@@ -22,9 +22,9 @@ export function runSwapTokenReapprovalFlow(
   const runHere = shouldRunBroadcastFlow(BroadcastFlow.REAPPROVAL);
   if (!runHere) {
     const broadcastEnabled = process.env.DISABLE_TRANSACTION_BROADCAST === "0";
-    const bothPlatforms = process.env.E2E_BOTH_PLATFORMS === "true";
+    const bothPlatformsBroadcast = process.env.E2E_BROADCAST_BOTH_MOBILE_PLATFORMS === "true";
     console.warn(
-      broadcastEnabled && bothPlatforms
+      broadcastEnabled && bothPlatformsBroadcast
         ? "[reapproval.swap.spec] Skipping — rotated to the other platform for this run (avoids shared-account broadcast race)"
         : "[reapproval.swap.spec] Skipping — requires DISABLE_TRANSACTION_BROADCAST=0",
     );
@@ -68,6 +68,8 @@ export function runSwapTokenReapprovalFlow(
         true,
       );
       await app.swapLiveApp.selectSpecificProvider(provider.uiName);
+      // Allowance only covers smallAmount, not the full swap, so the CTA reads "Continue".
+      await app.swapLiveApp.checkQuoteCardCta(provider.uiName, true);
       await app.swapLiveApp.tapExecuteSwap(provider.uiName);
       await app.swapLiveApp.expectResetApprovalScreen();
       await app.swapLiveApp.tapRevokeApprovalButton();

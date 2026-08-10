@@ -60,21 +60,21 @@ describe("staking/validators", () => {
       expect(first).toEqual({
         items: [
           expect.objectContaining({
-            validatorAddress: "seivaloper1abc",
+            id: "seivaloper1abc",
+            address: "seivaloper1abc",
             name: "John",
-            commission: 0.05,
+            commissionRate: "0.05",
             // REST returns usei (6 decimals); scaled to sei_evm's 18-decimal unit (×10^12).
-            tokens: "100000000000000",
-            votingPower: 0,
-            estimatedYearlyRewardsRate: 0,
+            balance: 100000000000000n,
+            apy: 0,
           }),
           expect.objectContaining({
-            validatorAddress: "seivaloper1def",
+            id: "seivaloper1def",
+            address: "seivaloper1def",
             name: "Doe",
-            commission: 1,
-            tokens: "999000000000000",
-            votingPower: 1,
-            estimatedYearlyRewardsRate: 0,
+            commissionRate: "1",
+            balance: 999000000000000n,
+            apy: 0,
           }),
         ],
         next: undefined,
@@ -159,8 +159,8 @@ describe("staking/validators", () => {
 
       expect(second).toEqual({
         items: [
-          expect.objectContaining({ validatorAddress: "seivaloper1abc" }),
-          expect.objectContaining({ validatorAddress: "seivaloper1def" }),
+          expect.objectContaining({ address: "seivaloper1abc" }),
+          expect.objectContaining({ address: "seivaloper1def" }),
         ],
         next: undefined,
       });

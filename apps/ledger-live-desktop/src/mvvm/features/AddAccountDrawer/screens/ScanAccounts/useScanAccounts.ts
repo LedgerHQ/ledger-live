@@ -1,5 +1,5 @@
 import { getAccountBridge, getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
-import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
+import { addAccountsAction } from "@ledgerhq/live-common/account/addAccounts";
 import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { Account } from "@ledgerhq/types-live";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";

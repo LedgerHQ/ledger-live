@@ -1,4 +1,3 @@
-import { getCurrentSolanaPreloadData } from "@ledgerhq/coin-solana/preload-data";
 import { stakeActions } from "@ledgerhq/coin-solana/logic";
 import { LEDGER_VALIDATORS_VOTE_ACCOUNTS } from "@ledgerhq/coin-solana/utils";
 import type { SolanaAccount } from "@ledgerhq/coin-solana/types";
@@ -16,17 +15,13 @@ export function getAccountBannerState(
   account: SolanaAccount,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   bridge: ResolvedAccountBridge<any>,
+  validators: ValidatorsAppValidator[],
 ): AccountBannerState {
   // Group current validator
   const solanaResources = account.solanaResources ? account.solanaResources : { stakes: [] };
   const delegations = solanaResources?.stakes.map(delegation => {
     return delegation;
   });
-
-  // Get ledger validator data
-  const { validators } = getCurrentSolanaPreloadData(account.currency) ?? {
-    validators: [],
-  };
 
   const ledgerValidator = validators.find(validator =>
     LEDGER_VALIDATORS_VOTE_ACCOUNTS.includes(validator.voteAccount),

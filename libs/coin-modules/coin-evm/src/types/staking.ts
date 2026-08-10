@@ -1,7 +1,13 @@
 import type { BigNumber } from "bignumber.js";
 import type { Stake } from "@ledgerhq/coin-module-framework/api/types";
 import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
-import type { StakingDelegation } from "@ledgerhq/types-live";
+
+export type EvmStakingOperationType =
+  | "DELEGATE"
+  | "UNDELEGATE"
+  | "REDELEGATE"
+  | "WITHDRAW_UNBONDED"
+  | "REWARD";
 
 export type StakingOperation =
   | "delegate"
@@ -173,7 +179,7 @@ export type StakingContractConfig = {
     contractAddress: string,
   ) => Promise<BigNumber | null>;
   /** Chain-specific guard called after cross-cutting checks. Returns true when the delegation can be undelegated. */
-  canUndelegate?: (delegation: StakingDelegation) => boolean;
+  canUndelegate?: (stake: Partial<Stake>) => boolean;
   /**
    * Multiplier applied to the raw `eth_estimateGas` result before it becomes the
    * transaction `gasLimit`.  Use when the chain's staking contract has a gas cost

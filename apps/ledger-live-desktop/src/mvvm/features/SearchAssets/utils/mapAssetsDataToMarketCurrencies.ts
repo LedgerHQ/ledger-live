@@ -1,5 +1,5 @@
-import { selectCurrencyForMetaId } from "@ledgerhq/live-common/dada-client/utils/currencySelection";
-import { AssetsDataWithPagination } from "@ledgerhq/live-common/dada-client/state-manager/types";
+import { selectCurrencyForMetaId } from "@features/platform-aggregated-assets";
+import type { AssetsDataWithPagination } from "@domain/api-aggregated-assets";
 import { dadaIdToMarketId } from "@ledgerhq/live-common/market/utils/index";
 import { applyUsdRateToMarket } from "@ledgerhq/live-common/market/utils/applyUsdRateToMarket";
 import { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";

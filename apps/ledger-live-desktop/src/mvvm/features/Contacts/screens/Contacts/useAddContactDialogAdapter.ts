@@ -9,7 +9,7 @@ import {
   type ContactsAddContactDialogLabels,
   type ContactsAddContactDialogProps,
   useAddContactDrawerViewModel,
-} from "@features/flow-contacts";
+} from "@features/flow-contacts-add-contact";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { v4 as uuid } from "uuid";

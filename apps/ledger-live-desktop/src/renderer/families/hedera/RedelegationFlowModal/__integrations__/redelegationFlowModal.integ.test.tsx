@@ -17,7 +17,7 @@ import {
 jest.mock("@ledgerhq/live-common/families/hedera/react", () => ({
   useHederaValidators: jest.fn(() => [
     {
-      nodeId: 0,
+      id: "0",
       name: "Hedera Node 0",
       address: "0.0.3",
       addressChecksum: null,
@@ -28,7 +28,7 @@ jest.mock("@ledgerhq/live-common/families/hedera/react", () => ({
       overstaked: false,
     },
     {
-      nodeId: 5,
+      id: "5",
       name: "Hedera Node 5",
       address: "0.0.5",
       addressChecksum: null,
@@ -45,7 +45,7 @@ jest.mock("@ledgerhq/live-common/families/hedera/react", () => ({
     pendingReward: new BigNumber(500_000),
     status: HEDERA_DELEGATION_STATUS.Active,
     validator: {
-      nodeId: 0,
+      id: "0",
       name: "Hedera Node 0",
       address: "0.0.3",
       addressChecksum: null,

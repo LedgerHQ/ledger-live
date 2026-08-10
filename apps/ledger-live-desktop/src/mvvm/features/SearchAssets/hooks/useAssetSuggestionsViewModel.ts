@@ -1,6 +1,5 @@
 import { useMemo } from "react";
-import { useAssetsData } from "@ledgerhq/live-common/dada-client/hooks/useAssetsData";
-import { useStablecoinTickers } from "@ledgerhq/live-common/dada-client/hooks/useStablecoinTickers";
+import { useAssetsData, useStablecoinTickers } from "@features/platform-aggregated-assets";
 import { useUsdToFiatRate } from "@ledgerhq/live-common/counterValues/hooks/useUsdToFiatRate";
 import { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
 import { useSelector } from "LLD/hooks/redux";

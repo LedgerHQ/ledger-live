@@ -1,10 +1,10 @@
-import type { OperationType } from "@ledgerhq/types-live";
+import type { EvmStakingOperationType } from "../types/staking";
 import { ethers } from "ethers";
 import type { StakingOperation } from "../types/staking";
 import { getStakingABI } from "./abis";
 import { STAKING_CONTRACTS } from "./contracts";
 
-const OP_MAP: Partial<Record<StakingOperation, OperationType>> = {
+const OP_MAP: Partial<Record<StakingOperation, EvmStakingOperationType>> = {
   delegate: "DELEGATE",
   undelegate: "UNDELEGATE",
   redelegate: "REDELEGATE",
@@ -32,7 +32,7 @@ export function isStakingOperation(value: string): value is StakingOperation {
 
 type SelectorEntry = {
   resolveAddress: (to: string) => string;
-  opType: OperationType;
+  opType: EvmStakingOperationType;
 };
 
 /**
@@ -92,7 +92,7 @@ export const detectEvmStakingOperationType = (
   currencyId: string,
   to: string | undefined | null,
   methodId: string | undefined | null,
-): OperationType | undefined => {
+): EvmStakingOperationType | undefined => {
   if (!to || !methodId) return undefined;
 
   const entries = getStakingEntries(currencyId);

@@ -1,6 +1,11 @@
 import BigNumber from "bignumber.js";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { reduceShieldedSyncResult, postSync } from "./sync";
+import {
+  reserveNotes,
+  getSessionReservedNullifiers,
+  _resetReservationsForTest,
+} from "./note-reservation";
 import type { ZcashAccount } from "../types/bridge";
 import type { ShieldedSyncResult, ShieldedTransaction } from "../network/types";
 import type { BtcOperation } from "../types/bridge";
@@ -30,6 +35,7 @@ const infoWith = (privateInfo: Partial<ZcashAccount["privateInfo"]>, transparent
       estimatedTimeRemaining: { hours: 0, minutes: 0 },
       ufvk: "uview1key",
       birthday: null,
+      shieldedAddress: null,
       lastSyncTimestamp: null,
       lastProcessedBlock: null,
       transactions: [],
@@ -233,6 +239,108 @@ describe("reduceShieldedSyncResult", () => {
       expect(notes?.[0].nullifier).toBe(nullifier);
     });
   });
+
+  // Dropping the nullifiers a scan reported spent is what keeps the session
+  // reservation store from growing forever, and the reducer is its only caller —
+  // one per branch, the chunk that discovered transactions and the chunk that did
+  // not. Both are covered here against the real store, since a mis-threaded
+  // argument is the regression that silently defeats the cleanup.
+  describe("reservation reconciliation", () => {
+    const RESERVED_A = "11".repeat(32);
+    const RESERVED_B = "22".repeat(32);
+
+    beforeEach(() => {
+      _resetReservationsForTest();
+    });
+
+    describe.each([
+      { branch: "without new transactions", transactions: [] as ShieldedTransaction[] },
+      { branch: "carrying new transactions", transactions: [incomingTx(3_425_869, 1000)] },
+    ])("on a chunk $branch", ({ transactions }) => {
+      it("drops the nullifiers the scan reported spent", () => {
+        reserveNotes("acc-1", "tx-in-flight", [RESERVED_A, RESERVED_B]);
+
+        reduceShieldedSyncResult(
+          { processedOperations: [], accountUpdate: {} },
+          {
+            ...emptyChunk,
+            transactions,
+            processedBlocks: 10,
+            remainingBlocks: 5,
+            spentKnownNullifiers: [RESERVED_A],
+          },
+          infoWith({}),
+          "acc-1",
+        );
+
+        const reserved = getSessionReservedNullifiers("acc-1");
+        expect(reserved.has(RESERVED_A)).toBe(false);
+        expect(reserved.has(RESERVED_B)).toBe(true);
+      });
+
+      // Reaching the tip a run started from is the outcome of nearly every poll
+      // of an account that is not backlogged. It confirms nothing about a spend
+      // in flight, so it must not hand its notes back to the next send.
+      it("keeps a reservation the scan said nothing about, tip or no tip", () => {
+        reserveNotes("acc-1", "tx-in-flight", [RESERVED_A, RESERVED_B]);
+
+        reduceShieldedSyncResult(
+          { processedOperations: [], accountUpdate: {} },
+          { ...emptyChunk, transactions, processedBlocks: 15, remainingBlocks: 0 },
+          infoWith({}),
+          "acc-1",
+        );
+
+        expect(getSessionReservedNullifiers("acc-1").size).toBe(2);
+      });
+
+      it("keeps the reservations of the accounts it is not syncing", () => {
+        reserveNotes("acc-1", "tx-in-flight", [RESERVED_A]);
+        reserveNotes("acc-2", "tx-elsewhere", [RESERVED_B]);
+
+        reduceShieldedSyncResult(
+          { processedOperations: [], accountUpdate: {} },
+          {
+            ...emptyChunk,
+            transactions,
+            processedBlocks: 15,
+            remainingBlocks: 0,
+            spentKnownNullifiers: [RESERVED_A],
+          },
+          infoWith({}),
+          "acc-1",
+        );
+
+        expect(getSessionReservedNullifiers("acc-1").size).toBe(0);
+        expect(getSessionReservedNullifiers("acc-2").has(RESERVED_B)).toBe(true);
+      });
+    });
+  });
+
+  describe("shieldedAddress carry-forward", () => {
+    it("preserves a non-null shieldedAddress across a sync cycle", () => {
+      const address = "u1testaddress";
+      const output = reduceShieldedSyncResult(
+        { processedOperations: [], accountUpdate: {} },
+        emptyChunk,
+        infoWith({ shieldedAddress: address }),
+        "acc-1",
+      );
+
+      expect(output.accountUpdate.privateInfo?.shieldedAddress).toBe(address);
+    });
+
+    it("carries null when no shieldedAddress was stored", () => {
+      const output = reduceShieldedSyncResult(
+        { processedOperations: [], accountUpdate: {} },
+        emptyChunk,
+        infoWith({ shieldedAddress: null }),
+        "acc-1",
+      );
+
+      expect(output.accountUpdate.privateInfo?.shieldedAddress).toBeNull();
+    });
+  });
 });
 
 describe("postSync", () => {
@@ -295,5 +403,48 @@ describe("postSync", () => {
     const synced = postSync(account([], []), account([], [optimistic]));
 
     expect(synced.pendingOperations).toEqual([optimistic]);
+  });
+
+  // The notes a shielded send spends are released on the same evidence that
+  // retires its optimistic operation, so that a second send can reuse them only
+  // once the first one is genuinely out of the way.
+  describe("note reservations", () => {
+    const RESERVED = "11".repeat(32);
+
+    beforeEach(() => {
+      _resetReservationsForTest();
+    });
+
+    it("releases the notes of a send that has confirmed", () => {
+      reserveNotes("acc-1", "76ec3b38", [RESERVED]);
+      const confirmed = operation({ hash: "76ec3b38", type: "SHIELDED_TX_ORCHARD_OUT" });
+
+      postSync(account([], []), account([confirmed], []));
+
+      expect(getSessionReservedNullifiers("acc-1").size).toBe(0);
+    });
+
+    // The double-spend race the reservation store exists for: a sync lands
+    // between two sends, and the first one has not confirmed yet.
+    it("holds the notes of a send no confirmed operation accounts for", () => {
+      reserveNotes("acc-1", "76ec3b38", [RESERVED]);
+      const unrelated = operation({ hash: "0e1d2c3b", type: "SHIELDED_TX_ORCHARD_IN" });
+      const optimistic = operation({ id: "op-pending", hash: "76ec3b38" });
+
+      postSync(account([], []), account([unrelated], [optimistic]));
+
+      expect(getSessionReservedNullifiers("acc-1").has(RESERVED)).toBe(true);
+    });
+
+    // A scan of an account carries no pending operation at all, and a send is
+    // only pending from broadcast onwards while its notes are reserved from
+    // signing — an empty pending list is no evidence of anything.
+    it("holds the notes of a send that is not pending yet", () => {
+      reserveNotes("acc-1", "76ec3b38", [RESERVED]);
+
+      postSync(account([], []), account([], []));
+
+      expect(getSessionReservedNullifiers("acc-1").has(RESERVED)).toBe(true);
+    });
   });
 });

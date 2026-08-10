@@ -15,7 +15,7 @@ import { Linking } from "react-native";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { makeSetEarnMenuBottomSheetAction } from "~/actions/earn";
 import { track } from "~/analytics";
-import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
+import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { AnalyticEvents } from "LLM/hooks/useAnalytics/enums";
 import { NavigatorName, ScreenName } from "~/const";
 import { earnMenuBottomSheetSelector } from "~/reducers/earn";

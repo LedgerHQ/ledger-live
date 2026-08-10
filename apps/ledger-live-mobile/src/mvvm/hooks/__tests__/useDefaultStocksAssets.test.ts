@@ -1,13 +1,16 @@
 import { renderHook } from "@tests/test-renderer";
-import { useStocksData } from "@ledgerhq/live-common/dada-client/hooks/useStocksData";
 import {
+  useStocksData,
   selectTopStocks,
   type StockSuggestion,
-} from "@ledgerhq/live-common/dada-client/utils/assetDiscovery";
+} from "@features/platform-aggregated-assets";
 import { useDefaultStocksAssets } from "../useDefaultStocksAssets";
 
-jest.mock("@ledgerhq/live-common/dada-client/hooks/useStocksData");
-jest.mock("@ledgerhq/live-common/dada-client/utils/assetDiscovery");
+jest.mock("@features/platform-aggregated-assets", () => ({
+  ...jest.requireActual("@features/platform-aggregated-assets"),
+  useStocksData: jest.fn(),
+  selectTopStocks: jest.fn(),
+}));
 
 const mockedStocks = jest.mocked(useStocksData);
 const mockedSelectTopStocks = jest.mocked(selectTopStocks);

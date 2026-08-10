@@ -1,3 +1,3 @@
-export { DeviceId } from "./DeviceId";
-export { UserId } from "./UserId";
-export { DatadogId } from "./DatadogId";
+export * from "./DeviceId";
+export * from "./UserId";
+export * from "./DatadogId";

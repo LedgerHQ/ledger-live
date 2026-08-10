@@ -21,7 +21,7 @@ export type StepProps = {
   ufvk: string;
   ufvkExportError: Error | undefined | null;
   onStepIdChanged: (stepId: StepId) => void;
-  onUfvkChanged: (ufvk: string, error?: Error | null) => void;
+  onUfvkChanged: (ufvk: string, shieldedAddress?: string | null, error?: Error | null) => void;
   birthday: string;
   invalidBirthday: boolean;
   syncFromZero: boolean;

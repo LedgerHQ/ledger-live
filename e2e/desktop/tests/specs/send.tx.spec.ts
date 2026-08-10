@@ -267,7 +267,7 @@ const transactionE2E = [
   },
   {
     transaction: new Transaction(Account.ALEO_1, Account.ALEO_2, "0.000001"),
-    xrayTicket: "B2CQA-4731",
+    xrayTicket: "B2CQA-6267",
     extraCliCommands: [shareViewKeyCommand(Account.ALEO_1)],
   },
 ];

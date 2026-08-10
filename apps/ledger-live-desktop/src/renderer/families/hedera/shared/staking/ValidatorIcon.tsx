@@ -12,7 +12,7 @@ interface Props {
 
 const ValidatorIcon = ({ validator }: Props) => {
   const ledgerNodeId = getEnv("HEDERA_STAKING_LEDGER_NODE_ID");
-  const isLedger = validator?.nodeId === ledgerNodeId;
+  const isLedger = validator?.id === String(ledgerNodeId);
   const validatorName = validator?.name ?? "";
 
   return (

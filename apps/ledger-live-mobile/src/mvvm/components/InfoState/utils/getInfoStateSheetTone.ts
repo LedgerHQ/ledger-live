@@ -1,4 +1,4 @@
-import type { BottomSheetBackgroundTone } from "LLM/contexts/BottomSheetBackgroundContext";
+import type { BottomSheetBackgroundTone } from "@shared/ui-queued-bottom-sheet";
 import type { InfoStateProps } from "../types";
 
 export function getInfoStateSheetTone(

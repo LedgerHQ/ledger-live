@@ -1,7 +1,8 @@
-import { CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
 import BigNumber from "bignumber.js";
+import { casperMainnetConfig } from "../__tests__/fixtures/config.fixture";
 import { getCoinConfig } from "../config";
-import { fetchAccountStateInfo, fetchBalance, fetchBlockHeight, fetchTxs } from "./api";
+import { fetchAccountStateInfo, fetchBalance, fetchLastBlock, fetchTxs, fetchTxsPage } from "./api";
+import { BUSY_MAINNET_PUBLIC_KEY } from "../__tests__/fixtures/addresses.fixture";
 import { CASPER_DUMMY_ADDRESS } from "../constants";
 
 const pubkey = "0202664e3958608cd8dc2b80d4c73f18f76ef197f1cccca2f4f817c70bb050b248bd";
@@ -9,16 +10,11 @@ const pubkeyAbandon = CASPER_DUMMY_ADDRESS;
 
 jest.mock("../config");
 describe("Casper API", () => {
-  jest.mocked(getCoinConfig).mockReturnValue({
-    ...({} as unknown as CurrencyConfig),
-    infra: {
-      API_CASPER_NODE_ENDPOINT: "https://casper.coin.ledger.com/node/",
-      API_CASPER_INDEXER: "https://casper.coin.ledger.com/indexer/",
-    },
-  });
+  jest.mocked(getCoinConfig).mockReturnValue(casperMainnetConfig());
+
   it("should be able to fetch the network status", async () => {
-    const blockHeight = await fetchBlockHeight();
-    expect(blockHeight).toBeGreaterThan(0);
+    const { height } = await fetchLastBlock();
+    expect(height).toBeGreaterThan(0);
   });
 
   it("shouldnt fetch account state info if account doesnt exist", async () => {
@@ -58,5 +54,17 @@ describe("Casper API", () => {
     const txs = await fetchTxs(pubkeyAbandon);
     expect(txs).toBeInstanceOf(Array);
     expect(txs.length).toBe(0);
+  });
+
+  // `listOperations` stops walking once a whole page falls below `minHeight`, which is only sound
+  // while the feed is newest-first. The indexer accepts its documented `order_by` /
+  // `order_direction` params but ignores them, so the order cannot be requested — only observed.
+  // If this fails, the indexer changed its ordering and that early exit is no longer safe.
+  it("serves the deploy feed newest-first, which listOperations' early exit depends on", async () => {
+    const { data } = await fetchTxsPage(BUSY_MAINNET_PUBLIC_KEY, 1);
+
+    expect(data.length).toBeGreaterThan(1);
+    const timestamps = data.map(tx => Date.parse(tx.timestamp));
+    expect([...timestamps].sort((a, b) => b - a)).toEqual(timestamps);
   });
 });

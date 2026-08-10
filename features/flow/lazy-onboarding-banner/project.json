@@ -1,0 +1,8 @@
+{
+  "name": "@features/flow-lazy-onboarding-banner",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

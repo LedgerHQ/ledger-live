@@ -36,10 +36,9 @@ function rowsFromEnv(env) {
       device: env[`ROW${i}_DEVICE`] || "",
       summary: env[`ROW${i}_SUMMARY`] || "No test results",
       reportUrl: env[`ROW${i}_REPORT_URL`] || "",
-      reportTitle: env[`ROW${i}_REPORT_TITLE`] || "Allure Report",
-      reportLinkText: env[`ROW${i}_REPORT_LINK_TEXT`] || "Allure Report",
       status: env[`ROW${i}_STATUS`] || "",
       missingShards: env[`ROW${i}_MISSING_SHARDS`] || "",
+      qaaUrl: env[`ROW${i}_QAA_URL`] || "",
     });
   }
   return rows;
@@ -52,11 +51,7 @@ function rowsFromEnv(env) {
 function modelFromEnv(env) {
   const smokeSuffix = env.SMOKE_TESTS === "true" ? " (Smoke Tests)" : "";
   const extraField = env.EXTRA_FIELD_TITLE
-    ? {
-        title: env.EXTRA_FIELD_TITLE,
-        url: env.EXTRA_FIELD_URL || "",
-        linkText: env.EXTRA_FIELD_LINK_TEXT || env.EXTRA_FIELD_TITLE,
-      }
+    ? { title: env.EXTRA_FIELD_TITLE, url: env.EXTRA_FIELD_URL || "" }
     : null;
   return {
     product: env.PRODUCT || "",
@@ -73,14 +68,6 @@ function modelFromEnv(env) {
 function resultLine(row) {
   const deviceMid = row.device ? ` · ${row.device}` : "";
   return `${row.emoji} ${row.label} · FF '${row.flags}'${deviceMid} : ${row.summary}`;
-}
-
-/** Allure link field, with a "No Allure Report" fallback when no URL is available. */
-function allureField(row) {
-  const text = row.reportUrl
-    ? `*${row.reportTitle}*\n<${row.reportUrl}|${row.reportLinkText}>`
-    : `*${row.reportTitle}*\nNo Allure Report`;
-  return { type: "mrkdwn", text };
 }
 
 /**
@@ -131,25 +118,39 @@ function buildSlackPayload(model) {
     });
   }
 
-  const infoFields = rows.map(allureField);
-  infoFields.push({
-    type: "mrkdwn",
-    text: `*Workflow*\n<${runUrl}|Workflow run>`,
-  });
   blocks.push({ type: "divider" });
-  blocks.push({ type: "section", fields: infoFields });
 
-  if (extraField) {
+  // Primary call to action: the new QAA Allure portal — one green button per row with a report.
+  const qaaRows = rows.filter(row => row.qaaUrl);
+  if (qaaRows.length > 0) {
     blocks.push({
       type: "section",
-      fields: [
-        {
-          type: "mrkdwn",
-          text: `*${extraField.title}*\n<${extraField.url}|${extraField.linkText}>`,
-        },
-      ],
+      text: { type: "mrkdwn", text: "🆕 *New QAA Allure report*" },
+    });
+    blocks.push({
+      type: "actions",
+      elements: qaaRows.map((row, i) => ({
+        type: "button",
+        text: { type: "plain_text", text: `${row.emoji} ${row.label}`, emoji: true },
+        url: row.qaaUrl,
+        style: "primary",
+        action_id: `qaa_report_${i}`,
+      })),
     });
   }
+
+  // Secondary links demoted to one muted line: legacy Allure per row, workflow run, optional extra.
+  const secondary = [];
+  const legacyLinks = rows
+    .filter(row => row.reportUrl)
+    .map(row => `<${row.reportUrl}|${row.emoji} ${row.label}>`);
+  if (legacyLinks.length > 0) secondary.push(`Legacy Allure: ${legacyLinks.join(" · ")}`);
+  secondary.push(`<${runUrl}|⚙️ Workflow run>`);
+  if (extraField) secondary.push(`<${extraField.url}|${extraField.title}>`);
+  blocks.push({
+    type: "context",
+    elements: [{ type: "mrkdwn", text: secondary.join("   ·   ") }],
+  });
 
   return {
     text: " ",

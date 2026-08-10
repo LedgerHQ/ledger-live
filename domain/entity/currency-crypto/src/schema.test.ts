@@ -2,9 +2,19 @@ import {
   ExplorerViewSchema,
   BitcoinLikeInfoSchema,
   EthereumLikeInfoSchema,
+  CryptoCurrencyIdSchema,
   CryptoCurrencySchema,
 } from "./schema";
 import { mockCryptoCurrency } from "./schema.mock";
+
+describe("CryptoCurrencyIdSchema", () => {
+  it("accepts a non-empty string", () => {
+    expect(CryptoCurrencyIdSchema.parse("bitcoin")).toBe("bitcoin");
+  });
+  it("rejects an empty string", () => {
+    expect(() => CryptoCurrencyIdSchema.parse("")).toThrow();
+  });
+});
 
 describe("ExplorerViewSchema", () => {
   it("accepts an empty object", () => {

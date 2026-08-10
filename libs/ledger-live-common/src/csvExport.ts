@@ -6,8 +6,11 @@ import { flattenOperationWithInternalsAndNfts } from "./operation";
 import { calculate } from "@ledgerhq/live-countervalues/logic";
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 import type { Currency } from "@domain/entity-currency";
-import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
-import { WalletState, accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
+import {
+  AccountNamesState,
+  accountNameWithDefaultSelector,
+  getDefaultAccountName,
+} from "@domain/entity-account-name";
 
 type Field = {
   title: string;
@@ -17,7 +20,7 @@ type Field = {
     arg2: Operation,
     arg3: Currency | null | undefined,
     arg4: CounterValuesState | null | undefined,
-    arg5: WalletState | null | undefined,
+    arg5: AccountNamesState | null | undefined,
   ) => string;
 };
 
@@ -66,10 +69,17 @@ const fields: Field[] = [
   },
   {
     title: "Account Name",
-    cell: (account, parentAccount, _op, _counterValueCurrency, _countervalueState, walletState) => {
+    cell: (
+      account,
+      parentAccount,
+      _op,
+      _counterValueCurrency,
+      _countervalueState,
+      accountNames,
+    ) => {
       const main = getMainAccount(account, parentAccount);
-      return walletState
-        ? accountNameWithDefaultSelector(walletState, main)
+      return accountNames
+        ? accountNameWithDefaultSelector(accountNames, main)
         : getDefaultAccountName(main);
     },
   },
@@ -134,7 +144,7 @@ const accountRows = (
   parentAccount: Account | null | undefined,
   counterValueCurrency?: Currency,
   countervalueState?: CounterValuesState,
-  walletState?: WalletState,
+  accountNames?: AccountNamesState,
 ): Array<string[]> =>
   account.operations
     .reduce((ops: Operation[], op) => ops.concat(flattenOperationWithInternalsAndNfts(op)), [])
@@ -146,7 +156,7 @@ const accountRows = (
           operation,
           counterValueCurrency,
           countervalueState,
-          walletState,
+          accountNames,
         ),
       ),
     );
@@ -155,13 +165,13 @@ const accountsRows = (
   accounts: Account[],
   counterValueCurrency?: Currency,
   countervalueState?: CounterValuesState,
-  walletState?: WalletState,
+  accountNames?: AccountNamesState,
 ): Array<string[]> => {
   return flattenAccounts(accounts).reduce((all: Array<string[]>, account) => {
     const parentAccount =
       account.type !== "Account" ? accounts.find(a => a.id === account.parentId) : null;
     return all.concat(
-      accountRows(account, parentAccount, counterValueCurrency, countervalueState, walletState),
+      accountRows(account, parentAccount, counterValueCurrency, countervalueState, accountNames),
     );
   }, []);
 };
@@ -180,14 +190,14 @@ export const accountsOpToCSV = (
   accounts: Account[],
   counterValueCurrency?: Currency,
   countervalueState?: CounterValuesState, // cvs state required for countervalues export
-  walletState?: WalletState, // wallet state required for account name
+  accountNames?: AccountNamesState, // wallet state required for account name
 ): string => {
   const header = fields.map(field => field.title).join(",") + newLine;
   const accountsRowsRes = accountsRows(
     accounts,
     counterValueCurrency,
     countervalueState,
-    walletState,
+    accountNames,
   );
   const rows = accountsRowsRes.map(mapRowValue).join(newLine);
   return header + rows;

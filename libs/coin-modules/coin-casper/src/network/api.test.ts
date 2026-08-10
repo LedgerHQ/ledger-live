@@ -5,12 +5,13 @@ import BigNumber from "bignumber.js";
 import { AccountIdentifier, HttpHandler, PublicKey, RpcClient, Transaction } from "casper-js-sdk";
 import { getCoinConfig } from "../config";
 import { NodeErrorCodeAccountNotFound, NodeErrorCodeQueryFailed } from "../constants";
-import { TEST_ADDRESSES } from "../test/fixtures";
+import { TEST_ADDRESSES } from "../__tests__/fixtures";
 import { ITxnHistoryData, RpcError, IndexerResponseRoot } from "../types/network";
 import {
   fetchAccountStateInfo,
   fetchBalance,
-  fetchBlockHeight,
+  fetchLastBlock,
+  fetchChainspecToml,
   fetchTxs,
   broadcastTx,
   getCasperNodeRpcClient,
@@ -23,7 +24,6 @@ const MOCK_PUBLIC_KEY = TEST_ADDRESSES.SECP256K1;
 const MOCK_PURSE_UREF = "uref-1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef-007";
 const MOCK_ACCOUNT_HASH =
   "account-hash-1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef";
-const DEFAULT_LIMIT = 100;
 
 // Mock dependencies
 jest.mock("@ledgerhq/logs", () => ({
@@ -60,7 +60,11 @@ type MockedBalance = {
 };
 
 type MockedBlock = {
-  block: { height: number };
+  block: {
+    height: number;
+    hash: { toHex: () => string };
+    timestamp: { date: Date };
+  };
 };
 
 type MockedTransactionHash = {
@@ -87,6 +91,7 @@ const createMockRpcClient = (methodOverrides: Partial<Record<keyof RpcClient, je
     getBalanceByStateRootHash: jest.fn(),
     getLatestBlock: jest.fn(),
     putTransaction: jest.fn(),
+    getChainspec: jest.fn(),
   };
 
   // Create a combined mock with defaultMethods overridden by methodOverrides
@@ -104,7 +109,6 @@ const createNetworkMock = <T>(responseData: T[], pageCount = 1, itemCount = resp
       data: responseData,
       page_count: pageCount,
       item_count: itemCount,
-      pages: [],
     },
     status: 200,
   }) as MockedNetworkResponse<T>;
@@ -274,30 +278,72 @@ describe("Casper API Unit Tests", () => {
     });
   });
 
-  describe("fetchBlockHeight", () => {
-    it("should fetch block height successfully", async () => {
-      const mockHeight = 12345;
+  describe("fetchLastBlock", () => {
+    it("should fetch last block info successfully", async () => {
+      const mockTime = new Date("2024-06-01T12:00:00Z");
 
       createMockRpcClient({
         getLatestBlock: jest.fn().mockResolvedValue({
-          block: { height: mockHeight },
+          block: {
+            height: 12345,
+            hash: { toHex: () => "0xabcdef1234567890" },
+            timestamp: { date: mockTime },
+          },
         } as MockedBlock),
       });
 
-      const result = await fetchBlockHeight();
+      const result = await fetchLastBlock();
 
-      expect(result).toBe(mockHeight);
+      expect(result).toEqual({
+        height: 12345,
+        hash: "0xabcdef1234567890",
+        time: mockTime,
+      });
     });
 
-    it("should throw error when block height fetch fails", async () => {
-      const mockError = new Error("Failed to fetch block height");
+    it("should throw error when last block fetch fails", async () => {
+      const mockError = new Error("Failed to fetch last block");
 
       createMockRpcClient({
         getLatestBlock: jest.fn().mockRejectedValue(mockError),
       });
 
-      await expect(fetchBlockHeight()).rejects.toThrow("Failed to fetch block height");
-      expect(log).toHaveBeenCalledWith("error", "Failed to fetch block height", mockError);
+      await expect(fetchLastBlock()).rejects.toThrow("Failed to fetch last block");
+      expect(log).toHaveBeenCalledWith("error", "Failed to fetch last block", mockError);
+    });
+  });
+
+  describe("fetchChainspecToml", () => {
+    it("should decode the hex-encoded chainspec to TOML", async () => {
+      const toml = "[transactions]\nnative_mint_lane = [0, 2048, 1024, 100_000_000, 325]\n";
+
+      createMockRpcClient({
+        getChainspec: jest.fn().mockResolvedValue({
+          chainspecBytes: { chainspecBytes: Buffer.from(toml, "utf8").toString("hex") },
+        }),
+      });
+
+      await expect(fetchChainspecToml()).resolves.toBe(toml);
+    });
+
+    it("should throw when the response carries no chainspec bytes", async () => {
+      createMockRpcClient({
+        getChainspec: jest.fn().mockResolvedValue({ chainspecBytes: {} }),
+      });
+
+      await expect(fetchChainspecToml()).rejects.toThrow("Chainspec bytes missing from response");
+      expect(log).toHaveBeenCalledWith("error", "Failed to fetch chainspec", expect.any(Error));
+    });
+
+    it("should throw error when the chainspec fetch fails", async () => {
+      const mockError = new Error("node unreachable");
+
+      createMockRpcClient({
+        getChainspec: jest.fn().mockRejectedValue(mockError),
+      });
+
+      await expect(fetchChainspecToml()).rejects.toThrow("node unreachable");
+      expect(log).toHaveBeenCalledWith("error", "Failed to fetch chainspec", mockError);
     });
   });
 
@@ -305,12 +351,11 @@ describe("Casper API Unit Tests", () => {
     const createMockTxData = (hash: string): ITxnHistoryData => ({
       deploy_hash: hash,
       block_hash: "block-hash-1",
+      block_height: 1272937,
       caller_public_key: MOCK_PUBLIC_KEY,
-      execution_type_id: 1,
       cost: "10000",
-      payment_amount: "100000000",
+      error_message: null,
       timestamp: "2023-01-01T12:00:00Z",
-      status: "success",
       args: {
         id: {
           parsed: 12345,
@@ -327,14 +372,13 @@ describe("Casper API Unit Tests", () => {
           cl_type: "PublicKey",
         },
       },
-      amount: "500000000",
     });
 
     const mockTxData = [createMockTxData("deploy-hash-1")];
 
     const getExpectedNetworkCall = (page: number) => ({
       method: "GET",
-      url: `${MOCK_INDEXER_URL}/accounts/${MOCK_PUBLIC_KEY}/ledgerlive-deploys?limit=${DEFAULT_LIMIT}&page=${page}`,
+      url: `${MOCK_INDEXER_URL}/accounts/${MOCK_PUBLIC_KEY}/ledgerlive-deploys?page=${page}&page_size=250`,
     });
 
     it("should fetch transactions successfully (single page)", async () => {

@@ -16,6 +16,7 @@ import { syncStateUpdater } from "./sync";
 const ExportKeyModal = ({ account }: { account: ZcashAccount }) => {
   const [stepId, setStepId] = useState<StepId>("birthday");
   const [ufvk, setUfvk] = useState<string>("");
+  const [shieldedAddress, setShieldedAddress] = useState<string | null>(null);
   const [ufvkExportError, setUfvkExportError] = useState<Error | undefined | null>(null);
 
   const today = new Date().toISOString().split("T")[0];
@@ -55,15 +56,21 @@ const ExportKeyModal = ({ account }: { account: ZcashAccount }) => {
   const onHandleReset = () => {
     setStepId("birthday");
     setUfvk("");
+    setShieldedAddress(null);
     setUfvkExportError(null);
   };
 
-  const handleUfvkChanged = (ufvk: string, error?: Error | undefined | null) => {
+  const handleUfvkChanged = (
+    viewKey: string,
+    shieldedAddr?: string | null,
+    error?: Error | undefined | null,
+  ) => {
     if ((error as { name?: string })?.name === "UserRefusedOnDevice") {
       logger.critical(error);
     }
     setUfvkExportError(error);
-    setUfvk(ufvk);
+    setUfvk(viewKey);
+    setShieldedAddress(shieldedAddr ?? null);
   };
 
   const handleEnableShieldedBalance = (nextSyncState: ZcashSyncState) => {
@@ -71,6 +78,7 @@ const ExportKeyModal = ({ account }: { account: ZcashAccount }) => {
       syncState: nextSyncState,
       ufvk,
       birthday,
+      shieldedAddress,
     });
   };
 

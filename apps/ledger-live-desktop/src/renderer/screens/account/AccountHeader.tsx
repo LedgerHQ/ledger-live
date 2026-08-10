@@ -32,8 +32,7 @@ import IconPen from "~/renderer/icons/Pen";
 import IconCross from "~/renderer/icons/Cross";
 import IconCheck from "~/renderer/icons/Check";
 import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
-import { setAccountName } from "@ledgerhq/live-wallet/store";
-import { useAccountName } from "~/renderer/reducers/wallet";
+import { setAccountName, useAccountName } from "~/renderer/reducers/wallet";
 
 type BaseComponentProps = BaseProps & { ff?: string };
 

@@ -187,6 +187,14 @@ export function createZCashIPCClient(
       })) as TransactionDetailsResult[];
     },
 
+    async deriveShieldedAddress(ufvk: string): Promise<string> {
+      const requestId = nextRequestId();
+      return (await ipcRenderer.invoke(ZCASH_IPC.deriveShieldedAddress, {
+        requestId,
+        ufvk,
+      })) as string;
+    },
+
     syncShielded(syncArgs: SyncShieldedArgs): Observable<ShieldedSyncResult> {
       return new Observable<ShieldedSyncResult>(subscriber => {
         const requestId = nextRequestId();

@@ -2,7 +2,8 @@ import { useStake } from "LLD/hooks/useStake";
 import BigNumber from "bignumber.js";
 import { renderHookWithLiveAppProvider, withFlagOverrides } from "tests/testSetup";
 
-import { accountRawToAccountUserData, WalletState } from "@ledgerhq/live-wallet/store";
+import { accountRawToAccountUserData } from "@ledgerhq/live-common/account/index";
+import type { WalletState } from "~/renderer/reducers/wallet";
 
 import { AccountRaw, TokenAccount } from "@ledgerhq/types-live";
 
@@ -101,10 +102,7 @@ const mockUSDCTokenAccount: TokenAccount = {
 const walletState: WalletState = {
   accountNames: new Map(),
   starredAccountIds: new Set(),
-  walletSyncState: {
-    data: null,
-    version: 0,
-  },
+  walletSync: { walletSyncState: { data: null, version: 0 } },
   nonImportedAccountInfos: [],
   recentAddresses: {},
 };

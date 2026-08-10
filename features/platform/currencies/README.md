@@ -1,7 +1,7 @@
 # `@features/platform-currencies`
 
-> [!CAUTION]
-> **Status: UNSTABLE** — Part of the emerging DDD layer; under active development.
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
 
 App-facing currency **runtime glue**. Mirrors `@features/platform-feature-flags`:
 this package owns hooks + the crypto-assets store builder; currency **state lives in

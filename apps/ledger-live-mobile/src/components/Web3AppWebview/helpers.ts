@@ -11,7 +11,7 @@ import {
   useCacheBustedLiveApps,
   useDAppManifestCurrencyIds,
 } from "@ledgerhq/live-common/wallet-api/react";
-import { useDrawerConfiguration } from "@ledgerhq/live-common/dada-client/hooks/useDrawerConfiguration";
+import { useDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/useDrawerConfiguration";
 import { useDappCurrentAccount, useDappLogic } from "@ledgerhq/live-common/wallet-api/useDappLogic";
 import type { AccountLike, Operation, Account } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
@@ -181,7 +181,7 @@ export function useWebView(
     onLoadError,
     server,
   } = useWalletAPIServer({
-    walletState,
+    accountNames: walletState.accountNames,
     manifest: manifest satisfies AppManifest,
     accounts,
     tracking,

@@ -32,6 +32,8 @@ jobs:
         with:
           app-id: ${{ secrets.GH_BOT_APP_ID }}
           private-key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+          permission-contents: write
+          permission-pull-requests: write
 
       - name: Generate ref/tag version to use when running changeset status
         uses: LedgerHQ/ledger-live/tools/actions/composites/generate-tag@develop

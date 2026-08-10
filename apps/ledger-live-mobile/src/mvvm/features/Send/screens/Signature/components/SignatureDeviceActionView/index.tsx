@@ -3,7 +3,7 @@ import { View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { BottomSheetView } from "@ledgerhq/lumen-ui-rnative";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
-import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
+import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import SelectDevice2, { type SetHeaderOptionsRequest } from "~/components/SelectDevice2";
 import { useAnalytics } from "~/analytics";
 import { getSendFlowTrackingProperties } from "@ledgerhq/ledger-wallet-framework/tracking/send";

@@ -1,33 +1,24 @@
 import { patchOperationWithHash } from "@ledgerhq/ledger-wallet-framework/operation";
-import { Transaction as CasperTransaction, PublicKey } from "casper-js-sdk";
-import { broadcastTx } from "../network/api";
 import {
   createMockAccount,
   createMockTransaction,
   createMockSignedOperation,
-} from "../test/fixtures";
+} from "../__tests__/fixtures";
+import { broadcast as logicBroadcast } from "../logic/broadcast";
+import { combine } from "../logic/combine";
 import { broadcast } from "./broadcast";
 
-// Mock the dependencies
-jest.mock("casper-js-sdk", () => {
-  return {
-    Transaction: {
-      fromJSON: jest.fn().mockReturnValue({
-        setSignature: jest.fn(),
-      }),
-    },
-    PublicKey: {
-      fromHex: jest.fn().mockReturnValue("mockedPublicKey"),
-    },
-  };
-});
-
-jest.mock("../network/api", () => ({
-  broadcastTx: jest.fn().mockResolvedValue("mockedTxHash"),
+jest.mock("../logic/combine", () => ({
+  combine: jest.fn().mockReturnValue("mockedCombinedTx"),
 }));
 
+jest.mock("../logic/broadcast", () => ({
+  broadcast: jest.fn().mockResolvedValue("mockedTxHash"),
+}));
+
+const mockLogicBroadcast = jest.mocked(logicBroadcast);
+
 describe("broadcast", () => {
-  // Create test fixtures
   const mockAccount = createMockAccount();
   const mockTransaction = createMockTransaction();
   const mockSignedOperation = createMockSignedOperation(mockAccount, mockTransaction, {
@@ -39,20 +30,22 @@ describe("broadcast", () => {
     jest.clearAllMocks();
   });
 
-  test("should successfully broadcast a transaction", async () => {
+  test("delegates to combine and broadcasts the combined transaction", async () => {
     const result = await broadcast({
       account: mockAccount,
       signedOperation: mockSignedOperation,
     });
 
-    // Assert the transaction was constructed and signed correctly
-    expect(CasperTransaction.fromJSON).toHaveBeenCalledWith(mockSignedOperation.rawData.tx);
-    expect(PublicKey.fromHex).toHaveBeenCalledWith(mockAccount.freshAddress);
+    expect(combine).toHaveBeenCalledTimes(1);
+    expect(combine).toHaveBeenCalledWith(
+      mockSignedOperation.rawData.tx,
+      mockSignedOperation.signature,
+      mockAccount.freshAddress,
+    );
 
-    // Assert the transaction was broadcast
-    expect(broadcastTx).toHaveBeenCalled();
+    expect(logicBroadcast).toHaveBeenCalledTimes(1);
+    expect(logicBroadcast).toHaveBeenCalledWith("mockedCombinedTx");
 
-    // Assert the operation was patched with the hash
     expect(result.hash).toBe("mockedTxHash");
     expect(result).toEqual({
       ...patchOperationWithHash(mockSignedOperation.operation, "mockedTxHash"),
@@ -61,10 +54,9 @@ describe("broadcast", () => {
   });
 
   test("should throw if rawData is missing", async () => {
-    // Create a type-safe but invalid signed operation for testing
     const invalidSignedOperation = {
       ...mockSignedOperation,
-      rawData: null as any, // Force type assertion for test
+      rawData: null as any,
     };
 
     await expect(
@@ -73,11 +65,29 @@ describe("broadcast", () => {
         signedOperation: invalidSignedOperation,
       }),
     ).rejects.toThrow("casper: rawData is required");
+
+    expect(combine).not.toHaveBeenCalled();
+  });
+
+  test("should throw if rawData.tx is not a string", async () => {
+    const invalidSignedOperation = {
+      ...mockSignedOperation,
+      rawData: { tx: { not: "a string" } } as any,
+    };
+
+    await expect(
+      broadcast({
+        account: mockAccount,
+        signedOperation: invalidSignedOperation,
+      }),
+    ).rejects.toThrow("casper: rawData.tx is required");
+
+    expect(combine).not.toHaveBeenCalled();
   });
 
   test("should throw if broadcast fails to return a hash", async () => {
-    // Mock broadcastTx to return null (failed broadcast)
-    (broadcastTx as jest.Mock).mockResolvedValueOnce(null);
+    // @ts-expect-error - null on purpose to test the error case
+    mockLogicBroadcast.mockResolvedValueOnce(null);
 
     await expect(
       broadcast({

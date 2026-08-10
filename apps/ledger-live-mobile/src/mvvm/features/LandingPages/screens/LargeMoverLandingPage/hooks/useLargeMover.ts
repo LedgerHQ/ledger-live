@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useAssetsData } from "@ledgerhq/live-common/dada-client/hooks/useAssetsData";
+import { useAssetsData } from "@features/platform-aggregated-assets";
 import VersionNumber from "react-native-version-number";
 import { getCurrencyIdsFromTickers } from "../utils";
 import { useMapLedgerIdsToCoinGeckoIds } from "./useLedgerMapping";

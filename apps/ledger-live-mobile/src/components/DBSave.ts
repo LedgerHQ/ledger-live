@@ -1,7 +1,11 @@
 import { trustchainStoreSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { largeScreenUpsellModalSelector } from "@ledgerhq/live-engagement/largeScreenUpsellModal";
 import { postOnboardingSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
-import { exportWalletState, walletStateExportShouldDiffer } from "@ledgerhq/live-wallet/store";
+import {
+  exportWalletState,
+  walletStateExportShouldDiffer,
+  walletSelector,
+} from "~/reducers/wallet";
 import isEqual from "lodash/isEqual";
 import throttleFn from "lodash/throttle";
 import { useCallback, useEffect, useMemo, useRef } from "react";
@@ -22,6 +26,7 @@ import {
   saveMarketState,
   saveMarketListConfig,
   saveMarketBannerState,
+  savePayCardState,
   savePostOnboardingState,
   saveSettings,
   saveTrustchainState,
@@ -34,9 +39,9 @@ import { exportSelector as knownDevicesExportSelector } from "~/reducers/knownDe
 import { exportLargeMoverSelector } from "~/reducers/largeMover";
 import { exportMarketSelector, exportMarketListConfigSelector } from "~/reducers/market";
 import { marketBannerStoreSelector } from "~/reducers/marketBanner";
+import { payCardPersistedSelector } from "@domain/entity-pay-card";
 import { settingsStoreSelector } from "~/reducers/settings";
 import type { State } from "~/reducers/types";
-import { walletSelector } from "~/reducers/wallet";
 import { Maybe } from "../types/helpers";
 import { extractPersistedCALFromState, persistedCALContentEqual } from "@domain/api-currency-token";
 import { calApi } from "@shared/api-services";
@@ -181,6 +186,8 @@ const getLargeScreenUpsellModalStateChanged = (a: State, b: State) =>
 const marketNotEquals = (a: State, b: State) => a.market !== b.market;
 const marketListConfigNotEquals = (a: State, b: State) => a.marketListConfig !== b.marketListConfig;
 const marketBannerNotEquals = (a: State, b: State) => a.marketBanner !== b.marketBanner;
+const payCardPersistedNotEquals = (a: State, b: State) =>
+  !isEqual(payCardPersistedSelector(a), payCardPersistedSelector(b));
 const trustchainNotEquals = (a: State, b: State) => a.trustchain !== b.trustchain;
 const compareWalletState = (a: State, b: State) =>
   walletStateExportShouldDiffer(a.wallet, b.wallet);
@@ -287,6 +294,14 @@ export const ConfigureDBSaveEffects = () => {
     throttle: 500,
     getChangesStats: marketBannerNotEquals,
     lense: marketBannerStoreSelector,
+  });
+
+  useDBSaveEffect({
+    stateSelector: (state: State) => state.payCard,
+    save: savePayCardState,
+    throttle: 500,
+    getChangesStats: payCardPersistedNotEquals,
+    lense: payCardPersistedSelector,
   });
 
   useDBSaveEffect({

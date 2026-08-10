@@ -32,7 +32,7 @@ export function CheckerLedgerSync() {
     },
     {
       key: t("settings.developer.debugWalletSync.modal.check.trustchain.cloudSyncVersion"),
-      value: "v" + String(walletState.walletSyncState.version),
+      value: "v" + String(walletState.walletSync.walletSyncState.version),
       copy: true,
       tiny: false,
     },

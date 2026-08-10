@@ -47,6 +47,7 @@ export function useContactDetailEditDeleteAdapter(
     namePlaceholder: t("contacts.editContact.namePlaceholder"),
     namingDisclaimer: t("contacts.editContact.namingDisclaimer"),
     applyChanges: t("contacts.editContact.applyChanges"),
+    confirmName: t("contacts.editContact.confirmName"),
     nameValidationErrors: {
       [INVALID_CONTACT_NAME_ERROR_NAME]: t("contacts.editContact.invalidNameError"),
       [DUPLICATE_CONTACT_NAME_ERROR_NAME]: t("contacts.addContactDrawer.duplicateNameError"),

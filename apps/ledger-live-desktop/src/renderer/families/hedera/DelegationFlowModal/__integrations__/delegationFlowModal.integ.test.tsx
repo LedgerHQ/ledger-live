@@ -17,7 +17,7 @@ import {
 jest.mock("@ledgerhq/live-common/families/hedera/react", () => ({
   useHederaValidators: jest.fn(() => [
     {
-      nodeId: 0,
+      id: "0",
       name: "Hedera Node 0",
       address: "0.0.3",
       addressChecksum: null,
@@ -51,7 +51,7 @@ jest.mock("@ledgerhq/live-common/bridge/impl", () => ({
 let prevLedgerNodeId: number;
 beforeEach(async () => {
   prevLedgerNodeId = getEnv("HEDERA_STAKING_LEDGER_NODE_ID");
-  // nodeId 0 matches the first mocked validator so getDefaultValidator pre-selects it,
+  // id "0" matches the first mocked validator so getDefaultValidator pre-selects it,
   // enabling the Continue button on the Validator step without user interaction.
   setEnv("HEDERA_STAKING_LEDGER_NODE_ID", 0);
   await setupHederaModalTest();

@@ -4,7 +4,7 @@ import { initialIdentitiesState } from "@domain/entity-client-identity";
 import { INITIAL_STATE as TRUSTCHAIN_INITIAL_STATE } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { initialState as POST_ONBOARDING_INITIAL_STATE } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { CountervaluesBridge, CountervaluesProvider } from "@ledgerhq/live-countervalues-react";
-import { initialState as WALLET_INITIAL_STATE } from "@ledgerhq/live-wallet/store";
+import { INITIAL_STATE as WALLET_INITIAL_STATE } from "~/reducers/wallet";
 import { NavigationContainer, type InitialState } from "@react-navigation/native";
 import { configureStore } from "@reduxjs/toolkit";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -14,7 +14,7 @@ import {
   renderHook as rntlRenderHook,
   userEvent,
 } from "@testing-library/react-native";
-import QueuedDrawersContextProvider from "LLM/components/QueuedDrawer/QueuedDrawersContextProvider";
+import QueuedBottomSheetsProvider from "LLM/components/QueuedDrawer/QueuedBottomSheetsProvider";
 import React, { useMemo } from "react";
 import { I18nextProvider } from "react-i18next";
 import { Provider } from "react-redux";
@@ -294,9 +294,9 @@ function Providers({
       // For default rendering, add new providers here
       <I18nextProvider i18n={i18n}>
         <BottomSheetModalProvider>
-          <QueuedDrawersContextProvider>
+          <QueuedBottomSheetsProvider>
             <AnalyticsContextProvider>{content}</AnalyticsContextProvider>
-          </QueuedDrawersContextProvider>
+          </QueuedBottomSheetsProvider>
         </BottomSheetModalProvider>
       </I18nextProvider>
     );

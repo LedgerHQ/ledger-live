@@ -32,10 +32,9 @@ on:
 jobs:
   release:
     name: Release
-    runs-on: ubuntu-24.04
+    runs-on: ledger-live-linux-8CPU-32RAM
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
-      NPM_REGISTRY: jfrog.ledgerlabs.net/artifactory/api/npm/ledger-live-npm-prod-public
     permissions:
       contents: write
       pull-requests: write
@@ -75,18 +74,37 @@ jobs:
         with:
           ruby-version: 3.3.0
 
+      - name: JFrog npm auth
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        with:
+          registry: ${{ vars.ARTIFACTORY_URL }}
+
       - name: install dependencies
         run: pnpm i -F "ledger-live" -F "{libs/**}..." -F "@ledgerhq/live-cli..." -F "@ledgerhq/wallet-cli..." -F "@ledgerhq/wallet-cli-*"
 
       - name: build libs
         run: pnpm exec nx run-many -t build --projects=tag:scope:libs,@ledgerhq/live-e2e-shared
 
+      #JFrog publishing - if statements to be removed when all is migrated
+      - name: JFrog npm auth (publish registry)
+        if: ${{ vars.ARTIFACTORY_PUBLISH_URL != '' }}
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        with:
+          registry: ${{ vars.ARTIFACTORY_PUBLISH_URL }}
+
+      - name: publish release (JFrog)
+        if: ${{ vars.ARTIFACTORY_PUBLISH_URL != '' }}
+        run: npm_config_registry="https://${{ vars.ARTIFACTORY_PUBLISH_URL }}/" pnpm changeset publish
+
+      #NPM publishing - to be removed when all is migrated
       - name: authenticate with npm
+        if: ${{ vars.ARTIFACTORY_PUBLISH_URL == '' }}
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           registry-url: "https://registry.npmjs.org"
 
       - name: publish release
+        if: ${{ vars.ARTIFACTORY_PUBLISH_URL == '' }}
         run: pnpm changeset publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPMJS_TOKEN }}

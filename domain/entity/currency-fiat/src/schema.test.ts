@@ -1,5 +1,14 @@
-import { FiatCurrencySchema } from "./schema";
+import { FiatCurrencyIdSchema, FiatCurrencySchema } from "./schema";
 import { mockFiatCurrency } from "./schema.mock";
+
+describe("FiatCurrencyIdSchema", () => {
+  it("accepts a non-empty string", () => {
+    expect(FiatCurrencyIdSchema.parse("usd")).toBe("usd");
+  });
+  it("rejects an empty string", () => {
+    expect(() => FiatCurrencyIdSchema.parse("")).toThrow();
+  });
+});
 
 describe("FiatCurrencySchema", () => {
   it("parses a valid fiat currency from mock factory", () => {

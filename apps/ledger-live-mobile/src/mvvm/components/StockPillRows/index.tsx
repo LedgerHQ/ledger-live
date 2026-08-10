@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from "react";
 import { ScrollView } from "react-native";
 import Icon from "@ledgerhq/crypto-icons/native";
-import type { StockSuggestion } from "@ledgerhq/live-common/dada-client/utils/assetDiscovery";
+import type { StockSuggestion } from "@features/platform-aggregated-assets";
 import { Box, MediaButton, Skeleton } from "@ledgerhq/lumen-ui-rnative";
 import type { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 

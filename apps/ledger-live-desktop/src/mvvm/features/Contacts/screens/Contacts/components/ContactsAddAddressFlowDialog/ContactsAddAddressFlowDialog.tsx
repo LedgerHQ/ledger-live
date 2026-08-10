@@ -12,6 +12,7 @@ import type { ContactsAddAddressFlowDialogProps } from "./types";
 export function ContactsAddAddressFlowDialog({
   state,
   entryLabels,
+  sanctionedAddressBanner,
   nameLabels,
   reviewLabels,
   onAddressChange,
@@ -40,6 +41,7 @@ export function ContactsAddAddressFlowDialog({
             <ContactsAddAddressFlowContent
               completionLabels={reviewLabels}
               entryLabels={entryLabels}
+              sanctionedAddressBanner={sanctionedAddressBanner}
               nameLabels={nameLabels}
               onAddressChange={onAddressChange}
               onAddressLabelChange={onAddressLabelChange}

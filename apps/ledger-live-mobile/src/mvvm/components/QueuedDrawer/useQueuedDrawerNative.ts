@@ -3,7 +3,7 @@ import { Keyboard } from "react-native";
 import { useIsFocused } from "@react-navigation/native";
 import { useSelector } from "~/context/hooks";
 import { isModalLockedSelector } from "~/reducers/appstate";
-import { DrawerInQueue, useQueuedDrawerContext } from "./QueuedDrawersContext";
+import { BottomSheetInQueue, useQueuedBottomSheetContext } from "@shared/ui-queued-bottom-sheet";
 import { logDrawer } from "./utils/logDrawer";
 
 interface UseQueuedDrawerNativeProps {
@@ -25,10 +25,10 @@ const useQueuedDrawerNative = ({
   preventBackdropClick,
   preventKeyboardDismissOnClose = false,
 }: UseQueuedDrawerNativeProps) => {
-  const { addDrawerToQueue } = useQueuedDrawerContext();
-  const drawerInQueueRef = useRef<DrawerInQueue | undefined>(undefined);
+  const { addBottomSheetToQueue } = useQueuedBottomSheetContext();
+  const drawerInQueueRef = useRef<BottomSheetInQueue | undefined>(undefined);
   const isFocused = useIsFocused();
-  const areDrawersLocked = useSelector(isModalLockedSelector);
+  const areBottomSheetsLocked = useSelector(isModalLockedSelector);
 
   const onCloseRef = useRef(onClose);
   onCloseRef.current = onClose;
@@ -44,7 +44,7 @@ const useQueuedDrawerNative = ({
 
   const cleanupQueue = useCallback(() => {
     if (drawerInQueueRef.current) {
-      drawerInQueueRef.current.removeDrawerFromQueue();
+      drawerInQueueRef.current.removeBottomSheetFromQueue();
       drawerInQueueRef.current = undefined;
     }
   }, []);
@@ -94,15 +94,10 @@ const useQueuedDrawerNative = ({
     }
 
     if ((isRequestingToBeOpened || isForcingToBeOpened) && !drawerInQueueRef.current) {
-      const onDrawerStateChanged = (isOpen: boolean) => {
-        if (isOpen) {
-          handleOpen();
-        } else {
-          handleClose();
-        }
-      };
-
-      drawerInQueueRef.current = addDrawerToQueue(onDrawerStateChanged, isForcingToBeOpened);
+      drawerInQueueRef.current = addBottomSheetToQueue(
+        { open: handleOpen, close: handleClose },
+        isForcingToBeOpened,
+      );
 
       return () => {
         logDrawer("Effect cleanup - closing native modal");
@@ -110,7 +105,7 @@ const useQueuedDrawerNative = ({
       };
     }
   }, [
-    addDrawerToQueue,
+    addBottomSheetToQueue,
     isFocused,
     isForcingToBeOpened,
     isRequestingToBeOpened,
@@ -127,16 +122,16 @@ const useQueuedDrawerNative = ({
   }, [cleanupQueue]);
 
   const enablePanDownToClose = useMemo(
-    () => !areDrawersLocked && !preventBackdropClick,
-    [areDrawersLocked, preventBackdropClick],
+    () => !areBottomSheetsLocked && !preventBackdropClick,
+    [areBottomSheetsLocked, preventBackdropClick],
   );
   const showBackdropPress = useMemo(
-    () => areDrawersLocked || preventBackdropClick,
-    [areDrawersLocked, preventBackdropClick],
+    () => areBottomSheetsLocked || preventBackdropClick,
+    [areBottomSheetsLocked, preventBackdropClick],
   );
 
   return {
-    areDrawersLocked,
+    areBottomSheetsLocked,
     isVisible,
     setIsVisible,
     handleUserClose,

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
-import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
+import { addAccountsAction } from "@ledgerhq/live-common/account/addAccounts";
 import { act, renderHook } from "@tests/test-renderer";
 import { NavigatorName, ScreenName } from "~/const";
 import { useOnboardingNavigation } from "../hooks/useOnboardingNavigation";

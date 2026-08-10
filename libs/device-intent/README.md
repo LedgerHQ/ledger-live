@@ -349,6 +349,10 @@ mounts that wrapper and passes all the required props:
 Do not import the raw `DeviceIntentExecutor` from `@ledgerhq/device-intent`;
 always use the existing platform wrapper.
 
+Both platform wrappers require a `sourceFlow` value for analytics. It is
+passed as a property on all DIE tracking events so they can be attributed to
+the originating user flow.
+
 ```tsx
 import { createIntent } from "@ledgerhq/device-intent";
 
@@ -362,6 +366,7 @@ function MyFlowScreen({ enabled, onDone }: Props) {
   return (
     <DeviceIntentExecutorLWM
       enabled={enabled}
+      sourceFlow="send" // several possible values (e.g "receive", "wallet_api" etc.)
       deviceConnectionParams={{ acceptedDeviceModelIds: [] }}
       deviceInitializationInput={{
         appName: "Ethereum",

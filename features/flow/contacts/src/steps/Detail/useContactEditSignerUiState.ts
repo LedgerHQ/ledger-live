@@ -1,12 +1,21 @@
 import { useCallback, useState } from "react";
-import type { SignerEditUiState } from "./model/signerEditUiState";
+import {
+  resolveEditUiStateOnConnectDifferentDevice,
+  resolveEditUiStateOnSignerMismatch,
+  resolveEditUiStateOnSignerMismatchCancel,
+  type SignerEditUiState,
+} from "./model/signerEditUiState";
 
 export type UseContactEditSignerUiStateResult = Readonly<{
   editUiState: SignerEditUiState;
   openSignerDialog: () => void;
+  openSignerMismatchDialog: () => void;
   openEditDialog: () => void;
+  closeSignerDialog: () => void;
   onSignerConfirm: () => void;
   onSignerCancel: () => void;
+  onSignerMismatchCancel: () => void;
+  onConnectDifferentDevice: () => void;
   onEditClose: () => void;
   resetEditUiState: () => void;
 }>;
@@ -18,12 +27,28 @@ export function useContactEditSignerUiState(): UseContactEditSignerUiStateResult
     setEditUiState("signer-open");
   }, []);
 
+  const openSignerMismatchDialog = useCallback(() => {
+    setEditUiState(resolveEditUiStateOnSignerMismatch());
+  }, []);
+
   const openEditDialog = useCallback(() => {
     setEditUiState("edit-open");
   }, []);
 
+  const closeSignerDialog = useCallback(() => {
+    setEditUiState("closed");
+  }, []);
+
   const onSignerConfirm = useCallback(() => {
     setEditUiState("edit-open");
+  }, []);
+
+  const onSignerMismatchCancel = useCallback(() => {
+    setEditUiState(resolveEditUiStateOnSignerMismatchCancel());
+  }, []);
+
+  const onConnectDifferentDevice = useCallback(() => {
+    setEditUiState(resolveEditUiStateOnConnectDifferentDevice());
   }, []);
 
   const onSignerCancel = useCallback(() => {
@@ -43,9 +68,13 @@ export function useContactEditSignerUiState(): UseContactEditSignerUiStateResult
   return {
     editUiState,
     openSignerDialog,
+    openSignerMismatchDialog,
     openEditDialog,
+    closeSignerDialog,
     onSignerConfirm,
     onSignerCancel,
+    onSignerMismatchCancel,
+    onConnectDifferentDevice,
     onEditClose,
     resetEditUiState,
   };

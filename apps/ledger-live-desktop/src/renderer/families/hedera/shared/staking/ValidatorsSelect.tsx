@@ -14,7 +14,7 @@ import TranslatedError from "~/renderer/components/TranslatedError";
 
 type Props = {
   account: HederaAccount;
-  selectedValidatorNodeId: number | null;
+  selectedValidatorId: string | null;
   error?: Error;
   warning?: Error;
   disabled?: boolean;
@@ -24,7 +24,7 @@ type Props = {
 
 export default function ValidatorsSelect({
   account,
-  selectedValidatorNodeId,
+  selectedValidatorId,
   error,
   warning,
   disabled,
@@ -52,8 +52,8 @@ export default function ValidatorsSelect({
   );
 
   const value = useMemo(() => {
-    return options.find(v => v.nodeId === selectedValidatorNodeId) ?? null;
-  }, [selectedValidatorNodeId, options]);
+    return options.find(v => v.id === selectedValidatorId) ?? null;
+  }, [selectedValidatorId, options]);
 
   const renderErrorMessage = () => {
     if (error) {
@@ -78,7 +78,7 @@ export default function ValidatorsSelect({
   return (
     <>
       <Select
-        key={selectedValidatorNodeId}
+        key={selectedValidatorId}
         value={value}
         error={error}
         options={options}

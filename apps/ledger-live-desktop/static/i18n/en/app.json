@@ -8897,7 +8897,8 @@
       "transparentBalance": "Transparent balance",
       "transparentBalanceTooltip": "Balance that is visible to the public",
       "privateBalance": "Private balance",
-      "privateBalanceTooltip": "Balance that is hidden from the public"
+      "privateBalanceTooltip": "Balance that is hidden from the public",
+      "privateBalanceWarning": "Private balance excludes Sapling and Orchard shielded funds"
     },
     "shielded": {
       "send": {
@@ -9298,9 +9299,13 @@
       "confirmAddress": "Continue to review",
       "validatingAddress": "Validating address",
       "validAddress": "Valid address",
-      "invalidAddress": "Invalid address",
+      "invalidAddress": "Incorrect address format.",
       "domainNotFound": "Domain not found",
-      "sanctionedAddress": "This address is sanctioned and cannot be used.",
+      "sanctionedAddress": "Sanctioned address.",
+      "sanctioned": {
+        "description": "This wallet address is sanctioned by international laws and regulations.",
+        "learnMore": "Learn more"
+      },
       "validationUnavailable": "Address validation is temporarily unavailable.",
       "ensDisclaimer": "This ENS name resolves to the address shown above."
     },
@@ -9335,6 +9340,7 @@
     },
     "detail": {
       "meDisplayName": "{{name}} (Me)",
+      "ledgerWalletAddresses": "Ledger Wallet addresses",
       "emptyState": {
         "meTitle": "No saved addresses for you",
         "contactTitle": "No saved addresses for {{name}}",
@@ -9359,6 +9365,7 @@
       "namePlaceholder": "Contact name",
       "namingDisclaimer": "For your privacy, avoid full names and surnames. Use a nickname or just a first name + initial, e.g. 'John S.'",
       "applyChanges": "Apply changes",
+      "confirmName": "Confirm name",
       "invalidNameError": "Special characters are not allowed."
     },
     "deleteContact": {
@@ -9367,10 +9374,28 @@
       "confirm": "Delete",
       "cancel": "Cancel"
     },
+    "deleteAddress": {
+      "title": "Delete address?",
+      "description": "This address will be removed from the contact.",
+      "confirm": "Delete",
+      "cancel": "Cancel"
+    },
+    "editAddress": {
+      "title": "Edit address",
+      "inputLabel": "Address name",
+      "applyChanges": "Apply changes",
+      "invalidLabelError": "Special characters are not allowed."
+    },
     "editSigner": {
       "title": "Confirm on your device",
       "description": "Connect and unlock your Ledger device to confirm this change.",
       "confirm": "Continue",
+      "cancel": "Cancel"
+    },
+    "editSignerMismatch": {
+      "title": "Use the same Ledger device you used to add this contact",
+      "description": "The connected device isn't a match.",
+      "connectDifferentDevice": "Connect a different device",
       "cancel": "Cancel"
     },
     "ledgerSyncIntroduction": {

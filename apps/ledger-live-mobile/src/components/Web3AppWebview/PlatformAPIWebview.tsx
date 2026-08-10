@@ -109,7 +109,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>
       >();
     const [device, setDevice] = useState<Device>();
-    const listAccounts = useListPlatformAccounts(walletState, accounts);
+    const listAccounts = useListPlatformAccounts(walletState.accountNames, accounts);
     const { deactivatedCurrencyIds } = useFeatureFlaggedCurrencies(!!useEnv("MOCK"));
     const deactivatedCurrencyIdsSet = useMemo(
       () => new Set(deactivatedCurrencyIds),
@@ -156,7 +156,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
             tracking.platformRequestAccountSuccess(manifest);
             resolve(
               serializePlatformAccount(
-                accountToPlatformAccount(walletState, account, parentAccount),
+                accountToPlatformAccount(walletState.accountNames, account, parentAccount),
               ),
             );
           };
@@ -173,13 +173,13 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
                 : (currentRouteNameRef.current ?? "Unknown"),
           });
         }),
-      [tracking, manifest, deactivatedCurrencyIds, walletState, openModularDrawer],
+      [tracking, manifest, deactivatedCurrencyIds, walletState.accountNames, openModularDrawer],
     );
 
     const receiveOnAccount = useCallback(
       ({ accountId }: { accountId: string }) =>
         receiveOnAccountLogic(
-          walletState,
+          walletState.accountNames,
           { manifest, accounts, tracking },
           accountId,
           (account, parentAccount, accountAddress) =>
@@ -203,7 +203,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
               });
             }),
         ),
-      [walletState, manifest, accounts, navigation, tracking],
+      [walletState.accountNames, manifest, accounts, navigation, tracking],
     );
 
     const signTransaction = useCallback(

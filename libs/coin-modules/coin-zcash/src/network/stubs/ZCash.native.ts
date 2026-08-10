@@ -47,4 +47,8 @@ export class ZCash implements ZCashClient {
   syncShielded(_args: SyncShieldedArgs): Observable<ShieldedSyncResult> {
     return throwError(() => new Error(UNSUPPORTED_ERROR_MESSAGE));
   }
+
+  async deriveShieldedAddress(_ufvk: string): Promise<string> {
+    throw new Error(UNSUPPORTED_ERROR_MESSAGE);
+  }
 }

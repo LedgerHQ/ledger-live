@@ -171,6 +171,7 @@ describe("setupZcashNativeHost", () => {
         ZCASH_IPC.broadcastTransaction,
         ZCASH_IPC.transactionDetails,
         ZCASH_IPC.buildIronwoodTransaction,
+        ZCASH_IPC.deriveShieldedAddress,
       ].sort(),
     );
     expect(typeof mockRegistry.beforeQuit).toBe("function");
@@ -300,6 +301,38 @@ describe("one-shot transaction handlers", () => {
       message: "gRPC rejected",
     });
     await expect(promise).rejects.toThrow("gRPC rejected");
+  });
+
+  it("deriveShieldedAddress forwards to the utility and resolves with the address", async () => {
+    setupZcashNativeHost();
+    const args = { requestId: "req-derive", ufvk: "uview1testkey" };
+    const promise = getHandler(ZCASH_IPC.deriveShieldedAddress)(event(), args) as Promise<unknown>;
+    emitSpawn();
+    await flush();
+
+    expect(mockRegistry.posted).toContainEqual({ type: "derive-shielded-address", args });
+
+    emitUtilityMessage({
+      type: "derive-shielded-address-result",
+      requestId: "req-derive",
+      address: "u1orchardaddress",
+    });
+    await expect(promise).resolves.toBe("u1orchardaddress");
+  });
+
+  it("deriveShieldedAddress rejects when the utility replies with an error", async () => {
+    setupZcashNativeHost();
+    const args = { requestId: "req-derive", ufvk: "uview1testkey" };
+    const promise = getHandler(ZCASH_IPC.deriveShieldedAddress)(event(), args) as Promise<unknown>;
+    emitSpawn();
+    await flush();
+
+    emitUtilityMessage({
+      type: "derive-shielded-address-error",
+      requestId: "req-derive",
+      message: "error deriving shielded address",
+    });
+    await expect(promise).rejects.toThrow("error deriving shielded address");
   });
 
   it("getChainTip and findBlockHeight resolve via the utility replies", async () => {

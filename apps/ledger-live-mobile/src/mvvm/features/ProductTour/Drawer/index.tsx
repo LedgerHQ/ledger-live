@@ -6,7 +6,7 @@ import { LayoutChangeEvent, Platform, StyleSheet, View, useWindowDimensions } fr
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Box, BottomSheetView, IconButton } from "@ledgerhq/lumen-ui-rnative";
 import { Close } from "@ledgerhq/lumen-ui-rnative/symbols";
-import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
+import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { useTranslation } from "~/context/Locale";
 import { TrackScreen } from "~/analytics";
 import { useProductTourControls } from "../context/ProductTourControlsContext";

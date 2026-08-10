@@ -2,7 +2,7 @@ import {
   CONTACTS_FEATURE_INTRODUCTION_HIGHLIGHTS,
   type ContactsLedgerSyncStatus,
   type ContactsListViewLabels,
-  type ContactsListViewNativeProps,
+  type ContactsViewNativeProps,
   resolveContactsLedgerSyncIntroductionOpen,
   useContactsFeatureIntroductionState,
   useContactsSearchViewModel,
@@ -30,6 +30,7 @@ export function useContactsPageViewModel(): ContactsPageViewModel {
         "contacts.ledgerSyncIntroduction.checkingAccessibilityLabel",
       ),
       formatAddressCount: count => t("contacts.addressCount", { count }),
+      formatMeDisplayName: name => t("contacts.detail.meDisplayName", { name }),
     }),
     [t],
   );
@@ -50,9 +51,9 @@ export function useContactsPageViewModel(): ContactsPageViewModel {
   const [ledgerSyncStatus] = useState<ContactsLedgerSyncStatus>("ready");
   const [isLedgerSyncIntroductionDismissed, setIsLedgerSyncIntroductionDismissed] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const viewModel = useContactsSearchViewModel(searchQuery);
+  const viewModel = useContactsSearchViewModel(searchQuery, labels.formatMeDisplayName);
   const onSearchQueryChange = useCallback((query: string) => setSearchQuery(query), []);
-  const onOpenContact = useCallback<ContactsListViewNativeProps["onOpenContact"]>(
+  const onOpenContact = useCallback<ContactsViewNativeProps["onOpenContact"]>(
     contactId => {
       navigation.navigate(ScreenName.MyWalletContactDetail, { contactId });
     },

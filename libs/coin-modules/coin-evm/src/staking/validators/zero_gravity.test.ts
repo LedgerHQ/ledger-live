@@ -50,7 +50,7 @@ describe("staking/validators/zero_gravity", () => {
 
     const page = await getValidators("zero_gravity");
 
-    expect(page.items[0].validatorAddress).toEqual(ethers.getAddress("0x" + addr));
+    expect(page.items[0].address).toEqual(ethers.getAddress("0x" + addr));
   });
 
   it("uses moniker as name", async () => {
@@ -81,7 +81,7 @@ describe("staking/validators/zero_gravity", () => {
 
     const page = await getValidators("zero_gravity");
 
-    expect(page.items[0].commission).toEqual(0.05);
+    expect(page.items[0].commissionRate).toEqual("0.05");
   });
 
   it("maps voting_power_tokens to tokens", async () => {
@@ -91,18 +91,7 @@ describe("staking/validators/zero_gravity", () => {
 
     const page = await getValidators("zero_gravity");
 
-    expect(page.items[0].tokens).toEqual("42000000000000000000");
-  });
-
-  it("assigns votingPower from position index", async () => {
-    mockedNetwork.mockResolvedValueOnce({
-      data: [makeValidator(), makeValidator({ addr: "ff" + "00".repeat(19) })],
-    } as never);
-
-    const page = await getValidators("zero_gravity");
-
-    expect(page.items[0].votingPower).toEqual(0);
-    expect(page.items[1].votingPower).toEqual(1);
+    expect(page.items[0].balance).toEqual(42000000000000000000n);
   });
 
   it("returns empty page on network error", async () => {

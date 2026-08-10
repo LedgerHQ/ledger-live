@@ -2,7 +2,7 @@ import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
 import { TokenCurrencyIdSchema } from "@domain/entity-currency-token";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { NetworkInfo } from "../schema";
-import type { PartialMarketItemResponse } from "../internals/market";
+import type { PartialMarketItemResponse } from "../market";
 
 /** DADA names every aggregated asset with this prefix. */
 const META_CURRENCY_PREFIX = "urn:crypto:meta-currency:";

@@ -7,7 +7,6 @@ import type {
   CraftedTransaction,
   Cursor,
   FeeEstimation,
-  MemoNotSupported,
   Page,
   Reward,
   Stake,
@@ -15,15 +14,22 @@ import type {
   TransactionValidation,
   Validator,
 } from "@ledgerhq/coin-module-framework/api/index";
-import { type CasperCoinConfig, setCoinConfig } from "../config";
+import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
+import { setCoinConfig } from "../config";
+import { broadcast } from "../logic/broadcast";
+import { combine } from "../logic/combine";
+import { craftTransaction } from "../logic/craftTransaction";
+import { lastBlock } from "../logic/lastBlock";
+import { getBalance as getAccountBalance } from "../logic/getBalance";
+import { listOperations } from "../logic/listOperations";
+import { estimateFees } from "../logic/estimateFees";
+import type { CasperCoinConfig, CasperMemo } from "../types";
 
-export function createApi(config: CasperCoinConfig): CoinModuleApi<MemoNotSupported> {
+export function createApi(config: CasperCoinConfig): CoinModuleApi<CasperMemo> {
   setCoinConfig(config);
 
   return {
-    lastBlock(): Promise<BlockInfo> {
-      throw new Error("lastBlock is not supported");
-    },
+    lastBlock,
     getBlockInfo(_height: number): Promise<BlockInfo> {
       throw new Error("getBlockInfo is not supported");
     },
@@ -36,21 +42,17 @@ export function createApi(config: CasperCoinConfig): CoinModuleApi<MemoNotSuppor
     getValidators(_cursor?: Cursor): Promise<Page<Validator>> {
       throw new Error("getValidators is not supported");
     },
-    getBalance(_address: string, _options?: BalanceOptions) {
-      throw new Error("getBalance is not supported");
+    getBalance(address: string, options?: BalanceOptions): Promise<Balance[]> {
+      return rejectBalanceOptions(() => getAccountBalance(address), options);
     },
-    listOperations(_address: string, _options?: unknown) {
-      throw new Error("listOperations is not supported");
-    },
+    listOperations,
     getStakes(_address: string, _cursor?: Cursor): Promise<Page<Stake>> {
       throw new Error("getStakes is not supported");
     },
     getRewards(_address: string, _cursor?: Cursor): Promise<Page<Reward>> {
       throw new Error("getRewards is not supported");
     },
-    craftTransaction(_intent: TransactionIntent<MemoNotSupported>): Promise<CraftedTransaction> {
-      throw new Error("craftTransaction is not supported");
-    },
+    craftTransaction,
     craftRawTransaction(
       _transaction: string,
       _sender: string,
@@ -59,17 +61,11 @@ export function createApi(config: CasperCoinConfig): CoinModuleApi<MemoNotSuppor
     ): Promise<CraftedTransaction> {
       throw new Error("craftRawTransaction is not supported");
     },
-    estimateFees(_intent: TransactionIntent<MemoNotSupported>): Promise<FeeEstimation> {
-      throw new Error("estimateFees is not supported");
-    },
-    combine(_tx: string, _signature: string, _pubkey?: string): string {
-      throw new Error("combine is not supported");
-    },
-    broadcast(_tx: string): Promise<string> {
-      throw new Error("broadcast is not supported");
-    },
+    combine,
+    broadcast,
+    estimateFees,
     validateIntent(
-      _intent: TransactionIntent<MemoNotSupported>,
+      _intent: TransactionIntent<CasperMemo>,
       _balances: Balance[],
       _customFees?: FeeEstimation,
     ): Promise<TransactionValidation> {
@@ -81,7 +77,7 @@ export function createApi(config: CasperCoinConfig): CoinModuleApi<MemoNotSuppor
     validateAddress(_address: string, _parameters: unknown): Promise<boolean> {
       throw new Error("validateAddress is not supported");
     },
-    craftTransactionData(_intent: TransactionIntent<MemoNotSupported>) {
+    craftTransactionData(_intent: TransactionIntent<CasperMemo>) {
       throw new Error("craftTransactionData is not supported");
     },
   };

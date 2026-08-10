@@ -13,7 +13,7 @@ import {
   useAleoViewKeyApproval,
   buildAccountsWithViewKeys,
 } from "@ledgerhq/live-common/families/aleo/react";
-import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
+import { addAccountsAction } from "@ledgerhq/live-common/account/addAccounts";
 import { ScreenName } from "~/const";
 import Animation from "~/components/Animation";
 import Button from "~/components/wrappedUi/Button";

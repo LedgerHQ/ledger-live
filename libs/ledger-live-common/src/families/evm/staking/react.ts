@@ -1,17 +1,26 @@
 import { useEffect, useMemo, useState } from "react";
-import {
-  getStakingContractAddress,
-  getValidators,
-  mapDelegations,
-} from "@ledgerhq/coin-evm/staking/index";
+import { getStakingContractAddress, getValidators } from "@ledgerhq/coin-evm/staking/index";
 import type { StakingOperation } from "@ledgerhq/coin-evm/types/staking";
-import type { Cursor } from "@ledgerhq/coin-module-framework/api/index";
+import type { Cursor, Validator } from "@ledgerhq/coin-module-framework/api/types";
 import type { StakingValidatorItem } from "@ledgerhq/types-live";
+import { mapDelegations } from "./logic";
 import { sortLedgerValidatorFirst } from "./ledgerValidator";
 import type { StakingAccount, StakingMappedDelegation } from "./types";
 import { getAccountCurrency } from "../../../account";
 import { GenericTransaction } from "../../../bridge/generic-coin-framework/types";
 import { Unit } from "@domain/entity-currency-unit";
+
+function toStakingValidatorItem(v: Validator): StakingValidatorItem {
+  return {
+    validatorAddress: v.address,
+    name: v.name,
+    commission: parseFloat(v.commissionRate ?? "0"),
+    estimatedYearlyRewardsRate: v.apy ?? 0,
+    tokens: (v.balance ?? 0n).toString(),
+    votingPower: 0,
+    validatorId: v.id,
+  };
+}
 
 export type EvmStakingValidatorsState = {
   validators: StakingValidatorItem[];
@@ -61,7 +70,7 @@ export function useEvmStakingValidators(
           const result = await getValidators(currencyId, cursor);
           if (cancelled) return;
 
-          items.push(...result.items);
+          items.push(...result.items.map(toStakingValidatorItem));
           cursor = result.next;
         } while (typeof cursor === "string");
 

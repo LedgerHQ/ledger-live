@@ -1,8 +1,11 @@
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
+import { setEnv } from "@ledgerhq/live-env";
 import BigNumber from "bignumber.js";
 import { getPreloadStrategy, hydrate, preload } from "./preload";
+import { filterValidatorBySearchTerm, getDefaultValidator } from "./logic/utils";
 import { apiClient } from "./network/api";
 import { setHederaPreloadData } from "./preload-data";
+import type { HederaPreloadData } from "./types";
 
 jest.mock("./preload-data", () => ({
   setHederaPreloadData: jest.fn(),
@@ -52,7 +55,7 @@ describe("preload", () => {
     expect(setHederaPreloadData).toHaveBeenCalledTimes(1);
     expect(result.validators).toHaveLength(1);
     expect(result.validators[0]).toMatchObject({
-      nodeId: 0,
+      id: "0",
       address: "0.0.3",
       minStake: new BigNumber(1000),
       maxStake: new BigNumber(100000),
@@ -123,6 +126,10 @@ describe("hydrate", () => {
     jest.clearAllMocks();
   });
 
+  afterEach(() => {
+    setEnv("HEDERA_STAKING_LEDGER_NODE_ID", -1);
+  });
+
   test.each([undefined, null, {}, []])(
     "should hydrate empty validators list if data is corrupted (%p value)",
     value => {
@@ -143,7 +150,7 @@ describe("hydrate", () => {
       {
         validators: [
           {
-            nodeId: 1,
+            id: "1",
             address: "0.0.1",
             addressChecksum: "abcde",
             name: "Ledger",
@@ -163,7 +170,7 @@ describe("hydrate", () => {
       {
         validators: [
           {
-            nodeId: 1,
+            id: "1",
             address: "0.0.1",
             addressChecksum: "abcde",
             name: "Ledger",
@@ -177,5 +184,82 @@ describe("hydrate", () => {
       },
       currency,
     );
+  });
+
+  it("should hydrate a legacy cache that stores the node id as `nodeId`", () => {
+    hydrate(
+      {
+        validators: [
+          {
+            nodeId: 0,
+            address: "0.0.3",
+            addressChecksum: "abcde",
+            name: "Ledger",
+            minStake: "1",
+            maxStake: "10",
+            activeStake: "5",
+            activeStakePercentage: "50",
+            overstaked: false,
+          },
+        ],
+      },
+      currency,
+    );
+
+    expect(setHederaPreloadData).toHaveBeenCalledWith(
+      {
+        validators: [
+          {
+            id: "0",
+            address: "0.0.3",
+            addressChecksum: "abcde",
+            name: "Ledger",
+            minStake: new BigNumber(1),
+            maxStake: new BigNumber(10),
+            activeStake: new BigNumber(5),
+            activeStakePercentage: new BigNumber(50),
+            overstaked: false,
+          },
+        ],
+      },
+      currency,
+    );
+  });
+
+  it("should let a migrated legacy validator be selected and searched", () => {
+    setEnv("HEDERA_STAKING_LEDGER_NODE_ID", 0);
+    hydrate(
+      {
+        validators: [
+          {
+            nodeId: 0,
+            address: "0.0.3",
+            addressChecksum: "abcde",
+            name: "Ledger",
+            minStake: "1",
+            maxStake: "10",
+            activeStake: "5",
+            activeStakePercentage: "50",
+            overstaked: false,
+          },
+        ],
+      },
+      currency,
+    );
+
+    const [{ validators }] = jest.mocked(setHederaPreloadData).mock.calls[0] as [
+      HederaPreloadData,
+      typeof currency,
+    ];
+
+    expect(getDefaultValidator(validators)).toEqual(expect.objectContaining({ id: "0" }));
+    expect(filterValidatorBySearchTerm(validators[0], "0")).toBe(true);
+    expect(filterValidatorBySearchTerm(validators[0], "ledger")).toBe(true);
+  });
+
+  it("should drop validators that have neither `id` nor `nodeId`", () => {
+    hydrate({ validators: [{ address: "0.0.3", name: "Ledger" }] }, currency);
+
+    expect(setHederaPreloadData).toHaveBeenCalledWith({ validators: [] }, currency);
   });
 });

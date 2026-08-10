@@ -1,0 +1,362 @@
+/**
+ * @module accounts
+ *
+ * This module is responsible for synchronizing account data across Live instances in the
+ * WalletSync system. It manages the lifecycle of accounts (adding, removing, and
+ * maintaining account information) to ensure that all synchronized Live instances have
+ * access to the same set of accounts.
+ *
+ * Key responsibilities:
+ * - Tracks locally added/removed accounts and prepares them for synchronization
+ * - Resolves incoming account updates from other Live instances by converting account
+ *   descriptors into full Account objects through bridge synchronization
+ * - Manages non-imported accounts with exponential backoff retry logic for accounts
+ *   that failed to import (e.g., due to network issues, invalid data, or missing currencies)
+ * - Handles account ID migrations and deduplication when accounts resolve to the same ID
+ * - Performs full account synchronization to validate account data and populate
+ *   all necessary fields before adding accounts to the local wallet
+ *
+ * The module maintains a list of accounts and tracks failed import attempts,
+ * allowing the system to retry importing accounts that previously failed with
+ * an exponential backoff strategy to avoid excessive retry attempts.
+ */
+import { Account, AccountBridge, BridgeCacheSystem, TransactionCommon } from "@ledgerhq/types-live";
+import type { CloudSyncDataManager, UpdateDiff, DistantDiff } from "@shared/cloud-sync-module";
+import { z } from "zod";
+
+export type CloudSyncDataManagerResolutionContext = {
+  getAccountBridge: <T extends TransactionCommon>(
+    account: Account,
+  ) => AccountBridge<T> | Promise<AccountBridge<T>>;
+  bridgeCache: BridgeCacheSystem;
+  blacklistedTokenIds?: string[];
+};
+import { descriptorToAccount } from "./descriptorToAccount";
+import {
+  accountDescriptorSchema,
+  type AccountDescriptor,
+  type NonImportedAccountInfo,
+} from "./schema";
+export type { NonImportedAccountInfo } from "./schema";
+import { Observable, firstValueFrom, reduce } from "rxjs";
+import { promiseAllBatched } from "@ledgerhq/live-promise";
+
+type LocalData = {
+  list: Account[];
+  nonImportedAccountInfos: NonImportedAccountInfo[];
+};
+
+type ManagerUpdate = {
+  removed: string[];
+  added: Account[];
+  nonImportedAccountInfos: NonImportedAccountInfo[];
+};
+
+const schema = z.array(accountDescriptorSchema);
+
+const manager = {
+  schema,
+
+  diffLocalToDistant(
+    localData: LocalData,
+    latestState: AccountDescriptor[] | null,
+  ): DistantDiff<AccountDescriptor[]> {
+    let hasChanges = false;
+
+    // let's figure out the new local accounts
+    const added: AccountDescriptor[] = [];
+    const distantServerAccountIds = new Set<string>(latestState?.map(a => a.id) || []);
+    for (const account of localData.list) {
+      const id = account.id;
+      if (!distantServerAccountIds.has(id)) {
+        added.push({
+          id,
+          currencyId: account.currency.id,
+          freshAddress: account.freshAddress,
+          seedIdentifier: account.seedIdentifier,
+          derivationMode: account.derivationMode,
+          index: account.index,
+        });
+        hasChanges = true;
+      }
+    }
+
+    // let's figure out the locally deleted accounts that we will need to take into account
+    const removed = new Set();
+    const localAccountIds = new Set(localData.list.map(a => a.id));
+    const nonImportedAccountInfos = new Set(localData.nonImportedAccountInfos.map(a => a.id));
+    for (const id of distantServerAccountIds) {
+      if (!localAccountIds.has(id) && !nonImportedAccountInfos.has(id)) {
+        removed.add(id);
+        hasChanges = true;
+      }
+    }
+
+    const latestOrEmpty = latestState || [];
+    let nextState = latestOrEmpty;
+    if (hasChanges) {
+      // we can now build the new state. we apply the diff on top of the previous state
+      nextState = [];
+      for (const account of latestOrEmpty) {
+        if (removed.has(account.id)) {
+          continue;
+        }
+        nextState.push(account);
+      }
+      // append added
+      for (const account of added) {
+        nextState.push(account);
+      }
+    }
+
+    return {
+      hasChanges,
+      nextState,
+    };
+  },
+
+  async resolveIncrementalUpdate(
+    ctx: CloudSyncDataManagerResolutionContext,
+    localData: LocalData,
+    latestState: AccountDescriptor[] | null,
+    incomingState: AccountDescriptor[] | null,
+  ): Promise<UpdateDiff<ManagerUpdate>> {
+    if (!incomingState) {
+      return { hasChanges: false }; // nothing to do, the data is no longer available
+    }
+
+    const diff = diffWalletSyncState(latestState, incomingState);
+
+    const existingIds = new Set(localData.list.map(a => a.id));
+
+    let hasChanges = false;
+
+    // non imported accounts are considered as "added" so we have opportunity to recheck them
+    const nonImportedById = new Map<string, NonImportedAccountInfo>();
+    const nextNonImportedById = new Map<string, NonImportedAccountInfo>();
+    for (const nonImported of localData.nonImportedAccountInfos) {
+      nonImportedById.set(nonImported.id, nonImported);
+      const { id, attempts, attemptsLastTimestamp } = nonImported;
+      if (existingIds.has(id) || diff.added.some(a => a.id === id)) {
+        hasChanges = true; // at least we need to save the deletion
+        continue; // we actually have the account. ignore.
+      }
+      const accountDescriptor = incomingState.find(a => a.id === id);
+      if (!accountDescriptor) {
+        hasChanges = true; // at least we need to save the deletion
+        // we don't have the account anymore in the distant state. ignore.
+        continue;
+      }
+      const now = Date.now();
+      const shouldRetry = shouldRetryImportAccount(now - attemptsLastTimestamp, attempts);
+      if (shouldRetry) {
+        diff.added.push(accountDescriptor);
+      } else {
+        // we don't retry so we preserve the non imported account for the future
+        nextNonImportedById.set(id, nonImported);
+      }
+    }
+
+    // filter out accounts we may already have
+    diff.added = diff.added.filter(a => !existingIds.has(a.id));
+
+    const resolved = await resolveWalletSyncDiffIntoSyncUpdate(existingIds, diff, ctx);
+
+    for (const failedId in resolved.failures) {
+      const nonImported = nonImportedById.get(failedId);
+      const { error } = resolved.failures[failedId];
+      hasChanges = true;
+      nextNonImportedById.set(failedId, {
+        id: failedId,
+        attempts: (nonImported?.attempts || 0) + 1,
+        attemptsLastTimestamp: Date.now(),
+        error: {
+          name: error.name,
+          message: error.message,
+        },
+      });
+    }
+
+    if (!hasChanges && (resolved.added.length > 0 || resolved.removed.length > 0)) {
+      hasChanges = true;
+    }
+
+    if (!hasChanges) {
+      // nothing to do
+      return { hasChanges };
+    }
+
+    return {
+      hasChanges: true,
+      update: {
+        removed: resolved.removed,
+        added: resolved.added,
+        nonImportedAccountInfos: Array.from(nextNonImportedById.values()),
+      },
+    };
+  },
+
+  applyUpdate(localData: LocalData, update: ManagerUpdate): LocalData {
+    const existingIds = new Set(localData.list.map(a => a.id));
+    const removed = new Set(update.removed);
+    const list = [
+      ...localData.list.filter(a => !removed.has(a.id)),
+      // filter out data we already have typically if they were added at same time
+      ...update.added.filter(a => !existingIds.has(a.id)),
+    ];
+    const nonImportedAccountInfos = update.nonImportedAccountInfos;
+    return { list, nonImportedAccountInfos };
+  },
+};
+
+export type WalletSyncDiff = {
+  hasChanges: boolean;
+  added: AccountDescriptor[]; // NB: what's considered "added" is based on the id. we assume all other fields of AccountDescriptor are not relevant for diffing
+  removed: string[];
+};
+
+export function diffWalletSyncState(
+  currentState: AccountDescriptor[] | null,
+  newState: AccountDescriptor[],
+): WalletSyncDiff {
+  const added: AccountDescriptor[] = [];
+  const removed: string[] = [];
+  const existingIds = new Set<string>();
+  if (currentState) {
+    for (const { id } of currentState) {
+      existingIds.add(id);
+    }
+  }
+  if (newState) {
+    const nextIds = new Set<string>();
+    for (const data of newState) {
+      nextIds.add(data.id);
+      if (!existingIds.has(data.id)) {
+        added.push(data);
+      }
+    }
+    for (const id of existingIds) {
+      if (!nextIds.has(id)) {
+        removed.push(id);
+      }
+    }
+  }
+  const hasChanges = added.length > 0 || removed.length > 0;
+  return { added, removed, hasChanges };
+}
+
+/**
+ * accept an AccountDescriptor to actively add it as an account
+ * it is async because we need to perform a full sync that
+ * will validate the data is valid (and that a coin correctly
+ * make it work) and that it has all the necessary fields automatically filled.
+ * in case of failure, the promise would fail and it's your responsability to re-try later in case of failure. we will have to implement a retrial strategy and minimize calls to integrateNewAccountDescriptor
+ * @param account
+ * @param getAccountBridge: implementation of live-common's getAccountBridge (since this lib don't depends on live-common). May return AccountBridge or Promise<AccountBridge> — both are awaited.
+ *
+ */
+export async function integrateNewAccountDescriptor<T extends TransactionCommon>(
+  accountDescriptor: AccountDescriptor,
+  getAccountBridge: (account: Account) => AccountBridge<T> | Promise<AccountBridge<T>>,
+  bridgeCache: BridgeCacheSystem,
+  blacklistedTokenIds?: string[],
+): Promise<Account> {
+  const accountShaped = descriptorToAccount(accountDescriptor);
+  const bridge = await getAccountBridge(accountShaped);
+  await bridgeCache.prepareCurrency(accountShaped.currency);
+  const syncConfig = {
+    paginationConfig: {},
+    blacklistedTokenIds,
+  };
+  const observable = bridge.sync(accountShaped, syncConfig);
+  const reduced: Observable<Account> = observable.pipe(
+    reduce((a, f: (_: Account) => Account) => f(a), accountShaped),
+  );
+  const synced = await firstValueFrom(reduced);
+  return synced;
+}
+
+export type WalletSyncAccountsUpdate = {
+  added: Account[];
+  removed: string[];
+  failures: Record<
+    string,
+    {
+      error: Error;
+      timestamp: number;
+    }
+  >;
+};
+
+/**
+ * logic related to {wallet sync data update -> local state} management
+ */
+export async function resolveWalletSyncDiffIntoSyncUpdate(
+  existingIds: Set<string>,
+  diff: WalletSyncDiff,
+  { getAccountBridge, bridgeCache, blacklistedTokenIds }: CloudSyncDataManagerResolutionContext,
+): Promise<WalletSyncAccountsUpdate> {
+  const failures: WalletSyncAccountsUpdate["failures"] = {};
+
+  let added = (
+    await promiseAllBatched(3, diff.added, async descriptor => {
+      try {
+        const account = await integrateNewAccountDescriptor(
+          descriptor,
+          getAccountBridge,
+          bridgeCache,
+          blacklistedTokenIds,
+        );
+        return account;
+      } catch (error) {
+        failures[descriptor.id] = {
+          error: error instanceof Error ? error : new Error(String(error)),
+          timestamp: Date.now(),
+        };
+      }
+    })
+  ).filter(Boolean) as Account[];
+
+  const addedIds = new Set(added.map(a => a.id));
+
+  // if some of the account ends up resolving one of the removed, we need to clean it up, this is the case if there were an implicit migration of account ids
+  const removed = diff.removed.filter(id => !addedIds.has(id));
+
+  // if some of the resolved are converging to the same account.id, we also remove them out
+  added = added.filter(a => !existingIds.has(a.id));
+
+  return { removed, added, failures };
+}
+
+const MINUTE = 60 * 1000;
+const backoffFactor = 1.3;
+const baseWaitTime = 0.5 * MINUTE; // Base wait time in milliseconds
+const maxWaitTime = 120 * MINUTE; // Maximum wait time in milliseconds
+export function shouldRetryImportAccount(elapsedMs: number, attempts: number) {
+  // Calculate the wait time using exponential backoff
+  let waitTime = baseWaitTime * Math.pow(backoffFactor, attempts - 1);
+  // Clamp the wait time to the maximum value
+  waitTime = Math.min(waitTime, maxWaitTime);
+  return elapsedMs > waitTime;
+}
+
+export function bindCtx(ctx: CloudSyncDataManagerResolutionContext): CloudSyncDataManager<
+  { list: Account[]; nonImportedAccountInfos: NonImportedAccountInfo[] },
+  {
+    removed: string[];
+    added: Account[];
+    nonImportedAccountInfos: NonImportedAccountInfo[];
+  },
+  typeof schema
+> {
+  return {
+    schema: manager.schema,
+    diffLocalToDistant: (localData, latestState) =>
+      manager.diffLocalToDistant(localData, latestState),
+    applyUpdate: (localData, update) => manager.applyUpdate(localData, update),
+    resolveIncrementalUpdate: (localData, latestState, incomingState) =>
+      manager.resolveIncrementalUpdate(ctx, localData, latestState, incomingState),
+  };
+}
+
+export default manager;

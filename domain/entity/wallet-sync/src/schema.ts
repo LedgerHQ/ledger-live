@@ -1,11 +1,18 @@
-export type WSState = { data: Record<string, unknown> | null; version: number };
+import { z } from "zod";
 
-export type WalletSyncState = {
-  walletSyncState: WSState;
-};
+export const WSStateSchema = z.object({
+  data: z.record(z.string(), z.unknown()).nullable(),
+  version: z.number(),
+});
+
+export type WSState = z.infer<typeof WSStateSchema>;
+
+export const WalletSyncStateSchema = z.object({
+  walletSyncState: WSStateSchema,
+});
+
+export type WalletSyncState = z.infer<typeof WalletSyncStateSchema>;
 
 export const initialWalletSyncState: WalletSyncState = {
   walletSyncState: { data: null, version: 0 },
 };
-
-export type ExportedWalletSyncState = WalletSyncState;

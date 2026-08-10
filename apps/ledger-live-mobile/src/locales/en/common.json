@@ -4468,6 +4468,8 @@
     "sign": {
       "title": "Continue on your {{productName}}",
       "description": "Follow the instructions displayed on your Secure Screen",
+      "termsAndConditions": "By signing this transaction, you accept <0>{{appName}}'s terms of use</0>.",
+      "termsAndConditionsWithPrivacy": "By signing this transaction, you accept <0>{{appName}}'s terms of use</0> and <1>Privacy Policy</1>.",
       "cancelled": {
         "title": "Operation rejected on device",
         "close": "Close",
@@ -9520,6 +9522,10 @@
       "cta": "Learn more"
     }
   },
+  "lazyOnboardingBanner": {
+    "title": "Discover Ledger devices",
+    "description": "Explore our latest products and accessories"
+  },
   "marketBanner": {
     "title": "Market",
     "viewAll": "View all",
@@ -10207,12 +10213,12 @@
       "invalidAddress": "Invalid address",
       "domainNotFound": "No address found for this domain",
       "sanctionedAddress": "This address is sanctioned and cannot be used.",
-      "sanctioned": {
-        "description": "This wallet address is sanctioned by international laws and regulations.",
-        "learnMore": "Learn more"
-      },
       "validationUnavailable": "Address validation is temporarily unavailable",
-      "ensDisclaimer": "ENS names resolve to wallet addresses. Always verify the resolved address before continuing."
+      "ensDisclaimer": "ENS names resolve to wallet addresses. Always verify the resolved address before continuing.",
+      "sanctioned": {
+        "description": "This address has been flagged and Ledger doesn't allow sending to it",
+        "learnMore": "Learn more"
+      }
     },
     "addAddressName": {
       "title": "Name address",
@@ -10233,6 +10239,7 @@
       "addressCount_other": "{{count}} addresses"
     },
     "detail": {
+      "meDisplayName": "{{name}} (Me)",
       "ledgerWalletAddresses": "Ledger Wallet addresses",
       "myAddresses": "My addresses",
       "emptyState": {
@@ -10272,10 +10279,28 @@
       "confirm": "Delete",
       "cancel": "Cancel"
     },
+    "deleteAddress": {
+      "title": "Delete address?",
+      "description": "This address will be removed from the contact.",
+      "confirm": "Delete",
+      "cancel": "Cancel"
+    },
+    "editAddress": {
+      "title": "Edit address",
+      "inputLabel": "Address name",
+      "applyChanges": "Apply changes",
+      "invalidLabelError": "Special characters are not allowed."
+    },
     "editSigner": {
       "title": "Confirm on your device",
       "description": "Connect and unlock your Ledger device to confirm this change.",
       "confirm": "Continue",
+      "cancel": "Cancel"
+    },
+    "editSignerMismatch": {
+      "title": "Use the same Ledger device you used to add this contact",
+      "description": "The connected device isn't a match.",
+      "connectDifferentDevice": "Connect a different device",
       "cancel": "Cancel"
     },
     "ledgerSyncIntroduction": {

@@ -1,5 +1,5 @@
 import { OnboardStatus } from "@ledgerhq/coin-canton/types";
-import { getDefaultAccountNameForCurrencyIndex } from "@ledgerhq/live-wallet/accountName";
+import { getDefaultAccountNameForCurrencyIndex } from "@domain/entity-account-name";
 import { isAxiosError } from "axios";
 import React from "react";
 import { Trans } from "react-i18next";

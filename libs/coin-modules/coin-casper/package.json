@@ -28,17 +28,8 @@
       "lib-es/*": [
         "lib-es/*"
       ],
-      "specs": [
-        "lib/test/bot-specs"
-      ],
       "*": [
-        "lib/*",
-        "lib/api/*",
-        "lib/bridge/*",
-        "lib/common-logic/*",
-        "lib/signer/*",
-        "lib/test/*",
-        "lib/types/*"
+        "lib/*"
       ]
     }
   },
@@ -51,14 +42,14 @@
       "default": "./lib-es/api/index.js"
     },
     "./deviceTransactionConfig": {
-      "@ledgerhq/source": "./src/bridge/deviceTransactionConfig.ts",
-      "require": "./lib/bridge/deviceTransactionConfig.js",
-      "default": "./lib-es/bridge/deviceTransactionConfig.js"
+      "@ledgerhq/source": "./src/deviceTransactionConfig.ts",
+      "require": "./lib/deviceTransactionConfig.js",
+      "default": "./lib-es/deviceTransactionConfig.js"
     },
     "./logic": {
-      "@ledgerhq/source": "./src/common-logic/index.ts",
-      "require": "./lib/common-logic/index.js",
-      "default": "./lib-es/common-logic/index.js"
+      "@ledgerhq/source": "./src/logic/index.ts",
+      "require": "./lib/logic/index.js",
+      "default": "./lib-es/logic/index.js"
     },
     "./bridge": {
       "@ledgerhq/source": "./src/bridge/index.ts",
@@ -111,7 +102,7 @@
     "bignumber.js": "^9.1.2",
     "casper-js-sdk": "5.0.5",
     "invariant": "^2.2.2",
-    "lodash": "^4.17.21",
+    "lodash": "catalog:",
     "rxjs": "catalog:"
   },
   "devDependencies": {
@@ -121,7 +112,7 @@
     "@swc/jest": "catalog:",
     "@types/invariant": "^2.2.2",
     "@types/jest": "catalog:",
-    "@types/lodash": "^4.14.191",
+    "@types/lodash": "catalog:",
     "@types/node": "catalog:",
     "@types/semver": "catalog:",
     "axios": "catalog:",

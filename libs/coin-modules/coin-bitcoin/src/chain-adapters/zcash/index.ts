@@ -1,13 +1,15 @@
 import { pathStringToArray } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
-import type { Account } from "@ledgerhq/types-live";
+import type { Account, AccountRaw } from "@ledgerhq/types-live";
 import type { BitcoinAddress, BitcoinXPub, SignerContext } from "../../signer";
 import type { Transaction } from "../../types";
 import { DmkSignerZcash } from "@ledgerhq/live-signer-zcash";
 import type { ZcashAddress, ZcashViewKey } from "@ledgerhq/live-signer-zcash";
 import { registerChainAdapter } from "../registry";
 import type { ChainAdapter } from "../types";
+import type { ZcashAccount, ZcashAccountRaw } from "./types";
 import { composeXpub } from "./xpub";
 import { resolveZcashFeePerByte } from "./transparent-fee-rate";
+import { fromZcashPrivateInfoRaw, toZcashPrivateInfoRaw } from "./serialization";
 
 // ── DMK transport helpers ─────────────────────────────────────────────────
 
@@ -53,6 +55,24 @@ const zcashChainAdapter: ChainAdapter = {
     const safeFeePerByte = transaction.feePerByte;
     if (!safeFeePerByte || safeFeePerByte.lte(0)) return undefined;
     return resolveZcashFeePerByte(account, transaction, safeFeePerByte);
+  },
+
+  // Persist the shielded state alongside the transparent bitcoinResources. The
+  // bitcoin bridge is what reads a Zcash account back at app startup (the
+  // `zcashShielded` flag is not mirrored yet then), so this must not be gated
+  // on the flag or the ufvk is lost on every restart.
+  assignToAccountRaw(account: Account, accountRaw: AccountRaw) {
+    const zcashAccount = account as ZcashAccount;
+    if (zcashAccount.privateInfo) {
+      (accountRaw as ZcashAccountRaw).privateInfo = toZcashPrivateInfoRaw(zcashAccount.privateInfo);
+    }
+  },
+
+  assignFromAccountRaw(accountRaw: AccountRaw, account: Account) {
+    const zcashPrivateInfoRaw = (accountRaw as ZcashAccountRaw).privateInfo;
+    if (zcashPrivateInfoRaw) {
+      (account as ZcashAccount).privateInfo = fromZcashPrivateInfoRaw(zcashPrivateInfoRaw);
+    }
   },
 
   getAddress(deviceId, { currency, path, verify }, signerContext: SignerContext) {

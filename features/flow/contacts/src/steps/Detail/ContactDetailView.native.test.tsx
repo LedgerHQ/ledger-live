@@ -2,6 +2,7 @@ import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react-native";
 import { mockContact, mockContactAddress, mockMeContact } from "@domain/entity-contact/schema.mock";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { createContactDetailLedgerWalletAccountsIntent } from "./model/contactDetailSharedState";
 import { createContactDetailAddressRowIntent } from "./model/viewModel";
 import type { ContactDetailLabels } from "./types";
 import { ContactDetailView } from "./ContactDetailView.native";
@@ -19,18 +20,23 @@ const labels: ContactDetailLabels = {
 };
 
 const onAddAddress = () => undefined;
-const onOpenLedgerWalletAddresses = () => undefined;
+const onLedgerWalletAccountsPress = () => undefined;
 
 const defaultProps = {
   labels,
   meAvatarSrc: "https://example.com/avatar.png",
   onAddAddress,
-  onOpenLedgerWalletAddresses,
+};
+
+const meDetailProps = {
+  ...defaultProps,
+  ledgerWalletAccountsIntent: createContactDetailLedgerWalletAccountsIntent(mockMeContact()),
+  onLedgerWalletAccountsPress,
 };
 
 describe("ContactDetailPage", () => {
   it("should render the Me empty state", () => {
-    render(<ContactDetailView {...defaultProps} contact={mockMeContact()} />);
+    render(<ContactDetailView {...meDetailProps} contact={mockMeContact()} />);
 
     expect(screen.getByTestId("contacts-detail-me-avatar")).toBeVisible();
     expect(screen.getByText("My addresses")).toBeVisible();
@@ -133,7 +139,11 @@ describe("ContactDetailPage", () => {
   it("should request adding an address when the action is pressed", () => {
     const onAddAddress = jest.fn();
     render(
-      <ContactDetailView {...defaultProps} contact={mockMeContact()} onAddAddress={onAddAddress} />,
+      <ContactDetailView
+        {...meDetailProps}
+        contact={mockMeContact()}
+        onAddAddress={onAddAddress}
+      />,
     );
 
     fireEvent.press(screen.getByTestId("contacts-detail-add-address"));
@@ -142,17 +152,19 @@ describe("ContactDetailPage", () => {
   });
 
   it("should request opening Ledger Wallet addresses for Me", () => {
-    const onOpenLedgerWalletAddresses = jest.fn();
+    const handleLedgerWalletAccountsPress = jest.fn();
     render(
       <ContactDetailView
-        {...defaultProps}
+        {...meDetailProps}
         contact={mockMeContact()}
-        onOpenLedgerWalletAddresses={onOpenLedgerWalletAddresses}
+        onLedgerWalletAccountsPress={handleLedgerWalletAccountsPress}
       />,
     );
 
     fireEvent.press(screen.getByTestId("contacts-detail-ledger-wallet-addresses"));
 
-    expect(onOpenLedgerWalletAddresses).toHaveBeenCalledTimes(1);
+    expect(handleLedgerWalletAccountsPress).toHaveBeenCalledWith({
+      type: "open-ledger-wallet-accounts",
+    });
   });
 });

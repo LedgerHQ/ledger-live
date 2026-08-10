@@ -8,7 +8,7 @@ import {
 } from "../accounts";
 import { createMockAccount, createMockConcordiumCurrency } from "../../__tests__/testUtils";
 
-jest.mock("@ledgerhq/live-wallet/accountName", () => ({
+jest.mock("@domain/entity-account-name", () => ({
   getDefaultAccountName: jest.fn((account: { id: string }) => `Default ${account.id}`),
 }));
 

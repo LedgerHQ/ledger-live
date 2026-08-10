@@ -6,6 +6,19 @@ name: "[Rsdoctor] - Bundle reports on PR"
 on:
   pull_request:
     types: [opened, synchronize, reopened]
+    paths:
+      - "apps/ledger-live-desktop/**"
+      - "apps/ledger-live-mobile/**"
+      - "libs/**"
+      - "domain/**"
+      - "features/**"
+      - "shared/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - "pnpm-workspace.yaml"
+      - "nx.json"
+      - "nx.workspace.json"
+      - ".github/workflows/rsdoctor-pr.yml"
   push:
     branches:
       - develop

@@ -84,6 +84,12 @@ export interface ICPAccountRaw extends AccountRaw {
   neuronsData?: NeuronsDataRaw;
 }
 
+// `neurons` is only populated once an account has been synced or deserialized, so classify by
+// family rather than by the presence of the field.
+export function isICPAccount(account: Account): account is ICPAccount {
+  return account.currency.family === "internet_computer";
+}
+
 export type TransactionStatus = TransactionStatusCommon;
 
 export type TransactionStatusRaw = TransactionStatusCommonRaw;

@@ -1,7 +1,6 @@
-export * from "./steps/List";
-export * from "./steps/List/web";
-export * from "./steps/AddContact";
-export * from "./steps/AddContact/web";
+export * from "./contactsListFacade";
+export * from "./contactsViewFacade";
+export * from "./addContactFacade";
 export * from "./steps/EditContact";
 export * from "./steps/EditContact/web";
 export * from "./steps/EditAddress";
@@ -14,4 +13,5 @@ export * from "./steps/Detail";
 export * from "./steps/Detail/web";
 export * from "./components";
 export * from "./hooks";
+export * from "./ledgerSync";
 export * from "./featureFlags";

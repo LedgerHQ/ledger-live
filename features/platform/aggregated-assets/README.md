@@ -10,10 +10,15 @@ This lives in `features/platform` rather than `features/flow` because several un
 it — Market, Portfolio, Global Search and the asset/network selectors — so it is a capability shared
 across flows, not one journey's internals.
 
-## Public API is hooks-only
+## Public API: hooks, plus the pure helpers over what they return
 
-Consumers get hooks plus the types those hooks return. The RTK Query endpoint objects, the cache
-selectors and the `assetsDataApi` instance stay internal.
+Consumers get the nine hooks and the types they return, and the pure functions that operate on data
+a hook already fetched — `selectTopStocks`, `selectTopAssetsByCategory`, `selectCurrency` and
+`selectCurrencyForMetaId`. Global Search, the Stocks section and the asset selectors call those
+directly rather than through a hook, so exporting them is deliberate.
+
+What stays internal: the RTK Query endpoint objects, the `assetsDataApi` instance, and the cache
+selectors in `selectors/` — nothing outside this package imports them.
 
 The one exception is the app composition root, which must register the API's reducer and middleware
 in the store.
@@ -41,5 +46,6 @@ Two consequences, both characterized in the test suite and **described, not endo
 
 ## Status
 
-Scaffolded and empty. Code arrives from `libs/ledger-live-common/src/dada-client` in `LIVE-35227`.
-Tracking epic: `LIVE-35223`.
+Populated in `LIVE-35227` from `libs/ledger-live-common/src/dada-client`, which keeps one-line
+re-export shims at the old paths until the retarget tasks (`LIVE-35228` / `35229` / `35230`) point
+consumers here and `LIVE-35231` deletes them. Tracking epic: `LIVE-35223`.

@@ -1,4 +1,4 @@
-import { ApyTypeSchema, InterestRateSchema } from "./schema";
+import { ApySchema, ApyTypeSchema, InterestRateSchema } from "./schema";
 
 const valid = {
   currencyId: "bitcoin",
@@ -27,19 +27,10 @@ describe("InterestRateSchema", () => {
     expect(() => InterestRateSchema.parse({ ...valid, rate: "4.2" })).toThrow();
   });
 
-  /*
-   * `type` is deliberately wider than ApyType. DADA sends kinds the apps do not render, and
-   * useInterestRatesByCurrencies drops them. Narrowing here would claim a guarantee the wire
-   * does not give.
-   */
   it("accepts a rate type outside the ApyType union", () => {
     expect(() => InterestRateSchema.parse({ ...valid, type: "STAKING" })).not.toThrow();
   });
 
-  /*
-   * fetchAt stays a plain string rather than DateTimeIsoSchema: nothing in the apps reads it, so
-   * validating the format could only discard otherwise-good rates.
-   */
   it("does not validate the fetchAt format", () => {
     expect(() => InterestRateSchema.parse({ ...valid, fetchAt: "not-a-date" })).not.toThrow();
   });
@@ -52,5 +43,42 @@ describe("ApyTypeSchema", () => {
 
   it.each(["", "apy", "STAKING", "UNKNOWN"])("rejects %p", type => {
     expect(() => ApyTypeSchema.parse(type)).toThrow();
+  });
+});
+
+describe("ApySchema", () => {
+  it("accepts a rate the apps can render", () => {
+    expect(ApySchema.parse({ value: 0.0425, type: "APY" })).toEqual({ value: 0.0425, type: "APY" });
+  });
+
+  it.each([0, -0.01, 1, 12.5])("accepts the value %p", value => {
+    expect(ApySchema.parse({ value, type: "APR" }).value).toBe(value);
+  });
+
+  /*
+   * The narrowing is the point of this type: InterestRateSchema keeps `type` a plain string because
+   * DADA sends kinds the apps do not render, and this is the shape after those have been dropped.
+   */
+  it("rejects a rate type the apps cannot render", () => {
+    expect(() => ApySchema.parse({ value: 0.04, type: "STAKING" })).toThrow();
+  });
+
+  it.each([
+    ["a missing value", { type: "APY" }],
+    ["a missing type", { value: 0.04 }],
+    ["a value that is not a number", { value: "0.04", type: "APY" }],
+  ])("rejects %s", (_label, input) => {
+    expect(() => ApySchema.parse(input)).toThrow();
+  });
+
+  it("is not the wire shape — it has no currencyId or fetchAt", () => {
+    const parsed = ApySchema.parse({
+      value: 0.04,
+      type: "APY",
+      currencyId: "bitcoin",
+      fetchAt: "2026-08-07",
+    });
+
+    expect(parsed).toEqual({ value: 0.04, type: "APY" });
   });
 });

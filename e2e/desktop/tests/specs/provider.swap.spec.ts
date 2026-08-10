@@ -81,6 +81,8 @@ for (const { fromAccount, toAccount, provider, xrayTicket, bugTickets } of provi
 
         await performSwapUntilQuoteSelectionStep(app, swap, minAmount);
         await app.swap.selectSpecificProvider(provider);
+        // Approval was ensured above, so the CTA reads "Review".
+        await app.swap.checkQuoteCardCta(provider.uiName);
 
         await app.swap.clickExchangeButton(provider.name);
         await app.swap.checkElementsPresenceOnSwapApprovalStep();
