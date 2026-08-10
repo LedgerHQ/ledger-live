@@ -1021,6 +1021,51 @@ describe("validateIntent", () => {
           expect(computeGasLimitModule.computeEIP7623GasLimit).toHaveBeenCalledTimes(1);
         });
 
+        describe("calldata floor coin config", () => {
+          it("forwards the configured floor parameters to computeEIP7623GasLimit", async () => {
+            setCoinConfig(
+              () =>
+                ({
+                  info: {
+                    node: { type: "ledger", explorerId: "eth" },
+                    explorer: { type: "ledger" },
+                    gasTracker: { type: "ledger", explorerId: "eth" },
+                    calldataFloorGasPerToken: 16,
+                    calldataFloorZeroByteTokens: 4,
+                  },
+                }) as unknown as EvmCoinConfig,
+            );
+
+            await validateIntent(
+              {} as CryptoCurrency,
+              createIntent({}),
+              [{ value: 50n, asset: { type: "native" } }],
+              { value: 0n, parameters: { gasLimit: 21000n } },
+            );
+
+            expect(computeGasLimitModule.computeEIP7623GasLimit).toHaveBeenCalledWith(
+              expect.any(BigInt),
+              expect.any(Buffer),
+              { gasPerToken: 16, zeroByteTokens: 4 },
+            );
+          });
+
+          it("forwards undefined parameters when the coin config sets none", async () => {
+            await validateIntent(
+              {} as CryptoCurrency,
+              createIntent({}),
+              [{ value: 50n, asset: { type: "native" } }],
+              { value: 0n, parameters: { gasLimit: 21000n } },
+            );
+
+            expect(computeGasLimitModule.computeEIP7623GasLimit).toHaveBeenCalledWith(
+              expect.any(BigInt),
+              expect.any(Buffer),
+              { gasPerToken: undefined, zeroByteTokens: undefined },
+            );
+          });
+        });
+
         it("detects customGasLimit being lower than gasLimit with a warning", async () => {
           const res = await validateIntent(
             {} as CryptoCurrency,

@@ -147,7 +147,9 @@ async function validateGas(
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
 
-  const { minGasPrice } = getCoinConfig(currency.id).info;
+  const { minGasPrice, calldataFloorGasPerToken, calldataFloorZeroByteTokens } = getCoinConfig(
+    currency.id,
+  ).info;
   const minGasPriceFloor = typeof minGasPrice === "string" ? BigInt(minGasPrice) : null;
 
   const nativeBalance = findBalance({ type: "native" }, balances);
@@ -166,6 +168,10 @@ async function validateGas(
   const eip7623GasLimit = computeEIP7623GasLimit(
     BigInt(DEFAULT_GAS_LIMIT.toFixed(0)),
     intent.data.value,
+    {
+      gasPerToken: calldataFloorGasPerToken,
+      zeroByteTokens: calldataFloorZeroByteTokens,
+    },
   );
 
   // Gas Limit
