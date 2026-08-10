@@ -145,6 +145,14 @@ export default class EarnV2DashboardPage {
     return `eth-provider-card-${EarnV2DashboardPage.resolveEthProviderCardId(providerId)}`;
   }
 
+  // Lumen's expandable Card puts the onClick on CardHeader, not the card root div. Tapping the
+  // root via its testid calls .click() on the root, which bubbles up (not into CardHeader), so
+  // the handler never fires. Tapping the provider name — a child of CardHeader — bubbles up
+  // through CardHeader and correctly triggers the expand/collapse handler.
+  private ethProviderNameTestId(providerId: string) {
+    return `eth-provider-name-${EarnV2DashboardPage.resolveEthProviderCardId(providerId)}`;
+  }
+
   @Step("Complete ETH deposit amount step with $0 ETH")
   async completeEthDepositAmountStep(amount: string) {
     await waitWebElementByTestId(this.ethAmountInput);
@@ -215,7 +223,7 @@ export default class EarnV2DashboardPage {
       throwOnTimeout: false,
     });
     if (!alreadyExpanded) {
-      await tapWebElementByTestId(this.ethProviderCardTestId(providerId));
+      await tapWebElementByTestId(this.ethProviderNameTestId(providerId));
     }
   }
 
