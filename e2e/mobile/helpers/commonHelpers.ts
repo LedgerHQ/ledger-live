@@ -82,6 +82,9 @@ export async function launchApp(customConfig: Detox.DeviceLaunchAppConfig = {}) 
       mock: "0",
       disable_broadcast: getEnv("DISABLE_TRANSACTION_BROADCAST") ? 1 : 0,
       IS_TEST: true,
+      // LIVE-DEBUG(drawer-stuck): trace the QueuedDrawer state machine into the
+      // Allure "App logs" attachment. Remove once the stuck-drawer cause is known.
+      log_drawers: "1",
     },
     languageAndLocale: {
       language: "en-US",

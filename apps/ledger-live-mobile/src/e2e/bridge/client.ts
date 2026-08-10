@@ -47,6 +47,9 @@ export function init() {
   const wsPort = LaunchArguments.value()["wsPort"] || "8099";
   const mock = LaunchArguments.value()["mock"];
   const disable_broadcast = LaunchArguments.value()["disable_broadcast"];
+  // LIVE-DEBUG(drawer-stuck): opt-in QueuedDrawer state-machine tracing. Routed
+  // through @ledgerhq/logs so it lands in the Allure "App logs" attachment.
+  const log_drawers = LaunchArguments.value()["log_drawers"];
 
   log(`[E2E Bridge Client]: wsPort=${wsPort}, mock=${mock}`);
 
@@ -56,6 +59,9 @@ export function init() {
     Config.MOCK = "";
   }
   setEnv("DISABLE_TRANSACTION_BROADCAST", disable_broadcast != "0");
+  if (log_drawers == "1") {
+    setEnv("LOG_DRAWERS", true);
+  }
 
   initAppNetworkLogging();
 

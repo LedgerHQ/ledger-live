@@ -13,6 +13,7 @@ import { Flex, Text, BoxedIcon, Icons } from "@ledgerhq/native-ui";
 import { IsInDrawerProvider } from "~/context/IsInDrawerContext";
 import useQueuedDrawerNative from "./useQueuedDrawerNative";
 import Header from "./Header";
+import { logDrawer } from "./utils/logDrawer";
 
 export type Props = {
   isRequestingToBeOpened?: boolean;
@@ -69,6 +70,7 @@ const QueuedDrawerNative = ({
   const insets = useSafeAreaInsets();
 
   const {
+    instanceId,
     areDrawersLocked,
     isVisible,
     handleDismiss,
@@ -88,16 +90,41 @@ const QueuedDrawerNative = ({
   const backdropOpacity = useSharedValue(0);
   const closeAnimTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // LIVE-DEBUG(drawer-stuck): plain JS callbacks, invoked from the animation
+  // worklets via scheduleOnRN — same pattern as the existing `afterOnce`, so the
+  // worklet closure stays serialisable.
+  const logAnimEnd = useCallback(
+    (label: string) => {
+      logDrawer(label, { instanceId });
+    },
+    [instanceId],
+  );
+
   const openAnim = useCallback(() => {
-    translateY.value = withTiming(0, {
-      duration: ANIMATION_DURATION,
-      easing: Easing.out(Easing.cubic),
-    });
+    // translateY BEFORE the open animation is the single most diagnostic number.
+    // 1000 = parked (fresh mount or a completed close); anything else means we are
+    // interrupting an in-flight animation.
+    logDrawer("openAnim START", { instanceId, translateYBefore: translateY.value });
+    translateY.value = withTiming(
+      0,
+      {
+        duration: ANIMATION_DURATION,
+        easing: Easing.out(Easing.cubic),
+      },
+      finished => {
+        scheduleOnRN(logAnimEnd, finished ? "openAnim END finished" : "openAnim END interrupted");
+      },
+    );
     backdropOpacity.value = withTiming(1, { duration: ANIMATION_DURATION });
-  }, [translateY, backdropOpacity]);
+  }, [translateY, backdropOpacity, instanceId, logAnimEnd]);
 
   const closeAnim = useCallback(
     (after?: () => void) => {
+      // LIVE-DEBUG(drawer-stuck): a close parks translateY back at 1000. If the
+      // Modal is still visible after this and no openAnim follows, the drawer is
+      // stuck off-screen — this is the second candidate root cause.
+      logDrawer("closeAnim START", { instanceId, translateYBefore: translateY.value });
+
       // Cancel any pending callback from a previous closeAnim call
       if (closeAnimTimeoutRef.current) {
         clearTimeout(closeAnimTimeoutRef.current);
@@ -108,9 +135,13 @@ const QueuedDrawerNative = ({
       // so that refs remain accessible when scheduled back via scheduleOnRN.
       const afterOnce = after
         ? () => {
-            if (!closeAnimTimeoutRef.current) return;
+            if (!closeAnimTimeoutRef.current) {
+              logDrawer("closeAnim after() SKIPPED (already consumed)", { instanceId });
+              return;
+            }
             clearTimeout(closeAnimTimeoutRef.current);
             closeAnimTimeoutRef.current = null;
+            logDrawer("closeAnim after() RUN", { instanceId });
             after();
           }
         : undefined;
@@ -123,7 +154,11 @@ const QueuedDrawerNative = ({
       translateY.value = withTiming(
         1000,
         { duration: ANIMATION_DURATION, easing: Easing.in(Easing.cubic) },
-        () => {
+        finished => {
+          scheduleOnRN(
+            logAnimEnd,
+            finished ? "closeAnim END finished" : "closeAnim END interrupted",
+          );
           if (afterOnce) {
             scheduleOnRN(afterOnce);
           }
@@ -131,7 +166,7 @@ const QueuedDrawerNative = ({
       );
       backdropOpacity.value = withTiming(0, { duration: ANIMATION_DURATION });
     },
-    [translateY, backdropOpacity],
+    [translateY, backdropOpacity, instanceId, logAnimEnd],
   );
 
   const containerAnimatedStyle = useAnimatedStyle(
@@ -148,9 +183,13 @@ const QueuedDrawerNative = ({
     [backdropOpacity],
   );
 
+  // LIVE-DEBUG(drawer-stuck): THE decisive probe. openAnim() has exactly one caller
+  // — this Android Modal.onShow callback. An "isVisible committed true" with no
+  // "Modal onShow fired" after it proves the sheet can never leave translateY=1000.
   const onShow = useCallback(() => {
+    logDrawer("Modal onShow fired", { instanceId, translateYBefore: translateY.value });
     openAnim();
-  }, [openAnim]);
+  }, [openAnim, instanceId, translateY]);
 
   const handleCloseUserEvent = useCallback(() => {
     closeAnim(() => {
@@ -196,13 +235,23 @@ const QueuedDrawerNative = ({
   // Close when opening conditions are no longer met (e.g., action succeeded)
   useEffect(() => {
     if (isVisible && !isRequestingToBeOpened && !isForcingToBeOpened) {
+      // LIVE-DEBUG(drawer-stuck): if this fires while the drawer is mid-open, it
+      // parks translateY at 1000 and relies on handleDismiss to hide the Modal.
+      logDrawer("conditions-no-longer-met -> closeAnim", { instanceId });
       closeAnim(() => {
         requestAnimationFrame(() => {
           handleDismiss();
         });
       });
     }
-  }, [isVisible, isRequestingToBeOpened, isForcingToBeOpened, closeAnim, handleDismiss]);
+  }, [
+    isVisible,
+    isRequestingToBeOpened,
+    isForcingToBeOpened,
+    closeAnim,
+    handleDismiss,
+    instanceId,
+  ]);
 
   function renderDrawerIcon() {
     if (React.isValidElement(Icon)) return Icon;
