@@ -17,8 +17,8 @@ import {
   starredMarketCoinsSelector,
 } from "~/renderer/reducers/settings";
 import { removeStarredMarketCoins, addStarredMarketCoins } from "~/renderer/actions/settings";
-import { selectCurrency } from "@ledgerhq/live-common/dada-client/utils/currencySelection";
-import { assetsDataApi } from "@ledgerhq/live-common/dada-client/state-manager/api";
+import { selectCurrency } from "@features/platform-aggregated-assets";
+import { assetsDataApi } from "@domain/api-aggregated-assets";
 import { track } from "~/renderer/analytics/segment";
 import { getCurrentTrackingPage } from "~/renderer/analytics/screenRefs";
 

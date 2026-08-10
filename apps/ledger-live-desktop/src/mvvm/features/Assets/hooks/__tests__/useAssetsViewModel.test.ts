@@ -23,7 +23,7 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { TokenCurrencyIdSchema } from "@domain/entity-currency-token";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { AssetTableItem } from "../../types";
-import type { AssetsDataWithPagination } from "@ledgerhq/live-common/dada-client/state-manager/types";
+import type { AssetsDataWithPagination } from "@domain/api-aggregated-assets";
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
 import useCryptoAssetsViewModel from "LLD/features/CryptoAddresses/hooks/useCryptoAssetsViewModel";
 import { buildPlaceholderAssetItemsFromAssetsData } from "../../utils/buildPlaceholderAssetItemsFromAssetsData";
@@ -53,7 +53,8 @@ jest.mock("LLD/hooks/useCategorizedAssets", () => ({
 }));
 
 const mockUseAssetsData = jest.fn();
-jest.mock("@ledgerhq/live-common/dada-client/hooks/useAssetsData", () => ({
+jest.mock("@features/platform-aggregated-assets", () => ({
+  ...jest.requireActual("@features/platform-aggregated-assets"),
   useAssetsData: (...args: unknown[]) => mockUseAssetsData(...args),
 }));
 

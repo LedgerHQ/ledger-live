@@ -1,11 +1,13 @@
 import { renderHook, withFlagOverrides } from "tests/testSetup";
 import { setEnv } from "@shared/env";
-import { useAssetsData } from "@ledgerhq/live-common/dada-client/hooks/useAssetsData";
-import { selectCurrencyForMetaId } from "@ledgerhq/live-common/dada-client/utils/currencySelection";
+import { useAssetsData, selectCurrencyForMetaId } from "@features/platform-aggregated-assets";
 import { useAssetSearchResultsViewModel } from "../useAssetSearchResultsViewModel";
 
-jest.mock("@ledgerhq/live-common/dada-client/hooks/useAssetsData");
-jest.mock("@ledgerhq/live-common/dada-client/utils/currencySelection");
+jest.mock("@features/platform-aggregated-assets", () => ({
+  ...jest.requireActual("@features/platform-aggregated-assets"),
+  useAssetsData: jest.fn(),
+  selectCurrencyForMetaId: jest.fn(),
+}));
 jest.mock("@ledgerhq/live-common/counterValues/hooks/useUsdToFiatRate", () => ({
   useUsdToFiatRate: () => ({ rate: 1, status: "ready" }),
 }));

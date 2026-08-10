@@ -1,6 +1,5 @@
 import { useMemo } from "react";
-import { useStocksData } from "@ledgerhq/live-common/dada-client/hooks/useStocksData";
-import { selectTopStocks } from "@ledgerhq/live-common/dada-client/utils/assetDiscovery";
+import { useStocksData, selectTopStocks } from "@features/platform-aggregated-assets";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 
 export const MAX_STOCK_TOKENS = 20;
