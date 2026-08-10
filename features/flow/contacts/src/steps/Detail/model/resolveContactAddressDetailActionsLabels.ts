@@ -4,16 +4,14 @@ import {
   INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME,
 } from "@domain/entity-contact";
 import type { ContactsDeleteAddressDialogLabels } from "../components/ContactsDeleteAddressDialog/types";
-import type { ContactsEditSignerDialogLabels } from "../components/ContactsEditSignerDialog/types";
-import type { ContactsEditSignerMismatchDialogLabels } from "../components/ContactsEditSignerMismatchDialog/types";
 import type { ContactsRenameAddressLabels } from "../../EditAddress/types";
+import { resolveContactEditSignerActionLabels } from "./resolveContactEditSignerActionLabels";
 
 export type ContactAddressDetailActionsLabels = Readonly<{
   delete: ContactsDeleteAddressDialogLabels;
   rename: ContactsRenameAddressLabels;
-  signer: ContactsEditSignerDialogLabels;
-  signerMismatch: ContactsEditSignerMismatchDialogLabels;
-}>;
+}> &
+  ReturnType<typeof resolveContactEditSignerActionLabels>;
 
 export type ResolveContactAddressDetailActionsLabelsOptions = Readonly<{
   t: (key: string) => string;
@@ -41,17 +39,6 @@ export function resolveContactAddressDetailActionsLabels({
         [CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME]: t(addressLabelTooLongKey),
       },
     },
-    signer: {
-      title: t("contacts.editSigner.title"),
-      description: t("contacts.editSigner.description"),
-      confirm: t("contacts.editSigner.confirm"),
-      cancel: t("contacts.editSigner.cancel"),
-    },
-    signerMismatch: {
-      title: t("contacts.editSignerMismatch.title"),
-      description: t("contacts.editSignerMismatch.description"),
-      connectDifferentDevice: t("contacts.editSignerMismatch.connectDifferentDevice"),
-      cancel: t("contacts.editSignerMismatch.cancel"),
-    },
+    ...resolveContactEditSignerActionLabels(t),
   };
 }

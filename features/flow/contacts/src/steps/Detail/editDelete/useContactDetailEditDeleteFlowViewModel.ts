@@ -1,10 +1,15 @@
-import { selectContactById, type ContactId } from "@domain/entity-contact";
+import {
+  CONTACT_SIGNER_MISMATCH_ERROR,
+  resolveContactSignerValidationResult,
+  selectContactById,
+  type ContactId,
+} from "@domain/entity-contact";
 import { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import type { ContactDetailActionsPorts } from "./model/ports";
-import { useContactDetailActionsViewModel } from "./useContactDetailActionsViewModel";
-import { useContactEditSignerUiState } from "./useContactEditSignerUiState";
-import type { SignerEditUiState } from "./model/signerEditUiState";
+import type { ContactDetailActionsPorts } from "../model/ports";
+import { useContactDetailActionsViewModel } from "../useContactDetailActionsViewModel";
+import { useContactEditSignerUiState } from "../useContactEditSignerUiState";
+import type { SignerEditUiState } from "../model/signerEditUiState";
 
 export type ContactDetailEditUiState = SignerEditUiState;
 
@@ -27,8 +32,10 @@ export type UseContactDetailEditDeleteFlowViewModelResult = ReturnType<
     isDeleting: boolean;
     onEditPress: () => void;
     onDeletePress: () => void;
-    onSignerConfirm: () => void;
+    onSignerConfirm: () => Promise<void>;
     onSignerCancel: () => void;
+    onSignerMismatchCancel: () => void;
+    onConnectDifferentDevice: () => void;
     onEditClose: () => void;
     onOpenActionsMenu: () => void;
     onCloseActionsMenu: () => void;
@@ -52,10 +59,12 @@ export function useContactDetailEditDeleteFlowViewModel({
   const {
     editUiState,
     openSignerDialog,
+    openSignerMismatchDialog,
     openEditDialog,
-    onSignerConfirm,
-    onSignerCancel,
-    onEditClose,
+    onSignerCancel: closeSignerOnCancel,
+    onSignerMismatchCancel,
+    onConnectDifferentDevice,
+    onEditClose: closeEditUiState,
   } = useContactEditSignerUiState();
   const [isActionsMenuOpen, setIsActionsMenuOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -72,6 +81,41 @@ export function useContactDetailEditDeleteFlowViewModel({
 
     openEditDialog();
   }, [isSignerRequiredForEdit, openEditDialog, openSignerDialog]);
+
+  const onSignerConfirm = useCallback(async () => {
+    const validationLookup = editIntent?.signerValidationLookup;
+
+    if (validationLookup === undefined) {
+      openEditDialog();
+      return;
+    }
+
+    const [expectedSignerId, currentSignerId] = await Promise.all([
+      ports.signerValidation.getExpectedSignerId(validationLookup),
+      ports.signerValidation.getCurrentSignerId(),
+    ]);
+    const status = resolveContactSignerValidationResult(expectedSignerId, currentSignerId);
+
+    if (status === CONTACT_SIGNER_MISMATCH_ERROR) {
+      openSignerMismatchDialog();
+      return;
+    }
+
+    openEditDialog();
+  }, [
+    editIntent?.signerValidationLookup,
+    openEditDialog,
+    openSignerMismatchDialog,
+    ports.signerValidation,
+  ]);
+
+  const onSignerCancel = useCallback(() => {
+    closeSignerOnCancel();
+  }, [closeSignerOnCancel]);
+
+  const onEditClose = useCallback(() => {
+    closeEditUiState();
+  }, [closeEditUiState]);
 
   const onDeletePress = useCallback(() => {
     setIsActionsMenuOpen(false);
@@ -122,6 +166,8 @@ export function useContactDetailEditDeleteFlowViewModel({
     onDeletePress,
     onSignerConfirm,
     onSignerCancel,
+    onSignerMismatchCancel,
+    onConnectDifferentDevice,
     onEditClose,
     onOpenActionsMenu,
     onCloseActionsMenu,

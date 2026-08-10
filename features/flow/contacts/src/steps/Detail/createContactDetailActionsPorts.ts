@@ -9,7 +9,7 @@ import {
   createMockContactDeviceIntentsPort,
   type ContactDeviceIntentsPort,
 } from "@features/platform-contacts";
-import type { ContactDetailActionsPorts } from "./model/ports";
+import type { ContactDetailActionsDataPorts } from "./model/ports";
 
 type ContactDetailActionsPortsDeps = Readonly<{
   dispatch: (action: { type: string }) => void;
@@ -21,7 +21,7 @@ export function createContactDetailActionsPorts({
   dispatch,
   getState,
   deviceIntents = createMockContactDeviceIntentsPort(),
-}: ContactDetailActionsPortsDeps): ContactDetailActionsPorts {
+}: ContactDetailActionsPortsDeps): ContactDetailActionsDataPorts {
   return {
     edit: {
       renameContact: async ({ contactId, name }) => {

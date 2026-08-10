@@ -1,13 +1,12 @@
-import {
-  DUPLICATE_CONTACT_NAME_ERROR_NAME,
-  INVALID_CONTACT_NAME_ERROR_NAME,
-  type ContactId,
-} from "@domain/entity-contact";
+import { type ContactId } from "@domain/entity-contact";
 import {
   type ContactsDeleteContactDrawerProps,
   type ContactsEditSignerDrawerProps,
+  type ContactsEditSignerMismatchDrawerProps,
   type ContactsRenameContactDrawerProps,
   type ContactDetailActionsLabels,
+  createContactDetailEditDeleteUiState,
+  resolveContactDetailEditDeleteLabels,
   useContactDetailEditDeleteFlowBindings,
   useContactsEditDeletePorts,
 } from "@features/flow-contacts";
@@ -26,6 +25,7 @@ export type ContactDetailEditDeleteFlowProps = Readonly<{
   renameDrawer: ContactsRenameContactDrawerProps;
   deleteDrawer: ContactsDeleteContactDrawerProps;
   signerDrawer: ContactsEditSignerDrawerProps;
+  signerMismatchSheet: ContactsEditSignerMismatchDrawerProps;
   onOpenActionsMenu: () => void;
 }>;
 
@@ -40,44 +40,18 @@ export function useContactDetailEditDeleteAdapter(
     ports,
     onDeleteSuccess,
   });
-  const actionLabels = useMemo<ContactDetailActionsLabels>(
-    () => ({
-      editContact: t("contacts.detailActions.editName"),
-      deleteContact: t("contacts.detailActions.deleteContact"),
-    }),
+  const labels = useMemo(
+    () =>
+      resolveContactDetailEditDeleteLabels({
+        t,
+        editContactLabelKey: "contacts.detailActions.editName",
+        deleteDescriptionKey: "contacts.deleteContact.mobileDescription",
+      }),
     [t],
   );
-  const renameLabels = useMemo(
-    () => ({
-      title: t("contacts.editContact.title"),
-      namePlaceholder: t("contacts.editContact.namePlaceholder"),
-      namingDisclaimer: t("contacts.editContact.namingDisclaimer"),
-      applyChanges: t("contacts.editContact.applyChanges"),
-      confirmName: t("contacts.editContact.confirmName"),
-      nameValidationErrors: {
-        [INVALID_CONTACT_NAME_ERROR_NAME]: t("contacts.editContact.invalidNameError"),
-        [DUPLICATE_CONTACT_NAME_ERROR_NAME]: t("contacts.addContactDrawer.duplicateNameError"),
-      },
-    }),
-    [t],
-  );
-  const deleteLabels = useMemo(
-    () => ({
-      title: t("contacts.deleteContact.title"),
-      description: t("contacts.deleteContact.mobileDescription"),
-      confirm: t("contacts.deleteContact.confirm"),
-      cancel: t("contacts.deleteContact.cancel"),
-    }),
-    [t],
-  );
-  const signerLabels = useMemo(
-    () => ({
-      title: t("contacts.editSigner.title"),
-      description: t("contacts.editSigner.description"),
-      confirm: t("contacts.editSigner.confirm"),
-      cancel: t("contacts.editSigner.cancel"),
-    }),
-    [t],
+  const uiState = useMemo(
+    () => createContactDetailEditDeleteUiState(flow, renameViewModel, labels),
+    [flow, labels, renameViewModel],
   );
 
   return {
@@ -85,27 +59,14 @@ export function useContactDetailEditDeleteAdapter(
     actionsMenu: {
       isOpen: flow.isActionsMenuOpen,
       canDelete: flow.canDelete,
-      labels: actionLabels,
+      labels: labels.actions,
       onEdit: flow.onEditPress,
       onDelete: flow.onDeletePress,
       onClose: flow.onCloseActionsMenu,
     },
-    renameDrawer: {
-      ...renameViewModel,
-      labels: renameLabels,
-    },
-    deleteDrawer: {
-      isOpen: flow.deleteLifecycle.status === "open",
-      isDeleting: flow.isDeleting,
-      labels: deleteLabels,
-      onConfirm: flow.confirmDelete,
-      onCancel: flow.cancelDelete,
-    },
-    signerDrawer: {
-      isOpen: flow.editUiState === "signer-open",
-      labels: signerLabels,
-      onConfirm: flow.onSignerConfirm,
-      onCancel: flow.onSignerCancel,
-    },
+    renameDrawer: uiState.rename,
+    deleteDrawer: uiState.delete,
+    signerDrawer: uiState.signer,
+    signerMismatchSheet: uiState.signerMismatch,
   };
 }
