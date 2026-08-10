@@ -2,16 +2,10 @@ import React from "react";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
 import QRCode from "react-native-qrcode-svg";
+import type { AddressQrCodeProps } from "./types";
 
 const DEFAULT_QR_CODE_SIZE = 200;
 const DEFAULT_CENTER_WRAPPER_SIZE = 56;
-
-export type AddressQrCodeProps = Readonly<{
-  value: string;
-  size?: number;
-  centerContent?: React.ReactNode;
-  testID?: string;
-}>;
 
 export function AddressQrCode({
   value,

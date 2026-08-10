@@ -1,7 +1,6 @@
 import React from "react";
 import {
   ContactAddressDetailDialog,
-  ContactsAddContactDialog,
   ContactsDeleteAddressDialog,
   ContactsDeleteContactDialog,
   ContactsEditSignerDialog,
@@ -9,9 +8,12 @@ import {
   ContactsRenameAddressDialog,
   ContactsRenameContactDialog,
   type ContactAddressDetailDialogProps,
-  type ContactsAddContactDialogProps,
   type ContactsListViewProps,
 } from "@features/flow-contacts";
+import {
+  ContactsAddContactDialog,
+  type ContactsAddContactDialogProps,
+} from "@features/flow-contacts-add-contact";
 import {
   ContactsAddAddressFlowDialog,
   type ContactsAddAddressFlowDialogProps,

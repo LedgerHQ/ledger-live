@@ -8,7 +8,7 @@ import {
   makeSaveNewUpdate,
   makeLocalIncrementalUpdate,
 } from "@features/platform-wallet-sync";
-import { setAccountNames } from "@domain/entity-account-name";
+import { bulkSetAccountNames } from "@domain/entity-account-name";
 import { updateRecentAddresses } from "@domain/entity-recent-addresses";
 import { setNonImportedAccounts } from "@ledgerhq/live-wallet/accounts";
 import {
@@ -82,7 +82,7 @@ async function save(
   dispatch(walletSyncUpdate({ data, version }));
   if (newLocalState) {
     dispatch(setNonImportedAccounts(newLocalState.accounts.nonImportedAccountInfos));
-    dispatch(setAccountNames(newLocalState.accountNames));
+    dispatch(bulkSetAccountNames(newLocalState.accountNames));
     dispatch(updateRecentAddresses(newLocalState.recentAddresses));
     dispatch(replaceAccounts(newLocalState.accounts.list));
   }

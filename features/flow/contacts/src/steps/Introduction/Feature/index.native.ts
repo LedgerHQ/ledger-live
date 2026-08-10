@@ -1,2 +1,2 @@
-export { ContactsFeatureIntroductionContent } from "./ContactsFeatureIntroductionContent.native";
-export type { ContactsFeatureIntroductionContentProps } from "./types";
+export * from "./ContactsFeatureIntroductionContent.native";
+export * from "./types";

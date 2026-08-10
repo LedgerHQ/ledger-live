@@ -20,7 +20,6 @@ import {
   resolveContactsLedgerSyncIntroductionOpen,
   useAddAddressCurrencySelectionViewModel,
   useAddAddressFlowViewModel,
-  useContacts,
   useContactsFeatureIntroductionState,
   useContactsMeContact,
   type AddAddressContact,
@@ -32,6 +31,7 @@ import {
   type ContactsListViewLabels,
   type ContactsListViewProps,
 } from "@features/flow-contacts";
+import { useContacts } from "@features/platform-contacts";
 import { MY_WALLET_AVATAR_USER_URL } from "LLD/features/MyWallet/components/UserAvatar/constants";
 import { useContactsFeatureIntroductionPreference } from "../../hooks/useContactsFeatureIntroductionPreference";
 import { useContactsCurrencySelectionAdapter } from "../../hooks/useContactsCurrencySelectionAdapter";

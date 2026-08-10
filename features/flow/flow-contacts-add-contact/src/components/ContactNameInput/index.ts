@@ -1,1 +1,1 @@
-export { ContactNameInput } from "./ContactNameInput.native";
+export * from "./ContactNameInput.native";

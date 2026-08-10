@@ -328,7 +328,10 @@
       }
     ]
   },
-  "plugins": ["./tools/nx-plugins/project-tags/plugin.js"],
+  "plugins": [
+    "./tools/nx-plugins/project-tags/plugin.js",
+    "./tools/nx-plugins/enforce-package-structure/plugin.js"
+  ],
   "targetDefaults": {
     "build": {
       "dependsOn": ["^build"],

@@ -97,7 +97,7 @@ async function apiFetch<T>(url: string, init: RequestInit): Promise<T> {
   return res.json() as Promise<T>;
 }
 
-function getApi(apiBaseURL: string) {
+export function getCloudSyncApi(apiBaseURL: string) {
   async function fetchData(
     jwt: JWT,
     datatype: string,
@@ -196,5 +196,3 @@ function getApi(apiBaseURL: string) {
 
   return { fetchData, uploadData, deleteData, listenNotifications, fetchStatus };
 }
-
-export default getApi;

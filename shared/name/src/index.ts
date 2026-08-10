@@ -1,1 +1,1 @@
-export { getNameInitial } from "./getNameInitial";
+export * from "./getNameInitial";

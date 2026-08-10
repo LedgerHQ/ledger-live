@@ -1,1 +1,1 @@
-export { ContactAvatar } from "./ContactAvatar.native";
+export * from "./ContactAvatar.native";

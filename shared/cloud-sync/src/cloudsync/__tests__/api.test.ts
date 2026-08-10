@@ -2,10 +2,10 @@ import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 import WebSocket from "ws";
 import { firstValueFrom, toArray } from "rxjs";
-import getApi from "../api";
+import { getCloudSyncApi } from "../api";
 import type { Trustchain } from "../../trustchain-types";
 
-describe("getApi", () => {
+describe("getCloudSyncApi", () => {
   const port = 54035;
   const base = `http://localhost:${port}`;
   const trustchain: Trustchain = {
@@ -46,7 +46,7 @@ describe("getApi", () => {
   beforeAll(() => server.listen());
   afterAll(() => server.close());
 
-  const api = getApi(base);
+  const api = getCloudSyncApi(base);
 
   it("fetchData without version returns distant payload", async () => {
     const response = await api.fetchData(jwt, "live", undefined, trustchain);
@@ -134,7 +134,7 @@ describe("getApi", () => {
   it("listenNotifications handles ping, jwt refresh, and version notifications", async () => {
     server.close();
     const { server: wsServer, port: wsPort, close: closeWsServer } = createWsServer();
-    const wsApi = getApi(`http://localhost:${wsPort}`);
+    const wsApi = getCloudSyncApi(`http://localhost:${wsPort}`);
     const receiveTunnel = makeTunnel<string>();
     const clientTunnel = makeTunnel<WebSocket>();
     const warnSpy = jest.spyOn(console, "warn").mockImplementation(() => {});
@@ -172,7 +172,7 @@ describe("getApi", () => {
   it("listenNotifications propagates jwt refresh failures", async () => {
     server.close();
     const { server: wsServer, port: wsPort, close: closeWsServer } = createWsServer();
-    const wsApi = getApi(`http://localhost:${wsPort}`);
+    const wsApi = getCloudSyncApi(`http://localhost:${wsPort}`);
 
     wsServer.on("connection", () => {});
 

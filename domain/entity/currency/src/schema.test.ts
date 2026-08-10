@@ -1,4 +1,4 @@
-import { CryptoOrTokenCurrencySchema, CurrencySchema } from "./index";
+import { CryptoOrTokenCurrencySchema, CurrencySchema } from "./schema";
 import { mockCryptoCurrency } from "@domain/entity-currency-crypto/schema.mock";
 import { mockTokenCurrency } from "@domain/entity-currency-token/schema.mock";
 import { mockFiatCurrency } from "@domain/entity-currency-fiat/schema.mock";
