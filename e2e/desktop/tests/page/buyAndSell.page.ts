@@ -72,7 +72,7 @@ export class BuyAndSellPage extends WebViewAppPage {
 
   @step("Expect Buy / Sell screen to be visible")
   async verifyBuySellScreenIsVisible() {
-    await this.verifyElementIsVisible(this.navigationTabs);
+    await this.waitForWebviewReady(this.navigationTabs);
   }
 
   @step("Expect $0 tab to be selected")
@@ -98,7 +98,7 @@ export class BuyAndSellPage extends WebViewAppPage {
 
   @step("Choose crypto asset if not selected")
   async chooseAssetIfNotSelected(account: AccountType) {
-    await this.waitForCryptoSelectorReady();
+    await this.waitForWebviewReady(this.cryptoCurrencySelector);
     if (await this.isCorrectAssetAlreadySelected(account)) return;
     await this.clickElement(this.cryptoCurrencySelector);
     await this.selectAssetInDrawer(account);
@@ -106,24 +106,28 @@ export class BuyAndSellPage extends WebViewAppPage {
 
   /**
    * Workaround: PTX Buy/Sell web app can remain stuck loading; reload the webview and retry.
-   * Mirrors the recovery used in borrow.page.ts.
+   * Mirrors the recovery used in borrow.page.ts. Used to guard every entry point that lands
+   * on the Buy/Sell webview, not just the crypto selector step.
    */
   @step("Wait for the Buy/Sell web app to finish loading")
-  private async waitForCryptoSelectorReady() {
+  private async waitForWebviewReady(testId: string) {
     const readyTimeout = 30_000;
     const maxReloads = 2;
-    const webview = await this.getWebView();
-    const selector = webview.getByTestId(this.cryptoCurrencySelector);
 
     for (let attempt = 0; ; attempt++) {
+      // Re-fetch the webview on every attempt: it can be torn down and recreated
+      // while we wait, and reloading a stale handle throws
+      // "Target page, context or browser has been closed".
+      const webview = await this.getWebView();
+      const selector = webview.getByTestId(testId);
       try {
         await expect(selector).toBeVisible({ timeout: readyTimeout });
         return;
       } catch (error) {
         if (attempt >= maxReloads) {
           throw new Error(
-            `Buy/Sell web app did not render the crypto selector "${this.cryptoCurrencySelector}" ` +
-              `after ${maxReloads + 1} attempts — webview stuck loading.`,
+            `Buy/Sell web app did not render "${testId}" after ${maxReloads + 1} attempts — ` +
+              `webview stuck loading.`,
             { cause: error },
           );
         }
