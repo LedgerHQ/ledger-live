@@ -19,6 +19,8 @@
   "types": "lib/index.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
+    "@domain/api-aggregated-assets": "workspace:*",
+    "@domain/entity-aggregated-asset": "workspace:*",
     "@domain/entity-currency": "workspace:*",
     "@domain/entity-currency-crypto": "workspace:*",
     "@domain/entity-currency-token": "workspace:*",

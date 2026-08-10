@@ -5792,6 +5792,12 @@ importers:
 
   libs/asset-aggregation:
     dependencies:
+      '@domain/api-aggregated-assets':
+        specifier: workspace:*
+        version: link:../../domain/api/aggregated-assets
+      '@domain/entity-aggregated-asset':
+        specifier: workspace:*
+        version: link:../../domain/entity/aggregated-asset
       '@domain/entity-currency':
         specifier: workspace:*
         version: link:../../domain/entity/currency
