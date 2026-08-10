@@ -21,6 +21,9 @@ import {
   withApi,
   destroyAllRpcProviders,
   parseERC20TransfersFromLogs,
+  SYSTEM_ADDRESS,
+  WETH_DEPOSIT_TOPIC,
+  ERC20_MINT_TOPIC,
 } from "./rpc.common";
 
 const nodeApi = createNodeApi({
@@ -410,6 +413,83 @@ describe("EVM Family", () => {
 
       it("should handle empty logs array", () => {
         expect(parseERC20TransfersFromLogs([])).toEqual([]);
+      });
+
+      describe("EIP-7708 SYSTEM_ADDRESS logs", () => {
+        // Shaped exactly like an ERC20 Transfer; only the emitter differs
+        const makeSystemTransferLog = (address: string) => ({
+          address,
+          topics: [
+            TRANSFER_TOPIC,
+            "0x000000000000000000000000534eef6db44fbeb71047ee3eb4cb16e572862af6",
+            "0x000000000000000000000000970402b253733a1f6f4f3cd1d07420006be2882d",
+          ],
+          data: "0x0000000000000000000000000000000000000000000000000000000000000001",
+        });
+
+        it("should skip Transfer-shaped logs emitted by SYSTEM_ADDRESS", () => {
+          expect(parseERC20TransfersFromLogs([makeSystemTransferLog(SYSTEM_ADDRESS)])).toEqual([]);
+        });
+
+        it("should skip SYSTEM_ADDRESS logs whatever the case of the emitter", () => {
+          expect(
+            parseERC20TransfersFromLogs([
+              makeSystemTransferLog("0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfE"),
+            ]),
+          ).toEqual([]);
+        });
+
+        it("should skip every log from SYSTEM_ADDRESS, not only Transfer-shaped ones", () => {
+          const logs = [
+            {
+              address: SYSTEM_ADDRESS,
+              topics: [
+                WETH_DEPOSIT_TOPIC,
+                "0x000000000000000000000000970402b253733a1f6f4f3cd1d07420006be2882d",
+              ],
+              data: "0x0000000000000000000000000000000000000000000000000000000000000001",
+            },
+            {
+              address: SYSTEM_ADDRESS,
+              topics: [
+                ERC20_MINT_TOPIC,
+                "0x000000000000000000000000970402b253733a1f6f4f3cd1d07420006be2882d",
+              ],
+              data: "0x0000000000000000000000000000000000000000000000000000000000000002",
+            },
+          ];
+
+          expect(parseERC20TransfersFromLogs(logs)).toEqual([]);
+        });
+
+        it("should still parse a genuine ERC20 Transfer sitting next to a system log", () => {
+          const logs = [
+            makeSystemTransferLog(SYSTEM_ADDRESS),
+            {
+              address: "0xabf26902fd7b624e0db40d31171ea9dddf078351",
+              topics: [
+                TRANSFER_TOPIC,
+                "0x000000000000000000000000534eef6db44fbeb71047ee3eb4cb16e572862af6",
+                "0x000000000000000000000000970402b253733a1f6f4f3cd1d07420006be2882d",
+              ],
+              data: "0x0000000000000000000000000000000000000000000000000000000000000003",
+            },
+          ];
+
+          const result = parseERC20TransfersFromLogs(logs);
+
+          expect(result).toEqual([
+            {
+              asset: {
+                type: "erc20",
+                assetReference: "0xaBf26902Fd7B624e0db40D31171eA9ddDf078351",
+              },
+              from: "0x534eeF6Db44FBeB71047EE3eb4CB16E572862aF6",
+              to: "0x970402B253733A1f6F4f3cd1d07420006be2882D",
+              value: "3",
+            },
+          ]);
+        });
       });
 
       it("should filter out logs with wrong number of topics", () => {
