@@ -1,14 +1,27 @@
 import { renderHook } from "@testing-library/react";
-import { BlockingStateType } from "@ledgerhq/live-dmk-shared";
+import { BlockingStateType, DeviceIntentTrackingProvider } from "@ledgerhq/live-dmk-shared";
+import React from "react";
 import { useInitializerActions } from "../../hooks/useInitializerActions";
+import { initializerDevice } from "../../testUtils";
+import { CONNECT_APP_BUTTON, trackConnectAppButtonClicked } from "../../../utils/trackDeviceIntent";
 import { useDeviceOutOfStorageSpaceViewModel } from "./useDeviceOutOfStorageSpaceViewModel";
 
 jest.mock("../../hooks/useInitializerActions", () => ({
   useInitializerActions: jest.fn(),
 }));
+jest.mock("../../../utils/trackDeviceIntent", () => ({
+  ...jest.requireActual("../../../utils/trackDeviceIntent"),
+  trackConnectAppButtonClicked: jest.fn(),
+}));
 
 const mockedUseInitializerActions = jest.mocked(useInitializerActions);
+const mockedTrackConnectAppButtonClicked = jest.mocked(trackConnectAppButtonClicked);
 const openMyLedger = jest.fn();
+const wrapper = ({ children }: React.PropsWithChildren) => (
+  <DeviceIntentTrackingProvider value={{ sourceFlow: "my_ledger" }}>
+    {children}
+  </DeviceIntentTrackingProvider>
+);
 
 describe("useDeviceOutOfStorageSpaceViewModel", () => {
   beforeEach(() => {
@@ -22,13 +35,16 @@ describe("useDeviceOutOfStorageSpaceViewModel", () => {
   });
 
   const renderViewModel = () =>
-    renderHook(() =>
-      useDeviceOutOfStorageSpaceViewModel({
-        state: {
-          type: BlockingStateType.DeviceOutOfStorageSpace,
-          appNames: ["Ethereum", "Bitcoin"],
-        },
-      }),
+    renderHook(
+      () =>
+        useDeviceOutOfStorageSpaceViewModel({
+          state: {
+            type: BlockingStateType.DeviceOutOfStorageSpace,
+            appNames: ["Ethereum", "Bitcoin"],
+          },
+          device: initializerDevice,
+        }),
+      { wrapper },
     );
 
   it("GIVEN multiple apps WHEN rendering THEN it displays all apps", () => {
@@ -48,5 +64,11 @@ describe("useDeviceOutOfStorageSpaceViewModel", () => {
 
     // THEN
     expect(openMyLedger).toHaveBeenCalledWith("Ethereum, Bitcoin");
+    expect(mockedTrackConnectAppButtonClicked).toHaveBeenCalledWith({
+      sourceFlow: "my_ledger",
+      modelId: initializerDevice.modelId,
+      button: CONNECT_APP_BUTTON.ManageApps,
+      extraProperties: {},
+    });
   });
 });

@@ -8897,7 +8897,8 @@
       "transparentBalance": "Transparent balance",
       "transparentBalanceTooltip": "Balance that is visible to the public",
       "privateBalance": "Private balance",
-      "privateBalanceTooltip": "Balance that is hidden from the public"
+      "privateBalanceTooltip": "Balance that is hidden from the public",
+      "privateBalanceWarning": "Private balance excludes Sapling and Orchard shielded funds"
     },
     "shielded": {
       "send": {

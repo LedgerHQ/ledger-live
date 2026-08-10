@@ -1,5 +1,8 @@
 import type { Contact } from "@domain/entity-contact";
-import { identityFormatMeDisplayName, resolveMeContactDisplayName } from "../../../utils";
+import {
+  identityFormatMeDisplayName,
+  resolveMeContactDisplayName,
+} from "@features/platform-contacts";
 import type { ContactDetailLedgerWalletAccountsIntent } from "../types";
 
 export function createContactDetailLedgerWalletAccountsIntent(

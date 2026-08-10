@@ -127,6 +127,7 @@ catalog:
   "@types/bs58": ^4.0.1
   "@types/bs58check": ^2.1.2
   "@types/jest": 30.0.0
+  "@types/lodash": ^4.17.21
   "@typescript-eslint/eslint-plugin": 8.48.1
   "@typescript-eslint/parser": 8.48.1
   typescript: "npm:@typescript/typescript6@^6.0.2"
@@ -156,6 +157,7 @@ catalog:
   expect: 30.2.0
   i18next: 25.7.3
   isomorphic-ws: 5.0.0
+  lodash: 4.17.21
   msw: ^2.7.3
   jest: 30.2.0
   jest-circus: 30.2.0

@@ -1,19 +1,29 @@
 import React from "react";
-import { RetryableStateType } from "@ledgerhq/live-dmk-shared";
+import { DeviceIntentTrackingProvider, RetryableStateType } from "@ledgerhq/live-dmk-shared";
 import { screen } from "@testing-library/react";
 import { render } from "tests/testSetup";
+import { CONNECT_APP_BUTTON, trackConnectAppButtonClicked } from "../../utils/trackDeviceIntent";
 import { initializerDevice } from "../testUtils";
 import { RetryableDeviceLockedState } from "./RetryableDeviceLockedState";
+
+jest.mock("../../utils/trackDeviceIntent", () => ({
+  ...jest.requireActual("../../utils/trackDeviceIntent"),
+  trackConnectAppButtonClicked: jest.fn(),
+}));
+
+const mockedTrackConnectAppButtonClicked = jest.mocked(trackConnectAppButtonClicked);
 
 describe("RetryableDeviceLockedState", () => {
   const renderState = () => {
     const retry = jest.fn();
     const { user } = render(
-      <RetryableDeviceLockedState
-        state={{ type: RetryableStateType.DeviceLocked, retry }}
-        device={initializerDevice}
-        onCancel={jest.fn()}
-      />,
+      <DeviceIntentTrackingProvider value={{ sourceFlow: "my_ledger" }}>
+        <RetryableDeviceLockedState
+          state={{ type: RetryableStateType.DeviceLocked, retry }}
+          device={initializerDevice}
+          onCancel={jest.fn()}
+        />
+      </DeviceIntentTrackingProvider>,
     );
     return { user, retry };
   };
@@ -35,5 +45,11 @@ describe("RetryableDeviceLockedState", () => {
 
     // THEN
     expect(retry).toHaveBeenCalledTimes(1);
+    expect(mockedTrackConnectAppButtonClicked).toHaveBeenCalledWith({
+      sourceFlow: "my_ledger",
+      modelId: initializerDevice.modelId,
+      button: CONNECT_APP_BUTTON.Retry,
+      extraProperties: {},
+    });
   });
 });

@@ -1,4 +1,4 @@
-import type { AssetsData } from "../../dada-client/entities";
+import type { AssetsData } from "@domain/api-aggregated-assets";
 import type { AssetData } from "./type";
 
 type BuildAssetsSortedOptions = Readonly<{

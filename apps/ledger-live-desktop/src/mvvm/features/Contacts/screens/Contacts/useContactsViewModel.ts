@@ -29,7 +29,7 @@ import {
   type ContactAddressDetailDialogProps,
   type ContactsLedgerSyncStatus,
   type ContactsListViewLabels,
-  type ContactsListViewProps,
+  type ContactsViewProps,
 } from "@features/flow-contacts";
 import { useContacts } from "@features/platform-contacts";
 import { MY_WALLET_AVATAR_USER_URL } from "LLD/features/MyWallet/components/UserAvatar/constants";
@@ -45,7 +45,7 @@ import type {
   ContactsAddAddressReviewLabels,
 } from "./components/ContactsAddAddressFlowDialog";
 
-export type ContactsPageViewModel = Omit<ContactsListViewProps, "onAddContact"> &
+export type ContactsPageViewModel = Omit<ContactsViewProps, "onAddContact"> &
   Readonly<{
     addAddressFlowState: AddAddressFlowState;
     addAddressFlowDialog: ContactsAddAddressFlowDialogProps;

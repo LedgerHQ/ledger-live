@@ -4,15 +4,18 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import { track } from "~/renderer/analytics/segment";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 import {
+  CONNECT_APP_BUTTON,
   CONNECT_DEVICE_BUTTON,
   DEVICE_ACTION_BUTTON,
   getConnectedDeviceTrackingProperties,
   getTrackingSubError,
   getTrackingTransport,
+  PAGE_CONNECT_APP,
   PAGE_CONNECT_DEVICE,
   PAGE_DEVICE_ACTION,
   setIsInTerminalConnectDeviceError,
   trackAppReady,
+  trackConnectAppButtonClicked,
   trackConnectDeviceButtonClicked,
   trackDeviceActionButtonClicked,
   trackDeviceConnected,
@@ -134,6 +137,14 @@ describe("trackDeviceIntent — Layer A tracking helpers", () => {
     });
 
     it.each([
+      PAGE_CONNECT_APP.DeviceNotOnboarded,
+      PAGE_CONNECT_APP.UnsupportedFirmware,
+      PAGE_CONNECT_APP.UnsupportedApplication,
+      PAGE_CONNECT_APP.UnsupportedFeature,
+      PAGE_CONNECT_APP.DeviceDeprecatedBlocking,
+      PAGE_CONNECT_APP.WrongDeviceForAccount,
+      PAGE_CONNECT_APP.OutOfStorage,
+      PAGE_CONNECT_APP.Error,
       PAGE_DEVICE_ACTION.Disconnected,
       PAGE_DEVICE_ACTION.UnknownIntentError,
       PAGE_DEVICE_ACTION.InvalidState,
@@ -163,8 +174,31 @@ describe("trackDeviceIntent — Layer A tracking helpers", () => {
       });
     });
 
+    it("GIVEN a terminal Connect Device discovery error WHEN called THEN it tracks deviceflow_failed", () => {
+      currentRouteNameRef.current = PAGE_CONNECT_DEVICE.DiscoveryError;
+      setIsInTerminalConnectDeviceError(true);
+
+      trackDeviceflowCanceled({ sourceFlow: "send", extraProperties: {} });
+
+      expect(mockedTrack).toHaveBeenCalledWith("deviceflow_failed", {
+        ...layerABaseProperties,
+        sourceFlow: "send",
+      });
+    });
+
     it("GIVEN a retryable Connect Device discovery error WHEN called THEN it tracks deviceflow_aborted", () => {
       currentRouteNameRef.current = PAGE_CONNECT_DEVICE.DiscoveryError;
+
+      trackDeviceflowCanceled({ sourceFlow: "send", extraProperties: {} });
+
+      expect(mockedTrack).toHaveBeenCalledWith("deviceflow_aborted", {
+        ...layerABaseProperties,
+        sourceFlow: "send",
+      });
+    });
+
+    it("GIVEN a retryable Connect Device connection error WHEN called THEN it tracks deviceflow_aborted", () => {
+      currentRouteNameRef.current = PAGE_CONNECT_DEVICE.ConnectionError;
 
       trackDeviceflowCanceled({ sourceFlow: "send", extraProperties: {} });
 
@@ -185,6 +219,31 @@ describe("trackDeviceIntent — Layer A tracking helpers", () => {
         Connecting: "Connect Device - Connecting",
         DiscoveryError: "Connect Device - Discovery Error",
         ConnectionError: "Connect Device - Connection Error",
+      });
+    });
+  });
+
+  describe("PAGE_CONNECT_APP", () => {
+    it("GIVEN Connect App pages WHEN inspecting constants THEN it exposes stable page names", () => {
+      expect(PAGE_CONNECT_APP).toEqual({
+        Loading: "Connect App - Loading",
+        InstallingApp: "Connect App - Installing App",
+        UnlockDevice: "Connect App - Unlock Device",
+        AllowSecureConnection: "Connect App - Allow Secure Connection",
+        ConfirmOpenApp: "Connect App - Confirm Open App",
+        DeviceDeprecatedWarning: "Connect App - Device Deprecated Warning",
+        OutdatedAppWarning: "Connect App - Outdated App Warning",
+        DeviceLocked: "Connect App - Device Locked",
+        UserRefused: "Connect App - User Refused",
+        DeviceBusy: "Connect App - Device Busy",
+        DeviceNotOnboarded: "Connect App - Device Not Onboarded",
+        UnsupportedFirmware: "Connect App - Unsupported Firmware",
+        UnsupportedApplication: "Connect App - Unsupported Application",
+        UnsupportedFeature: "Connect App - Unsupported Feature",
+        DeviceDeprecatedBlocking: "Connect App - Device Deprecated Blocking",
+        WrongDeviceForAccount: "Connect App - Wrong Device For Account",
+        OutOfStorage: "Connect App - Out Of Storage",
+        Error: "Connect App - Error",
       });
     });
   });
@@ -286,6 +345,24 @@ describe("trackDeviceIntent — Layer A tracking helpers", () => {
         ...layerABaseProperties,
         sourceFlow: "swap",
         button: CONNECT_DEVICE_BUTTON.Retry,
+      });
+    });
+  });
+
+  describe("trackConnectAppButtonClicked", () => {
+    it("GIVEN sourceFlow modelId and button WHEN called THEN it tracks button_clicked", () => {
+      trackConnectAppButtonClicked({
+        sourceFlow: "swap",
+        modelId: DeviceModelId.stax,
+        button: CONNECT_APP_BUTTON.Retry,
+        extraProperties: {},
+      });
+
+      expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
+        ...layerABaseProperties,
+        sourceFlow: "swap",
+        modelId: DeviceModelId.stax,
+        button: CONNECT_APP_BUTTON.Retry,
       });
     });
   });
@@ -408,6 +485,16 @@ describe("trackDeviceIntent — Layer A tracking helpers", () => {
             button: DEVICE_ACTION_BUTTON.Retry,
             modelId: DeviceModelId.stax,
             transport: "ble",
+            extraProperties,
+          }),
+      },
+      {
+        name: "trackConnectAppButtonClicked",
+        track: () =>
+          trackConnectAppButtonClicked({
+            sourceFlow: "wallet_api",
+            modelId: DeviceModelId.stax,
+            button: CONNECT_APP_BUTTON.Retry,
             extraProperties,
           }),
       },

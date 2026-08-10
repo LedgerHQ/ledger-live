@@ -1,7 +1,7 @@
 import React from "react";
 import { Button } from "@ledgerhq/lumen-ui-react";
 import { Plus } from "@ledgerhq/lumen-ui-react/symbols";
-import { resolveMeContactDisplayName } from "../../../utils";
+import { resolveMeContactDisplayName } from "@features/platform-contacts";
 import type { ContactDetailViewProps } from "../types";
 import { ContactDetailAvatar } from "./ContactDetailAvatar.web";
 
