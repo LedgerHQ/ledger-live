@@ -3,13 +3,11 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import type { ContactId } from "@domain/entity-contact";
 import { mockMeContact, mockPopulatedContacts } from "@domain/entity-contact/schema.mock";
 import type { ContactsPageViewModel } from "./types";
-import type { ContactsLedgerSyncStatus } from "../../ledgerSync";
 import {
   createContactsSearchViewModel,
   createEmptyContactsListViewModel,
   createPopulatedContactsListViewModel,
 } from "./model/viewModel";
-import { createClosedContactsFeatureIntroduction } from "../Introduction";
 import { ContactsListView } from "./ContactsListView.web";
 
 const labels = {
@@ -23,7 +21,7 @@ const labels = {
 
 type RenderContactsPageOptions = Readonly<{
   viewModel?: ContactsPageViewModel;
-  ledgerSyncStatus?: ContactsLedgerSyncStatus;
+  isLedgerSyncChecking?: boolean;
   isFeatureIntroductionOpen?: boolean;
   onCompleteFeatureIntroduction?: () => void;
   onDeferFeatureIntroduction?: () => void;
@@ -38,7 +36,7 @@ type RenderContactsPageOptions = Readonly<{
 
 function renderContactsPage({
   viewModel = createEmptyContactsListViewModel(mockMeContact()),
-  ledgerSyncStatus = "ready",
+  isLedgerSyncChecking = false,
   isFeatureIntroductionOpen = false,
   onCompleteFeatureIntroduction = jest.fn(),
   onDeferFeatureIntroduction = jest.fn(),
@@ -60,35 +58,27 @@ function renderContactsPage({
       onAddContact={onAddContact}
       searchQuery={searchQuery}
       onSearchInputChange={onSearchInputChange}
-      ledgerSyncStatus={ledgerSyncStatus}
+      isLedgerSyncChecking={isLedgerSyncChecking}
       featureIntroduction={
-        isFeatureIntroductionOpen
-          ? {
-              isOpen: true,
-              title: "Introducing Contacts",
-              description:
-                "Your address book for crypto — save the wallets you send to, all in one place.",
-              highlights: [
-                {
-                  title: "Save addresses once",
-                  description: "Keep the addresses you send to in one place.",
-                  icon: "Contact",
-                },
-              ],
-              primaryActionLabel: "Try contacts",
-              secondaryActionLabel: "Maybe later",
-              onComplete: onCompleteFeatureIntroduction,
-              onDefer: onDeferFeatureIntroduction,
-            }
-          : createClosedContactsFeatureIntroduction()
+        isFeatureIntroductionOpen ? (
+          <div>
+            <p>Introducing Contacts</p>
+            <button onClick={onCompleteFeatureIntroduction}>Try contacts</button>
+            <button onClick={onDeferFeatureIntroduction}>Maybe later</button>
+          </div>
+        ) : undefined
       }
-      ledgerSyncIntroduction={{
-        isOpen: isIntroductionOpen,
-        description:
-          "Your contacts are end-to-end encrypted with your Ledger and synced across your devices, only you can unlock them.",
-        dismissLabel: "Got it",
-        onDismiss: onDismissIntroduction,
-      }}
+      ledgerSyncIntroduction={
+        isIntroductionOpen ? (
+          <div>
+            <p>
+              Your contacts are end-to-end encrypted with your Ledger and synced across your
+              devices, only you can unlock them.
+            </p>
+            <button onClick={onDismissIntroduction}>Got it</button>
+          </div>
+        ) : undefined
+      }
     />,
   );
 
@@ -167,7 +157,7 @@ describe("ContactsPage", () => {
   });
 
   it("keeps the Contacts page visible while Ledger Sync is checking", () => {
-    renderContactsPage({ ledgerSyncStatus: "checking" });
+    renderContactsPage({ isLedgerSyncChecking: true });
 
     expect(screen.getByTestId("contacts-page-layout")).toBeVisible();
     expect(screen.getByTestId("contacts-list")).toBeVisible();
@@ -190,7 +180,7 @@ describe("ContactsPage", () => {
       onCompleteFeatureIntroduction,
     });
 
-    fireEvent.click(screen.getByTestId("contacts-feature-introduction-primary"));
+    fireEvent.click(screen.getByText("Try contacts"));
 
     expect(onCompleteFeatureIntroduction).toHaveBeenCalledTimes(1);
   });
@@ -206,7 +196,7 @@ describe("ContactsPage", () => {
     expect(screen.getByTestId("contacts-list")).toBeVisible();
     expect(screen.getByText("Introducing Contacts")).toBeVisible();
 
-    fireEvent.click(screen.getByTestId("contacts-feature-introduction-secondary"));
+    fireEvent.click(screen.getByText("Maybe later"));
 
     expect(onDeferFeatureIntroduction).toHaveBeenCalledTimes(1);
   });
@@ -215,7 +205,6 @@ describe("ContactsPage", () => {
     const onDismissIntroduction = jest.fn();
 
     renderContactsPage({
-      ledgerSyncStatus: "inactive",
       isIntroductionOpen: true,
       onDismissIntroduction,
     });
@@ -258,14 +247,7 @@ describe("ContactsPage", () => {
         onAddContact={jest.fn()}
         searchQuery="ben"
         onSearchInputChange={jest.fn()}
-        ledgerSyncStatus="ready"
-        featureIntroduction={createClosedContactsFeatureIntroduction()}
-        ledgerSyncIntroduction={{
-          isOpen: false,
-          description: "",
-          dismissLabel: "",
-          onDismiss: jest.fn(),
-        }}
+        isLedgerSyncChecking={false}
       />,
     );
 
@@ -290,14 +272,7 @@ describe("ContactsPage", () => {
         onAddContact={jest.fn()}
         searchQuery="unknown"
         onSearchInputChange={jest.fn()}
-        ledgerSyncStatus="ready"
-        featureIntroduction={createClosedContactsFeatureIntroduction()}
-        ledgerSyncIntroduction={{
-          isOpen: false,
-          description: "",
-          dismissLabel: "",
-          onDismiss: jest.fn(),
-        }}
+        isLedgerSyncChecking={false}
       />,
     );
 

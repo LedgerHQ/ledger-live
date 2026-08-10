@@ -6,7 +6,7 @@ import {
   ListItemLeading,
   ListItemTitle,
 } from "@ledgerhq/lumen-ui-rnative";
-import { ContactAvatar } from "../../../../../components/ContactAvatar/ContactAvatar.native";
+import { ContactAvatar } from "@features/platform-contacts/native";
 import type { ContactsListItem } from "../../../types";
 
 type ContactsSavedContactListItemProps = Readonly<{

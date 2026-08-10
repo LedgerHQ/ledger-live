@@ -1,5 +1,5 @@
 import type { Contact } from "@domain/entity-contact";
-import { DEFAULT_ME_CONTACT_NAME } from "./constants";
+import { DEFAULT_ME_CONTACT_NAME } from "@domain/entity-contact";
 
 export function resolveMeContactDisplayName(
   contact: Contact,

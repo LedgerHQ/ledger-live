@@ -18,13 +18,12 @@ export function ContactsListView({
   meAvatarSrc,
   onOpenContact,
   onAddContact,
-  ledgerSyncStatus,
+  isLedgerSyncChecking,
   searchQuery,
   onSearchQueryChange,
 }: ContactsListViewNativeProps): React.JSX.Element {
   const isPopulated = viewModel.displayMode === "populated";
   const hasNoResults = "status" in viewModel && viewModel.status === "no-results";
-  const isLedgerSyncChecking = ledgerSyncStatus === "checking";
   const me = "me" in viewModel ? viewModel.me : undefined;
   const listRef = useRef<SectionList<ContactsListItem, ContactsListSection> | null>(null);
   const [listHeight, setListHeight] = useState(0);

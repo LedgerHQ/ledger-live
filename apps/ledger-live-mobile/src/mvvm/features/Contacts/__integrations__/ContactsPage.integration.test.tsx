@@ -1,7 +1,7 @@
 import React from "react";
 import { mockContact, mockMeContact } from "@domain/entity-contact/schema.mock";
 import {
-  ContactsListView,
+  ContactsView,
   createClosedContactsFeatureIntroduction,
   createEmptyContactsListViewModel,
   createPopulatedContactsListViewModel,
@@ -17,7 +17,7 @@ function renderContactsPage(
   const onOpenContact = jest.fn();
   const onAddContact = jest.fn();
   const result = render(
-    <ContactsListView
+    <ContactsView
       viewModel={viewModel ?? createEmptyContactsListViewModel(me)}
       labels={{
         title: "Contacts",

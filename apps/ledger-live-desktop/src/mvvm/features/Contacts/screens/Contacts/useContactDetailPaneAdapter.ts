@@ -13,7 +13,7 @@ import {
   type ContactAddressDetailDialogProps,
   type ContactDetailLabels,
   type ContactDetailViewProps,
-  type ContactsListViewProps,
+  type ContactsViewProps,
 } from "@features/flow-contacts";
 import { MY_WALLET_AVATAR_USER_URL } from "LLD/features/MyWallet/components/UserAvatar/constants";
 import { useContactsAddressCurrencyAdapter } from "../../hooks/useContactsAddressCurrencyAdapter";
@@ -27,8 +27,8 @@ export function useContactDetailPaneAdapter(
   addressDetailDialog: ContactAddressDetailDialogProps;
   editDeleteDialogs: ReturnType<typeof useContactDetailEditDeleteAdapter>;
   addressDetailActionsDialogs: ReturnType<typeof useContactAddressDetailActionsAdapter>;
-  onOpenMe: ContactsListViewProps["onOpenMe"];
-  onOpenContact: ContactsListViewProps["onOpenContact"];
+  onOpenMe: ContactsViewProps["onOpenMe"];
+  onOpenContact: ContactsViewProps["onOpenContact"];
 }> {
   const { t } = useTranslation();
   const navigate = useNavigate();

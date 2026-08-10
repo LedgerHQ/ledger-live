@@ -29,6 +29,7 @@
     "@domain/entity-currency-crypto": "workspace:*",
     "@domain/entity-currency-token": "workspace:*",
     "@features/flow-contacts-add-contact": "workspace:^",
+    "@features/flow-contacts-list": "workspace:^",
     "@features/platform-contacts": "workspace:^",
     "@ledgerhq/crypto-icons": "catalog:",
     "@features/platform-feature-flags": "workspace:^",

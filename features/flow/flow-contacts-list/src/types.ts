@@ -1,11 +1,5 @@
-import type { ChangeEvent } from "react";
+import type { ChangeEvent, ReactNode } from "react";
 import type { ContactId } from "@domain/entity-contact";
-import type { ContactDetailViewProps } from "../Detail/types";
-import type {
-  ContactsFeatureIntroduction,
-  ContactsLedgerSyncIntroduction,
-} from "../Introduction/types";
-import type { ContactsLedgerSyncStatus } from "../../ledgerSync";
 
 export type ContactsListItem = Readonly<{
   contactId: ContactId;
@@ -69,16 +63,16 @@ export type ContactsPageSharedProps = Readonly<{
   meAvatarSrc: string;
   onOpenContact: (contactId: ContactId) => void;
   onAddContact: () => void;
-  ledgerSyncStatus: ContactsLedgerSyncStatus;
-  featureIntroduction: ContactsFeatureIntroduction;
-  ledgerSyncIntroduction: ContactsLedgerSyncIntroduction;
+  isLedgerSyncChecking: boolean;
 }>;
 
 export type ContactsListViewProps = ContactsPageSharedProps &
   Readonly<{
     onSearchInputChange: (event: ChangeEvent<HTMLInputElement>) => void;
     onOpenMe: (contactId: ContactId) => void;
-    detail?: ContactDetailViewProps;
+    detail?: ReactNode;
+    featureIntroduction?: ReactNode;
+    ledgerSyncIntroduction?: ReactNode;
   }>;
 
 export type ContactsListViewNativeProps = ContactsPageSharedProps &

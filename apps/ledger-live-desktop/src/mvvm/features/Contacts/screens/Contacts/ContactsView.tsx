@@ -5,11 +5,11 @@ import {
   ContactsDeleteContactDialog,
   ContactsEditSignerDialog,
   ContactsEditSignerMismatchDialog,
-  ContactsListView,
+  ContactsView as ContactsFlowView,
   ContactsRenameAddressDialog,
   ContactsRenameContactDialog,
   type ContactAddressDetailDialogProps,
-  type ContactsListViewProps,
+  type ContactsViewProps as ContactsFlowViewProps,
 } from "@features/flow-contacts";
 import {
   ContactsAddContactDialog,
@@ -22,7 +22,7 @@ import {
 import type { ContactAddressDetailActionsDialogProps } from "./useContactAddressDetailActionsAdapter";
 import type { ContactDetailEditDeleteDialogProps } from "./useContactDetailEditDeleteAdapter";
 
-export type ContactsViewProps = ContactsListViewProps &
+export type ContactsViewProps = ContactsFlowViewProps &
   Readonly<{
     addContactDialog: ContactsAddContactDialogProps;
     addAddressFlowDialog: ContactsAddAddressFlowDialogProps;
@@ -41,7 +41,7 @@ export function ContactsView({
 }: Readonly<ContactsViewProps>) {
   return (
     <>
-      <ContactsListView {...pageProps} />
+      <ContactsFlowView {...pageProps} />
       <ContactsAddContactDialog {...addContactDialog} />
       <ContactAddressDetailDialog {...addressDetailDialog} />
       <ContactsAddAddressFlowDialog {...addAddressFlowDialog} />

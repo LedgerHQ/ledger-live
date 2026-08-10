@@ -4,9 +4,14 @@
   "private": true,
   "description": "Contacts domain selectors for flow packages",
   "main": "src/index.ts",
+  "react-native": "src/index.native.ts",
   "types": "src/index.ts",
   "exports": {
-    ".": "./src/index.ts",
+    ".": {
+      "react-native": "./src/index.native.ts",
+      "default": "./src/index.ts"
+    },
+    "./native": "./src/index.native.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,
@@ -22,15 +27,28 @@
   },
   "peerDependencies": {
     "react": ">=19.0.0",
-    "react-redux": ">=9.0.0"
+    "react-redux": ">=9.0.0",
+    "react-native": ">=0.70.0",
+    "@ledgerhq/lumen-ui-rnative": "catalog:"
+  },
+  "peerDependenciesMeta": {
+    "react-native": {
+      "optional": true
+    },
+    "@ledgerhq/lumen-ui-rnative": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
+    "@testing-library/react-native": "catalog:",
     "jest": "catalog:",
     "react": "catalog:",
     "react-redux": "catalog:",
+    "react-native": "catalog:",
+    "@ledgerhq/lumen-ui-rnative": "catalog:",
     "typescript": "catalog:"
   }
 }
