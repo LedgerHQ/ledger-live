@@ -1,3 +1,4 @@
+import { JsonRpcProvider } from "ethers";
 import { findPositions, getPositions } from "./borrowApi";
 import { closeBorrowPosition, runBorrow, DEFAULT_RPC_URL } from "./borrowFlow";
 import type { OpenLoan } from "./types";
@@ -28,7 +29,53 @@ const isWithdrawReady = (loan: OpenLoan): boolean =>
 const PARTNER_INDEX_POLL_MS = 3_000;
 const PARTNER_INDEX_TIMEOUT_MS = 180_000;
 
+const NONCE_SETTLE_POLL_MS = 2_000;
+const NONCE_SETTLE_TIMEOUT_MS = 120_000;
+
 const cachedBorrowAddresses = new Map<string, string>();
+
+export const peekBorrowAddress = (account: string = DEFAULT_ACCOUNT): string | undefined =>
+  cachedBorrowAddresses.get(account);
+
+export interface AccountNonces {
+  latest: number;
+  pending: number;
+}
+
+export async function readAccountNonces(address: string, rpcUrl?: string): Promise<AccountNonces> {
+  const provider = new JsonRpcProvider(resolveRpc(rpcUrl));
+  try {
+    const [latest, pending] = await Promise.all([
+      provider.getTransactionCount(address, "latest"),
+      provider.getTransactionCount(address, "pending"),
+    ]);
+    return { latest, pending };
+  } finally {
+    provider.destroy();
+  }
+}
+
+export async function waitForChainNonceSettled(options: BorrowSetupOptions = {}): Promise<void> {
+  if (!broadcastEnabled()) return;
+
+  const address = await resolveBorrowAddress(options);
+  const deadline = Date.now() + NONCE_SETTLE_TIMEOUT_MS;
+  let nonces = await readAccountNonces(address, options.rpcUrl);
+
+  while (Date.now() < deadline) {
+    if (nonces.latest === nonces.pending) {
+      console.log(`[borrowSetup] Chain nonce settled at ${nonces.latest} for ${address}`);
+      return;
+    }
+    await new Promise(resolve => setTimeout(resolve, NONCE_SETTLE_POLL_MS));
+    nonces = await readAccountNonces(address, options.rpcUrl);
+  }
+
+  throw new Error(
+    `Account ${address} still has transactions in flight after ${NONCE_SETTLE_TIMEOUT_MS}ms ` +
+      `(latest nonce ${nonces.latest}, pending ${nonces.pending}) — another process is likely using it`,
+  );
+}
 
 const borrowSetupContext = (options: BorrowSetupOptions) => ({
   account: options.account ?? DEFAULT_ACCOUNT,
@@ -54,35 +101,31 @@ async function resolveBorrowAddress(options: BorrowSetupOptions): Promise<string
   return address;
 }
 
-async function waitForPartnerWithdrawReady(address: string): Promise<void> {
+async function waitForPartnerState(
+  address: string,
+  isReady: (loan: OpenLoan) => boolean,
+  expectedState: string,
+): Promise<void> {
   const deadline = Date.now() + PARTNER_INDEX_TIMEOUT_MS;
+  let loans = findPositions(await getPositions(address));
+
   while (Date.now() < deadline) {
-    const loans = findPositions(await getPositions(address));
-    if (loans.some(isWithdrawReady)) {
-      return;
-    }
+    if (loans.some(isReady)) return;
     await new Promise(resolve => setTimeout(resolve, PARTNER_INDEX_POLL_MS));
+    loans = findPositions(await getPositions(address));
   }
-  const loans = findPositions(await getPositions(address));
+
   throw new Error(
-    `Partner Borrow API never indexed withdraw-ready state for ${address} within ${PARTNER_INDEX_TIMEOUT_MS}ms: ${JSON.stringify(loans)}`,
+    `Partner Borrow API never indexed ${expectedState} for ${address} within ` +
+      `${PARTNER_INDEX_TIMEOUT_MS}ms: ${JSON.stringify(loans)}`,
   );
 }
 
-async function waitForPartnerLoanDebt(address: string): Promise<void> {
-  const deadline = Date.now() + PARTNER_INDEX_TIMEOUT_MS;
-  while (Date.now() < deadline) {
-    const loans = findPositions(await getPositions(address));
-    if (loans.some(loan => positive(loan.debtBalance))) {
-      return;
-    }
-    await new Promise(resolve => setTimeout(resolve, PARTNER_INDEX_POLL_MS));
-  }
-  const loans = findPositions(await getPositions(address));
-  throw new Error(
-    `Partner Borrow API never indexed loan debt for ${address} within ${PARTNER_INDEX_TIMEOUT_MS}ms: ${JSON.stringify(loans)}`,
-  );
-}
+const waitForPartnerWithdrawReady = (address: string): Promise<void> =>
+  waitForPartnerState(address, isWithdrawReady, "withdraw-ready state");
+
+const waitForPartnerLoanDebt = (address: string): Promise<void> =>
+  waitForPartnerState(address, loan => positive(loan.debtBalance), "loan debt");
 
 export async function ensureLoanOpen(options: BorrowSetupOptions = {}): Promise<void> {
   if (!broadcastEnabled()) {
@@ -107,6 +150,7 @@ export async function ensureLoanOpen(options: BorrowSetupOptions = {}): Promise<
     throw new TypeError("ensureLoanOpen: missing borrow account address after open setup");
   }
   await waitForPartnerLoanDebt(address);
+  await waitForChainNonceSettled(options);
 }
 
 export async function ensureRepayTestPrecondition(options: BorrowSetupOptions = {}): Promise<void> {
@@ -120,6 +164,7 @@ export async function ensureRepayTestPrecondition(options: BorrowSetupOptions = 
   const loans = findPositions(await getPositions(address));
   if (loans.some(loan => positive(loan.debtBalance))) {
     console.log("[borrowSetup] Active loan with debt — skipping reset+open");
+    await waitForChainNonceSettled(options);
     return;
   }
   await resetLoanState(options);
@@ -150,6 +195,7 @@ export async function ensureLoanRepaidForWithdraw(options: BorrowSetupOptions = 
     );
   }
   await waitForPartnerWithdrawReady(address);
+  await waitForChainNonceSettled(options);
 }
 
 export async function ensureWithdrawReadyForUi(options: BorrowSetupOptions = {}): Promise<void> {
@@ -165,6 +211,7 @@ export async function ensureWithdrawReadyForUi(options: BorrowSetupOptions = {})
 
   if (loans.some(isWithdrawReady)) {
     console.log("[borrowSetup] Withdraw-ready position exists — skipping API setup");
+    await waitForChainNonceSettled(options);
     return;
   }
 
@@ -179,6 +226,7 @@ export async function ensureWithdrawReadyForUi(options: BorrowSetupOptions = {})
       requireAction: true,
     });
     await waitForPartnerWithdrawReady(address);
+    await waitForChainNonceSettled(options);
     return;
   }
 
@@ -196,4 +244,5 @@ export async function resetLoanState(options: BorrowSetupOptions = {}): Promise<
     all: true,
     nanoAppCatalogPath: options.nanoAppCatalogPath,
   });
+  await waitForChainNonceSettled(options);
 }

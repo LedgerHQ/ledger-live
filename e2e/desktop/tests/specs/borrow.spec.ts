@@ -17,7 +17,7 @@ import {
 } from "tests/utils/featureFlagUtils";
 import { buildTags } from "tests/utils/tagsUtils";
 
-test.describe.configure({ mode: "serial" });
+test.describe.configure({ mode: "default" });
 
 const coldStartAccount = Account.ETH_1;
 const openLoanAccount = Account.ETH_4;
@@ -46,7 +46,17 @@ const borrowOnChainFixture = {
   },
 };
 
-const useBorrowOnChainFixture = (): void => {
+const useBorrowOnChain = (flowName: string): void => {
+  test.skip(
+    process.env.DISABLE_TRANSACTION_BROADCAST !== "0",
+    `${flowName} requires broadcast to be enabled — run on manual Desktop E2E with enable_broadcast`,
+  );
+
+  test.skip(
+    process.env.E2E_PRIMARY_DEVICE === "false",
+    `${flowName} runs on the primary device leg only — parallel legs share ${openLoanAccount.accountName} and would collide on its nonce`,
+  );
+
   test.use({
     ...borrowOnChainFixture,
     cliCommandsOnApp: [
@@ -94,12 +104,7 @@ test.describe("Borrow", () => {
 });
 
 test.describe("Borrow", () => {
-  test.skip(
-    process.env.DISABLE_TRANSACTION_BROADCAST !== "0",
-    "Open loan flow requires broadcast to be enabled — run on manual Desktop E2E with enable_broadcast",
-  );
-
-  useBorrowOnChainFixture();
+  useBorrowOnChain("Open loan flow");
 
   test.beforeAll(async () => {
     test.setTimeout(BORROW_HOOK_TIMEOUT_MS);
@@ -162,12 +167,7 @@ test.describe("Borrow", () => {
 });
 
 test.describe("Borrow", () => {
-  test.skip(
-    process.env.DISABLE_TRANSACTION_BROADCAST !== "0",
-    "Repay/withdraw flows require broadcast to be enabled — run on manual Desktop E2E with enable_broadcast",
-  );
-
-  useBorrowOnChainFixture();
+  useBorrowOnChain("Repay/withdraw flows");
 
   test.beforeAll(async () => {
     test.setTimeout(BORROW_HOOK_TIMEOUT_MS * 2);
