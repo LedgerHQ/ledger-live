@@ -15,6 +15,7 @@ import {
 } from "./runCli";
 import type { TokenApprovalOpts } from "./runCli";
 import { sleep } from "./index";
+import { setEnv } from "@shared/env";
 import { runWithCrossProcessLock } from "./crossProcessLock";
 import { getCcdAccountAddress } from "./families/concordium";
 import { approveToken } from "./families/evm";
@@ -397,6 +398,18 @@ async function runTokenApprovalWithRetry(opts: TokenApprovalOpts): Promise<strin
     // holding the flag set across the awaits below could leak it into unrelated
     // work in the same worker process. The finally is kept as a safety net.
     setDisableTransactionBroadcastEnv(original);
+
+    // The spawned CLI drives the Speculos instance at process.env.SPECULOS_API_PORT
+    // (apps/cli live-common-setup reads it at startup, snapshotted at spawn). The
+    // device driver (approveToken → waitFor / pressUntilTextFound via getEnv) reads
+    // the live-common env, which can drift to a *different* freshly-launched instance
+    // — so the driver ends up polling an idle "Ethereum app is ready" dashboard while
+    // the CLI presents the review on another port (observed: disjoint port sets, the
+    // review screenshot on a port the driver never polled). Re-pin the driver's env to
+    // the exact port the CLI just inherited so both watch the same instance.
+    const cliSpeculosPort = process.env.SPECULOS_API_PORT;
+    if (cliSpeculosPort) setEnv("SPECULOS_API_PORT", Number(cliSpeculosPort));
+
     const cliSettled = result.catch(() => undefined);
 
     try {
