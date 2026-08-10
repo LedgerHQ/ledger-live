@@ -2,4 +2,4 @@
 "ledger-live-desktop": minor
 ---
 
-Add private warning message for Ironwood only funds
+Add a warning on Zcash accounts that the private balance excludes Sapling and Orchard shielded funds.

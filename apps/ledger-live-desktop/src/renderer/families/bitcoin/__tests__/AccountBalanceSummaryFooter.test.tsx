@@ -24,6 +24,8 @@ const mockedSyncStateUpdater = jest.mocked(syncStateUpdater);
 
 const origToLocaleString = global.Date.prototype.toLocaleString;
 
+const PRIVATE_BALANCE_WARNING = "Private balance excludes Sapling and Orchard shielded funds";
+
 const makeUtxo = (value: number) => ({
   hash: "",
   outputIndex: 0,
@@ -64,6 +66,29 @@ describe("Bitcoin Account Balance Summary Footer", () => {
       expect(screen.getByText("Transparent balance")).toBeInTheDocument();
       expect(screen.getByText("Private balance")).toBeInTheDocument();
       expect(screen.getByTestId("show-private-balance-button")).toBeInTheDocument();
+      expect(screen.getByText(PRIVATE_BALANCE_WARNING)).toBeVisible();
+    });
+  });
+
+  it("should not render the private balance warning when zcashShielded is disabled", async () => {
+    mockedUseAccountUnit.mockReturnValue({
+      code: "ZEC",
+      name: "Zcash",
+      magnitude: 8,
+    });
+
+    render(
+      <AccountBalanceSummaryFooter
+        account={{ ...account, currency: { id: "zcash" } as CryptoCurrency }}
+      />,
+      {
+        initialState: withFlagOverrides({ zcashShielded: { enabled: false } }),
+      },
+    );
+
+    await waitFor(() => {
+      expect(screen.queryByText(PRIVATE_BALANCE_WARNING)).not.toBeInTheDocument();
+      expect(screen.queryByText("Private balance")).not.toBeInTheDocument();
     });
   });
 
@@ -206,6 +231,7 @@ describe("Bitcoin Account Balance Summary Footer", () => {
       expect(screen.queryByText("Transparent balance")).not.toBeInTheDocument();
       expect(screen.queryByText("Private balance")).not.toBeInTheDocument();
       expect(screen.queryByTestId("show-private-balance-button")).not.toBeInTheDocument();
+      expect(screen.queryByText(PRIVATE_BALANCE_WARNING)).not.toBeInTheDocument();
     });
   });
 
