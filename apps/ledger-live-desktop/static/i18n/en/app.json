@@ -8938,6 +8938,12 @@
             "message": "Balance may be slightly out of date",
             "cta": "Sync balance"
           }
+        },
+        "selfTransfer": {
+          "toPrivate": "Self transfer to private balance",
+          "toPublic": "Self transfer to public balance",
+          "unavailable": "Your private address is not available yet. Export your view key to enable this.",
+          "privacyWarning": "This links your shielded funds to your account's public address, which anyone can see. Sending to an external private address keeps them unlinked."
         }
       },
       "state": {

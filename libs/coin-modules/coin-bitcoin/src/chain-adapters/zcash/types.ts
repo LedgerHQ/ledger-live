@@ -70,6 +70,7 @@ export type ZcashPrivateInfo = {
   estimatedTimeRemaining: SyncEstimatedTime;
   ufvk: string | null;
   birthday: string | null;
+  shieldedAddress: string | null;
   lastSyncTimestamp: number | null;
   lastProcessedBlock: number | null;
   transactions: ShieldedTransaction[];
@@ -84,6 +85,7 @@ export type ZcashPrivateInfoRaw = {
   estimatedTimeRemaining: SyncEstimatedTime;
   ufvk: string | null;
   birthday: string | null;
+  shieldedAddress: string | null;
   lastSyncTimestamp: number | null;
   lastProcessedBlock: number | null;
   transactions: ShieldedTransactionRaw[];
