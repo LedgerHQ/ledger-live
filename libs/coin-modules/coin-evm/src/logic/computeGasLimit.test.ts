@@ -85,6 +85,20 @@ describe("computeGasLimit", () => {
         },
       );
 
+      it.each([1, 2, 3])(
+        "should never go below intrinsic gas when gasPerToken is misconfigured to %i",
+        gasPerToken => {
+          const gasLimit = computeEIP7623GasLimit(
+            defaultGasLimit,
+            Buffer.from(CALLDATA_68_BYTES, "hex"),
+            { gasPerToken },
+          );
+
+          // 21000 + 4 * 44 zero bytes + 16 * 24 non-zero ones
+          expect(gasLimit).toEqual(21560n);
+        },
+      );
+
       it("should under-estimate zero bytes when only gasPerToken is raised", () => {
         const gasLimit = computeEIP7623GasLimit(
           defaultGasLimit,
