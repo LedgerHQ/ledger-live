@@ -1,16 +1,15 @@
 import React from "react";
-import { Text } from "react-native";
-import { render, screen } from "@tests/test-renderer";
-import { useDeviceIntentExecutorHeaderOverrideRequests } from "../../hooks/useDeviceIntentExecutorHeaderOverrideRequests";
-import { DeviceIntentExecutorHeaderContext } from "../../utils/DeviceIntentExecutorHeaderContext";
-import { OverrideDeviceIntentExecutorHeader } from ".";
+import { render, screen } from "@testing-library/react";
+import { OverrideDeviceIntentExecutorHeader } from "./OverrideDeviceIntentExecutorHeader";
+import { DeviceIntentExecutorHeaderContext } from "./DeviceIntentExecutorHeaderContext";
+import { useDeviceIntentExecutorHeaderOverrideRequests } from "./useDeviceIntentExecutorHeaderOverrideRequests";
 
 describe("OverrideDeviceIntentExecutorHeader", () => {
   it("GIVEN no DeviceIntentExecutorHeaderContext provider WHEN the component renders THEN it renders nothing", () => {
     // GIVEN / WHEN
     render(
       <OverrideDeviceIntentExecutorHeader>
-        <Text>Custom header</Text>
+        <span>Custom header</span>
       </OverrideDeviceIntentExecutorHeader>,
     );
 
@@ -55,10 +54,10 @@ function HeaderOverrideHarness({ showOverride }: Readonly<{ showOverride: boolea
 
   return (
     <DeviceIntentExecutorHeaderContext.Provider value={headerContextValue}>
-      {hasHeaderOverride ? null : <Text>Default header</Text>}
+      {hasHeaderOverride ? null : <span>Default header</span>}
       {showOverride ? (
         <OverrideDeviceIntentExecutorHeader>
-          <Text>Custom header</Text>
+          <span>Custom header</span>
         </OverrideDeviceIntentExecutorHeader>
       ) : null}
     </DeviceIntentExecutorHeaderContext.Provider>

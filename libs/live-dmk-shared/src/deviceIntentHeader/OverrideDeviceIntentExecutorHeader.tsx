@@ -1,5 +1,5 @@
 import React from "react";
-import { useDeviceIntentExecutorHeaderOverride } from "../../hooks/useDeviceIntentExecutorHeaderOverride";
+import { useDeviceIntentExecutorHeaderOverride } from "./useDeviceIntentExecutorHeaderOverride";
 
 type OverrideDeviceIntentExecutorHeaderProps = Readonly<{
   children: React.ReactNode;

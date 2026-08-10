@@ -1,5 +1,5 @@
 import { useContext, useLayoutEffect } from "react";
-import { DeviceIntentExecutorHeaderContext } from "../utils/DeviceIntentExecutorHeaderContext";
+import { DeviceIntentExecutorHeaderContext } from "./DeviceIntentExecutorHeaderContext";
 
 export function useDeviceIntentExecutorHeaderOverride(): boolean {
   const context = useContext(DeviceIntentExecutorHeaderContext);

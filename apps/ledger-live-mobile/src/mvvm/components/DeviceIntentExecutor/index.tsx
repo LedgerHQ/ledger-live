@@ -3,6 +3,10 @@ import {
   type DeviceIntentExecutorProps,
   type ExecutorPlatformConfiguration,
 } from "@ledgerhq/device-intent";
+import {
+  DeviceIntentExecutorHeaderContext,
+  OverrideDeviceIntentExecutorHeader,
+} from "@ledgerhq/live-dmk-shared";
 import { BottomSheetHeader, BottomSheetScrollView } from "@ledgerhq/lumen-ui-rnative";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import React from "react";
@@ -11,7 +15,6 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { DeviceDisconnected } from "./components/DeviceDisconnected";
 import { IntentError } from "./components/IntentError";
 import { InvalidOperation } from "./components/InvalidOperation";
-import { OverrideDeviceIntentExecutorHeader } from "./components/OverrideDeviceIntentExecutorHeader";
 import DeviceConnectionComponentLWM from "./DeviceConnectionComponentLWM";
 import DeviceContextInitializerComponentLWM, {
   InitializerConfig,
@@ -21,7 +24,6 @@ import {
   type DeviceIntentTrackingProperties,
   type SourceFlow,
 } from "./utils/DeviceIntentTrackingContext";
-import { DeviceIntentExecutorHeaderContext } from "./utils/DeviceIntentExecutorHeaderContext";
 import type { InitializationInput } from "./types";
 import { useDeviceIntentExecutorLWMViewModel } from "./useDeviceIntentExecutorLWMViewModel";
 
@@ -34,7 +36,6 @@ export type {
   DeviceIntentTrackingProperties,
   SourceFlow,
 } from "./utils/DeviceIntentTrackingContext";
-export { OverrideDeviceIntentExecutorHeader };
 
 type Props<JobState, Input, ExtraProps> = DeviceIntentExecutorProps<
   JobState,

@@ -1,5 +1,5 @@
-import { act, renderHook } from "@tests/test-renderer";
-import { useDeviceIntentExecutorHeaderOverrideRequests } from "../useDeviceIntentExecutorHeaderOverrideRequests";
+import { act, renderHook } from "@testing-library/react";
+import { useDeviceIntentExecutorHeaderOverrideRequests } from "./useDeviceIntentExecutorHeaderOverrideRequests";
 
 describe("useDeviceIntentExecutorHeaderOverrideRequests", () => {
   it("GIVEN the hook has just rendered WHEN no request has been made THEN there is no header override", () => {
