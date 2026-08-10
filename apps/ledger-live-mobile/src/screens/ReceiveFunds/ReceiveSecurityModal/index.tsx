@@ -47,8 +47,16 @@ const ReceiveSecurityModal = ({
   // is not maintained and its animation dependency too. The internal animation is flaky and not
   // working properly on Android. So, we are using reanimated to enforce redraw after animation.
   const sharedHeight = useSharedValue(0);
+  // FIX CANDIDATE (drawer-stuck): same class of bug as the QueuedDrawer transform.
+  // useAnimatedStyle only ever puts its INITIAL value (height 0) into the shadow
+  // tree, so a commit that loses the animated value collapses this ScrollView to
+  // zero and the buttons inside become unreachable — exactly what the Allure
+  // hierarchy dumps showed (ReactScrollView h=0). Keep the measured height in React
+  // state and declare it after the animated style so commits fall back to it.
+  const [declaredHeight, setDeclaredHeight] = useState<number | null>(null);
   const onLayout = useCallback(({ nativeEvent: { layout } }: LayoutChangeEvent) => {
     sharedHeight.value = withTiming(layout.height, { duration: 200 });
+    setDeclaredHeight(layout.height);
     // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const animatedStyle = useAnimatedStyle(
@@ -62,6 +70,9 @@ const ReceiveSecurityModal = ({
     setIsModalOpen(false);
     setStep("initMessage");
     sharedHeight.value = 0;
+    // Keep the declared fallback in step with the shared value on close, so a
+    // reopened modal re-measures instead of flashing the previous height.
+    setDeclaredHeight(null);
   }, [setIsModalOpen, sharedHeight]);
 
   const onVerify = useCallback(() => {
@@ -92,7 +103,9 @@ const ReceiveSecurityModal = ({
       noCloseButton
       preventBackdropClick
     >
-      <Animated.ScrollView style={animatedStyle}>
+      <Animated.ScrollView
+        style={[animatedStyle, declaredHeight !== null ? { height: declaredHeight } : null]}
+      >
         <Animated.View onLayout={onLayout}>{component}</Animated.View>
       </Animated.ScrollView>
     </QueuedDrawer>

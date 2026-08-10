@@ -156,6 +156,20 @@ const QueuedDrawerNative = ({
   const renderCountRef = useRef(0);
   renderCountRef.current += 1;
   const [forceCommitTick, setForceCommitTick] = useState(0);
+  const lastDeltaRef = useRef<number | null>(null);
+
+  // FIX CANDIDATE (round 6): the shadow tree holds translateY 1000 for the whole
+  // time the drawer is open, because useAnimatedStyle's JS-side value is only ever
+  // its initial one. Reanimated's commit hook normally re-applies the live value on
+  // commit, but captures show the sheet snapping to 1000 anyway — with no re-render
+  // of this component, so a commit from a sibling is enough.
+  //
+  // Declaring the resting position in a PLAIN style AFTER the animated one makes
+  // the shadow tree carry the correct target, so any commit that loses the animated
+  // value falls back to "open" instead of "off-screen". The animation still drives
+  // intermediate frames through Reanimated's own path; the worst case becomes a
+  // clipped animation rather than an unreachable drawer.
+  const [isOpenDeclared, setIsOpenDeclared] = useState(false);
 
   const logMeasure = useCallback(
     (label: string, m: MeasuredDimensions | null) => {
@@ -168,15 +182,28 @@ const QueuedDrawerNative = ({
       // the delta should come out at ~1000 (the initial translateY, in dp).
       const expectedY = screenHeight - m.height;
       const delta = Math.round(m.pageY - expectedY);
-      logDrawer(`measure ${label}`, {
-        instanceId,
-        pageY: Math.round(m.pageY),
-        height: Math.round(m.height),
-        expectedY: Math.round(expectedY),
-        deltaFromResting: delta,
-        renderCount: renderCountRef.current,
-      });
-      if (delta > 100) {
+      // Round 6: the fast loop samples every 50ms, which is far too much to log in
+      // full. Only report a fast sample when the delta actually MOVED, so a revert
+      // is pinned to a 50ms window without flooding the 5000-entry export buffer.
+      const prev = lastDeltaRef.current;
+      const moved = prev === null || Math.abs(delta - prev) > 50;
+      lastDeltaRef.current = delta;
+      const isFast = label.startsWith("fast");
+      if (!isFast || moved) {
+        logDrawer(`measure ${label}`, {
+          instanceId,
+          pageY: Math.round(m.pageY),
+          height: Math.round(m.height),
+          expectedY: Math.round(expectedY),
+          deltaFromResting: delta,
+          renderCount: renderCountRef.current,
+          ...(isFast ? { movedFrom: prev } : {}),
+        });
+      }
+      // Loud on every non-fast sample, and on the exact 50ms tick a fast sample
+      // moves — so the transition is pinned but a steady-state stuck drawer still
+      // reports on each heartbeat.
+      if (delta > 100 && (moved || !isFast)) {
         logDrawer("DRAWER STUCK DETECTED", {
           instanceId,
           label,
@@ -209,6 +236,22 @@ const QueuedDrawerNative = ({
       forceCommitTick,
     });
   });
+
+  // LIVE-DEBUG(drawer-stuck) round 6: 50ms sampling for 8s while open. 500ms
+  // heartbeats left the revert inside a 440ms window, which was too coarse to
+  // attribute to any particular commit. logMeasure only emits a fast sample when
+  // the delta moves, so this pins the transition without flooding the log.
+  useEffect(() => {
+    if (!isVisible) return;
+    lastDeltaRef.current = null;
+    let n = 0;
+    const id = setInterval(() => {
+      n += 1;
+      measureNow(`fast ${n}`);
+      if (n >= 160) clearInterval(id);
+    }, 50);
+    return () => clearInterval(id);
+  }, [isVisible, measureNow]);
 
   // LIVE-DEBUG(drawer-stuck) round 5: force one commit while the drawer is open.
   // A state change here re-renders the component, which rebuilds the style array,
@@ -273,6 +316,9 @@ const QueuedDrawerNative = ({
     // 1000 = parked (fresh mount or a completed close); anything else means we are
     // interrupting an in-flight animation.
     logDrawer("openAnim START", { instanceId, translateYBefore: translateY.value });
+    // FIX CANDIDATE: put the open position into the shadow tree for the whole time
+    // the drawer is presented.
+    setIsOpenDeclared(true);
     translateY.value = withTiming(
       0,
       {
@@ -292,6 +338,10 @@ const QueuedDrawerNative = ({
       // Modal is still visible after this and no openAnim follows, the drawer is
       // stuck off-screen — this is the second candidate root cause.
       logDrawer("closeAnim START", { instanceId, translateYBefore: translateY.value });
+
+      // FIX CANDIDATE: back to the closed position in the shadow tree, so a commit
+      // during the close settles closed rather than snapping back open.
+      setIsOpenDeclared(false);
 
       // LIVE-DEBUG(drawer-stuck) round 3: a close always wins over a pending repair.
       clearRepair();
@@ -527,7 +577,12 @@ const QueuedDrawerNative = ({
               backgroundColor: colors.constant.overlay,
             }}
           >
-            <Animated.View style={[{ flex: 1 }, backdropAnimatedStyle]} />
+            {/* FIX CANDIDATE: declared opacity after the animated one, same reason
+                as the container transform — the captures showed this view stuck at
+                its initial alpha 0 alongside the parked sheet. */}
+            <Animated.View
+              style={[{ flex: 1 }, backdropAnimatedStyle, { opacity: isOpenDeclared ? 1 : 0 }]}
+            />
           </Pressable>
 
           <Animated.View
@@ -535,6 +590,10 @@ const QueuedDrawerNative = ({
             ref={containerRef}
             style={[
               containerAnimatedStyle,
+              // FIX CANDIDATE (round 6): AFTER the animated style, so this is what
+              // lands in the shadow tree and therefore what any commit re-applies.
+              // Reanimated still drives the intermediate frames via its own path.
+              { transform: [{ translateY: isOpenDeclared ? 0 : 1000 }] },
               // LIVE-DEBUG(drawer-stuck) round 5b: round 5a bumped state but nothing
               // reverted, because RN diffs style props BY VALUE — a new array with
               // identical contents sends no update, so the container's style was
