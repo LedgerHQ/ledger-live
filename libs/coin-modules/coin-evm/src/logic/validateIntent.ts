@@ -26,6 +26,7 @@ import {
   PriorityFeeHigherThanMaxFee,
   PriorityFeeTooHigh,
   PriorityFeeTooLow,
+  RecipientIsNewAccount,
   RedelegateDstValAddressRequired,
   ValAddressRequired,
 } from "../errors";
@@ -34,6 +35,7 @@ import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
 import { getCoinConfig } from "../config";
 import { getGasTracker } from "../network/gasTracker";
+import { getNodeApi } from "../network/node";
 import { isNative, StakingOperation, TransactionTypes } from "../types";
 import { STAKING_CONTRACTS } from "../staking";
 import { DEFAULT_GAS_LIMIT, isEthAddress, isStakingIntent } from "../utils";
@@ -107,6 +109,44 @@ function validateFeeRatio(
   }
 
   return { errors: {}, warnings: {} };
+}
+
+/**
+ * Warn that creating the recipient account costs more gas (EIP-8037). Informational only, as
+ * `eth_estimateGas` already accounts for it. Native sends only: a token transfer's `to` is the
+ * token contract, which always exists.
+ */
+async function validateNewAccountRecipient(
+  currency: CryptoCurrency,
+  intent: TransactionIntent<MemoNotSupported, BufferTxData>,
+  amount: bigint,
+): Promise<Pick<TransactionValidation, "errors" | "warnings">> {
+  const none = { errors: {}, warnings: {} };
+  const isPlainNativeSend =
+    isNative(intent.asset) &&
+    amount > 0n &&
+    !intent.data?.value?.length &&
+    !isStakingIntent(intent);
+
+  if (!isPlainNativeSend || !isEthAddress(intent.recipient)) {
+    return none;
+  }
+
+  try {
+    const nodeApi = getNodeApi(currency);
+    const [balance, nonce] = await Promise.all([
+      nodeApi.getCoinBalance(currency, intent.recipient),
+      nodeApi.getTransactionCount(currency, intent.recipient),
+    ]);
+
+    if (balance.isZero() && nonce === 0) {
+      return { errors: {}, warnings: { amount: new RecipientIsNewAccount() } };
+    }
+  } catch {
+    // An unreachable node must not fail the validation: no message is the current behaviour.
+  }
+
+  return none;
 }
 
 /**
@@ -460,6 +500,11 @@ export async function validateIntent(
     balances,
     estimatedFees,
   );
+  const { errors: newAccountErr, warnings: newAccountWarn } = await validateNewAccountRecipient(
+    currency,
+    intent,
+    amount,
+  );
 
   const errors = {
     ...recipientErr,
@@ -467,6 +512,7 @@ export async function validateIntent(
     ...gasErr,
     ...feeRatioErr,
     ...stakingErr,
+    ...newAccountErr,
   };
   const warnings = {
     ...recipientWarn,
@@ -474,6 +520,7 @@ export async function validateIntent(
     ...gasWarn,
     ...feeRatioWarn,
     ...stakingWarn,
+    ...newAccountWarn,
   };
 
   return {

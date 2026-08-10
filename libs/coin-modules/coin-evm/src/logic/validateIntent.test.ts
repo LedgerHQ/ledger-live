@@ -22,6 +22,7 @@ import {
   PriorityFeeHigherThanMaxFee,
   PriorityFeeTooHigh,
   PriorityFeeTooLow,
+  RecipientIsNewAccount,
   RedelegateDstValAddressRequired,
   ValAddressRequired,
 } from "../errors";
@@ -233,6 +234,97 @@ describe("validateIntent", () => {
           }),
         }),
       );
+    });
+
+    describe("new account recipient (EIP-8037)", () => {
+      const RECIPIENT = "0xe2ca7390e76c5A992749bB622087310d2e63ca29";
+
+      function nativeSendToRecipient(overrides = {}) {
+        return validateIntent(
+          {} as CryptoCurrency,
+          eip1559Intent({ amount: 1n, recipient: RECIPIENT, ...overrides }),
+          [{ value: 50n, asset: { type: "native" } }],
+          { value: 0n, parameters: { gasLimit: 21000n, maxFeePerGas: 1n } },
+        );
+      }
+
+      it("warns when the recipient has no balance and no nonce", async () => {
+        nodeApiMock.getCoinBalance.mockResolvedValue(new BigNumber(0));
+        nodeApiMock.getTransactionCount.mockResolvedValue(0);
+
+        const res = await nativeSendToRecipient();
+
+        expect(res.warnings).toEqual(
+          expect.objectContaining({ amount: new RecipientIsNewAccount() }),
+        );
+        expect(res.errors).not.toEqual(
+          expect.objectContaining({ amount: expect.any(RecipientIsNewAccount) }),
+        );
+      });
+
+      it("does not warn for an emptied account, which has a nonce", async () => {
+        nodeApiMock.getCoinBalance.mockResolvedValue(new BigNumber(0));
+        nodeApiMock.getTransactionCount.mockResolvedValue(4);
+
+        const res = await nativeSendToRecipient();
+
+        expect(res.warnings).not.toEqual(expect.objectContaining({ amount: expect.anything() }));
+      });
+
+      it("does not warn when the recipient holds a balance", async () => {
+        nodeApiMock.getCoinBalance.mockResolvedValue(new BigNumber(10));
+        nodeApiMock.getTransactionCount.mockResolvedValue(0);
+
+        const res = await nativeSendToRecipient();
+
+        expect(res.warnings).not.toEqual(expect.objectContaining({ amount: expect.anything() }));
+      });
+
+      it("does not probe the recipient on a token transfer", async () => {
+        nodeApiMock.getCoinBalance.mockResolvedValue(new BigNumber(0));
+        nodeApiMock.getTransactionCount.mockResolvedValue(0);
+
+        const res = await nativeSendToRecipient({
+          asset: { type: "erc20", assetReference: RECIPIENT },
+        });
+
+        expect(res.warnings).not.toEqual(expect.objectContaining({ amount: expect.anything() }));
+        expect(nodeApiMock.getCoinBalance).not.toHaveBeenCalled();
+      });
+
+      it("does not probe the recipient when the amount is zero", async () => {
+        const res = await nativeSendToRecipient({ amount: 0n });
+
+        expect(nodeApiMock.getCoinBalance).not.toHaveBeenCalled();
+        expect(res.warnings).not.toEqual(expect.objectContaining({ amount: expect.anything() }));
+      });
+
+      it("stays silent and does not throw when the node is unreachable", async () => {
+        nodeApiMock.getCoinBalance.mockRejectedValue(new Error("node down"));
+        nodeApiMock.getTransactionCount.mockResolvedValue(0);
+
+        const res = await nativeSendToRecipient();
+
+        expect(res.warnings).not.toEqual(expect.objectContaining({ amount: expect.anything() }));
+      });
+
+      it("leaves the fees and gas limit untouched", async () => {
+        nodeApiMock.getCoinBalance.mockResolvedValue(new BigNumber(10));
+        nodeApiMock.getTransactionCount.mockResolvedValue(2);
+        const withoutWarning = await nativeSendToRecipient();
+
+        nodeApiMock.getCoinBalance.mockResolvedValue(new BigNumber(0));
+        nodeApiMock.getTransactionCount.mockResolvedValue(0);
+        const withWarning = await nativeSendToRecipient();
+
+        expect(withWarning.warnings).toEqual(
+          expect.objectContaining({ amount: new RecipientIsNewAccount() }),
+        );
+        expect(withoutWarning.totalFees).toEqual(expect.any(BigInt));
+        expect(withWarning.totalFees).toEqual(withoutWarning.totalFees);
+        expect(withWarning.estimatedFees).toEqual(withoutWarning.estimatedFees);
+        expect(withWarning.amount).toEqual(withoutWarning.amount);
+      });
     });
 
     it("detects the recipient not being an EIP55 address with a warning", async () => {

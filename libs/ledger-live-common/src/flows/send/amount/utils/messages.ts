@@ -28,6 +28,9 @@ export function getAmountScreenMessage(params: {
   return null;
 }
 
+/** Warnings that explain the fee rather than flag a problem, rendered neutrally. */
+const INFORMATIONAL_AMOUNT_WARNINGS = new Set(["FeeTooHigh", "RecipientIsNewAccount"]);
+
 const AMOUNT_INPUT_BLOCKING_RECIPIENT_ERROR_SUFFIX = "SourceHasMultiSign";
 
 export function isAmountInputBlockingRecipientError(error: Error | undefined): boolean {
@@ -60,9 +63,10 @@ export function getAmountScreenRawMessage(params: {
   }
 
   if (amountWarning && params.hasRawAmount) {
-    const isFeeTooHigh = amountWarning.name === "FeeTooHigh";
-
-    return { type: isFeeTooHigh ? "info" : "warning", error: amountWarning };
+    return {
+      type: INFORMATIONAL_AMOUNT_WARNINGS.has(amountWarning.name) ? "info" : "warning",
+      error: amountWarning,
+    };
   }
 
   return null;

@@ -491,6 +491,9 @@
     "FeeTooHigh": {
       "title": "Network fees are above 10% of the amount"
     },
+    "RecipientIsNewAccount": {
+      "title": "This address has never received funds, activating it costs a higher network fee"
+    },
     "FeeTooLow": {
       "title": "Fees are too low to be accepted by the network. Please increase them"
     },
