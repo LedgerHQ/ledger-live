@@ -580,21 +580,6 @@ export async function waitFor(
       return texts;
     }
 
-    // On a freshly launched Speculos instance (token approve/revoke — see
-    // ensureTokenApproval / revokeTokenApproval, which each launchSpeculos()),
-    // `/events?currentscreenonly=true` can stay stuck on the launch screen
-    // ("Ethereum app is ready") even though the review screen is rendered — the
-    // `/screenshot` proves it is on-device. Fall back to the full event log so we
-    // still detect it. Opt-in only: the fresh instance's log holds a single
-    // approve/revoke flow, so this cannot match an earlier screen the way it
-    // could on the reused main instance during a multi-step send/swap.
-    if (matchFullEvents) {
-      const allEvents = (await fetchAllEvents(port)).join(" ");
-      if (allEvents.toLowerCase().includes(text.toLowerCase())) {
-        return allEvents;
-      }
-    }
-
     await sleep(SCREEN_POLL_INTERVAL_MS);
   }
 
@@ -653,14 +638,6 @@ export async function waitForReviewTransaction(
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
     texts = await fetchCurrentScreenTexts(port);
     if (texts.includes(DeviceLabels.REVIEW_TRANSACTION)) {
-      return;
-    }
-    // See waitFor: a freshly launched instance can leave currentscreenonly stuck
-    // on the launch screen while the review is rendered. Fall back to full events.
-    if (
-      matchFullEvents &&
-      (await fetchAllEvents(port)).join(" ").includes(DeviceLabels.REVIEW_TRANSACTION)
-    ) {
       return;
     }
     if (!enabled && texts.includes(DeviceLabels.YES_ENABLE)) {
