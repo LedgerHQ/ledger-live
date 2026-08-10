@@ -4,6 +4,11 @@ import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import groupBy from "lodash/groupBy";
+import { A4Client } from "./a4/client/index";
+import { deriveA4AccountId } from "./a4/client/accountId";
+import { ensureA4Registered } from "./a4/client/registration";
+import { toA4Network, resolveA4BaseUrl } from "./a4/client/utils";
+import { resolveA4ChainConfig } from "./a4/config";
 import { getCoinModuleApi } from "./api";
 import { getBridgeApi } from "./bridge";
 import { adaptCoreOperationToLiveOperation, cleanedOperation, extractBalance } from "./utils";
@@ -325,6 +330,23 @@ function buildParentOperations(
   return result;
 }
 
+async function registerWithA4(currencyId: string, address: string): Promise<void> {
+  const a4Network = toA4Network(currencyId);
+  if (a4Network === null) {
+    return;
+  }
+
+  const { register, environment } = resolveA4ChainConfig(a4Network);
+  if (!register) {
+    return;
+  }
+
+  const a4AccountId = deriveA4AccountId(address);
+  const url = resolveA4BaseUrl(environment);
+  const client = new A4Client(url, a4Network);
+  return ensureA4Registered(client, a4AccountId, [address]);
+}
+
 export function genericGetAccountShape(network: string, kind: string): GetAccountShape {
   return async (info, syncConfig) => {
     const { address, initialAccount, currency, derivationMode, rest } = info;
@@ -343,6 +365,11 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       derivationMode,
     });
 
+    void registerWithA4(currency.id, address).catch(e => {
+      log("generic-coin-framework", "a4 registration error", {
+        error: e instanceof Error ? e.message : String(e),
+      });
+    });
     const validatorsPromise = bridgeApi.stakingSupported
       ? coinModuleApi
           .getValidators()
