@@ -1,14 +1,18 @@
 import React, { useCallback, useEffect, useMemo, useRef } from "react";
-import { Modal, Pressable, StyleProp, View, ViewStyle } from "react-native";
+import { Modal, Pressable, StyleProp, useWindowDimensions, View, ViewStyle } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, {
   Easing,
+  measure,
+  setNativeProps,
   useAnimatedReaction,
+  useAnimatedRef,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
+  type MeasuredDimensions,
 } from "react-native-reanimated";
-import { scheduleOnRN } from "react-native-worklets";
+import { scheduleOnRN, scheduleOnUI } from "react-native-worklets";
 import { useTheme } from "styled-components/native";
 import { Flex, Text, BoxedIcon, Icons } from "@ledgerhq/native-ui";
 import { IsInDrawerProvider } from "~/context/IsInDrawerContext";
@@ -47,6 +51,11 @@ const ANIMATION_DURATION = 250;
 // enough that the 250ms open animation has finished and any surface mount has
 // settled, so the write is unambiguously "after everything".
 const REPAIR_WRITE_DELAY = 500;
+
+// LIVE-DEBUG(drawer-stuck) round 4: second repair, via setNativeProps rather than
+// a shared value, far enough after the first that the two are unambiguous in the
+// log.
+const REPAIR2_WRITE_DELAY = 400;
 
 const QueuedDrawerNative = ({
   isRequestingToBeOpened = false,
@@ -100,13 +109,68 @@ const QueuedDrawerNative = ({
   // any close and on unmount — otherwise a drawer that closed inside the delay
   // window would be yanked back to translateY 0 and reappear.
   const repairTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const repair2TimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const clearRepair = useCallback(() => {
     if (repairTimeoutRef.current) {
       clearTimeout(repairTimeoutRef.current);
       repairTimeoutRef.current = null;
     }
+    if (repair2TimeoutRef.current) {
+      clearTimeout(repair2TimeoutRef.current);
+      repair2TimeoutRef.current = null;
+    }
   }, []);
   useEffect(() => clearRepair, [clearRepair]);
+
+  // LIVE-DEBUG(drawer-stuck) round 4. Rounds 1-3 only ever logged the SHARED
+  // VALUE, and a healthy open logs byte-identically to a broken one (both report
+  // translateY 0 everywhere). So the shared value cannot discriminate — we need
+  // the RENDERED geometry. measure() runs on the UI thread against the real
+  // native view, which is the ground truth the hierarchy dump gave us
+  // post-mortem, now available live and comparable against the repair writes.
+  const containerRef = useAnimatedRef<View>();
+  const { height: screenHeight } = useWindowDimensions();
+
+  const logMeasure = useCallback(
+    (label: string, m: MeasuredDimensions | null) => {
+      if (!m) {
+        logDrawer(`measure ${label}: NULL (view not measurable)`, { instanceId });
+        return;
+      }
+      // Sheet is bottom-anchored, so a correctly presented drawer measures at
+      // screenHeight - height. Anything materially below that is the bug, and
+      // the delta should come out at ~1000 (the initial translateY, in dp).
+      const expectedY = screenHeight - m.height;
+      const delta = Math.round(m.pageY - expectedY);
+      logDrawer(`measure ${label}`, {
+        instanceId,
+        pageY: Math.round(m.pageY),
+        height: Math.round(m.height),
+        expectedY: Math.round(expectedY),
+        deltaFromResting: delta,
+      });
+      if (delta > 100) {
+        logDrawer("DRAWER STUCK DETECTED", {
+          instanceId,
+          label,
+          deltaFromResting: delta,
+          sharedTranslateY: translateY.value,
+          sharedBackdropOpacity: backdropOpacity.value,
+        });
+      }
+    },
+    [instanceId, screenHeight, translateY, backdropOpacity],
+  );
+
+  const measureNow = useCallback(
+    (label: string) => {
+      scheduleOnUI(() => {
+        "worklet";
+        scheduleOnRN(logMeasure, label, measure(containerRef));
+      });
+    },
+    [containerRef, logMeasure],
+  );
 
   // LIVE-DEBUG(drawer-stuck): plain JS callbacks, invoked from the animation
   // worklets via scheduleOnRN — same pattern as the existing `afterOnce`, so the
@@ -253,6 +317,8 @@ const QueuedDrawerNative = ({
     openAnim();
 
     clearRepair();
+    measureNow("at onShow");
+
     repairTimeoutRef.current = setTimeout(() => {
       repairTimeoutRef.current = null;
       logDrawer("repair write BEFORE", {
@@ -260,8 +326,8 @@ const QueuedDrawerNative = ({
         translateY: translateY.value,
         backdropOpacity: backdropOpacity.value,
       });
-      // Plain assignments, no withTiming — if these do not reach the view, the
-      // views are disconnected rather than the animation being at fault.
+      measureNow("before repair1");
+      // Repair 1: plain shared-value assignment, no withTiming.
       translateY.value = 0;
       backdropOpacity.value = 1;
       logDrawer("repair write AFTER", {
@@ -269,8 +335,25 @@ const QueuedDrawerNative = ({
         translateY: translateY.value,
         backdropOpacity: backdropOpacity.value,
       });
+      measureNow("after repair1 (shared value)");
+
+      // Repair 2: a DIFFERENT update mechanism. setNativeProps writes straight to
+      // the native view instead of going through useAnimatedStyle, so comparing
+      // the two measurements localises the break:
+      //   repair1 moves it            -> animated-style commit was merely stale
+      //   only repair2 moves it       -> the useAnimatedStyle path specifically is broken
+      //   neither moves it            -> this Dialog's views take no updates at all
+      repair2TimeoutRef.current = setTimeout(() => {
+        repair2TimeoutRef.current = null;
+        logDrawer("repair2 setNativeProps", { instanceId });
+        scheduleOnUI(() => {
+          "worklet";
+          setNativeProps(containerRef, { transform: [{ translateY: 0 }] });
+        });
+        measureNow("after repair2 (setNativeProps)");
+      }, REPAIR2_WRITE_DELAY);
     }, REPAIR_WRITE_DELAY);
-  }, [openAnim, instanceId, translateY, backdropOpacity, clearRepair]);
+  }, [openAnim, instanceId, translateY, backdropOpacity, clearRepair, measureNow, containerRef]);
 
   // LIVE-DEBUG(drawer-stuck): bounded heartbeat while the drawer is visible.
   // In round 1 the app's entire log stream stopped ~71s before the test timed out,
@@ -284,10 +367,13 @@ const QueuedDrawerNative = ({
     const id = setInterval(() => {
       tick += 1;
       logDrawer("visible heartbeat", { instanceId, tick, translateY: translateY.value });
+      // Round 4: pair every tick with the rendered geometry, so the log shows
+      // whether the view ever moves — and whether either repair moved it.
+      measureNow(`heartbeat ${tick}`);
       if (tick >= 24) clearInterval(id);
     }, 500);
     return () => clearInterval(id);
-  }, [isVisible, instanceId, translateY]);
+  }, [isVisible, instanceId, translateY, measureNow]);
 
   const handleCloseUserEvent = useCallback(() => {
     closeAnim(() => {
@@ -391,6 +477,8 @@ const QueuedDrawerNative = ({
           </Pressable>
 
           <Animated.View
+            // LIVE-DEBUG(drawer-stuck) round 4: measured + repaired through this ref.
+            ref={containerRef}
             style={[
               containerAnimatedStyle,
               {
