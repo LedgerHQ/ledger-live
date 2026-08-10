@@ -2,4 +2,4 @@
 "@ledgerhq/live-common": minor
 ---
 
-Support Hyperliquid setUserAbstraction type
+Support the Hyperliquid userSetAbstraction action type
