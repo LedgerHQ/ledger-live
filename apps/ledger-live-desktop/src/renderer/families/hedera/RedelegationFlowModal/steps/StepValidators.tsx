@@ -34,7 +34,8 @@ function StepValidators({
   invariant(isStakingTransaction(transaction), "hedera: staking tx expected");
 
   const { delegation } = account.hederaResources;
-  const selectedValidatorNodeId = transaction.properties?.stakingNodeId ?? null;
+  const stakingNodeId = transaction.properties?.stakingNodeId;
+  const selectedValidatorId = typeof stakingNodeId === "number" ? String(stakingNodeId) : null;
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   const enrichedDelegation = useHederaEnrichedDelegation(account, delegation);
   const feeError = status.errors.fee;
@@ -48,7 +49,7 @@ function StepValidators({
       return bridge.updateTransaction(transaction, {
         mode: HEDERA_TRANSACTION_MODES.Redelegate,
         properties: {
-          stakingNodeId: validator.nodeId ?? null,
+          stakingNodeId: Number(validator.id),
         },
       });
     });
@@ -65,7 +66,7 @@ function StepValidators({
         <ValidatorsSelect
           disabled
           account={account}
-          selectedValidatorNodeId={enrichedDelegation.validator.nodeId}
+          selectedValidatorId={enrichedDelegation.validator.id}
           showRemovedPlaceholder={isValidatorRemoved}
         />
       </Box>
@@ -76,7 +77,7 @@ function StepValidators({
         </Label>
         <ValidatorsSelect
           account={account}
-          selectedValidatorNodeId={selectedValidatorNodeId}
+          selectedValidatorId={selectedValidatorId}
           error={status.errors.stakingNodeId}
           onChangeValidator={updateValidator}
         />

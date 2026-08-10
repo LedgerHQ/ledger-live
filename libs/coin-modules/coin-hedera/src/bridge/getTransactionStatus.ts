@@ -300,7 +300,7 @@ async function handleStakingTransaction(account: HederaAccount, transaction: Tra
   ) {
     if (typeof transaction.properties?.stakingNodeId === "number") {
       const isValid = validators.some(validator => {
-        return validator.nodeId === transaction.properties?.stakingNodeId;
+        return validator.id === String(transaction.properties?.stakingNodeId);
       });
 
       if (!isValid) {

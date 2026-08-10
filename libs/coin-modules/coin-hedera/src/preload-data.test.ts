@@ -11,7 +11,7 @@ import { getMockedCurrency } from "./test/fixtures/currency.fixture";
 describe("preload-data", () => {
   const hedera = getCryptoCurrencyById("hedera");
   const hederaTestnet = getCryptoCurrencyById("hedera_testnet");
-  const testData = { validators: [{ nodeId: 1 }] } as HederaPreloadData;
+  const testData = { validators: [{ id: "1" }] } as HederaPreloadData;
 
   beforeEach(() => {
     setHederaPreloadData({ validators: [] }, hedera);

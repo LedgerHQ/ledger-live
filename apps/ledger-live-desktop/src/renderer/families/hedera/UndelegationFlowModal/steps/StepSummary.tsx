@@ -27,7 +27,7 @@ function StepSummary({
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   const currentValidatorNodeId = account.hederaResources?.delegation?.nodeId;
   const validators = useHederaValidators(account.currency);
-  const validator = validators.find(v => v.nodeId === currentValidatorNodeId);
+  const validator = validators.find(v => v.id === String(currentValidatorNodeId));
   const isValidatorRemoved = !validator && typeof currentValidatorNodeId === "number";
   const feeError = status.errors.fee;
 
@@ -42,7 +42,7 @@ function StepSummary({
         <ValidatorsSelect
           disabled
           account={account}
-          selectedValidatorNodeId={validator?.nodeId ?? null}
+          selectedValidatorId={validator?.id ?? null}
           showRemovedPlaceholder={isValidatorRemoved}
         />
       </Box>
