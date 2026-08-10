@@ -1,11 +1,9 @@
 import React from "react";
 import { DialogBody } from "@ledgerhq/lumen-ui-react";
 import { cn } from "LLD/utils/cn";
-import type {
-  AddressSearchResult,
-  AddressValidationError as AddressValidationErrorType,
-} from "@ledgerhq/live-common/flows/send/recipient/types";
+import type { AddressValidationError as AddressValidationErrorType } from "@ledgerhq/live-common/flows/send/recipient/types";
 import { shouldShowMatchedAddress } from "@ledgerhq/live-common/flows/send/recipient/utils/shouldShowMatchedAddress";
+import type { AddressMatchedSectionViewModel } from "../hooks/useAddressMatchedSectionViewModel";
 import { AddressMatchedSection } from "./AddressMatchedSection";
 import { AddressValidationError } from "./AddressValidationError";
 import EmptyList from "./EmptyList";
@@ -14,9 +12,7 @@ import { RecipientIntroCard } from "./RecipientIntroCard";
 import { ValidationBanner } from "./ValidationBanner";
 
 type RecipientAddressModalViewProps = Readonly<{
-  searchValue: string;
   isLoading: boolean;
-  result: AddressSearchResult;
   showInitialState: boolean;
   showMatchedAddress: boolean;
   showAddressValidationError: boolean;
@@ -25,22 +21,19 @@ type RecipientAddressModalViewProps = Readonly<{
   showSanctionedBanner: boolean;
   showBridgeRecipientError: boolean;
   showBridgeRecipientWarning: boolean;
-  isSanctioned: boolean;
   isAddressComplete: boolean;
   addressValidationErrorType: AddressValidationErrorType | null;
   bridgeRecipientError: Error | undefined;
   bridgeRecipientWarning: Error | undefined;
   bridgeSenderError: Error | undefined;
-  onAddressSelect: (address: string, ensName?: string) => void;
   hasMemo: boolean;
   hasMemoValidationError: boolean;
   hasFilledMemo: boolean;
+  addressMatchedSectionViewModel: AddressMatchedSectionViewModel;
 }>;
 
 export function RecipientAddressModalView({
-  searchValue,
   isLoading,
-  result,
   showInitialState,
   showMatchedAddress,
   showAddressValidationError,
@@ -49,16 +42,15 @@ export function RecipientAddressModalView({
   showSanctionedBanner,
   showBridgeRecipientError,
   showBridgeRecipientWarning,
-  isSanctioned,
   isAddressComplete,
   addressValidationErrorType,
   bridgeRecipientError,
   bridgeRecipientWarning,
   bridgeSenderError,
-  onAddressSelect,
   hasMemo,
   hasMemoValidationError,
   hasFilledMemo,
+  addressMatchedSectionViewModel,
 }: RecipientAddressModalViewProps) {
   const shouldShowErrorBanner =
     !isLoading &&
@@ -85,16 +77,7 @@ export function RecipientAddressModalView({
 
       {showInitialState && <RecipientIntroCard />}
 
-      {showMatched && (
-        <AddressMatchedSection
-          searchResult={result}
-          searchValue={searchValue}
-          onSelect={onAddressSelect}
-          isSanctioned={isSanctioned}
-          isAddressComplete={isAddressComplete}
-          hasBridgeError={showBridgeRecipientError}
-        />
-      )}
+      {showMatched && <AddressMatchedSection viewModel={addressMatchedSectionViewModel} />}
 
       {showAddressValidationError && (
         <div className="flex flex-1 items-center justify-center">

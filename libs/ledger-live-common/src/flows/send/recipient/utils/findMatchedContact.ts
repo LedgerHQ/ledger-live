@@ -1,4 +1,5 @@
 import type { MatchedContact } from "../types";
+import { addressesMatch } from "./addressesMatch";
 
 type Contact = Readonly<{
   id: string;
@@ -16,15 +17,6 @@ type ContactAddress = Readonly<{
 
 function resolveNetworkId(currencyId: string): string {
   return currencyId.split("/")[0];
-}
-
-function addressesMatch(left: string, right: string): boolean {
-  const normalizedLeft = left.trim();
-  const normalizedRight = right.trim();
-
-  return normalizedLeft.startsWith("0x") && normalizedRight.startsWith("0x")
-    ? normalizedLeft.toLowerCase() === normalizedRight.toLowerCase()
-    : normalizedLeft === normalizedRight;
 }
 
 export function findMatchedContact(
