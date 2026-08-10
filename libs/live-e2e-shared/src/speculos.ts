@@ -599,17 +599,21 @@ export async function waitFor(
   }
 
   if (matchFullEvents) {
-    // Diagnostic: the current-screen read never matched. Dump both event reads so
-    // a read-vs-render mismatch (stale `currentscreenonly=true`) is visible in the
-    // logs instead of only "Last screen text".
+    // Diagnostic: the current-screen read never matched. Dump the polled port, both
+    // event reads, and whether a screenshot of that exact port is reachable — so we can
+    // distinguish a same-instance events gap (screenshot of `port` shows the review but
+    // /events never does) from a port mismatch (waitFor polled a different, idle instance
+    // than the CLI drove — compare `port` with the attached "Speculos Screenshot – port X").
     try {
       const allEvents = (await fetchAllEvents(port)).join(" ");
+      const shot = await takeScreenshot(port);
       console.warn(
-        `[waitFor] "${text}" not matched after ${maxAttempts} polls. ` +
-          `currentscreenonly=true => "${texts}" | currentscreenonly=false => "${allEvents}"`,
+        `[waitFor] "${text}" not matched after ${maxAttempts} polls on port ${port}. ` +
+          `currentscreenonly=true => "${texts}" | currentscreenonly=false => "${allEvents}" | ` +
+          `screenshot(${port}) => ${shot ? `${shot.length} bytes` : "unreachable"}`,
       );
     } catch (err) {
-      console.warn(`[waitFor] failed to dump full events: ${sanitizeError(err)}`);
+      console.warn(`[waitFor] failed to dump diagnostics on port ${port}: ${sanitizeError(err)}`);
     }
   }
 
