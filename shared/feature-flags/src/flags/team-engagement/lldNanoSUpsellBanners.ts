@@ -5,19 +5,16 @@ const lldNanoSUpsellBannersConfigSchema = z.object({
   manager: z.boolean(),
   accounts: z.boolean(),
   notification_center: z.boolean(),
+  portfolio: z.boolean().default(true),
   link: z.string(),
   img: z.string().optional(),
   "%": z.number().optional(),
 });
 
-const lldOptedOutSchema = lldNanoSUpsellBannersConfigSchema.extend({
-  portfolio: z.boolean(),
-});
-
 export const lldNanoSUpsellBanners = flagWith(
   {
     opted_in: lldNanoSUpsellBannersConfigSchema,
-    opted_out: lldOptedOutSchema,
+    opted_out: lldNanoSUpsellBannersConfigSchema,
   },
   {
     enabled: false,
@@ -26,6 +23,7 @@ export const lldNanoSUpsellBanners = flagWith(
         manager: true,
         accounts: true,
         notification_center: true,
+        portfolio: true,
         link: "https://shop.ledger.com/pages/ledger-nano-s-upgrade-program",
         img: "",
         "%": 20,
