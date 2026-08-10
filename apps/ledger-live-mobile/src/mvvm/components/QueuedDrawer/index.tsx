@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Modal, Pressable, StyleProp, useWindowDimensions, View, ViewStyle } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, {
@@ -56,6 +56,26 @@ const REPAIR_WRITE_DELAY = 500;
 // a shared value, far enough after the first that the two are unambiguous in the
 // log.
 const REPAIR2_WRITE_DELAY = 400;
+
+// LIVE-DEBUG(drawer-stuck) round 5. Round 4 showed the sheet opens correctly and
+// then reverts to translateY 1000 after ~3.3-4.1s while the shared value stays 0.
+// The suspected trigger is a React commit: Reanimated's UI-thread writes never
+// reach the Fabric ShadowNode, so any re-send of the style prop re-applies the
+// transform React declared — which is the initial 1000. The style array is
+// rebuilt on every render, so ANY re-render of this component should do it.
+//
+// Locally this does NOT revert the sheet, even with a value-changing style update
+// that genuinely re-sends the transform — because Reanimated 4.3.0 ships
+// ReanimatedCommitHook (Common/cpp/reanimated/Fabric/), which re-applies animated
+// props on every Fabric commit precisely so they survive. So a plain commit is not
+// the trigger, and the natural revert must be something the hook does not cover
+// (a re-mount into a new shadow node family is the leading candidate).
+//
+// Kept ON for CI at 1500ms — comfortably after the 250ms open animation and well
+// before the ~3300-4100ms natural revert, so the two cannot be confused: a revert
+// right after "after forced commit" implicates the commit, one at ~3.5s exonerates
+// it. Set to 0 to disable.
+const FORCE_COMMIT_AFTER_MS = 1500;
 
 const QueuedDrawerNative = ({
   isRequestingToBeOpened = false,
@@ -131,6 +151,12 @@ const QueuedDrawerNative = ({
   const containerRef = useAnimatedRef<View>();
   const { height: screenHeight } = useWindowDimensions();
 
+  // LIVE-DEBUG(drawer-stuck) round 5: render counter, carried on every measure so
+  // the log shows whether a commit coincides with the revert.
+  const renderCountRef = useRef(0);
+  renderCountRef.current += 1;
+  const [forceCommitTick, setForceCommitTick] = useState(0);
+
   const logMeasure = useCallback(
     (label: string, m: MeasuredDimensions | null) => {
       if (!m) {
@@ -148,6 +174,7 @@ const QueuedDrawerNative = ({
         height: Math.round(m.height),
         expectedY: Math.round(expectedY),
         deltaFromResting: delta,
+        renderCount: renderCountRef.current,
       });
       if (delta > 100) {
         logDrawer("DRAWER STUCK DETECTED", {
@@ -171,6 +198,33 @@ const QueuedDrawerNative = ({
     },
     [containerRef, logMeasure],
   );
+
+  // LIVE-DEBUG(drawer-stuck) round 5: no dep array, so this runs after EVERY
+  // render — the commit timeline the revert should line up against.
+  useEffect(() => {
+    logDrawer("render committed", {
+      instanceId,
+      renderCount: renderCountRef.current,
+      isVisible,
+      forceCommitTick,
+    });
+  });
+
+  // LIVE-DEBUG(drawer-stuck) round 5: force one commit while the drawer is open.
+  // A state change here re-renders the component, which rebuilds the style array,
+  // which re-sends the style prop. If the sheet then snaps to translateY 1000, the
+  // commit-reset mechanism is proven and we have an on-demand repro.
+  useEffect(() => {
+    if (!isVisible || FORCE_COMMIT_AFTER_MS <= 0) return;
+    const id = setTimeout(() => {
+      logDrawer("FORCING re-render (commit-reset probe)", { instanceId });
+      measureNow("before forced commit");
+      setForceCommitTick(t => t + 1);
+      // Give the commit a frame to land, then look again.
+      setTimeout(() => measureNow("after forced commit"), 150);
+    }, FORCE_COMMIT_AFTER_MS);
+    return () => clearTimeout(id);
+  }, [isVisible, instanceId, measureNow]);
 
   // LIVE-DEBUG(drawer-stuck): plain JS callbacks, invoked from the animation
   // worklets via scheduleOnRN — same pattern as the existing `afterOnce`, so the
@@ -481,6 +535,13 @@ const QueuedDrawerNative = ({
             ref={containerRef}
             style={[
               containerAnimatedStyle,
+              // LIVE-DEBUG(drawer-stuck) round 5b: round 5a bumped state but nothing
+              // reverted, because RN diffs style props BY VALUE — a new array with
+              // identical contents sends no update, so the container's style was
+              // never re-applied. Tie an imperceptible value to the tick so the diff
+              // is non-empty and the whole style prop (transform included) really is
+              // re-sent from the ShadowNode.
+              { opacity: 1 - (forceCommitTick % 2) * 0.002 },
               {
                 width: "100%",
                 maxHeight: "95%",
