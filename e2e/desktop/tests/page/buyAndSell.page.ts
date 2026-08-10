@@ -131,7 +131,16 @@ export class BuyAndSellPage extends WebViewAppPage {
             { cause: error },
           );
         }
-        await webview.reload({ timeout: readyTimeout, waitUntil: "domcontentloaded" });
+        // The webview can also be torn down/recreated during the toBeVisible() wait above,
+        // so re-fetch it again right before reloading, and tolerate a reload failure caused
+        // by that same race — the next iteration re-fetches and re-checks instead of
+        // aborting the whole retry loop.
+        try {
+          const freshWebview = await this.getWebView();
+          await freshWebview.reload({ timeout: readyTimeout, waitUntil: "domcontentloaded" });
+        } catch {
+          // Ignore: target likely closed mid-wait; next attempt re-resolves the webview.
+        }
       }
     }
   }
