@@ -75,6 +75,7 @@ devtools/transport/                                      @ledgerhq/platform
 devtools/protocols/                                      @ledgerhq/platform
 devtools/wire/                                           @ledgerhq/platform
 devtools/relay/                                          @ledgerhq/platform
+tools/nx-plugins/generators/                             @ledgerhq/platform
 
 # Platform — support
 support/jest-devtools/                                   @ledgerhq/platform
