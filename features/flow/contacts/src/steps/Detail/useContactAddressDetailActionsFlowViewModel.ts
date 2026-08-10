@@ -112,11 +112,7 @@ export function useContactAddressDetailActionsFlowViewModel({
 
   const onSignerConfirm = useCallback(async () => {
     const pendingAction = signerPendingAction;
-    const validationTarget = resolveSignerValidationTarget(
-      pendingAction,
-      editIntent,
-      deleteIntent,
-    );
+    const validationTarget = resolveSignerValidationTarget(pendingAction, editIntent, deleteIntent);
 
     if (validationTarget === undefined || pendingAction === null) {
       return;

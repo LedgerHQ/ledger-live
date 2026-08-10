@@ -1,7 +1,4 @@
-import type {
-  ContactAddressDetailDeleteIntent,
-  ContactAddressDetailEditIntent,
-} from "../types";
+import type { ContactAddressDetailDeleteIntent, ContactAddressDetailEditIntent } from "../types";
 
 export type SignerPendingAction = "edit" | "delete";
 
