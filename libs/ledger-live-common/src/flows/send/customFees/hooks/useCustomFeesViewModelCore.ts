@@ -212,6 +212,14 @@ export function useCustomFeesViewModelCore({
   const selectedInputValueTransform = selectedAsset?.customFeeInputValueTransform ?? null;
   const selectedInputValueTransformId = selectedInputValueTransform ? selectedAssetId : null;
   const feeCurrencyAccountId = sendFeatures.getFeeCurrencyAccountId(accountCurrency, transaction);
+  const feePayerAccount = useMemo<AccountLike | null>(
+    () =>
+      feeCurrencyAccountId
+        ? (mainAccount.subAccounts?.find(subAccount => subAccount.id === feeCurrencyAccountId) ??
+          null)
+        : mainAccount,
+    [feeCurrencyAccountId, mainAccount],
+  );
   const { displayCurrency } = useMemo(
     () =>
       resolveFeeDisplayContext({
@@ -336,6 +344,7 @@ export function useCustomFeesViewModelCore({
     insufficientBalanceTargetInputKey,
   } = useCustomFeeValidation({
     account,
+    feePayerAccount,
     transaction,
     status,
     activeInputs,
