@@ -11,7 +11,7 @@ import CurrencyRow from "~/components/CurrencyRow";
 import LText from "~/components/LText";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { RequestAccountNavigatorParamList } from "~/components/RootNavigator/types/RequestAccountNavigator";
-import { useAssetsData } from "@ledgerhq/live-common/dada-client/hooks/useAssetsData";
+import { useAssetsData } from "@features/platform-aggregated-assets";
 import useEnv from "@features/platform-env";
 import VersionNumber from "react-native-version-number";
 import { useAcceptedCurrency } from "@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency";

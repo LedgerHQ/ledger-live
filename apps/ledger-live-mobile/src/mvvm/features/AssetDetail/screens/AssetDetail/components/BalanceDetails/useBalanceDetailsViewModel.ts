@@ -7,7 +7,7 @@ import {
   formatCurrencyUnit,
   formatCurrencyUnitFragment,
 } from "@ledgerhq/live-common/currencies/index";
-import { useInterestRatesByCurrencies } from "@ledgerhq/live-common/dada-client/hooks/useInterestRatesByCurrencies";
+import { useInterestRatesByCurrencies } from "@features/platform-aggregated-assets";
 import { getInterestRateForAsset } from "@ledgerhq/live-common/modularDrawer/utils/getInterestRateForAsset";
 import { useSelector } from "~/context/hooks";
 import { counterValueCurrencySelector, discreetModeSelector } from "~/reducers/settings";
