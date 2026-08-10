@@ -3,6 +3,7 @@ import { Modal, Pressable, StyleProp, View, ViewStyle } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, {
   Easing,
+  useAnimatedReaction,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
@@ -93,11 +94,43 @@ const QueuedDrawerNative = ({
   // LIVE-DEBUG(drawer-stuck): plain JS callbacks, invoked from the animation
   // worklets via scheduleOnRN — same pattern as the existing `afterOnce`, so the
   // worklet closure stays serialisable.
+  //
+  // Round 2. Round 1 proved onShow fires and openAnim reports `finished`, yet the
+  // committed transform is still 1000. Read the shared value back at three points
+  // after the callback to separate "withTiming never applied the value" from
+  // "value applied, then reverted or never committed to the view".
   const logAnimEnd = useCallback(
     (label: string) => {
-      logDrawer(label, { instanceId });
+      logDrawer(label, { instanceId, translateYAtCallback: translateY.value });
+      requestAnimationFrame(() => {
+        logDrawer(`${label} +1frame`, { instanceId, translateY: translateY.value });
+      });
+      setTimeout(() => {
+        logDrawer(`${label} +400ms`, { instanceId, translateY: translateY.value });
+      }, 400);
+    },
+    [instanceId, translateY],
+  );
+
+  // LIVE-DEBUG(drawer-stuck): UI-thread view of the same value. This reaction runs
+  // on the UI thread, so it reports endpoints even when the JS thread is busy —
+  // though the log hop itself still needs JS, so it goes quiet in a full stall.
+  const logSettled = useCallback(
+    (value: number) => {
+      logDrawer("translateY settled (UI thread)", { instanceId, value });
     },
     [instanceId],
+  );
+
+  useAnimatedReaction(
+    () => translateY.value,
+    (cur, prev) => {
+      if (prev === null || cur === prev) return;
+      // Only the resting/parked endpoints, to keep this off the per-frame path.
+      if (cur === 0 || cur === 1000) {
+        scheduleOnRN(logSettled, cur);
+      }
+    },
   );
 
   const openAnim = useCallback(() => {
@@ -183,13 +216,29 @@ const QueuedDrawerNative = ({
     [backdropOpacity],
   );
 
-  // LIVE-DEBUG(drawer-stuck): THE decisive probe. openAnim() has exactly one caller
-  // — this Android Modal.onShow callback. An "isVisible committed true" with no
-  // "Modal onShow fired" after it proves the sheet can never leave translateY=1000.
+  // LIVE-DEBUG(drawer-stuck): round 1 established this DOES fire — kept as the
+  // anchor that every later timestamp is read against.
   const onShow = useCallback(() => {
     logDrawer("Modal onShow fired", { instanceId, translateYBefore: translateY.value });
     openAnim();
   }, [openAnim, instanceId, translateY]);
+
+  // LIVE-DEBUG(drawer-stuck): bounded heartbeat while the drawer is visible.
+  // In round 1 the app's entire log stream stopped ~71s before the test timed out,
+  // so we cannot tell a stalled JS thread from "nothing more to log". This ticks
+  // every 500ms for 12s: where it stops is when the thread died, and the value it
+  // carries says whether the sheet ever left 1000. Not JS_THREAD_MONITOR — that
+  // one renders a floating badge that would occlude elements under test.
+  useEffect(() => {
+    if (!isVisible) return;
+    let tick = 0;
+    const id = setInterval(() => {
+      tick += 1;
+      logDrawer("visible heartbeat", { instanceId, tick, translateY: translateY.value });
+      if (tick >= 24) clearInterval(id);
+    }, 500);
+    return () => clearInterval(id);
+  }, [isVisible, instanceId, translateY]);
 
   const handleCloseUserEvent = useCallback(() => {
     closeAnim(() => {
