@@ -566,7 +566,11 @@ export function drainSpeculosScreenshots(port: number): Buffer[] {
   return screenshots;
 }
 
-export async function waitFor(text: string, maxAttempts = 60): Promise<string> {
+export async function waitFor(
+  text: string,
+  maxAttempts = 60,
+  { matchFullEvents = false }: { matchFullEvents?: boolean } = {},
+): Promise<string> {
   const port = getEnv("SPECULOS_API_PORT");
   let texts = "";
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
@@ -576,7 +580,37 @@ export async function waitFor(text: string, maxAttempts = 60): Promise<string> {
       return texts;
     }
 
+    // On a freshly launched Speculos instance (token approve/revoke — see
+    // ensureTokenApproval / revokeTokenApproval, which each launchSpeculos()),
+    // `/events?currentscreenonly=true` can stay stuck on the launch screen
+    // ("Ethereum app is ready") even though the review screen is rendered — the
+    // `/screenshot` proves it is on-device. Fall back to the full event log so we
+    // still detect it. Opt-in only: the fresh instance's log holds a single
+    // approve/revoke flow, so this cannot match an earlier screen the way it
+    // could on the reused main instance during a multi-step send/swap.
+    if (matchFullEvents) {
+      const allEvents = (await fetchAllEvents(port)).join(" ");
+      if (allEvents.toLowerCase().includes(text.toLowerCase())) {
+        return allEvents;
+      }
+    }
+
     await sleep(SCREEN_POLL_INTERVAL_MS);
+  }
+
+  if (matchFullEvents) {
+    // Diagnostic: the current-screen read never matched. Dump both event reads so
+    // a read-vs-render mismatch (stale `currentscreenonly=true`) is visible in the
+    // logs instead of only "Last screen text".
+    try {
+      const allEvents = (await fetchAllEvents(port)).join(" ");
+      console.warn(
+        `[waitFor] "${text}" not matched after ${maxAttempts} polls. ` +
+          `currentscreenonly=true => "${texts}" | currentscreenonly=false => "${allEvents}"`,
+      );
+    } catch (err) {
+      console.warn(`[waitFor] failed to dump full events: ${sanitizeError(err)}`);
+    }
   }
 
   throw new Error(
@@ -593,10 +627,13 @@ function isExchangeAppReadyStall(screenText: string): boolean {
   return screenText.toLowerCase().includes(DeviceLabels.EXCHANGE_APP_IS_READY.toLowerCase());
 }
 
-export async function waitForReviewTransaction(maxAttempts = 60): Promise<void> {
+export async function waitForReviewTransaction(
+  maxAttempts = 60,
+  { matchFullEvents = false }: { matchFullEvents?: boolean } = {},
+): Promise<void> {
   if (!isTouchDevice()) {
     try {
-      await waitFor(DeviceLabels.REVIEW_TRANSACTION, maxAttempts);
+      await waitFor(DeviceLabels.REVIEW_TRANSACTION, maxAttempts, { matchFullEvents });
     } catch (error) {
       if (error instanceof Error && isExchangeAppReadyStall(error.message)) {
         error.message += SWAP_INIT_STALL_HINT;
@@ -612,6 +649,14 @@ export async function waitForReviewTransaction(maxAttempts = 60): Promise<void> 
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
     texts = await fetchCurrentScreenTexts(port);
     if (texts.includes(DeviceLabels.REVIEW_TRANSACTION)) {
+      return;
+    }
+    // See waitFor: a freshly launched instance can leave currentscreenonly stuck
+    // on the launch screen while the review is rendered. Fall back to full events.
+    if (
+      matchFullEvents &&
+      (await fetchAllEvents(port)).join(" ").includes(DeviceLabels.REVIEW_TRANSACTION)
+    ) {
       return;
     }
     if (!enabled && texts.includes(DeviceLabels.YES_ENABLE)) {
