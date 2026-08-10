@@ -1,6 +1,4 @@
 ---
-"@devtools/bindings": minor
-"@devtools/pay-card": minor
 "@features/flow-pay-card-auth": minor
 "@shared/api-services": minor
 "ledger-live-desktop": minor
@@ -17,6 +15,3 @@ contracts; `@domain/api-pay-card` and its in-process mock transport are removed.
 Only `pre-auth` ships in this change. The OAuth code exchange and card status read are deferred until
 the callback and status steps can also provide session-token handling. Pay Card schemas and Redux
 state now live with their only consumer in `@features/flow-pay-card-auth`.
-
-The flow state persists whether the feature tour has been seen. The Pay Card DevTool displays that
-status and provides a control to reset the feature tour.
