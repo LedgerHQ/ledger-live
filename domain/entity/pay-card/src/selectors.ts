@@ -1,4 +1,9 @@
-import type { PayCardParams, PayCardPersistedState, PayCardState } from "./types";
+import type {
+  PayCardBalanceFilter,
+  PayCardParams,
+  PayCardPersistedState,
+  PayCardState,
+} from "./types";
 
 type PayCardStateRoot = {
   payCard: PayCardState;
@@ -20,9 +25,14 @@ export function selectPayCardHasSeenFeatureTour(state: PayCardStateRoot): boolea
   return state.payCard.hasSeenFeatureTour;
 }
 
+export function selectPayCardBalanceFilter(state: PayCardStateRoot): PayCardBalanceFilter {
+  return state.payCard.balanceFilter;
+}
+
 /** Returns only the persisted subset of the pay card state. */
 export function payCardPersistedSelector(state: PayCardStateRoot): PayCardPersistedState {
   return {
     hasSeenFeatureTour: state.payCard.hasSeenFeatureTour,
+    balanceFilter: state.payCard.balanceFilter,
   };
 }
