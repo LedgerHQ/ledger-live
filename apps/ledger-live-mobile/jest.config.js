@@ -157,6 +157,13 @@ module.exports = {
     "^react-native$": "<rootDir>/node_modules/react-native",
     "^react-native-gesture-handler$": "<rootDir>/node_modules/react-native-gesture-handler",
     "^react-native-gesture-handler/(.*)$": "<rootDir>/node_modules/react-native-gesture-handler/$1",
+    // Pin to a single instance so components rendered from workspace packages
+    // (e.g. @shared/ui-queued-bottom-sheet) share the app's SafeAreaProvider context
+    // instead of resolving a second pnpm copy (duplicate context = "No safe
+    // area value available").
+    "^react-native-safe-area-context$": "<rootDir>/node_modules/react-native-safe-area-context",
+    "^react-native-safe-area-context/(.*)$":
+      "<rootDir>/node_modules/react-native-safe-area-context/$1",
     "styled-components":
       "<rootDir>/node_modules/styled-components/native/dist/styled-components.native.cjs.js",
     "^react-redux": "<rootDir>/node_modules/react-redux",

@@ -2,7 +2,7 @@ import React from "react";
 import { BottomSheetHeader, BottomSheetView } from "@ledgerhq/lumen-ui-rnative";
 import { StyleSheet } from "react-native";
 import { FeatureIntroLayout } from "LLM/components/FeatureIntroLayout";
-import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
+import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import type { FeatureIntroViewModel } from "LLM/components/FeatureIntroLayout/types";
 import { CarouselLayout } from "./CarouselLayout";
 import { PromptLayout } from "./PromptLayout";

@@ -7,7 +7,7 @@ import type {
 import { StyleSheet } from "react-native";
 import { Text, Flex } from "@ledgerhq/native-ui";
 import { ScreenName, NavigatorName } from "~/const";
-import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
+import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import Illustration from "~/images/illustration/Illustration";
 import EarnLight from "~/images/illustration/Light/_003.webp";
 import EarnDark from "~/images/illustration/Dark/_003.webp";

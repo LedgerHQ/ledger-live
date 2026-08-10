@@ -1,7 +1,12 @@
 import React from "react";
-import type { StatusGradientTone } from "LLM/components/StatusGradient";
 
-export type BottomSheetBackgroundTone = StatusGradientTone;
+/**
+ * Status tone applied to a bottom sheet's background gradient.
+ *
+ * Kept as a local union so this package does not depend on the app's
+ * `StatusGradient`. The app's `StatusGradientTone` is structurally identical.
+ */
+export type BottomSheetBackgroundTone = "error" | "info" | "success";
 
 type CleanupBottomSheetBackgroundTone = () => void;
 

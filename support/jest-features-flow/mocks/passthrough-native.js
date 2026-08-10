@@ -23,13 +23,17 @@ function Button({ children, ...props }) {
 
 // Generic Lumen (native) stub: every named export becomes a host element named after the
 // component (e.g. Text -> "Text"), so React Native Testing Library text queries still work.
-// Redirected here via moduleNameMapper — no per-component mocks, no peer installs.
+// Hooks (`use*`) return a mutable ref stub. Redirected here via moduleNameMapper — no
+// per-component mocks, no peer installs.
 module.exports = new Proxy(
   { __esModule: true, Banner, Button },
   {
     get(target, prop) {
       if (prop in target) return target[prop];
       if (typeof prop !== "string") return undefined;
+      if (prop.startsWith("use")) {
+        return () => ({ current: null });
+      }
       return ({ children, ...props }) => React.createElement(prop, props, children);
     },
   },

@@ -3,6 +3,7 @@
   "compilerOptions": {
     "moduleResolution": "bundler",
     "customConditions": ["react-native", "@ledgerhq/source"],
+    "moduleSuffixes": [".native", ""],
     "module": "preserve",
     "allowJs": false,
     "checkJs": false,

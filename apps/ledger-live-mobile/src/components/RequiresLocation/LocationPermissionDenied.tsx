@@ -5,7 +5,7 @@ import { locationPermission } from "./hooks/useAndroidLocationPermission";
 import NoLocationImage from "~/icons/NoLocationImage";
 import GenericInformationalDrawerContent from "../GenericInformationalDrawerContent";
 import GenericInformationalView from "../GenericInformationalView";
-import IsInDrawerContext from "~/context/IsInDrawerContext";
+import { IsInBottomSheetContext } from "@shared/ui-queued-bottom-sheet";
 
 type Props = {
   onRetry?: (() => void) | null;
@@ -29,7 +29,7 @@ const LocationPermissionDenied: React.FC<Props> = ({
   forceOpenSettings = false,
 }) => {
   const { t } = useTranslation();
-  const { isInDrawer } = useContext(IsInDrawerContext);
+  const { isInBottomSheet } = useContext(IsInBottomSheetContext);
 
   const openNativeSettings = useCallback(() => {
     Linking.openSettings();
@@ -59,7 +59,7 @@ const LocationPermissionDenied: React.FC<Props> = ({
     buttonEvent = "LocationPermissionDeniedRetryAuthorize";
   }
 
-  if (isInDrawer) {
+  if (isInBottomSheet) {
     return (
       <GenericInformationalDrawerContent
         icon={<NoLocationImage viewBox="0 0 113 114" height="60" width="60" />}

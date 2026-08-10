@@ -2,7 +2,7 @@ import React from "react";
 import { useTranslation } from "~/context/Locale";
 import { TrackScreen } from "~/analytics";
 import { BottomSheetView, Box } from "@ledgerhq/lumen-ui-rnative";
-import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
+import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import { urls } from "~/utils/urls";
 import type { AnalyticsConsentPhase } from "@features/flow-analytics-consent";

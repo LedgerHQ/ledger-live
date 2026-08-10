@@ -1,13 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Keyboard } from "react-native";
 import { BottomSheetProps, useBottomSheetRef } from "@ledgerhq/lumen-ui-rnative";
-import { useIsFocused } from "@react-navigation/native";
-import { useSelector } from "~/context/hooks";
-import { isModalLockedSelector } from "~/reducers/appstate";
-import { bottomSheetGradientByTone } from "LLM/components/BottomSheetGradient";
-import { useBottomSheetBackgroundToneRequests } from "LLM/hooks/useBottomSheetBackgroundToneRequests";
-import { DrawerInQueue, useQueuedDrawerContext } from "./QueuedDrawersContext";
-import { logDrawer } from "./utils/logDrawer";
+import {
+  BottomSheetInQueue,
+  useQueuedBottomSheetContext,
+} from "../contexts/QueuedBottomSheetsContext";
+import { useQueuedBottomSheetAdapters } from "./adaptersContext";
+import { useBottomSheetBackgroundToneRequests } from "./useBottomSheetBackgroundToneRequests";
 
 interface UseQueuedBottomSheetProps {
   isRequestingToBeOpened?: boolean;
@@ -20,9 +19,9 @@ interface UseQueuedBottomSheetProps {
   preventBackdropClick?: boolean;
 }
 
-type DrawerState = "idle" | "open" | "dismissing";
+type BottomSheetState = "idle" | "open" | "dismissing";
 
-const useQueuedBottomSheet = ({
+export function useQueuedBottomSheet({
   isRequestingToBeOpened = false,
   isForcingToBeOpened = false,
   onClose,
@@ -31,15 +30,24 @@ const useQueuedBottomSheet = ({
   onBackdropPress,
   onModalHide,
   preventBackdropClick,
-}: UseQueuedBottomSheetProps) => {
+}: UseQueuedBottomSheetProps) {
+  const adapters = useQueuedBottomSheetAdapters();
+  const logRef = useRef(adapters.log);
+  logRef.current = adapters.log;
+  const logBottomSheet = useCallback(
+    (message: string, data?: Record<string, unknown> | number | string) =>
+      logRef.current(message, data),
+    [],
+  );
+
   const { backgroundTone, backgroundContextValue } = useBottomSheetBackgroundToneRequests();
-  const { addDrawerToQueue } = useQueuedDrawerContext();
-  const drawerInQueueRef = useRef<DrawerInQueue | undefined>(undefined);
+  const { addBottomSheetToQueue } = useQueuedBottomSheetContext();
+  const bottomSheetInQueueRef = useRef<BottomSheetInQueue | undefined>(undefined);
   const bottomSheetRef = useBottomSheetRef();
-  const isFocused = useIsFocused();
-  const areDrawersLocked = useSelector(isModalLockedSelector);
+  const isFocused = adapters.useIsScreenFocused();
+  const areBottomSheetsLocked = adapters.useAreBottomSheetsLocked();
   const backgroundComponent: BottomSheetProps["backgroundComponent"] = backgroundTone
-    ? bottomSheetGradientByTone[backgroundTone]
+    ? adapters.backgroundComponentByTone?.[backgroundTone]
     : undefined;
 
   const onCloseRef = useRef(onClose);
@@ -54,7 +62,7 @@ const useQueuedBottomSheet = ({
   const onModalHideRef = useRef(onModalHide);
   onModalHideRef.current = onModalHide;
 
-  const stateRef = useRef<DrawerState>("idle");
+  const stateRef = useRef<BottomSheetState>("idle");
 
   // Bumped at the end of handleDismiss to re-trigger the open/close effect below. This defers
   // the "should we reopen?" decision to a React commit, ensuring any state update scheduled by
@@ -64,19 +72,19 @@ const useQueuedBottomSheet = ({
   const [reopenCheckSignal, setReopenCheckSignal] = useState(0);
 
   const cleanupQueue = useCallback(() => {
-    if (drawerInQueueRef.current) {
-      drawerInQueueRef.current.removeDrawerFromQueue();
-      drawerInQueueRef.current = undefined;
+    if (bottomSheetInQueueRef.current) {
+      bottomSheetInQueueRef.current.removeBottomSheetFromQueue();
+      bottomSheetInQueueRef.current = undefined;
     }
   }, []);
 
   const handleOpen = useCallback(() => {
     if (stateRef.current !== "idle") return;
 
-    logDrawer("Opening drawer");
+    logBottomSheet("Opening drawer");
     stateRef.current = "open";
     bottomSheetRef.current?.present();
-  }, [bottomSheetRef]);
+  }, [bottomSheetRef, logBottomSheet]);
 
   const handleClose = useCallback(() => {
     const state = stateRef.current;
@@ -88,49 +96,44 @@ const useQueuedBottomSheet = ({
 
     if (state === "dismissing") return;
 
-    logDrawer("Closing drawer");
+    logBottomSheet("Closing drawer");
     stateRef.current = "dismissing";
     bottomSheetRef.current?.dismiss();
     onCloseRef.current?.();
-  }, [bottomSheetRef, cleanupQueue]);
+  }, [bottomSheetRef, cleanupQueue, logBottomSheet]);
 
   // Adds this drawer to the queue. The queue decides when to actually open/close it via the
-  // onDrawerStateChanged callback.
-  const enqueueDrawer = useCallback(() => {
-    if (drawerInQueueRef.current) return;
+  // open/close state handlers.
+  const enqueueBottomSheet = useCallback(() => {
+    if (bottomSheetInQueueRef.current) return;
 
-    const onDrawerStateChanged = (isOpen: boolean) => {
-      if (isOpen) {
-        handleOpen();
-      } else {
-        handleClose();
-      }
-    };
-
-    drawerInQueueRef.current = addDrawerToQueue(onDrawerStateChanged, isForcingToBeOpened);
-  }, [addDrawerToQueue, handleOpen, handleClose, isForcingToBeOpened]);
+    bottomSheetInQueueRef.current = addBottomSheetToQueue(
+      { open: handleOpen, close: handleClose },
+      isForcingToBeOpened,
+    );
+  }, [addBottomSheetToQueue, handleOpen, handleClose, isForcingToBeOpened]);
 
   const handleUserClose = useCallback(() => {
-    logDrawer("User initiated close");
+    logBottomSheet("User initiated close");
     bottomSheetRef.current?.dismiss();
-  }, [bottomSheetRef]);
+  }, [bottomSheetRef, logBottomSheet]);
 
   // Notifies the consumer of the explicit backdrop press before dismissing. Unlike onClose
   // (which fires for any closing reason), this reflects a real user close interaction.
   const handleBackdropPress = useCallback(() => {
-    logDrawer("Backdrop pressed");
+    logBottomSheet("Backdrop pressed");
     onBackdropPressRef.current?.();
     handleUserClose();
-  }, [handleUserClose]);
+  }, [handleUserClose, logBottomSheet]);
 
   const handleHeaderClosePressed = useCallback(() => {
     if (stateRef.current === "dismissing") return;
 
-    logDrawer("Header close pressed");
+    logBottomSheet("Header close pressed");
     stateRef.current = "dismissing";
     onHeaderClosePressedRef.current?.();
     onCloseRef.current?.();
-  }, []);
+  }, [logBottomSheet]);
 
   // Fired at the START of an animation. A close animation targets index -1, so this is the
   // earliest deterministic signal that the sheet is closing — for the X (close) button, the
@@ -138,16 +141,19 @@ const useQueuedBottomSheet = ({
   // onDismiss (which the X button defers until the close animation finishes). Otherwise a tap on
   // another trigger during the close window sets new state that the late onDismiss would wipe,
   // forcing the user to tap twice. Queue cleanup stays in onDismiss to preserve overlap protection.
-  const handleCloseAnimationStart = useCallback((_fromIndex: number, toIndex: number) => {
-    if (toIndex === -1 && stateRef.current === "open") {
-      logDrawer("Close animation started");
-      stateRef.current = "dismissing";
-      onCloseRef.current?.();
-    }
-  }, []);
+  const handleCloseAnimationStart = useCallback(
+    (_fromIndex: number, toIndex: number) => {
+      if (toIndex === -1 && stateRef.current === "open") {
+        logBottomSheet("Close animation started");
+        stateRef.current = "dismissing";
+        onCloseRef.current?.();
+      }
+    },
+    [logBottomSheet],
+  );
 
   const handleDismiss = useCallback(() => {
-    logDrawer("BottomSheet dismissed (onDismiss)");
+    logBottomSheet("BottomSheet dismissed (onDismiss)");
 
     if (Keyboard.isVisible()) {
       Keyboard.dismiss();
@@ -168,20 +174,20 @@ const useQueuedBottomSheet = ({
     // isRequestingToBeOpened reflects the user's true intent — false for a normal backdrop close,
     // true only if the consumer genuinely re-requested while the sheet was closing.
     setReopenCheckSignal(s => s + 1);
-  }, [cleanupQueue]);
+  }, [cleanupQueue, logBottomSheet]);
 
   useEffect(() => {
     if (!isFocused && (isRequestingToBeOpened || isForcingToBeOpened)) {
-      logDrawer("Closing drawer - screen not focused");
+      logBottomSheet("Closing drawer - screen not focused");
       handleClose();
       return;
     }
 
-    if ((isRequestingToBeOpened || isForcingToBeOpened) && !drawerInQueueRef.current) {
-      enqueueDrawer();
+    if ((isRequestingToBeOpened || isForcingToBeOpened) && !bottomSheetInQueueRef.current) {
+      enqueueBottomSheet();
 
       return () => {
-        logDrawer("Effect cleanup - closing drawer");
+        logBottomSheet("Effect cleanup - closing drawer");
         handleClose();
       };
     }
@@ -190,30 +196,29 @@ const useQueuedBottomSheet = ({
     isForcingToBeOpened,
     isRequestingToBeOpened,
     handleClose,
-    enqueueDrawer,
+    enqueueBottomSheet,
+    logBottomSheet,
     reopenCheckSignal,
   ]);
 
   useEffect(() => {
     return () => {
-      logDrawer("Component unmounting - cleaning up");
+      logBottomSheet("Component unmounting - cleaning up");
       cleanupQueue();
     };
-  }, [cleanupQueue]);
+  }, [cleanupQueue, logBottomSheet]);
 
   return {
     bottomSheetRef,
-    areDrawersLocked,
+    areBottomSheetsLocked,
     handleUserClose,
     handleBackdropPress,
     handleHeaderClosePressed,
     handleDismiss,
     handleCloseAnimationStart,
     onBack,
-    enablePanDownToClose: !areDrawersLocked && !preventBackdropClick,
+    enablePanDownToClose: !areBottomSheetsLocked && !preventBackdropClick,
     backgroundContextValue,
     backgroundComponent,
   };
-};
-
-export default useQueuedBottomSheet;
+}

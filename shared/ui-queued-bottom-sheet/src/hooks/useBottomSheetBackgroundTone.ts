@@ -2,7 +2,7 @@ import { useContext, useLayoutEffect } from "react";
 import {
   BottomSheetBackgroundContext,
   type BottomSheetBackgroundTone,
-} from "LLM/contexts/BottomSheetBackgroundContext";
+} from "../contexts/BottomSheetBackgroundContext";
 
 /**
  * Tints the enclosing `QueuedBottomSheet` with the given status tone.

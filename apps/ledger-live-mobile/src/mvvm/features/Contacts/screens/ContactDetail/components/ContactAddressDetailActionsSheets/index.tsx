@@ -5,7 +5,7 @@ import {
   ContactsRenameAddressDialog,
 } from "@features/flow-contacts";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
+import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import type { ContactAddressDetailActionsFlowProps } from "LLM/features/Contacts";
 
 type ContactAddressDetailActionsSheetsProps = Pick<

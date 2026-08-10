@@ -2,7 +2,7 @@ import { useCallback, useMemo, useRef, useState } from "react";
 import type {
   BottomSheetBackgroundContextValue,
   BottomSheetBackgroundTone,
-} from "LLM/contexts/BottomSheetBackgroundContext";
+} from "../contexts/BottomSheetBackgroundContext";
 
 type UseBottomSheetBackgroundToneRequestsReturn = Readonly<{
   backgroundTone: BottomSheetBackgroundTone | undefined;

@@ -8,7 +8,7 @@ import { SkipLockContext } from "~/components/behaviour/SkipLock";
 import type { Privacy } from "~/reducers/types";
 import AuthScreen from "./AuthScreen";
 import RequestBiometricAuth from "~/components/RequestBiometricAuth";
-import { useQueuedDrawerContext } from "LLM/components/QueuedDrawer/QueuedDrawersContext";
+import { useQueuedBottomSheetContext } from "@shared/ui-queued-bottom-sheet";
 import { useAppStateHandler, usePrivacyInitialization } from "./auth.hooks";
 import { isLockedSelector, biometricsErrorSelector, authModalOpenSelector } from "~/reducers/auth";
 import {
@@ -42,15 +42,15 @@ const AuthPass: React.FC<OwnProps> = ({ children }) => {
     [dispatch],
   );
 
-  const { closeAllDrawers } = useQueuedDrawerContext();
+  const { closeAllBottomSheets } = useQueuedBottomSheetContext();
 
   const lock = useCallback(() => {
     if (!privacy?.hasPassword || skipLockCount) return;
 
-    closeAllDrawers();
+    closeAllBottomSheets();
 
     dispatch(lockAction());
-  }, [privacy, skipLockCount, closeAllDrawers, dispatch]);
+  }, [privacy, skipLockCount, closeAllBottomSheets, dispatch]);
 
   const unlock = useCallback(() => {
     dispatch(unlockAction());

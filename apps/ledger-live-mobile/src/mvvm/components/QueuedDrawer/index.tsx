@@ -10,7 +10,7 @@ import Animated, {
 import { scheduleOnRN } from "react-native-worklets";
 import { useTheme } from "styled-components/native";
 import { Flex, Text, BoxedIcon, Icons } from "@ledgerhq/native-ui";
-import { IsInDrawerProvider } from "~/context/IsInDrawerContext";
+import { IsInBottomSheetProvider } from "@shared/ui-queued-bottom-sheet";
 import useQueuedDrawerNative from "./useQueuedDrawerNative";
 import Header from "./Header";
 
@@ -69,7 +69,7 @@ const QueuedDrawerNative = ({
   const insets = useSafeAreaInsets();
 
   const {
-    areDrawersLocked,
+    areBottomSheetsLocked,
     isVisible,
     handleDismiss,
     onBack: hookOnBack,
@@ -184,8 +184,8 @@ const QueuedDrawerNative = ({
   }, [enablePanDownToClose, closeAnim, handleDismiss, _onBackdropPress]);
 
   const shouldShowHeader = useMemo(
-    () => CustomHeader || title || hasBackButton || (!noCloseButton && !areDrawersLocked),
-    [CustomHeader, title, hasBackButton, noCloseButton, areDrawersLocked],
+    () => CustomHeader || title || hasBackButton || (!noCloseButton && !areBottomSheetsLocked),
+    [CustomHeader, title, hasBackButton, noCloseButton, areBottomSheetsLocked],
   );
 
   const shouldShowModalHeader = useMemo(
@@ -258,7 +258,7 @@ const QueuedDrawerNative = ({
           >
             {shouldShowHeader && CustomHeader ? (
               <CustomHeader>
-                {!noCloseButton && !areDrawersLocked ? (
+                {!noCloseButton && !areBottomSheetsLocked ? (
                   <Pressable
                     testID="modal-close-button"
                     onPress={handleCloseUserEvent}
@@ -301,7 +301,7 @@ const QueuedDrawerNative = ({
                   hasBackButton={hasBackButton}
                   hookOnBack={hookOnBack}
                   noCloseButton={noCloseButton}
-                  areDrawersLocked={areDrawersLocked}
+                  areBottomSheetsLocked={areBottomSheetsLocked}
                   handleCloseUserEvent={handleCloseUserEvent}
                 />
               ) : null}
@@ -324,7 +324,7 @@ const QueuedDrawerNative = ({
 
               {children && (
                 <View style={style || undefined}>
-                  <IsInDrawerProvider>{children}</IsInDrawerProvider>
+                  <IsInBottomSheetProvider>{children}</IsInBottomSheetProvider>
                 </View>
               )}
             </View>

@@ -5,7 +5,7 @@ import {
   type ContactsFeatureIntroduction,
 } from "@features/flow-contacts";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
+import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { useSingleFireDismiss } from "LLM/features/Contacts/hooks/useSingleFireDismiss";
 
 export type ContactsFeatureIntroductionSheetProps = ContactsFeatureIntroduction;

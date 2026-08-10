@@ -1,47 +1,48 @@
 import { useState } from "react";
-import { renderHook, act } from "@tests/test-renderer";
-import useQueuedBottomSheet from "../useQueuedBottomSheet";
+import { renderHook, act } from "@testing-library/react-native";
+import { useQueuedBottomSheet } from "./useQueuedBottomSheet";
+import type { BottomSheetStateHandlers } from "../contexts/QueuedBottomSheetsContext";
 
 const mockPresent = jest.fn();
 const mockDismiss = jest.fn();
 
 jest.mock("@ledgerhq/lumen-ui-rnative", () => ({
-  ...jest.requireActual("@ledgerhq/lumen-ui-rnative"),
+  __esModule: true,
   useBottomSheetRef: () => ({ current: { present: mockPresent, dismiss: mockDismiss } }),
 }));
 
-jest.mock("@react-navigation/native", () => ({
-  ...jest.requireActual("@react-navigation/native"),
-  useIsFocused: () => true,
-}));
-
-const mockRemoveDrawerFromQueue = jest.fn();
-const mockAddDrawerToQueue = jest.fn().mockImplementation(() => ({
-  removeDrawerFromQueue: mockRemoveDrawerFromQueue,
+const mockRemoveBottomSheetFromQueue = jest.fn();
+const mockAddBottomSheetToQueue = jest.fn().mockImplementation(() => ({
+  removeBottomSheetFromQueue: mockRemoveBottomSheetFromQueue,
   getPositionInQueue: () => 0,
 }));
 
-jest.mock("../QueuedDrawersContext", () => ({
-  useQueuedDrawerContext: () => ({
-    addDrawerToQueue: mockAddDrawerToQueue,
-    closeAllDrawers: jest.fn(),
+jest.mock("../contexts/QueuedBottomSheetsContext", () => ({
+  useQueuedBottomSheetContext: () => ({
+    addBottomSheetToQueue: mockAddBottomSheetToQueue,
+    closeAllBottomSheets: jest.fn(),
     _clearQueueDIRTYDONOTUSE: jest.fn(),
   }),
 }));
 
-function setupDrawerStateCapture() {
-  let onDrawerStateChanged: ((isOpen: boolean) => void) | undefined;
-  mockAddDrawerToQueue.mockImplementation(callback => {
-    onDrawerStateChanged = callback;
+function setupBottomSheetStateCapture() {
+  let stateHandlers: BottomSheetStateHandlers | undefined;
+  mockAddBottomSheetToQueue.mockImplementation(handlers => {
+    stateHandlers = handlers;
     return {
-      removeDrawerFromQueue: mockRemoveDrawerFromQueue,
+      removeBottomSheetFromQueue: mockRemoveBottomSheetFromQueue,
       getPositionInQueue: () => 0,
     };
   });
   return {
-    signal: (isOpen: boolean) => {
+    signalOpen: () => {
       act(() => {
-        onDrawerStateChanged?.(isOpen);
+        stateHandlers?.open();
+      });
+    },
+    signalClose: () => {
+      act(() => {
+        stateHandlers?.close();
       });
     },
   };
@@ -53,7 +54,7 @@ describe("useQueuedBottomSheet", () => {
   });
 
   it("calls present() when the queue signals the drawer to open", () => {
-    const { signal } = setupDrawerStateCapture();
+    const { signalOpen, signalClose } = setupBottomSheetStateCapture();
 
     renderHook(() =>
       useQueuedBottomSheet({
@@ -61,15 +62,15 @@ describe("useQueuedBottomSheet", () => {
       }),
     );
 
-    expect(mockAddDrawerToQueue).toHaveBeenCalledTimes(1);
+    expect(mockAddBottomSheetToQueue).toHaveBeenCalledTimes(1);
 
-    signal(true);
+    signalOpen();
 
     expect(mockPresent).toHaveBeenCalledTimes(1);
   });
 
   it("calls dismiss() when the queue signals the drawer to close", () => {
-    const { signal } = setupDrawerStateCapture();
+    const { signalOpen, signalClose } = setupBottomSheetStateCapture();
 
     renderHook(() =>
       useQueuedBottomSheet({
@@ -77,15 +78,15 @@ describe("useQueuedBottomSheet", () => {
       }),
     );
 
-    signal(true);
+    signalOpen();
     expect(mockPresent).toHaveBeenCalledTimes(1);
 
-    signal(false);
+    signalClose();
     expect(mockDismiss).toHaveBeenCalled();
   });
 
   it("does not remove from queue on close signal, only when handleDismiss fires after animation", () => {
-    const { signal } = setupDrawerStateCapture();
+    const { signalOpen, signalClose } = setupBottomSheetStateCapture();
 
     const { result } = renderHook(() =>
       useQueuedBottomSheet({
@@ -93,20 +94,20 @@ describe("useQueuedBottomSheet", () => {
       }),
     );
 
-    signal(true);
-    signal(false);
-    expect(mockRemoveDrawerFromQueue).not.toHaveBeenCalled();
+    signalOpen();
+    signalClose();
+    expect(mockRemoveBottomSheetFromQueue).not.toHaveBeenCalled();
 
     act(() => {
       result.current.handleDismiss();
     });
 
-    expect(mockRemoveDrawerFromQueue).toHaveBeenCalledTimes(1);
+    expect(mockRemoveBottomSheetFromQueue).toHaveBeenCalledTimes(1);
   });
 
   it("calls onClose callback when the queue signals close", () => {
     const onClose = jest.fn();
-    const { signal } = setupDrawerStateCapture();
+    const { signalOpen, signalClose } = setupBottomSheetStateCapture();
 
     renderHook(() =>
       useQueuedBottomSheet({
@@ -115,15 +116,15 @@ describe("useQueuedBottomSheet", () => {
       }),
     );
 
-    signal(true);
-    signal(false);
+    signalOpen();
+    signalClose();
 
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
   it("calls onModalHide when handleDismiss is invoked", () => {
     const onModalHide = jest.fn();
-    const { signal } = setupDrawerStateCapture();
+    const { signalOpen, signalClose } = setupBottomSheetStateCapture();
 
     const { result } = renderHook(() =>
       useQueuedBottomSheet({
@@ -132,7 +133,7 @@ describe("useQueuedBottomSheet", () => {
       }),
     );
 
-    signal(true);
+    signalOpen();
 
     act(() => {
       result.current.handleDismiss();
@@ -142,7 +143,7 @@ describe("useQueuedBottomSheet", () => {
   });
 
   it("does not call present() twice if already open", () => {
-    const { signal } = setupDrawerStateCapture();
+    const { signalOpen, signalClose } = setupBottomSheetStateCapture();
 
     renderHook(() =>
       useQueuedBottomSheet({
@@ -150,8 +151,8 @@ describe("useQueuedBottomSheet", () => {
       }),
     );
 
-    signal(true);
-    signal(true);
+    signalOpen();
+    signalOpen();
 
     expect(mockPresent).toHaveBeenCalledTimes(1);
   });
@@ -166,8 +167,8 @@ describe("useQueuedBottomSheet", () => {
     expect(mockDismiss).not.toHaveBeenCalled();
   });
 
-  it("does not call removeDrawerFromQueue on close signal until handleDismiss fires", () => {
-    const { signal } = setupDrawerStateCapture();
+  it("does not call removeBottomSheetFromQueue on close signal until handleDismiss fires", () => {
+    const { signalOpen, signalClose } = setupBottomSheetStateCapture();
 
     const { result } = renderHook(() =>
       useQueuedBottomSheet({
@@ -175,21 +176,21 @@ describe("useQueuedBottomSheet", () => {
       }),
     );
 
-    signal(true);
+    signalOpen();
     expect(mockPresent).toHaveBeenCalledTimes(1);
 
-    signal(false);
+    signalClose();
     expect(mockDismiss).toHaveBeenCalledTimes(1);
-    expect(mockRemoveDrawerFromQueue).not.toHaveBeenCalled();
+    expect(mockRemoveBottomSheetFromQueue).not.toHaveBeenCalled();
 
     act(() => {
       result.current.handleDismiss();
     });
-    expect(mockRemoveDrawerFromQueue).toHaveBeenCalledTimes(1);
+    expect(mockRemoveBottomSheetFromQueue).toHaveBeenCalledTimes(1);
   });
 
-  it("does not call removeDrawerFromQueue when handleClose is invoked multiple times before handleDismiss", () => {
-    const { signal } = setupDrawerStateCapture();
+  it("does not call removeBottomSheetFromQueue when handleClose is invoked multiple times before handleDismiss", () => {
+    const { signalOpen, signalClose } = setupBottomSheetStateCapture();
 
     const { result } = renderHook(() =>
       useQueuedBottomSheet({
@@ -197,47 +198,47 @@ describe("useQueuedBottomSheet", () => {
       }),
     );
 
-    signal(true);
+    signalOpen();
     expect(mockPresent).toHaveBeenCalledTimes(1);
 
-    signal(false);
+    signalClose();
     expect(mockDismiss).toHaveBeenCalledTimes(1);
-    expect(mockRemoveDrawerFromQueue).not.toHaveBeenCalled();
+    expect(mockRemoveBottomSheetFromQueue).not.toHaveBeenCalled();
 
-    signal(false);
-    expect(mockRemoveDrawerFromQueue).not.toHaveBeenCalled();
+    signalClose();
+    expect(mockRemoveBottomSheetFromQueue).not.toHaveBeenCalled();
 
     act(() => {
       result.current.handleDismiss();
     });
-    expect(mockRemoveDrawerFromQueue).toHaveBeenCalledTimes(1);
+    expect(mockRemoveBottomSheetFromQueue).toHaveBeenCalledTimes(1);
   });
 
-  it("does not call removeDrawerFromQueue when effect cleanup fires during dismiss animation", () => {
-    const { signal } = setupDrawerStateCapture();
+  it("does not call removeBottomSheetFromQueue when effect cleanup fires during dismiss animation", () => {
+    const { signalOpen, signalClose } = setupBottomSheetStateCapture();
     let isRequestingToBeOpened = true;
 
     const { result, rerender } = renderHook(() => useQueuedBottomSheet({ isRequestingToBeOpened }));
 
-    signal(true);
+    signalOpen();
     expect(mockPresent).toHaveBeenCalledTimes(1);
 
-    signal(false);
+    signalClose();
     expect(mockDismiss).toHaveBeenCalledTimes(1);
-    expect(mockRemoveDrawerFromQueue).not.toHaveBeenCalled();
+    expect(mockRemoveBottomSheetFromQueue).not.toHaveBeenCalled();
 
     isRequestingToBeOpened = false;
     rerender(undefined);
-    expect(mockRemoveDrawerFromQueue).not.toHaveBeenCalled();
+    expect(mockRemoveBottomSheetFromQueue).not.toHaveBeenCalled();
 
     act(() => {
       result.current.handleDismiss();
     });
-    expect(mockRemoveDrawerFromQueue).toHaveBeenCalledTimes(1);
+    expect(mockRemoveBottomSheetFromQueue).toHaveBeenCalledTimes(1);
   });
 
   it("cleans up the queue immediately when closed without ever being presented", () => {
-    const { signal } = setupDrawerStateCapture();
+    const { signalOpen, signalClose } = setupBottomSheetStateCapture();
 
     renderHook(() =>
       useQueuedBottomSheet({
@@ -245,14 +246,14 @@ describe("useQueuedBottomSheet", () => {
       }),
     );
 
-    signal(false);
+    signalClose();
 
     expect(mockDismiss).not.toHaveBeenCalled();
-    expect(mockRemoveDrawerFromQueue).toHaveBeenCalledTimes(1);
+    expect(mockRemoveBottomSheetFromQueue).toHaveBeenCalledTimes(1);
   });
 
   it("cleans up the queue on unmount", () => {
-    const { signal } = setupDrawerStateCapture();
+    const { signalOpen, signalClose } = setupBottomSheetStateCapture();
 
     const { unmount } = renderHook(() =>
       useQueuedBottomSheet({
@@ -260,16 +261,16 @@ describe("useQueuedBottomSheet", () => {
       }),
     );
 
-    signal(true);
+    signalOpen();
 
     unmount();
 
-    expect(mockRemoveDrawerFromQueue).toHaveBeenCalled();
+    expect(mockRemoveBottomSheetFromQueue).toHaveBeenCalled();
   });
 
   it("does not call onClose when drawer receives close signal before ever being opened", () => {
     const onClose = jest.fn();
-    const { signal } = setupDrawerStateCapture();
+    const { signalOpen, signalClose } = setupBottomSheetStateCapture();
 
     renderHook(() =>
       useQueuedBottomSheet({
@@ -278,15 +279,15 @@ describe("useQueuedBottomSheet", () => {
       }),
     );
 
-    signal(false);
+    signalClose();
 
     expect(onClose).not.toHaveBeenCalled();
-    expect(mockRemoveDrawerFromQueue).toHaveBeenCalledTimes(1);
+    expect(mockRemoveBottomSheetFromQueue).toHaveBeenCalledTimes(1);
   });
 
   it("calls onClose exactly once when handleClose is called multiple times during dismiss", () => {
     const onClose = jest.fn();
-    const { signal } = setupDrawerStateCapture();
+    const { signalOpen, signalClose } = setupBottomSheetStateCapture();
 
     const { result } = renderHook(() =>
       useQueuedBottomSheet({
@@ -295,11 +296,11 @@ describe("useQueuedBottomSheet", () => {
       }),
     );
 
-    signal(true);
-    signal(false);
+    signalOpen();
+    signalClose();
     expect(onClose).toHaveBeenCalledTimes(1);
 
-    signal(false);
+    signalClose();
     expect(onClose).toHaveBeenCalledTimes(1);
 
     act(() => {
@@ -310,7 +311,7 @@ describe("useQueuedBottomSheet", () => {
 
   it("calls onClose via handleDismiss when user swipes to dismiss (bypassing handleClose)", () => {
     const onClose = jest.fn();
-    const { signal } = setupDrawerStateCapture();
+    const { signalOpen, signalClose } = setupBottomSheetStateCapture();
 
     const { result } = renderHook(() =>
       useQueuedBottomSheet({
@@ -319,7 +320,7 @@ describe("useQueuedBottomSheet", () => {
       }),
     );
 
-    signal(true);
+    signalOpen();
     expect(onClose).not.toHaveBeenCalled();
 
     act(() => {
@@ -327,11 +328,11 @@ describe("useQueuedBottomSheet", () => {
     });
 
     expect(onClose).toHaveBeenCalledTimes(1);
-    expect(mockRemoveDrawerFromQueue).toHaveBeenCalledTimes(1);
+    expect(mockRemoveBottomSheetFromQueue).toHaveBeenCalledTimes(1);
   });
 
   it("does not recreate handleDismiss when onModalHide changes", () => {
-    const { signal } = setupDrawerStateCapture();
+    const { signalOpen, signalClose } = setupBottomSheetStateCapture();
     let onModalHide = jest.fn();
 
     const { result, rerender } = renderHook(() =>
@@ -341,7 +342,7 @@ describe("useQueuedBottomSheet", () => {
       }),
     );
 
-    signal(true);
+    signalOpen();
 
     const firstHandleDismiss = result.current.handleDismiss;
     onModalHide = jest.fn();
@@ -351,7 +352,7 @@ describe("useQueuedBottomSheet", () => {
   });
 
   it("calls the latest onModalHide even though handleDismiss is stable", () => {
-    const { signal } = setupDrawerStateCapture();
+    const { signalOpen, signalClose } = setupBottomSheetStateCapture();
     const firstOnModalHide = jest.fn();
     const secondOnModalHide = jest.fn();
     let onModalHide = firstOnModalHide;
@@ -363,7 +364,7 @@ describe("useQueuedBottomSheet", () => {
       }),
     );
 
-    signal(true);
+    signalOpen();
     onModalHide = secondOnModalHide;
     rerender(undefined);
 
@@ -377,7 +378,7 @@ describe("useQueuedBottomSheet", () => {
 
   it("clears consumer state at the start of the close animation, and not again on dismiss", () => {
     const onClose = jest.fn();
-    const { signal } = setupDrawerStateCapture();
+    const { signalOpen, signalClose } = setupBottomSheetStateCapture();
 
     const { result } = renderHook(() =>
       useQueuedBottomSheet({
@@ -386,7 +387,7 @@ describe("useQueuedBottomSheet", () => {
       }),
     );
 
-    signal(true);
+    signalOpen();
     expect(onClose).not.toHaveBeenCalled();
 
     // X button / backdrop / pan-down all animate towards index -1.
@@ -405,7 +406,7 @@ describe("useQueuedBottomSheet", () => {
   it("calls header close callbacks once and ignores later close animation and dismiss callbacks", () => {
     const onClose = jest.fn();
     const onHeaderClosePressed = jest.fn();
-    const { signal } = setupDrawerStateCapture();
+    const { signalOpen, signalClose } = setupBottomSheetStateCapture();
 
     const { result } = renderHook(() =>
       useQueuedBottomSheet({
@@ -415,7 +416,7 @@ describe("useQueuedBottomSheet", () => {
       }),
     );
 
-    signal(true);
+    signalOpen();
 
     act(() => {
       result.current.handleHeaderClosePressed();
@@ -435,7 +436,7 @@ describe("useQueuedBottomSheet", () => {
 
   it("does not clear consumer state on open or snap-point animations", () => {
     const onClose = jest.fn();
-    const { signal } = setupDrawerStateCapture();
+    const { signalOpen, signalClose } = setupBottomSheetStateCapture();
 
     const { result } = renderHook(() =>
       useQueuedBottomSheet({
@@ -444,7 +445,7 @@ describe("useQueuedBottomSheet", () => {
       }),
     );
 
-    signal(true);
+    signalOpen();
 
     act(() => {
       result.current.handleCloseAnimationStart(-1, 0); // opening
@@ -455,7 +456,7 @@ describe("useQueuedBottomSheet", () => {
   });
 
   it("reopens the drawer after dismiss when it is still requested (re-tapped while closing)", () => {
-    const { signal } = setupDrawerStateCapture();
+    const { signalOpen, signalClose } = setupBottomSheetStateCapture();
 
     const { result } = renderHook(() =>
       useQueuedBottomSheet({
@@ -463,9 +464,9 @@ describe("useQueuedBottomSheet", () => {
       }),
     );
 
-    signal(true);
+    signalOpen();
     expect(mockPresent).toHaveBeenCalledTimes(1);
-    expect(mockAddDrawerToQueue).toHaveBeenCalledTimes(1);
+    expect(mockAddBottomSheetToQueue).toHaveBeenCalledTimes(1);
 
     // Close starts, then finishes while the consumer still requests the drawer to be open.
     act(() => {
@@ -476,9 +477,9 @@ describe("useQueuedBottomSheet", () => {
     });
 
     // Re-enqueued so it can open again on the first interaction.
-    expect(mockAddDrawerToQueue).toHaveBeenCalledTimes(2);
+    expect(mockAddBottomSheetToQueue).toHaveBeenCalledTimes(2);
 
-    signal(true);
+    signalOpen();
     expect(mockPresent).toHaveBeenCalledTimes(2);
   });
 
@@ -486,7 +487,7 @@ describe("useQueuedBottomSheet", () => {
     // Reproduces the race condition: handleCloseAnimationStart triggers the consumer's onClose,
     // which schedules a setState to clear isRequestingToBeOpened. If handleDismiss reads a ref
     // before React has rendered that update, the old reopen guard would re-enqueue the drawer.
-    const { signal } = setupDrawerStateCapture();
+    const { signalOpen, signalClose } = setupBottomSheetStateCapture();
 
     const { result } = renderHook(() => {
       const [isOpen, setIsOpen] = useState(true);
@@ -496,8 +497,8 @@ describe("useQueuedBottomSheet", () => {
       });
     });
 
-    signal(true);
-    expect(mockAddDrawerToQueue).toHaveBeenCalledTimes(1);
+    signalOpen();
+    expect(mockAddBottomSheetToQueue).toHaveBeenCalledTimes(1);
     expect(mockPresent).toHaveBeenCalledTimes(1);
 
     // In production these fire from separate native callbacks separated by the close animation.
@@ -508,17 +509,17 @@ describe("useQueuedBottomSheet", () => {
       result.current.handleDismiss();
     });
 
-    expect(mockAddDrawerToQueue).toHaveBeenCalledTimes(1);
+    expect(mockAddBottomSheetToQueue).toHaveBeenCalledTimes(1);
   });
 
   it("does not reopen after dismiss when it is no longer requested (normal close)", () => {
-    const { signal } = setupDrawerStateCapture();
+    const { signalOpen, signalClose } = setupBottomSheetStateCapture();
     let isRequestingToBeOpened = true;
 
     const { result, rerender } = renderHook(() => useQueuedBottomSheet({ isRequestingToBeOpened }));
 
-    signal(true);
-    expect(mockAddDrawerToQueue).toHaveBeenCalledTimes(1);
+    signalOpen();
+    expect(mockAddBottomSheetToQueue).toHaveBeenCalledTimes(1);
 
     // Consumer clears its request (drawer genuinely closed), then the sheet finishes dismissing.
     isRequestingToBeOpened = false;
@@ -528,6 +529,6 @@ describe("useQueuedBottomSheet", () => {
       result.current.handleDismiss();
     });
 
-    expect(mockAddDrawerToQueue).toHaveBeenCalledTimes(1);
+    expect(mockAddBottomSheetToQueue).toHaveBeenCalledTimes(1);
   });
 });
