@@ -19,7 +19,6 @@
 "@shared/cloud-sync": minor
 "@shared/cloud-sync-module": minor
 "@shared/feature-flags": minor
-"@shared/name": minor
 "@shared/qr-code": minor
 "ledger-live-desktop": minor
 "live-mobile": minor

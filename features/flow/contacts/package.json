@@ -33,7 +33,6 @@
     "@ledgerhq/crypto-icons": "catalog:",
     "@features/platform-feature-flags": "workspace:^",
     "@shared/feature-flags": "workspace:^",
-    "@shared/name": "workspace:^",
     "@shared/qr-code": "workspace:*"
   },
   "peerDependencies": {

@@ -4912,9 +4912,6 @@ importers:
       '@shared/feature-flags':
         specifier: workspace:^
         version: link:../../../shared/feature-flags
-      '@shared/name':
-        specifier: workspace:^
-        version: link:../../../shared/name
       '@shared/qr-code':
         specifier: workspace:*
         version: link:../../../shared/qr-code
@@ -5057,9 +5054,6 @@ importers:
       '@features/platform-contacts':
         specifier: workspace:^
         version: link:../../platform/contacts
-      '@shared/name':
-        specifier: workspace:^
-        version: link:../../../shared/name
     devDependencies:
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
@@ -14779,24 +14773,6 @@ importers:
       '@types/semver':
         specifier: 'catalog:'
         version: 7.7.1
-      jest:
-        specifier: 'catalog:'
-        version: 30.2.0
-      typescript:
-        specifier: 'catalog:'
-        version: '@typescript/typescript6@6.0.2'
-
-  shared/name:
-    devDependencies:
-      '@swc/core':
-        specifier: 'catalog:'
-        version: 1.15.11
-      '@swc/jest':
-        specifier: 'catalog:'
-        version: 0.2.39(@swc/core@1.15.11)
-      '@types/jest':
-        specifier: 'catalog:'
-        version: 30.0.0
       jest:
         specifier: 'catalog:'
         version: 30.2.0
@@ -35409,8 +35385,8 @@ packages:
     engines: {node: '>=0.6.0', teleport: '>=0.2.0'}
     deprecated: |-
       You or someone you depend on is using Q, the JavaScript Promise library that gave JavaScript developers strong feelings about promises. They can almost certainly migrate to the native JavaScript promise now. Thank you literally everyone for joining me in this bet against the odds. Be excellent to each other.
-      (For a CapTP with native promises, see @endo/eventual-send and @endo/captp)
 
+      (For a CapTP with native promises, see @endo/eventual-send and @endo/captp)
   qrcode-terminal@0.11.0:
     resolution: {integrity: sha512-Uu7ii+FQy4Qf82G4xu7ShHhjhGahEpCWc3x8UavY3CTcWV+ufmmCtwkr7ZKsX42jdL0kr1B5FKUeqJvAn51jzQ==}
     hasBin: true
