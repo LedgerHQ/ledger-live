@@ -46,6 +46,7 @@ export function useRecipientSearchState({
   const hasAnyMatches =
     (result.matchedAccounts && result.matchedAccounts.length > 0) ||
     !!result.matchedRecentAddress ||
+    !!result.matchedContact ||
     !!result.ensName ||
     result.isLedgerAccount ||
     isSanctioned;
