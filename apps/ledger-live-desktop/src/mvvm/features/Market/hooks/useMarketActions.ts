@@ -15,7 +15,7 @@ import {
 } from "../../../../renderer/screens/market/utils";
 import { useStake } from "LLD/hooks/useStake";
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
-import { useLazyLedgerCurrency } from "@ledgerhq/live-common/dada-client/hooks/useLazyLedgerCurrency";
+import { useLazyLedgerCurrency } from "@features/platform-aggregated-assets";
 import useEnv from "@features/platform-env";
 import { useFeatureFlaggedCurrencies } from "@features/platform-currencies";
 import { useSwapNavigation } from "./useSwapNavigation";

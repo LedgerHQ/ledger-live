@@ -35,7 +35,7 @@ import { Loader as StyledLoader } from "./styled";
 import { WebviewAPI, WebviewProps, WebviewTag } from "./types";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 import { setFlowValue, setSourceValue } from "~/renderer/reducers/modularDialog";
-import { useDrawerConfiguration } from "@ledgerhq/live-common/dada-client/hooks/useDrawerConfiguration";
+import { useDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/useDrawerConfiguration";
 import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
 import { useFeature } from "@features/platform-feature-flags";
 import { setOriginFlow } from "~/renderer/analytics/originFlow";

@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 import { getLoadingStatus } from "@ledgerhq/live-common/modularDrawer/utils/getLoadingStatus";
-import { useAssetsData } from "@ledgerhq/live-common/dada-client/hooks/useAssetsData";
+import { useAssetsData } from "@features/platform-aggregated-assets";
 import {
   modularDialogAreCurrenciesFilteredSelector,
   modularDialogCurrenciesSelector,

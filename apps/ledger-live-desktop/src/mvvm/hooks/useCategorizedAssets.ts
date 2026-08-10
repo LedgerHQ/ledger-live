@@ -1,7 +1,6 @@
 import { useMemo } from "react";
 import { useDistribution } from "~/renderer/actions/general";
-import { useStablecoinTickers } from "@ledgerhq/live-common/dada-client/hooks/useStablecoinTickers";
-import { useStockAssetIds } from "@ledgerhq/live-common/dada-client/hooks/useStockAssetIds";
+import { useStablecoinTickers, useStockAssetIds } from "@features/platform-aggregated-assets";
 import {
   useCategorizedAssets,
   type CategorizedAssetItem,

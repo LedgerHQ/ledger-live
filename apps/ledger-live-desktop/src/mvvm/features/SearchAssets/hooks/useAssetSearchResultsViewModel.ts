@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useAssetsData } from "@ledgerhq/live-common/dada-client/hooks/useAssetsData";
+import { useAssetsData } from "@features/platform-aggregated-assets";
 import { useUsdToFiatRate } from "@ledgerhq/live-common/counterValues/hooks/useUsdToFiatRate";
 import useEnv from "@features/platform-env";
 import { useFeatureFlaggedCurrencies } from "@features/platform-currencies";
