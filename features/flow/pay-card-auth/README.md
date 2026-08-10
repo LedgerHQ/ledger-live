@@ -16,8 +16,9 @@ import { CardLogin } from "@features/flow-pay-card-auth";
 The host app provides `openHostedLogin` so platform-specific navigation remains at the app
 composition root.
 
-App composition and DevTools consume the flow-owned Redux state through the
-`@features/flow-pay-card-auth/state` subpath.
+App composition and DevTools consume shared Pay Card entity state through
+`@domain/entity-pay-card`. Auth-only runtime state (`hasCard`) lives in this flow's
+`payCardAuth` slice, exposed through `@features/flow-pay-card-auth/state`.
 
 ## Card API
 
@@ -84,14 +85,14 @@ pay-card-auth/
     │   ├── __tests__/
     │   │   ├── api.native.test.ts          # Endpoint contract tests (Node environment)
     │   │   ├── schema.native.test.ts       # Wire contract tests (Node environment)
-    │   │   └── slice.native.test.ts        # Slice, persistence, and selector tests
+    │   │   └── slice.native.test.ts        # Auth slice and selector tests
     │   ├── api.ts                          # Card API endpoint, injected into payCardApi
     │   ├── index.ts                        # Flow-local state surface
-    │   ├── schema.ts                       # Flow params and Card API wire contracts
-    │   ├── selectors.ts                    # Runtime and persistence selectors
-    │   ├── slice.ts                        # Flow state and persistence actions
+    │   ├── schema.ts                       # Card API wire contracts
+    │   ├── selectors.ts                    # Auth selectors
+    │   ├── slice.ts                        # Auth-only runtime state (`hasCard`)
     │   ├── store.ts                        # Side-effect-free public state subpath
-    │   └── types.ts                        # API and Redux state types
+    │   └── types.ts                        # API and auth Redux state types
     ├── utils/                              # Flow-local helpers
     ├── index.native.ts                     # Native public API
     └── index.ts                            # Default/web public API

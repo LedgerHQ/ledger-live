@@ -32,7 +32,7 @@ import {
 } from "@features/flow-large-screen-upsell";
 import { knownDevicesStoreSelector } from "../reducers/knownDevices";
 import { exportIdentitiesForPersistence } from "@domain/entity-client-identity";
-import { payCardPersistedSelector } from "@features/flow-pay-card-auth/state";
+import { payCardPersistedSelector } from "@domain/entity-pay-card";
 import { accountsPersistedStateChanged } from "@ledgerhq/live-common/account/index";
 
 let DB_MIDDLEWARE_ENABLED = true;

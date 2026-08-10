@@ -1,5 +1,6 @@
 ---
 "@features/flow-pay-card-auth": minor
+"@domain/entity-pay-card": minor
 "@shared/api-services": minor
 "ledger-live-desktop": minor
 "live-mobile": minor
@@ -13,5 +14,6 @@ calls it, in `@features/flow-pay-card-auth`, injected into that service along wi
 contracts; `@domain/api-pay-card` and its in-process mock transport are removed.
 
 Only `pre-auth` ships in this change. The OAuth code exchange and card status read are deferred until
-the callback and status steps can also provide session-token handling. Pay Card schemas and Redux
-state now live with their only consumer in `@features/flow-pay-card-auth`.
+the callback and status steps can also provide session-token handling. `@domain/entity-pay-card`
+owns the shared Pay Card Redux state registered by both apps, while Card API schemas and the
+auth-only `payCardAuth` slice remain local to `@features/flow-pay-card-auth`.

@@ -892,6 +892,9 @@ importers:
       '@domain/entity-market-sentiment':
         specifier: workspace:^
         version: link:../../domain/entity/market-sentiment
+      '@domain/entity-pay-card':
+        specifier: workspace:*
+        version: link:../../domain/entity/pay-card
       '@domain/entity-recent-addresses':
         specifier: workspace:^
         version: link:../../domain/entity/recent-addresses
@@ -1665,6 +1668,9 @@ importers:
       '@domain/entity-market-sentiment':
         specifier: workspace:^
         version: link:../../domain/entity/market-sentiment
+      '@domain/entity-pay-card':
+        specifier: workspace:*
+        version: link:../../domain/entity/pay-card
       '@domain/entity-recent-addresses':
         specifier: workspace:^
         version: link:../../domain/entity/recent-addresses
@@ -3005,9 +3011,9 @@ importers:
       '@devtools/registry':
         specifier: workspace:*
         version: link:../registry
-      '@features/flow-pay-card-auth':
+      '@domain/entity-pay-card':
         specifier: workspace:*
-        version: link:../../features/flow/pay-card-auth
+        version: link:../../domain/entity/pay-card
       '@features/platform-feature-flags':
         specifier: workspace:*
         version: link:../../features/platform/feature-flags
@@ -4406,6 +4412,34 @@ importers:
 
   domain/entity/market-sentiment:
     dependencies:
+      zod:
+        specifier: 'catalog:'
+        version: 4.3.6
+    devDependencies:
+      '@jest/globals':
+        specifier: 'catalog:'
+        version: 30.2.0
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      jest:
+        specifier: 'catalog:'
+        version: 30.2.0
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
+  domain/entity/pay-card:
+    dependencies:
+      '@reduxjs/toolkit':
+        specifier: 'catalog:'
+        version: 2.11.2
       zod:
         specifier: 'catalog:'
         version: 4.3.6
@@ -20767,7 +20801,6 @@ packages:
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [x64]
     os: [linux]
-    libc: [glibc]
 
   '@oxlint/binding-linux-x64-musl@1.51.0':
     resolution: {integrity: sha512-wD8HGTWhYBKXvRDvoBVB1y+fEYV01samhWQSy1Zkxq2vpezvMnjaFKRuiP6tBNITLGuffbNDEXOwcAhJ3gI5Ug==}
@@ -23820,7 +23853,7 @@ packages:
       metro-react-native-babel-preset: '*'
       react: 19.1.4
       react-dom: 19.1.4
-      webpack: ^5.89.0
+      webpack: '*'
     peerDependenciesMeta:
       '@react-native/babel-preset':
         optional: true

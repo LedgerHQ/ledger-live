@@ -3,7 +3,7 @@ import { Provider } from "react-redux";
 import { Store } from "redux";
 import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/actions";
 import { restoreLargeScreenUpsellModalState } from "@ledgerhq/live-engagement/largeScreenUpsellModal";
-import { restorePayCardPersistedState } from "@features/flow-pay-card-auth/state";
+import { restorePayCardPersistedState } from "@domain/entity-pay-card";
 import { backfillOnboardingDate } from "~/logic/postOnboarding/backfillOnboardingDate";
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
 import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";

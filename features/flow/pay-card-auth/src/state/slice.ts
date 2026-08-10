@@ -1,43 +1,18 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { PayCardParams, PayCardPersistedState, PayCardState } from "./types";
+import type { PayCardAuthState } from "./types";
 
-export const payCardInitialState = {
-  params: null,
-  hasSeenFeatureTour: false,
-} satisfies PayCardState as PayCardState;
+export const payCardAuthInitialState: PayCardAuthState = {
+  hasCard: false,
+};
 
-export const payCardSlice = createSlice({
-  name: "payCard",
-  initialState: payCardInitialState,
+export const payCardAuthSlice = createSlice({
+  name: "payCardAuth",
+  initialState: payCardAuthInitialState,
   reducers: {
-    openPayCard: (state, action: PayloadAction<PayCardParams>) => {
-      state.params = action.payload;
-    },
-    closePayCard: state => {
-      state.params = null;
-    },
-    markPayCardFeatureTourSeen: state => {
-      state.hasSeenFeatureTour = true;
-    },
-    resetPayCardFeatureTourSeen: state => {
-      state.hasSeenFeatureTour = false;
-    },
-    restorePayCardPersistedState: (
-      state,
-      action: PayloadAction<Partial<PayCardPersistedState>>,
-    ) => {
-      const { hasSeenFeatureTour } = action.payload ?? {};
-      if (typeof hasSeenFeatureTour === "boolean") {
-        state.hasSeenFeatureTour = hasSeenFeatureTour;
-      }
+    setHasCard: (state, action: PayloadAction<boolean>) => {
+      state.hasCard = action.payload;
     },
   },
 });
 
-export const {
-  openPayCard,
-  closePayCard,
-  markPayCardFeatureTourSeen,
-  resetPayCardFeatureTourSeen,
-  restorePayCardPersistedState,
-} = payCardSlice.actions;
+export const { setHasCard } = payCardAuthSlice.actions;

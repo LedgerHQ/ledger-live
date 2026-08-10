@@ -31,7 +31,8 @@ import {
   largeScreenUpsellModalSlice,
   type LargeScreenUpsellModalState,
 } from "@features/flow-large-screen-upsell";
-import { payCardSlice, type PayCardState } from "@features/flow-pay-card-auth/state";
+import { payCardSlice, type PayCardState } from "@domain/entity-pay-card";
+import { payCardAuthSlice, type PayCardAuthState } from "@features/flow-pay-card-auth/state";
 import type { PayloadAction, UnknownAction } from "@reduxjs/toolkit";
 import dialogs, { DialogsState } from "./dialogs";
 import dialogsWithData, { DialogsWithDataState } from "./dialogsWithData";
@@ -90,6 +91,7 @@ export type State = LLDRTKApiState & {
   contacts: ContactsState;
   largeScreenUpsellModal: LargeScreenUpsellModalState;
   payCard: PayCardState;
+  payCardAuth: PayCardAuthState;
 };
 
 const appReducer = combineReducers({
@@ -130,6 +132,7 @@ const appReducer = combineReducers({
   contacts: contactsSlice.reducer,
   largeScreenUpsellModal: largeScreenUpsellModalSlice.reducer,
   payCard: payCardSlice.reducer,
+  payCardAuth: payCardAuthSlice.reducer,
   ...lldRTKApiReducers,
   ...(getEnv("PLAYWRIGHT_RUN") && {
     lastAction: (_: unknown, action: PayloadAction) => action,
