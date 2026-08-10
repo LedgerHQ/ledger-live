@@ -29,8 +29,16 @@ export function bip32asBuffer(path: string): Buffer {
  * that bip32-path would silently shorten (e.g. "12abc'" → 12).
  */
 export function pathStringToArray(path: string): number[] {
-  for (const segment of path.split("/")) {
+  const __segments = path.split("/");
+  for (const [__i, segment] of __segments.entries()) {
+    // bip32-path accepts and strips a leading "m" root; mirror that.
+    if (__i === 0 && /^m$/i.test(segment)) {
+      continue;
+    }
     if (!/^\d+[hH']?$/.test(segment)) {
+      throw new Error(`Invalid BIP32 path segment: ${segment}`);
+    }
+    if (parseInt(segment, 10) > 0x7fffffff) {
       throw new Error(`Invalid BIP32 path segment: ${segment}`);
     }
   }

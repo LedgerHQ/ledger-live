@@ -14,6 +14,7 @@ describe("pathStringToArray", () => {
 
   it("should reject truncated/garbage segments instead of truncating via bip32-path", () => {
     expect(() => pathStringToArray("44'/12abc'/0'/0'/0'")).toThrow(/Invalid BIP32 path segment/);
+    expect(() => pathStringToArray("44'/2147483648'/0'/0'/0'")).toThrow(/Invalid BIP32 path segment/);
     expect(() => pathStringToArray("44'/NOTAINDEX'/0'/0'/0'")).toThrow(
       /Invalid BIP32 path segment/,
     );

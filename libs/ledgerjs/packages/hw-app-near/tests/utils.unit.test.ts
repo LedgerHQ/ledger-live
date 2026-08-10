@@ -11,6 +11,7 @@ describe("bip32PathToBytes", () => {
   it("should reject non-numeric path segments instead of mapping NaN to hardened 0", () => {
     expect(() => bip32PathToBytes("44'/NOTAINDEX'/0'/0'/1'")).toThrow(/Invalid BIP32 path segment/);
     expect(() => bip32PathToBytes("44'/12abc'/0'/0'/1'")).toThrow(/Invalid BIP32 path segment/);
+    expect(() => bip32PathToBytes("44'/2147483648'/0'/0'/1'")).toThrow(/Invalid BIP32 path segment/);
     expect(() => bip32PathToBytes("44'//0'/0'/1'")).toThrow(/Invalid BIP32 path segment/);
   });
 });

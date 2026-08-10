@@ -47,10 +47,18 @@ export function resolveHardenedBip32Path(originalPath: string): number[] {
     .split("/")
     .map(value => (value.endsWith("'") || value.endsWith("h") || value.endsWith("H") ? value : value + "'"))
     .join("/");
-  for (const segment of path.split("/")) {
+  const __segments = path.split("/");
+  for (const [__i, segment] of __segments.entries()) {
+    // bip32-path accepts and strips a leading "m" root; mirror that.
+    if (__i === 0 && /^m$/i.test(segment)) {
+      continue;
+    }
     // Reject empty/non-numeric/truncated segments (e.g. "NOTAINDEX", "12abc'").
     // bip32-path previously truncated "12abc'" to index 12 and dropped hardening.
     if (!/^\d+[hH']?$/.test(segment)) {
+      throw new Error(`Invalid BIP32 path segment: ${segment}`);
+    }
+    if (parseInt(segment, 10) > 0x7fffffff) {
       throw new Error(`Invalid BIP32 path segment: ${segment}`);
     }
   }

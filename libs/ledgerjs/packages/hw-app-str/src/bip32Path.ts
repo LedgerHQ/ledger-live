@@ -11,8 +11,16 @@ export function resolveHardenedBip32Path(originalPath: string): number[] {
       value.endsWith("'") || value.endsWith("h") || value.endsWith("H") ? value : `${value}'`,
     )
     .join("/");
-  for (const segment of path.split("/")) {
+  const __segments = path.split("/");
+  for (const [__i, segment] of __segments.entries()) {
+    // bip32-path accepts and strips a leading "m" root; mirror that.
+    if (__i === 0 && /^m$/i.test(segment)) {
+      continue;
+    }
     if (!/^\d+[hH']?$/.test(segment)) {
+      throw new Error(`Invalid BIP32 path segment: ${segment}`);
+    }
+    if (parseInt(segment, 10) > 0x7fffffff) {
       throw new Error(`Invalid BIP32 path segment: ${segment}`);
     }
   }

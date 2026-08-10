@@ -31,5 +31,5 @@ test("should throw on invalid derivation path", async () => {
   const icon = new Icon(transport);
   return expect(
     icon.getAddress("some invalid derivation path", false)
-  ).rejects.toThrow("EOF: no more APDU to replay");
+  ).rejects.toThrow("Invalid BIP32 path segment");
 });

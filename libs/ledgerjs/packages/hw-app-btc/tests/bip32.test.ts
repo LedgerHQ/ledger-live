@@ -267,6 +267,7 @@ describe("bip32 utilities", () => {
 
     test("rejects truncated/garbage segments instead of truncating via bip32-path", () => {
       expect(() => pathStringToArray("m/44'/12abc'/0'/0/0")).toThrow(
+      expect(() => pathStringToArray("m/44'/2147483648'/0'/0/0")).toThrow(/Invalid BIP32 path segment/);
         /Invalid BIP32 path segment/,
       );
       expect(() => pathStringToArray("m/44'/NOTAINDEX'/0'/0/0")).toThrow(

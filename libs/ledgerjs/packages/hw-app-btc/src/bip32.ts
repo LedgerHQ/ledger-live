@@ -48,6 +48,9 @@ export function pathStringToArray(path: string): number[] {
     if (!/^\d+[hH']?$/.test(segments[i])) {
       throw new Error(`Invalid BIP32 path segment: ${segments[i]}`);
     }
+    if (parseInt(segments[i], 10) > 0x7fffffff) {
+      throw new Error(`Invalid BIP32 path segment: ${segments[i]}`);
+    }
   }
   return bippath.fromString(path).toPathArray();
 }

@@ -29,6 +29,9 @@ export function splitPath(path: string): number[] {
     if (!/^\d+'?$/.test(element)) {
       throw new Error(`Invalid BIP32 path segment: ${element}`);
     }
+    if (parseInt(element, 10) > 0x7fffffff) {
+      throw new Error(`Invalid BIP32 path segment: ${element}`);
+    }
     let number = parseInt(element, 10);
     if (element[element.length - 1] === "'") {
       number += 0x80000000;
