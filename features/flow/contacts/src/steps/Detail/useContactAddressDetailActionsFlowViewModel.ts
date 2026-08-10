@@ -34,6 +34,8 @@ export type UseContactAddressDetailActionsFlowViewModelResult = Readonly<{
   onDeletePress: () => void;
   onSignerConfirm: () => Promise<void>;
   onSignerCancel: () => void;
+  onSignerMismatchCancel: () => void;
+  onConnectDifferentDevice: () => void;
   onEditClose: () => void;
   confirmDelete: () => Promise<void>;
   cancelDelete: () => void;
@@ -60,8 +62,11 @@ export function useContactAddressDetailActionsFlowViewModel({
   const {
     editUiState,
     openSignerDialog,
+    openSignerMismatchDialog,
     openEditDialog,
     onSignerCancel,
+    onSignerMismatchCancel,
+    onConnectDifferentDevice,
     onEditClose: closeEditUiState,
     resetEditUiState,
   } = useContactEditSignerUiState();
@@ -107,11 +112,12 @@ export function useContactAddressDetailActionsFlowViewModel({
     const status = resolveContactSignerValidationResult(expectedSignerId, currentSignerId);
 
     if (status === CONTACT_SIGNER_MISMATCH_ERROR) {
+      openSignerMismatchDialog();
       return;
     }
 
     openEditDialog();
-  }, [editIntent, openEditDialog, ports.signerValidation]);
+  }, [editIntent, openEditDialog, openSignerMismatchDialog, ports.signerValidation]);
 
   const onEditClose = useCallback(() => {
     closeEditUiState();
@@ -168,6 +174,8 @@ export function useContactAddressDetailActionsFlowViewModel({
     onDeletePress,
     onSignerConfirm,
     onSignerCancel,
+    onSignerMismatchCancel,
+    onConnectDifferentDevice,
     onEditClose,
     confirmDelete,
     cancelDelete,

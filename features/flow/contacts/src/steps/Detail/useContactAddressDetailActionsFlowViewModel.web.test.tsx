@@ -121,7 +121,7 @@ describe("useContactAddressDetailActionsFlowViewModel", () => {
     expect(result.current.editUiState).toBe("edit-open");
   });
 
-  it("should keep the signer dialog open when validation fails", async () => {
+  it("should open the signer mismatch dialog when validation fails", async () => {
     const contact = mockContactWithAddress();
     const address = contact.addresses[0]!;
     const mismatchPort: ContactSignerValidationPort = createMockContactSignerValidationPort({
@@ -146,6 +146,39 @@ describe("useContactAddressDetailActionsFlowViewModel", () => {
 
     await act(async () => {
       await result.current.onSignerConfirm();
+    });
+
+    expect(result.current.editUiState).toBe("signer-mismatch");
+  });
+
+  it("should return to the signer dialog when connecting a different device", async () => {
+    const contact = mockContactWithAddress();
+    const address = contact.addresses[0]!;
+    const mismatchPort: ContactSignerValidationPort = createMockContactSignerValidationPort({
+      currentSignerId: "signer-b",
+    });
+    const Wrapper = makeWrapper([mockMeContact(), contact]);
+    const { result } = renderHook(
+      () =>
+        useContactAddressDetailActionsFlowViewModel({
+          contactId: contact.id,
+          addressId: address.id,
+          ports: createPorts({ signerValidation: mismatchPort }),
+        }),
+      { wrapper: Wrapper },
+    );
+
+    act(() => {
+      result.current.onEditPress();
+    });
+    await act(async () => {
+      await result.current.onSignerConfirm();
+    });
+
+    expect(result.current.editUiState).toBe("signer-mismatch");
+
+    act(() => {
+      result.current.onConnectDifferentDevice();
     });
 
     expect(result.current.editUiState).toBe("signer-open");

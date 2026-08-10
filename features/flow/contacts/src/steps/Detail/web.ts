@@ -5,6 +5,8 @@ export type { ContactDetailActionsProps } from "./components/ContactDetailAction
 export { ContactsDeleteContactDialog } from "./components/ContactsDeleteContactDialog/ContactsDeleteContactDialog.web";
 export { ContactsDeleteAddressDialog } from "./components/ContactsDeleteAddressDialog/ContactsDeleteAddressDialog.web";
 export { ContactsEditSignerDialog } from "./components/ContactsEditSignerDialog/ContactsEditSignerDialog.web";
+export { ContactsEditSignerMismatchDialog } from "./components/ContactsEditSignerMismatchDialog/ContactsEditSignerMismatchDialog.web";
 export type { ContactsDeleteContactDialogProps } from "./components/ContactsDeleteContactDialog/types";
 export type { ContactsDeleteAddressDialogProps } from "./components/ContactsDeleteAddressDialog/types";
 export type { ContactsEditSignerDialogProps } from "./components/ContactsEditSignerDialog/types";
+export type { ContactsEditSignerMismatchDialogProps } from "./components/ContactsEditSignerMismatchDialog/types";

@@ -4,6 +4,7 @@ import {
   ContactsDeleteAddressDialog,
   ContactsDeleteContactDialog,
   ContactsEditSignerDialog,
+  ContactsEditSignerMismatchDialog,
   ContactsListView,
   ContactsRenameAddressDialog,
   ContactsRenameContactDialog,
@@ -50,6 +51,7 @@ export function ContactsView({
       <ContactsDeleteAddressDialog {...addressDetailActionsDialogs.deleteDialog} />
       <ContactsRenameAddressDialog {...addressDetailActionsDialogs.renameDialog} />
       <ContactsEditSignerDialog {...addressDetailActionsDialogs.signerDialog} />
+      <ContactsEditSignerMismatchDialog {...addressDetailActionsDialogs.signerMismatchDialog} />
     </>
   );
 }
