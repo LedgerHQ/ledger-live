@@ -5133,9 +5133,6 @@ importers:
       '@features/platform-contacts':
         specifier: workspace:^
         version: link:../../platform/contacts
-      '@shared/name':
-        specifier: workspace:^
-        version: link:../../../shared/name
       class-variance-authority:
         specifier: 'catalog:'
         version: 0.7.1
