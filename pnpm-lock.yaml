@@ -892,9 +892,6 @@ importers:
       '@domain/entity-market-sentiment':
         specifier: workspace:^
         version: link:../../domain/entity/market-sentiment
-      '@domain/entity-pay-card':
-        specifier: workspace:^
-        version: link:../../domain/entity/pay-card
       '@domain/entity-recent-addresses':
         specifier: workspace:^
         version: link:../../domain/entity/recent-addresses
@@ -1668,9 +1665,6 @@ importers:
       '@domain/entity-market-sentiment':
         specifier: workspace:^
         version: link:../../domain/entity/market-sentiment
-      '@domain/entity-pay-card':
-        specifier: workspace:^
-        version: link:../../domain/entity/pay-card
       '@domain/entity-recent-addresses':
         specifier: workspace:^
         version: link:../../domain/entity/recent-addresses
@@ -3011,9 +3005,9 @@ importers:
       '@devtools/registry':
         specifier: workspace:*
         version: link:../registry
-      '@domain/entity-pay-card':
+      '@features/flow-pay-card-auth':
         specifier: workspace:*
-        version: link:../../domain/entity/pay-card
+        version: link:../../features/flow/pay-card-auth
       '@features/platform-feature-flags':
         specifier: workspace:*
         version: link:../../features/platform/feature-flags
@@ -4435,34 +4429,6 @@ importers:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
 
-  domain/entity/pay-card:
-    dependencies:
-      '@reduxjs/toolkit':
-        specifier: 'catalog:'
-        version: 2.11.2
-      zod:
-        specifier: 'catalog:'
-        version: 4.3.6
-    devDependencies:
-      '@jest/globals':
-        specifier: 'catalog:'
-        version: 30.2.0
-      '@swc/core':
-        specifier: 'catalog:'
-        version: 1.15.11
-      '@swc/jest':
-        specifier: 'catalog:'
-        version: 0.2.39(@swc/core@1.15.11)
-      '@types/jest':
-        specifier: 'catalog:'
-        version: 30.0.0
-      jest:
-        specifier: 'catalog:'
-        version: 30.2.0
-      typescript:
-        specifier: 'catalog:'
-        version: '@typescript/typescript6@6.0.2'
-
   domain/entity/recent-addresses:
     dependencies:
       '@reduxjs/toolkit':
@@ -5302,6 +5268,9 @@ importers:
 
   features/flow/pay-card-auth:
     dependencies:
+      '@reduxjs/toolkit':
+        specifier: 'catalog:'
+        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
       '@shared/api-services':
         specifier: workspace:^
         version: link:../../../shared/api-services
@@ -5327,9 +5296,6 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.52(8f2c508bbb7b9fda5127db56feef203c)
-      '@reduxjs/toolkit':
-        specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
       '@support/jest-features-flow':
         specifier: workspace:*
         version: link:../../../support/jest-features-flow

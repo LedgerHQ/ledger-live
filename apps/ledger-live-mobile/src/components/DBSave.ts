@@ -39,7 +39,7 @@ import { exportSelector as knownDevicesExportSelector } from "~/reducers/knownDe
 import { exportLargeMoverSelector } from "~/reducers/largeMover";
 import { exportMarketSelector, exportMarketListConfigSelector } from "~/reducers/market";
 import { marketBannerStoreSelector } from "~/reducers/marketBanner";
-import { payCardPersistedSelector } from "@domain/entity-pay-card";
+import { payCardPersistedSelector } from "@features/flow-pay-card-auth/state";
 import { settingsStoreSelector } from "~/reducers/settings";
 import type { State } from "~/reducers/types";
 import { Maybe } from "../types/helpers";

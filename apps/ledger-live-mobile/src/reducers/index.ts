@@ -44,7 +44,7 @@ import liveAppModal from "./liveAppModal";
 import { authEnvironmentReducer } from "@shared/auth";
 import { identitiesSlice } from "@domain/entity-client-identity";
 import { supportedFiatsSlice } from "@domain/entity-currency-fiat";
-import { payCardSlice } from "@domain/entity-pay-card";
+import { payCardSlice } from "@features/flow-pay-card-auth/state";
 import { contactsSlice } from "@domain/entity-contact";
 import type { UnknownAction } from "@reduxjs/toolkit";
 

@@ -6,13 +6,13 @@ import {
   markPayCardFeatureTourSeen,
   resetPayCardFeatureTourSeen,
   restorePayCardPersistedState,
-} from "./slice";
+} from "../slice";
 import {
   selectPayCard,
   selectPayCardParams,
   selectPayCardHasSeenFeatureTour,
   payCardPersistedSelector,
-} from "./selectors";
+} from "../selectors";
 
 const reducer = payCardSlice.reducer;
 const params = { platform: "cl-card", name: "CL Card" };

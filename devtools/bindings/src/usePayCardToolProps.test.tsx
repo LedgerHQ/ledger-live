@@ -3,7 +3,7 @@ import { act, renderHook } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
 import featureFlagsReducer, { createFeatureFlagsMiddleware } from "@shared/feature-flags";
-import { payCardSlice, markPayCardFeatureTourSeen } from "@domain/entity-pay-card";
+import { payCardSlice, markPayCardFeatureTourSeen } from "@features/flow-pay-card-auth/state";
 import { usePayCardToolProps } from "./usePayCardToolProps";
 
 function buildStore() {

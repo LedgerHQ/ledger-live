@@ -1,6 +1,7 @@
 # @devtools/pay-card
 
-The Card / Pay DevTool. Lets developers put the Card/Pay feature into any state in one place: toggle the relevant feature flags, switch the API mock scenario, apply one-click quick states, force domain state, and reset seen/tour flags.
+The Card / Pay DevTool. It controls the relevant feature flags, onboarding-step state, and feature
+tour reset from one place.
 
 ## Import boundary
 
@@ -23,34 +24,22 @@ interface PayCardToolProps {
     payTabEnabled: boolean;
     cardParam: boolean;
     ptxCardEnabled: boolean;
-    setPayTabEnabled: (v: boolean) => void;
-    setCardParam: (v: boolean) => void;
-    setPtxCardEnabled: (v: boolean) => void;
-    resetFlagOverrides: () => void;
+    setPayTabEnabled: (value: boolean) => void;
+    setCardParam: (value: boolean) => void;
+    setPtxCardEnabled: (value: boolean) => void;
   };
-  mocks: {
-    useMocks: boolean;
-    setUseMocks: (v: boolean) => void;
-    scenario: string;
-    scenarios: readonly string[];
-    setScenario: (id: string) => void;
-    phase: string;
-    phases: readonly string[];
-    setPhase: (id: string) => void;
+  onboarding: {
+    steps: readonly {
+      id: string;
+      label: string;
+      done: boolean;
+    }[];
+    setStepDone: (id: string, done: boolean) => void;
   };
-  domain: {
-    openPayCard: () => void;
-    closePayCard: () => void;
-    resetPayCardSlice: () => void;
-  };
-  resets: {
-    resetFeatureTour: () => void;
-    resetOnboardingWidget: () => void;
-  };
+  hasSeenFeatureTour: boolean;
+  resetPayCardFeatureTourSeen: () => void;
 }
 ```
-
-Scenario and phase ids are plain strings; the concrete ids come from `@domain/api-pay-card` mocks and are injected by the bindings layer, keeping this tool app-agnostic.
 
 ## Layout
 

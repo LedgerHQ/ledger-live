@@ -10,3 +10,9 @@ export const PayCardProviderSchema = z.enum(["baanx"]);
 export const PayCardPreAuthResponseSchema = z.object({
   loginUrl: z.string().url(),
 });
+
+export const PayCardParamsSchema = z.object({
+  platform: z.string(),
+  name: z.string(),
+  path: z.string().optional(),
+});

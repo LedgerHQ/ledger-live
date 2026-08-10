@@ -1,5 +1,5 @@
 ---
-"@domain/entity-pay-card": minor
+"@features/flow-pay-card-auth": minor
 "@devtools/pay-card": minor
 "@devtools/bindings": minor
 ---

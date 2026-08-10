@@ -11,6 +11,7 @@
       "react-native": "./src/index.native.ts",
       "default": "./src/index.ts"
     },
+    "./state": "./src/state/store.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,
@@ -28,6 +29,7 @@
     "unimported": "pnpm knip --directory ../../.. -W features/flow/pay-card-auth"
   },
   "dependencies": {
+    "@reduxjs/toolkit": "catalog:",
     "@shared/api-services": "workspace:^",
     "zod": "catalog:"
   },
@@ -39,7 +41,6 @@
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
-    "@reduxjs/toolkit": "catalog:",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",

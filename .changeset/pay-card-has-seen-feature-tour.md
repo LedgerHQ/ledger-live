@@ -1,5 +1,5 @@
 ---
-"@domain/entity-pay-card": minor
+"@features/flow-pay-card-auth": minor
 ---
 
-Add persistable hasSeenFeatureTour flag to the payCard entity slice (markPayCardFeatureTourSeen, restorePayCardPersistedState, selectPayCardHasSeenFeatureTour, payCardPersistedSelector)
+Add a persistable `hasSeenFeatureTour` flag to the Pay Card flow state.

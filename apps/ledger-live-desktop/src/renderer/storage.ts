@@ -22,7 +22,7 @@ import type { PersistedCAL } from "@domain/api-currency-token";
 import type { PersistedIdentities } from "@domain/entity-client-identity";
 import type { FeatureFlagsState } from "@shared/feature-flags";
 import type { RestorableLargeScreenUpsellModalState } from "@features/flow-large-screen-upsell";
-import type { PayCardPersistedState } from "@domain/entity-pay-card";
+import type { PayCardPersistedState } from "@features/flow-pay-card-auth/state";
 
 /*
   This file serve as an interface for the RPC binding to the main thread that now manage the config file.

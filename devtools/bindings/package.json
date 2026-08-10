@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "@devtools/registry": "workspace:*",
-    "@domain/entity-pay-card": "workspace:*",
+    "@features/flow-pay-card-auth": "workspace:*",
     "@features/platform-feature-flags": "workspace:*",
     "@shared/feature-flags": "workspace:*"
   },

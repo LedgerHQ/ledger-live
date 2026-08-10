@@ -11,7 +11,7 @@ import {
   LARGE_SCREEN_UPSELL_MODAL,
   restoreLargeScreenUpsellModalState,
 } from "@features/flow-large-screen-upsell";
-import { restorePayCardPersistedState } from "@domain/entity-pay-card";
+import { restorePayCardPersistedState } from "@features/flow-pay-card-auth/state";
 import i18n from "i18next";
 import { webFrame, ipcRenderer } from "electron";
 import each from "lodash/each";

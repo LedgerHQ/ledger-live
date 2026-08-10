@@ -45,12 +45,6 @@ jest.mock("@domain/entity-client-identity", () => ({
   exportIdentitiesForPersistence: jest.fn(s => s),
 }));
 
-jest.mock("@domain/entity-pay-card", () => ({
-  payCardPersistedSelector: (state: FakeState) => ({
-    hasSeenFeatureTour: state.payCard.hasSeenFeatureTour,
-  }),
-}));
-
 jest.mock("@ledgerhq/live-common/account/index", () => ({
   accountsPersistedStateChanged: jest.fn(() => false),
 }));

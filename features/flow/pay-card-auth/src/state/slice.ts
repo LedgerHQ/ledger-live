@@ -1,10 +1,10 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { PayCardParams, PayCardPersistedState, PayCardState } from "./types";
 
-export const payCardInitialState: PayCardState = {
+export const payCardInitialState = {
   params: null,
   hasSeenFeatureTour: false,
-};
+} satisfies PayCardState as PayCardState;
 
 export const payCardSlice = createSlice({
   name: "payCard",
