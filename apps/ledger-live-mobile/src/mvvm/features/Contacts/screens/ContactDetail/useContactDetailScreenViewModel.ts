@@ -199,7 +199,8 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
     if (
       addressDetailActions.deleteSheet.isOpen ||
       addressDetailActions.renameSheet.isOpen ||
-      addressDetailActions.signerSheet.isOpen
+      addressDetailActions.signerSheet.isOpen ||
+      addressDetailActions.signerMismatchSheet.isOpen
     ) {
       return;
     }
@@ -209,6 +210,7 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
     addressDetailActions.deleteSheet.isOpen,
     addressDetailActions.renameSheet.isOpen,
     addressDetailActions.signerSheet.isOpen,
+    addressDetailActions.signerMismatchSheet.isOpen,
     onCloseAddressDetail,
   ]);
   const shouldRedirect = !isEnabled || !contact;

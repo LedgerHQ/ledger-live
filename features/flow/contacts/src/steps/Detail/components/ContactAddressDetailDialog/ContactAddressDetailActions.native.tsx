@@ -53,6 +53,7 @@ export function ContactAddressDetailActions({
           onPress={onEdit}
           isFull
           lx={{ flex: 1 }}
+          testID="contacts-address-detail-edit"
         >
           {labels.edit}
         </TileButton>

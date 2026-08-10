@@ -19,6 +19,8 @@ export * from "./model/addressDetailViewModel";
 export * from "./model/addressDetailActionsViewModel";
 export * from "./model/addressDetailActionsController";
 export * from "./model/sortContactAddressesByNetwork";
+export * from "./model/resolveContactAddressDetailActionsLabels";
+export * from "./model/mapContactAddressDetailActionsUiState";
 export * from "./model/ports";
 export * from "./types";
 export * from "./components/ContactAddressDetailDialog/types";
