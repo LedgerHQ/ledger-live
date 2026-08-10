@@ -52,7 +52,7 @@ function MemoTypeSelectComponent({ currencyId, options, value, onChange }: MemoT
 
   return (
     <>
-      <OptionListTrigger onPress={handleOpenSheet}>
+      <OptionListTrigger testID="send-memo-type-select" onPress={handleOpenSheet}>
         {selectedItem != null && (
           <Text typography="body1" lx={{ color: "base" }}>
             {selectedItem.label}
@@ -66,7 +66,7 @@ function MemoTypeSelectComponent({ currencyId, options, value, onChange }: MemoT
             <OptionListContent
               lx={{ marginBottom: "s24" }}
               renderItem={item => (
-                <OptionListItem value={item.value}>
+                <OptionListItem testID={`send-memo-type-option-${item.value}`} value={item.value}>
                   <OptionListItemContent>
                     <OptionListItemText>{item.label}</OptionListItemText>
                   </OptionListItemContent>
