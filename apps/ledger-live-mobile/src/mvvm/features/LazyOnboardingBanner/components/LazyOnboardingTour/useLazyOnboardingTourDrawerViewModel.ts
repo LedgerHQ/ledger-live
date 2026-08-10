@@ -5,7 +5,6 @@ import { useFeature } from "@features/platform-feature-flags";
 import { useSelector } from "~/context/hooks";
 import { personalizedRecommendationsEnabledSelector } from "~/reducers/settings";
 import {
-  resetLazyOnboardingTourViewTracking,
   trackLazyOnboardingTourBuyClicked,
   trackLazyOnboardingTourCloseClicked,
   trackLazyOnboardingTourContinueClicked,
@@ -36,6 +35,8 @@ export function useLazyOnboardingTourDrawerViewModel(): LazyOnboardingTourDrawer
   );
   const [isOpen, setIsOpen] = useState(false);
   const hasClosedRef = useRef(false);
+  const hasTrackedTourOpenRef = useRef(false);
+  const lastTrackedStepIndexRef = useRef<number | null>(null);
 
   const isFeatureEnabled = feature?.enabled === true;
   const link = typeof feature?.params?.link === "string" ? feature.params.link : "";
@@ -72,12 +73,22 @@ export function useLazyOnboardingTourDrawerViewModel(): LazyOnboardingTourDrawer
 
   useEffect(() => {
     if (!isOpen) {
-      resetLazyOnboardingTourViewTracking();
       hasClosedRef.current = false;
+      hasTrackedTourOpenRef.current = false;
+      lastTrackedStepIndexRef.current = null;
       return;
     }
 
-    trackLazyOnboardingTourOpened(sharedAnalyticsProps);
+    const hasTrackedOpen = trackLazyOnboardingTourOpened(
+      sharedAnalyticsProps,
+      hasTrackedTourOpenRef.current,
+    );
+    if (!hasTrackedOpen) {
+      return;
+    }
+
+    hasTrackedTourOpenRef.current = true;
+    lastTrackedStepIndexRef.current = 0;
   }, [isOpen, sharedAnalyticsProps]);
 
   useEffect(() => {
@@ -97,7 +108,11 @@ export function useLazyOnboardingTourDrawerViewModel(): LazyOnboardingTourDrawer
 
   const onSlideChange = useCallback(
     (index: number) => {
-      trackLazyOnboardingTourStepViewed(index, sharedAnalyticsProps);
+      lastTrackedStepIndexRef.current = trackLazyOnboardingTourStepViewed(
+        index,
+        sharedAnalyticsProps,
+        lastTrackedStepIndexRef.current,
+      );
     },
     [sharedAnalyticsProps],
   );

@@ -10,46 +10,39 @@ export type LazyOnboardingTourSharedAnalyticsProps = Readonly<{
   mode: "feature_intro";
 }>;
 
-let hasTrackedTourOpen = false;
-let lastTrackedStepIndex: number | null = null;
-
-export const resetLazyOnboardingTourViewTracking = () => {
-  hasTrackedTourOpen = false;
-  lastTrackedStepIndex = null;
-};
-
 export const trackLazyOnboardingTourOpened = (
   sharedProps: LazyOnboardingTourSharedAnalyticsProps,
-) => {
+  hasTrackedTourOpen: boolean,
+): boolean => {
   if (hasTrackedTourOpen) {
-    return;
+    return false;
   }
-
-  hasTrackedTourOpen = true;
-  lastTrackedStepIndex = 0;
 
   screen(LAZY_ONBOARDING_TOUR_PAGE, undefined, {
     name: "lazy onboarding tour",
     step: 0,
     ...sharedProps,
   });
+
+  return true;
 };
 
 export const trackLazyOnboardingTourStepViewed = (
   step: number,
   sharedProps: LazyOnboardingTourSharedAnalyticsProps,
-) => {
+  lastTrackedStepIndex: number | null,
+): number | null => {
   if (lastTrackedStepIndex === step) {
-    return;
+    return lastTrackedStepIndex;
   }
-
-  lastTrackedStepIndex = step;
 
   screen(LAZY_ONBOARDING_TOUR_PAGE, undefined, {
     name: "lazy onboarding tour",
     step,
     ...sharedProps,
   });
+
+  return step;
 };
 
 export const trackLazyOnboardingTourContinueClicked = (

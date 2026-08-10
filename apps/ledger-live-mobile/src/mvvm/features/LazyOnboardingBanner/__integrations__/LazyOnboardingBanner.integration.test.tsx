@@ -8,7 +8,6 @@ import type { State } from "~/reducers/types";
 import {
   __resetLazyOnboardingTourControllerForTests,
   LazyOnboardingTourPortfolioMount,
-  resetLazyOnboardingTourViewTracking,
 } from "../index";
 import { LazyOnboardingBanner } from "../components/LazyOnboardingBanner";
 import { LAZY_ONBOARDING_TOUR_PAGE } from "../components/LazyOnboardingTour/const";
@@ -92,7 +91,6 @@ describe("LazyOnboardingBanner", () => {
     jest.clearAllMocks();
     resetLazyOnboardingBannerSession();
     __resetLazyOnboardingTourControllerForTests();
-    resetLazyOnboardingTourViewTracking();
   });
 
   it("should open the shop with attribution in shop_direct mode", async () => {
@@ -181,7 +179,6 @@ describe("LazyOnboardingTour", () => {
     jest.clearAllMocks();
     resetLazyOnboardingBannerSession();
     __resetLazyOnboardingTourControllerForTests();
-    resetLazyOnboardingTourViewTracking();
   });
 
   it("should open the shop from Buy on the first slide", async () => {
