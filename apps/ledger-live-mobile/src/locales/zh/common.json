@@ -1548,10 +1548,6 @@
     }
   },
   "graph" : {
-    "week" : "1 周",
-    "month" : "1 月",
-    "year" : "1 年",
-    "all" : "全部",
     "graphNotSupported" : "图表不适用于此代币"
   },
   "carousel" : {
@@ -1697,10 +1693,8 @@
     "cta" : "立即购买您的 Ledger 设备",
     "footer" : "我已经有一个 Ledger 设备，对该设备进行设置",
     "bannerTitle" : "为您的加密货币和 NFT 提供一流的安全性",
-    "bannerTitle2" : "您需要一个 Ledger 设备才能进行交易",
     "bannerSubtitle" : "使用 Ledger Flex",
     "bannerButtonTitle" : "探索 Flex",
-    "bannerButtonTitle2" : "购买 Ledger 设备",
     "setupCta" : "我已经有一个 Ledger 设备，对该设备进行设置"
   },
   "rebornBuyDevice" : {
@@ -2829,44 +2823,18 @@
       "skipCTA" : "以后再说"
     }
   },
-  "tabs" : {
-    "accounts" : "账户",
-    "transfer" : "转移",
-    "manager" : "我的 Ledger",
-    "myWallet" : "我的钱包",
-    "settings" : "设置",
-    "platform" : "Live 应用程序",
-    "discover" : "探索",
-    "nanoX" : "Nano X",
-    "market" : "市场",
-    "earn" : "赚取",
-    "card" : "卡",
-    "swap" : "互换"
-  },
   "portfolio" : {
     "totalBalance" : "总余额",
-    "syncError" : "同步错误",
-    "syncFailed" : "同步失败",
     "syncPending" : "正在同步...",
     "transactionsPendingConfirmation" : {
       "title" : "非同步的余额",
       "desc" : "有些交易尚未确认。这些交易将反映在您的余额中，并在确认后可用。"
     },
     "emptyState" : {
-      "noAppsTitle" : "在我的设备上安装应用程序",
-      "noAppsDesc" : "在您的设备上安装应用程序，然后在 Ledger Wallet中添加账户。前往“我的 Ledger”安装应用程序。",
-      "noAccountsTitle" : "您没有任何账户…",
-      "noAccountsDesc" : "请添加账户到您的资产组合。",
       "buttons" : {
         "import" : "添加资产",
-        "buy" : "买入",
         "manager" : "安装应用程序",
         "managerSecondary" : "在我的设备上安装应用程序"
-      },
-      "addAccounts" : {
-        "addAccounts" : "添加资产",
-        "title" : "开始",
-        "description" : "您可以通过我们的合作伙伴购买加密货币或设置您的钱包"
       }
     },
     "noOpState" : {
@@ -2874,7 +2842,8 @@
       "desc" : "只需将加密资产发送到您的接收地址并等待应用程序同步。"
     },
     "carousel" : {
-      "title" : "为您而设"
+      "title" : "为您而设",
+      "closeAll" : "全部关闭"
     },
     "perpsEntry" : {
       "title" : "永续合约",
@@ -2886,14 +2855,6 @@
       "cardDescription" : "以极具竞争力的费率借入",
       "cta" : "探索"
     },
-    "recommended" : {
-      "title" : "推荐"
-    },
-    "topGainers" : {
-      "title" : "市场获利者（24 小时）",
-      "seeMarket" : "显示全部"
-    },
-    "walletBalance" : "钱包余额",
     "balance" : {
       "noSigner" : "您的安全\n加密钱包",
       "noAccounts" : "首先为您的\n钱包充值"
@@ -2926,8 +2887,7 @@
       "sell" : "卖出",
       "swap" : "互换",
       "send" : "发送",
-      "deposit" : "接收",
-      "stake" : "质押"
+      "deposit" : "接收"
     },
     "quickActionsCtas" : {
       "transfer" : "转移",
@@ -3865,8 +3825,7 @@
       "learnMore" : "详细了解“标签/备忘标签”"
     },
     "send" : {
-      "title" : "发送",
-      "description" : "将加密货币发送到另一个钱包。"
+      "title" : "发送"
     },
     "fees" : {
       "title" : "编辑费用"
@@ -3999,21 +3958,12 @@
       "title" : "买入",
       "description" : "用现金安全购买加密货币。"
     },
-    "sell" : {
-      "title" : "卖出",
-      "description" : "安全出售加密货币以换取现金。"
-    },
     "exchange" : {
       "title" : "买入 / 卖出",
       "connectingTo" : "正在连接到 {{provider}}"
     },
-    "stake" : {
-      "title" : "权益质押",
-      "description" : "获得加密货币权益质押奖励。"
-    },
     "swap" : {
       "title" : "互换",
-      "description" : "将加密货币兑换成加密货币。",
       "selectDevice" : "选择您的设备",
       "broadcasting" : "正在播送互换交易",
       "loadingFees" : "正在加载网络费用...",
@@ -4493,11 +4443,6 @@
     "walletConnect" : {
       "title" : "WalletConnect",
       "description" : "将您的钱包连接到去中心化应用程序"
-    },
-    "recover" : {
-      "title" : "Ledger Recover",
-      "description" : "钱包恢复，垂手可得",
-      "tag" : "免费一个月"
     }
   },
   "signMessage" : {
@@ -4540,6 +4485,11 @@
       "title" : "发送 {{currency}}",
       "available" : "可用 {{amount}}",
       "to" : "至：",
+      "addressDisclaimer" : {
+        "accessibilityLabel" : "关于接收者地址",
+        "title" : "在您的 Ledger 设备上验证地址",
+        "description" : "您的 Ledger 设备将安全地显示完整地址。请确保其与原始来源的地址一致。"
+      },
       "placeholder" : "请输入地址或 ENS",
       "placeholderNoENS" : "输入地址",
       "pasteFromClipboard" : {
@@ -9552,13 +9502,13 @@
   },
   "lnsUpsell" : {
     "opted_in" : {
-      "title" : "升级您的 Ledger Nano S™",
-      "description" : "购买最新 Ledger 签署设备可享八折专属优惠。",
+      "title" : "查看更多。更安全地签署",
+      "description" : "升级到任意触摸屏签署设备，可享八折优惠。",
       "cta" : "升级 Ledger 设备"
     },
     "opted_out" : {
-      "title" : "升级您的 Ledger Nano S™",
-      "description" : "由于 Ledger Nano S 的存储容量有限，您将无法全面体验最新功能、区块链升级及安全增强。",
+      "title" : "更加安全。更强掌控",
+      "description" : "详细了解高级安全功能。",
       "cta" : "了解更多"
     }
   },
@@ -10122,7 +10072,7 @@
       "stepViewKeyWarning" : {
         "title" : "设置 Aleo 私密余额",
         "description" : "Ledger Wallet 存储您的查看密钥以显示您的私密余额，并使用第三方服务来处理私密交易。<0>了解更多</0>",
-        "bullets" : ["只读权限，旨在解密您的私密余额", "Ledger 无法发送或使用您的资金", "只有您本人可以签署和使用您的资金", "为确保快速处理，证明生成由第三方证明者服务处理", "证明者无法访问或使用您的资金"],
+        "bullets" : ["查看密钥提供只读权限，以解密您在 Ledger Wallet 内的私密余额", "只有您本人可以通过 Ledger 签署设备签署并使用您的资金", "Aleo 交易需要零知识证明，这需要消耗大量的计算能力", "证明生成由外部 Aleo 网络服务处理，以加速交易"],
         "cta" : {
           "allow" : "允许",
           "cancel" : "取消"
@@ -10232,7 +10182,29 @@
       "namePlaceholder" : "联系人姓名",
       "namingDisclaimer" : "为了保护隐私，请避免使用全名和姓氏。使用昵称，或仅使用名字+首字母，例如：“John S”。",
       "confirmName" : "确认名称",
-      "invalidNameError" : "不允许使用特殊字符。"
+      "invalidNameError" : "不允许使用特殊字符。",
+      "duplicateNameError" : "此联系人名称已被使用。"
+    },
+    "addAddressEntry" : {
+      "title" : "输入地址",
+      "addressPlaceholder" : "地址或 ENS",
+      "confirmAddress" : "确认地址",
+      "validatingAddress" : "正在验证地址",
+      "validAddress" : "有效地址",
+      "invalidAddress" : "无效地址",
+      "domainNotFound" : "未找到此网域的地址",
+      "sanctionedAddress" : "该地址已被制裁，无法使用。",
+      "validationUnavailable" : "地址验证暂时不可用",
+      "ensDisclaimer" : "ENS 名称解析为钱包地址。在继续之前，请务必验证解析后的地址。"
+    },
+    "addAddressName" : {
+      "title" : "命名地址",
+      "inputLabel" : "地址名称",
+      "namingDisclaimer" : "建议您为此地址命名，以便在需要时轻松找到该地址。此名称仅对您可见。",
+      "continueToReview" : "继续核对",
+      "invalidLabel" : "不允许使用特殊字符。",
+      "duplicateLabel" : "此地址名称已用于此联系人。",
+      "labelTooLong" : "此地址名称过长。"
     },
     "addressCount_zero" : "0 个地址",
     "addressCount_one" : "{{count}} 个地址",
@@ -10252,6 +10224,42 @@
         "meDescription" : "保存您在交易所或其他钱包中拥有的外部地址。下次您向自己发送时，您的 Ledger 设备将显示您选择的名称。",
         "contactDescription" : "保存钱包地址以向 {{name}} 发送"
       }
+    },
+    "addressDetail" : {
+      "send" : "发送",
+      "copy" : "复制",
+      "copyAddress" : "复制地址",
+      "copied" : "已复制",
+      "edit" : "编辑",
+      "share" : "分享",
+      "delete" : "删除",
+      "networkTag" : "{{name}} 网络"
+    },
+    "detailActions" : {
+      "editName" : "编辑名称",
+      "deleteContact" : "删除联系人",
+      "menuAccessibilityLabel" : "联系人选项"
+    },
+    "editContact" : {
+      "title" : "编辑联系人",
+      "namePlaceholder" : "联系人姓名",
+      "namingDisclaimer" : "为了保护隐私，请避免使用全名和姓氏。使用昵称，或仅使用名字+首字母，例如：“John S.”",
+      "confirmName" : "确认名称",
+      "applyChanges" : "应用更改",
+      "invalidNameError" : "不允许使用特殊字符。"
+    },
+    "deleteContact" : {
+      "title" : "删除联系人？",
+      "description" : "删除此联系人将清除所有关联地址。",
+      "mobileDescription" : "移除此联系人将清除所有关联地址。",
+      "confirm" : "删除",
+      "cancel" : "取消"
+    },
+    "editSigner" : {
+      "title" : "在设备上确认",
+      "description" : "连接并解锁您的 Ledger 设备以确认此更改。",
+      "confirm" : "继续",
+      "cancel" : "取消"
     },
     "ledgerSyncIntroduction" : {
       "title" : "开启 Ledger Sync 账户同步功能以保存联系人",

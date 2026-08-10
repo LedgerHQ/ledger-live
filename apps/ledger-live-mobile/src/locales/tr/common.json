@@ -1548,10 +1548,6 @@
     }
   },
   "graph" : {
-    "week" : "1H",
-    "month" : "1A",
-    "year" : "1Y",
-    "all" : "TÜMÜ",
     "graphNotSupported" : "Grafik bu token için mevcut değil"
   },
   "carousel" : {
@@ -1697,10 +1693,8 @@
     "cta" : "Ledger'ınızı şimdi satın alın",
     "footer" : "Zaten bir Ledger cihazım var, onu kuralım",
     "bannerTitle" : "Kriptolarınız ve NFT'leriniz için birinci sınıf güvenlik",
-    "bannerTitle2" : "Ledger Flex ile işlem yapmak için",
     "bannerSubtitle" : "bir Ledger cihazınızın olması gerekir",
     "bannerButtonTitle" : "Flex'i keşfedin",
-    "bannerButtonTitle2" : "Ledger satın alın",
     "setupCta" : "Zaten bir Ledger cihazım var, onu kuralım"
   },
   "rebornBuyDevice" : {
@@ -2829,44 +2823,18 @@
       "skipCTA" : "Belki sonra"
     }
   },
-  "tabs" : {
-    "accounts" : "Hesaplar",
-    "transfer" : "Transfer",
-    "manager" : "My Ledger",
-    "myWallet" : "Cüzdanım",
-    "settings" : "Ayarlar",
-    "platform" : "Live Apps",
-    "discover" : "Keşfet",
-    "nanoX" : "Nano X",
-    "market" : "Piyasa",
-    "earn" : "Kazan",
-    "card" : "Kart",
-    "swap" : "Takas et"
-  },
   "portfolio" : {
     "totalBalance" : "Toplam bakiye",
-    "syncError" : "Senkronizasyon hatası",
-    "syncFailed" : "Senkronizasyon başarısız oldu",
     "syncPending" : "Senkronize ediliyor...",
     "transactionsPendingConfirmation" : {
       "title" : "Senkronize edilmemiş bakiye",
       "desc" : "Bazı işlemler henüz onaylanmadı. Bu işlemler onaylandıktan sonra bakiyenize yansıtılacak ve kullanılabilecek."
     },
     "emptyState" : {
-      "noAppsTitle" : "Cihazıma uygulama yükle",
-      "noAppsDesc" : "Ledger Wallet'a hesap eklemeden önce cihazınıza uygulamaları yükleyin. Uygulama yüklemek için My Ledger'a gidin.",
-      "noAccountsTitle" : "Herhangi bir hesabınız yok...",
-      "noAccountsDesc" : "Lütfen Portföyünüze hesap ekleyin.",
       "buttons" : {
         "import" : "Varlık ekle",
-        "buy" : "Satın Al",
         "manager" : "Uygulama yükle",
         "managerSecondary" : "Cihazıma uygulama yükle"
-      },
-      "addAccounts" : {
-        "addAccounts" : "Varlık ekle",
-        "title" : "Hemen başla",
-        "description" : "Ortaklarımızdan kripto satın alabilir veya cüzdanınızı kurabilirsiniz"
       }
     },
     "noOpState" : {
@@ -2874,7 +2842,8 @@
       "desc" : "Kripto varlıklarını alıcı adresinize gönderin ve uygulamanın senkronize olmasını bekleyin."
     },
     "carousel" : {
-      "title" : "Sizin için"
+      "title" : "Sizin için",
+      "closeAll" : "Tümünü kapat"
     },
     "perpsEntry" : {
       "title" : "Perpetual işlemler",
@@ -2886,14 +2855,6 @@
       "cardDescription" : "Rekabetçi kurlarla kredi alın",
       "cta" : "Keşfedin"
     },
-    "recommended" : {
-      "title" : "Önerilen"
-    },
-    "topGainers" : {
-      "title" : "Yükselenler (24SA)",
-      "seeMarket" : "Tümünü gör"
-    },
-    "walletBalance" : "Cüzdan bakiyesi",
     "balance" : {
       "noSigner" : "Güvenli\nkripto cüzdanınız",
       "noAccounts" : "Cüzdanınıza\nfon aktararak başlayın"
@@ -2926,8 +2887,7 @@
       "sell" : "Sat",
       "swap" : "Takas et",
       "send" : "Gönder",
-      "deposit" : "Al",
-      "stake" : "Stake et"
+      "deposit" : "Al"
     },
     "quickActionsCtas" : {
       "transfer" : "Transfer",
@@ -3865,8 +3825,7 @@
       "learnMore" : "Etiket/Memo hakkında daha fazla bilgi edinin"
     },
     "send" : {
-      "title" : "Gönder",
-      "description" : "Başka bir cüzdana kripto gönderin."
+      "title" : "Gönder"
     },
     "fees" : {
       "title" : "Ücretleri düzenle"
@@ -3999,21 +3958,12 @@
       "title" : "Satın Al",
       "description" : "Güvenli bir şekilde nakit karşılığında kripto satın alın."
     },
-    "sell" : {
-      "title" : "Sat",
-      "description" : "Güvenli bir şekilde nakit karşılığında kripto satın."
-    },
     "exchange" : {
       "title" : "Satın Al / Sat",
       "connectingTo" : "{{provider}} sağlayıcısına bağlanıyorsunuz"
     },
-    "stake" : {
-      "title" : "Stake et",
-      "description" : "Kriptolarınızla ödüller kazanın."
-    },
     "swap" : {
       "title" : "Takas et",
-      "description" : "Bir kriptoyu diğeriyle takas edin.",
       "selectDevice" : "Cihazınızı seçin",
       "broadcasting" : "Takas işlemi yayınlanıyor",
       "loadingFees" : "Ağ ücretleri yükleniyor...",
@@ -4493,11 +4443,6 @@
     "walletConnect" : {
       "title" : "WalletConnect",
       "description" : "Cüzdanınızı dApp'lere bağlayın"
-    },
-    "recover" : {
-      "title" : "Ledger Recover",
-      "description" : "Cüzdan kurtarmak artık çok kolay",
-      "tag" : "Bir ay ücretsiz"
     }
   },
   "signMessage" : {
@@ -4540,6 +4485,11 @@
       "title" : "{{currency}} gönder",
       "available" : "Mevcut: {{amount}}",
       "to" : "Alıcı:",
+      "addressDisclaimer" : {
+        "accessibilityLabel" : "Alıcı adresi hakkında",
+        "title" : "Ledger cihazınızda adresi doğrulayın",
+        "description" : "Ledger cihazınız tam adresi güvenli bir şekilde görüntüleyecektir. Bu adresin orijinal kaynaktaki adresle eşleştiğinden emin olun."
+      },
       "placeholder" : "Adres ya da ENS adı girin",
       "placeholderNoENS" : "Adresi girin",
       "pasteFromClipboard" : {
@@ -9552,13 +9502,13 @@
   },
   "lnsUpsell" : {
     "opted_in" : {
-      "title" : "Ledger Nano S™ cihazınızın modelini yükseltin",
-      "description" : "En yeni Ledger imzalayıcılarda %20 özel indirimden faydalanın.",
+      "title" : "Daha iyi görerek imzalayın",
+      "description" : "Dokunmatik ekranlı imzalayıcılarda %20 indirim.",
       "cta" : "Ledger modelimi yükselt"
     },
     "opted_out" : {
-      "title" : "Ledger Nano S™ cihazınızın modelini yükseltin",
-      "description" : "Ledger Nano S cihazınızdaki sınırlı bellek; en yeni özelliklere, blok zinciri değişikliklerine ve güvenlik güncellemelerine erişiminizi kısıtlar.",
+      "title" : "Daha fazla güvenlik ve kontrol",
+      "description" : "Gelişmiş güvenlik özellikleri hakkında daha fazla bilgi edinin.",
       "cta" : "Daha fazla bilgi"
     }
   },
@@ -10122,7 +10072,7 @@
       "stepViewKeyWarning" : {
         "title" : "Aleo gizli bakiyesini belirleyin",
         "description" : "Ledger Wallet, gizli bakiyenizi görüntülemek için görüntüleme anahtarınızı saklar ve gizli işlemleri işlemek için üçüncü taraf hizmetleri kullanır. <0>Daha fazla bilgi edinin</0>",
-        "bullets" : ["Gizli bakiyenizin şifresini çözmek için salt okunur erişim", "Ledger, fonlarınızı gönderemez ve harcayamaz", "Fonlarınızı sadece siz imzalayabilir ve harcayabilirsiniz", "İspat oluşturma süreci, hızlı işleme için üçüncü taraf ispatlayıcı hizmetleri tarafından gerçekleştirilir", "İspatlayıcılar fonlarınıza erişemez ve onları harcayamaz"],
+        "bullets" : ["Görüntüleme anahtarı, Ledger Wallet’taki gizli bakiyenizin şifresini çözmek için salt okunur erişim sağlar.", "Fonlarınızı Ledger imzalayıcı cihaz aracılığıyla sadece siz imzalayabilir ve harcayabilirsiniz.", "Aleo işlemleri, önemli ölçüde işlem gücü gerektiren sıfır bilgi ispatları gerektirir.", "İspat üretimi, işlemleri hızlandırmak için harici Aleo Network hizmeti tarafından gerçekleştirilir."],
         "cta" : {
           "allow" : "İzin ver",
           "cancel" : "İptal et"
@@ -10232,7 +10182,29 @@
       "namePlaceholder" : "Kişi adı",
       "namingDisclaimer" : "Gizlilik için ad ve soyadların tamamını kullanmaktan kaçının. Bir takma ad veya yalnızca ad + baş harf kullanın, örn. \"John S\".",
       "confirmName" : "Adı onayla",
-      "invalidNameError" : "Özel karakterlere izin verilmez."
+      "invalidNameError" : "Özel karakterlere izin verilmez.",
+      "duplicateNameError" : "Bu kişi adı zaten kullanımda."
+    },
+    "addAddressEntry" : {
+      "title" : "Adresi girin",
+      "addressPlaceholder" : "Adres veya ENS",
+      "confirmAddress" : "Adresi onayla",
+      "validatingAddress" : "Adres doğrulanıyor",
+      "validAddress" : "Geçerli adres",
+      "invalidAddress" : "Geçersiz adres",
+      "domainNotFound" : "Bu alan için adres bulunamadı",
+      "sanctionedAddress" : "Bu adres yaptırım listesindedir ve kullanılamaz.",
+      "validationUnavailable" : "Adres doğrulaması geçici olarak kullanılamıyor",
+      "ensDisclaimer" : "ENS adları cüzdan adreslerine çözümlenir. Devam etmeden önce çözümlenen adresi her zaman doğrulayın."
+    },
+    "addAddressName" : {
+      "title" : "Adresi adlandırın",
+      "inputLabel" : "Adres adı",
+      "namingDisclaimer" : "Gerektiğinde kolayca bulabilmeniz için bu adrese bir isim vermenizi öneririz. Bu isim yalnızca sizin tarafınızdan görülebilecektir.",
+      "continueToReview" : "İnceleme adımına geç",
+      "invalidLabel" : "Özel karakterler desteklenmez.",
+      "duplicateLabel" : "Bu adres adı bu kişi için zaten kullanılıyor.",
+      "labelTooLong" : "Bu adres adı çok uzun."
     },
     "addressCount_zero" : "0 adres",
     "addressCount_one" : "{{count}} adres",
@@ -10252,6 +10224,42 @@
         "meDescription" : "Borsalarda veya diğer cüzdanlarda size ait olan harici adresleri kaydedin. Kendinize yapacağınız bir sonraki gönderimde, Ledger cihazınız belirlediğiniz ismi gösterecektir.",
         "contactDescription" : "{{name}} kişisine transfer göndermek için bir cüzdan adresi kaydedin"
       }
+    },
+    "addressDetail" : {
+      "send" : "Gönder",
+      "copy" : "Kopyala",
+      "copyAddress" : "Adresi kopyala",
+      "copied" : "Kopyalandı",
+      "edit" : "Düzenle",
+      "share" : "Paylaş",
+      "delete" : "Sil",
+      "networkTag" : "{{name}} Ağı"
+    },
+    "detailActions" : {
+      "editName" : "Adı düzenle",
+      "deleteContact" : "Kişiyi sil",
+      "menuAccessibilityLabel" : "Kişi seçenekleri"
+    },
+    "editContact" : {
+      "title" : "Kişiyi düzenle",
+      "namePlaceholder" : "Kişi adı",
+      "namingDisclaimer" : "Gizlilik için ad ve soyadın tamamını kullanmaktan kaçının. Bir takma ad veya yalnızca ad+soyadın baş harfini kullanın, ör. 'John S.'",
+      "confirmName" : "Adı onayla",
+      "applyChanges" : "Değişiklikleri uygula",
+      "invalidNameError" : "Özel karakterler desteklenmez."
+    },
+    "deleteContact" : {
+      "title" : "Kişi silinsin mi?",
+      "description" : "Bu kişiyi silmek, ilişkili tüm adresleri silecektir.",
+      "mobileDescription" : "Bu kişiyi kaldırmak, ilişkili tüm adresleri silecektir.",
+      "confirm" : "Sil",
+      "cancel" : "İptal et"
+    },
+    "editSigner" : {
+      "title" : "Cihazınızda onaylayın",
+      "description" : "Bu değişikliği onaylamak için Ledger cihazınızı bağlayın ve kilidini açın.",
+      "confirm" : "Devam",
+      "cancel" : "İptal et"
     },
     "ledgerSyncIntroduction" : {
       "title" : "Kişileri kaydetmek için Ledger Sync'i etkinleştirin",
