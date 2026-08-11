@@ -2,16 +2,22 @@ import React from "react";
 import { Button } from "react-native";
 import { fireEvent, render, screen, waitFor } from "@tests/test-renderer";
 import { track } from "~/analytics";
+import { productTourCompletedSelector } from "~/reducers/settings";
 import { ProductTourControlsProvider } from "../../context/ProductTourControlsContext";
 import { useProductTourDrawer, ProductTourDrawer } from "../index";
-import { __resetProductTourAutoOpenForTests } from "../hooks/useProductTourDrawerViewModel";
-import { PAGE_TRACKING_PRODUCT_TOUR, PRODUCT_TOUR_SLIDES } from "../const";
+import {
+  PAGE_TRACKING_PRODUCT_TOUR,
+  PRODUCT_TOUR_LAST_SLIDE_INDEX,
+  PRODUCT_TOUR_SLIDES,
+} from "../const";
 import type { ProductTourPrimaryAction } from "../const";
 
 const FIRST_SLIDE_TITLE = "Start by funding your wallet";
 const FIRST_SLIDE_SUBTITLE =
   "Fund your Ledger Wallet your way — transfer, buy, or convert cash to stablecoins.";
 const FIRST_SLIDE_CTA = "Fund your wallet";
+
+const PRIMARY_ACTIONS_THAT_CLOSE_DRAWER = ["stake", "card", "swap", "portfolio"] as const;
 
 type TestComponentProps = {
   readonly onPrimaryActionOverride?: (action: ProductTourPrimaryAction) => void;
@@ -28,9 +34,23 @@ const TestComponent = ({ onPrimaryActionOverride }: TestComponentProps) => {
     completeProductTour,
   } = useProductTourDrawer();
 
+  const resolvedPrimaryAction = onPrimaryActionOverride ?? onPrimaryAction;
+
   return (
     <>
       <Button onPress={openProductTour} title="Open Drawer" />
+      <Button
+        onPress={() => onSlideChange(PRODUCT_TOUR_LAST_SLIDE_INDEX)}
+        title="Simulate last slide"
+      />
+      <Button onPress={closeProductTour} title="Dismiss Drawer" />
+      {PRIMARY_ACTIONS_THAT_CLOSE_DRAWER.map(action => (
+        <Button
+          key={action}
+          onPress={() => resolvedPrimaryAction(action)}
+          title={`Primary: ${action}`}
+        />
+      ))}
       <ProductTourControlsProvider
         value={{
           openProductTour,
@@ -38,7 +58,7 @@ const TestComponent = ({ onPrimaryActionOverride }: TestComponentProps) => {
           onCloseButtonPress,
           onSlideChange,
           isDrawerOpen,
-          onPrimaryAction: onPrimaryActionOverride ?? onPrimaryAction,
+          onPrimaryAction: resolvedPrimaryAction,
           completeProductTour,
         }}
       >
@@ -50,7 +70,7 @@ const TestComponent = ({ onPrimaryActionOverride }: TestComponentProps) => {
 
 describe("ProductTourDrawer integration", () => {
   beforeEach(() => {
-    __resetProductTourAutoOpenForTests();
+    jest.clearAllMocks();
   });
 
   function renderTestComponent(
@@ -133,6 +153,39 @@ describe("ProductTourDrawer integration", () => {
     expect(screen.queryByText(FIRST_SLIDE_SUBTITLE)).not.toBeVisible();
   });
 
+  it("should not mark tour completed on close-button dismiss and allow reopen", async () => {
+    const { user, store, resizeScreenWidth } = await openTourOnFirstSlide({
+      productTourCompleted: false,
+      featureFlagEnabled: true,
+    });
+
+    expect(productTourCompletedSelector(store.getState())).toBe(false);
+
+    await user.press(screen.getByTestId("product-tour-close-button"));
+
+    await waitFor(() => {
+      expect(screen.queryByText(FIRST_SLIDE_TITLE)).not.toBeVisible();
+    });
+    expect(productTourCompletedSelector(store.getState())).toBe(false);
+
+    await user.press(screen.getByText("Open Drawer"));
+    resizeScreenWidth();
+
+    await waitFor(() => expect(screen.getByText(FIRST_SLIDE_TITLE)).toBeVisible());
+    expect(productTourCompletedSelector(store.getState())).toBe(false);
+  });
+
+  it("should mark tour completed but keep drawer open when reaching the last slide", async () => {
+    const { user, store } = await openTourOnFirstSlide();
+
+    expect(productTourCompletedSelector(store.getState())).toBe(false);
+
+    await user.press(screen.getByText("Simulate last slide"));
+
+    expect(productTourCompletedSelector(store.getState())).toBe(true);
+    expect(screen.getByText(FIRST_SLIDE_TITLE)).toBeVisible();
+  });
+
   describe("footer buttons on the first slide", () => {
     it("should call onPrimaryAction with the slide's action when the primary CTA is pressed", async () => {
       const onPrimaryActionOverride = jest.fn();
@@ -168,6 +221,64 @@ describe("ProductTourDrawer integration", () => {
         page: PAGE_TRACKING_PRODUCT_TOUR,
         card: 1,
       });
+    });
+  });
+
+  describe("primary CTA navigation", () => {
+    it.each(PRIMARY_ACTIONS_THAT_CLOSE_DRAWER)(
+      "should close the drawer when onPrimaryAction is invoked with %s",
+      async action => {
+        const { user } = await openTourOnFirstSlide();
+
+        await user.press(screen.getByText(`Primary: ${action}`));
+
+        await waitFor(() => {
+          expect(screen.queryByText(FIRST_SLIDE_TITLE)).not.toBeVisible();
+        });
+      },
+    );
+  });
+
+  describe("modal_dismissed tracking", () => {
+    it("should track modal_dismissed when dismissed via swipe or backdrop", async () => {
+      const { user } = await openTourOnFirstSlide();
+
+      await user.press(screen.getByText("Dismiss Drawer"));
+
+      expect(track).toHaveBeenCalledWith("modal_dismissed", {
+        page: PAGE_TRACKING_PRODUCT_TOUR,
+        card: 1,
+      });
+    });
+
+    it("should not track modal_dismissed when closeProductTour runs after the close button", async () => {
+      const { user } = await openTourOnFirstSlide();
+
+      await user.press(screen.getByTestId("product-tour-close-button"));
+
+      await waitFor(() => {
+        expect(screen.queryByText(FIRST_SLIDE_TITLE)).not.toBeVisible();
+      });
+
+      expect(track).not.toHaveBeenCalledWith(
+        "modal_dismissed",
+        expect.objectContaining({ page: PAGE_TRACKING_PRODUCT_TOUR }),
+      );
+    });
+
+    it("should not track modal_dismissed when closeProductTour runs after a CTA action", async () => {
+      const { user } = await openTourOnFirstSlide();
+
+      await user.press(screen.getByText("Primary: stake"));
+
+      await waitFor(() => {
+        expect(screen.queryByText(FIRST_SLIDE_TITLE)).not.toBeVisible();
+      });
+
+      expect(track).not.toHaveBeenCalledWith(
+        "modal_dismissed",
+        expect.objectContaining({ page: PAGE_TRACKING_PRODUCT_TOUR }),
+      );
     });
   });
 });

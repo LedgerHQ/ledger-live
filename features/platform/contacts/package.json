@@ -16,6 +16,8 @@
   },
   "sideEffects": false,
   "scripts": {
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -45,6 +47,7 @@
     "@types/jest": "catalog:",
     "@testing-library/react-native": "catalog:",
     "jest": "catalog:",
+    "oxfmt": "catalog:",
     "react": "catalog:",
     "react-redux": "catalog:",
     "react-native": "catalog:",

@@ -12,6 +12,8 @@
   },
   "sideEffects": false,
   "scripts": {
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -30,6 +32,7 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "jest": "catalog:",
+    "oxfmt": "catalog:",
     "typescript": "catalog:"
   }
 }
