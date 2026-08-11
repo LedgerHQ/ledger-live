@@ -133,9 +133,6 @@ async function getEnsScreenTexts(ensName: string): Promise<string[]> {
 }
 
 export async function approveTokenTouchDevices() {
-  // Token approve/revoke runs on a freshly launched Speculos instance where
-  // `currentscreenonly=true` can stay stuck on the launch screen; match the full
-  // event log so the rendered review screen is still detected (see waitFor).
   await waitForReviewTransaction(SWAP_REVIEW_TRANSACTION_MAX_ATTEMPTS, { matchFullEvents: true });
   await pressUntilTextFound(DeviceLabels.HOLD_TO_SIGN);
   await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
@@ -144,8 +141,6 @@ export async function approveTokenTouchDevices() {
 export const approveTokenButtonDevice = withDeviceController(
   ({ getButtonsController }) =>
     async () => {
-      // See approveTokenTouchDevices: fresh-instance review screens can be
-      // invisible to currentscreenonly=true; match the full event log too.
       await waitFor(DeviceLabels.REVIEW_TRANSACTION_TO, SWAP_REVIEW_TRANSACTION_MAX_ATTEMPTS, {
         matchFullEvents: true,
       });

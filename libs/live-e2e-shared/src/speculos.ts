@@ -584,11 +584,6 @@ export async function waitFor(
   }
 
   if (matchFullEvents) {
-    // Diagnostic: the current-screen read never matched. Dump the polled port, both
-    // event reads, and whether a screenshot of that exact port is reachable — so we can
-    // distinguish a same-instance events gap (screenshot of `port` shows the review but
-    // /events never does) from a port mismatch (waitFor polled a different, idle instance
-    // than the CLI drove — compare `port` with the attached "Speculos Screenshot – port X").
     try {
       const allEvents = (await fetchAllEvents(port)).join(" ");
       const shot = await takeScreenshot(port);
