@@ -1,5 +1,6 @@
 export * from "./constants";
 export * from "./schema";
+export * from "./device/types";
 export * from "./types";
 export * from "./define";
 export * from "./slice";
@@ -7,3 +8,4 @@ export * from "./selectors";
 export * from "./errors";
 export * from "./validation";
 export * from "./signerValidation";
+export * from "./cloudSyncModule";

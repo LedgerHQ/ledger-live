@@ -3,6 +3,7 @@ import { DEFAULT_ME_CONTACT_ID, DEFAULT_ME_CONTACT_NAME } from "./constants";
 import { contact } from "./define";
 import { normalizeContacts } from "./internals";
 import type { Contact, ContactAddress, ContactId, ContactName, ContactsState } from "./types";
+import type { DeviceContactGroupCredentials } from "./device/types";
 
 const defaultMeContact = contact({
   id: DEFAULT_ME_CONTACT_ID,
@@ -31,14 +32,29 @@ export const contactsSlice = createSlice({
     },
     renameContact: (
       state,
-      action: PayloadAction<Readonly<{ contactId: ContactId; name: ContactName }>>,
+      action: PayloadAction<
+        Readonly<{
+          contactId: ContactId;
+          name: ContactName;
+          deviceCredentials?: DeviceContactGroupCredentials;
+        }>
+      >,
     ) => {
       const selectedContact = state.contacts.find(
         contact => contact.id === action.payload.contactId,
       );
 
-      if (selectedContact) {
-        selectedContact.name = action.payload.name;
+      if (!selectedContact) {
+        return;
+      }
+
+      if (selectedContact.addresses.length > 0 && action.payload.deviceCredentials === undefined) {
+        return;
+      }
+
+      selectedContact.name = action.payload.name;
+      if (selectedContact.addresses.length > 0) {
+        selectedContact.deviceCredentials = action.payload.deviceCredentials;
       }
     },
     deleteContact: (state, action: PayloadAction<ContactId>) => {
@@ -51,7 +67,13 @@ export const contactsSlice = createSlice({
     },
     addAddress: (
       state,
-      action: PayloadAction<Readonly<{ contactId: ContactId; address: ContactAddress }>>,
+      action: PayloadAction<
+        Readonly<{
+          contactId: ContactId;
+          address: ContactAddress;
+          deviceCredentials: DeviceContactGroupCredentials;
+        }>
+      >,
     ) => {
       const selectedContact = state.contacts.find(
         contact => contact.id === action.payload.contactId,
@@ -62,6 +84,7 @@ export const contactsSlice = createSlice({
         !selectedContact.addresses.some(address => address.id === action.payload.address.id)
       ) {
         selectedContact.addresses.push(action.payload.address);
+        selectedContact.deviceCredentials = action.payload.deviceCredentials;
       }
     },
     updateAddress: (
@@ -91,6 +114,9 @@ export const contactsSlice = createSlice({
         selectedContact.addresses = selectedContact.addresses.filter(
           address => address.id !== action.payload.addressId,
         );
+        if (selectedContact.addresses.length === 0) {
+          selectedContact.deviceCredentials = undefined;
+        }
       }
     },
   },

@@ -24,6 +24,7 @@
     "@domain/entity-currency-crypto": "workspace:*",
     "@domain/entity-currency-token": "workspace:*",
     "@reduxjs/toolkit": "catalog:",
+    "@shared/cloud-sync-module": "workspace:^",
     "@shared/schema-primitives": "workspace:*",
     "zod": "catalog:"
   },

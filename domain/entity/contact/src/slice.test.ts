@@ -10,7 +10,13 @@ import {
   setContacts,
   updateAddress,
 } from "./slice";
-import { mockContact, mockContactAddress, mockMeContact } from "./schema.mock";
+import {
+  mockContact,
+  mockContactAddress,
+  mockContactWithAddress,
+  mockDeviceContactGroupCredentials,
+  mockMeContact,
+} from "./schema.mock";
 import { ContactNameSchema } from "./schema";
 
 function makeStore() {
@@ -92,6 +98,16 @@ describe("contactsSlice", () => {
     expect(store.getState().contacts.contacts).toEqual([mockMeContact({ name: "Raphael" })]);
   });
 
+  it("does not rename a contact with an address without renewed device credentials", () => {
+    const store = makeStore();
+    const ben = mockContactWithAddress();
+
+    store.dispatch(addContact(ben));
+    store.dispatch(renameContact({ contactId: ben.id, name: ContactNameSchema.parse("Raphael") }));
+
+    expect(store.getState().contacts.contacts[1]).toEqual(ben);
+  });
+
   it("deletes a saved contact", () => {
     const store = makeStore();
     const ben = mockContact();
@@ -112,9 +128,11 @@ describe("contactsSlice", () => {
     });
 
     store.dispatch(addContact(ben));
-    store.dispatch(addAddress({ contactId: ben.id, address }));
+    const deviceCredentials = mockDeviceContactGroupCredentials();
+    store.dispatch(addAddress({ contactId: ben.id, address, deviceCredentials }));
 
     expect(store.getState().contacts.contacts[1]?.addresses).toEqual([address]);
+    expect(store.getState().contacts.contacts[1]?.deviceCredentials).toEqual(deviceCredentials);
   });
 
   it("updates an address on the intended contact", () => {
@@ -124,7 +142,13 @@ describe("contactsSlice", () => {
     const updatedAddress = mockContactAddress({ ...address, label: "Treasury" });
 
     store.dispatch(addContact(ben));
-    store.dispatch(addAddress({ contactId: ben.id, address }));
+    store.dispatch(
+      addAddress({
+        contactId: ben.id,
+        address,
+        deviceCredentials: mockDeviceContactGroupCredentials(),
+      }),
+    );
     store.dispatch(updateAddress({ contactId: ben.id, address: updatedAddress }));
 
     expect(store.getState().contacts.contacts[1]?.addresses).toEqual([updatedAddress]);
@@ -136,11 +160,18 @@ describe("contactsSlice", () => {
     const address = mockContactAddress();
 
     store.dispatch(addContact(ben));
-    store.dispatch(addAddress({ contactId: ben.id, address }));
+    store.dispatch(
+      addAddress({
+        contactId: ben.id,
+        address,
+        deviceCredentials: mockDeviceContactGroupCredentials(),
+      }),
+    );
 
     store.dispatch(deleteAddress({ contactId: ben.id, addressId: address.id }));
 
     expect(store.getState().contacts.contacts[1]?.addresses).toEqual([]);
+    expect(store.getState().contacts.contacts[1]?.deviceCredentials).toBeUndefined();
   });
 
   it("does not duplicate an address with the same id", () => {
@@ -149,8 +180,20 @@ describe("contactsSlice", () => {
     const address = mockContactAddress();
 
     store.dispatch(addContact(ben));
-    store.dispatch(addAddress({ contactId: ben.id, address }));
-    store.dispatch(addAddress({ contactId: ben.id, address }));
+    store.dispatch(
+      addAddress({
+        contactId: ben.id,
+        address,
+        deviceCredentials: mockDeviceContactGroupCredentials(),
+      }),
+    );
+    store.dispatch(
+      addAddress({
+        contactId: ben.id,
+        address,
+        deviceCredentials: mockDeviceContactGroupCredentials(),
+      }),
+    );
 
     expect(store.getState().contacts.contacts[1]?.addresses).toEqual([address]);
   });

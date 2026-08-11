@@ -3,7 +3,8 @@
 > [!CAUTION]
 > **Status: UNSTABLE** — In active development as part of the DDD migration.
 
-Contacts domain selectors, display helpers, and React hooks shared by flow packages.
+Contacts domain selectors, display helpers, React hooks, and Device Intent ports shared by flow
+packages.
 
 ## Exports
 
@@ -12,3 +13,5 @@ Contacts domain selectors, display helpers, and React hooks shared by flow packa
 - `useContactsMeContact()`: selects the self Contact from the Redux store.
 - `identityFormatMeDisplayName()` and `resolveMeContactDisplayName()`: resolve the shared display
   name rules used by Contacts List and Detail.
+- `ContactDeviceIntentsPort`: defines the typed boundary for Contacts device interactions.
+- `createMockContactDeviceIntentsPort()`: returns temporary typed device results for Contacts flows.
