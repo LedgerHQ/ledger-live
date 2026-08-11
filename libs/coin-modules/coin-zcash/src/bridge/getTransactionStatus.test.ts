@@ -223,6 +223,7 @@ describe("getTransactionStatus, transparent-input flows", () => {
       estimatedFees: new BigNumber(15_000),
       amount: new BigNumber(30_000),
       totalSpent: new BigNumber(45_000),
+      recipientIsReadOnly: false,
     });
   });
 
@@ -326,6 +327,7 @@ describe("getTransactionStatus, note-spending flows", () => {
       estimatedFees: new BigNumber(0),
       amount: new BigNumber(10_000),
       totalSpent: new BigNumber(10_000),
+      recipientIsReadOnly: false,
     });
   });
 
@@ -346,6 +348,7 @@ describe("getTransactionStatus, note-spending flows", () => {
       estimatedFees: new BigNumber(15_000),
       amount: new BigNumber(10_000),
       totalSpent: new BigNumber(25_000),
+      recipientIsReadOnly: false,
     });
   });
 
@@ -402,5 +405,63 @@ describe("getTransactionStatus, note-spending flows", () => {
     expect(errorNames(status.errors)).toEqual({
       recipient: "ZcashSaplingRecipientNotSupported",
     });
+  });
+});
+
+describe("getTransactionStatus, recipientIsReadOnly", () => {
+  it.each([
+    ["transparent-input", transaction({ selfTransfer: true }), account()],
+    [
+      "shielded",
+      transaction({ transferType: "shielded", recipient: U_ADDRESS, selfTransfer: true }),
+      account(),
+    ],
+    [
+      "no-privateInfo",
+      transaction({ transferType: "shielded", recipient: U_ADDRESS, selfTransfer: true }),
+      account({ synced: false }),
+    ],
+  ] as [string, Transaction, ZcashAccount][])(
+    "is true on the %s return point when selfTransfer is true",
+    async (_label, tx, acc) => {
+      expect((await getTransactionStatus(acc, tx)).recipientIsReadOnly).toBe(true);
+    },
+  );
+
+  it.each([
+    ["transparent-input", transaction(), account()],
+    ["transparent-input, explicit false", transaction({ selfTransfer: false }), account()],
+    [
+      "shielded",
+      transaction({
+        transferType: "shielded",
+        recipient: U_ADDRESS,
+        selectedNotes: [note(40_000)],
+      }),
+      account(),
+    ],
+    [
+      "no-privateInfo",
+      transaction({ transferType: "shielded", recipient: U_ADDRESS }),
+      account({ synced: false }),
+    ],
+  ] as [string, Transaction, ZcashAccount][])(
+    "is false on the %s return point when selfTransfer is absent or false",
+    async (_label, tx, acc) => {
+      expect((await getTransactionStatus(acc, tx)).recipientIsReadOnly).toBe(false);
+    },
+  );
+
+  it("adds no error and removes none: selfTransfer gates exactly as a manually typed address", async () => {
+    const withFlag = transaction({ selfTransfer: true, amount: new BigNumber(30_000) });
+    const withoutFlag = transaction({ amount: new BigNumber(30_000) });
+
+    const [statusWithFlag, statusWithoutFlag] = await Promise.all([
+      getTransactionStatus(account(), withFlag),
+      getTransactionStatus(account(), withoutFlag),
+    ]);
+
+    expect(errorNames(statusWithFlag.errors)).toEqual(errorNames(statusWithoutFlag.errors));
+    expect(Object.keys(statusWithFlag.warnings)).toEqual(Object.keys(statusWithoutFlag.warnings));
   });
 });
