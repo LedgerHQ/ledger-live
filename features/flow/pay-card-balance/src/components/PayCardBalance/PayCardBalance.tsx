@@ -1,5 +1,5 @@
 import React from "react";
-import { PayCardBalanceView } from "./PayCardBalanceView.web";
+import { PayCardBalanceView } from "./PayCardBalanceView";
 import type { PayCardBalanceProps } from "./types";
 import { usePayCardBalanceViewModel } from "./usePayCardBalanceViewModel";
 

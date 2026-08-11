@@ -33,7 +33,7 @@ describe("usePayCardBalance", () => {
     mockPortfolioResult();
   });
 
-  it("should sum the stablecoin countervalues", () => {
+  it("should sum the stablecoin countervalues when filter is all", () => {
     mockPortfolioResult({
       categorizedAssets: {
         cryptos: [],
@@ -49,6 +49,32 @@ describe("usePayCardBalance", () => {
 
     expect(result.current.stableBalance).toBe(1250.5);
     expect(result.current.status).toBe("ready");
+  });
+
+  it("should sum only the matching stablecoin when filter is a currencyId", () => {
+    const usdt = {
+      ...STABLECOIN_ASSET,
+      currency: { ...STABLECOIN_ASSET.currency, id: "ethereum/erc20/usdt" },
+      value: 250.5,
+    };
+
+    mockPortfolioResult({
+      categorizedAssets: {
+        cryptos: [],
+        stocks: [],
+        stablecoins: [{ ...STABLECOIN_ASSET, value: 1000 }, usdt],
+      },
+    });
+
+    const { result } = renderHook(() => usePayCardBalance(), {
+      initialState: {
+        ...initialState,
+        payCard: { balanceFilter: "ethereum/erc20/usdc" },
+      },
+    });
+
+    expect(result.current.stableBalance).toBe(1000);
+    expect(result.current.filter).toBe("ethereum/erc20/usdc");
   });
 
   it("should report loading while stablecoin tickers load", () => {

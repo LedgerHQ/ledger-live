@@ -14,7 +14,7 @@ const PayTab = () => {
   const balance = usePayCardBalance();
 
   return (
-    <>
+    <div className="flex flex-col gap-24">
       <TrackPage category="Pay" balance_filter={balance.filter} />
       <PayTabHeader />
       <PayCardBalance
@@ -25,7 +25,7 @@ const PayTab = () => {
         }}
       />
       <CardLogin openHostedLogin={openHostedLogin} />
-    </>
+    </div>
   );
 };
 

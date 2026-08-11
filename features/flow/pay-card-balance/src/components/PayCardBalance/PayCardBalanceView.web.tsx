@@ -1,8 +1,8 @@
 import React from "react";
 import { Divider } from "@ledgerhq/lumen-ui-react";
 import type { PayCardBalanceViewProps } from "./types";
-import { PayCardBalanceEmptyState } from "./PayCardBalanceEmptyState.web";
-import { PayCardBalanceFundedState } from "./PayCardBalanceFundedState.web";
+import { PayCardBalanceEmptyState } from "./PayCardBalanceEmptyState";
+import { PayCardBalanceFundedState } from "./PayCardBalanceFundedState";
 
 export function PayCardBalanceView(props: PayCardBalanceViewProps) {
   return (

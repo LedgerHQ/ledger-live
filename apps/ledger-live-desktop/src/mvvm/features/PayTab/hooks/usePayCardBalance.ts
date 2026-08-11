@@ -17,8 +17,11 @@ export function usePayCardBalance(): PayCardBalanceData {
     useCategorizedAssetsFromPortfolio();
 
   const stableBalance = useMemo(
-    () => categorizedAssets.stablecoins.reduce((total, { value }) => total + value, 0),
-    [categorizedAssets.stablecoins],
+    () =>
+      categorizedAssets.stablecoins
+        .filter(({ currency }) => filter === "all" || currency.id === filter)
+        .reduce((total, { value }) => total + value, 0),
+    [categorizedAssets.stablecoins, filter],
   );
 
   const unit = counterValueCurrency.units[0];
