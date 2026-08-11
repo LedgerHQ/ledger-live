@@ -2476,6 +2476,7 @@
     "addressMatched": "주소 일치함",
     "addressNotFound": "주소를 찾을 수 없음",
     "alreadyUsed": "이미 사용됨 · {{date}}",
+    "addressBookUnsupported": "{{family}} isn't supported yet",
     "recentSendWillAppear": "최근 전송 내역이 여기에 표시됩니다",
     "securityInfo": {
       "title": "안전한 전송 방법은 무엇인가요?",
@@ -7435,6 +7436,9 @@
     "FeeTooHigh": {
       "title": "네트워크 수수료가 금액의 10%를 넘습니다"
     },
+    "RecipientIsNewAccount": {
+      "title": "This address has never received funds, activating it costs a higher network fee"
+    },
     "DustLimit": {
       "title": "금액이 더스트(소액) 한도보다 낮습니다."
     },
@@ -8684,6 +8688,10 @@
     "selectAsset": "자산 선택",
     "selectNetwork": "네트워크 선택",
     "selectAccount": "계정 선택",
+    "selectAccountPerpsTitle": "Hyperliquid 계정 선택",
+    "selectAccountPerpsDescription": "무기한 선물에 자산을 예치하려면 Hyperliquid 계정이 필요합니다. 계속하려면 계정을 추가하세요.",
+    "selectDepositCurrencyTitle": "입금할 자산 선택",
+    "selectDepositCurrencyDescription": "지원되는 모든 자산을 사용할 수 있습니다. 필요한 경우 자동으로 스왑됩니다.",
     "accountCount_one": "{{count}}개 계정",
     "accountCount_other": "{{count}} 계정",
     "accountsAdded": {
@@ -8897,7 +8905,8 @@
       "transparentBalance": "공개 수량",
       "transparentBalanceTooltip": "누구나 볼 수 있는 수량",
       "privateBalance": "비공개 수량",
-      "privateBalanceTooltip": "타인에게 공개되지 않은 수량"
+      "privateBalanceTooltip": "타인에게 공개되지 않은 수량",
+      "privateBalanceWarning": "Private balance excludes Sapling and Orchard shielded funds"
     },
     "shielded": {
       "send": {
@@ -8937,6 +8946,12 @@
             "message": "잔액이 최신 상태가 아닐 수 있습니다",
             "cta": "수량 동기화"
           }
+        },
+        "selfTransfer": {
+          "toPrivate": "Self transfer to private balance",
+          "toPublic": "Self transfer to public balance",
+          "unavailable": "Your private address is not available yet. Export your view key to enable this.",
+          "privacyWarning": "This links your shielded funds to your account's public address, which anyone can see. Sending to an external private address keeps them unlinked."
         }
       },
       "state": {
