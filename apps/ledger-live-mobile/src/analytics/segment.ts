@@ -292,6 +292,17 @@ const getProductTourAttributes = () => {
   };
 };
 
+const getLazyOnboardingBannerAttributes = () => {
+  if (!analyticsFeatureFlagMethod) {
+    return { lazyOnboardingBanner: false, lazyOnboardingBannerMode: null };
+  }
+  const flag = analyticsFeatureFlagMethod("lazyOnboardingBanner");
+  return {
+    lazyOnboardingBanner: !!flag?.enabled,
+    lazyOnboardingBannerMode: flag?.params?.mode ?? null,
+  };
+};
+
 const getPayTabAttributes = () => {
   if (!analyticsFeatureFlagMethod) return false;
   const payTab = analyticsFeatureFlagMethod("lwmPayTab");
@@ -440,6 +451,7 @@ const extraProperties = async (store: AppStore) => {
 
   const backupHubAttributes = getBackupHubAttributes();
   const productTourAttributes = getProductTourAttributes();
+  const lazyOnboardingBannerAttributes = getLazyOnboardingBannerAttributes();
   const payTabAttributes = getPayTabAttributes();
 
   return {
@@ -478,6 +490,7 @@ const extraProperties = async (store: AppStore) => {
     ...mevProtectionAttributes,
     ...backupHubAttributes,
     ...productTourAttributes,
+    ...lazyOnboardingBannerAttributes,
     migrationToMMKV,
     tokenWithFunds,
     isLDMKTransportEnabled: ldmkTransport?.enabled,
