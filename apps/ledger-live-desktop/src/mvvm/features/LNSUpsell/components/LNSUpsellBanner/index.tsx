@@ -75,6 +75,7 @@ function View({
       return (
         <NotificationCard
           {...boxProps}
+          title={t(`lnsUpsell.${tracking}.title`)}
           description={
             <Trans i18nKey={`lnsUpsell.${tracking}.description`} values={{ discount }}>
               <span />
