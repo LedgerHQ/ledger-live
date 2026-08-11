@@ -40,9 +40,9 @@ export function DeviceContextInitializerComponentLWDView({
 
   switch (state.type) {
     case LoadingStateType.Loading:
-      return <LoadingState />;
+      return <LoadingState device={device} />;
     case LoadingStateType.InstallingApp:
-      return <InstallingAppState />;
+      return <InstallingAppState device={device} />;
     case DeviceInteractionRequiredType.UnlockDevice:
       return <UnlockDeviceState state={state} {...commonProps} />;
     case DeviceInteractionRequiredType.AllowSecureConnection:

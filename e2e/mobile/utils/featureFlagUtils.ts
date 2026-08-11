@@ -51,7 +51,7 @@ export const FF_NEW_SEND_FLOW_ENABLED = {
   newSendFlow: {
     enabled: true,
     params: {
-      families: ["cosmos", "polkadot"],
+      families: ["cosmos", "polkadot", "xrp", "stellar", "solana"],
       excludedCurrencyIds: [],
     },
   },

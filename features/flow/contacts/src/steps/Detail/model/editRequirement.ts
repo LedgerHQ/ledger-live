@@ -15,6 +15,11 @@ export const CONTACT_ADDRESS_EDIT_REQUIREMENT = {
   reason: "contact-has-address",
 } as const satisfies ContactEditRequirement;
 
+export const CONTACT_ADDRESS_DELETE_REQUIREMENT = {
+  type: "confirmation-required",
+  reason: "contact-has-address",
+} as const satisfies ContactEditRequirement;
+
 export function resolveContactEditRequirement(contact: Contact): ContactEditRequirement {
   return contact.addresses.length > 0
     ? { type: "confirmation-required", reason: "contact-has-address" }

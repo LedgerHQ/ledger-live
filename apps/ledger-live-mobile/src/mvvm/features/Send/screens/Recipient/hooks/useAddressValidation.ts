@@ -316,6 +316,7 @@ export function useAddressValidation({
       isFirstInteraction,
       matchedRecentAddress,
       matchedAccounts,
+      matchedContact: undefined,
       bridgeErrors: filteredBridgeErrors,
       bridgeWarnings: bridgeValidation.warnings,
       isBridgeLoading: bridgeValidation.isLoading && bridgeValidation.status === null,

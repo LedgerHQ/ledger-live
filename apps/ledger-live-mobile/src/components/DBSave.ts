@@ -297,7 +297,7 @@ export const ConfigureDBSaveEffects = () => {
   });
 
   useDBSaveEffect({
-    stateSelector: (state: State) => state.payCard.hasSeenFeatureTour,
+    stateSelector: (state: State) => state.payCard,
     save: savePayCardState,
     throttle: 500,
     getChangesStats: payCardPersistedNotEquals,

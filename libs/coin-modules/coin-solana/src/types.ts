@@ -12,7 +12,6 @@ import {
 import BigNumber from "bignumber.js";
 import { TokenAccountState } from "./network/chain/account/token";
 import { PARSED_PROGRAMS } from "./network/chain/program/constants";
-import { ValidatorsAppValidator } from "./network/validator-app";
 import { UserInputType } from "./signer";
 
 export type TransferCommand = {
@@ -296,33 +295,6 @@ export type SolanaResources = {
 export type SolanaResourcesRaw = {
   stakes: string;
   unstakeReserve: string;
-};
-
-export type SolanaValidator = {
-  voteAccAddr: string;
-  commission: number;
-  activatedStake: number;
-};
-
-export type SolanaPreloadDataV1 = {
-  version: "1";
-  validatorsWithMeta: SolanaValidatorWithMeta[];
-  validators: ValidatorsAppValidator[];
-};
-
-// exists for discriminated union to work
-export type SolanaPreloadDataV2 = {
-  version: "2";
-};
-
-export type SolanaPreloadData = SolanaPreloadDataV1 | SolanaPreloadDataV2;
-
-export type SolanaValidatorWithMeta = {
-  validator: SolanaValidator;
-  meta: {
-    name?: string;
-    img?: string;
-  };
 };
 
 export type StakeAction = "deactivate" | "activate" | "withdraw" | "reactivate";

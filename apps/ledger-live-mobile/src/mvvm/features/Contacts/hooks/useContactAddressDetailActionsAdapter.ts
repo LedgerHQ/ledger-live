@@ -3,8 +3,12 @@ import {
   type ContactAddressDetailSendIntent,
   type ContactsDeleteAddressDrawerProps,
   type ContactsEditSignerDrawerProps,
+  type ContactsEditSignerMismatchDrawerProps,
   type ContactsRenameAddressDrawerProps,
   type ContactAddressDetailDialogNativeProps,
+  createActiveContactAddressDetailActionsUiState,
+  createInactiveContactAddressDetailActionsUiState,
+  resolveContactAddressDetailActionsLabels,
   useContactAddressDetailActionsFlowBindings,
   useContactsAddressDetailActionsPorts,
 } from "@features/flow-contacts";
@@ -21,7 +25,20 @@ export type ContactAddressDetailActionsFlowProps = Readonly<{
   deleteSheet: ContactsDeleteAddressDrawerProps;
   renameSheet: ContactsRenameAddressDrawerProps;
   signerSheet: ContactsEditSignerDrawerProps;
+  signerMismatchSheet: ContactsEditSignerMismatchDrawerProps;
 }>;
+
+function mapUiStateToFlowProps(
+  uiState: ReturnType<typeof createInactiveContactAddressDetailActionsUiState>,
+): ContactAddressDetailActionsFlowProps {
+  return {
+    addressDetailDialog: uiState.addressDetailDialog,
+    deleteSheet: uiState.delete,
+    renameSheet: uiState.rename,
+    signerSheet: uiState.signer,
+    signerMismatchSheet: uiState.signerMismatch,
+  };
+}
 
 export function useContactAddressDetailActionsAdapter(
   contactId: ContactId | undefined,
@@ -34,6 +51,14 @@ export function useContactAddressDetailActionsAdapter(
     sourceScreenName: ScreenName.MyWalletContactDetail,
   });
   const isSelectionActive = contactId !== undefined && addressId !== undefined;
+  const labels = useMemo(
+    () =>
+      resolveContactAddressDetailActionsLabels({
+        t,
+        addressLabelTooLongKey: "contacts.addAddressName.labelTooLong",
+      }),
+    [t],
+  );
   const onSend = useCallback(
     (intent: ContactAddressDetailSendIntent) => {
       handleOpenSendFlow({
@@ -44,37 +69,6 @@ export function useContactAddressDetailActionsAdapter(
     },
     [handleOpenSendFlow, onCloseAddressDetail],
   );
-  const deleteLabels = useMemo(
-    () => ({
-      title: t("contacts.deleteAddress.title"),
-      description: t("contacts.deleteAddress.description"),
-      confirm: t("contacts.deleteAddress.confirm"),
-      cancel: t("contacts.deleteAddress.cancel"),
-    }),
-    [t],
-  );
-  const renameLabels = useMemo(
-    () => ({
-      title: t("contacts.editAddress.title"),
-      inputLabel: t("contacts.editAddress.inputLabel"),
-      applyChanges: t("contacts.editAddress.applyChanges"),
-      labelValidationErrors: {
-        InvalidContactAddressLabelError: t("contacts.editAddress.invalidLabelError"),
-        DuplicateContactAddressLabelError: t("contacts.addAddressName.duplicateLabel"),
-        ContactAddressLabelTooLongError: t("contacts.addAddressName.labelTooLong"),
-      },
-    }),
-    [t],
-  );
-  const signerLabels = useMemo(
-    () => ({
-      title: t("contacts.editSigner.title"),
-      description: t("contacts.editSigner.description"),
-      confirm: t("contacts.editSigner.confirm"),
-      cancel: t("contacts.editSigner.cancel"),
-    }),
-    [t],
-  );
   const { flow, renameViewModel } = useContactAddressDetailActionsFlowBindings({
     contactId: contactId ?? ContactIdSchema.parse("contact-me"),
     addressId: isSelectionActive ? addressId : undefined,
@@ -84,65 +78,10 @@ export function useContactAddressDetailActionsAdapter(
   });
 
   if (!isSelectionActive) {
-    return {
-      addressDetailDialog: {
-        canSend: false,
-        canEdit: false,
-        canDelete: false,
-      },
-      deleteSheet: {
-        isOpen: false,
-        isDeleting: false,
-        labels: deleteLabels,
-        onConfirm: async () => undefined,
-        onCancel: () => undefined,
-      },
-      renameSheet: {
-        isOpen: false,
-        isSaving: false,
-        draftLabel: "",
-        invalidLabelError: null,
-        isConfirmEnabled: false,
-        labels: renameLabels,
-        onOpen: () => undefined,
-        onClose: () => undefined,
-        onDraftLabelChange: () => undefined,
-        onConfirm: async () => undefined,
-      },
-      signerSheet: {
-        isOpen: false,
-        labels: signerLabels,
-        onConfirm: () => undefined,
-        onCancel: () => undefined,
-      },
-    };
+    return mapUiStateToFlowProps(createInactiveContactAddressDetailActionsUiState(labels));
   }
 
-  return {
-    addressDetailDialog: {
-      onSend: flow.onSendPress,
-      onEdit: flow.onEditPress,
-      onDelete: flow.onDeletePress,
-      canSend: flow.canSend,
-      canEdit: flow.canEdit,
-      canDelete: flow.canDelete,
-    },
-    deleteSheet: {
-      isOpen: flow.deleteLifecycle.status === "open",
-      isDeleting: flow.isDeleting,
-      labels: deleteLabels,
-      onConfirm: flow.confirmDelete,
-      onCancel: flow.cancelDelete,
-    },
-    renameSheet: {
-      ...renameViewModel,
-      labels: renameLabels,
-    },
-    signerSheet: {
-      isOpen: flow.editUiState === "signer-open",
-      labels: signerLabels,
-      onConfirm: flow.onSignerConfirm,
-      onCancel: flow.onSignerCancel,
-    },
-  };
+  return mapUiStateToFlowProps(
+    createActiveContactAddressDetailActionsUiState(flow, renameViewModel, labels),
+  );
 }

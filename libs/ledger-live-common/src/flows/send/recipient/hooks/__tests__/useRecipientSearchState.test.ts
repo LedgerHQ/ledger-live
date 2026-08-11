@@ -22,6 +22,7 @@ const createDefaultResult = (overrides?: Partial<AddressSearchResult>): AddressS
     isFirstInteraction: true,
     matchedRecentAddress: undefined,
     matchedAccounts: [],
+    matchedContact: undefined,
     bridgeErrors: undefined,
     bridgeWarnings: undefined,
     hasBridgeValidationResult: false,

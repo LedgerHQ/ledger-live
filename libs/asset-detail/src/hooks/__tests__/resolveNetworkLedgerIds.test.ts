@@ -1,4 +1,4 @@
-import type { AssetsDataWithPagination } from "@ledgerhq/live-common/dada-client/state-manager/types";
+import type { AssetsDataWithPagination } from "@domain/api-aggregated-assets";
 import { resolveNetworkLedgerIds } from "../useReceiveNetworkLedgerIds";
 
 const TETHER_META_ID = "urn:crypto:meta-currency:tether";

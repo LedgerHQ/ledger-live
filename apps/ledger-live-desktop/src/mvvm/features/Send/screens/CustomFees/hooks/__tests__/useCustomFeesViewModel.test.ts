@@ -3,7 +3,7 @@ import { BigNumber } from "bignumber.js";
 import { act } from "@testing-library/react";
 import { renderHook } from "tests/testSetup";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import type { AccountLike } from "@ledgerhq/types-live";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { useCustomFeesViewModel } from "../useCustomFeesViewModel";
 import type { SendFlowTransactionActions } from "@ledgerhq/live-common/flows/send/types";
@@ -152,6 +152,22 @@ function createMockAccount(): AccountLike {
   } as unknown as AccountLike;
 }
 
+function createMockTokenAccount(parentId: string): AccountLike {
+  return {
+    id: "usdc-account-1",
+    parentId,
+    type: "TokenAccount",
+    token: {
+      id: "ethereum/erc20/usd__coin",
+      name: "USD Coin",
+      ticker: "USDC",
+      units: [{ code: "USDC", magnitude: 6, name: "USD Coin" }],
+    },
+    balance: new BigNumber("100000000"),
+    spendableBalance: new BigNumber("100000000"),
+  } as unknown as AccountLike;
+}
+
 function createMockTransaction(): Transaction {
   return {
     family: "evm",
@@ -212,6 +228,64 @@ describe("useCustomFeesViewModel - EIP-1559 Validation", () => {
       "maxPriorityFeePerGas",
       "maxFeePerGas",
     ]);
+  });
+
+  it("should validate token transfer fees against the parent native balance", () => {
+    const parentAccount = createMockAccount() as Account;
+    const account = createMockTokenAccount(parentAccount.id);
+    const transaction = {
+      ...createMockTransaction(),
+      amount: new BigNumber("10000000"),
+      subAccountId: account.id,
+    } as Transaction;
+
+    const { result } = renderHook(() =>
+      useCustomFeesViewModel({
+        account,
+        parentAccount,
+        transaction,
+        status: createMockStatus(),
+        currency: createMockCurrency(),
+        transactionActions: createMockTransactionActions(),
+        onConfirm: jest.fn(),
+      }),
+    );
+
+    const maxFeeInput = result.current.inputs.find(input => input.key === "maxFeePerGas");
+
+    expect(maxFeeInput?.error).toBeNull();
+    expect(result.current.isConfirmDisabled).toBe(false);
+  });
+
+  it("should flag insufficient balance when the parent native account cannot cover fees", () => {
+    const parentAccount = {
+      ...createMockAccount(),
+      balance: new BigNumber("1000"),
+      spendableBalance: new BigNumber("1000"),
+    } as Account;
+    const account = createMockTokenAccount(parentAccount.id);
+    const transaction = {
+      ...createMockTransaction(),
+      amount: new BigNumber("10000000"),
+      subAccountId: account.id,
+    } as Transaction;
+
+    const { result } = renderHook(() =>
+      useCustomFeesViewModel({
+        account,
+        parentAccount,
+        transaction,
+        status: createMockStatus(),
+        currency: createMockCurrency(),
+        transactionActions: createMockTransactionActions(),
+        onConfirm: jest.fn(),
+      }),
+    );
+
+    const maxFeeInput = result.current.inputs.find(input => input.key === "maxFeePerGas");
+
+    expect(maxFeeInput?.error).toBe("newSendFlow.insufficientBalanceFees");
+    expect(result.current.isConfirmDisabled).toBe(true);
   });
 
   it("should expose custom fee assets when descriptor provides them", () => {

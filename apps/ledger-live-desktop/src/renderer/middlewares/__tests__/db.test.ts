@@ -45,6 +45,13 @@ jest.mock("@domain/entity-client-identity", () => ({
   exportIdentitiesForPersistence: jest.fn(s => s),
 }));
 
+jest.mock("@domain/entity-pay-card", () => ({
+  payCardPersistedSelector: (state: FakeState) => ({
+    hasSeenFeatureTour: state.payCard.hasSeenFeatureTour,
+    balanceFilter: state.payCard.balanceFilter,
+  }),
+}));
+
 jest.mock("@ledgerhq/live-common/account/index", () => ({
   accountsPersistedStateChanged: jest.fn(() => false),
 }));
@@ -62,7 +69,12 @@ type FakeState = {
   featureFlags: { overrides: unknown; bannerVisible: unknown; remoteFlagsReady?: unknown };
   coinConfigOverrides: { overrides: Record<string, unknown> };
   largeScreenUpsellModal: { retries: number; lastSeenAt: number | null };
-  payCard: { isOpen: boolean; params: unknown; hasSeenFeatureTour: boolean };
+  payCard: {
+    isOpen: boolean;
+    params: unknown;
+    hasSeenFeatureTour: boolean;
+    balanceFilter: string;
+  };
   trustchain?: unknown;
 };
 
@@ -77,7 +89,7 @@ const baseState = (): FakeState => ({
   featureFlags: { overrides: {}, bannerVisible: false },
   coinConfigOverrides: { overrides: {} },
   largeScreenUpsellModal: { retries: 0, lastSeenAt: null },
-  payCard: { isOpen: false, params: null, hasSeenFeatureTour: false },
+  payCard: { isOpen: false, params: null, hasSeenFeatureTour: false, balanceFilter: "all" },
 });
 
 function runMiddleware(states: FakeState[], action: { type: string; payload?: unknown }) {
@@ -221,16 +233,24 @@ describe("DBMiddleware - payCard branch", () => {
     mockedSetKey.mockReset();
   });
 
-  it("persists only { hasSeenFeatureTour } under app/payCard on payCard/* actions", () => {
+  it("persists only { hasSeenFeatureTour, balanceFilter } under app/payCard on payCard/* actions", () => {
     const state: FakeState = {
       ...baseState(),
-      payCard: { isOpen: true, params: { platform: "cl-card" }, hasSeenFeatureTour: true },
+      payCard: {
+        isOpen: true,
+        params: { platform: "cl-card" },
+        hasSeenFeatureTour: true,
+        balanceFilter: "ethereum/erc20/usd__coin",
+      },
     };
 
     runMiddleware([state, state], { type: "payCard/markPayCardFeatureTourSeen" });
 
     expect(mockedSetKey).toHaveBeenCalledTimes(1);
-    expect(mockedSetKey).toHaveBeenCalledWith("app", "payCard", { hasSeenFeatureTour: true });
+    expect(mockedSetKey).toHaveBeenCalledWith("app", "payCard", {
+      hasSeenFeatureTour: true,
+      balanceFilter: "ethereum/erc20/usd__coin",
+    });
 
     const persisted = mockedSetKey.mock.calls[0][2] as Record<string, unknown>;
     expect(persisted).not.toHaveProperty("isOpen");

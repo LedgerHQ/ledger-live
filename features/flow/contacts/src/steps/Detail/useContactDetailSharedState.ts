@@ -1,7 +1,7 @@
 import { selectContactById, type ContactId } from "@domain/entity-contact";
 import { useMemo } from "react";
 import { useSelector } from "react-redux";
-import { identityFormatMeDisplayName } from "../../utils";
+import { identityFormatMeDisplayName } from "@features/platform-contacts";
 import { createContactDetailSharedState } from "./model/contactDetailSharedState";
 
 type ContactsStateRoot = Parameters<typeof selectContactById>[0];

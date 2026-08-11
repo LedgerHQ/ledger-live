@@ -9,6 +9,7 @@ module.exports = {
   },
   View: "View",
   Text: "Text",
+  Image: "Image",
   ScrollView: "ScrollView",
   Keyboard: {
     isVisible: () => false,

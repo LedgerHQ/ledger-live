@@ -11,6 +11,7 @@ export type UseContactEditSignerUiStateResult = Readonly<{
   openSignerDialog: () => void;
   openSignerMismatchDialog: () => void;
   openEditDialog: () => void;
+  closeSignerDialog: () => void;
   onSignerConfirm: () => void;
   onSignerCancel: () => void;
   onSignerMismatchCancel: () => void;
@@ -32,6 +33,10 @@ export function useContactEditSignerUiState(): UseContactEditSignerUiStateResult
 
   const openEditDialog = useCallback(() => {
     setEditUiState("edit-open");
+  }, []);
+
+  const closeSignerDialog = useCallback(() => {
+    setEditUiState("closed");
   }, []);
 
   const onSignerConfirm = useCallback(() => {
@@ -65,6 +70,7 @@ export function useContactEditSignerUiState(): UseContactEditSignerUiStateResult
     openSignerDialog,
     openSignerMismatchDialog,
     openEditDialog,
+    closeSignerDialog,
     onSignerConfirm,
     onSignerCancel,
     onSignerMismatchCancel,

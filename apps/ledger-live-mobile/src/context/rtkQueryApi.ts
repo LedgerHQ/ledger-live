@@ -1,12 +1,12 @@
 import type { Middleware, Reducer, Tuple } from "@reduxjs/toolkit";
 import { ofacGeoBlockApi } from "@ledgerhq/live-common/api/ofacGeoBlockApi";
-import { assetsDataApi } from "@ledgerhq/live-common/dada-client/state-manager/api";
 import { marketApi } from "@ledgerhq/live-common/market/state-manager/api";
 import { cgApi } from "@ledgerhq/live-common/cg-client/state-manager/api";
 import {
   calApi,
   coinMarketCapApi,
   countervaluesApi,
+  dadaApi,
   payCardApi,
   pushDevicesApi,
   swapApi,
@@ -16,7 +16,7 @@ import { counterValuesApi } from "@ledgerhq/live-common/counterValues/state-mana
 // injected by the use-case package that owns them (`@domain/api-*`, or the owning `features/flow/*`),
 // which the view-models import directly.
 const APIs = {
-  [assetsDataApi.reducerPath]: assetsDataApi,
+  [dadaApi.reducerPath]: dadaApi,
   [calApi.reducerPath]: calApi,
   [coinMarketCapApi.reducerPath]: coinMarketCapApi,
   [countervaluesApi.reducerPath]: countervaluesApi,

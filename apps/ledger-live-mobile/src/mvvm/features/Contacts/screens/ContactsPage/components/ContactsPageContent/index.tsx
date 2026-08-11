@@ -1,5 +1,5 @@
 import React from "react";
-import { ContactsListView } from "@features/flow-contacts";
+import { ContactsView } from "@features/flow-contacts";
 import { ContactsAddContactDrawerSheet } from "../ContactsAddContactDrawerSheet";
 import { ContactsFeatureIntroductionSheet } from "../ContactsFeatureIntroductionSheet";
 import { ContactsLedgerSyncIntroductionSheet } from "../ContactsLedgerSyncIntroductionSheet";
@@ -12,7 +12,7 @@ export function ContactsPageContent({
 }: ContactsPageContentProps): React.JSX.Element {
   return (
     <>
-      <ContactsListView {...pageProps} />
+      <ContactsView {...pageProps} />
       <ContactsFeatureIntroductionSheet {...pageProps.featureIntroduction} />
       <ContactsLedgerSyncIntroductionSheet
         {...pageProps.ledgerSyncIntroduction}

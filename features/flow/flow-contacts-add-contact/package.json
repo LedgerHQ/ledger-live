@@ -37,10 +37,18 @@
     "@ledgerhq/lumen-ui-rnative": "catalog:"
   },
   "peerDependenciesMeta": {
-    "react-native": { "optional": true },
-    "@ledgerhq/lumen-design-core": { "optional": true },
-    "@ledgerhq/lumen-ui-react": { "optional": true },
-    "@ledgerhq/lumen-ui-rnative": { "optional": true }
+    "react-native": {
+      "optional": true
+    },
+    "@ledgerhq/lumen-design-core": {
+      "optional": true
+    },
+    "@ledgerhq/lumen-ui-react": {
+      "optional": true
+    },
+    "@ledgerhq/lumen-ui-rnative": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@support/jest-features-flow": "workspace:*",

@@ -31,6 +31,7 @@ export function ContactDetailScreen(): React.JSX.Element | null {
         deleteSheet={viewModel.addressDetailActions.deleteSheet}
         renameSheet={viewModel.addressDetailActions.renameSheet}
         signerSheet={viewModel.addressDetailActions.signerSheet}
+        signerMismatchSheet={viewModel.addressDetailActions.signerMismatchSheet}
       />
       <ContactDetailEditDeleteSheets {...viewModel.editDeleteFlow} />
     </>

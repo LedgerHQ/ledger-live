@@ -43,7 +43,7 @@ function RedelegationAmount({ navigation, route }: Props) {
     const transaction = bridge.updateTransaction(t, {
       mode: HEDERA_TRANSACTION_MODES.Redelegate,
       properties: {
-        stakingNodeId: route.params.selectedValidator.nodeId,
+        stakingNodeId: Number(route.params.selectedValidator.id),
       } as const,
     });
 

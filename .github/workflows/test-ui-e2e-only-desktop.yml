@@ -174,21 +174,27 @@ jobs:
           if [ "$EVENT_NAME" = "schedule" ]; then
             DOW=$(date -u +%u)
             DEVICE="${WEEKDAY_DEVICE[$DOW]:-nanoSP}"
-            echo "device_1=$DEVICE" >> $GITHUB_OUTPUT
-            echo "device_2=skipped" >> $GITHUB_OUTPUT
-            echo "is_dual=false"   >> $GITHUB_OUTPUT
-            printf 'e2e_matrix={"include":[{"device":"%s","is_primary":true,"artifact_suffix":""}]}\n' "$DEVICE" >> $GITHUB_OUTPUT
+            {
+              echo "device_1=$DEVICE"
+              echo "device_2=skipped"
+              echo "is_dual=false"
+              printf 'e2e_matrix={"include":[{"device":"%s","is_primary":true,"artifact_suffix":""}]}\n' "$DEVICE"
+            } >> "$GITHUB_OUTPUT"
           elif [ "$SPECULOS_DEVICE_INPUT" = "nanoSP and stax" ]; then
-            echo "device_1=nanoSP" >> $GITHUB_OUTPUT
-            echo "device_2=stax" >> $GITHUB_OUTPUT
-            echo "is_dual=true" >> $GITHUB_OUTPUT
-            echo 'e2e_matrix={"include":[{"device":"nanoSP","is_primary":true,"artifact_suffix":""},{"device":"stax","is_primary":false,"artifact_suffix":"-stax"}]}' >> $GITHUB_OUTPUT
+            {
+              echo "device_1=nanoSP"
+              echo "device_2=stax"
+              echo "is_dual=true"
+              echo 'e2e_matrix={"include":[{"device":"nanoSP","is_primary":true,"artifact_suffix":""},{"device":"stax","is_primary":false,"artifact_suffix":"-stax"}]}'
+            } >> "$GITHUB_OUTPUT"
           else
             DEVICE="$SPECULOS_DEVICE_INPUT"
-            echo "device_1=$DEVICE" >> $GITHUB_OUTPUT
-            echo "device_2=skipped" >> $GITHUB_OUTPUT
-            echo "is_dual=false" >> $GITHUB_OUTPUT
-            printf 'e2e_matrix={"include":[{"device":"%s","is_primary":true,"artifact_suffix":""}]}\n' "$DEVICE" >> $GITHUB_OUTPUT
+            {
+              echo "device_1=$DEVICE"
+              echo "device_2=skipped"
+              echo "is_dual=false"
+              printf 'e2e_matrix={"include":[{"device":"%s","is_primary":true,"artifact_suffix":""}]}\n' "$DEVICE"
+            } >> "$GITHUB_OUTPUT"
           fi
         shell: bash
 
@@ -213,6 +219,7 @@ jobs:
       DO_NOT_TRACK: 1
       SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ matrix.device == 'nanoS' && '1be65b91a8e0691866f880fd437ac05fce78af9d' || 'latest' }}
       SPECULOS_DEVICE: ${{ matrix.device }}
+      E2E_PRIMARY_DEVICE: ${{ matrix.is_primary }}
       COINAPPS: ${{ github.workspace }}/coin-apps
       cache-bucket: ll-nx-cache
       USERDATA_CACHE_ENABLED: ${{ inputs.build_type != 'js' }}
@@ -303,7 +310,7 @@ jobs:
             --smoke-tests "$SMOKE_TESTS_INPUT" \
             --check-dir "e2e/desktop/tests" \
             --runner playwright)"
-          echo "filter=$RESOLVED_FILTER" >> $GITHUB_OUTPUT
+          echo "filter=$RESOLVED_FILTER" >> "$GITHUB_OUTPUT"
         shell: bash
         env:
           TEST_FILTER_INPUT: ${{ inputs.test_filter }}
@@ -346,7 +353,7 @@ jobs:
             echo "- **Feature Flags:** $FEATURE_FLAGS"
             echo "- **JSON override feature flags:** $EXTRA_FEATURE_FLAGS"
             echo "- **Repeat each:** $REPEAT_EACH"
-          } >> $GITHUB_STEP_SUMMARY
+          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Validate feature flags JSON input
         shell: bash
@@ -355,6 +362,7 @@ jobs:
           if [ -z "$raw" ]; then
             exit 0
           fi
+          # shellcheck disable=SC2016  # ${...} below are JS template literals, not shell expansions
           node -e '
             try {
               JSON.parse(process.argv[1]);
@@ -584,7 +592,7 @@ jobs:
         id: authenticate
         run: |
           response=$(curl -H "Content-Type: application/json" -X POST --data '{"client_id": "${{ secrets.XRAY_CLIENT_ID }}", "client_secret": "${{ secrets.XRAY_CLIENT_SECRET }}"}' ${{ env.XRAY_API_URL }}/authenticate)
-          echo "xray_token=$response" >> $GITHUB_OUTPUT
+          echo "xray_token=$response" >> "$GITHUB_OUTPUT"
 
       - name: Publish report on Xray
         id: publish-xray
@@ -594,8 +602,8 @@ jobs:
                     -X POST \
                     --data @e2e/desktop/artifacts/xray/xray-report.json \
                     ${{ env.XRAY_API_URL }}/import/execution)
-          key=$(echo $response | jq -r '.key')
-          echo "xray_key=$key" >> $GITHUB_OUTPUT
+          key=$(echo "$response" | jq -r '.key')
+          echo "xray_key=$key" >> "$GITHUB_OUTPUT"
 
       - name: Write Xray report in summary
         shell: bash
