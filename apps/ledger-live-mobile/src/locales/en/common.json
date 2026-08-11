@@ -9526,8 +9526,29 @@
     }
   },
   "lazyOnboardingBanner": {
-    "title": "Discover Ledger devices",
-    "description": "Explore our latest products and accessories"
+    "title": "Why millions choose Ledger?",
+    "description": "To have peace of mind every time they transact."
+  },
+  "lazyOnboardingTour": {
+    "buyCta": "Buy a Ledger device",
+    "slides": {
+      "whoControls": {
+        "title": "Is your crypto safe?",
+        "subtitle": "Exchanges hold your assets. Software wallets keep your keys online. Both leave you vulnerable."
+      },
+      "takeBackControl": {
+        "title": "Take back control",
+        "subtitle": "A Ledger device keeps access to your crypto offline, away from hackers, and under your control."
+      },
+      "nothingMoves": {
+        "title": "You approve every move",
+        "subtitle": "Every transaction appears on the hack-resistant Secure Screen for your approval."
+      },
+      "startToday": {
+        "title": "Self-custody starts here",
+        "subtitle": "Manage your crypto with the security and control of a Ledger device."
+      }
+    }
   },
   "marketBanner": {
     "title": "Market",
