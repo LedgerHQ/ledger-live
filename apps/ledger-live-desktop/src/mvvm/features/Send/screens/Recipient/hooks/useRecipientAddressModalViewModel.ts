@@ -8,6 +8,8 @@ import { hasContactsOnNetwork } from "@ledgerhq/live-common/flows/send/recipient
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
+import { SEND_FLOW_STEP, type SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
+import { useFlowWizard } from "../../../../FlowWizard/FlowWizardContext";
 import { useSendFlowData } from "../../../context/SendFlowContext";
 import { useAddressValidation } from "./useAddressValidation";
 import { useAddressMatchedSectionViewModel } from "./useAddressMatchedSectionViewModel";
@@ -32,6 +34,7 @@ export function useRecipientAddressModalViewModel({
   const { recipientSearch, state } = useSendFlowData();
   const contacts = useContacts();
   const { isEnabled: isContactsFeatureEnabled } = useContactsFeature("desktop");
+  const { navigation } = useFlowWizard<SendFlowStep>();
 
   const mainAccount = getMainAccount(account, parentAccount);
   const hasAddressBook = sendFeatures.hasAddressBook(currency);
@@ -91,6 +94,10 @@ export function useRecipientAddressModalViewModel({
     [onAddressSelected, sendFlowTrackingProperties],
   );
 
+  const handleAddContact = useCallback(() => {
+    navigation.goToStep(SEND_FLOW_STEP.ADD_CONTACT);
+  }, [navigation]);
+
   const searchState = useRecipientSearchState({
     searchValue: recipientSearch.value,
     result,
@@ -102,6 +109,7 @@ export function useRecipientAddressModalViewModel({
     searchResult: result,
     searchValue: recipientSearch.value,
     onSelect: handleAddressSelect,
+    onAddContact: handleAddContact,
     isSanctioned: searchState.isSanctioned,
     isAddressComplete: searchState.isAddressComplete,
     hasBridgeError: searchState.showBridgeRecipientError,

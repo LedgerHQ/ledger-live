@@ -22,6 +22,7 @@ function AddressMatchedSectionContainer({
   isAddressComplete = true,
   hasBridgeError = false,
   isSanctioned = false,
+  onAddContact = jest.fn(),
 }: Readonly<{
   searchResult: AddressSearchResult;
   isContactsFeatureEnabled?: boolean;
@@ -29,11 +30,13 @@ function AddressMatchedSectionContainer({
   isAddressComplete?: boolean;
   hasBridgeError?: boolean;
   isSanctioned?: boolean;
+  onAddContact?: () => void;
 }>) {
   const viewModel = useAddressMatchedSectionViewModel({
     searchResult,
     searchValue: address,
     onSelect: jest.fn(),
+    onAddContact,
     isAddressComplete,
     hasBridgeError,
     isSanctioned,
@@ -54,6 +57,7 @@ function renderAddressMatchedSection(
     isAddressComplete?: boolean;
     hasBridgeError?: boolean;
     isSanctioned?: boolean;
+    onAddContact?: () => void;
   },
 ) {
   return render(
@@ -64,6 +68,7 @@ function renderAddressMatchedSection(
       isSanctioned={options?.isSanctioned ?? false}
       isContactsFeatureEnabled={options?.isContactsFeatureEnabled}
       hasAddressBook={options?.hasAddressBook}
+      onAddContact={options?.onAddContact}
     />,
     options?.featureFlagOverrides
       ? { initialState: withFlagOverrides(options.featureFlagOverrides) }
@@ -420,6 +425,36 @@ describe("AddressMatchedSection", () => {
     expect(screen.queryByTestId("send-recipient-card")).not.toBeInTheDocument();
     expect(screen.getByTestId("send-address-matched-title")).toBeInTheDocument();
     expect(screen.getByTestId("send-matched-address-button")).toBeInTheDocument();
+  });
+
+  it("opens the add contact step when clicking the add contact button", () => {
+    const searchResult: AddressSearchResult = {
+      status: "ens_resolved",
+      error: null,
+      resolvedAddress: address,
+      ensName: "vitalik.eth",
+      isLedgerAccount: false,
+      accountName: undefined,
+      accountBalance: undefined,
+      accountBalanceFormatted: undefined,
+      isFirstInteraction: false,
+      matchedRecentAddress: undefined,
+      matchedAccounts: [],
+      matchedContact: undefined,
+      bridgeErrors: undefined,
+      bridgeWarnings: undefined,
+      hasBridgeValidationResult: true,
+    };
+    const onAddContact = jest.fn();
+
+    renderAddressMatchedSection(searchResult, {
+      isContactsFeatureEnabled: true,
+      hasAddressBook: true,
+      onAddContact,
+    });
+    screen.getByTestId("send-recipient-card-add-contact").click();
+
+    expect(onAddContact).toHaveBeenCalled();
   });
 
   it("keeps the new ENS card visible while bridge validation is pending", () => {
