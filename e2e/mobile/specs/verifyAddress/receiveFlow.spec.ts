@@ -30,6 +30,12 @@ describe("Receive", () => {
   });
 
   afterEach(async () => {
+    // Close through the drawer's own button first: it resets the modular drawer's
+    // flow step. A deeplink alone only blurs the sheet, so the next test reopens on
+    // whichever step the last one left behind (seen as "no views found matching
+    // modular-drawer-network-selection-scrollView" while the drawer sat on
+    // Account-screen). The deeplink then confirms we are actually back on portfolio.
+    await app.modularDrawer.tapDrawerCloseButton({ onlyIfVisible: true });
     await app.portfolio.openViaDeeplink();
   });
 
