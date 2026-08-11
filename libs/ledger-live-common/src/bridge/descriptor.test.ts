@@ -660,7 +660,7 @@ describe("sendFeatures", () => {
 
   it.each([
     ["ethereum", true],
-    ["tron", true],
+    ["tron", false],
     ["bitcoin", false],
     ["solana", false],
   ])("should get address book support for %s", (currencyId, expected) => {
