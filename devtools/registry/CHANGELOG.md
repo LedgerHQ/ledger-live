@@ -1,5 +1,12 @@
 # @devtools/registry
 
+## 0.1.9
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @devtools/feature-flags@0.6.4
+
 ## 0.1.9-next.0
 
 ### Patch Changes

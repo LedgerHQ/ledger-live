@@ -1,5 +1,23 @@
 # @domain/entity-contact
 
+## 0.5.0
+
+### Minor Changes
+
+- [#20319](https://github.com/LedgerHQ/ledger-live/pull/20319) [`4d3ae1b`](https://github.com/LedgerHQ/ledger-live/commit/4d3ae1bea30b444281698844214072d95665e07a) Thanks [@deepyjr](https://github.com/deepyjr)! - Restrict Contacts address labels to printable ASCII characters
+
+- [#20316](https://github.com/LedgerHQ/ledger-live/pull/20316) [`36a08f1`](https://github.com/LedgerHQ/ledger-live/commit/36a08f1aea939fc42e7dafd8d734ef8dce88d7d0) Thanks [@deepyjr](https://github.com/deepyjr)! - Add address label validation and flow
+
+- [#20222](https://github.com/LedgerHQ/ledger-live/pull/20222) [`c6f620c`](https://github.com/LedgerHQ/ledger-live/commit/c6f620c3a0f7f944cb9de18ac129708dc69ec5a3) Thanks [@deepyjr](https://github.com/deepyjr)! - Model contact address labels with asset defaults and per-contact uniqueness
+
+- [#20252](https://github.com/LedgerHQ/ledger-live/pull/20252) [`e709463`](https://github.com/LedgerHQ/ledger-live/commit/e7094633d503367b7ccf4783f24dec7780b04707) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Render Desktop Me contact detail by default with Me display-name formatting and external address CTA.
+
+- [#20348](https://github.com/LedgerHQ/ledger-live/pull/20348) [`e7a22a6`](https://github.com/LedgerHQ/ledger-live/commit/e7a22a6e3c8c444640cfe8df88637ecad738e26a) Thanks [@deepyjr](https://github.com/deepyjr)! - Standardize contact validation error contracts.
+
+- [#20379](https://github.com/LedgerHQ/ledger-live/pull/20379) [`9d56877`](https://github.com/LedgerHQ/ledger-live/commit/9d568778b657961ef06ba04d5fa616677afec7b8) Thanks [@deepyjr](https://github.com/deepyjr)! - Standardize Contacts validation input schemas and error names
+
+- [#20321](https://github.com/LedgerHQ/ledger-live/pull/20321) [`9783675`](https://github.com/LedgerHQ/ledger-live/commit/97836755ebf605f62b5731f696ae66a9270a4c58) Thanks [@deepyjr](https://github.com/deepyjr)! - Block duplicate Contacts names before creation
+
 ## 0.5.0-next.0
 
 ### Minor Changes

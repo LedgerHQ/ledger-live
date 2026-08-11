@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-wallet",
-  "version": "0.30.2-next.0",
+  "version": "0.30.2",
   "private": true,
   "description": "Ledger Live wallet",
   "keywords": [

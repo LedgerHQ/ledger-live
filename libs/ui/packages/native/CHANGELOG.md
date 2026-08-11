@@ -1,5 +1,13 @@
 # @ledgerhq/native-ui
 
+## 0.66.0
+
+### Minor Changes
+
+- [#20262](https://github.com/LedgerHQ/ledger-live/pull/20262) [`03f2ac2`](https://github.com/LedgerHQ/ledger-live/commit/03f2ac27df5c85f6b2218268e6f05a7012462b1a) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Remove the `CryptoIcon` passthrough component from `@ledgerhq/native-ui/pre-ldls` and consume `@ledgerhq/crypto-icons/native` directly in ledger-live-mobile. `@ledgerhq/crypto-icons` is no longer a dependency of `@ledgerhq/native-ui`, and the `@ledgerhq/lumen-ui-rnative` / `@ledgerhq/lumen-design-core` peer dependencies it required are dropped as well.
+
+- [#20398](https://github.com/LedgerHQ/ledger-live/pull/20398) [`625c6c0`](https://github.com/LedgerHQ/ledger-live/commit/625c6c0628d0c4afe395f45fbb39a988af8aa106) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Declare `./assets/icons` explicitly in `exports`, drop the unused `stylis` dependency and remove four files that had no consumer left: `src/icons/Close.tsx`, `src/styles/InvertTheme.tsx`, `storybook/stories/index.ts` and `storybook/constants/globalStyles.ts`
+
 ## 0.66.0-next.0
 
 ### Minor Changes

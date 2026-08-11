@@ -1,6 +1,6 @@
 {
   "name": "@shared/api-services",
-  "version": "0.2.0-next.0",
+  "version": "0.2.0",
   "private": true,
   "description": "One endpoint-less RTK Query api per backend service: base query, cache tags and extraArgument contract. Use-case packages inject their endpoints into these.",
   "main": "src/index.ts",

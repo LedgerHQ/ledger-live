@@ -1,5 +1,16 @@
 # @devtools/shell
 
+## 0.7.0
+
+### Minor Changes
+
+- [#20225](https://github.com/LedgerHQ/ledger-live/pull/20225) [`9051d74`](https://github.com/LedgerHQ/ledger-live/commit/9051d7495e55706e8fb8801107f9473f505cb395) Thanks [@Sebastien-Dav1d](https://github.com/Sebastien-Dav1d)! - Add native transport panel and expose footer slot on native DevTools shell
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @devtools/registry@0.1.9
+
 ## 0.7.0-next.0
 
 ### Minor Changes

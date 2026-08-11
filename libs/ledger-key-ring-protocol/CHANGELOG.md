@@ -1,5 +1,16 @@
 # @ledgerhq/live-wallet
 
+## 0.18.0
+
+### Minor Changes
+
+- [#19634](https://github.com/LedgerHQ/ledger-live/pull/19634) [`4015ade`](https://github.com/LedgerHQ/ledger-live/commit/4015ade1f9744d4bb575282060fdb1beb9aafc89) Thanks [@thesan](https://github.com/thesan)! - Connect @ledgerhq/ledger-auth to the Ledger Wallet apps Redux store
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/speculos-transport@0.10.10
+
 ## 0.18.0-next.0
 
 ### Minor Changes
