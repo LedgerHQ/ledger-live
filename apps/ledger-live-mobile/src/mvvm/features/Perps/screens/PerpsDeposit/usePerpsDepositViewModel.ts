@@ -1,14 +1,13 @@
 import { useCallback, useMemo, useState } from "react";
 import BigNumber from "bignumber.js";
 import type { AccountLike } from "@ledgerhq/types-live";
-import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit, valueFromUnit } from "@ledgerhq/live-common/currencies/index";
 import { PERPS_UI_USE_CASE } from "@ledgerhq/live-common/wallet-api/ModularDrawer/uiUseCase";
 import { useCalculateCountervalueCallback } from "@ledgerhq/live-countervalues-react";
 import { useSelector } from "~/context/hooks";
 import { counterValueCurrencySelector, localeSelector } from "~/reducers/settings";
-import { walletSelector } from "~/reducers/wallet";
+import { accountNameWithDefaultSelector, walletSelector } from "~/reducers/wallet";
 import { useModularDrawerController } from "LLM/features/ModularDrawer";
 import type { RootComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
