@@ -1,5 +1,5 @@
 export enum LocationContentCard {
-  /** Top carousel on portfolio page (placement "portfolio") */
+  /** Top carousel on portfolio page — direct cards and category containers (e.g. alwayson hardware carousel) */
   Portfolio = "portfolio",
   /** Bottom carousel on portfolio page (placement "bottom_portfolio") */
   BottomPortfolio = "bottom_portfolio",
@@ -11,6 +11,21 @@ export enum LocationContentCard {
 
 export enum Platform {
   Desktop = "desktop",
+}
+
+export enum ContentCardsType {
+  smallSquare = "small_square",
+  mediumSquare = "medium_square",
+  bigSquare = "big_square",
+  action = "action",
+  category = "category",
+  hero = "hero",
+}
+
+export enum ContentCardsLayout {
+  unique = "unique",
+  carousel = "carousel",
+  grid = "grid",
 }
 
 export type ContentCard = {
@@ -38,6 +53,23 @@ export type NotificationContentCard = ContentCard & {
   viewed: boolean;
   url?: string;
   path?: string;
+};
+
+/**
+ * Container card grouping child cards that share its `categoryId`.
+ * Children are kept raw in the store and mapped at render time using `cardsType`.
+ */
+export type CategoryContentCard = ContentCard & {
+  categoryId?: string;
+  cardsLayout: ContentCardsLayout;
+  cardsType: ContentCardsType;
+  type: ContentCardsType.category;
+  cta?: string;
+  link?: string;
+  viewed?: boolean;
+  isDismissable?: boolean;
+  hasPagination?: boolean;
+  centeredText?: boolean;
 };
 
 export type PortfolioContentCard = ContentCard & {

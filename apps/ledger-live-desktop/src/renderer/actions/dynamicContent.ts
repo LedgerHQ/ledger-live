@@ -1,6 +1,7 @@
 import type { Card as BrazeCard } from "@braze/web-sdk";
 import {
   ActionContentCard,
+  CategoryContentCard,
   PortfolioContentCard,
   NotificationContentCard,
 } from "~/types/dynamicContent";
@@ -27,5 +28,18 @@ export const setActionCards = (payload: ActionContentCard[]) => ({
 
 export const setNotificationsCards = (payload: NotificationContentCard[]) => ({
   type: "DYNAMIC_CONTENT_SET_NOTIFICATIONS_CARDS",
+  payload,
+});
+
+export const setCategoriesCards = (payload: CategoryContentCard[]) => ({
+  type: "DYNAMIC_CONTENT_SET_CATEGORIES_CARDS",
+  payload,
+});
+
+export const setLocalCategoryCards = (payload: {
+  categories: CategoryContentCard[];
+  childCards: BrazeCard[];
+}) => ({
+  type: "DYNAMIC_CONTENT_SET_LOCAL_CATEGORY_CARDS",
   payload,
 });
