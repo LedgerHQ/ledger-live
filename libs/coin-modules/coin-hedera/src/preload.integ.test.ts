@@ -23,7 +23,7 @@ describe("preload", () => {
 
     // addressChecksum is null for some nodes — allow null or string
     expect(first).toMatchObject({
-      nodeId: expect.any(Number),
+      id: expect.any(String),
       address: expect.stringMatching(/^\d+\.\d+\.\d+$/),
       name: expect.any(String),
       minStake: expect.any(BigNumber),

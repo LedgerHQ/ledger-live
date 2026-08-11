@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useModularDrawerController } from "../ModularDrawer";
-import { useDrawerConfiguration } from "@ledgerhq/live-common/dada-client/hooks/useDrawerConfiguration";
+import { useDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/useDrawerConfiguration";
 import { useStakingDrawer } from "~/components/Stake/useStakingDrawer";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 

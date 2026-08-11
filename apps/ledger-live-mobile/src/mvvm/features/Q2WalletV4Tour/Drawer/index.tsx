@@ -5,7 +5,7 @@ import Animated from "react-native-reanimated";
 import { FlatList } from "react-native-gesture-handler";
 import { BottomSheetHeader, BottomSheetView } from "@ledgerhq/lumen-ui-rnative";
 import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
-import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
+import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { Platform } from "react-native";
 import { TrackScreen } from "~/analytics";
 import { useQ2WalletV4TourDrawerViewModel } from "./hooks/useQ2WalletV4TourDrawerViewModel";

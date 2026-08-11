@@ -1,12 +1,12 @@
 import { ethers } from "ethers";
 import { BigNumber } from "bignumber.js";
 import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
-import type { Operation } from "@ledgerhq/types-live";
 import {
   fetchRedelegations,
   resolveRedelegationValidators,
   resolveStakingValidator,
   buildRedelegationsFromOps,
+  type OperationLike,
 } from "./redelegations";
 import { getStakingABI } from "./abis";
 import { STAKING_CONTRACTS } from "./contracts";
@@ -39,23 +39,16 @@ function encodeRedelegateCalldata(src: string, dst: string, amountUsei: bigint):
   return new ethers.Interface(abi).encodeFunctionData("redelegate", [src, dst, amountUsei]);
 }
 
-function makeOperation(overrides: Partial<Operation> = {}): Operation {
+function makeOperation(overrides: Partial<OperationLike> = {}): OperationLike {
   return {
-    id: "op1",
     hash: "0xdeadbeef",
     type: "DELEGATE",
-    value: new BigNumber(0),
-    fee: new BigNumber(0),
-    senders: [],
-    recipients: [],
-    blockHeight: 1,
-    blockHash: null,
-    accountId: "acc1",
     date: new Date("2025-01-01T00:00:00Z"),
     extra: {},
     hasFailed: false,
+    recipients: [],
     ...overrides,
-  } as unknown as Operation;
+  };
 }
 
 describe("redelegations", () => {

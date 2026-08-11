@@ -1,4 +1,8 @@
 import type { ContactAddress, ContactAddressId, ContactId } from "@domain/entity-contact";
+import {
+  CONTACT_ADDRESS_DELETE_REQUIREMENT,
+  CONTACT_ADDRESS_EDIT_REQUIREMENT,
+} from "./editRequirement";
 import type {
   ContactAddressDeleteLifecycle,
   ContactAddressDetailDeleteIntent,
@@ -27,6 +31,7 @@ export function createContactAddressDetailEditIntent(
     type: "edit-address",
     contactId,
     addressId: contactAddress.id,
+    editRequirement: CONTACT_ADDRESS_EDIT_REQUIREMENT,
   };
 }
 
@@ -38,6 +43,7 @@ export function createContactAddressDetailDeleteIntent(
     type: "delete-address",
     contactId,
     addressId,
+    deleteRequirement: CONTACT_ADDRESS_DELETE_REQUIREMENT,
   };
 }
 

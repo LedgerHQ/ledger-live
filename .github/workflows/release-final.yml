@@ -32,10 +32,9 @@ on:
 jobs:
   release:
     name: Release
-    runs-on: ubuntu-24.04
+    runs-on: ledger-live-linux-8CPU-32RAM
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
-      NPM_REGISTRY: jfrog.ledgerlabs.net/artifactory/api/npm/ledger-live-npm-prod-public
     permissions:
       contents: write
       pull-requests: write
@@ -51,6 +50,8 @@ jobs:
           repositories: |
             ledger-live
             ledger-live-build
+          permission-contents: write
+          permission-actions: write
 
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
@@ -73,18 +74,37 @@ jobs:
         with:
           ruby-version: 3.3.0
 
+      - name: JFrog npm auth
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        with:
+          registry: ${{ vars.ARTIFACTORY_URL }}
+
       - name: install dependencies
         run: pnpm i -F "ledger-live" -F "{libs/**}..." -F "@ledgerhq/live-cli..." -F "@ledgerhq/wallet-cli..." -F "@ledgerhq/wallet-cli-*"
 
       - name: build libs
         run: pnpm exec nx run-many -t build --projects=tag:scope:libs,@ledgerhq/live-e2e-shared
 
+      #JFrog publishing - if statements to be removed when all is migrated
+      - name: JFrog npm auth (publish registry)
+        if: ${{ vars.ARTIFACTORY_PUBLISH_URL != '' }}
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        with:
+          registry: ${{ vars.ARTIFACTORY_PUBLISH_URL }}
+
+      - name: publish release (JFrog)
+        if: ${{ vars.ARTIFACTORY_PUBLISH_URL != '' }}
+        run: npm_config_registry="https://${{ vars.ARTIFACTORY_PUBLISH_URL }}/" pnpm changeset publish
+
+      #NPM publishing - to be removed when all is migrated
       - name: authenticate with npm
+        if: ${{ vars.ARTIFACTORY_PUBLISH_URL == '' }}
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           registry-url: "https://registry.npmjs.org"
 
       - name: publish release
+        if: ${{ vars.ARTIFACTORY_PUBLISH_URL == '' }}
         run: pnpm changeset publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPMJS_TOKEN }}
@@ -172,6 +192,8 @@ jobs:
       - uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         name: trigger release build for desktop
         if: ${{ steps.desktop-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLD", "ALL"]'), inputs.app) }}
+        env:
+          INPUT_REF: ${{ inputs.ref }}
         with:
           github-token: ${{ steps.generate-token.outputs.token }}
           script: |
@@ -181,13 +203,15 @@ jobs:
               ref: "main",
               workflow_id: "release-desktop.yml",
               inputs: {
-                branch: "${{ inputs.ref }}"
+                branch: process.env.INPUT_REF
               }
             });
 
       - uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         name: trigger release build for mobile
         if: ${{ steps.mobile-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLM", "ALL"]'), inputs.app) }}
+        env:
+          INPUT_REF: ${{ inputs.ref }}
         with:
           github-token: ${{ steps.generate-token.outputs.token }}
           script: |
@@ -197,7 +221,7 @@ jobs:
               ref: "main",
               workflow_id: "release-mobile.yml",
               inputs: {
-                ref: "${{ inputs.ref }}"
+                ref: process.env.INPUT_REF
               }
             });
 

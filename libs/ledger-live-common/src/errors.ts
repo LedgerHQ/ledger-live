@@ -1085,3 +1085,10 @@ export class NotEnoughGas extends Error {
     if (fields) Object.assign(this, fields);
   }
 }
+
+export class SwapQuotesRequestFailed extends Error {
+  override name = "SwapQuotesRequestFailed";
+  constructor(message?: string, cause?: unknown) {
+    super(message || "SwapQuotesRequestFailed", { cause });
+  }
+}

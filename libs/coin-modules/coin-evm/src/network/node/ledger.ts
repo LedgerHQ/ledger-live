@@ -280,7 +280,11 @@ async function getOptimismAdditionalFees(
   currency: CryptoCurrency,
   transaction: string,
 ): Promise<BigNumber> {
-  if (!["optimism", "optimism_sepolia"].includes(currency.id)) {
+  if (
+    !["optimism", "optimism_sepolia", "blast", "blast_sepolia", "base", "base_sepolia"].includes(
+      currency.id,
+    )
+  ) {
     return new BigNumber(0);
   }
   if (!transaction) {

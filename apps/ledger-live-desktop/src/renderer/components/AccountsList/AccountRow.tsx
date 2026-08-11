@@ -9,7 +9,7 @@ import FormattedVal from "~/renderer/components/FormattedVal";
 import Input from "~/renderer/components/Input";
 import AccountTagDerivationMode from "../AccountTagDerivationMode";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
-import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
+import { getDefaultAccountName } from "@domain/entity-account-name";
 const InputWrapper = styled.div`
   margin-left: 4px;
   width: 100%;

@@ -9,7 +9,7 @@ type HeaderProps = {
   hookOnBack?: () => void;
   hasBackButton?: boolean;
   noCloseButton?: boolean;
-  areDrawersLocked?: boolean;
+  areBottomSheetsLocked?: boolean;
   handleCloseUserEvent?: () => void;
 };
 const Header = ({
@@ -17,7 +17,7 @@ const Header = ({
   hookOnBack,
   hasBackButton,
   noCloseButton,
-  areDrawersLocked,
+  areBottomSheetsLocked,
   handleCloseUserEvent,
 }: HeaderProps) => {
   const { colors } = useTheme();
@@ -74,7 +74,7 @@ const Header = ({
         </Flex>
 
         <Flex width={32} height={32} alignItems="center" justifyContent="center">
-          {!noCloseButton && !areDrawersLocked && (
+          {!noCloseButton && !areBottomSheetsLocked && (
             <Pressable
               testID="modal-close-button"
               onPressIn={handleCloseUserEvent}

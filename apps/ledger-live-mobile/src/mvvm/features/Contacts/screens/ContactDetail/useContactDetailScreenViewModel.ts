@@ -13,6 +13,7 @@ import {
   type ContactDetailViewProps,
   resolveEligibleAddressCurrencyIds,
   useAddAddressFlowViewModel,
+  useContactDetailSharedState,
   useContactAddressDetailDialog,
   useContactsFeature,
   useEmptyContactDetail,
@@ -29,6 +30,7 @@ import { useContactsAddressValidationAdapter } from "../../hooks/useContactsAddr
 import type { ContactsAddAddressFlowDrawerProps } from "./components/ContactsAddAddressFlowDrawer/types";
 import type { ContactDetailEditDeleteFlowProps } from "./hooks/useContactDetailEditDeleteAdapter";
 import { useContactDetailEditDeleteAdapter } from "./hooks/useContactDetailEditDeleteAdapter";
+import { useContactAddressDetailActionsAdapter } from "../../hooks/useContactAddressDetailActionsAdapter";
 
 const MANUAL_ADDRESS_VALIDATION_DEBOUNCE_MS = 200;
 
@@ -40,6 +42,7 @@ type ContactDetailScreenViewModel =
       addAddressFlowProps: ContactsAddAddressFlowDrawerProps;
       pageProps: ContactDetailViewProps;
       addressDetailDialog: ContactAddressDetailDialogNativeProps;
+      addressDetailActions: ReturnType<typeof useContactAddressDetailActionsAdapter>;
       editDeleteFlow: ContactDetailEditDeleteFlowProps;
     }>;
 
@@ -123,7 +126,7 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
     },
     [addAddressFlowState, completeCurrencySelection],
   );
-  const onOpenLedgerWalletAddresses = useCallback(() => {
+  const onLedgerWalletAccountsPress = useCallback(() => {
     navigation.navigate(NavigatorName.Accounts, {
       screen: ScreenName.CryptoAddresses,
       params: {
@@ -160,9 +163,14 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
       emptyContactDescription: name => t("contacts.detail.emptyState.contactDescription", { name }),
       ledgerWalletAddresses: t("contacts.detail.ledgerWalletAddresses"),
       myAddresses: t("contacts.detail.myAddresses"),
+      formatMeDisplayName: name => t("contacts.detail.meDisplayName", { name }),
       formatAddressCount: count => t("contacts.addressCount", { count }),
     }),
     [t],
+  );
+  const detailSharedState = useContactDetailSharedState(
+    route.params.contactId,
+    labels.formatMeDisplayName,
   );
   const addressDetailDialogLabels = useMemo<ContactAddressDetailDialogNativeLabels>(
     () => ({
@@ -182,6 +190,29 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
     navigation.navigate(ScreenName.MyWalletContacts);
   }, [navigation]);
   const editDeleteFlow = useContactDetailEditDeleteAdapter(route.params.contactId, onDeleteSuccess);
+  const addressDetailActions = useContactAddressDetailActionsAdapter(
+    route.params.contactId,
+    selection?.row?.addressId,
+    onCloseAddressDetail,
+  );
+  const onCloseAddressDetailSheet = useCallback(() => {
+    if (
+      addressDetailActions.deleteSheet.isOpen ||
+      addressDetailActions.renameSheet.isOpen ||
+      addressDetailActions.signerSheet.isOpen ||
+      addressDetailActions.signerMismatchSheet.isOpen
+    ) {
+      return;
+    }
+
+    onCloseAddressDetail();
+  }, [
+    addressDetailActions.deleteSheet.isOpen,
+    addressDetailActions.renameSheet.isOpen,
+    addressDetailActions.signerSheet.isOpen,
+    addressDetailActions.signerMismatchSheet.isOpen,
+    onCloseAddressDetail,
+  ]);
   const shouldRedirect = !isEnabled || !contact;
 
   useLayoutEffect(() => {
@@ -203,7 +234,8 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
     labels,
     meAvatarSrc: USER_AVATAR_URL,
     onAddAddress,
-    onOpenLedgerWalletAddresses,
+    ledgerWalletAccountsIntent: detailSharedState?.ledgerWalletAccountsIntent,
+    onLedgerWalletAccountsPress,
     ...(populatedContactDetail
       ? {
           addressGroups: populatedContactDetail.addressGroups,
@@ -234,8 +266,10 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
       row: selection?.row,
       network: selection?.network,
       labels: addressDetailDialogLabels,
-      onClose: onCloseAddressDetail,
+      onClose: onCloseAddressDetailSheet,
+      ...addressDetailActions.addressDetailDialog,
     },
+    addressDetailActions,
     editDeleteFlow,
   };
 }

@@ -26,43 +26,6 @@ export class FeeTooLow extends Error {
   }
 }
 
-export class ZcashSaplingRecipientNotSupported extends Error {
-  override name = "ZcashSaplingRecipientNotSupported";
-  constructor(message?: string, fields?: Record<string, unknown>) {
-    super(message || "ZcashSaplingRecipientNotSupported");
-    if (fields) Object.assign(this, fields);
-  }
-}
-
-export class ZcashSignerNotSupported extends Error {
-  override name = "ZcashSignerNotSupported";
-  constructor(message?: string, fields?: Record<string, unknown>) {
-    super(message || "ZcashSignerNotSupported");
-    if (fields) Object.assign(this, fields);
-  }
-}
-
-// Typed cancellation marker for the shielded (PCZT) signOperation flow.
-export class ZcashSigningCancelled extends Error {
-  override name = "ZcashSigningCancelled";
-  constructor(message?: string, fields?: Record<string, unknown>) {
-    super(message || "ZcashSigningCancelled");
-    if (fields) Object.assign(this, fields);
-  }
-}
-
-// Raised when a transparent UTXO about to be spent by a Public→* PCZT flow
-// cannot be mapped to a known account key (missing address, or an address
-// outside the synced receive/change gap limit). Fail-closed: we refuse to sign
-// rather than risk producing an unsignable or wrong input.
-export class ZcashUtxoNotInAccount extends Error {
-  override name = "ZcashUtxoNotInAccount";
-  constructor(message?: string, fields?: Record<string, unknown>) {
-    super(message || "ZcashUtxoNotInAccount");
-    if (fields) Object.assign(this, fields);
-  }
-}
-
 export class DustLimit extends Error {
   override name = "DustLimit";
   constructor(message?: string, fields?: Record<string, unknown>) {

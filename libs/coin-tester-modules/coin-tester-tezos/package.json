@@ -58,7 +58,7 @@
   },
   "dependencies": {
     "@ledgerhq/coin-tester": "workspace:^",
-    "@ledgerhq/coin-tezos": "workspace:^",
+    "@ledgerhq/coin-tezos": "catalog:",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/live-config": "workspace:^",

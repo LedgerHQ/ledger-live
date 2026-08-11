@@ -4,7 +4,7 @@ import BigNumber from "bignumber.js";
 import { Account } from "@ledgerhq/types-live";
 import { BottomSheetFlatList, BottomSheetHeader } from "@ledgerhq/lumen-ui-rnative";
 import type { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
-import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
+import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import CryptoAddressesListItem from "LLM/features/CryptoAddresses/screens/CryptoAddressesScreen/components/CryptoAddressesListItem";
 import useCryptoAddressesViewModel from "LLM/features/CryptoAddresses/screens/CryptoAddressesScreen/useCryptoAddressesViewModel";
 import { ScreenName } from "~/const";

@@ -6,7 +6,6 @@ concurrency:
   group: ci-bridge-${{ github.ref }}
 
 permissions:
-  id-token: write
   contents: read
 
 jobs:
@@ -38,6 +37,9 @@ jobs:
 
   bridge-tests:
     name: "Bridge Tests"
+    permissions:
+      id-token: write
+      contents: read
     needs: is-affected
     if: ${{ needs.is-affected.outputs.is-affected == 'true' }}
     env:

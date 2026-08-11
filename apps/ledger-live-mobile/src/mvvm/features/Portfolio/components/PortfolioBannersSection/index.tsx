@@ -6,6 +6,7 @@ import {
   NativeSyntheticEvent,
 } from "react-native";
 import { Box, PageIndicator } from "@ledgerhq/lumen-ui-rnative";
+import { LazyOnboardingBannerView } from "@features/flow-lazy-onboarding-banner";
 import { LNUpsellBanner } from "LLM/features/LNUpsell/components/LNUpsellBanner";
 import ContentCardsLocation from "~/dynamicContent/ContentCardsLocation";
 import { ContentCardLocation } from "~/dynamicContent/types";
@@ -109,15 +110,34 @@ export const PortfolioBannersSection = ({
   showAssets,
 }: PortfolioBannersSectionProps) => {
   const {
+    lazyOnboardingBanner,
     shouldShowOnboardingWidget: showOnboarding,
     shouldDisplayRecover: showRecover,
     contentCardsPaddingTop,
     hasAssets,
+    canCoexistWithBraze,
     onScroll,
     carouselIndex,
-  } = usePortfolioBannersSectionViewModel({ showAssets });
+  } = usePortfolioBannersSectionViewModel({
+    showAssets,
+    isLNUpsellBannerShown,
+  });
 
-  if (isLNUpsellBannerShown) {
+  const upsellLeadingSlide = isLNUpsellBannerShown ? (
+    <LNUpsellBanner location="wallet" />
+  ) : undefined;
+
+  if (lazyOnboardingBanner.isShown) {
+    return (
+      <BannersSectionShell isFirst={isFirst}>
+        <PaddedBanner>
+          <LazyOnboardingBannerView {...lazyOnboardingBanner} />
+        </PaddedBanner>
+      </BannersSectionShell>
+    );
+  }
+
+  if (isLNUpsellBannerShown && !canCoexistWithBraze) {
     return (
       <BannersSectionShell isFirst={isFirst}>
         <LNUpsellBanner location="wallet" pt={4} />
@@ -141,6 +161,7 @@ export const PortfolioBannersSection = ({
               key="contentCardsLocationPortfolio"
               locationId={ContentCardLocation.TopWallet}
               mx={-6}
+              leadingSlide={upsellLeadingSlide}
             />
           </Box>
         </Box>

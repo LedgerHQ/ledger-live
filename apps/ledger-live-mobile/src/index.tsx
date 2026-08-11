@@ -68,7 +68,7 @@ import { selectFeature, type FeatureId } from "@shared/feature-flags";
 import { useSettings } from "~/hooks";
 import AppProviders from "./AppProviders";
 import { useAutoDismissPostOnboardingEntryPoint } from "@ledgerhq/live-common/postOnboarding/hooks/index";
-import QueuedDrawersContextProvider from "LLM/components/QueuedDrawer/QueuedDrawersContextProvider";
+import QueuedBottomSheetsProvider from "LLM/components/QueuedDrawer/QueuedBottomSheetsProvider";
 import { registerTransports } from "~/services/registerTransports";
 import { useDeviceManagementKit } from "@ledgerhq/live-dmk-mobile";
 import { WaitForAppReady } from "LLM/contexts/WaitForAppReady";
@@ -353,7 +353,7 @@ export default class Root extends Component {
               <HookDynamicContentCards />
               <HookDevTools />
               <TermsAndConditionMigrateLegacyData />
-              <QueuedDrawersContextProvider>
+              <QueuedBottomSheetsProvider>
                 <I18nextProvider i18n={i18n}>
                   <LocaleProvider>
                     <PlatformAppProviderWrapper>
@@ -382,7 +382,7 @@ export default class Root extends Component {
                     </PlatformAppProviderWrapper>
                   </LocaleProvider>
                 </I18nextProvider>
-              </QueuedDrawersContextProvider>
+              </QueuedBottomSheetsProvider>
             </RebootProvider>
           ) : (
             <LoadingApp />

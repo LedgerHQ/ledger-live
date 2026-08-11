@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from "react";
 import { useNavigation, useRoute, type RouteProp } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import type { StockSuggestion } from "@ledgerhq/live-common/dada-client/utils/assetDiscovery";
+import type { StockSuggestion } from "@features/platform-aggregated-assets";
 import { track } from "~/analytics";
 import { currentRouteNameRef } from "~/analytics/screenRefs";
 import { ScreenName } from "~/const";

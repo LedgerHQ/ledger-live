@@ -17,6 +17,8 @@ import { STAKING_CONTRACTS } from "../staking";
 import { getTransactionType, prepareUnsignedTxParams } from "./common";
 import { getNextSequence } from "./getNextSequence";
 
+const SEND_MAX_L1_FEE_BUFFER = new BigNumber(2);
+
 async function computeAdditionalFees(
   currency: CryptoCurrency,
   unsignedTransaction: TransactionLike,
@@ -213,7 +215,11 @@ export async function estimateFees(
     value,
     chainId,
   };
-  const additionalFees = await computeAdditionalFees(currency, unsignedTransaction);
+  const rawAdditionalFees = await computeAdditionalFees(currency, unsignedTransaction);
+  const additionalFees =
+    transactionIntent.useAllAmount && rawAdditionalFees
+      ? rawAdditionalFees.multipliedBy(SEND_MAX_L1_FEE_BUFFER).integerValue(BigNumber.ROUND_CEIL)
+      : rawAdditionalFees;
 
   // delegate send-max: expose reserve/scale so the bridge can compute the amount (it has the balance)
   const stakingConfig = STAKING_CONTRACTS[currency.id];

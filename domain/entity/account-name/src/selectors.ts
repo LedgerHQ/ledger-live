@@ -1,7 +1,5 @@
-import { type AccountNamesState } from "./slice";
+import { type AccountNamesState } from "./schema";
 import { getDefaultAccountName, type AccountForName } from "./accountName";
-
-export const initialAccountNamesState: AccountNamesState = new Map();
 
 export const accountNameSelector = (
   state: AccountNamesState,

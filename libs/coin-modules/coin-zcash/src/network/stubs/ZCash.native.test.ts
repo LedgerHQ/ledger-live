@@ -21,6 +21,12 @@ describe("ZCash (react-native stub)", () => {
     },
   );
 
+  it("rejects deriveShieldedAddress rather than answering something half-working", async () => {
+    await expect(new ZCash({ grpcUrl: "url" }).deriveShieldedAddress("uview1test")).rejects.toThrow(
+      UNSUPPORTED,
+    );
+  });
+
   it("errors the sync stream instead of completing empty", async () => {
     const stream = new ZCash({ grpcUrl: "url" }).syncShielded({
       viewingKey: "uview1test",

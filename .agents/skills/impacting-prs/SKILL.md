@@ -76,7 +76,7 @@ Three exclusions, all handled by `scan-prs.sh` — don't re-implement them by ha
 
 - PRs that do **not target `develop`**.
 - PRs **already conflicting** with `develop` — they have to rebase anyway, and will pick the change up then.
-- PRs **somebody already informed** (a comment/review body matching `-m`, default `[Oo]n behalf of @`) — commenting twice is pure noise, and the most common way this skill becomes annoying. The default is deliberately broad, so it also excludes PRs informed about *another* migration: when two campaigns overlap, narrow it to something specific to yours (`-m '#20040'`, `-m '@ledgerhq/errors'`) — our bodies always name the migration PR, so that always has something to match.
+- PRs **somebody already informed** (a comment/review body matching `-m`, default `[Oo]n behalf of @`) — commenting twice is pure noise, and the most common way this skill becomes annoying. The default is deliberately broad, so it also excludes PRs informed about *another* migration: when two campaigns overlap, narrow it to something specific to yours (`-m '#20040'`, `-m 'cryptoassets'`) — our bodies always name the migration PR, so that always has something to match.
 
 ```bash
 .agents/skills/impacting-prs/scan-prs.sh -p 'cryptoassets' -o "$TMPDIR/scan"

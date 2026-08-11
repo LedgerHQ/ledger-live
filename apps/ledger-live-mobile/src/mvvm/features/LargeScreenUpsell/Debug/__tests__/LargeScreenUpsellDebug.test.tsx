@@ -42,12 +42,29 @@ function buildViewModel(overrides: Record<string, unknown> = {}) {
     lastSeenHint: "Now: null",
     handleToggleFlag: jest.fn(),
     isNanoSeen: false,
-    nanoSeenHint: "No Nano seen. Toggle on to simulate a seen Nano (audience gate).",
+    nanoSeenHint: "Toggle on to mark Nano S + SP + X as seen (matches eligibility: any Nano).",
     handleToggleNanoSeen: jest.fn(),
+    isNanoSSeen: false,
+    nanoSSeenHint: "Toggle on to mark Nano S only and clear every other seen device.",
+    handleToggleNanoSSeen: jest.fn(),
     hasSeenTouchscreen: false,
     seenDevicesHint:
       "Clears every seen device model (removes any touchscreen that blocks the upsell).",
     handleClearSeenDevices: jest.fn(),
+    lnPortfolioBanner: {
+      isShown: false,
+      tracking: "opted_out",
+      flagEnabled: false,
+      ctaEnabled: false,
+      ctaHint: "params.opted_out.enabled/link missing.",
+      homepagePlacementEnabled: true,
+      eligibilityOk: false,
+      eligibilityHint: "Not eligible: no_nano.",
+      notExcludedByHighTier: true,
+      highTierHint: "No high-tier Braze exclusion.",
+      personalizedRecommendationsEnabled: false,
+    },
+    handleEnableLnHomepagePlacement: jest.fn(),
     handleApplyOnboardingDate: jest.fn(),
     handleSetOnboardingDateNull: jest.fn(),
     handleApplyRetries: jest.fn(),
@@ -74,7 +91,9 @@ describe("LargeScreenUpsellDebug", () => {
     render(<LargeScreenUpsellDebug />);
 
     expect(screen.getByText("Large-screen upsell debug")).toBeVisible();
-    expect(screen.getByText("WON'T SHOW")).toBeVisible();
+    expect(screen.getByText("Shows at next app start")).toBeVisible();
+    expect(screen.getAllByText("WON'T SHOW")).toHaveLength(2);
+    expect(screen.getByText("LN Portfolio banner")).toBeVisible();
     expect(screen.getByText("Decision breakdown")).toBeVisible();
     expect(screen.getByText("Feature flag enabled")).toBeVisible();
     expect(screen.getByText("largeScreenUpsell")).toBeVisible();
@@ -153,5 +172,18 @@ describe("LargeScreenUpsellDebug", () => {
     fireEvent.press(screen.getByText("Clear seen devices"));
 
     expect(handleClearSeenDevices).toHaveBeenCalled();
+  });
+
+  it("toggles Nano S seen", () => {
+    const handleToggleNanoSSeen = jest.fn();
+    mockedViewModel.mockReturnValue(buildViewModel({ handleToggleNanoSSeen, isNanoSSeen: false }));
+
+    render(<LargeScreenUpsellDebug />);
+
+    expect(screen.getByText("Nano S seen")).toBeVisible();
+    // Switches: preview variant, largeScreenUpsell, modal.enabled, Nano seen, Nano S seen.
+    fireEvent(screen.getAllByRole("switch")[4], "onCheckedChange", true);
+
+    expect(handleToggleNanoSSeen).toHaveBeenCalledWith(true);
   });
 });

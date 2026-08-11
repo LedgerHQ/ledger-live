@@ -1,0 +1,16 @@
+{
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "name": "enforce-package-structure",
+  "projectType": "library",
+  "targets": {
+    "test": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": ["{workspaceRoot}/tools/nx-plugins/enforce-package-structure/**/*"],
+      "options": {
+        "cwd": "{workspaceRoot}",
+        "command": "node --test tools/nx-plugins/enforce-package-structure/rules.test.js tools/nx-plugins/enforce-package-structure/validate.test.js"
+      }
+    }
+  }
+}

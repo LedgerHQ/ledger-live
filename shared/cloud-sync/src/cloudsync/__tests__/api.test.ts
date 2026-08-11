@@ -2,10 +2,10 @@ import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 import WebSocket from "ws";
 import { firstValueFrom, toArray } from "rxjs";
-import getApi from "../api";
+import { getCloudSyncApi } from "../api";
 import type { Trustchain } from "../../trustchain-types";
 
-describe("getApi", () => {
+describe("getCloudSyncApi", () => {
   const port = 54035;
   const base = `http://localhost:${port}`;
   const trustchain: Trustchain = {
@@ -46,7 +46,7 @@ describe("getApi", () => {
   beforeAll(() => server.listen());
   afterAll(() => server.close());
 
-  const api = getApi(base);
+  const api = getCloudSyncApi(base);
 
   it("fetchData without version returns distant payload", async () => {
     const response = await api.fetchData(jwt, "live", undefined, trustchain);
@@ -84,6 +84,44 @@ describe("getApi", () => {
     );
   });
 
+  it("exposes the HTTP status on a 401 so JWT expiration handling can react", async () => {
+    server.use(
+      http.get(`${base}/atomic/v1/:slug`, () =>
+        HttpResponse.json({ message: "JWT is expired" }, { status: 401 }),
+      ),
+    );
+    const error = await api.fetchData(jwt, "live", undefined, trustchain).catch(e => e);
+    expect(error).toMatchObject({ status: 401, method: "GET" });
+    expect(error.message).toBe("JWT is expired");
+  });
+
+  it("exposes the HTTP status on a 401 upload", async () => {
+    server.use(
+      http.post(`${base}/atomic/v1/:slug`, () =>
+        HttpResponse.json({ message: "JWT is expired" }, { status: 401 }),
+      ),
+    );
+    const error = await api.uploadData(jwt, "live", 1, "payload", trustchain).catch(e => e);
+    expect(error).toMatchObject({ status: 401, method: "POST" });
+  });
+
+  it("exposes the HTTP status on a 401 delete", async () => {
+    server.use(
+      http.delete(`${base}/atomic/v1/:slug`, () =>
+        HttpResponse.json({ message: "JWT is expired" }, { status: 401 }),
+      ),
+    );
+    const error = await api.deleteData(jwt, "live", trustchain).catch(e => e);
+    expect(error).toMatchObject({ status: 401, method: "DELETE" });
+  });
+
+  it("falls back to a status message when the error body carries none", async () => {
+    server.use(http.get(`${base}/atomic/v1/:slug`, () => HttpResponse.json({}, { status: 403 })));
+    const error = await api.fetchData(jwt, "live", undefined, trustchain).catch(e => e);
+    expect(error.status).toBe(403);
+    expect(error.message).toContain("HTTP 403");
+  });
+
   it("fetchStatus returns service info", async () => {
     await expect(api.fetchStatus()).resolves.toEqual({ name: "cloud-sync", version: "1.0.0" });
   });
@@ -96,7 +134,7 @@ describe("getApi", () => {
   it("listenNotifications handles ping, jwt refresh, and version notifications", async () => {
     server.close();
     const { server: wsServer, port: wsPort, close: closeWsServer } = createWsServer();
-    const wsApi = getApi(`http://localhost:${wsPort}`);
+    const wsApi = getCloudSyncApi(`http://localhost:${wsPort}`);
     const receiveTunnel = makeTunnel<string>();
     const clientTunnel = makeTunnel<WebSocket>();
     const warnSpy = jest.spyOn(console, "warn").mockImplementation(() => {});
@@ -134,7 +172,7 @@ describe("getApi", () => {
   it("listenNotifications propagates jwt refresh failures", async () => {
     server.close();
     const { server: wsServer, port: wsPort, close: closeWsServer } = createWsServer();
-    const wsApi = getApi(`http://localhost:${wsPort}`);
+    const wsApi = getCloudSyncApi(`http://localhost:${wsPort}`);
 
     wsServer.on("connection", () => {});
 

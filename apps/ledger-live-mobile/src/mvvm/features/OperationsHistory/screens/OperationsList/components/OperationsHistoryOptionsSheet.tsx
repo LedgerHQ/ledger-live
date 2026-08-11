@@ -10,7 +10,7 @@ import {
   ListItemTitle,
   Spot,
 } from "@ledgerhq/lumen-ui-rnative";
-import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
+import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import type { OperationsHistoryDustFilterOption } from "../useOperationsListViewModel";
 
 type Props = Readonly<{

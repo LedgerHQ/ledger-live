@@ -12,6 +12,8 @@
   },
   "sideEffects": false,
   "scripts": {
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -19,6 +21,8 @@
     "unimported": "pnpm knip --directory ../../.. -W domain/entity/contact"
   },
   "dependencies": {
+    "@domain/entity-currency-crypto": "workspace:*",
+    "@domain/entity-currency-token": "workspace:*",
     "@reduxjs/toolkit": "catalog:",
     "@shared/schema-primitives": "workspace:*",
     "zod": "catalog:"
@@ -28,6 +32,7 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "jest": "catalog:",
+    "oxfmt": "catalog:",
     "typescript": "catalog:"
   }
 }

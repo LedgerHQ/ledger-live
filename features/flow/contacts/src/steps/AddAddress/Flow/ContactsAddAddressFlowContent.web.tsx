@@ -9,6 +9,7 @@ import type {
   AddAddressFlowState,
   AddAddressInputSource,
 } from "../types";
+import type { SanctionedAddressBannerProps } from "../ContactsAddAddressEntry.types";
 
 export type AddAddressWebFlowStep = "currency" | "address" | "name" | "review" | "success";
 
@@ -18,6 +19,7 @@ type AddAddressFlowContentState = Exclude<OpenAddAddressFlowState, { status: "se
 export type ContactsAddAddressFlowContentProps = Readonly<{
   state: AddAddressFlowContentState;
   entryLabels: AddAddressEntryLabels;
+  sanctionedAddressBanner?: SanctionedAddressBannerProps;
   nameLabels: ContactsAddAddressNameLabels;
   completionLabels: AddAddressCompletionLabels;
   onAddressChange: (address: string, inputMethod: AddAddressInputSource) => void;
@@ -59,6 +61,7 @@ export function shouldUseAddAddressFlowBackNavigation(state: OpenAddAddressFlowS
 export function ContactsAddAddressFlowContent({
   state,
   entryLabels,
+  sanctionedAddressBanner,
   nameLabels,
   completionLabels,
   onAddressChange,
@@ -76,6 +79,7 @@ export function ContactsAddAddressFlowContent({
           addressEntry={state.addressEntry}
           addressLabel={state.addressLabel}
           labels={entryLabels}
+          sanctionedAddressBanner={sanctionedAddressBanner}
           nameLabels={nameLabels}
           onAddressChange={onAddressChange}
           onAddressLabelChange={onAddressLabelChange}

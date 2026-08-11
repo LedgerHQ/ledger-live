@@ -201,6 +201,15 @@ export function collectIronwoodSpendableNotes(
 
 /**
  * Converts raw shielded transactions to BtcOperation format.
+ *
+ * Operation value is the amount the transaction actually moved, counted across
+ * every pool. `account.balance` deliberately counts Ironwood only (see
+ * `getPrivateBalance`), so an account still holding Orchard or Sapling notes has
+ * operations that do not sum to its balance. That divergence is the chosen
+ * trade-off: excluding the deprecated pools from what is spendable must not make
+ * the history deny that the funds moved. Valuing an Orchard send at 0 would be
+ * the only record of that payment reading as a 0-amount row, since
+ * `mapTxToOperations` emits nothing for a recipient the account does not own.
  */
 export function convertShieldedTransactionsToOperations(
   shieldedTransactions: ShieldedTransaction[],
@@ -209,9 +218,9 @@ export function convertShieldedTransactionsToOperations(
   return shieldedTransactions.map(tx => {
     const txType = getTxType(tx);
     const allNotes = [
+      ...(tx.decryptedData?.ironwood_outputs ?? []),
       ...(tx.decryptedData?.orchard_outputs ?? []),
       ...(tx.decryptedData?.sapling_outputs ?? []),
-      ...(tx.decryptedData?.ironwood_outputs ?? []),
     ];
     const sumNotes = (transferType: string) =>
       allNotes

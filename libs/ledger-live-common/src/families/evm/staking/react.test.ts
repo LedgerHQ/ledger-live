@@ -5,7 +5,8 @@ import { act, renderHook, waitFor } from "@testing-library/react";
 import BigNumber from "bignumber.js";
 import type { Unit } from "@domain/entity-currency-unit";
 import type { Page } from "@ledgerhq/coin-module-framework/api/index";
-import type { StakingValidatorItem, StakingAccount, StakingDelegation } from "@ledgerhq/types-live";
+import type { Validator } from "@ledgerhq/coin-module-framework/api/types";
+import type { StakingAccount, StakingDelegation } from "@ledgerhq/types-live";
 import * as stakingIndex from "@ledgerhq/coin-evm/staking/index";
 import * as accountModule from "../../../account";
 import {
@@ -32,31 +33,10 @@ jest.mock("../../../account", () => ({
 const mockedGetValidators = jest.mocked(stakingIndex.getValidators);
 const mockedGetAccountCurrency = jest.mocked(accountModule.getAccountCurrency);
 
-const sampleValidators: StakingValidatorItem[] = [
-  {
-    validatorAddress: "addr-a",
-    name: "Joe",
-    commission: 0.05,
-    tokens: "100",
-    votingPower: 1,
-    estimatedYearlyRewardsRate: 0,
-  },
-  {
-    validatorAddress: "addr-b",
-    name: "Moxie",
-    commission: 1,
-    tokens: "999",
-    votingPower: 2,
-    estimatedYearlyRewardsRate: 0,
-  },
-  {
-    validatorAddress: "addr-c",
-    name: "Bruce",
-    commission: 0.1,
-    tokens: "500",
-    votingPower: 3,
-    estimatedYearlyRewardsRate: 0,
-  },
+const sampleValidators: Validator[] = [
+  { id: "addr-a", address: "addr-a", name: "Joe", commissionRate: "0.05", balance: 100n, apy: 0 },
+  { id: "addr-b", address: "addr-b", name: "Moxie", commissionRate: "1", balance: 999n, apy: 0 },
+  { id: "addr-c", address: "addr-c", name: "Bruce", commissionRate: "0.1", balance: 500n, apy: 0 },
 ];
 
 describe("useEvmStakingValidators", () => {
@@ -98,28 +78,28 @@ describe("useEvmStakingValidators", () => {
     mockedGetValidators.mockResolvedValue({
       items: [
         {
-          validatorAddress: "addr-small",
+          id: "addr-small",
+          address: "addr-small",
           name: "Small",
-          commission: 0.05,
-          tokens: "999",
-          votingPower: 1,
-          estimatedYearlyRewardsRate: 0,
+          commissionRate: "0.05",
+          balance: 999n,
+          apy: 0,
         },
         {
-          validatorAddress: "addr-huge",
+          id: "addr-huge",
+          address: "addr-huge",
           name: "Huge",
-          commission: 0.05,
-          tokens: "1000000000000000000000",
-          votingPower: 3,
-          estimatedYearlyRewardsRate: 0,
+          commissionRate: "0.05",
+          balance: 1000000000000000000000n,
+          apy: 0,
         },
         {
-          validatorAddress: "addr-mid",
+          id: "addr-mid",
+          address: "addr-mid",
           name: "Mid",
-          commission: 0.05,
-          tokens: "1500",
-          votingPower: 2,
-          estimatedYearlyRewardsRate: 0,
+          commissionRate: "0.05",
+          balance: 1500n,
+          apy: 0,
         },
       ],
       next: undefined,
@@ -135,24 +115,27 @@ describe("useEvmStakingValidators", () => {
         name: "Huge",
         commission: 0.05,
         tokens: "1000000000000000000000",
-        votingPower: 3,
+        votingPower: 0,
         estimatedYearlyRewardsRate: 0,
+        validatorId: "addr-huge",
       },
       {
         validatorAddress: "addr-mid",
         name: "Mid",
         commission: 0.05,
         tokens: "1500",
-        votingPower: 2,
+        votingPower: 0,
         estimatedYearlyRewardsRate: 0,
+        validatorId: "addr-mid",
       },
       {
         validatorAddress: "addr-small",
         name: "Small",
         commission: 0.05,
         tokens: "999",
-        votingPower: 1,
+        votingPower: 0,
         estimatedYearlyRewardsRate: 0,
+        validatorId: "addr-small",
       },
     ]);
   });
@@ -189,30 +172,30 @@ describe("useEvmStakingValidators", () => {
   });
 
   it("should ignore stale responses when currencyId changes mid-flight", async () => {
-    const seiValidators: StakingValidatorItem[] = [
+    const seiValidators: Validator[] = [
       {
-        validatorAddress: "sei-addr",
+        id: "sei-addr",
+        address: "sei-addr",
         name: "Sei Validator",
-        commission: 0.05,
-        tokens: "100",
-        votingPower: 1,
-        estimatedYearlyRewardsRate: 0,
+        commissionRate: "0.05",
+        balance: 100n,
+        apy: 0,
       },
     ];
-    const celoValidators: StakingValidatorItem[] = [
+    const celoValidators: Validator[] = [
       {
-        validatorAddress: "celo-addr",
+        id: "celo-addr",
+        address: "celo-addr",
         name: "Celo Validator",
-        commission: 0.1,
-        tokens: "200",
-        votingPower: 1,
-        estimatedYearlyRewardsRate: 0,
+        commissionRate: "0.1",
+        balance: 200n,
+        apy: 0,
       },
     ];
 
     // sei_evm resolves after celo to simulate a slow first request.
-    let resolveSei!: (v: Page<StakingValidatorItem>) => void;
-    const seiPromise = new Promise<Page<StakingValidatorItem>>(res => {
+    let resolveSei!: (v: Page<Validator>) => void;
+    const seiPromise = new Promise<Page<Validator>>(res => {
       resolveSei = res;
     });
 
@@ -247,22 +230,20 @@ describe("useEvmStakingValidators", () => {
     mockedGetValidators.mockResolvedValue({
       items: [
         {
-          validatorAddress: "0xWhale",
-          validatorId: "1",
+          id: "1",
+          address: "0xWhale",
           name: "Whale",
-          commission: 0.05,
-          tokens: "1000000000000000000000",
-          votingPower: 1,
-          estimatedYearlyRewardsRate: 0,
+          commissionRate: "0.05",
+          balance: 1000000000000000000000n,
+          apy: 0,
         },
         {
-          validatorAddress: "0xF249265D16A9D70F684b0E43863242298C25d81c",
-          validatorId: "2",
+          id: "2",
+          address: "0xF249265D16A9D70F684b0E43863242298C25d81c",
           name: "Ledger by P2P.org",
-          commission: 0.05,
-          tokens: "100",
-          votingPower: 2,
-          estimatedYearlyRewardsRate: 0,
+          commissionRate: "0.05",
+          balance: 100n,
+          apy: 0,
         },
       ],
       next: undefined,
@@ -279,7 +260,7 @@ describe("useEvmStakingValidators", () => {
         name: "Ledger by P2P.org",
         commission: 0.05,
         tokens: "100",
-        votingPower: 2,
+        votingPower: 0,
         estimatedYearlyRewardsRate: 0,
       },
       {
@@ -288,7 +269,7 @@ describe("useEvmStakingValidators", () => {
         name: "Whale",
         commission: 0.05,
         tokens: "1000000000000000000000",
-        votingPower: 1,
+        votingPower: 0,
         estimatedYearlyRewardsRate: 0,
       },
     ]);

@@ -3,6 +3,7 @@ import { Provider } from "react-redux";
 import { Store } from "redux";
 import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/actions";
 import { restoreLargeScreenUpsellModalState } from "@ledgerhq/live-engagement/largeScreenUpsellModal";
+import { restorePayCardPersistedState } from "@domain/entity-pay-card";
 import { backfillOnboardingDate } from "~/logic/postOnboarding/backfillOnboardingDate";
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
 import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
@@ -26,6 +27,7 @@ import {
   getMarketState,
   getMarketListConfig,
   getMarketBannerState,
+  getPayCardState,
   getTrustchainState,
   getWalletExportState,
   getLargeMoverState,
@@ -46,7 +48,7 @@ import { importMarket } from "~/actions/market";
 import { importMarketListConfig } from "~/reducers/market";
 import { importMarketBannerState } from "~/reducers/marketBanner";
 import { importTrustchainStoreState } from "@ledgerhq/ledger-key-ring-protocol/store";
-import { importWalletState } from "@ledgerhq/live-wallet/store";
+import { importWalletState } from "~/reducers/wallet";
 import { importLargeMoverState } from "~/actions/largeMoverLandingPage";
 import { initHistory } from "~/reducers/history";
 import { restoreTokensToCache, parsePersistedCAL } from "@domain/api-currency-token";
@@ -100,6 +102,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         marketState,
         marketListConfigState,
         marketBannerState,
+        payCardState,
         trustchainStore,
         walletStore,
         protect,
@@ -120,6 +123,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         retry(getMarketState, MAX_RETRIES, RETRY_DELAY),
         retry(getMarketListConfig, MAX_RETRIES, RETRY_DELAY),
         retry(getMarketBannerState, MAX_RETRIES, RETRY_DELAY),
+        retry(getPayCardState, MAX_RETRIES, RETRY_DELAY),
         retry(getTrustchainState, MAX_RETRIES, RETRY_DELAY),
         retry(getWalletExportState, MAX_RETRIES, RETRY_DELAY),
         retry(getProtect, MAX_RETRIES, RETRY_DELAY),
@@ -166,7 +170,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
 
       // Handle account import with error recovery for async issues
       try {
-        store.dispatch(await importAccountsRaw(accountsData));
+        (await importAccountsRaw(accountsData))(store.dispatch);
       } catch (error) {
         // eslint-disable-next-line no-console
         console.error("Failed to import accounts during initialization:", error);
@@ -196,10 +200,14 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         store.dispatch(importMarketBannerState(marketBannerState));
       }
 
+      if (payCardState) {
+        store.dispatch(restorePayCardPersistedState(payCardState));
+      }
+
       store.dispatch(importTrustchainStoreState(trustchainStore));
 
       if (walletStore) {
-        store.dispatch(importWalletState(walletStore));
+        importWalletState(walletStore)(store.dispatch);
       }
 
       if (protect) {

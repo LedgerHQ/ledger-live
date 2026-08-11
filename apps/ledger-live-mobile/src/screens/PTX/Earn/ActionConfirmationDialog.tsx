@@ -10,7 +10,7 @@ import {
 import { useSelector } from "~/context/hooks";
 import { earnActionDialogSelector } from "~/reducers/earn";
 import { resolveActionDialog } from "~/components/WebPTXPlayer/actionDialogStore";
-import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
+import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 
 const SPOT_APPEARANCE = {
   info: "info",

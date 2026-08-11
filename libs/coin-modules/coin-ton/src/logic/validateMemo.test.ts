@@ -34,6 +34,16 @@ describe("validateMemo", () => {
     },
   );
 
+  it("should return false when the comment is missing", () => {
+    expect(validateMemo(undefined)).toEqual(false);
+  });
+
+  it("should return false when the comment text is not a string", () => {
+    const comment = { isEncrypted: false, text: undefined } as unknown as TonComment;
+
+    expect(validateMemo(comment)).toEqual(false);
+  });
+
   it.each([
     "a",
     "Hello World",

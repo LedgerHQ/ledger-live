@@ -19,6 +19,7 @@ const EXPECTED_REDUCER_PATHS = [
   "ofacGeoBlockApi",
   "payCardApi",
   "pushDevicesApi",
+  "swapApi",
 ] as const;
 
 describe("llmRTKApiReducers", () => {

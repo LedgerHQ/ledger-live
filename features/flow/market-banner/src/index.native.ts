@@ -1,1 +1,1 @@
-export { MarketBanner } from "./components/MarketBanner/index.native";
+export * from "./components/MarketBanner/index.native";

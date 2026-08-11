@@ -4,12 +4,11 @@ import { CryptoOrTokenCurrency, Currency } from "@domain/entity-currency";
 import { AccountLike } from "@ledgerhq/types-live";
 import type { ComponentType, ReactNode, ReactElement } from "react";
 import { EnhancedModularDrawerConfiguration } from "../../wallet-api/ModularDrawer/types";
-import { InterestRate } from "../../dada-client/entities";
 import { MarketItemResponse } from "../../market/utils/types";
 import BigNumber from "bignumber.js";
-import { ApyType } from "../../dada-client/types/trend";
+import type { Apy, ApyType, InterestRate } from "@domain/entity-interest-rate";
 
-export type ApyIndicatorComponent = ComponentType<{ value: number; type: ApyType }>;
+export type ApyIndicatorComponent = ComponentType<Apy>;
 
 export type AssetType = {
   name: string;

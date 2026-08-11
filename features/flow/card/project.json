@@ -1,8 +1,0 @@
-{
-  "name": "@features/flow-card",
-  "targets": {
-    "build": {
-      "executor": "nx:noop"
-    }
-  }
-}

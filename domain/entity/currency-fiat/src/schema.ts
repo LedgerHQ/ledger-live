@@ -1,6 +1,9 @@
 import { z } from "zod";
 import { UnitSchema } from "@domain/entity-currency-unit";
 
+/** Opaque identifier for a fiat currency (e.g. `"usd"`, `"eur"`). Non-empty string. */
+export const FiatCurrencyIdSchema = z.string().min(1).brand<"FiatCurrencyId">();
+
 /**
  * Canonical Zod-first schema for a fiat currency entity.
  *
@@ -29,5 +32,7 @@ export const FiatCurrencySchema = z.object({
   keywords: z.array(z.string()).optional(),
 });
 
+/** A fiat currency id, inferred from {@link FiatCurrencyIdSchema}. */
+export type FiatCurrencyId = z.infer<typeof FiatCurrencyIdSchema>;
 /** A fiat currency entity, inferred from {@link FiatCurrencySchema}. */
 export type FiatCurrency = z.infer<typeof FiatCurrencySchema>;

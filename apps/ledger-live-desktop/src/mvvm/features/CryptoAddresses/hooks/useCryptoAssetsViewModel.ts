@@ -2,7 +2,7 @@ import { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useSearchParams } from "react-router";
 import { useCategorizedAssetsFromPortfolio } from "LLD/hooks/useCategorizedAssets";
-import { useAssetsData } from "@ledgerhq/live-common/dada-client/hooks/useAssetsData";
+import { useAssetsData } from "@features/platform-aggregated-assets";
 import { useSelector } from "LLD/hooks/redux";
 import {
   hasOnboardedDeviceSelector,

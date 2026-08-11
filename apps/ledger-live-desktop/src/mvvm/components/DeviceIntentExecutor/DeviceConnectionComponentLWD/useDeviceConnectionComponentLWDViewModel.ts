@@ -1,16 +1,22 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { DeviceConnectionParams, DeviceConnectionResult } from "@ledgerhq/device-intent";
-import { dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
+import { dmkToLedgerDeviceIdMap, useDeviceIntentTracking } from "@ledgerhq/live-dmk-shared";
 import {
   connectDevice,
   ConnectDeviceUIStateTypes,
   type ConnectDeviceUIState,
+  webHidTransportIdentifier,
   useDeviceManagementKit,
 } from "@ledgerhq/live-dmk-desktop";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useLazyOnboardingActions } from "LLD/hooks/useLazyOnboardingActions";
 import { addNewDeviceModel } from "~/renderer/actions/settings";
 import { knownDevicesSelector } from "~/renderer/reducers/knownDevices";
+import {
+  trackDeviceConnected,
+  trackDeviceConnecting,
+  trackDevicePrompted,
+} from "../utils/trackDeviceIntent";
 
 const missingDeviceManagementKitError = new Error("Device Management Kit is not available");
 
@@ -33,18 +39,52 @@ export function useDeviceConnectionComponentLWDViewModel({
   const dmk = useDeviceManagementKit();
   const knownDevices = useSelector(knownDevicesSelector);
   const { handleConnect, handleBuyDevice } = useLazyOnboardingActions();
+  const { sourceFlow, analyticsProperties } = useDeviceIntentTracking();
   const [state, setState] = useState<ConnectDeviceUIState>({
     type: ConnectDeviceUIStateTypes.Loading,
   });
+  const firedRef = useRef({
+    prompted: false,
+    connecting: false,
+  });
+
+  useEffect(() => {
+    switch (state.type) {
+      case ConnectDeviceUIStateTypes.Discovering:
+      case ConnectDeviceUIStateTypes.WaitingForSelectedDevice:
+        if (firedRef.current.prompted) return;
+        firedRef.current.prompted = true;
+        trackDevicePrompted({ sourceFlow, extraProperties: analyticsProperties });
+        return;
+      case ConnectDeviceUIStateTypes.Connecting:
+        if (firedRef.current.connecting) return;
+        firedRef.current.connecting = true;
+        trackDeviceConnecting({
+          sourceFlow,
+          modelId: state.device.deviceModelId,
+          transport: state.device.transport === webHidTransportIdentifier ? "usb" : "ble",
+          extraProperties: analyticsProperties,
+        });
+    }
+  }, [analyticsProperties, sourceFlow, state]);
 
   const wrappedOnConnected = useCallback(
     (result: DeviceConnectionResult) => {
       const modelId = dmkToLedgerDeviceIdMap[result.connectedDevice.modelId];
+      const transport = result.connectedDevice.type === "USB" ? "usb" : "ble";
+
+      trackDeviceConnected({
+        sourceFlow,
+        modelId,
+        transport,
+        extraProperties: analyticsProperties,
+      });
+
       dispatch(addNewDeviceModel({ deviceModelId: modelId }));
 
       onConnected(result);
     },
-    [dispatch, onConnected],
+    [analyticsProperties, dispatch, onConnected, sourceFlow],
   );
 
   useEffect(() => {

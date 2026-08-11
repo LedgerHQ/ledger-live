@@ -1,5 +1,8 @@
 # @shared/env
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 Workspace-private DDD layer for Ledger Live environment variables.
 
 ## What it is

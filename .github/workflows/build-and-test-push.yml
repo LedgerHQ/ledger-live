@@ -8,34 +8,47 @@ on:
       - hotfix
 
 permissions:
-  id-token: write
   contents: read
-  pull-requests: write
 
 jobs:
   # LLD
   build-desktop:
     name: "Build Desktop"
+    permissions:
+      id-token: write
+      contents: read
     uses: LedgerHQ/ledger-live/.github/workflows/build-desktop-reusable.yml@develop
     secrets: inherit
 
   test-desktop:
     name: "Desktop E2E & Mock Tests"
+    permissions:
+      id-token: write
+      contents: read
     uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-reusable.yml@develop
     secrets: inherit
 
   codecheck-desktop:
     name: "Desktop Lint & Unit Tests"
+    permissions:
+      id-token: write
+      contents: read
     uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-codechecks-reusable.yml@develop
     secrets: inherit
 
   test-mobile:
     name: "Test Mobile"
+    permissions:
+      id-token: write
+      contents: read
     uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-reusable.yml@develop
     secrets: inherit
 
   build-test-mobile:
     name: "Build & Test Mobile"
+    permissions:
+      id-token: write
+      contents: read
     uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-mock-reusable.yml@develop
     secrets: inherit
     with:
@@ -47,21 +60,34 @@ jobs:
   # Tests
   test-libraries:
     name: "Test Libraries"
+    permissions:
+      id-token: write
+      contents: read
     uses: LedgerHQ/ledger-live/.github/workflows/test-libs-reusable.yml@develop
     secrets: inherit
 
   test-features:
     name: "Test Features"
+    permissions:
+      id-token: write
+      contents: read
     uses: LedgerHQ/ledger-live/.github/workflows/test-features-reusable.yml@develop
     secrets: inherit
 
   test-design-system:
     name: "Test UI Libs"
+    permissions:
+      id-token: write
+      contents: read
     uses: LedgerHQ/ledger-live/.github/workflows/test-design-system-reusable.yml@develop
     secrets: inherit
 
   build-web-tools:
     name: "Build Web Tools"
+    permissions:
+      id-token: write
+      contents: read
+      pull-requests: write
     uses: LedgerHQ/ledger-live/.github/workflows/build-web-tools-reusable.yml@develop
     secrets: inherit
     with:
@@ -69,11 +95,17 @@ jobs:
 
   test-cli:
     name: "Test CLI"
+    permissions:
+      id-token: write
+      contents: read
     uses: LedgerHQ/ledger-live/.github/workflows/test-cli-reusable.yml@develop
     secrets: inherit
 
   build-wallet-cli:
     name: "Build Wallet CLI"
+    permissions:
+      id-token: write
+      contents: read
     uses: LedgerHQ/ledger-live/.github/workflows/build-wallet-cli-reusable.yml@develop
     secrets: inherit
 

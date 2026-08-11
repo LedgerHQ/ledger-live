@@ -2,6 +2,7 @@ import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { mockContact, mockContactAddress, mockMeContact } from "@domain/entity-contact/schema.mock";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { createContactDetailLedgerWalletAccountsIntent } from "./model/contactDetailSharedState";
 import { createContactDetailAddressRowIntent } from "./model/viewModel";
 import type { ContactDetailLabels } from "./types";
 import { ContactDetailView } from "./ContactDetailView.web";
@@ -121,5 +122,43 @@ describe("ContactDetailView", () => {
     fireEvent.click(screen.getByTestId("contacts-detail-add-address"));
 
     expect(handleAddAddress).toHaveBeenCalledTimes(1);
+  });
+
+  it("should render the Ledger Wallet addresses entry for Me", () => {
+    const handleLedgerWalletAccountsPress = jest.fn();
+
+    render(
+      <ContactDetailView
+        {...defaultProps}
+        contact={mockMeContact()}
+        labels={{ ...labels, ledgerWalletAddresses: "Ledger Wallet addresses" }}
+        ledgerWalletAccountsIntent={createContactDetailLedgerWalletAccountsIntent(mockMeContact())}
+        onLedgerWalletAccountsPress={handleLedgerWalletAccountsPress}
+      />,
+    );
+
+    expect(screen.getByTestId("contacts-detail-ledger-wallet-addresses")).toHaveTextContent(
+      "Ledger Wallet addresses",
+    );
+
+    fireEvent.click(screen.getByTestId("contacts-detail-ledger-wallet-addresses"));
+
+    expect(handleLedgerWalletAccountsPress).toHaveBeenCalledWith({
+      type: "open-ledger-wallet-accounts",
+    });
+  });
+
+  it("should not render the Ledger Wallet addresses entry for saved contacts", () => {
+    render(
+      <ContactDetailView
+        {...defaultProps}
+        contact={mockContact({ id: "contact-benoit", name: "Benoit" })}
+        labels={{ ...labels, ledgerWalletAddresses: "Ledger Wallet addresses" }}
+        ledgerWalletAccountsIntent={undefined}
+        onLedgerWalletAccountsPress={() => undefined}
+      />,
+    );
+
+    expect(screen.queryByTestId("contacts-detail-ledger-wallet-addresses")).not.toBeInTheDocument();
   });
 });

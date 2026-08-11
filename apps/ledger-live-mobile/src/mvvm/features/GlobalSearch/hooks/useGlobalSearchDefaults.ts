@@ -1,13 +1,13 @@
 import { useMemo } from "react";
 import VersionNumber from "react-native-version-number";
-import { useAssetsData } from "@ledgerhq/live-common/dada-client/hooks/useAssetsData";
-import { useStocksData } from "@ledgerhq/live-common/dada-client/hooks/useStocksData";
-import { useStablecoinTickers } from "@ledgerhq/live-common/dada-client/hooks/useStablecoinTickers";
-import { useUsdToFiatRate } from "@ledgerhq/live-common/counterValues/hooks/useUsdToFiatRate";
 import {
+  useAssetsData,
+  useStocksData,
+  useStablecoinTickers,
   selectTopAssetsByCategory,
   selectTopStocks,
-} from "@ledgerhq/live-common/dada-client/utils/assetDiscovery";
+} from "@features/platform-aggregated-assets";
+import { useUsdToFiatRate } from "@ledgerhq/live-common/counterValues/hooks/useUsdToFiatRate";
 import type { MarketAssetDisplayData } from "LLM/components/AssetListItem";
 import { useSelector } from "~/context/hooks";
 import { counterValueCurrencySelector } from "~/reducers/settings";

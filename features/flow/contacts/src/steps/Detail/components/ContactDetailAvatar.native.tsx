@@ -1,7 +1,7 @@
 import React from "react";
 import { Avatar } from "@ledgerhq/lumen-ui-rnative";
 import type { Contact } from "@domain/entity-contact";
-import { ContactAvatar } from "../../../components/ContactAvatar/ContactAvatar.native";
+import { ContactAvatar } from "@features/platform-contacts/native";
 
 type ContactDetailAvatarProps = Readonly<{
   contact: Contact;

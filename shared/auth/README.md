@@ -1,7 +1,7 @@
 # @shared/auth
 
-> [!CAUTION]
-> **Status: UNSTABLE** — RTK Query auth adapter; under active development.
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
 
 RTK Query helpers for APIs that authenticate through an injected token provider.
 

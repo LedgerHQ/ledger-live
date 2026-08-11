@@ -500,6 +500,11 @@ function mapShieldedNote(n: NativeTx["orchardNotes"][number]) {
   };
 }
 
+export async function deriveShieldedAddress(ufvk: string): Promise<string> {
+  const native = await getNativeModule();
+  return native.orchardAddressFromUfvk(ufvk);
+}
+
 /**
  * Converts a native (Rust-side) transaction to the IPC-safe `ShieldedTransactionRaw`.
  *

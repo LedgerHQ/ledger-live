@@ -35,8 +35,8 @@ describe("Wallet assets", () => {
   TAGS.forEach(tag => $Tag(tag));
 
   it(`[${currency.testLabel}] - Wallet assets empty state shows placeholders and add account CTA`, async () => {
-    await app.portfolio.checkCryptosListSectionVisible(true);
-    await app.portfolio.checkStablecoinsListSectionVisible(true);
+    await app.portfolio.checkCryptosListSectionVisible(4, true);
+    await app.portfolio.checkStablecoinsListSectionVisible(2, true);
     await app.portfolio.checkTotalAssetItemCount(6);
     await app.portfolio.checkAddAccountCtaVisible();
   });
@@ -67,8 +67,8 @@ describe("Wallet assets", () => {
   TAGS.forEach(tag => $Tag(tag));
 
   it(`[${Currency.BTC.testLabel}] - Wallet assets section with fewer than 6 cryptos and stablecoins`, async () => {
-    await app.portfolio.checkCryptosListSectionVisible();
-    await app.portfolio.checkStablecoinsListSectionVisible();
+    await app.portfolio.checkCryptosListSectionVisible(4);
+    await app.portfolio.checkStablecoinsListSectionVisible(2);
     await app.portfolio.checkTotalAssetItemCount(6);
     await app.portfolio.checkAssetVisible("Bitcoin");
   });
@@ -92,8 +92,7 @@ describe("Wallet assets", () => {
   TAGS.forEach(tag => $Tag(tag));
 
   it("Wallet assets section caps cryptos at 6", async () => {
-    await app.portfolio.scrollToTopOfPortfolioPage();
-    await app.portfolio.checkCryptosListSectionVisible();
+    await app.portfolio.checkCryptosListSectionVisible(6);
     await app.portfolio.checkCryptosSectionAssetItemCount(6);
     await app.portfolio.checkAssetVisible("Ethereum");
     await app.portfolio.checkAssetVisible("Bitcoin");
@@ -104,8 +103,8 @@ describe("Wallet assets", () => {
   });
 
   it("Wallet assets section caps stablecoins at 6", async () => {
-    await app.portfolio.scrollToTopOfPortfolioPage();
-    await app.portfolio.checkStablecoinsListSectionVisible();
+    await app.portfolio.checkStablecoinsListSectionVisible(6);
+    await app.portfolio.checkStablecoinsSectionAssetItemCount(6);
     await app.portfolio.checkAssetVisible("Tether USD");
     await app.portfolio.checkAssetVisible("USD Coin");
     await app.portfolio.tapStablecoinsSectionTitle();

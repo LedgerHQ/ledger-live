@@ -61,19 +61,21 @@ export function fromBitcoinOutputRaw([
 export function toBitcoinResourcesRaw(r: BitcoinResources): BitcoinResourcesRaw {
   return {
     utxos: r.utxos.map(toBitcoinOutputRaw),
-    walletAccount: r.walletAccount && wallet.exportToSerializedAccountSync(r.walletAccount),
+    ...(r.walletAccount && {
+      walletAccount: wallet.exportToSerializedAccountSync(r.walletAccount),
+    }),
   };
 }
 
 export function fromBitcoinResourcesRaw(r: BitcoinResourcesRaw): BitcoinResources {
   return {
     utxos: r.utxos.map(fromBitcoinOutputRaw),
-    walletAccount:
-      r.walletAccount &&
-      wallet.importFromSerializedAccountSync(
+    ...(r.walletAccount && {
+      walletAccount: wallet.importFromSerializedAccountSync(
         r.walletAccount,
         walletBtcCurrencyById(r.walletAccount.params.currency),
       ),
+    }),
   };
 }
 
@@ -101,6 +103,7 @@ export function toZcashPrivateInfoRaw(info: ZcashPrivateInfo): ZcashPrivateInfoR
     ironwoodBalance: info.ironwoodBalance.toString(),
     lastSyncTimestamp: info.lastSyncTimestamp,
     ufvk: info.ufvk,
+    shieldedAddress: info.shieldedAddress,
     syncState: info.syncState,
     progress: info.progress,
     estimatedTimeRemaining: info.estimatedTimeRemaining,
@@ -133,6 +136,7 @@ export function fromZcashPrivateInfoRaw(info: ZcashPrivateInfoRaw): ZcashPrivate
     ironwoodBalance: new BigNumber(info.ironwoodBalance ?? "0"),
     lastSyncTimestamp: info.lastSyncTimestamp,
     ufvk: info.ufvk,
+    shieldedAddress: info.shieldedAddress ?? null,
     syncState: info.syncState as ZcashPrivateInfo["syncState"],
     progress: info.progress,
     estimatedTimeRemaining: info.estimatedTimeRemaining,

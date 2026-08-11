@@ -13,7 +13,7 @@ import {
   accountUserDataExportSelector,
   walletStateExportShouldDiffer,
   exportWalletState,
-} from "@ledgerhq/live-wallet/store";
+} from "~/renderer/reducers/wallet";
 import {
   trustchainStoreActionTypePrefix,
   trustchainStoreSelector,
@@ -29,9 +29,10 @@ import { marketBannerStoreSelector } from "../reducers/marketBanner";
 import {
   LARGE_SCREEN_UPSELL_MODAL,
   persistedLargeScreenUpsellModalSelector,
-} from "@domain/entity-large-screen-upsell-modal";
+} from "@features/flow-large-screen-upsell";
 import { knownDevicesStoreSelector } from "../reducers/knownDevices";
 import { exportIdentitiesForPersistence } from "@domain/entity-client-identity";
+import { payCardPersistedSelector } from "@domain/entity-pay-card";
 import { accountsPersistedStateChanged } from "@ledgerhq/live-common/account/index";
 
 let DB_MIDDLEWARE_ENABLED = true;
@@ -130,6 +131,13 @@ const DBMiddleware: Middleware<object, State> = store => next => action => {
     return res;
   }
 
+  if (action.type.startsWith("payCard/")) {
+    const res = next(action);
+    const state = store.getState();
+    setKey("app", "payCard", payCardPersistedSelector(state));
+    return res;
+  }
+
   if (action.type.startsWith("cryptoAssetsApi/")) {
     const res = next(action);
     const state = store.getState();
@@ -148,7 +156,7 @@ const DBMiddleware: Middleware<object, State> = store => next => action => {
     }
   }
 
-  if (walletStateExportShouldDiffer(oldState.wallet, newState.wallet)) {
+  if (oldState.wallet && walletStateExportShouldDiffer(oldState.wallet, newState.wallet)) {
     setKey("app", "wallet", exportWalletState(newState.wallet));
   }
 

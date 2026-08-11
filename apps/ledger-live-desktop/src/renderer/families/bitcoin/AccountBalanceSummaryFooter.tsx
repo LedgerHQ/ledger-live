@@ -11,6 +11,7 @@ import Discreet, { useDiscreetMode } from "~/renderer/components/Discreet";
 import Box from "~/renderer/components/Box/Box";
 import Text from "~/renderer/components/Text";
 import InfoCircle from "~/renderer/icons/InfoCircle";
+import TriangleWarning from "~/renderer/icons/TriangleWarning";
 import ToolTip from "~/renderer/components/Tooltip";
 import ButtonV3 from "~/renderer/components/ButtonV3";
 import Spinner from "~/renderer/components/Spinner";
@@ -19,24 +20,52 @@ import { openModal } from "~/renderer/actions/modals";
 import type { Currency } from "@ledgerhq/wallet-btc/index";
 import type { ZcashAccount } from "@ledgerhq/live-common/families/bitcoin/types";
 import type { TokenAccount } from "@ledgerhq/types-live";
-import type { ZcashSyncState } from "@ledgerhq/coin-bitcoin/chain-adapters/zcash/types";
+import type { ZcashSyncState } from "@ledgerhq/coin-zcash/network/types";
 import {
   ZCASH_CHECK_OUTDATED_SYNC_INTERVAL,
   ZCASH_OUTDATED_SYNC_INTERVAL_MINUTES,
-} from "@ledgerhq/coin-bitcoin/chain-adapters/zcash/constants";
+} from "@ledgerhq/coin-zcash/constants";
+import {
+  getPrivateBalance,
+  getTransparentBalance,
+} from "@ledgerhq/coin-zcash/logic/account/balance";
 import { selectShieldedSubscriptions } from "~/renderer/reducers/shieldedSyncSubscriptions";
 import { useZcashShieldedSync } from "./useZcashShieldedSync";
 
-const Wrapper = styled(Box).attrs(() => ({
-  horizontal: true,
+const Container = styled(Box).attrs(() => ({
   mt: 4,
   p: 5,
   pb: 0,
-  scroll: true,
 }))`
   border-top: 1px solid ${p => p.theme.colors.neutral.c30};
+`;
+
+const Wrapper = styled(Box).attrs(() => ({
+  horizontal: true,
+  scroll: true,
+}))`
   justify-content: flex-start;
 `;
+
+const Separator = styled(Box).attrs(() => ({
+  mt: 4,
+}))`
+  border-top: 1px solid ${p => p.theme.colors.neutral.c30};
+`;
+
+const WarningWrapper = styled(Box).attrs(() => ({
+  horizontal: true,
+  alignItems: "center",
+  color: "warning.c70",
+  mt: 3,
+}))``;
+
+const WarningText = styled(Text).attrs(() => ({
+  fontSize: 3,
+  ff: "Inter|Medium",
+  color: "warning.c70",
+  ml: 2,
+}))``;
 
 const BalanceDetail = styled(Box).attrs(() => ({
   flex: "0 0 auto",
@@ -201,10 +230,6 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
   const showPrivateBalanceComponent = useFeature("zcashShielded")?.enabled;
 
   const privateInfo = "privateInfo" in account ? account.privateInfo : null;
-  const { orchardBalance, saplingBalance } = privateInfo ?? {
-    orchardBalance: BigNumber(0),
-    saplingBalance: BigNumber(0),
-  };
   const syncState = privateInfo?.syncState ?? "disabled";
   const previousSyncState = usePrevious(syncState);
   const lastSync = privateInfo?.lastSyncTimestamp ? new Date(privateInfo.lastSyncTimestamp) : null;
@@ -308,71 +333,85 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
     locale,
   };
 
+  // Each label is derived from its own source rather than one from another, so
+  // they stay correct regardless of which module (coin-bitcoin flag-off adapter
+  // vs coin-zcash) last wrote `account.balance` — a toggle or a pre-first-sync
+  // flag-ON no longer yields an under-reported or negative transparent balance.
+  const bitcoinResources = "bitcoinResources" in account ? account.bitcoinResources : undefined;
+  const _transparentBalance = getTransparentBalance(bitcoinResources?.utxos);
+  const _privateBalance = getPrivateBalance(privateInfo);
   const _availableBalance = balance ?? BigNumber(0);
-  const _privateBalance = orchardBalance.plus(saplingBalance);
-  const _transparentBalance = _availableBalance.minus(_privateBalance);
 
   const transparentBalanceLabel = formatCurrencyUnit(unit, _transparentBalance, formatConfig);
   const privateBalanceLabel = formatCurrencyUnit(unit, _privateBalance, formatConfig);
   const availableBalanceLabel = formatCurrencyUnit(unit, _availableBalance, formatConfig);
 
   return (
-    <Wrapper>
-      <BalanceDetail>
-        <ToolTip content={<Trans i18nKey="zcash.account.availableBalanceTooltip" />}>
-          <TitleWrapper>
-            <Title>
-              <Trans i18nKey="zcash.account.availableBalance" />
-            </Title>
-            <InfoCircle size={13} />
-          </TitleWrapper>
-        </ToolTip>
-        <AmountValue>
-          <Discreet>{availableBalanceLabel}</Discreet>
-        </AmountValue>
-      </BalanceDetail>
-      <BalanceDetail>
-        <ToolTip content={<Trans i18nKey="zcash.account.transparentBalanceTooltip" />}>
-          <TitleWrapper>
-            <Title>
-              <Trans i18nKey="zcash.account.transparentBalance" />
-            </Title>
-            <InfoCircle size={13} />
-          </TitleWrapper>
-        </ToolTip>
-        <AmountValue>
-          <Discreet>{transparentBalanceLabel}</Discreet>
-        </AmountValue>
-      </BalanceDetail>
-      <BalanceDetail>
-        <ToolTip content={<Trans i18nKey="zcash.account.privateBalanceTooltip" />}>
-          <TitleWrapper>
-            <Title>
-              <Trans i18nKey="zcash.account.privateBalance" />
-            </Title>
-            <InfoCircle size={13} />
-          </TitleWrapper>
-        </ToolTip>
-        <AmountValue>
-          <Discreet>{privateBalanceLabel}</Discreet>
-        </AmountValue>
-      </BalanceDetail>
-      <BalanceDetail>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: syncState === "running" || syncState === "stopped" ? "row" : "column",
-          }}
-        >
-          <ActionButton t={t} syncState={syncState} updateSyncState={updateSyncState} />
-          <SyncProgress syncState={syncState} progress={progress} lastSync={lastSync} />
-        </div>
-        <EstimatedTimeRemaining
-          syncState={syncState}
-          estimatedTimeRemaining={estimatedTimeRemaining}
-        />
-      </BalanceDetail>
-    </Wrapper>
+    <Container>
+      <Wrapper>
+        <BalanceDetail>
+          <ToolTip content={<Trans i18nKey="zcash.account.availableBalanceTooltip" />}>
+            <TitleWrapper>
+              <Title>
+                <Trans i18nKey="zcash.account.availableBalance" />
+              </Title>
+              <InfoCircle size={13} />
+            </TitleWrapper>
+          </ToolTip>
+          <AmountValue>
+            <Discreet>{availableBalanceLabel}</Discreet>
+          </AmountValue>
+        </BalanceDetail>
+        <BalanceDetail>
+          <ToolTip content={<Trans i18nKey="zcash.account.transparentBalanceTooltip" />}>
+            <TitleWrapper>
+              <Title>
+                <Trans i18nKey="zcash.account.transparentBalance" />
+              </Title>
+              <InfoCircle size={13} />
+            </TitleWrapper>
+          </ToolTip>
+          <AmountValue>
+            <Discreet>{transparentBalanceLabel}</Discreet>
+          </AmountValue>
+        </BalanceDetail>
+        <BalanceDetail>
+          <ToolTip content={<Trans i18nKey="zcash.account.privateBalanceTooltip" />}>
+            <TitleWrapper>
+              <Title>
+                <Trans i18nKey="zcash.account.privateBalance" />
+              </Title>
+              <InfoCircle size={13} />
+            </TitleWrapper>
+          </ToolTip>
+          <AmountValue>
+            <Discreet>{privateBalanceLabel}</Discreet>
+          </AmountValue>
+        </BalanceDetail>
+        <BalanceDetail>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: syncState === "running" || syncState === "stopped" ? "row" : "column",
+            }}
+          >
+            <ActionButton t={t} syncState={syncState} updateSyncState={updateSyncState} />
+            <SyncProgress syncState={syncState} progress={progress} lastSync={lastSync} />
+          </div>
+          <EstimatedTimeRemaining
+            syncState={syncState}
+            estimatedTimeRemaining={estimatedTimeRemaining}
+          />
+        </BalanceDetail>
+      </Wrapper>
+      <Separator />
+      <WarningWrapper>
+        <TriangleWarning size={16} />
+        <WarningText>
+          <Trans i18nKey="zcash.account.privateBalanceWarning" />
+        </WarningText>
+      </WarningWrapper>
+    </Container>
   );
 };
 

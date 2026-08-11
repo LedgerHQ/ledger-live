@@ -6,6 +6,7 @@ export async function getValidators(api: CosmosAPI, _cursor?: Cursor): Promise<P
   const validators = await api.getValidators();
 
   const items: Validator[] = validators.map(v => ({
+    id: v.validatorAddress,
     address: v.validatorAddress,
     name: v.name,
     balance: BigInt(v.tokens || "0"),

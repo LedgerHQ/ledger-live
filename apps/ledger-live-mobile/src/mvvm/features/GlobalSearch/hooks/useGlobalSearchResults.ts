@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import VersionNumber from "react-native-version-number";
-import { useAssetsData } from "@ledgerhq/live-common/dada-client/hooks/useAssetsData";
-import { selectCurrencyForMetaId } from "@ledgerhq/live-common/dada-client/utils/currencySelection";
+import { useAssetsData, selectCurrencyForMetaId } from "@features/platform-aggregated-assets";
 import { useSearchCommon } from "@ledgerhq/live-common/modularDrawer/hooks/useSearch";
 import { useFeatureFlaggedCurrencies } from "@features/platform-currencies";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";

@@ -16,7 +16,8 @@ jest.mock("@react-navigation/native", () => ({
 
 const mockAssetsData = jest.fn();
 
-jest.mock("@ledgerhq/live-common/dada-client/hooks/useAssetsData", () => ({
+jest.mock("@features/platform-aggregated-assets", () => ({
+  ...jest.requireActual("@features/platform-aggregated-assets"),
   useAssetsData: () => mockAssetsData(),
 }));
 

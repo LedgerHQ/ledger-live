@@ -1,5 +1,6 @@
 import BigNumber from "bignumber.js";
-import { CASPER_MAX_TRANSFER_ID, validateMemo } from "./validateMemo";
+import { CASPER_MAX_TRANSFER_ID } from "../constants";
+import { validateMemo } from "./validateMemo";
 
 describe("validateMemo", () => {
   it.each([undefined, ""])(

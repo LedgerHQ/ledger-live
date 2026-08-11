@@ -16,11 +16,9 @@ jest.mock("~/actions/general", () => ({
   useDistribution: (...args: unknown[]) => mockUseDistribution(...args),
 }));
 
-jest.mock("@ledgerhq/live-common/dada-client/hooks/useStablecoinTickers", () => ({
+jest.mock("@features/platform-aggregated-assets", () => ({
+  ...jest.requireActual("@features/platform-aggregated-assets"),
   useStablecoinTickers: (...args: unknown[]) => mockUseStablecoinTickers(...args),
-}));
-
-jest.mock("@ledgerhq/live-common/dada-client/hooks/useStockAssetIds", () => ({
   useStockAssetIds: (...args: unknown[]) => mockUseStockAssetIds(...args),
 }));
 

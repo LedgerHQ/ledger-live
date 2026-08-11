@@ -1,1 +1,1 @@
-export { useTheme } from "./useTheme.native";
+export * from "./useTheme.native";

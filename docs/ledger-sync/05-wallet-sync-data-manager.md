@@ -1,9 +1,9 @@
-# 5 · WalletSyncDataManager
+# 5 · CloudSyncDataManager
 
 > Layer 4 of the [Ledger Sync stack](./README.md). Code:
-> [`libs/live-wallet/src/walletsync`](../../libs/live-wallet/src/walletsync).
+> [`shared/wallet-sync`](../../shared/wallet-sync) (aggregation core) · entity modules in [`domain/entity/`](../../domain/entity/) · accounts module in [`libs/live-wallet/src/accounts`](../../libs/live-wallet/src/accounts).
 
-`WalletSyncDataManager` is where Ledger Wallet's world (rich `Account` objects, names, …) meets
+`CloudSyncDataManager` is where Ledger Wallet's world (rich `Account` objects, names, …) meets
 the wallet-sync data model (minimal descriptors stored in Cloud Sync). It owns all the
 **reconciliation** between local and distant state.
 
@@ -26,7 +26,7 @@ stateB = stateA + (distA → distB)
 ## The interface
 
 ```ts
-interface WalletSyncDataManager<LocalState, Update, Schema extends ZodType,
+interface CloudSyncDataManager<LocalState, Update, Schema extends ZodType,
                                  DistantState = z.infer<Schema>> {
   schema: Schema;
   diffLocalToDistant: (local: LocalState, latest: DistantState | null) => DistantDiff<DistantState>;
@@ -61,19 +61,25 @@ inferred automatically.
 
 ```mermaid
 flowchart TB
-    root["root WalletSyncDataManager<br/>(createAggregator)"]
+    root["root CloudSyncDataManager<br/>(createAggregator)"]
     root --> accounts["<b>accounts</b><br/>Account[] ⇄ AccountDescriptor[]"]
     root --> accountNames["<b>accountNames</b><br/>id → name"]
     root --> recent["<b>recentAddresses</b>"]
 ```
 
-Current modules ([`root.ts`](../../libs/live-wallet/src/walletsync/root.ts)):
+Current modules (composed via `createAggregator` in apps):
 
 ```ts
 const modules = { accounts, accountNames, recentAddresses };
 const root = createAggregator(modules);
 // DistantState = { accounts?, accountNames?, recentAddresses? }   (each field optional)
 ```
+
+| Module | Package |
+|---|---|
+| `accounts` | [`libs/live-wallet/src/accounts/cloudSyncModule.ts`](../../libs/live-wallet/src/accounts/cloudSyncModule.ts) |
+| `accountNames` | [`domain/entity/account-name`](../../domain/entity/account-name) |
+| `recentAddresses` | [`domain/entity/recent-addresses`](../../domain/entity/recent-addresses) |
 
 > [!NOTE]
 > The Confluence docs only listed `accounts` and `accountNames`; a third module
@@ -88,7 +94,7 @@ const root = createAggregator(modules);
 
 ## The `accounts` module
 
-The most involved module ([`modules/accounts.ts`](../../libs/live-wallet/src/walletsync/modules/accounts.ts)).
+The most involved module ([`libs/live-wallet/src/accounts/cloudSyncModule.ts`](../../libs/live-wallet/src/accounts/cloudSyncModule.ts)).
 
 - **LocalState**: `{ list: Account[], nonImportedAccountInfos }` — the full rich accounts plus a
   queue of accounts that failed to import (for retry).
@@ -132,7 +138,7 @@ flowchart TB
 
 ## The `accountNames` module
 
-Minimal ([`modules/accountNames.ts`](../../libs/live-wallet/src/walletsync/modules/accountNames.ts)):
+Minimal ([`domain/entity/account-name/src/cloudSyncModule.ts`](../../domain/entity/account-name/src/cloudSyncModule.ts)):
 `Map<id, name>` locally, `Record<id, name>` distant, **last-write-wins** (an incoming state that
 differs from both local and latest replaces all names). Names are applied on top of the UI, not
 on the blockchain.

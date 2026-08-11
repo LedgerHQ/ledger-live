@@ -9,6 +9,10 @@ import { createBridges } from "./index";
 import { ZCASH_ESTIMATION_RECIPIENT } from "../constants";
 import type { SignerContext } from "../types/signer";
 import type { ZcashAccount } from "../types/bridge";
+import { getZCashClient } from "../logic/engineClient";
+
+jest.mock("../logic/engineClient", () => ({ getZCashClient: jest.fn() }));
+const mockedGetZCashClient = jest.mocked(getZCashClient);
 
 const currency = getCryptoCurrencyById("zcash");
 const coinConfig = () => ({ info: { status: { type: "active" as const } } });
@@ -46,5 +50,16 @@ describe("createBridges", () => {
     const { accountBridge } = createBridges(makeSignerContext(jest.fn()), coinConfig);
 
     expect(accountBridge.getEstimationRecipient?.(account)).toBe(ZCASH_ESTIMATION_RECIPIENT);
+  });
+
+  it("exposes deriveShieldedAddress, delegating to getZCashClient", async () => {
+    const deriveShieldedAddress = jest.fn().mockResolvedValue("u1derived");
+    mockedGetZCashClient.mockResolvedValue({ deriveShieldedAddress } as any);
+    const { accountBridge } = createBridges(makeSignerContext(jest.fn()), coinConfig);
+
+    const result = await accountBridge.deriveShieldedAddress!("uview1testufvk");
+
+    expect(deriveShieldedAddress).toHaveBeenCalledWith("uview1testufvk");
+    expect(result).toBe("u1derived");
   });
 });

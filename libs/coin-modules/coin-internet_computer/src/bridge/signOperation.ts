@@ -1,102 +1,64 @@
 import { Cbor, requestIdOf } from "@dfinity/agent";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
-import { log } from "@ledgerhq/logs";
-import { Account, AccountBridge, DeviceId } from "@ledgerhq/types-live";
+import { AccountBridge, DeviceId, OperationType } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import { Observable } from "rxjs";
+import {
+  createReadStateRequest,
+  createUnsignedListNeuronsTransaction,
+  createUnsignedNeuronCommandTransaction,
+} from "../logic/buildNeuronTransaction";
 import { createUnsignedSendTransaction, type UnsignedTransaction } from "../logic/buildTransaction";
 import { pubkeyToDer } from "../logic/crypto";
 import { hashTransaction } from "../logic/hashTransaction";
-import { Transaction } from "../types";
-import { ICPSigner } from "../types";
+import { ICPSigner, ICPTransactionType, TRANSFER_TYPES, Transaction } from "../types";
 import { getAddress } from "./bridgeHelpers/addresses";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
 
-const signICPTransaction = async (
-  unsignedTxn: UnsignedTransaction,
-  derivationPath: string,
-  signerContext: SignerContext<ICPSigner>,
-  account: Account,
-  deviceId: DeviceId,
-) => {
-  const blob = Cbor.encode({ content: unsignedTxn });
-  log("debug", "[signICPTransaction] blob", Buffer.from(blob).toString("hex"));
-  const signatures = await signerContext(deviceId, signer =>
-    signer.sign(derivationPath, Buffer.from(blob)),
-  );
-
-  invariant(signatures.signatureRS, "[ICP](signICPTransaction) Signature not found");
-  invariant(account.xpub, "[ICP](signICPTransaction) Account xpub is required");
-  return {
-    signature: Buffer.from(signatures.signatureRS).toString("hex"),
-    callBody: {
-      content: unsignedTxn,
-      sender_pubkey: pubkeyToDer(account.xpub),
-      sender_sig: signatures.signatureRS,
-    },
-  };
+// Optimistic operation type per transaction; governance calls cost only the network fee.
+const OPERATION_TYPE: Partial<Record<ICPTransactionType, OperationType>> = {
+  send: "OUT",
+  create_neuron: "STAKE_NEURON",
+  increase_stake: "TOP_UP_NEURON",
 };
+
+const toHex = (bytes: ArrayBuffer | Uint8Array): string =>
+  Buffer.from(bytes as Uint8Array).toString("hex");
+
+// Assemble the CBOR envelope submitted to the replica: signed content + DER pubkey + raw signature.
+const signedEnvelope = (
+  content: UnsignedTransaction | object,
+  xpub: string,
+  senderSig: Buffer,
+): string =>
+  toHex(Cbor.encode({ content, sender_pubkey: pubkeyToDer(xpub), sender_sig: senderSig }));
 
 export const buildSignOperation =
   (signerContext: SignerContext<ICPSigner>): AccountBridge<Transaction>["signOperation"] =>
   ({ account, transaction, deviceId }) =>
     new Observable(o => {
       async function main() {
-        log("debug", "[signOperation] icp start fn");
-        log("debug", "[signOperation] transaction", transaction);
-
         const { xpub } = account;
         invariant(xpub, "[ICP](signOperation) Account xpub is required");
+        const { address, derivationPath } = getAddress(account);
 
-        const { derivationPath } = getAddress(account);
+        o.next({ type: "device-signature-requested" });
 
-        const { unsignedTransaction, transferRawRequest } = createUnsignedSendTransaction(
-          transaction,
-          xpub,
-        );
+        const rawData = TRANSFER_TYPES.has(transaction.type)
+          ? await signTransfer(transaction, address, derivationPath, xpub, signerContext, deviceId)
+          : await signGovernanceCall(transaction, derivationPath, xpub, signerContext, deviceId);
 
-        o.next({
-          type: "device-signature-requested",
-        });
+        o.next({ type: "device-signature-granted" });
 
-        let signature: string = "";
-        let encodedSignedCallBlob: string = "";
-        const res = await signICPTransaction(
-          unsignedTransaction,
-          derivationPath,
-          signerContext,
+        const operation = await buildOptimisticOperation(
           account,
-          deviceId,
+          transaction,
+          rawData.hash,
+          OPERATION_TYPE[transaction.type] ?? "FEES",
         );
-        signature = res.signature;
-        encodedSignedCallBlob = Buffer.from(Cbor.encode(res.callBody)).toString("hex");
-        invariant(signature, "[ICP](signOperation) Signature not found");
-        const transferRequestIdHex = Buffer.from(requestIdOf(unsignedTransaction)).toString("hex");
-
-        o.next({
-          type: "device-signature-granted",
-        });
-
-        const hash = hashTransaction({
-          from: account.freshAddress,
-          to: transaction.recipient,
-          amount: transferRawRequest.amount.e8s,
-          fee: transferRawRequest.fee.e8s,
-          memo: transferRawRequest.memo,
-          created_at_time: transferRawRequest.created_at_time[0]["timestamp_nanos"],
-        });
-
-        const operation = await buildOptimisticOperation(account, transaction, hash);
         o.next({
           type: "signed",
-          signedOperation: {
-            operation,
-            signature,
-            rawData: {
-              encodedSignedCallBlob,
-              transferRequestIdHex,
-            },
-          },
+          signedOperation: { operation, signature: rawData.signature, rawData: rawData.data },
         });
       }
 
@@ -105,3 +67,98 @@ export const buildSignOperation =
         e => o.error(e),
       );
     });
+
+// ICP ledger-canister transfer path. `stake` marks the transfer as a neuron creation (governance subaccount).
+async function signTransfer(
+  transaction: Transaction,
+  senderAddress: string,
+  derivationPath: string,
+  xpub: string,
+  signerContext: SignerContext<ICPSigner>,
+  deviceId: DeviceId,
+) {
+  const { unsignedTransaction, transferRawRequest } = createUnsignedSendTransaction(
+    transaction,
+    xpub,
+  );
+  const blob = Cbor.encode({ content: unsignedTransaction });
+
+  const signatures = await signerContext(deviceId, signer =>
+    signer.sign(derivationPath, Buffer.from(blob), transaction.type === "create_neuron"),
+  );
+  invariant(signatures.signatureRS, "[ICP](signOperation) Signature not found");
+
+  // Reproduces the on-chain ledger transaction identity; `from` is the sender, matching mapTxToOps
+  // (the neuron account is the transfer `to`), so the optimistic op reconciles with the confirmed one.
+  const hash = hashTransaction({
+    from: senderAddress,
+    to: transaction.recipient,
+    amount: transferRawRequest.amount.e8s,
+    fee: transferRawRequest.fee.e8s,
+    memo: transferRawRequest.memo,
+    created_at_time: transferRawRequest.created_at_time[0].timestamp_nanos,
+  });
+
+  return {
+    signature: toHex(signatures.signatureRS),
+    hash,
+    data: {
+      encodedSignedCallBlob: signedEnvelope(unsignedTransaction, xpub, signatures.signatureRS),
+      transferRequestIdHex: toHex(requestIdOf(unsignedTransaction)),
+      methodName: transaction.type,
+      // The nonce broadcast passes to claim_or_refresh (distinct from the transfer memo, which is
+      // 0 for a top-up so sync classifies it TOP_UP_NEURON, not STAKE_NEURON).
+      stakeNonce: transaction.stakeNonce,
+      neuronId: transaction.neuronId,
+    },
+  };
+}
+
+// Governance update-call path (manage_neuron, list_neurons): sign the call + its companion
+// read-state request.
+async function signGovernanceCall(
+  transaction: Transaction,
+  derivationPath: string,
+  xpub: string,
+  signerContext: SignerContext<ICPSigner>,
+  deviceId: DeviceId,
+) {
+  const unsignedTransaction =
+    transaction.type === "list_neurons"
+      ? createUnsignedListNeuronsTransaction(xpub)
+      : createUnsignedNeuronCommandTransaction(transaction, xpub);
+  const { readStateContent, requestId } = createReadStateRequest(unsignedTransaction);
+
+  const signatures = await signerContext(deviceId, signer =>
+    signer.signUpdateCall(
+      derivationPath,
+      Buffer.from(Cbor.encode({ content: unsignedTransaction })),
+      Buffer.from(Cbor.encode({ content: readStateContent })),
+    ),
+  );
+  invariant(
+    signatures.requestSignatureRS && signatures.readStateSignatureRS,
+    "[ICP](signOperation) Update-call signatures not found",
+  );
+
+  const requestIdHex = toHex(requestId);
+  return {
+    signature: requestIdHex,
+    hash: requestIdHex,
+    data: {
+      encodedSignedCallBlob: signedEnvelope(
+        unsignedTransaction,
+        xpub,
+        signatures.requestSignatureRS,
+      ),
+      encodedSignedReadStateBlob: signedEnvelope(
+        readStateContent,
+        xpub,
+        signatures.readStateSignatureRS,
+      ),
+      requestId: requestIdHex,
+      methodName: transaction.type,
+      neuronId: transaction.neuronId,
+    },
+  };
+}

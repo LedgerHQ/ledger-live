@@ -40,4 +40,5 @@ message NewFundResponse {
     bytes    in_amount = 4;              // inAmount
     string   in_address = 5;             // account
     bytes    device_transaction_id = 6;  // nonce
+    string   in_extra_id = 7;            // inExtraId
 }

@@ -2,12 +2,15 @@ import React from "react";
 import { screen } from "@testing-library/react";
 import { render } from "tests/testSetup";
 
+import { DeviceIntentTrackingTestWrapper } from "../testUtils";
 import { NoKnownDeviceState } from "./NoKnownDeviceState";
 
 describe("NoKnownDeviceState", () => {
   it("GIVEN there is no known device WHEN rendering THEN it shows the no known device copy", () => {
     // WHEN
-    render(<NoKnownDeviceState onConnectLedgerDevice={jest.fn()} onBuyLedgerDevice={jest.fn()} />);
+    render(<NoKnownDeviceState onConnectLedgerDevice={jest.fn()} onBuyLedgerDevice={jest.fn()} />, {
+      wrapper: DeviceIntentTrackingTestWrapper,
+    });
 
     // THEN
     expect(screen.getByText("Ledger device required")).toBeVisible();
@@ -22,6 +25,7 @@ describe("NoKnownDeviceState", () => {
         onConnectLedgerDevice={onConnectLedgerDevice}
         onBuyLedgerDevice={jest.fn()}
       />,
+      { wrapper: DeviceIntentTrackingTestWrapper },
     );
 
     // WHEN
@@ -39,6 +43,7 @@ describe("NoKnownDeviceState", () => {
         onConnectLedgerDevice={jest.fn()}
         onBuyLedgerDevice={onBuyLedgerDevice}
       />,
+      { wrapper: DeviceIntentTrackingTestWrapper },
     );
 
     // WHEN

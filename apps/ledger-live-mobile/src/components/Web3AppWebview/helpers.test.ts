@@ -36,7 +36,7 @@ jest.mock("@react-navigation/native", () => {
   return { ...actual, useNavigation: () => ({ navigate: mockNavigate }) };
 });
 
-jest.mock("@ledgerhq/live-common/dada-client/hooks/useDrawerConfiguration", () => ({
+jest.mock("@ledgerhq/live-common/wallet-api/ModularDrawer/useDrawerConfiguration", () => ({
   useDrawerConfiguration: jest.fn(() => ({ createDrawerConfiguration: jest.fn(() => ({})) })),
 }));
 

@@ -108,7 +108,7 @@ async function onMessage(event: WebSocketMessageEvent) {
         acceptGeneralTerms(store);
         break;
       case "importAccounts": {
-        store.dispatch(await importAccountsRaw({ active: msg.payload }));
+        (await importAccountsRaw({ active: msg.payload }))(store.dispatch);
         try {
           // workaround: persist bridge-imported accounts so they survive app restarts (QAA-1353)
           await saveAccounts(await accountsExportSelector(store.getState()));

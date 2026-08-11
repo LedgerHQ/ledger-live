@@ -7,7 +7,7 @@ import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { Unit } from "@domain/entity-currency-unit";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { SolanaAccount, SolanaOperation } from "@ledgerhq/live-common/families/solana/types";
-import { useSolanaPreloadData } from "@ledgerhq/live-common/families/solana/react";
+import { useValidators } from "@ledgerhq/live-common/families/solana/react";
 import Box from "~/renderer/components/Box/Box";
 import { useDiscreetMode } from "~/renderer/components/Discreet";
 import Text from "~/renderer/components/Text";
@@ -55,8 +55,8 @@ type DelegateExtraFieldsProps = {
 const DelegateExtraFields = ({ account, voteAddress, amount }: DelegateExtraFieldsProps) => {
   const unit = useAccountUnit(account);
   const formatAmount = useFormatAmount();
-  const preloadData = useSolanaPreloadData(account.currency);
-  const validator = preloadData?.validators.find(v => v.voteAccount === voteAddress);
+  const validators = useValidators(account.currency);
+  const validator = validators.find(v => v.voteAccount === voteAddress);
 
   return (
     <OpDetailsSection gap="80px">

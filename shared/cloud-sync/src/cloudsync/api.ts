@@ -35,15 +35,69 @@ const schemaAtomicPostResponse = z.discriminatedUnion("status", [
 ]);
 export type APISyncUpdateResponse = z.infer<typeof schemaAtomicPostResponse>;
 
+/**
+ * Satisfies the error contract documented in @ledgerhq/ledger-key-ring-protocol's `auth.ts`:
+ * a numeric `status` plus the backend's verbatim `message`. Both are required for JWT recovery —
+ * dropping either turns a recoverable expired token into a surfaced 401.
+ */
+export class CloudSyncHttpError extends Error {
+  override name = "CloudSyncHttpError";
+  readonly status: number;
+  readonly url: string;
+  readonly method: string;
+  constructor(message: string, fields: { status: number; url: string; method: string }) {
+    super(message);
+    this.status = fields.status;
+    this.url = fields.url;
+    this.method = fields.method;
+  }
+}
+
+function getErrorMessage(data: unknown): string | undefined {
+  if (!data) return undefined;
+  if (typeof data === "string") return data;
+  if (typeof data !== "object") return undefined;
+  const record = data as Record<string, unknown>;
+  const errors = record.errors;
+  if (Array.isArray(errors) && errors.length > 0) return getErrorMessage(errors[0]);
+  for (const key of ["message", "error_message", "error", "msg"]) {
+    const value = record[key];
+    if (typeof value === "string") return value;
+  }
+  return undefined;
+}
+
+function extractServerMessage(body: string): string | undefined {
+  if (!body) return undefined;
+  try {
+    const data: unknown = JSON.parse(body);
+    return getErrorMessage(Array.isArray(data) ? data[0] : data);
+  } catch {
+    return body;
+  }
+}
+
+async function makeHttpError(res: Response, url: string, method: string) {
+  let body = "";
+  try {
+    body = await res.text();
+  } catch {
+    body = "";
+  }
+  const message =
+    extractServerMessage(body) ?? `HTTP ${res.status} ${res.statusText} on ${method} ${url}`;
+  return new CloudSyncHttpError(message, { status: res.status, url, method });
+}
+
 async function apiFetch<T>(url: string, init: RequestInit): Promise<T> {
   const res = await fetch(url, init);
   if (!res.ok) {
-    throw new Error(`HTTP ${res.status} ${res.statusText} on ${init.method} ${url}`);
+    throw await makeHttpError(res, url, init.method ?? "GET");
   }
   return res.json() as Promise<T>;
 }
 
-function getApi(apiBaseURL: string) {
+export function getCloudSyncApi(apiBaseURL: string) {
   async function fetchData(
     jwt: JWT,
     datatype: string,
@@ -98,7 +152,7 @@ function getApi(apiBaseURL: string) {
       method: "DELETE",
       headers: { Authorization: `Bearer ${jwt.accessToken}` },
     });
-    if (!res.ok) throw new Error(`HTTP ${res.status} ${res.statusText} on DELETE ${url}`);
+    if (!res.ok) throw await makeHttpError(res, url, "DELETE");
   }
 
   function listenNotifications(
@@ -142,5 +196,3 @@ function getApi(apiBaseURL: string) {
 
   return { fetchData, uploadData, deleteData, listenNotifications, fetchStatus };
 }
-
-export default getApi;

@@ -55,7 +55,7 @@ describe("QueuedDrawer", () => {
       navigateToEmptyButton: () => getByTestId(mainTestIds.navigateToEmptyTestScreenButton),
       navigateBackButton: () => getByTestId(navigateBackButtonId),
       lockDrawersButton: () => getByTestId(mainTestIds.lockDrawersButton),
-      closeAllDrawersButton: () => getByTestId(mainTestIds.closeAllDrawersButton),
+      closeAllBottomSheetsButton: () => getByTestId(mainTestIds.closeAllBottomSheetsButton),
     };
 
     const helpers = {
@@ -210,7 +210,7 @@ describe("QueuedDrawer", () => {
     await helpers.openDrawer1();
     await user.press(elements.inDrawer1Drawer2Button());
     expect(queryByText(drawer2Text)).toBeNull();
-    await user.press(elements.closeAllDrawersButton());
+    await user.press(elements.closeAllBottomSheetsButton());
     await helpers.expectAllDrawersClosed();
     await helpers.openDrawer1();
     await user.press(elements.closeButton());

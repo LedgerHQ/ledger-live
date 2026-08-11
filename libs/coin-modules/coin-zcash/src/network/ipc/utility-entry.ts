@@ -23,9 +23,11 @@ import {
   broadcastTransactionJob,
   transactionDetailsJob,
   buildIronwoodTransactionJob,
+  deriveShieldedAddress,
 } from "../engine";
 import type {
   CancelSyncArgs,
+  DeriveShieldedAddressArgs,
   FindBlockHeightArgs,
   GetChainTipArgs,
   StartSyncArgs,
@@ -232,6 +234,22 @@ async function handleTransactionDetails(
   }
 }
 
+async function handleDeriveShieldedAddress(
+  port: ParentPort,
+  args: DeriveShieldedAddressArgs,
+): Promise<void> {
+  try {
+    const address = await deriveShieldedAddress(args.ufvk);
+    send(port, { type: "derive-shielded-address-result", requestId: args.requestId, address });
+  } catch (err) {
+    send(port, {
+      type: "derive-shielded-address-error",
+      requestId: args.requestId,
+      message: err instanceof Error ? err.message : String(err),
+    });
+  }
+}
+
 /**
  * Wires up a {@link ParentPort} to the ZCash engine. Exported for testing --
  * production code calls this once below with Electron's `process.parentPort`.
@@ -266,6 +284,9 @@ export function bootstrapUtility(port: ParentPort): void {
         break;
       case "build-ironwood-transaction":
         void handleBuildIronwoodTransaction(port, message.args);
+        break;
+      case "derive-shielded-address":
+        void handleDeriveShieldedAddress(port, message.args);
         break;
       default: {
         const exhaustive: never = message;

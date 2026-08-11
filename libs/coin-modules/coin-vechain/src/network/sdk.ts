@@ -13,7 +13,7 @@ import {
   mapTokenTransfersToOperations,
   padAddress,
 } from "../common-logic";
-import { VECHAIN_NODE_URL as BASE_URL } from "../constants";
+import { getNodeUrl } from "../config";
 
 const NET_ERROR_LOG_TRANSFERS_LIMIT = {
   status: 403,
@@ -23,7 +23,7 @@ const NET_ERROR_LOG_TRANSFERS_LIMIT = {
 export const getAccount = async (address: string): Promise<AccountResponse> => {
   const { data } = await network<AccountResponse>({
     method: "GET",
-    url: `${BASE_URL}/accounts/${address}`,
+    url: `${getNodeUrl()}/accounts/${address}`,
   });
 
   return data;
@@ -32,7 +32,7 @@ export const getAccount = async (address: string): Promise<AccountResponse> => {
 export const getLastBlockHeight = async (): Promise<number> => {
   const { data } = await network<{ number: number }>({
     method: "GET",
-    url: `${BASE_URL}/blocks/best`,
+    url: `${getNodeUrl()}/blocks/best`,
   });
 
   return data.number;
@@ -64,7 +64,7 @@ const fetchRangeOfOperations = async (
 
   const { data } = await network<TransferLog[]>({
     method: "POST",
-    url: `${BASE_URL}/logs/transfer`,
+    url: `${getNodeUrl()}/logs/transfer`,
     data: JSON.stringify(query),
   });
 
@@ -114,7 +114,7 @@ const fetchRangeOfTokenOperations = async (
 
   const { data } = await network<EventLog[]>({
     method: "POST",
-    url: `${BASE_URL}/logs/event`,
+    url: `${getNodeUrl()}/logs/event`,
     data: JSON.stringify(query),
   });
 
@@ -257,7 +257,7 @@ export const submit = async (transaction: VechainSDKTransaction): Promise<string
 
   const { data } = await network<{ id: string }>({
     method: "POST",
-    url: `${BASE_URL}/transactions`,
+    url: `${getNodeUrl()}/transactions`,
     data: encodedRawTx,
   });
 
@@ -274,7 +274,7 @@ export const submit = async (transaction: VechainSDKTransaction): Promise<string
 export const getBlockRef = async (): Promise<string> => {
   const { data } = await network<{ id: string }>({
     method: "GET",
-    url: `${BASE_URL}/blocks/best`,
+    url: `${getNodeUrl()}/blocks/best`,
   });
 
   return data.id.slice(0, 18);

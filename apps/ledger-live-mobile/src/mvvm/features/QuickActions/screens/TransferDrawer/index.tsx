@@ -1,6 +1,6 @@
 import React from "react";
 import { CryptoOrTokenCurrency } from "@domain/entity-currency";
-import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
+import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { TransferDrawerView } from "./TransferDrawerView";
 import { useTransferDrawerViewModel } from "./useTransferDrawerViewModel";
 

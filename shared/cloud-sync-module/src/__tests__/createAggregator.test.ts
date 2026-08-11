@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { createAggregator, mapValues } from "../index";
+import { createAggregator, mapValues } from "../cloudSyncModule";
 
 describe(mapValues.name, () => {
   it("maps object values while preserving keys", () => {

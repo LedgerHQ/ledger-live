@@ -1,5 +1,5 @@
 import type { ZodType } from "zod";
-import type { CloudSyncDataManager } from "./index";
+import type { CloudSyncDataManager } from "./cloudSyncModule";
 
 type Fixtures<LocalState, DistantState> = {
   /** A local state with no meaningful data (e.g. empty map/array/object) */

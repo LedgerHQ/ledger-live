@@ -17,17 +17,28 @@
     "coverage": "jest --coverage --passWithNoTests",
     "unimported": "pnpm knip --directory ../../.. -W features/platform/aggregated-assets"
   },
+  "dependencies": {
+    "@domain/api-aggregated-assets": "workspace:*",
+    "@domain/entity-aggregated-asset": "workspace:*",
+    "@domain/entity-currency": "workspace:^",
+    "@domain/entity-interest-rate": "workspace:*",
+    "@features/platform-env": "workspace:*",
+    "@reduxjs/toolkit": "catalog:",
+    "lodash": "catalog:"
+  },
   "peerDependencies": {
     "react": ">=19.0.0",
     "react-redux": ">=9.0.0"
   },
   "devDependencies": {
+    "@shared/env": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",
     "@testing-library/jest-dom": "catalog:",
     "@testing-library/react": "catalog:",
     "@types/jest": "catalog:",
+    "@types/lodash": "catalog:",
     "@types/react": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",

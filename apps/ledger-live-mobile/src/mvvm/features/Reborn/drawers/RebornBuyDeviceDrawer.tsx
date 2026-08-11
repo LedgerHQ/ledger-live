@@ -16,7 +16,7 @@ import {
 import { HandCoins, ShieldLock, Wallet } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { Image } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
+import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 
 const items = [
   {

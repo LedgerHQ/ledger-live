@@ -1,18 +1,18 @@
+import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { GetAddressFn } from "@ledgerhq/ledger-wallet-framework/bridge/getAddressWrapper";
 import {
-  getSerializedAddressParameters,
-  updateTransaction,
   GetAccountShape,
+  getSerializedAddressParameters,
   makeAccountBridgeReceive,
   makeScanAccounts,
   makeSync,
+  updateTransaction,
 } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { patchOperationWithHash } from "@ledgerhq/ledger-wallet-framework/operation";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
-import { minutes, makeLRUCache } from "@ledgerhq/live-network/cache";
+import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
 import { log } from "@ledgerhq/logs";
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
-import type { AccountBridge, AccountLike, CurrencyBridge } from "@ledgerhq/types-live";
+import type { Account, AccountBridge, AccountLike, CurrencyBridge } from "@ledgerhq/types-live";
 import { BlockhashWithExpiryBlockHeight } from "@solana/web3.js";
 import { SOLANA_DUMMY_ADDRESS } from "../constants";
 import { createTransaction } from "../createTransaction";
@@ -24,20 +24,19 @@ import { broadcast } from "../logic/broadcast";
 import { validateAddress } from "../logic/validateAddress";
 import { ChainAPI, Config } from "../network";
 import nftResolvers from "../nftResolvers";
-import { PRELOAD_MAX_AGE, preloadWithAPI } from "../preload";
 import { prepareTransaction as prepareTransactionWithAPI } from "../prepareTransaction";
 import {
   assignFromAccountRaw,
+  assignFromTokenAccountRaw,
   assignToAccountRaw,
+  assignToTokenAccountRaw,
   fromOperationExtraRaw,
   toOperationExtraRaw,
-  assignFromTokenAccountRaw,
-  assignToTokenAccountRaw,
 } from "../serialization";
 import { buildSignOperation } from "../signOperation";
 import { SolanaSigner } from "../signer";
 import { getAccountShapeWithAPI } from "../synchronization";
-import type { SolanaAccount, SolanaPreloadDataV1, Transaction, TransactionStatus } from "../types";
+import type { SolanaAccount, Transaction, TransactionStatus } from "../types";
 import { endpointByCurrencyId } from "../utils";
 
 function makePrepare(getChainAPI: (config: Config) => ChainAPI) {
@@ -71,6 +70,28 @@ function makeSyncAndScan(getChainAPI: (config: Config) => ChainAPI, getAddress: 
   };
 }
 
+/**
+ * Cache key for estimateMaxSpendable.
+ *
+ * Include pending operations so new outgoing txs bust the cache and "send max" stays correct.
+ * See: https://ledgerhq.atlassian.net/browse/LIVE-35129
+ */
+export const estimateMaxSpendableCacheKey = ({
+  account,
+  parentAccount,
+  transaction,
+}: {
+  account: AccountLike;
+  parentAccount?: Account | null | undefined;
+  transaction?: Transaction | null | undefined;
+}): string => {
+  const mainAccount = getMainAccount(account, parentAccount);
+  const pendingOpsSig = (mainAccount.pendingOperations ?? []).map(op => op.hash).join(",");
+  return `${account.id}:${account.spendableBalance.toString()}:pending:${pendingOpsSig}:tx:${
+    transaction?.model.kind ?? "<no transaction>"
+  }`;
+};
+
 function makeEstimateMaxSpendable(getChainAPI: (config: Config) => ChainAPI) {
   const estimateMaxSpendable: AccountBridge<
     Transaction,
@@ -94,19 +115,7 @@ function makeEstimateMaxSpendable(getChainAPI: (config: Config) => ChainAPI) {
     return estimateMaxSpendableWithAPI(arg, api);
   };
 
-  const cacheKeyByAccSpendableBalance = ({
-    account,
-    transaction,
-  }: {
-    account: AccountLike;
-    transaction?: Transaction | null | undefined;
-  }) => {
-    return `${account.id}:${account.spendableBalance.toString()}:tx:${
-      transaction?.model.kind ?? "<no transaction>"
-    }`;
-  };
-
-  return makeLRUCache(estimateMaxSpendable, cacheKeyByAccSpendableBalance, minutes(5));
+  return makeLRUCache(estimateMaxSpendable, estimateMaxSpendableCacheKey, minutes(5));
 }
 
 function makeBroadcast(
@@ -156,25 +165,6 @@ function makeSign(
   };
 }
 
-function makePreload(
-  getChainAPI: (config: Config) => ChainAPI,
-): (currency: CryptoCurrency) => Promise<SolanaPreloadDataV1> {
-  const preload = (currency: CryptoCurrency): Promise<SolanaPreloadDataV1> => {
-    const config: Config = {
-      endpoint: endpointByCurrencyId(currency.id),
-    };
-    const api = getChainAPI(config);
-    return preloadWithAPI(currency, api);
-  };
-  return preload;
-}
-
-function getPreloadStrategy() {
-  return {
-    preloadMaxAge: PRELOAD_MAX_AGE,
-  };
-}
-
 export function makeBridges({
   getAPI,
   signerContext,
@@ -213,9 +203,7 @@ export function makeBridges({
   };
 
   const currencyBridge: CurrencyBridge = {
-    preload: makePreload(getAPI),
     scanAccounts: scan,
-    getPreloadStrategy,
     nftResolvers,
   };
 

@@ -1,4 +1,4 @@
-import { sameAccountIdentity } from "@ledgerhq/live-wallet/addAccounts";
+import { sameAccountIdentity } from "@ledgerhq/live-common/account/addAccounts";
 import { NavigatorName, ScreenName } from "~/const";
 import type { CustomAddAccountFlow } from "LLM/features/Accounts/utils/customAddAccountFlow";
 

@@ -611,7 +611,7 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
     await expectModalNotOpen();
   });
 
-  it("should not open when onboarding date is missing", async () => {
+  it("should open when onboarding date is missing using the legacy fallback", async () => {
     renderMount({
       ...eligibleState({
         devicesModelList: [DeviceModelId.nanoX],
@@ -621,7 +621,9 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
       },
     });
 
-    await expectModalNotOpen();
+    await waitFor(() => {
+      expect(screen.getByTestId("large-screen-upsell-modal")).toBeVisible();
+    });
   });
 
   it("should not open when retries reach killThreshold 3 within the cadence window", async () => {

@@ -10,11 +10,12 @@ import {
   getAccountCurrency,
 } from "@ledgerhq/live-common/account/index";
 import { useBridgeRecipientValidation } from "@ledgerhq/live-common/flows/send/recipient/hooks/useBridgeRecipientValidation";
+import { genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { useFormattedAccountBalance } from "LLM/hooks/useFormattedAccountBalance";
 import { useMaybeAccountName, useBatchMaybeAccountName } from "~/reducers/wallet";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import { createMockAccount, createMockCurrency } from "./accounts";
+import { createMockAccount, createMockCurrency, createMockTokenCurrency } from "./accounts";
 
 jest.mock("~/context/hooks");
 jest.mock("~/reducers/wallet");
@@ -128,6 +129,29 @@ describe("useAddressValidation", () => {
     });
   });
 
+  it("checks token recipients against the parent currency sanctions", async () => {
+    const tokenCurrency = createMockTokenCurrency();
+    const tokenAccount = genTokenAccount(0, mockEthereumAccount, tokenCurrency);
+    mockedIsAddressSanctioned.mockResolvedValue(true);
+
+    const { result } = renderHook(() =>
+      useAddressValidation({
+        searchValue: "sanctioned_address",
+        currency: tokenCurrency,
+        account: tokenAccount,
+        parentAccount: mockEthereumAccount,
+      }),
+    );
+
+    await waitFor(() => {
+      expect(result.current.result.status).toBe("sanctioned");
+    });
+    expect(mockedIsAddressSanctioned).toHaveBeenCalledWith(
+      mockEthereumAccount.currency,
+      "sanctioned_address",
+    );
+  });
+
   it("resolves ENS names when recipientSupportsDomain is true", async () => {
     const ensResolution = {
       domain: "vitalik.eth",
@@ -158,6 +182,52 @@ describe("useAddressValidation", () => {
         "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
       );
     });
+  });
+
+  it("revalidates sanctions against the resolved ENS address", async () => {
+    const ensResolution = {
+      domain: "sanctioned.eth",
+      address: "0xSanctioned",
+      type: "forward" as const,
+      registry: "ens" as const,
+    };
+    const validationProps = {
+      searchValue: ensResolution.domain,
+      currency: mockEthereumAccount.currency,
+      account: mockEthereumAccount,
+      recipientSupportsDomain: true,
+    };
+    mockedUseDomain.mockReturnValue({ status: "loading" });
+    mockedIsAddressSanctioned.mockImplementation(
+      async (_currency, address) => address === ensResolution.address,
+    );
+
+    const { result, rerender } = renderHook(
+      (props: typeof validationProps) => useAddressValidation(props),
+      { initialProps: validationProps },
+    );
+
+    await waitFor(() => {
+      expect(mockedIsAddressSanctioned).toHaveBeenCalledWith(
+        mockEthereumAccount.currency,
+        ensResolution.domain,
+      );
+    });
+
+    mockedUseDomain.mockReturnValue({
+      status: "loaded",
+      resolutions: [ensResolution],
+      updatedAt: Date.now(),
+    });
+    rerender(validationProps);
+
+    await waitFor(() => {
+      expect(result.current.result.status).toBe("sanctioned");
+    });
+    expect(mockedIsAddressSanctioned).toHaveBeenCalledWith(
+      mockEthereumAccount.currency,
+      ensResolution.address,
+    );
   });
 
   it("shows loading state during ENS resolution", () => {

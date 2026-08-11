@@ -1,6 +1,6 @@
 import React from "react";
 import { AccountModuleParams, NetworkWithCount, NetworkConfigurationOptions } from "../utils/type";
-import { useInterestRatesByCurrencies } from "../../dada-client/hooks/useInterestRatesByCurrencies";
+import { useInterestRatesByCurrencies } from "@features/platform-aggregated-assets";
 import { getInterestRateForAsset } from "../utils/getInterestRateForAsset";
 
 export function useLeftAccountsApyModule(

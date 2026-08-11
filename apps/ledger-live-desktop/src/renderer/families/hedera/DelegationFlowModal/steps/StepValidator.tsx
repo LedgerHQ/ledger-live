@@ -21,7 +21,8 @@ export default function StepValidator({
 }: Readonly<StepProps>) {
   invariant(account && transaction, "hedera: account and transaction required");
   invariant(isStakingTransaction(transaction), "hedera: staking tx expected");
-  const selectedValidatorNodeId = transaction.properties?.stakingNodeId ?? null;
+  const stakingNodeId = transaction.properties?.stakingNodeId;
+  const selectedValidatorId = typeof stakingNodeId === "number" ? String(stakingNodeId) : null;
   const bridge = useAccountBridge<Transaction>(account, parentAccount);
 
   const updateValidator = (validator: HederaValidator) => {
@@ -29,7 +30,7 @@ export default function StepValidator({
       return bridge.updateTransaction(transaction, {
         mode: HEDERA_TRANSACTION_MODES.Delegate,
         properties: {
-          stakingNodeId: validator.nodeId,
+          stakingNodeId: Number(validator.id),
         },
       });
     });
@@ -50,7 +51,7 @@ export default function StepValidator({
       <ValidatorsListField
         account={account}
         onChangeValidator={updateValidator}
-        selectedValidatorNodeId={selectedValidatorNodeId}
+        selectedValidatorId={selectedValidatorId}
       />
     </Box>
   );

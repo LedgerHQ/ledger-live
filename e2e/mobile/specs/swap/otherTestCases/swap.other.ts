@@ -107,7 +107,7 @@ export function runSwapWithDifferentSeedTest(
         swapAmount,
       );
       const provider = await app.swapLiveApp.selectExchange();
-      await app.swapLiveApp.checkExchangeButtonHasProviderName(provider.uiName);
+      await app.swapLiveApp.checkQuoteCardCta(provider.uiName);
       await app.common.disableSynchronizationForiOS();
       await app.swapLiveApp.tapExecuteSwap(provider.uiName);
       if (errorMessage) {

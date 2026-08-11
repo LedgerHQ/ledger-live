@@ -1,0 +1,8 @@
+{
+  "name": "@features/flow-pay-card-auth",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

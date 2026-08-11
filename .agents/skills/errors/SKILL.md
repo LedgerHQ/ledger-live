@@ -9,9 +9,7 @@ globs: ["**/errors.ts", "**/errors/**/*.ts"]
 # Errors
 
 Each package owns its errors in its own `src/errors.ts`, as plain native classes.
-There is no shared errors lib: no workspace package may depend on `@ledgerhq/errors`,
-and the `enforce-boundaries` CI check fails on any manifest that does. It only still
-lives here to keep being published for external consumers (see its `DEPRECATED.md`).
+There is no shared errors lib: the former `@ledgerhq/errors` package has been removed.
 
 ## Define errors
 

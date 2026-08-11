@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import type { QueuedBottomSheetProps } from "LLM/components/QueuedDrawer/QueuedBottomSheet";
+import type { QueuedBottomSheetProps } from "@shared/ui-queued-bottom-sheet";
 
 export type QueuedDrawerFlowOptions = Readonly<
   Pick<

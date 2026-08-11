@@ -7,14 +7,17 @@
   "types": "src/index.ts",
   "exports": {
     ".": "./src/index.ts",
+    "./mock": "./src/fixtures/assetsData.mock.ts",
+    "./mock/stocks": "./src/fixtures/stocks.mock.ts",
+    "./mock/stablecoins": "./src/fixtures/stablecoins.mock.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "test": "jest --passWithNoTests",
+    "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage --passWithNoTests",
+    "coverage": "jest --coverage",
     "unimported": "pnpm knip --directory ../../.. -W domain/api/aggregated-assets"
   },
   "devDependencies": {
@@ -24,6 +27,23 @@
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "jest": "catalog:",
+    "react": "catalog:",
+    "react-redux": "catalog:",
     "typescript": "catalog:"
+  },
+  "dependencies": {
+    "@domain/api-currency-token": "workspace:^",
+    "@domain/entity-aggregated-asset": "workspace:*",
+    "@domain/entity-currency": "workspace:^",
+    "@domain/entity-currency-crypto": "workspace:^",
+    "@domain/entity-currency-token": "workspace:^",
+    "@domain/entity-interest-rate": "workspace:*",
+    "@reduxjs/toolkit": "catalog:",
+    "@shared/api-services": "workspace:*",
+    "@shared/env": "workspace:*"
+  },
+  "peerDependencies": {
+    "react": ">=19.0.0",
+    "react-redux": ">=9.0.0"
   }
 }

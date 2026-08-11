@@ -1,6 +1,8 @@
 import { z } from "zod";
-import { CryptoCurrencyIdSchema } from "@shared/schema-primitives";
 import { UnitSchema } from "@domain/entity-currency-unit";
+
+/** Opaque identifier for a crypto currency (e.g. `"bitcoin"`, `"ethereum"`). Non-empty string. */
+export const CryptoCurrencyIdSchema = z.string().min(1).brand<"CryptoCurrencyId">();
 
 /**
  * Blockchain explorer URL templates for a crypto currency.
@@ -107,6 +109,8 @@ export const CryptoCurrencySchema = z.object({
   tokenTypes: z.array(z.string()).optional(),
 });
 
+/** A crypto currency id, inferred from {@link CryptoCurrencyIdSchema}. */
+export type CryptoCurrencyId = z.infer<typeof CryptoCurrencyIdSchema>;
 /** A crypto currency entity, inferred from {@link CryptoCurrencySchema}. */
 export type CryptoCurrency = z.infer<typeof CryptoCurrencySchema>;
 /** Explorer view value object, inferred from {@link ExplorerViewSchema}. */

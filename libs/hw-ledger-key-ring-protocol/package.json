@@ -25,7 +25,7 @@
     "create-hmac": "^1.1.7"
   },
   "devDependencies": {
-    "@types/lodash": "4",
+    "@types/lodash": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "jest": "catalog:",

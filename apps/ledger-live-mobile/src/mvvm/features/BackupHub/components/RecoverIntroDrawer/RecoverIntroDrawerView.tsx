@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, BottomSheetHeader, BottomSheetView } from "@ledgerhq/lumen-ui-rnative";
-import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
+import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { FeatureIntroLayout } from "LLM/components/FeatureIntroLayout";
 import type { UseRecoverIntroDrawerViewModelResult } from "./useRecoverIntroDrawerViewModel";
 

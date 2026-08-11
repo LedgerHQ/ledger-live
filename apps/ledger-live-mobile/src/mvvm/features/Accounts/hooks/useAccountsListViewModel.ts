@@ -15,8 +15,7 @@ import {
 import { AccountsNavigatorParamList } from "~/components/RootNavigator/types/AccountsNavigator";
 import { PortfolioNavigatorStackParamList } from "~/components/RootNavigator/types/PortfolioNavigator";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
-import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
-import { walletSelector } from "~/reducers/wallet";
+import { accountNameWithDefaultSelector, walletSelector } from "~/reducers/wallet";
 import isEqual from "lodash/isEqual";
 import { orderAccountsByFiatValue } from "@ledgerhq/live-countervalues/portfolio";
 import { useCountervaluesState } from "@ledgerhq/live-countervalues-react/index";

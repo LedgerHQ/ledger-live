@@ -30,8 +30,15 @@ function View({
   if (variant.type === "none") return null;
 
   if (shouldUseLumenMediaBanner) {
+    const isNotificationCenter = location === "notification_center";
     return (
-      <Flex width="50%" maxWidth="50%" minWidth={0} alignSelf="flex-start" {...boxProps}>
+      <Flex
+        width={isNotificationCenter ? "100%" : "50%"}
+        maxWidth={isNotificationCenter ? "100%" : "50%"}
+        minWidth={0}
+        alignSelf="flex-start"
+        {...boxProps}
+      >
         <LNSUpsellMediaBanner
           title={t(`lnsUpsellMediaBanner.${tracking}.title`)}
           description={t(`lnsUpsellMediaBanner.${tracking}.description`)}

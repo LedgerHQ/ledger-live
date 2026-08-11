@@ -1,5 +1,5 @@
 import type { Contact, ContactId } from "@domain/entity-contact";
-import { resolveContactEditRequirement } from "./editRequirement";
+import { resolveContactEditRequirement, isSignerConfirmationRequired } from "./editRequirement";
 import type {
   ContactDeleteLifecycle,
   ContactDetailDeleteIntent,
@@ -40,5 +40,5 @@ export function createErrorContactDeleteLifecycle(contactId: ContactId): Contact
 export function isSignerRequiredForContactEdit(
   editIntent: ContactDetailEditIntent | undefined,
 ): boolean {
-  return editIntent?.editRequirement.type === "confirmation-required";
+  return isSignerConfirmationRequired(editIntent?.editRequirement);
 }

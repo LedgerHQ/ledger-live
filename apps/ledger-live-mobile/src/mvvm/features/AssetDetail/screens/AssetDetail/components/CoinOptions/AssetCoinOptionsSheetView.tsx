@@ -3,7 +3,7 @@ import { useTranslation } from "~/context/Locale";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { BottomSheetHeader, BottomSheetView } from "@ledgerhq/lumen-ui-rnative";
 import { Eye, EyeCross, Star, StarFill } from "@ledgerhq/lumen-ui-rnative/symbols";
-import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
+import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { ASSET_DETAIL_TEST_IDS } from "LLM/features/AssetDetail/testIds";
 import { CoinOptionRow } from "./CoinOptionRow";
 

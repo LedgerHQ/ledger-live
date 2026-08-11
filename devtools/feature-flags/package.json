@@ -8,8 +8,8 @@
   "types": "src/index.ts",
   "sideEffects": false,
   "scripts": {
-    "format": "oxfmt src jest",
-    "format:check": "oxfmt src jest --check",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
     "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
     "test": "pnpm run test:web && pnpm run test:native",
     "test:web": "jest --config jest.config.js",
@@ -23,6 +23,7 @@
     "@shared/feature-flags": "workspace:^"
   },
   "devDependencies": {
+    "@support/jest-devtools": "workspace:*",
     "@testing-library/react": "catalog:",
     "@testing-library/react-native": "catalog:",
     "@testing-library/dom": "catalog:",

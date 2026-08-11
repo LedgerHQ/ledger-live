@@ -17,7 +17,7 @@ import { blockPasswordLock } from "~/actions/appstate";
 import { readOnlyModeEnabledSelector } from "~/reducers/settings";
 import { openRebornBuyDeviceDrawer } from "~/reducers/rebornBuyDeviceDrawer";
 import { closePostOnboardingHubDrawer } from "~/reducers/postOnboardingHubDrawer";
-import { useQueuedDrawerContext } from "LLM/components/QueuedDrawer/QueuedDrawersContext";
+import { useQueuedBottomSheetContext } from "@shared/ui-queued-bottom-sheet";
 
 type Props = {
   isOpen: boolean;
@@ -32,7 +32,7 @@ type NavigationProps = BaseComposite<
 const useActivationDrawerModel = ({ isOpen, startingStep, handleClose }: Props) => {
   const { onClickTrack } = useLedgerSyncAnalytics();
   const { currentStep, setCurrentStep } = useCurrentStep();
-  const { closeAllDrawers } = useQueuedDrawerContext();
+  const { closeAllBottomSheets } = useQueuedBottomSheetContext();
 
   const dispatch = useDispatch();
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
@@ -88,7 +88,7 @@ const useActivationDrawerModel = ({ isOpen, startingStep, handleClose }: Props) 
 
   const navigateToWalletSyncActivationProcess = () => {
     onCloseDrawer();
-    closeAllDrawers();
+    closeAllBottomSheets();
     dispatch(closePostOnboardingHubDrawer());
     navigation.navigate(NavigatorName.WalletSync, {
       screen: ScreenName.WalletSyncActivationProcess,
@@ -98,7 +98,7 @@ const useActivationDrawerModel = ({ isOpen, startingStep, handleClose }: Props) 
   const onCreateKey = () => {
     if (readOnlyModeEnabled) {
       onCloseDrawer();
-      closeAllDrawers();
+      closeAllBottomSheets();
       dispatch(openRebornBuyDeviceDrawer());
     } else {
       navigateToWalletSyncActivationProcess();
