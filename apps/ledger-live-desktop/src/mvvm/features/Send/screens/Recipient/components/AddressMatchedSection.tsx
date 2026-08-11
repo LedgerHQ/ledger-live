@@ -1,150 +1,60 @@
-import type { AddressSearchResult } from "@ledgerhq/live-common/flows/send/recipient/types";
-import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
-import { SEND_ADDRESS_FORMAT_OPTIONS } from "@ledgerhq/live-common/flows/send/utils";
 import { Subheader, SubheaderRow, SubheaderTitle } from "@ledgerhq/lumen-ui-react";
-import { useFeature } from "@features/platform-feature-flags";
 import React from "react";
-import { useTranslation } from "react-i18next";
-import { useFormatRelativeDate } from "../hooks/useFormatRelativeDate";
+import type { AddressMatchedSectionViewModel } from "../hooks/useAddressMatchedSectionViewModel";
 import { AddressListItem } from "./AddressListItem";
 import { RecentHistoryWarningCard } from "./RecentHistoryWarningCard";
+import { RecipientCard } from "./RecipientCard";
 
 type AddressMatchedSectionProps = Readonly<{
-  searchResult: AddressSearchResult;
-  searchValue: string;
-  onSelect: (address: string, ensName?: string) => void;
-  isSanctioned?: boolean;
-  isAddressComplete?: boolean;
-  hasBridgeError?: boolean;
+  viewModel: AddressMatchedSectionViewModel;
 }>;
 
-export function AddressMatchedSection({
-  searchResult,
-  searchValue,
-  onSelect,
-  isSanctioned = false,
-  isAddressComplete = false,
-  hasBridgeError = false,
-}: AddressMatchedSectionProps) {
-  const { t } = useTranslation();
-  const formatRelativeDate = useFormatRelativeDate();
-  const isFirstInteractionBannerEnabled =
-    useFeature("newSendFlowFirstInteractionBanner")?.enabled ?? false;
-
-  const { accountName, matchedAccounts, ensName, matchedRecentAddress, status, resolvedAddress } =
-    searchResult;
-
-  const hasMatchedAccounts = matchedAccounts && matchedAccounts.length > 0;
-  const hasENS = !!ensName;
-  const hasRecentMatch = !!matchedRecentAddress;
-  const hasMatch = hasMatchedAccounts || hasENS || hasRecentMatch;
-
-  const isValidAddressWithoutMatch =
-    isAddressComplete && !hasMatch && !isSanctioned && !hasBridgeError && status === "valid";
-
-  const shouldShowDisabledAddress = (isSanctioned || hasBridgeError) && isAddressComplete;
-
-  if (!hasMatch && !shouldShowDisabledAddress && !isValidAddressWithoutMatch) {
+export function AddressMatchedSection({ viewModel }: AddressMatchedSectionProps) {
+  if (!viewModel.isVisible || !viewModel.suggestion) {
     return null;
   }
 
-  const formattedAddress = formatAddress(
-    resolvedAddress ?? searchValue,
-    SEND_ADDRESS_FORMAT_OPTIONS,
-  );
-
-  const getENSDisplayTitle = (): string => {
-    return `${ensName} (${formattedAddress})`;
-  };
-
-  const getMatchedAccountDisplayTitle = (): string | undefined => {
-    if (hasMatchedAccounts && accountName) {
-      return accountName;
-    }
-    return undefined;
-  };
-
-  const getAlreadyUsedDescription = (): string | undefined => {
-    if (matchedRecentAddress) {
-      return t("newSendFlow.alreadyUsed", {
-        date: formatRelativeDate(matchedRecentAddress.lastUsedAt),
-      });
-    }
-    return undefined;
-  };
-
-  const getMatchedAddressDescription = (): string | undefined => {
-    const alreadyUsedDescription = getAlreadyUsedDescription();
-    return alreadyUsedDescription ?? formattedAddress;
-  };
+  const { suggestion } = viewModel;
 
   return (
     <div className="flex w-full min-w-0 flex-col">
-      <Subheader className="mb-12">
-        <SubheaderRow>
-          <SubheaderTitle data-testid="send-address-matched-title">
-            {t("newSendFlow.addressMatched")}
-          </SubheaderTitle>
-        </SubheaderRow>
-      </Subheader>
+      {viewModel.showHeader && (
+        <Subheader className="mb-12">
+          <SubheaderRow>
+            <SubheaderTitle data-testid="send-address-matched-title">
+              {viewModel.addressMatchedLabel}
+            </SubheaderTitle>
+          </SubheaderRow>
+        </Subheader>
+      )}
       <div className="-mx-8 flex flex-col">
-        {/* Show ENS result if available */}
-        {hasENS && (
+        {suggestion.kind === "recipient-card" ? (
+          <RecipientCard
+            recipient={suggestion.recipient}
+            description={suggestion.description}
+            contact={suggestion.contact}
+            isReady={suggestion.isReady}
+            hasAddressBook={suggestion.hasAddressBook}
+            addressBookUnsupportedLabel={suggestion.addressBookUnsupportedLabel}
+            addContactLabel={suggestion.addContactLabel}
+            sendLabel={suggestion.sendLabel}
+            onSend={suggestion.onSend}
+          />
+        ) : (
           <AddressListItem
-            address={resolvedAddress ?? searchValue}
-            name={getENSDisplayTitle()}
-            description={formattedAddress}
-            onSelect={() => onSelect(resolvedAddress ?? searchValue, ensName)}
+            address={suggestion.address}
+            name={suggestion.name}
+            description={suggestion.description}
+            onSelect={suggestion.onSelect}
             showSendTo
-            disabled={isSanctioned || hasBridgeError}
+            isLedgerAccount={suggestion.isLedgerAccount}
+            disabled={suggestion.disabled}
+            hideDescription={suggestion.hideDescription}
             testId="send-matched-address-button"
           />
         )}
 
-        {/* Show matched address */}
-        {!hasENS && (hasMatchedAccounts || hasRecentMatch) && (
-          <AddressListItem
-            address={resolvedAddress ?? searchValue}
-            name={getMatchedAccountDisplayTitle()}
-            description={getMatchedAddressDescription()}
-            onSelect={() => onSelect(resolvedAddress ?? searchValue, matchedRecentAddress?.ensName)}
-            showSendTo
-            isLedgerAccount={hasMatchedAccounts}
-            disabled={isSanctioned || hasBridgeError}
-            testId="send-matched-address-button"
-          />
-        )}
-
-        {/* Show valid address without match (new address) */}
-        {isValidAddressWithoutMatch && (
-          <AddressListItem
-            address={searchValue}
-            name={formattedAddress}
-            onSelect={() => onSelect(searchValue)}
-            showSendTo
-            disabled={false}
-            hideDescription
-            testId="send-matched-address-button"
-          />
-        )}
-
-        {/* Show disabled address if sanctioned or has bridge error (even if no match) */}
-        {shouldShowDisabledAddress && !hasMatch && (
-          <AddressListItem
-            address={searchValue}
-            name={formattedAddress}
-            description={formattedAddress}
-            showSendTo
-            disabled={true}
-            testId="send-matched-address-button"
-          />
-        )}
-
-        {isFirstInteractionBannerEnabled &&
-          searchResult.isFirstInteraction &&
-          !isSanctioned &&
-          !hasBridgeError &&
-          isAddressComplete && <RecentHistoryWarningCard />}
+        {viewModel.showFirstInteractionWarning && <RecentHistoryWarningCard />}
       </div>
     </div>
   );

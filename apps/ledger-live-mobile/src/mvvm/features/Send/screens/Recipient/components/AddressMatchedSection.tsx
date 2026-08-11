@@ -1,4 +1,5 @@
 import type { AddressSearchResult } from "@ledgerhq/live-common/flows/send/recipient/types";
+import { getRecipientMatchPresentation } from "@ledgerhq/live-common/flows/send/recipient/utils/getRecipientMatchPresentation";
 import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
 import { SEND_ADDRESS_FORMAT_OPTIONS } from "@ledgerhq/live-common/flows/send/utils";
 import {
@@ -49,39 +50,22 @@ export function AddressMatchedSection({
     helpSheetRef.current?.present();
   }, [helpSheetRef]);
 
-  const { matchedAccounts, ensName, matchedRecentAddress, status, resolvedAddress } = searchResult;
+  const presentation = getRecipientMatchPresentation({
+    searchResult,
+    searchValue,
+    isSanctioned,
+    isAddressComplete,
+    hasBridgeError,
+  });
 
-  const hasMatchedAccounts = matchedAccounts && matchedAccounts.length > 0;
-  const hasENS = !!ensName;
-  const hasRecentMatch = !!matchedRecentAddress;
-  const hasMatch = hasMatchedAccounts || hasENS || hasRecentMatch;
-
-  const isValidAddressWithoutMatch =
-    isAddressComplete && !hasMatch && !isSanctioned && !hasBridgeError && status === "valid";
-
-  const shouldShowDisabledAddress = (isSanctioned || hasBridgeError) && isAddressComplete;
-
-  if (!hasMatch && !shouldShowDisabledAddress && !isValidAddressWithoutMatch) {
+  if (!presentation) {
     return null;
   }
 
   const formattedAddress = formatAddress(
-    resolvedAddress ?? searchValue,
+    presentation.kind === "recipient-card" ? presentation.recipientAddress : presentation.address,
     SEND_ADDRESS_FORMAT_OPTIONS,
   );
-
-  const getENSDisplayTitle = (): string => {
-    return `${ensName} (${formattedAddress})`;
-  };
-
-  const getRecentDescription = (): string => {
-    if (matchedRecentAddress) {
-      return t("send.newSendFlow.alreadyUsed", {
-        date: formatRelativeDate(matchedRecentAddress.lastUsedAt),
-      });
-    }
-    return formattedAddress;
-  };
 
   return (
     <Box lx={{ flexDirection: "column" }}>
@@ -92,56 +76,61 @@ export function AddressMatchedSection({
       </Subheader>
       <Box lx={{ flexDirection: "column" }}>
         {/* Show all matched Ledger accounts */}
-        {hasMatchedAccounts &&
-          matchedAccounts?.map(({ account }) => (
+        {presentation.kind === "matched-ledger-account" &&
+          presentation.matchedAccounts.map(({ account }) => (
             <AccountRowWithBalance
               key={account.id}
               account={account}
               onSelect={() => onSelect(account.freshAddress)}
               showSendTo
-              disabled={isSanctioned || hasBridgeError}
+              disabled={presentation.isDisabled}
               testID="new-send-flow-address-confirm"
             />
           ))}
 
         {/* Show ENS result if available and no matched accounts */}
-        {hasENS && !hasMatchedAccounts && (
+        {presentation.kind === "matched-ens" && (
           <AddressListItem
-            address={resolvedAddress ?? searchValue}
-            name={getENSDisplayTitle()}
+            address={presentation.address}
+            name={`${presentation.ensName} (${formattedAddress})`}
             description={formattedAddress}
-            onSelect={() => onSelect(resolvedAddress ?? searchValue, ensName)}
+            onSelect={() => onSelect(presentation.address, presentation.ensName)}
             showSendTo
-            disabled={isSanctioned || hasBridgeError}
+            disabled={presentation.isDisabled}
             testID="new-send-flow-address-confirm"
           />
         )}
 
         {/* Show recent match if available and no matched accounts or ENS */}
-        {hasRecentMatch && !hasMatchedAccounts && !hasENS && (
+        {presentation.kind === "matched-recent-address" && (
           <AddressListItem
-            address={matchedRecentAddress?.address ?? searchValue}
+            address={presentation.matchedRecentAddress.address}
             name={formatAddress(
-              matchedRecentAddress?.address ?? searchValue,
+              presentation.matchedRecentAddress.address,
               SEND_ADDRESS_FORMAT_OPTIONS,
             )}
-            description={getRecentDescription()}
+            description={t("send.newSendFlow.alreadyUsed", {
+              date: formatRelativeDate(presentation.matchedRecentAddress.lastUsedAt),
+            })}
             onSelect={() =>
-              onSelect(matchedRecentAddress?.address ?? searchValue, matchedRecentAddress?.ensName)
+              onSelect(
+                presentation.matchedRecentAddress.address,
+                presentation.matchedRecentAddress.ensName,
+              )
             }
             showSendTo
-            disabled={isSanctioned || hasBridgeError}
+            disabled={presentation.isDisabled}
             testID="new-send-flow-address-confirm"
           />
         )}
 
         {/* Show valid address without match (new address) */}
-        {isValidAddressWithoutMatch && (
+        {presentation.kind === "valid-address" && (
           <AddressListItem
-            address={searchValue}
+            address={presentation.address}
             name={formattedAddress}
             description={t("send.newSendFlow.notInRecentHistory")}
-            onSelect={() => onSelect(searchValue)}
+            onSelect={() => onSelect(presentation.address)}
             showSendTo
             disabled={false}
             testID="new-send-flow-address-confirm"
@@ -149,9 +138,9 @@ export function AddressMatchedSection({
         )}
 
         {/* Show disabled address if sanctioned or has bridge error (even if no match) */}
-        {shouldShowDisabledAddress && !hasMatch && (
+        {presentation.kind === "disabled-address" && (
           <AddressListItem
-            address={searchValue}
+            address={presentation.address}
             name={formattedAddress}
             description={formattedAddress}
             showSendTo

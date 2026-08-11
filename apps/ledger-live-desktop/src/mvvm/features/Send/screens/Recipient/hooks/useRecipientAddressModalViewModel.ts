@@ -1,4 +1,5 @@
 import { useCallback, useMemo } from "react";
+import { useContactsFeature } from "@features/flow-contacts";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { useRecipientSearchState } from "@ledgerhq/live-common/flows/send/recipient/hooks/useRecipientSearchState";
@@ -7,6 +8,7 @@ import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { useSendFlowData } from "../../../context/SendFlowContext";
 import { useAddressValidation } from "./useAddressValidation";
+import { useAddressMatchedSectionViewModel } from "./useAddressMatchedSectionViewModel";
 import { track } from "~/renderer/analytics/segment";
 import { getSendFlowTrackingProperties } from "../../../utils/tracking";
 
@@ -26,6 +28,7 @@ export function useRecipientAddressModalViewModel({
   recipientSupportsDomain,
 }: UseRecipientAddressModalViewModelProps) {
   const { recipientSearch, state } = useSendFlowData();
+  const { isEnabled: isContactsFeatureEnabled } = useContactsFeature("desktop");
 
   const mainAccount = getMainAccount(account, parentAccount);
   const sendFlowTrackingProperties = useMemo(
@@ -83,6 +86,19 @@ export function useRecipientAddressModalViewModel({
     isLoading,
     recipientSupportsDomain,
   });
+  const hasAddressBook = sendFeatures.hasAddressBook(currency);
+  const addressBookFamilyName = mainAccount.currency.name;
+  const addressMatchedSectionViewModel = useAddressMatchedSectionViewModel({
+    searchResult: result,
+    searchValue: recipientSearch.value,
+    onSelect: handleAddressSelect,
+    isSanctioned: searchState.isSanctioned,
+    isAddressComplete: searchState.isAddressComplete,
+    hasBridgeError: searchState.showBridgeRecipientError,
+    isContactsFeatureEnabled,
+    hasAddressBook,
+    addressBookFamilyName,
+  });
 
   return {
     searchValue: recipientSearch.value,
@@ -93,6 +109,10 @@ export function useRecipientAddressModalViewModel({
     hasMemo,
     hasMemoValidationError,
     hasFilledMemo,
+    isContactsFeatureEnabled,
+    hasAddressBook,
+    addressBookFamilyName,
+    addressMatchedSectionViewModel,
     memoType,
     memoTypeOptions,
     memoDefaultOption,
