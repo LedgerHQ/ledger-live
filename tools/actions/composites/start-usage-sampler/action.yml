@@ -1,0 +1,17 @@
+name: "Start Resource Usage Sampler"
+description: "Starts a background process sampling CPU/memory/disk/network every 5s into a CSV file"
+outputs:
+  sampler_pid:
+    description: "PID of the background sampler process"
+    value: ${{ steps.start.outputs.sampler_pid }}
+  csv_path:
+    description: "Path to the generated usage-metrics CSV"
+    value: ${{ steps.start.outputs.csv_path }}
+
+runs:
+  using: composite
+  steps:
+    - name: Start sampler
+      id: start
+      shell: bash
+      run: ${{ github.action_path }}/sample-usage.sh

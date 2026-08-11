@@ -7,6 +7,8 @@ export * from "./llmLedgerSyncEntryPoints";
 export * from "./llmMmkvMigration";
 export * from "./llmSentry";
 export * from "./llmWalletSync";
+export * from "./lwdAuth";
+export * from "./lwmAuth";
 export * from "./lwdLedgerSyncOptimisation";
 export * from "./lwmLedgerSyncOptimisation";
 export * from "./mixpanelAnalytics";

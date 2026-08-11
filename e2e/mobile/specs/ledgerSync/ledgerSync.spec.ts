@@ -7,7 +7,7 @@ const tmsLinks = ["B2CQA-2292", "B2CQA-2293", "B2CQA-2296"];
 const tags = ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5"];
 
 setTeamOwner(Team.WALLET_XP);
-describeIfNotNanoS(`Ledger Sync Accounts`, () => {
+describeIfNotNanoS("Ledger Sync", () => {
   beforeAll(async () => {
     await app.init({
       speculosApp: AppInfos.LS,
@@ -27,7 +27,7 @@ describeIfNotNanoS(`Ledger Sync Accounts`, () => {
 
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
-  it(`Synchronize one instance then delete the backup`, async () => {
+  it("Synchronize one instance then delete the backup", async () => {
     await app.accounts.openViaDeeplink();
     await app.accounts.expectNoAccount();
     await app.mainNavigation.openPortfolioViaDeeplink();

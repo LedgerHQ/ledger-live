@@ -812,6 +812,55 @@ describe("listOperations", () => {
       expect(tokenOps[0].value).toBe(5_000_000n);
     });
 
+    // Regression for LIVE-35047: Ledger Live / coin-service address token
+    // sub-accounts by their token-account (ATA) address, but Solana's token
+    // balance records only carry the wallet `owner`. Querying by the ATA must
+    // still surface the token operation (previously the owner-only match dropped
+    // it, making e.g. a swap's USDC leg invisible).
+    it("surfaces token ops when queried by the token-account (ATA) address (LIVE-35047)", async () => {
+      const blockTime = 1700000000;
+      const TOKEN_ACCOUNT = "AVHhsobqNw3b3XD43fz7Crq3d3UxFYZfHAByh7ogZoeN";
+      mockGetSignaturesForAddress.mockResolvedValue([
+        { signature: "sig1", slot: 100, blockTime, err: null },
+      ]);
+      mockGetParsedTransactions.mockResolvedValue([
+        makeTxWithTokenBalances(
+          [
+            {
+              accountIndex: 1,
+              mint: USDC_MINT,
+              owner: TEST_ADDRESS, // Solana records the WALLET as owner, never the ATA
+              programId: TOKEN_PROGRAM_ID_STR,
+              uiTokenAmount: { amount: "3576636", decimals: 6, uiAmount: 3.576636 },
+            },
+          ],
+          [
+            {
+              accountIndex: 1,
+              mint: USDC_MINT,
+              owner: TEST_ADDRESS,
+              programId: TOKEN_PROGRAM_ID_STR,
+              uiTokenAmount: { amount: "5112194", decimals: 6, uiAmount: 5.112194 },
+            },
+          ],
+          [TEST_ADDRESS, TOKEN_ACCOUNT], // ATA is accountKeys[1]
+        ),
+      ]);
+
+      // Query by the token-account address, not the wallet.
+      const result = await listOperations(api, TOKEN_ACCOUNT, { minHeight: 0, order: "desc" });
+
+      const tokenOps = result.items.filter(op => op.asset.type !== "native");
+      expect(tokenOps).toHaveLength(1);
+      expect(tokenOps[0].type).toBe("IN");
+      expect(tokenOps[0].value).toBe(1_535_558n);
+      expect(tokenOps[0].asset).toEqual({
+        type: "spl-token",
+        assetReference: USDC_MINT,
+        assetOwner: TEST_ADDRESS, // resolves to the wallet owner, not the queried ATA
+      });
+    });
+
     it("should skip tokens with zero delta", async () => {
       const blockTime = 1700000000;
       mockGetSignaturesForAddress.mockResolvedValue([

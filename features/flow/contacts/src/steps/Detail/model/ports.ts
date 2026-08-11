@@ -1,4 +1,10 @@
-import type { Contact, ContactAddress, ContactId, ContactInput } from "@domain/entity-contact";
+import type {
+  Contact,
+  ContactAddress,
+  ContactAddressId,
+  ContactId,
+  ContactInput,
+} from "@domain/entity-contact";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { ContactAddressDetailAsset, ContactAddressDetailNetwork } from "../types";
 
@@ -22,6 +28,19 @@ export type ContactDeletionPort = Readonly<{
 export type ContactDetailActionsPorts = Readonly<{
   edit: ContactEditPort;
   deletion: ContactDeletionPort;
+}>;
+
+export type ContactAddressDeletionInput = Readonly<{
+  contactId: ContactId;
+  addressId: ContactAddressId;
+}>;
+
+export type ContactAddressDeletionPort = Readonly<{
+  deleteAddress(input: ContactAddressDeletionInput): Promise<void>;
+}>;
+
+export type ContactAddressDetailActionsPorts = Readonly<{
+  deletion: ContactAddressDeletionPort;
 }>;
 
 /** Injected by app wiring; aligns with the future @features/platform-contacts contract. */

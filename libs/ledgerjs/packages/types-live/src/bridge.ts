@@ -5,7 +5,7 @@
 // that would directly be called from UI needs.
 import { BigNumber } from "bignumber.js";
 import type { Observable } from "rxjs";
-import type { CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, Unit } from "./currency";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 import type { AccountLike, Account, AccountRaw, TokenAccount, TokenAccountRaw } from "./account";
 import type {

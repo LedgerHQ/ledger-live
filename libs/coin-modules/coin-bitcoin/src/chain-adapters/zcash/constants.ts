@@ -49,23 +49,23 @@ export const getZainoEndpoint = (): { grpcUrl: string; network: ZcashNetwork } =
   network: getZainoNetwork(),
 });
 
-// ── Shielded routing feature flag ("zcashShielded") ─────────────────────────
+// ── Shielded routing (dead outside tests) ───────────────────────────────────
 //
-// Which signing path a Zcash send takes is driven by the `zcashShielded` feature
-// flag (see @ledgerhq/types-live `feature.ts`), NOT by the transfer type:
-//   • flag ON  → every send (including Public→Public / transparent t→t) is built
-//                and signed as a V5 PCZT through this adapter.
-//   • flag OFF → every send falls back to the legacy transparent Bitcoin PSBT
-//                path (the adapter returns `undefined` from each hook).
+// Which signing path a Zcash send takes is driven by this toggle, NOT by the
+// transfer type:
+//   • ON  → every send (including Public→Public / transparent t→t) is built and
+//           signed as a V5 PCZT through this adapter.
+//   • OFF → every send falls back to the legacy transparent Bitcoin PSBT path
+//           (the adapter returns `undefined` from each hook).
 //
-// A coin module cannot read React feature flags (`useFeature`) directly, so the
-// host app mirrors the flag value into this module-level state — the same
-// override pattern already used for the Zaino endpoint (`setZainoGrpcUrl`).
-// Defaults to `false` so an unconfigured environment never routes through the
-// in-development shielded path.
+// No host app mirrors anything here any more: the `zcashShielded` feature flag
+// now routes Zcash accounts to @ledgerhq/coin-zcash instead (see live-common
+// `bridge/impl.ts`), which is where the mirror lives. So this stays `false` in
+// every app, the ON branches below are only exercised by this package's own
+// tests, and they go away with the adapter's shielded path.
 let zcashShieldedEnabled = false;
 
-/** Mirror the `zcashShielded` feature flag into the coin module (see above). */
+/** Enable the adapter's shielded path. Tests only -- see above. */
 export const setZcashShieldedEnabled = (enabled: boolean): void => {
   zcashShieldedEnabled = enabled;
 };

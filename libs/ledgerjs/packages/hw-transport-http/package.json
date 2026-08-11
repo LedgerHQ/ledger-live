@@ -45,9 +45,8 @@
   "types": "lib/withStaticURLs.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
-    "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:*",
-    "@ledgerhq/logs": "workspace:^",
+    "@ledgerhq/logs": "catalog:",
     "axios": "catalog:",
     "ws": "catalog:"
   },

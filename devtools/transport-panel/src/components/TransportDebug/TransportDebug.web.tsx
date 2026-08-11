@@ -7,10 +7,10 @@ import {
   TextInput,
   Button,
 } from "@ledgerhq/lumen-ui-react";
-import { useState } from "react";
-import { HistoryLine } from "../HistoryLine/HistoryLine.web";
+import { HistoryLine } from "../HistoryLine";
 import type { MessageMap } from "@devtools/transport";
 import type { TransportPanelProps } from "../../types";
+import { useTransportSend } from "../../hooks";
 
 export interface TransportDebugProps<M extends MessageMap> {
   readonly transportConfig: TransportPanelProps<M>;
@@ -23,19 +23,10 @@ export function TransportDebug<M extends MessageMap>({
   open,
   onOpenChange,
 }: TransportDebugProps<M>) {
-  const [sendMessage, setSendMessage] = useState("");
-  const [kind, setKind] = useState("debug");
-  const [sendError, setSendError] = useState<string | null>(null);
+  const { kind, setKind, sendMessage, setSendMessage, sendError, handleSend } = useTransportSend(
+    transportConfig.transport,
+  );
   const state = transportConfig.transport.getState();
-
-  function handleSend() {
-    try {
-      transportConfig.transport.send(kind as keyof M, sendMessage as M[keyof M]);
-      setSendError(null);
-    } catch (e) {
-      setSendError(e instanceof Error ? e.message : String(e));
-    }
-  }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange} height="fixed">

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/asset-detail",
-  "version": "0.9.3",
+  "version": "0.10.0",
   "private": true,
   "description": "Ledger Live asset-detail shared module – market data hook, types and utils",
   "keywords": [
@@ -20,6 +20,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@domain/entity-currency": "workspace:*",
+    "@domain/entity-currency-crypto": "workspace:*",
     "@ledgerhq/asset-aggregation": "workspace:*",
     "@ledgerhq/live-common": "workspace:*"
   },

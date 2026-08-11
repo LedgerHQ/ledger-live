@@ -76,7 +76,7 @@ jobs:
           touch ${{ github.workspace }}/coverage/lcov.info
           touch ${{ github.workspace }}/coverage/sonar-executionTests-report.xml
 
-          pnpm exec nx run-many -t coverage --projects=tag:scope:devtools --parallel=4 -- --runInBand=1
+          pnpm exec nx run-many -t coverage --projects=tag:scope:devtools --parallel=4 -- --maxWorkers=2
 
       - name: Process coverage files
         id: process-coverage

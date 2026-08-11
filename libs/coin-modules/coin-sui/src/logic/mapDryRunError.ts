@@ -1,4 +1,4 @@
-import { NotEnoughBalance, NotEnoughBalanceFees } from "@ledgerhq/errors";
+import { NotEnoughBalance, NotEnoughBalanceFees } from "@ledgerhq/ledger-wallet-framework/errors";
 
 type ErrorMatcher = {
   pattern: RegExp;

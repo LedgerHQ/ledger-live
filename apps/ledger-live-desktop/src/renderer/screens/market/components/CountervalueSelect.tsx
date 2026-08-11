@@ -8,6 +8,7 @@ import Track from "~/renderer/analytics/Track";
 import { useTranslation } from "react-i18next";
 import { Currency } from "@domain/entity-currency";
 import { useSelector } from "LLD/hooks/redux";
+import { useGetSupportedFiatsQuery } from "@domain/api-currency-fiat";
 
 type Props = {
   counterCurrency?: string;
@@ -21,6 +22,7 @@ function CounterValueSelect({
   supportedCounterCurrencies = [],
 }: Props) {
   const { t } = useTranslation();
+  useGetSupportedFiatsQuery();
   const supportedCountervalues = useSelector(supportedCounterValuesSelector);
 
   const handleChangeCounterValue = useCallback(

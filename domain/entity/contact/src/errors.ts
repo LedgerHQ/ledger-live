@@ -1,16 +1,27 @@
 export class ContactError extends Error {
-  override name = "ContactError";
+  override name: string = "ContactError";
 }
 
 export class InvalidContactNameError extends ContactError {
-  override name = "InvalidContactNameError";
+  override name = "InvalidContactNameError" as const;
 
   constructor() {
     super("Expected letters, spaces, apostrophes, or hyphens");
   }
 }
 
-export type ContactNameValidationErrorName = "InvalidContactNameError";
+export class DuplicateContactNameError extends ContactError {
+  override name = "DuplicateContactNameError" as const;
+}
 
-export const INVALID_CONTACT_NAME_ERROR_NAME =
-  "InvalidContactNameError" satisfies ContactNameValidationErrorName;
+export class InvalidContactAddressLabelError extends ContactError {
+  override name = "InvalidContactAddressLabelError" as const;
+}
+
+export class DuplicateContactAddressLabelError extends ContactError {
+  override name = "DuplicateContactAddressLabelError" as const;
+}
+
+export class ContactAddressLabelTooLongError extends ContactError {
+  override name = "ContactAddressLabelTooLongError" as const;
+}

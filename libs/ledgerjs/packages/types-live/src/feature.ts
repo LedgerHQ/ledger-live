@@ -4,7 +4,7 @@
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { ABTestingVariants } from "./ABTesting";
 import { ChainwatchNetwork } from "./chainwatch";
-import { LldNanoSUpsellBannersConfig, LlmNanoSUpsellBannersConfig } from "./lnsUpsell";
+import { LldNanoSUpsellBannersConfig } from "./lnsUpsell";
 import { WalletSyncEnvironment, WalletSyncWatchConfig } from "./walletSync";
 
 /**
@@ -129,7 +129,6 @@ export type CurrencyFeatures = {
   currencyBlast: DefaultFeature;
   currencyBlastSepolia: DefaultFeature;
   currencyScroll: DefaultFeature;
-  currencyScrollSepolia: DefaultFeature;
   currencyShape: DefaultFeature;
   currencyStory: DefaultFeature;
   currencyIcon: DefaultFeature;
@@ -255,7 +254,6 @@ export type Features = CurrencyFeatures & {
   lwdProductTour: DefaultFeature;
   lwdBackupHub: DefaultFeature;
   lldNanoSUpsellBanners: Feature_LldNanoSUpsellBanners;
-  llmNanoSUpsellBanners: Feature_LlmNanoSUpsellBanners;
   llmThai: DefaultFeature;
   lldThai: DefaultFeature;
   llmMmkvMigration: Feature_LlmMmkvMigration;
@@ -846,12 +844,6 @@ export type Feature_PtxSwapDetailedView = Feature<{
 export type Feature_LldNanoSUpsellBanners = Feature<{
   opted_in: LldNanoSUpsellBannersConfig;
   opted_out: LldNanoSUpsellBannersConfig & { portfolio: boolean };
-}>;
-
-/** @deprecated Moved to `@shared/feature-flags`. Use `Features["llmNanoSUpsellBanners"]` from `@shared/feature-flags` instead. */
-export type Feature_LlmNanoSUpsellBanners = Feature<{
-  opted_in: LlmNanoSUpsellBannersConfig;
-  opted_out: LlmNanoSUpsellBannersConfig;
 }>;
 
 /** @deprecated Moved to `@shared/feature-flags`. Use `Features["llmTransferButtonCopyVariant"]` from `@shared/feature-flags` instead. */

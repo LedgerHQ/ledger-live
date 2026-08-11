@@ -2,7 +2,7 @@ import React, { memo } from "react";
 import { Box } from "@ledgerhq/native-ui";
 import HeaderErrorTitle from "~/components/HeaderErrorTitle";
 import { useNetInfo } from "@react-native-community/netinfo";
-import { NetworkDown } from "@ledgerhq/errors";
+import { NetworkDown } from "@ledgerhq/live-common/errors";
 
 type ErrorBannerProps = {
   error: Error;

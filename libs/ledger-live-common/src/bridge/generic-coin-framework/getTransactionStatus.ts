@@ -1,5 +1,5 @@
 import { AccountBridge } from "@ledgerhq/types-live";
-import { AccountAwaitingSendPendingOperations } from "@ledgerhq/errors";
+import { AccountAwaitingSendPendingOperations } from "../../errors";
 import BigNumber from "bignumber.js";
 import { getCoinModuleApi } from "./api";
 import { getBridgeApi } from "./bridge";

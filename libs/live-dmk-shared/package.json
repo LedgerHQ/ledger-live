@@ -35,7 +35,7 @@
   "dependencies": {
     "@ledgerhq/context-module": "catalog:",
     "@ledgerhq/hw-transport": "workspace:*",
-    "@ledgerhq/logs": "workspace:^",
+    "@ledgerhq/logs": "catalog:",
     "@ledgerhq/types-devices": "workspace:^",
     "@noble/hashes": "^1.8.0",
     "@types/semver": "catalog:",

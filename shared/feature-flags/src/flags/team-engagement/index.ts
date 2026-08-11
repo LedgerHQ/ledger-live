@@ -16,7 +16,6 @@ export * from "./lazyOnboardingBanner";
 export * from "./lwdProductTour";
 export { analyticsOptIn } from "./analyticsOptIn";
 export * from "./llmNanoOnboardingFundWallet";
-export * from "./llmNanoSUpsellBanners";
 export * from "./llmOnboardingEnableSync";
 export * from "./lwmNotificationsOptIn";
 export * from "./lwmProductTour";

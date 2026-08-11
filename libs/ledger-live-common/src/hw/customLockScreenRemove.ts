@@ -1,15 +1,11 @@
-import {
-  TransportStatusError,
-  UnexpectedBootloader,
-  StatusCodes,
-  UserRefusedOnDevice,
-} from "@ledgerhq/errors";
+import { TransportStatusError, StatusCodes } from "@ledgerhq/hw-transport/errors";
+import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
+import { ImageDoesNotExistOnDevice, UnexpectedBootloader } from "../errors";
 import Transport from "@ledgerhq/hw-transport";
 import { Observable, from, of, throwError } from "rxjs";
 import { withDevice } from "./deviceAccess";
 import { catchError, delay, mergeMap } from "rxjs/operators";
 import getDeviceInfo from "./getDeviceInfo";
-import { ImageDoesNotExistOnDevice } from "../errors";
 
 export type RemoveImageEvent =
   | {

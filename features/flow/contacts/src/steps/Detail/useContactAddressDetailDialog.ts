@@ -1,10 +1,7 @@
 import type { ContactAddressId } from "@domain/entity-contact";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { findContactAddressDetailSelection } from "./model/findContactAddressDetailSelection";
-import type {
-  ContactDetailAddressRowIntent,
-  PopulatedContactDetailViewModel,
-} from "./types";
+import type { ContactDetailAddressRowIntent, PopulatedContactDetailViewModel } from "./types";
 
 export function useContactAddressDetailDialog(
   populatedContactDetail: PopulatedContactDetailViewModel | undefined,

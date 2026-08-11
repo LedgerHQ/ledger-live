@@ -4,11 +4,11 @@ import flatMap from "lodash/flatMap";
 import semver from "semver";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { AppOp, State, Action, ListAppsResult, AppsDistribution, SkipReason } from "./types";
-import { findCryptoCurrency, findCryptoCurrencyById, isCurrencySupported } from "../currencies";
-import { NoSuchAppOnProvider } from "../errors";
+import { findCryptoCurrency, findCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { isCurrencySupported } from "../currencies";
+import { NoSuchAppOnProvider, LatestFirmwareVersionRequired } from "../errors";
 import { App } from "@ledgerhq/types-live";
 import { getEnv } from "@shared/env";
-import { LatestFirmwareVersionRequired } from "@ledgerhq/errors";
 
 const RESERVED_BLOCKS = 1;
 

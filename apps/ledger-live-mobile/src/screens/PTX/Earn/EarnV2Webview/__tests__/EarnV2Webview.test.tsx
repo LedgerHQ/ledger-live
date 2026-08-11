@@ -307,7 +307,7 @@ describe("EarnV2Webview", () => {
     expect(flattened.backgroundColor).toEqual(expect.any(String));
   });
 
-  it("does not override the screen background outside the simulate intent", () => {
+  it("does not override the screen background for deposit when swapToEarn is disabled", () => {
     render(
       <EarnV2Webview
         manifest={STUB_MANIFEST}
@@ -317,11 +317,31 @@ describe("EarnV2Webview", () => {
       {
         overrideInitialState: withFlagOverrides({
           ptxEarnUi: { enabled: true, params: { value: "v2" } },
+          swapToEarn: { enabled: false },
         }),
       },
     );
 
     const flattened = StyleSheet.flatten(screen.getByTestId("earn-screen").props.style);
     expect(flattened.backgroundColor).toBeUndefined();
+  });
+
+  it("paints the live-app canvas behind the webview for deposit when swapToEarn is enabled", () => {
+    render(
+      <EarnV2Webview
+        manifest={STUB_MANIFEST}
+        appManifestNotFoundError={ERROR}
+        inputs={{ intent: "deposit" }}
+      />,
+      {
+        overrideInitialState: withFlagOverrides({
+          ptxEarnUi: { enabled: true, params: { value: "v2" } },
+          swapToEarn: { enabled: true },
+        }),
+      },
+    );
+
+    const flattened = StyleSheet.flatten(screen.getByTestId("earn-screen").props.style);
+    expect(flattened.backgroundColor).toEqual(expect.any(String));
   });
 });

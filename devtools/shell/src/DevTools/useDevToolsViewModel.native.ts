@@ -5,15 +5,17 @@ import type { DevToolsConfig } from "@devtools/registry";
 
 interface DevToolsInput {
   config: DevToolsConfig;
+  footer?: React.ReactNode;
 }
 
 export interface DevToolsViewProps {
   shell: DevToolsShellValue;
+  footer?: React.ReactNode;
 }
 
-export function useDevToolsViewModel({ config }: DevToolsInput): DevToolsViewProps {
+export function useDevToolsViewModel({ config, footer }: DevToolsInput): DevToolsViewProps {
   const { categories } = useToolsFromConfig(config, "native");
-  const shell = useMemo(() => ({ categories }), [categories]);
+  const shell = useMemo(() => ({ categories, footer }), [categories, footer]);
 
   return { shell };
 }

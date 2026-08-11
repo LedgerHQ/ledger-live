@@ -8,6 +8,7 @@ export interface ToolsScreenViewProps {
   items: CatalogItem[];
   query: string;
   onQueryChange: (query: string) => void;
+  footer?: React.ReactNode;
 }
 
 export function useToolsScreenViewModel({
@@ -15,7 +16,7 @@ export function useToolsScreenViewModel({
   route,
 }: ToolsScreenProps): ToolsScreenViewProps {
   const { category } = route.params;
-  const { categories, query, setQuery } = useDevToolsShell();
+  const { categories, query, setQuery, footer } = useDevToolsShell();
 
   useLayoutEffect(() => {
     navigation.setOptions({ title: category });
@@ -37,5 +38,5 @@ export function useToolsScreenViewModel({
     [tools, navigation],
   );
 
-  return { items, query, onQueryChange: setQuery };
+  return { items, query, onQueryChange: setQuery, footer };
 }

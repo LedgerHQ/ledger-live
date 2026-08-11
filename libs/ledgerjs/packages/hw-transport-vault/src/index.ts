@@ -1,5 +1,5 @@
 import { log } from "@ledgerhq/logs";
-import { TransportError } from "@ledgerhq/errors";
+import { TransportError } from "@ledgerhq/hw-transport/errors";
 import WebSocketTransport from "@ledgerhq/hw-transport-http/WebSocketTransport";
 
 type VaultData = {

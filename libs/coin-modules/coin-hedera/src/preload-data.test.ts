@@ -1,4 +1,5 @@
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
+import { CryptoCurrencyIdSchema } from "@ledgerhq/ledger-wallet-framework/types";
 import {
   getCurrentHederaPreloadData,
   getHederaPreloadData,
@@ -32,7 +33,10 @@ describe("preload-data", () => {
     });
 
     it("should throw for unsupported currency", () => {
-      const unsupportedCurrency = getMockedCurrency({ id: "bitcoin", family: "bitcoin" });
+      const unsupportedCurrency = getMockedCurrency({
+        id: CryptoCurrencyIdSchema.parse("bitcoin"),
+        family: "bitcoin",
+      });
 
       expect(() => getCurrentHederaPreloadData(unsupportedCurrency)).toThrow(
         "unsupported currency bitcoin",
@@ -52,7 +56,10 @@ describe("preload-data", () => {
     });
 
     it("should throw for unsupported currency", () => {
-      const unsupportedCurrency = getMockedCurrency({ id: "bitcoin", family: "bitcoin" });
+      const unsupportedCurrency = getMockedCurrency({
+        id: CryptoCurrencyIdSchema.parse("bitcoin"),
+        family: "bitcoin",
+      });
 
       expect(() => getHederaPreloadData(unsupportedCurrency)).toThrow(
         "unsupported currency bitcoin",
@@ -62,7 +69,10 @@ describe("preload-data", () => {
 
   describe("setHederaPreloadData", () => {
     it("should throw for unsupported currency", () => {
-      const unsupportedCurrency = getMockedCurrency({ id: "bitcoin", family: "bitcoin" });
+      const unsupportedCurrency = getMockedCurrency({
+        id: CryptoCurrencyIdSchema.parse("bitcoin"),
+        family: "bitcoin",
+      });
 
       expect(() => setHederaPreloadData({ validators: [] }, unsupportedCurrency)).toThrow(
         "unsupported currency bitcoin",

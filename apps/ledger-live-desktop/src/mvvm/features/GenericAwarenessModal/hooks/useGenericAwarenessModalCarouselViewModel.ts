@@ -29,12 +29,14 @@ export interface GenericAwarenessModalCarouselViewModel {
   onContinueClick: (slideIndex: number, isLastSlide: boolean) => void;
   onHeaderClose: () => void;
   onDismiss: () => void;
-  onClose: () => void;
+  onCompleteClose: () => void;
 }
 
 const useGenericAwarenessModalCarouselViewModel = (
   contentCard: GenericAwarenessModalContentCard | undefined,
   isOpen: boolean,
+  logClick: () => void,
+  logDismiss: () => void,
 ): GenericAwarenessModalCarouselViewModel => {
   const dispatch = useDispatch();
   const currentIndexRef = useRef(0);
@@ -96,9 +98,10 @@ const useGenericAwarenessModalCarouselViewModel = (
       if (actionLink) {
         openURL(actionLink);
       }
+      logClick();
       closeDialog({ dismissAppStart: true });
     },
-    [closeDialog, getContext],
+    [closeDialog, getContext, logClick],
   );
 
   const onContinueClick = useCallback(
@@ -124,20 +127,23 @@ const useGenericAwarenessModalCarouselViewModel = (
     if (context) {
       trackCarouselCloseClick(context);
     }
+    logDismiss();
     closeDialog({ dismissAppStart: true });
-  }, [closeDialog, getContext]);
+  }, [closeDialog, getContext, logDismiss]);
 
   const onDismiss = useCallback(() => {
     const context = getContext(currentIndexRef.current);
     if (context) {
       trackCarouselDismissed(context);
     }
+    logDismiss();
     closeDialog({ dismissAppStart: true });
-  }, [closeDialog, getContext]);
+  }, [closeDialog, getContext, logDismiss]);
 
   const onCompleteClose = useCallback(() => {
+    logDismiss();
     closeDialog({ dismissAppStart: true });
-  }, [closeDialog]);
+  }, [closeDialog, logDismiss]);
 
   return useMemo(
     () => ({
@@ -147,7 +153,7 @@ const useGenericAwarenessModalCarouselViewModel = (
       onContinueClick,
       onHeaderClose,
       onDismiss,
-      onClose: onCompleteClose,
+      onCompleteClose,
     }),
     [
       carousel?.data,

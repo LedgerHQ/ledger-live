@@ -4,9 +4,7 @@ type ContactsListPaneProps = Readonly<{
   children: ReactNode;
 }>;
 
-export function ContactsListPane({
-  children,
-}: ContactsListPaneProps): React.ReactNode {
+export function ContactsListPane({ children }: ContactsListPaneProps): React.ReactNode {
   return (
     <aside
       className="flex w-2/5 min-h-0 min-w-[400px] max-w-[445px] shrink-0 flex-col overflow-hidden rounded-lg bg-section p-16"

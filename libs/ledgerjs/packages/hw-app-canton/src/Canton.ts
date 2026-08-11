@@ -1,4 +1,4 @@
-import { TransportStatusError } from "@ledgerhq/errors";
+import { TransportStatusError } from "@ledgerhq/hw-transport/errors";
 import type Transport from "@ledgerhq/hw-transport";
 import BIPPath from "bip32-path";
 

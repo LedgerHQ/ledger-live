@@ -1,8 +1,9 @@
 import { useState, useCallback, useMemo } from "react";
 import logger from "~/renderer/logger";
 import { useFeature } from "@features/platform-feature-flags";
-import { resolveAnalyticsOptInParams } from "@ledgerhq/live-common/analyticsConsent/index";
+import { resolveAnalyticsOptInParams } from "@features/flow-analytics-consent";
 import {
+  analyticsConsentInfoSelector,
   hasSeenAnalyticsOptInPromptSelector,
   trackingEnabledSelector,
 } from "~/renderer/reducers/settings";
@@ -29,9 +30,11 @@ interface Props {
 export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
   const hasSeenAnalyticsOptInPrompt = useSelector(hasSeenAnalyticsOptInPromptSelector);
   const isTrackingEnabled = useSelector(trackingEnabledSelector);
+  const consentInfo = useSelector(analyticsConsentInfoSelector);
   const lldAnalyticsOptInPromptFlag = useFeature("lldAnalyticsOptInPrompt");
   const analyticsOptInFlag = useFeature("analyticsOptIn");
-  const { policyVersion } = resolveAnalyticsOptInParams(analyticsOptInFlag);
+  const { currentPolicyVersion } = resolveAnalyticsOptInParams(analyticsOptInFlag);
+  const policyVersion = currentPolicyVersion?.normalized ?? consentInfo.privacyPolicyVersion;
   const shouldWeTrack = isTrackingEnabled || !hasSeenAnalyticsOptInPrompt;
 
   const dispatch = useDispatch();
@@ -71,7 +74,12 @@ export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
 
   const onSubmit = async () => {
     setIsAnalyticsOptInPromptOpened(false);
-    dispatch(setAnalyticsConsentInfo(policyVersion));
+    dispatch(
+      setAnalyticsConsentInfo({
+        consentDate: new Date().toISOString(),
+        privacyPolicyVersion: policyVersion,
+      }),
+    );
     dispatch(setHasSeenAnalyticsOptInPrompt(true));
     try {
       await updateIdentify({ force: true });

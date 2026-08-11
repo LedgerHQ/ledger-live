@@ -307,7 +307,6 @@ export enum SettingsActionTypes {
   SET_GENERAL_TERMS_VERSION_ACCEPTED = "SET_GENERAL_TERMS_VERSION_ACCEPTED",
   SET_ONBOARDING_TYPE = "SET_ONBOARDING_TYPE",
   SET_CLOSED_WITHDRAW_BANNER = "SET_CLOSED_WITHDRAW_BANNER",
-  SET_SUPPORTED_COUNTER_VALUES = "SET_SUPPORTED_COUNTER_VALUES",
   SET_HAS_SEEN_ANALYTICS_OPT_IN_PROMPT = "SET_HAS_SEEN_ANALYTICS_OPT_IN_PROMPT",
   SET_DEBUG_OS_UPDATE_BANNER_MODE = "SET_DEBUG_OS_UPDATE_BANNER_MODE",
   SET_DISMISSED_CONTENT_CARD = "SET_DISMISSED_CONTENT_CARD",
@@ -402,7 +401,6 @@ export type SettingsIsOnboardingFlowReceiveSuccessPayload =
 export type SettingsIsPostOnboardingFlowPayload = void | SettingsState["isPostOnboardingFlow"];
 
 export type SettingsSetGeneralTermsVersionAccepted = SettingsState["generalTermsVersionAccepted"];
-export type SettingsSetSupportedCounterValues = SettingsState["supportedCounterValues"];
 export type SettingsSetHasSeenAnalyticsOptInPrompt = SettingsState["hasSeenAnalyticsOptInPrompt"];
 export type SettingsSetDebugOsUpdateBannerMode = SettingsState["debugOsUpdateBannerMode"];
 export type SettingsSetAnalyticsConsentInfoPayload = SettingsState["analyticsConsentInfo"];
@@ -468,7 +466,6 @@ export type SettingsPayload =
   | SettingsSetGeneralTermsVersionAccepted
   | SettingsSetHasBeenUpsoldProtectPayload
   | SettingsSetOnboardingTypePayload
-  | SettingsSetSupportedCounterValues
   | SettingsSetHasSeenAnalyticsOptInPrompt
   | SettingsSetDebugOsUpdateBannerMode
   | SettingsSetAnalyticsConsentInfoPayload

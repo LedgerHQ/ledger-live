@@ -1,7 +1,7 @@
 import { AssertionError, fail } from "assert";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { delay } from "@ledgerhq/live-promise";
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import { CryptoCurrency, CryptoCurrencyIdSchema } from "@ledgerhq/ledger-wallet-framework/types";
 import axios from "axios";
 import BigNumber from "bignumber.js";
 import { Transaction } from "ethers";
@@ -613,7 +613,7 @@ describe("EVM Family", () => {
 
         expect(
           await api.getOptimismAdditionalFees(
-            { ...currency, id: "optimism" },
+            { ...currency, id: CryptoCurrencyIdSchema.parse("optimism") },
             transaction.serialized,
           ),
         ).toEqual(new BigNumber("100000000"));
@@ -657,7 +657,10 @@ describe("EVM Family", () => {
         });
 
         expect(
-          await api.getScrollAdditionalFees({ ...currency, id: "scroll" }, transaction.serialized),
+          await api.getScrollAdditionalFees(
+            { ...currency, id: CryptoCurrencyIdSchema.parse("scroll") },
+            transaction.serialized,
+          ),
         ).toEqual(new BigNumber("100000000"));
       });
     });

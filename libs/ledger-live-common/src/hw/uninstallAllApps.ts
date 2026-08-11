@@ -1,4 +1,5 @@
-import { TransportStatusError, StatusCodes, UserRefusedOnDevice } from "@ledgerhq/errors";
+import { TransportStatusError, StatusCodes } from "@ledgerhq/hw-transport/errors";
+import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import Transport from "@ledgerhq/hw-transport";
 import { Observable, from, of } from "rxjs";
 import { withDevice } from "./deviceAccess";

@@ -229,7 +229,7 @@ const modes: Readonly<Record<DerivationMode, ModeSpec>> = Object.freeze({
 //   modes[mode] = spec;
 // }
 
-const legacyDerivations: Partial<Record<CryptoCurrency["id"], DerivationMode[]>> = {
+const legacyDerivations: Partial<Record<string, DerivationMode[]>> = {
   aeternity: ["aeternity"],
   bitcoin_cash: [],
   tezos: ["galleonL", "tezboxL", "tezosSecp256k1", "tezosbip44h", "tezbox"],

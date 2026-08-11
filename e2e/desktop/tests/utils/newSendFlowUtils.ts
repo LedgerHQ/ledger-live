@@ -6,6 +6,7 @@ import { addBugLink, addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 import { liveDataWithRecipientAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
+import { FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED } from "tests/utils/featureFlagUtils";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { buildTags } from "tests/utils/tagsUtils";
 
@@ -72,14 +73,17 @@ export function registerNewSendFlowTests(entries: NewSendFlowEntry[]) {
     const tx = entry.transaction;
     const family = getFamilyByCurrencyId(tx.accountToDebit.currency.id);
     const validMemoTag = tx.memoTag !== "noTag" ? tx.memoTag : undefined;
+    const currency = tx.accountToDebit.currency;
+    const currencyLabel = currency.testLabel;
 
-    test.describe(tx.accountToDebit.accountName, () => {
+    test.describe("Send - new flow", () => {
       test.use({
         teamOwner: Team.COIN_INTEGRATION,
         userdata: "skip-onboarding-with-last-seen-device",
         speculosApp: tx.accountToDebit.currency.speculosApp,
         cliCommands: [liveDataWithRecipientAddressCommand(tx)],
         featureFlags: {
+          ...FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED,
           newSendFlow: {
             enabled: true,
             params: { families: NEW_SEND_FLOW_FAMILIES },
@@ -88,11 +92,9 @@ export function registerNewSendFlowTests(entries: NewSendFlowEntry[]) {
       });
 
       test(
-        `Send ${tx.amount} ${tx.accountToDebit.currency.ticker}${
-          tx.accountToDebit.derivationMode ? ` [${tx.accountToDebit.derivationMode}]` : ""
-        }${validMemoTag ? " with memo" : ""} from ${tx.accountToDebit.accountName} to ${
-          tx.accountToCredit.accountName
-        }`,
+        `[${currencyLabel}] - Send (new send flow)${
+          tx.accountToDebit.derivationMode ? ` - ${tx.accountToDebit.derivationMode}` : ""
+        }${validMemoTag ? " with memo" : ""}`,
         {
           tag: buildTags({ currencyId: tx.accountToDebit.currency.id }),
           annotation: { type: "TMS", description: entry.xrayTicket },

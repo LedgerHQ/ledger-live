@@ -9,7 +9,7 @@ import type { Transaction } from "@ledgerhq/coin-solana/types";
 import { getCurrentSolanaPreloadData } from "@ledgerhq/coin-solana/preload-data";
 import { LEDGER_VALIDATOR_DEFAULT } from "@ledgerhq/coin-solana/utils";
 import { getAccountBridge, getCurrencyBridge } from "../../bridge";
-import { getCryptoCurrencyById } from "../../currencies";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { makeBridgeCacheSystem } from "../../bridge/cache";
 import { genAccount, genAddingOperationsInAccount } from "../../mock/account";
 import * as hooks from "./react";

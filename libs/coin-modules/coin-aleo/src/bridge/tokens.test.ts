@@ -1,6 +1,7 @@
 import BigNumber from "bignumber.js";
 import type { TokenAccount } from "@ledgerhq/types-live";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
+import { TokenCurrencyIdSchema } from "@ledgerhq/ledger-wallet-framework/types";
 import { encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account";
 import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
@@ -270,7 +271,10 @@ describe("tokens utils", () => {
 
     it("should append sub-accounts that do not exist on the initial account", () => {
       const existingSubAccount = getMockedTokenAccount(mockTokenCurrency);
-      const newToken = getMockedTokenCurrency({ id: "other-token", contractAddress: "other.aleo" });
+      const newToken = getMockedTokenCurrency({
+        id: TokenCurrencyIdSchema.parse("other-token"),
+        contractAddress: "other.aleo",
+      });
       const newSubAccount = getMockedTokenAccount(newToken);
       const initialAccount = getMockedAccount({ subAccounts: [existingSubAccount] });
 

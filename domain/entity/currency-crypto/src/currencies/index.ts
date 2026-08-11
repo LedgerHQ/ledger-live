@@ -157,7 +157,6 @@ export * from "./robinhood";
 export * from "./robinhood_testnet";
 export * from "./rsk";
 export * from "./scroll";
-export * from "./scroll_sepolia";
 export * from "./secret_network";
 export * from "./sei_evm";
 export * from "./shape";

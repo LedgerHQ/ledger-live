@@ -61,8 +61,8 @@ describe("getStakes via MSW", () => {
     expect(active!.state).toBe("active");
     expect(active!.amountDeposited).toBe(1_000_000n);
     expect(active!.amountRewarded).toBe(500n);
-    // amount = amountDeposited + amountRewarded (getStakes.ts): 1_000_000 + 500 = 1_000_500.
-    expect(active!.amount).toBe(1_000_500n);
+    // amount is principal only (buildStakes) — the framework sums it into delegatedBalance; rewards stay separate.
+    expect(active!.amount).toBe(1_000_000n);
     expect(active!.actions).toEqual(
       expect.arrayContaining(["undelegate", "redelegate", "claim_reward"]),
     );

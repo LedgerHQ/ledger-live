@@ -1,6 +1,5 @@
 import { type AppStorageInfo, isAppStorageInfo } from "@ledgerhq/device-core";
 import { DeviceModelId } from "@ledgerhq/devices";
-import { createCustomErrorClass } from "@ledgerhq/errors";
 
 /**
  * The interface for the storage provider used to store the application data, should be implemented in a platform-specific context.
@@ -90,7 +89,12 @@ export type BackupAppDataEvent =
 /**
  * An error that occurs during the backup process, the error message should be descriptive when thrown.
  */
-export const BackupAppDataError = createCustomErrorClass("BackupAppDataError");
+export class BackupAppDataError extends Error {
+  override name = "BackupAppDataError";
+  constructor(message?: string) {
+    super(message || "BackupAppDataError");
+  }
+}
 
 export enum RestoreAppDataEventType {
   /**
@@ -141,7 +145,12 @@ export type RestoreAppDataEvent =
 /**
  * An error that occurs during the restore process, the error message should be descriptive when thrown.
  */
-export const RestoreAppDataError = createCustomErrorClass("RestoreAppDataError");
+export class RestoreAppDataError extends Error {
+  override name = "RestoreAppDataError";
+  constructor(message?: string) {
+    super(message || "RestoreAppDataError");
+  }
+}
 
 export enum DeleteAppDataEventType {
   AppDataDeleteStarted = "appDataDeleteStarted",
@@ -169,4 +178,9 @@ export type DeleteAppDataEvent =
 /**
  * An error that occurs during the delete process (local data), the error message should be descriptive when thrown.
  */
-export const DeleteAppDataError = createCustomErrorClass("DeleteAppDataError");
+export class DeleteAppDataError extends Error {
+  override name = "DeleteAppDataError";
+  constructor(message?: string) {
+    super(message || "DeleteAppDataError");
+  }
+}

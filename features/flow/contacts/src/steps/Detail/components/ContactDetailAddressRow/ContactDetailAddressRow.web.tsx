@@ -25,11 +25,7 @@ export function ContactDetailAddressRow({
   networkId,
   onPress,
 }: ContactDetailAddressRowProps): React.ReactNode {
-  const iconProps = resolveContactAddressIconProps(
-    row.currencyId,
-    row.label,
-    networkId,
-  );
+  const iconProps = resolveContactAddressIconProps(row.currencyId, row.label, networkId);
 
   return (
     <ListItem
@@ -47,9 +43,7 @@ export function ContactDetailAddressRow({
         />
         <ListItemContent>
           <ListItemTitle>{row.label}</ListItemTitle>
-          <ListItemDescription>
-            {truncateContactAddress(row.address)}
-          </ListItemDescription>
+          <ListItemDescription>{truncateContactAddress(row.address)}</ListItemDescription>
         </ListItemContent>
       </ListItemLeading>
       <ListItemTrailing>

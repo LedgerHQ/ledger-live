@@ -3,7 +3,7 @@ import type { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import { TokenCurrencyIdSchema } from "@domain/entity-currency-token";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
-import { getCryptoCurrencyById } from "../../currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import {
   buildReceiveOperationsSnapshot,
   findNewlyReceivedOperations,

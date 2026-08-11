@@ -30,7 +30,6 @@
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/device-management-kit": "catalog:",
     "@ledgerhq/device-signer-kit-hyperliquid": "catalog:",
-    "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:*",
     "rxjs": "catalog:"
   },

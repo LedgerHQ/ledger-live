@@ -6,9 +6,6 @@ const validBase64RegExp = new RegExp(
   /^(?:[A-Za-z\d+/]{4})*(?:[A-Za-z\d+/]{3}=|[A-Za-z\d+/]{2}==)?$/,
 );
 
-export const getPath = (path: string): string =>
-  path && path.substr(0, 2) !== "m/" ? `m/${path}` : path;
-
 export const isValidHex = (msg: string): boolean => validHexRegExp.test(msg);
 export const isValidBase64 = (msg: string): boolean => validBase64RegExp.test(msg);
 

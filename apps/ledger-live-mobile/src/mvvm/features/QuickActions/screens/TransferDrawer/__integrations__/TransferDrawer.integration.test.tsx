@@ -1,5 +1,5 @@
 import { renderHook, withFlagOverrides } from "@tests/test-renderer";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { useTransferDrawerViewModel } from "../useTransferDrawerViewModel";
 import { NavigatorName, ScreenName } from "~/const";
 import { track } from "~/analytics";

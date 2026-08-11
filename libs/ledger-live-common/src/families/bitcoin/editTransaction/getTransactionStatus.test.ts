@@ -1,4 +1,4 @@
-import { ReplacementTransactionUnderpriced } from "@ledgerhq/errors";
+import { ReplacementTransactionUnderpriced } from "../../../errors";
 import { BigNumber } from "bignumber.js";
 import { validateEditTransaction, getEditTransactionStatus } from "./getTransactionStatus";
 import type {

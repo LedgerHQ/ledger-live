@@ -345,16 +345,18 @@ describe("DmkSignerEth", () => {
       });
 
       // WHEN
-      const result = await lastValueFrom(signer.signTransaction(path, rawTxHex, {
-        domains: [
-          {
-            registry: "ens",
-            domain,
-            address: "0x",
-            type: "forward",
-          },
-        ]
-      }));
+      const result = await lastValueFrom(
+        signer.signTransaction(path, rawTxHex, {
+          domains: [
+            {
+              registry: "ens",
+              domain,
+              address: "0x",
+              type: "forward",
+            },
+          ],
+        }),
+      );
 
       // THEN
       expect(dmkMock.executeDeviceAction).toHaveBeenCalledWith(
@@ -643,7 +645,11 @@ describe("DmkSignerEth", () => {
 
       new DmkSignerEth(dmkMock as unknown as DeviceManagementKit, "sessionId");
 
-      expect(setCalConfigSpy).toHaveBeenCalledWith({ url: `${url}/v1`, mode: "prod", branch: "main" });
+      expect(setCalConfigSpy).toHaveBeenCalledWith({
+        url: `${url}/v1`,
+        mode: "prod",
+        branch: "main",
+      });
     });
 
     it("passes test mode when CAL_SERVICE_URL contains 'ledger-test'", () => {
@@ -652,7 +658,11 @@ describe("DmkSignerEth", () => {
 
       new DmkSignerEth(dmkMock as unknown as DeviceManagementKit, "sessionId");
 
-      expect(setCalConfigSpy).toHaveBeenCalledWith({ url: `${url}/v1`, mode: "test", branch: "main" });
+      expect(setCalConfigSpy).toHaveBeenCalledWith({
+        url: `${url}/v1`,
+        mode: "test",
+        branch: "main",
+      });
     });
 
     it("passes test mode when CAL_SERVICE_URL contains '.stg.' but not 'ledger-test'", () => {
@@ -661,7 +671,11 @@ describe("DmkSignerEth", () => {
 
       new DmkSignerEth(dmkMock as unknown as DeviceManagementKit, "sessionId");
 
-      expect(setCalConfigSpy).toHaveBeenCalledWith({ url: `${url}/v1`, mode: "test", branch: "main" });
+      expect(setCalConfigSpy).toHaveBeenCalledWith({
+        url: `${url}/v1`,
+        mode: "test",
+        branch: "main",
+      });
     });
   });
 });

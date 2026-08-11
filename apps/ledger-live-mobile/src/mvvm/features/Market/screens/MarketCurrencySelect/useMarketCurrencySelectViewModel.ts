@@ -4,10 +4,12 @@ import { supportedCounterValuesSelector } from "~/reducers/settings";
 import { useNavigation } from "@react-navigation/native";
 import { useMarket } from "../../hooks/useMarket";
 import { setMarketRequestParams } from "~/actions/market";
+import { useGetSupportedFiatsQuery } from "@domain/api-currency-fiat";
 
 function useMarketCurrencySelectViewModel() {
   const navigation = useNavigation();
   const dispatch = useDispatch();
+  useGetSupportedFiatsQuery();
   const supportedCountervalues = useSelector(supportedCounterValuesSelector);
 
   const { supportedCounterCurrencies, marketParams } = useMarket();

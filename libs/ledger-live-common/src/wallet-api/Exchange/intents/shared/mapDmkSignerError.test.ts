@@ -1,4 +1,5 @@
-import { LockedDeviceError, UserRefusedOnDevice } from "@ledgerhq/errors";
+import { LockedDeviceError } from "@ledgerhq/hw-transport/errors";
+import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import { EthAppPleaseEnableContractData } from "@ledgerhq/live-signer-evm/errors";
 import { mapDmkSignerError } from "./mapDmkSignerError";
 

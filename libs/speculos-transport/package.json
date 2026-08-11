@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/speculos-transport",
-  "version": "0.10.9",
+  "version": "0.10.10",
   "private": true,
   "description": "Ledger Live speculos transport test helper",
   "keywords": [
@@ -24,7 +24,7 @@
     "@ledgerhq/live-dmk-speculos": "workspace:*",
     "@shared/env": "workspace:*",
     "@ledgerhq/live-promise": "workspace:*",
-    "@ledgerhq/logs": "workspace:*"
+    "@ledgerhq/logs": "catalog:"
   },
   "devDependencies": {
     "@types/node": "catalog:",

@@ -1,43 +1,20 @@
 import * as React from "react";
 import { screen, renderWithReactQuery } from "@tests/test-renderer";
 import { MarketPages } from "./shared";
-import { State, supportedCountervaluesData } from "~/reducers/types";
-const SUPPORTED_CURRENCIES = [
-  {
-    currency: {
-      name: "Euro",
-      symbol: "€",
-      ticker: "EUR",
-      type: "FiatCurrency",
-      units: [],
-    },
-    label: "Euro - EUR",
-    ticker: "EUR",
-    value: "EUR",
-  },
-  {
-    currency: {
-      name: "US Dollar",
-      symbol: "$",
-      ticker: "USD",
-      type: "FiatCurrency",
-      units: [],
-    },
-    label: "US Dollar - USD",
-    ticker: "USD",
-    value: "USD",
-  },
-] as supportedCountervaluesData[];
+import { State } from "~/reducers/types";
+import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
+
+const EUR = getFiatCurrencyByTicker("EUR");
+const USD = getFiatCurrencyByTicker("USD");
 
 describe("Market integration test", () => {
   it("Should change selected currency", async () => {
     const { user } = renderWithReactQuery(<MarketPages />, {
       overrideInitialState: (state: State) => ({
         ...state,
-        settings: {
-          ...state.settings,
-          supportedCounterValues: SUPPORTED_CURRENCIES,
-        },
+        // Seed the supportedFiats slice so the derived supportedCounterValuesSelector
+        // returns EUR and USD deterministically, independent of CVS API availability.
+        supportedFiats: { fiats: [EUR, USD], fiatsReady: true },
       }),
     });
 

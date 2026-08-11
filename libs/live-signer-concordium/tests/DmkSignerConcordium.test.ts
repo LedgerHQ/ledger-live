@@ -3,9 +3,9 @@ import {
   ConcordiumAddressVerificationFailedError,
   ConcordiumInvalidMaxFeeError,
   ConcordiumTrustedMetadataServiceError,
-  LockedDeviceError,
-  UserRefusedOnDevice,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/coin-concordium/types";
+import { LockedDeviceError } from "@ledgerhq/hw-transport/errors";
+import { UserRefusedOnDevice } from "../src/errors";
 import { SignerConcordiumBuilder } from "@ledgerhq/device-signer-kit-concordium";
 import { TransactionType, AccountAddress } from "@ledgerhq/concordium-core";
 import type { Transaction, CredentialDeploymentTransaction } from "@ledgerhq/concordium-core";

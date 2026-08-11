@@ -8,14 +8,14 @@ type Mocks = {
   navigate: jest.Mock;
   goBack: jest.Mock;
   pop: jest.Mock;
-  setRouteParams: (currencyId: string, deviceId?: string) => void;
+  setRouteParams: (currencyId: string, deviceId?: string, extra?: Record<string, unknown>) => void;
   setScanObservable: (observable: Observable<ScanAccountEvent>) => void;
   makeDiscoveredEvent: (account: Account) => ScanAccountEvent;
   resetSpies: () => void;
   getCurrentCurrency: () => Account["currency"];
 };
 
-let routeParams = {
+let routeParams: Record<string, unknown> = {
   currency: getCryptoCurrencyById("ethereum"),
   device: { deviceId: "device-1" },
 };
@@ -77,10 +77,15 @@ jest.mock("~/bridge/cache", () => ({
 }));
 
 export const setupScanDeviceTests = (): Mocks => {
-  const setRouteParams = (currencyId: string, deviceId = "device-1") => {
+  const setRouteParams = (
+    currencyId: string,
+    deviceId = "device-1",
+    extra: Record<string, unknown> = {},
+  ) => {
     routeParams = {
       currency: getCryptoCurrencyById(currencyId),
       device: { deviceId },
+      ...extra,
     };
   };
 
@@ -93,7 +98,7 @@ export const setupScanDeviceTests = (): Mocks => {
     account,
   });
 
-  const getCurrentCurrency = () => routeParams.currency;
+  const getCurrentCurrency = () => routeParams.currency as Account["currency"];
 
   const resetSpies = () => {
     replace.mockClear();

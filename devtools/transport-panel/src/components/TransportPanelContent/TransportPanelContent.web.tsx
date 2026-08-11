@@ -1,7 +1,7 @@
 import { IconButton, TextInput } from "@ledgerhq/lumen-ui-react";
 import { Refresh, Repair } from "@ledgerhq/lumen-ui-react/symbols";
 import { useState } from "react";
-import { TransportDebug } from "../TransportDebug/TransportDebug";
+import { TransportDebug } from "../TransportDebug";
 import type { MessageMap } from "@devtools/transport";
 import type { TransportPanelProps } from "../../types";
 
@@ -11,7 +11,7 @@ interface TransportPanelContentProps<M extends MessageMap> {
 
 export function TransportPanelContent<M extends MessageMap>({
   transportConfig,
-}: TransportPanelContentProps<M>) {
+}: Readonly<TransportPanelContentProps<M>>) {
   const { transport, target, setTarget, hubUrl, setHubUrl, role } = transportConfig;
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   return (

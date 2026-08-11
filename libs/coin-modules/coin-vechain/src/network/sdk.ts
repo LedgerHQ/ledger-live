@@ -13,9 +13,8 @@ import {
   mapTokenTransfersToOperations,
   padAddress,
 } from "../common-logic";
-import { getEnv } from "@ledgerhq/live-env";
+import { VECHAIN_NODE_URL as BASE_URL } from "../constants";
 
-const BASE_URL = getEnv("API_VECHAIN_THOREST");
 const NET_ERROR_LOG_TRANSFERS_LIMIT = {
   status: 403,
   msgPattern: /exceeds the maximum allowed/,
@@ -149,6 +148,14 @@ const getLogsWithPagination = async (
   stopAt: number,
   fetchRangeOfLogs: (from: number, to: number) => Promise<Operation[]>,
 ): Promise<Operation[]> => {
+  // No new block since the last known operation (startAt = lastOp.blockHeight + 1 can exceed the
+  // current best height when nothing has happened since the previous sync) — Thor's `/logs/*`
+  // endpoints reject an inverted range with a 400, so treat it as "nothing new" instead of
+  // querying at all.
+  if (stopAt < startAt) {
+    return [];
+  }
+
   let completed = false;
   const ops: Operation[] = [];
 

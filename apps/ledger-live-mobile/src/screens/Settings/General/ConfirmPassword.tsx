@@ -3,7 +3,7 @@ import { Platform, Vibration } from "react-native";
 import * as Keychain from "react-native-keychain";
 import { useDispatch } from "~/context/hooks";
 import { useTranslation } from "~/context/Locale";
-import { PasswordsDontMatchError } from "@ledgerhq/errors";
+import { PasswordsDontMatchError } from "@ledgerhq/live-common/errors";
 
 import { CompositeScreenProps } from "@react-navigation/native";
 import { setPrivacy } from "~/actions/settings";

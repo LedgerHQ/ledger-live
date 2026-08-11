@@ -7,6 +7,9 @@ jest.mock("react-router", () => ({
   ...jest.requireActual("react-router"),
   useNavigate: () => mockNavigate,
 }));
+jest.mock("@devtools/transport-panel", () => ({
+  TransportPanel: () => null,
+}));
 
 const devToolsSpy = jest.fn();
 jest.mock("@devtools/shell", () => ({
@@ -23,6 +26,20 @@ jest.mock("@devtools/shell", () => ({
 jest.mock("@devtools/bindings", () => ({
   useFeatureFlagsToolProps: () => ({ marker: "ff-props" }),
 }));
+
+jest.mock("@devtools/wire", () => {
+  const wireState = { hubUrl: "ws://127.0.0.1:9090", role: "host" };
+  return {
+    buildTransport: () => ({
+      transport: {},
+      subscribe: () => () => {},
+      getState: () => wireState,
+      setHubUrl: jest.fn(),
+    }),
+    buildCopyStoreProtocol: () => ({}),
+    combineProtocols: (...args: unknown[]) => args[0],
+  };
+});
 
 describe("DevToolsScreen", () => {
   beforeEach(() => {

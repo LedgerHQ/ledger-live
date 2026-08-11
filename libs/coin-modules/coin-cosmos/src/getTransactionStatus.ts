@@ -6,13 +6,7 @@ import {
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
   RecipientRequired,
-  RecommendUndelegation,
-} from "@ledgerhq/errors";
-import { AccountBridge } from "@ledgerhq/types-live";
-import * as bech32 from "bech32";
-import { BigNumber } from "bignumber.js";
-import invariant from "invariant";
-import cryptoFactory from "./chain/chain";
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import {
   ClaimRewardsFeesWarning,
   CosmosDelegateAllFundsWarning,
@@ -20,7 +14,13 @@ import {
   CosmosTooManyRedelegations,
   CosmosTooManyValidators,
   NotEnoughDelegationBalance,
+  RecommendUndelegation,
 } from "./errors";
+import { AccountBridge } from "@ledgerhq/types-live";
+import * as bech32 from "bech32";
+import { BigNumber } from "bignumber.js";
+import invariant from "invariant";
+import cryptoFactory from "./chain/chain";
 import {
   COSMOS_MAX_DELEGATIONS,
   COSMOS_MAX_REDELEGATIONS,

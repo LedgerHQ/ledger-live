@@ -2,7 +2,7 @@ import {
   isAddressSanctioned,
   isCheckSanctionedAddressEnabled,
 } from "@ledgerhq/ledger-wallet-framework/sanction/index";
-import { CurrencyNotSupported } from "@ledgerhq/errors";
+import { CurrencyNotSupported } from "../errors";
 import { decodeAccountId, getMainAccount, checkAccountSupported } from "../account";
 import { getEnv } from "@shared/env";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
@@ -25,6 +25,17 @@ import {
   loadBridgeExtensionsForFamily,
 } from "../coin-modules/registry";
 import { defaultBridgeExtensions } from "./defaultBridgeExtensions";
+import { isZcashShieldedEnabled } from "./zcashRouting";
+
+// The family owning a currency's bridge is `currency.family`, except zcash:
+// `zcashShielded` routes it to the standalone "zcash" family
+// (@ledgerhq/coin-zcash) instead of coin-bitcoin's chain-adapter. The flag is
+// read from the mirror the host app feeds (`setZcashShieldedEnabled`), so a
+// developer-drawer override moves the routing with it; the two families keep
+// separate cache entries, so a flip mid-session resolves the other bridge.
+function resolveFamily(currency: CryptoCurrency): string {
+  return currency.id === "zcash" && isZcashShieldedEnabled() ? "zcash" : currency.family;
+}
 
 // Rejections stay cached: evicting would hand React.use() a fresh Promise per render and re-suspend forever.
 // Callers that want to retry a transient failure must invalidate via clearBridgeCache(family).
@@ -65,8 +76,10 @@ export function clearBridgeCache(family?: string): void {
 }
 
 async function buildCurrencyBridge(currency: CryptoCurrency): Promise<CurrencyBridge> {
+  const family = resolveFamily(currency);
+
   if (getEnv("MOCK")) {
-    const mockBridge = await loadMockBridgeForFamily(currency.family);
+    const mockBridge = await loadMockBridgeForFamily(family);
     // TODO Remove once we delete mock bridges tests
     if (mockBridge) {
       mockBridge.loadCoinConfig?.();
@@ -77,11 +90,11 @@ async function buildCurrencyBridge(currency: CryptoCurrency): Promise<CurrencyBr
     });
   }
 
-  if (isGenericCoinFrameworkFamily(currency.family)) {
-    return getCoinFrameworkCurrencyBridge(currency.family, "local");
+  if (isGenericCoinFrameworkFamily(family)) {
+    return getCoinFrameworkCurrencyBridge(family, "local");
   }
 
-  const setup = await loadSetupForFamily(currency.family);
+  const setup = await loadSetupForFamily(family);
   if (!setup?.bridge) {
     throw new CurrencyNotSupported("no implementation available for currency " + currency.id, {
       currencyName: currency.id,
@@ -91,7 +104,7 @@ async function buildCurrencyBridge(currency: CryptoCurrency): Promise<CurrencyBr
 }
 
 export const getCurrencyBridge = (currency: CryptoCurrency): Promise<CurrencyBridge> => {
-  const family = currency.family;
+  const family = resolveFamily(currency);
   if (!currencyBridgePromiseCache[family]) {
     currencyBridgePromiseCache[family] = annotatePromise(buildCurrencyBridge(currency));
   }
@@ -158,16 +171,17 @@ export function getAccountBridge(
   const mainAccount = getMainAccount(account, parentAccount);
   const { currency } = mainAccount;
   const supportedError = checkAccountSupported(mainAccount);
+  const family = resolveFamily(currency);
 
   if (supportedError) {
-    const key = `${currency.family}|${currency.id}|${mainAccount.derivationMode}`;
+    const key = `${family}|${currency.id}|${mainAccount.derivationMode}`;
     if (!unsupportedBridgePromiseCache[key]) {
       unsupportedBridgePromiseCache[key] = annotatePromise(Promise.reject(supportedError));
     }
     return unsupportedBridgePromiseCache[key];
   }
 
-  return getAccountBridgeByFamily(currency.family, mainAccount.id);
+  return getAccountBridgeByFamily(family, mainAccount.id);
 }
 
 async function wrapAccountBridge<T extends TransactionCommon>(

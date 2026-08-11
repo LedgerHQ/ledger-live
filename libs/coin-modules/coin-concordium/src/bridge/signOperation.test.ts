@@ -1,4 +1,4 @@
-import { FeeNotLoaded } from "@ledgerhq/errors";
+import { FeeNotLoaded } from "@ledgerhq/ledger-wallet-framework/errors";
 import BigNumber from "bignumber.js";
 import { firstValueFrom, toArray } from "rxjs";
 import { AccountAddress } from "@ledgerhq/concordium-core";

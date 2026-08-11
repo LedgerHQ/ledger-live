@@ -19,7 +19,7 @@ import { getBlockInfo } from "../logic/history/getBlockInfo";
 import { getTransactions } from "../logic/history/getTransactions";
 import { fetchValidators, getEpochInfo } from "../network";
 import type { RosettaTransaction } from "../network/types";
-import type { FetchEpochInfoResponse } from "../network/types";
+import type { FetchEpochInfoResponse, ValidatorInfo } from "../network/types";
 import {
   createMockTxn,
   createMockAccountInfo,
@@ -381,7 +381,7 @@ describe("synchronisation", () => {
     });
 
     it("should populate delegateInfo when a validator matches the delegate address", async () => {
-      (fetchValidators as jest.Mock).mockResolvedValue([
+      (fetchValidators as unknown as jest.Mock).mockResolvedValue([
         { address: "validator_address", name: "Validator" },
       ]);
       (getDelegateAddress as jest.Mock).mockResolvedValue("validator_address");
@@ -417,6 +417,53 @@ describe("synchronisation", () => {
 
       // delegateAddress = address (self) → stakingActive = false
       expect(result.resources?.stakingActive).toBe(false);
+    });
+
+    describe("when a staking upstream fails", () => {
+      const previousResources: MinaAccount["resources"] = {
+        blockProducers: [{ address: "validator_address", name: "Validator" } as ValidatorInfo],
+        delegateInfo: undefined,
+        stakingActive: true,
+        epochInfo: { epoch: "1", slot: "1", globalSlot: "1", startTime: "", endTime: "" },
+      };
+
+      it("should still return balance and operations", async () => {
+        (fetchValidators as unknown as jest.Mock).mockRejectedValue(new Error("validators down"));
+        const fakeOp = { type: "IN", id: "op1" } as MinaOperation;
+        (mergeOps as jest.Mock).mockReturnValue([fakeOp]);
+
+        const result = await getAccountShape(createMockAccountInfo(), { paginationConfig: {} });
+
+        expect(result.balance).toEqual(mockAccountData.balance);
+        expect(result.spendableBalance).toEqual(mockAccountData.spendableBalance);
+        expect(result.blockHeight).toBe(mockAccountData.blockHeight);
+        expect(result.operations).toEqual([fakeOp]);
+      });
+
+      it("should keep the resources from the previous sync", async () => {
+        (fetchValidators as unknown as jest.Mock).mockRejectedValue(new Error("validators down"));
+        const mockInfo = createMockAccountInfo();
+        mockInfo.initialAccount = {
+          ...mockInfo.initialAccount,
+          resources: previousResources,
+        } as MinaAccount;
+
+        const result = await getAccountShape(mockInfo, { paginationConfig: {} });
+
+        expect(result.resources).toEqual(previousResources);
+      });
+
+      it("should leave resources unset when there is nothing to fall back on", async () => {
+        (getEpochInfo as jest.Mock).mockRejectedValue(new Error("graphql down"));
+        const mockInfo = { ...createMockAccountInfo(), initialAccount: undefined };
+
+        const result = await getAccountShape(mockInfo as AccountShapeInfo<Account>, {
+          paginationConfig: {},
+        });
+
+        expect(result.resources).toBeUndefined();
+        expect(result.balance).toEqual(mockAccountData.balance);
+      });
     });
   });
 

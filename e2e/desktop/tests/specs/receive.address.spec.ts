@@ -46,7 +46,7 @@ async function verifySendCurrencyTokensWarning(app: Application, account: Accoun
 }
 
 for (const receive of nativeAccounts) {
-  test.describe("Receive native coin", () => {
+  test.describe("Receive", () => {
     test.use({
       teamOwner: Team.WALLET_XP,
       userdata: "skip-onboarding-with-last-seen-device",
@@ -55,7 +55,7 @@ for (const receive of nativeAccounts) {
     });
 
     test(
-      `[${receive.account.currency.name}] Receive`,
+      `[${receive.account.currency.testLabel}] - Verify address`,
       {
         tag: buildTags({
           currencyId: receive.account.currency.id,
@@ -83,7 +83,7 @@ for (const receive of nativeAccounts) {
   });
 }
 
-test.describe("Receive TRX empty balance", () => {
+test.describe("Receive", () => {
   const account = Account.TRX_3;
   test.use({
     teamOwner: Team.WALLET_XP,
@@ -93,7 +93,7 @@ test.describe("Receive TRX empty balance", () => {
   });
 
   test(
-    `${account.currency.ticker} empty balance Receive displays address activation warning message`,
+    `[${account.currency.testLabel}] - Verify address activation warning on empty account`,
     {
       tag: buildTags({ currencyId: account.currency.id }),
       annotation: {
@@ -114,7 +114,7 @@ test.describe("Receive TRX empty balance", () => {
   );
 });
 
-test.describe("Receive token", () => {
+test.describe("Receive", () => {
   test.use({
     teamOwner: Team.WALLET_XP,
     userdata: "speculos-subAccount",
@@ -122,7 +122,7 @@ test.describe("Receive token", () => {
   });
 
   test(
-    `[${tokenAccount.account.currency.name}] Receive`,
+    `[${tokenAccount.account.currency.testLabel}] - Verify address`,
     {
       tag: buildTags({ currencyId: tokenAccount.account.currency.id }),
       annotation: {

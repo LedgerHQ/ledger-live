@@ -12,7 +12,7 @@ import {
   NotEnoughBalance,
   NotEnoughGas,
   RecipientRequired,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import { TronMemo } from "../types";
 import { estimateFees } from "./estimateFees";
 import { validateAddress } from "./validateAddress";

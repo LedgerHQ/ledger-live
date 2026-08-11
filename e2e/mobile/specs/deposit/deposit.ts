@@ -23,9 +23,7 @@ export async function runSelectCryptoNetworkTest(
   tmsLinks: string[],
   tags: string[],
 ) {
-  describe(`Select crypto network with ${withAccount ? "account" : "no account"} for ${
-    account.currency.ticker
-  }`, () => {
+  describe("Deposit", () => {
     beforeAll(async () => {
       await beforeAllFunction({
         userdata: "skip-onboarding",
@@ -37,9 +35,7 @@ export async function runSelectCryptoNetworkTest(
     setTeamOwner(Team.WALLET_XP);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    it(`should select crypto network with ${withAccount ? "account" : "no account"} for ${
-      account.currency.ticker
-    }`, async () => {
+    it(`[${account.currency.testLabel}] - Deposit select network ${withAccount ? "with" : "without"} an account`, async () => {
       await app.portfolio.pressQuickActionTransferButton();
       await app.portfolio.pressTransferBottomSheetReceiveButton();
 
@@ -58,7 +54,7 @@ export async function runSelectCryptoWithoutNetworkAndAccountTest(
   tmsLinks: string[],
   tags: string[],
 ) {
-  describe(`Select crypto without network and account for ${account.currency.ticker}`, () => {
+  describe("Deposit", () => {
     beforeAll(async () => {
       await beforeAllFunction({
         userdata: "skip-onboarding",
@@ -68,7 +64,7 @@ export async function runSelectCryptoWithoutNetworkAndAccountTest(
     setTeamOwner(Team.WALLET_XP);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    it(`should select crypto without network and account for ${account.currency.ticker}`, async () => {
+    it(`[${account.currency.testLabel}] - Deposit select crypto without network or account`, async () => {
       await app.portfolio.pressQuickActionTransferButton();
       await app.portfolio.pressTransferBottomSheetReceiveButton();
 

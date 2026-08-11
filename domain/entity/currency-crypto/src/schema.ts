@@ -39,7 +39,7 @@ export const BitcoinLikeInfoSchema = z.object({
 /**
  * Canonical Zod-first schema for a crypto currency entity.
  *
- * Written from scratch — does **not** import from `@ledgerhq/types-cryptoassets`.
+ * Written from scratch — does **not** derive from the legacy currency types.
  * TS types are derived via `z.infer<>`. The legacy types become adapters during
  * migration and will be deleted once all consumers are rewired.
  *

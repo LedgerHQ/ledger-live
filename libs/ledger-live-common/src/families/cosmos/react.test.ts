@@ -15,7 +15,7 @@ import { getAccountCurrency } from "../../account";
 import { getAccountBridge, getCurrencyBridge } from "../../bridge";
 import { makeBridgeCacheSystem } from "../../bridge/cache";
 import { liveConfig } from "../../config/sharedConfig";
-import { getCryptoCurrencyById } from "../../currencies";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount, genAddingOperationsInAccount } from "../../mock/account";
 import * as hooks from "./react";
 import type {

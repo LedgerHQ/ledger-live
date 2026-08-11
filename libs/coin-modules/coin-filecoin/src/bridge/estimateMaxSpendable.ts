@@ -2,7 +2,7 @@ import {
   InvalidAddress,
   NotEnoughBalanceInParentAccount,
   NotEnoughSpendableBalance,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { AccountBridge, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";

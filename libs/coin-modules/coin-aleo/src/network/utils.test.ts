@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { LedgerAPI4xx, LedgerAPI5xx } from "@ledgerhq/errors";
+import { LedgerAPI4xx, LedgerAPI5xx } from "@ledgerhq/live-network/errors";
 import { AleoApiConfigurationResetError } from "../errors";
 import {
   EXPLORER_TRANSFER_TYPES,

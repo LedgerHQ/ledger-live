@@ -1,5 +1,5 @@
 import { CeloSignature } from "../signer/signer";
-import { FeeNotLoaded } from "@ledgerhq/errors";
+import { FeeNotLoaded } from "@ledgerhq/ledger-wallet-framework/errors";
 import { findSubAccountById } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { Account, AccountBridge, DeviceId, SignOperationEvent } from "@ledgerhq/types-live";

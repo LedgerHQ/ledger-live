@@ -11,7 +11,7 @@ import {
   InvalidAddress,
   NotEnoughBalance,
   RecipientRequired,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import { isValidKaspaAddress } from "./kaspaAddresses";
 
 // Fees are flagged "too high" once they exceed 1/RATIO of the sent amount (i.e. 10%),

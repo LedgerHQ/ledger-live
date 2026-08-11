@@ -12,7 +12,7 @@ import { DeviceModelId } from "@ledgerhq/devices";
 import calService from "@ledgerhq/ledger-cal-service";
 import trustService from "@ledgerhq/ledger-trust-service";
 import { loadPKI } from "@ledgerhq/hw-bolos";
-import { LatestFirmwareVersionRequired, UpdateYourApp } from "@ledgerhq/errors";
+import { LatestFirmwareVersionRequired, UpdateYourApp } from "./errors";
 
 /**
  * Required minimum version of App Solana for non NanoS devices.

@@ -149,7 +149,13 @@ export function NetworkFeesRow({ viewModel }: NetworkFeesRowProps) {
             <Text typography="body3" lx={{ color: "base" }}>
               {viewModel.value}
             </Text>
-            {viewModel.showFeeCurrencyAmount ? null : (
+            {viewModel.secondaryValue ? (
+              <Text typography="body3" lx={{ color: "muted" }}>
+                {viewModel.secondaryValue}
+              </Text>
+            ) : null}
+            {/* A read-only fee has no strategy to name. */}
+            {canOpenFeeSelector ? (
               <>
                 <Text typography="body3" lx={{ color: "muted" }}>
                   •
@@ -158,7 +164,7 @@ export function NetworkFeesRow({ viewModel }: NetworkFeesRowProps) {
                   {viewModel.strategyLabel}
                 </Text>
               </>
-            )}
+            ) : null}
           </View>
           {canOpenFeeSelector ? <ChevronDown size={16} /> : null}
         </Pressable>

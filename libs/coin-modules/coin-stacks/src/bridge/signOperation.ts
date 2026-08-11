@@ -1,4 +1,5 @@
-import { FeeNotLoaded, InvalidAddress, InvalidNonce } from "@ledgerhq/errors";
+import { InvalidNonce } from "../errors";
+import { FeeNotLoaded, InvalidAddress } from "@ledgerhq/ledger-wallet-framework/errors";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { AccountBridge } from "@ledgerhq/types-live";
 import invariant from "invariant";

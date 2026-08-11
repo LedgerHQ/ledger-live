@@ -1,5 +1,5 @@
 import Transport from "@ledgerhq/hw-transport";
-import { TransportError } from "@ledgerhq/errors";
+import { TransportError } from "@ledgerhq/hw-transport/errors";
 import { log } from "@ledgerhq/logs";
 
 declare global {

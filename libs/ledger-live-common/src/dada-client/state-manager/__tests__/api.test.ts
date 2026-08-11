@@ -79,6 +79,19 @@ describe("buildAssetsQueryParams", () => {
     expect(buildAssetsQueryParams(baseQueryArg).currencyIds).toBeUndefined();
   });
 
+  it("should serialize networkIds as a comma-separated string", () => {
+    const input = ["ethereum", "tron"];
+
+    expect(buildAssetsQueryParams({ ...baseQueryArg, networkIds: input }).networkIds).toBe(
+      "ethereum,tron",
+    );
+  });
+
+  it("should omit networkIds when empty or not provided", () => {
+    expect(buildAssetsQueryParams({ ...baseQueryArg, networkIds: [] }).networkIds).toBeUndefined();
+    expect(buildAssetsQueryParams(baseQueryArg).networkIds).toBeUndefined();
+  });
+
   it("should serialize categories as a comma-separated string", () => {
     expect(
       buildAssetsQueryParams({ ...baseQueryArg, categories: [AssetCategory.Stocks] }).categories,

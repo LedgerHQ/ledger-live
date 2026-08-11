@@ -1,6 +1,6 @@
 import Transport from "@ledgerhq/hw-transport";
 import { BatteryStatusFlags, ChargingModes } from "@ledgerhq/types-devices";
-import { TransportStatusError, StatusCodes } from "@ledgerhq/errors";
+import { TransportStatusError, StatusCodes } from "@ledgerhq/hw-transport/errors";
 import { UnresponsiveCmdEvent } from "./core";
 import { Observable, from, of } from "rxjs";
 import { switchMap } from "rxjs/operators";

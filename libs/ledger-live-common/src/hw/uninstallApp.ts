@@ -1,6 +1,6 @@
 import { ignoreElements, catchError } from "rxjs/operators";
 import { Observable, throwError } from "rxjs";
-import { ManagerAppDepUninstallRequired } from "@ledgerhq/errors";
+import { ManagerAppDepUninstallRequired } from "../errors";
 import Transport from "@ledgerhq/hw-transport";
 import ManagerAPI from "../manager/api";
 import type { App, ApplicationVersion } from "@ledgerhq/types-live";

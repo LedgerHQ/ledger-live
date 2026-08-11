@@ -13,6 +13,7 @@ import Text from "~/renderer/components/Text";
 import { useDeepLinkHandler } from "~/renderer/hooks/useDeeplinking/useDeepLinkHandler";
 import { closeInformationCenter } from "~/renderer/actions/UI";
 import { useNotifications } from "~/renderer/hooks/useNotifications";
+import { useMarkNotificationsAsReadOnOpen } from "~/renderer/hooks/useMarkNotificationsAsReadOnOpen";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { urls } from "~/config/urls";
 import { useDateFormatted } from "~/renderer/hooks/useDateFormatter";
@@ -248,6 +249,7 @@ const Separator = styled.div`
 
 export function AnnouncementPanel() {
   const { notificationsCards, groupNotifications, onClickNotif } = useNotifications();
+  useMarkNotificationsAsReadOnOpen();
   const groups = useMemo(
     () => groupNotifications(notificationsCards),
     // oxlint-disable-next-line react-hooks/exhaustive-deps

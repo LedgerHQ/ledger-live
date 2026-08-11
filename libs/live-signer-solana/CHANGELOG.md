@@ -1,5 +1,33 @@
 # @ledgerhq/live-signer-solana
 
+## 0.19.0
+
+### Minor Changes
+
+- [#20179](https://github.com/LedgerHQ/ledger-live/pull/20179) [`ec6f940`](https://github.com/LedgerHQ/ledger-live/commit/ec6f9402e65a366bcab2a0a3f845a98c5cbd576d) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Wire CAL_SERVICE_URL (with /v1 path) into DMK ContextModule via setCalConfig
+
+### Patch Changes
+
+- Updated dependencies [[`9fcbe39`](https://github.com/LedgerHQ/ledger-live/commit/9fcbe39689ff122568ffb031a30dc3805ebb6add), [`de041b8`](https://github.com/LedgerHQ/ledger-live/commit/de041b89c67dcacea7bc4eeffab75b76ab1d4bd7), [`c82c09a`](https://github.com/LedgerHQ/ledger-live/commit/c82c09abc5f7f814b68d6db44021d915bc9bc0d7), [`53c3431`](https://github.com/LedgerHQ/ledger-live/commit/53c3431e01b3139ef689cb589bab0adee4ed6152), [`635fa12`](https://github.com/LedgerHQ/ledger-live/commit/635fa12d47f5a98858326f4dd68962dffe82eda9)]:
+  - @ledgerhq/coin-solana@0.61.0
+  - @ledgerhq/ledger-wallet-framework@2.7.0
+  - @ledgerhq/ledger-cal-service@1.19.1
+  - @ledgerhq/ledger-trust-service@0.8.12
+
+## 0.19.0-next.0
+
+### Minor Changes
+
+- [#20179](https://github.com/LedgerHQ/ledger-live/pull/20179) [`ec6f940`](https://github.com/LedgerHQ/ledger-live/commit/ec6f9402e65a366bcab2a0a3f845a98c5cbd576d) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Wire CAL_SERVICE_URL (with /v1 path) into DMK ContextModule via setCalConfig
+
+### Patch Changes
+
+- Updated dependencies [[`9fcbe39`](https://github.com/LedgerHQ/ledger-live/commit/9fcbe39689ff122568ffb031a30dc3805ebb6add), [`de041b8`](https://github.com/LedgerHQ/ledger-live/commit/de041b89c67dcacea7bc4eeffab75b76ab1d4bd7), [`c82c09a`](https://github.com/LedgerHQ/ledger-live/commit/c82c09abc5f7f814b68d6db44021d915bc9bc0d7), [`53c3431`](https://github.com/LedgerHQ/ledger-live/commit/53c3431e01b3139ef689cb589bab0adee4ed6152), [`635fa12`](https://github.com/LedgerHQ/ledger-live/commit/635fa12d47f5a98858326f4dd68962dffe82eda9)]:
+  - @ledgerhq/coin-solana@0.61.0-next.0
+  - @ledgerhq/ledger-wallet-framework@2.7.0-next.0
+  - @ledgerhq/ledger-cal-service@1.19.1-next.0
+  - @ledgerhq/ledger-trust-service@0.8.12-next.0
+
 ## 0.18.2
 
 ### Patch Changes

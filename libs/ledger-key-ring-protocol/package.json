@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/ledger-key-ring-protocol",
-  "version": "0.17.2",
+  "version": "0.18.0",
   "private": true,
   "description": "Ledger Key Ring Protocol layer",
   "keywords": [
@@ -62,9 +62,10 @@
     "@ledgerhq/hw-ledger-key-ring-protocol": "workspace:*",
     "@ledgerhq/ledger-auth": "workspace:*",
     "@ledgerhq/live-network": "workspace:*",
-    "@ledgerhq/logs": "workspace:*",
+    "@ledgerhq/logs": "catalog:",
     "@ledgerhq/speculos-transport": "workspace:*",
     "@ledgerhq/types-devices": "workspace:^",
+    "@reduxjs/toolkit": "catalog:",
     "base64-js": "1",
     "isomorphic-ws": "catalog:",
     "rxjs": "catalog:",
