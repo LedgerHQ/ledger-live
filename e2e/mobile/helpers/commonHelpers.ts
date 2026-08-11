@@ -64,7 +64,6 @@ function createDetoxURLBlacklistRegex(): string {
     ".*global.api.prd.ledger.com/cal.*",
     ".*127.0.0.1.*",
     ".*speculos.*ldg-tech.com.*",
-    ".*optimism.*",
     ".*speculos.ledgerlabs.net.*",
   ];
 
