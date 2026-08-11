@@ -2476,6 +2476,7 @@
     "addressMatched": "已匹配地址",
     "addressNotFound": "未找到地址",
     "alreadyUsed": "已使用 · {{date}}",
+    "addressBookUnsupported": "{{family}} isn't supported yet",
     "recentSendWillAppear": "您最近的发送会显示在此处",
     "securityInfo": {
       "title": "如何安全发送？",
@@ -7435,6 +7436,9 @@
     "FeeTooHigh": {
       "title": "网络费用超过数额的10%"
     },
+    "RecipientIsNewAccount": {
+      "title": "This address has never received funds, activating it costs a higher network fee"
+    },
     "DustLimit": {
       "title": "金额低于小额资产下限"
     },
@@ -8684,6 +8688,10 @@
     "selectAsset": "选择资产",
     "selectNetwork": "选择网络",
     "selectAccount": "选择账户",
+    "selectAccountPerpsTitle": "选择 Hyperliquid 账户",
+    "selectAccountPerpsDescription": "若要为您的永续合约 (Perps) 提供资金，您需要一个 Hyperliquid 账户。添加一个账户以继续。",
+    "selectDepositCurrencyTitle": "选择要存入的资产",
+    "selectDepositCurrencyDescription": "任何支持的资产均可。必要时，该资产将自动互换。",
     "accountCount_one": "{{count}} 个账户",
     "accountCount_other": "{{count}} 个账户",
     "accountsAdded": {
@@ -8897,7 +8905,8 @@
       "transparentBalance": "公开余额",
       "transparentBalanceTooltip": "公开可见的余额",
       "privateBalance": "私密余额",
-      "privateBalanceTooltip": "对外隐藏的余额"
+      "privateBalanceTooltip": "对外隐藏的余额",
+      "privateBalanceWarning": "私密余额不包括 Sapling 和 Orchard 屏蔽资金"
     },
     "shielded": {
       "send": {
@@ -8937,6 +8946,12 @@
             "message": "余额可能稍微有些滞后",
             "cta": "同步余额"
           }
+        },
+        "selfTransfer": {
+          "toPrivate": "Self transfer to private balance",
+          "toPublic": "Self transfer to public balance",
+          "unavailable": "Your private address is not available yet. Export your view key to enable this.",
+          "privacyWarning": "This links your shielded funds to your account's public address, which anyone can see. Sending to an external private address keeps them unlinked."
         }
       },
       "state": {
@@ -9392,10 +9407,10 @@
       "cancel": "取消"
     },
     "editSignerMismatch": {
-      "title": "Use the same Ledger device you used to add this contact",
-      "description": "The connected device isn't a match.",
-      "connectDifferentDevice": "Connect a different device",
-      "cancel": "Cancel"
+      "title": "需使用添加此联系人时的同一 Ledger 设备",
+      "description": "已连接的设备不一致。",
+      "connectDifferentDevice": "连接其他设备",
+      "cancel": "取消"
     },
     "ledgerSyncIntroduction": {
       "description": "您的联系人信息通过您的 Ledger 进行端到端加密，并在您的设备之间进行同步，只有您自己可以解锁。",
