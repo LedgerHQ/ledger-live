@@ -79,6 +79,17 @@ export const trackLazyOnboardingTourCloseClicked = (
   });
 };
 
+export const trackLazyOnboardingTourDismissed = (
+  step: number,
+  sharedProps: LazyOnboardingTourSharedAnalyticsProps,
+) => {
+  track("modal_dismissed", {
+    page: LAZY_ONBOARDING_TOUR_PAGE,
+    step,
+    ...sharedProps,
+  });
+};
+
 export const trackLazyOnboardingTourDoneClicked = (
   sharedProps: LazyOnboardingTourSharedAnalyticsProps,
 ) => {
