@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { assetsDataApi } from "../api";
-import type { RawApiResponse } from "../../entities";
+import { assetsDataApi } from "./api";
+import type { RawApiResponse } from "./schema";
 
 jest.mock("@shared/env", () => ({
   getEnv: jest.fn().mockReturnValue("https://dada.api.ledger.com/v1"),

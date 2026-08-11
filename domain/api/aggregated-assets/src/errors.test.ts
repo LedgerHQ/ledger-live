@@ -4,7 +4,7 @@ import {
   isApiError,
   getApiErrorStatus,
   parseError,
-} from "../errorUtils";
+} from "./errors";
 
 describe("errorUtils", () => {
   describe("isFetchBaseQueryError", () => {

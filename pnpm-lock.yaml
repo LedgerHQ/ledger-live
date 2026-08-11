@@ -10348,9 +10348,6 @@ importers:
       '@domain/entity-account-name':
         specifier: workspace:^
         version: link:../../domain/entity/account-name
-      '@domain/entity-aggregated-asset':
-        specifier: workspace:^
-        version: link:../../domain/entity/aggregated-asset
       '@domain/entity-client-identity':
         specifier: workspace:^
         version: link:../../domain/entity/client-identity
