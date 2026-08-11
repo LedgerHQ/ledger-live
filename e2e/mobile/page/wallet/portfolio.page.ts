@@ -227,7 +227,7 @@ export default class PortfolioPage {
       jestExpect(assetsCount).toBeLessThanOrEqual(5);
       await detoxExpect(getElementById(this.showAllAssetsButton)).toBeVisible();
       await tapById(this.showAllAssetsButton);
-      jestExpect(await countElementsById(this.assetItemRegExp)).toBeGreaterThan(5);
+      jestExpect(await countElements(getElementsById(this.assetItemRegExp))).toBeGreaterThan(5);
     }
   }
 
@@ -241,7 +241,9 @@ export default class PortfolioPage {
       await scrollToId(this.showAllAccountsButton, this.accountsListView, 400);
       jestExpect(await countElementsById(app.common.accountItemNameRegExp)).toBeLessThanOrEqual(5);
       await this.tapShowAllAccountsButton();
-      jestExpect(await countElementsById(app.common.accountItemNameRegExp)).toBeGreaterThan(5);
+      jestExpect(
+        await countElements(getElementsById(app.common.accountItemNameRegExp)),
+      ).toBeGreaterThan(5);
       await this.tapAddNewOrExistingAccountButton();
       await app.addAccount.importWithYourLedger();
     }
@@ -281,7 +283,7 @@ export default class PortfolioPage {
     await scrollToId(this.seeAllTransactionsButton, this.accountsListView, 2000, "down");
     await detoxExpect(getElementById(this.seeAllTransactionsButton)).toBeVisible();
     await tapById(this.seeAllTransactionsButton);
-    jestExpect(await countElementsById(this.operationRowDate)).toBeGreaterThan(3);
+    jestExpect(await countElements(getElementsById(this.operationRowDate))).toBeGreaterThan(3);
   }
 
   @Step("Click on selected last operation")
