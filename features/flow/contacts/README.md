@@ -23,9 +23,13 @@ Shared Contacts flow package for Desktop and Mobile.
 - Shared UI components (`.web.tsx` / `.native.tsx`)
 - Contact detail composition; Platform Contacts owns the reusable Contact avatar, including the
   app-owned "Me" profile image
+- Contacts analytics contract: typed event/page names, payloads, and
+  `createContactsAnalyticsHelper()` for apps to inject their `track` functions
 - Compatibility exports for `@features/flow-contacts-add-contact`
 
-App layers own routing, screen composition, i18n, and analytics.
+App layers own routing, screen composition, i18n, and analytics adapters (`track` /
+`trackPage`). Flow-specific tracking contracts and helpers live in this package; shared global
+analytics properties come from `@features/platform-contacts`.
 
 For Add Address, the Flow resolves ordered production network IDs from
 `eligibleAddressFamilies` and sends only those IDs to MAD. The consuming adapter filters MAD content
@@ -101,6 +105,7 @@ src/
 │   ├── ContactsButton/                  # My Wallet entry (web + native)
 ├── hooks/                               # Contacts flow-only hooks
 ├── utils/                               # Contacts flow-only utilities
+├── analytics/                           # Typed tracking contract + helper
 ├── jest.native.ts                       # Mobile Jest entry (re-exports ./index.native)
 ├── featureFlags.ts
 ├── index.ts                             # Web public API

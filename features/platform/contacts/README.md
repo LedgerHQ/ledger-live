@@ -4,8 +4,8 @@
 >
 > **Status: UNSTABLE** — In active development as part of the DDD migration.
 
-Contacts domain selectors, display helpers, React hooks, and Device Intent ports shared by flow
-packages.
+Contacts domain selectors, display helpers, React hooks, Device Intent ports, and shared
+analytics building blocks used by flow packages.
 
 ## Exports
 
@@ -19,3 +19,5 @@ packages.
   resolves the React Native implementation.
 - `ContactDeviceIntentsPort`: defines the typed boundary for Contacts device interactions.
 - `createMockContactDeviceIntentsPort()`: returns temporary typed device results for Contacts flows.
+- Contacts analytics building blocks: `ContactsGlobalProperties` and
+  `buildContactsGlobalProperties()` for shared global event properties.
