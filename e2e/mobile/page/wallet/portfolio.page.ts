@@ -204,8 +204,7 @@ export default class PortfolioPage {
         await tapById(this.cryptoAddressItemId(currencyId));
       }
     } else {
-      await scrollToId(this.assetItemId(currencyName), this.accountsListView);
-      await scrollByPixels(this.accountsListView, 100, "down");
+      await revealForTap(this.assetItemId(currencyName), this.accountsListView, "down");
       await tapById(this.assetItemId(currencyName));
     }
   }
@@ -511,9 +510,7 @@ export default class PortfolioPage {
   async tapFirstAssetItemW40(): Promise<string> {
     const testId = await getIdByRegexp(this.assetItemRegExp, 0);
     const currencyName = testId.replace("assetItem-", "");
-    // The transparent nav header floats over the list, and Android reports the row underneath it as
-    // visible, so without this the tap is swallowed by the header.
-    await scrollByPixels(this.emptyPortfolioListId, 200, "up");
+    await revealForTap(testId, this.emptyPortfolioListId, "up");
     await tapById(testId);
     return currencyName;
   }
