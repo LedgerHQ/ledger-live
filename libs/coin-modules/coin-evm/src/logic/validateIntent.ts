@@ -44,7 +44,11 @@ import {
   isEip55Address,
   isLegacyFeeEstimation,
 } from "./common";
-import { computeEIP7623GasLimit } from "./computeGasLimit";
+import {
+  computeEIP7623GasLimit,
+  DEFAULT_CALLDATA_FLOOR_GAS_PER_TOKEN,
+  DEFAULT_CALLDATA_FLOOR_ZERO_BYTE_TOKENS,
+} from "./computeGasLimit";
 import estimateFees from "./estimateFees";
 
 function assetsAreEqual(asset1: AssetInfo, asset2: AssetInfo): boolean {
@@ -147,7 +151,9 @@ async function validateGas(
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
 
-  const { minGasPrice } = getCoinConfig(currency.id).info;
+  const { minGasPrice, calldataFloorGasPerToken, calldataFloorZeroByteTokens } = getCoinConfig(
+    currency.id,
+  ).info;
   const minGasPriceFloor = typeof minGasPrice === "string" ? BigInt(minGasPrice) : null;
 
   const nativeBalance = findBalance({ type: "native" }, balances);
@@ -166,6 +172,10 @@ async function validateGas(
   const eip7623GasLimit = computeEIP7623GasLimit(
     BigInt(DEFAULT_GAS_LIMIT.toFixed(0)),
     intent.data.value,
+    {
+      gasPerToken: calldataFloorGasPerToken ?? DEFAULT_CALLDATA_FLOOR_GAS_PER_TOKEN,
+      zeroByteTokens: calldataFloorZeroByteTokens ?? DEFAULT_CALLDATA_FLOOR_ZERO_BYTE_TOKENS,
+    },
   );
 
   // Gas Limit
