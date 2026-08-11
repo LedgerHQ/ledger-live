@@ -36,7 +36,8 @@ export type PerpsDepositUiParams = {
 export type PerpsDepositReviewParams = PerpsDepositUiParams & {
   depositAccount: AccountLike;
   amountSent: PerpsDepositAmount;
-  amountReceived?: PerpsDepositAmount;
+  amountTo?: PerpsDepositAmount;
+  quoteId?: string;
 };
 
 export type PerpsUiHooks = {

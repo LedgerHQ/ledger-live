@@ -1,7 +1,6 @@
 import { useCallback, useMemo } from "react";
-import type { AccountLike } from "@ledgerhq/types-live";
 import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
-import type { PerpsDepositAmount } from "@ledgerhq/live-common/wallet-api/Perps/server";
+import type { PerpsDepositReviewParams } from "@ledgerhq/live-common/wallet-api/Perps/server";
 import { useSelector } from "~/context/hooks";
 import { walletSelector } from "~/reducers/wallet";
 import { formatDepositAmount } from "./utils/formatDepositAmount";
@@ -12,12 +11,7 @@ export type PerpsReviewDetailItem = Readonly<{
   testID?: string;
 }>;
 
-export type PerpsReviewParams = Readonly<{
-  depositAccount: AccountLike;
-  receiverAccount: AccountLike;
-  amountSent: PerpsDepositAmount;
-  amountReceived?: PerpsDepositAmount;
-}>;
+export type PerpsReviewParams = Readonly<PerpsDepositReviewParams>;
 
 export type PerpsReviewProps = PerpsReviewParams &
   Readonly<{
@@ -37,7 +31,7 @@ export function usePerpsReviewViewModel({
   isOpen,
   onClose,
   amountSent,
-  amountReceived,
+  amountTo,
   depositAccount,
   receiverAccount,
 }: PerpsReviewProps): PerpsReviewViewModel {
@@ -49,8 +43,8 @@ export function usePerpsReviewViewModel({
   );
 
   const formattedAmountReceived = useMemo(
-    () => formatDepositAmount(amountReceived ?? amountSent, receiverAccount),
-    [amountReceived, amountSent, receiverAccount],
+    () => formatDepositAmount(amountTo, receiverAccount),
+    [amountTo, receiverAccount],
   );
 
   const receiverAccountLabel = useMemo(

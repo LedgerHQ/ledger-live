@@ -14,9 +14,12 @@ function resolveCurrency(amount: PerpsDepositAmount, account: AccountLike): Cryp
   return findCryptoCurrencyById(amount.currencyId) ?? accountCurrency;
 }
 
-/** Renders a deposit amount, given as a plain decimal string, in its own currency. */
-export function formatDepositAmount(amount: PerpsDepositAmount, account: AccountLike): string {
-  if (!amount.value) {
+/** `amount` formatted in its own currency, with the ticker. `""` when absent. */
+export function formatDepositAmount(
+  amount: PerpsDepositAmount | undefined,
+  account: AccountLike,
+): string {
+  if (!amount?.value) {
     return "";
   }
 

@@ -212,18 +212,11 @@ export function usePerpsDepositViewModel(
       receiverAccount,
       depositAccount,
       amountSent: {
-        value: toAmountValue(
-          toCurrencyAmount(depositCurrency),
-          depositCurrency.units[0].magnitude,
-          depositAccount.spendableBalance,
-        ),
+        value: sentAmount,
         currencyId: depositCurrency.id,
       },
-      amountReceived: {
-        value: toAmountValue(
-          toCurrencyAmount(receiverCurrency),
-          receiverCurrency.units[0].magnitude,
-        ),
+      amountReceived: quote && {
+        value: quote.amountTo.toFixed(),
         currencyId: receiverCurrency.id,
       },
       draft: { depositAccount, depositAmount },
@@ -235,9 +228,10 @@ export function usePerpsDepositViewModel(
     depositAmount,
     depositCurrency,
     onClose,
+    quote,
     receiverAccount,
     receiverCurrency,
-    toCurrencyAmount,
+    sentAmount,
   ]);
 
   const headerDescription = `${receiverAccountName} · ${receiverAccountCounterValue}`;

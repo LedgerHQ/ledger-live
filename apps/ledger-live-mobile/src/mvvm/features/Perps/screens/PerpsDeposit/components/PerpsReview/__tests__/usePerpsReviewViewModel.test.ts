@@ -38,17 +38,17 @@ describe("usePerpsReviewViewModel", () => {
     expect(result.current.swapDetails[0].value).toMatch(/^0\.02[\s\u00A0]ETH$/);
   });
 
-  it("falls back to the sent amount when no received amount is given", async () => {
+  it("shows no received amount rather than echoing the sent one when unquoted", async () => {
     const { result } = renderHook(() => usePerpsReviewViewModel(createProps()));
 
-    await waitFor(() => expect(result.current.swapDetails[1].value).not.toBe(""));
-    expect(result.current.swapDetails[1].value).toBe(result.current.swapDetails[0].value);
+    await waitFor(() => expect(result.current.swapDetails[0].value).not.toBe(""));
+    expect(result.current.swapDetails[1].value).toBe("");
   });
 
   it("shows the received amount and the receiver account in the deposit details", async () => {
     const { result } = renderHook(() =>
       usePerpsReviewViewModel(
-        createProps({ amountReceived: { value: "0.019", currencyId: "ethereum" } }),
+        createProps({ amountTo: { value: "0.019", currencyId: "ethereum" } }),
       ),
     );
 

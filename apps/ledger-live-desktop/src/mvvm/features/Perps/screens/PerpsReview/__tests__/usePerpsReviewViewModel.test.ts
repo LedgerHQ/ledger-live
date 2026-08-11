@@ -45,17 +45,17 @@ describe("usePerpsReviewViewModel", () => {
     expect(result.current.swapDetails[0].value).toMatch(/^0\.02[\s\u00A0]ETH$/);
   });
 
-  it("should fall back to the sent amount when no received amount is given", async () => {
+  it("should show no received amount rather than echo the sent one when unquoted", async () => {
     const { result } = renderHook(() => usePerpsReviewViewModel(createData(), jest.fn()));
 
-    await waitFor(() => expect(result.current.swapDetails[1].value).not.toBe(""));
-    expect(result.current.swapDetails[1].value).toBe(result.current.swapDetails[0].value);
+    await waitFor(() => expect(result.current.swapDetails[0].value).not.toBe(""));
+    expect(result.current.swapDetails[1].value).toBe("");
   });
 
   it("should show the received amount and the receiver account in the deposit details", async () => {
     const { result } = renderHook(() =>
       usePerpsReviewViewModel(
-        createData({ amountReceived: { value: "0.019", currencyId: "ethereum" } }),
+        createData({ amountTo: { value: "0.019", currencyId: "ethereum" } }),
         jest.fn(),
       ),
     );

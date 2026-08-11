@@ -36,8 +36,8 @@ export function usePerpsReviewViewModel(
   );
 
   const formattedAmountReceived = useMemo(
-    () => formatDepositAmount(data.amountReceived ?? data.amountSent, data.receiverAccount),
-    [data.amountReceived, data.amountSent, data.receiverAccount],
+    () => formatDepositAmount(data.amountTo, data.receiverAccount),
+    [data.amountTo, data.receiverAccount],
   );
 
   const receiverAccountLabel = useMemo(
