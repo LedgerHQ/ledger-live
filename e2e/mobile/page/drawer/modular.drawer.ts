@@ -120,6 +120,9 @@ export default class ModularDrawer {
       if (await IsIdVisible(id)) return;
       await scrollView.swipe("up", "slow", 0.2, 0.5);
     }
+    throw new Error(
+      `Network item ${String(id)} not reachable after ${maxAttempts} swipes in ${this.networkSelectionScrollViewId}`,
+    );
   }
 
   private async selectAssetCurrencyAndNetwork(account: Account): Promise<void> {
