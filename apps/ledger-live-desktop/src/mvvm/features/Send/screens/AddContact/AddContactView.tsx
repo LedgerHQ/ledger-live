@@ -18,10 +18,10 @@ export function AddContactView({ onAddNewContact, onAddToExistingContact }: AddC
   const { t } = useTranslation();
 
   return (
-    <div className="flex flex-col gap-8" data-testid="send-add-contact-step">
+    <div className="flex flex-col" data-testid="send-add-contact-step">
       <ListItem onClick={onAddNewContact} data-testid="send-add-contact-new">
         <ListItemLeading>
-          <Spot appearance="icon" icon={Plus} size={40} />
+          <Spot appearance="icon" icon={Plus} />
           <ListItemContent>
             <ListItemTitle>{t("newSendFlow.addContact.newContact")}</ListItemTitle>
           </ListItemContent>
@@ -29,7 +29,7 @@ export function AddContactView({ onAddNewContact, onAddToExistingContact }: AddC
       </ListItem>
       <ListItem onClick={onAddToExistingContact} data-testid="send-add-contact-existing">
         <ListItemLeading>
-          <Spot appearance="icon" icon={Contact} size={40} />
+          <Spot appearance="icon" icon={Contact} />
           <ListItemContent>
             <ListItemTitle>{t("newSendFlow.addContact.existingContact")}</ListItemTitle>
           </ListItemContent>
