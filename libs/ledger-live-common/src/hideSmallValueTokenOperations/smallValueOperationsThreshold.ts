@@ -2,6 +2,10 @@ import BigNumber from "bignumber.js";
 import { calculate } from "@ledgerhq/live-countervalues/logic";
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 import { getAccountCurrency } from "../account";
+import {
+  getOperationAmountNumber,
+  hasDisplayableOperationAmount,
+} from "@ledgerhq/ledger-wallet-framework/operation";
 import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import { formatCurrencyUnit } from "../currencies";
 import type { Unit } from "@domain/entity-currency-unit";
@@ -179,14 +183,18 @@ export function convertThresholdFromCountervalueMinorUnitToUsd({
 }
 
 /**
- * Returns `true` when an incoming or outgoing operation should be hidden as a
- * "small-value" (dust) transaction.
+ * Returns `true` when an operation should be hidden as a "small-value" (dust)
+ * transaction.
  *
  * An operation is considered dust when:
- * - its type is "IN" or "OUT", AND
- * - either its crypto value is exactly zero, OR its fiat countervalue is
+ * - it has a displayable amount (its type belongs to the IN, OUT or STAKE
+ *   families handled by {@link getOperationAmountNumber}), AND
+ * - either its displayed amount is exactly zero, OR its fiat countervalue is
  *   strictly below the configured USD threshold (defaults to $0.5,
  *   overridable via ff).
+ *
+ * Operation types without a displayed amount (e.g. `NFT_IN`, `NFT_OUT`,
+ * `UNKNOWN`) are never filtered.
  *
  * When the fiat countervalue cannot be computed (e.g. price feed unavailable),
  * the operation is NOT filtered so that legitimate transactions are never
@@ -194,7 +202,9 @@ export function convertThresholdFromCountervalueMinorUnitToUsd({
  *
  * The comparison is performed in the user's countervalue currency space:
  * we convert both the operation amount and the USD threshold to user-fiat
- * minor units, then compare those raw values.
+ * minor units, then compare those raw values. The operation amount is
+ * converted at the operation's own date so the filter matches the historical
+ * countervalue displayed for that row (what you see is what gets filtered).
  */
 export function isSmallValueOperation({
   operation,
@@ -209,22 +219,30 @@ export function isSmallValueOperation({
   /** The user's selected countervalue (fiat) currency, e.g. EUR.
    *  Countervalues are computed from the operation currency (native or token) to this currency. */
   userCounterValueCurrency: Currency;
-  /** USD threshold below which an incoming or outgoing operation is considered dust.
+  /** USD threshold below which an operation is considered dust.
    *  Defaults to MAX_SMALL_VALUE_OPERATIONS_THRESHOLD_USD ($0.5).
    *  Callers provide their product-specific dust-filter threshold. */
   thresholdUsd?: number;
 }): boolean {
-  if (operation.type !== "IN" && operation.type !== "OUT") return false;
+  if (!hasDisplayableOperationAmount(operation)) return false;
 
-  if (operation.value.isZero()) return true;
+  const operationAmount = getOperationAmountNumber(operation).abs();
+
+  if (operationAmount.isZero()) return true;
 
   const operationCurrency = getAccountCurrency(account);
 
+  // Convert at the operation's date, matching the historical countervalue shown
+  // in the UI (the history row uses `date: operation.date`). Using the latest
+  // rate here instead would let a row that displays e.g. "$0.00" escape the
+  // filter whenever the currency's price moved since the operation, or when no
+  // "latest" rate is loaded for that pair.
   const rawOpFiatValue = calculate(countervaluesState, {
     from: operationCurrency,
     to: userCounterValueCurrency,
-    value: operation.value.toNumber(),
+    value: operationAmount.toNumber(),
     disableRounding: true,
+    date: operation.date,
   });
 
   if (typeof rawOpFiatValue !== "number" || !Number.isFinite(rawOpFiatValue)) return false;

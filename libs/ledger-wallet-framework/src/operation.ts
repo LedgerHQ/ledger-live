@@ -211,15 +211,33 @@ export const OPERATION_TYPE_STAKE_FAMILY = [
   "WITHDRAW_UNSTAKED",
 ];
 
+const OPERATION_TYPE_IN_FAMILY_SET = new Set(OPERATION_TYPE_IN_FAMILY);
+const OPERATION_TYPE_OUT_FAMILY_SET = new Set(OPERATION_TYPE_OUT_FAMILY);
+const OPERATION_TYPE_STAKE_FAMILY_SET = new Set(OPERATION_TYPE_STAKE_FAMILY);
+
 export function getOperationAmountNumber(op: Operation): BigNumber {
-  if (OPERATION_TYPE_IN_FAMILY.includes(op.type)) {
+  if (OPERATION_TYPE_IN_FAMILY_SET.has(op.type)) {
     return op.value;
-  } else if (OPERATION_TYPE_OUT_FAMILY.includes(op.type)) {
+  } else if (OPERATION_TYPE_OUT_FAMILY_SET.has(op.type)) {
     return op.value.negated();
-  } else if (OPERATION_TYPE_STAKE_FAMILY.includes(op.type)) {
+  } else if (OPERATION_TYPE_STAKE_FAMILY_SET.has(op.type)) {
     return op.fee.negated();
   }
   return new BigNumber(0);
+}
+
+/**
+ * Returns `true` when an operation type has an amount rendered in operation
+ * lists (via {@link getOperationAmountNumber}), i.e. it belongs to the IN, OUT
+ * or STAKE families. Types outside these families (e.g. `NFT_IN`, `NFT_OUT`,
+ * `UNKNOWN`) display no amount and return `false`.
+ */
+export function hasDisplayableOperationAmount(op: Operation): boolean {
+  return (
+    OPERATION_TYPE_IN_FAMILY_SET.has(op.type) ||
+    OPERATION_TYPE_OUT_FAMILY_SET.has(op.type) ||
+    OPERATION_TYPE_STAKE_FAMILY_SET.has(op.type)
+  );
 }
 
 export function getOperationAmountNumberWithInternals(op: Operation): BigNumber {

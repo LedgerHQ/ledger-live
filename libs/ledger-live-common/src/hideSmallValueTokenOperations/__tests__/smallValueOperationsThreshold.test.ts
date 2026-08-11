@@ -222,9 +222,13 @@ describe("smallValueOperationsThreshold", () => {
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     const regularAccount = { type: "Account", currency: mockNativeCurrency } as AccountLike;
 
-    const buildOp = (type: string, value: BigNumber): Operation =>
+    const buildOp = (
+      type: string,
+      value: BigNumber,
+      fee: BigNumber = new BigNumber(0),
+    ): Operation =>
       // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-      ({ type, value }) as Operation;
+      ({ type, value, fee }) as Operation;
 
     const mockSmallValueCalculations = (
       operationCurrency: CryptoCurrency | TokenCurrency,
@@ -240,7 +244,22 @@ describe("smallValueOperationsThreshold", () => {
       });
     };
 
-    it("should keep non-transfer operations without calling calculate", () => {
+    it.each(["NFT_IN", "NFT_OUT", "UNKNOWN"])(
+      "should keep operations without a displayable amount (%s) without calling calculate",
+      type => {
+        const result = isSmallValueOperation({
+          operation: buildOp(type, new BigNumber(1)),
+          account: regularAccount,
+          countervaluesState: mockCountervaluesState,
+          userCounterValueCurrency: EUR,
+        });
+
+        expect(result).toBe(false);
+        expect(mockCalculate).not.toHaveBeenCalled();
+      },
+    );
+
+    it("should treat a zero-fee stake operation as dust without calling calculate", () => {
       const result = isSmallValueOperation({
         operation: buildOp("FEES", new BigNumber(0)),
         account: regularAccount,
@@ -248,8 +267,59 @@ describe("smallValueOperationsThreshold", () => {
         userCounterValueCurrency: EUR,
       });
 
-      expect(result).toBe(false);
+      expect(result).toBe(true);
       expect(mockCalculate).not.toHaveBeenCalled();
+    });
+
+    it.each([
+      { fiatValue: 49, expected: true, desc: "below threshold -> dust" },
+      { fiatValue: 51, expected: false, desc: "above threshold -> not dust" },
+    ])("should filter incoming reward operations $desc", ({ fiatValue, expected }) => {
+      mockSmallValueCalculations(mockNativeCurrency, fiatValue);
+
+      const result = isSmallValueOperation({
+        operation: buildOp("REWARD", new BigNumber(499_999)),
+        account: regularAccount,
+        countervaluesState: mockCountervaluesState,
+        userCounterValueCurrency: EUR,
+      });
+
+      expect(result).toBe(expected);
+    });
+
+    it("should filter outgoing delegate operations below the dust threshold", () => {
+      mockSmallValueCalculations(mockNativeCurrency, 49);
+
+      const result = isSmallValueOperation({
+        operation: buildOp("DELEGATE", new BigNumber(499_999)),
+        account: regularAccount,
+        countervaluesState: mockCountervaluesState,
+        userCounterValueCurrency: EUR,
+      });
+
+      expect(result).toBe(true);
+    });
+
+    it("should filter stake operations whose fee is dust, using the fee as the amount", () => {
+      mockSmallValueCalculations(mockNativeCurrency, 49);
+
+      const result = isSmallValueOperation({
+        operation: buildOp("STAKE", new BigNumber(0), new BigNumber(499_999)),
+        account: regularAccount,
+        countervaluesState: mockCountervaluesState,
+        userCounterValueCurrency: EUR,
+      });
+
+      expect(result).toBe(true);
+      expect(mockCalculate).toHaveBeenCalledWith(
+        mockCountervaluesState,
+        expect.objectContaining({
+          from: mockNativeCurrency,
+          to: EUR,
+          value: 499_999,
+          disableRounding: true,
+        }),
+      );
     });
 
     it("should return true when an incoming native operation has exactly 0 crypto value", () => {
@@ -355,6 +425,36 @@ describe("smallValueOperationsThreshold", () => {
       });
 
       expect(result).toBe(true);
+    });
+
+    it("should convert the operation amount at the operation's date so the filter matches the displayed countervalue", () => {
+      mockSmallValueCalculations(mockNativeCurrency, 49);
+      const operationDate = new Date("2021-01-01T00:00:00.000Z");
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      const operation = {
+        type: "IN",
+        value: new BigNumber(499_999),
+        fee: new BigNumber(0),
+        date: operationDate,
+      } as Operation;
+
+      isSmallValueOperation({
+        operation,
+        account: regularAccount,
+        countervaluesState: mockCountervaluesState,
+        userCounterValueCurrency: EUR,
+      });
+
+      expect(mockCalculate).toHaveBeenCalledWith(
+        mockCountervaluesState,
+        expect.objectContaining({
+          from: mockNativeCurrency,
+          to: EUR,
+          value: 499_999,
+          disableRounding: true,
+          date: operationDate,
+        }),
+      );
     });
 
     it.each([

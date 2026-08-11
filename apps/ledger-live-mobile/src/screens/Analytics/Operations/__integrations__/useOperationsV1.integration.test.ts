@@ -5,6 +5,7 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { calculate } from "@ledgerhq/live-countervalues/logic";
 import { renderHook, withFlagOverrides } from "@tests/test-renderer";
+import * as generalActions from "~/actions/general";
 import { useOperationsV1 } from "../useOperationsV1";
 import { State } from "~/reducers/types";
 
@@ -15,6 +16,9 @@ jest.mock("@ledgerhq/live-countervalues/logic", () => ({
 
 const ETH = getCryptoCurrencyById("ethereum");
 const mockCalculate = calculate as jest.MockedFunction<typeof calculate>;
+const addExtraSessionTrackingPairSpy = jest
+  .spyOn(generalActions, "addExtraSessionTrackingPair")
+  .mockImplementation(() => {});
 
 const EVM_TOKEN: TokenCurrency = {
   type: "TokenCurrency",
@@ -34,6 +38,10 @@ const ZERO_VALUE_NATIVE_OP_ID = "zero-value-native-op-id";
 const NON_ZERO_VALUE_NATIVE_OP_ID = "non-zero-value-native-op-id";
 const SMALL_NATIVE_OUT_OP_ID = "small-native-out-op-id";
 const LARGE_NATIVE_OUT_OP_ID = "large-native-out-op-id";
+const SMALL_NATIVE_REWARD_OP_ID = "small-native-reward-op-id";
+const LARGE_NATIVE_REWARD_OP_ID = "large-native-reward-op-id";
+const PARENT_NATIVE_OP_ID = "parent-native-op-id";
+const DUST_INTERNAL_OP_ID = "dust-internal-op-id";
 
 function createZeroValueTokenOperation(tokenAccountId: string): Operation {
   return {
@@ -159,6 +167,56 @@ function createAccountWithNativeOutgoingDustOperations(): Account {
   };
 }
 
+function createAccountWithNativeRewardDustOperations(): Account {
+  const account = genAccount("eth-reward-dust", {
+    currency: ETH,
+    operationsSize: 0,
+  });
+  const smallReward = createNativeOperation(
+    account.id,
+    SMALL_NATIVE_REWARD_OP_ID,
+    "REWARD",
+    new BigNumber(1),
+  );
+
+  return {
+    ...account,
+    operations: [
+      smallReward,
+      {
+        ...smallReward,
+        id: LARGE_NATIVE_REWARD_OP_ID,
+        hash: LARGE_NATIVE_REWARD_OP_ID,
+        value: new BigNumber(2),
+      },
+    ],
+    operationsCount: 2,
+  };
+}
+
+function createAccountWithDustInternalOperation(): Account {
+  const account = genAccount("eth-internal-dust", {
+    currency: ETH,
+    operationsSize: 0,
+  });
+  const dustInternal = createNativeOperation(
+    account.id,
+    DUST_INTERNAL_OP_ID,
+    "IN",
+    new BigNumber(1),
+  );
+  const parentOp: Operation = {
+    ...createNativeOperation(account.id, PARENT_NATIVE_OP_ID, "IN", new BigNumber(2)),
+    internalOperations: [dustInternal],
+  };
+
+  return {
+    ...account,
+    operations: [parentOp],
+    operationsCount: 1,
+  };
+}
+
 const initialStateWithFilterEnabled = (state: State): State => ({
   ...state,
   settings: {
@@ -220,6 +278,23 @@ const initialStateWithDesktopDustFilterEnabled = withFlagOverrides(
     },
   },
   initialStateWithDustPreferenceEnabled,
+);
+
+const initialStateWithDustFilterEnabledEurCounterValue = withFlagOverrides(
+  {
+    lwmDustFiltering: {
+      enabled: true,
+    },
+  },
+  (state: State): State => ({
+    ...state,
+    settings: {
+      ...state.settings,
+      filterTokenOperationsZeroAmount: false,
+      hideSmallValueTokenOperations: true,
+      counterValue: "EUR",
+    },
+  }),
 );
 
 describe("useOperationsV1 integration", () => {
@@ -305,5 +380,65 @@ describe("useOperationsV1 integration", () => {
 
     expect(result.current.sections[0].data.length).toBe(1);
     expect(result.current.sections[0].data[0].id).toBe(LARGE_NATIVE_OUT_OP_ID);
+  });
+
+  it("should filter out non-transfer reward operations below the dust threshold", () => {
+    const accountWithNativeRewardDust = createAccountWithNativeRewardDustOperations();
+    mockCalculate.mockImplementation((_state, query) => {
+      if (query.from === ETH && query.value === 1) return 0.5;
+      if (query.from === ETH && query.value === 2) return 2;
+      if (query.from.ticker === "USD") return 1;
+      return null;
+    });
+
+    const { result } = renderHook(() => useOperationsV1([accountWithNativeRewardDust], 50), {
+      overrideInitialState: initialStateWithDustFilterEnabled,
+    });
+
+    expect(result.current.sections[0].data.length).toBe(1);
+    expect(result.current.sections[0].data[0].id).toBe(LARGE_NATIVE_REWARD_OP_ID);
+  });
+
+  it("requests the USD -> counter tracking pair so the dust filter works everywhere for non-USD users", () => {
+    const account = genAccount("eth-dust-track", { currency: ETH, operationsSize: 0 });
+
+    renderHook(() => useOperationsV1([account], 50), {
+      overrideInitialState: initialStateWithDustFilterEnabledEurCounterValue,
+    });
+
+    expect(addExtraSessionTrackingPairSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        from: expect.objectContaining({ ticker: "USD" }),
+        to: expect.objectContaining({ ticker: "EUR" }),
+      }),
+    );
+  });
+
+  it("does not request a tracking pair when the counter value is already the USD reference", () => {
+    const account = genAccount("eth-dust-track-usd", { currency: ETH, operationsSize: 0 });
+
+    renderHook(() => useOperationsV1([account], 50), {
+      overrideInitialState: initialStateWithDustFilterEnabled,
+    });
+
+    expect(addExtraSessionTrackingPairSpy).not.toHaveBeenCalled();
+  });
+
+  it("should filter out dust internal operations nested under a non-dust parent", () => {
+    const accountWithDustInternal = createAccountWithDustInternalOperation();
+    mockCalculate.mockImplementation((_state, query) => {
+      if (query.from === ETH && query.value === 1) return 0.5;
+      if (query.from === ETH && query.value === 2) return 2;
+      if (query.from.ticker === "USD") return 1;
+      return null;
+    });
+
+    const { result } = renderHook(() => useOperationsV1([accountWithDustInternal], 50), {
+      overrideInitialState: initialStateWithDustFilterEnabled,
+    });
+
+    const ids = result.current.sections[0].data.map(op => op.id);
+    expect(ids).toContain(PARENT_NATIVE_OP_ID);
+    expect(ids).not.toContain(DUST_INTERNAL_OP_ID);
   });
 });

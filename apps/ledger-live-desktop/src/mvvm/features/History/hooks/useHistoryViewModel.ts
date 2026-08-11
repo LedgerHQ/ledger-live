@@ -1,11 +1,7 @@
 import { useCallback, useEffect, useMemo } from "react";
-import {
-  formatSmallValueOperationsThreshold,
-  SMALL_VALUE_OPERATIONS_THRESHOLD_REFERENCE_CURRENCY,
-} from "@ledgerhq/live-common/hideSmallValueTokenOperations/smallValueOperationsThreshold";
+import { formatSmallValueOperationsThreshold } from "@ledgerhq/live-common/hideSmallValueTokenOperations/smallValueOperationsThreshold";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useHideSmallValueTokenOperations } from "~/renderer/actions/settings";
-import { addExtraTrackingPairs } from "~/renderer/reducers/countervaluesExtraTracking";
 import {
   historyDustFilterCounterValueCurrencyForDisplaySelector,
   historyDustFilterCountervaluesStateForDisplaySelector,
@@ -13,6 +9,7 @@ import {
   historyDustFilterLocaleSelector,
   markOperationsAsSeen,
 } from "~/renderer/reducers/history";
+import { useRequestDustFilterCountervalueTracking } from "./useRequestDustFilterCountervalueTracking";
 import type { Virtualizer } from "@tanstack/react-virtual";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
@@ -77,25 +74,7 @@ export function useHistoryViewModel(): HistoryViewModel {
   const showDustFilterOption = useSelector(historyDustFilteringFeatureEnabledSelector);
   const counterValueCurrency = useSelector(historyDustFilterCounterValueCurrencyForDisplaySelector);
   const countervaluesState = useSelector(historyDustFilterCountervaluesStateForDisplaySelector);
-  useEffect(() => {
-    if (
-      !showDustFilterOption ||
-      !counterValueCurrency ||
-      counterValueCurrency.ticker === SMALL_VALUE_OPERATIONS_THRESHOLD_REFERENCE_CURRENCY.ticker
-    ) {
-      return;
-    }
-
-    dispatch(
-      addExtraTrackingPairs([
-        {
-          from: SMALL_VALUE_OPERATIONS_THRESHOLD_REFERENCE_CURRENCY,
-          to: counterValueCurrency,
-          startDate: new Date(),
-        },
-      ]),
-    );
-  }, [counterValueCurrency, dispatch, showDustFilterOption]);
+  useRequestDustFilterCountervalueTracking();
   const locale = useSelector(historyDustFilterLocaleSelector);
   const dustFilterThreshold = useMemo(() => {
     if (!counterValueCurrency) return "";

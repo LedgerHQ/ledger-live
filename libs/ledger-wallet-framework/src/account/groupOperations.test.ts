@@ -123,4 +123,22 @@ describe("groupAccountOperationsByDay", () => {
     expect(result.sections.length).toBe(1);
     expect(result.sections[0].data.map((op: Operation) => op.id)).toEqual(["op1"]);
   });
+
+  it("re-applies filterOperation to flattened internal operations", () => {
+    const child = { ...createOp("child", "2024-01-01T10:00:00Z"), id: "child" };
+    const parent: Operation = {
+      ...createOp("parent", "2024-01-01T10:00:00Z"),
+      internalOperations: [child],
+    };
+
+    const acc = createAccount({ confirmed: [parent] });
+
+    const result = groupAccountsOperationsByDay([acc], {
+      count: 10,
+      filterOperation: (op: Operation) => op.id !== "child",
+    });
+
+    expect(result.sections.length).toBe(1);
+    expect(result.sections[0].data.map((op: Operation) => op.id)).toEqual(["parent"]);
+  });
 });

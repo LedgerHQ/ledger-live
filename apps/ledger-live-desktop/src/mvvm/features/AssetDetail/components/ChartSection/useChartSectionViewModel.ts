@@ -40,6 +40,7 @@ import {
 } from "~/renderer/reducers/settings";
 import { hideTransactionsOnChartSelector } from "~/renderer/reducers/market";
 import { useHistoryOperationItemsForRootAccounts } from "LLD/features/History/hooks/useHistoryOperationItemsForRootAccounts";
+import { useRequestDustFilterCountervalueTracking } from "LLD/features/History/hooks/useRequestDustFilterCountervalueTracking";
 import {
   filterOperationTableItemsByAllowedAccountIds,
   filterTopLevelAccountsByAllowedAccountIds,
@@ -89,6 +90,7 @@ export function useChartSectionViewModel({
   distributionItem,
 }: UseChartSectionViewModelProps): ChartSectionViewModelResult {
   const { t } = useTranslation();
+  useRequestDustFilterCountervalueTracking();
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const counterCurrency = counterValueCurrency.ticker.toLowerCase();
   const fiatUnit = counterValueCurrency.units[0];

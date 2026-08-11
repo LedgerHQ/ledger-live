@@ -1,9 +1,13 @@
 import { groupAccountsOperationsByDay } from "@ledgerhq/ledger-wallet-framework/account/groupOperations";
 import { isAddressPoisoningOperation } from "@ledgerhq/ledger-wallet-framework/operation";
-import { isSmallValueOperation } from "@ledgerhq/live-common/hideSmallValueTokenOperations/smallValueOperationsThreshold";
+import {
+  isSmallValueOperation,
+  SMALL_VALUE_OPERATIONS_THRESHOLD_REFERENCE_CURRENCY,
+} from "@ledgerhq/live-common/hideSmallValueTokenOperations/smallValueOperationsThreshold";
 import { AccountLike, Operation } from "@ledgerhq/types-live";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { useSelector } from "~/context/hooks";
+import { addExtraSessionTrackingPair } from "~/actions/general";
 import {
   counterValueCurrencySelector,
   filterTokenOperationsZeroAmountEnabledSelector,
@@ -34,6 +38,27 @@ export function useOperationsV1(
   const userCounterValueCurrency = useSelector(state =>
     shouldHideSmallValueTokenOperations ? counterValueCurrencySelector(state) : undefined,
   );
+
+  // The dust threshold is expressed in USD but compared in the user's counter
+  // value. Without a USD -> counter tracking pair, calculate(USD -> counter)
+  // returns undefined for non-USD users and the filter silently no-ops. Request
+  // it here so every screen that filters (asset detail, portfolio, account…)
+  // gets the rate, not only the dedicated Operations list screen.
+  useEffect(() => {
+    if (
+      !shouldHideSmallValueTokenOperations ||
+      !userCounterValueCurrency ||
+      userCounterValueCurrency.ticker === SMALL_VALUE_OPERATIONS_THRESHOLD_REFERENCE_CURRENCY.ticker
+    ) {
+      return;
+    }
+
+    addExtraSessionTrackingPair({
+      from: SMALL_VALUE_OPERATIONS_THRESHOLD_REFERENCE_CURRENCY,
+      to: userCounterValueCurrency,
+      startDate: new Date(),
+    });
+  }, [shouldHideSmallValueTokenOperations, userCounterValueCurrency]);
 
   const addressPoisoningFamilies = useAddressPoisoningOperationsFamilies({
     shouldFilter: shouldFilterTokenOpsZeroAmount,

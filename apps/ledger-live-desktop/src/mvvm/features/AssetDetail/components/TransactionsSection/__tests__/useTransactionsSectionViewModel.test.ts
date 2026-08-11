@@ -1,4 +1,4 @@
-import { act, renderHook } from "tests/testSetup";
+import { act, renderHook, waitFor, withFlagOverrides } from "tests/testSetup";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { maticEth, usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
@@ -103,6 +103,28 @@ describe("useTransactionsSectionViewModel", () => {
     const rows = result.current.table.getRowModel().rows;
     expect(rows.length).toBeGreaterThan(0);
     expect(rows.every(r => r.original.account.id === usdc.id)).toBe(true);
+  });
+
+  it("requests the USD countervalue tracking pair so the dust filter works on the asset page for non-USD users", async () => {
+    const account = genAccount("btc-root-dust-track", { currency: btc, operationsSize: 1 });
+    const distributionItem = buildDistributionItem({ currency: btc, accounts: [account] });
+
+    const { store } = renderHook(() => useTransactionsSectionViewModel(distributionItem), {
+      initialState: {
+        accounts: [account],
+        settings: { counterValue: "EUR" },
+        ...withFlagOverrides({ lwdDustFiltering: { enabled: true } }),
+      },
+    });
+
+    await waitFor(() =>
+      expect(store.getState().countervaluesExtraTracking.extraTrackingPairs).toEqual([
+        expect.objectContaining({
+          from: expect.objectContaining({ ticker: "USD" }),
+          to: expect.objectContaining({ ticker: "EUR" }),
+        }),
+      ]),
+    );
   });
 
   it("navigates to history with accountIds and back path when see all is called", () => {

@@ -9,6 +9,7 @@ import { track } from "~/renderer/analytics/segment";
 import { ASSET_DETAIL_TRACKING_PAGE_NAME } from "LLD/features/AssetDetail/constants";
 import { useHistoryTable } from "LLD/features/History/hooks/useHistoryTable";
 import { useHistoryOperationItemsForRootAccounts } from "LLD/features/History/hooks/useHistoryOperationItemsForRootAccounts";
+import { useRequestDustFilterCountervalueTracking } from "LLD/features/History/hooks/useRequestDustFilterCountervalueTracking";
 import {
   filterOperationTableItemsByAllowedAccountIds,
   filterTopLevelAccountsByAllowedAccountIds,
@@ -31,6 +32,8 @@ export function useTransactionsSectionViewModel(
   const navigate = useNavigate();
   const { pathname: assetDetailPath } = useLocation();
   const allAccounts = useSelector(accountsSelector);
+
+  useRequestDustFilterCountervalueTracking();
 
   const rootAccounts = useMemo(() => {
     const allowed = new Set(distributionItem.accounts.map(a => a.id));

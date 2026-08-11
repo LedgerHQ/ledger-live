@@ -155,7 +155,13 @@ export function groupAccountsOperationsByDay(
         indexes[bestOpInfo.accountI]++;
       }
 
-      const ops = flattenOperationWithInternalsAndNfts(bestOp);
+      const account = accounts[bestOpInfo.accountI];
+      const flattened = flattenOperationWithInternalsAndNfts(bestOp);
+      // bestOp already passed filterOperation during the scan above, so we only
+      // re-filter its flattened internal children here.
+      const ops = filterOperation
+        ? flattened.filter(op => op === bestOp || filterOperation(op, account))
+        : flattened;
       return {
         ops,
         date: bestOp.date,
