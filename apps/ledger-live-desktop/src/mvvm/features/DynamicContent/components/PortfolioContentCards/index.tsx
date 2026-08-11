@@ -7,50 +7,22 @@ import React, {
   type ReactNode,
 } from "react";
 import { useNavigate } from "react-router";
-import styled from "styled-components";
 
 import { Carousel } from "@ledgerhq/react-ui";
 import { track } from "~/renderer/analytics/segment";
 import { openURL } from "~/renderer/linking";
 import type { PortfolioContentCard as PortfolioCardType } from "~/types/dynamicContent";
 import type { CarouselActions } from "../../types";
+import {
+  BRAZE_PLACEMENT_CONTAINER_CLASS_NAME,
+  BRAZE_PLACEMENT_GRID_CLASS_NAME,
+} from "../../utils/brazePlacementLayout";
 import { ContentBannerActionCard } from "../ContentBannerActionCard";
 import LogContentCardWrapper from "../LogContentCardWrapper";
 import Slide from "./Slide";
 import { usePortfolioContentCardsViewModel } from "./usePortfolioContentCardsViewModel";
 
 export default PortfolioContentCards;
-
-const CarouselWrapper = styled.div`
-  & > div > div > button {
-    translate: 0 -50%;
-    margin: 0 -12px;
-    background-color: ${({ theme }) => theme.colors.neutral.c00};
-  }
-`;
-
-/** 2 columns, max 2 cards (Braze placement portfolio) */
-const BrazePlacementGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
-  width: 100%;
-  & > * {
-    min-width: 0;
-  }
-`;
-
-const LeadingGridCell = styled.div`
-  min-width: 0;
-  width: 100%;
-`;
-
-const StackedLeading = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  width: 100%;
-`;
 
 type BrazeSlideProps = {
   card: PortfolioCardType;
@@ -121,7 +93,9 @@ type PortfolioContentCardsProps = Readonly<{
 
 function PortfolioContentCards({ leadingSlide }: PortfolioContentCardsProps) {
   const { layout, brazeCarouselEntries, positionOffset, logSlideClick, dismissCard } =
-    usePortfolioContentCardsViewModel({ hasLeadingSlide: Boolean(leadingSlide) });
+    usePortfolioContentCardsViewModel({
+      hasLeadingSlide: Boolean(leadingSlide),
+    });
 
   const handlePrevButton = () => trackSlide("prev");
   const handleNextButton = () => trackSlide("next");
@@ -143,7 +117,7 @@ function PortfolioContentCards({ leadingSlide }: PortfolioContentCardsProps) {
 
   // Carousel requires ReactElement[] (uses children.length / .map) — not a Fragment.
   const renderCarousel = (slides: ReactElement[]) => (
-    <CarouselWrapper>
+    <div className="[&>div>div>button]:-mx-12 [&>div>div>button]:translate-y-[-50%] [&>div>div>button]:bg-base">
       <Carousel
         initialDelay={2500}
         autoPlay={6000}
@@ -152,7 +126,7 @@ function PortfolioContentCards({ leadingSlide }: PortfolioContentCardsProps) {
       >
         {slides}
       </Carousel>
-    </CarouselWrapper>
+    </div>
   );
 
   if (layout === "empty") return null;
@@ -163,32 +137,37 @@ function PortfolioContentCards({ leadingSlide }: PortfolioContentCardsProps) {
 
   if (layout === "braze-grid") {
     return (
-      <BrazePlacementGrid>
-        {leadingSlide ? (
-          <LeadingGridCell key="portfolio-upsell-leading">
-            {leadingSlideForGrid(leadingSlide)}
-          </LeadingGridCell>
-        ) : null}
-        {brazeCarouselEntries.map(({ card, portfolioIndex }, displayIndex) => (
-          <PortfolioBrazePlacementSlide
-            key={card.id}
-            card={card}
-            index={portfolioIndex}
-            displayedPosition={displayIndex + positionOffset}
-            logSlideClick={logSlideClick}
-            dismissCard={dismissCard}
-          />
-        ))}
-      </BrazePlacementGrid>
+      <div className={BRAZE_PLACEMENT_CONTAINER_CLASS_NAME}>
+        <div
+          className={BRAZE_PLACEMENT_GRID_CLASS_NAME}
+          data-testid="portfolio-braze-placement-grid"
+        >
+          {leadingSlide ? (
+            <div className="min-w-0 w-full" key="portfolio-upsell-leading">
+              {leadingSlideForGrid(leadingSlide)}
+            </div>
+          ) : null}
+          {brazeCarouselEntries.map(({ card, portfolioIndex }, displayIndex) => (
+            <PortfolioBrazePlacementSlide
+              key={card.id}
+              card={card}
+              index={portfolioIndex}
+              displayedPosition={displayIndex + positionOffset}
+              logSlideClick={logSlideClick}
+              dismissCard={dismissCard}
+            />
+          ))}
+        </div>
+      </div>
     );
   }
 
   if (layout === "stacked-leading") {
     return (
-      <StackedLeading>
+      <div className="flex w-full flex-col gap-16">
         {leadingSlide}
         {renderCarousel(brazeSlides)}
-      </StackedLeading>
+      </div>
     );
   }
 
