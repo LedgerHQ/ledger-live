@@ -7,11 +7,7 @@ export const AMOUNT_DELETE_KEY = "delete";
 /**
  * Returns the amount text after pressing `key` on the in-app keypad.
  */
-export function applyAmountKey(
-  currentText: string,
-  key: string,
-  maxDecimalDigits: number,
-): string {
+export function applyAmountKey(currentText: string, key: string, maxDecimalDigits: number): string {
   if (key === AMOUNT_DELETE_KEY) return currentText.slice(0, -1);
 
   // A leading separator becomes "0." so the user can keep typing decimals.
@@ -32,7 +28,5 @@ export function toAmountText(amount: number, maxDecimalDigits: number): string {
 
 function isWithinPrecision(text: string, maxDecimalDigits: number): boolean {
   const [integerPart = "", decimalPart = ""] = text.split(".");
-  return (
-    integerPart.length <= AMOUNT_MAX_INTEGER_DIGITS && decimalPart.length <= maxDecimalDigits
-  );
+  return integerPart.length <= AMOUNT_MAX_INTEGER_DIGITS && decimalPart.length <= maxDecimalDigits;
 }

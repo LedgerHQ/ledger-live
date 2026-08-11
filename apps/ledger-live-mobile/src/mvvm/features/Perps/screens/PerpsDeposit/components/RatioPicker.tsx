@@ -25,7 +25,6 @@ export function RatioPicker({
   onMax,
   disabled,
 }: RatioPickerProps) {
-
   const maxOption = applyRatio(maxValue, 1, decimalPlaces);
 
   return (

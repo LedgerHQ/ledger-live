@@ -125,10 +125,7 @@ export function usePerpsDepositViewModel({ route }: NavigationProps): PerpsDepos
     [counterValueUnit.magnitude, depositAccountBalanceCounterValue],
   );
 
-  const selectMax = useCallback(
-    () => setDepositAmount(maxAmount),
-    [maxAmount, setDepositAmount],
-  );
+  const selectMax = useCallback(() => setDepositAmount(maxAmount), [maxAmount, setDepositAmount]);
 
   const formattedDepositAmount = useMemo(
     () =>

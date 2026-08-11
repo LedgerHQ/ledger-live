@@ -54,10 +54,7 @@ export function AmountKeypad({ onKeyPress, disabled }: AmountKeypadProps) {
               disabled={disabled}
               testID={KEY_TEST_IDS[key] ?? `perps-deposit-key-${key}`}
               accessibilityLabel={key === AMOUNT_DELETE_KEY ? t("perpsDeposit.keypadDelete") : key}
-              style={({ pressed }) => [
-                styles.key,
-                pressed && styles.keyPressed,
-              ]}
+              style={({ pressed }) => [styles.key, pressed && styles.keyPressed]}
               onPress={() => onKeyPress(key)}
             >
               {key === AMOUNT_DELETE_KEY ? (
