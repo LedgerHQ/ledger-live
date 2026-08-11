@@ -1,6 +1,6 @@
 {
   "name": "@domain/entity-account-name",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "private": true,
   "description": "AccountName entity: naming utilities, account-names store, and wallet-sync module",
   "main": "src/index.ts",
@@ -9,7 +9,9 @@
     ".": "./src/index.ts",
     "./package.json": "./package.json"
   },
-  "sideEffects": ["./src/slice.ts"],
+  "sideEffects": [
+    "./src/slice.ts"
+  ],
   "scripts": {
     "typecheck": "tsc --noEmit",
     "test": "jest",

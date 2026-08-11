@@ -1,5 +1,19 @@
 # @domain/entity-currency
 
+## 0.3.1
+
+### Patch Changes
+
+- Updated dependencies [[`6a531c5`](https://github.com/LedgerHQ/ledger-live/commit/6a531c54ccd1c65df122286de6f136f9d73b9002)]:
+  - @domain/entity-currency-crypto@0.9.0
+
+## 0.3.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`6a531c5`](https://github.com/LedgerHQ/ledger-live/commit/6a531c54ccd1c65df122286de6f136f9d73b9002)]:
+  - @domain/entity-currency-crypto@0.9.0-next.0
+
 ## 0.3.0
 
 ### Minor Changes
