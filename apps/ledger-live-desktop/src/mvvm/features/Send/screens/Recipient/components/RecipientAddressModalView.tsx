@@ -8,12 +8,14 @@ import { AddressMatchedSection } from "./AddressMatchedSection";
 import { AddressValidationError } from "./AddressValidationError";
 import EmptyList from "./EmptyList";
 import { LoadingState } from "./LoadingState";
+import { RecipientEmptyContactsState } from "./RecipientEmptyContactsState";
 import { RecipientIntroCard } from "./RecipientIntroCard";
 import { ValidationBanner } from "./ValidationBanner";
 
 type RecipientAddressModalViewProps = Readonly<{
   isLoading: boolean;
   showInitialState: boolean;
+  showEmptyContactsState: boolean;
   showMatchedAddress: boolean;
   showAddressValidationError: boolean;
   showEmptyState: boolean;
@@ -35,6 +37,7 @@ type RecipientAddressModalViewProps = Readonly<{
 export function RecipientAddressModalView({
   isLoading,
   showInitialState,
+  showEmptyContactsState,
   showMatchedAddress,
   showAddressValidationError,
   showEmptyState,
@@ -75,7 +78,9 @@ export function RecipientAddressModalView({
         </div>
       )}
 
-      {showInitialState && <RecipientIntroCard />}
+      {showInitialState && showEmptyContactsState && <RecipientEmptyContactsState />}
+
+      {showInitialState && !showEmptyContactsState && <RecipientIntroCard />}
 
       {showMatched && <AddressMatchedSection viewModel={addressMatchedSectionViewModel} />}
 

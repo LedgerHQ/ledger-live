@@ -2478,6 +2478,7 @@
     "alreadyUsed": "Already used · {{date}}",
     "addressBookUnsupported": "{{family}} isn't supported yet",
     "recentSendWillAppear": "Your recent send will appear here",
+    "contactsWillAppear": "Contacts will appear here",
     "securityInfo": {
       "title": "How to send securely?",
       "items": {
