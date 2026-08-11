@@ -120,6 +120,8 @@ export default class ModularDrawer {
       if (await IsIdVisible(id)) return;
       await scrollView.swipe("up", "slow", 0.2, 0.5);
     }
+    // The last swipe is only useful if its result is checked, so probe once more before failing.
+    if (await IsIdVisible(id)) return;
     throw new Error(
       `Network item ${String(id)} not reachable after ${maxAttempts} swipes in ${this.networkSelectionScrollViewId}`,
     );
