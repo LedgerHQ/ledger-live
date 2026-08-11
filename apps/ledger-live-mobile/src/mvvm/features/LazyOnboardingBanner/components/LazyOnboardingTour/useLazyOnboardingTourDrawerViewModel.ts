@@ -8,6 +8,7 @@ import {
   trackLazyOnboardingTourBuyClicked,
   trackLazyOnboardingTourCloseClicked,
   trackLazyOnboardingTourContinueClicked,
+  trackLazyOnboardingTourDismissed,
   trackLazyOnboardingTourDoneClicked,
   trackLazyOnboardingTourOpened,
   trackLazyOnboardingTourShopReached,
@@ -15,6 +16,8 @@ import {
   type LazyOnboardingTourSharedAnalyticsProps,
 } from "./analytics";
 import { lazyOnboardingTourController } from "./lazyOnboardingTourController";
+
+type CloseSource = "cross" | "external" | "internal";
 
 export type LazyOnboardingTourDrawerViewModel = Readonly<{
   isOpen: boolean;
@@ -37,6 +40,7 @@ export function useLazyOnboardingTourDrawerViewModel(): LazyOnboardingTourDrawer
   const hasClosedRef = useRef(false);
   const hasTrackedTourOpenRef = useRef(false);
   const lastTrackedStepIndexRef = useRef<number | null>(null);
+  const closeSourceRef = useRef<CloseSource>("external");
 
   const isFeatureEnabled = feature?.enabled === true;
   const link = typeof feature?.params?.link === "string" ? feature.params.link : "";
@@ -64,6 +68,7 @@ export function useLazyOnboardingTourDrawerViewModel(): LazyOnboardingTourDrawer
 
   const openDrawer = useCallback(() => {
     hasClosedRef.current = false;
+    closeSourceRef.current = "external";
     setIsOpen(true);
   }, []);
 
@@ -97,11 +102,17 @@ export function useLazyOnboardingTourDrawerViewModel(): LazyOnboardingTourDrawer
     }
   }, [closeDrawer, isFeatureEnabled, isOpen]);
 
+  // QueuedBottomSheet onClose — swipe / backdrop. Skip when X or Done already closed it.
   const onClose = useCallback(() => {
+    if (closeSourceRef.current === "external") {
+      trackLazyOnboardingTourDismissed(lastTrackedStepIndexRef.current ?? 0, sharedAnalyticsProps);
+    }
+    closeSourceRef.current = "external";
     closeDrawer();
-  }, [closeDrawer]);
+  }, [closeDrawer, sharedAnalyticsProps]);
 
   const onCloseButtonPress = useCallback(() => {
+    closeSourceRef.current = "cross";
     trackLazyOnboardingTourCloseClicked(sharedAnalyticsProps);
     closeDrawer();
   }, [closeDrawer, sharedAnalyticsProps]);
@@ -134,6 +145,7 @@ export function useLazyOnboardingTourDrawerViewModel(): LazyOnboardingTourDrawer
   );
 
   const onDone = useCallback(() => {
+    closeSourceRef.current = "internal";
     trackLazyOnboardingTourDoneClicked(sharedAnalyticsProps);
     closeDrawer();
   }, [closeDrawer, sharedAnalyticsProps]);

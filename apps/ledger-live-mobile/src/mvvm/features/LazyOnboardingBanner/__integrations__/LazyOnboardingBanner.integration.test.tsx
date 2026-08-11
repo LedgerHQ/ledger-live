@@ -199,6 +199,14 @@ describe("LazyOnboardingTour", () => {
 
     await user.press(screen.getByTestId("lazy-onboarding-tour-close-button"));
     expect(screen.queryByText(SLIDE_TITLES[0])).toBeNull();
+    expect(track).toHaveBeenCalledWith(
+      "button_clicked",
+      expect.objectContaining({
+        button: "close",
+        page: LAZY_ONBOARDING_TOUR_PAGE,
+      }),
+    );
+    expect(track).not.toHaveBeenCalledWith("modal_dismissed", expect.anything());
   });
 
   it("should track continue when the primary button is pressed", async () => {
