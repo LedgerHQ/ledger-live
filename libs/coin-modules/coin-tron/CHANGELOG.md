@@ -1,5 +1,35 @@
 # @ledgerhq/coin-tron
 
+## 6.10.0-next.0
+
+### Minor Changes
+
+- [#20391](https://github.com/LedgerHQ/ledger-live/pull/20391) [`a3ef727`](https://github.com/LedgerHQ/ledger-live/commit/a3ef72734361f30f90704fda76e27a45a3afd9db) Thanks [@shazzzam](https://github.com/shazzzam)! - Add gas-sponsoring (Tronify) context to the Tron transaction model (LIVE-32775). A new optional `energyProviderInfo` field (`{ providerId, orderId }`) marks a send as sponsored; it is set by the front-end Send flow, round-trips through transaction serialization, and is threaded to the fee-estimation, validation and signing seams so later work can price a sponsored USDT send as energy-rented rather than burning TRX. Absent `energyProviderInfo` keeps the current standard-crafting behavior unchanged.
+
+- [#20278](https://github.com/LedgerHQ/ledger-live/pull/20278) [`3d24a89`](https://github.com/LedgerHQ/ledger-live/commit/3d24a898d59de55364ec29de29eaecb7ca14425d) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Drop the `@ledgerhq/errors` dependency, completing the errors sunset (LIVE-32915).
+
+  The `@ledgerhq/errors` package is removed from the monorepo: no workspace source imported it anymore, every error class it held now lives in the package that owns it (`@ledgerhq/ledger-wallet-framework/errors` for the ones shared across coin modules). `createCustomErrorClass` and the `serializeError` / `deserializeError` stack are gone with it — define errors as native classes and branch on `error.name`.
+
+  `@ledgerhq/errors@6.37.0` stays on npm for external consumers, but is no longer published from this repo.
+
+- [#20280](https://github.com/LedgerHQ/ledger-live/pull/20280) [`9fcbe39`](https://github.com/LedgerHQ/ledger-live/commit/9fcbe39689ff122568ffb031a30dc3805ebb6add) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Stop depending on `@ledgerhq/errors` (LIVE-32915).
+
+  No workspace package declares it anymore, and none may again: `enforce-boundaries` now fails CI on any manifest that does. The classes it held live in the package that owns them, with `@ledgerhq/ledger-wallet-framework/errors` as the shared home below the coin layer.
+
+  The package itself stays in the repo so it keeps being published for external consumers, and is bridged to the external coin packages that still peer-depend on it via `pnpm.packageExtensions` using `workspace:*` (which reuses the single in-repo copy, so the dependency graph keeps exactly the physical copies it had before). [LedgerHQ/coin-modules#752](https://github.com/LedgerHQ/coin-modules/pull/752) removes that peerDependency upstream; once it is released the bridge can be dropped, but the package still needs publishing.
+
+- [#20291](https://github.com/LedgerHQ/ledger-live/pull/20291) [`5497b24`](https://github.com/LedgerHQ/ledger-live/commit/5497b244085b85297404b6ac90fac4432f7e8a67) Thanks [@amaslakov](https://github.com/amaslakov)! - Add the Tronify energy-rent provider client (ADR-050): a `network/tronify` REST client, a `logic/energyRent` provider switch exposing quote/craft/broadcast/status, plus `energyRent` coin-config settings and the `TronifyApiError` / `EnergyRentProviderNotConfigured` error types. Additive and opt-in — the config field is optional and no existing behaviour changes.
+
+- [#20492](https://github.com/LedgerHQ/ledger-live/pull/20492) [`02984f9`](https://github.com/LedgerHQ/ledger-live/commit/02984f92bb92144eba9452c892d6d9da870232d9) Thanks [@shazzzam](https://github.com/shazzzam)! - Expose a savings estimate for gas-sponsored (Tronify) Tron sends (LIVE-32776). When a send carries `energyProviderInfo`, `getTransactionStatus` now returns a `sponsoredEnergy` field on the transaction status: the disclosed energy provider (`{ id, name }`, resolved from a new in-module registry exported as `ENERGY_PROVIDERS`/`getEnergyProvider`) and `avoidedEnergyFees` — the native TRX (in SUN) that a non-sponsored USDT transfer would burn on energy (`energyRequired × energyFee`). The coin module stays fiat-agnostic: the front end converts the value to fiat and renders "Saved $X.XX with <provider>". It is informational only and does not change `estimatedFees`; pricing a sponsored send as energy-rented remains future work (LIVE-32892).
+
+- [#20560](https://github.com/LedgerHQ/ledger-live/pull/20560) [`21dd56a`](https://github.com/LedgerHQ/ledger-live/commit/21dd56afd20f9c113f90697d9e76b37cde699716) Thanks [@shazzzam](https://github.com/shazzzam)! - Guard sponsored (Tronify) USDT sends against the "fee consumed, transfer fails" loss (LIVE-32777). When a send carries `energyProviderInfo`, `getTransactionStatus` now reserves the USDT rental fee — a live Tronify quote priced from the transfer's energy requirement — out of the token balance: it blocks with `NotEnoughBalance` when the USDT balance can't cover fee + amount, and a max send leaves the fee behind (`amount = balance − fee`, `totalSpent = balance`). `estimateMaxSpendable` mirrors the reservation so "Max" doesn't overshoot. The guard is inert for non-sponsored sends and degrades to no reservation when the quote is unavailable or the rent is priced in a different asset (the TRX-paid flow).
+
+### Patch Changes
+
+- Updated dependencies [[`aee0e64`](https://github.com/LedgerHQ/ledger-live/commit/aee0e64b491aafc1ca8fea16b1ef124cb183770b), [`1e9db75`](https://github.com/LedgerHQ/ledger-live/commit/1e9db750a4882f9db7f95278e33c00262487b37b), [`647804e`](https://github.com/LedgerHQ/ledger-live/commit/647804ee755d54776e6b8cd96328bee89fb035e4), [`53c3431`](https://github.com/LedgerHQ/ledger-live/commit/53c3431e01b3139ef689cb589bab0adee4ed6152)]:
+  - @ledgerhq/types-live@6.119.0-next.0
+  - @ledgerhq/ledger-wallet-framework@2.8.0-next.0
+
 ## 6.9.0
 
 ### Minor Changes

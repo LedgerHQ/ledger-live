@@ -1,6 +1,6 @@
 {
   "name": "@features/flow-lazy-onboarding-banner",
-  "version": "0.1.0",
+  "version": "0.2.0-next.0",
   "private": true,
   "description": "Cross-platform lazy onboarding banner decision, CTA and session state",
   "main": "src/index.ts",

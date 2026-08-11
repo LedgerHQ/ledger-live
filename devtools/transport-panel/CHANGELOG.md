@@ -1,5 +1,18 @@
 # @devtools/transport-panel
 
+## 0.4.0-next.0
+
+### Minor Changes
+
+- [#20487](https://github.com/LedgerHQ/ledger-live/pull/20487) [`5edd732`](https://github.com/LedgerHQ/ledger-live/commit/5edd732aa9fd1769667a349b513ebdb985a1475c) Thanks [@ysitbon](https://github.com/ysitbon)! - Move the duplicated jest wiring (dual web/native presets, React Native mocks, setup files and the themed testing-library render) into the shared `@support/jest-devtools` package. Each package now keeps only a one-line re-export plus its own package-specific fixtures. The feature-flags web tests gained the lumen ThemeProvider they were missing.
+
+- [#20374](https://github.com/LedgerHQ/ledger-live/pull/20374) [`aaa67a7`](https://github.com/LedgerHQ/ledger-live/commit/aaa67a733e16cdfcb3f02b22038b0ae5518fb0ec) Thanks [@Sebastien-Dav1d](https://github.com/Sebastien-Dav1d)! - Add relay QR-code discovery and mobile QR scanner for one-tap Wi-Fi connection
+
+### Patch Changes
+
+- Updated dependencies [[`604c710`](https://github.com/LedgerHQ/ledger-live/commit/604c710658e80568e8ad10e588c84c23f954a142), [`f4b73a7`](https://github.com/LedgerHQ/ledger-live/commit/f4b73a71d9c44462fb18ec1d939c64a1dd102ec2)]:
+  - @devtools/transport@0.4.0-next.0
+
 ## 0.3.0
 
 ### Minor Changes

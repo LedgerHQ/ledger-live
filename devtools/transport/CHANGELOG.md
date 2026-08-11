@@ -1,5 +1,13 @@
 # @devtools/transport
 
+## 0.4.0-next.0
+
+### Minor Changes
+
+- [#20444](https://github.com/LedgerHQ/ledger-live/pull/20444) [`604c710`](https://github.com/LedgerHQ/ledger-live/commit/604c710658e80568e8ad10e588c84c23f954a142) Thanks [@Sebastien-Dav1d](https://github.com/Sebastien-Dav1d)! - Add uid-based device selection to relay: hosts receive a monotonic uid on connect, tools target a specific host instance via uid instead of host id
+
+- [#20434](https://github.com/LedgerHQ/ledger-live/pull/20434) [`f4b73a7`](https://github.com/LedgerHQ/ledger-live/commit/f4b73a71d9c44462fb18ec1d939c64a1dd102ec2) Thanks [@Sebastien-Dav1d](https://github.com/Sebastien-Dav1d)! - Add exponential-backoff reconnection to WebSocket transport
+
 ## 0.3.0
 
 ### Minor Changes

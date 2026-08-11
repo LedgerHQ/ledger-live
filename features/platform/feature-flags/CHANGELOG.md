@@ -1,5 +1,12 @@
 # @features/platform-feature-flags
 
+## 0.6.5-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`43bf6d8`](https://github.com/LedgerHQ/ledger-live/commit/43bf6d8f6600f70b7c2a85615660e7e150e798bf), [`9708010`](https://github.com/LedgerHQ/ledger-live/commit/970801044529fe978ccbb8c562cc64c00277d1de)]:
+  - @shared/feature-flags@0.18.0-next.0
+
 ## 0.6.4
 
 ### Patch Changes

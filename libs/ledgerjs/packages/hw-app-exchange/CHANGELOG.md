@@ -1,5 +1,11 @@
 # @ledgerhq/hw-app-exchange
 
+## 0.25.0-next.0
+
+### Minor Changes
+
+- [#20618](https://github.com/LedgerHQ/ledger-live/pull/20618) [`04a4ea2`](https://github.com/LedgerHQ/ledger-live/commit/04a4ea23d789d334b0938637f49c08e5616b98c1) Thanks [@ooke-ledger](https://github.com/ooke-ledger)! - Add missing inExtraId to fund payload and align FundPayload key with the protocol contract
+
 ## 0.24.0
 
 ### Minor Changes

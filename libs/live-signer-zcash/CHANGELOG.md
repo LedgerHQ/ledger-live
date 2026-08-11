@@ -1,5 +1,11 @@
 # @ledgerhq/live-signer-zcash
 
+## 0.9.0-next.0
+
+### Minor Changes
+
+- [#20360](https://github.com/LedgerHQ/ledger-live/pull/20360) [`ec0be9c`](https://github.com/LedgerHQ/ledger-live/commit/ec0be9c545259dd0dc2d2578dfabef3211f72e76) Thanks [@may01](https://github.com/may01)! - Add Ironwood PCZT v2 type re-exports to the live-signer-zcash bridge
+
 ## 0.8.0
 
 ### Minor Changes

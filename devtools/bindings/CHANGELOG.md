@@ -1,5 +1,21 @@
 # @devtools/bindings
 
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#20494](https://github.com/LedgerHQ/ledger-live/pull/20494) [`40efdfb`](https://github.com/LedgerHQ/ledger-live/commit/40efdfbb42cdc94b8efb59a9aa45992ff7c64653) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add `usePayCardToolProps` to bridge feature flags and Card onboarding into the pay-card DevTool (LIVE-35497).
+
+- [#20548](https://github.com/LedgerHQ/ledger-live/pull/20548) [`2edf614`](https://github.com/LedgerHQ/ledger-live/commit/2edf614eed7608714821ee54574d8c4d2b6f7d98) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add resetPayCardFeatureTourSeen reducer and expose a "Reset feature tour" control (with a Seen/Not seen tag) in the Pay Card DevTool
+
+### Patch Changes
+
+- Updated dependencies [[`43bf6d8`](https://github.com/LedgerHQ/ledger-live/commit/43bf6d8f6600f70b7c2a85615660e7e150e798bf), [`9708010`](https://github.com/LedgerHQ/ledger-live/commit/970801044529fe978ccbb8c562cc64c00277d1de), [`a61f702`](https://github.com/LedgerHQ/ledger-live/commit/a61f702a6e41f2bf84d5602930e261a708507efa), [`6bb6cb0`](https://github.com/LedgerHQ/ledger-live/commit/6bb6cb058d79074de3d7f23a89074bef3311cf8d), [`2edf614`](https://github.com/LedgerHQ/ledger-live/commit/2edf614eed7608714821ee54574d8c4d2b6f7d98), [`9e45705`](https://github.com/LedgerHQ/ledger-live/commit/9e45705b649513c3f9797c2add485a0ba3ea7a6c)]:
+  - @shared/feature-flags@0.18.0-next.0
+  - @domain/entity-pay-card@0.3.0-next.0
+  - @devtools/registry@0.2.0-next.0
+  - @features/platform-feature-flags@0.6.5-next.0
+
 ## 0.2.3
 
 ### Patch Changes
