@@ -1,0 +1,50 @@
+[
+  {
+    "id": "sol-already-processed",
+    "chain": "solana",
+    "layer": 1,
+    "description": "Submit the same signed transaction twice",
+    "expectReject": "already been processed",
+    "productionWeight": { "source": "Errors/Solana.md", "note": "LIVE-32549 retry" }
+  },
+  {
+    "id": "sol-blockhash-not-found",
+    "chain": "solana",
+    "layer": 1,
+    "description": "Transaction signed with an expired blockhash",
+    "expectReject": "blockhash not found",
+    "productionWeight": { "source": "Errors/Solana.md", "note": "LIVE-32551 simulation" }
+  },
+  {
+    "id": "sol-insufficient-funds-for-rent",
+    "chain": "solana",
+    "layer": 1,
+    "description": "Transfer more lamports than the payer holds",
+    "expectReject": "insufficient funds",
+    "productionWeight": { "source": "Errors/Solana.md", "note": "ATA rent class" }
+  },
+  {
+    "id": "sol-simulation-failed-while-pending-op",
+    "chain": "solana",
+    "layer": 2,
+    "description": "Simulation failure with pending operations maps to SolanaTxSimulationFailedWhilePendingOp",
+    "expectReject": "SolanaTxSimulationFailedWhilePendingOp",
+    "productionWeight": {
+      "source": "MS team SOL broadcast_failure report (2026-08-07)",
+      "count_14d": 233,
+      "note": "App error classification path"
+    }
+  },
+  {
+    "id": "sol-simulation-failed-no-pending-op",
+    "chain": "solana",
+    "layer": 2,
+    "description": "Same simulation failure without pending ops keeps raw RPC error",
+    "expectReject": "simulation failed",
+    "productionWeight": {
+      "source": "MS team SOL broadcast_failure report (2026-08-07)",
+      "count_14d": 169,
+      "note": "Must not be misclassified as pending-op"
+    }
+  }
+]

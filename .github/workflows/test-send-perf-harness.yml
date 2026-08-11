@@ -1,0 +1,95 @@
+name: "[Coin] - Send Performance Harness"
+
+on:
+  schedule:
+    - cron: "30 16 * * 1-5"
+
+  pull_request:
+    branches-ignore:
+      - "smartling-content-updated**"
+      - "smartling-translation-completed**"
+    paths:
+      - "libs/coin-tester-modules/coin-tester-send-perf/**"
+      - "libs/coin-tester/src/**"
+      - "libs/coin-modules/coin-evm/**"
+      - ".github/workflows/test-send-perf-harness.yml"
+
+  workflow_dispatch:
+    inputs:
+      chain:
+        description: "Chain to test (eth or sol)"
+        required: false
+        default: "eth"
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  send-perf-eth:
+    name: Send Perf Harness (eth)
+    runs-on: ubuntu-22.04
+    continue-on-error: true
+    if: github.event_name != 'workflow_dispatch' || github.event.inputs.chain == 'eth'
+
+    env:
+      SEED: chronic find success crew board merit elder life achieve scout gravity soul brief pen job
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup toolchain
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        with:
+          install-proto: true
+          skip-turbo-cache: "false"
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+
+      - name: Install dependencies
+        run: pnpm install --filter @ledgerhq/coin-tester-send-perf...
+
+      - name: Pull Anvil image
+        run: docker pull ghcr.io/foundry-rs/foundry:latest
+
+      - name: Run ETH harness
+        working-directory: libs/coin-tester-modules/coin-tester-send-perf
+        run: pnpm start:eth
+
+      - name: Layer 3 weighting report
+        working-directory: libs/coin-tester-modules/coin-tester-send-perf
+        run: pnpm weighting
+
+  send-perf-sol:
+    name: Send Perf Harness (sol)
+    runs-on: ubuntu-22.04
+    continue-on-error: true
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.chain == 'sol'
+
+    env:
+      SEED: chronic find success crew board merit elder life achieve scout gravity soul brief pen job
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup toolchain
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        with:
+          install-proto: true
+          skip-turbo-cache: "false"
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+
+      - name: Install dependencies
+        run: pnpm install --filter @ledgerhq/coin-tester-send-perf...
+
+      - name: Pull Solana validator image
+        run: docker pull ghcr.io/zeta-chain/solana-docker:2.0.24
+
+      - name: Run SOL harness
+        working-directory: libs/coin-tester-modules/coin-tester-send-perf
+        run: pnpm start:sol

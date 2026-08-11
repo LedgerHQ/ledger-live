@@ -1,0 +1,8 @@
+services:
+  anvil:
+    image: ghcr.io/foundry-rs/foundry:latest
+    container_name: send-perf-anvil
+    platform: linux/amd64
+    ports:
+      - "8545:8545"
+    command: -c "anvil --host 0.0.0.0 --mnemonic='${SEED}'"

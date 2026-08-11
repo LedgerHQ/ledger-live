@@ -1,0 +1,37 @@
+[
+  {
+    "id": "btc-missingorspent-stale-utxo",
+    "chain": "bitcoin",
+    "layer": 1,
+    "description": "Broadcast a tx that spends an already-confirmed UTXO",
+    "expectReject": "bad-txns-inputs-missingorspent",
+    "productionWeight": {
+      "source": "Errors/BTC.md",
+      "note": "Rare from clients; server-side dominated"
+    }
+  },
+  {
+    "id": "btc-txn-mempool-conflict",
+    "chain": "bitcoin",
+    "layer": 1,
+    "description": "Two conflicting txs spend the same UTXO while the first is still in mempool",
+    "expectReject": "txn-mempool-conflict",
+    "productionWeight": {
+      "source": "Errors/BTC.md",
+      "count_14d": 89,
+      "note": "TxReplacementError / double-spend race"
+    }
+  },
+  {
+    "id": "btc-rbf-underpriced-replacement",
+    "chain": "bitcoin",
+    "layer": 1,
+    "description": "RBF replacement with insufficient fee bump",
+    "expectReject": "insufficient fee",
+    "productionWeight": {
+      "source": "Errors/BTC.md",
+      "count_14d": 89,
+      "note": "RBF path; maps to TxReplacementError in production"
+    }
+  }
+]

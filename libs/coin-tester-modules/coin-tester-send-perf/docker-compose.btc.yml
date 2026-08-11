@@ -1,0 +1,18 @@
+services:
+  bitcoind:
+    image: bitcoin/bitcoin:28.0
+    container_name: send-perf-bitcoind
+    platform: linux/amd64
+    ports:
+      - "18443:18443"
+    command: >
+      bitcoind
+      -regtest
+      -server
+      -txindex
+      -fallbackfee=0.001
+      -deprecatedrpc=addresses
+      -rpcbind=0.0.0.0
+      -rpcallowip=0.0.0.0/0
+      -rpcuser=user
+      -rpcpassword=pass

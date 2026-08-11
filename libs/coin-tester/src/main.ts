@@ -27,6 +27,16 @@ export type ScenarioTransaction<T extends TransactionCommon, A extends Account> 
    * You should push a transaction with a xexpect
    */
   xexpect?: (previousAccount: A, currentAccount: A) => void;
+  /** Send-performance harness: expect broadcast to fail at the node */
+  expectBroadcast?: "accept" | "reject";
+  /** Substring match against the node rejection message */
+  expectRejectContains?: string;
+  /** Expected error class name from the client broadcast path (e.g. InsufficientFunds) */
+  expectErrorClass?: string;
+  /** Pre-built signed transaction hex; skips the sign step when set */
+  signedTxOverride?: string;
+  /** Inject chain/mempool state before broadcast */
+  setupChainState?: () => Promise<void>;
 };
 
 export type Scenario<T extends TransactionCommon, A extends Account> = {

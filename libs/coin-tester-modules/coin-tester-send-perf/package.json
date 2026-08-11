@@ -1,0 +1,42 @@
+{
+  "name": "@ledgerhq/coin-tester-send-perf",
+  "version": "0.1.0",
+  "description": "Send performance reproduction harness: controlled node rejections for BTC, ETH, SOL",
+  "private": true,
+  "license": "Apache-2.0",
+  "scripts": {
+    "clean": "rimraf lib lib-es",
+    "build": "tsc && tsc -m esnext --moduleResolution bundler --outDir lib-es",
+    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts --cache",
+    "typecheck": "tsc --noEmit",
+    "start": "DOTENV_CONFIG_PATH=.env pnpm jest --runInBand",
+    "start:eth": "DOTENV_CONFIG_PATH=.env pnpm jest --runInBand src/eth.test.ts",
+    "start:sol": "DOTENV_CONFIG_PATH=.env pnpm jest --runInBand src/sol.test.ts",
+    "start:btc": "DOTENV_CONFIG_PATH=.env pnpm jest --runInBand src/btc.test.ts",
+    "fixtures-only": "DOTENV_CONFIG_PATH=.env SEND_PERF_LAYER=1 pnpm jest --runInBand src/eth.test.ts",
+    "weighting": "ts-node src/weighting/report.ts"
+  },
+  "dependencies": {
+    "@ledgerhq/coin-evm": "workspace:^",
+    "@ledgerhq/coin-solana": "workspace:^",
+    "@ledgerhq/coin-tester": "workspace:^",
+    "@ledgerhq/cryptoassets": "workspace:^",
+    "@ledgerhq/types-cryptoassets": "workspace:^",
+    "@ledgerhq/types-live": "workspace:^",
+    "@solana/web3.js": "1.95.4",
+    "bignumber.js": "^9.1.2",
+    "bitcoin-core": "^5.0.0",
+    "docker-compose": "^1.1.0",
+    "dotenv": "^16.4.5",
+    "ethers": "catalog:"
+  },
+  "devDependencies": {
+    "@types/jest": "catalog:",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "jest": "catalog:",
+    "rimraf": "^5.0.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  }
+}

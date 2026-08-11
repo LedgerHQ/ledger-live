@@ -1,0 +1,42 @@
+[
+  {
+    "id": "eth-nonce-too-low-after-mined",
+    "chain": "ethereum",
+    "layer": 1,
+    "description": "Resubmit with stale nonce after original tx mined",
+    "expectReject": "nonce too low",
+    "productionWeight": { "source": "Errors/ETH.md", "count_14d": 47 }
+  },
+  {
+    "id": "eth-replacement-underpriced",
+    "chain": "ethereum",
+    "layer": 1,
+    "description": "Same-nonce replacement with lower gas price",
+    "expectReject": "replacement transaction underpriced",
+    "productionWeight": { "source": "Errors/ETH.md", "note": "Open monitoring" }
+  },
+  {
+    "id": "eth-insufficient-funds",
+    "chain": "ethereum",
+    "layer": 1,
+    "description": "Zero balance account attempts send",
+    "expectReject": "insufficient funds",
+    "productionWeight": { "source": "Errors/ETH.md", "count_14d": 774 }
+  },
+  {
+    "id": "eth-intrinsic-gas-too-low",
+    "chain": "ethereum",
+    "layer": 1,
+    "description": "Gas limit below EVM minimum for a simple transfer",
+    "expectReject": "intrinsic gas too low",
+    "productionWeight": { "source": "Errors/ETH.md", "note": "LIVE-26166 shipped" }
+  },
+  {
+    "id": "eth-already-known",
+    "chain": "ethereum",
+    "layer": 1,
+    "description": "Duplicate broadcast of identical signed tx",
+    "expectReject": "already known",
+    "productionWeight": { "source": "Errors/ETH.md", "note": "LIVE-26161 addressed client path" }
+  }
+]
