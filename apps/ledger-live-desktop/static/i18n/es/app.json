@@ -2476,6 +2476,7 @@
     "addressMatched": "Dirección coincidente",
     "addressNotFound": "Dirección no encontrada",
     "alreadyUsed": "Ya utilizado · {{date}}",
+    "addressBookUnsupported": "{{family}} isn't supported yet",
     "recentSendWillAppear": "Tus envíos anteriores aparecerán aquí",
     "securityInfo": {
       "title": "¿Cómo enviar de forma segura?",
@@ -7435,6 +7436,9 @@
     "FeeTooHigh": {
       "title": "Las tarifas de red superan el 10% del importe"
     },
+    "RecipientIsNewAccount": {
+      "title": "This address has never received funds, activating it costs a higher network fee"
+    },
     "DustLimit": {
       "title": "La cantidad es menor que el límite de remanente"
     },
@@ -8684,6 +8688,10 @@
     "selectAsset": "Seleccionar activo",
     "selectNetwork": "Seleccionar red",
     "selectAccount": "Seleccionar cuenta",
+    "selectAccountPerpsTitle": "Selecciona una cuenta de Hyperliquid",
+    "selectAccountPerpsDescription": "Para aportar fondos a tus perpetuos, necesitas una cuenta de Hyperliquid. Agrega una para continuar.",
+    "selectDepositCurrencyTitle": "Selecciona el activo a depositar",
+    "selectDepositCurrencyDescription": "Cualquier activo compatible funciona. Se permutará automáticamente si es necesario.",
     "accountCount_one": "Cuenta {{count}}",
     "accountCount_other": "Cuentas de {{count}}",
     "accountsAdded": {
@@ -8897,7 +8905,8 @@
       "transparentBalance": "Saldo transparente",
       "transparentBalanceTooltip": "Saldo visible para el público",
       "privateBalance": "Saldo privado",
-      "privateBalanceTooltip": "Saldo que está oculto al público"
+      "privateBalanceTooltip": "Saldo que está oculto al público",
+      "privateBalanceWarning": "El saldo privado excluye los fondos blindados de Sapling y Orchard"
     },
     "shielded": {
       "send": {
@@ -8937,6 +8946,12 @@
             "message": "El saldo podría no estar del todo actualizado",
             "cta": "Sincronizar saldo"
           }
+        },
+        "selfTransfer": {
+          "toPrivate": "Self transfer to private balance",
+          "toPublic": "Self transfer to public balance",
+          "unavailable": "Your private address is not available yet. Export your view key to enable this.",
+          "privacyWarning": "This links your shielded funds to your account's public address, which anyone can see. Sending to an external private address keeps them unlinked."
         }
       },
       "state": {
