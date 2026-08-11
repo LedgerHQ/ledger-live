@@ -868,6 +868,12 @@
     "unlockLiquidity": "Spend crypto in real life",
     "exploreCryptoCardsDescription": "Explore our crypto cards and find the one that suits you best."
   },
+  "payTab": {
+    "balance": {
+      "emptyTitle": "Pay and get paid",
+      "emptyDescription": "Start by depositing stablecoin to your wallet"
+    }
+  },
   "lend": {
     "title": "Lend crypto",
     "tabs": {
