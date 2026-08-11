@@ -8,6 +8,7 @@ import {
   type PageParam,
 } from "./types";
 import { ONE_DAY_IN_SECONDS } from "./constants";
+import { isFetchBaseQueryError } from "./errors";
 import { transformAssetsResponse } from "./transforms";
 import { fetchAllAssetCurrencyIdsByCategory, fetchAllAssetsByCategory } from "./accessors";
 import { buildAssetsQueryParams } from "./requests";
@@ -64,65 +65,53 @@ export const assetsDataApi = dadaApi
         transformResponse: transformAssetsResponse,
       }),
       getAssetsByCategory: build.query<string[], GetAssetsByCategoryParams>({
-        queryFn: async queryArg => {
-          return fetchAllAssetsByCategory(queryArg);
-        },
+        queryFn: (queryArg, _api, _extraOptions, baseQuery) =>
+          fetchAllAssetsByCategory(queryArg, baseQuery),
         keepUnusedDataFor: ONE_DAY_IN_SECONDS,
       }),
       getAssetCurrencyIdsByCategory: build.query<string[], GetAssetsByCategoryParams>({
-        queryFn: async queryArg => {
-          return fetchAllAssetCurrencyIdsByCategory(queryArg);
-        },
+        queryFn: (queryArg, _api, _extraOptions, baseQuery) =>
+          fetchAllAssetCurrencyIdsByCategory(queryArg, baseQuery),
         keepUnusedDataFor: ONE_DAY_IN_SECONDS,
       }),
       getChunkedAssetsData: build.query<AssetsData, GetAssetsDataParams>({
-        queryFn: async queryArg => {
-          try {
-            const chunks = chunkCurrencyIds(queryArg.currencyIds ?? []);
-            const baseUrl = resolveBaseUrl(queryArg);
+        queryFn: async (queryArg, _api, _extraOptions, baseQuery) => {
+          const chunks = chunkCurrencyIds(queryArg.currencyIds ?? []);
+          if (chunks.length === 0) return { data: emptyAssetsData() };
 
-            if (chunks.length === 0) {
-              return { data: emptyAssetsData() };
-            }
+          const results = await allSettled(
+            chunks.map(chunkIds =>
+              fetchAssetsPage(baseQuery, { ...queryArg, currencyIds: chunkIds }),
+            ),
+          );
 
-            const results = await allSettled(
-              chunks.map(chunkIds =>
-                fetchAssetsPage(baseUrl, { ...queryArg, currencyIds: chunkIds }),
-              ),
-            );
+          const responses = results.flatMap(r => (r.status === "fulfilled" ? [r.value] : []));
 
-            const responses = results.flatMap(r => (r.status === "fulfilled" ? [r.value] : []));
-
-            if (responses.length === 0) {
-              const firstError = results.find(r => r.status === "rejected");
-              const reason = firstError?.status === "rejected" ? firstError.reason : undefined;
-              return {
-                error: {
-                  status: "FETCH_ERROR",
-                  error: reason instanceof Error ? reason.message : "All DADA chunks failed",
-                },
-              };
-            }
-
-            const merged = responses.reduce<AssetsData>((acc, res) => {
-              deepMergeCryptoAssets(acc.cryptoAssets, res.cryptoAssets);
-              Object.assign(acc.networks, res.networks);
-              Object.assign(acc.cryptoOrTokenCurrencies, res.cryptoOrTokenCurrencies);
-              Object.assign(acc.interestRates, res.interestRates);
-              Object.assign(acc.markets, res.markets);
-              acc.currenciesOrder.metaCurrencyIds.push(...res.currenciesOrder.metaCurrencyIds);
-              return acc;
-            }, emptyAssetsData());
-
-            return { data: merged };
-          } catch (error) {
+          if (responses.length === 0) {
+            const firstRejection = results.find(r => r.status === "rejected");
+            const reason =
+              firstRejection?.status === "rejected" ? firstRejection.reason : undefined;
+            /* fetchAssetsPage rethrows the base query's error, so an HTTP status survives here. */
+            if (isFetchBaseQueryError(reason)) return { error: reason };
             return {
               error: {
-                status: "FETCH_ERROR",
-                error: error instanceof Error ? error.message : "Unknown error",
+                status: "CUSTOM_ERROR" as const,
+                error: reason instanceof Error ? reason.message : "All DADA chunks failed",
               },
             };
           }
+
+          const merged = responses.reduce<AssetsData>((acc, res) => {
+            deepMergeCryptoAssets(acc.cryptoAssets, res.cryptoAssets);
+            Object.assign(acc.networks, res.networks);
+            Object.assign(acc.cryptoOrTokenCurrencies, res.cryptoOrTokenCurrencies);
+            Object.assign(acc.interestRates, res.interestRates);
+            Object.assign(acc.markets, res.markets);
+            acc.currenciesOrder.metaCurrencyIds.push(...res.currenciesOrder.metaCurrencyIds);
+            return acc;
+          }, emptyAssetsData());
+
+          return { data: merged };
         },
         providesTags: [AssetsDataTags.Assets],
         keepUnusedDataFor: ONE_DAY_IN_SECONDS,

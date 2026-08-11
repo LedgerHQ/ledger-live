@@ -7,13 +7,11 @@ jest.mock("@shared/env", () => ({
   getEnv: jest.fn().mockReturnValue("https://dada.api.ledger.com/v1"),
 }));
 
+import { configureStore } from "@reduxjs/toolkit";
 import { getEnv } from "@shared/env";
-import {
-  assetsDataApi,
-  buildAssetsQueryParams,
-  fetchAllAssetsByCategory,
-  fetchAllAssetCurrencyIdsByCategory,
-} from "./index";
+import { assetsDataApi, buildAssetsQueryParams } from "./index";
+import { fetchAllAssetCurrencyIdsByCategory, fetchAllAssetsByCategory } from "./accessors";
+import { getApiErrorStatus, isApiError, isNetworkError } from "./errors";
 import { AssetCategory } from "./types";
 import type { RawApiResponse } from "./schema";
 
@@ -50,23 +48,29 @@ function makePage(tickers: string[]): RawApiResponse {
   };
 }
 
-function okResponse(body: RawApiResponse, nextCursor?: string): Response {
+/** A page as the base query returns it: parsed body plus the response for header access. */
+function okResponse(body: RawApiResponse, nextCursor?: string) {
   const headers = new Headers();
   if (nextCursor) headers.set("x-ledger-next", nextCursor);
-  return new Response(JSON.stringify(body), { status: 200, headers });
+  return { data: body, meta: { response: { headers } } };
 }
 
-function errorResponse(status: number, statusText: string): Response {
-  return new Response(null, { status, statusText });
-}
+let baseQuery: jest.Mock;
 
-function mockFetchPages(pages: { tickers: string[]; nextCursor?: string }[]): jest.SpyInstance {
-  const spy = jest.spyOn(globalThis, "fetch");
+function mockFetchPages(pages: { tickers: string[]; nextCursor?: string }[]): jest.Mock {
   for (const page of pages) {
-    spy.mockResolvedValueOnce(okResponse(makePage(page.tickers), page.nextCursor));
+    baseQuery.mockResolvedValueOnce(okResponse(makePage(page.tickers), page.nextCursor));
   }
-  return spy;
+  return baseQuery;
 }
+
+beforeEach(() => {
+  baseQuery = jest.fn();
+});
+
+/** The request descriptors handed to the base query, one per page walked. */
+const cursorOf = (call: number) =>
+  (baseQuery.mock.calls[call][0] as { params: Record<string, unknown> }).params.cursor;
 
 const defaultArgs = {
   category: AssetCategory.Stablecoins,
@@ -139,52 +143,46 @@ describe("fetchAllAssetsByCategory", () => {
       { tickers: ["TUSD", "FRAX"] },
     ]);
 
-    const result = await fetchAllAssetsByCategory(defaultArgs);
+    const result = await fetchAllAssetsByCategory(defaultArgs, baseQuery);
 
     expect(result).toEqual({ data: ["USDT", "USDC", "DAI", "BUSD", "TUSD", "FRAX"] });
     expect(spy).toHaveBeenCalledTimes(3);
 
-    expect(new URL(String(spy.mock.calls[0][0])).searchParams.has("cursor")).toBe(false);
-    expect(new URL(String(spy.mock.calls[1][0])).searchParams.get("cursor")).toBe("cursor-2");
-    expect(new URL(String(spy.mock.calls[2][0])).searchParams.get("cursor")).toBe("cursor-3");
+    expect(cursorOf(0)).toBeUndefined();
+    expect(cursorOf(1)).toBe("cursor-2");
+    expect(cursorOf(2)).toBe("cursor-3");
   });
 
   it("should return error and stop when a page fails", async () => {
-    const spy = jest.spyOn(globalThis, "fetch");
-    spy.mockResolvedValueOnce(okResponse(makePage(["USDT"]), "cursor-2"));
-    spy.mockResolvedValueOnce(errorResponse(502, "Bad Gateway"));
+    baseQuery.mockResolvedValueOnce(okResponse(makePage(["USDT"]), "cursor-2"));
+    baseQuery.mockResolvedValueOnce({ error: { status: 502, data: "Bad Gateway" } });
 
-    const result = await fetchAllAssetsByCategory(defaultArgs);
+    const result = await fetchAllAssetsByCategory(defaultArgs, baseQuery);
 
-    expect(result).toEqual({
-      error: { status: 502, data: "Failed to fetch assets by category: Bad Gateway" },
-    });
-    expect(spy).toHaveBeenCalledTimes(2);
+    expect(result).toEqual({ error: { status: 502, data: "Bad Gateway" } });
+    expect(baseQuery).toHaveBeenCalledTimes(2);
   });
 
   it("should return FETCH_ERROR on network failure", async () => {
-    jest.spyOn(globalThis, "fetch").mockRejectedValueOnce(new Error("Network failure"));
+    baseQuery.mockResolvedValueOnce({ error: { status: "FETCH_ERROR", error: "Network failure" } });
 
-    const result = await fetchAllAssetsByCategory(defaultArgs);
+    const result = await fetchAllAssetsByCategory(defaultArgs, baseQuery);
 
-    expect(result).toEqual({
-      error: { status: "FETCH_ERROR", error: "Network failure" },
-    });
+    expect(result).toEqual({ error: { status: "FETCH_ERROR", error: "Network failure" } });
   });
 
   it("should block requests to untrusted hosts", async () => {
     getEnvMock.mockImplementation(() => "https://evil.example.com/v1");
-    const spy = jest.spyOn(globalThis, "fetch");
 
-    const result = await fetchAllAssetsByCategory(defaultArgs);
+    const result = await fetchAllAssetsByCategory(defaultArgs, baseQuery);
 
     expect(result).toEqual({
       error: {
-        status: "FETCH_ERROR",
+        status: "CUSTOM_ERROR",
         error: "Blocked request to untrusted host: evil.example.com",
       },
     });
-    expect(spy).not.toHaveBeenCalled();
+    expect(baseQuery).not.toHaveBeenCalled();
   });
 });
 
@@ -217,25 +215,24 @@ describe("fetchAllAssetCurrencyIdsByCategory", () => {
   });
 
   it("should aggregate and flatten currency ids across pages", async () => {
-    const spy = jest.spyOn(globalThis, "fetch");
-    spy.mockResolvedValueOnce(
+    baseQuery.mockResolvedValueOnce(
       okResponse(
         makePageWithIds([{ key: "aapl", assetsIds: { ethereum: "eth/aapl", solana: "sol/aapl" } }]),
         "cursor-2",
       ),
     );
-    spy.mockResolvedValueOnce(
+    baseQuery.mockResolvedValueOnce(
       okResponse(makePageWithIds([{ key: "tsla", assetsIds: { ethereum: "eth/tsla" } }])),
     );
 
-    const result = await fetchAllAssetCurrencyIdsByCategory(stocksArgs);
+    const result = await fetchAllAssetCurrencyIdsByCategory(stocksArgs, baseQuery);
 
     expect(result).toEqual({ data: ["eth/aapl", "sol/aapl", "eth/tsla"] });
-    expect(spy).toHaveBeenCalledTimes(2);
+    expect(baseQuery).toHaveBeenCalledTimes(2);
   });
 
   it("should skip assets that have no assetsIds", async () => {
-    jest.spyOn(globalThis, "fetch").mockResolvedValueOnce(
+    baseQuery.mockResolvedValueOnce(
       okResponse(
         makePageWithIds([
           { key: "aapl", assetsIds: {} },
@@ -244,26 +241,147 @@ describe("fetchAllAssetCurrencyIdsByCategory", () => {
       ),
     );
 
-    const result = await fetchAllAssetCurrencyIdsByCategory(stocksArgs);
+    const result = await fetchAllAssetCurrencyIdsByCategory(stocksArgs, baseQuery);
 
     expect(result).toEqual({ data: ["eth/tsla"] });
   });
 
   it("should return error and stop when a page fails", async () => {
-    const spy = jest.spyOn(globalThis, "fetch");
-    spy.mockResolvedValueOnce(
+    baseQuery.mockResolvedValueOnce(
       okResponse(
         makePageWithIds([{ key: "aapl", assetsIds: { ethereum: "eth/aapl" } }]),
         "cursor-2",
       ),
     );
-    spy.mockResolvedValueOnce(errorResponse(502, "Bad Gateway"));
+    baseQuery.mockResolvedValueOnce({ error: { status: 502, data: "Bad Gateway" } });
 
-    const result = await fetchAllAssetCurrencyIdsByCategory(stocksArgs);
+    const result = await fetchAllAssetCurrencyIdsByCategory(stocksArgs, baseQuery);
 
     expect(result).toEqual({
-      error: { status: 502, data: "Failed to fetch assets by category: Bad Gateway" },
+      error: { status: 502, data: "Bad Gateway" },
     });
-    expect(spy).toHaveBeenCalledTimes(2);
+    expect(baseQuery).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe("requests issued through the store", () => {
+  const emptyPage = () =>
+    new Response(JSON.stringify(makePage([])), {
+      status: 200,
+      headers: { "content-type": "application/json" },
+    });
+
+  function makeStore() {
+    return configureStore({
+      reducer: { [assetsDataApi.reducerPath]: assetsDataApi.reducer },
+      middleware: getDefault => getDefault().concat(assetsDataApi.middleware),
+    });
+  }
+
+  const { endpoints } = assetsDataApi;
+  const storeArgs = { product: "llm" as const, version: "1.0.0" };
+  const storeCategoryArgs = { ...storeArgs, category: AssetCategory.Stocks };
+
+  /* Only that the signal reaches the request. Breaking out of the walk itself is LIVE-35503. */
+  it("should attach an abort signal to the category walk's requests", async () => {
+    let signal: AbortSignal | undefined;
+    const fetchSpy = jest
+      .spyOn(globalThis, "fetch")
+      .mockImplementation((request: RequestInfo | URL) => {
+        if (request instanceof Request) signal = request.signal;
+        return Promise.resolve(emptyPage());
+      });
+
+    await makeStore().dispatch(
+      assetsDataApi.endpoints.getAssetsByCategory.initiate({
+        category: AssetCategory.Stocks,
+        product: "llm",
+        version: "1.0.0",
+      }),
+    );
+
+    expect(signal).toBeInstanceOf(AbortSignal);
+    fetchSpy.mockRestore();
+  });
+
+  it("should issue no request at all when the resolved host is untrusted", async () => {
+    getEnvMock.mockReturnValue("https://evil.example.com/v1");
+    const fetchSpy = jest
+      .spyOn(globalThis, "fetch")
+      .mockImplementation(() => Promise.resolve(emptyPage()));
+
+    const result = await makeStore().dispatch(
+      assetsDataApi.endpoints.getAssetData.initiate({ product: "llm", version: "1.0.0" }),
+    );
+
+    expect(result.status).toBe("rejected");
+    expect(result.error).toMatchObject({
+      message: expect.stringContaining("evil.example.com"),
+    });
+    expect(fetchSpy).not.toHaveBeenCalled();
+
+    fetchSpy.mockRestore();
+    getEnvMock.mockReturnValue("https://dada.api.ledger.com/v1");
+  });
+
+  /*
+   * Before the base query was adopted, the queryFn endpoints flattened an HTTP failure into
+   * FETCH_ERROR with the status only inside a message string, so isNetworkError answered true for a
+   * server error on some endpoints and false on others. These assert the shapes agree.
+   */
+  type RunEndpoint = () => Promise<{ error?: unknown }>;
+
+  const endpointCases: [string, RunEndpoint][] = [
+    ["getAssetData", () => makeStore().dispatch(endpoints.getAssetData.initiate(storeArgs))],
+    [
+      "getChunkedAssetsData",
+      () =>
+        makeStore().dispatch(
+          endpoints.getChunkedAssetsData.initiate({ ...storeArgs, currencyIds: ["bitcoin"] }),
+        ),
+    ],
+    [
+      "getAssetsByCategory",
+      () => makeStore().dispatch(endpoints.getAssetsByCategory.initiate(storeCategoryArgs)),
+    ],
+    [
+      "getAssetCurrencyIdsByCategory",
+      () =>
+        makeStore().dispatch(endpoints.getAssetCurrencyIdsByCategory.initiate(storeCategoryArgs)),
+    ],
+  ];
+
+  describe.each(endpointCases)("%s", (_name, runEndpoint) => {
+    it("should classify an HTTP 500 as an api error carrying the numeric status", async () => {
+      const fetchSpy = jest.spyOn(globalThis, "fetch").mockImplementation(() =>
+        Promise.resolve(
+          new Response(JSON.stringify({ message: "server exploded" }), {
+            status: 500,
+            headers: { "content-type": "application/json" },
+          }),
+        ),
+      );
+
+      const { error } = await runEndpoint();
+
+      expect(isApiError(error)).toBe(true);
+      expect(getApiErrorStatus(error)).toBe(500);
+      expect(isNetworkError(error)).toBe(false);
+
+      fetchSpy.mockRestore();
+    });
+
+    it("should classify a transport failure as a network error", async () => {
+      const fetchSpy = jest
+        .spyOn(globalThis, "fetch")
+        .mockImplementation(() => Promise.reject(new TypeError("Failed to fetch")));
+
+      const { error } = await runEndpoint();
+
+      expect(isNetworkError(error)).toBe(true);
+      expect(isApiError(error)).toBe(false);
+
+      fetchSpy.mockRestore();
+    });
   });
 });

@@ -44,78 +44,65 @@ describe("resolveBaseUrl", () => {
 });
 
 describe("fetchAssetsPage", () => {
-  const baseUrl = "https://dada.api.ledger.com/v1";
-  let fetchSpy: jest.SpyInstance;
+  let baseQuery: jest.Mock;
 
-  const respondWith = (body: unknown, init?: ResponseInit) => {
-    fetchSpy.mockResolvedValue(new Response(JSON.stringify(body), { status: 200, ...init }));
-  };
-
-  const requestedUrl = () => new URL(fetchSpy.mock.calls[0][0] as string);
+  const request = () =>
+    baseQuery.mock.calls[0][0] as { url: string; params: Record<string, unknown> };
 
   beforeEach(() => {
-    fetchSpy = jest.spyOn(globalThis, "fetch");
+    baseQuery = jest.fn().mockResolvedValue({ data: emptyRaw });
   });
 
-  afterEach(() => {
-    fetchSpy.mockRestore();
+  it("targets the /assets path on the resolved base url", async () => {
+    await fetchAssetsPage(baseQuery, params());
+
+    expect(request().url).toBe("https://dada.api.ledger.com/v1/assets");
   });
 
-  it("targets the /assets path on the given base url", async () => {
-    respondWith(emptyRaw);
+  it("passes the query params to the base query rather than building a url", async () => {
+    await fetchAssetsPage(baseQuery, params({ currencyIds: ["bitcoin", "ethereum"] }));
 
-    await fetchAssetsPage(baseUrl, params());
-
-    expect(requestedUrl().pathname).toBe("/v1/assets");
+    expect(request().params).toMatchObject({
+      currencyIds: ["bitcoin", "ethereum"],
+      product: "llm",
+      minVersion: "1.0.0",
+      pageSize: 100,
+    });
   });
 
-  it("serialises the query params onto the url", async () => {
-    respondWith(emptyRaw);
+  it("omits absent params instead of sending them undefined", async () => {
+    await fetchAssetsPage(baseQuery, params());
 
-    await fetchAssetsPage(baseUrl, params({ currencyIds: ["bitcoin", "ethereum"] }));
-
-    const url = requestedUrl();
-    expect(url.searchParams.get("currencyIds")).toBe("bitcoin,ethereum");
-    expect(url.searchParams.get("product")).toBe("llm");
-    expect(url.searchParams.get("minVersion")).toBe("1.0.0");
-    expect(url.searchParams.get("pageSize")).toBe("100");
-  });
-
-  it("omits undefined params rather than sending the string 'undefined'", async () => {
-    respondWith(emptyRaw);
-
-    await fetchAssetsPage(baseUrl, params());
-
-    expect(requestedUrl().searchParams.has("search")).toBe(false);
+    expect(request().params).not.toHaveProperty("search");
   });
 
   it("returns the response with currencies converted", async () => {
-    respondWith(emptyRaw);
-
-    const result = await fetchAssetsPage(baseUrl, params());
+    const result = await fetchAssetsPage(baseQuery, params());
 
     expect(result.cryptoOrTokenCurrencies).toEqual({});
     expect(result.currenciesOrder).toEqual(emptyRaw.currenciesOrder);
   });
 
-  it("throws with the status when the response is not ok", async () => {
-    fetchSpy.mockResolvedValue(
-      new Response("nope", { status: 503, statusText: "Service Unavailable" }),
-    );
+  /*
+   * Rethrows the base query's own error object so the chunked endpoint can return it verbatim,
+   * which is how an HTTP failure keeps its numeric status instead of collapsing to FETCH_ERROR.
+   */
+  it("rethrows the base query's error when the request fails", async () => {
+    baseQuery.mockResolvedValue({ error: { status: 503, data: "Service Unavailable" } });
 
-    await expect(fetchAssetsPage(baseUrl, params())).rejects.toThrow(
-      "DADA fetch failed: 503 Service Unavailable",
-    );
+    await expect(fetchAssetsPage(baseQuery, params())).rejects.toEqual({
+      status: 503,
+      data: "Service Unavailable",
+    });
   });
 
-  /*
-   * This endpoint builds its own url instead of going through `baseQuery`, so the host guard is
-   * the only thing standing between a mis-resolved base url and a request to another host.
-   */
-  it("refuses to fetch from an untrusted host", async () => {
-    await expect(fetchAssetsPage("https://evil.example.com", params())).rejects.toThrow(
+  it("refuses an untrusted base url before issuing any request", async () => {
+    const { getEnv } = jest.requireMock("@shared/env");
+    getEnv.mockReturnValueOnce("https://evil.example.com/v1");
+
+    await expect(fetchAssetsPage(baseQuery, params())).rejects.toThrow(
       "Blocked request to untrusted host: evil.example.com",
     );
-    expect(fetchSpy).not.toHaveBeenCalled();
+    expect(baseQuery).not.toHaveBeenCalled();
   });
 });
