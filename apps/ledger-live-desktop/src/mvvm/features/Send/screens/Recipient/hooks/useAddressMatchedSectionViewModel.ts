@@ -95,6 +95,7 @@ export function useAddressMatchedSectionViewModel({
         addContactLabel: t("contacts.addContact"),
         sendLabel: t("contacts.addressDetail.send"),
         onSend: () => onSelect(recipientAddress, searchResult.ensName),
+        onAddContact,
       },
       showFirstInteractionWarning: false,
     };
