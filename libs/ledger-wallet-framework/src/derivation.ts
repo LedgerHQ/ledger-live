@@ -283,12 +283,8 @@ export const asDerivationMode = (derivationMode: string): DerivationMode => {
 export const getAllDerivationModes = (): DerivationMode[] => Object.keys(modes) as DerivationMode[];
 export const getMandatoryEmptyAccountSkip = (derivationMode: DerivationMode): number => {
   const keychainObservableRange = 25;
-
-  const mode = modes[derivationMode]?.mandatoryEmptyAccountSkip;
-  if (mode !== undefined) {
-    return mode > keychainObservableRange ? mode : keychainObservableRange;
-  }
-  return keychainObservableRange;
+  const mandatoryEmptyAccountSkip = modes[derivationMode]?.mandatoryEmptyAccountSkip ?? 0;
+  return Math.max(mandatoryEmptyAccountSkip, keychainObservableRange);
 };
 export const isInvalidDerivationMode = (derivationMode: DerivationMode): boolean =>
   (modes[derivationMode] as { isInvalid: boolean }).isInvalid || false;
