@@ -1,0 +1,427 @@
+================================================================================
+ADR: Remove `useAllAmount: true` + `amount: 0`, make "Send Max" compute a real
+     amount up front (like the percentage buttons)
+================================================================================
+
+Status:   Proposed
+Date:      2026-08-05
+Author:   qperrot (quentin.perrot-minnot@ledger.fr)
+Scope:    Send flow — apps/ledger-live-desktop (+ shared bridge / coin-modules)
+
+--------------------------------------------------------------------------------
+1. CONTEXT
+--------------------------------------------------------------------------------
+
+Today "Send Max" is implemented as a *deferred* flag rather than a real amount.
+When the user toggles Send Max:
+
+  - The UI sets `useAllAmount: true` and forces `amount: new BigNumber(0)`.
+  - The actual amount to send is NOT known at that point.
+  - Each layer downstream re-derives the amount at a different time, in a
+    different place, from a different formula.
+
+Relevant code today:
+
+  * Transaction type flag
+      libs/ledgerjs/packages/types-live/src/transaction.ts
+        `TransactionCommon.useAllAmount?: boolean`
+        (+ `TransactionCommonRaw` for serialization)
+
+  * UI toggle — LEGACY modal flow (sets the flag, zeroes the amount)
+      apps/ledger-live-desktop/src/renderer/modals/Send/fields/AmountField.tsx
+        onChangeSendMax(useAllAmount) =>
+          bridge.updateTransaction(transaction, {
+            useAllAmount,
+            amount: new BigNumber(0),   // <-- amount thrown away here
+          })
+        Input is disabled while `useAllAmount === true`.
+
+  * UI — NEW MVVM flow (checked): REPEATS the same pattern, and the
+    contradiction is now visible IN THE SAME ROW of buttons.
+      apps/ledger-live-desktop/src/mvvm/features/Send/screens/Amount/
+        hooks/useAmountScreenViewModel.ts
+          handleSelectMax() =>
+            updateTransactionWithPatch({
+              useAllAmount: true,
+              amount: new BigNumber(0),     // <-- same deferred pattern
+            })
+          setAmountFromRatio(nextAmount) =>            // the 25/50/75% buttons
+            updateTransactionWithPatch({
+              amount: safeAmount,           // <-- CONCRETE amount
+              useAllAmount: false,          // <-- no flag
+            })
+        hooks/useQuickActions.ts
+          QUICK_ACTIONS_CONFIG = 0.25 / 0.5 / 0.75 (ratio of availableBalance),
+          plus a "max" button whose active state is `transaction.useAllAmount`.
+        hooks/useAmountInput.ts
+          cryptoAmount = transaction.useAllAmount
+            ? (status.amount ?? 0)   // must read the bridge-computed value back
+            : transaction.amount     // out of `status` because the tx amount is 0
+
+    This is the crux: the new flow ALREADY has percentage quick-actions that set a
+    concrete amount with `useAllAmount:false`. "Max" is the ONE button in that row
+    that instead sets `useAllAmount:true, amount:0` and forces the UI to read the
+    real value back out of `status.amount`. The ADR simply makes "Max" behave like
+    its siblings — compute a value, set the amount — via estimateMaxSpendable.
+
+  * NEW MVVM shared logic already computes a max in the UI layer (a DIFFERENT,
+    third formula — see problem (a)/(e)):
+      libs/ledger-live-common/src/flows/send/amount/utils/amountReview.ts
+        getMaxAvailable(account, estimatedFees) =>
+          token   -> max(0, balance)
+          native  -> max(0, balance - estimatedFees)
+      This is a UI-side approximation of estimateMaxSpendable — yet the Max button
+      does NOT use it to set the amount; it still defers via the flag. Two max
+      formulas coexisting (getMaxAvailable in UI, estimateMaxSpendable in bridge,
+      plus per-family recompute) is exactly the split-brain this ADR removes.
+      Feature gate: sendFeatures.canSendMax (per-currency descriptor,
+      libs/ledger-live-common/src/bridge/descriptor/send/features.ts).
+
+  * Deferred amount computation, spread across the stack:
+      - libs/ledger-live-common/src/bridge/generic-coin-framework/prepareTransaction.ts
+          Has to special-case token accounts because amount:0 breaks EVM/ERC20
+          fee estimation:
+            "Ticking `useAllAmount` constantly resets the amount to 0. This is
+             problematic because some Blockchains need the actual transaction
+             amount to compute the fees (EVM/ERC20)."
+          -> for token tx it re-reads subAccount.spendableBalance - pendingSpent.
+      - libs/coin-modules/coin-bitcoin/src/getTransactionStatus.ts
+          amount = useAllAmount ? totalSpent.minus(estimatedFees) : transaction.amount
+      - libs/coin-modules/coin-tron/src/bridge/getTransactionStatus.ts
+          amount = useAllAmount ? balance : transaction.amount
+      - libs/ledger-live-common/src/flows/send/utils/feeEstimation.ts
+          buildEstimationKey() must include `useAllAmount` to avoid cache
+          collisions between max/manual flows.
+
+  * A dedicated function already exists to answer "what is the max?":
+      libs/ledgerjs/packages/types-live/src/bridge.ts
+        estimateMaxSpendable({ account, parentAccount?, transaction? })
+          : Promise<BigNumber>
+      Implementations:
+        - libs/ledger-live-common/src/bridge/generic-coin-framework/estimateMaxSpendable.ts
+        - libs/coin-modules/coin-cardano/src/estimateMaxSpendable.ts
+        - libs/coin-modules/coin-filecoin/.../estimateMaxSpendable.ts
+        - libs/coin-modules/coin-polkadot/.../estimateMaxSpendable.ts
+        - libs/coin-modules/coin-mina/.../estimateMaxSpendable.ts
+      NOTE: several of these implementations THEMSELVES build a draft tx with
+      `useAllAmount: true, amount: 0` internally — so the pattern is duplicated
+      both in the UI and inside estimateMaxSpendable.
+
+--------------------------------------------------------------------------------
+2. PROBLEM
+--------------------------------------------------------------------------------
+
+`useAllAmount: true` with `amount: 0` is a "compute-later" flag. It is the root
+cause of a whole class of Send Max bugs:
+
+  (a) Split-brain amount. The real amount is computed in at least three
+      independent places (prepareTransaction, per-family getTransactionStatus,
+      estimateMaxSpendable), each with its own formula. They drift.
+
+  (b) amount:0 is not a valid transaction state. Layers that legitimately need
+      the amount (EVM/ERC20 fee estimation) get 0 and must special-case
+      `useAllAmount` to reconstruct a value — leaking the flag everywhere.
+
+  (c) Every coin family must remember to handle `useAllAmount` in BOTH
+      prepareTransaction AND getTransactionStatus. Forgetting one path =>
+      "Send Max fails" / AmountRequired / NotEnoughBalance / off-by-fee errors.
+
+  (d) Fee/amount race. Because amount depends on fees and fees depend on amount,
+      and neither is fixed at toggle time, the flow is order-sensitive and hard
+      to cache (hence the special `useAllAmount` cache key).
+
+  (e) Duplicated logic. estimateMaxSpendable already knows how to compute the
+      max, but the send flow doesn't use its result as the amount — it re-derives
+      it later. Two sources of truth for the same number.
+
+Symptom the user reports: "Send Max keeps failing." The underlying reason is
+that the amount is never actually set — it is a promise to compute it later, and
+some path down the line either computes it differently or not at all.
+
+--------------------------------------------------------------------------------
+2.1 VALIDATION DIVERGENCE (confirmed) — manual-max != button-max TODAY
+--------------------------------------------------------------------------------
+
+Question raised: "If the user sets the max himself (types the amount) instead of
+clicking Max, does it go through validateIntent / getTransactionStatus the same
+way as clicking Max?"
+
+Answer, verified against the code: **NO. Today they diverge.** This is the
+strongest evidence for this ADR — `useAllAmount` is NOT just an amount-computation
+convenience, it LEAKS INTO VALIDATION as a branch condition.
+
+How it leaks: the generic framework passes the flag straight into the intent,
+and coin-modules branch on `intent.useAllAmount` inside validation:
+  - libs/ledger-live-common/src/bridge/generic-coin-framework/getTransactionStatus.ts
+      builds intent with `useAllAmount: !!transaction.useAllAmount`
+  - libs/ledger-live-common/src/bridge/generic-coin-framework/utils.ts
+      transactionToIntent() sets `useAllAmount` on the TransactionIntent
+  -> validateIntent() in each coin sees the flag and changes behavior.
+
+Concrete divergences found (a typed amount equal to the max would behave
+DIFFERENTLY from the Max button):
+
+  A. Different ERROR TYPE for amount<=0:
+       useAllAmount ? NotEnoughBalance() : AmountRequired()
+     - coin-bitcoin/src/getTransactionStatus.ts (~L275)
+     - coin-tron/src/bridge/getTransactionStatus.ts (~L120)
+     - coin-filecoin/src/logic/validateIntent.ts (~L48,54)
+     - coin-cardano/src/logic/validateIntent.ts (~L92)
+     - coin-cosmos/src/logic/transaction/validateIntent.ts
+
+  B. Amount CHECK SKIPPED when useAllAmount (a manual amount would hit it):
+       `if (!intent.useAllAmount && amount <= 0n) errors.amount = AmountRequired`
+     - coin-kaspa/src/logic/validateIntent.ts (~L46-51)
+     - coin-cardano/src/logic/validateIntent.ts (validateAmount, ~L116-127)
+
+  C. Amount RECOMPUTED inside validation only when useAllAmount (manual value is
+     used as-is, not recomputed):
+     - coin-multiversx/src/logic/validateIntent.ts (~L184-195): native ->
+       spendable - fees; token -> full esdt balance
+     - coin-filecoin/src/logic/validateIntent.ts: native -> available - fees
+
+  D. MINIMUM-amount thresholds skipped when useAllAmount (manual value fails):
+     - coin-aptos/src/bridge/getTransactionStatus.ts:
+         `if (!t.useAllAmount && t.amount.lt(MIN...)) NotEnoughToRestake`
+     - coin-sui/src/bridge/getTransactionStatus.ts:
+         `if (!transaction.useAllAmount && amount.lt(ONE_SUI)) ...`
+
+  E. MODE-specific amount transforms only when useAllAmount:
+     - coin-celo/src/bridge/getTransactionStatus.ts (~L60-76): unlock/vote/revoke
+       modes each derive a different amount when useAllAmount is set.
+
+  F. Different WARNING behavior:
+     - coin-polkadot/src/bridge/getTransactionStatus.ts (~L62-69):
+       PolkadotAllFundsWarning fires based on the flag.
+
+Implication for this ADR (two-sided):
+
+  * It CONFIRMS the decision: the desired end-state is that a user typing the max
+    and a user clicking Max produce the SAME validation, because both are just a
+    concrete amount. The flag-based divergence above is exactly the bug class we
+    want to delete.
+
+  * It RAISES a migration risk: some of these branches encode INTENTIONAL max-only
+    behavior (skip min-amount / dust / min-restake checks; deduct fees; mode-aware
+    amounts; all-funds warning). We cannot simply drop the flag and assume the
+    manual-amount path is correct — for several families the manual path is
+    STRICTER (min-amount, dust) or DIFFERENT (mode transforms). Each such branch
+    must be consciously re-homed:
+      - Fee/amount computation (C, E, and Celo modes) belongs INSIDE
+        estimateMaxSpendable, so the concrete amount handed to validation is
+        already correct — then validation needs no flag.
+      - Threshold/dust checks (B, D) must be reconciled: decide whether a max send
+        is legitimately allowed below the threshold. If yes, the check itself is
+        wrong for max and should compare against the computed max, not be skipped
+        via a flag. If no, the max computation should already respect the floor.
+      - Error-type cosmetics (A) become moot once amount is always concrete: an
+        empty account simply yields max=0 -> the normal amount>0 rule applies.
+      - Warnings (F) that should still say "you're sending everything" need a
+        UI-only signal (see the "isMax" note in section 5), NOT a tx-model flag
+        consulted during validation.
+
+  Bottom line: making manual-max == button-max is precisely the goal, but it is
+  achieved by MOVING the max-specific logic into estimateMaxSpendable (amount) and
+  into UI state (the "is this a max send" hint), NOT by leaving conditional
+  branches keyed on useAllAmount inside validateIntent.
+
+--------------------------------------------------------------------------------
+3. DECISION
+--------------------------------------------------------------------------------
+
+Treat "Send Max" as a button that COMPUTES AND SETS A CONCRETE AMOUNT, exactly
+like a "25% / 50% / 75%" quick-amount button would — the only difference being
+that Send Max routes through `estimateMaxSpendable` to obtain the value.
+
+Principle:
+  There must never be a transaction whose amount is unknown. The amount is a
+  first-class value set at the moment the user expresses intent, not a flag
+  resolved somewhere downstream.
+
+Concretely:
+
+  1. Clicking "Send Max":
+       - call `bridge.estimateMaxSpendable({ account, parentAccount, transaction })`
+       - set `transaction.amount = <result>` via bridge.updateTransaction
+       - DO NOT set `useAllAmount: true`. Amount is a normal amount from here on.
+     This mirrors how a percentage button would set
+       amount = spendableBalance * pct
+     except Send Max goes through estimateMaxSpendable so fees are accounted for.
+     In the NEW MVVM flow this literally means: make handleSelectMax() look like
+     setAmountFromRatio() (useAmountScreenViewModel.ts) — call updateTransaction-
+     WithPatch({ amount: <estimateMaxSpendable result>, useAllAmount: false }) —
+     so "Max" becomes just another quick-action, computed via estimateMaxSpendable
+     instead of a ratio. useAmountInput.ts then drops its `status.amount` special
+     case and reads transaction.amount like every other button.
+
+  2. `estimateMaxSpendable` becomes THE single source of truth for "the max".
+     Its internal draft-tx trick (useAllAmount/amount:0) is an implementation
+     detail hidden inside that one function — it is NOT exposed to the tx model
+     the rest of the app sees.
+
+  3. `useAllAmount` is removed from the transaction model (deprecate, then
+     delete) once all families set a concrete amount. getTransactionStatus /
+     prepareTransaction stop branching on it.
+
+  4. The amount input is no longer "disabled because useAllAmount". After Send
+     Max, the field simply shows the computed amount; the user can still edit it
+     (which naturally means "no longer max"), same as after clicking 25%.
+
+--------------------------------------------------------------------------------
+4. WHY THIS IS BETTER
+--------------------------------------------------------------------------------
+
+  - Single source of truth: one function (estimateMaxSpendable) computes the max,
+    once, and the result becomes the amount. No downstream re-derivation.
+  - A transaction is always in a valid, fully-specified state (real amount) — no
+    special amount:0 handling needed for EVM/ERC20 or anyone else.
+  - getTransactionStatus / prepareTransaction get simpler: no `useAllAmount`
+    branch, no per-family flag handling to forget.
+  - Fee estimation caches naturally on amount — no dedicated useAllAmount key.
+  - "Send Max" and "25%" become the same UX/code shape: compute value -> set
+    amount. Easier to reason about, test, and extend.
+
+--------------------------------------------------------------------------------
+5. CONSEQUENCES / TRADE-OFFS
+--------------------------------------------------------------------------------
+
+  - "Max is a snapshot" problem. Once we set a concrete amount, if fees or
+    balance change (e.g. a pending op lands, fee market moves), the stored max
+    can become stale. Today's useAllAmount silently re-computed at send time.
+    Mitigation options:
+      * Re-run estimateMaxSpendable when the inputs it depends on change (fee
+        setting changed, account balance/pendingOps changed, recipient changed).
+      * Keep a lightweight UI marker "isMax" purely as UI state (NOT on the tx
+        model) so the flow knows to recompute the amount when dependencies
+        change — but the transaction itself always carries a real amount.
+    This is the key design decision to nail down (see Open Questions).
+
+  - Fee-dependent amount. For coins where max = balance - fees and fees depend on
+    amount, estimateMaxSpendable must already resolve that fixpoint internally
+    (most implementations do via the draft tx). We keep that logic INSIDE
+    estimateMaxSpendable rather than in the send flow.
+
+  - Migration surface. useAllAmount is referenced across many coin-modules
+    (bitcoin, tron, cardano, polkadot, mina, filecoin, evm/token path, ...) and
+    the generic framework. Removal must be staged, not big-bang.
+
+  - Dust / rounding. Percentage buttons don't subtract fees; Send Max must. The
+    two share a "set amount" shape but Send Max keeps its fee-aware path.
+
+--------------------------------------------------------------------------------
+6. MIGRATION PLAN (staged)
+--------------------------------------------------------------------------------
+
+  Phase 0 — Decide the "recompute" strategy for staleness (see Open Questions).
+
+  Phase 1 — UI: make the Max button set a concrete amount via estimateMaxSpendable
+            instead of {useAllAmount:true, amount:0}, in BOTH flows:
+              - legacy: AmountField.onChangeSendMax
+              - new MVVM: useAmountScreenViewModel.handleSelectMax (mirror
+                setAmountFromRatio); then simplify useAmountInput (drop the
+                status.amount branch) and useQuickActions active-state logic.
+            Prefer starting with the MVVM flow — it already has the quick-action
+            shape to copy, so Max becomes a one-liner sibling of 25/50/75%.
+            Introduce UI-only "isMax" state (not on tx) if we choose to keep
+            auto-recompute. Keep useAllAmount working in the bridge for now.
+
+  Phase 2 — Verify each family's estimateMaxSpendable returns a fully fee-adjusted
+            amount that getTransactionStatus accepts with no useAllAmount branch.
+            Add/align tests per family (send max == manual amount of that value).
+            EXPLICITLY re-home each divergent branch listed in section 2.1
+            (A–F) before deleting its flag check: move fee/amount math into
+            estimateMaxSpendable; reconcile min-amount/dust thresholds; convert
+            all-funds warnings to a UI-only signal. Golden test per family:
+            "manual amount == estimateMaxSpendable() ⇒ identical status object as
+            the Max button" — this is the acceptance criterion for the whole ADR.
+
+  Phase 3 — Stop reading useAllAmount in generic prepareTransaction /
+            getTransactionStatus and in per-family getTransactionStatus. Remove
+            the token-account amount:0 special-case in prepareTransaction.
+
+  Phase 4 — Remove `useAllAmount` from feeEstimation cache key.
+
+  Phase 5 — Deprecate then delete `useAllAmount` from TransactionCommon /
+            TransactionCommonRaw and all remaining references.
+
+  Each phase is independently shippable; the flag stays functional until Phase 5.
+
+--------------------------------------------------------------------------------
+7. ALTERNATIVES CONSIDERED
+--------------------------------------------------------------------------------
+
+  A. Keep useAllAmount, just fix the failing families.
+     - Rejected: treats symptoms. The split-brain amount and amount:0 invalid
+       state remain; new families keep re-introducing the same bug.
+
+  B. Keep useAllAmount but centralize amount computation in the generic bridge
+     only (single place resolves amount:0 -> real amount).
+     - Better than today, but the transaction model still carries an invalid
+       amount:0 state and the UI still disables the field via a magic flag.
+       Chosen decision goes further and makes amount always concrete.
+
+  C. Chosen: Send Max = quick-amount button routed through estimateMaxSpendable;
+     amount is always concrete; useAllAmount removed.
+
+--------------------------------------------------------------------------------
+8. OPEN QUESTIONS
+--------------------------------------------------------------------------------
+
+  - Staleness: do we auto-recompute the max when fee setting / balance / recipient
+    change, and if so via a UI-only "isMax" flag? Or is a one-shot snapshot
+    (recomputed only on explicit re-click) acceptable UX?
+  - Do any flows (swap, sell, RBF cancel) rely on useAllAmount semantics that a
+    concrete amount would break? (bitcoin getTransactionStatus already exempts
+    RBF cancel from the amount>0 check — needs a look.)
+  - Async UX: estimateMaxSpendable is async; the button needs a loading/disabled
+    state while computing (percentage buttons are sync). Define the UX.
+  - Should estimateMaxSpendable's internal draft-tx also stop using
+    useAllAmount:true/amount:0 once the flag is deleted, or keep it as a private
+    implementation detail there?
+  - Threshold reconciliation (from section 2.1 B/D): for families that today SKIP
+    min-amount/dust checks when useAllAmount is set (kaspa, cardano, aptos, sui),
+    is a max send genuinely allowed below the floor? If yes, the floor check is
+    wrong for everyone and should compare against the computed max rather than be
+    flag-gated. If no, estimateMaxSpendable must return a value that already
+    respects the floor. Must be answered per family before deleting the flag.
+
+--------------------------------------------------------------------------------
+9. KEY FILES (reference)
+--------------------------------------------------------------------------------
+
+  Type/flag:
+    libs/ledgerjs/packages/types-live/src/transaction.ts
+    libs/ledgerjs/packages/types-live/src/bridge.ts        (estimateMaxSpendable)
+
+  UI (legacy modal flow):
+    apps/ledger-live-desktop/src/renderer/modals/Send/fields/AmountField.tsx
+    apps/ledger-live-desktop/src/renderer/families/*/SendAmountFields.tsx
+
+  UI (new MVVM flow) — primary change site:
+    apps/ledger-live-desktop/src/mvvm/features/Send/screens/Amount/
+      hooks/useAmountScreenViewModel.ts   (handleSelectMax / setAmountFromRatio)
+      hooks/useQuickActions.ts            (25/50/75/Max button config)
+      hooks/useAmountInput.ts             (status.amount vs transaction.amount)
+      components/QuickActionsRow.tsx
+    libs/ledger-live-common/src/flows/send/amount/utils/amountReview.ts
+      (getMaxAvailable — UI-side max approximation to reconcile)
+    libs/ledger-live-common/src/flows/send/hooks/useSendFlowAmountReviewCore.ts
+    libs/ledger-live-common/src/bridge/descriptor/send/features.ts (canSendMax)
+
+  Shared bridge / generic framework:
+    libs/ledger-live-common/src/bridge/generic-coin-framework/prepareTransaction.ts
+    libs/ledger-live-common/src/bridge/generic-coin-framework/getTransactionStatus.ts
+    libs/ledger-live-common/src/bridge/generic-coin-framework/estimateMaxSpendable.ts
+    libs/ledger-live-common/src/flows/send/utils/feeEstimation.ts
+
+  Per-family (examples that branch on useAllAmount / implement estimateMaxSpendable):
+    libs/coin-modules/coin-bitcoin/src/getTransactionStatus.ts
+    libs/coin-modules/coin-tron/src/bridge/getTransactionStatus.ts
+    libs/coin-modules/coin-cardano/src/estimateMaxSpendable.ts
+    libs/coin-modules/coin-filecoin/src/bridge/estimateMaxSpendable.ts
+    libs/coin-modules/coin-polkadot/src/bridge/estimateMaxSpendable.ts
+    libs/coin-modules/coin-mina/src/bridge/estimateMaxSpendable.ts
+
+================================================================================
+END
+================================================================================

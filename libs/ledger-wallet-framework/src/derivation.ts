@@ -282,8 +282,13 @@ export const asDerivationMode = (derivationMode: string): DerivationMode => {
 };
 export const getAllDerivationModes = (): DerivationMode[] => Object.keys(modes) as DerivationMode[];
 export const getMandatoryEmptyAccountSkip = (derivationMode: DerivationMode): number => {
-  const keychainObservableRange = getEnv("KEYCHAIN_OBSERVABLE_RANGE") ?? 0;
-  return modes[derivationMode]?.mandatoryEmptyAccountSkip ?? keychainObservableRange;
+  const keychainObservableRange = 25;
+
+  const mode = modes[derivationMode]?.mandatoryEmptyAccountSkip;
+  if (mode !== undefined) {
+    return mode > keychainObservableRange ? mode : keychainObservableRange;
+  }
+  return keychainObservableRange;
 };
 export const isInvalidDerivationMode = (derivationMode: DerivationMode): boolean =>
   (modes[derivationMode] as { isInvalid: boolean }).isInvalid || false;
