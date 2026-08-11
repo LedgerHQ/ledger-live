@@ -28,8 +28,7 @@ export default class AddAccountDrawer extends CommonPage {
 
   @Step("Wait for accounts discovery")
   async waitAccountsDiscovery() {
-    await waitForElementById(this.continueButtonId);
-    await waitFor(getElementById(this.continueButtonId)).toBeVisible().withTimeout(120_000);
+    await waitForElementById(this.continueButtonId, 120_000, { checkVisibility: true });
   }
 
   @Step("Get number of accounts displayed by the blockchain scan")
