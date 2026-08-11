@@ -167,6 +167,18 @@ describe("getAmountScreenRawMessage", () => {
     });
   });
 
+  it("returns a new-account recipient warning as an info message", () => {
+    const newAccountWarning = createNamedError("RecipientIsNewAccount");
+    const status = createStatus({
+      warnings: { amount: newAccountWarning },
+    });
+
+    expect(getAmountScreenRawMessage({ status, hasRawAmount: true })).toEqual({
+      type: "info",
+      error: newAccountWarning,
+    });
+  });
+
   it("classifies the selected amount warning instead of another warning key", () => {
     const amountWarning = createNamedError("RecommendUndelegation");
     const feeTooHighWarning = createNamedError("FeeTooHigh");
