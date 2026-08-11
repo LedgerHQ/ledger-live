@@ -18,7 +18,7 @@
   "scripts": {
     "format": "oxfmt src",
     "format:check": "oxfmt src --check",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
     "test": "jest",
     "coverage": "jest --coverage",
     "unimported": "pnpm knip --directory ../../.. -W features/flow/flow-contacts-introduction"

@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { ContactsLedgerSyncIntroductionDialog } from "./ContactsLedgerSyncIntroductionDialog.web";
+import { ContactsLedgerSyncIntroductionDialog } from "./ContactsLedgerSyncIntroductionDialog";
 
 describe("ContactsLedgerSyncIntroductionDialog", () => {
   it("should render the Ledger Sync explanation and dismiss it once", async () => {

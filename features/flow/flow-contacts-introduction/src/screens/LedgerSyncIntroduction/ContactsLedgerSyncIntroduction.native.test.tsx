@@ -1,6 +1,6 @@
 import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react-native";
-import { ContactsLedgerSyncIntroductionContent } from "./ContactsLedgerSyncIntroduction.native";
+import { ContactsLedgerSyncIntroductionContent } from "./ContactsLedgerSyncIntroduction";
 
 function renderContent(isOpen = true) {
   const onActivate = jest.fn();

@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { ContactsFeatureIntroductionDialog } from "./ContactsFeatureIntroductionDialog.web";
+import { ContactsFeatureIntroductionDialog } from "./ContactsFeatureIntroductionDialog";
 
 function renderDialog() {
   const onComplete = jest.fn();

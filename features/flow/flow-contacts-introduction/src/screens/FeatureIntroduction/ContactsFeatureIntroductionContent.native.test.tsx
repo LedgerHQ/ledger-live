@@ -1,6 +1,6 @@
 import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react-native";
-import { ContactsFeatureIntroductionContent } from "./ContactsFeatureIntroductionContent.native";
+import { ContactsFeatureIntroductionContent } from "./ContactsFeatureIntroductionContent";
 
 function renderContent(isOpen = true) {
   const onComplete = jest.fn();
