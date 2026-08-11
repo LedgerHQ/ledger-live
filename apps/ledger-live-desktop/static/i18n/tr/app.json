@@ -2476,6 +2476,7 @@
     "addressMatched": "Adres eşleşti",
     "addressNotFound": "Adres bulunamadı",
     "alreadyUsed": "Daha önce kullanıldı · {{date}}",
+    "addressBookUnsupported": "{{family}} henüz desteklenmiyor",
     "recentSendWillAppear": "Son gönderme işleminiz burada görüntülenecek",
     "securityInfo": {
       "title": "Güvenli bir şekilde nasıl gönderilir?",
@@ -7435,6 +7436,9 @@
     "FeeTooHigh": {
       "title": "Ağ ücretleri, tutarın % 10'unun üzerindedir"
     },
+    "RecipientIsNewAccount": {
+      "title": "Bu adrese daha önce hiç fon aktarılmadığı için adresi aktif hâle getirmek daha yüksek bir ağ işlem ücreti gerektirir"
+    },
     "DustLimit": {
       "title": "Miktar, dust sınırının altında"
     },
@@ -8609,9 +8613,9 @@
   },
   "largeScreenUpsellModal": {
     "optedIn": {
-      "title": "Daha fazla görün. Daha az dokunun. %{{discount}} tasarruf",
+      "title": "Daha fazla görün. Daha az dokunun. %{{discount}} tasarruf edin.",
       "subtitle": "Daha büyük ekranın, daha akıllı işlem incelemelerinin, gelişmiş korumanın ve özel %{{discount}} indirimin keyfini çıkarın.",
-      "cta": "Dokunmatik ekranlı imzalayıcıları keşfedin"
+      "cta": "Dokunmatik imzalayıcıları keşfedin"
     },
     "optedOut": {
       "title": "Dolandırıcılıkları imzalamadan önce fark edin",
@@ -8684,6 +8688,10 @@
     "selectAsset": "Varlık seçin",
     "selectNetwork": "Ağ seçin",
     "selectAccount": "Hesap seçin",
+    "selectAccountPerpsTitle": "Hyperliquid hesabı seçin",
+    "selectAccountPerpsDescription": "Sürekli vadeli (perpetual) işlemlerinizi fonlamak için bir Hyperliquid hesabına ihtiyacınız var. Devam etmek için bir hesap ekleyin.",
+    "selectDepositCurrencyTitle": "Yatırılacak varlığı seçin",
+    "selectDepositCurrencyDescription": "Desteklenen herhangi bir varlık kullanılabilir. Gerekirse otomatik olarak takas edilecektir.",
     "accountCount_one": "{{count}} hesap",
     "accountCount_other": "{{count}} hesap",
     "accountsAdded": {
@@ -8897,7 +8905,8 @@
       "transparentBalance": "Şeffaf bakiye",
       "transparentBalanceTooltip": "Herkes tarafından görülen bakiye",
       "privateBalance": "Gizli bakiye",
-      "privateBalanceTooltip": "Herkese açık olmayan bakiye"
+      "privateBalanceTooltip": "Herkese açık olmayan bakiye",
+      "privateBalanceWarning": "Gizli bakiye, Sapling ve Orchard korumalı fonlarını hariç tutar."
     },
     "shielded": {
       "send": {
@@ -8937,6 +8946,12 @@
             "message": "Bakiye güncel olmayabilir",
             "cta": "Bakiyeyi senkronize et"
           }
+        },
+        "selfTransfer": {
+          "toPrivate": "Self transfer to private balance",
+          "toPublic": "Self transfer to public balance",
+          "unavailable": "Your private address is not available yet. Export your view key to enable this.",
+          "privacyWarning": "This links your shielded funds to your account's public address, which anyone can see. Sending to an external private address keeps them unlinked."
         }
       },
       "state": {
