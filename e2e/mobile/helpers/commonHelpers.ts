@@ -61,13 +61,21 @@ function createDetoxURLBlacklistRegex(): string {
     ".*.googleapis.com/.*",
     ".*clients3.google.com.*",
     ".*tron.coin.ledger.com/wallet/getBrokerage.*",
-    ".*global.api.prd.ledger.com/cal.*",
+    ".*global.api.prd.ledger.com.*",
     ".*127.0.0.1.*",
+    ".*localhost.*",
+    ".*10\\.0\\.2\\.2.*",
     ".*speculos.*ldg-tech.com.*",
     ".*optimism.*",
     ".*speculos.ledgerlabs.net.*",
+    // Long-lived / noisy hosts during account discovery (keep Detox from idling forever)
+    ".*explorers.api.live.ledger.com.*",
+    ".*buy.api.live.ledger.com.*",
+    ".*proxycgassets.api.live.ledger.com.*",
+    ".*ledger.statuspage.io.*",
+    ".*crypto-icons.ledger.com.*",
+    ".*lw-icons.ledger.com.*",
   ];
-
   return `\\("${patterns.join('","')}"\\)`;
 }
 

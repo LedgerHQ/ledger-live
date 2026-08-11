@@ -28,7 +28,7 @@ export default class AddAccountDrawer extends CommonPage {
 
   @Step("Wait for accounts discovery")
   async waitAccountsDiscovery() {
-    const DISCOVERY_TIMEOUT = 240000;
+    const DISCOVERY_TIMEOUT = 120000;
     const ERROR_CHECK_INTERVAL = 2000;
     const startTime = Date.now();
 
