@@ -1728,6 +1728,9 @@ importers:
       '@features/platform-aggregated-assets':
         specifier: workspace:*
         version: link:../../features/platform/aggregated-assets
+      '@features/platform-contacts':
+        specifier: workspace:^
+        version: link:../../features/platform/contacts
       '@features/platform-currencies':
         specifier: workspace:^
         version: link:../../features/platform/currencies
@@ -4283,6 +4286,9 @@ importers:
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2
+      '@shared/cloud-sync-module':
+        specifier: workspace:^
+        version: link:../../../shared/cloud-sync-module
       '@shared/schema-primitives':
         specifier: workspace:*
         version: link:../../../shared/schema-primitives

@@ -31,7 +31,7 @@ import {
   type ContactsListViewLabels,
   type ContactsViewProps,
 } from "@features/flow-contacts";
-import { useContacts } from "@features/platform-contacts";
+import { createMockContactDeviceIntentsPort, useContacts } from "@features/platform-contacts";
 import { MY_WALLET_AVATAR_USER_URL } from "LLD/features/MyWallet/components/UserAvatar/constants";
 import { useContactsFeatureIntroductionPreference } from "../../hooks/useContactsFeatureIntroductionPreference";
 import { useContactsCurrencySelectionAdapter } from "../../hooks/useContactsCurrencySelectionAdapter";
@@ -66,6 +66,7 @@ export function useContactsViewModel(): ContactsPageViewModel {
   const [searchQuery, setSearchQuery] = useState("");
   const meContact = useContactsMeContact();
   const contacts = useContacts();
+  const deviceIntents = useMemo(() => createMockContactDeviceIntentsPort(), []);
   const currencySelection = useContactsCurrencySelectionAdapter();
   const { cancelCurrencySelection } = currencySelection;
   const addressValidation = useContactsAddressValidationAdapter();
@@ -86,21 +87,41 @@ export function useContactsViewModel(): ContactsPageViewModel {
     completeMockConfirmation,
     close: closeAddAddress,
   } = useAddAddressFlowViewModel({ addressValidation });
-  const saveAddressFromReview = useCallback(() => {
+  const saveAddressFromReview = useCallback(async () => {
     if (addAddressFlowState.status !== "reviewingAddress") {
       return;
     }
+
+    const selectedContact = contacts.find(
+      contact => contact.id === addAddressFlowState.selectedContactId,
+    );
+    if (selectedContact === undefined) {
+      return;
+    }
+    const signedAddress = await deviceIntents.registerExternalAddress({
+      contact: selectedContact,
+      currencyId: addAddressFlowState.selectedCurrencyId,
+      label: addAddressFlowState.addressLabel.label,
+      address: addAddressFlowState.addressEntry.resolvedAddress,
+    });
 
     const address = contactAddress({
       id: `address-${uuid()}`,
       currencyId: addAddressFlowState.selectedCurrencyId,
       label: addAddressFlowState.addressLabel.label,
       address: addAddressFlowState.addressEntry.resolvedAddress,
+      device: signedAddress.addressDeviceContext,
     });
 
-    dispatch(addAddress({ contactId: addAddressFlowState.selectedContactId, address }));
+    dispatch(
+      addAddress({
+        contactId: addAddressFlowState.selectedContactId,
+        address,
+        deviceCredentials: signedAddress.deviceCredentials,
+      }),
+    );
     continueFromReview();
-  }, [addAddressFlowState, continueFromReview, dispatch]);
+  }, [addAddressFlowState, contacts, continueFromReview, deviceIntents, dispatch]);
   const selectCurrencyForContact = useCallback(
     (contactId: ContactId) => {
       void selectCurrency()

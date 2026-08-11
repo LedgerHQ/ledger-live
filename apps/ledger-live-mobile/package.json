@@ -114,6 +114,7 @@
     "@domain/entity-wallet-sync": "workspace:^",
     "@features/flow-analytics-consent": "workspace:*",
     "@features/flow-contacts": "workspace:^",
+    "@features/platform-contacts": "workspace:^",
     "@features/flow-contacts-add-contact": "workspace:^",
     "@features/flow-fear-and-greed": "workspace:^",
     "@features/flow-lazy-onboarding-banner": "workspace:^",
