@@ -2,7 +2,7 @@ import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "../../helpers/allure/allure-helper";
-
+import { delay } from "../../helpers/commonHelpers";
 const isSmokeTestRun = process.env.INPUTS_TEST_FILTER?.includes("@smoke");
 
 setTeamOwner(Team.WALLET_XP);
@@ -64,6 +64,7 @@ describe("Receive", () => {
     const scannedAccounts = await app.addAccount.getNumberOfScannedAccounts();
 
     await app.receive.continueCreateAccount();
+    await delay(2000); // Wait for the account to be created and the receive page to be displayed
     await app.receive.doNotVerifyAddress();
 
     await app.receive.expectReceivePageIsDisplayed("ETH", Account.BASE_1.accountName);

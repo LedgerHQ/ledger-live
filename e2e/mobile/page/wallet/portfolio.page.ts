@@ -1,5 +1,5 @@
 import { Step } from "jest-allure2-reporter/api";
-import { openDeeplink } from "../../helpers/commonHelpers";
+import { openDeeplink, delay } from "../../helpers/commonHelpers";
 import { DEFAULT_TIMEOUT, VISIBILITY_PROBE_TIMEOUT } from "../../helpers/elementHelpers";
 import { getFlags } from "../../bridge/server";
 import { isAggregatedAssetsEnabled, isAssetSectionEnabled } from "../../utils/featureFlagUtils";
@@ -407,6 +407,7 @@ export default class PortfolioPage {
 
   @Step("Press quick action transfer button")
   async pressQuickActionTransferButton() {
+    await delay(1000); // Wait for the bottom sheet to be fully visible before tapping the button
     await tapById(this.quickActionTransferButtonV4);
   }
   @Step("Check no balance title visibility")
