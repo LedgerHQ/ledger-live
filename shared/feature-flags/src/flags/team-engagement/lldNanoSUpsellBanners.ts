@@ -5,7 +5,7 @@ const lldNanoSUpsellBannersConfigSchema = z.object({
   manager: z.boolean(),
   accounts: z.boolean(),
   notification_center: z.boolean(),
-  portfolio: z.boolean().default(true),
+  portfolio: z.boolean(),
   link: z.string(),
   img: z.string().optional(),
   "%": z.number().optional(),
