@@ -21,6 +21,7 @@ export type Props = {
   onClickSkipUpdate: () => void;
   onClickContinueToSetup: () => void;
   onClickRetryUpdate: () => void;
+  isPreparingFirmwareUpdate?: boolean;
   loading?: boolean;
 };
 
@@ -49,6 +50,7 @@ const SoftwareCheckContent = ({
   onClickSkipUpdate,
   onClickRetryUpdate,
   onClickContinueToSetup,
+  isPreparingFirmwareUpdate = false,
 }: Props) => {
   const { t } = useTranslation();
   return (
@@ -137,7 +139,14 @@ const SoftwareCheckContent = ({
       >
         {firmwareUpdateStatus === SoftwareCheckStatus.updateAvailable ? (
           <Flex flexDirection="row" alignItems="center" columnGap={6}>
-            <Button variant="main" size="medium" outline={false} onClick={onClickViewUpdate}>
+            <Button
+              variant="main"
+              size="medium"
+              outline={false}
+              onClick={onClickViewUpdate}
+              Icon={isPreparingFirmwareUpdate ? InfiniteLoader : undefined}
+              disabled={isPreparingFirmwareUpdate}
+            >
               {updateInterrupted
                 ? t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.resumeUpdateCTA")
                 : t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.viewUpdateCTA", {

@@ -36,10 +36,20 @@ const SubTitle = styled(Box).attrs(() => ({
   text-align: center;
 `;
 
-const StepConfirmation = ({ deviceModelId, appsToBeReinstalled }: StepProps) => {
+const StepConfirmation = ({
+  deviceModelId,
+  appsToBeReinstalled,
+  setFirmwareUpdateCompleted,
+}: StepProps) => {
   const device = getDeviceModel(deviceModelId);
   const { t } = useTranslation();
   const deviceName = { deviceName: device ? device.productName : "" };
+
+  // Reaching this step means the firmware update flow completed successfully
+  // (the error path renders `DeviceCancel` instead of the stepper).
+  useEffect(() => {
+    setFirmwareUpdateCompleted(true);
+  }, [setFirmwareUpdateCompleted]);
 
   useEffect(() => () => log("firmware-record-end"), []);
 
