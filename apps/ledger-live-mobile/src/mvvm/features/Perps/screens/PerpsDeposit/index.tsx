@@ -109,6 +109,7 @@ export function PerpsDepositView({
         <RatioPicker
           maxValue={maxAmount}
           value={depositAmount}
+          decimalPlaces={maxDecimalLength}
           onChange={setDepositAmount}
           onMax={selectMax}
         />

@@ -41,7 +41,7 @@ export function RatioPicker({
       ))}
       <Button
         appearance="gray"
-        disabled={disabled || maxValue === 0}
+        disabled={disabled || maxValue === 0 || value === maxValue}
         onClick={onMax}
         data-testid="perps-deposit-ratio-MAX"
       >

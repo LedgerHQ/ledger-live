@@ -1,5 +1,6 @@
 import BigNumber from "bignumber.js";
 
-export function applyRatio(value: number, ratio: number): number {
-  return BigNumber(value).times(ratio).decimalPlaces(6, BigNumber.ROUND_DOWN).toNumber();
+/** `ratio` of `value`, rounded down to `decimalPlaces`. */
+export function applyRatio(value: number, ratio: number, decimalPlaces: number): number {
+  return BigNumber(value).times(ratio).decimalPlaces(decimalPlaces, BigNumber.ROUND_DOWN).toNumber();
 }

@@ -5,6 +5,7 @@ import { applyRatio } from "../utils/applyRatio";
 type RatioPickerProps = Readonly<{
   value: number;
   maxValue: number;
+  decimalPlaces: number;
   onChange: (value: number) => void;
   onMax: () => void;
   disabled?: boolean;
@@ -19,14 +20,18 @@ const RATIOS = [
 export function RatioPicker({
   value,
   maxValue,
+  decimalPlaces,
   onChange,
   onMax,
   disabled,
 }: RatioPickerProps) {
+
+  const maxOption = applyRatio(maxValue, 1, decimalPlaces);
+
   return (
     <Box lx={{ flexDirection: "row", gap: "s12" }}>
       {RATIOS.map(({ label, ratio }) => {
-        const ratioValue = applyRatio(maxValue, ratio);
+        const ratioValue = applyRatio(maxValue, ratio, decimalPlaces);
         return (
           <Button
             key={label}
@@ -45,7 +50,7 @@ export function RatioPicker({
         appearance="gray"
         size="sm"
         lx={{ flex: 1 }}
-        disabled={disabled || maxValue === 0}
+        disabled={disabled || maxValue === 0 || value === maxOption}
         onPress={onMax}
         testID="perps-deposit-ratio-MAX"
       >
