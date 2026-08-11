@@ -13,8 +13,8 @@ Shared Contacts flow package for Desktop and Mobile.
 - Contact detail edit/delete scenario state (edit intent, delete intent, and delete lifecycle)
 - Contact address detail view model (selected address payload, QR payload string, and not-found state)
 - Contact address detail quick-action scenario state (send, edit, and delete intents with delete lifecycle)
-- Contacts orchestration through `ContactsView`, which composes the List, Detail, and
-  introduction journeys, plus `useContactsFeatureIntroductionState` (app wiring injects ports)
+- Contacts orchestration through `ContactsView`, which composes List, Detail, and Introduction
+  journeys
 - Add Address session, address-entry validation state, and address-label state
 - Add Address network eligibility and final currency selection state (MAD integration uses an
   injected selection port)
@@ -56,6 +56,10 @@ Folders under `src/` are internal implementation details and are not exported as
 list. It never imports this orchestrator. `ContactsView` is the appropriate API when the screen
 also needs Contacts Detail or introductions.
 
+`@features/flow-contacts-introduction` owns the Feature Introduction and Ledger Sync Introduction
+journeys. Applications that mount their hooks, helpers, or native content directly import that leaf
+instead of this orchestrator.
+
 Each user-facing screen owned by this package lives under `src/steps/` and follows the MVVM split used by the app
 features (View + ViewModel + types + colocated components). Web and React Native export their
 respective `ContactsView` and `ContactDetailView` implementations through the root entry point.
@@ -84,11 +88,6 @@ src/
 │   ├── AddAddress/                      # Shared address-entry flow and native step content
 │   │   ├── model/                       # Network resolver, MAD port and address validation
 │   │   └── ContactsAddAddressEntry.native.tsx / ContactsAddAddressPlaceholderView.native.tsx / useAddAddressFlowViewModel.ts / types.ts / index.ts
-│   ├── Introduction/                    # Feature intro + Ledger Sync intro (ex featureIntroduction)
-│   │   ├── Feature/ (web dialog + native content) / LedgerSync/ (web dialog + native content)
-│   │   ├── useContactsFeatureIntroductionState.ts / resolver.ts / ports.ts / constants.ts / types.ts
-│   │   ├── internals/useSingleFireDismiss.ts
-│   │   └── index.ts / web.ts / native.ts
 │   └── Detail/                          # Contact detail (web + native)
 │       ├── ContactDetailView.web/.native.tsx / useEmptyContactDetail.ts / usePopulatedContactDetail.ts / useContactAddressDetail.ts / useContactAddressDetailActionsViewModel.ts / types.ts
 │       ├── model/                       # empty + populated + address detail + quick-action builders
@@ -107,3 +106,6 @@ src/
 
 `@features/flow-contacts-add-contact` owns the Add contact step. This package re-exports its
 public API as a compatibility façade while the remaining Contacts journeys are extracted.
+
+`@features/flow-contacts-introduction` owns both introduction journeys and is composed by
+`ContactsView` on Web.

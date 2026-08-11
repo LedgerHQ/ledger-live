@@ -7,8 +7,6 @@ export * from "./steps/EditAddress";
 export * from "./steps/EditAddress/web";
 export * from "./steps/AddAddress";
 export * from "./steps/AddAddress/web";
-export * from "./steps/Introduction";
-export * from "./steps/Introduction/web";
 export * from "./steps/Detail";
 export * from "./steps/Detail/web";
 export * from "./components";

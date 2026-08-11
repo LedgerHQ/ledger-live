@@ -1,7 +1,7 @@
 import React from "react";
 import { Button, Dialog, DialogBody, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
 import type { ContactsFeatureIntroduction } from "../types";
-import { useSingleFireDismiss } from "../internals/useSingleFireDismiss";
+import { useContactsFeatureIntroductionActions } from "../useContactsFeatureIntroductionActions";
 import { CONTACTS_FEATURE_INTRODUCTION_HERO_IMAGE } from "./assets";
 import { ContactsFeatureIntroductionDialogContent } from "./ContactsFeatureIntroductionDialogContent.web";
 
@@ -16,13 +16,16 @@ export function ContactsFeatureIntroductionDialog({
   onComplete,
   onDefer,
 }: ContactsFeatureIntroduction): React.ReactNode {
-  const complete = useSingleFireDismiss(onComplete, isOpen);
-  const defer = useSingleFireDismiss(onDefer, isOpen);
+  const { complete, defer, onClose } = useContactsFeatureIntroductionActions({
+    isOpen,
+    onComplete,
+    onDefer,
+  });
   const heroImage = heroImageSrc ?? CONTACTS_FEATURE_INTRODUCTION_HERO_IMAGE;
 
   const handleOpenChange = (open: boolean) => {
     if (!open) {
-      defer();
+      onClose();
     }
   };
 
