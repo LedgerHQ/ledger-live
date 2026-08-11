@@ -20,6 +20,7 @@ type RecipientCardProps = Readonly<{
   description?: string;
   contact?: MatchedContact;
   isReady: boolean;
+  showActions: boolean;
   hasAddressBook: boolean;
   addressBookUnsupportedLabel: string;
   addContactLabel: string;
@@ -42,6 +43,7 @@ export function RecipientCard({
   description,
   contact,
   isReady,
+  showActions,
   hasAddressBook,
   addressBookUnsupportedLabel,
   addContactLabel,
@@ -62,7 +64,7 @@ export function RecipientCard({
 
   return (
     <Card data-testid="send-recipient-card">
-      <CardHeader>
+      <CardHeader className={showActions ? undefined : "pb-16"}>
         <CardLeading>
           {contact ? (
             <div
@@ -87,29 +89,31 @@ export function RecipientCard({
         </CardLeading>
       </CardHeader>
 
-      <div className="flex gap-8 px-16 pb-16">
-        {!contact &&
-          (!isReady || hasAddressBook ? (
-            <div className="flex-1">{addContactButton}</div>
-          ) : (
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <span className="flex flex-1">{addContactButton}</span>
-              </TooltipTrigger>
-              <TooltipContent side="bottom">{addressBookUnsupportedLabel}</TooltipContent>
-            </Tooltip>
-          ))}
-        <Button
-          appearance="base"
-          size="sm"
-          className="flex-1"
-          onClick={onSend}
-          disabled={!isReady}
-          data-testid="send-recipient-card-send"
-        >
-          {sendLabel}
-        </Button>
-      </div>
+      {showActions && (
+        <div className="flex gap-8 px-16 pb-16">
+          {!contact &&
+            (!isReady || hasAddressBook ? (
+              <div className="flex-1">{addContactButton}</div>
+            ) : (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span className="flex flex-1">{addContactButton}</span>
+                </TooltipTrigger>
+                <TooltipContent side="bottom">{addressBookUnsupportedLabel}</TooltipContent>
+              </Tooltip>
+            ))}
+          <Button
+            appearance="base"
+            size="sm"
+            className="flex-1"
+            onClick={onSend}
+            disabled={!isReady}
+            data-testid="send-recipient-card-send"
+          >
+            {sendLabel}
+          </Button>
+        </div>
+      )}
     </Card>
   );
 }
