@@ -48,6 +48,8 @@
     "@testing-library/dom": "catalog:",
     "@testing-library/jest-dom": "catalog:",
     "@testing-library/react": "catalog:",
+    "@testing-library/react-native": "catalog:",
+    "@testing-library/user-event": "catalog:",
     "@types/jest": "catalog:",
     "@types/react": "catalog:",
     "jest": "catalog:",
@@ -56,6 +58,7 @@
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-native": "catalog:",
+    "react-test-renderer": "catalog:",
     "typescript": "catalog:"
   }
 }

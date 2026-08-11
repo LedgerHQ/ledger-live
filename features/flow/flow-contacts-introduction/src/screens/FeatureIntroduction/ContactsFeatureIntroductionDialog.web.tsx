@@ -2,7 +2,7 @@ import React from "react";
 import { Button, Dialog, DialogBody, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
 import type { ContactsFeatureIntroduction } from "../../state/types";
 import { useContactsFeatureIntroductionActions } from "./useContactsFeatureIntroductionActions";
-import { CONTACTS_FEATURE_INTRODUCTION_HERO_IMAGE } from "./assets";
+import { CONTACTS_FEATURE_INTRODUCTION_HERO_IMAGE } from "./assets.web";
 import { ContactsFeatureIntroductionDialogContent } from "./ContactsFeatureIntroductionDialogContent.web";
 
 export function ContactsFeatureIntroductionDialog({
