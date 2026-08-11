@@ -59,7 +59,7 @@ runs:
         INPUTS_PATH: ${{ inputs.path }}
     - name: Upload allure results
       id: upload-results
-      uses: LedgerHQ/actions/allure/upload@815ffa9c111f5f0947ff73c9b12067d787bf34e0 # main @ 2026-06-25
+      uses: LedgerHQ/actions/allure/upload@a005f64b7ac8175ef0d79b212e531ce93d6a49b4 # main @ 2026-06-25
       with:
         url: "https://ledger-live.allure.green.ledgerlabs.net"
         username: ${{ inputs.login }}
@@ -67,7 +67,7 @@ runs:
         results: ${{ steps.prepare.outputs.path }}
     - name: Generate allure report
       id: generate-report
-      uses: LedgerHQ/actions/allure/generate@815ffa9c111f5f0947ff73c9b12067d787bf34e0 # main @ 2026-06-25
+      uses: LedgerHQ/actions/allure/generate@a005f64b7ac8175ef0d79b212e531ce93d6a49b4 # main @ 2026-06-25
       with:
         url: "https://ledger-live.allure.green.ledgerlabs.net"
         username: ${{ inputs.login }}
