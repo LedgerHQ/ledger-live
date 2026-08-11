@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useRef, useState } from "react";
-import type { DeviceIntentExecutorHeaderContextValue } from "../utils/DeviceIntentExecutorHeaderContext";
+import type { DeviceIntentExecutorHeaderContextValue } from "./DeviceIntentExecutorHeaderContext";
 
 type UseDeviceIntentExecutorHeaderOverrideRequestsReturn = Readonly<{
   hasHeaderOverride: boolean;

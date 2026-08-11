@@ -1,5 +1,9 @@
 import React from "react";
-import { DeviceInteractionRequiredType, type EnsureAppReadyState } from "@ledgerhq/live-dmk-shared";
+import {
+  DeviceInteractionRequiredType,
+  OverrideDeviceIntentExecutorHeader,
+  type EnsureAppReadyState,
+} from "@ledgerhq/live-dmk-shared";
 import { TrackDIEScreen } from "../../components/TrackDIEScreen";
 import { PAGE_CONNECT_APP } from "../../utils/trackDeviceIntent";
 import { UnlockDevice } from "../../components/DeviceGenericStates/UnlockDevice";
@@ -12,6 +16,9 @@ type UnlockDeviceStateProps = BaseInitializerStateProps<
 export function UnlockDeviceState({ device }: UnlockDeviceStateProps) {
   return (
     <>
+      <OverrideDeviceIntentExecutorHeader>
+        <div className="h-48" aria-hidden />
+      </OverrideDeviceIntentExecutorHeader>
       <TrackDIEScreen
         category={PAGE_CONNECT_APP.UnlockDevice}
         modelId={device.modelId}
