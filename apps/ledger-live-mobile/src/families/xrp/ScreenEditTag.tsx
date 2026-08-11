@@ -17,6 +17,7 @@ import TextInput from "~/components/FocusedTextInput";
 import { BaseComposite } from "~/components/RootNavigator/types/helpers";
 import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
 import { popToScreen } from "~/helpers/navigationHelpers";
+import { syncTransactionToAmountStep } from "./syncTransactionToAmountStep";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type NavigationProps = BaseComposite<
@@ -57,11 +58,14 @@ function XrpEditTag({ route, navigation }: NavigationProps) {
   }
 
   const onValidateText = useCallback(() => {
+    const updatedTransaction = bridge.updateTransaction(transaction, {
+      tag: tag && tag.toNumber(),
+    });
+    // Keep the amount step in sync too, or it reverts this edit on back-navigation (LIVE-35403).
+    syncTransactionToAmountStep(navigation, updatedTransaction);
     popToScreen(navigation, ScreenName.SendSummary, {
       accountId: account.id,
-      transaction: bridge.updateTransaction(transaction, {
-        tag: tag && tag.toNumber(),
-      }),
+      transaction: updatedTransaction,
     });
   }, [navigation, account, bridge, tag, transaction]);
   return (
