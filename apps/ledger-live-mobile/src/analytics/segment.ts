@@ -297,9 +297,11 @@ const getLazyOnboardingBannerAttributes = () => {
     return { lazyOnboardingBanner: false, lazyOnboardingBannerMode: null };
   }
   const flag = analyticsFeatureFlagMethod("lazyOnboardingBanner");
+  const enabled = !!flag?.enabled;
   return {
-    lazyOnboardingBanner: !!flag?.enabled,
-    lazyOnboardingBannerMode: flag?.params?.mode ?? null,
+    lazyOnboardingBanner: enabled,
+    // Only expose mode for the enabled cohort — defaults still exist when the flag is off.
+    lazyOnboardingBannerMode: enabled ? (flag?.params?.mode ?? null) : null,
   };
 };
 
