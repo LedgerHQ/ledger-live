@@ -1,7 +1,6 @@
 import React from "react";
-import { Avatar } from "@ledgerhq/lumen-ui-rnative";
+import { Avatar, resolveAvatarColor } from "@ledgerhq/lumen-ui-rnative";
 import type { ContactId } from "@domain/entity-contact";
-import { resolveAvatarColor } from "./resolveAvatarColor";
 
 type ContactAvatarProps = Readonly<{
   contactId: ContactId;
@@ -21,7 +20,7 @@ export function ContactAvatar({
       testID={testID ?? `contacts-avatar-${contactId}`}
       size={size}
       alt={name}
-      lx={{ backgroundColor: resolveAvatarColor(contactId) }}
+      fallbackColor={resolveAvatarColor(contactId)}
     />
   );
 }
