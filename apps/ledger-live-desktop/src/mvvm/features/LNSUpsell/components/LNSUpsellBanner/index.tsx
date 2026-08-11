@@ -41,7 +41,7 @@ function View({
       >
         <LNSUpsellMediaBanner
           title={t(`lnsUpsellMediaBanner.${tracking}.title`)}
-          description={t(`lnsUpsellMediaBanner.${tracking}.description`)}
+          description={t(`lnsUpsellMediaBanner.${tracking}.description`, { discount })}
           imageUrl={imageUrl}
           onClick={handleCTAClick}
         />

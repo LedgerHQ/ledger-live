@@ -72,7 +72,9 @@ describe("LNSUpsellBanner", () => {
       renderBanner({ brazePlacement: true });
 
       expect(screen.getByText(t(`lnsUpsellMediaBanner.opted_in.title`))).toBeTruthy();
-      expect(screen.getByText(t(`lnsUpsellMediaBanner.opted_in.description`))).toBeTruthy();
+      expect(
+        screen.getByText(t(`lnsUpsellMediaBanner.opted_in.description`, { discount: 10 })),
+      ).toBeTruthy();
 
       fireEvent.click(screen.getByTestId("lns-upsell-media-banner"));
 

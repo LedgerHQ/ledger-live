@@ -8594,7 +8594,7 @@
   "lnsUpsell": {
     "opted_in": {
       "title": "See more. Sign safer",
-      "description": "Upgrade and get 20% off.",
+      "description": "Upgrade and get {{discount}}% off.",
       "cta": "Upgrade my Ledger"
     },
     "opted_out": {
@@ -8606,7 +8606,7 @@
   "lnsUpsellMediaBanner": {
     "opted_in": {
       "title": "See more. Sign safer",
-      "description": "Upgrade and get 20% off."
+      "description": "Upgrade and get {{discount}}% off."
     },
     "opted_out": {
       "title": "More security. More control",
