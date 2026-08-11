@@ -22,6 +22,7 @@ const nativeMocks = {
   "^react-native$": path.join(__dirname, "mocks/react-native.js"),
   "^@ledgerhq/lumen-ui-rnative(/.*)?$": path.join(__dirname, "mocks/passthrough-native.js"),
   "^@ledgerhq/crypto-icons$": path.join(__dirname, "mocks/passthrough-native.js"),
+  "\\.(webp|png|jpg|jpeg|gif|svg)$": path.join(__dirname, "mocks/file-stub.js"),
 };
 
 /**
@@ -43,9 +44,21 @@ function createFlowJestConfig(overrides = {}) {
   const base = {
     testPathIgnorePatterns,
     transform: swcTransform,
-    moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json"],
     coverageReporters,
   };
+
+  // Platform variants resolve like they do in the bundlers (Rspack `resolve.extensions`, Metro
+  // platform extensions), so a `.web`/`.native` suffix stays confined to the file that needs one:
+  // `import { FeatureTourView } from "./FeatureTourView"` picks the right side per project.
+  const platformExtensions = platform => [
+    `${platform}.tsx`,
+    `${platform}.ts`,
+    "tsx",
+    "ts",
+    "js",
+    "jsx",
+    "json",
+  ];
 
   return {
     collectCoverage: true,
@@ -62,6 +75,7 @@ function createFlowJestConfig(overrides = {}) {
         ...base,
         displayName: "web",
         testEnvironment: "jsdom",
+        moduleFileExtensions: platformExtensions("web"),
         testMatch: ["**/*.web.test.ts?(x)", "**/*.web.spec.ts?(x)"],
         moduleNameMapper: { ...webMocks },
         setupFilesAfterEnv: ["@testing-library/jest-dom", path.join(__dirname, "setup/web.js")],
@@ -70,6 +84,7 @@ function createFlowJestConfig(overrides = {}) {
         ...base,
         displayName: "native",
         testEnvironment: "node",
+        moduleFileExtensions: platformExtensions("native"),
         testMatch: ["**/*.native.test.ts?(x)", "**/*.native.spec.ts?(x)"],
         moduleNameMapper: { ...nativeMocks },
       },
