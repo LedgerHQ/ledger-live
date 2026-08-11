@@ -2476,6 +2476,7 @@
     "addressMatched": "ที่อยู่ถูกต้องและตรงกัน",
     "addressNotFound": "ไม่พบที่อยู่",
     "alreadyUsed": "{{date}} ถูกใช้งานแล้ว",
+    "addressBookUnsupported": "{{family}} isn't supported yet",
     "recentSendWillAppear": "การส่งล่าสุดของคุณจะแสดงที่นี่",
     "securityInfo": {
       "title": "ส่งสินทรัพย์อย่างไรให้ปลอดภัย?",
@@ -7435,6 +7436,9 @@
     "FeeTooHigh": {
       "title": "ค่าธรรมเนียมเครือข่ายสูงกว่า 10% ของจำนวน"
     },
+    "RecipientIsNewAccount": {
+      "title": "This address has never received funds, activating it costs a higher network fee"
+    },
     "DustLimit": {
       "title": "จำนวนต่ำกว่าลิมิตของ Dust"
     },
@@ -8609,7 +8613,7 @@
   },
   "largeScreenUpsellModal": {
     "optedIn": {
-      "title": "ดูเพิ่มเติม ใช้งานคล่องตัวขึ้น รับส่วนลดถึง {{discount}}%",
+      "title": "เห็นชัดขึ้นใช้งานง่ายขึ้น พร้อมส่วนลด {{discount}}%",
       "subtitle": "เพลิดเพลินกับหน้าจอที่ใหญ่ขึ้น, การตรวจสอบธุรกรรมที่ฉลาดขึ้น, การปกป้องที่ดียิ่งขึ้น และรับส่วนลดเพิ่ม {{discount}}%",
       "cta": "ดูอุปกรณ์ลงนามหน้าจอที่ใช้งานง่าย"
     },
@@ -8684,6 +8688,10 @@
     "selectAsset": "เลือกสินทรัพย์",
     "selectNetwork": "เลือกเครือข่าย",
     "selectAccount": "เลือกบัญชี",
+    "selectAccountPerpsTitle": "เลือกบัญชี Hyperliquid",
+    "selectAccountPerpsDescription": "หากต้องการเติมเงินทุนสำหรับสัญญาซื้อขายคริปโตล่วงหน้าแบบไม่มีวันหมดอายุ (Perps) คุณต้องมีบัญชี Hyperliquid เพิ่มบัญชีเพื่อดำเนินการต่อ",
+    "selectDepositCurrencyTitle": "เลือกสินทรัพย์ที่จะฝาก",
+    "selectDepositCurrencyDescription": "สามารถใช้สินทรัพย์ใดรับรองก็ได้ ระบบจะสวอปให้โดยอัตโนมัติหากจำเป็น",
     "accountCount_one": "{{count}} บัญชี",
     "accountCount_other": "บัญชี {{count}}",
     "accountsAdded": {
@@ -8897,7 +8905,8 @@
       "transparentBalance": "ยอดคงเหลือในบัญชีที่โปร่งใส",
       "transparentBalanceTooltip": "ยอดคงเหลือในบัญชีที่เปิดเผยต่อสาธารณะ",
       "privateBalance": "ยอดคงเหลือในบัญชีส่วนบุคคล",
-      "privateBalanceTooltip": "ยอดคงเหลือในบัญชีที่ไม่เปิดเผยต่อสาธารณะ"
+      "privateBalanceTooltip": "ยอดคงเหลือในบัญชีที่ไม่เปิดเผยต่อสาธารณะ",
+      "privateBalanceWarning": "Private balance excludes Sapling and Orchard shielded funds"
     },
     "shielded": {
       "send": {
@@ -8937,6 +8946,12 @@
             "message": "ยอดคงเหลือในบัญชีอาจยังไม่อัปเดต",
             "cta": "ซิงค์ยอดคงเหลือในบัญชี"
           }
+        },
+        "selfTransfer": {
+          "toPrivate": "Self transfer to private balance",
+          "toPublic": "Self transfer to public balance",
+          "unavailable": "Your private address is not available yet. Export your view key to enable this.",
+          "privacyWarning": "This links your shielded funds to your account's public address, which anyone can see. Sending to an external private address keeps them unlinked."
         }
       },
       "state": {
