@@ -16,7 +16,7 @@ export type ChainSpecificRules = {
 export type BridgeApi = {
   getChainSpecificRules?: ChainSpecificRules;
   getTokenFromAsset?: (asset: AssetInfo) => Promise<TokenCurrency | undefined>;
-  getAssetFromToken?: (token: TokenCurrency, owner: string) => AssetInfo;
+  getAssetFromToken?: (token: TokenCurrency, owner: string) => AssetInfo | undefined;
   computeIntentType?: (transaction: Record<string, unknown>) => string;
   refreshOperations?: (operations: LiveOperation[]) => Promise<LiveOperation[]>;
   validateTransaction?: (signature: string) => Promise<{ error: Error | undefined }>;

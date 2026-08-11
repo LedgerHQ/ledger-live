@@ -190,7 +190,7 @@ export function genericPrepareTransaction(
 export async function getAssetInfos(
   tr: GenericTransaction,
   owner: string,
-  getAssetFromToken: (token: TokenCurrency, owner: string) => AssetInfo,
+  getAssetFromToken: (token: TokenCurrency, owner: string) => AssetInfo | undefined,
 ): Promise<{
   assetReference: string;
   assetOwner: string;
@@ -201,6 +201,8 @@ export async function getAssetInfos(
     if (!token) return assetInfosFallback(tr);
 
     const asset = getAssetFromToken(token, owner);
+
+    if (!asset) return assetInfosFallback(tr);
 
     return {
       assetOwner: ("assetOwner" in asset && asset.assetOwner) || "",
