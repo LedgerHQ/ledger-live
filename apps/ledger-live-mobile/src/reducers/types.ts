@@ -51,6 +51,7 @@ import type { LiveAppModalState } from "./liveAppModal";
 import type { KnownDevicesState } from "./knownDevices";
 import type { GenericAwarenessModalState } from "./genericAwarenessModal";
 import type { BackupHubFeatureIntroState } from "./backupHubFeatureIntro";
+import type { ProductTourDrawerState } from "./productTourDrawer";
 
 // === ACCOUNT STATE ===
 
@@ -452,6 +453,7 @@ export type State = LLMRTKApiState & {
   featureFlags: FeatureFlagsState;
   genericAwarenessModal: GenericAwarenessModalState;
   backupHubFeatureIntro: BackupHubFeatureIntroState;
+  productTourDrawer: ProductTourDrawerState;
   history: HistoryState;
   identities: IdentitiesState;
   inView: InViewState;

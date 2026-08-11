@@ -15,6 +15,7 @@ import dynamicContent from "./dynamicContent";
 import earn from "./earn";
 import genericAwarenessModal from "./genericAwarenessModal";
 import backupHubFeatureIntro from "./backupHubFeatureIntro";
+import productTourDrawer from "./productTourDrawer";
 import history from "./history";
 import inView from "./inView";
 import knownDevices from "./knownDevices";
@@ -63,6 +64,7 @@ const appReducer = combineReducers({
   featureFlags,
   genericAwarenessModal,
   backupHubFeatureIntro,
+  productTourDrawer,
   history,
   identities: identitiesSlice.reducer,
   inView,

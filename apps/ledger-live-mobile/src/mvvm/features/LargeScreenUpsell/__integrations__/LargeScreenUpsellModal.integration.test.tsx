@@ -6,7 +6,9 @@ import { act, fireEvent, render, screen, waitFor, withFlagOverrides } from "@tes
 import { screen as analyticsScreen, track } from "~/analytics";
 import { useDispatch } from "~/context/hooks";
 import { openBackupHubFeatureIntro } from "~/reducers/backupHubFeatureIntro";
+import { handleProductTourDeeplink } from "~/navigation/deeplinks/handleProductTourDeeplink";
 import type { State } from "~/reducers/types";
+import { ProductTourPortfolioMount } from "LLM/features/ProductTour";
 import { LargeScreenUpsellModalPortfolioMount } from "..";
 import { __resetLargeScreenUpsellAutoOpenForTests } from "../components/LargeScreenUpsellModalPortfolioMount/useLargeScreenUpsellModalPortfolioMountViewModel";
 
@@ -26,6 +28,9 @@ const NANO_S_OPTED_IN_ANALYTICS_PROPS = {
 
 const Stack = createNativeStackNavigator();
 const NOW = new Date("2026-06-01T12:00:00.000Z");
+const PRODUCT_TOUR_DEEPLINK_CONFIG = { screens: {} } as Parameters<
+  typeof handleProductTourDeeplink
+>[0]["config"];
 
 function withKnownDeviceModels(
   deviceModelIds: DeviceModelId[],
@@ -76,6 +81,15 @@ function PortfolioScreenWithDelayedCompetitor() {
   );
 }
 
+function PortfolioScreenWithProductTourMount() {
+  return (
+    <View style={{ flex: 1 }} testID="large-screen-upsell-integration-portfolio">
+      <ProductTourPortfolioMount />
+      <LargeScreenUpsellModalPortfolioMount />
+    </View>
+  );
+}
+
 function IntegrationNavigator() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="Portfolio">
@@ -88,6 +102,14 @@ function IntegrationNavigatorWithDelayedCompetitor() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="Portfolio">
       <Stack.Screen name="Portfolio" component={PortfolioScreenWithDelayedCompetitor} />
+    </Stack.Navigator>
+  );
+}
+
+function IntegrationNavigatorWithProductTourMount() {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="Portfolio">
+      <Stack.Screen name="Portfolio" component={PortfolioScreenWithProductTourMount} />
     </Stack.Navigator>
   );
 }
@@ -346,38 +368,6 @@ describe("LargeScreenUpsellModal on Portfolio (integration)", () => {
     ).toHaveLength(1);
   });
 
-  it("should auto-open the upsell modal when product tour is enabled but onboarding is not completed", async () => {
-    const overrideInitialState = withFlagOverrides(
-      {
-        largeScreenUpsell: {
-          enabled: true,
-          params: {
-            opted_out: {
-              enabled: true,
-              link: "https://shop.ledger.com/pages/ledger-nano-upgrade-program",
-            },
-          },
-        },
-        lwmProductTour: { enabled: true },
-        lwmGenericAwarenessModal: { enabled: false },
-        analyticsOptIn: { enabled: false },
-      },
-      withKnownDeviceModels([DeviceModelId.nanoS], {
-        hasCompletedOnboarding: false,
-        productTourCompleted: false,
-      }),
-    );
-
-    render(<IntegrationNavigator />, { overrideInitialState });
-
-    expect(await screen.findByTestId("large-screen-upsell-integration-portfolio")).toBeVisible();
-    expect(screen.getByTestId("large-screen-upsell-portfolio-mount")).toBeVisible();
-
-    await waitFor(() => {
-      expect(screen.getByTestId("large-screen-upsell-modal-drawer")).toBeVisible();
-    });
-  });
-
   it("should not auto-open the upsell modal when a competing app-start modal opens after mount", async () => {
     const overrideInitialState = withFlagOverrides(
       {
@@ -407,5 +397,80 @@ describe("LargeScreenUpsellModal on Portfolio (integration)", () => {
       expect(store.getState().backupHubFeatureIntro.isOpen).toBe(true);
     });
     expect(store.getState().largeScreenUpsellModal.retries).toBe(0);
+  });
+
+  it("should not auto-open Large Screen Upsell when Product Tour is opened via deeplink", async () => {
+    const overrideInitialState = withFlagOverrides(
+      {
+        largeScreenUpsell: {
+          enabled: true,
+          params: {
+            opted_out: {
+              enabled: true,
+              link: "https://shop.ledger.com/pages/ledger-nano-upgrade-program",
+            },
+          },
+        },
+        lwmProductTour: { enabled: true },
+        lwmGenericAwarenessModal: { enabled: false },
+        analyticsOptIn: { enabled: false },
+      },
+      withKnownDeviceModels([DeviceModelId.nanoS], {
+        hasCompletedOnboarding: true,
+        productTourCompleted: false,
+      }),
+    );
+
+    const { store } = render(<IntegrationNavigatorWithProductTourMount />, {
+      overrideInitialState,
+    });
+
+    // Open tour before LSU's pending rAF is flushed (findBy/waitFor can advance fake timers).
+    await act(async () => {
+      handleProductTourDeeplink({
+        isLwmProductTourEnabled: true,
+        hasCompletedOnboarding: true,
+        dispatch: store.dispatch,
+        config: PRODUCT_TOUR_DEEPLINK_CONFIG,
+      });
+    });
+
+    expect(await screen.findByTestId("product-tour-slides-container")).toBeVisible();
+
+    // Flush LSU's requestAnimationFrame auto-open so a missing competing check fails here.
+    act(() => {
+      jest.runOnlyPendingTimers();
+    });
+
+    expect(screen.queryByTestId("large-screen-upsell-modal-drawer")).not.toBeVisible();
+  });
+
+  it("should auto-open Large Screen Upsell when Product Tour is incomplete but its drawer is closed", async () => {
+    const overrideInitialState = withFlagOverrides(
+      {
+        largeScreenUpsell: {
+          enabled: true,
+          params: {
+            opted_out: {
+              enabled: true,
+              link: "https://shop.ledger.com/pages/ledger-nano-upgrade-program",
+            },
+          },
+        },
+        lwmProductTour: { enabled: true },
+        lwmGenericAwarenessModal: { enabled: false },
+        analyticsOptIn: { enabled: false },
+      },
+      withKnownDeviceModels([DeviceModelId.nanoS], {
+        hasCompletedOnboarding: true,
+        productTourCompleted: false,
+      }),
+    );
+
+    render(<IntegrationNavigator />, { overrideInitialState });
+
+    await waitFor(() => {
+      expect(screen.getByTestId("large-screen-upsell-modal-drawer")).toBeVisible();
+    });
   });
 });
