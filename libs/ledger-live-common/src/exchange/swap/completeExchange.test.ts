@@ -1,10 +1,27 @@
 import { TransportStatusError } from "@ledgerhq/hw-transport/errors";
 import { ErrorStatus } from "@ledgerhq/hw-app-exchange/ReturnCode";
+import BigNumber from "bignumber.js";
 import { CompleteExchangeError } from "../error";
 import {
   enrichSwapDeserializationError,
+  getBufferedDexGasLimit,
   shouldForceZeroAmountForDexSwap,
 } from "./completeExchange";
+
+describe("getBufferedDexGasLimit", () => {
+  it.each([
+    ["caps HyperEVM at 2.9M", "hyperevm", 3_000_000, "2900000"],
+    ["keeps a buffered HyperEVM value below the cap", "hyperevm", 2_000_000, "2600000"],
+    ["does not cap other EVM currencies", "ethereum", 3_000_000, "3900000"],
+  ])("%s", (_case, fromCurrencyId, gasLimit, expected) => {
+    expect(
+      getBufferedDexGasLimit({
+        gasLimit: new BigNumber(gasLimit),
+        fromCurrencyId,
+      }).toFixed(),
+    ).toBe(expected);
+  });
+});
 
 describe("shouldForceZeroAmountForDexSwap", () => {
   const base = {
