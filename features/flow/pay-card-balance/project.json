@@ -1,0 +1,8 @@
+{
+  "name": "@features/flow-pay-card-balance",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}
