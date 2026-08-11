@@ -117,6 +117,29 @@ describe("getRecipientMatchPresentation", () => {
     });
   });
 
+  it("returns a recipient card for a bridge error when Contacts is enabled", () => {
+    expect(
+      getRecipientMatchPresentation({
+        searchResult: createSearchResult({
+          ensName: "vitalik.eth",
+          resolvedAddress: address,
+          status: "ens_resolved",
+        }),
+        searchValue: address,
+        isAddressComplete: true,
+        hasBridgeError: true,
+        isContactsFeatureEnabled: true,
+      }),
+    ).toEqual({
+      kind: "recipient-card",
+      recipientAddress: address,
+      ensName: "vitalik.eth",
+      matchedContact: undefined,
+      matchedRecentAddress: undefined,
+      isReady: false,
+    });
+  });
+
   it("returns a valid-address presentation after an unmatched address is complete", () => {
     expect(
       getRecipientMatchPresentation({

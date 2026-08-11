@@ -27,13 +27,14 @@ export function AddressMatchedSection({ viewModel }: AddressMatchedSectionProps)
           </SubheaderRow>
         </Subheader>
       )}
-      <div className="-mx-8 flex flex-col">
+      <div className="flex flex-col mb-12 -mt-8">
         {suggestion.kind === "recipient-card" ? (
           <RecipientCard
             recipient={suggestion.recipient}
             description={suggestion.description}
             contact={suggestion.contact}
             isReady={suggestion.isReady}
+            showActions={suggestion.showActions}
             hasAddressBook={suggestion.hasAddressBook}
             addressBookUnsupportedLabel={suggestion.addressBookUnsupportedLabel}
             addContactLabel={suggestion.addContactLabel}
