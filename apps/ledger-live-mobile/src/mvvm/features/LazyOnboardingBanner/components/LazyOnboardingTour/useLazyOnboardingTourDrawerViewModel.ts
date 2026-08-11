@@ -113,7 +113,7 @@ export function useLazyOnboardingTourDrawerViewModel(): LazyOnboardingTourDrawer
 
   const onCloseButtonPress = useCallback(() => {
     closeSourceRef.current = "cross";
-    trackLazyOnboardingTourCloseClicked(sharedAnalyticsProps);
+    trackLazyOnboardingTourCloseClicked(lastTrackedStepIndexRef.current ?? 0, sharedAnalyticsProps);
     closeDrawer();
   }, [closeDrawer, sharedAnalyticsProps]);
 

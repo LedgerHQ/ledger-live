@@ -204,6 +204,7 @@ describe("LazyOnboardingTour", () => {
       expect.objectContaining({
         button: "close",
         page: LAZY_ONBOARDING_TOUR_PAGE,
+        step: 0,
       }),
     );
     expect(track).not.toHaveBeenCalledWith("modal_dismissed", expect.anything());

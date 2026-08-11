@@ -70,11 +70,13 @@ export const trackLazyOnboardingTourBuyClicked = (
 };
 
 export const trackLazyOnboardingTourCloseClicked = (
+  step: number,
   sharedProps: LazyOnboardingTourSharedAnalyticsProps,
 ) => {
   track("button_clicked", {
     button: "close",
     page: LAZY_ONBOARDING_TOUR_PAGE,
+    step,
     ...sharedProps,
   });
 };

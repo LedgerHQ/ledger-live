@@ -73,6 +73,7 @@ describe("useLazyOnboardingTourDrawerViewModel dismiss analytics", () => {
       expect.objectContaining({
         button: "close",
         page: LAZY_ONBOARDING_TOUR_PAGE,
+        step: 0,
       }),
     );
 
