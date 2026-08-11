@@ -31,6 +31,35 @@ const TRANSLATION_KEYS: Record<ModularDialogStep, string> = {
   [MODULAR_DIALOG_STEP.ACCOUNT_SELECTION]: "modularAssetDrawer.selectAccount",
 };
 
+type StepHeading = {
+  titleKey: string;
+  descriptionKey?: string;
+};
+
+/** Translation keys for a step's title and description, given the perps use case. */
+function getStepHeading(step: ModularDialogStep, uiUseCase?: string): StepHeading {
+  const perpsUseCase = getPerpsUiUseCase(uiUseCase);
+
+  if (step === MODULAR_DIALOG_STEP.ASSET_SELECTION && perpsUseCase === PERPS_UI_USE_CASE.fund) {
+    return {
+      titleKey: "modularAssetDrawer.selectDepositCurrencyTitle",
+      descriptionKey: "modularAssetDrawer.selectDepositCurrencyDescription",
+    };
+  }
+
+  if (
+    step === MODULAR_DIALOG_STEP.ACCOUNT_SELECTION &&
+    perpsUseCase === PERPS_UI_USE_CASE.receive
+  ) {
+    return {
+      titleKey: "modularAssetDrawer.selectAccountPerpsTitle",
+      descriptionKey: "modularAssetDrawer.selectAccountPerpsDescription",
+    };
+  }
+
+  return { titleKey: TRANSLATION_KEYS[step] };
+}
+
 export function ModularDialogFlow({
   children,
   fillAvailableHeight,
@@ -148,30 +177,10 @@ export function ModularDialogFlow({
         })
       : undefined;
 
-  const perpsUseCase = getPerpsUiUseCase(uiUseCase);
-  const { title, flowDescription } = ((): { title: string; flowDescription?: string } => {
-    if (
-      currentStep === MODULAR_DIALOG_STEP.ASSET_SELECTION &&
-      perpsUseCase === PERPS_UI_USE_CASE.fund
-    ) {
-      return {
-        title: t("modularAssetDrawer.selectDepositCurrencyTitle"),
-        flowDescription: t("modularAssetDrawer.selectDepositCurrencyDescription"),
-      };
-    }
-    if (
-      currentStep === MODULAR_DIALOG_STEP.ACCOUNT_SELECTION &&
-      perpsUseCase === PERPS_UI_USE_CASE.receive
-    ) {
-      return {
-        title: t("modularAssetDrawer.selectAccountPerpsTitle"),
-        flowDescription: t("modularAssetDrawer.selectAccountPerpsDescription"),
-      };
-    }
-    return { title: t(TRANSLATION_KEYS[currentStep]) };
-  })();
-
-  const description = accountSelectionDescription ?? flowDescription;
+  const { titleKey, descriptionKey } = getStepHeading(currentStep, uiUseCase);
+  const title = t(titleKey);
+  const description =
+    accountSelectionDescription ?? (descriptionKey ? t(descriptionKey) : undefined);
 
   return (
     <>
