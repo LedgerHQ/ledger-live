@@ -4,6 +4,7 @@ import {
   ContactDetailActionsMenu,
   ContactsDeleteContactDialog,
   ContactsEditSignerDialog,
+  ContactsEditSignerMismatchDialog,
   ContactsRenameContactDrawer,
 } from "@features/flow-contacts";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -18,6 +19,7 @@ export function ContactDetailEditDeleteSheets({
   renameDrawer,
   deleteDrawer,
   signerDrawer,
+  signerMismatchSheet,
 }: ContactDetailEditDeleteSheetsProps): React.JSX.Element {
   const { bottom: bottomInset } = useSafeAreaInsets();
   const { keyboardHeight } = useKeyboardVisible({
@@ -36,6 +38,9 @@ export function ContactDetailEditDeleteSheets({
   const onCloseSigner = useCallback(() => {
     signerDrawer.onCancel();
   }, [signerDrawer]);
+  const onCloseSignerMismatch = useCallback(() => {
+    signerMismatchSheet.onCancel();
+  }, [signerMismatchSheet]);
 
   return (
     <>
@@ -74,6 +79,15 @@ export function ContactDetailEditDeleteSheets({
         enableDynamicSizing
       >
         <ContactsEditSignerDialog {...signerDrawer} bottomInset={bottomInset} />
+      </QueuedBottomSheet>
+      <QueuedBottomSheet
+        isRequestingToBeOpened={signerMismatchSheet.isOpen}
+        isForcingToBeOpened={signerMismatchSheet.isOpen}
+        onClose={onCloseSignerMismatch}
+        testID="contacts-edit-signer-mismatch-sheet"
+        enableDynamicSizing
+      >
+        <ContactsEditSignerMismatchDialog {...signerMismatchSheet} bottomInset={bottomInset} />
       </QueuedBottomSheet>
     </>
   );

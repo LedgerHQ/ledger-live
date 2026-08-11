@@ -4,8 +4,12 @@ import {
   mockContactWithAddress,
   mockMeContact,
 } from "@domain/entity-contact/schema.mock";
-import { makeContactsWrapper } from "./__tests__/contactsStoreTestUtils";
-import type { ContactDetailActionsPorts } from "./model/ports";
+import {
+  createMockContactSignerValidationPort,
+  type ContactSignerValidationPort,
+} from "../../../platform/contactSignerValidationPort";
+import { makeContactsWrapper } from "../__tests__/contactsStoreTestUtils";
+import type { ContactDetailActionsPorts } from "../model/ports";
 import { useContactDetailEditDeleteFlowViewModel } from "./useContactDetailEditDeleteFlowViewModel";
 
 function createPorts(
@@ -18,6 +22,7 @@ function createPorts(
     deletion: {
       deleteContact: jest.fn().mockResolvedValue(undefined),
     },
+    signerValidation: createMockContactSignerValidationPort(),
     ...overrides,
   };
 }
@@ -60,15 +65,9 @@ describe("useContactDetailEditDeleteFlowViewModel", () => {
     });
 
     expect(result.current.editUiState).toBe("signer-open");
-
-    act(() => {
-      result.current.onSignerConfirm();
-    });
-
-    expect(result.current.editUiState).toBe("edit-open");
   });
 
-  it("should keep edit dialog open when signer close fires after confirm", () => {
+  it("should open edit state after signer confirmation", async () => {
     const contact = mockContactWithAddress();
     const Wrapper = makeContactsWrapper([mockMeContact(), contact]);
     const { result } = renderHook(
@@ -83,8 +82,30 @@ describe("useContactDetailEditDeleteFlowViewModel", () => {
     act(() => {
       result.current.onEditPress();
     });
+    await act(async () => {
+      await result.current.onSignerConfirm();
+    });
+
+    expect(result.current.editUiState).toBe("edit-open");
+  });
+
+  it("should keep edit dialog open when signer close fires after confirm", async () => {
+    const contact = mockContactWithAddress();
+    const Wrapper = makeContactsWrapper([mockMeContact(), contact]);
+    const { result } = renderHook(
+      () =>
+        useContactDetailEditDeleteFlowViewModel({
+          contactId: contact.id,
+          ports: createPorts(),
+        }),
+      { wrapper: Wrapper },
+    );
+
     act(() => {
-      result.current.onSignerConfirm();
+      result.current.onEditPress();
+    });
+    await act(async () => {
+      await result.current.onSignerConfirm();
     });
 
     expect(result.current.editUiState).toBe("edit-open");
@@ -94,6 +115,96 @@ describe("useContactDetailEditDeleteFlowViewModel", () => {
     });
 
     expect(result.current.editUiState).toBe("edit-open");
+  });
+
+  it("should open the signer mismatch dialog when validation fails", async () => {
+    const contact = mockContactWithAddress();
+    const mismatchPort: ContactSignerValidationPort = createMockContactSignerValidationPort({
+      currentSignerId: "signer-b",
+    });
+    const Wrapper = makeContactsWrapper([mockMeContact(), contact]);
+    const { result } = renderHook(
+      () =>
+        useContactDetailEditDeleteFlowViewModel({
+          contactId: contact.id,
+          ports: createPorts({ signerValidation: mismatchPort }),
+        }),
+      { wrapper: Wrapper },
+    );
+
+    act(() => {
+      result.current.onEditPress();
+    });
+
+    expect(result.current.editUiState).toBe("signer-open");
+
+    await act(async () => {
+      await result.current.onSignerConfirm();
+    });
+
+    expect(result.current.editUiState).toBe("signer-mismatch");
+  });
+
+  it("should return to the signer dialog when connecting a different device", async () => {
+    const contact = mockContactWithAddress();
+    const mismatchPort: ContactSignerValidationPort = createMockContactSignerValidationPort({
+      currentSignerId: "signer-b",
+    });
+    const Wrapper = makeContactsWrapper([mockMeContact(), contact]);
+    const { result } = renderHook(
+      () =>
+        useContactDetailEditDeleteFlowViewModel({
+          contactId: contact.id,
+          ports: createPorts({ signerValidation: mismatchPort }),
+        }),
+      { wrapper: Wrapper },
+    );
+
+    act(() => {
+      result.current.onEditPress();
+    });
+    await act(async () => {
+      await result.current.onSignerConfirm();
+    });
+
+    expect(result.current.editUiState).toBe("signer-mismatch");
+
+    act(() => {
+      result.current.onConnectDifferentDevice();
+    });
+
+    expect(result.current.editUiState).toBe("signer-open");
+  });
+
+  it("should close the signer mismatch dialog on cancel", async () => {
+    const contact = mockContactWithAddress();
+    const mismatchPort: ContactSignerValidationPort = createMockContactSignerValidationPort({
+      currentSignerId: "signer-b",
+    });
+    const Wrapper = makeContactsWrapper([mockMeContact(), contact]);
+    const { result } = renderHook(
+      () =>
+        useContactDetailEditDeleteFlowViewModel({
+          contactId: contact.id,
+          ports: createPorts({ signerValidation: mismatchPort }),
+        }),
+      { wrapper: Wrapper },
+    );
+
+    act(() => {
+      result.current.onEditPress();
+    });
+    await act(async () => {
+      await result.current.onSignerConfirm();
+    });
+
+    expect(result.current.editUiState).toBe("signer-mismatch");
+
+    act(() => {
+      result.current.onSignerMismatchCancel();
+    });
+
+    expect(result.current.editUiState).toBe("closed");
   });
 
   it("should prevent deleting the Me contact", () => {
