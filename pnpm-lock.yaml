@@ -13624,8 +13624,8 @@ importers:
         specifier: 'catalog:'
         version: 1.7.1(rxjs@7.8.2)
       '@ledgerhq/device-signer-kit-zcash':
-        specifier: 0.5.0
-        version: 0.5.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
+        specifier: 0.6.0
+        version: 0.6.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -19869,8 +19869,8 @@ packages:
     peerDependencies:
       '@ledgerhq/device-management-kit': ^1.7.1
 
-  '@ledgerhq/device-signer-kit-zcash@0.5.0':
-    resolution: {integrity: sha512-Vsdf9X6zYsSNJXiEvyXdamH30htuIVYpJv46RApU5Xj9WCTqn6UWPxyWMqAIQQQu8/qEItyDGklILC+trJ7lxg==}
+  '@ledgerhq/device-signer-kit-zcash@0.6.0':
+    resolution: {integrity: sha512-RASZEFtPKW+PY8N8Q5NMUT3OF3PkVX0UGLS05GKpbkS5w1eGwtsbXXcgv67oR1DwtJpfPW+98ifdWi42RHalHw==}
     peerDependencies:
       '@ledgerhq/device-management-kit': ^1.7.1
 
@@ -48116,7 +48116,7 @@ snapshots:
       - typescript
       - utf-8-validate
 
-  '@ledgerhq/device-signer-kit-zcash@0.5.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))':
+  '@ledgerhq/device-signer-kit-zcash@0.6.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))':
     dependencies:
       '@ledgerhq/device-management-kit': 1.7.1(rxjs@7.8.2)
       '@ledgerhq/signer-utils': 1.3.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))

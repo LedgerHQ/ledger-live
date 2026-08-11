@@ -44,3 +44,10 @@ export const ZCASH_ACTIVATION_HEIGHTS = {
 export const zCashEncCiphertextSize = 580; //https://zips.z.cash/zip-0225
 export const zCashOutCiphertextSize = 80; //https://zips.z.cash/zip-0225
 export const zCashProofsSaplingSize = 192; //https://zips.z.cash/zip-0225
+
+// nVersion 6 with the fOverwintered bit set, as it appears on the wire.
+export const zCashV6Version = Buffer.from([0x06, 0x00, 0x00, 0x80]);
+// https://zips.z.cash/zip-0229: a version 6 transaction MUST carry version group
+// id 0xd884b698, which is little-endian on the wire. The device app, the signer
+// kit and the parser all key v6 on the pair (version, version group id).
+export const zCashV6VersionGroupId = Buffer.from([0x98, 0xb6, 0x84, 0xd8]);

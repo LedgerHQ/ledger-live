@@ -6,6 +6,7 @@ import {
 } from "@ledgerhq/device-management-kit";
 import { SignerZcashBuilder } from "@ledgerhq/device-signer-kit-zcash";
 import { DmkSignerZcash } from "../src/DmkSignerZcash";
+import { UnsupportedV6SourceTransaction } from "../src/errors";
 import type { PcztTransaction, SignerTransactionLike } from "../src/types";
 
 jest.mock("@ledgerhq/device-signer-kit-zcash", () => ({
@@ -338,6 +339,76 @@ describe("DmkSignerZcash", () => {
 
       await expect(signer.createPaymentTransaction(baseArg)).rejects.toMatchObject({
         name: "UserRefusedOnDevice",
+      });
+    });
+
+    // What the signer kit reports for a V6 (Ironwood) source transaction the
+    // installed app cannot read: an `errorCode` that is no device status word, the
+    // kit having failed before sending an APDU, and a message naming the version
+    // the device session reported.
+    const unsupportedV6KitError = {
+      _tag: "UnsupportedV6TransactionError",
+      errorCode: "unsupported_v6_transaction",
+      message:
+        "The Zcash app version 3.0.2 installed on the device does not support V6 " +
+        "(Ironwood) source transactions, so a UTXO received from one cannot be signed. " +
+        "Support is expected in a future Zcash app update.",
+    };
+
+    it("explains an unsupported V6 source transaction instead of reporting the error tag", async () => {
+      mockSignerZcash.signTransaction.mockReturnValue({
+        observable: createErrorStatusObservable(unsupportedV6KitError),
+      });
+
+      await expect(signer.createPaymentTransaction(baseArg)).rejects.toMatchObject({
+        name: "UnsupportedV6SourceTransaction",
+        message: expect.stringContaining("does not support V6 (Ironwood) source transactions"),
+      });
+    });
+
+    it("names the installed app version and no version to install", async () => {
+      mockSignerZcash.signTransaction.mockReturnValue({
+        observable: createErrorStatusObservable(unsupportedV6KitError),
+      });
+
+      const rejection: unknown = await signer
+        .createPaymentTransaction(baseArg)
+        .then(() => undefined)
+        .catch((reason: unknown) => reason);
+
+      expect(rejection).toBeInstanceOf(UnsupportedV6SourceTransaction);
+      expect((rejection as Error).message).toContain("3.0.2");
+      // Only the installed version is named: no version to install is advertised.
+      expect((rejection as Error).message).not.toContain("3.8.0");
+    });
+
+    it("describes the condition itself when the kit reports no message", async () => {
+      mockSignerZcash.signTransaction.mockReturnValue({
+        observable: createErrorStatusObservable({
+          _tag: "UnsupportedV6TransactionError",
+          errorCode: "unsupported_v6_transaction",
+        }),
+      });
+
+      await expect(signer.createPaymentTransaction(baseArg)).rejects.toMatchObject({
+        name: "UnsupportedV6SourceTransaction",
+        message: expect.stringContaining("V6 (Ironwood) source transactions"),
+      });
+    });
+
+    it("still explains the condition when only the kit's error code has drifted", async () => {
+      // Code and tag are matched independently, so renaming one does not send the
+      // user back to a bare tag.
+      mockSignerZcash.signTransaction.mockReturnValue({
+        observable: createErrorStatusObservable({
+          ...unsupportedV6KitError,
+          errorCode: "unsupported_v6_source_transaction",
+        }),
+      });
+
+      await expect(signer.createPaymentTransaction(baseArg)).rejects.toMatchObject({
+        name: "UnsupportedV6SourceTransaction",
+        message: expect.stringContaining("does not support V6 (Ironwood) source transactions"),
       });
     });
 
