@@ -2476,6 +2476,7 @@
     "addressMatched": "Знакомый адрес",
     "addressNotFound": "Адрес не найден",
     "alreadyUsed": "Уже использовался · {{date}}",
+    "addressBookUnsupported": "{{family}} пока не поддерживается",
     "recentSendWillAppear": "Здесь отобразятся ваши отправления",
     "securityInfo": {
       "title": "Как отправить безопасно?",
@@ -7435,6 +7436,9 @@
     "FeeTooHigh": {
       "title": "Комиссия составляет 10% от суммы"
     },
+    "RecipientIsNewAccount": {
+      "title": "Этот адрес ещё никогда не получал средства. Для его активации комиссия сети будет увеличена."
+    },
     "DustLimit": {
       "title": "Сумма ниже лимита пыли"
     },
@@ -8684,6 +8688,10 @@
     "selectAsset": "Выберите криптоактив",
     "selectNetwork": "Выберите сеть",
     "selectAccount": "Выберите счёт",
+    "selectAccountPerpsTitle": "Выберите счёт Hyperliquid",
+    "selectAccountPerpsDescription": "Чтобы внести средства на перпсы, вам нужен счёт Hyperliquid. Добавьте счёт, чтобы продолжить.",
+    "selectDepositCurrencyTitle": "Выберите актив пополнения",
+    "selectDepositCurrencyDescription": "Подходит любой поддерживаемый актив. При необходимости обмен произойдёт автоматически.",
     "accountCount_one": "Счёт: {{count}}",
     "accountCount_other": "Счета: {{count}}",
     "accountsAdded": {
@@ -8897,7 +8905,8 @@
       "transparentBalance": "Прозрачный баланс",
       "transparentBalanceTooltip": "Баланс, видимый для всех",
       "privateBalance": "Конфиденциальный баланс",
-      "privateBalanceTooltip": "Баланс, скрытый от всех"
+      "privateBalanceTooltip": "Баланс, скрытый от всех",
+      "privateBalanceWarning": "Приватный баланс не включает экранированные средства Sapling и Orchard"
     },
     "shielded": {
       "send": {
@@ -8937,6 +8946,12 @@
             "message": "Баланс может быть неактуальным",
             "cta": "Синхронизировать баланс"
           }
+        },
+        "selfTransfer": {
+          "toPrivate": "Перевод себе на приватный баланс",
+          "toPublic": "Перевод себе на публичный баланс",
+          "unavailable": "Ваш приватный адрес пока недоступен. Экспортируйте ключ просмотра, чтобы активировать его.",
+          "privacyWarning": "Это свяжет ваши защищённые средства с публичным адресом вашего счёта, который виден всем. При отправке на внешний приватный адрес они остаются несвязанными."
         }
       },
       "state": {
