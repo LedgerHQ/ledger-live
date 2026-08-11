@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { Platform } from "react-native";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { TrackScreen } from "~/analytics";
 import ActivationDrawer from "LLM/features/WalletSync/screens/Activation/ActivationDrawer";
@@ -36,6 +37,9 @@ export function PostOnboardingHubDrawerWrapper() {
       <QueuedBottomSheet
         isRequestingToBeOpened={canOpenPostOnboardingHubDrawer}
         onClose={closePostOnboardingHubDrawer}
+        enableDynamicSizing
+        // iOS: allow the sheet to grow with content; uncapped on Android to avoid excess empty space.
+        maxDynamicContentSize={Platform.OS === "ios" ? "fullWithOffset" : undefined}
       >
         {deviceModelId ? (
           <>
