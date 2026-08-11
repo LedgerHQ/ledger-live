@@ -4503,6 +4503,7 @@
         "title": "Paste from clipboard",
         "cta": "Paste"
       },
+      "contactsWillAppear": "Contacts will appear here",
       "editRecipientAccessibilityLabel": "Edit recipient",
       "sendTo": "Send to {{address}}",
       "addressMatched": "Address matched",
