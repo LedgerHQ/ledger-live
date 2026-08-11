@@ -10,7 +10,7 @@ import {
   SubheaderTitle,
 } from "@ledgerhq/lumen-ui-rnative";
 import { LedgerLogo as LedgerIcon } from "@ledgerhq/lumen-ui-rnative/symbols";
-import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
+import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { useTranslation } from "~/context/Locale";
 import { PerpsReviewDetailRow } from "./components/PerpsReviewDetailRow";
 import type { PerpsReviewDetailItem, PerpsReviewViewModel } from "./usePerpsReviewViewModel";

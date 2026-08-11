@@ -1,8 +1,7 @@
 import { useCallback, useMemo } from "react";
-import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
 import type { PerpsDepositReviewParams } from "@ledgerhq/live-common/wallet-api/Perps/server";
 import { useSelector } from "LLD/hooks/redux";
-import { walletSelector } from "~/renderer/reducers/wallet";
+import { accountNameWithDefaultSelector, walletSelector } from "~/renderer/reducers/wallet";
 import { openPerpsDeposit } from "../PerpsDeposit/PerpsDepositDialog";
 import type { PerpsDepositDraft } from "../PerpsDeposit/usePerpsDepositViewModel";
 import { formatDepositAmount } from "./utils/formatDepositAmount";
