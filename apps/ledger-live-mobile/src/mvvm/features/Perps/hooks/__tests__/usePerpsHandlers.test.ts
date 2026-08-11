@@ -67,7 +67,7 @@ describe("usePerpsHandlers", () => {
     renderHook(() => usePerpsHandlers(accounts));
 
     const depositExecute = mockedPerpsHandlers.mock.calls[0][0].uiHooks["deposit.execute"];
-    depositExecute({ receiverAccount });
+    depositExecute?.({ receiverAccount });
 
     expect(mockNavigate).toHaveBeenCalledWith("PerpsDeposit", { receiverAccount });
   });

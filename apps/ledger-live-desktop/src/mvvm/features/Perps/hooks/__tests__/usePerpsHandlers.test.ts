@@ -63,7 +63,7 @@ describe("usePerpsHandlers", () => {
     const depositExecute = mockedPerpsHandlers.mock.calls[0][0].uiHooks["deposit.execute"];
     const params = { receiverAccount };
 
-    depositExecute(params);
+    depositExecute?.(params);
 
     expect(mockOpenPerpsDeposit).toHaveBeenCalledWith(params);
   });
