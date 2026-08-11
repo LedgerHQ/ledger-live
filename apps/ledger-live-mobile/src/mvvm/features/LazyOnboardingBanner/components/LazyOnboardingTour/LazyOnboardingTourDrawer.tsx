@@ -6,7 +6,7 @@ import { Platform, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Box, BottomSheetView, IconButton } from "@ledgerhq/lumen-ui-rnative";
 import { Close } from "@ledgerhq/lumen-ui-rnative/symbols";
-import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
+import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { ProgressIndicator } from "LLM/features/ProductTour/Drawer/components/ProgressIndicator";
 import { useTranslation } from "~/context/Locale";
 import ForceTheme from "~/components/theme/ForceTheme";
