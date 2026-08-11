@@ -1,7 +1,7 @@
 import Config from "react-native-config";
-import { configureStore, createListenerMiddleware, type StoreEnhancer } from "@reduxjs/toolkit";
+import { configureStore, type StoreEnhancer } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/query";
-import { authApiExtra } from "@shared/auth";
+import { authApiExtra, authEnvironmentSelector } from "@shared/auth";
 import { AuthSDK } from "@ledgerhq/ledger-auth";
 import { LkrpIdentityProvider } from "@ledgerhq/ledger-key-ring-protocol";
 import type { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
@@ -29,14 +29,14 @@ import {
   swapApiExtra,
 } from "@shared/api-services";
 import { getCardSessionToken, refreshCardSession } from "@features/platform-card";
-import { createFeatureFlagsMiddleware, type PartialFeatures } from "@shared/feature-flags";
+import {
+  createFeatureFlagsMiddleware,
+  selectFeature,
+  type PartialFeatures,
+} from "@shared/feature-flags";
 import { fetchRemoteFlags } from "~/firebase/remoteConfig";
 import { sleepingListener } from "./sleepingListener";
 import { createPkcePairWithExpoCrypto } from "~/helpers/pkce";
-
-// This listenerMiddleware is cross-scope as it is preferable to have one instance per store
-// Source: https://github.com/reduxjs/redux-toolkit/discussions/3665
-const listenerMiddleware = createListenerMiddleware<State>();
 
 export const store = configureStore({
   reducer: reducers,
@@ -73,27 +73,29 @@ export const store = configureStore({
               ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
             }),
             ...authApiExtra({
-              authFeatureId: "lwmAuth",
-              startListening: listenerMiddleware.startListening,
-              createAuthProvider: environment =>
-                new AuthSDK(
-                  {
-                    clientId: getEnv("LEDGER_AUTH_CLIENT_ID"),
-                    keycloakBaseUrl: getEnv(`LEDGER_AUTH_KEYCLOAK_BASE_URL_${environment}`),
-                    keycloakRealm: getEnv("LEDGER_AUTH_KEYCLOAK_REALM"),
-                    disablePkce: true,
+              isFeatureEnabled: (): boolean =>
+                selectFeature(store.getState(), "lwmAuth").enabled ?? false,
+              authProvider: new AuthSDK(
+                {
+                  clientId: getEnv("LEDGER_AUTH_CLIENT_ID"),
+                  keycloakBaseUrl(): string | null {
+                    const environment = authEnvironmentSelector(store.getState());
+                    return environment && getEnv(`LEDGER_AUTH_KEYCLOAK_BASE_URL_${environment}`);
                   },
-                  {
-                    provider: new LkrpIdentityProvider(
-                      (): TrustchainStore => store.getState().trustchain,
-                    ),
-                    createPkcePair: createPkcePairWithExpoCrypto,
-                  },
-                ),
+                  keycloakRealm: getEnv("LEDGER_AUTH_KEYCLOAK_REALM"),
+                  disablePkce: true,
+                },
+                {
+                  provider: new LkrpIdentityProvider(
+                    (): TrustchainStore => store.getState().trustchain,
+                  ),
+                  createPkcePair: createPkcePairWithExpoCrypto,
+                },
+              ),
             }),
           },
         },
-      }).prepend(listenerMiddleware.middleware),
+      }),
     )
       .concat(rebootMiddleware)
       .concat(

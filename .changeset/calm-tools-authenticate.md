@@ -1,7 +1,8 @@
 ---
+"@ledgerhq/ledger-auth": minor
 "@ledgerhq/ledger-key-ring-protocol": minor
 "@shared/auth": minor
 ---
 
-Load LKRP identity credentials on demand through a caller-provided callback and simplify auth
-provider factories to close over app-owned dependencies
+Load LKRP identity credentials on demand, allow AuthSDK to resolve the Keycloak URL lazily, and
+simplify auth feature gating around an app-owned provider

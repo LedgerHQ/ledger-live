@@ -1,118 +1,62 @@
-import { configureStore, createListenerMiddleware } from "@reduxjs/toolkit";
-import { featureFlagsReducer, setOverride, type FeatureFlagsState } from "@shared/feature-flags";
-import { authEnvironmentReducer, setAuthEnvironment, type AuthEnvironmentState } from "./data";
 import { authApiExtra } from "./api";
-import { AuthProviderUnavailableError } from "./errors";
-import type { AuthProvider } from "./types";
-
-type State = {
-  authEnvironment: AuthEnvironmentState;
-  featureFlags: FeatureFlagsState;
-};
 
 const EXPECTED_TOKEN = { accessToken: "foo", tokenType: "Bearer" };
 
 describe("authApiExtra", () => {
-  const createAuthProvider = jest.fn(
-    (): AuthProvider => ({ withToken: ({ queryFn }) => queryFn(EXPECTED_TOKEN) }),
-  );
+  let authEnabled = false;
+  const isFeatureEnabled = jest.fn(() => authEnabled);
+  const withToken = jest.fn(({ queryFn }) => queryFn(EXPECTED_TOKEN));
   const queryFn = jest.fn();
 
   beforeEach(() => {
     jest.clearAllMocks();
+    authEnabled = false;
   });
 
-  it("should bypass authentication for unrelated actions and the other platform flag", async () => {
-    const listenerMiddleware = createListenerMiddleware<State>();
+  it("should bypass authentication when the feature is disabled", async () => {
     const { authProvider } = authApiExtra({
-      startListening: listenerMiddleware.startListening,
-      authFeatureId: "lwdAuth",
-      createAuthProvider,
+      isFeatureEnabled,
+      authProvider: { withToken },
     });
-    const store = configureStore({
-      reducer: {
-        authEnvironment: authEnvironmentReducer,
-        featureFlags: featureFlagsReducer,
-      },
-      middleware: getDefaultMiddleware =>
-        getDefaultMiddleware().prepend(listenerMiddleware.middleware),
-    });
-
-    store.dispatch(setAuthEnvironment("PROD"));
-    store.dispatch(setOverride({ key: "lwmAuth", value: { enabled: true } }));
-    store.dispatch({ type: "unrelated/action" });
 
     await authProvider.withToken({ queryFn });
-    expect(createAuthProvider).not.toHaveBeenCalled();
+
+    expect(isFeatureEnabled).toHaveBeenCalledTimes(1);
+    expect(withToken).not.toHaveBeenCalled();
     expect(queryFn).toHaveBeenCalledTimes(1);
     expect(queryFn).toHaveBeenNthCalledWith(1);
   });
 
-  it("should initialize, bypass, and reuse the provider as configuration changes", async () => {
-    const listenerMiddleware = createListenerMiddleware<State>();
+  it("should delegate authentication when the feature is enabled", async () => {
+    authEnabled = true;
     const { authProvider } = authApiExtra({
-      startListening: listenerMiddleware.startListening,
-      authFeatureId: "lwdAuth",
-      createAuthProvider,
-    });
-    const store = configureStore({
-      reducer: {
-        authEnvironment: authEnvironmentReducer,
-        featureFlags: featureFlagsReducer,
-      },
-      middleware: getDefaultMiddleware =>
-        getDefaultMiddleware().prepend(listenerMiddleware.middleware),
+      isFeatureEnabled,
+      authProvider: { withToken },
     });
 
-    store.dispatch(setOverride({ key: "lwdAuth", value: { enabled: true } }));
-    expect(() => authProvider.withToken({ queryFn })).toThrow(AuthProviderUnavailableError);
-    expect(createAuthProvider).not.toHaveBeenCalled();
-    expect(queryFn).not.toHaveBeenCalled();
-
-    store.dispatch(setAuthEnvironment("PROD"));
     await authProvider.withToken({ queryFn });
-    expect(createAuthProvider).toHaveBeenCalledTimes(1);
-    expect(createAuthProvider).toHaveBeenCalledWith("PROD");
-    expect(queryFn).toHaveBeenCalledTimes(1);
-    expect(queryFn).toHaveBeenNthCalledWith(1, EXPECTED_TOKEN);
 
-    store.dispatch(setOverride({ key: "lwdAuth", value: { enabled: false } }));
-    await authProvider.withToken({ queryFn });
-    expect(createAuthProvider).toHaveBeenCalledTimes(1);
-    expect(queryFn).toHaveBeenCalledTimes(2);
-    expect(queryFn).toHaveBeenNthCalledWith(2);
-
-    store.dispatch(setAuthEnvironment("STAGING"));
-    store.dispatch(setOverride({ key: "lwdAuth", value: { enabled: true } }));
-    await authProvider.withToken({ queryFn });
-    expect(createAuthProvider).toHaveBeenCalledTimes(1);
-    expect(queryFn).toHaveBeenCalledTimes(3);
-    expect(queryFn).toHaveBeenNthCalledWith(3, EXPECTED_TOKEN);
+    expect(isFeatureEnabled).toHaveBeenCalledTimes(1);
+    expect(withToken).toHaveBeenCalledTimes(1);
+    expect(queryFn).toHaveBeenCalledWith(EXPECTED_TOKEN);
   });
 
-  it("should create the provider when authentication is enabled after the environment is set", async () => {
-    const listenerMiddleware = createListenerMiddleware<State>();
+  it("should reevaluate the feature before every authentication", async () => {
     const { authProvider } = authApiExtra({
-      startListening: listenerMiddleware.startListening,
-      authFeatureId: "lwdAuth",
-      createAuthProvider,
+      isFeatureEnabled,
+      authProvider: { withToken },
     });
-    const store = configureStore({
-      reducer: {
-        authEnvironment: authEnvironmentReducer,
-        featureFlags: featureFlagsReducer,
-      },
-      middleware: getDefaultMiddleware =>
-        getDefaultMiddleware().prepend(listenerMiddleware.middleware),
-    });
-
-    store.dispatch(setAuthEnvironment("STAGING"));
-    store.dispatch(setOverride({ key: "lwdAuth", value: { enabled: true } }));
 
     await authProvider.withToken({ queryFn });
-    expect(createAuthProvider).toHaveBeenCalledTimes(1);
-    expect(createAuthProvider).toHaveBeenCalledWith("STAGING");
-    expect(queryFn).toHaveBeenCalledTimes(1);
-    expect(queryFn).toHaveBeenNthCalledWith(1, EXPECTED_TOKEN);
+    authEnabled = true;
+    await authProvider.withToken({ queryFn });
+    authEnabled = false;
+    await authProvider.withToken({ queryFn });
+
+    expect(isFeatureEnabled).toHaveBeenCalledTimes(3);
+    expect(withToken).toHaveBeenCalledTimes(1);
+    expect(queryFn).toHaveBeenNthCalledWith(1);
+    expect(queryFn).toHaveBeenNthCalledWith(2, EXPECTED_TOKEN);
+    expect(queryFn).toHaveBeenNthCalledWith(3);
   });
 });

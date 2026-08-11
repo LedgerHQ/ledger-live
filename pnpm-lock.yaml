@@ -15186,9 +15186,6 @@ importers:
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2
-      '@shared/feature-flags':
-        specifier: workspace:*
-        version: link:../feature-flags
       zod:
         specifier: 'catalog:'
         version: 4.3.6
