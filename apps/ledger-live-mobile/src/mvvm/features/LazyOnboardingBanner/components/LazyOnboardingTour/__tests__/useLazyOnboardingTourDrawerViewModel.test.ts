@@ -1,6 +1,7 @@
+import { Linking } from "react-native";
 import { act, renderHook, withFlagOverrides } from "@tests/test-renderer";
-import { track } from "~/analytics";
-import { LAZY_ONBOARDING_TOUR_PAGE } from "../const";
+import { screen, track } from "~/analytics";
+import { LAZY_ONBOARDING_TOUR_PAGE, LAZY_ONBOARDING_TOUR_SHOP_PAGE } from "../const";
 import {
   __resetLazyOnboardingTourControllerForTests,
   lazyOnboardingTourController,
@@ -15,11 +16,11 @@ jest.mock("~/analytics", () => ({
 
 const SHOP_LINK = "https://shop.ledger.com/?product=flex";
 
-function renderTourViewModel() {
+function renderTourViewModel(enabled = true) {
   return renderHook(() => useLazyOnboardingTourDrawerViewModel(), {
     overrideInitialState: withFlagOverrides({
       lazyOnboardingBanner: {
-        enabled: true,
+        enabled,
         params: { mode: "feature_intro", link: SHOP_LINK },
       },
     }),
@@ -108,5 +109,49 @@ describe("useLazyOnboardingTourDrawerViewModel dismiss analytics", () => {
     });
 
     expect(track).not.toHaveBeenCalledWith("modal_dismissed", expect.anything());
+  });
+
+  it("should track continue, slide change, and buy with shop screen", () => {
+    const { result } = renderTourViewModel();
+
+    act(() => {
+      lazyOnboardingTourController.open();
+    });
+
+    expect(screen).toHaveBeenCalledWith(
+      LAZY_ONBOARDING_TOUR_PAGE,
+      undefined,
+      expect.objectContaining({ name: "lazy onboarding tour", card: 1 }),
+    );
+
+    act(() => {
+      result.current?.onContinue(0);
+      result.current?.onSlideChange(1);
+      result.current?.onBuy(1);
+    });
+
+    expect(track).toHaveBeenCalledWith(
+      "button_clicked",
+      expect.objectContaining({ button: "Continue", card: 1 }),
+    );
+    expect(track).toHaveBeenCalledWith(
+      "product_tour_card",
+      expect.objectContaining({ page: LAZY_ONBOARDING_TOUR_PAGE, card: 2 }),
+    );
+    expect(track).toHaveBeenCalledWith(
+      "button_clicked",
+      expect.objectContaining({ button: "Buy a Ledger device", card: 2 }),
+    );
+    expect(Linking.openURL).toHaveBeenCalled();
+    expect(screen).toHaveBeenCalledWith(
+      LAZY_ONBOARDING_TOUR_SHOP_PAGE,
+      undefined,
+      expect.objectContaining({ name: "shop", source: "lazy onboarding tour" }),
+    );
+  });
+
+  it("should return null when the feature is disabled", () => {
+    const { result } = renderTourViewModel(false);
+    expect(result.current).toBeNull();
   });
 });
