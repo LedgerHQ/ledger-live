@@ -2,7 +2,7 @@
 "@features/platform-aggregated-assets": minor
 "@domain/api-aggregated-assets": minor
 "@domain/entity-interest-rate": minor
-"@ledgerhq/live-common": patch
+"@ledgerhq/live-common": minor
 ---
 
 Move the dada-client platform layer (hooks, cache selectors, discovery and currency selection) into

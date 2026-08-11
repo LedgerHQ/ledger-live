@@ -1,5 +1,5 @@
 ---
-"@features/flow-lazy-onboarding-banner": patch
+"@features/flow-lazy-onboarding-banner": minor
 "@shared/feature-flags": minor
 "live-mobile": minor
 ---

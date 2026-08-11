@@ -1,12 +1,12 @@
 ---
-"@ledgerhq/coin-multiversx": patch
-"@ledgerhq/coin-cardano": patch
-"@ledgerhq/coin-cosmos": patch
-"@ledgerhq/coin-hedera": patch
-"@ledgerhq/coin-solana": patch
-"@ledgerhq/coin-celo": patch
-"@ledgerhq/coin-evm": patch
-"@ledgerhq/coin-sui": patch
+"@ledgerhq/coin-multiversx": minor
+"@ledgerhq/coin-cardano": minor
+"@ledgerhq/coin-cosmos": minor
+"@ledgerhq/coin-hedera": minor
+"@ledgerhq/coin-solana": minor
+"@ledgerhq/coin-celo": minor
+"@ledgerhq/coin-evm": minor
+"@ledgerhq/coin-sui": minor
 ---
 
 chore(coin-modules): provide validator id

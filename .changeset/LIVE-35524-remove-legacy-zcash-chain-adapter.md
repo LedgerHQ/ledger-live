@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-bitcoin": patch
+"@ledgerhq/coin-bitcoin": minor
 ---
 
 Remove the legacy Zcash shielded/PCZT chain-adapter (LIVE-35524).

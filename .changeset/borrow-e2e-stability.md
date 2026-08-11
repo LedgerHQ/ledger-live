@@ -1,6 +1,6 @@
 ---
-"ledger-live-desktop-e2e-tests": patch
-"@ledgerhq/live-e2e-shared": patch
+"ledger-live-desktop-e2e-tests": minor
+"@ledgerhq/live-e2e-shared": minor
 ---
 
 Make the Borrow desktop E2E suite independent and diagnosable: run the specs one at a time instead

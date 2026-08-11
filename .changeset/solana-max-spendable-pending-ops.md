@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-solana": patch
+"@ledgerhq/coin-solana": minor
 ---
 
 Fix incorrect Solana max spendable amount while a previous send is still pending.

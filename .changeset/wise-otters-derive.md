@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/asset-aggregation": patch
+"@ledgerhq/asset-aggregation": minor
 ---
 
 Derive assetDistribution's DADA views from the domain types instead of hand-declaring them

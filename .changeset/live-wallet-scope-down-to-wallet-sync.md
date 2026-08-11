@@ -1,9 +1,9 @@
 ---
 "@ledgerhq/live-wallet": major
 "@ledgerhq/live-common": minor
-"ledger-live-desktop": patch
-"live-mobile": patch
-"@ledgerhq/wallet-cli": patch
+"ledger-live-desktop": minor
+"live-mobile": minor
+"@ledgerhq/wallet-cli": minor
 ---
 
 Scope `@ledgerhq/live-wallet` down to wallet sync only

@@ -1,6 +1,6 @@
 ---
-"@ledgerhq/ledger-key-ring-protocol": patch
-"@shared/cloud-sync": patch
+"@ledgerhq/ledger-key-ring-protocol": minor
+"@shared/cloud-sync": minor
 ---
 
 Fix Ledger Sync surfacing a 401 instead of refreshing the expired JWT

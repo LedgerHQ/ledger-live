@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-evm": patch
+"@ledgerhq/coin-evm": minor
 ---
 
 Fix EVM send-max on L2s (Scroll, Blast, Base) failing at broadcast with `InsufficientFunds`

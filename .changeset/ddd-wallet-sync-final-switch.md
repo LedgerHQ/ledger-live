@@ -4,7 +4,7 @@
 "ledger-live-desktop": minor
 "live-mobile": minor
 "@ledgerhq/web-tools": minor
-"@ledgerhq/wallet-cli": patch
+"@ledgerhq/wallet-cli": minor
 "@domain/entity-wallet-sync": minor
 ---
 
