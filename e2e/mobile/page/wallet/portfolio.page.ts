@@ -204,7 +204,7 @@ export default class PortfolioPage {
         await tapById(this.cryptoAddressItemId(currencyId));
       }
     } else {
-      await revealForTap(this.assetItemId(currencyName), this.accountsListView, "down");
+      await revealForTap(this.assetItemId(currencyName), { container: this.accountsListView });
       await tapById(this.assetItemId(currencyName));
     }
   }
@@ -512,7 +512,7 @@ export default class PortfolioPage {
   async tapFirstAssetItemW40(): Promise<string> {
     const testId = await getIdByRegexp(this.assetItemRegExp, 0);
     const currencyName = testId.replace("assetItem-", "");
-    await revealForTap(testId, this.emptyPortfolioListId, "up");
+    await revealForTap(testId, { container: this.emptyPortfolioListId, direction: "up" });
     await tapById(testId);
     return currencyName;
   }

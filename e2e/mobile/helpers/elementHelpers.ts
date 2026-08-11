@@ -39,6 +39,13 @@ const DEFAULT_WEB_ELEMENT_INTERVAL = 2000;
 /** How far past the viewport edge revealForTap pushes a target so an overlay cannot intercept it. */
 const EDGE_CLEARANCE_PIXELS = 200;
 
+export type RevealForTapOptions = {
+  /** Scroll container. Omitted means the engine guesses the first scrollable by type. */
+  container?: string | RegExp;
+  /** Search direction; the edge clearance always continues the same way. Defaults to "down". */
+  direction?: Direction;
+};
+
 export type WaitForElementOptions = {
   errorCheckTimeout?: number;
   errorElementId?: string;
@@ -342,13 +349,10 @@ export const NativeElementHelpers = {
    *
    * Use before a tap; `scrollToId` stays correct for assertions.
    */
-  async revealForTap(
-    id: string | RegExp,
-    scrollViewId?: string | RegExp,
-    direction: Direction = "down",
-  ): Promise<void> {
-    await NativeElementHelpers.scrollToId(id, scrollViewId, undefined, direction);
-    await NativeElementHelpers.scrollByPixels(scrollViewId, EDGE_CLEARANCE_PIXELS, direction);
+  async revealForTap(id: string | RegExp, options: RevealForTapOptions = {}): Promise<void> {
+    const { container, direction = "down" } = options;
+    await NativeElementHelpers.scrollToId(id, container, undefined, direction);
+    await NativeElementHelpers.scrollByPixels(container, EDGE_CLEARANCE_PIXELS, direction);
   },
 
   async getAttributesOfElement(id: string | RegExp, index = 0): Promise<Detox.ElementAttributes> {

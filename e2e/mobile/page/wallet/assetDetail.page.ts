@@ -234,7 +234,7 @@ export default class AssetDetailPage {
   async openFirstTransaction(ticker: string) {
     await this.scrollToTransactions();
     const scrollViewId = await this.getScrollViewId();
-    await revealForTap(this.operationsListItemId, scrollViewId, "down");
+    await revealForTap(this.operationsListItemId, { container: scrollViewId });
     await detoxExpect(this.operationByTicker(ticker).atIndex(0)).toBeVisible();
     await this.tapTransactionUntilOperationDetailsOpen();
   }
