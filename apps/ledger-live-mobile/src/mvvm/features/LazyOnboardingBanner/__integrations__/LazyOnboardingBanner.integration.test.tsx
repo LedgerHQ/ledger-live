@@ -199,6 +199,15 @@ describe("LazyOnboardingTour", () => {
 
     await user.press(screen.getByTestId("lazy-onboarding-tour-close-button"));
     expect(screen.queryByText(SLIDE_TITLES[0])).toBeNull();
+    expect(track).toHaveBeenCalledWith(
+      "button_clicked",
+      expect.objectContaining({
+        button: "Close",
+        page: LAZY_ONBOARDING_TOUR_PAGE,
+        card: 1,
+      }),
+    );
+    expect(track).not.toHaveBeenCalledWith("modal_dismissed", expect.anything());
   });
 
   it("should track continue when the primary button is pressed", async () => {
@@ -210,9 +219,9 @@ describe("LazyOnboardingTour", () => {
     expect(track).toHaveBeenCalledWith(
       "button_clicked",
       expect.objectContaining({
-        button: "continue",
+        button: "Continue",
         page: LAZY_ONBOARDING_TOUR_PAGE,
-        step: 0,
+        card: 1,
         mode: "feature_intro",
       }),
     );
