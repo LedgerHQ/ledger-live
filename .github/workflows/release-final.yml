@@ -74,40 +74,40 @@ jobs:
         with:
           ruby-version: 3.3.0
 
-      - name: JFrog npm auth
-        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
-        with:
-          registry: ${{ vars.ARTIFACTORY_URL }}
+#      - name: JFrog npm auth
+#        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+#        with:
+#          registry: ${{ vars.ARTIFACTORY_URL }}
 
-      - name: install dependencies
-        run: pnpm i -F "ledger-live" -F "{libs/**}..." -F "@ledgerhq/live-cli..." -F "@ledgerhq/wallet-cli..." -F "@ledgerhq/wallet-cli-*"
-
-      - name: build libs
-        run: pnpm exec nx run-many -t build --projects=tag:scope:libs,@ledgerhq/live-e2e-shared
-
-      #JFrog publishing - if statements to be removed when all is migrated
-      - name: JFrog npm auth (publish registry)
-        if: ${{ vars.ARTIFACTORY_PUBLISH_URL != '' }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
-        with:
-          registry: ${{ vars.ARTIFACTORY_PUBLISH_URL }}
-
-      - name: publish release (JFrog)
-        if: ${{ vars.ARTIFACTORY_PUBLISH_URL != '' }}
-        run: npm_config_registry="https://${{ vars.ARTIFACTORY_PUBLISH_URL }}/" pnpm changeset publish
+#      - name: install dependencies
+#        run: pnpm i -F "ledger-live" -F "{libs/**}..." -F "@ledgerhq/live-cli..." -F "@ledgerhq/wallet-cli..." -F "@ledgerhq/wallet-cli-*"
+#
+#      - name: build libs
+#        run: pnpm exec nx run-many -t build --projects=tag:scope:libs,@ledgerhq/live-e2e-shared
+#
+#      #JFrog publishing - if statements to be removed when all is migrated
+#      - name: JFrog npm auth (publish registry)
+#        if: ${{ vars.ARTIFACTORY_PUBLISH_URL != '' }}
+#        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+#        with:
+#          registry: ${{ vars.ARTIFACTORY_PUBLISH_URL }}
+#
+#      - name: publish release (JFrog)
+#        if: ${{ vars.ARTIFACTORY_PUBLISH_URL != '' }}
+#        run: npm_config_registry="https://${{ vars.ARTIFACTORY_PUBLISH_URL }}/" pnpm changeset publish
 
       #NPM publishing - to be removed when all is migrated
-      - name: authenticate with npm
-        if: ${{ vars.ARTIFACTORY_PUBLISH_URL == '' }}
-        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
-        with:
-          registry-url: "https://registry.npmjs.org"
-
-      - name: publish release
-        if: ${{ vars.ARTIFACTORY_PUBLISH_URL == '' }}
-        run: pnpm changeset publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPMJS_TOKEN }}
+#      - name: authenticate with npm
+#        if: ${{ vars.ARTIFACTORY_PUBLISH_URL == '' }}
+#        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+#        with:
+#          registry-url: "https://registry.npmjs.org"
+#
+#      - name: publish release
+#        if: ${{ vars.ARTIFACTORY_PUBLISH_URL == '' }}
+#        run: pnpm changeset publish
+#        env:
+#          NODE_AUTH_TOKEN: ${{ secrets.NPMJS_TOKEN }}
 
       - name: check if desktop versions are different
         if: ${{ inputs.caller == 'release-prepare' || inputs.caller == 'release-prepare-hotfix' }}
@@ -141,35 +141,35 @@ jobs:
           output-path: ${{ github.workspace }}
           name: desktop-changelog
 
-      - name: tag desktop
-        if: ${{ steps.desktop-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLD", "ALL"]'), inputs.app) }}
-        env:
-          DESKTOP_VERSION: ${{ steps.desktop-version.outputs.version }}
-        run: |
-          git tag "@ledgerhq/live-desktop@$DESKTOP_VERSION"
+#      - name: tag desktop
+#        if: ${{ steps.desktop-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLD", "ALL"]'), inputs.app) }}
+#        env:
+#          DESKTOP_VERSION: ${{ steps.desktop-version.outputs.version }}
+#        run: |
+#          git tag "@ledgerhq/live-desktop@$DESKTOP_VERSION"
+#
+#      - name: generate mobile changelog
+#        if: ${{ steps.mobile-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLM", "ALL"]'), inputs.app) }}
+#        uses: LedgerHQ/ledger-live/tools/actions/generate-release-message@develop
+#        id: mobile-changelog
+#        with:
+#          package-path: ${{ github.workspace }}/apps/ledger-live-mobile/package.json
+#          changelog-path: ${{ github.workspace }}/apps/ledger-live-mobile/CHANGELOG.md
+#          output-path: ${{ github.workspace }}
+#          name: mobile-changelog
+#
+#      - name: tag mobile
+#        if: ${{ steps.mobile-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLM", "ALL"]'), inputs.app) }}
+#        env:
+#          MOBILE_VERSION: ${{ steps.mobile-version.outputs.version }}
+#        run: |
+#          git tag "live-mobile@$MOBILE_VERSION"
 
-      - name: generate mobile changelog
-        if: ${{ steps.mobile-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLM", "ALL"]'), inputs.app) }}
-        uses: LedgerHQ/ledger-live/tools/actions/generate-release-message@develop
-        id: mobile-changelog
-        with:
-          package-path: ${{ github.workspace }}/apps/ledger-live-mobile/package.json
-          changelog-path: ${{ github.workspace }}/apps/ledger-live-mobile/CHANGELOG.md
-          output-path: ${{ github.workspace }}
-          name: mobile-changelog
-
-      - name: tag mobile
-        if: ${{ steps.mobile-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLM", "ALL"]'), inputs.app) }}
-        env:
-          MOBILE_VERSION: ${{ steps.mobile-version.outputs.version }}
-        run: |
-          git tag "live-mobile@$MOBILE_VERSION"
-
-      - name: push changes
-        env:
-          TARGET_REF: ${{ inputs.ref }}
-        run: |
-          git push origin "$TARGET_REF" --tags
+#      - name: push changes
+#        env:
+#          TARGET_REF: ${{ inputs.ref }}
+#        run: |
+#          git push origin "$TARGET_REF" --tags
 
       - name: create desktop github release
         if: ${{ steps.desktop-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLD", "ALL"]'), inputs.app) }}
@@ -180,14 +180,14 @@ jobs:
         run: |
           gh release create "@ledgerhq/live-desktop@$DESKTOP_VERSION" -F "$DESKTOP_CHANGELOG_PATH"
 
-      - name: create mobile github release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          MOBILE_VERSION: ${{ steps.mobile-version.outputs.version }}
-          MOBILE_CHANGELOG_PATH: ${{ steps.mobile-changelog.outputs.path }}
-        if: ${{ steps.mobile-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLM", "ALL"]'), inputs.app) }}
-        run: |
-          gh release create "live-mobile@$MOBILE_VERSION" -F "$MOBILE_CHANGELOG_PATH"
+#      - name: create mobile github release
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#          MOBILE_VERSION: ${{ steps.mobile-version.outputs.version }}
+#          MOBILE_CHANGELOG_PATH: ${{ steps.mobile-changelog.outputs.path }}
+#        if: ${{ steps.mobile-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLM", "ALL"]'), inputs.app) }}
+#        run: |
+#          gh release create "live-mobile@$MOBILE_VERSION" -F "$MOBILE_CHANGELOG_PATH"
 
       - uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         name: trigger release build for desktop
