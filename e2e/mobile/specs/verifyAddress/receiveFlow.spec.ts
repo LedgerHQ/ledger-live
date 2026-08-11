@@ -30,7 +30,7 @@ describe("Receive", () => {
   });
 
   afterEach(async () => {
-    await app.modularDrawer.tapDrawerCloseButton({ onlyIfVisible: true });
+    await app.portfolio.openViaDeeplink();
   });
 
   $TmsLink("B2CQA-1858");
