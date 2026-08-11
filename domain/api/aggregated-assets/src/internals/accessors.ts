@@ -1,6 +1,6 @@
-import { collectAllByCategory } from "./internals/collectAllByCategory";
-import type { DadaBaseQuery } from "./internals/requests";
-import type { GetAssetsByCategoryParams } from "./types";
+import { collectAllByCategory } from "./collectAllByCategory";
+import type { DadaBaseQuery } from "./requests";
+import type { GetAssetsByCategoryParams } from "../types";
 
 /** Every ticker in a category, across all pages. */
 export function fetchAllAssetsByCategory(

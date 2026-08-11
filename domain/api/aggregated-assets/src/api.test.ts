@@ -10,7 +10,10 @@ jest.mock("@shared/env", () => ({
 import { configureStore } from "@reduxjs/toolkit";
 import { getEnv } from "@shared/env";
 import { assetsDataApi, buildAssetsQueryParams } from "./index";
-import { fetchAllAssetCurrencyIdsByCategory, fetchAllAssetsByCategory } from "./accessors";
+import {
+  fetchAllAssetCurrencyIdsByCategory,
+  fetchAllAssetsByCategory,
+} from "./internals/accessors";
 import { getApiErrorStatus, isApiError, isNetworkError } from "./errors";
 import { AssetCategory } from "./types";
 import type { RawApiResponse } from "./schema";
