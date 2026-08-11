@@ -49,8 +49,8 @@ catalogs:
       specifier: 1.16.0
       version: 1.16.0
     '@ledgerhq/device-signer-kit-hyperliquid':
-      specifier: 1.1.0
-      version: 1.1.0
+      specifier: 0.0.0-hyperliquid-unified-20260728150448
+      version: 0.0.0-hyperliquid-unified-20260728150448
     '@ledgerhq/device-signer-kit-icp':
       specifier: 0.2.0
       version: 0.2.0
@@ -13451,7 +13451,7 @@ importers:
         version: 1.7.1(rxjs@7.8.2)
       '@ledgerhq/device-signer-kit-hyperliquid':
         specifier: 'catalog:'
-        version: 1.1.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
+        version: 0.0.0-hyperliquid-unified-20260728150448(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../ledgerjs/packages/devices
@@ -19854,10 +19854,10 @@ packages:
       '@ledgerhq/context-module': 2.3.1
       '@ledgerhq/device-management-kit': ^1.5.0
 
-  '@ledgerhq/device-signer-kit-hyperliquid@1.1.0':
-    resolution: {integrity: sha512-e1dlDG6SYnfVFNZnNts9SYWyXBw243tFV0GQeFlfvKBc9Z3+jY9wboLecYmgZtgZlLDIBpisehLkACL0+ug4Xg==}
+  '@ledgerhq/device-signer-kit-hyperliquid@0.0.0-hyperliquid-unified-20260728150448':
+    resolution: {integrity: sha512-QJJG47HeKEw3rH1PINtRTjxFmpA2/NJl7Ae3dzEXT4yvHDHCHaoCX494GGueS9/I4dKeifCA75pNK5WJ7e5A5A==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': ^1.5.0
+      '@ledgerhq/device-management-kit': 0.0.0-hyperliquid-unified-20260728150448
 
   '@ledgerhq/device-signer-kit-icp@0.2.0':
     resolution: {integrity: sha512-jdRmiMeK0Y+vATuMXs9vsY35C8dg8dHlEtiHM6l+NnRpHvWDKKnwju9kRUwgpb2THKSC+dJmk4LYX7jm4rC4dw==}
@@ -20018,6 +20018,11 @@ packages:
     resolution: {integrity: sha512-G/eZXvir5wgmrTx8gkHU+oe+lGS9iIYXBZtb9IYJlJJ5JYN4h3GbrM/w0dCe9zCePqUCyAIztCOBVeltZDeXRA==}
     peerDependencies:
       react: 19.1.4
+
+  '@ledgerhq/signer-utils@0.0.0-hyperliquid-unified-20260728150448':
+    resolution: {integrity: sha512-TqKmLH2kHeJn8ZgrLjjz3fhV4q8FeUnTkJ3VPLk5TUxdEy4pDHGzlIET4pe+GwdYEunFpXDGaifJlI7xR0Vjrg==}
+    peerDependencies:
+      '@ledgerhq/device-management-kit': 0.0.0-hyperliquid-unified-20260728150448
 
   '@ledgerhq/signer-utils@1.1.3':
     resolution: {integrity: sha512-3Y1ove1TyMVuCTKxM1eB9QMXpmrnYVjRc0fEPr5F+I6YJ0DX/yRc+t38ZFJw6m/IkVl8NN1TtmDyaFWJb+xXnQ==}
@@ -48070,11 +48075,11 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/device-signer-kit-hyperliquid@1.1.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))':
+  '@ledgerhq/device-signer-kit-hyperliquid@0.0.0-hyperliquid-unified-20260728150448(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))':
     dependencies:
       '@ledgerhq/context-module': 2.3.1(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
       '@ledgerhq/device-management-kit': 1.7.1(rxjs@7.8.2)
-      '@ledgerhq/signer-utils': 1.3.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
+      '@ledgerhq/signer-utils': 0.0.0-hyperliquid-unified-20260728150448(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
       inversify: 7.5.1(reflect-metadata@0.2.2)
       purify-ts: 2.1.0
       reflect-metadata: 0.2.2
@@ -48546,6 +48551,11 @@ snapshots:
       clsx: 2.1.1
       react: 19.1.4
       tailwind-merge: 2.6.0
+
+  '@ledgerhq/signer-utils@0.0.0-hyperliquid-unified-20260728150448(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))':
+    dependencies:
+      '@ledgerhq/device-management-kit': 1.7.1(rxjs@7.8.2)
+      semver: 7.7.2
 
   '@ledgerhq/signer-utils@1.1.3(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))':
     dependencies:
