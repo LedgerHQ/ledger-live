@@ -28,21 +28,7 @@ export default class AddAccountDrawer extends CommonPage {
 
   @Step("Wait for accounts discovery")
   async waitAccountsDiscovery() {
-    const DISCOVERY_TIMEOUT = 240000;
-    const ERROR_CHECK_INTERVAL = 2000;
-    const startTime = Date.now();
-
-    while (Date.now() - startTime < DISCOVERY_TIMEOUT) {
-      if (await IsIdVisible(this.continueButtonId, 1000)) {
-        return;
-      }
-      await checkForErrorModals(1000, "Account discovery failed");
-      await delay(ERROR_CHECK_INTERVAL);
-    }
-
-    throw new Error(
-      `Account discovery timed out after ${DISCOVERY_TIMEOUT / 1000} seconds. Expected button "${this.continueButtonId}" not found.`,
-    );
+    await waitForElementById(this.continueButtonId, 150_000, { checkVisibility: true });
   }
 
   @Step("Get number of accounts displayed by the blockchain scan")

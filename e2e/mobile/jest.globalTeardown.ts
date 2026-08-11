@@ -50,7 +50,7 @@ export default async () => {
       await launchApp({ newInstance: true });
       await setFeatureFlags(getMergedFeatureFlags());
       await loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
-      await NativeElementHelpers.waitForElementById("topbar-settings", 120_000);
+      await NativeElementHelpers.waitForElementById("topbar-discover", 120_000);
     } catch (err) {
       log.warn("Error starting the app in CI global teardown:", sanitizeError(err));
     }
