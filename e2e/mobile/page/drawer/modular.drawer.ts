@@ -1,5 +1,6 @@
 import { Step } from "jest-allure2-reporter/api";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { delay } from "../../helpers/commonHelpers";
 
 export default class ModularDrawer {
   bottomSheetId = (component: string) => `bottom-sheet-${component}`;
@@ -45,6 +46,9 @@ export default class ModularDrawer {
 
   @Step("Select Account")
   async selectAccount(accountName: string): Promise<void> {
+    // QAA-1476 probe: same shape as the other taps — no wait before touching the
+    // account row.
+    await delay(500);
     const accountItemId = this.accountItemNameId(accountName);
     await tapById(accountItemId);
   }
@@ -62,11 +66,18 @@ export default class ModularDrawer {
 
   @Step("Perform search on modular drawer by ticker")
   async performSearchByTicker(ticker: string) {
+    // QAA-1476 probe: typing here has failed repeatedly — the soft keyboard comes
+    // up and the bottom sheet closes underneath it, leaving the input off-screen.
+    await delay(1000);
     await typeTextByElement(this.searchBar(), ticker);
   }
 
   @Step("Select currency in receive list by ticker")
   async selectCurrencyByTicker(ticker: string): Promise<void> {
+    // QAA-1476 probe: the 2026-08-06 nightly could not find
+    // modular-drawer-select-crypto-scrollView here — the drawer had not been
+    // presented yet.
+    await delay(1000);
     const assetItemId = this.assetItemByTicker(ticker);
     if (!(await IsIdVisible(assetItemId))) {
       await scrollToId(assetItemId, this.selectCryptoScrollViewId);

@@ -447,6 +447,10 @@ export default class PortfolioPage {
 
   @Step("Press transfer bottom sheet receive button")
   async pressTransferBottomSheetReceiveButton() {
+    // QAA-1476 probe: the 2026-08-10 nightly rejected this tap because
+    // transfer-action-receive was present but under 75% visible — the sheet was
+    // still settling.
+    await delay(1000);
     await tapById(this.transferBottomSheetReceiveButton);
   }
 
