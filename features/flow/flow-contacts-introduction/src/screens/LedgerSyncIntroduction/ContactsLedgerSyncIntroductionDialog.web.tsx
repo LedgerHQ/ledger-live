@@ -1,6 +1,6 @@
 import React from "react";
 import { Button, Dialog, DialogBody, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
-import { useSingleFireDismiss } from "../internals/useSingleFireDismiss";
+import { useSingleFireDismiss } from "../../internals/useSingleFireDismiss";
 import type { ContactsLedgerSyncIntroductionDialogProps } from "./types";
 
 export function ContactsLedgerSyncIntroductionDialog({

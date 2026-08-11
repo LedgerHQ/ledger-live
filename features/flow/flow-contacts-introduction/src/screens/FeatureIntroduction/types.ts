@@ -1,4 +1,4 @@
-import type { ContactsFeatureIntroduction } from "../types";
+import type { ContactsFeatureIntroduction } from "../../state/types";
 
 export type ContactsFeatureIntroductionContentProps = ContactsFeatureIntroduction &
   Readonly<{

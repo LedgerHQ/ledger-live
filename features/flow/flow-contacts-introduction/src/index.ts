@@ -1,3 +1,3 @@
 export * from "./exports";
-export * from "./Feature/ContactsFeatureIntroductionDialog.web";
-export * from "./LedgerSync/ContactsLedgerSyncIntroductionDialog.web";
+export * from "./screens/FeatureIntroduction/ContactsFeatureIntroductionDialog.web";
+export * from "./screens/LedgerSyncIntroduction/ContactsLedgerSyncIntroductionDialog.web";

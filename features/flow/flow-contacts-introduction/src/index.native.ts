@@ -1,3 +1,3 @@
 export * from "./exports";
-export * from "./Feature/ContactsFeatureIntroductionContent.native";
-export * from "./LedgerSync/ContactsLedgerSyncIntroduction.native";
+export * from "./screens/FeatureIntroduction/ContactsFeatureIntroductionContent.native";
+export * from "./screens/LedgerSyncIntroduction/ContactsLedgerSyncIntroduction.native";

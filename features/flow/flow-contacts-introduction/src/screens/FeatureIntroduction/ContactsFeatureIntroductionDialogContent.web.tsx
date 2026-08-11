@@ -1,6 +1,6 @@
 import React from "react";
 import * as Icons from "@ledgerhq/lumen-ui-react/symbols";
-import type { ContactsFeatureIntroductionHighlight } from "../types";
+import type { ContactsFeatureIntroductionHighlight } from "../../state/types";
 
 const FEATURE_INTRO_HERO_IMAGE_CLASSNAME =
   "pointer-events-none h-[200px] w-full select-none rounded-xl object-cover";

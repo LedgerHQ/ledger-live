@@ -1,4 +1,4 @@
-/// <reference path="../webp.d.ts" />
+/// <reference path="../../webp.d.ts" />
 
 import contactsFeatureIntroHero from "./assets/contacts-feature-intro-hero.webp";
 
