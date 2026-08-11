@@ -48,7 +48,7 @@ describe("useLazyOnboardingTourDrawerViewModel dismiss analytics", () => {
       "modal_dismissed",
       expect.objectContaining({
         page: LAZY_ONBOARDING_TOUR_PAGE,
-        step: 0,
+        card: 1,
         source: "lazy onboarding",
         mode: "feature_intro",
         platform: "llm",
@@ -71,9 +71,9 @@ describe("useLazyOnboardingTourDrawerViewModel dismiss analytics", () => {
     expect(track).toHaveBeenCalledWith(
       "button_clicked",
       expect.objectContaining({
-        button: "close",
+        button: "Close",
         page: LAZY_ONBOARDING_TOUR_PAGE,
-        step: 0,
+        card: 1,
       }),
     );
 
@@ -98,7 +98,7 @@ describe("useLazyOnboardingTourDrawerViewModel dismiss analytics", () => {
     expect(track).toHaveBeenCalledWith(
       "button_clicked",
       expect.objectContaining({
-        button: "done",
+        button: "Done",
         page: LAZY_ONBOARDING_TOUR_PAGE,
       }),
     );

@@ -202,9 +202,9 @@ describe("LazyOnboardingTour", () => {
     expect(track).toHaveBeenCalledWith(
       "button_clicked",
       expect.objectContaining({
-        button: "close",
+        button: "Close",
         page: LAZY_ONBOARDING_TOUR_PAGE,
-        step: 0,
+        card: 1,
       }),
     );
     expect(track).not.toHaveBeenCalledWith("modal_dismissed", expect.anything());
@@ -219,9 +219,9 @@ describe("LazyOnboardingTour", () => {
     expect(track).toHaveBeenCalledWith(
       "button_clicked",
       expect.objectContaining({
-        button: "continue",
+        button: "Continue",
         page: LAZY_ONBOARDING_TOUR_PAGE,
-        step: 0,
+        card: 1,
         mode: "feature_intro",
       }),
     );
