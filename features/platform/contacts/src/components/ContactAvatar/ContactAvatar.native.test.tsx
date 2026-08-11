@@ -1,8 +1,8 @@
 import React from "react";
 import { render, screen } from "@testing-library/react-native";
+import { resolveAvatarColor } from "@ledgerhq/lumen-ui-rnative";
 import { ContactIdSchema } from "@domain/entity-contact";
 import { ContactAvatar } from "./ContactAvatar.native";
-import { resolveAvatarColor } from "./resolveAvatarColor";
 
 describe("ContactAvatar", () => {
   it("should pass the contact details to the Lumen avatar in the list", () => {
@@ -16,7 +16,7 @@ describe("ContactAvatar", () => {
     expect(avatar.props).toMatchObject({
       size: "sm",
       alt: "élodie",
-      lx: { backgroundColor: resolveAvatarColor(contactId) },
+      fallbackColor: resolveAvatarColor(contactId),
     });
   });
 
@@ -38,7 +38,7 @@ describe("ContactAvatar", () => {
     expect(avatar.props).toMatchObject({
       size: "xl",
       alt: "Benoit",
-      lx: { backgroundColor: resolveAvatarColor(contactId) },
+      fallbackColor: resolveAvatarColor(contactId),
     });
   });
 });
