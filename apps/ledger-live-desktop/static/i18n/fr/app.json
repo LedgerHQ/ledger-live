@@ -2476,6 +2476,7 @@
     "addressMatched": "Adresse correspondante",
     "addressNotFound": "Adresse introuvable",
     "alreadyUsed": "Déjà utilisée · {{date}}",
+    "addressBookUnsupported": "{{family}} n’est pas encore pris en charge",
     "recentSendWillAppear": "Vos dernières transactions émises apparaîtront ici.",
     "securityInfo": {
       "title": "Comment envoyer en toute sécurité ?",
@@ -7435,6 +7436,9 @@
     "FeeTooHigh": {
       "title": "Les frais de réseau représentent plus de 10% du montant"
     },
+    "RecipientIsNewAccount": {
+      "title": "Cette adresse n’a jamais reçu d’actifs : son activation entraîne des frais de réseau plus élevés"
+    },
     "DustLimit": {
       "title": "Montant inférieur à la limite de poussière (dust limit)"
     },
@@ -8684,6 +8688,10 @@
     "selectAsset": "Sélectionner un actif",
     "selectNetwork": "Sélectionner un réseau",
     "selectAccount": "Sélectionner un compte",
+    "selectAccountPerpsTitle": "Sélectionner un compte Hyperliquid",
+    "selectAccountPerpsDescription": "Pour accéder aux marchés perpétuels, vous avez besoin d’un compte Hyperliquid. Ajoutez-en un pour continuer.",
+    "selectDepositCurrencyTitle": "Sélectionner l’actif à placer",
+    "selectDepositCurrencyDescription": "Choisissez l’actif pris en charge de votre choix. Un échange automatique s’exécute si nécessaire.",
     "accountCount_one": "{{count}} compte",
     "accountCount_other": "{{count}} comptes",
     "accountsAdded": {
@@ -8897,7 +8905,8 @@
       "transparentBalance": "Solde transparent",
       "transparentBalanceTooltip": "Le solde qui est visible publiquement.",
       "privateBalance": "Solde privé",
-      "privateBalanceTooltip": "Le solde qui est masqué."
+      "privateBalanceTooltip": "Le solde qui est masqué.",
+      "privateBalanceWarning": "Le solde privé exclut les actifs masqués sur Sapling et Orchard"
     },
     "shielded": {
       "send": {
@@ -8937,6 +8946,12 @@
             "message": "Le solde peut ne pas être à jour",
             "cta": "Synchroniser"
           }
+        },
+        "selfTransfer": {
+          "toPrivate": "Transfert interne vers le solde privé",
+          "toPublic": "Transfert interne vers le solde public",
+          "unavailable": "Votre adresse privée n’est pas encore disponible. Exportez votre clé de consultation pour l’activer.",
+          "privacyWarning": "Vos actifs shielded seront alors associés à l’adresse publique de votre compte, visible de tous. Un envoi vers une adresse privée externe les maintient dissociés."
         }
       },
       "state": {
