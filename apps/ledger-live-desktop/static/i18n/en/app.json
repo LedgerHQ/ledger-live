@@ -8603,16 +8603,6 @@
       "cta": "Learn more"
     }
   },
-  "lnsUpsellMediaBanner": {
-    "opted_in": {
-      "title": "See more. Sign safer",
-      "description": "Upgrade and get {{discount}}% off."
-    },
-    "opted_out": {
-      "title": "More security. More control",
-      "description": "Learn more about security features."
-    }
-  },
   "largeScreenUpsellModal": {
     "optedIn": {
       "title": "See more. Tap less. Save {{discount}}%",

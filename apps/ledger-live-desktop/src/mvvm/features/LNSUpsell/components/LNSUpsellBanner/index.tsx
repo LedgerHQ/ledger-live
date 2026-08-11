@@ -40,8 +40,8 @@ function View({
         {...boxProps}
       >
         <LNSUpsellMediaBanner
-          title={t(`lnsUpsellMediaBanner.${tracking}.title`)}
-          description={t(`lnsUpsellMediaBanner.${tracking}.description`, { discount })}
+          title={t(`lnsUpsell.${tracking}.title`)}
+          description={t(`lnsUpsell.${tracking}.description`, { discount })}
           imageUrl={imageUrl}
           onClick={handleCTAClick}
         />

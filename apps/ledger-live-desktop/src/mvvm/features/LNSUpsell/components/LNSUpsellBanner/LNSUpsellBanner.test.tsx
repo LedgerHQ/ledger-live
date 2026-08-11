@@ -71,10 +71,8 @@ describe("LNSUpsellBanner", () => {
     it("should render Lumen MediaBanner and track click when lwdWallet40 brazePlacement is on", () => {
       renderBanner({ brazePlacement: true });
 
-      expect(screen.getByText(t(`lnsUpsellMediaBanner.opted_in.title`))).toBeTruthy();
-      expect(
-        screen.getByText(t(`lnsUpsellMediaBanner.opted_in.description`, { discount: 10 })),
-      ).toBeTruthy();
+      expect(screen.getByText(t(`lnsUpsell.opted_in.title`))).toBeTruthy();
+      expect(screen.getByText(t(`lnsUpsell.opted_in.description`, { discount: 10 }))).toBeTruthy();
 
       fireEvent.click(screen.getByTestId("lns-upsell-media-banner"));
 
@@ -90,8 +88,8 @@ describe("LNSUpsellBanner", () => {
     it("should render opted-out MediaBanner copy when lwdWallet40 brazePlacement is on", () => {
       renderBanner({ brazePlacement: true, isOptIn: false });
 
-      expect(screen.getByText(t(`lnsUpsellMediaBanner.opted_out.title`))).toBeTruthy();
-      expect(screen.getByText(t(`lnsUpsellMediaBanner.opted_out.description`))).toBeTruthy();
+      expect(screen.getByText(t(`lnsUpsell.opted_out.title`))).toBeTruthy();
+      expect(screen.getByText(t(`lnsUpsell.opted_out.description`))).toBeTruthy();
     });
 
     it("should render the banner for opted out users", () => {
