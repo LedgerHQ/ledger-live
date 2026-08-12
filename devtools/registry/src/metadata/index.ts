@@ -1,2 +1,2 @@
-export * from "./team-platform";
+export * from "./platform";
 export * from "./wallet-xp";

@@ -1,6 +1,6 @@
 import React from "react";
 import { AmountDisplay } from "@ledgerhq/lumen-ui-react";
-import type { FormattedValue } from "@ledgerhq/lumen-ui-react";
+import type { FormattedValue } from "./types";
 
 type PayCardBalanceFundedStateProps = Readonly<{
   balance: number;

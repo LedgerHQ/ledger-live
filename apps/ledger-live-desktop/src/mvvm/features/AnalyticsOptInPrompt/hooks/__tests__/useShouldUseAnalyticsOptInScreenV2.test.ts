@@ -16,14 +16,10 @@ const buildFeatureFlagsState = (overrides: Record<string, unknown>) => ({
 });
 
 describe("useShouldUseAnalyticsOptInScreenV2", () => {
-  it("should return true for onboarding variant B when the v2 flag is enabled", () => {
+  it("should return true for onboarding when the v2 flag is enabled", () => {
     const { result } = renderHook(() => useShouldUseAnalyticsOptInScreenV2(EntryPoint.onboarding), {
       initialState: {
         featureFlags: buildFeatureFlagsState({
-          lldAnalyticsOptInPrompt: {
-            enabled: true,
-            params: { variant: "B", entryPoints: ["Onboarding"] },
-          },
           lwdAnalyticsOptInScreenV2: { enabled: true },
         }),
       },
@@ -32,14 +28,10 @@ describe("useShouldUseAnalyticsOptInScreenV2", () => {
     expect(result.current).toBe(true);
   });
 
-  it("should return false for portfolio even when variant B and v2 flag are enabled", () => {
+  it("should return false for portfolio even when the v2 flag is enabled", () => {
     const { result } = renderHook(() => useShouldUseAnalyticsOptInScreenV2(EntryPoint.portfolio), {
       initialState: {
         featureFlags: buildFeatureFlagsState({
-          lldAnalyticsOptInPrompt: {
-            enabled: true,
-            params: { variant: "B", entryPoints: ["Portfolio"] },
-          },
           lwdAnalyticsOptInScreenV2: { enabled: true },
         }),
       },
@@ -48,47 +40,11 @@ describe("useShouldUseAnalyticsOptInScreenV2", () => {
     expect(result.current).toBe(false);
   });
 
-  it("should return false for onboarding variant B when the v2 flag is disabled", () => {
+  it("should return false for onboarding when the v2 flag is disabled", () => {
     const { result } = renderHook(() => useShouldUseAnalyticsOptInScreenV2(EntryPoint.onboarding), {
       initialState: {
         featureFlags: buildFeatureFlagsState({
-          lldAnalyticsOptInPrompt: {
-            enabled: true,
-            params: { variant: "B", entryPoints: ["Onboarding"] },
-          },
           lwdAnalyticsOptInScreenV2: { enabled: false },
-        }),
-      },
-    });
-
-    expect(result.current).toBe(false);
-  });
-
-  it("should return false for onboarding variant A even when the v2 flag is enabled", () => {
-    const { result } = renderHook(() => useShouldUseAnalyticsOptInScreenV2(EntryPoint.onboarding), {
-      initialState: {
-        featureFlags: buildFeatureFlagsState({
-          lldAnalyticsOptInPrompt: {
-            enabled: true,
-            params: { variant: "A", entryPoints: ["Onboarding"] },
-          },
-          lwdAnalyticsOptInScreenV2: { enabled: true },
-        }),
-      },
-    });
-
-    expect(result.current).toBe(false);
-  });
-
-  it("should return false for onboarding variant B when lldAnalyticsOptInPrompt is disabled", () => {
-    const { result } = renderHook(() => useShouldUseAnalyticsOptInScreenV2(EntryPoint.onboarding), {
-      initialState: {
-        featureFlags: buildFeatureFlagsState({
-          lldAnalyticsOptInPrompt: {
-            enabled: false,
-            params: { variant: "B", entryPoints: ["Onboarding"] },
-          },
-          lwdAnalyticsOptInScreenV2: { enabled: true },
         }),
       },
     });

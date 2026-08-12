@@ -10,5 +10,8 @@
     "types": ["jest", "node", "@testing-library/jest-dom"]
   },
   "files": [],
-  "references": [{ "path": "./tsconfig.web.json" }]
+  "references": [
+    { "path": "./tsconfig.web.json" },
+    { "path": "./tsconfig.native.json" }
+  ]
 }

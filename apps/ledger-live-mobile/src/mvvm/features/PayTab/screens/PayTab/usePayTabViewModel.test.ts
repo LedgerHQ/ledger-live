@@ -1,5 +1,6 @@
 import { Linking } from "react-native";
 import { renderHook } from "@tests/test-renderer";
+import type { PayCardBalanceData } from "@features/flow-pay-card-balance";
 import { track } from "~/analytics";
 import { usePayTabViewModel } from "./usePayTabViewModel";
 
@@ -9,6 +10,17 @@ jest.mock("LLM/hooks/useNavigationBarHeights", () => ({
 
 jest.mock("~/analytics", () => ({
   track: jest.fn(),
+}));
+
+const balance: PayCardBalanceData = {
+  status: "ready",
+  stableBalance: 0,
+  filter: "all",
+  formatCountervalue: jest.fn(),
+};
+
+jest.mock("LLM/features/PayTab/hooks/usePayCardBalance", () => ({
+  usePayCardBalance: () => balance,
 }));
 
 const mockedTrack = jest.mocked(track);
@@ -22,6 +34,14 @@ describe("usePayTabViewModel", () => {
     const { result } = renderHook(() => usePayTabViewModel());
 
     expect(result.current.top).toBe(24);
+  });
+
+  it("should expose the balance data and empty-state labels for the hero", () => {
+    const { result } = renderHook(() => usePayTabViewModel());
+
+    expect(result.current.balance).toBe(balance);
+    expect(result.current.balanceLabels.emptyTitle).toBeTruthy();
+    expect(result.current.balanceLabels.emptyDescription).toBeTruthy();
   });
 
   it("should open the hosted login URL", async () => {

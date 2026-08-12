@@ -11,6 +11,7 @@ import { lldRTKApiReducers } from "./rtkQueryApi";
 const EXPECTED_REDUCER_PATHS = [
   "assetsDataApi",
   "calApi",
+  "cardApi",
   "cgApi",
   "coinMarketCapApi",
   "counterValuesApi",

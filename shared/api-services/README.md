@@ -3,23 +3,24 @@
 > [!NOTE]
 > **Status: STABLE** — Production-ready; API is considered stable.
 
-One **endpoint-less** RTK Query api per backend service. Each service owns everything about *reaching*
+One **endpoint-less** RTK Query api per backend service. Each service owns everything about _reaching_
 one backend — base URL, base query, retry policy, reducer path and the thunk `extraArgument` contract —
-and nothing about *what* is fetched from it.
+and nothing about _what_ is fetched from it.
 
 Use-case packages in `domain/api/*` — or a `features/flow/*` package whose endpoints serve only that
 flow — add their endpoints with
 [`injectEndpoints`](https://redux-toolkit.js.org/rtk-query/usage/code-splitting#injecting-endpoints)
-and their cache tags with `enhanceEndpoints({ addTagTypes })`. Both mutate and return the *same* api
+and their cache tags with `enhanceEndpoints({ addTagTypes })`. Both mutate and return the _same_ api
 object, so one reducer, one middleware and one cache serve every use case on a given backend.
 
-| Service | Reducer path | Injectors |
-| --- | --- | --- |
-| `services/cal` | `calApi` | `@domain/api-currency-token` |
+| Service                  | Reducer path       | Injectors                                                        |
+| ------------------------ | ------------------ | ---------------------------------------------------------------- |
+| `services/cal`           | `calApi`           | `@domain/api-currency-token`                                     |
+| `services/card`          | `cardApi`          | `@domain/api-card-management`                                    |
 | `services/coinmarketcap` | `coinMarketCapApi` | `@domain/api-altcoins-sentiment`, `@domain/api-market-sentiment` |
-| `services/countervalues` | `countervaluesApi` | `@domain/api-currency-fiat` |
-| `services/pay-card` | `payCardApi` | `@features/flow-pay-card-auth` |
-| `services/push-devices` | `pushDevicesApi` | `@domain/api-push-devices` |
+| `services/countervalues` | `countervaluesApi` | `@domain/api-currency-fiat`                                      |
+| `services/pay-card`      | `payCardApi`       | `@features/flow-pay-card-auth`                                   |
+| `services/push-devices`  | `pushDevicesApi`   | `@domain/api-push-devices`                                       |
 
 ## What lives here, and what does not
 
@@ -27,15 +28,15 @@ This is the seam: **reaching a backend** here, **what you ask it for** in `domai
 goes through it by default — a service with a single use case still belongs here, so that the second one
 is a one-line addition rather than a migration.
 
-| Concern | Owner | Why |
-| --- | --- | --- |
-| Base URL, headers, retry, auth | **here** | How to reach the service, identical for every use case |
-| `extraArgument` schema + builder + reader | **here** | It configures the base query, which lives here |
-| `reducerPath` | **here** | One store slice per backend, not per use case |
-| Endpoints, `query`, `transformResponse` | `domain/api/*` | What a use case asks for |
-| Wire schemas, entity conversion | `domain/api/*` | Response shape is a use-case concern |
-| **Cache tags** | `domain/api/*` | A tag names *data a use case owns*. It is registered on the shared api via `enhanceEndpoints({ addTagTypes })`, so this package never has to know it exists |
-| Hooks, persistence | `domain/api/*` | Built on the endpoints |
+| Concern                                   | Owner          | Why                                                                                                                                                         |
+| ----------------------------------------- | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Base URL, headers, retry, auth            | **here**       | How to reach the service, identical for every use case                                                                                                      |
+| `extraArgument` schema + builder + reader | **here**       | It configures the base query, which lives here                                                                                                              |
+| `reducerPath`                             | **here**       | One store slice per backend, not per use case                                                                                                               |
+| Endpoints, `query`, `transformResponse`   | `domain/api/*` | What a use case asks for                                                                                                                                    |
+| Wire schemas, entity conversion           | `domain/api/*` | Response shape is a use-case concern                                                                                                                        |
+| **Cache tags**                            | `domain/api/*` | A tag names _data a use case owns_. It is registered on the shared api via `enhanceEndpoints({ addTagTypes })`, so this package never has to know it exists |
+| Hooks, persistence                        | `domain/api/*` | Built on the endpoints                                                                                                                                      |
 
 That tag split is the important one. `tagTypes` is not accepted by `injectEndpoints`, so it would be
 easy to assume the shared api must declare every tag upfront — it does not. `enhanceEndpoints` widens
@@ -74,7 +75,7 @@ import { calApi, calApiExtra } from "@shared/api-services";
 
 configureStore({
   reducer: { [calApi.reducerPath]: calApi.reducer },
-  middleware: gdm =>
+  middleware: (gdm) =>
     gdm({
       thunk: {
         extraArgument: calApiExtra({
@@ -87,11 +88,11 @@ configureStore({
 ```
 
 Injection is a module-level side effect: an endpoint only exists once its use-case module has been
-evaluated as a *value* import. A type-only import will not trigger it, and the api exported from here
+evaluated as a _value_ import. A type-only import will not trigger it, and the api exported from here
 is never typed with anyone's endpoints — only the injected reference is.
 
 > [!NOTE]
-> Because the api registered here declares no tags, its reducer state type is *narrower* than that of an
+> Because the api registered here declares no tags, its reducer state type is _narrower_ than that of an
 > injected reference whose use case added some. A helper typed on the injected api will therefore not
 > accept an app's `State` — type it on the service api instead. See `WithCryptoAssetsApi` in
 > `@domain/api-currency-token`.

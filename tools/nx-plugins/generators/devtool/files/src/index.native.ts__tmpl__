@@ -1,0 +1,2 @@
+import <%=className%> from "./<%=fileName%>/<%=className%>";
+export default <%=className%>;

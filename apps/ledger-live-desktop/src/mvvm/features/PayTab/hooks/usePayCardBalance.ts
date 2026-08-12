@@ -1,8 +1,11 @@
 import { useCallback, useMemo } from "react";
 import BigNumber from "bignumber.js";
 import { formatCurrencyUnitFragment } from "@ledgerhq/live-common/currencies/index";
-import type { FormattedValue } from "@ledgerhq/lumen-ui-react";
-import type { PayCardBalanceData, PayCardBalanceStatus } from "@features/flow-pay-card-balance";
+import {
+  aggregatePayCardBalance,
+  type FormattedValue,
+  type PayCardBalanceData,
+} from "@features/flow-pay-card-balance";
 import { selectPayCardBalanceFilter } from "@domain/entity-pay-card";
 import { useSelector } from "LLD/hooks/redux";
 import { useCategorizedAssetsFromPortfolio } from "LLD/hooks/useCategorizedAssets";
@@ -16,14 +19,6 @@ export function usePayCardBalance(): PayCardBalanceData {
   const { categorizedAssets, isLoadingStablecoinTickers, isStablecoinTickersError } =
     useCategorizedAssetsFromPortfolio();
 
-  const stableBalance = useMemo(
-    () =>
-      categorizedAssets.stablecoins
-        .filter(({ currency }) => filter === "all" || currency.id === filter)
-        .reduce((total, { value }) => total + value, 0),
-    [categorizedAssets.stablecoins, filter],
-  );
-
   const unit = counterValueCurrency.units[0];
 
   const formatCountervalue = useCallback(
@@ -35,14 +30,21 @@ export function usePayCardBalance(): PayCardBalanceData {
     [unit, locale],
   );
 
-  const status: PayCardBalanceStatus = isStablecoinTickersError
-    ? "error"
-    : isLoadingStablecoinTickers
-      ? "loading"
-      : "ready";
-
   return useMemo(
-    () => ({ status, stableBalance, filter, formatCountervalue }),
-    [status, stableBalance, filter, formatCountervalue],
+    () =>
+      aggregatePayCardBalance({
+        stablecoins: categorizedAssets.stablecoins,
+        filter,
+        isLoading: isLoadingStablecoinTickers,
+        isError: isStablecoinTickersError,
+        formatCountervalue,
+      }),
+    [
+      categorizedAssets.stablecoins,
+      filter,
+      isLoadingStablecoinTickers,
+      isStablecoinTickersError,
+      formatCountervalue,
+    ],
   );
 }

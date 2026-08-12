@@ -17,6 +17,7 @@
     "unresolved": "off"
   },
   "ignoreExportsUsedInFile": true,
+  "github-actions": false,
   "project": ["src/**"],
   "ignore": [
     "**/__integrations__/*",

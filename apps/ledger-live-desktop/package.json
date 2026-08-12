@@ -100,6 +100,7 @@
     "@features/flow-pay-card-balance": "workspace:^",
     "@features/flow-pay-card-feature-tour": "workspace:^",
     "@features/platform-aggregated-assets": "workspace:*",
+    "@features/platform-card": "workspace:*",
     "@features/platform-contacts": "workspace:^",
     "@features/platform-currencies": "workspace:^",
     "@features/platform-env": "workspace:*",

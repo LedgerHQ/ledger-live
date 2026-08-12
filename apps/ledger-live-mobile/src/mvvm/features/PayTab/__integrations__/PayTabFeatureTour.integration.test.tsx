@@ -10,6 +10,20 @@ jest.mock("@features/flow-pay-card-auth", () => ({
   CardLogin: () => null,
 }));
 
+// Feed an empty balance so this suite only asserts tour copy (hero has its own integration test).
+jest.mock("LLM/features/PayTab/hooks/usePayCardBalance", () => ({
+  usePayCardBalance: () => ({
+    status: "ready",
+    stableBalance: 0,
+    filter: "all",
+    formatCountervalue: () => ({}),
+  }),
+}));
+
+// Copy unique to the tour: the empty hero also renders "Pay and get paid".
+const FEATURE_TOUR_ROW = "Minimal volatility";
+const FEATURE_TOUR_CTA = "Got it";
+
 describe("PayTab feature tour integration", () => {
   it("should show the feature tour on first visit", async () => {
     render(<PayTabScreen />, {
@@ -21,7 +35,7 @@ describe("PayTab feature tour integration", () => {
 
     expect(screen.getByTestId("paytab-screen")).toBeVisible();
     await waitFor(() => {
-      expect(screen.getByText("Pay and get paid")).toBeVisible();
+      expect(screen.getByText(FEATURE_TOUR_ROW)).toBeVisible();
     });
   });
 
@@ -34,14 +48,14 @@ describe("PayTab feature tour integration", () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByText("Pay and get paid")).toBeVisible();
+      expect(screen.getByText(FEATURE_TOUR_ROW)).toBeVisible();
     });
 
-    await user.press(screen.getByText("Got it"));
+    await user.press(screen.getByText(FEATURE_TOUR_CTA));
 
     await waitFor(() => {
       expect(store.getState().payCard.hasSeenFeatureTour).toBe(true);
-      expect(screen.queryByText("Pay and get paid")).toBeNull();
+      expect(screen.queryByText(FEATURE_TOUR_ROW)).toBeNull();
     });
   });
 
@@ -54,6 +68,6 @@ describe("PayTab feature tour integration", () => {
     });
 
     expect(screen.getByTestId("paytab-screen")).toBeVisible();
-    expect(screen.queryByText("Pay and get paid")).toBeNull();
+    expect(screen.queryByText(FEATURE_TOUR_ROW)).toBeNull();
   });
 });

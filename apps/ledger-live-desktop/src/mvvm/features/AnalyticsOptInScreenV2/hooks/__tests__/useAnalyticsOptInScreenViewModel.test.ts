@@ -63,11 +63,17 @@ describe("useAnalyticsOptInScreenViewModel", () => {
       "button_clicked",
       expect.objectContaining({
         button: "Accept all",
-        variant: "B",
         flow: "consent onboarding",
         entryPoint: "Onboarding",
       }),
       true,
+    );
+    expect(track).not.toHaveBeenCalledWith(
+      "button_clicked",
+      expect.objectContaining({
+        variant: expect.anything(),
+      }),
+      expect.anything(),
     );
   });
 
@@ -141,7 +147,6 @@ describe("useAnalyticsOptInScreenViewModel", () => {
       "button_clicked",
       expect.objectContaining({
         button: "Previous",
-        variant: "B",
       }),
       true,
     );
@@ -190,7 +195,6 @@ describe("useAnalyticsOptInScreenViewModel", () => {
       "button_clicked",
       expect.objectContaining({
         button: "Learn more link",
-        variant: "B",
       }),
       true,
     );
