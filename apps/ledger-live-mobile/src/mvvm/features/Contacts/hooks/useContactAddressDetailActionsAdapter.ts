@@ -76,12 +76,25 @@ export function useContactAddressDetailActionsAdapter(
     onSend,
     onCloseAddressDetail,
   });
+  const { onClose: closeRenameViewModel } = renameViewModel;
+  const onCloseRename = useCallback(() => {
+    closeRenameViewModel();
+    onCloseAddressDetail();
+  }, [closeRenameViewModel, onCloseAddressDetail]);
 
   if (!isSelectionActive) {
     return mapUiStateToFlowProps(createInactiveContactAddressDetailActionsUiState(labels));
   }
 
-  return mapUiStateToFlowProps(
+  const uiState = mapUiStateToFlowProps(
     createActiveContactAddressDetailActionsUiState(flow, renameViewModel, labels),
   );
+
+  return {
+    ...uiState,
+    renameSheet: {
+      ...uiState.renameSheet,
+      onClose: onCloseRename,
+    },
+  };
 }
