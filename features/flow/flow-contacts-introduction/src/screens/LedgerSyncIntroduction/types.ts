@@ -8,3 +8,10 @@ export type ContactsLedgerSyncIntroductionContentProps = Readonly<{
   onActivate: () => void;
   onDismiss: () => void;
 }>;
+
+export type ContactsLedgerSyncIntroductionDialogProps = Readonly<{
+  open: boolean;
+  description: string;
+  dismissLabel: string;
+  onDismiss: () => void;
+}>;

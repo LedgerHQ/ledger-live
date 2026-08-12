@@ -1,4 +1,4 @@
-import type { ContactsLedgerSyncStatus } from "../../ledgerSync";
+import type { ContactsLedgerSyncStatus } from "./types";
 
 export type ContactsFeatureIntroductionRequestInput = Readonly<{
   isContactsEntryAvailable: boolean;

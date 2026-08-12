@@ -11,7 +11,9 @@ Reusable Contacts List leaf flow for Desktop and Mobile.
 - Platform variants colocated with their UI concept (`*.web.tsx` / `*.native.tsx`)
 - Themed folders such as `components/ListHeader` and `components/PageLayout`
 
-This package does not know `@features/flow-contacts`, Contact Detail, or introductions.
+This package does not know `@features/flow-contacts`, Contact Detail, or introductions. The
+Introduction leaf is `@features/flow-contacts-introduction`; it is composed only by the parent
+orchestrator when the complete Contacts aggregate is needed.
 
 ## Public API
 

@@ -2,7 +2,7 @@ import React from "react";
 import {
   ContactsLedgerSyncIntroductionContent,
   type ContactsLedgerSyncIntroductionContentProps,
-} from "@features/flow-contacts";
+} from "@features/flow-contacts-introduction";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 

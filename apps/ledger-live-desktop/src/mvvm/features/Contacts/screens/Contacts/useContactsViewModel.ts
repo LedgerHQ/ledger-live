@@ -14,23 +14,25 @@ import {
   type ContactId,
 } from "@domain/entity-contact";
 import {
-  CONTACTS_FEATURE_INTRODUCTION_HIGHLIGHTS,
   createContactsListViewModel,
   createContactsSearchViewModel,
-  resolveContactsLedgerSyncIntroductionOpen,
   useAddAddressCurrencySelectionViewModel,
   useAddAddressFlowViewModel,
-  useContactsFeatureIntroductionState,
   useContactsMeContact,
   type AddAddressContact,
   type AddAddressFlowState,
   type ContactsAddAddressEntryLabels,
   type ContactsAddAddressNameLabels,
   type ContactAddressDetailDialogProps,
-  type ContactsLedgerSyncStatus,
   type ContactsListViewLabels,
   type ContactsViewProps,
 } from "@features/flow-contacts";
+import {
+  CONTACTS_FEATURE_INTRODUCTION_HIGHLIGHTS,
+  resolveContactsLedgerSyncIntroductionOpen,
+  useContactsFeatureIntroductionState,
+  type ContactsLedgerSyncStatus,
+} from "@features/flow-contacts-introduction";
 import { createMockContactDeviceIntentsPort, useContacts } from "@features/platform-contacts";
 import { MY_WALLET_AVATAR_USER_URL } from "LLD/features/MyWallet/components/UserAvatar/constants";
 import { useContactsFeatureIntroductionPreference } from "../../hooks/useContactsFeatureIntroductionPreference";

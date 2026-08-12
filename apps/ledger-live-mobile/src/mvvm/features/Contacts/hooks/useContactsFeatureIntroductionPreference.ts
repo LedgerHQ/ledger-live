@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from "react";
-import type { ContactsFeatureIntroductionPreferencePort } from "@features/flow-contacts";
+import type { ContactsFeatureIntroductionPreferencePort } from "@features/flow-contacts-introduction";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { setHasDismissedContactsFeatureIntroduction } from "~/actions/settings";
 import { hasDismissedContactsFeatureIntroductionSelector } from "~/reducers/settings";

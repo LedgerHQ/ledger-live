@@ -2,11 +2,11 @@ import React from "react";
 import { mockContact, mockMeContact } from "@domain/entity-contact/schema.mock";
 import {
   ContactsView,
-  createClosedContactsFeatureIntroduction,
   createEmptyContactsListViewModel,
   createPopulatedContactsListViewModel,
   type ContactsListViewModel,
 } from "@features/flow-contacts";
+import { createClosedContactsFeatureIntroduction } from "@features/flow-contacts-introduction";
 import { render, screen } from "@tests/test-renderer";
 
 function renderContactsPage(
