@@ -44,7 +44,7 @@ export function useAddContactDrawerViewModel({
     isSaving,
     draftName,
     avatarInitial,
-    invalidNameError,
+    invalidNameError: isSaving ? null : invalidNameError,
     onOpen,
     onClose,
     onDraftNameChange,

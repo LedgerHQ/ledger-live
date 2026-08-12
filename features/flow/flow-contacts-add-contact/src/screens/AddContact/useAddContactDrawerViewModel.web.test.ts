@@ -1,5 +1,6 @@
 import { act, renderHook } from "@testing-library/react";
 import { contact, INVALID_CONTACT_NAME_ERROR_NAME } from "@domain/entity-contact";
+import { mockContact, mockMeContact } from "@domain/entity-contact/schema.mock";
 import { useContacts } from "@features/platform-contacts";
 import type { ContactCreationPort } from "./model/ports";
 import { useAddContactDrawerViewModel } from "./useAddContactDrawerViewModel";
@@ -92,5 +93,46 @@ describe("useAddContactDrawerViewModel", () => {
 
     expect(contactCreation.createContact).toHaveBeenCalledWith({ name: "a".repeat(32) });
     expect(onSaveSuccess).toHaveBeenCalledTimes(1);
+  });
+
+  it("should not expose a duplicate error while saving a newly created contact", async () => {
+    let contacts = [mockMeContact()];
+    const createdContact = mockContact({ id: "contact-ada", name: "Ada" });
+    let resolveCreation: (contact: typeof createdContact) => void;
+    const creation = new Promise<typeof createdContact>(resolve => {
+      resolveCreation = resolve;
+    });
+    const contactCreation: ContactCreationPort = {
+      createContact: jest.fn(async () => {
+        contacts = [...contacts, createdContact];
+        return creation;
+      }),
+    };
+    mockedUseContacts.mockImplementation(() => contacts);
+    const { result, rerender } = renderHook(() =>
+      useAddContactDrawerViewModel({ contactCreation, onSaveSuccess: jest.fn() }),
+    );
+
+    act(() => {
+      result.current.onOpen();
+      result.current.onDraftNameChange("Ada");
+    });
+
+    act(() => {
+      void result.current.onConfirm();
+    });
+    rerender();
+
+    expect(result.current).toMatchObject({
+      isSaving: true,
+      invalidNameError: null,
+    });
+
+    await act(async () => {
+      resolveCreation(createdContact);
+      await creation;
+    });
+
+    expect(result.current.isOpen).toBe(false);
   });
 });
