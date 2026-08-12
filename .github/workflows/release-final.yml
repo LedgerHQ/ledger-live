@@ -69,10 +69,10 @@ jobs:
           token: ${{ steps.generate-token.outputs.token }}
 
       - name: Setup git user
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@ci/secrets-explicit-passing
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@ci/secrets-explicit-passing
         id: setup-caches
         with:
           use-mise: true
@@ -84,7 +84,7 @@ jobs:
           ruby-version: 3.3.0
 
       - name: JFrog npm auth
-        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@ci/secrets-explicit-passing
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
@@ -97,7 +97,7 @@ jobs:
       #JFrog publishing - if statements to be removed when all is migrated
       - name: JFrog npm auth (publish registry)
         if: ${{ vars.ARTIFACTORY_PUBLISH_URL != '' }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@ci/secrets-explicit-passing
         with:
           registry: ${{ vars.ARTIFACTORY_PUBLISH_URL }}
 
@@ -130,19 +130,19 @@ jobs:
         run: |
           echo "status=$(git diff HEAD HEAD~1 ./apps/ledger-live-mobile/package.json | grep '"version": "' | wc -l)" >> $GITHUB_OUTPUT
 
-      - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@ci/secrets-explicit-passing
         id: desktop-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-desktop
 
-      - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@ci/secrets-explicit-passing
         id: mobile-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
 
       - name: generate desktop changelog
         if: ${{ steps.desktop-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLD", "ALL"]'), inputs.app) }}
-        uses: LedgerHQ/ledger-live/tools/actions/generate-release-message@develop
+        uses: LedgerHQ/ledger-live/tools/actions/generate-release-message@ci/secrets-explicit-passing
         id: desktop-changelog
         with:
           package-path: ${{ github.workspace }}/apps/ledger-live-desktop/package.json
@@ -159,7 +159,7 @@ jobs:
 
       - name: generate mobile changelog
         if: ${{ steps.mobile-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLM", "ALL"]'), inputs.app) }}
-        uses: LedgerHQ/ledger-live/tools/actions/generate-release-message@develop
+        uses: LedgerHQ/ledger-live/tools/actions/generate-release-message@ci/secrets-explicit-passing
         id: mobile-changelog
         with:
           package-path: ${{ github.workspace }}/apps/ledger-live-mobile/package.json

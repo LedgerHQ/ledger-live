@@ -71,10 +71,10 @@ jobs:
           persist-credentials: false
 
       - name: Setup git user
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@ci/secrets-explicit-passing
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@ci/secrets-explicit-passing
         id: setup-caches
         with:
           use-mise: true
@@ -87,14 +87,14 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
 
       - name: JFrog npm auth
-        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@ci/secrets-explicit-passing
         if: ${{ matrix.config.name == 'Linux' }}
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
       - name: Build desktop
         id: build-desktop
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-build-desktop@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-build-desktop@ci/secrets-explicit-passing
         with:
           os: ${{ matrix.config.output-name }}
 
@@ -174,7 +174,7 @@ jobs:
             }
             return JSON.stringify(obj);
 
-      - uses: LedgerHQ/ledger-live/tools/actions/build-checks@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/build-checks@ci/secrets-explicit-passing
         if: ${{ !cancelled() && github.event.number != '' }}
         with:
           token: ${{ steps.generate-token.outputs.token }}
@@ -182,7 +182,7 @@ jobs:
           prNumber: ${{ github.event.number}}
           mode: desktop
 
-      - uses: LedgerHQ/ledger-live/tools/actions/desktop-report-build@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/desktop-report-build@ci/secrets-explicit-passing
         name: Report summary
         with:
           token: ${{ steps.generate-token.outputs.token }}

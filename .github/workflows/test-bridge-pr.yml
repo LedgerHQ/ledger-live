@@ -30,7 +30,7 @@ jobs:
         if: ${{ github.event_name != 'pull_request' }}
         run: |
           git checkout $GITHUB_SHA
-      - uses: LedgerHQ/ledger-live/tools/actions/live-common-affected@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/live-common-affected@ci/secrets-explicit-passing
         id: affected
         with:
           ref: ${{ github.event_name == 'pull_request' && format('origin/{0}', github.event.pull_request.base.ref) || 'HEAD^' }}
@@ -57,7 +57,7 @@ jobs:
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@ci/secrets-explicit-passing
         id: setup-caches
         with:
           use-mise: true

@@ -34,13 +34,13 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           persist-credentials: false
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@ci/secrets-explicit-passing
         id: setup-caches
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
           skip-nx-cache: "true"
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@ci/secrets-explicit-passing
         id: setup-test-desktop
         with:
           skip_builds: true
@@ -69,13 +69,13 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           persist-credentials: false
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@ci/secrets-explicit-passing
         id: setup-caches
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
           skip-nx-cache: "true"
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@ci/secrets-explicit-passing
         id: setup-test-desktop
         with:
           skip_builds: true
@@ -102,13 +102,13 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           persist-credentials: false
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@ci/secrets-explicit-passing
         id: setup-caches
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
           skip-nx-cache: "true"
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@ci/secrets-explicit-passing
         id: setup-test-desktop
         with:
           skip_ruby: true
@@ -176,7 +176,7 @@ jobs:
             fs.writeFileSync("./images.json", JSON.stringify(result, null, 2));
       - name: prepare comment with screenshots
         id: comment
-        uses: LedgerHQ/ledger-live/tools/actions/prepare-comment-screenshots@develop
+        uses: LedgerHQ/ledger-live/tools/actions/prepare-comment-screenshots@ci/secrets-explicit-passing
         with:
           images: images.json
           no-actor: true
