@@ -7032,6 +7032,9 @@
       "title": "Sorry, insufficient funds",
       "description": "Please make sure the account has enough funds."
     },
+    "NotEnoughTransferAmount": {
+      "title": "A minimum of 1 ICP is required to stake into a neuron."
+    },
     "UnstakeNotEnoughStakedBalanceLeft": {
       "title": "If you unstake more than {{maxAmount}}, your total stake of {{totalAmount}} will be unstaked",
       "description": "If you unstake more than {{maxAmount}}, your total stake of {{totalAmount}} will be unstaked"
@@ -9718,5 +9721,30 @@
       }
     },
     "disclaimer": "This data is provided for informational purposes only and is not financial advice. Not to be used for tax purposes."
+  },
+  "internetComputer": {
+    "memoField": {
+      "increaseStake": "This transaction will increase the stake of an existing neuron, input the desired amount to be staked in the amount field above.",
+      "createNeuron": "This transaction will create a neuron with staked ICP, input the desired amount to be staked in the amount field above.",
+      "tooltip": "Internet Computer uses this to identify the transaction to stake the ICP into the neuron."
+    },
+    "stakeBanner": {
+      "stakeICP": {
+        "title": "Stake ICP",
+        "description": "Stake ICP and gain rewards by participating in its governance.",
+        "cta": "Stake ICP"
+      }
+    },
+    "headerManageActions": {
+      "manageNeurons": {
+        "title": "Manage Neurons"
+      }
+    },
+    "summaryFooter": {
+      "stakedBalance": "Staked Balance",
+      "stakedBalanceTooltip": "The total amount of ICP tokens currently staked in neurons. Staked ICP earns voting rewards and can be used for governance.",
+      "totalMaturity": "Total Maturity",
+      "totalMaturityTooltip": "The total accumulated rewards from staking, including both staked and liquid maturity. These rewards can be either staked again or claimed as liquid ICP."
+    }
   }
 }

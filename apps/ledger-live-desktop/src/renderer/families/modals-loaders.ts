@@ -45,6 +45,8 @@ import type { Data as HederaDelegationData } from "./hedera/DelegationFlowModal/
 import type { Data as HederaUndelegationData } from "./hedera/UndelegationFlowModal/Body";
 import type { Data as HederaRedelegationData } from "./hedera/RedelegationFlowModal/Body";
 import type { Data as HederaClaimRewardsData } from "./hedera/ClaimRewardsFlowModal/Body";
+import type { Props as IcpListNeuronsProps } from "./internet_computer/ManageNeuronFlowModal";
+import type { Props as IcpRefreshVotingPowerProps } from "./internet_computer/RefreshVotingPowerFlowModal";
 import type { Data as MultiversxDelegateData } from "./multiversx/components/Modals/Delegate/Body";
 import type { Props as MultiversxRewardsInfoProps } from "./multiversx/components/Modals/Delegate/Info";
 import type { Data as MultiversxUndelegateData } from "./multiversx/components/Modals/Undelegate/Body";
@@ -123,6 +125,8 @@ export type CoinModalsData = {
   MODAL_HEDERA_UNDELEGATION: HederaUndelegationData;
   MODAL_HEDERA_REDELEGATION: HederaRedelegationData;
   MODAL_HEDERA_CLAIM_REWARDS: HederaClaimRewardsData;
+  MODAL_ICP_LIST_NEURONS: IcpListNeuronsProps;
+  MODAL_ICP_REFRESH_VOTING_POWER: IcpRefreshVotingPowerProps;
   MODAL_MULTIVERSX_DELEGATE: MultiversxDelegateData;
   MODAL_MULTIVERSX_REWARDS_INFO: MultiversxRewardsInfoProps;
   MODAL_MULTIVERSX_UNDELEGATE: MultiversxUndelegateData;
@@ -212,6 +216,8 @@ export const coinModalImports: Record<CoinModalKey, CoinModalImport> = {
   MODAL_HEDERA_UNDELEGATION: () => import("./hedera/UndelegationFlowModal"),
   MODAL_HEDERA_REDELEGATION: () => import("./hedera/RedelegationFlowModal"),
   MODAL_HEDERA_CLAIM_REWARDS: () => import("./hedera/ClaimRewardsFlowModal"),
+  MODAL_ICP_LIST_NEURONS: () => import("./internet_computer/ManageNeuronFlowModal"),
+  MODAL_ICP_REFRESH_VOTING_POWER: () => import("./internet_computer/RefreshVotingPowerFlowModal"),
   MODAL_MULTIVERSX_DELEGATE: () => import("./multiversx/components/Modals/Delegate"),
   MODAL_MULTIVERSX_REWARDS_INFO: () => import("./multiversx/components/Modals/Delegate/Info"),
   MODAL_MULTIVERSX_UNDELEGATE: () => import("./multiversx/components/Modals/Undelegate"),
