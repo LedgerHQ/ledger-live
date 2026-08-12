@@ -30,13 +30,12 @@ describe("Receive", () => {
   });
 
   afterEach(async () => {
-    // Close through the drawer's own button first: it resets the modular drawer's
-    // flow step. A deeplink alone only blurs the sheet, so the next test reopens on
-    // whichever step the last one left behind (seen as "no views found matching
-    // modular-drawer-network-selection-scrollView" while the drawer sat on
-    // Account-screen). The deeplink then confirms we are actually back on portfolio.
+    // Close through the drawer's own button: it resets the modular drawer's flow step,
+    // so the next test reopens on the asset step rather than wherever this one stopped.
+    // Deliberately no deeplink here — beforeEach already navigates to portfolio, and a
+    // second `ledgerlive://portfolio` only adds another asynchronous navigation that can
+    // land after the next test has opened the drawer and close it (see QAA-1476).
     await app.modularDrawer.tapDrawerCloseButton({ onlyIfVisible: true });
-    await app.portfolio.openViaDeeplink();
   });
 
   $TmsLink("B2CQA-1858");
