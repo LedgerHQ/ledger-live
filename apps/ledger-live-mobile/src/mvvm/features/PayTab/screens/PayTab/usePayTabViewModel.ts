@@ -1,10 +1,10 @@
 import { useCallback, useMemo } from "react";
 import { Linking } from "react-native";
+import Config from "react-native-config";
 import { useTranslation } from "~/context/Locale";
 import type { CardLoginOauthConfig, OpenHostedLogin } from "@features/flow-pay-card-auth";
 import type { FeatureTourProps } from "@features/flow-pay-card-feature-tour";
 import type { BalanceLabels } from "@features/flow-pay-card-balance";
-import { getEnv } from "@shared/env";
 import { useNavigationBarHeights } from "LLM/hooks/useNavigationBarHeights";
 import { usePayCardBalance } from "LLM/features/PayTab/hooks/usePayCardBalance";
 import { usePayTabActionTiles } from "LLM/features/PayTab/hooks/usePayTabActionTiles";
@@ -48,10 +48,12 @@ export function usePayTabViewModel() {
     [],
   );
 
-  // Baanx uses the same value for the client key header and the OAuth `client_id`.
+  // Baanx uses the same value for the client key header and the OAuth `client_id`, and it comes from
+  // the same place the store reads it: `Config` directly, because what copies it into the env system
+  // resolves asynchronously and this value is captured once.
   const oauth: CardLoginOauthConfig = useMemo(
     () => ({
-      clientId: getEnv("CARD_BAANX_CLIENT_KEY"),
+      clientId: Config.CARD_BAANX_CLIENT_KEY ?? "",
       redirectUri: PAY_CARD_OAUTH_REDIRECT_URI,
     }),
     [],

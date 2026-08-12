@@ -9,10 +9,12 @@
 Start the Baanx login with a real client key, PKCE challenge and CSRF state (LIVE-34738)
 
 The Baanx client key that every Card request carries as `x-client-key` now comes from the new
-`CARD_BAANX_CLIENT_KEY` env var, resolved by each app and passed to `payCardApiExtra`, so the shared
-base query sets the header for all endpoints and no use case carries it. It defaults to empty on
-purpose: an unset key fails Card requests with 499 rather than stopping the apps from starting. The
-Baanx secret key stays server-side and is never sent from the apps.
+`CARD_BAANX_CLIENT_KEY` env var, passed to `payCardApiExtra` so the shared base query sets the header
+for all endpoints and no use case carries it. Desktop resolves it through `getEnv`; mobile reads
+`Config` directly, since what copies `Config` into the env system resolves asynchronously, after the
+store has captured its `extraArgument`. It defaults to empty on purpose: an unset key fails Card
+requests with 499 rather than stopping the apps from starting. The Baanx secret key stays server-side
+and is never sent from the apps.
 
 Pressing Login then mints a login attempt client-side — a 16-byte `state` and a 32-byte PKCE verifier,
 with `code_challenge = BASE64URL(SHA256(verifier))` — and sends it to

@@ -1,7 +1,6 @@
 import { Linking } from "react-native";
 import { renderHook } from "@tests/test-renderer";
 import type { BalanceData } from "@features/flow-pay-card-balance";
-import { setEnv } from "@shared/env";
 import { track } from "~/analytics";
 import { usePayTabViewModel } from "./usePayTabViewModel";
 
@@ -74,14 +73,13 @@ describe("usePayTabViewModel", () => {
   });
 
   it("should expose the OAuth client configuration", () => {
-    setEnv("CARD_BAANX_CLIENT_KEY", "client-key");
-
     const { result } = renderHook(() => usePayTabViewModel());
 
-    // Baanx reuses the client key as the OAuth client id, and the redirect URI has to be the deep
-    // link the Pay tab registers — it is matched verbatim on the token exchange.
+    // Baanx reuses the client key as the OAuth client id — read from the build-time `Config`, whose
+    // test value comes from `__mocks__/react-native-config`. The redirect URI has to be the deep link
+    // the Pay tab registers: it is matched verbatim on the token exchange.
     expect(result.current.oauth).toEqual({
-      clientId: "client-key",
+      clientId: "CARD_BAANX_CLIENT_KEY",
       redirectUri: "ledgerlive://paytab",
     });
   });
