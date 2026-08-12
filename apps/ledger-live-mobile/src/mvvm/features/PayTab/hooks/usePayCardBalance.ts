@@ -7,9 +7,9 @@ import {
   type PayCardBalanceData,
 } from "@features/flow-pay-card-balance";
 import { selectPayCardBalanceFilter } from "@domain/entity-pay-card";
-import { useSelector } from "LLD/hooks/redux";
-import { useCategorizedAssetsFromPortfolio } from "LLD/hooks/useCategorizedAssets";
-import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";
+import { useCategorizedAssetsFromPortfolio } from "LLM/hooks/useCategorizedAssetsFromPortfolio";
+import { useSelector } from "~/context/hooks";
+import { counterValueCurrencySelector, localeSelector } from "~/reducers/settings";
 
 export function usePayCardBalance(): PayCardBalanceData {
   const locale = useSelector(localeSelector);

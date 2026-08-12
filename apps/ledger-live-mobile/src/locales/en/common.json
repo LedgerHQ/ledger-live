@@ -10012,6 +10012,10 @@
           "description": "Pay in USDC, USDT, BTC, ETH and more"
         }
       }
+    },
+    "balance": {
+      "emptyTitle": "Pay and get paid",
+      "emptyDescription": "Start by depositing stablecoin to your wallet"
     }
   },
   "syncIndicator": {

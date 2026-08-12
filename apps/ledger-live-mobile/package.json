@@ -114,6 +114,7 @@
     "@domain/entity-wallet-sync": "workspace:^",
     "@features/flow-analytics-consent": "workspace:*",
     "@features/flow-pay-card-auth": "workspace:^",
+    "@features/flow-pay-card-balance": "workspace:^",
     "@features/flow-pay-card-feature-tour": "workspace:^",
     "@features/flow-contacts": "workspace:^",
     "@features/platform-contacts": "workspace:^",

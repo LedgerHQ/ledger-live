@@ -1,5 +1,5 @@
 import React from "react";
-import { AmountDisplay } from "@ledgerhq/lumen-ui-react";
+import { AmountDisplay, Box } from "@ledgerhq/lumen-ui-rnative";
 import type { FormattedValue } from "./types";
 
 type PayCardBalanceFundedStateProps = Readonly<{
@@ -14,13 +14,17 @@ export function PayCardBalanceFundedState({
   isLoading,
 }: PayCardBalanceFundedStateProps) {
   return (
-    <div className="flex items-end gap-12" data-testid="pay-card-balance-funded-state">
+    <Box
+      lx={{ alignItems: "center", justifyContent: "center", paddingVertical: "s32" }}
+      testID="pay-card-balance-funded-state"
+    >
       <AmountDisplay
         value={balance}
         formatter={formatCountervalue}
         loading={isLoading}
-        data-testid="pay-card-balance-amount"
+        size="md"
+        testID="pay-card-balance-amount"
       />
-    </div>
+    </Box>
   );
 }
