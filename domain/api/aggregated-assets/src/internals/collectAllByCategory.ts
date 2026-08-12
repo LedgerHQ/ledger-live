@@ -8,20 +8,18 @@ import type { GetAssetsByCategoryParams } from "../types";
 import { resolveBaseUrl, type DadaBaseQuery } from "./requests";
 
 /**
- * Walks every page of a category and collects one projection per asset.
+ * Collects one projection per asset across every page of a category.
  *
- * Internal: both public category accessors share it, nothing outside this package should call it.
- * TODO(LIVE-35503): the walk is unbounded and only stops when the server clears the cursor.
+ * Ends on a repeated cursor, which is what a proxy echoing `x-ledger-next` produces. Deliberately
+ * still unbounded if the server keeps minting new ones: Cloudflare fronts DADA, so a page cap was
+ * judged not worth the ceiling it would put on how large a category may grow.
  */
 export async function collectAllByCategory(
   queryArg: GetAssetsByCategoryParams,
   baseQuery: DadaBaseQuery,
   extract: (data: RawApiResponse) => string[],
 ): Promise<QueryReturnValue<string[], FetchBaseQueryError, FetchBaseQueryMeta>> {
-  /*
-   * The host guard throws, and a rejected queryFn surfaces in RTK as an unhandled error. Convert it
-   * so no path out of this endpoint can throw — LIVE-35232 depends on that.
-   */
+  /* The host guard throws, and a rejected queryFn surfaces in RTK as an unhandled error. */
   let baseUrl: string;
   try {
     baseUrl = resolveBaseUrl(queryArg);
@@ -52,7 +50,13 @@ export async function collectAllByCategory(
     if (result.error) return { error: result.error };
 
     collected.push(...extract(result.data as RawApiResponse));
-    cursor = result.meta?.response?.headers.get("x-ledger-next") || undefined;
+
+    const nextCursor = result.meta?.response?.headers.get("x-ledger-next") || undefined;
+
+    /* Same cursor back means no further pages, so this is success rather than an error. */
+    if (nextCursor !== undefined && nextCursor === cursor) return { data: collected };
+
+    cursor = nextCursor;
   } while (cursor);
 
   return { data: collected };

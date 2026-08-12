@@ -155,4 +155,15 @@ describe("collectAllByCategory", () => {
     expect(result.error).toMatchObject({ error: expect.stringContaining("evil.example.com") });
     expect(baseQuery).not.toHaveBeenCalled();
   });
+
+  it("stops and keeps what it collected when the server repeats a cursor", async () => {
+    baseQuery
+      .mockResolvedValueOnce(page(rawWith(["aaplx"]), "stuck"))
+      .mockResolvedValue(page(rawWith(["teslax"]), "stuck"));
+
+    const result = await collectAllByCategory(queryArg, baseQuery, tickersOf);
+
+    expect(result).toEqual({ data: ["AAPLX", "TESLAX"] });
+    expect(baseQuery).toHaveBeenCalledTimes(2);
+  });
 });
