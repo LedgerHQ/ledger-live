@@ -138,7 +138,10 @@ export default class ModularDrawer {
   @Step("Select currency then a specific account in modular drawer")
   async selectAssetAndAccount(account: Account): Promise<void> {
     await this.selectAssetCurrencyAndNetwork(account);
-    await this.selectAccount(account.accountName);
+    // Token accounts are listed under their PARENT account's name in the drawer
+    // (useDetailedAccountsCore: name = parentAccountName ?? token name), so pin by parent.
+    const accountName = account.parentAccount?.accountName ?? account.accountName;
+    await this.selectAccount(accountName);
   }
 
   @Step("Validate account(s) present on account list")
