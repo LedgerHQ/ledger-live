@@ -1,6 +1,6 @@
 import { getTxType } from "./txTrackingHelper";
 import { ERC20_CLEAR_SIGNED_SELECTORS, DAPP_SELECTORS } from "@ledgerhq/hw-app-eth";
-import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/transaction";
+import type { Transaction as EvmTransaction } from "../../families/evm/types";
 
 const createMockTransaction = (selector: string): EvmTransaction =>
   ({

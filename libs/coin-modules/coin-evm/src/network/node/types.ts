@@ -2,7 +2,7 @@ import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { Account, BroadcastConfig } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { BlockFinalizationTag, EvmConfigInfo } from "../../config";
-import { Transaction as EvmTransaction, FeeData } from "../../types";
+import { FeeData } from "../../types";
 
 /**
  * Asset information for token transfers
@@ -189,11 +189,11 @@ export type NodeApi = {
   getTransactionCount: (currency: CryptoCurrency, address: string) => Promise<number>;
   getGasEstimation: (
     account: Pick<Account, "currency" | "freshAddress">,
-    transaction: Pick<EvmTransaction, "amount" | "data" | "recipient">,
+    transaction: { amount: BigNumber; data?: Buffer | null | undefined; recipient: string },
   ) => Promise<BigNumber>;
   getFeeData: (
     currency: CryptoCurrency,
-    transaction: Pick<EvmTransaction, "type" | "feesStrategy">,
+    transaction: { type?: number | undefined; feesStrategy?: string | null | undefined },
   ) => Promise<FeeData>;
   broadcastTransaction: (
     currency: CryptoCurrency,

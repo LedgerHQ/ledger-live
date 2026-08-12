@@ -4,7 +4,7 @@ import {
   getFeesUnit,
   getMainAccount,
 } from "@ledgerhq/live-common/account/index";
-import { TransactionStatus } from "@ledgerhq/coin-evm/types/index";
+import { TransactionStatus } from "@ledgerhq/live-common/families/evm/types";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import React from "react";
 import { Trans, useTranslation } from "react-i18next";

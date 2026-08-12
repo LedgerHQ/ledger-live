@@ -1,4 +1,4 @@
-import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/transaction";
+import type { Transaction as EvmTransaction } from "../../families/evm/types";
 import { DAPP_SELECTORS } from "@ledgerhq/hw-app-eth";
 
 const PLAIN_TRANSFER = "transfer";

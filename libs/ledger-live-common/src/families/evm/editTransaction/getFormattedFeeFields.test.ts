@@ -2,7 +2,7 @@ import { CRYPTO_CURRENCIES_REGISTRY } from "@domain/entity-currency-crypto";
 import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { getCoinConfig } from "@ledgerhq/coin-evm/config";
-import type { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
+import type { Transaction as EvmTransaction } from "@ledgerhq/live-common/families/evm/types";
 import { getFormattedFeeFields } from "./getFormattedFeeFields";
 
 jest.mock("@ledgerhq/coin-evm/config");

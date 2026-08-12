@@ -1,5 +1,5 @@
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import type { TransactionStatus } from "@ledgerhq/coin-evm/types/index";
+import type { TransactionStatus } from "@ledgerhq/live-common/families/evm/types";
 import type {
   StakingMappedDelegation,
   StakingValidatorItem,
