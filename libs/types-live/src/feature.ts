@@ -843,7 +843,7 @@ export type Feature_PtxSwapDetailedView = Feature<{
 /** @deprecated Moved to `@shared/feature-flags`. Use `Features["lldNanoSUpsellBanners"]` from `@shared/feature-flags` instead. */
 export type Feature_LldNanoSUpsellBanners = Feature<{
   opted_in: LldNanoSUpsellBannersConfig;
-  opted_out: LldNanoSUpsellBannersConfig & { portfolio: boolean };
+  opted_out: LldNanoSUpsellBannersConfig;
 }>;
 
 /** @deprecated Moved to `@shared/feature-flags`. Use `Features["llmTransferButtonCopyVariant"]` from `@shared/feature-flags` instead. */
