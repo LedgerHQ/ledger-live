@@ -3382,6 +3382,9 @@ importers:
       '@devtools/transport':
         specifier: workspace:*
         version: link:../transport
+      zod:
+        specifier: 'catalog:'
+        version: 4.3.6
     devDependencies:
       '@swc/core':
         specifier: 'catalog:'
@@ -3433,6 +3436,9 @@ importers:
         specifier: 'catalog:'
         version: 8.18.3
     devDependencies:
+      '@devtools/protocols':
+        specifier: workspace:*
+        version: link:../protocols
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11

@@ -1,5 +1,10 @@
 import type { MessageMap, Transport, Role } from "@devtools/transport";
 
+export interface Device {
+  id: string;
+  name: string;
+}
+
 export interface TransportPanelProps<M extends MessageMap = MessageMap> {
   readonly transport: Transport<M>;
   readonly hubUrl: string;
@@ -7,4 +12,5 @@ export interface TransportPanelProps<M extends MessageMap = MessageMap> {
   readonly role: Role;
   readonly target?: string;
   readonly setTarget?: (url: string) => void;
+  readonly devices?: Device[];
 }
