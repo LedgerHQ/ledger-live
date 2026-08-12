@@ -81,8 +81,6 @@ describe("ContactsAddContactDialog", () => {
       />,
     );
 
-    expect(screen.getByTestId("contacts-add-contact-name-input")).toHaveAttribute(
-      "readonly",
-    );
+    expect(screen.getByTestId("contacts-add-contact-name-input")).toHaveAttribute("readonly");
   });
 });
