@@ -12,10 +12,6 @@ jest.mock("LLM/features/Send/hooks/useOpenSendFlow", () => ({
   useOpenSendFlow: () => ({ handleOpenSendFlow: jest.fn() }),
 }));
 
-jest.mock("~/context/Locale", () => ({
-  useTranslation: () => ({ t: (key: string) => key }),
-}));
-
 function makeWrapper(contacts: ReturnType<typeof contactsSlice.getInitialState>["contacts"]) {
   const store = configureStore({
     reducer: { contacts: contactsSlice.reducer },
