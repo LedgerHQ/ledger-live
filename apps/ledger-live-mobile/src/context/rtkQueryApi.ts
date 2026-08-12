@@ -4,6 +4,7 @@ import { marketApi } from "@ledgerhq/live-common/market/state-manager/api";
 import { cgApi } from "@ledgerhq/live-common/cg-client/state-manager/api";
 import {
   calApi,
+  cardApi,
   coinMarketCapApi,
   countervaluesApi,
   dadaApi,
@@ -17,6 +18,7 @@ import { counterValuesApi } from "@ledgerhq/live-common/counterValues/state-mana
 const APIs = {
   [dadaApi.reducerPath]: dadaApi,
   [calApi.reducerPath]: calApi,
+  [cardApi.reducerPath]: cardApi,
   [coinMarketCapApi.reducerPath]: coinMarketCapApi,
   [countervaluesApi.reducerPath]: countervaluesApi,
   [counterValuesApi.reducerPath]: counterValuesApi,

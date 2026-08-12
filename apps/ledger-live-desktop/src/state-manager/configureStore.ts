@@ -11,11 +11,13 @@ import { authApiExtra } from "@shared/auth";
 import { LkrpIdentityProvider } from "@ledgerhq/ledger-key-ring-protocol";
 import {
   calApiExtra,
+  cardApiExtra,
   coinMarketCapApiExtra,
   cvsApiExtra,
   pushDevicesApiExtra,
   swapApiExtra,
 } from "@shared/api-services";
+import { getCardSessionToken, refreshCardSession } from "@features/platform-card";
 import { payCardApiExtra } from "@domain/api-pay-card";
 import logger from "~/renderer/middlewares/logger";
 import reducers, { State } from "~/renderer/reducers";
@@ -65,6 +67,11 @@ const customCreateStore = ({
               }),
               ...coinMarketCapApiExtra({
                 coinMarketCapApiUrl: getEnv("CMC_API_URL"),
+              }),
+              ...cardApiExtra({
+                cardApiBaseUrl: getEnv("CARD_API_URL"),
+                getCardSessionToken,
+                refreshCardSession,
               }),
               ...pushDevicesApiExtra({
                 pushDevicesServiceUrl: getEnv("PUSH_DEVICES_SERVICE_URL"),
