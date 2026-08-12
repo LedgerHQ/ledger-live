@@ -28,7 +28,7 @@ const config = () => ({
 });
 
 const ACCOUNT_WITH_HISTORY = "nearkat.near";
-const DELEGATOR = "81afe80a9d91c82f66122c35ef400da709bde01eada5aae8d7a63bbf68f42040";
+const DELEGATOR = "c351fce3fadaff7902f04aefcc5f519c87923a734ba5c0867f690d226a33c0a1";
 const IMPLICIT_RECIPIENT = "4e7de0a21d8a20f970c86b6edf407906d7ba9e205979c3268270eef80a286e2d";
 const NAMED_RECIPIENT = "recipient.near";
 const DUMMY_SIGNATURE = "ab".repeat(64);
