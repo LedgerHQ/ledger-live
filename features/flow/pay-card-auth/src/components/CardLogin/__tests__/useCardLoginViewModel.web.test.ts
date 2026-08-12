@@ -1,41 +1,48 @@
 import { act, renderHook, waitFor } from "@testing-library/react";
-import { usePreAuthMutation } from "../../../state";
+import { useInitiateAuthorizeMutation } from "../../../state";
 import { useCardLoginViewModel } from "../useCardLoginViewModel";
 
 jest.mock("../../../state", () => ({
-  usePreAuthMutation: jest.fn(),
+  useInitiateAuthorizeMutation: jest.fn(),
 }));
 
-const mockedUsePreAuthMutation = jest.mocked(usePreAuthMutation);
-const preAuth = jest.fn();
+const mockedUseInitiateAuthorizeMutation = jest.mocked(useInitiateAuthorizeMutation);
+const initiateAuthorize = jest.fn();
 const unwrap = jest.fn();
 
 describe("useCardLoginViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    preAuth.mockReturnValue({ unwrap });
-    mockedUsePreAuthMutation.mockReturnValue([
-      preAuth,
+    initiateAuthorize.mockReturnValue({ unwrap });
+    mockedUseInitiateAuthorizeMutation.mockReturnValue([
+      initiateAuthorize,
       { isLoading: false },
-    ] as unknown as ReturnType<typeof usePreAuthMutation>);
+    ] as unknown as ReturnType<typeof useInitiateAuthorizeMutation>);
   });
 
-  it("should forward the hosted login URL for the default provider", async () => {
+  it("should forward the hosted login URL", async () => {
     const openHostedLogin = jest.fn().mockResolvedValue(undefined);
-    unwrap.mockResolvedValue({ loginUrl: "https://card.example.com/login" });
+    unwrap.mockResolvedValue({ token: "jwt", url: "https://card.example.com/login" });
     const { result } = renderHook(() => useCardLoginViewModel({ openHostedLogin }));
 
     act(() => result.current.onLoginPress());
 
     await waitFor(() => {
-      expect(preAuth).toHaveBeenCalledWith({ provider: "baanx" });
+      expect(initiateAuthorize).toHaveBeenCalledWith(
+        expect.objectContaining({
+          clientId: expect.any(String),
+          redirectUri: expect.any(String),
+          state: expect.any(String),
+          codeChallenge: expect.any(String),
+        }),
+      );
       expect(openHostedLogin).toHaveBeenCalledWith("https://card.example.com/login");
     });
   });
 
   it("should expose an error when opening the hosted login fails", async () => {
     const openHostedLogin = jest.fn().mockRejectedValue(new Error("Browser unavailable"));
-    unwrap.mockResolvedValue({ loginUrl: "https://card.example.com/login" });
+    unwrap.mockResolvedValue({ token: "jwt", url: "https://card.example.com/login" });
     const { result } = renderHook(() => useCardLoginViewModel({ openHostedLogin }));
 
     act(() => result.current.onLoginPress());
@@ -64,7 +71,7 @@ describe("useCardLoginViewModel", () => {
 
   it("should reject an insecure hosted login URL", async () => {
     const openHostedLogin = jest.fn();
-    unwrap.mockResolvedValue({ loginUrl: "javascript:alert('login')" });
+    unwrap.mockResolvedValue({ token: "jwt", url: "javascript:alert('login')" });
     const { result } = renderHook(() => useCardLoginViewModel({ openHostedLogin }));
 
     act(() => result.current.onLoginPress());
@@ -75,11 +82,11 @@ describe("useCardLoginViewModel", () => {
     });
   });
 
-  it("should reflect the pre-auth loading state", () => {
-    mockedUsePreAuthMutation.mockReturnValue([
-      preAuth,
+  it("should reflect the authorize initiation loading state", () => {
+    mockedUseInitiateAuthorizeMutation.mockReturnValue([
+      initiateAuthorize,
       { isLoading: true },
-    ] as unknown as ReturnType<typeof usePreAuthMutation>);
+    ] as unknown as ReturnType<typeof useInitiateAuthorizeMutation>);
 
     const { result } = renderHook(() => useCardLoginViewModel({ openHostedLogin: jest.fn() }));
 

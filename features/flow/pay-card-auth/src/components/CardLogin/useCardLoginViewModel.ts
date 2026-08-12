@@ -1,6 +1,20 @@
 import { useCallback, useState } from "react";
-import { usePreAuthMutation } from "../../state";
+import { useInitiateAuthorizeMutation } from "../../state";
+import type { PayCardAuthorizeInitiateRequest } from "../../state";
 import type { CardLoginProps, CardLoginViewProps } from "./types";
+
+/**
+ * TODO(LIVE-34769): the OAuth orchestration that produces these — a random `state`, a PKCE
+ * verifier/challenge pair and the registered redirect URI — is the next ticket, as is the client id
+ * that has to come from configuration. Login therefore cannot complete yet; sending the real request
+ * shape now keeps this call site typed against the contract it will use.
+ */
+const PLACEHOLDER_AUTHORIZE_REQUEST: PayCardAuthorizeInitiateRequest = {
+  clientId: "",
+  redirectUri: "",
+  state: "",
+  codeChallenge: "",
+};
 
 function getSecureHostedLoginUrl(loginUrl: string): string {
   const url = new URL(loginUrl);
@@ -20,11 +34,9 @@ function getLoginErrorMessage(error: unknown): string {
   return "Unable to start login";
 }
 
-export function useCardLoginViewModel({
-  openHostedLogin,
-  provider = "baanx",
-}: CardLoginProps): CardLoginViewProps {
-  const [preAuth, { isLoading: isPreAuthLoading }] = usePreAuthMutation();
+export function useCardLoginViewModel({ openHostedLogin }: CardLoginProps): CardLoginViewProps {
+  const [initiateAuthorize, { isLoading: isInitiateAuthorizeLoading }] =
+    useInitiateAuthorizeMutation();
   const [isOpeningHostedLogin, setIsOpeningHostedLogin] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -34,21 +46,21 @@ export function useCardLoginViewModel({
     void (async () => {
       setIsOpeningHostedLogin(true);
       try {
-        const { loginUrl } = await preAuth({ provider }).unwrap();
-        await openHostedLogin(getSecureHostedLoginUrl(loginUrl));
+        const { url } = await initiateAuthorize(PLACEHOLDER_AUTHORIZE_REQUEST).unwrap();
+        await openHostedLogin(getSecureHostedLoginUrl(url));
       } catch (error) {
         setErrorMessage(getLoginErrorMessage(error));
       } finally {
         setIsOpeningHostedLogin(false);
       }
     })();
-  }, [openHostedLogin, preAuth, provider]);
+  }, [openHostedLogin, initiateAuthorize]);
 
   return {
     title: "Card",
     description: "Log in to access your Ledger Card",
     loginLabel: "Login",
-    isLoading: isPreAuthLoading || isOpeningHostedLogin,
+    isLoading: isInitiateAuthorizeLoading || isOpeningHostedLogin,
     errorMessage,
     onLoginPress,
   };

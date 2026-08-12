@@ -1,10 +1,7 @@
-import type { PayCardProvider } from "../../state";
-
 export type OpenHostedLogin = (loginUrl: string) => Promise<void> | void;
 
 export type CardLoginProps = {
   readonly openHostedLogin: OpenHostedLogin;
-  readonly provider?: PayCardProvider;
 };
 
 export type CardLoginViewProps = {
