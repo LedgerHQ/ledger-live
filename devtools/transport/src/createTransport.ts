@@ -11,6 +11,7 @@ import type {
 
 import { createSocketFactory } from "./socketFactory";
 import { createTimer } from "./timer";
+import { createEnvelope } from "./envelope";
 
 const isEnvelope = <M extends MessageMap>(value: unknown): value is Envelope<M> =>
   typeof value === "object" && value !== null && "kind" in value && "payload" in value;
@@ -146,16 +147,7 @@ export function createTransport<M extends MessageMap>(
       if (status !== "open") {
         throw new Error("transport is not open");
       }
-      const date = Date.now();
-      seq++;
-      const env = {
-        id: `${config.origin}-${date}-${seq}`,
-        seq: seq,
-        ts: date,
-        origin: config.origin,
-        kind,
-        payload,
-      };
+      const env = createEnvelope<M, K>(config.origin, ++seq, kind, payload);
       socket?.send(JSON.stringify(env));
       record(env);
       emit();

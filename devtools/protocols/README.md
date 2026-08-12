@@ -2,7 +2,11 @@
 
 Message contracts and `TransportProtocol` implementations for DevTools host ⇄ tool communication.
 
-Each protocol defines a `MessageMap`, a `createXxxProtocol` factory, and any helpers the app needs to wire its end. Import from the named export of the protocol you want — no barrel index.
+Each protocol lives in its own folder under `src/` and exposes a single `index.ts`. Import from the named sub-path — no barrel index.
+
+## Adding a protocol
+
+Create `src/<protocol-name>/index.ts`. The wildcard export map picks it up automatically — no `package.json` change needed. Tests go in the same folder as `index.test.ts`.
 
 ## copy-store
 

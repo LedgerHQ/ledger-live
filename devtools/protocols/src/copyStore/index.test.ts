@@ -1,12 +1,12 @@
 import type { Transport } from "@devtools/transport";
-import { createMockStore } from "../jest/mockStore";
+import { createMockStore } from "../../jest/mockStore";
 import {
   COPY_STORE_REPLACE,
   createCopyStoreProtocol,
   replaceStoreAction,
   withCopyStoreHydration,
-} from "./copyStore";
-import type { CopyStoreMessages } from "./copyStore";
+} from ".";
+import type { CopyStoreMessages } from ".";
 
 describe("replaceStoreAction", () => {
   it("should wrap a snapshot as a replace action", () => {
