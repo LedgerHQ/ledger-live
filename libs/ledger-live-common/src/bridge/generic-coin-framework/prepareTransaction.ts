@@ -4,12 +4,14 @@ import { getBridgeApi } from "./bridge";
 import {
   bigNumberToBigIntDeep,
   computeUseAllAmount,
+  feeParametersToJsonSafe,
   getNativeSpendableAfterPending,
   getPendingTokenSpent,
   toGasOptionsFromUnknown,
   transactionToIntent,
 } from "./utils";
 import BigNumber from "bignumber.js";
+import isEqual from "lodash/isEqual";
 import type { AssetInfo, FeeEstimation } from "@ledgerhq/coin-module-framework/api/types";
 import { decodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 import type { TokenCurrency } from "@domain/entity-currency-token";
@@ -113,6 +115,7 @@ export function genericPrepareTransaction(
       },
       bridgeApi.computeIntentType,
       coinModuleApi.craftTransactionData,
+      bridgeApi.buildIntentData,
     );
     const customFeesParameters = bigNumberToBigIntDeep({
       feesStrategy: transaction.feesStrategy ?? undefined,
@@ -141,11 +144,19 @@ export function genericPrepareTransaction(
         : computeUseAllAmount(estimation, getNativeSpendableAfterPending(account));
     }
 
+    // Part of the identity check: the fee *value* can hold while the breakdown behind it moves (a
+    // different recipient can change what a chain charges without changing the total), and a restored
+    // transaction has persisted fees but no `feeParameters` — returning early leaves it stale or unset.
+    // Normalised to a JSON-safe record (bigint → string) because this bag rides on the live
+    // transaction the swap flow serialises with `JSON.stringify`, which throws on a raw bigint.
+    const nextFeeParameters = feeParametersToJsonSafe(estimation.parameters);
+
     if (
       bnEq(transaction.fees, fees) &&
       bnEq(transaction.amount, nextAmount) &&
       (transaction.assetReference ?? "") === assetReference &&
-      (transaction.assetOwner ?? "") === assetOwner
+      (transaction.assetOwner ?? "") === assetOwner &&
+      isEqual(transaction.feeParameters, nextFeeParameters)
     ) {
       return transaction;
     }
@@ -161,6 +172,12 @@ export function genericPrepareTransaction(
           fees: customParametersFees ? new BigNumber(customParametersFees.toString()) : undefined,
         },
       },
+      // Assigned wholesale, never merged: an estimation returning no parameters clears the previous
+      // figures rather than leaving them to be read as current for a new amount. A custom fee that
+      // skips estimation clears them for the same reason — the breakdown belongs to a fee this
+      // transaction no longer uses. A custom fee *with* send-max still estimates (the max amount
+      // needs it), and keeps the breakdown that estimation produced.
+      feeParameters: nextFeeParameters,
     };
 
     // Propagate needed fields
