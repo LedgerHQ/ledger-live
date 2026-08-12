@@ -1,10 +1,9 @@
 import React, { useCallback, useEffect, useState, useMemo } from "react";
-import Animated, { useSharedValue, useAnimatedStyle, withTiming } from "react-native-reanimated";
+import { ScrollView } from "react-native";
 import storage from "LLM/storage";
 import QueuedDrawer from "~/components/QueuedDrawer";
 import InitMessage from "./InitMessage";
 import ConfirmUnverified from "./ConfirmUnverified";
-import { LayoutChangeEvent } from "react-native";
 
 const shouldNotRemindUserAgainToVerifyAddressOnReceive =
   "shouldNotRemindUserAgainToVerifyAddressOnReceive";
@@ -42,27 +41,10 @@ const ReceiveSecurityModal = ({
 
   const [step, setStep] = useState("initMessage");
 
-  // UPGRADE-RN77:
-  // It should already be animated by the `react-native-modal` but currently `react-native-modal`
-  // is not maintained and its animation dependency too. The internal animation is flaky and not
-  // working properly on Android. So, we are using reanimated to enforce redraw after animation.
-  const sharedHeight = useSharedValue(0);
-  const onLayout = useCallback(({ nativeEvent: { layout } }: LayoutChangeEvent) => {
-    sharedHeight.value = withTiming(layout.height, { duration: 200 });
-    // oxlint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-  const animatedStyle = useAnimatedStyle(
-    () => ({
-      height: sharedHeight.value,
-    }),
-    [sharedHeight],
-  );
-
   const closeModal = useCallback(() => {
     setIsModalOpen(false);
     setStep("initMessage");
-    sharedHeight.value = 0;
-  }, [setIsModalOpen, sharedHeight]);
+  }, []);
 
   const onVerify = useCallback(() => {
     closeModal();
@@ -92,9 +74,7 @@ const ReceiveSecurityModal = ({
       noCloseButton
       preventBackdropClick
     >
-      <Animated.ScrollView style={animatedStyle}>
-        <Animated.View onLayout={onLayout}>{component}</Animated.View>
-      </Animated.ScrollView>
+      <ScrollView>{component}</ScrollView>
     </QueuedDrawer>
   );
 };
