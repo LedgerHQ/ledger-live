@@ -20,11 +20,9 @@ export function useLNSUpsellBannerModel(location: LNSBannerLocation): LNSBannerM
   const state = useLNSUpsellBannerState(location);
   const { shouldDisplayBrazePlacement } = useWalletFeaturesConfig("desktop");
 
-  const { "%": discount, link: ctaLink, img } = state.params ?? {};
+  const { ctaLink, discountPercent: discount } = state;
   const analyticsPage = AnalyticsPageMap[location];
-
-  const imageUrl =
-    typeof img === "string" && img.length > 0 ? img : lnsUpsellImageByLocation[location];
+  const imageUrl = lnsUpsellImageByLocation[location];
 
   const handleCTAClick = () => {
     track("button_clicked", {
@@ -36,7 +34,7 @@ export function useLNSUpsellBannerModel(location: LNSBannerLocation): LNSBannerM
   };
 
   const tracking = state.tracking;
-  const variant = getVariant(location, state, imageUrl);
+  const variant = getVariant(location, state);
 
   return {
     location,
@@ -58,11 +56,7 @@ const AnalyticsPageMap = {
   notification_center: "NotificationPanel",
 } as const satisfies Record<LNSBannerLocation, unknown>;
 
-function getVariant(
-  location: LNSBannerLocation,
-  state: LNSBannerState,
-  imageUrl: string,
-): LNSBannerModel["variant"] {
+function getVariant(location: LNSBannerLocation, state: LNSBannerState): LNSBannerModel["variant"] {
   if (!state.isShown) return { type: "none" };
 
   if (state.tracking === "opted_out" || location === "notification_center") {
@@ -70,5 +64,5 @@ function getVariant(
     return { type: "notification", icon };
   }
 
-  return { type: "banner", image: imageUrl };
+  return { type: "banner" };
 }
