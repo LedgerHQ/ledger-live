@@ -61,6 +61,24 @@ describe("ContactDetailView", () => {
     ).toBeInTheDocument();
   });
 
+  it("should truncate a long saved contact name within the detail header", () => {
+    const name = "Z".repeat(64);
+
+    render(
+      <ContactDetailView
+        {...defaultProps}
+        contact={mockContact({ id: "contact-long-name", name })}
+      />,
+    );
+
+    expect(screen.getByTestId("contacts-detail-name")).toHaveTextContent(name);
+    expect(screen.getByTestId("contacts-detail-name")).toHaveClass(
+      "min-w-0",
+      "max-w-full",
+      "truncate",
+    );
+  });
+
   it("should render populated address rows when provided", () => {
     const contact = mockContact({
       id: "contact-benoit",

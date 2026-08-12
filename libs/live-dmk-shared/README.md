@@ -16,6 +16,8 @@ Platform-agnostic shared logic for the Ledger Device Management Kit (DMK) integr
   - `UserHashService` — hashed user identifier for DMK telemetry
 - `DeviceIntentTrackingProvider` / `useDeviceIntentTracking` — shared context contract for
   platform-specific Device Intent Executor tracking
+- `DeviceIntentExecutorHeaderContext` / `OverrideDeviceIntentExecutorHeader` — shared
+  header-override contract for platform-specific Device Intent Executor chrome
 - Centralises DMK configuration
 
 ## Key exports / concepts

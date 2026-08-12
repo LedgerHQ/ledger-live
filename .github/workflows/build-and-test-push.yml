@@ -74,6 +74,38 @@ jobs:
     uses: LedgerHQ/ledger-live/.github/workflows/test-features-reusable.yml@develop
     secrets: inherit
 
+  test-shared:
+    name: "Test Shared"
+    permissions:
+      id-token: write
+      contents: read
+    uses: LedgerHQ/ledger-live/.github/workflows/test-shared-reusable.yml@develop
+    secrets: inherit
+
+  test-domain:
+    name: "Test Domain"
+    permissions:
+      id-token: write
+      contents: read
+    uses: LedgerHQ/ledger-live/.github/workflows/test-domain-reusable.yml@develop
+    secrets: inherit
+
+  test-devtools:
+    name: "Test DevTools"
+    permissions:
+      id-token: write
+      contents: read
+    uses: LedgerHQ/ledger-live/.github/workflows/test-devtools-reusable.yml@develop
+    secrets: inherit
+
+  test-support:
+    name: "Test Support"
+    permissions:
+      id-token: write
+      contents: read
+    uses: LedgerHQ/ledger-live/.github/workflows/test-support-reusable.yml@develop
+    secrets: inherit
+
   test-design-system:
     name: "Test UI Libs"
     permissions:
@@ -109,6 +141,27 @@ jobs:
     uses: LedgerHQ/ledger-live/.github/workflows/build-wallet-cli-reusable.yml@develop
     secrets: inherit
 
+  test-additional:
+    name: "Test Additional"
+    uses: LedgerHQ/ledger-live/.github/workflows/test-additional.yml@develop
+    secrets: inherit
+
+  test-mobile-e2e-lint:
+    name: "Mobile E2E Lint & Typecheck"
+    permissions:
+      id-token: write
+      contents: read
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-e2e-lint-reusable.yml@develop
+    secrets: inherit
+
+  test-desktop-e2e-lint:
+    name: "Desktop E2E Lint & Typecheck"
+    permissions:
+      id-token: write
+      contents: read
+    uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-e2e-lint-reusable.yml@develop
+    secrets: inherit
+
   # Final Check required
   ok:
     name: "OK"
@@ -120,10 +173,17 @@ jobs:
       - build-test-mobile
       - test-libraries
       - test-features
+      - test-shared
+      - test-domain
+      - test-devtools
+      - test-support
       - test-design-system
       - build-web-tools
       - test-cli
       - build-wallet-cli
+      - test-additional
+      - test-mobile-e2e-lint
+      - test-desktop-e2e-lint
     runs-on: ubuntu-22.04
     if: always() && !cancelled()
     steps:

@@ -3,7 +3,7 @@ import { BigNumber } from "bignumber.js";
 import { View, StyleSheet } from "react-native";
 import { useTranslation } from "~/context/Locale";
 import { Account } from "@ledgerhq/types-live";
-import type { Transaction } from "@ledgerhq/coin-evm/types/index";
+import type { Transaction } from "@ledgerhq/live-common/families/evm/types";
 import { useNavigation, useRoute, useTheme } from "@react-navigation/native";
 import { toLocaleString } from "@ledgerhq/live-common/currencies/index";
 import { Navigation, RouteProps } from "./EvmCustomFees/types";

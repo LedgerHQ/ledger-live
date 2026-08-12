@@ -6,7 +6,7 @@ import {
   TokenCurrencySchema,
 } from "@domain/entity-currency-token";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
-import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
+import { Transaction as EvmTransaction } from "@ledgerhq/live-common/families/evm/types";
 import { getWalletAPITransactionSignFlowInfos } from "@ledgerhq/live-common/wallet-api/converters";
 import { WalletAPITransaction } from "@ledgerhq/live-common/wallet-api/types";
 import { getPlatformTransactionSignFlowInfos } from "@ledgerhq/live-common/platform/converters";

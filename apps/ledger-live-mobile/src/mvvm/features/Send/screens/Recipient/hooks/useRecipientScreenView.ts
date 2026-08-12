@@ -1,10 +1,14 @@
+import { useContactsFeature } from "@features/flow-contacts";
+import { useContacts } from "@features/platform-contacts";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { useRecipientSearchState } from "@ledgerhq/live-common/flows/send/recipient/hooks/useRecipientSearchState";
+import { hasContactsOnNetwork } from "@ledgerhq/live-common/flows/send/recipient/utils/hasContactsOnNetwork";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { useSendFlowData } from "../../../context/SendFlowContext";
 import { useAddressValidation } from "./useAddressValidation";
 import { useClipboardRecipient } from "./useClipboardRecipient";
@@ -27,8 +31,11 @@ export function useRecipientScreenView({
   recipientSupportsDomain,
 }: UseRecipientScreenViewProps) {
   const { recipientSearch } = useSendFlowData();
+  const contacts = useContacts();
+  const { isEnabled: isContactsFeatureEnabled } = useContactsFeature("mobile");
 
   const mainAccount = getMainAccount(account, parentAccount);
+  const hasAddressBook = sendFeatures.hasAddressBook(currency);
 
   const { result, isLoading } = useAddressValidation({
     searchValue: recipientSearch.value,
@@ -42,6 +49,13 @@ export function useRecipientScreenView({
 
   const hasSearchValue = recipientSearch.value.length > 0;
   const showInitialState = !hasSearchValue;
+  const showEmptyContactsState = useMemo(() => {
+    if (!showInitialState || !isContactsFeatureEnabled || !hasAddressBook) {
+      return false;
+    }
+
+    return !hasContactsOnNetwork(contacts, currency.id);
+  }, [contacts, currency.id, hasAddressBook, isContactsFeatureEnabled, showInitialState]);
 
   const { clipboardAddress } = useClipboardRecipient({
     enabled: showInitialState,
@@ -79,6 +93,7 @@ export function useRecipientScreenView({
     result,
     mainAccount,
     showInitialState,
+    showEmptyContactsState,
     clipboardAddress,
     handlePasteFromClipboard,
     handleAddressSelect,

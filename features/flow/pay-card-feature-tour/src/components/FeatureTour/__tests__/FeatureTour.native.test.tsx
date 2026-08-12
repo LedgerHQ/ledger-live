@@ -15,16 +15,20 @@ const CONTENT: FeatureTourContent = {
   description: "Stablecoin closes the gap between crypto and real life spending",
   ctaLabel: "Got it",
   rows: [
-    { icon: "Globe", title: "Spend everywhere", description: "Use your balance around the world" },
     {
-      icon: "Chart2",
-      title: "Beat volatility",
-      description: "Hold stablecoins pegged to the dollar",
+      icon: "Globe",
+      title: "Pay and get paid globally",
+      description: "Benefits from low networks fees",
+    },
+    {
+      icon: "Chart5",
+      title: "Minimal volatility",
+      description: "Stablecoin are based on fiat",
     },
     {
       icon: "CreditCard",
-      title: "Earn cashback",
-      description: "Spend with a card and get 1% cashback",
+      title: "Spend with a card and get 1% cashback",
+      description: "Pay in USDC, USDT, BTC, ETH and more",
     },
   ],
 };

@@ -63,7 +63,7 @@ import type {
   TransactionRaw as evmTransactionRaw,
   TransactionStatus as evmTransactionStatus,
   TransactionStatusRaw as evmTransactionStatusRaw,
-} from "@ledgerhq/coin-evm/types/index";
+} from "../families/evm/types";
 import type {
   Transaction as filecoinTransaction,
   TransactionRaw as filecoinTransactionRaw,

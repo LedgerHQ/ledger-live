@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen } from "@tests/test-renderer";
-import { CONTACTS_FEATURE_INTRODUCTION_HIGHLIGHTS } from "@features/flow-contacts";
+import { CONTACTS_FEATURE_INTRODUCTION_HIGHLIGHTS } from "@features/flow-contacts-introduction";
 import { ContactsFeatureIntroductionSheet } from ".";
 
 const highlights = CONTACTS_FEATURE_INTRODUCTION_HIGHLIGHTS.map(({ icon, translationKey }) => ({

@@ -28,7 +28,7 @@ catalog:
   "@ledgerhq/device-signer-kit-aleo": 0.4.0
   "@ledgerhq/device-signer-kit-concordium": 0.4.0
   "@ledgerhq/device-signer-kit-ethereum": 1.16.0
-  "@ledgerhq/device-signer-kit-hyperliquid": 1.1.0
+  "@ledgerhq/device-signer-kit-hyperliquid": 0.0.0-hyperliquid-unified-20260728150448
   "@ledgerhq/device-signer-kit-solana": 1.11.0
   "@ledgerhq/device-signer-kit-cosmos": 1.0.1
   "@ledgerhq/device-signer-kit-icp": 0.2.0
@@ -39,11 +39,11 @@ catalog:
   "@ledgerhq/device-transport-kit-web-hid": 1.2.4
   "@ledgerhq/speculos-device-controller": 0.3.0
   "@ledgerhq/logs": 6.17.0
-  "@ledgerhq/lumen-design-core": 0.1.23
-  "@ledgerhq/lumen-ui-react": 0.1.49
-  "@ledgerhq/lumen-ui-rnative": 0.1.52
-  "@ledgerhq/lumen-ui-rnative-visualization": 0.1.29
-  "@ledgerhq/lumen-ui-react-visualization": 0.1.28
+  "@ledgerhq/lumen-design-core": 0.1.24
+  "@ledgerhq/lumen-ui-react": 0.1.51
+  "@ledgerhq/lumen-ui-rnative": 0.1.54
+  "@ledgerhq/lumen-ui-rnative-visualization": 0.1.31
+  "@ledgerhq/lumen-ui-react-visualization": 0.1.30
   "@ledgerhq/lumen-utils-shared": "0.1.7"
   # Wallet API
   "@ledgerhq/wallet-api-client": 1.15.3

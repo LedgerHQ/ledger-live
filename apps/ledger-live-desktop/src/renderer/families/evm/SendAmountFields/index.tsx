@@ -1,4 +1,5 @@
-import { Transaction as EvmTransaction, Strategy } from "@ledgerhq/coin-evm/types/index";
+import { Transaction as EvmTransaction } from "@ledgerhq/live-common/families/evm/types";
+import { Strategy } from "@ledgerhq/coin-evm/types/index";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { useGasOptions } from "@ledgerhq/live-common/families/evm/react";
 import { log } from "@ledgerhq/logs";

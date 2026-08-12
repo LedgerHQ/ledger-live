@@ -59,6 +59,7 @@ describe("transaction serialization", () => {
     useAllAmount: false,
     sender: "private",
     recipientType: "public",
+    selfTransfer: true,
     memo: "for coffee",
     zcashFee: "15000",
     changeAmount: "5000",
@@ -73,7 +74,12 @@ describe("transaction serialization", () => {
 
     expect(tx.zcashFee).toEqual(new BigNumber(15_000));
     expect(tx.changeAmount).toEqual(new BigNumber(5_000));
-    expect(tx).toMatchObject({ sender: "private", recipientType: "public", memo: "for coffee" });
+    expect(tx).toMatchObject({
+      sender: "private",
+      recipientType: "public",
+      selfTransfer: true,
+      memo: "for coffee",
+    });
   });
 
   // An empty memo is a memo: the recipient gets an empty one rather than none,
@@ -86,7 +92,7 @@ describe("transaction serialization", () => {
 
   // The optional fields are spread conditionally, so an absent one must stay
   // absent rather than round-trip as an explicit `undefined`.
-  it.each(["sender", "recipientType", "memo", "zcashFee", "changeAmount"] as const)(
+  it.each(["sender", "recipientType", "selfTransfer", "memo", "zcashFee", "changeAmount"] as const)(
     "leaves %s out when it was never set",
     field => {
       const { [field]: _omitted, ...withoutField } = raw;

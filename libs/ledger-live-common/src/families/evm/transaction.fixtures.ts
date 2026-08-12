@@ -8,7 +8,7 @@ import type {
   Transaction as EvmTransaction,
   EvmNftTransaction,
   EvmNftTransactionRaw,
-} from "@ledgerhq/coin-evm/types/index";
+} from "./types";
 import { makeTokenAccount } from "./common.fixtures";
 import usdcTokenData from "./ethereum-erc20-usd__coin.json";
 

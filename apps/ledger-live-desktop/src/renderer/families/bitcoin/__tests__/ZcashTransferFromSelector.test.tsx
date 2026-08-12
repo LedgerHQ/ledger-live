@@ -195,4 +195,10 @@ describe("ZcashTransferFromSelector", () => {
     renderSelector(buildAccount({}, false), {});
     expect(screen.queryByTestId("zcash-transfer-from-selector")).not.toBeInTheDocument();
   });
+
+  it("does not render the self-transfer toggle (now a sibling slot above the recipient input)", () => {
+    renderSelector(buildAccount(), {});
+    expect(screen.getByTestId("zcash-transfer-from-selector")).toBeVisible();
+    expect(screen.queryByTestId("zcash-self-transfer-toggle")).not.toBeInTheDocument();
+  });
 });

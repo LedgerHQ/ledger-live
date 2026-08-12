@@ -7,8 +7,6 @@ export * from "./steps/EditAddress";
 export * from "./steps/EditAddress/native";
 export * from "./steps/AddAddress";
 export * from "./steps/AddAddress/native";
-export * from "./steps/Introduction";
-export * from "./steps/Introduction/native";
 export * from "./steps/Detail";
 export * from "./steps/Detail/native";
 export * from "./components/index.native";

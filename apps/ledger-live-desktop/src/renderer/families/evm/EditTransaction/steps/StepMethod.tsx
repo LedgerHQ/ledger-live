@@ -1,4 +1,4 @@
-import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
+import { Transaction as EvmTransaction } from "@ledgerhq/live-common/families/evm/types";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import React, { memo } from "react";

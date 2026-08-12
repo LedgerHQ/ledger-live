@@ -51,7 +51,7 @@ function getNetworkFeesInfo({
 
 export const descriptor: CoinDescriptor = {
   send: {
-    addressBook: true,
+    addressBook: false,
     inputs: {},
     fees: {
       hasPresets: false,
