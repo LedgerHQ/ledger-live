@@ -14,7 +14,6 @@ import {
 import { getCoinConfig } from "../../config";
 import { GasEstimationError, InsufficientFunds, UnsupportedRpcMethodError } from "../../errors";
 import { makeAccount } from "../../fixtures/common.fixtures";
-import { EvmTransactionLegacy, EvmTransactionEIP1559 } from "../../types";
 import {
   createNodeApi,
   DEFAULT_RETRIES_RPC_METHODS,
@@ -704,11 +703,8 @@ describe("EVM Family", () => {
         await nodeApi.getGasEstimation(account, {
           recipient: "0x0000000000000000000000000000000000000000",
           amount: new BigNumber(2),
-          gasLimit: new BigNumber(0),
-          gasPrice: new BigNumber(0),
           data: Buffer.from(""),
-          type: 0,
-        } as EvmTransactionLegacy),
+        }),
       ).toEqual(new BigNumber(5));
     });
 
@@ -733,7 +729,7 @@ describe("EVM Family", () => {
   });
 
   describe("getFeeData", () => {
-    const eip1559Tx: EvmTransactionEIP1559 = {
+    const eip1559Tx = {
       amount: new BigNumber(100),
       useAllAmount: false,
       recipient: "0xlmb",
@@ -1053,7 +1049,7 @@ describe("EVM Family", () => {
       });
     });
 
-    const legacyTx: EvmTransactionLegacy = {
+    const legacyTx = {
       amount: new BigNumber(100),
       useAllAmount: false,
       recipient: "0xlmb",
@@ -1702,11 +1698,8 @@ describe("EVM Family", () => {
         await nodeApi.getGasEstimation(account, {
           recipient: EIP1191_RECIPIENT,
           amount: new BigNumber(1000),
-          gasLimit: new BigNumber(0),
-          gasPrice: new BigNumber(0),
           data: Buffer.from(""),
-          type: 0,
-        } as EvmTransactionLegacy);
+        });
 
         // Verify the 'to' address was normalized (recipient)
         // Note: ethers internally re-checksums addresses in the transaction object,

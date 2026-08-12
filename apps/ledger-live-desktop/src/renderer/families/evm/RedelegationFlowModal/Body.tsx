@@ -10,7 +10,7 @@ import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index"
 import Track from "~/renderer/analytics/Track";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
-import type { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
+import type { Transaction as EvmTransaction } from "@ledgerhq/live-common/families/evm/types";
 import { useStakingContractAddress } from "@ledgerhq/live-common/families/evm/staking/react";
 import { StepId, StepProps, St } from "./types";
 import { Account, Operation } from "@ledgerhq/types-live";

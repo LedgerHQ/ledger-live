@@ -65,12 +65,12 @@ const AssetSelection = ({
   const source = useSelector(modularDrawerSourceSelector);
 
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
-  const { collapse, snapToIndex } = useBottomSheet();
+  const { collapse, expand } = useBottomSheet();
   const listRef = useRef<FlatList>(null);
 
   const expandToFullHeight = () => {
     if (formattedAssets.length > 0) {
-      snapToIndex(1);
+      expand();
       listRef.current?.scrollToIndex({ index: 0 });
     }
   };

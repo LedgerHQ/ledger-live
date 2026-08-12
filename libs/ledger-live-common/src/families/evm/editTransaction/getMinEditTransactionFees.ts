@@ -1,6 +1,6 @@
 import { getEnv } from "@shared/env";
 import { BigNumber } from "bignumber.js";
-import type { Transaction } from "@ledgerhq/coin-evm/types/transaction";
+import type { Transaction } from "../types";
 
 /**
  * Returns the minimum fees values to update a legacy transaction

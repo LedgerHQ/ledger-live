@@ -152,6 +152,18 @@ function getSync(currency: CryptoCurrency) {
     );
 }
 
+const ACCOUNT_SYNC_TIMEOUT_MS = 10 * 60 * 1000; // 10 minutes per scan or sync phase
+
+function withTimeout<T>(promise: Promise<T>, label: string): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    const timer = setTimeout(
+      () => reject(new Error(`${label} timed out after ${ACCOUNT_SYNC_TIMEOUT_MS / 1000}s`)),
+      ACCOUNT_SYNC_TIMEOUT_MS,
+    );
+    promise.then(resolve, reject).finally(() => clearTimeout(timer));
+  });
+}
+
 export default async function (currencyIds: string[], accountTypes: AccountType[]) {
   registerAllCoins();
 
@@ -207,7 +219,10 @@ export default async function (currencyIds: string[], accountTypes: AccountType[
           callsByDomain: scanRoutes,
           cpu: scanCpu,
           memory: scanMem,
-        } = await measureCalls(() => sync(toEmptyAccount(currency, info)));
+        } = await withTimeout(
+          measureCalls(() => sync(toEmptyAccount(currency, info))),
+          `${currencyId}/${accountType} scan`,
+        );
         const endScan = Date.now();
 
         const startSync = Date.now();
@@ -216,7 +231,10 @@ export default async function (currencyIds: string[], accountTypes: AccountType[
           callsByDomain: syncRoutes,
           cpu: syncCpu,
           memory: syncMem,
-        } = await measureCalls(() => sync(initialAccount));
+        } = await withTimeout(
+          measureCalls(() => sync(initialAccount)),
+          `${currencyId}/${accountType} sync`,
+        );
         const endSync = Date.now();
 
         const scanDuration = endScan - startScan;

@@ -869,6 +869,25 @@
     "exploreCryptoCardsDescription": "Explore our crypto cards and find the one that suits you best."
   },
   "payTab": {
+    "featureTour": {
+      "title": "Pay and get paid",
+      "description": "Stablecoin closes the gap between crypto and real life spending",
+      "cta": "Got it",
+      "rows": {
+        "global": {
+          "title": "Pay and get paid globally",
+          "description": "Benefits from low networks fees"
+        },
+        "volatility": {
+          "title": "Minimal volatility",
+          "description": "Stablecoin are based on fiat"
+        },
+        "card": {
+          "title": "Spend with a card and get 1% cashback",
+          "description": "Pay in USDC, USDT, BTC, ETH and more"
+        }
+      }
+    },
     "balance": {
       "emptyTitle": "Pay and get paid",
       "emptyDescription": "Start by depositing stablecoin to your wallet"
@@ -2502,6 +2521,10 @@
         "description": "Your recent history allows you to instantly see if you’ve already sent to a specific address or not. This could prevent potential copy/paste errors or hacks. Your history contains the last 12 addresses you sent crypto to using Ledger Wallet.",
         "cta": "Got it"
       }
+    },
+    "addContact": {
+      "newContact": "Add a new contact",
+      "existingContact": "Add to an existing contact"
     },
     "relativeDate": {
       "justNow": "Just now",

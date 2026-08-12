@@ -1,12 +1,12 @@
 import type { ChangeEvent } from "react";
 import type { ContactId } from "@domain/entity-contact";
 import type { ContactsListViewLabels, ContactsPageViewModel } from "@features/flow-contacts-list";
-import type { ContactDetailViewProps } from "./steps/Detail/types";
 import type {
   ContactsFeatureIntroduction,
   ContactsLedgerSyncIntroduction,
-} from "./steps/Introduction/types";
-import type { ContactsLedgerSyncStatus } from "./ledgerSync";
+  ContactsLedgerSyncStatus,
+} from "@features/flow-contacts-introduction";
+import type { ContactDetailViewProps } from "./steps/Detail/types";
 
 type ContactsPageSharedProps = Readonly<{
   viewModel: ContactsPageViewModel;

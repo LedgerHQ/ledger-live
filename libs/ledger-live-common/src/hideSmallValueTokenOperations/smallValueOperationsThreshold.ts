@@ -225,6 +225,7 @@ export function isSmallValueOperation({
     to: userCounterValueCurrency,
     value: operation.value.toNumber(),
     disableRounding: true,
+    date: operation.date,
   });
 
   if (typeof rawOpFiatValue !== "number" || !Number.isFinite(rawOpFiatValue)) return false;

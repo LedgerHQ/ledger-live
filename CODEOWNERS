@@ -117,7 +117,12 @@ apps/ledger-live-mobile/src/screens/Portfolio/           @ledgerhq/wallet-xp
 
 # Wallet — Contacts
 domain/entity/contact/                                   @ledgerhq/wallet-xp
+features/platform/contacts/                               @ledgerhq/wallet-xp
 features/flow/contacts/                                  @ledgerhq/wallet-xp
+features/flow/flow-contacts-add-address/                  @ledgerhq/wallet-xp
+features/flow/flow-contacts-add-contact/                  @ledgerhq/wallet-xp
+features/flow/flow-contacts-introduction/                @ledgerhq/wallet-xp
+features/flow/flow-contacts-list/                         @ledgerhq/wallet-xp
 
 # Wallet — Pay Card
 features/flow/pay-card-balance/                          @ledgerhq/wallet-xp
@@ -178,6 +183,8 @@ apps/ledger-live-mobile/src/screens/SignTransaction/                @ledgerhq/co
 
 ### ... cryptoassets ongoing rework => the lib now belongs to @ledgerhq/wallet-xp (with currencies owned by @ledgerhq/coin-integration) ... ###
 domain/entity/currency-crypto/src/currencies/            @ledgerhq/coin-integration
+domain/entity/currency-token/src/                        @ledgerhq/coin-integration
+domain/api/currency-token/src/                           @ledgerhq/coin-integration
 libs/types-live/src/lnsUpsell.ts       @ledgerhq/engagement
 libs/types-live/src/postOnboarding.ts  @ledgerhq/engagement
 features/flow/large-screen-upsell/                       @ledgerhq/engagement

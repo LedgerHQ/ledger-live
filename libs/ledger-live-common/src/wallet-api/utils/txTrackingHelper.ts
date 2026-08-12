@@ -1,14 +1,12 @@
-import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/transaction";
+import type { Transaction as EvmTransaction } from "../../families/evm/types";
 import { DAPP_SELECTORS } from "@ledgerhq/hw-app-eth";
 
-const fallback = "transfer";
+const PLAIN_TRANSFER = "transfer";
+const UNRECOGNISED = "unknown";
 
 export const getTxType = (tx: EvmTransaction): string => {
-  if (!tx || !tx.data) return fallback;
+  if (!tx?.data?.length) return PLAIN_TRANSFER;
 
   const txSelector = `0x${tx.data.toString("hex").substring(0, 8)}`;
-  const type = DAPP_SELECTORS[txSelector];
-
-  if (!type) return fallback;
-  return type;
+  return DAPP_SELECTORS[txSelector] ?? UNRECOGNISED;
 };

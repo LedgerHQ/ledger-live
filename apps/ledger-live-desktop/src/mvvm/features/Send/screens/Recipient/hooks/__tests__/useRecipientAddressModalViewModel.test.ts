@@ -24,6 +24,9 @@ import { mockContact, mockContactAddress } from "@domain/entity-contact/schema.m
 jest.mock("../useAddressValidation");
 jest.mock("../useAddressMatchedSectionViewModel");
 jest.mock("../../../../context/SendFlowContext");
+jest.mock("../../../../../FlowWizard/FlowWizardContext", () => ({
+  useFlowWizard: () => ({ navigation: { goToStep: jest.fn() } }),
+}));
 jest.mock("@ledgerhq/live-common/account/index");
 jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features");
 jest.mock("@features/platform-contacts");

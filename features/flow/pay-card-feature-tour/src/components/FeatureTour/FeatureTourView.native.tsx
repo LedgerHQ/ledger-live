@@ -1,6 +1,8 @@
-import React, { useCallback, useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Image, type ImageSourcePropType } from "react-native";
 import {
+  BottomSheetHeader,
+  BottomSheetView,
   Box,
   Button,
   ListItem,
@@ -27,67 +29,83 @@ export function FeatureTourView({
   onDismiss,
 }: FeatureTourViewProps) {
   const dismissed = useRef(false);
-  const shown = useRef(false);
+  const onShownRef = useRef(onShown);
+  onShownRef.current = onShown;
+  const [isOpen, setIsOpen] = useState(isVisible);
 
   useEffect(() => {
-    if (isVisible && !shown.current) {
-      shown.current = true;
-      onShown();
+    if (isVisible) {
+      dismissed.current = false;
+      setIsOpen(true);
+      onShownRef.current();
     }
-  }, [isVisible, onShown]);
+  }, [isVisible]);
 
   const handleDismiss = useCallback(() => {
     if (dismissed.current) {
       return;
     }
     dismissed.current = true;
+    setIsOpen(false);
     onDismiss();
   }, [onDismiss]);
 
-  if (!isVisible) {
-    return null;
-  }
-
   return (
     <QueuedBottomSheet
-      isRequestingToBeOpened={isVisible}
+      isRequestingToBeOpened={isOpen}
       onClose={handleDismiss}
       enableDynamicSizing
       testID="pay-feature-tour-sheet"
     >
-      <Box lx={{ padding: "s16", gap: "s24" }}>
-        <Image
-          source={heroImage as unknown as ImageSourcePropType}
-          resizeMode="cover"
-          style={{ width: "100%", height: 180, borderRadius: 16 }}
-        />
-        <Box lx={{ flexDirection: "column", gap: "s8" }}>
-          <Text typography="heading3">{title}</Text>
-          <Text typography="body2" lx={{ color: "muted" }}>
-            {description}
-          </Text>
-        </Box>
-        <Box lx={{ flexDirection: "column", gap: "s8" }}>
-          {rows.map((row, index) => {
-            const RowIcon = Icons[row.icon];
-            return (
-              <ListItem
-                key={`${row.icon}-${index}`}
-                testID={`pay-feature-tour-row-${row.icon}-${index}`}
-              >
-                <ListItemLeading>{RowIcon ? <RowIcon size={24} /> : null}</ListItemLeading>
-                <ListItemContent>
-                  <ListItemTitle>{row.title}</ListItemTitle>
-                  <ListItemDescription>{row.description}</ListItemDescription>
-                </ListItemContent>
-              </ListItem>
-            );
-          })}
-        </Box>
-        <Button appearance="base" size="lg" onPress={handleDismiss} accessibilityLabel={ctaLabel}>
-          {ctaLabel}
-        </Button>
-      </Box>
+      {isOpen ? (
+        <BottomSheetView>
+          <BottomSheetHeader density="expanded" />
+          <Box lx={{ paddingBottom: "s24", gap: "s16" }}>
+            <Image
+              source={heroImage as unknown as ImageSourcePropType}
+              resizeMode="cover"
+              style={{ width: "100%", height: 192, borderRadius: 24 }}
+            />
+            <Box lx={{ flexDirection: "column", gap: "s4" }}>
+              <Box lx={{ flexDirection: "column", gap: "s8" }}>
+                <Text typography="heading3SemiBold" lx={{ color: "base" }}>
+                  {title}
+                </Text>
+                <Text typography="body2" lx={{ color: "muted" }}>
+                  {description}
+                </Text>
+              </Box>
+              <Box lx={{ flexDirection: "column" }}>
+                {rows.map((row, index) => {
+                  const RowIcon = Icons[row.icon];
+                  return (
+                    <ListItem
+                      key={`${row.icon}-${index}`}
+                      testID={`pay-feature-tour-row-${row.icon}-${index}`}
+                    >
+                      <ListItemLeading>
+                        {RowIcon ? <RowIcon size={24} /> : null}
+                        <ListItemContent>
+                          <ListItemTitle>{row.title}</ListItemTitle>
+                          <ListItemDescription>{row.description}</ListItemDescription>
+                        </ListItemContent>
+                      </ListItemLeading>
+                    </ListItem>
+                  );
+                })}
+              </Box>
+            </Box>
+            <Button
+              appearance="base"
+              size="lg"
+              onPress={handleDismiss}
+              accessibilityLabel={ctaLabel}
+            >
+              {ctaLabel}
+            </Button>
+          </Box>
+        </BottomSheetView>
+      ) : null}
     </QueuedBottomSheet>
   );
 }

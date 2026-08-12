@@ -17,7 +17,7 @@ import { liveBlindSigningReporter } from "@ledgerhq/live-dmk-shared";
 import { AppManifest, WalletAPITransaction } from "./types";
 import { AccountPublicKeyUnavailable } from "../errors";
 import { createFixtureAccount, createFixtureTokenAccount } from "../mock/fixtures/cryptoCurrencies";
-import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
+import type { Transaction as EvmTransaction } from "../families/evm/types";
 import { OperationType, SignedOperation, TokenAccount } from "@ledgerhq/types-live";
 import { getWalletAccount } from "@ledgerhq/coin-bitcoin/getWalletAccount";
 import BigNumber from "bignumber.js";

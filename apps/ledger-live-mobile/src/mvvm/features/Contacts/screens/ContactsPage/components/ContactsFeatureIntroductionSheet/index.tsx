@@ -1,12 +1,12 @@
-import React, { useCallback, useEffect, useRef } from "react";
+import React from "react";
 import { Platform } from "react-native";
 import {
   ContactsFeatureIntroductionContent,
   type ContactsFeatureIntroduction,
-} from "@features/flow-contacts";
+  useContactsFeatureIntroductionActions,
+} from "@features/flow-contacts-introduction";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
-import { useSingleFireDismiss } from "LLM/features/Contacts/hooks/useSingleFireDismiss";
 
 export type ContactsFeatureIntroductionSheetProps = ContactsFeatureIntroduction;
 
@@ -17,29 +17,16 @@ export function ContactsFeatureIntroductionSheet({
   ...contentProps
 }: ContactsFeatureIntroductionSheetProps): React.JSX.Element {
   const { bottom: bottomInset } = useSafeAreaInsets();
-  const hasCompleted = useRef(false);
-  const defer = useSingleFireDismiss(onDefer, isOpen);
-  const complete = useSingleFireDismiss(() => {
-    hasCompleted.current = true;
-    onComplete();
-  }, isOpen);
-
-  useEffect(() => {
-    if (isOpen) {
-      hasCompleted.current = false;
-    }
-  }, [isOpen]);
-
-  const handleDrawerClose = useCallback(() => {
-    if (!hasCompleted.current) {
-      defer();
-    }
-  }, [defer]);
+  const { complete, defer, onClose } = useContactsFeatureIntroductionActions({
+    isOpen,
+    onComplete,
+    onDefer,
+  });
 
   return (
     <QueuedBottomSheet
       isRequestingToBeOpened={isOpen}
-      onClose={handleDrawerClose}
+      onClose={onClose}
       onHeaderClosePressed={defer}
       onBackdropPress={defer}
       testID="contacts-feature-introduction-drawer"

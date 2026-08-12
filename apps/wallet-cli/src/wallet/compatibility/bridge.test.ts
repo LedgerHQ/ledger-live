@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
 import { BigNumber } from "bignumber.js";
-import { getGasLimit } from "@ledgerhq/coin-evm/utils";
-import type { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
+import { getGasLimit } from "@ledgerhq/live-common/families/evm/utils";
+import type { Transaction as EvmTransaction } from "@ledgerhq/live-common/families/evm/types";
 import { applyEvmGasLimitMultiplier, BridgeAdapter, buildSolanaTransactionModel } from "./bridge";
 import type { TransactionIntent } from "../intents";
 import type { AccountDescriptor } from "../models";

@@ -13,6 +13,7 @@ type UseAddressMatchedSectionViewModelProps = Readonly<{
   searchResult: AddressSearchResult;
   searchValue: string;
   onSelect: (address: string, ensName?: string) => void;
+  onAddContact: () => void;
   isSanctioned?: boolean;
   isAddressComplete?: boolean;
   hasBridgeError?: boolean;
@@ -44,6 +45,7 @@ type RecipientCardSuggestion = Readonly<{
   addContactLabel: string;
   sendLabel: string;
   onSend: () => void;
+  onAddContact: () => void;
 }>;
 
 export type AddressMatchedSectionViewModel = Readonly<{
@@ -58,6 +60,7 @@ export function useAddressMatchedSectionViewModel({
   searchResult,
   searchValue,
   onSelect,
+  onAddContact,
   isSanctioned = false,
   isAddressComplete = false,
   hasBridgeError = false,
@@ -92,6 +95,7 @@ export function useAddressMatchedSectionViewModel({
         addContactLabel: t("contacts.addContact"),
         sendLabel: t("contacts.addressDetail.send"),
         onSend: () => onSelect(recipientAddress, searchResult.ensName),
+        onAddContact,
       },
       showFirstInteractionWarning: false,
     };
@@ -159,6 +163,7 @@ export function useAddressMatchedSectionViewModel({
           addContactLabel: t("contacts.addContact"),
           sendLabel: t("contacts.addressDetail.send"),
           onSend: () => onSelect(presentation.recipientAddress, presentation.ensName),
+          onAddContact,
         },
         showFirstInteractionWarning,
       };

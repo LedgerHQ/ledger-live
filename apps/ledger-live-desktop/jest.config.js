@@ -91,6 +91,8 @@ const commonConfig = {
   },
   moduleNameMapper,
   testPathIgnorePatterns,
+
+  moduleFileExtensions: ["web.tsx", "web.ts", "tsx", "ts", "js", "jsx", "json", "node"],
   setupFiles: ["jest-canvas-mock", "./jest.polyfills.js"],
   setupFilesAfterEnv: ["<rootDir>/tests/jestSetup.js"],
   moduleFileExtensions: ["web.tsx", "web.ts", "tsx", "ts", "js", "jsx", "json", "node"],

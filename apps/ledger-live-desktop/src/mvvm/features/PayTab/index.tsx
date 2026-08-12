@@ -6,12 +6,15 @@ import TrackPage from "~/renderer/analytics/TrackPage";
 import { openURL } from "~/renderer/linking";
 import PayTabHeader from "./components/PayTabHeader";
 import { usePayCardBalance } from "./hooks/usePayCardBalance";
+import { FeatureTour } from "@features/flow-pay-card-feature-tour";
+import { usePayTabFeatureTour } from "./usePayTabFeatureTour";
 
 const openHostedLogin = (loginUrl: string) => openURL(loginUrl, "");
 
 const PayTab = () => {
   const { t } = useTranslation();
   const balance = usePayCardBalance();
+  const featureTour = usePayTabFeatureTour();
 
   return (
     <div className="flex flex-col gap-24">
@@ -25,6 +28,7 @@ const PayTab = () => {
         }}
       />
       <CardLogin openHostedLogin={openHostedLogin} />
+      <FeatureTour {...featureTour} />
     </div>
   );
 };

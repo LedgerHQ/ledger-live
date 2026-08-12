@@ -722,6 +722,29 @@ describe("Contacts integration", () => {
     });
   });
 
+  it("should keep the currency selector usable when searching for a network", async () => {
+    const { user } = render(<ContactDetailAddressEntryTestApp />, {
+      navigationInitialState: contactDetailNavigationState,
+      overrideInitialState: withContactsPageReadyState({
+        lwmContacts: {
+          enabled: true,
+          params: { newBadge: false, eligibleAddressFamilies: ["evm"] },
+        },
+      }),
+    });
+
+    await user.press(screen.getByTestId("contacts-detail-add-address"));
+
+    const searchInput = await screen.findByTestId("modular-drawer-search-input");
+    await user.press(searchInput);
+    await user.type(searchInput, "ethereum");
+
+    await waitFor(() => {
+      expect(screen.getByTestId("modular-drawer-search-input")).toBeVisible();
+      expect(screen.getByText(/ethereum/i)).toBeVisible();
+    });
+  });
+
   it("should return to currency selection without removing the contact detail route", async () => {
     const { user } = render(<ContactDetailAddressEntryTestApp />, {
       navigationInitialState: contactDetailNavigationState,

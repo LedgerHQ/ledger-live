@@ -154,6 +154,16 @@ jobs:
     uses: LedgerHQ/ledger-live/.github/workflows/test-devtools-reusable.yml@develop
     secrets: inherit
 
+  test-support:
+    name: "Test Support"
+    permissions:
+      id-token: write
+      contents: read
+    needs: determine-affected
+    if: ${{contains(needs.determine-affected.outputs.paths, 'support') && !github.event.pull_request.head.repo.fork}}
+    uses: LedgerHQ/ledger-live/.github/workflows/test-support-reusable.yml@develop
+    secrets: inherit
+
   enforce-boundaries:
     name: "Enforce Module Boundaries"
     permissions:
@@ -289,6 +299,7 @@ jobs:
       - test-shared
       - test-domain
       - test-devtools
+      - test-support
       - test-design-system
       - build-web-tools
       - test-cli
