@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen } from "@testing-library/react-native";
 import { ContactIdSchema } from "@domain/entity-contact";
-import { ContactAvatar } from "./ContactAvatar.native";
+import { ContactAvatar } from "./ContactAvatar";
 
 describe("ContactAvatar", () => {
   it("should render the Lumen avatar in the list", () => {

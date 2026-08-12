@@ -2,7 +2,7 @@ import React from "react";
 import { render, screen } from "@testing-library/react";
 import { ContactIdSchema } from "@domain/entity-contact";
 import { getContactAvatarColorClass } from "../../utils/getContactAvatarColorClass";
-import { ContactAvatar } from "./ContactAvatar.web";
+import { ContactAvatar } from "./ContactAvatar";
 
 describe("ContactAvatar", () => {
   it("should bind a contact initial and stable color for the default list size", () => {
