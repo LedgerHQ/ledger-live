@@ -1,7 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { payCardApi, payCardApiExtra } from "./api";
 
-const valid = { payCardApiBaseUrl: "https://card.test" };
+const valid = { payCardApiBaseUrl: "https://card.test", payCardBaanxClientKey: "client-key" };
 
 // Captured at import time: the base query tests below inject into this same api object.
 const OWN_ENDPOINT_NAMES = Object.keys(payCardApi.endpoints);
@@ -21,14 +21,29 @@ describe("payCardApiExtra", () => {
     expect(payCardApiExtra(valid)).toEqual(valid);
   });
 
-  it("trims the base url", () => {
-    expect(payCardApiExtra({ payCardApiBaseUrl: " https://card.test " })).toEqual(valid);
+  it("trims the base url and the client key", () => {
+    expect(
+      payCardApiExtra({
+        payCardApiBaseUrl: " https://card.test ",
+        payCardBaanxClientKey: " client-key ",
+      }),
+    ).toEqual(valid);
   });
 
   it("throws when the base url is missing or blank", () => {
     // @ts-expect-error — payCardApiBaseUrl is required
-    expect(() => payCardApiExtra({})).toThrow();
-    expect(() => payCardApiExtra({ payCardApiBaseUrl: "  " })).toThrow();
+    expect(() => payCardApiExtra({ payCardBaanxClientKey: "client-key" })).toThrow();
+    expect(() =>
+      payCardApiExtra({ payCardApiBaseUrl: "  ", payCardBaanxClientKey: "client-key" }),
+    ).toThrow();
+  });
+
+  // An unset key must not keep the apps from starting: only the Card requests that need it fail.
+  it("accepts an empty client key", () => {
+    expect(payCardApiExtra({ ...valid, payCardBaanxClientKey: "" })).toEqual({
+      ...valid,
+      payCardBaanxClientKey: "",
+    });
   });
 });
 
@@ -62,13 +77,14 @@ describe("payCardBaseQuery", () => {
     expect(request(fetchSpy).url).toBe("https://card.test/probe");
   });
 
-  it("asks for json and sends no credentials", async () => {
+  it("asks for json, sends the client key and no credentials", async () => {
     fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({}));
 
     const { api, store } = probeStore(payCardApiExtra(valid));
     await store.dispatch(api.endpoints.probe.initiate());
 
     expect(request(fetchSpy).headers.get("accept")).toBe("application/json");
+    expect(request(fetchSpy).headers.get("x-client-key")).toBe("client-key");
     expect(request(fetchSpy).headers.get("authorization")).toBeNull();
   });
 

@@ -9,8 +9,7 @@ export const PayCardProviderSchema = z.enum(["baanx"]);
  */
 
 /**
- * Answer to the authorize initiation. The endpoint replies 302 by default; this flow asks for
- * `mode=api` so it receives the hosted-UI URL as JSON instead of `fetch` silently following it.
+ * Answer to the authorize initiation
  */
 export const PayCardAuthorizeInitiateResponseSchema = z.object({
   token: z.string().min(1),

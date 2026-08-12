@@ -6,4 +6,5 @@ import { z } from "zod";
  */
 export const PayCardApiExtraSchema = z.object({
   payCardApiBaseUrl: z.string().trim().min(1),
+  payCardBaanxClientKey: z.string().trim(),
 });

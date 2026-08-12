@@ -55,6 +55,12 @@ const teamPtx = {
     parser: stringParser,
     desc: "Pay Card API base URL (staging)",
   },
+  CARD_BAANX_CLIENT_KEY: {
+    // No default: the key is environment-specific and only the Card flow needs it.
+    def: "",
+    parser: stringParser,
+    desc: "Baanx public client key, sent as x-client-key on every Pay Card API request",
+  },
 };
 
 export default teamPtx;

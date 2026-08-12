@@ -66,6 +66,7 @@ export const store = configureStore({
             }),
             ...payCardApiExtra({
               payCardApiBaseUrl: getEnv("PAY_CARD_API_BASE_URL"),
+              payCardBaanxClientKey: getEnv("CARD_BAANX_CLIENT_KEY"),
             }),
             ...authApiExtra({
               authFeatureId: "lwmAuth",

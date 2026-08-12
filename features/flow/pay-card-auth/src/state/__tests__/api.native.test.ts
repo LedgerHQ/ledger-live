@@ -33,7 +33,10 @@ const makeStore = () =>
     middleware: gdm =>
       gdm({
         thunk: {
-          extraArgument: payCardApiExtra({ payCardApiBaseUrl: "https://card.test" }),
+          extraArgument: payCardApiExtra({
+            payCardApiBaseUrl: "https://card.test",
+            payCardBaanxClientKey: "client-key",
+          }),
         },
       }).concat(payCardApi.middleware),
   });
@@ -55,7 +58,7 @@ describe("payCardAuthApi", () => {
   });
 
   describe("initiateAuthorize", () => {
-    it("asks for a JSON answer and returns the hosted login URL", async () => {
+    it("sends the OAuth parameters and returns the hosted login URL", async () => {
       fetchSpy = jest
         .spyOn(globalThis, "fetch")
         .mockResolvedValue(jsonResponse({ token: "jwt", url: "https://card.test/login" }));
@@ -80,10 +83,9 @@ describe("payCardAuthApi", () => {
         state: "state-value",
         code_challenge: "challenge-value",
         code_challenge_method: "S256",
-        // Without this the endpoint answers 302 and `fetch` follows it instead of returning the URL.
-        mode: "api",
       });
-      expect(request(fetchSpy).headers.get("x-client-key")).toBe("");
+      // Set by the shared base query for every endpoint, not by this use case.
+      expect(request(fetchSpy).headers.get("x-client-key")).toBe("client-key");
       expect(result.data).toEqual({ token: "jwt", url: "https://card.test/login" });
     });
   });
@@ -140,9 +142,9 @@ describe("payCardAuthApi", () => {
 
       expect(request(fetchSpy).url).toBe("https://card.test/v1/auth/logout");
       expect(request(fetchSpy).method).toBe("POST");
-      // Both values are still the placeholders: `Headers` trims, so the empty token leaves "Bearer".
+      // The token is still the placeholder: `Headers` trims, so the empty value leaves "Bearer".
       expect(request(fetchSpy).headers.get("authorization")).toBe("Bearer");
-      expect(request(fetchSpy).headers.get("x-client-key")).toBe("");
+      expect(request(fetchSpy).headers.get("x-client-key")).toBe("client-key");
       expect(result.data).toEqual({ success: true });
     });
   });

@@ -44,6 +44,10 @@ const payCardBaseQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryE
     baseUrl: parsed.data.payCardApiBaseUrl,
     prepareHeaders: headers => {
       headers.set("accept", "application/json");
+      // Every endpoint of this API needs the client key (the backend answers 499 without it), so it
+      // belongs here rather than in each use case's `query`. The bearer token of authenticated
+      // endpoints does not: it is per-session and owned by the flow holding it.
+      headers.set("x-client-key", parsed.data.payCardBaanxClientKey);
       return headers;
     },
   })(args, api, extraOptions);

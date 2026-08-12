@@ -35,16 +35,11 @@ export type PayCardRefreshSessionRequest = {
 };
 
 /**
- * TODO(LIVE-34769): placeholders. The backend rejects any request without `x-client-key` (499) and an
- * authenticated one without a bearer token (401). Both belong in the base query's `prepareHeaders`
+ * TODO(LIVE-34769): placeholder until this flow owns the session it obtains below.
  */
-const CARD_BAANX_CLIENT_KEY = "";
 const PLACEHOLDER_ACCESS_TOKEN = "";
 
-const clientKeyHeaders = { "x-client-key": CARD_BAANX_CLIENT_KEY };
-
 const authenticatedHeaders = {
-  ...clientKeyHeaders,
   Authorization: `Bearer ${PLACEHOLDER_ACCESS_TOKEN}`,
 };
 
@@ -75,7 +70,6 @@ export const payCardAuthApi = payCardApi.injectEndpoints({
       query: ({ clientId, redirectUri, state, codeChallenge }) => ({
         url: "/v1/auth/oauth/authorize/initiate",
         method: "GET",
-        headers: clientKeyHeaders,
         params: {
           client_id: clientId,
           response_type: "code",
@@ -83,7 +77,6 @@ export const payCardAuthApi = payCardApi.injectEndpoints({
           state,
           code_challenge: codeChallenge,
           code_challenge_method: "S256",
-          mode: "api",
         },
       }),
       responseSchema: PayCardAuthorizeInitiateResponseSchema,
@@ -94,7 +87,6 @@ export const payCardAuthApi = payCardApi.injectEndpoints({
       query: ({ code, redirectUri, codeVerifier }) => ({
         url: "/v1/auth/oauth/token",
         method: "POST",
-        headers: clientKeyHeaders,
         body: {
           grant_type: "authorization_code",
           code,
@@ -112,7 +104,6 @@ export const payCardAuthApi = payCardApi.injectEndpoints({
       query: ({ refreshToken }) => ({
         url: "/v1/auth/oauth/token",
         method: "POST",
-        headers: clientKeyHeaders,
         body: {
           grant_type: "refresh_token",
           refresh_token: refreshToken,
