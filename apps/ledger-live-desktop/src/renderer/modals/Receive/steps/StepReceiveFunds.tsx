@@ -1,5 +1,5 @@
 import invariant from "invariant";
-import React, { useEffect, useCallback, useState } from "react";
+import React, { useEffect, useCallback, useRef, useState } from "react";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
@@ -215,13 +215,18 @@ const StepReceiveFunds = (props: StepProps) => {
   const [modalVisible, setModalVisible] = useState(false);
   const hideQRCodeModal = useCallback(() => setModalVisible(false), [setModalVisible]);
   const showQRCodeModal = useCallback(() => setModalVisible(true), [setModalVisible]);
+  // `isAddressVerified` stays `null` for the whole device confirmation, so without this latch a
+  // re-render would start a concurrent verification and break the ongoing one.
+  const isConfirmingRef = useRef(false);
+
   const confirmAddress = useCallback(async () => {
+    if (isConfirmingRef.current) return;
+    isConfirmingRef.current = true;
     try {
       if (getEnv("MOCK")) {
-        setTimeout(() => {
-          onChangeAddressVerified(true);
-          transitionTo("receive");
-        }, 3000);
+        await new Promise(resolve => setTimeout(resolve, 3000));
+        onChangeAddressVerified(true);
+        transitionTo("receive");
       } else {
         if (!device) {
           throw new DisconnectedDevice();
@@ -240,6 +245,8 @@ const StepReceiveFunds = (props: StepProps) => {
     } catch (err) {
       onChangeAddressVerified(false, err as Error);
       hideQRCodeModal();
+    } finally {
+      isConfirmingRef.current = false;
     }
   }, [device, mainAccount, transitionTo, onChangeAddressVerified, hideQRCodeModal]);
 
