@@ -21,7 +21,7 @@ export default class TopBarSearchPage {
     await retryUntilTimeout(async () => {
       if (await IsIdPresent(this.screenId)) return;
       await tapById(this.topBarSearchButtonId);
-      await waitForElementById(this.screenId, 5000, { checkVisibility: false });
+      await waitForElementById(this.screenId, 5000);
     });
     await waitForElementById(this.defaultSectionsId, undefined, {
       errorElementId: this.defaultsErrorId,
@@ -52,7 +52,7 @@ export default class TopBarSearchPage {
   @Step("Search for $0")
   async searchFor(query: string) {
     await typeTextById(this.searchInputId, query, false);
-    await waitForElementById(this.searchResultsId, 60000, {
+    await waitForElementById(this.searchResultsId, undefined, {
       checkVisibility: false,
     });
   }
@@ -65,7 +65,7 @@ export default class TopBarSearchPage {
   @Step("Expect first search result to be $0")
   async expectFirstResult(currencyId: string) {
     const expectedId = this.marketItemId(currencyId);
-    await waitForElementById(expectedId, undefined, { checkVisibility: false });
+    await waitForElementById(expectedId);
     const firstResultId = await getIdByRegexp(this.marketResultRegExp, 0);
     jestExpect(firstResultId).toBe(expectedId);
   }

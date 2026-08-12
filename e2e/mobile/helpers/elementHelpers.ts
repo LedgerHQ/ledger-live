@@ -214,9 +214,7 @@ export const NativeElementHelpers = {
 
   async isIdVisible(id: string | RegExp, timeout: number = 1_000): Promise<boolean> {
     try {
-      await waitFor(element(by.id(id)))
-        .toBeVisible()
-        .withTimeout(timeout);
+      await waitFor(NativeElementHelpers.getElementById(id)).toBeVisible().withTimeout(timeout);
       return true;
     } catch {
       return false;
@@ -225,9 +223,7 @@ export const NativeElementHelpers = {
 
   async isIdPresent(id: string | RegExp, timeout: number = 1_000): Promise<boolean> {
     try {
-      await waitFor(element(by.id(id)))
-        .toExist()
-        .withTimeout(timeout);
+      await waitFor(NativeElementHelpers.getElementById(id)).toExist().withTimeout(timeout);
       return true;
     } catch {
       return false;
@@ -309,16 +305,8 @@ export const NativeElementHelpers = {
     pixels?: number,
     direction?: Direction,
     androidDelay?: number,
-    visibilityPercentage?: number,
   ): Promise<void> {
-    await scroller.performScroll(
-      by.id(id),
-      scrollViewId,
-      pixels,
-      direction,
-      androidDelay,
-      visibilityPercentage,
-    );
+    await scroller.performScroll(by.id(id), scrollViewId, pixels, direction, androidDelay);
   },
 
   async scrollByPixels(

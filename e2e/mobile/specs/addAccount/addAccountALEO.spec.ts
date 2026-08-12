@@ -1,7 +1,6 @@
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "../../helpers/allure/allure-helper";
-import { DEFAULT_TIMEOUT } from "../../helpers/elementHelpers";
 
 const tmsLinks = ["B2CQA-4450", "B2CQA-4451", "B2CQA-4452"];
 const tags = ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@aleo", "@family-aleo"];
@@ -34,9 +33,7 @@ describe("Add account", () => {
 
     await app.addAccount.addAccountAtIndex(`${Currency.ALEO.name} 1`, Currency.ALEO.id, 0);
 
-    await waitForElementById("aleo-view-key-approve-screen", DEFAULT_TIMEOUT, {
-      checkVisibility: false,
-    });
+    await waitForElementById("aleo-view-key-approve-screen");
 
     await app.speculos.shareViewKey();
     await app.addAccount.tapCloseAddAccountCta();

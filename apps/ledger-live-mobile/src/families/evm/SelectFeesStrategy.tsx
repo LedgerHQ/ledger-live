@@ -249,6 +249,7 @@ export default function SelectFeesStrategy({
         )}
         <View style={styles.strategiesContainer}>
           <FlatList
+            testID="fees-strategy-list"
             data={customFees ? strategiesWithCustom : strategies}
             renderItem={renderItem}
             keyExtractor={s => s}

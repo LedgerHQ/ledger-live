@@ -115,7 +115,7 @@ export default class PortfolioPage {
   @Step("Expect asset row to have the correct counter value")
   async expectAssetRowCounterValue(asset: string, counterValue: string) {
     if (await isAggregatedAssetsEnabled()) {
-      await scrollToId(this.assetItemCountervalueId(asset));
+      await scrollToId(this.assetItemCountervalueId(asset), this.accountsListView);
       const text = await getTextOfElement(this.assetItemCountervalueId(asset));
       jestExpect(text).toContain(counterValue);
     } else {
@@ -212,18 +212,18 @@ export default class PortfolioPage {
 
   @Step("Check quick action buttons visibility")
   async checkQuickActionButtonsVisibility() {
-    await detoxExpect(getElementById(this.quickActionTransferButtonV4)).toBeVisible();
-    await detoxExpect(getElementById(this.quickActionSwapButtonV4)).toBeVisible();
-    await detoxExpect(getElementById(this.quickActionBuyButtonV4)).toBeVisible();
+    await waitForElementById(this.quickActionTransferButtonV4);
+    await waitForElementById(this.quickActionSwapButtonV4);
+    await waitForElementById(this.quickActionBuyButtonV4);
   }
 
   @Step("Check asset allocation section")
   async checkAssetAllocationSection() {
     if (await isAssetSectionEnabled()) {
-      await scrollToId(this.cryptosSectionHeaderId);
+      await scrollToId(this.cryptosSectionHeaderId, this.accountsListView);
       await detoxExpect(getElementById(this.cryptosSectionHeaderId)).toBeVisible();
     } else {
-      await scrollToId(this.showAllAssetsButton);
+      await scrollToId(this.showAllAssetsButton, this.accountsListView);
       const assetsCount = await countElementsById(this.assetItemRegExp);
       jestExpect(assetsCount).toBeLessThanOrEqual(5);
       await detoxExpect(getElementById(this.showAllAssetsButton)).toBeVisible();
@@ -261,16 +261,12 @@ export default class PortfolioPage {
   @Step("Navigate asset Page")
   async goToSpecificAsset(currencyName: string) {
     if (!(await isAssetSectionEnabled())) {
-      await scrollToId(this.assetsListId);
+      await scrollToId(this.assetsListId, this.accountsListView);
       if (await IsIdVisible(this.showAllAssetsButton)) {
         await tapById(this.showAllAssetsButton);
       }
     }
-    if (await isAggregatedAssetsEnabled()) {
-      await scrollToId(this.assetItemId(currencyName));
-    } else {
-      await scrollToId(this.assetItemId(currencyName), this.accountsListView);
-    }
+    await scrollToId(this.assetItemId(currencyName), this.accountsListView);
     await tapById(this.assetItemId(currencyName));
   }
 
@@ -314,7 +310,7 @@ export default class PortfolioPage {
     await waitForElementById(this.selectAssetsPageTitle);
     await detoxExpect(getElementById(this.selectAssetsPageTitle)).toBeVisible();
     await app.common.expectSearchBarVisible();
-    jestExpect(await countElementsById(this.bigCurrencyRowRegex)).toBeGreaterThan(6);
+    jestExpect(await countElements(getElementsById(this.bigCurrencyRowRegex))).toBeGreaterThan(6);
   }
 
   @Step("Open Earn tab from navigation bar")
@@ -332,8 +328,7 @@ export default class PortfolioPage {
 
   @Step("Expect market banner to be visible")
   async expectMarketBannerVisible(direction: "up" | "down" = "down") {
-    const scrollViewId = (await isAggregatedAssetsEnabled()) ? undefined : this.accountsListView;
-    await scrollToId(this.marketBannerTitle, scrollViewId, undefined, direction);
+    await scrollToId(this.marketBannerTitle, this.accountsListView, undefined, direction);
     await detoxExpect(getElementById(this.marketBannerList)).toBeVisible();
   }
 
@@ -377,51 +372,54 @@ export default class PortfolioPage {
 
   @Step("Swipe market banner to view all")
   async swipeMarketBannerToViewAll() {
-    await scrollToId(this.marketBannerViewAll, this.marketBannerList, 1000, "right");
+    await scrollToId(this.marketBannerViewAll, this.marketBannerList, undefined, "right");
   }
 
   @Step("Check quick action transfer button visibility")
   async checkQuickActionTransferButtonVisibility() {
-    await detoxExpect(getElementById(this.quickActionTransferButtonV4)).toBeVisible();
+    await waitForElementById(this.quickActionTransferButtonV4);
   }
 
   @Step("Check quick action swap button visibility")
   async checkQuickActionSwapButtonVisibility() {
-    await detoxExpect(getElementById(this.quickActionSwapButtonV4)).toBeVisible();
+    await waitForElementById(this.quickActionSwapButtonV4);
   }
 
   @Step("Check quick action buy button visibility")
   async checkQuickActionBuyButtonVisibility() {
-    await detoxExpect(getElementById(this.quickActionBuyButtonV4)).toBeVisible();
+    await waitForElementById(this.quickActionBuyButtonV4);
   }
 
   @Step("Press quick action buy button")
   async pressQuickActionBuyButton() {
+    await waitForElementById(this.quickActionBuyButtonV4);
     await tapById(this.quickActionBuyButtonV4);
   }
 
   @Step("Press quick action swap button")
   async pressQuickActionSwapButton() {
+    await waitForElementById(this.quickActionSwapButtonV4);
     await tapById(this.quickActionSwapButtonV4);
   }
 
   @Step("Press quick action transfer button")
   async pressQuickActionTransferButton() {
+    await waitForElementById(this.quickActionTransferButtonV4);
     await tapById(this.quickActionTransferButtonV4);
   }
   @Step("Check no balance title visibility")
   async checkNoBalanceTitleVisibility() {
-    await detoxExpect(getElementById(this.portfolioBalanceNoAccount)).toBeVisible();
+    await waitForElementById(this.portfolioBalanceNoAccount);
   }
 
   @Step("Check normal balance title visibility")
   async checkNormalBalanceTitleVisibility() {
-    await detoxExpect(getElementById(this.portfolioBalanceNormal)).toBeVisible();
+    await waitForElementById(this.portfolioBalanceNormal);
   }
 
   @Step("Check portfolio balance analytics pill visibility")
   async checkPortfolioBalanceAnalyticsPillVisibility() {
-    await detoxExpect(getElementById(this.portfolioBalanceAnalyticsPill)).toBeVisible();
+    await waitForElementById(this.portfolioBalanceAnalyticsPill);
   }
 
   @Step("Tap on portfolio balance analytics pill")
@@ -534,7 +532,7 @@ export default class PortfolioPage {
 
   @Step("Get aggregated asset row count")
   async getAggregatedAssetRowCount(currencyName: string) {
-    return await countElementsById(this.assetItemExactRegExp(currencyName));
+    return await countElements(getElementsById(this.assetItemExactRegExp(currencyName)));
   }
 
   @Step("Check asset countervalue is visible")
@@ -569,14 +567,16 @@ export default class PortfolioPage {
 
   @Step("Tap cryptos section title")
   async tapCryptosSectionTitle() {
-    await scrollToId(this.quickActionTransferButtonV4, this.accountsListView, 150, "up");
+    await waitForElementById(this.accountsListView);
+    await scrollToId(this.cryptosSectionHeaderId, this.accountsListView);
+    await detoxExpect(getElementById(this.cryptosSectionHeaderId)).toBeVisible();
     await tapById(this.cryptosSectionHeaderId);
   }
 
   @Step("Tap stablecoins section title")
   async tapStablecoinsSectionTitle() {
     await waitForElementById(this.accountsListView);
-    await scrollToId(this.stablecoinsSectionHeaderId, this.accountsListView, 700, "down");
+    await scrollToId(this.stablecoinsSectionHeaderId, this.accountsListView);
     await detoxExpect(getElementById(this.stablecoinsSectionHeaderId)).toBeVisible();
     await tapById(this.stablecoinsSectionHeaderId);
   }

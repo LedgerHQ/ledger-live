@@ -56,7 +56,7 @@ export default class ModularDrawer {
 
   @Step("Validate account(s) present on account list")
   async validateNumberOfAccounts(expectedCount: number) {
-    const elements = await countElementsById(this.accountItem);
+    const elements = await countElements(getElementsById(this.accountItem));
     jestExpect(elements).toBe(expectedCount);
   }
 
