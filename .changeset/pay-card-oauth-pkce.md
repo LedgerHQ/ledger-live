@@ -8,6 +8,9 @@
 
 Start the Baanx login with a real client key, PKCE challenge and CSRF state (LIVE-34738)
 
+`PAY_CARD_API_BASE_URL` now points at `https://dev.api.baanx.com`, so both apps call Baanx directly
+rather than through the Ledger staging proxy.
+
 The Baanx client key that every Card request carries as `x-client-key` now comes from the new
 `CARD_BAANX_CLIENT_KEY` env var, passed to `payCardApiExtra` so the shared base query sets the header
 for all endpoints and no use case carries it. Desktop resolves it through `getEnv`; mobile reads
