@@ -1,8 +1,8 @@
 import React from "react";
-import { Avatar } from "@ledgerhq/lumen-ui-react";
+import { Avatar, type AvatarProps as LumenAvatarProps } from "@ledgerhq/lumen-ui-react";
 import type { ContactId } from "@domain/entity-contact";
 import { getContactAvatarColorClass } from "../../utils/getContactAvatarColorClass";
-import { getContactInitial } from "../../utils/getContactInitial";
+import { getContactAvatarInitials } from "../../utils/getContactAvatarInitials";
 
 export type ContactAvatarProps = Readonly<{
   contactId: ContactId;
@@ -11,14 +11,18 @@ export type ContactAvatarProps = Readonly<{
   src?: string;
   ariaHidden?: boolean;
   ariaLabel?: string;
-  size?: "sm" | "xl";
+  size?: LumenAvatarProps["size"];
   testId?: string;
 }>;
 
-const avatarSizeClasses = {
-  sm: "body-2-semi-bold size-32",
-  xl: "heading-3-semi-bold size-80",
-} as const;
+const avatarSizeClasses: Record<NonNullable<LumenAvatarProps["size"]>, string> = {
+  xs: "body-4-semi-bold size-24",
+  sm: "body-1-semi-bold size-40",
+  md: "heading-5-semi-bold size-48",
+  lg: "heading-4-semi-bold size-56",
+  xl: "heading-2-semi-bold size-72",
+  "2xl": "heading-1-semi-bold size-128",
+};
 
 export function ContactAvatar({
   contactId,
@@ -53,7 +57,7 @@ export function ContactAvatar({
       data-testid={resolvedTestId}
       {...accessibilityProps}
     >
-      {getContactInitial(name)}
+      {getContactAvatarInitials(name)}
     </div>
   );
 }

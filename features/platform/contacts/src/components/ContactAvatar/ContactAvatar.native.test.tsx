@@ -14,6 +14,7 @@ describe("ContactAvatar", () => {
     expect(avatar).toBeVisible();
     expect(avatar.props.size).toBe("sm");
     expect(avatar.props.alt).toBe("élodie");
+    expect(avatar.props.fallbackText).toBe("É");
   });
 
   it("should render the Lumen avatar in the detail", () => {
@@ -22,7 +23,7 @@ describe("ContactAvatar", () => {
     render(
       <ContactAvatar
         contactId={contactId}
-        name="Benoit"
+        name="Benoit Jean"
         size="xl"
         testID="contacts-detail-avatar"
       />,
@@ -32,7 +33,16 @@ describe("ContactAvatar", () => {
 
     expect(avatar).toBeVisible();
     expect(avatar.props.size).toBe("xl");
-    expect(avatar.props.alt).toBe("Benoit");
+    expect(avatar.props.alt).toBe("Benoit Jean");
+    expect(avatar.props.fallbackText).toBe("BJ");
+  });
+
+  it.each(["xs", "md", "lg", "2xl"] as const)("should support the %s Lumen avatar size", size => {
+    const contactId = ContactIdSchema.parse(`contact-${size}`);
+
+    render(<ContactAvatar contactId={contactId} name="Benoit" size={size} />);
+
+    expect(screen.getByTestId(`contacts-avatar-${contactId}`).props.size).toBe(size);
   });
 
   it("should pass the Me profile image to the Lumen avatar", () => {
@@ -55,6 +65,7 @@ describe("ContactAvatar", () => {
     expect(avatar.props.size).toBe("xl");
     expect(avatar.props.src).toBe("https://example.com/me.png");
     expect(avatar.props.alt).toBe("My Wallet");
+    expect(avatar.props.fallbackText).toBe("MW");
     expect(avatar.props.fallbackColor).toBeUndefined();
   });
 });

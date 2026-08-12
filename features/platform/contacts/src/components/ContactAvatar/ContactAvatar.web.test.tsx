@@ -8,13 +8,13 @@ describe("ContactAvatar", () => {
   it("should bind a contact initial and stable color for the default list size", () => {
     const contactId = ContactIdSchema.parse("contact-elodie");
 
-    render(<ContactAvatar contactId={contactId} name="élodie" />);
+    render(<ContactAvatar contactId={contactId} name="élodie Martin" />);
 
-    const avatar = screen.getByRole("img", { name: "élodie" });
+    const avatar = screen.getByRole("img", { name: "élodie Martin" });
 
     expect(avatar).toBeVisible();
-    expect(avatar).toHaveTextContent("É");
-    expect(avatar).toHaveClass("size-32");
+    expect(avatar).toHaveTextContent("ÉM");
+    expect(avatar).toHaveClass("size-40");
     expect(avatar).toHaveClass(...getContactAvatarColorClass(contactId).split(" "));
   });
 
@@ -24,7 +24,7 @@ describe("ContactAvatar", () => {
     render(
       <ContactAvatar
         contactId={contactId}
-        name="Benoit"
+        name="Benoit Jean"
         size="xl"
         testId="contacts-detail-avatar"
       />,
@@ -33,8 +33,23 @@ describe("ContactAvatar", () => {
     const avatar = screen.getByTestId("contacts-detail-avatar");
 
     expect(avatar).toBeVisible();
-    expect(avatar).toHaveTextContent("B");
-    expect(avatar).toHaveClass("size-80");
+    expect(avatar).toHaveTextContent("BJ");
+    expect(avatar).toHaveClass("size-72");
+  });
+
+  it.each([
+    ["xs", "size-24"],
+    ["sm", "size-40"],
+    ["md", "size-48"],
+    ["lg", "size-56"],
+    ["xl", "size-72"],
+    ["2xl", "size-128"],
+  ] as const)("should support the %s Lumen avatar size", (size, expectedClass) => {
+    const contactId = ContactIdSchema.parse(`contact-${size}`);
+
+    render(<ContactAvatar contactId={contactId} name="Benoit" size={size} />);
+
+    expect(screen.getByTestId(`contacts-avatar-${contactId}`)).toHaveClass(expectedClass);
   });
 
   it("should render the Me profile image instead of a generated initial", () => {
