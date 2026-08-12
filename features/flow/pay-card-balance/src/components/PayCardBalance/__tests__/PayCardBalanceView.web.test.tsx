@@ -1,30 +1,29 @@
 import React from "react";
-import { render, screen } from "@testing-library/react";
-import { StyleProvider } from "@features/platform-style";
-import type { FormattedValue } from "@ledgerhq/lumen-ui-react";
+import { screen } from "@testing-library/react";
 import { PayCardBalanceView } from "../PayCardBalanceView.web";
 import type { PayCardBalanceViewProps } from "../types";
+import { formatCountervalue, labels, options } from "./fixtures";
+import { renderWithStyle } from "./renderWithStyle.web";
 
-const labels = {
-  emptyTitle: "Pay and get paid",
-  emptyDescription: "Start by depositing stablecoin to your wallet",
-};
-
-const formatCountervalue = (value: number): FormattedValue =>
-  ({
-    integerPart: String(value),
-    decimalPart: "00",
-    currencyText: "$",
-    decimalSeparator: ".",
-    currencyPosition: "start",
-  }) as unknown as FormattedValue;
+function fundedProps(overrides: Partial<PayCardBalanceViewProps> = {}): PayCardBalanceViewProps {
+  return {
+    displayMode: "funded",
+    balance: 1000,
+    formatCountervalue,
+    isLoading: false,
+    labels,
+    filter: "all",
+    options,
+    isFilterOpen: false,
+    onOpenFilter: jest.fn(),
+    onCloseFilter: jest.fn(),
+    onConfirmFilter: jest.fn(),
+    ...overrides,
+  } as PayCardBalanceViewProps;
+}
 
 function renderView(props: PayCardBalanceViewProps) {
-  return render(
-    <StyleProvider colorScheme="dark">
-      <PayCardBalanceView {...props} />
-    </StyleProvider>,
-  );
+  return renderWithStyle(<PayCardBalanceView {...props} />);
 }
 
 describe("PayCardBalanceView (Web)", () => {
@@ -41,16 +40,23 @@ describe("PayCardBalanceView (Web)", () => {
     expect(screen.queryByTestId("pay-card-balance-funded-state")).not.toBeInTheDocument();
   });
 
-  it("should render the funded balance when funded", () => {
-    renderView({
-      displayMode: "funded",
-      balance: 1000,
-      formatCountervalue,
-      filter: "all",
-      isLoading: false,
-    });
+  it("should render the funded balance and pill when funded", () => {
+    renderView(fundedProps());
 
     expect(screen.getByTestId("pay-card-balance-funded-state")).toBeVisible();
+    expect(screen.getByTestId("pay-card-balance-filter-pill")).toBeVisible();
     expect(screen.queryByTestId("pay-card-balance-empty-state")).not.toBeInTheDocument();
+  });
+
+  it("should not render the dialog contents while the filter is closed", () => {
+    renderView(fundedProps({ isFilterOpen: false }));
+
+    expect(screen.queryByTestId("pay-card-balance-filter-dialog")).not.toBeInTheDocument();
+  });
+
+  it("should render the dialog contents when the filter is open", () => {
+    renderView(fundedProps({ isFilterOpen: true }));
+
+    expect(screen.getByTestId("pay-card-balance-filter-dialog")).toBeVisible();
   });
 });

@@ -1,31 +1,55 @@
 import React from "react";
-import { render, screen } from "@testing-library/react";
-import { StyleProvider } from "@features/platform-style";
-import type { FormattedValue } from "@ledgerhq/lumen-ui-react";
+import { screen } from "@testing-library/react";
 import { PayCardBalanceFundedState } from "../PayCardBalanceFundedState.web";
-
-const formatCountervalue = (value: number): FormattedValue =>
-  ({
-    integerPart: String(value),
-    decimalPart: "00",
-    currencyText: "$",
-    decimalSeparator: ".",
-    currencyPosition: "start",
-  }) as unknown as FormattedValue;
+import { formatCountervalue, usdcOption } from "./fixtures";
+import { renderWithStyle } from "./renderWithStyle.web";
 
 describe("PayCardBalanceFundedState (Web)", () => {
-  it("should render the funded balance", () => {
-    render(
-      <StyleProvider colorScheme="dark">
-        <PayCardBalanceFundedState
-          balance={1000}
-          formatCountervalue={formatCountervalue}
-          isLoading={false}
-        />
-      </StyleProvider>,
+  it("should render the funded balance and the filter pill", () => {
+    renderWithStyle(
+      <PayCardBalanceFundedState
+        balance={1000}
+        formatCountervalue={formatCountervalue}
+        isLoading={false}
+        allStablecoinsLabel="All stablecoins"
+        onOpenFilter={jest.fn()}
+      />,
     );
 
     expect(screen.getByTestId("pay-card-balance-funded-state")).toBeVisible();
     expect(screen.getByTestId("pay-card-balance-amount")).toBeVisible();
+    expect(screen.getByTestId("pay-card-balance-filter-pill")).toBeVisible();
+  });
+
+  it("should render the selected coin ticker on the pill", () => {
+    renderWithStyle(
+      <PayCardBalanceFundedState
+        balance={1000}
+        formatCountervalue={formatCountervalue}
+        isLoading={false}
+        allStablecoinsLabel="All stablecoins"
+        selectedOption={usdcOption}
+        onOpenFilter={jest.fn()}
+      />,
+    );
+
+    expect(screen.getByText("USDC")).toBeVisible();
+  });
+
+  it("should open the filter when the pill is pressed", async () => {
+    const onOpenFilter = jest.fn();
+    renderWithStyle(
+      <PayCardBalanceFundedState
+        balance={1000}
+        formatCountervalue={formatCountervalue}
+        isLoading={false}
+        allStablecoinsLabel="All stablecoins"
+        onOpenFilter={onOpenFilter}
+      />,
+    );
+
+    await screen.getByTestId("pay-card-balance-filter-pill").click();
+
+    expect(onOpenFilter).toHaveBeenCalledTimes(1);
   });
 });

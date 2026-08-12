@@ -2,11 +2,7 @@ import React from "react";
 import { render, screen } from "@testing-library/react-native";
 import type { FormattedValue, PayCardBalanceViewProps } from "../types";
 import { PayCardBalanceView } from "../PayCardBalanceView.native";
-
-const labels = {
-  emptyTitle: "Pay and get paid",
-  emptyDescription: "Start by depositing stablecoin to your wallet",
-};
+import { labels } from "./fixtures";
 
 const formatCountervalue = (value: number): FormattedValue => ({
   integerPart: String(value),
@@ -40,7 +36,13 @@ describe("PayCardBalanceView (Native)", () => {
       balance: 1000,
       formatCountervalue,
       filter: "all",
+      options: [],
+      isFilterOpen: false,
+      onOpenFilter: jest.fn(),
+      onCloseFilter: jest.fn(),
+      onConfirmFilter: jest.fn(),
       isLoading: false,
+      labels,
     });
 
     expect(screen.getByTestId("pay-card-balance-funded-state")).toBeVisible();

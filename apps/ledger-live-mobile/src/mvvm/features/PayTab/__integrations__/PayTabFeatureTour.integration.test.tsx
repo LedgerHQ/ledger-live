@@ -16,7 +16,10 @@ jest.mock("LLM/features/PayTab/hooks/usePayCardBalance", () => ({
     status: "ready",
     stableBalance: 0,
     filter: "all",
+    hasBalance: false,
+    filterOptions: [],
     formatCountervalue: () => ({}),
+    onConfirmFilter: () => {},
   }),
 }));
 

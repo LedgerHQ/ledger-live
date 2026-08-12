@@ -1,19 +1,17 @@
 import React from "react";
-import { render, screen } from "@testing-library/react";
-import { StyleProvider } from "@features/platform-style";
+import { screen } from "@testing-library/react";
 import { PayCardBalanceEmptyState } from "../PayCardBalanceEmptyState.web";
+import { renderWithStyle } from "./renderWithStyle.web";
 
 describe("PayCardBalanceEmptyState (Web)", () => {
   it("should render the empty title and description", () => {
-    render(
-      <StyleProvider colorScheme="dark">
-        <PayCardBalanceEmptyState
-          labels={{
-            emptyTitle: "Pay and get paid",
-            emptyDescription: "Start by depositing stablecoin to your wallet",
-          }}
-        />
-      </StyleProvider>,
+    renderWithStyle(
+      <PayCardBalanceEmptyState
+        labels={{
+          emptyTitle: "Pay and get paid",
+          emptyDescription: "Start by depositing stablecoin to your wallet",
+        }}
+      />,
     );
 
     expect(screen.getByTestId("pay-card-balance-empty-state")).toBeVisible();
