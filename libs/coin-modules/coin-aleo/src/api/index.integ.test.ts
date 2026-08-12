@@ -214,32 +214,6 @@ describe("createApi", () => {
     });
   });
 
-  describe("getBalance", () => {
-    it("returns the balance for a valid address", async () => {
-      // not an exact value: testnetAddress's public balance shifts as the team runs more
-      // transactions against it, so only shape + non-negativity are checked here.
-      const balance = await api.getBalance(context, testnetAddress);
-
-      expect(balance).toEqual([expect.objectContaining({ asset: { type: "native" } })]);
-      expect(balance[0].value).toBeGreaterThanOrEqual(0n);
-    });
-
-    it("returns an empty array for a non-existing valid address", async () => {
-      const balance = await api.getBalance(context, emptyAddress);
-
-      expect(balance).toEqual([]);
-    });
-
-    it("throws an error for an invalid address", async () => {
-      const invalidAddress = "invalid_address";
-
-      await expect(api.getBalance(context, invalidAddress)).rejects.toMatchObject({
-        name: "LedgerAPI4xx",
-        status: 404,
-      });
-    });
-  });
-
   describe("getAccountInfo", () => {
     it("returns the aleo scan status for a registered provableId", async () => {
       const getAccountInfo = requireGetAccountInfo(api);

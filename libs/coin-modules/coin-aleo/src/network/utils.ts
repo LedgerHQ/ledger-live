@@ -20,6 +20,7 @@ import type {
   AleoTransition,
   AleoCoinConfig,
   AleoRecordScannerStatusResponse,
+  AleoDecryptedRecordResponse,
 } from "../types";
 import {
   isAleoAddressPlaintext,
@@ -29,6 +30,24 @@ import {
   parseMicrocredits,
 } from "../logic/utils";
 import { apiClient } from "./api";
+
+export async function decryptRecordAmount(
+  config: AleoCoinConfig,
+  viewKey: string,
+  record: AleoPrivateRecord,
+): Promise<{ amount: BigNumber; details: AleoDecryptedRecordResponse }> {
+  const details = await sdkClient.decryptRecord({
+    config,
+    viewKey,
+    ciphertext: record.record_ciphertext,
+  });
+  const raw = details.data?.amount ?? details.data?.balance ?? details.data?.microcredits;
+
+  return {
+    amount: parseAmount(raw ?? null),
+    details,
+  };
+}
 
 function limitTransactions(
   transactions: AleoPublicTransaction[],

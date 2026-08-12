@@ -1,6 +1,15 @@
 import BigNumber from "bignumber.js";
+import type {
+  MemoNotSupported,
+  TransactionIntent,
+} from "@ledgerhq/coin-module-framework/api/types";
 import { TRANSACTION_TYPE } from "../../constants";
-import type { AleoTransactionIntent, Transaction, TransactionRaw } from "../../types";
+import type {
+  AleoTransactionIntent,
+  AleoTransactionIntentData,
+  Transaction,
+  TransactionRaw,
+} from "../../types";
 import {
   mockUnspentRecord1,
   mockUnspentRecord2,
@@ -179,4 +188,25 @@ export const mockTxIntentConvertTokenPrivateToPublic2: AleoTransactionIntent = {
     programId: MOCK_TOKEN_PROGRAM_ID,
     records: [mockUnspentTokenRecord1.decryptedData, mockUnspentTokenRecord2.decryptedData],
   },
+};
+
+export const createMockTransactionIntent = (): TransactionIntent<
+  MemoNotSupported,
+  AleoTransactionIntentData
+> => {
+  return {
+    intentType: "transaction",
+    asset: {
+      type: "native",
+    },
+    type: "fee_public",
+    amount: BigInt(1000),
+    sender: "aleo1sender1234567890123456789012345678901234567",
+    recipient: "aleo1recipient123456789012345678901234567890",
+    data: {
+      type: "fee_public",
+      priorityFee: 1040n,
+      executionId: "ex1test",
+    },
+  };
 };
