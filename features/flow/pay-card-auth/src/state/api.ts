@@ -50,20 +50,6 @@ const authenticatedHeaders = {
   Authorization: `Bearer ${PLACEHOLDER_ACCESS_TOKEN}`,
 };
 
-/**
- * RTK treats an uncaught schema failure as unhandled and reports it through `console.error`, which is
- * forwarded to Datadog as an error event. A backend contract change must not produce one, so every
- * endpoint below warns and returns a handled error instead.
- */
-function warnOnSchemaFailure(endpoint: string) {
-  return (error: { issues: unknown }) =>
-    console.warn(`payCardAuthApi: ${endpoint} response did not match schema`, error.issues);
-}
-
-function schemaFailureError(endpoint: string) {
-  return () => ({ status: "CUSTOM_ERROR" as const, error: `invalid ${endpoint} response` });
-}
-
 function toPayCardSession(response: PayCardSessionResponse): PayCardSession {
   return {
     accessToken: response.access_token,
@@ -103,8 +89,6 @@ export const payCardAuthApi = payCardApi.injectEndpoints({
         },
       }),
       responseSchema: PayCardAuthorizeInitiateResponseSchema,
-      onSchemaFailure: warnOnSchemaFailure("authorize initiate"),
-      catchSchemaFailure: schemaFailureError("authorize initiate"),
     }),
 
     /** Single-use: the base query deliberately does not retry, so a failed exchange is not replayed. */
@@ -123,8 +107,6 @@ export const payCardAuthApi = payCardApi.injectEndpoints({
       rawResponseSchema: PayCardSessionResponseSchema,
       transformResponse: toPayCardSession,
       responseSchema: PayCardSessionSchema,
-      onSchemaFailure: warnOnSchemaFailure("token"),
-      catchSchemaFailure: schemaFailureError("token"),
     }),
 
     /** Same endpoint as the code exchange, separated by `grant_type`. */
@@ -141,8 +123,6 @@ export const payCardAuthApi = payCardApi.injectEndpoints({
       rawResponseSchema: PayCardSessionResponseSchema,
       transformResponse: toPayCardSession,
       responseSchema: PayCardSessionSchema,
-      onSchemaFailure: warnOnSchemaFailure("refresh token"),
-      catchSchemaFailure: schemaFailureError("refresh token"),
     }),
 
     logout: build.mutation<PayCardLogoutResult, void>({
@@ -152,8 +132,6 @@ export const payCardAuthApi = payCardApi.injectEndpoints({
         headers: authenticatedHeaders,
       }),
       responseSchema: PayCardLogoutResponseSchema,
-      onSchemaFailure: warnOnSchemaFailure("logout"),
-      catchSchemaFailure: schemaFailureError("logout"),
     }),
 
     getUser: build.query<PayCardUser, void>({
@@ -163,8 +141,6 @@ export const payCardAuthApi = payCardApi.injectEndpoints({
         headers: authenticatedHeaders,
       }),
       responseSchema: PayCardUserResponseSchema,
-      onSchemaFailure: warnOnSchemaFailure("user"),
-      catchSchemaFailure: schemaFailureError("user"),
     }),
   }),
 });
