@@ -1,15 +1,22 @@
 import { useCallback, useMemo } from "react";
 import { Linking } from "react-native";
 import { useTranslation } from "~/context/Locale";
-import type { OpenHostedLogin } from "@features/flow-pay-card-auth";
+import type { CardLoginOauthConfig, OpenHostedLogin } from "@features/flow-pay-card-auth";
 import type { FeatureTourProps } from "@features/flow-pay-card-feature-tour";
 import type { BalanceLabels } from "@features/flow-pay-card-balance";
+import { getEnv } from "@shared/env";
 import { useNavigationBarHeights } from "LLM/hooks/useNavigationBarHeights";
 import { usePayCardBalance } from "LLM/features/PayTab/hooks/usePayCardBalance";
 import { usePayTabActionTiles } from "LLM/features/PayTab/hooks/usePayTabActionTiles";
 import { usePayTabDepositOptions } from "LLM/features/PayTab/hooks/usePayTabDepositOptions";
 import { usePayStablecoins } from "LLM/features/PayTab/hooks/usePayStablecoins";
 import { track } from "~/analytics";
+
+/**
+ * The deep link the Pay tab already registers (see `DeeplinksProvider`), and the exact URI Baanx has
+ * to have whitelisted — it must match the one sent to the token exchange, character for character.
+ */
+const PAY_CARD_OAUTH_REDIRECT_URI = "ledgerlive://paytab";
 
 export function usePayTabViewModel() {
   const { top } = useNavigationBarHeights();
@@ -38,6 +45,15 @@ export function usePayTabViewModel() {
 
   const openHostedLogin: OpenHostedLogin = useCallback(
     (loginUrl: string) => Linking.openURL(loginUrl),
+    [],
+  );
+
+  // Baanx uses the same value for the client key header and the OAuth `client_id`.
+  const oauth: CardLoginOauthConfig = useMemo(
+    () => ({
+      clientId: getEnv("CARD_BAANX_CLIENT_KEY"),
+      redirectUri: PAY_CARD_OAUTH_REDIRECT_URI,
+    }),
     [],
   );
 
@@ -72,6 +88,7 @@ export function usePayTabViewModel() {
   return {
     top,
     openHostedLogin,
+    oauth,
     featureTour,
     balance,
     balanceLabels,

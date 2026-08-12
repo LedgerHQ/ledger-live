@@ -15,4 +15,4 @@ export function CardLogin(props: CardLoginProps) {
   );
 }
 
-export type { CardLoginProps, OpenHostedLogin } from "./types";
+export type { CardLoginOauthConfig, CardLoginProps, OpenHostedLogin } from "./types";

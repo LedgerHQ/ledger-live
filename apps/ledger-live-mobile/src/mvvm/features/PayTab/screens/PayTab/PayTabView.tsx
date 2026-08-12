@@ -1,5 +1,9 @@
 import React from "react";
-import { CardLogin, type OpenHostedLogin } from "@features/flow-pay-card-auth";
+import {
+  CardLogin,
+  type CardLoginOauthConfig,
+  type OpenHostedLogin,
+} from "@features/flow-pay-card-auth";
 import { FeatureTour, type FeatureTourProps } from "@features/flow-pay-card-feature-tour";
 import {
   Balance,
@@ -19,6 +23,7 @@ type PayTabViewProps = {
   readonly balanceLabels: BalanceLabels;
   readonly actionTiles: ActionTilesProps;
   readonly depositOptions: DepositOptionsProps;
+  readonly oauth: CardLoginOauthConfig;
 };
 
 export function PayTabView({
@@ -29,6 +34,7 @@ export function PayTabView({
   balanceLabels,
   actionTiles,
   depositOptions,
+  oauth,
 }: PayTabViewProps) {
   return (
     <Box
@@ -39,7 +45,7 @@ export function PayTabView({
       <TrackScreen category="Pay" balance_filter={balance.filter} />
       <Balance {...balance} labels={balanceLabels} actionTiles={actionTiles} />
       <DepositOptions {...depositOptions} />
-      <CardLogin openHostedLogin={openHostedLogin} />
+      <CardLogin openHostedLogin={openHostedLogin} oauth={oauth} />
       <FeatureTour {...featureTour} />
     </Box>
   );

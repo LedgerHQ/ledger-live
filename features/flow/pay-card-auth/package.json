@@ -31,6 +31,7 @@
   "dependencies": {
     "@domain/api-card-management": "workspace:^",
     "@reduxjs/toolkit": "catalog:",
+    "expo-crypto": "catalog:",
     "expo-web-browser": "15.0.10"
   },
   "devDependencies": {

@@ -1,14 +1,9 @@
 import { useCallback, useState } from "react";
 import { useInitiateAuthorizeMutation } from "@domain/api-card-management";
-import type { PayCardAuthorizeInitiateRequest } from "@domain/api-card-management";
+import { useDispatch } from "react-redux";
+import { clearAuthorizeAttempt, startAuthorizeAttempt } from "../../state";
+import { createAuthorizeAttempt } from "../../state/authorizeAttempt";
 import type { CardLoginProps, CardLoginViewProps } from "./types";
-
-const PLACEHOLDER_AUTHORIZE_REQUEST: PayCardAuthorizeInitiateRequest = {
-  clientId: "",
-  redirectUri: "",
-  state: "",
-  codeChallenge: "",
-};
 
 function getSecureHostedLoginUrl(loginUrl: string): string {
   const url = new URL(loginUrl);
@@ -27,7 +22,11 @@ function getLoginErrorMessage(error: unknown): string {
   return "Unable to start login";
 }
 
-export function useCardLoginViewModel({ openHostedLogin }: CardLoginProps): CardLoginViewProps {
+export function useCardLoginViewModel({
+  openHostedLogin,
+  oauth,
+}: CardLoginProps): CardLoginViewProps {
+  const dispatch = useDispatch();
   const [initiateAuthorize, { isLoading: isInitiateAuthorizeLoading }] =
     useInitiateAuthorizeMutation();
   const [isOpeningHostedLogin, setIsOpeningHostedLogin] = useState(false);
@@ -39,15 +38,28 @@ export function useCardLoginViewModel({ openHostedLogin }: CardLoginProps): Card
     void (async () => {
       setIsOpeningHostedLogin(true);
       try {
-        const { url } = await initiateAuthorize(PLACEHOLDER_AUTHORIZE_REQUEST).unwrap();
+        const { state, codeVerifier, codeChallenge } = await createAuthorizeAttempt();
+        // Recorded before the request leaves: the callback is only valid against an attempt already
+        // on record, and the hosted UI can come back as soon as the browser opens.
+        dispatch(startAuthorizeAttempt({ state, codeVerifier }));
+
+        const { url } = await initiateAuthorize({
+          clientId: oauth.clientId,
+          redirectUri: oauth.redirectUri,
+          state,
+          codeChallenge,
+        }).unwrap();
+
         await openHostedLogin(getSecureHostedLoginUrl(url));
       } catch (error) {
+        // Nothing can complete this attempt any more, so the verifier and `state` go with it.
+        dispatch(clearAuthorizeAttempt());
         setErrorMessage(getLoginErrorMessage(error));
       } finally {
         setIsOpeningHostedLogin(false);
       }
     })();
-  }, [openHostedLogin, initiateAuthorize]);
+  }, [openHostedLogin, initiateAuthorize, dispatch, oauth.clientId, oauth.redirectUri]);
 
   return {
     title: "Card",

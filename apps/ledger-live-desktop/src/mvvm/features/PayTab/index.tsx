@@ -1,7 +1,8 @@
 import React from "react";
-import { CardLogin } from "@features/flow-pay-card-auth";
+import { CardLogin, type CardLoginOauthConfig } from "@features/flow-pay-card-auth";
 import { Balance } from "@features/flow-pay-card-balance";
 import { DepositOptions } from "@features/flow-pay-card-deposit";
+import { getEnv } from "@shared/env";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { openURL } from "~/renderer/linking";
 import PayTabHeader from "./components/PayTabHeader";
@@ -13,6 +14,13 @@ import { usePayTabDepositOptions } from "./hooks/usePayTabDepositOptions";
 import { usePayStablecoins } from "./hooks/usePayStablecoins";
 
 const openHostedLogin = (loginUrl: string) => openURL(loginUrl, "");
+
+// Baanx uses the same value for the client key header and the OAuth `client_id`. The redirect URI is
+// the deep link the app registers, and has to be whitelisted by Baanx for this client.
+const oauth: CardLoginOauthConfig = {
+  clientId: getEnv("CARD_BAANX_CLIENT_KEY"),
+  redirectUri: "ledgerlive://card",
+};
 
 const PayTab = () => {
   const balance = usePayCardBalance();
@@ -30,7 +38,7 @@ const PayTab = () => {
       <PayTabHeader />
       <Balance {...balance} actionTiles={actionTiles} />
       <DepositOptions {...deposit.depositOptions} />
-      <CardLogin openHostedLogin={openHostedLogin} />
+      <CardLogin openHostedLogin={openHostedLogin} oauth={oauth} />
       <FeatureTour {...featureTour} />
     </div>
   );
