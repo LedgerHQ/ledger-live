@@ -88,7 +88,11 @@ describe("broadcastLogger", () => {
       "tx broadcast failed",
       "Error: tx broadcast failed\n  at test:1:1",
       {
-        error,
+        errorContext: {
+          name: "Error",
+          message: "tx broadcast failed",
+          stack: "Error: tx broadcast failed\n  at test:1:1",
+        },
         event: {
           status: "failure",
           txPayload: { signature: "signature" },

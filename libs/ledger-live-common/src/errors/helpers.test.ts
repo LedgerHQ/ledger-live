@@ -5,7 +5,7 @@ class CircularError extends Error {
 
   constructor(message: string) {
     super(message);
-    super.name = "CircularError";
+    this.name = "CircularError";
   }
 
   get cause(): Error | undefined {
@@ -35,7 +35,7 @@ class ExampleError extends Error {
 
   constructor(message: string, { id, count, logs, subContext, flagged }: ExampleErrorParams) {
     super(message);
-    super.name = "ExampleError";
+    this.name = "ExampleError";
     this.id = id;
     this.count = count;
     this.logs = [...logs];
@@ -44,20 +44,18 @@ class ExampleError extends Error {
   }
 }
 
-const DEFAULT_MESSAGE = "Example circular error, should not be used for production";
-
-const DEFAULT_EXPECTED_CONTEXT = {
-  message: DEFAULT_MESSAGE,
-  name: "CircularError",
-  stack: expect.any(String),
-};
-
 describe("extractErrorContext", () => {
   it("should not include Circular reference", () => {
-    const error = new CircularError(DEFAULT_MESSAGE);
+    const defaultMessage = "Example circular error, should not be used for production";
+
+    const error = new CircularError(defaultMessage);
     error.cause = error;
 
-    expect(extractErrorContext(error)).toEqual(DEFAULT_EXPECTED_CONTEXT);
+    expect(extractErrorContext(error)).toEqual({
+      message: defaultMessage,
+      name: "CircularError",
+      stack: expect.any(String),
+    });
   });
 
   it("should include additional attributes of error", () => {

@@ -237,6 +237,11 @@ describe("datadog logs", () => {
               flags: { newSendFlow: false },
             },
           },
+          errorContext: {
+            name: "Error",
+            message: "tx broadcast failed",
+            stack: "Error: tx broadcast failed\n  at test:1:1",
+          },
         },
         error,
       );
