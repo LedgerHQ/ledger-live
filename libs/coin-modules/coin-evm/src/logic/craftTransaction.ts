@@ -8,6 +8,7 @@ import {
 } from "@ledgerhq/coin-module-framework/api/types";
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { Transaction, TransactionLike } from "ethers";
+import { GasEstimationError } from "../errors";
 import { getNodeApi } from "../network/node";
 import { TransactionTypes } from "../types";
 import { prepareUnsignedTxParams } from "./common";
@@ -29,9 +30,14 @@ export async function craftTransaction(
     customFees?.parameters,
   );
 
-  // Some apps including, including Magic Eden, set the nonce to -1
+  // Never send a failed estimation to the device: the node rejects it as "intrinsic gas too low".
+  if (gasLimit.lte(0)) {
+    throw new GasEstimationError();
+  }
+
+  // Some apps, including Magic Eden, set the nonce to -1
   // instead of simply not providing it.
-  // In case of missing or nagative nonce, it must be re-computed.
+  // In case of missing or negative nonce, it must be re-computed.
   const nonce =
     typeof transactionIntent.sequence === "bigint" && transactionIntent.sequence >= 0n
       ? transactionIntent.sequence

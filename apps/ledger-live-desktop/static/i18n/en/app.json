@@ -7302,6 +7302,10 @@
     "GasPriceTooLow": {
       "title": "Gas price is lower than the network minimum"
     },
+    "GasEstimationError": {
+      "title": "Couldn't estimate the network fees",
+      "description": "Please try again in a moment. If it persists, check that the recipient and amount are correct."
+    },
     "PriorityFeeHigherThanMaxFee": {
       "title": "Max priority fee cannot be higher than max fee"
     },

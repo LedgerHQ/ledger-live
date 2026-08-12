@@ -37,6 +37,53 @@ describe("craftTransaction", () => {
     );
   });
 
+  describe("zero gas limit", () => {
+    const intent = {
+      intentType: "transaction",
+      type: "send-legacy",
+      recipient: "0x7b2c7232f9e38f30e2868f0e5bf311cd83554b5a",
+      amount: 10n,
+      asset: { type: "native" },
+    } as TransactionIntent<MemoNotSupported, BufferTxData>;
+
+    beforeEach(() => {
+      setCoinConfig(() => ({ info: { node: { type: "external" } } }) as unknown as EvmCoinConfig);
+      externalMocks.getTransactionCount.mockResolvedValue(18);
+      externalMocks.getFeeData.mockResolvedValue({
+        gasPrice: new BigNumber(8),
+        maxFeePerGas: null,
+        maxPriorityFeePerGas: null,
+        nextBaseFee: null,
+      });
+    });
+
+    it("re-estimates instead of trusting a zero gas limit coming back from a failed estimation", async () => {
+      externalMocks.getGasEstimation.mockResolvedValue(new BigNumber(2300));
+
+      const { transaction } = await craftTransaction(
+        { ethereumLikeInfo: { chainId: 42 } } as CryptoCurrency,
+        {
+          transactionIntent: intent,
+          customFees: { value: 0n, parameters: { gasPrice: 8n, gasLimit: 0n } },
+        },
+      );
+
+      expect(externalMocks.getGasEstimation).toHaveBeenCalled();
+      expect(ethers.Transaction.from(transaction).gasLimit).toBe(2300n);
+    });
+
+    it("refuses to craft a transaction when the gas estimation yields zero", async () => {
+      externalMocks.getGasEstimation.mockRejectedValue(new Error("node is down"));
+
+      await expect(
+        craftTransaction({ ethereumLikeInfo: { chainId: 42 } } as CryptoCurrency, {
+          transactionIntent: intent,
+          customFees: { value: 0n, parameters: { gasPrice: 8n } },
+        }),
+      ).rejects.toThrow("GasEstimationError");
+    });
+  });
+
   describe.each([
     [
       "legacy",
