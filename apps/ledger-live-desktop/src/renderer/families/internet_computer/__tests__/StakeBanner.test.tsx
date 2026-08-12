@@ -19,7 +19,12 @@ import StakeBanner from "../StakeBanner";
 const ENOUGH_TO_STAKE = new BigNumber(100_010_000);
 const NOT_ENOUGH_TO_STAKE = new BigNumber(100_009_999);
 
-const bannerOn = withFlagOverrides({ stakeAccountBanner: { enabled: true } });
+// The banner needs both switches: the shared banner flag and internet_computer being listed as a
+// natively-staked currency, which is what also drives the Earn action in the account header.
+const bannerOn = withFlagOverrides({
+  stakeAccountBanner: { enabled: true },
+  stakePrograms: { enabled: true, params: { list: ["internet_computer"], redirects: {} } },
+});
 
 beforeEach(() => {
   jest.clearAllMocks();
@@ -35,7 +40,41 @@ describe("StakeBanner (internet_computer)", () => {
 
   it("renders nothing when the stakeAccountBanner flag is off", () => {
     const account = makeICPAccount({ spendableBalance: ENOUGH_TO_STAKE });
-    const { container } = render(<StakeBanner account={account} />);
+    const { container } = render(<StakeBanner account={account} />, {
+      initialState: withFlagOverrides({
+        stakeAccountBanner: { enabled: false },
+        stakePrograms: { enabled: true, params: { list: ["internet_computer"], redirects: {} } },
+      }),
+    });
+
+    expect(container.firstChild).toBeNull();
+  });
+
+  // Keeps the banner in step with the header's Earn action, which AccountHeaderActions hides unless
+  // the currency is listed here.
+  it("renders nothing when internet_computer is absent from stakePrograms", () => {
+    const account = makeICPAccount({ spendableBalance: ENOUGH_TO_STAKE });
+    const { container } = render(<StakeBanner account={account} />, {
+      initialState: withFlagOverrides({ stakeAccountBanner: { enabled: true } }),
+    });
+
+    expect(container.firstChild).toBeNull();
+  });
+
+  it("renders nothing when internet_computer is redirected to a platform app", () => {
+    const account = makeICPAccount({ spendableBalance: ENOUGH_TO_STAKE });
+    const { container } = render(<StakeBanner account={account} />, {
+      initialState: withFlagOverrides({
+        stakeAccountBanner: { enabled: true },
+        stakePrograms: {
+          enabled: true,
+          params: {
+            list: ["internet_computer"],
+            redirects: { internet_computer: { platform: "earn", name: "Earn", queryParams: {} } },
+          },
+        },
+      }),
+    });
 
     expect(container.firstChild).toBeNull();
   });
