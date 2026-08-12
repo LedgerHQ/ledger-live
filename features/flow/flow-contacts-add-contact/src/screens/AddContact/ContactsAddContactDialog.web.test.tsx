@@ -70,4 +70,19 @@ describe("ContactsAddContactDialog", () => {
 
     expect(onDraftNameChange).toHaveBeenCalledWith("Ada1");
   });
+
+  it("should make the draft name read-only while saving", () => {
+    render(
+      <ContactsAddContactDialog
+        {...createViewModel({
+          draftName: "Ada",
+          isSaving: true,
+        })}
+      />,
+    );
+
+    expect(screen.getByTestId("contacts-add-contact-name-input")).toHaveAttribute(
+      "readonly",
+    );
+  });
 });

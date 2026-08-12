@@ -39,6 +39,7 @@ export function ContactsAddContactDialog({
             value={draftName}
             placeholder={labels.namePlaceholder}
             errorMessage={nameValidationError}
+            isEditable={!isSaving}
             onChange={onDraftNameChange}
           />
           <ContactsAddContactNamingDisclaimer

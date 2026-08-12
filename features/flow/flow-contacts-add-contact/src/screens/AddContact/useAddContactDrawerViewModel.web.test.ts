@@ -128,6 +128,12 @@ describe("useAddContactDrawerViewModel", () => {
       invalidNameError: null,
     });
 
+    act(() => {
+      result.current.onDraftNameChange("Ada1");
+    });
+
+    expect(result.current.draftName).toBe("Ada");
+
     await act(async () => {
       resolveCreation(createdContact);
       await creation;
