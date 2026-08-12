@@ -1,0 +1,23 @@
+{
+  "name": "@features/platform-contacts-device-intents",
+  "version": "0.1.0",
+  "private": true,
+  "description": "ADR contracts for Contacts device intents (Input, Result, JobState)",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
+    "typecheck": "tsc --noEmit",
+    "unimported": "pnpm knip --directory ../../.. -W features/platform/contacts-device-intents"
+  },
+  "devDependencies": {
+    "oxfmt": "catalog:",
+    "typescript": "catalog:"
+  }
+}
