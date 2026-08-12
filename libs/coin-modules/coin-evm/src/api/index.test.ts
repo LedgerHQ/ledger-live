@@ -1,4 +1,3 @@
-import { EvmConfig } from "../config";
 import { mockEvmContext } from "../fixtures/context.fixtures";
 import { createApi, parseCallParams } from "./index";
 import { getValidatorsPage } from "../staking/validators";
@@ -56,7 +55,7 @@ describe.each([
       craftTransactionData: expect.any(Function),
     },
   ],
-])("coin-framework methods %s", (_s, config, methods) => {
+])("coin-framework methods %s", (_s, _config, methods) => {
   it("ensures methods are presents", () => {
     expect(createApi("ethereum")).toEqual(methods);
   });

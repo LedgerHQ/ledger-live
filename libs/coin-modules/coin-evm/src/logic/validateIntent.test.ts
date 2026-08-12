@@ -245,6 +245,7 @@ describe("validateIntent", () => {
 
       function nativeSendToRecipient(overrides = {}) {
         return validateIntent(
+          createContext(),
           {} as CryptoCurrency,
           eip1559Intent({ amount: 1n, recipient: RECIPIENT, ...overrides }),
           [{ value: 50n, asset: { type: "native" } }],

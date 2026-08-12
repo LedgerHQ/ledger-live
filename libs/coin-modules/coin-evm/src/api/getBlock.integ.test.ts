@@ -22,19 +22,20 @@ describe("getBlock ERC20 transfers", () => {
 
     let module: ReturnType<typeof createApi>;
 
+    const velasEvmConfig: EvmConfig = {
+      node: {
+        type: "external",
+        uri: "https://evmexplorer.velas.com/rpc",
+      },
+      explorer: {
+        type: "blockscout",
+        uri: "https://evmexplorer.velas.com/api",
+      },
+      showNfts: true,
+    };
+
     beforeAll(() => {
-      const velasEvmConfig: EvmConfig = {
-        node: {
-          type: "external",
-          uri: "https://evmexplorer.velas.com/rpc",
-        },
-        explorer: {
-          type: "blockscout",
-          uri: "https://evmexplorer.velas.com/api",
-        },
-        showNfts: true,
-      };
-      module = createApi();
+      module = createApi("velas");
     });
 
     it("should return ERC20 transfer operations from block 69733298", async () => {
@@ -135,18 +136,18 @@ describe("getBlock ERC20 transfers", () => {
   describe.skip("External RPC Node (zkSync)", () => {
     let module: ReturnType<typeof createApi>;
 
+    const zkSyncConfig: EvmConfig = {
+      node: {
+        type: "external",
+        uri: "https://mainnet.era.zksync.io",
+      },
+      explorer: {
+        type: "none",
+      },
+      showNfts: true,
+    };
     beforeAll(() => {
-      const zkSyncConfig: EvmConfig = {
-        node: {
-          type: "external",
-          uri: "https://mainnet.era.zksync.io",
-        },
-        explorer: {
-          type: "none",
-        },
-        showNfts: true,
-      };
-      module = createApi();
+      module = createApi("zksync");
     });
 
     it("should return block 69174056 without failing on unsigned typed transactions", async () => {

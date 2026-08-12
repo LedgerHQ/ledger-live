@@ -1,5 +1,5 @@
 import type { Operation } from "@ledgerhq/coin-module-framework/api/types";
-import type { EvmConfig } from "../config";
+import type { EvmConfigInfo } from "../config";
 import { createMockEvmContext } from "../fixtures/context.fixtures";
 import { createApi } from "./index";
 
@@ -16,7 +16,7 @@ describe("EVM Api (Arc Testnet)", () => {
   let module: ReturnType<typeof createApi>;
   let operations: Operation[];
 
-  const config = {
+  const config: Partial<EvmConfigInfo> = {
     node: { type: "external", uri: "https://rpc.testnet.arc.network" },
     explorer: {
       type: "blockscout",

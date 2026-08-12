@@ -1,11 +1,11 @@
-import { EvmConfig } from "../config";
+import type { EvmConfigInfo } from "../config";
 import { createMockEvmContext } from "../fixtures/context.fixtures";
 import { createApi } from "./index";
 
 describe("EVM Avalanche C-Chain Fuji", () => {
   let module: ReturnType<typeof createApi>;
 
-  const config = {
+  const config: Partial<EvmConfigInfo> = {
     node: {
       type: "external",
       uri: "https://api.avax-test.network/ext/bc/C/rpc",
