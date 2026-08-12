@@ -15,6 +15,8 @@ export const start = (
   if (isDummyUserId(userId)) return;
 
   if (brazeOptOutIdentityCleanup) {
+    // Opted-out: do not call changeUser. Prior Braze profile wipe/reset is handled
+    // separately before this flag is enabled in production (see LIVE-34717).
     if (isTrackedUser) {
       Braze.changeUser(userId.exportUserIdForBraze());
     }
