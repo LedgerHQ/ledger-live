@@ -1,7 +1,7 @@
 import { renderHook } from "@tests/test-renderer";
 import { useLargeMover } from "../useLargeMover";
 
-jest.mock("@ledgerhq/live-common/dada-client/hooks/useAssetsData", () => ({
+jest.mock("@features/platform-aggregated-assets", () => ({
   useAssetsData: jest.fn(() => ({
     data: undefined,
     isLoading: false,
