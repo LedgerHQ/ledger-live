@@ -48,6 +48,38 @@ type NativeTx = NonNullable<Awaited<ReturnType<NativeStream["next"]>>>;
  */
 type NativePcztTransaction = ReturnType<NativeModule["parsePczt"]>;
 
+type NativeOrchardAction = NonNullable<NativePcztTransaction["orchardBundle"]>["actions"][number];
+
+/**
+ * The Ironwood section of a parsed PCZT, as the native addon returns it.
+ *
+ * Declared here rather than read off `NativePcztTransaction` because
+ * `@ledgerhq/zcash-utils` only started returning `ironwoodBundle` from
+ * `parsePczt()` in the release that added Ironwood support to its parser; the
+ * catalog pin in `pnpm-workspace.yaml` may still predate it. Structurally it is
+ * an Orchard bundle whose actions each carry the extra PCZT v2
+ * `notePlaintextVersion` byte -- see `PcztIronwoodBundle` in
+ * `@ledgerhq/device-signer-kit-zcash`, which this is normalised into.
+ */
+type NativeIronwoodBundle = {
+  actions: (NativeOrchardAction & { notePlaintextVersion: number })[];
+  flags: number;
+  valueBalance: string;
+  anchor: Uint8Array;
+};
+
+/**
+ * Reads the Ironwood section off a `parsePczt()` result.
+ *
+ * Returns `undefined` both when the transaction genuinely has no Ironwood
+ * actions and when the native addon predates Ironwood parsing;
+ * `buildIronwoodTransactionJob` distinguishes the two, since only the latter is
+ * a misconfiguration.
+ */
+function nativeIronwoodBundle(raw: NativePcztTransaction): NativeIronwoodBundle | undefined {
+  return (raw as { ironwoodBundle?: NativeIronwoodBundle | null }).ironwoodBundle ?? undefined;
+}
+
 /** PCZT methods that must be present on the native addon at runtime. */
 const PCZT_METHODS = [
   "parsePczt",
@@ -164,7 +196,26 @@ function adaptPcztForSigner(raw: NativePcztTransaction): PcztTransaction {
           })),
         }
       : null,
+    // V6 only. The signer rejects a V5 transaction that carries an Ironwood
+    // bundle just as firmly as a V6 one that does not, so an absent section
+    // must map to `null` rather than be omitted or defaulted.
+    ironwoodBundle: adaptIronwoodBundle(nativeIronwoodBundle(raw)),
   };
+}
+
+/** Normalises the Ironwood bundle exactly as `adaptPcztForSigner` does the Orchard one. */
+function adaptIronwoodBundle(raw: NativeIronwoodBundle | undefined) {
+  return raw
+    ? {
+        ...raw,
+        valueBalance: BigInt(raw.valueBalance),
+        actions: raw.actions.map(action => ({
+          ...action,
+          spendValue: BigInt(action.spendValue),
+          value: BigInt(action.value),
+        })),
+      }
+    : null;
 }
 
 /**
@@ -204,9 +255,24 @@ export async function buildIronwoodTransactionJob(
   const native = await getPcztModule();
   const built = await native.buildIronwoodTransaction(args);
   const rawPczt = native.parsePczt(built.pcztHex); // synchronous NAPI call — no await
+  const pcztTransaction = adaptPcztForSigner(rawPczt);
+
+  // The builder just produced Ironwood actions, so the parse must hand them
+  // back. If it does not, the native addon predates Ironwood parsing: the
+  // signer would reject the V6 transaction for a null Ironwood bundle, and the
+  // error it raises names neither this module nor the version mismatch. Fail
+  // here instead, where the cause is known.
+  if (built.nActionsIronwood > 0 && pcztTransaction.ironwoodBundle === null) {
+    throw new Error(
+      `parsePczt dropped the Ironwood bundle of a V6 PCZT with ${built.nActionsIronwood} ` +
+        "action(s): @ledgerhq/zcash-utils is too old to parse the Ironwood pool. " +
+        "Bump the @ledgerhq/zcash-utils catalog entry in pnpm-workspace.yaml.",
+    );
+  }
+
   return {
     pcztHex: built.pcztHex,
-    pcztTransaction: adaptPcztForSigner(rawPczt),
+    pcztTransaction,
     feeZat: built.feeZat,
     anchorHeight: built.anchorHeight,
     nActionsIronwood: built.nActionsIronwood,
