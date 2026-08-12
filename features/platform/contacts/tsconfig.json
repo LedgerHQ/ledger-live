@@ -8,7 +8,7 @@
     "moduleResolution": "bundler",
     "paths": { "*": ["./*"] },
     "noEmit": true,
-    "types": ["jest"]
+    "types": ["jest", "@testing-library/jest-dom"]
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "lib"]
