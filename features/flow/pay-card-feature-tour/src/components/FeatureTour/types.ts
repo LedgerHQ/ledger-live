@@ -2,8 +2,7 @@ export type PayCardTrackScreen = (page: string) => void;
 
 export type PayCardTrackEvent = (event: string, params: Record<string, unknown>) => void;
 
-/** Lumen symbol names used for the feature rows. The host resolves the glyph per platform. */
-export type FeatureTourRowIcon = "Globe" | "Chart2" | "CreditCard";
+export type FeatureTourRowIcon = "Globe" | "Chart5" | "CreditCard";
 
 export type FeatureTourRow = Readonly<{
   icon: FeatureTourRowIcon;

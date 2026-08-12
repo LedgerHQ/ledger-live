@@ -31,7 +31,7 @@ const content: FeatureTourContent = {
       description: t("payCardFeatureTour.rows.global.description"),
     },
     {
-      icon: "Chart2",
+      icon: "Chart5",
       title: t("payCardFeatureTour.rows.volatility.title"),
       description: t("payCardFeatureTour.rows.volatility.description"),
     },
@@ -102,5 +102,5 @@ pay-card-feature-tour/
 ```
 
 The view shows a hero image, title, subtitle, and three Lumen `ListItem` feature rows
-(Globe / Chart2 / CreditCard) inside a queued bottom sheet (mobile) or dialog (desktop),
+(Globe / Chart5 / CreditCard) inside a queued bottom sheet (mobile) or dialog (desktop),
 with a single "Got it" CTA to dismiss.

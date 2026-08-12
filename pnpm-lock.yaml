@@ -955,6 +955,9 @@ importers:
       '@features/flow-pay-card-balance':
         specifier: workspace:^
         version: link:../../features/flow/pay-card-balance
+      '@features/flow-pay-card-feature-tour':
+        specifier: workspace:^
+        version: link:../../features/flow/pay-card-feature-tour
       '@features/platform-aggregated-assets':
         specifier: workspace:*
         version: link:../../features/platform/aggregated-assets
@@ -1734,6 +1737,9 @@ importers:
       '@features/flow-pay-card-auth':
         specifier: workspace:^
         version: link:../../features/flow/pay-card-auth
+      '@features/flow-pay-card-feature-tour':
+        specifier: workspace:^
+        version: link:../../features/flow/pay-card-feature-tour
       '@features/platform-aggregated-assets':
         specifier: workspace:*
         version: link:../../features/platform/aggregated-assets
