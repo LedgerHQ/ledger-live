@@ -1,13 +1,7 @@
 import path from "path";
 import chalk from "chalk";
 import * as compose from "docker-compose";
-import { fetchChainspecToml } from "@ledgerhq/coin-casper/network/api";
-import {
-  DEVNET_CHAIN_NAME,
-  DEVNET_RPC_URL,
-  DEVNET_SERVICE_NAME,
-  userDerivationPath,
-} from "./fixtures";
+import { DEVNET_SERVICE_NAME, userDerivationPath } from "./fixtures";
 
 const PACKAGE_ROOT = path.resolve(__dirname, "..");
 
@@ -40,11 +34,7 @@ export async function spawnDevnet(): Promise<void> {
       commandOptions: ["--wait"],
     });
   } catch (error) {
-    const diagnosis = await readinessDiagnosis();
-    throw new Error(
-      `casper devnet did not become healthy: ${formatComposeError(error)}\n` +
-        `network ${DEVNET_CHAIN_NAME} is-ready → ${diagnosis}`,
-    );
+    throw new Error(`casper devnet did not become healthy: ${formatComposeError(error)}`);
   }
   console.log(chalk.bgBlueBright(" -  CASPER DEVNET READY ✅  - "));
 }
@@ -55,19 +45,6 @@ export async function killDevnet(): Promise<void> {
     ...composeOpts(),
     commandOptions: ["--remove-orphans", "--volumes"],
   });
-}
-
-async function readinessDiagnosis(): Promise<string> {
-  try {
-    const { out } = await compose.exec(
-      DEVNET_SERVICE_NAME,
-      `casper-devnet network ${DEVNET_CHAIN_NAME} is-ready`,
-      composeOpts(),
-    );
-    return out.trim();
-  } catch (error) {
-    return `command itself failed: ${formatComposeError(error)}`;
-  }
 }
 
 // `--secret-key` prints a CRLF PEM block, unlike the bare-hex `--public-key`
@@ -98,26 +75,3 @@ async function derive(derivationPath: string, flag: string): Promise<string> {
     killDevnet().catch(() => {});
   }),
 );
-
-export async function nativeTransferMinimumMotes(): Promise<string> {
-  const toml = await fetchChainspecToml();
-  const match = toml.match(/^native_transfer_minimum_motes\s*=\s*([\d_]+)/m);
-  if (!match) {
-    throw new Error(`native_transfer_minimum_motes not found in chainspec:\n${toml}`);
-  }
-  return match[1].replace(/_/g, "");
-}
-
-export async function rawAccountInfo(publicKey: string): Promise<string> {
-  const response = await fetch(DEVNET_RPC_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      jsonrpc: "2.0",
-      id: 1,
-      method: "state_get_account_info",
-      params: { public_key: publicKey },
-    }),
-  });
-  return `HTTP ${response.status} ${await response.text()}`;
-}

@@ -12,8 +12,6 @@ export const DEVNET_SERVICE_NAME = "casper-devnet";
 // The bare host and `/` both return 404 — the sidecar serves RPC on `/rpc`.
 export const DEVNET_RPC_URL = "http://localhost:11101/rpc";
 
-export const DEVNET_CHAIN_NAME = "casper";
-
 // Validators occupy derivation indices 0..n; users start at 100.
 const USER_DERIVATION_INDEX_OFFSET = 100;
 
@@ -55,9 +53,6 @@ export const localCoinConfig: ReturnType<CasperCoinConfig> = {
 
 export const SENDER_USER_INDEX = 0;
 export const RECIPIENT_USER_INDEX = 1;
-
-// Untouched by the transfer scenario, so devnet.test.ts's genesis-balance assertion always holds.
-export const DEVNET_SANITY_USER_INDEX = 2;
 
 const ONE_CSPR_MOTES = new BigNumber(1e9);
 
