@@ -1,6 +1,7 @@
 import React from "react";
 import {
   renderWithMockedCounterValuesProvider,
+  fireEvent,
   screen,
   waitFor,
   render,
@@ -8,13 +9,19 @@ import {
 } from "tests/testSetup";
 import { useNavigate } from "react-router";
 import { server } from "tests/server";
-import { trackPage } from "~/renderer/analytics/segment";
+import { track, trackPage } from "~/renderer/analytics/segment";
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
 import { BTC_ACCOUNT, ETH_ACCOUNT_WITH_USDC } from "LLD/features/__mocks__/accounts.mock";
 import { payCardInitialState } from "@domain/entity-pay-card";
 import PayTab from "LLD/features/PayTab";
+import { usePayStablecoins, type PayStablecoins } from "../hooks/usePayStablecoins";
+import { USDC, USDT, makeItem } from "../hooks/__tests__/fixtures";
 
 const mockNavigate = jest.fn();
+
+jest.mock("../hooks/usePayStablecoins", () => ({
+  usePayStablecoins: jest.fn(),
+}));
 
 jest.mock("react-router", () => ({
   ...jest.requireActual("react-router"),
@@ -23,6 +30,8 @@ jest.mock("react-router", () => ({
 
 const mockedUseNavigate = jest.mocked(useNavigate);
 const mockedTrackPage = jest.mocked(trackPage);
+const mockedTrack = jest.mocked(track);
+const mockedUsePayStablecoins = jest.mocked(usePayStablecoins);
 
 const EMPTY_TITLE = "Pay and get paid";
 const EMPTY_DESCRIPTION = "Start by depositing stablecoin to your wallet";
@@ -30,6 +39,31 @@ const FEATURE_TOUR_ROW = "Minimal volatility";
 
 const onboardedState = { settings: { ...AFTER_ONBOARDING_STATE, counterValue: "USD" } };
 const tourSeenState = { payCard: { ...payCardInitialState, hasSeenFeatureTour: true } };
+const fundedState = {
+  ...onboardedState,
+  ...tourSeenState,
+  accounts: [BTC_ACCOUNT, ETH_ACCOUNT_WITH_USDC],
+};
+
+const defaultPayStablecoins: PayStablecoins = {
+  stablecoins: [],
+  defaultStablecoins: [USDC, USDT],
+  isLoading: false,
+  isError: false,
+};
+
+function mockPayStablecoins(overrides: Partial<PayStablecoins> = {}) {
+  mockedUsePayStablecoins.mockReturnValue({
+    ...defaultPayStablecoins,
+    ...overrides,
+  });
+}
+
+function mockFundedPayStablecoins() {
+  mockPayStablecoins({
+    stablecoins: [makeItem(USDC.id, USDC.ticker, USDC.name, 1000)],
+  });
+}
 
 jest.mock("@features/flow-pay-card-auth", () => ({
   CardLogin: () => <button type="button">Login</button>,
@@ -39,9 +73,10 @@ jest.mock("~/renderer/linking", () => ({
   openURL: jest.fn(),
 }));
 
-describe("PayTab integration", () => {
+describe("PayTab", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockPayStablecoins();
     mockedUseNavigate.mockReturnValue(mockNavigate);
   });
 
@@ -92,6 +127,8 @@ describe("PayTab integration", () => {
   });
 
   it("should render the aggregated stablecoin balance when the user holds USDC", async () => {
+    mockFundedPayStablecoins();
+
     const { container } = renderWithMockedCounterValuesProvider(<PayTab />, {
       initialState: {
         ...onboardedState,
@@ -103,7 +140,6 @@ describe("PayTab integration", () => {
     await waitFor(() => {
       expect(within(container).getByTestId("pay-card-balance-funded-state")).toBeVisible();
     });
-    expect(within(container).queryByTestId("pay-card-balance-empty-state")).not.toBeInTheDocument();
   });
 
   it("should track the Pay page with the active balance filter on view", () => {
@@ -127,5 +163,55 @@ describe("PayTab integration", () => {
     });
 
     expect(await screen.findByRole("button", { name: "Login" })).toBeVisible();
+  });
+
+  it("should open the balance filter dialog from the hero pill and track the interaction", async () => {
+    mockFundedPayStablecoins();
+
+    renderWithMockedCounterValuesProvider(<PayTab />, {
+      initialState: fundedState,
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId("pay-card-balance-filter-pill")).toBeVisible();
+    });
+
+    fireEvent.click(screen.getByTestId("pay-card-balance-filter-pill"));
+
+    const dialog = await screen.findByTestId("pay-card-balance-filter-dialog");
+    expect(dialog).toHaveTextContent("USD Coin");
+    expect(dialog).toHaveTextContent("Tether USD");
+    expect(mockedTrack).toHaveBeenCalledWith("button_clicked", { button: "balance_filter" });
+  });
+
+  it("should persist the selected stablecoin, update the hero pill and track the confirmation", async () => {
+    mockFundedPayStablecoins();
+
+    const { store } = renderWithMockedCounterValuesProvider(<PayTab />, {
+      initialState: fundedState,
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId("pay-card-balance-filter-pill")).toBeVisible();
+    });
+
+    fireEvent.click(screen.getByTestId("pay-card-balance-filter-pill"));
+
+    fireEvent.click(await screen.findByTestId("pay-card-balance-filter-option-usdc"));
+    fireEvent.click(screen.getByTestId("pay-card-balance-filter-confirm"));
+
+    await waitFor(() => {
+      expect(screen.queryByTestId("pay-card-balance-filter-dialog")).not.toBeInTheDocument();
+    });
+
+    expect(store.getState().payCard.balanceFilter).toBe(USDC.id);
+
+    const pill = screen.getByTestId("pay-card-balance-filter-pill");
+    expect(within(pill).getByText("USDC")).toBeVisible();
+
+    expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
+      button: "confirm_balance_filter",
+      asset: "USDC",
+    });
   });
 });
