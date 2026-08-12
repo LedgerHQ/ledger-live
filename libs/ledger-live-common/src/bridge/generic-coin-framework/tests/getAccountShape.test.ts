@@ -18,12 +18,15 @@ const getBalanceMock = jest.fn();
 const lastBlockMock = jest.fn();
 const getTokenFromAssetMock = jest.fn();
 const chainSpecificGetAccountShapeMock = jest.fn();
+const buildAccountShapeMock = jest.fn();
 const refreshOperationsMock = jest.fn();
+const getAccountInfoMock = jest.fn();
 jest.mock("../api", () => ({
   getCoinModuleApi: () => ({
     lastBlock: (...a: any[]) => lastBlockMock(...a),
     getBalance: (...a: any[]) => getBalanceMock(...a),
     listOperations: (...a: any[]) => listOperationsMock(...a),
+    getAccountInfo: (...a: any[]) => getAccountInfoMock(...a),
   }),
 }));
 const getBridgeApiMock = jest.fn();
@@ -841,6 +844,159 @@ describe("genericGetAccountShape", () => {
       expect(attachedInternalOp?.hash).toBe(parentOpHash);
       expect(attachedInternalOp?.type).toBe("IN");
       expect((attachedInternalOp as any)?.extra?.internal).toBe(true);
+    });
+  });
+
+  describe("chain-specific account shape contribution", () => {
+    const network = "mainnet";
+    const currency = { id: "familyx", name: "FamilyX" };
+
+    beforeEach(() => {
+      // Opted in here rather than in `defaultBridgeApi`, matching `getAccountReadiness` above: no
+      // family declares this hook, so the default bridge must keep modelling one that does not —
+      // and declaring it there makes every unrelated suite spend a `getAccountInfo` call.
+      getBridgeApiMock.mockImplementation(() => ({
+        ...defaultBridgeApi(),
+        buildAccountShape: (...a: any[]) => buildAccountShapeMock(...a),
+      }));
+      getSyncHashMock.mockReturnValue("sync-hash");
+      getBalanceMock.mockResolvedValue([{ asset: { type: "native" }, value: 1000n, locked: 0n }]);
+      extractBalanceMock.mockReturnValue({ value: 1000n, locked: 0n });
+      listOperationsMock.mockResolvedValue({ items: [], next: undefined });
+      buildSubAccountsMock.mockReturnValue([]);
+      lastBlockMock.mockResolvedValue({ height: 1 });
+      mergeOpsMock.mockImplementation((_old: any[], newOps: any[]) => newOps ?? []);
+      cleanedOperationMock.mockImplementation((op: any) => op);
+      inferSubOperationsMock.mockReturnValue([]);
+    });
+
+    afterEach(() => {
+      getBridgeApiMock.mockImplementation(defaultBridgeApi);
+    });
+
+    test("spreads a family-contributed account shape into the synced account", async () => {
+      buildAccountShapeMock.mockResolvedValueOnce({ familyResources: { energy: "1200" } });
+
+      const getShape = genericGetAccountShape(network, currency.id);
+      const result = await getShape(
+        { address: "addr1", initialAccount: undefined, currency, derivationMode: "" } as any,
+        { paginationConfig: {} as any },
+      );
+
+      expect(buildAccountShapeMock).toHaveBeenCalledWith("addr1", undefined);
+      expect((result as any).familyResources).toEqual({ energy: "1200" });
+    });
+
+    test("hands the coin module's getAccountInfo metadata to the family mapper", async () => {
+      // ADR-045: the framework makes the standard call; the family decides what the metadata feeds.
+      const accountInfo = { type: "familyx", meterLimit: 5000, meterA: 1200, meterB: 600 };
+      getAccountInfoMock.mockResolvedValueOnce(accountInfo);
+      buildAccountShapeMock.mockImplementationOnce((_address: string, info: any) => ({
+        familyResources: { a: String(info.meterA), b: String(info.meterB) },
+      }));
+
+      const getShape = genericGetAccountShape(network, currency.id);
+      const result = await getShape(
+        { address: "addr3", initialAccount: undefined, currency, derivationMode: "" } as any,
+        { paginationConfig: {} as any },
+      );
+
+      expect(getAccountInfoMock).toHaveBeenCalledWith("addr3");
+      expect(buildAccountShapeMock).toHaveBeenCalledWith("addr3", accountInfo);
+      expect((result as any).familyResources).toEqual({ a: "1200", b: "600" });
+    });
+
+    test("syncs unchanged when the family contributes no shape", async () => {
+      buildAccountShapeMock.mockResolvedValueOnce(undefined);
+
+      const getShape = genericGetAccountShape(network, currency.id);
+      const result = await getShape(
+        { address: "addr2", initialAccount: undefined, currency, derivationMode: "" } as any,
+        { paginationConfig: {} as any },
+      );
+
+      expect(buildAccountShapeMock).toHaveBeenCalledWith("addr2", undefined);
+      expect(result.balance).toBeDefined();
+      expect((result as any).familyResources).toBeUndefined();
+    });
+
+    test("does not spend a getAccountInfo network call when the family declares no mapper", async () => {
+      getBridgeApiMock.mockImplementationOnce(() => ({
+        getTokenFromAsset: getTokenFromAssetMock,
+        refreshOperations: (...a: any[]) => refreshOperationsMock(...a),
+      }));
+
+      const getShape = genericGetAccountShape(network, currency.id);
+      await getShape(
+        { address: "addr4", initialAccount: undefined, currency, derivationMode: "" } as any,
+        { paginationConfig: {} as any },
+      );
+
+      expect(getAccountInfoMock).not.toHaveBeenCalled();
+    });
+
+    test("propagates a synchronous throw from the chain-specific hook (e.g. stellar's burn-address guard)", async () => {
+      const burnAddressError = new Error("burn address");
+      chainSpecificGetAccountShapeMock.mockImplementationOnce(() => {
+        throw burnAddressError;
+      });
+
+      const getShape = genericGetAccountShape(network, currency.id);
+
+      await expect(
+        getShape(
+          {
+            address: "burn_addr",
+            initialAccount: undefined,
+            currency,
+            derivationMode: "",
+          } as any,
+          { paginationConfig: {} as any },
+        ),
+      ).rejects.toThrow(burnAddressError);
+    });
+
+    test("fails the sync when the family mapper rejects, rather than persisting a partial account", async () => {
+      buildAccountShapeMock.mockRejectedValueOnce(new Error("trongrid down"));
+
+      const getShape = genericGetAccountShape(network, currency.id);
+
+      await expect(
+        getShape(
+          { address: "addr5", initialAccount: undefined, currency, derivationMode: "" } as any,
+          { paginationConfig: {} as any },
+        ),
+      ).rejects.toThrow("trongrid down");
+    });
+
+    test("keeps operations and syncHash when the family hook collides with them", async () => {
+      // Give the framework a real, non-empty `operations` result so a family-contributed
+      // `operations: []` collision is actually observable (both would otherwise be `[]`).
+      listOperationsMock.mockResolvedValueOnce({
+        items: [{ hash: "opA", type: "OUT", tx: { failed: false } }],
+        next: undefined,
+      });
+      adaptCoreOperationToLiveOperationMock.mockImplementationOnce((_accId: string, op: any) => ({
+        hash: op.hash,
+        type: op.type,
+        blockHeight: 5,
+        extra: {},
+      }));
+      buildAccountShapeMock.mockResolvedValueOnce({
+        operations: [],
+        syncHash: "hijacked",
+        familyOwnedField: "kept",
+      });
+
+      const getShape = genericGetAccountShape(network, currency.id);
+      const result = await getShape(
+        { address: "addr3", initialAccount: undefined, currency, derivationMode: "" } as any,
+        { paginationConfig: {} as any },
+      );
+
+      expect(result.operations).not.toEqual([]);
+      expect((result as any).syncHash).toBe("sync-hash");
+      expect((result as any).familyOwnedField).toBe("kept");
     });
   });
 

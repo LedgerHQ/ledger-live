@@ -38,6 +38,7 @@ export function genericEstimateMaxSpendable(
         draftTransaction,
         bridgeApi.computeIntentType,
         coinModuleApi.craftTransactionData,
+        bridgeApi.buildIntentData,
       ),
     );
     const estimation: FeeEstimation = {
