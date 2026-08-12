@@ -5,29 +5,29 @@ on:
 
     secrets:
       ALLURE_LEDGER_LIVE_PASSWORD:
-        required: false
+        required: true
       AWS_ACCOUNT_ID_PROD:
-        required: false
+        required: true
       AWS_CACHE_OIDC_ROLE_ARN_BRANCH:
-        required: false
+        required: true
       AWS_CACHE_OIDC_ROLE_ARN_DEVELOP:
-        required: false
+        required: true
       AWS_CACHE_REGION:
-        required: false
+        required: true
       AWS_CACHE_ROLE_NAME:
-        required: false
+        required: true
       GH_BOT_CLIENT_ID:
-        required: false
+        required: true
       GH_BOT_PRIVATE_KEY:
-        required: false
+        required: true
       MITMPROXY_LOGS_KEY:
-        required: false
+        required: true
       NX_KEY:
-        required: false
+        required: true
       SEED_QAA_B2C:
-        required: false
+        required: true
       SLACK_LIVE_CI_BOT_TOKEN:
-        required: false
+        required: true
   workflow_dispatch:
     inputs:
       ref:

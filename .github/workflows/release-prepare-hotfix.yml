@@ -152,7 +152,11 @@ jobs:
       # https://ledgerhq.atlassian.net/wiki/spaces/WALLETCO/pages/4710989838/LL+Incident+Recovery+-+Hotfix+in+all+cases
       ref: ${{ github.event.inputs.tag_version == 'latest' && 'main' || 'hotfix' }}
       caller: release-prepare-hotfix
-    secrets: inherit
+    secrets:
+      GH_BOT_APP_ID: ${{ secrets.GH_BOT_APP_ID }}
+      GH_BOT_PRIVATE_KEY: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+      NPMJS_TOKEN: ${{ secrets.NPMJS_TOKEN }}
+      SLACK_BOT_USER_OAUTH_ACCESS_TOKEN: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
 
   release-fail:
     name: "Prepare Hotfix > Failure Reporting"
