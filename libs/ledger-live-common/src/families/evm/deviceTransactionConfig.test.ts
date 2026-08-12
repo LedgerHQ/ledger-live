@@ -8,7 +8,7 @@ import BigNumber from "bignumber.js";
 import eip55 from "eip55";
 import getDeviceTransactionConfig from "./deviceTransactionConfig";
 import { makeAccount, makeTokenAccount } from "./common.fixtures";
-import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
+import { Transaction as EvmTransaction } from "@ledgerhq/live-common/families/evm/types";
 
 enum NFT_CONTRACTS {
   ERC721 = "0x60F80121C31A0d46B5279700f9DF786054aa5eE5",

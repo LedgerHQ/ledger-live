@@ -193,6 +193,38 @@ jobs:
       AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
       NX_KEY: ${{ secrets.NX_KEY }}
 
+  test-shared:
+    name: "Test Shared"
+    permissions:
+      id-token: write
+      contents: read
+    uses: LedgerHQ/ledger-live/.github/workflows/test-shared-reusable.yml@develop
+    secrets: inherit
+
+  test-domain:
+    name: "Test Domain"
+    permissions:
+      id-token: write
+      contents: read
+    uses: LedgerHQ/ledger-live/.github/workflows/test-domain-reusable.yml@develop
+    secrets: inherit
+
+  test-devtools:
+    name: "Test DevTools"
+    permissions:
+      id-token: write
+      contents: read
+    uses: LedgerHQ/ledger-live/.github/workflows/test-devtools-reusable.yml@develop
+    secrets: inherit
+
+  test-support:
+    name: "Test Support"
+    permissions:
+      id-token: write
+      contents: read
+    uses: LedgerHQ/ledger-live/.github/workflows/test-support-reusable.yml@develop
+    secrets: inherit
+
   test-design-system:
     name: "Test UI Libs"
     permissions:
@@ -288,6 +320,27 @@ jobs:
       AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
       AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
       NX_KEY: ${{ secrets.NX_KEY }}
+
+  test-additional:
+    name: "Test Additional"
+    uses: LedgerHQ/ledger-live/.github/workflows/test-additional.yml@develop
+    secrets: inherit
+
+  test-mobile-e2e-lint:
+    name: "Mobile E2E Lint & Typecheck"
+    permissions:
+      id-token: write
+      contents: read
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-e2e-lint-reusable.yml@develop
+    secrets: inherit
+
+  test-desktop-e2e-lint:
+    name: "Desktop E2E Lint & Typecheck"
+    permissions:
+      id-token: write
+      contents: read
+    uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-e2e-lint-reusable.yml@develop
+    secrets: inherit
 
   # Final Check required
   ok:

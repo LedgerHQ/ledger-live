@@ -115,11 +115,21 @@ const getGasPriceFromRpc = async (): Promise<string> => {
 export const getGasPrice = async (): Promise<string> => {
   const currencyConfig = getCoinConfig();
 
-  const response = await liveNetwork<NearV3Response<NearStats>>({
-    url: `${currencyConfig.infra.API_NEARBLOCKS_INDEXER}/v3/stats`,
-  });
+  try {
+    const response = await liveNetwork<NearV3Response<NearStats>>({
+      url: `${currencyConfig.infra.API_NEARBLOCKS_INDEXER}/v3/stats`,
+    });
 
-  return response.data.data?.gas_price || (await getGasPriceFromRpc());
+    const gasPrice = response.data.data?.gas_price;
+    if (gasPrice) {
+      return gasPrice;
+    }
+  } catch (error) {
+    // The indexer rate-limits (429) under load; the node RPC is the source of truth for gas price.
+    log("Near", "getGasPrice indexer request failed, falling back to node RPC", error);
+  }
+
+  return getGasPriceFromRpc();
 };
 
 export const getAccessKey = async ({

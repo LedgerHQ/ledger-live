@@ -1,7 +1,6 @@
 import React from "react";
-import { Avatar } from "@ledgerhq/lumen-ui-react";
 import type { Contact } from "@domain/entity-contact";
-import { getContactAvatarColorClass, getContactInitial } from "@features/platform-contacts";
+import { ContactAvatar } from "@features/platform-contacts";
 
 type ContactDetailAvatarProps = Readonly<{
   contact: Contact;
@@ -12,22 +11,15 @@ export function ContactDetailAvatar({
   contact,
   meAvatarSrc,
 }: ContactDetailAvatarProps): React.ReactNode {
-  if (contact.isMe) {
-    return (
-      <Avatar size="xl" src={meAvatarSrc} aria-hidden data-testid="contacts-detail-me-avatar" />
-    );
-  }
-
-  const avatarColorClass = getContactAvatarColorClass(contact.id);
-  const initial = getContactInitial(contact.name);
-
   return (
-    <div
-      className={`heading-3-semi-bold flex size-80 shrink-0 items-center justify-center rounded-full ${avatarColorClass}`}
-      aria-hidden
-      data-testid="contacts-detail-avatar"
-    >
-      {initial}
-    </div>
+    <ContactAvatar
+      contactId={contact.id}
+      name={contact.name}
+      isMe={contact.isMe}
+      src={meAvatarSrc}
+      ariaHidden
+      size="xl"
+      testId={contact.isMe ? "contacts-detail-me-avatar" : "contacts-detail-avatar"}
+    />
   );
 }

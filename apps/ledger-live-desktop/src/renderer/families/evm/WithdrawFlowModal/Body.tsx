@@ -24,7 +24,7 @@ import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmati
 import logger from "~/renderer/logger";
 import type { StakingAccount } from "@ledgerhq/live-common/families/evm/staking/types";
 import { isStakingAccount } from "@ledgerhq/live-common/families/evm/staking/types";
-import type { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
+import type { Transaction as EvmTransaction } from "@ledgerhq/live-common/families/evm/types";
 import { useStakingContractAddress } from "@ledgerhq/live-common/families/evm/staking/react";
 import { BigNumber } from "bignumber.js";
 

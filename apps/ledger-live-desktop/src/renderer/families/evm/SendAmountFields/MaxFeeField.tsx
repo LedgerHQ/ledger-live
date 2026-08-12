@@ -1,4 +1,4 @@
-import { Transaction } from "@ledgerhq/coin-evm/types/index";
+import { Transaction } from "@ledgerhq/live-common/families/evm/types";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import BigNumber from "bignumber.js";

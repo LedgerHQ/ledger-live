@@ -57,7 +57,7 @@ import { CompleteExchangeError, getErrorDetails, getSwapStepFromError } from "..
 import { postSwapCancelled } from "../../exchange/swap";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { setBroadcastTransaction } from "../../exchange/swap/setBroadcastTransaction";
-import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
+import type { Transaction as EvmTransaction } from "../../families/evm/types";
 import { padHexString } from "@ledgerhq/hw-app-eth";
 import { createStepError, StepError, toError } from "./parser";
 import { handleErrors } from "./handleSwapErrors";

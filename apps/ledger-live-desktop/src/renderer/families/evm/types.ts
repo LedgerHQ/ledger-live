@@ -1,4 +1,4 @@
-import { Transaction, TransactionStatus } from "@ledgerhq/coin-evm/types/index";
+import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/evm/types";
 import { Account, Operation } from "@ledgerhq/types-live";
 import { LLDCoinFamily } from "../types";
 

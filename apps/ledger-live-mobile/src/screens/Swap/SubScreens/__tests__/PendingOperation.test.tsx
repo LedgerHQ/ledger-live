@@ -79,7 +79,7 @@ describe("PendingOperation", () => {
       <PendingOperation route={route as never} navigation={navigation as never} />,
     );
 
-    await user.press(screen.getByText(/go to history/i));
+    await user.press(screen.getByText(/see details/i));
 
     expect(navigation.dispatch).toHaveBeenCalledWith(
       CommonActions.reset({
@@ -106,7 +106,7 @@ describe("PendingOperation", () => {
       <PendingOperation route={route as never} navigation={navigation as never} />,
     );
 
-    await user.press(screen.getByText(/go to history/i));
+    await user.press(screen.getByText(/see details/i));
 
     expect(navigation.dispatch).toHaveBeenCalledWith(
       CommonActions.reset({

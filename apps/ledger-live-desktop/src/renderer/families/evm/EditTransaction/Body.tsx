@@ -1,5 +1,9 @@
 import { fromTransactionRaw } from "@ledgerhq/live-common/families/evm/transaction";
-import { Transaction, TransactionRaw, TransactionStatus } from "@ledgerhq/coin-evm/types/index";
+import {
+  Transaction,
+  TransactionRaw,
+  TransactionStatus,
+} from "@ledgerhq/live-common/families/evm/types";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { addPendingOperation, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";

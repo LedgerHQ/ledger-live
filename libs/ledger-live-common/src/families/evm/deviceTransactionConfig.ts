@@ -11,7 +11,7 @@ import type { CommonDeviceTransactionField } from "@ledgerhq/ledger-wallet-frame
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
-import { Transaction as EvmTransaction, TransactionStatus } from "@ledgerhq/coin-evm/types/index";
+import type { Transaction as EvmTransaction, TransactionStatus } from "./types";
 
 type DeviceTransactionField = CommonDeviceTransactionField;
 

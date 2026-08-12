@@ -4,6 +4,7 @@ import { Plus } from "@ledgerhq/lumen-ui-react/symbols";
 import { resolveMeContactDisplayName } from "@features/platform-contacts";
 import type { ContactDetailViewProps } from "../types";
 import { ContactDetailAvatar } from "./ContactDetailAvatar.web";
+import { ContactDetailName } from "./ContactDetailName.web";
 
 type ContactDetailHeaderProps = Pick<
   ContactDetailViewProps,
@@ -26,12 +27,10 @@ export function ContactDetailHeader({
 
   return (
     <div className="flex flex-col items-center gap-24 pt-24">
-      <div className="flex flex-col items-center gap-16">
+      <div className="flex w-full min-w-0 flex-col items-center gap-16">
         <ContactDetailAvatar contact={contact} meAvatarSrc={meAvatarSrc} />
-        <div className="flex flex-col items-center gap-4">
-          <h2 className="heading-3-semi-bold text-base" data-testid="contacts-detail-name">
-            {displayName}
-          </h2>
+        <div className="flex w-full min-w-0 flex-col items-center gap-4">
+          <ContactDetailName name={displayName} />
           <p className="body-2 text-muted">{labels.formatAddressCount(contact.addresses.length)}</p>
         </div>
       </div>

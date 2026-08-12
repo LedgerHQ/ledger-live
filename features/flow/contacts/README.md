@@ -1,6 +1,8 @@
 # @features/flow-contacts
 
-> [!CAUTION] > **Status: UNSTABLE** — In active development as part of the Contacts feature.
+> [!CAUTION]
+>
+> **Status: UNSTABLE** — In active development as part of the Contacts feature.
 
 Shared Contacts flow package for Desktop and Mobile.
 
@@ -19,6 +21,8 @@ Shared Contacts flow package for Desktop and Mobile.
 - Add Address network eligibility and final currency selection state (MAD integration uses an
   injected selection port)
 - Shared UI components (`.web.tsx` / `.native.tsx`)
+- Contact detail composition; Platform Contacts owns the reusable Contact avatar, including the
+  app-owned "Me" profile image
 - Compatibility exports for `@features/flow-contacts-add-contact`
 
 App layers own routing, screen composition, i18n, and analytics.
@@ -91,11 +95,10 @@ src/
 │   └── Detail/                          # Contact detail (web + native)
 │       ├── ContactDetailView.web/.native.tsx / useEmptyContactDetail.ts / usePopulatedContactDetail.ts / useContactAddressDetail.ts / useContactAddressDetailActionsViewModel.ts / types.ts
 │       ├── model/                       # empty + populated + address detail + quick-action builders
-│       ├── components/                  # Header, EmptyState, Avatar (web + native)
+│       ├── components/                  # Header, EmptyState and detail-specific UI
 │       └── index.ts / web.ts / native.ts
 ├── components/                          # Cross-step shared UI
 │   ├── ContactsButton/                  # My Wallet entry (web + native)
-│   └── ContactAvatar/                   # Shared native list and detail avatar
 ├── hooks/                               # Contacts flow-only hooks
 ├── utils/                               # Contacts flow-only utilities
 ├── jest.native.ts                       # Mobile Jest entry (re-exports ./index.native)
@@ -109,3 +112,6 @@ public API as a compatibility façade while the remaining Contacts journeys are 
 
 `@features/flow-contacts-introduction` owns both introduction journeys and is composed by
 `ContactsView` on Web.
+
+`@features/platform-contacts` owns `ContactAvatar`: flows and applications can consume it directly
+for a Me profile image or a saved-contact avatar with deterministic color and Unicode initial.

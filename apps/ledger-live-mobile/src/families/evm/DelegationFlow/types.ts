@@ -1,5 +1,5 @@
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import type { TransactionStatus } from "@ledgerhq/coin-evm/types/index";
+import type { TransactionStatus } from "@ledgerhq/live-common/families/evm/types";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { StakingValidatorItem } from "@ledgerhq/live-common/families/evm/staking/types";
 import type { Operation } from "@ledgerhq/types-live";
