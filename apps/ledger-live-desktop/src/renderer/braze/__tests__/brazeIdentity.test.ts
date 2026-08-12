@@ -1,6 +1,6 @@
 import { UserId, DUMMY_USER_ID } from "@domain/entity-client-identity";
 import { generateAnonymousId } from "@ledgerhq/live-common/braze/anonymousUsers";
-import { resolveDesktopBrazeUserId, shouldPersistAnonymousBrazeId } from "./brazeIdentity";
+import { resolveDesktopBrazeUserId, shouldPersistAnonymousBrazeId } from "../brazeIdentity";
 
 jest.mock("@ledgerhq/live-common/braze/anonymousUsers", () => ({
   generateAnonymousId: jest.fn(() => "anonymous_id_1"),
