@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState, type ChangeEvent } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 import { urls } from "~/config/urls";
@@ -26,6 +26,12 @@ import {
   type ContactAddressDetailDialogProps,
   type ContactsListViewLabels,
   type ContactsViewProps,
+  CONTACTS_EVENT_SOURCE,
+  CONTACTS_FLOW,
+  CONTACTS_PAGE_EVENTS,
+  CONTACTS_PAGE_PROPERTY,
+  CONTACTS_TRACK_EVENTS,
+  CONTACTS_TRACKING_BUTTON,
 } from "@features/flow-contacts";
 import {
   CONTACTS_FEATURE_INTRODUCTION_HIGHLIGHTS,
@@ -35,6 +41,7 @@ import {
 } from "@features/flow-contacts-introduction";
 import { createMockContactDeviceIntentsPort, useContacts } from "@features/platform-contacts";
 import { MY_WALLET_AVATAR_USER_URL } from "LLD/features/MyWallet/components/UserAvatar/constants";
+import { useContactsAnalytics, resolveContactsCurrencyAnalytics } from "../../analytics";
 import { useContactsFeatureIntroductionPreference } from "../../hooks/useContactsFeatureIntroductionPreference";
 import { useContactsCurrencySelectionAdapter } from "../../hooks/useContactsCurrencySelectionAdapter";
 import { useContactsAddressValidationAdapter } from "../../hooks/useContactsAddressValidationAdapter";
@@ -61,6 +68,9 @@ export function useContactsViewModel(): ContactsPageViewModel {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const analytics = useContactsAnalytics();
+  const hasTrackedListPage = useRef(false);
+  const hasTrackedLedgerSyncGate = useRef(false);
   const helpCenterUrl = useLocalizedUrl(urls.helpModal.helpCenter);
   const handleSanctionedAddressLearnMore = useCallback(() => {
     openURL(helpCenterUrl);
@@ -94,6 +104,21 @@ export function useContactsViewModel(): ContactsPageViewModel {
       return;
     }
 
+    const { network, asset } = await resolveContactsCurrencyAnalytics(
+      addAddressFlowState.selectedCurrencyId,
+    );
+    const inputMethod = addAddressFlowState.addressEntry.inputMethod ?? "manual";
+
+    analytics.trackEvent(CONTACTS_TRACK_EVENTS.BUTTON_CLICKED, {
+      source: CONTACTS_EVENT_SOURCE.ADD_ADDRESS,
+      button: CONTACTS_TRACKING_BUTTON.saveAddress,
+      page: CONTACTS_PAGE_PROPERTY.CONTACT_DETAIL,
+      network,
+      asset,
+      inputMethod,
+      flow: CONTACTS_FLOW.CONTACTS,
+    });
+
     const selectedContact = contacts.find(
       contact => contact.id === addAddressFlowState.selectedContactId,
     );
@@ -122,8 +147,18 @@ export function useContactsViewModel(): ContactsPageViewModel {
         deviceCredentials: signedAddress.deviceCredentials,
       }),
     );
+
+    analytics.trackEvent(CONTACTS_TRACK_EVENTS.ADDRESS_ADDED, {
+      source: CONTACTS_EVENT_SOURCE.ADD_ADDRESS,
+      network,
+      asset,
+      inputMethod,
+      isEns: inputMethod === "ens",
+      flow: CONTACTS_FLOW.CONTACTS,
+    });
+
     continueFromReview();
-  }, [addAddressFlowState, contacts, continueFromReview, deviceIntents, dispatch]);
+  }, [addAddressFlowState, analytics, contacts, continueFromReview, deviceIntents, dispatch]);
   const selectCurrencyForContact = useCallback(
     (contactId: ContactId) => {
       void selectCurrency()
@@ -298,10 +333,14 @@ export function useContactsViewModel(): ContactsPageViewModel {
     setSearchQuery(event.target.value);
   }, []);
   const onClearSearch = useCallback(() => setSearchQuery(""), []);
-  const onDismissLedgerSyncIntroduction = useCallback(
-    () => setIsLedgerSyncIntroductionDismissed(true),
-    [],
-  );
+  const onDismissLedgerSyncIntroduction = useCallback(() => {
+    analytics.trackEvent(CONTACTS_TRACK_EVENTS.BUTTON_CLICKED, {
+      source: CONTACTS_EVENT_SOURCE.LEDGER_SYNC_GATE,
+      button: CONTACTS_TRACKING_BUTTON.dismiss,
+      page: CONTACTS_PAGE_PROPERTY.LEDGER_SYNC_GATE,
+    });
+    setIsLedgerSyncIntroductionDismissed(true);
+  }, [analytics]);
 
   useEffect(() => {
     if (ledgerSyncStatus !== "inactive") {
@@ -320,6 +359,58 @@ export function useContactsViewModel(): ContactsPageViewModel {
   const onDeferFeatureIntroduction = useCallback(() => {
     navigate(-1);
   }, [navigate]);
+
+  useEffect(() => {
+    if (hasTrackedListPage.current) {
+      return;
+    }
+
+    hasTrackedListPage.current = true;
+    analytics.trackPage(CONTACTS_PAGE_EVENTS.CONTACTS, {
+      source: CONTACTS_EVENT_SOURCE.LIST,
+      page: CONTACTS_PAGE_PROPERTY.CONTACTS,
+    });
+  }, [analytics]);
+
+  const searchHasResults = !("status" in viewModel && viewModel.status === "no-results");
+
+  useEffect(() => {
+    const trimmedQuery = searchQuery.trim();
+
+    if (trimmedQuery.length === 0) {
+      return;
+    }
+
+    const timeoutId = setTimeout(() => {
+      analytics.trackEvent(CONTACTS_TRACK_EVENTS.SEARCH_QUERY, {
+        source: CONTACTS_EVENT_SOURCE.SEARCH,
+        page: CONTACTS_PAGE_PROPERTY.CONTACTS,
+        queryLength: trimmedQuery.length,
+        hasResults: searchHasResults,
+      });
+    }, 500);
+
+    return () => clearTimeout(timeoutId);
+  }, [analytics, searchHasResults, searchQuery]);
+
+  useEffect(() => {
+    if (!isLedgerSyncIntroductionOpen || hasTrackedLedgerSyncGate.current) {
+      return;
+    }
+
+    hasTrackedLedgerSyncGate.current = true;
+    analytics.trackPage(CONTACTS_PAGE_EVENTS.ACTIVATE_LEDGER_SYNC, {
+      source: CONTACTS_EVENT_SOURCE.LEDGER_SYNC_GATE,
+      flow: CONTACTS_FLOW.CONTACTS,
+      previousPage: CONTACTS_PAGE_PROPERTY.CONTACTS,
+    });
+  }, [analytics, isLedgerSyncIntroductionOpen]);
+
+  useEffect(() => {
+    if (!isLedgerSyncIntroductionOpen) {
+      hasTrackedLedgerSyncGate.current = false;
+    }
+  }, [isLedgerSyncIntroductionOpen]);
 
   return {
     addAddressFlowState,
