@@ -18,28 +18,21 @@ jest.mock("LLD/features/Onboarding/screens/Welcome/hooks/useVideoCarousel", () =
   }),
 }));
 
-const analyticsPromptEnabledOverrides = {
-  ...FEATURE_FLAGS_INITIAL_STATE.overrides,
-  lldAnalyticsOptInPrompt: {
-    enabled: true,
-    params: {
-      variant: "B",
-      entryPoints: ["Onboarding"],
-    },
-  },
-  lwdAnalyticsOptInScreenV2: {
-    enabled: true,
-  },
-};
-
-const featureFlagsState = {
+const buildFeatureFlagsState = (overrides: Record<string, unknown>) => ({
   ...FEATURE_FLAGS_INITIAL_STATE,
-  overrides: analyticsPromptEnabledOverrides,
+  overrides: {
+    ...FEATURE_FLAGS_INITIAL_STATE.overrides,
+    ...overrides,
+  },
   resolved: {
     ...FEATURE_FLAGS_DEFAULTS,
-    ...analyticsPromptEnabledOverrides,
+    ...overrides,
   },
-};
+});
+
+const v2EnabledFeatureFlags = buildFeatureFlagsState({
+  lwdAnalyticsOptInScreenV2: { enabled: true },
+});
 
 describe("AnalyticsOptInScreen on Welcome", () => {
   beforeEach(() => {
@@ -55,10 +48,10 @@ describe("AnalyticsOptInScreen on Welcome", () => {
     document.getElementById("modals")?.remove();
   });
 
-  it("should open the screen when user starts onboarding and accept continues flow", async () => {
+  it("should open the v2 screen when the v2 flag is enabled without lldAnalyticsOptInPrompt", async () => {
     const { user } = render(<Welcome />, {
       initialState: {
-        featureFlags: featureFlagsState,
+        featureFlags: v2EnabledFeatureFlags,
         settings: {
           ...INITIAL_STATE,
           hasSeenAnalyticsOptInPrompt: false,
@@ -80,17 +73,24 @@ describe("AnalyticsOptInScreen on Welcome", () => {
       "button_clicked",
       expect.objectContaining({
         button: "Accept all",
-        variant: "B",
         entryPoint: "Onboarding",
+        flow: "consent onboarding",
       }),
       true,
+    );
+    expect(track).not.toHaveBeenCalledWith(
+      "button_clicked",
+      expect.objectContaining({
+        variant: expect.anything(),
+      }),
+      expect.anything(),
     );
   });
 
   it("should open preferences when user chooses Set preferences", async () => {
     const { user } = render(<Welcome />, {
       initialState: {
-        featureFlags: featureFlagsState,
+        featureFlags: v2EnabledFeatureFlags,
         settings: {
           ...INITIAL_STATE,
           hasSeenAnalyticsOptInPrompt: false,
@@ -109,7 +109,7 @@ describe("AnalyticsOptInScreen on Welcome", () => {
   it("should return to the main screen when user closes preferences", async () => {
     const { user } = render(<Welcome />, {
       initialState: {
-        featureFlags: featureFlagsState,
+        featureFlags: v2EnabledFeatureFlags,
         settings: {
           ...INITIAL_STATE,
           hasSeenAnalyticsOptInPrompt: false,
@@ -133,41 +133,27 @@ describe("AnalyticsOptInScreen on Welcome", () => {
       "button_clicked",
       expect.objectContaining({
         button: "Close",
-        variant: "B",
-        page: "Analytics opt-in screen B preferences",
+        page: "Analytics opt-in screen preferences",
       }),
       true,
     );
   });
 
-  it("should keep the legacy drawer for onboarding variant A when the v2 flag is enabled", async () => {
-    const variantAFeatureFlagsState = {
-      ...featureFlagsState,
-      overrides: {
-        ...featureFlagsState.overrides,
-        lldAnalyticsOptInPrompt: {
-          enabled: true,
-          params: {
-            variant: "A",
-            entryPoints: ["Onboarding"],
-          },
+  it("should keep the legacy drawer when the v2 flag is disabled and lldAnalyticsOptInPrompt is enabled", async () => {
+    const legacyFeatureFlags = buildFeatureFlagsState({
+      lldAnalyticsOptInPrompt: {
+        enabled: true,
+        params: {
+          variant: "A",
+          entryPoints: ["Onboarding"],
         },
       },
-      resolved: {
-        ...featureFlagsState.resolved,
-        lldAnalyticsOptInPrompt: {
-          enabled: true,
-          params: {
-            variant: "A",
-            entryPoints: ["Onboarding"],
-          },
-        },
-      },
-    };
+      lwdAnalyticsOptInScreenV2: { enabled: false },
+    });
 
     const { user } = render(<Welcome />, {
       initialState: {
-        featureFlags: variantAFeatureFlagsState,
+        featureFlags: legacyFeatureFlags,
         settings: {
           ...INITIAL_STATE,
           hasSeenAnalyticsOptInPrompt: false,
@@ -181,10 +167,27 @@ describe("AnalyticsOptInScreen on Welcome", () => {
     expect(screen.queryByTestId("analytics-opt-in-screen")).not.toBeInTheDocument();
   });
 
+  it("should not open the v2 screen when the prompt was already seen", async () => {
+    const { user } = render(<Welcome />, {
+      initialState: {
+        featureFlags: v2EnabledFeatureFlags,
+        settings: {
+          ...INITIAL_STATE,
+          hasSeenAnalyticsOptInPrompt: true,
+        },
+      },
+    });
+
+    await user.click(screen.getByTestId("v3-onboarding-get-started-button"));
+
+    expect(screen.queryByTestId("analytics-opt-in-screen")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("accept-analytics-button")).not.toBeInTheDocument();
+  });
+
   it("should refuse all and close the screen", async () => {
     const { user } = render(<Welcome />, {
       initialState: {
-        featureFlags: featureFlagsState,
+        featureFlags: v2EnabledFeatureFlags,
         settings: {
           ...INITIAL_STATE,
           hasSeenAnalyticsOptInPrompt: false,
