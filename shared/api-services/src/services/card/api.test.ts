@@ -1,0 +1,132 @@
+import { configureStore } from "@reduxjs/toolkit";
+import { getCardExtra, cardApi, cardApiExtra } from "./api";
+import type { CardApiExtra } from "./types";
+
+function buildExtra(overrides: Partial<CardApiExtra> = {}): CardApiExtra {
+  return {
+    cardApiBaseUrl: "https://card.test",
+    getCardSessionToken: () => "session-token",
+    refreshCardSession: async () => "refreshed-token",
+    ...overrides,
+  };
+}
+
+// Captured at import time: the base query tests below inject into this same api object.
+const OWN_ENDPOINT_NAMES = Object.keys(cardApi.endpoints);
+
+describe("cardApi", () => {
+  it("has the correct reducer path", () => {
+    expect(cardApi.reducerPath).toBe("cardApi");
+  });
+
+  it("declares no endpoints of its own", () => {
+    expect(OWN_ENDPOINT_NAMES).toHaveLength(0);
+  });
+});
+
+describe("cardApiExtra", () => {
+  it("returns the validated config", () => {
+    const extra = buildExtra();
+    expect(cardApiExtra(extra)).toEqual(extra);
+  });
+
+  it("throws when the base url is missing or empty", () => {
+    expect(() => cardApiExtra(buildExtra({ cardApiBaseUrl: undefined }))).toThrow();
+    expect(() => cardApiExtra(buildExtra({ cardApiBaseUrl: "" }))).toThrow();
+  });
+
+  it("throws when the session accessors are not functions", () => {
+    expect(() => cardApiExtra(buildExtra({ getCardSessionToken: undefined }))).toThrow();
+    expect(() => cardApiExtra(buildExtra({ refreshCardSession: undefined }))).toThrow();
+  });
+});
+
+describe("getCardExtra", () => {
+  it("reads the config off the thunk extraArgument", () => {
+    const extra = buildExtra();
+    expect(getCardExtra({ extra })).toBe(extra);
+  });
+});
+
+describe("cardBaseQuery", () => {
+  let fetchSpy: jest.SpyInstance;
+
+  // The base query is private, so drive it the way a use case does: through an injected endpoint.
+  function probeStore(extra: CardApiExtra) {
+    const api = cardApi.injectEndpoints({
+      endpoints: build => ({ probe: build.query<unknown, void>({ query: () => "/probe" }) }),
+      overrideExisting: true,
+    });
+    const store = configureStore({
+      reducer: { [cardApi.reducerPath]: cardApi.reducer },
+      middleware: gdm => gdm({ thunk: { extraArgument: extra } }).concat(cardApi.middleware),
+    });
+    return { api, store };
+  }
+
+  afterEach(() => {
+    fetchSpy?.mockRestore();
+  });
+
+  it("resolves requests against the configured base url with a Bearer token", async () => {
+    fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({ ok: true }));
+
+    const { api, store } = probeStore(cardApiExtra(buildExtra()));
+    const result = await store.dispatch(api.endpoints.probe.initiate());
+
+    expect(result.data).toEqual({ ok: true });
+    const sent = request(fetchSpy);
+    expect(sent.url).toBe("https://card.test/probe");
+    expect(sent.headers.get("authorization")).toBe("Bearer session-token");
+  });
+
+  it("omits the Authorization header when no session token is available", async () => {
+    fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({}));
+
+    const { api, store } = probeStore(
+      cardApiExtra(buildExtra({ getCardSessionToken: () => null })),
+    );
+    await store.dispatch(api.endpoints.probe.initiate());
+
+    expect(request(fetchSpy).headers.get("authorization")).toBeNull();
+  });
+
+  it("refreshes the session once and retries on a 401", async () => {
+    fetchSpy = jest
+      .spyOn(globalThis, "fetch")
+      .mockResolvedValueOnce(jsonResponse({ error: "unauthorized" }, 401))
+      .mockResolvedValueOnce(jsonResponse({ ok: true }));
+    const refreshCardSession = jest.fn(async () => "refreshed-token");
+
+    const { api, store } = probeStore(cardApiExtra(buildExtra({ refreshCardSession })));
+    const result = await store.dispatch(api.endpoints.probe.initiate());
+
+    expect(refreshCardSession).toHaveBeenCalledTimes(1);
+    expect(fetchSpy).toHaveBeenCalledTimes(2);
+    expect(result.data).toEqual({ ok: true });
+    expect(request(fetchSpy, 1).headers.get("authorization")).toBe("Bearer refreshed-token");
+  });
+
+  it("returns the 401 error when the session cannot be refreshed", async () => {
+    fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({}, 401));
+    const refreshCardSession = jest.fn(async () => null);
+
+    const { api, store } = probeStore(cardApiExtra(buildExtra({ refreshCardSession })));
+    const result = await store.dispatch(api.endpoints.probe.initiate());
+
+    expect(refreshCardSession).toHaveBeenCalledTimes(1);
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
+    expect(result.error).toMatchObject({ status: 401 });
+  });
+});
+
+function jsonResponse(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "content-type": "application/json" },
+  });
+}
+
+function request(spy: jest.SpyInstance, callIndex = 0): Request {
+  return spy.mock.calls[callIndex][0] as Request;
+}
