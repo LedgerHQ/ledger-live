@@ -28,12 +28,10 @@ export class BrazePlugin extends Plugin {
         this.lastSeenTraits?.anonymousId === event.anonymousId &&
         isEqual(this.lastSeenTraits?.traits, debouncedTraits)
       ) {
-        const integrations = event.integrations;
-
-        // If the traits didn't changed, disable braze integration
-        if (integrations !== undefined) {
-          integrations[this.key] = false;
-        }
+        // If the traits didn't change, disable braze integration
+        const integrations = event.integrations ?? {};
+        integrations[this.key] = false;
+        event.integrations = integrations;
       } else {
         this.lastSeenTraits = {
           anonymousId: event.anonymousId ?? "",

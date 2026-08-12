@@ -580,9 +580,13 @@ export const start = async (store: AppStore): Promise<SegmentClient | undefined>
 };
 
 export const updateIdentify = async (additionalProperties?: UserTraits, mandatory?: boolean) => {
-  const state = storeInstance?.getState();
+  if (!storeInstance) {
+    return;
+  }
+
+  const state = storeInstance.getState();
   const isTracking = getIsTracking(state, mandatory);
-  if (!storeInstance || !isTracking.enabled) {
+  if (!isTracking.enabled) {
     return;
   }
 

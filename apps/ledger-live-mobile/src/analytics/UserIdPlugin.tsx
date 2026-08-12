@@ -1,17 +1,13 @@
-import type { Store } from "@reduxjs/toolkit";
 import { Plugin, PluginType, SegmentEvent } from "@segment/analytics-react-native";
-import {
-  userIdSelector,
-  isDummyUserId,
-  type IdentitiesState,
-} from "@domain/entity-client-identity";
+import { userIdSelector, isDummyUserId } from "@domain/entity-client-identity";
+import type { AppStore } from "~/reducers";
 import { shouldIncludeSegmentIdentity } from "./segmentIdentity";
 
 export class UserIdPlugin extends Plugin {
   type = PluginType.enrichment;
-  store;
+  store: AppStore;
 
-  constructor(store: Store<{ identities: IdentitiesState }>) {
+  constructor(store: AppStore) {
     super();
     this.store = store;
   }
