@@ -2,6 +2,10 @@ import { getEnv } from "@shared/env";
 import { A4_SUPPORTED_NETWORKS } from "../config";
 import type { A4Environment } from "../config";
 
+export function normalizeAccountKey(xpubOrAddress: string): string {
+  return /^0x[0-9a-fA-F]+$/.test(xpubOrAddress) ? xpubOrAddress.toLowerCase() : xpubOrAddress;
+}
+
 const A4_SUPPORTED_NETWORK_SET: ReadonlySet<string> = new Set(A4_SUPPORTED_NETWORKS);
 
 function remapCurrencyId(currencyId: string): string {
