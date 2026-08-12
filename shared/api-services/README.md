@@ -1,6 +1,7 @@
 # @shared/api-services
 
-> [!NOTE] > **Status: STABLE** — Production-ready; API is considered stable.
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
 
 One **endpoint-less** RTK Query api per backend service. Each service owns everything about _reaching_
 one backend — base URL, base query, retry policy, reducer path and the thunk `extraArgument` contract —
@@ -108,6 +109,7 @@ one service only and must not be forced to supply config for services they never
 A base query added here must be **pure transport** — no endpoint URLs, no endpoint-name lookups, no wire
 schemas.
 
-> [!NOTE] > `@domain/api-aggregated-assets` is a placeholder for **DADA**, which currently lives as
+> [!NOTE]
+> `@domain/api-aggregated-assets` is a placeholder for **DADA**, which currently lives as
 > `assetsDataApi` in `libs/ledger-live-common`. When it migrates, its base belongs here as
 > `src/services/dada/` rather than as another standalone `createApi`.

@@ -34,7 +34,7 @@ describe("refreshCardSession", () => {
     cardSession.clear();
   });
 
-  it("clears the session and reports it cannot be renewed (scaffold)", async () => {
+  it("clears the session", async () => {
     cardSession.set("session-token");
     await expect(refreshCardSession()).resolves.toBeNull();
     expect(cardSession.getToken()).toBeNull();

@@ -5,6 +5,7 @@ import type { CardApiExtra } from "./types";
 function buildExtra(overrides: Partial<CardApiExtra> = {}): CardApiExtra {
   return {
     cardApiBaseUrl: "https://card.test",
+    cardBaanxClientKey: "test-client-key",
     getCardSessionToken: () => "session-token",
     refreshCardSession: async () => "refreshed-token",
     ...overrides,
@@ -38,6 +39,10 @@ describe("cardApiExtra", () => {
   it("throws when the session accessors are not functions", () => {
     expect(() => cardApiExtra(buildExtra({ getCardSessionToken: undefined }))).toThrow();
     expect(() => cardApiExtra(buildExtra({ refreshCardSession: undefined }))).toThrow();
+  });
+
+  it("accepts an empty Baanx client key (provisioned later via CARD_BAANX_CLIENT_KEY)", () => {
+    expect(cardApiExtra(buildExtra({ cardBaanxClientKey: "" })).cardBaanxClientKey).toBe("");
   });
 });
 
@@ -78,9 +83,10 @@ describe("cardBaseQuery", () => {
     const sent = request(fetchSpy);
     expect(sent.url).toBe("https://card.test/probe");
     expect(sent.headers.get("authorization")).toBe("Bearer session-token");
+    expect(sent.headers.get("x-client-key")).toBe("test-client-key");
   });
 
-  it("omits the Authorization header when no session token is available", async () => {
+  it("sends x-client-key and omits Authorization when no session token is available", async () => {
     fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({}));
 
     const { api, store } = probeStore(
@@ -88,7 +94,9 @@ describe("cardBaseQuery", () => {
     );
     await store.dispatch(api.endpoints.probe.initiate());
 
-    expect(request(fetchSpy).headers.get("authorization")).toBeNull();
+    const sent = request(fetchSpy);
+    expect(sent.headers.get("authorization")).toBeNull();
+    expect(sent.headers.get("x-client-key")).toBe("test-client-key");
   });
 
   it("refreshes the session once and retries on a 401", async () => {
@@ -105,6 +113,7 @@ describe("cardBaseQuery", () => {
     expect(fetchSpy).toHaveBeenCalledTimes(2);
     expect(result.data).toEqual({ ok: true });
     expect(request(fetchSpy, 1).headers.get("authorization")).toBe("Bearer refreshed-token");
+    expect(request(fetchSpy, 1).headers.get("x-client-key")).toBe("test-client-key");
   });
 
   it("returns the 401 error when the session cannot be refreshed", async () => {

@@ -1,6 +1,8 @@
 # @features/platform-card
 
-> [!CAUTION] > **Status: UNSTABLE** — Part of the emerging DDD layer; under active development.
+> [!CAUTION]
+>
+> **Status: UNSTABLE** — Part of the emerging DDD layer; under active development.
 
 Cross-flow Card runtime. Owns the in-memory Card session and the Bearer/refresh accessors the app
 injects into the shared `cardApi` service (`@shared/api-services`, `services/card`).

@@ -60,6 +60,7 @@ export const store = configureStore({
             }),
             ...cardApiExtra({
               cardApiBaseUrl: getEnv("CARD_API_URL"),
+              cardBaanxClientKey: getEnv("CARD_BAANX_CLIENT_KEY"),
               getCardSessionToken,
               refreshCardSession,
             }),
