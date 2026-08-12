@@ -3,12 +3,9 @@ import { isGenericAwarenessModalContentCardReady } from "@ledgerhq/live-common/g
 import { useFeature } from "@features/platform-feature-flags";
 import { useSelector } from "~/context/hooks";
 import { selectIsBackupHubFeatureIntroOpen } from "~/reducers/backupHubFeatureIntro";
+import { selectIsProductTourDrawerOpen } from "~/reducers/productTourDrawer";
 import { selectGenericAwarenessModalContentCards } from "~/reducers/genericAwarenessModal";
-import {
-  analyticsConsentInfoSelector,
-  hasCompletedOnboardingSelector,
-  productTourCompletedSelector,
-} from "~/reducers/settings";
+import { analyticsConsentInfoSelector, hasCompletedOnboardingSelector } from "~/reducers/settings";
 
 const APP_START_PREFIX = "app_start";
 
@@ -18,18 +15,13 @@ const hasGenericAwarenessAppStartPrefix = (id: string) =>
 export function useCompetingAppStartModalsPresent(): boolean {
   const cards = useSelector(selectGenericAwarenessModalContentCards);
   const isBackupHubFeatureIntroOpen = useSelector(selectIsBackupHubFeatureIntroOpen);
-  const productTourCompleted = useSelector(productTourCompletedSelector);
+  const isProductTourDrawerOpen = useSelector(selectIsProductTourDrawerOpen);
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const analyticsConsentInfo = useSelector(analyticsConsentInfoSelector);
 
-  const productTourFlag = useFeature("lwmProductTour");
   const genericAwarenessModalFlag = useFeature("lwmGenericAwarenessModal");
   const { isFeatureEnabled: isAnalyticsOptInEnabled, decision: analyticsConsentDecision } =
     useAnalyticsConsentDecision(analyticsConsentInfo);
-
-  const hasProductTourCompeting = Boolean(
-    productTourFlag?.enabled && hasCompletedOnboarding && !productTourCompleted,
-  );
 
   const hasGenericAwarenessCompeting = Boolean(
     genericAwarenessModalFlag?.enabled &&
@@ -44,7 +36,7 @@ export function useCompetingAppStartModalsPresent(): boolean {
 
   return (
     isBackupHubFeatureIntroOpen ||
-    hasProductTourCompeting ||
+    isProductTourDrawerOpen ||
     hasGenericAwarenessCompeting ||
     hasAnalyticsConsentCompeting
   );

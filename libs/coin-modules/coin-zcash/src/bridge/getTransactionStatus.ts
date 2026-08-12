@@ -40,7 +40,14 @@ function getTransparentInputStatus(
     errors.amount = new NotEnoughBalance();
   }
 
-  return { errors, warnings, estimatedFees: fee, amount: tx.amount, totalSpent };
+  return {
+    errors,
+    warnings,
+    estimatedFees: fee,
+    amount: tx.amount,
+    totalSpent,
+    recipientIsReadOnly: tx.selfTransfer === true,
+  };
 }
 
 export const getTransactionStatus: AccountBridge<
@@ -64,6 +71,7 @@ export const getTransactionStatus: AccountBridge<
       estimatedFees: new BigNumber(0),
       amount: transaction.amount,
       totalSpent: transaction.amount,
+      recipientIsReadOnly: transaction.selfTransfer === true,
     };
   }
 
@@ -78,5 +86,12 @@ export const getTransactionStatus: AccountBridge<
   const amountError = computeAmountError(transaction, totalSpent, poolBalance);
   if (amountError) errors.amount = amountError;
 
-  return { errors, warnings, estimatedFees: fee, amount: transaction.amount, totalSpent };
+  return {
+    errors,
+    warnings,
+    estimatedFees: fee,
+    amount: transaction.amount,
+    totalSpent,
+    recipientIsReadOnly: transaction.selfTransfer === true,
+  };
 };

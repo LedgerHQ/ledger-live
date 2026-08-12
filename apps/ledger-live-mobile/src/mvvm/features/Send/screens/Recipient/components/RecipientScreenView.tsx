@@ -8,6 +8,7 @@ import { AddressMatchedSection } from "./AddressMatchedSection";
 import { AddressValidationError } from "./AddressValidationError";
 import { LoadingState } from "./LoadingState";
 import { PasteFromClipboard } from "./PasteFromClipboard";
+import { RecipientEmptyContactsState } from "./RecipientEmptyContactsState";
 import { ValidationBanner } from "./ValidationBanner";
 
 type RecipientScreenViewProps = Readonly<{
@@ -27,6 +28,7 @@ export const RecipientScreenView = ({ viewModel }: RecipientScreenViewProps) => 
   const {
     isLoading,
     showInitialState,
+    showEmptyContactsState,
     result,
     searchValue,
     showBridgeSenderError,
@@ -58,6 +60,8 @@ export const RecipientScreenView = ({ viewModel }: RecipientScreenViewProps) => 
           {showInitialState && clipboardAddress && (
             <PasteFromClipboard address={clipboardAddress} onPaste={handlePasteFromClipboard} />
           )}
+
+          {showInitialState && showEmptyContactsState && <RecipientEmptyContactsState />}
 
           {showMemo && <MemoControls vm={memo} />}
 

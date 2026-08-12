@@ -26,8 +26,8 @@ describe("tron descriptor", () => {
     expect(descriptor.send.fees.hasCoinControl).toBeUndefined();
   });
 
-  it("declares address book support", () => {
-    expect(descriptor.send.addressBook).toBe(true);
+  it("does not declare address book support until contacts supports Tron", () => {
+    expect(descriptor.send.addressBook).toBe(false);
   });
 });
 

@@ -4,7 +4,11 @@ import type {
   DeviceIntentExecutorProps,
   ExecutorState,
 } from "@ledgerhq/device-intent";
-import { dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
+import {
+  dmkToLedgerDeviceIdMap,
+  type DeviceIntentExecutorHeaderContextValue,
+  useDeviceIntentExecutorHeaderOverrideRequests,
+} from "@ledgerhq/live-dmk-shared";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 import {
   trackAppReady,
@@ -16,8 +20,6 @@ import {
 import type { InitializerConfig } from "./DeviceContextInitializerComponentLWM";
 import type { InitializationInput } from "./types";
 import { useKeepScreenAwake } from "~/hooks/useKeepScreenAwake";
-import { useDeviceIntentExecutorHeaderOverrideRequests } from "./hooks/useDeviceIntentExecutorHeaderOverrideRequests";
-import type { DeviceIntentExecutorHeaderContextValue } from "./utils/DeviceIntentExecutorHeaderContext";
 import type {
   DeviceIntentTrackingProperties,
   SourceFlow,

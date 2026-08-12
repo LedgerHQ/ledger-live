@@ -1,3 +1,7 @@
+export type LazyOnboardingBannerMode = "shop_direct" | "feature_intro";
+
+export type LazyOnboardingBannerTapAction = "open_shop" | "open_feature_intro_tour";
+
 export type LazyOnboardingBannerUserState = Readonly<{
   hasCompletedOnboarding: boolean;
   isReadOnlyModeEnabled: boolean;

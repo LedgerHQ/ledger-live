@@ -1,0 +1,62 @@
+name: nx-codechecks
+description: Runs format:check, lint, typecheck and unimported for a set of Nx projects
+
+inputs:
+  projects:
+    description: "Nx project selector, e.g. tag:scope:libs"
+    required: true
+  parallel:
+    description: "Nx parallelism for each target"
+    required: false
+    default: "3"
+  emit-summaries:
+    description: "Write summary-typecheck.txt and summary-lint.txt to the workspace"
+    required: false
+    default: "false"
+
+runs:
+  using: composite
+  steps:
+    - name: Check formatting
+      id: format-check
+      if: github.base_ref == 'develop' || github.ref == 'refs/heads/develop' || github.event_name == 'workflow_dispatch'
+      run: pnpm exec nx run-many -t format:check --projects="$PROJECTS" --parallel="$PARALLEL" --nxBail=false
+      shell: bash
+      env:
+        PROJECTS: ${{ inputs.projects }}
+        PARALLEL: ${{ inputs.parallel }}
+
+    - name: Lint
+      id: lint
+      run: pnpm exec nx run-many -t lint --projects="$PROJECTS" --parallel="$PARALLEL" --nxBail=false -- --quiet
+      shell: bash
+      env:
+        PROJECTS: ${{ inputs.projects }}
+        PARALLEL: ${{ inputs.parallel }}
+
+    - name: Typecheck
+      id: typecheck
+      run: pnpm exec nx run-many -t typecheck --projects="$PROJECTS" --parallel="$PARALLEL" --nxBail=false
+      shell: bash
+      env:
+        PROJECTS: ${{ inputs.projects }}
+        PARALLEL: ${{ inputs.parallel }}
+
+    - name: Test unimported files
+      id: unimported
+      run: pnpm exec nx run-many -t unimported --projects="$PROJECTS" --parallel="$PARALLEL" --nxBail=false
+      shell: bash
+      env:
+        PROJECTS: ${{ inputs.projects }}
+        PARALLEL: ${{ inputs.parallel }}
+
+    - uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+      if: ${{ inputs.emit-summaries == 'true' && !cancelled() }}
+      env:
+        TYPECHECK_OUTCOME: ${{ steps.typecheck.outcome }}
+        LINT_OUTCOME: ${{ steps.lint.outcome }}
+      with:
+        script: |
+          const fs = require("fs");
+          fs.writeFileSync("summary-typecheck.txt", process.env.TYPECHECK_OUTCOME, "utf-8");
+          fs.writeFileSync("summary-lint.txt", process.env.LINT_OUTCOME, "utf-8");

@@ -348,6 +348,19 @@ export type LLDCoinFamily<
   }>;
 
   /**
+   * Allow to add a family-specific component directly above the recipient
+   * input in the Send modal (below the "transfer from" selector separator),
+   * e.g. Zcash's self-transfer toggle. The component is responsible for its
+   * own gating (feature flags, currency checks) and should render nothing when
+   * it does not apply.
+   */
+  SendStepAboveRecipientInput?: React.ComponentType<{
+    account: A;
+    transaction: T;
+    onChange: (t: T) => void;
+  }>;
+
+  /**
    * Allow to add component below recipient field
    *
    * FIXME: account will have to be A | TokenAccount

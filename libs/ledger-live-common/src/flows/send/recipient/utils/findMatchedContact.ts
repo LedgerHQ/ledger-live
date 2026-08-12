@@ -1,4 +1,6 @@
 import type { MatchedContact } from "../types";
+import { addressesMatch } from "./addressesMatch";
+import { resolveRecipientNetworkId } from "./resolveRecipientNetworkId";
 
 type Contact = Readonly<{
   id: string;
@@ -14,19 +16,6 @@ type ContactAddress = Readonly<{
   address: string;
 }>;
 
-function resolveNetworkId(currencyId: string): string {
-  return currencyId.split("/")[0];
-}
-
-function addressesMatch(left: string, right: string): boolean {
-  const normalizedLeft = left.trim();
-  const normalizedRight = right.trim();
-
-  return normalizedLeft.startsWith("0x") && normalizedRight.startsWith("0x")
-    ? normalizedLeft.toLowerCase() === normalizedRight.toLowerCase()
-    : normalizedLeft === normalizedRight;
-}
-
 export function findMatchedContact(
   contacts: readonly Contact[],
   recipient: string,
@@ -34,7 +23,7 @@ export function findMatchedContact(
   resolvedRecipient?: string,
 ): MatchedContact | undefined {
   const recipientAddress = resolvedRecipient ?? recipient;
-  const recipientNetworkId = resolveNetworkId(currencyId);
+  const recipientNetworkId = resolveRecipientNetworkId(currencyId);
   if (!recipientAddress.trim()) {
     return undefined;
   }
@@ -50,7 +39,7 @@ export function findMatchedContact(
 
     for (const address of contact.addresses) {
       if (
-        resolveNetworkId(address.currencyId) === recipientNetworkId &&
+        resolveRecipientNetworkId(address.currencyId) === recipientNetworkId &&
         addressesMatch(address.address, recipientAddress)
       ) {
         return {

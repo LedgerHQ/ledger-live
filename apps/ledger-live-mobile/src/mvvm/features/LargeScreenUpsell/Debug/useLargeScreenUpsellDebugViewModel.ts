@@ -553,7 +553,7 @@ export function useLargeScreenUpsellDebugViewModel() {
       throttleHint: `Kill threshold ${killThreshold ?? "?"} within ${cadenceDays ?? "?"} day(s).`,
       noCompetingModalOk,
       competingModalHint: hasCompetingModal
-        ? "Another app-start modal is showing (product tour, awareness, analytics consent, backup hub); the upsell is suppressed this session."
+        ? "Another app-start modal is showing (awareness, analytics consent, backup hub, product tour); the upsell is suppressed this session."
         : "No competing app-start modal.",
     },
     onboardingDateValue: toIso(onboardingDate),

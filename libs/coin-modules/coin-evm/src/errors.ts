@@ -220,3 +220,12 @@ export class ClaimRewardsFeesWarning extends Error {
     if (fields) Object.assign(this, fields);
   }
 }
+
+/** @see https://eips.ethereum.org/EIPS/eip-8037 — creating an account costs materially more gas. */
+export class RecipientIsNewAccount extends Error {
+  override name = "RecipientIsNewAccount";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "RecipientIsNewAccount");
+    if (fields) Object.assign(this, fields);
+  }
+}

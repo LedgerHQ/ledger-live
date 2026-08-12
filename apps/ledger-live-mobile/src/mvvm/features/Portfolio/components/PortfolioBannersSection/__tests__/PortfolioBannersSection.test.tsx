@@ -27,8 +27,8 @@ const MockContentCardsLocation = jest.mocked(ContentCardsLocation);
 
 const hiddenLazyOnboardingBanner = {
   isShown: false,
-  title: "Discover Ledger devices",
-  description: "Explore our latest products and accessories",
+  title: "Why millions choose Ledger?",
+  description: "To have peace of mind every time they transact.",
   onPress: jest.fn(),
   onClose: jest.fn(),
 };
@@ -99,7 +99,7 @@ describe("PortfolioBannersSection", () => {
 
     render(<PortfolioBannersSection isFirst={false} isLNUpsellBannerShown />);
 
-    expect(screen.getByText("Discover Ledger devices")).toBeVisible();
+    expect(screen.getByText("Why millions choose Ledger?")).toBeVisible();
     expect(screen.queryByTestId("mock-ln-banner")).toBeNull();
     expect(screen.queryByTestId("mock-recover-banner")).toBeNull();
     expect(screen.queryByTestId("mock-onboarding-widget")).toBeNull();

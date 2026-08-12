@@ -3,21 +3,33 @@
 import { renderHook } from "@testing-library/react";
 import { useRecipientAddressModalViewModel } from "../useRecipientAddressModalViewModel";
 import { useAddressValidation } from "../useAddressValidation";
+import { useAddressMatchedSectionViewModel } from "../useAddressMatchedSectionViewModel";
 import { useSendFlowData } from "../../../../context/SendFlowContext";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
+import { useContactsFeature } from "@features/flow-contacts";
+import { useContacts } from "@features/platform-contacts";
 import {
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
 } from "@ledgerhq/ledger-wallet-framework/errors";
-import { createMockAccount } from "../../__integrations__/__fixtures__/accounts";
+import {
+  createMockAccount,
+  createMockCurrency,
+} from "../../__integrations__/__fixtures__/accounts";
 import type { SendFlowState } from "@ledgerhq/live-common/flows/send/types";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
+import { mockContact, mockContactAddress } from "@domain/entity-contact/schema.mock";
 
 jest.mock("../useAddressValidation");
+jest.mock("../useAddressMatchedSectionViewModel");
 jest.mock("../../../../context/SendFlowContext");
 jest.mock("@ledgerhq/live-common/account/index");
 jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features");
+jest.mock("@features/platform-contacts");
+jest.mock("@features/flow-contacts", () => ({
+  useContactsFeature: jest.fn(),
+}));
 jest.mock("~/renderer/reducers/wallet", () => ({
   useMaybeAccountName: jest.fn(),
   useBatchMaybeAccountName: jest.fn(() => []),
@@ -25,9 +37,12 @@ jest.mock("~/renderer/reducers/wallet", () => ({
 }));
 
 const mockedUseAddressValidation = jest.mocked(useAddressValidation);
+const mockedUseAddressMatchedSectionViewModel = jest.mocked(useAddressMatchedSectionViewModel);
 const mockedUseSendFlowData = jest.mocked(useSendFlowData);
 const mockedGetMainAccount = jest.mocked(getMainAccount);
 const mockedSendFeatures = jest.mocked(sendFeatures);
+const mockedUseContacts = jest.mocked(useContacts);
+const mockedUseContactsFeature = jest.mocked(useContactsFeature);
 
 const mockAccount = createMockAccount({ id: "account_1" });
 
@@ -53,6 +68,13 @@ describe("useRecipientAddressModalViewModel", () => {
       return account.type === "Account" ? account : parentAccount || mockAccount;
     });
     mockedSendFeatures.hasMemo.mockReturnValue(false);
+    mockedSendFeatures.hasAddressBook.mockReturnValue(false);
+    mockedUseContacts.mockReturnValue([]);
+    mockedUseContactsFeature.mockReturnValue({
+      isEnabled: false,
+      showNewBadge: false,
+      eligibleAddressFamilies: [],
+    });
     mockedUseSendFlowData.mockReturnValue({
       recipientSearch: mockRecipientSearch,
       state: DEFAULT_STATE,
@@ -67,6 +89,7 @@ describe("useRecipientAddressModalViewModel", () => {
         bridgeWarnings: {},
         hasBridgeValidationResult: false,
         matchedAccounts: [],
+        matchedContact: undefined,
         resolvedAddress: undefined,
         ensName: undefined,
         isLedgerAccount: false,
@@ -75,10 +98,16 @@ describe("useRecipientAddressModalViewModel", () => {
         accountBalanceFormatted: undefined,
         isFirstInteraction: true,
         matchedRecentAddress: undefined,
-        matchedContact: undefined,
       },
       isLoading: false,
       validateAddress: jest.fn(),
+    });
+    mockedUseAddressMatchedSectionViewModel.mockReturnValue({
+      isVisible: false,
+      showHeader: false,
+      addressMatchedLabel: "",
+      suggestion: null,
+      showFirstInteractionWarning: false,
     });
   });
 
@@ -93,7 +122,100 @@ describe("useRecipientAddressModalViewModel", () => {
     );
 
     expect(result.current.showInitialState).toBe(true);
+    expect(result.current.showEmptyContactsState).toBe(false);
     expect(result.current.showSearchResults).toBe(false);
+  });
+
+  it("shows empty contacts state when address book is enabled and no contact matches the network", () => {
+    mockedSendFeatures.hasAddressBook.mockReturnValue(true);
+    mockedUseContactsFeature.mockReturnValue({
+      isEnabled: true,
+      showNewBadge: false,
+      eligibleAddressFamilies: ["evm"],
+    });
+    mockedUseContacts.mockReturnValue([
+      mockContact({
+        id: "contact-sol",
+        name: "Alice",
+        addresses: [
+          mockContactAddress({
+            id: "address-sol",
+            currencyId: "solana",
+            label: "Solana",
+            address: "SolanaAddress123",
+          }),
+        ],
+      }),
+    ]);
+
+    const { result } = renderHook(() =>
+      useRecipientAddressModalViewModel({
+        account: mockAccount,
+        currency: createMockCurrency({ id: "ethereum" }),
+        onAddressSelected: jest.fn(),
+        recipientSupportsDomain: true,
+      }),
+    );
+
+    expect(result.current.showInitialState).toBe(true);
+    expect(result.current.showEmptyContactsState).toBe(true);
+  });
+
+  it("does not show empty contacts state when address book is not supported", () => {
+    mockedSendFeatures.hasAddressBook.mockReturnValue(false);
+    mockedUseContactsFeature.mockReturnValue({
+      isEnabled: true,
+      showNewBadge: false,
+      eligibleAddressFamilies: ["evm"],
+    });
+
+    const { result } = renderHook(() =>
+      useRecipientAddressModalViewModel({
+        account: createMockAccount({
+          currency: createMockCurrency({ id: "tron", family: "tron" }),
+        }),
+        currency: createMockCurrency({ id: "tron", family: "tron" }),
+        onAddressSelected: jest.fn(),
+        recipientSupportsDomain: true,
+      }),
+    );
+
+    expect(result.current.showEmptyContactsState).toBe(false);
+  });
+
+  it("does not show empty contacts state when a contact matches the network", () => {
+    mockedSendFeatures.hasAddressBook.mockReturnValue(true);
+    mockedUseContactsFeature.mockReturnValue({
+      isEnabled: true,
+      showNewBadge: false,
+      eligibleAddressFamilies: ["evm"],
+    });
+    mockedUseContacts.mockReturnValue([
+      mockContact({
+        id: "contact-eth",
+        name: "Alice",
+        addresses: [
+          mockContactAddress({
+            id: "address-eth",
+            currencyId: "ethereum",
+            label: "Ethereum",
+            address: "0x1234567890123456789012345678901234567890",
+          }),
+        ],
+      }),
+    ]);
+
+    const { result } = renderHook(() =>
+      useRecipientAddressModalViewModel({
+        account: mockAccount,
+        currency: createMockCurrency({ id: "ethereum" }),
+        onAddressSelected: jest.fn(),
+        recipientSupportsDomain: true,
+      }),
+    );
+
+    expect(result.current.showInitialState).toBe(true);
+    expect(result.current.showEmptyContactsState).toBe(false);
   });
 
   it("shows search results when search value is provided", () => {
@@ -179,6 +301,7 @@ describe("useRecipientAddressModalViewModel", () => {
         bridgeWarnings: {},
         hasBridgeValidationResult: false,
         matchedAccounts: [],
+        matchedContact: undefined,
         resolvedAddress: undefined,
         ensName: undefined,
         isLedgerAccount: false,
@@ -187,7 +310,6 @@ describe("useRecipientAddressModalViewModel", () => {
         accountBalanceFormatted: undefined,
         isFirstInteraction: true,
         matchedRecentAddress: undefined,
-        matchedContact: undefined,
       },
       isLoading: false,
       validateAddress: jest.fn(),
@@ -222,6 +344,7 @@ describe("useRecipientAddressModalViewModel", () => {
         bridgeWarnings: {},
         hasBridgeValidationResult: false,
         matchedAccounts: [],
+        matchedContact: undefined,
         resolvedAddress: undefined,
         ensName: undefined,
         isLedgerAccount: false,
@@ -230,7 +353,6 @@ describe("useRecipientAddressModalViewModel", () => {
         accountBalanceFormatted: undefined,
         isFirstInteraction: true,
         matchedRecentAddress: undefined,
-        matchedContact: undefined,
       },
       isLoading: false,
       validateAddress: jest.fn(),
@@ -265,6 +387,7 @@ describe("useRecipientAddressModalViewModel", () => {
         bridgeWarnings: {},
         hasBridgeValidationResult: true,
         matchedAccounts: [],
+        matchedContact: undefined,
         resolvedAddress: undefined,
         ensName: undefined,
         isLedgerAccount: false,
@@ -273,7 +396,6 @@ describe("useRecipientAddressModalViewModel", () => {
         accountBalanceFormatted: undefined,
         isFirstInteraction: true,
         matchedRecentAddress: undefined,
-        matchedContact: undefined,
       },
       isLoading: false,
       validateAddress: jest.fn(),
@@ -310,6 +432,7 @@ describe("useRecipientAddressModalViewModel", () => {
         bridgeWarnings: {},
         hasBridgeValidationResult: true,
         matchedAccounts: [],
+        matchedContact: undefined,
         resolvedAddress: undefined,
         ensName: undefined,
         isLedgerAccount: false,
@@ -318,7 +441,6 @@ describe("useRecipientAddressModalViewModel", () => {
         accountBalanceFormatted: undefined,
         isFirstInteraction: true,
         matchedRecentAddress: undefined,
-        matchedContact: undefined,
       },
       isLoading: false,
       validateAddress: jest.fn(),
@@ -355,6 +477,7 @@ describe("useRecipientAddressModalViewModel", () => {
         bridgeWarnings: {},
         hasBridgeValidationResult: true,
         matchedAccounts: [],
+        matchedContact: undefined,
         resolvedAddress: undefined,
         ensName: undefined,
         isLedgerAccount: false,
@@ -363,7 +486,6 @@ describe("useRecipientAddressModalViewModel", () => {
         accountBalanceFormatted: undefined,
         isFirstInteraction: true,
         matchedRecentAddress: undefined,
-        matchedContact: undefined,
       },
       isLoading: false,
       validateAddress: jest.fn(),
@@ -397,6 +519,7 @@ describe("useRecipientAddressModalViewModel", () => {
         bridgeWarnings: {},
         hasBridgeValidationResult: false,
         matchedAccounts: [],
+        matchedContact: undefined,
         resolvedAddress: undefined,
         ensName: undefined,
         isLedgerAccount: false,
@@ -405,7 +528,6 @@ describe("useRecipientAddressModalViewModel", () => {
         accountBalanceFormatted: undefined,
         isFirstInteraction: true,
         matchedRecentAddress: undefined,
-        matchedContact: undefined,
       },
       isLoading: false,
       validateAddress: jest.fn(),
@@ -432,6 +554,7 @@ describe("useRecipientAddressModalViewModel", () => {
         bridgeWarnings: {},
         hasBridgeValidationResult: false,
         matchedAccounts: [],
+        matchedContact: undefined,
         resolvedAddress: undefined,
         ensName: undefined,
         isLedgerAccount: false,
@@ -440,7 +563,6 @@ describe("useRecipientAddressModalViewModel", () => {
         accountBalanceFormatted: undefined,
         isFirstInteraction: true,
         matchedRecentAddress: undefined,
-        matchedContact: undefined,
       },
       isLoading: true,
       validateAddress: jest.fn(),

@@ -53,6 +53,7 @@ describe("zcash chain adapter — shielded privateInfo (de)serialization", () =>
     estimatedTimeRemaining: { hours: 0, minutes: 3 },
     ufvk: "uview-persisted",
     birthday: "2022-05-31",
+    shieldedAddress: "u1shieldedpersisted",
     lastSyncTimestamp: 1_700_000_000_000,
     lastProcessedBlock: 3_400_000,
     transactions: [
@@ -91,6 +92,7 @@ describe("zcash chain adapter — shielded privateInfo (de)serialization", () =>
     adapter.assignToAccountRaw!(account as unknown as Account, accountRaw);
     const raw = accountRaw as ZcashAccountRaw;
     expect(raw.privateInfo?.ufvk).toBe("uview-persisted");
+    expect(raw.privateInfo?.shieldedAddress).toBe("u1shieldedpersisted");
     expect(raw.privateInfo?.orchardBalance).toBe("1234");
 
     const restoredAccount = {} as ZcashAccount;
@@ -98,6 +100,7 @@ describe("zcash chain adapter — shielded privateInfo (de)serialization", () =>
     const restored = restoredAccount.privateInfo!;
 
     expect(restored.ufvk).toBe("uview-persisted");
+    expect(restored.shieldedAddress).toBe("u1shieldedpersisted");
     expect(restored.syncState).toBe("ready");
     expect(restored.orchardBalance.toString()).toBe("1234");
     expect(restored.ironwoodBalance.toString()).toBe("56");

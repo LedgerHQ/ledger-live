@@ -54,6 +54,12 @@ type SendStepRecipientFromSelectorComponent = React.ComponentType<{
   onChange: (t: Transaction) => void;
 }>;
 
+type SendStepAboveRecipientInputComponent = React.ComponentType<{
+  account: Account;
+  transaction: Transaction;
+  onChange: (t: Transaction) => void;
+}>;
+
 const SenderErrorBanner = ({ error }: { error: Error }) => (
   <div data-testid="sender-error-container">
     <ErrorBanner dataTestId="sender-error" error={error} />
@@ -84,6 +90,7 @@ type RecipientFormFieldsProps = {
   onChangeTransaction: StepProps["onChangeTransaction"];
   maybeRecipient?: string;
   onResetMaybeRecipient: () => void;
+  SendStepAboveRecipientInput?: SendStepAboveRecipientInputComponent;
 };
 
 const RecipientFormFields = ({
@@ -97,8 +104,16 @@ const RecipientFormFields = ({
   onChangeTransaction,
   maybeRecipient,
   onResetMaybeRecipient,
+  SendStepAboveRecipientInput,
 }: RecipientFormFieldsProps) => (
   <>
+    {SendStepAboveRecipientInput ? (
+      <SendStepAboveRecipientInput
+        account={mainAccount}
+        transaction={transaction}
+        onChange={onChangeTransaction}
+      />
+    ) : null}
     <RecipientField
       status={status}
       autoFocus={openedFromAccount && !forceAutoFocusOnMemoField}
@@ -133,6 +148,7 @@ type RecipientStepContentProps = {
   accountFilter: (acc: Account) => boolean;
   stuckAccountAndOperation: StuckAccountAndOperation | undefined;
   SendStepRecipientFromSelector?: SendStepRecipientFromSelectorComponent;
+  SendStepAboveRecipientInput?: SendStepAboveRecipientInputComponent;
   onChangeAccount: StepProps["onChangeAccount"];
   onChangeTransaction: StepProps["onChangeTransaction"];
   maybeRecipient?: string;
@@ -152,6 +168,7 @@ const RecipientStepContent = ({
   accountFilter,
   stuckAccountAndOperation,
   SendStepRecipientFromSelector,
+  SendStepAboveRecipientInput,
   onChangeAccount,
   onChangeTransaction,
   maybeRecipient,
@@ -204,6 +221,7 @@ const RecipientStepContent = ({
         onChangeTransaction={onChangeTransaction}
         maybeRecipient={maybeRecipient}
         onResetMaybeRecipient={onResetMaybeRecipient}
+        SendStepAboveRecipientInput={SendStepAboveRecipientInput}
       />
     ) : null}
   </>
@@ -265,6 +283,7 @@ export const DefaultStepRecipient = ({
           accountFilter={accountFilter}
           stuckAccountAndOperation={stuckAccountAndOperation}
           SendStepRecipientFromSelector={specific?.SendStepRecipientFromSelector}
+          SendStepAboveRecipientInput={specific?.SendStepAboveRecipientInput}
           onChangeAccount={onChangeAccount}
           onChangeTransaction={onChangeTransaction}
           maybeRecipient={maybeRecipient}

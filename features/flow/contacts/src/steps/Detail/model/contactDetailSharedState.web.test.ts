@@ -1,4 +1,4 @@
-import { mockContact, mockMeContact } from "@domain/entity-contact/schema.mock";
+import { mockContact, mockContactAddress, mockMeContact } from "@domain/entity-contact/schema.mock";
 import {
   createContactDetailLedgerWalletAccountsIntent,
   createContactDetailSharedState,
@@ -40,14 +40,7 @@ describe("createContactDetailSharedState", () => {
 
   it("counts only external addresses saved on Me", () => {
     const me = mockMeContact({
-      addresses: [
-        {
-          id: "address-ethereum",
-          currencyId: "ethereum",
-          label: "Ethereum",
-          address: "0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034",
-        },
-      ],
+      addresses: [mockContactAddress()],
     });
 
     expect(createContactDetailSharedState(me, formatMeDisplayName).addressCount).toBe(1);

@@ -1,6 +1,6 @@
 {
   "name": "@domain/entity-contact",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "private": true,
   "description": "Domain entity for Contacts: schemas, state, selectors, and mock factories",
   "main": "src/index.ts",
@@ -24,6 +24,7 @@
     "@domain/entity-currency-crypto": "workspace:*",
     "@domain/entity-currency-token": "workspace:*",
     "@reduxjs/toolkit": "catalog:",
+    "@shared/cloud-sync-module": "workspace:^",
     "@shared/schema-primitives": "workspace:*",
     "zod": "catalog:"
   },

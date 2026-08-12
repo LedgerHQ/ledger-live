@@ -868,6 +868,12 @@
     "unlockLiquidity": "Spend crypto in real life",
     "exploreCryptoCardsDescription": "Explore our crypto cards and find the one that suits you best."
   },
+  "payTab": {
+    "balance": {
+      "emptyTitle": "Pay and get paid",
+      "emptyDescription": "Start by depositing stablecoin to your wallet"
+    }
+  },
   "lend": {
     "title": "Lend crypto",
     "tabs": {
@@ -2476,7 +2482,9 @@
     "addressMatched": "Address matched",
     "addressNotFound": "Address not found",
     "alreadyUsed": "Already used · {{date}}",
+    "addressBookUnsupported": "{{family}} isn't supported yet",
     "recentSendWillAppear": "Your recent send will appear here",
+    "contactsWillAppear": "Contacts will appear here",
     "securityInfo": {
       "title": "How to send securely?",
       "items": {
@@ -7435,6 +7443,9 @@
     "FeeTooHigh": {
       "title": "Network fees are above 10% of the amount"
     },
+    "RecipientIsNewAccount": {
+      "title": "This address has never received funds, activating it costs a higher network fee"
+    },
     "DustLimit": {
       "title": "Amount is lower than dust limit"
     },
@@ -8938,6 +8949,12 @@
             "message": "Balance may be slightly out of date",
             "cta": "Sync balance"
           }
+        },
+        "selfTransfer": {
+          "toPrivate": "Self transfer to private balance",
+          "toPublic": "Self transfer to public balance",
+          "unavailable": "Your private address is not available yet. Export your view key to enable this.",
+          "privacyWarning": "This links your shielded funds to your account's public address, which anyone can see. Sending to an external private address keeps them unlinked."
         }
       },
       "state": {
