@@ -1,8 +1,8 @@
 import { act, renderHook, waitFor } from "@testing-library/react";
-import { useInitiateAuthorizeMutation } from "../../../state";
+import { useInitiateAuthorizeMutation } from "@domain/api-card-management";
 import { useCardLoginViewModel } from "../useCardLoginViewModel";
 
-jest.mock("../../../state", () => ({
+jest.mock("@domain/api-card-management", () => ({
   useInitiateAuthorizeMutation: jest.fn(),
 }));
 
@@ -56,8 +56,8 @@ describe("useCardLoginViewModel", () => {
   it("should not surface internal RTK error text", async () => {
     const openHostedLogin = jest.fn();
     unwrap.mockRejectedValue({
-      status: "CUSTOM_ERROR",
-      error: "payCardApiExtra not configured in store extraArgument",
+      status: 401,
+      data: { message: "unauthorized" },
     });
     const { result } = renderHook(() => useCardLoginViewModel({ openHostedLogin }));
 

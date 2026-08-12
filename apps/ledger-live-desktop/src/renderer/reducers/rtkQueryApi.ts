@@ -8,15 +8,14 @@ import {
   coinMarketCapApi,
   countervaluesApi,
   dadaApi,
-  payCardApi,
   pushDevicesApi,
   swapApi,
 } from "@shared/api-services";
 import { counterValuesApi } from "@ledgerhq/live-common/counterValues/state-manager/api";
 
 // Add new RTK Query API here. `@shared/api-services` entries own one backend each; the endpoints are
-// injected by the use-case package that owns them (`@domain/api-*`, or the owning `features/flow/*`),
-// which the view-models import directly.
+// injected by the `@domain/api-*` use-case package that owns them, which the view-models import
+// directly.
 const APIs = {
   [dadaApi.reducerPath]: dadaApi,
   [calApi.reducerPath]: calApi,
@@ -26,7 +25,6 @@ const APIs = {
   [counterValuesApi.reducerPath]: counterValuesApi,
   [marketApi.reducerPath]: marketApi,
   [cgApi.reducerPath]: cgApi,
-  [payCardApi.reducerPath]: payCardApi,
   [ofacGeoBlockApi.reducerPath]: ofacGeoBlockApi,
   [pushDevicesApi.reducerPath]: pushDevicesApi,
   [swapApi.reducerPath]: swapApi,

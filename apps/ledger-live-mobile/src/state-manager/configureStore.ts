@@ -24,7 +24,6 @@ import {
   cardApiExtra,
   coinMarketCapApiExtra,
   cvsApiExtra,
-  payCardApiExtra,
   pushDevicesApiExtra,
   swapApiExtra,
 } from "@shared/api-services";
@@ -71,14 +70,6 @@ export const store = configureStore({
             ...swapApiExtra({
               swapApiBaseUrl: getEnv("SWAP_API_BASE"),
               ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
-            }),
-            ...payCardApiExtra({
-              payCardApiBaseUrl: getEnv("PAY_CARD_API_BASE_URL"),
-              // Read straight from `Config`, not through `getEnv`: what copies `Config` into the env
-              // system is the async block in `experimental.ts`, which resumes only after every module
-              // has been evaluated — including this one, whose `extraArgument` is a fixed snapshot.
-              // `getEnv` here would therefore always return the empty default.
-              payCardBaanxClientKey: Config.CARD_BAANX_CLIENT_KEY ?? "",
             }),
             ...authApiExtra({
               authFeatureId: "lwmAuth",

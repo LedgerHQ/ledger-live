@@ -1,20 +1,9 @@
 import {
   PayCardAuthorizeInitiateResponseSchema,
   PayCardLogoutResponseSchema,
-  PayCardProviderSchema,
   PayCardSessionResponseSchema,
   PayCardUserResponseSchema,
-} from "../schema";
-
-describe("PayCardProviderSchema", () => {
-  it("accepts a supported provider", () => {
-    expect(PayCardProviderSchema.parse("baanx")).toBe("baanx");
-  });
-
-  it("rejects an unknown provider", () => {
-    expect(() => PayCardProviderSchema.parse("unknown")).toThrow();
-  });
-});
+} from "./schema";
 
 describe("PayCardAuthorizeInitiateResponseSchema", () => {
   it("accepts a hosted login URL and its token", () => {
@@ -68,7 +57,7 @@ describe("PayCardLogoutResponseSchema", () => {
 });
 
 describe("PayCardUserResponseSchema", () => {
-  it("drops the personal data the endpoint returns alongside the fields this flow uses", () => {
+  it("drops the personal data the endpoint returns alongside the fields the Card flows use", () => {
     expect(
       PayCardUserResponseSchema.parse({
         id: "3f2504e0-4f89-11d3-9a0c-0305e82c3301",

@@ -1,11 +1,8 @@
 import { z } from "zod";
 
-/** Card providers this flow can log in against. */
-export const PayCardProviderSchema = z.enum(["baanx"]);
-
 /**
- * Wire contracts for the Card API endpoints this flow calls. Responses are parsed before they reach
- * the flow, so a backend change surfaces here rather than in a view model.
+ * Wire contracts for the Card API endpoints this use case calls. Responses are parsed before they
+ * reach a caller, so a backend change surfaces here rather than in a view model.
  */
 
 /**
@@ -25,9 +22,9 @@ export const PayCardSessionResponseSchema = z.object({
 });
 
 /**
- * The session as the flow exposes it. Lifetimes stay the durations the backend sent rather than
+ * The session as this package exposes it. Lifetimes stay the durations the backend sent rather than
  * absolute instants: turning them into instants needs a clock, which belongs with the token storage
- * this flow does not own yet.
+ * no package owns yet.
  */
 export const PayCardSessionSchema = z.object({
   accessToken: z.string().min(1),
@@ -43,7 +40,7 @@ export const PayCardLogoutResponseSchema = z.object({
 /**
  * `GET /v1/user` also returns first and last name, date of birth, email, phone number, postal address
  * and — in the US — an SSN. Zod drops keys a schema does not declare, so listing only the two fields
- * this flow acts on keeps that PII out of the RTK Query cache, and therefore out of anything that
+ * the Card flows act on keeps that PII out of the RTK Query cache, and therefore out of anything that
  * serialises or persists the store.
  */
 export const PayCardUserResponseSchema = z.object({

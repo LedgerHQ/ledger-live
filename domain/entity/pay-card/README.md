@@ -7,4 +7,4 @@ Domain entity package for Ledger Pay Card data and Redux state.
 - `slice.ts` — Redux slice for opening and closing the Pay Card flow.
 - `schema.mock.ts` — reusable mock factories for tests.
 
-This is the app-facing model. Raw Pay Card API wire-format schemas, endpoint definitions, and mock transport live in `@domain/api-pay-card`.
+This is the app-facing model. Raw Pay Card API wire-format schemas and endpoint definitions live in `@domain/api-card-management`.

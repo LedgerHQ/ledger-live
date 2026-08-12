@@ -29,9 +29,8 @@
     "unimported": "pnpm knip --directory ../../.. -W features/flow/pay-card-auth"
   },
   "dependencies": {
-    "@reduxjs/toolkit": "catalog:",
-    "@shared/api-services": "workspace:^",
-    "zod": "catalog:"
+    "@domain/api-card-management": "workspace:^",
+    "@reduxjs/toolkit": "catalog:"
   },
   "devDependencies": {
     "@support/jest-features-flow": "workspace:*",

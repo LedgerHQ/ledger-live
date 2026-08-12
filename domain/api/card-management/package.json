@@ -19,7 +19,8 @@
   },
   "dependencies": {
     "@shared/api-services": "workspace:*",
-    "@reduxjs/toolkit": "catalog:"
+    "@reduxjs/toolkit": "catalog:",
+    "zod": "catalog:"
   },
   "peerDependencies": {
     "react": ">=19.0.0",

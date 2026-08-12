@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
-import { useInitiateAuthorizeMutation } from "../../state";
-import type { PayCardAuthorizeInitiateRequest } from "../../state";
+import { useInitiateAuthorizeMutation } from "@domain/api-card-management";
+import type { PayCardAuthorizeInitiateRequest } from "@domain/api-card-management";
 import type { CardLoginProps, CardLoginViewProps } from "./types";
 
 /**
@@ -24,8 +24,8 @@ function getSecureHostedLoginUrl(loginUrl: string): string {
   return url.toString();
 }
 
-// Only genuine `Error` messages reach the user. RTK rejections carry internal strings such as the
-// base query's `CUSTOM_ERROR` text, which must not be rendered.
+// Only genuine `Error` messages reach the user. An RTK rejection is a `FetchBaseQueryError`, not an
+// `Error`: it carries the raw status and response body, which must not be rendered.
 function getLoginErrorMessage(error: unknown): string {
   if (error instanceof Error && error.message) {
     return error.message;

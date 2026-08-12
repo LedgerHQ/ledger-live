@@ -14,7 +14,6 @@ import {
   cardApiExtra,
   coinMarketCapApiExtra,
   cvsApiExtra,
-  payCardApiExtra,
   pushDevicesApiExtra,
   swapApiExtra,
 } from "@shared/api-services";
@@ -81,10 +80,6 @@ const customCreateStore = ({
               ...swapApiExtra({
                 swapApiBaseUrl: getEnv("SWAP_API_BASE"),
                 ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
-              }),
-              ...payCardApiExtra({
-                payCardApiBaseUrl: getEnv("PAY_CARD_API_BASE_URL"),
-                payCardBaanxClientKey: getEnv("CARD_BAANX_CLIENT_KEY"),
               }),
               ...authApiExtra({
                 authFeatureId: "lwdAuth",

@@ -7,8 +7,7 @@ One **endpoint-less** RTK Query api per backend service. Each service owns every
 one backend — base URL, base query, retry policy, reducer path and the thunk `extraArgument` contract —
 and nothing about _what_ is fetched from it.
 
-Use-case packages in `domain/api/*` — or a `features/flow/*` package whose endpoints serve only that
-flow — add their endpoints with
+Use-case packages in `domain/api/*` add their endpoints with
 [`injectEndpoints`](https://redux-toolkit.js.org/rtk-query/usage/code-splitting#injecting-endpoints)
 and their cache tags with `enhanceEndpoints({ addTagTypes })`. Both mutate and return the _same_ api
 object, so one reducer, one middleware and one cache serve every use case on a given backend.
@@ -19,7 +18,6 @@ object, so one reducer, one middleware and one cache serve every use case on a g
 | `services/card`          | `cardApi`          | `@domain/api-card-management`                                    |
 | `services/coinmarketcap` | `coinMarketCapApi` | `@domain/api-altcoins-sentiment`, `@domain/api-market-sentiment` |
 | `services/countervalues` | `countervaluesApi` | `@domain/api-currency-fiat`                                      |
-| `services/pay-card`      | `payCardApi`       | `@features/flow-pay-card-auth`                                   |
 | `services/push-devices`  | `pushDevicesApi`   | `@domain/api-push-devices`                                       |
 
 ## What lives here, and what does not

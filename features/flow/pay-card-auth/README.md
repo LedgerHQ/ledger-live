@@ -22,21 +22,10 @@ App composition and DevTools consume shared Pay Card entity state through
 
 ## Card API
 
-The flow owns its Card API wire contract and endpoint in `src/state/`. The endpoint is injected into
-the endpoint-less `payCardApi` service from
-[`@shared/api-services`](../../../shared/api-services/README.md):
-
-| Endpoint | Method | Purpose |
-| -------- | ------ | ------- |
-| `/card/v1/pre-auth` | POST | Exchange a provider for the hosted login URL |
-
-Reaching the backend — including the base URL (`PAY_CARD_API_BASE_URL`; staging is VPN-only) —
-belongs to the shared service. Both apps register `payCardApi`; importing this flow injects the
-endpoint into that same API instance. Responses are validated against
-`PayCardPreAuthResponseSchema` before they reach the view model.
-
-The OAuth code exchange (`/card/v1/auth`) and card status read (`/card/v1/me`) are intentionally
-deferred until the callback and status steps can also provide session-token handling.
+This flow owns no API code. The Card endpoints, their wire schemas and the generated hooks live in
+[`@domain/api-card-management`](../../../domain/api/card-management/README.md), which injects them
+into the shared `cardApi` service. `useCardLoginViewModel` imports
+`useInitiateAuthorizeMutation` from there directly — that import is what triggers the injection.
 
 ## Platform resolution
 
@@ -83,16 +72,11 @@ pay-card-auth/
     ├── router/                             # Flow-local routing
     ├── state/
     │   ├── __tests__/
-    │   │   ├── api.native.test.ts          # Endpoint contract tests (Node environment)
-    │   │   ├── schema.native.test.ts       # Wire contract tests (Node environment)
     │   │   └── slice.native.test.ts        # Auth slice and selector tests
-    │   ├── api.ts                          # Card API endpoint, injected into payCardApi
-    │   ├── index.ts                        # Flow-local state surface
-    │   ├── schema.ts                       # Card API wire contracts
     │   ├── selectors.ts                    # Auth selectors
     │   ├── slice.ts                        # Auth-only runtime state (`hasCard`)
-    │   ├── store.ts                        # Side-effect-free public state subpath
-    │   └── types.ts                        # API and auth Redux state types
+    │   ├── store.ts                        # Public state subpath
+    │   └── types.ts                        # Auth Redux state type
     ├── utils/                              # Flow-local helpers
     ├── index.native.ts                     # Native public API
     └── index.ts                            # Default/web public API

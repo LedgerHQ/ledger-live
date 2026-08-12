@@ -50,19 +50,6 @@ const teamPtx = {
     parser: stringParser,
     desc: "Request provider session id",
   },
-  PAY_CARD_API_BASE_URL: {
-    // Baanx's dev environment, called directly rather than through a Ledger proxy. No version prefix:
-    // the endpoint paths carry `/v1`, and RTK joins the two verbatim.
-    def: "https://dev.api.baanx.com",
-    parser: stringParser,
-    desc: "Pay Card API base URL (Baanx dev)",
-  },
-  CARD_BAANX_CLIENT_KEY: {
-    // No default: the key is environment-specific and only the Card flow needs it.
-    def: "",
-    parser: stringParser,
-    desc: "Baanx public client key, sent as x-client-key on every Pay Card API request",
-  },
 };
 
 export default teamPtx;
