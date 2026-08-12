@@ -3411,6 +3411,9 @@ importers:
         specifier: 'catalog:'
         version: 4.3.6
     devDependencies:
+      '@ledgerhq/generators':
+        specifier: workspace:*
+        version: link:../../tools/nx-plugins/generators
       '@types/react':
         specifier: 'catalog:'
         version: 19.0.14
@@ -15763,6 +15766,27 @@ importers:
         specifier: 13.0.10
         version: 13.0.10
 
+  tools/nx-plugins/generators:
+    devDependencies:
+      '@nx/devkit':
+        specifier: 22.5.1
+        version: 22.5.1(nx@22.5.1)
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
+      jest:
+        specifier: 'catalog:'
+        version: 30.2.0(@types/node@24.12.0)
+
   tools/pnpm-utils: {}
 
 packages:
@@ -20675,6 +20699,11 @@ packages:
 
   '@nx/devkit@22.0.3':
     resolution: {integrity: sha512-98Iq6+FIrAEv7ZK3n86Nr8zUZ20394fpyJBBhvQJiywH+JRonk7JWY5tUaSuL8kfY8vM+WCnFoWHJ+2Hsgw9EA==}
+    peerDependencies:
+      nx: '>= 21 <= 23 || ^22.0.0-0'
+
+  '@nx/devkit@22.5.1':
+    resolution: {integrity: sha512-1ZJ8pCB+6EWC8X6q8tfBweg92WzFAwliBhtBkOPP8Li8GQq71ulPWRdY4lDd5pH3Ea1zKqhOtBKWdOlyDPOKYA==}
     peerDependencies:
       nx: '>= 21 <= 23 || ^22.0.0-0'
 
@@ -49373,6 +49402,17 @@ snapshots:
       ejs: 3.1.10
       enquirer: 2.3.6
       minimatch: 9.0.3
+      nx: 22.5.1
+      semver: 7.8.1
+      tslib: 2.6.2
+      yargs-parser: 21.1.1
+
+  '@nx/devkit@22.5.1(nx@22.5.1)':
+    dependencies:
+      '@zkochan/js-yaml': 0.0.7
+      ejs: 3.1.10
+      enquirer: 2.3.6
+      minimatch: 10.1.1
       nx: 22.5.1
       semver: 7.8.1
       tslib: 2.6.2
