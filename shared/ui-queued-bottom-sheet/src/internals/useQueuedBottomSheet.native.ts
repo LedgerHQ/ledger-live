@@ -21,6 +21,13 @@ interface UseQueuedBottomSheetProps {
 
 type BottomSheetState = "idle" | "open" | "dismissing";
 
+// How long a blur must persist before it is treated as the user leaving the screen.
+// Resolving a deeplink rewrites the navigation state, which blurs the current screen and
+// refocuses it a frame or two later. Acting on the first blur therefore dismisses a sheet the
+// user is still looking at, so wait for the blur to be confirmed. The window only has to
+// outlast that refocus: a real navigation stays blurred and still closes, just this much later.
+const BLUR_CLOSE_CONFIRMATION_MS = 500;
+
 export function useQueuedBottomSheet({
   isRequestingToBeOpened = false,
   isForcingToBeOpened = false,
@@ -45,6 +52,11 @@ export function useQueuedBottomSheet({
   const bottomSheetInQueueRef = useRef<BottomSheetInQueue | undefined>(undefined);
   const bottomSheetRef = useBottomSheetRef();
   const isFocused = adapters.useIsScreenFocused();
+  // Read inside the deferred blur check so it sees the current focus rather than the value
+  // captured when the blur was first observed.
+  const isFocusedRef = useRef(isFocused);
+  isFocusedRef.current = isFocused;
+  const blurCloseTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const areBottomSheetsLocked = adapters.useAreBottomSheetsLocked();
   const backgroundComponent: BottomSheetProps["backgroundComponent"] = backgroundTone
     ? adapters.backgroundComponentByTone?.[backgroundTone]
@@ -176,20 +188,46 @@ export function useQueuedBottomSheet({
     setReopenCheckSignal(s => s + 1);
   }, [cleanupQueue, logBottomSheet]);
 
+  const cancelPendingBlurClose = useCallback(() => {
+    if (blurCloseTimeoutRef.current) {
+      clearTimeout(blurCloseTimeoutRef.current);
+      blurCloseTimeoutRef.current = null;
+    }
+  }, []);
+
+  // Closing used to ride on this effect's cleanup, which React re-runs on every dependency
+  // change — including `isFocused` flipping. A blur therefore dismissed the sheet before the
+  // body below could decide whether the blur was real. Each reason to close is now explicit,
+  // and unmount is handled by the teardown effect at the end of the hook.
   useEffect(() => {
-    if (!isFocused && (isRequestingToBeOpened || isForcingToBeOpened)) {
-      logBottomSheet("Closing drawer - screen not focused");
+    const wantsToBeOpen = isRequestingToBeOpened || isForcingToBeOpened;
+
+    if (!wantsToBeOpen) {
+      cancelPendingBlurClose();
       handleClose();
       return;
     }
 
-    if ((isRequestingToBeOpened || isForcingToBeOpened) && !bottomSheetInQueueRef.current) {
-      enqueueBottomSheet();
+    if (!isFocused) {
+      if (blurCloseTimeoutRef.current) return;
 
-      return () => {
-        logBottomSheet("Effect cleanup - closing drawer");
+      blurCloseTimeoutRef.current = setTimeout(() => {
+        blurCloseTimeoutRef.current = null;
+        if (isFocusedRef.current) return;
+
+        logBottomSheet("Closing drawer - screen not focused");
         handleClose();
-      };
+      }, BLUR_CLOSE_CONFIRMATION_MS);
+
+      return;
+    }
+
+    // Focused again, so any pending blur was not the user leaving: drop it before it can
+    // dismiss a sheet that is back on screen.
+    cancelPendingBlurClose();
+
+    if (!bottomSheetInQueueRef.current) {
+      enqueueBottomSheet();
     }
   }, [
     isFocused,
@@ -198,15 +236,23 @@ export function useQueuedBottomSheet({
     handleClose,
     enqueueBottomSheet,
     logBottomSheet,
+    cancelPendingBlurClose,
     reopenCheckSignal,
   ]);
+
+  // Read through a ref so this teardown never re-runs mid-life: it must fire on unmount only,
+  // which is what stops a departing screen from leaving its sheet behind.
+  const handleCloseRef = useRef(handleClose);
+  handleCloseRef.current = handleClose;
 
   useEffect(() => {
     return () => {
       logBottomSheet("Component unmounting - cleaning up");
+      cancelPendingBlurClose();
+      handleCloseRef.current();
       cleanupQueue();
     };
-  }, [cleanupQueue, logBottomSheet]);
+  }, [cleanupQueue, cancelPendingBlurClose, logBottomSheet]);
 
   return {
     bottomSheetRef,
