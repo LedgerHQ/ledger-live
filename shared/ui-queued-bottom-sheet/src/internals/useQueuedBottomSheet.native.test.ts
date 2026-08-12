@@ -1,6 +1,8 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { renderHook, act } from "@testing-library/react-native";
 import { useQueuedBottomSheet } from "./useQueuedBottomSheet";
+import { QueuedBottomSheetAdaptersProvider } from "./adaptersContext";
+import type { QueuedBottomSheetAdapters } from "../adapters";
 import type { BottomSheetStateHandlers } from "../contexts/QueuedBottomSheetsContext";
 
 const mockPresent = jest.fn();
@@ -530,5 +532,68 @@ describe("useQueuedBottomSheet", () => {
     });
 
     expect(mockAddBottomSheetToQueue).toHaveBeenCalledTimes(1);
+  });
+
+  describe("screen focus", () => {
+    // Renders the hook with focus we can flip between rerenders.
+    function renderWithFocus() {
+      const { signalOpen } = setupBottomSheetStateCapture();
+      let focused = true;
+      const adapters: QueuedBottomSheetAdapters = {
+        useAreBottomSheetsLocked: () => false,
+        useIsScreenFocused: () => focused,
+        log: () => {},
+      };
+      const wrapper = ({ children }: { children: React.ReactNode }) =>
+        React.createElement(QueuedBottomSheetAdaptersProvider, { value: adapters }, children);
+
+      const view = renderHook(() => useQueuedBottomSheet({ isRequestingToBeOpened: true }), {
+        wrapper,
+      });
+
+      return {
+        ...view,
+        signalOpen,
+        setFocused: (next: boolean) => {
+          focused = next;
+          view.rerender(undefined);
+        },
+      };
+    }
+
+    beforeEach(() => jest.useFakeTimers());
+    afterEach(() => jest.useRealTimers());
+
+    it("keeps the sheet open when a blur is immediately followed by a refocus", () => {
+      // Resolving a deeplink rewrites the navigation state, which blurs the screen and refocuses
+      // it a frame later. The sheet the user is looking at must survive that.
+      const { signalOpen, setFocused } = renderWithFocus();
+      signalOpen();
+
+      setFocused(false);
+      act(() => {
+        jest.advanceTimersByTime(100);
+      });
+      setFocused(true);
+      act(() => {
+        jest.advanceTimersByTime(5000);
+      });
+
+      expect(mockDismiss).not.toHaveBeenCalled();
+    });
+
+    it("closes the sheet once a blur persists", () => {
+      const { signalOpen, setFocused } = renderWithFocus();
+      signalOpen();
+
+      setFocused(false);
+      expect(mockDismiss).not.toHaveBeenCalled();
+
+      act(() => {
+        jest.advanceTimersByTime(500);
+      });
+
+      expect(mockDismiss).toHaveBeenCalledTimes(1);
+    });
   });
 });
