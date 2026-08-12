@@ -2522,6 +2522,10 @@
         "cta": "Got it"
       }
     },
+    "addContact": {
+      "newContact": "Add a new contact",
+      "existingContact": "Add to an existing contact"
+    },
     "relativeDate": {
       "justNow": "Just now",
       "minutesAgo_one": "1 min ago",

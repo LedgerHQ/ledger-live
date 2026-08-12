@@ -40,6 +40,7 @@ export function AddressMatchedSection({ viewModel }: AddressMatchedSectionProps)
             addContactLabel={suggestion.addContactLabel}
             sendLabel={suggestion.sendLabel}
             onSend={suggestion.onSend}
+            onAddContact={suggestion.onAddContact}
           />
         ) : (
           <AddressListItem
