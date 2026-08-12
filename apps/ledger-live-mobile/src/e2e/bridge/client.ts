@@ -57,6 +57,11 @@ export function init() {
   }
   setEnv("DISABLE_TRANSACTION_BROADCAST", disable_broadcast != "0");
 
+  // QAA-1476 instrumentation. Set here rather than in .env.mock: react-native-config bakes that
+  // file into the native build, and CI restores the native APK from cache, so an env-file change
+  // never reaches the app. This runs in the JS bundle, which is rebuilt every run.
+  setEnv("LOG_DRAWERS", true);
+
   initAppNetworkLogging();
 
   if (ws) {
