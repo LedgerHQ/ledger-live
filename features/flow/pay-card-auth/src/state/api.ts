@@ -36,14 +36,12 @@ export type PayCardRefreshSessionRequest = {
 
 /**
  * TODO(LIVE-34769): placeholders. The backend rejects any request without `x-client-key` (499) and an
- * authenticated one without a bearer token (401), but neither value has a source yet — the client key
- * is not in `shared/env`, and the access token only exists once the OAuth flow writes it to secure
- * storage. Both belong in the base query's `prepareHeaders`
+ * authenticated one without a bearer token (401). Both belong in the base query's `prepareHeaders`
  */
-const PLACEHOLDER_CLIENT_KEY = "";
+const CARD_BAANX_CLIENT_KEY = "";
 const PLACEHOLDER_ACCESS_TOKEN = "";
 
-const clientKeyHeaders = { "x-client-key": PLACEHOLDER_CLIENT_KEY };
+const clientKeyHeaders = { "x-client-key": CARD_BAANX_CLIENT_KEY };
 
 const authenticatedHeaders = {
   ...clientKeyHeaders,
