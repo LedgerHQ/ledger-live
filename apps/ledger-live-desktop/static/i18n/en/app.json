@@ -8952,7 +8952,8 @@
             "title": "Private balance",
             "subtitle": "Shielded",
             "unavailable": "Private balance unavailable"
-          }
+          },
+          "spendableWarning": "Spendable balance may be lower than total balance. Recently shielded funds need confirmations and full scanning (~15 minutes) before they can be spent."
         },
         "memo": {
           "label": "Memo (optional)",

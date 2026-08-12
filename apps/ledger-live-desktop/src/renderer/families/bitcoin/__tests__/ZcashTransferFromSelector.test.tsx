@@ -1,6 +1,10 @@
 import React from "react";
 import BigNumber from "bignumber.js";
-import { DEFAULT_ZCASH_PRIVATE_INFO } from "@ledgerhq/coin-zcash/constants";
+import {
+  DEFAULT_ZCASH_PRIVATE_INFO,
+  ZCASH_SHIELDED_SPENDABILITY_DELAY_BLOCKS,
+} from "@ledgerhq/coin-zcash/constants";
+import type { ShieldedTransaction } from "@ledgerhq/coin-zcash/network/types";
 import { render, screen, fireEvent, withFlagOverrides } from "tests/testSetup";
 import { createFixtureAccount } from "@ledgerhq/coin-bitcoin/fixtures/common.fixtures";
 import { CryptoCurrency } from "@domain/entity-currency-crypto";
@@ -184,6 +188,61 @@ describe("ZcashTransferFromSelector", () => {
     expect(screen.getByTestId("transfer-from-public")).toHaveTextContent(/0\.1 ZEC/);
     expect(screen.getByTestId("transfer-from-public")).not.toHaveTextContent(/0\.4 ZEC/);
     expect(screen.getByTestId("transfer-from-private")).toHaveTextContent(/0\.5 ZEC/);
+  });
+
+  const TIP = 1_000_000; // latest scanned block height
+  const outgoingShieldedTx = (blockHeight: number) =>
+    ({
+      blockHeight,
+      decryptedData: {
+        orchard_outputs: [],
+        sapling_outputs: [],
+        ironwood_outputs: [{ amount: new BigNumber(5000), memo: "", transfer_type: "outgoing" }],
+      },
+    }) as unknown as ShieldedTransaction;
+  const recentShieldedTx = () => outgoingShieldedTx(TIP - 1);
+  const oldShieldedTx = () => outgoingShieldedTx(TIP - ZCASH_SHIELDED_SPENDABILITY_DELAY_BLOCKS);
+
+  it(`shows the spendable-balance warning when Private is selected and funds were shielded within the last ${ZCASH_SHIELDED_SPENDABILITY_DELAY_BLOCKS} blocks`, () => {
+    renderSelector(
+      buildAccount({
+        ufvk: "uview-test",
+        transactions: [recentShieldedTx()],
+        lastProcessedBlock: TIP,
+      }),
+      {
+        sender: "private",
+      } as Partial<Transaction>,
+    );
+    expect(screen.getByTestId("zcash-private-spendable-warning")).toBeVisible();
+  });
+
+  it(`hides the spendable-balance warning when the shielded transaction has ${ZCASH_SHIELDED_SPENDABILITY_DELAY_BLOCKS}+ confirmations`, () => {
+    renderSelector(
+      buildAccount({
+        ufvk: "uview-test",
+        transactions: [oldShieldedTx()],
+        lastProcessedBlock: TIP,
+      }),
+      {
+        sender: "private",
+      } as Partial<Transaction>,
+    );
+    expect(screen.queryByTestId("zcash-private-spendable-warning")).not.toBeInTheDocument();
+  });
+
+  it("hides the spendable-balance warning when Public is the selected source even with recent shielded funds", () => {
+    renderSelector(
+      buildAccount({
+        ufvk: "uview-test",
+        transactions: [recentShieldedTx()],
+        lastProcessedBlock: TIP,
+      }),
+      {
+        sender: "public",
+      } as Partial<Transaction>,
+    );
+    expect(screen.queryByTestId("zcash-private-spendable-warning")).not.toBeInTheDocument();
   });
 
   it("renders nothing when the zcashShielded feature flag is off", () => {

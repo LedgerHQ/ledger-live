@@ -60,6 +60,11 @@ export const getZainoEndpoint = (): { grpcUrl: string; network: ZcashNetwork } =
 export const ZCASH_ACTIVATION_DATE = new Date("2022-05-31");
 export const ZCASH_ACTIVATION_DATE_STRING = "2022-05-31";
 export const ZCASH_OUTDATED_SYNC_INTERVAL_MINUTES = 2;
+// A freshly shielded note is scanned into the spendable (Ironwood) balance
+// before it can actually be spent: it first needs to gain confirmations. Until
+// the note's transaction has this many blocks mined on top of it, the spendable
+// balance can trail the total.
+export const ZCASH_SHIELDED_SPENDABILITY_DELAY_BLOCKS = 12;
 export const ZCASH_CHECK_OUTDATED_SYNC_INTERVAL = 5_000; // 5 seconds
 export const DEFAULT_ZCASH_PRIVATE_INFO: ZcashPrivateInfo = {
   orchardBalance: new BigNumber(0),

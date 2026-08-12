@@ -259,6 +259,40 @@ export async function transactionDetailsJob(
 }
 
 /**
+ * Adds the nullifiers of incoming/internal notes to `target` so a later chunk
+ * can detect them as spent. Outgoing notes are skipped -- their nullifiers
+ * belong to the counterparty, not to us.
+ */
+function collectSpendableNullifiers(
+  notes: NativeTx["orchardNotes"] | undefined,
+  target: Set<string>,
+): void {
+  for (const note of notes ?? []) {
+    if (note.nullifier && note.transferType !== "outgoing") {
+      target.add(note.nullifier);
+    }
+  }
+}
+
+/**
+ * Maps a chunk's native transactions into `allTransactions` and grows
+ * `accumulatedNullifiers` with the Orchard/Ironwood notes discovered in them.
+ */
+function accumulateChunkTransactions(
+  transactions: NativeTx[],
+  allTransactions: ShieldedTransactionRaw[],
+  accumulatedNullifiers: Set<string>,
+): void {
+  for (const tx of transactions) {
+    allTransactions.push(mapNativeTx(tx));
+    // Collect nullifiers from incoming/internal notes discovered in this chunk
+    // so the next chunk can detect them as spent.
+    collectSpendableNullifiers(tx.orchardNotes, accumulatedNullifiers);
+    collectSpendableNullifiers(tx.ironwoodNotes, accumulatedNullifiers);
+  }
+}
+
+/**
  * Runs the shielded sync loop.
  *
  * Drives the native tonic gRPC stream in `maxBatchSize`-block chunks, emitting
@@ -349,21 +383,7 @@ export async function startSyncJob(
     }
 
     processedBlocks += blocksScanned;
-    for (const tx of transactions) {
-      allTransactions.push(mapNativeTx(tx));
-      // Collect nullifiers from incoming/internal Orchard and Ironwood notes
-      // discovered in this chunk so the next chunk can detect them as spent.
-      for (const note of tx.orchardNotes ?? []) {
-        if (note.nullifier && note.transferType !== "outgoing") {
-          accumulatedNullifiers.add(note.nullifier);
-        }
-      }
-      for (const note of tx.ironwoodNotes ?? []) {
-        if (note.nullifier && note.transferType !== "outgoing") {
-          accumulatedNullifiers.add(note.nullifier);
-        }
-      }
-    }
+    accumulateChunkTransactions(transactions, allTransactions, accumulatedNullifiers);
     allSpentKnownNullifiers.push(...spentKnownNullifiers);
 
     log(ZCASH_LOG_TYPE, "chunk done", {
@@ -384,8 +404,8 @@ export async function startSyncJob(
           txid: tx.txid,
           blockHeight: tx.blockHeight,
           fee: tx.fee,
-          orchardNotesCount: tx.orchardNotes?.length ?? 0,
-          saplingNotesCount: tx.saplingNotes?.length ?? 0,
+          orchardNotesCount: tx.orchardNotes.length,
+          saplingNotesCount: tx.saplingNotes.length,
           ironwoodNotesCount: tx.ironwoodNotes?.length ?? 0,
         })),
       );
