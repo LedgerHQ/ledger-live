@@ -42,10 +42,10 @@ describe("getTxType", () => {
   });
 
   describe("Unknown transactions", () => {
-    it("should return 'transfer' for unknown selectors", () => {
+    it("should return 'unknown' for unrecognised selectors, not 'transfer'", () => {
       const tx = createMockTransaction("0x12345678");
       const result = getTxType(tx);
-      expect(result).toBe("transfer");
+      expect(result).toBe("unknown");
     });
 
     it("should return 'transfer' for transactions without data", () => {
@@ -62,6 +62,19 @@ describe("getTxType", () => {
       } as EvmTransaction;
       const result = getTxType(tx);
       expect(result).toBe("transfer");
+    });
+  });
+
+  describe("ERC-4626 vault (staking / stablecoin yield) calls", () => {
+    it.each([
+      ["0x6e553f65", "deposit"],
+      ["0xb460af94", "withdraw"],
+    ])("maps %s -> %s", (selector, expected) => {
+      expect(getTxType(createMockTransaction(selector))).toBe(expected);
+    });
+
+    it("maps the redeem selector, which used to resolve to the typo 'reedeem'", () => {
+      expect(getTxType(createMockTransaction("0xba087652"))).toBe("redeem");
     });
   });
 
