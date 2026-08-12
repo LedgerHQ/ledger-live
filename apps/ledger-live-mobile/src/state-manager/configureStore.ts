@@ -21,11 +21,13 @@ import { canPushDeviceIdsSelector, languageSelector } from "~/reducers/settings"
 import { getEnv } from "@shared/env";
 import {
   calApiExtra,
+  cardApiExtra,
   coinMarketCapApiExtra,
   cvsApiExtra,
   pushDevicesApiExtra,
   swapApiExtra,
 } from "@shared/api-services";
+import { getCardSessionToken, refreshCardSession } from "@features/platform-card";
 import { payCardApiExtra } from "@domain/api-pay-card";
 import { createFeatureFlagsMiddleware, type PartialFeatures } from "@shared/feature-flags";
 import { fetchRemoteFlags } from "~/firebase/remoteConfig";
@@ -55,6 +57,12 @@ export const store = configureStore({
             }),
             ...coinMarketCapApiExtra({
               coinMarketCapApiUrl: getEnv("CMC_API_URL"),
+            }),
+            ...cardApiExtra({
+              cardApiBaseUrl: getEnv("CARD_API_URL"),
+              cardBaanxClientKey: getEnv("CARD_BAANX_CLIENT_KEY"),
+              getCardSessionToken,
+              refreshCardSession,
             }),
             ...pushDevicesApiExtra({
               pushDevicesServiceUrl: getEnv("PUSH_DEVICES_SERVICE_URL"),

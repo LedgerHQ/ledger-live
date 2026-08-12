@@ -122,6 +122,7 @@
     "@features/flow-fear-and-greed": "workspace:^",
     "@features/flow-lazy-onboarding-banner": "workspace:^",
     "@features/platform-aggregated-assets": "workspace:*",
+    "@features/platform-card": "workspace:*",
     "@features/platform-currencies": "workspace:^",
     "@features/platform-env": "workspace:*",
     "@features/platform-feature-flags": "workspace:^",

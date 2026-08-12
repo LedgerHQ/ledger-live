@@ -961,6 +961,9 @@ importers:
       '@features/platform-aggregated-assets':
         specifier: workspace:*
         version: link:../../features/platform/aggregated-assets
+      '@features/platform-card':
+        specifier: workspace:*
+        version: link:../../features/platform/card
       '@features/platform-contacts':
         specifier: workspace:^
         version: link:../../features/platform/contacts
@@ -1743,6 +1746,9 @@ importers:
       '@features/platform-aggregated-assets':
         specifier: workspace:*
         version: link:../../features/platform/aggregated-assets
+      '@features/platform-card':
+        specifier: workspace:*
+        version: link:../../features/platform/card
       '@features/platform-contacts':
         specifier: workspace:^
         version: link:../../features/platform/contacts
@@ -3889,6 +3895,43 @@ importers:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
 
+  domain/api/card-management:
+    dependencies:
+      '@reduxjs/toolkit':
+        specifier: 'catalog:'
+        version: 2.11.2(react-redux@9.2.0(react@19.1.4))(react@19.1.4)
+      '@shared/api-services':
+        specifier: workspace:*
+        version: link:../../../shared/api-services
+    devDependencies:
+      '@jest/globals':
+        specifier: 'catalog:'
+        version: 30.2.0
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
+      jest:
+        specifier: 'catalog:'
+        version: 30.2.0(@types/node@24.12.0)
+      react:
+        specifier: 19.1.4
+        version: 19.1.4
+      react-redux:
+        specifier: 'catalog:'
+        version: 9.2.0(react@19.1.4)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
   domain/api/currency-fiat:
     dependencies:
       '@domain/entity-currency-fiat':
@@ -5942,6 +5985,30 @@ importers:
       react-redux:
         specifier: 'catalog:'
         version: 9.2.0(@types/react@19.0.14)(react@19.1.4)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
+  features/platform/card:
+    devDependencies:
+      '@jest/globals':
+        specifier: 'catalog:'
+        version: 30.2.0
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
+      jest:
+        specifier: 'catalog:'
+        version: 30.2.0(@types/node@24.12.0)
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
