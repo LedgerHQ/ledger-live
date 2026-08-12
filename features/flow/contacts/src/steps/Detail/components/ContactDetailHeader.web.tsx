@@ -26,10 +26,13 @@ export function ContactDetailHeader({
 
   return (
     <div className="flex flex-col items-center gap-24 pt-24">
-      <div className="flex flex-col items-center gap-16">
+      <div className="flex w-full min-w-0 flex-col items-center gap-16">
         <ContactDetailAvatar contact={contact} meAvatarSrc={meAvatarSrc} />
-        <div className="flex flex-col items-center gap-4">
-          <h2 className="heading-3-semi-bold text-base" data-testid="contacts-detail-name">
+        <div className="flex w-full min-w-0 flex-col items-center gap-4">
+          <h2
+            className="heading-3-semi-bold min-w-0 max-w-full truncate text-base"
+            data-testid="contacts-detail-name"
+          >
             {displayName}
           </h2>
           <p className="body-2 text-muted">{labels.formatAddressCount(contact.addresses.length)}</p>
