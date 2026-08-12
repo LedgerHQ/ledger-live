@@ -112,6 +112,24 @@ describe("HookNotifications", () => {
     });
   });
 
+  it("should re-sync Braze identity when the cleanup feature flag changes", () => {
+    mockedUseFeature.mockReturnValue({ enabled: false } as ReturnType<typeof useFeature>);
+    mockSelectors({ isTrackedUser: false, userId: REAL_USER_ID });
+    const { rerender } = render(<HookNotifications />);
+    expect(mockedStart).toHaveBeenCalledTimes(1);
+    expect(mockedStart).toHaveBeenLastCalledWith(false, REAL_USER_ID, {
+      brazeOptOutIdentityCleanup: false,
+    });
+
+    mockedUseFeature.mockReturnValue({ enabled: true } as ReturnType<typeof useFeature>);
+    rerender(<HookNotifications />);
+
+    expect(mockedStart).toHaveBeenCalledTimes(2);
+    expect(mockedStart).toHaveBeenLastCalledWith(false, REAL_USER_ID, {
+      brazeOptOutIdentityCleanup: true,
+    });
+  });
+
   it("should update notification preferences when settings change", () => {
     mockSelectors({ isTrackedUser: true, userId: REAL_USER_ID });
     const updatedNotifications = {

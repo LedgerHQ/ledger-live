@@ -1,13 +1,14 @@
 import { useEffect, useRef, useCallback } from "react";
-import { userIdSelector, isDummyUserId } from "@domain/entity-client-identity";
+import { type UserId, userIdSelector, isDummyUserId } from "@domain/entity-client-identity";
 import { useFeature } from "@features/platform-feature-flags";
 import { useSelector } from "~/context/hooks";
 import { notificationsSelector, trackingEnabledSelector } from "../reducers/settings";
 import { start, updateUserPreferences } from "./braze";
 
 type SyncedBrazeIdentity = {
-  userId: string;
+  userId: UserId;
   isTrackedUser: boolean;
+  brazeOptOutIdentityCleanup: boolean;
 };
 
 const HookNotifications = () => {
@@ -23,21 +24,25 @@ const HookNotifications = () => {
       return;
     }
 
+    const brazeOptOutIdentityCleanupEnabled = brazeOptOutIdentityCleanup?.enabled ?? false;
     const currentIdentity: SyncedBrazeIdentity = {
-      userId: userId.exportUserIdForPersistence(),
+      userId,
       isTrackedUser,
+      brazeOptOutIdentityCleanup: brazeOptOutIdentityCleanupEnabled,
     };
     const lastSyncedIdentity = lastSyncedIdentityRef.current;
     if (
-      lastSyncedIdentity?.userId === currentIdentity.userId &&
-      lastSyncedIdentity.isTrackedUser === currentIdentity.isTrackedUser
+      lastSyncedIdentity &&
+      lastSyncedIdentity.userId.equals(currentIdentity.userId) &&
+      lastSyncedIdentity.isTrackedUser === currentIdentity.isTrackedUser &&
+      lastSyncedIdentity.brazeOptOutIdentityCleanup === currentIdentity.brazeOptOutIdentityCleanup
     ) {
       return;
     }
 
     lastSyncedIdentityRef.current = currentIdentity;
     start(isTrackedUser, userId, {
-      brazeOptOutIdentityCleanup: brazeOptOutIdentityCleanup?.enabled ?? false,
+      brazeOptOutIdentityCleanup: brazeOptOutIdentityCleanupEnabled,
     });
   }, [brazeOptOutIdentityCleanup?.enabled, isTrackedUser, userId]);
 
