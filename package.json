@@ -133,6 +133,7 @@
     "coin-modules:test-integ": "nx run-many -t test-integ -p \"@ledgerhq/coin-*\"",
     "coin:modules:monitoring": "pnpm --filter coin-modules-monitoring",
     "coin:tester:cardano": "pnpm --filter coin-tester-cardano",
+    "coin:tester:casper": "pnpm --filter coin-tester-casper",
     "coin:tester:cosmos": "pnpm --filter coin-tester-cosmos",
     "coin:tester:evm": "pnpm --filter coin-tester-evm",
     "coin:tester:polkadot": "pnpm --filter coin-tester-polkadot",
