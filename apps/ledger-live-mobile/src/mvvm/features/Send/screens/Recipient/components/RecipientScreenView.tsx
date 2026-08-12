@@ -23,14 +23,12 @@ export const RecipientScreenView = ({ viewModel }: RecipientScreenViewProps) => 
     showMatched,
     shouldShowErrorBanner,
     keyboardBehavior,
-    handleMatchedAddress,
+    addressMatchedSectionViewModel,
   } = viewModel;
   const {
     isLoading,
     showInitialState,
     showEmptyContactsState,
-    result,
-    searchValue,
     showBridgeSenderError,
     bridgeSenderError,
     showSanctionedBanner,
@@ -39,7 +37,6 @@ export const RecipientScreenView = ({ viewModel }: RecipientScreenViewProps) => 
     showAddressValidationError,
     bridgeRecipientError,
     bridgeRecipientWarning,
-    isAddressComplete,
     addressValidationErrorType,
     clipboardAddress,
     handlePasteFromClipboard,
@@ -65,16 +62,7 @@ export const RecipientScreenView = ({ viewModel }: RecipientScreenViewProps) => 
 
           {showMemo && <MemoControls vm={memo} />}
 
-          {showMatched && (
-            <AddressMatchedSection
-              searchResult={result}
-              searchValue={searchValue}
-              onSelect={handleMatchedAddress}
-              isSanctioned={showSanctionedBanner}
-              isAddressComplete={isAddressComplete}
-              hasBridgeError={showBridgeRecipientError}
-            />
-          )}
+          {showMatched && <AddressMatchedSection viewModel={addressMatchedSectionViewModel} />}
 
           {showAddressValidationError && (
             <AddressValidationError error={addressValidationErrorType} />

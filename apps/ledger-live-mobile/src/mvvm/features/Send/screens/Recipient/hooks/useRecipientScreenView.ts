@@ -97,6 +97,7 @@ export function useRecipientScreenView({
     clipboardAddress,
     handlePasteFromClipboard,
     handleAddressSelect,
+    isContactsFeatureEnabled,
     ...searchState,
   };
 }
