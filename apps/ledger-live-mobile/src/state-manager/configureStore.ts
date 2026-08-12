@@ -66,7 +66,11 @@ export const store = configureStore({
             }),
             ...payCardApiExtra({
               payCardApiBaseUrl: getEnv("PAY_CARD_API_BASE_URL"),
-              payCardBaanxClientKey: getEnv("CARD_BAANX_CLIENT_KEY"),
+              // Read straight from `Config`, not through `getEnv`: what copies `Config` into the env
+              // system is the async block in `experimental.ts`, which resumes only after every module
+              // has been evaluated — including this one, whose `extraArgument` is a fixed snapshot.
+              // `getEnv` here would therefore always return the empty default.
+              payCardBaanxClientKey: Config.CARD_BAANX_CLIENT_KEY ?? "",
             }),
             ...authApiExtra({
               authFeatureId: "lwmAuth",
