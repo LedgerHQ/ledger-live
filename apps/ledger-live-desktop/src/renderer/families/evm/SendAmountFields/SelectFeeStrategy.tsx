@@ -1,10 +1,7 @@
-import { getEstimatedFees } from "@ledgerhq/coin-evm/utils";
+import { getEstimatedFees } from "@ledgerhq/live-common/families/evm/utils";
 import { getTypedTransaction } from "@ledgerhq/live-common/families/evm/transaction";
-import {
-  Transaction as EvmTransaction,
-  GasOptions,
-  Strategy,
-} from "@ledgerhq/coin-evm/types/index";
+import { Transaction as EvmTransaction } from "@ledgerhq/live-common/families/evm/types";
+import { GasOptions, Strategy } from "@ledgerhq/coin-evm/types/index";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { Account } from "@ledgerhq/types-live";

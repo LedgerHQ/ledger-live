@@ -1,5 +1,4 @@
 import React from "react";
-import { Avatar } from "@ledgerhq/lumen-ui-rnative";
 import type { Contact } from "@domain/entity-contact";
 import { ContactAvatar } from "@features/platform-contacts/native";
 
@@ -12,18 +11,14 @@ export function ContactDetailAvatar({
   contact,
   meAvatarSrc,
 }: ContactDetailAvatarProps): React.JSX.Element {
-  if (contact.isMe) {
-    return (
-      <Avatar size="xl" src={meAvatarSrc} alt={contact.name} testID="contacts-detail-me-avatar" />
-    );
-  }
-
   return (
     <ContactAvatar
       contactId={contact.id}
       name={contact.name}
+      isMe={contact.isMe}
+      src={meAvatarSrc}
       size="xl"
-      testID="contacts-detail-avatar"
+      testID={contact.isMe ? "contacts-detail-me-avatar" : "contacts-detail-avatar"}
     />
   );
 }

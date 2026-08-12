@@ -1,6 +1,6 @@
 import { CommonActions, useTheme } from "@react-navigation/native";
 import React, { useCallback, useEffect, useRef } from "react";
-import { Trans } from "~/context/Locale";
+import { Trans, useTranslation } from "~/context/Locale";
 import { StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -36,6 +36,8 @@ export function PendingOperation({ route, navigation }: PendingOperationParamLis
   const completeSwapFlow = useCallback(() => {
     notifyFlowCompleted("swap");
   }, [notifyFlowCompleted]);
+
+  const { t } = useTranslation();
 
   const navigateToSwapForm = useCallback(() => {
     if (allowRemovalRef.current) return;
@@ -143,7 +145,7 @@ export function PendingOperation({ route, navigation }: PendingOperationParamLis
         <Button
           event="SwapDone"
           type="primary"
-          title={<Trans i18nKey={"transfer.swap.history.button"} />}
+          title={t("transfer.swap.pendingOperation.cta")}
           onPress={onComplete}
         />
       </View>

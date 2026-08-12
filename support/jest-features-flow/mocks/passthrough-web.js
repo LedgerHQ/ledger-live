@@ -1,11 +1,26 @@
 const React = require("react");
+const TooltipOpenContext = React.createContext();
 
 function InteractiveIcon({ icon: _icon, iconType: _iconType, size: _size, ...props }) {
   return React.createElement("button", { type: "button", ...props });
 }
 
-function Tooltip({ children }) {
-  return React.createElement(React.Fragment, undefined, children);
+function Tooltip({ children, onOpenChange, open }) {
+  return React.createElement(
+    TooltipOpenContext.Provider,
+    { value: open },
+    React.createElement(
+      "div",
+      {
+        "data-open": String(open),
+        onMouseEnter: () => onOpenChange?.(true),
+        onMouseLeave: () => onOpenChange?.(false),
+        onFocus: () => onOpenChange?.(true),
+        onBlur: () => onOpenChange?.(false),
+      },
+      children,
+    ),
+  );
 }
 
 function TooltipTrigger({ children }) {
@@ -13,6 +28,8 @@ function TooltipTrigger({ children }) {
 }
 
 function TooltipContent({ children, ...props }) {
+  if (React.useContext(TooltipOpenContext) === false) return null;
+
   return React.createElement("div", { ...props, role: "tooltip" }, children);
 }
 

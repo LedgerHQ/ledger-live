@@ -1,4 +1,4 @@
-import { Transaction } from "@ledgerhq/coin-evm/types/index";
+import { Transaction } from "@ledgerhq/live-common/families/evm/types";
 import { FAMILIES, EthereumTransaction as PlatformTransaction } from "@ledgerhq/live-app-sdk";
 import BigNumber from "bignumber.js";
 import evm from "./platformAdapter";

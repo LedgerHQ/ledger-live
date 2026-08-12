@@ -5,3 +5,4 @@ export * from "./utils/getContactAvatarColorClass";
 export * from "./utils/formatMeDisplayName";
 export * from "./utils/resolveMeContactDisplayName";
 export * from "./contactDeviceIntentsPort";
+export * from "./components/ContactAvatar";

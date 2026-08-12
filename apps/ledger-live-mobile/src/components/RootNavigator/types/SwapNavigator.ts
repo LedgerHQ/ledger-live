@@ -1,4 +1,5 @@
-import type { Transaction as EvmTransaction, GasOptions } from "@ledgerhq/coin-evm/types/index";
+import type { GasOptions } from "@ledgerhq/coin-evm/types/index";
+import type { Transaction as EvmTransaction } from "@ledgerhq/live-common/families/evm/types";
 import { SwapLiveError } from "@ledgerhq/live-common/exchange/swap/types";
 
 import type {
