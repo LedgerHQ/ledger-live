@@ -68,4 +68,16 @@ describe("computeA4AccountVersion", () => {
     computeA4AccountVersion(addrs);
     expect(addrs).toEqual(["zzz", "aaa"]);
   });
+
+  it("EVM gold pair: checksummed and lowercase produce the same version", () => {
+    const checksummed = "0x742d35Cc6634C0532925a3b844Bc454e4438f44e";
+    const lowercase = "0x742d35cc6634c0532925a3b844bc454e4438f44e";
+    expect(computeA4AccountVersion([checksummed])).toBe(computeA4AccountVersion([lowercase]));
+  });
+
+  it("EVM gold pair: known digest for single checksummed address", () => {
+    expect(computeA4AccountVersion(["0x742d35Cc6634C0532925a3b844Bc454e4438f44e"])).toBe(
+      "ff8b25f1cdd03142b2300762c03b74ac6f8dffa401adf341971ed5b624da38b8",
+    );
+  });
 });
