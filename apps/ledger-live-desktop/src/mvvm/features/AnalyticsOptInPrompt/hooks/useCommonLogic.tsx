@@ -32,6 +32,7 @@ export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
   const isTrackingEnabled = useSelector(trackingEnabledSelector);
   const consentInfo = useSelector(analyticsConsentInfoSelector);
   const lldAnalyticsOptInPromptFlag = useFeature("lldAnalyticsOptInPrompt");
+  const lwdAnalyticsOptInScreenV2 = useFeature("lwdAnalyticsOptInScreenV2");
   const analyticsOptInFlag = useFeature("analyticsOptIn");
   const { currentPolicyVersion } = resolveAnalyticsOptInParams(analyticsOptInFlag);
   const policyVersion = currentPolicyVersion?.normalized ?? consentInfo.privacyPolicyVersion;
@@ -46,6 +47,8 @@ export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
   const variant = (lldAnalyticsOptInPromptFlag?.params?.variant ?? "A") as AnalyticsOptInVariant;
   const policyUrlKey = resolveAnalyticsOptInPolicyUrl(entryPoint, variant);
   const policyUrl = useLocalizedUrl(policyUrlKey);
+  const shouldUseScreenV2 =
+    entryPoint === EntryPoint.onboarding && Boolean(lwdAnalyticsOptInScreenV2?.enabled);
 
   const openAnalyticsOptInPrompt = useCallback(
     (routePath: string, callBack: () => void) => {
@@ -59,18 +62,24 @@ export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
     .map(s => s.toLowerCase())
     .includes(entryPoint.toLowerCase());
 
-  const isFlagEnabled = useMemo(
-    () =>
-      isEntryPointIncludedInFlagParams &&
-      lldAnalyticsOptInPromptFlag?.enabled &&
-      (!hasSeenAnalyticsOptInPrompt || entryPoint === EntryPoint.onboarding),
-    [
-      lldAnalyticsOptInPromptFlag,
-      hasSeenAnalyticsOptInPrompt,
-      entryPoint,
-      isEntryPointIncludedInFlagParams,
-    ],
-  );
+  const isFlagEnabled = useMemo(() => {
+    // V2 Welcome path: gated only by lwdAnalyticsOptInScreenV2 + unseen prompt.
+    if (shouldUseScreenV2) {
+      return !hasSeenAnalyticsOptInPrompt;
+    }
+
+    return (
+      Boolean(isEntryPointIncludedInFlagParams) &&
+      Boolean(lldAnalyticsOptInPromptFlag?.enabled) &&
+      (!hasSeenAnalyticsOptInPrompt || entryPoint === EntryPoint.onboarding)
+    );
+  }, [
+    shouldUseScreenV2,
+    hasSeenAnalyticsOptInPrompt,
+    isEntryPointIncludedInFlagParams,
+    lldAnalyticsOptInPromptFlag?.enabled,
+    entryPoint,
+  ]);
 
   const onSubmit = async () => {
     setIsAnalyticsOptInPromptOpened(false);
