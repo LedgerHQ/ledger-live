@@ -11,6 +11,7 @@ import type {
   TokenAccount,
 } from "@ledgerhq/types-live";
 import type {
+  AssetInfo,
   Operation as CoinFrameworkOperation,
   MemoNotSupported,
   TransactionIntent,
@@ -172,6 +173,16 @@ function parseTransactionFields(rawTx: AleoPublicTransaction, address: string) {
   return { type, fee, blockHash, transactionType, date, hasFailed };
 }
 
+/**
+ * Aleo token programs are reported by program id. Resolving it to a currency is the caller's job
+ * (ADR-042 / LIVE-34091) — no CAL lookup here.
+ */
+export function toOperationAsset(programId: string): AssetInfo {
+  return programId === PROGRAM_ID.CREDITS
+    ? { type: "native" }
+    : { type: "arc22", assetReference: programId };
+}
+
 export const toCoinFrameworkOperation = (
   rawTx: AleoPublicTransaction,
   address: string,
@@ -181,19 +192,19 @@ export const toCoinFrameworkOperation = (
     address,
   );
   return {
-    id: rawTx.transaction_id,
+    id: rawTx.transaction_id.trim(),
     type,
     recipients: [rawTx.recipient_address],
     senders: [rawTx.sender_address],
     value: BigInt(rawTx.amount.toFixed(0)),
-    asset: { type: "native" },
+    asset: toOperationAsset(rawTx.program_id),
     details: {
       functionId: rawTx.function_id,
       transactionType,
       ledgerOpType: type,
     },
     tx: {
-      hash: rawTx.transaction_id,
+      hash: rawTx.transaction_id.trim(),
       fees: BigInt(fee.toFixed(0)),
       date: date,
       block: {
@@ -202,6 +213,45 @@ export const toCoinFrameworkOperation = (
         time: date,
       },
       failed: hasFailed ?? false,
+    },
+  };
+};
+
+/**
+ * Maps a decrypted private record to a coin-framework operation. Used for transactions with no
+ * public counterpart (fully private transfers) and as the private side of a merged operation.
+ */
+export const toCoinFrameworkPrivateOperation = (
+  enrichedRecord: EnrichedPrivateRecord,
+  address: string,
+): CoinFrameworkOperation => {
+  const { rawRecord, details } = enrichedRecord;
+  const hash = rawRecord.transaction_id.trim();
+  const date = new Date(Number(rawRecord.block_timestamp) * 1000);
+  const type: OperationType = enrichedRecord.recipient === address ? "IN" : "OUT";
+
+  return {
+    id: hash,
+    type,
+    senders: [enrichedRecord.sender],
+    recipients: [enrichedRecord.recipient],
+    value: BigInt(enrichedRecord.value.toFixed(0)),
+    asset: toOperationAsset(rawRecord.program_name),
+    details: {
+      functionId: rawRecord.function_name,
+      transactionType: "private",
+      ledgerOpType: type,
+    },
+    tx: {
+      hash,
+      fees: BigInt(details.fee_value),
+      date,
+      block: {
+        hash: details.block_hash,
+        height: rawRecord.block_height,
+        time: date,
+      },
+      failed: false,
     },
   };
 };
