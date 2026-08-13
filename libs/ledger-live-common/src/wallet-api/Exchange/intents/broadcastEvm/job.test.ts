@@ -1,5 +1,8 @@
 import { lastValueFrom, toArray } from "rxjs";
-import type { DeviceConnectionResult, DeviceExtractedContext } from "@ledgerhq/device-intent";
+import type {
+  DeviceConnectionResult,
+  DeviceExtractedContext,
+} from "@features/platform-device-intent";
 
 const broadcastTransaction = jest.fn();
 const getTransaction = jest.fn();

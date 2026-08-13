@@ -1,4 +1,4 @@
-import type { DeviceConnectionResult, Job } from "@ledgerhq/device-intent";
+import type { DeviceConnectionResult, Job } from "@features/platform-device-intent";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { getMainAccount } from "../../account/index";
 import { getAccountBridge } from "../../bridge/index";
@@ -16,7 +16,7 @@ type SigningDevice = Readonly<{
 function buildSigningDevice(connectionResult: DeviceConnectionResult): SigningDevice {
   return {
     deviceId: connectionResult.compatDeviceId,
-    modelId: connectionResult.compatDeviceModelId,
+    modelId: connectionResult.compatDeviceModelId as DeviceModelId,
   };
 }
 

@@ -4,7 +4,7 @@ import {
   createIntent,
   type DeviceConnectionParams,
   type ExecutorState,
-} from "@ledgerhq/device-intent";
+} from "@features/platform-device-intent";
 import { Text, Flex, Button, SelectableList } from "@ledgerhq/native-ui";
 import { BottomSheetHeader, BottomSheetScrollView } from "@ledgerhq/lumen-ui-rnative";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";

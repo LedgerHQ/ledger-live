@@ -1,6 +1,6 @@
 import { type Observable, concat, interval } from "rxjs";
 import { map, take } from "rxjs/operators";
-import type { Job } from "@ledgerhq/device-intent";
+import type { Job } from "@features/platform-device-intent";
 import type { TimerDemoIntentInput, TimerDemoIntentJobState } from "./types";
 
 export const timerDemoIntentJob: Job<TimerDemoIntentJobState, TimerDemoIntentInput> = ({

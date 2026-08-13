@@ -1,5 +1,8 @@
 import { firstValueFrom, lastValueFrom, toArray } from "rxjs";
-import type { DeviceConnectionResult, DeviceExtractedContext } from "@ledgerhq/device-intent";
+import type {
+  DeviceConnectionResult,
+  DeviceExtractedContext,
+} from "@features/platform-device-intent";
 import { submitRfqOrderEvmJob } from "./job";
 import type { SubmitRfqOrderEvmIntentInput, SubmitRfqOrderEvmJobState } from "./types";
 

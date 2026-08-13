@@ -33,7 +33,7 @@ jest.mock("LLM/components/DeviceIntentExecutor", () => {
   };
 });
 
-jest.mock("@ledgerhq/device-intent", () => ({
+jest.mock("@features/platform-device-intent", () => ({
   createIntent: jest.fn((definition: unknown, input: unknown) => ({
     uuid: "intent-1",
     definition,

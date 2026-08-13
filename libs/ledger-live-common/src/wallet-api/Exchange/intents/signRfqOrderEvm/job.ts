@@ -1,5 +1,5 @@
 import { concat, of } from "rxjs";
-import type { Job } from "@ledgerhq/device-intent";
+import type { Job } from "@features/platform-device-intent";
 import { runSignTypedDataEvm } from "../shared/signTypedDataEvm";
 import type { SignRfqOrderEvmIntentInput, SignRfqOrderEvmJobState } from "./types";
 

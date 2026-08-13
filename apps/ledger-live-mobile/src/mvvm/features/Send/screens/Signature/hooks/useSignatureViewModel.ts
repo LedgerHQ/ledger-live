@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { createIntent } from "@ledgerhq/device-intent";
+import { createIntent } from "@features/platform-device-intent";
 import type { Account, Operation } from "@ledgerhq/types-live";
 import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";
 import { addPendingOperation, getMainAccount } from "@ledgerhq/live-common/account/index";

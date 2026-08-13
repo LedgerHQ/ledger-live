@@ -4,7 +4,7 @@ import type {
   DeviceExtractedContext,
   DeviceIntentExecutorProps,
   ExecutorState,
-} from "@ledgerhq/device-intent";
+} from "@features/platform-device-intent";
 import { DeviceModelId as DMKDeviceModelId } from "@ledgerhq/device-management-kit";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { track } from "~/analytics";
@@ -42,7 +42,9 @@ type Props = DeviceIntentExecutorProps<unknown, unknown, unknown, Initialization
 
 function makeProps(overrides: Partial<Props> = {}): Props {
   return {
-    deviceConnectionParams: {} as Props["deviceConnectionParams"],
+    deviceConnectionParams: {
+      acceptedDeviceModelIds: [DeviceModelId.nanoX],
+    },
     deviceInitializationInput: {} as InitializationInput,
     onExecutorStateChanged: jest.fn(),
     intent: {} as Props["intent"],

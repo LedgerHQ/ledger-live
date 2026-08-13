@@ -3,7 +3,10 @@ import { act, renderHook, withFlagOverrides } from "@tests/test-renderer";
 import { Linking } from "react-native";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { DeviceModelId as DMKDeviceModelId } from "@ledgerhq/device-management-kit";
-import type { DeviceConnectionParams, DeviceConnectionResult } from "@ledgerhq/device-intent";
+import type {
+  DeviceConnectionParams,
+  DeviceConnectionResult,
+} from "@features/platform-device-intent";
 import {
   connectDevice,
   ConnectDeviceUIStateTypes,
@@ -358,7 +361,11 @@ describe("useDeviceConnectionComponentLWMViewModel", () => {
     const onConnectedFromConnectDevice = mockedConnectDevice.mock.calls[0][0].onConnected;
 
     // WHEN
-    act(() => onConnectedFromConnectDevice(connectionResult));
+    act(() =>
+      onConnectedFromConnectDevice(
+        connectionResult as Parameters<typeof onConnectedFromConnectDevice>[0],
+      ),
+    );
 
     // THEN
     expect(store.getState().settings.lastConnectedDevice).toEqual({
@@ -393,7 +400,11 @@ describe("useDeviceConnectionComponentLWMViewModel", () => {
     const onConnectedFromConnectDevice = mockedConnectDevice.mock.calls[0][0].onConnected;
 
     // WHEN
-    act(() => onConnectedFromConnectDevice(connectionResult));
+    act(() =>
+      onConnectedFromConnectDevice(
+        connectionResult as Parameters<typeof onConnectedFromConnectDevice>[0],
+      ),
+    );
 
     // THEN
     expect(store.getState().settings.lastConnectedDevice).toEqual({
@@ -546,7 +557,11 @@ describe("useDeviceConnectionComponentLWMViewModel", () => {
         const onConnectedFromConnectDevice = mockedConnectDevice.mock.calls[0][0].onConnected;
 
         // WHEN
-        act(() => onConnectedFromConnectDevice(connectionResult));
+        act(() =>
+          onConnectedFromConnectDevice(
+            connectionResult as Parameters<typeof onConnectedFromConnectDevice>[0],
+          ),
+        );
 
         // THEN
         expect(mockedTrack).toHaveBeenCalledWith("device_connected", {
@@ -570,7 +585,11 @@ describe("useDeviceConnectionComponentLWMViewModel", () => {
         const onConnectedFromConnectDevice = mockedConnectDevice.mock.calls[0][0].onConnected;
 
         // WHEN
-        act(() => onConnectedFromConnectDevice(connectionResult));
+        act(() =>
+          onConnectedFromConnectDevice(
+            connectionResult as Parameters<typeof onConnectedFromConnectDevice>[0],
+          ),
+        );
 
         // THEN
         expect(mockedTrack).toHaveBeenCalledWith(

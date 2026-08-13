@@ -4,7 +4,10 @@ import { UserRefusedAddress, UserRefusedOnDevice } from "@ledgerhq/ledger-wallet
 import { getMainAccount } from "../../../account/index";
 import { signMessageExec } from "../../../hw/signMessage/index";
 import type { Result } from "../../../hw/signMessage/types";
-import type { DeviceConnectionResult, DeviceExtractedContext } from "@ledgerhq/device-intent";
+import type {
+  DeviceConnectionResult,
+  DeviceExtractedContext,
+} from "@features/platform-device-intent";
 import type { Account, AccountLike, AnyMessage } from "@ledgerhq/types-live";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { Observable, of, throwError } from "rxjs";

@@ -1,5 +1,5 @@
 import React from "react";
-import type { DeviceDisconnectedComponent } from "@ledgerhq/device-intent";
+import type { DeviceDisconnectedComponent } from "@features/platform-device-intent";
 import { Trans } from "~/context/Locale";
 import { InfoState } from "LLM/components/InfoState";
 import { TrackDIEScreen } from "./TrackDIEScreen";

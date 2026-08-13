@@ -1,6 +1,6 @@
 import { UserRefusedAddress, UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import { TransportStatusError } from "@ledgerhq/hw-transport/errors";
-import type { DeviceConnectionResult, Job } from "@ledgerhq/device-intent";
+import type { DeviceConnectionResult, Job } from "@features/platform-device-intent";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 import { Observable, type Subscription } from "rxjs";
 import { getMainAccount } from "../../account/index";
@@ -15,7 +15,7 @@ type SigningDevice = Readonly<{
 function buildSigningDevice(connectionResult: DeviceConnectionResult): SigningDevice {
   return {
     deviceId: connectionResult.compatDeviceId,
-    modelId: connectionResult.compatDeviceModelId,
+    modelId: connectionResult.compatDeviceModelId as DeviceModelId,
   };
 }
 
