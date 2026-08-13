@@ -11,18 +11,19 @@ import { DAPP_SELECTORS } from "@ledgerhq/evm-tools/selectors/index";
 import { deriveEarnTransactionType, type EarnTransactionType } from "./earnTransactionType";
 
 /**
- * Identifies which pathway emitted the transaction log event.
- * This is the granular "where", complementing the live-app `manifestId`.
+ * Identifies which pathway emitted the transaction log event — the granular "where",
+ * complementing the live-app `manifestId`.
+ *
+ * One value per `TransactionSource["type"]` (`libs/types-live/src/transaction.ts`), which
+ * is what the bridge seam attributes from. Per-route values for signRaw / signPsbt / ACRE
+ * belong with the taps that would emit them, so they are added when those land.
  */
 export enum TransactionFlow {
   /** Native in-app send flow (`useBroadcast`). */
   Send = "send",
   WalletApiSignAndBroadcast = "wallet-api/transaction.signAndBroadcast",
-  WalletApiSignRaw = "wallet-api/transaction.signRaw",
-  WalletApiSignPsbt = "wallet-api/bitcoin.signPsbt",
   Dapp = "dApp/eth_sendTransaction",
-  Acre = "acre/transactionSignAndBroadcast",
-  PlatformLegacy = "platform/broadcast",
+  Swap = "swap",
   /** Emitted by the bridge seam when the originating route is not known (e.g. sign-stage). */
   Unknown = "unknown",
 }

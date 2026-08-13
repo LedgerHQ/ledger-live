@@ -212,6 +212,8 @@ function attributeBroadcastSource(source?: { type: string; name: string }): {
       return { flow: TransactionFlow.WalletApiSignAndBroadcast, manifestId: source.name };
     case "coin-module":
       return { flow: TransactionFlow.Send };
+    case "swap":
+      return { flow: TransactionFlow.Swap };
     default:
       return { flow: TransactionFlow.Unknown };
   }

@@ -74,6 +74,29 @@ describe("wrapAccountBridge — transaction observability seam", () => {
     });
   });
 
+  // One TransactionFlow per TransactionSource["type"], so no real source falls into
+  // "unknown" — which is reserved for the sign stage, where the source is not yet known.
+  test.each([
+    ["coin-module", "send"],
+    ["dApp", "dApp/eth_sendTransaction"],
+    ["live-app", "wallet-api/transaction.signAndBroadcast"],
+    ["swap", "swap"],
+  ])("broadcast: attributes a %s source as flow=%s", async (type, expectedFlow) => {
+    const bridge = makeBridge({ broadcast: jest.fn().mockResolvedValue({ id: "op-1" }) });
+    const wrapped = await wrapAccountBridge(bridge, "bitcoin");
+
+    await wrapped.broadcast({
+      account,
+      signedOperation,
+      broadcastConfig: {
+        mevProtected: false,
+        source: { type: type as "coin-module" | "dApp" | "live-app" | "swap", name: "x" },
+      },
+    });
+
+    expect(events[0]).toMatchObject({ flow: expectedFlow });
+  });
+
   test("broadcast: emits a categorized failure event and re-throws the original error", async () => {
     const error = new Error("insufficient_funds for gas");
     const bridge = makeBridge({ broadcast: jest.fn().mockRejectedValue(error) });

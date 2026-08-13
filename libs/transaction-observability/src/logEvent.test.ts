@@ -98,7 +98,7 @@ describe("buildTransactionSuccessEvent / buildTransactionFailureEvent", () => {
   const common = buildTransactionCommonEvent({
     account: mainAccount,
     mainAccount,
-    flow: TransactionFlow.Acre,
+    flow: TransactionFlow.Dapp,
   });
 
   it("tags success as a broadcast-stage success", () => {
