@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Keyboard } from "react-native";
+import { Dimensions, Keyboard, type View } from "react-native";
 import { BottomSheetProps, useBottomSheetRef } from "@ledgerhq/lumen-ui-rnative";
 import {
   BottomSheetInQueue,
@@ -85,13 +85,32 @@ export function useQueuedBottomSheet({
     }
   }, []);
 
+  // QAA-1476 instrumentation. The failing captures show the sheet at its closed resting
+  // position while this hook reports it open and nothing ever closed it, so measure where the
+  // content actually lands after present(). measureInWindow reflects transforms, unlike
+  // onLayout, so a y near the screen bottom means the open animation never took. Not for merge.
+  const measureRef = useRef<View | null>(null);
+  const measureAfterOpen = useCallback(() => {
+    const screenHeight = Math.round(Dimensions?.get?.("window")?.height ?? 0);
+    [300, 1200, 3000].forEach(delay =>
+      setTimeout(() => {
+        measureRef.current?.measureInWindow((_x, y, _w, h) => {
+          logBottomSheet(
+            `measured +${delay}ms: y=${Math.round(y)} h=${Math.round(h)} screen=${screenHeight} state=${stateRef.current}`,
+          );
+        });
+      }, delay),
+    );
+  }, [logBottomSheet]);
+
   const handleOpen = useCallback(() => {
     if (stateRef.current !== "idle") return;
 
     logBottomSheet("Opening drawer");
     stateRef.current = "open";
     bottomSheetRef.current?.present();
-  }, [bottomSheetRef, logBottomSheet]);
+    measureAfterOpen();
+  }, [bottomSheetRef, logBottomSheet, measureAfterOpen]);
 
   const handleClose = useCallback(() => {
     const state = stateRef.current;
@@ -251,6 +270,7 @@ export function useQueuedBottomSheet({
   }, [cleanupQueue, logBottomSheet]);
 
   return {
+    measureRef,
     bottomSheetRef,
     areBottomSheetsLocked,
     handleUserClose,

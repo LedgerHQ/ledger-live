@@ -29,6 +29,7 @@ export function QueuedBottomSheet({
   testID,
 }: QueuedBottomSheetProps) {
   const {
+    measureRef,
     bottomSheetRef,
     areBottomSheetsLocked,
     handleBackdropPress,
@@ -70,9 +71,13 @@ export function QueuedBottomSheet({
       onBackdropPress={handleBackdropPress}
       backgroundComponent={backgroundComponent}
     >
-      <BottomSheetBackgroundContext.Provider value={backgroundContextValue}>
-        <IsInBottomSheetProvider>{children}</IsInBottomSheetProvider>
-      </BottomSheetBackgroundContext.Provider>
+      {/* QAA-1476 instrumentation: ref'd so the hook can measureInWindow after present() and
+          record where the sheet content actually landed. Not for merge. */}
+      <View ref={measureRef} collapsable={false}>
+        <BottomSheetBackgroundContext.Provider value={backgroundContextValue}>
+          <IsInBottomSheetProvider>{children}</IsInBottomSheetProvider>
+        </BottomSheetBackgroundContext.Provider>
+      </View>
       <OnscreenNavigationSafeArea />
     </BottomSheet>
   );
