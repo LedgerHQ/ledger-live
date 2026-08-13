@@ -28,7 +28,6 @@ import {
   Subscription,
 } from "rxjs";
 import { first, filter, tap, timeout, retry, map } from "rxjs/operators";
-import type { DeviceModel } from "@ledgerhq/types-devices";
 import { HwTransportError } from "@ledgerhq/hw-transport/errors";
 import { PairingFailed, PeerRemovedPairing, isPeerRemovedPairingError } from "../errors";
 import { getDeviceManagementKit } from "../hooks/useDeviceManagementKit";
@@ -289,9 +288,7 @@ export class DeviceManagementKitBLETransport extends Transport {
             type: "add",
             descriptor: "",
             device: device,
-            deviceModel: {
-              id,
-            } as DeviceModel,
+            deviceModel: getDeviceModel(id),
           });
         }
       },
