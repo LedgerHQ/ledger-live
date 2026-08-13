@@ -31,15 +31,20 @@ function normalizeSignatureLike(signature: SignatureLike): SignatureLike {
  * Combines a serialized (hex string) Ethereum transaction and a signature to generate a signed transaction.
  * Wallet API swap flows pass DMK signer output through this coin-evm boundary, where `r` and `s` are unprefixed.
  * @param tx Serialized unsigned transaction as a hexadecimal string
- * @param signature Hexadecimal signature or any `SignatureLike` (e.g. `{ r, s, v }` returned by the DMK).
+ * @param signature Single-element list of hexadecimal signatures, or any `SignatureLike` (e.g. `{ r, s, v }` returned by the DMK).
  * @returns Signed transaction as a hexadecimal string
  */
-export function combine(tx: string | Transaction, signature: string | SignatureLike): string {
+export function combine(tx: string | Transaction, signature: string[] | SignatureLike): string {
+  if (Array.isArray(signature) && signature.length !== 1) {
+    throw new Error(`EVM combine expects exactly one signature, got ${signature.length}`);
+  }
+
   const txObj = typeof tx === "string" ? Transaction.from(prefixHexString(tx)) : tx;
+  const signatureLike = Array.isArray(signature) ? signature[0] : signature;
   const sig =
-    typeof signature === "string"
-      ? Signature.from(prefixHexString(signature))
-      : Signature.from(normalizeSignatureLike(signature));
+    typeof signatureLike === "string"
+      ? Signature.from(prefixHexString(signatureLike))
+      : Signature.from(normalizeSignatureLike(signatureLike));
 
   // Extract only raw fields manually to avoid class instance issues
   const unsignedTx = {

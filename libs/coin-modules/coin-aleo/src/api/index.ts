@@ -37,7 +37,7 @@ export function createApi(
     combine: (
       _context: AleoContext,
       _transaction: string,
-      _signature: string,
+      _signature: string[],
       _options?: { pubkey?: string },
     ): string => {
       throw new Error("combine is not supported");

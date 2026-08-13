@@ -70,7 +70,7 @@ describe("createApi", () => {
     };
     // Simulate calling all methods
     await api.broadcast(context, "transaction");
-    api.combine(context, "tx", "signature", { pubkey: "pubkey" });
+    api.combine(context, "tx", ["signature"], { pubkey: "pubkey" });
     await api.craftTransaction(context, intent);
     await api.estimateFees(context, intent);
     await api.getBalance(context, "address");
@@ -81,7 +81,7 @@ describe("createApi", () => {
 
     // Test that each of the methods was called with correct arguments, threading the config
     expect(broadcast).toHaveBeenCalledWith(mockTronConfig, "transaction");
-    expect(combine).toHaveBeenCalledWith("tx", "signature");
+    expect(combine).toHaveBeenCalledWith("tx", ["signature"]);
     expect(estimateFees).toHaveBeenCalledWith(mockTronConfig, intent);
     expect(craftTransaction).toHaveBeenCalledWith(mockTronConfig, intent, undefined);
     expect(getBalance).toHaveBeenCalledWith(mockTronConfig, "address");

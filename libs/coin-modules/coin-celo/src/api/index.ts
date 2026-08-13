@@ -71,7 +71,7 @@ export function createApi(
       intent: TransactionIntent<MemoNotSupported, BufferTxData>,
       _options?: { feeOption?: unknown },
     ) => estimateFees(intent),
-    combine: (_context: CeloContext, tx: string, signature: string) => combine(tx, signature),
+    combine: (_context: CeloContext, tx: string, signature: string[]) => combine(tx, signature),
     broadcast: (
       _context: CeloContext,
       tx: string,

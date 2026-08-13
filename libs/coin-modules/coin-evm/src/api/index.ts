@@ -73,7 +73,7 @@ export function createApi(
     combine: (
       _context: EvmContext,
       tx: string,
-      signature: string,
+      signature: string[],
       _options?: { pubkey?: string },
     ) => combine(tx, signature),
     craftTransaction: (

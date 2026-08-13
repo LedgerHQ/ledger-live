@@ -41,7 +41,7 @@ describe("createApi factory (integration)", () => {
     expect(unsignedTx.signature).toBeUndefined();
 
     const fakeSignature = "a".repeat(128);
-    const signedStr = await api.combine(context, crafted.transaction, fakeSignature);
+    const signedStr = await api.combine(context, crafted.transaction, [fakeSignature]);
     const signedTx = JSON.parse(signedStr);
 
     expect(signedTx.signature).toBe(fakeSignature);

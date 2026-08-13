@@ -56,7 +56,7 @@ describe("combine", () => {
 
   it("accepts a concatenated r||s||v hex string signature", () => {
     const sigHex = `0x${"11".repeat(32)}${"22".repeat(32)}1b`;
-    const signed = combine(unsignedEip1559, sigHex);
+    const signed = combine(unsignedEip1559, [sigHex]);
     const tx = parseTransaction(signed as `0x${string}`);
 
     expect(tx.r).toBe(R);

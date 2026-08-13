@@ -26,7 +26,7 @@ describe("combine", () => {
     const crafted = nearAPI.transactions.Transaction.decode(Buffer.from(tx, "base64"));
 
     const signed = nearAPI.transactions.SignedTransaction.decode(
-      Buffer.from(combine(tx, SIGNATURE), "base64"),
+      Buffer.from(combine(tx, [SIGNATURE]), "base64"),
     );
 
     expect(signed.transaction.signerId).toBe(SENDER);
@@ -39,7 +39,7 @@ describe("combine", () => {
 
   it("carries the signature bytes through", () => {
     const signed = nearAPI.transactions.SignedTransaction.decode(
-      Buffer.from(combine(unsigned(), SIGNATURE), "base64"),
+      Buffer.from(combine(unsigned(), [SIGNATURE]), "base64"),
     );
 
     expect(Buffer.from(signed.signature.data).toString("hex")).toBe(SIGNATURE);
@@ -51,14 +51,14 @@ describe("combine", () => {
       .keyType;
 
     const signed = nearAPI.transactions.SignedTransaction.decode(
-      Buffer.from(combine(tx, SIGNATURE), "base64"),
+      Buffer.from(combine(tx, [SIGNATURE]), "base64"),
     );
 
     expect(signed.signature.keyType).toBe(expected);
   });
 
   it("throws on a payload that is not a crafted transaction", () => {
-    expect(() => combine("bm90LWEtdHJhbnNhY3Rpb24=", SIGNATURE)).toThrow(
+    expect(() => combine("bm90LWEtdHJhbnNhY3Rpb24=", [SIGNATURE])).toThrow(
       "the buffer is smaller than expected",
     );
   });
@@ -70,20 +70,22 @@ describe("combine", () => {
       ["a non-hex character", `zz${"ab".repeat(63)}`],
       ["an odd number of characters", "abc"],
     ])("rejects %s", (_label, signature) => {
-      expect(() => combine(unsigned(), signature)).toThrow("signature is not valid hex");
+      expect(() => combine(unsigned(), [signature])).toThrow("signature is not valid hex");
     });
 
     it("rejects an empty signature", () => {
-      expect(() => combine(unsigned(), "")).toThrow("signature is empty");
+      expect(() => combine(unsigned(), [""])).toThrow("signature is empty");
     });
 
     it("accepts a well-formed 64-byte signature", () => {
-      expect(() => combine(unsigned(), "ab".repeat(64))).not.toThrow();
+      expect(() => combine(unsigned(), ["ab".repeat(64)])).not.toThrow();
     });
 
     it("lets Borsh reject a well-formed signature of the wrong length", () => {
       // The NEAR schema pins the signature at 64 bytes, so a longer one cannot be encoded.
-      expect(() => combine(unsigned(), "ab".repeat(65))).toThrow("does not match schema length 64");
+      expect(() => combine(unsigned(), ["ab".repeat(65)])).toThrow(
+        "does not match schema length 64",
+      );
     });
   });
 });

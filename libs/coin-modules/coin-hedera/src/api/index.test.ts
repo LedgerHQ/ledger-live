@@ -79,7 +79,7 @@ describe("createApi", () => {
     it("should call combine from logic", () => {
       mockCombine.mockReturnValue("combined-tx");
 
-      const result = api.combine(mockContext, "tx", "sig", { pubkey: "pubkey" });
+      const result = api.combine(mockContext, "tx", ["sig"], { pubkey: "pubkey" });
 
       expect(mockCombine).toHaveBeenCalledTimes(1);
       expect(result).toBe("combined-tx");

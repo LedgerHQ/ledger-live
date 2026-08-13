@@ -97,9 +97,9 @@ describe("createApi", () => {
     const api = createApi();
     const context = createMockKaspaContext();
 
-    const result = api.combine(context, "tx", "sigs");
+    const result = api.combine(context, "tx", ["sigs"]);
 
-    expect(combine).toHaveBeenCalledWith("tx", "sigs");
+    expect(combine).toHaveBeenCalledWith("tx", ["sigs"]);
     expect(result).toBe("signedTx");
   });
 

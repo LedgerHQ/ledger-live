@@ -17,7 +17,7 @@ describe("combine", () => {
   it("returns a hex-encoded signed transaction", () => {
     const signature = "aa".repeat(65);
 
-    const signed = combine(JSON.stringify(BODY), signature);
+    const signed = combine(JSON.stringify(BODY), [signature]);
 
     expect(signed).toMatch(/^0x[0-9a-f]+$/);
   });
@@ -25,13 +25,13 @@ describe("combine", () => {
   it("produces a different (longer) payload than the unsigned body JSON, reflecting the signature", () => {
     const signature = "bb".repeat(65);
 
-    const signed = combine(JSON.stringify(BODY), signature);
+    const signed = combine(JSON.stringify(BODY), [signature]);
 
     expect(signed.length).toBeGreaterThan(0);
     expect(signed).not.toBe(JSON.stringify(BODY));
   });
 
   it("throws on a malformed transaction payload", () => {
-    expect(() => combine("not-json", "aa".repeat(65))).toThrow();
+    expect(() => combine("not-json", ["aa".repeat(65)])).toThrow();
   });
 });

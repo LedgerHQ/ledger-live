@@ -39,7 +39,7 @@ const POOL_HASH = "b".repeat(56);
 async function expectBodyPreserved(intent: TransactionIntent<StringMemo>): Promise<void> {
   const tx = await buildUnsignedTransaction(currency, intent);
   const { payload, hash } = tx.buildTransaction();
-  const { value } = cbors.Decoder.decode(Buffer.from(combine(payload, SIGNATURE, PUBKEY), "hex"));
+  const { value } = cbors.Decoder.decode(Buffer.from(combine(payload, [SIGNATURE], PUBKEY), "hex"));
   expect(crypto.hash32(cbors.Encoder.encode(value[0])).toString("hex")).toBe(hash);
 }
 
@@ -85,7 +85,7 @@ describe("combine", () => {
   it("injects the vkey witness into the unsigned transaction's witness set", async () => {
     const { payload } = await craftUnsigned();
 
-    const signedHex = combine(payload, SIGNATURE, PUBKEY);
+    const signedHex = combine(payload, [SIGNATURE], PUBKEY);
 
     const { value } = cbors.Decoder.decode(Buffer.from(signedHex, "hex"));
     const witnessSet = value[1] as Map<number, [Buffer, Buffer][]>;
@@ -102,8 +102,8 @@ describe("combine", () => {
     const SIGNATURE_2 = "12".repeat(64);
 
     // Combine onto an already-combined (partially-signed) payload — the first witness must survive.
-    const onceSigned = combine(payload, SIGNATURE, PUBKEY);
-    const twiceSigned = combine(onceSigned, SIGNATURE_2, PUBKEY_2);
+    const onceSigned = combine(payload, [SIGNATURE], PUBKEY);
+    const twiceSigned = combine(onceSigned, [SIGNATURE_2], PUBKEY_2);
 
     const { value } = cbors.Decoder.decode(Buffer.from(twiceSigned, "hex"));
     const witnessSet = value[1] as Map<number, [Buffer, Buffer][]>;
@@ -119,7 +119,7 @@ describe("combine", () => {
   it("preserves the transaction body so the signed hash still matches what was signed", async () => {
     const { payload, bodyHash } = await craftUnsigned();
 
-    const signedHex = combine(payload, SIGNATURE, PUBKEY);
+    const signedHex = combine(payload, [SIGNATURE], PUBKEY);
 
     const { value } = cbors.Decoder.decode(Buffer.from(signedHex, "hex"));
     const reencodedBodyHash = crypto.hash32(cbors.Encoder.encode(value[0])).toString("hex");
@@ -218,6 +218,6 @@ describe("combine", () => {
       "vkey witnesses is not a CBOR array",
     ],
   ])("rejects when %s", (_label, tx, signature, pubkey, expected) => {
-    expect(() => combine(tx, signature, pubkey)).toThrow(expected);
+    expect(() => combine(tx, [signature], pubkey)).toThrow(expected);
   });
 });

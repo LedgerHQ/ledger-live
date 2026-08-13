@@ -47,9 +47,14 @@ const normalizeSignature = (signature: string | DeviceSignature): Signature => {
  * round-trip with their correct type byte preserved — ethers cannot parse the
  * CIP-64 `0x7b` type.
  */
-export const combine = (tx: string, signature: string | DeviceSignature): string => {
+export const combine = (tx: string, signature: string[] | DeviceSignature): string => {
+  if (Array.isArray(signature) && signature.length !== 1) {
+    throw new Error(`Celo combine expects exactly one signature, got ${signature.length}`);
+  }
+
   const parsed = parseTransaction(prefix(tx));
-  return serializeTransaction(parsed, normalizeSignature(signature));
+  const deviceSignature = Array.isArray(signature) ? signature[0] : signature;
+  return serializeTransaction(parsed, normalizeSignature(deviceSignature));
 };
 
 export default combine;

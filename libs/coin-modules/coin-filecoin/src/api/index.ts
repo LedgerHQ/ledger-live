@@ -47,7 +47,7 @@ export function createApi(): CoinModuleApi<FilecoinCoinConfig> {
     combine: (
       _context: FilecoinContext,
       tx: string,
-      signature: string,
+      signature: string[],
       options?: { pubkey?: string },
     ): string => combine(tx, signature, options?.pubkey),
 

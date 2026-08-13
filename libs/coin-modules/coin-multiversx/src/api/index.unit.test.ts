@@ -108,9 +108,9 @@ describe("createApi", () => {
     const api = createApi();
     const context = createMockMultiversXContext();
 
-    const result = api.combine(context, "transaction", "signature");
+    const result = api.combine(context, "transaction", ["signature"]);
 
-    expect(combine).toHaveBeenCalledWith("transaction", "signature", undefined);
+    expect(combine).toHaveBeenCalledWith("transaction", ["signature"], undefined);
     expect(result).toBe("signedTx");
   });
 

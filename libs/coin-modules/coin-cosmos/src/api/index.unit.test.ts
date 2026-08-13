@@ -90,7 +90,7 @@ describe("api/createApi", () => {
     await expect(api.broadcast(context, "00")).resolves.toBe("HASH");
     await expect(api.validateIntent(context, sendIntent, [])).resolves.toHaveProperty("errors");
     await expect(api.validateAddress(context, "cosmos1sender", {})).resolves.toBe(false);
-    expect(() => api.combine(context, "{}", "00")).toThrow("public key");
+    expect(() => api.combine(context, "{}", ["00"])).toThrow("public key");
   });
 
   it("threads each currency's config from its own context into the CosmosAPI (no singleton seeding)", async () => {

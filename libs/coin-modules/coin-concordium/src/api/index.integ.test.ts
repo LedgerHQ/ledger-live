@@ -262,7 +262,7 @@ describe("Concordium Api (testnet)", () => {
       const transaction = "01".repeat(100);
       const signature = "02".repeat(64);
 
-      const result = await api.combine(context, transaction, signature);
+      const result = await api.combine(context, transaction, [signature]);
 
       const parsed = JSON.parse(result);
       expect(parsed).toHaveProperty("transactionBody");

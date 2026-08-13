@@ -110,7 +110,7 @@ export const buildSignOperation =
 
             return combine(
               serializeTransaction(tx),
-              serializeSignature(signatureBytes),
+              [serializeSignature(signatureBytes)],
               accountPublicKey,
             );
           });

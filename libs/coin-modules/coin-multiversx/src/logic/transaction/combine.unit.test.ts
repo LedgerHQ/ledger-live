@@ -16,7 +16,7 @@ const SIGNATURE = "a".repeat(128); // 64 bytes hex
 
 describe("combine", () => {
   it("attaches signature to parsed transaction", () => {
-    const result = combine(UNSIGNED_TX, SIGNATURE);
+    const result = combine(UNSIGNED_TX, [SIGNATURE]);
     const tx = JSON.parse(result);
 
     expect(tx.signature).toBe(SIGNATURE);
@@ -25,7 +25,7 @@ describe("combine", () => {
   });
 
   it("preserves all original fields", () => {
-    const result = combine(UNSIGNED_TX, SIGNATURE);
+    const result = combine(UNSIGNED_TX, [SIGNATURE]);
     const tx = JSON.parse(result);
 
     expect(tx.value).toBe("1000000000000000000");
@@ -35,15 +35,15 @@ describe("combine", () => {
   });
 
   it("throws on invalid JSON input", () => {
-    expect(() => combine("not-json", SIGNATURE)).toThrow();
+    expect(() => combine("not-json", [SIGNATURE])).toThrow();
   });
 
   it("throws when signature is empty", () => {
-    expect(() => combine(UNSIGNED_TX, "")).toThrow("signature is required");
+    expect(() => combine(UNSIGNED_TX, [""])).toThrow("signature is required");
   });
 
   it("output is valid JSON", () => {
-    const result = combine(UNSIGNED_TX, SIGNATURE);
+    const result = combine(UNSIGNED_TX, [SIGNATURE]);
     expect(() => JSON.parse(result)).not.toThrow();
   });
 });

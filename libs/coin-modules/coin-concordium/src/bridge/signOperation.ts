@@ -58,7 +58,7 @@ export const buildSignOperation =
             estimation.cost,
           );
 
-          return combine(result.serialized, result.signature);
+          return combine(result.serialized, [result.signature]);
         });
 
         o.next({

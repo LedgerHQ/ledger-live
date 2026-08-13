@@ -60,7 +60,7 @@ const buildCombine = networkFamily =>
   async function combine(
     _context: Context<any>,
     tx: string,
-    signature: string,
+    signature: string[],
     options?: { pubkey?: string },
   ): Promise<string> {
     const { data } = await network<

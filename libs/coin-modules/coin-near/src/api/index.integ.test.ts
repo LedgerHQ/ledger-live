@@ -309,7 +309,7 @@ describe("CoinModuleApi (integration)", () => {
       );
 
       // Signed with a dummy signature and deliberately never broadcast.
-      const signed = combine(transaction, DUMMY_SIGNATURE);
+      const signed = combine(transaction, [DUMMY_SIGNATURE]);
       const decoded = nearAPI.transactions.SignedTransaction.decode(Buffer.from(signed, "base64"));
 
       expect(decoded.transaction.signerId).toBe(ACCOUNT_WITH_HISTORY);

@@ -253,7 +253,7 @@ describe("logic/transaction", () => {
       const transaction = "aabbccdd";
       const signature = "11223344";
 
-      const result = combine(transaction, signature);
+      const result = combine(transaction, [signature]);
       const parsed = JSON.parse(result);
 
       expect(parsed).toEqual({
@@ -263,7 +263,7 @@ describe("logic/transaction", () => {
     });
 
     it("should produce valid JSON", () => {
-      const result = combine("tx-hex", "sig-hex");
+      const result = combine("tx-hex", ["sig-hex"]);
       expect(() => JSON.parse(result)).not.toThrow();
     });
   });

@@ -22,12 +22,16 @@ export function combineSignedTransaction(
   });
 }
 
-export function combine(tx: string, signature: string, pubkey?: string) {
+export function combine(tx: string, signature: string[], pubkey?: string) {
+  if (signature.length !== 1) {
+    throw new Error(`Aptos combine expects exactly one signature, got ${signature.length}`);
+  }
+
   if (!Hex.isValid(tx).valid) {
     throw new Error("tx must be a valid hex value");
   }
 
-  if (!Hex.isValid(signature).valid) {
+  if (!Hex.isValid(signature[0]).valid) {
     throw new Error("signature must be a valid hex value");
   }
 
@@ -39,7 +43,7 @@ export function combine(tx: string, signature: string, pubkey?: string) {
     throw new Error("pubkey must be a valid hex value");
   }
 
-  const ed25519Signature = new Ed25519Signature(signature);
+  const ed25519Signature = new Ed25519Signature(signature[0]);
   const ed25519PubKey = new Ed25519PublicKey(pubkey);
 
   const txBytes = Hex.fromHexString(tx).toUint8Array();

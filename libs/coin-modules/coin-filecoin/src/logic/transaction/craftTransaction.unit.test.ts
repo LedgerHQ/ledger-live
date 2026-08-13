@@ -79,7 +79,7 @@ describe("craftTransaction", () => {
     expect(typeof crafted.transaction).toBe("string");
 
     // Round-trip: combine should produce a parseable BroadcastTransactionRequest
-    const combined = combine(crafted.transaction, "c2ln");
+    const combined = combine(crafted.transaction, ["c2ln"]);
     const parsed = JSON.parse(combined);
     expect(parsed.message.nonce).toBe(5);
     expect(parsed.message.value).toBe("1000000000000000000");

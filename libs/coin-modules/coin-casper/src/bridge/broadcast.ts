@@ -14,7 +14,7 @@ export const broadcast: AccountBridge<Transaction>["broadcast"] = async ({
 }) => {
   invariant(rawData, "casper: rawData is required");
   invariant(typeof rawData.tx === "string", "casper: rawData.tx is required and must be a string");
-  const combinedTx = combine(rawData.tx, signature, account.freshAddress);
+  const combinedTx = combine(rawData.tx, [signature], account.freshAddress);
 
   const context: CasperContext = {
     config: async () => getCoinConfig(),
