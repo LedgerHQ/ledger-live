@@ -44,6 +44,19 @@ async function getScannerSyncedHeight(
   return status.synced ? latestBlockHeight : 0;
 }
 
+/**
+ * Which of a transaction's owned records represents it. Ordered by output index so the choice does
+ * not depend on the order the scanner happened to page them in — the resume point counts operations,
+ * so an unstable pick would shift the paging boundary between calls.
+ */
+function isEarlierOutput(candidate: AleoPrivateRecord, current: AleoPrivateRecord): boolean {
+  if (candidate.output_index !== current.output_index) {
+    return candidate.output_index < current.output_index;
+  }
+
+  return candidate.commitment < current.commitment;
+}
+
 /** One operation per `(account, tx)`, ordered totally so the result is reproducible across calls. */
 function buildOrderedOperations({
   publicTransactions,
@@ -115,7 +128,11 @@ export async function listOperations({
 
   // Only the opening page owns the empty-range rule: on a resume the window legitimately collapses
   // onto a single height that may still hold operations this run has not emitted.
-  if (!cursor && maxBlockHeight <= minHeight) {
+  //
+  // `minHeight` is inclusive per the framework contract, so a watermark sitting exactly on it still
+  // has a block worth reading. The spec's exclusive `lo` is about the cursor position, which the
+  // resume point already handles.
+  if (!cursor && maxBlockHeight < minHeight) {
     return { items: [], next: undefined };
   }
 
@@ -145,22 +162,28 @@ export async function listOperations({
 
   const ownedRecordTxIds = new Set<string>();
   // Only fully private transfers need decrypting: the rest are completed from their public row.
-  const recordsToEnrich: AleoPrivateRecord[] = [];
+  // Keyed by transaction so a transaction producing several owned records — a private self-transfer
+  // owns both the output and the change — still yields exactly one operation (ADR-042 invariant).
+  const recordsToEnrich = new Map<string, AleoPrivateRecord>();
 
   for (const record of ownedRecords) {
     if (!isInWindow(record.block_height)) continue;
 
     const transactionId = record.transaction_id.trim();
     ownedRecordTxIds.add(transactionId);
+    if (publicTxIds.has(transactionId)) continue;
 
-    if (!publicTxIds.has(transactionId)) recordsToEnrich.push(record);
+    const current = recordsToEnrich.get(transactionId);
+    if (!current || isEarlierOutput(record, current)) {
+      recordsToEnrich.set(transactionId, record);
+    }
   }
 
   const enrichedRecords = await enrichPrivateRecords({
     config,
     viewKey,
     address,
-    records: recordsToEnrich,
+    records: [...recordsToEnrich.values()],
   });
 
   const ordered = buildOrderedOperations({

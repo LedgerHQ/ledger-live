@@ -346,12 +346,15 @@ describe("toCoinFrameworkOperation", () => {
     expect(result.type).toBe("OUT");
   });
 
-  it("should set type to NONE when program_id is not CREDITS", () => {
+  it("should resolve a direction for token programs, not just credits", () => {
     const rawTx = getMockedPublicTransaction({ program_id: "custom.aleo" });
 
-    const result = toCoinFrameworkOperation(rawTx, recipientAddress);
-
-    expect(result.type).toBe("NONE");
+    expect(toCoinFrameworkOperation(rawTx, recipientAddress)).toMatchObject({
+      type: "IN",
+      asset: { type: "arc22", assetReference: "custom.aleo" },
+      details: { ledgerOpType: "IN" },
+    });
+    expect(toCoinFrameworkOperation(rawTx, rawTx.sender_address).type).toBe("OUT");
   });
 
   it("should map core fields from rawTx", () => {
@@ -415,6 +418,15 @@ describe("toBridgeOperation", () => {
 
     expect(result.id).toBe(expectedId);
     expect(result.accountId).toBe(ledgerAccountId);
+  });
+
+  it("should keep token programs at type NONE so persisted operation ids stay stable", () => {
+    const rawTx = getMockedPublicTransaction({ program_id: "custom.aleo" });
+
+    const result = toBridgeOperation(ledgerAccountId, rawTx, recipientAddress, true);
+
+    expect(result.type).toBe("NONE");
+    expect(result.id).toBe(encodeOperationId(ledgerAccountId, rawTx.transaction_id, "NONE"));
   });
 
   it("should derive all operation fields from rawTx", () => {

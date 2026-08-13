@@ -157,16 +157,24 @@ export const determineTransactionType = (
   return "public";
 };
 
+/**
+ * Direction of a public row, resolved against the recipient so a self-transfer reads IN. Merged
+ * operations use the opposite precedence — see {@link toMergedOperation}.
+ */
+function resolvePublicOperationType(rawTx: AleoPublicTransaction, address: string): OperationType {
+  return address === rawTx.recipient_address ? "IN" : "OUT";
+}
+
 function parseTransactionFields(rawTx: AleoPublicTransaction, address: string) {
   const date = new Date(Number(rawTx.block_timestamp) * 1000);
   const hasFailed = rawTx.transaction_status !== "Accepted";
-  let type: OperationType = "NONE";
   const fee = rawTx.fee;
   const blockHash = rawTx.block_hash;
 
-  if (rawTx.program_id === PROGRAM_ID.CREDITS) {
-    type = address === rawTx.recipient_address ? "IN" : "OUT";
-  }
+  // Token programs stay NONE here: the bridge derives its operation id from `type`, so widening it
+  // would renumber every persisted token operation. The coin-module mapper resolves its own.
+  const type: OperationType =
+    rawTx.program_id === PROGRAM_ID.CREDITS ? resolvePublicOperationType(rawTx, address) : "NONE";
 
   const transactionType = determineTransactionType(rawTx.function_id, type);
 
@@ -184,10 +192,12 @@ export const toCoinFrameworkOperation = (
   rawTx: AleoPublicTransaction,
   address: string,
 ): CoinFrameworkOperation => {
-  const { type, fee, blockHash, transactionType, date, hasFailed } = parseTransactionFields(
-    rawTx,
-    address,
-  );
+  const { fee, blockHash, date, hasFailed } = parseTransactionFields(rawTx, address);
+  // Unlike the bridge, this surface reports a direction for every program: token transfers are
+  // first-class here, keyed by `assetReference` rather than resolved through CAL (ADR-042).
+  const type = resolvePublicOperationType(rawTx, address);
+  const transactionType = determineTransactionType(rawTx.function_id, type);
+
   return {
     id: rawTx.transaction_id.trim(),
     type,
@@ -238,14 +248,14 @@ export const toCoinFrameworkPrivateOperation = (
     },
     tx: {
       hash,
-      fees: BigInt(details.fee_value),
+      fees: BigInt(details.fee_value.toFixed(0)),
       date,
       block: {
         hash: details.block_hash,
         height: rawRecord.block_height,
         time: date,
       },
-      failed: false,
+      failed: details.status !== "Accepted",
     },
   };
 };

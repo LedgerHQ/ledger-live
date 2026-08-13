@@ -90,9 +90,20 @@ describe("logic/listOperations", () => {
   });
 
   describe("empty ranges", () => {
-    it("returns an empty page when the ceiling is at or below minHeight", async () => {
-      expect(await list({ minHeight: 900 })).toEqual({ items: [], next: undefined });
+    it("returns an empty page when the ceiling is below minHeight", async () => {
+      expect(await list({ minHeight: 901 })).toEqual({ items: [], next: undefined });
       expect(mockPublicOperations).not.toHaveBeenCalled();
+    });
+
+    it("still reads the block when the watermark sits exactly on minHeight", async () => {
+      mockPublicOperations.mockResolvedValue({
+        transactions: [publicTx("tx-at-watermark", 900)],
+        nextCursor: null,
+      });
+
+      const { items } = await list({ minHeight: 900 });
+
+      expect(items.map(op => op.id)).toEqual(["tx-at-watermark"]);
     });
 
     it("returns an empty page when a pinned range is inverted", async () => {
@@ -149,6 +160,48 @@ describe("logic/listOperations", () => {
       expect(mockEnrich).toHaveBeenCalledWith(
         expect.objectContaining({ records: [privateOnly], viewKey }),
       );
+    });
+
+    it("decrypts one record per transaction when a transaction owns several", async () => {
+      const change = getMockedRecord({
+        transaction_id: "tx-self",
+        block_height: 500,
+        output_index: 1,
+      });
+      const output = getMockedRecord({
+        transaction_id: "tx-self",
+        block_height: 500,
+        output_index: 0,
+      });
+      mockOwnedRecords.mockResolvedValue([change, output]);
+
+      await list({ minHeight: 0 });
+
+      expect(mockEnrich).toHaveBeenCalledWith(expect.objectContaining({ records: [output] }));
+    });
+
+    it("picks the same record whatever order the scanner returns them in", async () => {
+      const first = getMockedRecord({
+        transaction_id: "tx-self",
+        block_height: 500,
+        output_index: 0,
+      });
+      const second = getMockedRecord({
+        transaction_id: "tx-self",
+        block_height: 500,
+        output_index: 1,
+      });
+
+      mockOwnedRecords.mockResolvedValueOnce([first, second]);
+      await list({ minHeight: 0 });
+      const forward = mockEnrich.mock.calls.at(-1)?.[0].records;
+
+      mockOwnedRecords.mockResolvedValueOnce([second, first]);
+      await list({ minHeight: 0 });
+      const reversed = mockEnrich.mock.calls.at(-1)?.[0].records;
+
+      expect(forward).toEqual(reversed);
+      expect(forward).toEqual([first]);
     });
 
     it("drops owned records that fall outside the window", async () => {
@@ -216,6 +269,27 @@ describe("logic/listOperations", () => {
       expect(page2.next).toBeUndefined();
     });
 
+    it("pages a descending range without overlap or gaps", async () => {
+      mockPublicOperations.mockResolvedValue({ transactions: threeTxs, nextCursor: null });
+
+      const page1 = await list({ minHeight: 0, limit: 2, order: "desc" });
+      expect(page1.items.map(op => op.id)).toEqual(["tx-c", "tx-b"]);
+
+      const page2 = await list({ minHeight: 0, limit: 2, order: "desc", cursor: page1.next });
+      expect(page2.items.map(op => op.id)).toEqual(["tx-a"]);
+      expect(page2.next).toBeUndefined();
+    });
+
+    it("narrows the upper bound when resuming a descending run", async () => {
+      mockPublicOperations.mockResolvedValue({ transactions: threeTxs, nextCursor: null });
+      const page1 = await list({ minHeight: 0, limit: 2, order: "desc" });
+
+      expect(decodeOperationsCursor(page1.next)).toMatchObject({
+        order: "desc",
+        resume: { height: 200, emitted: 1 },
+      });
+    });
+
     it("skips exactly the rows already emitted at the boundary height", async () => {
       const sameHeight = [publicTx("tx-a", 100), publicTx("tx-b", 100), publicTx("tx-c", 100)];
       mockPublicOperations.mockResolvedValue({ transactions: sameHeight, nextCursor: null });
@@ -248,6 +322,20 @@ describe("logic/listOperations", () => {
       await list({ minHeight: 0, limit: 2, cursor: page1.next });
 
       expect(mockOwnedRecords).toHaveBeenLastCalledWith(expect.objectContaining({ start: 200 }));
+    });
+
+    // The resume point counts emitted operations, so it is only exact while the ordered stream is
+    // reproducible between calls. This is the invariant the whole paging scheme rests on.
+    it("returns the very same rows when a page is replayed", async () => {
+      mockPublicOperations.mockResolvedValue({ transactions: threeTxs, nextCursor: null });
+      const page1 = await list({ minHeight: 0, limit: 2 });
+
+      const replayed = await list({ minHeight: 0, limit: 2 });
+      const page2 = await list({ minHeight: 0, limit: 2, cursor: page1.next });
+      const page2Replayed = await list({ minHeight: 0, limit: 2, cursor: page1.next });
+
+      expect(replayed).toEqual(page1);
+      expect(page2Replayed).toEqual(page2);
     });
 
     it("does not hand back a cursor once the range is exhausted", async () => {
