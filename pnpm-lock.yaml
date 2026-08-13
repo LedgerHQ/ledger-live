@@ -109,8 +109,8 @@ catalogs:
       specifier: 2.3.3
       version: 2.3.3
     '@ledgerhq/zcash-utils':
-      specifier: 2.1.0
-      version: 2.1.0
+      specifier: 2.1.1
+      version: 2.1.1
     '@playwright/test':
       specifier: 1.60.0
       version: 1.60.0
@@ -1113,7 +1113,7 @@ importers:
         version: link:../../libs/wallet-pnl
       '@ledgerhq/zcash-utils':
         specifier: 'catalog:'
-        version: 2.1.0
+        version: 2.1.1
       '@lottiefiles/dotlottie-react':
         specifier: 0.17.13
         version: 0.17.13(react@19.1.4)
@@ -8842,7 +8842,7 @@ importers:
         version: link:../../wallet-btc
       '@ledgerhq/zcash-utils':
         specifier: 'catalog:'
-        version: 2.1.0
+        version: 2.1.1
       '@noble/hashes':
         specifier: 1.8.0
         version: 1.8.0
@@ -20387,8 +20387,8 @@ packages:
   '@ledgerhq/wallet-api-simulator@2.3.3':
     resolution: {integrity: sha512-gtSepkiGXvwIyvMC0DhNNYfZKt2BXFZ7IeFIY7h3Edz9ya5LxaRWWe3Zczo5Ex2CHgH2ALfXew+tZOod9Hd6Rg==}
 
-  '@ledgerhq/zcash-utils@2.1.0':
-    resolution: {integrity: sha512-qUMiG+uOwTVv8c5aXghBM1Coi0n1WTiVvq5bUlG+1qqeLbDZJBb4t1uZD6xrC09COX2DHoeD+VaJz8M8aPA5Aw==}
+  '@ledgerhq/zcash-utils@2.1.1':
+    resolution: {integrity: sha512-ImaCqeOjngqFRsuBoSQ7iiTX9TUqvdpXdzvLoKQF2fI3J91nUUMU4TTMxC1hHvjzSnme4tlVJD6ZIiM2bavrDg==}
 
   '@leichtgewicht/ip-codec@2.0.5':
     resolution: {integrity: sha512-Vo+PSpZG2/fmgmiNzYK9qWRh8h/CHrwD0mo1h1DzL4yzHNSfWYujGTYsWGreD000gcgmZ7K4Ys6Tx9TxtsKdDw==}
@@ -48953,7 +48953,7 @@ snapshots:
       - encoding
       - utf-8-validate
 
-  '@ledgerhq/zcash-utils@2.1.0': {}
+  '@ledgerhq/zcash-utils@2.1.1': {}
 
   '@leichtgewicht/ip-codec@2.0.5': {}
 
