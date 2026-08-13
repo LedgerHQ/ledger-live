@@ -1,3 +1,4 @@
+import invariant from "invariant";
 import type {
   AccountInfo,
   CoinModuleApi,
@@ -18,7 +19,9 @@ import type {
 } from "@ledgerhq/coin-module-framework/api/index";
 import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
+import { FEE_INTENT_TYPES } from "../constants";
 import {
+  craftTransaction,
   estimateFees,
   getAccountInfo,
   getBalance,
@@ -26,7 +29,7 @@ import {
   listOperations,
   validateAddress,
 } from "../logic";
-import { getTransactionType } from "../logic/utils";
+import { buildFeeConfigurationForRootIntent, getTransactionType } from "../logic/utils";
 import type { AleoContext, AleoCoinConfig, AleoTransactionIntentData } from "../types";
 
 // currencyId is captured here (it can't live on the Context). The logic functions are shared with
@@ -53,12 +56,65 @@ export function createApi(
     ): string => {
       throw new Error("combine is not supported");
     },
-    craftTransaction: (
-      _context: AleoContext,
-      _txIntent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData>,
-      _options?: { customFees?: FeeEstimation },
+    craftTransaction: async (
+      context: AleoContext,
+      txIntent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData>,
+      options?: { customFees?: FeeEstimation },
     ): Promise<CraftedTransaction> => {
-      throw new Error("craftTransaction is not supported");
+      invariant(!txIntent.useAllAmount, "aleo: useAllAmount is not supported");
+
+      const config = await context.config();
+      const isFeeIntent = FEE_INTENT_TYPES.has(txIntent.type);
+      const isPrivateIntent = "data" in txIntent && "records" in txIntent.data;
+      const isPrivateFeeIntent = txIntent.type === "fee_private";
+
+      if (isFeeIntent) {
+        invariant(!config.isFeeSponsored, "aleo: fee craft is not needed when fees are sponsored");
+        invariant(!options?.customFees, "aleo: customFees is not supported for fee intents");
+
+        if (isPrivateFeeIntent) {
+          invariant(context.viewKey, "aleo: viewKey is missing");
+        }
+
+        // txIntent.amount -> base fee
+        // txIntent.data.priorityFee -> priority fee (defaults to 0)
+        // both should match max_base_fee/max_priority_fee from the FeeConfiguration of the root intent
+        return craftTransaction({
+          config,
+          txIntent,
+          feeConfiguration: null,
+          ...(context.viewKey && { viewKey: context.viewKey }),
+        });
+      }
+
+      if (isPrivateIntent) {
+        invariant(context.viewKey, "aleo: viewKey is missing");
+      }
+
+      const maxBaseFee = options?.customFees
+        ? options.customFees.value
+        : estimateFees({
+            configOrCurrencyId: config,
+            transactionType: getTransactionType(txIntent),
+          }).value;
+
+      const maxPriorityFee =
+        ("data" in txIntent && "priorityFee" in txIntent.data
+          ? txIntent.data.priorityFee
+          : undefined) ?? 0n;
+
+      const feeConfiguration = buildFeeConfigurationForRootIntent({
+        isPrivate: isPrivateIntent,
+        maxBaseFee,
+        maxPriorityFee,
+      });
+
+      return craftTransaction({
+        config,
+        txIntent,
+        feeConfiguration,
+        ...(context.viewKey && { viewKey: context.viewKey }),
+      });
     },
     craftRawTransaction: (
       _context: AleoContext,

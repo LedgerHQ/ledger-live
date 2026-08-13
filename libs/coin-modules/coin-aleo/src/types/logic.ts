@@ -57,20 +57,24 @@ export type AleoTransactionIntentData =
   | {
       type: typeof TRANSACTION_TYPE.TRANSFER_PRIVATE;
       records: AleoDecryptedRecordResponse[];
+      tvks: string[];
     }
   | {
       type: typeof TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC;
       records: AleoDecryptedRecordResponse[];
+      tvks: string[];
     }
   | {
       type: typeof TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE;
       programId: string;
       records: AleoDecryptedRecordResponse[];
+      tvks: string[];
     }
   | {
       type: typeof TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC;
       programId: string;
       records: AleoDecryptedRecordResponse[];
+      tvks: string[];
     }
   | {
       type: "fee_public";

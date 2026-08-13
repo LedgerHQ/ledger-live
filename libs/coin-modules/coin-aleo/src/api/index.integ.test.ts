@@ -2,6 +2,7 @@ import invariant from "invariant";
 import { createApi } from "../api";
 import { TRANSACTION_TYPE } from "../constants";
 import { AleoApiConfigurationResetError } from "../errors";
+import { fromHex } from "../logic/utils";
 import { accessProvableApi } from "../network/utils";
 import { getTestnetIntegConfig } from "../__tests__/fixtures/config.fixture";
 import {
@@ -12,7 +13,11 @@ import {
 } from "../__tests__/fixtures/api.fixture";
 import { setupCalStore } from "../__tests__/helpers/cal";
 import { getPristineAccount } from "../__tests__/helpers/account";
-import type { AleoAccountInfo, AleoContext } from "../types";
+import type { AleoAccountInfo, AleoContext, PreparedRequestResponse } from "../types";
+import {
+  mockTxIntentTransferPrivate,
+  mockTxIntentTransferPublic,
+} from "../__tests__/fixtures/transaction.fixture";
 
 type AleoApi = ReturnType<typeof createApi>;
 
@@ -53,6 +58,28 @@ describe("createApi", () => {
     privacyContext = await withPrivacyContext(context, testnetViewKey);
     emptyAddress = pristineAccount.address;
     emptyAddressViewKey = pristineAccount.viewKey;
+  });
+
+  describe("craftTransaction", () => {
+    it("crafts a prepared request for a public root intent", async () => {
+      const result = await api.craftTransaction(context, mockTxIntentTransferPublic);
+
+      const preparedRequest = fromHex<PreparedRequestResponse>(result.transaction);
+      expect(preparedRequest.function_name.toLowerCase()).toContain(
+        Buffer.from("transfer_public").toString("hex"),
+      );
+    });
+
+    it("crafts a prepared request for a private root intent when a viewKey is present", async () => {
+      const contextWithPrivacy = await withPrivacyContext(context, testnetViewKey);
+
+      const result = await api.craftTransaction(contextWithPrivacy, mockTxIntentTransferPrivate);
+
+      const preparedRequest = fromHex<PreparedRequestResponse>(result.transaction);
+      expect(preparedRequest.function_name.toLowerCase()).toContain(
+        Buffer.from("transfer_private").toString("hex"),
+      );
+    });
   });
 
   describe("estimateFees", () => {

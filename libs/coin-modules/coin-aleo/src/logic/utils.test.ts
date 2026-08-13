@@ -65,6 +65,7 @@ import {
   toPrivateBridgeOperation,
   resolveConfig,
   getTransactionType,
+  buildFeeConfigurationForRootIntent,
   getAleoSubAccount,
   calculateAmount,
   isProvableApiConfigured,
@@ -546,6 +547,39 @@ describe("getTransactionType", () => {
     const mockTx: TransactionIntent = {};
 
     expect(() => getTransactionType(mockTx)).toThrow();
+  });
+});
+
+describe("buildFeeConfigurationForRootIntent", () => {
+  it("returns function_name fee_public when isPrivate is false", () => {
+    const result = buildFeeConfigurationForRootIntent({
+      isPrivate: false,
+      maxBaseFee: 1234n,
+      maxPriorityFee: 0n,
+    });
+
+    expect(result.function_name).toBe("fee_public");
+  });
+
+  it("returns function_name fee_private when isPrivate is true", () => {
+    const result = buildFeeConfigurationForRootIntent({
+      isPrivate: true,
+      maxBaseFee: 1234n,
+      maxPriorityFee: 0n,
+    });
+
+    expect(result.function_name).toBe("fee_private");
+  });
+
+  it("stringifies maxBaseFee and maxPriorityFee", () => {
+    const result = buildFeeConfigurationForRootIntent({
+      isPrivate: false,
+      maxBaseFee: 4242n,
+      maxPriorityFee: 10n,
+    });
+
+    expect(result.max_base_fee).toBe("4242");
+    expect(result.max_priority_fee).toBe("10");
   });
 });
 

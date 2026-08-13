@@ -11,7 +11,6 @@ import {
   type AleoSigner,
   type AleoAccount,
   type SignedAleoTransaction,
-  type FeeConfiguration,
   PreparedRequestResponse,
   type AleoCoinConfig,
   AleoTransactionIntentData,
@@ -19,6 +18,7 @@ import {
 import { sdkClient } from "../network/sdk";
 import { craftTransaction } from "../logic";
 import {
+  buildFeeConfigurationForRootIntent,
   createFeeTransactionIntent,
   createTransactionIntent,
   extractViewKey,
@@ -232,11 +232,11 @@ export const buildSignOperation =
           const baseFee = transaction.fees;
           const priorityFee = new BigNumber(0);
 
-          const feeConfiguration: FeeConfiguration = {
-            function_name: isPrivateTransaction(transaction) ? "fee_private" : "fee_public",
-            max_base_fee: baseFee.toString(),
-            max_priority_fee: priorityFee.toString(),
-          };
+          const feeConfiguration = buildFeeConfigurationForRootIntent({
+            isPrivate: isPrivateTransaction(transaction),
+            maxBaseFee: BigInt(baseFee.toFixed(0)),
+            maxPriorityFee: BigInt(priorityFee.toFixed(0)),
+          });
 
           const signature = await signerContext(deviceId, async signer => {
             const tvks = await getTvks({
@@ -260,8 +260,11 @@ export const buildSignOperation =
               config,
               viewKey,
               feeConfiguration,
-              txIntent,
-              ...(tvks && { tvks: [tvks.rootTvk, ...tvks.nestedTvks] }),
+              txIntent: createTransactionIntent({
+                account,
+                transaction,
+                tvks: tvks ? [tvks.rootTvk, ...tvks.nestedTvks] : [],
+              }),
             });
 
             const request = fromHex<PreparedRequestResponse>(craftedRequest.transaction);

@@ -1,12 +1,17 @@
 import aleoConfig from "../config";
 import { testnetViewKey } from "../__tests__/fixtures/api.fixture";
 import {
+  mockTxIntentConvertTokenPrivateToPublicReal,
+  mockTxIntentConvertTokenPublicToPrivate,
   mockTxIntentFeePrivate,
   mockTxIntentFeePublic,
   mockTxIntentSelfTransferToPrivate,
   mockTxIntentSelfTransferToPublic,
   mockTxIntentTransferPrivate,
+  mockTxIntentTransferPrivate2,
   mockTxIntentTransferPublic,
+  mockTxIntentTransferTokenPrivateReal,
+  mockTxIntentTransferTokenPublic,
 } from "../__tests__/fixtures/transaction.fixture";
 import type { FeeConfiguration, PreparedRequestResponse } from "../types";
 import { getTestnetIntegConfig } from "../__tests__/fixtures/config.fixture";
@@ -69,6 +74,39 @@ describe("craftTransaction", () => {
       expectedFunctionName: "fee_private",
       feeConfiguration: null,
       txIntent: mockTxIntentFeePrivate,
+      viewKey: testnetViewKey,
+    },
+    {
+      name: "transfer_token_public",
+      expectedFunctionName: "transfer_public",
+      feeConfiguration: publicFeeConfiguration,
+      txIntent: mockTxIntentTransferTokenPublic,
+    },
+    {
+      name: "transfer_token_private",
+      expectedFunctionName: "transfer_private",
+      feeConfiguration: privateFeeConfiguration,
+      txIntent: mockTxIntentTransferTokenPrivateReal,
+      viewKey: testnetViewKey,
+    },
+    {
+      name: "convert_token_public_to_private",
+      expectedFunctionName: "transfer_public_to_private",
+      feeConfiguration: publicFeeConfiguration,
+      txIntent: mockTxIntentConvertTokenPublicToPrivate,
+    },
+    {
+      name: "convert_token_private_to_public",
+      expectedFunctionName: "transfer_private_to_public",
+      feeConfiguration: privateFeeConfiguration,
+      txIntent: mockTxIntentConvertTokenPrivateToPublicReal,
+      viewKey: testnetViewKey,
+    },
+    {
+      name: "transfer_private (multi-record, 2 records)",
+      expectedFunctionName: "transfer_private_2",
+      feeConfiguration: privateFeeConfiguration,
+      txIntent: mockTxIntentTransferPrivate2,
       viewKey: testnetViewKey,
     },
   ])(

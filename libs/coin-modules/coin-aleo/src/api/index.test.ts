@@ -1,7 +1,13 @@
 import type { BalanceOptions } from "@ledgerhq/coin-module-framework/api/types";
 import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
 import { getMockedCoinFrameworkOperation } from "../__tests__/fixtures/operation.fixture";
-import { createMockTransactionIntent } from "../__tests__/fixtures/transaction.fixture";
+import {
+  createMockTransactionIntent,
+  mockTxIntentFeePrivate,
+  mockTxIntentFeePublic,
+  mockTxIntentTransferPrivate,
+  mockTxIntentTransferPublic,
+} from "../__tests__/fixtures/transaction.fixture";
 import {
   craftTransaction,
   estimateFees,
@@ -10,7 +16,7 @@ import {
   lastBlock,
   listOperations,
 } from "../logic";
-import { getTransactionType } from "../logic/utils";
+import { buildFeeConfigurationForRootIntent, getTransactionType } from "../logic/utils";
 import type { AleoContext } from "../types";
 import { createApi } from "./index";
 
@@ -32,6 +38,7 @@ describe("createApi", () => {
   const mockedLastBlock = jest.mocked(lastBlock);
   const mockedListOperations = jest.mocked(listOperations);
   const mockedGetTransactionType = jest.mocked(getTransactionType);
+  const mockedBuildFeeConfigurationForRootIntent = jest.mocked(buildFeeConfigurationForRootIntent);
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -47,6 +54,11 @@ describe("createApi", () => {
       nextCursor: "next-cursor",
     });
     mockedGetTransactionType.mockReturnValue("transfer_public");
+    mockedBuildFeeConfigurationForRootIntent.mockReturnValue({
+      function_name: "fee_public",
+      max_base_fee: "1234",
+      max_priority_fee: "0",
+    });
   });
 
   it("should return an API object with coin module api methods", () => {
@@ -115,10 +127,170 @@ describe("createApi", () => {
   });
 
   describe("craftTransaction", () => {
-    it("should throw unsupported error", async () => {
-      // @ts-expect-error - it should throw no matter what the input is
-      expect(() => api.craftTransaction(context, {})).toThrow("craftTransaction is not supported");
+    it("throws for an intent with useAllAmount set, before resolving config or crafting", async () => {
+      await expect(
+        api.craftTransaction(context, { ...mockTxIntentTransferPublic, useAllAmount: true }),
+      ).rejects.toThrow("useAllAmount is not supported");
+
+      expect(mockedCraftTransaction).not.toHaveBeenCalled();
+      expect(mockedBuildFeeConfigurationForRootIntent).not.toHaveBeenCalled();
     });
+
+    it("omits viewKey from the craft call when a fee intent's context.viewKey is null", async () => {
+      const nullViewKeyContext = {
+        ...context,
+        config: async () => ({ ...mockConfig, isFeeSponsored: false }),
+        viewKey: null,
+      } as unknown as AleoContext;
+
+      await api.craftTransaction(nullViewKeyContext, mockTxIntentFeePublic);
+
+      expect(mockedCraftTransaction).toHaveBeenCalledWith({
+        config: { ...mockConfig, isFeeSponsored: false },
+        txIntent: mockTxIntentFeePublic,
+        feeConfiguration: null,
+      });
+    });
+
+    it("delegates a public root intent to logic/craftTransaction with a built FeeConfiguration", async () => {
+      const result = await api.craftTransaction(context, mockTxIntentTransferPublic);
+
+      expect(mockedGetTransactionType).toHaveBeenCalledWith(mockTxIntentTransferPublic);
+      expect(mockedEstimateFees).toHaveBeenCalledWith({
+        configOrCurrencyId: mockConfig,
+        transactionType: "transfer_public",
+      });
+      expect(mockedBuildFeeConfigurationForRootIntent).toHaveBeenCalledWith({
+        isPrivate: false,
+        maxBaseFee: BigInt(1234),
+        maxPriorityFee: 0n,
+      });
+      expect(mockedCraftTransaction).toHaveBeenCalledWith({
+        config: mockConfig,
+        txIntent: mockTxIntentTransferPublic,
+        feeConfiguration: {
+          function_name: "fee_public",
+          max_base_fee: "1234",
+          max_priority_fee: "0",
+        },
+      });
+      expect(result).toEqual({ transaction: "crafted_tx" });
+    });
+
+    it("uses options.customFees for max_base_fee instead of calling estimateFees", async () => {
+      await api.craftTransaction(context, mockTxIntentTransferPublic, {
+        customFees: { value: 9999n },
+      });
+
+      expect(mockedEstimateFees).not.toHaveBeenCalled();
+      expect(mockedBuildFeeConfigurationForRootIntent).toHaveBeenCalledWith({
+        isPrivate: false,
+        maxBaseFee: 9999n,
+        maxPriorityFee: 0n,
+      });
+    });
+
+    it.each([
+      ["fee_public", mockTxIntentFeePublic, undefined],
+      ["fee_private", mockTxIntentFeePrivate, "mock-view-key"],
+    ])(
+      "delegates a %s intent to logic/craftTransaction with feeConfiguration: null, without building one or fetching records",
+      async (_label, feeIntent, viewKey) => {
+        const sponsorshipDisabledContext: AleoContext = {
+          ...context,
+          config: async () => ({ ...mockConfig, isFeeSponsored: false }),
+          ...(viewKey !== undefined && { viewKey }),
+        };
+
+        const result = await api.craftTransaction(sponsorshipDisabledContext, feeIntent);
+
+        expect(mockedCraftTransaction).toHaveBeenCalledWith({
+          config: { ...mockConfig, isFeeSponsored: false },
+          txIntent: feeIntent,
+          feeConfiguration: null,
+          ...(viewKey !== undefined && { viewKey }),
+        });
+        expect(mockedBuildFeeConfigurationForRootIntent).not.toHaveBeenCalled();
+        expect(mockedEstimateFees).not.toHaveBeenCalled();
+        expect(mockedGetBalance).not.toHaveBeenCalled();
+        expect(result).toEqual({ transaction: "crafted_tx" });
+      },
+    );
+
+    it.each([
+      ["fee_public", mockTxIntentFeePublic],
+      ["fee_private", mockTxIntentFeePrivate],
+    ])(
+      "throws for a %s intent when fees are sponsored, before any craft",
+      async (_label, feeIntent) => {
+        await expect(api.craftTransaction(context, feeIntent)).rejects.toThrow(
+          "fee craft is not needed when fees are sponsored",
+        );
+
+        expect(mockedCraftTransaction).not.toHaveBeenCalled();
+        expect(mockedBuildFeeConfigurationForRootIntent).not.toHaveBeenCalled();
+      },
+    );
+
+    it.each([
+      ["fee_public", mockTxIntentFeePublic],
+      ["fee_private", mockTxIntentFeePrivate],
+    ])("throws for a %s intent when customFees is passed", async (_label, feeIntent) => {
+      const sponsorshipDisabledContext: AleoContext = {
+        ...context,
+        config: async () => ({ ...mockConfig, isFeeSponsored: false }),
+      };
+
+      await expect(
+        api.craftTransaction(sponsorshipDisabledContext, feeIntent, {
+          customFees: { value: 9999n },
+        }),
+      ).rejects.toThrow("customFees is not supported for fee intents");
+
+      expect(mockedCraftTransaction).not.toHaveBeenCalled();
+    });
+
+    it.each([
+      ["undefined", undefined],
+      ["null", null],
+      ["empty string", ""],
+    ])(
+      "throws AleoIncompletePrivacyContextError for a private root intent when viewKey is %s",
+      async (_label, viewKey) => {
+        const privateContext = {
+          ...context,
+          ...(viewKey !== undefined && { viewKey }),
+        } as AleoContext;
+
+        await expect(
+          api.craftTransaction(privateContext, mockTxIntentTransferPrivate),
+        ).rejects.toThrow("aleo: viewKey is missing");
+
+        expect(mockedCraftTransaction).not.toHaveBeenCalled();
+        expect(mockedBuildFeeConfigurationForRootIntent).not.toHaveBeenCalled();
+      },
+    );
+
+    it.each([
+      ["undefined", undefined],
+      ["null", null],
+      ["empty string", ""],
+    ])(
+      "throws AleoIncompletePrivacyContextError for a fee_private intent when viewKey is %s",
+      async (_label, viewKey) => {
+        const privateFeeContext = {
+          ...context,
+          config: async () => ({ ...mockConfig, isFeeSponsored: false }),
+          ...(viewKey !== undefined && { viewKey }),
+        } as AleoContext;
+
+        await expect(
+          api.craftTransaction(privateFeeContext, mockTxIntentFeePrivate),
+        ).rejects.toThrow("aleo: viewKey is missing");
+
+        expect(mockedCraftTransaction).not.toHaveBeenCalled();
+      },
+    );
   });
 
   describe("craftRawTransaction", () => {
