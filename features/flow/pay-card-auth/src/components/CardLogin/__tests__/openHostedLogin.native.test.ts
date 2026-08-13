@@ -9,7 +9,7 @@ const mockedOpenAuthSessionAsync = jest.mocked(openAuthSessionAsync);
 
 const loginUrl =
   "https://card.example.com/login?request=opaque%2Bvalue&redirect_uri=ledgerlive%3A%2F%2Fpaytab";
-const redirectUri = "https://ledger.com";
+const redirectUri = "ledgerlive://paytab";
 
 describe("openHostedLoginInSecureBrowser", () => {
   beforeEach(() => {
