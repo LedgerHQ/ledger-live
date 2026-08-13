@@ -1,14 +1,22 @@
 import { AccountIdentifier, SubAccount } from "@dfinity/ledger-icp";
 import { Principal } from "@dfinity/principal";
 import {
+  LAST_SYNC_THRESHOLD_IN_DAYS,
   MAINNET_GOVERNANCE_CANISTER_ID,
   MAX_AGE_BONUS,
   MAX_DISSOLVE_DELAY_BONUS,
   MAX_NEURON_AGE_FOR_AGE_BONUS,
   MIN_NEURON_STAKE,
+  NNS_CLEAR_FOLLOWING_AFTER_SECONDS,
   NNS_MATURITY_MODULATION_WORST_CASE_FACTOR,
   NNS_MAXIMUM_DISSOLVE_DELAY,
   NNS_MINIMUM_DISSOLVE_DELAY_TO_VOTE,
+  NNS_START_REDUCING_VOTING_POWER_AFTER_SECONDS,
+  SECONDS_IN_DAY,
+  SECONDS_IN_HOUR,
+  SECONDS_IN_MINUTE,
+  SECONDS_IN_MONTH,
+  SECONDS_IN_YEAR,
 } from "../consts";
 import {
   ICPNeuron,
@@ -33,10 +41,21 @@ export const neuronAccountIdentifier = (subaccount: Uint8Array | number[]): stri
   }).toHex();
 };
 
+// The voting-power fields appear on both the Neuron and the NeuronInfo record. NeuronInfo is the
+// canister's own computed view, so prefer it and fall back to the full neuron.
+const pick = <T>(fromInfo: ([] | [T]) | undefined, fromNeuron: [] | [T]): T | undefined =>
+  (fromInfo && first(fromInfo)) ?? first(fromNeuron);
+
 const toICPNeuron = (raw: RawNeuron, info?: RawNeuronInfo): ICPNeuron => {
   const id = first(raw.id)?.id;
   const dissolveState = first(raw.dissolve_state);
   const controller = first(raw.controller)?.toText();
+  const votingPowerRefreshedTimestampSeconds = pick(
+    info?.voting_power_refreshed_timestamp_seconds,
+    raw.voting_power_refreshed_timestamp_seconds,
+  );
+  const decidingVotingPower = pick(info?.deciding_voting_power, raw.deciding_voting_power);
+  const potentialVotingPower = pick(info?.potential_voting_power, raw.potential_voting_power);
   return {
     accountIdentifier: neuronAccountIdentifier(raw.account),
     state: (info?.state ?? NeuronState.Unspecified) as NeuronState,
@@ -57,6 +76,11 @@ const toICPNeuron = (raw: RawNeuron, info?: RawNeuronInfo): ICPNeuron => {
     ...(id !== undefined && { id }),
     ...(dissolveState !== undefined && { dissolveState }),
     ...(controller !== undefined && { controller }),
+    ...(votingPowerRefreshedTimestampSeconds !== undefined && {
+      votingPowerRefreshedTimestampSeconds,
+    }),
+    ...(decidingVotingPower !== undefined && { decidingVotingPower }),
+    ...(potentialVotingPower !== undefined && { potentialVotingPower }),
   };
 };
 
@@ -172,6 +196,134 @@ export const neuronPotentialVotingPower = (neuron: ICPNeuron): bigint => {
   return (stakeE8s * scaledBonus) / VOTING_POWER_SCALE;
 };
 
+// ---- periodic confirmation ----------------------------------------------------------------------
+
+/**
+ * Seconds until the neuron loses its voting power entirely and has its following cleared.
+ * `undefined` when the canister reported no refresh timestamp, which is also the case for neurons
+ * persisted before that field was decoded: there, staleness is unknown, not zero.
+ */
+export const getSecondsTillVotingPowerExpires = (
+  neuron: ICPNeuron,
+  nowSeconds: number = Math.floor(Date.now() / 1000),
+): number | undefined => {
+  const refreshed = neuron.votingPowerRefreshedTimestampSeconds;
+  if (refreshed === undefined) return undefined;
+  const deadline =
+    refreshed +
+    BigInt(NNS_START_REDUCING_VOTING_POWER_AFTER_SECONDS + NNS_CLEAR_FOLLOWING_AFTER_SECONDS);
+  const remaining = deadline - BigInt(nowSeconds);
+  return remaining > 0n ? Number(remaining) : 0;
+};
+
+/**
+ * Whether any neuron has entered the decay window and is actively losing voting power.
+ * Neurons the canister reported no refresh timestamp for are skipped, so a snapshot persisted before
+ * the decode change never raises a false alarm — the next list_neurons populates the field.
+ */
+export const votingPowerNeedsRefresh = (
+  neurons: readonly ICPNeuron[],
+  nowSeconds: number = Math.floor(Date.now() / 1000),
+): boolean =>
+  neurons.some(neuron => {
+    const refreshed = neuron.votingPowerRefreshedTimestampSeconds;
+    // Only neurons eligible to vote are subject to periodic confirmation.
+    if (refreshed === undefined) return false;
+    if (neuron.dissolveDelaySeconds < BigInt(NNS_MINIMUM_DISSOLVE_DELAY_TO_VOTE)) return false;
+    return BigInt(nowSeconds) >= refreshed + BigInt(NNS_START_REDUCING_VOTING_POWER_AFTER_SECONDS);
+  });
+
+/**
+ * Whether the persisted snapshot is old enough to prompt a device-signed re-sync. Neurons are only
+ * refreshed by a signed list_neurons call, so background sync never ages this out on its own.
+ */
+export const neuronsNeedSync = (neurons: NeuronsData, nowMSecs: number = Date.now()): boolean =>
+  neurons.fullNeurons.length > 0 &&
+  nowMSecs - neurons.lastUpdatedMSecs >= LAST_SYNC_THRESHOLD_IN_DAYS * SECONDS_IN_DAY * 1000;
+
+/**
+ * Whether the account's own principal controls the neuron rather than merely holding a hot key.
+ * Hot keys may vote and set following, but cannot disburse, split, or change the dissolve delay.
+ */
+export const isDeviceControlledNeuron = (neuron: ICPNeuron, principal: string): boolean =>
+  neuron.controller === principal;
+
+// ---- account banner -----------------------------------------------------------------------------
+
+export type ICPBannerState =
+  | "stakeICP"
+  | "syncNeurons"
+  | "confirmFollowing"
+  | "lockNeurons"
+  | "addFollowees"
+  | "none";
+
+/**
+ * The single most urgent prompt for an account, in precedence order: stale data first (everything
+ * below is judged from it), then losses that are already accruing, then setup the user never
+ * finished.
+ *
+ * `lockNeurons` intentionally means "dissolve delay too short to vote". The original reference
+ * tested `dissolveState === "Unlocked"`, which no NeuronState nor DissolveState variant can equal,
+ * so that branch was dead and its intent had to be reconstructed.
+ */
+export const getBannerState = ({
+  neurons,
+  canStake,
+  nowMSecs = Date.now(),
+}: {
+  neurons: NeuronsData;
+  canStake: boolean;
+  nowMSecs?: number;
+}): ICPBannerState => {
+  const { fullNeurons } = neurons;
+  if (fullNeurons.length === 0) return canStake ? "stakeICP" : "none";
+  if (neuronsNeedSync(neurons, nowMSecs)) return "syncNeurons";
+  if (votingPowerNeedsRefresh(fullNeurons, Math.floor(nowMSecs / 1000))) return "confirmFollowing";
+  if (fullNeurons.some(n => n.dissolveDelaySeconds < BigInt(NNS_MINIMUM_DISSOLVE_DELAY_TO_VOTE)))
+    return "lockNeurons";
+  if (fullNeurons.some(n => !hasFollowees(n))) return "addFollowees";
+  return "none";
+};
+
+// ---- duration formatting ------------------------------------------------------------------------
+
+export type DurationParts = {
+  years: number;
+  months: number;
+  days: number;
+  hours: number;
+  minutes: number;
+  seconds: number;
+};
+
+// Years and months use the NNS averages the governance canister itself uses, so a dissolve delay
+// entered as "2 years" round-trips exactly.
+const DURATION_UNITS = [
+  ["years", SECONDS_IN_YEAR],
+  ["months", SECONDS_IN_MONTH],
+  ["days", SECONDS_IN_DAY],
+  ["hours", SECONDS_IN_HOUR],
+  ["minutes", SECONDS_IN_MINUTE],
+] as const;
+
+/**
+ * Split a duration into display parts. Returns numbers rather than a formatted string so wording and
+ * pluralization stay in the apps, where the translations live.
+ */
+export const secondsToDuration = (totalSeconds: bigint | number): DurationParts => {
+  let rest = typeof totalSeconds === "bigint" ? totalSeconds : BigInt(Math.trunc(totalSeconds));
+  if (rest < 0n) rest = 0n;
+  const parts: DurationParts = { years: 0, months: 0, days: 0, hours: 0, minutes: 0, seconds: 0 };
+  for (const [unit, size] of DURATION_UNITS) {
+    const divisor = BigInt(size);
+    parts[unit] = Number(rest / divisor);
+    rest %= divisor;
+  }
+  parts.seconds = Number(rest);
+  return parts;
+};
+
 // ---- stake / split / maturity -------------------------------------------------------------------
 
 /** Effective stake: cached stake minus accrued fees. */
@@ -186,6 +338,17 @@ export const minNeuronSplittable = (feeE8s: bigint): bigint =>
 
 export const neuronCanBeSplit = (neuron: ICPNeuron, feeE8s: bigint): boolean =>
   neuronStake(neuron) >= minNeuronSplittable(feeE8s);
+
+/**
+ * Bounds on the amount passed to `split`. The parent is debited the full amount and the child
+ * receives it minus the fee, so the fee constrains the lower bound only.
+ */
+export const minAllowedSplitAmount = (feeE8s: bigint): bigint => BigInt(MIN_NEURON_STAKE) + feeE8s;
+
+export const maxAllowedSplitAmount = (neuron: ICPNeuron): bigint => {
+  const max = neuronStake(neuron) - BigInt(MIN_NEURON_STAKE);
+  return max > 0n ? max : 0n;
+};
 
 export const hasEnoughMaturityToStake = (neuron: ICPNeuron): boolean =>
   neuron.maturityE8sEquivalent > 0n;
