@@ -2476,7 +2476,9 @@
     "addressMatched": "Dirección coincidente",
     "addressNotFound": "Dirección no encontrada",
     "alreadyUsed": "Ya utilizado · {{date}}",
+    "addressBookUnsupported": "{{family}} no es compatible todavía",
     "recentSendWillAppear": "Tus envíos anteriores aparecerán aquí",
+    "contactsWillAppear": "Los contactos aparecerán aquí",
     "securityInfo": {
       "title": "¿Cómo enviar de forma segura?",
       "items": {
@@ -2494,6 +2496,10 @@
         "description": "Tu historial reciente te permite ver al instante si ya has enviado a una dirección específica o no. Esto podría evitar posibles errores de copiar y pegar o hackeos. Tu historial contiene las últimas 12 direcciones a las que has enviado cripto con Ledger Wallet.",
         "cta": "Entendido"
       }
+    },
+    "addContact": {
+      "newContact": "Agregar un nuevo contacto",
+      "existingContact": "Agregar a un contacto existente"
     },
     "relativeDate": {
       "justNow": "Ahora",
@@ -7435,6 +7441,9 @@
     "FeeTooHigh": {
       "title": "Las tarifas de red superan el 10% del importe"
     },
+    "RecipientIsNewAccount": {
+      "title": "Esta dirección nunca ha recibido fondos, activarla gererará una tarifa de red más alta"
+    },
     "DustLimit": {
       "title": "La cantidad es menor que el límite de remanente"
     },
@@ -8897,7 +8906,8 @@
       "transparentBalance": "Saldo transparente",
       "transparentBalanceTooltip": "Saldo visible para el público",
       "privateBalance": "Saldo privado",
-      "privateBalanceTooltip": "Saldo que está oculto al público"
+      "privateBalanceTooltip": "Saldo que está oculto al público",
+      "privateBalanceWarning": "El saldo privado excluye los fondos blindados de Sapling y Orchard"
     },
     "shielded": {
       "send": {
@@ -8937,6 +8947,12 @@
             "message": "El saldo podría no estar del todo actualizado",
             "cta": "Sincronizar saldo"
           }
+        },
+        "selfTransfer": {
+          "toPrivate": "Autotransferencia al saldo privado",
+          "toPublic": "Autotransferencia al saldo público",
+          "unavailable": "Tu dirección privada aún no está disponible. Exporta tu clave de visualización para habilitar esto.",
+          "privacyWarning": "Esto vincula tus fondos blindados con la dirección pública de tu cuenta, que cualquiera puede ver. Enviar a una dirección privada externa los mantiene desvinculados."
         }
       },
       "state": {
