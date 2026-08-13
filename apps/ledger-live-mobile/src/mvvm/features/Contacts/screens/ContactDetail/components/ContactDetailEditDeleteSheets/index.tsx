@@ -28,7 +28,11 @@ export function ContactDetailEditDeleteSheets({
   const keyboardInset = shouldUseKeyboardAvoidance(Platform.OS, Platform.Version)
     ? keyboardHeight
     : 0;
-  const { onClose: onCloseActionsMenuFromMenu, ...actionsMenuProps } = actionsMenu;
+  const {
+    onClose: onCloseActionsMenuFromMenu,
+    onHidden: onActionsMenuHidden,
+    ...actionsMenuProps
+  } = actionsMenu;
   const onCloseActionsMenu = useCallback(() => {
     onCloseActionsMenuFromMenu();
   }, [onCloseActionsMenuFromMenu]);
@@ -47,6 +51,7 @@ export function ContactDetailEditDeleteSheets({
       <QueuedBottomSheet
         isRequestingToBeOpened={actionsMenu.isOpen}
         onClose={onCloseActionsMenu}
+        onModalHide={onActionsMenuHidden}
         testID="contacts-detail-actions-sheet"
         enableDynamicSizing
       >

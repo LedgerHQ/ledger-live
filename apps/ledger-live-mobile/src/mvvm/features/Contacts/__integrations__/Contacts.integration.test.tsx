@@ -1026,6 +1026,36 @@ describe("Contacts integration", () => {
     });
   });
 
+  it("should reopen the delete contact confirmation after canceling it", async () => {
+    const contacts = [mockMeContact(), mockContact({ id: "contact-ada", name: "Ada" })];
+    const { user } = render(<MyWalletNavigator />, {
+      overrideInitialState: withContactsPageReadyState(
+        { lwmContacts: { enabled: true, params: { newBadge: false } } },
+        state => ({ ...state, contacts: { contacts } }),
+      ),
+    });
+
+    await user.press(screen.getByTestId("my-wallet-contacts-button"));
+    await user.press(await screen.findByTestId("contacts-saved-contact-contact-ada"));
+    await user.press(await screen.findByTestId("contacts-detail-actions-trigger"));
+    await user.press(await screen.findByTestId("contacts-detail-delete-action"));
+
+    expect(await screen.findByTestId("contacts-delete-contact-confirm")).toBeVisible();
+
+    await user.press(screen.getByText("Cancel"));
+
+    await waitFor(() => {
+      expect(screen.queryByTestId("contacts-delete-contact-confirm")).toBeNull();
+    });
+
+    await user.press(await screen.findByTestId("contacts-detail-actions-trigger"));
+    await user.press(await screen.findByTestId("contacts-detail-delete-action"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("contacts-delete-contact-confirm")).toBeVisible();
+    });
+  });
+
   it("should delete a saved contact and navigate back to the contacts list", async () => {
     const contacts = [mockMeContact(), mockContact({ id: "contact-ada", name: "Ada" })];
     const { user } = render(<MyWalletNavigator />, {

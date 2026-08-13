@@ -119,8 +119,7 @@ export function useContactDetailEditDeleteFlowViewModel({
 
   const onDeletePress = useCallback(() => {
     setIsActionsMenuOpen(false);
-    openDelete();
-  }, [openDelete]);
+  }, []);
 
   const onOpenActionsMenu = useCallback(() => {
     setIsActionsMenuOpen(true);
