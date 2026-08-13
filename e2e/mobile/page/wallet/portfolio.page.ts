@@ -392,19 +392,16 @@ export default class PortfolioPage {
 
   @Step("Press quick action buy button")
   async pressQuickActionBuyButton() {
-    await waitForElementById(this.quickActionBuyButtonV4);
     await tapById(this.quickActionBuyButtonV4);
   }
 
   @Step("Press quick action swap button")
   async pressQuickActionSwapButton() {
-    await waitForElementById(this.quickActionSwapButtonV4);
     await tapById(this.quickActionSwapButtonV4);
   }
 
   @Step("Press quick action transfer button")
   async pressQuickActionTransferButton() {
-    await waitForElementById(this.quickActionTransferButtonV4);
     await tapById(this.quickActionTransferButtonV4);
   }
   @Step("Check no balance title visibility")
