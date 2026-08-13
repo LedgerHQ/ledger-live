@@ -868,6 +868,38 @@
     "unlockLiquidity": "Gasta cripto en la vida real",
     "exploreCryptoCardsDescription": "Explora nuestras tarjetas cripto y elige la que mejor se ajuste a tus necesidades."
   },
+  "payTab": {
+    "featureTour": {
+      "title": "Paga y recibe pagos",
+      "description": "Las monedas estables reducen la brecha entre las cripto y el gasto en la vida real",
+      "cta": "Entendido",
+      "rows": {
+        "global": {
+          "title": "Paga y recibe pagos globalmente",
+          "description": "Aprovecha bajas tarifas de red"
+        },
+        "volatility": {
+          "title": "Volatilidad mínima",
+          "description": "Las monedas estables se basan en fiat"
+        },
+        "card": {
+          "title": "Gasta con una tarjeta y obtén un 1% de devolución en efectivo",
+          "description": "Paga en USDC, USDT, BTC, ETH y más"
+        }
+      }
+    },
+    "balance": {
+      "emptyTitle": "Paga y recibe pagos",
+      "emptyDescription": "Comienza por depositar monedas estables en tu wallet",
+      "filter": {
+        "allStablecoins": "Todas las monedas estables",
+        "dialogTitle": "Filtrar saldo",
+        "dialogDescription": "Usa monedas estables para pagar en todo el mundo con tarifas bajas y una volatilidad mínima.",
+        "dialogBanner": "Gestiona todos los demás activos en tu Inicio",
+        "confirm": "Confirmar"
+      }
+    }
+  },
   "lend": {
     "title": "Prestar cripto",
     "tabs": {
@@ -2476,7 +2508,9 @@
     "addressMatched": "Dirección coincidente",
     "addressNotFound": "Dirección no encontrada",
     "alreadyUsed": "Ya utilizado · {{date}}",
+    "addressBookUnsupported": "{{family}} no es compatible todavía",
     "recentSendWillAppear": "Tus envíos anteriores aparecerán aquí",
+    "contactsWillAppear": "Los contactos aparecerán aquí",
     "securityInfo": {
       "title": "¿Cómo enviar de forma segura?",
       "items": {
@@ -2494,6 +2528,10 @@
         "description": "Tu historial reciente te permite ver al instante si ya has enviado a una dirección específica o no. Esto podría evitar posibles errores de copiar y pegar o hackeos. Tu historial contiene las últimas 12 direcciones a las que has enviado cripto con Ledger Wallet.",
         "cta": "Entendido"
       }
+    },
+    "addContact": {
+      "newContact": "Agregar un nuevo contacto",
+      "existingContact": "Agregar a un contacto existente"
     },
     "relativeDate": {
       "justNow": "Ahora",
@@ -7001,6 +7039,9 @@
       "title": "Fondos insuficientes",
       "description": "Asegúrate de que la cuenta tenga fondos suficientes."
     },
+    "NotEnoughTransferAmount": {
+      "title": "Se requiere un mínimo de 1 ICP para poner en participación en una neurona."
+    },
     "UnstakeNotEnoughStakedBalanceLeft": {
       "title": "Si cancelas la puesta en participación de más de {{maxAmount}}, se cancelará la totalidad de tu participación de {{totalAmount}}",
       "description": "Si cancelas la puesta en participación de más de {{maxAmount}}, se cancelará la totalidad de tu participación de {{totalAmount}}"
@@ -7434,6 +7475,9 @@
     },
     "FeeTooHigh": {
       "title": "Las tarifas de red superan el 10% del importe"
+    },
+    "RecipientIsNewAccount": {
+      "title": "Esta dirección nunca ha recibido fondos, activarla gererará una tarifa de red más alta"
     },
     "DustLimit": {
       "title": "La cantidad es menor que el límite de remanente"
@@ -8588,23 +8632,14 @@
   },
   "lnsUpsell": {
     "opted_in": {
-      "title": "Si la memoria es limitada, la experiencia también lo será",
-      "description": "Actualiza tu Ledger Nano S a un dispositivo Ledger más moderno, como el Ledger Flex, para disponer de más memoria, mejoras de seguridad más recientes y nuevas funciones. También tenemos reservado, sólo para ti, un <0>{{discount}}% de descuento</>.",
+      "title": "Más datos. Firma de forma más segura",
+      "description": "Renueva y obtén un {{discount}}% de descuento.",
       "cta": "Renovar mi Ledger"
     },
     "opted_out": {
-      "description": "La memoria limitada de tu Ledger Nano S restringe tu acceso a las opciones más recientes, a cambios en la blockchain y a mejoras de seguridad. Cambia a un dispositivo Ledger más moderno para garantizar un uso prolongado.",
-      "cta": "Más información"
-    }
-  },
-  "lnsUpsellMediaBanner": {
-    "opted_in": {
-      "title": "Más datos. Firma de forma más segura",
-      "description": "Renueva y obtén un 20% de descuento."
-    },
-    "opted_out": {
       "title": "Más seguridad. Más control",
-      "description": "Más información sobre las funciones de seguridad."
+      "description": "Más información sobre las funciones de seguridad.",
+      "cta": "Más información"
     }
   },
   "largeScreenUpsellModal": {
@@ -8684,6 +8719,10 @@
     "selectAsset": "Seleccionar activo",
     "selectNetwork": "Seleccionar red",
     "selectAccount": "Seleccionar cuenta",
+    "selectAccountPerpsTitle": "Selecciona una cuenta de Hyperliquid",
+    "selectAccountPerpsDescription": "Para aportar fondos a tus perpetuos, necesitas una cuenta de Hyperliquid. Agrega una para continuar.",
+    "selectDepositCurrencyTitle": "Selecciona el activo a depositar",
+    "selectDepositCurrencyDescription": "Cualquier activo compatible funciona. Se permutará automáticamente si es necesario.",
     "accountCount_one": "Cuenta {{count}}",
     "accountCount_other": "Cuentas de {{count}}",
     "accountsAdded": {
@@ -8897,7 +8936,8 @@
       "transparentBalance": "Saldo transparente",
       "transparentBalanceTooltip": "Saldo visible para el público",
       "privateBalance": "Saldo privado",
-      "privateBalanceTooltip": "Saldo que está oculto al público"
+      "privateBalanceTooltip": "Saldo que está oculto al público",
+      "privateBalanceWarning": "El saldo privado excluye los fondos blindados de Sapling y Orchard"
     },
     "shielded": {
       "send": {
@@ -8917,7 +8957,8 @@
             "title": "Saldo privado",
             "subtitle": "Blindado",
             "unavailable": "Saldo privado no disponible"
-          }
+          },
+          "spendableWarning": "El saldo disponible puede ser inferior al saldo total. Los fondos protegidos recientemente necesitan confirmaciones y un escaneo completo (~15 minutos) antes de poder gastarse."
         },
         "memo": {
           "label": "Memo (opcional)",
@@ -8937,6 +8978,12 @@
             "message": "El saldo podría no estar del todo actualizado",
             "cta": "Sincronizar saldo"
           }
+        },
+        "selfTransfer": {
+          "toPrivate": "Autotransferencia al saldo privado",
+          "toPublic": "Autotransferencia al saldo público",
+          "unavailable": "Tu dirección privada aún no está disponible. Exporta tu clave de visualización para habilitar esto.",
+          "privacyWarning": "Esto vincula tus fondos blindados con la dirección pública de tu cuenta, que cualquiera puede ver. Enviar a una dirección privada externa los mantiene desvinculados."
         }
       },
       "state": {
@@ -9677,5 +9724,30 @@
       }
     },
     "disclaimer": "Estos datos se proporcionan con fines meramente informativos y no constituyen asesoramiento financiero. No debe utilizarse con fines fiscales."
+  },
+  "internetComputer": {
+    "memoField": {
+      "increaseStake": "Esta transacción aumentará la participación de una neurona existente. Especifica la cantidad que quieres poner en participación en el campo de cantidad que aparece arriba.",
+      "createNeuron": "Esta transacción creará una neurona con los ICP que pongas en participación. Especifica la cantidad que quieres poner en participación en el campo de cantidad que aparece arriba.",
+      "tooltip": "Internet Computer usa esta información para identificar la transacción con la que pondrás en participación tus ICP en la neurona."
+    },
+    "stakeBanner": {
+      "stakeICP": {
+        "title": "Poner en participación ICP",
+        "description": "Pon ICP en participación y obtén recompensas por colaborar en su gobernanza.",
+        "cta": "Poner en participación ICP"
+      }
+    },
+    "headerManageActions": {
+      "manageNeurons": {
+        "title": "Gestionar neuronas"
+      }
+    },
+    "summaryFooter": {
+      "stakedBalance": "Saldo en participación",
+      "stakedBalanceTooltip": "La cantidad total de tokens ICP puestos en participación en neuronas actualmente. Los ICP puestos en participación reportan recompensas de voto y se pueden usar para la gobernanza.",
+      "totalMaturity": "Madurez total",
+      "totalMaturityTooltip": "El total de recompensas acumuladas por la puesta en participación, incluidas las de madurez líquida y puesta en participación. Estas recompensas se pueden volver a poner en participación o reclamarse como ICP líquido."
+    }
   }
 }
