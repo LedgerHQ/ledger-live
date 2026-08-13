@@ -1110,6 +1110,19 @@ function isStrictlyAfterCursor(
   );
 }
 
+/**
+ * Removes operations the previous page already delivered. Both history arms rely on this, and it is
+ * why their server-side checkpoint bounds must *include* the cursor's own checkpoint:
+ *
+ * A checkpoint can hold several transactions for one address, and they share its `timestampMs`, so
+ * the cursor comparison falls through to the digest tie-break. A page boundary can therefore land
+ * inside a checkpoint. Excluding that checkpoint from the next query drops its remainder for good —
+ * this filter can only remove what the server returned, never recover what it withheld.
+ *
+ * The cost of including it is a page of already-seen items. That is fine except when one checkpoint
+ * holds a full page of the address's transactions, where nothing survives the filter and pagination
+ * would end early; each arm then steps its bound past that checkpoint once.
+ */
 function dropOperationsBeforeCursor(params: {
   operations: SuiTransactionBlockResponse[];
   order: "asc" | "desc";
@@ -1221,32 +1234,51 @@ export const getListOperations = async (
           parsedCursor.digest,
         );
       }
-      // `desc` order paginates backwards in time → server filter excludes
-      // anything at-or-after the cursor; `asc` does the opposite.
-      let filter: { beforeCheckpoint?: number; afterCheckpoint?: number } | undefined;
-      if (cursorCheckpoint !== null) {
-        filter =
-          order === "desc"
-            ? { beforeCheckpoint: cursorCheckpoint }
-            : { afterCheckpoint: cursorCheckpoint };
-      }
-      const pairs = await getTransactionsWithCheckpointDigestsGraphQL(
-        api,
-        addr,
-        TRANSACTIONS_LIMIT_PER_QUERY,
-        filter,
+      // The bound includes the cursor's own checkpoint — see {@link dropOperationsBeforeCursor}. The
+      // ±1 achieves that whether the server treats these filters as strict or inclusive; either way
+      // the extra checkpoint's items sit on the wrong side of the cursor and the drop below clears
+      // them.
+      const boundsFrom = (seq: number, includeCursorCheckpoint: boolean) =>
+        order === "desc"
+          ? { beforeCheckpoint: includeCursorCheckpoint ? seq + 1 : seq }
+          : { afterCheckpoint: includeCursorCheckpoint ? Math.max(0, seq - 1) : seq };
+
+      const fetchPage = async (
+        filter: { beforeCheckpoint?: number; afterCheckpoint?: number } | undefined,
+      ) => {
+        const pairs = await getTransactionsWithCheckpointDigestsGraphQL(
+          api,
+          addr,
+          TRANSACTIONS_LIMIT_PER_QUERY,
+          filter,
+        );
+        const filtered = pairs.filter(({ tx }) => !isSettlementTransaction(tx));
+        const sorted = filtered.slice().sort((a, b) => compareOperations(order)(a.tx, b.tx));
+        return {
+          received: pairs.length,
+          sorted,
+          afterCursor: dropOperationsBeforeCursor({
+            operations: sorted.map(p => p.tx),
+            order,
+            cursor: parsedCursor,
+          }),
+        };
+      };
+
+      let page = await fetchPage(
+        cursorCheckpoint === null ? undefined : boundsFrom(cursorCheckpoint, true),
       );
-      const filtered = pairs.filter(({ tx }) => !isSettlementTransaction(tx));
-      const sorted = filtered.slice().sort((a, b) => compareOperations(order)(a.tx, b.tx));
-      // Server filter already excluded items strictly past the cursor;
-      // the additional client-side drop guards against same-checkpoint ties.
-      const afterCursor = dropOperationsBeforeCursor({
-        operations: sorted.map(p => p.tx),
-        order,
-        cursor: parsedCursor,
-      });
+      // Same stall guard as the gRPC arm.
+      if (
+        cursorCheckpoint !== null &&
+        page.afterCursor.length === 0 &&
+        page.received >= TRANSACTIONS_LIMIT_PER_QUERY
+      ) {
+        page = await fetchPage(boundsFrom(cursorCheckpoint, false));
+      }
+      const afterCursor = page.afterCursor;
       const digestToHash = new Map(
-        sorted.map(({ tx, checkpointDigest }) => [tx.digest, checkpointDigest]),
+        page.sorted.map(({ tx, checkpointDigest }) => [tx.digest, checkpointDigest]),
       );
       const items = afterCursor.map(t =>
         transactionToCoinFrameworkOperation(addr, t, digestToHash.get(t.digest)),
@@ -1266,31 +1298,50 @@ export const getListOperations = async (
   if (getTransport(config) === "grpc") {
     return withGrpcApi(config, async api => {
       // The alpaca cursor is `timestamp:digest`; translate its digest to a checkpoint bound in the
-      // direction of travel. `startCheckpoint` is inclusive so ascending steps one past the cursor,
-      // while `endCheckpoint` is exclusive so descending stops at it.
-      let bounds: { startCheckpoint?: number; endCheckpoint?: number } = {};
-      if (parsedCursor) {
-        const seq = await resolveCheckpointForDigestGrpc(api, parsedCursor.digest);
-        if (seq !== null) {
-          bounds = order === "desc" ? { endCheckpoint: seq } : { startCheckpoint: seq + 1 };
-        }
-      }
-      const { transactions } = await listTransactionsByAddressGrpc(api, {
-        address: addr,
-        limit: TRANSACTIONS_LIMIT_PER_QUERY,
-        order,
-        ...bounds,
-      });
+      // direction of travel, including the cursor's own checkpoint — see
+      // {@link dropOperationsBeforeCursor}. `startCheckpoint` is inclusive, `endCheckpoint` exclusive.
+      const cursorCheckpoint = parsedCursor
+        ? await resolveCheckpointForDigestGrpc(api, parsedCursor.digest)
+        : null;
+      const boundsFrom = (seq: number, includeCursorCheckpoint: boolean) =>
+        order === "desc"
+          ? { endCheckpoint: includeCursorCheckpoint ? seq + 1 : seq }
+          : { startCheckpoint: includeCursorCheckpoint ? seq : seq + 1 };
 
-      const sorted = transactions
-        .filter(tx => !isSettlementTransaction(tx))
-        .sort(compareOperations(order));
-      // Checkpoint bounds are coarse, so same-checkpoint ties can still slip past the cursor.
-      const afterCursor = dropOperationsBeforeCursor({
-        operations: sorted,
-        order,
-        cursor: parsedCursor,
-      });
+      const fetchPage = async (bounds: { startCheckpoint?: number; endCheckpoint?: number }) => {
+        const { transactions } = await listTransactionsByAddressGrpc(api, {
+          address: addr,
+          limit: TRANSACTIONS_LIMIT_PER_QUERY,
+          order,
+          ...bounds,
+        });
+        const sorted = transactions
+          .filter(tx => !isSettlementTransaction(tx))
+          .sort(compareOperations(order));
+        return {
+          received: transactions.length,
+          afterCursor: dropOperationsBeforeCursor({
+            operations: sorted,
+            order,
+            cursor: parsedCursor,
+          }),
+        };
+      };
+
+      let page = await fetchPage(
+        cursorCheckpoint === null ? {} : boundsFrom(cursorCheckpoint, true),
+      );
+      // Stall guard: only reachable at ≥ TRANSACTIONS_LIMIT_PER_QUERY transactions for this address
+      // in one checkpoint, and it trades that checkpoint's unseen remainder for pagination that keeps
+      // moving. See {@link dropOperationsBeforeCursor}.
+      if (
+        cursorCheckpoint !== null &&
+        page.afterCursor.length === 0 &&
+        page.received >= TRANSACTIONS_LIMIT_PER_QUERY
+      ) {
+        page = await fetchPage(boundsFrom(cursorCheckpoint, false));
+      }
+      const afterCursor = page.afterCursor;
       // One extra streamed call buys the real `blockHash` the other transports report; anything
       // unresolved keeps the mapper's `synthetic-<sequence>` fallback.
       const checkpointDigests = await fetchCheckpointDigestsGrpc(api, {
@@ -1903,13 +1954,7 @@ export const paymentInfo = async (
   sender: string,
   fakeTransaction: TransactionType,
 ) => {
-  const { unsigned: txb } = await createTransaction(
-    config,
-    sender,
-    fakeTransaction,
-    false,
-    undefined,
-  );
+  const { unsigned: txb } = await createTransaction(config, sender, fakeTransaction, false);
   return withTransport(config, {
     jsonRpc: async api => {
       try {

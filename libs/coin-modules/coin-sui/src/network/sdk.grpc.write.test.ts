@@ -463,3 +463,120 @@ describe("getListOperations on the gRPC transport", () => {
     expect(listCheckpoints).toHaveBeenCalledTimes(1);
   });
 });
+
+// Guards the invariant documented on `dropOperationsBeforeCursor`: a page boundary can fall inside a
+// checkpoint, so the server bound must keep that checkpoint in range.
+describe("getListOperations cursor bounds on the gRPC transport", () => {
+  const TS = 1700000000000;
+
+  // Transactions in one checkpoint share its `timestampMs`, so the cursor comparison falls through
+  // to the digest tie-break — which is what these fixtures exercise.
+  const txFrame = (digest: string, checkpoint: string, timestampMs: number = TS) => ({
+    transaction: {
+      digest,
+      checkpoint,
+      timestampMs: String(timestampMs),
+      effects: { status: { status: "success" }, gasUsed },
+    },
+  });
+
+  /** `pages` is consumed one `listTransactions` call at a time, so a retry sees the next page. */
+  const stubApi = (pages: unknown[][], cursorCheckpoint: bigint | undefined) => {
+    const requests: { startCheckpoint?: bigint; endCheckpoint?: bigint }[] = [];
+    let call = 0;
+    const listTransactions = jest.fn(
+      (req: { startCheckpoint?: bigint; endCheckpoint?: bigint }) => {
+        requests.push(req);
+        const frames = pages[Math.min(call++, pages.length - 1)];
+        return {
+          responses: (async function* () {
+            for (const frame of frames) yield frame;
+          })(),
+        };
+      },
+    );
+    const getTransaction = jest.fn(() => ({
+      response: { transaction: { checkpoint: cursorCheckpoint } },
+    }));
+    (createSuiGrpcClient as unknown as jest.Mock).mockReturnValue({
+      ledgerService: {
+        listTransactions,
+        getTransaction,
+        listCheckpoints: jest.fn(() => ({
+          responses: (async function* () {
+            /* digests resolve to the synthetic fallback; not under test here */
+          })(),
+        })),
+      },
+    });
+    return { listTransactions, requests };
+  };
+
+  const grpcConfig = {
+    node: {
+      url: "https://json-rpc.example.test",
+      graphqlUrl: "https://graphql.example.test/graphql",
+      grpcUrl: "https://grpc.example.test",
+    },
+    status: { type: "active" },
+    features: { transport: "grpc" },
+  } as unknown as SuiCoinConfig;
+
+  beforeEach(() => {
+    (createSuiGrpcClient as unknown as jest.Mock).mockReset();
+  });
+
+  it("keeps the cursor's own checkpoint in range when descending", async () => {
+    const { requests } = stubApi([[txFrame("tx-m", "12"), txFrame("tx-a", "12")]], 12n);
+
+    const page = await getListOperations(grpcConfig, ADDRESS, "desc", undefined, `${TS}:tx-m`);
+
+    // `endCheckpoint` is exclusive, so 13 is what keeps checkpoint 12 in range.
+    expect(requests[0].endCheckpoint).toBe(13n);
+    // The sibling that shared the cursor's checkpoint is returned rather than skipped.
+    expect(page.items.map(op => op.tx.hash)).toEqual(["tx-a"]);
+  });
+
+  it("keeps the cursor's own checkpoint in range when ascending", async () => {
+    const { requests } = stubApi([[txFrame("tx-a", "12"), txFrame("tx-m", "12")]], 12n);
+
+    const page = await getListOperations(grpcConfig, ADDRESS, "asc", undefined, `${TS}:tx-a`);
+
+    // `startCheckpoint` is inclusive, so 12 itself is the bound.
+    expect(requests[0].startCheckpoint).toBe(12n);
+    expect(page.items.map(op => op.tx.hash)).toEqual(["tx-m"]);
+  });
+
+  it("steps past the cursor's checkpoint when a full page of it is already seen", async () => {
+    // A whole page from checkpoint 12, every item at-or-before the cursor: nothing survives the
+    // drop, so a second request must move the bound rather than return an empty page.
+    const stalled = Array.from({ length: 50 }, (_, i) =>
+      txFrame(`tx-${String(i + 1).padStart(3, "0")}`, "12"),
+    );
+    const { requests } = stubApi([stalled, [txFrame("tx-older", "11", TS - 1000)]], 12n);
+
+    const page = await getListOperations(grpcConfig, ADDRESS, "desc", undefined, `${TS}:tx-000`);
+
+    expect(requests).toHaveLength(2);
+    expect(requests[0].endCheckpoint).toBe(13n);
+    expect(requests[1].endCheckpoint).toBe(12n);
+    expect(page.items.map(op => op.tx.hash)).toEqual(["tx-older"]);
+  });
+
+  it("does not retry when the page still yields unseen operations", async () => {
+    const { requests } = stubApi([[txFrame("tx-m", "12"), txFrame("tx-a", "12")]], 12n);
+
+    await getListOperations(grpcConfig, ADDRESS, "desc", undefined, `${TS}:tx-m`);
+
+    expect(requests).toHaveLength(1);
+  });
+
+  it("falls back to an unbounded page when the cursor digest is unknown", async () => {
+    const { requests } = stubApi([[txFrame("tx-a", "10")]], undefined);
+
+    await getListOperations(grpcConfig, ADDRESS, "desc", undefined, `${TS}:tx-missing`);
+
+    expect(requests[0]).not.toHaveProperty("endCheckpoint");
+    expect(requests[0]).not.toHaveProperty("startCheckpoint");
+  });
+});

@@ -19,6 +19,7 @@ import {
   getCheckpoint,
   getLastBlock,
   getDelegatedStakes,
+  getListOperations,
   getOperations,
   getStakingExtraByDigest,
   getValidators,
@@ -1120,6 +1121,86 @@ describe("getTransactionsWithCheckpointDigestsGraphQL", () => {
     expect(out).toHaveLength(1);
     expect(out[0].tx.digest).toBe("0xfinal");
     expect(out[0].checkpointDigest).toBe("0xcpDigest");
+  });
+});
+
+// Same invariant as the gRPC arm, documented on `dropOperationsBeforeCursor`: a page boundary can
+// fall inside a checkpoint, so the server filter must keep that checkpoint in range.
+describe("getListOperations cursor bounds on the GraphQL transport", () => {
+  const TS_ISO = "2026-05-19T00:00:00.000Z";
+  const TS = Date.parse(TS_ISO);
+
+  const node = (digest: string, sequenceNumber: number, timestamp: string = TS_ISO) => ({
+    digest,
+    effects: {
+      status: "SUCCESS",
+      timestamp,
+      checkpoint: { sequenceNumber, digest: `cp-${sequenceNumber}` },
+    },
+    transactionJson: { sender: addr("11") },
+  });
+
+  /** First query resolves the cursor digest to a checkpoint; the rest serve pages in order. */
+  const stub = (cursorCheckpoint: number | null, pages: unknown[][]) => {
+    const filters: ({ beforeCheckpoint?: number; afterCheckpoint?: number } | undefined)[] = [];
+    let page = 0;
+    const query = jest.fn(({ variables }: { variables?: Record<string, unknown> }) => {
+      if (variables && "digest" in variables) {
+        return Promise.resolve({
+          data: {
+            transaction:
+              cursorCheckpoint === null
+                ? null
+                : { effects: { checkpoint: { sequenceNumber: cursorCheckpoint } } },
+          },
+        });
+      }
+      filters.push({
+        ...(variables?.beforeCheckpoint !== undefined && {
+          beforeCheckpoint: variables.beforeCheckpoint as number,
+        }),
+        ...(variables?.afterCheckpoint !== undefined && {
+          afterCheckpoint: variables.afterCheckpoint as number,
+        }),
+      });
+      const nodes = pages[Math.min(page++, pages.length - 1)];
+      return Promise.resolve({ data: { transactions: { nodes } } });
+    });
+    mockNext({ query });
+    return { filters };
+  };
+
+  it("keeps the cursor's own checkpoint in range when descending", async () => {
+    const { filters } = stub(12, [[node("tx-a", 12), node("tx-m", 12)]]);
+
+    const page = await getListOperations(config, addr("11"), "desc", undefined, `${TS}:tx-m`);
+
+    // `beforeCheckpoint` is the exclusive upper bound, so 13 keeps checkpoint 12 in range.
+    expect(filters[0]?.beforeCheckpoint).toBe(13);
+    expect(page.items.map(op => op.tx.hash)).toEqual(["tx-a"]);
+  });
+
+  it("keeps the cursor's own checkpoint in range when ascending", async () => {
+    const { filters } = stub(12, [[node("tx-a", 12), node("tx-m", 12)]]);
+
+    const page = await getListOperations(config, addr("11"), "asc", undefined, `${TS}:tx-a`);
+
+    expect(filters[0]?.afterCheckpoint).toBe(11);
+    expect(page.items.map(op => op.tx.hash)).toEqual(["tx-m"]);
+  });
+
+  it("steps past the cursor's checkpoint when a full page of it is already seen", async () => {
+    const stalled = Array.from({ length: 50 }, (_, i) =>
+      node(`tx-${String(i + 1).padStart(3, "0")}`, 12),
+    );
+    const { filters } = stub(12, [stalled, [node("tx-older", 11, "2026-05-18T00:00:00.000Z")]]);
+
+    const page = await getListOperations(config, addr("11"), "desc", undefined, `${TS}:tx-000`);
+
+    expect(filters).toHaveLength(2);
+    expect(filters[0]?.beforeCheckpoint).toBe(13);
+    expect(filters[1]?.beforeCheckpoint).toBe(12);
+    expect(page.items.map(op => op.tx.hash)).toEqual(["tx-older"]);
   });
 });
 
