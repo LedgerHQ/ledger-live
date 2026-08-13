@@ -204,8 +204,7 @@ export default class PortfolioPage {
         await tapById(this.cryptoAddressItemId(currencyId));
       }
     } else {
-      await scrollToId(this.assetItemId(currencyName), this.accountsListView);
-      await scrollByPixels(this.accountsListView, 100, "down");
+      await revealForTap(this.assetItemId(currencyName), { container: this.accountsListView });
       await tapById(this.assetItemId(currencyName));
     }
   }
@@ -228,7 +227,7 @@ export default class PortfolioPage {
       jestExpect(assetsCount).toBeLessThanOrEqual(5);
       await detoxExpect(getElementById(this.showAllAssetsButton)).toBeVisible();
       await tapById(this.showAllAssetsButton);
-      jestExpect(await countElementsById(this.assetItemRegExp)).toBeGreaterThan(5);
+      jestExpect(await countElements(getElementsById(this.assetItemRegExp))).toBeGreaterThan(5);
     }
   }
 
@@ -242,7 +241,9 @@ export default class PortfolioPage {
       await scrollToId(this.showAllAccountsButton, this.accountsListView, 400);
       jestExpect(await countElementsById(app.common.accountItemNameRegExp)).toBeLessThanOrEqual(5);
       await this.tapShowAllAccountsButton();
-      jestExpect(await countElementsById(app.common.accountItemNameRegExp)).toBeGreaterThan(5);
+      jestExpect(
+        await countElements(getElementsById(app.common.accountItemNameRegExp)),
+      ).toBeGreaterThan(5);
       await this.tapAddNewOrExistingAccountButton();
       await app.addAccount.importWithYourLedger();
     }
@@ -282,7 +283,7 @@ export default class PortfolioPage {
     await scrollToId(this.seeAllTransactionsButton, this.accountsListView, 2000, "down");
     await detoxExpect(getElementById(this.seeAllTransactionsButton)).toBeVisible();
     await tapById(this.seeAllTransactionsButton);
-    jestExpect(await countElementsById(this.operationRowDate)).toBeGreaterThan(3);
+    jestExpect(await countElements(getElementsById(this.operationRowDate))).toBeGreaterThan(3);
   }
 
   @Step("Click on selected last operation")
@@ -511,9 +512,7 @@ export default class PortfolioPage {
   async tapFirstAssetItemW40(): Promise<string> {
     const testId = await getIdByRegexp(this.assetItemRegExp, 0);
     const currencyName = testId.replace("assetItem-", "");
-    // The transparent nav header floats over the list, and Android reports the row underneath it as
-    // visible, so without this the tap is swallowed by the header.
-    await scrollByPixels(this.emptyPortfolioListId, 200, "up");
+    await revealForTap(testId, { container: this.emptyPortfolioListId, direction: "up" });
     await tapById(testId);
     return currencyName;
   }
