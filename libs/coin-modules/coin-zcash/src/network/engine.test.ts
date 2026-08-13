@@ -17,6 +17,7 @@ const mockBuildIronwoodTransaction = jest.fn();
 const mockFinalizeTransaction = jest.fn();
 const mockBroadcastTransaction = jest.fn();
 const mockOrchardAddressFromUfvk = jest.fn<Promise<string>, [string]>();
+const mockTransactionDetails = jest.fn();
 
 // Mutable module object so individual tests can delete a PCZT method to
 // exercise the `getPcztModule` capability guard. `__esModule: true` makes the
@@ -32,6 +33,7 @@ const mockNativeModule: Record<string, unknown> = {
   finalizeTransaction: (...args: unknown[]) => mockFinalizeTransaction(...args),
   broadcastTransaction: (...args: unknown[]) => mockBroadcastTransaction(...args),
   orchardAddressFromUfvk: (...args: unknown[]) => mockOrchardAddressFromUfvk(...(args as [string])),
+  transactionDetails: (...args: unknown[]) => mockTransactionDetails(...args),
 };
 
 jest.mock("@ledgerhq/zcash-utils", () => mockNativeModule);
@@ -89,6 +91,7 @@ import {
   buildIronwoodTransactionJob,
   finalizeTransactionJob,
   broadcastTransactionJob,
+  transactionDetailsJob,
   deriveShieldedAddress,
   type StartSyncJobArgs,
 } from "./engine";
@@ -96,6 +99,7 @@ import type {
   BuildTransactionArgs,
   BuildIronwoodTransactionArgs,
   FinalizeTransactionArgs,
+  TransactionDetailsRequest,
 } from "./types";
 
 // ---------------------------------------------------------------------------
@@ -933,6 +937,81 @@ describe("broadcastTransactionJob", () => {
   });
 });
 
+// ── transactionDetailsJob ──────────────────────────────────────────────
+
+describe("transactionDetailsJob", () => {
+  const requests: TransactionDetailsRequest[] = [
+    {
+      txid: "aa".repeat(32),
+      height: 2_000_000,
+      prevouts: [{ txid: "bb".repeat(32), index: 0, value: "100000" }],
+    },
+    {
+      txid: "cc".repeat(32),
+      height: 2_000_001,
+      prevouts: [],
+    },
+  ];
+
+  it("delegates to native.transactionDetails with grpcUrl, requests, network and ufvk", async () => {
+    mockTransactionDetails.mockResolvedValue([]);
+
+    await transactionDetailsJob("https://grpc.example.com", requests, "mainnet", "uview1test");
+
+    expect(mockTransactionDetails).toHaveBeenCalledWith(
+      "https://grpc.example.com",
+      requests,
+      "mainnet",
+      "uview1test",
+    );
+  });
+
+  it("forwards an undefined ufvk when none is provided", async () => {
+    mockTransactionDetails.mockResolvedValue([]);
+
+    await transactionDetailsJob("https://grpc.example.com", requests, "mainnet");
+
+    expect(mockTransactionDetails).toHaveBeenCalledWith(
+      "https://grpc.example.com",
+      requests,
+      "mainnet",
+      undefined,
+    );
+  });
+
+  it("keeps an established fee and coerces a missing fee to null", async () => {
+    // First result carries a priced fee; second could not be priced (undefined)
+    // -> must surface as an explicit null rather than masquerading as zero.
+    mockTransactionDetails.mockResolvedValue([
+      { txid: "aa".repeat(32), fee: "1000", payees: ["u1payee"] },
+      { txid: "cc".repeat(32), fee: undefined, payees: [] },
+    ]);
+
+    const results = await transactionDetailsJob("url", requests, "mainnet", "uview1test");
+
+    expect(results).toEqual([
+      { txid: "aa".repeat(32), fee: "1000", payees: ["u1payee"] },
+      { txid: "cc".repeat(32), fee: null, payees: [] },
+    ]);
+  });
+
+  it("coerces a null fee to null", async () => {
+    mockTransactionDetails.mockResolvedValue([{ txid: "aa".repeat(32), fee: null, payees: [] }]);
+
+    const results = await transactionDetailsJob("url", requests, "mainnet");
+
+    expect(results[0].fee).toBeNull();
+  });
+
+  it("propagates errors from native.transactionDetails", async () => {
+    mockTransactionDetails.mockRejectedValue(new Error("gRPC unavailable"));
+
+    await expect(transactionDetailsJob("url", requests, "mainnet")).rejects.toThrow(
+      "gRPC unavailable",
+    );
+  });
+});
+
 describe("getPcztModule guard (via jobs)", () => {
   it("throws a descriptive error listing the missing PCZT method(s)", async () => {
     const original = mockNativeModule.finalizeTransaction;
@@ -990,6 +1069,39 @@ describe("mapNativeTx (Ironwood notes via startSyncJob)", () => {
     expect(iwOut.memo).toBe("iw-memo");
     expect(iwOut.transfer_type).toBe("incoming");
     expect(iwOut.nullifier).toBe("aa".repeat(32));
+  });
+
+  it("includes the recipient field on a shielded note when present", async () => {
+    mockGetChainTip.mockResolvedValue(200);
+    const tx = makeNativeTx({
+      orchardNotes: [
+        {
+          amount: 42_000n,
+          memo: "with-recipient",
+          transferType: "outgoing",
+          recipient: "ee".repeat(43),
+        },
+      ],
+      saplingNotes: [],
+    });
+    const stream = makeMockStream([tx]);
+    mockStartSync.mockResolvedValue(stream);
+
+    const onChunk = jest.fn();
+    await startSyncJob(
+      {
+        grpcUrl: "https://grpc.example.com",
+        network: "main",
+        viewingKey: "vk",
+        startBlockHeight: 100,
+        maxBatchSize: 500,
+      },
+      onChunk,
+      { isCancelled: () => false },
+    );
+
+    const orchardOut = onChunk.mock.calls[0][0].transactions[0].decryptedData.orchard_outputs[0];
+    expect(orchardOut.recipient).toBe("ee".repeat(43));
   });
 
   it("omits ironwood_outputs key when ironwoodNotes is absent or empty", async () => {

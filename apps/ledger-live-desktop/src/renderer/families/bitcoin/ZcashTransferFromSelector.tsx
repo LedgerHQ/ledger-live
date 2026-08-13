@@ -10,12 +10,14 @@ import type { Transaction as ZcashTransaction } from "@ledgerhq/coin-zcash/types
 import {
   getPrivateBalance,
   getTransparentBalance,
+  hasRecentlyShieldedFunds,
 } from "@ledgerhq/coin-zcash/logic/account/balance";
 import { useSelector } from "LLD/hooks/redux";
 import { localeSelector } from "~/renderer/reducers/settings";
 import Box from "~/renderer/components/Box/Box";
 import Text from "~/renderer/components/Text";
 import Label from "~/renderer/components/Label";
+import Alert from "~/renderer/components/Alert";
 import Discreet, { useDiscreetMode } from "~/renderer/components/Discreet";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
@@ -105,6 +107,10 @@ const ZcashTransferFromSelector = ({ account, transaction, onChange }: Props) =>
   // (not balance − private, which diverges across flag/module provenance).
   const privateBalance = getPrivateBalance(privateInfo);
   const transparentBalance = getTransparentBalance(zcashAccount.bitcoinResources?.utxos);
+  // Only warn while a freshly shielded note may still be maturing (until its
+  // transaction has enough confirmations); once everything is spendable the
+  // private balance no longer trails the total.
+  const showSpendableWarning = sender === "private" && hasRecentlyShieldedFunds(privateInfo);
 
   const formatConfig = { showCode: true, discreet, locale };
   const transparentLabel = formatCurrencyUnit(unit, transparentBalance, formatConfig);
@@ -165,6 +171,11 @@ const ZcashTransferFromSelector = ({ account, transaction, onChange }: Props) =>
           ) : null}
         </Card>
       </Box>
+      {showSpendableWarning ? (
+        <Alert type="warning" mt={3} data-testid="zcash-private-spendable-warning">
+          <Trans i18nKey="zcash.shielded.send.transferFrom.spendableWarning" />
+        </Alert>
+      ) : null}
     </Box>
   );
 };
