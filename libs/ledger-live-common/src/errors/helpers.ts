@@ -1,12 +1,14 @@
-interface To {
-  name?: string;
-  message?: string;
-  stack?: string;
-}
+type To =
+  | {
+      name?: string;
+      message?: string;
+      stack?: string;
+    }
+  | [];
 
 // https://www.npmjs.com/package/destroy-circular
 function destroyCircular(from: To, seen: Array<To>): To {
-  const to: To = {};
+  const to: To = Array.isArray(from) ? [] : {};
   seen.push(from);
   for (const key of Object.keys(from)) {
     const value = from[key];
@@ -23,24 +25,39 @@ function destroyCircular(from: To, seen: Array<To>): To {
     }
     to[key] = "[Circular]";
   }
-  if (typeof from.name === "string") {
-    to.name = from.name;
-  }
-  if (typeof from.message === "string") {
-    to.message = from.message;
-  }
-  if (typeof from.stack === "string") {
-    to.stack = from.stack;
+  if (!Array.isArray(from) && !Array.isArray(to)) {
+    if (typeof from.name === "string") {
+      to.name = from.name;
+    }
+    if (typeof from.message === "string") {
+      to.message = from.message;
+    }
+    if (typeof from.stack === "string") {
+      to.stack = from.stack;
+    }
   }
   return to;
 }
 
+/**
+ * Extract every property of the error passed in parameter
+ * It does not include default properties: cause, message and name
+ * And also null, undefined or Circular error (error linked to itself)
+ *
+ * @param error the error to parse
+ *
+ * @return A record of attributes mapped to their value
+ */
 export function extractErrorContext(error: Error): Record<string, unknown> {
   const sanitizedError = destroyCircular(error, []);
   const context: Record<string, unknown> = {};
 
   Object.keys(sanitizedError)
     .filter(key => {
+      if (key === "message" || key === "name" || key === "stack") {
+        return false;
+      }
+
       const value = sanitizedError[key];
       return value !== null && value !== undefined && value !== "[Circular]";
     })

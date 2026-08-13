@@ -45,17 +45,15 @@ class ExampleError extends Error {
 }
 
 describe("extractErrorContext", () => {
-  it("should not include Circular reference", () => {
+  it("should not include any filtered properties: defaults, null, undefined and Circular reference", () => {
     const defaultMessage = "Example circular error, should not be used for production";
 
     const error = new CircularError(defaultMessage);
     error.cause = error;
+    error["nullAttribute"] = null;
+    error["undefinedAttribute"] = undefined;
 
-    expect(extractErrorContext(error)).toEqual({
-      message: defaultMessage,
-      name: "CircularError",
-      stack: expect.any(String),
-    });
+    expect(extractErrorContext(error)).toEqual({});
   });
 
   it("should include additional attributes of error", () => {
@@ -66,18 +64,13 @@ describe("extractErrorContext", () => {
       logs: ["instruction 1", "instruction 2"],
       subContext: { id: "1" },
       flagged: true,
+      error: new Error("A previous error in the stack"),
     });
 
     expect(extractErrorContext(error)).toEqual({
-      name: "ExampleError",
-      message,
-      stack: expect.any(String),
       id: "0",
       count: 1,
-      logs: {
-        "0": "instruction 1",
-        "1": "instruction 2",
-      },
+      logs: ["instruction 1", "instruction 2"],
       subContext: {
         id: "1",
       },
