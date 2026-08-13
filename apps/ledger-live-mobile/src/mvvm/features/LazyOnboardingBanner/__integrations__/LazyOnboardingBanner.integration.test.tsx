@@ -101,6 +101,10 @@ describe("LazyOnboardingBanner", () => {
 
     await user.press(screen.getByTestId("lazy-onboarding-banner"));
 
+    expect(track).toHaveBeenCalledWith("button_clicked", {
+      button: "Product tour lazy onboarding",
+      page: "Wallet",
+    });
     expect(Linking.openURL).toHaveBeenCalledTimes(1);
     const openedUrl = new URL(jest.mocked(Linking.openURL).mock.calls[0][0]);
     expect(openedUrl.searchParams.get("product")).toBe("flex");
@@ -110,10 +114,31 @@ describe("LazyOnboardingBanner", () => {
     expect(openedUrl.searchParams.get("utm_content")).toBe("lazy_onboarding_banner");
   });
 
+  it("should track dismiss when the banner close button is pressed", async () => {
+    const { user } = renderBanner();
+
+    await user.press(screen.getByTestId("media-banner-close-button"));
+
+    expect(track).toHaveBeenCalledWith("button_clicked", {
+      button: "Dismiss",
+      page: "Wallet",
+      banner: "Lazy onboarding banner",
+    });
+    expect(screen.queryByText("Why millions choose Ledger?")).toBeNull();
+  });
+
   it("should open the tour instead of the shop in feature_intro mode", async () => {
     const { user } = renderBanner({ mode: "feature_intro", withTourMount: true });
     await openTourFromBanner(user);
     expect(Linking.openURL).not.toHaveBeenCalled();
+    expect(track).toHaveBeenCalledWith(
+      "lazy_onboarding_tour_card",
+      expect.objectContaining({
+        page: LAZY_ONBOARDING_TOUR_PAGE,
+        card: 1,
+        mode: "feature_intro",
+      }),
+    );
   });
 
   it("should remain hidden for the rest of the session after it is closed", async () => {

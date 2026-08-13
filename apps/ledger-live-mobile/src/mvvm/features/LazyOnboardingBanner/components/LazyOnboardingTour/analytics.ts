@@ -10,6 +10,8 @@ export type LazyOnboardingTourSharedAnalyticsProps = Readonly<{
   mode: "feature_intro";
 }>;
 
+const LAZY_ONBOARDING_TOUR_CARD_EVENT = "lazy_onboarding_tour_card";
+
 export const trackLazyOnboardingTourOpened = (
   sharedProps: LazyOnboardingTourSharedAnalyticsProps,
   hasTrackedTourOpen: boolean,
@@ -18,9 +20,9 @@ export const trackLazyOnboardingTourOpened = (
     return false;
   }
 
-  screen(LAZY_ONBOARDING_TOUR_PAGE, undefined, {
-    name: "lazy onboarding tour",
-    step: 0,
+  track(LAZY_ONBOARDING_TOUR_CARD_EVENT, {
+    page: LAZY_ONBOARDING_TOUR_PAGE,
+    card: 1,
     ...sharedProps,
   });
 
@@ -36,9 +38,9 @@ export const trackLazyOnboardingTourStepViewed = (
     return lastTrackedStepIndex;
   }
 
-  screen(LAZY_ONBOARDING_TOUR_PAGE, undefined, {
-    name: "lazy onboarding tour",
-    step,
+  track(LAZY_ONBOARDING_TOUR_CARD_EVENT, {
+    page: LAZY_ONBOARDING_TOUR_PAGE,
+    card: step + 1,
     ...sharedProps,
   });
 
