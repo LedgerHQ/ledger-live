@@ -868,6 +868,38 @@
     "unlockLiquidity": "在现实生活中使用加密货币",
     "exploreCryptoCardsDescription": "探索我们的加密货币卡，找到最适合您的那一款"
   },
+  "payTab": {
+    "featureTour": {
+      "title": "Pay and get paid",
+      "description": "Stablecoin closes the gap between crypto and real life spending",
+      "cta": "Got it",
+      "rows": {
+        "global": {
+          "title": "Pay and get paid globally",
+          "description": "Benefits from low networks fees"
+        },
+        "volatility": {
+          "title": "Minimal volatility",
+          "description": "Stablecoin are based on fiat"
+        },
+        "card": {
+          "title": "Spend with a card and get 1% cashback",
+          "description": "Pay in USDC, USDT, BTC, ETH and more"
+        }
+      }
+    },
+    "balance": {
+      "emptyTitle": "Pay and get paid",
+      "emptyDescription": "Start by depositing stablecoin to your wallet",
+      "filter": {
+        "allStablecoins": "All stablecoins",
+        "dialogTitle": "Filter balance",
+        "dialogDescription": "Use stablecoin to pay worldwide with low fees and minimal volatility.",
+        "dialogBanner": "Manage all other assets in your home",
+        "confirm": "Confirm"
+      }
+    }
+  },
   "lend": {
     "title": "借出加密货币",
     "tabs": {
@@ -2476,7 +2508,9 @@
     "addressMatched": "已匹配地址",
     "addressNotFound": "未找到地址",
     "alreadyUsed": "已使用 · {{date}}",
+    "addressBookUnsupported": "暂不支持 {{family}}",
     "recentSendWillAppear": "您最近的发送会显示在此处",
+    "contactsWillAppear": "联系人将在此处显示",
     "securityInfo": {
       "title": "如何安全发送？",
       "items": {
@@ -2494,6 +2528,10 @@
         "description": "最近记录允许您即时查看自己是否已向特定地址发送过。这可以防止潜在的复制/粘贴错误或黑客攻击。您的历史记录中包含您最近 12 个使用 Ledger Wallet 发送加密货币的地址。",
         "cta": "知道了"
       }
+    },
+    "addContact": {
+      "newContact": "添加新联系人",
+      "existingContact": "添加到现有联系人"
     },
     "relativeDate": {
       "justNow": "刚刚",
@@ -7001,6 +7039,9 @@
       "title": "抱歉，资金不足",
       "description": "请确保该账户资金充足。"
     },
+    "NotEnoughTransferAmount": {
+      "title": "向神经元质押最少需要 1 ICP。"
+    },
     "UnstakeNotEnoughStakedBalanceLeft": {
       "title": "如果您解除质押的数额超过 {{maxAmount}}，您 {{totalAmount}} 的质押总额将会全部解除质押",
       "description": "如果您解除质押的数额超过 {{maxAmount}}，您 {{totalAmount}} 的质押总额将会全部解除质押"
@@ -7434,6 +7475,9 @@
     },
     "FeeTooHigh": {
       "title": "网络费用超过数额的10%"
+    },
+    "RecipientIsNewAccount": {
+      "title": "This address has never received funds, activating it costs a higher network fee"
     },
     "DustLimit": {
       "title": "金额低于小额资产下限"
@@ -8588,23 +8632,14 @@
   },
   "lnsUpsell": {
     "opted_in": {
-      "title": "内存有限，体验受限",
-      "description": "将您的 Ledger Nano S 升级到 Ledger Flex 等新款 Ledger 设备，即可享受<0>省 {{discount}}% 专属折扣</>，解锁更多内存、全新功能和最新增强安全保护。",
+      "title": "查看更多。更安全地签署",
+      "description": "升级即享 {{discount}}% 折扣。",
       "cta": "升级 Ledger 设备"
     },
     "opted_out": {
-      "description": "Ledger Nano S 内存有限，影响您访问最新功能、区块链变更和增强安全保护。为保证长期使用体验，请升级到新款 Ledger 设备。",
-      "cta": "了解更多"
-    }
-  },
-  "lnsUpsellMediaBanner": {
-    "opted_in": {
-      "title": "查看更多。更安全地签署",
-      "description": "升级立享八折优惠。"
-    },
-    "opted_out": {
       "title": "更加安全。更强掌控",
-      "description": "详细了解安全功能。"
+      "description": "详细了解安全功能。",
+      "cta": "了解更多"
     }
   },
   "largeScreenUpsellModal": {
@@ -8684,6 +8719,10 @@
     "selectAsset": "选择资产",
     "selectNetwork": "选择网络",
     "selectAccount": "选择账户",
+    "selectAccountPerpsTitle": "选择 Hyperliquid 账户",
+    "selectAccountPerpsDescription": "若要为您的永续合约 (Perps) 提供资金，您需要一个 Hyperliquid 账户。添加一个账户以继续。",
+    "selectDepositCurrencyTitle": "选择要存入的资产",
+    "selectDepositCurrencyDescription": "任何支持的资产均可。必要时，该资产将自动互换。",
     "accountCount_one": "{{count}} 个账户",
     "accountCount_other": "{{count}} 个账户",
     "accountsAdded": {
@@ -8897,7 +8936,8 @@
       "transparentBalance": "公开余额",
       "transparentBalanceTooltip": "公开可见的余额",
       "privateBalance": "私密余额",
-      "privateBalanceTooltip": "对外隐藏的余额"
+      "privateBalanceTooltip": "对外隐藏的余额",
+      "privateBalanceWarning": "私密余额不包括 Sapling 和 Orchard 屏蔽资金"
     },
     "shielded": {
       "send": {
@@ -8917,7 +8957,8 @@
             "title": "私密余额",
             "subtitle": "已屏蔽",
             "unavailable": "私密余额不可用"
-          }
+          },
+          "spendableWarning": "可用余额可能低于总余额。最近转入屏蔽池的资金需经过区块确认和完整扫描（约 15 分钟）后方可使用。"
         },
         "memo": {
           "label": "Memo（可选）",
@@ -8937,6 +8978,12 @@
             "message": "余额可能稍微有些滞后",
             "cta": "同步余额"
           }
+        },
+        "selfTransfer": {
+          "toPrivate": "Self transfer to private balance",
+          "toPublic": "Self transfer to public balance",
+          "unavailable": "Your private address is not available yet. Export your view key to enable this.",
+          "privacyWarning": "This links your shielded funds to your account's public address, which anyone can see. Sending to an external private address keeps them unlinked."
         }
       },
       "state": {
@@ -9392,10 +9439,10 @@
       "cancel": "取消"
     },
     "editSignerMismatch": {
-      "title": "Use the same Ledger device you used to add this contact",
-      "description": "The connected device isn't a match.",
-      "connectDifferentDevice": "Connect a different device",
-      "cancel": "Cancel"
+      "title": "需使用添加此联系人时的同一 Ledger 设备",
+      "description": "已连接的设备不一致。",
+      "connectDifferentDevice": "连接其他设备",
+      "cancel": "取消"
     },
     "ledgerSyncIntroduction": {
       "description": "您的联系人信息通过您的 Ledger 进行端到端加密，并在您的设备之间进行同步，只有您自己可以解锁。",
@@ -9677,5 +9724,30 @@
       }
     },
     "disclaimer": "此数据仅供参考，不构成任何投资建议。不可用于税务目的。"
+  },
+  "internetComputer": {
+    "memoField": {
+      "increaseStake": "此交易将增加一个现有神经元的质押量，请在上面的数额字段中输入想要质押的数额。",
+      "createNeuron": "此交易将创建一个质押了 ICP 的神经元，请在上面的数额字段中输入想要质押的数额。",
+      "tooltip": "Internet Computer 用此来识别交易，将 ICP 质押到神经元。"
+    },
+    "stakeBanner": {
+      "stakeICP": {
+        "title": "质押 ICP",
+        "description": "质押 ICP 并通过参与其治理获得奖励。",
+        "cta": "质押 ICP"
+      }
+    },
+    "headerManageActions": {
+      "manageNeurons": {
+        "title": "管理神经元"
+      }
+    },
+    "summaryFooter": {
+      "stakedBalance": "已质押余额",
+      "stakedBalanceTooltip": "当前在神经元中质押的 ICP 代币总额。质押的 ICP 可获得投票奖励，且可用于治理。",
+      "totalMaturity": "总成熟度",
+      "totalMaturityTooltip": "累积的总质押奖励，包括已质押成熟度和流动成熟度。这些奖励可以再质押或以流动 ICP 的形式领取。"
+    }
   }
 }
