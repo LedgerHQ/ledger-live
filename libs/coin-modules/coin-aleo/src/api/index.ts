@@ -17,15 +17,8 @@ import type {
 } from "@ledgerhq/coin-module-framework/api/index";
 import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
-import {
-  estimateFees,
-  getBalance,
-  lastBlock,
-  listOperations,
-  listOperationsFramework,
-  resolvePrivateContext,
-  validateAddress,
-} from "../logic";
+import invariant from "invariant";
+import { estimateFees, getBalance, lastBlock, listOperations, validateAddress } from "../logic";
 import { getTransactionType } from "../logic/utils";
 import type { AleoContext, AleoCoinConfig, AleoTransactionIntentData } from "../types";
 
@@ -85,22 +78,18 @@ export function createApi(
       const config = await context.config();
       return lastBlock(config);
     },
+    // Aleo history is only complete with both sides merged, and A4's operation model is append-only
+    // — a public-only page could never be enriched afterwards. So the pair is required rather than
+    // optional, and a caller that omits it is told before any network call.
     listOperations: async (context: AleoContext, address, options) => {
-      const privateContext = resolvePrivateContext(context, address);
+      const { provableId, viewKey } = context;
+      invariant(
+        provableId && viewKey,
+        `aleo: listOperations requires provableId and viewKey on the context for ${address}`,
+      );
+
       const config = await context.config(currencyId);
-
-      if (!privateContext) {
-        const { operations, nextCursor } = await listOperations({
-          config,
-          currencyId,
-          address,
-          options,
-          mode: "coin-framework",
-        });
-        return { items: operations, next: nextCursor ?? undefined };
-      }
-
-      return listOperationsFramework({ config, address, options, ...privateContext });
+      return listOperations({ config, address, options, provableId, viewKey });
     },
     getBlock(_context, _height): Promise<Block> {
       throw new Error("getBlock is not supported");

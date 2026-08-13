@@ -5,7 +5,8 @@ import { log } from "@ledgerhq/logs";
 import { SyncConfig, DerivationMode } from "@ledgerhq/types-live";
 import { firstValueFrom, toArray, type Observable } from "rxjs";
 import { SYNC_TYPE_TRANSPARENT, SYNC_TYPE_SHIELDED } from "@ledgerhq/types-live";
-import { getBalance, lastBlock, listOperations } from "../logic";
+import { getBalance, lastBlock } from "../logic";
+import { listOperations } from "./listOperations";
 import {
   getMockedCurrency,
   getMockedTokenCurrency,
@@ -43,6 +44,7 @@ jest.mock("@ledgerhq/ledger-wallet-framework/account", () => ({
   getSyncHash: jest.fn(),
 }));
 jest.mock("../logic");
+jest.mock("./listOperations");
 jest.mock("../network/utils");
 jest.mock("../network/api");
 jest.mock("../logic/listPrivateOperations");
@@ -252,7 +254,6 @@ describe("sync.ts", () => {
         currencyId: mockCurrency.id,
         address: mockAccount.freshAddress,
         ledgerAccountId: expect.any(String),
-        mode: "bridge",
         options: {
           minHeight: 0,
           order: "asc",
@@ -293,7 +294,6 @@ describe("sync.ts", () => {
         currencyId: mockCurrency.id,
         address: mockAccount.freshAddress,
         ledgerAccountId: mockInitialAccount.id,
-        mode: "bridge",
         options: {
           minHeight: 0,
           order: "asc",
@@ -1257,7 +1257,6 @@ describe("sync.ts", () => {
       const accountWithOps = { ...mockInitialAccount, operations: [oldPublicOp] };
 
       mockListOperations.mockResolvedValueOnce({
-        // @ts-expect-error - bridge operation type is expected in this test
         operations: [newPublicOp],
         tokenOperations: [],
         calTokens: new Map(),

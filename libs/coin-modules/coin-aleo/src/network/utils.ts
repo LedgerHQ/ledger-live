@@ -19,6 +19,7 @@ import type {
   AleoOperation,
   AleoTransition,
   AleoCoinConfig,
+  AleoRecordScannerStatusResponse,
 } from "../types";
 import {
   isAleoAddressPlaintext,
@@ -34,24 +35,6 @@ function limitTransactions(
   limit: number,
 ): AleoPublicTransaction[] {
   return transactions.length > limit ? transactions.slice(0, limit) : transactions;
-}
-
-/**
- * The explorer pages per transition, so a multi-transition transaction arrives as several rows
- * sharing one transaction_id. Keeping the first occurrence normalises the result to tx granularity,
- * which is what lets the cursor stay monotonic. `seen` is caller-owned so it dedupes across pages.
- */
-function dedupeByTransactionId(
-  transactions: AleoPublicTransaction[],
-  seen: Set<string>,
-): AleoPublicTransaction[] {
-  return transactions.filter(tx => {
-    const transactionId = tx.transaction_id.trim();
-    if (seen.has(transactionId)) return false;
-
-    seen.add(transactionId);
-    return true;
-  });
 }
 
 function getLastTransactionCursor(transactions: AleoPublicTransaction[]): string | null {
@@ -86,7 +69,6 @@ export async function fetchAccountTransactionsFromHeight({
   nextCursor: string | null;
 }> {
   const transactions: AleoPublicTransaction[] = [];
-  const seenTransactionIds = new Set<string>();
   let currentCursor = cursor ?? null;
   let hasMorePages = true;
 
@@ -115,7 +97,7 @@ export async function fetchAccountTransactionsFromHeight({
 
       return hasValidBlockNumber && !isInvalidTransition;
     });
-    transactions.push(...dedupeByTransactionId(recentTxs, seenTransactionIds));
+    transactions.push(...recentTxs);
 
     // stop if DESC order hit the min height boundary
     if (order === "desc" && hasReachedMinHeight(page.transactions, minBlockHeight)) {
@@ -215,6 +197,25 @@ export async function fetchAllOwnedRecords({
 }
 
 /**
+ * @throws {AleoApiConfigurationResetError} on 422 — the uuid is no longer valid and the account
+ * must re-register with the scanner.
+ */
+export async function fetchRecordScannerStatus(
+  config: AleoCoinConfig,
+  uuid: string,
+): Promise<AleoRecordScannerStatusResponse> {
+  try {
+    return await apiClient.getRecordScannerStatus(config, uuid);
+  } catch (error) {
+    const err = error as { name?: string; status?: number } | null | undefined;
+    if (err?.name === "LedgerAPI4xx" && err?.status === 422) {
+      throw new AleoApiConfigurationResetError();
+    }
+    throw error;
+  }
+}
+
+/**
  * Manages access to the Provable API by handling authentication and account registration.
  *
  * This function ensures valid API credentials are available and up-to-date. It handles:
@@ -265,15 +266,7 @@ export async function accessProvableApi({
     uuid = accountUuid;
   }
 
-  try {
-    status = await apiClient.getRecordScannerStatus(config, uuid);
-  } catch (error) {
-    const err = error as { name?: string; status?: number } | null | undefined;
-    if (err?.name === "LedgerAPI4xx" && err?.status === 422) {
-      throw new AleoApiConfigurationResetError();
-    }
-    throw error;
-  }
+  status = await fetchRecordScannerStatus(config, uuid);
 
   if (status) {
     synced = status.synced;

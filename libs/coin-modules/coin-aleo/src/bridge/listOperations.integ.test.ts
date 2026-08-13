@@ -10,7 +10,7 @@ import {
 import { setupCalStore } from "../__tests__/helpers/cal";
 import { listOperations } from "./listOperations";
 
-describe("listOperations (bridge mode)", () => {
+describe("bridge/listOperations", () => {
   const config = getTestnetIntegConfig();
 
   beforeAll(() => {
@@ -24,7 +24,6 @@ describe("listOperations (bridge mode)", () => {
       currencyId: "aleo_testnet",
       address: testnetAddress,
       ledgerAccountId: testnetLedgerAccountId,
-      mode: "bridge",
       options: { minHeight: 0, limit: 10, order: "asc" },
     });
 
@@ -52,7 +51,6 @@ describe("listOperations (bridge mode)", () => {
         currencyId: "aleo_testnet",
         address: testnetAddress,
         ledgerAccountId: testnetLedgerAccountId,
-        mode: "bridge",
         options: { ...options, limit: 5 },
       }),
       listOperations({
@@ -60,7 +58,6 @@ describe("listOperations (bridge mode)", () => {
         currencyId: "aleo_testnet",
         address: testnetAddress,
         ledgerAccountId: testnetLedgerAccountId,
-        mode: "bridge",
         options: { ...options, limit: 50 },
       }),
     ]);
@@ -82,7 +79,6 @@ describe("listOperations (bridge mode)", () => {
       currencyId: "aleo_testnet",
       address: testnetAddress,
       ledgerAccountId: testnetLedgerAccountId,
-      mode: "bridge",
       options: { minHeight: 0, limit: 50, order: "asc" },
     });
 

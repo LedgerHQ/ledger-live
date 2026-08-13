@@ -5,15 +5,7 @@ import type {
 } from "@ledgerhq/coin-module-framework/api/types";
 import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
 import { getMockedCoinFrameworkOperation } from "../__tests__/fixtures/operation.fixture";
-import {
-  craftTransaction,
-  estimateFees,
-  getBalance,
-  lastBlock,
-  listOperations,
-  listOperationsFramework,
-  resolvePrivateContext,
-} from "../logic";
+import { craftTransaction, estimateFees, getBalance, lastBlock, listOperations } from "../logic";
 import { getTransactionType } from "../logic/utils";
 import type { AleoContext, AleoTransactionIntentData } from "../types";
 import { createApi } from "./index";
@@ -33,8 +25,6 @@ describe("createApi", () => {
   const mockedGetBalance = jest.mocked(getBalance);
   const mockedLastBlock = jest.mocked(lastBlock);
   const mockedListOperations = jest.mocked(listOperations);
-  const mockedListOperationsFramework = jest.mocked(listOperationsFramework);
-  const mockedResolvePrivateContext = jest.mocked(resolvePrivateContext);
   const mockedGetTransactionType = jest.mocked(getTransactionType);
   const privateContext: AleoContext = {
     ...context,
@@ -49,20 +39,7 @@ describe("createApi", () => {
     mockedEstimateFees.mockReturnValue({ value: BigInt(1234) });
     mockedGetBalance.mockResolvedValue([{ value: BigInt(10), asset: { type: "native" } }]);
     mockedLastBlock.mockResolvedValue({ hash: "blockHash", height: 42, time: new Date() });
-    mockedResolvePrivateContext.mockReturnValue({
-      provableId: "uuid-1",
-      viewKey: "AViewKey1secret",
-    });
-    mockedListOperations.mockResolvedValue({
-      operations: [mockOperation],
-      tokenOperations: [],
-      calTokens: new Map(),
-      nextCursor: "public-cursor",
-    });
-    mockedListOperationsFramework.mockResolvedValue({
-      items: [mockOperation],
-      next: "next-cursor",
-    });
+    mockedListOperations.mockResolvedValue({ items: [mockOperation], next: "next-cursor" });
     mockedGetTransactionType.mockReturnValue("transfer_public");
   });
 
@@ -230,14 +207,14 @@ describe("createApi", () => {
   });
 
   describe("listOperations", () => {
-    it("should delegate to listOperationsFramework with the resolved private context", async () => {
+    it("should pass the context pair down to the merged listing", async () => {
       const api = createApi("aleo");
       const options = { minHeight: 10, limit: 5 };
+
       const result = await api.listOperations(privateContext, "aleo1test", options);
 
-      expect(mockedResolvePrivateContext).toHaveBeenCalledWith(privateContext, "aleo1test");
-      expect(mockedListOperationsFramework).toHaveBeenCalledTimes(1);
-      expect(mockedListOperationsFramework).toHaveBeenCalledWith({
+      expect(mockedListOperations).toHaveBeenCalledTimes(1);
+      expect(mockedListOperations).toHaveBeenCalledWith({
         config: mockConfig,
         address: "aleo1test",
         options,
@@ -247,36 +224,21 @@ describe("createApi", () => {
       expect(result).toEqual({ items: [mockOperation], next: "next-cursor" });
     });
 
-    it("should fall back to the public-only listing when the context carries no pair", async () => {
-      const api = createApi("aleo");
-      const options = { minHeight: 10, limit: 5 };
-      mockedResolvePrivateContext.mockReturnValueOnce(null);
-
-      const result = await api.listOperations(context, "aleo1test", options);
-
-      expect(mockedListOperations).toHaveBeenCalledWith({
-        config: mockConfig,
-        currencyId: "aleo",
-        address: "aleo1test",
-        options,
-        mode: "coin-framework",
-      });
-      expect(mockedListOperationsFramework).not.toHaveBeenCalled();
-      expect(result).toEqual({ items: [mockOperation], next: "public-cursor" });
-    });
-
-    it("should reject an incomplete pair before resolving the config", async () => {
+    it.each([
+      ["no pair at all", {}],
+      ["only provableId", { provableId: "uuid-1" }],
+      ["only viewKey", { viewKey: "AViewKey1secret" }],
+    ])("should reject a context carrying %s before resolving the config", async (_l, partial) => {
       const api = createApi("aleo");
       const configSpy = jest.fn(async () => mockConfig);
-      mockedResolvePrivateContext.mockImplementation(() => {
-        throw new Error("INVALID_ARGS");
-      });
 
       await expect(
-        api.listOperations({ ...context, config: configSpy }, "aleo1test", { minHeight: 1 }),
-      ).rejects.toThrow("INVALID_ARGS");
+        api.listOperations({ ...context, ...partial, config: configSpy }, "aleo1test", {
+          minHeight: 1,
+        }),
+      ).rejects.toThrow(/requires provableId and viewKey/);
       expect(configSpy).not.toHaveBeenCalled();
-      expect(mockedListOperationsFramework).not.toHaveBeenCalled();
+      expect(mockedListOperations).not.toHaveBeenCalled();
     });
   });
 

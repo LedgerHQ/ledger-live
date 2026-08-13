@@ -58,12 +58,12 @@ describe("network/utils", () => {
       it("should fetch all transactions across multiple pages", async () => {
         const minBlockHeight = 100;
         const mockPage1Txs = [
-          getMockedPublicTransaction({ block_number: 150, transaction_id: "at1tx150" }),
-          getMockedPublicTransaction({ block_number: 140, transaction_id: "at1tx140" }),
+          getMockedPublicTransaction({ block_number: 150 }),
+          getMockedPublicTransaction({ block_number: 140 }),
         ];
         const mockPage2Txs = [
-          getMockedPublicTransaction({ block_number: 130, transaction_id: "at1tx130" }),
-          getMockedPublicTransaction({ block_number: 120, transaction_id: "at1tx120" }),
+          getMockedPublicTransaction({ block_number: 130 }),
+          getMockedPublicTransaction({ block_number: 120 }),
         ];
 
         jest
@@ -106,10 +106,10 @@ describe("network/utils", () => {
       it("should filter out transactions below minBlockHeight", async () => {
         const minBlockHeight = 130;
         const mockTxs = [
-          getMockedPublicTransaction({ block_number: 150, transaction_id: "at1tx150" }),
-          getMockedPublicTransaction({ block_number: 140, transaction_id: "at1tx140" }),
-          getMockedPublicTransaction({ block_number: 120, transaction_id: "at1tx120" }), // below min
-          getMockedPublicTransaction({ block_number: 100, transaction_id: "at1tx100" }), // below min
+          getMockedPublicTransaction({ block_number: 150 }),
+          getMockedPublicTransaction({ block_number: 140 }),
+          getMockedPublicTransaction({ block_number: 120 }), // below min
+          getMockedPublicTransaction({ block_number: 100 }), // below min
         ];
 
         jest.mocked(apiClient.getAccountPublicTransactions).mockResolvedValueOnce({
@@ -140,9 +140,9 @@ describe("network/utils", () => {
       it("should handle descending order and stop at minBlockHeight", async () => {
         const minBlockHeight = 130;
         const mockTxs = [
-          getMockedPublicTransaction({ block_number: 150, transaction_id: "at1tx150" }),
-          getMockedPublicTransaction({ block_number: 140, transaction_id: "at1tx140" }),
-          getMockedPublicTransaction({ block_number: 120, transaction_id: "at1tx120" }), // below min - should stop
+          getMockedPublicTransaction({ block_number: 150 }),
+          getMockedPublicTransaction({ block_number: 140 }),
+          getMockedPublicTransaction({ block_number: 120 }), // below min - should stop
         ];
 
         jest.mocked(apiClient.getAccountPublicTransactions).mockResolvedValueOnce({
@@ -210,8 +210,8 @@ describe("network/utils", () => {
         const limit = 10;
         const minBlockHeight = 100;
         const mockTxs = [
-          getMockedPublicTransaction({ block_number: 150, transaction_id: "at1tx150" }),
-          getMockedPublicTransaction({ block_number: 140, transaction_id: "at1tx140" }),
+          getMockedPublicTransaction({ block_number: 150 }),
+          getMockedPublicTransaction({ block_number: 140 }),
         ];
 
         jest.mocked(apiClient.getAccountPublicTransactions).mockResolvedValueOnce({

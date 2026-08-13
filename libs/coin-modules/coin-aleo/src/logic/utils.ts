@@ -250,6 +250,50 @@ export const toCoinFrameworkPrivateOperation = (
   };
 };
 
+/**
+ * A public↔private self-transfer puts the account on both sides. `senders` is checked first so both
+ * shapes report OUT of the balance they leave — a shield leaves the public balance, an unshield the
+ * private one — even though an unshield's public row is the receiving leg.
+ */
+function resolveOperationType(
+  senders: string[],
+  recipients: string[],
+  address: string,
+): OperationType {
+  if (senders.includes(address)) return "OUT";
+  if (recipients.includes(address)) return "IN";
+  return "NONE";
+}
+
+/**
+ * Completes a public row with its private side. Owning a record produced by the transaction is proof
+ * that this account is the counterparty the explorer left blank, so no decryption is needed.
+ */
+export const toMergedOperation = (
+  rawTx: AleoPublicTransaction,
+  address: string,
+  hasOwnedRecord: boolean,
+): CoinFrameworkOperation => {
+  const operation = toCoinFrameworkOperation(rawTx, address);
+  if (!hasOwnedRecord) return operation;
+
+  const senders = rawTx.sender_address ? operation.senders : [address];
+  const recipients = rawTx.recipient_address ? operation.recipients : [address];
+  const type = resolveOperationType(senders, recipients, address);
+
+  return {
+    ...operation,
+    type,
+    senders,
+    recipients,
+    details: {
+      ...operation.details,
+      transactionType: determineTransactionType(rawTx.function_id, type),
+      ledgerOpType: type,
+    },
+  };
+};
+
 export const toBridgeOperation = (
   ledgerAccountId: string,
   rawTx: AleoPublicTransaction,

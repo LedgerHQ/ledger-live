@@ -15,7 +15,8 @@ import { SyncConfig, SYNC_TYPE_SHIELDED, SYNC_TYPE_TRANSPARENT } from "@ledgerhq
 import type { TokenAccount } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import { AleoApiConfigurationResetError } from "../errors";
-import { getBalance, lastBlock, listOperations } from "../logic";
+import { getBalance, lastBlock } from "../logic";
+import { listOperations } from "./listOperations";
 import {
   extractViewKey,
   isProvableApiConfigured,
@@ -110,7 +111,6 @@ export async function performPublicSync(
     currencyId: currency.id,
     address,
     ledgerAccountId,
-    mode: "bridge",
     options: {
       minHeight: 0,
       order: "asc",

@@ -14,7 +14,7 @@ import {
 } from "../__tests__/fixtures/api.fixture";
 import { setupCalStore } from "../__tests__/helpers/cal";
 import { getPristineAccount } from "../__tests__/helpers/account";
-import { encodeOperationsCursor } from "../logic/listOperationsFramework.helpers";
+import { encodeOperationsCursor } from "../logic/operationsCursor";
 import { accessProvableApi } from "../network/utils";
 import type { AleoContext } from "../types";
 
@@ -25,7 +25,7 @@ const MAX_BLOCK_HEIGHT = 18_143_000;
 
 describe("createApi", () => {
   const api = createApi("aleo_testnet");
-  const publicOnlyContext: AleoContext = {
+  const contextWithoutPair: AleoContext = {
     config: async () => getTestnetIntegConfig(),
     logger: () => {},
   };
@@ -46,7 +46,7 @@ describe("createApi", () => {
     });
     invariant(uuid, "guard: missing scanner enrollment id");
     provableId = uuid;
-    context = { ...publicOnlyContext, provableId, viewKey: testnetViewKey };
+    context = { ...contextWithoutPair, provableId, viewKey: testnetViewKey };
   });
 
   describe("estimateFees", () => {
@@ -208,20 +208,6 @@ describe("createApi", () => {
       expect(result).toEqual({ items: [], next: undefined });
     });
 
-    it("falls back to the public-only listing when the context carries no pair", async () => {
-      const { items } = await api.listOperations(publicOnlyContext, testnetAddress, {
-        minHeight: MIN_BLOCK_HEIGHT,
-        limit: 200,
-      });
-
-      expect(items.length).toBeGreaterThan(0);
-      expect(items.every(op => op.tx.block.height >= MIN_BLOCK_HEIGHT)).toBe(true);
-      // A fully private transfer has no public row at all, so this path cannot see it.
-      expect(items.some(op => op.id === testnetIncomingPrivateRecord2.transaction_id.trim())).toBe(
-        false,
-      );
-    });
-
     it("rejects a cursor replayed against a different range", async () => {
       const { next } = await listPinnedRange({ limit: 2 });
       invariant(next, "guard: missing cursor after first page");
@@ -231,32 +217,33 @@ describe("createApi", () => {
           minHeight: MIN_BLOCK_HEIGHT + 1,
           cursor: next,
         }),
-      ).rejects.toMatchObject({ name: "AleoInvalidArgumentsError" });
+      ).rejects.toThrow(/does not match the requested range/);
     });
 
     it.each([
+      ["no pair at all", () => ({})],
       ["only provableId", () => ({ provableId })],
       ["only viewKey", () => ({ viewKey: testnetViewKey })],
     ])("throws when the context carries %s", async (_label, partial) => {
       await expect(
-        api.listOperations({ ...publicOnlyContext, ...partial() }, testnetAddress, {
+        api.listOperations({ ...contextWithoutPair, ...partial() }, testnetAddress, {
           minHeight: MIN_BLOCK_HEIGHT,
         }),
-      ).rejects.toMatchObject({ name: "AleoInvalidArgumentsError" });
+      ).rejects.toThrow(/requires provableId and viewKey/);
     });
 
     it("throws for an unknown scanner enrollment id", async () => {
       await expect(
         api.listOperations(
           {
-            ...publicOnlyContext,
+            ...contextWithoutPair,
             provableId: "00000000-0000-0000-0000-000000000000",
             viewKey: testnetViewKey,
           },
           testnetAddress,
           { minHeight: MIN_BLOCK_HEIGHT },
         ),
-      ).rejects.toMatchObject({ name: "AleoProvableIdNotFoundError" });
+      ).rejects.toMatchObject({ name: "AleoApiConfigurationResetError" });
     });
 
     it("rejects a malformed cursor", async () => {
@@ -265,7 +252,7 @@ describe("createApi", () => {
           minHeight: MIN_BLOCK_HEIGHT,
           cursor: "!!!not-a-cursor!!!",
         }),
-      ).rejects.toMatchObject({ name: "AleoInvalidArgumentsError" });
+      ).rejects.toThrow(/malformed listOperations cursor/);
     });
   });
 
