@@ -71,7 +71,9 @@ setEnv("DISABLE_APP_VERSION_REQUIREMENTS", true);
 setEnv("SWAP_API_BASE", process.env.SWAP_API_BASE || "https://swap-stg.ledger-test.com/v5");
 
 async function executeCliCommand(cmd: CliCommand, userdataDestinationPath?: string) {
-  const label = cmd.name || "anonymous";
+  // Factories tag commands via `named(...)`; treat the inferred "cmd" (from `const cmd = …`
+  // factories) as unnamed so a missed factory degrades to "anonymous" (QAA-1433).
+  const label = cmd.name && cmd.name !== "cmd" ? cmd.name : "anonymous";
   return runCliStep(label, async () => {
     const promise = await cmd(`${userdataDestinationPath}/app.json`);
     return promise instanceof Observable ? await lastValueFrom(promise) : await promise;
@@ -200,7 +202,6 @@ export const test = base.extend<TestFixtures>({
     const mergedFeatureFlags = getMergedFeatureFlags({
       testFlags: featureFlags,
     });
-    await attachMergedFeatureFlags(testInfo, mergedFeatureFlags);
 
     // default environment variables
     env = Object.assign(
@@ -239,6 +240,11 @@ export const test = base.extend<TestFixtures>({
     });
 
     await use(electronApp);
+
+    // Attach merged feature flags on failure only — they add noise to green tests (QAA-1433).
+    if (testInfo.status !== "passed") {
+      await attachMergedFeatureFlags(testInfo, mergedFeatureFlags);
+    }
 
     try {
       await electronApp.close();

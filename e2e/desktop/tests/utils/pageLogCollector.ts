@@ -18,12 +18,65 @@ interface NetworkLog {
   failureText?: string;
 }
 
+/**
+ * URL patterns that are pure noise in E2E network logs: the app's own code/asset
+ * bundles, fonts, and third-party telemetry / CDN / countervalues start-up traffic.
+ * Dropping these removes the background Swap-panel spam (all asset + Firebase loading)
+ * and the app-side CDN / countervalues flood (QAA-1433). The caller keeps failing
+ * requests regardless, so a real error is never hidden.
+ */
+const NETWORK_NOISE_HOSTS = [
+  // telemetry / analytics start-up
+  "firebaseinstallations.googleapis.com",
+  "firebaseremoteconfig.googleapis.com",
+  "firebase.googleapis.com",
+  "firebaselogging-pa.googleapis.com",
+  "sentry.io",
+  "segment.io",
+  "cdn.segment.com",
+  "google-analytics.com",
+  "googletagmanager.com",
+  "datadoghq.com",
+  "braze.com",
+  // ledger asset / cdn / countervalues flood
+  "cdn.live.ledger.com",
+  "countervalues.live.ledger.com",
+  "countervalues.api.live.ledger.com",
+];
+
+const NETWORK_NOISE_ASSET_PATH = /\/_next\/static\//i;
+const NETWORK_NOISE_ASSET_EXT =
+  /\.(?:js|mjs|css|map|woff2?|ttf|otf|eot|png|jpe?g|gif|svg|ico|webp|avif|wasm|mp4)(?:$|[?#])/i;
+
+/** True when `url` is app-asset / font / telemetry / CDN start-up noise (not a real API call). */
+export function isNoiseNetworkUrl(url: string): boolean {
+  let host = "";
+  let pathname = url;
+  try {
+    const parsed = new URL(url);
+    host = parsed.host;
+    pathname = parsed.pathname;
+  } catch {
+    // Non-URL (onRequest only stores http(s), so this is unexpected) — fall back to raw matching.
+  }
+  if (NETWORK_NOISE_ASSET_PATH.test(pathname) || NETWORK_NOISE_ASSET_EXT.test(pathname)) {
+    return true;
+  }
+  return NETWORK_NOISE_HOSTS.some(
+    noiseHost => host === noiseHost || host.endsWith(`.${noiseHost}`),
+  );
+}
+
 export class PageLogCollector {
   private readonly consoleLogs: ConsoleLog[] = [];
   private readonly requestsMap: Map<Request, NetworkLog> = new Map();
 
   private targetPage: Page | null = null;
   private readonly attachedPages: WeakSet<Page> = new WeakSet<Page>();
+
+  // Console levels worth attaching: warnings + errors only. The full buffer is still kept
+  // in `consoleLogs` so getSwapInitError() can match on any level (QAA-1433).
+  private static readonly CONSOLE_KEEP_LEVELS = new Set(["warning", "error"]);
 
   // Swap-init failure signatures (QAA-1326): used to surface the root cause when swap-init stalls.
   private static readonly SWAP_INIT_ERROR_SIGNATURES = [
@@ -128,9 +181,12 @@ export class PageLogCollector {
   }
 
   getFormattedConsoleLogs(): string {
-    if (this.consoleLogs.length === 0) return "";
+    const kept = this.consoleLogs.filter(entry =>
+      PageLogCollector.CONSOLE_KEEP_LEVELS.has(entry.level),
+    );
+    if (kept.length === 0) return "";
 
-    return this.consoleLogs
+    return kept
       .map(entry => `[${entry.timestamp}] [${entry.level.toUpperCase()}] ${entry.text}`)
       .join("\n");
   }
@@ -208,9 +264,14 @@ export class PageLogCollector {
   }
 
   getFormattedNetworkLogs(): string {
-    // Always return valid JSON: an empty map serializes to "[]", which keeps the
+    // Always return valid JSON: an empty array serializes to "[]", which keeps the
     // application/json attachment parseable instead of an empty (invalid) body.
-    const logEntriesArray = Array.from(this.requestsMap.values());
+    // Drop asset / telemetry / CDN noise (QAA-1433) but always keep failing requests
+    // (status >= 400 or a network failure) so a real error is never hidden.
+    const logEntriesArray = Array.from(this.requestsMap.values()).filter(entry => {
+      const isFailure = (entry.status !== undefined && entry.status >= 400) || !!entry.failureText;
+      return isFailure || !isNoiseNetworkUrl(entry.url);
+    });
     return JSON.stringify(logEntriesArray, null, 2);
   }
 }
