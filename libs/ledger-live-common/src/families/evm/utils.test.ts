@@ -1,5 +1,13 @@
+import * as EIP712 from "@ledgerhq/evm-tools/message/EIP712/index";
 import BigNumber from "bignumber.js";
-import { getEstimatedFees, getGasLimit } from "./utils";
+import { getEstimatedFees, getGasLimit, getMessageProperties } from "./utils";
+
+jest.mock("@ledgerhq/evm-tools/message/EIP712/index");
+jest.mock("@shared/env", () => ({
+  getEnv: jest.fn().mockReturnValue("https://cal.ledger.com"),
+}));
+
+const mockGetEIP712Fields = jest.mocked(EIP712.getEIP712FieldsDisplayedOnNano);
 
 describe("getGasLimit", () => {
   it("returns gasLimit when customGasLimit is not provided", () => {
@@ -62,5 +70,26 @@ describe("getEstimatedFees", () => {
     expect(getEstimatedFees({ gasLimit: new BigNumber(10), type: 2 } as any)).toEqual(
       new BigNumber(0),
     );
+  });
+});
+
+describe("getMessageProperties", () => {
+  beforeEach(() => jest.clearAllMocks());
+
+  it("returns null for a non-EIP712 message", async () => {
+    expect(await getMessageProperties({ standard: "EIP191", message: "doot-doot" })).toBe(null);
+  });
+
+  it("returns fields displayed on the Nano for an EIP712 message", async () => {
+    mockGetEIP712Fields.mockResolvedValueOnce([{ label: "key", value: "value" }]);
+
+    expect(
+      await getMessageProperties({
+        standard: "EIP712",
+        message: {} as any,
+        domainHash: "0xabc",
+        hashStruct: "0xdef",
+      }),
+    ).toEqual([{ label: "key", value: "value" }]);
   });
 });

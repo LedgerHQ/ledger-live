@@ -1,4 +1,4 @@
-import { getMessageProperties } from "@ledgerhq/coin-evm/logic";
+import { getMessageProperties } from "@ledgerhq/live-common/families/evm/utils";
 import AccountBalanceSummaryFooter from "./AccountBalanceSummaryFooter";
 import AccountBodyHeader from "./AccountBodyHeader";
 import AccountFooter from "./AccountFooter";
