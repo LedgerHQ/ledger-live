@@ -1,29 +1,94 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import BigNumber from "bignumber.js";
-import { formatCurrencyUnitFragment } from "@ledgerhq/live-common/currencies/index";
+import {
+  formatCurrencyUnit,
+  formatCurrencyUnitFragment,
+} from "@ledgerhq/live-common/currencies/index";
 import {
   aggregatePayCardBalance,
+  buildBalanceFilterOptions,
+  resolveSelection,
+  tickerForFilter,
   type FormattedValue,
   type PayCardBalanceData,
 } from "@features/flow-pay-card-balance";
 import {
   PAY_CARD_BALANCE_FILTER_ALL,
   selectPayCardBalanceFilter,
+  setPayCardBalanceFilter,
   type PayCardBalanceFilter,
 } from "@domain/entity-pay-card";
-import { useCategorizedAssetsFromPortfolio } from "LLM/hooks/useCategorizedAssetsFromPortfolio";
-import { useSelector } from "~/context/hooks";
+import type { Unit } from "@domain/entity-currency-unit";
+import { useDispatch, useSelector } from "~/context/hooks";
 import { useTranslation } from "~/context/Locale";
 import { counterValueCurrencySelector, localeSelector } from "~/reducers/settings";
+import { track } from "~/analytics";
+import { usePayStablecoins } from "./usePayStablecoins";
 
 export function usePayCardBalance(): PayCardBalanceData {
+  const dispatch = useDispatch();
   const { t } = useTranslation();
   const locale = useSelector(localeSelector);
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const filter = useSelector(selectPayCardBalanceFilter);
 
-  const { categorizedAssets, isLoadingStablecoinTickers, isStablecoinTickersError } =
-    useCategorizedAssetsFromPortfolio();
+  const { stablecoins, defaultStablecoins, isLoading, isError } = usePayStablecoins();
+
+  const formatFiat = useCallback(
+    (value: number): string =>
+      formatCurrencyUnit(counterValueCurrency.units[0], new BigNumber(value), {
+        locale,
+        showCode: true,
+      }),
+    [counterValueCurrency, locale],
+  );
+
+  const formatCrypto = useCallback(
+    (unit: Unit, balance: number): string =>
+      formatCurrencyUnit(unit, new BigNumber(balance), { locale, showCode: true }),
+    [locale],
+  );
+
+  const filterOptions = useMemo(
+    () =>
+      buildBalanceFilterOptions({
+        stablecoins,
+        defaultStablecoins,
+        allLabel: t("payTab.balance.filter.allStablecoins"),
+        formatFiat,
+        formatCrypto,
+      }),
+    [stablecoins, defaultStablecoins, t, formatFiat, formatCrypto],
+  );
+
+  const effectiveFilter = useMemo(
+    () =>
+      resolveSelection(
+        filter,
+        filterOptions.map(option => option.id),
+      ),
+    [filter, filterOptions],
+  );
+
+  // Heal a stale persisted selection once data is ready.
+  useEffect(() => {
+    if (!isLoading && !isError && effectiveFilter !== filter) {
+      dispatch(setPayCardBalanceFilter(PAY_CARD_BALANCE_FILTER_ALL));
+    }
+  }, [isLoading, isError, effectiveFilter, filter, dispatch]);
+
+  // Defaults (USDC/USDT) are keyed by market id; held rows may use a different currencyId.
+  // Match by ticker so the filtered total stays correct across those ids.
+  const stablecoinsForAggregate = useMemo(() => {
+    if (effectiveFilter === PAY_CARD_BALANCE_FILTER_ALL) {
+      return stablecoins;
+    }
+    const ticker = tickerForFilter(effectiveFilter, filterOptions);
+    if (ticker == null) {
+      return stablecoins.filter(({ currency }) => currency.id === effectiveFilter);
+    }
+    return stablecoins.filter(({ currency }) => currency.ticker.toUpperCase() === ticker);
+  }, [stablecoins, effectiveFilter, filterOptions]);
 
   const unit = counterValueCurrency.units[0];
 
@@ -36,44 +101,46 @@ export function usePayCardBalance(): PayCardBalanceData {
     [unit, locale],
   );
 
-  // Full filter options / confirm wiring lands with the LWD/LWM filter tasks.
-  const filterOptions = useMemo(
-    () =>
-      [
-        {
-          id: PAY_CARD_BALANCE_FILTER_ALL,
-          title: t("payTab.balance.filter.allStablecoins"),
-          countervalue: 0,
-          countervalueLabel: "",
-        },
-      ] as const,
-    [t],
+  const onConfirmFilter = useCallback(
+    (next: PayCardBalanceFilter) => {
+      dispatch(setPayCardBalanceFilter(next));
+    },
+    [dispatch],
   );
 
-  const onConfirmFilter = useCallback((_next: PayCardBalanceFilter) => {}, []);
+  const onTrackEvent = useCallback((event: string, params: Record<string, unknown>) => {
+    track(event, params);
+  }, []);
 
-  return useMemo(
-    () => ({
-      ...aggregatePayCardBalance({
-        stablecoins: categorizedAssets.stablecoins,
-        filter,
-        isLoading: isLoadingStablecoinTickers,
-        isError: isStablecoinTickersError,
-        filterOptions,
-        formatCountervalue,
-        onConfirmFilter,
-      }),
-      filterOptions,
-      onConfirmFilter,
-    }),
-    [
-      categorizedAssets.stablecoins,
-      filter,
-      isLoadingStablecoinTickers,
-      isStablecoinTickersError,
+  return useMemo(() => {
+    const aggregate = aggregatePayCardBalance({
+      // Pre-filtered by ticker/id; aggregate with "all" so it sums the prepared list.
+      stablecoins: stablecoinsForAggregate,
+      filter: PAY_CARD_BALANCE_FILTER_ALL,
+      isLoading,
+      isError,
       filterOptions,
       formatCountervalue,
       onConfirmFilter,
-    ],
-  );
+      onTrackEvent,
+    });
+
+    return {
+      ...aggregate,
+      // Keep the resolved selection for the UI (not the "all" forced into aggregate).
+      filter: effectiveFilter,
+      // Funded vs empty depends on any held stablecoin, not the active filter slice.
+      hasBalance: stablecoins.some(({ value }) => value > 0),
+    };
+  }, [
+    stablecoinsForAggregate,
+    isLoading,
+    isError,
+    formatCountervalue,
+    effectiveFilter,
+    stablecoins,
+    filterOptions,
+    onConfirmFilter,
+    onTrackEvent,
+  ]);
 }
