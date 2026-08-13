@@ -30,7 +30,6 @@ export default class SendPage {
   amountContinueButton = () => getElementById(this.amountContinueEnabledButtonId);
   summaryWarning = () => getElementById("send-summary-warning");
   summaryContinueButton = () => getElementById(this.summaryContinueEnabledButtonId);
-  feesStrategyListId = "fees-strategy-list";
   feeStrategy = (fee: string) => getElementByText(fee);
 
   @Step("Navigate to send screen")
@@ -248,7 +247,7 @@ export default class SendPage {
   @Step("Choose fee strategy")
   async chooseFeeStrategy(fee?: string) {
     if (fee) {
-      await scrollToText(fee, this.feesStrategyListId);
+      await scrollToText(fee);
       const feeBtn = this.feeStrategy(fee);
       await tapByElement(feeBtn);
     }
