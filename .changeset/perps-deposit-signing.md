@@ -1,0 +1,7 @@
+---
+"ledger-live-desktop": minor
+"live-mobile": minor
+"@ledgerhq/live-common": minor
+---
+
+Add the Perps deposit signing step on desktop and mobile, reached from the review screen. It runs on the same swap orchestration as the `custom.exchange.swap` handler — now extracted into a shared `executeSwap` — behind the perps screens, and executes against the quote the review priced against.
