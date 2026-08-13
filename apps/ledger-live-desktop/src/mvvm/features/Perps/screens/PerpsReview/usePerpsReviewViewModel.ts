@@ -7,6 +7,7 @@ import { useSelector } from "LLD/hooks/redux";
 import { accountNameWithDefaultSelector, walletSelector } from "~/renderer/reducers/wallet";
 import { openPerpsDeposit } from "../PerpsDeposit/PerpsDepositDialog";
 import type { PerpsDepositDraft } from "../PerpsDeposit/usePerpsDepositViewModel";
+import { openPerpsDepositSign } from "../PerpsDepositSign/PerpsDepositSignDialog";
 export type PerpsReviewData = PerpsDepositReviewParams & {
   draft?: PerpsDepositDraft;
 };
@@ -98,10 +99,23 @@ export function usePerpsReviewViewModel(
     onClose();
   }, [data.draft, data.receiverAccount, onClose]);
 
-  // The signing dialog is not built yet, so confirming just closes the review.
   const handleDeposit = useCallback(() => {
+    openPerpsDepositSign({
+      receiverAccount: data.receiverAccount,
+      depositAccount: data.depositAccount,
+      amountSent: data.amountSent,
+      amountTo: data.amountTo,
+      quoteId: data.quoteId,
+    });
     onClose();
-  }, [onClose]);
+  }, [
+    data.amountTo,
+    data.amountSent,
+    data.depositAccount,
+    data.quoteId,
+    data.receiverAccount,
+    onClose,
+  ]);
 
   return {
     swapDetails,

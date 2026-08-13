@@ -77,6 +77,7 @@ import { useTrackTransactionChecksFlow } from "~/renderer/analytics/hooks/useTra
 import { useTrackDmkErrorsEvents } from "~/renderer/analytics/hooks/useTrackDmkErrorsEvents";
 import { identitiesSlice, DeviceId } from "@domain/entity-client-identity";
 import { useBuyDeviceIntercept } from "~/renderer/hooks/useBuyDeviceIntercept";
+import { PerpsDepositContinueOnDevice } from "LLD/features/Perps/screens/PerpsDepositSign/components/PerpsDepositContinueOnDevice";
 import {
   DeviceDeprecationScreen,
   DeviceDeprecationScreens,
@@ -88,7 +89,7 @@ type PartialNullable<T> = {
   [P in keyof T]?: T[P] | null;
 };
 
-type States = PartialNullable<{
+export type States = PartialNullable<{
   appAndVersion: AppAndVersion;
   device: Device;
   unresponsive: boolean;
@@ -168,6 +169,9 @@ type InnerProps<P> = {
   overridesPreferredDeviceModel?: DeviceModelId;
   inlineRetry?: boolean; // Set to false if the retry mechanism is handled externally.
   location?: HOOKS_TRACKING_LOCATIONS;
+  // Marks a perps deposit device action so its swap confirmation renders the
+  // perps "continue on your device" screen instead of the generic swap summary.
+  isPerpsConfirmation?: boolean;
 };
 
 type Props<H extends States, P> = InnerProps<P> & {
@@ -200,6 +204,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   inlineRetry = true,
   analyticsPropertyFlow,
   location,
+  isPerpsConfirmation,
 }: Props<H, P> & {
   request?: R;
 }) => {
@@ -512,6 +517,11 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   }
 
   if (completeExchangeStarted && !completeExchangeResult && !completeExchangeError && !isLoading) {
+    // Perps deposit is a FUND, but keeps its own "continue on your device" screen
+    // regardless of exchange type — handle it before the swap/sell/fund switch.
+    if (isPerpsConfirmation) {
+      return <PerpsDepositContinueOnDevice />;
+    }
     const { exchangeType } = request as { exchangeType: number };
 
     // FIXME: could use a TS enum (when LLD will be in TS) or a JS object instead of raw numbers for switch values for clarity
@@ -547,6 +557,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
           estimatedFees: estimatedFees?.toString() ?? undefined,
           stateSettings,
           walletState,
+          isPerpsConfirmation,
         });
       }
 
