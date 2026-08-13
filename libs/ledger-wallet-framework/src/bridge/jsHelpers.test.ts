@@ -14,6 +14,7 @@ import {
   bip32asBuffer,
   makeScanAccounts,
   makeSync,
+  mergeOps,
   updateTransaction,
 } from "./jsHelpers";
 import { createEmptyHistoryCache } from "../account/balanceHistoryCache";
@@ -969,6 +970,40 @@ describe("makeScanAccounts", () => {
     });
     await new Promise(r => setImmediate(r));
     expect(completeSpy).not.toHaveBeenCalled();
+  });
+});
+
+describe("mergeOps", () => {
+  const op = (transactionSequenceNumber?: BigNumber) =>
+    ({
+      id: "op-1",
+      hash: "0xhash",
+      type: "FEES",
+      value: new BigNumber(1),
+      fee: new BigNumber(1),
+      blockHeight: 42,
+      date: new Date("2026-08-13T09:34:00Z"),
+      senders: ["0xfrom"],
+      recipients: ["0xto"],
+      transactionSequenceNumber,
+    }) as Operation;
+
+  it("backfills an operation stored without a sequence number", () => {
+    const [merged] = mergeOps([op(undefined)], [op(new BigNumber(313))]);
+
+    expect(merged.transactionSequenceNumber).toEqual(new BigNumber(313));
+  });
+
+  it("does not erase a stored sequence number with a fetch that reports none", () => {
+    const existing = [op(new BigNumber(313))];
+
+    expect(mergeOps(existing, [op(undefined)])).toBe(existing);
+  });
+
+  it("keeps the stored operation when the sequence number is unchanged", () => {
+    const existing = [op(new BigNumber(313))];
+
+    expect(mergeOps(existing, [op(new BigNumber(313))])).toBe(existing);
   });
 });
 
