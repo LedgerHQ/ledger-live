@@ -228,18 +228,23 @@ describe.each([
     });
 
     it("crafts a transaction with the USDC asset", async () => {
-      const { transaction: result } = await module.craftTransaction({
-        type: `send-${mode}`,
-        intentType: "transaction",
-        amount: 10n,
-        sender: "0x9bcd841436ef4f85dacefb1aec772af71619024e",
-        recipient: "0x7b2c7232f9e38f30e2868f0e5bf311cd83554b5a",
-        data: { type: "buffer", value: Buffer.from([]) },
-        asset: {
-          type: "erc20",
-          assetReference: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+      const { transaction: result } = await module.craftTransaction(
+        {
+          type: `send-${mode}`,
+          intentType: "transaction",
+          amount: 10n,
+          sender: "0x9bcd841436ef4f85dacefb1aec772af71619024e",
+          recipient: "0x7b2c7232f9e38f30e2868f0e5bf311cd83554b5a",
+          data: { type: "buffer", value: Buffer.from([]) },
+          asset: {
+            type: "erc20",
+            assetReference: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          },
         },
-      });
+        // The sender holds no USDC, so estimating this transfer reverts on-chain. Pin the gas
+        // limit so the test covers the crafted payload rather than a live token balance.
+        { value: 0n, parameters: { gasLimit: 60000n } },
+      );
 
       expect(result).toMatch(/^0x[A-Fa-f0-9]+$/);
       expect(ethers.Transaction.from(result)).toMatchObject({
