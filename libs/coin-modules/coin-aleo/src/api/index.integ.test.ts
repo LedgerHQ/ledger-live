@@ -65,8 +65,8 @@ describe("createApi", () => {
   });
 
   describe("listOperations", () => {
-    // Seeding an opaque cursor pins the upper bound, so the asserted range is deterministic no
-    // matter how far the scanner has advanced. Every fetch and decrypt still hits the real network.
+    // Seeding a cursor pins the upper bound, so the asserted range stays deterministic however far
+    // the scanner has advanced. Every fetch and decrypt still hits the real network.
     const listPinnedRange = (overrides?: { limit?: number; order?: "asc" | "desc" }) =>
       api.listOperations(context, testnetAddress, {
         minHeight: MIN_BLOCK_HEIGHT,

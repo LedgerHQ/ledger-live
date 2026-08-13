@@ -56,10 +56,7 @@ export class AleoProvableIdNotFoundError extends Error {
 
 export class AleoScannerUnavailableError extends Error {
   override name = "AleoScannerUnavailableError";
-  /**
-   * Advisory only: the coin-module framework has no retry convention, so consumers discriminate on
-   * `name`. Kept as an explicit marker of which scanner failure is worth retrying.
-   */
+  /** Advisory: the framework has no retry convention, consumers discriminate on `name`. */
   readonly retryable = true;
   constructor(message?: string, fields?: Record<string, unknown>) {
     super(message || "AleoScannerUnavailableError");

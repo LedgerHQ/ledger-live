@@ -85,9 +85,6 @@ export function createApi(
       const config = await context.config();
       return lastBlock(config);
     },
-    // The ADR-042 pair opts into the merged public + private path, where Aleo history is complete.
-    // Without it the public-only listing is served unchanged; half-supplied is rejected before the
-    // config resolves, so a request that cannot be honoured never reaches the network.
     listOperations: async (context: AleoContext, address, options) => {
       const privateContext = resolvePrivateContext(context, address);
       const config = await context.config(currencyId);

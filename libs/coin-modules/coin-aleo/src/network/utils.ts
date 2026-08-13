@@ -39,8 +39,7 @@ function limitTransactions(
 /**
  * The explorer pages per transition, so a multi-transition transaction arrives as several rows
  * sharing one transaction_id. Keeping the first occurrence normalises the result to tx granularity,
- * which is what lets the cursor stay monotonic. `seen` is owned by the caller so it spans every page
- * of one fetch and therefore dedupes across page boundaries too.
+ * which is what lets the cursor stay monotonic. `seen` is caller-owned so it dedupes across pages.
  */
 function dedupeByTransactionId(
   transactions: AleoPublicTransaction[],

@@ -173,10 +173,7 @@ function parseTransactionFields(rawTx: AleoPublicTransaction, address: string) {
   return { type, fee, blockHash, transactionType, date, hasFailed };
 }
 
-/**
- * Aleo token programs are reported by program id. Resolving it to a currency is the caller's job
- * (ADR-042 / LIVE-34091) — no CAL lookup here.
- */
+/** Resolving the program id to a currency is the caller's job (ADR-042) — no CAL lookup here. */
 export function toOperationAsset(programId: string): AssetInfo {
   return programId === PROGRAM_ID.CREDITS
     ? { type: "native" }
@@ -217,10 +214,7 @@ export const toCoinFrameworkOperation = (
   };
 };
 
-/**
- * Maps a decrypted private record to a coin-framework operation. Used for transactions with no
- * public counterpart (fully private transfers) and as the private side of a merged operation.
- */
+/** Maps a decrypted record to an operation, for transactions that have no public row at all. */
 export const toCoinFrameworkPrivateOperation = (
   enrichedRecord: EnrichedPrivateRecord,
   address: string,

@@ -44,9 +44,8 @@ export function buildConsumedRecordTags(
 /**
  * Decrypts every supplied record. A decrypt failure rejects, so callers never see a partial set.
  *
- * Spend reconciliation is deliberately not part of this: only the bridge needs it, to compensate for
- * the scanner reporting already-spent records as unspent. Callers that do pair it with
- * {@link buildConsumedRecordTags}; a history listing does not, since a record being spent later does
+ * Spend reconciliation is deliberately not part of this — only the bridge needs it, and pairs this
+ * with {@link buildConsumedRecordTags}. A history listing does not: a record being spent later does
  * not unmake the operation that created it.
  */
 export async function enrichPrivateRecords({

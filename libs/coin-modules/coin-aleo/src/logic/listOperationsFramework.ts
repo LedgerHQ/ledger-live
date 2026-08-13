@@ -24,9 +24,8 @@ const DEFAULT_LIMIT = 50;
  * Lists complete public + private operations over a scanner-bounded height range: one operation
  * per `(account, tx)`, both sides merged in the same pass.
  *
- * Stateless by design — nothing is cached between calls. A page reads only its own height window, so
- * resuming does not re-decrypt what earlier pages already covered, and the records that fall outside
- * the window are dropped before the per-record decryption they would otherwise cost.
+ * Stateless by design — nothing is cached between calls. Records outside the page's height window
+ * are dropped before the per-record decryption, which is the expensive half.
  */
 export async function listOperationsFramework({
   config,
@@ -48,8 +47,8 @@ export async function listOperationsFramework({
   if (cursor) assertCursorMatchesRequest(cursor, minHeight, order);
 
   const latestBlock = await lastBlock(config);
-  // Read on every page, not just the first: it is also what turns a dropped enrollment into
-  // AleoProvableIdNotFoundError instead of a bare 4xx surfacing from the records fetch.
+  // Read on every page so a dropped enrollment surfaces as AleoProvableIdNotFoundError rather than
+  // a bare 4xx from the records fetch.
   const scannerSyncedHeight = await getScannerSyncedHeight({
     config,
     provableId,
@@ -58,14 +57,13 @@ export async function listOperationsFramework({
   });
 
   // A cursor pins the ceiling so a paging run stays a consistent snapshot as the scanner advances,
-  // but it is still clamped to the chain tip: a stale or hand-crafted cursor must not lift the range
-  // above what exists. Re-deriving the ceiling here instead would defeat the pin.
+  // still clamped to the tip so a stale or hand-crafted cursor cannot lift the range above what exists.
   const maxBlockHeight = Math.min(
     cursor?.maxBlockHeight ?? scannerSyncedHeight,
     latestBlock.height,
   );
 
-  // Only the opening page owns the empty-range rule; on a resume the window legitimately collapses
+  // Only the opening page owns the empty-range rule: on a resume the window legitimately collapses
   // onto a single height that may still hold operations this run has not emitted.
   if (!cursor && maxBlockHeight <= minHeight) {
     return { items: [], next: undefined };
@@ -77,8 +75,7 @@ export async function listOperationsFramework({
     return { items: [], next: undefined };
   }
 
-  // The window is enforced here; the bounds handed to the fetches below only keep them from
-  // over-fetching, and are not trusted to define the range on their own.
+  // The window is enforced here; the bounds handed to the fetches below only limit over-fetching.
   const isInWindow = (height: number): boolean => height >= from && height <= to;
 
   const [publicResult, ownedRecords] = await Promise.all([
@@ -92,7 +89,7 @@ export async function listOperationsFramework({
       config,
       uuid: provableId,
       start: from,
-      // empty programs opts out of the credits.aleo-only filter, so token records are included too
+      // empty opts out of the credits.aleo-only filter, so token records are included too
       programs: [],
       functions: [...PRIVATE_TRANSFER_FUNCTIONS],
     }),
@@ -129,9 +126,8 @@ export async function listOperationsFramework({
     order,
   });
 
-  // The window opens on the boundary height, so the operations already emitted there come back in
-  // this page's stream. The ordering is total and the range immutable, so they are exactly its first
-  // `emitted` rows.
+  // The window opens on the boundary height, so operations already emitted there come back in this
+  // page's stream. Ordering is total and the range immutable, so they are exactly its first rows.
   const emittedBefore = cursor?.resume?.emitted ?? 0;
   const limit = options.limit ?? DEFAULT_LIMIT;
   const items = ordered.slice(emittedBefore, emittedBefore + limit);
