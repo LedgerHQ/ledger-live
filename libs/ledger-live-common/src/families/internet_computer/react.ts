@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { useMemo } from "react";
-import { neuronStake } from "@ledgerhq/coin-internet_computer/logic";
+import { derivePrincipalFromPubkey, neuronStake } from "@ledgerhq/coin-internet_computer/logic";
 import { ICP_FEES, MIN_NEURON_STAKE } from "./consts";
 import { NeuronState } from "./types";
 import type { ICPAccount, ICPNeuron } from "./types";
@@ -53,6 +53,23 @@ export function useTotalStakedMaturity(account: ICPAccount): BigNumber {
 
 export function canStakeICP(account: ICPAccount): boolean {
   return account.spendableBalance.gte(MIN_NEURON_STAKE + ICP_FEES);
+}
+
+/**
+ * The account's own principal, in the textual form `ICPNeuron.controller` uses.
+ *
+ * Empty when the account has no public key yet, or when the key cannot be parsed — either way the
+ * account controls nothing, which is the safe reading for gating neuron actions.
+ */
+export function useICPPrincipal(account: ICPAccount): string {
+  return useMemo(() => {
+    if (!account.xpub) return "";
+    try {
+      return derivePrincipalFromPubkey(account.xpub).toText();
+    } catch {
+      return "";
+    }
+  }, [account.xpub]);
 }
 
 export function getNeuronState(neuron: ICPNeuron): ICPNeuronStateLabel {
