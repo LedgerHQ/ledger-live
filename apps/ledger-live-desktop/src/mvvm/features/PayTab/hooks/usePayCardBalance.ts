@@ -1,15 +1,12 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import BigNumber from "bignumber.js";
 import { useTranslation } from "react-i18next";
-import {
-  formatCurrencyUnit,
-  formatCurrencyUnitFragment,
-} from "@ledgerhq/live-common/currencies/index";
+import { formatCurrencyUnitFragment } from "@ledgerhq/live-common/currencies/index";
 import {
   aggregatePayCardBalance,
+  resolveSelection,
   type FormattedValue,
   type PayCardBalanceData,
-  type PayCardBalanceFilterOption,
 } from "@features/flow-pay-card-balance";
 import {
   PAY_CARD_BALANCE_FILTER_ALL,
@@ -18,8 +15,10 @@ import {
   type PayCardBalanceFilter,
 } from "@domain/entity-pay-card";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
-import { useCategorizedAssetsFromPortfolio } from "LLD/hooks/useCategorizedAssets";
 import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";
+import { track } from "~/renderer/analytics/segment";
+import { buildBalanceFilterOptions, tickerForFilter } from "./buildBalanceFilterOptions";
+import { usePayStablecoins } from "./usePayStablecoins";
 
 export function usePayCardBalance(): PayCardBalanceData {
   const dispatch = useDispatch();
@@ -28,8 +27,50 @@ export function usePayCardBalance(): PayCardBalanceData {
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const filter = useSelector(selectPayCardBalanceFilter);
 
-  const { categorizedAssets, isLoadingStablecoinTickers, isStablecoinTickersError } =
-    useCategorizedAssetsFromPortfolio();
+  const { stablecoins, defaultStablecoins, isLoading, isError } = usePayStablecoins();
+
+  const filterOptions = useMemo(
+    () =>
+      buildBalanceFilterOptions({
+        stablecoins,
+        defaultStablecoins,
+        allLabel: t("payTab.balance.filter.allStablecoins"),
+        locale,
+        counterValueUnit: counterValueCurrency.units[0],
+      }),
+    [stablecoins, defaultStablecoins, t, locale, counterValueCurrency],
+  );
+
+  const effectiveFilter = useMemo(
+    () =>
+      resolveSelection(
+        filter,
+        filterOptions.map(option => option.id),
+      ),
+    [filter, filterOptions],
+  );
+
+  // Heal a stale persisted selection once data is ready.
+  useEffect(() => {
+    if (!isLoading && !isError && effectiveFilter !== filter) {
+      dispatch(setPayCardBalanceFilter(PAY_CARD_BALANCE_FILTER_ALL));
+    }
+  }, [isLoading, isError, effectiveFilter, filter, dispatch]);
+
+  // Defaults (USDC/USDT) are keyed by market id; held rows may use a different currencyId.
+  // Match by ticker so the filtered total stays correct across those ids.
+  const stablecoinsForAggregate = useMemo(() => {
+    if (effectiveFilter === PAY_CARD_BALANCE_FILTER_ALL) {
+      return stablecoins;
+    }
+    const ticker = tickerForFilter(effectiveFilter, filterOptions);
+    if (ticker == null) {
+      return stablecoins.filter(({ currency }) => currency.id === effectiveFilter);
+    }
+    return stablecoins.filter(
+      ({ currency }) => currency.ticker.toUpperCase() === ticker.toUpperCase(),
+    );
+  }, [stablecoins, effectiveFilter, filterOptions]);
 
   const unit = counterValueCurrency.units[0];
 
@@ -42,30 +83,6 @@ export function usePayCardBalance(): PayCardBalanceData {
     [unit, locale],
   );
 
-  // "all" plus one row per held stablecoin, so a currencyId filter resolves instead of falling back to "all".
-  const filterOptions = useMemo<PayCardBalanceFilterOption[]>(
-    () => [
-      {
-        id: PAY_CARD_BALANCE_FILTER_ALL,
-        title: t("payTab.balance.filter.allStablecoins"),
-        countervalue: 0,
-        countervalueLabel: "",
-      },
-      ...categorizedAssets.stablecoins.map(({ currency, value }) => ({
-        id: currency.id,
-        title: currency.name,
-        ticker: currency.ticker,
-        ledgerId: currency.id,
-        countervalue: value,
-        countervalueLabel: formatCurrencyUnit(unit, new BigNumber(value), {
-          locale,
-          showCode: true,
-        }),
-      })),
-    ],
-    [categorizedAssets.stablecoins, t, unit, locale],
-  );
-
   const onConfirmFilter = useCallback(
     (next: PayCardBalanceFilter) => {
       dispatch(setPayCardBalanceFilter(next));
@@ -73,25 +90,39 @@ export function usePayCardBalance(): PayCardBalanceData {
     [dispatch],
   );
 
-  return useMemo(
-    () =>
-      aggregatePayCardBalance({
-        stablecoins: categorizedAssets.stablecoins,
-        filter,
-        isLoading: isLoadingStablecoinTickers,
-        isError: isStablecoinTickersError,
-        filterOptions,
-        formatCountervalue,
-        onConfirmFilter,
-      }),
-    [
-      categorizedAssets.stablecoins,
-      filter,
-      isLoadingStablecoinTickers,
-      isStablecoinTickersError,
+  const onTrackEvent = useCallback((event: string, params: Record<string, unknown>) => {
+    track(event, params);
+  }, []);
+
+  return useMemo(() => {
+    const aggregate = aggregatePayCardBalance({
+      // Pre-filtered by ticker/id; aggregate with "all" so it sums the prepared list.
+      stablecoins: stablecoinsForAggregate,
+      filter: PAY_CARD_BALANCE_FILTER_ALL,
+      isLoading,
+      isError,
       filterOptions,
       formatCountervalue,
       onConfirmFilter,
-    ],
-  );
+      onTrackEvent,
+    });
+
+    return {
+      ...aggregate,
+      // Keep the resolved selection for the UI (not the "all" forced into aggregate).
+      filter: effectiveFilter,
+      // Funded vs empty depends on any held stablecoin, not the active filter slice.
+      hasBalance: stablecoins.some(({ value }) => value > 0),
+    };
+  }, [
+    stablecoinsForAggregate,
+    isLoading,
+    isError,
+    formatCountervalue,
+    effectiveFilter,
+    stablecoins,
+    filterOptions,
+    onConfirmFilter,
+    onTrackEvent,
+  ]);
 }

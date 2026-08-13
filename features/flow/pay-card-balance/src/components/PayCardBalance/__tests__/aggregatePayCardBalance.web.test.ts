@@ -37,7 +37,7 @@ const filterOptionsWithStablecoins = [
 function buildPort(overrides: Partial<PayCardPortfolioPort> = {}): PayCardPortfolioPort {
   return {
     stablecoins: [],
-    filter: "all",
+    filter: PAY_CARD_BALANCE_FILTER_ALL,
     isLoading: false,
     isError: false,
     filterOptions,

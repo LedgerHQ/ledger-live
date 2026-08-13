@@ -53,8 +53,8 @@ export function usePayCardBalance(): PayCardBalanceData {
   const onConfirmFilter = useCallback((_next: PayCardBalanceFilter) => {}, []);
 
   return useMemo(
-    () =>
-      aggregatePayCardBalance({
+    () => ({
+      ...aggregatePayCardBalance({
         stablecoins: categorizedAssets.stablecoins,
         filter,
         isLoading: isLoadingStablecoinTickers,
@@ -63,6 +63,9 @@ export function usePayCardBalance(): PayCardBalanceData {
         formatCountervalue,
         onConfirmFilter,
       }),
+      filterOptions,
+      onConfirmFilter,
+    }),
     [
       categorizedAssets.stablecoins,
       filter,

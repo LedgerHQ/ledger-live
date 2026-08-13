@@ -36,26 +36,12 @@ export type PayCardBalanceFilterOption = Readonly<{
   cryptoAmountLabel?: string;
 }>;
 
-/** Host props for `PayCardBalance`, produced via {@link aggregatePayCardBalance}. */
-export type PayCardBalanceData = Readonly<{
-  status: PayCardBalanceStatus;
-  stableBalance: number;
-  filter: PayCardBalanceFilter;
-  /** Whether the user holds any stablecoin balance. Drives funded vs empty. */
-  hasBalance: boolean;
-  /** First entry is always the "all" option. */
-  filterOptions: readonly PayCardBalanceFilterOption[];
-  formatCountervalue: (value: number) => FormattedValue;
-  onConfirmFilter: (filter: PayCardBalanceFilter) => void;
-  onTrackEvent?: (event: string, params: Record<string, unknown>) => void;
-}>;
-
 export type PayCardStablecoin = Readonly<{
   currency: Readonly<{ id: string }>;
   value: number;
 }>;
 
-// Platform-agnostic input for {@link aggregatePayCardBalance}
+/** Platform-agnostic input for {@link aggregatePayCardBalance}. */
 export type PayCardPortfolioPort = Readonly<{
   stablecoins: readonly PayCardStablecoin[];
   filter: PayCardBalanceFilter;
@@ -67,6 +53,25 @@ export type PayCardPortfolioPort = Readonly<{
   onConfirmFilter: (filter: PayCardBalanceFilter) => void;
   onTrackEvent?: (event: string, params: Record<string, unknown>) => void;
 }>;
+
+/** Result of {@link aggregatePayCardBalance}: filtered total + status. */
+export type PayCardBalanceAggregate = Readonly<{
+  status: PayCardBalanceStatus;
+  stableBalance: number;
+  filter: PayCardBalanceFilter;
+  /** Whether the user holds any stablecoin balance. Drives funded vs empty. */
+  hasBalance: boolean;
+  formatCountervalue: (value: number) => FormattedValue;
+}>;
+
+/** Full host props for `PayCardBalance` (= aggregate + filter UI wiring). */
+export type PayCardBalanceData = PayCardBalanceAggregate &
+  Readonly<{
+    /** First entry is always the "all" option. */
+    filterOptions: readonly PayCardBalanceFilterOption[];
+    onConfirmFilter: (filter: PayCardBalanceFilter) => void;
+    onTrackEvent?: (event: string, params: Record<string, unknown>) => void;
+  }>;
 
 export type PayCardBalanceProps = PayCardBalanceData &
   Readonly<{

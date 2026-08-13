@@ -1,9 +1,17 @@
-import type { FormattedValue } from "@ledgerhq/lumen-ui-react";
-import type { PayCardBalanceFilterOption, PayCardBalanceLabels } from "../types";
+import type {
+  FormattedValue,
+  PayCardBalanceEmptyLabels,
+  PayCardBalanceFilterLabels,
+  PayCardBalanceFilterOption,
+  PayCardBalanceLabels,
+} from "../types";
 
-export const labels: PayCardBalanceLabels = {
+export const emptyLabels: PayCardBalanceEmptyLabels = {
   emptyTitle: "Pay and get paid",
   emptyDescription: "Start by depositing stablecoin to your wallet",
+};
+
+export const filterLabels: PayCardBalanceFilterLabels = {
   allStablecoins: "All stablecoins",
   filterDialogTitle: "Filter balance",
   filterDialogDescription: "Select a stablecoin to filter your balance",
@@ -11,14 +19,18 @@ export const labels: PayCardBalanceLabels = {
   confirm: "Confirm",
 };
 
-export const formatCountervalue = (value: number): FormattedValue =>
-  ({
-    integerPart: String(value),
-    decimalPart: "00",
-    currencyText: "$",
-    decimalSeparator: ".",
-    currencyPosition: "start",
-  }) as unknown as FormattedValue;
+export const labels: PayCardBalanceLabels = {
+  ...emptyLabels,
+  ...filterLabels,
+};
+
+export const formatCountervalue = (value: number): FormattedValue => ({
+  integerPart: String(value),
+  decimalPart: "00",
+  currencyText: "$",
+  decimalSeparator: ".",
+  currencyPosition: "start",
+});
 
 export const USDC_ID = "ethereum/erc20/usd__coin";
 export const USDT_ID = "ethereum/erc20/usd_tether__erc20_";
