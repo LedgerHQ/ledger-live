@@ -78,6 +78,7 @@ function redactSecrets(value: unknown): unknown {
 }
 
 // reporting must never flip the command's pass/fail outcome, so payload building runs here too
+// Attached to the report only: printing here floods the console when specs run in parallel.
 async function reportCliOutcome(
   label: string,
   status: string,
@@ -87,7 +88,6 @@ async function reportCliOutcome(
 ) {
   try {
     const payload = buildPayload();
-    console.log(`CLI ${label} — ${status}: `, payload);
     const title = `CLI ${label} — ${status} (${Date.now() - start}ms)`;
     if (typeof payload === "string") {
       await allure.attachment(title, payload, "text/plain");
