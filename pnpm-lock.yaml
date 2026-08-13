@@ -13589,6 +13589,9 @@ importers:
       '@domain/entity-currency-crypto':
         specifier: workspace:*
         version: link:../../domain/entity/currency-crypto
+      '@features/platform-wallet-sync':
+        specifier: workspace:^
+        version: link:../../features/platform/wallet-sync
       '@ledgerhq/device-core':
         specifier: workspace:^
         version: link:../device-core
@@ -13598,6 +13601,9 @@ importers:
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../ledgerjs/packages/devices
+      '@ledgerhq/ledger-key-ring-protocol':
+        specifier: workspace:^
+        version: link:../ledger-key-ring-protocol
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../ledger-wallet-framework
@@ -13613,6 +13619,9 @@ importers:
       '@ledgerhq/live-signer-evm':
         specifier: workspace:^
         version: link:../live-signer-evm
+      '@ledgerhq/live-wallet':
+        specifier: workspace:^
+        version: link:../live-wallet
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.17.0
@@ -13628,6 +13637,9 @@ importers:
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../types-live
+      '@shared/cloud-sync':
+        specifier: workspace:^
+        version: link:../../shared/cloud-sync
       '@shared/env':
         specifier: workspace:*
         version: link:../../shared/env

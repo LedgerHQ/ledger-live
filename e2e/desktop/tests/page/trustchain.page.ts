@@ -1,10 +1,10 @@
 import { expect } from "@playwright/test";
 import { step } from "../misc/reporters/step";
-import { LedgerSyncCliHelper } from "tests/utils/ledgerSyncCliUtils";
+import { LedgerSyncCliHelper } from "@ledgerhq/live-e2e-shared/ledgerSync/helper";
 import {
   getTrustchainAccountName,
   getTrustchainAccounts,
-} from "tests/utils/ledgerSyncPulledDataUtils";
+} from "@ledgerhq/live-e2e-shared/ledgerSync/pulledData";
 
 /**
  * Assertions on what a Ledger Sync trustchain holds, read through the CLI rather than the UI.

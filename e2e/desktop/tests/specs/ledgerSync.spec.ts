@@ -4,78 +4,38 @@ import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
-import { LedgerSyncCliHelper, ledgerSyncEnvironment } from "tests/utils/ledgerSyncCliUtils";
+import {
+  LedgerSyncCliHelper,
+  ledgerSyncEnvironment,
+} from "@ledgerhq/live-e2e-shared/ledgerSync/helper";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
-import { ethAccount, secondEthAccount } from "tests/testdata/ledgerSyncTestData";
+import { ethAccount, secondEthAccount } from "@ledgerhq/live-e2e-shared/ledgerSync/testData";
+import {
+  addTrustchainMember,
+  destroyTrustchain,
+  generateLedgerSyncSeed,
+  initializeEmptyTrustchain,
+  pushAccountsToTrustchain,
+} from "@ledgerhq/live-e2e-shared/ledgerSync/setup";
 import { getEnv, setEnv } from "@shared/env";
 import { deviceTagsWithoutLNS } from "tests/utils/tagsUtils";
-import { randomUUID } from "crypto";
 
 const APP_INSTANCE_NAME = "LWD";
 
-/**
- * A seed generated per run, so every test builds its trustchain from scratch instead of clearing
- * whatever the previous run left on the backend. That removes the destroy-then-recreate burst the
- * tests used to open with, and with it a version counter, member list and data set to reset.
- * The trustchain is unreachable once the run ends, so `destroyTrustchainAfterAll` is what keeps
- * the backend from accumulating orphans.
- */
 function setupSeed() {
   const prevSeed = getEnv("SEED");
   test.beforeAll(async () => {
-    process.env.SEED = `LS_E2E_${randomUUID()}`;
+    process.env.SEED = generateLedgerSyncSeed();
   });
   test.afterAll(async () => {
     setEnv("SEED", prevSeed);
   });
 }
 
-function initializeEmptyTrustchain() {
-  return [
-    LedgerSyncCliHelper.initializeLedgerKeyRingProtocol,
-    LedgerSyncCliHelper.initializeLedgerSync,
-  ];
-}
-
-function pushEthAccountToTrustchain() {
-  return LedgerSyncCliHelper.pushAccountsToTrustchain([ethAccount]);
-}
-
-/** Registers the app under its own instance name, so the CLI stays a separate instance. */
-function addAppInstanceToTrustchain() {
-  return LedgerSyncCliHelper.addTrustchainMember(APP_INSTANCE_NAME);
-}
-
-function pushTwoEthAccountsToTrustchain() {
-  return LedgerSyncCliHelper.pushAccountsToTrustchain([ethAccount, secondEthAccount]);
-}
-
-/** Raised when the trustchain no longer exists, so a test that deleted it has nothing to clean. */
-const ALREADY_DESTROYED_ERRORS = new Set([
-  "TrustchainEjected",
-  "TrustchainNotAllowed",
-  "TrustchainNotFound",
-]);
-
 function destroyTrustchainAfterAll() {
-  test.afterAll(async () => {
-    const { pubKey } = LedgerSyncCliHelper.ledgerKeyRingProtocolArgs;
-    const { rootId } = LedgerSyncCliHelper.ledgerSyncPushDataArgs;
-    if (!pubKey || !rootId) return;
-
-    try {
-      await LedgerSyncCliHelper.deleteLedgerSyncData();
-    } catch (error) {
-      if (error instanceof Error && ALREADY_DESTROYED_ERRORS.has(error.name)) return;
-      console.error(`[E2E] Ledger Sync cleanup failed for trustchain ${rootId}:`, error);
-    }
-  });
+  test.afterAll(destroyTrustchain);
 }
 
-/**
- * Options for a test that boots the app already a member of a freshly created trustchain.
- * `seedCommands` run once the trustchain exists and before it is written to the userdata.
- */
 function preSeededTrustchain(seedCommands: CliCommand[] = []) {
   return {
     teamOwner: Team.WALLET_XP,
@@ -160,11 +120,12 @@ test.describe("Ledger Sync - add account", () => {
 
 test.describe("Ledger Sync - rename account", () => {
   setupSeed();
+
   destroyTrustchainAfterAll();
   const defaultAccountName = `${Currency.ETH.name} 1`;
   const renamedAccountName = `${Currency.ETH.name} LedgerSync 1`;
 
-  test.use(preSeededTrustchain([pushEthAccountToTrustchain]));
+  test.use(preSeededTrustchain([pushAccountsToTrustchain([ethAccount])]));
 
   test(
     "[Live Hub][Ledger Sync] Renaming Account (Online)",
@@ -200,11 +161,12 @@ test.describe("Ledger Sync - rename account", () => {
 
 test.describe("Ledger Sync - delete account", () => {
   setupSeed();
+
   destroyTrustchainAfterAll();
   const deletedAccountName = `${Currency.ETH.name} 1`;
   const remainingAccountName = `${Currency.ETH.name} 2`;
 
-  test.use(preSeededTrustchain([pushTwoEthAccountsToTrustchain]));
+  test.use(preSeededTrustchain([pushAccountsToTrustchain([ethAccount, secondEthAccount])]));
 
   test(
     "[Live Hub][Ledger Sync] Deleting Account (Online)",
@@ -242,9 +204,10 @@ test.describe("Ledger Sync - delete account", () => {
 
 test.describe("Ledger Sync - delete instance", () => {
   setupSeed();
+
   destroyTrustchainAfterAll();
 
-  test.use(preSeededTrustchain([addAppInstanceToTrustchain]));
+  test.use(preSeededTrustchain([addTrustchainMember(APP_INSTANCE_NAME)]));
 
   test(
     "[Live Hub][Ledger Sync] Delete instance",
@@ -279,9 +242,10 @@ test.describe("Ledger Sync - delete instance", () => {
 
 test.describe("Ledger Sync - delete backup", () => {
   setupSeed();
+
   destroyTrustchainAfterAll();
 
-  test.use(preSeededTrustchain([pushEthAccountToTrustchain]));
+  test.use(preSeededTrustchain([pushAccountsToTrustchain([ethAccount])]));
 
   test(
     "[Live Hub][Ledger Sync] Delete backup",

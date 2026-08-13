@@ -1,18 +1,9 @@
-import { CLI } from "tests/utils/cliUtils";
-import { activateLedgerSync } from "@ledgerhq/live-e2e-shared/speculos";
-import { getEnv } from "@shared/env";
 import { readFile, writeFile } from "node:fs/promises";
 import invariant from "invariant";
-
-/** An account as it is stored in the trustchain, matching `accountDescriptorSchema`. */
-export interface LedgerSyncAccountDescriptor {
-  id: string;
-  currencyId: string;
-  index: number;
-  seedIdentifier: string;
-  derivationMode: string;
-  freshAddress: string;
-}
+import { getEnv } from "@shared/env";
+import { activateLedgerSync } from "../speculos";
+import { ledgerKeyRingProtocol, ledgerSync, resolveApplicationPath } from "./cli";
+import type { LedgerSyncAccountDescriptor } from "./testData";
 
 interface LedgerKeyRingProtocolArgs {
   pubKey: string;
@@ -128,14 +119,14 @@ export class LedgerSyncCliHelper {
   }
 
   static async initializeLedgerKeyRingProtocol() {
-    return CLI.ledgerKeyRingProtocol({ initMemberCredentials: true }).then(output => {
+    return ledgerKeyRingProtocol({ initMemberCredentials: true }).then(output => {
       LedgerSyncCliHelper.updateKeysAndArgs(output);
       return output;
     });
   }
 
   static async initializeLedgerSync() {
-    const output = CLI.ledgerKeyRingProtocol({
+    const output = ledgerKeyRingProtocol({
       getKeyRingTree: true,
       ...LedgerSyncCliHelper.ledgerKeyRingProtocolArgs,
     }).then(out => {
@@ -154,7 +145,7 @@ export class LedgerSyncCliHelper {
   static async addTrustchainMember(name: string) {
     await LedgerSyncCliHelper.initializeLedgerKeyRingProtocol();
 
-    const output = CLI.ledgerKeyRingProtocol({
+    const output = ledgerKeyRingProtocol({
       getKeyRingTree: true,
       name,
       ...LedgerSyncCliHelper.ledgerKeyRingProtocolArgs,
@@ -178,14 +169,14 @@ export class LedgerSyncCliHelper {
   }
 
   static async pullLedgerSyncData() {
-    return CLI.ledgerSync({
+    return ledgerSync({
       ...LedgerSyncCliHelper.ledgerKeyRingProtocolArgs,
       ...LedgerSyncCliHelper.ledgerSyncPullDataArgs,
     });
   }
 
   static async pushLedgerSyncData() {
-    return CLI.ledgerSync({
+    return ledgerSync({
       ...LedgerSyncCliHelper.ledgerKeyRingProtocolArgs,
       ...LedgerSyncCliHelper.ledgerSyncPushDataArgs,
     });
@@ -199,7 +190,7 @@ export class LedgerSyncCliHelper {
    */
   static async refreshApplicationPath() {
     try {
-      const applicationPath = await CLI.resolveApplicationPath({
+      const applicationPath = await resolveApplicationPath({
         ...LedgerSyncCliHelper.ledgerKeyRingProtocolArgs,
         ...LedgerSyncCliHelper.ledgerSyncPushDataArgs,
       });
@@ -215,13 +206,13 @@ export class LedgerSyncCliHelper {
   static async deleteLedgerSyncData() {
     await LedgerSyncCliHelper.refreshApplicationPath();
 
-    await CLI.ledgerSync({
+    await ledgerSync({
       deleteData: true,
       ...LedgerSyncCliHelper.ledgerKeyRingProtocolArgs,
       ...LedgerSyncCliHelper.ledgerSyncPushDataArgs,
     });
 
-    await CLI.ledgerKeyRingProtocol({
+    await ledgerKeyRingProtocol({
       destroyKeyRingTree: true,
       ...LedgerSyncCliHelper.ledgerKeyRingProtocolArgs,
       ...LedgerSyncCliHelper.ledgerSyncPushDataArgs,

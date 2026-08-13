@@ -1,0 +1,159 @@
+import { getSdk } from "@ledgerhq/ledger-key-ring-protocol";
+import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
+import { CloudSyncSDK, type UpdateEvent } from "@shared/cloud-sync";
+import { liveSlug } from "@features/platform-wallet-sync";
+import {
+  walletSyncSchema,
+  type WalletSyncDistantState as LiveData,
+} from "@ledgerhq/live-wallet/walletSyncComposition";
+import { getEnv } from "@shared/env";
+import type { LedgerKeyRingProtocolOpts, LedgerSyncOpts } from "../runCli";
+
+/**
+ * Ledger Sync CLI entry points, shared by the desktop and mobile e2e suites. Unlike the other
+ * `runCli*` helpers these do not spawn the CLI binary: they drive the SDKs in-process, reaching
+ * Speculos through whichever transport module the caller registered.
+ */
+export function ledgerKeyRingProtocol(opts: LedgerKeyRingProtocolOpts) {
+  const {
+    apiBaseUrl = getEnv("TRUSTCHAIN_API_STAGING"),
+    applicationId = 16,
+    name = "CLI",
+    initMemberCredentials,
+    getKeyRingTree,
+    pubKey,
+    privateKey,
+    device,
+    destroyKeyRingTree,
+    rootId,
+    walletSyncEncryptionKey,
+    applicationPath,
+  } = opts;
+
+  const sdk = getSdk(false, { applicationId, name, apiBaseUrl }, withDevice);
+
+  if (initMemberCredentials) {
+    return sdk.initMemberCredentials();
+  }
+
+  if (getKeyRingTree) {
+    if (!pubKey || !privateKey) {
+      return Promise.reject("pubKey and privateKey are required");
+    }
+    return sdk
+      .getOrCreateTrustchain(device || "", { pubkey: pubKey, privatekey: privateKey })
+      .then(result => result.trustchain);
+  }
+
+  if (destroyKeyRingTree) {
+    if (!pubKey || !privateKey) return Promise.reject("pubKey and privateKey are required");
+    if (!rootId) return Promise.reject("rootId is required");
+    if (!walletSyncEncryptionKey) return Promise.reject("walletSyncEncryptionKey is required");
+    if (!applicationPath) return Promise.reject("applicationPath is required");
+
+    return sdk["destroyTrustchain"](
+      { rootId, walletSyncEncryptionKey, applicationPath },
+      { pubkey: pubKey, privatekey: privateKey },
+    );
+  }
+
+  return Promise.reject("No function specified");
+}
+
+/**
+ * Resolves the application path the backend currently accepts for a trustchain. Removing a
+ * member rotates the application stream onto the next path (`sdk.removeMember`), which leaves
+ * any locally cached `applicationPath` stale. The JWT permissions are the source of truth.
+ */
+export function resolveApplicationPath(
+  opts: LedgerKeyRingProtocolOpts,
+): Promise<string | undefined> {
+  const {
+    apiBaseUrl = getEnv("TRUSTCHAIN_API_STAGING"),
+    applicationId = 16,
+    name = "CLI",
+    pubKey,
+    privateKey,
+    rootId,
+    walletSyncEncryptionKey,
+  } = opts;
+
+  if (!pubKey || !privateKey) return Promise.reject("pubKey and privateKey are required");
+  if (!rootId) return Promise.reject("rootId is required");
+
+  const sdk = getSdk(false, { applicationId, name, apiBaseUrl }, withDevice);
+
+  return sdk
+    .withAuth(
+      { rootId, walletSyncEncryptionKey: walletSyncEncryptionKey ?? "", applicationPath: "" },
+      { pubkey: pubKey, privatekey: privateKey },
+      jwt => Promise.resolve(Object.keys(jwt.permissions?.[rootId] ?? {})),
+      undefined,
+      true,
+    )
+    .then(paths => paths.find(path => path.startsWith(`m/0'/${applicationId}'/`)) ?? paths[0]);
+}
+
+export function ledgerSync(opts: LedgerSyncOpts) {
+  const {
+    applicationId = 16,
+    name = "CLI",
+    apiBaseUrl = getEnv("TRUSTCHAIN_API_STAGING"),
+    pubKey,
+    privateKey,
+    rootId,
+    walletSyncEncryptionKey,
+    applicationPath,
+    push,
+    pull,
+    data,
+    version,
+    cloudSyncApiBaseUrl,
+    deleteData,
+  } = opts;
+
+  if (!cloudSyncApiBaseUrl) {
+    return;
+  }
+
+  let latestUpdateEvent: UpdateEvent<LiveData> | null = null;
+  const ledgerKeyRingProtocolSDK = getSdk(false, { applicationId, name, apiBaseUrl }, withDevice);
+
+  const cloudSyncSDK = new CloudSyncSDK({
+    apiBaseUrl: cloudSyncApiBaseUrl,
+    slug: liveSlug,
+    schema: walletSyncSchema,
+    trustchainSdk: ledgerKeyRingProtocolSDK,
+    getCurrentVersion: () => version ?? 0,
+    saveNewUpdate: async (event: UpdateEvent<LiveData>) => {
+      latestUpdateEvent = event;
+    },
+  });
+
+  // check deleteData/pull before push: callers reuse args that carry push: true
+  if (deleteData) {
+    return cloudSyncSDK.destroy(
+      { rootId, walletSyncEncryptionKey, applicationPath },
+      { pubkey: pubKey, privatekey: privateKey },
+    );
+  }
+
+  if (pull) {
+    return cloudSyncSDK
+      .pull(
+        { rootId, walletSyncEncryptionKey, applicationPath },
+        { pubkey: pubKey, privatekey: privateKey },
+      )
+      .then((result: void) => JSON.stringify({ result, updateEvent: latestUpdateEvent }, null, 2));
+  }
+
+  if (push) {
+    return cloudSyncSDK
+      .push(
+        { rootId, walletSyncEncryptionKey, applicationPath },
+        { pubkey: pubKey, privatekey: privateKey },
+        JSON.parse(data!) as LiveData,
+      )
+      .then((result: void) => JSON.stringify(result, null, 2));
+  }
+}
