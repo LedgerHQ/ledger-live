@@ -2,6 +2,7 @@
 "@domain/api-card-management": minor
 "@features/flow-pay-card-auth": minor
 "@domain/entity-pay-card": patch
+"@devtools/pay-card": patch
 "ledger-live-desktop": minor
 "live-mobile": minor
 ---

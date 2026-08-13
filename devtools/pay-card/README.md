@@ -1,7 +1,8 @@
 # @devtools/pay-card
 
-The Card / Pay DevTool. It controls the relevant feature flags, onboarding-step state, and feature
-tour reset from one place.
+The Card / Pay DevTool. It puts the Card / Pay feature into a given state from one place, in four
+sections: **Feature flags**, **Onboarding** (toggle each step done or not-done), **Reset onboarding**
+and **Feature tour** (seen state plus a reset).
 
 ## Import boundary
 
@@ -14,7 +15,11 @@ import PayCard, { type PayCardToolProps } from "@devtools/pay-card";
 ```
 
 - `PayCard` (default export) — the React component rendered by the shell.
-- `PayCardToolProps` — the props contract the host (via bindings) must satisfy.
+- `PayCardToolProps` — the props contract the host (via bindings) must satisfy, with its parts
+  `PayCardFlagsProps`, `PayCardOnboardingProps` and `OnboardingStep`.
+- `usePayCardViewModel` / `PayCardViewModel` — onboarding progress derived from those props, plus
+  `toggleStep` and `setAllSteps`.
+- `formatId` — turns a step id into a label: `"kyc-check"` → `"Kyc check"`.
 
 ## Props contract
 
@@ -50,8 +55,8 @@ pay-card/
 └── src/
     ├── pay-card/          # PayCard.web.tsx / PayCard.native.tsx (default-exported component)
     ├── components/        # Section / row primitives, each with .web/.native variants
-    ├── usePayCardViewModel.ts  # shared view model: quick-state presets + derived UI state
-    ├── types.ts           # PayCardToolProps
+    ├── usePayCardViewModel.ts  # shared view model: onboarding progress + step helpers
+    ├── types.ts           # PayCardToolProps and its parts
     ├── index.ts           # public exports + `export default PayCard;`
     └── index.native.ts    # native entry point
 ```
