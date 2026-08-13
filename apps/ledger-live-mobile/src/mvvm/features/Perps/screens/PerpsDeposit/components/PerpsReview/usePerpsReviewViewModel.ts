@@ -1,7 +1,11 @@
 import { useCallback, useMemo } from "react";
+import { useNavigation } from "@react-navigation/native";
 import type { PerpsDepositReviewParams } from "@ledgerhq/live-common/wallet-api/Perps/server";
 import { useSelector } from "~/context/hooks";
+import { ScreenName } from "~/const";
 import { accountNameWithDefaultSelector, walletSelector } from "~/reducers/wallet";
+import type { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
+import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { formatDepositAmount } from "./utils/formatDepositAmount";
 
 export type PerpsReviewDetailItem = Readonly<{
@@ -33,8 +37,10 @@ export function usePerpsReviewViewModel({
   amountTo,
   depositAccount,
   receiverAccount,
+  quoteId,
 }: PerpsReviewProps): PerpsReviewViewModel {
   const walletState = useSelector(walletSelector);
+  const navigation = useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
 
   const formattedAmountSent = useMemo(
     () => formatDepositAmount(amountSent, depositAccount),
@@ -84,10 +90,15 @@ export function usePerpsReviewViewModel({
   );
 
   const handleDeposit = useCallback(() => {
-    // Confirming closes the drawer; executing the deposit (sign + broadcast) is
-    // owned by the wallet's deposit flow and reports no result to the live app.
     onClose();
-  }, [onClose]);
+    navigation.navigate(ScreenName.PerpsDepositSign, {
+      depositAccount,
+      receiverAccount,
+      amountSent,
+      amountTo,
+      quoteId,
+    });
+  }, [amountTo, amountSent, depositAccount, navigation, onClose, quoteId, receiverAccount]);
 
   return {
     drawerOpen: isOpen,

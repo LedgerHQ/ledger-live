@@ -69,6 +69,7 @@ import { BaseNavigatorStackParamList } from "./types/BaseNavigator";
 import DeviceConnect, { deviceConnectHeaderOptions } from "~/screens/DeviceConnect";
 import PerpsSign from "LLM/features/Perps/screens/PerpsSign/PerpsSignScreen";
 import PerpsDeposit from "LLM/features/Perps/screens/PerpsDeposit/PerpsDepositScreen";
+import PerpsDepositSign from "LLM/features/Perps/screens/PerpsDepositSign/PerpsDepositSignScreen";
 import NoFundsFlowNavigator from "./NoFundsFlowNavigator";
 import StakeFlowNavigator from "./StakeFlowNavigator";
 import { RecoverPlayer } from "~/screens/Protect/Player";
@@ -586,6 +587,11 @@ export default function BaseNavigator() {
             headerStyle: { backgroundColor: lumenBaseColor },
             contentStyle: { backgroundColor: lumenBaseColor },
           }}
+        />
+        <Stack.Screen
+          name={ScreenName.PerpsDepositSign}
+          component={PerpsDepositSign}
+          options={{ headerShown: false }}
         />
         <Stack.Screen
           name={ScreenName.RedirectToOnboardingRecoverFlow}

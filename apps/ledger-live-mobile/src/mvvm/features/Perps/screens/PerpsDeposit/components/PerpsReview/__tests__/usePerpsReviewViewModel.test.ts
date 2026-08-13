@@ -2,7 +2,15 @@ import BigNumber from "bignumber.js";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { renderHook, waitFor } from "@tests/test-renderer";
+import { ScreenName } from "~/const";
 import { usePerpsReviewViewModel, type PerpsReviewProps } from "../usePerpsReviewViewModel";
+
+const mockNavigate = jest.fn();
+
+jest.mock("@react-navigation/native", () => ({
+  ...jest.requireActual("@react-navigation/native"),
+  useNavigation: () => ({ navigate: mockNavigate }),
+}));
 
 function createAccount(id: string, currencyId: string): AccountLike {
   return {
@@ -70,5 +78,26 @@ describe("usePerpsReviewViewModel", () => {
     result.current.handleDeposit();
 
     expect(onClose).toHaveBeenCalled();
+  });
+
+  it("hands the signing screen the quote the review priced against", () => {
+    const { result } = renderHook(() =>
+      usePerpsReviewViewModel(
+        createProps({
+          amountTo: { value: "0.019", currencyId: "ethereum" },
+          quoteId: "quote-1",
+        }),
+      ),
+    );
+
+    result.current.handleDeposit();
+
+    expect(mockNavigate).toHaveBeenCalledWith(ScreenName.PerpsDepositSign, {
+      depositAccount,
+      receiverAccount,
+      amountSent: { value: "0.02", currencyId: "ethereum" },
+      amountTo: { value: "0.019", currencyId: "ethereum" },
+      quoteId: "quote-1",
+    });
   });
 });

@@ -70,7 +70,7 @@ import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { FlowName, getCurrencyName, getFlowName } from "./utils";
 import { useFeature } from "@features/platform-feature-flags";
 
-type Status = PartialNullable<{
+export type Status = PartialNullable<{
   appAndVersion: AppAndVersion;
   device: Device;
   unresponsive: boolean;

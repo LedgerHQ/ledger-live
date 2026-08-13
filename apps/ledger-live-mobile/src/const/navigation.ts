@@ -108,6 +108,7 @@ export enum ScreenName {
   DeviceConnect = "DeviceConnect",
   PerpsSign = "PerpsSign",
   PerpsDeposit = "PerpsDeposit",
+  PerpsDepositSign = "PerpsDepositSign",
   EditAccountName = "EditAccountName",
   EditDeviceName = "EditDeviceName",
   Card = "Card",
