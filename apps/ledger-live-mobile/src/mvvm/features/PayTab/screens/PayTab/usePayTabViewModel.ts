@@ -1,7 +1,5 @@
-import { useCallback, useMemo } from "react";
-import { Linking } from "react-native";
+import { useMemo } from "react";
 import { useTranslation } from "~/context/Locale";
-import type { OpenHostedLogin } from "@features/flow-pay-card-auth";
 import type { FeatureTourProps } from "@features/flow-pay-card-feature-tour";
 import type { BalanceLabels } from "@features/flow-pay-card-balance";
 import { useNavigationBarHeights } from "LLM/hooks/useNavigationBarHeights";
@@ -36,11 +34,6 @@ export function usePayTabViewModel() {
     [t],
   );
 
-  const openHostedLogin: OpenHostedLogin = useCallback(
-    (loginUrl: string) => Linking.openURL(loginUrl),
-    [],
-  );
-
   const featureTour: FeatureTourProps = useMemo(
     () => ({
       title: t("payTab.featureTour.title"),
@@ -71,7 +64,6 @@ export function usePayTabViewModel() {
 
   return {
     top,
-    openHostedLogin,
     featureTour,
     balance,
     balanceLabels,

@@ -31,9 +31,10 @@ the `x-client-key` header, while the OAuth endpoints reuse it as `client_id` and
 
 The `state` and verifier the callback and token exchange will need are held in the `payCardAuth`
 slice, which neither app persists, and are dropped as soon as an attempt ends. `CardLogin` carries no
-OAuth configuration: authorization initiation returns the resolved redirect URI with the hosted URL
-so the native secure browser can match the callback. The Baanx secret key stays server-side and is
-never sent from the apps.
+OAuth configuration and no host-provided opener: authorization initiation returns the resolved
+redirect URI with the hosted URL so the native secure browser can match the callback, and each
+platform container opens that URL itself. The Baanx secret key stays server-side and is never sent
+from the apps.
 
 Completing the callback — verifying `state`, exchanging the code for tokens and storing them in
 `expo-secure-store` — is the remainder of LIVE-34738 and is not part of this change.

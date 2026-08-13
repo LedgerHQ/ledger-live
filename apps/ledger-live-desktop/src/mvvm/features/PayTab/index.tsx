@@ -3,7 +3,6 @@ import { CardLogin } from "@features/flow-pay-card-auth";
 import { Balance } from "@features/flow-pay-card-balance";
 import { DepositOptions } from "@features/flow-pay-card-deposit";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import { openURL } from "~/renderer/linking";
 import PayTabHeader from "./components/PayTabHeader";
 import { usePayCardBalance } from "./hooks/usePayCardBalance";
 import { FeatureTour } from "@features/flow-pay-card-feature-tour";
@@ -11,8 +10,6 @@ import { usePayTabFeatureTour } from "./hooks/usePayTabFeatureTour";
 import { usePayTabActionTiles } from "./hooks/usePayTabActionTiles";
 import { usePayTabDepositOptions } from "./hooks/usePayTabDepositOptions";
 import { usePayStablecoins } from "./hooks/usePayStablecoins";
-
-const openHostedLogin = (loginUrl: string) => openURL(loginUrl, "");
 
 const PayTab = () => {
   const balance = usePayCardBalance();
@@ -30,7 +27,7 @@ const PayTab = () => {
       <PayTabHeader />
       <Balance {...balance} actionTiles={actionTiles} />
       <DepositOptions {...deposit.depositOptions} />
-      <CardLogin openHostedLogin={openHostedLogin} />
+      <CardLogin />
       <FeatureTour {...featureTour} />
     </div>
   );

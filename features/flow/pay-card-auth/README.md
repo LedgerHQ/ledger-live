@@ -10,12 +10,11 @@ Cross-platform Pay Card authentication flow for Ledger Wallet.
 ```tsx
 import { CardLogin } from "@features/flow-pay-card-auth";
 
-<CardLogin openHostedLogin={openHostedLogin} />;
+<CardLogin />;
 ```
 
-Desktop uses the host-provided `openHostedLogin`. Mobile keeps the prop for compatibility but
-replaces it with `expo-web-browser` so the API-provided login URL opens through
-`ASWebAuthenticationSession` on iOS and Chrome Custom Tabs on Android.
+`CardLogin` opens the API-provided login URL itself. Desktop uses a new browsing context.
+Mobile uses `expo-web-browser` (`ASWebAuthenticationSession` on iOS, Chrome Custom Tabs on Android).
 
 The native opener forwards the opaque login URL unchanged. Callback exchange, OAuth state handling,
 and session persistence are outside this package's current scope.
@@ -76,6 +75,8 @@ pay-card-auth/
     │       ├── CardLoginView.web.tsx        # Web presentational UI
     │       ├── index.native.tsx             # Native component container
     │       ├── index.web.tsx                # Web component container
+    │       ├── openHostedLogin.native.ts    # Native secure-browser opener
+    │       ├── openHostedLogin.web.ts       # Desktop browsing-context opener
     │       ├── types.ts                     # Component contracts
     │       └── useCardLoginViewModel.ts     # Shared state and orchestration
     ├── hooks/                              # Flow-local hooks

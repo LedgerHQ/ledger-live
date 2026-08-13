@@ -1,4 +1,3 @@
-import { Linking } from "react-native";
 import { renderHook } from "@tests/test-renderer";
 import type { BalanceData } from "@features/flow-pay-card-balance";
 import { track } from "~/analytics";
@@ -70,14 +69,6 @@ describe("usePayTabViewModel", () => {
     expect(result.current.balance).toBe(balance);
     expect(result.current.balanceLabels.emptyTitle).toBeTruthy();
     expect(result.current.balanceLabels.emptyDescription).toBeTruthy();
-  });
-
-  it("should open the hosted login URL", async () => {
-    const { result } = renderHook(() => usePayTabViewModel());
-
-    await result.current.openHostedLogin("https://card.example.com/login", "https://ledger.com");
-
-    expect(Linking.openURL).toHaveBeenCalledWith("https://card.example.com/login");
   });
 
   it("should build the feature tour content with the three feature rows", () => {
