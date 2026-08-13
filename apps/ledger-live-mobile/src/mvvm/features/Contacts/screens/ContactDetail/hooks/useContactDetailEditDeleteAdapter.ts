@@ -10,7 +10,7 @@ import {
   useContactDetailEditDeleteFlowBindings,
   useContactsEditDeletePorts,
 } from "@features/flow-contacts";
-import { useMemo } from "react";
+import { useCallback, useMemo, useRef } from "react";
 import { useTranslation } from "~/context/Locale";
 
 export type ContactDetailEditDeleteFlowProps = Readonly<{
@@ -21,6 +21,7 @@ export type ContactDetailEditDeleteFlowProps = Readonly<{
     onEdit: () => void;
     onDelete: () => void;
     onClose: () => void;
+    onHidden: () => void;
   }>;
   renameDrawer: ContactsRenameContactDrawerProps;
   deleteDrawer: ContactsDeleteContactDrawerProps;
@@ -53,6 +54,19 @@ export function useContactDetailEditDeleteAdapter(
     () => createContactDetailEditDeleteUiState(flow, renameViewModel, labels),
     [flow, labels, renameViewModel],
   );
+  const pendingDeleteRef = useRef(false);
+  const onDelete = useCallback(() => {
+    pendingDeleteRef.current = true;
+    flow.onDeletePress();
+  }, [flow]);
+  const onActionsMenuHidden = useCallback(() => {
+    if (!pendingDeleteRef.current) {
+      return;
+    }
+
+    pendingDeleteRef.current = false;
+    flow.openDelete();
+  }, [flow]);
 
   return {
     onOpenActionsMenu: flow.onOpenActionsMenu,
@@ -61,8 +75,9 @@ export function useContactDetailEditDeleteAdapter(
       canDelete: flow.canDelete,
       labels: labels.actions,
       onEdit: flow.onEditPress,
-      onDelete: flow.onDeletePress,
+      onDelete,
       onClose: flow.onCloseActionsMenu,
+      onHidden: onActionsMenuHidden,
     },
     renameDrawer: uiState.rename,
     deleteDrawer: uiState.delete,

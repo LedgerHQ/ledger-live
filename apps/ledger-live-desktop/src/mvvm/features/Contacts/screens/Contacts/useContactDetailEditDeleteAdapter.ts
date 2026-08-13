@@ -65,6 +65,7 @@ export function useContactDetailEditDeleteAdapter(
       page: CONTACTS_PAGE_PROPERTY.CONTACT_DETAIL,
     });
     flow.onDeletePress();
+    flow.openDelete();
   }, [analytics, flow]);
 
   useEffect(() => {

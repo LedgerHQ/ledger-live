@@ -239,8 +239,10 @@ describe("useContactDetailEditDeleteFlowViewModel", () => {
 
     act(() => {
       result.current.onDeletePress();
+      result.current.openDelete();
     });
 
+    expect(result.current.isActionsMenuOpen).toBe(false);
     expect(result.current.deleteLifecycle).toEqual({ status: "open", contactId: contact.id });
 
     await act(async () => {
