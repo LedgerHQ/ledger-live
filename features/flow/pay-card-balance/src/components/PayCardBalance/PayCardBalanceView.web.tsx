@@ -17,6 +17,7 @@ export function PayCardBalanceView(props: PayCardBalanceViewProps) {
             allStablecoinsLabel={props.labels.allStablecoins}
             selectedOption={props.selectedOption}
             onOpenFilter={props.onOpenFilter}
+            actionTiles={props.actionTiles}
           />
           <BalanceFilterDialog
             isOpen={props.isFilterOpen}

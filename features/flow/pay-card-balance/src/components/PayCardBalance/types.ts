@@ -1,5 +1,6 @@
 import type { PayCardBalanceFilter } from "@domain/entity-pay-card";
 import type { FormattedValue } from "@ledgerhq/lumen-utils-shared";
+import type { ActionTilesProps } from "../ActionTiles/types";
 
 // Shared by both platforms (`AmountDisplay`);
 export type { FormattedValue };
@@ -71,6 +72,7 @@ export type PayCardBalanceData = PayCardBalanceAggregate &
     filterOptions: readonly PayCardBalanceFilterOption[];
     onConfirmFilter: (filter: PayCardBalanceFilter) => void;
     onTrackEvent?: (event: string, params: Record<string, unknown>) => void;
+    actionTiles?: ActionTilesProps;
   }>;
 
 export type PayCardBalanceProps = PayCardBalanceData &
@@ -98,6 +100,7 @@ export type PayCardBalanceViewProps =
       onCloseFilter: () => void;
       onConfirmFilter: (filter: PayCardBalanceFilter) => void;
       onTrackEvent?: (event: string, params: Record<string, unknown>) => void;
+      actionTiles?: ActionTilesProps;
     }>;
 
 export type BalanceFilterDialogViewModelParams = Readonly<{
