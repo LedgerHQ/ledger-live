@@ -102,6 +102,7 @@ describe("cardManagementApi requests", () => {
         state: "state-value",
         code_challenge: "challenge-value",
         code_challenge_method: "S256",
+        mode: "api",
       });
       expect(request(fetchSpy).headers.get("x-client-key")).toBe("client-key");
       expect(request(fetchSpy).headers.get("authorization")).toBeNull();

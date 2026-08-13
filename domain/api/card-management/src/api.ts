@@ -34,6 +34,8 @@ export const cardManagementApi = cardApi
             state,
             code_challenge: codeChallenge,
             code_challenge_method: "S256",
+            // Without this the endpoint answers 302 to the hosted UI; `api` returns it as JSON.
+            mode: "api",
           },
         }),
         responseSchema: PayCardAuthorizeInitiateResponseSchema,

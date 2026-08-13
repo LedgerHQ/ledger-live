@@ -15,11 +15,10 @@ import { usePayStablecoins } from "./hooks/usePayStablecoins";
 
 const openHostedLogin = (loginUrl: string) => openURL(loginUrl, "");
 
-// Baanx uses the same value for the client key header and the OAuth `client_id`. The redirect URI is
-// the deep link the app registers, and has to be whitelisted by Baanx for this client.
+// Baanx uses the same value for the client key header and the OAuth `client_id`.
 const oauth: CardLoginOauthConfig = {
   clientId: getEnv("CARD_BAANX_CLIENT_KEY"),
-  redirectUri: "ledgerlive://card",
+  redirectUri: getEnv("CARD_OAUTH_REDIRECT_URI"),
 };
 
 const PayTab = () => {

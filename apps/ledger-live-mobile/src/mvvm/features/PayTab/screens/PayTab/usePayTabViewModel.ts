@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from "react";
 import { Linking } from "react-native";
-import Config from "react-native-config";
+import { getEnv } from "@shared/env";
 import { useTranslation } from "~/context/Locale";
 import type { CardLoginOauthConfig, OpenHostedLogin } from "@features/flow-pay-card-auth";
 import type { FeatureTourProps } from "@features/flow-pay-card-feature-tour";
@@ -11,12 +11,6 @@ import { usePayTabActionTiles } from "LLM/features/PayTab/hooks/usePayTabActionT
 import { usePayTabDepositOptions } from "LLM/features/PayTab/hooks/usePayTabDepositOptions";
 import { usePayStablecoins } from "LLM/features/PayTab/hooks/usePayStablecoins";
 import { track } from "~/analytics";
-
-/**
- * The deep link the Pay tab already registers (see `DeeplinksProvider`), and the exact URI Baanx has
- * to have whitelisted — it must match the one sent to the token exchange, character for character.
- */
-const PAY_CARD_OAUTH_REDIRECT_URI = "ledgerlive://paytab";
 
 export function usePayTabViewModel() {
   const { top } = useNavigationBarHeights();
@@ -48,13 +42,11 @@ export function usePayTabViewModel() {
     [],
   );
 
-  // Baanx uses the same value for the client key header and the OAuth `client_id`, and it comes from
-  // the same place the store reads it: `Config` directly, because what copies it into the env system
-  // resolves asynchronously and this value is captured once.
+  // Baanx uses the same value for the client key header and the OAuth `client_id`.
   const oauth: CardLoginOauthConfig = useMemo(
     () => ({
-      clientId: Config.CARD_BAANX_CLIENT_KEY ?? "",
-      redirectUri: PAY_CARD_OAUTH_REDIRECT_URI,
+      clientId: getEnv("CARD_BAANX_CLIENT_KEY"),
+      redirectUri: getEnv("CARD_OAUTH_REDIRECT_URI"),
     }),
     [],
   );

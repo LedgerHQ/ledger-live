@@ -36,6 +36,11 @@ const teamWalletXp = {
     parser: stringParser,
     desc: "Baanx public client key sent as x-client-key on every Card API request (tenant routing)",
   },
+  CARD_OAUTH_REDIRECT_URI: {
+    def: "https://ledger.com",
+    parser: stringParser,
+    desc: "Card OAuth redirect URI, whitelisted by the provider; must match on the token exchange",
+  },
   COINGECKO_API_URL: {
     def: "https://proxycg.api.live.ledger.com/api/v3",
     parser: stringParser,
