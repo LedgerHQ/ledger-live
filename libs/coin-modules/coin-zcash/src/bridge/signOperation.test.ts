@@ -86,6 +86,9 @@ const defaultSigResult = {
     { spendAuthSig: new Uint8Array(64).fill(0xcd) },
   ],
   transparentInputSigs: [] as Uint8Array[],
+  // `SignPcztTransactionResult.ironwood` is required and is empty whenever the
+  // device signed no Ironwood action.
+  ironwood: [] as { spendAuthSig: Uint8Array }[],
 };
 
 function makeSpendableNote(overrides: Partial<SpendableNote> = {}): SpendableNote {
@@ -241,6 +244,71 @@ describe("bridge/signOperation", () => {
     },
   );
 
+  // A V6 send is only finishable if the device's Ironwood spend-auth signatures
+  // reach the finalizer: without them the extracted transaction carries
+  // unauthorized spends. The V5 path has always been covered by the cases
+  // above; this is the V6 counterpart.
+  it("forwards the device's Ironwood signatures to combine for a V6 send", async () => {
+    const ironwoodSigs = [
+      { spendAuthSig: new Uint8Array(64).fill(0x11) },
+      { spendAuthSig: new Uint8Array(64).fill(0x22) },
+    ];
+    const signOp = buildSignOperation(
+      makeSignerContext({ orchard: [], transparentInputSigs: [], ironwood: ironwoodSigs }),
+    );
+
+    await collectEvents(signOp, {
+      account: makeAccount(),
+      deviceId: "device-1",
+      transaction: makeTx("shielded"),
+    } as never);
+
+    expect(mockCombine).toHaveBeenCalledWith({
+      pczt: MOCK_PCZT_V2_HEX,
+      orchardSignatures: [],
+      transparentSignatures: [],
+      ironwoodSignatures: [
+        Buffer.from(ironwoodSigs[0].spendAuthSig).toString("hex"),
+        Buffer.from(ironwoodSigs[1].spendAuthSig).toString("hex"),
+      ],
+    });
+  });
+
+  // The key is omitted rather than sent empty: zcash-utils treats an absent
+  // `ironwoodSignatures` as "no Ironwood bundle to sign", and length-checks the
+  // list against the PCZT when it is present.
+  //
+  // Asserted on the argument's own keys rather than with
+  // `expect.not.objectContaining({ ironwoodSignatures: expect.anything() })`:
+  // that matcher passes for `ironwoodSignatures: undefined` (`anything()` never
+  // matches `undefined`), which is exactly the case the conditional spread
+  // exists to avoid, and it constrains none of the keys that must be present.
+  it("omits ironwoodSignatures entirely when the device signed no Ironwood action", async () => {
+    const signOp = buildSignOperation(makeSignerContext());
+
+    await collectEvents(signOp, {
+      account: makeAccount(),
+      deviceId: "device-1",
+      transaction: makeTx("transparent"),
+    } as never);
+
+    expect(mockCombine).toHaveBeenCalledTimes(1);
+    const args = mockCombine.mock.calls[0][0];
+    expect(Object.keys(args).sort()).toEqual([
+      "orchardSignatures",
+      "pczt",
+      "transparentSignatures",
+    ]);
+    expect(args).toEqual({
+      pczt: MOCK_PCZT_HEX,
+      orchardSignatures: [
+        Buffer.from(defaultSigResult.orchard[0].spendAuthSig).toString("hex"),
+        Buffer.from(defaultSigResult.orchard[1].spendAuthSig).toString("hex"),
+      ],
+      transparentSignatures: [],
+    });
+  });
+
   it("gives up before touching the device when the engine cannot complete a send", async () => {
     // A client that can build but not finalize would otherwise be discovered
     // after the user has signed.
@@ -370,7 +438,7 @@ describe("bridge/signOperation", () => {
         zcashFee: new BigNumber(10_000),
       });
       const signOp = buildSignOperation(
-        makeSignerContext({ orchard: [], transparentInputSigs: [] }),
+        makeSignerContext({ orchard: [], transparentInputSigs: [], ironwood: [] }),
       );
 
       const events = await collectEvents(signOp, {
