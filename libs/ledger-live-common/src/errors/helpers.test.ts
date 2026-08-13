@@ -64,7 +64,6 @@ describe("extractErrorContext", () => {
       logs: ["instruction 1", "instruction 2"],
       subContext: { id: "1" },
       flagged: true,
-      error: new Error("A previous error in the stack"),
     });
 
     expect(extractErrorContext(error)).toEqual({
