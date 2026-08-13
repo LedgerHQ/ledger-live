@@ -14,7 +14,7 @@
       "apps/ledger-live-mobile/src/analytics/UserIdPlugin.tsx"
     ],
     "exportUserIdForBraze": [
-      "apps/ledger-live-desktop/src/renderer/hooks/useBraze.ts",
+      "apps/ledger-live-desktop/src/renderer/braze/brazeIdentity.ts",
       "apps/ledger-live-mobile/src/notifications/braze.ts"
     ],
     "exportUserIdForRecover": [

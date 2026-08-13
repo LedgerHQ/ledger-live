@@ -278,11 +278,18 @@ export function useBraze() {
       dispatch(setGenericAwarenessModalContentCards(genericAwarenessModalContentCards));
     });
 
-        braze.automaticallyShowInAppMessages();
+    braze.automaticallyShowInAppMessages();
     braze.openSession();
 
     return subscriptionId;
-  }, [dispatch, devMode, isTrackedUser, brazeOptOutIdentityCleanupEnabled, anonymousBrazeId, userId]);
+  }, [
+    dispatch,
+    devMode,
+    isTrackedUser,
+    brazeOptOutIdentityCleanupEnabled,
+    anonymousBrazeId,
+    userId,
+  ]);
 
   useEffect(() => {
     let subscriptionId: string | undefined;
