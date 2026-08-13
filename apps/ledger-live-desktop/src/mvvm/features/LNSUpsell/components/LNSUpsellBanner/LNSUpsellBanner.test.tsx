@@ -19,6 +19,8 @@ jest.mock("~/renderer/analytics/segment", () => ({
 }));
 
 describe("LNSUpsellBanner", () => {
+  const defaultDevicesModelList: DeviceModelId[] = [DeviceModelId.nanoS];
+
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -124,7 +126,7 @@ describe("LNSUpsellBanner", () => {
       ffEnabled = true,
       ffLocationEnabled = true,
       isOptIn = true,
-      devicesModelList = [DeviceModelId.nanoS] as DeviceModelId[],
+      devicesModelList = defaultDevicesModelList,
       targetedByHighTierUpsell = false,
       brazePlacement = false,
     }) {

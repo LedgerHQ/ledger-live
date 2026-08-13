@@ -15,7 +15,7 @@ type Props = {
 };
 
 const animationStyles = (modelId: DeviceModelId) =>
-  ([DeviceModelId.stax, DeviceModelId.europa] as DeviceModelId[]).includes(modelId)
+  new Set<DeviceModelId>([DeviceModelId.stax, DeviceModelId.europa]).has(modelId)
     ? { height: 210 }
     : {};
 

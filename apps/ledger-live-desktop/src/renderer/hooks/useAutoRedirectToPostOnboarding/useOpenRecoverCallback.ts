@@ -39,9 +39,9 @@ export function useOpenRecoverCallback() {
         fallbackRedirection();
       } else if (
         lastOnboardedDevice &&
-        (
-          [DeviceModelId.stax, DeviceModelId.europa, DeviceModelId.apex] as DeviceModelId[]
-        ).includes(lastOnboardedDevice.modelId) &&
+        new Set<DeviceModelId>([DeviceModelId.stax, DeviceModelId.europa, DeviceModelId.apex]).has(
+          lastOnboardedDevice.modelId,
+        ) &&
         touchScreenPath
       ) {
         redirect(touchScreenPath);

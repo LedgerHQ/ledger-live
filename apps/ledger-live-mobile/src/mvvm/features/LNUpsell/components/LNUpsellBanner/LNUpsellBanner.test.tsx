@@ -10,6 +10,7 @@ import { LNUpsellBanner } from ".";
 
 describe("LNUpsellBanner", () => {
   const now = new Date("2026-07-06T12:00:00.000Z");
+  const defaultDevicesModelList: DeviceModelId[] = [DeviceModelId.nanoS];
   let t: ReturnType<typeof useTranslation>["t"];
 
   beforeEach(() => {
@@ -186,7 +187,7 @@ describe("LNUpsellBanner", () => {
     function renderBanner({
       largeScreenUpsellEnabled = true,
       isOptIn = true,
-      devicesModelList = [DeviceModelId.nanoS] as DeviceModelId[],
+      devicesModelList = defaultDevicesModelList,
       onboardingDate = now.toISOString(),
       audienceModels = {},
       targetedByHighTierUpsell = false,

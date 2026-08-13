@@ -50,7 +50,7 @@ export function useOpenRecoverUpsellCallback() {
       if (
         lastConnectedDevice &&
         touchScreenURI &&
-        ([DeviceModelId.stax, DeviceModelId.europa] as DeviceModelId[]).includes(
+        new Set<DeviceModelId>([DeviceModelId.stax, DeviceModelId.europa]).has(
           lastConnectedDevice.modelId,
         )
       ) {

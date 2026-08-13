@@ -145,7 +145,7 @@ const UpdateModal = ({
     confirmedPrompt,
     setConfirmedPrompt,
     deviceHasPin: !(
-      ([DeviceModelId.stax, DeviceModelId.europa] as DeviceModelId[]).includes(deviceModelId) &&
+      new Set<DeviceModelId>([DeviceModelId.stax, DeviceModelId.europa]).has(deviceModelId) &&
       !props.deviceInfo?.onboarded
     ),
   };
