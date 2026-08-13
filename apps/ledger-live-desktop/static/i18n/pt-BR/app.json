@@ -2476,7 +2476,9 @@
     "addressMatched": "O endereço correspondeu",
     "addressNotFound": "Endereço não encontrado",
     "alreadyUsed": "Já usado · {{date}}",
+    "addressBookUnsupported": "{{family}} ainda não é suportado",
     "recentSendWillAppear": "O seu envio recente aparecerá aqui",
+    "contactsWillAppear": "Os contatos aparecerão aqui",
     "securityInfo": {
       "title": "Como enviar com segurança?",
       "items": {
@@ -2494,6 +2496,10 @@
         "description": "Seu histórico recente permite que você veja imediatamente se você já enviou para um endereço específico ou não. Isso pode evitar possíveis erros de copiar e colar ou invasões. Seu histórico contém os últimos 12 endereços para os quais você enviou cripto usando a Ledger Wallet.",
         "cta": "Entendi"
       }
+    },
+    "addContact": {
+      "newContact": "Adicionar um novo contato",
+      "existingContact": "Adicionar a um contato existente"
     },
     "relativeDate": {
       "justNow": "Agora mesmo",
@@ -7435,6 +7441,9 @@
     "FeeTooHigh": {
       "title": "As taxas de rede estão acima de 10% da quantia"
     },
+    "RecipientIsNewAccount": {
+      "title": "Este endereço nunca recebeu fundos, ativá-lo vai custar uma taxa de rede mais alta"
+    },
     "DustLimit": {
       "title": "Quantia menor do que o limite de pó"
     },
@@ -8897,7 +8906,8 @@
       "transparentBalance": "Saldo transparente",
       "transparentBalanceTooltip": "Saldo visível ao público",
       "privateBalance": "Saldo privado",
-      "privateBalanceTooltip": "Saldo oculto ao público"
+      "privateBalanceTooltip": "Saldo oculto ao público",
+      "privateBalanceWarning": "O saldo privado exclui os fundos protegidos de Sapling e Orchard"
     },
     "shielded": {
       "send": {
@@ -8937,6 +8947,12 @@
             "message": "O saldo pode estar um pouco desatualizado",
             "cta": "Sincronizar saldo"
           }
+        },
+        "selfTransfer": {
+          "toPrivate": "Auto transferir para o saldo privado",
+          "toPublic": "Auto transferir para o saldo público",
+          "unavailable": "Seu endereço privado ainda não está disponível. Exporte sua chave de visualização para habilitar isso.",
+          "privacyWarning": "Isso vincula seus fundos protegidos ao endereço público da sua conta, que qualquer pessoa pode ver. Enviar para um endereço privado externo os mantém desvinculados."
         }
       },
       "state": {
@@ -9392,10 +9408,10 @@
       "cancel": "Cancelar"
     },
     "editSignerMismatch": {
-      "title": "Use the same Ledger device you used to add this contact",
-      "description": "The connected device isn't a match.",
-      "connectDifferentDevice": "Connect a different device",
-      "cancel": "Cancel"
+      "title": "Use o mesmo dispositivo Ledger usado para adicionar este contato",
+      "description": "O dispositivo conectado não corresponde.",
+      "connectDifferentDevice": "Conecte um dispositivo diferente",
+      "cancel": "Cancelar"
     },
     "ledgerSyncIntroduction": {
       "description": "Seus contatos são criptografados de ponta a ponta com sua Ledger e sincronizados entre seus dispositivos, apenas você pode desbloqueá-los.",
