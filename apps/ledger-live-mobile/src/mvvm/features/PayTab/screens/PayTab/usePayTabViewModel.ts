@@ -18,6 +18,11 @@ export function usePayTabViewModel() {
     () => ({
       emptyTitle: t("payTab.balance.emptyTitle"),
       emptyDescription: t("payTab.balance.emptyDescription"),
+      allStablecoins: t("payTab.balance.filter.allStablecoins"),
+      filterDialogTitle: t("payTab.balance.filter.dialogTitle"),
+      filterDialogDescription: t("payTab.balance.filter.dialogDescription"),
+      filterDialogBanner: t("payTab.balance.filter.dialogBanner"),
+      confirm: t("payTab.balance.filter.confirm"),
     }),
     [t],
   );

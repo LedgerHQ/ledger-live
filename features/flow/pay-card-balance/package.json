@@ -34,6 +34,7 @@
   "devDependencies": {
     "@support/jest-features-flow": "workspace:*",
     "@features/platform-style": "workspace:*",
+    "@ledgerhq/crypto-icons": "catalog:",
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",

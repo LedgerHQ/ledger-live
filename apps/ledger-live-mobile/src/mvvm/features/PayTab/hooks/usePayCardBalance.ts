@@ -6,12 +6,18 @@ import {
   type FormattedValue,
   type PayCardBalanceData,
 } from "@features/flow-pay-card-balance";
-import { selectPayCardBalanceFilter } from "@domain/entity-pay-card";
+import {
+  PAY_CARD_BALANCE_FILTER_ALL,
+  selectPayCardBalanceFilter,
+  type PayCardBalanceFilter,
+} from "@domain/entity-pay-card";
 import { useCategorizedAssetsFromPortfolio } from "LLM/hooks/useCategorizedAssetsFromPortfolio";
 import { useSelector } from "~/context/hooks";
+import { useTranslation } from "~/context/Locale";
 import { counterValueCurrencySelector, localeSelector } from "~/reducers/settings";
 
 export function usePayCardBalance(): PayCardBalanceData {
+  const { t } = useTranslation();
   const locale = useSelector(localeSelector);
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const filter = useSelector(selectPayCardBalanceFilter);
@@ -30,6 +36,22 @@ export function usePayCardBalance(): PayCardBalanceData {
     [unit, locale],
   );
 
+  // Full filter options / confirm wiring lands with the LWD/LWM filter tasks.
+  const filterOptions = useMemo(
+    () =>
+      [
+        {
+          id: PAY_CARD_BALANCE_FILTER_ALL,
+          title: t("payTab.balance.filter.allStablecoins"),
+          countervalue: 0,
+          countervalueLabel: "",
+        },
+      ] as const,
+    [t],
+  );
+
+  const onConfirmFilter = useCallback((_next: PayCardBalanceFilter) => {}, []);
+
   return useMemo(
     () =>
       aggregatePayCardBalance({
@@ -37,14 +59,18 @@ export function usePayCardBalance(): PayCardBalanceData {
         filter,
         isLoading: isLoadingStablecoinTickers,
         isError: isStablecoinTickersError,
+        filterOptions,
         formatCountervalue,
+        onConfirmFilter,
       }),
     [
       categorizedAssets.stablecoins,
       filter,
       isLoadingStablecoinTickers,
       isStablecoinTickersError,
+      filterOptions,
       formatCountervalue,
+      onConfirmFilter,
     ],
   );
 }

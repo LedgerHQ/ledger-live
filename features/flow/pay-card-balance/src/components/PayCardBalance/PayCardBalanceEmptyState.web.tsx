@@ -1,8 +1,8 @@
 import React from "react";
-import type { PayCardBalanceLabels } from "./types";
+import type { PayCardBalanceEmptyLabels } from "./types";
 
 type PayCardBalanceEmptyStateProps = Readonly<{
-  labels: PayCardBalanceLabels;
+  labels: PayCardBalanceEmptyLabels;
 }>;
 
 export function PayCardBalanceEmptyState({ labels }: PayCardBalanceEmptyStateProps) {

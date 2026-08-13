@@ -16,7 +16,10 @@ const balance: PayCardBalanceData = {
   status: "ready",
   stableBalance: 0,
   filter: "all",
+  hasBalance: false,
+  filterOptions: [],
   formatCountervalue: jest.fn(),
+  onConfirmFilter: jest.fn(),
 };
 
 jest.mock("LLM/features/PayTab/hooks/usePayCardBalance", () => ({
