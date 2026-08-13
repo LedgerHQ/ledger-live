@@ -51,12 +51,12 @@ describe("PayCardBalanceView (Web)", () => {
   it("should not render the dialog contents while the filter is closed", () => {
     renderView(fundedProps({ isFilterOpen: false }));
 
-    expect(screen.queryByTestId("pay-card-balance-filter-dialog")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("pay-card-balance-filter-picker")).not.toBeInTheDocument();
   });
 
   it("should render the dialog contents when the filter is open", () => {
     renderView(fundedProps({ isFilterOpen: true }));
 
-    expect(screen.getByTestId("pay-card-balance-filter-dialog")).toBeVisible();
+    expect(screen.getByTestId("pay-card-balance-filter-picker")).toBeVisible();
   });
 });

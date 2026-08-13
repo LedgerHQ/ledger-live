@@ -3,17 +3,32 @@ import { Box } from "@ledgerhq/lumen-ui-rnative";
 import type { PayCardBalanceViewProps } from "./types";
 import { PayCardBalanceEmptyState } from "./PayCardBalanceEmptyState";
 import { PayCardBalanceFundedState } from "./PayCardBalanceFundedState";
+import { BalanceFilterPicker } from "./BalanceFilterPicker";
 
 export function PayCardBalanceView(props: PayCardBalanceViewProps) {
   return (
     <Box lx={{ paddingHorizontal: "s16" }} testID="pay-card-balance">
       {props.displayMode === "funded" ? (
-        <PayCardBalanceFundedState
-          balance={props.balance}
-          formatCountervalue={props.formatCountervalue}
-          isLoading={props.isLoading}
-          actionTiles={props.actionTiles}
-        />
+        <>
+          <PayCardBalanceFundedState
+            balance={props.balance}
+            formatCountervalue={props.formatCountervalue}
+            isLoading={props.isLoading}
+            allStablecoinsLabel={props.labels.allStablecoins}
+            selectedOption={props.selectedOption}
+            onOpenFilter={props.onOpenFilter}
+            actionTiles={props.actionTiles}
+          />
+          <BalanceFilterPicker
+            isOpen={props.isFilterOpen}
+            filter={props.filter}
+            options={props.options}
+            labels={props.labels}
+            onClose={props.onCloseFilter}
+            onConfirmFilter={props.onConfirmFilter}
+            onTrackEvent={props.onTrackEvent}
+          />
+        </>
       ) : (
         <PayCardBalanceEmptyState labels={props.labels} />
       )}

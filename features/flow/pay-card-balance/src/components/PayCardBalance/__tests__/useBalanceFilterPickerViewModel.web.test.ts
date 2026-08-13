@@ -1,11 +1,11 @@
 import { act, renderHook } from "@testing-library/react";
-import { useBalanceFilterDialogViewModel } from "../useBalanceFilterDialogViewModel";
-import type { BalanceFilterDialogViewModelParams } from "../types";
+import { useBalanceFilterPickerViewModel } from "../useBalanceFilterPickerViewModel";
+import type { BalanceFilterPickerViewModelParams } from "../types";
 import { USDC_ID, USDT_ID, options } from "./fixtures";
 
 function buildParams(
-  overrides: Partial<BalanceFilterDialogViewModelParams> = {},
-): BalanceFilterDialogViewModelParams {
+  overrides: Partial<BalanceFilterPickerViewModelParams> = {},
+): BalanceFilterPickerViewModelParams {
   return {
     isOpen: true,
     activeFilter: "all",
@@ -17,25 +17,25 @@ function buildParams(
   };
 }
 
-describe("useBalanceFilterDialogViewModel", () => {
+describe("useBalanceFilterPickerViewModel", () => {
   it("should seed the draft from the active filter", () => {
     const { result } = renderHook(() =>
-      useBalanceFilterDialogViewModel(buildParams({ activeFilter: USDC_ID })),
+      useBalanceFilterPickerViewModel(buildParams({ activeFilter: USDC_ID })),
     );
 
     expect(result.current.draftFilter).toBe(USDC_ID);
   });
 
   it("should update the draft when an option is selected", () => {
-    const { result } = renderHook(() => useBalanceFilterDialogViewModel(buildParams()));
+    const { result } = renderHook(() => useBalanceFilterPickerViewModel(buildParams()));
 
     act(() => result.current.onSelectDraft(USDT_ID));
 
     expect(result.current.draftFilter).toBe(USDT_ID);
   });
 
-  it("should re-seed the draft when the dialog re-opens", () => {
-    const { result, rerender } = renderHook(props => useBalanceFilterDialogViewModel(props), {
+  it("should re-seed the draft when the picker re-opens", () => {
+    const { result, rerender } = renderHook(props => useBalanceFilterPickerViewModel(props), {
       initialProps: buildParams({ isOpen: false, activeFilter: USDC_ID }),
     });
 
@@ -49,7 +49,7 @@ describe("useBalanceFilterDialogViewModel", () => {
     const onClose = jest.fn();
     const onTrackEvent = jest.fn();
     const { result } = renderHook(() =>
-      useBalanceFilterDialogViewModel(
+      useBalanceFilterPickerViewModel(
         buildParams({ activeFilter: USDC_ID, onConfirmFilter, onClose, onTrackEvent }),
       ),
     );
@@ -67,7 +67,7 @@ describe("useBalanceFilterDialogViewModel", () => {
   it("should track 'all' as the asset when confirming the all option", () => {
     const onTrackEvent = jest.fn();
     const { result } = renderHook(() =>
-      useBalanceFilterDialogViewModel(buildParams({ activeFilter: "all", onTrackEvent })),
+      useBalanceFilterPickerViewModel(buildParams({ activeFilter: "all", onTrackEvent })),
     );
 
     act(() => result.current.onConfirm());

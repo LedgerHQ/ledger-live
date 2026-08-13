@@ -3,7 +3,7 @@ import { Divider } from "@ledgerhq/lumen-ui-react";
 import type { PayCardBalanceViewProps } from "./types";
 import { PayCardBalanceEmptyState } from "./PayCardBalanceEmptyState";
 import { PayCardBalanceFundedState } from "./PayCardBalanceFundedState";
-import { BalanceFilterDialog } from "./BalanceFilterDialog";
+import { BalanceFilterPicker } from "./BalanceFilterPicker";
 
 export function PayCardBalanceView(props: PayCardBalanceViewProps) {
   return (
@@ -19,7 +19,7 @@ export function PayCardBalanceView(props: PayCardBalanceViewProps) {
             onOpenFilter={props.onOpenFilter}
             actionTiles={props.actionTiles}
           />
-          <BalanceFilterDialog
+          <BalanceFilterPicker
             isOpen={props.isFilterOpen}
             filter={props.filter}
             options={props.options}

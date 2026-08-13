@@ -1,15 +1,15 @@
 import { useCallback, useEffect, useState } from "react";
 import { PAY_CARD_BALANCE_FILTER_ALL, type PayCardBalanceFilter } from "@domain/entity-pay-card";
-import type { BalanceFilterDialogViewModel, BalanceFilterDialogViewModelParams } from "./types";
+import type { BalanceFilterPickerViewModel, BalanceFilterPickerViewModelParams } from "./types";
 
-export function useBalanceFilterDialogViewModel({
+export function useBalanceFilterPickerViewModel({
   isOpen,
   activeFilter,
   options,
   onConfirmFilter,
   onClose,
   onTrackEvent,
-}: BalanceFilterDialogViewModelParams): BalanceFilterDialogViewModel {
+}: BalanceFilterPickerViewModelParams): BalanceFilterPickerViewModel {
   const [draftFilter, setDraftFilter] = useState<PayCardBalanceFilter>(activeFilter);
 
   useEffect(() => {

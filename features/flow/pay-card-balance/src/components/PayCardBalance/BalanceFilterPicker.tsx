@@ -1,10 +1,10 @@
 import React from "react";
 import type { PayCardBalanceFilter } from "@domain/entity-pay-card";
-import { BalanceFilterDialogView } from "./BalanceFilterDialogView";
-import { useBalanceFilterDialogViewModel } from "./useBalanceFilterDialogViewModel";
+import { BalanceFilterPickerView } from "./BalanceFilterPickerView";
+import { useBalanceFilterPickerViewModel } from "./useBalanceFilterPickerViewModel";
 import type { PayCardBalanceFilterLabels, PayCardBalanceFilterOption } from "./types";
 
-export type BalanceFilterDialogProps = Readonly<{
+export type BalanceFilterPickerProps = Readonly<{
   isOpen: boolean;
   filter: PayCardBalanceFilter;
   options: readonly PayCardBalanceFilterOption[];
@@ -14,7 +14,7 @@ export type BalanceFilterDialogProps = Readonly<{
   onTrackEvent?: (event: string, params: Record<string, unknown>) => void;
 }>;
 
-export function BalanceFilterDialog({
+export function BalanceFilterPicker({
   isOpen,
   filter,
   options,
@@ -22,8 +22,8 @@ export function BalanceFilterDialog({
   onClose,
   onConfirmFilter,
   onTrackEvent,
-}: BalanceFilterDialogProps) {
-  const { draftFilter, onSelectDraft, onConfirm } = useBalanceFilterDialogViewModel({
+}: BalanceFilterPickerProps) {
+  const { draftFilter, onSelectDraft, onConfirm } = useBalanceFilterPickerViewModel({
     isOpen,
     activeFilter: filter,
     options,
@@ -33,7 +33,7 @@ export function BalanceFilterDialog({
   });
 
   return (
-    <BalanceFilterDialogView
+    <BalanceFilterPickerView
       isOpen={isOpen}
       draftFilter={draftFilter}
       options={options}

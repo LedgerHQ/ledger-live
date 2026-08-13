@@ -13,24 +13,14 @@ import {
   Dialog,
   DialogBody,
   DialogContent,
+  DialogFooter,
   DialogHeader,
   Spot,
 } from "@ledgerhq/lumen-ui-react";
 import { Bundle } from "@ledgerhq/lumen-ui-react/symbols";
-import type { PayCardBalanceFilter } from "@domain/entity-pay-card";
-import type { PayCardBalanceFilterLabels, PayCardBalanceFilterOption } from "./types";
+import type { BalanceFilterPickerViewProps } from "./types";
 
-export type BalanceFilterDialogViewProps = Readonly<{
-  isOpen: boolean;
-  draftFilter: PayCardBalanceFilter;
-  options: readonly PayCardBalanceFilterOption[];
-  labels: PayCardBalanceFilterLabels;
-  onClose: () => void;
-  onSelectDraft: (filter: PayCardBalanceFilter) => void;
-  onConfirm: () => void;
-}>;
-
-export function BalanceFilterDialogView({
+export function BalanceFilterPickerView({
   isOpen,
   draftFilter,
   options,
@@ -38,7 +28,7 @@ export function BalanceFilterDialogView({
   onClose,
   onSelectDraft,
   onConfirm,
-}: BalanceFilterDialogViewProps) {
+}: BalanceFilterPickerViewProps) {
   const handleOpenChange = useCallback(
     (open: boolean) => {
       if (!open) {
@@ -61,8 +51,8 @@ export function BalanceFilterDialogView({
           description={labels.filterDialogDescription}
           onClose={onClose}
         />
-        <DialogBody className="flex flex-col gap-16">
-          <div className="flex flex-col gap-8" data-testid="pay-card-balance-filter-dialog">
+        <DialogBody className="flex flex-col gap-8">
+          <div className="flex flex-col gap-8" data-testid="pay-card-balance-filter-picker">
             {options.map(option => {
               const selected = option.id === draftFilter;
               const rowKey = option.ticker?.toLowerCase() ?? "all";
@@ -106,6 +96,8 @@ export function BalanceFilterDialogView({
             })}
           </div>
           <Banner appearance="info" title={labels.filterDialogBanner} />
+        </DialogBody>
+        <DialogFooter className="flex-col gap-16">
           <Button
             appearance="base"
             size="lg"
@@ -115,7 +107,7 @@ export function BalanceFilterDialogView({
           >
             {labels.confirm}
           </Button>
-        </DialogBody>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

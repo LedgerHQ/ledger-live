@@ -103,9 +103,9 @@ export type PayCardBalanceViewProps =
       actionTiles?: ActionTilesProps;
     }>;
 
-export type BalanceFilterDialogViewModelParams = Readonly<{
+export type BalanceFilterPickerViewModelParams = Readonly<{
   isOpen: boolean;
-  /** Active (resolved) filter, used to seed the draft when the dialog opens. */
+  /** Active (resolved) filter, used to seed the draft when the picker opens. */
   activeFilter: PayCardBalanceFilter;
   options: readonly PayCardBalanceFilterOption[];
   onConfirmFilter: (filter: PayCardBalanceFilter) => void;
@@ -113,8 +113,19 @@ export type BalanceFilterDialogViewModelParams = Readonly<{
   onTrackEvent?: (event: string, params: Record<string, unknown>) => void;
 }>;
 
-export type BalanceFilterDialogViewModel = Readonly<{
+export type BalanceFilterPickerViewModel = Readonly<{
   draftFilter: PayCardBalanceFilter;
+  onSelectDraft: (filter: PayCardBalanceFilter) => void;
+  onConfirm: () => void;
+}>;
+
+/** Presentation props shared by the web dialog and native bottom-sheet views. */
+export type BalanceFilterPickerViewProps = Readonly<{
+  isOpen: boolean;
+  draftFilter: PayCardBalanceFilter;
+  options: readonly PayCardBalanceFilterOption[];
+  labels: PayCardBalanceFilterLabels;
+  onClose: () => void;
   onSelectDraft: (filter: PayCardBalanceFilter) => void;
   onConfirm: () => void;
 }>;

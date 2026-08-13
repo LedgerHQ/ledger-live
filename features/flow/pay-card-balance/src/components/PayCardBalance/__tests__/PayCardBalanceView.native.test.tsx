@@ -1,8 +1,25 @@
 import React from "react";
+import { View } from "react-native";
 import { render, screen } from "@testing-library/react-native";
 import type { PayCardBalanceViewProps } from "../types";
 import { PayCardBalanceView } from "../PayCardBalanceView.native";
 import { emptyLabels, filterLabels, formatCountervalue, options } from "./fixtures";
+
+jest.mock("@shared/ui-queued-bottom-sheet", () => ({
+  QueuedBottomSheet: ({
+    children,
+    isRequestingToBeOpened,
+    testID,
+  }: {
+    children: React.ReactNode;
+    isRequestingToBeOpened?: boolean;
+    testID?: string;
+  }) => (
+    <View testID={testID} accessibilityState={{ expanded: !!isRequestingToBeOpened }}>
+      {children}
+    </View>
+  ),
+}));
 
 function fundedProps(): PayCardBalanceViewProps {
   return {

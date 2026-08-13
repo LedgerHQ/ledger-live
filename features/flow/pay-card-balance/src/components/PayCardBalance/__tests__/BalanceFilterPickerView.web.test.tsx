@@ -1,13 +1,13 @@
 import React from "react";
 import { screen } from "@testing-library/react";
-import { BalanceFilterDialogView } from "../BalanceFilterDialogView.web";
-import type { BalanceFilterDialogViewProps } from "../BalanceFilterDialogView.web";
+import { BalanceFilterPickerView } from "../BalanceFilterPickerView.web";
+import type { BalanceFilterPickerViewProps } from "../types";
 import { USDC_ID, labels, options } from "./fixtures";
 import { renderWithStyle } from "./renderWithStyle.web";
 
 function buildProps(
-  overrides: Partial<BalanceFilterDialogViewProps> = {},
-): BalanceFilterDialogViewProps {
+  overrides: Partial<BalanceFilterPickerViewProps> = {},
+): BalanceFilterPickerViewProps {
   return {
     isOpen: true,
     draftFilter: "all",
@@ -20,21 +20,21 @@ function buildProps(
   };
 }
 
-function renderView(props: BalanceFilterDialogViewProps) {
-  return renderWithStyle(<BalanceFilterDialogView {...props} />);
+function renderView(props: BalanceFilterPickerViewProps) {
+  return renderWithStyle(<BalanceFilterPickerView {...props} />);
 }
 
-describe("BalanceFilterDialogView (Web)", () => {
+describe("BalanceFilterPickerView (Web)", () => {
   it("should render nothing when closed", () => {
     renderView(buildProps({ isOpen: false }));
 
-    expect(screen.queryByTestId("pay-card-balance-filter-dialog")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("pay-card-balance-filter-picker")).not.toBeInTheDocument();
   });
 
   it("should render one row per option with tickers and crypto amounts", () => {
     renderView(buildProps());
 
-    expect(screen.getByTestId("pay-card-balance-filter-dialog")).toBeVisible();
+    expect(screen.getByTestId("pay-card-balance-filter-picker")).toBeVisible();
     expect(screen.getByText("All stablecoins")).toBeVisible();
     expect(screen.getByText("USD Coin")).toBeVisible();
     expect(screen.getByText("USDC")).toBeVisible();

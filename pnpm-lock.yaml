@@ -5682,6 +5682,9 @@ importers:
 
   features/flow/pay-card-balance:
     dependencies:
+      '@domain/entity-currency-unit':
+        specifier: workspace:^
+        version: link:../../../domain/entity/currency-unit
       '@domain/entity-pay-card':
         specifier: workspace:^
         version: link:../../../domain/entity/pay-card
@@ -5691,6 +5694,9 @@ importers:
       '@ledgerhq/lumen-utils-shared':
         specifier: 'catalog:'
         version: 0.1.7(react@19.1.4)
+      '@shared/ui-queued-bottom-sheet':
+        specifier: workspace:*
+        version: link:../../../shared/ui-queued-bottom-sheet
     devDependencies:
       '@features/platform-style':
         specifier: workspace:*
