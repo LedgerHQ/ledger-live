@@ -3820,6 +3820,12 @@ importers:
       '@shared/env':
         specifier: workspace:*
         version: link:../../../shared/env
+      '@shared/schema-primitives':
+        specifier: workspace:*
+        version: link:../../../shared/schema-primitives
+      zod:
+        specifier: 'catalog:'
+        version: 4.3.6
     devDependencies:
       '@jest/globals':
         specifier: 'catalog:'
@@ -4484,6 +4490,12 @@ importers:
 
   domain/entity/interest-rate:
     dependencies:
+      '@domain/entity-currency':
+        specifier: workspace:*
+        version: link:../currency
+      '@shared/schema-primitives':
+        specifier: workspace:*
+        version: link:../../../shared/schema-primitives
       zod:
         specifier: 'catalog:'
         version: 4.3.6

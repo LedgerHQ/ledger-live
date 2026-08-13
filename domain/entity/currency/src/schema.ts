@@ -1,7 +1,21 @@
 import { z } from "zod";
-import { CryptoCurrencySchema } from "@domain/entity-currency-crypto";
-import { TokenCurrencySchema } from "@domain/entity-currency-token";
+import { CryptoCurrencyIdSchema, CryptoCurrencySchema } from "@domain/entity-currency-crypto";
+import { TokenCurrencyIdSchema, TokenCurrencySchema } from "@domain/entity-currency-token";
 import { FiatCurrencySchema } from "@domain/entity-currency-fiat";
+
+/**
+ * The id of a crypto or a token currency — `"ethereum"` or `"ethereum/erc20/usd_tether"`.
+ *
+ * Lives here rather than beside each consumer because callers that key data by currency accept
+ * both kinds, and asserting only the crypto form would reject every token id.
+ */
+export const CryptoOrTokenCurrencyIdSchema = z.union([
+  CryptoCurrencyIdSchema,
+  TokenCurrencyIdSchema,
+]);
+
+/** A crypto or token currency id, inferred from {@link CryptoOrTokenCurrencyIdSchema}. */
+export type CryptoOrTokenCurrencyId = z.infer<typeof CryptoOrTokenCurrencyIdSchema>;
 
 /**
  * Discriminated union of {@link CryptoCurrency} and {@link TokenCurrency}.

@@ -17,10 +17,16 @@ describe("InterestRateSchema", () => {
   });
 
   it("throws when a required field is missing", () => {
-    for (const key of ["currencyId", "rate", "type", "fetchAt"] as const) {
+    for (const key of ["currencyId", "rate", "type"] as const) {
       const { [key]: _omitted, ...rest } = valid;
       expect(() => InterestRateSchema.parse(rest)).toThrow();
     }
+  });
+
+  /* Nothing reads fetchAt, so its absence must not cost an otherwise usable rate. */
+  it("accepts a rate with no fetchAt", () => {
+    const { fetchAt: _omitted, ...rest } = valid;
+    expect(() => InterestRateSchema.parse(rest)).not.toThrow();
   });
 
   it("throws when rate is not a number", () => {
@@ -31,8 +37,17 @@ describe("InterestRateSchema", () => {
     expect(() => InterestRateSchema.parse({ ...valid, type: "STAKING" })).not.toThrow();
   });
 
-  it("does not validate the fetchAt format", () => {
-    expect(() => InterestRateSchema.parse({ ...valid, fetchAt: "not-a-date" })).not.toThrow();
+  it.each(["not-a-date", "2026-07-31", "2026-07-31T00:00:00"])(
+    "rejects %p as fetchAt, which needs an offset",
+    fetchAt => {
+      expect(() => InterestRateSchema.parse({ ...valid, fetchAt })).toThrow();
+    },
+  );
+
+  it("accepts a token id, not just a crypto one", () => {
+    expect(
+      InterestRateSchema.parse({ ...valid, currencyId: "ethereum/erc20/usd_tether" }),
+    ).toMatchObject({ currencyId: "ethereum/erc20/usd_tether" });
   });
 });
 

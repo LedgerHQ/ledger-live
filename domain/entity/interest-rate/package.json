@@ -18,6 +18,8 @@
     "unimported": "pnpm knip --directory ../../.. -W domain/entity/interest-rate"
   },
   "dependencies": {
+    "@domain/entity-currency": "workspace:*",
+    "@shared/schema-primitives": "workspace:*",
     "zod": "catalog:"
   },
   "devDependencies": {

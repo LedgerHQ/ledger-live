@@ -10,6 +10,7 @@ import type { AssetsData, GetAssetsDataParams } from "../types";
 import { convertApiAssets } from "../transforms";
 import { buildAssetsQueryParams } from "../requests";
 import { assertDadaApiHost } from "./utils";
+import { validateAssetsResponse } from "./validate";
 
 type DadaQueryResult = QueryReturnValue<unknown, FetchBaseQueryError, FetchBaseQueryMeta>;
 
@@ -45,6 +46,6 @@ export async function fetchAssetsPage(
 
   if (result.error) throw result.error;
 
-  const raw = result.data as RawApiResponse;
+  const raw = validateAssetsResponse(result.data as RawApiResponse);
   return { ...raw, cryptoOrTokenCurrencies: convertApiAssets(raw.cryptoOrTokenCurrencies) };
 }
