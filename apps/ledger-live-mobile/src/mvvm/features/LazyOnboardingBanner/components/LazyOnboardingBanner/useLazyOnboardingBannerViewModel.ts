@@ -8,7 +8,6 @@ import {
 import { useTranslation } from "~/context/Locale";
 import { lazyOnboardingTourController } from "../LazyOnboardingTour/lazyOnboardingTourController";
 import { useLazyOnboardingBannerState } from "../../hooks/useLazyOnboardingBannerState";
-import { trackLazyOnboardingBannerDismissed, trackLazyOnboardingBannerPressed } from "./analytics";
 
 export function useLazyOnboardingBannerViewModel(): LazyOnboardingBannerViewProps {
   const { t } = useTranslation();
@@ -16,7 +15,6 @@ export function useLazyOnboardingBannerViewModel(): LazyOnboardingBannerViewProp
   const shopLink = buildLazyOnboardingBannerLink(link, "mobile");
 
   const onPress = useCallback(() => {
-    trackLazyOnboardingBannerPressed();
     const action = resolveLazyOnboardingBannerTapAction(mode);
 
     if (action === "open_feature_intro_tour") {
@@ -27,16 +25,11 @@ export function useLazyOnboardingBannerViewModel(): LazyOnboardingBannerViewProp
     void Linking.openURL(shopLink);
   }, [mode, shopLink]);
 
-  const onClose = useCallback(() => {
-    trackLazyOnboardingBannerDismissed();
-    dismiss();
-  }, [dismiss]);
-
   return {
     isShown,
     title: t("lazyOnboardingBanner.title"),
     description: t("lazyOnboardingBanner.description"),
     onPress,
-    onClose,
+    onClose: dismiss,
   };
 }

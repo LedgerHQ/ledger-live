@@ -9,6 +9,7 @@ import { Close } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { ProgressIndicator } from "LLM/features/ProductTour/Drawer/components/ProgressIndicator";
 import { useTranslation } from "~/context/Locale";
+import ForceTheme from "~/components/theme/ForceTheme";
 import { LAZY_ONBOARDING_TOUR_SLIDES } from "./content";
 import { LazyOnboardingTourSlideItem } from "./LazyOnboardingTourSlideItem";
 import { LazyOnboardingTourFooter } from "./LazyOnboardingTourFooter";
@@ -33,55 +34,65 @@ export function LazyOnboardingTourDrawer({
   const bottomSafeArea = Platform.OS === "ios" ? bottomInset : 0;
 
   return (
-    <QueuedBottomSheet
-      isRequestingToBeOpened={isOpen}
-      onClose={onClose}
-      noCloseButton
-      snapPoints={[LAZY_ONBOARDING_TOUR_SHEET_SNAP_POINT]}
-      testID="lazy-onboarding-tour-drawer"
-    >
-      {isOpen ? (
-        <BottomSheetView style={styles.fullHeight}>
-          <View style={[styles.content, { paddingBottom: bottomSafeArea + 8 }]}>
-            <Box lx={{ flexDirection: "row", justifyContent: "flex-end", paddingBottom: "s12" }}>
-              <IconButton
-                icon={Close}
-                appearance="transparent"
-                size="xs"
-                onPress={onCloseButtonPress}
-                accessibilityLabel={t("common.close")}
-                testID="lazy-onboarding-tour-close-button"
-              />
-            </Box>
-            <Slides
-              bounces={false}
-              as={AnimatedGestureHandlerFlatList}
-              testID="lazy-onboarding-tour-slides-container"
-              initialNumToRender={1}
-              maxToRenderPerBatch={Platform.OS === "ios" ? 1 : undefined}
-              onSlideChange={onSlideChange}
-              style={styles.slides}
-            >
-              <Slides.Content style={styles.slides}>
-                {LAZY_ONBOARDING_TOUR_SLIDES.map(slide => (
-                  <Slides.Content.Item key={slide.titleKey}>
-                    <LazyOnboardingTourSlideItem {...slide} />
-                  </Slides.Content.Item>
-                ))}
-              </Slides.Content>
+    <ForceTheme selectedPalette="dark">
+      <QueuedBottomSheet
+        isRequestingToBeOpened={isOpen}
+        onClose={onClose}
+        noCloseButton
+        snapPoints={[LAZY_ONBOARDING_TOUR_SHEET_SNAP_POINT]}
+        testID="lazy-onboarding-tour-drawer"
+      >
+        {isOpen ? (
+          <ForceTheme selectedPalette="dark">
+            <BottomSheetView style={styles.fullHeight}>
+              <View style={[styles.content, { paddingBottom: bottomSafeArea + 8 }]}>
+                <Box
+                  lx={{ flexDirection: "row", justifyContent: "flex-end", paddingBottom: "s12" }}
+                >
+                  <IconButton
+                    icon={Close}
+                    appearance="transparent"
+                    size="xs"
+                    onPress={onCloseButtonPress}
+                    accessibilityLabel={t("common.close")}
+                    testID="lazy-onboarding-tour-close-button"
+                  />
+                </Box>
+                <Slides
+                  bounces={false}
+                  as={AnimatedGestureHandlerFlatList}
+                  testID="lazy-onboarding-tour-slides-container"
+                  initialNumToRender={1}
+                  maxToRenderPerBatch={Platform.OS === "ios" ? 1 : undefined}
+                  onSlideChange={onSlideChange}
+                  style={styles.slides}
+                >
+                  <Slides.Content style={styles.slides}>
+                    {LAZY_ONBOARDING_TOUR_SLIDES.map(slide => (
+                      <Slides.Content.Item key={slide.titleKey}>
+                        <LazyOnboardingTourSlideItem {...slide} />
+                      </Slides.Content.Item>
+                    ))}
+                  </Slides.Content>
 
-              <Slides.ProgressIndicator style={styles.progressIndicator}>
-                <ProgressIndicator />
-              </Slides.ProgressIndicator>
+                  <Slides.ProgressIndicator style={styles.progressIndicator}>
+                    <ProgressIndicator />
+                  </Slides.ProgressIndicator>
 
-              <Slides.Footer>
-                <LazyOnboardingTourFooter onContinue={onContinue} onBuy={onBuy} onDone={onDone} />
-              </Slides.Footer>
-            </Slides>
-          </View>
-        </BottomSheetView>
-      ) : null}
-    </QueuedBottomSheet>
+                  <Slides.Footer>
+                    <LazyOnboardingTourFooter
+                      onContinue={onContinue}
+                      onBuy={onBuy}
+                      onDone={onDone}
+                    />
+                  </Slides.Footer>
+                </Slides>
+              </View>
+            </BottomSheetView>
+          </ForceTheme>
+        ) : null}
+      </QueuedBottomSheet>
+    </ForceTheme>
   );
 }
 
