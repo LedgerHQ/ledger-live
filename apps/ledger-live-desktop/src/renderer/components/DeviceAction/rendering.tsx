@@ -12,6 +12,7 @@ import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { TokenCurrency } from "@domain/entity-currency-token";
 import { Account, ABTestingVariants } from "@ledgerhq/types-live";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
+import { PerpsDepositContinueOnDevice } from "LLD/features/Perps/screens/PerpsDepositSign/components/PerpsDepositContinueOnDevice";
 import {
   Button as ButtonV3,
   Flex,
@@ -1306,6 +1307,12 @@ interface SwapConfirmationProps {
   swapDefaultTrack: Record<string, string | boolean>;
   stateSettings: SettingsState;
   walletState: WalletState;
+  /**
+   * Perps deposit funds via the swap exchange flow, but shows the design's
+   * "continue on your device" confirmation instead of the generic swap summary.
+   * Set by the perps <DeviceAction>; leaves every other swap flow unchanged.
+   */
+  isPerpsConfirmation?: boolean;
 }
 
 const SwapConfirmationDetailedView: React.FC<{
@@ -1506,9 +1513,12 @@ const SwapDeviceConfirmation: React.FC<SwapConfirmationProps> = ({
   );
 };
 
-export const renderSwapDeviceConfirmation = (props: SwapConfirmationProps) => (
-  <SwapDeviceConfirmation {...props} />
-);
+export const renderSwapDeviceConfirmation = (props: SwapConfirmationProps) =>
+  props.isPerpsConfirmation ? (
+    <PerpsDepositContinueOnDevice />
+  ) : (
+    <SwapDeviceConfirmation {...props} />
+  );
 
 export const renderSecureTransferDeviceConfirmation = ({
   exchangeType,
