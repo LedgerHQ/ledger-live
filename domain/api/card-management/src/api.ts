@@ -1,6 +1,7 @@
-import { cardApi, getCardExtra } from "@shared/api-services";
+import { cardApi } from "@shared/api-services";
 import { CARD_MANAGEMENT_TAGS } from "./constants";
 import {
+  PayCardAuthorizeInitiateResponseSchema,
   PayCardAuthorizeInitiateSchema,
   PayCardLogoutResponseSchema,
   PayCardSessionResponseSchema,
@@ -25,30 +26,28 @@ export const cardManagementApi = cardApi
     endpoints: build => ({
       /** A mutation, not a query: every attempt carries a fresh `state` and PKCE challenge. */
       initiateAuthorize: build.mutation<PayCardAuthorizeInitiate, PayCardAuthorizeInitiateRequest>({
-        queryFn: async ({ state, codeChallenge }, queryApi, _extraOptions, baseQuery) => {
-          const { cardBaanxClientKey, cardOauthRedirectUri } = getCardExtra(queryApi);
-          const response = await baseQuery({
-            url: "/v1/auth/oauth/authorize/initiate",
-            method: "GET",
-            params: {
-              client_id: cardBaanxClientKey,
-              response_type: "code",
-              redirect_uri: cardOauthRedirectUri,
-              state,
-              code_challenge: codeChallenge,
-              code_challenge_method: "S256",
-              // Without this the endpoint answers 302 to the hosted UI; `api` returns it as JSON.
-              mode: "api",
-            },
-          });
-
-          if (response.error) {
-            return { error: response.error };
-          }
-
-          const initiate = response.data as PayCardAuthorizeInitiateResponse;
-          return { data: { ...initiate, redirectUri: cardOauthRedirectUri } };
-        },
+        query: ({ clientId, redirectUri, state, codeChallenge }) => ({
+          url: "/v1/auth/oauth/authorize/initiate",
+          method: "GET",
+          params: {
+            client_id: clientId,
+            response_type: "code",
+            redirect_uri: redirectUri,
+            state,
+            code_challenge: codeChallenge,
+            code_challenge_method: "S256",
+            // Without this the endpoint answers 302 to the hosted UI; `api` returns it as JSON.
+            mode: "api",
+          },
+        }),
+        rawResponseSchema: PayCardAuthorizeInitiateResponseSchema,
+        // The redirect URI travels with the answer: the secure browser has to match the callback
+        // against it, and the token exchange has to echo it.
+        transformResponse: (
+          response: PayCardAuthorizeInitiateResponse,
+          _meta,
+          { redirectUri }: PayCardAuthorizeInitiateRequest,
+        ) => ({ ...response, redirectUri }),
         responseSchema: PayCardAuthorizeInitiateSchema,
       }),
 

@@ -1,5 +1,6 @@
 import { renderHook } from "@tests/test-renderer";
 import type { BalanceData } from "@features/flow-pay-card-balance";
+import { getEnv } from "@shared/env";
 import { track } from "~/analytics";
 import { usePayTabViewModel } from "./usePayTabViewModel";
 
@@ -61,6 +62,16 @@ describe("usePayTabViewModel", () => {
     const { result } = renderHook(() => usePayTabViewModel());
 
     expect(result.current.top).toBe(24);
+  });
+
+  it("should expose the OAuth client configuration", () => {
+    const { result } = renderHook(() => usePayTabViewModel());
+
+    // The redirect URI is matched verbatim on the token exchange, so both values come from the app.
+    expect(result.current.oauth).toEqual({
+      clientId: getEnv("CARD_BAANX_CLIENT_KEY"),
+      redirectUri: getEnv("CARD_OAUTH_REDIRECT_URI"),
+    });
   });
 
   it("should expose the balance data and empty-state labels for the hero", () => {

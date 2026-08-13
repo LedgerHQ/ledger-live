@@ -6,7 +6,6 @@ function buildExtra(overrides: Partial<CardApiExtra> = {}): CardApiExtra {
   return {
     cardApiBaseUrl: "https://card.test",
     cardBaanxClientKey: "test-client-key",
-    cardOauthRedirectUri: "ledgerlive://paytab",
     getCardSessionToken: () => "session-token",
     refreshCardSession: async () => "refreshed-token",
     ...overrides,
@@ -35,11 +34,6 @@ describe("cardApiExtra", () => {
   it("throws when the base url is missing or empty", () => {
     expect(() => cardApiExtra(buildExtra({ cardApiBaseUrl: undefined }))).toThrow();
     expect(() => cardApiExtra(buildExtra({ cardApiBaseUrl: "" }))).toThrow();
-  });
-
-  it("throws when the OAuth redirect URI is missing or empty", () => {
-    expect(() => cardApiExtra(buildExtra({ cardOauthRedirectUri: undefined }))).toThrow();
-    expect(() => cardApiExtra(buildExtra({ cardOauthRedirectUri: "" }))).toThrow();
   });
 
   it("throws when the session accessors are not functions", () => {

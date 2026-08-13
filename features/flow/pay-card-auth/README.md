@@ -19,9 +19,9 @@ Mobile uses `expo-web-browser` (`ASWebAuthenticationSession` on iOS, Chrome Cust
 The native opener forwards the opaque login URL unchanged. Callback exchange, OAuth state handling,
 and session persistence are outside this package's current scope.
 
-The apps configure the OAuth client and redirect URI once through `cardApiExtra`. The authorization
-initiation returns that resolved redirect URI with the hosted URL so the native opener can end the
-secure browser session without `CardLogin` receiving app configuration.
+`CardLogin` takes the OAuth client id and redirect URI as an `oauth` prop: both are the app's to
+know, and the provider matches the redirect URI verbatim. The authorization initiation echoes it back
+with the hosted URL, so the native opener can end the secure browser session on it.
 
 App composition and DevTools consume shared Pay Card entity state through
 `@domain/entity-pay-card`. Auth-only runtime state (`hasCard`) lives in this flow's

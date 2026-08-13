@@ -39,7 +39,6 @@ const makeStore = (getCardSessionToken: () => string | null = () => null) =>
           extraArgument: cardApiExtra({
             cardApiBaseUrl: "https://card.test",
             cardBaanxClientKey: "client-key",
-            cardOauthRedirectUri: "ledgerlive://paytab",
             getCardSessionToken,
             refreshCardSession: () => Promise.resolve(null),
           }),
@@ -86,6 +85,8 @@ describe("cardManagementApi requests", () => {
       const store = makeStore();
       const result = await store.dispatch(
         cardManagementApi.endpoints.initiateAuthorize.initiate({
+          clientId: "client-key",
+          redirectUri: "ledgerlive://paytab",
           state: "state-value",
           codeChallenge: "challenge-value",
         }),
@@ -243,6 +244,8 @@ describe("cardManagementApi requests", () => {
     const store = makeStore();
     const result = await store.dispatch(
       cardManagementApi.endpoints.initiateAuthorize.initiate({
+        clientId: "client-key",
+        redirectUri: "ledgerlive://paytab",
         state: "state-value",
         codeChallenge: "challenge-value",
       }),

@@ -22,7 +22,8 @@ const attempt = {
   codeChallenge: "challenge-value",
 };
 
-const redirectUri = "ledgerlive://paytab";
+const oauth = { clientId: "client-id", redirectUri: "ledgerlive://paytab" };
+const { redirectUri } = oauth;
 
 function authorizeResponse(url: string) {
   return { token: "jwt", url, redirectUri };
@@ -46,12 +47,14 @@ describe("useCardLoginViewModel", () => {
     const url =
       "https://card.example.com/login?request=opaque%2Bvalue&redirect_uri=ledgerlive%3A%2F%2Fpaytab";
     unwrap.mockResolvedValue(authorizeResponse(url));
-    const { result } = renderHook(() => useCardLoginViewModel({ openHostedLogin }));
+    const { result } = renderHook(() => useCardLoginViewModel({ openHostedLogin, oauth }));
 
     act(() => result.current.onLoginPress());
 
     await waitFor(() => {
       expect(initiateAuthorize).toHaveBeenCalledWith({
+        clientId: oauth.clientId,
+        redirectUri: oauth.redirectUri,
         state: attempt.state,
         codeChallenge: attempt.codeChallenge,
       });
@@ -62,7 +65,7 @@ describe("useCardLoginViewModel", () => {
   it("should show nothing once the browser closes", async () => {
     const openHostedLogin = jest.fn().mockResolvedValue(undefined);
     unwrap.mockResolvedValue(authorizeResponse("https://card.example.com/login"));
-    const { result } = renderHook(() => useCardLoginViewModel({ openHostedLogin }));
+    const { result } = renderHook(() => useCardLoginViewModel({ openHostedLogin, oauth }));
 
     act(() => result.current.onLoginPress());
 
@@ -75,7 +78,7 @@ describe("useCardLoginViewModel", () => {
   it("should not open the hosted login when the initiation fails", async () => {
     const openHostedLogin = jest.fn();
     unwrap.mockRejectedValue({ status: 422 });
-    const { result } = renderHook(() => useCardLoginViewModel({ openHostedLogin }));
+    const { result } = renderHook(() => useCardLoginViewModel({ openHostedLogin, oauth }));
 
     act(() => result.current.onLoginPress());
 
@@ -88,7 +91,7 @@ describe("useCardLoginViewModel", () => {
   it("should expose an error when opening the hosted login fails", async () => {
     const openHostedLogin = jest.fn().mockRejectedValue(new Error("Browser unavailable"));
     unwrap.mockResolvedValue(authorizeResponse("https://card.example.com/login"));
-    const { result } = renderHook(() => useCardLoginViewModel({ openHostedLogin }));
+    const { result } = renderHook(() => useCardLoginViewModel({ openHostedLogin, oauth }));
 
     act(() => result.current.onLoginPress());
 
@@ -104,7 +107,7 @@ describe("useCardLoginViewModel", () => {
       status: "CUSTOM_ERROR",
       error: "payCardApiExtra not configured in store extraArgument",
     });
-    const { result } = renderHook(() => useCardLoginViewModel({ openHostedLogin }));
+    const { result } = renderHook(() => useCardLoginViewModel({ openHostedLogin, oauth }));
 
     act(() => result.current.onLoginPress());
 
@@ -120,7 +123,9 @@ describe("useCardLoginViewModel", () => {
       { isLoading: true },
     ] as unknown as ReturnType<typeof useInitiateAuthorizeMutation>);
 
-    const { result } = renderHook(() => useCardLoginViewModel({ openHostedLogin: jest.fn() }));
+    const { result } = renderHook(() =>
+      useCardLoginViewModel({ openHostedLogin: jest.fn(), oauth }),
+    );
 
     expect(result.current.isLoading).toBe(true);
   });

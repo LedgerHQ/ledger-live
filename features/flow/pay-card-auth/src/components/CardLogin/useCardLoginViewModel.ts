@@ -5,6 +5,7 @@ import type { CardLoginViewModelParams, CardLoginViewProps } from "./types";
 
 export function useCardLoginViewModel({
   openHostedLogin,
+  oauth,
 }: CardLoginViewModelParams): CardLoginViewProps {
   const [initiateAuthorize, { isLoading: isInitiateAuthorizeLoading }] =
     useInitiateAuthorizeMutation();
@@ -20,6 +21,8 @@ export function useCardLoginViewModel({
         const { state, codeChallenge } = await createAuthorizeAttempt();
 
         const { url, redirectUri } = await initiateAuthorize({
+          clientId: oauth.clientId,
+          redirectUri: oauth.redirectUri,
           state,
           codeChallenge,
         }).unwrap();
@@ -33,7 +36,7 @@ export function useCardLoginViewModel({
         setIsOpeningHostedLogin(false);
       }
     })();
-  }, [openHostedLogin, initiateAuthorize]);
+  }, [openHostedLogin, initiateAuthorize, oauth.clientId, oauth.redirectUri]);
 
   return {
     title: "Card",

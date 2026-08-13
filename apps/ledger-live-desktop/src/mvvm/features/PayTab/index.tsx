@@ -1,7 +1,8 @@
 import React from "react";
-import { CardLogin } from "@features/flow-pay-card-auth";
+import { CardLogin, type CardLoginOauthConfig } from "@features/flow-pay-card-auth";
 import { Balance } from "@features/flow-pay-card-balance";
 import { DepositOptions } from "@features/flow-pay-card-deposit";
+import { getEnv } from "@shared/env";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import PayTabHeader from "./components/PayTabHeader";
 import { usePayCardBalance } from "./hooks/usePayCardBalance";
@@ -10,6 +11,12 @@ import { usePayTabFeatureTour } from "./hooks/usePayTabFeatureTour";
 import { usePayTabActionTiles } from "./hooks/usePayTabActionTiles";
 import { usePayTabDepositOptions } from "./hooks/usePayTabDepositOptions";
 import { usePayStablecoins } from "./hooks/usePayStablecoins";
+
+// Baanx uses the same value for the client key header and the OAuth `client_id`.
+const oauth: CardLoginOauthConfig = {
+  clientId: getEnv("CARD_BAANX_CLIENT_KEY"),
+  redirectUri: getEnv("CARD_OAUTH_REDIRECT_URI"),
+};
 
 const PayTab = () => {
   const balance = usePayCardBalance();
@@ -27,7 +34,7 @@ const PayTab = () => {
       <PayTabHeader />
       <Balance {...balance} actionTiles={actionTiles} />
       <DepositOptions {...deposit.depositOptions} />
-      <CardLogin />
+      <CardLogin oauth={oauth} />
       <FeatureTour {...featureTour} />
     </div>
   );
