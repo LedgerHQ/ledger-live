@@ -1,5 +1,5 @@
 module.exports = {
-  testEnvironment: "node",
+  testEnvironment: "jsdom",
   testPathIgnorePatterns: ["lib/", "lib-es/", "__tests__/test-utils"],
   coveragePathIgnorePatterns: ["__tests__/test-utils"],
   moduleNameMapper: {
@@ -20,7 +20,7 @@ module.exports = {
       },
     ],
   },
-  coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../" }], "text"],
+  coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../../" }], "text"],
   reporters: [
     "default",
     ...(process.env.CI ? ["github-actions"] : []),

@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import type { ErrorComponent } from "@ledgerhq/device-intent";
+import type { ErrorComponent } from "@features/platform-device-intent";
 import { isDmkError } from "@ledgerhq/live-dmk-desktop";
 import { useDeviceIntentTracking } from "@ledgerhq/live-dmk-shared";
 import TranslatedError from "~/renderer/components/TranslatedError";

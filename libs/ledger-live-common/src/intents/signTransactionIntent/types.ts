@@ -1,4 +1,8 @@
-import type { Intent, IntentDefinition, IntentPlatformDefinition } from "@ledgerhq/device-intent";
+import type {
+  Intent,
+  IntentDefinition,
+  IntentPlatformDefinition,
+} from "@features/platform-device-intent";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 import type { SignatureRequest } from "../../flows/send/hooks/useSendFlowSignatureCore";
 import type { SignedOperation } from "@ledgerhq/types-live";

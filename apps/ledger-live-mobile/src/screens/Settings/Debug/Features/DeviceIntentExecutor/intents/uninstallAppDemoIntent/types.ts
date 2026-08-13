@@ -1,4 +1,8 @@
-import type { Intent, IntentDefinition, IntentPlatformDefinition } from "@ledgerhq/device-intent";
+import type {
+  Intent,
+  IntentDefinition,
+  IntentPlatformDefinition,
+} from "@features/platform-device-intent";
 
 export type UninstallAppDemoIntentJobState =
   | { type: "promptUninstall"; confirm: () => void; skip: () => void }

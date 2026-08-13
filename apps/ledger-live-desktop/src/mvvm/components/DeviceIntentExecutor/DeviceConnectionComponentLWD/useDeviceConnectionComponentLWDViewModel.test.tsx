@@ -1,4 +1,7 @@
-import type { DeviceConnectionParams, DeviceConnectionResult } from "@ledgerhq/device-intent";
+import type {
+  DeviceConnectionParams,
+  DeviceConnectionResult,
+} from "@features/platform-device-intent";
 import {
   connectDevice,
   ConnectDeviceUIStateTypes,
@@ -138,7 +141,6 @@ function makeConnectionResult(
   return {
     compatDeviceId: "device-id",
     compatDeviceName: "Ledger Nano X",
-    compatDeviceModelId: DeviceModelId.nanoX,
     compatDeviceWired: true,
     dmk: mockDmk,
     sessionId: "session-id",
@@ -183,7 +185,7 @@ describe("useDeviceConnectionComponentLWDViewModel", () => {
 
   it("GIVEN accepted device model ids WHEN rendering the view model THEN it passes them to connect device", () => {
     // GIVEN
-    const acceptedDeviceModelIds = [DeviceModelId.stax];
+    const acceptedDeviceModelIds = [ledgerToDmkDeviceIdMap[DeviceModelId.stax]];
 
     // WHEN
     renderViewModel({
@@ -193,7 +195,7 @@ describe("useDeviceConnectionComponentLWDViewModel", () => {
     // THEN
     expect(mockedConnectDevice).toHaveBeenCalledWith(
       expect.objectContaining({
-        acceptedDeviceModelIds,
+        acceptedDeviceModelIds: [DeviceModelId.stax],
       }),
     );
   });

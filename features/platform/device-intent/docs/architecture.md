@@ -177,7 +177,7 @@ flowchart LR
 ## File structure
 
 ```
-libs/device-intent/src/
+features/platform/device-intent/src/
 ├── core.ts                              # intent & device types + createIntent helper
 ├── executor.ts                          # executor props, state & platform config types
 ├── index.ts                             # re-exports

@@ -5,7 +5,7 @@ import {
   type DeviceConnectionParams,
   type DeviceIntentExecutorProps,
   type ExecutorState,
-} from "@ledgerhq/device-intent";
+} from "@features/platform-device-intent";
 import { Button } from "@ledgerhq/lumen-ui-react";
 import { ArrowLeft } from "@ledgerhq/lumen-ui-react/symbols";
 import {

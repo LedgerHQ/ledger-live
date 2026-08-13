@@ -3,7 +3,7 @@ import type {
   DeviceConnectionResult,
   DeviceIntentExecutorProps,
   ExecutorState,
-} from "@ledgerhq/device-intent";
+} from "@features/platform-device-intent";
 import {
   dmkToLedgerDeviceIdMap,
   type DeviceIntentTrackingProperties,
