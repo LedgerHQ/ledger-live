@@ -21,6 +21,11 @@ interface UseQueuedBottomSheetProps {
 
 type BottomSheetState = "idle" | "open" | "dismissing";
 
+// QAA-1476 instrumentation. logDrawer emits no instance identifier, so lines from every drawer
+// on screen interleave into one stream and cannot be attributed. Number each hook instance and
+// prefix its output. Not for merge.
+let instanceCounter = 0;
+
 export function useQueuedBottomSheet({
   isRequestingToBeOpened = false,
   isForcingToBeOpened = false,
@@ -34,9 +39,11 @@ export function useQueuedBottomSheet({
   const adapters = useQueuedBottomSheetAdapters();
   const logRef = useRef(adapters.log);
   logRef.current = adapters.log;
+  const instanceIdRef = useRef(0);
+  if (instanceIdRef.current === 0) instanceIdRef.current = ++instanceCounter;
   const logBottomSheet = useCallback(
     (message: string, data?: Record<string, unknown> | number | string) =>
-      logRef.current(message, data),
+      logRef.current(`[#${instanceIdRef.current}] ${message}`, data),
     [],
   );
 
@@ -176,10 +183,21 @@ export function useQueuedBottomSheet({
     setReopenCheckSignal(s => s + 1);
   }, [cleanupQueue, logBottomSheet]);
 
+  // QAA-1476 instrumentation: identify the consumer behind this instance. Callback names
+  // usually survive minification well enough to point at the owning component, and the mount
+  // order alone maps an id onto a drawer once you line it up with the test steps.
+  useEffect(() => {
+    logBottomSheet(
+      `mounted: onClose=${onCloseRef.current?.name || "anon"} onModalHide=${onModalHideRef.current?.name || "anon"}`,
+    );
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // QAA-1476 instrumentation: the effect below closes the sheet from its cleanup, and React
-  // re-runs that cleanup whenever any dependency changes. Focus is provably stable in the
-  // failing runs, so name whichever dependency actually moved. Computed during render so it
-  // is logged before the cleanup it explains. Not for merge.
+  // re-runs that cleanup whenever any dependency changes. `isRequestingToBeOpened` is what
+  // precedes every spurious close, so log the transition itself with the value, to separate
+  // "the consumer withdrew the request" from "the hook closed and the consumer followed".
+  // Computed during render so it is logged before the cleanup it explains. Not for merge.
   const prevDepsRef = useRef<Record<string, unknown> | null>(null);
   const currentDeps: Record<string, unknown> = {
     isFocused,
@@ -193,7 +211,10 @@ export function useQueuedBottomSheet({
   if (prevDepsRef.current) {
     const previous = prevDepsRef.current;
     const changed = Object.keys(currentDeps).filter(key => currentDeps[key] !== previous[key]);
-    if (changed.length) logBottomSheet(`deps changed: ${changed.join(", ")}`);
+    if (changed.length) {
+      const state = `req=${isRequestingToBeOpened} forcing=${isForcingToBeOpened} focused=${isFocused} state=${stateRef.current}`;
+      logBottomSheet(`deps changed: ${changed.join(", ")} | ${state}`);
+    }
   }
   prevDepsRef.current = currentDeps;
 
