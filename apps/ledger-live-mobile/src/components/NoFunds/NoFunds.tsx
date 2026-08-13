@@ -9,7 +9,7 @@ import { StyleProp, ViewStyle } from "react-native";
 import CoinsIcon from "./CoinsIcon";
 import TransferButton from "../TransferButton";
 import { NavigatorName, ScreenName } from "~/const";
-import { TrackScreen, useAnalytics, track } from "~/analytics";
+import { TrackScreen, track, usePageNameFromRoute } from "~/analytics";
 import type { NoFundsNavigatorParamList } from "../RootNavigator/types/NoFundsNavigator";
 import { StackNavigatorProps } from "../RootNavigator/types/helpers";
 import { Currency } from "@domain/entity-currency";
@@ -80,7 +80,7 @@ export default function NoFunds({ route }: Readonly<Props>) {
     return currency && swapAvailableIds.includes(currency.id);
   }, [currency, swapAvailableIds]);
 
-  const { page, track } = useAnalytics();
+  const page = usePageNameFromRoute();
   const onNavigate = useCallback(
     (name: string, options?: object) => {
       (navigation as NativeStackNavigationProp<{ [key: string]: object | undefined }>).navigate(
@@ -111,7 +111,7 @@ export default function NoFunds({ route }: Readonly<Props>) {
         createTokenAccount: shouldCreateTokenAccount,
       },
     });
-  }, [account, currency, onNavigate, page, parentAccount, track]);
+  }, [account, currency, onNavigate, page, parentAccount]);
 
   const onSwap = useCallback(() => {
     track("button_clicked", {
@@ -121,7 +121,7 @@ export default function NoFunds({ route }: Readonly<Props>) {
     navigateToSwapTab({
       navigation: navigation as unknown as NativeStackNavigationProp<BaseNavigatorStackParamList>,
     });
-  }, [navigation, page, track]);
+  }, [navigation, page]);
 
   const onBuy = useCallback(() => {
     track("button_clicked", {
@@ -135,7 +135,7 @@ export default function NoFunds({ route }: Readonly<Props>) {
         defaultCurrencyId: currency.id,
       },
     });
-  }, [track, page, onNavigate, account, parentAccount, currency.id]);
+  }, [page, onNavigate, account, parentAccount, currency.id]);
 
   const buttonsList: ButtonItem[] = [
     {

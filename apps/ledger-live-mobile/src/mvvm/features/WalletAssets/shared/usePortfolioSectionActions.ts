@@ -5,7 +5,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { NavigatorName, ScreenName } from "~/const";
 import { Asset } from "~/types/asset";
-import { useAnalytics } from "~/analytics";
+import { track } from "~/analytics";
 import { useAssetDetailNavigation } from "LLM/features/AssetDetail/hooks/useAssetDetailNavigation";
 
 interface PortfolioSectionActions {
@@ -28,7 +28,6 @@ export function usePortfolioSectionActions(
 ): PortfolioSectionActions {
   const { shouldDisplayAssetSection } = useWalletFeaturesConfig("mobile");
   const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
-  const { track } = useAnalytics();
   const { openFromAsset } = useAssetDetailNavigation();
 
   const onPressShowAll = useCallback(() => {
@@ -50,7 +49,7 @@ export function usePortfolioSectionActions(
         screen: ScreenName.Assets,
       });
     }
-  }, [navigation, shouldDisplayAssetSection, isReadOnly, variant, track]);
+  }, [navigation, shouldDisplayAssetSection, isReadOnly, variant]);
 
   const onItemPress = useCallback(
     (asset: Asset) => {
@@ -65,7 +64,7 @@ export function usePortfolioSectionActions(
         marketId: asset.marketId,
       });
     },
-    [openFromAsset, track],
+    [openFromAsset],
   );
 
   return { onPressShowAll, onItemPress };

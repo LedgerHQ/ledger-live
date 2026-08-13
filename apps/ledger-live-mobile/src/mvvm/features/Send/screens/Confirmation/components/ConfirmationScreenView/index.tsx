@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo } from "react";
 import { Button } from "@ledgerhq/lumen-ui-rnative";
 import { ConfirmationStatusLayout } from "../ConfirmationStatusLayout";
-import { useAnalytics } from "~/analytics";
+import { track, usePageNameFromRoute } from "~/analytics";
 import { getSendFlowTrackingProperties } from "@ledgerhq/ledger-wallet-framework/tracking/send";
 import { useSendFlowData } from "../../../../context/SendFlowContext";
 
@@ -27,18 +27,20 @@ export function ConfirmationScreenView({
   const { state } = useSendFlowData();
   const { account, parentAccount } = state.account;
 
-  const { track } = useAnalytics();
   const trackingProperties = useMemo(() => {
     return getSendFlowTrackingProperties(account ?? null, parentAccount);
   }, [account, parentAccount]);
+
+  const page = usePageNameFromRoute();
 
   useEffect(() => {
     track("transaction_drawer", {
       ...trackingProperties,
       name: "transaction details",
+      page,
       flow: "send",
     });
-  }, [track, trackingProperties]);
+  }, [page, trackingProperties]);
 
   const handleViewTransaction = useCallback(() => {
     track("button_clicked", {
@@ -48,7 +50,7 @@ export function ConfirmationScreenView({
       flow: "send",
     });
     onViewTransaction();
-  }, [track, trackingProperties, onViewTransaction]);
+  }, [trackingProperties, onViewTransaction]);
 
   const handleClose = useCallback(() => {
     track("button_clicked", {
@@ -58,11 +60,11 @@ export function ConfirmationScreenView({
       flow: "send",
     });
     onClose();
-  }, [track, trackingProperties, onClose]);
+  }, [trackingProperties, onClose]);
 
   useEffect(() => {
-    track("send_modal", { ...trackingProperties, name: "step confirmation" });
-  }, [track, trackingProperties]);
+    track("send_modal", { ...trackingProperties, name: "step confirmation", page });
+  }, [page, trackingProperties]);
 
   return (
     <ConfirmationStatusLayout

@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from "react";
 import { Box, Button } from "@ledgerhq/lumen-ui-rnative";
 import type { AmountScreenQuickAction } from "../types";
-import { useAnalytics } from "~/analytics";
+import { track } from "~/analytics";
 import { getSendFlowTrackingProperties } from "@ledgerhq/ledger-wallet-framework/tracking/send";
 import { useSendFlowData } from "../../../context/SendFlowContext";
 
@@ -26,7 +26,6 @@ export function QuickActionsRow({ actions }: QuickActionsRowProps) {
   const { state } = useSendFlowData();
   const { account, parentAccount } = state.account;
 
-  const { track } = useAnalytics();
   const trackingProperties = useMemo(() => {
     return getSendFlowTrackingProperties(account, parentAccount);
   }, [account, parentAccount]);
@@ -46,7 +45,7 @@ export function QuickActionsRow({ actions }: QuickActionsRowProps) {
       });
       onPress();
     },
-    [track, trackingProperties],
+    [trackingProperties],
   );
 
   return (

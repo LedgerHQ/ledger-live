@@ -60,7 +60,7 @@ jest.mock("../../context/SendFlowContext", () => ({
   }),
 }));
 jest.mock("~/analytics", () => ({
-  useAnalytics: () => ({ track: jest.fn() }),
+  track: jest.fn(),
 }));
 jest.mock("@ledgerhq/ledger-wallet-framework/tracking/send", () => ({
   getSendFlowTrackingProperties: () => ({}),

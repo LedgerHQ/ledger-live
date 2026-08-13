@@ -17,7 +17,7 @@ jest.mock("@react-navigation/native", () => ({
 }));
 
 jest.mock("~/analytics", () => ({
-  useAnalytics: () => ({ track: mockTrack }),
+  track: (...args: unknown[]) => mockTrack(...args),
 }));
 
 const btcAsset: Asset = {

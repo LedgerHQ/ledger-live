@@ -9,7 +9,7 @@ import { ButtonProps } from "@ledgerhq/native-ui/components/cta/Button/index";
 import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import InfoModal from "../InfoModal";
-import { useAnalytics } from "~/analytics";
+import { track } from "~/analytics";
 import { WrappedButtonProps } from "../wrappedUi/Button";
 import { setOriginFlow } from "~/analytics/originFlow";
 import { NavigatorName } from "~/const";
@@ -90,7 +90,6 @@ export const FabButtonBarProvider = ({
   eventProperties?: { [key: string]: unknown };
   children: (value: { quickActions: ActionButtonProps[] }) => ReactNode;
 }) => {
-  const { track } = useAnalytics();
   const [pressedDisabledAction, setPressedDisabledAction] = useState<ActionButtonEvent | undefined>(
     undefined,
   );
@@ -192,7 +191,6 @@ export const FabButtonBarProvider = ({
       readOnlyModeEnabled,
       hasOrderedNano,
       navigateToRebornFlow,
-      track,
       router.name,
       globalEventProperties,
       onNavigate,
