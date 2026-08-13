@@ -9,26 +9,25 @@ import { getModularSelector } from "tests/utils/modularSelectorUtils";
 import { ethAccount, secondEthAccount } from "tests/testdata/ledgerSyncTestData";
 import { getEnv, setEnv } from "@shared/env";
 import { deviceTagsWithoutLNS } from "tests/utils/tagsUtils";
+import { randomUUID } from "crypto";
 
 const APP_INSTANCE_NAME = "LWD";
 
-function setupSeed(seed: string) {
+/**
+ * A seed generated per run, so every test builds its trustchain from scratch instead of clearing
+ * whatever the previous run left on the backend. That removes the destroy-then-recreate burst the
+ * tests used to open with, and with it a version counter, member list and data set to reset.
+ * The trustchain is unreachable once the run ends, so `destroyTrustchainAfterAll` is what keeps
+ * the backend from accumulating orphans.
+ */
+function setupSeed() {
   const prevSeed = getEnv("SEED");
   test.beforeAll(async () => {
-    process.env.SEED = seed;
+    process.env.SEED = `LS_E2E_${randomUUID()}`;
   });
   test.afterAll(async () => {
     setEnv("SEED", prevSeed);
   });
-}
-
-/** Clears whatever the previous run left on the backend before building the real trustchain. */
-function initializeThenDeleteTrustchain() {
-  return [
-    LedgerSyncCliHelper.initializeLedgerKeyRingProtocol,
-    LedgerSyncCliHelper.initializeLedgerSync,
-    LedgerSyncCliHelper.deleteLedgerSyncData,
-  ];
 }
 
 function initializeEmptyTrustchain() {
@@ -83,7 +82,6 @@ function preSeededTrustchain(seedCommands: CliCommand[] = []) {
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: AppInfos.LS,
     cliCommands: [
-      ...initializeThenDeleteTrustchain(),
       ...initializeEmptyTrustchain(),
       ...seedCommands,
       LedgerSyncCliHelper.saveTrustchainToUserdata,
@@ -106,7 +104,7 @@ function preSeededTrustchain(seedCommands: CliCommand[] = []) {
 }
 
 test.describe("Ledger Sync - add account", () => {
-  setupSeed("LS_AddAccount_SEED");
+  setupSeed();
   destroyTrustchainAfterAll();
   const addedCurrency = Currency.ETH;
 
@@ -161,7 +159,7 @@ test.describe("Ledger Sync - add account", () => {
 });
 
 test.describe("Ledger Sync - rename account", () => {
-  setupSeed("LS_RenameAccount_SEED");
+  setupSeed();
   destroyTrustchainAfterAll();
   const defaultAccountName = `${Currency.ETH.name} 1`;
   const renamedAccountName = `${Currency.ETH.name} LedgerSync 1`;
@@ -201,7 +199,7 @@ test.describe("Ledger Sync - rename account", () => {
 });
 
 test.describe("Ledger Sync - delete account", () => {
-  setupSeed("LS_DeleteAccount_SEED");
+  setupSeed();
   destroyTrustchainAfterAll();
   const deletedAccountName = `${Currency.ETH.name} 1`;
   const remainingAccountName = `${Currency.ETH.name} 2`;
@@ -243,7 +241,7 @@ test.describe("Ledger Sync - delete account", () => {
 });
 
 test.describe("Ledger Sync - delete instance", () => {
-  setupSeed("LS_DeleteInstance_SEED");
+  setupSeed();
   destroyTrustchainAfterAll();
 
   test.use(preSeededTrustchain([addAppInstanceToTrustchain]));
@@ -280,7 +278,7 @@ test.describe("Ledger Sync - delete instance", () => {
 });
 
 test.describe("Ledger Sync - delete backup", () => {
-  setupSeed("LS_DeleteBackup_SEED");
+  setupSeed();
   destroyTrustchainAfterAll();
 
   test.use(preSeededTrustchain([pushEthAccountToTrustchain]));
