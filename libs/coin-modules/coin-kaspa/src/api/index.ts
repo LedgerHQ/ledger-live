@@ -120,6 +120,9 @@ export function createApi(): CoinModuleApi<KaspaCoinConfig> {
     call: async (_context: KaspaContext) => {
       throw new Error("call is not supported");
     },
+    async register() {
+      throw new Error("register is not supported");
+    },
     getStakes: (
       _context: KaspaContext,
       _address: string,

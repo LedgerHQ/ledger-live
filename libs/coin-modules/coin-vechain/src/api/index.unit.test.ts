@@ -244,6 +244,12 @@ describe("createApi", () => {
     expect(() => api.call(context, {})).toThrow("call is not supported");
   });
 
+  it("throws for register (not supported)", async () => {
+    const api = createApi();
+    const context = createMockVechainContext();
+    await expect(api.register(context, SENDER)).rejects.toThrow("register is not supported");
+  });
+
   it("validates addresses via parseAddress", async () => {
     const api = createApi();
     const context = createMockVechainContext();

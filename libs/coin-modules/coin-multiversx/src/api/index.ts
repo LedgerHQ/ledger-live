@@ -56,6 +56,9 @@ export function createApi(): CoinModuleApi<MultiversXCoinConfig> {
     async call(_context: MultiversXContext) {
       throw new Error("call is not supported");
     },
+    async register() {
+      throw new Error("register is not supported");
+    },
     combine: (
       _context: MultiversXContext,
       tx: string,

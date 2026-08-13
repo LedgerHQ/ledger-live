@@ -118,6 +118,9 @@ export function createApi(
       getBlock(context, currency, height),
     getBlockInfo: (context: EvmContext, height: number): Promise<BlockInfo> =>
       getBlockInfo(context, currency, height),
+    async register() {
+      throw new Error("register is not supported");
+    },
     getStakes(_context: EvmContext, _address: string): Promise<Page<Stake>> {
       throw new Error("getStakes is not supported");
     },

@@ -44,6 +44,9 @@ export function createApi(currencyId: string): CoinModuleApi<CardanoCoinConfig, 
     async call() {
       throw new Error("call is not supported");
     },
+    async register() {
+      throw new Error("register is not supported");
+    },
     lastBlock: (_context: CardanoContext): Promise<BlockInfo> => lastBlock(currency),
     getBlockInfo: (_context: CardanoContext, _height: number): Promise<BlockInfo> => {
       throw new Error("getBlockInfo is not supported");

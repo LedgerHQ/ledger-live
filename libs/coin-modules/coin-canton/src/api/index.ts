@@ -27,6 +27,9 @@ export function createApi(): CoinModuleApi<CantonCoinConfig> {
     async call() {
       throw new Error("call is not supported");
     },
+    async register() {
+      throw new Error("register is not supported");
+    },
     broadcast: (_context: CantonContext, _tx: string): Promise<string> => {
       throw new Error("broadcast is not supported");
     },

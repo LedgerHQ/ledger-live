@@ -64,6 +64,9 @@ export function createApi(currencyId: string): SolanaCoinModuleApi {
     async call() {
       throw new Error("call is not supported");
     },
+    async register() {
+      throw new Error("register is not supported");
+    },
     combine: (
       _context: SolanaContext,
       tx: string,
