@@ -2,23 +2,45 @@ import { Principal } from "@dfinity/principal";
 import {
   E8S_PER_ICP,
   ICP_FEES,
+  LAST_SYNC_THRESHOLD_IN_DAYS,
   MIN_NEURON_STAKE,
+  NNS_CLEAR_FOLLOWING_AFTER_SECONDS,
   NNS_MAXIMUM_DISSOLVE_DELAY,
+  NNS_START_REDUCING_VOTING_POWER_AFTER_SECONDS,
+  SECONDS_IN_DAY,
   SECONDS_IN_FOUR_YEARS,
+  SECONDS_IN_MONTH,
+  SECONDS_IN_YEAR,
   SECONDS_IN_7_DAYS,
 } from "../consts";
-import { ICPNeuron, ListNeuronsResponse, NeuronState, RawNeuron } from "../types/neuron";
+import {
+  ICPNeuron,
+  ListNeuronsResponse,
+  NeuronsData,
+  NeuronState,
+  RawNeuron,
+} from "../types/neuron";
 import {
   ageMultiplier,
   bonusMultiplier,
   dissolveDelayMultiplier,
+  getBannerState,
   getNeuronActionPermissions,
   getNeuronDissolveDurationSeconds,
+  getSecondsTillVotingPowerExpires,
+  hasEnoughMaturityToStake,
+  isDeviceControlledNeuron,
+  isEnoughMaturityToSpawn,
+  maxAllowedSplitAmount,
+  minAllowedSplitAmount,
   minNeuronSplittable,
   neuronCanBeSplit,
   neuronPotentialVotingPower,
+  neuronsNeedSync,
   neuronStake,
+  secondsToDuration,
   toNeuronsData,
+  votingPowerNeedsRefresh,
 } from "./neuron";
 
 const baseNeuron = (overrides: Partial<ICPNeuron> = {}): ICPNeuron => ({
@@ -39,38 +61,48 @@ const baseNeuron = (overrides: Partial<ICPNeuron> = {}): ICPNeuron => ({
   ...overrides,
 });
 
+// The voting-power fields are deliberately different on the two records so the tests can tell which
+// one the decode read.
+const listNeuronsResponse = (): ListNeuronsResponse => {
+  const raw: RawNeuron = {
+    id: [{ id: 123n }],
+    account: new Array(32).fill(1),
+    controller: [Principal.anonymous()],
+    hot_keys: [Principal.anonymous()],
+    cached_neuron_stake_e8s: 300_000_000n,
+    neuron_fees_e8s: 0n,
+    created_timestamp_seconds: 1_600_000_000n,
+    aging_since_timestamp_seconds: 1_600_000_000n,
+    dissolve_state: [{ DissolveDelaySeconds: BigInt(NNS_MAXIMUM_DISSOLVE_DELAY) }],
+    followees: [[4, { followees: [{ id: 999n }] }]],
+    maturity_e8s_equivalent: 0n,
+    staked_maturity_e8s_equivalent: [],
+    auto_stake_maturity: [true],
+    voting_power_refreshed_timestamp_seconds: [1_700_000_000n],
+    potential_voting_power: [900_000_000n],
+    deciding_voting_power: [450_000_000n],
+  };
+  return {
+    neuron_infos: [
+      [
+        123n,
+        {
+          state: NeuronState.Locked,
+          age_seconds: BigInt(SECONDS_IN_FOUR_YEARS),
+          dissolve_delay_seconds: BigInt(NNS_MAXIMUM_DISSOLVE_DELAY),
+          voting_power_refreshed_timestamp_seconds: [1_700_000_001n],
+          potential_voting_power: [900_000_001n],
+          deciding_voting_power: [450_000_001n],
+        },
+      ],
+    ],
+    full_neurons: [raw],
+  };
+};
+
 describe("toNeuronsData", () => {
   it("normalizes a list_neurons response into ICPNeurons", () => {
-    const raw: RawNeuron = {
-      id: [{ id: 123n }],
-      account: new Array(32).fill(1),
-      controller: [Principal.anonymous()],
-      hot_keys: [Principal.anonymous()],
-      cached_neuron_stake_e8s: 300_000_000n,
-      neuron_fees_e8s: 0n,
-      created_timestamp_seconds: 1_600_000_000n,
-      aging_since_timestamp_seconds: 1_600_000_000n,
-      dissolve_state: [{ DissolveDelaySeconds: BigInt(NNS_MAXIMUM_DISSOLVE_DELAY) }],
-      followees: [[4, { followees: [{ id: 999n }] }]],
-      maturity_e8s_equivalent: 0n,
-      staked_maturity_e8s_equivalent: [],
-      auto_stake_maturity: [true],
-    };
-    const response: ListNeuronsResponse = {
-      neuron_infos: [
-        [
-          123n,
-          {
-            state: NeuronState.Locked,
-            age_seconds: BigInt(SECONDS_IN_FOUR_YEARS),
-            dissolve_delay_seconds: BigInt(NNS_MAXIMUM_DISSOLVE_DELAY),
-          },
-        ],
-      ],
-      full_neurons: [raw],
-    };
-
-    const { fullNeurons } = toNeuronsData(response, 42);
+    const { fullNeurons } = toNeuronsData(listNeuronsResponse(), 42);
     expect(fullNeurons).toHaveLength(1);
     const [n] = fullNeurons;
     expect(n.id).toBe(123n);
@@ -81,6 +113,24 @@ describe("toNeuronsData", () => {
     expect(n.autoStakeMaturity).toBe(true);
     expect(n.followees).toEqual([{ topic: 4, followeeIds: [999n] }]);
     expect(n.accountIdentifier).toMatch(/^[0-9a-f]{64}$/);
+  });
+
+  it("prefers the NeuronInfo voting-power fields over the full neuron's", () => {
+    const [n] = toNeuronsData(listNeuronsResponse()).fullNeurons;
+    expect(n.votingPowerRefreshedTimestampSeconds).toBe(1_700_000_001n);
+    expect(n.potentialVotingPower).toBe(900_000_001n);
+    expect(n.decidingVotingPower).toBe(450_000_001n);
+  });
+
+  it("falls back to the full neuron when NeuronInfo omits them, and omits them when both do", () => {
+    const response = listNeuronsResponse();
+    response.neuron_infos[0][1].voting_power_refreshed_timestamp_seconds = [];
+    response.neuron_infos[0][1].deciding_voting_power = [];
+    response.full_neurons[0].deciding_voting_power = [];
+
+    const [n] = toNeuronsData(response).fullNeurons;
+    expect(n.votingPowerRefreshedTimestampSeconds).toBe(1_700_000_000n);
+    expect("decidingVotingPower" in n).toBe(false);
   });
 });
 
@@ -167,5 +217,159 @@ describe("stake & split", () => {
     expect(
       neuronCanBeSplit(baseNeuron({ cachedNeuronStakeE8s: minNeuronSplittable(fee) - 1n }), fee),
     ).toBe(false);
+  });
+
+  it("split bounds leave the minimum stake on both neurons at the smallest splittable size", () => {
+    const fee = BigInt(ICP_FEES);
+    const neuron = baseNeuron({ cachedNeuronStakeE8s: minNeuronSplittable(fee) });
+    // The only valid amount at exactly the minimum splittable stake.
+    expect(minAllowedSplitAmount(fee)).toBe(BigInt(MIN_NEURON_STAKE) + fee);
+    expect(maxAllowedSplitAmount(neuron)).toBe(BigInt(MIN_NEURON_STAKE) + fee);
+  });
+
+  it("maxAllowedSplitAmount clamps to zero below the minimum stake", () => {
+    expect(maxAllowedSplitAmount(baseNeuron({ cachedNeuronStakeE8s: 1n }))).toBe(0n);
+  });
+});
+
+describe("maturity", () => {
+  it("can stake maturity only when there is some", () => {
+    expect(hasEnoughMaturityToStake(baseNeuron({ maturityE8sEquivalent: 1n }))).toBe(true);
+    expect(hasEnoughMaturityToStake(baseNeuron({ maturityE8sEquivalent: 0n }))).toBe(false);
+  });
+
+  // The canister rejects a spawn whose maturity would not clear the minimum stake after the
+  // worst-case -5% modulation: `(maturity_to_spawn as f64 * (1 - 0.05)) as u64 < min_stake`.
+  // These are the two integers either side of that boundary, so the wallet neither offers a spawn
+  // the canister would reject nor hides one it would accept.
+  it("matches the canister's worst-case modulation boundary exactly", () => {
+    const boundary = 105_263_158n; // ceil(MIN_NEURON_STAKE / 0.95)
+    expect(Math.floor(Number(boundary) * 0.95)).toBeGreaterThanOrEqual(MIN_NEURON_STAKE);
+    expect(Math.floor(Number(boundary - 1n) * 0.95)).toBeLessThan(MIN_NEURON_STAKE);
+
+    expect(isEnoughMaturityToSpawn(baseNeuron({ maturityE8sEquivalent: boundary }), 100)).toBe(
+      true,
+    );
+    expect(isEnoughMaturityToSpawn(baseNeuron({ maturityE8sEquivalent: boundary - 1n }), 100)).toBe(
+      false,
+    );
+  });
+
+  it("applies the requested percentage before the eligibility check", () => {
+    const twice = 210_526_316n;
+    expect(isEnoughMaturityToSpawn(baseNeuron({ maturityE8sEquivalent: twice }), 50)).toBe(true);
+    expect(isEnoughMaturityToSpawn(baseNeuron({ maturityE8sEquivalent: twice }), 49)).toBe(false);
+  });
+});
+
+describe("periodic confirmation", () => {
+  const REFRESHED = 1_700_000_000n;
+  const decaying = (overrides: Partial<ICPNeuron> = {}) =>
+    baseNeuron({ votingPowerRefreshedTimestampSeconds: REFRESHED, ...overrides });
+  const decayStart = Number(REFRESHED) + NNS_START_REDUCING_VOTING_POWER_AFTER_SECONDS;
+  const clearedAt = decayStart + NNS_CLEAR_FOLLOWING_AFTER_SECONDS;
+
+  it("counts down to the moment following is cleared, clamping at zero", () => {
+    expect(getSecondsTillVotingPowerExpires(decaying(), clearedAt - 60)).toBe(60);
+    expect(getSecondsTillVotingPowerExpires(decaying(), clearedAt)).toBe(0);
+    expect(getSecondsTillVotingPowerExpires(decaying(), clearedAt + 10_000)).toBe(0);
+  });
+
+  it("reports unknown, not expired, for a neuron persisted before the field was decoded", () => {
+    expect(getSecondsTillVotingPowerExpires(baseNeuron(), clearedAt)).toBeUndefined();
+    expect(votingPowerNeedsRefresh([baseNeuron()], clearedAt)).toBe(false);
+  });
+
+  it("flags a refresh only once the neuron has entered the decay window", () => {
+    expect(votingPowerNeedsRefresh([decaying()], decayStart - 1)).toBe(false);
+    expect(votingPowerNeedsRefresh([decaying()], decayStart)).toBe(true);
+  });
+
+  it("ignores neurons whose dissolve delay is too short to vote", () => {
+    const ineligible = decaying({ dissolveDelaySeconds: BigInt(SECONDS_IN_7_DAYS) });
+    expect(votingPowerNeedsRefresh([ineligible], clearedAt)).toBe(false);
+  });
+
+  it("neuronsNeedSync fires on the threshold and never on an empty snapshot", () => {
+    const stale = LAST_SYNC_THRESHOLD_IN_DAYS * SECONDS_IN_DAY * 1000;
+    const data = (lastUpdated: number) => new NeuronsData([baseNeuron()], lastUpdated);
+    expect(neuronsNeedSync(data(0), stale - 1)).toBe(false);
+    expect(neuronsNeedSync(data(0), stale)).toBe(true);
+    expect(neuronsNeedSync(new NeuronsData([], 0), stale)).toBe(false);
+  });
+
+  it("isDeviceControlledNeuron distinguishes the controller from a hot key", () => {
+    const principal = "2vxsx-fae";
+    expect(isDeviceControlledNeuron(baseNeuron({ controller: principal }), principal)).toBe(true);
+    expect(
+      isDeviceControlledNeuron(
+        baseNeuron({ controller: "other", hotKeys: [principal] }),
+        principal,
+      ),
+    ).toBe(false);
+    expect(isDeviceControlledNeuron(baseNeuron(), principal)).toBe(false);
+  });
+});
+
+describe("getBannerState", () => {
+  const REFRESHED = 1_700_000_000n;
+  const votingNeuron = (overrides: Partial<ICPNeuron> = {}) =>
+    baseNeuron({
+      votingPowerRefreshedTimestampSeconds: REFRESHED,
+      followees: [{ topic: 4, followeeIds: [9n] }],
+      ...overrides,
+    });
+  // Recent enough that neuronsNeedSync stays quiet, and before the decay window opens.
+  const NOW_MS = Number(REFRESHED) * 1000;
+  const state = (neurons: ICPNeuron[], canStake = true, nowMSecs = NOW_MS) =>
+    getBannerState({ neurons: new NeuronsData(neurons, nowMSecs), canStake, nowMSecs });
+
+  it("prompts to stake only when there are no neurons and the balance allows it", () => {
+    expect(state([])).toBe("stakeICP");
+    expect(state([], false)).toBe("none");
+  });
+
+  it("is quiet for a fully configured, freshly confirmed neuron", () => {
+    expect(state([votingNeuron()])).toBe("none");
+  });
+
+  it("puts a stale snapshot ahead of everything judged from it", () => {
+    const nowMSecs = NOW_MS + LAST_SYNC_THRESHOLD_IN_DAYS * SECONDS_IN_DAY * 1000;
+    const neurons = new NeuronsData([votingNeuron({ followees: [] })], NOW_MS);
+    expect(getBannerState({ neurons, canStake: true, nowMSecs })).toBe("syncNeurons");
+  });
+
+  it("ranks decaying voting power above configuration gaps", () => {
+    const nowMSecs = (Number(REFRESHED) + NNS_START_REDUCING_VOTING_POWER_AFTER_SECONDS) * 1000;
+    expect(state([votingNeuron({ followees: [] })], true, nowMSecs)).toBe("confirmFollowing");
+  });
+
+  it("asks to raise a dissolve delay that is too short to vote", () => {
+    expect(state([votingNeuron({ dissolveDelaySeconds: BigInt(SECONDS_IN_7_DAYS) })])).toBe(
+      "lockNeurons",
+    );
+  });
+
+  it("asks for followees once the neuron can vote but follows nobody", () => {
+    expect(state([votingNeuron({ followees: [] })])).toBe("addFollowees");
+  });
+});
+
+describe("secondsToDuration", () => {
+  it("splits a duration across the NNS year and month averages", () => {
+    expect(secondsToDuration(SECONDS_IN_YEAR * 2)).toMatchObject({ years: 2, months: 0, days: 0 });
+    expect(secondsToDuration(SECONDS_IN_MONTH + SECONDS_IN_DAY * 2 + 61)).toMatchObject({
+      years: 0,
+      months: 1,
+      days: 2,
+      hours: 0,
+      minutes: 1,
+      seconds: 1,
+    });
+  });
+
+  it("clamps negatives to zero and keeps precision for bigint input", () => {
+    expect(secondsToDuration(-5)).toMatchObject({ years: 0, seconds: 0 });
+    expect(secondsToDuration(BigInt(SECONDS_IN_YEAR) * 1_000n)).toMatchObject({ years: 1_000 });
   });
 });

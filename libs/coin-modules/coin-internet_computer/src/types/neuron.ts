@@ -38,6 +38,14 @@ export type ICPNeuron = {
   hotKeys: string[];
   followees: Followee[];
   autoStakeMaturity: boolean;
+  // Periodic-confirmation fields. All three are optional on the wire and absent from neurons
+  // persisted before they were decoded, so every consumer must treat "missing" as "unknown" rather
+  // than as zero — see votingPowerNeedsRefresh.
+  votingPowerRefreshedTimestampSeconds?: bigint;
+  // Voting power the canister will actually count, after periodic-confirmation decay.
+  decidingVotingPower?: bigint;
+  // Voting power ignoring decay. Equals the locally computed neuronPotentialVotingPower.
+  potentialVotingPower?: bigint;
 };
 
 // ---- Raw candid decode shapes (subset actually read by the wallet) ------------------------------
@@ -61,12 +69,18 @@ export type RawNeuron = {
   maturity_e8s_equivalent: bigint;
   staked_maturity_e8s_equivalent: [] | [bigint];
   auto_stake_maturity: [] | [boolean];
+  voting_power_refreshed_timestamp_seconds: [] | [bigint];
+  potential_voting_power: [] | [bigint];
+  deciding_voting_power: [] | [bigint];
 };
 
 export type RawNeuronInfo = {
   state: number;
   age_seconds: bigint;
   dissolve_delay_seconds: bigint;
+  voting_power_refreshed_timestamp_seconds: [] | [bigint];
+  potential_voting_power: [] | [bigint];
+  deciding_voting_power: [] | [bigint];
 };
 
 export type ListNeuronsResponse = {
