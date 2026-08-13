@@ -39,6 +39,7 @@ interface PayCardToolProps {
       label: string;
       done: boolean;
     }[];
+    // id "all" applies `done` to every step — the "Reset onboarding" button relies on it
     setStepDone: (id: string, done: boolean) => void;
   };
   hasSeenFeatureTour: boolean;
