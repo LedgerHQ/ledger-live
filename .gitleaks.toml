@@ -9,6 +9,12 @@ description = "Detected a BIP39 mnemonic seed phrase."
 regex = '''(?i)\b(?:seed|dev[_\s]?seed|mnemonic|pass[_\s]?phrase|recovery[_\s]?phrase)\s*[:=\s]\s*(?:[\x60'"]\s*)?((?:[a-zA-Z]{3,8}\s+){10,23}[a-zA-Z]{3,8})(?:\s*[\x60'"]|\s*[,;]|\b)'''
 keywords = ["seed", "mnemonic", "pass", "recovery", "phrase"]
 
+    [[rules.allowlists]]
+    description = "Ignore Clarinet's own public, deterministic devnet dev accounts (wallet_1/2/3, deployer)."
+    paths = [
+        '''libs/coin-tester-modules/coin-tester-stacks/settings/Devnet\.toml''',
+    ]
+
 [[rules]]
 id = "seed-array"
 description = "Detected a BIP39 mnemonic seed phrase in array format."
@@ -29,6 +35,13 @@ id = "generic-api-key"
         '''e2e/.+/userdata/.+\.json''',
         '''e2e/desktop/tests/.+/.+\.spec\.ts''',
         '''libs/.+/.+\.test\.ts\.snap''',
+    ]
+
+    [[rules.allowlists]]
+    description = "Ignore Clarinet's own public, deterministic devnet dev account keys (Devnet.toml comments and the matching hex private keys in fixtures.ts)."
+    paths = [
+        '''libs/coin-tester-modules/coin-tester-stacks/settings/Devnet\.toml''',
+        '''libs/coin-tester-modules/coin-tester-stacks/src/fixtures\.ts''',
     ]
 
 [[rules]]

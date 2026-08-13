@@ -27,6 +27,9 @@ import {
 export const StacksNetwork = {
   mainnet: "mainnet",
   testnet: "testnet",
+  // Additive only: lets the legacy bridge's `network: keyof typeof StacksNetwork` field
+  // (`types/bridge.ts`) address a local devnet (e.g. Clarinet), same env var as `mainnet`.
+  devnet: "devnet",
 } as const;
 
 /**
