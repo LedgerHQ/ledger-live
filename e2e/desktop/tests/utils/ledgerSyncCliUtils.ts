@@ -191,7 +191,30 @@ export class LedgerSyncCliHelper {
     });
   }
 
+  /**
+   * Re-reads the application path from the backend. Removing a member rotates the trustchain onto
+   * the next application path, leaving the path captured at creation time stale; without this a
+   * later delete is rejected with `TrustchainOutdated`. Best effort: on failure the cached path is
+   * kept so the caller still gets the underlying error.
+   */
+  static async refreshApplicationPath() {
+    try {
+      const applicationPath = await CLI.resolveApplicationPath({
+        ...LedgerSyncCliHelper.ledgerKeyRingProtocolArgs,
+        ...LedgerSyncCliHelper.ledgerSyncPushDataArgs,
+      });
+      if (applicationPath) {
+        LedgerSyncCliHelper.ledgerSyncPushDataArgs.applicationPath = applicationPath;
+        LedgerSyncCliHelper.ledgerSyncPullDataArgs.applicationPath = applicationPath;
+      }
+    } catch {
+      // keep the cached path: the caller surfaces the real failure
+    }
+  }
+
   static async deleteLedgerSyncData() {
+    await LedgerSyncCliHelper.refreshApplicationPath();
+
     await CLI.ledgerSync({
       deleteData: true,
       ...LedgerSyncCliHelper.ledgerKeyRingProtocolArgs,

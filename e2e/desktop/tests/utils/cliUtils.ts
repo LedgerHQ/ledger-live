@@ -80,6 +80,37 @@ export const CLI = {
 
     return Promise.reject("No function specified");
   },
+  /**
+   * Resolves the application path the backend currently accepts for a trustchain. Removing a
+   * member rotates the application stream onto the next path (`sdk.removeMember`), which leaves
+   * any locally cached `applicationPath` stale. The JWT permissions are the source of truth.
+   */
+  resolveApplicationPath: function (opts: LedgerKeyRingProtocolOpts): Promise<string | undefined> {
+    const {
+      apiBaseUrl = getEnv("TRUSTCHAIN_API_STAGING"),
+      applicationId = 16,
+      name = "CLI",
+      pubKey,
+      privateKey,
+      rootId,
+      walletSyncEncryptionKey,
+    } = opts;
+
+    if (!pubKey || !privateKey) return Promise.reject("pubKey and privateKey are required");
+    if (!rootId) return Promise.reject("rootId is required");
+
+    const sdk = getSdk(false, { applicationId, name, apiBaseUrl }, withDevice);
+
+    return sdk
+      .withAuth(
+        { rootId, walletSyncEncryptionKey: walletSyncEncryptionKey ?? "", applicationPath: "" },
+        { pubkey: pubKey, privatekey: privateKey },
+        jwt => Promise.resolve(Object.keys(jwt.permissions?.[rootId] ?? {})),
+        undefined,
+        true,
+      )
+      .then(paths => paths.find(path => path.startsWith(`m/0'/${applicationId}'/`)) ?? paths[0]);
+  },
   ledgerSync: function (opts: LedgerSyncOpts) {
     const {
       applicationId = 16,
