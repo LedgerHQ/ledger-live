@@ -33,6 +33,10 @@ jest.mock("@ledgerhq/live-common/bridge/useBridgeTransaction", () => ({
   default: jest.fn(),
 }));
 
+jest.mock("~/logic/screenTransactionHooks", () => ({
+  useTransactionChangeFromNavigation: jest.fn(),
+}));
+
 jest.mock("~/screens/SendFunds/utils/customSendFlow", () => ({
   getCustomSendFlow: jest.fn(() => null),
 }));

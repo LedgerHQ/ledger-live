@@ -12,6 +12,7 @@ import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransact
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { getCustomSendFlow } from "~/screens/SendFunds/utils/customSendFlow";
+import { useTransactionChangeFromNavigation } from "~/logic/screenTransactionHooks";
 import { ScreenName } from "~/const";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import { TrackScreen } from "~/analytics";
@@ -76,6 +77,7 @@ function SendAmountCoinContent({ navigation, route, account, parentAccount }: Co
       parentAccount,
     }),
   );
+  useTransactionChangeFromNavigation(setTransaction);
   const debouncedTransaction = useDebounce(transaction, 500);
   useEffect(() => {
     let cancelled = false;
