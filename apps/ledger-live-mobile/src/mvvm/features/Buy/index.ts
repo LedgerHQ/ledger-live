@@ -16,7 +16,6 @@ const ASSET_DETAIL_SOURCE_SCREEN_NAME = "Asset Detail";
 type UseOpenBuySellProps = {
   currency?: CryptoOrTokenCurrency;
   sourceScreenName: string;
-  onCancel?: () => void;
 };
 
 type AccountWithParent = {
@@ -42,7 +41,7 @@ function getAccountsForCurrency(
     });
 }
 
-export function useOpenBuySell({ currency, sourceScreenName, onCancel }: UseOpenBuySellProps) {
+export function useOpenBuySell({ currency, sourceScreenName }: UseOpenBuySellProps) {
   const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
   const shallowAccounts = useSelector(shallowAccountsSelector);
   const flattenedAccounts = useSelector(flattenAccountsSelector);
@@ -86,10 +85,9 @@ export function useOpenBuySell({ currency, sourceScreenName, onCancel }: UseOpen
         enableAccountSelection: true,
         onAccountSelected: (account, parentAccount) =>
           navigateToBuySell(mode, account, parentAccount),
-        onCancel,
       });
     },
-    [currency, openDrawer, sourceScreenName, navigateToBuySell, onCancel],
+    [currency, openDrawer, sourceScreenName, navigateToBuySell],
   );
 
   const handleOpenBuySell = useCallback(

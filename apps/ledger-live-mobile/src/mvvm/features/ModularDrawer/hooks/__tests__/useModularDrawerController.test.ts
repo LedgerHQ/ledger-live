@@ -74,6 +74,25 @@ describe("useModularDrawerController", () => {
       expect(onCancel).toHaveBeenCalledTimes(1);
     });
 
+    it("should not invoke onCancel when a new drawer replaces the current one", () => {
+      const firstCancel = jest.fn();
+      const { result } = renderHook(() => useModularDrawerController());
+
+      act(() => {
+        result.current.openDrawer({
+          flow: "test_flow",
+          source: "test_source",
+          onCancel: firstCancel,
+        });
+      });
+
+      act(() => {
+        result.current.openDrawer({ flow: "other_flow", source: "test_source" });
+      });
+
+      expect(firstCancel).not.toHaveBeenCalled();
+    });
+
     it("should not invoke onCancel when handleAccountSelected is used", () => {
       const onCancel = jest.fn();
       const onAccountSelected = jest.fn();
