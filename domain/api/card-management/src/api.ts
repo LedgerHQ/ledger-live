@@ -27,23 +27,11 @@ function toPayCardSession(response: PayCardSessionResponse): PayCardSession {
   };
 }
 
-/**
- * Card Management endpoints, injected into the shared Card API service.
- *
- * `injectEndpoints` mutates and returns the same api object, so this reference shares its reducer,
- * middleware and cache with the service the apps register, while only this one is typed with the
- * endpoints below. Reaching the backend — base URL, `x-client-key`, the session bearer token and the
- * 401 refresh — stays in `@shared/api-services`.
- */
 export const cardManagementApi = cardApi
   .enhanceEndpoints({ addTagTypes: CARD_MANAGEMENT_TAGS })
   .injectEndpoints({
     endpoints: build => ({
-      /**
-       * A mutation rather than a query: each attempt carries a fresh `state` and PKCE challenge, so
-       * no response is ever reusable, and starting a login must be an explicit act rather than
-       * something a mounted component triggers.
-       */
+      /** A mutation, not a query: every attempt carries a fresh `state` and PKCE challenge. */
       initiateAuthorize: build.mutation<PayCardAuthorizeInitiate, PayCardAuthorizeInitiateRequest>({
         query: ({ clientId, redirectUri, state, codeChallenge }) => ({
           url: "/v1/auth/oauth/authorize/initiate",
@@ -60,14 +48,6 @@ export const cardManagementApi = cardApi
         responseSchema: PayCardAuthorizeInitiateResponseSchema,
       }),
 
-      /**
-       * Single-use: an authorization code cannot be presented twice.
-       *
-       * TODO(LIVE-34769): the Card base query retries once on 401 after `refreshCardSession()`. That
-       * refresh returns `null` today, so nothing is replayed — but once it returns a real token, a
-       * 401 here would re-POST the same spent code. Exclude this path from the refresh retry when
-       * the session gets an owner.
-       */
       exchangeAuthorizationCode: build.mutation<PayCardSession, PayCardAuthorizationCodeRequest>({
         query: ({ code, redirectUri, codeVerifier }) => ({
           url: "/v1/auth/oauth/token",
@@ -84,7 +64,7 @@ export const cardManagementApi = cardApi
         responseSchema: PayCardSessionSchema,
       }),
 
-      /** Same endpoint as the code exchange, separated by `grant_type`. Same replay caveat. */
+      /** Same endpoint as the code exchange, separated by `grant_type`. */
       refreshSession: build.mutation<PayCardSession, PayCardRefreshSessionRequest>({
         query: ({ refreshToken }) => ({
           url: "/v1/auth/oauth/token",

@@ -3,12 +3,6 @@ import { useInitiateAuthorizeMutation } from "@domain/api-card-management";
 import type { PayCardAuthorizeInitiateRequest } from "@domain/api-card-management";
 import type { CardLoginProps, CardLoginViewProps } from "./types";
 
-/**
- * TODO(LIVE-34769): the OAuth orchestration that produces these — a random `state`, a PKCE
- * verifier/challenge pair and the registered redirect URI — is the next ticket, as is the client id
- * that has to come from configuration. Login therefore cannot complete yet; sending the real request
- * shape now keeps this call site typed against the contract it will use.
- */
 const PLACEHOLDER_AUTHORIZE_REQUEST: PayCardAuthorizeInitiateRequest = {
   clientId: "",
   redirectUri: "",
@@ -24,8 +18,7 @@ function getSecureHostedLoginUrl(loginUrl: string): string {
   return url.toString();
 }
 
-// Only genuine `Error` messages reach the user. An RTK rejection is a `FetchBaseQueryError`, not an
-// `Error`: it carries the raw status and response body, which must not be rendered.
+// An RTK rejection is a `FetchBaseQueryError` carrying the raw response, which must not be rendered.
 function getLoginErrorMessage(error: unknown): string {
   if (error instanceof Error && error.message) {
     return error.message;

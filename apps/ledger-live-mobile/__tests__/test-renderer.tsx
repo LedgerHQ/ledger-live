@@ -146,9 +146,6 @@ function createStore({ overrideInitialState }: { overrideInitialState: (state: S
             extraArgument: {
               ...cvsApiExtra({ countervaluesServiceUrl: getEnv("LEDGER_COUNTERVALUES_API") }),
               ...coinMarketCapApiExtra({ coinMarketCapApiUrl: getEnv("CMC_API_URL") }),
-              // The Card base query reads its extra unchecked, so a test that dispatches a Card
-              // endpoint without this throws instead of returning a handled error. No session here:
-              // a test that needs one seeds it through `@features/platform-card`.
               ...cardApiExtra({
                 cardApiBaseUrl: getEnv("CARD_API_URL"),
                 cardBaanxClientKey: getEnv("CARD_BAANX_CLIENT_KEY"),

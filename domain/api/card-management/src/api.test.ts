@@ -27,8 +27,7 @@ const session = {
   refreshTokenExpiresIn: 15897600,
 };
 
-// Wired the way the apps wire it: the store registers the *service api*, and this package's tags and
-// endpoints only live on that api because importing this module injected them.
+// Wired the way the apps wire it: the store registers the service api, never this package.
 const makeStore = (getCardSessionToken: () => string | null = () => null) =>
   configureStore({
     reducer: {
@@ -104,9 +103,7 @@ describe("cardManagementApi requests", () => {
         code_challenge: "challenge-value",
         code_challenge_method: "S256",
       });
-      // Set by the shared base query for every endpoint, not by this use case.
       expect(request(fetchSpy).headers.get("x-client-key")).toBe("client-key");
-      // No session yet, so the base query sends no bearer token at all.
       expect(request(fetchSpy).headers.get("authorization")).toBeNull();
       expect(result.data).toEqual({ token: "jwt", url: "https://card.test/login" });
     });
@@ -173,7 +170,6 @@ describe("cardManagementApi requests", () => {
 
       expect(request(fetchSpy).url).toBe("https://card.test/v1/auth/logout");
       expect(request(fetchSpy).method).toBe("POST");
-      // Supplied by the shared base query from the session, not by this use case.
       expect(request(fetchSpy).headers.get("authorization")).toBe("Bearer session-token");
       expect(request(fetchSpy).headers.get("x-client-key")).toBe("client-key");
       expect(result.data).toEqual({ success: true });
@@ -225,8 +221,6 @@ describe("cardManagementApi requests", () => {
       }),
     );
 
-    // Only that the schema is wired and rejects. How the failure is reported and converted is
-    // `onSchemaFailure`/`catchSchemaFailure`, which belong to `createApi` on the Card API service.
     expect(result.data).toBeUndefined();
     expect(result.error).toBeDefined();
   });
