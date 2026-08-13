@@ -78,9 +78,7 @@ export function createApi(
       const config = await context.config();
       return lastBlock(config);
     },
-    // Aleo history is only complete with both sides merged, and A4's operation model is append-only
-    // — a public-only page could never be enriched afterwards. So the pair is required rather than
-    // optional, and a caller that omits it is told before any network call.
+    // Both fields are required: public + private history must be merged in one pass; neither half can be enriched after the fact (ADR-042).
     listOperations: async (context: AleoContext, address, options) => {
       const { provableId, viewKey } = context;
       invariant(

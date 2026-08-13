@@ -74,11 +74,6 @@ export function assertCursorMatchesRequest(
   );
 }
 
-/**
- * The height window this page must read. `asc` walks upward, so the resume point becomes the new
- * lower bound — which the record fetch applies server-side. `desc` walks downward, so it only
- * narrows the upper bound and every page still reads from `minHeight`.
- */
 export function resolveHeightWindow(
   cursor: OperationsCursor | null,
   minHeight: number,

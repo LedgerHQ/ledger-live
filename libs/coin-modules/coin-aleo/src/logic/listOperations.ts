@@ -119,8 +119,7 @@ export async function listOperations({
   // than a bare 4xx from the records fetch.
   const scannerSyncedHeight = await getScannerSyncedHeight(config, provableId, latestBlock.height);
 
-  // A cursor pins the ceiling so a paging run stays a consistent snapshot as the scanner advances,
-  // still clamped to the tip so a stale or hand-crafted cursor cannot lift the range above what exists.
+  // A cursor pins the ceiling so a paging run stays a consistent snapshot as the scanner advances.
   const maxBlockHeight = Math.min(
     cursor?.maxBlockHeight ?? scannerSyncedHeight,
     latestBlock.height,

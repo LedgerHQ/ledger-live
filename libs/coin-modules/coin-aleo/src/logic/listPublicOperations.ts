@@ -39,12 +39,7 @@ function isBetterRepresentative(
   return candidate.transition_id < current.transition_id;
 }
 
-/**
- * The public half of the Aleo history, normalised to one row per transaction.
- *
- * Shared by both surfaces — `logic/listOperations` merges these with the private side, `bridge/
- * listOperations` maps them to bridge operations — so the tx-granularity normalisation happens once.
- */
+/** The public half of the Aleo history, normalised to one row per transaction. */
 export async function listPublicOperations({
   config,
   address,
