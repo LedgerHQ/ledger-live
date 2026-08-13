@@ -42,7 +42,7 @@ on:
 
     secrets:
       SONAR_TOKEN:
-        required: false
+        required: true
 permissions:
   id-token: write
   contents: read

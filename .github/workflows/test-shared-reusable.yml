@@ -8,17 +8,17 @@ on:
 
     secrets:
       AWS_ACCOUNT_ID_PROD:
-        required: false
+        required: true
       AWS_CACHE_OIDC_ROLE_ARN_BRANCH:
-        required: false
+        required: true
       AWS_CACHE_OIDC_ROLE_ARN_DEVELOP:
-        required: false
+        required: true
       AWS_CACHE_REGION:
-        required: false
+        required: true
       AWS_CACHE_ROLE_NAME:
-        required: false
+        required: true
       NX_KEY:
-        required: false
+        required: true
   workflow_dispatch:
     inputs:
       ref:
@@ -36,7 +36,13 @@ jobs:
   test-shared:
     name: "Shared Test"
     uses: LedgerHQ/ledger-live/.github/workflows/test-scope-reusable.yml@develop
-    secrets: inherit
+    secrets:
+      AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+      AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+      AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
+      AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+      NX_KEY: ${{ secrets.NX_KEY }}
     with:
       scope: shared
       ref: ${{ inputs.ref || github.sha }}
