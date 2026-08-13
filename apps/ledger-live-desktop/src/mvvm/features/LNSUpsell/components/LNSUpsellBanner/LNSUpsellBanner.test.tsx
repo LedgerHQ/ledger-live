@@ -41,6 +41,11 @@ describe("LNSUpsellBanner", () => {
       expect(screen.queryByText(t(`lnsUpsell.opted_in.cta`))).toBeNull();
     });
 
+    it("should not render if the tracking CTA is disabled on the feature flag", () => {
+      renderBanner({ ffCtaEnabled: false });
+      expect(screen.queryByText(t(`lnsUpsell.opted_in.cta`))).toBeNull();
+    });
+
     it("should not render if the user uses another device", () => {
       renderBanner({ devicesModelList: [DeviceModelId.nanoSP] });
       expect(screen.queryByText(t(`lnsUpsell.opted_in.cta`))).toBeNull();
@@ -125,6 +130,7 @@ describe("LNSUpsellBanner", () => {
     function renderBanner({
       ffEnabled = true,
       ffLocationEnabled = true,
+      ffCtaEnabled = true,
       isOptIn = true,
       devicesModelList = [DeviceModelId.nanoS],
       targetedByHighTierUpsell = false,
@@ -151,10 +157,12 @@ describe("LNSUpsellBanner", () => {
                 },
                 opted_in: {
                   ...defaultParams.opted_in,
+                  enabled: ffCtaEnabled,
                   link: "https://example.com/optInCta",
                 },
                 opted_out: {
                   ...defaultParams.opted_out,
+                  enabled: ffCtaEnabled,
                   link: "https://example.com/optOutCta",
                 },
               },
@@ -197,6 +205,7 @@ describe("LNSUpsellBanner", () => {
               },
               opted_in: {
                 ...defaultParams.opted_in,
+                enabled: true,
                 link: "https://example.com/optInCta",
               },
             },

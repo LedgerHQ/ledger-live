@@ -21,7 +21,9 @@ export function useLNSUpsellBannerState(location: LNSBannerLocation): LNSBannerS
 
   const placement = BANNER_PLACEMENT_BY_LOCATION[location];
   const isPlacementEnabled = largeScreenUpsell?.params?.banners?.[placement] ?? false;
-  const ctaLink = largeScreenUpsell?.params?.[tracking]?.link?.trim() || undefined;
+  const ctaConfig = largeScreenUpsell?.params?.[tracking];
+  const isCTAEnabled = ctaConfig?.enabled ?? false;
+  const ctaLink = ctaConfig?.link?.trim() || undefined;
   const discountPercent = Math.round((largeScreenUpsell?.params?.discount ?? 0) * 100);
 
   const devicesModelList = useSelector(devicesModelListSelector);
@@ -31,7 +33,9 @@ export function useLNSUpsellBannerState(location: LNSBannerLocation): LNSBannerS
   const desktopCards = useSelector(desktopContentCardSelector);
   const isExcluded = isOptIn && desktopCards.some(c => c.extras.campaign === LNS_UPSELL_HIGH_TIER);
 
-  const isEnabled = Boolean(largeScreenUpsell?.enabled && isPlacementEnabled && ctaLink);
+  const isEnabled = Boolean(
+    largeScreenUpsell?.enabled && isCTAEnabled && isPlacementEnabled && ctaLink,
+  );
   const isShown = isEnabled && hasOnlySeenLNS && !isExcluded;
 
   return { isShown, tracking, ctaLink, discountPercent };
