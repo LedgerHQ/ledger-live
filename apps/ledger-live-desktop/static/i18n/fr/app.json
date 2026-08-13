@@ -2476,7 +2476,9 @@
     "addressMatched": "Adresse correspondante",
     "addressNotFound": "Adresse introuvable",
     "alreadyUsed": "Déjà utilisée · {{date}}",
+    "addressBookUnsupported": "{{family}} n’est pas encore pris en charge",
     "recentSendWillAppear": "Vos dernières transactions émises apparaîtront ici.",
+    "contactsWillAppear": "Vos contacts apparaîtront ici.",
     "securityInfo": {
       "title": "Comment envoyer en toute sécurité ?",
       "items": {
@@ -2494,6 +2496,10 @@
         "description": "Votre historique vous permet de voir instantanément si vous avez déjà envoyé des cryptos à une adresse spécifique. Cela pourrait permettre d’éviter d’éventuelles erreurs de copier/coller ou les piratages. Votre historique contient les 12 dernières adresses auxquelles vous avez envoyé des cryptos via Ledger Wallet.",
         "cta": "Compris"
       }
+    },
+    "addContact": {
+      "newContact": "Ajouter un nouveau contact",
+      "existingContact": "Ajouter à un contact"
     },
     "relativeDate": {
       "justNow": "À l’instant",
@@ -7435,6 +7441,9 @@
     "FeeTooHigh": {
       "title": "Les frais de réseau représentent plus de 10% du montant"
     },
+    "RecipientIsNewAccount": {
+      "title": "Cette adresse n’a jamais reçu d’actifs : son activation entraîne des frais de réseau plus élevés"
+    },
     "DustLimit": {
       "title": "Montant inférieur à la limite de poussière (dust limit)"
     },
@@ -8897,7 +8906,8 @@
       "transparentBalance": "Solde transparent",
       "transparentBalanceTooltip": "Le solde qui est visible publiquement.",
       "privateBalance": "Solde privé",
-      "privateBalanceTooltip": "Le solde qui est masqué."
+      "privateBalanceTooltip": "Le solde qui est masqué.",
+      "privateBalanceWarning": "Le solde privé exclut les actifs masqués sur Sapling et Orchard"
     },
     "shielded": {
       "send": {
@@ -8937,6 +8947,12 @@
             "message": "Le solde peut ne pas être à jour",
             "cta": "Synchroniser"
           }
+        },
+        "selfTransfer": {
+          "toPrivate": "Transfert interne vers le solde privé",
+          "toPublic": "Transfert interne vers le solde public",
+          "unavailable": "Votre adresse privée n’est pas encore disponible. Exportez votre clé de consultation pour l’activer.",
+          "privacyWarning": "Vos actifs shielded seront alors associés à l’adresse publique de votre compte, visible de tous. Un envoi vers une adresse privée externe les maintient dissociés."
         }
       },
       "state": {
