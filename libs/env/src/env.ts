@@ -217,12 +217,12 @@ export type EnvName = keyof EnvTypes;
 export type EnvValue<K extends EnvName = EnvName> = EnvTypes[K];
 
 export const intParser = (v: any): number | undefined => {
-  const n = parseInt(v, 10);
+  const n = Number.parseInt(v, 10);
   if (!Number.isNaN(n)) return n;
 };
 
 export const floatParser = (v: any): number | undefined => {
-  const n = parseFloat(v);
+  const n = Number.parseFloat(v);
   if (!Number.isNaN(n)) return n;
 };
 
