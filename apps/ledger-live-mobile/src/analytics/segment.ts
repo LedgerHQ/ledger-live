@@ -767,14 +767,6 @@ export const usePageNameFromRoute = () => {
   const route = useRoute();
   return getPageNameFromRoute(route);
 };
-export const useAnalytics = () => {
-  const track = useTrack();
-  const page = usePageNameFromRoute();
-  return {
-    track,
-    page,
-  };
-};
 
 const lastScreenEventName: RefObject<string | null | undefined> = React.createRef();
 

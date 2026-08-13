@@ -18,7 +18,7 @@ import {
   TouchableOpacityProps,
   View,
 } from "react-native";
-import { useAnalytics } from "~/analytics";
+import { track } from "~/analytics";
 import CounterValue from "~/components/CounterValue";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import LText from "~/components/LText";
@@ -75,7 +75,6 @@ export default function SelectFeesStrategy({
   transactionToUpdate,
   status,
 }: Props) {
-  const { track } = useAnalytics();
   const { t } = useTranslation();
   const { colors } = useTheme();
   const mainAccount = getMainAccount(account, parentAccount);
@@ -104,7 +103,7 @@ export default function SelectFeesStrategy({
       });
       onStrategySelect({ feesStrategy: strategy });
     },
-    [onStrategySelect, track],
+    [onStrategySelect],
   );
 
   const onBuy = useCallback(

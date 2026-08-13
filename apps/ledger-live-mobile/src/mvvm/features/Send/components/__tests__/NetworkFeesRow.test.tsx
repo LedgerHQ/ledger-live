@@ -59,9 +59,6 @@ jest.mock("../../context/SendFlowContext", () => ({
     state: { account: { account: null, parentAccount: null } },
   }),
 }));
-jest.mock("~/analytics", () => ({
-  useAnalytics: () => ({ track: jest.fn() }),
-}));
 jest.mock("@ledgerhq/ledger-wallet-framework/tracking/send", () => ({
   getSendFlowTrackingProperties: () => ({}),
 }));

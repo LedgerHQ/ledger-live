@@ -207,14 +207,7 @@ jest.mock("~/analytics/segment", () => ({
   track: jest.fn(),
   setAnalyticsFeatureFlagMethod: jest.fn(),
   screen: jest.fn(),
-  useAnalytics: jest.fn(() => ({
-    track: jest.fn(),
-    screen: jest.fn(),
-    identify: jest.fn(),
-    group: jest.fn(),
-    alias: jest.fn(),
-    reset: jest.fn(),
-  })),
+  usePageNameFromRoute: jest.fn(() => "portfolio_navigator"),
 }));
 
 // Mock of Native Modules
