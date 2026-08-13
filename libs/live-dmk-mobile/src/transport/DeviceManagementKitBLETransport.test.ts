@@ -1,6 +1,7 @@
 import { BlePlxManager } from "./BlePlxManager";
 import { DeviceManagementKitBLETransport, tracer } from "./DeviceManagementKitBLETransport";
 import { Observable, Subject, Subscription } from "rxjs";
+import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { State } from "react-native-ble-plx";
 import { getDeviceManagementKit } from "../hooks";
 import {
@@ -305,9 +306,7 @@ describe("DeviceManagementKitBLETransport", () => {
             model: "flex",
           },
         },
-        deviceModel: {
-          id: "europa",
-        },
+        deviceModel: getDeviceModel(DeviceModelId.europa),
       });
     });
     it("should call stopDiscovering if unsubscribed", async () => {

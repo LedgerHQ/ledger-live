@@ -1,10 +1,14 @@
 import Transport from "@ledgerhq/hw-transport";
-import { BatteryStatusFlags, ChargingModes } from "@ledgerhq/types-devices";
 import { TransportStatusError, StatusCodes } from "@ledgerhq/hw-transport/errors";
 import { UnresponsiveCmdEvent } from "./core";
 import { Observable, from, of } from "rxjs";
 import { switchMap } from "rxjs/operators";
-import { BatteryStatusTypes, FlagMasks } from "../../hw/getBatteryStatus";
+import {
+  BatteryStatusTypes,
+  ChargingModes,
+  FlagMasks,
+  type BatteryStatusFlags,
+} from "../../hw/getBatteryStatus";
 
 export type GetBatteryStatusCmdEvent =
   | { type: "data"; batteryStatus: BatteryStatusFlags | number }

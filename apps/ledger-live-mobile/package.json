@@ -145,6 +145,7 @@
     "@ledgerhq/context-module": "catalog:",
     "@ledgerhq/crypto-icons": "catalog:",
     "@ledgerhq/device-intent": "workspace:^",
+    "@ledgerhq/device-core": "workspace:^",
     "@ledgerhq/device-management-kit": "catalog:",
     "@ledgerhq/device-signer-kit-ethereum": "catalog:",
     "@ledgerhq/device-transport-kit-react-native-hid": "catalog:",

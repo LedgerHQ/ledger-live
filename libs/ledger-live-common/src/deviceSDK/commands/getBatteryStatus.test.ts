@@ -1,6 +1,5 @@
 import Transport from "@ledgerhq/hw-transport";
-import { ChargingModes } from "@ledgerhq/types-devices";
-import { BatteryStatusTypes } from "../../hw/getBatteryStatus";
+import { BatteryStatusTypes, ChargingModes } from "../../hw/getBatteryStatus";
 import { getBatteryStatus } from "./getBatteryStatus";
 import { firstValueFrom } from "rxjs";
 

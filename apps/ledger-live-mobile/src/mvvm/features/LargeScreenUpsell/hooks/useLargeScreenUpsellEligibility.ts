@@ -1,7 +1,8 @@
 import { resolveOnboardingDateForUpsell } from "@ledgerhq/live-common/postOnboarding/logic/legacyOnboardingDate";
 import { isCooldownElapsed } from "@ledgerhq/live-common/postOnboarding/logic/upsellFrequency";
 import { onboardingDateSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
-import { DeviceModelId, DevicesWithTouchScreen } from "@ledgerhq/types-devices";
+import { DevicesWithTouchScreen } from "@ledgerhq/device-core";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 import { useFeature } from "@features/platform-feature-flags";
 import { useSelector } from "~/context/hooks";
 import { knownDeviceModelIdsSelector } from "~/reducers/settings";
