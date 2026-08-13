@@ -85,6 +85,24 @@ const useQueuedDrawerNative = ({
     onModalHideRef.current?.();
   }, [handleClose, preventKeyboardDismissOnClose]);
 
+  // QAA-1476 instrumentation, mirroring the shared hook: name the dependency whose change
+  // re-runs the effect below, since its cleanup is what closes the modal. Not for merge.
+  const prevDepsRef = useRef<Record<string, unknown> | null>(null);
+  const currentDeps: Record<string, unknown> = {
+    addBottomSheetToQueue,
+    isFocused,
+    isForcingToBeOpened,
+    isRequestingToBeOpened,
+    handleOpen,
+    handleClose,
+  };
+  if (prevDepsRef.current) {
+    const previous = prevDepsRef.current;
+    const changed = Object.keys(currentDeps).filter(key => currentDeps[key] !== previous[key]);
+    if (changed.length) logDrawer(`deps changed (native): ${changed.join(", ")}`);
+  }
+  prevDepsRef.current = currentDeps;
+
   // Queue management effect
   useEffect(() => {
     if (!isFocused && (isRequestingToBeOpened || isForcingToBeOpened)) {

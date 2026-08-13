@@ -176,6 +176,27 @@ export function useQueuedBottomSheet({
     setReopenCheckSignal(s => s + 1);
   }, [cleanupQueue, logBottomSheet]);
 
+  // QAA-1476 instrumentation: the effect below closes the sheet from its cleanup, and React
+  // re-runs that cleanup whenever any dependency changes. Focus is provably stable in the
+  // failing runs, so name whichever dependency actually moved. Computed during render so it
+  // is logged before the cleanup it explains. Not for merge.
+  const prevDepsRef = useRef<Record<string, unknown> | null>(null);
+  const currentDeps: Record<string, unknown> = {
+    isFocused,
+    isForcingToBeOpened,
+    isRequestingToBeOpened,
+    handleClose,
+    enqueueBottomSheet,
+    logBottomSheet,
+    reopenCheckSignal,
+  };
+  if (prevDepsRef.current) {
+    const previous = prevDepsRef.current;
+    const changed = Object.keys(currentDeps).filter(key => currentDeps[key] !== previous[key]);
+    if (changed.length) logBottomSheet(`deps changed: ${changed.join(", ")}`);
+  }
+  prevDepsRef.current = currentDeps;
+
   useEffect(() => {
     if (!isFocused && (isRequestingToBeOpened || isForcingToBeOpened)) {
       logBottomSheet("Closing drawer - screen not focused");
