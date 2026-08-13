@@ -28,3 +28,14 @@ function parseLedgerSyncPulledData(pulledData: string | void): LedgerSyncPulledD
 export function getTrustchainAccounts(pulledData: string | void): LedgerSyncAccountData[] {
   return parseLedgerSyncPulledData(pulledData).updateEvent?.data?.accounts ?? [];
 }
+
+/**
+ * Returns `undefined` when the account still carries its default name: only names the user
+ * customized are stored, defaults are derived from the currency and index at render time.
+ */
+export function getTrustchainAccountName(
+  pulledData: string | void,
+  accountId: string,
+): string | undefined {
+  return parseLedgerSyncPulledData(pulledData).updateEvent?.data?.accountNames?.[accountId];
+}

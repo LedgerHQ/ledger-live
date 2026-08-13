@@ -6,6 +6,7 @@ import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { LedgerSyncCliHelper, ledgerSyncEnvironment } from "tests/utils/ledgerSyncCliUtils";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
+import { ethAccount } from "tests/testdata/ledgerSyncTestData";
 import { getEnv, setEnv } from "@shared/env";
 import { deviceTagsWithoutLNS } from "tests/utils/tagsUtils";
 
@@ -33,6 +34,10 @@ function initializeEmptyTrustchain() {
     LedgerSyncCliHelper.initializeLedgerKeyRingProtocol,
     LedgerSyncCliHelper.initializeLedgerSync,
   ];
+}
+
+function pushEthAccountToTrustchain() {
+  return LedgerSyncCliHelper.pushAccountsToTrustchain([ethAccount]);
 }
 
 function destroyTrustchainAfterAll() {
@@ -132,6 +137,46 @@ test.describe("Ledger Sync - add account", () => {
       await app.layout.waitForAccountsSyncToBeDone();
 
       await app.trustchain.expectToHoldAccount(addedAccountId, addedCurrency.id);
+    },
+  );
+});
+
+test.describe("Ledger Sync - rename account", () => {
+  setupSeed("LS_RenameAccount_SEED");
+  destroyTrustchainAfterAll();
+  const defaultAccountName = `${Currency.ETH.name} 1`;
+  const renamedAccountName = `${Currency.ETH.name} LedgerSync 1`;
+
+  test.use(preSeededTrustchain([pushEthAccountToTrustchain]));
+
+  test(
+    "[Live Hub][Ledger Sync] Renaming Account (Online)",
+    {
+      tag: deviceTagsWithoutLNS(),
+      annotation: {
+        type: "TMS",
+        description: "B2CQA-2302",
+      },
+    },
+    async ({ app }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
+      await app.accounts.expectReduxAccountIds([ethAccount.id]);
+      await app.trustchain.expectAccountToHaveDefaultName(ethAccount.id);
+
+      await app.mainNavigation.openTargetFromMainNavigation("accounts");
+      await app.accounts.expectAccountsCount(1, 60_000);
+      await app.accounts.expectCryptoAccountRowVisible(defaultAccountName);
+
+      await app.accounts.navigateToAccountByName(defaultAccountName);
+      await app.account.expectAccountVisibility(defaultAccountName);
+      await app.account.renameAccount(renamedAccountName);
+      await app.account.expectAccountVisibility(renamedAccountName);
+
+      await app.layout.syncAccountsIfAvailable();
+      await app.layout.waitForAccountsSyncToBeDone();
+
+      await app.trustchain.expectAccountName(ethAccount.id, renamedAccountName);
     },
   );
 });
