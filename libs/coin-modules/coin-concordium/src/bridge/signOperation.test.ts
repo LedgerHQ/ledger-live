@@ -371,7 +371,7 @@ describe("signOperation", () => {
       // THEN
       expect(combine).toHaveBeenCalledWith(
         expect.stringMatching(/^[a-f0-9]+$/), // serialized hex
-        expect.stringMatching(/^[a-f0-9]{128}$/), // 64-byte signature as hex
+        [expect.stringMatching(/^[a-f0-9]{128}$/)], // 64-byte signature as hex
       );
     });
 

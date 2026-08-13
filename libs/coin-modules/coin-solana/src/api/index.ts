@@ -67,7 +67,7 @@ export function createApi(currencyId: string): SolanaCoinModuleApi {
     combine: (
       _context: SolanaContext,
       tx: string,
-      signature: string,
+      signature: string[],
       _options?: { pubkey?: string },
     ) => {
       return combine(tx, signature);

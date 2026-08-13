@@ -117,7 +117,7 @@ describe("createApi (integration)", () => {
 
     // combine attaches a (dummy) 65-byte signature and returns the hex-encoded signed tx that
     // broadcast would submit — exercising the full craft → combine round trip.
-    const signed = api.combine(context, crafted.transaction, "aa".repeat(65));
+    const signed = api.combine(context, crafted.transaction, ["aa".repeat(65)]);
     expect(signed).toMatch(/^0x[0-9a-f]+$/);
   });
 });

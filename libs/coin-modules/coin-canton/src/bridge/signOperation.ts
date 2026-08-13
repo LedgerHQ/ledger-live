@@ -63,10 +63,9 @@ export const buildSignOperation =
               nativeTransaction,
             );
 
-            return combine(
-              serializedTransaction,
+            return combine(serializedTransaction, [
               `${signatureResult.signature}__PARTY__${address}`,
-            );
+            ]);
           });
 
           o.next({

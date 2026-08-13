@@ -61,7 +61,7 @@ export const genericSignRawOperation =
         const combined = await coinModuleApi.combine(
           context,
           signedInfo.unsigned,
-          signedInfo.txnSig,
+          [signedInfo.txnSig],
           {
             pubkey: signedInfo.publicKey,
           },

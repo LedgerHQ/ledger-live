@@ -67,7 +67,7 @@ export function createApi(): CoinModuleApi<NearConfig> {
     combine: (
       _context: NearContext,
       tx: string,
-      signature: string,
+      signature: string[],
       options?: { pubkey?: string },
     ): string => combine(tx, signature, options?.pubkey),
     broadcast: (

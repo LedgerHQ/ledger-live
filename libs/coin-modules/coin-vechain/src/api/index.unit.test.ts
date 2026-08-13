@@ -112,9 +112,9 @@ describe("createApi", () => {
     const api = createApi();
     const context = createMockVechainContext();
 
-    const result = api.combine(context, "tx", "sig");
+    const result = api.combine(context, "tx", ["sig"]);
 
-    expect(combine).toHaveBeenCalledWith("tx", "sig");
+    expect(combine).toHaveBeenCalledWith("tx", ["sig"]);
     expect(result).toBe("0xsigned");
   });
 

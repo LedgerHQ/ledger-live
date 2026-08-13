@@ -59,7 +59,7 @@ export function createApi(): CoinModuleApi<MultiversXCoinConfig> {
     combine: (
       _context: MultiversXContext,
       tx: string,
-      signature: string,
+      signature: string[],
       options?: { pubkey?: string },
     ): string => {
       return combine(tx, signature, options?.pubkey);

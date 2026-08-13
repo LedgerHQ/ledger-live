@@ -52,7 +52,7 @@ export function createApi(): CoinModuleApi<AptosCoinConfig> {
     combine: (
       _context: AptosContext,
       tx: string,
-      signature: string,
+      signature: string[],
       options?: { pubkey?: string },
     ): string => combine(tx, signature, options?.pubkey),
     craftTransaction: async (

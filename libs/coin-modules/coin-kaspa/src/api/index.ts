@@ -75,7 +75,7 @@ export function createApi(): CoinModuleApi<KaspaCoinConfig> {
     combine: (
       _context: KaspaContext,
       tx: string,
-      signature: string,
+      signature: string[],
       _options?: { pubkey?: string },
     ): string => combine(tx, signature),
     broadcast: (

@@ -59,7 +59,7 @@ describe("api/index", () => {
   it("should call combine from logic", async () => {
     const mockCombine = jest.spyOn(logic, "combine").mockReturnValue("combined-tx");
     const arg1 = "txstring";
-    const arg2 = "sigstring";
+    const arg2 = ["sigstring"];
     const result = api.combine(context, arg1, arg2);
     expect(mockCombine).toHaveBeenCalledWith(arg1, arg2);
     expect(result).toBe("combined-tx");

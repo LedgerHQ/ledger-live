@@ -72,7 +72,7 @@ describe("createApi (integration)", () => {
 
       // Combine with a mock signature (base64-encoded)
       const mockSignature = Buffer.from("a]fake-signature-bytes-for-testing").toString("base64");
-      const signed = await api.combine(context, crafted.transaction, mockSignature);
+      const signed = await api.combine(context, crafted.transaction, [mockSignature]);
 
       const parsed = JSON.parse(signed);
       expect(parsed.message.from).toBe(sender.address.toString());

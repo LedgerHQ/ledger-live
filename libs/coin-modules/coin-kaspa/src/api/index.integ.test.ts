@@ -150,7 +150,7 @@ describe("createApi (integration)", () => {
       });
 
       const unsigned = JSON.parse(crafted.transaction);
-      const mockSignatures = JSON.stringify(unsigned.inputs.map(() => "b".repeat(128)));
+      const mockSignatures: string[] = unsigned.inputs.map(() => "b".repeat(128));
       const signed = await api.combine(context, crafted.transaction, mockSignatures);
 
       const parsed = JSON.parse(signed);

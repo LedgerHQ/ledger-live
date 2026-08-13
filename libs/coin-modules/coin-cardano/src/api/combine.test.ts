@@ -24,10 +24,10 @@ describe("api.combine", () => {
     mockCombine.mockReturnValue("signedTxPayload");
     const api = createApi("cardano");
 
-    const result = api.combine(mockCtx, "unsignedTx", "signature", { pubkey: "pubkey" });
+    const result = api.combine(mockCtx, "unsignedTx", ["signature"], { pubkey: "pubkey" });
 
     expect(mockCombine).toHaveBeenCalledTimes(1);
-    expect(mockCombine).toHaveBeenCalledWith("unsignedTx", "signature", "pubkey");
+    expect(mockCombine).toHaveBeenCalledWith("unsignedTx", ["signature"], "pubkey");
     expect(result).toBe("signedTxPayload");
   });
 
@@ -37,7 +37,7 @@ describe("api.combine", () => {
     });
     const api = createApi("cardano");
 
-    expect(() => api.combine(mockCtx, "unsignedTx", "signature")).toThrow(
+    expect(() => api.combine(mockCtx, "unsignedTx", ["signature"])).toThrow(
       "cardano: combine requires the signing public key",
     );
   });

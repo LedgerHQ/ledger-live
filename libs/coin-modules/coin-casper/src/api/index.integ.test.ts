@@ -66,7 +66,7 @@ describe("Casper Api (mainnet)", () => {
       const combined = await api.combine(
         context,
         JSON.stringify(deploy.toJSON()),
-        taggedSignature,
+        [taggedSignature],
         {
           pubkey: senderHex,
         },
@@ -105,7 +105,7 @@ describe("Casper Api (mainnet)", () => {
         sender.signAndAddAlgorithmBytes(new Uint8Array(unsignedTx.hash.toBytes())),
       ).toString("hex");
 
-      const combined = await api.combine(context, unsignedTxJson, taggedSignature, {
+      const combined = await api.combine(context, unsignedTxJson, [taggedSignature], {
         pubkey: sender.publicKey.toHex(),
       });
 
@@ -123,7 +123,7 @@ describe("Casper Api (mainnet)", () => {
         sender.signAndAddAlgorithmBytes(new Uint8Array(unsignedTx.hash.toBytes())),
       ).toString("hex");
 
-      expect(() => api.combine(context, unsignedTxJson, taggedSignature)).toThrow(
+      expect(() => api.combine(context, unsignedTxJson, [taggedSignature])).toThrow(
         "casper: combine requires the signer public key",
       );
     });
@@ -165,7 +165,7 @@ describe("Casper Api (mainnet)", () => {
         sender.signAndAddAlgorithmBytes(new Uint8Array(unsignedTx.hash.toBytes())),
       ).toString("hex");
 
-      const combined = await api.combine(context, transaction, taggedSignature, {
+      const combined = await api.combine(context, transaction, [taggedSignature], {
         pubkey: sender.publicKey.toHex(),
       });
 

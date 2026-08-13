@@ -39,7 +39,7 @@ describe("broadcast", () => {
     expect(combine).toHaveBeenCalledTimes(1);
     expect(combine).toHaveBeenCalledWith(
       mockSignedOperation.rawData.tx,
-      mockSignedOperation.signature,
+      [mockSignedOperation.signature],
       mockAccount.freshAddress,
     );
 

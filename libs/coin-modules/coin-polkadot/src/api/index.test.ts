@@ -73,7 +73,7 @@ describe("index", () => {
     it.each([undefined, ""])("should throw an error when pubkey is %s", pubkey => {
       const api = generateApi();
       expect(() =>
-        api.combine(context, "", "", pubkey === undefined ? undefined : { pubkey }),
+        api.combine(context, "", [""], pubkey === undefined ? undefined : { pubkey }),
       ).toThrow("UnsupportedMethod");
     });
   });

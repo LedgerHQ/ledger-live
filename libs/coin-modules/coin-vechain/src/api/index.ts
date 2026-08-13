@@ -71,7 +71,7 @@ export function createApi(): CoinModuleApi<VechainCurrencyConfig> {
     combine: (
       _context: VechainContext,
       tx: string,
-      signature: string,
+      signature: string[],
       _options?: { pubkey?: string },
     ): string => combine(tx, signature),
     broadcast: (

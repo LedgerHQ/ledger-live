@@ -77,9 +77,9 @@ describe("Algorand API", () => {
       const mockSignedTx = "signedTxHex";
       (logic.combine as jest.Mock).mockReturnValue(mockSignedTx);
 
-      const result = api.combine(mockCtx, "unsignedTx", "signature");
+      const result = api.combine(mockCtx, "unsignedTx", ["signature"]);
 
-      expect(logic.combine).toHaveBeenCalledWith("unsignedTx", "signature");
+      expect(logic.combine).toHaveBeenCalledWith("unsignedTx", ["signature"]);
       expect(result).toBe(mockSignedTx);
     });
   });

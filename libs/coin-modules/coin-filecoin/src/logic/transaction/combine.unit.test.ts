@@ -27,7 +27,7 @@ describe("combine", () => {
     const tx = makeTx();
     const sig = "c2lnbmF0dXJlZGF0YQ==";
 
-    const result = combine(tx, sig);
+    const result = combine(tx, [sig]);
     const parsed = JSON.parse(result);
 
     expect(parsed.signature).toEqual({ type: 1, data: sig });
@@ -37,7 +37,7 @@ describe("combine", () => {
 
   it("output is consumable by broadcast (round-trip shape check)", () => {
     const tx = makeTx();
-    const result = combine(tx, "dGVzdA==");
+    const result = combine(tx, ["dGVzdA=="]);
     const parsed = JSON.parse(result);
 
     expect(typeof parsed.message.gaslimit).toBe("number");

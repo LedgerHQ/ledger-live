@@ -18,7 +18,7 @@ describe("broadcast", () => {
 
   it("returns the hash from putTransaction for a valid signed transaction", async () => {
     const { unsignedTx, taggedSignature, publicKey } = createMockSignedTransaction();
-    const combinedTx = combine(unsignedTx, taggedSignature, publicKey);
+    const combinedTx = combine(unsignedTx, [taggedSignature], publicKey);
 
     mockBroadcastTx.mockResolvedValueOnce("mockedTxHash");
 
@@ -30,7 +30,7 @@ describe("broadcast", () => {
 
   it("propagates a node rejection unchanged", async () => {
     const { unsignedTx, taggedSignature, publicKey } = createMockSignedTransaction();
-    const combinedTx = combine(unsignedTx, taggedSignature, publicKey);
+    const combinedTx = combine(unsignedTx, [taggedSignature], publicKey);
     const nodeError = new Error("Code: -32016, err: Invalid transaction");
 
     mockBroadcastTx.mockRejectedValueOnce(nodeError);

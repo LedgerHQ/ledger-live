@@ -84,7 +84,7 @@ describe("createApi", () => {
       const api = createApi("aleo");
 
       expect(() =>
-        api.combine(context, "transaction", "signature", { pubkey: "publicKey" }),
+        api.combine(context, "transaction", ["signature"], { pubkey: "publicKey" }),
       ).toThrow("combine is not supported");
     });
   });

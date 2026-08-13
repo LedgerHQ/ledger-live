@@ -101,7 +101,7 @@ export function createApi(currencyId: string): CoinModuleApi<CardanoCoinConfig, 
     combine: (
       _context: CardanoContext,
       tx: string,
-      signature: string,
+      signature: string[],
       options?: { pubkey?: string },
     ) => combine(tx, signature, options?.pubkey),
     broadcast: (
