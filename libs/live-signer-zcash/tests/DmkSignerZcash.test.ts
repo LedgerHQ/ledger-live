@@ -668,7 +668,11 @@ describe("DmkSignerZcash", () => {
     };
 
     it("returns orchard spendAuthSigs and empty transparentInputSigs for a pure-Orchard transaction", async () => {
-      const result = { orchard: [{ spendAuthSig: orchardSig }], transparentInputSigs: [], ironwood: [] };
+      const result = {
+        orchard: [{ spendAuthSig: orchardSig }],
+        transparentInputSigs: [],
+        ironwood: [],
+      };
       mockSignerZcash.signPcztTransaction.mockReturnValue({
         observable: createCompletedObservable(result),
       });
@@ -757,7 +761,11 @@ describe("DmkSignerZcash", () => {
     });
 
     it("returns ironwood spendAuthSigs for a V6 transaction with an Ironwood bundle", async () => {
-      const result = { orchard: [], transparentInputSigs: [], ironwood: [{ spendAuthSig: ironwoodSig }] };
+      const result = {
+        orchard: [],
+        transparentInputSigs: [],
+        ironwood: [{ spendAuthSig: ironwoodSig }],
+      };
       mockSignerZcash.signPcztTransaction.mockReturnValue({
         observable: createCompletedObservable(result),
       });
