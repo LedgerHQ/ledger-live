@@ -868,6 +868,38 @@
     "unlockLiquidity": "Kriptolarınızı gerçek hayatta harcayın",
     "exploreCryptoCardsDescription": "Kripto kartlarımızı inceleyin ve size en uygun kartı bulun."
   },
+  "payTab": {
+    "featureTour": {
+      "title": "Ödeme yapın ve ödeme alın",
+      "description": "Stabil coin'ler, kripto dünyası ile gerçek hayattaki günlük harcamalarınız arasında bir köprü kurar",
+      "cta": "Anladım",
+      "rows": {
+        "global": {
+          "title": "Küresel çapta ödeme yapın ve ödeme alın",
+          "description": "Düşük ağ ücretlerinden yararlanın"
+        },
+        "volatility": {
+          "title": "Düşük volatilite",
+          "description": "Stabil coin'ler, itibari paraya çıpalanır"
+        },
+        "card": {
+          "title": "Kartla harcama yapın ve %1 para iadesi alın",
+          "description": "USDC, USDT, BTC, ETH ve daha fazlasıyla ödeme yapın"
+        }
+      }
+    },
+    "balance": {
+      "emptyTitle": "Ödeme yapın ve ödeme alın",
+      "emptyDescription": "Cüzdanınıza stabil coin yatırarak başlayın",
+      "filter": {
+        "allStablecoins": "Tüm stabil coin'ler",
+        "dialogTitle": "Bakiyeye göre filtrele",
+        "dialogDescription": "Düşük ücretler ve düşük oynaklıkla dünya çapında ödeme yapmak için stabil coin kullanın.",
+        "dialogBanner": "Diğer tüm varlıklarınızı ana sayfanızdan yönetin",
+        "confirm": "Onayla"
+      }
+    }
+  },
   "lend": {
     "title": "Kripto borç verin",
     "tabs": {
@@ -2476,7 +2508,9 @@
     "addressMatched": "Adres eşleşti",
     "addressNotFound": "Adres bulunamadı",
     "alreadyUsed": "Daha önce kullanıldı · {{date}}",
+    "addressBookUnsupported": "{{family}} henüz desteklenmiyor",
     "recentSendWillAppear": "Son gönderme işleminiz burada görüntülenecek",
+    "contactsWillAppear": "Kişileriniz burada görünecektir",
     "securityInfo": {
       "title": "Güvenli bir şekilde nasıl gönderilir?",
       "items": {
@@ -2494,6 +2528,10 @@
         "description": "Son işlemler geçmişiniz, belirli bir adrese gönderim yapıp yapmadığınızı hemen görmenize izin verir. Bu, potansiyel kopyala/yapıştır hatalarını veya hack'leme girişimlerini önleyebilir. Geçmişiniz, Ledger Wallet kullanarak kripto gönderdiğiniz son 12 adresi içerir.",
         "cta": "Anladım"
       }
+    },
+    "addContact": {
+      "newContact": "Yeni bir kişi ekleyin",
+      "existingContact": "Mevcut bir kişiye ekleyin"
     },
     "relativeDate": {
       "justNow": "Yalnızca şimdilik",
@@ -7001,6 +7039,9 @@
       "title": "Üzgünüz, fon miktarı yetersiz",
       "description": "Hesabınızdaki fon miktarının yeterli olduğundan lütfen emin olun."
     },
+    "NotEnoughTransferAmount": {
+      "title": "Bir nörona bakiye stake etmek için en az 1 ICP gereklidir."
+    },
     "UnstakeNotEnoughStakedBalanceLeft": {
       "title": "{{maxAmount}} miktarından fazla varlığı stake etmeyi durdurursanız, toplamda {{totalAmount}} miktarındaki stake durdurulacaktır",
       "description": "{{maxAmount}} miktarından fazla varlığı stake etmeyi durdurursanız, toplamda {{totalAmount}} miktarındaki stake durdurulacaktır"
@@ -7434,6 +7475,9 @@
     },
     "FeeTooHigh": {
       "title": "Ağ ücretleri, tutarın % 10'unun üzerindedir"
+    },
+    "RecipientIsNewAccount": {
+      "title": "Bu adrese daha önce hiç fon aktarılmadığı için adresi aktif hâle getirmek daha yüksek bir ağ işlem ücreti gerektirir"
     },
     "DustLimit": {
       "title": "Miktar, dust sınırının altında"
@@ -8588,30 +8632,21 @@
   },
   "lnsUpsell": {
     "opted_in": {
-      "title": "Sınırlı bellek, sınırlı deneyim",
-      "description": "Daha fazla bellek, en son güvenlik güncellemeleri, yeni özellikler ve <0>%{{discount}} oranında özel bir indirim</> için Ledger Nano S cihazınızın modelini Ledger Flex gibi daha yeni bir Ledger modeline yükseltin.",
+      "title": "Daha iyi görerek imzalayın",
+      "description": "Model yükseltin ve %{{discount}} indirim kazanın.",
       "cta": "Ledger modelimi yükselt"
     },
     "opted_out": {
-      "description": "Ledger Nano S cihazınızdaki sınırlı bellek en yeni özelliklere, blok zinciri değişikliklerine ve güvenlik güncellemelerine erişiminizi kısıtlar. Uzun vadeli kullanım için daha yeni bir Ledger cihazına model yükseltin.",
-      "cta": "Daha fazla bilgi"
-    }
-  },
-  "lnsUpsellMediaBanner": {
-    "opted_in": {
-      "title": "Daha iyi görerek imzalayın",
-      "description": "Yükseltin ve %20 indirim kazanın."
-    },
-    "opted_out": {
       "title": "Daha fazla güvenlik ve kontrol",
-      "description": "Güvenlik özellikleri hakkında daha fazla bilgi edinin."
+      "description": "Güvenlik özellikleri hakkında daha fazla bilgi edinin.",
+      "cta": "Daha fazla bilgi"
     }
   },
   "largeScreenUpsellModal": {
     "optedIn": {
-      "title": "Daha fazla görün. Daha az dokunun. %{{discount}} tasarruf",
+      "title": "Daha fazla görün. Daha az dokunun. %{{discount}} tasarruf edin.",
       "subtitle": "Daha büyük ekranın, daha akıllı işlem incelemelerinin, gelişmiş korumanın ve özel %{{discount}} indirimin keyfini çıkarın.",
-      "cta": "Dokunmatik ekranlı imzalayıcıları keşfedin"
+      "cta": "Dokunmatik imzalayıcıları keşfedin"
     },
     "optedOut": {
       "title": "Dolandırıcılıkları imzalamadan önce fark edin",
@@ -8684,6 +8719,10 @@
     "selectAsset": "Varlık seçin",
     "selectNetwork": "Ağ seçin",
     "selectAccount": "Hesap seçin",
+    "selectAccountPerpsTitle": "Hyperliquid hesabı seçin",
+    "selectAccountPerpsDescription": "Sürekli vadeli (perpetual) işlemlerinizi fonlamak için bir Hyperliquid hesabına ihtiyacınız var. Devam etmek için bir hesap ekleyin.",
+    "selectDepositCurrencyTitle": "Yatırılacak varlığı seçin",
+    "selectDepositCurrencyDescription": "Desteklenen herhangi bir varlık kullanılabilir. Gerekirse otomatik olarak takas edilecektir.",
     "accountCount_one": "{{count}} hesap",
     "accountCount_other": "{{count}} hesap",
     "accountsAdded": {
@@ -8897,7 +8936,8 @@
       "transparentBalance": "Şeffaf bakiye",
       "transparentBalanceTooltip": "Herkes tarafından görülen bakiye",
       "privateBalance": "Gizli bakiye",
-      "privateBalanceTooltip": "Herkese açık olmayan bakiye"
+      "privateBalanceTooltip": "Herkese açık olmayan bakiye",
+      "privateBalanceWarning": "Gizli bakiye, Sapling ve Orchard korumalı fonlarını hariç tutar."
     },
     "shielded": {
       "send": {
@@ -8917,7 +8957,8 @@
             "title": "Gizli bakiye",
             "subtitle": "Korumalı",
             "unavailable": "Gizli bakiye kullanılamıyor"
-          }
+          },
+          "spendableWarning": "Harcanabilir bakiye, toplam bakiyeden daha düşük olabilir. Yakın zamanda korumalı (shielded) hâle getirilen bakiyenin harcanabilmesi için ağ onayları ve tam tarama işlemi (~15 dakika) gerekir."
         },
         "memo": {
           "label": "Memo (isteğe bağlı)",
@@ -8937,6 +8978,12 @@
             "message": "Bakiye güncel olmayabilir",
             "cta": "Bakiyeyi senkronize et"
           }
+        },
+        "selfTransfer": {
+          "toPrivate": "Kendi gizli bakiyenize transfer",
+          "toPublic": "Kendi açık bakiyenize transer",
+          "unavailable": "Gizli adresiniz henüz kullanılabilir değil. Bunu etkinleştirmek için görüntüleme anahtarınızı dışa aktarın.",
+          "privacyWarning": "Bu işlem, korumalı fonlarınızı, hesabınızın herkes tarafından görülebilen açık adresiyle ilişkilendirir. Harici bir gizli adrese gönderim yapmak ise bu fonların birbiriyle ilişkisiz kalmasını sağlar."
         }
       },
       "state": {
@@ -9677,5 +9724,30 @@
       }
     },
     "disclaimer": "Bu veriler sadece bilgilendirme amacıyla sunulmaktadır ve finansal tavsiye değildir. Vergi amaçlı kullanılamaz."
+  },
+  "internetComputer": {
+    "memoField": {
+      "increaseStake": "Bu işlem mevcut bir nöronun stake’ini artıracaktır; stake etmek istediğiniz tutarı yukarıdaki tutar alanına girin.",
+      "createNeuron": "Bu işlem, stake edilen ICP ile bir nöron oluşturacaktır; stake etmek istediğiniz tutarı yukarıdaki tutar alanına girin.",
+      "tooltip": "Internet Computer bunu, ICP’yi nörona stake etme işlemini tanımlamak için kullanır."
+    },
+    "stakeBanner": {
+      "stakeICP": {
+        "title": "ICP Stake Edin",
+        "description": "ICP stake edip yönetişimine katılarak ödüller kazanın.",
+        "cta": "ICP Stake Et"
+      }
+    },
+    "headerManageActions": {
+      "manageNeurons": {
+        "title": "Nöronları Yönetin"
+      }
+    },
+    "summaryFooter": {
+      "stakedBalance": "Stake Bakiyesi",
+      "stakedBalanceTooltip": "Şu anda nöronlara stake edilen toplam ICP token'ı miktarı. Stake edilen ICP’ler oylama ödülleri kazanabilir ve yönetişim için kullanılabilir.",
+      "totalMaturity": "Toplam Birikmiş Ödül Miktarı",
+      "totalMaturityTooltip": "Staking vadesi ve likidite vadesi kapsamındakiler de dâhil olmak üzere staking kapsamında biriken toplam ödül tutarı. Bu ödüller tekrar stake edilebilir veya likit ICP olarak alınabilir."
+    }
   }
 }
