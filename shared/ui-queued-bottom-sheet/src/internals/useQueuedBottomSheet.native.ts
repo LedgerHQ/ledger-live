@@ -90,18 +90,32 @@ export function useQueuedBottomSheet({
   // content actually lands after present(). measureInWindow reflects transforms, unlike
   // onLayout, so a y near the screen bottom means the open animation never took. Not for merge.
   const measureRef = useRef<View | null>(null);
+  // Poll rather than sample a few fixed offsets: the sheet was measured open and correctly
+  // positioned at +3s, so whatever moves it to the closed position happens later, during the
+  // 60s the failing step spends retrying. Log only when y moves, to keep the buffer readable.
+  const measurePollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const stopMeasuring = useCallback(() => {
+    if (measurePollRef.current) {
+      clearInterval(measurePollRef.current);
+      measurePollRef.current = null;
+    }
+  }, []);
   const measureAfterOpen = useCallback(() => {
     const screenHeight = Math.round(Dimensions?.get?.("window")?.height ?? 0);
-    [300, 1200, 3000].forEach(delay =>
-      setTimeout(() => {
-        measureRef.current?.measureInWindow((_x, y, _w, h) => {
-          logBottomSheet(
-            `measured +${delay}ms: y=${Math.round(y)} h=${Math.round(h)} screen=${screenHeight} state=${stateRef.current}`,
-          );
-        });
-      }, delay),
-    );
-  }, [logBottomSheet]);
+    const openedAt = Date.now();
+    let lastY: number | null = null;
+    stopMeasuring();
+    measurePollRef.current = setInterval(() => {
+      measureRef.current?.measureInWindow((_x, y) => {
+        const rounded = Math.round(y);
+        if (lastY !== null && Math.abs(rounded - lastY) < 12) return;
+        lastY = rounded;
+        logBottomSheet(
+          `y moved to ${rounded} (+${Date.now() - openedAt}ms, screen=${screenHeight}, state=${stateRef.current})`,
+        );
+      });
+    }, 500);
+  }, [logBottomSheet, stopMeasuring]);
 
   const handleOpen = useCallback(() => {
     if (stateRef.current !== "idle") return;
@@ -180,6 +194,7 @@ export function useQueuedBottomSheet({
 
   const handleDismiss = useCallback(() => {
     logBottomSheet("BottomSheet dismissed (onDismiss)");
+    stopMeasuring();
 
     if (Keyboard.isVisible()) {
       Keyboard.dismiss();
@@ -200,7 +215,7 @@ export function useQueuedBottomSheet({
     // isRequestingToBeOpened reflects the user's true intent — false for a normal backdrop close,
     // true only if the consumer genuinely re-requested while the sheet was closing.
     setReopenCheckSignal(s => s + 1);
-  }, [cleanupQueue, logBottomSheet]);
+  }, [cleanupQueue, logBottomSheet, stopMeasuring]);
 
   // QAA-1476 instrumentation: identify the consumer behind this instance. Callback names
   // usually survive minification well enough to point at the owning component, and the mount
@@ -265,9 +280,10 @@ export function useQueuedBottomSheet({
   useEffect(() => {
     return () => {
       logBottomSheet("Component unmounting - cleaning up");
+      stopMeasuring();
       cleanupQueue();
     };
-  }, [cleanupQueue, logBottomSheet]);
+  }, [cleanupQueue, logBottomSheet, stopMeasuring]);
 
   return {
     measureRef,
