@@ -68,6 +68,7 @@ export function AmountInputSection({ viewModel, message, toggleLabel }: AmountIn
         />
         <View style={styles.toggleButton}>
           <IconButton
+            testID="amount-mode-toggle"
             icon={TransferVertical}
             size="xs"
             appearance="gray"
