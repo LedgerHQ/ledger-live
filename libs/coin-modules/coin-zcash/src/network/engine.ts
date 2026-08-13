@@ -12,7 +12,6 @@
 
 import { log } from "@ledgerhq/logs";
 import { ZCASH_LOG_TYPE } from "../constants";
-import { describeTxVersion } from "./tx-version";
 import type {
   ShieldedSyncResultRaw,
   ShieldedTransactionRaw,
@@ -254,44 +253,11 @@ export async function buildTransactionJob(
 export async function buildIronwoodTransactionJob(
   args: Omit<BuildIronwoodTransactionArgs, "requestId">,
 ): Promise<BuildIronwoodTransactionResult> {
-  log(ZCASH_LOG_TYPE, "[craft] buildIronwoodTransactionJob start", {
-    grpcUrl: args.grpcUrl,
-    network: args.network,
-    accountIndex: args.accountIndex,
-    feeZat: args.feeZat,
-    nSpends: args.spends.length,
-    nTransparentInputs: args.transparentInputs.length,
-    nOutputs: args.outputs.length,
-    anchorHeight: args.anchorHeight,
-  });
-
   const native = await getPcztModule();
 
-  log(ZCASH_LOG_TYPE, "[craft] calling native.buildIronwoodTransaction…");
   const built = await native.buildIronwoodTransaction(args);
-  log(ZCASH_LOG_TYPE, "[craft] native.buildIronwoodTransaction returned", {
-    pcztHexLen: built.pcztHex.length,
-    feeZat: built.feeZat,
-    anchorHeight: built.anchorHeight,
-    nActionsIronwood: built.nActionsIronwood,
-    nTransparentInputs: built.nTransparentInputs,
-    nTransparentOutputs: built.nTransparentOutputs,
-  });
 
-  log(ZCASH_LOG_TYPE, "[craft] calling native.parsePczt…");
   const rawPczt = native.parsePczt(built.pcztHex); // synchronous NAPI call — no await
-  const rawIronwoodBundle = nativeIronwoodBundle(rawPczt);
-  log(ZCASH_LOG_TYPE, "[craft] native.parsePczt returned", {
-    txVersion: rawPczt.global.txVersion,
-    hasOrchardBundle: Boolean(rawPczt.orchardBundle),
-    nOrchardActions: rawPczt.orchardBundle?.actions.length ?? 0,
-    hasIronwoodBundle: Boolean(rawIronwoodBundle),
-    nIronwoodActions: rawIronwoodBundle?.actions.length ?? 0,
-    nTransparentInputs: rawPczt.transparentInputs.length,
-    nTransparentOutputs: rawPczt.transparentOutputs.length,
-  });
-
-  log(ZCASH_LOG_TYPE, "[craft] calling adaptPcztForSigner…");
   const pcztTransaction = adaptPcztForSigner(rawPczt);
 
   // The builder just produced Ironwood actions, so the parse must hand them
@@ -306,17 +272,6 @@ export async function buildIronwoodTransactionJob(
         "Bump the @ledgerhq/zcash-utils catalog entry in pnpm-workspace.yaml.",
     );
   }
-
-  const { orchardBundle, ironwoodBundle } = pcztTransaction;
-  log(ZCASH_LOG_TYPE, "[craft] adaptPcztForSigner returned", {
-    txVersion: pcztTransaction.global.txVersion,
-    orchardBundle: orchardBundle ? { nActions: orchardBundle.actions.length } : null,
-    ironwoodBundle: ironwoodBundle
-      ? { nActions: ironwoodBundle.actions.length, flags: ironwoodBundle.flags }
-      : null,
-    nTransparentInputs: pcztTransaction.transparentInputs.length,
-    nTransparentOutputs: pcztTransaction.transparentOutputs.length,
-  });
 
   return {
     pcztHex: built.pcztHex,
@@ -337,24 +292,9 @@ export async function buildIronwoodTransactionJob(
 export async function finalizeTransactionJob(
   args: Omit<FinalizeTransactionArgs, "requestId">,
 ): Promise<FinalizeTransactionResult> {
-  log(ZCASH_LOG_TYPE, "[finalize] finalizeTransactionJob start", {
-    pcztLen: args.pczt.length,
-    nOrchardSignatures: args.orchardSignatures.length,
-    nIronwoodSignatures: args.ironwoodSignatures?.length ?? 0,
-    nTransparentSignatures: args.transparentSignatures.length,
-  });
-
   const native = await getPcztModule();
 
-  log(ZCASH_LOG_TYPE, "[finalize] calling native.finalizeTransaction…");
-  const finalized = await native.finalizeTransaction(args);
-  log(ZCASH_LOG_TYPE, "[finalize] native.finalizeTransaction returned", {
-    txHexLen: finalized.txHex.length,
-    txVersion: describeTxVersion(finalized.txHex),
-    txid: finalized.txid,
-  });
-
-  return finalized;
+  return native.finalizeTransaction(args);
 }
 
 /**
@@ -362,30 +302,8 @@ export async function finalizeTransactionJob(
  * Returns the txid (64-char hex, big-endian display order).
  */
 export async function broadcastTransactionJob(grpcUrl: string, txHex: string): Promise<string> {
-  log(ZCASH_LOG_TYPE, "[broadcast] broadcastTransactionJob start", {
-    grpcUrl,
-    txHexLen: txHex.length,
-    txVersion: describeTxVersion(txHex),
-  });
-
   const native = await getPcztModule();
-
-  log(ZCASH_LOG_TYPE, "[broadcast] calling native.broadcastTransaction…");
-  try {
-    const txid = await native.broadcastTransaction(grpcUrl, txHex);
-    log(ZCASH_LOG_TYPE, "[broadcast] native.broadcastTransaction returned", { txid });
-    return txid;
-  } catch (err) {
-    // The native error message is otherwise the only surviving diagnostic — it
-    // crosses the IPC boundary as a bare string, stripped of all context.
-    log(ZCASH_LOG_TYPE, "[broadcast] native.broadcastTransaction failed", {
-      grpcUrl,
-      txHexLen: txHex.length,
-      txVersion: describeTxVersion(txHex),
-      message: err instanceof Error ? err.message : String(err),
-    });
-    throw err;
-  }
+  return native.broadcastTransaction(grpcUrl, txHex);
 }
 
 /**

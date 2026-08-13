@@ -58,7 +58,6 @@ import {
 } from "./ipc/contract";
 import { rehydrateSyncResult } from "./serialization/rehydrate";
 import { createSyncTimeEstimator } from "./sync-estimator";
-import { describeTxVersion } from "./tx-version";
 
 // ── Dependency & argument types ─────────────────────────────────────────
 
@@ -159,55 +158,19 @@ export function createZCashIPCClient(
       args: Omit<FinalizeTransactionArgs, "requestId">,
     ): Promise<FinalizeTransactionResult> {
       const requestId = nextRequestId();
-      log(ZCASH_LOG_TYPE, "[finalize] invoking finalizeTransaction", {
-        requestId,
-        pcztLen: args.pczt.length,
-        nOrchardSignatures: args.orchardSignatures.length,
-        nIronwoodSignatures: args.ironwoodSignatures?.length ?? 0,
-        nTransparentSignatures: args.transparentSignatures.length,
-      });
-      const result = (await ipcRenderer.invoke(ZCASH_IPC.finalizeTransaction, {
+      return (await ipcRenderer.invoke(ZCASH_IPC.finalizeTransaction, {
         ...args,
         requestId,
       })) as FinalizeTransactionResult;
-      log(ZCASH_LOG_TYPE, "[finalize] finalizeTransaction returned", {
-        requestId,
-        txHexLen: result.txHex.length,
-        txVersion: describeTxVersion(result.txHex),
-        txid: result.txid,
-      });
-      return result;
     },
 
     async broadcastTransaction(grpcUrl: string, txHex: string): Promise<string> {
       const requestId = nextRequestId();
-      log(ZCASH_LOG_TYPE, "[broadcast] invoking broadcastTransaction", {
-        requestId,
+      return (await ipcRenderer.invoke(ZCASH_IPC.broadcastTransaction, {
         grpcUrl,
-        txHexLen: txHex.length,
-        txVersion: describeTxVersion(txHex),
-      });
-      try {
-        const txid = (await ipcRenderer.invoke(ZCASH_IPC.broadcastTransaction, {
-          grpcUrl,
-          txHex,
-          requestId,
-        })) as string;
-        log(ZCASH_LOG_TYPE, "[broadcast] broadcastTransaction returned", { requestId, txid });
-        return txid;
-      } catch (err) {
-        // Only the renderer's logs reach an exported log file, so a broadcast
-        // failure must be recorded here — the native error crosses IPC as a
-        // bare string and the utility process's own logs are not captured.
-        log(ZCASH_LOG_TYPE, "[broadcast] broadcastTransaction failed", {
-          requestId,
-          grpcUrl,
-          txHexLen: txHex.length,
-          txVersion: describeTxVersion(txHex),
-          message: err instanceof Error ? err.message : String(err),
-        });
-        throw err;
-      }
+        txHex,
+        requestId,
+      })) as string;
     },
 
     async transactionDetails(
