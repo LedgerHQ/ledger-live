@@ -1,6 +1,6 @@
 import { crypto } from "@ledgerhq/hw-ledger-key-ring-protocol";
 import { AuthSDK } from "@ledgerhq/ledger-auth";
-import { configureStore, createListenerMiddleware } from "@reduxjs/toolkit";
+import { configureStore } from "@reduxjs/toolkit";
 import { HttpResponse, http } from "msw";
 import { setupServer } from "msw/node";
 import type { Challenge as ChallengeJson, WeakChallengeSignature } from "../api";
@@ -61,7 +61,7 @@ describe("LkrpIdentityProvider (integration, MSW)", () => {
     server.resetHandlers();
   });
 
-  it("synchronizes credentials after Trustchain import actions", async () => {
+  it("should read current Redux credentials for every authentication", async () => {
     endpoints.lkrpAuth.mockImplementation(() => HttpResponse.json(AUTHORIZATION_CODE));
     endpoints.lkrpToken.mockImplementation(() =>
       HttpResponse.json({ access_token: LKRP_TOKEN, token_type: "Bearer" }),
@@ -70,10 +70,6 @@ describe("LkrpIdentityProvider (integration, MSW)", () => {
       HttpResponse.json({ access_token: KEYCLOAK_JWT, token_type: "Bearer" }),
     );
 
-    const listenerMiddleware = createListenerMiddleware<{ trustchain: TrustchainStore }>();
-    const lkrpIdentityProvider = new LkrpIdentityProvider<{ trustchain: TrustchainStore }>({
-      startListening: listenerMiddleware.startListening,
-    });
     const store = configureStore({
       reducer: {
         trustchain: (
@@ -81,9 +77,8 @@ describe("LkrpIdentityProvider (integration, MSW)", () => {
           action: { type: string; payload?: { trustchain?: TrustchainStore } },
         ) => action.payload?.trustchain ?? state,
       },
-      middleware: getDefaultMiddleware =>
-        getDefaultMiddleware().prepend(listenerMiddleware.middleware),
     });
+    const lkrpIdentityProvider = new LkrpIdentityProvider(() => store.getState().trustchain);
     const request = {
       challenge: { tlv: CHALLENGE.tlv, json: CHALLENGE.json },
       clientId: CLIENT_ID,
@@ -114,6 +109,47 @@ describe("LkrpIdentityProvider (integration, MSW)", () => {
       "signature.credential.publicKey",
       updatedMemberCredentials.pubkey,
     );
+  });
+
+  it("should load async headless credentials for every authentication", async () => {
+    endpoints.lkrpAuth.mockImplementation(() => HttpResponse.json(AUTHORIZATION_CODE));
+    endpoints.lkrpToken.mockImplementation(() =>
+      HttpResponse.json({ access_token: LKRP_TOKEN, token_type: "Bearer" }),
+    );
+    endpoints.tokenExchange.mockImplementation(() =>
+      HttpResponse.json({ access_token: KEYCLOAK_JWT, token_type: "Bearer" }),
+    );
+
+    const loadedMemberCredentials = initMemberCredentials();
+    const loadTrustchainStore = jest
+      .fn()
+      .mockResolvedValueOnce({
+        trustchain: { rootId: TRUSTCHAIN_ID },
+        memberCredentials: loadedMemberCredentials,
+      })
+      .mockResolvedValueOnce(undefined);
+    const lkrpIdentityProvider = new LkrpIdentityProvider(loadTrustchainStore);
+    const request = {
+      challenge: { tlv: CHALLENGE.tlv, json: CHALLENGE.json },
+      clientId: CLIENT_ID,
+      redirectUri: REDIRECT_URI,
+    };
+
+    await lkrpIdentityProvider.authenticate(request);
+    expect(await endpoints.lkrpAuth.mock.calls[0][0].request.json()).toEqual(
+      expect.objectContaining({
+        signature: expect.objectContaining({
+          credential: expect.objectContaining({ publicKey: loadedMemberCredentials.pubkey }),
+          attestation: EXPECTED_ATTESTATION,
+        }),
+      }),
+    );
+
+    await expect(lkrpIdentityProvider.authenticate(request)).rejects.toMatchObject({
+      name: "WalletAuthNoCredentialsError",
+    });
+    expect(loadTrustchainStore).toHaveBeenCalledTimes(2);
+    expect(endpoints.lkrpAuth).toHaveBeenCalledTimes(1);
   });
 
   it("retrieves a Keycloak JWT with PKCE", async () => {
@@ -275,12 +311,10 @@ describe("LkrpIdentityProvider (integration, MSW)", () => {
 });
 
 function createIdentityProvider(trustchainId: string | undefined): LkrpIdentityProvider {
-  const provider = new LkrpIdentityProvider();
-  provider.setTrustchainStore({
+  return new LkrpIdentityProvider(() => ({
     memberCredentials: MEMBER_CREDENTIALS,
     trustchain: trustchainId ? { rootId: trustchainId } : null,
-  });
-  return provider;
+  }));
 }
 
 function stringToArrayBuffer(value: string): ArrayBuffer {

@@ -1,18 +1,30 @@
+import { WalletAuthMissingBaseUrlError } from "./errors";
 import { parseJsonResponse } from "./http";
-import type { ChallengeRequest, KeycloakService } from "./types";
+import type { AuthConfig, ChallengeRequest, KeycloakService } from "./types";
 
 export class HttpKeycloakService implements KeycloakService {
-  readonly baseUrl: string;
-  readonly realmBaseUrl: string;
-  private readonly openIdBaseUrl: string;
-
+  private getBaseUrl: () => string | null;
   readonly #fetch: typeof globalThis.fetch;
 
-  constructor(baseUrl: string, realm: string, fetch: typeof globalThis.fetch = globalThis.fetch) {
-    this.baseUrl = trimTrailingSlash(baseUrl);
-    this.realmBaseUrl = `${this.baseUrl}/realms/${realm}`;
-    this.openIdBaseUrl = `${this.realmBaseUrl}/protocol/openid-connect`;
+  constructor(
+    getBaseUrl: AuthConfig["keycloakBaseUrl"],
+    private readonly realm: string,
+    fetch: typeof globalThis.fetch = globalThis.fetch,
+  ) {
+    this.getBaseUrl = typeof getBaseUrl === "string" ? () => getBaseUrl : getBaseUrl;
     this.#fetch = fetch;
+  }
+
+  get baseUrl(): string {
+    const baseUrl = this.getBaseUrl();
+    if (!baseUrl) throw new WalletAuthMissingBaseUrlError();
+    return trimTrailingSlash(baseUrl);
+  }
+  get realmBaseUrl(): string {
+    return `${this.baseUrl}/realms/${this.realm}`;
+  }
+  get openIdBaseUrl(): string {
+    return `${this.realmBaseUrl}/protocol/openid-connect`;
   }
 
   async getChallenge(request: ChallengeRequest): Promise<unknown> {

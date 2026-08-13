@@ -1,14 +1,10 @@
-import {
-  configureStore,
-  createListenerMiddleware,
-  type Middleware,
-  type ThunkDispatch,
-} from "@reduxjs/toolkit";
+import { configureStore, type Middleware, type ThunkDispatch } from "@reduxjs/toolkit";
 import { UnknownAction } from "redux";
 import { AuthSDK } from "@ledgerhq/ledger-auth";
 import { getEnv } from "@shared/env";
-import { authApiExtra } from "@shared/auth";
+import { authApiExtra, authEnvironmentSelector } from "@shared/auth";
 import { LkrpIdentityProvider } from "@ledgerhq/ledger-key-ring-protocol";
+import type { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import {
   calApiExtra,
   cardApiExtra,
@@ -23,7 +19,11 @@ import reducers, { State } from "~/renderer/reducers";
 import { applyLldRTKApiMiddlewares } from "~/renderer/reducers/rtkQueryApi";
 import { createIdentitiesSyncMiddleware } from "@domain/api-push-devices";
 import { canPushDeviceIdsSelector, languageSelector } from "~/renderer/reducers/settings";
-import { createFeatureFlagsMiddleware, type PartialFeatures } from "@shared/feature-flags";
+import {
+  createFeatureFlagsMiddleware,
+  selectFeature,
+  type PartialFeatures,
+} from "@shared/feature-flags";
 import { fetchRemoteFlags as defaultFetchRemoteFlags } from "~/firebase/remoteConfig";
 import { sleepingListener } from "./sleepingListener";
 type Props = {
@@ -43,10 +43,6 @@ const customCreateStore = ({
   analyticsMiddleware,
   fetchRemoteFlags = defaultFetchRemoteFlags,
 }: Props) => {
-  // This listenerMiddleware is cross-scope as it is preferable to have one instance per store
-  // Source: https://github.com/reduxjs/redux-toolkit/discussions/3665
-  const listenerMiddleware = createListenerMiddleware<State>();
-
   const store = configureStore({
     reducer: reducers,
     preloadedState: state,
@@ -82,27 +78,28 @@ const customCreateStore = ({
                 ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
               }),
               ...authApiExtra({
-                authFeatureId: "lwdAuth",
-                startListening: listenerMiddleware.startListening,
-                providerParams: {
-                  identityProvider: new LkrpIdentityProvider<State>({
-                    startListening: listenerMiddleware.startListening,
-                  }),
-                },
-                createAuthProvider: (environment, { identityProvider }) =>
-                  new AuthSDK(
-                    {
-                      clientId: getEnv("LEDGER_AUTH_CLIENT_ID"),
-                      keycloakBaseUrl: getEnv(`LEDGER_AUTH_KEYCLOAK_BASE_URL_${environment}`),
-                      keycloakRealm: getEnv("LEDGER_AUTH_KEYCLOAK_REALM"),
-                      disablePkce: true,
+                isFeatureEnabled: (): boolean =>
+                  selectFeature(store.getState(), "lwdAuth").enabled ?? false,
+                authProvider: new AuthSDK(
+                  {
+                    clientId: getEnv("LEDGER_AUTH_CLIENT_ID"),
+                    keycloakBaseUrl(): string | null {
+                      const environment = authEnvironmentSelector(store.getState());
+                      return environment && getEnv(`LEDGER_AUTH_KEYCLOAK_BASE_URL_${environment}`);
                     },
-                    { provider: identityProvider },
-                  ),
+                    keycloakRealm: getEnv("LEDGER_AUTH_KEYCLOAK_REALM"),
+                    disablePkce: true,
+                  },
+                  {
+                    provider: new LkrpIdentityProvider(
+                      (): TrustchainStore => store.getState().trustchain,
+                    ),
+                  },
+                ),
               }),
             },
           },
-        }).prepend(listenerMiddleware.middleware),
+        }),
       )
         .concat(logger)
         .concat(analyticsMiddleware ? [analyticsMiddleware] : [])
