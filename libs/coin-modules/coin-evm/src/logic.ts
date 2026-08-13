@@ -1,16 +1,7 @@
-import { getEIP712FieldsDisplayedOnNano } from "@ledgerhq/evm-tools/message/EIP712/index";
-import { getEnv } from "@ledgerhq/live-env";
-import { CryptoCurrency, Unit } from "@ledgerhq/ledger-wallet-framework/types";
-import { AnyMessage, MessageProperties } from "@ledgerhq/types-live";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
 import type { EvmConfigInfo } from "./config";
 import { getNodeApi } from "./network/node/index";
-
-/**
- * Helper to get the currency unit to be used for the fee field
- */
-export const getDefaultFeeUnit = (currency: CryptoCurrency): Unit =>
-  currency.units.length > 1 ? currency.units[1] : currency.units[0];
 
 /**
  * Helper returning the potential additional fees necessary for layer twos
@@ -40,17 +31,4 @@ export const getAdditionalLayer2Fees = async (
     default:
       return;
   }
-};
-
-/**
- * Helper to get the message properties to be displayed on the Nano
- */
-export const getMessageProperties = async (
-  messageData: AnyMessage,
-): Promise<MessageProperties | null> => {
-  if (messageData.standard === "EIP712") {
-    return getEIP712FieldsDisplayedOnNano(messageData.message, getEnv("CAL_SERVICE_URL"));
-  }
-
-  return null;
 };
