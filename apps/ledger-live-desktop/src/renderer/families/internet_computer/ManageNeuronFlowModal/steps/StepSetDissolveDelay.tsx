@@ -1,0 +1,109 @@
+import {
+  NNS_MAXIMUM_DISSOLVE_DELAY,
+  NNS_MINIMUM_DISSOLVE_DELAY,
+  NNS_MINIMUM_DISSOLVE_DELAY_TO_VOTE,
+  SECONDS_IN_DAY,
+} from "@ledgerhq/live-common/families/internet_computer/consts";
+import { getNeuronDissolveDurationSeconds } from "@ledgerhq/live-common/families/internet_computer/neuron";
+import React, { useCallback } from "react";
+import { Trans, useTranslation } from "react-i18next";
+import Box from "~/renderer/components/Box";
+import Input from "~/renderer/components/Input";
+import Text from "~/renderer/components/Text";
+import { useFormatDuration } from "../../useFormatDuration";
+import SubmitFooter from "./SubmitFooter";
+import type { StepProps } from "../../neuronFlow/types";
+
+const MAX_DAYS = Math.floor(NNS_MAXIMUM_DISSOLVE_DELAY / SECONDS_IN_DAY);
+
+/**
+ * Dissolve delay is entered in days, the unit the NNS bounds are quoted in. A dissolved neuron sets
+ * its delay outright; a locked one may only add to it, so the same screen drives two transaction
+ * types and the current delay is the floor for one and zero for the other.
+ */
+const StepSetDissolveDelay = ({
+  neurons,
+  selectedNeuronId,
+  transaction,
+  onUpdateTransaction,
+}: StepProps) => {
+  const { t } = useTranslation();
+  const formatDuration = useFormatDuration();
+  const neuron = neurons.find(n => n.id?.toString() === selectedNeuronId);
+  const isIncrease = transaction?.type === "increase_dissolve_delay";
+  const currentSeconds = neuron ? getNeuronDissolveDurationSeconds(neuron) : 0n;
+
+  const value = isIncrease
+    ? (transaction?.additionalDissolveDelay ?? "")
+    : (transaction?.dissolveDelay ?? "");
+  const days = value ? String(Math.round(Number(value) / SECONDS_IN_DAY)) : "";
+
+  const onChange = useCallback(
+    (nextDays: string) => {
+      const digits = nextDays.replace(/\D/g, "");
+      const seconds = digits ? String(Number(digits) * SECONDS_IN_DAY) : "";
+      onUpdateTransaction(tx => ({
+        ...tx,
+        ...(isIncrease ? { additionalDissolveDelay: seconds } : { dissolveDelay: seconds }),
+      }));
+    },
+    [isIncrease, onUpdateTransaction],
+  );
+
+  if (!neuron) return null;
+
+  const resultingSeconds = isIncrease
+    ? currentSeconds + BigInt(Number(value) || 0)
+    : BigInt(Number(value) || 0);
+
+  return (
+    <Box flow={3} px={4}>
+      <Text ff="Inter|Regular" fontSize={4} color="neutral.c70">
+        <Trans
+          i18nKey={
+            isIncrease
+              ? "internetComputer.manageNeuronFlow.setDissolveDelay.increaseDescription"
+              : "internetComputer.manageNeuronFlow.setDissolveDelay.setDescription"
+          }
+          values={{
+            min: Math.ceil(NNS_MINIMUM_DISSOLVE_DELAY / SECONDS_IN_DAY),
+            max: MAX_DAYS,
+          }}
+        />
+      </Text>
+      <Box>
+        <Text ff="Inter|SemiBold" fontSize={3} color="neutral.c70" mb={1}>
+          <Trans i18nKey="internetComputer.manageNeuronFlow.setDissolveDelay.days" />
+        </Text>
+        <Input
+          value={days}
+          onChange={onChange}
+          placeholder={String(MAX_DAYS)}
+          data-testid="icp-dissolve-delay-input"
+        />
+      </Box>
+      <Text ff="Inter|Regular" fontSize={3} color="neutral.c70">
+        {t("internetComputer.manageNeuronFlow.setDissolveDelay.resulting", {
+          duration: formatDuration(resultingSeconds),
+        })}
+      </Text>
+      {resultingSeconds > 0n && resultingSeconds < BigInt(NNS_MINIMUM_DISSOLVE_DELAY_TO_VOTE) ? (
+        <Text ff="Inter|Regular" fontSize={3} color="warning.c70">
+          <Trans
+            i18nKey="internetComputer.manageNeuronFlow.setDissolveDelay.belowVotingThreshold"
+            values={{ days: Math.ceil(NNS_MINIMUM_DISSOLVE_DELAY_TO_VOTE / SECONDS_IN_DAY) }}
+          />
+        </Text>
+      ) : null}
+    </Box>
+  );
+};
+
+export const StepSetDissolveDelayFooter = (props: StepProps) => (
+  <SubmitFooter
+    {...props}
+    canContinue={!!props.transaction?.dissolveDelay || !!props.transaction?.additionalDissolveDelay}
+  />
+);
+
+export default StepSetDissolveDelay;

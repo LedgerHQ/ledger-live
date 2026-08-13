@@ -1,6 +1,7 @@
 import { useFeature } from "@features/platform-feature-flags";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
-import { canStakeICP, useICPNeurons } from "@ledgerhq/live-common/families/internet_computer/react";
+import { getBannerState } from "@ledgerhq/live-common/families/internet_computer/neuron";
+import { canStakeICP } from "@ledgerhq/live-common/families/internet_computer/react";
 import type {
   ICPAccount,
   Transaction,
@@ -10,6 +11,7 @@ import { useStake } from "LLD/hooks/useStake";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { track } from "~/renderer/analytics/segment";
+import { openModal } from "~/renderer/actions/modals";
 import { AccountBanner } from "~/renderer/screens/account/AccountBanner";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
 import { onClickStakeIcp } from "./common";
@@ -25,32 +27,40 @@ const StakeBanner = ({ account }: { account: ICPAccount }) => {
   const stakeAccountBanner = useFeature("stakeAccountBanner");
   const { getCanStakeUsingLedgerLive, getCanStakeUsingPlatformApp } = useStake();
   const bridge = useAccountBridge<Transaction>(account);
-  const neurons = useICPNeurons(account);
 
   const { id: currencyId } = account.currency;
   const canOnlyStakeUsingLedgerLive =
     getCanStakeUsingLedgerLive(currencyId) && !getCanStakeUsingPlatformApp(currencyId);
 
   if (!stakeAccountBanner?.enabled || !canOnlyStakeUsingLedgerLive) return null;
-  if (neurons.length > 0 || !canStakeICP(account)) return null;
+
+  const state = getBannerState({ neurons: account.neurons, canStake: canStakeICP(account) });
+  if (state === "none") return null;
 
   const onClick = () => {
     track("button_clicked2", {
       ...stakeDefaultTrack,
       delegation: "stake",
       page: "Page Account",
-      button: "delegate",
+      button: state === "stakeICP" ? "delegate" : state,
       currency: "INTERNET_COMPUTER",
     });
-    onClickStakeIcp(dispatch, account, bridge);
+    if (state === "stakeICP") {
+      onClickStakeIcp(dispatch, account, bridge);
+    } else if (state === "confirmFollowing") {
+      dispatch(openModal("MODAL_ICP_REFRESH_VOTING_POWER", { account }));
+    } else {
+      // syncNeurons, lockNeurons and addFollowees are all resolved from the neuron list.
+      dispatch(openModal("MODAL_ICP_LIST_NEURONS", { account }));
+    }
   };
 
   return (
     <AccountBanner
       display
-      title={t("internetComputer.stakeBanner.stakeICP.title")}
-      description={t("internetComputer.stakeBanner.stakeICP.description")}
-      cta={t("internetComputer.stakeBanner.stakeICP.cta")}
+      title={t(`internetComputer.stakeBanner.${state}.title`)}
+      description={t(`internetComputer.stakeBanner.${state}.description`)}
+      cta={t(`internetComputer.stakeBanner.${state}.cta`)}
       onClick={onClick}
     />
   );
