@@ -1,4 +1,13 @@
-export type OpenHostedLogin = (loginUrl: string) => Promise<void> | void;
+/**
+ * How a login attempt ended in the browser. An opener that only hands the URL over, as desktop's
+ * does, knows neither and returns nothing.
+ */
+export type OpenHostedLoginOutcome = "redirected" | "cancelled";
+
+export type OpenHostedLogin = (
+  loginUrl: string,
+  redirectUri: string,
+) => Promise<OpenHostedLoginOutcome | void> | OpenHostedLoginOutcome | void;
 
 /**
  * Per-app OAuth client configuration. It reaches the flow as a prop because the values are the app's

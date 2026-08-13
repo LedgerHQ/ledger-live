@@ -14,6 +14,11 @@ with `code_challenge = BASE64URL(SHA256(verifier))` — and sends it to
 secure browser as before. The randomness comes from the platform CSPRNG on each side: `expo-crypto`
 on mobile, WebCrypto on desktop.
 
+The redirect URI now reaches the secure browser too, since that is what ends the session:
+`ASWebAuthenticationSession` matches the callback against it, and so does the Android polyfill.
+Closing the browser resolves that session rather than rejecting it, so the attempt is dropped on the
+way out and no error is shown — a cancelled login is not a failed one.
+
 The initiation carries `mode=api`. Without it the endpoint answers `302` and redirects to the hosted
 UI, which a `fetch` follows into an HTML page; `api` returns the same URL as JSON instead.
 

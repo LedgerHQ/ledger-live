@@ -87,7 +87,7 @@ describe("usePayTabViewModel", () => {
   it("should open the hosted login URL", async () => {
     const { result } = renderHook(() => usePayTabViewModel());
 
-    await result.current.openHostedLogin("https://card.example.com/login");
+    await result.current.openHostedLogin("https://card.example.com/login", "https://ledger.com");
 
     expect(Linking.openURL).toHaveBeenCalledWith("https://card.example.com/login");
   });
