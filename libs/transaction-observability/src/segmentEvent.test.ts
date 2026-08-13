@@ -21,6 +21,22 @@ const refused = Object.assign(new Error("declined for 0xSENSITIVE_ADDR"), {
 });
 
 describe("toSegmentTrackEvent", () => {
+  // `flow` is what dashboards slice on, and it is deliberately Ledger Wallet's word, not
+  // the Earn live-app's. Pinned separately so a change has to be intentional.
+  it.each([TransactionFlow.Send, TransactionFlow.Dapp, TransactionFlow.Swap])(
+    "always reports flow=stake, whatever the route (%s)",
+    flow => {
+      const result = toSegmentTrackEvent({
+        status: "success",
+        stage: TransactionStage.Broadcast,
+        ...common,
+        flow,
+      } as LogEvent);
+
+      expect(result!.properties).toMatchObject({ flow: "stake", tx_pathway: flow });
+    },
+  );
+
   it("maps a broadcast success to earn_transaction_completed", () => {
     const result = toSegmentTrackEvent({
       status: "success",
@@ -30,8 +46,8 @@ describe("toSegmentTrackEvent", () => {
 
     expect(result!.event).toBe("earn_transaction_completed");
     expect(result!.properties).toMatchObject({
-      // Joins with the Earn live-app's events, which carry the same flow.
-      flow: "earn",
+      // Ledger Wallet's staking vocabulary, not the Earn live-app's "earn".
+      flow: "stake",
       stage: "broadcast",
       status: "success",
       transaction_type: "delegate",

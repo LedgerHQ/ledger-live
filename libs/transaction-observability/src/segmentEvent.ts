@@ -12,7 +12,7 @@ const EARN_TRANSACTION_FAILED = "earn_transaction_failed";
 
 // The Earn live-app emits earn_transaction_* for its own wallet-api flows, and it has
 // richer context (protocol, receipt token). Emitting here too would double-count.
-const APP_OWNED_MANIFEST_IDS = new Set(["earn"]);
+const APP_OWNED_MANIFEST_IDS = new Set(["earn", "earn-prd-eks"]);
 
 /**
  * Maps a transaction {@link LogEvent} to a Segment/Mixpanel `track` call, or `null`
@@ -34,10 +34,13 @@ export function toSegmentTrackEvent(event: LogEvent): SegmentTrackEvent | null {
 
   const isSuccess = event.status === "success";
   const properties: Record<string, unknown> = {
-    // Matches the `flow` the Earn live-app sets, so both halves of the funnel join on
-    // the same property. Ledger Wallet's `track` has no base-property channel, so it
-    // goes here — nothing in its globals provides or overwrites `flow`.
-    flow: "earn",
+    // Ledger Wallet's own staking events already say "stake" (screens/stake/constants,
+    // the family StepConfirmations), so the seam speaks its host's vocabulary rather than
+    // the Earn live-app's "earn". The two halves of the funnel join on the event name.
+    //
+    // Unreliable on mobile: `segment.ts` spreads its extra properties after the event's,
+    // and those set flow=onboarding|post-onboarding while those selectors are true.
+    flow: "stake",
     stage: event.stage,
     status: isSuccess ? "success" : "failed",
     transaction_type: event.earnTransactionType,

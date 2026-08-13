@@ -344,6 +344,11 @@ const getStakingCurrenciesFromFlags = () => {
   return { stakePrograms, stakingCurrenciesEnabled, partnerStakingCurrenciesEnabled };
 };
 
+/**
+ * FIXME (LIVE-35904): these extras are spread *after* an event's own properties in both
+ * `track` and `screen`, so `flow` here silently overwrites the emitter's value — an
+ * inversion of specificity.
+ */
 const getFlowAndSatisfactionProps = (
   state: State,
   satisfaction: ReturnType<typeof satisfactionSelector>,
