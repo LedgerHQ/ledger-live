@@ -8,7 +8,6 @@ import {
   within,
 } from "tests/testSetup";
 import { useNavigate } from "react-router";
-import { server } from "tests/server";
 import { track, trackPage } from "~/renderer/analytics/segment";
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
 import { BTC_ACCOUNT, ETH_ACCOUNT_WITH_USDC } from "LLD/features/__mocks__/accounts.mock";
@@ -80,10 +79,6 @@ describe("PayTab", () => {
     mockedUseNavigate.mockReturnValue(mockNavigate);
   });
 
-  afterEach(() => {
-    server.resetHandlers();
-  });
-
   it("should show the feature tour on first visit", () => {
     render(<PayTab />, {
       initialState: { payCard: { ...payCardInitialState, hasSeenFeatureTour: false } },
@@ -129,16 +124,13 @@ describe("PayTab", () => {
   it("should render the aggregated stablecoin balance when the user holds USDC", async () => {
     mockFundedPayStablecoins();
 
-    const { container } = renderWithMockedCounterValuesProvider(<PayTab />, {
-      initialState: {
-        ...onboardedState,
-        ...tourSeenState,
-        accounts: [BTC_ACCOUNT, ETH_ACCOUNT_WITH_USDC],
-      },
+    renderWithMockedCounterValuesProvider(<PayTab />, {
+      initialState: { ...onboardedState, ...tourSeenState },
     });
 
     await waitFor(() => {
-      expect(within(container).getByTestId("pay-card-balance-funded-state")).toBeVisible();
+      expect(screen.getByTestId("pay-card-balance-funded-state")).toBeVisible();
+      expect(screen.queryByTestId("pay-card-balance-empty-state")).not.toBeInTheDocument();
     });
   });
 
