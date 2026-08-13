@@ -24,6 +24,15 @@ export class TrustchainPage {
     expect(await this.getAccounts(), "Trustchain should not hold any account").toEqual([]);
   }
 
+  /** Deleting the backup destroys the last application stream, and with it the trustchain root. */
+  @step("Expect trustchain to be destroyed")
+  async expectToBeDestroyed() {
+    await expect(
+      LedgerSyncCliHelper.pullLedgerSyncData(),
+      "Trustchain should no longer be reachable once the backup is deleted",
+    ).rejects.toThrow();
+  }
+
   @step("Expect trustchain to hold account $0 on $1")
   async expectToHoldAccount(accountId: string, currencyId: string, timeout = 60_000) {
     await expect

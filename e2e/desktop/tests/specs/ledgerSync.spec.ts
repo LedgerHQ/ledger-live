@@ -51,6 +51,13 @@ function pushTwoEthAccountsToTrustchain() {
   return LedgerSyncCliHelper.pushAccountsToTrustchain([ethAccount, secondEthAccount]);
 }
 
+/** Raised when the trustchain no longer exists, so a test that deleted it has nothing to clean. */
+const ALREADY_DESTROYED_ERRORS = new Set([
+  "TrustchainEjected",
+  "TrustchainNotAllowed",
+  "TrustchainNotFound",
+]);
+
 function destroyTrustchainAfterAll() {
   test.afterAll(async () => {
     const { pubKey } = LedgerSyncCliHelper.ledgerKeyRingProtocolArgs;
@@ -60,6 +67,7 @@ function destroyTrustchainAfterAll() {
     try {
       await LedgerSyncCliHelper.deleteLedgerSyncData();
     } catch (error) {
+      if (error instanceof Error && ALREADY_DESTROYED_ERRORS.has(error.name)) return;
       console.error(`[E2E] Ledger Sync cleanup failed for trustchain ${rootId}:`, error);
     }
   });
@@ -267,6 +275,40 @@ test.describe("Ledger Sync - delete instance", () => {
       await app.ledgerSync.manageInstances();
       await app.ledgerSync.expectCLIMemberRemoved();
       await app.drawer.closeDrawer();
+    },
+  );
+});
+
+test.describe("Ledger Sync - delete backup", () => {
+  setupSeed("LS_DeleteBackup_SEED");
+  destroyTrustchainAfterAll();
+
+  test.use(preSeededTrustchain([pushEthAccountToTrustchain]));
+
+  test(
+    "[Live Hub][Ledger Sync] Delete backup",
+    {
+      tag: deviceTagsWithoutLNS(),
+      annotation: {
+        type: "TMS",
+        description: "B2CQA-2296",
+      },
+    },
+    async ({ app }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
+      await app.trustchain.expectToHoldAccount(ethAccount.id, ethAccount.currencyId);
+
+      await app.mainNavigation.openSettings();
+      await app.settings.openManageLedgerSync();
+      await app.ledgerSync.expectLedgerSyncManagementVisible();
+
+      await app.ledgerSync.destroyTrustchain();
+      await app.ledgerSync.expectBackupDeletion();
+      await app.drawer.closeDrawer();
+
+      await app.settings.expectLedgerSyncSettingsEntryPoint();
+      await app.trustchain.expectToBeDestroyed();
     },
   );
 });
