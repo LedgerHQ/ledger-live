@@ -79,7 +79,7 @@ const Receive1ShareAddress = ({
   const shouldRenderMemoTagInfo = currency.family && MEMO_TAG_COINS.includes(currency.family);
 
   return (
-    <>
+    <Box data-testid="receive-public-address-block">
       <Box horizontal alignItems="center" flow={2} mb={4}>
         <Text
           style={{
@@ -119,14 +119,14 @@ const Receive1ShareAddress = ({
           </Box>
         )}
       </FeatureToggle>
-    </>
+    </Box>
   );
 };
 const Receive2Device = ({ name, device }: { name: string; device: Device }) => {
   const type = useTheme().theme;
   return (
     <>
-      <Box horizontal alignItems="center" flow={2}>
+      <Box horizontal alignItems="center" flow={2} data-testid="receive-device-animation">
         <Text
           style={{
             flexShrink: "unset",
@@ -161,6 +161,20 @@ const Receive2Device = ({ name, device }: { name: string; device: Device }) => {
         modelId: device.modelId,
         type,
       })}
+    </>
+  );
+};
+
+const ZcashReceive2Device = ({ device }: { device: Device }) => {
+  const type = useTheme().theme;
+  return (
+    <>
+      <Box horizontal alignItems="center" flow={2} data-testid="zcash-receive-device-animation">
+        <Text style={{ flexShrink: "unset" }} ff="Inter|SemiBold" color="neutral.c100" fontSize={4}>
+          <Trans i18nKey="zcash.shielded.receive.verifyAddresses" />
+        </Text>
+      </Box>
+      {renderVerifyUnwrapped({ modelId: device.modelId, type })}
     </>
   );
 };
@@ -315,13 +329,30 @@ const StepReceiveFunds = (props: StepProps) => {
   // custom family UI for StepReceiveFunds
   const CustomStepReceiveFunds = specific?.StepReceiveFunds;
 
+  const zcashShieldedFeature = useFeature("zcashShielded");
+  const isZcashShielded =
+    mainAccount?.currency.id === "zcash" && zcashShieldedFeature?.enabled === true;
+  const zcashShieldedAddress = isZcashShielded
+    ? ((mainAccount as { privateInfo?: { shieldedAddress?: string | null } }).privateInfo
+        ?.shieldedAddress ?? null)
+    : null;
+
   // Families that own their confirm-address lifecycle opt out of the shared auto-trigger.
+  // Zcash with shielded enabled uses 0x51 instead of the generic 0x40 path.
   useEffect(() => {
-    if (specific?.useCustomConfirmAddress) return;
+    if (specific?.useCustomConfirmAddress || isZcashShielded) return;
     if (isAddressVerified === null) {
       confirmAddress();
     }
-  }, [specific?.useCustomConfirmAddress, isAddressVerified, confirmAddress]);
+  }, [specific?.useCustomConfirmAddress, isZcashShielded, isAddressVerified, confirmAddress]);
+
+  // After successful shielded verification, advance to the "receive" success
+  // step — mirrors what confirmAddress() does for the standard 0x40 path.
+  useEffect(() => {
+    if (isZcashShielded && isAddressVerified === true) {
+      transitionTo("receive");
+    }
+  }, [isZcashShielded, isAddressVerified, transitionTo]);
 
   if (CustomStepReceiveFunds) {
     return <CustomStepReceiveFunds {...props} />;
@@ -398,8 +429,19 @@ const StepReceiveFunds = (props: StepProps) => {
                 showQRCodeModal={showQRCodeModal}
               />
               {CustomPostAlertReceiveFunds && <CustomPostAlertReceiveFunds {...props} />}
-              <Separator />
-              <Receive2Device device={device} name={name} />
+              {isZcashShielded ? (
+                zcashShieldedAddress ? (
+                  <>
+                    <Separator />
+                    <ZcashReceive2Device device={device} />
+                  </>
+                ) : null
+              ) : (
+                <>
+                  <Separator />
+                  <Receive2Device device={device} name={name} />
+                </>
+              )}
             </>
           ) : null // should not happen
         }

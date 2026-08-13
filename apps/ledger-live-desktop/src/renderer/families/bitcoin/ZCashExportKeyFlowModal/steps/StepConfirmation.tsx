@@ -8,6 +8,9 @@ import Button from "~/renderer/components/Button";
 import SuccessDisplay from "~/renderer/components/SuccessDisplay";
 import { Container } from "../shared/Container";
 import type { StepProps } from "../types";
+import { useDispatch } from "LLD/hooks/redux";
+import { openModal } from "~/renderer/actions/modals";
+import { accountsSelector } from "~/renderer/reducers/accounts";
 
 function StepConfirmation({ t }: Readonly<StepProps>) {
   return (
@@ -63,15 +66,31 @@ function StepConfirmation({ t }: Readonly<StepProps>) {
 export function StepConfirmationFooter({
   closeModal,
   handleEnableShieldedBalance,
+  account,
+  source,
 }: Readonly<StepProps>) {
+  const dispatch = useDispatch();
+
+  const afterClose = () => {
+    if (source === "receive" && account) {
+      // Read state after handleEnableShieldedBalance has synchronously committed shieldedAddress
+      dispatch((d, getState) => {
+        const freshAccount = accountsSelector(getState()).find(a => a.id === account.id) ?? account;
+        d(openModal("MODAL_RECEIVE", { account: freshAccount }));
+      });
+    }
+  };
+
   const handleCloseModal = () => {
     handleEnableShieldedBalance("ready");
     closeModal();
+    afterClose();
   };
 
   const handleStartSync = () => {
     handleEnableShieldedBalance("running");
     closeModal();
+    afterClose();
   };
 
   return (

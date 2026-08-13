@@ -1,8 +1,10 @@
 import { useCallback } from "react";
 import { from, switchMap } from "rxjs";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { SYNC_TYPE_SHIELDED } from "@ledgerhq/types-live";
+import type { Account } from "@ledgerhq/types-live";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import {
   removeShieldedSubscription,
@@ -11,8 +13,21 @@ import {
 } from "~/renderer/reducers/shieldedSyncSubscriptions";
 import type { ZcashAccount } from "@ledgerhq/live-common/families/bitcoin/types";
 import type { ZcashPrivateInfo } from "@ledgerhq/coin-zcash/network/types";
+import type { ZcashAccountBridge } from "@ledgerhq/coin-zcash/bridge";
 import type { Currency } from "@ledgerhq/wallet-btc/index";
 import { syncStateUpdater } from "./ZCashExportKeyFlowModal/sync";
+
+function assertZcashBridge(bridge: unknown): asserts bridge is ZcashAccountBridge {
+  if (typeof (bridge as ZcashAccountBridge).getShieldedAddress !== "function") {
+    throw new Error("[zcashShielded] expected ZcashAccountBridge — is the feature flag on?");
+  }
+}
+
+export function useZcashBridge(account: Account): ZcashAccountBridge {
+  const bridge = useAccountBridge(account);
+  assertZcashBridge(bridge);
+  return bridge;
+}
 
 export function useZcashShieldedSync(account: ZcashAccount) {
   const dispatch = useDispatch();
