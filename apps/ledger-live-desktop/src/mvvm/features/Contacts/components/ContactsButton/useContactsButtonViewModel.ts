@@ -1,13 +1,15 @@
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
-import { useContactsFeature } from "@features/flow-contacts";
-import { track } from "~/renderer/analytics/segment";
-import { useContextMenuClose } from "LLD/features/MyWallet/components/ContextMenuContext";
 import {
-  MY_WALLET_TRACKING_BUTTON,
-  MY_WALLET_TRACKING_PAGE_NAME,
-} from "LLD/features/MyWallet/constants";
+  CONTACTS_EVENT_SOURCE,
+  CONTACTS_PAGE_PROPERTY,
+  CONTACTS_TRACK_EVENTS,
+  CONTACTS_TRACKING_BUTTON,
+  useContactsFeature,
+} from "@features/flow-contacts";
+import { useContextMenuClose } from "LLD/features/MyWallet/components/ContextMenuContext";
+import { useContactsAnalytics } from "../../analytics";
 
 export type ContactsButtonViewModel = {
   isEnabled: boolean;
@@ -22,15 +24,17 @@ export function useContactsButtonViewModel(): ContactsButtonViewModel {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { isEnabled, showNewBadge } = useContactsFeature("desktop");
+  const analytics = useContactsAnalytics();
 
   const handleClick = useCallback(() => {
-    track("button_clicked", {
-      button: MY_WALLET_TRACKING_BUTTON.contacts,
-      page: MY_WALLET_TRACKING_PAGE_NAME,
+    analytics.trackEvent(CONTACTS_TRACK_EVENTS.BUTTON_CLICKED, {
+      source: CONTACTS_EVENT_SOURCE.ENTRY,
+      button: CONTACTS_TRACKING_BUTTON.contacts,
+      page: CONTACTS_PAGE_PROPERTY.MY_WALLET,
     });
     navigate("/contacts");
     close();
-  }, [close, navigate]);
+  }, [analytics, close, navigate]);
 
   return {
     isEnabled,
