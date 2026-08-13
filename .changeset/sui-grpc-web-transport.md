@@ -26,3 +26,10 @@ Add a gRPC-web transport to the Sui coin module
 - The live shape-parity suite now compares gRPC against GraphQL; JSON-RPC keeps its own suite.
 - Fix: the Sui fetcher dropped `X-Ledger-Client-Version` and all gRPC-web headers when passed a
   `Headers` instance.
+- Fix: GraphQL resolved the latest checkpoint in two queries, so the tip could advance past what the
+  checkpoint index had and the second query answered null. It is now a single query.
+- A checkpoint whose `digest` or `timestamp` is absent now raises an error on both GraphQL and gRPC.
+  Both previously reported the block with an empty hash and a 1970 timestamp, which sync stored as
+  though it were real.
+- Degradation telemetry keeps its per-transport keys: GraphQL still logs `sui-graphql:*`, and the
+  gRPC arm logs the same events under `sui-grpc:*`.

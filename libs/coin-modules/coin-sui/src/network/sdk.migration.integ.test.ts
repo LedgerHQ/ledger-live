@@ -3,6 +3,10 @@
  * the same shape (keys, JS types, array structure); content drifts between back-to-back calls
  * and is not asserted on. Identifiers (digests, addresses, stake IDs, stake principals) are
  * deterministic and ARE asserted exactly.
+ *
+ * gRPC is the reference leg, and the `rpc`-prefixed locals below hold it. It replaced JSON-RPC after
+ * the Sui Foundation retired the public mainnet fullnode (wk of 2026-07-20), which left this suite
+ * with no runnable baseline.
  */
 import { getEnv } from "@ledgerhq/live-env";
 import BigNumber from "bignumber.js";
@@ -43,8 +47,8 @@ let stableCheckpointSequence: string;
 
 beforeAll(async () => {
   coinConfig.setCoinConfig(id => {
-    // Every currency carries all three URLs: `SuiCoinConfig` requires them, and the dispatcher
-    // picks one per the flag rather than per the config.
+    // Both ids carry all three URLs — `SuiCoinConfig` requires them — and differ only in
+    // `features.transport`, so a parity failure can only come from the arm, never from the endpoints.
     const node = {
       url: getEnv("API_SUI_NODE_PROXY"),
       graphqlUrl: getEnv("API_SUI_GRAPHQL_PROXY"),
@@ -204,8 +208,6 @@ function assertIdsSubset<T>(
 // Tests
 // ---------------------------------------------------------------------------
 
-// gRPC is the reference leg. It replaced JSON-RPC here after the Sui Foundation retired the public
-// mainnet fullnode (wk of 2026-07-20), which left this suite skipped with no runnable baseline.
 describe("gRPC vs GraphQL shape parity (live mainnet)", () => {
   // ----- Read-side: balances ----------------------------------------------
 

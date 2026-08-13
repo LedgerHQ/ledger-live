@@ -328,9 +328,10 @@ describe("gRPC vs GraphQL parity (live mainnet)", () => {
       expect(pages).toBeGreaterThan(1);
     });
 
-    // This is LIVE-35142 in miniature. `ACCOUNT` — the fixture the JSON-RPC suite has always used —
-    // last transacted around 2026-05-08, so its whole history has aged out of QuickNode's 90-day
-    // GraphQL window. gRPC's archive index still has it, which is the entire point of the migration.
+    // The user-visible symptom this migration exists to fix, reproduced on one address. `ACCOUNT` —
+    // the fixture the JSON-RPC suite has always used — last transacted around 2026-05-08, so its
+    // whole history has aged out of the 90-day GraphQL retention window. gRPC's archive index still
+    // has it, so an account that looks empty on GraphQL shows its operations again.
     it("recovers history that GraphQL has dropped", async () => {
       const viaGraphql = await getOperations(
         graphqlConfig,
