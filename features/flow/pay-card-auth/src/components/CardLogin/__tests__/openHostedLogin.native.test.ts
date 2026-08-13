@@ -24,22 +24,14 @@ describe("openHostedLoginInSecureBrowser", () => {
     expect(mockedOpenAuthSessionAsync).toHaveBeenCalledWith(loginUrl, redirectUri);
   });
 
-  it("should report a redirect back to the app", async () => {
-    mockedOpenAuthSessionAsync.mockResolvedValue({ type: "success", url: redirectUri });
-
-    await expect(openHostedLoginInSecureBrowser(loginUrl, redirectUri)).resolves.toBe("redirected");
-  });
-
   it.each(["cancel", "dismiss", "locked"] as const)(
-    "should report a cancellation when the session ends with %s",
+    "should not fail when the session ends with %s",
     async type => {
       mockedOpenAuthSessionAsync.mockResolvedValue({
         type,
       } as Awaited<ReturnType<typeof openAuthSessionAsync>>);
 
-      await expect(openHostedLoginInSecureBrowser(loginUrl, redirectUri)).resolves.toBe(
-        "cancelled",
-      );
+      await expect(openHostedLoginInSecureBrowser(loginUrl, redirectUri)).resolves.toBeUndefined();
     },
   );
 });

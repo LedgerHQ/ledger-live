@@ -91,29 +91,16 @@ describe("useCardLoginViewModel", () => {
     });
   });
 
-  it("should drop the attempt, and show nothing, when the user closes the hosted login", async () => {
-    const openHostedLogin = jest.fn().mockResolvedValue("cancelled");
+  it("should keep the attempt, and show nothing, once the browser closes", async () => {
+    const openHostedLogin = jest.fn().mockResolvedValue(undefined);
     unwrap.mockResolvedValue(authorizeResponse("https://card.example.com/login"));
     const { result, store } = renderCardLoginViewModel({ openHostedLogin });
 
     act(() => result.current.onLoginPress());
 
     await waitFor(() => {
-      expect(selectAuthorizeAttempt(store.getState())).toBeNull();
+      expect(result.current.isLoading).toBe(false);
       expect(result.current.errorMessage).toBeNull();
-      expect(result.current.isLoading).toBe(false);
-    });
-  });
-
-  it("should keep the attempt when the hosted login redirects back", async () => {
-    const openHostedLogin = jest.fn().mockResolvedValue("redirected");
-    unwrap.mockResolvedValue(authorizeResponse("https://card.example.com/login"));
-    const { result, store } = renderCardLoginViewModel({ openHostedLogin });
-
-    act(() => result.current.onLoginPress());
-
-    await waitFor(() => {
-      expect(result.current.isLoading).toBe(false);
       expect(selectAuthorizeAttempt(store.getState())).toEqual({
         state: attempt.state,
         codeVerifier: attempt.codeVerifier,

@@ -16,9 +16,9 @@ secure browser as before. The randomness comes from the platform CSPRNG on each 
 on mobile, WebCrypto on desktop.
 
 The redirect URI now reaches the secure browser too, since that is what ends the session:
-`ASWebAuthenticationSession` matches the callback against it, and so does the Android polyfill.
-Closing the browser resolves that session rather than rejecting it, so the attempt is dropped on the
-way out and no error is shown — a cancelled login is not a failed one.
+`ASWebAuthenticationSession` matches the callback against it, and so does the Android polyfill. The
+opener only opens the URL; the redirect goes back to the app, so the browser result is not read and
+closing the browser shows no error — a cancelled login is not a failed one.
 
 The initiation carries `mode=api`. Without it the endpoint answers `302` and redirects to the hosted
 UI, which a `fetch` follows into an HTML page; `api` returns the same URL as JSON instead.

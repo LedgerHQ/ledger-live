@@ -30,12 +30,8 @@ export function useCardLoginViewModel({
           codeChallenge,
         }).unwrap();
 
-        const outcome = await openHostedLogin(url, redirectUri);
-
-        // Closing the browser is not an error, but nothing can complete that attempt any more.
-        if (outcome === "cancelled") {
-          dispatch(clearAuthorizeAttempt());
-        }
+        // The attempt outlives the browser: the callback comes back to the app, not to this call.
+        await openHostedLogin(url, redirectUri);
       } catch (error) {
         // Nothing can complete this attempt any more, so the verifier and `state` go with it.
         dispatch(clearAuthorizeAttempt());
