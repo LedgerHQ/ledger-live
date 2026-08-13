@@ -2476,7 +2476,9 @@
     "addressMatched": "アドレスが一致",
     "addressNotFound": "住所が見つかりません",
     "alreadyUsed": "使用ずみ・{{date}}",
+    "addressBookUnsupported": "{{family}}にはまだ対応していません",
     "recentSendWillAppear": "最近の送付がこちらに表示されます",
+    "contactsWillAppear": "連絡先がここに表示されます。",
     "securityInfo": {
       "title": "安全に送付するには？",
       "items": {
@@ -2494,6 +2496,10 @@
         "description": "最近の履歴では、すでに特定のアドレスに送付したかどうかを即座に確認できます。これにより、コピー/貼り付けのエラーやハッキングを防ぐことができます。履歴には、Ledger Walletを使用して暗号資産を送付した直近の12件のアドレスが含まれています。",
         "cta": "了解"
       }
+    },
+    "addContact": {
+      "newContact": "新しい連絡先を追加",
+      "existingContact": "既存の連絡先に追加"
     },
     "relativeDate": {
       "justNow": "たった今",
@@ -7435,6 +7441,9 @@
     "FeeTooHigh": {
       "title": "ネットワーク手数料が10%を超えています。"
     },
+    "RecipientIsNewAccount": {
+      "title": "このアドレスは一度も資金を受け取ったことがないため、有効化にはより高いネットワーク手数料がかかります。"
+    },
     "DustLimit": {
       "title": "金額がダスト制限を下回っています"
     },
@@ -8897,7 +8906,8 @@
       "transparentBalance": "トランスペアレント残高",
       "transparentBalanceTooltip": "一般に公開されている残高",
       "privateBalance": "プライベート残高",
-      "privateBalanceTooltip": "一般には非公開の残高"
+      "privateBalanceTooltip": "一般には非公開の残高",
+      "privateBalanceWarning": "プライベート残高には、SaplingおよびOrchardのシールドされた資金は含まれません。"
     },
     "shielded": {
       "send": {
@@ -8937,6 +8947,12 @@
             "message": "残高が最新でない可能性があります",
             "cta": "残高を同期"
           }
+        },
+        "selfTransfer": {
+          "toPrivate": "プライベート残高への自己送金",
+          "toPublic": "パブリック残高への自己送金",
+          "unavailable": "プライベートアドレスはまだ利用できません。これを有効にするには、閲覧キーをエクスポートしてください。",
+          "privacyWarning": "これにより、シールドされた資金が、誰でも閲覧可能なアカウントのパブリックアドレスに紐付けられます。外部のプライベートアドレスに送信することで、これらは紐付けられないままになります。"
         }
       },
       "state": {
@@ -9392,10 +9408,10 @@
       "cancel": "キャンセル"
     },
     "editSignerMismatch": {
-      "title": "Use the same Ledger device you used to add this contact",
-      "description": "The connected device isn't a match.",
-      "connectDifferentDevice": "Connect a different device",
-      "cancel": "Cancel"
+      "title": "連絡先の追加で使用したものと同じLedgerデバイスを使用してください",
+      "description": "接続されたデバイスが一致しません。",
+      "connectDifferentDevice": "別のデバイスを接続してください",
+      "cancel": "キャンセル"
     },
     "ledgerSyncIntroduction": {
       "description": "連絡先はLedgerによってエンドツーエンドで暗号化され、デバイス間で同期されます。これをロック解除できるのはあなただけです。",
