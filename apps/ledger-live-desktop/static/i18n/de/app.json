@@ -2476,7 +2476,9 @@
     "addressMatched": "Adressen passen",
     "addressNotFound": "Adresse nicht gefunden",
     "alreadyUsed": "Bereits genutzt · {{date}}",
+    "addressBookUnsupported": "{{family}} wird noch nicht unterstützt",
     "recentSendWillAppear": "Deine letzten Transfers erscheinen hier",
+    "contactsWillAppear": "Kontakte werden hier angezeigt",
     "securityInfo": {
       "title": "Wie versendet man sicher?",
       "items": {
@@ -2494,6 +2496,10 @@
         "description": "In deinem aktuellen Verlauf kannst du sofort erkennen, ob du bereits an eine bestimmte Adresse gesendet hast oder nicht. Dies könnte mögliche Fehler beim Kopieren und Einfügen oder das Hacken verhindern. Dein Verlauf enthält die letzten 12 Adressen, an die du über Ledger Wallet Krypto gesendet hast.",
         "cta": "Verstanden"
       }
+    },
+    "addContact": {
+      "newContact": "Neuen Kontakt hinzufügen",
+      "existingContact": "Zu einem bestehenden Kontakt hinzufügen"
     },
     "relativeDate": {
       "justNow": "Jetzt gerade",
@@ -7435,6 +7441,9 @@
     "FeeTooHigh": {
       "title": "Die Netzwerkgebühren liegen über 10 % des Betrags"
     },
+    "RecipientIsNewAccount": {
+      "title": "Diese Adresse hat noch nie Guthaben empfangen, ihre Aktivierung kostet eine höhere Netzwerkgebühr."
+    },
     "DustLimit": {
       "title": "Die Menge ist niedriger als das Staub (dust) -Limit"
     },
@@ -8897,7 +8906,8 @@
       "transparentBalance": "Transparenter Saldo",
       "transparentBalanceTooltip": "Guthaben, das öffentlich einsehbar ist",
       "privateBalance": "Privater Saldo",
-      "privateBalanceTooltip": "Guthaben, das nicht öffentlich einsehbar ist"
+      "privateBalanceTooltip": "Guthaben, das nicht öffentlich einsehbar ist",
+      "privateBalanceWarning": "Der private Kontostand schließt geschützte Sapling- und Orchard-Guthaben aus"
     },
     "shielded": {
       "send": {
@@ -8937,6 +8947,12 @@
             "message": "Kontostand ist eventuell nicht ganz aktuell",
             "cta": "Kontostand synchronisieren"
           }
+        },
+        "selfTransfer": {
+          "toPrivate": "Selbstüberweisung auf den privaten Kontostand",
+          "toPublic": "Selbstüberweisung auf den öffentlichen Kontostand",
+          "unavailable": "Deine private Adresse ist noch nicht verfügbar. Exportiere deinen Viewkey, um dies zu aktivieren.",
+          "privacyWarning": "Dies verknüpft dein geschütztes Guthaben mit der öffentlichen Adresse deines Kontos, die für jeden sichtbar ist. Durch das Senden an eine externe private Adresse bleiben diese unverknüpft."
         }
       },
       "state": {
@@ -9392,10 +9408,10 @@
       "cancel": "Abbrechen"
     },
     "editSignerMismatch": {
-      "title": "Use the same Ledger device you used to add this contact",
-      "description": "The connected device isn't a match.",
-      "connectDifferentDevice": "Connect a different device",
-      "cancel": "Cancel"
+      "title": "Verwende dasselbe Ledger-Gerät, das du zum Hinzufügen dieses Kontakts verwendet hast",
+      "description": "Das verbundene Gerät passt nicht.",
+      "connectDifferentDevice": "Verbinde ein anderes Gerät",
+      "cancel": "Abbrechen"
     },
     "ledgerSyncIntroduction": {
       "description": "Deine Kontakte sind mit deinem Ledger Ende-zu-Ende verschlüsselt und werden mit deinen Geräten synchronisiert – nur du kannst sie entsperren.",
