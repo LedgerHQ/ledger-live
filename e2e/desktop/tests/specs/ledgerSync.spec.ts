@@ -10,6 +10,8 @@ import { ethAccount, secondEthAccount } from "tests/testdata/ledgerSyncTestData"
 import { getEnv, setEnv } from "@shared/env";
 import { deviceTagsWithoutLNS } from "tests/utils/tagsUtils";
 
+const APP_INSTANCE_NAME = "LWD";
+
 function setupSeed(seed: string) {
   const prevSeed = getEnv("SEED");
   test.beforeAll(async () => {
@@ -38,6 +40,11 @@ function initializeEmptyTrustchain() {
 
 function pushEthAccountToTrustchain() {
   return LedgerSyncCliHelper.pushAccountsToTrustchain([ethAccount]);
+}
+
+/** Registers the app under its own instance name, so the CLI stays a separate instance. */
+function addAppInstanceToTrustchain() {
+  return LedgerSyncCliHelper.addTrustchainMember(APP_INSTANCE_NAME);
 }
 
 function pushTwoEthAccountsToTrustchain() {
@@ -223,6 +230,43 @@ test.describe("Ledger Sync - delete account", () => {
       await app.layout.waitForAccountsSyncToBeDone();
 
       await app.trustchain.expectAccountIds([secondEthAccount.id]);
+    },
+  );
+});
+
+test.describe("Ledger Sync - delete instance", () => {
+  setupSeed("LS_DeleteInstance_SEED");
+  destroyTrustchainAfterAll();
+
+  test.use(preSeededTrustchain([addAppInstanceToTrustchain]));
+
+  test(
+    "[Live Hub][Ledger Sync] Delete instance",
+    {
+      tag: deviceTagsWithoutLNS(),
+      annotation: {
+        type: "TMS",
+        description: "B2CQA-2297",
+      },
+    },
+    async ({ app }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
+      await app.mainNavigation.openSettings();
+      await app.settings.openManageLedgerSync();
+      await app.ledgerSync.manageInstances();
+      await app.ledgerSync.expectCLIMemberVisible();
+
+      await app.ledgerSync.removeCLIMember();
+      await app.speculos.removeMemberFromLedgerSync();
+      await app.ledgerSync.expectMemberRemoval();
+      await app.ledgerSync.expectCLIMemberRemoved();
+      await app.drawer.closeDrawer();
+
+      await app.settings.openManageLedgerSync();
+      await app.ledgerSync.manageInstances();
+      await app.ledgerSync.expectCLIMemberRemoved();
+      await app.drawer.closeDrawer();
     },
   );
 });

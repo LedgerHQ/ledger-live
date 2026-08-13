@@ -146,6 +146,26 @@ export class LedgerSyncCliHelper {
     return output;
   }
 
+  /**
+   * Adds a second member to the existing trustchain under its own instance name, so the app can be
+   * seeded with it and still see the CLI as a separate instance. Takes an argument, so it cannot be
+   * used as a `cliCommands` entry directly — wrap it in a no-arg command.
+   */
+  static async addTrustchainMember(name: string) {
+    await LedgerSyncCliHelper.initializeLedgerKeyRingProtocol();
+
+    const output = CLI.ledgerKeyRingProtocol({
+      getKeyRingTree: true,
+      name,
+      ...LedgerSyncCliHelper.ledgerKeyRingProtocolArgs,
+    }).then(out => {
+      LedgerSyncCliHelper.updateKeysAndArgs(out);
+      return out;
+    });
+    await activateLedgerSync();
+    return output;
+  }
+
   static async pushAccountsToTrustchain(
     descriptors: LedgerSyncAccountDescriptor[],
     accountNames: Record<string, string> = {},
