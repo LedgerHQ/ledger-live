@@ -255,8 +255,6 @@ describe("dispatcher dual-URL routing", () => {
   const JSON_RPC_URL = "https://json-rpc.example.test";
   const GRAPHQL_URL = "https://graphql.example.test/graphql";
 
-  beforeEach(() => {});
-
   it('withApi reads node.url even when features.transport is "graphql"', async () => {
     // GIVEN
     const captured = jest.fn();
@@ -314,8 +312,6 @@ describe("dispatcher dual-URL routing", () => {
 // instead of throwing. These tests pin that routing so a regression flips loudly.
 
 describe("getBlock/getBlockInfo digest routing", () => {
-  beforeEach(() => {});
-
   it("getBlockInfo with a digest input never constructs a GraphQL client (routes to JSON-RPC)", async () => {
     // 44-char base58-ish digest; not numeric, so isSequenceNumber returns false.
     const digest = "5f7c9b3a2e1d0c4b6f8a9e2d1c3b4a5f6e7d8c9b0a1f2e3d4c5b6a7f8e9d0c1b";
