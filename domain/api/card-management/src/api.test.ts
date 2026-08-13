@@ -39,6 +39,7 @@ const makeStore = (getCardSessionToken: () => string | null = () => null) =>
           extraArgument: cardApiExtra({
             cardApiBaseUrl: "https://card.test",
             cardBaanxClientKey: "client-key",
+            cardOauthRedirectUri: "ledgerlive://paytab",
             getCardSessionToken,
             refreshCardSession: () => Promise.resolve(null),
           }),
@@ -85,8 +86,6 @@ describe("cardManagementApi requests", () => {
       const store = makeStore();
       const result = await store.dispatch(
         cardManagementApi.endpoints.initiateAuthorize.initiate({
-          clientId: "client-id",
-          redirectUri: "ledgerlive://card",
           state: "state-value",
           codeChallenge: "challenge-value",
         }),
@@ -96,9 +95,9 @@ describe("cardManagementApi requests", () => {
       expect(pathname).toBe("/v1/auth/oauth/authorize/initiate");
       expect(request(fetchSpy).method).toBe("GET");
       expect(Object.fromEntries(searchParams)).toEqual({
-        client_id: "client-id",
+        client_id: "client-key",
         response_type: "code",
-        redirect_uri: "ledgerlive://card",
+        redirect_uri: "ledgerlive://paytab",
         state: "state-value",
         code_challenge: "challenge-value",
         code_challenge_method: "S256",
@@ -106,7 +105,11 @@ describe("cardManagementApi requests", () => {
       });
       expect(request(fetchSpy).headers.get("x-client-key")).toBe("client-key");
       expect(request(fetchSpy).headers.get("authorization")).toBeNull();
-      expect(result.data).toEqual({ token: "jwt", url: "https://card.test/login" });
+      expect(result.data).toEqual({
+        token: "jwt",
+        url: "https://card.test/login",
+        redirectUri: "ledgerlive://paytab",
+      });
     });
   });
 
@@ -118,7 +121,6 @@ describe("cardManagementApi requests", () => {
       const result = await store.dispatch(
         cardManagementApi.endpoints.exchangeAuthorizationCode.initiate({
           code: "auth-code",
-          redirectUri: "ledgerlive://card",
           codeVerifier: "verifier",
         }),
       );
@@ -128,10 +130,34 @@ describe("cardManagementApi requests", () => {
       expect(JSON.parse(await request(fetchSpy).clone().text())).toEqual({
         grant_type: "authorization_code",
         code: "auth-code",
-        redirect_uri: "ledgerlive://card",
+        redirect_uri: "ledgerlive://paytab",
         code_verifier: "verifier",
       });
       expect(result.data).toEqual(session);
+    });
+
+    it("does not expose tokens when the response is malformed", async () => {
+      fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(
+        jsonResponse({
+          ...sessionResponse,
+          access_token: "sensitive-access-token",
+          refresh_token: "sensitive-refresh-token",
+          expires_in: "invalid",
+        }),
+      );
+
+      const store = makeStore();
+      const result = await store.dispatch(
+        cardManagementApi.endpoints.exchangeAuthorizationCode.initiate({
+          code: "auth-code",
+          codeVerifier: "verifier",
+        }),
+      );
+      const serializedError = JSON.stringify(result.error);
+
+      expect(result.data).toBeUndefined();
+      expect(serializedError).not.toContain("sensitive-access-token");
+      expect(serializedError).not.toContain("sensitive-refresh-token");
     });
   });
 
@@ -215,8 +241,6 @@ describe("cardManagementApi requests", () => {
     const store = makeStore();
     const result = await store.dispatch(
       cardManagementApi.endpoints.initiateAuthorize.initiate({
-        clientId: "client-id",
-        redirectUri: "ledgerlive://card",
         state: "state-value",
         codeChallenge: "challenge-value",
       }),

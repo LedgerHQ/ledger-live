@@ -20,10 +20,15 @@ replaces it with `expo-web-browser` so the API-provided login URL opens through
 The native opener forwards the opaque login URL unchanged. Callback exchange, OAuth state handling,
 and session persistence are outside this package's current scope.
 
-Auth-only runtime state (`hasCard`) lives in this flow's `payCardAuth` slice, exposed through
-`@features/flow-pay-card-auth/state`. Other Pay Card UI state is owned by the flow it belongs to:
-the balance filter by `@features/flow-pay-card-balance` and the feature-tour flag by
-`@features/flow-pay-card-feature-tour`.
+The apps configure the OAuth client and redirect URI once through `cardApiExtra`. The authorization
+initiation returns that resolved redirect URI with the hosted URL so the native opener can end the
+secure browser session without `CardLogin` receiving app configuration.
+
+App composition and DevTools consume shared Pay Card entity state through
+`@domain/entity-pay-card`. Auth-only runtime state (`hasCard`) lives in this flow's
+`payCardAuth` slice, exposed through `@features/flow-pay-card-auth/state`. Other Pay Card UI state is
+owned by the flow it belongs to: the balance filter by `@features/flow-pay-card-balance` and the
+feature-tour flag by `@features/flow-pay-card-feature-tour`.
 
 ## Card API
 

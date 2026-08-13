@@ -3,7 +3,7 @@ import { useInitiateAuthorizeMutation } from "@domain/api-card-management";
 import { useDispatch } from "react-redux";
 import { clearAuthorizeAttempt, startAuthorizeAttempt } from "../../state";
 import { createAuthorizeAttempt } from "../../state/authorizeAttempt";
-import type { CardLoginProps, CardLoginViewProps } from "./types";
+import type { CardLoginViewModelParams, CardLoginViewProps } from "./types";
 
 function getSecureHostedLoginUrl(loginUrl: string): string {
   const url = new URL(loginUrl);
@@ -13,19 +13,13 @@ function getSecureHostedLoginUrl(loginUrl: string): string {
   return loginUrl;
 }
 
-// An RTK rejection is a `FetchBaseQueryError` carrying the raw response, which must not be rendered.
 function getLoginErrorMessage(error: unknown): string {
-  if (error instanceof Error && error.message) {
-    return error.message;
-  }
-
-  return "Unable to start login";
+  return error instanceof Error && error.message ? error.message : "Unable to start login";
 }
 
 export function useCardLoginViewModel({
   openHostedLogin,
-  oauth,
-}: CardLoginProps): CardLoginViewProps {
+}: CardLoginViewModelParams): CardLoginViewProps {
   const dispatch = useDispatch();
   const [initiateAuthorize, { isLoading: isInitiateAuthorizeLoading }] =
     useInitiateAuthorizeMutation();
@@ -43,14 +37,12 @@ export function useCardLoginViewModel({
         // on record, and the hosted UI can come back as soon as the browser opens.
         dispatch(startAuthorizeAttempt({ state, codeVerifier }));
 
-        const { url } = await initiateAuthorize({
-          clientId: oauth.clientId,
-          redirectUri: oauth.redirectUri,
+        const { url, redirectUri } = await initiateAuthorize({
           state,
           codeChallenge,
         }).unwrap();
 
-        const outcome = await openHostedLogin(getSecureHostedLoginUrl(url), oauth.redirectUri);
+        const outcome = await openHostedLogin(getSecureHostedLoginUrl(url), redirectUri);
 
         // Closing the browser is not an error, but nothing can complete that attempt any more.
         if (outcome === "cancelled") {
@@ -64,7 +56,7 @@ export function useCardLoginViewModel({
         setIsOpeningHostedLogin(false);
       }
     })();
-  }, [openHostedLogin, initiateAuthorize, dispatch, oauth.clientId, oauth.redirectUri]);
+  }, [openHostedLogin, initiateAuthorize, dispatch]);
 
   return {
     title: "Card",

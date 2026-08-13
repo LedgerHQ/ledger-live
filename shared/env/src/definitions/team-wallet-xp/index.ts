@@ -37,7 +37,7 @@ const teamWalletXp = {
     desc: "Baanx public client key sent as x-client-key on every Card API request (tenant routing)",
   },
   CARD_OAUTH_REDIRECT_URI: {
-    def: "https://ledger.com",
+    def: "ledgerlive://paytab",
     parser: stringParser,
     desc: "Card OAuth redirect URI, whitelisted by the provider; must match on the token exchange",
   },

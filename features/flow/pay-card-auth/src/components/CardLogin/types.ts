@@ -1,6 +1,6 @@
 /**
- * How a login attempt ended in the browser. An opener that only hands the URL over, as desktop's
- * does, knows neither and returns nothing.
+ * How a login attempt ended in the browser. An opener that only hands the URL over
+ * knows neither and returns nothing.
  */
 export type OpenHostedLoginOutcome = "redirected" | "cancelled";
 
@@ -9,19 +9,8 @@ export type OpenHostedLogin = (
   redirectUri: string,
 ) => Promise<OpenHostedLoginOutcome | void> | OpenHostedLoginOutcome | void;
 
-/**
- * Per-app OAuth client configuration. It reaches the flow as a prop because the values are the app's
- * to know: the client id comes from its environment, and the redirect URI is the deep link the app
- * registers — and has whitelisted with the provider.
- */
-export type CardLoginOauthConfig = {
-  readonly clientId: string;
-  readonly redirectUri: string;
-};
-
-export type CardLoginProps = {
+export type CardLoginViewModelParams = {
   readonly openHostedLogin: OpenHostedLogin;
-  readonly oauth: CardLoginOauthConfig;
 };
 
 export type CardLoginViewProps = {

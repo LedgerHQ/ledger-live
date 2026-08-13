@@ -1,7 +1,6 @@
 import { Linking } from "react-native";
 import { renderHook } from "@tests/test-renderer";
 import type { BalanceData } from "@features/flow-pay-card-balance";
-import { getEnv } from "@shared/env";
 import { track } from "~/analytics";
 import { usePayTabViewModel } from "./usePayTabViewModel";
 
@@ -71,17 +70,6 @@ describe("usePayTabViewModel", () => {
     expect(result.current.balance).toBe(balance);
     expect(result.current.balanceLabels.emptyTitle).toBeTruthy();
     expect(result.current.balanceLabels.emptyDescription).toBeTruthy();
-  });
-
-  it("should expose the OAuth client configuration", () => {
-    const { result } = renderHook(() => usePayTabViewModel());
-
-    // The redirect URI has to be the deep link the Pay tab registers: it is matched verbatim on the
-    // token exchange.
-    expect(result.current.oauth).toEqual({
-      clientId: getEnv("CARD_BAANX_CLIENT_KEY"),
-      redirectUri: getEnv("CARD_OAUTH_REDIRECT_URI"),
-    });
   });
 
   it("should open the hosted login URL", async () => {

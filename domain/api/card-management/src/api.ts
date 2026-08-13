@@ -1,6 +1,9 @@
-import { cardApi } from "@shared/api-services";
+import type { FetchBaseQueryError } from "@reduxjs/toolkit/query";
+import { cardApi, getCardExtra } from "@shared/api-services";
+import type { ZodType } from "zod";
 import { CARD_MANAGEMENT_TAGS } from "./constants";
 import {
+  PayCardAuthorizeInitiateSchema,
   PayCardAuthorizeInitiateResponseSchema,
   PayCardLogoutResponseSchema,
   PayCardSessionResponseSchema,
@@ -18,43 +21,95 @@ import type {
   PayCardUser,
 } from "./types";
 
+function parseResponse<T>(
+  schema: ZodType<T>,
+  data: unknown,
+): { data: T } | { error: FetchBaseQueryError } {
+  const parsed = schema.safeParse(data);
+  if (parsed.success) {
+    return { data: parsed.data };
+  }
+
+  return {
+    error: {
+      status: "PARSING_ERROR",
+      originalStatus: 200,
+      data: "",
+      error: "Response did not match the Card API schema",
+    },
+  };
+}
+
 export const cardManagementApi = cardApi
   .enhanceEndpoints({ addTagTypes: CARD_MANAGEMENT_TAGS })
   .injectEndpoints({
     endpoints: build => ({
       /** A mutation, not a query: every attempt carries a fresh `state` and PKCE challenge. */
       initiateAuthorize: build.mutation<PayCardAuthorizeInitiate, PayCardAuthorizeInitiateRequest>({
-        query: ({ clientId, redirectUri, state, codeChallenge }) => ({
-          url: "/v1/auth/oauth/authorize/initiate",
-          method: "GET",
-          params: {
-            client_id: clientId,
-            response_type: "code",
-            redirect_uri: redirectUri,
-            state,
-            code_challenge: codeChallenge,
-            code_challenge_method: "S256",
-            // Without this the endpoint answers 302 to the hosted UI; `api` returns it as JSON.
-            mode: "api",
-          },
-        }),
-        responseSchema: PayCardAuthorizeInitiateResponseSchema,
+        queryFn: async ({ state, codeChallenge }, queryApi, _extraOptions, baseQuery) => {
+          const { cardBaanxClientKey, cardOauthRedirectUri } = getCardExtra(queryApi);
+          const response = await baseQuery({
+            url: "/v1/auth/oauth/authorize/initiate",
+            method: "GET",
+            params: {
+              client_id: cardBaanxClientKey,
+              response_type: "code",
+              redirect_uri: cardOauthRedirectUri,
+              state,
+              code_challenge: codeChallenge,
+              code_challenge_method: "S256",
+              // Without this the endpoint answers 302 to the hosted UI; `api` returns it as JSON.
+              mode: "api",
+            },
+          });
+
+          if (response.error) {
+            return { error: response.error };
+          }
+
+          const parsedResponse = parseResponse(
+            PayCardAuthorizeInitiateResponseSchema,
+            response.data,
+          );
+          if ("error" in parsedResponse) {
+            return parsedResponse;
+          }
+
+          return parseResponse(PayCardAuthorizeInitiateSchema, {
+            ...parsedResponse.data,
+            redirectUri: cardOauthRedirectUri,
+          });
+        },
       }),
 
       exchangeAuthorizationCode: build.mutation<PayCardSession, PayCardAuthorizationCodeRequest>({
-        query: ({ code, redirectUri, codeVerifier }) => ({
-          url: "/v1/auth/oauth/token",
-          method: "POST",
-          body: {
-            grant_type: "authorization_code",
-            code,
-            redirect_uri: redirectUri,
-            code_verifier: codeVerifier,
-          },
-        }),
-        rawResponseSchema: PayCardSessionResponseSchema,
-        transformResponse: transformPayCardSessionResponse,
-        responseSchema: PayCardSessionSchema,
+        queryFn: async ({ code, codeVerifier }, queryApi, _extraOptions, baseQuery) => {
+          const { cardOauthRedirectUri } = getCardExtra(queryApi);
+          const response = await baseQuery({
+            url: "/v1/auth/oauth/token",
+            method: "POST",
+            body: {
+              grant_type: "authorization_code",
+              code,
+              redirect_uri: cardOauthRedirectUri,
+              code_verifier: codeVerifier,
+            },
+          });
+
+          if (response.error) {
+            return { error: response.error };
+          }
+
+          const parsedResponse = parseResponse(PayCardSessionResponseSchema, response.data);
+          if ("error" in parsedResponse) {
+            return parsedResponse;
+          }
+
+          return parseResponse(
+            PayCardSessionSchema,
+            transformPayCardSessionResponse(parsedResponse.data),
+          );
+        },
       }),
 
       /** Same endpoint as the code exchange, separated by `grant_type`. */

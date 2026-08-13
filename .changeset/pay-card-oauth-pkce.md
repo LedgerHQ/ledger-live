@@ -1,6 +1,7 @@
 ---
 "@domain/api-card-management": minor
 "@features/flow-pay-card-auth": minor
+"@shared/api-services": minor
 "@shared/env": minor
 "ledger-live-desktop": minor
 "live-mobile": minor
@@ -23,17 +24,16 @@ The initiation carries `mode=api`. Without it the endpoint answers `302` and red
 UI, which a `fetch` follows into an HTML page; `api` returns the same URL as JSON instead.
 
 The request goes through `useInitiateAuthorizeMutation` from `@domain/api-card-management`, which owns
-the Card Auth contract and injects it into the shared `cardApi` service. The base URL and the
-`x-client-key` header are already supplied by `cardApiExtra` from `CARD_API_URL` and
-`CARD_BAANX_CLIENT_KEY`, so no use case carries either.
+the Card Auth contract and injects it into the shared `cardApi` service. Both apps configure the base
+URL, Baanx client key and OAuth redirect URI once through `cardApiExtra`. The service uses the key for
+the `x-client-key` header, while the OAuth endpoints reuse it as `client_id` and use the same
+`ledgerlive://paytab` redirect for authorization and token exchange.
 
 The `state` and verifier the callback and token exchange will need are held in the `payCardAuth`
-slice, which neither app persists, and are dropped as soon as an attempt ends. The OAuth `client_id`
-and the redirect URI reach the flow as a prop, since each app owns that configuration: Baanx reuses
-the client key as `client_id`, and the redirect URI comes from the new `CARD_OAUTH_REDIRECT_URI`,
-which defaults to `https://ledger.com` — the value Baanx has whitelisted, and the one the token
-exchange has to match. Both apps resolve every one of these through `getEnv`. The Baanx secret key
-stays server-side and is never sent from the apps.
+slice, which neither app persists, and are dropped as soon as an attempt ends. `CardLogin` carries no
+OAuth configuration: authorization initiation returns the resolved redirect URI with the hosted URL
+so the native secure browser can match the callback. The Baanx secret key stays server-side and is
+never sent from the apps.
 
 Completing the callback — verifying `state`, exchanging the code for tokens and storing them in
 `expo-secure-store` — is the remainder of LIVE-34738 and is not part of this change.

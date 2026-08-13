@@ -66,6 +66,7 @@ const customCreateStore = ({
               ...cardApiExtra({
                 cardApiBaseUrl: getEnv("CARD_API_URL"),
                 cardBaanxClientKey: getEnv("CARD_BAANX_CLIENT_KEY"),
+                cardOauthRedirectUri: getEnv("CARD_OAUTH_REDIRECT_URI"),
                 getCardSessionToken,
                 refreshCardSession,
               }),

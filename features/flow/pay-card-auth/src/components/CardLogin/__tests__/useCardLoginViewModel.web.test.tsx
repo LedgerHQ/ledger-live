@@ -26,7 +26,11 @@ const attempt = {
   codeChallenge: "challenge-value",
 };
 
-const oauth = { clientId: "client-id", redirectUri: "ledgerlive://paytab" };
+const redirectUri = "ledgerlive://paytab";
+
+function authorizeResponse(url: string) {
+  return { token: "jwt", url, redirectUri };
+}
 
 function makeStore() {
   return configureStore({ reducer: { payCardAuth: payCardAuthSlice.reducer } });
@@ -34,7 +38,7 @@ function makeStore() {
 
 function renderCardLoginViewModel({ openHostedLogin }: { openHostedLogin: jest.Mock }) {
   const store = makeStore();
-  const { result } = renderHook(() => useCardLoginViewModel({ openHostedLogin, oauth }), {
+  const { result } = renderHook(() => useCardLoginViewModel({ openHostedLogin }), {
     wrapper: ({ children }) => <Provider store={store}>{children}</Provider>,
   });
   return { result, store };
@@ -57,25 +61,23 @@ describe("useCardLoginViewModel", () => {
     // redirect back into the app from them.
     const url =
       "https://card.example.com/login?request=opaque%2Bvalue&redirect_uri=ledgerlive%3A%2F%2Fpaytab";
-    unwrap.mockResolvedValue({ token: "jwt", url });
+    unwrap.mockResolvedValue(authorizeResponse(url));
     const { result } = renderCardLoginViewModel({ openHostedLogin });
 
     act(() => result.current.onLoginPress());
 
     await waitFor(() => {
       expect(initiateAuthorize).toHaveBeenCalledWith({
-        clientId: "client-id",
-        redirectUri: "ledgerlive://paytab",
         state: attempt.state,
         codeChallenge: attempt.codeChallenge,
       });
-      expect(openHostedLogin).toHaveBeenCalledWith(url, oauth.redirectUri);
+      expect(openHostedLogin).toHaveBeenCalledWith(url, redirectUri);
     });
   });
 
   it("should keep the state and verifier of the attempt it started", async () => {
     const openHostedLogin = jest.fn().mockResolvedValue(undefined);
-    unwrap.mockResolvedValue({ token: "jwt", url: "https://card.example.com/login" });
+    unwrap.mockResolvedValue(authorizeResponse("https://card.example.com/login"));
     const { result, store } = renderCardLoginViewModel({ openHostedLogin });
 
     act(() => result.current.onLoginPress());
@@ -91,7 +93,7 @@ describe("useCardLoginViewModel", () => {
 
   it("should drop the attempt, and show nothing, when the user closes the hosted login", async () => {
     const openHostedLogin = jest.fn().mockResolvedValue("cancelled");
-    unwrap.mockResolvedValue({ token: "jwt", url: "https://card.example.com/login" });
+    unwrap.mockResolvedValue(authorizeResponse("https://card.example.com/login"));
     const { result, store } = renderCardLoginViewModel({ openHostedLogin });
 
     act(() => result.current.onLoginPress());
@@ -105,7 +107,7 @@ describe("useCardLoginViewModel", () => {
 
   it("should keep the attempt when the hosted login redirects back", async () => {
     const openHostedLogin = jest.fn().mockResolvedValue("redirected");
-    unwrap.mockResolvedValue({ token: "jwt", url: "https://card.example.com/login" });
+    unwrap.mockResolvedValue(authorizeResponse("https://card.example.com/login"));
     const { result, store } = renderCardLoginViewModel({ openHostedLogin });
 
     act(() => result.current.onLoginPress());
@@ -134,7 +136,7 @@ describe("useCardLoginViewModel", () => {
 
   it("should expose an error and drop the attempt when opening the hosted login fails", async () => {
     const openHostedLogin = jest.fn().mockRejectedValue(new Error("Browser unavailable"));
-    unwrap.mockResolvedValue({ token: "jwt", url: "https://card.example.com/login" });
+    unwrap.mockResolvedValue(authorizeResponse("https://card.example.com/login"));
     const { result, store } = renderCardLoginViewModel({ openHostedLogin });
 
     act(() => result.current.onLoginPress());
@@ -164,7 +166,7 @@ describe("useCardLoginViewModel", () => {
 
   it("should reject an insecure hosted login URL", async () => {
     const openHostedLogin = jest.fn();
-    unwrap.mockResolvedValue({ token: "jwt", url: "javascript:alert('login')" });
+    unwrap.mockResolvedValue(authorizeResponse("javascript:alert('login')"));
     const { result } = renderCardLoginViewModel({ openHostedLogin });
 
     act(() => result.current.onLoginPress());

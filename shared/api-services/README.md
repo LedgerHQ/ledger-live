@@ -29,7 +29,7 @@ is a one-line addition rather than a migration.
 | Concern                                   | Owner          | Why                                                                                                                                                         |
 | ----------------------------------------- | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Base URL, headers, retry, auth            | **here**       | How to reach the service, identical for every use case                                                                                                      |
-| `extraArgument` schema + builder + reader | **here**       | It configures the base query, which lives here                                                                                                              |
+| `extraArgument` schema + builder + reader | **here**       | It configures the base query and gives endpoint injectors app-resolved service configuration                                                               |
 | `reducerPath`                             | **here**       | One store slice per backend, not per use case                                                                                                               |
 | Endpoints, `query`, `transformResponse`   | `domain/api/*` | What a use case asks for                                                                                                                                    |
 | Wire schemas, entity conversion           | `domain/api/*` | Response shape is a use-case concern                                                                                                                        |
@@ -43,7 +43,7 @@ use case never requires editing another backend's file**.
 
 This package sits in `shared/` rather than `domain/` because after that split it holds no domain
 knowledge at all: no entity schemas, no cache tags, no business vocabulary — only HTTP plumbing and the
-config contract for it. It has no workspace dependencies, just `@reduxjs/toolkit` and `zod`.
+service configuration contract. It has no workspace dependencies, just `@reduxjs/toolkit` and `zod`.
 
 ## Layout
 

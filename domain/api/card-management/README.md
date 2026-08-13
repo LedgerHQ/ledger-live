@@ -9,7 +9,7 @@ shared `cardApi` service (`@shared/api-services`, `services/card`) rather than d
 - `api.ts` — `cardManagementApi`: `cardApi.enhanceEndpoints({ addTagTypes }).injectEndpoints(...)`.
 - `schema.ts` — zod wire contracts for the responses below.
 - `types.ts` — the inferred response types and the request arguments each endpoint takes.
-- `transforms.ts` — maps a wire response onto its canonical shape, for `transformResponse`.
+- `transforms.ts` — maps a validated wire response onto its canonical shape.
 - `constants.ts` — `CARD_MANAGEMENT_TAGS`, the cache tags this use case owns.
 
 | Endpoint | Method | Path | Purpose |
@@ -26,7 +26,11 @@ in the store; a view-model importing a generated hook from here triggers the inj
 
 Reaching the backend belongs to the service, not here: base URL, `x-client-key`, the
 `Authorization: Bearer` header from `getCardSessionToken()` and the single 401 refresh all live in
-`@shared/api-services`, `services/card`.
+`@shared/api-services`, `services/card`. The OAuth endpoints also read the client key and redirect URI
+from that service's app-supplied `extraArgument`, so callers only provide attempt-specific values.
 
 > [!NOTE]
-> The `PayCard*` schemas and types here are the **wire** contracts, owned by this API package.
+> The `PayCard*Response` schemas and types here are the **wire** contracts; canonical results may add
+> app-resolved service configuration. `@domain/entity-pay-card` exports some of the same names for the
+> app-facing model, with different shapes. The two are reconciled under LIVE-34769, which gives the
+> session an owner.

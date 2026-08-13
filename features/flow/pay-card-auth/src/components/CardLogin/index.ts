@@ -1,2 +1,2 @@
 export { CardLogin } from "./index.web";
-export type { CardLoginOauthConfig, CardLoginProps, OpenHostedLogin } from "./types";
+export type { CardLoginProps, OpenHostedLogin } from "./types";
