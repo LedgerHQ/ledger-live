@@ -1,20 +1,21 @@
-import {
-  InternetComputerOperation,
-  Transaction,
-  TransactionStatus,
-} from "@ledgerhq/live-common/families/internet_computer/types";
-import { LLDCoinFamily } from "../types";
-import operationDetails from "./operationDetails";
+import AccountBalanceSummaryFooter from "./AccountBalanceSummaryFooter";
+import accountHeaderManageActions from "./AccountHeaderManageActions";
 import AccountSubHeader from "./AccountSubHeader";
+import operationDetails from "./operationDetails";
 import sendAmountFields from "./SendAmountFields";
-import { Account } from "@ledgerhq/types-live";
 import sendRecipientFields from "./SendRecipientFields";
+import StakeBanner from "./StakeBanner";
+import { InternetComputerFamily } from "./types";
 
-const family: LLDCoinFamily<Account, Transaction, TransactionStatus, InternetComputerOperation> = {
+const family: InternetComputerFamily = {
   operationDetails,
   AccountSubHeader,
   sendAmountFields,
   sendRecipientFields,
+  accountHeaderManageActions,
+  AccountBalanceSummaryFooter,
+  StakeBanner,
+  modalsToPreload: ["MODAL_ICP_LIST_NEURONS", "MODAL_ICP_REFRESH_VOTING_POWER"],
 };
 
 export default family;
