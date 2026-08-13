@@ -1,4 +1,5 @@
 import type {
+  AccountInfo,
   CoinModuleApi,
   Balance,
   Block,
@@ -17,7 +18,14 @@ import type {
 } from "@ledgerhq/coin-module-framework/api/index";
 import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
-import { estimateFees, getBalance, lastBlock, listOperations, validateAddress } from "../logic";
+import {
+  estimateFees,
+  getAccountInfo,
+  getBalance,
+  lastBlock,
+  listOperations,
+  validateAddress,
+} from "../logic";
 import { getTransactionType } from "../logic/utils";
 import type { AleoContext, AleoCoinConfig, AleoTransactionIntentData } from "../types";
 
@@ -64,6 +72,14 @@ export function createApi(
         configOrCurrencyId: config,
         transactionType: getTransactionType(intent),
       });
+    },
+    getAccountInfo: async (context: AleoContext, _address: string): Promise<AccountInfo> => {
+      const provableId = context.provableId;
+      if (typeof provableId !== "string" || provableId.length === 0) {
+        return { type: "none" };
+      }
+      const config = await context.config();
+      return getAccountInfo(config, provableId);
     },
     getBalance: async (
       context: AleoContext,

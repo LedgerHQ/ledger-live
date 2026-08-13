@@ -97,6 +97,8 @@ export interface AleoGetProvePublicKeyResponse {
 export interface AleoRecordScannerStatusResponse {
   synced: boolean;
   percentage: number;
+  sync_start_height: number;
+  synced_up_to: number;
 }
 
 export interface AleoPrivateRecord {

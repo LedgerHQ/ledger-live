@@ -5,7 +5,14 @@ import type {
 } from "@ledgerhq/coin-module-framework/api/types";
 import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
 import { getMockedCoinFrameworkOperation } from "../__tests__/fixtures/operation.fixture";
-import { craftTransaction, estimateFees, getBalance, lastBlock, listOperations } from "../logic";
+import {
+  craftTransaction,
+  estimateFees,
+  getAccountInfo,
+  getBalance,
+  lastBlock,
+  listOperations,
+} from "../logic";
 import { getTransactionType } from "../logic/utils";
 import type { AleoContext, AleoTransactionIntentData } from "../types";
 import { createApi } from "./index";
@@ -22,6 +29,7 @@ describe("createApi", () => {
   const mockOperation = getMockedCoinFrameworkOperation();
   const mockedCraftTransaction = jest.mocked(craftTransaction);
   const mockedEstimateFees = jest.mocked(estimateFees);
+  const mockedGetAccountInfo = jest.mocked(getAccountInfo);
   const mockedGetBalance = jest.mocked(getBalance);
   const mockedLastBlock = jest.mocked(lastBlock);
   const mockedListOperations = jest.mocked(listOperations);
@@ -69,6 +77,48 @@ describe("createApi", () => {
     expect(api.lastBlock).toBeInstanceOf(Function);
     expect(api.listOperations).toBeInstanceOf(Function);
     expect(api.craftTransactionData).toBeInstanceOf(Function);
+    expect(api.getAccountInfo).toBeInstanceOf(Function);
+  });
+
+  describe("getAccountInfo", () => {
+    const accountInfo = {
+      type: "aleo" as const,
+      synced: true,
+      percentage: 100,
+      startHeight: 0,
+      scannedHeight: 20985061,
+    };
+
+    it("reads the provableId off the context and returns the scan status", async () => {
+      mockedGetAccountInfo.mockResolvedValue(accountInfo);
+      const api = createApi("aleo");
+      const enrolledContext: AleoContext = { ...context, provableId: "scan-uuid-123" };
+
+      const result = await api.getAccountInfo!(enrolledContext, "aleo1test");
+
+      expect(mockedGetAccountInfo).toHaveBeenCalledTimes(1);
+      expect(mockedGetAccountInfo).toHaveBeenCalledWith(mockConfig, "scan-uuid-123");
+      expect(result).toEqual(accountInfo);
+    });
+
+    it("returns { type: 'none' } and makes no scanner call when no provableId is on the context", async () => {
+      const api = createApi("aleo");
+
+      const result = await api.getAccountInfo!(context, "aleo1test");
+
+      expect(result).toEqual({ type: "none" });
+      expect(mockedGetAccountInfo).not.toHaveBeenCalled();
+    });
+
+    it("returns { type: 'none' } when provableId is present but empty", async () => {
+      const api = createApi("aleo");
+      const emptyContext: AleoContext = { ...context, provableId: "" };
+
+      const result = await api.getAccountInfo!(emptyContext, "aleo1test");
+
+      expect(result).toEqual({ type: "none" });
+      expect(mockedGetAccountInfo).not.toHaveBeenCalled();
+    });
   });
 
   describe("broadcast", () => {

@@ -1,15 +1,31 @@
 import invariant from "invariant";
 import { createApi } from "../api";
 import { TRANSACTION_TYPE } from "../constants";
+import { AleoApiConfigurationResetError } from "../errors";
+import { accessProvableApi } from "../network/utils";
 import { getTestnetIntegConfig } from "../__tests__/fixtures/config.fixture";
 import {
   referenceFailedTransferPublicTx,
   referenceTransferPublicTx,
   testnetAddress,
+  testnetViewKey,
 } from "../__tests__/fixtures/api.fixture";
 import { setupCalStore } from "../__tests__/helpers/cal";
 import { getPristineAccount } from "../__tests__/helpers/account";
-import type { AleoContext } from "../types";
+import type { AleoAccountInfo, AleoContext } from "../types";
+
+async function withPrivacyContext(context: AleoContext, viewKey: string): Promise<AleoContext> {
+  const config = await context.config();
+  const provableApi = await accessProvableApi({
+    config,
+    viewKey,
+    provableApi: null,
+  });
+
+  invariant(provableApi.uuid, "guard: missing provableApi.uuid");
+
+  return { ...context, provableId: provableApi.uuid, viewKey };
+}
 
 describe("createApi", () => {
   const api = createApi("aleo_testnet");
@@ -209,6 +225,36 @@ describe("createApi", () => {
         name: "LedgerAPI4xx",
         status: 404,
       });
+    });
+  });
+
+  describe("getAccountInfo", () => {
+    it("returns the aleo scan status for a registered provableId", async () => {
+      // getAccountInfo never registers; withPrivacyContext mints a provableId to exercise the read side.
+      const contextWithPrivacy = await withPrivacyContext(context, testnetViewKey);
+
+      const info = (await api.getAccountInfo!(
+        contextWithPrivacy,
+        testnetAddress,
+      )) as AleoAccountInfo;
+
+      expect(info.type).toBe("aleo");
+      expect(typeof info.synced).toBe("boolean");
+      expect(typeof info.percentage).toBe("number");
+      expect(typeof info.startHeight).toBe("number");
+      expect(typeof info.scannedHeight).toBe("number");
+      expect(info.scannedHeight).toBeGreaterThanOrEqual(info.startHeight);
+    });
+
+    it("throws AleoApiConfigurationResetError for an unknown provableId", async () => {
+      const contextWithUnknownProvableId: AleoContext = {
+        ...context,
+        provableId: "00000000-0000-0000-0000-000000000000",
+      };
+
+      await expect(
+        api.getAccountInfo!(contextWithUnknownProvableId, testnetAddress),
+      ).rejects.toBeInstanceOf(AleoApiConfigurationResetError);
     });
   });
 });

@@ -34,8 +34,17 @@ export type EnrichedPrivateRecord = {
 
 export interface ProvableApi {
   uuid?: string;
-  scannerStatus?: AleoRecordScannerStatusResponse;
+  // Bridge persists only the sync flags; the height fields are read live via getAccountInfo.
+  scannerStatus?: Pick<AleoRecordScannerStatusResponse, "synced" | "percentage">;
 }
+
+export type AleoAccountInfo = {
+  type: "aleo";
+  synced: boolean;
+  percentage: number;
+  startHeight: number;
+  scannedHeight: number;
+};
 
 export type RecordPickingStrategy = "manual" | "auto";
 
