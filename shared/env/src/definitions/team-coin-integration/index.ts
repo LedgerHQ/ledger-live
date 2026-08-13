@@ -178,7 +178,7 @@ const teamCoinIntegration = {
     desc: "minimum priority fee percents allowed compared to network conditions allowed when EIP1559_MINIMUM_FEES_GATE is activated",
   },
   EIP1559_BASE_FEE_MULTIPLIER: {
-    def: 1.27,
+    def: 1.6,
     parser: floatParser,
     desc: "multiplier for the base fee that is composing the maxFeePerGas property",
   },

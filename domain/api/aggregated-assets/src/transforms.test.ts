@@ -451,19 +451,18 @@ describe("getChunkedAssetsData", () => {
       ]);
 
       expect(result.data).toBeUndefined();
-      expect(result.error).toMatchObject({ status: "FETCH_ERROR" });
+      // The base query's error is returned verbatim, so the HTTP status survives.
+      expect(result.error).toMatchObject({ status: 500 });
     });
 
-    it("reports the first failure's message when everything fails", async () => {
+    it("keeps the failure's http status when everything fails", async () => {
       const result = await getChunked(
         ["bitcoin"],
         [new Response(null, { status: 500, statusText: "Server Error" })],
       );
 
-      expect(result.error).toMatchObject({
-        status: "FETCH_ERROR",
-        error: expect.stringContaining("500"),
-      });
+      // Was a FETCH_ERROR with 500 buried in a message string; now a structured status.
+      expect(result.error).toMatchObject({ status: 500 });
     });
   });
 
@@ -476,7 +475,7 @@ describe("getChunkedAssetsData", () => {
 
     expect(fetchSpy).not.toHaveBeenCalled();
     expect(result.error).toMatchObject({
-      status: "FETCH_ERROR",
+      status: "CUSTOM_ERROR",
       error: expect.stringContaining("evil.example.com"),
     });
   });

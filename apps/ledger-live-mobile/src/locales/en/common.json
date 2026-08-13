@@ -4503,6 +4503,7 @@
         "title": "Paste from clipboard",
         "cta": "Paste"
       },
+      "contactsWillAppear": "Contacts will appear here",
       "editRecipientAccessibilityLabel": "Edit recipient",
       "sendTo": "Send to {{address}}",
       "addressMatched": "Address matched",
@@ -9991,6 +9992,38 @@
     "yield": "Yield",
     "card": "Card",
     "paytab": "Pay"
+  },
+  "payTab": {
+    "featureTour": {
+      "title": "Pay and get paid",
+      "description": "Stablecoin closes the gap between crypto and real life spending",
+      "cta": "Got it",
+      "rows": {
+        "global": {
+          "title": "Pay and get paid globally",
+          "description": "Benefits from low networks fees"
+        },
+        "volatility": {
+          "title": "Minimal volatility",
+          "description": "Stablecoin are based on fiat"
+        },
+        "card": {
+          "title": "Spend with a card and get 1% cashback",
+          "description": "Pay in USDC, USDT, BTC, ETH and more"
+        }
+      }
+    },
+    "balance": {
+      "emptyTitle": "Pay and get paid",
+      "emptyDescription": "Start by depositing stablecoin to your wallet",
+      "filter": {
+        "allStablecoins": "All stablecoins",
+        "dialogTitle": "Filter balance",
+        "dialogDescription": "Use stablecoin to pay worldwide with low fees and minimal volatility.",
+        "dialogBanner": "Manage all other assets in your home",
+        "confirm": "Confirm"
+      }
+    }
   },
   "syncIndicator": {
     "accessibilityLabel": {

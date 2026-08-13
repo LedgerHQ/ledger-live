@@ -9,7 +9,8 @@ type TabKey =
   | "NotificationContentCard"
   | "ActionContentCard"
   | "PortfolioContentCard"
-  | "BottomPortfolioContentCard";
+  | "BottomPortfolioContentCard"
+  | "CategoryContentCard";
 
 const FormRow = styled(Flex)`
   align-items: center;
@@ -83,6 +84,7 @@ export const ModalBody: React.FC = () => {
     addLocalBottomPortfolioCard,
     addLocalActionCard,
     addLocalNotificationCard,
+    addLocalCategoryCard,
     dismissLocalCards,
   } = useGenerateLocalBraze();
 
@@ -145,6 +147,8 @@ export const ModalBody: React.FC = () => {
       );
     } else if (selectedTab === "NotificationContentCard") {
       addLocalNotificationCard(title, description, cta, false, url, path, order);
+    } else if (selectedTab === "CategoryContentCard") {
+      addLocalCategoryCard(title, description, image, cta, path, order);
     }
     dispatch({ type: "RESET_FORM" });
   };
@@ -179,6 +183,10 @@ export const ModalBody: React.FC = () => {
     {
       key: "BottomPortfolioContentCard",
       label: t("settings.developer.brazeTools.modal.fields.bottomPortfolio"),
+    },
+    {
+      key: "CategoryContentCard",
+      label: "Category (hardware carousel)",
     },
   ];
 
@@ -321,6 +329,23 @@ export const ModalBody: React.FC = () => {
       {
         field: "path",
         placeholder: "Path",
+        label: t("settings.developer.brazeTools.modal.fields.path"),
+      },
+    ],
+    CategoryContentCard: [
+      {
+        field: "image",
+        placeholder: "Media URL applied to every child card",
+        label: t("settings.developer.brazeTools.modal.fields.image"),
+      },
+      {
+        field: "cta",
+        placeholder: "CTA",
+        label: t("settings.developer.brazeTools.modal.fields.cta"),
+      },
+      {
+        field: "path",
+        placeholder: "In-app path (deep link)",
         label: t("settings.developer.brazeTools.modal.fields.path"),
       },
     ],

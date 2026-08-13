@@ -1,0 +1,8 @@
+{
+  "name": "@features/platform-card",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

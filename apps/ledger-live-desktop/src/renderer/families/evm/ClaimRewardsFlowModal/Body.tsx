@@ -28,7 +28,7 @@ import StepClaimRewards, { StepClaimRewardsFooter } from "./steps/StepClaimRewar
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import { St, StepId, StepProps } from "./types";
 import { findDelegationByValidator } from "./utils";
-import type { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
+import type { Transaction as EvmTransaction } from "@ledgerhq/live-common/families/evm/types";
 import { getStakingContractAddress } from "@ledgerhq/coin-evm/staking/index";
 
 export type Data = {

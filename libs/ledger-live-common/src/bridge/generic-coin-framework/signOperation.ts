@@ -59,6 +59,7 @@ export const genericSignOperation =
             { ...transaction },
             bridgeApi.computeIntentType,
             coinModuleApi.craftTransactionData,
+            bridgeApi.buildIntentData,
           );
           transactionIntent.senderPublicKey = publicKey;
 
@@ -83,6 +84,7 @@ export const genericSignOperation =
           /* Sign on Ledger device */
           const txnSig = await signer.signTransaction(derivationPath, unsigned, {
             ...transaction.recipientDomain,
+            ...bridgeApi.getDeviceSignOptions?.(transaction, account),
             derivationMode: account.derivationMode,
           });
           return {
@@ -103,7 +105,12 @@ export const genericSignOperation =
           signedInfo.txnSig,
           signedInfo.publicKey,
         );
-        const operation = buildOptimisticOperation(account, transaction, signedInfo.sequence);
+        const operation = buildOptimisticOperation(
+          account,
+          transaction,
+          signedInfo.sequence,
+          bridgeApi.describeOptimisticOperation,
+        );
         if (!operation.id) {
           log("Generic coin-framework", "buildOptimisticOperation", operation);
         }

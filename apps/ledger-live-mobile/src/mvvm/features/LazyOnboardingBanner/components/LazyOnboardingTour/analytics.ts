@@ -10,7 +10,8 @@ export type LazyOnboardingTourSharedAnalyticsProps = Readonly<{
   mode: "feature_intro";
 }>;
 
-const LAZY_ONBOARDING_TOUR_CARD_EVENT = "lazy_onboarding_tour_card";
+/** Convert 0-based slide index to 1-based analytics card. */
+const toCard = (slideIndex: number) => slideIndex + 1;
 
 export const trackLazyOnboardingTourOpened = (
   sharedProps: LazyOnboardingTourSharedAnalyticsProps,
@@ -20,8 +21,8 @@ export const trackLazyOnboardingTourOpened = (
     return false;
   }
 
-  track(LAZY_ONBOARDING_TOUR_CARD_EVENT, {
-    page: LAZY_ONBOARDING_TOUR_PAGE,
+  screen(LAZY_ONBOARDING_TOUR_PAGE, undefined, {
+    name: "lazy onboarding tour",
     card: 1,
     ...sharedProps,
   });
@@ -30,53 +31,66 @@ export const trackLazyOnboardingTourOpened = (
 };
 
 export const trackLazyOnboardingTourStepViewed = (
-  step: number,
+  slideIndex: number,
   sharedProps: LazyOnboardingTourSharedAnalyticsProps,
-  lastTrackedStepIndex: number | null,
+  lastTrackedSlideIndex: number | null,
 ): number | null => {
-  if (lastTrackedStepIndex === step) {
-    return lastTrackedStepIndex;
+  if (lastTrackedSlideIndex === slideIndex) {
+    return lastTrackedSlideIndex;
   }
 
-  track(LAZY_ONBOARDING_TOUR_CARD_EVENT, {
+  track("product_tour_card", {
     page: LAZY_ONBOARDING_TOUR_PAGE,
-    card: step + 1,
+    card: toCard(slideIndex),
     ...sharedProps,
   });
 
-  return step;
+  return slideIndex;
 };
 
 export const trackLazyOnboardingTourContinueClicked = (
-  step: number,
+  slideIndex: number,
   sharedProps: LazyOnboardingTourSharedAnalyticsProps,
 ) => {
   track("button_clicked", {
-    button: "continue",
+    button: "Continue",
     page: LAZY_ONBOARDING_TOUR_PAGE,
-    step,
+    card: toCard(slideIndex),
     ...sharedProps,
   });
 };
 
 export const trackLazyOnboardingTourBuyClicked = (
-  step: number,
+  slideIndex: number,
   sharedProps: LazyOnboardingTourSharedAnalyticsProps,
 ) => {
   track("button_clicked", {
-    button: "buy a ledger device",
+    button: "Buy a Ledger device",
     page: LAZY_ONBOARDING_TOUR_PAGE,
-    step,
+    card: toCard(slideIndex),
     ...sharedProps,
   });
 };
 
 export const trackLazyOnboardingTourCloseClicked = (
+  slideIndex: number,
   sharedProps: LazyOnboardingTourSharedAnalyticsProps,
 ) => {
   track("button_clicked", {
-    button: "close",
+    button: "Close",
     page: LAZY_ONBOARDING_TOUR_PAGE,
+    card: toCard(slideIndex),
+    ...sharedProps,
+  });
+};
+
+export const trackLazyOnboardingTourDismissed = (
+  slideIndex: number,
+  sharedProps: LazyOnboardingTourSharedAnalyticsProps,
+) => {
+  track("modal_dismissed", {
+    page: LAZY_ONBOARDING_TOUR_PAGE,
+    card: toCard(slideIndex),
     ...sharedProps,
   });
 };
@@ -85,7 +99,7 @@ export const trackLazyOnboardingTourDoneClicked = (
   sharedProps: LazyOnboardingTourSharedAnalyticsProps,
 ) => {
   track("button_clicked", {
-    button: "done",
+    button: "Done",
     page: LAZY_ONBOARDING_TOUR_PAGE,
     ...sharedProps,
   });

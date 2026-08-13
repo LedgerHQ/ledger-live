@@ -38,13 +38,6 @@ export function ContactsAddAddressEntryView({
         status={inputStatus}
         value={value}
       />
-      {showEnsDisclaimer ? (
-        <Banner
-          appearance="info"
-          data-testid="contacts-add-address-ens-disclaimer"
-          description={labels.ensDisclaimer}
-        />
-      ) : null}
       {addressLabel && nameLabels && onAddressLabelChange ? (
         <TextInput
           autoComplete="off"
@@ -65,6 +58,13 @@ export function ContactsAddAddressEntryView({
             />
           }
           value={addressLabel.value}
+        />
+      ) : null}
+      {showEnsDisclaimer ? (
+        <Banner
+          appearance="info"
+          data-testid="contacts-add-address-ens-disclaimer"
+          description={labels.ensDisclaimer}
         />
       ) : null}
       {sanctionedAddressBanner ? <SanctionedAddressBanner {...sanctionedAddressBanner} /> : null}

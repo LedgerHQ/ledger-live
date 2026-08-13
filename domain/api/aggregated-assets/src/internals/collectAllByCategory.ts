@@ -5,57 +5,59 @@ import type {
 } from "@reduxjs/toolkit/query/react";
 import type { RawApiResponse } from "../schema";
 import type { GetAssetsByCategoryParams } from "../types";
-import { assertDadaApiUrl } from "./utils";
-import { resolveBaseUrl } from "./requests";
+import { resolveBaseUrl, type DadaBaseQuery } from "./requests";
 
 /**
- * Walks every page of a category and collects one projection per asset.
+ * Collects one projection per asset across every page of a category.
  *
- * Internal: both public category accessors share it, nothing outside this package should call it.
+ * Ends on a repeated cursor, which is what a proxy echoing `x-ledger-next` produces. Deliberately
+ * still unbounded if the server keeps minting new ones: Cloudflare fronts DADA, so a page cap was
+ * judged not worth the ceiling it would put on how large a category may grow.
  */
 export async function collectAllByCategory(
   queryArg: GetAssetsByCategoryParams,
+  baseQuery: DadaBaseQuery,
   extract: (data: RawApiResponse) => string[],
-): Promise<QueryReturnValue<string[], FetchBaseQueryError, FetchBaseQueryMeta | undefined>> {
+): Promise<QueryReturnValue<string[], FetchBaseQueryError, FetchBaseQueryMeta>> {
+  /* The host guard throws, and a rejected queryFn surfaces in RTK as an unhandled error. */
+  let baseUrl: string;
   try {
-    const baseUrl = resolveBaseUrl(queryArg);
-    const collected: string[] = [];
-    let cursor: string | undefined;
-
-    do {
-      const url = new URL(`${baseUrl}/assets`);
-      url.searchParams.set("categories", queryArg.category);
-      url.searchParams.set("product", queryArg.product);
-      url.searchParams.set("pageSize", "100");
-      url.searchParams.set("minVersion", queryArg.version);
-      if (cursor) {
-        url.searchParams.set("cursor", cursor);
-      }
-
-      assertDadaApiUrl(url);
-      const response = await fetch(url.toString());
-
-      if (!response.ok) {
-        return {
-          error: {
-            status: response.status,
-            data: `Failed to fetch assets by category: ${response.statusText}`,
-          },
-        };
-      }
-
-      const data: RawApiResponse = await response.json();
-      collected.push(...extract(data));
-      cursor = response.headers.get("x-ledger-next") || undefined;
-    } while (cursor);
-
-    return { data: collected };
+    baseUrl = resolveBaseUrl(queryArg);
   } catch (error) {
     return {
       error: {
-        status: "FETCH_ERROR",
-        error: error instanceof Error ? error.message : "Unknown error",
+        status: "CUSTOM_ERROR",
+        error: error instanceof Error ? error.message : "Unresolvable DADA base url",
       },
     };
   }
+
+  const collected: string[] = [];
+  let cursor: string | undefined;
+
+  do {
+    const result = await baseQuery({
+      url: `${baseUrl}/assets`,
+      params: {
+        categories: queryArg.category,
+        product: queryArg.product,
+        pageSize: 100,
+        minVersion: queryArg.version,
+        ...(cursor && { cursor }),
+      },
+    });
+
+    if (result.error) return { error: result.error };
+
+    collected.push(...extract(result.data as RawApiResponse));
+
+    const nextCursor = result.meta?.response?.headers.get("x-ledger-next") || undefined;
+
+    /* Same cursor back means no further pages, so this is success rather than an error. */
+    if (nextCursor !== undefined && nextCursor === cursor) return { data: collected };
+
+    cursor = nextCursor;
+  } while (cursor);
+
+  return { data: collected };
 }

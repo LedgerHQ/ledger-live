@@ -14,13 +14,15 @@ import type {
   EvmTransactionEIP1559,
   EvmTransactionLegacy,
   TransactionRaw as EvmTransactionRaw,
+  TransactionStatus,
+  TransactionStatusRaw,
+} from "./types";
+import type {
   FeeData,
   FeeDataRaw,
   GasOptions,
   GasOptionsRaw,
   Strategy,
-  TransactionStatus,
-  TransactionStatusRaw,
 } from "@ledgerhq/coin-evm/types/index";
 
 /* istanbul ignore next: don't test CLI text helpers */

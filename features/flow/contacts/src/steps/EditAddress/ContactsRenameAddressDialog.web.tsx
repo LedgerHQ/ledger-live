@@ -37,7 +37,7 @@ export function ContactsRenameAddressDialog({
         data-testid="contacts-rename-address-dialog"
       >
         <DialogHeader density="expanded" title={labels.title} onClose={onClose} />
-        <DialogBody className="flex flex-col gap-32 px-24 pb-24">
+        <DialogBody className="flex flex-col gap-32 px-24 pt-2 pb-24">
           <TextInput
             autoComplete="off"
             autoCorrect="off"

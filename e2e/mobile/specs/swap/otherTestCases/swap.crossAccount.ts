@@ -48,7 +48,11 @@ export function runSwapCrossAccountTest(
       ]);
       const errorMessage =
         "Cross-account swaps are not currently supported. Please ensure your sending and receiving accounts are the same.";
-      await performSwapUntilQuoteSelectionStep(fromAccount, toAccount, minAmount, true, true);
+      // Pin BOTH accounts. The send account must be selected explicitly — otherwise it
+      // takes the first USDT account, which the drawer sorts by fiat value and can be the
+      // USDT on Ethereum 3 (the receive account also holds USDT), collapsing the swap to a
+      // same-account one so the cross-account warning never shows. See QAA-1478.
+      await performSwapUntilQuoteSelectionStep(fromAccount, toAccount, minAmount, true, true, true);
       await app.swapLiveApp.selectSpecificProvider(provider.uiName);
       await app.swapLiveApp.verifySwapCrossAccountErrorMessageIsCorrect(errorMessage);
     });

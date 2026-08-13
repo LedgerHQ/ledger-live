@@ -9,7 +9,7 @@ import {
 } from "@ledgerhq/live-common/families/evm/staking/logic";
 import { isStakingAccount } from "@ledgerhq/live-common/families/evm/staking/types";
 import { getStakingContractAddress } from "@ledgerhq/coin-evm/staking/index";
-import type { TransactionStatus } from "@ledgerhq/coin-evm/types/index";
+import type { TransactionStatus } from "@ledgerhq/live-common/families/evm/types";
 import { Alert, Text } from "@ledgerhq/native-ui";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";

@@ -771,6 +771,51 @@ function makeRawPczt(overrides: Partial<Record<string, unknown>> = {}) {
   };
 }
 
+/**
+ * The Ironwood section of a raw parsePczt() result: an Orchard-shaped bundle
+ * whose actions carry the extra PCZT v2 `notePlaintextVersion` byte.
+ */
+function makeRawIronwoodBundle() {
+  return {
+    actions: [
+      {
+        cvNet: new Uint8Array([0]),
+        nullifier: new Uint8Array([0]),
+        rk: new Uint8Array([0]),
+        spendRecipient: new Uint8Array([0]),
+        spendValue: "90000", // string -> bigint
+        spendRho: new Uint8Array([0]),
+        spendRseed: new Uint8Array([0]),
+        alpha: new Uint8Array([0]),
+        signingPath: "m/32'/133'/0'",
+        cmx: new Uint8Array([0]),
+        ephemeralKey: new Uint8Array([0]),
+        encCiphertext: new Uint8Array([0]),
+        outCiphertext: new Uint8Array([0]),
+        recipient: new Uint8Array([0]),
+        value: 40000n, // bigint -> bigint
+        rseed: new Uint8Array([0]),
+        rcv: new Uint8Array([0]),
+        notePlaintextVersion: 3,
+      },
+    ],
+    flags: 7,
+    valueBalance: "-50000", // string -> bigint
+    anchor: new Uint8Array([0xcd]),
+  };
+}
+
+/** A raw parsePczt() result for a V6 transaction carrying an Ironwood bundle. */
+function makeRawPcztV6(overrides: Partial<Record<string, unknown>> = {}) {
+  const base = makeRawPczt();
+  return {
+    ...base,
+    global: { ...base.global, txVersion: 6 },
+    ironwoodBundle: makeRawIronwoodBundle(),
+    ...overrides,
+  };
+}
+
 const buildArgs: Omit<BuildTransactionArgs, "requestId"> = {
   grpcUrl: "https://grpc.example.com",
   ufvk: "uview1test",
@@ -1001,7 +1046,7 @@ describe("buildIronwoodTransactionJob", () => {
 
   it("calls native.buildIronwoodTransaction, parsePczt, and returns the adapted result", async () => {
     mockBuildIronwoodTransaction.mockResolvedValue(nativeIwBuildResult);
-    mockParsePczt.mockReturnValue(makeRawPczt());
+    mockParsePczt.mockReturnValue(makeRawPcztV6());
 
     const result = await buildIronwoodTransactionJob(iwBuildArgs);
 
@@ -1018,13 +1063,45 @@ describe("buildIronwoodTransactionJob", () => {
 
   it("normalises the PCZT result via adaptPcztForSigner (same path as buildTransactionJob)", async () => {
     mockBuildIronwoodTransaction.mockResolvedValue(nativeIwBuildResult);
-    mockParsePczt.mockReturnValue(makeRawPczt());
+    mockParsePczt.mockReturnValue(makeRawPcztV6());
 
     const { pcztTransaction } = await buildIronwoodTransactionJob(iwBuildArgs);
 
     // Verify that adaptPcztForSigner ran (BigNumber normalisation is its signature)
     expect(pcztTransaction.transparentInputs[0].value).toBe(100000n);
     expect(pcztTransaction.orchardBundle?.valueBalance).toBe(-20000n);
+  });
+
+  // The signer refuses to send a V6 transaction whose `ironwoodBundle` is null,
+  // and does so before any APDU, so the bundle surviving the build -> parse ->
+  // adapt round trip is the whole point of this job.
+  it("carries the Ironwood bundle through to the signer, normalised", async () => {
+    mockBuildIronwoodTransaction.mockResolvedValue(nativeIwBuildResult);
+    mockParsePczt.mockReturnValue(makeRawPcztV6());
+
+    const { pcztTransaction } = await buildIronwoodTransactionJob(iwBuildArgs);
+
+    expect(pcztTransaction.global.txVersion).toBe(6);
+    const ironwood = pcztTransaction.ironwoodBundle;
+    expect(ironwood).not.toBeNull();
+    expect(ironwood?.valueBalance).toBe(-50000n);
+    expect(ironwood?.flags).toBe(7);
+    expect(ironwood?.actions).toHaveLength(1);
+    expect(ironwood?.actions[0].spendValue).toBe(90000n);
+    expect(ironwood?.actions[0].value).toBe(40000n);
+    // The byte that distinguishes an Ironwood action from an Orchard one.
+    expect(ironwood?.actions[0].notePlaintextVersion).toBe(3);
+  });
+
+  it("throws a diagnosable error when the native addon drops the Ironwood bundle", async () => {
+    mockBuildIronwoodTransaction.mockResolvedValue(nativeIwBuildResult);
+    // A pre-Ironwood @ledgerhq/zcash-utils: parsePczt returns no Ironwood section
+    // even though the builder reported two Ironwood actions.
+    mockParsePczt.mockReturnValue(makeRawPczt());
+
+    await expect(buildIronwoodTransactionJob(iwBuildArgs)).rejects.toThrow(
+      /parsePczt dropped the Ironwood bundle.*zcash-utils is too old/s,
+    );
   });
 
   it("propagates errors from native.buildIronwoodTransaction", async () => {

@@ -11,12 +11,13 @@ import { authApiExtra } from "@shared/auth";
 import { LkrpIdentityProvider } from "@ledgerhq/ledger-key-ring-protocol";
 import {
   calApiExtra,
+  cardApiExtra,
   coinMarketCapApiExtra,
   cvsApiExtra,
   pushDevicesApiExtra,
   swapApiExtra,
 } from "@shared/api-services";
-import { payCardApiExtra } from "@domain/api-pay-card";
+import { getCardSessionToken, refreshCardSession } from "@features/platform-card";
 import logger from "~/renderer/middlewares/logger";
 import reducers, { State } from "~/renderer/reducers";
 import { applyLldRTKApiMiddlewares } from "~/renderer/reducers/rtkQueryApi";
@@ -66,6 +67,12 @@ const customCreateStore = ({
               ...coinMarketCapApiExtra({
                 coinMarketCapApiUrl: getEnv("CMC_API_URL"),
               }),
+              ...cardApiExtra({
+                cardApiBaseUrl: getEnv("CARD_API_URL"),
+                cardBaanxClientKey: getEnv("CARD_BAANX_CLIENT_KEY"),
+                getCardSessionToken,
+                refreshCardSession,
+              }),
               ...pushDevicesApiExtra({
                 pushDevicesServiceUrl: getEnv("PUSH_DEVICES_SERVICE_URL"),
                 ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
@@ -73,10 +80,6 @@ const customCreateStore = ({
               ...swapApiExtra({
                 swapApiBaseUrl: getEnv("SWAP_API_BASE"),
                 ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
-              }),
-              ...payCardApiExtra({
-                // LIVE-33829: force mocks until Pay Card API base URL is wired.
-                payCardApiMocksEnabled: true,
               }),
               ...authApiExtra({
                 authFeatureId: "lwdAuth",

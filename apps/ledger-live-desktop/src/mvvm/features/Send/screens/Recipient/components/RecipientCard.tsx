@@ -26,6 +26,7 @@ type RecipientCardProps = Readonly<{
   addContactLabel: string;
   sendLabel: string;
   onSend: () => void;
+  onAddContact: () => void;
 }>;
 
 function getContactInitials(name: string): string {
@@ -49,6 +50,7 @@ export function RecipientCard({
   addContactLabel,
   sendLabel,
   onSend,
+  onAddContact,
 }: RecipientCardProps) {
   const addContactButton = (
     <Button
@@ -56,6 +58,7 @@ export function RecipientCard({
       size="sm"
       disabled={!isReady || !hasAddressBook}
       className="w-full"
+      onClick={onAddContact}
       data-testid="send-recipient-card-add-contact"
     >
       {addContactLabel}

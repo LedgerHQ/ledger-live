@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import type { ContactId } from "@domain/entity-contact";
-import type { ContactsLedgerSyncStatus } from "./types";
+import type { ContactsLedgerSyncStatus } from "@features/flow-contacts-introduction";
 
 export type ContactsLedgerSyncMutationIntent =
   | Readonly<{ kind: "addContact" }>

@@ -74,27 +74,34 @@ const ReceiveModal = (props: GlobalModalData["MODAL_RECEIVE"]) => {
     setState(prevState => ({ ...prevState, stepId: newStepId }));
   }, []);
 
-  const setIsAddressVerified = (newIsAddressVerified: State["isAddressVerified"]) => {
+  const setIsAddressVerified = useCallback((newIsAddressVerified: State["isAddressVerified"]) => {
     setState(prevState => ({ ...prevState, isAddressVerified: newIsAddressVerified }));
-  };
+  }, []);
 
-  const setVerifyAddressError = (newVerifyAddressError: State["verifyAddressError"]) => {
-    setState(prevState => ({ ...prevState, verifyAddressError: newVerifyAddressError }));
-  };
+  const setVerifyAddressError = useCallback(
+    (newVerifyAddressError: State["verifyAddressError"]) => {
+      setState(prevState => ({ ...prevState, verifyAddressError: newVerifyAddressError }));
+    },
+    [],
+  );
 
-  const handleReset = () => {
+  const handleReset = useCallback(() => {
     setStepId(initialState.stepId);
     setIsAddressVerified(initialState.isAddressVerified);
     setVerifyAddressError(initialState.verifyAddressError);
-  };
+  }, [initialState, setStepId, setIsAddressVerified, setVerifyAddressError]);
 
-  const handleChangeAddressVerified = (isAddressVerified?: boolean | null, err?: Error | null) => {
-    if (err && err.name !== "UserRefusedAddress") {
-      logger.critical(err);
-    }
-    setIsAddressVerified(isAddressVerified);
-    setVerifyAddressError(err);
-  };
+  // kept stable: a new identity on every render re-triggers the address verification
+  const handleChangeAddressVerified = useCallback(
+    (isAddressVerified?: boolean | null, err?: Error | null) => {
+      if (err && err.name !== "UserRefusedAddress") {
+        logger.critical(err);
+      }
+      setIsAddressVerified(isAddressVerified);
+      setVerifyAddressError(err);
+    },
+    [setIsAddressVerified, setVerifyAddressError],
+  );
 
   // Making sure at least one account exists, if not, redirecting to the add account modal
   const accounts = useSelector(accountsSelector);

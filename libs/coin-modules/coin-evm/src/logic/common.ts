@@ -175,9 +175,14 @@ export async function prepareUnsignedTxParams(
       new BigNumber(1))
     : new BigNumber(1);
 
+  const customGasLimit =
+    typeof customFeesParameters?.gasLimit === "bigint" && customFeesParameters.gasLimit > 0n
+      ? customFeesParameters.gasLimit
+      : null;
+
   const gasLimit =
-    typeof customFeesParameters?.gasLimit === "bigint"
-      ? BigNumber(customFeesParameters.gasLimit.toString())
+    customGasLimit !== null
+      ? BigNumber(customGasLimit.toString())
       : (
           await estimateGas(
             currency,

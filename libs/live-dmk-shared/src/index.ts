@@ -39,6 +39,10 @@ export type {
   DeviceIntentTrackingProperties,
   SourceFlow,
 } from "./deviceIntentTracking/DeviceIntentTrackingContext";
+export { OverrideDeviceIntentExecutorHeader } from "./deviceIntentHeader/OverrideDeviceIntentExecutorHeader";
+export { DeviceIntentExecutorHeaderContext } from "./deviceIntentHeader/DeviceIntentExecutorHeaderContext";
+export type { DeviceIntentExecutorHeaderContextValue } from "./deviceIntentHeader/DeviceIntentExecutorHeaderContext";
+export { useDeviceIntentExecutorHeaderOverrideRequests } from "./deviceIntentHeader/useDeviceIntentExecutorHeaderOverrideRequests";
 export { LedgerLiveLogger } from "./services/LedgerLiveLogger";
 export { UserHashService } from "./services/UserHashService";
 export {

@@ -156,6 +156,19 @@ describe("node api (indexer-backed calls)", () => {
       expect(gasPrice).toBe(RPC_GAS_PRICE);
     });
 
+    it("falls back to the node RPC when the indexer rate-limits with a 429", async () => {
+      mockServer.use(
+        http.get(`${NEAR_BASE_URL_MOCKED}/v3/stats`, () =>
+          HttpResponse.json({ message: "Too Many Requests" }, { status: 429 }),
+        ),
+      );
+      mockRpc();
+
+      const gasPrice = await getGasPrice();
+
+      expect(gasPrice).toBe(RPC_GAS_PRICE);
+    });
+
     it("reports the node error when the fallback cannot read a gas price either", async () => {
       mockStats(null);
       mockServer.use(

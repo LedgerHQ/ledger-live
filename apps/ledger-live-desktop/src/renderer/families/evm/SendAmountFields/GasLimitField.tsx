@@ -1,5 +1,6 @@
-import { getGasLimit, DEFAULT_GAS_LIMIT } from "@ledgerhq/coin-evm/utils";
-import { Transaction } from "@ledgerhq/coin-evm/types/index";
+import { DEFAULT_GAS_LIMIT } from "@ledgerhq/coin-evm/utils";
+import { getGasLimit } from "@ledgerhq/live-common/families/evm/utils";
+import { Transaction } from "@ledgerhq/live-common/families/evm/types";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { Button } from "@ledgerhq/react-ui";
 import { BigNumber } from "bignumber.js";

@@ -1,6 +1,14 @@
 import { useCallback, useState } from "react";
-import { usePreAuthMutation } from "@domain/api-pay-card";
+import { useInitiateAuthorizeMutation } from "@domain/api-card-management";
+import type { PayCardAuthorizeInitiateRequest } from "@domain/api-card-management";
 import type { CardLoginProps, CardLoginViewProps } from "./types";
+
+const PLACEHOLDER_AUTHORIZE_REQUEST: PayCardAuthorizeInitiateRequest = {
+  clientId: "",
+  redirectUri: "",
+  state: "",
+  codeChallenge: "",
+};
 
 function getSecureHostedLoginUrl(loginUrl: string): string {
   const url = new URL(loginUrl);
@@ -10,14 +18,8 @@ function getSecureHostedLoginUrl(loginUrl: string): string {
   return url.toString();
 }
 
+// An RTK rejection is a `FetchBaseQueryError` carrying the raw response, which must not be rendered.
 function getLoginErrorMessage(error: unknown): string {
-  if (typeof error === "object" && error !== null && "error" in error) {
-    const message = error.error;
-    if (typeof message === "string") {
-      return message;
-    }
-  }
-
   if (error instanceof Error && error.message) {
     return error.message;
   }
@@ -25,11 +27,9 @@ function getLoginErrorMessage(error: unknown): string {
   return "Unable to start login";
 }
 
-export function useCardLoginViewModel({
-  openHostedLogin,
-  provider = "baanx",
-}: CardLoginProps): CardLoginViewProps {
-  const [preAuth, { isLoading: isPreAuthLoading }] = usePreAuthMutation();
+export function useCardLoginViewModel({ openHostedLogin }: CardLoginProps): CardLoginViewProps {
+  const [initiateAuthorize, { isLoading: isInitiateAuthorizeLoading }] =
+    useInitiateAuthorizeMutation();
   const [isOpeningHostedLogin, setIsOpeningHostedLogin] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -39,21 +39,21 @@ export function useCardLoginViewModel({
     void (async () => {
       setIsOpeningHostedLogin(true);
       try {
-        const { loginUrl } = await preAuth({ provider }).unwrap();
-        await openHostedLogin(getSecureHostedLoginUrl(loginUrl));
+        const { url } = await initiateAuthorize(PLACEHOLDER_AUTHORIZE_REQUEST).unwrap();
+        await openHostedLogin(getSecureHostedLoginUrl(url));
       } catch (error) {
         setErrorMessage(getLoginErrorMessage(error));
       } finally {
         setIsOpeningHostedLogin(false);
       }
     })();
-  }, [openHostedLogin, preAuth, provider]);
+  }, [openHostedLogin, initiateAuthorize]);
 
   return {
     title: "Card",
     description: "Log in to access your Ledger Card",
     loginLabel: "Login",
-    isLoading: isPreAuthLoading || isOpeningHostedLogin,
+    isLoading: isInitiateAuthorizeLoading || isOpeningHostedLogin,
     errorMessage,
     onLoginPress,
   };

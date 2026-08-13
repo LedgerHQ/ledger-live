@@ -1,5 +1,5 @@
 import React from "react";
-import { createClosedContactsFeatureIntroduction } from "@features/flow-contacts";
+import { createClosedContactsFeatureIntroduction } from "@features/flow-contacts-introduction";
 import { render, screen } from "@tests/test-renderer";
 import { ContactsPageContent } from ".";
 import type { ContactsPageContentProps } from "../../types";
