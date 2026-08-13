@@ -84,14 +84,26 @@ describe("updateUserPreferences", () => {
     jest.clearAllMocks();
   });
 
-  it("should skip Braze writes when user is not tracked", () => {
-    updateUserPreferences(defaultNotifications, false);
+  it("should write Braze attributes when flag is off even if user is not tracked", () => {
+    updateUserPreferences(defaultNotifications, false, {
+      brazeOptOutIdentityCleanup: false,
+    });
+
+    expect(mockedSetCustomUserAttribute).toHaveBeenCalledWith("notificationsAllowed", true);
+  });
+
+  it("should skip Braze writes when flag is on and user is not tracked", () => {
+    updateUserPreferences(defaultNotifications, false, {
+      brazeOptOutIdentityCleanup: true,
+    });
 
     expect(mockedSetCustomUserAttribute).not.toHaveBeenCalled();
   });
 
   it("should write Braze attributes when user is tracked", () => {
-    updateUserPreferences(defaultNotifications, true);
+    updateUserPreferences(defaultNotifications, true, {
+      brazeOptOutIdentityCleanup: true,
+    });
 
     expect(mockedSetCustomUserAttribute).toHaveBeenCalledWith("notificationsAllowed", true);
     expect(mockedSetCustomUserAttribute).toHaveBeenCalledWith("optInAnnouncements", true);

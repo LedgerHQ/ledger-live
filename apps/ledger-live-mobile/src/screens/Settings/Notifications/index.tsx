@@ -35,6 +35,7 @@ function NotificationSettingsRow({ disabled, notificationKey, label }: Notificat
   const dispatch = useDispatch();
   const notifications = useSelector(notificationsSelector);
   const isTrackedUser = useSelector(trackingEnabledSelector);
+  const brazeOptOutIdentityCleanup = useFeature("brazeOptOutIdentityCleanup");
   const { markUserAsOptIn, permissionStatus, markUserAsOptOut } = useNotifications();
 
   const { t } = useTranslation();
@@ -72,6 +73,9 @@ function NotificationSettingsRow({ disabled, notificationKey, label }: Notificat
           [notificationKey]: value,
         },
         isTrackedUser,
+        {
+          brazeOptOutIdentityCleanup: brazeOptOutIdentityCleanup?.enabled ?? false,
+        },
       );
     },
     [
@@ -80,6 +84,7 @@ function NotificationSettingsRow({ disabled, notificationKey, label }: Notificat
       capitalizedKey,
       notifications,
       isTrackedUser,
+      brazeOptOutIdentityCleanup?.enabled,
       markUserAsOptOut,
       permissionStatus,
       markUserAsOptIn,

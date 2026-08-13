@@ -54,6 +54,7 @@ export const useNotificationsDrawer = ({
   updateUserLastInactiveTime,
 }: UseNotificationsDrawerParams) => {
   const featureBrazePushNotifications = useFeature("brazePushNotifications");
+  const brazeOptOutIdentityCleanup = useFeature("brazeOptOutIdentityCleanup");
   const actionEvents = featureBrazePushNotifications?.params?.action_events;
 
   const isPushNotificationsModalOpen = useSelector(notificationsModalOpenSelector);
@@ -301,6 +302,9 @@ export const useNotificationsDrawer = ({
           transactionsAlertsCategory: true,
         },
         isTrackedUser,
+        {
+          brazeOptOutIdentityCleanup: brazeOptOutIdentityCleanup?.enabled ?? false,
+        },
       );
       markUserAsOptIn();
       return;
@@ -332,6 +336,7 @@ export const useNotificationsDrawer = ({
     dispatch,
     notifications,
     isTrackedUser,
+    brazeOptOutIdentityCleanup?.enabled,
     permissionStatus,
     requestPushNotificationsPermission,
     drawerSource,

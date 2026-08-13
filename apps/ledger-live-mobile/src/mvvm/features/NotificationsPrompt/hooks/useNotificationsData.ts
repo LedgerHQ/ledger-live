@@ -16,6 +16,7 @@ import { buildOptOutUserData } from "../utils/buildOptOutUserData";
 import { type DataOfUser, type NotificationPromptTarget } from "../types";
 import { updateIdentify } from "~/analytics";
 import { updateUserPreferences } from "~/notifications/braze";
+import { useFeature } from "@features/platform-feature-flags";
 
 const notificationSettingsKeys: Array<keyof NotificationsSettings> = [
   "areNotificationsAllowed",
@@ -29,6 +30,7 @@ const notificationSettingsKeys: Array<keyof NotificationsSettings> = [
 export const useNotificationsData = () => {
   const notifications = useSelector(notificationsSelector);
   const isTrackedUser = useSelector(trackingEnabledSelector);
+  const brazeOptOutIdentityCleanup = useFeature("brazeOptOutIdentityCleanup");
   const pushNotificationsDataOfUser = useSelector(notificationsDataOfUserSelector);
   const dispatch = useDispatch();
 
@@ -61,8 +63,10 @@ export const useNotificationsData = () => {
     };
 
     dispatch(setNotifications(updatedNotifications));
-    updateUserPreferences(updatedNotifications, isTrackedUser);
-  }, [dispatch, isTrackedUser, notifications]);
+    updateUserPreferences(updatedNotifications, isTrackedUser, {
+      brazeOptOutIdentityCleanup: brazeOptOutIdentityCleanup?.enabled ?? false,
+    });
+  }, [brazeOptOutIdentityCleanup?.enabled, dispatch, isTrackedUser, notifications]);
 
   const markUserAsOptOut = useCallback(
     (promptTarget?: NotificationPromptTarget) => {
