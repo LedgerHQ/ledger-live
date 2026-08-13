@@ -1,5 +1,11 @@
 import React from "react";
-import { renderWithMockedCounterValuesProvider, screen, waitFor, render } from "tests/testSetup";
+import {
+  renderWithMockedCounterValuesProvider,
+  screen,
+  waitFor,
+  render,
+  within,
+} from "tests/testSetup";
 import { useNavigate } from "react-router";
 import { server } from "tests/server";
 import { trackPage } from "~/renderer/analytics/segment";
@@ -33,7 +39,16 @@ jest.mock("~/renderer/linking", () => ({
   openURL: jest.fn(),
 }));
 
-describe("PayTab feature tour integration", () => {
+describe("PayTab integration", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockedUseNavigate.mockReturnValue(mockNavigate);
+  });
+
+  afterEach(() => {
+    server.resetHandlers();
+  });
+
   it("should show the feature tour on first visit", () => {
     render(<PayTab />, {
       initialState: { payCard: { ...payCardInitialState, hasSeenFeatureTour: false } },
@@ -66,17 +81,6 @@ describe("PayTab feature tour integration", () => {
     expect(screen.queryByText(FEATURE_TOUR_ROW)).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Got it" })).not.toBeInTheDocument();
   });
-});
-
-describe("PayTab feature integration", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-    mockedUseNavigate.mockReturnValue(mockNavigate);
-  });
-
-  afterEach(() => {
-    server.resetHandlers();
-  });
 
   it("should render the empty hero when the user holds no stablecoins", async () => {
     renderWithMockedCounterValuesProvider(<PayTab />, {
@@ -88,7 +92,7 @@ describe("PayTab feature integration", () => {
   });
 
   it("should render the aggregated stablecoin balance when the user holds USDC", async () => {
-    renderWithMockedCounterValuesProvider(<PayTab />, {
+    const { container } = renderWithMockedCounterValuesProvider(<PayTab />, {
       initialState: {
         ...onboardedState,
         ...tourSeenState,
@@ -97,9 +101,9 @@ describe("PayTab feature integration", () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByTestId("pay-card-balance-funded-state")).toBeVisible();
+      expect(within(container).getByTestId("pay-card-balance-funded-state")).toBeVisible();
     });
-    expect(screen.queryByText(EMPTY_TITLE)).not.toBeInTheDocument();
+    expect(within(container).queryByTestId("pay-card-balance-empty-state")).not.toBeInTheDocument();
   });
 
   it("should track the Pay page with the active balance filter on view", () => {
