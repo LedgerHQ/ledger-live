@@ -57,6 +57,12 @@ export function init() {
   }
   setEnv("DISABLE_TRANSACTION_BROADCAST", disable_broadcast != "0");
 
+  // QAA-1476 instrumentation. Set here rather than in .env.mock: react-native-config bakes that
+  // file into the native build and CI restores the native APK from cache, so an env-file change
+  // never reaches the app. This runs in the JS bundle, which is rebuilt every run. The drawer
+  // logs then land in logReport, which e2e attaches as "App logs" on failure.
+  setEnv("LOG_DRAWERS", true);
+
   initAppNetworkLogging();
 
   if (ws) {
