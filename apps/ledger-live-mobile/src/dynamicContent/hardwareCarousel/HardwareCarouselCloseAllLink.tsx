@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "@ledgerhq/lumen-ui-rnative";
+import { Pressable, Text } from "@ledgerhq/lumen-ui-rnative";
 import { useTranslation } from "~/context/Locale";
 import { useHardwareCarouselCloseAll } from "./useHardwareCarouselCloseAll";
 
@@ -12,14 +12,10 @@ export function HardwareCarouselCloseAllLink({ cardIds }: Props) {
   const handleCloseAll = useHardwareCarouselCloseAll(cardIds);
 
   return (
-    <Link
-      appearance="base"
-      onPress={handleCloseAll}
-      size="sm"
-      testID="hardware-carousel-close-all"
-      underline={false}
-    >
-      {t("portfolio.carousel.closeAll")}
-    </Link>
+    <Pressable onPress={handleCloseAll} testID="hardware-carousel-close-all">
+      <Text typography="body2SemiBold" lx={{ color: "muted" }}>
+        {t("portfolio.carousel.closeAll")}
+      </Text>
+    </Pressable>
   );
 }
