@@ -21,6 +21,13 @@ describe("PayCardAuthorizeInitiateResponseSchema", () => {
     ).toThrow();
   });
 
+  it.each(["http://card.test/login", "javascript:alert('login')", "ledgerlive://paytab"])(
+    "rejects %s as a login URL",
+    url => {
+      expect(() => PayCardAuthorizeInitiateResponseSchema.parse({ token: "jwt", url })).toThrow();
+    },
+  );
+
   it("rejects a payload missing the login URL", () => {
     expect(() => PayCardAuthorizeInitiateResponseSchema.parse({ token: "jwt" })).toThrow();
   });

@@ -2,7 +2,8 @@ import { z } from "zod";
 
 export const PayCardAuthorizeInitiateResponseSchema = z.object({
   token: z.string().min(1),
-  url: z.string().url(),
+  /** Handed straight to a browser, so no other scheme is accepted. */
+  url: z.string().url().startsWith("https://"),
 });
 
 export const PayCardAuthorizeInitiateSchema = PayCardAuthorizeInitiateResponseSchema.extend({

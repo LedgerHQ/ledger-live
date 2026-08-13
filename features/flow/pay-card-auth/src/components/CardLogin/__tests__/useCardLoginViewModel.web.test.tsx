@@ -164,19 +164,6 @@ describe("useCardLoginViewModel", () => {
     });
   });
 
-  it("should reject an insecure hosted login URL", async () => {
-    const openHostedLogin = jest.fn();
-    unwrap.mockResolvedValue(authorizeResponse("javascript:alert('login')"));
-    const { result } = renderCardLoginViewModel({ openHostedLogin });
-
-    act(() => result.current.onLoginPress());
-
-    await waitFor(() => {
-      expect(result.current.errorMessage).toBe("Unable to start login");
-      expect(openHostedLogin).not.toHaveBeenCalled();
-    });
-  });
-
   it("should reflect the authorize initiation loading state", () => {
     mockedUseInitiateAuthorizeMutation.mockReturnValue([
       initiateAuthorize,

@@ -1,10 +1,7 @@
-import type { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { cardApi, getCardExtra } from "@shared/api-services";
-import type { ZodType } from "zod";
 import { CARD_MANAGEMENT_TAGS } from "./constants";
 import {
   PayCardAuthorizeInitiateSchema,
-  PayCardAuthorizeInitiateResponseSchema,
   PayCardLogoutResponseSchema,
   PayCardSessionResponseSchema,
   PayCardSessionSchema,
@@ -15,30 +12,13 @@ import type {
   PayCardAuthorizationCodeRequest,
   PayCardAuthorizeInitiate,
   PayCardAuthorizeInitiateRequest,
+  PayCardAuthorizeInitiateResponse,
   PayCardLogoutResult,
   PayCardRefreshSessionRequest,
   PayCardSession,
+  PayCardSessionResponse,
   PayCardUser,
 } from "./types";
-
-function parseResponse<T>(
-  schema: ZodType<T>,
-  data: unknown,
-): { data: T } | { error: FetchBaseQueryError } {
-  const parsed = schema.safeParse(data);
-  if (parsed.success) {
-    return { data: parsed.data };
-  }
-
-  return {
-    error: {
-      status: "PARSING_ERROR",
-      originalStatus: 200,
-      data: "",
-      error: "Response did not match the Card API schema",
-    },
-  };
-}
 
 export const cardManagementApi = cardApi
   .enhanceEndpoints({ addTagTypes: CARD_MANAGEMENT_TAGS })
@@ -67,19 +47,10 @@ export const cardManagementApi = cardApi
             return { error: response.error };
           }
 
-          const parsedResponse = parseResponse(
-            PayCardAuthorizeInitiateResponseSchema,
-            response.data,
-          );
-          if ("error" in parsedResponse) {
-            return parsedResponse;
-          }
-
-          return parseResponse(PayCardAuthorizeInitiateSchema, {
-            ...parsedResponse.data,
-            redirectUri: cardOauthRedirectUri,
-          });
+          const initiate = response.data as PayCardAuthorizeInitiateResponse;
+          return { data: { ...initiate, redirectUri: cardOauthRedirectUri } };
         },
+        responseSchema: PayCardAuthorizeInitiateSchema,
       }),
 
       exchangeAuthorizationCode: build.mutation<PayCardSession, PayCardAuthorizationCodeRequest>({
@@ -100,16 +71,10 @@ export const cardManagementApi = cardApi
             return { error: response.error };
           }
 
-          const parsedResponse = parseResponse(PayCardSessionResponseSchema, response.data);
-          if ("error" in parsedResponse) {
-            return parsedResponse;
-          }
-
-          return parseResponse(
-            PayCardSessionSchema,
-            transformPayCardSessionResponse(parsedResponse.data),
-          );
+          const session = response.data as PayCardSessionResponse;
+          return { data: transformPayCardSessionResponse(session) };
         },
+        responseSchema: PayCardSessionSchema,
       }),
 
       /** Same endpoint as the code exchange, separated by `grant_type`. */

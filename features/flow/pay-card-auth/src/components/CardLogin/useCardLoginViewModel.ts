@@ -5,18 +5,6 @@ import { clearAuthorizeAttempt, startAuthorizeAttempt } from "../../state";
 import { createAuthorizeAttempt } from "../../state/authorizeAttempt";
 import type { CardLoginViewModelParams, CardLoginViewProps } from "./types";
 
-function getSecureHostedLoginUrl(loginUrl: string): string {
-  const url = new URL(loginUrl);
-  if (url.protocol !== "https:") {
-    throw new Error("Unable to start login");
-  }
-  return loginUrl;
-}
-
-function getLoginErrorMessage(error: unknown): string {
-  return error instanceof Error && error.message ? error.message : "Unable to start login";
-}
-
 export function useCardLoginViewModel({
   openHostedLogin,
 }: CardLoginViewModelParams): CardLoginViewProps {
@@ -42,7 +30,7 @@ export function useCardLoginViewModel({
           codeChallenge,
         }).unwrap();
 
-        const outcome = await openHostedLogin(getSecureHostedLoginUrl(url), redirectUri);
+        const outcome = await openHostedLogin(url, redirectUri);
 
         // Closing the browser is not an error, but nothing can complete that attempt any more.
         if (outcome === "cancelled") {
@@ -51,7 +39,9 @@ export function useCardLoginViewModel({
       } catch (error) {
         // Nothing can complete this attempt any more, so the verifier and `state` go with it.
         dispatch(clearAuthorizeAttempt());
-        setErrorMessage(getLoginErrorMessage(error));
+        setErrorMessage(
+          error instanceof Error && error.message ? error.message : "Unable to start login",
+        );
       } finally {
         setIsOpeningHostedLogin(false);
       }
