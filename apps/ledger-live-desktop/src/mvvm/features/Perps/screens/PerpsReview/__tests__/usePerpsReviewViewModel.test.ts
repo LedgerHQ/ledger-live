@@ -9,6 +9,11 @@ jest.mock("../../PerpsDeposit/PerpsDepositDialog", () => ({
   openPerpsDeposit: (data: unknown) => mockOpenPerpsDeposit(data),
 }));
 
+const mockOpenPerpsDepositSign = jest.fn();
+jest.mock("../../PerpsDepositSign/PerpsDepositSignDialog", () => ({
+  openPerpsDepositSign: (data: unknown) => mockOpenPerpsDepositSign(data),
+}));
+
 function createAccount(id: string, currencyId: string): AccountLike {
   return {
     type: "Account",
@@ -76,12 +81,24 @@ describe("usePerpsReviewViewModel", () => {
     expect(onClose).toHaveBeenCalled();
   });
 
-  it("should close the review when confirming the deposit", () => {
+  it("should hand the signing dialog the quote the review priced against", () => {
     const onClose = jest.fn();
-    const { result } = renderHook(() => usePerpsReviewViewModel(createData(), onClose));
+    const data = createData({
+      amountTo: { value: "0.019", currencyId: "ethereum" },
+      quoteId: "quote-1",
+      draft: { depositAccount, depositAmount: 20 },
+    });
+    const { result } = renderHook(() => usePerpsReviewViewModel(data, onClose));
 
     result.current.handleDeposit();
 
+    expect(mockOpenPerpsDepositSign).toHaveBeenCalledWith({
+      depositAccount,
+      receiverAccount,
+      amountSent: data.amountSent,
+      amountTo: data.amountTo,
+      quoteId: "quote-1",
+    });
     expect(onClose).toHaveBeenCalled();
     expect(mockOpenPerpsDeposit).not.toHaveBeenCalled();
   });

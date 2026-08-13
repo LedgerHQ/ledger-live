@@ -4,6 +4,7 @@ import SendFlowRoot from "LLD/features/Send/SendFlowRoot";
 import PerpsSignRoot from "LLD/features/Perps/screens/PerpsSign/PerpsSignDialog";
 import PerpsDepositRoot from "LLD/features/Perps/screens/PerpsDeposit/PerpsDepositDialog";
 import PerpsReviewRoot from "LLD/features/Perps/screens/PerpsReview/PerpsReviewDialog";
+import PerpsDepositSignRoot from "LLD/features/Perps/screens/PerpsDepositSign/PerpsDepositSignDialog";
 import ActionConfirmationDialog from "LLD/features/ActionConfirmationDialog";
 
 const ReleaseNotes = lazy(() => import("LLD/features/ReleaseNotes"));
@@ -29,6 +30,7 @@ const GlobalDialogs = () => (
     <PerpsSignRoot />
     <PerpsDepositRoot />
     <PerpsReviewRoot />
+    <PerpsDepositSignRoot />
     <ActionConfirmationDialog />
     <Suspense fallback={null}>
       <ReleaseNotes />
