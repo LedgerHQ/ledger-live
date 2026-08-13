@@ -1,5 +1,5 @@
-import type { z } from "zod";
-import type {
+import { z } from "zod";
+import {
   PayCardAuthorizeInitiateResponseSchema,
   PayCardLogoutResponseSchema,
   PayCardSessionResponseSchema,
