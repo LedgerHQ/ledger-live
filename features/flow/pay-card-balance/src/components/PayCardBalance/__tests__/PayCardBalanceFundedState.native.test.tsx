@@ -24,4 +24,20 @@ describe("PayCardBalanceFundedState (Native)", () => {
     expect(screen.getByTestId("pay-card-balance-funded-state")).toBeTruthy();
     expect(screen.getByTestId("pay-card-balance-amount")).toBeTruthy();
   });
+
+  it("should render the action tiles when provided", () => {
+    render(
+      <PayCardBalanceFundedState
+        balance={1000}
+        formatCountervalue={formatCountervalue}
+        isLoading={false}
+        actionTiles={{
+          page: "Pay",
+          tiles: [{ id: "deposit", label: "Deposit", onPress: jest.fn() }],
+        }}
+      />,
+    );
+
+    expect(screen.getByTestId("action-tile-deposit")).toBeTruthy();
+  });
 });

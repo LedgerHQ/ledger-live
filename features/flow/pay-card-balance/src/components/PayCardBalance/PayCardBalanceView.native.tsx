@@ -12,6 +12,7 @@ export function PayCardBalanceView(props: PayCardBalanceViewProps) {
           balance={props.balance}
           formatCountervalue={props.formatCountervalue}
           isLoading={props.isLoading}
+          actionTiles={props.actionTiles}
         />
       ) : (
         <PayCardBalanceEmptyState labels={props.labels} />
