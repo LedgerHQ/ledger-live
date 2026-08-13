@@ -1,11 +1,40 @@
-import type { ICPAccount } from "@ledgerhq/live-common/families/internet_computer/types";
+import React, { useCallback, useState } from "react";
+import { useTranslation } from "react-i18next";
+import Modal from "~/renderer/components/Modal";
+import Body, { type Data } from "../neuronFlow/Body";
+import type { StepId } from "../neuronFlow/types";
+import { steps } from "./steps";
 
-export type Props = {
-  account: ICPAccount;
+export type Props = Data;
+
+const LOCKED_STEPS: StepId[] = ["manageAction", "confirmation"];
+
+const RefreshVotingPowerFlowModal = () => {
+  const { t } = useTranslation();
+  const [stepId, setStepId] = useState<StepId>("listNeuron");
+  const onReset = useCallback(() => setStepId("listNeuron"), []);
+
+  return (
+    <Modal
+      name="MODAL_ICP_REFRESH_VOTING_POWER"
+      centered
+      width={700}
+      onHide={onReset}
+      preventBackdropClick={LOCKED_STEPS.includes(stepId)}
+      render={({ onClose, data }) => (
+        <Body
+          stepId={stepId}
+          onClose={onClose}
+          onChangeStepId={setStepId}
+          params={(data ?? {}) as Data}
+          steps={steps}
+          title={t("internetComputer.refreshVotingPowerFlow.title")}
+          trackEvent="CloseModalIcpRefreshVotingPower"
+          signingStepId="manageAction"
+        />
+      )}
+    />
+  );
 };
-
-// Registry placeholder. `coinModalImports` is a total Record over `CoinModalKey`, so the key cannot
-// be declared without a module behind it. The flow steps land in LIVE-29096.
-const RefreshVotingPowerFlowModal = () => null;
 
 export default RefreshVotingPowerFlowModal;
