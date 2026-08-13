@@ -9,6 +9,7 @@ shared `cardApi` service (`@shared/api-services`, `services/card`) rather than d
 - `api.ts` — `cardManagementApi`: `cardApi.enhanceEndpoints({ addTagTypes }).injectEndpoints(...)`.
 - `schema.ts` — zod wire contracts for the responses below.
 - `types.ts` — the inferred response types and the request arguments each endpoint takes.
+- `transforms.ts` — maps a wire response onto its canonical shape, for `transformResponse`.
 - `constants.ts` — `CARD_MANAGEMENT_TAGS`, the cache tags this use case owns.
 
 | Endpoint | Method | Path | Purpose |

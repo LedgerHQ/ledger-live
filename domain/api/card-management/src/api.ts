@@ -7,6 +7,7 @@ import {
   PayCardSessionSchema,
   PayCardUserResponseSchema,
 } from "./schema";
+import { transformPayCardSessionResponse } from "./transforms";
 import type {
   PayCardAuthorizationCodeRequest,
   PayCardAuthorizeInitiate,
@@ -14,18 +15,8 @@ import type {
   PayCardLogoutResult,
   PayCardRefreshSessionRequest,
   PayCardSession,
-  PayCardSessionResponse,
   PayCardUser,
 } from "./types";
-
-function toPayCardSession(response: PayCardSessionResponse): PayCardSession {
-  return {
-    accessToken: response.access_token,
-    expiresIn: response.expires_in,
-    refreshToken: response.refresh_token,
-    refreshTokenExpiresIn: response.refresh_token_expires_in,
-  };
-}
 
 export const cardManagementApi = cardApi
   .enhanceEndpoints({ addTagTypes: CARD_MANAGEMENT_TAGS })
@@ -60,7 +51,7 @@ export const cardManagementApi = cardApi
           },
         }),
         rawResponseSchema: PayCardSessionResponseSchema,
-        transformResponse: toPayCardSession,
+        transformResponse: transformPayCardSessionResponse,
         responseSchema: PayCardSessionSchema,
       }),
 
@@ -75,7 +66,7 @@ export const cardManagementApi = cardApi
           },
         }),
         rawResponseSchema: PayCardSessionResponseSchema,
-        transformResponse: toPayCardSession,
+        transformResponse: transformPayCardSessionResponse,
         responseSchema: PayCardSessionSchema,
       }),
 
