@@ -35,7 +35,7 @@ returns the resolved redirect URI with the hosted URL so the native secure brows
 callback, and each platform container opens that URL itself. The Baanx secret key stays server-side
 and is never sent from the apps.
 
-The verifier is minted and spent on the initiation, and nothing keeps it afterwards. Completing the
+The challenge is spent on the initiation, and nothing keeps the attempt afterwards. Completing the
 callback — holding the `state` and the verifier, verifying the `state`, exchanging the code for
 tokens and storing them in `expo-secure-store` — is the remainder of LIVE-34738 and is not part of
-this change. The `payCardAuth` slice already holds the place for that attempt.
+this change.
