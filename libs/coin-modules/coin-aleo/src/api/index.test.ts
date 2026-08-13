@@ -1,3 +1,4 @@
+import type { BalanceOptions } from "@ledgerhq/coin-module-framework/api/types";
 import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
 import { getMockedCoinFrameworkOperation } from "../__tests__/fixtures/operation.fixture";
 import { createMockTransactionIntent } from "../__tests__/fixtures/transaction.fixture";
@@ -5,6 +6,7 @@ import {
   craftTransaction,
   estimateFees,
   getAccountInfo,
+  getBalance,
   lastBlock,
   listOperations,
 } from "../logic";
@@ -26,6 +28,7 @@ describe("createApi", () => {
   const mockedCraftTransaction = jest.mocked(craftTransaction);
   const mockedEstimateFees = jest.mocked(estimateFees);
   const mockedGetAccountInfo = jest.mocked(getAccountInfo);
+  const mockedGetBalance = jest.mocked(getBalance);
   const mockedLastBlock = jest.mocked(lastBlock);
   const mockedListOperations = jest.mocked(listOperations);
   const mockedGetTransactionType = jest.mocked(getTransactionType);
@@ -35,6 +38,7 @@ describe("createApi", () => {
 
     mockedCraftTransaction.mockResolvedValue({ transaction: "crafted_tx" });
     mockedEstimateFees.mockReturnValue({ value: BigInt(1234) });
+    mockedGetBalance.mockResolvedValue([{ value: BigInt(10), asset: { type: "native" } }]);
     mockedLastBlock.mockResolvedValue({ hash: "blockHash", height: 42, time: new Date() });
     mockedListOperations.mockResolvedValue({
       operations: [mockOperation],
@@ -50,6 +54,7 @@ describe("createApi", () => {
     expect(api.combine).toBeInstanceOf(Function);
     expect(api.craftTransaction).toBeInstanceOf(Function);
     expect(api.estimateFees).toBeInstanceOf(Function);
+    expect(api.getBalance).toBeInstanceOf(Function);
     expect(api.getBlock).toBeInstanceOf(Function);
     expect(api.getBlockInfo).toBeInstanceOf(Function);
     expect(api.lastBlock).toBeInstanceOf(Function);
@@ -137,6 +142,24 @@ describe("createApi", () => {
         transactionType: "transfer_public",
       });
       expect(result).toEqual({ value: BigInt(1234) });
+    });
+  });
+
+  describe("getBalance", () => {
+    it("should call getBalance and return balances", async () => {
+      const result = await api.getBalance(context, "aleo1test");
+
+      expect(mockedGetBalance).toHaveBeenCalledTimes(1);
+      expect(mockedGetBalance).toHaveBeenCalledWith(expect.any(Object), "aleo1test");
+      expect(result).toEqual([{ value: BigInt(10), asset: { type: "native" } }]);
+    });
+
+    it("should throw an exception when options is provided", async () => {
+      await expect(
+        api.getBalance(context, "", {} as unknown as BalanceOptions),
+      ).rejects.toMatchObject({
+        name: "InvalidParameterError",
+      });
     });
   });
 

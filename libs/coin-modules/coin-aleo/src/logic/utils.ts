@@ -32,6 +32,7 @@ import {
   MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION,
   PROGRAM_ID,
   SINGLE_CALL_SIGNING_TIME,
+  TOKEN_RECORD_NAME,
   TRANSACTION_TYPE,
 } from "../constants";
 import type {
@@ -52,10 +53,14 @@ import type {
   TransactionPublic,
   TransactionPrivate,
   AleoCoinConfig,
+  AleoPrivateRecord,
   AleoUnspentRecord,
   AleoTransactionIntent,
   SigningStrategy,
   StrategyConfig,
+  AleoContext,
+  AleoTokenDetails,
+  AleoTokenType,
 } from "../types";
 
 const MICROCREDITS_REGEX = /^(\d+)u\d+$/;
@@ -78,6 +83,33 @@ export function parseMicrocredits(microcredits: string): string {
 export function parseAmount(raw: string | null): BigNumber {
   if (!raw) return new BigNumber(0);
   return new BigNumber(matchAleoPlaintextAmount(raw) ?? 0);
+}
+
+export function isTokenRecord(record: AleoPrivateRecord): boolean {
+  return (
+    record.record_name.toLowerCase() === TOKEN_RECORD_NAME.toLowerCase() &&
+    record.program_name !== PROGRAM_ID.CREDITS
+  );
+}
+
+export function classifyAleoTokenType(token: AleoTokenDetails): AleoTokenType {
+  if (token.token_standard?.toLowerCase() === "arc-20") return "arc20";
+  if (token.program_name === PROGRAM_ID.TOKEN_REGISTRY) return "arc21";
+  if (token.program_name.includes("stablecoin")) return "arc22";
+  return "unknown";
+}
+
+export function resolvePrivacyContext(context: AleoContext): {
+  provableId: string;
+  viewKey: string;
+} {
+  invariant(typeof context.provableId === "string", "aleo: provableId is missing");
+  invariant(typeof context.viewKey === "string", "aleo: viewKey is missing");
+
+  return {
+    provableId: context.provableId,
+    viewKey: context.viewKey,
+  };
 }
 
 export function patchAccountWithViewKey(account: Account, viewKey: string): Account {

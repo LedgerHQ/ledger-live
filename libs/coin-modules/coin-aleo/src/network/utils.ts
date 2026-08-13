@@ -1,10 +1,12 @@
 import BigNumber from "bignumber.js";
 import { log } from "@ledgerhq/logs";
+import { promiseAllBatched } from "@ledgerhq/coin-module-framework/promises";
 import { AleoApiConfigurationResetError } from "../errors";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import {
   AMOUNT_ARG_INDEX,
   DEFAULT_RECORDS_PAGE_SIZE,
+  DEFAULT_TOKENS_PAGE_SIZE,
   EXPLORER_TRANSFER_TYPES,
   PROGRAM_ID,
   RECIPIENT_ARG_INDEX,
@@ -21,6 +23,7 @@ import type {
   AleoCoinConfig,
   AleoRecordScannerStatusResponse,
   AleoDecryptedRecordResponse,
+  AleoTokenDetails,
 } from "../types";
 import {
   isAleoAddressPlaintext,
@@ -47,6 +50,35 @@ export async function decryptRecordAmount(
     amount: parseAmount(raw ?? null),
     details,
   };
+}
+
+/**
+ * Sums the decrypted amount of every unspent record.
+ *
+ * @param maxBlockHeight - Excludes records scanned past this height. Omit to sum all records.
+ */
+export async function sumUnspentRecords({
+  config,
+  viewKey,
+  records,
+  maxBlockHeight,
+}: {
+  config: AleoCoinConfig;
+  viewKey: string;
+  records: AleoPrivateRecord[];
+  maxBlockHeight?: number;
+}): Promise<BigNumber> {
+  const filteredRecords = records.filter(record => {
+    if (typeof maxBlockHeight !== "number") return true;
+    return record.block_height <= maxBlockHeight;
+  });
+
+  const amounts = await promiseAllBatched(4, filteredRecords, async record => {
+    const decryptedRecord = await decryptRecordAmount(config, viewKey, record);
+    return decryptedRecord.amount;
+  });
+
+  return amounts.reduce((sum, amount) => sum.plus(amount), new BigNumber(0));
 }
 
 function limitTransactions(
@@ -213,6 +245,40 @@ export async function fetchAllOwnedRecords({
   }
 
   return allRecords;
+}
+
+/**
+ * Fetches the full token registry (ARC-20, ARC-21 and ARC-22 alike).
+ *
+ * The `/tokens` endpoint has no program-name filter, so identifying whether a given
+ * program is a known token requires the full registry rather than a per-program lookup.
+ */
+export async function fetchAllTokens({
+  config,
+  resultsPerPage = DEFAULT_TOKENS_PAGE_SIZE,
+}: {
+  config: AleoCoinConfig;
+  resultsPerPage?: number;
+}): Promise<AleoTokenDetails[]> {
+  const tokens: AleoTokenDetails[] = [];
+  let offset = 0;
+  let hasNext = true;
+
+  while (hasNext) {
+    const { data, pagination } = await apiClient.getTokens({
+      config,
+      options: {
+        limit: resultsPerPage,
+        offset,
+      },
+    });
+
+    tokens.push(...data);
+    hasNext = pagination.has_next;
+    offset += resultsPerPage;
+  }
+
+  return tokens;
 }
 
 export async function getRecordScannerStatusOrThrow(

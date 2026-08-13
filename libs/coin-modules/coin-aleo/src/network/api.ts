@@ -8,6 +8,7 @@ import type {
   AleoRegisterForRecordsResponse,
   AleoGetScannerPublicKeyResponse,
   AleoGetProvePublicKeyResponse,
+  AleoGetTokensResponse,
   AleoPrivateRecord,
   DelegatedProvingResponse,
 } from "../types/api";
@@ -55,6 +56,41 @@ async function getTokenBalance(
   const res = await network<string | null>({
     method: "GET",
     url: `${apiUrls.node}/v2/${networkType}/program/${programId}/mapping/balances/${address}`,
+  });
+
+  return res.data;
+}
+
+/**
+ * Fetches the registry of known tokens on the network (ARC-20, ARC-21 and ARC-22 alike).
+ *
+ * @param config - The Aleo coin config
+ * @param params.limit - Max items to return (server default: 20)
+ * @param params.offset - Number of items to skip (server default: 0)
+ */
+async function getTokens({
+  config,
+  options = {},
+}: {
+  config: AleoCoinConfig;
+  options?: {
+    verified?: boolean;
+    symbol?: string;
+    limit?: number;
+    offset?: number;
+  };
+}): Promise<AleoGetTokensResponse> {
+  const { apiUrls, networkType } = config;
+  const params = new URLSearchParams({
+    ...(options.symbol && { symbol: options.symbol }),
+    ...(typeof options.verified === "boolean" && { verified: options.verified.toString() }),
+    ...(typeof options.limit === "number" && { limit: options.limit.toString() }),
+    ...(typeof options.offset === "number" && { offset: options.offset.toString() }),
+  });
+
+  const res = await network<AleoGetTokensResponse>({
+    method: "GET",
+    url: `${apiUrls.node}/v2/${networkType}/tokens?${params.toString()}`,
   });
 
   return res.data;
@@ -283,6 +319,7 @@ export const apiClient = {
   getLatestBlock,
   getAccountBalance,
   getTokenBalance,
+  getTokens,
   getTransactionById,
   getAccountPublicTransactions,
   getRecordScannerStatus,

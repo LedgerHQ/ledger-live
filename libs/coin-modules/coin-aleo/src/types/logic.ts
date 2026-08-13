@@ -48,6 +48,8 @@ export type AleoAccountInfo = {
 
 export type RecordPickingStrategy = "manual" | "auto";
 
+export type AleoTokenType = "arc20" | "arc21" | "arc22" | "unknown";
+
 export type TransactionType = (typeof TRANSACTION_TYPE)[keyof typeof TRANSACTION_TYPE];
 
 export type AleoTransactionIntentData =

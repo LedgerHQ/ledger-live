@@ -2,6 +2,7 @@ export const ALEO_DUMMY_ADDRESS = "aleo14pfq40wgltv8wrhsxqe5tlme4pkp448rfejfvqhd
 
 export const PROGRAM_ID = {
   CREDITS: "credits.aleo",
+  TOKEN_REGISTRY: "token_registry.aleo",
 };
 
 export const EXPLORER_TRANSFER_TYPES = {
@@ -50,6 +51,9 @@ export const AMOUNT_ARG_INDEX = 2;
 // The maximum amount of records to fetch in a single API call when fetching owned records.
 // This is not a limit on the total number of records that can be fetched, but rather a pagination parameter for the API calls.
 export const DEFAULT_RECORDS_PAGE_SIZE = 1000;
+
+// Pagination parameter for GET /tokens calls when fetching the full token registry.
+export const DEFAULT_TOKENS_PAGE_SIZE = 1000;
 
 /**
  * Progress phase boundaries for private sync.
