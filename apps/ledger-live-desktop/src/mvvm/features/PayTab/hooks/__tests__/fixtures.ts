@@ -1,7 +1,7 @@
 import { makeToken } from "@ledgerhq/asset-aggregation/assetCategorization/__tests__/fixtures";
 import type { CategorizedAssetItem } from "@ledgerhq/asset-aggregation/assetCategorization/index";
 import type { Unit } from "@domain/entity-currency-unit";
-import type { DefaultStablecoin } from "../usePayStablecoins";
+import type { DefaultStablecoin } from "@features/platform-aggregated-assets";
 
 export const USD_UNIT: Unit = { name: "US Dollar", code: "USD", magnitude: 2 };
 

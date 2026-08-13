@@ -1,10 +1,15 @@
 import { useCallback, useEffect, useMemo } from "react";
 import BigNumber from "bignumber.js";
 import { useTranslation } from "react-i18next";
-import { formatCurrencyUnitFragment } from "@ledgerhq/live-common/currencies/index";
+import {
+  formatCurrencyUnit,
+  formatCurrencyUnitFragment,
+} from "@ledgerhq/live-common/currencies/index";
 import {
   aggregatePayCardBalance,
+  buildBalanceFilterOptions,
   resolveSelection,
+  tickerForFilter,
   type FormattedValue,
   type PayCardBalanceData,
 } from "@features/flow-pay-card-balance";
@@ -14,10 +19,10 @@ import {
   setPayCardBalanceFilter,
   type PayCardBalanceFilter,
 } from "@domain/entity-pay-card";
+import type { Unit } from "@domain/entity-currency-unit";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";
 import { track } from "~/renderer/analytics/segment";
-import { buildBalanceFilterOptions, tickerForFilter } from "./buildBalanceFilterOptions";
 import { usePayStablecoins } from "./usePayStablecoins";
 
 export function usePayCardBalance(): PayCardBalanceData {
@@ -29,16 +34,31 @@ export function usePayCardBalance(): PayCardBalanceData {
 
   const { stablecoins, defaultStablecoins, isLoading, isError } = usePayStablecoins();
 
+  const formatFiat = useCallback(
+    (value: number): string =>
+      formatCurrencyUnit(counterValueCurrency.units[0], new BigNumber(value), {
+        locale,
+        showCode: true,
+      }),
+    [counterValueCurrency, locale],
+  );
+
+  const formatCrypto = useCallback(
+    (unit: Unit, balance: number): string =>
+      formatCurrencyUnit(unit, new BigNumber(balance), { locale, showCode: true }),
+    [locale],
+  );
+
   const filterOptions = useMemo(
     () =>
       buildBalanceFilterOptions({
         stablecoins,
         defaultStablecoins,
         allLabel: t("payTab.balance.filter.allStablecoins"),
-        locale,
-        counterValueUnit: counterValueCurrency.units[0],
+        formatFiat,
+        formatCrypto,
       }),
-    [stablecoins, defaultStablecoins, t, locale, counterValueCurrency],
+    [stablecoins, defaultStablecoins, t, formatFiat, formatCrypto],
   );
 
   const effectiveFilter = useMemo(
