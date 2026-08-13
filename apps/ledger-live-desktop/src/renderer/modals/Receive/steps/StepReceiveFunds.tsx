@@ -338,7 +338,9 @@ const StepReceiveFunds = (props: StepProps) => {
     : null;
 
   // Families that own their confirm-address lifecycle opt out of the shared auto-trigger.
-  // Zcash with shielded enabled uses 0x51 instead of the generic 0x40 path.
+  // Zcash with the shielded feature on never uses 0x40: verification is handled by
+  // ZcashShieldedVerify (0x51) when a shieldedAddress exists, or skipped entirely
+  // when showing the "Enable private balance" activation CTA.
   useEffect(() => {
     if (specific?.useCustomConfirmAddress || isZcashShielded) return;
     if (isAddressVerified === null) {
@@ -349,14 +351,29 @@ const StepReceiveFunds = (props: StepProps) => {
   // After successful shielded verification, advance to the "receive" success
   // step — mirrors what confirmAddress() does for the standard 0x40 path.
   useEffect(() => {
-    if (isZcashShielded && isAddressVerified === true) {
+    if (zcashShieldedAddress !== null && isAddressVerified === true) {
       transitionTo("receive");
     }
-  }, [isZcashShielded, isAddressVerified, transitionTo]);
+  }, [zcashShieldedAddress, isAddressVerified, transitionTo]);
 
   if (CustomStepReceiveFunds) {
     return <CustomStepReceiveFunds {...props} />;
   }
+
+  const deviceAnimationBlock = isZcashShielded ? (
+    zcashShieldedAddress !== null ? (
+      <>
+        <Separator />
+        <ZcashReceive2Device device={device!} />
+      </>
+    ) : null
+  ) : (
+    // "Enable private balance" CTA state — no device animation
+    <>
+      <Separator />
+      <Receive2Device device={device!} name={name} />
+    </>
+  );
 
   const CustomPostAlertReceiveFunds = specific?.StepReceiveFundsPostAlert;
 
@@ -429,19 +446,7 @@ const StepReceiveFunds = (props: StepProps) => {
                 showQRCodeModal={showQRCodeModal}
               />
               {CustomPostAlertReceiveFunds && <CustomPostAlertReceiveFunds {...props} />}
-              {isZcashShielded ? (
-                zcashShieldedAddress ? (
-                  <>
-                    <Separator />
-                    <ZcashReceive2Device device={device} />
-                  </>
-                ) : null
-              ) : (
-                <>
-                  <Separator />
-                  <Receive2Device device={device} name={name} />
-                </>
-              )}
+              {deviceAnimationBlock}
             </>
           ) : null // should not happen
         }

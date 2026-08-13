@@ -42,7 +42,7 @@ export type ZcashAccountBridge = AccountBridge<Transaction, ZcashAccount, Transa
   deriveShieldedAddress: (ufvk: string) => Promise<string>;
   getShieldedAddress: (
     account: ZcashAccount,
-    options: { deviceId: string; path?: string | undefined; display?: boolean | undefined },
+    options: { deviceId: string; path?: string; display?: boolean },
   ) => Promise<{ address: string }>;
 };
 
@@ -114,7 +114,7 @@ export function createBridges(signerContext: SignerContext, coinConfig: CoinConf
     getShieldedAddress: (account, { deviceId, path, display }) =>
       getShieldedAddressFn(deviceId, {
         path: path ?? account.freshAddressPath,
-        display,
+        ...(display !== undefined && { display }),
       }),
   };
 

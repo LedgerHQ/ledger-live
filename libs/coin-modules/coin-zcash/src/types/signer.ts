@@ -19,7 +19,6 @@ import type {
 // getFullViewingKey / signPcztTransaction). Kept named `BitcoinSigner` for
 // continuity with the copied adapter code and tests.
 
-export type BitcoinXPub = string;
 export type BitcoinAddress = {
   publicKey: string;
   bitcoinAddress: string;

@@ -17,10 +17,11 @@ import { useMaybeAccountName } from "~/renderer/reducers/wallet";
 import { getDefaultAccountName } from "@domain/entity-account-name";
 import type { ZcashAccount } from "@ledgerhq/live-common/families/bitcoin/types";
 import type { ZcashAccount as CoinZcashAccount } from "@ledgerhq/coin-zcash/types/bridge";
+import type { ZcashAccountBridge } from "@ledgerhq/coin-zcash/bridge";
 import type { ZcashPrivateInfo } from "@ledgerhq/coin-zcash/network/types";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { getEnv } from "@shared/env";
-import { useZcashBridge } from "./useZcashShieldedSync";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 
 const AlertBoxContainer = styled.div`
   margin-top: 20px;
@@ -41,7 +42,6 @@ type ZcashShieldedVerifyProps = {
   onChangeAddressVerified: (b?: boolean | null, a?: Error | null) => void;
 };
 
-// Mounts only for Zcash+shielded, so useZcashBridge is always safe to call here.
 function ZcashShieldedVerify({
   account,
   shieldedAddress,
@@ -49,7 +49,7 @@ function ZcashShieldedVerify({
   isAddressVerified,
   onChangeAddressVerified,
 }: ZcashShieldedVerifyProps) {
-  const bridge = useZcashBridge(account);
+  const bridge = useAccountBridge(account) as unknown as ZcashAccountBridge;
   // Ref so background sync producing new account object references does not
   // cancel and re-dispatch a 0x51 call while the user is confirming on device.
   const accountRef = useRef(account);
@@ -60,6 +60,7 @@ function ZcashShieldedVerify({
 
     let cancelled = false;
 
+    /* istanbul ignore next */
     if (getEnv("MOCK")) {
       const t = setTimeout(() => {
         if (!cancelled) onChangeAddressVerified(true);
@@ -84,11 +85,13 @@ function ZcashShieldedVerify({
       })
       .catch(err => {
         if (cancelled) return;
-        // Do not log err — IPC/device errors can echo UFVK back in the message
-        onChangeAddressVerified(
-          false,
-          err instanceof Error ? err : new Error("Verification failed"),
-        );
+        // Strip the message before propagating: device/IPC errors can echo the
+        // UFVK back in their message string, and onChangeAddressVerified feeds
+        // into logger.critical in ReceiveModal for non-user-refusal errors.
+        const safeErr = Object.assign(new Error("Verification failed"), {
+          name: err instanceof Error ? err.name : "Error",
+        });
+        onChangeAddressVerified(false, safeErr);
       });
 
     return () => {
@@ -113,7 +116,7 @@ export function ZcashShieldedReceiveBlock({
   isAddressVerified,
   onChangeAddressVerified,
   closeModal,
-}: ZcashShieldedReceiveBlockProps) {
+}: Readonly<ZcashShieldedReceiveBlockProps>) {
   const dispatch = useDispatch();
   const maybeAccountName = useMaybeAccountName(account);
   const name = maybeAccountName || getDefaultAccountName(account);

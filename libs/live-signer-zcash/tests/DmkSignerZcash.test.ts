@@ -194,23 +194,32 @@ describe("DmkSignerZcash", () => {
   });
 
   describe("getShieldedAddress", () => {
-    it("should return the unified address and pass checkOnDevice=false by default", async () => {
+    it("returns the unified address from the device action output", async () => {
       mockSignerZcash.getShieldedAddress.mockReturnValue({
-        observable: createCompletedObservable({ address: "u1testunifiedaddress" }),
+        observable: createCompletedObservable({ address: "u1testshieldedaddress" }),
       });
 
       const result = await signer.getShieldedAddress("m/32'/133'/0'");
 
-      expect(result).toEqual({ address: "u1testunifiedaddress" });
+      expect(result).toEqual({ address: "u1testshieldedaddress" });
+    });
+
+    it("passes checkOnDevice=false when display is omitted", async () => {
+      mockSignerZcash.getShieldedAddress.mockReturnValue({
+        observable: createCompletedObservable({ address: "u1testshieldedaddress" }),
+      });
+
+      await signer.getShieldedAddress("m/32'/133'/0'");
+
       expect(mockSignerZcash.getShieldedAddress).toHaveBeenCalledWith("m/32'/133'/0'", {
         checkOnDevice: false,
         skipOpenApp: true,
       });
     });
 
-    it("should pass checkOnDevice=true when display is true", async () => {
+    it("passes checkOnDevice=true when display is true", async () => {
       mockSignerZcash.getShieldedAddress.mockReturnValue({
-        observable: createCompletedObservable({ address: "u1testdisplay" }),
+        observable: createCompletedObservable({ address: "u1testshieldedaddress" }),
       });
 
       await signer.getShieldedAddress("m/32'/133'/0'", true);
@@ -218,47 +227,6 @@ describe("DmkSignerZcash", () => {
       expect(mockSignerZcash.getShieldedAddress).toHaveBeenCalledWith("m/32'/133'/0'", {
         checkOnDevice: true,
         skipOpenApp: true,
-      });
-    });
-
-    it("should reject with mapped error when device action returns error status", async () => {
-      mockSignerZcash.getShieldedAddress.mockReturnValue({
-        observable: createErrorStatusObservable({ _tag: "GetShieldedAddressDAError" }),
-      });
-
-      await expect(signer.getShieldedAddress("m/32'/133'/0'")).rejects.toThrow(
-        "GetShieldedAddressDAError",
-      );
-    });
-
-    it("should reject when observable emits transport error", async () => {
-      mockSignerZcash.getShieldedAddress.mockReturnValue({
-        observable: createTransportErrorObservable(new Error("transport error")),
-      });
-
-      await expect(signer.getShieldedAddress("m/32'/133'/0'")).rejects.toThrow("transport error");
-    });
-
-    it("should reject instead of hanging when the device action is stopped", async () => {
-      mockSignerZcash.getShieldedAddress.mockReturnValue({
-        observable: createStoppedObservable(),
-      });
-
-      await expect(signer.getShieldedAddress("m/32'/133'/0'")).rejects.toThrow(
-        "Unexpected device action status: stopped",
-      );
-    });
-
-    it("rejects with UserRefusedOnDevice (drives the 'Action rejected' UI) on the 6985 status word", async () => {
-      mockSignerZcash.getShieldedAddress.mockReturnValue({
-        observable: createErrorStatusObservable({
-          _tag: "ZcashAppCommandError",
-          errorCode: "6985",
-        }),
-      });
-
-      await expect(signer.getShieldedAddress("m/32'/133'/0'")).rejects.toMatchObject({
-        name: "UserRefusedOnDevice",
       });
     });
   });

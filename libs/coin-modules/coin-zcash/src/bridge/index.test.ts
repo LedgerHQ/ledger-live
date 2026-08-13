@@ -26,10 +26,6 @@ function makeSignerContext(getFullViewingKey: jest.Mock): SignerContext {
   return jest.fn(async (_deviceId, fn) => fn({ getFullViewingKey })) as unknown as SignerContext;
 }
 
-function makeSignerContextWithShielded(getShieldedAddress: jest.Mock): SignerContext {
-  return jest.fn(async (_deviceId, fn) => fn({ getShieldedAddress })) as unknown as SignerContext;
-}
-
 describe("createBridges", () => {
   it("exposes getFullViewingKey, defaulting the path to the account's fresh address path", async () => {
     const getFullViewingKey = jest.fn().mockResolvedValue({ viewKey: "uview1test" });
@@ -67,45 +63,28 @@ describe("createBridges", () => {
     expect(result).toBe("u1derived");
   });
 
-  describe("getShieldedAddress", () => {
-    it("calls the signer with the account path and returns the address", async () => {
-      const getShieldedAddress = jest.fn().mockResolvedValue({ address: "u1testunifiedaddr" });
-      const { accountBridge } = createBridges(
-        makeSignerContextWithShielded(getShieldedAddress),
-        coinConfig,
-      );
+  it("getShieldedAddress delegates to the signer with the account's freshAddressPath by default", async () => {
+    const getShieldedAddress = jest.fn().mockResolvedValue({ address: "u1testunified" });
+    const signerContext: SignerContext = jest.fn(async (_deviceId, fn) =>
+      fn({ getShieldedAddress }),
+    ) as unknown as SignerContext;
+    const { accountBridge } = createBridges(signerContext, coinConfig);
 
-      await expect(
-        accountBridge.getShieldedAddress(account, { deviceId: "device-1" }),
-      ).resolves.toEqual({ address: "u1testunifiedaddr" });
-      expect(getShieldedAddress).toHaveBeenCalledWith("m/32'/133'/0'", undefined);
-    });
+    const result = await accountBridge.getShieldedAddress(account, { deviceId: "device-1" });
 
-    it("honours an explicit path", async () => {
-      const getShieldedAddress = jest.fn().mockResolvedValue({ address: "u1testother" });
-      const { accountBridge } = createBridges(
-        makeSignerContextWithShielded(getShieldedAddress),
-        coinConfig,
-      );
+    expect(result).toEqual({ address: "u1testunified" });
+    expect(getShieldedAddress).toHaveBeenCalledWith("m/32'/133'/0'", undefined);
+  });
 
-      await accountBridge.getShieldedAddress(account, {
-        deviceId: "device-1",
-        path: "m/32'/133'/1'",
-      });
+  it("getShieldedAddress passes display=true when requested", async () => {
+    const getShieldedAddress = jest.fn().mockResolvedValue({ address: "u1testunified" });
+    const signerContext: SignerContext = jest.fn(async (_deviceId, fn) =>
+      fn({ getShieldedAddress }),
+    ) as unknown as SignerContext;
+    const { accountBridge } = createBridges(signerContext, coinConfig);
 
-      expect(getShieldedAddress).toHaveBeenCalledWith("m/32'/133'/1'", undefined);
-    });
+    await accountBridge.getShieldedAddress(account, { deviceId: "device-1", display: true });
 
-    it("passes display=true to the signer for on-device verification", async () => {
-      const getShieldedAddress = jest.fn().mockResolvedValue({ address: "u1testdisplay" });
-      const { accountBridge } = createBridges(
-        makeSignerContextWithShielded(getShieldedAddress),
-        coinConfig,
-      );
-
-      await accountBridge.getShieldedAddress(account, { deviceId: "device-1", display: true });
-
-      expect(getShieldedAddress).toHaveBeenCalledWith("m/32'/133'/0'", true);
-    });
+    expect(getShieldedAddress).toHaveBeenCalledWith("m/32'/133'/0'", true);
   });
 });

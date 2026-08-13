@@ -2,7 +2,7 @@ import type { SignerContext } from "../types/signer";
 
 export type GetShieldedAddressOptions = {
   path: string;
-  display?: boolean | undefined;
+  display?: boolean;
 };
 
 export type GetShieldedAddressResult = {

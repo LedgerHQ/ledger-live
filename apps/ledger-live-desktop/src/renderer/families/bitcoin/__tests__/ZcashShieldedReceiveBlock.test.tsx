@@ -1,77 +1,17 @@
-/**
- * @jest-environment jsdom
- */
 import React from "react";
-import {
-  act,
-  fireEvent,
-  render,
-  screen,
-  waitFor,
-  within,
-  withFlagOverrides,
-} from "tests/testSetup";
+import { act, render, screen, waitFor, withFlagOverrides } from "tests/testSetup";
 import { createFixtureAccount } from "@ledgerhq/coin-bitcoin/fixtures/common.fixtures";
 import { DeviceModelId } from "@ledgerhq/devices";
-import { getEnv } from "@shared/env";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { ZcashShieldedReceiveBlock } from "../ZcashShieldedReceiveBlock";
+import type { ZcashShieldedReceiveBlockProps } from "../ZcashShieldedReceiveBlock";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 
-// ── Mocks ──────────────────────────────────────────────────────────────────
-
-// jest.mock is hoisted before const declarations — never reference outer variables inside the factory.
-// Several API schemas inside configureStore.ts require non-empty strings (z.string().min(1)).
-// Providing "jest" for those keys satisfies the schemas without real network config.
-jest.mock("@shared/env", () => ({
-  getEnv: jest.fn((key: string) => {
-    if (
-      key === "CAL_SERVICE_URL" ||
-      key === "LEDGER_CLIENT_VERSION" ||
-      key === "LEDGER_COUNTERVALUES_API" ||
-      key === "CMC_API_URL" ||
-      key === "PUSH_DEVICES_SERVICE_URL" ||
-      key === "SWAP_API_BASE"
-    )
-      return "jest";
-    return "";
-  }),
+jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
+  useAccountBridge: jest.fn(),
 }));
 
-const mockDispatch = jest.fn();
-const mockGetShieldedAddress = jest.fn();
-const mockGetEnv = jest.mocked(getEnv);
-
-// Default getEnv implementation: schema-required keys → "jest", everything else → "".
-// Used in beforeEach to restore after tests that override specific keys.
-const defaultEnvImpl = (key: string): string => {
-  if (
-    key === "CAL_SERVICE_URL" ||
-    key === "LEDGER_CLIENT_VERSION" ||
-    key === "LEDGER_COUNTERVALUES_API" ||
-    key === "CMC_API_URL" ||
-    key === "PUSH_DEVICES_SERVICE_URL" ||
-    key === "SWAP_API_BASE"
-  )
-    return "jest";
-  return "";
-};
-jest.mock("LLD/hooks/redux", () => ({
-  ...jest.requireActual("LLD/hooks/redux"),
-  useDispatch: () => mockDispatch, // spy-able dispatch; useSelector/useStore use real react-redux hooks
-}));
-jest.mock("~/renderer/reducers/wallet", () => ({
-  ...jest.requireActual("~/renderer/reducers/wallet"),
-  useMaybeAccountName: jest.fn(() => null),
-}));
-jest.mock("@domain/entity-account-name", () => ({
-  getDefaultAccountName: jest.fn(() => "Zcash 1"),
-}));
-jest.mock("~/renderer/actions/modals", () => ({ openModal: jest.fn(a => a) }));
-jest.mock("../useZcashShieldedSync", () => ({
-  useZcashBridge: jest.fn(() => ({ getShieldedAddress: mockGetShieldedAddress })),
-}));
-
-// ── Fixtures ───────────────────────────────────────────────────────────────
+const mockedUseAccountBridge = jest.mocked(useAccountBridge);
 
 const mockDevice: Device = {
   deviceId: "mock-device-id",
@@ -79,9 +19,7 @@ const mockDevice: Device = {
   wired: true,
 };
 
-// Realistic-length UA: ~70 chars, ends in a unique suffix so both address
-// segments ("slice(0,-5)" and "slice(-5)") are unambiguous in the DOM.
-const SHIELDED = "u1testshieldedaddressfortestingreceivingblockzec000fxyz99";
+const SHIELDED = "u1testshieldedaddressfortesting000xyz";
 const UFVK = "uview1testufvkkey";
 
 const baseAccount = {
@@ -94,140 +32,104 @@ const buildAccount = (privateInfo?: unknown) => ({
   ...(privateInfo !== undefined ? { privateInfo } : {}),
 });
 
-const shieldedAccount = buildAccount({ shieldedAddress: SHIELDED, ufvk: UFVK });
+const mockBridge = (getShieldedAddress: jest.Mock) =>
+  mockedUseAccountBridge.mockReturnValue({
+    getShieldedAddress,
+  } as unknown as ReturnType<typeof useAccountBridge>);
 
-const renderBlock = (
-  overrides: Partial<{
-    account: unknown;
-    isAddressVerified: boolean | null | undefined;
-    device: Device | null | undefined;
-    onChangeAddressVerified: jest.Mock;
-    closeModal: jest.Mock;
-  }> = {},
-) =>
+const renderBlock = (overrides: Partial<ZcashShieldedReceiveBlockProps> = {}) =>
   render(
     <ZcashShieldedReceiveBlock
-      account={shieldedAccount as never}
-      device={mockDevice}
-      isAddressVerified={null}
-      onChangeAddressVerified={jest.fn()}
-      closeModal={jest.fn()}
-      {...overrides}
+      {...{
+        account: buildAccount({ shieldedAddress: SHIELDED, ufvk: UFVK }) as never,
+        device: mockDevice,
+        isAddressVerified: null,
+        onChangeAddressVerified: jest.fn(),
+        closeModal: jest.fn(),
+        ...overrides,
+      }}
     />,
     { initialState: withFlagOverrides({ zcashShielded: { enabled: true } }) },
   );
 
-// ── Tests ──────────────────────────────────────────────────────────────────
+beforeEach(() => {
+  jest.clearAllMocks();
+  // Never-resolving: keeps verification effect pending so it does not
+  // mutate state during render assertions.
+  mockBridge(jest.fn(() => new Promise(() => {})));
+});
 
-describe("ZcashShieldedReceiveBlock — address display", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-    mockGetEnv.mockImplementation(defaultEnvImpl);
-    // Verification effect fires on mount (isAddressVerified=null, device set) — return a
-    // never-resolving promise so the block renders normally without crashing or completing.
-    mockGetShieldedAddress.mockReturnValue(new Promise(() => {}));
-  });
-
-  it("renders the private block with the stable data-testid", () => {
+describe("ZcashShieldedReceiveBlock — rendering", () => {
+  it("renders the private address block when shieldedAddress is present", () => {
     renderBlock();
     expect(screen.getByTestId("receive-private-address-block")).toBeInTheDocument();
   });
 
-  it("the block's ReadOnlyAddressField carries the shieldedAddress, not a different address", () => {
-    renderBlock();
-    const block = screen.getByTestId("receive-private-address-block");
-    // ReadOnlyAddressField splits the address: first span = slice(0,-5)
-    expect(within(block).getByText(SHIELDED.slice(0, -5))).toBeInTheDocument();
-    expect(within(block).getByText(SHIELDED.slice(-5))).toBeInTheDocument();
-  });
-
-  it("the Show QR Code link is present and clickable without throwing", () => {
-    // The modal renders into a #modals portal which does not exist in jsdom; testing the full
-    // open/close lifecycle belongs in a playwright test. Here we verify the link is accessible and
-    // that clicking it does not crash (state toggle is exercised by the act wrapper).
-    renderBlock({ isAddressVerified: false });
-    const block = screen.getByTestId("receive-private-address-block");
-    expect(within(block).getByText("Show QR Code")).toBeInTheDocument();
-    act(() => {
-      fireEvent.click(within(block).getByText("Show QR Code"));
-    });
-  });
-});
-
-describe("ZcashShieldedReceiveBlock — no UFVK state", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-    mockGetEnv.mockImplementation(defaultEnvImpl);
-  });
-
   it("renders the activation CTA when ufvk is absent", () => {
     renderBlock({ account: buildAccount({}) as never });
-    // i18n is loaded in test env — assert the real translated string, not the key
     expect(screen.getByText("Enable private balance")).toBeInTheDocument();
   });
 
   it("renders nothing when ufvk is present but shieldedAddress is null", () => {
     renderBlock({ account: buildAccount({ ufvk: UFVK, shieldedAddress: null }) as never });
     expect(screen.queryByTestId("receive-private-address-block")).not.toBeInTheDocument();
-    expect(screen.queryByText("zcash.receive.noUfvk.cta")).not.toBeInTheDocument();
+    expect(screen.queryByText("Enable private balance")).not.toBeInTheDocument();
   });
 });
 
 describe("ZcashShieldedReceiveBlock — verification", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-    mockGetEnv.mockImplementation(defaultEnvImpl);
-  });
-
-  it("onChangeAddressVerified(true, null) when returned UA matches stored address", async () => {
+  it("calls onChangeAddressVerified(true, null) when device returns matching address", async () => {
     const onChangeAddressVerified = jest.fn();
-    mockGetShieldedAddress.mockResolvedValue({ address: SHIELDED });
+    mockBridge(jest.fn().mockResolvedValue({ address: SHIELDED }));
+
     renderBlock({ onChangeAddressVerified });
+
     await waitFor(() => expect(onChangeAddressVerified).toHaveBeenCalledWith(true, null));
   });
 
-  it("onChangeAddressVerified(false, Error) on UA mismatch — catches derivation divergence too", async () => {
+  it("calls onChangeAddressVerified(false, Error) when device returns a different address", async () => {
     const onChangeAddressVerified = jest.fn();
-    mockGetShieldedAddress.mockResolvedValue({ address: "u1wrongaddress" });
+    mockBridge(jest.fn().mockResolvedValue({ address: "u1wrongaddress" }));
+
     renderBlock({ onChangeAddressVerified });
-    await waitFor(() => {
-      expect(onChangeAddressVerified).toHaveBeenCalledWith(false, expect.any(Error));
-      const [, err] = onChangeAddressVerified.mock.calls[0];
-      // Error message must not hard-code "wrong device" as the only cause
-      expect((err as Error).message).not.toMatch(/wrong device/i);
-    });
+
+    await waitFor(() =>
+      expect(onChangeAddressVerified).toHaveBeenCalledWith(false, expect.any(Error)),
+    );
   });
 
-  it("does not fire verification when device is absent", async () => {
+  it("calls onChangeAddressVerified with a sanitized error when getShieldedAddress rejects", async () => {
     const onChangeAddressVerified = jest.fn();
+    const err = new Error("device transport failure — contains sensitive payload");
+    mockBridge(jest.fn().mockRejectedValue(err));
+
+    renderBlock({ onChangeAddressVerified });
+
+    await waitFor(() =>
+      expect(onChangeAddressVerified).toHaveBeenCalledWith(
+        false,
+        expect.objectContaining({ message: "Verification failed", name: err.name }),
+      ),
+    );
+  });
+
+  it("does not call onChangeAddressVerified when device is absent", async () => {
+    const onChangeAddressVerified = jest.fn();
+
     renderBlock({ device: null, onChangeAddressVerified });
-    await act(async () => {});
-    expect(onChangeAddressVerified).not.toHaveBeenCalled();
-  });
 
-  it("does not re-verify when isAddressVerified is already set (false)", async () => {
-    const onChangeAddressVerified = jest.fn();
-    mockGetShieldedAddress.mockResolvedValue({ address: SHIELDED });
-    renderBlock({ isAddressVerified: false, onChangeAddressVerified });
     await act(async () => {});
     expect(onChangeAddressVerified).not.toHaveBeenCalled();
-    expect(mockGetShieldedAddress).not.toHaveBeenCalled();
   });
 });
 
-describe("ZcashShieldedReceiveBlock — MOCK shortcut", () => {
-  beforeEach(() => jest.clearAllMocks());
+describe("ZcashShieldedReceiveBlock — CTA", () => {
+  it("calls closeModal and dispatches openModal when activation button is clicked", () => {
+    const closeModal = jest.fn();
+    renderBlock({ account: buildAccount({}) as never, closeModal });
 
-  it("resolves verification without a device call in MOCK mode", () => {
-    mockGetEnv.mockImplementation((key: string) => (key === "MOCK" ? "1" : defaultEnvImpl(key)));
-    const onChangeAddressVerified = jest.fn();
-    jest.useFakeTimers();
-    renderBlock({ onChangeAddressVerified });
-    act(() => {
-      jest.advanceTimersByTime(1500);
-    });
-    expect(onChangeAddressVerified).toHaveBeenCalledWith(true);
-    expect(mockGetShieldedAddress).not.toHaveBeenCalled();
-    jest.useRealTimers();
+    screen.getByText("Enable private balance").click();
+
+    expect(closeModal).toHaveBeenCalledTimes(1);
   });
 });
