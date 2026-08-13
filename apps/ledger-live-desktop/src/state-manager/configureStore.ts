@@ -18,7 +18,6 @@ import {
   swapApiExtra,
 } from "@shared/api-services";
 import { getCardSessionToken, refreshCardSession } from "@features/platform-card";
-import { payCardApiExtra } from "@domain/api-pay-card";
 import logger from "~/renderer/middlewares/logger";
 import reducers, { State } from "~/renderer/reducers";
 import { applyLldRTKApiMiddlewares } from "~/renderer/reducers/rtkQueryApi";
@@ -81,10 +80,6 @@ const customCreateStore = ({
               ...swapApiExtra({
                 swapApiBaseUrl: getEnv("SWAP_API_BASE"),
                 ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
-              }),
-              ...payCardApiExtra({
-                // LIVE-33829: force mocks until Pay Card API base URL is wired.
-                payCardApiMocksEnabled: true,
               }),
               ...authApiExtra({
                 authFeatureId: "lwdAuth",

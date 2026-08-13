@@ -1,6 +1,8 @@
 # @devtools/pay-card
 
-The Card / Pay DevTool. Lets developers put the Card/Pay feature into any state in one place: toggle the relevant feature flags, switch the API mock scenario, apply one-click quick states, force domain state, and reset seen/tour flags.
+The Card / Pay DevTool. It puts the Card / Pay feature into a given state from one place, in four
+sections: **Feature flags**, **Onboarding** (toggle each step done or not-done), **Reset onboarding**
+and **Feature tour** (seen state plus a reset).
 
 ## Import boundary
 
@@ -13,7 +15,11 @@ import PayCard, { type PayCardToolProps } from "@devtools/pay-card";
 ```
 
 - `PayCard` (default export) — the React component rendered by the shell.
-- `PayCardToolProps` — the props contract the host (via bindings) must satisfy.
+- `PayCardToolProps` — the props contract the host (via bindings) must satisfy, with its parts
+  `PayCardFlagsProps`, `PayCardOnboardingProps` and `OnboardingStep`.
+- `usePayCardViewModel` / `PayCardViewModel` — onboarding progress derived from those props, plus
+  `toggleStep` and `setAllSteps`.
+- `formatId` — turns a step id into a label: `"kyc-check"` → `"Kyc check"`.
 
 ## Props contract
 
@@ -23,34 +29,23 @@ interface PayCardToolProps {
     payTabEnabled: boolean;
     cardParam: boolean;
     ptxCardEnabled: boolean;
-    setPayTabEnabled: (v: boolean) => void;
-    setCardParam: (v: boolean) => void;
-    setPtxCardEnabled: (v: boolean) => void;
-    resetFlagOverrides: () => void;
+    setPayTabEnabled: (value: boolean) => void;
+    setCardParam: (value: boolean) => void;
+    setPtxCardEnabled: (value: boolean) => void;
   };
-  mocks: {
-    useMocks: boolean;
-    setUseMocks: (v: boolean) => void;
-    scenario: string;
-    scenarios: readonly string[];
-    setScenario: (id: string) => void;
-    phase: string;
-    phases: readonly string[];
-    setPhase: (id: string) => void;
+  onboarding: {
+    steps: readonly {
+      id: string;
+      label: string;
+      done: boolean;
+    }[];
+    // id "all" applies `done` to every step — the "Reset onboarding" button relies on it
+    setStepDone: (id: string, done: boolean) => void;
   };
-  domain: {
-    openPayCard: () => void;
-    closePayCard: () => void;
-    resetPayCardSlice: () => void;
-  };
-  resets: {
-    resetFeatureTour: () => void;
-    resetOnboardingWidget: () => void;
-  };
+  hasSeenFeatureTour: boolean;
+  resetPayCardFeatureTourSeen: () => void;
 }
 ```
-
-Scenario and phase ids are plain strings; the concrete ids come from `@domain/api-pay-card` mocks and are injected by the bindings layer, keeping this tool app-agnostic.
 
 ## Layout
 
@@ -61,8 +56,8 @@ pay-card/
 └── src/
     ├── pay-card/          # PayCard.web.tsx / PayCard.native.tsx (default-exported component)
     ├── components/        # Section / row primitives, each with .web/.native variants
-    ├── usePayCardViewModel.ts  # shared view model: quick-state presets + derived UI state
-    ├── types.ts           # PayCardToolProps
+    ├── usePayCardViewModel.ts  # shared view model: onboarding progress + step helpers
+    ├── types.ts           # PayCardToolProps and its parts
     ├── index.ts           # public exports + `export default PayCard;`
     └── index.native.ts    # native entry point
 ```
