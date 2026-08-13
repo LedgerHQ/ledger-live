@@ -41,6 +41,39 @@ export function buildConsumedRecordTags(
   return tags;
 }
 
+/**
+ * Decrypts every supplied record. A decrypt failure rejects, so callers never see a partial set.
+ *
+ * Spend reconciliation is deliberately not part of this: only the bridge needs it, to compensate for
+ * the scanner reporting already-spent records as unspent. Callers that do pair it with
+ * {@link buildConsumedRecordTags}; a history listing does not, since a record being spent later does
+ * not unmake the operation that created it.
+ */
+export async function enrichPrivateRecords({
+  config,
+  viewKey,
+  address,
+  records,
+  onProgress,
+  signal,
+}: {
+  config: AleoCoinConfig;
+  viewKey: string;
+  address: string;
+  records: AleoPrivateRecord[];
+  onProgress?: (completed: number, total: number) => void;
+  signal?: AbortSignal;
+}): Promise<(EnrichedPrivateRecord | null)[]> {
+  let completed = 0;
+
+  return promiseAllBatched(2, records, async rawRecord => {
+    signal?.throwIfAborted();
+    const result = await enrichPrivateRecord({ config, rawRecord, address, viewKey });
+    onProgress?.(++completed, records.length);
+    return result;
+  });
+}
+
 export async function listPrivateOperations({
   config,
   viewKey,
@@ -66,12 +99,13 @@ export async function listPrivateOperations({
   const recordsToEnrich = tokenRecords ? [...privateRecords, ...tokenRecords] : privateRecords;
   const nativeRecordTags = new Set(privateRecords.map(record => record.tag));
 
-  let completed = 0;
-  const enrichedRecords = await promiseAllBatched(2, recordsToEnrich, async rawRecord => {
-    signal?.throwIfAborted();
-    const result = await enrichPrivateRecord({ config, rawRecord, address, viewKey });
-    onProgress?.(++completed, recordsToEnrich.length);
-    return result;
+  const enrichedRecords = await enrichPrivateRecords({
+    config,
+    viewKey,
+    address,
+    records: recordsToEnrich,
+    ...(onProgress && { onProgress }),
+    ...(signal && { signal }),
   });
 
   const consumedRecordTags = buildConsumedRecordTags(enrichedRecords, address);

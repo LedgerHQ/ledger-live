@@ -97,6 +97,9 @@ export interface AleoGetProvePublicKeyResponse {
 export interface AleoRecordScannerStatusResponse {
   synced: boolean;
   percentage: number;
+  // Height the scanner is complete through (LIVE-34092). Not served yet — treat as optional and
+  // fall back to the chain tip, see `getScannerSyncedHeight`.
+  synced_up_to?: number;
 }
 
 export interface AleoPrivateRecord {

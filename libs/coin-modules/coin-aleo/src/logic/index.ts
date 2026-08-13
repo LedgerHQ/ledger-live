@@ -5,5 +5,7 @@ export { estimateFees } from "./estimateFees";
 export { getBalance } from "./getBalance";
 export { lastBlock } from "./lastBlock";
 export { listOperations } from "./listOperations";
+export { listOperationsFramework } from "./listOperationsFramework";
+export { resolvePrivateContext } from "./listOperationsFramework.helpers";
 export { validateIntent } from "./validateIntent";
 export { validateAddress } from "./validateAddress";

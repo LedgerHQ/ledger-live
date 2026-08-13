@@ -17,7 +17,15 @@ import type {
 } from "@ledgerhq/coin-module-framework/api/index";
 import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
-import { estimateFees, getBalance, lastBlock, listOperations, validateAddress } from "../logic";
+import {
+  estimateFees,
+  getBalance,
+  lastBlock,
+  listOperations,
+  listOperationsFramework,
+  resolvePrivateContext,
+  validateAddress,
+} from "../logic";
 import { getTransactionType } from "../logic/utils";
 import type { AleoContext, AleoCoinConfig, AleoTransactionIntentData } from "../types";
 
@@ -77,16 +85,25 @@ export function createApi(
       const config = await context.config();
       return lastBlock(config);
     },
+    // The ADR-042 pair opts into the merged public + private path, where Aleo history is complete.
+    // Without it the public-only listing is served unchanged; half-supplied is rejected before the
+    // config resolves, so a request that cannot be honoured never reaches the network.
     listOperations: async (context: AleoContext, address, options) => {
-      const config = await context.config();
-      const { operations, nextCursor } = await listOperations({
-        config,
-        currencyId,
-        address,
-        options,
-        mode: "coin-framework",
-      });
-      return { items: operations, next: nextCursor ?? undefined };
+      const privateContext = resolvePrivateContext(context, address);
+      const config = await context.config(currencyId);
+
+      if (!privateContext) {
+        const { operations, nextCursor } = await listOperations({
+          config,
+          currencyId,
+          address,
+          options,
+          mode: "coin-framework",
+        });
+        return { items: operations, next: nextCursor ?? undefined };
+      }
+
+      return listOperationsFramework({ config, address, options, ...privateContext });
     },
     getBlock(_context, _height): Promise<Block> {
       throw new Error("getBlock is not supported");

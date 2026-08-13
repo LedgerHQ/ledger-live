@@ -36,6 +36,25 @@ function limitTransactions(
   return transactions.length > limit ? transactions.slice(0, limit) : transactions;
 }
 
+/**
+ * The explorer pages per transition, so a multi-transition transaction arrives as several rows
+ * sharing one transaction_id. Keeping the first occurrence normalises the result to tx granularity,
+ * which is what lets the cursor stay monotonic. `seen` is owned by the caller so it spans every page
+ * of one fetch and therefore dedupes across page boundaries too.
+ */
+function dedupeByTransactionId(
+  transactions: AleoPublicTransaction[],
+  seen: Set<string>,
+): AleoPublicTransaction[] {
+  return transactions.filter(tx => {
+    const transactionId = tx.transaction_id.trim();
+    if (seen.has(transactionId)) return false;
+
+    seen.add(transactionId);
+    return true;
+  });
+}
+
 function getLastTransactionCursor(transactions: AleoPublicTransaction[]): string | null {
   return transactions.at(-1)?.block_number.toString() ?? null;
 }
@@ -68,6 +87,7 @@ export async function fetchAccountTransactionsFromHeight({
   nextCursor: string | null;
 }> {
   const transactions: AleoPublicTransaction[] = [];
+  const seenTransactionIds = new Set<string>();
   let currentCursor = cursor ?? null;
   let hasMorePages = true;
 
@@ -96,7 +116,7 @@ export async function fetchAccountTransactionsFromHeight({
 
       return hasValidBlockNumber && !isInvalidTransition;
     });
-    transactions.push(...recentTxs);
+    transactions.push(...dedupeByTransactionId(recentTxs, seenTransactionIds));
 
     // stop if DESC order hit the min height boundary
     if (order === "desc" && hasReachedMinHeight(page.transactions, minBlockHeight)) {
