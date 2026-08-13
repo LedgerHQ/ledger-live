@@ -1812,6 +1812,9 @@ importers:
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
         version: 2.0.4(@ledgerhq/lumen-design-core@0.1.24)(@ledgerhq/lumen-ui-rnative@0.1.54(db3cee34e4c141f05cf3fa5e40e0d3fc))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+      '@ledgerhq/device-core':
+        specifier: workspace:^
+        version: link:../../libs/device-core
       '@ledgerhq/device-intent':
         specifier: workspace:^
         version: link:../../libs/device-intent

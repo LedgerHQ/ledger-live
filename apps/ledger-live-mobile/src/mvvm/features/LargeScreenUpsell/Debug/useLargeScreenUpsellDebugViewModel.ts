@@ -3,7 +3,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useFeature } from "@features/platform-feature-flags";
 import type { Features } from "@shared/feature-flags";
 import { setOverride } from "@shared/feature-flags";
-import { DeviceModelId, DevicesWithTouchScreen } from "@ledgerhq/types-devices";
+import { DevicesWithTouchScreen } from "@ledgerhq/device-core";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 import {
   isCooldownElapsed,
   shouldThrottle,

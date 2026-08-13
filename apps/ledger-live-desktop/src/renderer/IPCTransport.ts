@@ -3,9 +3,9 @@
  * WebHID devices use DeviceManagementKit directly in renderer
  */
 import { ipcRenderer } from "electron";
-import Transport, { TransportError } from "@ledgerhq/hw-transport";
+import Transport, { type DescriptorEvent, TransportError } from "@ledgerhq/hw-transport";
 import { log, trace, TraceContext } from "@ledgerhq/logs";
-import { DescriptorEvent, DeviceModelId } from "@ledgerhq/types-devices";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 import { Observer } from "rxjs";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { v4 as uuid } from "uuid";

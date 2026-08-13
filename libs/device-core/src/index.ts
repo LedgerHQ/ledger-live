@@ -38,6 +38,7 @@ export {
 export { isEditDeviceNameSupported } from "./capabilities/isEditDeviceNameSupported";
 export { isSyncOnboardingSupported } from "./capabilities/isSyncOnboardingSupported";
 export { supportedDeviceModelIds } from "./capabilities/isCustomLockScreenSupported";
+export { DevicesWithTouchScreen } from "./capabilities/devicesWithTouchScreen";
 export { getDeviceHasBattery } from "./capabilities/getDeviceHasBattery";
 export { isCharonSupported } from "./commands/use-cases/isCharonSupported";
 // src/customLockScreen/

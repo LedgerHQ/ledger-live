@@ -14,104 +14,19 @@ Ledger types for devices and transport.
 #### Table of Contents
 
 *   [DeviceModelId](#devicemodelid)
-*   [DevicesWithTouchScreen](#deviceswithtouchscreen)
 *   [DeviceModel](#devicemodel)
-*   [ChargingModes](#chargingmodes)
-*   [BatteryStatusFlags](#batterystatusflags)
-*   [BluetoothInfos](#bluetoothinfos)
-*   [Subscription](#subscription)
-    *   [Properties](#properties)
 *   [Device](#device)
-*   [Observer](#observer)
-*   [send](#send)
-    *   [Parameters](#parameters)
-*   [on](#on)
-*   [off](#off)
-*   [setExchangeTimeout](#setexchangetimeout)
-*   [setExchangeUnresponsiveTimeout](#setexchangeunresponsivetimeout)
 
 ### DeviceModelId
 
 DeviceModelId is a unique identifier to identify the model of a Ledger hardware wallet.
 
-### DevicesWithTouchScreen
-
-DevicesWithTouchScreen is a list of DeviceModelId of whom the Ledger device can present a QR code.
-
-Type: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[DeviceModelId](#devicemodelid)>
-
 ### DeviceModel
 
 a DeviceModel contains all the information of a specific Ledger hardware wallet model.
-
-### ChargingModes
-
-### BatteryStatusFlags
-
-Series of flags to represent the health status of the Ledger hardware wallet battery.
-
-### BluetoothInfos
-
-### Subscription
-
-represent an ongoing job that can be stopped with .unsubscribe()
-
-Type: {unsubscribe: function (): void}
-
-#### Properties
-
-*   `unsubscribe` **function (): void**&#x20;
 
 ### Device
 
 data about the device. not yet typed
 
 Type: any
-
-### Observer
-
-Type: Readonly<{next: function (event: Ev): any, error: function (e: any): any, complete: function (): any}>
-
-### send
-
-wrapper on top of exchange to simplify work of the implementation.
-
-Type: function (cla: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), ins: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), p1: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), p2: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), data: [Buffer](https://nodejs.org/api/buffer.html), statusList: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)>): [Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[Buffer](https://nodejs.org/api/buffer.html)>
-
-#### Parameters
-
-*   `cla` &#x20;
-*   `ins` &#x20;
-*   `p1` &#x20;
-*   `p2` &#x20;
-*   `data` &#x20;
-*   `statusList`  is a list of accepted status code (shorts). \[0x9000] by default
-
-Returns **any** a Promise of response buffer
-
-### on
-
-Listen to an event on an instance of transport.
-Transport implementation can have specific events. Here is the common events:
-
-*   `"disconnect"` : triggered if Transport is disconnected
-
-Type: function (eventName: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), cb: function (...args: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<any>): any): void
-
-### off
-
-Stop listening to an event on an instance of transport.
-
-Type: function (eventName: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), cb: function (...args: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<any>): any): void
-
-### setExchangeTimeout
-
-Set a timeout (in milliseconds) for the exchange call. Only some transport might implement it. (e.g. U2F)
-
-Type: function (exchangeTimeout: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)): void
-
-### setExchangeUnresponsiveTimeout
-
-Define the delay before emitting "unresponsive" on an exchange that does not respond
-
-Type: function (unresponsiveTimeout: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)): void

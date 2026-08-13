@@ -6,8 +6,7 @@ import { catchError, filter, map, switchMap } from "rxjs/operators";
 import { SharedTaskEvent, retryOnErrorsCommandWrapper, sharedLogicTaskWrapper } from "./core";
 import { quitApp } from "../commands/quitApp";
 import { withTransport } from "../transports/core";
-import { BatteryStatusTypes } from "../../hw/getBatteryStatus";
-import { BatteryStatusFlags } from "@ledgerhq/types-devices";
+import { BatteryStatusTypes, type BatteryStatusFlags } from "../../hw/getBatteryStatus";
 import getBatteryStatus from "../commands/getBatteryStatus";
 
 export type GetBatteryStatusesTaskArgs = {
