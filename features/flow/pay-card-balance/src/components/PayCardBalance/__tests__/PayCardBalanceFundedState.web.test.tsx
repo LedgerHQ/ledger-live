@@ -52,4 +52,22 @@ describe("PayCardBalanceFundedState (Web)", () => {
 
     expect(onOpenFilter).toHaveBeenCalledTimes(1);
   });
+
+  it("should render the action tiles when provided", () => {
+    renderWithStyle(
+      <PayCardBalanceFundedState
+        balance={1000}
+        formatCountervalue={formatCountervalue}
+        isLoading={false}
+        allStablecoinsLabel="All stablecoins"
+        onOpenFilter={jest.fn()}
+        actionTiles={{
+          page: "Pay",
+          tiles: [{ id: "deposit", label: "Deposit", onPress: jest.fn() }],
+        }}
+      />,
+    );
+
+    expect(screen.getByTestId("action-tile-deposit")).toBeVisible();
+  });
 });

@@ -12,6 +12,7 @@ export function usePayCardBalanceViewModel({
   formatCountervalue,
   onConfirmFilter,
   onTrackEvent,
+  actionTiles,
   labels,
 }: PayCardBalanceProps): PayCardBalanceViewProps {
   const isLoading = status === "loading";
@@ -57,5 +58,6 @@ export function usePayCardBalanceViewModel({
     onCloseFilter,
     onConfirmFilter,
     onTrackEvent,
+    actionTiles,
   };
 }
