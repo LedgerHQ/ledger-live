@@ -312,6 +312,9 @@ async function mockSeiOperationsApi(page: Page) {
 }
 
 test.use({
+  // Pre-boot, not in a `beforeEach`: the initial sync would otherwise hit the real sei
+  // endpoints and cache the real validator list for 30s, killing every delegation lookup.
+  mockRoutes: [mockSeiValidatorsApi, mockSeiOperationsApi, mockSeiEvmRpc],
   userdata: "accountSeiEvmStaking",
   featureFlags: {
     evmNativeStaking: {
@@ -329,9 +332,6 @@ let accountsPage: AccountsPage;
 
 test.beforeEach(async ({ page }) => {
   seiAccountAssociated = true;
-  await mockSeiValidatorsApi(page);
-  await mockSeiOperationsApi(page);
-  await mockSeiEvmRpc(page);
 
   const layout = new Layout(page);
   await layout.goToAccounts();
