@@ -15,7 +15,7 @@ import {
   InvalidAddress,
   NotEnoughBalance,
   RecipientRequired,
-} from "@ledgerhq/ledger-wallet-framework/errors";
+} from "@ledgerhq/coin-module-framework/errors";
 import {
   ClaimRewardsFeesWarning,
   ETHAddressNonEIP,

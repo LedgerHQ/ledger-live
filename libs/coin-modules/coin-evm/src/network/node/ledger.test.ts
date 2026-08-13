@@ -1,6 +1,6 @@
 import { AssertionError, fail } from "assert";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
-import { delay } from "@ledgerhq/live-promise";
+import { delay } from "@ledgerhq/coin-module-framework/promises";
 import { CryptoCurrency, CryptoCurrencyIdSchema } from "@ledgerhq/ledger-wallet-framework/types";
 import axios from "axios";
 import BigNumber from "bignumber.js";
@@ -13,7 +13,7 @@ import { createLedgerNodeApi } from "./ledger";
 jest.useFakeTimers({ doNotFake: ["setTimeout"] });
 
 jest.mock("axios");
-jest.mock("@ledgerhq/live-promise");
+jest.mock("@ledgerhq/coin-module-framework/promises");
 jest.mock("../gasTracker/ledger", () => ({
   getGasOptions: jest.fn(),
 }));

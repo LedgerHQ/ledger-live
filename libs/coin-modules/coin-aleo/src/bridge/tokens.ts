@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { log } from "@ledgerhq/logs";
-import { promiseAllBatched } from "@ledgerhq/live-promise";
+import { promiseAllBatched } from "@ledgerhq/coin-module-framework/promises";
 import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { Account, OperationType, TokenAccount } from "@ledgerhq/types-live";
 import { encodeTokenAccountId, emptyHistoryCache } from "@ledgerhq/ledger-wallet-framework/account";

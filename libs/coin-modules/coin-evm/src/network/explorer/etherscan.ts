@@ -1,7 +1,7 @@
 import { isNFTActive } from "@ledgerhq/ledger-wallet-framework/nft/support";
 import type { MemoNotSupported, Operation } from "@ledgerhq/coin-module-framework/api/types";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
-import { delay } from "@ledgerhq/live-promise";
+import { delay } from "@ledgerhq/coin-module-framework/promises";
 import { log } from "@ledgerhq/logs";
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import axios, { AxiosRequestConfig } from "axios";

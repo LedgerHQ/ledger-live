@@ -1,7 +1,7 @@
 import type { MemoNotSupported, Operation } from "@ledgerhq/coin-module-framework/api/types";
 import { AssertionError, fail } from "assert";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
-import { delay } from "@ledgerhq/live-promise";
+import { delay } from "@ledgerhq/coin-module-framework/promises";
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import axios from "axios";
 
@@ -28,7 +28,7 @@ import {
 import * as ETHERSCAN_API from "./etherscan";
 
 jest.mock("axios");
-jest.mock("@ledgerhq/live-promise");
+jest.mock("@ledgerhq/coin-module-framework/promises");
 (delay as jest.Mock).mockImplementation(
   () => new Promise(resolve => setTimeout(resolve, 1)), // mocking the delay supposed to happen after each try
 );

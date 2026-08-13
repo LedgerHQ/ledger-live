@@ -9,7 +9,7 @@ import {
   mergeOps,
   type GetAccountShape,
 } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
-import { promiseAllBatched } from "@ledgerhq/live-promise";
+import { promiseAllBatched } from "@ledgerhq/coin-module-framework/promises";
 import { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { type Operation } from "@ledgerhq/types-live";
 import type { SyncConfig, TokenAccount } from "@ledgerhq/types-live";

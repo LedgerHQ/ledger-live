@@ -5,7 +5,7 @@
  * Boundary cast: SDK's `CoreClient` has 17 abstract methods, we cast through `unknown` and rely on
  * the audited resolver call set rather than zero-filling fields we don't honestly populate.
  */
-import { promiseAllBatched } from "@ledgerhq/live-promise";
+import { promiseAllBatched } from "@ledgerhq/coin-module-framework/promises";
 import { log } from "@ledgerhq/logs";
 import type { ClientWithCoreApi, SuiClientTypes } from "@mysten/sui/client";
 import type { TransactionPlugin } from "@mysten/sui/transactions";

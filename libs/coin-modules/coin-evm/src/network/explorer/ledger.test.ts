@@ -1,6 +1,6 @@
 import { AssertionError, fail } from "assert";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
-import { delay } from "@ledgerhq/live-promise";
+import { delay } from "@ledgerhq/coin-module-framework/promises";
 import { CryptoCurrency, CryptoCurrencyIdSchema } from "@ledgerhq/ledger-wallet-framework/types";
 import axios from "axios";
 import eip55 from "eip55";
@@ -15,7 +15,7 @@ import {
 import * as LEDGER_API from "./ledger";
 
 jest.mock("axios");
-jest.mock("@ledgerhq/live-promise");
+jest.mock("@ledgerhq/coin-module-framework/promises");
 (delay as jest.Mock).mockImplementation(
   () => new Promise(resolve => setTimeout(resolve, 1)), // mocking the delay supposed to happen after each try
 );
