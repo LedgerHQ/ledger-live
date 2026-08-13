@@ -56,11 +56,13 @@ export const scenarioArcTestnetNative: Scenario<GenericTransaction, Account> = {
 
     const info: EvmConfigInfo = {
       status: { type: "active" },
+      chainId: 5042002,
+      name: "Arc Testnet",
       node: { type: "external", uri: "http://127.0.0.1:8545" },
       explorer: { type: "blockscout", noCache: true, uri: ARC_TESTNET_EXPLORER },
       showNfts: false,
       nativeContracts: [ARC_USDC_NATIVE_CONTRACT],
-    } as EvmConfigInfo;
+    };
 
     LiveConfig.setConfig({
       config_currency_arc_testnet: { type: "object", default: info },

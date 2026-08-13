@@ -1,6 +1,5 @@
 import type { BigNumber } from "bignumber.js";
 import type { Stake } from "@ledgerhq/coin-module-framework/api/types";
-import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { EvmConfigInfo } from "../config";
 
 export type EvmStakingOperationType =
@@ -178,7 +177,7 @@ export type StakingContractConfig = {
     config: EvmConfigInfo,
     decoded: readonly unknown[],
     operationType: "delegate" | "undelegate" | "withdraw",
-    currency: CryptoCurrency,
+    currencyId: string,
     contractAddress: string,
   ) => Promise<BigNumber | null>;
   /** Chain-specific guard called after cross-cutting checks. Returns true when the delegation can be undelegated. */
@@ -194,7 +193,6 @@ export type StakingContractConfig = {
 };
 
 export type StakeCreate = {
-  currency: CryptoCurrency;
   address: string;
   currencyId: string;
   validatorAddress: string;
@@ -222,7 +220,7 @@ export type StakingFetcher = (
   evmConfig: EvmConfigInfo,
   address: string,
   config: StakingContractConfig,
-  currency: CryptoCurrency,
+  currencyId: string,
 ) => Promise<Stake[]>;
 
 /**

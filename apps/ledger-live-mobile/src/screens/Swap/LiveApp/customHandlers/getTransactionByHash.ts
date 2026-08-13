@@ -41,11 +41,11 @@ export function getTransactionByHash(accounts: AccountLike[]) {
 
     const nodeAPI = getNodeApi(
       getCurrencyConfiguration<EvmConfigInfo>(mainAccount.currency.id),
-      mainAccount.currency,
+      mainAccount.currency.id,
     );
 
     try {
-      const tx = await nodeAPI.getTransaction(mainAccount.currency, params.transactionHash);
+      const tx = await nodeAPI.getTransaction(mainAccount.currency.id, params.transactionHash);
       return Promise.resolve(tx);
     } catch {
       // not a real error, the node just didn't find the transaction yet

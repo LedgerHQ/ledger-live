@@ -5,7 +5,6 @@ import type {
   MemoNotSupported,
   Operation,
 } from "@ledgerhq/coin-module-framework/api/types";
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 
 import { EvmConfigInfo, type EvmContext } from "../config";
 import { getExplorerApi } from "../network/explorer";
@@ -19,35 +18,35 @@ export const TOKEN_BALANCE_BATCH_SIZE = 8;
 /**
  * Get all assets linked to the user (native, tokens, ...)
  * @param context - The coin-module context (config + logger)
- * @param currency - The currency we must get the balances of
+ * @param currencyId - The currency id we must get the balances of
  * @param address - The user's address
  * @returns Promise<Balance[]> - Array of balances for all assets (first element will always be the native asset)
  */
 export async function getBalance(
   context: EvmContext,
-  currency: CryptoCurrency,
+  currencyId: string,
   address: string,
   options?: BalanceOptions,
 ): Promise<Balance[]> {
-  const config = await context.config(currency.id);
-  const nodeApi = getNodeApi(config, currency);
-  const explorerApi = getExplorerApi(config, currency);
+  const config = await context.config(currencyId);
+  const nodeApi = getNodeApi(config, currencyId);
+  const explorerApi = getExplorerApi(config, currencyId);
 
   const [nativeBalance, tokensBalances] = await Promise.all([
-    getNativeBalance(currency, address, nodeApi),
-    getTokenBalances(context, currency, address, nodeApi, explorerApi, config, options),
+    getNativeBalance(currencyId, address, nodeApi),
+    getTokenBalances(context, currencyId, address, nodeApi, explorerApi, config, options),
   ]);
 
   return [nativeBalance].concat(tokensBalances);
 }
 
 async function getNativeBalance(
-  currency: CryptoCurrency,
+  currencyId: string,
   address: string,
   nodeApi: NodeApi,
 ): Promise<Balance> {
   // Get native balance for the first element array
-  const nativeBalance = await nodeApi.getCoinBalance(currency, address);
+  const nativeBalance = await nodeApi.getCoinBalance(currencyId, address);
 
   return {
     asset: { type: "native" },
@@ -57,7 +56,7 @@ async function getNativeBalance(
 
 async function getTokenBalances(
   context: EvmContext,
-  currency: CryptoCurrency,
+  currencyId: string,
   address: string,
   nodeApi: NodeApi,
   explorerApi: ExplorerApi,
@@ -68,8 +67,8 @@ async function getTokenBalances(
 
   // Execute staking and token operations in parallel for better performance
   const [stakingResult, tokenOperationsResult] = await Promise.allSettled([
-    getStakes(context, currency, address),
-    explorerApi.getOperations(config, currency, address, 0),
+    getStakes(context, currencyId, address),
+    explorerApi.getOperations(config, currencyId, address, 0),
   ]);
 
   // Add staking positions to balances (with error handling)
@@ -109,7 +108,7 @@ async function getTokenBalances(
       chunk.map(async contract => {
         const asset = assets.get(contract);
         if (asset === undefined) throw new Error(`No asset defined for contract ${contract}`);
-        const balance = await nodeApi.getTokenBalance(currency, address, contract);
+        const balance = await nodeApi.getTokenBalance(currencyId, address, contract);
         return { asset, value: BigInt(balance.toFixed(0)) };
       }),
     );

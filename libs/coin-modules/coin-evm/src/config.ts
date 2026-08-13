@@ -16,6 +16,8 @@ export {
 export type BlockFinalizationTag = "latest" | "safe" | "finalized";
 
 export type EvmConfig = {
+  chainId: number;
+  name: string;
   node:
     | {
         type: "external";

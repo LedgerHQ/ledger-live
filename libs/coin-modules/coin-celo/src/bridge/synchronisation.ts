@@ -272,12 +272,12 @@ const getSubAccounts = async ({
     return acc;
   }, tokensByKeys);
 
-  const nodeApi = getNodeApi(getCoinConfig(info.currency.id).info, info.currency);
+  const nodeApi = getNodeApi(getCoinConfig(info.currency.id).info, info.currency.id);
   const tokensList = Object.values(tokensByKeys);
   const tokensListWithBalance = await Promise.all(
     tokensList.map(async item => {
       const balance = await nodeApi.getTokenBalance(
-        info.currency,
+        info.currency.id,
         info.address,
         item.token.contractAddress,
       );
@@ -343,12 +343,12 @@ export const getAccountShape: GetAccountShape<CeloAccount> = async (info, config
   const blacklistedTokenIds = config.blacklistedTokenIds || [];
   const syncHash = await getSyncHash(currency, blacklistedTokenIds);
 
-  const nodeApi = getNodeApi(configEvm, currency);
+  const nodeApi = getNodeApi(configEvm, currency.id);
   const api = createApi(currency.id);
   const evmCtx = buildEvmContext(currency.id);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const blockInfo = await (api as any).lastBlock(evmCtx);
-  const balance = await nodeApi.getCoinBalance(currency, address);
+  const balance = await nodeApi.getCoinBalance(currency.id, address);
 
   const isTokensEnabled = getEnv("ENABLE_CELO_TOKENS");
 

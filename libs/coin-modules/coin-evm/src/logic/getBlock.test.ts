@@ -1,5 +1,4 @@
 import type { BlockOperation } from "@ledgerhq/coin-module-framework/api/index";
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { createContext, EvmCoinConfig, internalTxSourcesFromList, setCoinConfig } from "../config";
 import { UnsupportedRpcMethodError } from "../errors";
 import { getInternalTransactionsByBlock } from "../network/explorer/etherscan";
@@ -157,7 +156,7 @@ describe("getBlock", () => {
       getTransaction: jest.fn(),
     } as any);
 
-    const result = await getBlock(createContext(), {} as CryptoCurrency, 12345);
+    const result = await getBlock(createContext(), "", 12345);
 
     expect(result).toMatchObject({
       info: {
@@ -242,7 +241,7 @@ describe("getBlock", () => {
       getTransaction: jest.fn(),
     } as any);
 
-    const result = await getBlock(createContext(), {} as CryptoCurrency, 12345);
+    const result = await getBlock(createContext(), "", 12345);
 
     expect(result.transactions[0]).toMatchObject({
       hash: "0xtx1",
@@ -284,7 +283,7 @@ describe("getBlock", () => {
       getTransaction: jest.fn(),
     } as any);
 
-    const result = await getBlock(createContext(), {} as CryptoCurrency, 12345);
+    const result = await getBlock(createContext(), "", 12345);
 
     expect(result.transactions[0]).toMatchObject({
       hash: "0xdeploy",
@@ -320,7 +319,7 @@ describe("getBlock", () => {
       getTransaction: jest.fn(),
     } as any);
 
-    const result = await getBlock(createContext(), {} as CryptoCurrency, 12345);
+    const result = await getBlock(createContext(), "", 12345);
 
     expect({
       hash: result.transactions[0].hash,
@@ -362,7 +361,7 @@ describe("getBlock", () => {
       getTransaction: mockGetTransaction,
     } as any);
 
-    const result = await getBlock(createContext(), {} as CryptoCurrency, 12345);
+    const result = await getBlock(createContext(), "", 12345);
 
     expect(result.transactions[0]).toMatchObject({
       hash: "0xtx1",
@@ -403,7 +402,7 @@ describe("getBlock", () => {
       getTransaction: mockGetTransaction,
     } as any);
 
-    const result = await getBlock(createContext(), {} as CryptoCurrency, 12345);
+    const result = await getBlock(createContext(), "", 12345);
 
     expect(result).toMatchObject({
       info: {
@@ -438,7 +437,7 @@ describe("getBlock", () => {
       getTransaction: mockGetTransaction,
     } as any);
 
-    const result = await getBlock(createContext(), {} as CryptoCurrency, 12345);
+    const result = await getBlock(createContext(), "", 12345);
 
     expect(result).toMatchObject({
       info: {
@@ -478,7 +477,7 @@ describe("getBlock", () => {
       getTransaction: mockGetTransaction,
     } as any);
 
-    await expect(getBlock(createContext(), {} as CryptoCurrency, 12345)).rejects.toThrow("timeout");
+    await expect(getBlock(createContext(), "", 12345)).rejects.toThrow("timeout");
     expect(mockGetTransaction).not.toHaveBeenCalled();
   });
 
@@ -542,7 +541,7 @@ describe("getBlock", () => {
       }),
     ]);
 
-    const result = await getBlock(createContext(), {} as CryptoCurrency, 12345);
+    const result = await getBlock(createContext(), "", 12345);
 
     const encodedFrom = safeEncodeEIP55(address1);
     const encodedTo = safeEncodeEIP55(address2);
@@ -614,7 +613,7 @@ describe("getBlock", () => {
       }),
     ]);
 
-    const result = await getBlock(createContext(), {} as CryptoCurrency, 12345);
+    const result = await getBlock(createContext(), "", 12345);
 
     // Only the two ops from the coin tx itself (sender + recipient side), no duplicates.
     const nativeOps = result.transactions[0].operations.filter(
@@ -672,7 +671,7 @@ describe("getBlock", () => {
       }),
     ]);
 
-    const result = await getBlock(createContext(), {} as CryptoCurrency, 12345);
+    const result = await getBlock(createContext(), "", 12345);
 
     const nativeOps = result.transactions[0].operations.filter(
       op => op.type === "transfer" && op.asset.type === "native",
@@ -728,7 +727,7 @@ describe("getBlock", () => {
 
     const mockGetInternalTransactionsByBlock = jest.mocked(getInternalTransactionsByBlock);
 
-    const result = await getBlock(createContext(), {} as CryptoCurrency, 12345);
+    const result = await getBlock(createContext(), "", 12345);
 
     expect(mockGetInternalTransactionsByBlock).not.toHaveBeenCalled();
     expect(mockTraceBlock).toHaveBeenCalledWith(expect.anything(), 12345);
@@ -789,7 +788,7 @@ describe("getBlock", () => {
     } as any);
     const mockGetInternalTransactionsByBlock = jest.mocked(getInternalTransactionsByBlock);
 
-    await expect(getBlock(createContext(), {} as CryptoCurrency, 12345)).rejects.toThrow(error);
+    await expect(getBlock(createContext(), "", 12345)).rejects.toThrow(error);
 
     expect(mockGetInternalTransactionsByBlock).not.toHaveBeenCalled();
     expect(mockTraceBlock).toHaveBeenCalledWith(expect.anything(), 12345);
@@ -822,7 +821,7 @@ describe("getBlock", () => {
     const mockGetInternalTransactionsByBlock = jest.mocked(getInternalTransactionsByBlock);
     mockGetInternalTransactionsByBlock.mockRejectedValueOnce(new Error("explorer error"));
 
-    const result = await getBlock(createContext(), {} as CryptoCurrency, 12345);
+    const result = await getBlock(createContext(), "", 12345);
 
     expect(result).toMatchObject({
       info: {
@@ -871,7 +870,7 @@ describe("getBlock", () => {
     const mockGetInternalTransactionsByBlock = jest.mocked(getInternalTransactionsByBlock);
     mockGetInternalTransactionsByBlock.mockRejectedValueOnce(new Error("explorer error"));
 
-    const result = await getBlock(createContext(), {} as CryptoCurrency, 12345);
+    const result = await getBlock(createContext(), "", 12345);
 
     expect(mockTraceBlock).toHaveBeenCalledWith(expect.anything(), 12345);
     const encodedFrom = safeEncodeEIP55(address1);
@@ -941,13 +940,9 @@ describe("getBlock", () => {
     const mockGetInternalTransactionsByBlock = jest.mocked(getInternalTransactionsByBlock);
     mockGetInternalTransactionsByBlock.mockRejectedValueOnce(new Error("explorer error"));
 
-    await expect(getBlock(createContext(), {} as CryptoCurrency, 12345)).rejects.toThrow(error);
+    await expect(getBlock(createContext(), "", 12345)).rejects.toThrow(error);
 
-    expect(mockGetInternalTransactionsByBlock).toHaveBeenCalledWith(
-      expect.anything(),
-      expect.anything(),
-      12345,
-    );
+    expect(mockGetInternalTransactionsByBlock).toHaveBeenCalledWith(expect.anything(), 12345);
     expect(mockTraceBlock).toHaveBeenCalledWith(expect.anything(), 12345);
   });
 
@@ -990,7 +985,7 @@ describe("getBlock", () => {
     const mockGetInternalTransactionsByBlock = jest.mocked(getInternalTransactionsByBlock);
     mockGetInternalTransactionsByBlock.mockRejectedValueOnce(new Error("explorer error"));
 
-    await expect(getBlock(createContext(), {} as CryptoCurrency, 12345)).rejects.toMatchObject({
+    await expect(getBlock(createContext(), "", 12345)).rejects.toMatchObject({
       errors: [erigonError, gethError],
     });
     expect(mockTraceBlockErigon).toHaveBeenCalledWith(expect.anything(), 12345);
@@ -1032,7 +1027,7 @@ describe("getBlock", () => {
     const mockGetInternalTransactionsByBlock = jest.mocked(getInternalTransactionsByBlock);
     mockGetInternalTransactionsByBlock.mockRejectedValueOnce(new Error("explorer error"));
 
-    const result = await getBlock(createContext(), {} as CryptoCurrency, 12345);
+    const result = await getBlock(createContext(), "", 12345);
 
     expect(mockTraceBlockErigon).toHaveBeenCalledWith(expect.anything(), 12345);
     expect(mockTraceBlockGeth).toHaveBeenCalledWith(expect.anything(), 12345);
@@ -1091,9 +1086,7 @@ describe("getBlock", () => {
     const mockGetInternalTransactionsByBlock = jest.mocked(getInternalTransactionsByBlock);
     mockGetInternalTransactionsByBlock.mockRejectedValueOnce(new Error("explorer error"));
 
-    await expect(getBlock(createContext(), {} as CryptoCurrency, 12345)).rejects.toThrow(
-      erigonError,
-    );
+    await expect(getBlock(createContext(), "", 12345)).rejects.toThrow(erigonError);
     expect(mockTraceBlockErigon).toHaveBeenCalledWith(expect.anything(), 12345);
   });
 
@@ -1123,7 +1116,7 @@ describe("getBlock", () => {
       ]),
       getTransaction: jest.fn(),
     } as any);
-    const result = await getBlock(createContext(), {} as CryptoCurrency, 12345);
+    const result = await getBlock(createContext(), "", 12345);
     expect(result.transactions[0].fees).toEqual(21000n * 568125000000n);
   });
 
@@ -1154,7 +1147,7 @@ describe("getBlock", () => {
       ]),
       getTransaction: jest.fn(),
     } as any);
-    const result = await getBlock(createContext(), {} as CryptoCurrency, 12345);
+    const result = await getBlock(createContext(), "", 12345);
     expect(result.transactions[0].fees).toEqual(21000n * 1000000000n);
   });
 
@@ -1162,7 +1155,7 @@ describe("getBlock", () => {
     const USER = "0xbEB30f27e61eFFF46Aa27dcE18E23ee8D5A7c6a4";
     const L2_BASE_TOKEN = "0x000000000000000000000000000000000000800A";
     const MINT_PEER = "0x0000000000000000000000000000000000000000";
-    const ZKSYNC = { id: "zksync" } as CryptoCurrency;
+    const ZKSYNC = "zksync";
 
     function buildZksyncMocks(
       txOverrides: Partial<PrefetchedBlockTransaction>,
@@ -1446,7 +1439,7 @@ describe("getBlock", () => {
           ],
         },
       );
-      const result = await getBlock(createContext(), { id: "ethereum" } as CryptoCurrency, 12345);
+      const result = await getBlock(createContext(), "ethereum", 12345);
       expect(result.transactions[0].operations).toEqual([
         {
           type: "transfer",

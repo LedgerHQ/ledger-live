@@ -53,10 +53,10 @@ export async function getEvmTokenAllowance(
 
   const nodeApi = getNodeApi(
     getCurrencyConfiguration<EvmConfigInfo>(account.currency.id),
-    account.currency,
+    account.currency.id,
   );
   const allowance = await nodeApi.getTokenAllowance(
-    account.currency,
+    account.currency.id,
     account.freshAddress,
     tokenCurrency.contractAddress,
     spender,

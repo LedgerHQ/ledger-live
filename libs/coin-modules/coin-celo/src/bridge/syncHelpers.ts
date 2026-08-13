@@ -95,7 +95,7 @@ export const getSyncHash = async (
   blacklistedTokenIds: string[] = [],
 ): Promise<string> => {
   const syncHash = await baseGetSyncHash(currency.id, blacklistedTokenIds);
-  const isNftSupported = isNFTActive(currency);
+  const isNftSupported = isNFTActive(currency.id);
 
   const config = getCoinConfig(currency.id).info;
   const { node = {}, explorer = {} } = config;

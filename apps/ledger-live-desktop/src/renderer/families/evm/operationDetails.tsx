@@ -59,7 +59,7 @@ function DelegateDetails({ operation, account }: { operation: Operation; account
     let cancelled = false;
     resolveStakingValidator(
       getCurrencyConfiguration<EvmConfigInfo>(account.currency.id),
-      account.currency,
+      account.currency.id,
       operation,
       "delegate",
     ).then(result => {
@@ -112,7 +112,7 @@ function UndelegateDetails({ operation, account }: { operation: Operation; accou
     let cancelled = false;
     resolveStakingValidator(
       getCurrencyConfiguration<EvmConfigInfo>(account.currency.id),
-      account.currency,
+      account.currency.id,
       operation,
       "undelegate",
     ).then(result => {
@@ -169,7 +169,7 @@ function RedelegateDetails({ operation, account }: { operation: Operation; accou
     let cancelled = false;
     resolveRedelegationValidators(
       getCurrencyConfiguration<EvmConfigInfo>(account.currency.id),
-      account.currency,
+      account.currency.id,
       operation,
     ).then(result => {
       if (!cancelled) setResolved(result);
@@ -224,7 +224,7 @@ function RedelegateAmountCell({ operation, unit, currency }: AmountCellExtraProp
     let cancelled = false;
     resolveRedelegationValidators(
       getCurrencyConfiguration<EvmConfigInfo>(currency.id),
-      currency,
+      currency.id,
       operation,
     ).then(result => {
       if (!cancelled && result) setAmount(result.amount);

@@ -1,16 +1,15 @@
 import type { BlockInfo } from "@ledgerhq/coin-module-framework/api/index";
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { EvmContext } from "../config";
 import { getNodeApi } from "../network/node";
 
 export async function getBlockInfo(
   context: EvmContext,
-  currency: CryptoCurrency,
+  currencyId: string,
   height: number,
 ): Promise<BlockInfo> {
-  const config = await context.config(currency.id);
-  const api = getNodeApi(config, currency);
-  const result = await api.getBlockByHeight(currency, height);
+  const config = await context.config(currencyId);
+  const api = getNodeApi(config, currencyId);
+  const result = await api.getBlockByHeight(currencyId, height);
 
   const blockInfo: BlockInfo = {
     height: result.height,

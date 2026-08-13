@@ -1,4 +1,3 @@
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { EvmConfigInfo, EvmContext } from "../config";
 import { createMockEvmContext } from "../fixtures/context.fixtures";
 import { getNodeApi } from "../network/node";
@@ -18,7 +17,7 @@ describe("getBlockInfo", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockGetNodeApi.mockImplementation((config: EvmConfigInfo, _currency: CryptoCurrency) => {
+    mockGetNodeApi.mockImplementation((config: EvmConfigInfo, _currencyId: string) => {
       return config?.node?.type === "ledger" ? ledgerMocks : externalMocks;
     });
   });
@@ -37,7 +36,7 @@ describe("getBlockInfo", () => {
         parentHash: "0xparent123",
       });
 
-      expect(await getBlockInfo(context, {} as CryptoCurrency, 99999)).toEqual({
+      expect(await getBlockInfo(context, "", 99999)).toEqual({
         hash: "0xdef456",
         height: 99999,
         time: new Date("2025-02-20T15:45:00Z"),
@@ -56,7 +55,7 @@ describe("getBlockInfo", () => {
         parentHash: "",
       });
 
-      expect(await getBlockInfo(context, {} as CryptoCurrency, 0)).toEqual({
+      expect(await getBlockInfo(context, "", 0)).toEqual({
         hash: "0xgenesis",
         height: 0,
         time: new Date("2015-07-30T00:00:00Z"),
@@ -71,7 +70,7 @@ describe("getBlockInfo", () => {
         parentHash: "0xgenesis",
       });
 
-      const result = await getBlockInfo(context, {} as CryptoCurrency, 1);
+      const result = await getBlockInfo(context, "", 1);
 
       expect(result).toEqual({
         hash: "0xblock1",
@@ -94,7 +93,7 @@ describe("getBlockInfo", () => {
         parentHash: "0xparent",
       });
 
-      const result = await getBlockInfo(context, {} as CryptoCurrency, currentHeight);
+      const result = await getBlockInfo(context, "", currentHeight);
 
       expect(result.height).toBe(currentHeight);
       expect(result.parent?.height).toBe(currentHeight - 1);
@@ -109,7 +108,7 @@ describe("getBlockInfo", () => {
         parentHash: "0xparent",
       });
 
-      const result = await getBlockInfo(context, {} as CryptoCurrency, 100);
+      const result = await getBlockInfo(context, "", 100);
 
       expect(result.time).toBeInstanceOf(Date);
       expect(result.parent).not.toBeUndefined();

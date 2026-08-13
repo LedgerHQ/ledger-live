@@ -4,11 +4,10 @@ import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import type { Cursor, Page } from "@ledgerhq/coin-module-framework/api/index";
 import type { AssetInfo, Stake, StakeState } from "@ledgerhq/coin-module-framework/api/types";
 
-import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { log } from "@ledgerhq/logs";
-import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { Validator } from "@ledgerhq/coin-module-framework/api/types";
 import type { EvmConfigInfo } from "../../config";
+import { evmUnit } from "../../logic/evmUnit";
 import { withApi } from "../../network/node/rpc.common";
 import { isExternalNodeConfig } from "../../network/node/types";
 import type { StakingContractConfig } from "../../types/staking";
@@ -112,7 +111,6 @@ function isDelegationsRaw(value: unknown): value is DelegationsRaw {
 }
 
 type ResolvedContext = {
-  currency: CryptoCurrency;
   abi: ethers.InterfaceAbi;
   node: { type: "external"; uri: string; retries?: number };
   contractAddress: string;
@@ -132,10 +130,7 @@ const resolveContext = (
   if (!isExternalNodeConfig(node)) return undefined;
 
   try {
-    const currency = getCryptoCurrencyById(currencyId);
-
     return {
-      currency,
       abi: abi as ethers.InterfaceAbi,
       node,
       contractAddress: config.contractAddress(),
@@ -230,7 +225,8 @@ const fetchValidators = async (
     const startIndex = cursor === undefined ? 0n : BigInt(cursor);
 
     return await withApi(
-      ctx.currency,
+      evmConfig,
+      currencyId,
       async provider => {
         const iface = new ethers.Interface(ctx.abi);
         return fetchPage(currencyId, provider, iface, ctx.contractAddress, startIndex);
@@ -275,7 +271,8 @@ const fetchDelegatedValIds = async (
 };
 
 const fetchStakeForValId = async (
-  currency: CryptoCurrency,
+  evmConfig: EvmConfigInfo,
+  currencyId: string,
   provider: JsonRpcProvider,
   iface: ethers.Interface,
   contractAddress: string,
@@ -317,14 +314,14 @@ const fetchStakeForValId = async (
     validatorAddress = ethers.computeAddress(secpPubkey);
     const secp = secpPubkey.toLowerCase().replace(/^0x/, "");
     if (secp.length > 0) {
-      validatorName = (await validatorNameCache(currency.id, secp).catch(() => null)) ?? undefined;
+      validatorName = (await validatorNameCache(currencyId, secp).catch(() => null)) ?? undefined;
     }
   }
 
   const asset: AssetInfo = {
     type: "native",
-    name: currency.name,
-    unit: currency.units[0],
+    name: evmConfig.name,
+    unit: evmUnit[currencyId],
   };
   const details = {
     contractAddress,
@@ -374,14 +371,15 @@ export const fetchMonadStakes = async (
   evmConfig: EvmConfigInfo,
   address: string,
   _config: StakingContractConfig,
-  currency: CryptoCurrency,
+  currencyId: string,
 ): Promise<Stake[]> => {
-  const ctx = resolveContext(evmConfig, currency.id);
+  const ctx = resolveContext(evmConfig, currencyId);
   if (!ctx) return [];
 
   try {
     return await withApi(
-      ctx.currency,
+      evmConfig,
+      currencyId,
       async provider => {
         const iface = new ethers.Interface(ctx.abi);
         const valIds = await fetchDelegatedValIds(provider, iface, ctx.contractAddress, address);
@@ -395,7 +393,8 @@ export const fetchMonadStakes = async (
           const settled = await Promise.allSettled(
             chunk.map(valId =>
               fetchStakeForValId(
-                ctx.currency,
+                evmConfig,
+                currencyId,
                 provider,
                 iface,
                 ctx.contractAddress,
@@ -424,7 +423,7 @@ export const fetchMonadStakes = async (
     );
   } catch (error) {
     log("coin-evm/staking", "fetchMonadStakes: delegations fetch failed", {
-      currencyId: currency.id,
+      currencyId,
       error: error instanceof Error ? error.message : String(error),
     });
     return [];
@@ -519,7 +518,8 @@ export const findFirstFreeWithdrawId = async (
 
   try {
     return await withApi(
-      ctx.currency,
+      evmConfig,
+      currencyId,
       async provider => {
         const iface = new ethers.Interface(ctx.abi);
 

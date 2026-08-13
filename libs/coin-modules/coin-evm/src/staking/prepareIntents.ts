@@ -4,7 +4,6 @@ import type {
   MemoNotSupported,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/index";
-import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { EvmConfigInfo } from "../config";
 import { withApi } from "../network/node/rpc.common";
 import { isExternalNodeConfig } from "../network/node/types";
@@ -37,11 +36,11 @@ function isWithdrawalFeeInGweiResult(value: unknown): value is WithdrawalFeeInGw
  */
 type IntentPreparer = (
   config: EvmConfigInfo,
-  currency: CryptoCurrency,
+  currencyId: string,
   intent: StakingIntent,
 ) => Promise<StakingIntent>;
 
-const prepareMonadIntent: IntentPreparer = async (config, _currency, intent) => {
+const prepareMonadIntent: IntentPreparer = async (config, _currencyId, intent) => {
   if (!isStakingIntent(intent)) return intent;
   if (intent.mode !== "undelegate" || intent.withdrawId !== undefined || !intent.valId) {
     return intent;
@@ -66,14 +65,14 @@ const prepareMonadIntent: IntentPreparer = async (config, _currency, intent) => 
   return enriched;
 };
 
-const prepareZeroGravityIntent: IntentPreparer = async (config, currency, intent) => {
+const prepareZeroGravityIntent: IntentPreparer = async (config, currencyId, intent) => {
   if (!isStakingIntent(intent)) return intent;
   if (intent.mode !== "undelegate" || intent.shares !== undefined || !intent.valAddress) {
     return intent;
   }
   if (!intent.useAllAmount && intent.amount <= 0n) return intent;
 
-  const abi = getStakingABI(currency.id);
+  const abi = getStakingABI(currencyId);
   if (!abi) return intent;
 
   const node = config.node;
@@ -84,7 +83,8 @@ const prepareZeroGravityIntent: IntentPreparer = async (config, currency, intent
   const delegator = intent.sender;
 
   const { shares, txValue } = await withApi(
-    currency,
+    config,
+    currencyId,
     async provider => {
       const rawDelegation = await provider.call({
         to: valAddress,
@@ -149,9 +149,9 @@ const STAKING_INTENT_PREPARERS: Record<string, IntentPreparer> = {
  */
 export const prepareStakingIntent = async (
   config: EvmConfigInfo,
-  currency: CryptoCurrency,
+  currencyId: string,
   intent: StakingIntent,
 ): Promise<StakingIntent> => {
-  const prepare = STAKING_INTENT_PREPARERS[currency.id];
-  return prepare ? prepare(config, currency, intent) : intent;
+  const prepare = STAKING_INTENT_PREPARERS[currencyId];
+  return prepare ? prepare(config, currencyId, intent) : intent;
 };

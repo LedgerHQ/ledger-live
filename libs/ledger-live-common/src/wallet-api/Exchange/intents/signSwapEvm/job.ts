@@ -25,7 +25,7 @@ async function buildUnsignedSwapTxHex(
   const calldataHex = transactionData.data.replace(/^0x/, "");
   const data = calldataHex.length > 0 ? Buffer.from(calldataHex, "hex") : Buffer.alloc(0);
 
-  const { transaction } = await craftTransaction(createContext(), currency, {
+  const { transaction } = await craftTransaction(createContext(), currency.id, {
     transactionIntent: {
       intentType: "transaction",
       type: "send-eip1559",

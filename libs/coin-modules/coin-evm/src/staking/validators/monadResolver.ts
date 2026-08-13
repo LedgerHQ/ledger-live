@@ -1,6 +1,5 @@
 import { ethers, type JsonRpcProvider } from "ethers";
 import { log } from "@ledgerhq/logs";
-import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import type { EvmConfigInfo } from "../../config";
 import { withApi } from "../../network/node/rpc.common";
 import { isExternalNodeConfig } from "../../network/node/types";
@@ -60,9 +59,9 @@ export const getValidatorAddressById = async (
   if (!isExternalNodeConfig(node)) return null;
 
   try {
-    const currency = getCryptoCurrencyById(currencyId);
     return await withApi(
-      currency,
+      config,
+      currencyId,
       async provider => {
         const iface = new ethers.Interface(abi as ethers.InterfaceAbi);
         const decoded = await callGetValidator(provider, iface, MONAD_PRECOMPILE, valId);

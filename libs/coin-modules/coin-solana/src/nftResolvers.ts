@@ -11,7 +11,7 @@ export const nftMetadata: NftResolvers["nftMetadata"] = async ({
   currencyId,
 }) => {
   const currency = getCryptoCurrencyById(currencyId);
-  if (!isNFTActive(currency)) {
+  if (!isNFTActive(currency.id)) {
     throw new Error(`Solana Bridge NFT Resolver: Unsupported currency (${currency.id})`);
   }
 
@@ -28,7 +28,7 @@ export const collectionMetadata: NftResolvers["collectionMetadata"] = async ({
   currencyId,
 }) => {
   const currency = getCryptoCurrencyById(currencyId);
-  if (!isNFTActive(currency)) {
+  if (!isNFTActive(currency.id)) {
     throw new Error(`Solana Bridge NFT Resolver: Unsupported currency (${currency.id})`);
   }
 

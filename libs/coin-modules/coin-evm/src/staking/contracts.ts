@@ -231,7 +231,7 @@ export const STAKING_CONTRACTS: Record<string, StakingContractConfig> = {
     resolveValidatorAddress: async (_config, _, contractAddress) => {
       return contractAddress ? ethers.getAddress(contractAddress) : null;
     },
-    resolveOperationAmount: async (config, decoded, operationType, currency, contractAddress) => {
+    resolveOperationAmount: async (config, decoded, operationType, currencyId, contractAddress) => {
       switch (operationType) {
         case "undelegate": {
           const shares = decoded[1];
@@ -240,7 +240,8 @@ export const STAKING_CONTRACTS: Record<string, StakingContractConfig> = {
           if (!isExternalNodeConfig(node)) return null;
           try {
             return await withApi(
-              currency,
+              config,
+              currencyId,
               async provider => {
                 const iface = new ethers.Interface([
                   "function convertToTokens(uint256 shares) view returns (uint256)",

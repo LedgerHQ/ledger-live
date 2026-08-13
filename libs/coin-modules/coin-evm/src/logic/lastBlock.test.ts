@@ -1,4 +1,3 @@
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { BlockFinalizationTag, type EvmConfigInfo } from "../config";
 import { createMockEvmContext } from "../fixtures/context.fixtures";
 import { getNodeApi } from "../network/node";
@@ -18,7 +17,7 @@ describe("lastBlock", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockGetNodeApi.mockImplementation((config: EvmConfigInfo, _currency: CryptoCurrency) => {
+    mockGetNodeApi.mockImplementation((config: EvmConfigInfo, _currencyId: string) => {
       return config?.node?.type === "ledger" ? ledgerMocks : externalMocks;
     });
   });
@@ -38,7 +37,7 @@ describe("lastBlock", () => {
     const context = createMockEvmContext({ node: { type } } as Partial<EvmConfigInfo>);
     nodeApiMock.getBlockByHeight.mockResolvedValue(blockResult);
 
-    expect(await lastBlock(context, {} as CryptoCurrency)).toEqual(expectedInfo);
+    expect(await lastBlock(context, "")).toEqual(expectedInfo);
   });
 
   it.each([
@@ -55,7 +54,7 @@ describe("lastBlock", () => {
     const context = createMockEvmContext({ node: { type } } as Partial<EvmConfigInfo>);
     nodeApiMock.getBlockByHeight.mockResolvedValue(blockResult);
 
-    await lastBlock(context, {} as CryptoCurrency);
+    await lastBlock(context, "");
 
     expect(nodeApiMock.getBlockByHeight).toHaveBeenCalledWith(expect.anything(), "latest");
   });
@@ -82,7 +81,7 @@ describe("lastBlock", () => {
       } as Partial<EvmConfigInfo>);
       nodeApiMock.getBlockByHeight.mockResolvedValue(blockResult);
 
-      expect(await lastBlock(context, {} as CryptoCurrency)).toEqual(expectedInfo);
+      expect(await lastBlock(context, "")).toEqual(expectedInfo);
       expect(nodeApiMock.getBlockByHeight).toHaveBeenCalledWith(
         expect.anything(),
         finalizationLevel,

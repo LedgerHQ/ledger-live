@@ -23,6 +23,8 @@ export const scenarioRobinhoodTestnet: Scenario<GenericTransaction, Account> = {
 
     const info: EvmConfigInfo = {
       status: { type: "active" },
+      chainId: 46630,
+      name: "Robinhood Chain Testnet",
       node: { type: "external", uri: "http://127.0.0.1:8545" },
       explorer: { type: "none" },
       showNfts: false,

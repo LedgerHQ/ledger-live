@@ -1,6 +1,5 @@
 import { FeeEstimation, MemoNotSupported } from "@ledgerhq/coin-module-framework/api/index";
 import { TransactionIntent, BufferTxData } from "@ledgerhq/coin-module-framework/api/types";
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { BigNumber } from "bignumber.js";
 import type { EvmConfigInfo } from "../config";
 import { getNodeApi } from "../network/node";
@@ -147,12 +146,6 @@ describe("common", () => {
   });
 
   describe("prepareUnsignedTxParams — staking gas estimation retry", () => {
-    const mockCurrency = {
-      id: "sei_evm",
-      family: "evm",
-      ethereumLikeInfo: { chainId: 1329 },
-    } as CryptoCurrency;
-
     const stakingContractAddress = "0x0000000000000000000000000000000000001005";
     const stakingData = Buffer.from("encoded-delegate-calldata");
     const GAS_ESTIMATION_ERROR = new Error(
@@ -198,31 +191,23 @@ describe("common", () => {
 
       const result = await prepareUnsignedTxParams(
         testConfig,
-        mockCurrency,
+        "sei_evm",
         makeStakingIntent(spendableBalance),
       );
 
       expect(nodeApiMock.getGasEstimation).toHaveBeenCalledTimes(2);
       // First call used the full balance
-      expect(nodeApiMock.getGasEstimation).toHaveBeenNthCalledWith(
-        1,
-        { currency: mockCurrency, freshAddress: "0xSender" },
-        {
-          amount: new BigNumber(spendableBalance.toString()),
-          recipient: stakingContractAddress,
-          data: stakingData,
-        },
-      );
+      expect(nodeApiMock.getGasEstimation).toHaveBeenNthCalledWith(1, "sei_evm", "0xSender", {
+        amount: new BigNumber(spendableBalance.toString()),
+        recipient: stakingContractAddress,
+        data: stakingData,
+      });
       // Retry used the minimum calldata unit for the chain (calldataAmountScale)
-      expect(nodeApiMock.getGasEstimation).toHaveBeenNthCalledWith(
-        2,
-        { currency: mockCurrency, freshAddress: "0xSender" },
-        {
-          amount: new BigNumber(USEI_TO_EVM_SCALE.toString()),
-          recipient: stakingContractAddress,
-          data: stakingData,
-        },
-      );
+      expect(nodeApiMock.getGasEstimation).toHaveBeenNthCalledWith(2, "sei_evm", "0xSender", {
+        amount: new BigNumber(USEI_TO_EVM_SCALE.toString()),
+        recipient: stakingContractAddress,
+        data: stakingData,
+      });
       expect(result.gasLimit).toEqual(new BigNumber(70_000));
     });
 
@@ -238,18 +223,14 @@ describe("common", () => {
         .mockRejectedValueOnce(GAS_ESTIMATION_ERROR)
         .mockResolvedValueOnce(new BigNumber(70_000));
 
-      const result = await prepareUnsignedTxParams(testConfig, mockCurrency, makeStakingIntent(0n));
+      const result = await prepareUnsignedTxParams(testConfig, "sei_evm", makeStakingIntent(0n));
 
       expect(nodeApiMock.getGasEstimation).toHaveBeenCalledTimes(2);
-      expect(nodeApiMock.getGasEstimation).toHaveBeenNthCalledWith(
-        2,
-        { currency: mockCurrency, freshAddress: "0xSender" },
-        {
-          amount: new BigNumber(USEI_TO_EVM_SCALE.toString()),
-          recipient: stakingContractAddress,
-          data: stakingData,
-        },
-      );
+      expect(nodeApiMock.getGasEstimation).toHaveBeenNthCalledWith(2, "sei_evm", "0xSender", {
+        amount: new BigNumber(USEI_TO_EVM_SCALE.toString()),
+        recipient: stakingContractAddress,
+        data: stakingData,
+      });
       expect(result.gasLimit).toEqual(new BigNumber(70_000));
     });
 
@@ -262,7 +243,7 @@ describe("common", () => {
 
       nodeApiMock.getGasEstimation.mockRejectedValue(GAS_ESTIMATION_ERROR);
 
-      const result = await prepareUnsignedTxParams(testConfig, mockCurrency, makeStakingIntent(0n));
+      const result = await prepareUnsignedTxParams(testConfig, "sei_evm", makeStakingIntent(0n));
 
       expect(nodeApiMock.getGasEstimation).toHaveBeenCalledTimes(2);
       expect(result.gasLimit).toEqual(new BigNumber(0));
@@ -287,27 +268,22 @@ describe("common", () => {
         .mockRejectedValueOnce(GAS_ESTIMATION_ERROR)
         .mockResolvedValueOnce(new BigNumber(1_412_179));
 
-      const result = await prepareUnsignedTxParams(testConfig, mockCurrency, makeStakingIntent(0n));
+      const result = await prepareUnsignedTxParams(testConfig, "sei_evm", makeStakingIntent(0n));
 
       expect(nodeApiMock.getGasEstimation).toHaveBeenCalledTimes(2);
       // Retry rebuilds BOTH calldata and value from the min unit (USEI_TO_EVM_SCALE), so the
       // calldata-encoded amount matches msg.value — otherwise the contract would revert.
-      expect(nodeApiMock.getGasEstimation).toHaveBeenNthCalledWith(
-        2,
-        { currency: mockCurrency, freshAddress: "0xSender" },
-        {
-          amount: new BigNumber(USEI_TO_EVM_SCALE.toString()),
-          recipient: stakingContractAddress,
-          data: Buffer.from(`delegate:${USEI_TO_EVM_SCALE.toString()}`),
-        },
-      );
+      expect(nodeApiMock.getGasEstimation).toHaveBeenNthCalledWith(2, "sei_evm", "0xSender", {
+        amount: new BigNumber(USEI_TO_EVM_SCALE.toString()),
+        recipient: stakingContractAddress,
+        data: Buffer.from(`delegate:${USEI_TO_EVM_SCALE.toString()}`),
+      });
       // The returned params keep the ORIGINAL intent (amount=0) — only the estimate is retried.
       expect(result.data).toEqual("0x" + Buffer.from("delegate:0").toString("hex"));
       expect(result.gasLimit).toEqual(new BigNumber(1_412_179));
     });
 
     it("applies gasMultiplier (1.2) and ceil-rounds the result for zero_gravity delegate", async () => {
-      const zgCurrency = { id: "zero_gravity", family: "evm" } as CryptoCurrency;
       mockBuildStakingTransactionParams.mockReturnValue({
         to: "0xVaultAddress",
         data: stakingData,
@@ -315,7 +291,7 @@ describe("common", () => {
       });
       nodeApiMock.getGasEstimation.mockResolvedValueOnce(new BigNumber(237_279));
 
-      const result = await prepareUnsignedTxParams(testConfig, zgCurrency, {
+      const result = await prepareUnsignedTxParams(testConfig, "zero_gravity", {
         intentType: "staking",
         type: "staking-eip1559",
         mode: "delegate",
@@ -333,7 +309,6 @@ describe("common", () => {
     });
 
     it("applies gasMultiplier (1.2) and ceil-rounds the result for zero_gravity undelegate", async () => {
-      const zgCurrency = { id: "zero_gravity", family: "evm" } as CryptoCurrency;
       mockBuildStakingTransactionParams.mockReturnValue({
         to: "0xVaultAddress",
         data: stakingData,
@@ -341,7 +316,7 @@ describe("common", () => {
       });
       nodeApiMock.getGasEstimation.mockResolvedValueOnce(new BigNumber(237_279));
 
-      const result = await prepareUnsignedTxParams(testConfig, zgCurrency, {
+      const result = await prepareUnsignedTxParams(testConfig, "zero_gravity", {
         intentType: "staking",
         type: "staking-eip1559",
         mode: "undelegate",
@@ -359,7 +334,6 @@ describe("common", () => {
     });
 
     it("does not apply gasMultiplier when customFeesParameters.gasLimit is provided", async () => {
-      const zgCurrency = { id: "zero_gravity", family: "evm" } as CryptoCurrency;
       mockBuildStakingTransactionParams.mockReturnValue({
         to: "0xVaultAddress",
         data: stakingData,
@@ -368,7 +342,7 @@ describe("common", () => {
 
       const result = await prepareUnsignedTxParams(
         testConfig,
-        zgCurrency,
+        "zero_gravity",
         {
           intentType: "staking",
           type: "staking-eip1559",
@@ -401,7 +375,7 @@ describe("common", () => {
 
       nodeApiMock.getGasEstimation.mockRejectedValueOnce(GAS_ESTIMATION_ERROR);
 
-      const result = await prepareUnsignedTxParams(testConfig, mockCurrency, sendIntent);
+      const result = await prepareUnsignedTxParams(testConfig, "sei_evm", sendIntent);
 
       expect(nodeApiMock.getGasEstimation).toHaveBeenCalledTimes(1);
       expect(result.gasLimit).toEqual(new BigNumber(0));

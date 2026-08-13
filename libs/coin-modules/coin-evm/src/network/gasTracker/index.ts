@@ -1,12 +1,8 @@
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { EvmConfigInfo } from "../../config";
 import ledgerGasTracker from "./ledger";
 import { GasTrackerApi } from "./types";
 
-export const getGasTracker = (
-  config: EvmConfigInfo,
-  _currency: CryptoCurrency,
-): GasTrackerApi | null => {
+export const getGasTracker = (config: EvmConfigInfo): GasTrackerApi | null => {
   switch (config?.gasTracker?.type) {
     case "ledger":
       return ledgerGasTracker;

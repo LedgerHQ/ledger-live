@@ -5,7 +5,6 @@ import type {
   MemoNotSupported,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/index";
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
 import { Transaction, TransactionLike } from "ethers";
 import { EvmConfigInfo, type EvmContext } from "../config";
@@ -22,7 +21,7 @@ const SEND_MAX_L1_FEE_BUFFER = new BigNumber(2);
 
 async function computeAdditionalFees(
   config: EvmConfigInfo,
-  currency: CryptoCurrency,
+  currencyId: string,
   unsignedTransaction: TransactionLike,
 ): Promise<BigNumber | undefined> {
   // Fake signature is added to get the best approximation possible for the gas on L1
@@ -38,7 +37,7 @@ async function computeAdditionalFees(
   try {
     return await getAdditionalLayer2Fees(
       config,
-      currency,
+      currencyId,
       Transaction.from(transaction).serialized,
     );
   } catch {
@@ -115,7 +114,7 @@ function extractGasOptions(
 
 export async function estimateFees(
   context: EvmContext,
-  currency: CryptoCurrency,
+  currencyId: string,
   transactionIntent: TransactionIntent<MemoNotSupported, BufferTxData>,
   customFeesParameters?: FeeEstimation["parameters"],
 ): Promise<FeeEstimation> {
@@ -123,7 +122,7 @@ export async function estimateFees(
     return { value: 0n };
   }
 
-  const config = await context.config(currency.id);
+  const config = await context.config(currencyId);
 
   // Skip fee estimation for redelegate without a destination validator — the
   // validateStaking step in validateIntent will surface RedelegateDstValAddressRequired.
@@ -138,14 +137,14 @@ export async function estimateFees(
   // Determine the transaction type synchronously so fee-data and gas-estimation
   // requests can be fired in parallel without waiting on each other.
   const txType = getTransactionType(transactionIntent.type);
-  const chainId = currency.ethereumLikeInfo?.chainId ?? 0;
+  const chainId = config.chainId;
 
   // Some apps, including Magic Eden, set the nonce to -1 instead of simply not
   // providing it. In case of a missing or negative nonce, it must be re-fetched.
   const noncePromise: Promise<bigint> =
     typeof transactionIntent.sequence === "bigint" && transactionIntent.sequence >= 0n
       ? Promise.resolve(transactionIntent.sequence)
-      : getNextSequence(context, currency, transactionIntent.sender);
+      : getNextSequence(context, currencyId, transactionIntent.sender);
 
   const feeDataPromise = (async (): Promise<{
     finalFeeData: FeeData;
@@ -163,9 +162,9 @@ export async function estimateFees(
       return { finalFeeData: customGasOptions[feesStrategy], finalGasOptions: customGasOptions };
     }
 
-    const gasTracker = getGasTracker(config, currency);
+    const gasTracker = getGasTracker(config);
     const remoteGasOptions = await gasTracker?.getGasOptions({
-      currency,
+      currencyId,
       config,
       options: { useEIP1559: txType === TransactionTypes.eip1559 },
     });
@@ -174,8 +173,8 @@ export async function estimateFees(
       return { finalFeeData: remoteGasOptions[feesStrategy], finalGasOptions: remoteGasOptions };
     }
 
-    const node = getNodeApi(config, currency);
-    const feeData = await node.getFeeData(config, currency, {
+    const node = getNodeApi(config, currencyId);
+    const feeData = await node.getFeeData(config, currencyId, {
       type: txType,
       feesStrategy,
     });
@@ -187,7 +186,7 @@ export async function estimateFees(
   // all independent network calls and sequencing them triples the latency.
   const [{ to, data, value, gasLimit }, nonce, { finalFeeData, finalGasOptions }] =
     await Promise.all([
-      prepareUnsignedTxParams(config, currency, transactionIntent, customFeesParameters),
+      prepareUnsignedTxParams(config, currencyId, transactionIntent, customFeesParameters),
       noncePromise,
       feeDataPromise,
     ]);
@@ -225,14 +224,14 @@ export async function estimateFees(
     value,
     chainId,
   };
-  const rawAdditionalFees = await computeAdditionalFees(config, currency, unsignedTransaction);
+  const rawAdditionalFees = await computeAdditionalFees(config, currencyId, unsignedTransaction);
   const additionalFees =
     transactionIntent.useAllAmount && rawAdditionalFees
       ? rawAdditionalFees.multipliedBy(SEND_MAX_L1_FEE_BUFFER).integerValue(BigNumber.ROUND_CEIL)
       : rawAdditionalFees;
 
   // delegate send-max: expose reserve/scale so the bridge can compute the amount (it has the balance)
-  const stakingConfig = STAKING_CONTRACTS[currency.id];
+  const stakingConfig = STAKING_CONTRACTS[currencyId];
   const delegateMaxParams =
     transactionIntent.useAllAmount &&
     isStakingIntent(transactionIntent) &&
