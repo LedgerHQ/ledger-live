@@ -45,8 +45,9 @@ describe("getAccountShape", () => {
       node: {
         url: getJsonRpcFullnodeUrl("mainnet"),
         graphqlUrl: "https://graphql.mainnet.sui.io/graphql",
+        grpcUrl: getJsonRpcFullnodeUrl("mainnet"),
       },
-      features: { graphql: false },
+      features: { transport: "json" },
     }));
   });
 

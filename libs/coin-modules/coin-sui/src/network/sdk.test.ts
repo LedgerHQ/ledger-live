@@ -473,8 +473,9 @@ beforeAll(() => {
     node: {
       url: "https://mockapi.sui.io",
       graphqlUrl: "https://mockapi.sui.io/graphql",
+      grpcUrl: "https://mockapi.sui.io",
     },
-    features: { graphql: false },
+    features: { transport: "json" },
   }));
 });
 
@@ -1635,7 +1636,7 @@ describe("Staking Operations", () => {
 });
 
 describe("getStakingExtraByDigest on JSON-RPC transport", () => {
-  // `features.graphql: false` (beforeAll) routes withTransport to the jsonRpc branch, where
+  // `features.transport: "json"` (beforeAll) routes withTransport to the jsonRpc branch, where
   // `withApi`'s client is the shared mock — so `mockApi.getTransactionBlock` drives it.
   it("reads validator_address + amount from StakingRequestEvent (DELEGATE)", async () => {
     mockApi.getTransactionBlock.mockResolvedValueOnce({

@@ -78,11 +78,17 @@ export const BLOCK_BY_SEQUENCE = graphql(`
 
 export type BlockBySequenceResult = ResultOf<typeof BLOCK_BY_SEQUENCE>;
 
-/** Latest checkpoint's sequence number (`sui_getLatestCheckpointSequenceNumber` equivalent). */
+/**
+ * Latest checkpoint with the fields `getLastBlock` returns. Selecting them here rather than
+ * re-fetching by sequence avoids racing the indexer: between two queries the tip can advance past
+ * what the checkpoint index has, and `checkpoint(sequenceNumber:)` then answers null.
+ */
 export const LATEST_CHECKPOINT_SEQUENCE = graphql(`
   query LatestCheckpointSequence {
     checkpoint {
+      digest
       sequenceNumber
+      timestamp
     }
   }
 `);

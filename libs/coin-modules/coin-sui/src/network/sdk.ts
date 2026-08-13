@@ -40,7 +40,7 @@ import { makeSuiClientFromGraphQL } from "./graphql/sui-client-adapter";
 import { SUI_SYSTEM_STATE_OBJECT_ID } from "@mysten/sui/utils";
 import { BigNumber } from "bignumber.js";
 import uniqBy from "lodash/unionBy";
-import { type SuiCoinConfig } from "../config";
+import { type SuiCoinConfig, type SuiTransport } from "../config";
 import { BLOCK_HEIGHT, ONE_SUI } from "../constants";
 import type {
   CoreTransaction,
@@ -70,18 +70,41 @@ import {
   simulateTransactionGraphQL,
   withGraphQLApi,
 } from "./sdk.graphql";
+import {
+  type AsyncGrpcApiFunction,
+  getAllBalancesGrpc,
+  getBlockGrpc,
+  getCheckpointGrpc,
+  executeTransactionGrpc,
+  getDelegatedStakesGrpc,
+  fetchCheckpointDigestsGrpc,
+  listTransactionsByAddressGrpc,
+  resolveCheckpointForDigestGrpc,
+  simulateTransactionGrpc,
+  getLastBlockGrpc,
+  getStakingEventsByDigestGrpc,
+  getValidatorsGrpc,
+  withGrpcApi,
+} from "./sdk.grpc";
 
 type AsyncApiFunction<T> = (api: SuiJsonRpcClient) => Promise<T>;
 
 /**
- * Single source of truth consulted by every `withTransport` dispatcher. When
- * `true`, read paths (balances, stakes, last block, checkpoint, operations,
- * validators) and write paths (transaction construction, fee dry-run,
- * broadcast) route through GraphQL via `node.graphqlUrl`. Callers bound
- * directly to `withApi` (none in the current hot path) always use `node.url`.
+ * Single source of truth consulted by every `withTransport` dispatcher. Selects which
+ * endpoint the read paths (balances, stakes, last block, checkpoint, operations,
+ * validators) and write paths (transaction construction, fee dry-run, broadcast) use.
+ *
+ * Defaults to `json` when unset so a missing config can never silently change transport.
+ * The one caller that steps outside the dispatcher is the digest-id lookup in
+ * `getBlockInfo`/`getBlock`, and only on GraphQL, whose `checkpoint(...)` takes sequence numbers
+ * alone. Device signing goes through {@link withCoreApi}, so it follows the flag like everything else.
  */
+export function getTransport(config: SuiCoinConfig): SuiTransport {
+  return config.features?.transport ?? "json";
+}
+
 export function isGraphQLEnabled(config: SuiCoinConfig): boolean {
-  return config.features?.graphql === true;
+  return getTransport(config) === "graphql";
 }
 
 export const TRANSACTIONS_LIMIT_PER_QUERY = 50;
@@ -121,21 +144,43 @@ export async function withApi<T>(config: SuiCoinConfig, execute: AsyncApiFunctio
   return execute(api);
 }
 
-/** Dispatcher gated on `features.graphql` */
 export function withTransport<T>(
   config: SuiCoinConfig,
   impls: {
     jsonRpc: AsyncApiFunction<T>;
     graphql: AsyncGraphQLApiFunction<T>;
+    grpc: AsyncGrpcApiFunction<T>;
   },
 ): Promise<T> {
-  return isGraphQLEnabled(config)
-    ? withGraphQLApi(config, impls.graphql)
-    : withApi(config, impls.jsonRpc);
+  switch (getTransport(config)) {
+    case "grpc":
+      return withGrpcApi(config, impls.grpc);
+    case "graphql":
+      return withGraphQLApi(config, impls.graphql);
+    default:
+      return withApi(config, impls.jsonRpc);
+  }
 }
 
 /**
- * Subset both transports populate. Narrows the dispatcher's surface so the
+ * Dispatches to the selected transport and hands the callback a `ClientWithCoreApi` — the SDK's
+ * transport-agnostic client surface. JSON-RPC and gRPC clients implement it directly; GraphQL goes
+ * through the adapter. For callers that need a client rather than a wire protocol, this keeps them
+ * free of any single transport so each one can be retired independently.
+ */
+export function withCoreApi<T>(
+  config: SuiCoinConfig,
+  execute: (client: ClientWithCoreApi) => Promise<T>,
+): Promise<T> {
+  return withTransport(config, {
+    jsonRpc: execute,
+    graphql: api => execute(makeSuiClientFromGraphQL(api)),
+    grpc: execute,
+  });
+}
+
+/**
+ * Subset every transport populates. Narrows the dispatcher's surface so the
  * GraphQL path's neutral fillers for JSON-RPC-only fields (`coinObjectCount`,
  * `lockedBalance`) can't leak to a future caller via the cached value.
  */
@@ -161,21 +206,22 @@ const toDispatchedCoinBalance = (b: CoinBalance): DispatchedCoinBalance => ({
  */
 export const getAllBalancesCached = makeLRUCache(
   async (config: SuiCoinConfig, owner: string): Promise<DispatchedCoinBalance[]> => {
-    // Pick<> is compile-time only — explicitly project both transports' results
+    // Pick<> is compile-time only — explicitly project every transport's result
     // so the cache never stores transport-specific fields (`coinObjectCount`,
     // `lockedBalance` from JSON-RPC; GraphQL's neutral fillers for the same).
     const balances = await withTransport(config, {
       jsonRpc: api => api.getAllBalances({ owner }),
       graphql: api => getAllBalancesCachedGraphQL(api, owner),
+      grpc: api => getAllBalancesGrpc(api, owner),
     });
     return balances.map(toDispatchedCoinBalance);
   },
   // Key includes the transport so flipping the flag mid-rollout doesn't
-  // cross-pollinate cached entries between JSON-RPC and GraphQL. The network is
-  // derived from the node URL so cached entries stay scoped per environment.
-  // Inputs are colon-free (owner = `0x` + hex; network is a fixed enum).
+  // cross-pollinate cached entries between transports. The network is derived from the node URL
+  // so cached entries stay scoped per environment.
+  // Inputs are colon-free (owner = `0x` + hex; network and transport are fixed enums).
   (config: SuiCoinConfig, owner: string) =>
-    `${inferNetworkFromUrl(config.node.url)}:${isGraphQLEnabled(config) ? "g" : "j"}:${owner}`,
+    `${inferNetworkFromUrl(config.node.url)}:${getTransport(config)}:${owner}`,
   minutes(1),
 );
 
@@ -460,7 +506,7 @@ function stakingExtraFromEvents(
     | undefined;
   const validatorAddress = parsed?.validator_address;
   const rawAmount = isUnstake ? parsed?.principal_amount : parsed?.amount;
-  // Sui serializes u64 as a string on both transports; String()-coerce defensively.
+  // Sui serializes u64 as a string on every transport; String()-coerce defensively.
   const stakedAmount = String(rawAmount ?? "");
   if (!validatorAddress || !stakedAmount) return null;
   return { validatorAddress, stakedAmount };
@@ -469,10 +515,11 @@ function stakingExtraFromEvents(
 /**
  * Extract `{ validatorAddress, stakedAmount }` from a staking/unstaking transaction's events for
  * the **bridge** operation (`transactionToOperation`). The event is authoritative and present at
- * sync on both transports (`showEvents: true` on JSON-RPC; the `events` selection in
- * `TRANSACTIONS_BY_AFFECTED_ADDRESS` on GraphQL) — which is what lets the bridge fill `op.extra`
- * and drop the per-drawer re-fetch. Distinct from `getStakingEventDetails` (coin-framework path,
- * different shape). Module-internal; returns `null` when not staking or the fields are absent.
+ * sync on every transport (`showEvents: true` on JSON-RPC; the `events` selection in
+ * `TRANSACTIONS_BY_AFFECTED_ADDRESS` on GraphQL; the `events` read-mask path on gRPC) — which is
+ * what lets the bridge fill `op.extra` and drop the per-drawer re-fetch. Distinct from
+ * `getStakingEventDetails` (coin-framework path, different shape). Module-internal; returns `null`
+ * when not staking or the fields are absent.
  */
 function getStakingExtra(response: SuiTransactionBlockResponse): SuiStakingExtra | null {
   const tx = response.transaction?.data?.transaction;
@@ -508,6 +555,10 @@ export const getStakingExtraByDigest = (
       const events = await getStakingEventsByDigestGraphQL(api, digest);
       return stakingExtraFromEvents(events, type);
     },
+    grpc: async api => {
+      const events = await getStakingEventsByDigestGrpc(api, digest);
+      return stakingExtraFromEvents(events, type);
+    },
   });
 };
 
@@ -526,9 +577,9 @@ export const getFeesPayer = (transaction: SuiTransactionBlockResponse): string |
   transaction.transaction?.data?.gasData?.owner || undefined;
 
 /**
- * `DelegatedStake[]` regardless of transport. GraphQL reconstructs from
- * `StakedSui` objects + system-state (one extra dynamicField per Active
- * stake, deduped); rate failures degrade `estimatedReward` to `"0"`.
+ * `DelegatedStake[]` regardless of transport. Only JSON-RPC has a native `getStakes`; GraphQL and
+ * gRPC both reconstruct from `StakedSui` objects + system-state (one extra rate lookup per Active
+ * stake's pool, deduped), and rate failures degrade `estimatedReward` to `"0"`.
  */
 export const getDelegatedStakes = (
   config: SuiCoinConfig,
@@ -537,6 +588,7 @@ export const getDelegatedStakes = (
   withTransport(config, {
     jsonRpc: api => api.getStakes({ owner }),
     graphql: api => getDelegatedStakesGraphQL(api, owner),
+    grpc: api => getDelegatedStakesGrpc(api, owner),
   });
 
 /**
@@ -868,13 +920,18 @@ export const getLastBlock = (
       return { digest, sequenceNumber, timestampMs };
     },
     graphql: getLastBlockGraphQL,
+    grpc: async api => {
+      const { digest, sequenceNumber, timestampMs } = await getLastBlockGrpc(api);
+      return { digest, sequenceNumber, timestampMs };
+    },
   });
 
 /**
  * Paginated transaction history. JSON-RPC: two parallel `queryTransactionBlocks`
  * calls (FromAddress + ToAddress) merged + deduped by `filterOperations`.
  * GraphQL: a single `transactions(filter: { affectedAddress })` query covers
- * sender/sponsor/recipient in one round-trip (no IN+OUT merge needed).
+ * sender/sponsor/recipient in one round-trip (no IN+OUT merge needed). gRPC:
+ * one `ListTransactions` stream on the affected-address filter, same single-pass shape.
  */
 export const getOperations = async (
   config: SuiCoinConfig,
@@ -939,6 +996,26 @@ export const getOperations = async (
         filter,
       );
       return items
+        .filter(tx => !isSettlementTransaction(tx))
+        .map(transaction => transactionToOperation(accountId, addr, transaction));
+    },
+    grpc: async api => {
+      // Same digest-cursor translation as the GraphQL arm: the bridge passes a Sui digest, which
+      // becomes a checkpoint lower bound. `startCheckpoint` is inclusive, so start one past the
+      // cursor's own checkpoint — its operations were ingested by the previous sync.
+      const cursorDigest = typeof cursor === "string" ? cursor : null;
+      let startCheckpoint: number | undefined;
+      if (cursorDigest) {
+        const seq = await resolveCheckpointForDigestGrpc(api, cursorDigest);
+        if (seq !== null) startCheckpoint = seq + 1;
+      }
+      const { transactions } = await listTransactionsByAddressGrpc(api, {
+        address: addr,
+        limit: TRANSACTIONS_LIMIT_PER_QUERY,
+        order: "desc",
+        ...(startCheckpoint !== undefined && { startCheckpoint }),
+      });
+      return transactions
         .filter(tx => !isSettlementTransaction(tx))
         .map(transaction => transactionToOperation(accountId, addr, transaction));
     },
@@ -1186,6 +1263,62 @@ export const getListOperations = async (
     });
   }
 
+  if (getTransport(config) === "grpc") {
+    return withGrpcApi(config, async api => {
+      // The alpaca cursor is `timestamp:digest`; translate its digest to a checkpoint bound in the
+      // direction of travel. `startCheckpoint` is inclusive so ascending steps one past the cursor,
+      // while `endCheckpoint` is exclusive so descending stops at it.
+      let bounds: { startCheckpoint?: number; endCheckpoint?: number } = {};
+      if (parsedCursor) {
+        const seq = await resolveCheckpointForDigestGrpc(api, parsedCursor.digest);
+        if (seq !== null) {
+          bounds = order === "desc" ? { endCheckpoint: seq } : { startCheckpoint: seq + 1 };
+        }
+      }
+      const { transactions } = await listTransactionsByAddressGrpc(api, {
+        address: addr,
+        limit: TRANSACTIONS_LIMIT_PER_QUERY,
+        order,
+        ...bounds,
+      });
+
+      const sorted = transactions
+        .filter(tx => !isSettlementTransaction(tx))
+        .sort(compareOperations(order));
+      // Checkpoint bounds are coarse, so same-checkpoint ties can still slip past the cursor.
+      const afterCursor = dropOperationsBeforeCursor({
+        operations: sorted,
+        order,
+        cursor: parsedCursor,
+      });
+      // One extra streamed call buys the real `blockHash` the other transports report; anything
+      // unresolved keeps the mapper's `synthetic-<sequence>` fallback.
+      const checkpointDigests = await fetchCheckpointDigestsGrpc(api, {
+        address: addr,
+        sequences: afterCursor
+          .map(tx => Number(tx.checkpoint))
+          .filter(seq => Number.isFinite(seq) && seq > 0),
+        limit: TRANSACTIONS_LIMIT_PER_QUERY,
+      });
+      const items = afterCursor.map(tx =>
+        transactionToCoinFrameworkOperation(
+          addr,
+          tx,
+          tx.checkpoint ? checkpointDigests.get(tx.checkpoint) : undefined,
+        ),
+      );
+      const last = afterCursor.at(-1);
+      const next =
+        afterCursor.length >= TRANSACTIONS_LIMIT_PER_QUERY && last?.timestampMs
+          ? serializeListOperationsCursor({
+              digest: last.digest,
+              timestamp: Number(last.timestampMs),
+            })
+          : undefined;
+      return { items, next };
+    });
+  }
+
   return withApiImpl(config, async api => {
     const rpcOrder = convertApiOrderToSdkOrder(order);
     const rpcCursor = toSdkCursor(parsedCursor?.digest ?? cursor);
@@ -1271,9 +1404,10 @@ export const getListOperations = async (
 };
 
 /**
- * Subset of `Checkpoint` populated by both transports. Narrowed at the
+ * Subset of `Checkpoint` populated by every transport. Narrowed at the
  * public surface so flipping the flag can't silently null out a wider
- * field — callers needing more should route through {@link withApi}.
+ * field — a caller needing more adds the field to every arm of
+ * {@link withTransport}, never reaches for one transport's client.
  */
 export type MinimalCheckpoint = Pick<Checkpoint, "digest" | "sequenceNumber" | "timestampMs">;
 
@@ -1311,6 +1445,12 @@ export const getCheckpoint = async (
       };
     },
     graphql: api => getCheckpointGraphQL(api, id),
+    // Project down explicitly: `getCheckpointGrpc` also carries `previousDigest` for
+    // `toBlockInfo`, and `MinimalCheckpoint` is a narrowed contract the other arms honour.
+    grpc: async api => {
+      const { digest, sequenceNumber, timestampMs } = await getCheckpointGrpc(api, id);
+      return { digest, sequenceNumber, timestampMs };
+    },
   });
 };
 
@@ -1320,9 +1460,11 @@ export const getBlockInfo = async (config: SuiCoinConfig, id: string): Promise<B
     const checkpoint = await api.getCheckpoint({ id });
     return toBlockInfo(checkpoint);
   };
-  // GraphQL `checkpoint(...)` only accepts UInt53 sequence numbers; digest
-  // lookups fall back to JSON-RPC even when the GraphQL flag is on.
-  if (!isSequenceNumber(id)) return withApi(config, fromJsonRpc);
+  // GraphQL `checkpoint(...)` only accepts UInt53 sequence numbers, so digest lookups fall
+  // back to JSON-RPC there. gRPC's `GetCheckpoint` takes either, so it needs no fallback.
+  if (!isSequenceNumber(id) && getTransport(config) === "graphql") {
+    return withApi(config, fromJsonRpc);
+  }
   return withTransport(config, {
     jsonRpc: fromJsonRpc,
     graphql: async api => {
@@ -1330,6 +1472,7 @@ export const getBlockInfo = async (config: SuiCoinConfig, id: string): Promise<B
       if (!cp) throw new Error(`GraphQL Checkpoint not found: ${id}`);
       return toBlockInfo(cp);
     },
+    grpc: async api => toBlockInfo(await getCheckpointGrpc(api, id)),
   });
 };
 
@@ -1346,14 +1489,25 @@ export const getBlock = async (config: SuiCoinConfig, id: string): Promise<Block
       transactions: rawTxs.filter(tx => !isSettlementTransaction(tx)).map(toBlockTransaction),
     };
   };
-  // GraphQL `checkpoint(...)` only accepts UInt53 sequence numbers; digest
-  // lookups fall back to JSON-RPC even when the GraphQL flag is on.
-  if (!isSequenceNumber(id)) return withApi(config, fromJsonRpc);
+  // GraphQL `checkpoint(...)` only accepts UInt53 sequence numbers, so digest lookups fall
+  // back to JSON-RPC there. gRPC's `GetCheckpoint` takes either, so it needs no fallback.
+  if (!isSequenceNumber(id) && getTransport(config) === "graphql") {
+    return withApi(config, fromJsonRpc);
+  }
   return withTransport(config, {
     jsonRpc: fromJsonRpc,
     graphql: async api => {
       const block = await getBlockGraphQL(api, Number(id));
       if (!block) throw new Error(`GraphQL Block not found: ${id}`);
+      return {
+        info: toBlockInfo(block.info),
+        transactions: block.transactions
+          .filter(tx => !isSettlementTransaction(tx))
+          .map(toBlockTransaction),
+      };
+    },
+    grpc: async api => {
+      const block = await getBlockGrpc(api, id);
       return {
         info: toBlockInfo(block.info),
         transactions: block.transactions
@@ -1536,8 +1690,8 @@ const createTransactionFromMode = (
 /**
  * Shared post-processing for the three transaction builders: build BCS via
  * `Transaction.build({ client })` and optionally collect input-object BCS for
- * clear-signing. Both transports flow through this — the JSON-RPC branch
- * passes a `SuiJsonRpcClient`, the GraphQL branch passes the synthetic
+ * clear-signing. Every transport flows through this — JSON-RPC passes a
+ * `SuiJsonRpcClient`, gRPC a `SuiGrpcClient`, and GraphQL the synthetic
  * `ClientWithCoreApi` from `makeSuiClientFromGraphQL`.
  */
 async function finalizeBuild(
@@ -1601,6 +1755,8 @@ const createTransactionForDelegate = (
     jsonRpc: api => buildDelegateBody(address, transaction, withObjects, api),
     graphql: api =>
       buildDelegateBody(address, transaction, withObjects, makeSuiClientFromGraphQL(api)),
+    // `SuiGrpcClient` is a `ClientWithCoreApi`, so the build path takes it directly — no adapter.
+    grpc: api => buildDelegateBody(address, transaction, withObjects, api),
   });
 
 const buildUndelegateBody = async (
@@ -1649,6 +1805,8 @@ const createTransactionForUndelegate = (
     jsonRpc: api => buildUndelegateBody(address, transaction, withObjects, api),
     graphql: api =>
       buildUndelegateBody(address, transaction, withObjects, makeSuiClientFromGraphQL(api)),
+    // `SuiGrpcClient` is a `ClientWithCoreApi`, so the build path takes it directly — no adapter.
+    grpc: api => buildUndelegateBody(address, transaction, withObjects, api),
   });
 
 /**
@@ -1727,6 +1885,8 @@ const createTransactionForOthers = (
     jsonRpc: api => buildOthersBody(address, transaction, withObjects, api),
     graphql: api =>
       buildOthersBody(address, transaction, withObjects, makeSuiClientFromGraphQL(api)),
+    // `SuiGrpcClient` is a `ClientWithCoreApi`, so the build path takes it directly — no adapter.
+    grpc: api => buildOthersBody(address, transaction, withObjects, api),
   });
 
 /**
@@ -1769,6 +1929,16 @@ export const paymentInfo = async (
     graphql: async api => {
       try {
         const sim = await simulateTransactionGraphQL(api, txb);
+        const fees =
+          BigInt(sim.computationCost) + BigInt(sim.storageCost) - BigInt(sim.storageRebate);
+        return { gasBudget: sim.gasBudget, totalGasUsed: fees, fees };
+      } catch (error) {
+        throw mapDryRunError(error);
+      }
+    },
+    grpc: async api => {
+      try {
+        const sim = await simulateTransactionGrpc(api, txb);
         const fees =
           BigInt(sim.computationCost) + BigInt(sim.storageCost) - BigInt(sim.storageRebate);
         return { gasBudget: sim.gasBudget, totalGasUsed: fees, fees };
@@ -1825,6 +1995,14 @@ export const executeTransactionBlock = async (
       }
       const status = r.status === "SUCCESS" ? "success" : "failure";
       return toExecuteResult(r.digest, status, status === "failure" ? r.error : undefined);
+    },
+    grpc: async api => {
+      const signatures = Array.isArray(params.signature) ? params.signature : [params.signature];
+      const r = await executeTransactionGrpc(api, params.transactionBlock, signatures);
+      if (!r.status) {
+        return toExecuteResult(r.digest, "failure", "missing effects in broadcast response");
+      }
+      return toExecuteResult(r.digest, r.status, r.error);
     },
   });
 
@@ -1979,7 +2157,9 @@ export const toStakeAmounts = (stake: StakeObject): { deposited: bigint; rewarde
 
 /**
  * Active validator set with APY. JSON-RPC: two parallel calls merged by
- * `suiAddress`. GraphQL: see {@link getValidatorsGraphQL}.
+ * `suiAddress`. GraphQL and gRPC have no server-side APY, so both derive it
+ * client-side from pool exchange rates — see {@link getValidatorsGraphQL} and
+ * {@link getValidatorsGrpc}.
  */
 export const getValidators = (config: SuiCoinConfig): Promise<SuiValidator[]> =>
   withTransport(config, {
@@ -1998,4 +2178,5 @@ export const getValidators = (config: SuiCoinConfig): Promise<SuiValidator[]> =>
       }));
     },
     graphql: getValidatorsGraphQL,
+    grpc: getValidatorsGrpc,
   });

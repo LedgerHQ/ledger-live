@@ -1,12 +1,15 @@
 import { JsonRpcHTTPTransport } from "@mysten/sui/jsonRpc";
 import { createSuiGraphQLClient } from "./graphql/client";
-import coinConfig from "../config";
 import type { SuiCoinConfig } from "../config";
 
 const config = {
-  node: { url: "https://mockapi.sui.io", graphqlUrl: "https://mockapi.sui.io/graphql" },
+  node: {
+    url: "https://mockapi.sui.io",
+    graphqlUrl: "https://mockapi.sui.io/graphql",
+    grpcUrl: "https://mockapi.sui.io",
+  },
   status: { type: "active" },
-  features: { graphql: true },
+  features: { transport: "graphql" },
 } as unknown as SuiCoinConfig;
 import { fetcher } from "./fetcher";
 import { GRAPHQL_MAINNET_URL } from "./graphql/constants";
@@ -18,6 +21,18 @@ import {
   isGraphQLEnabled,
   withApi,
 } from "./sdk";
+
+/** Selects a transport through injected config; nothing reads module-level config any more. */
+const configWith = (transport: "json" | "graphql" | "grpc"): SuiCoinConfig =>
+  ({
+    node: {
+      url: "https://mockapi.sui.io",
+      graphqlUrl: GRAPHQL_MAINNET_URL,
+      grpcUrl: "https://mockapi.sui.io",
+    },
+    status: { type: "active" },
+    features: { transport },
+  }) as unknown as SuiCoinConfig;
 import { withGraphQLApi } from "./sdk.graphql";
 import { bindMockNextGraphQLClient, fakeBalancesPage } from "./sdk.graphql.fixtures";
 
@@ -57,48 +72,22 @@ beforeEach(() => {
   factoryMock.mockReset();
   JsonRpcHTTPTransportMock.mockReset();
   unexpectedJsonRpc.mockClear();
-  coinConfig.setCoinConfig(() => ({
-    node: { url: "https://mockapi.sui.io", graphqlUrl: GRAPHQL_MAINNET_URL },
-    status: { type: "active" },
-    features: { graphql: true },
-  }));
 });
 
 // ---- isGraphQLEnabled: feature-flag plumbing ----
 
 describe("isGraphQLEnabled", () => {
-  it("should return true when features.graphql === true", () => {
-    coinConfig.setCoinConfig(() => ({
-      node: { url: "https://mockapi.sui.io", graphqlUrl: GRAPHQL_MAINNET_URL },
-      status: { type: "active" },
-      features: { graphql: true },
-    }));
-    expect(isGraphQLEnabled({ features: { graphql: true } } as unknown as SuiCoinConfig)).toBe(
-      true,
-    );
+  it('should return true when features.transport === "graphql"', () => {
+    expect(isGraphQLEnabled(configWith("graphql"))).toBe(true);
   });
 
-  it("should return false when features.graphql === false", () => {
-    coinConfig.setCoinConfig(() => ({
-      node: { url: "https://mockapi.sui.io", graphqlUrl: GRAPHQL_MAINNET_URL },
-      status: { type: "active" },
-      features: { graphql: false },
-    }));
-    expect(isGraphQLEnabled({ features: { graphql: false } } as unknown as SuiCoinConfig)).toBe(
-      false,
-    );
+  it('should return false when features.transport === "json"', () => {
+    expect(isGraphQLEnabled(configWith("json"))).toBe(false);
   });
 
   it("should treat the feature flag as the single source of truth, not node.url", () => {
     // Even with a GraphQL-shaped URL, the flag-off path should report false.
-    coinConfig.setCoinConfig(() => ({
-      node: { url: GRAPHQL_MAINNET_URL, graphqlUrl: GRAPHQL_MAINNET_URL },
-      status: { type: "active" },
-      features: { graphql: false },
-    }));
-    expect(isGraphQLEnabled({ features: { graphql: false } } as unknown as SuiCoinConfig)).toBe(
-      false,
-    );
+    expect(isGraphQLEnabled(configWith("json"))).toBe(false);
   });
 });
 
@@ -209,26 +198,66 @@ describe("fetcher: retry behaviour", () => {
   });
 });
 
+describe("fetcher: header forwarding", () => {
+  let originalFetch: typeof fetch;
+  let mockFetch: jest.Mock;
+
+  const sentHeaders = () => new Headers(mockFetch.mock.calls[0][1].headers as HeadersInit);
+
+  beforeEach(() => {
+    originalFetch = global.fetch;
+    mockFetch = jest.fn().mockResolvedValue(new Response("ok"));
+    global.fetch = mockFetch as unknown as typeof fetch;
+  });
+
+  afterEach(() => {
+    global.fetch = originalFetch;
+  });
+
+  it("should stamp the client-version header", async () => {
+    await fetcher("https://endpoint/graphql", { method: "POST" });
+
+    expect(sentHeaders().get("X-Ledger-Client-Version")).toEqual(expect.any(String));
+  });
+
+  it("should forward plain-object headers", async () => {
+    await fetcher("https://endpoint/graphql", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+    });
+
+    expect(sentHeaders().get("content-type")).toBe("application/json");
+  });
+
+  // A spread of a `Headers` instance yields `{}`. The gRPC-web transport passes one, so
+  // spreading silently stripped content-type and x-grpc-web and the node answered 400.
+  it("should forward a Headers instance", async () => {
+    await fetcher("https://endpoint/grpc", {
+      method: "POST",
+      headers: new Headers({
+        "content-type": "application/grpc-web-text+proto",
+        "x-grpc-web": "1",
+      }),
+    });
+
+    expect(sentHeaders().get("content-type")).toBe("application/grpc-web-text+proto");
+    expect(sentHeaders().get("x-grpc-web")).toBe("1");
+  });
+});
+
 // ---- dual-URL routing invariant ----
 //
-// Locks in the round-1 architectural fix: `withApi` (build path) MUST read `node.url`
-// (JSON-RPC fullnode) and `withGraphQLApi` MUST read `node.graphqlUrl`, regardless of
-// `features.graphql`. A future config refactor that conflated the two would silently
-// reintroduce the original `paymentInfo` failure documented in `sdk.migration.integ.test.ts`.
+// `withApi` MUST read `node.url` (JSON-RPC fullnode) and `withGraphQLApi` MUST read
+// `node.graphqlUrl`, regardless of `features.transport`. A config refactor that conflated the two
+// would silently reintroduce the `paymentInfo` failure documented in `sdk.migration.integ.test.ts`.
 
 describe("dispatcher dual-URL routing", () => {
   const JSON_RPC_URL = "https://json-rpc.example.test";
   const GRAPHQL_URL = "https://graphql.example.test/graphql";
 
-  beforeEach(() => {
-    coinConfig.setCoinConfig(() => ({
-      node: { url: JSON_RPC_URL, graphqlUrl: GRAPHQL_URL },
-      status: { type: "active" },
-      features: { graphql: true },
-    }));
-  });
+  beforeEach(() => {});
 
-  it("withApi reads node.url even when features.graphql is true", async () => {
+  it('withApi reads node.url even when features.transport is "graphql"', async () => {
     // GIVEN
     const captured = jest.fn();
 
@@ -237,7 +266,7 @@ describe("dispatcher dual-URL routing", () => {
       {
         node: { url: JSON_RPC_URL, graphqlUrl: GRAPHQL_URL },
         status: { type: "active" },
-        features: { graphql: true },
+        features: { transport: "graphql" },
       } as unknown as SuiCoinConfig,
       async () => {
         captured();
@@ -262,7 +291,7 @@ describe("dispatcher dual-URL routing", () => {
       {
         node: { url: JSON_RPC_URL, graphqlUrl: GRAPHQL_URL },
         status: { type: "active" },
-        features: { graphql: true },
+        features: { transport: "graphql" },
       } as unknown as SuiCoinConfig,
       async () => {
         captured();
@@ -285,13 +314,7 @@ describe("dispatcher dual-URL routing", () => {
 // instead of throwing. These tests pin that routing so a regression flips loudly.
 
 describe("getBlock/getBlockInfo digest routing", () => {
-  beforeEach(() => {
-    coinConfig.setCoinConfig(() => ({
-      node: { url: "https://mockapi.sui.io", graphqlUrl: GRAPHQL_MAINNET_URL },
-      status: { type: "active" },
-      features: { graphql: true },
-    }));
-  });
+  beforeEach(() => {});
 
   it("getBlockInfo with a digest input never constructs a GraphQL client (routes to JSON-RPC)", async () => {
     // 44-char base58-ish digest; not numeric, so isSequenceNumber returns false.

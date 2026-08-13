@@ -1,5 +1,5 @@
 import { BATCH_RATES_15, EXCHANGE_RATE_AT_EPOCH } from "./graphql/queries";
-import type { StakedSuiJson } from "./graphql/utils";
+import type { StakedSuiJson } from "./staking";
 import { type FakeValidator, makeSystemStateJson } from "./graphql/fixtures";
 
 export type { FakeValidator } from "./graphql/fixtures";

@@ -16,8 +16,9 @@ describe("Sui Api", () => {
     node: {
       url: getEnv("API_SUI_NODE_PROXY"),
       graphqlUrl: getEnv("API_SUI_GRAPHQL_PROXY"),
+      grpcUrl: getEnv("API_SUI_GRPC_PROXY"),
     },
-    features: { graphql: false },
+    features: { transport: "json" },
     status: { type: "active" },
   };
 

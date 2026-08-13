@@ -33,27 +33,29 @@ import {
   mapEventNodeContents,
 } from "./graphql/transactions";
 import {
-  assertSystemStateJson,
-  computeApy,
-  computeStakeRewards,
   extractFailureError,
-  fromSystemStateJson,
-  groupStakedSuiByPool,
   parseExchangeRateNode,
-  planActivationRateLookups,
-  poolRefsFromSystemState,
   shortenCoinType,
   unwrapGraphQL,
   validateStakedSuiNodes,
-  type PoolRefs,
   type StakeNode,
+} from "./graphql/utils";
+import {
+  assertSystemStateJson,
+  applyValidatorApy,
+  planValidatorApyLookups,
+  computeStakeRewards,
+  fromSystemStateJson,
+  groupStakedSuiByPool,
+  planActivationRateLookups,
+  poolRefsFromSystemState,
+  type PoolRefs,
   type StakeRatePlans,
   type SuiSystemStateInnerJson,
   type ExchangeRate,
-} from "./graphql/utils";
+} from "./staking";
 import type { VariablesOf } from "./graphql/tada";
 import {
-  APY_LOOKBACK_EPOCHS,
   BLOCK_TXS_PAGE_SIZE,
   EVENTS_PAGE_SIZE,
   MAX_CURSOR_RETRIES,
@@ -529,7 +531,34 @@ export const getDelegatedStakesGraphQL = async (
   const plans = planActivationRateLookups(items, sys.currentEpoch, sys.poolRefs);
   const rates = await fetchActivationRates(api, plans, malformed);
   const rewards = computeStakeRewards(plans.activeStakes, sys.poolRefs, rates);
-  return groupStakedSuiByPool(items, sys.epochId, sys.poolToValidator, rewards);
+  return groupStakedSuiByPool(items, sys.epochId, sys.poolToValidator, "graphql", rewards);
+};
+
+/**
+ * Checkpoint metadata with the schema's nullable fields resolved, or a throw.
+ *
+ * `Checkpoint.digest` is `String` and `timestamp` is `DateTime` — both nullable — so coercing them
+ * would hand sync an empty block hash or a 1970 timestamp: a silently invalid "block" that JSON-RPC
+ * can never produce. Failing here keeps the transports at parity and makes the fault retryable.
+ *
+ * `sequenceNumber` is `UInt53!`, and `previousCheckpointDigest` is legitimately null at genesis, so
+ * neither is checked.
+ */
+const checkpointMetadata = (
+  cp: { digest?: string | null; sequenceNumber: unknown; timestamp?: string | null },
+  context: string,
+): { digest: string; sequenceNumber: string; timestampMs: string } => {
+  const seq = String(cp.sequenceNumber);
+  if (!cp.digest) throw new Error(`${context}: checkpoint ${seq} has no digest`);
+  if (!cp.timestamp) throw new Error(`${context}: checkpoint ${seq} has no timestamp`);
+  // RFC3339 → epoch-ms string (JSON-RPC convention).
+  const timestampMs = new Date(cp.timestamp).getTime();
+  if (!Number.isFinite(timestampMs)) {
+    throw new TypeError(
+      `${context}: checkpoint ${seq} has an unparseable timestamp (${cp.timestamp})`,
+    );
+  }
+  return { digest: cp.digest, sequenceNumber: seq, timestampMs: String(timestampMs) };
 };
 
 /** GraphQL's `Query.checkpoint(sequenceNumber:)` only accepts UInt53; digests must route to JSON-RPC. */
@@ -555,92 +584,26 @@ export const getCheckpointGraphQL = async (
   if (!cp) {
     throw new Error(`GraphQL CheckpointBySequence failed: not found (id=${id})`);
   }
-  // RFC3339 → epoch-ms string (JSON-RPC convention).
-  const timestampMs = cp.timestamp ? String(new Date(cp.timestamp).getTime()) : "0";
-  return {
-    digest: cp.digest ?? "",
-    sequenceNumber: String(cp.sequenceNumber),
-    timestampMs,
-  };
+  return checkpointMetadata(cp, "GraphQL CheckpointBySequence");
 };
 
-/** Latest checkpoint via `LATEST_CHECKPOINT_SEQUENCE` + `getCheckpointGraphQL`. */
+/** Latest checkpoint in one round trip: `LATEST_CHECKPOINT_SEQUENCE` selects the fields directly. */
 export const getLastBlockGraphQL = async (
   api: SuiGraphQLClient,
 ): Promise<Pick<Checkpoint, "digest" | "sequenceNumber" | "timestampMs">> => {
   const res = await api.query({
     query: LATEST_CHECKPOINT_SEQUENCE,
   });
-  const seq = unwrapGraphQL("LatestCheckpointSequence", res).checkpoint?.sequenceNumber;
-  if (seq === null || seq === undefined) {
+  const cp = unwrapGraphQL("LatestCheckpointSequence", res).checkpoint;
+  if (cp?.sequenceNumber === null || cp?.sequenceNumber === undefined) {
     throw new Error("GraphQL LatestCheckpointSequence failed: no checkpoint");
   }
-  return getCheckpointGraphQL(api, seq);
+  return checkpointMetadata(cp, "GraphQL LatestCheckpointSequence");
 };
-
-type ApyPlan = {
-  suiAddress: string;
-  exchangeRatesId: string;
-  currentRate: ExchangeRate;
-  pastEpoch: number;
-};
-
-/** One historical-rate plan per active validator with a known pool; orphans are skipped. */
-function planValidatorApyLookups(
-  poolRefs: Map<string, PoolRefs>,
-  poolToValidator: Map<string, string>,
-  currentEpoch: number,
-): ApyPlan[] {
-  const plans: ApyPlan[] = [];
-  for (const [stakingPoolId, refs] of poolRefs) {
-    const suiAddress = poolToValidator.get(stakingPoolId);
-    if (!suiAddress) continue;
-    // 30-epoch lookback; clamp to activation epoch for young pools.
-    const desired = currentEpoch - APY_LOOKBACK_EPOCHS;
-    const pastEpoch = Math.max(desired, refs.activationEpoch);
-    plans.push({
-      suiAddress,
-      exchangeRatesId: refs.exchangeRatesId,
-      currentRate: refs.currentRate,
-      pastEpoch,
-    });
-  }
-  return plans;
-}
-
-/** Missing/failed rates degrade to apy=0; aggregate degradation surfaces via telemetry. */
-function applyValidatorApy(
-  plans: ReadonlyArray<ApyPlan>,
-  rates: ReadonlyArray<ExchangeRate | null>,
-  currentEpoch: number,
-  chunksFailed: number,
-  firstError?: string,
-): Map<string, number> {
-  const apyByAddress = new Map<string, number>();
-  let rateMissing = 0;
-  plans.forEach((p, idx) => {
-    const rate = rates[idx];
-    if (rate === null || rate === undefined) {
-      rateMissing++;
-      return; // degrade to 0
-    }
-    const epochsBetween = currentEpoch - p.pastEpoch;
-    apyByAddress.set(p.suiAddress, computeApy(p.currentRate, rate, epochsBetween));
-  });
-  if (rateMissing > 0 || chunksFailed > 0) {
-    log("warn", "sui-graphql:rate-fetch-degraded", {
-      source: "validator-apy",
-      missing: rateMissing,
-      chunksFailed,
-      total: plans.length,
-      ...(firstError !== undefined && { firstError }),
-    });
-  }
-  return apyByAddress;
-}
 
 /**
- * Active validator set with client-side APY over {@link APY_LOOKBACK_EPOCHS} (Mysten's formula).
+ * Active validator set with client-side APY over `staking.ts`'s `APY_LOOKBACK_EPOCHS` epochs
+ * (Mysten's formula).
  * Young pools clamp the past epoch to activation; per-rate nulls degrade to apy=0.
  */
 export const getValidatorsGraphQL = async (api: SuiGraphQLClient): Promise<SuiValidator[]> => {
@@ -660,7 +623,14 @@ export const getValidatorsGraphQL = async (api: SuiGraphQLClient): Promise<SuiVa
     })),
     RATE_BATCH_CHUNK_SIZE,
   );
-  const apyByAddress = applyValidatorApy(plans, rates, currentEpoch, chunksFailed, firstError);
+  const apyByAddress = applyValidatorApy(
+    plans,
+    rates,
+    currentEpoch,
+    chunksFailed,
+    "graphql",
+    firstError,
+  );
   return activeValidators.map(v => ({
     ...v,
     apy: apyByAddress.get(v.suiAddress) ?? 0,
@@ -837,9 +807,7 @@ export const getBlockInfoFieldsGraphQL = async (
   const cp = unwrapGraphQL("CheckpointBySequence", res).checkpoint;
   if (!cp) return null;
   return {
-    digest: cp.digest ?? "",
-    sequenceNumber: String(cp.sequenceNumber),
-    timestampMs: cp.timestamp ? String(new Date(cp.timestamp).getTime()) : "0",
+    ...checkpointMetadata(cp, "GraphQL CheckpointBySequence"),
     previousDigest: cp.previousCheckpointDigest ?? null,
   };
 };
@@ -884,9 +852,7 @@ export const getBlockGraphQL = async (
     const cp = unwrapGraphQL("BlockBySequence", res).checkpoint;
     if (!cp) return null;
     info ??= {
-      digest: cp.digest ?? "",
-      sequenceNumber: String(cp.sequenceNumber),
-      timestampMs: cp.timestamp ? String(new Date(cp.timestamp).getTime()) : "0",
+      ...checkpointMetadata(cp, "GraphQL BlockBySequence"),
       previousDigest: cp.previousCheckpointDigest ?? null,
     };
     transactions.push(...(cp.transactions?.nodes ?? []).map(graphqlTxToJsonRpcResponse));

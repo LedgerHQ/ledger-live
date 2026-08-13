@@ -130,6 +130,8 @@ export interface EnvTypes {
   API_SUI_NODE_PROXY: string;
   API_SUI_GRAPHQL_PROXY: string;
   API_SUI_TESTNET_GRAPHQL_PROXY: string;
+  API_SUI_GRPC_PROXY: string;
+  API_SUI_TESTNET_GRPC_PROXY: string;
   SUI_ENABLE_TOKENS: boolean;
   CANTON_API_KEY: string;
   CANTON_NODE_ID_OVERRIDE: string;

@@ -1,20 +1,18 @@
 import { createSuiGraphQLClient } from "./graphql/client";
-import coinConfig from "../config";
 import type { SuiCoinConfig } from "../config";
 
 const config = {
-  node: { url: "https://mockapi.sui.io", graphqlUrl: "https://mockapi.sui.io/graphql" },
+  node: {
+    url: "https://mockapi.sui.io",
+    graphqlUrl: "https://mockapi.sui.io/graphql",
+    grpcUrl: "https://mockapi.sui.io",
+  },
   status: { type: "active" },
-  features: { graphql: true },
+  features: { transport: "graphql" },
 } as unknown as SuiCoinConfig;
 import { mist } from "../constants";
-import {
-  APY_LOOKBACK_EPOCHS,
-  GRAPHQL_MAINNET_URL,
-  RATE_BATCH_CHUNK_SIZE,
-  STAKES_PAGE_SIZE,
-} from "./graphql/constants";
-import { UNKNOWN_VALIDATOR } from "./graphql/utils";
+import { RATE_BATCH_CHUNK_SIZE, STAKES_PAGE_SIZE } from "./graphql/constants";
+import { UNKNOWN_VALIDATOR, APY_LOOKBACK_EPOCHS } from "./staking";
 import {
   executeTransactionBlock,
   getAllBalancesCached,
@@ -86,12 +84,6 @@ const mockNext = bindMockNextGraphQLClient(factoryMock);
 beforeEach(() => {
   factoryMock.mockReset();
   unexpectedJsonRpc.mockClear();
-  // Default-on: every test in this suite needs the GraphQL branch.
-  coinConfig.setCoinConfig(() => ({
-    node: { url: "https://mockapi.sui.io", graphqlUrl: GRAPHQL_MAINNET_URL },
-    status: { type: "active" },
-    features: { graphql: true },
-  }));
 });
 
 describe("getAllBalancesCached on GraphQL transport", () => {
@@ -199,22 +191,12 @@ describe("getLastBlock on GraphQL transport", () => {
   it("should resolve digest and timestamp from the latest checkpoint", async () => {
     // GIVEN
     const isoTimestamp = "2026-04-01T12:34:56.789Z";
-    const query = jest
-      .fn()
-      // 1. LATEST_CHECKPOINT_SEQUENCE — server returns UInt53 as a number
-      .mockResolvedValueOnce({
-        data: { checkpoint: { sequenceNumber: 12345 } },
-      })
-      // 2. CHECKPOINT_BY_SEQUENCE
-      .mockResolvedValueOnce({
-        data: {
-          checkpoint: {
-            digest: "AbCdEfDigestZ",
-            sequenceNumber: 12345,
-            timestamp: isoTimestamp,
-          },
-        },
-      });
+    // LATEST_CHECKPOINT_SEQUENCE carries all three fields; the server returns UInt53 as a number.
+    const query = jest.fn().mockResolvedValueOnce({
+      data: {
+        checkpoint: { digest: "AbCdEfDigestZ", sequenceNumber: 12345, timestamp: isoTimestamp },
+      },
+    });
     mockNext({ query });
 
     // WHEN
@@ -228,10 +210,9 @@ describe("getLastBlock on GraphQL transport", () => {
       sequenceNumber: "12345",
       timestampMs: String(new Date(isoTimestamp).getTime()),
     });
-    expect(query).toHaveBeenCalledTimes(2);
-    // CHECKPOINT_BY_SEQUENCE variable must be a number — the server
-    // rejects quoted-string UInt53 inputs in production.
-    expect(query.mock.calls[1][0].variables).toEqual({ sequenceNumber: 12345 });
+    // One round trip: a second query racing the tip is what produced intermittent
+    // "CheckpointBySequence failed: not found" against live mainnet.
+    expect(query).toHaveBeenCalledTimes(1);
   });
 });
 
@@ -844,7 +825,7 @@ describe("getValidators on GraphQL transport", () => {
 
 // Unit-only by design: live broadcast has irreversible chain effects, so the
 // mutation handler is exercised via mocks here. The integ suite never invokes
-// `executeTransactionBlock` with `features.graphql=true` against mainnet.
+// `executeTransactionBlock` with `features.transport="graphql"` against mainnet.
 describe("executeTransactionBlock on GraphQL transport (mock)", () => {
   it("should encode the BCS bytes as Base64 and forward the signatures verbatim", async () => {
     // GIVEN
@@ -1338,19 +1319,36 @@ describe("getBlockInfoFieldsGraphQL", () => {
     expect(out).toBeNull();
   });
 
-  it("falls back to '0' timestamp when the schema returns null", async () => {
+  // `digest` and `timestamp` are nullable in the schema. Coercing them would report a block with an
+  // empty hash or a 1970 timestamp, which sync stores as if it were real; JSON-RPC cannot produce
+  // either, so the GraphQL arm fails instead.
+  it.each([
+    ["digest", { digest: null, timestamp: "2026-01-01T00:00:00Z" }, /has no digest/],
+    ["timestamp", { digest: "d", timestamp: null }, /has no timestamp/],
+    ["parseable timestamp", { digest: "d", timestamp: "not-a-date" }, /unparseable timestamp/],
+  ])("throws when the checkpoint has no %s", async (_label, fields, expected) => {
+    const query = jest.fn().mockResolvedValueOnce({
+      data: { checkpoint: { sequenceNumber: 1, previousCheckpointDigest: null, ...fields } },
+    });
+
+    await expect(getBlockInfoFieldsGraphQL(fakeApi(query), 1)).rejects.toThrow(expected);
+  });
+
+  it("returns the metadata when every nullable field is populated", async () => {
     const query = jest.fn().mockResolvedValueOnce({
       data: {
         checkpoint: {
           digest: "d",
           sequenceNumber: 1,
-          timestamp: null,
+          timestamp: "2026-01-01T00:00:00Z",
           previousCheckpointDigest: null,
         },
       },
     });
+
     const out = await getBlockInfoFieldsGraphQL(fakeApi(query), 1);
-    expect(out?.timestampMs).toBe("0");
+
+    expect(out?.timestampMs).toBe(String(Date.parse("2026-01-01T00:00:00Z")));
     expect(out?.previousDigest).toBeNull();
   });
 });
@@ -1433,7 +1431,7 @@ describe("getBlockGraphQL", () => {
           checkpoint: {
             digest: "0xdgst",
             sequenceNumber: 100,
-            timestamp: null,
+            timestamp: "2026-01-01T00:00:00Z",
             previousCheckpointDigest: null,
             transactions: {
               nodes: [txNode("0xt1"), txNode("0xt2")],
@@ -1474,7 +1472,7 @@ describe("getBlockGraphQL", () => {
         checkpoint: {
           digest: "d",
           sequenceNumber: 1,
-          timestamp: null,
+          timestamp: "2026-01-01T00:00:00Z",
           previousCheckpointDigest: null,
           transactions: {
             nodes: [txNode("0xt1")],
@@ -1495,7 +1493,7 @@ describe("getBlockGraphQL", () => {
         checkpoint: {
           digest: "0xdgst",
           sequenceNumber: 1,
-          timestamp: null,
+          timestamp: "2026-01-01T00:00:00Z",
           previousCheckpointDigest: null,
           transactions: {
             nodes: [txNode("0xt")],
