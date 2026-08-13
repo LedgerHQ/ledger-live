@@ -14,12 +14,47 @@ Ledger types for devices and transport.
 #### Table of Contents
 
 *   [DeviceModelId](#devicemodelid)
+    *   [blue](#blue)
+    *   [nanoS](#nanos)
+    *   [nanoSP](#nanosp)
+    *   [nanoX](#nanox)
+    *   [stax](#stax)
+    *   [europa](#europa)
+    *   [apex](#apex)
 *   [DeviceModel](#devicemodel)
 *   [Device](#device)
 
 ### DeviceModelId
 
 DeviceModelId is a unique identifier to identify the model of a Ledger hardware wallet.
+
+#### blue
+
+Ledger Blue
+
+#### nanoS
+
+Ledger Nano S
+
+#### nanoSP
+
+Ledger Nano S Plus
+
+#### nanoX
+
+Ledger Nano X
+
+#### stax
+
+Ledger Stax
+
+#### europa
+
+Ledger Flex ("europa" is the internal name)
+
+#### apex
+
+Ledger Nano Gen5  (Apex)
 
 ### DeviceModel
 

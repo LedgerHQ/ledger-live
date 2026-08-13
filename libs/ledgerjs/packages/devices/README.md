@@ -80,7 +80,7 @@ Ledger Flex ("europa" is the internal name)
 
 ### apex
 
-Apex
+Ledger Nano Gen5  (Apex)
 
 ### ledgerUSBVendorId
 
