@@ -186,7 +186,7 @@ describe("LNUpsellBanner", () => {
     function renderBanner({
       largeScreenUpsellEnabled = true,
       isOptIn = true,
-      devicesModelList = [DeviceModelId.nanoS],
+      devicesModelList = [DeviceModelId.nanoS] as DeviceModelId[],
       onboardingDate = now.toISOString(),
       audienceModels = {},
       targetedByHighTierUpsell = false,

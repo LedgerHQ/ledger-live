@@ -21,22 +21,24 @@ export const IIU2F = 0x04;
 export const IICCID = 0x08;
 export const IIWebUSB = 0x10;
 
-export enum DeviceModelId {
+export const DeviceModelId = {
   /** Ledger Blue */
-  blue = "blue",
+  blue: "blue",
   /** Ledger Nano S */
-  nanoS = "nanoS",
+  nanoS: "nanoS",
   /** Ledger Nano S Plus */
-  nanoSP = "nanoSP",
+  nanoSP: "nanoSP",
   /** Ledger Nano X */
-  nanoX = "nanoX",
+  nanoX: "nanoX",
   /** Ledger Stax */
-  stax = "stax",
+  stax: "stax",
   /** Ledger Flex ("europa" is the internal name) */
-  europa = "europa", // DO NOT CHANGE TO FLEX or handle all migration issues, things will break
+  europa: "europa", // DO NOT CHANGE TO FLEX or handle all migration issues, things will break
   /** Apex */
-  apex = "apex",
-}
+  apex: "apex",
+} as const;
+
+export type DeviceModelId = (typeof DeviceModelId)[keyof typeof DeviceModelId];
 
 const devices: { [key in DeviceModelId]: DeviceModel } = {
   [DeviceModelId.blue]: {

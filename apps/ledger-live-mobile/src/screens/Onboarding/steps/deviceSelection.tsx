@@ -56,7 +56,7 @@ export const devices = {
   },
 };
 
-const NOT_SUPPORTED_DEVICES_IOS = [DeviceModelId.nanoS, DeviceModelId.nanoSP];
+const NOT_SUPPORTED_DEVICES_IOS: DeviceModelId[] = [DeviceModelId.nanoS, DeviceModelId.nanoSP];
 
 function OnboardingStepDeviceSelection() {
   const navigation = useNavigation<NavigationProp>();

@@ -13,7 +13,7 @@ import NavigationScrollView from "~/components/NavigationScrollView";
 import { NavigatorName, ScreenName } from "~/const";
 
 const DebugHttpTransport = () => {
-  const models = [
+  const models: DeviceModelId[] = [
     DeviceModelId.nanoX,
     DeviceModelId.nanoSP,
     DeviceModelId.stax,
@@ -23,7 +23,7 @@ const DebugHttpTransport = () => {
   const dispatch = useDispatch();
   const [address, setAddress] = useState("");
   const [name, setName] = useState("");
-  const [model, setModelId] = useState(DeviceModelId.nanoX);
+  const [model, setModelId] = useState<DeviceModelId>(DeviceModelId.nanoX);
 
   const onAdd = useCallback(() => {
     const m = address.trim().match(/^((?:[0-9]{1,3}\.){3}[0-9]{1,3})(:([0-9]+))?/);

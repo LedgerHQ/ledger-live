@@ -26,12 +26,12 @@ function usePrevious<T>(val: T): T {
 }
 
 type EnabledDeviceModelIds =
-  | DeviceModelId.nanoS
-  | DeviceModelId.nanoSP
-  | DeviceModelId.nanoX
-  | DeviceModelId.stax
-  | DeviceModelId.europa
-  | DeviceModelId.apex;
+  | (typeof DeviceModelId)["nanoS"]
+  | (typeof DeviceModelId)["nanoSP"]
+  | (typeof DeviceModelId)["nanoX"]
+  | (typeof DeviceModelId)["stax"]
+  | (typeof DeviceModelId)["europa"]
+  | (typeof DeviceModelId)["apex"];
 
 const deviceModelIds: Array<EnabledDeviceModelIds> = [
   DeviceModelId.nanoS,

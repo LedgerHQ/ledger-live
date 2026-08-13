@@ -50,7 +50,9 @@ export function useOpenRecoverUpsellCallback() {
       if (
         lastConnectedDevice &&
         touchScreenURI &&
-        [DeviceModelId.stax, DeviceModelId.europa].includes(lastConnectedDevice.modelId)
+        ([DeviceModelId.stax, DeviceModelId.europa] as DeviceModelId[]).includes(
+          lastConnectedDevice.modelId,
+        )
       ) {
         redirect(touchScreenURI);
       } else if (recoverPostOnboardingURI && onboardingType === OnboardingType.restore) {

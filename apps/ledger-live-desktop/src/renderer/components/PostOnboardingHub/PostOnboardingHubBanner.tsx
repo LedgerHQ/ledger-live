@@ -16,7 +16,7 @@ const Wrapper = styled(Card)`
   margin: 20px 0px;
 `;
 
-const illustrations = {
+const illustrations: Record<DeviceModelId, React.ReactNode> = {
   stax: <StaxBannerIllustration />,
   europa: <EuropaBannerIllustration />,
   nanoS: undefined,
@@ -39,7 +39,7 @@ const PostOnboardingHubBanner = () => {
   return (
     <Wrapper>
       <ActionCard
-        leftContent={deviceModelId ? illustrations[deviceModelId] : undefined}
+        leftContent={deviceModelId ? illustrations[deviceModelId as DeviceModelId] : undefined}
         title={t("postOnboarding.postOnboardingBanner.title", {
           productName: getDeviceModel(deviceModelId ?? DeviceModelId.stax).productName,
         })}

@@ -1,15 +1,17 @@
 /**
  * DeviceModelId is a unique identifier to identify the model of a Ledger hardware wallet.
  */
-export enum DeviceModelId {
-  blue = "blue",
-  nanoS = "nanoS",
-  nanoSP = "nanoSP",
-  nanoX = "nanoX",
-  stax = "stax",
-  europa = "europa",
-  apex = "apex",
-}
+export const DeviceModelId = {
+  blue: "blue",
+  nanoS: "nanoS",
+  nanoSP: "nanoSP",
+  nanoX: "nanoX",
+  stax: "stax",
+  europa: "europa",
+  apex: "apex",
+} as const;
+
+export type DeviceModelId = (typeof DeviceModelId)[keyof typeof DeviceModelId];
 
 /**
  * a DeviceModel contains all the information of a specific Ledger hardware wallet model.

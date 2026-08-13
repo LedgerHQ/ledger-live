@@ -6,9 +6,9 @@ export const LARGE_SCREEN_UPSELL_MODAL_PAGE_NAME = "Modal - Upgrade";
 export type LargeScreenUpsellDismissMethod = "close button" | "outside tap";
 
 export type LargeScreenUpsellNanoDeviceModelId =
-  | DeviceModelId.nanoS
-  | DeviceModelId.nanoSP
-  | DeviceModelId.nanoX;
+  | (typeof DeviceModelId)["nanoS"]
+  | (typeof DeviceModelId)["nanoSP"]
+  | (typeof DeviceModelId)["nanoX"];
 
 export type LargeScreenUpsellDeviceModelAnalyticsValue = "lns" | "lnsp" | "lnx";
 

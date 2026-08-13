@@ -5,7 +5,10 @@ import type { State } from "~/reducers/types";
 
 const NOW = new Date("2026-07-06T12:00:00.000Z");
 
-type NanoDeviceModelId = DeviceModelId.nanoS | DeviceModelId.nanoSP | DeviceModelId.nanoX;
+type NanoDeviceModelId =
+  | (typeof DeviceModelId)["nanoS"]
+  | (typeof DeviceModelId)["nanoSP"]
+  | (typeof DeviceModelId)["nanoX"];
 
 type RenderOptions = {
   enabled?: boolean;

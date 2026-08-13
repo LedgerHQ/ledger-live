@@ -15,7 +15,9 @@ type Props = {
 };
 
 const animationStyles = (modelId: DeviceModelId) =>
-  [DeviceModelId.stax, DeviceModelId.europa].includes(modelId) ? { height: 210 } : {};
+  ([DeviceModelId.stax, DeviceModelId.europa] as DeviceModelId[]).includes(modelId)
+    ? { height: 210 }
+    : {};
 
 const FollowInstructions: React.FC<Props> = ({ device }) => {
   const { theme } = useTheme();

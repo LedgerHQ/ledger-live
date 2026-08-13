@@ -124,7 +124,7 @@ describe("LNSUpsellBanner", () => {
       ffEnabled = true,
       ffLocationEnabled = true,
       isOptIn = true,
-      devicesModelList = [DeviceModelId.nanoS],
+      devicesModelList = [DeviceModelId.nanoS] as DeviceModelId[],
       targetedByHighTierUpsell = false,
       brazePlacement = false,
     }) {

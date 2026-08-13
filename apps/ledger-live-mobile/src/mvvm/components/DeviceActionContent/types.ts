@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import type { DeviceModelId } from "@ledgerhq/types-devices";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { LottieViewProps } from "lottie-react-native";
 
 /** Device-side action illustrated by the content animation. */
@@ -12,7 +12,7 @@ export type DeviceActionAnimationTheme = "light" | "dark";
 export type DeviceActionAnimationSource = LottieViewProps["source"] | undefined;
 
 /** Device models supported by DeviceActionContent animations. */
-export type SupportedDeviceActionModelId = Exclude<DeviceModelId, DeviceModelId.blue>;
+export type SupportedDeviceActionModelId = Exclude<DeviceModelId, (typeof DeviceModelId)["blue"]>;
 
 /** Lumen banner displayed below the main device instructions. */
 export type DeviceActionContentBanner = Readonly<{
