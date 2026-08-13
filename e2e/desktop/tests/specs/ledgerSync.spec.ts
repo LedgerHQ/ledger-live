@@ -1,32 +1,25 @@
-import { test } from "tests/fixtures/common";
+import { type CliCommand, test } from "tests/fixtures/common";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
-import { addBugLink, addTmsLink } from "tests/utils/allureUtils";
+import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
+import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
-import { CLI } from "tests/utils/cliUtils";
-import { LedgerSyncCliHelper } from "tests/utils/ledgerSyncCliUtils";
-import { expectPulledDataToMatchAccountChanges } from "tests/utils/ledgerSyncPulledDataUtils";
-import { accountNames, accounts } from "tests/testdata/ledgerSyncTestData";
+import { LedgerSyncCliHelper, ledgerSyncEnvironment } from "tests/utils/ledgerSyncCliUtils";
+import { getModularSelector } from "tests/utils/modularSelectorUtils";
 import { getEnv, setEnv } from "@shared/env";
 import { deviceTagsWithoutLNS } from "tests/utils/tagsUtils";
 
-const app: AppInfos = AppInfos.LS;
-const firstAccountId = accounts[0].id;
-const firstAccountName = accountNames[firstAccountId];
-const secondAccountId = accounts[1].id;
-const secondAccountName = accountNames[secondAccountId];
-const renamedSecondAccountName = `${secondAccountName}_renamed`;
-
-function setupSeed() {
+function setupSeed(seed: string) {
   const prevSeed = getEnv("SEED");
   test.beforeAll(async () => {
-    process.env.SEED = "Temporary_SEED";
+    process.env.SEED = seed;
   });
   test.afterAll(async () => {
     setEnv("SEED", prevSeed);
   });
 }
 
+/** Clears whatever the previous run left on the backend before building the real trustchain. */
 function initializeThenDeleteTrustchain() {
   return [
     LedgerSyncCliHelper.initializeLedgerKeyRingProtocol,
@@ -35,27 +28,47 @@ function initializeThenDeleteTrustchain() {
   ];
 }
 
-function initializeTrustchain() {
+function initializeEmptyTrustchain() {
   return [
     LedgerSyncCliHelper.initializeLedgerKeyRingProtocol,
     LedgerSyncCliHelper.initializeLedgerSync,
-    LedgerSyncCliHelper.pushLedgerSyncData,
   ];
 }
-// TODO: Unskip once LIVE-35808 is fixed — staging cloud-sync cannot verify the JWT that
-// staging trustchain issues, so every cloud-sync call fails with 400 on the Authorization header.
-test.describe.skip("Ledger Sync", () => {
-  setupSeed();
-  test.use({
+
+function destroyTrustchainAfterAll() {
+  test.afterAll(async () => {
+    const { pubKey } = LedgerSyncCliHelper.ledgerKeyRingProtocolArgs;
+    const { rootId } = LedgerSyncCliHelper.ledgerSyncPushDataArgs;
+    if (!pubKey || !rootId) return;
+
+    try {
+      await LedgerSyncCliHelper.deleteLedgerSyncData();
+    } catch (error) {
+      console.error(`[E2E] Ledger Sync cleanup failed for trustchain ${rootId}:`, error);
+    }
+  });
+}
+
+/**
+ * Options for a test that boots the app already a member of a freshly created trustchain.
+ * `seedCommands` run once the trustchain exists and before it is written to the userdata.
+ */
+function preSeededTrustchain(seedCommands: CliCommand[] = []) {
+  return {
     teamOwner: Team.WALLET_XP,
     userdata: "skip-onboarding-with-last-seen-device",
-    speculosApp: app,
-    cliCommands: [...initializeThenDeleteTrustchain(), ...initializeTrustchain()],
+    speculosApp: AppInfos.LS,
+    cliCommands: [
+      ...initializeThenDeleteTrustchain(),
+      ...initializeEmptyTrustchain(),
+      ...seedCommands,
+      LedgerSyncCliHelper.saveTrustchainToUserdata,
+    ],
     featureFlags: {
       lldWalletSync: {
         enabled: true,
         params: {
-          environment: "STAGING",
+          environment: ledgerSyncEnvironment,
           watchConfig: {
             pollingInterval: 2_000,
             initialTimeout: 500,
@@ -65,95 +78,60 @@ test.describe.skip("Ledger Sync", () => {
       },
       lldLedgerSyncEntryPoints: { enabled: true },
     },
-  });
+  };
+}
+
+test.describe("Ledger Sync - add account", () => {
+  setupSeed("LS_AddAccount_SEED");
+  destroyTrustchainAfterAll();
+  const addedCurrency = Currency.ETH;
+
+  test.use(preSeededTrustchain());
 
   test(
-    "Sync instances, rename and delete accounts, then delete the backup",
+    "[Live Hub][Ledger Sync] Adding New Account (Online)",
     {
       tag: deviceTagsWithoutLNS(),
       annotation: {
         type: "TMS",
-        description: "B2CQA-2303, B2CQA-2302, B2CQA-2300, B2CQA-2297, B2CQA-2296",
+        description: "B2CQA-2303",
       },
     },
-    async ({ app, page }) => {
+    async ({ app, speculos }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-      await addBugLink(["LIVE-31799", "LIVE-35808"]);
+
+      await speculos.relaunch(addedCurrency.speculosApp.name);
 
       await app.portfolio.expectAddAccountButtonVisible();
+      await app.trustchain.expectToBeEmpty();
 
-      await app.mainNavigation.openSettings();
-      await app.settings.enableWalletSync();
-      await app.ledgerSync.expectSyncAccountsButtonExist();
+      await app.portfolio.clickAddAccountButton();
 
-      await app.ledgerSync.syncAccounts();
-      await app.speculos.activateLedgerSync();
-      await app.ledgerSync.expectSynchronizationSuccess();
-      await app.ledgerSync.closeLedgerSync();
+      const selector = await getModularSelector(app, "ASSET");
+      if (selector) {
+        await selector.validateItems();
+        await selector.selectAssetByTicker(addedCurrency);
+        await selector.selectNetwork(addedCurrency);
+        await app.scanAccountsDrawer.selectFirstAccount();
+        await app.scanAccountsDrawer.clickCloseButton();
+      } else {
+        await app.addAccount.expectModalVisibility();
+        await app.addAccount.selectCurrency(addedCurrency);
+        await app.addAccount.addAccounts();
+        await app.addAccount.done();
+      }
 
-      // Success copy can appear before the watch loop finishes importing every descriptor (retries use backoff).
-      await app.accounts.expectReduxAccountsLength(2);
-      await app.accounts.expectReduxAccountIds([firstAccountId, secondAccountId]);
-
-      await app.mainNavigation.openTargetFromMainNavigation("accounts");
-      await app.accounts.expectAccountsCount(2, 60_000);
-      await app.accounts.expectCryptoAccountRowVisible(firstAccountName);
-      await app.accounts.expectCryptoAccountRowVisible(secondAccountName);
-
-      await app.accounts.navigateToAccountByName(firstAccountName);
-      await app.account.expectAccountVisibility(firstAccountName);
-      await app.account.deleteAccount();
-      await app.accounts.expectReduxAccountIds([secondAccountId]);
-      await app.accounts.expectAccountAbsence(firstAccountName);
-
-      await app.accounts.navigateToAccountByName(secondAccountName);
-      await app.account.expectAccountVisibility(secondAccountName);
-      await app.account.renameAccount(renamedSecondAccountName);
-      await app.account.expectAccountVisibility(renamedSecondAccountName);
-
-      const cloudSyncResponse = LedgerSyncCliHelper.getCloudSyncResponse(page);
-      await app.layout.syncAccountsIfAvailable();
-      await LedgerSyncCliHelper.checkSynchronizationSuccess(cloudSyncResponse, app);
-
-      await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.expectReduxAccountsLength(1);
-      await app.accounts.expectReduxAccountIds([secondAccountId]);
+      const [addedAccountId] = await app.accounts.getReduxAccountIds();
+
+      await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.expectAccountsCount(1, 60_000);
-      await app.accounts.expectCryptoAccountRowVisible(renamedSecondAccountName);
-      await app.accounts.expectAccountAbsence(firstAccountName);
+      await app.accounts.expectCryptoAccountRowVisible(`${addedCurrency.name} 1`);
 
-      const pulledData = await CLI.ledgerSync({
-        ...LedgerSyncCliHelper.ledgerKeyRingProtocolArgs,
-        ...LedgerSyncCliHelper.ledgerSyncPullDataArgs,
-      });
+      await app.layout.syncAccountsIfAvailable();
+      await app.layout.waitForAccountsSyncToBeDone();
 
-      expectPulledDataToMatchAccountChanges(pulledData, {
-        deletedAccountId: firstAccountId,
-        remainingAccountId: secondAccountId,
-        expectedRemainingAccountName: renamedSecondAccountName,
-      });
-
-      await app.mainNavigation.openSettings();
-      await app.settings.openManageLedgerSync();
-      await app.ledgerSync.manageInstances();
-      await app.ledgerSync.expectCLIMemberVisible();
-      await app.ledgerSync.removeCLIMember();
-      await app.speculos.removeMemberFromLedgerSync();
-      await app.ledgerSync.expectMemberRemoval();
-      await app.ledgerSync.expectCLIMemberRemoved();
-      await app.drawer.closeDrawer();
-
-      await app.mainNavigation.openSettings();
-      await app.settings.openManageLedgerSync();
-      await app.ledgerSync.manageInstances();
-      await app.ledgerSync.expectCLIMemberRemoved();
-      await app.drawer.closeDrawer();
-      await app.ledgerSync.expectLedgerSyncManagementVisible();
-
-      await app.ledgerSync.destroyTrustchain();
-      await app.ledgerSync.expectBackupDeletion();
-      await app.drawer.closeDrawer();
-      await app.settings.expectLedgerSyncSettingsEntryPoint();
+      await app.trustchain.expectToHoldAccount(addedAccountId, addedCurrency.id);
     },
   );
 });

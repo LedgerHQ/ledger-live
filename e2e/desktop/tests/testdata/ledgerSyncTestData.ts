@@ -1,23 +1,15 @@
-export const accounts = [
-  {
-    id: "mock:1:dogecoin:0.790010769447963:",
-    currencyId: "dogecoin",
-    index: 1,
-    seedIdentifier: "mock",
-    derivationMode: "",
-    freshAddress: "1uVnrWAzycYqKUXSuNXt3XSjJ8",
-  },
-  {
-    id: "mock:1:bitcoin_gold:0.8027791663782486:",
-    currencyId: "bitcoin_gold",
-    index: 1,
-    seedIdentifier: "mock",
-    derivationMode: "",
-    freshAddress: "1Y5T8JQqBKUS7cXbxUYCR4wg3YSbV9R",
-  },
-];
+import type { LedgerSyncAccountDescriptor } from "tests/utils/ledgerSyncCliUtils";
 
-export const accountNames: Record<string, string> = {
-  "mock:1:dogecoin:0.790010769447963:": "Dogecoin 2",
-  "mock:1:bitcoin_gold:0.8027791663782486:": "Bitcoin Gold 2",
+/**
+ * Accounts seeded straight into a Ledger Sync trustchain, so the app pulls them on boot.
+ * A `mock:` id routes to the offline mock bridge whatever the MOCK env, and carrying no
+ * `accountNames` entry is what keeps an account on its default name ("Ethereum 1").
+ */
+export const ethAccount: LedgerSyncAccountDescriptor = {
+  id: "mock:1:ethereum:0x6Cbcd73CD8e8a42844662f0A0e76D7F79Afd933d:",
+  currencyId: "ethereum",
+  index: 0,
+  seedIdentifier: "mock",
+  derivationMode: "",
+  freshAddress: "0x6Cbcd73CD8e8a42844662f0A0e76D7F79Afd933d",
 };

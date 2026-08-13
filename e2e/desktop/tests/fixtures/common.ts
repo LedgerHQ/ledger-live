@@ -28,7 +28,9 @@ import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { unregisterAllTransportModules } from "@ledgerhq/live-common/hw/index";
 import { getMergedFeatureFlags } from "tests/utils/featureFlagUtils";
 
-type CliCommand = ((userdataPath?: string) => Observable<unknown> | Promise<unknown> | string) & {
+export type CliCommand = ((
+  userdataPath?: string,
+) => Observable<unknown> | Promise<unknown> | string) & {
   canUseGeneratedUserdata?: () => boolean;
 };
 

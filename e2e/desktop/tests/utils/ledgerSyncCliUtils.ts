@@ -1,9 +1,18 @@
 import { CLI } from "tests/utils/cliUtils";
 import { activateLedgerSync } from "@ledgerhq/live-e2e-shared/speculos";
-import { accountNames, accounts } from "tests/testdata/ledgerSyncTestData";
-import { expect, Page, Response } from "@playwright/test";
-import { Application } from "tests/page";
 import { getEnv } from "@shared/env";
+import { readFile, writeFile } from "node:fs/promises";
+import invariant from "invariant";
+
+/** An account as it is stored in the trustchain, matching `accountDescriptorSchema`. */
+export interface LedgerSyncAccountDescriptor {
+  id: string;
+  currencyId: string;
+  index: number;
+  seedIdentifier: string;
+  derivationMode: string;
+  freshAddress: string;
+}
 
 interface LedgerKeyRingProtocolArgs {
   pubKey: string;
@@ -44,8 +53,11 @@ function isLedgerOutput(output: unknown): output is LedgerOutput {
   return typeof output === "object" && output !== null;
 }
 
+export const ledgerSyncEnvironment =
+  process.env.LEDGER_SYNC_ENVIRONMENT === "PROD" ? "PROD" : "STAGING";
+
 export class LedgerSyncCliHelper {
-  private static environment = process.env.LEDGER_SYNC_ENVIRONMENT;
+  private static environment = ledgerSyncEnvironment;
 
   private static cloudSyncApiBaseUrl =
     LedgerSyncCliHelper.environment == "PROD"
@@ -68,10 +80,7 @@ export class LedgerSyncCliHelper {
     walletSyncEncryptionKey: "",
     applicationPath: "",
     push: true,
-    data: JSON.stringify({
-      accounts,
-      accountNames,
-    }),
+    data: JSON.stringify({ accounts: [], accountNames: {} }),
     cloudSyncApiBaseUrl: LedgerSyncCliHelper.cloudSyncApiBaseUrl,
   };
 
@@ -118,15 +127,6 @@ export class LedgerSyncCliHelper {
     }
   }
 
-  static getCloudSyncResponse(page: Page): Promise<Response> {
-    return page.waitForResponse(
-      response =>
-        response.url().startsWith(LedgerSyncCliHelper.cloudSyncApiBaseUrl + "/atomic/v1/live") &&
-        response.status() === 200,
-      { timeout: 60_000 },
-    );
-  }
-
   static async initializeLedgerKeyRingProtocol() {
     return CLI.ledgerKeyRingProtocol({ initMemberCredentials: true }).then(output => {
       LedgerSyncCliHelper.updateKeysAndArgs(output);
@@ -144,6 +144,24 @@ export class LedgerSyncCliHelper {
     });
     await activateLedgerSync();
     return output;
+  }
+
+  static async pushAccountsToTrustchain(
+    descriptors: LedgerSyncAccountDescriptor[],
+    accountNames: Record<string, string> = {},
+  ) {
+    LedgerSyncCliHelper.ledgerSyncPushDataArgs.data = JSON.stringify({
+      accounts: descriptors,
+      accountNames,
+    });
+    return LedgerSyncCliHelper.pushLedgerSyncData();
+  }
+
+  static async pullLedgerSyncData() {
+    return CLI.ledgerSync({
+      ...LedgerSyncCliHelper.ledgerKeyRingProtocolArgs,
+      ...LedgerSyncCliHelper.ledgerSyncPullDataArgs,
+    });
   }
 
   static async pushLedgerSyncData() {
@@ -167,12 +185,33 @@ export class LedgerSyncCliHelper {
     });
   }
 
-  static async checkSynchronizationSuccess(
-    cloudSyncResponse: Promise<Response>,
-    app: Application,
-  ): Promise<void> {
-    await app.layout.waitForAccountsSyncToBeDone();
-    const response = await cloudSyncResponse;
-    expect(response.ok(), "Cloud Sync response should complete").toBe(true);
+  /**
+   * Writes the CLI's trustchain and member credentials into the userdata `app.json` so the app
+   * boots already synced, skipping the in-app activation flow. `data.trustchain` is allowlisted
+   * and hydrated at startup by `fetchTrustchain`; the app reuses the CLI's member identity, so
+   * the trustchain still holds a single member.
+   */
+  static async saveTrustchainToUserdata(userdataPath?: string) {
+    invariant(userdataPath, "Ledger Sync: a userdata path is required to seed the trustchain");
+
+    const { pubKey, privateKey } = LedgerSyncCliHelper.ledgerKeyRingProtocolArgs;
+    const { rootId, walletSyncEncryptionKey, applicationPath } =
+      LedgerSyncCliHelper.ledgerSyncPushDataArgs;
+    invariant(
+      pubKey && privateKey && rootId,
+      "Ledger Sync: the trustchain must be initialized before seeding the userdata",
+    );
+
+    const userdata = JSON.parse(await readFile(userdataPath, "utf-8"));
+    userdata.data = {
+      ...userdata.data,
+      trustchain: {
+        trustchain: { rootId, walletSyncEncryptionKey, applicationPath },
+        memberCredentials: { pubkey: pubKey, privatekey: privateKey },
+      },
+    };
+    await writeFile(userdataPath, JSON.stringify(userdata));
+
+    return { rootId };
   }
 }
