@@ -71,13 +71,18 @@ export function QueuedBottomSheet({
       onBackdropPress={handleBackdropPress}
       backgroundComponent={backgroundComponent}
     >
-      {/* QAA-1476 instrumentation: ref'd so the hook can measureInWindow after present() and
-          record where the sheet content actually landed. Not for merge. */}
-      <View ref={measureRef} collapsable={false}>
-        <BottomSheetBackgroundContext.Provider value={backgroundContextValue}>
-          <IsInBottomSheetProvider>{children}</IsInBottomSheetProvider>
-        </BottomSheetBackgroundContext.Provider>
-      </View>
+      {/* QAA-1476 instrumentation: a 1x1 absolute marker at the sheet content's origin, so the
+          hook can measureInWindow after present() without touching layout. Wrapping the children
+          instead collapsed them to height 0 and broke every run. Not for merge. */}
+      <View
+        ref={measureRef}
+        collapsable={false}
+        pointerEvents="none"
+        style={{ position: "absolute", top: 0, left: 0, width: 1, height: 1 }}
+      />
+      <BottomSheetBackgroundContext.Provider value={backgroundContextValue}>
+        <IsInBottomSheetProvider>{children}</IsInBottomSheetProvider>
+      </BottomSheetBackgroundContext.Provider>
       <OnscreenNavigationSafeArea />
     </BottomSheet>
   );
