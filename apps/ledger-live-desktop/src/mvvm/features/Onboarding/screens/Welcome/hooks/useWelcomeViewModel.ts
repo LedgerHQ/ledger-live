@@ -1,10 +1,19 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useNavigate } from "react-router";
-import { saveSettings } from "~/renderer/actions/settings";
+import { DeviceModelId } from "@ledgerhq/devices";
+import {
+  saveSettings,
+  setAnalyticsConsentInfo,
+  setHasSeenAnalyticsOptInPrompt,
+  setLastOnboardedDevice,
+  setShareAnalytics,
+  setSharePersonalizedRecommendations,
+} from "~/renderer/actions/settings";
 import { openURL } from "~/renderer/linking";
 import {
+  analyticsConsentInfoSelector,
   hasCompletedOnboardingSelector,
   hasOnboardedDeviceSelector,
 } from "~/renderer/reducers/settings";
@@ -15,7 +24,14 @@ import { useAnalyticsOptInPrompt } from "LLD/features/AnalyticsOptInPrompt/hooks
 import { EntryPoint } from "LLD/features/AnalyticsOptInPrompt/types/AnalyticsOptInPromptNavigator";
 import { useActivationDrawer } from "LLD/features/LedgerSyncEntryPoints/hooks/useActivationDrawer";
 import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
+import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
+import { resolveAnalyticsOptInParams } from "@features/flow-analytics-consent";
+
+const DEV_SKIP_ONBOARDED_DEVICE = {
+  deviceId: "dev-skip-onboarding",
+  modelId: DeviceModelId.stax,
+  wired: false,
+};
 
 export function useWelcomeViewModel() {
   const { t } = useTranslation();
@@ -23,90 +39,98 @@ export function useWelcomeViewModel() {
   const dispatch = useDispatch();
   const { shouldUseLazyOnboarding } = useWalletFeaturesConfig("desktop");
 
-  // URLs
   const urlReborn = useLocalizedUrl(urls.reborn);
   const urlTerms = useLocalizedUrl(urls.terms);
   const urlPrivacyPolicy = useLocalizedUrl(urls.privacyPolicy);
 
-  // URL handlers
-  const openReborn = useCallback(() => openURL(urlReborn), [urlReborn]);
-  const openTermsAndConditions = useCallback(() => openURL(urlTerms), [urlTerms]);
-  const openPrivacyPolicy = useCallback(() => openURL(urlPrivacyPolicy), [urlPrivacyPolicy]);
+  const openReborn = () => openURL(urlReborn);
+  const openTermsAndConditions = () => openURL(urlTerms);
+  const openPrivacyPolicy = () => openURL(urlPrivacyPolicy);
 
-  // Redux selectors
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const hasOnboardedDevice = useSelector(hasOnboardedDeviceSelector);
+  const consentInfo = useSelector(analyticsConsentInfoSelector);
+  const analyticsOptInFlag = useFeature("analyticsOptIn");
+  const { currentPolicyVersion } = resolveAnalyticsOptInParams(analyticsOptInFlag);
+  const policyVersion = currentPolicyVersion?.normalized ?? consentInfo.privacyPolicyVersion;
   const trustchain = useSelector(trustchainSelector);
-  const shouldInitiallySelectDevice = useRef(hasCompletedOnboarding && !trustchain);
+  const shouldRedirectToDeviceSelection = useRef(hasCompletedOnboarding && !trustchain);
 
-  // Navigation effect
   useEffect(() => {
-    if (!shouldInitiallySelectDevice.current) return;
+    if (!shouldRedirectToDeviceSelection.current) return;
+
     if (shouldUseLazyOnboarding && !hasOnboardedDevice) {
       navigate("/");
-    } else {
-      navigate("/onboarding/select-device");
+      return;
     }
+
+    navigate("/onboarding/select-device");
   }, [navigate, shouldUseLazyOnboarding, hasOnboardedDevice]);
 
-  // Feature flags easter egg state
-  const countRef1 = useRef(0);
-  const countRef2 = useRef(0);
-  const timeout = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const logoClickCount = useRef(0);
+  const progressClickCount = useRef(0);
+  const easterEggResetTimeout = useRef<ReturnType<typeof setTimeout>>(undefined);
   const [isFeatureFlagsSettingsButtonDisplayed, setIsFeatureFlagsSettingsButtonDisplayed] =
-    useState<boolean>(false);
+    useState(false);
 
-  // Feature flags easter egg handler
-  const handleOpenFeatureFlagsDrawer = useCallback((nb: string) => {
-    if (nb === "1") countRef1.current++;
-    else if (nb === "2") countRef2.current++;
+  const handleOpenFeatureFlagsDrawer = (source: "1" | "2") => {
+    if (source === "1") logoClickCount.current++;
+    else progressClickCount.current++;
 
-    if (countRef1.current > 3 && countRef2.current > 5) {
-      countRef1.current = 0;
-      countRef2.current = 0;
+    if (logoClickCount.current > 3 && progressClickCount.current > 5) {
+      logoClickCount.current = 0;
+      progressClickCount.current = 0;
       setIsFeatureFlagsSettingsButtonDisplayed(true);
     }
 
-    if (timeout.current) clearTimeout(timeout.current);
-    timeout.current = setTimeout(() => {
-      countRef1.current = 0;
-      countRef2.current = 0;
+    if (easterEggResetTimeout.current) clearTimeout(easterEggResetTimeout.current);
+    easterEggResetTimeout.current = setTimeout(() => {
+      logoClickCount.current = 0;
+      progressClickCount.current = 0;
     }, 1000);
-  }, []);
+  };
 
-  // Cleanup effect
-  useEffect(() => {
-    return () => {
-      if (timeout.current) clearTimeout(timeout.current);
-    };
-  }, []);
+  useEffect(
+    () => () => {
+      if (easterEggResetTimeout.current) clearTimeout(easterEggResetTimeout.current);
+    },
+    [],
+  );
 
-  const accessSettings = useCallback(() => {
+  const accessSettings = () => {
     navigate("/settings");
-  }, [navigate]);
+  };
 
-  // Skip onboarding (dev only)
-  const skipOnboardingDev = useCallback(() => {
+  const skipOnboarding = () => {
+    acceptTerms();
+    dispatch(setShareAnalytics(true));
+    dispatch(setSharePersonalizedRecommendations(true));
+    dispatch(
+      setAnalyticsConsentInfo({
+        consentDate: new Date().toISOString(),
+        privacyPolicyVersion: policyVersion,
+      }),
+    );
+    dispatch(setHasSeenAnalyticsOptInPrompt(true));
+    dispatch(setLastOnboardedDevice(DEV_SKIP_ONBOARDED_DEVICE));
     dispatch(saveSettings({ hasCompletedOnboarding: true }));
     navigate("/settings");
-  }, [dispatch, navigate]);
+  };
 
-  const skipOnboarding = useCallback(() => {
+  const completeOnboarding = () => {
     dispatch(saveSettings({ hasCompletedOnboarding: true }));
     navigate("/");
-  }, [dispatch, navigate]);
-  // Main navigation handlers
-  const handleAcceptTermsAndGetStarted = useCallback(() => {
-    acceptTerms();
+  };
 
+  const handleAcceptTermsAndGetStarted = () => {
+    acceptTerms();
     if (shouldUseLazyOnboarding) {
-      skipOnboarding();
+      completeOnboarding();
     } else {
       navigate("/onboarding/select-device");
     }
-  }, [navigate, shouldUseLazyOnboarding, skipOnboarding]);
+  };
 
-  // Analytics opt-in prompt
   const {
     analyticsOptInPromptProps,
     isFeatureFlagsAnalyticsPrefDisplayed,
@@ -116,75 +140,53 @@ export function useWelcomeViewModel() {
     entryPoint: EntryPoint.onboarding,
   });
 
-  const extendedAnalyticsOptInPromptProps = useMemo(
-    () => ({
-      ...analyticsOptInPromptProps,
-      onSubmit,
-    }),
-    [analyticsOptInPromptProps, onSubmit],
-  );
+  const extendedAnalyticsOptInPromptProps = {
+    ...analyticsOptInPromptProps,
+    onSubmit,
+  };
 
-  // Ledger Sync activation
   const { openDrawer } = useActivationDrawer();
 
-  const setupLedgerSync = useCallback(() => {
+  const setupLedgerSync = () => {
     acceptTerms();
     openDrawer();
-  }, [openDrawer]);
+  };
 
-  // Action handlers with analytics
-  const handleGetStarted = useCallback(() => {
+  const handleGetStarted = () => {
     if (isFeatureFlagsAnalyticsPrefDisplayed) {
       openAnalyticsOptInPrompt("Onboarding", handleAcceptTermsAndGetStarted);
     } else {
       handleAcceptTermsAndGetStarted();
     }
-  }, [
-    isFeatureFlagsAnalyticsPrefDisplayed,
-    openAnalyticsOptInPrompt,
-    handleAcceptTermsAndGetStarted,
-  ]);
+  };
 
-  const handleBuyNew = useCallback(() => {
+  const handleBuyNew = () => {
     if (isFeatureFlagsAnalyticsPrefDisplayed) {
       openAnalyticsOptInPrompt("Onboarding", openReborn);
     } else {
       openReborn();
     }
-  }, [isFeatureFlagsAnalyticsPrefDisplayed, openAnalyticsOptInPrompt, openReborn]);
+  };
 
-  const handleSetupLedgerSync = useCallback(() => {
+  const handleSetupLedgerSync = () => {
     if (isFeatureFlagsAnalyticsPrefDisplayed) {
       openAnalyticsOptInPrompt("Onboarding", setupLedgerSync);
     } else {
       setupLedgerSync();
     }
-  }, [isFeatureFlagsAnalyticsPrefDisplayed, openAnalyticsOptInPrompt, setupLedgerSync]);
+  };
 
   return {
-    // Translations
     t,
-
-    // Navigation
     accessSettings,
-
-    // URL handlers
     openTermsAndConditions,
     openPrivacyPolicy,
-
-    // Feature flags easter egg
     isFeatureFlagsSettingsButtonDisplayed,
     handleOpenFeatureFlagsDrawer,
-
-    // Dev utilities
-    skipOnboarding: skipOnboardingDev,
-
-    // Action handlers
+    skipOnboarding,
     handleGetStarted,
     handleBuyNew,
     handleSetupLedgerSync,
-
-    // Analytics opt-in
     isFeatureFlagsAnalyticsPrefDisplayed,
     extendedAnalyticsOptInPromptProps,
   };
