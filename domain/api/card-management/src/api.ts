@@ -16,7 +16,6 @@ import type {
   PayCardLogoutResult,
   PayCardRefreshSessionRequest,
   PayCardSession,
-  PayCardSessionResponse,
   PayCardUser,
 } from "./types";
 
@@ -54,26 +53,20 @@ export const cardManagementApi = cardApi
       }),
 
       exchangeAuthorizationCode: build.mutation<PayCardSession, PayCardAuthorizationCodeRequest>({
-        queryFn: async ({ code, codeVerifier }, queryApi, _extraOptions, baseQuery) => {
-          const { cardOauthRedirectUri } = getCardExtra(queryApi);
-          const response = await baseQuery({
-            url: "/v1/auth/oauth/token",
-            method: "POST",
-            body: {
-              grant_type: "authorization_code",
-              code,
-              redirect_uri: cardOauthRedirectUri,
-              code_verifier: codeVerifier,
-            },
-          });
-
-          if (response.error) {
-            return { error: response.error };
-          }
-
-          const session = response.data as PayCardSessionResponse;
-          return { data: transformPayCardSessionResponse(session) };
-        },
+        query: ({ code, redirectUri, codeVerifier }) => ({
+          url: "/v1/auth/oauth/token",
+          method: "POST",
+          body: {
+            grant_type: "authorization_code",
+            code,
+            // The provider compares it with the one the authorization carried, so it comes back
+            // from the initiation rather than from the store.
+            redirect_uri: redirectUri,
+            code_verifier: codeVerifier,
+          },
+        }),
+        rawResponseSchema: PayCardSessionResponseSchema,
+        transformResponse: transformPayCardSessionResponse,
         responseSchema: PayCardSessionSchema,
       }),
 

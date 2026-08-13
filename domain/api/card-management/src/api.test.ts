@@ -121,6 +121,7 @@ describe("cardManagementApi requests", () => {
       const result = await store.dispatch(
         cardManagementApi.endpoints.exchangeAuthorizationCode.initiate({
           code: "auth-code",
+          redirectUri: "ledgerlive://paytab",
           codeVerifier: "verifier",
         }),
       );
@@ -150,6 +151,7 @@ describe("cardManagementApi requests", () => {
       const result = await store.dispatch(
         cardManagementApi.endpoints.exchangeAuthorizationCode.initiate({
           code: "auth-code",
+          redirectUri: "ledgerlive://paytab",
           codeVerifier: "verifier",
         }),
       );

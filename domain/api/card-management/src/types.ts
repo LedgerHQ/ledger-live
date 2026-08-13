@@ -32,6 +32,8 @@ export type PayCardAuthorizeInitiateRequest = {
 
 export type PayCardAuthorizationCodeRequest = {
   readonly code: string;
+  /** The value the authorization carried. {@link PayCardAuthorizeInitiate} returns it. */
+  readonly redirectUri: string;
   readonly codeVerifier: string;
 };
 

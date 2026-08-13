@@ -17,7 +17,6 @@ export function useCardLoginViewModel({
     void (async () => {
       setIsOpeningHostedLogin(true);
       try {
-        // TODO(LIVE-34738): keep the `state` and the verifier, so the callback can be completed.
         const { state, codeChallenge } = await createAuthorizeAttempt();
 
         const { url, redirectUri } = await initiateAuthorize({

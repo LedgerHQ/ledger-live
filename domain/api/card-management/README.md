@@ -26,8 +26,9 @@ in the store; a view-model importing a generated hook from here triggers the inj
 
 Reaching the backend belongs to the service, not here: base URL, `x-client-key`, the
 `Authorization: Bearer` header from `getCardSessionToken()` and the single 401 refresh all live in
-`@shared/api-services`, `services/card`. The OAuth endpoints also read the client key and redirect URI
-from that service's app-supplied `extraArgument`, so callers only provide attempt-specific values.
+`@shared/api-services`, `services/card`. The authorization initiation also reads the client key and
+redirect URI from that service's app-supplied `extraArgument`, so callers only provide
+attempt-specific values, and it returns the resolved redirect URI for the token exchange to echo.
 
 > [!NOTE]
 > The `PayCard*Response` schemas and types here are the **wire** contracts; canonical results may add

@@ -26,8 +26,9 @@ UI, which a `fetch` follows into an HTML page; `api` returns the same URL as JSO
 The request goes through `useInitiateAuthorizeMutation` from `@domain/api-card-management`, which owns
 the Card Auth contract and injects it into the shared `cardApi` service. Both apps configure the base
 URL, Baanx client key and OAuth redirect URI once through `cardApiExtra`. The service uses the key for
-the `x-client-key` header, while the OAuth endpoints reuse it as `client_id` and use the same
-`ledgerlive://paytab` redirect for authorization and token exchange.
+the `x-client-key` header, while the initiation reuses it as `client_id` and sends the configured
+`ledgerlive://paytab` redirect. The token exchange takes that redirect back from its caller, since the
+provider compares it with the one the authorization carried.
 
 `CardLogin` carries no OAuth configuration and no host-provided opener: authorization initiation
 returns the resolved redirect URI with the hosted URL so the native secure browser can match the
