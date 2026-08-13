@@ -1,3 +1,4 @@
+import { mockNearContext } from "../../test/context";
 import type {
   Balance,
   StakingTransactionIntent,
@@ -85,7 +86,12 @@ describe("validateIntent", () => {
 
   describe("transfers", () => {
     it("accepts a funded transfer to an existing account", async () => {
-      const result = await validateIntent(sendIntent(), [nativeBalance(ONE_NEAR * 10n)], FEES);
+      const result = await validateIntent(
+        mockNearContext,
+        sendIntent(),
+        [nativeBalance(ONE_NEAR * 10n)],
+        FEES,
+      );
 
       expect(result.errors).toEqual({});
       expect(result.amount).toBe(ONE_NEAR);
@@ -94,6 +100,7 @@ describe("validateIntent", () => {
 
     it("subtracts the locked storage deposit from what can be spent", async () => {
       const result = await validateIntent(
+        mockNearContext,
         sendIntent({ amount: ONE_NEAR * 2n }),
         [nativeBalance(ONE_NEAR * 3n, ONE_NEAR * 2n)],
         FEES,
@@ -104,6 +111,7 @@ describe("validateIntent", () => {
 
     it("requires a recipient", async () => {
       const result = await validateIntent(
+        mockNearContext,
         sendIntent({ recipient: "" }),
         [nativeBalance(ONE_NEAR * 10n)],
         FEES,
@@ -114,6 +122,7 @@ describe("validateIntent", () => {
 
     it("rejects a malformed recipient", async () => {
       const result = await validateIntent(
+        mockNearContext,
         sendIntent({ recipient: "NOT VALID" }),
         [nativeBalance(ONE_NEAR * 10n)],
         FEES,
@@ -124,6 +133,7 @@ describe("validateIntent", () => {
 
     it("requires a positive amount", async () => {
       const result = await validateIntent(
+        mockNearContext,
         sendIntent({ amount: 0n }),
         [nativeBalance(ONE_NEAR * 10n)],
         FEES,
@@ -134,6 +144,7 @@ describe("validateIntent", () => {
 
     it("warns when sending to yourself", async () => {
       const result = await validateIntent(
+        mockNearContext,
         sendIntent({ recipient: SENDER }),
         [nativeBalance(ONE_NEAR * 10n)],
         FEES,
@@ -146,6 +157,7 @@ describe("validateIntent", () => {
       (fetchAccountDetails as jest.Mock).mockResolvedValue(undefined);
 
       const result = await validateIntent(
+        mockNearContext,
         sendIntent({ recipient: IMPLICIT_RECIPIENT }),
         [nativeBalance(ONE_NEAR * 10n)],
         FEES,
@@ -163,6 +175,7 @@ describe("validateIntent", () => {
       (fetchAccountDetails as jest.Mock).mockResolvedValue(undefined);
 
       const result = await validateIntent(
+        mockNearContext,
         sendIntent({ recipient: IMPLICIT_RECIPIENT, amount: 1n }),
         [nativeBalance(ONE_NEAR * 10n)],
         FEES,
@@ -178,13 +191,19 @@ describe("validateIntent", () => {
     it("rejects a named recipient that does not exist yet", async () => {
       (fetchAccountDetails as jest.Mock).mockResolvedValue(undefined);
 
-      const result = await validateIntent(sendIntent(), [nativeBalance(ONE_NEAR * 10n)], FEES);
+      const result = await validateIntent(
+        mockNearContext,
+        sendIntent(),
+        [nativeBalance(ONE_NEAR * 10n)],
+        FEES,
+      );
 
       expect(result.errors.recipient?.name).toBe("NearNewNamedAccountError");
     });
 
     it("spends the balance minus fees when sending everything", async () => {
       const result = await validateIntent(
+        mockNearContext,
         sendIntent({ useAllAmount: true }),
         [nativeBalance(ONE_NEAR * 10n)],
         FEES,
@@ -196,6 +215,7 @@ describe("validateIntent", () => {
 
     it("recommends unstaking first when sending everything with an open position", async () => {
       const result = await validateIntent(
+        mockNearContext,
         sendIntent({ useAllAmount: true }),
         [nativeBalance(ONE_NEAR * 10n), stakeBalance(ABOVE_THRESHOLD, "active")],
         FEES,
@@ -212,12 +232,13 @@ describe("validateIntent", () => {
       });
 
       const result = await validateIntent(
+        mockNearContext,
         sendIntent({ useAllAmount: true }),
         [nativeBalance(ONE_NEAR * 10n)],
         FEES,
       );
 
-      expect(getStakingPositions).toHaveBeenCalledWith(SENDER);
+      expect(getStakingPositions).toHaveBeenCalledWith(expect.anything(), SENDER);
       expect(result.warnings.amount?.name).toBe("NearRecommendUnstake");
     });
 
@@ -225,6 +246,7 @@ describe("validateIntent", () => {
       (getStakingPositions as jest.Mock).mockResolvedValue({ stakingPositions: [] });
 
       const result = await validateIntent(
+        mockNearContext,
         sendIntent({ useAllAmount: true }),
         [nativeBalance(ONE_NEAR * 10n)],
         FEES,
@@ -237,6 +259,7 @@ describe("validateIntent", () => {
   describe("staking", () => {
     it("accepts a funded delegation", async () => {
       const result = await validateIntent(
+        mockNearContext,
         stakingIntent("delegate"),
         [nativeBalance(ONE_NEAR * 10n)],
         FEES,
@@ -259,12 +282,13 @@ describe("validateIntent", () => {
       });
 
       const result = await validateIntent(
+        mockNearContext,
         stakingIntent("withdraw", { amount: ONE_NEAR / 2n }),
         [nativeBalance(ONE_NEAR * 10n)],
         FEES,
       );
 
-      expect(getStakingPositions).toHaveBeenCalledWith(SENDER);
+      expect(getStakingPositions).toHaveBeenCalledWith(expect.anything(), SENDER);
       expect(result.errors).toEqual({});
       expect(result.amount).toBe(ONE_NEAR / 2n);
     });
@@ -282,6 +306,7 @@ describe("validateIntent", () => {
       });
 
       const result = await validateIntent(
+        mockNearContext,
         stakingIntent("withdraw", { amount: ONE_NEAR }),
         [nativeBalance(ONE_NEAR * 10n)],
         FEES,
@@ -292,6 +317,7 @@ describe("validateIntent", () => {
 
     it("rejects an amount below the staking threshold", async () => {
       const result = await validateIntent(
+        mockNearContext,
         stakingIntent("delegate", { amount: 1n }),
         [nativeBalance(ONE_NEAR * 10n)],
         FEES,
@@ -303,6 +329,7 @@ describe("validateIntent", () => {
 
     it("rejects a delegation the liquid balance cannot cover", async () => {
       const result = await validateIntent(
+        mockNearContext,
         stakingIntent("delegate", { amount: ONE_NEAR * 100n }),
         [nativeBalance(ONE_NEAR)],
         FEES,
@@ -313,6 +340,7 @@ describe("validateIntent", () => {
 
     it("only spends the fee when unstaking, since the funds are already delegated", async () => {
       const result = await validateIntent(
+        mockNearContext,
         stakingIntent("undelegate"),
         [nativeBalance(ONE_NEAR), stakeBalance(ABOVE_THRESHOLD * 2n, "active")],
         FEES,
@@ -324,6 +352,7 @@ describe("validateIntent", () => {
 
     it("rejects unstaking more than is delegated to that pool", async () => {
       const result = await validateIntent(
+        mockNearContext,
         stakingIntent("undelegate", { amount: ABOVE_THRESHOLD * 5n }),
         [nativeBalance(ONE_NEAR), stakeBalance(ABOVE_THRESHOLD, "active")],
         FEES,
@@ -334,6 +363,7 @@ describe("validateIntent", () => {
 
     it("rejects withdrawing more than has been released", async () => {
       const result = await validateIntent(
+        mockNearContext,
         stakingIntent("withdraw", { amount: ABOVE_THRESHOLD * 5n }),
         [nativeBalance(ONE_NEAR), stakeBalance(ABOVE_THRESHOLD, "withdrawable")],
         FEES,
@@ -344,6 +374,7 @@ describe("validateIntent", () => {
 
     it("does not count an unbonding position as withdrawable", async () => {
       const result = await validateIntent(
+        mockNearContext,
         stakingIntent("withdraw"),
         [nativeBalance(ONE_NEAR), stakeBalance(ABOVE_THRESHOLD, "deactivating")],
         FEES,
@@ -353,13 +384,19 @@ describe("validateIntent", () => {
     });
 
     it("rejects staking when the liquid balance cannot even cover the fee", async () => {
-      const result = await validateIntent(stakingIntent("delegate"), [nativeBalance(1n)], FEES);
+      const result = await validateIntent(
+        mockNearContext,
+        stakingIntent("delegate"),
+        [nativeBalance(1n)],
+        FEES,
+      );
 
       expect(result.errors.amount?.name).toBe("NotEnoughBalance");
     });
 
     it("warns when delegating the entire spendable balance", async () => {
       const result = await validateIntent(
+        mockNearContext,
         stakingIntent("delegate", { useAllAmount: true }),
         [nativeBalance(ONE_NEAR * 10n)],
         FEES,

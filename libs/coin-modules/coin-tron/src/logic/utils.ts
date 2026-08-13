@@ -2,14 +2,9 @@ import { createHash } from "crypto";
 import BigNumber from "bignumber.js";
 import get from "lodash/get";
 import { TronWeb, providers, utils } from "tronweb";
-import coinConfig from "../config";
 import { TronResources, UnFrozenInfo } from "../types";
 
-export function createTronWeb(trongridUrl?: string): TronWeb {
-  if (!trongridUrl) {
-    trongridUrl = coinConfig.getCoinConfig().explorer.url;
-  }
-
+export function createTronWeb(trongridUrl: string): TronWeb {
   const HttpProvider = providers.HttpProvider;
   const fullNode = new HttpProvider(trongridUrl);
   const solidityNode = new HttpProvider(trongridUrl);

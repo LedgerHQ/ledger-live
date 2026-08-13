@@ -2,6 +2,7 @@ import { BigNumber } from "bignumber.js";
 import { craftTransaction } from "../logic";
 import type { SuiAccount, Transaction } from "../types";
 import { createFixtureAccount } from "../types/bridge.fixture";
+import coinConfig from "../config";
 import { buildTransaction } from "./buildTransaction";
 
 // Mock the craftTransaction function
@@ -58,6 +59,7 @@ describe("buildTransaction", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    coinConfig.setCoinConfig(() => ({}) as never);
     (craftTransaction as jest.Mock).mockResolvedValue({
       unsigned: new Uint8Array([1, 2, 3, 4, 5]),
     });
@@ -70,6 +72,7 @@ describe("buildTransaction", () => {
 
       // THEN
       expect(craftTransaction).toHaveBeenCalledWith(
+        expect.anything(),
         {
           intentType: "transaction",
           sender: mockAccount.freshAddress,
@@ -112,6 +115,7 @@ describe("buildTransaction", () => {
 
       // THEN
       expect(craftTransaction).toHaveBeenCalledWith(
+        expect.anything(),
         {
           intentType: "transaction",
           sender: account.freshAddress,
@@ -156,6 +160,7 @@ describe("buildTransaction", () => {
 
       // THEN
       expect(craftTransaction).toHaveBeenCalledWith(
+        expect.anything(),
         {
           intentType: "transaction",
           sender: account.freshAddress,
@@ -201,6 +206,7 @@ describe("buildTransaction", () => {
 
       // THEN
       expect(craftTransaction).toHaveBeenCalledWith(
+        expect.anything(),
         expect.objectContaining({
           amount: BigInt("999999999999999999"),
         }),
@@ -220,6 +226,7 @@ describe("buildTransaction", () => {
 
       // THEN
       expect(craftTransaction).toHaveBeenCalledWith(
+        expect.anything(),
         expect.objectContaining({
           amount: BigInt("0"),
         }),
@@ -239,6 +246,7 @@ describe("buildTransaction", () => {
 
       // THEN
       expect(craftTransaction).toHaveBeenCalledWith(
+        expect.anything(),
         expect.objectContaining({
           type: "send",
         }),
@@ -258,6 +266,7 @@ describe("buildTransaction", () => {
 
       // THEN
       expect(craftTransaction).toHaveBeenCalledWith(
+        expect.anything(),
         expect.objectContaining({
           recipient: "0x9876543210fedcba",
         }),
@@ -277,6 +286,7 @@ describe("buildTransaction", () => {
 
       // THEN
       expect(craftTransaction).toHaveBeenCalledWith(
+        expect.anything(),
         expect.objectContaining({
           sender: "0xabcdef1234567890",
         }),
@@ -328,6 +338,7 @@ describe("buildTransaction", () => {
 
       // THEN
       expect(craftTransaction).toHaveBeenCalledWith(
+        expect.anything(),
         expect.objectContaining({
           recipient: "",
         }),
@@ -348,6 +359,7 @@ describe("buildTransaction", () => {
 
       // THEN
       expect(craftTransaction).toHaveBeenCalledWith(
+        expect.anything(),
         expect.objectContaining({
           recipient: longAddress,
         }),

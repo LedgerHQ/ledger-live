@@ -1,4 +1,4 @@
-import { type CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
+import { type Context, type CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
 import buildCoinConfig from "@ledgerhq/coin-module-framework/config";
 
 /**
@@ -25,6 +25,9 @@ export type SuiConfig = {
 };
 
 export type SuiCoinConfig = CurrencyConfig & SuiConfig;
+
+/** The {@link Context} threaded through the coin-sui low layers (ADR-019). */
+export type SuiContext = Context<SuiCoinConfig>;
 
 const { setCoinConfig, getCoinConfig } = buildCoinConfig<SuiCoinConfig>();
 export default { setCoinConfig, getCoinConfig };

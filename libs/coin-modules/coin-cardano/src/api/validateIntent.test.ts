@@ -1,12 +1,17 @@
-import { createApi } from ".";
-import { type CardanoConfig } from "../config";
 import type { StringMemo, TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
+import type { Context } from "@ledgerhq/coin-module-framework/config";
+import { createApi } from ".";
+import { type CardanoCoinConfig, type CardanoConfig } from "../config";
 
 const config: CardanoConfig = { maxFeesWarning: 0, maxFeesError: 0 };
+const mockCtx: Context<CardanoCoinConfig> = {
+  config: async () => ({ ...config, status: { type: "active" } }),
+  logger: () => {},
+};
 
 describe("validateIntent", () => {
   it("delegates to the validateIntent logic (flags a missing recipient)", async () => {
-    const api = createApi(config, "cardano");
+    const api = createApi("cardano");
 
     const intent = {
       intentType: "transaction",
@@ -17,7 +22,7 @@ describe("validateIntent", () => {
       asset: { type: "native" },
     } as TransactionIntent<StringMemo>;
 
-    const res = await api.validateIntent(intent, [
+    const res = await api.validateIntent(mockCtx, intent, [
       { asset: { type: "native" }, value: 10_000_000n },
     ]);
 

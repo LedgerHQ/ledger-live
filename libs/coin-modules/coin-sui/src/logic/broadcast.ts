@@ -1,5 +1,6 @@
 import { ExecuteTransactionBlockParams } from "@mysten/sui/jsonRpc";
 import suiAPI from "../network";
+import type { SuiCoinConfig } from "../config";
 
 /**
  * Broadcasts a transaction to the Sui network.
@@ -8,8 +9,8 @@ import suiAPI from "../network";
  * @returns {Promise<string>} A promise that resolves to the transaction digest.
  */
 export async function broadcast(
+  config: SuiCoinConfig,
   transaction: string | ExecuteTransactionBlockParams,
-  currencyId?: string,
 ): Promise<string> {
   let params: ExecuteTransactionBlockParams;
   if (typeof transaction === "string") {
@@ -34,7 +35,7 @@ export async function broadcast(
       },
     };
   }
-  const result = await suiAPI.executeTransactionBlock(params, currencyId);
+  const result = await suiAPI.executeTransactionBlock(config, params);
   if (!result?.digest) {
     throw new Error("sui: broadcast returned no transaction digest");
   }

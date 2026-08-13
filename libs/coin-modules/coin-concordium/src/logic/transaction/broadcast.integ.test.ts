@@ -1,10 +1,8 @@
-import { setupTestnetCoinConfig } from "../../test/fixtures";
+import { createFixtureConfig } from "../../test/fixtures";
 import { broadcast } from "./broadcast";
 
 describe("Broadcast", () => {
-  beforeAll(() => {
-    setupTestnetCoinConfig();
-  });
+  const config = createFixtureConfig();
 
   it("throws when broadcasting a valid tx with an invalid signature", async () => {
     const signedTx = JSON.stringify({
@@ -19,6 +17,6 @@ describe("Broadcast", () => {
       signature: "00".repeat(64),
     });
 
-    await expect(broadcast(signedTx, "concordium")).rejects.toThrow(/^1$/);
+    await expect(broadcast(config, signedTx, "concordium")).rejects.toThrow(/^1$/);
   });
 });

@@ -1,11 +1,16 @@
+import type { Context } from "@ledgerhq/coin-module-framework/config";
 import { createApi } from ".";
-import { type CardanoConfig } from "../config";
+import { type CardanoCoinConfig, type CardanoConfig } from "../config";
 import { getBalance } from "../logic/getBalance";
 
 jest.mock("../logic/getBalance");
 const mockGetBalance = jest.mocked(getBalance);
 
 const config: CardanoConfig = { maxFeesWarning: 0, maxFeesError: 0 };
+const mockCtx: Context<CardanoCoinConfig> = {
+  config: async () => ({ ...config, status: { type: "active" } }),
+  logger: () => {},
+};
 
 describe("getBalance", () => {
   afterEach(() => {
@@ -16,8 +21,8 @@ describe("getBalance", () => {
     const balances = [{ value: 1n, asset: { type: "native" as const } }];
     mockGetBalance.mockResolvedValue(balances);
 
-    const api = createApi(config, "cardano");
-    const result = await api.getBalance("addr1xxx");
+    const api = createApi("cardano");
+    const result = await api.getBalance(mockCtx, "addr1xxx");
 
     expect(result).toBe(balances);
     expect(mockGetBalance).toHaveBeenCalledTimes(1);
@@ -28,15 +33,15 @@ describe("getBalance", () => {
   it("propagates errors from logic getBalance", async () => {
     mockGetBalance.mockRejectedValue(new Error("boom"));
 
-    const api = createApi(config, "cardano");
+    const api = createApi("cardano");
 
-    await expect(api.getBalance("addr1xxx")).rejects.toThrow("boom");
+    await expect(api.getBalance(mockCtx, "addr1xxx")).rejects.toThrow("boom");
   });
 
   it("rejects unsupported balance options instead of silently dropping them", async () => {
-    const api = createApi(config, "cardano");
+    const api = createApi("cardano");
 
-    await expect(api.getBalance("addr1xxx", {} as never)).rejects.toThrow(
+    await expect(api.getBalance(mockCtx, "addr1xxx", {} as never)).rejects.toThrow(
       "getBalance does not support the options parameter",
     );
     expect(mockGetBalance).not.toHaveBeenCalled();

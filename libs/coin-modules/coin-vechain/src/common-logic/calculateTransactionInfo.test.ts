@@ -4,6 +4,7 @@ import { calculateTransactionInfo } from "./calculateTransactionInfo";
 import { Transaction } from "../types";
 import { ImpossibleToCalculateAmountAndFees } from "../errors";
 import { calculateGasFees } from "./calculateGasFees";
+import { mockVechainConfig } from "../test/context";
 
 // Mock dependencies
 jest.mock("./calculateGasFees");
@@ -71,7 +72,11 @@ describe("calculateTransactionInfo", () => {
 
   describe("VET transactions", () => {
     it("should calculate transaction info for normal VET transaction", async () => {
-      const result = await calculateTransactionInfo(mockAccount, mockBaseTransaction);
+      const result = await calculateTransactionInfo(
+        mockVechainConfig,
+        mockAccount,
+        mockBaseTransaction,
+      );
 
       expect(result).toEqual({
         isTokenAccount: false,
@@ -92,16 +97,21 @@ describe("calculateTransactionInfo", () => {
         useAllAmount: true,
       };
 
-      const result = await calculateTransactionInfo(mockAccount, useAllAmountTransaction);
+      const result = await calculateTransactionInfo(
+        mockVechainConfig,
+        mockAccount,
+        useAllAmountTransaction,
+      );
 
       expect(result.amount).toEqual(new BigNumber("5000000000000000000"));
       expect(result.spendableBalance).toEqual(new BigNumber("5000000000000000000"));
     });
 
     it("should call calculateGasFees with correct parameters for VET", async () => {
-      await calculateTransactionInfo(mockAccount, mockBaseTransaction);
+      await calculateTransactionInfo(mockVechainConfig, mockAccount, mockBaseTransaction);
 
       expect(mockedCalculateGasFees).toHaveBeenCalledWith(
+        mockVechainConfig,
         expect.objectContaining({
           amount: new BigNumber("1000000000000000000"),
         }),
@@ -123,7 +133,11 @@ describe("calculateTransactionInfo", () => {
     };
 
     it("should calculate transaction info for normal token transaction", async () => {
-      const result = await calculateTransactionInfo(mockAccountWithToken, mockTokenTransaction);
+      const result = await calculateTransactionInfo(
+        mockVechainConfig,
+        mockAccountWithToken,
+        mockTokenTransaction,
+      );
 
       expect(result).toEqual({
         isTokenAccount: true,
@@ -145,6 +159,7 @@ describe("calculateTransactionInfo", () => {
       };
 
       const result = await calculateTransactionInfo(
+        mockVechainConfig,
         mockAccountWithToken,
         useAllAmountTokenTransaction,
       );
@@ -160,15 +175,20 @@ describe("calculateTransactionInfo", () => {
       };
       mockedCalculateGasFees.mockResolvedValue(highGasResult);
 
-      const result = await calculateTransactionInfo(mockAccountWithToken, mockTokenTransaction);
+      const result = await calculateTransactionInfo(
+        mockVechainConfig,
+        mockAccountWithToken,
+        mockTokenTransaction,
+      );
 
       expect(result.spendableBalance).toEqual(new BigNumber("0"));
     });
 
     it("should call calculateGasFees with correct parameters for token", async () => {
-      await calculateTransactionInfo(mockAccountWithToken, mockTokenTransaction);
+      await calculateTransactionInfo(mockVechainConfig, mockAccountWithToken, mockTokenTransaction);
 
       expect(mockedCalculateGasFees).toHaveBeenCalledWith(
+        mockVechainConfig,
         expect.objectContaining({
           amount: new BigNumber("1000000000000000000"),
         }),
@@ -184,6 +204,7 @@ describe("calculateTransactionInfo", () => {
       };
 
       const result = await calculateTransactionInfo(
+        mockVechainConfig,
         mockAccountWithToken,
         transactionWithNonExistentToken,
       );
@@ -202,7 +223,12 @@ describe("calculateTransactionInfo", () => {
     };
 
     it("should use fixed gas fees when provided", async () => {
-      const result = await calculateTransactionInfo(mockAccount, mockBaseTransaction, fixedGasFees);
+      const result = await calculateTransactionInfo(
+        mockVechainConfig,
+        mockAccount,
+        mockBaseTransaction,
+        fixedGasFees,
+      );
 
       expect(mockedCalculateGasFees).not.toHaveBeenCalled();
       expect(result.estimatedFees).toBe("500000000000000000");
@@ -223,6 +249,7 @@ describe("calculateTransactionInfo", () => {
       };
 
       const result = await calculateTransactionInfo(
+        mockVechainConfig,
         mockAccountWithToken,
         mockTokenTransaction,
         fixedGasFees,
@@ -255,7 +282,11 @@ describe("calculateTransactionInfo", () => {
         useAllAmount: true,
       };
 
-      const result = await calculateTransactionInfo(mockAccount, useAllAmountTransaction);
+      const result = await calculateTransactionInfo(
+        mockVechainConfig,
+        mockAccount,
+        useAllAmountTransaction,
+      );
 
       expect(result.amount).toEqual(new BigNumber("5000000000000000000"));
       expect(mockedCalculateGasFees).toHaveBeenCalledTimes(2);
@@ -287,7 +318,7 @@ describe("calculateTransactionInfo", () => {
       });
 
       await expect(
-        calculateTransactionInfo(mockAccountWithToken, mockTokenTransaction),
+        calculateTransactionInfo(mockVechainConfig, mockAccountWithToken, mockTokenTransaction),
       ).rejects.toThrow(ImpossibleToCalculateAmountAndFees);
     });
 
@@ -306,7 +337,7 @@ describe("calculateTransactionInfo", () => {
         useAllAmount: true,
       };
 
-      await calculateTransactionInfo(mockAccount, useAllAmountTransaction);
+      await calculateTransactionInfo(mockVechainConfig, mockAccount, useAllAmountTransaction);
 
       // Should be called at least once, might be called twice in the loop
       expect(mockedCalculateGasFees).toHaveBeenCalledTimes(2);
@@ -320,7 +351,11 @@ describe("calculateTransactionInfo", () => {
         amount: new BigNumber(NaN),
       };
 
-      const result = await calculateTransactionInfo(mockAccount, nanAmountTransaction);
+      const result = await calculateTransactionInfo(
+        mockVechainConfig,
+        mockAccount,
+        nanAmountTransaction,
+      );
 
       expect(mockedCalculateGasFees).not.toHaveBeenCalled();
       expect(result.amount.isNaN()).toBe(true);
@@ -334,7 +369,11 @@ describe("calculateTransactionInfo", () => {
         amount: new BigNumber(NaN),
       };
 
-      const result = await calculateTransactionInfo(mockAccount, nanAmountTransaction);
+      const result = await calculateTransactionInfo(
+        mockVechainConfig,
+        mockAccount,
+        nanAmountTransaction,
+      );
 
       expect(result.balance).toEqual(mockAccount.balance);
       expect(result.spendableBalance).toEqual(mockAccount.balance);
@@ -348,7 +387,11 @@ describe("calculateTransactionInfo", () => {
         subAccounts: [],
       };
 
-      const result = await calculateTransactionInfo(accountWithoutSubAccounts, mockBaseTransaction);
+      const result = await calculateTransactionInfo(
+        mockVechainConfig,
+        accountWithoutSubAccounts,
+        mockBaseTransaction,
+      );
 
       expect(result.isTokenAccount).toBe(false);
       expect(result.tokenAccount).toBeUndefined();
@@ -365,7 +408,11 @@ describe("calculateTransactionInfo", () => {
         subAccountId: "some-id",
       };
 
-      const result = await calculateTransactionInfo(accountWithEmptySubAccounts, tokenTransaction);
+      const result = await calculateTransactionInfo(
+        mockVechainConfig,
+        accountWithEmptySubAccounts,
+        tokenTransaction,
+      );
 
       expect(result.isTokenAccount).toBe(false);
       expect(result.tokenAccount).toBeUndefined();
@@ -377,7 +424,11 @@ describe("calculateTransactionInfo", () => {
         balance: new BigNumber("0"),
       };
 
-      const result = await calculateTransactionInfo(zeroBalanceAccount, mockBaseTransaction);
+      const result = await calculateTransactionInfo(
+        mockVechainConfig,
+        zeroBalanceAccount,
+        mockBaseTransaction,
+      );
 
       expect(result.balance).toEqual(new BigNumber("0"));
       expect(result.spendableBalance).toEqual(new BigNumber("0"));
@@ -389,7 +440,11 @@ describe("calculateTransactionInfo", () => {
         amount: new BigNumber("0"),
       };
 
-      const result = await calculateTransactionInfo(mockAccount, zeroAmountTransaction);
+      const result = await calculateTransactionInfo(
+        mockVechainConfig,
+        mockAccount,
+        zeroAmountTransaction,
+      );
 
       expect(result.amount).toEqual(new BigNumber("0"));
       expect(mockedCalculateGasFees).toHaveBeenCalled();

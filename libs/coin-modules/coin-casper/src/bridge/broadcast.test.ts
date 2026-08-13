@@ -44,7 +44,7 @@ describe("broadcast", () => {
     );
 
     expect(logicBroadcast).toHaveBeenCalledTimes(1);
-    expect(logicBroadcast).toHaveBeenCalledWith("mockedCombinedTx");
+    expect(logicBroadcast).toHaveBeenCalledWith(expect.anything(), "mockedCombinedTx");
 
     expect(result.hash).toBe("mockedTxHash");
     expect(result).toEqual({

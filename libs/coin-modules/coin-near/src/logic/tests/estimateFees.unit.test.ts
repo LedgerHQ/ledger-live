@@ -1,3 +1,4 @@
+import { mockNearContext } from "../../test/context";
 import type {
   StakingTransactionIntent,
   TransactionIntent,
@@ -56,15 +57,16 @@ describe("estimateFees", () => {
     expect(getCurrentNearPreloadData().gasPrice.isZero()).toBe(true);
     expect(getCurrentNearPreloadData().transferCostSend.isZero()).toBe(true);
 
-    const { value } = await estimateFees(intent());
+    const { value } = await estimateFees(mockNearContext, intent());
 
     expect(value).toBeGreaterThan(0n);
     expect(getActionCosts).toHaveBeenCalled();
   });
 
   it("charges more for an implicit recipient, which the transfer has to create", async () => {
-    const named = await estimateFees(intent());
+    const named = await estimateFees(mockNearContext, intent());
     const implicit = await estimateFees(
+      mockNearContext,
       intent({ recipient: "4e7de0a21d8a20f970c86b6edf407906d7ba9e205979c3268270eef80a286e2d" }),
     );
 
@@ -72,13 +74,13 @@ describe("estimateFees", () => {
   });
 
   it("reports the gas price it priced with", async () => {
-    const { parameters } = await estimateFees(intent());
+    const { parameters } = await estimateFees(mockNearContext, intent());
 
     expect(parameters).toEqual({ gasPrice: GAS_PRICE });
   });
 
   it("prices a staking intent from staking gas, not from transfer costs", async () => {
-    const staking = (await estimateFees({
+    const staking = (await estimateFees(mockNearContext, {
       ...intent(),
       intentType: "staking",
       type: "delegate",
@@ -86,21 +88,21 @@ describe("estimateFees", () => {
       valAddress: "astro-stakers.poolv1.near",
     } as StakingTransactionIntent)) as { value: bigint };
 
-    const send = await estimateFees(intent());
+    const send = await estimateFees(mockNearContext, intent());
 
     expect(staking.value).toBeGreaterThan(0n);
     expect(staking.value).not.toBe(send.value);
   });
 
   it("returns a zero estimate for an incomplete form instead of throwing", async () => {
-    const { value } = await estimateFees(intent({ recipient: "" }));
+    const { value } = await estimateFees(mockNearContext, intent({ recipient: "" }));
 
     expect(value).toBe(0n);
     expect(getGasPrice).not.toHaveBeenCalled();
   });
 
   it("returns a zero estimate for a staking intent with no validator picked yet", async () => {
-    const { value } = await estimateFees({
+    const { value } = await estimateFees(mockNearContext, {
       ...intent({ recipient: "" }),
       intentType: "staking",
       type: "stake",
@@ -122,7 +124,7 @@ describe("estimateFees", () => {
       ],
     });
 
-    const { parameters } = await estimateFees({
+    const { parameters } = await estimateFees(mockNearContext, {
       ...intent({ recipient: "astro-stakers.poolv1.near" }),
       intentType: "staking",
       type: "finalize_unstake",
@@ -133,18 +135,22 @@ describe("estimateFees", () => {
 
   describe("with a caller-supplied gas price", () => {
     it("prices from the override instead of querying the network", async () => {
-      const { value, parameters } = await estimateFees(intent(), { gasPrice: "200000000" });
+      const { value, parameters } = await estimateFees(mockNearContext, intent(), {
+        gasPrice: "200000000",
+      });
 
       expect(getGasPrice).not.toHaveBeenCalled();
       expect(parameters).toEqual({ gasPrice: "200000000" });
 
       // Twice the live gas price, so twice the fee.
-      const live = await estimateFees(intent());
+      const live = await estimateFees(mockNearContext, intent());
       expect(value).toBe(live.value * 2n);
     });
 
     it("accepts the bigint the framework hands fee parameters back as", async () => {
-      const { parameters } = await estimateFees(intent(), { gasPrice: 200_000_000n });
+      const { parameters } = await estimateFees(mockNearContext, intent(), {
+        gasPrice: 200_000_000n,
+      });
 
       expect(parameters).toEqual({ gasPrice: "200000000" });
       expect(getGasPrice).not.toHaveBeenCalled();
@@ -157,7 +163,7 @@ describe("estimateFees", () => {
       ["not a number", "abc"],
       ["absent", undefined],
     ])("falls back to the live gas price when the override is %s", async (_label, gasPrice) => {
-      await estimateFees(intent(), { gasPrice });
+      await estimateFees(mockNearContext, intent(), { gasPrice });
 
       expect(getGasPrice).toHaveBeenCalled();
     });

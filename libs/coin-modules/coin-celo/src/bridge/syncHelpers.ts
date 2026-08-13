@@ -4,7 +4,7 @@ import { isNFTActive } from "@ledgerhq/ledger-wallet-framework/nft/support";
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import murmurhash from "imurmurhash";
-import { getCoinConfig } from "@ledgerhq/coin-evm/config";
+import { getCoinConfig } from "../config";
 
 /**
  * List of properties of a sub account that can be updated when 2 "identical" accounts are found

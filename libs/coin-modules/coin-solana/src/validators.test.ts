@@ -4,6 +4,16 @@ import { getValidators } from "./network/validator-app";
 import type { ValidatorsAppValidator } from "./network/validator-app";
 import { LEDGER_VALIDATOR_BY_BITWISE, LEDGER_VALIDATOR_BY_FIGMENT } from "./utils";
 import { fetchValidators, getSolanaValidators } from "./validators";
+import coinConfig, { type SolanaCoinConfig } from "./config";
+
+coinConfig.setCoinConfig(
+  () =>
+    ({
+      token2022Enabled: false,
+      legacyOCMSMaxVersion: "1.0.0",
+      status: { type: "active" },
+    }) as SolanaCoinConfig,
+);
 
 jest.mock("./network/validator-app");
 jest.mock("./network", () => ({

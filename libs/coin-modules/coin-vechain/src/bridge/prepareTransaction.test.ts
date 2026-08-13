@@ -188,7 +188,11 @@ describe("prepareTransaction", () => {
     it("should call calculateTransactionInfo with correct parameters", async () => {
       await prepareTransaction(mockAccount, mockTransaction);
 
-      expect(mockedCalculateTransactionInfo).toHaveBeenCalledWith(mockAccount, mockTransaction);
+      expect(mockedCalculateTransactionInfo).toHaveBeenCalledWith(
+        expect.anything(),
+        mockAccount,
+        mockTransaction,
+      );
     });
 
     it("should use transaction info results in the prepared transaction", async () => {

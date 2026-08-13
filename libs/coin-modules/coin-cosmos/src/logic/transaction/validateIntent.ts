@@ -16,6 +16,7 @@ import {
   RecipientRequired,
 } from "@ledgerhq/ledger-wallet-framework/errors";
 import cryptoFactory from "../../chain/chain";
+import { type CosmosCoinConfig } from "../../config";
 import {
   ClaimRewardsFeesWarning,
   RedelegateDstValAddressRequired,
@@ -40,6 +41,7 @@ export async function validateIntent(
   intent: TransactionIntent<StringMemo | MemoNotSupported>,
   balances: Balance[],
   customFees?: FeeEstimation,
+  config?: CosmosCoinConfig,
 ): Promise<TransactionValidation> {
   if (intent.intentType === "staking") {
     return validateStakingIntent(
@@ -47,6 +49,7 @@ export async function validateIntent(
       intent as StakingTransactionIntent,
       balances,
       customFees?.value ?? 0n,
+      config,
     );
   }
 
@@ -93,11 +96,12 @@ function validateStakingIntent(
   intent: StakingTransactionIntent,
   balances: Balance[],
   estimatedFees: bigint,
+  config?: CosmosCoinConfig,
 ): TransactionValidation {
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
 
-  const validatorPrefix = cryptoFactory(currencyId).validatorPrefix;
+  const validatorPrefix = cryptoFactory(currencyId, config).validatorPrefix;
 
   if (!intent.valAddress) {
     errors.valAddress = new ValAddressRequired();

@@ -1,12 +1,15 @@
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { BigNumber } from "bignumber.js"; // Assuming BigNumber is used for value and fee
+import { type PolkadotCoinConfig } from "../config";
 import { PolkadotOperation, PolkadotOperationExtra } from "../types";
 import { listOperations } from "./listOperations";
 
+const config = {} as PolkadotCoinConfig;
 const mockGetOperations = jest.fn();
 jest.mock("../network", () => {
   return {
     getOperations: (
+      _config: PolkadotCoinConfig,
       accountId: string,
       addr: string,
       currency?: CryptoCurrency,
@@ -60,7 +63,7 @@ describe("listOperations", () => {
 
     mockGetOperations.mockResolvedValue(mockOperations);
 
-    const result = await listOperations(fakeAddress, { limit, startAt });
+    const result = await listOperations(config, fakeAddress, { limit, startAt });
 
     expect(mockGetOperations).toHaveBeenCalledTimes(1);
     expect(mockGetOperations.mock.lastCall[2]).toEqual(undefined);
@@ -116,7 +119,7 @@ describe("listOperations", () => {
 
     mockGetOperations.mockResolvedValue([]);
 
-    const result = await listOperations(fakeAddress, { limit, startAt });
+    const result = await listOperations(config, fakeAddress, { limit, startAt });
 
     expect(mockGetOperations).toHaveBeenCalledTimes(1);
     expect(mockGetOperations.mock.lastCall[2]).toEqual(undefined);
@@ -146,7 +149,7 @@ describe("listOperations", () => {
 
     mockGetOperations.mockResolvedValue(mockOperations);
 
-    const result = await listOperations(fakeAddress, { limit, startAt });
+    const result = await listOperations(config, fakeAddress, { limit, startAt });
 
     expect(mockGetOperations).toHaveBeenCalledTimes(1);
     expect(mockGetOperations.mock.lastCall[2]).toEqual(undefined);
@@ -199,7 +202,7 @@ describe("listOperations", () => {
 
     mockGetOperations.mockResolvedValue(mockOperations);
 
-    const result = await listOperations(fakeAddress, { limit });
+    const result = await listOperations(config, fakeAddress, { limit });
 
     expect(mockGetOperations).toHaveBeenCalledTimes(1);
     expect(mockGetOperations.mock.lastCall[2]).toEqual(undefined);

@@ -1,15 +1,17 @@
 import network from "@ledgerhq/live-network";
 import { BigNumber } from "bignumber.js";
+import type { AlgorandCoinConfig } from "../config";
 import { getAccountTransactions, getAllAccountTransactions } from "./indexer";
 
 jest.mock("@ledgerhq/live-network");
-jest.mock("../config", () => ({
-  getCoinConfig: jest.fn().mockReturnValue({
-    indexer: "https://algorand-indexer.example.com",
-  }),
-}));
 
 const mockNetwork = network as jest.MockedFunction<typeof network>;
+
+const config = {
+  status: { type: "active" },
+  node: "",
+  indexer: "https://algorand-indexer.example.com",
+} as AlgorandCoinConfig;
 
 describe("indexer", () => {
   beforeEach(() => {
@@ -41,7 +43,7 @@ describe("indexer", () => {
         },
       } as never);
 
-      const result = await getAccountTransactions("ALGO_ADDRESS");
+      const result = await getAccountTransactions(config, "ALGO_ADDRESS");
 
       expect(result.transactions).toHaveLength(1);
       expect(result.transactions[0].id).toBe("TX_123");
@@ -74,7 +76,7 @@ describe("indexer", () => {
         },
       } as never);
 
-      const result = await getAccountTransactions("ALGO_ADDRESS");
+      const result = await getAccountTransactions(config, "ALGO_ADDRESS");
 
       expect(result.transactions[0].type).toBe("axfer");
       expect(result.transactions[0].details).not.toBeUndefined();
@@ -85,7 +87,7 @@ describe("indexer", () => {
         data: { transactions: [] },
       } as never);
 
-      await getAccountTransactions("ALGO_ADDRESS", { minRound: 50000000 });
+      await getAccountTransactions(config, "ALGO_ADDRESS", { minRound: 50000000 });
 
       expect(mockNetwork).toHaveBeenCalledWith({
         url: expect.stringContaining("min-round=50000000"),
@@ -97,7 +99,7 @@ describe("indexer", () => {
         data: { transactions: [] },
       } as never);
 
-      await getAccountTransactions("ALGO_ADDRESS", { nextToken: "abc123" });
+      await getAccountTransactions(config, "ALGO_ADDRESS", { nextToken: "abc123" });
 
       expect(mockNetwork).toHaveBeenCalledWith({
         url: expect.stringContaining("next=abc123"),
@@ -112,7 +114,7 @@ describe("indexer", () => {
         },
       } as never);
 
-      const result = await getAccountTransactions("ALGO_ADDRESS");
+      const result = await getAccountTransactions(config, "ALGO_ADDRESS");
 
       expect(result.nextToken).toBe("next_page_token");
     });
@@ -143,7 +145,7 @@ describe("indexer", () => {
         },
       } as never);
 
-      const result = await getAccountTransactions("ALGO_ADDRESS");
+      const result = await getAccountTransactions(config, "ALGO_ADDRESS");
 
       expect(result.transactions[0].closeRewards).toBeInstanceOf(BigNumber);
       expect(result.transactions[0].closeAmount).toBeInstanceOf(BigNumber);
@@ -173,7 +175,7 @@ describe("indexer", () => {
         },
       } as never);
 
-      const result = await getAllAccountTransactions("ALGO_ADDRESS");
+      const result = await getAllAccountTransactions(config, "ALGO_ADDRESS");
 
       expect(result).toHaveLength(1);
       expect(mockNetwork).toHaveBeenCalledTimes(1);
@@ -235,7 +237,7 @@ describe("indexer", () => {
           },
         } as never);
 
-      const result = await getAllAccountTransactions("ALGO_ADDRESS");
+      const result = await getAllAccountTransactions(config, "ALGO_ADDRESS");
 
       expect(result).toHaveLength(3);
       expect(result[0].id).toBe("TX_1");
@@ -249,7 +251,7 @@ describe("indexer", () => {
         data: { transactions: [] },
       } as never);
 
-      await getAllAccountTransactions("ALGO_ADDRESS", 50000000);
+      await getAllAccountTransactions(config, "ALGO_ADDRESS", 50000000);
 
       expect(mockNetwork).toHaveBeenCalledWith({
         url: expect.stringContaining("min-round=50000000"),
@@ -261,7 +263,7 @@ describe("indexer", () => {
         data: { transactions: [] },
       } as never);
 
-      const result = await getAllAccountTransactions("ALGO_ADDRESS");
+      const result = await getAllAccountTransactions(config, "ALGO_ADDRESS");
 
       expect(result).toEqual([]);
     });

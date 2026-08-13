@@ -20,9 +20,10 @@
   ],
   "ignoreUnimported": [
     "src/network/node.mock.ts",
+    "src/supportedFeatures.ts",
     "src/test/bridge.dataset.ts",
     "src/test/coinConfig.ts",
-    "src/supportedFeatures.ts"
+    "src/test/context.ts"
   ],
   "ignoreUnused": []
 }

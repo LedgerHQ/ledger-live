@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 import network from "@ledgerhq/live-network";
-import { getCoinConfig } from "../../config";
+import type { EvmConfigInfo } from "../../config";
 import { withApi } from "../../network/node/rpc.common";
 import { isExternalNodeConfig } from "../../network/node/types";
 import zeroGravityAbi from "../../abis/zero_gravity-validator.abi.json";
@@ -11,7 +11,6 @@ jest.mock("@ledgerhq/live-network", () => ({
   __esModule: true,
   default: jest.fn(),
 }));
-jest.mock("../../config", () => ({ __esModule: true, getCoinConfig: jest.fn() }));
 jest.mock("../../network/node/rpc.common", () => ({ __esModule: true, withApi: jest.fn() }));
 jest.mock("../../network/node/types", () => ({
   __esModule: true,
@@ -19,9 +18,12 @@ jest.mock("../../network/node/types", () => ({
 }));
 
 const mockedNetwork = jest.mocked(network);
-const mockedGetCoinConfig = jest.mocked(getCoinConfig);
 const mockedWithApi = jest.mocked(withApi);
 const mockedIsExternalNodeConfig = jest.mocked(isExternalNodeConfig);
+
+const mockConfig = {
+  node: { type: "external", uri: "https://zero-gravity.coin.ledger.com" },
+} as unknown as EvmConfigInfo;
 
 const makeValidator = (
   overrides: Partial<{
@@ -48,7 +50,7 @@ describe("staking/validators/zero_gravity", () => {
     const addr = "aabbccddee" + "00".repeat(15);
     mockedNetwork.mockResolvedValueOnce({ data: [makeValidator({ addr })] } as never);
 
-    const page = await getValidators("zero_gravity");
+    const page = await getValidators(mockConfig, "zero_gravity");
 
     expect(page.items[0].address).toEqual(ethers.getAddress("0x" + addr));
   });
@@ -58,7 +60,7 @@ describe("staking/validators/zero_gravity", () => {
       data: [makeValidator({ moniker: "MyNode" })],
     } as never);
 
-    const page = await getValidators("zero_gravity");
+    const page = await getValidators(mockConfig, "zero_gravity");
 
     expect(page.items[0].name).toEqual("MyNode");
   });
@@ -69,7 +71,7 @@ describe("staking/validators/zero_gravity", () => {
       data: [makeValidator({ addr, moniker: null })],
     } as never);
 
-    const page = await getValidators("zero_gravity");
+    const page = await getValidators(mockConfig, "zero_gravity");
 
     expect(page.items[0].name).toEqual(ethers.getAddress("0x" + addr));
   });
@@ -79,7 +81,7 @@ describe("staking/validators/zero_gravity", () => {
       data: [makeValidator({ commission_pct: "5.00" })],
     } as never);
 
-    const page = await getValidators("zero_gravity");
+    const page = await getValidators(mockConfig, "zero_gravity");
 
     expect(page.items[0].commissionRate).toEqual("0.05");
   });
@@ -89,7 +91,7 @@ describe("staking/validators/zero_gravity", () => {
       data: [makeValidator({ voting_power_tokens: "42000000000000000000" })],
     } as never);
 
-    const page = await getValidators("zero_gravity");
+    const page = await getValidators(mockConfig, "zero_gravity");
 
     expect(page.items[0].balance).toEqual(42000000000000000000n);
   });
@@ -97,7 +99,7 @@ describe("staking/validators/zero_gravity", () => {
   it("returns empty page on network error", async () => {
     mockedNetwork.mockRejectedValueOnce(new Error("network failure"));
 
-    const page = await getValidators("zero_gravity");
+    const page = await getValidators(mockConfig, "zero_gravity");
 
     expect(page).toEqual({ items: [], next: undefined });
   });
@@ -105,7 +107,7 @@ describe("staking/validators/zero_gravity", () => {
   it("always returns next: undefined (single-page API)", async () => {
     mockedNetwork.mockResolvedValueOnce({ data: [makeValidator()] } as never);
 
-    const page = await getValidators("zero_gravity");
+    const page = await getValidators(mockConfig, "zero_gravity");
 
     expect(page.next).toBeUndefined();
   });
@@ -119,6 +121,7 @@ describe("staking/validators/zero_gravity", () => {
     const DELEGATOR = "0x" + "11".repeat(20);
     const VALIDATOR_ADDR = ethers.getAddress("0xaabbccddee" + "00".repeat(15));
     const NODE = { type: "external", uri: "https://zero-gravity.coin.ledger.com" };
+    const zgConfig = { node: NODE } as unknown as EvmConfigInfo;
     const zg0Iface = new ethers.Interface(zeroGravityAbi as ethers.InterfaceAbi);
 
     const CURRENT_BLOCK = 1_000_000n;
@@ -175,7 +178,6 @@ describe("staking/validators/zero_gravity", () => {
     }
 
     beforeEach(() => {
-      mockedGetCoinConfig.mockReturnValue({ info: { node: NODE } } as never);
       mockedIsExternalNodeConfig.mockReturnValue(true);
       mockedNetwork.mockResolvedValueOnce({ data: [makeValidator()] } as never);
     });
@@ -183,7 +185,7 @@ describe("staking/validators/zero_gravity", () => {
     it("returns an active stake when shares and amount are non-zero", async () => {
       setupProvider(makeCallHandler(1000n, 500n));
 
-      const stakes = await fetchZeroGravityStakes(DELEGATOR, {} as never, CURRENCY);
+      const stakes = await fetchZeroGravityStakes(zgConfig, DELEGATOR, {} as never, CURRENCY);
 
       expect(stakes).toHaveLength(1);
       expect(stakes[0]).toMatchObject({
@@ -199,7 +201,7 @@ describe("staking/validators/zero_gravity", () => {
       // delegator share = 900 * 500 / 1000 = 450
       setupProvider(makeCallHandler(500n, 500n, 0n, [], 1000n, 1000n, 100_000n));
 
-      const stakes = await fetchZeroGravityStakes(DELEGATOR, {} as never, CURRENCY);
+      const stakes = await fetchZeroGravityStakes(zgConfig, DELEGATOR, {} as never, CURRENCY);
 
       expect(stakes[0].amountRewarded).toEqual(450n);
     });
@@ -207,7 +209,7 @@ describe("staking/validators/zero_gravity", () => {
     it("does not set amountRewarded when rewards are zero", async () => {
       setupProvider(makeCallHandler(1000n, 500n, 0n, [], 0n, 1000n, 0n));
 
-      const stakes = await fetchZeroGravityStakes(DELEGATOR, {} as never, CURRENCY);
+      const stakes = await fetchZeroGravityStakes(zgConfig, DELEGATOR, {} as never, CURRENCY);
 
       expect(stakes[0].amountRewarded).toBeUndefined();
     });
@@ -215,7 +217,7 @@ describe("staking/validators/zero_gravity", () => {
     it("does not set amountRewarded when totalShares is zero", async () => {
       setupProvider(makeCallHandler(1000n, 500n, 0n, [], 1000n, 0n, 0n));
 
-      const stakes = await fetchZeroGravityStakes(DELEGATOR, {} as never, CURRENCY);
+      const stakes = await fetchZeroGravityStakes(zgConfig, DELEGATOR, {} as never, CURRENCY);
 
       expect(stakes[0].amountRewarded).toBeUndefined();
     });
@@ -239,7 +241,7 @@ describe("staking/validators/zero_gravity", () => {
       });
       setupProvider(callHandler);
 
-      const stakes = await fetchZeroGravityStakes(DELEGATOR, {} as never, CURRENCY);
+      const stakes = await fetchZeroGravityStakes(zgConfig, DELEGATOR, {} as never, CURRENCY);
 
       expect(stakes[0].amountRewarded).toBeUndefined();
     });
@@ -247,7 +249,7 @@ describe("staking/validators/zero_gravity", () => {
     it("clamps commission to 1_000_000 when contract returns an out-of-range value", async () => {
       setupProvider(makeCallHandler(1000n, 500n, 0n, [], 1000n, 1000n, 1_500_000n));
 
-      const stakes = await fetchZeroGravityStakes(DELEGATOR, {} as never, CURRENCY);
+      const stakes = await fetchZeroGravityStakes(zgConfig, DELEGATOR, {} as never, CURRENCY);
 
       expect(stakes[0].amountRewarded).toBeUndefined();
     });
@@ -271,7 +273,7 @@ describe("staking/validators/zero_gravity", () => {
       });
       setupProvider(callHandler);
 
-      const stakes = await fetchZeroGravityStakes(DELEGATOR, {} as never, CURRENCY);
+      const stakes = await fetchZeroGravityStakes(zgConfig, DELEGATOR, {} as never, CURRENCY);
 
       expect(stakes[0].amountRewarded).toBeUndefined();
     });
@@ -279,7 +281,7 @@ describe("staking/validators/zero_gravity", () => {
     it("filters out validators with shares = 0", async () => {
       setupProvider(makeCallHandler(0n, 0n));
 
-      const stakes = await fetchZeroGravityStakes(DELEGATOR, {} as never, CURRENCY);
+      const stakes = await fetchZeroGravityStakes(zgConfig, DELEGATOR, {} as never, CURRENCY);
 
       expect(stakes).toEqual([]);
     });
@@ -287,7 +289,7 @@ describe("staking/validators/zero_gravity", () => {
     it("filters out validators when convertToTokens returns 0", async () => {
       setupProvider(makeCallHandler(1000n, 0n));
 
-      const stakes = await fetchZeroGravityStakes(DELEGATOR, {} as never, CURRENCY);
+      const stakes = await fetchZeroGravityStakes(zgConfig, DELEGATOR, {} as never, CURRENCY);
 
       expect(stakes).toEqual([]);
     });
@@ -297,7 +299,7 @@ describe("staking/validators/zero_gravity", () => {
         fn({ call: jest.fn().mockRejectedValue(new Error("RPC error")) } as never),
       );
 
-      const stakes = await fetchZeroGravityStakes(DELEGATOR, {} as never, CURRENCY);
+      const stakes = await fetchZeroGravityStakes(zgConfig, DELEGATOR, {} as never, CURRENCY);
 
       expect(stakes).toEqual([]);
     });
@@ -313,7 +315,7 @@ describe("staking/validators/zero_gravity", () => {
       mockedNetwork.mockResolvedValueOnce({ data: validators } as never);
       setupProvider(makeCallHandler(1000n, 500n));
 
-      const stakes = await fetchZeroGravityStakes(DELEGATOR, {} as never, CURRENCY);
+      const stakes = await fetchZeroGravityStakes(zgConfig, DELEGATOR, {} as never, CURRENCY);
 
       expect(stakes).toHaveLength(11);
     });
@@ -321,7 +323,7 @@ describe("staking/validators/zero_gravity", () => {
     it("returns [] when node config is not external", async () => {
       mockedIsExternalNodeConfig.mockReturnValue(false);
 
-      const stakes = await fetchZeroGravityStakes(DELEGATOR, {} as never, CURRENCY);
+      const stakes = await fetchZeroGravityStakes(zgConfig, DELEGATOR, {} as never, CURRENCY);
 
       expect(stakes).toEqual([]);
     });
@@ -345,7 +347,7 @@ describe("staking/validators/zero_gravity", () => {
         const completionHeight = CURRENT_BLOCK + 100n;
         setupProvider(makeCallHandler(0n, 0n, 1n, [[completionHeight, DELEGATOR, 500n]]));
 
-        const stakes = await fetchZeroGravityStakes(DELEGATOR, {} as never, CURRENCY);
+        const stakes = await fetchZeroGravityStakes(zgConfig, DELEGATOR, {} as never, CURRENCY);
 
         expect(stakes).toEqual([
           {
@@ -366,7 +368,7 @@ describe("staking/validators/zero_gravity", () => {
         const otherDelegator = "0x" + "22".repeat(20);
         setupProvider(makeCallHandler(0n, 0n, 1n, [[CURRENT_BLOCK + 100n, otherDelegator, 500n]]));
 
-        const stakes = await fetchZeroGravityStakes(DELEGATOR, {} as never, CURRENCY);
+        const stakes = await fetchZeroGravityStakes(zgConfig, DELEGATOR, {} as never, CURRENCY);
 
         expect(stakes).toEqual([]);
       });
@@ -374,7 +376,7 @@ describe("staking/validators/zero_gravity", () => {
       it("skips withdraw entries with amount = 0", async () => {
         setupProvider(makeCallHandler(0n, 0n, 1n, [[CURRENT_BLOCK + 100n, DELEGATOR, 0n]]));
 
-        const stakes = await fetchZeroGravityStakes(DELEGATOR, {} as never, CURRENCY);
+        const stakes = await fetchZeroGravityStakes(zgConfig, DELEGATOR, {} as never, CURRENCY);
 
         expect(stakes).toEqual([]);
       });
@@ -382,7 +384,7 @@ describe("staking/validators/zero_gravity", () => {
       it("skips entries whose completionHeight has already passed", async () => {
         setupProvider(makeCallHandler(0n, 0n, 1n, [[CURRENT_BLOCK - 1n, DELEGATOR, 300n]]));
 
-        const stakes = await fetchZeroGravityStakes(DELEGATOR, {} as never, CURRENCY);
+        const stakes = await fetchZeroGravityStakes(zgConfig, DELEGATOR, {} as never, CURRENCY);
 
         expect(stakes).toEqual([]);
       });
@@ -391,7 +393,7 @@ describe("staking/validators/zero_gravity", () => {
         const completionHeight = CURRENT_BLOCK + 200n;
         setupProvider(makeCallHandler(1000n, 500n, 1n, [[completionHeight, DELEGATOR, 300n]]));
 
-        const stakes = await fetchZeroGravityStakes(DELEGATOR, {} as never, CURRENCY);
+        const stakes = await fetchZeroGravityStakes(zgConfig, DELEGATOR, {} as never, CURRENCY);
 
         expect(stakes).toEqual([
           {
@@ -440,7 +442,7 @@ describe("staking/validators/zero_gravity", () => {
         });
         setupProvider(callHandler);
 
-        const stakes = await fetchZeroGravityStakes(DELEGATOR, {} as never, CURRENCY);
+        const stakes = await fetchZeroGravityStakes(zgConfig, DELEGATOR, {} as never, CURRENCY);
 
         expect(stakes).toEqual([]);
       });

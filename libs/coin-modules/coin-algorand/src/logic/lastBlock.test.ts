@@ -1,5 +1,6 @@
 import * as network from "../network";
 import { lastBlock } from "./lastBlock";
+import { mockAlgorandContext, mockAlgorandConfig } from "../test/context";
 
 jest.mock("../network");
 
@@ -31,9 +32,9 @@ describe("lastBlock", () => {
       },
     });
 
-    const result = await lastBlock();
+    const result = await lastBlock(mockAlgorandContext);
 
-    expect(mockGetBlock).toHaveBeenCalledWith(50000000);
+    expect(mockGetBlock).toHaveBeenCalledWith(mockAlgorandConfig, 50000000);
     expect(result).toEqual({
       height: 50000000,
       hash: "wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8=",
@@ -59,9 +60,9 @@ describe("lastBlock", () => {
       },
     });
 
-    const result = await lastBlock();
+    const result = await lastBlock(mockAlgorandContext);
 
-    expect(mockGetBlock).toHaveBeenCalledWith(12345678);
+    expect(mockGetBlock).toHaveBeenCalledWith(mockAlgorandConfig, 12345678);
     expect(result.height).toBe(12345678);
     expect(result.hash).toBe("testHash123");
     expect(result.time).toEqual(new Date(1609459200000));
@@ -70,7 +71,7 @@ describe("lastBlock", () => {
   it("should propagate network errors from getTransactionParams", async () => {
     mockGetTransactionParams.mockRejectedValue(new Error("Network error"));
 
-    await expect(lastBlock()).rejects.toThrow("Network error");
+    await expect(lastBlock(mockAlgorandContext)).rejects.toThrow("Network error");
   });
 
   it("should propagate network errors from getBlock", async () => {
@@ -85,6 +86,6 @@ describe("lastBlock", () => {
 
     mockGetBlock.mockRejectedValue(new Error("Block not found"));
 
-    await expect(lastBlock()).rejects.toThrow("Block not found");
+    await expect(lastBlock(mockAlgorandContext)).rejects.toThrow("Block not found");
   });
 });

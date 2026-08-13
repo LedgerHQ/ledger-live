@@ -1,6 +1,8 @@
-import { VALID_ADDRESS, VALID_ADDRESS_2 } from "../../test/fixtures";
+import { VALID_ADDRESS, VALID_ADDRESS_2, createFixtureConfig } from "../../test/fixtures";
 import type { WalletProxyTransaction } from "../../types";
 import { listOperations, parseTransaction } from "./listOperations";
+
+const config = createFixtureConfig();
 
 jest.mock("@ledgerhq/concordium-core", () => ({
   decodeMemoFromCbor: jest.fn(),
@@ -205,9 +207,14 @@ describe("listOperations", () => {
       order: "descending",
     });
 
-    const result = await listOperations(VALID_ADDRESS, { minHeight: 0 }, "concordium_testnet");
+    const result = await listOperations(
+      config,
+      VALID_ADDRESS,
+      { minHeight: 0 },
+      "concordium_testnet",
+    );
 
-    expect(getTransactionsMock).toHaveBeenCalledWith("concordium_testnet", VALID_ADDRESS, {
+    expect(getTransactionsMock).toHaveBeenCalledWith(config, "concordium_testnet", VALID_ADDRESS, {
       limit: 100,
       order: "d",
     });
@@ -232,9 +239,9 @@ describe("listOperations", () => {
       order: "descending",
     });
 
-    await listOperations(VALID_ADDRESS, { minHeight: 500 }, "concordium_testnet");
+    await listOperations(config, VALID_ADDRESS, { minHeight: 500 }, "concordium_testnet");
 
-    expect(getTransactionsMock).toHaveBeenCalledWith("concordium_testnet", VALID_ADDRESS, {
+    expect(getTransactionsMock).toHaveBeenCalledWith(config, "concordium_testnet", VALID_ADDRESS, {
       limit: 100,
       order: "d",
       blockHeightFrom: 500,
@@ -249,9 +256,14 @@ describe("listOperations", () => {
       order: "descending",
     });
 
-    await listOperations(VALID_ADDRESS, { minHeight: 0, cursor: "42" }, "concordium_testnet");
+    await listOperations(
+      config,
+      VALID_ADDRESS,
+      { minHeight: 0, cursor: "42" },
+      "concordium_testnet",
+    );
 
-    expect(getTransactionsMock).toHaveBeenCalledWith("concordium_testnet", VALID_ADDRESS, {
+    expect(getTransactionsMock).toHaveBeenCalledWith(config, "concordium_testnet", VALID_ADDRESS, {
       limit: 100,
       order: "d",
       from: "42",
@@ -284,7 +296,12 @@ describe("listOperations", () => {
       order: "descending",
     });
 
-    const result = await listOperations(VALID_ADDRESS, { minHeight: 0 }, "concordium_testnet");
+    const result = await listOperations(
+      config,
+      VALID_ADDRESS,
+      { minHeight: 0 },
+      "concordium_testnet",
+    );
 
     expect(result.next).toBe("101");
   });
@@ -308,7 +325,12 @@ describe("listOperations", () => {
       order: "descending",
     });
 
-    const result = await listOperations(VALID_ADDRESS, { minHeight: 0 }, "concordium_testnet");
+    const result = await listOperations(
+      config,
+      VALID_ADDRESS,
+      { minHeight: 0 },
+      "concordium_testnet",
+    );
 
     expect(result.items).toHaveLength(0);
   });
@@ -316,7 +338,12 @@ describe("listOperations", () => {
   it("should return empty array on error", async () => {
     getTransactionsMock.mockRejectedValue(new Error("network error"));
 
-    const result = await listOperations(VALID_ADDRESS, { minHeight: 0 }, "concordium_testnet");
+    const result = await listOperations(
+      config,
+      VALID_ADDRESS,
+      { minHeight: 0 },
+      "concordium_testnet",
+    );
 
     expect(result).toEqual({ items: [], next: undefined });
   });

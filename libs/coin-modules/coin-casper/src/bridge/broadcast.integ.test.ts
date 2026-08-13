@@ -5,7 +5,10 @@ import {
   PublicKey,
   Transaction as CasperDeployTransaction,
 } from "casper-js-sdk";
-import { casperMainnetConfig } from "../__tests__/fixtures/config.fixture";
+import {
+  casperMainnetConfig,
+  casperMainnetResolvedConfig,
+} from "../__tests__/fixtures/config.fixture";
 import { getCasperNodeRpcClient } from "../network/api";
 import { setCoinConfig } from "../config";
 import { CASPER_DEFAULT_TTL, CASPER_FEES_MOTES, CASPER_NETWORK } from "../constants";
@@ -20,7 +23,9 @@ describe("Broadcast", () => {
     const privateKey = PrivateKey.generate(KeyAlgorithm.SECP256K1);
     const senderHex = privateKey.publicKey.toHex();
 
-    const casperNetwork = await CasperNetwork.create(getCasperNodeRpcClient());
+    const casperNetwork = await CasperNetwork.create(
+      getCasperNodeRpcClient(casperMainnetResolvedConfig),
+    );
     const deploy: CasperDeployTransaction = casperNetwork.createTransferTransaction(
       PublicKey.fromHex(senderHex),
       PublicKey.fromHex(senderHex),

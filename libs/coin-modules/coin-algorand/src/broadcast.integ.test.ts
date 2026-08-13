@@ -4,20 +4,18 @@ import coinConfig from "./config";
 import { getTransactionParams } from "./network";
 
 describe("Broadcast", () => {
+  const mockAlgorandConfig = {
+    status: { type: "active" },
+    node: "https://algorand.coin.ledger.com/ps2/v2",
+  };
   beforeAll(() => {
-    coinConfig.setCoinConfig(
-      () =>
-        ({
-          status: { type: "active" },
-          node: "https://algorand.coin.ledger.com/ps2/v2",
-        }) as any,
-    );
+    coinConfig.setCoinConfig(() => mockAlgorandConfig as any);
   });
 
   it("throws on insufficient funds", async () => {
     const sender = algosdk.generateAccount();
     const receiver = algosdk.generateAccount();
-    const params = await getTransactionParams();
+    const params = await getTransactionParams(mockAlgorandConfig);
     const tx = makePaymentTxnWithSuggestedParamsFromObject({
       sender: sender.addr,
       receiver: receiver.addr,

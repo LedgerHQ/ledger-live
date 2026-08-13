@@ -1,3 +1,4 @@
+import { mockNearContext } from "../../test/context";
 import { http, HttpResponse } from "msw";
 import { setMockCoinConfig } from "../../test/coinConfig";
 import { mockServer, NEAR_BASE_URL_MOCKED } from "../../network/node.mock";
@@ -19,7 +20,7 @@ describe("getBlockInfo (MSW)", () => {
       http.post(NEAR_BASE_URL_MOCKED, () => HttpResponse.json({ result: { header: HEADER } })),
     );
 
-    const block = await getBlockInfo(140_000_000);
+    const block = await getBlockInfo(mockNearContext, 140_000_000);
 
     expect(block).toEqual({
       height: 140_000_000,
@@ -35,6 +36,6 @@ describe("getBlockInfo (MSW)", () => {
       ),
     );
 
-    await expect(getBlockInfo(999_999_999)).rejects.toThrow("DB Not Found Error");
+    await expect(getBlockInfo(mockNearContext, 999_999_999)).rejects.toThrow("DB Not Found Error");
   });
 });

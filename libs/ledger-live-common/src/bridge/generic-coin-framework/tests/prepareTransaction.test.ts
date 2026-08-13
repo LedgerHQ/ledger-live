@@ -70,7 +70,7 @@ describe("genericPrepareTransaction", () => {
       account,
       expect.objectContaining(baseTransaction),
       undefined,
-      undefined,
+      expect.any(Function), // craftTransactionData closure (framework v6)
       undefined,
     );
   });
@@ -569,7 +569,11 @@ describe("genericPrepareTransaction", () => {
       } as GenericTransaction,
     );
 
-    expect(estimateFees).toHaveBeenCalledWith(expect.objectContaining({ amount: 100n }), {});
+    expect(estimateFees).toHaveBeenCalledWith(
+      expect.anything(), // context (framework v6)
+      expect.objectContaining({ amount: 100n }),
+      { customFeesParameters: {} },
+    );
     expect((result as any).amount.toString()).toBe("100");
   });
 
@@ -650,7 +654,7 @@ describe("genericPrepareTransaction", () => {
         assetReference: "usdc",
       },
       undefined,
-      undefined,
+      expect.any(Function), // craftTransactionData closure (framework v6)
       undefined,
     );
   });

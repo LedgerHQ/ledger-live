@@ -7,7 +7,7 @@ import type {
 } from "@ledgerhq/coin-module-framework/api/types";
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 
-import { getCoinConfig } from "../config";
+import { EvmConfigInfo, type EvmContext } from "../config";
 import { getExplorerApi } from "../network/explorer";
 import { ExplorerApi } from "../network/explorer/types";
 import { getNodeApi } from "../network/node";
@@ -18,21 +18,24 @@ export const TOKEN_BALANCE_BATCH_SIZE = 8;
 
 /**
  * Get all assets linked to the user (native, tokens, ...)
+ * @param context - The coin-module context (config + logger)
  * @param currency - The currency we must get the balances of
  * @param address - The user's address
  * @returns Promise<Balance[]> - Array of balances for all assets (first element will always be the native asset)
  */
 export async function getBalance(
+  context: EvmContext,
   currency: CryptoCurrency,
   address: string,
   options?: BalanceOptions,
 ): Promise<Balance[]> {
-  const nodeApi = getNodeApi(currency);
-  const explorerApi = getExplorerApi(currency);
+  const config = await context.config(currency.id);
+  const nodeApi = getNodeApi(config, currency);
+  const explorerApi = getExplorerApi(config, currency);
 
   const [nativeBalance, tokensBalances] = await Promise.all([
     getNativeBalance(currency, address, nodeApi),
-    getTokenBalances(currency, address, nodeApi, explorerApi, options),
+    getTokenBalances(context, currency, address, nodeApi, explorerApi, config, options),
   ]);
 
   return [nativeBalance].concat(tokensBalances);
@@ -53,18 +56,20 @@ async function getNativeBalance(
 }
 
 async function getTokenBalances(
+  context: EvmContext,
   currency: CryptoCurrency,
   address: string,
   nodeApi: NodeApi,
   explorerApi: ExplorerApi,
+  config: EvmConfigInfo,
   options?: BalanceOptions,
 ): Promise<Balance[]> {
   const balances: Balance[] = [];
 
   // Execute staking and token operations in parallel for better performance
   const [stakingResult, tokenOperationsResult] = await Promise.allSettled([
-    getStakes(currency, address),
-    explorerApi.getOperations(currency, address, 0),
+    getStakes(context, currency, address),
+    explorerApi.getOperations(config, currency, address, 0),
   ]);
 
   // Add staking positions to balances (with error handling)
@@ -86,7 +91,7 @@ async function getTokenBalances(
 
   // Contracts whose ERC20 balance mirrors the native balance — skip them here to avoid
   // counting the same value twice (the native balance is already returned upstream).
-  const { nativeContracts = [] } = getCoinConfig(currency.id).info;
+  const { nativeContracts = [] } = config;
   const nativeContractsSet = new Set(nativeContracts.map(c => c.toLowerCase()));
 
   const { contracts, assets } = await collectTokenAssets(

@@ -1,3 +1,4 @@
+import type { TronCoinConfig } from "../config";
 import BigNumber from "bignumber.js";
 import { getTronAccountNetwork } from "../network";
 import type { NetworkInfo } from "../types";
@@ -20,6 +21,11 @@ const buildNetworkInfo = (overrides: Partial<NetworkInfo> = {}): NetworkInfo => 
   ...overrides,
 });
 
+const mockConfig = {
+  status: { type: "active" },
+  explorer: { url: "https://api.trongrid.io" },
+} as TronCoinConfig;
+
 describe("getAccountInfo", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -28,9 +34,9 @@ describe("getAccountInfo", () => {
   it("polls wallet/getaccountresource for the given address", async () => {
     mockGetTronAccountNetwork.mockResolvedValueOnce(buildNetworkInfo());
 
-    await getAccountInfo("TXYZ");
+    await getAccountInfo(mockConfig, "TXYZ");
 
-    expect(mockGetTronAccountNetwork).toHaveBeenCalledWith("TXYZ");
+    expect(mockGetTronAccountNetwork).toHaveBeenCalledWith(mockConfig, "TXYZ");
   });
 
   it("returns available energy/bandwidth and the raw energy limit", async () => {
@@ -45,7 +51,7 @@ describe("getAccountInfo", () => {
       }),
     );
 
-    const info = (await getAccountInfo("TXYZ")) as TronAccountInfo;
+    const info = (await getAccountInfo(mockConfig, "TXYZ")) as TronAccountInfo;
 
     expect(info).toEqual({
       type: "tron",
@@ -67,7 +73,7 @@ describe("getAccountInfo", () => {
       }),
     );
 
-    const info = (await getAccountInfo("TXYZ")) as TronAccountInfo;
+    const info = (await getAccountInfo(mockConfig, "TXYZ")) as TronAccountInfo;
 
     // energy clamped to 0; bandwidth = max(0, 100-250) + max(0, 300-50) = 0 + 250
     expect(info).toEqual({
@@ -81,7 +87,7 @@ describe("getAccountInfo", () => {
   it("returns zeroed metadata for an account with no resources", async () => {
     mockGetTronAccountNetwork.mockResolvedValueOnce(buildNetworkInfo());
 
-    const info = (await getAccountInfo("TXYZ")) as TronAccountInfo;
+    const info = (await getAccountInfo(mockConfig, "TXYZ")) as TronAccountInfo;
 
     expect(info).toEqual({
       type: "tron",

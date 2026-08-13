@@ -1,5 +1,6 @@
 import buildCoinConfig, {
   type CoinConfig,
+  type Context,
   type CurrencyConfig,
 } from "@ledgerhq/coin-module-framework/config";
 
@@ -23,6 +24,9 @@ export interface HederaConfig {
 }
 
 export type HederaCoinConfig = CurrencyConfig & HederaConfig;
+
+/** The {@link Context} threaded through the coin-hedera low layers (ADR-019). */
+export type HederaContext = Context<HederaCoinConfig>;
 
 const coinConfig: {
   setCoinConfig: (config: CoinConfig<HederaCoinConfig>) => void;

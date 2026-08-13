@@ -1,5 +1,5 @@
 import { makeAccount } from "../fixtures";
-import { getCoinConfig, setCoinConfig } from "@ledgerhq/coin-evm/config";
+import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { Account } from "@ledgerhq/types-live";
@@ -21,27 +21,20 @@ export const scenarioRobinhoodTestnet: Scenario<GenericTransaction, Account> = {
     const signer = await buildSigner();
     await spawnAnvil(ROBINHOOD_TESTNET_RPC, signer.exportMnemonic());
 
-    setCoinConfig(() => ({
-      info: {
-        status: { type: "active" },
-        node: { type: "external", uri: "http://127.0.0.1:8545" },
-        explorer: { type: "none" },
-        showNfts: false,
-      },
-    }));
+    const info: EvmConfigInfo = {
+      status: { type: "active" },
+      node: { type: "external", uri: "http://127.0.0.1:8545" },
+      explorer: { type: "none" },
+      showNfts: false,
+    };
     LiveConfig.setConfig({
       config_currency_robinhood_testnet: {
         type: "object",
-        default: {
-          status: { type: "active" },
-          node: { type: "external", uri: "http://127.0.0.1:8545" },
-          explorer: { type: "none" },
-          showNfts: false,
-        },
+        default: info,
       },
     });
 
-    initMswHandlers(getCoinConfig(robinhoodTestnet.id).info);
+    initMswHandlers(info);
 
     const { currencyBridge, accountBridge, getAddress } = await getBridges(signer);
     const { address } = await getAddress("", {

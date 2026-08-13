@@ -77,6 +77,7 @@ describe("getAccountShape", () => {
 
     expect(logic.listOperationsV2).toHaveBeenCalledTimes(1);
     expect(logic.listOperationsV2).toHaveBeenCalledWith(
+      mockConfig,
       expect.objectContaining({ address: mockAddress, evmAddress: mockEvmAddress }),
     );
     expect(mockGetERC20BalancesForAccountV2).toHaveBeenCalledTimes(1);
@@ -110,6 +111,7 @@ describe("getAccountShape", () => {
 
     expect(logic.listOperationsV2).toHaveBeenCalledTimes(1);
     expect(logic.listOperationsV2).toHaveBeenCalledWith(
+      mockConfig,
       expect.objectContaining({ cursor: expect.any(String) }),
     );
   });
@@ -119,6 +121,7 @@ describe("getAccountShape", () => {
 
     expect(logic.listOperationsV2).toHaveBeenCalledTimes(1);
     expect(logic.listOperationsV2).toHaveBeenCalledWith(
+      mockConfig,
       expect.not.objectContaining({ cursor: expect.any(String) }),
     );
   });
@@ -131,6 +134,7 @@ describe("getAccountShape", () => {
     await getAccountShape(mockInfo, { paginationConfig: {} });
 
     expect(logic.listOperationsV2).toHaveBeenCalledWith(
+      mockConfig,
       expect.objectContaining({
         tokenEvmAddresses: expect.arrayContaining([erc20Address]),
       }),
@@ -177,6 +181,7 @@ describe("getAccountShape", () => {
 
     expect(logic.listOperationsV2).toHaveBeenCalledTimes(1);
     expect(logic.listOperationsV2).toHaveBeenCalledWith(
+      mockConfig,
       expect.not.objectContaining({ cursor: expect.any(String) }),
     );
   });

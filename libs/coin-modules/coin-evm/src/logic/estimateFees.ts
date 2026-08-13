@@ -8,6 +8,7 @@ import type {
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
 import { Transaction, TransactionLike } from "ethers";
+import { EvmConfigInfo, type EvmContext } from "../config";
 import { getAdditionalLayer2Fees } from "../logic";
 import { getGasTracker } from "../network/gasTracker";
 import { getNodeApi } from "../network/node";
@@ -20,6 +21,7 @@ import { getNextSequence } from "./getNextSequence";
 const SEND_MAX_L1_FEE_BUFFER = new BigNumber(2);
 
 async function computeAdditionalFees(
+  config: EvmConfigInfo,
   currency: CryptoCurrency,
   unsignedTransaction: TransactionLike,
 ): Promise<BigNumber | undefined> {
@@ -34,7 +36,11 @@ async function computeAdditionalFees(
   };
 
   try {
-    return await getAdditionalLayer2Fees(currency, Transaction.from(transaction).serialized);
+    return await getAdditionalLayer2Fees(
+      config,
+      currency,
+      Transaction.from(transaction).serialized,
+    );
   } catch {
     return new BigNumber(0);
   }
@@ -108,6 +114,7 @@ function extractGasOptions(
 }
 
 export async function estimateFees(
+  context: EvmContext,
   currency: CryptoCurrency,
   transactionIntent: TransactionIntent<MemoNotSupported, BufferTxData>,
   customFeesParameters?: FeeEstimation["parameters"],
@@ -115,6 +122,8 @@ export async function estimateFees(
   if (!isEthAddress(transactionIntent.recipient)) {
     return { value: 0n };
   }
+
+  const config = await context.config(currency.id);
 
   // Skip fee estimation for redelegate without a destination validator — the
   // validateStaking step in validateIntent will surface RedelegateDstValAddressRequired.
@@ -136,7 +145,7 @@ export async function estimateFees(
   const noncePromise: Promise<bigint> =
     typeof transactionIntent.sequence === "bigint" && transactionIntent.sequence >= 0n
       ? Promise.resolve(transactionIntent.sequence)
-      : getNextSequence(currency, transactionIntent.sender);
+      : getNextSequence(context, currency, transactionIntent.sender);
 
   const feeDataPromise = (async (): Promise<{
     finalFeeData: FeeData;
@@ -154,9 +163,10 @@ export async function estimateFees(
       return { finalFeeData: customGasOptions[feesStrategy], finalGasOptions: customGasOptions };
     }
 
-    const gasTracker = getGasTracker(currency);
+    const gasTracker = getGasTracker(config, currency);
     const remoteGasOptions = await gasTracker?.getGasOptions({
       currency,
+      config,
       options: { useEIP1559: txType === TransactionTypes.eip1559 },
     });
 
@@ -164,8 +174,8 @@ export async function estimateFees(
       return { finalFeeData: remoteGasOptions[feesStrategy], finalGasOptions: remoteGasOptions };
     }
 
-    const node = getNodeApi(currency);
-    const feeData = await node.getFeeData(currency, {
+    const node = getNodeApi(config, currency);
+    const feeData = await node.getFeeData(config, currency, {
       type: txType,
       feesStrategy,
     });
@@ -177,7 +187,7 @@ export async function estimateFees(
   // all independent network calls and sequencing them triples the latency.
   const [{ to, data, value, gasLimit }, nonce, { finalFeeData, finalGasOptions }] =
     await Promise.all([
-      prepareUnsignedTxParams(currency, transactionIntent, customFeesParameters),
+      prepareUnsignedTxParams(config, currency, transactionIntent, customFeesParameters),
       noncePromise,
       feeDataPromise,
     ]);
@@ -215,7 +225,7 @@ export async function estimateFees(
     value,
     chainId,
   };
-  const rawAdditionalFees = await computeAdditionalFees(currency, unsignedTransaction);
+  const rawAdditionalFees = await computeAdditionalFees(config, currency, unsignedTransaction);
   const additionalFees =
     transactionIntent.useAllAmount && rawAdditionalFees
       ? rawAdditionalFees.multipliedBy(SEND_MAX_L1_FEE_BUFFER).integerValue(BigNumber.ROUND_CEIL)

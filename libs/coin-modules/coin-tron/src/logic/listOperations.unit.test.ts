@@ -4,6 +4,7 @@ import { fromTrongridTxInfoToOperation } from "../network/trongrid/trongrid-adap
 import { TrongridTxInfo } from "../types";
 import { listOperations, ListOperationsOptions } from "./listOperations";
 import { TronEmptyPage } from "../types/errors";
+import type { TronCoinConfig } from "../config";
 
 jest.mock("../network", () => ({
   fetchTronAccountTxsPage: jest.fn(),
@@ -16,6 +17,7 @@ jest.mock("../network/trongrid/trongrid-adapters", () => ({
 
 describe("listOperations", () => {
   const mockAddress = "tronExampleAddress";
+  const config = {} as TronCoinConfig;
 
   const defaultOptions: ListOperationsOptions = {
     limit: 200,
@@ -57,9 +59,9 @@ describe("listOperations", () => {
       value: BigInt(tx.value.toString()),
     }));
 
-    const result = await listOperations(mockAddress, defaultOptions);
+    const result = await listOperations(config, mockAddress, defaultOptions);
 
-    expect(fetchTronAccountTxsPage).toHaveBeenCalledWith(mockAddress, {
+    expect(fetchTronAccountTxsPage).toHaveBeenCalledWith(config, mockAddress, {
       limit: 200,
       minTimestamp: 0,
       order: "asc",
@@ -74,7 +76,7 @@ describe("listOperations", () => {
       trc20Txs: { txs: [], hasNextPage: false },
     });
 
-    const result = await listOperations(mockAddress, defaultOptions);
+    const result = await listOperations(config, mockAddress, defaultOptions);
 
     expect(result.items).toHaveLength(0);
     expect(result.next).toBeUndefined();
@@ -90,9 +92,9 @@ describe("listOperations", () => {
 
     const cursor = `${new Date("2023-01-01T01:00:00Z").getTime()}:tx1`;
 
-    await expect(listOperations(mockAddress, { ...defaultOptions, cursor })).rejects.toThrow(
-      TronEmptyPage,
-    );
+    await expect(
+      listOperations(config, mockAddress, { ...defaultOptions, cursor }),
+    ).rejects.toThrow(TronEmptyPage);
   });
 
   it("should return cursor when hasNextPage is true", async () => {
@@ -126,7 +128,7 @@ describe("listOperations", () => {
       value: BigInt(tx.value.toString()),
     }));
 
-    const result = await listOperations(mockAddress, defaultOptions);
+    const result = await listOperations(config, mockAddress, defaultOptions);
 
     expect(result.items).toHaveLength(3);
     expect(result.next).toContain("tx3");
@@ -171,7 +173,7 @@ describe("listOperations", () => {
       value: BigInt(tx.value.toString()),
     }));
 
-    const result = await listOperations(mockAddress, defaultOptions);
+    const result = await listOperations(config, mockAddress, defaultOptions);
 
     expect(result.items).toHaveLength(3);
     const hashes = result.items.map(op => op.tx.hash);
@@ -209,7 +211,7 @@ describe("listOperations", () => {
       value: BigInt(tx.value.toString()),
     }));
 
-    const result = await listOperations(mockAddress, { ...defaultOptions, order: "asc" });
+    const result = await listOperations(config, mockAddress, { ...defaultOptions, order: "asc" });
 
     const hashes = result.items.map(op => op.tx.hash);
     expect(hashes).toEqual(["tx1", "tx2", "tx3"]);
@@ -246,7 +248,7 @@ describe("listOperations", () => {
       value: BigInt(tx.value.toString()),
     }));
 
-    const result = await listOperations(mockAddress, { ...defaultOptions, order: "desc" });
+    const result = await listOperations(config, mockAddress, { ...defaultOptions, order: "desc" });
 
     const hashes = result.items.map(op => op.tx.hash);
     expect(hashes).toEqual(["tx3", "tx2", "tx1"]);
@@ -286,7 +288,7 @@ describe("listOperations", () => {
     const cursorTimestamp = new Date("2023-01-01T01:00:00Z").getTime();
     const cursor = `${cursorTimestamp}:tx1`;
 
-    const result = await listOperations(mockAddress, { ...defaultOptions, cursor });
+    const result = await listOperations(config, mockAddress, { ...defaultOptions, cursor });
 
     const hashes = result.items.map(op => op.tx.hash);
     expect(hashes).toEqual(["tx2", "tx3"]);
@@ -316,7 +318,7 @@ describe("listOperations", () => {
     }));
 
     const cursor = `${sameTimestamp.getTime()}:txB`;
-    const result = await listOperations(mockAddress, { ...defaultOptions, cursor });
+    const result = await listOperations(config, mockAddress, { ...defaultOptions, cursor });
 
     const hashes = result.items.map(op => op.tx.hash);
     expect(hashes).toEqual(["txC", "txD"]);
@@ -326,12 +328,14 @@ describe("listOperations", () => {
     const exampleError = new Error("Network error!");
     (fetchTronAccountTxsPage as jest.Mock).mockRejectedValue(exampleError);
 
-    await expect(listOperations(mockAddress, defaultOptions)).rejects.toThrow("Network error!");
+    await expect(listOperations(config, mockAddress, defaultOptions)).rejects.toThrow(
+      "Network error!",
+    );
   });
 
   it("should throw on invalid cursor format", async () => {
     await expect(
-      listOperations(mockAddress, { ...defaultOptions, cursor: "invalid" }),
+      listOperations(config, mockAddress, { ...defaultOptions, cursor: "invalid" }),
     ).rejects.toThrow("Invalid cursor format");
   });
 
@@ -368,7 +372,7 @@ describe("listOperations", () => {
       value: BigInt(tx.value.toString()),
     }));
 
-    const result = await listOperations(mockAddress, defaultOptions);
+    const result = await listOperations(config, mockAddress, defaultOptions);
 
     expect(result.next).toContain("trc20-1");
     const hashes = result.items.map(op => op.tx.hash);
@@ -404,14 +408,14 @@ describe("listOperations", () => {
     const cursor = `${cursorTimestamp}:tx4`;
     const minTimestamp = 1000;
 
-    await listOperations(mockAddress, {
+    await listOperations(config, mockAddress, {
       ...defaultOptions,
       order: "desc",
       cursor,
       minTimestamp,
     });
 
-    expect(fetchTronAccountTxsPage).toHaveBeenCalledWith(mockAddress, {
+    expect(fetchTronAccountTxsPage).toHaveBeenCalledWith(config, mockAddress, {
       limit: 200,
       minTimestamp,
       maxTimestamp: cursorTimestamp,
@@ -427,13 +431,13 @@ describe("listOperations", () => {
 
     const minTimestamp = 1000;
 
-    await listOperations(mockAddress, {
+    await listOperations(config, mockAddress, {
       ...defaultOptions,
       order: "desc",
       minTimestamp,
     });
 
-    expect(fetchTronAccountTxsPage).toHaveBeenCalledWith(mockAddress, {
+    expect(fetchTronAccountTxsPage).toHaveBeenCalledWith(config, mockAddress, {
       limit: 200,
       minTimestamp,
       maxTimestamp: undefined,
@@ -464,14 +468,14 @@ describe("listOperations", () => {
     }));
     const minTimestamp = 1000;
 
-    await listOperations(mockAddress, {
+    await listOperations(config, mockAddress, {
       ...defaultOptions,
       order: "asc",
       cursor,
       minTimestamp,
     });
 
-    expect(fetchTronAccountTxsPage).toHaveBeenCalledWith(mockAddress, {
+    expect(fetchTronAccountTxsPage).toHaveBeenCalledWith(config, mockAddress, {
       limit: 200,
       minTimestamp: cursorTimestamp,
       maxTimestamp: undefined,

@@ -4,7 +4,7 @@ import { log } from "@ledgerhq/logs";
 import type { Page } from "@ledgerhq/coin-module-framework/api/index";
 import type { AssetInfo, Stake, Validator } from "@ledgerhq/coin-module-framework/api/types";
 import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
-import { getCoinConfig } from "../../config";
+import type { EvmConfigInfo } from "../../config";
 import { withApi } from "../../network/node/rpc.common";
 import { isExternalNodeConfig } from "../../network/node/types";
 import type { StakingContractConfig } from "../../types/staking";
@@ -36,7 +36,7 @@ function isExploreMe0gValidator(value: unknown): value is ExploreMe0gValidator {
 }
 
 const zeroGravityValidatorApi: ValidatorApi = {
-  fetchValidators: async (currencyId): Promise<Page<Validator>> => {
+  fetchValidators: async (_config, currencyId): Promise<Page<Validator>> => {
     const apiConfig = STAKING_CONTRACTS[currencyId]?.apiConfig;
     if (!apiConfig?.baseUrl) return { items: [], next: undefined };
 
@@ -212,6 +212,7 @@ const fetchUnbondingsForValidator = async (
 };
 
 export const fetchZeroGravityStakes = async (
+  evmConfig: EvmConfigInfo,
   address: string,
   _config: StakingContractConfig,
   currency: CryptoCurrency,
@@ -219,10 +220,13 @@ export const fetchZeroGravityStakes = async (
   const abi = getStakingABI(currency.id);
   if (!abi) return [];
 
-  const node = getCoinConfig(currency.id).info.node;
+  const node = evmConfig.node;
   if (!isExternalNodeConfig(node)) return [];
 
-  const { items: validators } = await zeroGravityValidatorApi.fetchValidators(currency.id);
+  const { items: validators } = await zeroGravityValidatorApi.fetchValidators(
+    evmConfig,
+    currency.id,
+  );
   if (validators.length === 0) return [];
 
   const asset: AssetInfo = {

@@ -1,3 +1,4 @@
+import { mockNearContext } from "../../test/context";
 import type {
   StakingTransactionIntent,
   TransactionIntent,
@@ -66,7 +67,7 @@ describe("craftTransaction", () => {
   });
 
   it("crafts a transfer addressed to the recipient", async () => {
-    const { transaction, details } = await craftTransaction(intent());
+    const { transaction, details } = await craftTransaction(mockNearContext, intent());
     const decoded = decode(transaction);
 
     expect(decoded.signerId).toBe(SENDER);
@@ -79,9 +80,12 @@ describe("craftTransaction", () => {
   });
 
   it("takes the next nonce from the sender's access key", async () => {
-    const { transaction, details } = await craftTransaction(intent());
+    const { transaction, details } = await craftTransaction(mockNearContext, intent());
 
-    expect(getAccessKey).toHaveBeenCalledWith({ address: SENDER, publicKey: PUBLIC_KEY });
+    expect(getAccessKey).toHaveBeenCalledWith(expect.anything(), {
+      address: SENDER,
+      publicKey: PUBLIC_KEY,
+    });
     expect(decode(transaction).nonce.toString()).toBe(String(NONCE + 1));
     expect(details).toMatchObject({ nonce: NONCE + 1 });
   });
@@ -91,7 +95,7 @@ describe("craftTransaction", () => {
     ["undelegate", "unstake"],
     ["withdraw", "withdraw"],
   ] as const)("addresses a %s intent to the staking pool as mode %s", async (mode, expected) => {
-    const { transaction, details } = await craftTransaction(stakingIntent(mode));
+    const { transaction, details } = await craftTransaction(mockNearContext, stakingIntent(mode));
 
     expect(decode(transaction).receiverId).toBe(VALIDATOR);
     expect(details).toMatchObject({ mode: expected, receiverId: VALIDATOR });
@@ -99,6 +103,7 @@ describe("craftTransaction", () => {
 
   it("uses the _all pool method when a staking intent spends everything", async () => {
     const { transaction } = await craftTransaction(
+      mockNearContext,
       stakingIntent("undelegate", { useAllAmount: true }),
     );
 
@@ -112,7 +117,7 @@ describe("craftTransaction", () => {
   ] as const)(
     "calls %s on the pool when the operation only comes as an intent type",
     async (type, method) => {
-      const { transaction } = await craftTransaction(typedStakingIntent(type));
+      const { transaction } = await craftTransaction(mockNearContext, typedStakingIntent(type));
 
       expect(decode(transaction).receiverId).toBe(VALIDATOR);
       expect(methodOf(transaction)).toBe(method);
@@ -120,47 +125,52 @@ describe("craftTransaction", () => {
   );
 
   it("rejects a staking operation the module does not implement", async () => {
-    await expect(craftTransaction(stakingIntent("redelegate"))).rejects.toThrow(
+    await expect(craftTransaction(mockNearContext, stakingIntent("redelegate"))).rejects.toThrow(
       "staking operation redelegate is not supported",
     );
   });
 
   it("requires a validator address for a staking intent", async () => {
     await expect(
-      craftTransaction(stakingIntent("delegate", { valAddress: "", recipient: "" })),
+      craftTransaction(
+        mockNearContext,
+        stakingIntent("delegate", { valAddress: "", recipient: "" }),
+      ),
     ).rejects.toThrow("validator address is required");
   });
 
   it("requires the sender public key, which carries the nonce's access key", async () => {
-    await expect(craftTransaction(intent({ senderPublicKey: undefined }))).rejects.toThrow(
-      "senderPublicKey is required",
-    );
+    await expect(
+      craftTransaction(mockNearContext, intent({ senderPublicKey: undefined })),
+    ).rejects.toThrow("senderPublicKey is required");
     expect(getAccessKey).not.toHaveBeenCalled();
   });
 
   it("requires a recipient", async () => {
-    await expect(craftTransaction(intent({ recipient: "" }))).rejects.toThrow(
+    await expect(craftTransaction(mockNearContext, intent({ recipient: "" }))).rejects.toThrow(
       "recipient is required",
     );
   });
 
   it("rejects a malformed sender before hitting the network", async () => {
-    await expect(craftTransaction(intent({ sender: "NOT VALID" }))).rejects.toThrow(
-      "invalid sender address NOT VALID",
-    );
+    await expect(
+      craftTransaction(mockNearContext, intent({ sender: "NOT VALID" })),
+    ).rejects.toThrow("invalid sender address NOT VALID");
     expect(getAccessKey).not.toHaveBeenCalled();
   });
 
   it("rejects a malformed recipient before hitting the network", async () => {
-    await expect(craftTransaction(intent({ recipient: "NOT VALID" }))).rejects.toThrow(
-      "invalid recipient address NOT VALID",
-    );
+    await expect(
+      craftTransaction(mockNearContext, intent({ recipient: "NOT VALID" })),
+    ).rejects.toThrow("invalid recipient address NOT VALID");
     expect(getAccessKey).not.toHaveBeenCalled();
   });
 
   it("fails clearly when the account has no access key for that public key", async () => {
     (getAccessKey as jest.Mock).mockResolvedValue({});
 
-    await expect(craftTransaction(intent())).rejects.toThrow(`no access key found for ${SENDER}`);
+    await expect(craftTransaction(mockNearContext, intent())).rejects.toThrow(
+      `no access key found for ${SENDER}`,
+    );
   });
 });

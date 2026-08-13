@@ -1,9 +1,11 @@
 import type { FeeEstimation, TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
 import { parseAddress } from "../../common-logic";
+import type { VechainContext } from "../../config";
 import { craftTransaction } from "./craftTransaction";
 
 // Estimate VTHO gas by crafting the unsigned tx and reading back its settled fee/gas parameters.
 export async function estimateFees(
+  context: VechainContext,
   intent: TransactionIntent,
   customFeesParameters?: FeeEstimation["parameters"],
 ): Promise<FeeEstimation> {
@@ -15,6 +17,7 @@ export async function estimateFees(
     !intent.useAllAmount && intent.amount <= 0n ? { ...intent, amount: 1n } : intent;
 
   const { details } = await craftTransaction(
+    context,
     estimationIntent,
     customFeesParameters ? { value: 0n, parameters: customFeesParameters } : undefined,
   );

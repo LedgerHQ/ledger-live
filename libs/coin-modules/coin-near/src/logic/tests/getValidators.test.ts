@@ -1,3 +1,4 @@
+import { mockNearContext } from "../../test/context";
 import { http, HttpResponse } from "msw";
 import { setMockCoinConfig } from "../../test/coinConfig";
 import { mockServer, NEAR_BASE_URL_MOCKED } from "../../network/node.mock";
@@ -30,7 +31,7 @@ describe("getValidators (MSW)", () => {
       ),
     );
 
-    const page = await getValidators();
+    const page = await getValidators(mockNearContext);
 
     expect(page.next).toBeUndefined();
     expect(page.items).toEqual([
@@ -49,7 +50,7 @@ describe("getValidators (MSW)", () => {
       http.get(`${NEAR_BASE_URL_MOCKED}/v3/validators`, () => HttpResponse.json({ data: null })),
     );
 
-    const page = await getValidators();
+    const page = await getValidators(mockNearContext);
 
     expect(page.items).toEqual([]);
   });

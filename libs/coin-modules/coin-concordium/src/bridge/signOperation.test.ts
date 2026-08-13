@@ -6,6 +6,7 @@ import {
   createFixtureAccount,
   createFixtureTransaction,
   createFixtureOperation,
+  setupTestnetCoinConfig,
   VALID_ADDRESS,
 } from "../test/fixtures";
 import { buildSignOperation } from "./signOperation";
@@ -45,6 +46,7 @@ jest.mock("./getTransactionStatus", () => ({
 describe("signOperation", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    setupTestnetCoinConfig();
   });
 
   describe("buildSignOperation", () => {

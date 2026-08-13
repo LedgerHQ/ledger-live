@@ -40,7 +40,7 @@ import { makeSuiClientFromGraphQL } from "./graphql/sui-client-adapter";
 import { SUI_SYSTEM_STATE_OBJECT_ID } from "@mysten/sui/utils";
 import { BigNumber } from "bignumber.js";
 import uniqBy from "lodash/unionBy";
-import coinConfig from "../config";
+import { type SuiCoinConfig } from "../config";
 import { BLOCK_HEIGHT, ONE_SUI } from "../constants";
 import type {
   CoreTransaction,
@@ -80,8 +80,8 @@ type AsyncApiFunction<T> = (api: SuiJsonRpcClient) => Promise<T>;
  * broadcast) route through GraphQL via `node.graphqlUrl`. Callers bound
  * directly to `withApi` (none in the current hot path) always use `node.url`.
  */
-export function isGraphQLEnabled(currencyId?: string): boolean {
-  return coinConfig.getCoinConfig(currencyId).features?.graphql === true;
+export function isGraphQLEnabled(config: SuiCoinConfig): boolean {
+  return config.features?.graphql === true;
 }
 
 export const TRANSACTIONS_LIMIT_PER_QUERY = 50;
@@ -109,8 +109,8 @@ const TRANSACTIONS_QUERY_OPTIONS: SuiTransactionBlockResponseOptions = {
 };
 
 /** Fresh JSON-RPC client per call — SuiJsonRpcClient is stateless. */
-export async function withApi<T>(execute: AsyncApiFunction<T>, currencyId?: string) {
-  const url = coinConfig.getCoinConfig(currencyId).node.url;
+export async function withApi<T>(config: SuiCoinConfig, execute: AsyncApiFunction<T>) {
+  const url = config.node.url;
   const network = inferNetworkFromUrl(url);
   const transport = new JsonRpcHTTPTransport({
     url,
@@ -123,15 +123,15 @@ export async function withApi<T>(execute: AsyncApiFunction<T>, currencyId?: stri
 
 /** Dispatcher gated on `features.graphql` */
 export function withTransport<T>(
-  currencyId: string | undefined,
+  config: SuiCoinConfig,
   impls: {
     jsonRpc: AsyncApiFunction<T>;
     graphql: AsyncGraphQLApiFunction<T>;
   },
 ): Promise<T> {
-  return isGraphQLEnabled(currencyId)
-    ? withGraphQLApi(impls.graphql, currencyId)
-    : withApi(impls.jsonRpc, currencyId);
+  return isGraphQLEnabled(config)
+    ? withGraphQLApi(config, impls.graphql)
+    : withApi(config, impls.jsonRpc);
 }
 
 /**
@@ -160,21 +160,22 @@ const toDispatchedCoinBalance = (b: CoinBalance): DispatchedCoinBalance => ({
  * and remaps each node into the shared {@link DispatchedCoinBalance} shape.
  */
 export const getAllBalancesCached = makeLRUCache(
-  async (owner: string, currencyId?: string): Promise<DispatchedCoinBalance[]> => {
+  async (config: SuiCoinConfig, owner: string): Promise<DispatchedCoinBalance[]> => {
     // Pick<> is compile-time only — explicitly project both transports' results
     // so the cache never stores transport-specific fields (`coinObjectCount`,
     // `lockedBalance` from JSON-RPC; GraphQL's neutral fillers for the same).
-    const balances = await withTransport(currencyId, {
+    const balances = await withTransport(config, {
       jsonRpc: api => api.getAllBalances({ owner }),
       graphql: api => getAllBalancesCachedGraphQL(api, owner),
     });
     return balances.map(toDispatchedCoinBalance);
   },
   // Key includes the transport so flipping the flag mid-rollout doesn't
-  // cross-pollinate cached entries between JSON-RPC and GraphQL.
-  // Inputs are colon-free (owner = `0x` + hex; currencyId is wallet-set).
-  (owner: string, currencyId?: string) =>
-    `${currencyId ?? "sui"}:${isGraphQLEnabled(currencyId) ? "g" : "j"}:${owner}`,
+  // cross-pollinate cached entries between JSON-RPC and GraphQL. The network is
+  // derived from the node URL so cached entries stay scoped per environment.
+  // Inputs are colon-free (owner = `0x` + hex; network is a fixed enum).
+  (config: SuiCoinConfig, owner: string) =>
+    `${inferNetworkFromUrl(config.node.url)}:${isGraphQLEnabled(config) ? "g" : "j"}:${owner}`,
   minutes(1),
 );
 
@@ -309,10 +310,10 @@ export type AccountBalance = {
  * coin-selection logic in transaction building).
  */
 export const getAccountBalances = async (
+  config: SuiCoinConfig,
   addr: string,
-  currencyId?: string,
 ): Promise<AccountBalance[]> => {
-  const balances = await getAllBalancesCached(addr, currencyId);
+  const balances = await getAllBalancesCached(config, addr);
   return balances.map(({ coinType, totalBalance, fundsInAddressBalance }) => ({
     coinType,
     blockHeight: BLOCK_HEIGHT * 2,
@@ -451,7 +452,11 @@ function stakingExtraFromEvents(
   const isUnstake = type === "UNDELEGATE";
   const eventType = isUnstake ? UNSTAKING_REQUEST_EVENT : STAKING_REQUEST_EVENT;
   const parsed = events?.find(e => e.type === eventType)?.parsedJson as
-    | { amount?: string | number; principal_amount?: string | number; validator_address?: string }
+    | {
+        amount?: string | number;
+        principal_amount?: string | number;
+        validator_address?: string;
+      }
     | undefined;
   const validatorAddress = parsed?.validator_address;
   const rawAmount = isUnstake ? parsed?.principal_amount : parsed?.amount;
@@ -486,14 +491,17 @@ function getStakingExtra(response: SuiTransactionBlockResponse): SuiStakingExtra
  * out. Not a stable coin-sui API.
  */
 export const getStakingExtraByDigest = (
+  config: SuiCoinConfig,
   digest: string,
   type: OperationType,
-  currencyId?: string,
 ): Promise<SuiStakingExtra | null> => {
   if (type !== "DELEGATE" && type !== "UNDELEGATE") return Promise.resolve(null);
-  return withTransport(currencyId, {
+  return withTransport(config, {
     jsonRpc: async api => {
-      const response = await api.getTransactionBlock({ digest, options: { showEvents: true } });
+      const response = await api.getTransactionBlock({
+        digest,
+        options: { showEvents: true },
+      });
       return stakingExtraFromEvents(response.events, type);
     },
     graphql: async api => {
@@ -522,8 +530,11 @@ export const getFeesPayer = (transaction: SuiTransactionBlockResponse): string |
  * `StakedSui` objects + system-state (one extra dynamicField per Active
  * stake, deduped); rate failures degrade `estimatedReward` to `"0"`.
  */
-export const getDelegatedStakes = (owner: string, currencyId?: string): Promise<DelegatedStake[]> =>
-  withTransport(currencyId, {
+export const getDelegatedStakes = (
+  config: SuiCoinConfig,
+  owner: string,
+): Promise<DelegatedStake[]> =>
+  withTransport(config, {
     jsonRpc: api => api.getStakes({ owner }),
     graphql: api => getDelegatedStakesGraphQL(api, owner),
   });
@@ -846,12 +857,14 @@ export function toSuiAsset(coinType: string): AssetInfo {
 }
 
 export const getLastBlock = (
-  currencyId?: string,
+  config: SuiCoinConfig,
 ): Promise<{ digest: string; sequenceNumber: string; timestampMs: string }> =>
-  withTransport(currencyId, {
+  withTransport(config, {
     jsonRpc: async api => {
       const checkpoint = await api.getLatestCheckpointSequenceNumber();
-      const { digest, sequenceNumber, timestampMs } = await api.getCheckpoint({ id: checkpoint });
+      const { digest, sequenceNumber, timestampMs } = await api.getCheckpoint({
+        id: checkpoint,
+      });
       return { digest, sequenceNumber, timestampMs };
     },
     graphql: getLastBlockGraphQL,
@@ -864,13 +877,13 @@ export const getLastBlock = (
  * sender/sponsor/recipient in one round-trip (no IN+OUT merge needed).
  */
 export const getOperations = async (
+  config: SuiCoinConfig,
   accountId: string,
   addr: string,
   cursor?: QueryTransactionBlocksParams["cursor"],
   order?: "asc" | "desc",
-  currencyId?: string,
 ): Promise<Operation[]> =>
-  withTransport(currencyId, {
+  withTransport(config, {
     jsonRpc: async api => {
       let rpcOrder: "ascending" | "descending";
       if (order) {
@@ -1110,11 +1123,11 @@ function parseListOperationsCursor(cursor: string | undefined): ListOperationsCu
 // test. The default points at the real `withApi`, so production callers
 // pass through unchanged.
 export const getListOperations = async (
+  config: SuiCoinConfig,
   addr: string,
   order: "asc" | "desc",
   withApiImpl: typeof withApi = withApi,
   cursor?: string,
-  currencyId?: string,
 ): Promise<Page<Op>> => {
   const parsedCursor = parseListOperationsCursor(cursor);
 
@@ -1122,8 +1135,8 @@ export const getListOperations = async (
   // `before/afterCheckpoint` filter via a digest→checkpoint lookup. Per-tx
   // checkpoint digests come back in the same round-trip (no JSON-RPC-style
   // per-checkpoint fan-out).
-  if (isGraphQLEnabled(currencyId)) {
-    return withGraphQLApi(async api => {
+  if (isGraphQLEnabled(config)) {
+    return withGraphQLApi(config, async api => {
       let cursorCheckpoint: number | null = null;
       if (parsedCursor) {
         cursorCheckpoint = await resolveCheckpointSequenceForDigestGraphQL(
@@ -1170,10 +1183,10 @@ export const getListOperations = async (
             })
           : undefined;
       return { items, next };
-    }, currencyId);
+    });
   }
 
-  return withApiImpl(async api => {
+  return withApiImpl(config, async api => {
     const rpcOrder = convertApiOrderToSdkOrder(order);
     const rpcCursor = toSdkCursor(parsedCursor?.digest ?? cursor);
 
@@ -1254,7 +1267,7 @@ export const getListOperations = async (
       items: operations,
       next: nextCursor,
     };
-  }, currencyId);
+  });
 };
 
 /**
@@ -1279,16 +1292,16 @@ const isSequenceNumber = (id: string): boolean => {
  * only accepts a sequence number — digest IDs throw. Returns the narrow {@link MinimalCheckpoint}.
  */
 export const getCheckpoint = async (
+  config: SuiCoinConfig,
   id: string,
-  currencyId?: string,
 ): Promise<MinimalCheckpoint> => {
-  if (isGraphQLEnabled(currencyId) && !isSequenceNumber(id)) {
+  if (isGraphQLEnabled(config) && !isSequenceNumber(id)) {
     throw new Error(
       `getCheckpoint(${id}): digest-based lookups are not supported on the GraphQL transport. ` +
         "Pass a sequence number, or route this caller through the JSON-RPC endpoint.",
     );
   }
-  return withTransport(currencyId, {
+  return withTransport(config, {
     jsonRpc: async api => {
       const cp = await api.getCheckpoint({ id });
       return {
@@ -1302,15 +1315,15 @@ export const getCheckpoint = async (
 };
 
 /** Checkpoint metadata only; see {@link getBlock} for the variant that includes the transactions. */
-export const getBlockInfo = async (id: string, currencyId?: string): Promise<BlockInfo> => {
+export const getBlockInfo = async (config: SuiCoinConfig, id: string): Promise<BlockInfo> => {
   const fromJsonRpc = async (api: SuiJsonRpcClient): Promise<BlockInfo> => {
     const checkpoint = await api.getCheckpoint({ id });
     return toBlockInfo(checkpoint);
   };
   // GraphQL `checkpoint(...)` only accepts UInt53 sequence numbers; digest
   // lookups fall back to JSON-RPC even when the GraphQL flag is on.
-  if (!isSequenceNumber(id)) return withApi(fromJsonRpc, currencyId);
-  return withTransport(currencyId, {
+  if (!isSequenceNumber(id)) return withApi(config, fromJsonRpc);
+  return withTransport(config, {
     jsonRpc: fromJsonRpc,
     graphql: async api => {
       const cp = await getBlockInfoFieldsGraphQL(api, Number(id));
@@ -1321,10 +1334,13 @@ export const getBlockInfo = async (id: string, currencyId?: string): Promise<Blo
 };
 
 /** Checkpoint metadata + all transactions in the block; see {@link getBlockInfo} for the metadata-only variant. */
-export const getBlock = async (id: string, currencyId?: string): Promise<Block> => {
+export const getBlock = async (config: SuiCoinConfig, id: string): Promise<Block> => {
   const fromJsonRpc = async (api: SuiJsonRpcClient): Promise<Block> => {
     const checkpoint = await api.getCheckpoint({ id });
-    const rawTxs = await queryTransactionsByDigest({ api, digests: checkpoint.transactions });
+    const rawTxs = await queryTransactionsByDigest({
+      api,
+      digests: checkpoint.transactions,
+    });
     return {
       info: toBlockInfo(checkpoint),
       transactions: rawTxs.filter(tx => !isSettlementTransaction(tx)).map(toBlockTransaction),
@@ -1332,8 +1348,8 @@ export const getBlock = async (id: string, currencyId?: string): Promise<Block> 
   };
   // GraphQL `checkpoint(...)` only accepts UInt53 sequence numbers; digest
   // lookups fall back to JSON-RPC even when the GraphQL flag is on.
-  if (!isSequenceNumber(id)) return withApi(fromJsonRpc, currencyId);
-  return withTransport(currencyId, {
+  if (!isSequenceNumber(id)) return withApi(config, fromJsonRpc);
+  return withTransport(config, {
     jsonRpc: fromJsonRpc,
     graphql: async api => {
       const block = await getBlockGraphQL(api, Number(id));
@@ -1374,7 +1390,12 @@ export const getCoinsForAmount = async (
   coinType: string,
   requiredAmount: bigint,
 ) => {
-  const coins: { coinObjectId: string; version: string; digest: string; balance: string }[] = [];
+  const coins: {
+    coinObjectId: string;
+    version: string;
+    digest: string;
+    balance: string;
+  }[] = [];
   let cursor: string | null = null;
   let hasNextPage = true;
   let totalBalance = 0n;
@@ -1450,7 +1471,10 @@ async function getSuiFundingModel(
   client: ClientWithCoreApi,
   address: string,
 ): Promise<SuiFundingModel> {
-  const { balance } = await client.core.getBalance({ owner: address, coinType: DEFAULT_COIN_TYPE });
+  const { balance } = await client.core.getBalance({
+    owner: address,
+    coinType: DEFAULT_COIN_TYPE,
+  });
   const addressBalance = BigInt(balance.addressBalance);
   const realCoinBalance = BigInt(balance.coinBalance);
   return {
@@ -1472,17 +1496,17 @@ async function getSuiFundingModel(
  *
  */
 export const createTransaction = async (
+  config: SuiCoinConfig,
   address: string,
   transaction: CreateExtrinsicArg,
   withObjects: boolean = false,
   resolution?: Resolution,
-  currencyId?: string,
 ): Promise<CoreTransaction> => {
   const { serialized, bcsObjects } = await createTransactionFromMode(
+    config,
     address,
     transaction,
     withObjects,
-    currencyId,
   );
 
   return {
@@ -1493,19 +1517,19 @@ export const createTransaction = async (
 };
 
 const createTransactionFromMode = (
+  config: SuiCoinConfig,
   address: string,
   transaction: CreateExtrinsicArg,
   withObjects: boolean,
-  currencyId?: string,
 ) => {
   const { mode } = transaction;
   switch (mode) {
     case "delegate":
-      return createTransactionForDelegate(address, transaction, withObjects, currencyId);
+      return createTransactionForDelegate(config, address, transaction, withObjects);
     case "undelegate":
-      return createTransactionForUndelegate(address, transaction, withObjects, currencyId);
+      return createTransactionForUndelegate(config, address, transaction, withObjects);
     default:
-      return createTransactionForOthers(address, transaction, withObjects, currencyId);
+      return createTransactionForOthers(config, address, transaction, withObjects);
   }
 };
 
@@ -1568,12 +1592,12 @@ const buildDelegateBody = async (
 };
 
 const createTransactionForDelegate = (
+  config: SuiCoinConfig,
   address: string,
   transaction: CreateExtrinsicArg,
   withObjects: boolean,
-  currencyId?: string,
 ) =>
-  withTransport(currencyId, {
+  withTransport(config, {
     jsonRpc: api => buildDelegateBody(address, transaction, withObjects, api),
     graphql: api =>
       buildDelegateBody(address, transaction, withObjects, makeSuiClientFromGraphQL(api)),
@@ -1616,12 +1640,12 @@ const buildUndelegateBody = async (
 };
 
 const createTransactionForUndelegate = (
+  config: SuiCoinConfig,
   address: string,
   transaction: CreateExtrinsicArg,
   withObjects: boolean,
-  currencyId?: string,
 ) =>
-  withTransport(currencyId, {
+  withTransport(config, {
     jsonRpc: api => buildUndelegateBody(address, transaction, withObjects, api),
     graphql: api =>
       buildUndelegateBody(address, transaction, withObjects, makeSuiClientFromGraphQL(api)),
@@ -1684,7 +1708,9 @@ const buildOthersBody = async (
     // `coinWithBalance` (a FundsWithdrawal sized for the transfer amount). Gas is paid from
     // real coin objects when present (see `getSuiFundingModel`), so the transfer can consume
     // the full address balance without the gas reservation overdrawing it.
-    const coin = coinWithBalance({ balance: BigInt(transaction.amount.toFixed()) })(tx);
+    const coin = coinWithBalance({
+      balance: BigInt(transaction.amount.toFixed()),
+    })(tx);
     tx.transferObjects([coin], transaction.recipient);
   }
 
@@ -1692,12 +1718,12 @@ const buildOthersBody = async (
 };
 
 const createTransactionForOthers = (
+  config: SuiCoinConfig,
   address: string,
   transaction: CreateExtrinsicArg,
   withObjects: boolean,
-  currencyId?: string,
 ) =>
-  withTransport(currencyId, {
+  withTransport(config, {
     jsonRpc: api => buildOthersBody(address, transaction, withObjects, api),
     graphql: api =>
       buildOthersBody(address, transaction, withObjects, makeSuiClientFromGraphQL(api)),
@@ -1713,21 +1739,23 @@ const createTransactionForOthers = (
  * address-balance funding models.
  */
 export const paymentInfo = async (
+  config: SuiCoinConfig,
   sender: string,
   fakeTransaction: TransactionType,
-  currencyId?: string,
 ) => {
   const { unsigned: txb } = await createTransaction(
+    config,
     sender,
     fakeTransaction,
     false,
     undefined,
-    currencyId,
   );
-  return withTransport(currencyId, {
+  return withTransport(config, {
     jsonRpc: async api => {
       try {
-        const dryRunTxResponse = await api.dryRunTransactionBlock({ transactionBlock: txb });
+        const dryRunTxResponse = await api.dryRunTransactionBlock({
+          transactionBlock: txb,
+        });
         const fees = getTotalGasUsed(dryRunTxResponse.effects);
         return {
           gasBudget: dryRunTxResponse.input.gasData.budget,
@@ -1773,10 +1801,10 @@ const toExecuteResult = (
 });
 
 export const executeTransactionBlock = async (
+  config: SuiCoinConfig,
   params: ExecuteTransactionBlockParams,
-  currencyId?: string,
 ): Promise<ExecuteTransactionBlockResult> =>
-  withTransport(currencyId, {
+  withTransport(config, {
     jsonRpc: async api => {
       const r = await api.executeTransactionBlock(params);
       // `effects` requires `options.showEffects: true` upstream — `broadcast.ts`
@@ -1940,7 +1968,10 @@ export const toStakeAmounts = (stake: StakeObject): { deposited: bigint; rewarde
     case "Pending":
       return { deposited: BigInt(stake.principal), rewarded: 0n };
     case "Active":
-      return { deposited: BigInt(stake.principal), rewarded: BigInt(stake.estimatedReward) };
+      return {
+        deposited: BigInt(stake.principal),
+        rewarded: BigInt(stake.estimatedReward),
+      };
     case "Unstaked":
       return { deposited: BigInt(stake.principal), rewarded: 0n }; // note: we lose reward information in unstaked state here
   }
@@ -1950,8 +1981,8 @@ export const toStakeAmounts = (stake: StakeObject): { deposited: bigint; rewarde
  * Active validator set with APY. JSON-RPC: two parallel calls merged by
  * `suiAddress`. GraphQL: see {@link getValidatorsGraphQL}.
  */
-export const getValidators = (currencyId?: string): Promise<SuiValidator[]> =>
-  withTransport(currencyId, {
+export const getValidators = (config: SuiCoinConfig): Promise<SuiValidator[]> =>
+  withTransport(config, {
     jsonRpc: async api => {
       const [{ activeValidators }, { apys }] = await Promise.all([
         api.getLatestSuiSystemState(),
@@ -1961,7 +1992,10 @@ export const getValidators = (currencyId?: string): Promise<SuiValidator[]> =>
       // `getValidatorsApy` and `getLatestSuiSystemState` are independent calls;
       // a missing APY entry (race, partial response) defaults to 0 to honour
       // the `SuiValidator.apy: number` contract. Matches the GraphQL branch.
-      return activeValidators.map(item => ({ ...item, apy: hash[item.suiAddress] ?? 0 }));
+      return activeValidators.map(item => ({
+        ...item,
+        apy: hash[item.suiAddress] ?? 0,
+      }));
     },
     graphql: getValidatorsGraphQL,
   });

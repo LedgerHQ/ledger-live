@@ -7,7 +7,7 @@ import type { OperationType } from "@ledgerhq/types-live";
 import { encodeAddress } from "@polkadot/util-crypto";
 import { BigNumber } from "bignumber.js";
 import { isValidAddress } from "../common";
-import coinConfig from "../config";
+import { type PolkadotCoinConfig } from "../config";
 import type {
   ExplorerExtrinsic,
   PalletMethod,
@@ -23,8 +23,7 @@ const LIMIT = 200;
  *
  * @returns {string}
  */
-const getBaseApiUrl = (currency?: CryptoCurrency): string =>
-  coinConfig.getCoinConfig(currency?.id).indexer.url;
+const getBaseApiUrl = (config: PolkadotCoinConfig): string => config.indexer.url;
 
 /**
  * Fetch operation lists from indexer
@@ -37,13 +36,13 @@ const getBaseApiUrl = (currency?: CryptoCurrency): string =>
  * @returns {string}
  */
 const getAccountOperationUrl = (
+  config: PolkadotCoinConfig,
   addr: string,
   offset: number,
   startAt: number,
   limit: number = LIMIT,
-  currency?: CryptoCurrency,
 ): string =>
-  `${getBaseApiUrl(currency)}/accounts/${addr}/operations?${querystring.stringify({
+  `${getBaseApiUrl(config)}/accounts/${addr}/operations?${querystring.stringify({
     limit,
     offset,
     startAt,
@@ -300,17 +299,17 @@ const slashToOperation = (accountId: string, slash: any): PolkadotOperation => {
  * @param {PolkadotOperation[]} prevOperations
  */
 const fetchOperationList = async (
+  config: PolkadotCoinConfig,
   accountId: string,
   addr: string,
   startAt: number,
-  currency?: CryptoCurrency,
   limit = LIMIT,
   offset = 0,
   prevOperations: PolkadotOperation[] = [],
 ): Promise<PolkadotOperation[]> => {
   const { data } = await network({
     method: "GET",
-    url: getAccountOperationUrl(addr, offset, startAt, limit, currency),
+    url: getAccountOperationUrl(config, addr, offset, startAt, limit),
   });
   const operations = data.extrinsics.map((extrinsic: any) =>
     extrinsicToOperation(addr, accountId, extrinsic),
@@ -324,10 +323,10 @@ const fetchOperationList = async (
   }
 
   return await fetchOperationList(
+    config,
     accountId,
     addr,
     startAt,
-    currency,
     limit,
     offset + LIMIT,
     mergedOp,
@@ -344,6 +343,7 @@ const fetchOperationList = async (
  * @return {PolkadotOperation[]}
  */
 export const getOperations = async (
+  config: PolkadotCoinConfig,
   accountId: string,
   addr: string,
   currency?: CryptoCurrency,
@@ -352,8 +352,8 @@ export const getOperations = async (
 ) => {
   if (currency && ["westend", "assethub_westend"].includes(currency.id)) {
     const encodeAddr = encodeAddress(addr, 42);
-    return await fetchOperationList(accountId, encodeAddr, startAt, currency, limit);
+    return await fetchOperationList(config, accountId, encodeAddr, startAt, limit, 0, []);
   } else {
-    return await fetchOperationList(accountId, addr, startAt, currency, limit);
+    return await fetchOperationList(config, accountId, addr, startAt, limit, 0, []);
   }
 };

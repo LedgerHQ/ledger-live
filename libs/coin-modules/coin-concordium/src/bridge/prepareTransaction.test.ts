@@ -1,5 +1,11 @@
 import BigNumber from "bignumber.js";
-import { createFixtureAccount, createFixtureTransaction, VALID_ADDRESS } from "../test/fixtures";
+import {
+  createFixtureAccount,
+  createFixtureConfig,
+  createFixtureTransaction,
+  setupTestnetCoinConfig,
+  VALID_ADDRESS,
+} from "../test/fixtures";
 import { prepareTransaction } from "./prepareTransaction";
 
 jest.mock("../logic", () => ({
@@ -7,10 +13,12 @@ jest.mock("../logic", () => ({
 }));
 
 const { estimateFees } = jest.requireMock("../logic");
+const config = createFixtureConfig();
 
 describe("prepareTransaction", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    setupTestnetCoinConfig();
     // Default mock: fee estimation returns 500 microCCD
     estimateFees.mockResolvedValue({ cost: BigInt(500), energy: BigInt(501) });
   });
@@ -67,7 +75,7 @@ describe("prepareTransaction", () => {
       await prepareTransaction(account, tx);
 
       // THEN
-      expect(estimateFees).toHaveBeenCalledWith(account.currency.id, undefined);
+      expect(estimateFees).toHaveBeenCalledWith(config, account.currency.id, undefined);
     });
 
     it("should call estimateFees with memo when memo is present", async () => {
@@ -79,7 +87,7 @@ describe("prepareTransaction", () => {
       await prepareTransaction(account, tx);
 
       // THEN
-      expect(estimateFees).toHaveBeenCalledWith(account.currency.id, "test memo");
+      expect(estimateFees).toHaveBeenCalledWith(config, account.currency.id, "test memo");
     });
   });
 

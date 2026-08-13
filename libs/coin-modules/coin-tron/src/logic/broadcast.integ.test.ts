@@ -1,6 +1,12 @@
+import type { TronCoinConfig } from "../config";
 import { TronWeb } from "tronweb";
 import { broadcast } from "./broadcast";
 import coinConfig from "../config";
+
+const mockConfig = {
+  status: { type: "active" },
+  explorer: { url: "https://api.trongrid.io" },
+} as TronCoinConfig;
 
 describe("Broadcast", () => {
   beforeAll(() => {
@@ -23,6 +29,6 @@ describe("Broadcast", () => {
     );
     const signed = await tronWeb.trx.sign(tx, sender.privateKey);
 
-    await expect(broadcast(signed)).rejects.toThrow(/CONTRACT_VALIDATE_ERROR/);
+    await expect(broadcast(mockConfig, signed)).rejects.toThrow(/CONTRACT_VALIDATE_ERROR/);
   });
 });

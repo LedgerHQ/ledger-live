@@ -1,4 +1,5 @@
 import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import suiConfig from "../config";
 import { setSuiPreloadData } from "../network/preload-data";
 import { getValidators } from "../network/sdk";
 import type { SuiPreloadData } from "../types";
@@ -10,7 +11,7 @@ export const getPreloadStrategy = () => ({
 });
 
 export const preload = async (currency: CryptoCurrency): Promise<SuiPreloadData> => {
-  const validators = await getValidators(currency.id);
+  const validators = await getValidators(suiConfig.getCoinConfig(currency.id));
   return { validators, tokens: [] };
 };
 

@@ -13,6 +13,11 @@ jest.mock("@ledgerhq/coin-sui/getStakingExtraByDigest", () => ({
   getStakingExtraByDigest: jest.fn(),
 }));
 
+jest.mock("@ledgerhq/coin-sui/config", () => ({
+  __esModule: true,
+  default: { getCoinConfig: jest.fn(() => ({})) },
+}));
+
 jest.mock("../../account", () => ({
   getAccountCurrency: jest.fn(),
 }));
@@ -94,7 +99,11 @@ describe("useGetExtraDetails", () => {
     await waitFor(() =>
       expect(result.current).toEqual({ amount: STAKED, address: VALIDATOR, name: VALIDATOR_NAME }),
     );
-    expect(mockedGetStakingExtraByDigest).toHaveBeenCalledWith(DIGEST, "UNDELEGATE", "sui");
+    expect(mockedGetStakingExtraByDigest).toHaveBeenCalledWith(
+      expect.anything(),
+      DIGEST,
+      "UNDELEGATE",
+    );
   });
 
   it("stays empty when the fallback resolves null", async () => {

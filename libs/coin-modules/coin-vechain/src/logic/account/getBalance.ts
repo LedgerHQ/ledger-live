@@ -1,5 +1,6 @@
 import type { AssetInfo, Balance } from "@ledgerhq/coin-module-framework/api/index";
 import { VTHO_ADDRESS } from "@vechain/sdk-core";
+import type { VechainContext } from "../../config";
 import { getAccount } from "../../network";
 
 export const NATIVE_ASSET: AssetInfo = { type: "native", name: "VET" };
@@ -14,8 +15,9 @@ export const vthoAsset = (address: string): AssetInfo => ({
 });
 
 // VET + VTHO balances from Thor's /accounts/{address} (both returned in one call); 0 if absent.
-export async function getBalance(address: string): Promise<Balance[]> {
-  const { balance, energy } = await getAccount(address);
+export async function getBalance(context: VechainContext, address: string): Promise<Balance[]> {
+  const config = await context.config();
+  const { balance, energy } = await getAccount(config, address);
 
   return [
     { value: BigInt(balance || "0"), asset: NATIVE_ASSET },

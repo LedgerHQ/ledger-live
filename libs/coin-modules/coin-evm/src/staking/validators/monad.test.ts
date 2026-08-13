@@ -2,16 +2,12 @@ import { ethers } from "ethers";
 import network from "@ledgerhq/live-network";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import monadAbi from "../../abis/monad.abi.json";
-import { getCoinConfig } from "../../config";
+import type { EvmConfigInfo } from "../../config";
 import { withApi } from "../../network/node/rpc.common";
 import { clearValidatorsCache, getValidators } from "./index";
 import { fetchMonadStakes } from "./monad";
 import { getValidatorAddressById } from "./monadResolver";
 
-jest.mock("../../config", () => ({
-  __esModule: true,
-  getCoinConfig: jest.fn(),
-}));
 jest.mock("../../network/node/rpc.common", () => ({
   __esModule: true,
   withApi: jest.fn(),
@@ -26,10 +22,14 @@ jest.mock("@ledgerhq/live-network", () => ({
   default: jest.fn(),
 }));
 
-const mockedGetCoinConfig = jest.mocked(getCoinConfig);
 const mockedWithApi = jest.mocked(withApi);
 const mockedGetCryptoCurrencyById = jest.mocked(getCryptoCurrencyById);
 const mockedNetwork = jest.mocked(network);
+
+const mockConfig = {
+  node: { type: "external", uri: "https://monad.rpc/" },
+} as unknown as EvmConfigInfo;
+const ledgerConfig = { node: { type: "ledger" } } as unknown as EvmConfigInfo;
 
 const monadIface = new ethers.Interface(monadAbi);
 const PRECOMPILE = "0x0000000000000000000000000000000000001000";
@@ -60,9 +60,6 @@ const encodeGetValidator = (params: {
 type CallHandler = (request: { to?: string; data?: string }) => Promise<string>;
 
 const setupRpc = (handler: CallHandler) => {
-  mockedGetCoinConfig.mockReturnValue({
-    info: { node: { type: "external", uri: "https://monad.rpc/" } },
-  } as unknown as ReturnType<typeof getCoinConfig>);
   mockedGetCryptoCurrencyById.mockReturnValue({
     id: "monad",
     name: "Monad",
@@ -168,7 +165,7 @@ describe("staking/validators/monad", () => {
       }),
     );
 
-    expect(await getValidators("monad")).toStrictEqual({
+    expect(await getValidators(mockConfig, "monad")).toStrictEqual({
       items: [
         {
           id: "1",
@@ -197,7 +194,7 @@ describe("staking/validators/monad", () => {
 
     // a non-empty page is cached: the second read makes no further RPC calls
     const callsAfterFirst = callMock.mock.calls.length;
-    await getValidators("monad");
+    await getValidators(mockConfig, "monad");
     expect(callMock.mock.calls.length).toBe(callsAfterFirst);
   });
 
@@ -218,7 +215,7 @@ describe("staking/validators/monad", () => {
       data: { name: "GalaxyDigital" },
     } as any);
 
-    const page = await getValidators("monad");
+    const page = await getValidators(mockConfig, "monad");
 
     expect(page.items[0]).toMatchObject({
       address: ethers.computeAddress(
@@ -250,7 +247,7 @@ describe("staking/validators/monad", () => {
       }),
     );
 
-    const page = await getValidators("monad");
+    const page = await getValidators(mockConfig, "monad");
 
     expect(page.items).toHaveLength(1);
     expect(page.items[0]).toMatchObject({
@@ -269,23 +266,19 @@ describe("staking/validators/monad", () => {
       }),
     );
 
-    const page = await getValidators("monad");
+    const page = await getValidators(mockConfig, "monad");
 
     expect(page.items).toStrictEqual([]);
     expect(page.next).toBeUndefined();
 
     // empty results are not cached, so the next read hits the precompile again
     const callsAfterFirst = callMock.mock.calls.length;
-    await getValidators("monad");
+    await getValidators(mockConfig, "monad");
     expect(callMock.mock.calls.length).toBeGreaterThan(callsAfterFirst);
   });
 
   it("returns an empty page when the node config is not external", async () => {
-    mockedGetCoinConfig.mockReturnValue({
-      info: { node: { type: "ledger" } },
-    } as unknown as ReturnType<typeof getCoinConfig>);
-
-    const page = await getValidators("monad");
+    const page = await getValidators(ledgerConfig, "monad");
 
     expect(page.items).toStrictEqual([]);
     expect(page.next).toBeUndefined();
@@ -301,7 +294,7 @@ describe("staking/validators/monad", () => {
         }),
       );
 
-      const page = await getValidators("monad");
+      const page = await getValidators(mockConfig, "monad");
 
       expect(page.items).toHaveLength(2);
       expect(page.next).toBe("100");
@@ -318,10 +311,10 @@ describe("staking/validators/monad", () => {
         }),
       );
 
-      const first = await getValidators("monad");
+      const first = await getValidators(mockConfig, "monad");
       expect(first.next).toBe("100");
 
-      const second = await getValidators("monad", first.next);
+      const second = await getValidators(mockConfig, "monad", first.next);
       expect(second.items).toHaveLength(1);
       expect(second.next).toBeUndefined();
     });
@@ -338,7 +331,7 @@ describe("staking/validators/monad", () => {
         }),
       );
 
-      const page = await getValidators("monad");
+      const page = await getValidators(mockConfig, "monad");
 
       expect(page.next).toBeUndefined();
     });
@@ -353,10 +346,10 @@ describe("staking/validators/monad", () => {
         }),
       );
 
-      await getValidators("monad");
+      await getValidators(mockConfig, "monad");
       const callCountAfterFirst = callMock.mock.calls.length;
 
-      const second = await getValidators("monad");
+      const second = await getValidators(mockConfig, "monad");
       expect(second.items).toHaveLength(1);
       expect(callMock.mock.calls.length).toBe(callCountAfterFirst);
     });
@@ -372,8 +365,8 @@ describe("staking/validators/monad", () => {
         }),
       );
 
-      const firstPage = await getValidators("monad");
-      const secondPage = await getValidators("monad", "100");
+      const firstPage = await getValidators(mockConfig, "monad");
+      const secondPage = await getValidators(mockConfig, "monad", "100");
       const callsAfterBoth = callMock.mock.calls.length;
 
       expect(firstPage).toStrictEqual({
@@ -394,8 +387,8 @@ describe("staking/validators/monad", () => {
       expect(secondPage.next).toBeUndefined();
 
       // both cursors are now cached independently — no further RPC calls
-      expect(await getValidators("monad")).toStrictEqual(firstPage);
-      expect(await getValidators("monad", "100")).toStrictEqual(secondPage);
+      expect(await getValidators(mockConfig, "monad")).toStrictEqual(firstPage);
+      expect(await getValidators(mockConfig, "monad", "100")).toStrictEqual(secondPage);
       expect(callMock.mock.calls.length).toBe(callsAfterBoth);
     });
 
@@ -410,15 +403,15 @@ describe("staking/validators/monad", () => {
         }),
       );
 
-      await getValidators("monad");
-      await getValidators("monad", "100");
+      await getValidators(mockConfig, "monad");
+      await getValidators(mockConfig, "monad", "100");
       const callsBeforeClear = callMock.mock.calls.length;
 
       clearValidatorsCache("monad");
 
       // every cursor was evicted, so both reads hit the precompile again
-      await getValidators("monad");
-      await getValidators("monad", "100");
+      await getValidators(mockConfig, "monad");
+      await getValidators(mockConfig, "monad", "100");
       expect(callMock.mock.calls.length).toBeGreaterThan(callsBeforeClear);
     });
   });
@@ -436,7 +429,7 @@ describe("staking/validators/monad", () => {
         }),
       );
 
-      expect(await getValidatorAddressById("monad", 7n)).toEqual(
+      expect(await getValidatorAddressById(mockConfig, "monad", 7n)).toEqual(
         ethers.computeAddress(
           "0x036e44a092493800e427b2b08d3427d804348b1368ecd0a6af6510ae40ce507187",
         ),
@@ -444,17 +437,13 @@ describe("staking/validators/monad", () => {
     });
 
     it("returns null when the node config is not external", async () => {
-      mockedGetCoinConfig.mockReturnValue({
-        info: { node: { type: "ledger" } },
-      } as unknown as ReturnType<typeof getCoinConfig>);
-
-      expect(await getValidatorAddressById("monad", 7n)).toBeNull();
+      expect(await getValidatorAddressById(ledgerConfig, "monad", 7n)).toBeNull();
     });
 
     it("returns null when the getValidator call fails", async () => {
       setupRpc(routeByName({ getValidator: () => new Error("boom") }));
 
-      expect(await getValidatorAddressById("monad", 7n)).toBeNull();
+      expect(await getValidatorAddressById(mockConfig, "monad", 7n)).toBeNull();
     });
   });
 
@@ -462,7 +451,8 @@ describe("staking/validators/monad", () => {
     const DELEGATOR = "0x00000000000000000000000000000000000000aa";
     const SECP = "0x036e44a092493800e427b2b08d3427d804348b1368ecd0a6af6510ae40ce507187";
 
-    const fetchStakes = () => fetchMonadStakes(DELEGATOR, {} as never, { id: "monad" } as never);
+    const fetchStakes = (config: EvmConfigInfo = mockConfig) =>
+      fetchMonadStakes(config, DELEGATOR, {} as never, { id: "monad" } as never);
 
     const encodeDelegator = (
       stake: bigint,
@@ -704,11 +694,7 @@ describe("staking/validators/monad", () => {
     });
 
     it("returns an empty array when the node config is not external", async () => {
-      mockedGetCoinConfig.mockReturnValue({
-        info: { node: { type: "ledger" } },
-      } as unknown as ReturnType<typeof getCoinConfig>);
-
-      expect(await fetchStakes()).toStrictEqual([]);
+      expect(await fetchStakes(ledgerConfig)).toStrictEqual([]);
       expect(mockedWithApi).not.toHaveBeenCalled();
     });
 

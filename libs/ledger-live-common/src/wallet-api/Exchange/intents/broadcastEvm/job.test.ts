@@ -14,6 +14,7 @@ jest.mock("@ledgerhq/coin-evm/network/node/index", () => ({
   getNodeApi: (...args: unknown[]) => getNodeApi(...args),
 }));
 
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { broadcastEvmJob } from "./job";
 import type { BroadcastEvmIntentInput, BroadcastEvmJobState } from "./types";
 
@@ -36,6 +37,14 @@ function collect(input: BroadcastEvmIntentInput = BASE_INPUT): Promise<Broadcast
     }).pipe(toArray()),
   );
 }
+
+beforeAll(() => {
+  // The job resolves config via getCurrencyConfiguration (LiveConfig); getNodeApi is mocked, so a
+  // minimal entry is enough to avoid "Config not set".
+  LiveConfig.setConfig({
+    config_currency_ethereum: { type: "object", default: {} },
+  } as never);
+});
 
 beforeEach(() => {
   jest.useFakeTimers();

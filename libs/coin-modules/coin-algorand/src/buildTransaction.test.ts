@@ -1,5 +1,7 @@
 import * as v8 from "v8";
 import { BigNumber } from "bignumber.js";
+import { setCoinConfig } from "./config";
+import { mockAlgorandConfig } from "./test/context";
 import { buildTransactionPayload, encodeToSign, encodeToBroadcast } from "./buildTransaction";
 import * as network from "./network";
 import type { AlgorandAccount, Transaction } from "./types";
@@ -79,6 +81,7 @@ describe("buildTransaction", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    setCoinConfig(() => mockAlgorandConfig);
     mockGetTransactionParams.mockResolvedValue(defaultParams);
   });
 

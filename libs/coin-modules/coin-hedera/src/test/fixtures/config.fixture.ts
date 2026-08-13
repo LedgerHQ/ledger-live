@@ -1,4 +1,4 @@
-import type { HederaCoinConfig } from "../../config";
+import type { HederaCoinConfig, HederaContext } from "../../config";
 
 export const getMockedConfig = (overrides?: Partial<HederaCoinConfig>): HederaCoinConfig => {
   return {
@@ -12,3 +12,9 @@ export const getMockedConfig = (overrides?: Partial<HederaCoinConfig>): HederaCo
     ...overrides,
   };
 };
+
+/** A {@link HederaContext} backed by the mocked config, for api/logic tests. */
+export const getMockedContext = (overrides?: Partial<HederaCoinConfig>): HederaContext => ({
+  config: async () => getMockedConfig(overrides),
+  logger: () => {},
+});

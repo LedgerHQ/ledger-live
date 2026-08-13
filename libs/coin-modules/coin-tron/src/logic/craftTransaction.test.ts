@@ -1,3 +1,4 @@
+import type { TronCoinConfig } from "../config";
 import { TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
 import BigNumber from "bignumber.js";
 import { craftStandardTransaction, craftTrc20Transaction } from "../network";
@@ -14,6 +15,11 @@ jest.mock("../network", () => ({
   craftStandardTransaction: jest.fn(),
   craftTrc20Transaction: jest.fn(),
 }));
+
+const mockConfig = {
+  status: { type: "active" },
+  explorer: { url: "https://api.trongrid.io" },
+} as TronCoinConfig;
 
 describe("craftTransaction", () => {
   beforeEach(() => {
@@ -35,11 +41,12 @@ describe("craftTransaction", () => {
       raw_data_hex: "extendedRawDataHex",
     });
 
-    const { transaction: result } = await craftTransaction(transactionIntent);
+    const { transaction: result } = await craftTransaction(mockConfig, transactionIntent);
 
     expect(decode58Check).toHaveBeenCalledWith("recipient");
     expect(decode58Check).toHaveBeenCalledWith("sender");
     expect(craftStandardTransaction).toHaveBeenCalledWith(
+      mockConfig,
       undefined,
       "recipient",
       "sender",
@@ -69,11 +76,12 @@ describe("craftTransaction", () => {
       raw_data_hex: "extendedRawDataHex",
     });
 
-    const { transaction: result } = await craftTransaction(transactionIntent);
+    const { transaction: result } = await craftTransaction(mockConfig, transactionIntent);
 
     expect(decode58Check).toHaveBeenCalledWith("recipient");
     expect(decode58Check).toHaveBeenCalledWith("sender");
     expect(craftTrc20Transaction).toHaveBeenCalledWith(
+      mockConfig,
       "contractAddress",
       "recipient",
       "sender",
@@ -99,7 +107,9 @@ describe("craftTransaction", () => {
       raw_data_hex: "extendedRawDataHex",
     });
 
-    const { transaction: result } = await craftTransaction(transactionIntent, { value: 0n });
+    const { transaction: result } = await craftTransaction(mockConfig, transactionIntent, {
+      value: 0n,
+    });
 
     expect(craftStandardTransaction).toHaveBeenCalled();
     expect(craftTrc20Transaction).not.toHaveBeenCalled();
@@ -123,8 +133,9 @@ describe("craftTransaction", () => {
       raw_data_hex: "extendedRawDataHex",
     });
 
-    await craftTransaction(transactionIntent, { value: customFees });
+    await craftTransaction(mockConfig, transactionIntent, { value: customFees });
     expect(craftTrc20Transaction).toHaveBeenCalledWith(
+      mockConfig,
       "contractAddress",
       undefined,
       undefined,
@@ -151,8 +162,9 @@ describe("craftTransaction", () => {
       raw_data_hex: "extendedRawDataHex",
     });
 
-    await craftTransaction(transactionIntent, { value: customFees });
+    await craftTransaction(mockConfig, transactionIntent, { value: customFees });
     expect(craftTrc20Transaction).toHaveBeenCalledWith(
+      mockConfig,
       "contractAddress",
       undefined,
       undefined,
@@ -178,8 +190,9 @@ describe("craftTransaction", () => {
       raw_data_hex: "extendedRawDataHex",
     });
 
-    await craftTransaction(transactionIntent);
+    await craftTransaction(mockConfig, transactionIntent);
     expect(craftTrc20Transaction).toHaveBeenCalledWith(
+      mockConfig,
       "contractAddress",
       undefined,
       undefined,
@@ -194,6 +207,7 @@ describe("craftTransaction", () => {
     async (customFees: bigint) => {
       try {
         await craftTransaction(
+          mockConfig,
           {
             intentType: "transaction",
             asset: {

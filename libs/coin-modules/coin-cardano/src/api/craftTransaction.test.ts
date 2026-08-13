@@ -3,14 +3,19 @@ import type {
   StringMemo,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/index";
+import type { Context } from "@ledgerhq/coin-module-framework/config";
 import { createApi } from ".";
-import { type CardanoConfig } from "../config";
+import { type CardanoCoinConfig, type CardanoConfig } from "../config";
 import { craftTransaction } from "../logic/craftTransaction";
 
 jest.mock("../logic/craftTransaction");
 const mockCraftTransaction = jest.mocked(craftTransaction);
 
 const config: CardanoConfig = { maxFeesWarning: 0, maxFeesError: 0 };
+const mockCtx: Context<CardanoCoinConfig> = {
+  config: async () => ({ ...config, status: { type: "active" } }),
+  logger: () => {},
+};
 
 const intent = {
   intentType: "transaction",
@@ -31,8 +36,8 @@ describe("craftTransaction", () => {
     mockCraftTransaction.mockResolvedValue(crafted);
     const customFees: FeeEstimation = { value: 200_000n };
 
-    const api = createApi(config, "cardano");
-    const result = await api.craftTransaction(intent, customFees);
+    const api = createApi("cardano");
+    const result = await api.craftTransaction(mockCtx, intent, { customFees });
 
     expect(result).toBe(crafted);
     expect(mockCraftTransaction).toHaveBeenCalledTimes(1);
@@ -44,8 +49,8 @@ describe("craftTransaction", () => {
   it("propagates errors from logic craftTransaction", async () => {
     mockCraftTransaction.mockRejectedValue(new Error("boom"));
 
-    const api = createApi(config, "cardano");
+    const api = createApi("cardano");
 
-    await expect(api.craftTransaction(intent)).rejects.toThrow("boom");
+    await expect(api.craftTransaction(mockCtx, intent)).rejects.toThrow("boom");
   });
 });

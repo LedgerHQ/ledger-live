@@ -1,9 +1,5 @@
-import {
-  CoinModuleApi,
-  BufferTxData,
-  MemoNotSupported,
-} from "@ledgerhq/coin-module-framework/api/types";
 import { EvmConfig } from "../config";
+import { createMockEvmContext } from "../fixtures/context.fixtures";
 import { createApi } from "./index";
 
 /**
@@ -24,21 +20,22 @@ describe("getBlock ERC20 transfers", () => {
     // - From: 0x534eeF6Db44FBeB71047EE3eb4CB16E572862aF6
     // - To: 0x970402B253733A1f6F4f3cd1d07420006be2882D
 
-    let module: CoinModuleApi<MemoNotSupported, BufferTxData>;
+    let module: ReturnType<typeof createApi>;
+
+    const velasEvmConfig: EvmConfig = {
+      node: {
+        type: "external",
+        uri: "https://evmexplorer.velas.com/rpc",
+      },
+      explorer: {
+        type: "blockscout",
+        uri: "https://evmexplorer.velas.com/api",
+      },
+      showNfts: true,
+    };
 
     beforeAll(() => {
-      const velasEvmConfig: EvmConfig = {
-        node: {
-          type: "external",
-          uri: "https://evmexplorer.velas.com/rpc",
-        },
-        explorer: {
-          type: "blockscout",
-          uri: "https://evmexplorer.velas.com/api",
-        },
-        showNfts: true,
-      };
-      module = createApi(velasEvmConfig, "velas_evm");
+      module = createApi("velas");
     });
 
     it("should return ERC20 transfer operations from block 69733298", async () => {
@@ -48,7 +45,7 @@ describe("getBlock ERC20 transfers", () => {
       };
       const expectedAmount = 742832320000000000000000n;
 
-      const block = await module.getBlock(69733298);
+      const block = await module.getBlock(createMockEvmContext(velasEvmConfig), 69733298);
 
       // Verify block info
       expect(block.info.height).toBe(69733298);
@@ -83,21 +80,21 @@ describe("getBlock ERC20 transfers", () => {
     // - Address: 0xcc4461636684868AaB71037b29a11cC643E64500
     // - Token: 0xF68C9Df95a18B2A5a5fa1124d79EEEffBaD0B6Fa
 
-    let module: CoinModuleApi<MemoNotSupported, BufferTxData>;
+    let module: ReturnType<typeof createApi>;
 
+    const bscConfig: EvmConfig = {
+      node: {
+        type: "ledger",
+        explorerId: "bnb",
+      },
+      explorer: {
+        type: "ledger",
+        explorerId: "bnb",
+      },
+      showNfts: true,
+    };
     beforeAll(() => {
-      const bscConfig: EvmConfig = {
-        node: {
-          type: "ledger",
-          explorerId: "bnb",
-        },
-        explorer: {
-          type: "ledger",
-          explorerId: "bnb",
-        },
-        showNfts: true,
-      };
-      module = createApi(bscConfig, "bsc");
+      module = createApi("bsc");
     });
 
     it("should return ERC20 transfer operations from block 18821112", async () => {
@@ -107,7 +104,7 @@ describe("getBlock ERC20 transfers", () => {
       };
       const expectedAmount = 20000000000000000000000n;
 
-      const block = await module.getBlock(18821112);
+      const block = await module.getBlock(createMockEvmContext(bscConfig), 18821112);
 
       // Verify block info
       expect(block.info.height).toBe(18821112);
@@ -137,24 +134,24 @@ describe("getBlock ERC20 transfers", () => {
 
   // this test is skipped until a RPC provider supporting trace_block is setup for zksync
   describe.skip("External RPC Node (zkSync)", () => {
-    let module: CoinModuleApi<MemoNotSupported, BufferTxData>;
+    let module: ReturnType<typeof createApi>;
 
+    const zkSyncConfig: EvmConfig = {
+      node: {
+        type: "external",
+        uri: "https://mainnet.era.zksync.io",
+      },
+      explorer: {
+        type: "none",
+      },
+      showNfts: true,
+    };
     beforeAll(() => {
-      const zkSyncConfig: EvmConfig = {
-        node: {
-          type: "external",
-          uri: "https://mainnet.era.zksync.io",
-        },
-        explorer: {
-          type: "none",
-        },
-        showNfts: true,
-      };
-      module = createApi(zkSyncConfig, "zksync");
+      module = createApi("zksync");
     });
 
     it("should return block 69174056 without failing on unsigned typed transactions", async () => {
-      const block = await module.getBlock(69174056);
+      const block = await module.getBlock(createMockEvmContext(zkSyncConfig), 69174056);
 
       expect(block.info.height).toBe(69174056);
       expect(block.info.hash).toBe(

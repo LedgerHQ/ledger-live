@@ -1,4 +1,5 @@
 import type { Balance, Stake } from "@ledgerhq/coin-module-framework/api/index";
+import type { Context, CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
 
 jest.mock("./getStakes", () => ({ buildCeloStakes: jest.fn() }));
 
@@ -8,6 +9,11 @@ import { buildCeloStakes } from "./getStakes";
 const ADDR = "0x7777777777777777777777777777777777777777";
 const GROUP = "0x4444444444444444444444444444444444444444";
 const NATIVE: Balance = { value: 500n, asset: { type: "native" }, locked: 0n };
+
+const mockCtx: Context<CurrencyConfig> = {
+  config: async () => ({ status: { type: "active" } }),
+  logger: () => {},
+};
 
 const stake = (uid: string, amount: bigint): Stake => ({
   uid,
@@ -26,9 +32,9 @@ describe("makeGetBalance", () => {
     const base = jest.fn(async (): Promise<Balance[]> => [NATIVE]);
     (buildCeloStakes as jest.Mock).mockResolvedValue([stake("s1", 100n)]);
 
-    const balances = await makeGetBalance(base)(ADDR);
+    const balances = await makeGetBalance(base)(mockCtx, ADDR);
 
-    expect(base).toHaveBeenCalledWith(ADDR, undefined);
+    expect(base).toHaveBeenCalledWith(mockCtx, ADDR, undefined);
     expect(balances).toHaveLength(2);
     // native balance stays first so extractBalance(..., "native") resolves it
     expect(balances[0]).toBe(NATIVE);
@@ -48,7 +54,7 @@ describe("makeGetBalance", () => {
     const base = jest.fn(async (): Promise<Balance[]> => [NATIVE, evmShim]);
     (buildCeloStakes as jest.Mock).mockResolvedValue([stake("celo-vote", 100n)]);
 
-    const balances = await makeGetBalance(base)(ADDR);
+    const balances = await makeGetBalance(base)(mockCtx, ADDR);
 
     // coin-evm's embedded (governance-delegation) stake is removed; native kept; only Celo's appended
     expect(balances).toHaveLength(2);
@@ -62,16 +68,16 @@ describe("makeGetBalance", () => {
     (buildCeloStakes as jest.Mock).mockResolvedValue([]);
     const options = { includeAssets: async () => true };
 
-    await makeGetBalance(base)(ADDR, options);
+    await makeGetBalance(base)(mockCtx, ADDR, options);
 
-    expect(base).toHaveBeenCalledWith(ADDR, options);
+    expect(base).toHaveBeenCalledWith(mockCtx, ADDR, options);
   });
 
   it("degrades to the base balances when stake fetching fails", async () => {
     const base = jest.fn(async (): Promise<Balance[]> => [NATIVE]);
     (buildCeloStakes as jest.Mock).mockRejectedValue(new Error("rpc down"));
 
-    const balances = await makeGetBalance(base)(ADDR);
+    const balances = await makeGetBalance(base)(mockCtx, ADDR);
 
     expect(balances).toEqual([NATIVE]);
   });

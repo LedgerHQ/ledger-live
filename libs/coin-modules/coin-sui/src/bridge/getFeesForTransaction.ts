@@ -1,5 +1,6 @@
 import { findSubAccountById } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { BigNumber } from "bignumber.js";
+import suiConfig from "../config";
 import { SUI_DUMMY_ADDRESS } from "../constants";
 import { estimateFees } from "../logic";
 import { DEFAULT_COIN_TYPE, toSuiAsset } from "../network/sdk";
@@ -53,7 +54,7 @@ export default async function getEstimatedFees({
       break;
   }
 
-  const { fees, gasBudget } = await estimateFees({
+  const { fees, gasBudget } = await estimateFees(suiConfig.getCoinConfig(account.currency.id), {
     intentType,
     recipient: SUI_DUMMY_ADDRESS,
     sender: account.freshAddress,
@@ -61,8 +62,12 @@ export default async function getEstimatedFees({
     type: transactionType,
     asset,
     currencyId: account.currency.id,
-    ...(transaction.useAllAmount !== undefined && { useAllAmount: transaction.useAllAmount }),
-    ...(transaction.stakedSuiId !== undefined && { stakedSuiId: transaction.stakedSuiId }),
+    ...(transaction.useAllAmount !== undefined && {
+      useAllAmount: transaction.useAllAmount,
+    }),
+    ...(transaction.stakedSuiId !== undefined && {
+      stakedSuiId: transaction.stakedSuiId,
+    }),
   });
   return {
     fees: new BigNumber(fees.toString()),

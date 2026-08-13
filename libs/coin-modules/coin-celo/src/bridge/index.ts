@@ -7,6 +7,7 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import { setCoinConfig, type CeloCoinConfig } from "../config";
 import { CELO_DUMMY_ADDRESS } from "../constants";
 import resolver from "../signer/hw-getAddress";
 import { CeloSigner } from "../signer/signer";
@@ -78,7 +79,11 @@ export function buildAccountBridge(
   };
 }
 
-export function createBridges(signerContext: SignerContext<CeloSigner>) {
+export function createBridges(
+  signerContext: SignerContext<CeloSigner>,
+  coinConfig: CeloCoinConfig,
+) {
+  setCoinConfig(coinConfig);
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),

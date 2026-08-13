@@ -1,6 +1,7 @@
 import BigNumber from "bignumber.js";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { Transaction, TransactionInfo } from "../types";
+import type { VechainCurrencyConfig } from "../config";
 import { ImpossibleToCalculateAmountAndFees } from "../errors";
 import { calculateGasFees } from "./calculateGasFees";
 
@@ -25,6 +26,7 @@ const getTokenAccount = (
 // amount -> spendableBalance -> fees -> amount
 
 export const calculateTransactionInfo = async (
+  config: VechainCurrencyConfig,
   account: Account,
   transaction: Transaction,
   fixedMaxTokenFees?: {
@@ -58,7 +60,7 @@ export const calculateTransactionInfo = async (
 
       const estimatedGasAndFees =
         fixedMaxTokenFees ||
-        (await calculateGasFees(tempTransaction, isTokenAccount, account.freshAddress));
+        (await calculateGasFees(config, tempTransaction, isTokenAccount, account.freshAddress));
 
       maxEstimatedGasFees = estimatedGasAndFees.estimatedGasFees;
       maxEstimatedGas = estimatedGasAndFees.estimatedGas;

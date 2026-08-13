@@ -170,7 +170,7 @@ describe("combine", () => {
       asset: { type: "native" },
       mode: "delegate",
       valAddress: POOL_HASH,
-    } as TransactionIntent<StringMemo>);
+    } as unknown as TransactionIntent<StringMemo>);
   });
 
   it("preserves the body for a send with a memo (auxiliary data)", async () => {

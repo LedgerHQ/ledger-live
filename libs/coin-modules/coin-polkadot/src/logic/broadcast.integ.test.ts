@@ -43,7 +43,9 @@ describe("Broadcast", () => {
         .transferKeepAlive(receiverAddress, 15_000_000_000n)
         .signAsync(signerPair, { nonce: 0 });
 
-      await expect(broadcast(signedTx.toHex())).rejects.toThrow(/FundsUnavailable/);
+      await expect(
+        broadcast(coinConfig.getCoinConfig("polkadot"), signedTx.toHex()),
+      ).rejects.toThrow(/FundsUnavailable/);
     } finally {
       await api.disconnect();
     }

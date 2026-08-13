@@ -2,6 +2,7 @@ import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { stringCamelCase } from "@polkadot/util";
 import { hexToU8a } from "@polkadot/util";
 import BigNumber from "bignumber.js";
+import { type PolkadotCoinConfig } from "../config";
 import polkadotAPI from "../network";
 import {
   CoreTransaction,
@@ -170,17 +171,18 @@ export const defaultExtrinsicArg = (amount: bigint, recipient: string): CreateEx
 });
 
 export async function craftTransaction(
+  config: PolkadotCoinConfig,
   address: string,
   nonceToUse: number,
   extractExtrinsicArg: CreateExtrinsicArg,
   currency?: CryptoCurrency,
 ): Promise<CoreTransaction> {
   await loadPolkadotCrypto();
-  const { extrinsics, registry } = await polkadotAPI.getRegistry(currency);
+  const { extrinsics, registry } = await polkadotAPI.getRegistry(config, currency);
   // Embedding outdated params inside transactions results in `Transaction has a bad signature`.
   // We bypass the cache to fetch fresh parameters and avoid the issue, especially since the endpoint
   // POST /transaction/material?noMeta=true returns a pretty small payload (content-length=284)
-  const info = await polkadotAPI.getTransactionParams(currency, {
+  const info = await polkadotAPI.getTransactionParams(config, currency, {
     force: true,
   });
   // Get the correct extrinsics params depending on transaction
@@ -238,10 +240,16 @@ export async function craftTransaction(
  * @param amount
  */
 export async function craftEstimationTransaction(
+  config: PolkadotCoinConfig,
   account: string,
   amount: bigint,
 ): Promise<CoreTransaction> {
-  return await craftTransaction(account, 0, defaultExtrinsicArg(amount, POLKADOT_NULL_ADDRESS));
+  return await craftTransaction(
+    config,
+    account,
+    0,
+    defaultExtrinsicArg(amount, POLKADOT_NULL_ADDRESS),
+  );
 }
 
 /**

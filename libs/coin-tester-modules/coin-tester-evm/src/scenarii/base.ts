@@ -3,7 +3,7 @@ import { ethers } from "ethers";
 import { Account } from "@ledgerhq/types-live";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { resetIndexer, setBlock, indexBlocks, initMswHandlers } from "../indexer";
-import { getCoinConfig, setCoinConfig } from "@ledgerhq/coin-evm/config";
+import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
 import { makeAccount } from "../fixtures";
 import { base, expectAddressInList, getBridges, VITALIK } from "../helpers";
 import { killAnvil, spawnAnvil } from "../anvil";
@@ -63,44 +63,28 @@ export const scenarioBase: Scenario<GenericTransaction, Account> = {
 
     setBlock(lastBlockNumber);
 
-    setCoinConfig(() => ({
-      info: {
-        status: {
-          type: "active",
-        },
-        node: {
-          type: "external",
-          uri: "http://127.0.0.1:8545",
-        },
-        explorer: {
-          type: "etherscan",
-          noCache: true,
-          uri: "https://proxyetherscan.api.live.ledger.com/v2/api/8453",
-        },
-        showNfts: true,
+    const info: EvmConfigInfo = {
+      status: {
+        type: "active",
       },
-    }));
+      node: {
+        type: "external",
+        uri: "http://127.0.0.1:8545",
+      },
+      explorer: {
+        type: "etherscan",
+        noCache: true,
+        uri: "https://proxyetherscan.api.live.ledger.com/v2/api/8453",
+      },
+      showNfts: true,
+    };
     LiveConfig.setConfig({
       config_currency_base: {
         type: "object",
-        default: {
-          status: {
-            type: "active",
-          },
-          node: {
-            type: "external",
-            uri: "http://127.0.0.1:8545",
-          },
-          explorer: {
-            type: "etherscan",
-            noCache: true,
-            uri: "https://proxyetherscan.api.live.ledger.com/v2/api/8453",
-          },
-          showNfts: true,
-        },
+        default: info,
       },
     });
-    initMswHandlers(getCoinConfig(base.id).info);
+    initMswHandlers(info);
 
     const { currencyBridge, accountBridge, getAddress } = await getBridges(signer);
     const { address } = await getAddress("", {

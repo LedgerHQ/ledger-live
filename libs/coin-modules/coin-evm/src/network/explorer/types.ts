@@ -7,6 +7,7 @@ export const NO_TOKEN = "";
 
 export type ExplorerApi = {
   getOperations: (
+    config: EvmConfigInfo,
     currency: CryptoCurrency,
     address: string,
     fromBlock: number,

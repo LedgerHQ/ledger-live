@@ -1,10 +1,6 @@
-import type {
-  CoinModuleApi,
-  BufferTxData,
-  MemoNotSupported,
-  Operation,
-} from "@ledgerhq/coin-module-framework/api/types";
-import type { EvmConfig } from "../config";
+import type { Operation } from "@ledgerhq/coin-module-framework/api/types";
+import type { EvmConfigInfo } from "../config";
+import { createMockEvmContext } from "../fixtures/context.fixtures";
 import { createApi } from "./index";
 
 // Arc testnet exposes its native unit (USDC) as an ERC20 at this fixed precompile
@@ -17,29 +13,30 @@ const ARC_USDC_NATIVE_CONTRACT = "0x3600000000000000000000000000000000000000";
 const NATIVE_USDC_ADDRESS = "0x6b618ca7eadcd948266de6602f2f8f3452d1ad6c";
 
 describe("EVM Api (Arc Testnet)", () => {
-  let module: CoinModuleApi<MemoNotSupported, BufferTxData>;
+  let module: ReturnType<typeof createApi>;
   let operations: Operation[];
 
+  const config: Partial<EvmConfigInfo> = {
+    node: { type: "external", uri: "https://rpc.testnet.arc.network" },
+    explorer: {
+      type: "blockscout",
+      uri: "https://proxyblockscout.api.live.ledger.com/5042002/api",
+    },
+    showNfts: false,
+    nativeContracts: [ARC_USDC_NATIVE_CONTRACT],
+  };
   beforeAll(async () => {
-    module = createApi(
-      {
-        node: { type: "external", uri: "https://rpc.testnet.arc.network" },
-        explorer: {
-          type: "blockscout",
-          uri: "https://proxyblockscout.api.live.ledger.com/5042002/api",
-        },
-        showNfts: false,
-        nativeContracts: [ARC_USDC_NATIVE_CONTRACT],
-      } as EvmConfig,
-      "arc_testnet",
-    );
+    module = createApi("arc_testnet");
 
-    // Single network call shared across all listOperations assertions.
-    const { items } = await module.listOperations(NATIVE_USDC_ADDRESS, {
-      minHeight: 0,
-      order: "desc",
-      limit: 200,
-    });
+    const { items } = await module.listOperations(
+      createMockEvmContext(config),
+      NATIVE_USDC_ADDRESS,
+      {
+        minHeight: 0,
+        order: "desc",
+        limit: 200,
+      },
+    );
     operations = items;
   }, 60000);
 
@@ -89,7 +86,7 @@ describe("EVM Api (Arc Testnet)", () => {
 
   describe("getBalance", () => {
     it("returns the native balance and no ERC20 balance for contracts in nativeContracts", async () => {
-      const balances = await module.getBalance(NATIVE_USDC_ADDRESS);
+      const balances = await module.getBalance(createMockEvmContext(config), NATIVE_USDC_ADDRESS);
 
       const nativeBalance = balances[0];
       expect(nativeBalance.asset.type).toBe("native");

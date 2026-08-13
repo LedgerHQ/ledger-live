@@ -7,6 +7,7 @@ import {
 } from "../common-logic";
 import { Transaction, VechainSDKTransactionClause } from "../types";
 import { getBlockRef } from "../network";
+import { getCoinConfig } from "../config";
 
 /**
  * Prepare transaction before checking status
@@ -18,6 +19,7 @@ export const prepareTransaction = async (
   account: Account,
   transaction: Transaction,
 ): Promise<Transaction> => {
+  const config = getCoinConfig();
   const {
     amount,
     isTokenAccount,
@@ -25,13 +27,13 @@ export const prepareTransaction = async (
     estimatedGas,
     maxFeePerGas,
     maxPriorityFeePerGas,
-  } = await calculateTransactionInfo(account, transaction);
+  } = await calculateTransactionInfo(config, account, transaction);
 
   let blockRef = "";
 
   let clauses: Array<VechainSDKTransactionClause> = [];
   if (transaction.recipient && parseAddress(transaction.recipient)) {
-    blockRef = await getBlockRef();
+    blockRef = await getBlockRef(config);
     if (isTokenAccount) {
       clauses = await calculateClausesVtho(transaction.recipient, amount);
     } else {

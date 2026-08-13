@@ -49,6 +49,7 @@
     "src/test/coinConfig.integ.setup.ts",
     "src/test/coinConfig.setup.ts",
     "src/test/constants.ts",
+    "src/test/context.ts",
     "src/test/index.ts",
     "src/test/msw.mock.ts"
   ],

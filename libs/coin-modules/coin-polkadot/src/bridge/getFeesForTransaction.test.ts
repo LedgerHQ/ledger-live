@@ -18,7 +18,7 @@ const mockRegistry = jest
 const mockTransactionParams = jest.fn().mockResolvedValue(fixtureTransactionParams);
 jest.mock("../network/sidecar", () => ({
   getRegistry: () => mockRegistry(),
-  paymentInfo: (signedTx: string, currency: CryptoCurrency | undefined) =>
+  paymentInfo: (_config: unknown, signedTx: string, currency: CryptoCurrency | undefined) =>
     mockPaymentInfo(signedTx, currency),
   getTransactionParams: () => mockTransactionParams(),
 }));

@@ -4,6 +4,7 @@
 import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { createLocalEvmApi } from "@ledgerhq/live-common/families/evm/coinModuleApi";
+import { buildContext } from "@ledgerhq/live-common/bridge/generic-coin-framework/api/context";
 import evmBridge from "@ledgerhq/live-common/families/evm/bridge/api";
 import type { Operation as CoreOperation } from "@ledgerhq/coin-module-framework/api/types";
 import {
@@ -25,10 +26,11 @@ export class CoinFrameworkAdapter {
     const { xpubOrAddress: address } = decodeAccountId(descriptor.id);
     const currency = getCryptoCurrencyById(descriptor.currencyId);
     const api = createLocalEvmApi(currency.id);
+    const context = buildContext(currency.id);
     // Pending better bridge API — evmBridge used as interim token resolver
     const bridgeApi = evmBridge(currency);
 
-    const balanceRes: CoinFrameworkAssetEntry[] = await api.getBalance(address);
+    const balanceRes: CoinFrameworkAssetEntry[] = await api.getBalance(context, address);
     const native = extractBalance(balanceRes, "native");
     const tokenAssets = balanceRes.filter(b => b.asset.type !== "native");
 
@@ -53,8 +55,9 @@ export class CoinFrameworkAdapter {
     const { xpubOrAddress: address } = decodeAccountId(descriptor.id);
     const currency = getCryptoCurrencyById(descriptor.currencyId);
     const api = createLocalEvmApi(currency.id);
+    const context = buildContext(currency.id);
 
-    const page = await api.listOperations(address, {
+    const page = await api.listOperations(context, address, {
       minHeight: 0,
       cursor: options?.cursor,
       order: "desc",

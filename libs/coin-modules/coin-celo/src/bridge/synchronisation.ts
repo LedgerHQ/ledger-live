@@ -1,6 +1,11 @@
 import { electionABI, lockedGoldABI } from "@celo/abis";
 import { createApi } from "@ledgerhq/coin-evm/api/index";
-import { getCoinConfig } from "@ledgerhq/coin-evm/config";
+import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
+import { getCoinConfig } from "../config";
+import type { Operation } from "@ledgerhq/coin-module-framework/api/index";
+import type { Context } from "@ledgerhq/coin-module-framework/config";
+
+type EvmContext = Context<EvmConfigInfo>;
 import { createSwapHistoryMap, mergeSubAccounts, getSyncHash } from "./syncHelpers";
 import { getNodeApi } from "@ledgerhq/coin-evm/network/node/index";
 import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account";
@@ -29,6 +34,11 @@ import {
 } from "../network/sdk";
 import { CeloAccount, isCeloOperationExtra } from "../types/types";
 import { getTokenFromAsset } from "./getTokenFromAsset";
+
+const buildEvmContext = (currencyId: string): EvmContext => ({
+  config: async () => getCoinConfig(currencyId).info,
+  logger: () => {},
+});
 
 const operationsTypes = [
   "IN",
@@ -138,11 +148,14 @@ const getOperationsList = async ({
   const shouldSyncFromScratch =
     syncHash !== initialAccount?.syncHash || initialAccount === undefined;
   const latestSyncedHeight = shouldSyncFromScratch ? 0 : initialAccount.blockHeight;
-  const rawOperationsList = (
-    await api.listOperations(address, {
-      minHeight: Math.max(latestSyncedHeight - SAFE_REORG_THRESHOLD, 0),
-    })
-  ).items;
+  const context = buildEvmContext(currency.id);
+  const rawOperationsList: Operation[] =
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (
+      await (api as any).listOperations(context, address, {
+        minHeight: Math.max(latestSyncedHeight - SAFE_REORG_THRESHOLD, 0),
+      })
+    ).items;
 
   const operationsList = await Promise.all(
     rawOperationsList.map(async item => {
@@ -259,7 +272,7 @@ const getSubAccounts = async ({
     return acc;
   }, tokensByKeys);
 
-  const nodeApi = getNodeApi(info.currency);
+  const nodeApi = getNodeApi(getCoinConfig(info.currency.id).info, info.currency);
   const tokensList = Object.values(tokensByKeys);
   const tokensListWithBalance = await Promise.all(
     tokensList.map(async item => {
@@ -330,9 +343,11 @@ export const getAccountShape: GetAccountShape<CeloAccount> = async (info, config
   const blacklistedTokenIds = config.blacklistedTokenIds || [];
   const syncHash = await getSyncHash(currency, blacklistedTokenIds);
 
-  const nodeApi = getNodeApi(currency);
-  const api = createApi(configEvm, currency.id);
-  const blockInfo = await api.lastBlock();
+  const nodeApi = getNodeApi(configEvm, currency);
+  const api = createApi(currency.id);
+  const evmCtx = buildEvmContext(currency.id);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const blockInfo = await (api as any).lastBlock(evmCtx);
   const balance = await nodeApi.getCoinBalance(currency, address);
 
   const isTokensEnabled = getEnv("ENABLE_CELO_TOKENS");

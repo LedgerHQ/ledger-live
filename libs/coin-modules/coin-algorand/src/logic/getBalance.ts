@@ -1,14 +1,17 @@
 import { Balance } from "@ledgerhq/coin-module-framework/api/types";
+import type { AlgorandContext } from "../config";
 import { getAccount } from "../network";
 import { computeMinimumBalance } from "./common";
 
 /**
  * Get the balance of an Algorand account
+ * @param context - The coin-module context (config + logger)
  * @param address - The account address
  * @returns Array of balances (native ALGO + ASA tokens)
  */
-export async function getBalance(address: string): Promise<Balance[]> {
-  const account = await getAccount(address);
+export async function getBalance(context: AlgorandContext, address: string): Promise<Balance[]> {
+  const config = await context.config();
+  const account = await getAccount(config, address);
 
   const nbAssets = account.assets.length;
   // min balance can be increased if user deployed apps, not supported yet

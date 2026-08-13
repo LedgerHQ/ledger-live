@@ -16,9 +16,13 @@ import type {
   TransactionValidation,
   Validator,
 } from "@ledgerhq/coin-module-framework/api/index";
-import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
+import { craftTransactionData as craftTransactionDataImpl } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
+import type { Context } from "@ledgerhq/coin-module-framework/config";
 import { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import network from "@ledgerhq/live-network";
+
+// The coin-service is a stateless HTTP backend, so it ignores the framework v6 Context; every
+// method still takes it first to satisfy the CoinModuleApi contract.
 
 function adaptOp<T extends AssetInfo>(backendOp: Operation<T>): Operation<T> {
   const { date } = backendOp.tx;
@@ -34,7 +38,7 @@ function adaptOp<T extends AssetInfo>(backendOp: Operation<T>): Operation<T> {
 const COIN_SERVICE_URL = "http://0.0.0.0:3000";
 
 const buildBroadcast = networkFamily =>
-  async function broadcast(signedOperation: string): Promise<string> {
+  async function broadcast(_context: Context<any>, signedOperation: string): Promise<string> {
     const { data } = await network<
       {
         transactionIdentifier: string;
@@ -53,7 +57,12 @@ const buildBroadcast = networkFamily =>
   };
 
 const buildCombine = networkFamily =>
-  async function combine(tx: string, signature: string, pubKey?: string): Promise<string> {
+  async function combine(
+    _context: Context<any>,
+    tx: string,
+    signature: string,
+    options?: { pubkey?: string },
+  ): Promise<string> {
     const { data } = await network<
       {
         signedTransaction: string;
@@ -65,14 +74,17 @@ const buildCombine = networkFamily =>
       data: {
         raw_transaction: tx,
         signature: signature,
-        pubkey: pubKey,
+        pubkey: options?.pubkey,
       },
     });
     return data.signedTransaction;
   };
 
 const buildEstimateFees = networkFamily =>
-  async function estimateFees(intent: TransactionIntent<any>): Promise<FeeEstimation> {
+  async function estimateFees(
+    _context: Context<any>,
+    intent: TransactionIntent<any>,
+  ): Promise<FeeEstimation> {
     const { data } = await network<{ fee: string }, unknown>({
       method: "POST",
       url: `${COIN_SERVICE_URL}/${networkFamily}/transaction/estimate`,
@@ -89,7 +101,10 @@ const buildEstimateFees = networkFamily =>
   };
 
 const buildValidateIntent = networkFamily =>
-  async function validateIntent(transaction: TransactionIntent): Promise<TransactionValidation> {
+  async function validateIntent(
+    _context: Context<any>,
+    transaction: TransactionIntent,
+  ): Promise<TransactionValidation> {
     const { data } = await network<
       {
         errors: Record<string, Error>;
@@ -110,7 +125,7 @@ const buildValidateIntent = networkFamily =>
   };
 
 const buildGetBalance = (networkFamily: string) =>
-  async function getBalance(address: string): Promise<Balance[]> {
+  async function getBalance(_context: Context<any>, address: string): Promise<Balance[]> {
     const { data } = await network<Balance, unknown>({
       method: "GET",
       url: `${COIN_SERVICE_URL}/${networkFamily}/account/${address}/balance`,
@@ -126,7 +141,7 @@ const buildGetBalance = (networkFamily: string) =>
   };
 
 const buildGetNextSequence = (networkFamily: string) =>
-  async function getNextSequence(address: string): Promise<bigint> {
+  async function getNextSequence(_context: Context<any>, address: string): Promise<bigint> {
     const { data } = await network<bigint, unknown>({
       method: "GET",
       url: `${COIN_SERVICE_URL}/${networkFamily}/account/${address}/info`,
@@ -137,6 +152,7 @@ const buildGetNextSequence = (networkFamily: string) =>
 
 const buildListOperations = networkFamily =>
   async function listOperations(
+    _context: Context<any>,
     address: string,
     { minHeight = 0 }: ListOperationsOptions,
   ): Promise<Page<Operation<any>>> {
@@ -151,7 +167,7 @@ const buildListOperations = networkFamily =>
   };
 
 const buildLastBlock = networkFamily =>
-  async function lastBlock(): Promise<BlockInfo> {
+  async function lastBlock(_context: Context<any>): Promise<BlockInfo> {
     const { data } = await network<any, unknown>({
       method: "GET",
       url: `${COIN_SERVICE_URL}/${networkFamily}/lastblock`,
@@ -164,7 +180,10 @@ const buildLastBlock = networkFamily =>
   };
 
 const buildCraftTransaction = networkFamily =>
-  async function craftTransaction(intent: TransactionIntent<any>): Promise<CraftedTransaction> {
+  async function craftTransaction(
+    _context: Context<any>,
+    intent: TransactionIntent<any>,
+  ): Promise<CraftedTransaction> {
     const { data } = await network<CraftedTransaction, unknown>({
       method: "POST",
       url: `${COIN_SERVICE_URL}/${networkFamily}/transaction/encode`,
@@ -190,6 +209,7 @@ export const getNetworkCoinModuleApi = (networkFamily: string) =>
     lastBlock: buildLastBlock(networkFamily),
     craftTransaction: buildCraftTransaction(networkFamily),
     craftRawTransaction: (
+      _context: Context<any>,
       _transaction: string,
       _sender: string,
       _publicKey: string,
@@ -197,27 +217,39 @@ export const getNetworkCoinModuleApi = (networkFamily: string) =>
     ): Promise<CraftedTransaction> => {
       throw new Error("craftRawTransaction is not supported");
     },
-    getBlock(_height): Promise<Block> {
+    getBlock(_context: Context<any>, _height): Promise<Block> {
       throw new Error("getBlock is not supported");
     },
-    getBlockInfo(_height: number): Promise<BlockInfo> {
+    getBlockInfo(_context: Context<any>, _height: number): Promise<BlockInfo> {
       throw new Error("getBlockInfo is not supported");
     },
-    getStakes(_address: string, _cursor?: Cursor): Promise<Page<Stake>> {
+    getStakes(
+      _context: Context<any>,
+      _address: string,
+      _options?: { cursor?: Cursor },
+    ): Promise<Page<Stake>> {
       throw new Error("getStakes is not supported");
     },
-    getRewards(_address: string, _cursor?: Cursor): Promise<Page<Reward>> {
+    getRewards(
+      _context: Context<any>,
+      _address: string,
+      _options?: { cursor?: Cursor },
+    ): Promise<Page<Reward>> {
       throw new Error("getRewards is not supported");
     },
-    getValidators(_cursor?: Cursor): Promise<Page<Validator>> {
+    getValidators(
+      _context: Context<any>,
+      _options?: { cursor?: Cursor },
+    ): Promise<Page<Validator>> {
       throw new Error("getValidators is not supported");
     },
-    validateAddress(_address: string): Promise<boolean> {
+    validateAddress(_context: Context<any>, _address: string): Promise<boolean> {
       throw new Error("validateAddress is not supported");
     },
     // TODO(BACK-11825): wire to the coin-service `call` endpoint once it is exposed over the network.
-    async call() {
+    async call(_context: Context<any>) {
       throw new Error("call is not supported");
     },
-    craftTransactionData,
+    craftTransactionData: (_context: Context<any>, intent: TransactionIntent) =>
+      craftTransactionDataImpl(intent),
   }) satisfies CoinModuleApi<any> & BridgeApi;

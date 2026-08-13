@@ -1,14 +1,14 @@
 import network from "@ledgerhq/live-network/network";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import { BigNumber } from "bignumber.js";
-import { getCoinConfig } from "../config";
+import { type NearConfig } from "../config";
 import { NearProtocolConfigNotLoaded } from "../errors";
 import type { NearProtocolConfig } from "./sdk.types";
 
 // Lives here rather than in node.ts: fetchActionCosts is its only caller, and node.ts already
 // imports getActionCosts from this module — importing back from node.ts would cycle the two files.
-export const getProtocolConfig = async (): Promise<NearProtocolConfig> => {
-  const currencyConfig = getCoinConfig();
+export const getProtocolConfig = async (config: NearConfig): Promise<NearProtocolConfig> => {
+  const currencyConfig = config;
   const { data } = await network<{ result: NearProtocolConfig }>({
     method: "POST",
     url: currencyConfig.infra.API_NEAR_PRIVATE_NODE,
@@ -44,8 +44,8 @@ export type NearActionCosts = {
   accountCreationCharge: BigNumber;
 };
 
-const fetchActionCosts = async (): Promise<NearActionCosts> => {
-  const protocolConfig = await getProtocolConfig();
+const fetchActionCosts = async (config: NearConfig): Promise<NearActionCosts> => {
+  const protocolConfig = await getProtocolConfig(config);
 
   if (!protocolConfig) {
     throw new NearProtocolConfigNotLoaded();

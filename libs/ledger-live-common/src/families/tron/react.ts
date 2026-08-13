@@ -1,10 +1,12 @@
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
+import { TronCoinConfig } from "@ledgerhq/coin-tron/config";
 import { ONE_TRX } from "@ledgerhq/coin-tron/logic/constants";
 import { getTronSuperRepresentatives } from "@ledgerhq/coin-tron/network";
 import type { SuperRepresentative, TronAccount, Vote } from "@ledgerhq/coin-tron/types/index";
 import { useEffect, useRef, useState } from "react";
 import { useBridgeSync } from "../../bridge/react";
+import { getCurrencyConfiguration } from "../../config";
 
 export type Action = {
   type: "updateVote" | "resetVotes" | "clearVotes";
@@ -37,7 +39,8 @@ export const useTronSuperRepresentatives = (): Array<SuperRepresentative> => {
   const [sr, setSr] = useState(__lastSeenSR);
   useEffect(() => {
     let unsub = false;
-    getTronSuperRepresentatives().then((sr: SuperRepresentative[]) => {
+    const config = getCurrencyConfiguration<TronCoinConfig>("tron");
+    getTronSuperRepresentatives(config).then((sr: SuperRepresentative[]) => {
       __lastSeenSR = sr;
       if (unsub) return;
       setSr(sr);

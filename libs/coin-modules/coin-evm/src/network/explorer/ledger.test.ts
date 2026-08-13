@@ -168,6 +168,7 @@ describe("EVM Family", () => {
 
         try {
           await LEDGER_API.getOperations(
+            getCoinConfig(badCurrency.id).info,
             badCurrency,
             "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
             0,
@@ -196,6 +197,7 @@ describe("EVM Family", () => {
         const request = jest.spyOn(axios, "request").mockResolvedValue({ data: { data: [] } });
 
         await LEDGER_API.getOperations(
+          getCoinConfig(fakeCurrency.id).info,
           fakeCurrency,
           "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
           0,
@@ -214,6 +216,7 @@ describe("EVM Family", () => {
         }));
 
         const response = await LEDGER_API.getOperations(
+          getCoinConfig(fakeCurrency.id).info,
           fakeCurrency,
           "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
           0,
@@ -436,6 +439,7 @@ describe("EVM Family", () => {
           }));
 
           const response = await LEDGER_API.getOperations(
+            getCoinConfig(fakeCurrency.id).info,
             fakeCurrency,
             "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
             0,
@@ -464,6 +468,7 @@ describe("EVM Family", () => {
           }));
 
           const response = await LEDGER_API.getOperations(
+            getCoinConfig(fakeCurrency.id).info,
             fakeCurrency,
             "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
             0,
@@ -479,6 +484,7 @@ describe("EVM Family", () => {
           }));
 
           const response = await LEDGER_API.getOperations(
+            getCoinConfig(fakeCurrency.id).info,
             fakeCurrency,
             "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
             0,
@@ -494,6 +500,7 @@ describe("EVM Family", () => {
           }));
 
           const response = await LEDGER_API.getOperations(
+            getCoinConfig(fakeCurrency.id).info,
             fakeCurrency,
             "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
             0,
@@ -509,6 +516,7 @@ describe("EVM Family", () => {
           }));
 
           const response = await LEDGER_API.getOperations(
+            getCoinConfig(fakeCurrency.id).info,
             fakeCurrency,
             "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
             0,

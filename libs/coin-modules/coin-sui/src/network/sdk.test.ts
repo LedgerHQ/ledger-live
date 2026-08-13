@@ -13,6 +13,13 @@ import coinConfig from "../config";
 import { mist, ONE_SUI } from "../constants";
 import * as sdkOriginal from "./sdk";
 import { graphqlTxToJsonRpcResponse, type GraphQLTransactionNode } from "./graphql/transactions";
+import type { SuiCoinConfig } from "../config";
+
+const config = {
+  status: { type: "active" },
+  node: { url: "https://mockapi.sui.io", graphqlUrl: "https://mockapi.sui.io/graphql" },
+  features: { graphql: false },
+} as unknown as SuiCoinConfig;
 
 // Create a mutable copy of the sdk module for mocking specific functions
 const mockLoadOperations = jest.fn<
@@ -23,16 +30,17 @@ const mockLoadOperations = jest.fn<
 // Create a wrapped version of getOperations that uses the mock
 const createWrappedGetOperations = () => {
   return async (
+    config: SuiCoinConfig,
     accountId: string,
     addr: string,
-    cursor?: Parameters<typeof sdkOriginal.getOperations>[2],
-    order?: Parameters<typeof sdkOriginal.getOperations>[3],
+    cursor?: Parameters<typeof sdkOriginal.getOperations>[3],
+    order?: Parameters<typeof sdkOriginal.getOperations>[4],
   ) => {
     // Use the mocked loadOperations if available
     const loadOps = mockLoadOperations.getMockImplementation() || sdkOriginal.loadOperations;
 
     // Re-implement getOperations logic with mocked loadOperations
-    return sdkOriginal.withApi(async api => {
+    return sdkOriginal.withApi(config, async api => {
       let rpcOrder: "ascending" | "descending";
       if (order) {
         rpcOrder = order === "asc" ? "ascending" : "descending";
@@ -511,7 +519,7 @@ beforeEach(() => {
 describe("SDK Functions", () => {
   test("getAccountBalances should return array of account balances", async () => {
     const address = "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164";
-    const balances = await sdk.getAccountBalances(address);
+    const balances = await sdk.getAccountBalances(config, address);
 
     expect(Array.isArray(balances)).toBe(true);
     expect(balances.length).toBeGreaterThan(0);
@@ -529,7 +537,7 @@ describe("SDK Functions", () => {
 
   test("getAccountBalances surfaces SIP-58 fundsInAddressBalance when present", async () => {
     const address = "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164";
-    const balances = await sdk.getAccountBalances(address);
+    const balances = await sdk.getAccountBalances(config, address);
 
     const sui = balances.find(b => b.coinType === sdk.DEFAULT_COIN_TYPE)!;
     expect(sui.balance).toEqual(BigNumber(mist(1)));
@@ -897,7 +905,7 @@ describe("SDK Functions", () => {
   test("getOperations should fetch operations", async () => {
     const accountId = "mockAccountId";
     const addr = "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164";
-    const operations = await sdk.getOperations(accountId, addr);
+    const operations = await sdk.getOperations(config, accountId, addr);
     expect(Array.isArray(operations)).toBe(true);
   });
 
@@ -911,7 +919,7 @@ describe("SDK Functions", () => {
       recipient: "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164",
       errors: {},
     };
-    const info = await sdk.paymentInfo(sender, fakeTransaction);
+    const info = await sdk.paymentInfo(config, sender, fakeTransaction);
     expect(info).toHaveProperty("gasBudget");
     expect(info).toHaveProperty("totalGasUsed");
     expect(info).toHaveProperty("fees");
@@ -935,7 +943,9 @@ describe("SDK Functions", () => {
       errors: {},
     };
 
-    await expect(sdk.paymentInfo(sender, fakeTransaction)).rejects.toThrow(NotEnoughBalanceFees);
+    await expect(sdk.paymentInfo(config, sender, fakeTransaction)).rejects.toThrow(
+      NotEnoughBalanceFees,
+    );
   });
 
   test("paymentInfo should rethrow unrecognised errors from dryRunTransactionBlock", async () => {
@@ -951,7 +961,9 @@ describe("SDK Functions", () => {
       errors: {},
     };
 
-    await expect(sdk.paymentInfo(sender, fakeTransaction)).rejects.toThrow("Network timeout");
+    await expect(sdk.paymentInfo(config, sender, fakeTransaction)).rejects.toThrow(
+      "Network timeout",
+    );
   });
 
   test("createTransaction should build a transaction", async () => {
@@ -963,7 +975,7 @@ describe("SDK Functions", () => {
       recipient: "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164",
     };
 
-    const tx = await sdk.createTransaction(address, transaction);
+    const tx = await sdk.createTransaction(config, address, transaction);
     expect(tx).toEqual({ unsigned: { transactionBlock: expect.any(Uint8Array) } });
   });
 
@@ -986,7 +998,7 @@ describe("SDK Functions", () => {
       recipient: "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164",
     };
 
-    const tx = await sdk.createTransaction(address, transaction);
+    const tx = await sdk.createTransaction(config, address, transaction);
     expect(tx).toEqual({ unsigned: { transactionBlock: expect.any(Uint8Array) } });
     expect(mockApi.getAllBalances).toHaveBeenCalledWith(
       expect.objectContaining({ owner: address }),
@@ -1020,7 +1032,7 @@ describe("SDK Functions", () => {
       recipient: "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164",
     };
 
-    const tx = await sdk.createTransaction(address, transaction);
+    const tx = await sdk.createTransaction(config, address, transaction);
     expect(tx).toEqual({ unsigned: { transactionBlock: expect.any(Uint8Array) } });
     const MockTransaction = Transaction as unknown as jest.Mock;
     const mockTxInstance = MockTransaction.mock.results.at(-1)!.value;
@@ -1039,7 +1051,7 @@ describe("SDK Functions", () => {
       recipient: "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164",
     };
 
-    const tx = await sdk.createTransaction(address, transaction);
+    const tx = await sdk.createTransaction(config, address, transaction);
     expect(tx).toEqual({ unsigned: { transactionBlock: expect.any(Uint8Array) } });
   });
 
@@ -1081,12 +1093,12 @@ describe("SDK Functions", () => {
       recipient: "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164",
     };
 
-    const tx = await sdk.createTransaction(address, transaction);
+    const tx = await sdk.createTransaction(config, address, transaction);
     expect(tx).toEqual({ unsigned: { transactionBlock: expect.any(Uint8Array) } });
   });
 
   test("executeTransactionBlock should execute a transaction", async () => {
-    const result = await sdk.executeTransactionBlock({
+    const result = await sdk.executeTransactionBlock(config, {
       transactionBlock: new Uint8Array(),
       signature: "mockSignature",
       options: { showEffects: true },
@@ -1232,7 +1244,7 @@ describe("Staking Operations", () => {
         recipient: "0xvalidator_address_123",
       };
 
-      const tx = await sdk.createTransaction(address, transaction);
+      const tx = await sdk.createTransaction(config, address, transaction);
       expect(tx).toEqual({ unsigned: { transactionBlock: expect.any(Uint8Array) } });
     });
 
@@ -1247,7 +1259,7 @@ describe("Staking Operations", () => {
         recipient: "0xvalidator_address_123", // Required by type but not used for undelegate
       };
 
-      const tx = await sdk.createTransaction(address, transaction);
+      const tx = await sdk.createTransaction(config, address, transaction);
       expect(tx).toEqual({ unsigned: { transactionBlock: expect.any(Uint8Array) } });
     });
 
@@ -1270,7 +1282,7 @@ describe("Staking Operations", () => {
         recipient: "0xvalidator_address_123",
       };
 
-      const tx = await sdk.createTransaction(address, transaction);
+      const tx = await sdk.createTransaction(config, address, transaction);
       expect(tx).toEqual({ unsigned: { transactionBlock: expect.any(Uint8Array) } });
       expect(mockApi.getAllBalances).toHaveBeenCalledWith(
         expect.objectContaining({ owner: address }),
@@ -1301,7 +1313,7 @@ describe("Staking Operations", () => {
         recipient: "0xvalidator_address_123",
       };
 
-      const tx = await sdk.createTransaction(address, transaction);
+      const tx = await sdk.createTransaction(config, address, transaction);
       expect(tx).toEqual({ unsigned: { transactionBlock: expect.any(Uint8Array) } });
       const MockTransaction = Transaction as unknown as jest.Mock;
       const mockTxInstance = MockTransaction.mock.results.at(-1)!.value;
@@ -1319,7 +1331,7 @@ describe("Staking Operations", () => {
         recipient: "0xvalidator_address_123", // Required by type but not used for undelegate
       };
 
-      const tx = await sdk.createTransaction(address, transaction);
+      const tx = await sdk.createTransaction(config, address, transaction);
       expect(tx).toEqual({ unsigned: { transactionBlock: expect.any(Uint8Array) } });
     });
   });
@@ -1335,7 +1347,7 @@ describe("Staking Operations", () => {
         recipient: "0xvalidator_address_123",
         errors: {},
       };
-      const info = await sdk.paymentInfo(sender, fakeTransaction);
+      const info = await sdk.paymentInfo(config, sender, fakeTransaction);
       expect(info).toHaveProperty("gasBudget");
       expect(info).toHaveProperty("totalGasUsed");
       expect(info).toHaveProperty("fees");
@@ -1353,7 +1365,7 @@ describe("Staking Operations", () => {
         recipient: "0xvalidator_address_123", // Required by type but not used for undelegate
         errors: {},
       };
-      const info = await sdk.paymentInfo(sender, fakeTransaction);
+      const info = await sdk.paymentInfo(config, sender, fakeTransaction);
       expect(info).toHaveProperty("gasBudget");
       expect(info).toHaveProperty("totalGasUsed");
       expect(info).toHaveProperty("fees");
@@ -1372,7 +1384,7 @@ describe("Staking Operations", () => {
         recipient: "0xrecipient_address",
         errors: {},
       };
-      const info = await sdk.paymentInfo(sender, fakeTransaction);
+      const info = await sdk.paymentInfo(config, sender, fakeTransaction);
       expect(info).toHaveProperty("gasBudget");
       expect(info).toHaveProperty("totalGasUsed");
       expect(info).toHaveProperty("fees");
@@ -1390,7 +1402,7 @@ describe("Staking Operations", () => {
       };
 
       mockApi.multiGetObjects.mockClear();
-      await sdk.paymentInfo(sender, fakeTransaction);
+      await sdk.paymentInfo(config, sender, fakeTransaction);
 
       expect(mockApi.multiGetObjects).not.toHaveBeenCalled();
     });
@@ -1634,7 +1646,7 @@ describe("getStakingExtraByDigest on JSON-RPC transport", () => {
         },
       ],
     } as unknown as SuiTransactionBlockResponse);
-    const out = await sdk.getStakingExtraByDigest("0xdigest", "DELEGATE", "sui-jsonrpc-stake");
+    const out = await sdk.getStakingExtraByDigest(config, "0xdigest", "DELEGATE");
     expect(out).toEqual({ validatorAddress: "0xval", stakedAmount: "1000000000" });
     expect(mockApi.getTransactionBlock).toHaveBeenCalledWith({
       digest: "0xdigest",
@@ -1646,7 +1658,7 @@ describe("getStakingExtraByDigest on JSON-RPC transport", () => {
     mockApi.getTransactionBlock.mockResolvedValueOnce({
       events: [],
     } as unknown as SuiTransactionBlockResponse);
-    const out = await sdk.getStakingExtraByDigest("0xmissing", "DELEGATE", "sui-jsonrpc-miss");
+    const out = await sdk.getStakingExtraByDigest(config, "0xmissing", "DELEGATE");
     expect(out).toBeNull();
   });
 });
@@ -2019,7 +2031,7 @@ describe("getOperations filtering logic", () => {
   test("should not apply timestamp filter when cursor is provided", async () => {
     const cursor = "test-cursor";
 
-    const operations = await sdk.getOperations(mockAccountId, mockAddr, cursor);
+    const operations = await sdk.getOperations(config, mockAccountId, mockAddr, cursor);
 
     // Should not filter by timestamp when cursor is provided
     expect(operations).toHaveLength(4);
@@ -2027,7 +2039,7 @@ describe("getOperations filtering logic", () => {
   });
 
   test("should not apply timestamp filter when operations don't reach limits", async () => {
-    const operations = await sdk.getOperations(mockAccountId, mockAddr);
+    const operations = await sdk.getOperations(config, mockAccountId, mockAddr);
 
     // Should not filter by timestamp when limits aren't reached
     expect(operations).toHaveLength(4);
@@ -2056,7 +2068,7 @@ describe("getOperations filtering logic", () => {
       return { operations: [], cursor: null };
     });
 
-    const operations = await sdk.getOperations(mockAccountId, mockAddr);
+    const operations = await sdk.getOperations(config, mockAccountId, mockAddr);
 
     // Filter timestamp should be the maximum of the last timestamps from both arrays
     // sent: last timestamp = 1000 + 299*100 = 30900
@@ -2091,7 +2103,7 @@ describe("getOperations filtering logic", () => {
       return { operations: [], cursor: null };
     });
 
-    const operations = await sdk.getOperations(mockAccountId, mockAddr);
+    const operations = await sdk.getOperations(config, mockAccountId, mockAddr);
 
     // Filter timestamp should be the maximum of the last timestamps from both arrays
     // sent: last timestamp = 1500
@@ -2125,7 +2137,7 @@ describe("getOperations filtering logic", () => {
       return { operations: [], cursor: null };
     });
 
-    const operations = await sdk.getOperations(mockAccountId, mockAddr);
+    const operations = await sdk.getOperations(config, mockAccountId, mockAddr);
 
     // Filter timestamp should be the maximum of the last timestamps from both arrays
     // sent: last timestamp = 1000 + 299*100 = 30900
@@ -2164,7 +2176,7 @@ describe("getOperations filtering logic", () => {
       return { operations: [], cursor: null };
     });
 
-    const operations = await sdk.getOperations(mockAccountId, mockAddr);
+    const operations = await sdk.getOperations(config, mockAccountId, mockAddr);
 
     // Filter timestamp should be the timestamp of the last sent operation (4000 + 296*100 = 33600)
     // Only operations with timestamp >= 33600 should remain
@@ -2193,7 +2205,7 @@ describe("getOperations filtering logic", () => {
       return { operations: [], cursor: null };
     });
 
-    const operations = await sdk.getOperations(mockAccountId, mockAddr);
+    const operations = await sdk.getOperations(config, mockAccountId, mockAddr);
 
     // Should be sorted by timestamp in descending order
     const timestamps = operations.map(op => Number(op.date.getTime()));
@@ -2206,7 +2218,7 @@ describe("getOperations filtering logic", () => {
       return { operations: [], cursor: null };
     });
 
-    const operations = await sdk.getOperations(mockAccountId, mockAddr);
+    const operations = await sdk.getOperations(config, mockAccountId, mockAddr);
 
     expect(operations).toHaveLength(0);
   });
@@ -2228,7 +2240,7 @@ describe("getOperations filtering logic", () => {
       return { operations: [], cursor: null };
     });
 
-    const operations = await sdk.getOperations(mockAccountId, mockAddr);
+    const operations = await sdk.getOperations(config, mockAccountId, mockAddr);
 
     expect(operations).toHaveLength(2);
     expect(operations.map(op => op.hash)).toEqual(["sent2", "sent1"]);
@@ -2257,7 +2269,7 @@ describe("getOperations filtering logic", () => {
       return { operations: [], cursor: null };
     });
 
-    const operations = await sdk.getOperations(mockAccountId, mockAddr);
+    const operations = await sdk.getOperations(config, mockAccountId, mockAddr);
 
     // Filter timestamp should be 1000 (the common timestamp)
     // All operations have timestamp 1000, so all should pass the filter
@@ -2275,7 +2287,10 @@ describe("listOperations", () => {
   const tx = (digest: string, checkpoint: string, timestampMs: string) =>
     ({ ...mockTransaction, digest, checkpoint, timestampMs }) as SuiTransactionBlockResponse;
 
-  const apiCall = async <T>(execute: (api: SuiJsonRpcClient) => Promise<T>) => execute(mockApi);
+  const apiCall = async <T>(
+    _config: SuiCoinConfig,
+    execute: (api: SuiJsonRpcClient) => Promise<T>,
+  ) => execute(mockApi);
 
   const setupListOperationsMocks = (
     handler: (params: QueryBlocksParams) => Promise<QueryBlocksResult> | QueryBlocksResult,
@@ -2297,7 +2312,7 @@ describe("listOperations", () => {
     const hashes: string[] = [];
     let cursor = initialCursor;
     for (let i = 0; i < maxPages; i++) {
-      const page = await sdk.getListOperations(ADDRESS, order, apiCall, cursor);
+      const page = await sdk.getListOperations(config, ADDRESS, order, apiCall, cursor);
       hashes.push(...page.items.map(op => op.tx.hash));
       if (!page.next) break;
       cursor = page.next;
@@ -2306,19 +2321,19 @@ describe("listOperations", () => {
   };
 
   test("throws on malformed list operations cursor", async () => {
-    await expect(sdk.getListOperations(ADDRESS, "asc", apiCall, "not-a-v3-cursor")).rejects.toThrow(
-      "Invalid list operations cursor format",
-    );
+    await expect(
+      sdk.getListOperations(config, ADDRESS, "asc", apiCall, "not-a-v3-cursor"),
+    ).rejects.toThrow("Invalid list operations cursor format");
   });
 
   test("throws when cursor timestamp is invalid", async () => {
-    await expect(sdk.getListOperations(ADDRESS, "asc", apiCall, "abc:txhash")).rejects.toThrow(
-      "Invalid list operations cursor format: invalid timestamp or digest",
-    );
+    await expect(
+      sdk.getListOperations(config, ADDRESS, "asc", apiCall, "abc:txhash"),
+    ).rejects.toThrow("Invalid list operations cursor format: invalid timestamp or digest");
   });
 
   test("throws when cursor digest is missing", async () => {
-    await expect(sdk.getListOperations(ADDRESS, "asc", apiCall, "1234:")).rejects.toThrow(
+    await expect(sdk.getListOperations(config, ADDRESS, "asc", apiCall, "1234:")).rejects.toThrow(
       "Invalid list operations cursor format: missing timestamp or digest",
     );
   });
@@ -2340,7 +2355,7 @@ describe("listOperations", () => {
             },
       );
 
-      const page = await sdk.getListOperations(ADDRESS, order, apiCall);
+      const page = await sdk.getListOperations(config, ADDRESS, order, apiCall);
       expect(page.items.map(op => op.tx.hash)).toEqual(["out-1"]);
       expect(page.next).not.toEqual("");
     },
@@ -2363,7 +2378,7 @@ describe("listOperations", () => {
             },
       );
 
-      const page = await sdk.getListOperations(ADDRESS, order, apiCall);
+      const page = await sdk.getListOperations(config, ADDRESS, order, apiCall);
       expect(page.items.map(op => op.tx.hash)).toEqual(["in-1"]);
       expect(page.next).not.toEqual("");
     },
@@ -2373,7 +2388,10 @@ describe("listOperations", () => {
     const address = "0x766ff1061aaad7241d1a8ebeadced7b3f7bd3c5f12dfd7a0e49bb1684855eb11";
     const tx = (digest: string, checkpoint: string, timestampMs: string) =>
       ({ ...mockTransaction, digest, checkpoint, timestampMs }) as SuiTransactionBlockResponse;
-    const apiCall = async (execute: (api: SuiJsonRpcClient) => Promise<any>) => execute(mockApi);
+    const apiCall = async (
+      _config: SuiCoinConfig,
+      execute: (api: SuiJsonRpcClient) => Promise<any>,
+    ) => execute(mockApi);
 
     mockApi.queryTransactionBlocks.mockReset();
     mockApi.getCheckpoint = jest.fn().mockImplementation(async ({ id }) => ({
@@ -2410,8 +2428,8 @@ describe("listOperations", () => {
       };
     });
 
-    const page1 = await sdk.getListOperations(address, "asc", apiCall);
-    const page2 = await sdk.getListOperations(address, "asc", apiCall, page1.next);
+    const page1 = await sdk.getListOperations(config, address, "asc", apiCall);
+    const page2 = await sdk.getListOperations(config, address, "asc", apiCall, page1.next);
 
     expect(page1.items.map(op => op.tx.hash)).toEqual(["zzzz"]);
     expect(page2.items).toEqual([]);
@@ -2422,7 +2440,10 @@ describe("listOperations", () => {
     const address = "0x766ff1061aaad7241d1a8ebeadced7b3f7bd3c5f12dfd7a0e49bb1684855eb11";
     const tx = (digest: string, checkpoint: string, timestampMs: string) =>
       ({ ...mockTransaction, digest, checkpoint, timestampMs }) as SuiTransactionBlockResponse;
-    const apiCall = async (execute: (api: SuiJsonRpcClient) => Promise<any>) => execute(mockApi);
+    const apiCall = async (
+      _config: SuiCoinConfig,
+      execute: (api: SuiJsonRpcClient) => Promise<any>,
+    ) => execute(mockApi);
 
     mockApi.queryTransactionBlocks.mockReset();
     mockApi.getCheckpoint = jest.fn().mockImplementation(async ({ id }) => ({
@@ -2438,7 +2459,7 @@ describe("listOperations", () => {
         : { data: [tx("in-same-ts", "2", "200")], hasNextPage: false, nextCursor: null };
     });
 
-    const page = await sdk.getListOperations(address, "desc", apiCall, "200:boundary");
+    const page = await sdk.getListOperations(config, address, "desc", apiCall, "200:boundary");
     expect(page.items).toEqual([]);
     expect(page.next).toBeUndefined();
   });
@@ -2447,7 +2468,10 @@ describe("listOperations", () => {
     const address = "0x766ff1061aaad7241d1a8ebeadced7b3f7bd3c5f12dfd7a0e49bb1684855eb11";
     const tx = (digest: string, checkpoint: string, timestampMs: string) =>
       ({ ...mockTransaction, digest, checkpoint, timestampMs }) as SuiTransactionBlockResponse;
-    const apiCall = async (execute: (api: SuiJsonRpcClient) => Promise<any>) => execute(mockApi);
+    const apiCall = async (
+      _config: SuiCoinConfig,
+      execute: (api: SuiJsonRpcClient) => Promise<any>,
+    ) => execute(mockApi);
 
     mockApi.queryTransactionBlocks.mockReset();
     mockApi.getCheckpoint = jest.fn().mockImplementation(async ({ id }) => ({
@@ -2469,7 +2493,7 @@ describe("listOperations", () => {
           };
     });
 
-    const page = await sdk.getListOperations(address, "asc", apiCall, "500:boundary");
+    const page = await sdk.getListOperations(config, address, "asc", apiCall, "500:boundary");
     expect(page.items).toEqual([]);
     expect(page.next).toEqual("400:filtered-tail");
   });
@@ -2480,7 +2504,10 @@ describe("listOperations", () => {
       const address = "0x766ff1061aaad7241d1a8ebeadced7b3f7bd3c5f12dfd7a0e49bb1684855eb11";
       const tx = (digest: string, checkpoint: string, timestampMs: string) =>
         ({ ...mockTransaction, digest, checkpoint, timestampMs }) as SuiTransactionBlockResponse;
-      const apiCall = async (execute: (api: SuiJsonRpcClient) => Promise<any>) => execute(mockApi);
+      const apiCall = async (
+        _config: SuiCoinConfig,
+        execute: (api: SuiJsonRpcClient) => Promise<any>,
+      ) => execute(mockApi);
 
       mockApi.queryTransactionBlocks.mockReset();
       mockApi.getCheckpoint = jest.fn().mockImplementation(async ({ id }) => ({
@@ -2494,7 +2521,7 @@ describe("listOperations", () => {
           : { data: [tx("in-end", "2", "150")], hasNextPage: false, nextCursor: null };
       });
 
-      const page = await sdk.getListOperations(address, order, apiCall);
+      const page = await sdk.getListOperations(config, address, order, apiCall);
       expect(page.items.length).toBeGreaterThan(0);
       expect(page.next).toBeUndefined();
     },
@@ -2504,7 +2531,10 @@ describe("listOperations", () => {
     const address = "0x766ff1061aaad7241d1a8ebeadced7b3f7bd3c5f12dfd7a0e49bb1684855eb11";
     const tx = (digest: string, checkpoint: string, timestampMs: string) =>
       ({ ...mockTransaction, digest, checkpoint, timestampMs }) as SuiTransactionBlockResponse;
-    const apiCall = async (execute: (api: SuiJsonRpcClient) => Promise<any>) => execute(mockApi);
+    const apiCall = async (
+      _config: SuiCoinConfig,
+      execute: (api: SuiJsonRpcClient) => Promise<any>,
+    ) => execute(mockApi);
 
     mockApi.queryTransactionBlocks.mockReset();
     mockApi.getCheckpoint = jest.fn().mockImplementation(async ({ id }) => ({
@@ -2527,8 +2557,8 @@ describe("listOperations", () => {
         : { data: [], hasNextPage: false, nextCursor: null };
     });
 
-    const page1 = await sdk.getListOperations(address, "asc", apiCall);
-    const page2 = await sdk.getListOperations(address, "asc", apiCall, page1.next);
+    const page1 = await sdk.getListOperations(config, address, "asc", apiCall);
+    const page2 = await sdk.getListOperations(config, address, "asc", apiCall, page1.next);
 
     expect(page1.items.map(op => op.tx.hash)).toEqual(["boundary"]);
     expect(page2.items).toEqual([]);
@@ -2540,7 +2570,10 @@ describe("listOperations", () => {
     const boundaryDigest = "HdJAXgAA94Q8njwnmX1YT6RDu6s3HvUrdTgDRGNNFwm";
     const tx = (digest: string, checkpoint: string, timestampMs: string) =>
       ({ ...mockTransaction, digest, checkpoint, timestampMs }) as SuiTransactionBlockResponse;
-    const apiCall = async (execute: (api: SuiJsonRpcClient) => Promise<any>) => execute(mockApi);
+    const apiCall = async (
+      _config: SuiCoinConfig,
+      execute: (api: SuiJsonRpcClient) => Promise<any>,
+    ) => execute(mockApi);
 
     mockApi.queryTransactionBlocks.mockReset();
     mockApi.getCheckpoint = jest.fn().mockImplementation(async ({ id }) => ({
@@ -2580,8 +2613,8 @@ describe("listOperations", () => {
           };
     });
 
-    const firstPage = await sdk.getListOperations(address, "asc", apiCall);
-    const secondPage = await sdk.getListOperations(address, "asc", apiCall, firstPage.next);
+    const firstPage = await sdk.getListOperations(config, address, "asc", apiCall);
+    const secondPage = await sdk.getListOperations(config, address, "asc", apiCall, firstPage.next);
 
     expect(firstPage.items.some(op => op.tx.hash === boundaryDigest)).toBe(true);
     expect(secondPage.items.some(op => op.tx.hash === boundaryDigest)).toBe(false);
@@ -2591,7 +2624,10 @@ describe("listOperations", () => {
     const address = "0x766ff1061aaad7241d1a8ebeadced7b3f7bd3c5f12dfd7a0e49bb1684855eb11";
     const tx = (digest: string, checkpoint: string, timestampMs: string) =>
       ({ ...mockTransaction, digest, checkpoint, timestampMs }) as SuiTransactionBlockResponse;
-    const apiCall = async (execute: (api: SuiJsonRpcClient) => Promise<any>) => execute(mockApi);
+    const apiCall = async (
+      _config: SuiCoinConfig,
+      execute: (api: SuiJsonRpcClient) => Promise<any>,
+    ) => execute(mockApi);
 
     mockApi.getCheckpoint = jest.fn().mockImplementation(async ({ id }) => ({
       digest: `checkpoint-${id}`,
@@ -2627,8 +2663,8 @@ describe("listOperations", () => {
           };
     });
 
-    const ascPage1 = await sdk.getListOperations(address, "asc", apiCall);
-    const ascPage2 = await sdk.getListOperations(address, "asc", apiCall, ascPage1.next);
+    const ascPage1 = await sdk.getListOperations(config, address, "asc", apiCall);
+    const ascPage2 = await sdk.getListOperations(config, address, "asc", apiCall, ascPage1.next);
     const ascTimes1 = ascPage1.items.map(op => op.tx.date.getTime());
     const ascTimes2 = ascPage2.items.map(op => op.tx.date.getTime());
     expect(ascTimes1).toEqual([100, 150]);
@@ -2667,8 +2703,8 @@ describe("listOperations", () => {
           };
     });
 
-    const descPage1 = await sdk.getListOperations(address, "desc", apiCall);
-    const descPage2 = await sdk.getListOperations(address, "desc", apiCall, descPage1.next);
+    const descPage1 = await sdk.getListOperations(config, address, "desc", apiCall);
+    const descPage2 = await sdk.getListOperations(config, address, "desc", apiCall, descPage1.next);
     const descTimes1 = descPage1.items.map(op => op.tx.date.getTime());
     const descTimes2 = descPage2.items.map(op => op.tx.date.getTime());
     expect(descTimes1).toEqual([400, 350]);
@@ -2715,8 +2751,8 @@ describe("listOperations", () => {
       };
     });
 
-    const firstPage = await sdk.getListOperations(ADDRESS, "asc", apiCall);
-    const secondPage = await sdk.getListOperations(ADDRESS, "asc", apiCall, firstPage.next);
+    const firstPage = await sdk.getListOperations(config, ADDRESS, "asc", apiCall);
+    const secondPage = await sdk.getListOperations(config, ADDRESS, "asc", apiCall, firstPage.next);
 
     expect(firstPage.items.map(op => op.tx.hash)).toEqual(["out-100", "out-200"]);
     expect(firstPage.next).toEqual("200:out-200");
@@ -2762,8 +2798,14 @@ describe("listOperations", () => {
       };
     });
 
-    const firstPage = await sdk.getListOperations(ADDRESS, "desc", apiCall);
-    const secondPage = await sdk.getListOperations(ADDRESS, "desc", apiCall, firstPage.next);
+    const firstPage = await sdk.getListOperations(config, ADDRESS, "desc", apiCall);
+    const secondPage = await sdk.getListOperations(
+      config,
+      ADDRESS,
+      "desc",
+      apiCall,
+      firstPage.next,
+    );
 
     expect(firstPage.items.map(op => op.tx.hash)).toEqual(["out-1000", "out-900"]);
     expect(firstPage.next).toEqual("900:out-900");
@@ -2921,8 +2963,8 @@ describe("listOperations", () => {
             };
       });
 
-      const page1 = await sdk.getListOperations(ADDRESS, order, apiCall);
-      const page2 = await sdk.getListOperations(ADDRESS, order, apiCall, page1.next);
+      const page1 = await sdk.getListOperations(config, ADDRESS, order, apiCall);
+      const page2 = await sdk.getListOperations(config, ADDRESS, order, apiCall, page1.next);
       const hashes = [...page1.items.map(op => op.tx.hash), ...page2.items.map(op => op.tx.hash)];
 
       if (order === "asc") {
@@ -4297,7 +4339,7 @@ describe("settlement transaction filtering in operations", () => {
       };
     });
 
-    const ops = await sdkOriginal.getOperations("account-1", userAddr);
+    const ops = await sdkOriginal.getOperations(config, "account-1", userAddr);
 
     expect(ops.map(o => o.hash)).toEqual(["normal-tx"]);
   });
@@ -4311,9 +4353,12 @@ describe("settlement transaction filtering in operations", () => {
     });
     (mockApi as any).getCheckpoint = jest.fn().mockResolvedValue({ digest: "cp-hash" });
 
-    const apiCall = async <T>(execute: (api: SuiJsonRpcClient) => Promise<T>) => execute(mockApi);
+    const apiCall = async <T>(
+      _config: SuiCoinConfig,
+      execute: (api: SuiJsonRpcClient) => Promise<T>,
+    ) => execute(mockApi);
 
-    const page = await sdk.getListOperations(userAddr, "desc", apiCall);
+    const page = await sdk.getListOperations(config, userAddr, "desc", apiCall);
 
     const hashes = page.items.map(op => op.tx.hash);
     expect(hashes).not.toContain("settlement-tx");

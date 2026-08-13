@@ -21,8 +21,11 @@ describe("getBalance", () => {
       ),
     );
 
-    expect(await getBalance("1a1LcBX6hGPKg5aQ6DXZpAHCCzWjckhea4sz3P1PvL3oc4F")).toEqual([
-      { value: BigInt(100), asset: { type: "native" } },
-    ]);
+    expect(
+      await getBalance(
+        coinConfig.getCoinConfig("polkadot"),
+        "1a1LcBX6hGPKg5aQ6DXZpAHCCzWjckhea4sz3P1PvL3oc4F",
+      ),
+    ).toEqual([{ value: BigInt(100), asset: { type: "native" } }]);
   });
 });

@@ -1,11 +1,13 @@
 import BigNumber from "bignumber.js";
 import { Transaction } from "../types";
+import type { VechainCurrencyConfig } from "../config";
 import { parseAddress } from "./parseAddress";
 import { calculateClausesVet, calculateClausesVtho } from "./calculateClauses";
 import { estimateGas } from "./estimateGas";
 import { getThorClient } from "./getThorClient";
 
 export const calculateGasFees = async (
+  config: VechainCurrencyConfig,
   transaction: Transaction,
   isTokenAccount: boolean,
   originAddress: string,
@@ -24,8 +26,8 @@ export const calculateGasFees = async (
       clauses = await calculateClausesVet(transaction.recipient, transaction.amount);
     }
 
-    const gasEstimation = await estimateGas(clauses, originAddress);
-    const thorClient = getThorClient();
+    const gasEstimation = await estimateGas(config, clauses, originAddress);
+    const thorClient = getThorClient(config);
     const body = await thorClient.transactions.buildTransactionBody(
       clauses,
       gasEstimation.totalGas,

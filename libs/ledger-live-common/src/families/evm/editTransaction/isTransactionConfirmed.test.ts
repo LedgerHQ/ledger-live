@@ -1,6 +1,7 @@
 import { getNodeApi } from "@ledgerhq/coin-evm/network/node/index";
 import type { NodeApi } from "@ledgerhq/coin-evm/network/node/types";
 import type { Account } from "@ledgerhq/types-live";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { isTransactionConfirmed } from "./isTransactionConfirmed";
 
 jest.mock("@ledgerhq/coin-evm/network/node/index", () => ({
@@ -31,13 +32,19 @@ const mockGetNodeApi = jest.mocked(getNodeApi);
 describe("isTransactionConfirmed", () => {
   const nodeApiMock = mockNodeApi();
 
+  beforeAll(() => {
+    LiveConfig.setConfig({
+      config_currency_external_coin: { type: "object", default: {} },
+    } as never);
+  });
+
   beforeEach(() => {
     jest.clearAllMocks();
     mockGetNodeApi.mockReturnValue(nodeApiMock);
   });
 
   test("should return true if blockHeight is not null", async () => {
-    const account = { type: "Account", currency: { id: "external-coin" } } as Account;
+    const account = { type: "Account", currency: { id: "external_coin" } } as Account;
     const hash = "transactionHash";
     const blockHeight = 12345;
 
@@ -50,7 +57,7 @@ describe("isTransactionConfirmed", () => {
   });
 
   test("should return false if blockHeight is null", async () => {
-    const account = { type: "Account", currency: { id: "external-coin" } } as Account;
+    const account = { type: "Account", currency: { id: "external_coin" } } as Account;
     const hash = "transactionHash";
     const blockHeight = null;
 

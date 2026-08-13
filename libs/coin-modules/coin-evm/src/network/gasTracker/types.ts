@@ -5,9 +5,11 @@ import { GasOptions } from "../../types";
 export type GasTrackerApi = {
   getGasOptions: ({
     currency,
+    config,
     options,
   }: {
     currency: CryptoCurrency;
+    config: EvmConfigInfo;
     options?: {
       useEIP1559: boolean;
     };

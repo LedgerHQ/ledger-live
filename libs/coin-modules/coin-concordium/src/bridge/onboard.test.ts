@@ -317,7 +317,10 @@ describe("onboard", () => {
       await firstValueFrom(observable.pipe(toArray()));
 
       // THEN
-      expect(submitCredential).toHaveBeenCalledWith(currency.id, { v: 0, value: { test: "data" } });
+      expect(submitCredential).toHaveBeenCalledWith({ networkType: "mainnet" }, currency.id, {
+        v: 0,
+        value: { test: "data" },
+      });
     });
   });
 

@@ -4,6 +4,7 @@ import {
   Balance,
   Block,
   BlockInfo,
+  BalanceOptions,
   CraftedTransaction,
   Cursor,
   FeeEstimation,
@@ -13,11 +14,10 @@ import {
   TransactionIntent,
   TransactionValidation,
   Validator,
-  BalanceOptions,
 } from "@ledgerhq/coin-module-framework/api/index";
 import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 import BigNumber from "bignumber.js";
-import coinConfig, { type BoilerplateConfig } from "../config";
+import { type BoilerplateCoinConfig, type BoilerplateContext } from "../config";
 import {
   broadcast,
   combine,
@@ -29,17 +29,17 @@ import {
   listOperations,
 } from "../logic";
 
-export function createApi(config: BoilerplateConfig): CoinModuleApi {
-  coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
-
+// The caller builds the {@link BoilerplateContext} (config + logger) and passes it to each method (ADR-019).
+export function createApi(): CoinModuleApi<BoilerplateCoinConfig> {
   return {
-    broadcast,
+    broadcast: (_context, tx) => broadcast(tx),
     async call() {
       throw new Error("call is not supported");
     },
-    combine,
-    craftTransaction: craft,
+    combine: (_context, tx, signature, options) => combine(tx, signature, options?.pubkey),
+    craftTransaction: (_context, transactionIntent) => craft(transactionIntent),
     craftRawTransaction: (
+      _context: BoilerplateContext,
       _transaction: string,
       _sender: string,
       _publicKey: string,
@@ -47,40 +47,41 @@ export function createApi(config: BoilerplateConfig): CoinModuleApi {
     ): Promise<CraftedTransaction> => {
       throw new Error("craftRawTransaction is not supported");
     },
-    estimateFees: estimate,
-    getBalance: (address: string, options?: BalanceOptions) =>
-      rejectBalanceOptions(() => getBalance(address), options),
-    lastBlock,
-    listOperations,
-    getBlock(_height): Promise<Block> {
+    estimateFees: (_context, transactionIntent) => estimate(transactionIntent),
+    getBalance: (context, address, options?: BalanceOptions) =>
+      rejectBalanceOptions(() => getBalance(context, address), options),
+    lastBlock: _context => lastBlock(),
+    listOperations: (_context, address, options) => listOperations(address, options),
+    getBlock(_context, _height): Promise<Block> {
       throw new Error("getBlock is not supported");
     },
-    getBlockInfo(_height: number): Promise<BlockInfo> {
+    getBlockInfo(_context, _height: number): Promise<BlockInfo> {
       throw new Error("getBlockInfo is not supported");
     },
-    getStakes(_address: string, _cursor?: Cursor): Promise<Page<Stake>> {
+    getStakes(_context, _address: string, _options?: { cursor?: Cursor }): Promise<Page<Stake>> {
       throw new Error("getStakes is not supported");
     },
-    getRewards(_address: string, _cursor?: Cursor): Promise<Page<Reward>> {
+    getRewards(_context, _address: string, _options?: { cursor?: Cursor }): Promise<Page<Reward>> {
       throw new Error("getRewards is not supported");
     },
-    getValidators(_cursor?: Cursor): Promise<Page<Validator>> {
+    getValidators(_context, _options?: { cursor?: Cursor }): Promise<Page<Validator>> {
       throw new Error("getValidators is not supported");
     },
     validateIntent: async (
+      _context: BoilerplateContext,
       _transactionIntent: TransactionIntent,
       _balances: Balance[],
-      _customFees?: FeeEstimation,
+      _options?: { customFees?: FeeEstimation },
     ): Promise<TransactionValidation> => {
       throw new Error("validateIntent is not supported");
     },
-    getNextSequence: async (_address: string) => {
+    getNextSequence: async (_context: BoilerplateContext, _address: string) => {
       throw new Error("getNextSequence is not supported");
     },
-    validateAddress: async (_address: string) => {
+    validateAddress: async (_context: BoilerplateContext, _address: string) => {
       throw new Error("validateAddress is not supported");
     },
-    craftTransactionData,
+    craftTransactionData: (_context, intent) => craftTransactionData(intent),
   };
 }
 
