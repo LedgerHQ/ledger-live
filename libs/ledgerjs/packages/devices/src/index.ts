@@ -34,8 +34,8 @@ export const DeviceModelId = {
   stax: "stax",
   /** Ledger Flex ("europa" is the internal name) */
   europa: "europa", // DO NOT CHANGE TO FLEX or handle all migration issues, things will break
-  /** Apex */
-  apex: "apex",
+  /** Ledger Nano Gen5  (Apex) */
+  apex: "apex", // DO NOT CHANGE TO A NEW VALUE or handle all migration issues, things will break
 } as const;
 
 export type DeviceModelId = (typeof DeviceModelId)[keyof typeof DeviceModelId];
@@ -253,7 +253,6 @@ export interface DeviceModel {
   usbOnly: boolean;
   memorySize: number;
   masks: number[];
-  // blockSize: number, // THIS FIELD IS DEPRECATED, use getBlockSize
   getBlockSize: (firmwareVersion: string) => number;
   bluetoothSpec?: {
     serviceUuid: string;

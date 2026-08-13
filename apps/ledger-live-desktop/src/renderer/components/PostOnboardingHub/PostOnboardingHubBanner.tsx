@@ -16,7 +16,7 @@ const Wrapper = styled(Card)`
   margin: 20px 0px;
 `;
 
-const illustrations: Record<DeviceModelId, React.ReactNode> = {
+const illustrations: Record<string, React.ReactNode> = {
   stax: <StaxBannerIllustration />,
   europa: <EuropaBannerIllustration />,
   nanoS: undefined,
@@ -24,7 +24,7 @@ const illustrations: Record<DeviceModelId, React.ReactNode> = {
   nanoX: undefined,
   blue: undefined,
   apex: undefined,
-};
+} satisfies Record<DeviceModelId, React.ReactNode>;
 
 const PostOnboardingHubBanner = () => {
   const { t } = useTranslation();
@@ -39,7 +39,7 @@ const PostOnboardingHubBanner = () => {
   return (
     <Wrapper>
       <ActionCard
-        leftContent={deviceModelId ? illustrations[deviceModelId as DeviceModelId] : undefined}
+        leftContent={deviceModelId ? illustrations[deviceModelId] : undefined}
         title={t("postOnboarding.postOnboardingBanner.title", {
           productName: getDeviceModel(deviceModelId ?? DeviceModelId.stax).productName,
         })}
