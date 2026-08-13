@@ -13,3 +13,12 @@ export const ethAccount: LedgerSyncAccountDescriptor = {
   derivationMode: "",
   freshAddress: "0x6Cbcd73CD8e8a42844662f0A0e76D7F79Afd933d",
 };
+
+export const secondEthAccount: LedgerSyncAccountDescriptor = {
+  id: "mock:1:ethereum:0x1aB2c3D4e5F60718293A4b5C6d7E8f90A1b2C3d4:",
+  currencyId: "ethereum",
+  index: 1,
+  seedIdentifier: "mock",
+  derivationMode: "",
+  freshAddress: "0x1aB2c3D4e5F60718293A4b5C6d7E8f90A1b2C3d4",
+};

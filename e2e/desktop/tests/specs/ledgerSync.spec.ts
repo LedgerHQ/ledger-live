@@ -6,7 +6,7 @@ import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { LedgerSyncCliHelper, ledgerSyncEnvironment } from "tests/utils/ledgerSyncCliUtils";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
-import { ethAccount } from "tests/testdata/ledgerSyncTestData";
+import { ethAccount, secondEthAccount } from "tests/testdata/ledgerSyncTestData";
 import { getEnv, setEnv } from "@shared/env";
 import { deviceTagsWithoutLNS } from "tests/utils/tagsUtils";
 
@@ -38,6 +38,10 @@ function initializeEmptyTrustchain() {
 
 function pushEthAccountToTrustchain() {
   return LedgerSyncCliHelper.pushAccountsToTrustchain([ethAccount]);
+}
+
+function pushTwoEthAccountsToTrustchain() {
+  return LedgerSyncCliHelper.pushAccountsToTrustchain([ethAccount, secondEthAccount]);
 }
 
 function destroyTrustchainAfterAll() {
@@ -177,6 +181,48 @@ test.describe("Ledger Sync - rename account", () => {
       await app.layout.waitForAccountsSyncToBeDone();
 
       await app.trustchain.expectAccountName(ethAccount.id, renamedAccountName);
+    },
+  );
+});
+
+test.describe("Ledger Sync - delete account", () => {
+  setupSeed("LS_DeleteAccount_SEED");
+  destroyTrustchainAfterAll();
+  const deletedAccountName = `${Currency.ETH.name} 1`;
+  const remainingAccountName = `${Currency.ETH.name} 2`;
+
+  test.use(preSeededTrustchain([pushTwoEthAccountsToTrustchain]));
+
+  test(
+    "[Live Hub][Ledger Sync] Deleting Account (Online)",
+    {
+      tag: deviceTagsWithoutLNS(),
+      annotation: {
+        type: "TMS",
+        description: "B2CQA-2300",
+      },
+    },
+    async ({ app }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
+      await app.accounts.expectReduxAccountIds([ethAccount.id, secondEthAccount.id]);
+      await app.trustchain.expectAccountIds([ethAccount.id, secondEthAccount.id]);
+
+      await app.mainNavigation.openTargetFromMainNavigation("accounts");
+      await app.accounts.expectAccountsCount(2, 60_000);
+      await app.accounts.expectCryptoAccountRowVisible(deletedAccountName);
+      await app.accounts.expectCryptoAccountRowVisible(remainingAccountName);
+
+      await app.accounts.navigateToAccountByName(deletedAccountName);
+      await app.account.expectAccountVisibility(deletedAccountName);
+      await app.account.deleteAccount();
+      await app.accounts.expectAccountAbsence(deletedAccountName);
+      await app.accounts.expectReduxAccountIds([secondEthAccount.id]);
+
+      await app.layout.syncAccountsIfAvailable();
+      await app.layout.waitForAccountsSyncToBeDone();
+
+      await app.trustchain.expectAccountIds([secondEthAccount.id]);
     },
   );
 });
