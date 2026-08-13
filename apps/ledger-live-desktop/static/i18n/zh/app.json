@@ -2476,7 +2476,9 @@
     "addressMatched": "已匹配地址",
     "addressNotFound": "未找到地址",
     "alreadyUsed": "已使用 · {{date}}",
+    "addressBookUnsupported": "暂不支持 {{family}}",
     "recentSendWillAppear": "您最近的发送会显示在此处",
+    "contactsWillAppear": "联系人将在此处显示",
     "securityInfo": {
       "title": "如何安全发送？",
       "items": {
@@ -2494,6 +2496,10 @@
         "description": "最近记录允许您即时查看自己是否已向特定地址发送过。这可以防止潜在的复制/粘贴错误或黑客攻击。您的历史记录中包含您最近 12 个使用 Ledger Wallet 发送加密货币的地址。",
         "cta": "知道了"
       }
+    },
+    "addContact": {
+      "newContact": "添加新联系人",
+      "existingContact": "添加到现有联系人"
     },
     "relativeDate": {
       "justNow": "刚刚",
@@ -7435,6 +7441,9 @@
     "FeeTooHigh": {
       "title": "网络费用超过数额的10%"
     },
+    "RecipientIsNewAccount": {
+      "title": "This address has never received funds, activating it costs a higher network fee"
+    },
     "DustLimit": {
       "title": "金额低于小额资产下限"
     },
@@ -8897,7 +8906,8 @@
       "transparentBalance": "公开余额",
       "transparentBalanceTooltip": "公开可见的余额",
       "privateBalance": "私密余额",
-      "privateBalanceTooltip": "对外隐藏的余额"
+      "privateBalanceTooltip": "对外隐藏的余额",
+      "privateBalanceWarning": "私密余额不包括 Sapling 和 Orchard 屏蔽资金"
     },
     "shielded": {
       "send": {
@@ -8937,6 +8947,12 @@
             "message": "余额可能稍微有些滞后",
             "cta": "同步余额"
           }
+        },
+        "selfTransfer": {
+          "toPrivate": "Self transfer to private balance",
+          "toPublic": "Self transfer to public balance",
+          "unavailable": "Your private address is not available yet. Export your view key to enable this.",
+          "privacyWarning": "This links your shielded funds to your account's public address, which anyone can see. Sending to an external private address keeps them unlinked."
         }
       },
       "state": {
@@ -9392,10 +9408,10 @@
       "cancel": "取消"
     },
     "editSignerMismatch": {
-      "title": "Use the same Ledger device you used to add this contact",
-      "description": "The connected device isn't a match.",
-      "connectDifferentDevice": "Connect a different device",
-      "cancel": "Cancel"
+      "title": "需使用添加此联系人时的同一 Ledger 设备",
+      "description": "已连接的设备不一致。",
+      "connectDifferentDevice": "连接其他设备",
+      "cancel": "取消"
     },
     "ledgerSyncIntroduction": {
       "description": "您的联系人信息通过您的 Ledger 进行端到端加密，并在您的设备之间进行同步，只有您自己可以解锁。",
