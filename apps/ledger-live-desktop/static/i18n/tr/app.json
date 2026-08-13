@@ -2476,7 +2476,9 @@
     "addressMatched": "Adres eşleşti",
     "addressNotFound": "Adres bulunamadı",
     "alreadyUsed": "Daha önce kullanıldı · {{date}}",
+    "addressBookUnsupported": "{{family}} henüz desteklenmiyor",
     "recentSendWillAppear": "Son gönderme işleminiz burada görüntülenecek",
+    "contactsWillAppear": "Kişileriniz burada görünecektir",
     "securityInfo": {
       "title": "Güvenli bir şekilde nasıl gönderilir?",
       "items": {
@@ -2494,6 +2496,10 @@
         "description": "Son işlemler geçmişiniz, belirli bir adrese gönderim yapıp yapmadığınızı hemen görmenize izin verir. Bu, potansiyel kopyala/yapıştır hatalarını veya hack'leme girişimlerini önleyebilir. Geçmişiniz, Ledger Wallet kullanarak kripto gönderdiğiniz son 12 adresi içerir.",
         "cta": "Anladım"
       }
+    },
+    "addContact": {
+      "newContact": "Yeni bir kişi ekleyin",
+      "existingContact": "Mevcut bir kişiye ekleyin"
     },
     "relativeDate": {
       "justNow": "Yalnızca şimdilik",
@@ -7435,6 +7441,9 @@
     "FeeTooHigh": {
       "title": "Ağ ücretleri, tutarın % 10'unun üzerindedir"
     },
+    "RecipientIsNewAccount": {
+      "title": "Bu adrese daha önce hiç fon aktarılmadığı için adresi aktif hâle getirmek daha yüksek bir ağ işlem ücreti gerektirir"
+    },
     "DustLimit": {
       "title": "Miktar, dust sınırının altında"
     },
@@ -8609,9 +8618,9 @@
   },
   "largeScreenUpsellModal": {
     "optedIn": {
-      "title": "Daha fazla görün. Daha az dokunun. %{{discount}} tasarruf",
+      "title": "Daha fazla görün. Daha az dokunun. %{{discount}} tasarruf edin.",
       "subtitle": "Daha büyük ekranın, daha akıllı işlem incelemelerinin, gelişmiş korumanın ve özel %{{discount}} indirimin keyfini çıkarın.",
-      "cta": "Dokunmatik ekranlı imzalayıcıları keşfedin"
+      "cta": "Dokunmatik imzalayıcıları keşfedin"
     },
     "optedOut": {
       "title": "Dolandırıcılıkları imzalamadan önce fark edin",
@@ -8897,7 +8906,8 @@
       "transparentBalance": "Şeffaf bakiye",
       "transparentBalanceTooltip": "Herkes tarafından görülen bakiye",
       "privateBalance": "Gizli bakiye",
-      "privateBalanceTooltip": "Herkese açık olmayan bakiye"
+      "privateBalanceTooltip": "Herkese açık olmayan bakiye",
+      "privateBalanceWarning": "Gizli bakiye, Sapling ve Orchard korumalı fonlarını hariç tutar."
     },
     "shielded": {
       "send": {
@@ -8937,6 +8947,12 @@
             "message": "Bakiye güncel olmayabilir",
             "cta": "Bakiyeyi senkronize et"
           }
+        },
+        "selfTransfer": {
+          "toPrivate": "Kendi gizli bakiyenize transfer",
+          "toPublic": "Kendi açık bakiyenize transer",
+          "unavailable": "Gizli adresiniz henüz kullanılabilir değil. Bunu etkinleştirmek için görüntüleme anahtarınızı dışa aktarın.",
+          "privacyWarning": "Bu işlem, korumalı fonlarınızı, hesabınızın herkes tarafından görülebilen açık adresiyle ilişkilendirir. Harici bir gizli adrese gönderim yapmak ise bu fonların birbiriyle ilişkisiz kalmasını sağlar."
         }
       },
       "state": {
