@@ -615,6 +615,9 @@ export function transactionToIntent(
     intentType: isStaking || isDelegation ? "staking" : "transaction",
     type: intentType,
     sender: account.freshAddress,
+    // Needed upfront by families whose unsigned-tx builder embeds the public key (e.g. Stacks);
+    // signOperation overwrites it with a freshly fetched value before actually signing.
+    senderPublicKey: account.xpub,
     recipient: transaction.recipient,
     amount,
     asset: { type: "native", name: account.currency.name, unit: account.currency.units[0] },

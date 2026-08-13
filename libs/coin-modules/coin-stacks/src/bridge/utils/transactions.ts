@@ -5,19 +5,16 @@ import {
   makeUnsignedContractCall,
   uintCV,
   standardPrincipalCV,
-  StacksMessageType,
-  PostConditionType,
-  FungibleConditionCode,
-  createStandardPrincipal,
-  createAssetInfo,
   createMessageSignature,
   PostCondition,
+  FungibleComparator,
+  AssetString,
   UnsignedContractCallOptions,
   AnchorMode,
-  StacksTransaction,
+  StacksTransactionWire,
 } from "@stacks/transactions";
+import type { StacksNetworkName } from "@stacks/network";
 import BigNumber from "bignumber.js";
-import { StacksNetwork } from "../../network/api";
 import { StacksOperation, Transaction } from "../../types";
 import { memoToBufferCV } from "./memoUtils";
 
@@ -43,6 +40,8 @@ export type CreateTokenTransferTransactionOptions = {
 };
 
 type BaseRawData = {
+  // @stacks/transactions@7 dropped AnchorMode from every builder below; kept only for
+  // call-site compatibility with older rawData payloads, never actually used.
   anchorMode: AnchorMode;
   network: string;
   xpub: string;
@@ -60,7 +59,6 @@ function isTokenTransferRawData(data: Record<string, unknown>): data is TokenTra
     typeof data.contractAddress === "string" &&
     typeof data.contractName === "string" &&
     typeof data.assetName === "string" &&
-    typeof data.anchorMode === "number" &&
     typeof data.network === "string" &&
     typeof data.xpub === "string"
   );
@@ -68,13 +66,14 @@ function isTokenTransferRawData(data: Record<string, unknown>): data is TokenTra
 
 // Extracts and validates base fields from rawData (throws if invalid)
 function extractBaseRawData(data: Record<string, unknown>): BaseRawData {
-  const anchorMode = data.anchorMode;
   const network = data.network;
   const xpub = data.xpub;
 
-  if (typeof anchorMode !== "number" || typeof network !== "string" || typeof xpub !== "string") {
+  if (typeof network !== "string" || typeof xpub !== "string") {
     throw new Error("Invalid raw data: missing or invalid base fields");
   }
+
+  const anchorMode = typeof data.anchorMode === "number" ? data.anchorMode : AnchorMode.Any;
 
   return { anchorMode, network, xpub };
 }
@@ -111,7 +110,9 @@ export const createTokenTransferFunctionArgs = (
 };
 
 // Creates post conditions for token transfer
-// Uses LessEqual for special tokens (auto-alex-v3, lqstx, liabtc), Equal for others
+// Uses "lte" for special tokens (auto-alex-v3, lqstx, liabtc), "eq" for others.
+// @stacks/transactions@7 replaced the old {type: StacksMessageType.PostCondition,
+// conditionType, principal, conditionCode, assetInfo} shape with a plain tagged union.
 export const createTokenTransferPostConditions = (
   senderAddress: string,
   amount: BigNumber,
@@ -119,19 +120,18 @@ export const createTokenTransferPostConditions = (
   contractName: string,
   assetName: string,
 ): PostCondition[] => {
-  let conditionCode: FungibleConditionCode = FungibleConditionCode.Equal;
+  let condition: FungibleComparator = "eq";
   if (specialConditionCode.has(`${contractAddress}.${contractName}::${assetName}`)) {
-    conditionCode = FungibleConditionCode.LessEqual;
+    condition = "lte";
   }
 
   return [
     {
-      type: StacksMessageType.PostCondition,
-      conditionType: PostConditionType.Fungible,
-      principal: createStandardPrincipal(senderAddress),
-      conditionCode,
+      type: "ft-postcondition",
+      address: senderAddress,
+      condition,
+      asset: `${contractAddress}.${contractName}::${assetName}` as AssetString,
       amount: BigInt(amount.toFixed()),
-      assetInfo: createAssetInfo(contractAddress, contractName, assetName),
     },
   ];
 };
@@ -139,7 +139,7 @@ export const createTokenTransferPostConditions = (
 // Creates unsigned SIP-010 token transfer transaction
 export const createTokenTransferTransaction = async (
   options: CreateTokenTransferTransactionOptions,
-): Promise<StacksTransaction> => {
+): Promise<StacksTransactionWire> => {
   const {
     contractAddress,
     contractName,
@@ -147,7 +147,6 @@ export const createTokenTransferTransaction = async (
     amount,
     senderAddress,
     recipientAddress,
-    anchorMode,
     network,
     publicKey,
     fee,
@@ -170,13 +169,14 @@ export const createTokenTransferTransaction = async (
     assetName,
   );
 
+  // `network` takes a network name here, not a `@stacks/network` class instance (that package
+  // stayed pinned at 6.x, whose StacksNetwork shape is unrelated to v7's).
   const contractCallOptions: UnsignedContractCallOptions = {
     contractAddress,
     contractName,
     functionName: "transfer",
     functionArgs,
-    anchorMode,
-    network: StacksNetwork[network],
+    network: network as StacksNetworkName,
     publicKey,
     postConditions,
   };
@@ -195,18 +195,16 @@ export const createTokenTransferTransaction = async (
 export const createStxTransferTransaction = async (
   amount: BigNumber,
   recipientAddress: string,
-  anchorMode: AnchorMode,
+  // Retained for call-site compatibility; unused by v7's UnsignedTokenTransferOptions.
+  _anchorMode: AnchorMode,
   network: string,
   publicKey: string,
-  fee?: BigNumber,
-  nonce?: BigNumber,
-  memo?: string,
-): Promise<StacksTransaction> => {
+  { fee, nonce, memo }: { fee?: BigNumber; nonce?: BigNumber; memo?: string } = {},
+): Promise<StacksTransactionWire> => {
   const options: UnsignedTokenTransferOptions = {
     amount: amount.toFixed(),
     recipient: recipientAddress,
-    anchorMode,
-    network: StacksNetwork[network],
+    network: network as StacksNetworkName,
     memo,
     publicKey,
   };
@@ -229,7 +227,7 @@ export const createTransaction = async (
   subAccount?: TokenAccount,
   fee?: BigNumber,
   nonce?: BigNumber,
-): Promise<StacksTransaction> => {
+): Promise<StacksTransactionWire> => {
   const { recipient, anchorMode, network, memo, amount } = transaction;
 
   const tokenDetails = getTokenContractDetails(subAccount);
@@ -253,25 +251,24 @@ export const createTransaction = async (
     });
   } else {
     // Regular STX transfer
-    return createStxTransferTransaction(
-      amount,
-      recipient,
-      anchorMode,
-      network,
-      publicKey,
+    return createStxTransferTransaction(amount, recipient, anchorMode, network, publicKey, {
       fee,
       nonce,
       memo,
-    );
+    });
   }
 };
 
 // Applies signature to transaction and returns serialized buffer
-export const applySignatureToTransaction = (tx: StacksTransaction, signature: string): Buffer => {
+export const applySignatureToTransaction = (
+  tx: StacksTransactionWire,
+  signature: string,
+): Buffer => {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore - TS doesn't recognize spendingCondition.signature property
   tx.auth.spendingCondition.signature = createMessageSignature(signature);
-  return Buffer.from(tx.serialize());
+  // v7's serialize() returns a hex string, not raw bytes -- decode it explicitly.
+  return Buffer.from(tx.serialize(), "hex");
 };
 
 // Recreates transaction from operation and applies signature for broadcast
@@ -291,7 +288,7 @@ export const getTxToBroadcast = async (
 
   if (isTokenTransferRawData(rawData)) {
     // TypeScript now knows rawData has all token transfer fields
-    const { anchorMode, network, xpub, contractAddress, contractName, assetName } = rawData;
+    const { network, xpub, contractAddress, contractName, assetName } = rawData;
 
     // Create the function arguments for the SIP-010 transfer function
     const functionArgs = createTokenTransferFunctionArgs(
@@ -314,8 +311,7 @@ export const getTxToBroadcast = async (
       contractName,
       functionName: "transfer",
       functionArgs,
-      anchorMode,
-      network: StacksNetwork[network],
+      network: network as StacksNetworkName,
       publicKey: xpub,
       fee: fee.toFixed(),
       nonce: operation.transactionSequenceNumber?.toString() ?? "0",
@@ -333,9 +329,11 @@ export const getTxToBroadcast = async (
       anchorMode,
       network,
       xpub,
-      new BigNumber(fee),
-      new BigNumber(operation.transactionSequenceNumber ?? 0),
-      memo !== undefined && memo !== null ? String(memo) : undefined,
+      {
+        fee: new BigNumber(fee),
+        nonce: new BigNumber(operation.transactionSequenceNumber ?? 0),
+        memo: memo !== undefined && memo !== null ? String(memo) : undefined,
+      },
     );
 
     return applySignatureToTransaction(tx, signature);

@@ -1,17 +1,9 @@
 import { TokenAccount } from "@ledgerhq/types-live";
-import {
-  StacksTransaction,
-  AnchorMode,
-  PostConditionType,
-  FungibleConditionCode,
-  StacksMessageType,
-} from "@stacks/transactions";
+import { StacksTransactionWire, AnchorMode } from "@stacks/transactions";
 import {
   makeUnsignedSTXTokenTransfer,
   makeUnsignedContractCall,
   createMessageSignature,
-  createStandardPrincipal,
-  createAssetInfo,
   standardPrincipalCV,
   uintCV,
 } from "@stacks/transactions";
@@ -38,8 +30,6 @@ jest.mock("@stacks/transactions", () => {
     makeUnsignedSTXTokenTransfer: jest.fn(),
     makeUnsignedContractCall: jest.fn(),
     createMessageSignature: jest.fn(),
-    createStandardPrincipal: jest.fn(),
-    createAssetInfo: jest.fn(),
     standardPrincipalCV: jest.fn(),
     uintCV: jest.fn(),
   };
@@ -136,11 +126,6 @@ describe("transactions utility functions", () => {
   });
 
   describe("createTokenTransferPostConditions", () => {
-    beforeEach(() => {
-      (createStandardPrincipal as jest.Mock).mockReturnValue("MOCK_STANDARD_PRINCIPAL");
-      (createAssetInfo as jest.Mock).mockReturnValue("MOCK_ASSET_INFO");
-    });
-
     test("should create post conditions for token transfer", () => {
       const senderAddress = "SP_SENDER";
       const amount = new BigNumber(1000);
@@ -159,22 +144,33 @@ describe("transactions utility functions", () => {
       expect(result).toEqual(
         expect.arrayContaining([
           {
-            type: StacksMessageType.PostCondition,
-            conditionType: PostConditionType.Fungible,
-            principal: "MOCK_STANDARD_PRINCIPAL",
-            conditionCode: FungibleConditionCode.Equal,
+            type: "ft-postcondition",
+            address: senderAddress,
+            condition: "eq",
+            asset: "SP_CONTRACT.token-contract::TOKEN-X",
             amount: BigInt(1000),
-            assetInfo: "MOCK_ASSET_INFO",
           },
         ]),
       );
-      expect(createStandardPrincipal).toHaveBeenCalledWith(senderAddress);
-      expect(createAssetInfo).toHaveBeenCalledWith(contractAddress, contractName, assetName);
+    });
+
+    test("should use lte condition for special tokens", () => {
+      const result = createTokenTransferPostConditions(
+        "SP_SENDER",
+        new BigNumber(1000),
+        "SP102V8P0F7JX67ARQ77WEA3D3CFB5XW39REDT0AM",
+        "auto-alex-v3",
+        "auto-alex-v3",
+      );
+
+      expect(result[0]).toEqual(
+        expect.objectContaining({ condition: "lte", type: "ft-postcondition" }),
+      );
     });
   });
 
   describe("createTokenTransferTransaction", () => {
-    const mockTx = { serialize: jest.fn() } as unknown as StacksTransaction;
+    const mockTx = { serialize: jest.fn() } as unknown as StacksTransactionWire;
 
     beforeEach(() => {
       (makeUnsignedContractCall as jest.Mock).mockResolvedValue(mockTx);
@@ -209,17 +205,22 @@ describe("transactions utility functions", () => {
         memo,
       });
 
+      // anchorMode is accepted by createTokenTransferTransaction for call-site compatibility but is
+      // no longer forwarded: @stacks/transactions@7's ContractCallOptions dropped the field.
+      void anchorMode;
       expect(makeUnsignedContractCall).toHaveBeenCalledWith(
         expect.objectContaining({
           contractAddress,
           contractName,
           functionName: "transfer",
-          anchorMode,
-          network: StacksNetwork[network],
+          network,
           publicKey,
           fee: "100",
           nonce: "5",
         }),
+      );
+      expect(makeUnsignedContractCall).toHaveBeenCalledWith(
+        expect.not.objectContaining({ anchorMode: expect.anything() }),
       );
       expect(result).toBe(mockTx);
     });
@@ -247,13 +248,13 @@ describe("transactions utility functions", () => {
         publicKey,
       });
 
+      void anchorMode;
       expect(makeUnsignedContractCall).toHaveBeenCalledWith(
         expect.objectContaining({
           contractAddress,
           contractName,
           functionName: "transfer",
-          anchorMode,
-          network: StacksNetwork[network],
+          network,
           publicKey,
         }),
       );
@@ -261,6 +262,7 @@ describe("transactions utility functions", () => {
         expect.not.objectContaining({
           fee: expect.anything(),
           nonce: expect.anything(),
+          anchorMode: expect.anything(),
         }),
       );
       expect(result).toBe(mockTx);
@@ -268,7 +270,7 @@ describe("transactions utility functions", () => {
   });
 
   describe("createStxTransferTransaction", () => {
-    const mockTx = { serialize: jest.fn() } as unknown as StacksTransaction;
+    const mockTx = { serialize: jest.fn() } as unknown as StacksTransactionWire;
 
     beforeEach(() => {
       (makeUnsignedSTXTokenTransfer as jest.Mock).mockResolvedValue(mockTx);
@@ -290,22 +292,29 @@ describe("transactions utility functions", () => {
         anchorMode,
         network,
         publicKey,
-        fee,
-        nonce,
-        memo,
+        {
+          fee,
+          nonce,
+          memo,
+        },
       );
 
+      // anchorMode is accepted for call-site compatibility but no longer forwarded:
+      // @stacks/transactions@7's UnsignedTokenTransferOptions dropped the field.
+      void anchorMode;
       expect(makeUnsignedSTXTokenTransfer).toHaveBeenCalledWith(
         expect.objectContaining({
           amount: "1000",
           recipient: recipientAddress,
-          anchorMode,
-          network: StacksNetwork[network],
+          network,
           publicKey,
           fee: "100",
           nonce: "5",
           memo,
         }),
+      );
+      expect(makeUnsignedSTXTokenTransfer).toHaveBeenCalledWith(
+        expect.not.objectContaining({ anchorMode: expect.anything() }),
       );
       expect(result).toBe(mockTx);
     });
@@ -325,12 +334,12 @@ describe("transactions utility functions", () => {
         publicKey,
       );
 
+      void anchorMode;
       expect(makeUnsignedSTXTokenTransfer).toHaveBeenCalledWith(
         expect.objectContaining({
           amount: "1000",
           recipient: recipientAddress,
-          anchorMode,
-          network: StacksNetwork[network],
+          network,
           publicKey,
         }),
       );
@@ -338,6 +347,7 @@ describe("transactions utility functions", () => {
         expect.not.objectContaining({
           fee: expect.anything(),
           nonce: expect.anything(),
+          anchorMode: expect.anything(),
         }),
       );
       expect(result).toBe(mockTx);
@@ -345,7 +355,7 @@ describe("transactions utility functions", () => {
   });
 
   describe("createTransaction", () => {
-    const mockTx = { serialize: jest.fn() } as unknown as StacksTransaction;
+    const mockTx = { serialize: jest.fn() } as unknown as StacksTransactionWire;
 
     beforeEach(() => {
       (makeUnsignedSTXTokenTransfer as jest.Mock).mockResolvedValue(mockTx);
@@ -417,13 +427,15 @@ describe("transactions utility functions", () => {
 
   describe("applySignatureToTransaction", () => {
     test("should apply signature to transaction and return serialized buffer", () => {
-      // Use a simple object with casting for testing
+      // serialize() returns a hex string on @stacks/transactions@7 (StacksTransactionWire's real
+      // return type), not the pre-v7 Uint8Array -- a stale Uint8Array mock here would hide a
+      // wrong-encoding regression, since Buffer.from(uint8array, "hex") ignores the "hex" arg.
       const mockTx = {
         auth: {
           spendingCondition: {},
         },
-        serialize: jest.fn().mockReturnValue(new Uint8Array([1, 2, 3])),
-      } as unknown as StacksTransaction;
+        serialize: jest.fn().mockReturnValue("010203"),
+      } as unknown as StacksTransactionWire;
 
       (createMessageSignature as jest.Mock).mockReturnValue("MOCK_SIGNATURE");
 
@@ -445,12 +457,13 @@ describe("transactions utility functions", () => {
   });
 
   describe("getTxToBroadcast", () => {
+    // serialize() returns a hex string on @stacks/transactions@7, not the pre-v7 Uint8Array.
     const mockTx = {
       auth: {
         spendingCondition: {},
       },
-      serialize: jest.fn().mockReturnValue(new Uint8Array([1, 2, 3])),
-    } as unknown as StacksTransaction;
+      serialize: jest.fn().mockReturnValue("010203"),
+    } as unknown as StacksTransactionWire;
 
     beforeEach(() => {
       (makeUnsignedContractCall as jest.Mock).mockResolvedValue(mockTx);

@@ -54,6 +54,24 @@ describe("createTransaction", () => {
     });
   });
 
+  it("returns the Stacks default native send transaction", () => {
+    const account = {
+      type: "Account",
+      currency: getCryptoCurrencyById("stacks"),
+    } as unknown as Account;
+
+    expect(createTransaction(account)).toEqual({
+      family: "stacks",
+      amount: new BigNumber(0),
+      recipient: "",
+      fees: null,
+      useAllAmount: false,
+      mode: "send",
+      assetReference: "",
+      assetOwner: "",
+    });
+  });
+
   it("throws for an unsupported currency family", () => {
     const account = {
       type: "Account",

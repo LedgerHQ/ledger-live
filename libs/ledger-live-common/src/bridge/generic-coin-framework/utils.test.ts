@@ -675,6 +675,24 @@ describe("coin-framework utils", () => {
       });
     });
 
+    describe("senderPublicKey", () => {
+      it("propagates account.xpub, cached from the device's getAddress at sync time", () => {
+        const intent = transactionToIntent(
+          { currency: { name: "stacks", units: [{}] }, xpub: "02abc" } as Account,
+          { mode: "send" } as GenericTransaction,
+        );
+        expect(intent).toMatchObject({ senderPublicKey: "02abc" });
+      });
+
+      it("is undefined when the account has no cached xpub", () => {
+        const intent = transactionToIntent(
+          { currency: { name: "ethereum", units: [{}] } } as Account,
+          { mode: "send" } as GenericTransaction,
+        );
+        expect(intent.senderPublicKey).toBeUndefined();
+      });
+    });
+
     describe("craftTransactionData", () => {
       it.each([
         { title: "undefined", data: undefined },
