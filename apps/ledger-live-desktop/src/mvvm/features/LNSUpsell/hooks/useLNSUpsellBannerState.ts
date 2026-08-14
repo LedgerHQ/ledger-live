@@ -6,15 +6,25 @@ import {
   devicesModelListSelector,
   sharePersonalizedRecommendationsSelector,
 } from "~/renderer/reducers/settings";
-import type { LNSBannerLocation, LNSBannerState } from "../types";
+import {
+  BANNER_PLACEMENT_BY_LOCATION,
+  type LNSBannerLocation,
+  type LNSBannerState,
+} from "../types";
 
 const LNS_UPSELL_HIGH_TIER = "LNS_UPSELL_HIGH_TIER";
 
 export function useLNSUpsellBannerState(location: LNSBannerLocation): LNSBannerState {
   const isOptIn = useSelector(sharePersonalizedRecommendationsSelector);
-  const ff = useFeature("lldNanoSUpsellBanners");
+  const largeScreenUpsell = useFeature("largeScreenUpsell");
   const tracking = isOptIn ? "opted_in" : "opted_out";
-  const params = ff?.params?.[tracking];
+
+  const placement = BANNER_PLACEMENT_BY_LOCATION[location];
+  const isPlacementEnabled = largeScreenUpsell?.params?.banners?.[placement] ?? false;
+  const ctaConfig = largeScreenUpsell?.params?.[tracking];
+  const isCTAEnabled = ctaConfig?.enabled ?? false;
+  const ctaLink = ctaConfig?.link?.trim() || undefined;
+  const discountPercent = Math.round((largeScreenUpsell?.params?.discount ?? 0) * 100);
 
   const devicesModelList = useSelector(devicesModelListSelector);
   const hasOnlySeenLNS =
@@ -23,8 +33,10 @@ export function useLNSUpsellBannerState(location: LNSBannerLocation): LNSBannerS
   const desktopCards = useSelector(desktopContentCardSelector);
   const isExcluded = isOptIn && desktopCards.some(c => c.extras.campaign === LNS_UPSELL_HIGH_TIER);
 
-  const isEnabled = Boolean(ff?.enabled && params?.[location as keyof LNSBannerState["params"]]);
+  const isEnabled = Boolean(
+    largeScreenUpsell?.enabled && isCTAEnabled && isPlacementEnabled && ctaLink,
+  );
   const isShown = isEnabled && hasOnlySeenLNS && !isExcluded;
 
-  return { isShown, params, tracking };
+  return { isShown, tracking, ctaLink, discountPercent };
 }

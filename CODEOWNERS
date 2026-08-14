@@ -188,7 +188,6 @@ apps/ledger-live-mobile/src/screens/SignTransaction/                @ledgerhq/co
 domain/entity/currency-crypto/src/currencies/            @ledgerhq/coin-integration
 domain/entity/currency-token/src/                        @ledgerhq/coin-integration
 domain/api/currency-token/src/                           @ledgerhq/coin-integration
-libs/types-live/src/lnsUpsell.ts       @ledgerhq/engagement
 libs/types-live/src/postOnboarding.ts  @ledgerhq/engagement
 features/flow/large-screen-upsell/                       @ledgerhq/engagement
 domain/entity/analytics-consent/                         @ledgerhq/engagement
