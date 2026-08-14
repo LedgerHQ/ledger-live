@@ -3,12 +3,10 @@ import { log } from "@ledgerhq/logs";
 import { AleoApiConfigurationResetError } from "../errors";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import {
-  AMOUNT_ARG_INDEX,
   DEFAULT_RECORDS_PAGE_SIZE,
   EXPLORER_TRANSFER_TYPES,
   PROGRAM_ID,
-  RECIPIENT_ARG_INDEX,
-  TOKEN_RECORD_NAME,
+  NON_TRANSFER_FUNCTIONS,
 } from "../constants";
 import { sdkClient } from "../network/sdk";
 import type {
@@ -310,8 +308,14 @@ function hasValueField(
   return Boolean(input && "value" in input);
 }
 
+/** Index of the first function argument: spent record inputs have no `value`, arguments do. */
+function getRecipientArgumentIndex(inputs: AleoTransition["inputs"]): number {
+  const index = inputs.findIndex(hasValueField);
+
+  return index === -1 ? inputs.length : index;
+}
+
 function getTransferArguments(
-  isTokenRecord: boolean,
   recordTransition: AleoTransition,
   transactionId: string,
 ): {
@@ -320,13 +324,18 @@ function getTransferArguments(
   recipientOutputIndex: number;
   amountOutputIndex: number;
 } | null {
-  const recipientOutputIndex = isTokenRecord ? RECIPIENT_ARG_INDEX - 1 : RECIPIENT_ARG_INDEX;
-  const amountOutputIndex = isTokenRecord ? AMOUNT_ARG_INDEX - 1 : AMOUNT_ARG_INDEX;
+  if (NON_TRANSFER_FUNCTIONS.has(recordTransition.function)) {
+    return null;
+  }
+
+  const recipientOutputIndex = getRecipientArgumentIndex(recordTransition.inputs);
+  const amountOutputIndex = recipientOutputIndex + 1;
+  const transitionName = `${recordTransition.program}/${recordTransition.function}`;
 
   if (recordTransition.inputs.length <= amountOutputIndex) {
     log(
       "aleo/sync",
-      `enrichPrivateRecord: transition has only ${recordTransition.inputs.length} inputs, expected at least ${amountOutputIndex + 1} for tx ${transactionId}`,
+      `enrichPrivateRecord: transition ${transitionName} has only ${recordTransition.inputs.length} inputs, expected at least ${amountOutputIndex + 1} for tx ${transactionId}`,
     );
     return null;
   }
@@ -338,7 +347,10 @@ function getTransferArguments(
   const amountInput = recordTransition.inputs[amountOutputIndex] ?? null;
 
   if (!hasValueField(recipientInput) || !hasValueField(amountInput)) {
-    log("aleo/sync", `enrichPrivateRecord: invalid transition arguments for tx ${transactionId}`);
+    log(
+      "aleo/sync",
+      `enrichPrivateRecord: invalid ${transitionName} transition arguments for tx ${transactionId}`,
+    );
     return null;
   }
 
@@ -365,8 +377,7 @@ async function enrichOutgoingRecord({
   viewKey: string;
   address: string;
 }): Promise<EnrichedRecordData | null> {
-  const isTokenRecord = rawRecord.record_name.toLowerCase() === TOKEN_RECORD_NAME.toLowerCase();
-  const transferArguments = getTransferArguments(isTokenRecord, recordTransition, transactionId);
+  const transferArguments = getTransferArguments(recordTransition, transactionId);
   if (!transferArguments) {
     return null;
   }
@@ -694,16 +705,15 @@ export async function getTokenOutDetails({
       fee,
     };
 
-  // token programs have different argument indices
-  const recipientOutputIndex = RECIPIENT_ARG_INDEX - 1;
-  const amountOutputIndex = AMOUNT_ARG_INDEX - 1;
+  const recipientOutputIndex = getRecipientArgumentIndex(transition.inputs);
+  const amountOutputIndex = recipientOutputIndex + 1;
 
   const plaintexts = transition.inputs.flatMap(inp =>
     inp.type === "public" ? [normalizeAleoPlaintext(inp.value)] : [],
   );
   const recipient = plaintexts.find(isAleoAddressPlaintext) ?? null;
 
-  // For private_to_public the amount argument is already in plaintext at AMOUNT_ARG_INDEX.
+  // For private_to_public the amount argument is already in plaintext.
   if (record.function_name === EXPLORER_TRANSFER_TYPES.PRIVATE_TO_PUBLIC) {
     // Amount is already in plaintext — scan inputs by pattern instead of assuming a
     // fixed argument index (token programs may differ from credits.aleo).
@@ -711,8 +721,7 @@ export async function getTokenOutDetails({
     return { amount: amountStr ? parseAmount(amountStr) : null, recipient, fee };
   }
 
-  // Fully private transfer: decrypt recipient and amount arguments using the token program's
-  // argument indices (recipientOutputIndex/amountOutputIndex already account for layout differences).
+  // Fully private transfer: decrypt recipient and amount arguments.
   if (transition.inputs.length <= amountOutputIndex) {
     return { amount: null, recipient, fee };
   }

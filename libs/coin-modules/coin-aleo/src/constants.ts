@@ -31,6 +31,14 @@ export const PRIVATE_TRANSFER_FUNCTIONS = new Set([
   EXPLORER_TRANSFER_TYPES.PUBLIC_TO_PRIVATE,
 ]);
 
+// Functions that produce owned records without transferring anything,
+// so their transition holds no recipient and no amount.
+export const NON_TRANSFER_FUNCTIONS = new Set([
+  "join",
+  "split",
+  EXPLORER_TRANSFER_TYPES.FEE_PRIVATE,
+]);
+
 // Semi-public function names that cross the public/private boundary.
 // These appear in public token operations AND have matching private records,
 // so they need to be patched during private sync (analogous to coin ops patching).
@@ -41,11 +49,6 @@ export const SEMI_PUBLIC_TOKEN_FUNCTIONS = new Set([
 
 // Each record with this value in `record_name` field is a token record.
 export const TOKEN_RECORD_NAME = "Token";
-
-// Indexes based on aleo credits program args
-// ref: https://developer.aleo.org/concepts/fundamentals/credits/#transfer_public
-export const RECIPIENT_ARG_INDEX = 1;
-export const AMOUNT_ARG_INDEX = 2;
 
 // The maximum amount of records to fetch in a single API call when fetching owned records.
 // This is not a limit on the total number of records that can be fetched, but rather a pagination parameter for the API calls.

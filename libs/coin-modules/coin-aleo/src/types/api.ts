@@ -10,6 +10,16 @@ export type AleoTransitionValue =
       id: string;
       type: "record";
       tag: string;
+    }
+  | {
+      id: string;
+      type: "record_with_dynamic_id";
+      tag: string;
+      dynamic_id: string;
+    }
+  | {
+      id: string;
+      type: "external_record" | "record_dynamic";
     };
 
 export interface AleoTransition {
@@ -43,6 +53,7 @@ export interface AleoPublicTransaction {
   block_timestamp: string;
   function_id: string;
   amount: number;
+  amount_u128?: string;
   sender_address: string;
   recipient_address: string;
   program_id: string;

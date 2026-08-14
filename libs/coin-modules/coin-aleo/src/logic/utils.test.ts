@@ -378,6 +378,15 @@ describe("toCoinFrameworkOperation", () => {
     expect(result.tx.block.hash).toBe(rawTx.block_hash);
   });
 
+  it("should use amount_u128 over amount when provided, including values beyond JS safe integer range", () => {
+    const amountU128 = "123456789012345678901234567890";
+    const rawTx = getMockedPublicTransaction({ amount: 10000000, amount_u128: amountU128 });
+
+    const result = toCoinFrameworkOperation(rawTx, recipientAddress);
+
+    expect(result.value).toBe(BigInt(amountU128));
+  });
+
   it("should set failed to true when transaction_status is not Accepted", () => {
     const rawTx = getMockedPublicTransaction({ transaction_status: "Rejected" });
 
@@ -433,6 +442,15 @@ describe("toBridgeOperation", () => {
     expect(result.hasFailed).toBe(false);
   });
 
+  it("should use amount_u128 over amount when provided, including values beyond JS safe integer range", () => {
+    const amountU128 = "123456789012345678901234567890";
+    const rawTx = getMockedPublicTransaction({ amount: 10000000, amount_u128: amountU128 });
+
+    const result = toBridgeOperation(ledgerAccountId, rawTx, recipientAddress);
+
+    expect(result.value).toEqual(new BigNumber(amountU128));
+  });
+
   it("should generate different ids for different account ids", () => {
     const rawTx = getMockedPublicTransaction();
     const otherId = "js:2:aleo:aleo1other:";
@@ -466,7 +484,6 @@ describe("toBridgeOperation", () => {
 
   it.each([
     ["NaN amount", { amount: NaN as number }],
-    ["zero amount", { amount: 0 }],
     ["negative amount", { amount: -1 }],
   ])("should log invalid raw transaction details for %s", (_label, amountOverride) => {
     const rawTx = getMockedPublicTransaction(amountOverride);
@@ -479,6 +496,19 @@ describe("toBridgeOperation", () => {
       rawTx,
     );
     expect(result.value).toEqual(new BigNumber(rawTx.amount));
+  });
+
+  it("should log a zero amount apart from invalid details, as it is valid on chain", () => {
+    const rawTx = getMockedPublicTransaction({ amount: 0 });
+
+    toBridgeOperation(ledgerAccountId, rawTx, recipientAddress);
+
+    expect(log).toHaveBeenCalledTimes(1);
+    expect(log).toHaveBeenCalledWith(
+      "aleo/toBridgeOperation",
+      `Zero value transaction for ${recipientAddress}`,
+      rawTx,
+    );
   });
 
   it("should not log when amount is valid", () => {

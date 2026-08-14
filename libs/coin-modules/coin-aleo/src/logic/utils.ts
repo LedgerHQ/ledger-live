@@ -156,6 +156,10 @@ export const determineTransactionType = (
   return "public";
 };
 
+function resolveTransactionAmount(rawTx: AleoPublicTransaction): BigNumber {
+  return new BigNumber(rawTx.amount_u128 ?? rawTx.amount);
+}
+
 function parseTransactionFields(rawTx: AleoPublicTransaction, address: string) {
   const date = new Date(Number(rawTx.block_timestamp) * 1000);
   const hasFailed = rawTx.transaction_status !== "Accepted";
@@ -185,7 +189,7 @@ export const toCoinFrameworkOperation = (
     type,
     recipients: [rawTx.recipient_address],
     senders: [rawTx.sender_address],
-    value: BigInt(rawTx.amount.toFixed(0)),
+    value: BigInt(resolveTransactionAmount(rawTx).toFixed(0)),
     asset: { type: "native" },
     details: {
       functionId: rawTx.function_id,
@@ -212,14 +216,18 @@ export const toBridgeOperation = (
   address: string,
   isTokenTx?: boolean,
 ): AleoOperation => {
-  const value = new BigNumber(rawTx.amount);
+  const value = resolveTransactionAmount(rawTx);
   const { type, fee, blockHash, transactionType, date, hasFailed } = parseTransactionFields(
     rawTx,
     address,
   );
 
-  if (value.isNaN() || value.lte(0)) {
+  if (value.isNaN() || value.isNegative()) {
     log("aleo/toBridgeOperation", `Invalid raw transaction details for ${address}`, rawTx);
+  }
+
+  if (value.isZero()) {
+    log("aleo/toBridgeOperation", `Zero value transaction for ${address}`, rawTx);
   }
 
   return {
