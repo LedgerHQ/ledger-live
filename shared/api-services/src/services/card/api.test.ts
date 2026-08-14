@@ -6,7 +6,7 @@ function buildExtra(overrides: Partial<CardApiExtra> = {}): CardApiExtra {
   return {
     cardApiBaseUrl: "https://card.test",
     cardBaanxClientKey: "test-client-key",
-    getCardSessionToken: () => "session-token",
+    getCardSessionToken: async () => "session-token",
     refreshCardSession: async () => "refreshed-token",
     ...overrides,
   };
@@ -90,7 +90,7 @@ describe("cardBaseQuery", () => {
     fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({}));
 
     const { api, store } = probeStore(
-      cardApiExtra(buildExtra({ getCardSessionToken: () => null })),
+      cardApiExtra(buildExtra({ getCardSessionToken: async () => null })),
     );
     await store.dispatch(api.endpoints.probe.initiate());
 

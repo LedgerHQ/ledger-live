@@ -40,7 +40,7 @@ const cardBaseQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryErro
       },
     })(args, api, extraOptions);
 
-  const result = await runWithToken(extra.getCardSessionToken());
+  const result = await runWithToken(await extra.getCardSessionToken());
 
   const isUnauthorized =
     !!result.error &&

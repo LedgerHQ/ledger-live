@@ -28,7 +28,9 @@ const session = {
 };
 
 // Wired the way the apps wire it: the store registers the service api, never this package.
-const makeStore = (getCardSessionToken: () => string | null = () => null) =>
+const makeStore = (
+  getCardSessionToken: () => Promise<string | null> = () => Promise.resolve(null),
+) =>
   configureStore({
     reducer: {
       [cardApi.reducerPath]: cardApi.reducer,
@@ -191,7 +193,7 @@ describe("cardManagementApi requests", () => {
     it("sends the session bearer token alongside the client key", async () => {
       fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({ success: true }));
 
-      const store = makeStore(() => "session-token");
+      const store = makeStore(async () => "session-token");
       const result = await store.dispatch(cardManagementApi.endpoints.logout.initiate());
 
       expect(request(fetchSpy).url).toBe("https://card.test/v1/auth/logout");
@@ -220,7 +222,7 @@ describe("cardManagementApi requests", () => {
         }),
       );
 
-      const store = makeStore(() => "session-token");
+      const store = makeStore(async () => "session-token");
       const result = await store.dispatch(cardManagementApi.endpoints.getUser.initiate());
 
       expect(request(fetchSpy).url).toBe("https://card.test/v1/user");

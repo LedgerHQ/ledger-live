@@ -13,7 +13,11 @@ export const cardSession = {
   },
 };
 
-export function getCardSessionToken(): string | null | undefined {
+/**
+ * Async because the store behind it is about to become OS secure storage, which only reads
+ * asynchronously. The Card base query awaits this value on every request.
+ */
+export async function getCardSessionToken(): Promise<string | null | undefined> {
   return cardSession.getToken();
 }
 
