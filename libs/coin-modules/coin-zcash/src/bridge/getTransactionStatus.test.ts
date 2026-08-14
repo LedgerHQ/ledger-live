@@ -9,6 +9,7 @@ import {
 import { ZIP317_MINIMUM_FEE } from "../logic/coin-selection";
 import type { BitcoinOutput, Transaction, ZcashAccount, ZcashTransferType } from "../types/bridge";
 import type { SpendableNote } from "../network/types";
+import { ZCASH_SHIELDED_SPENDABILITY_DELAY_BLOCKS } from "../constants";
 
 const T_ADDRESS = "t1b1Rbw2shhJkP6MCnCyxCPuyFedHrwKty8";
 const U_ADDRESS =
@@ -16,7 +17,7 @@ const U_ADDRESS =
 const ZS_ADDRESS = "zs1z7rejlpsa98s2rrrfkwmaxu53e4ue0ulcrw0h4x5g8jl04tak0d3mm47vdtahatqrlkngh9slya";
 
 const REFERENCE_HEIGHT = 3_450_000;
-const MATURE_BLOCK = REFERENCE_HEIGHT - 12; // mirrors ZCASH_SHIELDED_SPENDABILITY_DELAY_BLOCKS
+const MATURE_BLOCK = REFERENCE_HEIGHT - ZCASH_SHIELDED_SPENDABILITY_DELAY_BLOCKS;
 const FRESH_BLOCK = REFERENCE_HEIGHT - 3; // still maturing
 
 const note = (amount: number, index = 1): SpendableNote =>

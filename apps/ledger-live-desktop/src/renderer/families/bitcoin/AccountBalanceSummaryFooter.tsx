@@ -30,6 +30,7 @@ import {
   getTransparentBalance,
 } from "@ledgerhq/coin-zcash/logic/account/balance";
 import {
+  getMaturingIronwoodBalance,
   getSpendableIronwoodBalance,
   hasMaturingIronwoodNotes,
 } from "@ledgerhq/coin-zcash/logic/account/spendability";
@@ -359,19 +360,24 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
 
   const zcashAccount = account as ZcashAccount;
   const hasMaturingFunds = hasMaturingIronwoodNotes(zcashAccount);
-  // The maturing amount is what the total holds beyond what selection could
-  // currently spend -- derived from the same filter as the send flow, so it
-  // can never disagree with it.
-  const _maturingAmount = hasMaturingFunds
-    ? _privateBalance.minus(
-        getSpendableIronwoodBalance(zcashAccount, getReservedNullifiers(zcashAccount)),
-      )
-    : BigNumber(0);
+  // Spending one note returns its whole remainder as a single fresh note, so
+  // right after a send nearly the entire private balance is maturing. Leading
+  // with what is still spendable is what keeps that from reading as "all your
+  // funds are locked", and it is the figure the send flow will actually offer.
+  const _spendableBalance = getSpendableIronwoodBalance(
+    zcashAccount,
+    getReservedNullifiers(zcashAccount),
+  );
+  // Counted from immaturity alone, not as `total - spendable`: that difference
+  // also swallows the notes an in-flight spend has reserved, which would label
+  // a pending transaction of the user's own as "maturing".
+  const _maturingAmount = getMaturingIronwoodBalance(zcashAccount);
 
   const transparentBalanceLabel = formatCurrencyUnit(unit, _transparentBalance, formatConfig);
   const privateBalanceLabel = formatCurrencyUnit(unit, _privateBalance, formatConfig);
   const availableBalanceLabel = formatCurrencyUnit(unit, _availableBalance, formatConfig);
   const maturingAmountLabel = formatCurrencyUnit(unit, _maturingAmount, formatConfig);
+  const spendableBalanceLabel = formatCurrencyUnit(unit, _spendableBalance, formatConfig);
 
   return (
     <Container>
@@ -419,7 +425,7 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
               <Discreet>
                 <Trans
                   i18nKey="zcash.account.privateBalanceMaturing"
-                  values={{ amount: maturingAmountLabel }}
+                  values={{ spendable: spendableBalanceLabel, maturing: maturingAmountLabel }}
                 />
               </Discreet>
             </MaturingAmount>

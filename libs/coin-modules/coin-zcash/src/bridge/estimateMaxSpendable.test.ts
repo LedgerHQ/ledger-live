@@ -2,12 +2,12 @@ import { BigNumber } from "bignumber.js";
 import { estimateMaxSpendable } from "./estimateMaxSpendable";
 import { computeShieldedSpendFee } from "../logic/coin-selection";
 import type { Transaction, ZcashAccount } from "../types/bridge";
+import { ZCASH_SHIELDED_SPENDABILITY_DELAY_BLOCKS } from "../constants";
 
 const U_ADDRESS =
   "u1u2h4ce7e2cn3z4nzur95muq2dl4da9x8h8kdp2l80gm9nl9raj8zzpx79ycjnfvar4v5exea5pqr5y9qsnlp0cdunwf9yjjx5c4q7ar9";
 const REFERENCE_HEIGHT = 3_450_000;
-const MATURE_DELAY = 12; // mirrors ZCASH_SHIELDED_SPENDABILITY_DELAY_BLOCKS
-const MATURE_BLOCK = REFERENCE_HEIGHT - MATURE_DELAY;
+const MATURE_BLOCK = REFERENCE_HEIGHT - ZCASH_SHIELDED_SPENDABILITY_DELAY_BLOCKS;
 const IMMATURE_BLOCK = REFERENCE_HEIGHT - 3;
 
 const nullifierAt = (index: number) => index.toString(16).padStart(2, "0").repeat(32);

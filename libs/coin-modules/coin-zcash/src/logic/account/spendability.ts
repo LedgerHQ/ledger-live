@@ -104,3 +104,18 @@ export function getSpendableIronwoodBalance(
 export function hasMaturingIronwoodNotes(account: SpendabilityAccount): boolean {
   return collectIronwoodNotesWithMaturity(account).some(({ mature }) => !mature);
 }
+
+/**
+ * Value held by notes that are merely too young to spend.
+ *
+ * Deliberately **not** `total - spendable`: that difference also swallows the
+ * notes an in-flight spend has reserved, and reporting those as "maturing"
+ * would tell the user to wait for a confirmation depth when what they are
+ * actually waiting on is their own pending transaction. This counts immaturity
+ * and nothing else, so the figure always matches the word next to it.
+ */
+export function getMaturingIronwoodBalance(account: SpendabilityAccount): BigNumber {
+  return collectIronwoodNotesWithMaturity(account)
+    .filter(({ mature }) => !mature)
+    .reduce((sum, { note }) => sum.plus(note.amount), new BigNumber(0));
+}
