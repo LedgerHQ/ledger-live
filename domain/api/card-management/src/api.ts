@@ -8,12 +8,14 @@ import {
   PayCardSessionSchema,
   PayCardUserResponseSchema,
 } from "./schema";
-import { transformPayCardSessionResponse } from "./transforms";
+import {
+  transformPayCardAuthorizeInitiateResponse,
+  transformPayCardSessionResponse,
+} from "./transforms";
 import type {
   PayCardAuthorizationCodeRequest,
   PayCardAuthorizeInitiate,
   PayCardAuthorizeInitiateRequest,
-  PayCardAuthorizeInitiateResponse,
   PayCardLogoutResult,
   PayCardRefreshSessionRequest,
   PayCardSession,
@@ -41,13 +43,7 @@ export const cardManagementApi = cardApi
           },
         }),
         rawResponseSchema: PayCardAuthorizeInitiateResponseSchema,
-        // The redirect URI travels with the answer: the secure browser has to match the callback
-        // against it, and the token exchange has to echo it.
-        transformResponse: (
-          response: PayCardAuthorizeInitiateResponse,
-          _meta,
-          { redirectUri }: PayCardAuthorizeInitiateRequest,
-        ) => ({ ...response, redirectUri }),
+        transformResponse: transformPayCardAuthorizeInitiateResponse,
         responseSchema: PayCardAuthorizeInitiateSchema,
       }),
 
