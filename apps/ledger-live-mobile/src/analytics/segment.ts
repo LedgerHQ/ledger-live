@@ -14,7 +14,7 @@ import {
   useRoute,
 } from "@react-navigation/native";
 import snakeCase from "lodash/snakeCase";
-import React, { type RefObject, useCallback } from "react";
+import React, { type RefObject } from "react";
 import { idsToLanguage } from "@ledgerhq/types-live";
 import type { FeatureId, Features } from "@shared/feature-flags";
 
@@ -754,15 +754,6 @@ export const flush = async () => {
   await segmentClient.flush();
 };
 
-export const useTrack = () => {
-  const route = useRoute();
-  const track = useCallback(
-    (event: EventType, properties?: Record<string, unknown> | null, mandatory?: boolean | null) =>
-      trackWithRoute(event, route, properties, mandatory),
-    [route],
-  );
-  return track;
-};
 export const usePageNameFromRoute = () => {
   const route = useRoute();
   return getPageNameFromRoute(route);

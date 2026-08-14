@@ -28,7 +28,6 @@ jest.mock("~/analytics", () => {
 
   return {
     track,
-    useTrack: () => track,
     TrackScreen: () => null,
     updateIdentify: jest.fn(),
   };
