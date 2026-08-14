@@ -1,12 +1,16 @@
-import { mapSnapshotToViewProps } from "../useCardLoginViewModel";
+import { mapSnapshotToViewModel } from "../useCardLoginViewModel";
 
-describe("mapSnapshotToViewProps", () => {
+const handlers = { onLoginPress: jest.fn(), onLogoutPress: jest.fn() };
+
+const user = { id: "3f2504e0-4f89-11d3-9a0c-0305e82c3301", verificationState: "VERIFIED" } as const;
+
+describe("mapSnapshotToViewModel", () => {
   it.each(["idle", "error"] as const)("offers the login action in %s", value => {
-    const props = mapSnapshotToViewProps(value, null);
+    const { login, user: panel } = mapSnapshotToViewModel(value, null, undefined, handlers);
 
-    expect(props.isHidden).toBe(false);
-    expect(props.isLoading).toBe(false);
-    expect(props.loginLabel).toBe("Login");
+    expect(login?.isLoading).toBe(false);
+    expect(login?.loginLabel).toBe("Login");
+    expect(panel).toBeNull();
   });
 
   it.each([
@@ -21,18 +25,59 @@ describe("mapSnapshotToViewProps", () => {
     "fetchingUser",
     "clearingAttempt",
   ] as const)("shows work in progress in %s", value => {
-    const props = mapSnapshotToViewProps(value, null);
+    const { login, user: panel } = mapSnapshotToViewModel(value, null, undefined, handlers);
 
-    expect(props.isHidden).toBe(false);
-    expect(props.isLoading).toBe(true);
+    expect(login?.isLoading).toBe(true);
+    expect(panel).toBeNull();
   });
 
-  it("renders nothing once the user is signed in", () => {
-    expect(mapSnapshotToViewProps("ready", null).isHidden).toBe(true);
+  it("shows the card holder once signed in", () => {
+    const { login, user: panel } = mapSnapshotToViewModel("ready", null, user, handlers);
+
+    expect(login).toBeNull();
+    expect(panel).toMatchObject({
+      userId: user.id,
+      verificationValue: "Verified",
+      logoutLabel: "Log out",
+      isLoading: false,
+    });
+  });
+
+  it("keeps the logout action busy while the logout runs", () => {
+    const { login, user: panel } = mapSnapshotToViewModel("loggingOut", null, user, handlers);
+
+    expect(login).toBeNull();
+    expect(panel?.isLoading).toBe(true);
+  });
+
+  it.each([
+    ["UNVERIFIED", "Not verified"],
+    ["PENDING", "In review"],
+    ["VERIFIED", "Verified"],
+    ["REJECTED", "Rejected"],
+  ] as const)("reads %s as %s", (verificationState, expected) => {
+    const { user: panel } = mapSnapshotToViewModel(
+      "ready",
+      null,
+      { ...user, verificationState },
+      handlers,
+    );
+
+    expect(panel?.verificationValue).toBe(expected);
+  });
+
+  it("shows neither half while the signed-in user is still on its way", () => {
+    // `ready` with an empty cache: the panel would otherwise flash an account with no id.
+    expect(mapSnapshotToViewModel("ready", null, undefined, handlers)).toEqual({
+      login: null,
+      user: null,
+    });
   });
 
   it("shows no message while there is no error", () => {
-    expect(mapSnapshotToViewProps("idle", null).errorMessage).toBeNull();
+    expect(
+      mapSnapshotToViewModel("idle", null, undefined, handlers).login?.errorMessage,
+    ).toBeNull();
   });
 
   it.each([
@@ -45,10 +90,10 @@ describe("mapSnapshotToViewProps", () => {
     "persist_failed",
     "fetch_user_failed",
   ] as const)("shows a message for %s", errorKind => {
-    const { errorMessage } = mapSnapshotToViewProps("error", errorKind);
+    const { login } = mapSnapshotToViewModel("error", errorKind, undefined, handlers);
 
-    expect(errorMessage).toMatch(/\.$/);
+    expect(login?.errorMessage).toMatch(/\.$/);
     // The copy is ours, never the backend's or RTK's.
-    expect(errorMessage).not.toContain(errorKind);
+    expect(login?.errorMessage).not.toContain(errorKind);
   });
 });

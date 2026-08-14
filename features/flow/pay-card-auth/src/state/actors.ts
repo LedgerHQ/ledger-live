@@ -132,6 +132,13 @@ export const getUser = fromPromise(({ input }: { input: { ports: CardLoginPorts 
   input.ports.getUser(),
 );
 
+export const logout = fromPromise(async ({ input }: { input: { ports: CardLoginPorts } }) => {
+  await input.ports.logout().catch(() => undefined);
+  await input.ports.clearSession();
+  await input.ports.clearAttempt().catch(() => undefined);
+  input.ports.forgetUser();
+});
+
 /**
  * Best effort by design. A store that refuses to forget must not wedge the login, and a session left
  * behind heals itself: the next request answers 401 and the base query clears it.

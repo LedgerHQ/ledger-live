@@ -5,6 +5,7 @@ import {
   getUser,
   hydrate,
   initiateAuthorize,
+  logout,
   openHostedLogin,
   persistSession,
   prepareAttempt,
@@ -30,6 +31,7 @@ export const cardLoginMachine = setup({
     exchangeAuthorizationCode,
     persistSession,
     getUser,
+    logout,
     clearAttempt,
   },
   guards: {
@@ -257,7 +259,19 @@ export const cardLoginMachine = setup({
       },
     },
 
-    // Terminal for v1. Logout and renewal are later work (LIVE-34741).
-    ready: {},
+    ready: {
+      on: { LOGOUT: { target: "loggingOut" } },
+    },
+
+    loggingOut: {
+      invoke: {
+        src: "logout",
+        input: ({ context }) => ({ ports: context.ports }),
+        // Both ways lead back to the login screen. A logout the user asked for always happens here,
+        // even when the provider or the store refused to take part.
+        onDone: { target: "idle" },
+        onError: { target: "idle" },
+      },
+    },
   },
 });

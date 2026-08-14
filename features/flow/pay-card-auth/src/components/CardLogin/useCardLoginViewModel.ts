@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useMemo } from "react";
 import { useDispatch } from "react-redux";
+import { useGetUserQuery } from "@domain/api-card-management";
+import type { PayCardUser } from "@domain/api-card-management";
 import { useMachine } from "@xstate/react";
 import type { SnapshotFrom } from "xstate";
 import { createCardLoginPorts, type CardLoginDispatch } from "../../state/createCardLoginPorts";
 import type { PayCardLoginErrorKind } from "../../state/errors";
 import { cardLoginMachine } from "../../state/machine";
-import type { CardLoginViewModelParams, CardLoginViewProps } from "./types";
+import type { CardLoginViewModel, CardLoginViewModelParams } from "./types";
 
 type CardLoginStateValue = SnapshotFrom<typeof cardLoginMachine>["value"];
 
@@ -21,22 +23,57 @@ const ERROR_MESSAGES: Record<PayCardLoginErrorKind, string> = {
   fetch_user_failed: "Your card could not be loaded. Please try again.",
 };
 
+const VERIFICATION_LABELS: Record<PayCardUser["verificationState"], string> = {
+  UNVERIFIED: "Not verified",
+  PENDING: "In review",
+  VERIFIED: "Verified",
+  REJECTED: "Rejected",
+};
+
+/** The states that mean the card holder is signed in, whatever the flow is doing about it. */
+function isSignedIn(value: CardLoginStateValue): boolean {
+  return value === "ready" || value === "loggingOut";
+}
+
 /**
- * Turns one machine snapshot into view props. It is a pure function so the mapping can be read, and
- * tested, without a React tree: `idle` and `error` offer the login action, `ready` shows nothing, and
- * every state in between is work in progress.
+ * Turns one machine snapshot, plus the user in the cache, into the view props. It is a pure function so
+ * the mapping can be read, and tested, without a React tree.
  */
-export function mapSnapshotToViewProps(
+export function mapSnapshotToViewModel(
   value: CardLoginStateValue,
   errorKind: PayCardLoginErrorKind | null,
-): Omit<CardLoginViewProps, "onLoginPress"> {
+  user: PayCardUser | undefined,
+  handlers: { onLoginPress: () => void; onLogoutPress: () => void },
+): CardLoginViewModel {
+  if (isSignedIn(value)) {
+    // The card holder is signed in, but the user answer may still be on its way back from the cache.
+    return user
+      ? {
+          login: null,
+          user: {
+            title: "Card",
+            idLabel: "Account",
+            userId: user.id,
+            verificationLabel: "Verification",
+            verificationValue: VERIFICATION_LABELS[user.verificationState],
+            logoutLabel: "Log out",
+            isLoading: value === "loggingOut",
+            onLogoutPress: handlers.onLogoutPress,
+          },
+        }
+      : { login: null, user: null };
+  }
+
   return {
-    title: "Card",
-    description: "Log in to access your Ledger Card",
-    loginLabel: "Login",
-    isHidden: value === "ready",
-    isLoading: value !== "idle" && value !== "error" && value !== "ready",
-    errorMessage: errorKind ? ERROR_MESSAGES[errorKind] : null,
+    login: {
+      title: "Card",
+      description: "Log in to access your Ledger Card",
+      loginLabel: "Login",
+      isLoading: value !== "idle" && value !== "error",
+      errorMessage: errorKind ? ERROR_MESSAGES[errorKind] : null,
+      onLoginPress: handlers.onLoginPress,
+    },
+    user: null,
   };
 }
 
@@ -44,7 +81,7 @@ export function useCardLoginViewModel({
   openHostedLogin,
   oauthConfig,
   callback,
-}: CardLoginViewModelParams): CardLoginViewProps {
+}: CardLoginViewModelParams): CardLoginViewModel {
   const dispatch = useDispatch<CardLoginDispatch>();
 
   const ports = useMemo(
@@ -56,6 +93,10 @@ export function useCardLoginViewModel({
     input: { ports, oauthConfig, callback },
   });
 
+  // The machine already filled this cache entry. Subscribing keeps the answer alive while the panel is
+  // on screen, and asks for it again if the entry expired first.
+  const { data: user } = useGetUserQuery(undefined, { skip: !isSignedIn(snapshot.value) });
+
   useEffect(() => {
     // A redirect that arrives while the screen is already open. The machine ignores it unless it is
     // waiting for one, so a repeat is harmless: the first callback wins.
@@ -65,9 +106,10 @@ export function useCardLoginViewModel({
   }, [callback, send]);
 
   const onLoginPress = useCallback(() => send({ type: "LOGIN" }), [send]);
+  const onLogoutPress = useCallback(() => send({ type: "LOGOUT" }), [send]);
 
-  return {
-    ...mapSnapshotToViewProps(snapshot.value, snapshot.context.errorKind),
+  return mapSnapshotToViewModel(snapshot.value, snapshot.context.errorKind, user, {
     onLoginPress,
-  };
+    onLogoutPress,
+  });
 }

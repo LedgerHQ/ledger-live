@@ -13,7 +13,8 @@ import { CardLogin } from "@features/flow-pay-card-auth";
 <CardLogin oauthConfig={oauthConfig} callback={callback} />;
 ```
 
-`CardLogin` runs the whole login and shows nothing once it succeeds.
+`CardLogin` runs the whole login. Once the card holder is signed in it shows them instead: the account
+id, the verification state, and a logout action.
 
 `oauthConfig` carries the OAuth client id and redirect URI: both are the app's to know, and the
 provider matches the redirect URI verbatim. That same value goes to the authorization initiation, to
@@ -37,6 +38,10 @@ PKCE minted and stored → authorize initiation → OS browser → redirect → 
 → code exchanged → session stored → attempt wiped → GET /v1/user
 ```
 
+Logout runs that backwards, in the one order that works: the provider is told first, while the session
+can still authorize that call, and only then are the session, the attempt and the Card cache cleared.
+Telling the provider is best effort — a logout on a dead network still logs the user out on this device.
+
 The machine holds no React, no redux and no platform API. Everything it touches is a port
 (`CardLoginPorts` in `src/state/types.ts`), and `createCardLoginPorts` binds those ports to RTK Query,
 to this flow's PKCE store and to `@features/platform-card`. That is what makes every path testable with plain
@@ -52,7 +57,7 @@ Two secrets, two owners:
 The redirect can arrive twice, from the browser session and from the app's deep link. The first one
 wins and the second is ignored.
 
-Renewal, logout and the desktop redirect are later work (LIVE-34741, LIVE-34740).
+Renewal and the desktop redirect are later work (LIVE-34741, LIVE-34740).
 
 App composition and DevTools consume shared Pay Card entity state through
 `@domain/entity-pay-card`. Auth-only runtime state (`hasCard`) lives in this flow's
@@ -102,8 +107,10 @@ pay-card-auth/
     │       ├── __tests__/
     │       │   ├── CardLoginView.native.test.tsx
     │       │   └── CardLoginView.web.test.tsx
-    │       ├── CardLoginView.native.tsx     # Native presentational UI
-    │       ├── CardLoginView.web.tsx        # Web presentational UI
+    │       ├── CardLoginView.native.tsx     # Native login UI
+    │       ├── CardLoginView.web.tsx        # Web login UI
+    │       ├── CardUserView.native.tsx      # Native signed-in UI, with logout
+    │       ├── CardUserView.web.tsx         # Web signed-in UI, with logout
     │       ├── index.native.tsx             # Native component container
     │       ├── index.web.tsx                # Web component container
     │       ├── openHostedLogin.native.ts    # Native secure-browser opener

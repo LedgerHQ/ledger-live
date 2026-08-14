@@ -46,6 +46,12 @@ export function createCardLoginPorts({
         request.unsubscribe();
       }
     },
+    logout: async () => {
+      await dispatch(cardManagementApi.endpoints.logout.initiate()).unwrap();
+    },
+    forgetUser: () => {
+      dispatch(cardManagementApi.util.resetApiState());
+    },
     openHostedLogin,
   };
 }

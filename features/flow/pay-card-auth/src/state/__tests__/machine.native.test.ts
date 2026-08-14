@@ -34,6 +34,8 @@ function stubPorts(overrides: Partial<Ports> = {}): Ports {
     initiateAuthorize: jest.fn(async () => ({ url: "https://card.test/login" })),
     exchangeAuthorizationCode: jest.fn(async () => session),
     getUser: jest.fn(async () => user),
+    logout: jest.fn(async () => undefined),
+    forgetUser: jest.fn(),
     openHostedLogin: jest.fn(async () => ({
       type: "success",
       url: "ledgerlive://paytab?code=auth-code&state=state-value",
@@ -329,5 +331,79 @@ describe("cardLoginMachine failures", () => {
     await settledAt(actor, "error");
     expect(actor.getSnapshot().context.errorKind).toBe("fetch_user_failed");
     expect(ports.clearSession).not.toHaveBeenCalled();
+  });
+});
+
+describe("cardLoginMachine logout", () => {
+  async function signedIn(overrides: Partial<Ports> = {}) {
+    const ports = stubPorts({ hasSession: jest.fn(async () => true), ...overrides });
+    const actor = start(ports);
+    await settledAt(actor, "ready");
+    return { ports, actor };
+  }
+
+  it("tells the provider before it clears the session", async () => {
+    const order: string[] = [];
+    const { ports, actor } = await signedIn({
+      logout: jest.fn(async () => {
+        order.push("logout");
+      }),
+      clearSession: jest.fn(async () => {
+        order.push("clearSession");
+      }),
+    });
+
+    actor.send({ type: "LOGOUT" });
+
+    await settledAt(actor, "idle");
+    // The provider call carries the Bearer, so it cannot run after the session is gone.
+    expect(order).toEqual(["logout", "clearSession"]);
+    expect(ports.clearAttempt).toHaveBeenCalled();
+    expect(ports.forgetUser).toHaveBeenCalledTimes(1);
+  });
+
+  it("logs the user out on this device even when the provider cannot be reached", async () => {
+    const { ports, actor } = await signedIn({
+      logout: jest.fn(async () => Promise.reject(new Error("offline"))),
+    });
+
+    actor.send({ type: "LOGOUT" });
+
+    await settledAt(actor, "idle");
+    expect(ports.clearSession).toHaveBeenCalledTimes(1);
+    expect(ports.forgetUser).toHaveBeenCalledTimes(1);
+  });
+
+  it("returns to the login action even when the store refuses to forget", async () => {
+    const { actor } = await signedIn({
+      clearSession: jest.fn(async () => Promise.reject(new Error("keychain locked"))),
+    });
+
+    actor.send({ type: "LOGOUT" });
+
+    await settledAt(actor, "idle");
+    expect(actor.getSnapshot().context.errorKind).toBeNull();
+  });
+
+  it("offers a new login after the logout", async () => {
+    const { ports, actor } = await signedIn();
+    actor.send({ type: "LOGOUT" });
+    await settledAt(actor, "idle");
+
+    actor.send({ type: "LOGIN" });
+
+    await waitFor(actor, snapshot => snapshot.value === "awaitingHostedLogin");
+    expect(ports.createAttempt).toHaveBeenCalledTimes(1);
+  });
+
+  it("ignores a logout that arrives before the user is signed in", async () => {
+    const ports = stubPorts();
+    const actor = start(ports);
+    await settledAt(actor, "idle");
+
+    actor.send({ type: "LOGOUT" });
+
+    expect(actor.getSnapshot().value).toBe("idle");
+    expect(ports.logout).not.toHaveBeenCalled();
   });
 });

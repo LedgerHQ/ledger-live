@@ -79,6 +79,10 @@ export type CardLoginPorts = Readonly<{
   exchangeAuthorizationCode: (request: PayCardAuthorizationCodeRequest) => Promise<PayCardSession>;
   /** Fills the RTK Query cache, so every other screen sees the user too. */
   getUser: () => Promise<PayCardUser>;
+  /** Ends the session at the provider before the local session is cleared. */
+  logout: () => Promise<void>;
+  /** Removes the cached Card user after logout. */
+  forgetUser: () => void;
   openHostedLogin: OpenHostedLogin;
 }>;
 
@@ -122,6 +126,7 @@ export type CardLoginContext = {
 export type CardLoginEvent =
   | { type: "LOGIN" }
   | { type: "RETRY" }
+  | { type: "LOGOUT" }
   | { type: "CALLBACK_RECEIVED"; code: string; state: string };
 
 /* --- Redux ----------------------------------------------------------------------------------- */
