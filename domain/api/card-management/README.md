@@ -12,6 +12,10 @@ shared `cardApi` service (`@shared/api-services`, `services/card`) rather than d
 - `transforms.ts` — maps a validated wire response onto its canonical shape.
 - `constants.ts` — `CARD_MANAGEMENT_TAGS`, the cache tags this use case owns.
 
+Every endpoint is declarative: `query`, never `queryFn`, with the schemas and the transform doing the
+rest. [`.agents/skills/card-endpoint-shape`](.agents/skills/card-endpoint-shape/SKILL.md) has the
+shape and the reasons.
+
 | Endpoint | Method | Path | Purpose |
 | -------- | ------ | ---- | ------- |
 | `initiateAuthorize` | GET | `/v1/auth/oauth/authorize/initiate` | Start a login and get the hosted login URL |
