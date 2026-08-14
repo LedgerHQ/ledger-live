@@ -42,6 +42,8 @@ export class BuyAndSellPage extends WebViewAppPage {
   private fiatDrawerInput = "fiat-drawer-search-input";
   private saveRegionFiatOptionsSelector = "save-region-and-fiat-options";
   private showMoreQuotes = "SHOW MORE QUOTES";
+  private amountInputError = "amount-input-section-error";
+  private maxAmountButton = "max";
   private providerTitleCssSelector =
     "[data-testid^='provider_title_'][data-testid$='_title_container']";
 
@@ -235,8 +237,9 @@ export class BuyAndSellPage extends WebViewAppPage {
     await this.verifyElementText(this.infoBox, "Sell securely with Ledger");
   }
 
+  // Falls back to the max sellable balance if the requested amount exceeds it.
   @step("Enter amount to pay $0")
-  async setAmountToPay(amount: string, operation: string) {
+  async setAmountToPay(amount: string, operation: string): Promise<string> {
     await this.setValue(this.amountInputSection, amount);
 
     await this.verifyElementText(
@@ -244,8 +247,19 @@ export class BuyAndSellPage extends WebViewAppPage {
       operation === OperationType.Buy ? "Select quote to continue" : "Set an amount to get quotes",
     );
     await this.verifyElementIsNotEnabled(this.formCta);
-    await this.verifyElementIsVisible(this.paymentSelector);
+
+    try {
+      await this.verifyElementIsVisible(this.paymentSelector);
+    } catch (error) {
+      if (operation !== OperationType.Sell) throw error;
+      await this.verifyElementIsVisible(this.amountInputError);
+      await this.clickElement(this.maxAmountButton);
+      amount = await (await this.getWebViewElementByTestId(this.amountInputSection)).inputValue();
+      await this.verifyElementIsVisible(this.paymentSelector);
+    }
+
     await this.verifyElementIsVisible(this.providersList);
+    return amount;
   }
 
   @step("Select provider quote")
