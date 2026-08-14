@@ -21,6 +21,7 @@ function entry(
     },
     sourcePath: "/tmp/x.yaml",
     sourceRelative: "quarantine/x.yaml",
+    titleRegex: partial.titlePattern !== undefined ? new RegExp(partial.titlePattern) : undefined,
   };
 }
 

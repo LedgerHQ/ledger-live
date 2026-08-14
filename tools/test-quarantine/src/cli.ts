@@ -1,7 +1,7 @@
 import { spawn, spawnSync } from "node:child_process";
 import { mkdtempSync, readFileSync, readdirSync, existsSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { join, isAbsolute, relative } from "node:path";
+import { join, isAbsolute, relative, extname } from "node:path";
 import { loadRegistry, defaultRepoRoot } from "./load.ts";
 import {
   buildJestFilterArgs,
@@ -98,6 +98,16 @@ function splitCommand(input: string): string[] {
   return tokens;
 }
 
+/**
+ * On Windows, npm-installed binaries are `.cmd` shims that cmd.exe must resolve.
+ * Appending the extension lets us keep `shell: false` (the default) everywhere,
+ * avoiding the OS-command-injection surface that `shell: true` opens.
+ */
+function resolveCmd(cmd: string): string {
+  if (process.platform !== "win32" || extname(cmd)) return cmd;
+  return cmd + ".cmd";
+}
+
 /** Resolve the runner's launch command. We invoke the local binary via the package manager. */
 function runnerCommand(runner: Runner, args: string[]): { cmd: string; argv: string[] } {
   // Optional override so integration tests (and unusual local setups) can point
@@ -178,10 +188,9 @@ function positionalRunFiles(
  */
 function jestRunFiles(runnerArgs: string[], repoRoot: string): string[] | undefined {
   const { cmd, argv } = runnerCommand("jest", [...runnerArgs, "--listTests"]);
-  const res = spawnSync(cmd, argv, {
+  const res = spawnSync(resolveCmd(cmd), argv, {
     cwd: process.cwd(),
     encoding: "utf8",
-    shell: process.platform === "win32",
   });
   if (res.status !== 0 || typeof res.stdout !== "string") return undefined;
   const files = res.stdout
@@ -525,10 +534,9 @@ function logApplied(entries: LoadedEntry[], runner: Runner): void {
 
 function spawnRunner(cmd: string, argv: string[], env: NodeJS.ProcessEnv): Promise<number> {
   return new Promise(resolve => {
-    const child = spawn(cmd, argv, {
+    const child = spawn(resolveCmd(cmd), argv, {
       stdio: "inherit",
       env,
-      shell: process.platform === "win32",
     });
     child.on("error", error => {
       console.error(`[test-quarantine] failed to spawn ${cmd}: ${error.message}`);

@@ -36,6 +36,9 @@ const FilterSchema = z
     }
     if (filter.titlePattern !== undefined) {
       try {
+        // Validation only — we construct the RegExp to confirm it compiles; it is
+        // never matched against user input here. The compiled instance is stored on
+        // LoadedEntry.titleRegex by load.ts and reused from there.
         // eslint-disable-next-line no-new
         new RegExp(filter.titlePattern);
       } catch (error) {
@@ -73,6 +76,13 @@ export interface LoadedEntry {
   sourcePath: string;
   /** `sourcePath` relative to the repo root, for human-readable logs. */
   sourceRelative: string;
+  /**
+   * Pre-compiled form of `entry.filter.titlePattern` (set by `load.ts` when the
+   * field is present). Reusing this instance avoids reconstructing the RegExp on
+   * every match call and keeps the non-literal regex construction out of the hot
+   * path.
+   */
+  titleRegex?: RegExp;
 }
 
 /**

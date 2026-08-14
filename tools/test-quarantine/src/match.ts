@@ -24,8 +24,9 @@ function titleMatches(entry: LoadedEntry, title: string): boolean {
   if (filter.title !== undefined) {
     return filter.title === title;
   }
-  // filter.titlePattern (validated as a real regex by the schema).
-  return new RegExp(filter.titlePattern as string).test(title);
+  // filter.titlePattern — use the pre-compiled RegExp from LoadedEntry so we
+  // avoid constructing a new object on every match call.
+  return entry.titleRegex!.test(title);
 }
 
 /**

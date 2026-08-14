@@ -86,7 +86,15 @@ export function loadRegistry(options: LoadOptions = {}): LoadResult {
       throw new Error(`Invalid quarantine entry ${sourceRelative}:\n${issues}`);
     }
 
-    const loaded: LoadedEntry = { entry: parsed.data, sourcePath, sourceRelative };
+    const loaded: LoadedEntry = {
+      entry: parsed.data,
+      sourcePath,
+      sourceRelative,
+      titleRegex:
+        parsed.data.filter.titlePattern !== undefined
+          ? new RegExp(parsed.data.filter.titlePattern)
+          : undefined,
+    };
 
     if (isExpired(parsed.data.expiry, now)) {
       warn(
