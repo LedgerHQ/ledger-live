@@ -445,6 +445,12 @@ export default class PortfolioPage {
     await tapById(this.transferBottomSheetReceiveButton);
   }
 
+  @Step("Open the receive drawer")
+  async openReceiveDrawer() {
+    await this.pressQuickActionTransferButton();
+    await this.pressTransferBottomSheetReceiveButton();
+  }
+
   @Step("Press transfer bottom sheet send button")
   async pressTransferBottomSheetSendButton() {
     await tapById(this.transferBottomSheetSendButton);

@@ -19,6 +19,7 @@ export default class CommonPage {
   deviceItemRegex = /device-item-.*/;
   walletApiWebview = "wallet-api-webview";
   closeWithConfirmationButtonId = "button-close-add-account";
+  closeButtonId = "NavigationHeaderCloseButton";
   errorPage = new ErrorPage();
   seeAllTransactionButton = "portfolio-seeAll-transaction";
   assetDetailScrollViewId = /^asset-detail-scroll-view-.*/;
@@ -26,7 +27,7 @@ export default class CommonPage {
   accountGraphId = (accountId: string) => `account-graph-${accountId}`;
 
   searchBar = () => getElementById(this.searchBarId);
-  closeButton = () => getElementById("NavigationHeaderCloseButton");
+  closeButton = () => getElementById(this.closeButtonId);
   backButton = () => getElementById("navigation-header-back-button");
   seeAllOperationsButtonElement = () => getElementById(this.seeAllTransactionButton);
   assetScreenFlatlistElement = () => getElementById(this.assetScreenFlatlistId);
@@ -61,7 +62,10 @@ export default class CommonPage {
   }
 
   @Step("Close page")
-  async closePage() {
+  async closePage(options?: { onlyIfVisible: boolean }) {
+    if (options?.onlyIfVisible && !(await IsIdVisible(this.closeButtonId))) {
+      return;
+    }
     await tapByElement(this.closeButton());
   }
 
