@@ -1,13 +1,13 @@
 import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/index";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import type { Transaction, ZcashAccount } from "../types/bridge";
-import { collectIronwoodSpendableNotes } from "./operations";
 import {
   estimateMaxSpendableAmount,
   estimateMaxSpendableTransparent,
 } from "../logic/coin-selection";
 import { isTransparentInputTransfer, resolveTransparentUtxos } from "./statusHelpers";
 import { getReservedNullifiers } from "./note-reservation";
+import { collectSelectableIronwoodNotes } from "../logic/account/spendability";
 
 export const estimateMaxSpendable: AccountBridge<
   Transaction,
@@ -28,9 +28,6 @@ export const estimateMaxSpendable: AccountBridge<
     return estimateMaxSpendableTransparent(utxoValues, "transparent");
   }
 
-  const transactions = mainAccount.privateInfo?.transactions ?? [];
-  const allNotes = collectIronwoodSpendableNotes(transactions);
-  const reserved = getReservedNullifiers(mainAccount);
-  const notes = reserved.size > 0 ? allNotes.filter(n => !reserved.has(n.nullifier)) : allNotes;
+  const notes = collectSelectableIronwoodNotes(mainAccount, getReservedNullifiers(mainAccount));
   return estimateMaxSpendableAmount(notes, transferType);
 };

@@ -9,7 +9,11 @@ import type {
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import type { Transaction, ZcashAccount, BtcInputRef, ZcashOperationExtra } from "../types/bridge";
 import type { SignerContext } from "../types/signer";
-import { ZcashSignerNotSupported, ZcashSigningCancelled } from "../types/errors";
+import {
+  ZcashNotesNotYetSpendable,
+  ZcashSignerNotSupported,
+  ZcashSigningCancelled,
+} from "../types/errors";
 import { assertCanSend } from "../logic/engineClient";
 import { craftIronwoodTransaction, craftTransaction } from "../logic/transaction/craftTransaction";
 import { combine } from "../logic/transaction/combine";
@@ -30,6 +34,19 @@ const IRONWOOD_BUNDLE_TRANSFER_TYPES = new Set<Transaction["transferType"]>([
   "shielded-to-transparent",
   "transparent-to-shielded",
 ]);
+
+/**
+ * The builder's stable marker for a note whose leaf position is at or past the
+ * number of leaves the Ironwood tree held at its anchor -- the position-range
+ * rejection the maturity filter is meant to make unreachable (see
+ * `types/errors.ts`'s `ZcashNotesNotYetSpendable`). Matched on the message
+ * because the IPC wrapper carries the Rust error through verbatim, with no
+ * structured code.
+ */
+function isNotePositionPastAnchor(error: unknown): boolean {
+  const message = error instanceof Error ? error.message : String(error);
+  return message.includes("compute_ironwood_witnesses") && message.includes("anchor_total_leaves");
+}
 
 /**
  * The only bespoke residue of this bridge (kaspa-style): builds the PCZT
@@ -93,7 +110,10 @@ export const buildSignOperation =
 
         const useIronwood = IRONWOOD_BUNDLE_TRANSFER_TYPES.has(transaction.transferType);
         const buildResult = useIronwood
-          ? await craftIronwoodTransaction(plan)
+          ? await craftIronwoodTransaction(plan).catch(err => {
+              if (isNotePositionPastAnchor(err)) throw new ZcashNotesNotYetSpendable();
+              throw err;
+            })
           : await craftTransaction(plan);
 
         const { pcztTransaction } = buildResult;
