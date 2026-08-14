@@ -1,4 +1,4 @@
-import { PAY_CARD_BALANCE_FILTER_ALL, type PayCardBalanceFilter } from "@domain/entity-pay-card";
+import { PAY_CARD_BALANCE_FILTER_ALL, type PayCardBalanceFilter } from "../state";
 
 export function resolveSelection(
   persisted: PayCardBalanceFilter,

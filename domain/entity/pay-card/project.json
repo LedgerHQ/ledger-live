@@ -1,8 +1,0 @@
-{
-  "name": "@domain/entity-pay-card",
-  "targets": {
-    "build": {
-      "executor": "nx:noop"
-    }
-  }
-}

@@ -1,5 +1,5 @@
 import React from "react";
-import type { PayCardBalanceFilter } from "@domain/entity-pay-card";
+import type { PayCardBalanceFilter } from "../../state";
 import {
   CardContent,
   CardContentDescription,

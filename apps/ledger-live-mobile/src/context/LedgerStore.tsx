@@ -3,7 +3,8 @@ import { Provider } from "react-redux";
 import { Store } from "redux";
 import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/actions";
 import { restoreLargeScreenUpsellModalState } from "@ledgerhq/live-engagement/largeScreenUpsellModal";
-import { restorePayCardPersistedState } from "@domain/entity-pay-card";
+import { restorePayCardBalanceFilter } from "@features/flow-pay-card-balance/state";
+import { restorePayCardFeatureTour } from "@features/flow-pay-card-feature-tour/state";
 import { backfillOnboardingDate } from "~/logic/postOnboarding/backfillOnboardingDate";
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
 import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
@@ -201,7 +202,8 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
       }
 
       if (payCardState) {
-        store.dispatch(restorePayCardPersistedState(payCardState));
+        store.dispatch(restorePayCardFeatureTour(payCardState));
+        store.dispatch(restorePayCardBalanceFilter(payCardState));
       }
 
       store.dispatch(importTrustchainStoreState(trustchainStore));

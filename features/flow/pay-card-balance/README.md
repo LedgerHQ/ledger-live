@@ -28,6 +28,9 @@ The host passes the balance data (aggregated stable balance, `status`, `filter` 
 formatter) and the display `labels` directly, so the views stay props-only and platform navigation
 and data access remain at the app composition root.
 
+Store, persistence and test setup should import the slice from
+`@features/flow-pay-card-balance/state` so they do not load the hero UI.
+
 ## Shared data hook (`usePayCardBalanceData`)
 
 Both apps derive the balance data from their own portfolio source, then feed it through the shared
@@ -85,8 +88,8 @@ file it can reach through no other path would be reported as dead.
 
 This package follows the [Structure & Flow ADR](https://ledgerhq.atlassian.net/wiki/spaces/WXP/pages/6111232117/Guideline+Monorepo+DDD+Re-architecture+Structure+Flow).
 Every `index.*` is a pure barrel (`export *` only). UI lives under `components/` (one folder per
-component); the platform-agnostic logic lives in `logic/`, the host hook in `hooks/` and the shared
-contracts in `types.ts`.
+component); the platform-agnostic logic lives in `logic/`, the host hook in `hooks/`, Redux in
+`state/` (also exported as `./state`) and the shared contracts in `types.ts`.
 
 ```text
 pay-card-balance/
@@ -118,6 +121,7 @@ pay-card-balance/
     │   ├── buildBalanceFilterOptions.ts      # Filter option rows
     │   ├── buildPayCardBalanceData.ts        # build + aggregate + reset decision
     │   └── resolveSelection.ts               # Heal a stale persisted filter
+    ├── state/                                # UI-free Redux slice (`./state` export)
     ├── types.ts                              # Component + port contracts
     ├── exports.ts                            # Public surface (Hero container, hook, model, types)
     ├── index.ts                              # Public API barrel → ./exports

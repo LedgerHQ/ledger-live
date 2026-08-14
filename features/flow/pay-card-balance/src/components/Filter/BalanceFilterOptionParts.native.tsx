@@ -8,7 +8,7 @@ import {
   Spot,
 } from "@ledgerhq/lumen-ui-rnative";
 import { Placeholder } from "@ledgerhq/lumen-ui-rnative/symbols";
-import type { PayCardBalanceFilter } from "@domain/entity-pay-card";
+import type { PayCardBalanceFilter } from "../../state";
 
 export {
   CardContent,

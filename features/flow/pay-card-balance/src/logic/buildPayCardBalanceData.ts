@@ -1,5 +1,5 @@
 import type { Unit } from "@domain/entity-currency-unit";
-import type { PayCardBalanceFilter } from "@domain/entity-pay-card";
+import type { PayCardBalanceFilter } from "../state";
 import { aggregatePayCardBalance } from "./aggregatePayCardBalance";
 import {
   buildBalanceFilterOptions,

@@ -6,17 +6,15 @@ import {
   formatCurrencyUnitFragment,
 } from "@ledgerhq/live-common/currencies/index";
 import {
-  usePayCardBalanceData,
-  type FormattedValue,
-  type PayCardBalanceData,
-  type PayCardBalanceLabels,
-} from "@features/flow-pay-card-balance";
-import {
   PAY_CARD_BALANCE_FILTER_ALL,
   selectPayCardBalanceFilter,
   setPayCardBalanceFilter,
+  usePayCardBalanceData,
+  type FormattedValue,
+  type PayCardBalanceData,
   type PayCardBalanceFilter,
-} from "@domain/entity-pay-card";
+  type PayCardBalanceLabels,
+} from "@features/flow-pay-card-balance";
 import type { Unit } from "@domain/entity-currency-unit";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";
