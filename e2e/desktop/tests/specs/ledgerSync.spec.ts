@@ -42,10 +42,8 @@ function initializeTrustchain() {
     LedgerSyncCliHelper.pushLedgerSyncData,
   ];
 }
-// TODO: Unskip once staging cloud-sync can verify the JWT staging trustchain issues.
-// Staging trustchain 1.6.0-RC10 signs with a P-256/ES256 key that cloud-sync 1.0.5-RC1
-// cannot verify, so every cloud-sync call fails with 400 "Invalid value for: header
-// Authorization". Nothing to fix in Ledger Live: the app sends the same token.
+// TODO: Unskip once LIVE-35808 is fixed — staging cloud-sync cannot verify the JWT that
+// staging trustchain issues, so every cloud-sync call fails with 400 on the Authorization header.
 test.describe.skip("Ledger Sync", () => {
   setupSeed();
   test.use({
@@ -80,7 +78,7 @@ test.describe.skip("Ledger Sync", () => {
     },
     async ({ app, page }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-      await addBugLink(["LIVE-31799"]);
+      await addBugLink(["LIVE-31799", "LIVE-35808"]);
 
       await app.portfolio.expectAddAccountButtonVisible();
 
