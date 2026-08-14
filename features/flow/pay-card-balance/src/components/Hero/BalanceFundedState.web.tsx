@@ -2,20 +2,20 @@ import React from "react";
 import { AmountDisplay } from "@ledgerhq/lumen-ui-react";
 import { ActionTiles } from "../ActionTiles";
 import type { ActionTilesProps } from "../ActionTiles";
-import type { FormattedValue, PayCardBalanceFilterOption } from "../../types";
+import type { FormattedValue, BalanceFilterOption } from "../../types";
 import { BalanceFilterPill } from "../Filter/BalanceFilterPill";
 
-type PayCardBalanceFundedStateProps = Readonly<{
+type BalanceFundedStateProps = Readonly<{
   balance: number;
   formatCountervalue: (value: number) => FormattedValue;
   isLoading: boolean;
   allStablecoinsLabel: string;
-  selectedOption?: PayCardBalanceFilterOption;
+  selectedOption?: BalanceFilterOption;
   onOpenFilter: () => void;
   actionTiles?: ActionTilesProps;
 }>;
 
-export function PayCardBalanceFundedState({
+export function BalanceFundedState({
   balance,
   formatCountervalue,
   isLoading,
@@ -23,7 +23,7 @@ export function PayCardBalanceFundedState({
   selectedOption,
   onOpenFilter,
   actionTiles,
-}: PayCardBalanceFundedStateProps) {
+}: BalanceFundedStateProps) {
   return (
     <div className="flex flex-col gap-24" data-testid="pay-card-balance-funded-state">
       <div className="flex items-end gap-12">

@@ -8,10 +8,10 @@ import {
   PAY_CARD_BALANCE_FILTER_ALL,
   selectPayCardBalanceFilter,
   setPayCardBalanceFilter,
-  usePayCardBalanceData,
+  useBalanceData,
   type FormattedValue,
-  type PayCardBalanceData,
-  type PayCardBalanceFilter,
+  type BalanceData,
+  type BalanceFilter,
 } from "@features/flow-pay-card-balance";
 import type { Unit } from "@domain/entity-currency-unit";
 import { useDispatch, useSelector } from "~/context/hooks";
@@ -20,7 +20,7 @@ import { counterValueCurrencySelector, localeSelector } from "~/reducers/setting
 import { track } from "~/analytics";
 import { usePayStablecoins } from "./usePayStablecoins";
 
-export function usePayCardBalance(): PayCardBalanceData {
+export function usePayCardBalance(): BalanceData {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const locale = useSelector(localeSelector);
@@ -50,7 +50,7 @@ export function usePayCardBalance(): PayCardBalanceData {
   );
 
   const onConfirmFilter = useCallback(
-    (next: PayCardBalanceFilter) => {
+    (next: BalanceFilter) => {
       dispatch(setPayCardBalanceFilter(next));
     },
     [dispatch],
@@ -64,7 +64,7 @@ export function usePayCardBalance(): PayCardBalanceData {
     track(event, params);
   }, []);
 
-  return usePayCardBalanceData({
+  return useBalanceData({
     stablecoins,
     defaultStablecoins,
     filter,

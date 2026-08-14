@@ -1,12 +1,12 @@
 import React from "react";
-import type { PayCardBalanceFilterOption } from "../../types";
+import type { BalanceFilterOption } from "../../types";
 import { BalanceFilterSelectView } from "./BalanceFilterSelectView.native";
 import { useBalanceFilterSelectViewModel } from "./useBalanceFilterSelectViewModel";
 
 export type BalanceFilterSelectProps = Readonly<{
   allStablecoinsLabel: string;
   /** Applied option, or `undefined` when "all" is active. */
-  selectedOption?: PayCardBalanceFilterOption;
+  selectedOption?: BalanceFilterOption;
   onOpenFilter: () => void;
 }>;
 

@@ -1,9 +1,9 @@
-import type { PayCardBalanceFilterOption } from "../../types";
+import type { BalanceFilterOption } from "../../types";
 
 export type BalanceFilterSelectViewModelParams = Readonly<{
   allStablecoinsLabel: string;
   /** Applied option, or `undefined` when "all" is active. */
-  selectedOption?: PayCardBalanceFilterOption;
+  selectedOption?: BalanceFilterOption;
   onOpenFilter: () => void;
 }>;
 

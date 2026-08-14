@@ -1,9 +1,9 @@
-import { PAY_CARD_BALANCE_FILTER_ALL, type PayCardBalanceFilter } from "../state";
+import { PAY_CARD_BALANCE_FILTER_ALL, type BalanceFilter } from "../state";
 
 export function resolveSelection(
-  persisted: PayCardBalanceFilter,
-  optionIds: readonly PayCardBalanceFilter[],
-): PayCardBalanceFilter {
+  persisted: BalanceFilter,
+  optionIds: readonly BalanceFilter[],
+): BalanceFilter {
   if (persisted === PAY_CARD_BALANCE_FILTER_ALL) {
     return PAY_CARD_BALANCE_FILTER_ALL;
   }

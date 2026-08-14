@@ -1,6 +1,6 @@
 import type { Unit } from "@domain/entity-currency-unit";
 import { PAY_CARD_BALANCE_FILTER_ALL } from "../state";
-import type { PayCardBalanceFilterOption } from "../types";
+import type { BalanceFilterOption } from "../types";
 
 /** Always-offered stablecoin (USDC/USDT), taken from the top of the market-cap list. */
 export type DefaultStablecoin = Readonly<{
@@ -11,7 +11,7 @@ export type DefaultStablecoin = Readonly<{
 }>;
 
 /** Minimal held-stablecoin shape consumed by {@link buildBalanceFilterOptions}. */
-export type PayCardStablecoinItem = Readonly<{
+export type StablecoinItem = Readonly<{
   currency: Readonly<{
     id: string;
     name: string;
@@ -23,7 +23,7 @@ export type PayCardStablecoinItem = Readonly<{
 }>;
 
 export type BuildBalanceFilterOptionsParams = Readonly<{
-  stablecoins: readonly PayCardStablecoinItem[];
+  stablecoins: readonly StablecoinItem[];
   defaultStablecoins: readonly DefaultStablecoin[];
   allLabel: string;
   /** Formats a fiat countervalue, e.g. `(1000) => "$1,000.00"`. */
@@ -34,11 +34,11 @@ export type BuildBalanceFilterOptionsParams = Readonly<{
 
 function assetOption(
   id: string,
-  item: PayCardStablecoinItem,
+  item: StablecoinItem,
   formatFiat: (value: number) => string,
   formatCrypto: (unit: Unit, balance: number) => string,
   override?: Pick<DefaultStablecoin, "name" | "ticker">,
-): PayCardBalanceFilterOption {
+): BalanceFilterOption {
   return {
     id,
     title: override?.name ?? item.currency.name,
@@ -56,15 +56,15 @@ export function buildBalanceFilterOptions({
   allLabel,
   formatFiat,
   formatCrypto,
-}: BuildBalanceFilterOptionsParams): PayCardBalanceFilterOption[] {
-  const byTicker = new Map<string, PayCardStablecoinItem>();
+}: BuildBalanceFilterOptionsParams): BalanceFilterOption[] {
+  const byTicker = new Map<string, StablecoinItem>();
   for (const item of stablecoins) {
     byTicker.set(item.currency.ticker.toUpperCase(), item);
   }
 
   const unfilteredTotal = stablecoins.reduce((total, { value }) => total + value, 0);
 
-  const options: PayCardBalanceFilterOption[] = [
+  const options: BalanceFilterOption[] = [
     {
       id: PAY_CARD_BALANCE_FILTER_ALL,
       title: allLabel,
@@ -104,7 +104,7 @@ export function buildBalanceFilterOptions({
 
 export function tickerForFilter(
   filter: string,
-  options: readonly PayCardBalanceFilterOption[],
+  options: readonly BalanceFilterOption[],
 ): string | undefined {
   return options.find(option => option.id === filter)?.ticker;
 }

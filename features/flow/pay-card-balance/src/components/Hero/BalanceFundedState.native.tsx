@@ -2,20 +2,20 @@ import React from "react";
 import { AmountDisplay, Box } from "@ledgerhq/lumen-ui-rnative";
 import { ActionTiles } from "../ActionTiles";
 import type { ActionTilesProps } from "../ActionTiles";
-import type { FormattedValue, PayCardBalanceFilterOption } from "../../types";
+import type { FormattedValue, BalanceFilterOption } from "../../types";
 import { BalanceFilterSelect } from "../Filter/BalanceFilterSelect.native";
 
-type PayCardBalanceFundedStateProps = Readonly<{
+type BalanceFundedStateProps = Readonly<{
   balance: number;
   formatCountervalue: (value: number) => FormattedValue;
   isLoading: boolean;
   actionTiles?: ActionTilesProps;
   allStablecoinsLabel: string;
-  selectedOption?: PayCardBalanceFilterOption;
+  selectedOption?: BalanceFilterOption;
   onOpenFilter: () => void;
 }>;
 
-export function PayCardBalanceFundedState({
+export function BalanceFundedState({
   balance,
   formatCountervalue,
   isLoading,
@@ -23,7 +23,7 @@ export function PayCardBalanceFundedState({
   selectedOption,
   onOpenFilter,
   actionTiles,
-}: PayCardBalanceFundedStateProps) {
+}: BalanceFundedStateProps) {
   return (
     <Box
       lx={{ alignItems: "center", justifyContent: "center", gap: "s16", paddingVertical: "s32" }}

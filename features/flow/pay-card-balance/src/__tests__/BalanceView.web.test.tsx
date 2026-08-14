@@ -1,11 +1,11 @@
 import React from "react";
 import { screen } from "@testing-library/react";
-import { PayCardBalanceView } from "../components/Hero/PayCardBalanceView.web";
-import type { PayCardBalanceViewProps } from "../types";
+import { BalanceView } from "../components/Hero/BalanceView.web";
+import type { BalanceViewProps } from "../types";
 import { formatCountervalue, labels, options } from "./fixtures";
 import { renderWithStyle } from "./renderWithStyle.web";
 
-function fundedProps(overrides: Partial<PayCardBalanceViewProps> = {}): PayCardBalanceViewProps {
+function fundedProps(overrides: Partial<BalanceViewProps> = {}): BalanceViewProps {
   return {
     displayMode: "funded",
     balance: 1000,
@@ -19,14 +19,14 @@ function fundedProps(overrides: Partial<PayCardBalanceViewProps> = {}): PayCardB
     onCloseFilter: jest.fn(),
     onConfirmFilter: jest.fn(),
     ...overrides,
-  } as PayCardBalanceViewProps;
+  } as BalanceViewProps;
 }
 
-function renderView(props: PayCardBalanceViewProps) {
-  return renderWithStyle(<PayCardBalanceView {...props} />);
+function renderView(props: BalanceViewProps) {
+  return renderWithStyle(<BalanceView {...props} />);
 }
 
-describe("PayCardBalanceView (Web)", () => {
+describe("BalanceView (Web)", () => {
   it("should render the empty title and description when empty", () => {
     renderView({ displayMode: "empty", labels });
 

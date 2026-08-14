@@ -1,18 +1,18 @@
 import type { ActionTilesProps } from "../components/ActionTiles/types";
 import type {
   FormattedValue,
-  PayCardBalanceEmptyLabels,
-  PayCardBalanceFilterLabels,
-  PayCardBalanceFilterOption,
-  PayCardBalanceLabels,
+  BalanceEmptyLabels,
+  BalanceFilterLabels,
+  BalanceFilterOption,
+  BalanceLabels,
 } from "../types";
 
-export const emptyLabels: PayCardBalanceEmptyLabels = {
+export const emptyLabels: BalanceEmptyLabels = {
   emptyTitle: "Pay and get paid",
   emptyDescription: "Start by depositing stablecoin to your wallet",
 };
 
-export const filterLabels: PayCardBalanceFilterLabels = {
+export const filterLabels: BalanceFilterLabels = {
   allStablecoins: "All stablecoins",
   filterDialogTitle: "Filter balance",
   filterDialogDescription: "Select a stablecoin to filter your balance",
@@ -20,7 +20,7 @@ export const filterLabels: PayCardBalanceFilterLabels = {
   confirm: "Confirm",
 };
 
-export const labels: PayCardBalanceLabels = {
+export const labels: BalanceLabels = {
   ...emptyLabels,
   ...filterLabels,
 };
@@ -49,14 +49,14 @@ export const depositActionTiles: ActionTilesProps = {
 export const USDC_ID = "ethereum/erc20/usd__coin";
 export const USDT_ID = "ethereum/erc20/usd_tether__erc20_";
 
-export const allOption: PayCardBalanceFilterOption = {
+export const allOption: BalanceFilterOption = {
   id: "all",
   title: "All stablecoins",
   countervalue: 1250,
   countervalueLabel: "$1,250.00",
 };
 
-export const usdcOption: PayCardBalanceFilterOption = {
+export const usdcOption: BalanceFilterOption = {
   id: USDC_ID,
   title: "USD Coin",
   ticker: "USDC",
@@ -66,7 +66,7 @@ export const usdcOption: PayCardBalanceFilterOption = {
   cryptoAmountLabel: "1,000.00 USDC",
 };
 
-export const usdtOption: PayCardBalanceFilterOption = {
+export const usdtOption: BalanceFilterOption = {
   id: USDT_ID,
   title: "Tether USD",
   ticker: "USDT",
@@ -76,4 +76,4 @@ export const usdtOption: PayCardBalanceFilterOption = {
   cryptoAmountLabel: "250.00 USDT",
 };
 
-export const options: PayCardBalanceFilterOption[] = [allOption, usdcOption, usdtOption];
+export const options: BalanceFilterOption[] = [allOption, usdcOption, usdtOption];

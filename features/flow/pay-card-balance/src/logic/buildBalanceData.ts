@@ -1,36 +1,36 @@
 import type { Unit } from "@domain/entity-currency-unit";
-import type { PayCardBalanceFilter } from "../state";
-import { aggregatePayCardBalance } from "./aggregatePayCardBalance";
+import type { BalanceFilter } from "../state";
+import { aggregateBalance } from "./aggregateBalance";
 import {
   buildBalanceFilterOptions,
   type DefaultStablecoin,
-  type PayCardStablecoinItem,
+  type StablecoinItem,
 } from "./buildBalanceFilterOptions";
-import type { FormattedValue, PayCardBalanceData } from "../types";
+import type { FormattedValue, BalanceData } from "../types";
 
-export type BuildPayCardBalanceDataParams = Readonly<{
-  stablecoins: readonly PayCardStablecoinItem[];
+export type BuildBalanceDataParams = Readonly<{
+  stablecoins: readonly StablecoinItem[];
   defaultStablecoins: readonly DefaultStablecoin[];
-  filter: PayCardBalanceFilter;
+  filter: BalanceFilter;
   isLoading: boolean;
   isError: boolean;
   allLabel: string;
   formatFiat: (value: number) => string;
   formatCrypto: (unit: Unit, balance: number) => string;
   formatCountervalue: (value: number) => FormattedValue;
-  onConfirmFilter: (filter: PayCardBalanceFilter) => void;
+  onConfirmFilter: (filter: BalanceFilter) => void;
   onTrackEvent?: (event: string, params: Record<string, unknown>) => void;
 }>;
 
-export type BuildPayCardBalanceDataResult = Readonly<{
-  data: PayCardBalanceData;
+export type BuildBalanceDataResult = Readonly<{
+  data: BalanceData;
   /** True once data is ready and the persisted filter was healed away from the host value. */
   shouldResetFilter: boolean;
 }>;
 
 // Builds the filter options and aggregates the balance in one place so both apps
 // only supply their portfolio source and formatters.
-export function buildPayCardBalanceData({
+export function buildBalanceData({
   stablecoins,
   defaultStablecoins,
   filter,
@@ -42,7 +42,7 @@ export function buildPayCardBalanceData({
   formatCountervalue,
   onConfirmFilter,
   onTrackEvent,
-}: BuildPayCardBalanceDataParams): BuildPayCardBalanceDataResult {
+}: BuildBalanceDataParams): BuildBalanceDataResult {
   const filterOptions = buildBalanceFilterOptions({
     stablecoins,
     defaultStablecoins,
@@ -51,7 +51,7 @@ export function buildPayCardBalanceData({
     formatCrypto,
   });
 
-  const data = aggregatePayCardBalance({
+  const data = aggregateBalance({
     stablecoins,
     filter,
     isLoading,

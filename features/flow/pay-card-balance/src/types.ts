@@ -1,18 +1,18 @@
-import type { PayCardBalanceFilter } from "./state";
+import type { BalanceFilter } from "./state";
 import type { FormattedValue } from "@ledgerhq/lumen-utils-shared";
 import type { ActionTilesProps } from "./components/ActionTiles/types";
 
 // Shared by both platforms (`AmountDisplay`);
 export type { FormattedValue };
 
-export type PayCardBalanceStatus = "loading" | "error" | "ready";
+export type BalanceStatus = "loading" | "error" | "ready";
 
-export type PayCardBalanceEmptyLabels = Readonly<{
+export type BalanceEmptyLabels = Readonly<{
   emptyTitle: string;
   emptyDescription: string;
 }>;
 
-export type PayCardBalanceFilterLabels = Readonly<{
+export type BalanceFilterLabels = Readonly<{
   allStablecoins: string;
   filterDialogTitle: string;
   filterDialogDescription: string;
@@ -20,11 +20,11 @@ export type PayCardBalanceFilterLabels = Readonly<{
   confirm: string;
 }>;
 
-export type PayCardBalanceLabels = PayCardBalanceEmptyLabels & PayCardBalanceFilterLabels;
+export type BalanceLabels = BalanceEmptyLabels & BalanceFilterLabels;
 
 /** A selectable row in the filter dialog. `id` is `"all"` or a stablecoin currencyId. */
-export type PayCardBalanceFilterOption = Readonly<{
-  id: PayCardBalanceFilter;
+export type BalanceFilterOption = Readonly<{
+  id: BalanceFilter;
   title: string;
   /** Absent for the "all" row. */
   ticker?: string;
@@ -37,68 +37,68 @@ export type PayCardBalanceFilterOption = Readonly<{
   cryptoAmountLabel?: string;
 }>;
 
-export type PayCardStablecoin = Readonly<{
+export type Stablecoin = Readonly<{
   currency: Readonly<{ id: string; ticker: string }>;
   value: number;
 }>;
 
-/** Platform-agnostic input for {@link aggregatePayCardBalance}. */
-export type PayCardPortfolioPort = Readonly<{
-  stablecoins: readonly PayCardStablecoin[];
-  filter: PayCardBalanceFilter;
+/** Platform-agnostic input for {@link aggregateBalance}. */
+export type PortfolioPort = Readonly<{
+  stablecoins: readonly Stablecoin[];
+  filter: BalanceFilter;
   isLoading: boolean;
   isError: boolean;
   /** First entry is always the "all" option. */
-  filterOptions: readonly PayCardBalanceFilterOption[];
+  filterOptions: readonly BalanceFilterOption[];
   formatCountervalue: (value: number) => FormattedValue;
-  onConfirmFilter: (filter: PayCardBalanceFilter) => void;
+  onConfirmFilter: (filter: BalanceFilter) => void;
   onTrackEvent?: (event: string, params: Record<string, unknown>) => void;
 }>;
 
-/** Result of {@link aggregatePayCardBalance}: filtered total + status. */
-export type PayCardBalanceAggregate = Readonly<{
-  status: PayCardBalanceStatus;
+/** Result of {@link aggregateBalance}: filtered total + status. */
+export type BalanceAggregate = Readonly<{
+  status: BalanceStatus;
   stableBalance: number;
-  filter: PayCardBalanceFilter;
+  filter: BalanceFilter;
   /** Whether the user holds any stablecoin balance. Drives funded vs empty. */
   hasBalance: boolean;
   formatCountervalue: (value: number) => FormattedValue;
 }>;
 
-/** Full host props for `PayCardBalance` (= aggregate + filter UI wiring). */
-export type PayCardBalanceData = PayCardBalanceAggregate &
+/** Full host props for `Balance` (= aggregate + filter UI wiring). */
+export type BalanceData = BalanceAggregate &
   Readonly<{
     /** First entry is always the "all" option. */
-    filterOptions: readonly PayCardBalanceFilterOption[];
-    onConfirmFilter: (filter: PayCardBalanceFilter) => void;
+    filterOptions: readonly BalanceFilterOption[];
+    onConfirmFilter: (filter: BalanceFilter) => void;
     onTrackEvent?: (event: string, params: Record<string, unknown>) => void;
   }>;
 
-export type PayCardBalanceProps = PayCardBalanceData &
+export type BalanceProps = BalanceData &
   Readonly<{
-    labels: PayCardBalanceLabels;
+    labels: BalanceLabels;
     actionTiles?: ActionTilesProps;
   }>;
 
-export type PayCardBalanceViewProps =
+export type BalanceViewProps =
   | Readonly<{
       displayMode: "empty";
-      labels: PayCardBalanceEmptyLabels;
+      labels: BalanceEmptyLabels;
     }>
   | Readonly<{
       displayMode: "funded";
       balance: number;
       formatCountervalue: (value: number) => FormattedValue;
       isLoading: boolean;
-      labels: PayCardBalanceFilterLabels;
-      filter: PayCardBalanceFilter;
-      options: readonly PayCardBalanceFilterOption[];
+      labels: BalanceFilterLabels;
+      filter: BalanceFilter;
+      options: readonly BalanceFilterOption[];
       /** Applied option, or `undefined` when "all" is active. */
-      selectedOption?: PayCardBalanceFilterOption;
+      selectedOption?: BalanceFilterOption;
       isFilterOpen: boolean;
       onOpenFilter: () => void;
       onCloseFilter: () => void;
-      onConfirmFilter: (filter: PayCardBalanceFilter) => void;
+      onConfirmFilter: (filter: BalanceFilter) => void;
       onTrackEvent?: (event: string, params: Record<string, unknown>) => void;
       actionTiles?: ActionTilesProps;
     }>;
@@ -106,26 +106,26 @@ export type PayCardBalanceViewProps =
 export type BalanceFilterPickerViewModelParams = Readonly<{
   isOpen: boolean;
   /** Active (resolved) filter, used to seed the draft when the picker opens. */
-  activeFilter: PayCardBalanceFilter;
-  options: readonly PayCardBalanceFilterOption[];
-  onConfirmFilter: (filter: PayCardBalanceFilter) => void;
+  activeFilter: BalanceFilter;
+  options: readonly BalanceFilterOption[];
+  onConfirmFilter: (filter: BalanceFilter) => void;
   onClose: () => void;
   onTrackEvent?: (event: string, params: Record<string, unknown>) => void;
 }>;
 
 export type BalanceFilterPickerViewModel = Readonly<{
-  draftFilter: PayCardBalanceFilter;
-  onSelectDraft: (filter: PayCardBalanceFilter) => void;
+  draftFilter: BalanceFilter;
+  onSelectDraft: (filter: BalanceFilter) => void;
   onConfirm: () => void;
 }>;
 
 /** Presentation props shared by the web dialog and native bottom-sheet views. */
 export type BalanceFilterPickerViewProps = Readonly<{
   isOpen: boolean;
-  draftFilter: PayCardBalanceFilter;
-  options: readonly PayCardBalanceFilterOption[];
-  labels: PayCardBalanceFilterLabels;
+  draftFilter: BalanceFilter;
+  options: readonly BalanceFilterOption[];
+  labels: BalanceFilterLabels;
   onClose: () => void;
-  onSelectDraft: (filter: PayCardBalanceFilter) => void;
+  onSelectDraft: (filter: BalanceFilter) => void;
   onConfirm: () => void;
 }>;

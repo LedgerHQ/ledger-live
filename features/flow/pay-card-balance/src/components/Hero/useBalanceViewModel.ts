@@ -1,9 +1,9 @@
 import { useCallback, useMemo, useState } from "react";
 import { PAY_CARD_BALANCE_FILTER_ALL } from "../../state";
 import { resolveSelection } from "../../logic/resolveSelection";
-import type { PayCardBalanceProps, PayCardBalanceViewProps } from "../../types";
+import type { BalanceProps, BalanceViewProps } from "../../types";
 
-export function usePayCardBalanceViewModel({
+export function useBalanceViewModel({
   status,
   stableBalance,
   filter,
@@ -14,7 +14,7 @@ export function usePayCardBalanceViewModel({
   onTrackEvent,
   actionTiles,
   labels,
-}: PayCardBalanceProps): PayCardBalanceViewProps {
+}: BalanceProps): BalanceViewProps {
   const isLoading = status === "loading";
   const isFunded = isLoading || (status === "ready" && hasBalance);
 

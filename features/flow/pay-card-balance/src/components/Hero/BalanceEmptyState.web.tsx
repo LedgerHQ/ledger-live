@@ -1,11 +1,11 @@
 import React from "react";
-import type { PayCardBalanceEmptyLabels } from "../../types";
+import type { BalanceEmptyLabels } from "../../types";
 
-type PayCardBalanceEmptyStateProps = Readonly<{
-  labels: PayCardBalanceEmptyLabels;
+type BalanceEmptyStateProps = Readonly<{
+  labels: BalanceEmptyLabels;
 }>;
 
-export function PayCardBalanceEmptyState({ labels }: PayCardBalanceEmptyStateProps) {
+export function BalanceEmptyState({ labels }: BalanceEmptyStateProps) {
   return (
     <div className="flex flex-col items-start gap-16" data-testid="pay-card-balance-empty-state">
       <p className="heading-1-semi-bold text-base">{labels.emptyTitle}</p>

@@ -8,7 +8,7 @@ import {
   Spot,
 } from "@ledgerhq/lumen-ui-rnative";
 import { Placeholder } from "@ledgerhq/lumen-ui-rnative/symbols";
-import type { PayCardBalanceFilter } from "../../state";
+import type { BalanceFilter } from "../../state";
 
 export {
   CardContent,
@@ -20,10 +20,10 @@ export {
 } from "@ledgerhq/lumen-ui-rnative";
 
 type FilterOptionCardProps = Readonly<{
-  optionId: PayCardBalanceFilter;
+  optionId: BalanceFilter;
   selected: boolean;
   rowKey: string;
-  onSelect: (id: PayCardBalanceFilter) => void;
+  onSelect: (id: BalanceFilter) => void;
   children: React.ReactNode;
 }>;
 
