@@ -226,16 +226,24 @@ export async function spawnDevnet(): Promise<void> {
     ["integrate", "--no-dashboard", "--manifest-path", "Clarinet.toml", "--from-genesis"],
     {
       cwd: PACKAGE_ROOT,
-      // stdin is always closed (independent of DEBUG) so that if some other prompt is ever
-      // triggered (e.g. a genesis-snapshot mismatch prompt), it fails fast on a closed stdin
-      // instead of hanging -- `--from-genesis` already avoids that specific prompt.
+      // stdin piped (not ignored/closed): `Devnet.toml`'s own comment on `pox_stacking_orders`
+      // documents that the genesis-snapshot-compatibility confirmation fires unconditionally,
+      // *before* `--from-genesis` is even consulted, whenever a "significant field" (`epoch_*`,
+      // `stacks_signers_keys`, `pox_stacking_orders`) differs from the bundled snapshot -- which
+      // the staking scenario's explicit `epoch_4_0` now does on purpose. Pre-answering "y\n" makes
+      // that prompt (if it fires) resolve immediately instead of blocking on a closed stdin; it's a
+      // harmless no-op on runs where the prompt never appears.
       stdio: [
-        "ignore",
+        "pipe",
         process.env.DEBUG ? "inherit" : "ignore",
         process.env.DEBUG ? "inherit" : "ignore",
       ],
     },
   );
+
+  // Written repeatedly (not `.end()`-ed) in case more than one confirmation prompt appears in
+  // sequence; harmless extra bytes if none do, since nothing else in this flow reads stdin.
+  clarinetProcess.stdin?.write("y\n".repeat(5));
 
   clarinetProcess.on("error", err => {
     console.error(chalk.red("coin-tester-stacks: failed to spawn clarinet"), err);

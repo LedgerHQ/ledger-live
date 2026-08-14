@@ -60,16 +60,28 @@ bitcoin_controller_block_time = 10_000
 # Default 5432 collides with other local Postgres instances/containers on dev machines.
 postgres_port = 27432
 
+# Explicit (not left as the implicit `DEFAULT_EPOCH_4_0 = 162` from `network_manifest.rs`):
+# `stx-labs/clarinet` PR #2428 ("pox-5 devnet capabilities") only generates the pox-5-specific
+# stacks-node config (`pox_5_sbtc_contract`/`pox_5_bond_admin`) "when epoch 4.0 is configured" --
+# an *explicit* Devnet.toml value, not merely reaching that burn height under the implicit default.
+# Without this, the staking scenario's devnet never transitions `.pox` off the pox-4-style interface
+# no matter how many blocks pass (verified empirically: still pox-4-style at burn height 194, well
+# past 162). This intentionally makes Devnet.toml differ from the bundled snapshot's `epoch_*`
+# fields -- see the `pox_stacking_orders` comment below for why that's now handled instead of
+# avoided.
+epoch_4_0 = 162
+
 # Clarinet ships a pre-baked chain-state snapshot for faster devnet boot, keyed to this exact set
 # of stacking orders (verified against `DevnetDiffConfig`'s `default_significant_fields` in the
 # `clarinet` source — `epoch_*`/`stacks_signers_keys`/`pox_stacking_orders` are the only fields it
 # compares). Any Devnet.toml that omits or changes them is treated as "incompatible with the
 # snapshot" and — regardless of `--from-genesis`, verified empirically: the confirmation fires
 # unconditionally before that flag is even consulted — drops into an interactive
-# "Do you want to continue? (y/N)" prompt on stdin, which this package's non-interactive `docker
-# run` (no `-i`/`-t`, `src/devnet.ts`) cannot answer. This package doesn't need PoX stacking (no
-# staking scenario), but keeps these three default orders verbatim so the compatibility check
-# reports no differences and the prompt never fires at all.
+# "Do you want to continue? (y/N)" prompt on stdin. The explicit `epoch_4_0` above now deliberately
+# triggers that mismatch (pox-5 staking needs it), so `src/devnet.ts`'s `spawnDevnet` pre-answers
+# "y" on a piped stdin instead of the previous "keep everything identical so it never fires"
+# approach. These three stacking orders stay verbatim regardless -- removing them would be a
+# second, unrelated source of mismatch on top of the intentional `epoch_4_0` one.
 [[devnet.pox_stacking_orders]]
 start_at_cycle = 1
 duration = 10

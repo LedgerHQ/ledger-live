@@ -9634,6 +9634,9 @@ importers:
       '@stacks/transactions':
         specifier: 6.17.0
         version: 6.17.0
+      '@stacks/transactions-v7':
+        specifier: npm:@stacks/transactions@^7.6.0
+        version: '@stacks/transactions@7.6.0'
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2

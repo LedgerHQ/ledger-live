@@ -8,7 +8,8 @@ import { GetAccountShape, makeSync } from "@ledgerhq/ledger-wallet-framework/bri
 import { getEnv } from "@ledgerhq/live-env";
 import { log } from "@ledgerhq/logs";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
-import { getAddressFromPublicKey, TransactionVersion } from "@stacks/transactions";
+import { getAddressFromPublicKey } from "@stacks/transactions";
+import type { StacksNetworkName } from "@stacks/network";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import { TransactionResponse } from "../network";
@@ -183,12 +184,13 @@ export const getAccountShape: GetAccountShape = async info => {
   // Additive only: the legacy bridge has only ever registered the mainnet "stacks" currency, so
   // this always defaulted to Mainnet with no way to override it. `API_STACKS_NETWORK` lets a
   // devnet/testnet consumer (e.g. the coin-tester) derive the correctly-versioned address instead
-  // of a mainnet one that was never funded on that chain.
-  const transactionVersion =
-    getEnv("API_STACKS_NETWORK") === "mainnet"
-      ? TransactionVersion.Mainnet
-      : TransactionVersion.Testnet;
-  const address = getAddressFromPublicKey(pubKey, transactionVersion);
+  // of a mainnet one that was never funded on that chain. v7's `getAddressFromPublicKey` takes the
+  // network name directly (no more `TransactionVersion` enum), so this env var's value passes
+  // straight through.
+  const address = getAddressFromPublicKey(
+    pubKey,
+    getEnv("API_STACKS_NETWORK") as StacksNetworkName,
+  );
 
   // Make API calls in parallel for better performance
   const [blockHeight, balanceResp, txsResult, tokenBalances, mempoolTxs] = await Promise.all([

@@ -1,7 +1,9 @@
 import BigNumber from "bignumber.js";
-import type { Account } from "@ledgerhq/types-live";
+import type { Account, AccountBridge } from "@ledgerhq/types-live";
 import type { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import type { Transaction } from "@ledgerhq/coin-stacks/types";
+import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
+import { fetchPoxInfo } from "@ledgerhq/coin-stacks/network/pox";
 import { encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account";
 import {
   DEPLOYER_ADDRESS,
@@ -16,13 +18,20 @@ import {
 import { getBridges } from "../helpers";
 import { initMSW } from "../indexer";
 import { buildStacksTestSigner } from "../signer";
+import { buildStacksGenericTestSigner } from "../genericSigner";
 import { killDevnet, spawnDevnet, waitForContractDeployment } from "../devnet";
+import { setupSignerManager } from "../signerManager";
 
 let closeMsw: (() => void) | null = null;
 let subAccountId = "";
 let recipientAddress = "";
+let stakingValAddress = "";
+let startBurnHt = 0;
 
 type Tx = ScenarioTransaction<Transaction, Account>;
+type StakingTx = ScenarioTransaction<GenericTransaction, Account>;
+
+const SIGNER_MANAGER_CONTRACT_NAME = "signer-manager-stub";
 
 function makeTransactions(): Tx[] {
   // A fresh devnet has never mined a plain STX transfer or a call to this specific contract, and
@@ -126,20 +135,31 @@ export const scenarioStacks: Scenario<Transaction, Account> = {
     await waitForContractDeployment(DEPLOYER_ADDRESS, TOKEN_CONTRACT_NAME, 15 * 60 * 1000);
 
     const funder = buildStacksTestSigner(DEPLOYER_PRIVATE_KEY);
+    const genericFunder = buildStacksGenericTestSigner(DEPLOYER_PRIVATE_KEY);
     const recipient = buildStacksTestSigner(RECIPIENT_PRIVATE_KEY);
     recipientAddress = recipient.address;
 
     registerTestTokenInMockStore();
     closeMsw = initMSW();
 
-    const { currencyBridge, accountBridge } = getBridges(strategy, funder.signer);
+    const { currencyBridge, accountBridge } = await getBridges(strategy, {
+      legacy: funder.signer,
+      generic: genericFunder.signer,
+    });
     const account = makeAccount(funder.publicKey, funder.address);
     subAccountId = encodeTokenAccountId(account.id, TEST_TOKEN);
 
     // retryLimit bumped from 40 to 90 (200s -> 450s headroom): occasionally, a balance/
     // spendableBalance assertion took longer than 300s to catch up through the indexer during
     // verification, intermittently exhausting a smaller limit even on otherwise-successful runs.
-    return { currencyBridge, accountBridge, account, retryInterval: 5000, retryLimit: 90 };
+    // `getBridges` returns a strategy-dependent union; this scenario only ever runs "legacy".
+    return {
+      currencyBridge,
+      accountBridge: accountBridge as AccountBridge<Transaction>,
+      account,
+      retryInterval: 5000,
+      retryLimit: 90,
+    };
   },
 
   getTransactions: () => makeTransactions(),
@@ -165,6 +185,127 @@ export const scenarioStacks: Scenario<Transaction, Account> = {
   teardown: async () => {
     closeMsw?.();
     closeMsw = null;
+    await killDevnet();
+  },
+};
+
+/**
+ * Staking (pox-5 `stake`/`unstake`) only exists through `generic-adapter` -- the legacy bridge has
+ * no staking code at all -- so this runs as its own scenario/devnet lifecycle rather than a second
+ * `describe.each` branch of `scenarioStacks`. `startBurnHt` just needs to fall within the *current*
+ * reward cycle (verified by reading `pox-5.clar`'s `stake`: it always locks starting at
+ * `current-cycle + 1` and only validates that the caller's `startBurnHt` maps back to
+ * `current-cycle`), so the live `current_burnchain_block_height` captured once at setup time is
+ * safe to reuse for the whole scenario -- there's no cycle-boundary wait involved.
+ */
+function makeStakingTransactions(valAddress: string, startBurnHt: number): StakingTx[] {
+  const STAKE_FEE = new BigNumber(20_000);
+  const STAKE_AMOUNT = new BigNumber(5_000_000); // 5 STX (6 decimals)
+
+  const delegate: StakingTx = {
+    name: "Delegate (stake) 5 STX",
+    mode: "delegate",
+    valAddress,
+    recipient: valAddress,
+    amount: STAKE_AMOUNT,
+    // `customFees.parameters.fees`, not the plain `fees` field: `genericPrepareTransaction`
+    // (`generic-coin-framework/prepareTransaction.ts`) only skips the network fee estimate when
+    // *this* nested field is set -- a fresh devnet has no historical cost data for a pox-5
+    // contract-call payload yet, so without this override `estimateFees` throws
+    // `NoEstimateAvailableError`, verified empirically (mirrors why `scenarioStacks`'s own
+    // STX/SIP-010 sends set an explicit fee too, just via the legacy bridge's own override field).
+    customFees: { parameters: { fees: STAKE_FEE } },
+    familySpecificData: { numCycles: 1, startBurnHt },
+    expect: (prev, curr) => {
+      expect(curr.operations.length).toBeGreaterThan(prev.operations.length);
+      const [latestOp] = curr.operations;
+      // `Operation.type` is cast, not runtime-mapped, from `coin-stacks`'s own raw pox-5 function
+      // name (`generic-coin-framework/utils.ts`'s `adaptCoreOperationToLiveOperation`) -- the
+      // `OperationType` union only has the uppercase convention, so the real runtime value here is
+      // the lowercase Clarity function name.
+      expect(latestOp.type as string).toBe("stake");
+      // Balance is total (locked stays in it, only the fee leaves); spendableBalance drops by at
+      // least the staked amount -- not asserted as an exact equality, since the generic-adapter's
+      // exact locked-funds arithmetic isn't otherwise exercised by this package's existing tests.
+      expect(curr.balance).toStrictEqual(prev.balance.minus(latestOp.fee));
+      expect(curr.spendableBalance.lt(prev.spendableBalance.minus(STAKE_AMOUNT))).toBe(true);
+    },
+  };
+
+  const undelegate: StakingTx = {
+    name: "Undelegate (unstake)",
+    mode: "undelegate",
+    valAddress,
+    recipient: valAddress,
+    amount: new BigNumber(0),
+    customFees: { parameters: { fees: STAKE_FEE } },
+    expect: (prev, curr) => {
+      expect(curr.operations.length).toBeGreaterThan(prev.operations.length);
+      const [latestOp] = curr.operations;
+      expect(latestOp.type as string).toBe("unstake");
+      expect(curr.balance).toStrictEqual(prev.balance.minus(latestOp.fee));
+    },
+  };
+
+  return [delegate, undelegate];
+}
+
+export const scenarioStacksStaking: Scenario<GenericTransaction, Account> = {
+  name: "Ledger Live Stacks (pox-5 staking, generic-adapter)",
+
+  setup: async strategy => {
+    await spawnDevnet();
+    await waitForContractDeployment(DEPLOYER_ADDRESS, TOKEN_CONTRACT_NAME, 15 * 60 * 1000);
+    // 25 minutes, not 15: `signer-manager-stub` is pinned at epoch 4.0 (`Clarinet.toml`), which the
+    // chain must first cross (`DEFAULT_EPOCH_4_0 = 162` burn blocks) before its deployment batch
+    // even attempts -- empirically ~14-17 minutes at this devnet's mining cadence, so 15 minutes
+    // left no margin at all.
+    await waitForContractDeployment(DEPLOYER_ADDRESS, SIGNER_MANAGER_CONTRACT_NAME, 25 * 60 * 1000);
+
+    const funder = buildStacksTestSigner(DEPLOYER_PRIVATE_KEY);
+    const genericFunder = buildStacksGenericTestSigner(DEPLOYER_PRIVATE_KEY);
+
+    // Read first: pox-5 is a separate, literally-named contract (`...pox-5`), not something `.pox`
+    // ever aliases to -- `poxInfo.contract_id` is the live source of truth for its current address,
+    // same as `buildUnsignedTx.ts`'s own `buildStaking`.
+    const poxInfo = await fetchPoxInfo();
+    startBurnHt = poxInfo.current_burnchain_block_height;
+
+    const { valAddress } = await setupSignerManager(
+      DEPLOYER_PRIVATE_KEY,
+      DEPLOYER_ADDRESS,
+      poxInfo.contract_id,
+    );
+    stakingValAddress = valAddress;
+
+    const { currencyBridge, accountBridge } = await getBridges(strategy, {
+      legacy: funder.signer,
+      generic: genericFunder.signer,
+    });
+    const account = makeAccount(funder.publicKey, funder.address);
+
+    return {
+      currencyBridge,
+      accountBridge: accountBridge as AccountBridge<GenericTransaction>,
+      account,
+      retryInterval: 5000,
+      retryLimit: 90,
+    };
+  },
+
+  getTransactions: () => makeStakingTransactions(stakingValAddress, startBurnHt),
+
+  beforeAll: account => {
+    expect(account.currency.id).toBe(STACKS.id);
+    expect(account.balance.gt(0)).toBe(true);
+  },
+
+  afterAll: account => {
+    expect(account.operations.some(op => (op.type as string) === "stake")).toBe(true);
+    expect(account.operations.some(op => (op.type as string) === "unstake")).toBe(true);
+  },
+
+  teardown: async () => {
     await killDevnet();
   },
 };

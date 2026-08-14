@@ -15,6 +15,7 @@ import {
   uintCV,
 } from "@stacks/transactions";
 import type { StacksNetworkName } from "@stacks/network";
+import { getEnv } from "@ledgerhq/live-env";
 import BigNumber from "bignumber.js";
 import {
   createStxTransferTransaction,
@@ -34,10 +35,12 @@ function resolveRecipient(recipient: string): string {
   return validateAddress(recipient).isValid ? recipient : STACKS_DUMMY_ADDRESS;
 }
 
-/** Alpaca (CoinModuleApi) is currently wired mainnet-only for Stacks: the framework selects a
- * network by `currencyId`/coin config, not per transaction-intent, unlike the legacy bridge's
- * per-account `network` field. Testnet stays reachable through the legacy bridge only. */
-export const NETWORK: StacksNetworkName = "mainnet";
+/** Alpaca (CoinModuleApi) selects a network by coin config/env, not per transaction-intent, unlike
+ * the legacy bridge's per-account `network` field. Shares `API_STACKS_NETWORK` with the legacy
+ * bridge's own address-derivation fix (`bridge/synchronization.ts`) rather than introducing a
+ * second, parallel config mechanism -- one env var controls network for both code paths. Defaults
+ * to `"mainnet"` (the env var's own default), so real callers see no behavior change. */
+export const NETWORK: StacksNetworkName = getEnv("API_STACKS_NETWORK") as StacksNetworkName;
 
 function parseSip010AssetReference(assetReference: string): {
   contractAddress: string;

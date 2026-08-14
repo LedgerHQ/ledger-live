@@ -66,6 +66,7 @@
     "@ledgerhq/types-live": "workspace:^",
     "@stacks/network": "6.17.0",
     "@stacks/transactions": "6.17.0",
+    "@stacks/transactions-v7": "npm:@stacks/transactions@^7.6.0",
     "bignumber.js": "^9",
     "chalk": "^4.1.2",
     "msw": "catalog:"
