@@ -37,7 +37,7 @@ export function usePayTabViewModel() {
   );
 
   // Baanx uses the same value for the client key header and the OAuth `client_id`.
-  const oauth: CardLoginOauthConfig = useMemo(
+  const oauthConfig: CardLoginOauthConfig = useMemo(
     () => ({
       clientId: getEnv("CARD_BAANX_CLIENT_KEY"),
       redirectUri: getEnv("CARD_OAUTH_REDIRECT_URI"),
@@ -75,7 +75,7 @@ export function usePayTabViewModel() {
 
   return {
     top,
-    oauth,
+    oauthConfig,
     featureTour,
     balance,
     balanceLabels,

@@ -11,7 +11,7 @@ export type CardLoginOauthConfig = {
 };
 
 export type CardLoginProps = {
-  readonly oauth: CardLoginOauthConfig;
+  readonly oauthConfig: CardLoginOauthConfig;
 };
 
 export type CardLoginViewModelParams = CardLoginProps & {

@@ -13,7 +13,7 @@ import { usePayTabDepositOptions } from "./hooks/usePayTabDepositOptions";
 import { usePayStablecoins } from "./hooks/usePayStablecoins";
 
 // Baanx uses the same value for the client key header and the OAuth `client_id`.
-const oauth: CardLoginOauthConfig = {
+const oauthConfig: CardLoginOauthConfig = {
   clientId: getEnv("CARD_BAANX_CLIENT_KEY"),
   redirectUri: getEnv("CARD_OAUTH_REDIRECT_URI"),
 };
@@ -34,7 +34,7 @@ const PayTab = () => {
       <PayTabHeader />
       <Balance {...balance} actionTiles={actionTiles} />
       <DepositOptions {...deposit.depositOptions} />
-      <CardLogin oauth={oauth} />
+      <CardLogin oauthConfig={oauthConfig} />
       <FeatureTour {...featureTour} />
     </div>
   );

@@ -68,7 +68,7 @@ describe("usePayTabViewModel", () => {
     const { result } = renderHook(() => usePayTabViewModel());
 
     // The redirect URI is matched verbatim on the token exchange, so both values come from the app.
-    expect(result.current.oauth).toEqual({
+    expect(result.current.oauthConfig).toEqual({
       clientId: getEnv("CARD_BAANX_CLIENT_KEY"),
       redirectUri: getEnv("CARD_OAUTH_REDIRECT_URI"),
     });

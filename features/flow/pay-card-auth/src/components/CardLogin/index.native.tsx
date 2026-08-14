@@ -4,12 +4,12 @@ import { useCardLoginViewModel } from "./useCardLoginViewModel";
 import { openHostedLoginInSecureBrowser } from "./openHostedLogin.native";
 import type { CardLoginProps } from "./types";
 
-export function CardLogin({ oauth }: CardLoginProps) {
+export function CardLogin({ oauthConfig }: CardLoginProps) {
   return (
     <CardLoginView
       {...useCardLoginViewModel({
         openHostedLogin: openHostedLoginInSecureBrowser,
-        oauth,
+        oauthConfig,
       })}
     />
   );
