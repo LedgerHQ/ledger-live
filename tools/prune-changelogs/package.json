@@ -1,0 +1,25 @@
+{
+  "name": "@ledgerhq/prune-changelogs",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Trims old entries from workspace CHANGELOG.md files so release commits stay small.",
+  "type": "module",
+  "bin": {
+    "prune-changelogs": "./bin/prune-changelogs.mjs"
+  },
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test": "node --test \"test/**/*.test.ts\"",
+    "typecheck": "tsc --noEmit",
+    "lint": "oxlint ./",
+    "lint:fix": "oxlint ./ --fix --quiet"
+  },
+  "devDependencies": {
+    "@manypkg/get-packages": "1.1.3",
+    "@types/node": "catalog:",
+    "prettier": "2.8.8",
+    "typescript": "catalog:"
+  }
+}
