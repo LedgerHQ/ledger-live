@@ -70,6 +70,7 @@ export interface TokenCurrency {
   delisted?: boolean;
   disableCountervalue?: boolean;
   ledgerSignature?: string;
+  tokenIdentifier?: string;
   symbol?: string;
   keywords?: string[];
 }

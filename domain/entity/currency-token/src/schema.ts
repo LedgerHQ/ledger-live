@@ -39,6 +39,8 @@ export const TokenCurrencySchema = z.object({
   disableCountervalue: z.boolean().optional(),
   /** Ledger's cryptographic signature for the token listing. */
   ledgerSignature: z.string().optional(),
+  /** Token-family-specific identifier (e.g. FA2 token-id for Tezos, ESDT ticker for MultiversX). */
+  tokenIdentifier: z.string().optional(),
 });
 
 /** A token currency id, inferred from {@link TokenCurrencyIdSchema}. */
