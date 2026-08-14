@@ -2,7 +2,7 @@ import { type CliCommand, test } from "tests/fixtures/common";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
-import { addTmsLink } from "tests/utils/allureUtils";
+import { addBugLink, addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { LedgerSyncCliHelper } from "@ledgerhq/live-e2e-shared/ledgerSync/helper";
 import { ledgerSyncEnvironment } from "@ledgerhq/live-e2e-shared/ledgerSync/environment";
@@ -18,6 +18,9 @@ import {
 import { getEnv, setEnv } from "@shared/env";
 import { deviceTagsWithoutLNS } from "tests/utils/tagsUtils";
 
+// TODO: Unskip every suite below once LIVE-35808 is fixed — staging cloud-sync cannot verify the
+// JWT that staging trustchain issues, so every cloud-sync call fails with 400 on the
+// Authorization header.
 const APP_INSTANCE_NAME = "LWD";
 
 function setupSeed() {
@@ -61,7 +64,7 @@ function preSeededTrustchain(seedCommands: CliCommand[] = []) {
   };
 }
 
-test.describe("Ledger Sync - add account", () => {
+test.describe.skip("Ledger Sync - add account", () => {
   setupSeed();
   destroyTrustchainAfterAll();
   const addedCurrency = Currency.ETH;
@@ -79,6 +82,7 @@ test.describe("Ledger Sync - add account", () => {
     },
     async ({ app, speculos }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+      await addBugLink(["LIVE-35808"]);
 
       await speculos.relaunch(addedCurrency.speculosApp.name);
 
@@ -116,7 +120,7 @@ test.describe("Ledger Sync - add account", () => {
   );
 });
 
-test.describe("Ledger Sync - rename account", () => {
+test.describe.skip("Ledger Sync - rename account", () => {
   setupSeed();
 
   destroyTrustchainAfterAll();
@@ -136,6 +140,7 @@ test.describe("Ledger Sync - rename account", () => {
     },
     async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+      await addBugLink(["LIVE-35808"]);
 
       await app.accounts.expectReduxAccountIds([ethAccount.id]);
       await app.trustchain.expectAccountToHaveDefaultName(ethAccount.id);
@@ -157,7 +162,7 @@ test.describe("Ledger Sync - rename account", () => {
   );
 });
 
-test.describe("Ledger Sync - delete account", () => {
+test.describe.skip("Ledger Sync - delete account", () => {
   setupSeed();
 
   destroyTrustchainAfterAll();
@@ -177,6 +182,7 @@ test.describe("Ledger Sync - delete account", () => {
     },
     async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+      await addBugLink(["LIVE-35808"]);
 
       await app.accounts.expectReduxAccountIds([ethAccount.id, secondEthAccount.id]);
       await app.trustchain.expectAccountIds([ethAccount.id, secondEthAccount.id]);
@@ -200,7 +206,7 @@ test.describe("Ledger Sync - delete account", () => {
   );
 });
 
-test.describe("Ledger Sync - delete instance", () => {
+test.describe.skip("Ledger Sync - delete instance", () => {
   setupSeed();
 
   destroyTrustchainAfterAll();
@@ -218,6 +224,7 @@ test.describe("Ledger Sync - delete instance", () => {
     },
     async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+      await addBugLink(["LIVE-35808"]);
 
       await app.mainNavigation.openSettings();
       await app.settings.openManageLedgerSync();
@@ -238,7 +245,7 @@ test.describe("Ledger Sync - delete instance", () => {
   );
 });
 
-test.describe("Ledger Sync - delete backup", () => {
+test.describe.skip("Ledger Sync - delete backup", () => {
   setupSeed();
 
   destroyTrustchainAfterAll();
@@ -256,6 +263,7 @@ test.describe("Ledger Sync - delete backup", () => {
     },
     async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+      await addBugLink(["LIVE-35808"]);
 
       await app.trustchain.expectToHoldAccount(ethAccount.id, ethAccount.currencyId);
 
