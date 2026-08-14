@@ -113,8 +113,10 @@ export function LargeScreenUpsellModalMount() {
     [getAnalyticsPropsForDevice],
   );
 
-  // session becomes "dismissed" on close — while visible it stays "ready" so Mount stays mounted.
-  if (session !== "ready" || hasCompetingAppStartModal) {
+  // session becomes "dismissed" / "blockedByCompeting" — while visible it stays "ready".
+  // Competing modals gate `isAllowedToDisplay` so a visible upsell can roll back its
+  // impression before the session flips to blockedByCompeting.
+  if (session !== "ready") {
     return null;
   }
 
@@ -132,6 +134,7 @@ export function LargeScreenUpsellModalMount() {
       t={t}
       openUrl={openURL}
       analytics={analytics}
+      isAllowedToDisplay={!hasCompetingAppStartModal}
     />
   );
 }

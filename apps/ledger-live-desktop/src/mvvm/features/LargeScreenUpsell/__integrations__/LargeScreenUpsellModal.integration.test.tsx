@@ -13,6 +13,7 @@ import type { State } from "~/renderer/reducers";
 import { closeDialog, openDialog } from "~/renderer/reducers/dialogs";
 import { openURL } from "~/renderer/linking";
 import { track, trackPage } from "~/renderer/analytics/segment";
+import { setHasSeenWalletV4Tour } from "~/renderer/actions/settings";
 import { LargeScreenUpsellModalMount } from "..";
 
 /** Mimics Portfolio scoping: Mount unmounts when leaving portfolio. */
@@ -79,7 +80,7 @@ function eligibleState(settingsOverrides: Partial<State["settings"]> = {}): Deep
       onboardingDate: "2026-01-01T00:00:00.000Z",
     },
     largeScreenUpsellModal: {
-      retries: 0,
+      retriesModal: 0,
       lastSeenAt: null,
       session: "ready",
     },
@@ -264,7 +265,7 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
     expect(openedUrl.searchParams.get("utm_medium")).toBe("ledger_live");
     expect(openedUrl.searchParams.get("utm_campaign")).toBe("nano_upgrade_program");
     expect(openedUrl.searchParams.get("utm_content")).toBe("app_start_modal");
-    expect(store.getState().largeScreenUpsellModal.retries).toBe(0);
+    expect(store.getState().largeScreenUpsellModal.retriesModal).toBe(0);
     expect(track).toHaveBeenCalledWith("button_clicked", {
       button: "explore large screen devices",
       page: "Modal - Upgrade",
@@ -330,7 +331,7 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
     });
 
     await waitFor(() => {
-      expect(store.getState().largeScreenUpsellModal.retries).toBe(1);
+      expect(store.getState().largeScreenUpsellModal.retriesModal).toBe(1);
       expect(store.getState().largeScreenUpsellModal.lastSeenAt).not.toBeNull();
     });
     expect(store.getState().largeScreenUpsellModal.session).toBe("ready");
@@ -344,7 +345,7 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
     });
 
     await waitFor(() => {
-      expect(store.getState().largeScreenUpsellModal.retries).toBe(1);
+      expect(store.getState().largeScreenUpsellModal.retriesModal).toBe(1);
     });
     expect(store.getState().largeScreenUpsellModal.session).toBe("ready");
 
@@ -355,7 +356,7 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
     });
 
     expect(openURL).not.toHaveBeenCalled();
-    expect(store.getState().largeScreenUpsellModal.retries).toBe(1);
+    expect(store.getState().largeScreenUpsellModal.retriesModal).toBe(1);
     expect(store.getState().largeScreenUpsellModal.session).toBe("dismissed");
     expect(screen.queryByTestId("large-screen-upsell-modal")).not.toBeInTheDocument();
     expect(track).toHaveBeenCalledWith("modal_dismissed", {
@@ -388,7 +389,7 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
     });
 
     await waitFor(() => {
-      expect(store.getState().largeScreenUpsellModal.retries).toBe(1);
+      expect(store.getState().largeScreenUpsellModal.retriesModal).toBe(1);
     });
 
     await user.click(screen.getByRole("button", { name: "Learn more" }));
@@ -398,7 +399,7 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
     });
 
     expect(openURL).not.toHaveBeenCalled();
-    expect(store.getState().largeScreenUpsellModal.retries).toBe(0);
+    expect(store.getState().largeScreenUpsellModal.retriesModal).toBe(0);
   });
 
   it("should open for nanoS even when onboarding was recent because nanoS cooldown is 0", async () => {
@@ -433,7 +434,7 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
         lwdWallet40: { enabled: true, params: { tour: false } },
       }),
       largeScreenUpsellModal: {
-        retries: 2,
+        retriesModal: 2,
         lastSeenAt: Date.parse("2026-07-14T12:00:00.000Z"),
         session: "ready",
       },
@@ -554,7 +555,7 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
 
     await expectModalNotOpen();
 
-    expect(store.getState().largeScreenUpsellModal.retries).toBe(0);
+    expect(store.getState().largeScreenUpsellModal.retriesModal).toBe(0);
     expect(trackPage).not.toHaveBeenCalled();
   });
 
@@ -577,7 +578,7 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
 
     await expectModalNotOpen();
 
-    expect(store.getState().largeScreenUpsellModal.retries).toBe(0);
+    expect(store.getState().largeScreenUpsellModal.retriesModal).toBe(0);
     expect(trackPage).not.toHaveBeenCalled();
   });
 
@@ -643,7 +644,7 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
         lwdWallet40: { enabled: true, params: { tour: false } },
       }),
       largeScreenUpsellModal: {
-        retries: 3,
+        retriesModal: 3,
         lastSeenAt: Date.parse("2026-07-14T12:00:00.000Z"),
         session: "ready",
       },
@@ -669,7 +670,7 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
         lwdWallet40: { enabled: true, params: { tour: false } },
       }),
       largeScreenUpsellModal: {
-        retries: 3,
+        retriesModal: 3,
         lastSeenAt: Date.parse("2026-05-01T12:00:00.000Z"),
         session: "ready",
       },
@@ -708,7 +709,7 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
         onboardingDate: "2026-01-01T00:00:00.000Z",
       },
       largeScreenUpsellModal: {
-        retries: 0,
+        retriesModal: 0,
         lastSeenAt: null,
         session: "ready",
       },
@@ -734,7 +735,7 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
         onboardingDate: "2026-01-01T00:00:00.000Z",
       },
       largeScreenUpsellModal: {
-        retries: 0,
+        retriesModal: 0,
         lastSeenAt: null,
         session: "ready",
       },
@@ -754,7 +755,7 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
     await expectModalNotOpen();
   });
 
-  it("should not open later in the same session after a competing modal closes", async () => {
+  it("should stay blocked for the session after a competing modal closes", async () => {
     const { store } = renderMount({
       ...eligibleState(),
       dialogs: {
@@ -763,6 +764,10 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
     });
 
     await expectModalNotOpen();
+    await waitFor(() => {
+      expect(store.getState().largeScreenUpsellModal.session).toBe("blockedByCompeting");
+    });
+    expect(store.getState().largeScreenUpsellModal.retriesModal).toBe(0);
 
     act(() => {
       store.dispatch(closeDialog("GENERIC_AWARENESS_MODAL"));
@@ -770,13 +775,52 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
 
     expect(store.getState().dialogs.GENERIC_AWARENESS_MODAL).toBe(false);
     await expectModalNotOpen();
+    expect(store.getState().largeScreenUpsellModal.session).toBe("blockedByCompeting");
+    expect(store.getState().largeScreenUpsellModal.retriesModal).toBe(0);
   });
 
-  it("should unmount when a competing modal opens after the upsell is already visible", async () => {
+  it("should stay blocked after the Wallet V4 tour is completed in the same session", async () => {
+    const { store } = renderMount({
+      ...eligibleState({
+        hasSeenWalletV4Tour: false,
+      }),
+      ...withFlagOverrides({
+        largeScreenUpsell: {
+          enabled: true,
+          params: {
+            opted_out: {
+              enabled: true,
+              link: "https://shop.ledger.com/pages/ledger-nano-upgrade-program",
+            },
+          },
+        },
+        lwdWallet40: { enabled: true, params: { tour: true } },
+      }),
+    });
+
+    await expectModalNotOpen();
+    await waitFor(() => {
+      expect(store.getState().largeScreenUpsellModal.session).toBe("blockedByCompeting");
+    });
+    expect(store.getState().largeScreenUpsellModal.retriesModal).toBe(0);
+
+    act(() => {
+      store.dispatch(setHasSeenWalletV4Tour(true));
+    });
+
+    await expectModalNotOpen();
+    expect(store.getState().largeScreenUpsellModal.session).toBe("blockedByCompeting");
+    expect(store.getState().largeScreenUpsellModal.retriesModal).toBe(0);
+  });
+
+  it("should roll back retries when a competing modal preempts a visible upsell", async () => {
     const { store } = renderMount();
 
     await waitFor(() => {
       expect(screen.getByTestId("large-screen-upsell-modal")).toBeVisible();
+    });
+    await waitFor(() => {
+      expect(store.getState().largeScreenUpsellModal.retriesModal).toBe(1);
     });
 
     act(() => {
@@ -786,7 +830,8 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
     await waitFor(() => {
       expect(screen.queryByTestId("large-screen-upsell-modal")).not.toBeInTheDocument();
     });
-    expect(store.getState().largeScreenUpsellModal.retries).toBe(1);
+    expect(store.getState().largeScreenUpsellModal.retriesModal).toBe(0);
+    expect(store.getState().largeScreenUpsellModal.session).toBe("blockedByCompeting");
   });
 
   it("should dismiss via Escape with dismissMethod escape key down", async () => {

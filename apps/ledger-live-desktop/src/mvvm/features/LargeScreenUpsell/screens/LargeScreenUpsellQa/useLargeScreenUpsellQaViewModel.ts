@@ -148,7 +148,7 @@ export function useLargeScreenUpsellQaViewModel() {
           seenNanoModelIds,
           hasSeenTouchscreenDevice,
           onboardingDate,
-          frequency: { retries, lastSeenAt },
+          frequency: { retriesModal: retries, lastSeenAt },
         },
         {
           isFeatureEnabled,

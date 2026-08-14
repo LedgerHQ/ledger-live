@@ -73,7 +73,7 @@ type FakeState = {
   history: unknown;
   featureFlags: { overrides: unknown; bannerVisible: unknown; remoteFlagsReady?: unknown };
   coinConfigOverrides: { overrides: Record<string, unknown> };
-  largeScreenUpsellModal: { retries: number; lastSeenAt: number | null };
+  largeScreenUpsellModal: { retriesModal: number; lastSeenAt: number | null };
   payCardBalance: {
     balanceFilter: string;
   };
@@ -93,7 +93,7 @@ const baseState = (): FakeState => ({
   history: {},
   featureFlags: { overrides: {}, bannerVisible: false },
   coinConfigOverrides: { overrides: {} },
-  largeScreenUpsellModal: { retries: 0, lastSeenAt: null },
+  largeScreenUpsellModal: { retriesModal: 0, lastSeenAt: null },
   payCardBalance: { balanceFilter: "all" },
   payCardFeatureTour: { hasSeenFeatureTour: false },
 });
@@ -218,7 +218,7 @@ describe("DBMiddleware - largeScreenUpsellModal branch", () => {
   it("persists largeScreenUpsellModal under app/largeScreenUpsellModal on largeScreenUpsellModal/* actions", () => {
     const state: FakeState = {
       ...baseState(),
-      largeScreenUpsellModal: { retries: 2, lastSeenAt: 1_720_000_000_000 },
+      largeScreenUpsellModal: { retriesModal: 2, lastSeenAt: 1_720_000_000_000 },
     };
 
     runMiddleware([state, state], {
@@ -228,7 +228,7 @@ describe("DBMiddleware - largeScreenUpsellModal branch", () => {
 
     expect(mockedSetKey).toHaveBeenCalledTimes(1);
     expect(mockedSetKey).toHaveBeenCalledWith("app", LARGE_SCREEN_UPSELL_MODAL, {
-      retries: 2,
+      retriesModal: 2,
       lastSeenAt: 1_720_000_000_000,
     });
   });
