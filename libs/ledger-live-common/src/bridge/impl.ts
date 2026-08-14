@@ -26,6 +26,17 @@ import {
 } from "../coin-modules/registry";
 import { defaultBridgeExtensions } from "./defaultBridgeExtensions";
 import { isZcashShieldedEnabled } from "./zcashRouting";
+import { throwError } from "rxjs";
+import { catchError } from "rxjs/operators";
+import {
+  buildBroadcastCommonEvent,
+  buildSignCommonEvent,
+  buildTransactionFailureEvent,
+  buildTransactionSuccessEvent,
+  emitTransactionEvent,
+  TransactionFlow,
+  TransactionStage,
+} from "@ledgerhq/transaction-observability";
 
 // The family owning a currency's bridge is `currency.family`, except zcash:
 // `zcashShielded` routes it to the standalone "zcash" family
@@ -184,7 +195,31 @@ export function getAccountBridge(
   return getAccountBridgeByFamily(family, mainAccount.id);
 }
 
-async function wrapAccountBridge<T extends TransactionCommon>(
+/**
+ * Attributes a broadcast to a {@link TransactionFlow} and a live-app manifest id from
+ * `broadcastConfig.source`. `manifestId` is only set for live-app / dApp sources — a
+ * "coin-module" source's `name` is the host app, not a manifest.
+ */
+function attributeBroadcastSource(source?: { type: string; name: string }): {
+  flow: TransactionFlow;
+  manifestId?: string;
+} {
+  switch (source?.type) {
+    case "dApp":
+      return { flow: TransactionFlow.Dapp, manifestId: source.name };
+    case "live-app":
+      return { flow: TransactionFlow.WalletApiSignAndBroadcast, manifestId: source.name };
+    case "coin-module":
+      return { flow: TransactionFlow.Send };
+    case "swap":
+      return { flow: TransactionFlow.Swap };
+    default:
+      return { flow: TransactionFlow.Unknown };
+  }
+}
+
+// Exported for unit testing the transaction-observability seam.
+export async function wrapAccountBridge<T extends TransactionCommon>(
   bridge: AccountBridge<T>,
   family: string,
 ): Promise<ResolvedAccountBridge<T>> {
@@ -203,6 +238,61 @@ async function wrapAccountBridge<T extends TransactionCommon>(
 
       const commonTransactionStatus = await commonGetTransactionStatus(...args);
       return mergeResults(blockchainTransactionStatus, commonTransactionStatus);
+    },
+    /**
+     * Transaction observability, sign stage. Only failures: a success here is not an outcome
+     * the funnel cares about, and abandoning the prompt is an unsubscribe rather than an
+     * error, so the device-action layer reports that instead.
+     *
+     * The rich transaction is available (hence the exact action and the validators) but
+     * `broadcastConfig` is not, so the originating route is unknown until broadcast.
+     */
+    signOperation: (arg0: Parameters<typeof bridge.signOperation>[0]) =>
+      bridge.signOperation(arg0).pipe(
+        catchError(error => {
+          emitTransactionEvent(
+            buildTransactionFailureEvent(
+              buildSignCommonEvent({
+                account: arg0.account,
+                mainAccount: arg0.account,
+                flow: TransactionFlow.Unknown,
+                transaction: arg0.transaction,
+              }),
+              { stage: TransactionStage.Sign, error },
+            ),
+          );
+          return throwError(() => error);
+        }),
+      ),
+    /**
+     * Transaction observability, broadcast stage — where a staking transaction's success is
+     * actually known. Fully attributed via `broadcastConfig.source`, but the action has to be
+     * read off the optimistic operation since the transaction is not passed here.
+     */
+    broadcast: async (arg0: Parameters<typeof bridge.broadcast>[0]) => {
+      const { flow, manifestId } = attributeBroadcastSource(arg0.broadcastConfig?.source);
+      const common = buildBroadcastCommonEvent({
+        account: arg0.account,
+        mainAccount: arg0.account,
+        flow,
+        manifestId,
+        source: arg0.broadcastConfig?.source,
+        operation: arg0.signedOperation.operation,
+      });
+      try {
+        const operation = await bridge.broadcast(arg0);
+        emitTransactionEvent(buildTransactionSuccessEvent(common));
+        return operation;
+      } catch (error) {
+        emitTransactionEvent(
+          buildTransactionFailureEvent(common, {
+            stage: TransactionStage.Broadcast,
+            error,
+            signedOperation: arg0.signedOperation,
+          }),
+        );
+        throw error;
+      }
     },
   } as ResolvedAccountBridge<T>;
 }

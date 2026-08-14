@@ -363,6 +363,7 @@
     "@ledgerhq/live-signer-zcash": "workspace:^",
     "@ledgerhq/logs": "catalog:",
     "@ledgerhq/speculos-transport": "workspace:^",
+    "@ledgerhq/transaction-observability": "workspace:^",
     "@ledgerhq/wallet-api-acre-module": "workspace:^",
     "@ledgerhq/wallet-api-client": "catalog:",
     "@ledgerhq/wallet-api-core": "catalog:",

@@ -1126,6 +1126,9 @@ importers:
       '@ledgerhq/react-ui':
         specifier: workspace:^
         version: link:../../libs/ui/packages/react
+      '@ledgerhq/transaction-observability':
+        specifier: workspace:^
+        version: link:../../libs/transaction-observability
       '@ledgerhq/types-devices':
         specifier: workspace:^
         version: link:../../libs/types-devices
@@ -1953,6 +1956,9 @@ importers:
       '@ledgerhq/native-ui':
         specifier: workspace:^
         version: link:../../libs/ui/packages/native
+      '@ledgerhq/transaction-observability':
+        specifier: workspace:^
+        version: link:../../libs/transaction-observability
       '@ledgerhq/types-devices':
         specifier: workspace:^
         version: link:../../libs/types-devices
@@ -11685,6 +11691,9 @@ importers:
       '@ledgerhq/speculos-transport':
         specifier: workspace:^
         version: link:../speculos-transport
+      '@ledgerhq/transaction-observability':
+        specifier: workspace:^
+        version: link:../transaction-observability
       '@ledgerhq/wallet-api-acre-module':
         specifier: workspace:^
         version: link:../wallet-api-acre-module
