@@ -2,6 +2,7 @@
   "targets": {
     "build": {
       "executor": "nx:noop"
-    }
+    },
+    "generate-tsconfig": {}
   }
 }

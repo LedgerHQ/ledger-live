@@ -1,0 +1,16 @@
+{
+  "root": {
+    "compilerOptions": {
+      "paths": {
+        "jest/*": ["./jest/*"]
+      }
+    }
+  },
+  "web": {
+    "compilerOptions": {
+      "types": ["@testing-library/jest-dom"]
+    },
+    "include": ["jest/**/*"],
+    "exclude": ["jest/**/*.native.*"]
+  }
+}

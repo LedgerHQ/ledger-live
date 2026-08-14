@@ -37,6 +37,8 @@ Two kinds of preset:
 | --- | --- |
 | [`jest-devtools`](./jest-devtools) | `devtools/*` — dual web/native jest presets plus themed render fixtures |
 | [`jest-features-flow`](./jest-features-flow) | `features/flow/*` — dual web/native jest preset plus Lumen passthrough stubs |
+| [`tsconfigs`](./tsconfigs) | All — raw config fragments consumed by `generate-config` |
+| [`generate-config`](./generate-config) | All — CLI that reads `tsconfig.config.json` and writes generated tsconfig files |
 
 ## Adding a package
 

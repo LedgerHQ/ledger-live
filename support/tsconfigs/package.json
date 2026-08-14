@@ -1,0 +1,9 @@
+{
+  "name": "@support/tsconfigs",
+  "version": "0.1.0",
+  "private": true,
+  "exports": {
+    "./package.json": "./package.json",
+    "./*": "./fragments/*.json"
+  }
+}

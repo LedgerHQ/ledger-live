@@ -1,0 +1,12 @@
+{
+  "name": "@support/generate-config",
+  "version": "0.1.0",
+  "private": true,
+  "bin": {
+    "generate-tsconfig": "./generator.js"
+  },
+  "dependencies": {
+    "@support/tsconfigs": "workspace:*",
+    "deepmerge": "^4.3.1"
+  }
+}

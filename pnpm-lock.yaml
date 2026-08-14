@@ -676,6 +676,9 @@ importers:
       '@react-native/babel-plugin-codegen':
         specifier: 'catalog:'
         version: 0.81.6
+      '@support/generate-config':
+        specifier: workspace:*
+        version: link:support/generate-config
       '@ton/crypto':
         specifier: ^3.3.0
         version: 3.3.0
@@ -15519,6 +15522,15 @@ importers:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
 
+  support/generate-config:
+    dependencies:
+      '@support/tsconfigs':
+        specifier: workspace:*
+        version: link:../tsconfigs
+      deepmerge:
+        specifier: ^4.3.1
+        version: 4.3.1
+
   support/jest-devtools:
     devDependencies:
       '@gorhom/bottom-sheet':
@@ -15581,6 +15593,8 @@ importers:
       react:
         specifier: 19.1.4
         version: 19.1.4
+
+  support/tsconfigs: {}
 
   tests/dummy-live-app:
     dependencies:

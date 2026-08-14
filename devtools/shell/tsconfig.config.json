@@ -1,0 +1,7 @@
+{
+  "extends": [
+    "@support/tsconfigs/base",
+    "@support/tsconfigs/jest",
+    "@support/tsconfigs/web-native"
+  ]
+}

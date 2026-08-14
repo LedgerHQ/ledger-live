@@ -1,0 +1,26 @@
+{
+  "root": {
+    "files": [],
+    "references": [
+      { "path": "./tsconfig.web.json" },
+      { "path": "./tsconfig.native.json" }
+    ]
+  },
+  "web": {
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+      "moduleSuffixes": [".web", ""],
+      "types": ["jest"]
+    },
+    "include": ["src/**/*", "**/*.d.ts"],
+    "exclude": ["node_modules", "src/**/*.native.*"]
+  },
+  "native": {
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+      "moduleSuffixes": [".native", ""]
+    },
+    "include": ["src/**/*", "**/*.d.ts"],
+    "exclude": ["node_modules", "src/**/*.web.*"]
+  }
+}
