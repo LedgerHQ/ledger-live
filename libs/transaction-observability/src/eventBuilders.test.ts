@@ -19,7 +19,8 @@ const cosmos = account({ id: "cosmos", family: "cosmos", ticker: "ATOM" });
 const sei = account({ id: "sei_evm", family: "evm", ticker: "SEI" });
 
 const tx = (fields: Record<string, unknown>): TransactionLike => fields;
-const operation = (fields: Record<string, unknown>) => fields as unknown as Operation;
+const signed = (op: Record<string, unknown>) =>
+  ({ signature: "0xsig", operation: op }) as unknown as SignedOperation;
 
 const attribution = (mainAccount: Account, over: Partial<{ account: AccountLike }> = {}) => ({
   account: over.account ?? mainAccount,
@@ -86,7 +87,7 @@ describe("buildBroadcastCommonEvent", () => {
   it("derives the action from the optimistic operation type", () => {
     const common = buildBroadcastCommonEvent({
       ...attribution(cosmos),
-      operation: operation({ type: "DELEGATE", extra: {} }),
+      signedOperation: signed({ type: "DELEGATE", extra: {} }),
     });
 
     expect(common).toMatchObject({
@@ -99,7 +100,7 @@ describe("buildBroadcastCommonEvent", () => {
   it("reads the validators cosmos copies into the operation extra", () => {
     const common = buildBroadcastCommonEvent({
       ...attribution(cosmos),
-      operation: operation({
+      signedOperation: signed({
         type: "DELEGATE",
         extra: { validators: [{ address: "cosmosvaloper1" }] },
       }),
@@ -111,7 +112,7 @@ describe("buildBroadcastCommonEvent", () => {
   it("reports no validators for a family that does not copy them across", () => {
     const common = buildBroadcastCommonEvent({
       ...attribution(cardano),
-      operation: operation({ type: "DELEGATE", extra: {} }),
+      signedOperation: signed({ type: "DELEGATE", extra: {} }),
     });
 
     expect(common.validators).toBeUndefined();
@@ -122,7 +123,7 @@ describe("buildBroadcastCommonEvent", () => {
   it("prefers the exact mode off transactionRaw where it survives", () => {
     const common = buildBroadcastCommonEvent({
       ...attribution(sei),
-      operation: operation({
+      signedOperation: signed({
         type: "REWARD",
         extra: {},
         transactionRaw: { mode: "compoundReward", valAddress: "0xval" },
@@ -139,7 +140,7 @@ describe("buildBroadcastCommonEvent", () => {
   it("falls back to the operation type when transactionRaw carries no usable mode", () => {
     const common = buildBroadcastCommonEvent({
       ...attribution(sei),
-      operation: operation({ type: "REWARD", extra: {}, transactionRaw: { mode: "send" } }),
+      signedOperation: signed({ type: "REWARD", extra: {}, transactionRaw: { mode: "send" } }),
     });
 
     expect(common).toMatchObject({
@@ -151,7 +152,7 @@ describe("buildBroadcastCommonEvent", () => {
   it("derives nothing from a plain send, so it never enters the funnel", () => {
     const common = buildBroadcastCommonEvent({
       ...attribution(cosmos),
-      operation: operation({ type: "OUT", extra: {} }),
+      signedOperation: signed({ type: "OUT", extra: {} }),
     });
 
     expect(common.earnTransactionType).toBeUndefined();

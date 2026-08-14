@@ -15,6 +15,8 @@ export { deriveFromOperationType } from "./operationType";
 
 export { getRawTransactionType, getStakeTarget, type TransactionLike } from "./transactionShape";
 
+export { rememberSignContext, type SignContext } from "./signContext";
+
 export {
   buildBroadcastCommonEvent,
   buildSignCommonEvent,
