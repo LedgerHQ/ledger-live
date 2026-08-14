@@ -1,6 +1,5 @@
 import { ethers } from "ethers";
 import network from "@ledgerhq/live-network";
-import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import monadAbi from "../../abis/monad.abi.json";
 import type { EvmConfigInfo } from "../../config";
 import { withApi } from "../../network/node/rpc.common";
@@ -12,21 +11,16 @@ jest.mock("../../network/node/rpc.common", () => ({
   __esModule: true,
   withApi: jest.fn(),
 }));
-jest.mock("@ledgerhq/ledger-wallet-framework/currencies", () => ({
-  __esModule: true,
-  ...jest.requireActual("@ledgerhq/ledger-wallet-framework/currencies"),
-  getCryptoCurrencyById: jest.fn(),
-}));
 jest.mock("@ledgerhq/live-network", () => ({
   __esModule: true,
   default: jest.fn(),
 }));
 
 const mockedWithApi = jest.mocked(withApi);
-const mockedGetCryptoCurrencyById = jest.mocked(getCryptoCurrencyById);
 const mockedNetwork = jest.mocked(network);
 
 const mockConfig = {
+  name: "Monad",
   node: { type: "external", uri: "https://monad.rpc/" },
 } as unknown as EvmConfigInfo;
 const ledgerConfig = { node: { type: "ledger" } } as unknown as EvmConfigInfo;
@@ -60,13 +54,8 @@ const encodeGetValidator = (params: {
 type CallHandler = (request: { to?: string; data?: string }) => Promise<string>;
 
 const setupRpc = (handler: CallHandler) => {
-  mockedGetCryptoCurrencyById.mockReturnValue({
-    id: "monad",
-    name: "Monad",
-    units: [{ name: "MON", code: "MON", magnitude: 18 }],
-  } as unknown as ReturnType<typeof getCryptoCurrencyById>);
   const callMock = jest.fn(handler);
-  mockedWithApi.mockImplementation(async (_currency, fn) =>
+  mockedWithApi.mockImplementation(async (_config, _currencyId, fn) =>
     fn({ call: callMock } as unknown as Parameters<typeof fn>[0]),
   );
   return callMock;
@@ -452,7 +441,7 @@ describe("staking/validators/monad", () => {
     const SECP = "0x036e44a092493800e427b2b08d3427d804348b1368ecd0a6af6510ae40ce507187";
 
     const fetchStakes = (config: EvmConfigInfo = mockConfig) =>
-      fetchMonadStakes(config, DELEGATOR, {} as never, { id: "monad" } as never);
+      fetchMonadStakes(config, DELEGATOR, {} as never, "monad");
 
     const encodeDelegator = (
       stake: bigint,

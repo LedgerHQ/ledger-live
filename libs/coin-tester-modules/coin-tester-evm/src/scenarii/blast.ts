@@ -92,6 +92,8 @@ export const scenarioBlast: Scenario<GenericTransaction, Account> = {
       status: {
         type: "active",
       },
+      chainId: 81457,
+      name: "Blast",
       node: {
         type: "external",
         uri: "http://127.0.0.1:8545",

@@ -1,4 +1,3 @@
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
 import type { EvmConfigInfo } from "./config";
 import { getNodeApi } from "./network/node/index";
@@ -9,23 +8,23 @@ import { getNodeApi } from "./network/node/index";
  */
 export const getAdditionalLayer2Fees = async (
   config: EvmConfigInfo,
-  currency: CryptoCurrency,
+  currencyId: string,
   transaction: string,
 ): Promise<BigNumber | undefined> => {
-  switch (currency.id) {
+  switch (currencyId) {
     case "optimism":
     case "optimism_sepolia":
     case "blast":
     case "blast_sepolia":
     case "base":
     case "base_sepolia": {
-      const nodeApi = getNodeApi(config, currency);
-      const additionalFees = await nodeApi.getOptimismAdditionalFees(currency, transaction);
+      const nodeApi = getNodeApi(config, currencyId);
+      const additionalFees = await nodeApi.getOptimismAdditionalFees(currencyId, transaction);
       return additionalFees;
     }
     case "scroll": {
-      const nodeApi = getNodeApi(config, currency);
-      const additionalFees = await nodeApi.getScrollAdditionalFees(currency, transaction);
+      const nodeApi = getNodeApi(config, currencyId);
+      const additionalFees = await nodeApi.getScrollAdditionalFees(currencyId, transaction);
       return additionalFees;
     }
     default:

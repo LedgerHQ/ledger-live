@@ -3,7 +3,6 @@ import {
   MemoNotSupported,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/types";
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
 import type { EvmConfigInfo } from "../config";
@@ -24,18 +23,16 @@ describe("craftTransaction", () => {
   const ledgerMocks = mockNodeApi();
   beforeEach(() => {
     jest.clearAllMocks();
-    mockGetNodeApi.mockImplementation((config: EvmConfigInfo, _currency: CryptoCurrency) => {
+    mockGetNodeApi.mockImplementation((config: EvmConfigInfo, _currencyId: string) => {
       return config?.node?.type === "ledger" ? ledgerMocks : externalMocks;
     });
   });
 
   it("fails to craft an unknown intent type", async () => {
     await expect(
-      craftTransaction(
-        createMockEvmContext(),
-        {} as CryptoCurrency,
-        { transactionIntent: { type: "any" } } as any,
-      ),
+      craftTransaction(createMockEvmContext(), "ethereum", {
+        transactionIntent: { type: "any" },
+      } as any),
     ).rejects.toThrow(
       "Unsupported intent type 'any'. Must be 'send-legacy', 'send-eip1559', 'staking-legacy', or 'staking-eip1559'",
     );
@@ -64,8 +61,8 @@ describe("craftTransaction", () => {
       externalMocks.getGasEstimation.mockResolvedValue(new BigNumber(2300));
 
       const { transaction } = await craftTransaction(
-        createMockEvmContext({ node: { type: "external" } } as Partial<EvmConfigInfo>),
-        { ethereumLikeInfo: { chainId: 42 } } as CryptoCurrency,
+        createMockEvmContext({ node: { type: "external" }, chainId: 42 } as Partial<EvmConfigInfo>),
+        "ethereum",
         {
           transactionIntent: intent,
           customFees: { value: 0n, parameters: { gasPrice: 8n, gasLimit: 0n } },
@@ -81,8 +78,11 @@ describe("craftTransaction", () => {
 
       await expect(
         craftTransaction(
-          createMockEvmContext({ node: { type: "external" } } as Partial<EvmConfigInfo>),
-          { ethereumLikeInfo: { chainId: 42 } } as CryptoCurrency,
+          createMockEvmContext({
+            node: { type: "external" },
+            chainId: 42,
+          } as Partial<EvmConfigInfo>),
+          "ethereum",
           {
             transactionIntent: intent,
             customFees: { value: 0n, parameters: { gasPrice: 8n } },
@@ -123,30 +123,29 @@ describe("craftTransaction", () => {
       ["an external node", "external", externalMocks],
       ["a ledger node", "ledger", ledgerMocks],
     ] as const)("crafts a transaction with the native asset using %s", async (_, type, mocks) => {
-      const context = createMockEvmContext({ node: { type } } as Partial<EvmConfigInfo>);
+      const context = createMockEvmContext({
+        node: { type },
+        chainId: 42,
+      } as Partial<EvmConfigInfo>);
       mocks.getTransactionCount.mockResolvedValue(18);
       mocks.getGasEstimation.mockResolvedValue(new BigNumber(2300));
       mocks.getFeeData.mockResolvedValue(feeData);
 
-      const { transaction } = await craftTransaction(
-        context,
-        { ethereumLikeInfo: { chainId: 42 } } as CryptoCurrency,
-        {
-          transactionIntent: {
-            intentType: "transaction",
-            type: `send-${transactionType}`,
-            recipient: "0x7b2c7232f9e38f30e2868f0e5bf311cd83554b5a",
-            amount: 10n,
-            asset: { type: "native" },
-          } as TransactionIntent<MemoNotSupported, BufferTxData>,
-          customFees: {
-            value: 0n,
-            parameters: {
-              gasPrice: 8n,
-            },
+      const { transaction } = await craftTransaction(context, "ethereum", {
+        transactionIntent: {
+          intentType: "transaction",
+          type: `send-${transactionType}`,
+          recipient: "0x7b2c7232f9e38f30e2868f0e5bf311cd83554b5a",
+          amount: 10n,
+          asset: { type: "native" },
+        } as TransactionIntent<MemoNotSupported, BufferTxData>,
+        customFees: {
+          value: 0n,
+          parameters: {
+            gasPrice: 8n,
           },
         },
-      );
+      });
 
       expect(transaction).toEqual(
         ethers.Transaction.from({
@@ -166,30 +165,29 @@ describe("craftTransaction", () => {
       ["an external node", "external", externalMocks],
       ["a ledger node", "ledger", ledgerMocks],
     ] as const)("crafts a transaction with a token asset using %s", async (_, type, mocks) => {
-      const context = createMockEvmContext({ node: { type } } as Partial<EvmConfigInfo>);
+      const context = createMockEvmContext({
+        node: { type },
+        chainId: 42,
+      } as Partial<EvmConfigInfo>);
       mocks.getTransactionCount.mockResolvedValue(18);
       mocks.getGasEstimation.mockResolvedValue(new BigNumber(2300));
       mocks.getFeeData.mockResolvedValue(feeData);
 
-      const { transaction } = await craftTransaction(
-        context,
-        { ethereumLikeInfo: { chainId: 42 } } as CryptoCurrency,
-        {
-          transactionIntent: {
-            intentType: "transaction",
-            type: `send-${transactionType}`,
-            recipient: "0x7b2c7232f9e38f30e2868f0e5bf311cd83554b5a",
-            amount: 10n,
-            asset: { type: "erc20", assetReference: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48" },
-          } as TransactionIntent<MemoNotSupported, BufferTxData>,
-          customFees: {
-            value: 0n,
-            parameters: {
-              gasPrice: 8n,
-            },
+      const { transaction } = await craftTransaction(context, "ethereum", {
+        transactionIntent: {
+          intentType: "transaction",
+          type: `send-${transactionType}`,
+          recipient: "0x7b2c7232f9e38f30e2868f0e5bf311cd83554b5a",
+          amount: 10n,
+          asset: { type: "erc20", assetReference: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48" },
+        } as TransactionIntent<MemoNotSupported, BufferTxData>,
+        customFees: {
+          value: 0n,
+          parameters: {
+            gasPrice: 8n,
           },
         },
-      );
+      });
 
       expect(transaction).toEqual(
         ethers.Transaction.from({
@@ -220,35 +218,34 @@ describe("craftTransaction", () => {
     ] as const)(
       "crafts a transaction without %s when custom fees are passed",
       async (_, type, mocks) => {
-        const context = createMockEvmContext({ node: { type } } as Partial<EvmConfigInfo>);
+        const context = createMockEvmContext({
+          node: { type },
+          chainId: 42,
+        } as Partial<EvmConfigInfo>);
         mocks.getTransactionCount.mockResolvedValue(18);
 
-        const { transaction } = await craftTransaction(
-          context,
-          { ethereumLikeInfo: { chainId: 42 } } as CryptoCurrency,
-          {
-            transactionIntent: {
-              intentType: "transaction",
-              type: `send-${transactionType}`,
-              recipient: "0x7b2c7232f9e38f30e2868f0e5bf311cd83554b5a",
-              amount: 10n,
-              asset: {
-                type: "erc20",
-                assetReference: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
-              },
-            } as TransactionIntent<MemoNotSupported, BufferTxData>,
-            customFees: {
-              value: 0n,
-              parameters: {
-                gasPrice: feeData.gasPrice && BigInt(feeData.gasPrice.toFixed()),
-                maxFeePerGas: feeData.maxFeePerGas && BigInt(feeData.maxFeePerGas.toFixed()),
-                maxPriorityFeePerGas:
-                  feeData.maxPriorityFeePerGas && BigInt(feeData.maxPriorityFeePerGas.toFixed()),
-                gasLimit: 2300n,
-              },
+        const { transaction } = await craftTransaction(context, "ethereum", {
+          transactionIntent: {
+            intentType: "transaction",
+            type: `send-${transactionType}`,
+            recipient: "0x7b2c7232f9e38f30e2868f0e5bf311cd83554b5a",
+            amount: 10n,
+            asset: {
+              type: "erc20",
+              assetReference: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+            },
+          } as TransactionIntent<MemoNotSupported, BufferTxData>,
+          customFees: {
+            value: 0n,
+            parameters: {
+              gasPrice: feeData.gasPrice && BigInt(feeData.gasPrice.toFixed()),
+              maxFeePerGas: feeData.maxFeePerGas && BigInt(feeData.maxFeePerGas.toFixed()),
+              maxPriorityFeePerGas:
+                feeData.maxPriorityFeePerGas && BigInt(feeData.maxPriorityFeePerGas.toFixed()),
+              gasLimit: 2300n,
             },
           },
-        );
+        });
 
         expect(transaction).toEqual(
           ethers.Transaction.from({
@@ -278,7 +275,10 @@ describe("craftTransaction", () => {
   });
 
   it("preserves passed calldata", async () => {
-    const context = createMockEvmContext({ node: { type: "external" } } as Partial<EvmConfigInfo>);
+    const context = createMockEvmContext({
+      node: { type: "external" },
+      chainId: 42,
+    } as Partial<EvmConfigInfo>);
     externalMocks.getTransactionCount.mockResolvedValue(18);
     externalMocks.getGasEstimation.mockResolvedValue(new BigNumber(2300));
     externalMocks.getFeeData.mockResolvedValue({
@@ -288,20 +288,16 @@ describe("craftTransaction", () => {
       nextBaseFee: null,
     });
 
-    const { transaction } = await craftTransaction(
-      context,
-      { ethereumLikeInfo: { chainId: 42 } } as CryptoCurrency,
-      {
-        transactionIntent: {
-          intentType: "transaction",
-          type: "send-legacy",
-          recipient: "0x7b2c7232f9e38f30e2868f0e5bf311cd83554b5a",
-          amount: 10n,
-          data: { type: "buffer", value: Buffer.from([0xca, 0xfe]) },
-          asset: { type: "native" },
-        } as TransactionIntent<MemoNotSupported, BufferTxData>,
-      },
-    );
+    const { transaction } = await craftTransaction(context, "ethereum", {
+      transactionIntent: {
+        intentType: "transaction",
+        type: "send-legacy",
+        recipient: "0x7b2c7232f9e38f30e2868f0e5bf311cd83554b5a",
+        amount: 10n,
+        data: { type: "buffer", value: Buffer.from([0xca, 0xfe]) },
+        asset: { type: "native" },
+      } as TransactionIntent<MemoNotSupported, BufferTxData>,
+    });
 
     expect(transaction).toEqual(
       ethers.Transaction.from({
@@ -318,7 +314,10 @@ describe("craftTransaction", () => {
   });
 
   it("preserves passed sequence", async () => {
-    const context = createMockEvmContext({ node: { type: "external" } } as Partial<EvmConfigInfo>);
+    const context = createMockEvmContext({
+      node: { type: "external" },
+      chainId: 42,
+    } as Partial<EvmConfigInfo>);
     externalMocks.getGasEstimation.mockResolvedValue(new BigNumber(2300));
     externalMocks.getFeeData.mockResolvedValue({
       gasPrice: new BigNumber(5),
@@ -327,20 +326,16 @@ describe("craftTransaction", () => {
       nextBaseFee: null,
     });
 
-    const { transaction } = await craftTransaction(
-      context,
-      { ethereumLikeInfo: { chainId: 42 } } as CryptoCurrency,
-      {
-        transactionIntent: {
-          intentType: "transaction",
-          sequence: 15n,
-          type: "send-legacy",
-          recipient: "0x7b2c7232f9e38f30e2868f0e5bf311cd83554b5a",
-          amount: 10n,
-          asset: { type: "native" },
-        } as TransactionIntent<MemoNotSupported, BufferTxData>,
-      },
-    );
+    const { transaction } = await craftTransaction(context, "ethereum", {
+      transactionIntent: {
+        intentType: "transaction",
+        sequence: 15n,
+        type: "send-legacy",
+        recipient: "0x7b2c7232f9e38f30e2868f0e5bf311cd83554b5a",
+        amount: 10n,
+        asset: { type: "native" },
+      } as TransactionIntent<MemoNotSupported, BufferTxData>,
+    });
 
     expect(transaction).toEqual(
       ethers.Transaction.from({
@@ -395,30 +390,26 @@ describe("craftTransaction", () => {
         ] as const)(
           "crafts a SEI staking delegate transaction using %s",
           async (_, type, mocks) => {
-            const context = createMockEvmContext({ node: { type } } as Partial<EvmConfigInfo>);
+            const context = createMockEvmContext({
+              node: { type },
+              chainId: 42,
+            } as Partial<EvmConfigInfo>);
             mocks.getTransactionCount.mockResolvedValue(25);
             mocks.getGasEstimation.mockResolvedValue(new BigNumber(45000));
             mocks.getFeeData.mockResolvedValue(feeData);
 
-            const { transaction } = await craftTransaction(
-              context,
-              {
-                id: "sei_evm",
-                ethereumLikeInfo: { chainId: 42 },
-              } as CryptoCurrency,
-              {
-                transactionIntent: {
-                  intentType: "staking",
-                  type: `staking-${transactionType}`,
-                  sender: "0x1234567890abcdef1234567890abcdef12345678",
-                  recipient: "0x000000000000000000000000000000000001005",
-                  valAddress: "seivaloper1234567890abcdef1234567890abcdef12345678",
-                  amount: 1000000000000000000n, // 1 SEI
-                  asset: { type: "native" },
-                  mode: "delegate",
-                } as any,
-              },
-            );
+            const { transaction } = await craftTransaction(context, "sei_evm", {
+              transactionIntent: {
+                intentType: "staking",
+                type: `staking-${transactionType}`,
+                sender: "0x1234567890abcdef1234567890abcdef12345678",
+                recipient: "0x000000000000000000000000000000000001005",
+                valAddress: "seivaloper1234567890abcdef1234567890abcdef12345678",
+                amount: 1000000000000000000n, // 1 SEI
+                asset: { type: "native" },
+                mode: "delegate",
+              } as any,
+            });
 
             // Parse the returned transaction to verify its properties
             const parsedTx = ethers.Transaction.from(transaction);
@@ -440,30 +431,26 @@ describe("craftTransaction", () => {
         ] as const)(
           "crafts a SEI staking undelegate transaction using %s",
           async (_, type, mocks) => {
-            const context = createMockEvmContext({ node: { type } } as Partial<EvmConfigInfo>);
+            const context = createMockEvmContext({
+              node: { type },
+              chainId: 42,
+            } as Partial<EvmConfigInfo>);
             mocks.getTransactionCount.mockResolvedValue(26);
             mocks.getGasEstimation.mockResolvedValue(new BigNumber(50000));
             mocks.getFeeData.mockResolvedValue(feeData);
 
-            const { transaction } = await craftTransaction(
-              context,
-              {
-                id: "sei_evm",
-                ethereumLikeInfo: { chainId: 42 },
-              } as CryptoCurrency,
-              {
-                transactionIntent: {
-                  intentType: "staking",
-                  type: `staking-${transactionType}`,
-                  sender: "0x1234567890abcdef1234567890abcdef12345678",
-                  recipient: "0x000000000000000000000000000000000001005",
-                  valAddress: "seivaloper1234567890abcdef1234567890abcdef12345678",
-                  amount: 500000000000000000n, // 0.5 SEI
-                  asset: { type: "native" },
-                  mode: "undelegate",
-                } as any,
-              },
-            );
+            const { transaction } = await craftTransaction(context, "sei_evm", {
+              transactionIntent: {
+                intentType: "staking",
+                type: `staking-${transactionType}`,
+                sender: "0x1234567890abcdef1234567890abcdef12345678",
+                recipient: "0x000000000000000000000000000000000001005",
+                valAddress: "seivaloper1234567890abcdef1234567890abcdef12345678",
+                amount: 500000000000000000n, // 0.5 SEI
+                asset: { type: "native" },
+                mode: "undelegate",
+              } as any,
+            });
 
             // Parse the returned transaction to verify its properties
             const parsedTx = ethers.Transaction.from(transaction);
@@ -485,30 +472,26 @@ describe("craftTransaction", () => {
         ] as const)(
           "crafts a CELO staking delegate transaction using %s",
           async (_, type, mocks) => {
-            const context = createMockEvmContext({ node: { type } } as Partial<EvmConfigInfo>);
+            const context = createMockEvmContext({
+              node: { type },
+              chainId: 42220,
+            } as Partial<EvmConfigInfo>);
             mocks.getTransactionCount.mockResolvedValue(30);
             mocks.getGasEstimation.mockResolvedValue(new BigNumber(60000));
             mocks.getFeeData.mockResolvedValue(feeData);
 
-            const { transaction } = await craftTransaction(
-              context,
-              {
-                id: "celo",
-                ethereumLikeInfo: { chainId: 42220 },
-              } as CryptoCurrency,
-              {
-                transactionIntent: {
-                  intentType: "staking",
-                  type: `staking-${transactionType}`,
-                  sender: "0x1234567890abcdef1234567890abcdef12345678",
-                  recipient: "0x55E1A0C8f376964bd339167476063bFED7f213d5",
-                  valAddress: "0xabcdef1234567890abcdef1234567890abcdef12",
-                  amount: 100000000000000000000n, // 100 CELO
-                  asset: { type: "native" },
-                  mode: "delegate",
-                } as any,
-              },
-            );
+            const { transaction } = await craftTransaction(context, "celo", {
+              transactionIntent: {
+                intentType: "staking",
+                type: `staking-${transactionType}`,
+                sender: "0x1234567890abcdef1234567890abcdef12345678",
+                recipient: "0x55E1A0C8f376964bd339167476063bFED7f213d5",
+                valAddress: "0xabcdef1234567890abcdef1234567890abcdef12",
+                amount: 100000000000000000000n, // 100 CELO
+                asset: { type: "native" },
+                mode: "delegate",
+              } as any,
+            });
 
             // Parse the returned transaction to verify its properties
             const parsedTx = ethers.Transaction.from(transaction);
@@ -532,24 +515,17 @@ describe("craftTransaction", () => {
       } as Partial<EvmConfigInfo>);
 
       await expect(
-        craftTransaction(
-          context,
-          {
-            id: "unsupported_network",
-            ethereumLikeInfo: { chainId: 999 },
-          } as unknown as CryptoCurrency,
-          {
-            transactionIntent: {
-              type: "staking",
-              sender: "0x1234567890abcdef1234567890abcdef12345678",
-              recipient: "0x000000000000000000000000000000000001005",
-              valAddress: "validator123",
-              amount: 1000000000000000000n,
-              asset: { type: "native" },
-              mode: "delegate",
-            } as any,
-          },
-        ),
+        craftTransaction(context, "unsupported_network", {
+          transactionIntent: {
+            type: "staking",
+            sender: "0x1234567890abcdef1234567890abcdef12345678",
+            recipient: "0x000000000000000000000000000000000001005",
+            valAddress: "validator123",
+            amount: 1000000000000000000n,
+            asset: { type: "native" },
+            mode: "delegate",
+          } as any,
+        }),
       ).rejects.toThrow(
         "Unsupported intent type 'staking'. Must be 'send-legacy', 'send-eip1559', 'staking-legacy', or 'staking-eip1559'",
       ); // Can throw GasEstimationError due to unsupported currency
@@ -561,24 +537,17 @@ describe("craftTransaction", () => {
       } as Partial<EvmConfigInfo>);
 
       await expect(
-        craftTransaction(
-          context,
-          {
-            id: "sei_evm",
-            ethereumLikeInfo: { chainId: 42 },
-          } as CryptoCurrency,
-          {
-            transactionIntent: {
-              type: "staking",
-              sender: "0x1234567890abcdef1234567890abcdef12345678",
-              recipient: "0x000000000000000000000000000000000001005",
-              valAddress: "validator123",
-              amount: 1000000000000000000n,
-              asset: { type: "native" },
-              mode: "unsupported_operation",
-            } as any,
-          },
-        ),
+        craftTransaction(context, "sei_evm", {
+          transactionIntent: {
+            type: "staking",
+            sender: "0x1234567890abcdef1234567890abcdef12345678",
+            recipient: "0x000000000000000000000000000000000001005",
+            valAddress: "validator123",
+            amount: 1000000000000000000n,
+            asset: { type: "native" },
+            mode: "unsupported_operation",
+          } as any,
+        }),
       ).rejects.toThrow();
     });
   });

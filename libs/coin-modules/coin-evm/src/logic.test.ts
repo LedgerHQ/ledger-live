@@ -1,5 +1,3 @@
-import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
-
 jest.mock("./network/node/index", () => ({
   ...jest.requireActual("./network/node/index"),
   getNodeApi: jest.fn((...args: unknown[]) =>
@@ -87,10 +85,6 @@ mockGetConfig.mockImplementation((currencyId: string): any => {
 describe("EVM Family", () => {
   describe("logic.ts", () => {
     describe("getAdditionalLayer2Fees", () => {
-      const optimism = getCryptoCurrencyById("optimism");
-      const scroll = getCryptoCurrencyById("scroll");
-      const ethereum = getCryptoCurrencyById("ethereum");
-
       beforeEach(() => {
         jest.clearAllMocks();
         mockGetNodeApi.mockImplementation(
@@ -106,9 +100,9 @@ describe("EVM Family", () => {
         mockGetOptimismAdditionalFees.mockClear();
         mockGetScrollAdditionalFees.mockClear();
 
-        await getAdditionalLayer2Fees({} as any, optimism, {} as any);
+        await getAdditionalLayer2Fees({} as any, "optimism", {} as any);
         expect(mockGetOptimismAdditionalFees).toHaveBeenCalled();
-        await getAdditionalLayer2Fees({} as any, scroll, {} as any);
+        await getAdditionalLayer2Fees({} as any, "scroll", {} as any);
         expect(mockGetScrollAdditionalFees).toHaveBeenCalled();
       });
 
@@ -116,7 +110,7 @@ describe("EVM Family", () => {
         mockGetOptimismAdditionalFees.mockClear();
         mockGetScrollAdditionalFees.mockClear();
 
-        await getAdditionalLayer2Fees({} as any, ethereum, {} as any);
+        await getAdditionalLayer2Fees({} as any, "ethereum", {} as any);
         expect(mockGetOptimismAdditionalFees).not.toHaveBeenCalled();
         expect(mockGetScrollAdditionalFees).not.toHaveBeenCalled();
       });

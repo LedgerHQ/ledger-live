@@ -103,7 +103,7 @@ async function enrichStakingResources(
 
   // Reconstruct active redelegations from the REDELEGATE operation history by
   // decoding the ABI-encoded calldata fetched directly from the RPC node.
-  const opsRedelegations = await buildRedelegationsFromOps(config, currency, operations);
+  const opsRedelegations = await buildRedelegationsFromOps(config, currency.id, operations);
 
   // Merge both sources, deduplicating by (src, dst) validator pair.
   const key = (r: StakingRedelegation) => `${r.validatorSrcAddress}|${r.validatorDstAddress}`;
@@ -121,15 +121,15 @@ async function getOperationStatus(
   op: LiveOperation,
 ): Promise<LiveOperation | null> {
   try {
-    const nodeApi = getNodeApi(getCurrencyConfiguration<EvmConfigInfo>(currency.id), currency);
+    const nodeApi = getNodeApi(getCurrencyConfiguration<EvmConfigInfo>(currency.id), currency.id);
     const { blockHeight, blockHash, nonce, gasPrice, gasUsed, value } =
-      await nodeApi.getTransaction(currency, op.hash);
+      await nodeApi.getTransaction(currency.id, op.hash);
 
     if (!blockHeight) {
       throw new Error("getOperationStatus: Transaction has no block");
     }
 
-    const { timestamp } = await nodeApi.getBlockByHeight(currency, blockHeight);
+    const { timestamp } = await nodeApi.getBlockByHeight(currency.id, blockHeight);
     const date = new Date(timestamp);
     const fee = new BigNumber(gasPrice).multipliedBy(gasUsed);
 
@@ -182,12 +182,15 @@ export async function validateTransaction(
   currency: CryptoCurrency,
   { signature }: { signature: string },
 ): Promise<{ error: Error | undefined }> {
-  const nodeApi = getNodeApi(getCurrencyConfiguration<EvmConfigInfo>(currency.id), currency);
+  const nodeApi = getNodeApi(getCurrencyConfiguration<EvmConfigInfo>(currency.id), currency.id);
   const transaction = ethers.Transaction.from(signature);
 
   if (transaction.hash) {
     try {
-      const { hash, blockHeight = null } = await nodeApi.getTransaction(currency, transaction.hash);
+      const { hash, blockHeight = null } = await nodeApi.getTransaction(
+        currency.id,
+        transaction.hash,
+      );
       if (blockHeight) {
         return { error: new InvalidTransactionError("transaction is already mined") };
       }
@@ -202,7 +205,7 @@ export async function validateTransaction(
   if (transaction.from) {
     const currentNonce = await getNextSequence(
       buildContext(currency.id),
-      currency,
+      currency.id,
       transaction.from,
     );
     if (typeof transaction.nonce === "number") {

@@ -33,9 +33,9 @@ function buildBroadcastObservable(
       // `concat(of(...), ...)` wrapper below; we go straight to the actual
       // broadcast call here to avoid a duplicate transition.
       const currency = getCryptoCurrencyById(input.currencyId);
-      const nodeApi = getNodeApi(getCurrencyConfiguration<EvmConfigInfo>(currency.id), currency);
+      const nodeApi = getNodeApi(getCurrencyConfiguration<EvmConfigInfo>(currency.id), currency.id);
 
-      const hash = await nodeApi.broadcastTransaction(currency, input.signedTxHex);
+      const hash = await nodeApi.broadcastTransaction(currency.id, input.signedTxHex);
       if (cancelled) return;
       subscriber.next({ type: "broadcasted", hash });
 
@@ -47,7 +47,7 @@ function buildBroadcastObservable(
 
         let info: Awaited<ReturnType<typeof nodeApi.getTransaction>> | null = null;
         try {
-          info = await nodeApi.getTransaction(currency, hash);
+          info = await nodeApi.getTransaction(currency.id, hash);
         } catch {
           // Some nodes return 404 for not-yet-mined txs — keep polling instead
           // of failing the whole intent on transient lookup errors.

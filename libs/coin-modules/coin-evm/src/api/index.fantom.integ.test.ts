@@ -8,6 +8,8 @@ describe("Fantom (etherscan explorer)", () => {
     let module: ReturnType<typeof createApi>;
 
     const fantomConfig: EvmConfig = {
+      chainId: 250,
+      name: "Fantom",
       node: {
         type: "external",
         uri: "https://rpcapi.fantom.network",

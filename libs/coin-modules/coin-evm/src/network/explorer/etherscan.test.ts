@@ -1,8 +1,6 @@
 import type { MemoNotSupported, Operation } from "@ledgerhq/coin-module-framework/api/types";
 import { AssertionError, fail } from "assert";
-import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { delay } from "@ledgerhq/coin-module-framework/promises";
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import axios from "axios";
 
 import {
@@ -17,7 +15,6 @@ import {
 } from "../../adapters";
 import { getCoinConfig } from "../../config";
 import { EtherscanAPIError, EtherscanLikeExplorerUsedIncorrectly } from "../../errors";
-import { makeAccount } from "../../fixtures/common.fixtures";
 import {
   etherscanCoinOperations,
   etherscanERC1155Operations,
@@ -36,14 +33,8 @@ jest.mock("@ledgerhq/coin-module-framework/promises");
 jest.mock("../../config");
 const mockGetConfig = jest.mocked(getCoinConfig);
 
-const currency: CryptoCurrency = {
-  ...getCryptoCurrencyById("ethereum"),
-  ethereumLikeInfo: {
-    chainId: 1,
-  },
-};
-
-const account = makeAccount("0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d", currency);
+const currencyId = "ethereum";
+const address = "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d";
 
 // Factory to create fetch utilities for isPageFull/isDone tests
 const createFetchWithLimit =
@@ -55,9 +46,9 @@ const createFetchWithLimit =
       data: { result: ops },
     });
     return apiFn({
-      currency,
-      config: getCoinConfig(currency.id).info,
-      address: account.freshAddress,
+      currencyId: currencyId,
+      config: getCoinConfig(currencyId).info,
+      address: address,
       fromBlock: 0,
       sort,
       ...(limit !== undefined ? { limit } : {}),
@@ -180,14 +171,9 @@ describe("EVM Family", () => {
 
       try {
         await ETHERSCAN_API.getCoinOperations({
-          currency: {
-            ...currency,
-            ethereumLikeInfo: {
-              chainId: 1,
-            },
-          },
-          config: getCoinConfig(currency.id).info,
-          address: account.freshAddress,
+          currencyId: currencyId,
+          config: getCoinConfig(currencyId).info,
+          address: address,
           fromBlock: 0,
           sort: "desc",
         });
@@ -208,9 +194,9 @@ describe("EVM Family", () => {
       }));
 
       const response = await ETHERSCAN_API.getCoinOperations({
-        currency,
-        config: getCoinConfig(currency.id).info,
-        address: account.freshAddress,
+        currencyId: currencyId,
+        config: getCoinConfig(currencyId).info,
+        address: address,
         fromBlock: 0,
         sort: "desc",
       });
@@ -218,7 +204,7 @@ describe("EVM Family", () => {
       expect(response.operations.length).toBe(4);
       expect(response).toEqual({
         operations: etherscanCoinOperations
-          .map(op => etherscanOperationToOperations(account.freshAddress, currency.id, op))
+          .map(op => etherscanOperationToOperations(address, currencyId, op))
           .flat(),
         isDone: true,
         boundBlock: 14923692,
@@ -226,7 +212,7 @@ describe("EVM Family", () => {
       });
       expect(spy).toHaveBeenCalledWith({
         method: "GET",
-        url: `mock?module=account&action=txlist&address=${account.freshAddress}`,
+        url: `mock?module=account&action=txlist&address=${address}`,
         params: {
           tag: "latest",
           page: 1,
@@ -245,9 +231,9 @@ describe("EVM Family", () => {
       }));
 
       const response = await ETHERSCAN_API.getCoinOperations({
-        currency,
-        config: getCoinConfig(currency.id).info,
-        address: account.freshAddress,
+        currencyId: currencyId,
+        config: getCoinConfig(currencyId).info,
+        address: address,
         fromBlock: 50,
         sort: "desc",
       });
@@ -255,7 +241,7 @@ describe("EVM Family", () => {
       expect(response.operations.length).toBe(4);
       expect(response).toEqual({
         operations: etherscanCoinOperations
-          .map(op => etherscanOperationToOperations(account.freshAddress, currency.id, op))
+          .map(op => etherscanOperationToOperations(address, currencyId, op))
           .flat(),
         isDone: true,
         boundBlock: 14923692,
@@ -263,7 +249,7 @@ describe("EVM Family", () => {
       });
       expect(spy).toHaveBeenCalledWith({
         method: "GET",
-        url: `mock?module=account&action=txlist&address=${account.freshAddress}`,
+        url: `mock?module=account&action=txlist&address=${address}`,
         params: {
           tag: "latest",
           page: 1,
@@ -282,9 +268,9 @@ describe("EVM Family", () => {
       }));
 
       const response = await ETHERSCAN_API.getCoinOperations({
-        currency,
-        config: getCoinConfig(currency.id).info,
-        address: account.freshAddress,
+        currencyId: currencyId,
+        config: getCoinConfig(currencyId).info,
+        address: address,
         fromBlock: 50,
         toBlock: 100,
         sort: "desc",
@@ -293,7 +279,7 @@ describe("EVM Family", () => {
       expect(response.operations.length).toBe(4);
       expect(response).toEqual({
         operations: etherscanCoinOperations
-          .map(op => etherscanOperationToOperations(account.freshAddress, currency.id, op))
+          .map(op => etherscanOperationToOperations(address, currencyId, op))
           .flat(),
         isDone: true,
         boundBlock: 14923692,
@@ -301,7 +287,7 @@ describe("EVM Family", () => {
       });
       expect(spy).toHaveBeenCalledWith({
         method: "GET",
-        url: `mock?module=account&action=txlist&address=${account.freshAddress}`,
+        url: `mock?module=account&action=txlist&address=${address}`,
         params: {
           tag: "latest",
           page: 1,
@@ -413,14 +399,9 @@ describe("EVM Family", () => {
 
       try {
         await ETHERSCAN_API.getTokenOperations({
-          currency: {
-            ...currency,
-            ethereumLikeInfo: {
-              chainId: 1,
-            },
-          },
-          config: getCoinConfig(currency.id).info,
-          address: account.freshAddress,
+          currencyId: currencyId,
+          config: getCoinConfig(currencyId).info,
+          address: address,
           fromBlock: 0,
           sort: "desc",
         });
@@ -441,9 +422,9 @@ describe("EVM Family", () => {
       }));
 
       const response = await ETHERSCAN_API.getTokenOperations({
-        currency,
-        config: getCoinConfig(currency.id).info,
-        address: account.freshAddress,
+        currencyId: currencyId,
+        config: getCoinConfig(currencyId).info,
+        address: address,
         fromBlock: 0,
         sort: "desc",
       });
@@ -451,9 +432,9 @@ describe("EVM Family", () => {
       expect(response.operations.length).toBe(4);
       expect(response).toEqual({
         operations: [
-          etherscanERC20EventToOperations(account.freshAddress, etherscanTokenOperations[0], 0),
-          etherscanERC20EventToOperations(account.freshAddress, etherscanTokenOperations[1], 0),
-          etherscanERC20EventToOperations(account.freshAddress, etherscanTokenOperations[2], 1),
+          etherscanERC20EventToOperations(address, etherscanTokenOperations[0], 0),
+          etherscanERC20EventToOperations(address, etherscanTokenOperations[1], 0),
+          etherscanERC20EventToOperations(address, etherscanTokenOperations[2], 1),
         ].flat(),
         isDone: true,
         boundBlock: 4764973,
@@ -461,7 +442,7 @@ describe("EVM Family", () => {
       });
       expect(spy).toHaveBeenCalledWith({
         method: "GET",
-        url: `mock?module=account&action=tokentx&address=${account.freshAddress}`,
+        url: `mock?module=account&action=tokentx&address=${address}`,
         params: {
           tag: "latest",
           page: 1,
@@ -480,9 +461,9 @@ describe("EVM Family", () => {
       }));
 
       const response = await ETHERSCAN_API.getTokenOperations({
-        currency,
-        config: getCoinConfig(currency.id).info,
-        address: account.freshAddress,
+        currencyId: currencyId,
+        config: getCoinConfig(currencyId).info,
+        address: address,
         fromBlock: 50,
         sort: "desc",
       });
@@ -490,9 +471,9 @@ describe("EVM Family", () => {
       expect(response.operations.length).toBe(4);
       expect(response).toEqual({
         operations: [
-          etherscanERC20EventToOperations(account.freshAddress, etherscanTokenOperations[0], 0),
-          etherscanERC20EventToOperations(account.freshAddress, etherscanTokenOperations[1], 0),
-          etherscanERC20EventToOperations(account.freshAddress, etherscanTokenOperations[2], 1),
+          etherscanERC20EventToOperations(address, etherscanTokenOperations[0], 0),
+          etherscanERC20EventToOperations(address, etherscanTokenOperations[1], 0),
+          etherscanERC20EventToOperations(address, etherscanTokenOperations[2], 1),
         ].flat(),
         isDone: true,
         boundBlock: 4764973,
@@ -500,7 +481,7 @@ describe("EVM Family", () => {
       });
       expect(spy).toHaveBeenCalledWith({
         method: "GET",
-        url: `mock?module=account&action=tokentx&address=${account.freshAddress}`,
+        url: `mock?module=account&action=tokentx&address=${address}`,
         params: {
           tag: "latest",
           page: 1,
@@ -519,9 +500,9 @@ describe("EVM Family", () => {
       }));
 
       const response = await ETHERSCAN_API.getTokenOperations({
-        currency,
-        config: getCoinConfig(currency.id).info,
-        address: account.freshAddress,
+        currencyId: currencyId,
+        config: getCoinConfig(currencyId).info,
+        address: address,
         fromBlock: 50,
         toBlock: 100,
         sort: "desc",
@@ -530,9 +511,9 @@ describe("EVM Family", () => {
       expect(response.operations.length).toBe(4);
       expect(response).toEqual({
         operations: [
-          etherscanERC20EventToOperations(account.freshAddress, etherscanTokenOperations[0], 0),
-          etherscanERC20EventToOperations(account.freshAddress, etherscanTokenOperations[1], 0),
-          etherscanERC20EventToOperations(account.freshAddress, etherscanTokenOperations[2], 1),
+          etherscanERC20EventToOperations(address, etherscanTokenOperations[0], 0),
+          etherscanERC20EventToOperations(address, etherscanTokenOperations[1], 0),
+          etherscanERC20EventToOperations(address, etherscanTokenOperations[2], 1),
         ].flat(),
         isDone: true,
         boundBlock: 4764973,
@@ -540,7 +521,7 @@ describe("EVM Family", () => {
       });
       expect(spy).toHaveBeenCalledWith({
         method: "GET",
-        url: `mock?module=account&action=tokentx&address=${account.freshAddress}`,
+        url: `mock?module=account&action=tokentx&address=${address}`,
         params: {
           tag: "latest",
           page: 1,
@@ -646,9 +627,9 @@ describe("EVM Family", () => {
         }));
 
         const response = await ETHERSCAN_API.getTokenOperations({
-          currency,
-          config: getCoinConfig(currency.id).info,
-          address: account.freshAddress,
+          currencyId: currencyId,
+          config: getCoinConfig(currencyId).info,
+          address: address,
           fromBlock: 0,
           sort: "desc",
         });
@@ -663,9 +644,9 @@ describe("EVM Family", () => {
         }));
 
         const response = await ETHERSCAN_API.getTokenOperations({
-          currency,
-          config: getCoinConfig(currency.id).info,
-          address: account.freshAddress,
+          currencyId: currencyId,
+          config: getCoinConfig(currencyId).info,
+          address: address,
           fromBlock: 0,
           sort: "desc",
         });
@@ -680,9 +661,9 @@ describe("EVM Family", () => {
         }));
 
         const response = await ETHERSCAN_API.getTokenOperations({
-          currency,
-          config: getCoinConfig(currency.id).info,
-          address: account.freshAddress,
+          currencyId: currencyId,
+          config: getCoinConfig(currencyId).info,
+          address: address,
           fromBlock: 0,
           sort: "desc",
         });
@@ -698,9 +679,9 @@ describe("EVM Family", () => {
         }));
 
         const response = await ETHERSCAN_API.getTokenOperations({
-          currency,
-          config: getCoinConfig(currency.id).info,
-          address: account.freshAddress,
+          currencyId: currencyId,
+          config: getCoinConfig(currencyId).info,
+          address: address,
           fromBlock: 0,
           sort: "desc",
         });
@@ -736,14 +717,9 @@ describe("EVM Family", () => {
 
       try {
         await ETHERSCAN_API.getERC721Operations({
-          currency: {
-            ...currency,
-            ethereumLikeInfo: {
-              chainId: 1,
-            },
-          },
-          config: getCoinConfig(currency.id).info,
-          address: account.freshAddress,
+          currencyId: currencyId,
+          config: getCoinConfig(currencyId).info,
+          address: address,
           fromBlock: 0,
           sort: "desc",
         });
@@ -764,9 +740,9 @@ describe("EVM Family", () => {
       }));
 
       const response = await ETHERSCAN_API.getERC721Operations({
-        currency,
-        config: getCoinConfig(currency.id).info,
-        address: account.freshAddress,
+        currencyId: currencyId,
+        config: getCoinConfig(currencyId).info,
+        address: address,
         fromBlock: 0,
         sort: "desc",
       });
@@ -774,9 +750,9 @@ describe("EVM Family", () => {
       expect(response.operations.length).toBe(4);
       expect(response).toEqual({
         operations: [
-          etherscanERC721EventToOperations(account.freshAddress, etherscanERC721Operations[0], 0),
-          etherscanERC721EventToOperations(account.freshAddress, etherscanERC721Operations[1], 0),
-          etherscanERC721EventToOperations(account.freshAddress, etherscanERC721Operations[2], 1),
+          etherscanERC721EventToOperations(address, etherscanERC721Operations[0], 0),
+          etherscanERC721EventToOperations(address, etherscanERC721Operations[1], 0),
+          etherscanERC721EventToOperations(address, etherscanERC721Operations[2], 1),
         ].flat(),
         isDone: true,
         boundBlock: 4708161,
@@ -784,7 +760,7 @@ describe("EVM Family", () => {
       });
       expect(spy).toHaveBeenCalledWith({
         method: "GET",
-        url: `mock?module=account&action=tokennfttx&address=${account.freshAddress}`,
+        url: `mock?module=account&action=tokennfttx&address=${address}`,
         params: {
           tag: "latest",
           page: 1,
@@ -802,9 +778,9 @@ describe("EVM Family", () => {
       }));
 
       const response = await ETHERSCAN_API.getERC721Operations({
-        currency,
-        config: getCoinConfig(currency.id).info,
-        address: account.freshAddress,
+        currencyId: currencyId,
+        config: getCoinConfig(currencyId).info,
+        address: address,
         fromBlock: 50,
         sort: "desc",
       });
@@ -812,9 +788,9 @@ describe("EVM Family", () => {
       expect(response.operations.length).toBe(4);
       expect(response).toEqual({
         operations: [
-          etherscanERC721EventToOperations(account.freshAddress, etherscanERC721Operations[0], 0),
-          etherscanERC721EventToOperations(account.freshAddress, etherscanERC721Operations[1], 0),
-          etherscanERC721EventToOperations(account.freshAddress, etherscanERC721Operations[2], 1),
+          etherscanERC721EventToOperations(address, etherscanERC721Operations[0], 0),
+          etherscanERC721EventToOperations(address, etherscanERC721Operations[1], 0),
+          etherscanERC721EventToOperations(address, etherscanERC721Operations[2], 1),
         ].flat(),
         isDone: true,
         boundBlock: 4708161,
@@ -822,7 +798,7 @@ describe("EVM Family", () => {
       });
       expect(spy).toHaveBeenCalledWith({
         method: "GET",
-        url: `mock?module=account&action=tokennfttx&address=${account.freshAddress}`,
+        url: `mock?module=account&action=tokennfttx&address=${address}`,
         params: {
           tag: "latest",
           page: 1,
@@ -840,9 +816,9 @@ describe("EVM Family", () => {
       }));
 
       const response = await ETHERSCAN_API.getERC721Operations({
-        currency,
-        config: getCoinConfig(currency.id).info,
-        address: account.freshAddress,
+        currencyId: currencyId,
+        config: getCoinConfig(currencyId).info,
+        address: address,
         fromBlock: 50,
         toBlock: 100,
         sort: "desc",
@@ -851,9 +827,9 @@ describe("EVM Family", () => {
       expect(response.operations.length).toBe(4);
       expect(response).toEqual({
         operations: [
-          etherscanERC721EventToOperations(account.freshAddress, etherscanERC721Operations[0], 0),
-          etherscanERC721EventToOperations(account.freshAddress, etherscanERC721Operations[1], 0),
-          etherscanERC721EventToOperations(account.freshAddress, etherscanERC721Operations[2], 1),
+          etherscanERC721EventToOperations(address, etherscanERC721Operations[0], 0),
+          etherscanERC721EventToOperations(address, etherscanERC721Operations[1], 0),
+          etherscanERC721EventToOperations(address, etherscanERC721Operations[2], 1),
         ].flat(),
         isDone: true,
         boundBlock: 4708161,
@@ -861,7 +837,7 @@ describe("EVM Family", () => {
       });
       expect(spy).toHaveBeenCalledWith({
         method: "GET",
-        url: `mock?module=account&action=tokennfttx&address=${account.freshAddress}`,
+        url: `mock?module=account&action=tokennfttx&address=${address}`,
         params: {
           tag: "latest",
           page: 1,
@@ -973,14 +949,9 @@ describe("EVM Family", () => {
 
       try {
         await ETHERSCAN_API.getERC1155Operations({
-          currency: {
-            ...currency,
-            ethereumLikeInfo: {
-              chainId: 1,
-            },
-          },
-          config: getCoinConfig(currency.id).info,
-          address: account.freshAddress,
+          currencyId: currencyId,
+          config: getCoinConfig(currencyId).info,
+          address: address,
           fromBlock: 0,
           sort: "desc",
         });
@@ -1001,9 +972,9 @@ describe("EVM Family", () => {
       }));
 
       const response = await ETHERSCAN_API.getERC1155Operations({
-        currency,
-        config: getCoinConfig(currency.id).info,
-        address: account.freshAddress,
+        currencyId: currencyId,
+        config: getCoinConfig(currencyId).info,
+        address: address,
         fromBlock: 0,
         sort: "desc",
       });
@@ -1011,9 +982,9 @@ describe("EVM Family", () => {
       expect(response.operations.length).toBe(4);
       expect(response).toEqual({
         operations: [
-          etherscanERC1155EventToOperations(account.freshAddress, etherscanERC1155Operations[0], 0),
-          etherscanERC1155EventToOperations(account.freshAddress, etherscanERC1155Operations[1], 0),
-          etherscanERC1155EventToOperations(account.freshAddress, etherscanERC1155Operations[2], 1),
+          etherscanERC1155EventToOperations(address, etherscanERC1155Operations[0], 0),
+          etherscanERC1155EventToOperations(address, etherscanERC1155Operations[1], 0),
+          etherscanERC1155EventToOperations(address, etherscanERC1155Operations[2], 1),
         ].flat(),
         isDone: true,
         boundBlock: 14049909,
@@ -1021,7 +992,7 @@ describe("EVM Family", () => {
       });
       expect(spy).toHaveBeenCalledWith({
         method: "GET",
-        url: `mock?module=account&action=token1155tx&address=${account.freshAddress}`,
+        url: `mock?module=account&action=token1155tx&address=${address}`,
         params: {
           tag: "latest",
           page: 1,
@@ -1039,9 +1010,9 @@ describe("EVM Family", () => {
       }));
 
       const response = await ETHERSCAN_API.getERC1155Operations({
-        currency,
-        config: getCoinConfig(currency.id).info,
-        address: account.freshAddress,
+        currencyId: currencyId,
+        config: getCoinConfig(currencyId).info,
+        address: address,
         fromBlock: 50,
         sort: "desc",
       });
@@ -1049,9 +1020,9 @@ describe("EVM Family", () => {
       expect(response.operations.length).toBe(4);
       expect(response).toEqual({
         operations: [
-          etherscanERC1155EventToOperations(account.freshAddress, etherscanERC1155Operations[0], 0),
-          etherscanERC1155EventToOperations(account.freshAddress, etherscanERC1155Operations[1], 0),
-          etherscanERC1155EventToOperations(account.freshAddress, etherscanERC1155Operations[2], 1),
+          etherscanERC1155EventToOperations(address, etherscanERC1155Operations[0], 0),
+          etherscanERC1155EventToOperations(address, etherscanERC1155Operations[1], 0),
+          etherscanERC1155EventToOperations(address, etherscanERC1155Operations[2], 1),
         ].flat(),
         isDone: true,
         boundBlock: 14049909,
@@ -1059,7 +1030,7 @@ describe("EVM Family", () => {
       });
       expect(spy).toHaveBeenCalledWith({
         method: "GET",
-        url: `mock?module=account&action=token1155tx&address=${account.freshAddress}`,
+        url: `mock?module=account&action=token1155tx&address=${address}`,
         params: {
           tag: "latest",
           page: 1,
@@ -1077,9 +1048,9 @@ describe("EVM Family", () => {
       }));
 
       const response = await ETHERSCAN_API.getERC1155Operations({
-        currency,
-        config: getCoinConfig(currency.id).info,
-        address: account.freshAddress,
+        currencyId: currencyId,
+        config: getCoinConfig(currencyId).info,
+        address: address,
         fromBlock: 50,
         toBlock: 100,
         sort: "desc",
@@ -1088,9 +1059,9 @@ describe("EVM Family", () => {
       expect(response.operations.length).toBe(4);
       expect(response).toEqual({
         operations: [
-          etherscanERC1155EventToOperations(account.freshAddress, etherscanERC1155Operations[0], 0),
-          etherscanERC1155EventToOperations(account.freshAddress, etherscanERC1155Operations[1], 0),
-          etherscanERC1155EventToOperations(account.freshAddress, etherscanERC1155Operations[2], 1),
+          etherscanERC1155EventToOperations(address, etherscanERC1155Operations[0], 0),
+          etherscanERC1155EventToOperations(address, etherscanERC1155Operations[1], 0),
+          etherscanERC1155EventToOperations(address, etherscanERC1155Operations[2], 1),
         ].flat(),
         isDone: true,
         boundBlock: 14049909,
@@ -1098,7 +1069,7 @@ describe("EVM Family", () => {
       });
       expect(spy).toHaveBeenCalledWith({
         method: "GET",
-        url: `mock?module=account&action=token1155tx&address=${account.freshAddress}`,
+        url: `mock?module=account&action=token1155tx&address=${address}`,
         params: {
           tag: "latest",
           page: 1,
@@ -1195,9 +1166,9 @@ describe("EVM Family", () => {
       }));
 
       const response = await ETHERSCAN_API.getNftOperations({
-        currency,
-        config: getCoinConfig(currency.id).info,
-        address: account.freshAddress,
+        currencyId: currencyId,
+        config: getCoinConfig(currencyId).info,
+        address: address,
         fromBlock: 0,
         sort: "desc",
       });
@@ -1228,9 +1199,9 @@ describe("EVM Family", () => {
           },
         }));
         return ETHERSCAN_API.getNftOperations({
-          currency,
-          config: getCoinConfig(currency.id).info,
-          address: account.freshAddress,
+          currencyId: currencyId,
+          config: getCoinConfig(currencyId).info,
+          address: address,
           fromBlock: 0,
           sort,
           ...(limit !== undefined ? { limit } : {}),
@@ -1299,9 +1270,9 @@ describe("EVM Family", () => {
           },
         }));
         return ETHERSCAN_API.getNftOperations({
-          currency,
-          config: getCoinConfig(currency.id).info,
-          address: account.freshAddress,
+          currencyId: currencyId,
+          config: getCoinConfig(currencyId).info,
+          address: address,
           fromBlock: 0,
           sort,
         });
@@ -1343,14 +1314,9 @@ describe("EVM Family", () => {
 
       try {
         await ETHERSCAN_API.getInternalOperations({
-          currency: {
-            ...currency,
-            ethereumLikeInfo: {
-              chainId: 1,
-            },
-          },
-          config: getCoinConfig(currency.id).info,
-          address: account.freshAddress,
+          currencyId: currencyId,
+          config: getCoinConfig(currencyId).info,
+          address: address,
           fromBlock: 0,
           sort: "desc",
         });
@@ -1371,9 +1337,9 @@ describe("EVM Family", () => {
       }));
 
       const response = await ETHERSCAN_API.getInternalOperations({
-        currency,
-        config: getCoinConfig(currency.id).info,
-        address: account.freshAddress,
+        currencyId: currencyId,
+        config: getCoinConfig(currencyId).info,
+        address: address,
         fromBlock: 0,
         sort: "desc",
       });
@@ -1381,21 +1347,9 @@ describe("EVM Family", () => {
       expect(response.operations.length).toBe(3);
       expect(response).toEqual({
         operations: [
-          etherscanInternalTransactionToOperations(
-            account.freshAddress,
-            etherscanInternalOperations[0],
-            0,
-          ),
-          etherscanInternalTransactionToOperations(
-            account.freshAddress,
-            etherscanInternalOperations[1],
-            1,
-          ),
-          etherscanInternalTransactionToOperations(
-            account.freshAddress,
-            etherscanInternalOperations[2],
-            0,
-          ),
+          etherscanInternalTransactionToOperations(address, etherscanInternalOperations[0], 0),
+          etherscanInternalTransactionToOperations(address, etherscanInternalOperations[1], 1),
+          etherscanInternalTransactionToOperations(address, etherscanInternalOperations[2], 0),
         ].flat(),
         isDone: true,
         boundBlock: 15214745,
@@ -1403,7 +1357,7 @@ describe("EVM Family", () => {
       });
       expect(spy).toHaveBeenCalledWith({
         method: "GET",
-        url: `mock?module=account&action=txlistinternal&address=${account.freshAddress}`,
+        url: `mock?module=account&action=txlistinternal&address=${address}`,
         params: {
           tag: "latest",
           page: 1,
@@ -1422,9 +1376,9 @@ describe("EVM Family", () => {
       }));
 
       const response = await ETHERSCAN_API.getInternalOperations({
-        currency,
-        config: getCoinConfig(currency.id).info,
-        address: account.freshAddress,
+        currencyId: currencyId,
+        config: getCoinConfig(currencyId).info,
+        address: address,
         fromBlock: 50,
         sort: "desc",
       });
@@ -1432,21 +1386,9 @@ describe("EVM Family", () => {
       expect(response.operations.length).toBe(3);
       expect(response).toEqual({
         operations: [
-          etherscanInternalTransactionToOperations(
-            account.freshAddress,
-            etherscanInternalOperations[0],
-            0,
-          ),
-          etherscanInternalTransactionToOperations(
-            account.freshAddress,
-            etherscanInternalOperations[1],
-            1,
-          ),
-          etherscanInternalTransactionToOperations(
-            account.freshAddress,
-            etherscanInternalOperations[2],
-            0,
-          ),
+          etherscanInternalTransactionToOperations(address, etherscanInternalOperations[0], 0),
+          etherscanInternalTransactionToOperations(address, etherscanInternalOperations[1], 1),
+          etherscanInternalTransactionToOperations(address, etherscanInternalOperations[2], 0),
         ].flat(),
         isDone: true,
         boundBlock: 15214745,
@@ -1454,7 +1396,7 @@ describe("EVM Family", () => {
       });
       expect(spy).toHaveBeenCalledWith({
         method: "GET",
-        url: `mock?module=account&action=txlistinternal&address=${account.freshAddress}`,
+        url: `mock?module=account&action=txlistinternal&address=${address}`,
         params: {
           tag: "latest",
           page: 1,
@@ -1473,9 +1415,9 @@ describe("EVM Family", () => {
       }));
 
       const response = await ETHERSCAN_API.getInternalOperations({
-        currency,
-        config: getCoinConfig(currency.id).info,
-        address: account.freshAddress,
+        currencyId: currencyId,
+        config: getCoinConfig(currencyId).info,
+        address: address,
         fromBlock: 50,
         toBlock: 100,
         sort: "desc",
@@ -1484,21 +1426,9 @@ describe("EVM Family", () => {
       expect(response.operations.length).toBe(3);
       expect(response).toEqual({
         operations: [
-          etherscanInternalTransactionToOperations(
-            account.freshAddress,
-            etherscanInternalOperations[0],
-            0,
-          ),
-          etherscanInternalTransactionToOperations(
-            account.freshAddress,
-            etherscanInternalOperations[1],
-            1,
-          ),
-          etherscanInternalTransactionToOperations(
-            account.freshAddress,
-            etherscanInternalOperations[2],
-            0,
-          ),
+          etherscanInternalTransactionToOperations(address, etherscanInternalOperations[0], 0),
+          etherscanInternalTransactionToOperations(address, etherscanInternalOperations[1], 1),
+          etherscanInternalTransactionToOperations(address, etherscanInternalOperations[2], 0),
         ].flat(),
         isDone: true,
         boundBlock: 15214745,
@@ -1506,7 +1436,7 @@ describe("EVM Family", () => {
       });
       expect(spy).toHaveBeenCalledWith({
         method: "GET",
-        url: `mock?module=account&action=txlistinternal&address=${account.freshAddress}`,
+        url: `mock?module=account&action=txlistinternal&address=${address}`,
         params: {
           tag: "latest",
           page: 1,
@@ -1531,30 +1461,18 @@ describe("EVM Family", () => {
       }));
 
       const response = await ETHERSCAN_API.getInternalOperations({
-        currency,
-        config: getCoinConfig(currency.id).info,
-        address: account.freshAddress,
+        currencyId: currencyId,
+        config: getCoinConfig(currencyId).info,
+        address: address,
         fromBlock: 0,
         sort: "desc",
       });
 
       expect(response.operations).toEqual(
         [
-          etherscanInternalTransactionToOperations(
-            account.freshAddress,
-            etherscanInternalOperations[0],
-            0,
-          ),
-          etherscanInternalTransactionToOperations(
-            account.freshAddress,
-            etherscanInternalOperations[1],
-            1,
-          ),
-          etherscanInternalTransactionToOperations(
-            account.freshAddress,
-            etherscanInternalOperations[2],
-            0,
-          ),
+          etherscanInternalTransactionToOperations(address, etherscanInternalOperations[0], 0),
+          etherscanInternalTransactionToOperations(address, etherscanInternalOperations[1], 1),
+          etherscanInternalTransactionToOperations(address, etherscanInternalOperations[2], 0),
         ].flat(),
       );
     });
@@ -1567,9 +1485,9 @@ describe("EVM Family", () => {
       });
 
       const response = await ETHERSCAN_API.getInternalOperations({
-        currency,
-        config: getCoinConfig(currency.id).info,
-        address: account.freshAddress,
+        currencyId: currencyId,
+        config: getCoinConfig(currencyId).info,
+        address: address,
         fromBlock: 0,
         sort: "asc",
       });
@@ -1685,8 +1603,7 @@ describe("EVM Family", () => {
       });
 
       const result = await ETHERSCAN_API.getInternalTransactionsByBlock(
-        getCoinConfig(currency.id).info,
-        currency,
+        getCoinConfig(currencyId).info,
         blockHeight,
       );
 
@@ -1720,8 +1637,7 @@ describe("EVM Family", () => {
       });
 
       await ETHERSCAN_API.getInternalTransactionsByBlock(
-        getCoinConfig(currency.id).info,
-        currency,
+        getCoinConfig(currencyId).info,
         blockHeight,
       );
 
@@ -1752,8 +1668,7 @@ describe("EVM Family", () => {
       }));
 
       const result = await ETHERSCAN_API.getInternalTransactionsByBlock(
-        getCoinConfig(currency.id).info,
-        currency,
+        getCoinConfig(currencyId).info,
         blockHeight,
       );
 
@@ -1774,8 +1689,7 @@ describe("EVM Family", () => {
       });
 
       const result = await ETHERSCAN_API.getInternalTransactionsByBlock(
-        getCoinConfig(currency.id).info,
-        currency,
+        getCoinConfig(currencyId).info,
         blockHeight,
       );
 
@@ -1799,11 +1713,7 @@ describe("EVM Family", () => {
       });
 
       await expect(
-        ETHERSCAN_API.getInternalTransactionsByBlock(
-          getCoinConfig(currency.id).info,
-          currency,
-          blockHeight,
-        ),
+        ETHERSCAN_API.getInternalTransactionsByBlock(getCoinConfig(currencyId).info, blockHeight),
       ).rejects.toThrow(EtherscanAPIError);
     });
 
@@ -1837,8 +1747,7 @@ describe("EVM Family", () => {
         });
 
       const result = await ETHERSCAN_API.getInternalTransactionsByBlock(
-        getCoinConfig(currency.id).info,
-        currency,
+        getCoinConfig(currencyId).info,
         blockHeight,
       );
 
@@ -1875,11 +1784,7 @@ describe("EVM Family", () => {
       jest.mocked(axios.request).mockRejectedValue(new Error("network error"));
 
       await expect(
-        ETHERSCAN_API.getInternalTransactionsByBlock(
-          getCoinConfig(currency.id).info,
-          currency,
-          blockHeight,
-        ),
+        ETHERSCAN_API.getInternalTransactionsByBlock(getCoinConfig(currencyId).info, blockHeight),
       ).rejects.toThrow("network error");
     });
   });
@@ -1905,9 +1810,9 @@ describe("EVM Family", () => {
 
     it("should not return NFT operation", async () => {
       const response = await ETHERSCAN_API.getNftOperations({
-        currency,
-        config: getCoinConfig(currency.id).info,
-        address: account.freshAddress,
+        currencyId: currencyId,
+        config: getCoinConfig(currencyId).info,
+        address: address,
         fromBlock: 0,
         sort: "desc",
       });
@@ -2044,9 +1949,9 @@ describe("EVM Family", () => {
           : undefined;
         jest.spyOn(axios, "request").mockImplementation(createBlockchainMock(allOps, limit, order));
         return ETHERSCAN_API.getOperations.force(
-          getCoinConfig(currency.id).info,
-          currency,
-          account.freshAddress,
+          getCoinConfig(currencyId).info,
+          currencyId,
+          address,
           fromBlock,
           toBlock,
           pagingToken,
@@ -2687,9 +2592,9 @@ describe("EVM Family", () => {
         });
 
       await ETHERSCAN_API.exhaustEndpoint(mockFetch, {
-        currency,
-        config: getCoinConfig(currency.id).info,
-        address: account.freshAddress,
+        currencyId: currencyId,
+        config: getCoinConfig(currencyId).info,
+        address: address,
         fromBlock: 0,
         limit: 100,
         sort: "desc",
@@ -2762,9 +2667,9 @@ describe("EVM Family", () => {
       const mockFetch = createPaginatedMock(ops);
 
       const result = await ETHERSCAN_API.exhaustEndpoint(mockFetch, {
-        currency,
-        config: getCoinConfig(currency.id).info,
-        address: account.freshAddress,
+        currencyId: currencyId,
+        config: getCoinConfig(currencyId).info,
+        address: address,
         fromBlock: 0,
         limit: LIMIT,
         sort: "desc",

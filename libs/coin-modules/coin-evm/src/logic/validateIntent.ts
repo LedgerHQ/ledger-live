@@ -30,9 +30,8 @@ import {
   RedelegateDstValAddressRequired,
   ValAddressRequired,
 } from "../errors";
-import { getFeesUnit } from "@ledgerhq/ledger-wallet-framework/account/helpers";
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
+import { evmUnit } from "./evmUnit";
 import { EvmConfigInfo, type EvmContext } from "../config";
 import { getGasTracker } from "../network/gasTracker";
 import { getNodeApi } from "../network/node";
@@ -118,7 +117,7 @@ function validateFeeRatio(
  */
 async function validateNewAccountRecipient(
   config: EvmConfigInfo,
-  currency: CryptoCurrency,
+  currencyId: string,
   intent: TransactionIntent<MemoNotSupported, BufferTxData>,
   amount: bigint,
 ): Promise<Pick<TransactionValidation, "errors" | "warnings">> {
@@ -134,10 +133,10 @@ async function validateNewAccountRecipient(
   }
 
   try {
-    const nodeApi = getNodeApi(config, currency);
+    const nodeApi = getNodeApi(config, currencyId);
     const [balance, nonce] = await Promise.all([
-      nodeApi.getCoinBalance(currency, intent.recipient),
-      nodeApi.getTransactionCount(currency, intent.recipient),
+      nodeApi.getCoinBalance(currencyId, intent.recipient),
+      nodeApi.getTransactionCount(currencyId, intent.recipient),
     ]);
 
     if (balance.isZero() && nonce === 0) {
@@ -154,7 +153,7 @@ async function validateNewAccountRecipient(
  * Validate an address for a transaction
  */
 function validateRecipient(
-  currency: CryptoCurrency,
+  currencyName: string,
   intent: TransactionIntent,
 ): Pick<TransactionValidation, "errors" | "warnings"> {
   if (!intent.recipient) {
@@ -165,7 +164,7 @@ function validateRecipient(
     return {
       errors: {
         recipient: new InvalidAddress("", {
-          currencyName: currency.name,
+          currencyName,
         }),
       },
       warnings: {},
@@ -185,7 +184,7 @@ function validateRecipient(
  */
 async function validateGas(
   config: EvmConfigInfo,
-  currency: CryptoCurrency,
+  currencyId: string,
   intent: TransactionIntent<MemoNotSupported, BufferTxData>,
   balances: Balance[],
   estimatedFees: FeeEstimation,
@@ -253,9 +252,9 @@ async function validateGas(
   ) {
     errors.gasPrice = new NotEnoughGas(undefined, {
       // "You need {{fees}} {{ticker}} for network fees to swap as you are on {{cryptoName}} network. <link0>Buy {{ticker}}</link0>"
-      fees: formatCurrencyUnit(getFeesUnit(currency), new BigNumber(totalFees.toString())),
-      ticker: currency.ticker,
-      cryptoName: currency.name,
+      fees: formatCurrencyUnit(evmUnit[currencyId], new BigNumber(totalFees.toString())),
+      ticker: evmUnit[currencyId].code,
+      cryptoName: config.name,
       links: ["ledgerlive://buy"],
     });
   }
@@ -295,9 +294,9 @@ async function validateGas(
         }
       }
 
-      const gasTracker = getGasTracker(config, currency);
+      const gasTracker = getGasTracker(config);
       const gasOptions = await gasTracker?.getGasOptions({
-        currency,
+        currencyId,
         config,
         options: { useEIP1559: true },
       });
@@ -389,7 +388,7 @@ function validateStaking(
 }
 
 function computeAmount(
-  currency: CryptoCurrency,
+  currencyId: string,
   intent: TransactionIntent,
   estimatedFees: FeeEstimation,
   balance: Balance,
@@ -408,14 +407,14 @@ function computeAmount(
       // - chains with a large per-chain reserve keep their existing behaviour,
       // - unconfigured chains (reserve = 0n) fall back to the current fees,
       // - high-fee selections never produce an amount the account cannot afford.
-      const configuredReserve = STAKING_CONTRACTS[currency.id]?.delegationMaxAmountReserve ?? 0n;
+      const configuredReserve = STAKING_CONTRACTS[currencyId]?.delegationMaxAmountReserve ?? 0n;
       const effectiveReserve = configuredReserve > totalFees ? configuredReserve : totalFees;
       const rawAmount = available > effectiveReserve ? available - effectiveReserve : 0n;
       // Floor-round to the nearest minimum calldata unit for this chain's staking precompile.
       // Chains like SEI require msg.value to be a whole multiple of their unit scale
       // (e.g. 10^12 wei = 1 usei), otherwise the precompile reverts.
       // For chains without a scale (calldataAmountScale = 1n), this is a no-op.
-      const scale = STAKING_CONTRACTS[currency.id]?.calldataAmountScale ?? 1n;
+      const scale = STAKING_CONTRACTS[currencyId]?.calldataAmountScale ?? 1n;
       return (rawAmount / scale) * scale;
     }
     const additionalFees =
@@ -456,17 +455,17 @@ function refreshEstimationValue(
 
 export async function validateIntent(
   context: EvmContext,
-  currency: CryptoCurrency,
+  currencyId: string,
   intent: TransactionIntent<MemoNotSupported, BufferTxData>,
   balances: Balance[],
   customFees?: FeeEstimation,
 ): Promise<TransactionValidation> {
-  const config = await context.config(currency.id);
+  const config = await context.config(currencyId);
   const estimatedFees = customFees?.parameters
     ? { ...customFees, value: refreshEstimationValue(intent, customFees.parameters) }
-    : await estimateFees(context, currency, intent);
+    : await estimateFees(context, currencyId, intent);
   const balance = findBalance(intent.asset, balances);
-  const amount = computeAmount(currency, intent, estimatedFees, balance);
+  const amount = computeAmount(currencyId, intent, estimatedFees, balance);
   const additionalFees =
     typeof estimatedFees.parameters?.additionalFees === "bigint"
       ? estimatedFees.parameters.additionalFees
@@ -479,7 +478,7 @@ export async function validateIntent(
       ? amountSpentFromSpendableBalance + totalFees
       : amountSpentFromSpendableBalance;
 
-  const { errors: recipientErr, warnings: recipientWarn } = validateRecipient(currency, intent);
+  const { errors: recipientErr, warnings: recipientWarn } = validateRecipient(config.name, intent);
   const { errors: amountErr, warnings: amountWarn } = await validateAmount(
     balance,
     amount,
@@ -489,7 +488,7 @@ export async function validateIntent(
   );
   const { errors: gasErr, warnings: gasWarn } = await validateGas(
     config,
-    currency,
+    currencyId,
     intent,
     balances,
     estimatedFees,
@@ -506,7 +505,7 @@ export async function validateIntent(
   );
   const { errors: newAccountErr, warnings: newAccountWarn } = await validateNewAccountRecipient(
     config,
-    currency,
+    currencyId,
     intent,
     amount,
   );

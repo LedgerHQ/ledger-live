@@ -1,5 +1,4 @@
 import type { MemoNotSupported, Operation } from "@ledgerhq/coin-module-framework/api/types";
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
 import { EvmConfigInfo, type EvmContext } from "../config";
 import { createMockEvmContext } from "../fixtures/context.fixtures";
@@ -9,7 +8,7 @@ import { ExplorerApi } from "../network/explorer/types";
 import { listOperations } from "./listOperations";
 
 describe("listOperations", () => {
-  const currency = {} as CryptoCurrency;
+  const currency = "";
   const address = "address";
 
   // The logic layer resolves config from the threaded context, so tests carry their explorer
@@ -610,7 +609,7 @@ describe("listOperations", () => {
     });
 
     expect(
-      await listOperations(testContext, {} as CryptoCurrency, address.toLowerCase(), {
+      await listOperations(testContext, "", address.toLowerCase(), {
         minHeight: 1,
         order: "asc",
       }),
@@ -706,7 +705,7 @@ describe("listOperations", () => {
     });
 
     expect(
-      await listOperations(testContext, {} as CryptoCurrency, "address1", {
+      await listOperations(testContext, "", "address1", {
         minHeight: 1,
         order: "asc",
       }),
@@ -801,7 +800,7 @@ describe("listOperations", () => {
       nextPagingToken: "",
     });
 
-    const { items } = await listOperations(testContext, {} as CryptoCurrency, recipient, {
+    const { items } = await listOperations(testContext, "", recipient, {
       minHeight: 1,
       order: "asc",
     });
@@ -878,7 +877,7 @@ describe("listOperations", () => {
       nextPagingToken: "",
     });
 
-    const { items } = await listOperations(testContext, {} as CryptoCurrency, address, {
+    const { items } = await listOperations(testContext, "", address, {
       minHeight: 0,
       order: "asc",
     });
@@ -947,7 +946,7 @@ describe("listOperations", () => {
     });
 
     expect(
-      await listOperations(testContext, {} as CryptoCurrency, "address1", {
+      await listOperations(testContext, "", "address1", {
         minHeight: 1,
         order: "asc",
       }),
@@ -1118,7 +1117,7 @@ describe("listOperations", () => {
       nextPagingToken: "",
     });
 
-    const { items: result } = await listOperations(testContext, {} as CryptoCurrency, address, {
+    const { items: result } = await listOperations(testContext, "", address, {
       minHeight: 1,
       order: "asc",
     });
@@ -1159,7 +1158,7 @@ describe("listOperations", () => {
       nextPagingToken: "",
     });
 
-    const { items } = await listOperations(testContext, {} as CryptoCurrency, address, {
+    const { items } = await listOperations(testContext, "", address, {
       minHeight: 0,
       order: "asc",
     });
@@ -1199,7 +1198,7 @@ describe("listOperations", () => {
       nextPagingToken: "",
     });
 
-    const { items } = await listOperations(testContext, {} as CryptoCurrency, address, {
+    const { items } = await listOperations(testContext, "", address, {
       minHeight: 0,
       order: "asc",
     });
@@ -1242,7 +1241,7 @@ describe("listOperations", () => {
       nextPagingToken: "",
     });
 
-    const { items } = await listOperations(testContext, {} as CryptoCurrency, "address", {
+    const { items } = await listOperations(testContext, "", "address", {
       minHeight: 1,
       order: "asc",
     });
@@ -1403,11 +1402,11 @@ describe("listOperations", () => {
         ],
       });
 
-      const address1Result = await listOperations(testContext, {} as CryptoCurrency, "address1", {
+      const address1Result = await listOperations(testContext, "", "address1", {
         minHeight: 0,
         order: "asc",
       });
-      const address2Result = await listOperations(testContext, {} as CryptoCurrency, "address2", {
+      const address2Result = await listOperations(testContext, "", "address2", {
         minHeight: 0,
         order: "asc",
       });
@@ -1449,7 +1448,7 @@ describe("listOperations", () => {
         ],
       });
 
-      const result = await listOperations(testContext, {} as CryptoCurrency, "address1", {
+      const result = await listOperations(testContext, "", "address1", {
         minHeight: 0,
         order: "asc",
       });
@@ -1486,7 +1485,7 @@ describe("listOperations", () => {
         "0xselfsend",
       );
 
-      const result = await listOperations(testContext, {} as CryptoCurrency, "address1", {
+      const result = await listOperations(testContext, "", "address1", {
         minHeight: 0,
         order: "asc",
       });
@@ -1534,11 +1533,11 @@ describe("listOperations", () => {
         sharedTxHash,
       );
 
-      const address1Result = await listOperations(testContext, {} as CryptoCurrency, "address1", {
+      const address1Result = await listOperations(testContext, "", "address1", {
         minHeight: 0,
         order: "asc",
       });
-      const address2Result = await listOperations(testContext, {} as CryptoCurrency, "address2", {
+      const address2Result = await listOperations(testContext, "", "address2", {
         minHeight: 0,
         order: "asc",
       });
@@ -1593,7 +1592,7 @@ describe("listOperations", () => {
         "0xcase4",
       );
 
-      const result = await listOperations(testContext, {} as CryptoCurrency, "address1", {
+      const result = await listOperations(testContext, "", "address1", {
         minHeight: 0,
         order: "asc",
       });
@@ -1645,11 +1644,11 @@ describe("listOperations", () => {
         sharedTxHash,
       );
 
-      const address1Result = await listOperations(testContext, {} as CryptoCurrency, "address1", {
+      const address1Result = await listOperations(testContext, "", "address1", {
         minHeight: 0,
         order: "asc",
       });
-      const address2Result = await listOperations(testContext, {} as CryptoCurrency, "address2", {
+      const address2Result = await listOperations(testContext, "", "address2", {
         minHeight: 0,
         order: "asc",
       });
@@ -1705,15 +1704,15 @@ describe("listOperations", () => {
         sharedTxHash,
       );
 
-      const address1Result = await listOperations(testContext, {} as CryptoCurrency, "address1", {
+      const address1Result = await listOperations(testContext, "", "address1", {
         minHeight: 0,
         order: "asc",
       });
-      const address2Result = await listOperations(testContext, {} as CryptoCurrency, "address2", {
+      const address2Result = await listOperations(testContext, "", "address2", {
         minHeight: 0,
         order: "asc",
       });
-      const address3Result = await listOperations(testContext, {} as CryptoCurrency, "address3", {
+      const address3Result = await listOperations(testContext, "", "address3", {
         minHeight: 0,
         order: "asc",
       });
@@ -1766,7 +1765,7 @@ describe("listOperations", () => {
         ],
       });
 
-      const result = await listOperations(testContext, {} as CryptoCurrency, "address1", {
+      const result = await listOperations(testContext, "", "address1", {
         minHeight: 0,
         order: "asc",
       });
@@ -1810,7 +1809,7 @@ describe("listOperations", () => {
         "0xcase8",
       );
 
-      const result = await listOperations(testContext, {} as CryptoCurrency, "address1", {
+      const result = await listOperations(testContext, "", "address1", {
         minHeight: 0,
         order: "asc",
       });
@@ -1854,11 +1853,11 @@ describe("listOperations", () => {
         sharedTxHash,
       );
 
-      const address1Result = await listOperations(testContext, {} as CryptoCurrency, "address1", {
+      const address1Result = await listOperations(testContext, "", "address1", {
         minHeight: 0,
         order: "asc",
       });
-      const address2Result = await listOperations(testContext, {} as CryptoCurrency, "address2", {
+      const address2Result = await listOperations(testContext, "", "address2", {
         minHeight: 0,
         order: "asc",
       });
@@ -1914,11 +1913,11 @@ describe("listOperations", () => {
         sharedTxHash,
       );
 
-      const address1Result = await listOperations(testContext, {} as CryptoCurrency, "address1", {
+      const address1Result = await listOperations(testContext, "", "address1", {
         minHeight: 0,
         order: "asc",
       });
-      const address2Result = await listOperations(testContext, {} as CryptoCurrency, "address2", {
+      const address2Result = await listOperations(testContext, "", "address2", {
         minHeight: 0,
         order: "asc",
       });
@@ -1984,15 +1983,15 @@ describe("listOperations", () => {
         sharedTxHash,
       );
 
-      const address1Result = await listOperations(testContext, {} as CryptoCurrency, "address1", {
+      const address1Result = await listOperations(testContext, "", "address1", {
         minHeight: 0,
         order: "asc",
       });
-      const address2Result = await listOperations(testContext, {} as CryptoCurrency, "address2", {
+      const address2Result = await listOperations(testContext, "", "address2", {
         minHeight: 0,
         order: "asc",
       });
-      const address3Result = await listOperations(testContext, {} as CryptoCurrency, "address3", {
+      const address3Result = await listOperations(testContext, "", "address3", {
         minHeight: 0,
         order: "asc",
       });
@@ -2066,7 +2065,7 @@ describe("listOperations", () => {
         sharedTxHash,
       );
 
-      const result = await listOperations(testContext, {} as CryptoCurrency, "address1", {
+      const result = await listOperations(testContext, "", "address1", {
         minHeight: 0,
         order: "asc",
       });
@@ -2114,7 +2113,7 @@ describe("listOperations", () => {
         sharedTxHash,
       );
 
-      const result = await listOperations(testContext, {} as CryptoCurrency, "address1", {
+      const result = await listOperations(testContext, "", "address1", {
         minHeight: 0,
         order: "asc",
       });
@@ -2145,7 +2144,7 @@ describe("listOperations", () => {
         sharedTxHash,
       );
 
-      const result = await listOperations(testContext, {} as CryptoCurrency, "user", {
+      const result = await listOperations(testContext, "", "user", {
         minHeight: 0,
         order: "asc",
       });
@@ -2177,7 +2176,7 @@ describe("listOperations", () => {
         sharedTxHash,
       );
 
-      const result = await listOperations(testContext, {} as CryptoCurrency, "user", {
+      const result = await listOperations(testContext, "", "user", {
         minHeight: 0,
         order: "asc",
       });
@@ -2211,7 +2210,7 @@ describe("listOperations", () => {
         sharedTxHash,
       );
 
-      const result = await listOperations(testContext, {} as CryptoCurrency, "user", {
+      const result = await listOperations(testContext, "", "user", {
         minHeight: 0,
         order: "asc",
       });
@@ -2259,7 +2258,7 @@ describe("listOperations", () => {
         sharedTxHash,
       );
 
-      const result = await listOperations(testContext, {} as CryptoCurrency, "address1", {
+      const result = await listOperations(testContext, "", "address1", {
         minHeight: 0,
         order: "asc",
       });
@@ -2304,7 +2303,7 @@ describe("listOperations", () => {
         sharedTxHash,
       );
 
-      const result = await listOperations(testContext, {} as CryptoCurrency, "address1", {
+      const result = await listOperations(testContext, "", "address1", {
         minHeight: 0,
         order: "asc",
       });

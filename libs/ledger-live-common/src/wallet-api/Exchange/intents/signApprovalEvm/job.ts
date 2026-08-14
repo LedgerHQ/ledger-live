@@ -24,7 +24,7 @@ async function buildUnsignedApprovalTxHex(
   const calldataHex = approvalTransaction.calldata.replace(/^0x/, "");
   const data = calldataHex.length > 0 ? Buffer.from(calldataHex, "hex") : Buffer.alloc(0);
 
-  const { transaction } = await craftTransaction(createContext(), currency, {
+  const { transaction } = await craftTransaction(createContext(), currency.id, {
     // The intent shape comes from `@ledgerhq/coin-module-framework`; use
     // the craftTransaction parameter type rather than adding a direct dep.
     transactionIntent: {

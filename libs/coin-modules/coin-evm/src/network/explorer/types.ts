@@ -1,5 +1,4 @@
 import type { MemoNotSupported, Operation } from "@ledgerhq/coin-module-framework/api/types";
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { EvmConfigInfo } from "../../config";
 
 /** Constant representing no pagination token (end of pagination or first page) */
@@ -8,7 +7,7 @@ export const NO_TOKEN = "";
 export type ExplorerApi = {
   getOperations: (
     config: EvmConfigInfo,
-    currency: CryptoCurrency,
+    currencyId: string,
     address: string,
     fromBlock: number,
     toBlock?: number,

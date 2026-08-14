@@ -1,5 +1,4 @@
 import { AssetInfo } from "@ledgerhq/coin-module-framework/api/types";
-import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
 import type { EvmConfigInfo, EvmContext } from "../config";
 import { createMockEvmContext } from "../fixtures/context.fixtures";
@@ -128,7 +127,7 @@ describe("getBalance", () => {
       ],
     });
 
-    expect(await getBalance(context, {} as CryptoCurrency, "address")).toEqual(expected);
+    expect(await getBalance(context, "", "address")).toEqual(expected);
   });
 
   it.each([
@@ -189,7 +188,7 @@ describe("getBalance", () => {
         getOperations: jest.fn().mockResolvedValue(operations),
       });
 
-      const currency = {} as unknown as CryptoCurrency;
+      const currency = "";
       const userAddress = "0x000";
 
       await getBalance(context, currency, userAddress, { includeAssets });
@@ -242,7 +241,7 @@ describe("getBalance", () => {
       items: [],
     });
 
-    const result = await getBalance(context, {} as CryptoCurrency, "address");
+    const result = await getBalance(context, "", "address");
 
     expect(result).toEqual([
       { asset: { type: "native" }, value: 10n },
@@ -276,7 +275,7 @@ describe("getBalance", () => {
         }),
       });
 
-      const result = await getBalance(context, {} as CryptoCurrency, "address");
+      const result = await getBalance(context, "", "address");
 
       expect(nodeApiMock.getTokenBalance).toHaveBeenCalledTimes(1);
       expect(nodeApiMock.getTokenBalance).toHaveBeenCalledWith(
@@ -311,7 +310,7 @@ describe("getBalance", () => {
         }),
       });
 
-      await getBalance(context, {} as CryptoCurrency, "address");
+      await getBalance(context, "", "address");
 
       expect(nodeApiMock.getTokenBalance).not.toHaveBeenCalled();
     });
@@ -331,7 +330,7 @@ describe("getBalance", () => {
         }),
       });
 
-      await getBalance(context, {} as CryptoCurrency, "address");
+      await getBalance(context, "", "address");
 
       expect(nodeApiMock.getTokenBalance).toHaveBeenCalledTimes(2);
     });
@@ -349,7 +348,7 @@ describe("getBalance", () => {
       items: [],
     });
 
-    const result = await getBalance(context, {} as CryptoCurrency, "address");
+    const result = await getBalance(context, "", "address");
     expect(result[0]).toEqual({
       value: BigInt("0"),
       asset: { type: "native" },

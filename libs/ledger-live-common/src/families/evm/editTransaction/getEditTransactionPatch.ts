@@ -232,7 +232,7 @@ export const getEditTransactionPatch = async ({
 }): Promise<Partial<Transaction>> => {
   const { currency } = account;
   const config = getCurrencyConfiguration<EvmConfigInfo>(account.currency.id);
-  const gasTracker = getGasTracker(config, currency);
+  const gasTracker = getGasTracker(config);
 
   if (!gasTracker) {
     throw new Error(`No gas tracker found for currency ${currency.id}`);
@@ -241,7 +241,7 @@ export const getEditTransactionPatch = async ({
   const shouldUseEip1559 = transaction.type === 2;
 
   const gasOptions = await gasTracker.getGasOptions({
-    currency,
+    currencyId: currency.id,
     config,
     options: { useEIP1559: shouldUseEip1559 },
   });
