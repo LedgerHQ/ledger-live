@@ -44,7 +44,11 @@ type CommonLogEvent = {
   appVersion: string;
   /** The technical route; the product funnel is a separate concept — see above. */
   pathway: TransactionPathway;
-  /** Live-app manifest id — the primary "where". Absent for the native send flow. */
+  /**
+   * Manifest id of the live-app or dApp that originated the transaction — the primary "where".
+   * Both routes carry one: the dApp path sends `manifest.id` too (`useDappLogic.ts`), so `type`
+   * on the source distinguishes the route, not the kind of identifier. Absent for native send.
+   */
   manifestId?: string;
   source?: TransactionSource;
   /** Parent/network currency id (e.g. "ethereum"); token id is reported separately. */

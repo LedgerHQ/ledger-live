@@ -13,7 +13,7 @@ export { deriveEarnTransactionType, type EarnTransactionType } from "./earnTrans
 
 export { deriveFromOperationType } from "./operationType";
 
-export { getRawTransactionType, getStakeTarget } from "./transactionShape";
+export { getRawTransactionType, getStakeTarget, type TransactionLike } from "./transactionShape";
 
 export {
   buildBroadcastCommonEvent,
