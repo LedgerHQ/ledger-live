@@ -21,12 +21,14 @@ function selectDeviceModelWithLongestCooldown(
     cooldownDays[deviceModelId] ?? cooldownDays.default;
 
   const seenIds = new Set(deviceModelIds);
-  const orderedDeviceModelIds = NANO_DEVICE_MODEL_IDS.filter(deviceModelId =>
+  const [firstDeviceModelId, ...restDeviceModelIds] = NANO_DEVICE_MODEL_IDS.filter(deviceModelId =>
     seenIds.has(deviceModelId),
   );
 
-  const deviceModelId = orderedDeviceModelIds.reduce((longestId, candidateId) =>
-    resolveDays(candidateId) > resolveDays(longestId) ? candidateId : longestId,
+  const deviceModelId = restDeviceModelIds.reduce(
+    (longestId, candidateId) =>
+      resolveDays(candidateId) > resolveDays(longestId) ? candidateId : longestId,
+    firstDeviceModelId,
   );
 
   return { deviceModelId, days: resolveDays(deviceModelId) };
