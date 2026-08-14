@@ -8,6 +8,7 @@ import {
   markBlockedByCompeting,
   retriesUpsellModalSelector,
   sessionSelector,
+  useLargeScreenUpsellDecision,
   type LargeScreenUpsellDismissMethod,
   type LargeScreenUpsellModalAnalyticsPorts,
   type LargeScreenUpsellModalViewedContext,
@@ -92,6 +93,18 @@ export function LargeScreenUpsellModalMount() {
   const { shouldDisplayTour, shouldDisplayQ2Tour } = useWalletFeaturesConfig("desktop");
   const isGenericAwarenessModalOpen = useSelector(selectIsGenericAwarenessModalOpen);
 
+  const variant = personalizedRecommendationsEnabled ? "opted_in" : "opted_out";
+  const { seenNanoModelIds, hasSeenTouchscreenDevice } = useMemo(
+    () => mapDevicesModelListToUpsellInputs(devicesModelList),
+    [devicesModelList],
+  );
+  const decision = useLargeScreenUpsellDecision({
+    seenNanoModelIds,
+    hasSeenTouchscreenDevice,
+    onboardingDate,
+    variant,
+  });
+
   // Gate with the same deferred-tour freeze as Terms/Release Notes.
   const hasCompetingAppStartModal = !shouldShowDeferredModals || isGenericAwarenessModalOpen;
 
@@ -105,7 +118,7 @@ export function LargeScreenUpsellModalMount() {
   const hasTrackedBlockRef = useRef(false);
 
   useEffect(() => {
-    if (!hasCompetingAppStartModal || session !== "ready") {
+    if (!hasCompetingAppStartModal || session !== "ready" || !decision.shouldShow) {
       return;
     }
     if (!hasTrackedBlockRef.current && competingModal !== null) {
@@ -113,7 +126,7 @@ export function LargeScreenUpsellModalMount() {
       trackLargeScreenUpsellModalBlockedByCompeting(competingModal);
     }
     dispatch(markBlockedByCompeting());
-  }, [competingModal, dispatch, hasCompetingAppStartModal, session]);
+  }, [competingModal, decision.shouldShow, dispatch, hasCompetingAppStartModal, session]);
 
   const currentModalAnalyticsPropsRef = useRef<LargeScreenUpsellSharedAnalyticsProps | null>(null);
 
@@ -163,9 +176,6 @@ export function LargeScreenUpsellModalMount() {
     return null;
   }
 
-  const { seenNanoModelIds, hasSeenTouchscreenDevice } =
-    mapDevicesModelListToUpsellInputs(devicesModelList);
-
   return (
     <LargeScreenUpsellModal
       seenNanoModelIds={seenNanoModelIds}
@@ -173,7 +183,7 @@ export function LargeScreenUpsellModalMount() {
       onboardingDate={onboardingDate}
       medium="desktop"
       theme={theme === "dark" ? "dark" : "light"}
-      variant={personalizedRecommendationsEnabled ? "opted_in" : "opted_out"}
+      variant={variant}
       t={t}
       openUrl={openURL}
       analytics={analytics}

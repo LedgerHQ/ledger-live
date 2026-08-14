@@ -46,7 +46,14 @@ export const largeScreenUpsellModalSlice = createSlice({
       if (state.retriesModal > 0) {
         state.retriesModal -= 1;
       }
-      state.lastSeenAt = action.payload.previousLastSeenAt;
+      const { previousLastSeenAt } = action.payload;
+      if (previousLastSeenAt === null) {
+        state.lastSeenAt = null;
+        return;
+      }
+      if (isStorableTimestamp(previousLastSeenAt)) {
+        state.lastSeenAt = previousLastSeenAt;
+      }
     },
     markDismissed: state => {
       state.session = "dismissed";

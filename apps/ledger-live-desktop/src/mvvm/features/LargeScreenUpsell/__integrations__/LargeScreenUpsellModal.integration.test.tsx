@@ -695,7 +695,15 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
   it("should not open when a product tour is competing", async () => {
     renderMount({
       ...withFlagOverrides({
-        largeScreenUpsell: { enabled: true },
+        largeScreenUpsell: {
+          enabled: true,
+          params: {
+            opted_out: {
+              enabled: true,
+              link: "https://shop.ledger.com/pages/ledger-nano-upgrade-program",
+            },
+          },
+        },
         lwdWallet40: { enabled: true, params: { tour: true } },
       }),
       settings: {
@@ -713,6 +721,9 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
         lastSeenAt: null,
         session: "ready",
       },
+      dialogs: {
+        GENERIC_AWARENESS_MODAL: false,
+      },
     });
 
     await expectModalNotOpen();
@@ -728,7 +739,15 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
   it("should not open when a Q2 tour is competing", async () => {
     renderMount({
       ...withFlagOverrides({
-        largeScreenUpsell: { enabled: true },
+        largeScreenUpsell: {
+          enabled: true,
+          params: {
+            opted_out: {
+              enabled: true,
+              link: "https://shop.ledger.com/pages/ledger-nano-upgrade-program",
+            },
+          },
+        },
         lwdWallet40: { enabled: true, params: { tour: false, q2Tour: true } },
       }),
       settings: {
@@ -745,6 +764,9 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
         retriesModal: 0,
         lastSeenAt: null,
         session: "ready",
+      },
+      dialogs: {
+        GENERIC_AWARENESS_MODAL: false,
       },
     });
 
@@ -774,6 +796,26 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
         competitor: "generic_awareness",
       }),
     );
+  });
+
+  it("should not track modal_blocked when the upsell is not eligible", async () => {
+    renderMount({
+      ...eligibleState(),
+      ...withFlagOverrides({
+        largeScreenUpsell: { enabled: false },
+        lwdWallet40: { enabled: true, params: { tour: true } },
+      }),
+      settings: {
+        hasCompletedOnboarding: true,
+        hasSeenWalletV4Tour: false,
+        hasSeenQ2Tour: true,
+        sharePersonalizedRecommandations: false,
+        devicesModelList: [DeviceModelId.nanoS],
+      },
+    });
+
+    await expectModalNotOpen();
+    expect(track).not.toHaveBeenCalledWith("modal_blocked", expect.anything());
   });
 
   it("should stay blocked for the session after a competing modal closes", async () => {
