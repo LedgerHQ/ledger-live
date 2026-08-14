@@ -1,8 +1,30 @@
 import lint from "@commitlint/lint";
 import config from "../../../commitlint.config.js";
 
+// The `support/release-merge-conflicts` automation (see .github/workflows/release-prepare.yml)
+// opens PRs with a fixed, non-conventional title such as:
+//   [LWDM] :rotating_light: Release merge conflicts
+// GitHub's API can return either the raw shortcode (":rotating_light:") or the rendered
+// unicode emoji ("🚨") depending on the client, so both are accepted here.
+// These PRs are bot-authored, always follow this exact shape, and are never renamed by a
+// human, so we allow-list this specific title rather than loosening the convention itself.
+const ROTATING_LIGHT_EMOJI = /(?:🚨|:rotating_light:)/;
+const RELEASE_MERGE_CONFLICTS_BOT_TITLE = new RegExp(
+  `^\\[LWDM\\]\\s*${ROTATING_LIGHT_EMOJI.source}\\s*Release merge conflicts$`,
+);
+
+function isReleaseMergeConflictsBotTitle(title: string): boolean {
+  return RELEASE_MERGE_CONFLICTS_BOT_TITLE.test(title.trim());
+}
+
 async function validatePrTitle() {
-  const report = await lint(stripPlatformPrefix(danger.github.pr.title), config.rules);
+  const title = danger.github.pr.title;
+
+  if (isReleaseMergeConflictsBotTitle(title)) {
+    return;
+  }
+
+  const report = await lint(stripPlatformPrefix(title), config.rules);
 
   const { errors, input, valid, warnings } = report;
 
