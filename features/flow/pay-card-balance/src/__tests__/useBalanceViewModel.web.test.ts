@@ -1,9 +1,9 @@
 import { act, renderHook } from "@testing-library/react";
-import { usePayCardBalanceViewModel } from "../components/Hero/usePayCardBalanceViewModel";
-import type { PayCardBalanceProps } from "../types";
+import { useBalanceViewModel } from "../components/Hero/useBalanceViewModel";
+import type { BalanceProps } from "../types";
 import { USDC_ID, formatCountervalue, labels, options } from "./fixtures";
 
-function buildProps(overrides: Partial<PayCardBalanceProps> = {}): PayCardBalanceProps {
+function buildProps(overrides: Partial<BalanceProps> = {}): BalanceProps {
   return {
     status: "ready",
     stableBalance: 0,
@@ -17,18 +17,16 @@ function buildProps(overrides: Partial<PayCardBalanceProps> = {}): PayCardBalanc
   };
 }
 
-describe("usePayCardBalanceViewModel", () => {
+describe("useBalanceViewModel", () => {
   it("should be empty when the user has no balance", () => {
-    const { result } = renderHook(() =>
-      usePayCardBalanceViewModel(buildProps({ hasBalance: false })),
-    );
+    const { result } = renderHook(() => useBalanceViewModel(buildProps({ hasBalance: false })));
 
     expect(result.current.displayMode).toBe("empty");
   });
 
   it("should be funded when the user has balance and is ready", () => {
     const { result } = renderHook(() =>
-      usePayCardBalanceViewModel(buildProps({ hasBalance: true, stableBalance: 1250.5 })),
+      useBalanceViewModel(buildProps({ hasBalance: true, stableBalance: 1250.5 })),
     );
 
     expect(result.current).toMatchObject({
@@ -41,7 +39,7 @@ describe("usePayCardBalanceViewModel", () => {
 
   it("should be funded and loading while data loads", () => {
     const { result } = renderHook(() =>
-      usePayCardBalanceViewModel(buildProps({ status: "loading", hasBalance: false })),
+      useBalanceViewModel(buildProps({ status: "loading", hasBalance: false })),
     );
 
     expect(result.current).toMatchObject({ displayMode: "funded", isLoading: true });
@@ -49,7 +47,7 @@ describe("usePayCardBalanceViewModel", () => {
 
   it("should be empty on error", () => {
     const { result } = renderHook(() =>
-      usePayCardBalanceViewModel(buildProps({ status: "error", hasBalance: true })),
+      useBalanceViewModel(buildProps({ status: "error", hasBalance: true })),
     );
 
     expect(result.current.displayMode).toBe("empty");
@@ -57,7 +55,7 @@ describe("usePayCardBalanceViewModel", () => {
 
   it("should expose the selected option for a valid filter", () => {
     const { result } = renderHook(() =>
-      usePayCardBalanceViewModel(buildProps({ hasBalance: true, filter: USDC_ID })),
+      useBalanceViewModel(buildProps({ hasBalance: true, filter: USDC_ID })),
     );
 
     expect(result.current).toMatchObject({
@@ -70,7 +68,7 @@ describe("usePayCardBalanceViewModel", () => {
   it("should open the filter and track the open event", () => {
     const onTrackEvent = jest.fn();
     const { result } = renderHook(() =>
-      usePayCardBalanceViewModel(buildProps({ hasBalance: true, onTrackEvent })),
+      useBalanceViewModel(buildProps({ hasBalance: true, onTrackEvent })),
     );
 
     if (result.current.displayMode !== "funded") throw new Error("expected funded");
@@ -84,9 +82,7 @@ describe("usePayCardBalanceViewModel", () => {
   });
 
   it("should close the filter", () => {
-    const { result } = renderHook(() =>
-      usePayCardBalanceViewModel(buildProps({ hasBalance: true })),
-    );
+    const { result } = renderHook(() => useBalanceViewModel(buildProps({ hasBalance: true })));
 
     act(() => result.current.displayMode === "funded" && result.current.onOpenFilter());
     act(() => result.current.displayMode === "funded" && result.current.onCloseFilter());

@@ -1,17 +1,17 @@
 import React from "react";
-import type { PayCardBalanceViewProps } from "../../types";
-import { PayCardBalanceEmptyState } from "./PayCardBalanceEmptyState";
-import { PayCardBalanceFundedState } from "./PayCardBalanceFundedState";
+import type { BalanceViewProps } from "../../types";
+import { BalanceEmptyState } from "./BalanceEmptyState";
+import { BalanceFundedState } from "./BalanceFundedState";
 import { BalanceFilterPicker } from "../Filter/BalanceFilterPicker";
 
-export function PayCardBalanceBody(props: PayCardBalanceViewProps) {
+export function BalanceBody(props: BalanceViewProps) {
   if (props.displayMode !== "funded") {
-    return <PayCardBalanceEmptyState labels={props.labels} />;
+    return <BalanceEmptyState labels={props.labels} />;
   }
 
   return (
     <>
-      <PayCardBalanceFundedState
+      <BalanceFundedState
         balance={props.balance}
         formatCountervalue={props.formatCountervalue}
         isLoading={props.isLoading}

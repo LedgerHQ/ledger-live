@@ -1,6 +1,6 @@
 import React from "react";
 import { CardLogin } from "@features/flow-pay-card-auth";
-import { PayCardBalance } from "@features/flow-pay-card-balance";
+import { Balance } from "@features/flow-pay-card-balance";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { openURL } from "~/renderer/linking";
 import PayTabHeader from "./components/PayTabHeader";
@@ -20,7 +20,7 @@ const PayTab = () => {
     <div className="flex flex-col gap-24">
       <TrackPage category="Pay" balance_filter={balance.filter} />
       <PayTabHeader />
-      <PayCardBalance {...balance} actionTiles={actionTiles} />
+      <Balance {...balance} actionTiles={actionTiles} />
       <CardLogin openHostedLogin={openHostedLogin} />
       <FeatureTour {...featureTour} />
     </div>

@@ -1,10 +1,10 @@
-import type { PayCardBalanceFilter, PayCardBalanceState } from "./types";
+import type { BalanceFilter, PayCardBalanceState } from "./types";
 
 type PayCardBalanceStateRoot = {
   payCardBalance: PayCardBalanceState;
 };
 
-export function selectPayCardBalanceFilter(state: PayCardBalanceStateRoot): PayCardBalanceFilter {
+export function selectPayCardBalanceFilter(state: PayCardBalanceStateRoot): BalanceFilter {
   return state.payCardBalance.balanceFilter;
 }
 

@@ -1,28 +1,28 @@
 import { useEffect, useMemo } from "react";
 import type { Unit } from "@domain/entity-currency-unit";
-import type { PayCardBalanceFilter } from "../state";
-import type { DefaultStablecoin, PayCardStablecoinItem } from "../logic/buildBalanceFilterOptions";
-import { buildPayCardBalanceData } from "../logic/buildPayCardBalanceData";
-import type { FormattedValue, PayCardBalanceData } from "../types";
+import type { BalanceFilter } from "../state";
+import type { DefaultStablecoin, StablecoinItem } from "../logic/buildBalanceFilterOptions";
+import { buildBalanceData } from "../logic/buildBalanceData";
+import type { FormattedValue, BalanceData } from "../types";
 
-export type UsePayCardBalanceDataParams = Readonly<{
-  stablecoins: readonly PayCardStablecoinItem[];
+export type UseBalanceDataParams = Readonly<{
+  stablecoins: readonly StablecoinItem[];
   defaultStablecoins: readonly DefaultStablecoin[];
-  filter: PayCardBalanceFilter;
+  filter: BalanceFilter;
   isLoading: boolean;
   isError: boolean;
   allLabel: string;
   formatFiat: (value: number) => string;
   formatCrypto: (unit: Unit, balance: number) => string;
   formatCountervalue: (value: number) => FormattedValue;
-  onConfirmFilter: (filter: PayCardBalanceFilter) => void;
+  onConfirmFilter: (filter: BalanceFilter) => void;
   onResetFilter: () => void;
   onTrackEvent?: (event: string, params: Record<string, unknown>) => void;
 }>;
 
 // Host-facing data hook: both apps feed their portfolio source + formatters and get back
-// the ready-to-render `PayCardBalanceData`, plus the stale-filter self-heal side effect.
-export function usePayCardBalanceData({
+// the ready-to-render `BalanceData`, plus the stale-filter self-heal side effect.
+export function useBalanceData({
   stablecoins,
   defaultStablecoins,
   filter,
@@ -35,10 +35,10 @@ export function usePayCardBalanceData({
   onConfirmFilter,
   onResetFilter,
   onTrackEvent,
-}: UsePayCardBalanceDataParams): PayCardBalanceData {
+}: UseBalanceDataParams): BalanceData {
   const { data, shouldResetFilter } = useMemo(
     () =>
-      buildPayCardBalanceData({
+      buildBalanceData({
         stablecoins,
         defaultStablecoins,
         filter,

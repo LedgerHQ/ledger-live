@@ -1,12 +1,12 @@
 import React from "react";
 import { Box, Text } from "@ledgerhq/lumen-ui-rnative";
-import type { PayCardBalanceEmptyLabels } from "../../types";
+import type { BalanceEmptyLabels } from "../../types";
 
-type PayCardBalanceEmptyStateProps = Readonly<{
-  labels: PayCardBalanceEmptyLabels;
+type BalanceEmptyStateProps = Readonly<{
+  labels: BalanceEmptyLabels;
 }>;
 
-export function PayCardBalanceEmptyState({ labels }: PayCardBalanceEmptyStateProps) {
+export function BalanceEmptyState({ labels }: BalanceEmptyStateProps) {
   return (
     <Box
       lx={{ alignItems: "center", justifyContent: "center", gap: "s16", paddingVertical: "s32" }}

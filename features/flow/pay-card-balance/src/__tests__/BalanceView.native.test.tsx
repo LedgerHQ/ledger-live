@@ -1,8 +1,8 @@
 import React from "react";
 import { View } from "react-native";
 import { render, screen } from "@testing-library/react-native";
-import type { PayCardBalanceViewProps } from "../types";
-import { PayCardBalanceView } from "../components/Hero/PayCardBalanceView.native";
+import type { BalanceViewProps } from "../types";
+import { BalanceView } from "../components/Hero/BalanceView.native";
 import { emptyLabels, filterLabels, formatCountervalue, options } from "./fixtures";
 
 jest.mock("@shared/ui-queued-bottom-sheet", () => ({
@@ -21,7 +21,7 @@ jest.mock("@shared/ui-queued-bottom-sheet", () => ({
   ),
 }));
 
-function fundedProps(): PayCardBalanceViewProps {
+function fundedProps(): BalanceViewProps {
   return {
     displayMode: "funded",
     balance: 1000,
@@ -37,11 +37,11 @@ function fundedProps(): PayCardBalanceViewProps {
   };
 }
 
-function renderView(props: PayCardBalanceViewProps) {
-  return render(<PayCardBalanceView {...props} />);
+function renderView(props: BalanceViewProps) {
+  return render(<BalanceView {...props} />);
 }
 
-describe("PayCardBalanceView (Native)", () => {
+describe("BalanceView (Native)", () => {
   it("should render the empty title and description when empty", () => {
     renderView({ displayMode: "empty", labels: emptyLabels });
 

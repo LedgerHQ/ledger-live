@@ -9,11 +9,11 @@ import {
   PAY_CARD_BALANCE_FILTER_ALL,
   selectPayCardBalanceFilter,
   setPayCardBalanceFilter,
-  usePayCardBalanceData,
+  useBalanceData,
   type FormattedValue,
-  type PayCardBalanceData,
-  type PayCardBalanceFilter,
-  type PayCardBalanceLabels,
+  type BalanceData,
+  type BalanceFilter,
+  type BalanceLabels,
 } from "@features/flow-pay-card-balance";
 import type { Unit } from "@domain/entity-currency-unit";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
@@ -21,7 +21,7 @@ import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducer
 import { track } from "~/renderer/analytics/segment";
 import { usePayStablecoins } from "./usePayStablecoins";
 
-export function usePayCardBalance(): PayCardBalanceData & { labels: PayCardBalanceLabels } {
+export function usePayCardBalance(): BalanceData & { labels: BalanceLabels } {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const locale = useSelector(localeSelector);
@@ -51,7 +51,7 @@ export function usePayCardBalance(): PayCardBalanceData & { labels: PayCardBalan
   );
 
   const onConfirmFilter = useCallback(
-    (next: PayCardBalanceFilter) => {
+    (next: BalanceFilter) => {
       dispatch(setPayCardBalanceFilter(next));
     },
     [dispatch],
@@ -65,7 +65,7 @@ export function usePayCardBalance(): PayCardBalanceData & { labels: PayCardBalan
     track(event, params);
   }, []);
 
-  const labels: PayCardBalanceLabels = {
+  const labels: BalanceLabels = {
     emptyTitle: t("payTab.balance.emptyTitle"),
     emptyDescription: t("payTab.balance.emptyDescription"),
     allStablecoins: t("payTab.balance.filter.allStablecoins"),
@@ -75,7 +75,7 @@ export function usePayCardBalance(): PayCardBalanceData & { labels: PayCardBalan
     confirm: t("payTab.balance.filter.confirm"),
   };
 
-  const data = usePayCardBalanceData({
+  const data = useBalanceData({
     stablecoins,
     defaultStablecoins,
     filter,

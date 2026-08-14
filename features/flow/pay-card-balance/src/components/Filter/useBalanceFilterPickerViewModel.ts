@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { PAY_CARD_BALANCE_FILTER_ALL, type PayCardBalanceFilter } from "../../state";
+import { PAY_CARD_BALANCE_FILTER_ALL, type BalanceFilter } from "../../state";
 import type { BalanceFilterPickerViewModel, BalanceFilterPickerViewModelParams } from "../../types";
 
 export function useBalanceFilterPickerViewModel({
@@ -10,7 +10,7 @@ export function useBalanceFilterPickerViewModel({
   onClose,
   onTrackEvent,
 }: BalanceFilterPickerViewModelParams): BalanceFilterPickerViewModel {
-  const [draftFilter, setDraftFilter] = useState<PayCardBalanceFilter>(activeFilter);
+  const [draftFilter, setDraftFilter] = useState<BalanceFilter>(activeFilter);
 
   useEffect(() => {
     if (isOpen) {
@@ -18,7 +18,7 @@ export function useBalanceFilterPickerViewModel({
     }
   }, [isOpen, activeFilter]);
 
-  const onSelectDraft = useCallback((next: PayCardBalanceFilter) => {
+  const onSelectDraft = useCallback((next: BalanceFilter) => {
     setDraftFilter(next);
   }, []);
 

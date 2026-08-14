@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
 import { Card, Spot } from "@ledgerhq/lumen-ui-react";
 import { Placeholder } from "@ledgerhq/lumen-ui-react/symbols";
-import type { PayCardBalanceFilter } from "../../state";
+import type { BalanceFilter } from "../../state";
 
 export {
   CardContent,
@@ -14,10 +14,10 @@ export {
 } from "@ledgerhq/lumen-ui-react";
 
 type FilterOptionCardProps = Readonly<{
-  optionId: PayCardBalanceFilter;
+  optionId: BalanceFilter;
   selected: boolean;
   rowKey: string;
-  onSelect: (id: PayCardBalanceFilter) => void;
+  onSelect: (id: BalanceFilter) => void;
   children: React.ReactNode;
 }>;
 

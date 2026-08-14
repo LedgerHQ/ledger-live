@@ -1,11 +1,11 @@
 import React from "react";
 import { render, screen } from "@testing-library/react-native";
-import { PayCardBalanceEmptyState } from "../components/Hero/PayCardBalanceEmptyState.native";
+import { BalanceEmptyState } from "../components/Hero/BalanceEmptyState.native";
 import { emptyLabels } from "./fixtures";
 
-describe("PayCardBalanceEmptyState (Native)", () => {
+describe("BalanceEmptyState (Native)", () => {
   it("should render the empty title and description", () => {
-    render(<PayCardBalanceEmptyState labels={emptyLabels} />);
+    render(<BalanceEmptyState labels={emptyLabels} />);
 
     expect(screen.getByTestId("pay-card-balance-empty-state")).toBeTruthy();
     expect(screen.getByText("Pay and get paid")).toBeTruthy();

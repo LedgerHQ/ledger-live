@@ -3,7 +3,7 @@ import { Linking } from "react-native";
 import { useTranslation } from "~/context/Locale";
 import type { OpenHostedLogin } from "@features/flow-pay-card-auth";
 import type { FeatureTourProps } from "@features/flow-pay-card-feature-tour";
-import type { PayCardBalanceLabels } from "@features/flow-pay-card-balance";
+import type { BalanceLabels } from "@features/flow-pay-card-balance";
 import { useNavigationBarHeights } from "LLM/hooks/useNavigationBarHeights";
 import { usePayCardBalance } from "LLM/features/PayTab/hooks/usePayCardBalance";
 import { usePayTabActionTiles } from "LLM/features/PayTab/hooks/usePayTabActionTiles";
@@ -16,7 +16,7 @@ export function usePayTabViewModel() {
   const balance = usePayCardBalance();
   const actionTiles = usePayTabActionTiles(balance.onTrackEvent);
 
-  const balanceLabels: PayCardBalanceLabels = useMemo(
+  const balanceLabels: BalanceLabels = useMemo(
     () => ({
       emptyTitle: t("payTab.balance.emptyTitle"),
       emptyDescription: t("payTab.balance.emptyDescription"),

@@ -1,16 +1,16 @@
 import React from "react";
-import type { PayCardBalanceFilter } from "../../state";
+import type { BalanceFilter } from "../../state";
 import { BalanceFilterPickerView } from "./BalanceFilterPickerView";
 import { useBalanceFilterPickerViewModel } from "./useBalanceFilterPickerViewModel";
-import type { PayCardBalanceFilterLabels, PayCardBalanceFilterOption } from "../../types";
+import type { BalanceFilterLabels, BalanceFilterOption } from "../../types";
 
 export type BalanceFilterPickerProps = Readonly<{
   isOpen: boolean;
-  filter: PayCardBalanceFilter;
-  options: readonly PayCardBalanceFilterOption[];
-  labels: PayCardBalanceFilterLabels;
+  filter: BalanceFilter;
+  options: readonly BalanceFilterOption[];
+  labels: BalanceFilterLabels;
   onClose: () => void;
-  onConfirmFilter: (filter: PayCardBalanceFilter) => void;
+  onConfirmFilter: (filter: BalanceFilter) => void;
   onTrackEvent?: (event: string, params: Record<string, unknown>) => void;
 }>;
 

@@ -1,12 +1,12 @@
 import React from "react";
 import { screen } from "@testing-library/react";
-import { PayCardBalanceEmptyState } from "../components/Hero/PayCardBalanceEmptyState.web";
+import { BalanceEmptyState } from "../components/Hero/BalanceEmptyState.web";
 import { renderWithStyle } from "./renderWithStyle.web";
 
-describe("PayCardBalanceEmptyState (Web)", () => {
+describe("BalanceEmptyState (Web)", () => {
   it("should render the empty title and description", () => {
     renderWithStyle(
-      <PayCardBalanceEmptyState
+      <BalanceEmptyState
         labels={{
           emptyTitle: "Pay and get paid",
           emptyDescription: "Start by depositing stablecoin to your wallet",

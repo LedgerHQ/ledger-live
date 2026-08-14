@@ -1,6 +1,6 @@
 import { PAY_CARD_BALANCE_FILTER_ALL } from "../state";
-import { aggregatePayCardBalance } from "../logic/aggregatePayCardBalance";
-import type { FormattedValue, PayCardPortfolioPort } from "../types";
+import { aggregateBalance } from "../logic/aggregateBalance";
+import type { FormattedValue, PortfolioPort } from "../types";
 
 const formatCountervalue = (): FormattedValue => ({}) as unknown as FormattedValue;
 const onConfirmFilter = jest.fn();
@@ -34,7 +34,7 @@ const filterOptionsWithStablecoins = [
   },
 ] as const;
 
-function buildPort(overrides: Partial<PayCardPortfolioPort> = {}): PayCardPortfolioPort {
+function buildPort(overrides: Partial<PortfolioPort> = {}): PortfolioPort {
   return {
     stablecoins: [],
     filter: PAY_CARD_BALANCE_FILTER_ALL,
@@ -50,9 +50,9 @@ function buildPort(overrides: Partial<PayCardPortfolioPort> = {}): PayCardPortfo
 const usdc = { currency: { id: "ethereum/erc20/usdc", ticker: "USDC" }, value: 1000 };
 const usdt = { currency: { id: "ethereum/erc20/usdt", ticker: "USDT" }, value: 250.5 };
 
-describe("aggregatePayCardBalance", () => {
+describe("aggregateBalance", () => {
   it("should sum every stablecoin countervalue when the filter is all", () => {
-    const data = aggregatePayCardBalance(buildPort({ stablecoins: [usdc, usdt] }));
+    const data = aggregateBalance(buildPort({ stablecoins: [usdc, usdt] }));
 
     expect(data.stableBalance).toBe(1250.5);
     expect(data.status).toBe("ready");
@@ -60,7 +60,7 @@ describe("aggregatePayCardBalance", () => {
   });
 
   it("should sum only the matching stablecoin when the filter is a currencyId", () => {
-    const data = aggregatePayCardBalance(
+    const data = aggregateBalance(
       buildPort({
         stablecoins: [usdc, usdt],
         filter: "ethereum/erc20/usdc",
@@ -73,7 +73,7 @@ describe("aggregatePayCardBalance", () => {
   });
 
   it("should fall back to all when the persisted filter is no longer available", () => {
-    const data = aggregatePayCardBalance(
+    const data = aggregateBalance(
       buildPort({
         stablecoins: [usdc, usdt],
         filter: "ethereum/erc20/dai",
@@ -86,13 +86,13 @@ describe("aggregatePayCardBalance", () => {
   });
 
   it("should report loading while the portfolio is loading", () => {
-    const data = aggregatePayCardBalance(buildPort({ stablecoins: [usdc], isLoading: true }));
+    const data = aggregateBalance(buildPort({ stablecoins: [usdc], isLoading: true }));
 
     expect(data.status).toBe("loading");
   });
 
   it("should report error when the portfolio errors, regardless of loading", () => {
-    const data = aggregatePayCardBalance(
+    const data = aggregateBalance(
       buildPort({ stablecoins: [usdc], isLoading: true, isError: true }),
     );
 
@@ -100,19 +100,19 @@ describe("aggregatePayCardBalance", () => {
   });
 
   it("should forward the countervalue formatter untouched", () => {
-    const data = aggregatePayCardBalance(buildPort());
+    const data = aggregateBalance(buildPort());
 
     expect(data.formatCountervalue).toBe(formatCountervalue);
   });
 
   it("should report hasBalance when any stablecoin has a positive value", () => {
-    const data = aggregatePayCardBalance(buildPort({ stablecoins: [usdc] }));
+    const data = aggregateBalance(buildPort({ stablecoins: [usdc] }));
 
     expect(data.hasBalance).toBe(true);
   });
 
   it("should forward filterOptions and onConfirmFilter", () => {
-    const data = aggregatePayCardBalance(buildPort());
+    const data = aggregateBalance(buildPort());
 
     expect(data.filterOptions).toBe(filterOptions);
     expect(data.onConfirmFilter).toBe(onConfirmFilter);

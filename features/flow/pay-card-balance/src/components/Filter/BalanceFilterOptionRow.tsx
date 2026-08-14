@@ -1,5 +1,5 @@
 import React from "react";
-import type { PayCardBalanceFilter } from "../../state";
+import type { BalanceFilter } from "../../state";
 import {
   CardContent,
   CardContentDescription,
@@ -11,12 +11,12 @@ import {
   FilterOptionCard,
   FilterOptionIcon,
 } from "./BalanceFilterOptionParts";
-import type { PayCardBalanceFilterOption } from "../../types";
+import type { BalanceFilterOption } from "../../types";
 
 type BalanceFilterOptionRowProps = Readonly<{
-  option: PayCardBalanceFilterOption;
+  option: BalanceFilterOption;
   selected: boolean;
-  onSelect: (id: PayCardBalanceFilter) => void;
+  onSelect: (id: BalanceFilter) => void;
 }>;
 
 export function BalanceFilterOptionRow({

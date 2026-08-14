@@ -1,10 +1,7 @@
 import { PAY_CARD_BALANCE_FILTER_ALL } from "../state";
 import type { Unit } from "@domain/entity-currency-unit";
-import {
-  buildPayCardBalanceData,
-  type BuildPayCardBalanceDataParams,
-} from "../logic/buildPayCardBalanceData";
-import type { DefaultStablecoin, PayCardStablecoinItem } from "../logic/buildBalanceFilterOptions";
+import { buildBalanceData, type BuildBalanceDataParams } from "../logic/buildBalanceData";
+import type { DefaultStablecoin, StablecoinItem } from "../logic/buildBalanceFilterOptions";
 import type { FormattedValue } from "../types";
 
 const USDC: DefaultStablecoin = {
@@ -21,7 +18,7 @@ const USDT: DefaultStablecoin = {
   magnitude: 6,
 };
 
-function makeItem(id: string, ticker: string, name: string, value: number): PayCardStablecoinItem {
+function makeItem(id: string, ticker: string, name: string, value: number): StablecoinItem {
   return {
     currency: { id, name, ticker, units: [{ name, code: ticker, magnitude: 6 }] },
     balance: value * 1_000_000,
@@ -35,8 +32,8 @@ const formatCrypto = (unit: Unit, balance: number): string =>
 const formatCountervalue = (): FormattedValue => ({}) as unknown as FormattedValue;
 const onConfirmFilter = jest.fn();
 
-function build(overrides: Partial<BuildPayCardBalanceDataParams> = {}) {
-  return buildPayCardBalanceData({
+function build(overrides: Partial<BuildBalanceDataParams> = {}) {
+  return buildBalanceData({
     stablecoins: [],
     defaultStablecoins: [USDC, USDT],
     filter: PAY_CARD_BALANCE_FILTER_ALL,
@@ -51,7 +48,7 @@ function build(overrides: Partial<BuildPayCardBalanceDataParams> = {}) {
   });
 }
 
-describe("buildPayCardBalanceData", () => {
+describe("buildBalanceData", () => {
   it("should sum every stablecoin countervalue when the filter is all", () => {
     const { data } = build({
       stablecoins: [

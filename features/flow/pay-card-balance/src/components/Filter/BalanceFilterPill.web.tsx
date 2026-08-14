@@ -1,11 +1,11 @@
 import React from "react";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
 import { MediaButton } from "@ledgerhq/lumen-ui-react";
-import type { PayCardBalanceFilterOption } from "../../types";
+import type { BalanceFilterOption } from "../../types";
 
 type BalanceFilterPillProps = Readonly<{
   allStablecoinsLabel: string;
-  selectedOption?: PayCardBalanceFilterOption;
+  selectedOption?: BalanceFilterOption;
   onClick: () => void;
 }>;
 

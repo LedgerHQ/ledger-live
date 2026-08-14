@@ -1,16 +1,11 @@
 import { PAY_CARD_BALANCE_FILTER_ALL } from "../state";
 import { tickerForFilter } from "./buildBalanceFilterOptions";
 import { resolveSelection } from "./resolveSelection";
-import type {
-  PayCardBalanceData,
-  PayCardBalanceStatus,
-  PayCardPortfolioPort,
-  PayCardStablecoin,
-} from "../types";
+import type { BalanceData, BalanceStatus, PortfolioPort, Stablecoin } from "../types";
 
 // Filters stablecoins by the active filter, sums their
 // countervalues and maps the loading/error flags to a single status.
-export function aggregatePayCardBalance({
+export function aggregateBalance({
   stablecoins,
   filter,
   isLoading,
@@ -19,7 +14,7 @@ export function aggregatePayCardBalance({
   formatCountervalue,
   onConfirmFilter,
   onTrackEvent,
-}: PayCardPortfolioPort): PayCardBalanceData {
+}: PortfolioPort): BalanceData {
   const optionIds = filterOptions.map(option => option.id);
   const effectiveFilter = resolveSelection(filter, optionIds);
 
@@ -30,7 +25,7 @@ export function aggregatePayCardBalance({
       ? undefined
       : tickerForFilter(effectiveFilter, filterOptions);
 
-  const matchesFilter = ({ currency }: PayCardStablecoin): boolean => {
+  const matchesFilter = ({ currency }: Stablecoin): boolean => {
     if (effectiveFilter === PAY_CARD_BALANCE_FILTER_ALL) {
       return true;
     }
@@ -46,7 +41,7 @@ export function aggregatePayCardBalance({
 
   const hasBalance = stablecoins.some(({ value }) => value > 0);
 
-  let status: PayCardBalanceStatus = "ready";
+  let status: BalanceStatus = "ready";
   if (isError) {
     status = "error";
   } else if (isLoading) {

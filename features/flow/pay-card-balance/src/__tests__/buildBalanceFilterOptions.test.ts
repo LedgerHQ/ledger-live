@@ -2,7 +2,7 @@ import type { Unit } from "@domain/entity-currency-unit";
 import {
   buildBalanceFilterOptions,
   type DefaultStablecoin,
-  type PayCardStablecoinItem,
+  type StablecoinItem,
 } from "../logic/buildBalanceFilterOptions";
 
 const USDC: DefaultStablecoin = {
@@ -19,7 +19,7 @@ const USDT: DefaultStablecoin = {
   magnitude: 6,
 };
 
-function makeItem(id: string, ticker: string, name: string, value: number): PayCardStablecoinItem {
+function makeItem(id: string, ticker: string, name: string, value: number): StablecoinItem {
   return {
     currency: { id, name, ticker, units: [{ name, code: ticker, magnitude: 6 }] },
     balance: value * 1_000_000,
@@ -31,7 +31,7 @@ const formatFiat = (value: number): string => `$${value.toFixed(2)}`;
 const formatCrypto = (unit: Unit, balance: number): string =>
   `${(balance / 10 ** unit.magnitude).toFixed(2)} ${unit.code}`;
 
-function build(stablecoins: PayCardStablecoinItem[], defaults: DefaultStablecoin[] = [USDC, USDT]) {
+function build(stablecoins: StablecoinItem[], defaults: DefaultStablecoin[] = [USDC, USDT]) {
   return buildBalanceFilterOptions({
     stablecoins,
     defaultStablecoins: defaults,

@@ -13,9 +13,9 @@ Shared Pay hero (Desktop and Mobile) for the aggregated stablecoin balance. Rend
 ## Usage
 
 ```tsx
-import { PayCardBalance } from "@features/flow-pay-card-balance";
+import { Balance } from "@features/flow-pay-card-balance";
 
-<PayCardBalance
+<Balance
   status={status}
   stableBalance={stableBalance}
   filter={filter}
@@ -31,17 +31,17 @@ and data access remain at the app composition root.
 Store, persistence and test setup should import the slice from
 `@features/flow-pay-card-balance/state` so they do not load the hero UI.
 
-## Shared data hook (`usePayCardBalanceData`)
+## Shared data hook (`useBalanceData`)
 
 Both apps derive the balance data from their own portfolio source, then feed it through the shared
-`usePayCardBalanceData` hook so the filter-option building, filtering, summing, status mapping and
+`useBalanceData` hook so the filter-option building, filtering, summing, status mapping and
 stale-filter self-heal all live in one place (LIVE-34898). Each app only writes a thin adapter that
 supplies its portfolio source, formatters and Redux/analytics callbacks:
 
 ```tsx
-import { usePayCardBalanceData } from "@features/flow-pay-card-balance";
+import { useBalanceData } from "@features/flow-pay-card-balance";
 
-return usePayCardBalanceData({
+return useBalanceData({
   stablecoins,
   defaultStablecoins,
   filter,
@@ -57,9 +57,9 @@ return usePayCardBalanceData({
 });
 ```
 
-Under the hood the hook memoizes the pure `buildPayCardBalanceData` (which composes
-`buildBalanceFilterOptions` + `aggregatePayCardBalance`) and runs the reset side effect when the
-persisted filter no longer matches an available option. `aggregatePayCardBalance` matches held rows
+Under the hood the hook memoizes the pure `buildBalanceData` (which composes
+`buildBalanceFilterOptions` + `aggregateBalance`) and runs the reset side effect when the
+persisted filter no longer matches an available option. `aggregateBalance` matches held rows
 to the active filter by ticker (falling back to currencyId) so market-id defaults and chain-specific
 held ids still sum correctly.
 
@@ -98,13 +98,13 @@ pay-card-balance/
     ├── __tests__/                            # Tests + shared fixtures (fixtures.tsx, renderWithStyle.web.tsx)
     ├── components/
     │   ├── Hero/                             # The balance hero component
-    │   │   ├── PayCardBalance.tsx            # Container (platform-agnostic)
-    │   │   ├── usePayCardBalanceViewModel.ts
-    │   │   ├── PayCardBalanceView.web.tsx    # Platform chrome around the body
-    │   │   ├── PayCardBalanceView.native.tsx
-    │   │   ├── PayCardBalanceBody.tsx        # Shared funded/empty tree
-    │   │   ├── PayCardBalanceEmptyState.web.tsx / .native.tsx
-    │   │   └── PayCardBalanceFundedState.web.tsx / .native.tsx
+    │   │   ├── Balance.tsx                   # Container (platform-agnostic)
+    │   │   ├── useBalanceViewModel.ts
+    │   │   ├── BalanceView.web.tsx           # Platform chrome around the body
+    │   │   ├── BalanceView.native.tsx
+    │   │   ├── BalanceBody.tsx               # Shared funded/empty tree
+    │   │   ├── BalanceEmptyState.web.tsx / .native.tsx
+    │   │   └── BalanceFundedState.web.tsx / .native.tsx
     │   └── Filter/                           # Filter picker + trigger
     │       ├── BalanceFilterPicker.tsx
     │       ├── BalanceFilterPickerView.web.tsx / .native.tsx
@@ -115,11 +115,11 @@ pay-card-balance/
     │       ├── BalanceFilterSelect.native.tsx / BalanceFilterSelectView.native.tsx
     │       └── useBalanceFilterSelectViewModel.ts
     ├── hooks/
-    │   └── usePayCardBalanceData.ts          # Host-facing data hook
+    │   └── useBalanceData.ts                 # Host-facing data hook
     ├── logic/                                # Platform-agnostic logic (no suffix)
-    │   ├── aggregatePayCardBalance.ts        # Filter + sum + status mapping
+    │   ├── aggregateBalance.ts               # Filter + sum + status mapping
     │   ├── buildBalanceFilterOptions.ts      # Filter option rows
-    │   ├── buildPayCardBalanceData.ts        # build + aggregate + reset decision
+    │   ├── buildBalanceData.ts               # build + aggregate + reset decision
     │   └── resolveSelection.ts               # Heal a stale persisted filter
     ├── state/                                # UI-free Redux slice (`./state` export)
     ├── types.ts                              # Component + port contracts
