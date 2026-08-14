@@ -1,3 +1,4 @@
+import type { ActionTilesProps } from "../components/ActionTiles/types";
 import type {
   FormattedValue,
   PayCardBalanceEmptyLabels,
@@ -40,9 +41,9 @@ export const fundedStateProps = {
   onOpenFilter: () => undefined,
 };
 
-export const depositActionTiles = {
+export const depositActionTiles: ActionTilesProps = {
   page: "Pay",
-  tiles: [{ id: "deposit" as const, label: "Deposit", onPress: () => undefined }],
+  tiles: [{ id: "deposit", label: "Deposit", onPress: () => undefined, appearance: "base" }],
 };
 
 export const USDC_ID = "ethereum/erc20/usd__coin";

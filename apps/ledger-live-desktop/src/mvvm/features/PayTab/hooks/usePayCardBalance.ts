@@ -9,6 +9,7 @@ import {
   usePayCardBalanceData,
   type FormattedValue,
   type PayCardBalanceData,
+  type PayCardBalanceLabels,
 } from "@features/flow-pay-card-balance";
 import {
   PAY_CARD_BALANCE_FILTER_ALL,
@@ -22,7 +23,7 @@ import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducer
 import { track } from "~/renderer/analytics/segment";
 import { usePayStablecoins } from "./usePayStablecoins";
 
-export function usePayCardBalance(): PayCardBalanceData {
+export function usePayCardBalance(): PayCardBalanceData & { labels: PayCardBalanceLabels } {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const locale = useSelector(localeSelector);
@@ -66,13 +67,23 @@ export function usePayCardBalance(): PayCardBalanceData {
     track(event, params);
   }, []);
 
-  return usePayCardBalanceData({
+  const labels: PayCardBalanceLabels = {
+    emptyTitle: t("payTab.balance.emptyTitle"),
+    emptyDescription: t("payTab.balance.emptyDescription"),
+    allStablecoins: t("payTab.balance.filter.allStablecoins"),
+    filterDialogTitle: t("payTab.balance.filter.dialogTitle"),
+    filterDialogDescription: t("payTab.balance.filter.dialogDescription"),
+    filterDialogBanner: t("payTab.balance.filter.dialogBanner"),
+    confirm: t("payTab.balance.filter.confirm"),
+  };
+
+  const data = usePayCardBalanceData({
     stablecoins,
     defaultStablecoins,
     filter,
     isLoading,
     isError,
-    allLabel: t("payTab.balance.filter.allStablecoins"),
+    allLabel: labels.allStablecoins,
     formatFiat,
     formatCrypto,
     formatCountervalue,
@@ -80,4 +91,6 @@ export function usePayCardBalance(): PayCardBalanceData {
     onResetFilter,
     onTrackEvent,
   });
+
+  return { ...data, labels };
 }
