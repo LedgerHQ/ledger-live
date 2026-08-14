@@ -1,4 +1,3 @@
-import { getEnv } from "@ledgerhq/live-env";
 import { makeBatcher } from "@ledgerhq/live-network/batcher/index";
 import { Batcher } from "@ledgerhq/live-network/batcher/types";
 import { log } from "@ledgerhq/logs";
@@ -19,19 +18,25 @@ const LEDGER_TIMEOUT = 10_000; // 10s for network call timeout
 const LEDGER_TIME_BETWEEN_TRIES = 200; // 200ms between 2 calls
 const DEFAULT_RETRIES_API = 2;
 
+/** The node config, narrowed and defaulted, as the request builders need it. */
+export type LedgerNodeApiConfig = LedgerNodeConfig & {
+  explorerUri: string;
+  clientVersion?: string;
+};
+
 type LedgerFetch = <T>(params: AxiosRequestConfig) => Promise<T>;
 
-function makeFetchWithRetries(config: LedgerNodeConfig): LedgerFetch {
+function makeFetchWithRetries(config: LedgerNodeApiConfig): LedgerFetch {
   const retries = config.retries ?? DEFAULT_RETRIES_API;
+  const clientVersionHeader = config.clientVersion
+    ? { "X-Ledger-Client-Version": config.clientVersion }
+    : {};
   return async function fetchWithRetries<T>(params: AxiosRequestConfig): Promise<T> {
     return withRetries(
       async () => {
         const { data } = await axios.request<T>({
           ...params,
-          headers: {
-            ...(params.headers || {}),
-            "X-Ledger-Client-Version": getEnv("LEDGER_CLIENT_VERSION"),
-          },
+          headers: { ...(params.headers || {}), ...clientVersionHeader },
         });
         return data;
       },
@@ -42,8 +47,8 @@ function makeFetchWithRetries(config: LedgerNodeConfig): LedgerFetch {
 }
 
 function make<F extends (currencyId: string, ...args: any[]) => any>(
-  f: (fetch: LedgerFetch, config: LedgerNodeConfig, ...args: Parameters<F>) => ReturnType<F>,
-  config: LedgerNodeConfig,
+  f: (fetch: LedgerFetch, config: LedgerNodeApiConfig, ...args: Parameters<F>) => ReturnType<F>,
+  config: LedgerNodeApiConfig,
   fetch: LedgerFetch,
 ): F {
   return ((...args: Parameters<F>) => f(fetch, config, ...args)) as F;
@@ -51,13 +56,13 @@ function make<F extends (currencyId: string, ...args: any[]) => any>(
 
 async function getTransaction(
   fetch: LedgerFetch,
-  config: LedgerNodeConfig,
+  config: LedgerNodeApiConfig,
   _currencyId: string,
   hash: string,
 ): Promise<TransactionInfo> {
   const ledgerTransaction = await fetch<LedgerExplorerOperation>({
     method: "GET",
-    url: `${getEnv("EXPLORER")}/blockchain/v4/${config.explorerId}/tx/${hash}`,
+    url: `${config.explorerUri}/blockchain/v4/${config.explorerId}/tx/${hash}`,
   });
 
   return {
@@ -84,7 +89,7 @@ async function getTransaction(
 }
 
 function makeGetTokenBalance(
-  config: LedgerNodeConfig,
+  config: LedgerNodeApiConfig,
   fetch: LedgerFetch,
   tokenBalancesBatchersMap: Map<
     string,
@@ -109,19 +114,19 @@ function makeGetTokenBalance(
 
 async function getCoinBalance(
   fetch: LedgerFetch,
-  config: LedgerNodeConfig,
+  config: LedgerNodeApiConfig,
   _currencyId: string,
   address: string,
 ): Promise<BigNumber> {
   const { balance } = await fetch<{ address: string; balance: string }>({
     method: "GET",
-    url: `${getEnv("EXPLORER")}/blockchain/v4/${config.explorerId}/address/${address}/balance`,
+    url: `${config.explorerUri}/blockchain/v4/${config.explorerId}/address/${address}/balance`,
   });
   return new BigNumber(balance);
 }
 
 function makeGetBatchTokenBalances(
-  config: LedgerNodeConfig,
+  config: LedgerNodeApiConfig,
   fetch: LedgerFetch,
 ): (
   input: { address: string; contract: string }[],
@@ -136,7 +141,7 @@ function makeGetBatchTokenBalances(
       }>
     >({
       method: "POST",
-      url: `${getEnv("EXPLORER")}/blockchain/v4/${config.explorerId}/erc20/balances`,
+      url: `${config.explorerUri}/blockchain/v4/${config.explorerId}/erc20/balances`,
       data: input,
     });
     return balances.map(({ balance }) => new BigNumber(balance));
@@ -145,19 +150,19 @@ function makeGetBatchTokenBalances(
 
 async function getTransactionCount(
   fetch: LedgerFetch,
-  config: LedgerNodeConfig,
+  config: LedgerNodeApiConfig,
   _currencyId: string,
   address: string,
 ): Promise<number> {
   const { nonce } = await fetch<{ address: string; nonce: number }>({
     method: "GET",
-    url: `${getEnv("EXPLORER")}/blockchain/v4/${config.explorerId}/address/${address}/nonce`,
+    url: `${config.explorerUri}/blockchain/v4/${config.explorerId}/address/${address}/nonce`,
   });
   return nonce;
 }
 
 function makeGetGasEstimation(
-  config: LedgerNodeConfig,
+  config: LedgerNodeApiConfig,
   fetch: LedgerFetch,
 ): NodeApi["getGasEstimation"] {
   return async (_currencyId, address, transaction) => {
@@ -169,7 +174,7 @@ function makeGetGasEstimation(
       }>({
         method: "POST",
         timeout: LEDGER_TIMEOUT,
-        url: `${getEnv("EXPLORER")}/blockchain/v4/${config.explorerId}/tx/estimate-gas-limit`,
+        url: `${config.explorerUri}/blockchain/v4/${config.explorerId}/tx/estimate-gas-limit`,
         data: {
           from: address,
           to,
@@ -187,7 +192,7 @@ function makeGetGasEstimation(
 
 async function getFeeData(
   _fetch: LedgerFetch,
-  config: LedgerNodeConfig,
+  config: LedgerNodeApiConfig,
   evmConfig: Parameters<NodeApi["getFeeData"]>[0],
   currencyId: Parameters<NodeApi["getFeeData"]>[1],
   transaction: Parameters<NodeApi["getFeeData"]>[2],
@@ -196,7 +201,7 @@ async function getFeeData(
     currencyId,
     config: evmConfig,
     options: {
-      useEIP1559: getEnv("EVM_FORCE_LEGACY_TRANSACTIONS") ? false : transaction.type === 2,
+      useEIP1559: evmConfig.forceLegacyTransactions ? false : transaction.type === 2,
       overrideGasTracker: { type: "ledger", explorerId: config.explorerId },
     },
   });
@@ -205,7 +210,7 @@ async function getFeeData(
 
 async function broadcastTransaction(
   fetch: LedgerFetch,
-  config: LedgerNodeConfig,
+  config: LedgerNodeApiConfig,
   _currencyId: string,
   signedTxHex: string,
   broadcastConfig?: Parameters<NodeApi["broadcastTransaction"]>[2],
@@ -221,7 +226,7 @@ async function broadcastTransaction(
   }
   const { result: hash } = await fetch<{ result: string }>({
     method: "POST",
-    url: `${getEnv("EXPLORER")}/blockchain/v4/${config.explorerId}/tx/send`,
+    url: `${config.explorerUri}/blockchain/v4/${config.explorerId}/tx/send`,
     data: { tx: signedTxHex },
     params,
     headers,
@@ -231,7 +236,7 @@ async function broadcastTransaction(
 
 async function getBlockByHeight(
   fetch: LedgerFetch,
-  config: LedgerNodeConfig,
+  config: LedgerNodeApiConfig,
   _currencyId: string,
   blockHeight: number | BlockFinalizationTag = "latest",
   _prefetchTxs = false,
@@ -245,7 +250,7 @@ async function getBlockByHeight(
       prevHash?: string;
     }>({
       method: "GET",
-      url: `${getEnv("EXPLORER")}/blockchain/v4/${config.explorerId}/block/current`,
+      url: `${config.explorerUri}/blockchain/v4/${config.explorerId}/block/current`,
     });
     return {
       hash,
@@ -259,7 +264,7 @@ async function getBlockByHeight(
     [{ hash: string; height: number; time: string; txs: string[]; prevHash?: string }]
   >({
     method: "GET",
-    url: `${getEnv("EXPLORER")}/blockchain/v4/${config.explorerId}/block/${blockHeight}`,
+    url: `${config.explorerUri}/blockchain/v4/${config.explorerId}/block/${blockHeight}`,
   });
   return {
     hash,
@@ -272,7 +277,7 @@ async function getBlockByHeight(
 
 async function getOptimismAdditionalFees(
   fetch: LedgerFetch,
-  config: LedgerNodeConfig,
+  config: LedgerNodeApiConfig,
   currencyId: string,
   transaction: string,
 ): Promise<BigNumber> {
@@ -295,7 +300,7 @@ async function getOptimismAdditionalFees(
     }>
   >({
     method: "POST",
-    url: `${getEnv("EXPLORER")}/blockchain/v4/${config.explorerId}/contract/read`,
+    url: `${config.explorerUri}/blockchain/v4/${config.explorerId}/contract/read`,
     data: [
       {
         contract: "0x420000000000000000000000000000000000000F",
@@ -322,7 +327,7 @@ type ContractReadResult = {
  */
 async function call(
   fetch: LedgerFetch,
-  config: LedgerNodeConfig,
+  config: LedgerNodeApiConfig,
   _currencyId: string,
   params: EvmCallParams,
 ): Promise<string> {
@@ -330,7 +335,7 @@ async function call(
   // defaults to latest when omitted. We forward `block` as-is (unlike the RPC path, no hex quantity).
   const [result] = await fetch<ContractReadResult[]>({
     method: "POST",
-    url: `${getEnv("EXPLORER")}/blockchain/v4/${config.explorerId}/contract/read`,
+    url: `${config.explorerUri}/blockchain/v4/${config.explorerId}/contract/read`,
     data: [
       {
         contract: normalizeAddress(params.to),
@@ -355,7 +360,7 @@ async function call(
 }
 
 function makeGetTokenAllowance(
-  config: LedgerNodeConfig,
+  config: LedgerNodeApiConfig,
   fetch: LedgerFetch,
 ): NodeApi["getTokenAllowance"] {
   const iface = new ethers.Interface(ERC20Abi as ethers.InterfaceAbi);
@@ -371,7 +376,7 @@ function makeGetTokenAllowance(
       }>
     >({
       method: "POST",
-      url: `${getEnv("EXPLORER")}/blockchain/v4/${config.explorerId}/contract/read`,
+      url: `${config.explorerUri}/blockchain/v4/${config.explorerId}/contract/read`,
       data: [{ contract: contractAddress, data }],
     });
     return new BigNumber(result.response);
@@ -380,7 +385,7 @@ function makeGetTokenAllowance(
 
 async function getScrollAdditionalFees(
   fetch: LedgerFetch,
-  config: LedgerNodeConfig,
+  config: LedgerNodeApiConfig,
   currencyId: string,
   transaction: string,
 ): Promise<BigNumber> {
@@ -399,7 +404,7 @@ async function getScrollAdditionalFees(
     }>
   >({
     method: "POST",
-    url: `${getEnv("EXPLORER")}/blockchain/v4/${config.explorerId}/contract/read`,
+    url: `${config.explorerUri}/blockchain/v4/${config.explorerId}/contract/read`,
     data: [
       {
         contract: "0x5300000000000000000000000000000000000002",
@@ -410,7 +415,7 @@ async function getScrollAdditionalFees(
   return new BigNumber(result.response);
 }
 
-export function createLedgerNodeApi(config: LedgerNodeConfig): NodeApi {
+export function createLedgerNodeApi(config: LedgerNodeApiConfig): NodeApi {
   const fetch = makeFetchWithRetries(config);
   const tokenBalancesBatchersMap = new Map<
     string,
