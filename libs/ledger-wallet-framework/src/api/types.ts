@@ -38,7 +38,7 @@ export type ChainSpecificRules = {
 export type BridgeApi = {
   getChainSpecificRules?: ChainSpecificRules;
   getTokenFromAsset?: (asset: AssetInfo) => Promise<TokenCurrency | undefined>;
-  getAssetFromToken?: (token: TokenCurrency, owner: string) => AssetInfo;
+  getAssetFromToken?: (token: TokenCurrency, owner: string) => AssetInfo | undefined;
   computeIntentType?: (transaction: Record<string, unknown>) => string;
   /**
    * Maps the family's own transaction fields onto the intent's `data` (the coin module's `TxData`);

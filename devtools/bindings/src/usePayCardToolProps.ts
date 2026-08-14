@@ -5,7 +5,7 @@ import { useFeature } from "@features/platform-feature-flags";
 import {
   resetPayCardFeatureTourSeen,
   selectPayCardHasSeenFeatureTour,
-} from "@domain/entity-pay-card";
+} from "@features/flow-pay-card-feature-tour/state";
 import type { DevToolsConfig } from "@devtools/registry";
 
 type PayCardToolProps = Extract<DevToolsConfig[number], { id: "pay-card" }>["config"];

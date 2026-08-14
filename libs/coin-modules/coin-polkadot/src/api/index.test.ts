@@ -53,6 +53,7 @@ describe("index", () => {
         getStakes: expect.any(Function),
         getValidators: expect.any(Function),
         listOperations: expect.any(Function),
+        register: expect.any(Function),
         validateIntent: expect.any(Function),
         validateAddress: expect.any(Function),
         getNextSequence: expect.any(Function),
@@ -66,6 +67,13 @@ describe("index", () => {
     it("should reject as unsupported", async () => {
       const api = generateApi();
       await expect(api.call(context, {})).rejects.toThrow("call is not supported");
+    });
+  });
+
+  describe("register", () => {
+    it("should reject as unsupported", async () => {
+      const api = generateApi();
+      await expect(api.register(context, "address")).rejects.toThrow("register is not supported");
     });
   });
 

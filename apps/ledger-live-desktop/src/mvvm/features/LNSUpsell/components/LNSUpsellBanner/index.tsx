@@ -65,7 +65,7 @@ function View({
               {t(`lnsUpsell.${tracking}.cta`)}
             </Button>
           }
-          image={variant.image}
+          image={imageUrl}
           borderRadius="5px"
           onClick={handleCTAClick}
         />

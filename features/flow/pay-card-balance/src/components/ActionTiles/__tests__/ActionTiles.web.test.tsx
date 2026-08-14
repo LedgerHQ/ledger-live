@@ -11,8 +11,8 @@ function renderWithStyle(ui: React.ReactElement) {
 function buildProps(overrides: Partial<ActionTilesProps> = {}): ActionTilesProps {
   return {
     tiles: [
-      { id: "deposit", label: "Deposit", onPress: jest.fn() },
-      { id: "request", label: "Request", onPress: jest.fn() },
+      { id: "deposit", label: "Deposit", onPress: jest.fn(), appearance: "base" },
+      { id: "request", label: "Request", onPress: jest.fn(), appearance: "transparent" },
     ],
     page: "Pay",
     ...overrides,
@@ -32,7 +32,10 @@ describe("ActionTiles (Web)", () => {
     const onPress = jest.fn();
     renderWithStyle(
       <ActionTiles
-        {...buildProps({ tiles: [{ id: "deposit", label: "Deposit", onPress }], onTrackEvent })}
+        {...buildProps({
+          tiles: [{ id: "deposit", label: "Deposit", onPress, appearance: "base" }],
+          onTrackEvent,
+        })}
       />,
     );
 

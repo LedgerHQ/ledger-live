@@ -230,7 +230,7 @@ export function getPendingTokenSpent(pendingOperations: Operation[]): BigNumber 
 
 export function extractBalances(
   account: Account,
-  getAssetFromToken?: (token: TokenCurrency, owner: string) => AssetInfo,
+  getAssetFromToken?: (token: TokenCurrency, owner: string) => AssetInfo | undefined,
 ): Balance[] {
   const nativeReserve = BigNumber.max(account.balance.minus(account.spendableBalance), 0);
   const nativePending = getPendingNativeSpent(account.pendingOperations ?? []);
@@ -252,6 +252,7 @@ export function extractBalances(
 
   for (const subAccount of account.subAccounts) {
     const asset = getAssetFromToken(subAccount.token, account.freshAddress);
+    if (!asset) continue;
     const tokenReserve = BigNumber.max(subAccount.balance.minus(subAccount.spendableBalance), 0);
     const tokenPending = getPendingTokenSpent(subAccount.pendingOperations ?? []);
     balances.push({

@@ -2,12 +2,14 @@
  * @jest-environment jsdom
  */
 
+import { FEATURE_FLAGS_DEFAULTS } from "@shared/feature-flags";
 import { t } from "i18next";
 import React from "react";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { render, screen, fireEvent, withFlagOverrides } from "tests/testSetup";
 import { openURL } from "~/renderer/linking";
 import { track } from "~/renderer/analytics/segment";
+import { BANNER_PLACEMENT_BY_LOCATION } from "LLD/features/LNSUpsell/types";
 import { LNSUpsellBanner } from ".";
 
 jest.mock("~/renderer/linking", () => ({
@@ -18,9 +20,20 @@ jest.mock("~/renderer/analytics/segment", () => ({
   track: jest.fn(),
 }));
 
+const DEFAULT_DISCOUNT_PERCENT = Math.round(
+  (FEATURE_FLAGS_DEFAULTS.largeScreenUpsell.params?.discount ?? 0) * 100,
+);
+
+function daysAgoIso(days: number): string {
+  const date = new Date();
+  date.setDate(date.getDate() - days);
+  return date.toISOString();
+}
+
 describe("LNSUpsellBanner", () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    jest.mocked(openURL).mockClear();
+    jest.mocked(track).mockClear();
   });
 
   describe.each([
@@ -39,9 +52,73 @@ describe("LNSUpsellBanner", () => {
       expect(screen.queryByText(t(`lnsUpsell.opted_in.cta`))).toBeNull();
     });
 
-    it("should not render if the user uses another device", () => {
-      renderBanner({ devicesModelList: [DeviceModelId.nanoSP] });
+    it("should not render if the tracking CTA is disabled on the feature flag", () => {
+      renderBanner({ ffCtaEnabled: false });
       expect(screen.queryByText(t(`lnsUpsell.opted_in.cta`))).toBeNull();
+    });
+
+    it.each([DeviceModelId.nanoSP, DeviceModelId.nanoX])(
+      "should not render for %s before the cooldown elapses",
+      deviceModelId => {
+        renderBanner({
+          devicesModelList: [deviceModelId],
+          onboardingDate: daysAgoIso(1),
+        });
+        expect(screen.queryByText(t(`lnsUpsell.opted_in.cta`))).toBeNull();
+      },
+    );
+
+    it.each([
+      { deviceModelId: DeviceModelId.nanoSP, analyticsValue: "lnsp" },
+      { deviceModelId: DeviceModelId.nanoX, analyticsValue: "lnx" },
+    ])(
+      "should render for $deviceModelId once its cooldown has elapsed",
+      ({ deviceModelId, analyticsValue }) => {
+        renderBanner({
+          devicesModelList: [deviceModelId],
+          onboardingDate: daysAgoIso(30),
+        });
+        fireEvent.click(screen.getByText(t(`lnsUpsell.opted_in.cta`)));
+
+        expect(track).toHaveBeenCalledWith("button_clicked", {
+          button: "Level up wallet",
+          deviceModel: analyticsValue,
+          link: "https://example.com/optInCta",
+          page,
+        });
+      },
+    );
+
+    it("should not render if the user's Nano model is outside the audience", () => {
+      renderBanner({ audienceModels: { nanoS: false, nanoSP: true, nanoX: true } });
+      expect(screen.queryByText(t(`lnsUpsell.opted_in.cta`))).toBeNull();
+    });
+
+    it("should not render if the user also owns a large-screen device", () => {
+      renderBanner({ devicesModelList: [DeviceModelId.nanoS, DeviceModelId.stax] });
+      expect(screen.queryByText(t(`lnsUpsell.opted_in.cta`))).toBeNull();
+    });
+
+    it("should not render when a longer-cooldown nano is still in cooldown", () => {
+      renderBanner({
+        devicesModelList: [DeviceModelId.nanoS, DeviceModelId.nanoX],
+      });
+      expect(screen.queryByText(t(`lnsUpsell.opted_in.cta`))).toBeNull();
+    });
+
+    it("should render the longest-cooldown nano once that cooldown has elapsed", () => {
+      renderBanner({
+        devicesModelList: [DeviceModelId.nanoS, DeviceModelId.nanoX],
+        onboardingDate: daysAgoIso(30),
+      });
+      fireEvent.click(screen.getByText(t(`lnsUpsell.opted_in.cta`)));
+
+      expect(track).toHaveBeenCalledWith("button_clicked", {
+        button: "Level up wallet",
+        deviceModel: "lnx",
+        link: "https://example.com/optInCta",
+        page,
+      });
     });
 
     it("should not render if the user has no devices", () => {
@@ -63,6 +140,7 @@ describe("LNSUpsellBanner", () => {
       expect(track).toHaveBeenCalledTimes(1);
       expect(track).toHaveBeenCalledWith("button_clicked", {
         button: "Level up wallet",
+        deviceModel: "lns",
         link: "https://example.com/optInCta",
         page,
       });
@@ -71,8 +149,12 @@ describe("LNSUpsellBanner", () => {
     it("should render Lumen MediaBanner and track click when lwdWallet40 brazePlacement is on", () => {
       renderBanner({ brazePlacement: true });
 
-      expect(screen.getByText(t(`lnsUpsell.opted_in.title`))).toBeTruthy();
-      expect(screen.getByText(t(`lnsUpsell.opted_in.description`, { discount: 10 }))).toBeTruthy();
+      expect(screen.getByText(t(`lnsUpsell.opted_in.title`))).toBeVisible();
+      expect(
+        screen.getByText(
+          t(`lnsUpsell.opted_in.description`, { discount: DEFAULT_DISCOUNT_PERCENT }),
+        ),
+      ).toBeVisible();
 
       fireEvent.click(screen.getByTestId("lns-upsell-media-banner"));
 
@@ -80,6 +162,7 @@ describe("LNSUpsellBanner", () => {
       expect(openURL).toHaveBeenCalledWith("https://example.com/optInCta");
       expect(track).toHaveBeenCalledWith("button_clicked", {
         button: "Level up wallet",
+        deviceModel: "lns",
         link: "https://example.com/optInCta",
         page,
       });
@@ -88,8 +171,8 @@ describe("LNSUpsellBanner", () => {
     it("should render opted-out MediaBanner copy when lwdWallet40 brazePlacement is on", () => {
       renderBanner({ brazePlacement: true, isOptIn: false });
 
-      expect(screen.getByText(t(`lnsUpsell.opted_out.title`))).toBeTruthy();
-      expect(screen.getByText(t(`lnsUpsell.opted_out.description`))).toBeTruthy();
+      expect(screen.getByText(t(`lnsUpsell.opted_out.title`))).toBeVisible();
+      expect(screen.getByText(t(`lnsUpsell.opted_out.description`))).toBeVisible();
     });
 
     it("should render the banner for opted out users", () => {
@@ -101,6 +184,7 @@ describe("LNSUpsellBanner", () => {
       expect(track).toHaveBeenCalledTimes(1);
       expect(track).toHaveBeenCalledWith("button_clicked", {
         button: "Level up wallet",
+        deviceModel: "lns",
         link: "https://example.com/optOutCta",
         page,
       });
@@ -115,6 +199,7 @@ describe("LNSUpsellBanner", () => {
       expect(track).toHaveBeenCalledTimes(1);
       expect(track).toHaveBeenCalledWith("button_clicked", {
         button: "Level up wallet",
+        deviceModel: "lns",
         link: "https://example.com/optOutCta",
         page,
       });
@@ -123,22 +208,61 @@ describe("LNSUpsellBanner", () => {
     function renderBanner({
       ffEnabled = true,
       ffLocationEnabled = true,
+      ffCtaEnabled = true,
       isOptIn = true,
       devicesModelList = [DeviceModelId.nanoS],
+      onboardingDate = daysAgoIso(0),
+      audienceModels = {},
       targetedByHighTierUpsell = false,
       brazePlacement = false,
+    }: {
+      ffEnabled?: boolean;
+      ffLocationEnabled?: boolean;
+      ffCtaEnabled?: boolean;
+      isOptIn?: boolean;
+      devicesModelList?: DeviceModelId[];
+      onboardingDate?: string;
+      audienceModels?: Partial<{ nanoS: boolean; nanoSP: boolean; nanoX: boolean }>;
+      targetedByHighTierUpsell?: boolean;
+      brazePlacement?: boolean;
     }) {
-      const defaultParams = { [location]: ffLocationEnabled, "%": 10, img: "" };
-      const ffParams = {
-        opted_in: { ...defaultParams, link: "https://example.com/optInCta" },
-        opted_out: { ...defaultParams, link: "https://example.com/optOutCta" },
-      };
+      const defaultParams = FEATURE_FLAGS_DEFAULTS.largeScreenUpsell.params;
+
+      if (!defaultParams) {
+        throw new Error("Expected large-screen upsell default params");
+      }
+
+      const placement = BANNER_PLACEMENT_BY_LOCATION[location];
 
       render(<LNSUpsellBanner location={location} />, {
         initialState: {
           ...withFlagOverrides({
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            lldNanoSUpsellBanners: { enabled: ffEnabled, params: ffParams as any },
+            largeScreenUpsell: {
+              enabled: ffEnabled,
+              params: {
+                ...defaultParams,
+                audience: {
+                  models: {
+                    ...defaultParams.audience.models,
+                    ...audienceModels,
+                  },
+                },
+                banners: {
+                  ...defaultParams.banners,
+                  [placement]: ffLocationEnabled,
+                },
+                opted_in: {
+                  ...defaultParams.opted_in,
+                  enabled: ffCtaEnabled,
+                  link: "https://example.com/optInCta",
+                },
+                opted_out: {
+                  ...defaultParams.opted_out,
+                  enabled: ffCtaEnabled,
+                  link: "https://example.com/optOutCta",
+                },
+              },
+            },
             lwdWallet40: { enabled: true, params: { brazePlacement } },
           }),
           settings: {
@@ -146,6 +270,9 @@ describe("LNSUpsellBanner", () => {
             sharePersonalizedRecommandations: isOptIn,
             devicesModelList,
             anonymousUserNotifications: {},
+          },
+          postOnboarding: {
+            onboardingDate,
           },
           dynamicContent: {
             desktopCards: [
@@ -155,5 +282,50 @@ describe("LNSUpsellBanner", () => {
         },
       });
     }
+  });
+
+  it("should render portfolio banner for opted-in users when homepage placement is enabled", () => {
+    const defaultParams = FEATURE_FLAGS_DEFAULTS.largeScreenUpsell.params;
+
+    if (!defaultParams) {
+      throw new Error("Expected large-screen upsell default params");
+    }
+
+    render(<LNSUpsellBanner location="portfolio" />, {
+      initialState: {
+        ...withFlagOverrides({
+          largeScreenUpsell: {
+            enabled: true,
+            params: {
+              ...defaultParams,
+              banners: {
+                ...defaultParams.banners,
+                homepage: true,
+              },
+              opted_in: {
+                ...defaultParams.opted_in,
+                enabled: true,
+                link: "https://example.com/optInCta",
+              },
+            },
+          },
+        }),
+        settings: {
+          shareAnalytics: true,
+          sharePersonalizedRecommandations: true,
+          devicesModelList: [DeviceModelId.nanoS],
+          anonymousUserNotifications: {},
+        },
+        postOnboarding: {
+          onboardingDate: daysAgoIso(0),
+        },
+        dynamicContent: {
+          desktopCards: [],
+        },
+      },
+    });
+
+    fireEvent.click(screen.getByTestId("lns-upsell-media-banner"));
+    expect(openURL).toHaveBeenCalledWith("https://example.com/optInCta");
   });
 });

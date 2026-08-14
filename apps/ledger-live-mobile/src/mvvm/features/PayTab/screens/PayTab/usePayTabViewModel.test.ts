@@ -1,6 +1,6 @@
 import { Linking } from "react-native";
 import { renderHook } from "@tests/test-renderer";
-import type { PayCardBalanceData } from "@features/flow-pay-card-balance";
+import type { BalanceData } from "@features/flow-pay-card-balance";
 import { track } from "~/analytics";
 import { usePayTabViewModel } from "./usePayTabViewModel";
 
@@ -12,7 +12,7 @@ jest.mock("~/analytics", () => ({
   track: jest.fn(),
 }));
 
-const balance: PayCardBalanceData = {
+const balance: BalanceData = {
   status: "ready",
   stableBalance: 0,
   filter: "all",

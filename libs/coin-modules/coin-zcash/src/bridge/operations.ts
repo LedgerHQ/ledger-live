@@ -75,6 +75,21 @@ export const getTxType = (tx: ShieldedTransaction): OperationType => {
   return "SHIELDED_TX_INTERNAL";
 };
 
+/**
+ * The type the operation carries, which is not always the type the transaction
+ * has.
+ *
+ * A self-transfer moved no value across the wallet boundary, so it has nothing to
+ * report in a history list: it names no counterparty, its value is 0, and when it
+ * is the shielded leg of a transparent-funded send — a t→z sweep whose whole
+ * amount landed on the internal address — the transparent operation already lists
+ * the same transaction. `NONE` is how the platform keeps such a transaction in the
+ * account data while leaving it out of the lists it would only clutter (see
+ * `flattenOperationWithInternalsAndNfts`).
+ */
+const toOperationType = (txType: OperationType): OperationType =>
+  txType === "SHIELDED_TX_INTERNAL" ? "NONE" : txType;
+
 export function applyOutputDelta(
   balance: BigNumber,
   outputs: { transfer_type: string; amount: BigNumber }[],
@@ -238,13 +253,14 @@ export function convertShieldedTransactionsToOperations(
       value = sumNotes("outgoing").plus(deshieldedValue(tx)).plus(fee);
     }
 
+    const operationType = toOperationType(txType);
     const operation: BtcOperation = {
-      id: encodeOperationId(accountId, tx.id, txType),
+      id: encodeOperationId(accountId, tx.id, operationType),
       hash: tx.id,
       accountId,
       blockHash: tx.blockHash,
       blockHeight: tx.blockHeight,
-      type: txType,
+      type: operationType,
       senders: [],
       recipients: [],
       date: new Date(tx.timestamp * 1000), // zcash shielded transaction timestamps are Unix seconds.

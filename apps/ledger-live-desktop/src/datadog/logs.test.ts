@@ -205,8 +205,11 @@ describe("datadog logs", () => {
     });
 
     it("calls datadogLogs.logger.error with correct parameters on failure event", () => {
-      const error = new Error("tx broadcast failed");
-      error.stack = "Error: tx broadcast failed\n  at test:1:1";
+      const error = Object.assign(new Error("tx broadcast failed"), {
+        stack: "Error: tx broadcast failed\n  at test:1:1",
+        transactionId: 0,
+        payload: "0x123456789",
+      });
 
       broadcastLogger({
         status: "failure",
@@ -236,6 +239,10 @@ describe("datadog logs", () => {
               name: "ledger-live-desktop",
               flags: { newSendFlow: false },
             },
+          },
+          errorContext: {
+            transactionId: 0,
+            payload: "0x123456789",
           },
         },
         error,

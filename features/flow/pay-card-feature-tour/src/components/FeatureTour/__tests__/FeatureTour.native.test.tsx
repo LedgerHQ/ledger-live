@@ -1,7 +1,7 @@
 import React from "react";
 import { configureStore } from "@reduxjs/toolkit";
 import { cleanup, render, screen, userEvent } from "@testing-library/react-native";
-import { markPayCardFeatureTourSeen, payCardSlice } from "@domain/entity-pay-card";
+import { markPayCardFeatureTourSeen, payCardFeatureTourSlice } from "../../../state";
 import { Provider } from "react-redux";
 import { FeatureTour } from "../FeatureTour";
 import type { FeatureTourContent, FeatureTourProps } from "../types";
@@ -34,7 +34,7 @@ const CONTENT: FeatureTourContent = {
 };
 
 function makeStore() {
-  return configureStore({ reducer: { payCard: payCardSlice.reducer } });
+  return configureStore({ reducer: { payCardFeatureTour: payCardFeatureTourSlice.reducer } });
 }
 
 function renderTour(props: Partial<FeatureTourProps> = {}, store = makeStore()) {
@@ -75,7 +75,7 @@ describe("FeatureTour (Native)", () => {
 
     await user.press(screen.getByLabelText("Got it"));
 
-    expect(store.getState().payCard.hasSeenFeatureTour).toBe(true);
+    expect(store.getState().payCardFeatureTour.hasSeenFeatureTour).toBe(true);
     expect(onTrackEvent).toHaveBeenCalledWith("button_clicked", {
       button: "got it",
       page: "$page",

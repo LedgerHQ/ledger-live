@@ -1,6 +1,7 @@
 import type { AssetInfo, BalanceOptions } from "@ledgerhq/coin-module-framework/api/types";
 import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import type {
+  AccountReadiness,
   Operation as LiveOperation,
   StakingRedelegation,
   StakingResources,
@@ -16,7 +17,7 @@ import {
   fetchRedelegations,
   buildRedelegationsFromOps,
 } from "@ledgerhq/coin-evm/staking/redelegations";
-import { STAKING_CONTRACTS } from "@ledgerhq/coin-evm/staking/index";
+import { STAKING_CONTRACTS, isSeiAccountUnassociated } from "@ledgerhq/coin-evm/staking/index";
 import { getNodeApi } from "@ledgerhq/coin-evm/network/node/index";
 import { getNextSequence } from "@ledgerhq/coin-evm/logic/index";
 import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
@@ -164,6 +165,19 @@ export async function refreshOperations(
   return refreshedOperationsOrNull.filter((op): op is LiveOperation => !!op);
 }
 
+/**
+ * A Sei account can only transact (swap included) once its EVM (0x) address is
+ * associated on-chain with its Cosmos (sei1) address.
+ */
+export async function getAccountReadiness(
+  currency: CryptoCurrency,
+  address: string,
+): Promise<AccountReadiness> {
+  const config = getCurrencyConfiguration<EvmConfigInfo>(currency.id);
+  const unassociated = await isSeiAccountUnassociated(config, currency.id, address);
+  return unassociated ? { ready: false, reason: "activationRequired" } : { ready: true };
+}
+
 export async function validateTransaction(
   currency: CryptoCurrency,
   { signature }: { signature: string },
@@ -217,6 +231,8 @@ export default function evmBridge(currency: CryptoCurrency): BridgeApi {
     enrichStakingResources: (c, addr, ops, sr) => enrichStakingResources(c, addr, ops, sr),
     validateTransaction: (signature: string) => validateTransaction(currency, { signature }),
     ...(STAKING_CONTRACTS[currency.id] ? { stakingSupported: true } : {}),
+    // Only Sei has an activation concept; elsewhere readiness stays undefined (= ready).
+    ...(currency.id === "sei_evm" ? { getAccountReadiness } : {}),
     // Config comes from `getCurrencyConfiguration` (the live-common config source), available at
     // bridge-assembly time. Only expose refreshOperations
     // for explorer-less chains (e.g. core) — explorer-backed chains rely on the explorer's results.

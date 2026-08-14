@@ -62,6 +62,9 @@ export function createApi(
     async call() {
       throw new Error("call is not supported");
     },
+    async register() {
+      throw new Error("register is not supported");
+    },
     combine: (_context, tx, signature, options) => combine(tx, signature, options?.pubkey),
     craftTransaction: async (context: HederaContext, txIntent, options) => {
       invariant(!txIntent.useAllAmount, "useAllAmount is not supported");

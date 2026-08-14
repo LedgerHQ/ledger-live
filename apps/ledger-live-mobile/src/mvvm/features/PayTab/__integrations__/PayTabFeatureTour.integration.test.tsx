@@ -32,7 +32,7 @@ describe("PayTab feature tour integration", () => {
     render(<PayTabScreen />, {
       overrideInitialState: state => ({
         ...state,
-        payCard: { ...state.payCard, hasSeenFeatureTour: false },
+        payCardFeatureTour: { ...state.payCardFeatureTour, hasSeenFeatureTour: false },
       }),
     });
 
@@ -46,7 +46,7 @@ describe("PayTab feature tour integration", () => {
     const { user, store } = render(<PayTabScreen />, {
       overrideInitialState: state => ({
         ...state,
-        payCard: { ...state.payCard, hasSeenFeatureTour: false },
+        payCardFeatureTour: { ...state.payCardFeatureTour, hasSeenFeatureTour: false },
       }),
     });
 
@@ -57,7 +57,7 @@ describe("PayTab feature tour integration", () => {
     await user.press(screen.getByText(FEATURE_TOUR_CTA));
 
     await waitFor(() => {
-      expect(store.getState().payCard.hasSeenFeatureTour).toBe(true);
+      expect(store.getState().payCardFeatureTour.hasSeenFeatureTour).toBe(true);
       expect(screen.queryByText(FEATURE_TOUR_ROW)).toBeNull();
     });
   });
@@ -66,7 +66,7 @@ describe("PayTab feature tour integration", () => {
     render(<PayTabScreen />, {
       overrideInitialState: state => ({
         ...state,
-        payCard: { ...state.payCard, hasSeenFeatureTour: true },
+        payCardFeatureTour: { ...state.payCardFeatureTour, hasSeenFeatureTour: true },
       }),
     });
 

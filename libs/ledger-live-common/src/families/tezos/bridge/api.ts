@@ -16,22 +16,11 @@ export async function getTokenFromAsset(asset: AssetInfo): Promise<TokenCurrency
   return store.findTokenByAddressInCurrency(contractAddress, "tezos", tokenIdentifier);
 }
 
-/**
- * Derives the FA2 tokenId from a TokenCurrency's CAL id.
- * CAL ids follow the pattern `tezos/fa2/{name}_{contract}` (tokenId=0)
- * or `tezos/fa2/{name}_{contract}_{tokenId}` (multi-asset).
- */
-function deriveTokenId(token: TokenCurrency): string {
-  const contractLower = token.contractAddress.toLowerCase();
-  const suffix = token.id.split(contractLower)[1];
-  return suffix?.match(/^_(\d+)$/)?.[1] ?? "0";
-}
-
-export function getAssetFromToken(token: TokenCurrency, owner: string): AssetInfo {
-  const tokenId = deriveTokenId(token);
+export function getAssetFromToken(token: TokenCurrency, owner: string): AssetInfo | undefined {
+  if (!token.tokenIdentifier) return undefined;
   return {
     type: token.tokenType,
-    assetReference: `${token.contractAddress}:${tokenId}`,
+    assetReference: `${token.contractAddress}:${token.tokenIdentifier}`,
     assetOwner: owner,
     name: token.name,
     unit: token.units[0],
