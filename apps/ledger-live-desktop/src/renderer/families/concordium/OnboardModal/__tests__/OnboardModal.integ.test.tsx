@@ -209,7 +209,8 @@ describe("OnboardModal Integration", () => {
 
     // Real bridge flows: getPublicKey → getSession → requestCreateAccount → sign.
     // SIGN screen not asserted: the success emit cancels its still pending
-    // setStateWithTimeout transition (see LIVE-34490). MSW intercepts submitCredential.
+    // setStateWithTimeout transition — a wider waitFor budget (LIVE-34490) does not
+    // help. MSW intercepts submitCredential.
     await waitFor(
       () => {
         expect(
