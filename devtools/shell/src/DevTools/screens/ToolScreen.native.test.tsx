@@ -1,5 +1,5 @@
 import { Text } from "react-native";
-import { renderScreen, screen } from "jest/render.native";
+import { renderScreen, screen } from "jest/screens.native";
 import { Category } from "@devtools/registry";
 import { makeTool } from "jest/fixtures";
 import { ToolScreen } from "./ToolScreen";

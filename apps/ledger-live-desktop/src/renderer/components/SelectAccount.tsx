@@ -24,7 +24,7 @@ import Plus from "~/renderer/icons/Plus";
 import Text from "./Text";
 import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
 import { useAccountUnit } from "../hooks/useAccountUnit";
-import { WalletState, accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
+import { WalletState, accountNameWithDefaultSelector } from "~/renderer/reducers/wallet";
 import { useAccountName, walletSelector } from "../reducers/wallet";
 
 const mapStateToProps = createStructuredSelector({

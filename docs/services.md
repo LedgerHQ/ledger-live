@@ -184,7 +184,7 @@ URLs the app hands to the OS browser (`openURL` / `Linking.openURL`) — **not**
 | Developers portal | `developers.ledger.com` | |
 | Contact / Source / Donjon | `contact.ledger.com`, `source.ledger.com`, `donjon.ledger.com` | |
 | Block explorers (per coin) | `etherscan.io`, `tronscan.org`, `mintscan.io`, `suiscan.xyz`, `tzkt.io`, `cardanoscan.io`, … | "View in explorer" links. |
-| Swap / trade provider sites | `changelly.com`, `moonpay.com`, `1inch.com`, `paraswap.io`, `li.fi`, `web3.okx.com`, … | PTX provider UI links; quoting goes via `swap.ledger.com`. |
+| Swap / trade provider sites | `changelly.com`, `moonpay.com`, `1inch.com`, `paraswap.io`, `li.fi`, `web3.okx.com`, `www.kiln.fi`, … | PTX provider UI links; quoting goes via `swap.ledger.com`. |
 | Chatbot support | `ledgercustomersuccess.my.salesforce-sites.com` | Feature-flagged (`llmChatbotSupport` / `lldChatbotSupport`). |
 | Feedback survey | `form.typeform.com` | Swap completed feedback (LLD); ratings modal (LLM). |
 | Tezos baker directory | `baking-bad.org` | Delegation flow (both apps). |

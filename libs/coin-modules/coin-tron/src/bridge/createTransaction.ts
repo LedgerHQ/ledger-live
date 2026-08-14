@@ -11,6 +11,7 @@ const createTransaction = (): Transaction => ({
   networkInfo: null,
   resource: null,
   votes: [],
+  // energyProviderInfo omitted by default (optional) → standard crafting; set by the Send flow.
 });
 
 export default createTransaction;

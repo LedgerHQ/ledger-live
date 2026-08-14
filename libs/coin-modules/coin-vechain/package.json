@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-vechain",
-  "version": "2.28.0",
+  "version": "3.0.0",
   "description": "Ledger VeChain Coin integration",
   "keywords": [
     "Ledger",
@@ -106,14 +106,13 @@
     "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
-    "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
     "@vechain/sdk-core": "2.0.0",
     "@vechain/sdk-network": "2.0.0",
     "bignumber.js": "^9.1.2",
     "eip55": "^2.1.1",
     "invariant": "^2.2.2",
-    "lodash": "^4.17.21",
+    "lodash": "catalog:",
     "rxjs": "catalog:"
   },
   "devDependencies": {
@@ -124,7 +123,7 @@
     "@swc/jest": "catalog:",
     "@types/invariant": "^2.2.2",
     "@types/jest": "catalog:",
-    "@types/lodash": "^4.14.191",
+    "@types/lodash": "catalog:",
     "@types/node": "catalog:",
     "dotenv": "^16.4.5",
     "jest": "catalog:",

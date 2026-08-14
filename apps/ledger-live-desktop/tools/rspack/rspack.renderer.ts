@@ -88,12 +88,6 @@ export function createRendererConfig(
         // reached over the `zcash:*` channels the main process registers (see
         // `@ledgerhq/coin-zcash/network/ipc/main-host`).
         "@ledgerhq/coin-zcash/network/ZCash$": "@ledgerhq/coin-zcash/network/ZCashIPC",
-        // The Zcash chain-adapter of `coin-bitcoin` needs the same alias -- its
-        // lazy `zcash-native` chunk is still resolved at build time, addon
-        // included -- even though its shielded path is no longer served: the
-        // `zcashShielded` flag routes those accounts to coin-zcash.
-        "@ledgerhq/coin-bitcoin/chain-adapters/zcash/ZCash$":
-          "@ledgerhq/coin-bitcoin/chain-adapters/zcash/ZCashIPC",
         // Fix tests/time.js import for TIMEMACHINE feature
         "../../tests/time.js": path.resolve(rootFolder, "tests", "time.ts"),
         "../tests/time": path.resolve(rootFolder, "tests", "time.ts"),

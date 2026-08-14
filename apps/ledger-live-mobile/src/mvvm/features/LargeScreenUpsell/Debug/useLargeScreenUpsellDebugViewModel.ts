@@ -1,12 +1,14 @@
 import { useCallback, useMemo, useState } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useFeature } from "@features/platform-feature-flags";
+import type { Features } from "@shared/feature-flags";
 import { setOverride } from "@shared/feature-flags";
 import { DeviceModelId, DevicesWithTouchScreen } from "@ledgerhq/types-devices";
 import {
   isCooldownElapsed,
   shouldThrottle,
 } from "@ledgerhq/live-common/postOnboarding/logic/upsellFrequency";
+import { resolveOnboardingDateForUpsell } from "@ledgerhq/live-common/postOnboarding/logic/legacyOnboardingDate";
 import { onboardingDateSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { setPostOnboardingDate } from "@ledgerhq/live-common/postOnboarding/actions";
 import {
@@ -18,10 +20,16 @@ import {
   setUpsellModalRetries,
 } from "@ledgerhq/live-engagement/largeScreenUpsellModal";
 import type { FeatureIntroViewModel } from "LLM/components/FeatureIntroLayout/types";
+import { useLNUpsellBannerState } from "LLM/features/LNUpsell/hooks/useLNUpsellBannerState";
+import useDynamicContent from "~/dynamicContent/useDynamicContent";
 import { unsafe_setKnownDeviceModelIds } from "~/actions/settings";
 import { useTranslation } from "~/context/Locale";
 import { useDispatch, useSelector } from "~/context/hooks";
-import { analyticsEnabledSelector, knownDeviceModelIdsSelector } from "~/reducers/settings";
+import {
+  analyticsEnabledSelector,
+  knownDeviceModelIdsSelector,
+  personalizedRecommendationsEnabledSelector,
+} from "~/reducers/settings";
 import {
   useLargeScreenUpsellEligibility,
   type LargeScreenUpsellIneligibilityReason,
@@ -34,6 +42,7 @@ import {
 import { parseDateOrOffset } from "./utils";
 
 const FLAG_KEY = "largeScreenUpsell";
+const LNS_UPSELL_HIGH_TIER = "LNS_UPSELL_HIGH_TIER";
 const PREVIEW_MODAL_ID = "large-screen-upsell-modal-debug-preview";
 const PREVIEW_IOS_BOTTOM_PADDING = 20;
 
@@ -100,7 +109,11 @@ function deriveDebugDecision({
   const resolvedCooldownDays =
     "cooldownDays" in eligibility ? eligibility.cooldownDays : cooldownDaysDefault;
 
-  const cooldownElapsed = isCooldownElapsed(onboardingDate, resolvedCooldownDays ?? 0, now);
+  const cooldownElapsed = isCooldownElapsed(
+    resolveOnboardingDateForUpsell(onboardingDate),
+    resolvedCooldownDays ?? 0,
+    now,
+  );
 
   const throttled =
     killThreshold != null && cadenceDays != null
@@ -132,59 +145,82 @@ function deriveDebugDecision({
   };
 }
 
-export function useLargeScreenUpsellDebugViewModel() {
+type LargeScreenUpsellEligibility = ReturnType<typeof useLargeScreenUpsellEligibility>;
+type LargeScreenUpsellFeature = Features["largeScreenUpsell"];
+type LargeScreenUpsellParams = NonNullable<LargeScreenUpsellFeature["params"]>;
+
+function getEligibilityHint(eligibility: LargeScreenUpsellEligibility): string {
+  if (eligibility.isEligible) {
+    return `Eligible (${eligibility.deviceModelId}).`;
+  }
+  const reason = "reason" in eligibility ? eligibility.reason : "unknown";
+  return `Not eligible: ${reason}.`;
+}
+
+function buildDeviceSeenHints(
+  isNanoSeen: boolean,
+  isNanoSSeen: boolean,
+  hasSeenTouchscreen: boolean,
+) {
+  return {
+    nanoSeenHint: isNanoSeen
+      ? "At least one Nano (S/SP/X) is marked seen. Toggle off clears S/SP/X."
+      : "Toggle on to mark Nano S + SP + X as seen (matches eligibility: any Nano).",
+    nanoSSeenHint: isNanoSSeen
+      ? "Nano S only (other models cleared). Useful for a clean eligibility check."
+      : "Toggle on to mark Nano S only and clear every other seen device.",
+    seenDevicesHint: hasSeenTouchscreen
+      ? "A touchscreen device (Flex/Stax) has been seen — it blocks the upsell. Clear to reset."
+      : "Clears every seen device model (removes any touchscreen that blocks the upsell).",
+  };
+}
+
+type LnPortfolioBannerDebugInput = {
+  isLnPortfolioBannerShown: boolean;
+  lnBannerTracking: "opted_in" | "opted_out";
+  isFlagEnabled: boolean;
+  isLnCtaEnabled: boolean;
+  isLnHomepagePlacementEnabled: boolean;
+  eligibility: LargeScreenUpsellEligibility;
+  isExcludedByHighTier: boolean;
+  isPersonalizedRecommendationsEnabled: boolean;
+};
+
+function buildLnPortfolioBannerDebugSection({
+  isLnPortfolioBannerShown,
+  lnBannerTracking,
+  isFlagEnabled,
+  isLnCtaEnabled,
+  isLnHomepagePlacementEnabled,
+  eligibility,
+  isExcludedByHighTier,
+  isPersonalizedRecommendationsEnabled,
+}: LnPortfolioBannerDebugInput) {
+  return {
+    isShown: isLnPortfolioBannerShown,
+    tracking: lnBannerTracking,
+    flagEnabled: isFlagEnabled,
+    ctaEnabled: isLnCtaEnabled,
+    ctaHint: isLnCtaEnabled
+      ? `params.${lnBannerTracking}.enabled + link are set.`
+      : `params.${lnBannerTracking}.enabled/link missing — enable CTA for the current tracking branch.`,
+    homepagePlacementEnabled: Boolean(isLnHomepagePlacementEnabled),
+    eligibilityOk: eligibility.isEligible,
+    eligibilityHint: getEligibilityHint(eligibility),
+    notExcludedByHighTier: !isExcludedByHighTier,
+    highTierHint: isExcludedByHighTier
+      ? "Opted-in + Braze campaign LNS_UPSELL_HIGH_TIER suppresses the banner."
+      : "No high-tier Braze exclusion.",
+    personalizedRecommendationsEnabled: isPersonalizedRecommendationsEnabled,
+  };
+}
+
+function useLargeScreenUpsellDebugHandlers(
+  feature: LargeScreenUpsellFeature | null | undefined,
+  params: LargeScreenUpsellParams | undefined,
+  lnBannerTracking: "opted_in" | "opted_out",
+) {
   const dispatch = useDispatch();
-  const { t } = useTranslation();
-  const { bottom } = useSafeAreaInsets();
-  const feature = useFeature(FLAG_KEY);
-  const eligibility = useLargeScreenUpsellEligibility();
-  const hasCompetingModal = useCompetingAppStartModalsPresent();
-
-  const onboardingDate = useSelector(onboardingDateSelector);
-  const retries = useSelector(retriesUpsellModalSelector);
-  const lastSeenAt = useSelector(lastSeenUpsellModalSelector);
-  const analyticsEnabled = useSelector(analyticsEnabledSelector);
-  const knownDeviceModelIds = useSelector(knownDeviceModelIdsSelector);
-
-  const isNanoSeen = NANO_DEVICE_MODEL_IDS.some(id => knownDeviceModelIds[id]);
-  const hasSeenTouchscreen = DevicesWithTouchScreen.some(id => knownDeviceModelIds[id]);
-
-  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  const [previewVariant, setPreviewVariant] = useState<LargeScreenUpsellVariant>(
-    analyticsEnabled ? "opted_in" : "opted_out",
-  );
-
-  const params = feature?.params;
-  const killThreshold = params?.modal?.killThreshold;
-  const cadenceDays = params?.modal?.cadenceDays;
-  const modalEnabled = params?.modal?.enabled ?? false;
-  const cooldownDaysDefault = params?.cooldownDays?.default;
-  const isFlagEnabled = feature?.enabled ?? false;
-
-  const now = new Date();
-  const lastSeenDate = lastSeenAt != null ? new Date(lastSeenAt) : null;
-
-  const {
-    resolvedCooldownDays,
-    wouldShow,
-    audienceOk,
-    cooldownOk,
-    notThrottledOk,
-    noCompetingModalOk,
-    audienceHint,
-  } = deriveDebugDecision({
-    eligibility,
-    onboardingDate,
-    retries,
-    lastSeenDate,
-    now,
-    isFlagEnabled,
-    modalEnabled,
-    killThreshold,
-    cadenceDays,
-    cooldownDaysDefault,
-    hasCompetingModal,
-  });
 
   const handleToggleFlag = useCallback(
     (enabled: boolean) => {
@@ -207,6 +243,21 @@ export function useLargeScreenUpsellDebugViewModel() {
     [dispatch],
   );
 
+  const handleToggleNanoSSeen = useCallback(
+    (seen: boolean) => {
+      if (seen) {
+        dispatch(
+          unsafe_setKnownDeviceModelIds(
+            Object.fromEntries(ALL_DEVICE_MODEL_IDS.map(id => [id, id === DeviceModelId.nanoS])),
+          ),
+        );
+        return;
+      }
+      dispatch(unsafe_setKnownDeviceModelIds({ [DeviceModelId.nanoS]: false }));
+    },
+    [dispatch],
+  );
+
   const handleClearSeenDevices = useCallback(() => {
     dispatch(
       unsafe_setKnownDeviceModelIds(
@@ -216,7 +267,7 @@ export function useLargeScreenUpsellDebugViewModel() {
   }, [dispatch]);
 
   const overrideParams = useCallback(
-    (nextParams: NonNullable<typeof params>) => {
+    (nextParams: LargeScreenUpsellParams) => {
       if (!feature) return;
       dispatch(setOverride({ key: FLAG_KEY, value: { ...feature, params: nextParams } }));
     },
@@ -321,6 +372,136 @@ export function useLargeScreenUpsellDebugViewModel() {
     dispatch(setLastSeenUpsellModal(null));
   }, [dispatch]);
 
+  const handleEnableLnHomepagePlacement = useCallback(() => {
+    if (!params) return;
+    overrideParams({
+      ...params,
+      banners: { ...params.banners, homepage: true },
+      [lnBannerTracking]: {
+        ...params[lnBannerTracking],
+        enabled: true,
+      },
+    });
+  }, [lnBannerTracking, overrideParams, params]);
+
+  return {
+    handleToggleFlag,
+    handleToggleNanoSeen,
+    handleToggleNanoSSeen,
+    handleClearSeenDevices,
+    handleToggleModalEnabled,
+    handleApplyKillThreshold,
+    handleApplyCadenceDays,
+    handleApplyCooldownDays,
+    handleApplyDiscount,
+    handleApplyOnboardingDate,
+    handleSetOnboardingDateNull,
+    handleApplyRetries,
+    handleResetRetries,
+    handleApplyLastSeen,
+    handleSetLastSeenNull,
+    handleEnableLnHomepagePlacement,
+  };
+}
+
+export function useLargeScreenUpsellDebugViewModel() {
+  const { t } = useTranslation();
+  const { bottom } = useSafeAreaInsets();
+  const feature = useFeature(FLAG_KEY);
+  const eligibility = useLargeScreenUpsellEligibility();
+  const hasCompetingModal = useCompetingAppStartModalsPresent();
+
+  const onboardingDate = useSelector(onboardingDateSelector);
+  const retries = useSelector(retriesUpsellModalSelector);
+  const lastSeenAt = useSelector(lastSeenUpsellModalSelector);
+  const analyticsEnabled = useSelector(analyticsEnabledSelector);
+  const knownDeviceModelIds = useSelector(knownDeviceModelIdsSelector);
+  const isPersonalizedRecommendationsEnabled = useSelector(
+    personalizedRecommendationsEnabledSelector,
+  );
+  const { isShown: isLnPortfolioBannerShown, tracking: lnBannerTracking } =
+    useLNUpsellBannerState("wallet");
+  const { mobileCards } = useDynamicContent();
+
+  const isNanoSeen = NANO_DEVICE_MODEL_IDS.some(id => knownDeviceModelIds[id]);
+  const isNanoSSeen = Boolean(knownDeviceModelIds[DeviceModelId.nanoS]);
+  const hasSeenTouchscreen = DevicesWithTouchScreen.some(id => knownDeviceModelIds[id]);
+  const trackingParams = feature?.params?.[lnBannerTracking];
+  const isLnCtaEnabled = Boolean(trackingParams?.enabled && trackingParams?.link?.trim());
+  const isLnHomepagePlacementEnabled = feature?.params?.banners?.homepage ?? true;
+  const isExcludedByHighTier = Boolean(
+    isPersonalizedRecommendationsEnabled &&
+    mobileCards.some(c => c.extras.campaign === LNS_UPSELL_HIGH_TIER),
+  );
+
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [previewVariant, setPreviewVariant] = useState<LargeScreenUpsellVariant>(
+    analyticsEnabled ? "opted_in" : "opted_out",
+  );
+
+  const params = feature?.params;
+  const killThreshold = params?.modal?.killThreshold;
+  const cadenceDays = params?.modal?.cadenceDays;
+  const modalEnabled = params?.modal?.enabled ?? false;
+  const cooldownDaysDefault = params?.cooldownDays?.default;
+  const isFlagEnabled = feature?.enabled ?? false;
+
+  const now = new Date();
+  const lastSeenDate = lastSeenAt != null ? new Date(lastSeenAt) : null;
+
+  const {
+    resolvedCooldownDays,
+    wouldShow,
+    audienceOk,
+    cooldownOk,
+    notThrottledOk,
+    noCompetingModalOk,
+    audienceHint,
+  } = deriveDebugDecision({
+    eligibility,
+    onboardingDate,
+    retries,
+    lastSeenDate,
+    now,
+    isFlagEnabled,
+    modalEnabled,
+    killThreshold,
+    cadenceDays,
+    cooldownDaysDefault,
+    hasCompetingModal,
+  });
+
+  const {
+    handleToggleFlag,
+    handleToggleNanoSeen,
+    handleToggleNanoSSeen,
+    handleClearSeenDevices,
+    handleToggleModalEnabled,
+    handleApplyKillThreshold,
+    handleApplyCadenceDays,
+    handleApplyCooldownDays,
+    handleApplyDiscount,
+    handleApplyOnboardingDate,
+    handleSetOnboardingDateNull,
+    handleApplyRetries,
+    handleResetRetries,
+    handleApplyLastSeen,
+    handleSetLastSeenNull,
+    handleEnableLnHomepagePlacement,
+  } = useLargeScreenUpsellDebugHandlers(feature, params, lnBannerTracking);
+
+  const deviceSeenHints = buildDeviceSeenHints(isNanoSeen, isNanoSSeen, hasSeenTouchscreen);
+  const lnPortfolioBanner = buildLnPortfolioBannerDebugSection({
+    isLnPortfolioBannerShown,
+    lnBannerTracking,
+    isFlagEnabled,
+    isLnCtaEnabled,
+    isLnHomepagePlacementEnabled,
+    eligibility,
+    isExcludedByHighTier,
+    isPersonalizedRecommendationsEnabled,
+  });
+
   const handleClosePreview = useCallback(() => {
     setIsPreviewOpen(false);
   }, []);
@@ -372,7 +553,7 @@ export function useLargeScreenUpsellDebugViewModel() {
       throttleHint: `Kill threshold ${killThreshold ?? "?"} within ${cadenceDays ?? "?"} day(s).`,
       noCompetingModalOk,
       competingModalHint: hasCompetingModal
-        ? "Another app-start modal is showing (product tour, awareness, analytics consent, backup hub); the upsell is suppressed this session."
+        ? "Another app-start modal is showing (awareness, analytics consent, backup hub, product tour); the upsell is suppressed this session."
         : "No competing app-start modal.",
     },
     onboardingDateValue: toIso(onboardingDate),
@@ -383,15 +564,14 @@ export function useLargeScreenUpsellDebugViewModel() {
     lastSeenHint: `Now: ${toIso(lastSeenDate) || "null"} — enter an ISO date or a day offset (today = 0, yesterday = 1).`,
     handleToggleFlag,
     isNanoSeen,
-    nanoSeenHint: isNanoSeen
-      ? "A Nano has been seen. Toggle off to clear the audience gate."
-      : "No Nano seen. Toggle on to simulate a seen Nano (audience gate).",
+    ...deviceSeenHints,
     handleToggleNanoSeen,
+    isNanoSSeen,
+    handleToggleNanoSSeen,
     hasSeenTouchscreen,
-    seenDevicesHint: hasSeenTouchscreen
-      ? "A touchscreen device (Flex/Stax) has been seen — it blocks the upsell. Clear to reset."
-      : "Clears every seen device model (removes any touchscreen that blocks the upsell).",
     handleClearSeenDevices,
+    lnPortfolioBanner,
+    handleEnableLnHomepagePlacement,
     handleApplyOnboardingDate,
     handleSetOnboardingDateNull,
     handleApplyRetries,

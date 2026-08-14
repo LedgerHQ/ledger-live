@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tron",
-  "version": "6.9.0",
+  "version": "6.10.0",
   "description": "Ledger Tron Coin integration",
   "keywords": [
     "Ledger",
@@ -111,7 +111,7 @@
     "bignumber.js": "^9.1.2",
     "bs58check": "catalog:",
     "invariant": "^2.2.2",
-    "lodash": "^4.17.21",
+    "lodash": "catalog:",
     "rxjs": "catalog:",
     "tronweb": "6.2.0"
   },
@@ -123,7 +123,7 @@
     "@types/bs58check": "catalog:",
     "@types/invariant": "^2.2.2",
     "@types/jest": "catalog:",
-    "@types/lodash": "^4.14.191",
+    "@types/lodash": "catalog:",
     "@types/node": "catalog:",
     "dotenv": "^16.4.5",
     "jest": "catalog:",

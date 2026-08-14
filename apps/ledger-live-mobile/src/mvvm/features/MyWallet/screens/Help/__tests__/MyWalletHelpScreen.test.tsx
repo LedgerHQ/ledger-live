@@ -18,17 +18,21 @@ jest.mock("@ledgerhq/lumen-ui-rnative", () => {
   };
 });
 
-jest.mock("LLM/components/QueuedDrawer/QueuedBottomSheet", () => {
+jest.mock("@shared/ui-queued-bottom-sheet", () => {
+  const actual = jest.requireActual("@shared/ui-queued-bottom-sheet");
   const { View } = require("react-native");
-  return function MockQueuedBottomSheet({
-    children,
-    isRequestingToBeOpened,
-  }: {
-    children: React.ReactNode;
-    isRequestingToBeOpened: boolean;
-  }) {
-    if (!isRequestingToBeOpened) return null;
-    return <View testID="queued-drawer-bottom-sheet">{children}</View>;
+  return {
+    ...actual,
+    QueuedBottomSheet: function MockQueuedBottomSheet({
+      children,
+      isRequestingToBeOpened,
+    }: {
+      children: React.ReactNode;
+      isRequestingToBeOpened: boolean;
+    }) {
+      if (!isRequestingToBeOpened) return null;
+      return <View testID="queued-drawer-bottom-sheet">{children}</View>;
+    },
   };
 });
 

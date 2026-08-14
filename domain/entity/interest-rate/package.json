@@ -1,6 +1,6 @@
 {
   "name": "@domain/entity-interest-rate",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "description": "Domain entity for asset interest rates: the canonical rate shape and its APY type",
   "main": "src/index.ts",
@@ -12,10 +12,13 @@
   "sideEffects": false,
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "test": "jest --passWithNoTests",
+    "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage --passWithNoTests",
+    "coverage": "jest --coverage",
     "unimported": "pnpm knip --directory ../../.. -W domain/entity/interest-rate"
+  },
+  "dependencies": {
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@jest/globals": "catalog:",

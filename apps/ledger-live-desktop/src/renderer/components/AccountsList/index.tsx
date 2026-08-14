@@ -8,8 +8,7 @@ import { SpoilerIcon } from "~/renderer/components/Spoiler";
 import { openURL } from "~/renderer/linking";
 import AccountRow from "./AccountRow";
 import { useSelector } from "LLD/hooks/redux";
-import { walletSelector } from "~/renderer/reducers/wallet";
-import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
+import { walletSelector, accountNameWithDefaultSelector } from "~/renderer/reducers/wallet";
 
 export type AccountListProps = {
   accounts: Account[];

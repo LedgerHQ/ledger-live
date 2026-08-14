@@ -21,6 +21,10 @@ jobs:
         with:
           app-id: ${{ secrets.GH_BOT_APP_ID }}
           private-key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+          permission-contents: write
+          permission-pull-requests: write
+          permission-workflows: write
+
       - name: Checkout Repo
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
@@ -94,6 +98,11 @@ jobs:
   release-final:
     name: "Prepare Release > Publish packages and apps"
     needs: prepare-release
+    permissions:
+      contents: write
+      pull-requests: write
+      packages: write
+      id-token: write
     uses: LedgerHQ/ledger-live/.github/workflows/release-final.yml@develop
     with:
       ref: main

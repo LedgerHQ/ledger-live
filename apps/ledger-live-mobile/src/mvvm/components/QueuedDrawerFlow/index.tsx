@@ -1,5 +1,5 @@
 import React from "react";
-import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
+import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import type { QueuedDrawerFlowProps } from "./types";
 
 export function QueuedDrawerFlow<Step extends string>({

@@ -141,17 +141,15 @@ describe("staking/validators/somnia", () => {
       expect(page.next).toBeUndefined();
       expect(page.items).toHaveLength(2);
       expect(page.items[0]).toMatchObject({
-        validatorAddress: VALIDATOR_A,
+        address: VALIDATOR_A,
         name: VALIDATOR_A,
-        commission: expect.closeTo(0.1, 5),
-        tokens: "1500",
-        votingPower: 0,
-        estimatedYearlyRewardsRate: 0,
+        commissionRate: "0.1",
+        balance: 1500n,
+        apy: 0,
       });
       expect(page.items[1]).toMatchObject({
-        validatorAddress: VALIDATOR_B,
-        votingPower: 1,
-        tokens: "1500",
+        address: VALIDATOR_B,
+        balance: 1500n,
       });
     });
 
@@ -174,7 +172,7 @@ describe("staking/validators/somnia", () => {
       const page = await getValidators("somnia");
 
       expect(page.items).toHaveLength(1);
-      expect(page.items[0].validatorAddress).toBe(VALIDATOR_B);
+      expect(page.items[0].address).toBe(VALIDATOR_B);
     });
 
     it("returns empty when getCommitteeValidators returns no addresses", async () => {

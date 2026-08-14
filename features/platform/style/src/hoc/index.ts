@@ -1,1 +1,1 @@
-export { withStyleProvider } from "./withStyleProvider";
+export * from "./withStyleProvider";

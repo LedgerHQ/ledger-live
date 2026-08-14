@@ -26,6 +26,7 @@ import {
   PriorityFeeHigherThanMaxFee,
   PriorityFeeTooHigh,
   PriorityFeeTooLow,
+  RecipientIsNewAccount,
   RedelegateDstValAddressRequired,
   ValAddressRequired,
 } from "../errors";
@@ -34,6 +35,7 @@ import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
 import { getCoinConfig } from "../config";
 import { getGasTracker } from "../network/gasTracker";
+import { getNodeApi } from "../network/node";
 import { isNative, StakingOperation, TransactionTypes } from "../types";
 import { STAKING_CONTRACTS } from "../staking";
 import { DEFAULT_GAS_LIMIT, isEthAddress, isStakingIntent } from "../utils";
@@ -44,7 +46,11 @@ import {
   isEip55Address,
   isLegacyFeeEstimation,
 } from "./common";
-import { computeEIP7623GasLimit } from "./computeGasLimit";
+import {
+  computeEIP7623GasLimit,
+  DEFAULT_CALLDATA_FLOOR_GAS_PER_TOKEN,
+  DEFAULT_CALLDATA_FLOOR_ZERO_BYTE_TOKENS,
+} from "./computeGasLimit";
 import estimateFees from "./estimateFees";
 
 function assetsAreEqual(asset1: AssetInfo, asset2: AssetInfo): boolean {
@@ -106,6 +112,44 @@ function validateFeeRatio(
 }
 
 /**
+ * Warn that creating the recipient account costs more gas (EIP-8037). Informational only, as
+ * `eth_estimateGas` already accounts for it. Native sends only: a token transfer's `to` is the
+ * token contract, which always exists.
+ */
+async function validateNewAccountRecipient(
+  currency: CryptoCurrency,
+  intent: TransactionIntent<MemoNotSupported, BufferTxData>,
+  amount: bigint,
+): Promise<Pick<TransactionValidation, "errors" | "warnings">> {
+  const none = { errors: {}, warnings: {} };
+  const isPlainNativeSend =
+    isNative(intent.asset) &&
+    amount > 0n &&
+    !intent.data?.value?.length &&
+    !isStakingIntent(intent);
+
+  if (!isPlainNativeSend || !isEthAddress(intent.recipient)) {
+    return none;
+  }
+
+  try {
+    const nodeApi = getNodeApi(currency);
+    const [balance, nonce] = await Promise.all([
+      nodeApi.getCoinBalance(currency, intent.recipient),
+      nodeApi.getTransactionCount(currency, intent.recipient),
+    ]);
+
+    if (balance.isZero() && nonce === 0) {
+      return { errors: {}, warnings: { amount: new RecipientIsNewAccount() } };
+    }
+  } catch {
+    // An unreachable node must not fail the validation: no message is the current behaviour.
+  }
+
+  return none;
+}
+
+/**
  * Validate an address for a transaction
  */
 function validateRecipient(
@@ -147,7 +191,9 @@ async function validateGas(
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
 
-  const { minGasPrice } = getCoinConfig(currency.id).info;
+  const { minGasPrice, calldataFloorGasPerToken, calldataFloorZeroByteTokens } = getCoinConfig(
+    currency.id,
+  ).info;
   const minGasPriceFloor = typeof minGasPrice === "string" ? BigInt(minGasPrice) : null;
 
   const nativeBalance = findBalance({ type: "native" }, balances);
@@ -166,6 +212,10 @@ async function validateGas(
   const eip7623GasLimit = computeEIP7623GasLimit(
     BigInt(DEFAULT_GAS_LIMIT.toFixed(0)),
     intent.data.value,
+    {
+      gasPerToken: calldataFloorGasPerToken ?? DEFAULT_CALLDATA_FLOOR_GAS_PER_TOKEN,
+      zeroByteTokens: calldataFloorZeroByteTokens ?? DEFAULT_CALLDATA_FLOOR_ZERO_BYTE_TOKENS,
+    },
   );
 
   // Gas Limit
@@ -450,6 +500,11 @@ export async function validateIntent(
     balances,
     estimatedFees,
   );
+  const { errors: newAccountErr, warnings: newAccountWarn } = await validateNewAccountRecipient(
+    currency,
+    intent,
+    amount,
+  );
 
   const errors = {
     ...recipientErr,
@@ -457,6 +512,7 @@ export async function validateIntent(
     ...gasErr,
     ...feeRatioErr,
     ...stakingErr,
+    ...newAccountErr,
   };
   const warnings = {
     ...recipientWarn,
@@ -464,6 +520,7 @@ export async function validateIntent(
     ...gasWarn,
     ...feeRatioWarn,
     ...stakingWarn,
+    ...newAccountWarn,
   };
 
   return {

@@ -74,7 +74,8 @@ jest.mock("LLD/features/Send/hooks/useOpenSendFlow", () => ({
   useOpenSendFlow: () => mockOpenSendFlow,
 }));
 
-jest.mock("@ledgerhq/live-common/dada-client/hooks/useInterestRatesByCurrencies", () => ({
+jest.mock("@features/platform-aggregated-assets", () => ({
+  ...jest.requireActual("@features/platform-aggregated-assets"),
   useInterestRatesByCurrencies: (...args: unknown[]) => mockUseInterestRatesByCurrencies(...args),
 }));
 

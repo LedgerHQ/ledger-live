@@ -34,7 +34,8 @@ jest.mock("LLM/features/Stake", () => ({
 
 const mockUseInterestRatesByCurrencies = jest.fn().mockReturnValue({});
 
-jest.mock("@ledgerhq/live-common/dada-client/hooks/useInterestRatesByCurrencies", () => ({
+jest.mock("@features/platform-aggregated-assets", () => ({
+  ...jest.requireActual("@features/platform-aggregated-assets"),
   useInterestRatesByCurrencies: (currencies: unknown) =>
     mockUseInterestRatesByCurrencies(currencies),
 }));

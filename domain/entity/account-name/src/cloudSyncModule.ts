@@ -1,9 +1,11 @@
-import { z } from "zod";
 import type { CloudSyncDataManager } from "@shared/cloud-sync-module";
+import {
+  AccountNamesDistantSchema,
+  type AccountNamesDistantState,
+  type AccountNamesState,
+} from "./schema";
 
-const schema = z.record(z.string(), z.string());
-
-function sameDistantState(a: Record<string, string>, b: Record<string, string>) {
+function sameDistantState(a: AccountNamesDistantState, b: AccountNamesDistantState) {
   const aEntries = Object.entries(a);
   if (aEntries.length !== Object.keys(b).length) return false;
   for (const [k, v] of aEntries) {
@@ -13,22 +15,22 @@ function sameDistantState(a: Record<string, string>, b: Record<string, string>) 
 }
 
 export const accountNamesSyncModule: CloudSyncDataManager<
-  Map<string, string>,
-  { replaceAllNames: Record<string, string> },
-  typeof schema
+  AccountNamesState,
+  { replaceAllNames: AccountNamesDistantState },
+  typeof AccountNamesDistantSchema
 > = {
-  schema,
+  schema: AccountNamesDistantSchema,
 
-  diffLocalToDistant(localData: Map<string, string>, latestState: Record<string, string> | null) {
+  diffLocalToDistant(localData: AccountNamesState, latestState: AccountNamesDistantState | null) {
     const nextState = Object.fromEntries(localData.entries());
     const hasChanges = !sameDistantState(latestState ?? {}, nextState);
     return { hasChanges, nextState };
   },
 
   async resolveIncrementalUpdate(
-    localData: Map<string, string>,
-    latestState: Record<string, string> | null,
-    incomingState: Record<string, string> | null,
+    localData: AccountNamesState,
+    latestState: AccountNamesDistantState | null,
+    incomingState: AccountNamesDistantState | null,
   ) {
     if (!incomingState) return { hasChanges: false as const };
     const hasChanges =
@@ -39,8 +41,8 @@ export const accountNamesSyncModule: CloudSyncDataManager<
   },
 
   applyUpdate(
-    _localData: Map<string, string>,
-    update: { replaceAllNames: Record<string, string> },
+    _localData: AccountNamesState,
+    update: { replaceAllNames: AccountNamesDistantState },
   ) {
     return new Map(Object.entries(update.replaceAllNames));
   },

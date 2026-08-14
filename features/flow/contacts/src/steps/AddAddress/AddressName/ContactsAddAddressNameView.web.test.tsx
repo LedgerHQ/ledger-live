@@ -27,6 +27,8 @@ function createProps(
     },
     labels: {
       inputLabel: "Address name",
+      namingDisclaimer: "Address naming disclaimer",
+      namingDisclaimerAccessibilityLabel: "Address name information",
       continueToReview: "Continue to review",
       validAddress: "Valid address",
       validationErrors: {

@@ -1,6 +1,6 @@
 import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { mockTokenCurrency } from "@domain/entity-currency-token/schema.mock";
-import { initialState as walletState } from "@ledgerhq/live-wallet/store";
+const walletState = new Map<string, string>();
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";

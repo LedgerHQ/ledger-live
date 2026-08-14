@@ -1,13 +1,16 @@
 import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
+import { parseCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies";
 import { log } from "@ledgerhq/logs";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { estimateFees, getAccount } from "../logic";
 import { ACTIVATION_FEES, STANDARD_FEES_NATIVE, STANDARD_FEES_TRC_20 } from "../logic/constants";
+import { getEnergyProvider } from "../logic/energyProviders";
+import { getEnergyRentQuote } from "../logic/energyRent";
 import { computeBandwidthFee, computeEnergyFee, estimateEnergy } from "../logic/estimateFees";
 import { getChainParameters, getTronAccountNetwork } from "../network";
 import type { AccountTronAPI, ChainParameters } from "../network/types";
-import type { NetworkInfo, Transaction } from "../types";
+import type { NetworkInfo, SponsoredEnergyEstimate, Transaction } from "../types";
 import { extractBandwidthInfo, getEstimatedBlockSize } from "./utils";
 
 // see : https://developers.tron.network/docs/bandwith#section-bandwidth-points-consumption
@@ -52,6 +55,9 @@ export const getFeeResourceBreakdown = async (
   transaction: Transaction,
   tokenAccount?: TokenAccount | null,
 ): Promise<FeeResourceBreakdown> => {
+  // TODO(LIVE-32892): when `transaction.energyProviderInfo` is set, augment energy availability with
+  // rented (sponsored) energy. Dormant for now — LIVE-32776 only exposes the informational estimate.
+
   // Energy is only required for an actual TRC20 transfer — native/TRC10 use none, non-"send" modes
   // don't transfer, and a zero-amount non-max send is headed for AmountRequired. Compute it up front
   // so the network-failure path reports the "insufficient" sentinel only when energy is truly needed.
@@ -151,6 +157,88 @@ export const getFeeResourceBreakdown = async (
   }
 };
 
+// LIVE-32776: informational savings estimate for a sponsored send. Purely additive — it does NOT
+// change fees (that re-pricing is LIVE-32892). The avoided cost is the full energy cost of the
+// transfer (energyRequired × energyFee), independent of the user's own staked energy, matching the
+// PRD framing ("every USDT transfer burns ~6.4 TRX"). Returns null when the send isn't sponsored,
+// the provider id is unknown, or energy couldn't be reliably estimated (so we never surface a number
+// derived from the failure sentinel). Reuses the breakdown already computed by the status path, so
+// it adds no network round trips (getChainParameters is LRU-cached).
+export const computeSponsoredEnergyEstimate = async (
+  transaction: Transaction,
+  breakdown: FeeResourceBreakdown,
+): Promise<SponsoredEnergyEstimate | null> => {
+  const info = transaction.energyProviderInfo;
+  if (!info) return null;
+  const provider = getEnergyProvider(info.providerId);
+  if (!provider || !breakdown.energyEstimated) return null;
+  // Only an energy-bearing TRC20 transfer has a saving to disclose. Native/TRC10 and non-"send"
+  // modes report energyRequired 0 — surfacing a {provider, 0} estimate there would render a
+  // misleading "Saved $0.00 with <provider>" third-party disclosure on an unsponsored tx.
+  if (breakdown.energyRequired.lte(0)) return null;
+
+  try {
+    const params: ChainParameters = await getChainParameters();
+    const avoidedEnergyFees = breakdown.energyRequired
+      .multipliedBy(params.energyFee)
+      .integerValue(BigNumber.ROUND_CEIL);
+    return { provider, avoidedEnergyFees };
+  } catch (err) {
+    // Informational only: a chain-params fetch failure must not break the whole status computation.
+    log("tron/computeSponsoredEnergyEstimate", "chain params unavailable, omitting estimate", {
+      err,
+    });
+    return null;
+  }
+};
+
+// Rental-quote params for the sponsored-fee guard.
+// TODO(LIVE-32892): align these with the params the real energy-rent order uses at signing time.
+const SPONSORED_RENTAL_DURATION_SECONDS = 600; // 10-min fastTrade window (~200-block lock, per PRD)
+const SPONSORED_RENTAL_EXTRA_TRX = 0.8; // bandwidth top-up Tronify bundles in the USDT-paid flow
+
+// LIVE-32777: the USDT rental fee (in the token's base units) that a sponsored TRC20 send must
+// reserve on top of the transfer amount, so the send can't be confirmed when the USDT balance can't
+// cover fee + amount (the Trust Wallet "Case 2" loss). Live Tronify quote using the breakdown's
+// energyRequired. Returns 0 when not applicable — not sponsored, not a TRC20 send, no reliable
+// energy figure, or the rent is priced in a currency other than the token being sent (Flow 1 / TRX).
+// Never throws: a quote failure degrades to no reservation (mirrors getFeeResourceBreakdown), logged.
+export const computeSponsoredUsdtFee = async (
+  account: Account,
+  transaction: Transaction,
+  tokenAccount: TokenAccount | null | undefined,
+  breakdown: FeeResourceBreakdown,
+): Promise<BigNumber> => {
+  const info = transaction.energyProviderInfo;
+  if (!info) return new BigNumber(0);
+  // Consistent with computeSponsoredEnergyEstimate: an unknown provider id reserves nothing (and
+  // must not block the send), rather than silently pricing via the config-selected provider.
+  if (!getEnergyProvider(info.providerId)) return new BigNumber(0);
+  if (tokenAccount?.token.tokenType !== "trc20") return new BigNumber(0);
+  if (!breakdown.energyEstimated || breakdown.energyRequired.lte(0)) return new BigNumber(0);
+
+  try {
+    const quote = await getEnergyRentQuote({
+      payerAddress: account.freshAddress,
+      receiverAddress: account.freshAddress,
+      energy: BigInt(breakdown.energyRequired.integerValue(BigNumber.ROUND_CEIL).toFixed()),
+      durationSeconds: SPONSORED_RENTAL_DURATION_SECONDS,
+      extraTrx: SPONSORED_RENTAL_EXTRA_TRX,
+    });
+    // Only reserve when the rent is paid in the SAME asset being sent (Flow 2 / USDT); a TRX-paid
+    // rent (Flow 1) is charged to the parent account, not this token balance.
+    if (quote.payCoinCode.toUpperCase() !== tokenAccount.token.ticker.toUpperCase()) {
+      return new BigNumber(0);
+    }
+    return parseCurrencyUnit(tokenAccount.token.units[0], quote.payCoinAmt);
+  } catch (err) {
+    log("tron/computeSponsoredUsdtFee", "rent quote unavailable, skipping fee reservation", {
+      err,
+    });
+    return new BigNumber(0);
+  }
+};
+
 // Energy-aware fee for an active-recipient TRC20 transfer: 0 when energy and bandwidth cover it, the
 // real shortfall otherwise, and the flat STANDARD_FEES_TRC_20 on any uncertainty.
 const computeActiveRecipientTrc20Fee = async (
@@ -159,6 +247,9 @@ const computeActiveRecipientTrc20Fee = async (
   tokenAccount: TokenAccount,
   breakdown?: FeeResourceBreakdown,
 ): Promise<BigNumber> => {
+  // TODO(LIVE-32892): when `transaction.energyProviderInfo` is set, price the send as energy-rented
+  // (sponsored) instead of burning TRX. Dormant for now — LIVE-32776 only exposes the estimate.
+
   try {
     const resourceBreakdown =
       breakdown ?? (await getFeeResourceBreakdown(account, transaction, tokenAccount));

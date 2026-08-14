@@ -105,8 +105,11 @@ describe("Send flow integration tests", () => {
     );
   }
 
-  function renderForAccount(account: Account) {
-    return renderWithReactQuery(<SendPage initParams={{ account }} />, {
+  function renderForAccount(
+    account: Account,
+    initParams: Omit<SendFlowInitParams, "account"> = {},
+  ) {
+    return renderWithReactQuery(<SendPage initParams={{ account, ...initParams }} />, {
       overrideInitialState: (state: State) => ({
         ...state,
         accounts: { ...state.accounts, active: [account] },
@@ -144,6 +147,19 @@ describe("Send flow integration tests", () => {
     }
     throw new Error(`No TextInput found near label "${String(labelText)}"`);
   }
+
+  it("should prefill and validate the recipient from the initial parameters", async () => {
+    const { user } = renderForAccount(accountEthereum, {
+      recipient: VALID_ETHEREUM_RECIPIENT,
+    });
+
+    expect(await screen.findByDisplayValue(VALID_ETHEREUM_RECIPIENT)).toBeOnTheScreen();
+
+    await flushTimers();
+    await user.press(await screen.findByText(/^Send to /));
+
+    expect(await screen.findByText("Review")).toBeOnTheScreen();
+  });
 
   describe("Stellar (memo flow)", () => {
     it("Should walk through Recipient → Amount and reach the Signature step", async () => {

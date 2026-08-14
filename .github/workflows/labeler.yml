@@ -1,8 +1,10 @@
 name: "[CI] - Labeler - PR"
 run-name: "@PR • Labeler triggered by ${{ github.actor }} ${{ format('on branch {0}', github.head_ref) }}"
 
+# pull_request_target is required for fork PR write access (label/fork tagging).
+# No PR code is checked out, so the elevated token cannot execute attacker-controlled code.
 on:
-  - pull_request_target
+  - pull_request_target # zizmor: ignore[dangerous-triggers]
 
 jobs:
   triage:
@@ -17,6 +19,7 @@ jobs:
         with:
           app-id: ${{ secrets.GH_BOT_APP_ID }}
           private-key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+          permission-pull-requests: write
       - uses: actions/labeler@ac9175f8a1f3625fd0d4fb234536d26811351594 # v4
         with:
           repo-token: ${{ steps.generate-token.outputs.token }}

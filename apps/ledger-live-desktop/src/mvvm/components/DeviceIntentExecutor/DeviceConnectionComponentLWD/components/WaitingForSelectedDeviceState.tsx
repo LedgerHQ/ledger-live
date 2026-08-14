@@ -4,6 +4,8 @@ import { ConnectDeviceUIStateTypes, type ConnectDeviceUIState } from "@ledgerhq/
 import { useTranslation } from "react-i18next";
 
 import { DeviceActionContent } from "LLD/components/DeviceActionContent";
+import { TrackDIEScreen } from "../../components/TrackDIEScreen";
+import { PAGE_CONNECT_DEVICE } from "../../utils/trackDeviceIntent";
 
 type WaitingForSelectedDeviceStateProps = {
   state: Extract<
@@ -26,14 +28,21 @@ export function WaitingForSelectedDeviceState({
   const productName = getProductName(state.device.deviceModelId);
 
   return (
-    <DeviceActionContent
-      action="power-and-unlock"
-      deviceModelId={state.device.deviceModelId}
-      deviceName={getDeviceName(state.device, productName)}
-      title={t("deviceIntentExecutor.connectDevice.states.waitingForSelectedDevice.title", {
-        productName,
-      })}
-      testID="device-intent-executor-connect-device-waiting-for-selected-device"
-    />
+    <>
+      <TrackDIEScreen
+        category={PAGE_CONNECT_DEVICE.WaitingForSelectedDevice}
+        modelId={state.device.deviceModelId}
+        refreshSource
+      />
+      <DeviceActionContent
+        action="power-and-unlock"
+        deviceModelId={state.device.deviceModelId}
+        deviceName={getDeviceName(state.device, productName)}
+        title={t("deviceIntentExecutor.connectDevice.states.waitingForSelectedDevice.title", {
+          productName,
+        })}
+        testID="device-intent-executor-connect-device-waiting-for-selected-device"
+      />
+    </>
   );
 }

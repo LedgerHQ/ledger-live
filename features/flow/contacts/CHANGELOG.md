@@ -1,5 +1,181 @@
 # @features/flow-contacts
 
+## 0.6.0
+
+### Minor Changes
+
+- [#20537](https://github.com/LedgerHQ/ledger-live/pull/20537) [`f080e51`](https://github.com/LedgerHQ/ledger-live/commit/f080e51c682c2ac1239c0417e29b32b79d363eb9) Thanks [@deepyjr](https://github.com/deepyjr)! - Extract the Contacts list journey into its own flow package, expose the parent Contacts view orchestrator, and share contact display-name helpers through Platform.
+
+- [#20474](https://github.com/LedgerHQ/ledger-live/pull/20474) [`e73390c`](https://github.com/LedgerHQ/ledger-live/commit/e73390cfa30d2d7ec7a9644875063c77b42f0713) Thanks [@deepyjr](https://github.com/deepyjr)! - Replace the Desktop address name clear action with a help tooltip.
+
+- [#20523](https://github.com/LedgerHQ/ledger-live/pull/20523) [`6f6afe2`](https://github.com/LedgerHQ/ledger-live/commit/6f6afe2b6203b5c46cbe450b254be493689c0cad) Thanks [@deepyjr](https://github.com/deepyjr)! - Extract the Add contact journey into dedicated Contacts platform and flow packages while preserving the Contacts flow facade.
+
+- [#20483](https://github.com/LedgerHQ/ledger-live/pull/20483) [`1de30a9`](https://github.com/LedgerHQ/ledger-live/commit/1de30a98a7a3db27f42de0c9608e1d0be748a10e) Thanks [@deepyjr](https://github.com/deepyjr)! - Add Contacts Flow format checks
+
+- [#20585](https://github.com/LedgerHQ/ledger-live/pull/20585) [`feaf2fc`](https://github.com/LedgerHQ/ledger-live/commit/feaf2fcb8b3d71ab731e0ee52243e8d2a87d5604) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Require signer confirmation before opening address delete confirmation in Contacts.
+
+- [#20446](https://github.com/LedgerHQ/ledger-live/pull/20446) [`9ef4440`](https://github.com/LedgerHQ/ledger-live/commit/9ef44402ece2207268361bfe4e2af8fbd1396670) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Add address detail actions flow orchestration with send, edit, delete, signer validation, and delete-address confirmation dialog. Consolidates the prior edit-only flow scaffold.
+
+- [#20445](https://github.com/LedgerHQ/ledger-live/pull/20445) [`5297c79`](https://github.com/LedgerHQ/ledger-live/commit/5297c79823362f5e7584886c8193808988ec46fc) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Extract shared delete confirmation dialog, signer UI state hook, and EditAddress rename step for contact addresses.
+
+- [#20595](https://github.com/LedgerHQ/ledger-live/pull/20595) [`43bf6d8`](https://github.com/LedgerHQ/ledger-live/commit/43bf6d8f6600f70b7c2a85615660e7e150e798bf) Thanks [@ysitbon](https://github.com/ysitbon)! - Make every new-architecture barrel a pure regrouping point, and enforce it.
+
+  An `index.*` under `shared/`, `domain/` or `features/` may now contain only `export * from "./x"`
+  lines, plus an optional default re-export. Having to sort in the export
+  (`export { a, b } from "./x"`) proved the target file mixed public and private code; an `index.*`
+  holding actual code proved it more loudly. A new nx plugin infers a `lint:structure` target on each
+  of the 49 packages and fails on both, along with two related rules: a barrel may not re-export a
+  private `internals` location, and it may not re-export another workspace package.
+
+  That last rule removes the proxies. A package that re-exported a neighbour gave the same symbol two
+  import paths and hid who actually provided it. Consumers now import the original provider and
+  declare the dependency, which is why the two apps gain `@features/flow-contacts-add-contact` and the
+  desktop app gains `@features/platform-contacts`.
+
+  Renamed or relocated, with the import specifier unchanged for consumers in every case except where
+  noted:
+
+  - `@domain/entity-account-name` no longer exports the `setAccountNames` alias; use
+    `bulkSetAccountNames`, the name the slice actually defines.
+  - `@shared/cloud-sync` exports `getCloudSyncApi` as a named export from its api module instead of
+    re-exporting a default under a different name.
+
+  Five packages are left untouched behind temporary exclusions, each recording how to remove it:
+
+  - `@shared/env`, the facade over the legacy `@ledgerhq/live-env`, which carries the wrapping in its
+    barrel.
+  - the `@ledgerhq/engagement` and `@ledgerhq/ptx` packages (`flow-analytics-consent`,
+    `flow-large-screen-upsell`, `flow-lazy-onboarding-banner`, `flow-pay-card-auth`), so each owning
+    team lands the change on its own schedule. Conformant barrels were prepared and verified for them
+    before being reverted, so the work is deferred rather than open.
+
+- [#20455](https://github.com/LedgerHQ/ledger-live/pull/20455) [`f77b3fa`](https://github.com/LedgerHQ/ledger-live/commit/f77b3fa8954e93a00acdbd3e52210561028fd6b8) Thanks [@deepyjr](https://github.com/deepyjr)! - Add invalid and sanctioned address feedback to the Desktop Contacts flow.
+
+- [#20403](https://github.com/LedgerHQ/ledger-live/pull/20403) [`5bdffd5`](https://github.com/LedgerHQ/ledger-live/commit/5bdffd5b9590cc65e650fb0d5b28a5fbf2477d00) Thanks [@deepyjr](https://github.com/deepyjr)! - Add a shared Contacts Ledger Sync mutation guard that preserves add-contact and add-address intents until activation succeeds.
+
+- [#20408](https://github.com/LedgerHQ/ledger-live/pull/20408) [`e9a14f8`](https://github.com/LedgerHQ/ledger-live/commit/e9a14f886532f3ee00dc7f28727c762ec75fc9b3) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Wire send, edit, and delete actions on desktop contact address detail.
+
+- [#20409](https://github.com/LedgerHQ/ledger-live/pull/20409) [`91a2953`](https://github.com/LedgerHQ/ledger-live/commit/91a29531167176557194d9adbc6b55ff11363b8d) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Wire mobile contact address detail send, edit, and delete actions with confirmation sheets.
+
+- [#20557](https://github.com/LedgerHQ/ledger-live/pull/20557) [`3e0ae80`](https://github.com/LedgerHQ/ledger-live/commit/3e0ae805b065eaa3d5fd3c1ab35c0d7f8e2a170f) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Render Desktop Contacts address edit signer mismatch error from shared flow state.
+
+- [#20559](https://github.com/LedgerHQ/ledger-live/pull/20559) [`c904346`](https://github.com/LedgerHQ/ledger-live/commit/c9043466032fab4f9c2ae02d4bd52970ad8fbcfe) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Render Mobile Contacts address edit signer mismatch error and extract shared address detail action labels and UI state mapping.
+
+- [#20510](https://github.com/LedgerHQ/ledger-live/pull/20510) [`a1bd49e`](https://github.com/LedgerHQ/ledger-live/commit/a1bd49ec9190a395730b3348fef5c0987e4eaeb7) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Model Me as the default self contact with shared display-name formatting, external address counts, and a Ledger Wallet accounts intent.
+
+- [#20489](https://github.com/LedgerHQ/ledger-live/pull/20489) [`e1e005d`](https://github.com/LedgerHQ/ledger-live/commit/e1e005daff0d3e01ef397ac752cbc711245539a7) Thanks [@ysitbon](https://github.com/ysitbon)! - Take the shared flow jest configuration from `@support/jest-features-flow` instead of `@features/platform-jest-config`. The package moved to the `support/` layer, which is where development-only tooling belongs; its API is unchanged.
+
+- [#20380](https://github.com/LedgerHQ/ledger-live/pull/20380) [`79d2278`](https://github.com/LedgerHQ/ledger-live/commit/79d22789896f55d9a7196392632b08488997d937) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Add shared address edit signer validation state with mocked signer mismatch handling for Desktop and Mobile.
+
+- [#20500](https://github.com/LedgerHQ/ledger-live/pull/20500) [`71b1069`](https://github.com/LedgerHQ/ledger-live/commit/71b1069ae8358b4d3fa3a6a5d4fb2d49f1c1c7d7) Thanks [@deepyjr](https://github.com/deepyjr)! - Use shared Lumen test primitives across Contacts tests.
+
+- [#20413](https://github.com/LedgerHQ/ledger-live/pull/20413) [`ccbda89`](https://github.com/LedgerHQ/ledger-live/commit/ccbda895d0672222becbe50df61fcf7646618448) Thanks [@deepyjr](https://github.com/deepyjr)! - Add sanctioned address feedback to the Mobile Contacts flow.
+
+- [#20651](https://github.com/LedgerHQ/ledger-live/pull/20651) [`78ebc73`](https://github.com/LedgerHQ/ledger-live/commit/78ebc736177e9e751f4d7a7a6a3fae97a1913c1f) Thanks [@ishaba](https://github.com/ishaba)! - fix(flow-contacts): remove unused exports, de-alias delete requirement
+
+- [#20480](https://github.com/LedgerHQ/ledger-live/pull/20480) [`b0e81d2`](https://github.com/LedgerHQ/ledger-live/commit/b0e81d2edc7c40e2c81236ea372370859d05d0bc) Thanks [@deepyjr](https://github.com/deepyjr)! - Fix the Contacts Flow typecheck for cleared address selections
+
+### Patch Changes
+
+- Updated dependencies [[`f080e51`](https://github.com/LedgerHQ/ledger-live/commit/f080e51c682c2ac1239c0417e29b32b79d363eb9), [`6f6afe2`](https://github.com/LedgerHQ/ledger-live/commit/6f6afe2b6203b5c46cbe450b254be493689c0cad), [`02c6f9e`](https://github.com/LedgerHQ/ledger-live/commit/02c6f9e46152894aa97648f50a52efaad38aa86c), [`cc8b5b9`](https://github.com/LedgerHQ/ledger-live/commit/cc8b5b9af4a2ec488b6912d3fcb08bcc8f4b72c3), [`43bf6d8`](https://github.com/LedgerHQ/ledger-live/commit/43bf6d8f6600f70b7c2a85615660e7e150e798bf), [`9708010`](https://github.com/LedgerHQ/ledger-live/commit/970801044529fe978ccbb8c562cc64c00277d1de), [`a1bd49e`](https://github.com/LedgerHQ/ledger-live/commit/a1bd49ec9190a395730b3348fef5c0987e4eaeb7), [`79d2278`](https://github.com/LedgerHQ/ledger-live/commit/79d22789896f55d9a7196392632b08488997d937)]:
+  - @features/flow-contacts-list@0.2.0
+  - @features/platform-contacts@0.2.0
+  - @features/flow-contacts-add-contact@0.2.0
+  - @domain/entity-contact@0.6.0
+  - @domain/entity-currency-crypto@0.10.0
+  - @domain/entity-currency-token@0.4.0
+  - @shared/feature-flags@0.18.0
+  - @shared/qr-code@0.2.0
+  - @features/platform-feature-flags@0.6.5
+
+## 0.6.0-next.0
+
+### Minor Changes
+
+- [#20537](https://github.com/LedgerHQ/ledger-live/pull/20537) [`f080e51`](https://github.com/LedgerHQ/ledger-live/commit/f080e51c682c2ac1239c0417e29b32b79d363eb9) Thanks [@deepyjr](https://github.com/deepyjr)! - Extract the Contacts list journey into its own flow package, expose the parent Contacts view orchestrator, and share contact display-name helpers through Platform.
+
+- [#20474](https://github.com/LedgerHQ/ledger-live/pull/20474) [`e73390c`](https://github.com/LedgerHQ/ledger-live/commit/e73390cfa30d2d7ec7a9644875063c77b42f0713) Thanks [@deepyjr](https://github.com/deepyjr)! - Replace the Desktop address name clear action with a help tooltip.
+
+- [#20523](https://github.com/LedgerHQ/ledger-live/pull/20523) [`6f6afe2`](https://github.com/LedgerHQ/ledger-live/commit/6f6afe2b6203b5c46cbe450b254be493689c0cad) Thanks [@deepyjr](https://github.com/deepyjr)! - Extract the Add contact journey into dedicated Contacts platform and flow packages while preserving the Contacts flow facade.
+
+- [#20483](https://github.com/LedgerHQ/ledger-live/pull/20483) [`1de30a9`](https://github.com/LedgerHQ/ledger-live/commit/1de30a98a7a3db27f42de0c9608e1d0be748a10e) Thanks [@deepyjr](https://github.com/deepyjr)! - Add Contacts Flow format checks
+
+- [#20585](https://github.com/LedgerHQ/ledger-live/pull/20585) [`feaf2fc`](https://github.com/LedgerHQ/ledger-live/commit/feaf2fcb8b3d71ab731e0ee52243e8d2a87d5604) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Require signer confirmation before opening address delete confirmation in Contacts.
+
+- [#20446](https://github.com/LedgerHQ/ledger-live/pull/20446) [`9ef4440`](https://github.com/LedgerHQ/ledger-live/commit/9ef44402ece2207268361bfe4e2af8fbd1396670) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Add address detail actions flow orchestration with send, edit, delete, signer validation, and delete-address confirmation dialog. Consolidates the prior edit-only flow scaffold.
+
+- [#20445](https://github.com/LedgerHQ/ledger-live/pull/20445) [`5297c79`](https://github.com/LedgerHQ/ledger-live/commit/5297c79823362f5e7584886c8193808988ec46fc) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Extract shared delete confirmation dialog, signer UI state hook, and EditAddress rename step for contact addresses.
+
+- [#20595](https://github.com/LedgerHQ/ledger-live/pull/20595) [`43bf6d8`](https://github.com/LedgerHQ/ledger-live/commit/43bf6d8f6600f70b7c2a85615660e7e150e798bf) Thanks [@ysitbon](https://github.com/ysitbon)! - Make every new-architecture barrel a pure regrouping point, and enforce it.
+
+  An `index.*` under `shared/`, `domain/` or `features/` may now contain only `export * from "./x"`
+  lines, plus an optional default re-export. Having to sort in the export
+  (`export { a, b } from "./x"`) proved the target file mixed public and private code; an `index.*`
+  holding actual code proved it more loudly. A new nx plugin infers a `lint:structure` target on each
+  of the 49 packages and fails on both, along with two related rules: a barrel may not re-export a
+  private `internals` location, and it may not re-export another workspace package.
+
+  That last rule removes the proxies. A package that re-exported a neighbour gave the same symbol two
+  import paths and hid who actually provided it. Consumers now import the original provider and
+  declare the dependency, which is why the two apps gain `@features/flow-contacts-add-contact` and the
+  desktop app gains `@features/platform-contacts`.
+
+  Renamed or relocated, with the import specifier unchanged for consumers in every case except where
+  noted:
+
+  - `@domain/entity-account-name` no longer exports the `setAccountNames` alias; use
+    `bulkSetAccountNames`, the name the slice actually defines.
+  - `@shared/cloud-sync` exports `getCloudSyncApi` as a named export from its api module instead of
+    re-exporting a default under a different name.
+
+  Five packages are left untouched behind temporary exclusions, each recording how to remove it:
+
+  - `@shared/env`, the facade over the legacy `@ledgerhq/live-env`, which carries the wrapping in its
+    barrel.
+  - the `@ledgerhq/engagement` and `@ledgerhq/ptx` packages (`flow-analytics-consent`,
+    `flow-large-screen-upsell`, `flow-lazy-onboarding-banner`, `flow-pay-card-auth`), so each owning
+    team lands the change on its own schedule. Conformant barrels were prepared and verified for them
+    before being reverted, so the work is deferred rather than open.
+
+- [#20455](https://github.com/LedgerHQ/ledger-live/pull/20455) [`f77b3fa`](https://github.com/LedgerHQ/ledger-live/commit/f77b3fa8954e93a00acdbd3e52210561028fd6b8) Thanks [@deepyjr](https://github.com/deepyjr)! - Add invalid and sanctioned address feedback to the Desktop Contacts flow.
+
+- [#20403](https://github.com/LedgerHQ/ledger-live/pull/20403) [`5bdffd5`](https://github.com/LedgerHQ/ledger-live/commit/5bdffd5b9590cc65e650fb0d5b28a5fbf2477d00) Thanks [@deepyjr](https://github.com/deepyjr)! - Add a shared Contacts Ledger Sync mutation guard that preserves add-contact and add-address intents until activation succeeds.
+
+- [#20408](https://github.com/LedgerHQ/ledger-live/pull/20408) [`e9a14f8`](https://github.com/LedgerHQ/ledger-live/commit/e9a14f886532f3ee00dc7f28727c762ec75fc9b3) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Wire send, edit, and delete actions on desktop contact address detail.
+
+- [#20409](https://github.com/LedgerHQ/ledger-live/pull/20409) [`91a2953`](https://github.com/LedgerHQ/ledger-live/commit/91a29531167176557194d9adbc6b55ff11363b8d) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Wire mobile contact address detail send, edit, and delete actions with confirmation sheets.
+
+- [#20557](https://github.com/LedgerHQ/ledger-live/pull/20557) [`3e0ae80`](https://github.com/LedgerHQ/ledger-live/commit/3e0ae805b065eaa3d5fd3c1ab35c0d7f8e2a170f) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Render Desktop Contacts address edit signer mismatch error from shared flow state.
+
+- [#20559](https://github.com/LedgerHQ/ledger-live/pull/20559) [`c904346`](https://github.com/LedgerHQ/ledger-live/commit/c9043466032fab4f9c2ae02d4bd52970ad8fbcfe) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Render Mobile Contacts address edit signer mismatch error and extract shared address detail action labels and UI state mapping.
+
+- [#20510](https://github.com/LedgerHQ/ledger-live/pull/20510) [`a1bd49e`](https://github.com/LedgerHQ/ledger-live/commit/a1bd49ec9190a395730b3348fef5c0987e4eaeb7) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Model Me as the default self contact with shared display-name formatting, external address counts, and a Ledger Wallet accounts intent.
+
+- [#20489](https://github.com/LedgerHQ/ledger-live/pull/20489) [`e1e005d`](https://github.com/LedgerHQ/ledger-live/commit/e1e005daff0d3e01ef397ac752cbc711245539a7) Thanks [@ysitbon](https://github.com/ysitbon)! - Take the shared flow jest configuration from `@support/jest-features-flow` instead of `@features/platform-jest-config`. The package moved to the `support/` layer, which is where development-only tooling belongs; its API is unchanged.
+
+- [#20380](https://github.com/LedgerHQ/ledger-live/pull/20380) [`79d2278`](https://github.com/LedgerHQ/ledger-live/commit/79d22789896f55d9a7196392632b08488997d937) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Add shared address edit signer validation state with mocked signer mismatch handling for Desktop and Mobile.
+
+- [#20500](https://github.com/LedgerHQ/ledger-live/pull/20500) [`71b1069`](https://github.com/LedgerHQ/ledger-live/commit/71b1069ae8358b4d3fa3a6a5d4fb2d49f1c1c7d7) Thanks [@deepyjr](https://github.com/deepyjr)! - Use shared Lumen test primitives across Contacts tests.
+
+- [#20413](https://github.com/LedgerHQ/ledger-live/pull/20413) [`ccbda89`](https://github.com/LedgerHQ/ledger-live/commit/ccbda895d0672222becbe50df61fcf7646618448) Thanks [@deepyjr](https://github.com/deepyjr)! - Add sanctioned address feedback to the Mobile Contacts flow.
+
+- [#20651](https://github.com/LedgerHQ/ledger-live/pull/20651) [`78ebc73`](https://github.com/LedgerHQ/ledger-live/commit/78ebc736177e9e751f4d7a7a6a3fae97a1913c1f) Thanks [@ishaba](https://github.com/ishaba)! - fix(flow-contacts): remove unused exports, de-alias delete requirement
+
+- [#20480](https://github.com/LedgerHQ/ledger-live/pull/20480) [`b0e81d2`](https://github.com/LedgerHQ/ledger-live/commit/b0e81d2edc7c40e2c81236ea372370859d05d0bc) Thanks [@deepyjr](https://github.com/deepyjr)! - Fix the Contacts Flow typecheck for cleared address selections
+
+### Patch Changes
+
+- Updated dependencies [[`f080e51`](https://github.com/LedgerHQ/ledger-live/commit/f080e51c682c2ac1239c0417e29b32b79d363eb9), [`6f6afe2`](https://github.com/LedgerHQ/ledger-live/commit/6f6afe2b6203b5c46cbe450b254be493689c0cad), [`02c6f9e`](https://github.com/LedgerHQ/ledger-live/commit/02c6f9e46152894aa97648f50a52efaad38aa86c), [`cc8b5b9`](https://github.com/LedgerHQ/ledger-live/commit/cc8b5b9af4a2ec488b6912d3fcb08bcc8f4b72c3), [`43bf6d8`](https://github.com/LedgerHQ/ledger-live/commit/43bf6d8f6600f70b7c2a85615660e7e150e798bf), [`9708010`](https://github.com/LedgerHQ/ledger-live/commit/970801044529fe978ccbb8c562cc64c00277d1de), [`a1bd49e`](https://github.com/LedgerHQ/ledger-live/commit/a1bd49ec9190a395730b3348fef5c0987e4eaeb7), [`79d2278`](https://github.com/LedgerHQ/ledger-live/commit/79d22789896f55d9a7196392632b08488997d937)]:
+  - @features/flow-contacts-list@0.2.0-next.0
+  - @features/platform-contacts@0.2.0-next.0
+  - @features/flow-contacts-add-contact@0.2.0-next.0
+  - @domain/entity-contact@0.6.0-next.0
+  - @domain/entity-currency-crypto@0.10.0-next.0
+  - @domain/entity-currency-token@0.4.0-next.0
+  - @shared/feature-flags@0.18.0-next.0
+  - @shared/qr-code@0.2.0-next.0
+  - @features/platform-feature-flags@0.6.5-next.0
+
 ## 0.5.0
 
 ### Minor Changes

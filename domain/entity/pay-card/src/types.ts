@@ -1,4 +1,5 @@
 import type { z } from "zod";
+import { PAY_CARD_BALANCE_FILTER_ALL } from "./constants";
 import {
   PayCardLogoutResultSchema,
   PayCardParamsSchema,
@@ -26,7 +27,18 @@ export type PayCardLogoutResult = z.infer<typeof PayCardLogoutResultSchema>;
 
 export type PayCardParams = z.infer<typeof PayCardParamsSchema>;
 
+/** `"all"` or the currencyId of a single stablecoin. Never a ticker: ids are stable. */
+export type PayCardBalanceFilter = typeof PAY_CARD_BALANCE_FILTER_ALL | (string & {});
+
 export type PayCardState = Readonly<{
   isOpen: boolean;
   params: PayCardParams | null;
+  hasSeenFeatureTour: boolean;
+  balanceFilter: PayCardBalanceFilter;
+}>;
+
+/** Subset of {@link PayCardState} that is persisted across app restarts. */
+export type PayCardPersistedState = Readonly<{
+  hasSeenFeatureTour: boolean;
+  balanceFilter: PayCardBalanceFilter;
 }>;

@@ -1,6 +1,5 @@
 import { useMemo } from "react";
-import { useStocksData } from "@ledgerhq/live-common/dada-client/hooks/useStocksData";
-import { selectTopStocks } from "@ledgerhq/live-common/dada-client/utils/assetDiscovery";
+import { useStocksData, selectTopStocks } from "@features/platform-aggregated-assets";
 import { StocksSectionViewModelResult } from "../types";
 import { STOCKS_PRICE_REFRESH_INTERVAL_MS } from "../constants";
 

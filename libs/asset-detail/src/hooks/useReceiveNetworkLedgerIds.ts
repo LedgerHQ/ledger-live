@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { toSlug } from "@ledgerhq/asset-aggregation/assetDistribution/index";
-import { useAssetsData } from "@ledgerhq/live-common/dada-client/hooks/useAssetsData";
-import type { AssetsDataWithPagination } from "@ledgerhq/live-common/dada-client/state-manager/types";
+import { useAssetsData } from "@features/platform-aggregated-assets";
+import type { AssetsDataWithPagination } from "@domain/api-aggregated-assets";
 import type { ReceiveNetworkLedgerIdsInput } from "../types";
 
 type MetaHints = Pick<

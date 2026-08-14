@@ -1,10 +1,12 @@
 import React from "react";
 import { Text } from "react-native";
 import { render, screen } from "@tests/test-renderer";
-import type { BottomSheetBackgroundTone } from "LLM/contexts/BottomSheetBackgroundContext";
-import { useBottomSheetBackgroundTone } from "LLM/hooks/useBottomSheetBackgroundTone";
-import QueuedBottomSheet from "../QueuedBottomSheet";
-import QueuedDrawersContextProvider from "../QueuedDrawersContextProvider";
+import {
+  QueuedBottomSheet,
+  useBottomSheetBackgroundTone,
+  type BottomSheetBackgroundTone,
+} from "@shared/ui-queued-bottom-sheet";
+import QueuedBottomSheetsProvider from "../QueuedBottomSheetsProvider";
 
 const statusGradientTones = ["error", "info", "success"] as const;
 type MockBottomSheetBackgroundProps = {
@@ -48,9 +50,9 @@ jest.mock("@react-navigation/native", () => ({
 
 function renderQueuedBottomSheet(children: React.ReactNode) {
   return render(
-    <QueuedDrawersContextProvider>
+    <QueuedBottomSheetsProvider>
       <QueuedBottomSheet>{children}</QueuedBottomSheet>
-    </QueuedDrawersContextProvider>,
+    </QueuedBottomSheetsProvider>,
   );
 }
 
@@ -106,9 +108,9 @@ describe("QueuedBottomSheet background tone integration", () => {
 
       // WHEN
       rerender(
-        <QueuedDrawersContextProvider>
+        <QueuedBottomSheetsProvider>
           <QueuedBottomSheet>{null}</QueuedBottomSheet>
-        </QueuedDrawersContextProvider>,
+        </QueuedBottomSheetsProvider>,
       );
 
       // THEN
@@ -128,11 +130,11 @@ describe("QueuedBottomSheet background tone integration", () => {
 
       // WHEN
       rerender(
-        <QueuedDrawersContextProvider>
+        <QueuedBottomSheetsProvider>
           <QueuedBottomSheet>
             <BackgroundToneRequester key="second" tone="error" />
           </QueuedBottomSheet>
-        </QueuedDrawersContextProvider>,
+        </QueuedBottomSheetsProvider>,
       );
 
       // THEN

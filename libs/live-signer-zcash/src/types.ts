@@ -4,12 +4,22 @@
  * the device action consumes/produces — no local mirror to keep in sync.
  */
 import type {
+  IronwoodActionSignature,
   OrchardActionSignature,
+  PcztIronwoodAction,
+  PcztIronwoodBundle,
   PcztTransaction,
   SignPcztTransactionResult,
 } from "@ledgerhq/device-signer-kit-zcash";
 
-export type { OrchardActionSignature, PcztTransaction, SignPcztTransactionResult };
+export type {
+  IronwoodActionSignature,
+  OrchardActionSignature,
+  PcztIronwoodAction,
+  PcztIronwoodBundle,
+  PcztTransaction,
+  SignPcztTransactionResult,
+};
 
 export type ZcashAppConfig = {
   version: string;

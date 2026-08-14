@@ -4,7 +4,7 @@ import { createBridges } from "@ledgerhq/coin-internet_computer/bridge/index";
 import Transport from "@ledgerhq/hw-transport";
 import icpResolver from "@ledgerhq/coin-internet_computer/signer/index";
 import { signMessage } from "@ledgerhq/coin-internet_computer/hw-signMessage";
-import type { Account, Bridge } from "@ledgerhq/types-live";
+import type { Bridge } from "@ledgerhq/types-live";
 import {
   CreateSigner,
   createMessageSigner,
@@ -12,7 +12,13 @@ import {
   executeWithSigner,
 } from "../../bridge/setup";
 import { Resolver } from "../../hw/getAddress/types";
-import { TransactionStatus, Transaction } from "@ledgerhq/coin-internet_computer/types/index";
+import {
+  ICPAccount,
+  ICPAccountRaw,
+  InternetComputerOperation,
+  TransactionStatus,
+  Transaction,
+} from "@ledgerhq/coin-internet_computer/types/index";
 import { DmkSignerICP } from "@ledgerhq/live-signer-icp";
 import { isDmkTransport } from "../../hw/dmkUtils";
 import { ICPSigner } from "./types";
@@ -24,9 +30,13 @@ const createSigner: CreateSigner<ICPSigner> = (transport: Transport): ICPSigner 
   return new DmkSignerICP(transport.dmk, transport.sessionId);
 };
 
-const bridge: Bridge<Transaction, Account, TransactionStatus> = createBridges(
-  executeWithSigner(createSigner),
-);
+const bridge: Bridge<
+  Transaction,
+  ICPAccount,
+  TransactionStatus,
+  InternetComputerOperation,
+  ICPAccountRaw
+> = createBridges(executeWithSigner(createSigner));
 
 const messageSigner = {
   signMessage: createMessageSigner(createSigner, signMessage),

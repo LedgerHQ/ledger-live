@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef, useEffect } from "react";
+import { useCallback, useRef, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useFeature } from "@features/platform-feature-flags";
@@ -7,6 +7,11 @@ import { useDispatch, useSelector } from "~/context/hooks";
 import { setProductTourCompleted } from "~/actions/settings";
 import { productTourCompletedSelector } from "~/reducers/settings";
 import { productTourDeeplinkNonceSelector } from "~/reducers/appstate";
+import {
+  closeProductTourDrawer,
+  openProductTourDrawer,
+  selectIsProductTourDrawerOpen,
+} from "~/reducers/productTourDrawer";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import type { ProductTourDrawerViewModel } from "../types";
 import { track } from "~/analytics";
@@ -17,31 +22,15 @@ import type { ProductTourPrimaryAction } from "../const";
 
 type CloseSource = "cross" | "external" | "internal";
 
-// Module-scoped so the auto-open only fires once per app session, even if the
-// Portfolio screen remounts (e.g. after deleting the last account of a currency,
-// which calls `navigation.replace(NavigatorName.Base)`).
-let hasAutoOpenedThisSession = false;
-
-export const __resetProductTourAutoOpenForTests = () => {
-  hasAutoOpenedThisSession = false;
-};
-
 export const useProductTourDrawerViewModel = (): ProductTourDrawerViewModel => {
   const currentIndexRef = useRef(0);
   const closeSourceRef = useRef<CloseSource>("external");
   const productTourCompleted = useSelector(productTourCompletedSelector);
   const deeplinkNonce = useSelector(productTourDeeplinkNonceSelector);
+  const isDrawerOpen = useSelector(selectIsProductTourDrawerOpen);
   const lastHandledDeeplinkNonceRef = useRef(0);
   const lwmProductTour = useFeature("lwmProductTour");
   const isLWMProductTourEnabled = !!lwmProductTour?.enabled;
-  const [isDrawerOpen, setIsDrawerOpen] = useState(() => {
-    const shouldAutoOpen =
-      !hasAutoOpenedThisSession && !productTourCompleted && isLWMProductTourEnabled;
-    if (shouldAutoOpen) {
-      hasAutoOpenedThisSession = true;
-    }
-    return shouldAutoOpen;
-  });
   const dispatch = useDispatch();
   const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
   const { openDrawer: openModularDrawer } = useModularDrawerController();
@@ -52,13 +41,13 @@ export const useProductTourDrawerViewModel = (): ProductTourDrawerViewModel => {
         button: "Open",
         page: PAGE_TRACKING_PRODUCT_TOUR,
       });
-      setIsDrawerOpen(true);
+      dispatch(openProductTourDrawer());
     }
-  }, [productTourCompleted, isLWMProductTourEnabled]);
+  }, [dispatch, productTourCompleted, isLWMProductTourEnabled]);
 
   const handleCloseDrawer = useCallback(() => {
-    setIsDrawerOpen(false);
-  }, []);
+    dispatch(closeProductTourDrawer());
+  }, [dispatch]);
 
   const onCloseButtonPress = useCallback(() => {
     closeSourceRef.current = "cross";
@@ -136,9 +125,9 @@ export const useProductTourDrawerViewModel = (): ProductTourDrawerViewModel => {
   useEffect(() => {
     if (isDrawerOpen && !isLWMProductTourEnabled) {
       closeSourceRef.current = "internal";
-      setIsDrawerOpen(false);
+      dispatch(closeProductTourDrawer());
     }
-  }, [isDrawerOpen, isLWMProductTourEnabled]);
+  }, [dispatch, isDrawerOpen, isLWMProductTourEnabled]);
 
   useEffect(() => {
     if (deeplinkNonce === 0) {

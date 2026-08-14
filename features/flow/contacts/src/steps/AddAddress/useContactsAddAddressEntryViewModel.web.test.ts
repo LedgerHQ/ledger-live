@@ -26,6 +26,8 @@ const RESOLVED_ADDRESS = ContactAddressValueSchema.parse(
 );
 const nameLabels: ContactsAddAddressNameLabels = {
   inputLabel: "Address name",
+  namingDisclaimer: "Address naming disclaimer",
+  namingDisclaimerAccessibilityLabel: "Address name information",
   continueToReview: "Continue to review",
   validAddress: "Valid address",
   validationErrors: {
@@ -140,6 +142,7 @@ describe("useContactsAddAddressEntryViewModel", () => {
   });
 
   it("should expose a sanctioned address as a blocking error", () => {
+    const onAction = jest.fn();
     const { result } = renderViewModel({
       addressEntry: {
         status: "invalid",
@@ -148,12 +151,22 @@ describe("useContactsAddAddressEntryViewModel", () => {
         inputMethod: "manual",
         error: "sanctioned",
       },
+      sanctionedAddressBanner: {
+        description: "This wallet address is sanctioned.",
+        actionLabel: "Learn more",
+        onAction,
+      },
     });
 
     expect(result.current).toMatchObject({
       inputStatus: "error",
       helperText: "This address is sanctioned and cannot be used.",
       isConfirmEnabled: false,
+    });
+    expect(result.current.sanctionedAddressBanner).toEqual({
+      description: "This wallet address is sanctioned.",
+      actionLabel: "Learn more",
+      onAction,
     });
   });
 

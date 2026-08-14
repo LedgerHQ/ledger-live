@@ -1,0 +1,139 @@
+name: "[Scope] - Test - Called"
+
+on:
+  workflow_call:
+    inputs:
+      scope:
+        description: "Scope to test. Must match both the directory name and the scope:<name> Nx tag (e.g. features)."
+        type: string
+        required: true
+      extra-targets:
+        description: "Comma-separated Nx targets to run before coverage (e.g. check-export-rules)."
+        type: string
+        required: false
+        default: ""
+      timeout-minutes:
+        description: "Job timeout."
+        type: number
+        required: false
+        default: 10
+      ref:
+        description: "Ref to check out. Defaults to github.sha."
+        type: string
+        required: false
+
+    outputs:
+      coverage_generated:
+        value: ${{ jobs.test-scope.outputs.coverage_generated }}
+
+    secrets:
+      AWS_ACCOUNT_ID_PROD:
+        required: false
+      AWS_CACHE_OIDC_ROLE_ARN_BRANCH:
+        required: false
+      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP:
+        required: false
+      AWS_CACHE_REGION:
+        required: false
+      AWS_CACHE_ROLE_NAME:
+        required: false
+      NX_KEY:
+        required: false
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  test-scope:
+    name: "Coverage & Codecheck"
+    timeout-minutes: ${{ inputs.timeout-minutes }}
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
+      FORCE_COLOR: 3
+      CI_OS: ubuntu-22.04
+    outputs:
+      coverage_generated: ${{ contains(steps.generate_coverage.outcome, 'success') }}
+
+    runs-on: [ledger-live-linux-8CPU-32RAM]
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+
+      - name: Setup the caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        id: setup-caches
+        with:
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
+          cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+          cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+          nx-key: ${{ secrets.NX_KEY }}
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+
+      - name: JFrog npm auth
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        with:
+          registry: ${{ vars.ARTIFACTORY_URL }}
+
+      - name: Install dependencies
+        env:
+          SCOPE: ${{ inputs.scope }}
+        run: pnpm i --filter="{./$SCOPE/**}..."
+        shell: bash
+
+      - name: Run extra targets
+        if: ${{ inputs.extra-targets != '' }}
+        env:
+          EXTRA_TARGETS: ${{ inputs.extra-targets }}
+          SCOPE: ${{ inputs.scope }}
+        run: pnpm exec nx run-many -t "$EXTRA_TARGETS" --projects="tag:scope:$SCOPE"
+        shell: bash
+
+      - name: Run coverage
+        env:
+          SCOPE: ${{ inputs.scope }}
+        run: |
+          mkdir -p ${{ github.workspace }}/coverage
+          touch ${{ github.workspace }}/coverage/lcov.info
+          touch ${{ github.workspace }}/coverage/sonar-executionTests-report.xml
+
+          pnpm exec nx run-many -t coverage --projects="tag:scope:$SCOPE" --parallel=4 -- --maxWorkers=2
+        shell: bash
+
+      - name: Process coverage files
+        id: process-coverage
+        env:
+          SCOPE: ${{ inputs.scope }}
+        run: |
+          for package_json in $(find "./$SCOPE" -name "package.json" -not -path "*/node_modules/*"); do
+            pkg=$(dirname "$package_json")
+            echo "Processing package at path: $pkg"
+            if [ -f "$package_json" ] && jq -e '.scripts.coverage' "$package_json" > /dev/null 2>&1; then
+              if [ -f "$pkg/coverage/lcov.info" ] && [ -f "$pkg/coverage/sonar-executionTests-report.xml" ]; then
+                echo "Appending coverage files for $pkg"
+                cat "$pkg/coverage/lcov.info" >> ${{ github.workspace }}/coverage/lcov.info
+                cat "$pkg/coverage/sonar-executionTests-report.xml" >> ${{ github.workspace }}/coverage/sonar-executionTests-report.xml
+              fi
+            else
+              echo "No coverage script found for $pkg, skipping."
+            fi
+          done
+        shell: bash
+
+      - name: Codechecks
+        if: ${{ !cancelled() }}
+        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-codechecks@develop
+        with:
+          projects: "tag:scope:${{ inputs.scope }}"
+          parallel: "4"
+
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        if: ${{ !cancelled() }}
+        id: generate_coverage
+        with:
+          name: coverage-${{ inputs.scope }}
+          path: ${{ github.workspace }}/coverage

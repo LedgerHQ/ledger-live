@@ -23,7 +23,7 @@ export function RecipientAddressModal({
   recipientSupportsDomain = false,
 }: RecipientAddressModalProps) {
   const { setIsRecipientAddressComplete } = useSendFlowActions();
-  const { handleAddressSelect, isAddressValid, ...viewModel } = useRecipientAddressModalViewModel({
+  const { isAddressValid, ...viewModel } = useRecipientAddressModalViewModel({
     account,
     parentAccount,
     currency,
@@ -35,5 +35,5 @@ export function RecipientAddressModal({
     setIsRecipientAddressComplete(isAddressValid);
   }, [isAddressValid, setIsRecipientAddressComplete]);
 
-  return <RecipientAddressModalView {...viewModel} onAddressSelect={handleAddressSelect} />;
+  return <RecipientAddressModalView {...viewModel} />;
 }

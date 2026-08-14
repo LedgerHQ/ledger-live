@@ -183,19 +183,24 @@ describe("useDeviceContextInitializerComponentLWMViewModel", () => {
     expect(unsubscribe).toHaveBeenCalledTimes(1);
   });
 
-  it("should dispatch store updates from use case side effects", () => {
+  it("GIVEN use case side effects WHEN they observe device metadata THEN they update mobile stores", () => {
+    // GIVEN
     const { store } = renderViewModel();
     const { sideEffects } = mockedEnsureAppReadyUseCase.mock.calls[0][0];
     const deviceId = DeviceId.fromString("010203");
     const deviceInfo = { version: "2.0.0" } as DeviceInfo;
+    const apps = [{ name: "Bitcoin", version: "2.2.0" }];
 
+    // WHEN
     sideEffects.onDeviceIdObserved(deviceId);
     sideEffects.onLastSeenDeviceInfoObserved({
       modelId: DeviceModelId.nanoX,
       deviceInfo,
+      apps,
       latestFirmware: null,
     });
 
+    // THEN
     const state = store.getState();
     expect(state.identities.deviceIds).toHaveLength(1);
     expect(state.identities.deviceIds[0].equals(deviceId)).toBe(true);
@@ -203,7 +208,7 @@ describe("useDeviceContextInitializerComponentLWMViewModel", () => {
       {
         modelId: DeviceModelId.nanoX,
         deviceInfo,
-        apps: [],
+        apps,
       },
     ]);
   });

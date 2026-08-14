@@ -11,7 +11,7 @@ import {
   type ContactsAddContactDrawerLabels,
   type ContactsAddContactDrawerProps,
   useAddContactDrawerViewModel,
-} from "@features/flow-contacts";
+} from "@features/flow-contacts-add-contact";
 import { useDispatch } from "~/context/hooks";
 import { useTranslation } from "~/context/Locale";
 

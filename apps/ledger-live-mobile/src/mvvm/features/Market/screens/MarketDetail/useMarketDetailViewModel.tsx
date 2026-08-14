@@ -12,8 +12,8 @@ import { useMarket } from "LLM/features/Market/hooks/useMarket";
 import { useMarketCoinDataWithChart } from "LLM/features/Market/hooks/useMarketCoinData";
 import { addStarredMarketCoins, removeStarredMarketCoins } from "~/actions/settings";
 import VersionNumber from "react-native-version-number";
-import { selectCurrency } from "@ledgerhq/live-common/dada-client/utils/currencySelection";
-import { assetsDataApi } from "@ledgerhq/live-common/dada-client/state-manager/api";
+import { selectCurrency } from "@features/platform-aggregated-assets";
+import { assetsDataApi } from "@domain/api-aggregated-assets";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<MarketNavigatorStackParamList, ScreenName.MarketDetail>

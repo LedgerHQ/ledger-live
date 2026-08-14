@@ -1,25 +1,42 @@
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
-import { useMemo } from "react";
-import {
-  getCurrentSolanaPreloadData,
-  getSolanaPreloadData,
-} from "@ledgerhq/coin-solana/preload-data";
-import { SolanaPreloadDataV1, SolanaStake, SolanaStakeWithMeta } from "@ledgerhq/coin-solana/types";
+import { useEffect, useMemo, useState } from "react";
+import { getSolanaValidators } from "@ledgerhq/coin-solana/validators";
+import type { SolanaStake, SolanaStakeWithMeta } from "@ledgerhq/coin-solana/types";
 import type { ValidatorsAppValidator } from "@ledgerhq/coin-solana/network/validator-app/index";
-import { useObservable } from "../../observable";
 
-export function useSolanaPreloadData(
-  currency: CryptoCurrency,
-): SolanaPreloadDataV1 | undefined | null {
-  return useObservable(getSolanaPreloadData(currency), getCurrentSolanaPreloadData(currency));
+// keeps the last fetched validators so remounting a screen does not flash an empty list
+const lastSeenValidators = new Map<string, ValidatorsAppValidator[]>();
+
+export function useSolanaValidators(currency: CryptoCurrency): ValidatorsAppValidator[] {
+  const currencyId = currency.id;
+  const [validators, setValidators] = useState<ValidatorsAppValidator[]>(
+    () => lastSeenValidators.get(currencyId) ?? [],
+  );
+
+  useEffect(() => {
+    let cancelled = false;
+
+    setValidators(lastSeenValidators.get(currencyId) ?? []);
+    getSolanaValidators(currencyId)
+      .then(fetched => {
+        lastSeenValidators.set(currencyId, fetched);
+        if (!cancelled) setValidators(fetched);
+      })
+      // keep the last known list, like the preload store did on a failed refresh
+      .catch(() => undefined);
+
+    return () => {
+      cancelled = true;
+    };
+  }, [currencyId]);
+
+  return validators;
 }
 
 export function useValidators(currency: CryptoCurrency, search?: string): ValidatorsAppValidator[] {
-  const data = useSolanaPreloadData(currency);
+  const validators = useSolanaValidators(currency);
 
   return useMemo(() => {
-    const validators = data?.validators ?? [];
-
     if (validators.length === 0 || !search || search === "") {
       return validators;
     }
@@ -32,45 +49,41 @@ export function useValidators(currency: CryptoCurrency, search?: string): Valida
         validator.voteAccount.toLowerCase().includes(lowercaseSearch),
     );
 
-    const flags = [];
+    const seen = new Set<string>();
     const output: ValidatorsAppValidator[] = [];
-    for (let i = 0; i < filtered.length; i++) {
-      if (flags[filtered[i].voteAccount]) continue;
-      flags[filtered[i].voteAccount] = true;
-      output.push(filtered[i]);
+    for (const validator of filtered) {
+      if (seen.has(validator.voteAccount)) continue;
+      seen.add(validator.voteAccount);
+      output.push(validator);
     }
     return output;
-  }, [data, search]);
+  }, [validators, search]);
 }
 
 export function useSolanaStakesWithMeta(
   currency: CryptoCurrency,
   stakes: SolanaStake[],
 ): SolanaStakeWithMeta[] {
-  const data = useSolanaPreloadData(currency);
+  const validators = useSolanaValidators(currency);
 
-  if (data === null || data === undefined) {
-    return [];
-  }
+  return useMemo(() => {
+    const validatorByVoteAccAddr = new Map(validators.map(v => [v.voteAccount, v]));
 
-  const { validators } = data;
+    return stakes.map(stake => {
+      const voteAccAddr = stake.delegation?.voteAccAddr;
+      const validator =
+        voteAccAddr === undefined ? undefined : validatorByVoteAccAddr.get(voteAccAddr);
 
-  const validatorByVoteAccAddr = new Map(validators.map(v => [v.voteAccount, v]));
-
-  return stakes.map(stake => {
-    const voteAccAddr = stake.delegation?.voteAccAddr;
-    const validator =
-      voteAccAddr === undefined ? undefined : validatorByVoteAccAddr.get(voteAccAddr);
-
-    return {
-      stake,
-      meta: {
-        validator: {
-          img: validator?.avatarUrl,
-          name: validator?.name,
-          url: validator?.wwwUrl,
+      return {
+        stake,
+        meta: {
+          validator: {
+            img: validator?.avatarUrl,
+            name: validator?.name,
+            url: validator?.wwwUrl,
+          },
         },
-      },
-    };
-  });
+      };
+    });
+  }, [validators, stakes]);
 }

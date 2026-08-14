@@ -13,12 +13,13 @@ Shared Contacts flow package for Desktop and Mobile.
 - Contact detail edit/delete scenario state (edit intent, delete intent, and delete lifecycle)
 - Contact address detail view model (selected address payload, QR payload string, and not-found state)
 - Contact address detail quick-action scenario state (send, edit, and delete intents with delete lifecycle)
-- `useAddContactViewModel` and `useContactsFeatureIntroductionState` (app wiring injects ports)
+- Contacts orchestration through `ContactsView`, which composes the List, Detail, and
+  introduction journeys, plus `useContactsFeatureIntroductionState` (app wiring injects ports)
 - Add Address session, address-entry validation state, and address-label state
 - Add Address network eligibility and final currency selection state (MAD integration uses an
   injected selection port)
 - Shared UI components (`.web.tsx` / `.native.tsx`)
-- Empty, populated, and search Contacts list view models and their Desktop and Mobile page shells
+- Compatibility exports for `@features/flow-contacts-add-contact`
 
 App layers own routing, screen composition, i18n, and analytics.
 
@@ -47,14 +48,18 @@ proactively, while manual validation can be debounced without delaying paste or 
 
 ## Public API
 
-Consume the package from `@features/flow-contacts`. The root entry point resolves to the
-appropriate Web or React Native API. Folders under `src/` are internal implementation details
-and are not exported as package subpaths.
+Consume the complete Contacts page from `@features/flow-contacts`. Both Desktop and Mobile use
+the root `ContactsView` export; the package resolves its Web or React Native implementation.
+Folders under `src/` are internal implementation details and are not exported as package subpaths.
 
-Each user-facing screen lives under `src/steps/` and follows the MVVM split used by the app
+`@features/flow-contacts-list` remains a public leaf flow for consumers that only need a contact
+list. It never imports this orchestrator. `ContactsView` is the appropriate API when the screen
+also needs Contacts Detail or introductions.
+
+Each user-facing screen owned by this package lives under `src/steps/` and follows the MVVM split used by the app
 features (View + ViewModel + types + colocated components). Web and React Native export their
-respective `ContactsListView` and `ContactDetailView` implementations through the root entry point. The native entry also
-exports `ContactsAddContactHeaderButton` via the step `native.ts` barrels.
+respective `ContactsView` and `ContactDetailView` implementations through the root entry point.
+The native entry also exports `ContactsAddContactHeaderButton` via the List leaf flow.
 
 ## Testing
 
@@ -67,30 +72,15 @@ exports `ContactsAddContactHeaderButton` via the step `native.ts` barrels.
 Each `steps/<Step>/` is an MVVM screen: `index.ts` (neutral barrel) + `web.ts` / `native.ts`
 (platform Views) + `XxxView.web/.native.tsx` (dumb View) + `types.ts` + colocated `components/`,
 mirroring the app `mvvm/features/*` folders. View-model logic lives at the step root for small
-steps (e.g. `AddContact`) or is grouped into `model/` (pure builders) and `hooks/` (React hooks)
+steps or is grouped into `model/` (pure builders) and `hooks/` (React hooks)
 for larger steps (e.g. `List`). Every folder under `components/` is a PascalCase UI concept; a
 "block" owns its sub-parts as nested folders.
 
 ```
 src/
+├── ContactsView.web/.native.tsx         # orchestrates List with parent-owned journeys
+├── ContactsView.types.ts
 ├── steps/
-│   ├── List/                            # Contacts home screen (ex list/ + page/)
-│   │   ├── ContactsListView.web/.native.tsx  # dumb Views + types.ts
-│   │   ├── model/                       # viewModel.ts (pure list/search view-model builders)
-│   │   ├── hooks/                       # useContactsListViewModel / useContactsSearchViewModel
-│   │   ├── components/                  # one PascalCase folder per UI concept
-│   │   │   ├── ContactsList/            # list block: ListItems/ + Search/ + Section/
-│   │   │   ├── ListHeader/              # native header + add-contact button
-│   │   │   ├── LedgerSyncLoadingPane/   # web loading pane
-│   │   │   └── PageLayout/              # web page layout (Header, ListPane, DetailPane)
-│   │   ├── utils/                       # createContactsListSections, getContactAvatarColorClass
-│   │   └── index.ts / web.ts / native.ts
-│   ├── AddContact/                      # Web dialog + native drawer
-│   │   ├── ContactsAddContactDialog.web.tsx / ContactsAddContactDrawer.native.tsx
-│   │   ├── useAddContactViewModel.ts / useAddContactDrawerViewModel.ts / types.ts
-│   │   ├── components/ContactNameInput/ (web + native)
-│   │   ├── model/                       # Contact-name validation and creation contract
-│   │   └── index.ts / web.ts / native.ts
 │   ├── AddAddress/                      # Shared address-entry flow and native step content
 │   │   ├── model/                       # Network resolver, MAD port and address validation
 │   │   └── ContactsAddAddressEntry.native.tsx / ContactsAddAddressPlaceholderView.native.tsx / useAddAddressFlowViewModel.ts / types.ts / index.ts
@@ -107,10 +97,13 @@ src/
 ├── components/                          # Cross-step shared UI
 │   ├── ContactsButton/                  # My Wallet entry (web + native)
 │   └── ContactAvatar/                   # Shared native list and detail avatar
-├── hooks/                               # useContacts, useContactsMeContact
-├── utils/                               # getContactInitial (shared List + AddContact)
+├── hooks/                               # Contacts flow-only hooks
+├── utils/                               # Contacts flow-only utilities
 ├── jest.native.ts                       # Mobile Jest entry (re-exports ./index.native)
 ├── featureFlags.ts
 ├── index.ts                             # Web public API
 └── index.native.ts                      # React Native public API
 ```
+
+`@features/flow-contacts-add-contact` owns the Add contact step. This package re-exports its
+public API as a compatibility façade while the remaining Contacts journeys are extracted.

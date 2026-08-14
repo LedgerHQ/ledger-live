@@ -5,7 +5,7 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import { screen } from "@testing-library/react";
 import { render } from "tests/testSetup";
 
-import { makeKnownDevice } from "../testUtils";
+import { DeviceIntentTrackingTestWrapper, makeKnownDevice } from "../testUtils";
 import { WaitingForSelectedDeviceState } from "./WaitingForSelectedDeviceState";
 
 jest.mock("~/renderer/components/DeviceAction/animations", () => ({
@@ -27,6 +27,7 @@ function renderState(device: WaitingForSelectedDeviceUIState["device"]) {
         device,
       }}
     />,
+    { wrapper: DeviceIntentTrackingTestWrapper },
   );
 }
 

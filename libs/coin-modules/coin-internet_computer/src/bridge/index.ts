@@ -7,16 +7,24 @@ import {
   updateTransaction,
 } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
-import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import { ICP_DUMMY_ADDRESS } from "../constants";
 import resolver from "../signer";
-import type { Transaction, TransactionStatus, ICPSigner } from "../types";
+import type {
+  ICPAccount,
+  ICPAccountRaw,
+  InternetComputerOperation,
+  Transaction,
+  TransactionStatus,
+  ICPSigner,
+} from "../types";
 import { getAccountShape } from "./bridgeHelpers/account";
 import { broadcast } from "./broadcast";
 import { createTransaction } from "./createTransaction";
 import { estimateMaxSpendable } from "./estimateMaxSpendable";
 import { getTransactionStatus } from "./getTransactionStatus";
 import { prepareTransaction } from "./prepareTransaction";
+import { assignFromAccountRaw, assignToAccountRaw } from "./serialization";
 import { buildSignOperation } from "./signOperation";
 import { validateAddress } from "./validateAddress";
 
@@ -37,7 +45,13 @@ const sync = makeSync({ getAccountShape });
 
 function buildAccountBridge(
   signerContext: SignerContext<ICPSigner>,
-): AccountBridge<Transaction, Account, TransactionStatus> {
+): AccountBridge<
+  Transaction,
+  ICPAccount,
+  TransactionStatus,
+  InternetComputerOperation,
+  ICPAccountRaw
+> {
   const getAddress = resolver(signerContext);
 
   const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
@@ -59,6 +73,8 @@ function buildAccountBridge(
     broadcast,
     getSerializedAddressParameters,
     validateAddress,
+    assignToAccountRaw,
+    assignFromAccountRaw,
   };
 }
 

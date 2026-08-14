@@ -3,7 +3,7 @@ import { BottomSheetView, Box, Button } from "@ledgerhq/lumen-ui-rnative";
 import { Trash } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTranslation } from "~/context/Locale";
-import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
+import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { DeviceIllustration } from "~/components/DeviceIllustration";
 import { type DeviceSectionDevice } from "../useDeviceSectionViewModel";
 

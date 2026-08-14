@@ -1,6 +1,6 @@
 {
   "name": "@domain/entity-aggregated-asset",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "description": "Domain entity for aggregated assets: crypto-asset metadata, network info and currency ordering",
   "main": "src/index.ts",
@@ -12,10 +12,13 @@
   "sideEffects": false,
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "test": "jest --passWithNoTests",
+    "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage --passWithNoTests",
+    "coverage": "jest --coverage",
     "unimported": "pnpm knip --directory ../../.. -W domain/entity/aggregated-asset"
+  },
+  "dependencies": {
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@jest/globals": "catalog:",

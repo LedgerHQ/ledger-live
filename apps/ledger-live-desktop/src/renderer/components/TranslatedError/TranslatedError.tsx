@@ -11,10 +11,10 @@ import ExternalLink from "../ExternalLink";
 import { openURL } from "~/renderer/linking";
 import { urls } from "~/config/urls";
 import { useErrorLinks } from "./hooks/useErrorLinks";
-import { isDmkError } from "@ledgerhq/live-dmk-desktop";
+import { isDmkError, type DmkError } from "@ledgerhq/live-dmk-desktop";
 import { ErrorWithAnchorContent } from "./ErrorWithAnchor";
 type Props = {
-  error: Error | undefined | null;
+  error: Error | DmkError | undefined | null;
   field?: "title" | "description" | "list";
   noLink?: boolean;
   fallback?: React.ReactNode;
@@ -44,23 +44,23 @@ export function TranslatedError({
 }: Props): React.JSX.Element {
   const { t } = useTranslation();
 
-  const errorName = error?.name;
+  const regularError = error instanceof Error ? error : undefined;
+  const errorName = regularError?.name;
 
   const translationKey = useMemo(() => `errors.${errorName}.${field}`, [errorName, field]);
 
-  const isValidError = useMemo(() => error instanceof Error, [error]);
   const links = useErrorLinks(error);
 
   const args = useMemo(() => {
-    if (isValidError) {
+    if (regularError) {
       return {
-        ...error,
-        message: error?.message,
+        ...regularError,
+        message: regularError.message,
         returnObjects: true,
       };
     }
     return {};
-  }, [error, isValidError]);
+  }, [regularError]);
 
   const translation = useMemo(() => {
     const translation = t(translationKey, { ...args });
@@ -68,12 +68,12 @@ export function TranslatedError({
   }, [args, t, translationKey]);
 
   useEffect(() => {
-    if (!isValidError) {
+    if (!regularError) {
       logger.critical(`TranslatedError invalid usage: ${String(error)}`);
     }
-  }, [isValidError, error]);
+  }, [regularError, error]);
 
-  if (!error || !isValidError) {
+  if (!error || !regularError) {
     // NOTE: Temporary handling of DMK errors
     if (isDmkError(error)) {
       const translatedKey = `errors.${error._tag}.${field}`;
@@ -117,13 +117,13 @@ export function TranslatedError({
         </span>
       )}
 
-      {urls.errors[error.name] && !noLink && (
+      {regularError && urls.errors[regularError.name] && !noLink && (
         <>
           {" "}
           <Text ff="Inter|SemiBold">
             <ExternalLink
               label={t("common.learnMore")}
-              onClick={() => openURL(urls.errors[error.name])}
+              onClick={() => openURL(urls.errors[regularError.name])}
             />
           </Text>
         </>

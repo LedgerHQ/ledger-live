@@ -2,7 +2,7 @@ import React from "react";
 import { BottomSheetView, BottomSheetHeader, Box, Link, Text } from "@ledgerhq/lumen-ui-rnative";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { ValidatedInfoDialogParams } from "@ledgerhq/live-common/wallet-api/validation/validateInfoDialogParams";
-import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
+import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 
 type InfoBottomSheetProps = Readonly<{

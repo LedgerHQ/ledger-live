@@ -79,14 +79,18 @@ export function PtxScreen({ route, config }: Props) {
         const parentAccount = isTokenAccount(account)
           ? getParentAccount(account, flattenedAccounts)
           : undefined;
-        params.account = accountToWalletAPIAccount(walletState, account, parentAccount).id;
+        params.account = accountToWalletAPIAccount(
+          walletState.accountNames,
+          account,
+          parentAccount,
+        ).id;
       }
     }
 
     if (params?.goToURL) params.goToURL = decodeURIComponent(params.goToURL);
 
     return params;
-  }, [walletState, flattenedAccounts, manifest?.apiVersion, params]);
+  }, [walletState.accountNames, flattenedAccounts, manifest?.apiVersion, params]);
 
   /**
    * Given the user is on an internal app (webview url is owned by LL) we must reset the session

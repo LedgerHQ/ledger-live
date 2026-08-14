@@ -14,6 +14,7 @@ import {
   coinMarketCapApiExtra,
   cvsApiExtra,
   pushDevicesApiExtra,
+  swapApiExtra,
 } from "@shared/api-services";
 import { payCardApiExtra } from "@domain/api-pay-card";
 import logger from "~/renderer/middlewares/logger";
@@ -67,6 +68,10 @@ const customCreateStore = ({
               }),
               ...pushDevicesApiExtra({
                 pushDevicesServiceUrl: getEnv("PUSH_DEVICES_SERVICE_URL"),
+                ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
+              }),
+              ...swapApiExtra({
+                swapApiBaseUrl: getEnv("SWAP_API_BASE"),
                 ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
               }),
               ...payCardApiExtra({

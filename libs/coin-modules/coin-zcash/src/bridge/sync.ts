@@ -45,6 +45,7 @@ import { DEFAULT_ZCASH_PRIVATE_INFO, getZainoEndpoint, ZCASH_LOG_TYPE } from "..
 import { getZCashClient } from "../logic/engineClient";
 import { resolveTransactionDetails, type ResolvedTransactions } from "./transaction-details";
 import { composeXpub } from "../signer/xpub";
+import { releaseConfirmedNullifiers, releaseRetiredReservations } from "./note-reservation";
 
 export { removeReplaced } from "@ledgerhq/wallet-btc/operations";
 
@@ -134,6 +135,150 @@ function withRecoveredRecipients(
   return { ...op, recipients: [...transparentRecipients, ...payees] };
 }
 
+type AccountInputs = {
+  /** Every address the transaction spends from, ours or not. */
+  senders: Set<string>;
+  accountInputs: WalletInput[];
+  /** What the account's own inputs put in, before its change comes back. */
+  spent: BigNumber;
+};
+
+function collectAccountInputs(tx: TX, accountAddresses: Set<string>): AccountInputs {
+  const senders = new Set<string>();
+  const accountInputs: WalletInput[] = [];
+  let spent = new BigNumber(0);
+
+  for (const input of tx.inputs) {
+    if (!input.address) continue;
+    senders.add(input.address);
+    if (input.value && accountAddresses.has(input.address)) {
+      spent = spent.plus(input.value);
+      accountInputs.push(input);
+    }
+  }
+
+  return { senders, accountInputs, spent };
+}
+
+/**
+ * Minimum nSequence among the account's own inputs -- the conservative
+ * RBF/locktime signal. An input that omits it counts as 0xfffffffe, the
+ * Bitcoin Core default; no own input at all reads as 0.
+ */
+function minAccountSequence(accountInputs: WalletInput[]): BigNumber {
+  if (accountInputs.length === 0) return new BigNumber(0);
+  return new BigNumber(Math.min(...accountInputs.map(input => input.sequence ?? 0xfffffffe)));
+}
+
+/** Where a sender's own change sits: the last output of the transaction. */
+function changeOutputIndexOf(tx: TX): number {
+  return tx.outputs.reduce((highest, output) => Math.max(highest, output.output_index), 0);
+}
+
+type OutputContext = {
+  fundedByAccount: boolean;
+  singleOutput: boolean;
+  changeOutputIndex: number;
+  spentNothing: boolean;
+};
+
+/** An output the explorer could not attribute carries a placeholder address. */
+function isAttributed(output: WalletOutput): boolean {
+  return !!output.address && !output.address.includes("unknown");
+}
+
+/**
+ * A foreign address is a payee only when the account funded the transaction,
+ * and only among the outputs preceding the change.
+ */
+function isForeignPayee(output: WalletOutput, context: OutputContext): boolean {
+  if (!context.fundedByAccount) return false;
+  return context.singleOutput || output.output_index < context.changeOutputIndex;
+}
+
+/**
+ * One of the account's own addresses is a payee unless it is change -- which
+ * still counts when nothing else was paid, or when the account spent nothing
+ * and is therefore being paid rather than paying.
+ */
+function isOwnPayee(
+  output: WalletOutput,
+  changeAddresses: Set<string>,
+  recipientsSoFar: number,
+  context: OutputContext,
+): boolean {
+  if (!changeAddresses.has(output.address)) return true;
+  return (
+    (recipientsSoFar === 0 && output.output_index >= context.changeOutputIndex) ||
+    context.spentNothing
+  );
+}
+
+type OutputRoles = {
+  recipients: string[];
+  accountOutputs: WalletOutput[];
+};
+
+function assignOutputRoles(
+  tx: TX,
+  accountAddresses: Set<string>,
+  changeAddresses: Set<string>,
+  context: OutputContext,
+): OutputRoles {
+  const recipients: string[] = [];
+  const accountOutputs: WalletOutput[] = [];
+
+  for (const output of tx.outputs) {
+    if (!isAttributed(output)) continue;
+
+    const isOwn = accountAddresses.has(output.address);
+    if (isOwn) accountOutputs.push(output);
+
+    const isPayee = isOwn
+      ? isOwnPayee(output, changeAddresses, recipients.length, context)
+      : isForeignPayee(output, context);
+    if (isPayee) recipients.push(output.address);
+  }
+
+  return { recipients, accountOutputs };
+}
+
+function sumValues(outputs: WalletOutput[]): BigNumber {
+  return outputs.reduce((total, output) => total.plus(output.value), new BigNumber(0));
+}
+
+type OperationDraft = {
+  tx: TX;
+  accountId: string;
+  senders: Set<string>;
+  recipients: string[];
+  transactionSequenceNumber: BigNumber;
+};
+
+function buildOperation(
+  draft: OperationDraft,
+  type: OperationType,
+  value: BigNumber,
+): BtcOperation {
+  const { tx, accountId, senders, recipients, transactionSequenceNumber } = draft;
+  return {
+    id: encodeOperationId(accountId, tx.id, type),
+    hash: tx.id,
+    type,
+    value,
+    fee: explorerFee(tx),
+    senders: Array.from(senders),
+    recipients,
+    blockHeight: tx.block?.height,
+    blockHash: tx.block?.hash,
+    accountId,
+    date: txDate(tx),
+    hasFailed: false,
+    transactionSequenceNumber,
+    extra: { inputs: Array.from(new Set(spentOutpoints(tx))) },
+  } as BtcOperation;
+}
+
 /**
  * Maps a wallet-btc TX to LL operations. Ported from coin-bitcoin's
  * `logic.ts` `mapTxToOperations`, dropping the multi-currency `perCoinLogic`
@@ -145,127 +290,38 @@ function mapTxToOperations(
   accountAddresses: Set<string>,
   changeAddresses: Set<string>,
 ): BtcOperation[] {
+  const { senders, accountInputs, spent } = collectAccountInputs(tx, accountAddresses);
+  const fundedByAccount = accountInputs.length > 0;
+
+  const { recipients, accountOutputs } = assignOutputRoles(tx, accountAddresses, changeAddresses, {
+    fundedByAccount,
+    singleOutput: tx.outputs.length === 1,
+    changeOutputIndex: changeOutputIndexOf(tx),
+    spentNothing: spent.eq(0),
+  });
+
+  const draft: OperationDraft = {
+    tx,
+    accountId,
+    senders,
+    recipients,
+    transactionSequenceNumber: minAccountSequence(accountInputs),
+  };
+
   const operations: BtcOperation[] = [];
-  const txId = tx.id;
-  const fee = explorerFee(tx);
-  const blockHeight = tx.block?.height;
-  const blockHash = tx.block?.hash;
-  const date = txDate(tx);
-  const senders = new Set<string>();
-  const recipients: string[] = [];
-  let type: OperationType = "OUT";
-  let value = new BigNumber(0);
-  const hasFailed = false;
-  const accountInputs: WalletInput[] = [];
-  const accountOutputs: WalletOutput[] = [];
-  const inputs = new Set(spentOutpoints(tx));
 
-  for (const input of tx.inputs) {
-    if (input.address) {
-      senders.add(input.address);
-      if (input.value && accountAddresses.has(input.address)) {
-        value = value.plus(input.value);
-        accountInputs.push(input);
-      }
-    }
+  if (fundedByAccount) {
+    const change = accountOutputs.filter(output => changeAddresses.has(output.address));
+    operations.push(buildOperation(draft, "OUT", spent.minus(sumValues(change))));
   }
 
-  // Minimum nSequence among the account's own inputs -- the conservative
-  // RBF/locktime signal. An input that omits it counts as 0xfffffffe, the
-  // Bitcoin Core default; no own input at all reads as 0.
-  const transactionSequenceNumber = new BigNumber(
-    accountInputs.length === 0
-      ? 0
-      : Math.min(...accountInputs.map(input => input.sequence ?? 0xfffffffe)),
-  );
-
-  const hasSpentNothing = value.eq(0);
-  const changeOutputIndex =
-    tx.outputs.length === 0
-      ? 0
-      : tx.outputs.map(o => o.output_index).reduce((p, c) => (p > c ? p : c));
-
-  for (const output of tx.outputs) {
-    if (output.address && !output.address.includes("unknown")) {
-      if (!accountAddresses.has(output.address)) {
-        if (
-          accountInputs.length > 0 &&
-          (tx.outputs.length === 1 || output.output_index < changeOutputIndex)
-        ) {
-          recipients.push(output.address);
-        }
-      } else {
-        accountOutputs.push(output);
-        if (!changeAddresses.has(output.address)) {
-          recipients.push(output.address);
-        } else if (
-          (recipients.length === 0 && output.output_index >= changeOutputIndex) ||
-          hasSpentNothing
-        ) {
-          recipients.push(output.address);
-        }
-      }
-    }
-  }
-
-  if (accountInputs.length > 0) {
-    for (const output of accountOutputs) {
-      if (changeAddresses.has(output.address)) {
-        value = value.minus(output.value);
-      }
-    }
-
-    type = "OUT";
-    operations.push({
-      id: encodeOperationId(accountId, txId, type),
-      hash: txId,
-      type,
-      value,
-      fee,
-      senders: Array.from(senders),
-      recipients,
-      blockHeight,
-      blockHash,
-      accountId,
-      date,
-      hasFailed,
-      transactionSequenceNumber,
-      extra: { inputs: Array.from(inputs) },
-    } as BtcOperation);
-  }
-
-  if (accountOutputs.length > 0) {
-    const filterChangeAddresses = !!accountInputs.length;
-    let accountOutputCount = 0;
-    let finalAmount = new BigNumber(0);
-
-    for (const output of accountOutputs) {
-      if (!filterChangeAddresses || !changeAddresses.has(output.address)) {
-        finalAmount = finalAmount.plus(output.value);
-        accountOutputCount += 1;
-      }
-    }
-
-    if (accountOutputCount > 0) {
-      value = finalAmount;
-      type = "IN";
-      operations.push({
-        id: encodeOperationId(accountId, txId, type),
-        hash: txId,
-        type,
-        value,
-        fee,
-        senders: Array.from(senders),
-        recipients,
-        blockHeight,
-        blockHash,
-        accountId,
-        date,
-        hasFailed,
-        transactionSequenceNumber,
-        extra: { inputs: Array.from(inputs) },
-      } as BtcOperation);
-    }
+  // Change coming back to the account is not income, so a send only credits
+  // what it pays to an address of ours that is not change.
+  const credited = fundedByAccount
+    ? accountOutputs.filter(output => !changeAddresses.has(output.address))
+    : accountOutputs;
+  if (credited.length > 0) {
+    operations.push(buildOperation(draft, "IN", sumValues(credited)));
   }
 
   return operations;
@@ -343,8 +399,7 @@ export async function performTransparentSync(
   }
 
   const newOperations = (resolved?.transactions ?? transactions)
-    ?.map(tx => mapTxToOperations(tx, accountId, accountAddresses, changeAddresses))
-    .flat()
+    ?.flatMap(tx => mapTxToOperations(tx, accountId, accountAddresses, changeAddresses))
     .map(op => withRecoveredRecipients(op, resolved?.payeesByTxId, changeAddresses));
 
   const newUniqueOperations = deduplicateOperations(newOperations);
@@ -371,7 +426,13 @@ export async function performTransparentSync(
   const getInputsKey = (op: BtcOperation): string | null => {
     const inputs = op.extra?.inputs;
     if (!Array.isArray(inputs) || inputs.length === 0) return null;
-    return [...inputs].sort().join("|");
+    return [...inputs]
+      .sort((a, b) => {
+        if (a < b) return -1;
+        if (a > b) return 1;
+        return 0;
+      })
+      .join("|");
   };
 
   const isBetterCandidate = (candidate: BtcOperation, existing: BtcOperation): boolean => {
@@ -616,6 +677,78 @@ function markSpentNotes(tx: ShieldedTransaction, spentSet: Set<string>): Shielde
   };
 }
 
+/** How far the scan got, as persisted on the account. */
+function scanProgress(
+  result: ShieldedSyncResult,
+): Pick<ZcashPrivateInfo, "syncState" | "progress"> {
+  const totalBlocks = result.processedBlocks + result.remainingBlocks;
+  return {
+    syncState: result.remainingBlocks > 0 ? "running" : "complete",
+    progress: totalBlocks > 0 ? Math.round((result.processedBlocks / totalBlocks) * 100) : 100,
+  };
+}
+
+/**
+ * Fold a chunk that carries no transaction the account does not already hold.
+ *
+ * Only the scan cursor and the spent flags can move here: a note already known
+ * may have been spent elsewhere, which the chunk reports through its
+ * nullifiers. Operations are left untouched.
+ */
+function reduceUnchangedShieldedChunk(
+  accumulated: ShieldedScanAccumulated,
+  result: ShieldedSyncResult,
+  context: {
+    existingPrivateInfo: ZcashPrivateInfo;
+    transparentBalance: BigNumber;
+    lastProcessedBlock: number | null;
+    accountId: string;
+  },
+): ShieldedScanAccumulated {
+  const { existingPrivateInfo, transparentBalance, lastProcessedBlock, accountId } = context;
+  // The NAPI uses a unified spentKnownNullifiers list for all pools.
+  const spentNfs = result.spentKnownNullifiers ?? [];
+  const hasNewlySpentNotes = spentNfs.length > 0;
+  const spentSet = new Set(spentNfs);
+
+  const updatedTransactions = hasNewlySpentNotes
+    ? existingPrivateInfo.transactions.map(tx => markSpentNotes(tx, spentSet))
+    : existingPrivateInfo.transactions;
+  const orchardBalance = hasNewlySpentNotes
+    ? computeBalanceFromNotes(updatedTransactions)
+    : existingPrivateInfo.orchardBalance;
+  const ironwoodBalance = hasNewlySpentNotes
+    ? computeIronwoodBalanceFromNotes(updatedTransactions)
+    : existingPrivateInfo.ironwoodBalance;
+
+  const balance = computeZcashBalance(transparentBalance, {
+    orchardBalance,
+    saplingBalance: existingPrivateInfo.saplingBalance,
+    ironwoodBalance,
+  });
+
+  releaseConfirmedNullifiers(accountId, spentNfs);
+
+  return {
+    ...accumulated,
+    accountUpdate: {
+      ...accumulated.accountUpdate,
+      balance,
+      spendableBalance: balance,
+      blockHeight: lastProcessedBlock ?? accumulated.accountUpdate.blockHeight ?? 0,
+      privateInfo: {
+        ...existingPrivateInfo,
+        ...scanProgress(result),
+        lastProcessedBlock,
+        lastSyncTimestamp: Date.now(),
+        transactions: updatedTransactions,
+        orchardBalance,
+        ironwoodBalance,
+      },
+    },
+  };
+}
+
 export function reduceShieldedSyncResult(
   accumulated: ShieldedScanAccumulated,
   result: ShieldedSyncResult,
@@ -637,49 +770,12 @@ export function reduceShieldedSyncResult(
   );
 
   if (newTransactions.length === 0) {
-    const totalBlocks = result.processedBlocks + result.remainingBlocks;
-    // The NAPI uses a unified spentKnownNullifiers list for all pools.
-    const spentNfs = result.spentKnownNullifiers ?? [];
-    let updatedTransactions = existingPrivateInfo.transactions;
-    if (spentNfs.length > 0) {
-      const spentSet = new Set(spentNfs);
-      updatedTransactions = updatedTransactions.map(tx => markSpentNotes(tx, spentSet));
-    }
-    const orchardBalance =
-      spentNfs.length > 0
-        ? computeBalanceFromNotes(updatedTransactions)
-        : existingPrivateInfo.orchardBalance;
-    const ironwoodBalance =
-      spentNfs.length > 0
-        ? computeIronwoodBalanceFromNotes(updatedTransactions)
-        : existingPrivateInfo.ironwoodBalance;
-
-    const balance = computeZcashBalance(transparentBalance, {
-      orchardBalance,
-      saplingBalance: existingPrivateInfo.saplingBalance,
-      ironwoodBalance,
+    return reduceUnchangedShieldedChunk(accumulated, result, {
+      existingPrivateInfo,
+      transparentBalance,
+      lastProcessedBlock,
+      accountId,
     });
-
-    return {
-      ...accumulated,
-      accountUpdate: {
-        ...accumulated.accountUpdate,
-        balance,
-        spendableBalance: balance,
-        blockHeight: lastProcessedBlock ?? accumulated.accountUpdate.blockHeight ?? 0,
-        privateInfo: {
-          ...existingPrivateInfo,
-          syncState: result.remainingBlocks > 0 ? ("running" as const) : ("complete" as const),
-          progress:
-            totalBlocks > 0 ? Math.round((result.processedBlocks / totalBlocks) * 100) : 100,
-          lastProcessedBlock,
-          lastSyncTimestamp: Date.now(),
-          transactions: updatedTransactions,
-          orchardBalance,
-          ironwoodBalance,
-        },
-      },
-    };
   }
 
   const newOperations = convertShieldedTransactionsToOperations(newTransactions, accountId);
@@ -707,16 +803,15 @@ export function reduceShieldedSyncResult(
   const ironwoodBalance = computeIronwoodBalanceFromNotes(allShieldedTx);
   const saplingBalance = accumulated.accountUpdate.privateInfo?.saplingBalance ?? new BigNumber(0);
 
-  const totalBlocks = result.processedBlocks + result.remainingBlocks;
   const privateInfo: ZcashPrivateInfo = {
     saplingBalance,
     orchardBalance,
     ironwoodBalance,
-    syncState: result.remainingBlocks > 0 ? ("running" as const) : ("complete" as const),
-    progress: totalBlocks > 0 ? Math.round((result.processedBlocks / totalBlocks) * 100) : 100,
+    ...scanProgress(result),
     estimatedTimeRemaining: existingPrivateInfo.estimatedTimeRemaining ?? { hours: 0, minutes: 0 },
     ufvk: existingPrivateInfo?.ufvk ?? null,
     birthday: existingPrivateInfo?.birthday ?? null,
+    shieldedAddress: existingPrivateInfo?.shieldedAddress ?? null,
     lastSyncTimestamp: Date.now(),
     lastProcessedBlock,
     transactions: allShieldedTx,
@@ -741,6 +836,8 @@ export function reduceShieldedSyncResult(
     0,
     (info.initialAccount?.operationsCount ?? 0) - (info.initialAccount?.operations?.length ?? 0),
   );
+
+  releaseConfirmedNullifiers(accountId, spentNfs);
 
   return {
     processedOperations: [...result.transactions],
@@ -906,5 +1003,13 @@ function reconcileConfirmedPendingOperations(account: ZcashAccount): ZcashAccoun
   return { ...account, operations, pendingOperations };
 }
 
-export const postSync = (_initial: ZcashAccount, synced: ZcashAccount): ZcashAccount =>
-  reconcileConfirmedPendingOperations(synced);
+/**
+ * Note reservations hang off the same lifecycle: the notes a shielded send spends
+ * stay reserved until the operation spending them is retired, matched on the very
+ * hashes `reconcileConfirmedPendingOperations` resolves the optimistic operation
+ * by.
+ */
+export const postSync = (_initial: ZcashAccount, synced: ZcashAccount): ZcashAccount => {
+  releaseRetiredReservations(synced.id, new Set(synced.operations.map(op => op.hash)));
+  return reconcileConfirmedPendingOperations(synced);
+};

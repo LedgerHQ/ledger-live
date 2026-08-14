@@ -15,7 +15,7 @@ import {
 import { Download, Information, LifeRing, Trash } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useTranslation } from "~/context/Locale";
 import { TrackScreen } from "~/analytics";
-import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
+import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { useMyWalletHelpViewModel } from "./useMyWalletHelpViewModel";
 import { HelpListItem } from "./components/HelpListItem";
 

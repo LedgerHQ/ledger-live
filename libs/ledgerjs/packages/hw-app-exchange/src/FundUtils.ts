@@ -9,7 +9,7 @@ export type FundPayload = {
   inCurrency: string;
   accountName: string;
   userId: string;
-  payinExtraId?: string;
+  inExtraId?: string;
 };
 
 export async function decodeFundPayload(payload: string): Promise<FundPayload> {

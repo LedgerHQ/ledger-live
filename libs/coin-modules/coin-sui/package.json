@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-sui",
-  "version": "0.43.0",
+  "version": "0.44.0",
   "description": "Ledger Sui Coin integration",
   "keywords": [
     "Ledger",
@@ -167,7 +167,7 @@
     "@mysten/sui": "2.9.0",
     "bignumber.js": "^9.1.2",
     "gql.tada": "^1.9.2",
-    "lodash": "4.17.21",
+    "lodash": "catalog:",
     "rxjs": "catalog:"
   },
   "devDependencies": {
@@ -179,7 +179,7 @@
     "@swc/jest": "catalog:",
     "@types/invariant": "^2.2.2",
     "@types/jest": "catalog:",
-    "@types/lodash": "^4.14.191",
+    "@types/lodash": "catalog:",
     "@types/node": "catalog:",
     "graphql": "^16.10.0",
     "jest": "catalog:",

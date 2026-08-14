@@ -4,8 +4,12 @@ run-name: >
 
 on:
   schedule:
-    - cron: "0 1 * * 1,3,5"
-    - cron: "0 1 * * 2,4"
+    # Monday is the desktop broadcast nightly: real on-chain transactions are sent.
+    # Mobile broadcasts on other days (Wednesday iOS, Friday Android) so the two apps never
+    # broadcast from the shared QAA accounts on the same day.
+    # The cron expression below is matched verbatim in the E2E_BROADCAST_ENABLED env — keep both in sync.
+    - cron: "0 1 * * 1"
+    - cron: "0 1 * * 2-5"
   workflow_dispatch:
     inputs:
       ref:
@@ -141,6 +145,8 @@ permissions:
 env:
   E2E_DESKTOP_FEATURE_FLAGS: ${{ inputs.feature_flags || 'defaults' }}
   E2E_FEATURE_FLAGS_JSON: ${{ inputs.feature_flags_json || '' }}
+  # Broadcast on explicit request, or on the Monday nightly (see the schedule above).
+  E2E_BROADCAST_ENABLED: ${{ inputs.enable_broadcast || github.event.schedule == '0 1 * * 1' }}
 
 jobs:
   prepare-devices:
@@ -168,21 +174,27 @@ jobs:
           if [ "$EVENT_NAME" = "schedule" ]; then
             DOW=$(date -u +%u)
             DEVICE="${WEEKDAY_DEVICE[$DOW]:-nanoSP}"
-            echo "device_1=$DEVICE" >> $GITHUB_OUTPUT
-            echo "device_2=skipped" >> $GITHUB_OUTPUT
-            echo "is_dual=false"   >> $GITHUB_OUTPUT
-            printf 'e2e_matrix={"include":[{"device":"%s","is_primary":true,"artifact_suffix":""}]}\n' "$DEVICE" >> $GITHUB_OUTPUT
+            {
+              echo "device_1=$DEVICE"
+              echo "device_2=skipped"
+              echo "is_dual=false"
+              printf 'e2e_matrix={"include":[{"device":"%s","is_primary":true,"artifact_suffix":""}]}\n' "$DEVICE"
+            } >> "$GITHUB_OUTPUT"
           elif [ "$SPECULOS_DEVICE_INPUT" = "nanoSP and stax" ]; then
-            echo "device_1=nanoSP" >> $GITHUB_OUTPUT
-            echo "device_2=stax" >> $GITHUB_OUTPUT
-            echo "is_dual=true" >> $GITHUB_OUTPUT
-            echo 'e2e_matrix={"include":[{"device":"nanoSP","is_primary":true,"artifact_suffix":""},{"device":"stax","is_primary":false,"artifact_suffix":"-stax"}]}' >> $GITHUB_OUTPUT
+            {
+              echo "device_1=nanoSP"
+              echo "device_2=stax"
+              echo "is_dual=true"
+              echo 'e2e_matrix={"include":[{"device":"nanoSP","is_primary":true,"artifact_suffix":""},{"device":"stax","is_primary":false,"artifact_suffix":"-stax"}]}'
+            } >> "$GITHUB_OUTPUT"
           else
             DEVICE="$SPECULOS_DEVICE_INPUT"
-            echo "device_1=$DEVICE" >> $GITHUB_OUTPUT
-            echo "device_2=skipped" >> $GITHUB_OUTPUT
-            echo "is_dual=false" >> $GITHUB_OUTPUT
-            printf 'e2e_matrix={"include":[{"device":"%s","is_primary":true,"artifact_suffix":""}]}\n' "$DEVICE" >> $GITHUB_OUTPUT
+            {
+              echo "device_1=$DEVICE"
+              echo "device_2=skipped"
+              echo "is_dual=false"
+              printf 'e2e_matrix={"include":[{"device":"%s","is_primary":true,"artifact_suffix":""}]}\n' "$DEVICE"
+            } >> "$GITHUB_OUTPUT"
           fi
         shell: bash
 
@@ -207,6 +219,7 @@ jobs:
       DO_NOT_TRACK: 1
       SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ matrix.device == 'nanoS' && '1be65b91a8e0691866f880fd437ac05fce78af9d' || 'latest' }}
       SPECULOS_DEVICE: ${{ matrix.device }}
+      E2E_PRIMARY_DEVICE: ${{ matrix.is_primary }}
       COINAPPS: ${{ github.workspace }}/coin-apps
       cache-bucket: ll-nx-cache
       USERDATA_CACHE_ENABLED: ${{ inputs.build_type != 'js' }}
@@ -226,6 +239,7 @@ jobs:
           repositories: |
             ledger-live
             coin-apps
+          permission-contents: read
 
       - name: Checkout ledger-live monorepo (shallow clone)
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
@@ -285,7 +299,7 @@ jobs:
       - name: Configure test environment (API endpoints, broadcast settings)
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@develop
         with:
-          enable_broadcast: ${{ inputs.enable_broadcast }}
+          enable_broadcast: ${{ env.E2E_BROADCAST_ENABLED }}
           build_type: ${{ inputs.build_type }}
 
       - name: Build Playwright grep filter from inputs
@@ -296,7 +310,7 @@ jobs:
             --smoke-tests "$SMOKE_TESTS_INPUT" \
             --check-dir "e2e/desktop/tests" \
             --runner playwright)"
-          echo "filter=$RESOLVED_FILTER" >> $GITHUB_OUTPUT
+          echo "filter=$RESOLVED_FILTER" >> "$GITHUB_OUTPUT"
         shell: bash
         env:
           TEST_FILTER_INPUT: ${{ inputs.test_filter }}
@@ -307,7 +321,7 @@ jobs:
           FILTER_PATTERN: ${{ steps.test-filter.outputs.filter }}
           BUILD_TYPE: ${{ inputs.build_type || 'testing' }}
           TEST_EXECUTION: ${{ inputs.test_execution || '(not provided)' }}
-          BROADCAST_ENABLED: ${{ inputs.enable_broadcast }}
+          BROADCAST_ENABLED: ${{ env.E2E_BROADCAST_ENABLED }}
           REPEAT_EACH: ${{ inputs.repeat_each }}
           WORKFLOW_REF: ${{ github.workflow_ref }}
           TRIGGERED_BRANCH: ${{ inputs.ref || github.ref_name }}
@@ -339,7 +353,7 @@ jobs:
             echo "- **Feature Flags:** $FEATURE_FLAGS"
             echo "- **JSON override feature flags:** $EXTRA_FEATURE_FLAGS"
             echo "- **Repeat each:** $REPEAT_EACH"
-          } >> $GITHUB_STEP_SUMMARY
+          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Validate feature flags JSON input
         shell: bash
@@ -348,6 +362,7 @@ jobs:
           if [ -z "$raw" ]; then
             exit 0
           fi
+          # shellcheck disable=SC2016  # ${...} below are JS template literals, not shell expansions
           node -e '
             try {
               JSON.parse(process.argv[1]);
@@ -505,6 +520,8 @@ jobs:
     if: ${{ !cancelled() }}
     continue-on-error: true
     timeout-minutes: 15
+    outputs:
+      report_url: ${{ steps.qaa-allure-upload.outputs.report_url }}
     env:
       ALLURE_RESULTS: "allure-results"
     steps:
@@ -515,6 +532,7 @@ jobs:
           path: ${{ env.ALLURE_RESULTS }}
 
       - name: Upload to qaa-allure (sandbox)
+        id: qaa-allure-upload
         uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report-qaa@develop
         with:
           api_key: ${{ secrets.QAA_ALLURE_API_KEY }}
@@ -530,6 +548,8 @@ jobs:
     if: ${{ !cancelled() && needs.prepare-devices.outputs.is_dual == 'true' }}
     continue-on-error: true
     timeout-minutes: 15
+    outputs:
+      report_url: ${{ steps.qaa-allure-upload.outputs.report_url }}
     env:
       ALLURE_RESULTS: "allure-results-device2"
     steps:
@@ -540,6 +560,7 @@ jobs:
           path: ${{ env.ALLURE_RESULTS }}
 
       - name: Upload to qaa-allure (sandbox)
+        id: qaa-allure-upload
         uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report-qaa@develop
         with:
           api_key: ${{ secrets.QAA_ALLURE_API_KEY }}
@@ -571,7 +592,7 @@ jobs:
         id: authenticate
         run: |
           response=$(curl -H "Content-Type: application/json" -X POST --data '{"client_id": "${{ secrets.XRAY_CLIENT_ID }}", "client_secret": "${{ secrets.XRAY_CLIENT_SECRET }}"}' ${{ env.XRAY_API_URL }}/authenticate)
-          echo "xray_token=$response" >> $GITHUB_OUTPUT
+          echo "xray_token=$response" >> "$GITHUB_OUTPUT"
 
       - name: Publish report on Xray
         id: publish-xray
@@ -581,8 +602,8 @@ jobs:
                     -X POST \
                     --data @e2e/desktop/artifacts/xray/xray-report.json \
                     ${{ env.XRAY_API_URL }}/import/execution)
-          key=$(echo $response | jq -r '.key')
-          echo "xray_key=$key" >> $GITHUB_OUTPUT
+          key=$(echo "$response" | jq -r '.key')
+          echo "xray_key=$key" >> "$GITHUB_OUTPUT"
 
       - name: Write Xray report in summary
         shell: bash
@@ -593,7 +614,7 @@ jobs:
   notify-to-slack:
     name: "Notify to Slack"
     runs-on: [ledger-live-medium]
-    needs: [prepare-devices, report-to-allure, report-to-allure-device2]
+    needs: [prepare-devices, report-to-allure, report-to-allure-device2, qaa-allure-upload, qaa-allure-upload-device2]
     if: ${{ always() && (inputs.slack_notif || github.event_name == 'schedule') }}
     env:
       IS_DUAL: ${{ needs.prepare-devices.outputs.is_dual }}
@@ -618,19 +639,16 @@ jobs:
           row1_flags: ${{ env.E2E_DESKTOP_FEATURE_FLAGS }}
           row1_summary: ${{ needs.report-to-allure.outputs.summary_message }}
           row1_report_url: ${{ needs.report-to-allure.outputs.report-url }}
-          row1_report_title: ${{ env.IS_DUAL == 'true' && format('Allure Report ({0})', env.DEVICE_1) || 'Allure Report' }}
-          row1_report_link_text: ${{ env.IS_DUAL == 'true' && format('allure-results-{0}', env.DEVICE_1) || 'allure-results-linux' }}
           row1_status: ${{ needs.report-to-allure.outputs.status }}
+          row1_qaa_url: ${{ needs.qaa-allure-upload.outputs.report_url }}
           # Row 2 only renders on dual-device runs (empty label = dropped).
           row2_emoji: "🐧"
           row2_label: ${{ env.IS_DUAL == 'true' && format('linux ({0})', env.DEVICE_2) || '' }}
           row2_flags: ${{ env.E2E_DESKTOP_FEATURE_FLAGS }}
           row2_summary: ${{ needs.report-to-allure-device2.outputs.summary_message }}
           row2_report_url: ${{ needs.report-to-allure-device2.outputs.report-url }}
-          row2_report_title: ${{ env.IS_DUAL == 'true' && format('Allure Report ({0})', env.DEVICE_2) || '' }}
-          row2_report_link_text: ${{ env.IS_DUAL == 'true' && format('allure-results-{0}', env.DEVICE_2) || '' }}
           row2_status: ${{ needs.report-to-allure-device2.outputs.status }}
+          row2_qaa_url: ${{ needs.qaa-allure-upload-device2.outputs.report_url }}
           # Xray link: single-device runs with export_to_xray only (matches previous behavior).
-          extra_field_title: ${{ (env.IS_DUAL != 'true' && inputs.export_to_xray) && 'Xray Link' || '' }}
+          extra_field_title: ${{ (env.IS_DUAL != 'true' && inputs.export_to_xray) && '🎫 Xray Link' || '' }}
           extra_field_url: "https://ledgerhq.atlassian.net/browse/${{ github.event.inputs.test_execution }}"
-          extra_field_link_text: "Test Execution"

@@ -2,7 +2,7 @@ import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { NetworkBasedAddAccountNavigator } from "../AddAccount/types";
 import { ScreenName } from "~/const";
-import { AddAccountSupportLink } from "@ledgerhq/live-wallet/addAccounts";
+import { AddAccountSupportLink } from "@ledgerhq/live-common/account/addAccounts";
 import { AnalyticMetadata } from "LLM/hooks/useAnalytics/types";
 
 export type SubAccountEnhanced = TokenAccount & {

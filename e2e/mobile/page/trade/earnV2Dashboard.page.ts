@@ -6,7 +6,7 @@ export default class EarnV2DashboardPage {
   maxPotentialRewards = "max-potential-rewards";
   walletHeaderAmount = "wallet-header-amount";
   rewardsSummary = "rewards-summary";
-  tokensToEarnBanner = "tokens-to-earn-banner";
+  crowdFavourites = "crowd-favourites";
   iceColdStartEarnCta = "ice-cold-start-earn-cta";
   assetItemTicker = (ticker: string) => `asset-item-ticker-${ticker}`;
   assetEarnCta = (ticker: string) => `asset-earn-cta-${ticker}`;
@@ -45,7 +45,7 @@ export default class EarnV2DashboardPage {
 
   @Step("Verify cold start page")
   async verifyColdStartPage() {
-    await waitWebElementByTestId(this.tokensToEarnBanner);
+    await waitWebElementByTestId(this.crowdFavourites);
   }
 
   @Step("Verify asset ready to earn")

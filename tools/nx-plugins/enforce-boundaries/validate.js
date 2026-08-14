@@ -107,7 +107,7 @@ function findSourceImportViolations(workspaceRoot, legacyPackages, exceptions = 
         const spec = m[1];
 
         if (spec.startsWith("@ledgerhq/")) {
-          // Strip sub-paths: "@ledgerhq/errors/types" → "@ledgerhq/errors"
+          // Strip sub-paths: "@ledgerhq/logs/types" → "@ledgerhq/logs"
           const pkg = spec.split("/").slice(0, 2).join("/");
           if (legacyPackages.has(pkg)) {
             const relFile = path.relative(workspaceRoot, file);

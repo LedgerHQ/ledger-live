@@ -25,7 +25,7 @@ to what you need.
 | [TrustchainSDK](./02-trustchain-sdk.md) | auth, members, key rotation, deactivation, the Trustchain object & state | manage members / auth / deactivation |
 | [QR-code sync protocol](./03-qr-code-protocol.md) | adding a member by scanning a QR code | build the add-an-instance flow |
 | [CloudSyncSDK](./04-cloud-sync-sdk.md) | cipher layers, atomic pull/push/delete, versioning | store/retrieve the synced data |
-| [WalletSyncDataManager](./05-wallet-sync-data-manager.md) | modular reconciliation, local ⇄ distant | add a new synced data type |
+| [CloudSyncDataManager](./05-wallet-sync-data-manager.md) | modular reconciliation, local ⇄ distant | add a new synced data type |
 | [The watch loop](./06-watch-loop.md) | how it runs continuously inside an app | debug sync timing / lifecycle |
 | [App integration](./07-app-integration.md) | wiring into Ledger Wallet Desktop & Mobile (Redux/React) | work in the apps (LWD/LWM) |
 | [Cookbook](./cookbook.md) | install the app, web-tools playground, add a module | get hands-on |
@@ -66,13 +66,13 @@ flowchart TB
     end
 
     subgraph CS["3 · Cloud Sync"]
-        cssdk["live-wallet/cloudsync<br/><b>CloudSyncSDK</b>"]
+        cssdk["shared/cloud-sync<br/><b>CloudSyncSDK</b>"]
         csapi[("Cloud Sync API")]
         cssdk <-->|"pull / push / delete<br/>(E2E encrypted)"| csapi
     end
 
     subgraph WS["4 · Wallet Sync (app integration)"]
-        wsdm["live-wallet/walletsync<br/><b>WalletSyncDataManager</b><br/>+ createWalletSyncWatchLoop"]
+        wsdm["shared/wallet-sync + features/platform/wallet-sync<br/><b>CloudSyncDataManager</b><br/>+ createWalletSyncWatchLoop"]
     end
 
     subgraph APPS["Consumers"]
@@ -111,9 +111,11 @@ flowchart TB
 | hw-ledger-key-ring-protocol | [`libs/hw-ledger-key-ring-protocol`](../../libs/hw-ledger-key-ring-protocol) | Talks to the app over APDU; exposes `Crypto`, `Device`, `StreamTree`, `CommandStream`. |
 | ledger-key-ring-protocol | [`libs/ledger-key-ring-protocol`](../../libs/ledger-key-ring-protocol) | `TrustchainSDK`: create/modify/destroy the Trustchain, member management, QR-code sync, the encryption key. |
 | Trustchain API | [trustchain-backend](https://github.com/LedgerHQ/trustchain-backend) | CRUD-like API for Trustchain operations + authentication. |
-| live-wallet / cloudsync | [`libs/live-wallet/src/cloudsync`](../../libs/live-wallet/src/cloudsync) | `CloudSyncSDK`: atomic pull / push / delete of the encrypted wallet-sync data. |
+| live-wallet / cloudsync | [`shared/cloud-sync`](../../shared/cloud-sync) | `CloudSyncSDK`: atomic pull / push / delete of the encrypted wallet-sync data. |
 | Cloud Sync API | [cloud-sync-backend](https://github.com/LedgerHQ/cloud-sync-backend) | Stores encrypted data, authenticated via the Trustchain API. |
-| live-wallet / walletsync | [`libs/live-wallet/src/walletsync`](../../libs/live-wallet/src/walletsync) | Bridges Ledger Wallet's world (accounts, …) with the wallet-sync data model; the watch-loop lifecycle. |
+| live-wallet / walletsync | [`shared/wallet-sync`](../../shared/wallet-sync) + [`features/platform/wallet-sync`](../../features/platform/wallet-sync) | `CloudSyncDataManager` aggregation + watch-loop lifecycle. |
+| live-wallet / accounts module | [`libs/live-wallet/src/accounts`](../../libs/live-wallet/src/accounts) | Accounts sync module (interim — pending `@domain/entity-account`). |
+| domain entity modules | [`domain/entity/account-name`](../../domain/entity/account-name), [`domain/entity/recent-addresses`](../../domain/entity/recent-addresses), [`domain/entity/wallet-sync`](../../domain/entity/wallet-sync) | RTK slices + per-type `cloudSyncModule.ts` implementations. |
 | web-tools | [`apps/web-tools/src/trustchain`](../../apps/web-tools/src/trustchain) · [live.ledger.tools/trustchain](https://live.ledger.tools/trustchain) | Dev/QA tools to debug Trustchain, Cloud Sync and test synchronization across simulated instances. |
 
 > [!TIP]

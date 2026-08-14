@@ -5,7 +5,7 @@ import {
   JWT,
   TrustchainOutdated,
 } from "../trustchain-types";
-import getApi from "./api";
+import { getCloudSyncApi } from "./api";
 import { Observable } from "rxjs";
 import { z, ZodType } from "zod";
 import { Cipher, makeCipher } from "./cipher";
@@ -35,7 +35,7 @@ export class CloudSyncSDK<
   private readonly getCurrentVersion: () => number | undefined;
   private readonly saveNewUpdate: (updateEvent: UpdateEvent<Data>) => Promise<void>;
   private readonly cipher: Cipher<Data>;
-  private readonly api: ReturnType<typeof getApi>;
+  private readonly api: ReturnType<typeof getCloudSyncApi>;
 
   constructor({
     apiBaseUrl,
@@ -61,7 +61,7 @@ export class CloudSyncSDK<
     this.push = this.decorateMethod("push", this.push);
     this.pull = this.decorateMethod("pull", this.pull);
     this.destroy = this.decorateMethod("destroy", this.destroy);
-    this.api = getApi(apiBaseUrl);
+    this.api = getCloudSyncApi(apiBaseUrl);
   }
 
   async push(

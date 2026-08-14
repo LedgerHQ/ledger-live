@@ -12,6 +12,13 @@ type AmountInputSectionProps = Readonly<{
   toggleLabel: string;
 }>;
 
+/** Kept in sync with the desktop mapping in `AmountMessageText.tsx`. */
+const MESSAGE_COLORS = {
+  error: "error",
+  warning: "warning",
+  info: "base",
+} as const;
+
 export function AmountInputSection({ viewModel, message, toggleLabel }: AmountInputSectionProps) {
   const styles = useStyleSheet(
     theme => ({
@@ -74,17 +81,7 @@ export function AmountInputSection({ viewModel, message, toggleLabel }: AmountIn
       </Text>
       <View style={styles.messageContainer}>
         {message ? (
-          <Text
-            typography="body3"
-            lx={{
-              color:
-                message.type === "error"
-                  ? "error"
-                  : message.type === "warning"
-                    ? "warning"
-                    : "muted",
-            }}
-          >
+          <Text typography="body3" lx={{ color: MESSAGE_COLORS[message.type] }}>
             <TranslatedError error={message.error} />
           </Text>
         ) : null}

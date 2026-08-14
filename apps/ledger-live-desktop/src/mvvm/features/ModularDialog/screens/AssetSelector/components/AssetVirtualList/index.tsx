@@ -10,6 +10,7 @@ type AssetVirtualListProps = {
   scrollToTop?: boolean;
   hasNextPage?: boolean;
   isDebuggingDuplicates?: boolean;
+  fillAvailableHeight?: boolean;
 };
 
 export const AssetVirtualList = ({
@@ -19,6 +20,7 @@ export const AssetVirtualList = ({
   scrollToTop,
   hasNextPage,
   isDebuggingDuplicates,
+  fillAvailableHeight,
 }: AssetVirtualListProps) => {
   const renderAssetItem = useCallback(
     (props: AssetType) => (
@@ -36,7 +38,7 @@ export const AssetVirtualList = ({
       scrollToTop={scrollToTop}
       hasNextPage={hasNextPage}
       testId="asset-selector-list-container"
-      className="pb-80"
+      className={fillAvailableHeight ? "h-auto min-h-0 flex-1 pb-80" : "pb-80"}
     />
   );
 };

@@ -26,7 +26,7 @@ describe("createContactAddressDetailSendIntent", () => {
 });
 
 describe("createContactAddressDetailEditIntent", () => {
-  it("exposes an edit-address intent for the selected address", () => {
+  it("exposes an edit-address intent with a signer-required requirement for the selected address", () => {
     const contact = mockContactWithAddress();
     const address = contact.addresses[0]!;
 
@@ -34,12 +34,16 @@ describe("createContactAddressDetailEditIntent", () => {
       type: "edit-address",
       contactId: contact.id,
       addressId: address.id,
+      editRequirement: {
+        type: "confirmation-required",
+        reason: "contact-has-address",
+      },
     });
   });
 });
 
 describe("createContactAddressDetailDeleteIntent", () => {
-  it("exposes a delete-address intent for the selected address", () => {
+  it("exposes a delete-address intent with a signer-required requirement for the selected address", () => {
     const contact = mockContactWithAddress();
     const address = contact.addresses[0]!;
 
@@ -47,6 +51,10 @@ describe("createContactAddressDetailDeleteIntent", () => {
       type: "delete-address",
       contactId: contact.id,
       addressId: address.id,
+      deleteRequirement: {
+        type: "confirmation-required",
+        reason: "contact-has-address",
+      },
     });
   });
 });

@@ -17,7 +17,7 @@ import { BitcoinAccount } from "@ledgerhq/live-common/families/bitcoin/types";
 import { ContinueFooter } from "./shared/ContinueFooter";
 import StepUfvk from "./steps/StepUfvk";
 import StepDevice, { StepDeviceFooter } from "./steps/StepDevice";
-import { ZcashSyncState } from "@ledgerhq/coin-bitcoin/chain-adapters/zcash/types";
+import { ZcashSyncState } from "@ledgerhq/coin-zcash/network/types";
 
 export type Data = {
   account: BitcoinAccount;
@@ -30,7 +30,7 @@ type OwnProps = {
   ufvk: string;
   ufvkExportError: Error | undefined | null;
   onStepIdChanged: (stepId: StepId) => void;
-  onUfvkChanged: (ufvk: string, error?: Error | null) => void;
+  onUfvkChanged: (ufvk: string, shieldedAddress?: string | null, error?: Error | null) => void;
   onRetry: () => void;
   birthday: string;
   invalidBirthday: boolean;

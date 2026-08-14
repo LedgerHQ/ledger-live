@@ -82,7 +82,7 @@ describe("getTransactionStatus", () => {
   const mockConfig = getMockedConfig();
   const mockedEstimatedFee: EstimateFeesResult = { tinybars: new BigNumber(1) };
   const mockedUsdRate = new BigNumber(1);
-  const mockPreload = { validators: [{ nodeId: 1 }, { nodeId: 2 }] } as HederaPreloadData;
+  const mockPreload = { validators: [{ id: "1" }, { id: "2" }] } as HederaPreloadData;
   const validRecipientAddress = "0.0.1234567";
   const validRecipientAddressWithChecksum = "0.0.1234567-ylkls";
 

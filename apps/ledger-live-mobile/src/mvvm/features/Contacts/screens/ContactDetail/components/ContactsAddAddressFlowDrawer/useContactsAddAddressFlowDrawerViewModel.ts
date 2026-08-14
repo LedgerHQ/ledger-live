@@ -1,4 +1,5 @@
-import { Platform } from "react-native";
+import { useCallback } from "react";
+import { Linking, Platform } from "react-native";
 import {
   CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME,
   DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME,
@@ -6,7 +7,9 @@ import {
 } from "@domain/entity-contact";
 import { useTranslation } from "~/context/Locale";
 import { shouldUseKeyboardAvoidance, useKeyboardVisible } from "~/logic/keyboardVisible";
-import { useContactsCurrencySelectionAdapter } from "../../../../hooks/useContactsCurrencySelectionAdapter";
+import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
+import { urls } from "~/utils/urls";
+import { useContactsCurrencySelectionAdapter } from "LLM/features/Contacts/hooks/useContactsCurrencySelectionAdapter";
 import type { ContactsAddAddressDrawerStep, ContactsAddAddressFlowDrawerProps } from "./types";
 
 function resolveDrawerStep(
@@ -40,6 +43,10 @@ export function useContactsAddAddressFlowDrawerViewModel({
   onQrCodeClick,
 }: ContactsAddAddressFlowDrawerProps) {
   const { t } = useTranslation();
+  const helpCenterUrl = useLocalizedUrl(urls.resources.helpCenter);
+  const handleSanctionedAddressLearnMore = useCallback(() => {
+    void Linking.openURL(helpCenterUrl);
+  }, [helpCenterUrl]);
   const { isKeyboardVisible, keyboardHeight } = useKeyboardVisible({
     eventTiming: Platform.OS === "ios" ? "will" : "did",
   });
@@ -70,6 +77,11 @@ export function useContactsAddAddressFlowDrawerViewModel({
               sanctionedAddress: t("contacts.addAddressEntry.sanctionedAddress"),
               validationUnavailable: t("contacts.addAddressEntry.validationUnavailable"),
               ensDisclaimer: t("contacts.addAddressEntry.ensDisclaimer"),
+            },
+            sanctionedAddressBanner: {
+              description: t("contacts.addAddressEntry.sanctioned.description"),
+              actionLabel: t("contacts.addAddressEntry.sanctioned.learnMore"),
+              onAction: handleSanctionedAddressLearnMore,
             },
             bottomOffset,
             onChangeText: onAddressChange,

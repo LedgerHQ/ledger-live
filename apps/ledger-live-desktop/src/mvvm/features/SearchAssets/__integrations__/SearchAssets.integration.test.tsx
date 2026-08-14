@@ -1,14 +1,16 @@
 import React from "react";
 import { render, screen, fireEvent } from "tests/testSetup";
-import { useAssetsData } from "@ledgerhq/live-common/dada-client/hooks/useAssetsData";
-import { useStablecoinTickers } from "@ledgerhq/live-common/dada-client/hooks/useStablecoinTickers";
+import { useAssetsData, useStablecoinTickers } from "@features/platform-aggregated-assets";
 import { useUsdToFiatRate } from "@ledgerhq/live-common/counterValues/hooks/useUsdToFiatRate";
-import { AssetsDataWithPagination } from "@ledgerhq/live-common/dada-client/state-manager/types";
+import type { AssetsDataWithPagination } from "@domain/api-aggregated-assets";
 import { useAssetSuggestionsViewModel } from "../hooks/useAssetSuggestionsViewModel";
 import { AssetSuggestionsSection } from "../AssetSuggestionsSection";
 
-jest.mock("@ledgerhq/live-common/dada-client/hooks/useAssetsData");
-jest.mock("@ledgerhq/live-common/dada-client/hooks/useStablecoinTickers");
+jest.mock("@features/platform-aggregated-assets", () => ({
+  ...jest.requireActual("@features/platform-aggregated-assets"),
+  useAssetsData: jest.fn(),
+  useStablecoinTickers: jest.fn(),
+}));
 jest.mock("@ledgerhq/live-common/counterValues/hooks/useUsdToFiatRate");
 
 const mockedUseAssetsData = jest.mocked(useAssetsData);

@@ -29,6 +29,7 @@ export type ContactsRenameContactLabels = Readonly<{
   namePlaceholder: string;
   namingDisclaimer: string;
   applyChanges: string;
+  confirmName: string;
   nameValidationErrors: Readonly<Record<ContactNameValidationErrorName, string>>;
 }>;
 

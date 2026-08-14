@@ -1,6 +1,5 @@
 import { useMemo } from "react";
-import { useAssetsData } from "@ledgerhq/live-common/dada-client/hooks/useAssetsData";
-import { selectCurrencyForMetaId } from "@ledgerhq/live-common/dada-client/utils/currencySelection";
+import { useAssetsData, selectCurrencyForMetaId } from "@features/platform-aggregated-assets";
 import VersionNumber from "react-native-version-number";
 import { Asset } from "~/types/asset";
 

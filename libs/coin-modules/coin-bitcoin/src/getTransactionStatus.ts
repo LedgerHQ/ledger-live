@@ -4,15 +4,8 @@ import {
   FeeNotLoaded,
   FeeTooHigh,
   FeeRequired,
-  InvalidAddress,
 } from "@ledgerhq/ledger-wallet-framework/errors";
-import {
-  DustLimit,
-  OpReturnDataSizeLimit,
-  TaprootNotActivated,
-  FeeTooLow,
-  ZcashSaplingRecipientNotSupported,
-} from "./errors";
+import { DustLimit, OpReturnDataSizeLimit, TaprootNotActivated, FeeTooLow } from "./errors";
 import { BigNumber } from "bignumber.js";
 import { log } from "@ledgerhq/logs";
 import type { Account, AccountBridge } from "@ledgerhq/types-live";
@@ -27,7 +20,6 @@ import { calculateFees, validateRecipient, isTaprootRecipient } from "./cache";
 import { OP_RETURN_DATA_SIZE_LIMIT } from "@ledgerhq/wallet-btc/crypto/base";
 import cryptoFactory from "@ledgerhq/wallet-btc/crypto/factory";
 import { computeDustAmount } from "@ledgerhq/wallet-btc/utils";
-import { classifyZcashRecipient } from "./chain-adapters/zcash/address";
 import { Currency } from "@ledgerhq/wallet-btc/index";
 import { isAddressSanctioned } from "@ledgerhq/ledger-wallet-framework/sanction/index";
 import { AddressesSanctionedError } from "@ledgerhq/ledger-wallet-framework/sanction/errors";
@@ -43,68 +35,20 @@ type FeeCalculation = {
   estimatedFees: BigNumber;
 };
 
-// Zcash shielded context: refine recipient validation only where the shared
-// validator gets it wrong. Gated on "sender" in transaction so the flag-off /
-// non-shielded path is unchanged. Returns whether the legacy Bitcoin fee
-// calculation must be skipped (a valid Orchard UA the legacy builder can't encode).
-//
-// We only OVERRIDE validateRecipient's result for a private (Orchard UA)
-// recipient. For transparent recipients we keep the shared result untouched:
-// classifyZcashRecipient checks only the prefix + length (not the Base58Check
-// checksum), so clearing errors here would let a malformed address slip through.
-//
-// NOTE: In the running app the Zcash chain adapter now handles the shielded
-// flows ("shielded", "shielded-to-transparent", "transparent-to-shielded") in
-// its own getTransactionStatus and short-circuits before this default path — so
-// the private-recipient (skip) branch below is only reachable when the adapter
-// is not registered. This refinement is still required for recipients that
-// resolve to transferType "transparent" (Sapling/invalid UAs), which the adapter
-// intentionally leaves to this legacy path, so it maps them to the precise error
-// (ZcashSaplingRecipientNotSupported / InvalidAddress).
-function refineZcashRecipient(
-  account: Account,
-  transaction: Transaction,
-  errors: ErrorMap,
-): boolean {
-  const isZcashShielded =
-    account.currency.id === "zcash" && "sender" in transaction && !!transaction.recipient;
-  if (!isZcashShielded) return false;
-
-  const cls = classifyZcashRecipient(transaction.recipient);
-  if ("error" in cls) {
-    errors.recipient =
-      cls.error === "sapling-unsupported"
-        ? new ZcashSaplingRecipientNotSupported()
-        : new InvalidAddress("", { currencyName: account.currency.name });
-    return false;
-  }
-
-  if (cls.recipientType === "private") {
-    delete errors.recipient;
-    return true;
-  }
-
-  return false;
-}
-
 async function validateRecipientAndChange(
   account: Account,
   transaction: Transaction,
   errors: ErrorMap,
   warnings: ErrorMap,
-): Promise<boolean> {
+): Promise<void> {
   const { recipientError, recipientWarning, changeAddressError, changeAddressWarning } =
     await validateRecipient(account.currency, transaction.recipient, transaction?.changeAddress);
 
   if (recipientError) errors.recipient = recipientError;
   if (recipientWarning) warnings.recipient = recipientWarning;
 
-  const skipLegacyFeeCalculation = refineZcashRecipient(account, transaction, errors);
-
   if (changeAddressError) errors.changeAddress = changeAddressError;
   if (changeAddressWarning) warnings.changeAddress = changeAddressWarning;
-
-  return skipLegacyFeeCalculation;
 }
 
 // Safeguard before Taproot activation
@@ -140,7 +84,6 @@ async function computeFees(
   account: Account,
   transaction: Transaction,
   errors: ErrorMap,
-  skipLegacyFeeCalculation: boolean,
 ): Promise<FeeCalculation> {
   const empty: FeeCalculation = {
     txInputs: [],
@@ -162,7 +105,7 @@ async function computeFees(
     errors.feePerByte = new FeeTooLow();
     return empty;
   }
-  if (!transaction.recipient || errors.recipient || skipLegacyFeeCalculation) {
+  if (!transaction.recipient || errors.recipient) {
     return empty;
   }
 
@@ -232,21 +175,11 @@ export const getTransactionStatus: AccountBridge<
   const warnings: ErrorMap = {};
   const useAllAmount = !!transaction.useAllAmount;
 
-  const skipLegacyFeeCalculation = await validateRecipientAndChange(
-    account,
-    transaction,
-    errors,
-    warnings,
-  );
+  await validateRecipientAndChange(account, transaction, errors, warnings);
 
   await applyTaprootSafeguard(account, transaction, errors);
 
-  const { txInputs, txOutputs, estimatedFees } = await computeFees(
-    account,
-    transaction,
-    errors,
-    skipLegacyFeeCalculation,
-  );
+  const { txInputs, txOutputs, estimatedFees } = await computeFees(account, transaction, errors);
 
   const sumOfInputs = txInputs.reduce((sum, input) => sum.plus(input.value ?? 0), new BigNumber(0));
   const sumOfChanges = txOutputs

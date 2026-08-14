@@ -1,0 +1,16 @@
+{
+  "extends": "../../tsconfig.base",
+  "compilerOptions": {
+    "declaration": true,
+    "declarationMap": true,
+    "noImplicitAny": false,
+    "noImplicitThis": false,
+    "isolatedModules": false,
+    "lib": ["DOM", "ES2017"],
+    "target": "ES2022",
+    "outDir": "lib",
+    "rootDir": "src",
+    "types": ["node", "react"]
+  },
+  "include": ["src/**/*"]
+}

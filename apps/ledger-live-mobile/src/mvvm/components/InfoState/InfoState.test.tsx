@@ -2,7 +2,7 @@ import React from "react";
 import { render, screen } from "@tests/test-renderer";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import { Search } from "@ledgerhq/lumen-ui-rnative/symbols";
-import { BottomSheetBackgroundContext } from "LLM/contexts/BottomSheetBackgroundContext";
+import { BottomSheetBackgroundContext } from "@shared/ui-queued-bottom-sheet";
 import { InfoState } from ".";
 import type { InfoStatePreset } from "./types";
 

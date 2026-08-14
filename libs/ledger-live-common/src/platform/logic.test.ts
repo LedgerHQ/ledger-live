@@ -35,11 +35,10 @@ import {
 import { RawPlatformTransaction } from "./rawTypes";
 import * as serializers from "./serializers";
 import { LiveAppManifest } from "./types";
-import { initialState } from "@ledgerhq/live-wallet/store";
 import { TrackingAPI } from "./tracking";
 
 describe("receiveOnAccountLogic", () => {
-  const walletState = initialState;
+  const walletState = new Map<string, string>();
   // Given
   const mockPlatformReceiveRequested = jest.fn();
   const mockPlatformReceiveFail = jest.fn();

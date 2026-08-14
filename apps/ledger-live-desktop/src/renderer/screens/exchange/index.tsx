@@ -82,11 +82,15 @@ const LiveAppExchange = ({ appId }: { appId: string }) => {
         const parentAccount = isTokenAccount(account)
           ? getParentAccount(account, accounts)
           : undefined;
-        urlParams.account = accountToWalletAPIAccount(walletState, account, parentAccount).id;
+        urlParams.account = accountToWalletAPIAccount(
+          walletState.accountNames,
+          account,
+          parentAccount,
+        ).id;
       }
     }
     return urlParams;
-  }, [accounts, manifest?.apiVersion, urlParams, walletState]);
+  }, [accounts, manifest?.apiVersion, urlParams, walletState.accountNames]);
 
   const { updateManifests } = useRemoteLiveAppContext();
 

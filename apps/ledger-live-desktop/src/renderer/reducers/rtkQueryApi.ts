@@ -1,16 +1,22 @@
 import type { Middleware, Reducer, Tuple } from "@reduxjs/toolkit";
 import { ofacGeoBlockApi } from "@ledgerhq/live-common/api/ofacGeoBlockApi";
-import { assetsDataApi } from "@ledgerhq/live-common/dada-client/state-manager/api";
 import { marketApi } from "@ledgerhq/live-common/market/state-manager/api";
 import { cgApi } from "@ledgerhq/live-common/cg-client/state-manager/api";
-import { calApi, coinMarketCapApi, countervaluesApi, pushDevicesApi } from "@shared/api-services";
+import {
+  calApi,
+  coinMarketCapApi,
+  countervaluesApi,
+  dadaApi,
+  pushDevicesApi,
+  swapApi,
+} from "@shared/api-services";
 import { payCardApi } from "@domain/api-pay-card";
 import { counterValuesApi } from "@ledgerhq/live-common/counterValues/state-manager/api";
 
 // Add new RTK Query API here. `@shared/api-services` entries own one backend each; the endpoints are
 // injected by the `@domain/api-*` use-case packages, which the view-models import directly.
 const APIs = {
-  [assetsDataApi.reducerPath]: assetsDataApi,
+  [dadaApi.reducerPath]: dadaApi,
   [calApi.reducerPath]: calApi,
   [coinMarketCapApi.reducerPath]: coinMarketCapApi,
   [countervaluesApi.reducerPath]: countervaluesApi,
@@ -20,6 +26,7 @@ const APIs = {
   [payCardApi.reducerPath]: payCardApi,
   [ofacGeoBlockApi.reducerPath]: ofacGeoBlockApi,
   [pushDevicesApi.reducerPath]: pushDevicesApi,
+  [swapApi.reducerPath]: swapApi,
 };
 
 /*

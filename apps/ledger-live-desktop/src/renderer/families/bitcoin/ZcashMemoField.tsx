@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import type { Account } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/bitcoin/types";
-import type { ZcashTransaction } from "@ledgerhq/coin-bitcoin/chain-adapters/zcash/types";
+import type { Transaction as ZcashTransaction } from "@ledgerhq/coin-zcash/types";
 import MemoTagField from "LLD/features/MemoTag/components/MemoTagField";
 
 // Memo can only be attached to shielded outputs (512 bytes max, ZIP-302).
@@ -35,12 +35,12 @@ type Props = {
 const ZcashMemoField = ({ account, transaction, status, onChange, autoFocus }: Props) => {
   const { t } = useTranslation();
   const bridge = useAccountBridge<ZcashTransaction>(account);
-  const tx = transaction as ZcashTransaction;
+  const tx = transaction as unknown as ZcashTransaction;
 
   const onMemoChange = useCallback(
     (memo: string) => {
       const truncated = truncateToBytes(memo, MAX_MEMO_BYTES);
-      onChange(bridge.updateTransaction(tx, { memo: truncated }) as Transaction);
+      onChange(bridge.updateTransaction(tx, { memo: truncated }) as unknown as Transaction);
     },
     [onChange, bridge, tx],
   );

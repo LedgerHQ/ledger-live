@@ -5,7 +5,7 @@ import Animated from "react-native-reanimated";
 import { FlatList } from "react-native-gesture-handler";
 import { useWalletV4TourDrawerViewModel } from "./hooks/useWalletV4TourDrawerViewModel";
 import { BottomSheetHeader, BottomSheetView } from "@ledgerhq/lumen-ui-rnative";
-import { default as QueuedBottomSheet } from "LLM/components/QueuedDrawer/QueuedBottomSheet";
+import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { SlideItem } from "./components/SlideItem";
 import { SlideFooterButton } from "./components/SlideFooterButton";
 import { Platform, StyleSheet } from "react-native";

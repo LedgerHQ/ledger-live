@@ -1,6 +1,6 @@
 {
   "name": "@features/flow-market-banner",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "private": true,
   "main": "src/index.ts",
   "types": "src/index.ts",
@@ -26,7 +26,7 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@features/platform-jest-config": "workspace:*",
+    "@support/jest-features-flow": "workspace:*",
     "tailwindcss": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",

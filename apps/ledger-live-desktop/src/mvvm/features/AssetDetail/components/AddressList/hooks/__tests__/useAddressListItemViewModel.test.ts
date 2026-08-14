@@ -1,5 +1,5 @@
 import type { Account } from "@ledgerhq/types-live";
-import type { WalletState } from "@ledgerhq/live-wallet/store";
+import type { WalletState } from "~/renderer/reducers/wallet";
 import { renderHook } from "tests/testSetup";
 import { genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
@@ -10,7 +10,7 @@ import { ETH_ACCOUNT } from "LLD/features/__mocks__/accounts.mock";
 const walletStateWithAccountName = (accountId: string, name: string): WalletState => ({
   accountNames: new Map([[accountId, name]]),
   starredAccountIds: new Set(),
-  walletSyncState: { data: null, version: 0 },
+  walletSync: { walletSyncState: { data: null, version: 0 } },
   nonImportedAccountInfos: [],
   recentAddresses: {},
 });

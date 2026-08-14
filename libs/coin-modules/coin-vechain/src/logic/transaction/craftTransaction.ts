@@ -12,8 +12,8 @@ import {
 } from "../../common-logic";
 import { estimateGas } from "../../common-logic/estimateGas";
 import { getThorClient } from "../../common-logic/getThorClient";
+import { getChainTag } from "../../config";
 import { getAccount, getBlockRef } from "../../network";
-import { MAINNET_CHAIN_TAG } from "../../types";
 import type { VechainSDKTransactionBody, VechainSDKTransactionClause } from "../../types";
 
 const EXPIRATION = 18;
@@ -113,7 +113,7 @@ export async function craftTransaction(
   }
 
   const body: VechainSDKTransactionBody = {
-    chainTag: MAINNET_CHAIN_TAG,
+    chainTag: getChainTag(),
     blockRef,
     expiration: EXPIRATION,
     clauses,

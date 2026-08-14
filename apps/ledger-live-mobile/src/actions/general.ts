@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from "~/context/hooks";
 import {
   flattenSortAccounts,
   sortAccountsComparatorFromOrder,
-} from "@ledgerhq/live-wallet/ordering";
+} from "@ledgerhq/live-common/account/ordering";
 import type { FlattenAccountsOptions } from "@ledgerhq/live-common/account/index";
 import type { TrackingPair } from "@ledgerhq/live-countervalues/types";
 import {
@@ -64,7 +64,7 @@ export function useSortAccountsComparator() {
   const accounts = useSelector(orderAccountsSelector);
   const calc = useCalculateCountervalueCallback();
   const walletState = useSelector(walletSelector);
-  return sortAccountsComparatorFromOrder(accounts, walletState, calc);
+  return sortAccountsComparatorFromOrder(accounts, walletState.accountNames, calc);
 }
 export function useFlattenSortAccounts(options?: FlattenAccountsOptions) {
   const accounts = useSelector(accountsSelector);

@@ -77,16 +77,15 @@ reconciliation across instances; import accounts, rename them, etc.
 
 ## Develop a new WalletSync module
 
-The modular [WalletSyncDataManager](./05-wallet-sync-data-manager.md#a-modular-architecture)
+The modular [CloudSyncDataManager](./05-wallet-sync-data-manager.md#a-modular-architecture)
 design exists precisely so new synced features are cheap to add.
 
-1. Read the [WalletSyncDataManager](./05-wallet-sync-data-manager.md) doc first.
-2. Implement the interface (`schema`, `diffLocalToDistant`, `resolveIncrementalUpdate`,
-   `applyUpdate`) for your slice of data in `libs/live-wallet/src/walletsync/modules/`.
-3. Register it in [`root.ts`](../../libs/live-wallet/src/walletsync/root.ts) — types are inferred
-   automatically by the aggregator.
-4. Add state generators under `src/walletsync/__mocks__/modules/` (see the `__mocks__/README.md`)
-   so the [generic tests](./test-strategy.md) exercise your module, plus a specific test.
+1. Read the [CloudSyncDataManager](./05-wallet-sync-data-manager.md) doc first.
+2. Create a `domain/entity/<name>` package with `schema.ts`, `slice.ts` and `cloudSyncModule.ts`
+   implementing the interface (`schema`, `diffLocalToDistant`, `resolveIncrementalUpdate`,
+   `applyUpdate`). See [`domain/entity/account-name`](../../domain/entity/account-name) for reference.
+3. Register it in the app's `createAggregator({ ... })` call — types are inferred automatically.
+4. Add unit tests for your module (see [`test-strategy.md`](./test-strategy.md)).
 
 > [!TIP]
 > Video walkthrough — implementing an `accountFavorites` module in under 30 minutes:

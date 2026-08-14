@@ -1,5 +1,51 @@
 # @ledgerhq/live-wallet
 
+## 0.19.0
+
+### Minor Changes
+
+- [#20423](https://github.com/LedgerHQ/ledger-live/pull/20423) [`c4a8141`](https://github.com/LedgerHQ/ledger-live/commit/c4a8141369e63e875fb5bfc9aef3f53362150338) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Fix Ledger Sync surfacing a 401 instead of refreshing the expired JWT
+
+  `@shared/cloud-sync` threw a bare `Error` carrying only `HTTP <status> on <method> <url>`, dropping
+  both the HTTP status and the backend's response body. The trustchain JWT recovery in
+  `genericWithJWT` could not classify it, so an expired token was rethrown instead of being refreshed
+  and retried: the 401 reached the UI, and on mobile it fed the wallet-sync error into the account
+  sync indicator ("Some account data couldn't load").
+
+  `CloudSyncHttpError` now carries `status`, `url`, `method` and the backend's verbatim message, and
+  `auth.ts` classifies 4xx from the numeric `status` rather than from the `LedgerAPI4xx` class name,
+  so recovery no longer depends on which transport made the call. The error contract expected by the
+  trustchain layer is documented in `auth.ts`; a transport whose errors are not `Error`-shaped must
+  remap to it at its boundary.
+
+### Patch Changes
+
+- Updated dependencies [[`1e9db75`](https://github.com/LedgerHQ/ledger-live/commit/1e9db750a4882f9db7f95278e33c00262487b37b)]:
+  - @ledgerhq/types-devices@6.32.0
+
+## 0.19.0-next.0
+
+### Minor Changes
+
+- [#20423](https://github.com/LedgerHQ/ledger-live/pull/20423) [`c4a8141`](https://github.com/LedgerHQ/ledger-live/commit/c4a8141369e63e875fb5bfc9aef3f53362150338) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Fix Ledger Sync surfacing a 401 instead of refreshing the expired JWT
+
+  `@shared/cloud-sync` threw a bare `Error` carrying only `HTTP <status> on <method> <url>`, dropping
+  both the HTTP status and the backend's response body. The trustchain JWT recovery in
+  `genericWithJWT` could not classify it, so an expired token was rethrown instead of being refreshed
+  and retried: the 401 reached the UI, and on mobile it fed the wallet-sync error into the account
+  sync indicator ("Some account data couldn't load").
+
+  `CloudSyncHttpError` now carries `status`, `url`, `method` and the backend's verbatim message, and
+  `auth.ts` classifies 4xx from the numeric `status` rather than from the `LedgerAPI4xx` class name,
+  so recovery no longer depends on which transport made the call. The error contract expected by the
+  trustchain layer is documented in `auth.ts`; a transport whose errors are not `Error`-shaped must
+  remap to it at its boundary.
+
+### Patch Changes
+
+- Updated dependencies [[`1e9db75`](https://github.com/LedgerHQ/ledger-live/commit/1e9db750a4882f9db7f95278e33c00262487b37b)]:
+  - @ledgerhq/types-devices@6.32.0-next.0
+
 ## 0.18.0
 
 ### Minor Changes

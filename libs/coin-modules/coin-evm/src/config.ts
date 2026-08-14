@@ -93,6 +93,14 @@ export type EvmConfig = {
    */
   feeHistoryRewardPercentile?: number;
   /**
+   * Calldata floor cost, used as a gas validation lower bound. Default to 10 and 1 (EIP-7623).
+   * EIP-7976 raises them to 16 and 4, i.e. 64 gas per byte — set both, or zero-byte calldata is
+   * under-estimated. 64 is the resulting gas per byte, not a value to set here.
+   * @see https://eips.ethereum.org/EIPS/eip-7976
+   */
+  calldataFloorGasPerToken?: number;
+  calldataFloorZeroByteTokens?: number;
+  /**
    * Ordered list of internal-tx sources for `getBlock`. Built via `internalTxSourcesFromList()`.
    * Defaults to explorer-first, then node traces, then `empty` (resolves only when no
    * real trace runtime error was remembered; trace failures still propagate for retry).

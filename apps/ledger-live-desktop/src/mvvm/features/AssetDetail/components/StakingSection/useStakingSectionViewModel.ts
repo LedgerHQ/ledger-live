@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from "react";
 import type { DistributionItem } from "@ledgerhq/types-live";
-import { useInterestRatesByCurrencies } from "@ledgerhq/live-common/dada-client/hooks/useInterestRatesByCurrencies";
+import { useInterestRatesByCurrencies } from "@features/platform-aggregated-assets";
 import { getInterestRateForAsset } from "@ledgerhq/live-common/modularDrawer/utils/getInterestRateForAsset";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "LLD/hooks/redux";

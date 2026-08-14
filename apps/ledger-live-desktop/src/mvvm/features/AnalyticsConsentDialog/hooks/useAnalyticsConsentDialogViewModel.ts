@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import logger from "~/renderer/logger";
 import { useTranslation } from "react-i18next";
-import { useMatch } from "react-router";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import {
   analyticsConsentInfoSelector,
@@ -37,8 +36,6 @@ export function useAnalyticsConsentDialogViewModel() {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const privacyPolicyUrl = useLocalizedUrl(urls.privacyPolicy);
-  const portfolioRouteMatch = useMatch({ path: "/", end: true });
-  const isPortfolioRouteFocused = Boolean(portfolioRouteMatch);
 
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const consentInfo = useSelector(analyticsConsentInfoSelector);
@@ -83,7 +80,7 @@ export function useAnalyticsConsentDialogViewModel() {
   };
 
   useEffect(() => {
-    if (!isPortfolioRouteFocused || !shouldOffer) {
+    if (!shouldOffer) {
       setPhase(current => {
         if (current !== "closed") {
           track("drawer_closed", dialogClosedPayload);
@@ -96,7 +93,7 @@ export function useAnalyticsConsentDialogViewModel() {
       if (current === "preferences") return current;
       return resolveAnalyticsConsentPhase(current, decision, shareAnalytics);
     });
-  }, [isPortfolioRouteFocused, shouldOffer, decision, shareAnalytics]);
+  }, [shouldOffer, decision, shareAnalytics]);
 
   const persistConsentCompletion = async () => {
     dispatch(

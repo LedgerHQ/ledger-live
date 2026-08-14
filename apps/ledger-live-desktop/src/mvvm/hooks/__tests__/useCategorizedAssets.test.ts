@@ -1,9 +1,12 @@
 import { renderHook, waitFor, withFlagOverrides } from "tests/testSetup";
-import { useStockAssetIds } from "@ledgerhq/live-common/dada-client/hooks/useStockAssetIds";
+import { useStockAssetIds } from "@features/platform-aggregated-assets";
 import { useCategorizedAssetsFromPortfolio } from "../useCategorizedAssets";
 import { BTC_ACCOUNT, ETH_ACCOUNT_WITH_USDC } from "LLD/features/__mocks__/accounts.mock";
 
-jest.mock("@ledgerhq/live-common/dada-client/hooks/useStockAssetIds");
+jest.mock("@features/platform-aggregated-assets", () => ({
+  ...jest.requireActual("@features/platform-aggregated-assets"),
+  useStockAssetIds: jest.fn(),
+}));
 
 const mockedUseStockAssetIds = jest.mocked(useStockAssetIds);
 

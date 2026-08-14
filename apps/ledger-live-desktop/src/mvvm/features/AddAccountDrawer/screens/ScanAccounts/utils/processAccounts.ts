@@ -1,4 +1,4 @@
-import { groupAddAccounts } from "@ledgerhq/live-wallet/addAccounts";
+import { groupAddAccounts } from "@ledgerhq/live-common/account/addAccounts";
 import { Account, DerivationMode } from "@ledgerhq/types-live";
 
 type IsAccountEmpty = (account: Account) => boolean;

@@ -50,6 +50,7 @@ import {
   finalizeTransactionJob,
   broadcastTransactionJob,
   transactionDetailsJob,
+  deriveShieldedAddress,
 } from "./engine";
 import { rehydrateSyncResult } from "./serialization/rehydrate";
 import { createSyncTimeEstimator } from "./sync-estimator";
@@ -88,6 +89,7 @@ export type ZCashClientDeps = {
     network: string,
     ufvk?: string,
   ) => Promise<TransactionDetailsResult[]>;
+  deriveShieldedAddress: (ufvk: string) => Promise<string>;
 };
 
 // ── DI factory (for tests) ──────────────────────────────────────────────
@@ -156,6 +158,10 @@ export function createZCashClientWith(deps: ZCashClientDeps, args: ZCashClientAr
       ): Promise<TransactionDetailsResult[]> =>
         transactionDetailsJob(grpcUrl, requests, network, ufvk),
     }),
+
+    deriveShieldedAddress(ufvk: string): Promise<string> {
+      return deps.deriveShieldedAddress(ufvk);
+    },
 
     syncShielded(syncArgs: SyncShieldedArgs): Observable<ShieldedSyncResult> {
       return new Observable<ShieldedSyncResult>(subscriber => {
@@ -233,6 +239,7 @@ const defaultDeps: ZCashClientDeps = {
   finalizeTransactionJob,
   broadcastTransactionJob,
   transactionDetailsJob,
+  deriveShieldedAddress,
 };
 
 // ── Convenience factory (production — deps pre-wired) ───────────────────

@@ -12,6 +12,7 @@ import type { ContactsAddAddressFlowDialogProps } from "./types";
 export function ContactsAddAddressFlowDialog({
   state,
   entryLabels,
+  sanctionedAddressBanner,
   nameLabels,
   reviewLabels,
   onAddressChange,
@@ -27,8 +28,10 @@ export function ContactsAddAddressFlowDialog({
     return null;
   }
 
+  const isSelectingCurrency = state.status === "selectingCurrency";
+
   return (
-    <ModularDialogFlow onClose={onClose}>
+    <ModularDialogFlow fillAvailableHeight={isSelectingCurrency} onClose={onClose}>
       {modularDialog => {
         const currentStep = resolveAddAddressWebFlowStep(state);
         const flowContent =
@@ -38,6 +41,7 @@ export function ContactsAddAddressFlowDialog({
             <ContactsAddAddressFlowContent
               completionLabels={reviewLabels}
               entryLabels={entryLabels}
+              sanctionedAddressBanner={sanctionedAddressBanner}
               nameLabels={nameLabels}
               onAddressChange={onAddressChange}
               onAddressLabelChange={onAddressLabelChange}
@@ -95,9 +99,12 @@ export function ContactsAddAddressFlowDialog({
           <DialogFlow
             currentStep={currentStep}
             defaultOptions={{
-              dialogBodyProps: { className: "!mb-0 px-24 pb-24 pt-12" },
+              dialogBodyProps: {
+                className: `!mb-0 ${isSelectingCurrency ? "px-16 pb-0" : "px-24 pb-24"} pt-12`,
+              },
               dialogContentProps: { className: "w-400 bg-canvas-sheet pb-0" },
             }}
+            height={isSelectingCurrency ? "fixed" : undefined}
             isOpen
             onBack={shouldUseAddAddressFlowBackNavigation(state) ? onBack : modularDialog.onBack}
             onClose={onClose}

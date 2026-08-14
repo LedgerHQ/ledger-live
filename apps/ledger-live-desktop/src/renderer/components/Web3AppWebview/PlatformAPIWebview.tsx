@@ -98,7 +98,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     const [widgetLoaded, setWidgetLoaded] = useState(false);
 
     const walletState = useSelector(walletSelector);
-    const listAccounts = useListPlatformAccounts(walletState, accounts);
+    const listAccounts = useListPlatformAccounts(walletState.accountNames, accounts);
     const { deactivatedCurrencyIds: _deactivatedCurrencyIds } = useFeatureFlaggedCurrencies(
       !!useEnv("MOCK"),
     );
@@ -133,20 +133,26 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         dispatch(setSourceValue(source));
 
         return requestAccountLogic(
-          walletState,
+          walletState.accountNames,
           { manifest },
           request,
           deactivatedCurrencyIds,
           openAssetAndAccountSelector,
         );
       },
-      [manifest, dispatch, walletState, deactivatedCurrencyIds, openAssetAndAccountSelector],
+      [
+        manifest,
+        dispatch,
+        walletState.accountNames,
+        deactivatedCurrencyIds,
+        openAssetAndAccountSelector,
+      ],
     );
 
     const receiveOnAccount = useCallback(
       ({ accountId }: { accountId: string }) =>
         receiveOnAccountLogic(
-          walletState,
+          walletState.accountNames,
           { manifest, accounts, tracking },
           accountId,
           (account, parentAccount, accountAddress) => {
@@ -174,7 +180,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
             );
           },
         ),
-      [walletState, manifest, accounts, dispatch, tracking],
+      [walletState.accountNames, manifest, accounts, dispatch, tracking],
     );
 
     const signTransaction = useCallback(

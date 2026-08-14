@@ -3,6 +3,7 @@ import { MemoryRouter, Route, Routes } from "react-router";
 import type { ContactId } from "@domain/entity-contact";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { resolveEligibleAddressCurrencyIds } from "@features/flow-contacts";
+import { isAddressSanctioned } from "@ledgerhq/ledger-wallet-framework/sanction/index";
 import {
   mockContact,
   mockMeContact,
@@ -22,15 +23,22 @@ import { useContactsViewModel } from "LLD/features/Contacts/screens/Contacts/use
 import ContextMenuContext from "LLD/features/MyWallet/components/ContextMenuContext";
 import { ContextMenu } from "LLD/features/MyWallet/components/ContextMenu";
 import { CONTEXT_MENU_VIEW } from "LLD/features/MyWallet/components/ContextMenu/types";
+import { openURL } from "~/renderer/linking";
 
 const mockNavigate = jest.fn();
 const mockClose = jest.fn();
+const mockValidateAddress = jest.fn();
+const mockOpenSendFlow = jest.fn();
 const meContactId = mockMeContact().id;
 const savedContactId = mockContact({ id: "contact-ada" }).id;
 
 jest.mock("react-router", () => ({
   ...jest.requireActual<typeof import("react-router")>("react-router"),
   useNavigate: () => mockNavigate,
+}));
+
+jest.mock("LLD/features/Send/hooks/useOpenSendFlow", () => ({
+  useOpenSendFlow: () => mockOpenSendFlow,
 }));
 
 jest.mock("~/renderer/store", () => ({
@@ -44,8 +52,16 @@ jest.mock("@ledgerhq/live-common/bridge/index", () => ({
     "@ledgerhq/live-common/bridge/index",
   ),
   getAccountBridgeByFamily: jest.fn().mockResolvedValue({
-    validateAddress: jest.fn().mockResolvedValue(true),
+    validateAddress: (...args: unknown[]) => mockValidateAddress(...args),
   }),
+}));
+
+jest.mock("@ledgerhq/ledger-wallet-framework/sanction/index", () => ({
+  isAddressSanctioned: jest.fn(),
+}));
+
+jest.mock("~/renderer/linking", () => ({
+  openURL: jest.fn(),
 }));
 
 const contextMenuValue = {
@@ -128,6 +144,9 @@ function ContactsViewModelProbe({
       <button type="button" onClick={viewModel.detail?.onAddAddress} disabled={!viewModel.detail}>
         Start Add Address
       </button>
+      <button type="button" onClick={viewModel.addAddressFlowDialog.onContinueFromReview}>
+        Continue address review
+      </button>
     </>
   );
 }
@@ -135,6 +154,8 @@ function ContactsViewModelProbe({
 describe("Contacts integration", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockValidateAddress.mockResolvedValue(true);
+    jest.mocked(isAddressSanctioned).mockResolvedValue(false);
   });
 
   it("should not render the Contacts button when lwdContacts is disabled", () => {
@@ -423,6 +444,19 @@ describe("Contacts integration", () => {
     const dialog = screen.getByRole("dialog");
     expect(dialog).toBeVisible();
 
+    await waitFor(() => {
+      expect(screen.getByTestId("asset-selector-list-container")).toBeVisible();
+    });
+
+    const assetList = screen.getByTestId("asset-selector-list-container");
+    expect(dialog).toHaveClass("h-560");
+    expect(screen.getByTestId("modular-dialog-screen-ASSET_SELECTION")).toHaveClass("flex-1");
+    expect(assetList).toHaveClass("h-auto");
+    expect(assetList).toHaveClass("min-h-0");
+    expect(assetList).toHaveClass("flex-1");
+    expect(dialog.querySelector('[data-slot="dialog-body"]')).toHaveClass("pb-0");
+    expect(dialog.querySelector('[data-slot="dialog-body"]')).toHaveClass("px-16");
+
     act(() => {
       store
         .getState()
@@ -437,6 +471,8 @@ describe("Contacts integration", () => {
     expect(confirmationButton).toBeDisabled();
     expect(confirmationButton.querySelector("svg")).not.toBeNull();
     expect(dialog.querySelector('[data-slot="dialog-body"]')).toHaveClass("!mb-0");
+    expect(dialog.querySelector('[data-slot="dialog-body"]')).toHaveClass("pb-24");
+    expect(dialog.querySelector('[data-slot="dialog-body"]')).toHaveClass("px-24");
   });
 
   it("should render the address and its prefilled name together before review", async () => {
@@ -469,6 +505,15 @@ describe("Contacts integration", () => {
     expect(addressNameInput).toHaveAttribute("maxlength", "32");
     expect(screen.getByTestId("contacts-add-address-confirm")).toBeDisabled();
 
+    const namingDisclaimer = screen.getByRole("button", {
+      name: "Address name information",
+    });
+    await user.hover(namingDisclaimer);
+    expect(await screen.findByRole("tooltip")).toHaveTextContent(
+      "This name appears on your Ledger device when you send to this address. Give it a name that makes it easy to find.",
+    );
+    expect(addressNameInput).toHaveValue("Ethereum");
+
     fireEvent.change(addressInput, {
       target: { value: "0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034" },
     });
@@ -498,7 +543,116 @@ describe("Contacts integration", () => {
     await user.click(screen.getByTestId("contacts-add-address-confirm"));
     await user.click(screen.getByTestId("contacts-add-address-review-continue"));
 
-    expect(screen.getByTestId("contacts-add-address-success")).toBeVisible();
+    await waitFor(() => {
+      expect(screen.getByTestId("contacts-add-address-success")).toBeVisible();
+    });
+
+    await user.click(screen.getByTestId("contacts-add-address-success-continue"));
+
+    await waitFor(() => {
+      expect(screen.queryByTestId("contacts-add-address-success")).not.toBeInTheDocument();
+      expect(
+        within(screen.getByTestId("contacts-detail-screen")).getByText("1 address"),
+      ).toBeVisible();
+      expect(screen.getByTestId("contacts-detail-network-group-ethereum")).toBeVisible();
+      expect(
+        within(screen.getByTestId("contacts-detail-screen")).getByText("Exchange"),
+      ).toBeVisible();
+    });
+  });
+
+  it("should reopen currency selection when going back from address entry", async () => {
+    const { store, user } = renderContactsScreen();
+
+    await user.click(screen.getByTestId("contacts-me-row"));
+    await user.click(screen.getByTestId("contacts-detail-add-address"));
+    act(() => {
+      store
+        .getState()
+        .modularDialog.dialogParams?.onAssetSelected?.(getCryptoCurrencyById("ethereum"));
+    });
+
+    await screen.findByTestId("contacts-add-address-input");
+    await user.click(
+      screen.getByRole("button", { name: "components.dialogHeader.goBackAriaLabel" }),
+    );
+
+    await waitFor(() => {
+      expect(store.getState().modularDialog.isOpen).toBe(true);
+    });
+  });
+
+  it("should ignore review continuation when the address flow is closed", async () => {
+    const { user } = render(
+      <MemoryRouter initialEntries={["/contacts"]}>
+        <ContactsViewModelProbe contactId={meContactId} contactType="me" />
+      </MemoryRouter>,
+      {
+        skipRouter: true,
+        initialState: contactsPageInitialState(),
+      },
+    );
+
+    await user.click(screen.getByRole("button", { name: "Continue address review" }));
+
+    expect(screen.getByTestId("contacts-add-address-flow-state")).toHaveTextContent("closed");
+  });
+
+  it("should render an invalid-format helper and block address confirmation", async () => {
+    mockValidateAddress.mockResolvedValue(false);
+    const { store, user } = renderContactsScreen();
+
+    await user.click(screen.getByTestId("contacts-me-row"));
+    await user.click(screen.getByTestId("contacts-detail-add-address"));
+    act(() => {
+      store
+        .getState()
+        .modularDialog.dialogParams?.onAssetSelected?.(getCryptoCurrencyById("ethereum"));
+    });
+
+    const addressInput = await screen.findByTestId("contacts-add-address-input");
+    fireEvent.change(addressInput, {
+      target: { value: "0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034" },
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText("Incorrect address format.")).toBeVisible();
+      expect(screen.getByTestId("contacts-add-address-confirm")).toBeDisabled();
+    });
+    expect(screen.queryByTestId("contacts-sanctioned-address-banner")).not.toBeInTheDocument();
+  });
+
+  it("should render sanctioned feedback, block confirmation, and open the Help Center", async () => {
+    jest.mocked(isAddressSanctioned).mockResolvedValue(true);
+    const { store, user } = renderContactsScreen();
+
+    await user.click(screen.getByTestId("contacts-me-row"));
+    await user.click(screen.getByTestId("contacts-detail-add-address"));
+    act(() => {
+      store
+        .getState()
+        .modularDialog.dialogParams?.onAssetSelected?.(getCryptoCurrencyById("ethereum"));
+    });
+
+    const addressInput = await screen.findByTestId("contacts-add-address-input");
+    fireEvent.change(addressInput, {
+      target: { value: "0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034" },
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText("Sanctioned address.")).toBeVisible();
+      expect(screen.getByTestId("contacts-sanctioned-address-banner")).toBeVisible();
+      expect(
+        screen.getByText(
+          "This wallet address is sanctioned by international laws and regulations.",
+        ),
+      ).toBeVisible();
+      expect(screen.getByTestId("contacts-add-address-confirm")).toBeDisabled();
+    });
+
+    await user.click(screen.getByRole("button", { name: "Learn more" }));
+
+    expect(openURL).toHaveBeenCalledTimes(1);
   });
 
   it("should expose the Add Address session started for Me", async () => {
@@ -746,6 +900,115 @@ describe("Contacts integration", () => {
       expect(screen.queryByTestId("contacts-delete-contact-dialog")).not.toBeInTheDocument();
       expect(screen.queryByTestId("contacts-saved-row-contact-ada")).not.toBeInTheDocument();
       expect(screen.getByTestId("contacts-detail-name")).toHaveTextContent("Me");
+    });
+  });
+
+  it("should open the send flow from the address detail dialog", async () => {
+    const { user } = renderContactsScreen(populatedContactsPageState);
+
+    await user.click(screen.getByTestId("contacts-saved-row-contact-ben"));
+    await user.click(screen.getByTestId("contacts-detail-address-row-address-ethereum"));
+    await user.click(screen.getByTestId("contacts-address-detail-send"));
+
+    expect(mockOpenSendFlow).toHaveBeenCalledWith({
+      currencyIds: ["ethereum"],
+      recipient: "0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034",
+    });
+    expect(screen.queryByTestId("contacts-address-detail-dialog")).not.toBeInTheDocument();
+  });
+
+  it("should open the signer dialog before deleting an address", async () => {
+    const { user } = renderContactsScreen(populatedContactsPageState);
+
+    await user.click(screen.getByTestId("contacts-saved-row-contact-ben"));
+    await user.click(screen.getByTestId("contacts-detail-address-row-address-ethereum"));
+    await user.click(screen.getByTestId("contacts-address-detail-delete"));
+
+    expect(screen.queryByTestId("contacts-address-detail-dialog")).not.toBeInTheDocument();
+    expect(screen.getByTestId("contacts-edit-signer-dialog")).toBeVisible();
+    expect(screen.queryByTestId("contacts-delete-address-dialog")).not.toBeInTheDocument();
+
+    await user.click(screen.getByTestId("contacts-edit-signer-confirm"));
+
+    await waitFor(() => {
+      expect(screen.queryByTestId("contacts-edit-signer-dialog")).not.toBeInTheDocument();
+      expect(screen.getByTestId("contacts-delete-address-dialog")).toBeVisible();
+    });
+  });
+
+  it("should delete an address and close the address detail dialog", async () => {
+    const { user } = renderContactsScreen(populatedContactsPageState);
+
+    await user.click(screen.getByTestId("contacts-saved-row-contact-ben"));
+    await user.click(screen.getByTestId("contacts-detail-address-row-address-ethereum"));
+    await user.click(screen.getByTestId("contacts-address-detail-delete"));
+    await user.click(screen.getByTestId("contacts-edit-signer-confirm"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("contacts-delete-address-dialog")).toBeVisible();
+    });
+
+    await user.click(screen.getByTestId("contacts-delete-address-confirm"));
+
+    await waitFor(() => {
+      expect(screen.queryByTestId("contacts-delete-address-dialog")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("contacts-address-detail-dialog")).not.toBeInTheDocument();
+    });
+
+    const detailScreen = screen.getByTestId("contacts-detail-screen");
+    expect(within(detailScreen).getByText("1 address")).toBeInTheDocument();
+    expect(
+      screen.queryByTestId("contacts-detail-address-row-address-ethereum"),
+    ).not.toBeInTheDocument();
+    expect(screen.getByTestId("contacts-detail-address-row-address-polygon")).toBeInTheDocument();
+  });
+
+  it("should open the rename address dialog after signer confirmation", async () => {
+    const { user } = renderContactsScreen(populatedContactsPageState);
+
+    await user.click(screen.getByTestId("contacts-saved-row-contact-ben"));
+    await user.click(screen.getByTestId("contacts-detail-address-row-address-ethereum"));
+
+    await user.click(screen.getByTestId("contacts-address-detail-edit"));
+
+    await waitFor(() => {
+      expect(screen.queryByTestId("contacts-address-detail-dialog")).not.toBeInTheDocument();
+      expect(screen.getByTestId("contacts-edit-signer-dialog")).toBeVisible();
+    });
+
+    await user.click(screen.getByTestId("contacts-edit-signer-confirm"));
+
+    await waitFor(() => {
+      expect(screen.queryByTestId("contacts-edit-signer-dialog")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("contacts-address-detail-dialog")).not.toBeInTheDocument();
+      expect(screen.getByTestId("contacts-rename-address-dialog")).toBeVisible();
+    });
+  });
+
+  it("should rename an address and close the edit dialog", async () => {
+    const { user } = renderContactsScreen(populatedContactsPageState);
+
+    await user.click(screen.getByTestId("contacts-saved-row-contact-ben"));
+    await user.click(screen.getByTestId("contacts-detail-address-row-address-ethereum"));
+
+    await user.click(screen.getByTestId("contacts-address-detail-edit"));
+    await user.click(screen.getByTestId("contacts-edit-signer-confirm"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("contacts-rename-address-dialog")).toBeVisible();
+    });
+
+    fireEvent.change(screen.getByTestId("contacts-rename-address-input"), {
+      target: { value: "Main ETH" },
+    });
+    await user.click(screen.getByTestId("contacts-rename-address-confirm"));
+
+    await waitFor(() => {
+      expect(screen.queryByTestId("contacts-rename-address-dialog")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("contacts-address-detail-dialog")).not.toBeInTheDocument();
+      expect(screen.getByTestId("contacts-detail-address-row-address-ethereum")).toHaveTextContent(
+        "Main ETH",
+      );
     });
   });
 });

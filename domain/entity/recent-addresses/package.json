@@ -1,6 +1,6 @@
 {
   "name": "@domain/entity-recent-addresses",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "description": "RecentAddresses entity: state types, action creators, and wallet-sync module",
   "main": "src/index.ts",
@@ -26,6 +26,7 @@
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
+    "@types/node": "catalog:",
     "jest": "catalog:",
     "typescript": "catalog:"
   }

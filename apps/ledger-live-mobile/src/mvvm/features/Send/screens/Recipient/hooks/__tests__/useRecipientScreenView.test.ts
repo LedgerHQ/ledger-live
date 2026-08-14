@@ -44,6 +44,7 @@ const idleResult = {
   accountBalanceFormatted: undefined,
   isFirstInteraction: false,
   matchedRecentAddress: undefined,
+  matchedContact: undefined,
 };
 
 describe("useRecipientScreenView", () => {

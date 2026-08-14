@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/asset-aggregation",
-  "version": "0.12.2",
+  "version": "0.13.0",
   "private": true,
   "description": "Ledger Live asset-aggregation module – asset aggregation & categorization",
   "keywords": [
@@ -19,6 +19,8 @@
   "types": "lib/index.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
+    "@domain/api-aggregated-assets": "workspace:*",
+    "@domain/entity-aggregated-asset": "workspace:*",
     "@domain/entity-currency": "workspace:*",
     "@domain/entity-currency-crypto": "workspace:*",
     "@domain/entity-currency-token": "workspace:*",

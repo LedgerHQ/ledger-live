@@ -728,21 +728,21 @@ describe("logic utils", () => {
       setEnv("HEDERA_STAKING_LEDGER_NODE_ID", 2);
 
       const validators = [
-        { nodeId: 3, activeStake: new BigNumber(1000) },
-        { nodeId: 2, activeStake: new BigNumber(2000) },
-        { nodeId: 1, activeStake: new BigNumber(3000) },
+        { id: "3", activeStake: new BigNumber(1000) },
+        { id: "2", activeStake: new BigNumber(2000) },
+        { id: "1", activeStake: new BigNumber(3000) },
       ] as HederaValidator[];
 
       const sorted = sortValidators(validators);
 
-      expect(sorted[0].nodeId).toBe(2);
-      expect(sorted[1].nodeId).toBe(1);
-      expect(sorted[2].nodeId).toBe(3);
+      expect(sorted[0].id).toBe("2");
+      expect(sorted[1].id).toBe("1");
+      expect(sorted[2].id).toBe("3");
     });
   });
 
   describe("getValidatorFromAccount", () => {
-    const mockValidator = { nodeId: 1 };
+    const mockValidator = { id: "1" };
     const mockPreload = { validators: [mockValidator] } as HederaPreloadData;
 
     beforeEach(() => {
@@ -772,14 +772,14 @@ describe("logic utils", () => {
 
   describe("getDefaultValidator", () => {
     const mockValidators = [
-      { nodeId: 1, activeStake: new BigNumber(2000) },
-      { nodeId: 2, activeStake: new BigNumber(1000) },
-      { nodeId: 3, activeStake: new BigNumber(10000) },
+      { id: "1", activeStake: new BigNumber(2000) },
+      { id: "2", activeStake: new BigNumber(1000) },
+      { id: "3", activeStake: new BigNumber(10000) },
     ] as HederaValidator[];
 
     it("returns Ledger validator if present", () => {
       setEnv("HEDERA_STAKING_LEDGER_NODE_ID", 2);
-      expect(getDefaultValidator(mockValidators)?.nodeId).toBe(2);
+      expect(getDefaultValidator(mockValidators)?.id).toBe("2");
     });
 
     it("returns null if no Ledger validator is present", () => {
@@ -807,12 +807,12 @@ describe("logic utils", () => {
 
   describe("filterValidatorBySearchTerm", () => {
     const mockValidator = getMockedValidator({
-      nodeId: 123,
+      id: "123",
       name: "Validator Test",
       address: "0.0.456",
     });
 
-    it("should match by nodeId", () => {
+    it("should match by id", () => {
       expect(filterValidatorBySearchTerm(mockValidator, "123")).toBe(true);
     });
 

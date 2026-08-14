@@ -2,9 +2,8 @@ import { ethers, type JsonRpcProvider } from "ethers";
 import network from "@ledgerhq/live-network";
 import { log } from "@ledgerhq/logs";
 import type { Page } from "@ledgerhq/coin-module-framework/api/index";
-import type { AssetInfo, Stake } from "@ledgerhq/coin-module-framework/api/types";
+import type { AssetInfo, Stake, Validator } from "@ledgerhq/coin-module-framework/api/types";
 import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
-import type { StakingValidatorItem } from "@ledgerhq/types-live";
 import { getCoinConfig } from "../../config";
 import { withApi } from "../../network/node/rpc.common";
 import { isExternalNodeConfig } from "../../network/node/types";
@@ -37,7 +36,7 @@ function isExploreMe0gValidator(value: unknown): value is ExploreMe0gValidator {
 }
 
 const zeroGravityValidatorApi: ValidatorApi = {
-  fetchValidators: async (currencyId): Promise<Page<StakingValidatorItem>> => {
+  fetchValidators: async (currencyId): Promise<Page<Validator>> => {
     const apiConfig = STAKING_CONTRACTS[currencyId]?.apiConfig;
     if (!apiConfig?.baseUrl) return { items: [], next: undefined };
 
@@ -49,16 +48,16 @@ const zeroGravityValidatorApi: ValidatorApi = {
         method: "GET",
       });
 
-      const items: StakingValidatorItem[] = Array.isArray(data)
-        ? data.filter(isExploreMe0gValidator).map((v, index) => {
-            const validatorAddress = ethers.getAddress("0x" + v.addr);
+      const items: Validator[] = Array.isArray(data)
+        ? data.filter(isExploreMe0gValidator).map(v => {
+            const address = ethers.getAddress("0x" + v.addr);
             return {
-              validatorAddress,
-              name: v.moniker ?? validatorAddress,
-              commission: parseFloat(v.commission_pct) / 100,
-              tokens: v.voting_power_tokens,
-              votingPower: index,
-              estimatedYearlyRewardsRate: 0,
+              id: address,
+              address,
+              name: v.moniker ?? address,
+              commissionRate: (parseFloat(v.commission_pct) / 100).toString(),
+              balance: BigInt(v.voting_power_tokens),
+              apy: 0,
             };
           })
         : [];
@@ -244,12 +243,12 @@ export const fetchZeroGravityStakes = async (
           const chunk = validators.slice(i, i + DETAILS_BATCH_SIZE);
           const [activeSettled, unbondingSettled] = await Promise.all([
             Promise.allSettled(
-              chunk.map(({ validatorAddress: valAddr }) =>
+              chunk.map(({ address: valAddr }) =>
                 fetchStakeForValidator(provider, iface, valAddr, address, asset),
               ),
             ),
             Promise.allSettled(
-              chunk.map(({ validatorAddress: valAddr }) =>
+              chunk.map(({ address: valAddr }) =>
                 fetchUnbondingsForValidator(provider, iface, valAddr, address, currentBlock, asset),
               ),
             ),
@@ -258,7 +257,7 @@ export const fetchZeroGravityStakes = async (
           activeSettled.forEach((res, idx) => {
             if (res.status === "rejected") {
               log("coin-evm/staking", "fetchZeroGravityStakes: getDelegation call failed", {
-                validator: chunk[idx].validatorAddress,
+                validator: chunk[idx].address,
                 error: res.reason instanceof Error ? res.reason.message : String(res.reason),
               });
               return;
@@ -272,7 +271,7 @@ export const fetchZeroGravityStakes = async (
                 "coin-evm/staking",
                 "fetchZeroGravityStakes: withdrawCount/getWithdraw call failed",
                 {
-                  validator: chunk[idx].validatorAddress,
+                  validator: chunk[idx].address,
                   error: res.reason instanceof Error ? res.reason.message : String(res.reason),
                 },
               );

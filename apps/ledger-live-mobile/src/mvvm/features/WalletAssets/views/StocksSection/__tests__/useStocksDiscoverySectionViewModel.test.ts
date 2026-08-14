@@ -1,7 +1,7 @@
 import { act } from "@testing-library/react-native";
 import { renderHook } from "@tests/test-renderer";
 import { ScreenName } from "~/const";
-import type { StockSuggestion } from "@ledgerhq/live-common/dada-client/utils/assetDiscovery";
+import type { StockSuggestion } from "@features/platform-aggregated-assets";
 import { MAX_DISCOVERY_STOCKS } from "LLM/features/WalletAssets/constants";
 import { useStocksDiscoverySectionViewModel } from "../useStocksDiscoverySectionViewModel";
 

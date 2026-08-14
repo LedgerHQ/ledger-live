@@ -10,7 +10,7 @@ import { Box, Flex } from "@ledgerhq/native-ui";
 import { getCurrencyColor, isCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
 import { useAccountBridgeMany } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { useTheme } from "styled-components/native";
-import { useAssetsData } from "@ledgerhq/live-common/dada-client/hooks/useAssetsData";
+import { useAssetsData } from "@features/platform-aggregated-assets";
 import VersionNumber from "react-native-version-number";
 import { Loading } from "~/components/Loading";
 import { Account, TokenAccount } from "@ledgerhq/types-live";

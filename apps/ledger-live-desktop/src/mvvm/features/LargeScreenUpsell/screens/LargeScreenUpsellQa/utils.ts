@@ -1,3 +1,5 @@
+import { resolveOnboardingDateForUpsell } from "@ledgerhq/live-common/postOnboarding/logic/legacyOnboardingDate";
+
 const MS_PER_DAY = 86_400_000;
 
 type DisplayParamValue = string | number | boolean | null | undefined;
@@ -74,8 +76,7 @@ export function calendarDaysBetween(later: Date, earlier: Date): number {
 }
 
 /**
- * Mirrors getLargeScreenUpsellDecision: null onboardingDate is treated as `now`
- * (legacy installs wait the full cooldown unless cooldownDays is 0).
+ * Mirrors getLargeScreenUpsellDecision: null onboardingDate uses the legacy fallback date.
  */
 export function isPostOnboardingCooldownPassed({
   onboardingDate,
@@ -86,7 +87,7 @@ export function isPostOnboardingCooldownPassed({
   cooldownDays: number;
   now: Date;
 }): boolean {
-  const elapsedSinceDate = onboardingDate ?? now;
+  const elapsedSinceDate = resolveOnboardingDateForUpsell(onboardingDate);
   return calendarDaysBetween(now, elapsedSinceDate) >= cooldownDays;
 }
 

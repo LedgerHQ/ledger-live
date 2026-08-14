@@ -97,10 +97,11 @@ const validateAmount = (
       errors.amount = new TonNotEnoughBalanceInParentAccount(); // "Sorry, insufficient funds in the parent account"
     }
     warnings.amount = new TonExcessFee();
-  } else {
-    if (account.balance.isLessThan(new BigNumber(toNano(MINIMUM_REQUIRED_BALANCE).toString()))) {
-      errors.amount = new TonMinimumRequired();
-    }
+  } else if (
+    !errors.amount &&
+    account.balance.isLessThan(new BigNumber(toNano(MINIMUM_REQUIRED_BALANCE).toString()))
+  ) {
+    errors.amount = new TonMinimumRequired();
   }
 
   return [errors, warnings];

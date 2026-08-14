@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-kaspa",
-  "version": "1.22.0",
+  "version": "1.23.0",
   "description": "Ledger Kaspa Coin integration",
   "keywords": [
     "Ledger",
@@ -106,7 +106,7 @@
     "bip32-path": "^0.4.2",
     "eip55": "^2.1.0",
     "invariant": "^2.2.2",
-    "lodash": "^4.17.21",
+    "lodash": "catalog:",
     "lru-cache": "^7.14.1",
     "prando": "^6.0.1",
     "rxjs": "catalog:"
@@ -119,7 +119,7 @@
     "@swc/jest": "catalog:",
     "@types/invariant": "^2.2.2",
     "@types/jest": "catalog:",
-    "@types/lodash": "^4.14.191",
+    "@types/lodash": "catalog:",
     "@types/node": "catalog:",
     "@types/numeral": "^2.0.2",
     "cross-env": "^7.0.3",

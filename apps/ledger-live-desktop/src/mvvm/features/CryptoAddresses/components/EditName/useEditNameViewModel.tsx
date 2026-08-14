@@ -1,10 +1,12 @@
 import { useTranslation } from "react-i18next";
 import type { AccountLike } from "@ledgerhq/types-live";
-import { validateNameEdition } from "@ledgerhq/live-wallet/accountName";
-import { setAccountName as actionSetAccountName } from "@ledgerhq/live-wallet/store";
+import { validateNameEdition } from "@domain/entity-account-name";
+import {
+  setAccountName as actionSetAccountName,
+  useMaybeAccountName,
+} from "~/renderer/reducers/wallet";
 import { useDispatch } from "LLD/hooks/redux";
 import { updateAccount } from "~/renderer/actions/accounts";
-import { useMaybeAccountName } from "~/renderer/reducers/wallet";
 
 export type EditNameViewProps = {
   suggestions: string[];

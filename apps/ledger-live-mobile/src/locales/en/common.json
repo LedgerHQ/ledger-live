@@ -491,6 +491,9 @@
     "FeeTooHigh": {
       "title": "Network fees are above 10% of the amount"
     },
+    "RecipientIsNewAccount": {
+      "title": "This address has never received funds, activating it costs a higher network fee"
+    },
     "FeeTooLow": {
       "title": "Fees are too low to be accepted by the network. Please increase them"
     },
@@ -3025,6 +3028,8 @@
       "UNSTAKE": "Unstaked",
       "WITHDRAW_UNSTAKED": "Withdrawn",
       "FINALIZE_UNSTAKE": "Unstaked",
+      "STAKE_NEURON": "Staked",
+      "TOP_UP_NEURON": "Stake increased",
       "ASSOCIATE_TOKEN": "Associate token",
       "CONTRACT_CALL": "Contract call",
       "UPDATE_ACCOUNT": "Updated account"
@@ -4466,6 +4471,8 @@
     "sign": {
       "title": "Continue on your {{productName}}",
       "description": "Follow the instructions displayed on your Secure Screen",
+      "termsAndConditions": "By signing this transaction, you accept <0>{{appName}}'s terms of use</0>.",
+      "termsAndConditionsWithPrivacy": "By signing this transaction, you accept <0>{{appName}}'s terms of use</0> and <1>Privacy Policy</1>.",
       "cancelled": {
         "title": "Operation rejected on device",
         "close": "Close",
@@ -9509,14 +9516,18 @@
   "lnsUpsell": {
     "opted_in": {
       "title": "See more. Sign safer",
-      "description": "Upgrade to any touchscreen signer and get 20% off.",
+      "description": "Upgrade and get 20% off.",
       "cta": "Upgrade my Ledger"
     },
     "opted_out": {
       "title": "More security. More control",
-      "description": "Learn more about advanced security features.",
+      "description": "Learn more about security features.",
       "cta": "Learn more"
     }
+  },
+  "lazyOnboardingBanner": {
+    "title": "Discover Ledger devices",
+    "description": "Explore our latest products and accessories"
   },
   "marketBanner": {
     "title": "Market",
@@ -10206,7 +10217,11 @@
       "domainNotFound": "No address found for this domain",
       "sanctionedAddress": "This address is sanctioned and cannot be used.",
       "validationUnavailable": "Address validation is temporarily unavailable",
-      "ensDisclaimer": "ENS names resolve to wallet addresses. Always verify the resolved address before continuing."
+      "ensDisclaimer": "ENS names resolve to wallet addresses. Always verify the resolved address before continuing.",
+      "sanctioned": {
+        "description": "This address has been flagged and Ledger doesn't allow sending to it",
+        "learnMore": "Learn more"
+      }
     },
     "addAddressName": {
       "title": "Name address",
@@ -10227,6 +10242,7 @@
       "addressCount_other": "{{count}} addresses"
     },
     "detail": {
+      "meDisplayName": "{{name}} (Me)",
       "ledgerWalletAddresses": "Ledger Wallet addresses",
       "myAddresses": "My addresses",
       "emptyState": {
@@ -10266,10 +10282,28 @@
       "confirm": "Delete",
       "cancel": "Cancel"
     },
+    "deleteAddress": {
+      "title": "Delete address?",
+      "description": "This address will be removed from the contact.",
+      "confirm": "Delete",
+      "cancel": "Cancel"
+    },
+    "editAddress": {
+      "title": "Edit address",
+      "inputLabel": "Address name",
+      "applyChanges": "Apply changes",
+      "invalidLabelError": "Special characters are not allowed."
+    },
     "editSigner": {
       "title": "Confirm on your device",
       "description": "Connect and unlock your Ledger device to confirm this change.",
       "confirm": "Continue",
+      "cancel": "Cancel"
+    },
+    "editSignerMismatch": {
+      "title": "Use the same Ledger device you used to add this contact",
+      "description": "The connected device isn't a match.",
+      "connectDifferentDevice": "Connect a different device",
       "cancel": "Cancel"
     },
     "ledgerSyncIntroduction": {

@@ -87,12 +87,17 @@ function resolveAddressInputPresentation(
 export function useContactsAddAddressEntryViewModel({
   addressEntry,
   labels,
+  sanctionedAddressBanner,
   bottomOffset = 0,
   onChangeText,
   onConfirm,
   onQrCodeClick,
 }: ContactsAddAddressEntryProps): ContactsAddAddressEntryViewProps {
   const presentation = resolveAddressInputPresentation(addressEntry, labels);
+  const shouldShowSanctionedAddressBanner =
+    addressEntry.status === "invalid" &&
+    addressEntry.error === "sanctioned" &&
+    sanctionedAddressBanner !== undefined;
   const onAddressChange = useCallback(
     (value: string) => {
       const inputMethod =
@@ -108,7 +113,10 @@ export function useContactsAddAddressEntryViewModel({
     bottomOffset,
     bottomPadding: 32,
     inputStatus: presentation.status,
-    helperText: presentation.helperText,
+    helperText: shouldShowSanctionedAddressBanner ? undefined : presentation.helperText,
+    sanctionedAddressBanner: shouldShowSanctionedAddressBanner
+      ? sanctionedAddressBanner
+      : undefined,
     showEnsDisclaimer: presentation.showEnsDisclaimer,
     isConfirmEnabled: presentation.isConfirmEnabled,
     onAddressChange,

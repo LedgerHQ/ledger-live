@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { BottomSheetHeader, BottomSheetView } from "@ledgerhq/lumen-ui-rnative";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
+import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { useDispatch, useSelector } from "~/context/hooks";
 import {
   closeSwapTransactionStatusDrawer,

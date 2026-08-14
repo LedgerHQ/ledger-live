@@ -18,5 +18,5 @@ export const openURL = (url: string, customEventName = "OpenURL", extraParams: o
       url,
     });
   }
-  if (shell) shell.openExternal(url);
+  return shell?.openExternal(url);
 };

@@ -80,6 +80,8 @@ export const ZCASH_IPC = {
   broadcastTransaction: "zcash:broadcastTransaction",
   /** invoke -> TransactionDetailsResult[] */
   transactionDetails: "zcash:transactionDetails",
+  /** invoke -> string (orchard unified address) */
+  deriveShieldedAddress: "zcash:deriveShieldedAddress",
 } as const;
 
 export type ZcashIpcChannel = (typeof ZCASH_IPC)[keyof typeof ZCASH_IPC];
@@ -111,6 +113,11 @@ export type CancelSyncArgs = {
   requestId: RequestId;
 };
 
+export type DeriveShieldedAddressArgs = {
+  requestId: RequestId;
+  ufvk: string;
+};
+
 // --- Stream events (main -> renderer, utility -> main) ---
 
 /**
@@ -139,7 +146,8 @@ export type UtilityInboundMessage =
   | { type: "build-ironwood-transaction"; args: BuildIronwoodTransactionArgs }
   | { type: "finalize-transaction"; args: FinalizeTransactionArgs }
   | { type: "broadcast-transaction"; args: BroadcastTransactionArgs }
-  | { type: "transaction-details"; args: TransactionDetailsArgs };
+  | { type: "transaction-details"; args: TransactionDetailsArgs }
+  | { type: "derive-shielded-address"; args: DeriveShieldedAddressArgs };
 
 export type UtilityOutboundMessage =
   | { type: "chain-tip"; requestId: RequestId; height: number }
@@ -164,4 +172,6 @@ export type UtilityOutboundMessage =
       requestId: RequestId;
       results: TransactionDetailsResult[];
     }
-  | { type: "transaction-details-error"; requestId: RequestId; message: string };
+  | { type: "transaction-details-error"; requestId: RequestId; message: string }
+  | { type: "derive-shielded-address-result"; requestId: RequestId; address: string }
+  | { type: "derive-shielded-address-error"; requestId: RequestId; message: string };

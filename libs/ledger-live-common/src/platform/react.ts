@@ -18,7 +18,7 @@ import {
 } from "./types";
 import { getParentAccount } from "../account";
 import { listSupportedCurrencies } from "../currencies";
-import { WalletState } from "@ledgerhq/live-wallet/store";
+import { type AccountNamesState } from "@domain/entity-account-name";
 
 /**
  * TODO: we might want to use "searchParams.append" instead of "searchParams.set"
@@ -51,23 +51,23 @@ export function usePlatformUrl(
 }
 
 export function usePlatformAccounts(
-  walletState: WalletState,
+  accountNames: AccountNamesState,
   accounts: AccountLike[],
 ): PlatformAccount[] {
   return useMemo(() => {
     return accounts.map(account => {
       const parentAccount = getParentAccount(account, accounts);
 
-      return accountToPlatformAccount(walletState, account, parentAccount);
+      return accountToPlatformAccount(accountNames, account, parentAccount);
     });
-  }, [walletState, accounts]);
+  }, [accountNames, accounts]);
 }
 
 export function useListPlatformAccounts(
-  walletState: WalletState,
+  accountNames: AccountNamesState,
   accounts: AccountLike[],
 ): ListPlatformAccount {
-  const platformAccounts = usePlatformAccounts(walletState, accounts);
+  const platformAccounts = usePlatformAccounts(accountNames, accounts);
   return useCallback(
     (filters: AccountFilters = {}) => {
       return filterPlatformAccounts(platformAccounts, filters);

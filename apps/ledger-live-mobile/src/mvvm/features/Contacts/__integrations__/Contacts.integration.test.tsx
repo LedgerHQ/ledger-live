@@ -24,6 +24,11 @@ import { useMyWalletHeaderViewModel } from "LLM/features/MyWallet/views/Header/u
 import { useModularDrawerController } from "LLM/features/ModularDrawer";
 import { mockEthCryptoCurrency } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 
+const mockHandleOpenSendFlow = jest.fn();
+jest.mock("LLM/features/Send/hooks/useOpenSendFlow", () => ({
+  useOpenSendFlow: () => ({ handleOpenSendFlow: mockHandleOpenSendFlow }),
+}));
+
 jest.mock("LLM/features/MyWallet/views/Header/useMyWalletHeaderViewModel");
 jest.mock("LLM/features/Contacts/hooks/useContactsAddressValidationAdapter", () => ({
   useContactsAddressValidationAdapter: () => ({
@@ -822,6 +827,129 @@ describe("Contacts integration", () => {
     await waitFor(() => {
       expect(setString).toHaveBeenCalledWith("0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034");
       expect(screen.getByTestId("contacts-address-detail-copy")).toHaveTextContent("Copied");
+    });
+  });
+
+  it("should open the send flow from the address detail sheet", async () => {
+    const { user } = render(<MyWalletNavigator />, {
+      overrideInitialState: withContactsPageReadyState(
+        { lwmContacts: { enabled: true, params: { newBadge: false } } },
+        state => ({ ...state, contacts: { contacts: mockPopulatedContacts() } }),
+      ),
+    });
+
+    await user.press(screen.getByTestId("my-wallet-contacts-button"));
+    await user.press(await screen.findByTestId("contacts-saved-contact-contact-ben"));
+    await user.press(await screen.findByTestId("contacts-detail-address-row-address-ethereum"));
+    await user.press(await screen.findByText("Send"));
+
+    expect(mockHandleOpenSendFlow).toHaveBeenCalledWith({
+      currencyIds: ["ethereum"],
+      recipient: "0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034",
+    });
+  });
+
+  it("should open the signer sheet before deleting an address", async () => {
+    const { user } = render(<MyWalletNavigator />, {
+      overrideInitialState: withContactsPageReadyState(
+        { lwmContacts: { enabled: true, params: { newBadge: false } } },
+        state => ({ ...state, contacts: { contacts: mockPopulatedContacts() } }),
+      ),
+    });
+
+    await user.press(screen.getByTestId("my-wallet-contacts-button"));
+    await user.press(await screen.findByTestId("contacts-saved-contact-contact-ben"));
+    await user.press(await screen.findByTestId("contacts-detail-address-row-address-ethereum"));
+    await user.press(await screen.findByTestId("contacts-address-detail-delete"));
+
+    expect(await screen.findByTestId("contacts-edit-signer-confirm")).toBeVisible();
+    expect(screen.getByText("Confirm on your device")).toBeVisible();
+    expect(screen.queryByTestId("contacts-delete-address-confirm")).toBeNull();
+
+    await user.press(screen.getByTestId("contacts-edit-signer-confirm"));
+
+    await waitFor(() => {
+      expect(screen.queryByTestId("contacts-edit-signer-confirm")).toBeNull();
+      expect(screen.getByTestId("contacts-delete-address-confirm")).toBeVisible();
+      expect(screen.getByText("Delete address?")).toBeVisible();
+    });
+  });
+
+  it("should delete an address and close the address detail sheet", async () => {
+    const { user } = render(<MyWalletNavigator />, {
+      overrideInitialState: withContactsPageReadyState(
+        { lwmContacts: { enabled: true, params: { newBadge: false } } },
+        state => ({ ...state, contacts: { contacts: mockPopulatedContacts() } }),
+      ),
+    });
+
+    await user.press(screen.getByTestId("my-wallet-contacts-button"));
+    await user.press(await screen.findByTestId("contacts-saved-contact-contact-ben"));
+    await user.press(await screen.findByTestId("contacts-detail-address-row-address-ethereum"));
+    await user.press(await screen.findByTestId("contacts-address-detail-delete"));
+    await user.press(await screen.findByTestId("contacts-edit-signer-confirm"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("contacts-delete-address-confirm")).toBeVisible();
+    });
+
+    await user.press(screen.getByTestId("contacts-delete-address-confirm"));
+
+    await waitFor(() => {
+      expect(screen.queryByTestId("contacts-delete-address-confirm")).toBeNull();
+      expect(screen.queryByTestId("contacts-address-detail-dialog")).toBeNull();
+      expect(screen.getByText("1 address")).toBeVisible();
+      expect(screen.queryByTestId("contacts-detail-address-row-address-ethereum")).toBeNull();
+      expect(screen.getByTestId("contacts-detail-address-row-address-polygon")).toBeVisible();
+    });
+  });
+
+  it("should open the signer sheet before editing an address", async () => {
+    const { user } = render(<MyWalletNavigator />, {
+      overrideInitialState: withContactsPageReadyState(
+        { lwmContacts: { enabled: true, params: { newBadge: false } } },
+        state => ({ ...state, contacts: { contacts: mockPopulatedContacts() } }),
+      ),
+    });
+
+    await user.press(screen.getByTestId("my-wallet-contacts-button"));
+    await user.press(await screen.findByTestId("contacts-saved-contact-contact-ben"));
+    await user.press(await screen.findByTestId("contacts-detail-address-row-address-ethereum"));
+    await user.press(await screen.findByText("Edit"));
+
+    expect(await screen.findByTestId("contacts-edit-signer-confirm")).toBeVisible();
+    expect(screen.getByText("Confirm on your device")).toBeVisible();
+
+    await user.press(screen.getByTestId("contacts-edit-signer-confirm"));
+
+    await waitFor(() => {
+      expect(screen.queryByTestId("contacts-edit-signer-confirm")).toBeNull();
+      expect(screen.getByTestId("contacts-rename-address-confirm")).toBeVisible();
+    });
+  });
+
+  it("should rename an address after confirming on the signer sheet", async () => {
+    const { user } = render(<MyWalletNavigator />, {
+      overrideInitialState: withContactsPageReadyState(
+        { lwmContacts: { enabled: true, params: { newBadge: false } } },
+        state => ({ ...state, contacts: { contacts: mockPopulatedContacts() } }),
+      ),
+    });
+
+    await user.press(screen.getByTestId("my-wallet-contacts-button"));
+    await user.press(await screen.findByTestId("contacts-saved-contact-contact-ben"));
+    await user.press(await screen.findByTestId("contacts-detail-address-row-address-ethereum"));
+    await user.press(await screen.findByText("Edit"));
+    await user.press(await screen.findByTestId("contacts-edit-signer-confirm"));
+    const renameInput = await screen.findByDisplayValue("Ethereum");
+    await user.clear(renameInput);
+    await user.type(renameInput, "Exchange wallet");
+    await user.press(screen.getByTestId("contacts-rename-address-confirm"));
+
+    await waitFor(() => {
+      expect(screen.queryByTestId("contacts-rename-address-confirm")).toBeNull();
+      expect(screen.queryByTestId("contacts-address-detail-dialog")).toBeNull();
+      expect(screen.getByText("Exchange wallet")).toBeVisible();
     });
   });
 

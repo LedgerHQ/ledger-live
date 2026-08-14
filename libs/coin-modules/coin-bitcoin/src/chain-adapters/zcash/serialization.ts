@@ -6,7 +6,34 @@ import type {
   ZcashPrivateInfoRaw,
   ZcashSyncState,
 } from "./types";
-import { rehydrateOutput } from "./serialization/rehydrate";
+
+// Persistence of the shielded `privateInfo` (its unified full viewing key,
+// balances and decrypted notes) for a Zcash account served by the bitcoin
+// family bridge. This is flag-independent on purpose: accounts are decoded at
+// app startup, before the host has mirrored the `zcashShielded` flag, so the
+// bitcoin bridge is always the one that reads a persisted Zcash account back.
+// Without this the ufvk is dropped on every load and then erased on the next
+// save. The standalone @ledgerhq/coin-zcash module writes the same raw shape
+// when the flag is on, so the two round-trip interchangeably.
+//
+// TODO: remove this module once the `zcashShielded` feature flag is retired and
+// Zcash is served by @ledgerhq/coin-zcash by default. At that point set the
+// Zcash `currency.family` to "zcash" (see domain/entity/currency-crypto) and
+// drop the flag-based routing in ledger-live-common's `resolveFamily`
+// (bridge/impl.ts): both decode and encode then resolve to coin-zcash
+// unconditionally, coin-bitcoin no longer serves Zcash, and this file — along
+// with the `assignToAccountRaw`/`assignFromAccountRaw` hooks in ./index.ts —
+// becomes dead code. coin-zcash's own bridge/serialization.ts already owns the
+// same round-trip, so persistence is preserved by that move alone.
+//
+// This holds only if the transparent transaction path is re-routed through
+// @ledgerhq/coin-zcash too. Today it is this chain-adapter — getAddress,
+// getWalletXpub, getFullViewingKey, createSigner and the ZIP-317 fee pricer in
+// ./index.ts — that backs the transparent PSBT flow whenever coin-bitcoin
+// serves Zcash. If that path stays on coin-bitcoin, then coin-bitcoin keeps
+// serving Zcash, `currency.family` cannot become "zcash", and this
+// serialization must stay. So the precondition for the cleanup above is that
+// coin-zcash owns the whole Zcash path, transparent included.
 
 function mapDecryptedOutput(output: DecryptedOutput): DecryptedOutputRaw {
   return {
@@ -20,6 +47,21 @@ function mapDecryptedOutput(output: DecryptedOutput): DecryptedOutputRaw {
     ...(output.position !== undefined && { position: output.position }),
     ...(output.recipient !== undefined && { recipient: output.recipient }),
     ...(output.isSpent !== undefined && { is_spent: output.isSpent }),
+  };
+}
+
+function rehydrateOutput(raw: DecryptedOutputRaw): DecryptedOutput {
+  return {
+    memo: raw.memo,
+    transfer_type: raw.transfer_type,
+    amount: new BigNumber(raw.amount),
+    ...(raw.nullifier !== undefined && { nullifier: raw.nullifier }),
+    ...(raw.rho !== undefined && { rho: raw.rho }),
+    ...(raw.rseed !== undefined && { rseed: raw.rseed }),
+    ...(raw.cmx !== undefined && { cmx: raw.cmx }),
+    ...(raw.position !== undefined && { position: raw.position }),
+    ...(raw.recipient !== undefined && { recipient: raw.recipient }),
+    ...(raw.is_spent !== undefined && { isSpent: raw.is_spent }),
   };
 }
 

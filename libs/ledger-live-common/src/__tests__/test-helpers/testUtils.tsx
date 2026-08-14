@@ -11,6 +11,8 @@ interface ApiSlice {
 interface CreateTestStoreOptions {
   /** Disable serializable check (e.g. when API stores Date in state) */
   disableSerializableCheck?: boolean;
+  /** Thunk `extraArgument`, exposed to RTK Query endpoints as `api.extra` */
+  extra?: unknown;
 }
 
 export function createTestStore(apis: ApiSlice[], options?: CreateTestStoreOptions) {
@@ -25,9 +27,10 @@ export function createTestStore(apis: ApiSlice[], options?: CreateTestStoreOptio
   return configureStore({
     reducer: combineReducers(reducers),
     middleware: getDefaultMiddleware =>
-      getDefaultMiddleware(
-        options?.disableSerializableCheck ? { serializableCheck: false } : undefined,
-      ).concat(middlewares),
+      getDefaultMiddleware({
+        ...(options?.disableSerializableCheck ? { serializableCheck: false } : {}),
+        ...(options && "extra" in options ? { thunk: { extraArgument: options.extra } } : {}),
+      }).concat(middlewares),
   });
 }
 

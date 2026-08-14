@@ -9,9 +9,7 @@ concurrency:
   cancel-in-progress: true
 
 permissions:
-  id-token: write
   contents: read
-  pull-requests: write
 
 jobs:
   determine-affected:
@@ -36,6 +34,9 @@ jobs:
 
   test-desktop-external:
     name: "Test Desktop (External)"
+    permissions:
+      id-token: write
+      contents: read
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') && github.event.pull_request.head.repo.fork }}
     uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-external-reusable.yml@develop

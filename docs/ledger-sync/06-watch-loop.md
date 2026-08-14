@@ -1,11 +1,11 @@
 # 6 · The watch loop
 
 > How everything above runs continuously inside a Ledger Wallet instance. Code:
-> [`createWalletSyncWatchLoop.ts`](../../libs/live-wallet/src/walletsync/createWalletSyncWatchLoop.ts) ·
-> [`incrementalUpdates.ts`](../../libs/live-wallet/src/walletsync/incrementalUpdates.ts).
+> [`features/platform/wallet-sync/src/walletsync/createWalletSyncWatchLoop.ts`](../../features/platform/wallet-sync/src/walletsync/createWalletSyncWatchLoop.ts) ·
+> [`features/platform/wallet-sync/src/walletsync/incrementalUpdates.ts`](../../features/platform/wallet-sync/src/walletsync/incrementalUpdates.ts).
 
 The watch loop is the lifecycle that ties [CloudSyncSDK](./04-cloud-sync-sdk.md) and the
-[WalletSyncDataManager](./05-wallet-sync-data-manager.md) together so the app stays in sync
+[CloudSyncDataManager](./05-wallet-sync-data-manager.md) together so the app stays in sync
 **automatically** — the user does nothing.
 
 ## Startup

@@ -1148,7 +1148,7 @@ describe("createApi", () => {
       result.items.forEach(item => {
         expect(item).toMatchObject({
           address: expect.any(String),
-          nodeId: expect.any(String),
+          id: expect.any(String),
           name: expect.any(String),
           description: expect.any(String),
           balance: expect.any(BigInt),

@@ -60,3 +60,9 @@ jobs:
 
       - name: Enforce module boundaries
         run: pnpm exec nx run enforce-boundaries:lint:boundaries
+
+      - name: Test the package-structure rules
+        run: pnpm exec nx run enforce-package-structure:test
+
+      - name: Enforce package structure
+        run: pnpm exec nx run-many -t lint:structure

@@ -1,7 +1,7 @@
 # @shared/api-services
 
-> [!CAUTION]
-> **Status: UNSTABLE** — Part of the emerging DDD layer; under active development.
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
 
 One **endpoint-less** RTK Query api per backend service. Each service owns everything about *reaching*
 one backend — base URL, base query, retry policy, reducer path and the thunk `extraArgument` contract —
