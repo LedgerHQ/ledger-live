@@ -4,9 +4,13 @@
   "private": true,
   "description": "Cross-flow Card runtime: in-memory Card session and the Bearer/refresh accessors the app injects into the shared cardApi service",
   "main": "src/index.ts",
+  "react-native": "src/index.native.ts",
   "types": "src/index.ts",
   "exports": {
-    ".": "./src/index.ts",
+    ".": {
+      "react-native": "./src/index.native.ts",
+      "default": "./src/index.ts"
+    },
     "./package.json": "./package.json"
   },
   "sideEffects": false,
@@ -17,7 +21,10 @@
     "coverage": "jest --coverage",
     "unimported": "pnpm knip --directory ../../.. -W features/platform/card"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@domain/api-card-management": "workspace:*",
+    "expo-secure-store": "catalog:"
+  },
   "devDependencies": {
     "@jest/globals": "catalog:",
     "@swc/core": "catalog:",

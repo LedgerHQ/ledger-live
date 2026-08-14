@@ -4,7 +4,7 @@
 >
 > **Status: UNSTABLE** — Part of the emerging DDD layer; under active development.
 
-Cross-flow Card runtime. Owns the in-memory Card session and the Bearer/refresh accessors the app
+Cross-flow Card runtime. Owns the stored Card session and the Bearer/refresh accessors the app
 injects into the shared `cardApi` service (`@shared/api-services`, `services/card`).
 
 This lives in `features/platform` rather than `features/flow` because it is the seam between Card Auth
@@ -13,20 +13,32 @@ capability shared across flows, not one journey's internals.
 
 ## Public API
 
-- `cardSession` — `set` / `clear` / `getToken` over the process-lifetime session token.
-- `getCardSessionToken()` — reader passed to `cardApiExtra`; the shared base query calls it before
-  every request to attach `Authorization: Bearer`.
+Every accessor is async, because the native store only reads asynchronously.
+
+- `cardSession` — `set` / `get` / `clear` over the whole `PayCardSession` (both tokens and both
+  lifetimes). Card Auth calls `set` when a login completes.
+- `getCardSessionToken()` — reader passed to `cardApiExtra`; the shared base query awaits it before
+  every request to attach `Authorization: Bearer`. It reads the access token key and nothing else.
 - `refreshCardSession()` — refresh handler passed to `cardApiExtra`; the shared base query calls it
   once after a `401`.
 
-## The session token is never persisted
+## Where the session lives
 
-The token is a Bearer credential and stays in module memory only. It must not join the persisted
-`payCard` slice (which stores only `hasSeenFeatureTour` / `balanceFilter`).
+| Platform | Store |
+| --- | --- |
+| Native | `expo-secure-store` — iOS keychain, Android keystore, `AFTER_FIRST_UNLOCK` |
+| Web and desktop | renderer memory, for the life of the process |
+
+Electron exposes no OS secret store in this repo, so a desktop restart asks for a new login. That is
+the answer, not a shim: a Bearer credential must not join the persisted `payCard` slice (which stores
+only `hasSeenFeatureTour` / `balanceFilter`).
+
+The session occupies **three keys**, not one. `expo-secure-store` warns above 2048 bytes per value and
+says it may throw in a later SDK, and two JWTs in one JSON blob can pass that limit. Each token
+therefore gets its own key, with the two lifetimes in a third. It also makes the hot path cheap: the
+base query reads one small key per request.
 
 ## Status
 
-Scaffold: `refreshCardSession` clears the session and reports it cannot be renewed, because there is no
-refresh contract yet. Card Auth replaces it with a real renewal — and starts calling `cardSession.set`
-on login — once it migrates onto `cardApi` (LIVE-33829). Hooks over `@domain/api-card-management` land
-here alongside that work.
+`refreshCardSession` still clears the session and reports it cannot be renewed. The wire contract
+exists (`refreshSession` in `@domain/api-card-management`), but the renewal itself is LIVE-34741.
