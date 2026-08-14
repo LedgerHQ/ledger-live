@@ -4,7 +4,7 @@ export type ActionTile = Readonly<{
   id: ActionTileId;
   label: string;
   onPress: () => void;
-  appearance: "base" | "transparent";
+  appearance?: "base" | "transparent";
 }>;
 
 export type ActionTilesProps = Readonly<{

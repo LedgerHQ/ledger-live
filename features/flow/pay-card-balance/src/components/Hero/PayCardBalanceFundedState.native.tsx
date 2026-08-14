@@ -41,7 +41,9 @@ export function PayCardBalanceFundedState({
         selectedOption={selectedOption}
         onOpenFilter={onOpenFilter}
       />
-      {actionTiles && <ActionTiles {...actionTiles} />}
+      <Box lx={{ marginTop: "s40", alignItems: "center", justifyContent: "center" }}>
+        {actionTiles && <ActionTiles {...actionTiles} />}
+      </Box>
     </Box>
   );
 }

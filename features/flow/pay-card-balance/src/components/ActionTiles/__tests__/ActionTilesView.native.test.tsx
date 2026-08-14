@@ -5,8 +5,8 @@ import type { ActionTilesViewProps } from "../types";
 
 const defaultProps: ActionTilesViewProps = {
   tiles: [
-    { id: "deposit", label: "Deposit", onPress: jest.fn(), appearance: "base" },
-    { id: "request", label: "Request", onPress: jest.fn(), appearance: "transparent" },
+    { id: "deposit", label: "Deposit", onPress: jest.fn() },
+    { id: "request", label: "Request", onPress: jest.fn() },
   ],
 };
 
@@ -20,11 +20,7 @@ describe("ActionTilesView (Native)", () => {
 
   it("should call onPress when a tile is pressed", () => {
     const onPress = jest.fn();
-    render(
-      <ActionTilesView
-        tiles={[{ id: "deposit", label: "Deposit", onPress, appearance: "base" }]}
-      />,
-    );
+    render(<ActionTilesView tiles={[{ id: "deposit", label: "Deposit", onPress }]} />);
 
     screen.getByTestId("action-tile-deposit").props.onPress();
 

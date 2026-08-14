@@ -82,6 +82,8 @@ describe("PayTab balance integration", () => {
     expect(screen.getByText(EMPTY_TITLE)).toBeVisible();
     expect(screen.getByText(EMPTY_DESCRIPTION)).toBeVisible();
     expect(screen.queryByTestId("pay-card-balance-funded-state")).toBeNull();
+    expect(screen.queryByTestId("action-tile-deposit")).toBeNull();
+    expect(screen.queryByTestId("action-tile-request")).toBeNull();
   });
 
   it("should render the aggregated stablecoin balance when the user holds stablecoins", async () => {
@@ -91,6 +93,39 @@ describe("PayTab balance integration", () => {
 
     expect(await screen.findByTestId("pay-card-balance-funded-state")).toBeVisible();
     expect(screen.queryByTestId("pay-card-balance-empty-state")).toBeNull();
+  });
+
+  it("should render Deposit and Request action tiles when the hero is funded", async () => {
+    mockStablecoins({ stablecoins: [heldUsdc(1000)] });
+
+    render(<PayTabScreen />, { overrideInitialState: tourSeen });
+
+    expect(await screen.findByTestId("action-tile-deposit")).toBeVisible();
+    expect(screen.getByTestId("action-tile-request")).toBeVisible();
+    expect(screen.getByText("Add stablecoin")).toBeVisible();
+    expect(screen.getByText("Request")).toBeVisible();
+  });
+
+  it("should track button_clicked with quick_action location when an action tile is pressed", async () => {
+    mockStablecoins({ stablecoins: [heldUsdc(1000)] });
+
+    const { user } = render(<PayTabScreen />, { overrideInitialState: tourSeen });
+
+    await user.press(await screen.findByTestId("action-tile-deposit"));
+
+    expect(mockTrack).toHaveBeenCalledWith("button_clicked", {
+      button: "deposit",
+      buttonLocation: "quick_action",
+      page: "Pay",
+    });
+
+    await user.press(screen.getByTestId("action-tile-request"));
+
+    expect(mockTrack).toHaveBeenCalledWith("button_clicked", {
+      button: "request",
+      buttonLocation: "quick_action",
+      page: "Pay",
+    });
   });
 
   it("should track the Pay page with the active balance filter on view", async () => {
