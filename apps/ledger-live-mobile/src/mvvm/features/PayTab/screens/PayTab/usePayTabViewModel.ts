@@ -6,6 +6,7 @@ import type { FeatureTourProps } from "@features/flow-pay-card-feature-tour";
 import type { PayCardBalanceLabels } from "@features/flow-pay-card-balance";
 import { useNavigationBarHeights } from "LLM/hooks/useNavigationBarHeights";
 import { usePayCardBalance } from "LLM/features/PayTab/hooks/usePayCardBalance";
+import { usePayTabActionTiles } from "LLM/features/PayTab/hooks/usePayTabActionTiles";
 import { track } from "~/analytics";
 
 export function usePayTabViewModel() {
@@ -13,6 +14,7 @@ export function usePayTabViewModel() {
   const { t } = useTranslation();
 
   const balance = usePayCardBalance();
+  const actionTiles = usePayTabActionTiles(balance.onTrackEvent);
 
   const balanceLabels: PayCardBalanceLabels = useMemo(
     () => ({
@@ -60,5 +62,5 @@ export function usePayTabViewModel() {
     [t],
   );
 
-  return { top, openHostedLogin, featureTour, balance, balanceLabels };
+  return { top, openHostedLogin, featureTour, balance, balanceLabels, actionTiles };
 }

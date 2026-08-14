@@ -3,6 +3,7 @@ import { CardLogin, type OpenHostedLogin } from "@features/flow-pay-card-auth";
 import { FeatureTour, type FeatureTourProps } from "@features/flow-pay-card-feature-tour";
 import {
   PayCardBalance,
+  type ActionTilesProps,
   type PayCardBalanceData,
   type PayCardBalanceLabels,
 } from "@features/flow-pay-card-balance";
@@ -15,6 +16,7 @@ type PayTabViewProps = {
   readonly featureTour: FeatureTourProps;
   readonly balance: PayCardBalanceData;
   readonly balanceLabels: PayCardBalanceLabels;
+  readonly actionTiles: ActionTilesProps;
 };
 
 export function PayTabView({
@@ -23,6 +25,7 @@ export function PayTabView({
   featureTour,
   balance,
   balanceLabels,
+  actionTiles,
 }: PayTabViewProps) {
   return (
     <Box
@@ -31,7 +34,7 @@ export function PayTabView({
       testID="paytab-screen"
     >
       <TrackScreen category="Pay" balance_filter={balance.filter} />
-      <PayCardBalance {...balance} labels={balanceLabels} />
+      <PayCardBalance {...balance} labels={balanceLabels} actionTiles={actionTiles} />
       <CardLogin openHostedLogin={openHostedLogin} />
       <FeatureTour {...featureTour} />
     </Box>
