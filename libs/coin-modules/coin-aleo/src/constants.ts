@@ -51,6 +51,10 @@ export const AMOUNT_ARG_INDEX = 2;
 // This is not a limit on the total number of records that can be fetched, but rather a pagination parameter for the API calls.
 export const DEFAULT_RECORDS_PAGE_SIZE = 1000;
 
+// Rows per explorer call when paging public transitions. The explorer pages per transition and a
+// transaction spans several of them, so this is an upper bound on rows, not on transactions.
+export const DEFAULT_TRANSITION_PAGE_SIZE = 50;
+
 /**
  * Progress phase boundaries for private sync.
  *

@@ -3,10 +3,11 @@ import {
   assertCursorMatchesRequest,
   buildResumePoint,
   decodeOperationsCursor,
+  dropThroughResumePoint,
   encodeOperationsCursor,
   resolveHeightWindow,
   type OperationsCursor,
-} from "./operationsCursor";
+} from "./listOperations.helpers";
 
 const operationAt = (height: number, hash: string) =>
   getMockedCoinFrameworkOperation({
@@ -18,10 +19,14 @@ const operationAt = (height: number, hash: string) =>
     },
   });
 
-describe("operationsCursor", () => {
+describe("listOperations.helpers", () => {
   describe("encode / decode", () => {
     it("round-trips a cursor that only pins the range", () => {
-      const cursor: OperationsCursor = { minHeight: 10, maxBlockHeight: 200, order: "asc" };
+      const cursor: OperationsCursor = {
+        minHeight: 10,
+        maxBlockHeight: 200,
+        order: "asc",
+      };
 
       expect(decodeOperationsCursor(encodeOperationsCursor(cursor))).toEqual(cursor);
     });
@@ -31,7 +36,7 @@ describe("operationsCursor", () => {
         minHeight: 10,
         maxBlockHeight: 200,
         order: "desc",
-        resume: { height: 150, emitted: 3 },
+        resume: { block: 150, transactionId: "tx-b" },
       };
 
       expect(decodeOperationsCursor(encodeOperationsCursor(cursor))).toEqual(cursor);
@@ -59,13 +64,13 @@ describe("operationsCursor", () => {
         ).toString("base64url"),
       ],
       [
-        "a fractional resume height",
+        "a fractional resume block",
         Buffer.from(
           JSON.stringify({
             minHeight: 1,
             maxBlockHeight: 2,
             order: "asc",
-            resume: { height: 1.5, emitted: 1 },
+            resume: { block: 1.5, transactionId: "tx-a" },
           }),
         ).toString("base64url"),
       ],
@@ -75,7 +80,11 @@ describe("operationsCursor", () => {
   });
 
   describe("assertCursorMatchesRequest", () => {
-    const cursor: OperationsCursor = { minHeight: 10, maxBlockHeight: 200, order: "asc" };
+    const cursor: OperationsCursor = {
+      minHeight: 10,
+      maxBlockHeight: 200,
+      order: "asc",
+    };
 
     it("accepts a cursor cut from the same window", () => {
       expect(() => assertCursorMatchesRequest(cursor, 10, "asc")).not.toThrow();
@@ -100,9 +109,16 @@ describe("operationsCursor", () => {
     });
 
     it("spans the whole range for a cursor that only pins it", () => {
-      const cursor: OperationsCursor = { minHeight: 10, maxBlockHeight: 200, order: "asc" };
+      const cursor: OperationsCursor = {
+        minHeight: 10,
+        maxBlockHeight: 200,
+        order: "asc",
+      };
 
-      expect(resolveHeightWindow(cursor, 10, 200)).toEqual({ from: 10, to: 200 });
+      expect(resolveHeightWindow(cursor, 10, 200)).toEqual({
+        from: 10,
+        to: 200,
+      });
     });
 
     it("raises the lower bound when resuming ascending", () => {
@@ -110,10 +126,13 @@ describe("operationsCursor", () => {
         minHeight: 10,
         maxBlockHeight: 200,
         order: "asc",
-        resume: { height: 150, emitted: 2 },
+        resume: { block: 150, transactionId: "tx-b" },
       };
 
-      expect(resolveHeightWindow(cursor, 10, 200)).toEqual({ from: 150, to: 200 });
+      expect(resolveHeightWindow(cursor, 10, 200)).toEqual({
+        from: 150,
+        to: 200,
+      });
     });
 
     it("lowers the upper bound when resuming descending", () => {
@@ -121,41 +140,73 @@ describe("operationsCursor", () => {
         minHeight: 10,
         maxBlockHeight: 200,
         order: "desc",
-        resume: { height: 150, emitted: 2 },
+        resume: { block: 150, transactionId: "tx-b" },
       };
 
-      expect(resolveHeightWindow(cursor, 10, 200)).toEqual({ from: 10, to: 150 });
+      expect(resolveHeightWindow(cursor, 10, 200)).toEqual({
+        from: 10,
+        to: 150,
+      });
     });
   });
 
   describe("buildResumePoint", () => {
     it("returns undefined when nothing was emitted", () => {
-      expect(buildResumePoint([], 0, 0)).toBeUndefined();
+      expect(buildResumePoint([])).toBeUndefined();
     });
 
-    it("counts a single operation at the boundary height", () => {
-      const ordered = [operationAt(100, "a"), operationAt(101, "b")];
+    it("names the last operation the page emitted", () => {
+      const items = [operationAt(100, "a"), operationAt(101, "b")];
 
-      expect(buildResumePoint(ordered, 0, 2)).toEqual({ height: 101, emitted: 1 });
+      expect(buildResumePoint(items)).toEqual({
+        block: 101,
+        transactionId: "b",
+      });
     });
 
-    it("counts every operation sharing the boundary height", () => {
-      const ordered = [operationAt(100, "a"), operationAt(101, "b"), operationAt(101, "c")];
+    it("distinguishes operations sharing a height", () => {
+      const items = [operationAt(101, "b"), operationAt(101, "c")];
 
-      expect(buildResumePoint(ordered, 0, 3)).toEqual({ height: 101, emitted: 2 });
+      expect(buildResumePoint(items)).toEqual({
+        block: 101,
+        transactionId: "c",
+      });
+    });
+  });
+
+  describe("dropThroughResumePoint", () => {
+    // page 2 reopens on block 101, so the rows page 1 emitted there come back in this stream
+    const ordered = [operationAt(101, "b"), operationAt(101, "c"), operationAt(102, "d")];
+
+    it("keeps everything when there is no resume point", () => {
+      expect(dropThroughResumePoint(ordered, undefined, "asc")).toEqual(ordered);
     });
 
-    it("accumulates the boundary count across pages", () => {
-      // page 2 re-reads from height 101, so the two rows page 1 emitted there are in this stream too
-      const ordered = [operationAt(101, "b"), operationAt(101, "c"), operationAt(101, "d")];
+    it("drops the operations already emitted at the boundary height", () => {
+      const kept = dropThroughResumePoint(ordered, { block: 101, transactionId: "b" }, "asc");
 
-      expect(buildResumePoint(ordered, 2, 1)).toEqual({ height: 101, emitted: 3 });
+      expect(kept.map(op => op.tx.hash)).toEqual(["c", "d"]);
     });
 
-    it("resets the count once the boundary height moves on", () => {
-      const ordered = [operationAt(101, "b"), operationAt(101, "c"), operationAt(102, "d")];
+    it("drops a whole boundary height once its last operation went out", () => {
+      const kept = dropThroughResumePoint(ordered, { block: 101, transactionId: "c" }, "asc");
 
-      expect(buildResumePoint(ordered, 2, 1)).toEqual({ height: 102, emitted: 1 });
+      expect(kept.map(op => op.tx.hash)).toEqual(["d"]);
+    });
+
+    it("cuts at the right place descending", () => {
+      const descending = [operationAt(102, "d"), operationAt(101, "c"), operationAt(101, "b")];
+      const kept = dropThroughResumePoint(descending, { block: 101, transactionId: "c" }, "desc");
+
+      expect(kept.map(op => op.tx.hash)).toEqual(["b"]);
+    });
+
+    it("still cuts when the resume point itself has left the range", () => {
+      // a reorg dropped "c"; the position is an order key, not a lookup, so the cut still holds
+      const withoutC = [operationAt(101, "b"), operationAt(102, "d")];
+      const kept = dropThroughResumePoint(withoutC, { block: 101, transactionId: "c" }, "asc");
+
+      expect(kept.map(op => op.tx.hash)).toEqual(["d"]);
     });
   });
 });

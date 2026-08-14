@@ -10,14 +10,16 @@ export type OperationsOrder = "asc" | "desc";
  * first page so a paging run stays a consistent snapshot as the scanner advances, and
  * `minHeight` / `order` are echoed back so a cursor replayed against a different window is rejected.
  *
- * `resume.height` is where the next page picks up; `resume.emitted` counts the operations already
- * returned at exactly that height, which is what makes the boundary skip exact.
+ * `resume` names the last operation actually emitted, by `(block, transactionId)` — the same pair the
+ * total order sorts on. The framework requires a non-volatile cursor, which is why it is an identity
+ * and not an offset: a count of operations at a height is recomputed on every call, so a late-indexed
+ * row or a reorg would shift it and the next page would skip or repeat rows.
  */
 export type OperationsCursor = {
   minHeight: number;
   maxBlockHeight: number;
   order: OperationsOrder;
-  resume?: { height: number; emitted: number };
+  resume?: { block: number; transactionId: string };
 };
 
 function isNonNegativeInteger(value: unknown): value is number {
@@ -52,7 +54,7 @@ export function decodeOperationsCursor(raw: string | undefined): OperationsCurso
   if (resume === undefined) return { minHeight, maxBlockHeight, order };
 
   invariant(
-    isNonNegativeInteger(resume?.height) && isNonNegativeInteger(resume?.emitted),
+    isNonNegativeInteger(resume?.block) && typeof resume?.transactionId === "string",
     "aleo: malformed listOperations cursor",
   );
 
@@ -74,6 +76,11 @@ export function assertCursorMatchesRequest(
   );
 }
 
+/**
+ * The height range to fetch. A resume reopens *on* the boundary block rather than after it: the
+ * explorer resumes at block granularity, and operations already emitted from that block are dropped
+ * locally by {@link dropThroughResumePoint}.
+ */
 export function resolveHeightWindow(
   cursor: OperationsCursor | null,
   minHeight: number,
@@ -82,27 +89,48 @@ export function resolveHeightWindow(
   if (!cursor?.resume) return { from: minHeight, to: maxBlockHeight };
 
   return cursor.order === "asc"
-    ? { from: cursor.resume.height, to: maxBlockHeight }
-    : { from: minHeight, to: cursor.resume.height };
+    ? { from: cursor.resume.block, to: maxBlockHeight }
+    : { from: minHeight, to: cursor.resume.block };
+}
+
+/** Total order over operations: block height first, hash to break ties within a height. */
+export function compareOperations(
+  a: { block: number; transactionId: string },
+  b: { block: number; transactionId: string },
+  order: OperationsOrder,
+): number {
+  const direction = order === "asc" ? 1 : -1;
+
+  return direction * (a.block - b.block || a.transactionId.localeCompare(b.transactionId));
+}
+
+function toOrderKey(operation: Operation): {
+  block: number;
+  transactionId: string;
+} {
+  return { block: operation.tx.block.height, transactionId: operation.tx.hash };
 }
 
 /**
- * Where the next page picks up: the last emitted operation's height, plus how many operations at that
- * height have gone out across the whole run. The window opens on the previous resume height, so the
- * emitted prefix of `ordered` still contains the earlier pages' rows at that height.
+ * Drops the operations an earlier page already emitted.
+ *
+ * Compares against the resume point in the stream's own total order rather than looking the operation
+ * up by identity, so a resume point that has since vanished from the range — a reorg dropped it, the
+ * explorer re-indexed it — still cuts at the right place instead of replaying the page.
  */
-export function buildResumePoint(
+export function dropThroughResumePoint(
   ordered: Operation[],
-  emittedBefore: number,
-  emittedNow: number,
-): OperationsCursor["resume"] {
-  const last = ordered[emittedBefore + emittedNow - 1];
-  if (!last) return undefined;
+  resume: OperationsCursor["resume"],
+  order: OperationsOrder,
+): Operation[] {
+  if (!resume) return ordered;
 
-  const height = last.tx.block.height;
-  const emitted = ordered
-    .slice(0, emittedBefore + emittedNow)
-    .filter(operation => operation.tx.block.height === height).length;
+  return ordered.filter(operation => compareOperations(toOrderKey(operation), resume, order) > 0);
+}
 
-  return { height, emitted };
+/** Where the next page picks up: the last operation this page emitted. */
+export function buildResumePoint(items: Operation[]): OperationsCursor["resume"] {
+  const last = items.at(-1);
+
+  return last ? toOrderKey(last) : undefined;
 }

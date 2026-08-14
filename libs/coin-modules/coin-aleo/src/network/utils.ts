@@ -5,6 +5,7 @@ import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import {
   AMOUNT_ARG_INDEX,
   DEFAULT_RECORDS_PAGE_SIZE,
+  DEFAULT_TRANSITION_PAGE_SIZE,
   EXPLORER_TRANSFER_TYPES,
   PROGRAM_ID,
   RECIPIENT_ARG_INDEX,
@@ -48,6 +49,17 @@ function hasReachedMinHeight(
   return transactions.some(tx => tx.block_number < minBlockHeight);
 }
 
+/**
+ * Skip transitions that have no direct account involvement (e.g. outer call in a batching contract).
+ * Other transition, sharing the same transaction_id, will carry the real amount and addresses.
+ * Testnet transaction showing this issue: at1lqugdt847uwnfem2xhzwq6ewrnd6ysjv2gumvglytskutxj3kcpsmc3rrf
+ */
+function isBareInnerTransition(tx: AleoPublicTransaction): boolean {
+  return (
+    tx.function_id.includes("transfer") && tx.sender_address === "" && tx.recipient_address === ""
+  );
+}
+
 export async function fetchAccountTransactionsFromHeight({
   config,
   address,
@@ -84,19 +96,9 @@ export async function fetchAccountTransactionsFromHeight({
     const nextCursorBlockNumber = page.next_cursor?.block_number.toString() ?? null;
     hasMorePages = nextCursorBlockNumber !== null;
 
-    const recentTxs = page.transactions.filter(tx => {
-      const hasValidBlockNumber = tx.block_number >= minBlockHeight;
-
-      // Skip transitions that have no direct account involvement (e.g. outer call in a batching contract).
-      // Other transition, sharing the same transaction_id, will carry the real amount and addresses.
-      // Testnet transaction showing this issue: at1lqugdt847uwnfem2xhzwq6ewrnd6ysjv2gumvglytskutxj3kcpsmc3rrf
-      const isInvalidTransition =
-        tx.function_id.includes("transfer") &&
-        tx.sender_address === "" &&
-        tx.recipient_address === "";
-
-      return hasValidBlockNumber && !isInvalidTransition;
-    });
+    const recentTxs = page.transactions.filter(
+      tx => tx.block_number >= minBlockHeight && !isBareInnerTransition(tx),
+    );
     transactions.push(...recentTxs);
 
     // stop if DESC order hit the min height boundary
@@ -135,6 +137,69 @@ export async function fetchAccountTransactionsFromHeight({
 
   // should not be reached, just a type guard
   throw new Error("aleo: unexpected end of loop in fetchAccountTransactionsFromHeight");
+}
+
+/**
+ * Fetches transitions forward from `startBlock`, stopping as soon as more than `targetTransactions`
+ * distinct transactions are in hand — the bounded counterpart of
+ * {@link fetchAccountTransactionsFromHeight}, for callers that page rather than take the whole history.
+ *
+ * `startBlock` is passed to the explorer as its cursor, so the walk begins near the requested height
+ * instead of at the account's first transaction. Callers must still treat the height as a filter, not
+ * a guarantee: the explorer resumes at block granularity, so the first block comes back whole and may
+ * repeat rows an earlier page already saw.
+ *
+ * One more transaction than asked for is deliberate. The explorer pages per transition, so the
+ * transaction the stream ends on may still have rows beyond the boundary; `complete: false` tells the
+ * caller not to trust it, and the surplus is what lets the caller discard it and still fill a page.
+ */
+export async function fetchAccountTransitionPage({
+  config,
+  address,
+  minBlockHeight,
+  startBlock,
+  targetTransactions,
+  pageSize = DEFAULT_TRANSITION_PAGE_SIZE,
+  order = "asc",
+}: {
+  config: AleoCoinConfig;
+  address: string;
+  minBlockHeight: number;
+  startBlock?: number;
+  targetTransactions: number;
+  pageSize?: number;
+  order?: "asc" | "desc";
+}): Promise<{ transitions: AleoPublicTransaction[]; complete: boolean }> {
+  const transitions: AleoPublicTransaction[] = [];
+  const transactionIds = new Set<string>();
+  let currentCursor = typeof startBlock === "number" ? startBlock.toString() : null;
+
+  for (;;) {
+    const page = await apiClient.getAccountPublicTransactions({
+      config,
+      address,
+      limit: pageSize,
+      order,
+      ...(currentCursor && { cursor: currentCursor }),
+    });
+
+    for (const tx of page.transactions) {
+      if (tx.block_number < minBlockHeight || isBareInnerTransition(tx)) continue;
+
+      transitions.push(tx);
+      transactionIds.add(tx.transaction_id.trim());
+    }
+
+    const nextCursor = page.next_cursor?.block_number.toString() ?? null;
+
+    // Walking down past the floor means the range is fully covered, whatever the explorer still holds.
+    const reachedFloor = order === "desc" && hasReachedMinHeight(page.transactions, minBlockHeight);
+    if (nextCursor === null || reachedFloor) return { transitions, complete: true };
+
+    if (transactionIds.size > targetTransactions) return { transitions, complete: false };
+
+    currentCursor = nextCursor;
+  }
 }
 
 /**
@@ -280,7 +345,9 @@ export async function accessProvableApi({
 }
 
 type EnrichedRecordData = Pick<EnrichedPrivateRecord, "sender" | "recipient" | "value">;
-type AleoTransitionInputWithValue = AleoTransition["inputs"][number] & { value: string };
+type AleoTransitionInputWithValue = AleoTransition["inputs"][number] & {
+  value: string;
+};
 
 // PUBLIC_TO_PRIVATE where sender is this address is already captured as a public OUT op.
 function shouldSkipPublicToPrivateRecord(rawRecord: AleoPrivateRecord, address: string): boolean {
@@ -330,7 +397,9 @@ function getTransferArguments(
   if (recordTransition.inputs.length <= amountOutputIndex) {
     log(
       "aleo/sync",
-      `enrichPrivateRecord: transition has only ${recordTransition.inputs.length} inputs, expected at least ${amountOutputIndex + 1} for tx ${transactionId}`,
+      `enrichPrivateRecord: transition has only ${
+        recordTransition.inputs.length
+      } inputs, expected at least ${amountOutputIndex + 1} for tx ${transactionId}`,
     );
     return null;
   }
@@ -686,7 +755,11 @@ export async function getTokenOutDetails({
   config: AleoCoinConfig;
   record: AleoPrivateRecord;
   viewKey: string;
-}): Promise<{ amount: BigNumber | null; recipient: string | null; fee: BigNumber }> {
+}): Promise<{
+  amount: BigNumber | null;
+  recipient: string | null;
+  fee: BigNumber;
+}> {
   const txDetails = await apiClient.getTransactionById(config, record.transaction_id.trim());
   const fee = new BigNumber(txDetails.fee_value);
   const transition = txDetails.execution?.transitions[record.transition_index];
@@ -712,7 +785,11 @@ export async function getTokenOutDetails({
     // Amount is already in plaintext — scan inputs by pattern instead of assuming a
     // fixed argument index (token programs may differ from credits.aleo).
     const amountStr = plaintexts.find(isAleoAmountPlaintext) ?? null;
-    return { amount: amountStr ? parseAmount(amountStr) : null, recipient, fee };
+    return {
+      amount: amountStr ? parseAmount(amountStr) : null,
+      recipient,
+      fee,
+    };
   }
 
   // Fully private transfer: decrypt recipient and amount arguments using the token program's

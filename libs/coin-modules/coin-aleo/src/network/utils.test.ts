@@ -22,6 +22,7 @@ import { accessProvableApi } from "./utils";
 import { apiClient } from "./api";
 import {
   fetchAccountTransactionsFromHeight,
+  fetchAccountTransitionPage,
   fetchAllOwnedRecords,
   enrichPrivateRecord,
   patchPublicOperations,
@@ -176,9 +177,18 @@ describe("network/utils", () => {
         const limit = 2;
         const minBlockHeight = 100;
         const mockTxs = [
-          getMockedPublicTransaction({ block_number: 150, transaction_id: "tx1" }),
-          getMockedPublicTransaction({ block_number: 140, transaction_id: "tx2" }),
-          getMockedPublicTransaction({ block_number: 130, transaction_id: "tx3" }),
+          getMockedPublicTransaction({
+            block_number: 150,
+            transaction_id: "tx1",
+          }),
+          getMockedPublicTransaction({
+            block_number: 140,
+            transaction_id: "tx2",
+          }),
+          getMockedPublicTransaction({
+            block_number: 130,
+            transaction_id: "tx3",
+          }),
         ];
 
         jest.mocked(apiClient.getAccountPublicTransactions).mockResolvedValueOnce({
@@ -404,8 +414,13 @@ describe("network/utils", () => {
 
     beforeEach(() => {
       jest.clearAllMocks();
-      mockGetScannerPublicKey.mockResolvedValue({ public_key: mockPublicKey, key_id: mockKeyId });
-      mockEncryptRegistrationPayload.mockResolvedValue({ encrypted: mockEncryptedData });
+      mockGetScannerPublicKey.mockResolvedValue({
+        public_key: mockPublicKey,
+        key_id: mockKeyId,
+      });
+      mockEncryptRegistrationPayload.mockResolvedValue({
+        encrypted: mockEncryptedData,
+      });
     });
 
     describe("UUID and scanning registration", () => {
@@ -414,8 +429,13 @@ describe("network/utils", () => {
           scannerStatus: { synced: false, percentage: 0 },
         };
 
-        mockRegisterForScanningAccountRecords.mockResolvedValue({ uuid: mockUUID });
-        mockGetRecordScannerStatus.mockResolvedValue({ synced: false, percentage: 5 });
+        mockRegisterForScanningAccountRecords.mockResolvedValue({
+          uuid: mockUUID,
+        });
+        mockGetRecordScannerStatus.mockResolvedValue({
+          synced: false,
+          percentage: 5,
+        });
 
         const result = await accessProvableApi({
           config: mockConfig,
@@ -447,7 +467,10 @@ describe("network/utils", () => {
           scannerStatus: { synced: false, percentage: 50 },
         };
 
-        mockGetRecordScannerStatus.mockResolvedValue({ synced: false, percentage: 60 });
+        mockGetRecordScannerStatus.mockResolvedValue({
+          synced: false,
+          percentage: 60,
+        });
 
         const result = await accessProvableApi({
           config: mockConfig,
@@ -467,7 +490,10 @@ describe("network/utils", () => {
           scannerStatus: { synced: false, percentage: 50 },
         };
 
-        mockGetRecordScannerStatus.mockResolvedValue({ synced: true, percentage: 100 });
+        mockGetRecordScannerStatus.mockResolvedValue({
+          synced: true,
+          percentage: 100,
+        });
 
         const result = await accessProvableApi({
           config: mockConfig,
@@ -475,7 +501,10 @@ describe("network/utils", () => {
           provableApi: existingProvableApi,
         });
 
-        expect(result?.scannerStatus).toEqual({ synced: true, percentage: 100 });
+        expect(result?.scannerStatus).toEqual({
+          synced: true,
+          percentage: 100,
+        });
       });
 
       it("should throw AleoApiConfigurationResetError when getRecordScannerStatus fails with a 422 error", async () => {
@@ -534,12 +563,20 @@ describe("network/utils", () => {
           provableApi: existingProvableApi,
         });
 
-        expect(result?.scannerStatus).toEqual({ synced: false, percentage: 75 });
+        expect(result?.scannerStatus).toEqual({
+          synced: false,
+          percentage: 75,
+        });
       });
 
       it("should initialize scanner status with defaults when provableApi is null", async () => {
-        mockRegisterForScanningAccountRecords.mockResolvedValue({ uuid: mockUUID });
-        mockGetRecordScannerStatus.mockResolvedValue({ synced: false, percentage: 0 });
+        mockRegisterForScanningAccountRecords.mockResolvedValue({
+          uuid: mockUUID,
+        });
+        mockGetRecordScannerStatus.mockResolvedValue({
+          synced: false,
+          percentage: 0,
+        });
 
         const result = await accessProvableApi({
           config: mockConfig,
@@ -1242,7 +1279,10 @@ describe("network/utils", () => {
         hash: txHash,
         type: "OUT",
         date: new Date("2024-01-01T00:00:00.000Z"),
-        extra: { functionId: "transfer_public_to_private", transactionType: "public" },
+        extra: {
+          functionId: "transfer_public_to_private",
+          transactionType: "public",
+        },
       });
       const matchingRecord = getMockedRecord({
         transaction_id: txHash,
@@ -1288,7 +1328,10 @@ describe("network/utils", () => {
         hash: txHash,
         type: "IN",
         date: new Date("2024-02-01T00:00:00.000Z"),
-        extra: { functionId: "transfer_private_to_public", transactionType: "public" },
+        extra: {
+          functionId: "transfer_private_to_public",
+          transactionType: "public",
+        },
       });
       const matchingRecord = getMockedRecord({
         transaction_id: txHash,
@@ -1331,7 +1374,10 @@ describe("network/utils", () => {
         hash: txHash,
         type: "OUT",
         date: opDate,
-        extra: { functionId: "transfer_public_to_private", transactionType: "public" },
+        extra: {
+          functionId: "transfer_public_to_private",
+          transactionType: "public",
+        },
       });
       const matchingRecord = getMockedRecord({
         transaction_id: txHash,
@@ -1357,7 +1403,10 @@ describe("network/utils", () => {
       const publicOp = getMockedOperation({
         hash: txHash,
         type: "OUT",
-        extra: { functionId: "transfer_public_to_private", transactionType: "public" },
+        extra: {
+          functionId: "transfer_public_to_private",
+          transactionType: "public",
+        },
       });
       const feeRecord = getMockedRecord({
         transaction_id: txHash,
@@ -1382,7 +1431,9 @@ describe("network/utils", () => {
         },
       });
       mockGetTransactionById.mockResolvedValueOnce(mockDetails);
-      mockDecryptCiphertext.mockResolvedValueOnce({ plaintext: "aleo1decrypted_recipient" });
+      mockDecryptCiphertext.mockResolvedValueOnce({
+        plaintext: "aleo1decrypted_recipient",
+      });
 
       const result = await patchPublicOperations({
         config: mockConfig,
@@ -1408,7 +1459,10 @@ describe("network/utils", () => {
       const publicOp = getMockedOperation({
         hash: txHash,
         type: "OUT",
-        extra: { functionId: "transfer_public_to_private", transactionType: "public" },
+        extra: {
+          functionId: "transfer_public_to_private",
+          transactionType: "public",
+        },
       });
       const mockDetails = getMockedTransactionDetails(txHash, {
         block_height: 100,
@@ -1428,7 +1482,9 @@ describe("network/utils", () => {
         },
       });
       mockGetTransactionById.mockResolvedValueOnce(mockDetails);
-      mockDecryptCiphertext.mockResolvedValueOnce({ plaintext: "aleo1external_recipient" });
+      mockDecryptCiphertext.mockResolvedValueOnce({
+        plaintext: "aleo1external_recipient",
+      });
 
       // no private records -> latestScannedBlockHeight = 0, which is less than tx block 100
       const result = await patchPublicOperations({
@@ -1466,7 +1522,10 @@ describe("network/utils", () => {
       const publicOp = getMockedOperation({
         hash: txHash,
         type: "OUT",
-        extra: { functionId: "transfer_public_to_private", transactionType: "public" },
+        extra: {
+          functionId: "transfer_public_to_private",
+          transactionType: "public",
+        },
       });
       const mockDetails = getMockedTransactionDetails(txHash, {
         block_height: 100,
@@ -1486,7 +1545,9 @@ describe("network/utils", () => {
         },
       });
       mockGetTransactionById.mockResolvedValueOnce(mockDetails);
-      mockDecryptCiphertext.mockResolvedValueOnce({ plaintext: "aleo1external_recipient" });
+      mockDecryptCiphertext.mockResolvedValueOnce({
+        plaintext: "aleo1external_recipient",
+      });
 
       // fee_private record at block 200 acts as scanner watermark - scanner has definitely passed block 100
       const scannerWatermarkRecord = getMockedRecord({
@@ -1543,7 +1604,10 @@ describe("network/utils", () => {
       const publicOp = getMockedOperation({
         hash: txHash,
         type: "OUT",
-        extra: { functionId: "transfer_public_to_private", transactionType: "public" },
+        extra: {
+          functionId: "transfer_public_to_private",
+          transactionType: "public",
+        },
       });
       const mockDetails = getMockedTransactionDetails(txHash, {
         block_height: 100,
@@ -1625,7 +1689,10 @@ describe("network/utils", () => {
       const publicOp = getMockedOperation({
         hash: txHash,
         type: "OUT",
-        extra: { functionId: "transfer_public_to_private", transactionType: "public" },
+        extra: {
+          functionId: "transfer_public_to_private",
+          transactionType: "public",
+        },
       });
       const mockDetails = getMockedTransactionDetails(txHash, {
         execution: {
@@ -1663,7 +1730,10 @@ describe("network/utils", () => {
       const publicOp = getMockedOperation({
         hash: txHash,
         type: "OUT",
-        extra: { functionId: "transfer_public_to_private", transactionType: "public" },
+        extra: {
+          functionId: "transfer_public_to_private",
+          transactionType: "public",
+        },
       });
       const recordWithSpaces = getMockedRecord({
         transaction_id: `  ${txHash}  `,
@@ -1696,7 +1766,10 @@ describe("network/utils", () => {
         id: "semi_pub",
         hash: "at1semi",
         type: "OUT",
-        extra: { functionId: "transfer_public_to_private", transactionType: "public" },
+        extra: {
+          functionId: "transfer_public_to_private",
+          transactionType: "public",
+        },
       });
       const matchingRecord = getMockedRecord({
         transaction_id: "at1semi",
@@ -1718,6 +1791,131 @@ describe("network/utils", () => {
       expect(result).toEqual(
         expect.arrayContaining([expect.objectContaining({ id: "fully_pub" })]),
       );
+    });
+  });
+
+  describe("fetchAccountTransitionPage", () => {
+    const mockGetTransactions = jest.mocked(apiClient.getAccountPublicTransactions);
+
+    const transition = (transactionId: string, blockNumber: number) =>
+      getMockedPublicTransaction({
+        transaction_id: transactionId,
+        block_number: blockNumber,
+      });
+
+    const explorerPage = (
+      transactions: ReturnType<typeof transition>[],
+      nextBlock: number | null,
+    ) => ({
+      address: mockAddress,
+      transactions,
+      ...(nextBlock !== null && {
+        next_cursor: { block_number: nextBlock, transition_id: "au1" },
+      }),
+    });
+
+    const fetchPage = (targetTransactions: number, startBlock?: number) =>
+      fetchAccountTransitionPage({
+        config: mockConfig,
+        address: mockAddress,
+        minBlockHeight: 0,
+        targetTransactions,
+        ...(startBlock !== undefined && { startBlock }),
+      });
+
+    beforeEach(() => jest.clearAllMocks());
+
+    it("starts the walk at the requested block instead of the account's first row", async () => {
+      mockGetTransactions.mockResolvedValue(explorerPage([transition("tx1", 500)], null));
+
+      await fetchPage(5, 500);
+
+      expect(mockGetTransactions).toHaveBeenCalledWith(
+        expect.objectContaining({ cursor: "500", limit: 50, order: "asc" }),
+      );
+    });
+
+    it("reports complete once the explorer runs out", async () => {
+      mockGetTransactions.mockResolvedValue(
+        explorerPage([transition("tx1", 100), transition("tx2", 101)], null),
+      );
+
+      const { transitions, complete } = await fetchPage(5);
+
+      expect(transitions).toHaveLength(2);
+      expect(complete).toBe(true);
+      expect(mockGetTransactions).toHaveBeenCalledTimes(1);
+    });
+
+    it("stops one transaction past the target, so the trailing one can be discarded", async () => {
+      mockGetTransactions
+        .mockResolvedValueOnce(explorerPage([transition("tx1", 100)], 101))
+        .mockResolvedValueOnce(explorerPage([transition("tx2", 101)], 102))
+        .mockResolvedValueOnce(explorerPage([transition("tx3", 102)], 103));
+
+      const { transitions, complete } = await fetchPage(2);
+
+      expect(transitions.map(tx => tx.transaction_id)).toEqual(["tx1", "tx2", "tx3"]);
+      expect(complete).toBe(false);
+      expect(mockGetTransactions).toHaveBeenCalledTimes(3);
+    });
+
+    it("keeps paging while a transaction spans several explorer pages", async () => {
+      // one transaction, three transitions: the target is never reached, so it must not stop early
+      mockGetTransactions
+        .mockResolvedValueOnce(explorerPage([transition("tx1", 100)], 100))
+        .mockResolvedValueOnce(explorerPage([transition("tx1", 100)], 100))
+        .mockResolvedValueOnce(explorerPage([transition("tx1", 100)], null));
+
+      const { transitions, complete } = await fetchPage(1);
+
+      expect(transitions).toHaveLength(3);
+      expect(complete).toBe(true);
+    });
+
+    it("drops transitions below minBlockHeight and bare inner transitions", async () => {
+      mockGetTransactions.mockResolvedValue(
+        explorerPage(
+          [
+            transition("tx-low", 10),
+            transition("tx-ok", 100),
+            getMockedPublicTransaction({
+              transaction_id: "tx-inner",
+              block_number: 100,
+              function_id: "transfer_public",
+              sender_address: "",
+              recipient_address: "",
+            }),
+          ],
+          null,
+        ),
+      );
+
+      const { transitions } = await fetchAccountTransitionPage({
+        config: mockConfig,
+        address: mockAddress,
+        minBlockHeight: 50,
+        targetTransactions: 5,
+      });
+
+      expect(transitions.map(tx => tx.transaction_id)).toEqual(["tx-ok"]);
+    });
+
+    it("stops descending once it walks below the floor", async () => {
+      mockGetTransactions.mockResolvedValue(
+        explorerPage([transition("tx1", 100), transition("tx-below", 10)], 9),
+      );
+
+      const { transitions, complete } = await fetchAccountTransitionPage({
+        config: mockConfig,
+        address: mockAddress,
+        minBlockHeight: 50,
+        targetTransactions: 5,
+        order: "desc",
+      });
+
+      expect(transitions.map(tx => tx.transaction_id)).toEqual(["tx1"]);
+      expect(complete).toBe(true);
     });
   });
 

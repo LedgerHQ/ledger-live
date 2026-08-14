@@ -12,36 +12,37 @@ import type {
   EnrichedPrivateRecord,
 } from "../types";
 import { lastBlock } from "./lastBlock";
-import { listPublicOperations } from "./listPublicOperations";
+import { listPublicOperationsPage } from "./listPublicOperations";
 import { enrichPrivateRecords } from "./listPrivateOperations";
 import {
   assertCursorMatchesRequest,
   buildResumePoint,
+  compareOperations,
   decodeOperationsCursor,
+  dropThroughResumePoint,
   encodeOperationsCursor,
   resolveHeightWindow,
-} from "./operationsCursor";
+} from "./listOperations.helpers";
 import { toCoinFrameworkPrivateOperation, toMergedOperation } from "./utils";
 
 const DEFAULT_LIMIT = 50;
+
+// Ceiling for the widening retry below, so a pathologically dense block degrades to one large fetch
+// rather than an unbounded walk.
+const MAX_TARGET_TRANSACTIONS = 2000;
 
 /**
  * Resolves the height the record scanner is complete through. Operations above it are withheld
  * rather than returned public-only (ADR-042 completeness ceiling).
  *
- * `synced_up_to` ships with LIVE-34092. Until then a fully-synced scanner is assumed complete
- * through the chain tip, and a lagging one yields 0 (empty page) rather than a partial range.
+ * `synced_up_to` ships with LIVE-34092. Until then the height is unknown, and an unknown ceiling
+ * yields 0 (empty page) rather than a guessed range — `synced: true` says nothing about how far the
+ * scanner got, so treating it as the chain tip would claim completeness the scanner never reported.
  */
-async function getScannerSyncedHeight(
-  config: AleoCoinConfig,
-  provableId: string,
-  latestBlockHeight: number,
-): Promise<number> {
+async function getScannerSyncedHeight(config: AleoCoinConfig, provableId: string): Promise<number> {
   const status = await fetchRecordScannerStatus(config, provableId);
 
-  if (typeof status.synced_up_to === "number") return status.synced_up_to;
-
-  return status.synced ? latestBlockHeight : 0;
+  return typeof status.synced_up_to === "number" ? status.synced_up_to : 0;
 }
 
 /**
@@ -79,12 +80,12 @@ function buildOrderedOperations({
     if (record) operations.push(toCoinFrameworkPrivateOperation(record, address));
   }
 
-  const direction = order === "asc" ? 1 : -1;
-
-  // Tie-break on hash so the ordering is total.
-  return operations.sort(
-    (a, b) =>
-      direction * (a.tx.block.height - b.tx.block.height || a.tx.hash.localeCompare(b.tx.hash)),
+  return operations.sort((a, b) =>
+    compareOperations(
+      { block: a.tx.block.height, transactionId: a.tx.hash },
+      { block: b.tx.block.height, transactionId: b.tx.hash },
+      order,
+    ),
   );
 }
 
@@ -117,7 +118,7 @@ export async function listOperations({
   const latestBlock = await lastBlock(config);
   // Read on every page so a dropped enrollment surfaces as AleoApiConfigurationResetError rather
   // than a bare 4xx from the records fetch.
-  const scannerSyncedHeight = await getScannerSyncedHeight(config, provableId, latestBlock.height);
+  const scannerSyncedHeight = await getScannerSyncedHeight(config, provableId);
 
   // A cursor pins the ceiling so a paging run stays a consistent snapshot as the scanner advances.
   const maxBlockHeight = Math.min(
@@ -141,70 +142,106 @@ export async function listOperations({
     return { items: [], next: undefined };
   }
 
-  // The window is enforced here; the bounds handed to the fetches below only limit over-fetching.
-  const isInWindow = (height: number): boolean => height >= from && height <= to;
+  const limit = Math.max(options.limit ?? DEFAULT_LIMIT, 1);
 
-  const [publicResult, ownedRecords] = await Promise.all([
-    listPublicOperations({ config, address, minBlockHeight: from }),
-    fetchAllOwnedRecords({
-      config,
-      uuid: provableId,
-      start: from,
-      // empty opts out of the credits.aleo-only filter, so token records are included too
-      programs: [],
-      functions: [...PRIVATE_TRANSFER_FUNCTIONS],
-    }),
-  ]);
+  // Started alongside the first public fetch and awaited by every attempt: the record endpoint is
+  // bulk-paged and takes no ceiling, so a widening retry reuses the same result rather than refetching.
+  const ownedRecordsPromise = fetchAllOwnedRecords({
+    config,
+    uuid: provableId,
+    start: from,
+    // empty opts out of the credits.aleo-only filter, so token records are included too
+    programs: [],
+    functions: [...PRIVATE_TRANSFER_FUNCTIONS],
+  });
 
-  const publicTransactions = publicResult.transactions.filter(tx => isInWindow(tx.block_number));
-  const publicTxIds = new Set(publicTransactions.map(tx => tx.transaction_id.trim()));
+  async function collectPage(
+    targetTransactions: number,
+  ): Promise<{ items: Operation[]; hasMore: boolean }> {
+    const [publicPage, ownedRecords] = await Promise.all([
+      listPublicOperationsPage({
+        config,
+        address,
+        minBlockHeight: from,
+        startBlock: order === "asc" ? from : to,
+        targetTransactions,
+        order,
+      }),
+      ownedRecordsPromise,
+    ]);
 
-  const ownedRecordTxIds = new Set<string>();
-  // Only fully private transfers need decrypting: the rest are completed from their public row.
-  // Keyed by transaction so a transaction producing several owned records — a private self-transfer
-  // owns both the output and the change — still yields exactly one operation (ADR-042 invariant).
-  const recordsToEnrich = new Map<string, AleoPrivateRecord>();
+    // A bounded public stream can only vouch for the range it actually reached. Merging private
+    // operations past that point would emit them ahead of the public rows sharing their heights, and
+    // the next page would then repeat those rows.
+    const heights = publicPage.transactions.map(tx => tx.block_number);
+    const windowFrom =
+      publicPage.complete || order === "asc" ? from : Math.max(from, Math.min(...heights));
+    const windowTo =
+      publicPage.complete || order === "desc" ? to : Math.min(to, Math.max(...heights));
+    const isInWindow = (height: number): boolean => height >= windowFrom && height <= windowTo;
 
-  for (const record of ownedRecords) {
-    if (!isInWindow(record.block_height)) continue;
+    const publicTransactions = publicPage.transactions.filter(tx => isInWindow(tx.block_number));
+    const publicTxIds = new Set(publicTransactions.map(tx => tx.transaction_id.trim()));
 
-    const transactionId = record.transaction_id.trim();
-    ownedRecordTxIds.add(transactionId);
-    if (publicTxIds.has(transactionId)) continue;
+    const ownedRecordTxIds = new Set<string>();
+    // Only fully private transfers need decrypting: the rest are completed from their public row.
+    // Keyed by transaction so a transaction producing several owned records — a private self-transfer
+    // owns both the output and the change — still yields exactly one operation (ADR-042 invariant).
+    const recordsToEnrich = new Map<string, AleoPrivateRecord>();
 
-    const current = recordsToEnrich.get(transactionId);
-    if (!current || isEarlierOutput(record, current)) {
-      recordsToEnrich.set(transactionId, record);
+    for (const record of ownedRecords) {
+      if (!isInWindow(record.block_height)) continue;
+
+      const transactionId = record.transaction_id.trim();
+      ownedRecordTxIds.add(transactionId);
+      if (publicTxIds.has(transactionId)) continue;
+
+      const current = recordsToEnrich.get(transactionId);
+      if (!current || isEarlierOutput(record, current)) {
+        recordsToEnrich.set(transactionId, record);
+      }
     }
+
+    const enrichedRecords = await enrichPrivateRecords({
+      config,
+      viewKey,
+      address,
+      records: [...recordsToEnrich.values()],
+    });
+
+    const ordered = buildOrderedOperations({
+      publicTransactions,
+      ownedRecordTxIds,
+      privateOnlyRecords: enrichedRecords,
+      address,
+      order,
+    });
+
+    return {
+      // The window reopens on the resume block, so operations already emitted from it come back in
+      // this stream. Ordering is total, so they are exactly the rows at or before the resume point.
+      items: dropThroughResumePoint(ordered, cursor?.resume, order),
+      hasMore: !publicPage.complete,
+    };
   }
 
-  const enrichedRecords = await enrichPrivateRecords({
-    config,
-    viewKey,
-    address,
-    records: [...recordsToEnrich.values()],
-  });
+  let targetTransactions = limit;
+  let page = await collectPage(targetTransactions);
 
-  const ordered = buildOrderedOperations({
-    publicTransactions,
-    ownedRecordTxIds,
-    privateOnlyRecords: enrichedRecords,
-    address,
-    order,
-  });
+  // A resume block holding more transactions than the fetch asked for yields a page whose rows were
+  // all emitted already — and a cursor that has not moved. Widen until the block clears, rather than
+  // hand back an empty page that would end the walk early or spin on the same cursor.
+  while (page.items.length === 0 && page.hasMore && targetTransactions < MAX_TARGET_TRANSACTIONS) {
+    targetTransactions = Math.min(targetTransactions * 4, MAX_TARGET_TRANSACTIONS);
+    page = await collectPage(targetTransactions);
+  }
 
-  // The window opens on the boundary height, so operations already emitted there come back in this
-  // page's stream. Ordering is total and the range immutable, so they are exactly its first rows.
-  const emittedBefore = cursor?.resume?.emitted ?? 0;
-  const limit = Math.max(options.limit ?? DEFAULT_LIMIT, 1);
-  const items = ordered.slice(emittedBefore, emittedBefore + limit);
-  const resume = buildResumePoint(ordered, emittedBefore, items.length);
-  const hasMore = emittedBefore + items.length < ordered.length;
+  const resume = buildResumePoint(page.items);
 
   return {
-    items,
+    items: page.items,
     next:
-      hasMore && resume
+      page.hasMore && resume
         ? encodeOperationsCursor({ minHeight, maxBlockHeight, order, resume })
         : undefined,
   };

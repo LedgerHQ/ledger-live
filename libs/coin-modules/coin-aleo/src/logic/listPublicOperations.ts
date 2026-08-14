@@ -1,4 +1,4 @@
-import { fetchAccountTransactionsFromHeight } from "../network/utils";
+import { fetchAccountTransactionsFromHeight, fetchAccountTransitionPage } from "../network/utils";
 import type { AleoCoinConfig, AleoPublicTransaction } from "../types";
 
 /**
@@ -39,7 +39,54 @@ function isBetterRepresentative(
   return candidate.transition_id < current.transition_id;
 }
 
-/** The public half of the Aleo history, normalised to one row per transaction. */
+/**
+ * A bounded page of the public history, normalised to one row per transaction.
+ *
+ * The explorer pages per transition, so the transaction the stream ends on may still have rows past
+ * the boundary — its representative would be picked from a partial set, and the pick has to be stable
+ * across calls. So that trailing transaction is dropped and left for the next page, which refetches
+ * from its block and sees it whole. Nothing is lost: the caller resumes from the last transaction it
+ * actually emitted.
+ *
+ * `complete` means the explorer had nothing left, so every transaction in hand is whole and the
+ * trailing-drop does not apply.
+ */
+export async function listPublicOperationsPage({
+  config,
+  address,
+  minBlockHeight,
+  startBlock,
+  targetTransactions,
+  order,
+}: {
+  config: AleoCoinConfig;
+  address: string;
+  minBlockHeight: number;
+  startBlock?: number;
+  targetTransactions: number;
+  order?: "asc" | "desc";
+}): Promise<{ transactions: AleoPublicTransaction[]; complete: boolean }> {
+  const { transitions, complete } = await fetchAccountTransitionPage({
+    config,
+    address,
+    minBlockHeight,
+    targetTransactions,
+    ...(typeof startBlock === "number" && { startBlock }),
+    ...(order && { order }),
+  });
+
+  const transactions = pickTransactionRepresentatives(transitions);
+  if (complete) return { transactions, complete: true };
+
+  const trailingId = transitions.at(-1)?.transaction_id.trim();
+
+  return {
+    transactions: transactions.filter(tx => tx.transaction_id.trim() !== trailingId),
+    complete: false,
+  };
+}
+
+/** The whole public half of the Aleo history, normalised to one row per transaction. */
 export async function listPublicOperations({
   config,
   address,
@@ -54,7 +101,10 @@ export async function listPublicOperations({
   cursor?: string;
   limit?: number;
   order?: "asc" | "desc";
-}): Promise<{ transactions: AleoPublicTransaction[]; nextCursor: string | null }> {
+}): Promise<{
+  transactions: AleoPublicTransaction[];
+  nextCursor: string | null;
+}> {
   const { transactions, nextCursor } = await fetchAccountTransactionsFromHeight({
     config,
     address,
@@ -67,5 +117,8 @@ export async function listPublicOperations({
     ...(order && { order }),
   });
 
-  return { transactions: pickTransactionRepresentatives(transactions), nextCursor };
+  return {
+    transactions: pickTransactionRepresentatives(transactions),
+    nextCursor,
+  };
 }

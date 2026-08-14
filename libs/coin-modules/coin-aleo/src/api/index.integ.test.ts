@@ -14,7 +14,7 @@ import {
 } from "../__tests__/fixtures/api.fixture";
 import { setupCalStore } from "../__tests__/helpers/cal";
 import { getPristineAccount } from "../__tests__/helpers/account";
-import { encodeOperationsCursor } from "../logic/operationsCursor";
+import { encodeOperationsCursor } from "../logic/listOperations.helpers";
 import { accessProvableApi } from "../network/utils";
 import type { AleoContext } from "../types";
 
