@@ -716,6 +716,13 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
     });
 
     await expectModalNotOpen();
+    expect(track).toHaveBeenCalledWith(
+      "modal_blocked",
+      expect.objectContaining({
+        reason: "competing_app_start_modal",
+        competitor: "wallet_v4_tour",
+      }),
+    );
   });
 
   it("should not open when a Q2 tour is competing", async () => {
@@ -742,6 +749,13 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
     });
 
     await expectModalNotOpen();
+    expect(track).toHaveBeenCalledWith(
+      "modal_blocked",
+      expect.objectContaining({
+        reason: "competing_app_start_modal",
+        competitor: "q2_tour",
+      }),
+    );
   });
 
   it("should not open when Generic Awareness modal is open", async () => {
@@ -753,6 +767,13 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
     });
 
     await expectModalNotOpen();
+    expect(track).toHaveBeenCalledWith(
+      "modal_blocked",
+      expect.objectContaining({
+        reason: "competing_app_start_modal",
+        competitor: "generic_awareness",
+      }),
+    );
   });
 
   it("should stay blocked for the session after a competing modal closes", async () => {

@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { onboardingDateSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
-import { useFeature } from "@features/platform-feature-flags";
+import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import {
   LargeScreenUpsellModal,
   mapDevicesModelListToUpsellInputs,
@@ -19,14 +19,18 @@ import { useShouldShowDeferredModals } from "~/renderer/hooks/useShouldShowDefer
 import { selectIsGenericAwarenessModalOpen } from "LLD/features/GenericAwarenessModal/genericAwarenessModalDialog";
 import {
   devicesModelListSelector,
+  hasSeenQ2TourSelector,
+  hasSeenWalletV4TourSelector,
   sharePersonalizedRecommendationsSelector,
 } from "~/renderer/reducers/settings";
 import { openURL } from "~/renderer/linking";
 import {
   toLargeScreenUpsellDeviceModelAnalyticsValue,
+  trackLargeScreenUpsellModalBlockedByCompeting,
   trackLargeScreenUpsellModalCtaClicked,
   trackLargeScreenUpsellModalDismissed,
   trackLargeScreenUpsellModalViewed,
+  type LargeScreenUpsellBlockedCompetitor,
   type LargeScreenUpsellSharedAnalyticsProps,
 } from "./analytics";
 
@@ -51,6 +55,27 @@ function buildSharedAnalyticsProps({
   };
 }
 
+function resolveCompetingAppStartModal({
+  isWalletV4TourCompeting,
+  isQ2TourCompeting,
+  isGenericAwarenessModalOpen,
+}: {
+  isWalletV4TourCompeting: boolean;
+  isQ2TourCompeting: boolean;
+  isGenericAwarenessModalOpen: boolean;
+}): LargeScreenUpsellBlockedCompetitor | null {
+  if (isWalletV4TourCompeting) {
+    return "wallet_v4_tour";
+  }
+  if (isQ2TourCompeting) {
+    return "q2_tour";
+  }
+  if (isGenericAwarenessModalOpen) {
+    return "generic_awareness";
+  }
+  return null;
+}
+
 export function LargeScreenUpsellModalMount() {
   const dispatch = useDispatch();
   const { t } = useTranslation();
@@ -62,15 +87,33 @@ export function LargeScreenUpsellModalMount() {
   const session = useSelector(sessionSelector);
   const feature = useFeature("largeScreenUpsell");
   const shouldShowDeferredModals = useShouldShowDeferredModals();
+  const hasSeenWalletV4Tour = useSelector(hasSeenWalletV4TourSelector);
+  const hasSeenQ2Tour = useSelector(hasSeenQ2TourSelector);
+  const { shouldDisplayTour, shouldDisplayQ2Tour } = useWalletFeaturesConfig("desktop");
   const isGenericAwarenessModalOpen = useSelector(selectIsGenericAwarenessModalOpen);
 
+  // Gate with the same deferred-tour freeze as Terms/Release Notes.
   const hasCompetingAppStartModal = !shouldShowDeferredModals || isGenericAwarenessModalOpen;
 
+  // Competitor identity is only for analytics (`modal_blocked`).
+  const competingModal = resolveCompetingAppStartModal({
+    isWalletV4TourCompeting: shouldDisplayTour && !hasSeenWalletV4Tour,
+    isQ2TourCompeting: shouldDisplayQ2Tour && !hasSeenQ2Tour,
+    isGenericAwarenessModalOpen,
+  });
+
+  const hasTrackedBlockRef = useRef(false);
+
   useEffect(() => {
-    if (hasCompetingAppStartModal && session === "ready") {
-      dispatch(markBlockedByCompeting());
+    if (!hasCompetingAppStartModal || session !== "ready") {
+      return;
     }
-  }, [dispatch, hasCompetingAppStartModal, session]);
+    if (!hasTrackedBlockRef.current && competingModal !== null) {
+      hasTrackedBlockRef.current = true;
+      trackLargeScreenUpsellModalBlockedByCompeting(competingModal);
+    }
+    dispatch(markBlockedByCompeting());
+  }, [competingModal, dispatch, hasCompetingAppStartModal, session]);
 
   const currentModalAnalyticsPropsRef = useRef<LargeScreenUpsellSharedAnalyticsProps | null>(null);
 
