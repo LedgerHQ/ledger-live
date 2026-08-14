@@ -117,7 +117,7 @@ function PortfolioContentCards({ leadingSlide }: PortfolioContentCardsProps) {
 
   // Carousel requires ReactElement[] (uses children.length / .map) — not a Fragment.
   const renderCarousel = (slides: ReactElement[]) => (
-    <div className="[&>div>div>button]:-mx-12 [&>div>div>button]:translate-y-[-50%] [&>div>div>button]:bg-base">
+    <div className="[&_[data-testid=carousel-arrow-prev]]:-ml-12 [&_[data-testid=carousel-arrow-next]]:-mr-12 [&_[data-testid^=carousel-arrow]]:bg-base">
       <Carousel
         initialDelay={2500}
         autoPlay={6000}
