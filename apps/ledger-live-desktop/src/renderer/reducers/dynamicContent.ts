@@ -49,6 +49,10 @@ type HandlersPayloads = {
     categories: CategoryContentCard[];
     childCards: BrazeCard[];
   };
+  DYNAMIC_CONTENT_ADD_LOCAL_CONTENT_CARDS: {
+    category: CategoryContentCard;
+    cards: BrazeCard[];
+  };
 };
 type DynamicContentHandlers<PreciseKey = true> = Handlers<
   DynamicContentState,
@@ -107,6 +111,40 @@ const handlers: DynamicContentHandlers = {
     localCategoriesCards: payload.categories,
     localCategoryChildCards: payload.childCards,
   }),
+  DYNAMIC_CONTENT_ADD_LOCAL_CONTENT_CARDS: (
+    state: DynamicContentState,
+    {
+      payload,
+    }: {
+      payload: { category: CategoryContentCard; cards: BrazeCard[] };
+    },
+  ) => {
+    const { category, cards } = payload;
+    const existingCategory = category.categoryId
+      ? state.localCategoriesCards.find(existing => existing.categoryId === category.categoryId)
+      : undefined;
+    const mergedCategory =
+      existingCategory && category.categoryId
+        ? {
+            ...category,
+            title: category.title || existingCategory.title,
+            description: category.description || existingCategory.description,
+            cta: category.cta || existingCategory.cta,
+            link: category.link || existingCategory.link,
+          }
+        : category;
+    const localCategoriesCardsWithoutSameId = mergedCategory.categoryId
+      ? state.localCategoriesCards.filter(
+          existing => existing.categoryId !== mergedCategory.categoryId,
+        )
+      : state.localCategoriesCards;
+
+    return {
+      ...state,
+      localCategoriesCards: [...localCategoriesCardsWithoutSameId, mergedCategory],
+      localCategoryChildCards: [...state.localCategoryChildCards, ...cards],
+    };
+  },
 };
 
 // Selectors

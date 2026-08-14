@@ -44,10 +44,10 @@ jest.mock("LLD/features/LNSUpsell", () => ({
   LNSUpsellBanner: () => <div data-testid="lns-upsell-banner" />,
 }));
 
-jest.mock("LLD/features/DynamicContent/components/PortfolioContentCards", () => ({
+jest.mock("LLD/features/DynamicContent/components/PortfolioCategoryContentCards", () => ({
   __esModule: true,
   default: ({ leadingSlide }: { leadingSlide?: React.ReactNode }) => (
-    <div data-testid="portfolio-content-cards">{leadingSlide}</div>
+    <div data-testid="portfolio-category-content-cards">{leadingSlide}</div>
   ),
 }));
 
@@ -91,6 +91,7 @@ const DEFAULT_VISIBILITY: BannersVisibility = {
   shouldDisplayFinishOnboardingWidget: false,
   isActionCardsVisible: false,
   isLNSUpsellBannerVisible: false,
+  isPortfolioCategoryContentCardsVisible: false,
   isPortfolioContentCardsVisible: false,
   hasAnyContentBannerVisible: false,
 };
@@ -229,7 +230,7 @@ describe("PortfolioBannerContent", () => {
       expect(screen.getByTestId("recover-widget")).toBeInTheDocument();
     });
 
-    it("falls back to portfolio content cards when finish and recover are both off", () => {
+    it("stacks portfolio category content cards when finish and recover are both off", () => {
       setWallet40RecoverInRow(false);
       setVisibility({
         shouldDisplayFinishOnboardingWidget: true,
@@ -239,10 +240,10 @@ describe("PortfolioBannerContent", () => {
 
       render(<PortfolioBannerContent />);
 
-      expect(screen.getByTestId("portfolio-content-cards")).toBeInTheDocument();
+      expect(screen.getByTestId("portfolio-category-content-cards")).toBeInTheDocument();
     });
 
-    it("prepends LNS upsell into portfolio content cards when finish and recover are off", () => {
+    it("stacks LNS upsell into portfolio category content cards when finish and recover are off", () => {
       setWallet40RecoverInRow(false);
       setVisibility({
         shouldDisplayFinishOnboardingWidget: true,
@@ -252,13 +253,13 @@ describe("PortfolioBannerContent", () => {
 
       render(<PortfolioBannerContent />);
 
-      expect(screen.getByTestId("portfolio-content-cards")).toBeInTheDocument();
+      expect(screen.getByTestId("portfolio-category-content-cards")).toBeInTheDocument();
       expect(screen.getByTestId("lns-upsell-banner")).toBeVisible();
       expect(screen.queryByTestId("finish-onboarding-widget")).not.toBeInTheDocument();
       expect(screen.queryByTestId("recover-widget")).not.toBeInTheDocument();
     });
 
-    it("keeps LNS exclusive when recover is visible and finish is off (Wallet40 not mounted)", () => {
+    it("stacks LNS upsell with portfolio category content cards when recover is visible and finish is off", () => {
       setWallet40RecoverInRow(true);
       setVisibility({
         shouldDisplayFinishOnboardingWidget: true,
@@ -271,10 +272,10 @@ describe("PortfolioBannerContent", () => {
       expect(screen.getByTestId("lns-upsell-banner")).toBeVisible();
       expect(screen.queryByTestId("recover-widget")).not.toBeInTheDocument();
       expect(screen.queryByTestId("finish-onboarding-widget")).not.toBeInTheDocument();
-      expect(screen.queryByTestId("portfolio-content-cards")).not.toBeInTheDocument();
+      expect(screen.getByTestId("portfolio-category-content-cards")).toBeInTheDocument();
     });
 
-    it("keeps LNS exclusive when finish onboarding is visible", () => {
+    it("stacks LNS upsell with portfolio category content cards when finish onboarding is visible", () => {
       setWallet40RecoverInRow(true);
       setVisibility({
         shouldDisplayFinishOnboardingWidget: true,
@@ -287,10 +288,10 @@ describe("PortfolioBannerContent", () => {
       expect(screen.getByTestId("lns-upsell-banner")).toBeVisible();
       expect(screen.queryByTestId("finish-onboarding-widget")).not.toBeInTheDocument();
       expect(screen.queryByTestId("recover-widget")).not.toBeInTheDocument();
-      expect(screen.queryByTestId("portfolio-content-cards")).not.toBeInTheDocument();
+      expect(screen.getByTestId("portfolio-category-content-cards")).toBeInTheDocument();
     });
 
-    it("shows finish onboarding without recover when displayBanner is false", () => {
+    it("stacks finish onboarding widget with portfolio category content cards when recover is off", () => {
       setWallet40RecoverInRow(false);
       setVisibility({
         shouldDisplayFinishOnboardingWidget: true,
@@ -302,9 +303,10 @@ describe("PortfolioBannerContent", () => {
 
       expect(screen.getByTestId("finish-onboarding-widget")).toBeInTheDocument();
       expect(screen.queryByTestId("recover-widget")).not.toBeInTheDocument();
+      expect(screen.getByTestId("portfolio-category-content-cards")).toBeInTheDocument();
     });
 
-    it("falls back to portfolio content cards when banner allows recover but RecoverWidget visibility gates are off", () => {
+    it("stacks portfolio category content cards when recover widget visibility gates are off", () => {
       mockUseRecoverWidgetViewModel.mockReturnValue({
         ...defaultRecoverWidgetViewModelReturn(),
         shouldDisplay: false,
@@ -317,13 +319,13 @@ describe("PortfolioBannerContent", () => {
 
       render(<PortfolioBannerContent />);
 
-      expect(screen.getByTestId("portfolio-content-cards")).toBeInTheDocument();
+      expect(screen.getByTestId("portfolio-category-content-cards")).toBeInTheDocument();
       expect(screen.queryByTestId("recover-widget")).not.toBeInTheDocument();
     });
   });
 
   describe("legacy RecoverBanner branch", () => {
-    it("renders action content cards when action cards are visible", () => {
+    it("stacks action content cards with portfolio category content cards", () => {
       setVisibility({
         isPostOnboardingBannerVisible: false,
         shouldDisplayFinishOnboardingWidget: false,
@@ -333,9 +335,10 @@ describe("PortfolioBannerContent", () => {
       render(<PortfolioBannerContent />);
 
       expect(screen.getByTestId("action-content-cards")).toBeInTheDocument();
+      expect(screen.getByTestId("portfolio-category-content-cards")).toBeInTheDocument();
     });
 
-    it("renders LNS upsell when action cards are off but LNS is visible", () => {
+    it("stacks LNS upsell with portfolio category content cards when action cards are off", () => {
       setVisibility({
         isPostOnboardingBannerVisible: false,
         shouldDisplayFinishOnboardingWidget: false,
@@ -345,12 +348,12 @@ describe("PortfolioBannerContent", () => {
 
       render(<PortfolioBannerContent />);
 
-      expect(screen.getByTestId("portfolio-content-cards")).toBeInTheDocument();
+      expect(screen.getByTestId("portfolio-category-content-cards")).toBeInTheDocument();
       expect(screen.getByTestId("lns-upsell-banner")).toBeVisible();
       expect(screen.queryByTestId("action-content-cards")).not.toBeInTheDocument();
     });
 
-    it("falls back to portfolio content cards when action cards and LNS are off", () => {
+    it("renders portfolio category content cards when action cards and LNS are off", () => {
       setVisibility({
         isPostOnboardingBannerVisible: false,
         shouldDisplayFinishOnboardingWidget: false,
@@ -360,7 +363,7 @@ describe("PortfolioBannerContent", () => {
 
       render(<PortfolioBannerContent />);
 
-      expect(screen.getByTestId("portfolio-content-cards")).toBeInTheDocument();
+      expect(screen.getByTestId("portfolio-category-content-cards")).toBeInTheDocument();
     });
   });
 });

@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { Flex, Input, Text } from "@ledgerhq/react-ui";
 import { Button } from "@ledgerhq/lumen-ui-react";
 import { useGenerateLocalBraze } from "../Hooks/useGenerateLocalBraze";
+import { HardwareCarouselBuilder } from "./HardwareCarouselBuilder";
 import { useTranslation } from "react-i18next";
 
 type TabKey =
@@ -84,7 +85,6 @@ export const ModalBody: React.FC = () => {
     addLocalBottomPortfolioCard,
     addLocalActionCard,
     addLocalNotificationCard,
-    addLocalCategoryCard,
     dismissLocalCards,
   } = useGenerateLocalBraze();
 
@@ -147,8 +147,6 @@ export const ModalBody: React.FC = () => {
       );
     } else if (selectedTab === "NotificationContentCard") {
       addLocalNotificationCard(title, description, cta, false, url, path, order);
-    } else if (selectedTab === "CategoryContentCard") {
-      addLocalCategoryCard(title, description, image, cta, path, order);
     }
     dispatch({ type: "RESET_FORM" });
   };
@@ -186,7 +184,7 @@ export const ModalBody: React.FC = () => {
     },
     {
       key: "CategoryContentCard",
-      label: "Category (hardware carousel)",
+      label: "Small card carousel",
     },
   ];
 
@@ -196,7 +194,7 @@ export const ModalBody: React.FC = () => {
   );
 
   const inputFields: Record<
-    TabKey,
+    Exclude<TabKey, "CategoryContentCard">,
     { field: keyof FormState; placeholder: string; label: string }[]
   > = {
     PortfolioContentCard: [
@@ -332,24 +330,9 @@ export const ModalBody: React.FC = () => {
         label: t("settings.developer.brazeTools.modal.fields.path"),
       },
     ],
-    CategoryContentCard: [
-      {
-        field: "image",
-        placeholder: "Media URL applied to every child card",
-        label: t("settings.developer.brazeTools.modal.fields.image"),
-      },
-      {
-        field: "cta",
-        placeholder: "CTA",
-        label: t("settings.developer.brazeTools.modal.fields.cta"),
-      },
-      {
-        field: "path",
-        placeholder: "In-app path (deep link)",
-        label: t("settings.developer.brazeTools.modal.fields.path"),
-      },
-    ],
   };
+
+  const isHardwareCarouselTab = selectedTab === "CategoryContentCard";
 
   return (
     <Flex flexDirection="column" rowGap={24}>
@@ -364,53 +347,59 @@ export const ModalBody: React.FC = () => {
           </Button>
         ))}
       </div>
-      <Flex flexDirection="column" rowGap={12}>
-        <FormRow>
-          <Label> {t("settings.developer.brazeTools.modal.fields.title")}</Label>
-          <FullWidthInput
-            value={formData.title}
-            onChangeEvent={handleInputChange("title")}
-            placeholder="Title"
-          />
-        </FormRow>
-        <FormRow>
-          <Label>{t("settings.developer.brazeTools.modal.fields.description")}</Label>
-          <FullWidthInput
-            value={formData.description}
-            onChangeEvent={handleInputChange("description")}
-            placeholder="Description"
-          />
-        </FormRow>
-        <FormRow>
-          <Label> {t("settings.developer.brazeTools.modal.fields.order")}</Label>
-          <FullWidthInput
-            value={formData.order}
-            onChangeEvent={handleNumberChange("order")}
-            placeholder="Order"
-            type="number"
-          />
-        </FormRow>
-        {inputFields[selectedTab].map(({ field, placeholder, label }) => (
-          <FormRow key={field}>
-            <Label>{label}</Label>
-            <FullWidthInput
-              value={formData[field] ?? ""}
-              onChangeEvent={handleInputChange(field)}
-              placeholder={placeholder}
-            />
-          </FormRow>
-        ))}
-      </Flex>
-      <Flex flexDirection="row" columnGap={24}>
-        <Button size="sm" appearance="accent" onClick={handleAddCard}>
-          {t("settings.developer.brazeTools.modal.add") +
-            " " +
-            tabs.find(tab => tab.key === selectedTab)?.label}
-        </Button>
-        <Button size="sm" appearance="red" onClick={dismissLocalCards}>
-          {t("settings.developer.brazeTools.modal.dismiss")}
-        </Button>
-      </Flex>
+      {isHardwareCarouselTab ? (
+        <HardwareCarouselBuilder />
+      ) : (
+        <>
+          <Flex flexDirection="column" rowGap={12}>
+            <FormRow>
+              <Label> {t("settings.developer.brazeTools.modal.fields.title")}</Label>
+              <FullWidthInput
+                value={formData.title}
+                onChangeEvent={handleInputChange("title")}
+                placeholder="Title"
+              />
+            </FormRow>
+            <FormRow>
+              <Label>{t("settings.developer.brazeTools.modal.fields.description")}</Label>
+              <FullWidthInput
+                value={formData.description}
+                onChangeEvent={handleInputChange("description")}
+                placeholder="Description"
+              />
+            </FormRow>
+            <FormRow>
+              <Label> {t("settings.developer.brazeTools.modal.fields.order")}</Label>
+              <FullWidthInput
+                value={formData.order}
+                onChangeEvent={handleNumberChange("order")}
+                placeholder="Order"
+                type="number"
+              />
+            </FormRow>
+            {inputFields[selectedTab].map(({ field, placeholder, label }) => (
+              <FormRow key={field}>
+                <Label>{label}</Label>
+                <FullWidthInput
+                  value={formData[field] ?? ""}
+                  onChangeEvent={handleInputChange(field)}
+                  placeholder={placeholder}
+                />
+              </FormRow>
+            ))}
+          </Flex>
+          <Flex flexDirection="row" columnGap={24}>
+            <Button size="sm" appearance="accent" onClick={handleAddCard}>
+              {t("settings.developer.brazeTools.modal.add") +
+                " " +
+                tabs.find(tab => tab.key === selectedTab)?.label}
+            </Button>
+            <Button size="sm" appearance="red" onClick={dismissLocalCards}>
+              {t("settings.developer.brazeTools.modal.dismiss")}
+            </Button>
+          </Flex>
+        </>
+      )}
     </Flex>
   );
 };
