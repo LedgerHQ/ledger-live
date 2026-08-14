@@ -5,8 +5,11 @@ import { scenarioStacks } from "./scenarii/stacks";
 global.console = require("console");
 // Clarinet devnet boot (bitcoind + stacks-node + stacks-signer + the bundled
 // stacks-blockchain-api/Postgres pair) plus real block confirmations is slower than VeChain's
-// single-container thor-solo; budget generously.
-jest.setTimeout(600_000);
+// single-container thor-solo; budget generously. Must stay comfortably above the inner
+// `waitForContractDeployment` timeout (15 min at the 10s-per-block cadence, `scenarii/stacks.ts`)
+// plus the per-transaction retry budget (up to 7.5 min each, `retryLimit`/`retryInterval`) or this
+// outer limit would cut the scenario off before its own, more specific timeouts get a chance to.
+jest.setTimeout(30 * 60 * 1000);
 
 ["exit", "SIGINT", "SIGQUIT", "SIGTERM", "SIGUSR1", "SIGUSR2", "uncaughtException"].forEach(e =>
   process.on(e, async () => {

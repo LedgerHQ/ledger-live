@@ -41,6 +41,11 @@ const teamBlockchainSupport = {
     def: "https://stacks.coin.ledger.com",
     desc: "Stacks API url",
   },
+  API_STACKS_NETWORK: {
+    parser: stringParser,
+    def: "mainnet",
+    desc: "Stacks network for legacy-bridge address derivation (mainnet | testnet)",
+  },
   API_KASPA_ENDPOINT: {
     parser: stringParser,
     def: "https://kaspa.coin.ledger.com",

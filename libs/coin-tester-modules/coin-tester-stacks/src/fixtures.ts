@@ -31,7 +31,7 @@ export const DEPLOYER_ADDRESS = "ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM";
 export const RECIPIENT_PRIVATE_KEY =
   "530d9f61984c888536871c6573073bdfc0058896dc1adfe9a6a10dfacadc209101";
 
-const TOKEN_CONTRACT_NAME = "sip-010-test-token";
+export const TOKEN_CONTRACT_NAME = "sip-010-test-token";
 const TOKEN_ASSET_NAME = "test-token";
 
 /**

@@ -9,5 +9,9 @@ import { setEnv } from "@ledgerhq/live-env";
 import { STACKS_DEVNET_URL } from "./devnet";
 
 setEnv("API_STACKS_ENDPOINT", STACKS_DEVNET_URL);
+// The devnet's genesis accounts (`settings/Devnet.toml`) are funded on testnet-versioned (`ST...`)
+// addresses, not mainnet (`SP...`) ones — see `bridge/synchronization.ts`'s `API_STACKS_NETWORK`
+// read, added specifically so a devnet/testnet consumer can get the correctly-versioned address.
+setEnv("API_STACKS_NETWORK", "testnet");
 
 global.console = require("console");

@@ -29,49 +29,117 @@ that produced it.)
 
 ## Known limitations (discovered while implementing)
 
-- **Devnet boot fails today: `bitcoin-node` container never starts.** A real `clarinet integrate`
-  run (with a working Docker daemon) gets past deployment-plan computation and into the actual
-  boot sequence, then fails immediately:
-  ```
-  Aug 13 11:15:10.383 ERRO Fatal: unable to start bitcoind container: JsonSerdeError { err: Error("expected value", line: 1, column: 1) }
-  error: unable to start bitcoind container: JsonSerdeError { err: Error("expected value", line: 1, column: 1) }
-  ```
-  This is a Docker-API JSON-decode failure inside Clarinet's own container orchestration (a
-  `bollard` client call getting a non-JSON/empty response), surfaced when running the published
-  `linux/amd64` `clarinet` image (there is no `arm64` build) under emulation on an Apple Silicon
-  Docker Desktop host talking to the mounted host socket. **Ruled out**: forcing `--platform
-  linux/amd64` on the outer `docker run` plus `DOCKER_DEFAULT_PLATFORM=linux/amd64` in its
-  environment (so any docker-cli/API calls Clarinet makes internally for its sibling containers
-  also default to amd64) — tried and reproduced the identical error at the identical point
-  (`bitcoin-node - booting` → the same `JsonSerdeError`), so a bare platform mismatch on the
-  *outer* container is not the cause; not kept in `src/devnet.ts` to avoid suggesting a fix that
-  doesn't work. Remaining candidate: something in how `--network host` interacts with Docker
-  Desktop for Mac's VM networking for this specific docker-outside-of-docker container, or an
-  issue inside the `bitcoind` container's own start sequence regardless of platform. No
-  `coin-tester-*` module has used Clarinet before, so there's no established pattern for this repo
-  to compare against; needs a further spike (ideally on a native Linux Docker host, matching what
-  CI actually runs on) before the scenario itself (signing/broadcast/sync) can be exercised at all.
-  Earlier in the same investigation, a first attempt hit a *different*, now-fixed problem: this
-  package's `Devnet.toml` didn't match Clarinet's bundled snapshot's default `pox_stacking_orders`,
-  which drops into an interactive `Do you want to continue? (y/N)` confirmation on stdin regardless
-  of `--from-genesis` (verified in `clarinet`'s own `cli.rs`: the compatibility check runs
-  unconditionally, before that flag is even consulted) — fixed by keeping Clarinet's own default
-  `wallet_1`/`wallet_2`/`wallet_3` accounts and stacking orders in `settings/Devnet.toml` verbatim,
-  even though this package's scenario doesn't stake, so the compatibility check reports no
-  differences and the prompt never fires.
-- **Possible address-version mismatch in `coin-stacks`'s legacy bridge, independent of Clarinet.**
-  `bridge/synchronization.ts`'s `getAccountShape` derives the account's `freshAddress` via
-  `getAddressFromPublicKey(pubKey)` with no explicit `TransactionVersion`, which defaults to
-  `TransactionVersion.Mainnet` — producing a mainnet-styled (`SP…`) address regardless of the
-  transaction's own `network` field. A Clarinet devnet (like testnet) expects/produces
-  testnet-styled (`ST…`) addresses for the same key. If this API surface is in fact
-  version-sensitive end to end (unverified without a live run), account sync would never observe
-  the devnet's actual balance/transactions for the funder account, and every `expect` in
-  `src/scenarii/stacks.ts` would fail regardless of whether the devnet itself is healthy. Fixing it
-  would mean threading the transaction's network into that one `getAddressFromPublicKey` call in
-  `bridge/synchronization.ts` — out of scope for this package (the only in-scope `coin-stacks`
-  change is the additive `devnet` entry in `network/api.ts`). Flagging as a candidate follow-up
-  rather than silently working around it.
+Two real, upstream `clarinet` bugs were found and fixed via a pinned, patched build (see
+`docker/clarinet/`) — no manual local setup needed, `spawnDevnet()` (`src/devnet.ts`) builds and
+caches the patched binary automatically on first use (via Docker on Linux, extracting the built
+binary — no host Rust toolchain needed there; via a local `cargo +nightly` build elsewhere, e.g.
+macOS, since a container-built Linux binary can't run natively there). A third `clarinet` bug
+(sustained block mining sometimes stalling, see below) could not be source-patched the same way —
+its root cause inside `clarinet`'s own Rust orchestrator was not found despite substantial
+investigation — so it is **worked around** instead, from this package's own code
+(`scripts/bitcoin-miner.js`), not silently left broken.
+
+### Devnet infrastructure — three real, fixed `clarinet` bugs
+
+The published `ghcr.io/stx-labs/clarinet` image is `linux/amd64`-only and, under QEMU emulation on
+Apple Silicon, its own `bollard` Docker-API client fails on certain calls (`JsonSerdeError { err:
+Error("expected value", ...) }` — an empty/malformed response it can't parse). This is **not** a
+code bug in this package: it was root-caused by building `clarinet-cli` natively (`cargo build
+--release`, arm64, from `stx-labs/clarinet`'s own source) and confirming `bitcoin-node` then boots
+and mines correctly.
+
+- **`bollard` (Clarinet's Docker-API client) is pinned to `0.17`, which mis-parses some Docker
+  Engine API responses as empty JSON** — this is what produced the `JsonSerdeError` above for the
+  `postgres` container too (not just an emulation artifact: it reproduced identically on the
+  native arm64 build, and being an HTTP JSON-parsing bug unrelated to CPU architecture is expected
+  to reproduce on amd64/CI too). Bumping to `bollard = "0.18"` in `stacks-network`'s `Cargo.toml`
+  (one version below `0.21`, which removes a generic parameter `stacks-network` relies on) fixes
+  the parsing and surfaces the *real* underlying error instead — which turned out to be a mundane
+  local port conflict (`postgres_port` now overridden to `27432` in `settings/Devnet.toml`, since
+  the default `5432` collides with other local Postgres instances on dev machines).
+- **The generated `Stacks.toml`'s `[burnchain].rpc_port` is a genuine upstream typo**: it's set
+  from `devnet_config.orchestrator_ingestion_port` (clarinet's own event-listener port) instead of
+  `devnet_config.bitcoin_node_rpc_port` (bitcoind's actual RPC port) — see
+  `orchestrator.rs`'s burnchain-config template. `stacks-node` then tries to reach bitcoind on the
+  wrong port and its burnchain sync never completes (`Bitcoin RPC failure: error listing utxos ...
+  Connection refused`, indefinitely). Fixed in the patch by using the correct field.
+- **Contract `epoch` pinned to `"3.0"`** instead of `"latest"` (`Clarinet.toml`) — `"latest"`
+  resolved to a deployment batch the devnet doesn't reliably reach within a short scenario run.
+
+Both `clarinet` source fixes are captured as one patch, `docker/clarinet/bollard-fix.patch`,
+applied on top of pinned commit `4220f34773a20960ce955a6b76590c97751e8a60` — see
+`docker/clarinet/Dockerfile` for the exact build. Running `clarinet` itself was deliberately kept
+as a **native host process**, never inside a container: an earlier version of this fix ran
+`clarinet integrate` inside a Docker image, which works for the `bollard`/`rpc_port` fixes but hits
+a *different*, environment-specific problem — the sibling containers `clarinet` spawns need to
+reach its own event-listener at `host.docker.internal:<port>`, and that hop is only reliable when
+`clarinet` itself runs on the real host; running it inside a `--network host` container hit real
+limitations of Docker Desktop for Mac's host-networking support (verified: sibling containers got
+`ECONNREFUSED` reaching the orchestrator's own listener). Building the binary and then running it
+directly on the host sidesteps that — Docker is still used, but only the way `clarinet` itself
+already uses it (to spawn its sibling containers), not to run `clarinet` itself.
+
+### `coin-stacks` bugs (real, fixed in the legacy bridge, covered by unit tests)
+
+- **The legacy bridge derived a mainnet-versioned address regardless of the transaction's
+  network.** `bridge/synchronization.ts`'s `getAccountShape` called
+  `getAddressFromPublicKey(pubKey)` with no explicit `TransactionVersion`, defaulting to
+  `TransactionVersion.Mainnet` (a real, confirmed bug, not a hypothesis — verified live: the sync
+  queried a mainnet-styled `SP…` address that was never funded, instead of the devnet-funded
+  `ST…` one). Fixed additively: a new `API_STACKS_NETWORK` env var (default `"mainnet"`, so no
+  behavior change for real users) lets this package set it to `"testnet"` (`env.setup.ts`),
+  threading the correct `TransactionVersion.Testnet` into that one call.
+- **`calculateSpendableBalance` crashed on a pending contract-call (e.g. a SIP-010 transfer).** It
+  unconditionally read `tx.token_transfer.amount` for every pending mempool transaction, but only
+  `token_transfer`-typed transactions have that field — a pending `contract_call` has no
+  `token_transfer` at all. Fixed to only subtract the token amount when `tx_type ===
+  "token_transfer"`; a contract-call still has its `fee_rate` subtracted. Covered in
+  `bridge/synchronization.test.ts`.
+- **A fresh devnet's fee estimator has no historical cost data for *any* payload shape**, not just
+  contract-calls — verified live: `/v2/fees/transaction` returns `NoEstimateAvailable` for a plain
+  native STX transfer too. There is no Clarinet-level config to switch to a non-historical
+  estimator. Worked around in `coin-stacks` itself: `prepareTransaction.ts` now skips the network
+  fee-estimate call when the caller has already set a positive `fee` on the transaction (additive
+  only — real callers never pre-set `fee`, so mainnet behavior is unchanged). This package sets
+  flat, generous per-transaction-kind fees (`scenarii/stacks.ts`) since there's no estimate to
+  measure against on a fresh chain. Covered in `bridge/prepareTransaction.test.ts`.
+
+### `clarinet`'s bitcoin-mining scheduler stalls — worked around, not source-patched
+
+With the `bollard`/`rpc_port` fixes above, the devnet reliably boots, syncs the burnchain, and
+mines the genesis Stacks block anchored in Bitcoin block #100 — but on several runs during
+verification, `bitcoin-node`'s periodic miner (`chains_coordinator.rs`'s `handle_bitcoin_mining`,
+driven by `bitcoin_controller_block_time = 3_000` in `settings/Devnet.toml`) mined exactly one
+further Bitcoin block (`#101`) and then never mined again: `burn_block_height` frozen at `101` for
+10+ minutes straight, no further `"mining blocks"` log line, no error.
+
+Investigation, in order:
+
+- **Not a container-networking issue**: the orchestrator's event-listener is bound to all
+  interfaces and independently verified reachable from a container via `host.docker.internal`.
+- **Not specific to the deprecated `clarinet integrate` command**: `clarinet devnet start` (the
+  current, non-deprecated command per Clarinet's own docs) reproduces the identical stall,
+  confirming both commands share the same underlying orchestrator code.
+- **Not bitcoind's fault**: manually issuing the exact same `generatetoaddress` RPC call bitcoind
+  itself exposes (bypassing `clarinet` entirely) mines new blocks immediately and reliably, every
+  time — proving the bitcoind side of the pipeline is healthy and the bug is in `clarinet`'s own
+  scheduler.
+- The Rust-level root cause inside `handle_bitcoin_mining`'s spawned thread was not found despite
+  tracing every `BitcoinMiningCommand::Pause`/`Start` call site and the `create_global_snapshot`
+  epoch-4.0 path (ruled out: gated behind `--create-new-snapshot`, which this package never
+  passes).
+
+**Worked around** in `scripts/bitcoin-miner.js`: a small, dependency-free script that calls
+bitcoind's `generatetoaddress` directly, every `bitcoin_controller_block_time`, replacing
+Clarinet's own broken scheduler. `src/devnet.ts`'s `startBitcoinMiningWorkaround` spawns it as a
+**separate OS process** — an in-process `setInterval` was tried first and was itself unreliable,
+because Jest's own CPU-bound work (signing, `--runInBand` test execution) delays or starves the
+shared event loop long enough to occasionally miss ticks for minutes, indistinguishable from the
+original bug from the test's point of view. A separate process has its own event loop, unaffected
+by Jest's load. Verified via multiple consecutive full scenario runs after this fix.
+
+### Other
+
 - **`@stacks/network`/`@stacks/transactions` are pinned at `6.17.0`** (matching what `coin-stacks`
   itself declares on `develop`), not `7.x` — `StacksDevnet` is the `StacksMocknet` alias in this
   version, with the same default URL (`http://localhost:3999`, matching Clarinet's own default

@@ -117,6 +117,18 @@ describe("prepareTransaction", () => {
     expect(newTx).toEqual(mockTransaction);
   });
 
+  it("should use a pre-set positive fee and skip the network estimate call", async () => {
+    const txWithFee = {
+      ...mockTransaction,
+      fee: new BigNumber(4321),
+    } as unknown as Transaction;
+
+    fetchFeeEstimateTransactionSpy.mockClear();
+    const newTx = await prepareTransaction(mockAccount, txWithFee);
+    expect(newTx.fee).toEqual(new BigNumber(4321));
+    expect(fetchFeeEstimateTransactionSpy).not.toHaveBeenCalled();
+  });
+
   it("should throw error when xpub is missing", async () => {
     const accountWithoutXpub = { ...mockAccount, xpub: undefined } as unknown as Account;
 

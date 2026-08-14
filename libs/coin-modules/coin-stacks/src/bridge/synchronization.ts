@@ -5,9 +5,10 @@ import {
   encodeTokenAccountId,
 } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { GetAccountShape, makeSync } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import { getEnv } from "@ledgerhq/live-env";
 import { log } from "@ledgerhq/logs";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
-import { getAddressFromPublicKey } from "@stacks/transactions";
+import { getAddressFromPublicKey, TransactionVersion } from "@stacks/transactions";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import { TransactionResponse } from "../network";
@@ -31,14 +32,17 @@ import {
  */
 export function calculateSpendableBalance(
   totalBalance: BigNumber,
-  pendingTxs: Array<{ fee_rate: string; token_transfer: { amount: string } }>,
+  pendingTxs: Array<{ tx_type: string; fee_rate: string; token_transfer?: { amount: string } }>,
 ): BigNumber {
   let spendableBalance = totalBalance;
 
   for (const tx of pendingTxs) {
-    spendableBalance = spendableBalance
-      .minus(new BigNumber(tx.fee_rate))
-      .minus(new BigNumber(tx.token_transfer.amount));
+    spendableBalance = spendableBalance.minus(new BigNumber(tx.fee_rate));
+    // Only a native STX transfer moves STX beyond the fee — a pending contract-call (e.g. a
+    // SIP-010 transfer) has no `token_transfer` field at all and doesn't move native STX itself.
+    if (tx.tx_type === "token_transfer" && tx.token_transfer) {
+      spendableBalance = spendableBalance.minus(new BigNumber(tx.token_transfer.amount));
+    }
   }
 
   return spendableBalance;
@@ -176,7 +180,15 @@ export const getAccountShape: GetAccountShape = async info => {
     derivationMode,
   });
 
-  const address = getAddressFromPublicKey(pubKey);
+  // Additive only: the legacy bridge has only ever registered the mainnet "stacks" currency, so
+  // this always defaulted to Mainnet with no way to override it. `API_STACKS_NETWORK` lets a
+  // devnet/testnet consumer (e.g. the coin-tester) derive the correctly-versioned address instead
+  // of a mainnet one that was never funded on that chain.
+  const transactionVersion =
+    getEnv("API_STACKS_NETWORK") === "mainnet"
+      ? TransactionVersion.Mainnet
+      : TransactionVersion.Testnet;
+  const address = getAddressFromPublicKey(pubKey, transactionVersion);
 
   // Make API calls in parallel for better performance
   const [blockHeight, balanceResp, txsResult, tokenBalances, mempoolTxs] = await Promise.all([

@@ -1,0 +1,78 @@
+diff --git a/components/stacks-network/Cargo.toml b/components/stacks-network/Cargo.toml
+index c6a9a34..bb4e1af 100644
+--- a/components/stacks-network/Cargo.toml
++++ b/components/stacks-network/Cargo.toml
+@@ -7,7 +7,7 @@ edition = "2021"
+ 
+ [dependencies]
+ bitcoincore-rpc = { workspace= true }
+-bollard = "0.17"
++bollard = "0.18"
+ colored = { workspace = true }
+ dirs = { workspace = true }
+ serde = { workspace = true, features = ["derive", "rc"] }
+diff --git a/components/stacks-network/src/orchestrator.rs b/components/stacks-network/src/orchestrator.rs
+index c05a5fe..0f786b5 100644
+--- a/components/stacks-network/src/orchestrator.rs
++++ b/components/stacks-network/src/orchestrator.rs
+@@ -288,8 +288,7 @@ impl DevnetOrchestrator {
+                     "clarinet was unable to create network. Is docker running locally? (error: {e})"
+                 )
+             })?
+-            .id
+-            .ok_or("unable to retrieve network_id")?;
++            .id;
+ 
+         let res = docker
+             .inspect_network::<&str>(&network_id, None)
+@@ -408,10 +407,28 @@ impl DevnetOrchestrator {
+         // Start postgres container
+         if !disable_postgres {
+             let _ = event_tx.send(DevnetEvent::info("Starting postgres".to_string()));
+-            let res = self.prepare_postgres_container(ctx).await;
+-            self.or_fatal(res, &event_tx, ctx).await?;
+-            let res = self.boot_postgres_container(ctx).await;
+-            self.or_fatal(res, &event_tx, ctx).await?;
++            let mut postgres_attempt = 0u8;
++            let final_res: Result<(), String> = loop {
++                let prep = self.prepare_postgres_container(ctx).await;
++                let boot_res = match prep {
++                    Ok(()) => self.boot_postgres_container(ctx).await,
++                    Err(e) => Err(e),
++                };
++                match boot_res {
++                    Ok(()) => break Ok(()),
++                    Err(e) => {
++                        if postgres_attempt >= 4 {
++                            break Err(e);
++                        }
++                        postgres_attempt += 1;
++                        let _ = event_tx.send(DevnetEvent::info(format!(
++                            "postgres container vanished before start ({e}), retrying ({postgres_attempt}/4)"
++                        )));
++                        tokio::time::sleep(std::time::Duration::from_millis(2000)).await;
++                    }
++                }
++            };
++            self.or_fatal(final_res, &event_tx, ctx).await?;
+         };
+ 
+         // Start stacks-api
+@@ -980,7 +997,7 @@ impl DevnetOrchestrator {
+             wallet_name = "{miner_wallet_name}"
+             username = "{bitcoin_node_username}"
+             password = "{bitcoin_node_password}"
+-            rpc_port = {orchestrator_ingestion_port}
++            rpc_port = {bitcoin_node_rpc_port}
+             peer_port = {bitcoin_node_p2p_port}
+             "#,
+             pox_prepare_length = DEFAULT_POX_PREPARE_LENGTH,
+@@ -988,7 +1005,7 @@ impl DevnetOrchestrator {
+             bitcoin_node_username = devnet_config.bitcoin_node_username,
+             bitcoin_node_password = devnet_config.bitcoin_node_password,
+             bitcoin_node_p2p_port = devnet_config.bitcoin_node_p2p_port,
+-            orchestrator_ingestion_port = devnet_config.orchestrator_ingestion_port,
++            bitcoin_node_rpc_port = devnet_config.bitcoin_node_rpc_port,
+             miner_wallet_name = devnet_config.miner_wallet_name,
+         ));
+ 

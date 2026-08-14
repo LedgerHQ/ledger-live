@@ -5,7 +5,11 @@ import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { TransactionResponse } from "../network";
 import { TokenPrefix } from "../types";
-import { buildTokenAccounts, createTokenAccount } from "./synchronization";
+import {
+  buildTokenAccounts,
+  calculateSpendableBalance,
+  createTokenAccount,
+} from "./synchronization";
 
 jest.mock("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore");
 jest.mock("@ledgerhq/logs");
@@ -599,6 +603,39 @@ describe("buildTokenAccounts", () => {
 
       expect(result).toHaveLength(3);
     });
+  });
+});
+
+describe("calculateSpendableBalance", () => {
+  it("should subtract fee and amount for a pending native token_transfer", () => {
+    const result = calculateSpendableBalance(new BigNumber(1_000_000), [
+      { tx_type: "token_transfer", fee_rate: "1000", token_transfer: { amount: "50000" } },
+    ]);
+
+    expect(result).toEqual(new BigNumber(1_000_000 - 1000 - 50000));
+  });
+
+  it("should only subtract the fee for a pending contract_call (e.g. SIP-010 transfer)", () => {
+    const result = calculateSpendableBalance(new BigNumber(1_000_000), [
+      { tx_type: "contract_call", fee_rate: "10000" },
+    ]);
+
+    expect(result).toEqual(new BigNumber(1_000_000 - 10000));
+  });
+
+  it("should handle a mix of pending native and contract-call transactions", () => {
+    const result = calculateSpendableBalance(new BigNumber(1_000_000), [
+      { tx_type: "token_transfer", fee_rate: "1000", token_transfer: { amount: "50000" } },
+      { tx_type: "contract_call", fee_rate: "10000" },
+    ]);
+
+    expect(result).toEqual(new BigNumber(1_000_000 - 1000 - 50000 - 10000));
+  });
+
+  it("should return the full balance when there are no pending transactions", () => {
+    const result = calculateSpendableBalance(new BigNumber(1_000_000), []);
+
+    expect(result).toEqual(new BigNumber(1_000_000));
   });
 });
 

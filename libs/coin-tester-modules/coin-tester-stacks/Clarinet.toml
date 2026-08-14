@@ -10,7 +10,11 @@ cache_dir = "./.cache"
 
 [contracts.sip-010-test-token]
 path = "contracts/sip-010-test-token.clar"
-epoch = "latest"
+# "latest" resolved to epoch 4.0/batch 1 in the generated deployment plan — later than the devnet
+# reliably reaches within the scenario's short run. This contract needs no recent Clarity feature,
+# so pin it to the same epoch the bundled sbtc-registry/sbtc-token requirements already deploy at
+# (batch 0, reached within the first ~40 blocks), verified against `deployments/default.devnet-plan.yaml`.
+epoch = "3.0"
 
 [repl.analysis]
 passes = ["check_checker"]

@@ -40,15 +40,22 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
 
     const senderAddress = c32address(addressVersion, tx.auth.spendingCondition!.signer);
 
-    // [low, medium, high] tuple; index 0 matches this call's pre-existing "low" behavior.
-    const [fee] = await fetchFeeEstimateTransaction({
-      payload: serializePayload(tx.payload),
-      estimatedLength: estimateTransactionByteLength(tx),
-      network,
-      client: { baseUrl: getStacksBaseUrl() },
-    });
+    // A pre-set positive fee (e.g. a devnet/testnet caller working around a node whose fee
+    // estimator has no historical data yet for this payload shape) skips the network call
+    // entirely — additive only, real callers never pre-set `fee` before this step.
+    if (transaction.fee && transaction.fee.gt(0)) {
+      patch.fee = transaction.fee;
+    } else {
+      // [low, medium, high] tuple; index 0 matches this call's pre-existing "low" behavior.
+      const [fee] = await fetchFeeEstimateTransaction({
+        payload: serializePayload(tx.payload),
+        estimatedLength: estimateTransactionByteLength(tx),
+        network,
+        client: { baseUrl: getStacksBaseUrl() },
+      });
 
-    patch.fee = new BigNumber(fee.fee);
+      patch.fee = new BigNumber(fee.fee);
+    }
     patch.nonce = await findNextNonce(senderAddress, pendingOperations);
 
     // For token transfers and useAllAmount

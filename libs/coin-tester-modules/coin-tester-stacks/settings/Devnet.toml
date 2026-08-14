@@ -52,8 +52,13 @@ disable_postgres = false
 # Left at Clarinet's own default (matches `@stacks/network`'s StacksDevnet/StacksMocknet default
 # URL, http://localhost:3999 — see `src/devnet.ts`).
 # stacks_api_port = 3999
-# Faster than the 30s real-chain default so the scenario doesn't wait on real-world block time.
-bitcoin_controller_block_time = 3_000
+# Not actually consumed by Clarinet's own scheduler on this branch anymore -- see
+# `scripts/bitcoin-miner.js`'s `BLOCK_TIME_MS` (kept equal to this value for anyone reading this
+# file) for why and what drives mining instead, including why it's slower than the 3s this was
+# originally set to (a middle ground vs. docs.stacks.co's "High resource usage" 60s suggestion).
+bitcoin_controller_block_time = 10_000
+# Default 5432 collides with other local Postgres instances/containers on dev machines.
+postgres_port = 27432
 
 # Clarinet ships a pre-baked chain-state snapshot for faster devnet boot, keyed to this exact set
 # of stacking orders (verified against `DevnetDiffConfig`'s `default_significant_fields` in the
