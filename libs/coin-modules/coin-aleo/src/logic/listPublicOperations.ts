@@ -1,4 +1,4 @@
-import { fetchAccountTransactionsFromHeight, fetchAccountTransitionPage } from "../network/utils";
+import { fetchAccountTransitionPage } from "../network/utils";
 import type { AleoCoinConfig, AleoPublicTransaction } from "../types";
 
 // Prefer rows with an address (real transfers) over bare inner transitions of batching contracts.
@@ -32,6 +32,9 @@ function isBetterRepresentative(
   return candidate.transition_id < current.transition_id;
 }
 
+// Normalises the explorer's per-transition rows to tx granularity. Only the coin-module surface
+// uses this — `bridge/listOperations.ts` keeps consuming raw rows, see the note there.
+//
 // Drops the trailing transaction when incomplete: its representative may change as more transitions
 // arrive on the next fetch, so only the caller's resumed transaction can be trusted whole.
 export async function listPublicOperationsPage({
@@ -66,40 +69,5 @@ export async function listPublicOperationsPage({
   return {
     transactions: transactions.filter(tx => tx.transaction_id.trim() !== trailingId),
     complete: false,
-  };
-}
-
-export async function listPublicOperations({
-  config,
-  address,
-  minBlockHeight,
-  cursor,
-  limit,
-  order,
-}: {
-  config: AleoCoinConfig;
-  address: string;
-  minBlockHeight: number;
-  cursor?: string;
-  limit?: number;
-  order?: "asc" | "desc";
-}): Promise<{
-  transactions: AleoPublicTransaction[];
-  nextCursor: string | null;
-}> {
-  // fetchAllPages: per-transition cursor can't page a per-transaction stream; normalisation must see every row of a tx.
-  const { transactions, nextCursor } = await fetchAccountTransactionsFromHeight({
-    config,
-    address,
-    fetchAllPages: true,
-    minBlockHeight,
-    ...(cursor && { cursor }),
-    ...(limit && { limit }),
-    ...(order && { order }),
-  });
-
-  return {
-    transactions: pickTransactionRepresentatives(transactions),
-    nextCursor,
   };
 }

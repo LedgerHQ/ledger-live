@@ -1,6 +1,6 @@
 import type { ListOperationsOptions } from "@ledgerhq/coin-module-framework/api/types";
 import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
-import { listPublicOperations } from "../logic/listPublicOperations";
+import { fetchAccountTransactionsFromHeight } from "../network/utils";
 import { getCalTokens, toBridgeOperation } from "../logic/utils";
 import type { AleoCoinConfig } from "../types";
 import type { AleoOperation } from "../types/bridge";
@@ -26,9 +26,10 @@ export async function listOperations({
   const operations: AleoOperation[] = [];
   const tokenOperations: AleoOperation[] = [];
 
-  const result = await listPublicOperations({
+  const result = await fetchAccountTransactionsFromHeight({
     config,
     address,
+    fetchAllPages: true,
     minBlockHeight: options.minHeight,
     ...(options.cursor && { cursor: options.cursor }),
     ...(options.limit && { limit: options.limit }),

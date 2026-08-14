@@ -7,14 +7,14 @@ import {
   MOCK_TOKEN_PROGRAM_ID,
 } from "../__tests__/fixtures/currency.fixture";
 import { getMockedOperation } from "../__tests__/fixtures/operation.fixture";
-import { listPublicOperations } from "../logic/listPublicOperations";
+import { fetchAccountTransactionsFromHeight } from "../network/utils";
 import { getCalTokens, toBridgeOperation } from "../logic/utils";
 import { listOperations } from "./listOperations";
 
-jest.mock("../logic/listPublicOperations");
+jest.mock("../network/utils");
 jest.mock("../logic/utils");
 
-const mockListPublicOperations = jest.mocked(listPublicOperations);
+const mockFetch = jest.mocked(fetchAccountTransactionsFromHeight);
 const mockToBridgeOperation = jest.mocked(toBridgeOperation);
 const mockGetCalTokens = jest.mocked(getCalTokens);
 
@@ -38,7 +38,7 @@ describe("bridge/listOperations", () => {
     const mockOp1 = getMockedOperation({ id: "op1", blockHeight: 100 });
     const mockOp2 = getMockedOperation({ id: "op2", blockHeight: 101 });
 
-    mockListPublicOperations.mockResolvedValue({
+    mockFetch.mockResolvedValue({
       transactions: [mockTx1, mockTx2],
       nextCursor: mockTx2.block_number.toString(),
     });
@@ -52,9 +52,10 @@ describe("bridge/listOperations", () => {
       options: { minHeight: 0, order: "asc" },
     });
 
-    expect(mockListPublicOperations).toHaveBeenCalledWith({
+    expect(mockFetch).toHaveBeenCalledWith({
       config: mockConfig,
       address: mockAddress,
+      fetchAllPages: true,
       minBlockHeight: 0,
       order: "asc",
     });
@@ -64,10 +65,44 @@ describe("bridge/listOperations", () => {
     expect(result.calTokens).toEqual(new Map());
   });
 
+  // Regression guard: the coin-module surface normalises transitions to tx granularity, the bridge
+  // must not. Collapsing here would renumber and drop already-persisted operations.
+  it("should keep one operation per transition row of a multi-transition transaction", async () => {
+    const firstTransition = getMockedTransaction({
+      transaction_id: "tx1",
+      transition_id: "au1a",
+      program_id: "credits.aleo",
+    });
+    const secondTransition = getMockedTransaction({
+      transaction_id: "tx1",
+      transition_id: "au1b",
+      program_id: MOCK_TOKEN_PROGRAM_ID,
+    });
+    const firstOp = getMockedOperation({ id: "op1", hash: "tx1" });
+    const secondOp = getMockedOperation({ id: "op2", hash: "tx1" });
+
+    mockFetch.mockResolvedValue({
+      transactions: [firstTransition, secondTransition],
+      nextCursor: null,
+    });
+    mockToBridgeOperation.mockReturnValueOnce(firstOp).mockReturnValueOnce(secondOp);
+
+    const result = await listOperations({
+      config: mockConfig,
+      currencyId: mockCurrency.id,
+      address: mockAddress,
+      ledgerAccountId: mockLedgerAccountId,
+      options: { minHeight: 0 },
+    });
+
+    expect(mockToBridgeOperation).toHaveBeenCalledTimes(2);
+    expect(result.operations).toEqual([firstOp, secondOp]);
+  });
+
   it("should skip the CAL lookup when tokens are disabled", async () => {
     const mockTx = getMockedTransaction({ transaction_id: "tx1" });
 
-    mockListPublicOperations.mockResolvedValue({ transactions: [mockTx], nextCursor: null });
+    mockFetch.mockResolvedValue({ transactions: [mockTx], nextCursor: null });
     mockToBridgeOperation.mockReturnValue(getMockedOperation({ id: "op1" }));
 
     await listOperations({
@@ -88,7 +123,7 @@ describe("bridge/listOperations", () => {
   });
 
   it("should return empty operations when no transactions found", async () => {
-    mockListPublicOperations.mockResolvedValue({ transactions: [], nextCursor: null });
+    mockFetch.mockResolvedValue({ transactions: [], nextCursor: null });
 
     const result = await listOperations({
       config: mockConfig,
@@ -105,7 +140,7 @@ describe("bridge/listOperations", () => {
   });
 
   it("should forward the pagination options untouched", async () => {
-    mockListPublicOperations.mockResolvedValue({ transactions: [], nextCursor: null });
+    mockFetch.mockResolvedValue({ transactions: [], nextCursor: null });
 
     await listOperations({
       config: mockConfig,
@@ -115,9 +150,10 @@ describe("bridge/listOperations", () => {
       options: { minHeight: 1000, cursor: "500", limit: 20, order: "desc" },
     });
 
-    expect(mockListPublicOperations).toHaveBeenCalledWith({
+    expect(mockFetch).toHaveBeenCalledWith({
       config: mockConfig,
       address: mockAddress,
+      fetchAllPages: true,
       minBlockHeight: 1000,
       cursor: "500",
       limit: 20,
@@ -139,7 +175,7 @@ describe("bridge/listOperations", () => {
       const nativeOp = getMockedOperation({ id: "native-op" });
       const calTokens = new Map([[MOCK_TOKEN_PROGRAM_ID, mockTokenCurrency]]);
 
-      mockListPublicOperations.mockResolvedValue({
+      mockFetch.mockResolvedValue({
         transactions: [tokenTx, nativeTx],
         nextCursor: null,
       });
@@ -179,6 +215,51 @@ describe("bridge/listOperations", () => {
       expect(result.calTokens).toEqual(calTokens);
     });
 
+    // A transaction can touch two token programs across its transitions; each needs its own
+    // operation so both sub-accounts get one.
+    it("should emit a token operation per program when one transaction touches several", async () => {
+      const secondProgramId = "usad_stablecoin.aleo";
+      const secondTokenCurrency = getMockedTokenCurrency({
+        id: TokenCurrencyIdSchema.parse("aleo/token/usad_stablecoin.aleo"),
+        contractAddress: secondProgramId,
+        ticker: "USAD",
+      });
+      const firstTransition = getMockedTransaction({
+        transaction_id: "tx1",
+        transition_id: "au1a",
+        program_id: MOCK_TOKEN_PROGRAM_ID,
+      });
+      const secondTransition = getMockedTransaction({
+        transaction_id: "tx1",
+        transition_id: "au1b",
+        program_id: secondProgramId,
+      });
+      const firstOp = getMockedOperation({ id: "op-1", hash: "tx1" });
+      const secondOp = getMockedOperation({ id: "op-2", hash: "tx1" });
+
+      mockFetch.mockResolvedValue({
+        transactions: [firstTransition, secondTransition],
+        nextCursor: null,
+      });
+      mockGetCalTokens.mockResolvedValue(
+        new Map([
+          [MOCK_TOKEN_PROGRAM_ID, mockTokenCurrency],
+          [secondProgramId, secondTokenCurrency],
+        ]),
+      );
+      mockToBridgeOperation.mockReturnValueOnce(firstOp).mockReturnValueOnce(secondOp);
+
+      const result = await listOperations({
+        config: mockConfigWithTokens,
+        currencyId: mockCurrency.id,
+        address: mockAddress,
+        ledgerAccountId: mockLedgerAccountId,
+        options: { minHeight: 0 },
+      });
+
+      expect(result.tokenOperations).toEqual([firstOp, secondOp]);
+    });
+
     it("should not populate tokenOperations when CAL returns no matching tokens", async () => {
       const unknownTokenTx = getMockedTransaction({
         transaction_id: "unknown-tx",
@@ -186,7 +267,7 @@ describe("bridge/listOperations", () => {
       });
       const mockOp = getMockedOperation({ id: "unknown-op" });
 
-      mockListPublicOperations.mockResolvedValue({
+      mockFetch.mockResolvedValue({
         transactions: [unknownTokenTx],
         nextCursor: null,
       });
@@ -220,7 +301,7 @@ describe("bridge/listOperations", () => {
       const op1 = getMockedOperation({ id: "op-1", hash: "tx-1" });
       const op2 = getMockedOperation({ id: "op-2", hash: "tx-2" });
 
-      mockListPublicOperations.mockResolvedValue({ transactions: [tx1, tx2], nextCursor: null });
+      mockFetch.mockResolvedValue({ transactions: [tx1, tx2], nextCursor: null });
       mockGetCalTokens.mockResolvedValue(
         new Map([
           [MOCK_TOKEN_PROGRAM_ID, mockTokenCurrency],
