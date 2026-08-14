@@ -360,6 +360,3 @@ export default function DevToolsPage() {
 
 A tool the host doesn't list is simply not loaded. If a tool requires props, TypeScript will refuse a host config that omits it — the discriminated union enforces the wiring at compile time.
 
-## Adding a new tool
-
-See [`addTool.md`](./addTool.md) for the full walk-through.
