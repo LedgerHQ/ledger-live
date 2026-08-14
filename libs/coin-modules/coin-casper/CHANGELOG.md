@@ -1,5 +1,47 @@
 # @ledgerhq/coin-casper
 
+## 2.19.0
+
+### Minor Changes
+
+- [#20278](https://github.com/LedgerHQ/ledger-live/pull/20278) [`3d24a89`](https://github.com/LedgerHQ/ledger-live/commit/3d24a898d59de55364ec29de29eaecb7ca14425d) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Drop the `@ledgerhq/errors` dependency, completing the errors sunset (LIVE-32915).
+
+  The `@ledgerhq/errors` package is removed from the monorepo: no workspace source imported it anymore, every error class it held now lives in the package that owns it (`@ledgerhq/ledger-wallet-framework/errors` for the ones shared across coin modules). `createCustomErrorClass` and the `serializeError` / `deserializeError` stack are gone with it — define errors as native classes and branch on `error.name`.
+
+  `@ledgerhq/errors@6.37.0` stays on npm for external consumers, but is no longer published from this repo.
+
+- [#20280](https://github.com/LedgerHQ/ledger-live/pull/20280) [`9fcbe39`](https://github.com/LedgerHQ/ledger-live/commit/9fcbe39689ff122568ffb031a30dc3805ebb6add) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Stop depending on `@ledgerhq/errors` (LIVE-32915).
+
+  No workspace package declares it anymore, and none may again: `enforce-boundaries` now fails CI on any manifest that does. The classes it held live in the package that owns them, with `@ledgerhq/ledger-wallet-framework/errors` as the shared home below the coin layer.
+
+  The package itself stays in the repo so it keeps being published for external consumers, and is bridged to the external coin packages that still peer-depend on it via `pnpm.packageExtensions` using `workspace:*` (which reuses the single in-repo copy, so the dependency graph keeps exactly the physical copies it had before). [LedgerHQ/coin-modules#752](https://github.com/LedgerHQ/coin-modules/pull/752) removes that peerDependency upstream; once it is released the bridge can be dropped, but the package still needs publishing.
+
+- [#20562](https://github.com/LedgerHQ/ledger-live/pull/20562) [`f1e93f7`](https://github.com/LedgerHQ/ledger-live/commit/f1e93f79bedea0b6a2c140271769c37cf4e02407) Thanks [@mateuszpalosz-ext](https://github.com/mateuszpalosz-ext)! - feat(casper): implement `listOperations` method
+  fix(casper): sync keeps transfers sent without a transfer id
+  chore(casper): drop the unused `getUnit` export
+
+- [#20512](https://github.com/LedgerHQ/ledger-live/pull/20512) [`2f297f7`](https://github.com/LedgerHQ/ledger-live/commit/2f297f74dcda8113f86196ecd9c61e327f7981e9) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - feat: combine method in coin-casper module
+
+- [#20453](https://github.com/LedgerHQ/ledger-live/pull/20453) [`ac57e97`](https://github.com/LedgerHQ/ledger-live/commit/ac57e970074572eb99e989c8f5a1a6bd227c922b) Thanks [@vtaranushenko-ext-ledger](https://github.com/vtaranushenko-ext-ledger)! - Implement getBalance in the Casper CoinModuleApi
+
+- [#20375](https://github.com/LedgerHQ/ledger-live/pull/20375) [`6d45e7c`](https://github.com/LedgerHQ/ledger-live/commit/6d45e7c4245be9acaf2f3a86f48d38e5677d8e96) Thanks [@mateuszpalosz-ext](https://github.com/mateuszpalosz-ext)! - coinModuleApi init for Casper with base folders structure cleanup
+
+- [#20509](https://github.com/LedgerHQ/ledger-live/pull/20509) [`9ea6eed`](https://github.com/LedgerHQ/ledger-live/commit/9ea6eedc129c4d496ec745a6affeddb136d3680f) Thanks [@vtaranushenko-ext-ledger](https://github.com/vtaranushenko-ext-ledger)! - Implement `estimateFees` in the Casper CoinModuleApi, resolving the native transfer payment from the chainspec native mint lane limit, with `CASPER_FEES_MOTES` as fallback.
+
+- [#20517](https://github.com/LedgerHQ/ledger-live/pull/20517) [`c9eab39`](https://github.com/LedgerHQ/ledger-live/commit/c9eab39bff1f46fc63c8717237390aa94fb78dec) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - feat: broadcast method in coin-casper module
+
+- [#20514](https://github.com/LedgerHQ/ledger-live/pull/20514) [`bdd82c4`](https://github.com/LedgerHQ/ledger-live/commit/bdd82c435d01d56397fe0967e92825f0442bf487) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - feat: craftTransaction method in coin-casper module
+
+- [#20438](https://github.com/LedgerHQ/ledger-live/pull/20438) [`b9d4a22`](https://github.com/LedgerHQ/ledger-live/commit/b9d4a2209b5fff587c67ea8868bcf553fcc4ecbd) Thanks [@mateuszpalosz-ext](https://github.com/mateuszpalosz-ext)! - lastBlock method support for Casper
+
+- [#20435](https://github.com/LedgerHQ/ledger-live/pull/20435) [`e664d84`](https://github.com/LedgerHQ/ledger-live/commit/e664d84bc45a0bde9f4794c96d43e8a7eebb83b9) Thanks [@mateuszpalosz-ext](https://github.com/mateuszpalosz-ext)! - Casper folder structure cleanup part 2
+
+### Patch Changes
+
+- Updated dependencies [[`aee0e64`](https://github.com/LedgerHQ/ledger-live/commit/aee0e64b491aafc1ca8fea16b1ef124cb183770b), [`1e9db75`](https://github.com/LedgerHQ/ledger-live/commit/1e9db750a4882f9db7f95278e33c00262487b37b), [`647804e`](https://github.com/LedgerHQ/ledger-live/commit/647804ee755d54776e6b8cd96328bee89fb035e4), [`53c3431`](https://github.com/LedgerHQ/ledger-live/commit/53c3431e01b3139ef689cb589bab0adee4ed6152)]:
+  - @ledgerhq/types-live@6.119.0
+  - @ledgerhq/ledger-wallet-framework@2.8.0
+
 ## 2.19.0-next.0
 
 ### Minor Changes

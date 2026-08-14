@@ -1,5 +1,12 @@
 # @ledgerhq/device-intent
 
+## 5.0.0
+
+### Patch Changes
+
+- Updated dependencies [[`1e9db75`](https://github.com/LedgerHQ/ledger-live/commit/1e9db750a4882f9db7f95278e33c00262487b37b)]:
+  - @ledgerhq/types-devices@6.32.0
+
 ## 5.0.0-next.0
 
 ### Patch Changes

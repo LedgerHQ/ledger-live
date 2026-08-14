@@ -1,6 +1,6 @@
 {
   "name": "@devtools/protocols",
-  "version": "0.2.2-next.0",
+  "version": "0.2.2",
   "private": true,
   "description": "Shared WebSocket message contracts for DevTools host ⇄ tool communication",
   "sideEffects": false,

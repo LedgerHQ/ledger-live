@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-vechain",
-  "version": "0.1.1-next.0",
+  "version": "0.1.1",
   "private": true,
   "description": "Ledger VeChain Coin Tester",
   "main": "src/scenarii.test.ts",

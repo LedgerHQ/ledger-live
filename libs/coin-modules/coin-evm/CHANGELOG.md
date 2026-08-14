@@ -1,5 +1,45 @@
 # @ledgerhq/coin-evm
 
+## 4.10.0
+
+### Minor Changes
+
+- [#20278](https://github.com/LedgerHQ/ledger-live/pull/20278) [`3d24a89`](https://github.com/LedgerHQ/ledger-live/commit/3d24a898d59de55364ec29de29eaecb7ca14425d) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Drop the `@ledgerhq/errors` dependency, completing the errors sunset (LIVE-32915).
+
+  The `@ledgerhq/errors` package is removed from the monorepo: no workspace source imported it anymore, every error class it held now lives in the package that owns it (`@ledgerhq/ledger-wallet-framework/errors` for the ones shared across coin modules). `createCustomErrorClass` and the `serializeError` / `deserializeError` stack are gone with it — define errors as native classes and branch on `error.name`.
+
+  `@ledgerhq/errors@6.37.0` stays on npm for external consumers, but is no longer published from this repo.
+
+- [#20280](https://github.com/LedgerHQ/ledger-live/pull/20280) [`9fcbe39`](https://github.com/LedgerHQ/ledger-live/commit/9fcbe39689ff122568ffb031a30dc3805ebb6add) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Stop depending on `@ledgerhq/errors` (LIVE-32915).
+
+  No workspace package declares it anymore, and none may again: `enforce-boundaries` now fails CI on any manifest that does. The classes it held live in the package that owns them, with `@ledgerhq/ledger-wallet-framework/errors` as the shared home below the coin layer.
+
+  The package itself stays in the repo so it keeps being published for external consumers, and is bridged to the external coin packages that still peer-depend on it via `pnpm.packageExtensions` using `workspace:*` (which reuses the single in-repo copy, so the dependency graph keeps exactly the physical copies it had before). [LedgerHQ/coin-modules#752](https://github.com/LedgerHQ/coin-modules/pull/752) removes that peerDependency upstream; once it is released the bridge can be dropped, but the package still needs publishing.
+
+- [#20625](https://github.com/LedgerHQ/ledger-live/pull/20625) [`fd3e81e`](https://github.com/LedgerHQ/ledger-live/commit/fd3e81e80eb5400e739e40e3ed360f40139d2aa4) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Make the EIP-7623 calldata floor remotely configurable through the new `calldataFloorGasPerToken` and `calldataFloorZeroByteTokens` coin config fields. Both default to the current EIP-7623 values, so behaviour is unchanged unless they are set; EIP-7976 can then be activated per chain without a release.
+
+- [#20627](https://github.com/LedgerHQ/ledger-live/pull/20627) [`7af726b`](https://github.com/LedgerHQ/ledger-live/commit/7af726b50eb7c8a2712bf734aac5618be61911ef) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Explain the higher network fees when sending to an address that does not exist yet. EIP-8037 charges account creation substantially more gas, and nothing in the send flow told the user why the fee jumped. The gas we send is unchanged: `eth_estimateGas` remains the only source.
+
+- [#20620](https://github.com/LedgerHQ/ledger-live/pull/20620) [`e5ec77b`](https://github.com/LedgerHQ/ledger-live/commit/e5ec77bf92a89c5f9a36a2e5901729e20682ead0) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Skip logs emitted by SYSTEM_ADDRESS when parsing ERC20 transfers from receipts. EIP-7708 (Glamsterdam) makes every native transfer emit a log identical to an ERC20 `Transfer`, which would otherwise be reported as a transfer of a non-existent token.
+
+- [#20356](https://github.com/LedgerHQ/ledger-live/pull/20356) [`2ec3de4`](https://github.com/LedgerHQ/ledger-live/commit/2ec3de4f864bc7bccf02f42b04356bb563f9ed91) Thanks [@qperrot](https://github.com/qperrot)! - Fix EVM send-max on L2s (Scroll, Blast, Base) failing at broadcast with `InsufficientFunds`
+
+  The send-max amount is `balance - fees`, but the L2 → L1 data fee (`additionalFees`) was reserved with no headroom, unlike L2 execution gas which already carries ~2x headroom via `maxFeePerGas`. Because the L1 data fee tracks the volatile Ethereum L1 base fee, any upward drift between fee estimation and broadcast (device signing takes seconds) made the transaction overspend and the node rejected it.
+
+  - Reserve a 2x headroom on the L1 data fee for send-max only (normal sends keep an exact fee display).
+  - Query the OP-stack L1 gas oracle for Blast and Base on the Ledger node — they were falling through to a `0` L1 fee and being under-reserved.
+  - Point the external RPC node at the canonical OP-stack `GasPriceOracle` predeploy (`0x420000000000000000000000000000000000000F`) so the L1-fee lookup succeeds on all OP-stack chains.
+
+- [#20447](https://github.com/LedgerHQ/ledger-live/pull/20447) [`9e1412e`](https://github.com/LedgerHQ/ledger-live/commit/9e1412e08ccccd4af4a7078a797332ea92f86c63) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - chore(coin-modules): provide validator id
+
+- [#20431](https://github.com/LedgerHQ/ledger-live/pull/20431) [`0e439a0`](https://github.com/LedgerHQ/ledger-live/commit/0e439a0b73f1ad49aab32e98dfaf4fbd1d0ded04) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(coin-evm): migrate EVM staking types from `@ledgerhq/types-live` to `@ledgerhq/coin-module-framework`; move staking helpers (mapDelegations, serialization) to ledger-live-common evm family
+
+### Patch Changes
+
+- Updated dependencies [[`aee0e64`](https://github.com/LedgerHQ/ledger-live/commit/aee0e64b491aafc1ca8fea16b1ef124cb183770b), [`53c3431`](https://github.com/LedgerHQ/ledger-live/commit/53c3431e01b3139ef689cb589bab0adee4ed6152)]:
+  - @ledgerhq/ledger-wallet-framework@2.8.0
+  - @ledgerhq/evm-tools@1.13.2
+
 ## 4.10.0-next.0
 
 ### Minor Changes

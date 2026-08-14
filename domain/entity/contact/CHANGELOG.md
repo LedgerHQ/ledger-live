@@ -1,5 +1,34 @@
 # @domain/entity-contact
 
+## 0.6.0
+
+### Minor Changes
+
+- [#20653](https://github.com/LedgerHQ/ledger-live/pull/20653) [`02c6f9e`](https://github.com/LedgerHQ/ledger-live/commit/02c6f9e46152894aa97648f50a52efaad38aa86c) Thanks [@deepyjr](https://github.com/deepyjr)! - Add formatting checks to Contacts packages.
+
+- [#20582](https://github.com/LedgerHQ/ledger-live/pull/20582) [`cc8b5b9`](https://github.com/LedgerHQ/ledger-live/commit/cc8b5b9af4a2ec488b6912d3fcb08bcc8f4b72c3) Thanks [@ysitbon](https://github.com/ysitbon)! - Move the currency id schemas to the packages that own them.
+
+  `CryptoCurrencyIdSchema`, `TokenCurrencyIdSchema` and `FiatCurrencyIdSchema` (and their inferred
+  types) now live in `@domain/entity-currency-crypto`, `@domain/entity-currency-token` and
+  `@domain/entity-currency-fiat` respectively, instead of `@shared/schema-primitives`. A primitives
+  package has no business knowing about crypto, tokens or fiat.
+
+  The crypto and token packages used to re-export these symbols from primitives, which made them
+  proxies: two import paths for the same thing, and no obvious original provider. Consumers already
+  importing from `@domain/entity-currency-*` are unaffected, since the symbols genuinely moved there.
+  Anything importing them from `@shared/schema-primitives` must now import the owning domain package.
+
+- [#20510](https://github.com/LedgerHQ/ledger-live/pull/20510) [`a1bd49e`](https://github.com/LedgerHQ/ledger-live/commit/a1bd49ec9190a395730b3348fef5c0987e4eaeb7) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Model Me as the default self contact with shared display-name formatting, external address counts, and a Ledger Wallet accounts intent.
+
+- [#20380](https://github.com/LedgerHQ/ledger-live/pull/20380) [`79d2278`](https://github.com/LedgerHQ/ledger-live/commit/79d22789896f55d9a7196392632b08488997d937) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Add shared address edit signer validation state with mocked signer mismatch handling for Desktop and Mobile.
+
+### Patch Changes
+
+- Updated dependencies [[`cc8b5b9`](https://github.com/LedgerHQ/ledger-live/commit/cc8b5b9af4a2ec488b6912d3fcb08bcc8f4b72c3)]:
+  - @domain/entity-currency-crypto@0.10.0
+  - @domain/entity-currency-token@0.4.0
+  - @shared/schema-primitives@0.4.0
+
 ## 0.6.0-next.0
 
 ### Minor Changes

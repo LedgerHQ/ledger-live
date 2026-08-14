@@ -1,5 +1,11 @@
 # ledger-live-mobile-e2e-tests
 
+## 0.34.0
+
+### Minor Changes
+
+- [#20619](https://github.com/LedgerHQ/ledger-live/pull/20619) [`0175f1f`](https://github.com/LedgerHQ/ledger-live/commit/0175f1ffab7a31fe882b3538d5a87619c331bf54) Thanks [@qperrot](https://github.com/qperrot)! - Chore: add tests for memo on the new send flow
+
 ## 0.34.0-next.0
 
 ### Minor Changes
