@@ -48,23 +48,17 @@ describe("logic/listOperations", () => {
       synced_up_to: 900,
     });
     mockOwnedRecords.mockResolvedValue([]);
-    mockPublicOperations.mockResolvedValue({
-      transactions: [],
-      complete: true,
-    });
+    mockPublicOperations.mockResolvedValue({ transactions: [], nextBlock: null });
     mockEnrich.mockResolvedValue([]);
   });
 
   describe("completeness ceiling", () => {
-    it("withholds operations above the scanner watermark", async () => {
-      mockPublicOperations.mockResolvedValue({
-        transactions: [publicTx("tx-below", 800), publicTx("tx-above", 950)],
-        complete: true,
-      });
+    it("caps the window at the scanner watermark, below the chain tip", async () => {
+      await list({ minHeight: 0 });
 
-      const { items } = await list({ minHeight: 0 });
-
-      expect(items.map(op => op.id)).toEqual(["tx-below"]);
+      expect(mockPublicOperations).toHaveBeenCalledWith(
+        expect.objectContaining({ fromBlock: 0, toBlock: 900 }),
+      );
     });
 
     it.each([
@@ -72,24 +66,16 @@ describe("logic/listOperations", () => {
       ["a scanner still catching up", { synced: false, percentage: 40 }],
     ])("withholds everything while synced_up_to is not served, even for %s", async (_, status) => {
       mockScannerStatus.mockResolvedValue(status);
-      mockPublicOperations.mockResolvedValue({
-        transactions: [publicTx("tx-1", 950)],
-        complete: true,
-      });
 
-      expect(await list({ minHeight: 0 })).toEqual({
-        items: [],
-        next: undefined,
-      });
+      await list({ minHeight: 0 });
+
+      expect(mockPublicOperations).toHaveBeenCalledWith(
+        expect.objectContaining({ fromBlock: 0, toBlock: 0 }),
+      );
     });
 
     it("clamps a cursor that reaches above the chain tip", async () => {
-      mockPublicOperations.mockResolvedValue({
-        transactions: [publicTx("tx-1", 1500)],
-        complete: true,
-      });
-
-      const { items } = await list({
+      await list({
         minHeight: 0,
         cursor: encodeOperationsCursor({
           minHeight: 0,
@@ -98,7 +84,7 @@ describe("logic/listOperations", () => {
         }),
       });
 
-      expect(items).toEqual([]);
+      expect(mockPublicOperations).toHaveBeenCalledWith(expect.objectContaining({ toBlock: 1000 }));
     });
   });
 
@@ -114,7 +100,7 @@ describe("logic/listOperations", () => {
     it("still reads the block when the watermark sits exactly on minHeight", async () => {
       mockPublicOperations.mockResolvedValue({
         transactions: [publicTx("tx-at-watermark", 900)],
-        complete: true,
+        nextBlock: null,
       });
 
       const { items } = await list({ minHeight: 900 });
@@ -133,6 +119,7 @@ describe("logic/listOperations", () => {
       });
 
       expect(result).toEqual({ items: [], next: undefined });
+      expect(mockPublicOperations).not.toHaveBeenCalled();
     });
   });
 
@@ -147,7 +134,7 @@ describe("logic/listOperations", () => {
       });
       mockPublicOperations.mockResolvedValue({
         transactions: [shield],
-        complete: true,
+        nextBlock: null,
       });
       mockOwnedRecords.mockResolvedValue([
         getMockedRecord({ transaction_id: "tx-shield", block_height: 500 }),
@@ -167,7 +154,7 @@ describe("logic/listOperations", () => {
     it("only decrypts records whose transaction has no public row", async () => {
       mockPublicOperations.mockResolvedValue({
         transactions: [publicTx("tx-public", 500)],
-        complete: true,
+        nextBlock: null,
       });
       const privateOnly = getMockedRecord({
         transaction_id: "tx-private",
@@ -227,12 +214,40 @@ describe("logic/listOperations", () => {
       expect(forward).toEqual([first]);
     });
 
-    it("drops owned records that fall outside the window", async () => {
+    it("drops owned records above the ceiling", async () => {
       mockOwnedRecords.mockResolvedValue([
         getMockedRecord({ transaction_id: "tx-above", block_height: 950 }),
       ]);
 
       await list({ minHeight: 0 });
+
+      expect(mockEnrich).toHaveBeenCalledWith(expect.objectContaining({ records: [] }));
+    });
+
+    it("defers a record sitting past the blocks this page emitted", async () => {
+      mockPublicOperations.mockResolvedValue({
+        transactions: [publicTx("tx-a", 100)],
+        nextBlock: 201,
+      });
+      mockOwnedRecords.mockResolvedValue([
+        getMockedRecord({ transaction_id: "tx-private", block_height: 250 }),
+      ]);
+
+      await list({ minHeight: 0, limit: 1 });
+
+      expect(mockEnrich).toHaveBeenCalledWith(expect.objectContaining({ records: [] }));
+    });
+
+    it("defers a record below the blocks a descending page emitted", async () => {
+      mockPublicOperations.mockResolvedValue({
+        transactions: [publicTx("tx-a", 800)],
+        nextBlock: 700,
+      });
+      mockOwnedRecords.mockResolvedValue([
+        getMockedRecord({ transaction_id: "tx-private", block_height: 650 }),
+      ]);
+
+      await list({ minHeight: 0, limit: 1, order: "desc" });
 
       expect(mockEnrich).toHaveBeenCalledWith(expect.objectContaining({ records: [] }));
     });
@@ -242,41 +257,37 @@ describe("logic/listOperations", () => {
     const threeTxs = [publicTx("tx-c", 300), publicTx("tx-a", 100), publicTx("tx-b", 200)];
 
     /**
-     * Stands in for the explorer walk: hands back at most `targetTransactions` rows from `startBlock`
-     * onwards, and reports `complete` only once it has nothing left. That is the signal the paging
-     * scheme runs on — the real one drops the transaction the stream ends on before returning.
+     * Stands in for the block-aligned explorer walk: returns whole blocks from the window until it
+     * holds `minTransactions` rows, and reports the first block it left untouched.
      */
     const explorerHolding = (all: typeof threeTxs) =>
       mockPublicOperations.mockImplementation(
-        async ({ startBlock, targetTransactions, order = "asc" }) => {
+        async ({ fromBlock, toBlock, minTransactions, order = "asc" }) => {
           const direction = order === "desc" ? -1 : 1;
-          const sorted = [...all].sort(
-            (a, b) =>
-              direction *
-              (a.block_number - b.block_number || a.transaction_id.localeCompare(b.transaction_id)),
-          );
-          const reachable = sorted.filter(tx =>
-            startBlock === undefined
-              ? true
-              : order === "desc"
-                ? tx.block_number <= startBlock
-                : tx.block_number >= startBlock,
-          );
+          const inWindow = all
+            .filter(tx => tx.block_number >= fromBlock && tx.block_number <= toBlock)
+            .sort(
+              (a, b) =>
+                direction *
+                (a.block_number - b.block_number ||
+                  a.transaction_id.localeCompare(b.transaction_id)),
+            );
+          const blocks = [...new Set(inWindow.map(tx => tx.block_number))];
 
-          return reachable.length <= targetTransactions
-            ? { transactions: reachable, complete: true }
-            : {
-                transactions: reachable.slice(0, targetTransactions),
-                complete: false,
-              };
+          for (const [index, block] of blocks.entries()) {
+            const transactions = inWindow.filter(tx => direction * (tx.block_number - block) <= 0);
+
+            if (transactions.length >= minTransactions && index < blocks.length - 1) {
+              return { transactions, nextBlock: block + direction };
+            }
+          }
+
+          return { transactions: inWindow, nextBlock: null };
         },
       );
 
     it("orders ascending by default", async () => {
-      mockPublicOperations.mockResolvedValue({
-        transactions: threeTxs,
-        complete: true,
-      });
+      mockPublicOperations.mockResolvedValue({ transactions: threeTxs, nextBlock: null });
 
       const { items } = await list({ minHeight: 0 });
 
@@ -284,10 +295,7 @@ describe("logic/listOperations", () => {
     });
 
     it("orders descending on request", async () => {
-      mockPublicOperations.mockResolvedValue({
-        transactions: threeTxs,
-        complete: true,
-      });
+      mockPublicOperations.mockResolvedValue({ transactions: threeTxs, nextBlock: null });
 
       const { items } = await list({ minHeight: 0, order: "desc" });
 
@@ -297,7 +305,7 @@ describe("logic/listOperations", () => {
     it("breaks ties on hash so operations at one height keep a stable order", async () => {
       mockPublicOperations.mockResolvedValue({
         transactions: [publicTx("tx-b", 100), publicTx("tx-a", 100)],
-        complete: true,
+        nextBlock: null,
       });
 
       const { items } = await list({ minHeight: 0 });
@@ -305,7 +313,7 @@ describe("logic/listOperations", () => {
       expect(items.map(op => op.id)).toEqual(["tx-a", "tx-b"]);
     });
 
-    it("names the last emitted operation in the cursor it hands back", async () => {
+    it("resumes at the block after the last one it emitted", async () => {
       explorerHolding(threeTxs);
 
       const { next } = await list({ minHeight: 0, limit: 1 });
@@ -314,7 +322,7 @@ describe("logic/listOperations", () => {
         minHeight: 0,
         maxBlockHeight: 900,
         order: "asc",
-        resume: { block: 100, transactionId: "tx-a" },
+        nextBlock: 101,
       });
     });
 
@@ -345,42 +353,24 @@ describe("logic/listOperations", () => {
       expect(page2.next).toBeUndefined();
     });
 
-    it("narrows the upper bound when resuming a descending run", async () => {
+    it("resumes below the last emitted block when descending", async () => {
       explorerHolding(threeTxs);
+
       const page1 = await list({ minHeight: 0, limit: 2, order: "desc" });
 
       expect(decodeOperationsCursor(page1.next)).toMatchObject({
         order: "desc",
-        resume: { block: 200, transactionId: "tx-b" },
+        nextBlock: 199,
       });
     });
 
-    it("resumes past the rows already emitted at the boundary height", async () => {
-      // one height holding more operations than a page: the window reopens on it, so the earlier
-      // page's rows come back in the stream and have to be dropped by identity, not by count
+    it("returns a block denser than the limit whole rather than splitting it", async () => {
       explorerHolding([publicTx("tx-a", 100), publicTx("tx-b", 100), publicTx("tx-c", 100)]);
 
-      const page1 = await list({ minHeight: 0, limit: 2 });
-      const page2 = await list({ minHeight: 0, limit: 2, cursor: page1.next });
+      const page = await list({ minHeight: 0, limit: 2 });
 
-      expect(page1.items.map(op => op.id)).toEqual(["tx-a", "tx-b"]);
-      expect(page2.items.map(op => op.id)).toEqual(["tx-c"]);
-    });
-
-    it("widens the fetch rather than stall on a block denser than the page", async () => {
-      // every row the resumed fetch can reach was already emitted, so the first attempt yields
-      // nothing; without widening the cursor would never move
-      explorerHolding([
-        publicTx("tx-a", 100),
-        publicTx("tx-b", 100),
-        publicTx("tx-c", 100),
-        publicTx("tx-d", 100),
-      ]);
-
-      const page1 = await list({ minHeight: 0, limit: 2 });
-      const page2 = await list({ minHeight: 0, limit: 2, cursor: page1.next });
-
-      expect(page2.items.map(op => op.id)).toEqual(["tx-c", "tx-d"]);
+      expect(page.items.map(op => op.id)).toEqual(["tx-a", "tx-b", "tx-c"]);
+      expect(page.next).toBeUndefined();
     });
 
     it("keeps the pinned ceiling as the scanner advances mid-run", async () => {
@@ -404,22 +394,20 @@ describe("logic/listOperations", () => {
 
       await list({ minHeight: 0, limit: 2, cursor: page1.next });
 
-      expect(mockOwnedRecords).toHaveBeenLastCalledWith(expect.objectContaining({ start: 200 }));
+      expect(mockOwnedRecords).toHaveBeenLastCalledWith(expect.objectContaining({ start: 201 }));
     });
 
-    it("starts the explorer walk at the resumed height instead of the account's first row", async () => {
+    it("starts the explorer walk at the resumed block instead of the account's first row", async () => {
       explorerHolding(threeTxs);
       const page1 = await list({ minHeight: 0, limit: 2 });
 
       await list({ minHeight: 0, limit: 2, cursor: page1.next });
 
       expect(mockPublicOperations).toHaveBeenLastCalledWith(
-        expect.objectContaining({ startBlock: 200, minBlockHeight: 200 }),
+        expect.objectContaining({ fromBlock: 201, toBlock: 900 }),
       );
     });
 
-    // The resume point is an identity in the stream's total order, so it is only exact while that
-    // order is reproducible between calls. This is the invariant the whole paging scheme rests on.
     it("returns the very same rows when a page is replayed", async () => {
       explorerHolding(threeTxs);
       const page1 = await list({ minHeight: 0, limit: 2 });

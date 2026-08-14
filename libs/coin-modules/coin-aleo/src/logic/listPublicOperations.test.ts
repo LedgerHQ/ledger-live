@@ -20,65 +20,30 @@ describe("listPublicOperationsPage", () => {
     listPublicOperationsPage({
       config: mockConfig,
       address,
-      minBlockHeight: 0,
-      startBlock: 100,
-      targetTransactions: 2,
+      fromBlock: 100,
+      toBlock: 200,
+      minTransactions: 2,
     });
 
-  it("asks the explorer to start at the requested block", async () => {
-    mockFetchPage.mockResolvedValue({ transitions: [], complete: true });
+  it("forwards the block window to the explorer walk", async () => {
+    mockFetchPage.mockResolvedValue({ transitions: [], nextBlock: null });
 
     await page();
 
     expect(mockFetchPage).toHaveBeenCalledWith(
-      expect.objectContaining({ startBlock: 100, targetTransactions: 2 }),
+      expect.objectContaining({ fromBlock: 100, toBlock: 200, minTransactions: 2 }),
     );
   });
 
-  it("drops the transaction the stream ends on, which may still have rows past the boundary", async () => {
+  it("hands the resume block back untouched", async () => {
     mockFetchPage.mockResolvedValue({
-      transitions: [
-        transition({ transaction_id: "tx1", transition_id: "au1a" }),
-        transition({ transaction_id: "tx2", transition_id: "au1b" }),
-        transition({ transaction_id: "tx3", transition_id: "au1c" }),
-      ],
-      complete: false,
+      transitions: [transition({ transaction_id: "tx1", transition_id: "au1a" })],
+      nextBlock: 150,
     });
 
-    const { transactions, complete } = await page();
+    const { nextBlock } = await page();
 
-    expect(transactions.map(tx => tx.transaction_id)).toEqual(["tx1", "tx2"]);
-    expect(complete).toBe(false);
-  });
-
-  it("drops every row of that trailing transaction, not just the last one", async () => {
-    mockFetchPage.mockResolvedValue({
-      transitions: [
-        transition({ transaction_id: "tx1", transition_id: "au1a" }),
-        transition({ transaction_id: "tx2", transition_id: "au1b" }),
-        transition({ transaction_id: "tx2", transition_id: "au1c" }),
-      ],
-      complete: false,
-    });
-
-    const { transactions } = await page();
-
-    expect(transactions.map(tx => tx.transaction_id)).toEqual(["tx1"]);
-  });
-
-  it("keeps the trailing transaction once the explorer has nothing left", async () => {
-    mockFetchPage.mockResolvedValue({
-      transitions: [
-        transition({ transaction_id: "tx1", transition_id: "au1a" }),
-        transition({ transaction_id: "tx2", transition_id: "au1b" }),
-      ],
-      complete: true,
-    });
-
-    const { transactions, complete } = await page();
-
-    expect(transactions.map(tx => tx.transaction_id)).toEqual(["tx1", "tx2"]);
-    expect(complete).toBe(true);
+    expect(nextBlock).toBe(150);
   });
 
   it("collapses a multi-transition transaction to a single row", async () => {
@@ -88,7 +53,7 @@ describe("listPublicOperationsPage", () => {
         transition({ transaction_id: "tx1", transition_id: "au1b" }),
         transition({ transaction_id: "tx2", transition_id: "au1c" }),
       ],
-      complete: true,
+      nextBlock: null,
     });
 
     const { transactions } = await page();
@@ -102,7 +67,7 @@ describe("listPublicOperationsPage", () => {
         transition({ transaction_id: "tx1", transition_id: "au1a" }),
         transition({ transaction_id: " tx1 ", transition_id: "au1b" }),
       ],
-      complete: true,
+      nextBlock: null,
     });
 
     const { transactions } = await page();
@@ -120,7 +85,7 @@ describe("listPublicOperationsPage", () => {
     });
     const real = transition({ transaction_id: "tx1", transition_id: "au1b" });
 
-    mockFetchPage.mockResolvedValue({ transitions: [inner, real], complete: true });
+    mockFetchPage.mockResolvedValue({ transitions: [inner, real], nextBlock: null });
 
     const { transactions } = await page();
 
@@ -131,10 +96,10 @@ describe("listPublicOperationsPage", () => {
     const first = transition({ transaction_id: "tx1", transition_id: "au1aaa" });
     const second = transition({ transaction_id: "tx1", transition_id: "au1bbb" });
 
-    mockFetchPage.mockResolvedValueOnce({ transitions: [first, second], complete: true });
+    mockFetchPage.mockResolvedValueOnce({ transitions: [first, second], nextBlock: null });
     const forward = await page();
 
-    mockFetchPage.mockResolvedValueOnce({ transitions: [second, first], complete: true });
+    mockFetchPage.mockResolvedValueOnce({ transitions: [second, first], nextBlock: null });
     const reversed = await page();
 
     expect(forward.transactions).toEqual(reversed.transactions);

@@ -1814,18 +1814,18 @@ describe("network/utils", () => {
       }),
     });
 
-    const fetchPage = (targetTransactions: number, startBlock?: number) =>
+    const fetchPage = (minTransactions: number, fromBlock = 0, toBlock = Number.MAX_SAFE_INTEGER) =>
       fetchAccountTransitionPage({
         config: mockConfig,
         address: mockAddress,
-        minBlockHeight: 0,
-        targetTransactions,
-        ...(startBlock !== undefined && { startBlock }),
+        fromBlock,
+        toBlock,
+        minTransactions,
       });
 
     beforeEach(() => jest.clearAllMocks());
 
-    it("starts the walk at the requested block instead of the account's first row", async () => {
+    it("starts the ascending walk at the requested block", async () => {
       mockGetTransactions.mockResolvedValue(explorerPage([transition("tx1", 500)], null));
 
       await fetchPage(5, 500);
@@ -1835,45 +1835,65 @@ describe("network/utils", () => {
       );
     });
 
-    it("reports complete once the explorer runs out", async () => {
+    it("reports no next block once the explorer runs out", async () => {
       mockGetTransactions.mockResolvedValue(
         explorerPage([transition("tx1", 100), transition("tx2", 101)], null),
       );
 
-      const { transitions, complete } = await fetchPage(5);
+      const { transitions, nextBlock } = await fetchPage(5);
 
       expect(transitions).toHaveLength(2);
-      expect(complete).toBe(true);
+      expect(nextBlock).toBeNull();
       expect(mockGetTransactions).toHaveBeenCalledTimes(1);
     });
 
-    it("stops one transaction past the target, so the trailing one can be discarded", async () => {
+    it("cuts the page on a block boundary and resumes at the next block", async () => {
       mockGetTransactions
         .mockResolvedValueOnce(explorerPage([transition("tx1", 100)], 101))
-        .mockResolvedValueOnce(explorerPage([transition("tx2", 101)], 102))
-        .mockResolvedValueOnce(explorerPage([transition("tx3", 102)], 103));
+        .mockResolvedValueOnce(explorerPage([transition("tx2", 101)], 102));
 
-      const { transitions, complete } = await fetchPage(2);
+      const { transitions, nextBlock } = await fetchPage(1);
+
+      expect(transitions.map(tx => tx.transaction_id)).toEqual(["tx1"]);
+      expect(nextBlock).toBe(101);
+    });
+
+    it("returns a block denser than the target whole rather than splitting it", async () => {
+      mockGetTransactions
+        .mockResolvedValueOnce(explorerPage([transition("tx1", 100)], 100))
+        .mockResolvedValueOnce(explorerPage([transition("tx2", 100)], 100))
+        .mockResolvedValueOnce(explorerPage([transition("tx3", 100), transition("tx4", 101)], 102));
+
+      const { transitions, nextBlock } = await fetchPage(1);
 
       expect(transitions.map(tx => tx.transaction_id)).toEqual(["tx1", "tx2", "tx3"]);
-      expect(complete).toBe(false);
-      expect(mockGetTransactions).toHaveBeenCalledTimes(3);
+      expect(nextBlock).toBe(101);
     });
 
     it("keeps paging while a transaction spans several explorer pages", async () => {
-      // one transaction, three transitions: the target is never reached, so it must not stop early
       mockGetTransactions
         .mockResolvedValueOnce(explorerPage([transition("tx1", 100)], 100))
         .mockResolvedValueOnce(explorerPage([transition("tx1", 100)], 100))
         .mockResolvedValueOnce(explorerPage([transition("tx1", 100)], null));
 
-      const { transitions, complete } = await fetchPage(1);
+      const { transitions, nextBlock } = await fetchPage(1);
 
       expect(transitions).toHaveLength(3);
-      expect(complete).toBe(true);
+      expect(nextBlock).toBeNull();
     });
 
-    it("drops transitions below minBlockHeight and bare inner transitions", async () => {
+    it("stops once the walk leaves the window", async () => {
+      mockGetTransactions.mockResolvedValue(
+        explorerPage([transition("tx1", 100), transition("tx-above", 101)], 102),
+      );
+
+      const { transitions, nextBlock } = await fetchPage(5, 0, 100);
+
+      expect(transitions.map(tx => tx.transaction_id)).toEqual(["tx1"]);
+      expect(nextBlock).toBeNull();
+    });
+
+    it("drops transitions outside the window and bare inner transitions", async () => {
       mockGetTransactions.mockResolvedValue(
         explorerPage(
           [
@@ -1891,31 +1911,48 @@ describe("network/utils", () => {
         ),
       );
 
-      const { transitions } = await fetchAccountTransitionPage({
-        config: mockConfig,
-        address: mockAddress,
-        minBlockHeight: 50,
-        targetTransactions: 5,
-      });
+      const { transitions } = await fetchPage(5, 50, 200);
 
       expect(transitions.map(tx => tx.transaction_id)).toEqual(["tx-ok"]);
     });
 
-    it("stops descending once it walks below the floor", async () => {
+    it("starts the descending walk at the top of the window and resumes below the cut", async () => {
+      mockGetTransactions
+        .mockResolvedValueOnce(explorerPage([transition("tx1", 200)], 199))
+        .mockResolvedValueOnce(explorerPage([transition("tx2", 199)], 198));
+
+      const { transitions, nextBlock } = await fetchAccountTransitionPage({
+        config: mockConfig,
+        address: mockAddress,
+        fromBlock: 50,
+        toBlock: 200,
+        minTransactions: 1,
+        order: "desc",
+      });
+
+      expect(mockGetTransactions).toHaveBeenCalledWith(
+        expect.objectContaining({ cursor: "200", order: "desc" }),
+      );
+      expect(transitions.map(tx => tx.transaction_id)).toEqual(["tx1"]);
+      expect(nextBlock).toBe(199);
+    });
+
+    it("stops descending once it walks below the window", async () => {
       mockGetTransactions.mockResolvedValue(
         explorerPage([transition("tx1", 100), transition("tx-below", 10)], 9),
       );
 
-      const { transitions, complete } = await fetchAccountTransitionPage({
+      const { transitions, nextBlock } = await fetchAccountTransitionPage({
         config: mockConfig,
         address: mockAddress,
-        minBlockHeight: 50,
-        targetTransactions: 5,
+        fromBlock: 50,
+        toBlock: 200,
+        minTransactions: 5,
         order: "desc",
       });
 
       expect(transitions.map(tx => tx.transaction_id)).toEqual(["tx1"]);
-      expect(complete).toBe(true);
+      expect(nextBlock).toBeNull();
     });
   });
 

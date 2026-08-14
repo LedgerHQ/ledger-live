@@ -3,13 +3,13 @@ import type { Operation } from "@ledgerhq/coin-module-framework/api/types";
 
 export type OperationsOrder = "asc" | "desc";
 
-// `resume` is an identity (block + transactionId), not an offset — recomputing a count on every
-// call would shift on a late-indexed row or a reorg, causing skips or repeats.
+// The explorer only pages by block (`cursor_block_number`), so `nextBlock` — the first block not yet
+// emitted — is the finest resume point the source can express. Pages therefore never split a block.
 export type OperationsCursor = {
   minHeight: number;
   maxBlockHeight: number;
   order: OperationsOrder;
-  resume?: { block: number; transactionId: string };
+  nextBlock?: number;
 };
 
 function isNonNegativeInteger(value: unknown): value is number {
@@ -34,21 +34,18 @@ export function decodeOperationsCursor(raw: string | undefined): OperationsCurso
     throw new Error("aleo: malformed listOperations cursor");
   }
 
-  const { minHeight, maxBlockHeight, order, resume } = decoded;
+  const { minHeight, maxBlockHeight, order, nextBlock } = decoded;
   invariant(
     isNonNegativeInteger(minHeight) && isNonNegativeInteger(maxBlockHeight),
     "aleo: malformed listOperations cursor",
   );
   invariant(isOperationsOrder(order), "aleo: malformed listOperations cursor");
 
-  if (resume === undefined) return { minHeight, maxBlockHeight, order };
+  if (nextBlock === undefined) return { minHeight, maxBlockHeight, order };
 
-  invariant(
-    isNonNegativeInteger(resume?.block) && typeof resume?.transactionId === "string",
-    "aleo: malformed listOperations cursor",
-  );
+  invariant(isNonNegativeInteger(nextBlock), "aleo: malformed listOperations cursor");
 
-  return { minHeight, maxBlockHeight, order, resume };
+  return { minHeight, maxBlockHeight, order, nextBlock };
 }
 
 export function assertCursorMatchesRequest(
@@ -62,17 +59,18 @@ export function assertCursorMatchesRequest(
   );
 }
 
-// A resume reopens *on* the boundary block — already-emitted rows are dropped by dropThroughResumePoint.
-export function resolveHeightWindow(
+/** The blocks this call may emit, or `null` when the range is empty. */
+export function resolveBlockWindow(
   cursor: OperationsCursor | null,
   minHeight: number,
   maxBlockHeight: number,
-): { from: number; to: number } {
-  if (!cursor?.resume) return { from: minHeight, to: maxBlockHeight };
+): { fromBlock: number; toBlock: number } | null {
+  const resumesAt = cursor?.nextBlock;
+  const isAscending = (cursor?.order ?? "asc") === "asc";
+  const fromBlock = resumesAt !== undefined && isAscending ? resumesAt : minHeight;
+  const toBlock = resumesAt !== undefined && !isAscending ? resumesAt : maxBlockHeight;
 
-  return cursor.order === "asc"
-    ? { from: cursor.resume.block, to: maxBlockHeight }
-    : { from: minHeight, to: cursor.resume.block };
+  return fromBlock > toBlock ? null : { fromBlock, toBlock };
 }
 
 /** Total order over operations: block height first, hash to break ties within a height. */
@@ -86,26 +84,12 @@ export function compareOperations(
   return direction * (a.block - b.block || a.transactionId.localeCompare(b.transactionId));
 }
 
-function toOrderKey(operation: Operation): {
-  block: number;
-  transactionId: string;
-} {
-  return { block: operation.tx.block.height, transactionId: operation.tx.hash };
-}
-
-// Compares by order position, not identity, so a reorg-dropped resume point still cuts correctly.
-export function dropThroughResumePoint(
-  ordered: Operation[],
-  resume: OperationsCursor["resume"],
-  order: OperationsOrder,
-): Operation[] {
-  if (!resume) return ordered;
-
-  return ordered.filter(operation => compareOperations(toOrderKey(operation), resume, order) > 0);
-}
-
-export function buildResumePoint(items: Operation[]): OperationsCursor["resume"] {
-  const last = items.at(-1);
-
-  return last ? toOrderKey(last) : undefined;
+export function sortOperations(operations: Operation[], order: OperationsOrder): Operation[] {
+  return operations.sort((a, b) =>
+    compareOperations(
+      { block: a.tx.block.height, transactionId: a.tx.hash },
+      { block: b.tx.block.height, transactionId: b.tx.hash },
+      order,
+    ),
+  );
 }

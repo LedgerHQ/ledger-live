@@ -139,28 +139,61 @@ export async function fetchAccountTransactionsFromHeight({
   throw new Error("aleo: unexpected end of loop in fetchAccountTransactionsFromHeight");
 }
 
-// Fetches one more transaction than asked for: the explorer pages per transition, so the last tx
-// may have rows beyond the boundary. `complete: false` signals the caller to drop it.
+/**
+ * The last block that is provably whole and already holds `minTransactions` transactions, or `null`
+ * while more rows are still needed. The block the stream currently sits on is never a candidate: the
+ * explorer pages per transition, so it may still gain rows on the next fetch.
+ */
+function resolveCutBlock(
+  transitions: AleoPublicTransaction[],
+  order: "asc" | "desc",
+  minTransactions: number,
+): number | null {
+  const direction = order === "asc" ? 1 : -1;
+  const transactionIdsByBlock = new Map<number, Set<string>>();
+
+  for (const tx of transitions) {
+    const transactionIds = transactionIdsByBlock.get(tx.block_number) ?? new Set<string>();
+    transactionIds.add(tx.transaction_id.trim());
+    transactionIdsByBlock.set(tx.block_number, transactionIds);
+  }
+
+  const blocks = [...transactionIdsByBlock.keys()].sort((a, b) => direction * (a - b));
+  const collected = new Set<string>();
+
+  for (const block of blocks.slice(0, -1)) {
+    for (const transactionId of transactionIdsByBlock.get(block)!) collected.add(transactionId);
+    if (collected.size >= minTransactions) return block;
+  }
+
+  return null;
+}
+
+/**
+ * Pages the explorer's per-transition stream in whole blocks: every returned block is complete, and
+ * `nextBlock` is the first block left to fetch (`null` once the window is exhausted). A block denser
+ * than `minTransactions` degrades to a single large page rather than being split.
+ */
 export async function fetchAccountTransitionPage({
   config,
   address,
-  minBlockHeight,
-  startBlock,
-  targetTransactions,
+  fromBlock,
+  toBlock,
+  minTransactions,
   pageSize = DEFAULT_TRANSITION_PAGE_SIZE,
   order = "asc",
 }: {
   config: AleoCoinConfig;
   address: string;
-  minBlockHeight: number;
-  startBlock?: number;
-  targetTransactions: number;
+  fromBlock: number;
+  toBlock: number;
+  minTransactions: number;
   pageSize?: number;
   order?: "asc" | "desc";
-}): Promise<{ transitions: AleoPublicTransaction[]; complete: boolean }> {
+}): Promise<{ transitions: AleoPublicTransaction[]; nextBlock: number | null }> {
+  const isAscending = order === "asc";
   const transitions: AleoPublicTransaction[] = [];
-  const transactionIds = new Set<string>();
-  let currentCursor = typeof startBlock === "number" ? startBlock.toString() : null;
+  let currentCursor = isAscending ? fromBlock : toBlock;
 
   for (;;) {
     const page = await apiClient.getAccountPublicTransactions({
@@ -168,22 +201,35 @@ export async function fetchAccountTransitionPage({
       address,
       limit: pageSize,
       order,
-      ...(currentCursor && { cursor: currentCursor }),
+      cursor: currentCursor.toString(),
     });
 
     for (const tx of page.transactions) {
-      if (tx.block_number < minBlockHeight || isBareInnerTransition(tx)) continue;
+      if (tx.block_number < fromBlock || tx.block_number > toBlock) continue;
+      if (isBareInnerTransition(tx)) continue;
 
       transitions.push(tx);
-      transactionIds.add(tx.transaction_id.trim());
     }
 
-    const nextCursor = page.next_cursor?.block_number.toString() ?? null;
+    const nextCursor = page.next_cursor?.block_number ?? null;
+    const leftWindow = page.transactions.some(tx =>
+      isAscending ? tx.block_number > toBlock : tx.block_number < fromBlock,
+    );
 
-    const reachedFloor = order === "desc" && hasReachedMinHeight(page.transactions, minBlockHeight);
-    if (nextCursor === null || reachedFloor) return { transitions, complete: true };
+    if (nextCursor === null || leftWindow) return { transitions, nextBlock: null };
 
-    if (transactionIds.size > targetTransactions) return { transitions, complete: false };
+    const cutBlock = resolveCutBlock(transitions, order, minTransactions);
+
+    if (cutBlock !== null) {
+      const nextBlock = isAscending ? cutBlock + 1 : cutBlock - 1;
+      const withinCut = (tx: AleoPublicTransaction) =>
+        isAscending ? tx.block_number <= cutBlock : tx.block_number >= cutBlock;
+
+      return {
+        transitions: transitions.filter(withinCut),
+        nextBlock: nextBlock >= fromBlock && nextBlock <= toBlock ? nextBlock : null,
+      };
+    }
 
     currentCursor = nextCursor;
   }

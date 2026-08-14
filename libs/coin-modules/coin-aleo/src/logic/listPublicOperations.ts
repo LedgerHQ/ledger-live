@@ -32,42 +32,31 @@ function isBetterRepresentative(
   return candidate.transition_id < current.transition_id;
 }
 
-// Normalises the explorer's per-transition rows to tx granularity. Only the coin-module surface
-// uses this — `bridge/listOperations.ts` keeps consuming raw rows, see the note there.
-//
-// Drops the trailing transaction when incomplete: its representative may change as more transitions
-// arrive on the next fetch, so only the caller's resumed transaction can be trusted whole.
+// Normalises the explorer's per-transition rows to tx granularity. Only the coin-module surface uses
+// this — `bridge/listOperations.ts` consumes raw rows, so its operation ids stay as they were.
 export async function listPublicOperationsPage({
   config,
   address,
-  minBlockHeight,
-  startBlock,
-  targetTransactions,
+  fromBlock,
+  toBlock,
+  minTransactions,
   order,
 }: {
   config: AleoCoinConfig;
   address: string;
-  minBlockHeight: number;
-  startBlock?: number;
-  targetTransactions: number;
+  fromBlock: number;
+  toBlock: number;
+  minTransactions: number;
   order?: "asc" | "desc";
-}): Promise<{ transactions: AleoPublicTransaction[]; complete: boolean }> {
-  const { transitions, complete } = await fetchAccountTransitionPage({
+}): Promise<{ transactions: AleoPublicTransaction[]; nextBlock: number | null }> {
+  const { transitions, nextBlock } = await fetchAccountTransitionPage({
     config,
     address,
-    minBlockHeight,
-    targetTransactions,
-    ...(typeof startBlock === "number" && { startBlock }),
+    fromBlock,
+    toBlock,
+    minTransactions,
     ...(order && { order }),
   });
 
-  const transactions = pickTransactionRepresentatives(transitions);
-  if (complete) return { transactions, complete: true };
-
-  const trailingId = transitions.at(-1)?.transaction_id.trim();
-
-  return {
-    transactions: transactions.filter(tx => tx.transaction_id.trim() !== trailingId),
-    complete: false,
-  };
+  return { transactions: pickTransactionRepresentatives(transitions), nextBlock };
 }
