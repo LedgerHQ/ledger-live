@@ -14,17 +14,23 @@ describe("openHostedLoginInBrowser", () => {
     open.mockRestore();
   });
 
-  it("should open the exact hosted login URL in a new browsing context", () => {
+  it("should open the exact hosted login URL in a new browsing context", async () => {
     open.mockReturnValue({} as Window);
 
-    openHostedLoginInBrowser(loginUrl);
+    await openHostedLoginInBrowser(loginUrl);
 
     expect(open).toHaveBeenCalledWith(loginUrl, "_blank", "noopener,noreferrer");
   });
 
-  it("should throw when the browsing context cannot be opened", () => {
+  it("should report a dismissal, because the browser reports nothing back", async () => {
+    open.mockReturnValue({} as Window);
+
+    await expect(openHostedLoginInBrowser(loginUrl)).resolves.toEqual({ type: "dismissed" });
+  });
+
+  it("should reject when the browsing context cannot be opened", async () => {
     open.mockReturnValue(null);
 
-    expect(() => openHostedLoginInBrowser(loginUrl)).toThrow("Unable to start login");
+    await expect(openHostedLoginInBrowser(loginUrl)).rejects.toThrow("Unable to start login");
   });
 });

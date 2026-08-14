@@ -1,7 +1,10 @@
 import { useMemo } from "react";
+import { useRoute, type RouteProp } from "@react-navigation/native";
 import { getEnv } from "@shared/env";
 import { useTranslation } from "~/context/Locale";
-import type { CardLoginOauthConfig } from "@features/flow-pay-card-auth";
+import type { ScreenName } from "~/const";
+import type { CardLoginOauthConfig, PayCardAuthCallback } from "@features/flow-pay-card-auth";
+import type { PayTabNavigatorParamList } from "LLM/features/PayTab/types";
 import type { FeatureTourProps } from "@features/flow-pay-card-feature-tour";
 import type { BalanceLabels } from "@features/flow-pay-card-balance";
 import { useNavigationBarHeights } from "LLM/hooks/useNavigationBarHeights";
@@ -14,6 +17,7 @@ import { track } from "~/analytics";
 export function usePayTabViewModel() {
   const { top } = useNavigationBarHeights();
   const { t } = useTranslation();
+  const { params } = useRoute<RouteProp<PayTabNavigatorParamList, ScreenName.PayTab>>();
 
   const balance = usePayCardBalance();
   const { defaultStablecoins } = usePayStablecoins();
@@ -43,6 +47,12 @@ export function usePayTabViewModel() {
       redirectUri: getEnv("CARD_OAUTH_REDIRECT_URI"),
     }),
     [],
+  );
+
+  // The OAuth redirect, when the deep link brought one. Both halves must be there to mean anything.
+  const callback: PayCardAuthCallback | null = useMemo(
+    () => (params?.code && params?.state ? { code: params.code, state: params.state } : null),
+    [params?.code, params?.state],
   );
 
   const featureTour: FeatureTourProps = useMemo(
@@ -76,6 +86,7 @@ export function usePayTabViewModel() {
   return {
     top,
     oauthConfig,
+    callback,
     featureTour,
     balance,
     balanceLabels,

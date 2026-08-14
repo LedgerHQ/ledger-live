@@ -4,6 +4,13 @@ import { getEnv } from "@shared/env";
 import { track } from "~/analytics";
 import { usePayTabViewModel } from "./usePayTabViewModel";
 
+let routeParams: { code?: string; state?: string } | undefined;
+
+jest.mock("@react-navigation/native", () => ({
+  ...jest.requireActual("@react-navigation/native"),
+  useRoute: () => ({ params: routeParams }),
+}));
+
 jest.mock("LLM/hooks/useNavigationBarHeights", () => ({
   useNavigationBarHeights: () => ({ top: 24 }),
 }));
@@ -56,6 +63,7 @@ const mockedTrack = jest.mocked(track);
 describe("usePayTabViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    routeParams = undefined;
   });
 
   it("should expose the navigation bar offset", () => {
@@ -72,6 +80,27 @@ describe("usePayTabViewModel", () => {
       clientId: getEnv("CARD_BAANX_CLIENT_KEY"),
       redirectUri: getEnv("CARD_OAUTH_REDIRECT_URI"),
     });
+  });
+
+  it("should hand the login flow the redirect the deep link carried", () => {
+    // react-navigation parses `ledgerlive://paytab?code=…&state=…` into the route params.
+    routeParams = { code: "auth-code", state: "state-value" };
+
+    const { result } = renderHook(() => usePayTabViewModel());
+
+    expect(result.current.callback).toEqual({ code: "auth-code", state: "state-value" });
+  });
+
+  it.each([
+    ["there are no params", undefined],
+    ["the code is missing", { state: "state-value" }],
+    ["the state is missing", { code: "auth-code" }],
+  ])("should report no redirect when %s", (_case, params) => {
+    routeParams = params;
+
+    const { result } = renderHook(() => usePayTabViewModel());
+
+    expect(result.current.callback).toBeNull();
   });
 
   it("should expose the balance data and empty-state labels for the hero", () => {

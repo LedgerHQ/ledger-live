@@ -6,10 +6,15 @@ export function CardLoginView({
   title,
   description,
   loginLabel,
+  isHidden,
   isLoading,
   errorMessage,
   onLoginPress,
 }: CardLoginViewProps) {
+  if (isHidden) {
+    return null;
+  }
+
   return (
     <Box
       lx={{

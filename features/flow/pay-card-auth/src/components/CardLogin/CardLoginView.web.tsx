@@ -4,10 +4,15 @@ import type { CardLoginViewProps } from "./types";
 
 export function CardLoginView({
   loginLabel,
+  isHidden,
   isLoading,
   errorMessage,
   onLoginPress,
 }: CardLoginViewProps) {
+  if (isHidden) {
+    return null;
+  }
+
   return (
     <div className="flex flex-col items-end gap-4">
       <Button
