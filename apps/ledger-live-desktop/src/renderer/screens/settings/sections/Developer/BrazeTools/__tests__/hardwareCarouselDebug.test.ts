@@ -1,6 +1,4 @@
-import {
-  ALWAYS_ON_CATEGORY_ID,
-} from "LLD/features/DynamicContent/utils/constants";
+import { ALWAYS_ON_CATEGORY_ID } from "LLD/features/DynamicContent/utils/constants";
 import { ContentCardsLayout, ContentCardsType, LocationContentCard } from "~/types/dynamicContent";
 import {
   buildDefaultHardwareCarouselValues,

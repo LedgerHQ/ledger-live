@@ -30,7 +30,7 @@ const CATEGORY: CategoryContentCard = {
 
 const childCard: BrazeCard =
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  ({
+  {
     id: "child-1",
     created: new Date("2026-01-02"),
     extras: {
@@ -40,7 +40,7 @@ const childCard: BrazeCard =
       media: "https://example.com/device.png",
       order: "0",
     },
-  }) as unknown as BrazeCard;
+  } as unknown as BrazeCard;
 
 const leadingSlide = <div data-testid="leading-slide">Leading</div>;
 
@@ -71,7 +71,7 @@ describe("usePortfolioCategoryContentCardsViewModel", () => {
   it("routes the leading slide to the portfolio carousel when category children are not renderable", () => {
     const emptyChild: BrazeCard =
       // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-      ({
+      {
         id: "empty-child",
         created: new Date("2026-01-02"),
         extras: {
@@ -79,7 +79,7 @@ describe("usePortfolioCategoryContentCardsViewModel", () => {
           categoryId: "alwayson",
           order: "0",
         },
-      }) as unknown as BrazeCard;
+      } as unknown as BrazeCard;
 
     mockUseDynamicContent.mockReturnValue({
       categoriesCards: [CATEGORY],

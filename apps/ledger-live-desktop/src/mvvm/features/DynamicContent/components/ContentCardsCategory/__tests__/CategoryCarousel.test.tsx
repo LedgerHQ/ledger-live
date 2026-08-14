@@ -1,5 +1,4 @@
-import React from "react";
-import { act } from "react";
+import React, { act } from "react";
 import { render, screen } from "tests/testSetup";
 import CategoryCarousel from "../CategoryCarousel";
 

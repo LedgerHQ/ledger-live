@@ -74,7 +74,11 @@ export function useContentCardsCategoryViewModel({
   }, [category, categoryContentCards, positionOffset]);
 
   const trackCategoryEvent = useCallback(
-    (event: ContentCardInteractionEvent, card: SmallSquareContentCard, displayedPosition: number) => {
+    (
+      event: ContentCardInteractionEvent,
+      card: SmallSquareContentCard,
+      displayedPosition: number,
+    ) => {
       const properties: ContentCardEventProperties = {
         ...buildContentCardTrackingProperties({
           cardExtras: card.extras,

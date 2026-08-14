@@ -38,9 +38,7 @@ export default function Layout({
         mediaType={slide.card.mediaType}
         filledMedia={slide.card.filledMedia}
         isDismissable={isDismissable}
-        onClick={
-          slide.card.link ? () => onCardClick(slide) : undefined
-        }
+        onClick={slide.card.link ? () => onCardClick(slide) : undefined}
         onDismiss={isDismissable ? () => onCardDismiss(slide) : undefined}
       />
     </LogContentCardWrapper>

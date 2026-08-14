@@ -1,4 +1,4 @@
-import { useDispatch } from "LLD/hooks/redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import {
   setPortfolioCards,
   setBottomPortfolioCards,
@@ -19,11 +19,9 @@ import {
   NotificationContentCard,
   LocationContentCard,
 } from "~/types/dynamicContent";
-import { useSelector } from "LLD/hooks/redux";
 import {
   buildDefaultHardwareCarouselValues,
   buildHardwareCarouselDebugCards,
-  buildRandomLedgerImageUrl,
   DEBUG_CARD_PREFIX,
   HARDWARE_CAROUSEL_SAMPLE_PRODUCTS,
   type HardwareCarouselBuilderValues,

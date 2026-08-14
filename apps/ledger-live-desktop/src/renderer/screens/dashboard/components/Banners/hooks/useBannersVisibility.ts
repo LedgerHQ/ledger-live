@@ -5,9 +5,7 @@ import {
   usePostOnboardingPortfolioWidgetVisibility,
 } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { showClearCacheBannerSelector } from "~/renderer/reducers/settings";
-import {
-  portfolioContentCardSelector,
-} from "~/renderer/reducers/dynamicContent";
+import { portfolioContentCardSelector } from "~/renderer/reducers/dynamicContent";
 import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
 import { useLNSUpsellBannerState } from "LLD/features/LNSUpsell";
 import useActionCards from "~/renderer/hooks/useActionCards";

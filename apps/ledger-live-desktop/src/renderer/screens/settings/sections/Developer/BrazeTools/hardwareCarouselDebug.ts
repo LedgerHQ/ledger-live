@@ -58,9 +58,7 @@ export type HardwareCarouselBuilderValues = Readonly<{
   order: string;
 }>;
 
-export function getHardwareCarouselProductImage(
-  productTitle: string,
-): string | undefined {
+export function getHardwareCarouselProductImage(productTitle: string): string | undefined {
   return HARDWARE_CAROUSEL_PRODUCT_IMAGES[
     productTitle as (typeof HARDWARE_CAROUSEL_PRODUCTS)[number]
   ];

@@ -81,10 +81,7 @@ describe("useContentCardsCategoryViewModel", () => {
     const { result } = renderHook(() =>
       useContentCardsCategoryViewModel({
         category: CATEGORY,
-        categoryContentCards: [
-          childCard("child-2", "2"),
-          childCard("child-1", "1"),
-        ],
+        categoryContentCards: [childCard("child-2", "2"), childCard("child-1", "1")],
         leadingSlide: <div>Leading</div>,
       }),
     );

@@ -1,9 +1,6 @@
 import type { Card as BrazeCard } from "@braze/web-sdk";
 
-import dynamicContentReducer, {
-  INITIAL_STATE,
-  type DynamicContentState,
-} from "../dynamicContent";
+import dynamicContentReducer, { INITIAL_STATE, type DynamicContentState } from "../dynamicContent";
 import { addLocalContentCards } from "../../actions/dynamicContent";
 import {
   CategoryContentCard,
