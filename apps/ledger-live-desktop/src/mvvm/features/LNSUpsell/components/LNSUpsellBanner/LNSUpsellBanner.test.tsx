@@ -20,6 +20,10 @@ jest.mock("~/renderer/analytics/segment", () => ({
   track: jest.fn(),
 }));
 
+const DEFAULT_DISCOUNT_PERCENT = Math.round(
+  (FEATURE_FLAGS_DEFAULTS.largeScreenUpsell.params?.discount ?? 0) * 100,
+);
+
 describe("LNSUpsellBanner", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -79,7 +83,11 @@ describe("LNSUpsellBanner", () => {
       renderBanner({ brazePlacement: true });
 
       expect(screen.getByText(t(`lnsUpsell.opted_in.title`))).toBeTruthy();
-      expect(screen.getByText(t(`lnsUpsell.opted_in.description`, { discount: 10 }))).toBeTruthy();
+      expect(
+        screen.getByText(
+          t(`lnsUpsell.opted_in.description`, { discount: DEFAULT_DISCOUNT_PERCENT }),
+        ),
+      ).toBeTruthy();
 
       fireEvent.click(screen.getByTestId("lns-upsell-media-banner"));
 
