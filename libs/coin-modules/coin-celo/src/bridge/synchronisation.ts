@@ -20,7 +20,7 @@ import type {
   AccountShapeInfo,
 } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { getEnv } from "@ledgerhq/live-env";
-import { promiseAllBatched } from "@ledgerhq/live-promise";
+import { promiseAllBatched } from "@ledgerhq/coin-module-framework/promises";
 import type { TokenAccount, SyncConfig } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { NATIVE_FEE_CURRENCY_MARKER } from "../constants";

@@ -1,7 +1,7 @@
 import type { MemoNotSupported, Operation } from "@ledgerhq/coin-module-framework/api/types";
 import { isNFTActive } from "@ledgerhq/ledger-wallet-framework/nft/support";
 import { getEnv } from "@ledgerhq/live-env";
-import { delay } from "@ledgerhq/live-promise";
+import { delay } from "@ledgerhq/coin-module-framework/promises";
 import axios from "axios";
 import {
   ledgerERC1155EventToOperations,

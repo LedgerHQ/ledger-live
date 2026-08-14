@@ -1,5 +1,5 @@
 import { Operation, Page } from "@ledgerhq/coin-module-framework/api/index";
-import { promiseAllBatched } from "@ledgerhq/live-promise";
+import { promiseAllBatched } from "@ledgerhq/coin-module-framework/promises";
 import uniqBy from "lodash/uniqBy";
 import type { TronCoinConfig } from "../config";
 import { fetchTronAccountTxsPage, getBlock } from "../network";

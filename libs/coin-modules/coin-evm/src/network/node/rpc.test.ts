@@ -1,5 +1,5 @@
 import { AssertionError, fail } from "assert";
-import { delay } from "@ledgerhq/live-promise";
+import { delay } from "@ledgerhq/coin-module-framework/promises";
 import type { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
 import {
@@ -51,7 +51,7 @@ const account = makeAccount(
   fakeCurrency as CryptoCurrency,
 );
 
-jest.mock("@ledgerhq/live-promise");
+jest.mock("@ledgerhq/coin-module-framework/promises");
 (delay as jest.Mock).mockImplementation(
   () => new Promise(resolve => setTimeout(resolve, 1)), // mocking the delay supposed to happen after each try
 );

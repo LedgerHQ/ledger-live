@@ -5,7 +5,7 @@ import type {
   BlockTransaction,
   TransferBlockOperation,
 } from "@ledgerhq/coin-module-framework/api/index";
-import { promiseAllBatched } from "@ledgerhq/live-promise";
+import { promiseAllBatched } from "@ledgerhq/coin-module-framework/promises";
 import { log } from "@ledgerhq/logs";
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { rpcTransactionToBlockOperations } from "../adapters/blockOperations";
