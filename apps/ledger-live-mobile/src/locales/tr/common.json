@@ -491,6 +491,9 @@
     "FeeTooHigh" : {
       "title" : "Ağ ücretleri, tutarın % 10'unun üzerindedir"
     },
+    "RecipientIsNewAccount" : {
+      "title" : "Bu adrese daha önce hiç fon aktarılmadığı için adresi aktif hâle getirmek daha yüksek bir ağ işlem ücreti gerektirir"
+    },
     "FeeTooLow" : {
       "title" : "Ücret ağ tarafından kabul edilemeyecek kadar düşük. Lütfen artırın"
     },
@@ -1400,9 +1403,9 @@
   },
   "largeScreenUpsellModal" : {
     "optedIn" : {
-      "title" : "Daha fazla görün. Daha az dokunun. %{{discount}} tasarruf",
+      "title" : "Daha fazla görün. Daha az dokunun. %{{discount}} tasarruf edin.",
       "subtitle" : "Daha büyük ekranın, daha akıllı işlem incelemelerinin, gelişmiş korumanın ve özel %{{discount}} indirimin keyfini çıkarın.",
-      "cta" : "Dokunmatik ekranlı imzalayıcıları keşfedin"
+      "cta" : "Dokunmatik imzalayıcıları keşfedin"
     },
     "optedOut" : {
       "title" : "Dolandırıcılıkları imzalamadan önce fark edin",
@@ -3025,6 +3028,8 @@
       "UNSTAKE" : "Stake durdurma",
       "WITHDRAW_UNSTAKED" : "Çekildi",
       "FINALIZE_UNSTAKE" : "Stake durdurma",
+      "STAKE_NEURON" : "Stake edildi",
+      "TOP_UP_NEURON" : "Stake artırıldı",
       "ASSOCIATE_TOKEN" : "Token'ı ilişkilendirin",
       "CONTRACT_CALL" : "Sözleşme çağrısı",
       "UPDATE_ACCOUNT" : "Güncellenmiş hesap"
@@ -4466,6 +4471,8 @@
     "sign" : {
       "title" : "{{productName}} üzerinde devam edin",
       "description" : "Güvenli Ekranınızda gösterilen yönergeleri izleyin.",
+      "termsAndConditions" : "Bu işlemi imzaladığınızda <0>{{appName}} kullanım koşullarını kabul etmiş olursunuz.</0>",
+      "termsAndConditionsWithPrivacy" : "Bu işlemi imzaladığınızda <0>{{appName}} kullanım koşullarını</0> ve <1>Gizlilik Politikasını</1> kabul etmiş olursunuz.",
       "cancelled" : {
         "title" : "İşlem cihazda reddedildi",
         "close" : "Kapat",
@@ -9503,14 +9510,18 @@
   "lnsUpsell" : {
     "opted_in" : {
       "title" : "Daha iyi görerek imzalayın",
-      "description" : "Dokunmatik ekranlı imzalayıcılarda %20 indirim.",
+      "description" : "Yükseltin ve %20 indirim kazanın.",
       "cta" : "Ledger modelimi yükselt"
     },
     "opted_out" : {
       "title" : "Daha fazla güvenlik ve kontrol",
-      "description" : "Gelişmiş güvenlik özellikleri hakkında daha fazla bilgi edinin.",
+      "description" : "Güvenlik özellikleri hakkında daha fazla bilgi edinin.",
       "cta" : "Daha fazla bilgi"
     }
+  },
+  "lazyOnboardingBanner" : {
+    "title" : "Ledger cihazlarını keşfedin",
+    "description" : "En yeni ürünlerimizi ve aksesuarlarımızı inceleyin"
   },
   "marketBanner" : {
     "title" : "Piyasa",
@@ -10195,7 +10206,11 @@
       "domainNotFound" : "Bu alan için adres bulunamadı",
       "sanctionedAddress" : "Bu adres yaptırım listesindedir ve kullanılamaz.",
       "validationUnavailable" : "Adres doğrulaması geçici olarak kullanılamıyor",
-      "ensDisclaimer" : "ENS adları cüzdan adreslerine çözümlenir. Devam etmeden önce çözümlenen adresi her zaman doğrulayın."
+      "ensDisclaimer" : "ENS adları cüzdan adreslerine çözümlenir. Devam etmeden önce çözümlenen adresi her zaman doğrulayın.",
+      "sanctioned" : {
+        "description" : "Bu adres işaretlenmiş ve Ledger bu adrese gönderim yapamıyor.",
+        "learnMore" : "Daha fazla bilgi"
+      }
     },
     "addAddressName" : {
       "title" : "Adresi adlandırın",
@@ -10216,6 +10231,7 @@
       "addressCount_other" : "{{count}} adres"
     },
     "detail" : {
+      "meDisplayName" : "{{name}} (Ben)",
       "ledgerWalletAddresses" : "Ledger Wallet adresleri",
       "myAddresses" : "Adreslerim",
       "emptyState" : {
@@ -10255,10 +10271,28 @@
       "confirm" : "Sil",
       "cancel" : "İptal et"
     },
+    "deleteAddress" : {
+      "title" : "Adres silinsin mi?",
+      "description" : "Bu adres kişiden kaldırılacak.",
+      "confirm" : "Sil",
+      "cancel" : "İptal et"
+    },
+    "editAddress" : {
+      "title" : "Adresi düzenle",
+      "inputLabel" : "Adres adı",
+      "applyChanges" : "Değişiklikleri uygula",
+      "invalidLabelError" : "Özel karakterler desteklenmez."
+    },
     "editSigner" : {
       "title" : "Cihazınızda onaylayın",
       "description" : "Bu değişikliği onaylamak için Ledger cihazınızı bağlayın ve kilidini açın.",
       "confirm" : "Devam",
+      "cancel" : "İptal et"
+    },
+    "editSignerMismatch" : {
+      "title" : "Bu kişiyi eklerken kullandığınız aynı Ledger cihazını kullanın",
+      "description" : "Bağlı cihaz eşleşmiyor.",
+      "connectDifferentDevice" : "Farklı bir cihaz bağlayın",
       "cancel" : "İptal et"
     },
     "ledgerSyncIntroduction" : {
