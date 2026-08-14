@@ -47,6 +47,8 @@ jobs:
       NX_KEY: ${{ secrets.NX_KEY }}
       SEED_QAA_B2C: ${{ secrets.SEED_QAA_B2C }}
       SLACK_LIVE_CI_BOT_TOKEN: ${{ secrets.SLACK_LIVE_CI_BOT_TOKEN }}
+      FLAKE_API_KEY_CI: ${{ secrets.FLAKE_API_KEY_CI }}
+      FLAKE_API_HOST: ${{ secrets.FLAKE_API_HOST }}
 
   codecheck-desktop:
     name: "Desktop Lint & Unit Tests"
@@ -62,6 +64,8 @@ jobs:
       AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
       NX_KEY: ${{ secrets.NX_KEY }}
       SLACK_LIVE_CI_BOT_TOKEN: ${{ secrets.SLACK_LIVE_CI_BOT_TOKEN }}
+      FLAKE_API_KEY_CI: ${{ secrets.FLAKE_API_KEY_CI }}
+      FLAKE_API_HOST: ${{ secrets.FLAKE_API_HOST }}
 
   test-mobile:
     name: "Test Mobile"
@@ -76,6 +80,8 @@ jobs:
       AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
       AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
       NX_KEY: ${{ secrets.NX_KEY }}
+      FLAKE_API_KEY_CI: ${{ secrets.FLAKE_API_KEY_CI }}
+      FLAKE_API_HOST: ${{ secrets.FLAKE_API_HOST }}
 
   build-test-mobile:
     name: "Build & Test Mobile"
@@ -102,6 +108,8 @@ jobs:
       S3_DIRECTCONNECT_ENDPOINT: ${{ secrets.S3_DIRECTCONNECT_ENDPOINT }}
       SEED_QAA_B2C: ${{ secrets.SEED_QAA_B2C }}
       SPECULINHO_URL: ${{ secrets.SPECULINHO_URL }}
+      FLAKE_API_KEY_CI: ${{ secrets.FLAKE_API_KEY_CI }}
+      FLAKE_API_HOST: ${{ secrets.FLAKE_API_HOST }}
     with:
       macos-specificity-runner-label: "general-pool"
       skip-bundle-size-reporting: true
@@ -122,6 +130,8 @@ jobs:
       AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
       AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
       NX_KEY: ${{ secrets.NX_KEY }}
+      FLAKE_API_KEY_CI: ${{ secrets.FLAKE_API_KEY_CI }}
+      FLAKE_API_HOST: ${{ secrets.FLAKE_API_HOST }}
 
   test-features:
     name: "Test Features"
@@ -136,6 +146,8 @@ jobs:
       AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
       AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
       NX_KEY: ${{ secrets.NX_KEY }}
+      FLAKE_API_KEY_CI: ${{ secrets.FLAKE_API_KEY_CI }}
+      FLAKE_API_HOST: ${{ secrets.FLAKE_API_HOST }}
 
   test-shared:
     name: "Test Shared"
@@ -150,6 +162,8 @@ jobs:
       AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
       AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
       NX_KEY: ${{ secrets.NX_KEY }}
+      FLAKE_API_KEY_CI: ${{ secrets.FLAKE_API_KEY_CI }}
+      FLAKE_API_HOST: ${{ secrets.FLAKE_API_HOST }}
 
   test-domain:
     name: "Test Domain"
@@ -164,6 +178,8 @@ jobs:
       AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
       AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
       NX_KEY: ${{ secrets.NX_KEY }}
+      FLAKE_API_KEY_CI: ${{ secrets.FLAKE_API_KEY_CI }}
+      FLAKE_API_HOST: ${{ secrets.FLAKE_API_HOST }}
 
   test-devtools:
     name: "Test DevTools"
@@ -178,6 +194,8 @@ jobs:
       AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
       AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
       NX_KEY: ${{ secrets.NX_KEY }}
+      FLAKE_API_KEY_CI: ${{ secrets.FLAKE_API_KEY_CI }}
+      FLAKE_API_HOST: ${{ secrets.FLAKE_API_HOST }}
 
   test-support:
     name: "Test Support"
@@ -192,6 +210,8 @@ jobs:
       AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
       AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
       NX_KEY: ${{ secrets.NX_KEY }}
+      FLAKE_API_KEY_CI: ${{ secrets.FLAKE_API_KEY_CI }}
+      FLAKE_API_HOST: ${{ secrets.FLAKE_API_HOST }}
 
   test-design-system:
     name: "Test UI Libs"
@@ -242,6 +262,8 @@ jobs:
       AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
       AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
       NX_KEY: ${{ secrets.NX_KEY }}
+      FLAKE_API_KEY_CI: ${{ secrets.FLAKE_API_KEY_CI }}
+      FLAKE_API_HOST: ${{ secrets.FLAKE_API_HOST }}
 
   build-wallet-cli:
     name: "Build Wallet CLI"

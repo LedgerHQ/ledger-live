@@ -21,6 +21,10 @@ on:
         required: true
       SLACK_LIVE_CI_BOT_TOKEN:
         required: true
+      FLAKE_API_KEY_CI:
+        required: false
+      FLAKE_API_HOST:
+        required: false
   workflow_dispatch:
     inputs:
       ref:

@@ -19,6 +19,10 @@ on:
         required: true
       NX_KEY:
         required: true
+      FLAKE_API_KEY_CI:
+        required: false
+      FLAKE_API_HOST:
+        required: false
   workflow_dispatch:
     inputs:
       ref:

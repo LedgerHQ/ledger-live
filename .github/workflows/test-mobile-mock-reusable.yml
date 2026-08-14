@@ -70,6 +70,10 @@ on:
         required: true
       SPECULINHO_URL:
         required: true
+      FLAKE_API_KEY_CI:
+        required: false
+      FLAKE_API_HOST:
+        required: false
   workflow_dispatch:
     inputs:
       ref:
