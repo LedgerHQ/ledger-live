@@ -40,3 +40,25 @@ export type LargeScreenUpsellContext = {
   cadenceDays: number;
   now: Date;
 };
+
+export type LargeScreenUpsellEligibilityUserState = Pick<
+  LargeScreenUpsellUserState,
+  "seenNanoModelIds" | "hasSeenTouchscreenDevice" | "onboardingDate"
+>;
+
+export type LargeScreenUpsellEligibilityContext = Pick<
+  LargeScreenUpsellContext,
+  "audienceModels" | "cooldownDays" | "now"
+>;
+
+export type LargeScreenUpsellEligibility =
+  | { isEligible: true; deviceModelId: NanoDeviceModelId }
+  | {
+      isEligible: false;
+      reason: "no_nano" | "touchscreen_seen" | "model_disabled";
+    }
+  | {
+      isEligible: false;
+      reason: "cooldown";
+      deviceModelId: NanoDeviceModelId;
+    };

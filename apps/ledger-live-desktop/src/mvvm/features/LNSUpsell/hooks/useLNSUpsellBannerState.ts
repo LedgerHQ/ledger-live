@@ -1,6 +1,10 @@
 import { useSelector } from "LLD/hooks/redux";
 import { useFeature } from "@features/platform-feature-flags";
-import { DeviceModelId } from "@ledgerhq/types-devices";
+import {
+  getLargeScreenUpsellEligibility,
+  mapDevicesModelListToUpsellInputs,
+} from "@features/flow-large-screen-upsell";
+import { onboardingDateSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { desktopContentCardSelector } from "~/renderer/reducers/dynamicContent";
 import {
   devicesModelListSelector,
@@ -27,8 +31,22 @@ export function useLNSUpsellBannerState(location: LNSBannerLocation): LNSBannerS
   const discountPercent = Math.round((largeScreenUpsell?.params?.discount ?? 0) * 100);
 
   const devicesModelList = useSelector(devicesModelListSelector);
-  const hasOnlySeenLNS =
-    devicesModelList.length === 1 && devicesModelList[0] === DeviceModelId.nanoS;
+  const onboardingDate = useSelector(onboardingDateSelector);
+  const eligibility = getLargeScreenUpsellEligibility(
+    {
+      ...mapDevicesModelListToUpsellInputs(devicesModelList),
+      onboardingDate,
+    },
+    {
+      audienceModels: largeScreenUpsell?.params?.audience?.models ?? {
+        nanoS: false,
+        nanoSP: false,
+        nanoX: false,
+      },
+      cooldownDays: largeScreenUpsell?.params?.cooldownDays ?? { default: Infinity },
+      now: new Date(),
+    },
+  );
 
   const desktopCards = useSelector(desktopContentCardSelector);
   const isExcluded = isOptIn && desktopCards.some(c => c.extras.campaign === LNS_UPSELL_HIGH_TIER);
@@ -36,7 +54,8 @@ export function useLNSUpsellBannerState(location: LNSBannerLocation): LNSBannerS
   const isEnabled = Boolean(
     largeScreenUpsell?.enabled && isCTAEnabled && isPlacementEnabled && ctaLink,
   );
-  const isShown = isEnabled && hasOnlySeenLNS && !isExcluded;
+  const isShown = isEnabled && eligibility.isEligible && !isExcluded;
+  const deviceModelId = eligibility.isEligible ? eligibility.deviceModelId : undefined;
 
-  return { isShown, tracking, ctaLink, discountPercent };
+  return { isShown, tracking, ctaLink, discountPercent, deviceModelId };
 }
