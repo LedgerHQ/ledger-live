@@ -30,7 +30,7 @@ jest.mock("~/analytics", () => {
   const actual = jest.requireActual("~/analytics");
   return {
     ...actual,
-    useTrack: () => jest.fn(),
+    track: jest.fn(),
   };
 });
 

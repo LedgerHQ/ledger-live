@@ -28,7 +28,7 @@ import { TokenCurrency } from "@domain/entity-currency-token";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { DeviceModelInfo } from "@ledgerhq/types-live";
 
-import { TrackScreen, track, useTrack } from "~/analytics";
+import { TrackScreen, track } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
 import { MANAGER_TABS } from "~/const/manager";
 import { getDeviceAnimation, getDeviceAnimationStyles } from "~/helpers/getDeviceAnimation";
@@ -790,7 +790,6 @@ export function RequiredFirmwareUpdate({
   device: Device;
 }) {
   const { t } = useTranslation();
-  const track = useTrack();
   const lastSeenDevice: DeviceModelInfo | null | undefined = useSelector(lastSeenDeviceSelector);
   const { shouldDisplayMyWallet } = useWalletFeaturesConfig("mobile");
 

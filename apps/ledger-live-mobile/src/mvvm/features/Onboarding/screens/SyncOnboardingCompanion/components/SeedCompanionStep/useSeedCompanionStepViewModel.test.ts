@@ -1,10 +1,10 @@
 import { Linking } from "react-native";
 import { act, renderHook } from "@tests/test-renderer";
+import { track } from "~/analytics";
 import { useSeedCompanionStepViewModel } from "./useSeedCompanionStepViewModel";
 
-const mockTrack = jest.fn();
 jest.mock("~/analytics", () => ({
-  useTrack: () => mockTrack,
+  track: jest.fn(),
 }));
 
 describe("useSeedCompanionStepViewModel", () => {
@@ -20,8 +20,8 @@ describe("useSeedCompanionStepViewModel", () => {
       result.current.handleLearnMoreClick();
     });
 
-    expect(mockTrack).toHaveBeenCalledTimes(1);
-    expect(mockTrack).toHaveBeenCalledWith("button_clicked", {
+    expect(track).toHaveBeenCalledTimes(1);
+    expect(track).toHaveBeenCalledWith("button_clicked", {
       button: "Learn More",
       page: "Charon Start",
       flow: "onboarding",

@@ -3,14 +3,14 @@ import { Linking } from "react-native";
 import { CharonStatus } from "@ledgerhq/live-common/hw/extractOnboardingState";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { render, screen } from "@tests/test-renderer";
+import { track } from "~/analytics";
 import SeedCompanionStep from "../components/SeedCompanionStep";
 
-const mockTrack = jest.fn();
 jest.mock("~/analytics", () => {
   const actual = jest.requireActual("~/analytics");
   return {
     ...actual,
-    useTrack: () => mockTrack,
+    track: jest.fn(),
   };
 });
 
@@ -79,7 +79,7 @@ describe("SeedCompanionStep", () => {
     const learnMore = await screen.findByText("Learn more or buy");
     await user.press(learnMore);
 
-    expect(mockTrack).toHaveBeenCalledWith("button_clicked", {
+    expect(track).toHaveBeenCalledWith("button_clicked", {
       button: "Learn More",
       page: "Charon Start",
       flow: "onboarding",

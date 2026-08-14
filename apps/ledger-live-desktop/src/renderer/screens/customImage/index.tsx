@@ -33,7 +33,7 @@ import { analyticsDrawerContext, setDrawer } from "~/renderer/drawers/Provider";
 import { useNavigateToPostOnboardingHubCallback } from "~/renderer/components/PostOnboardingHub/logic/useNavigateToPostOnboardingHubCallback";
 import { analyticsPageNames, analyticsFlowName, analyticsDrawerName } from "./shared";
 import TrackPage, { setTrackingSource } from "~/renderer/analytics/TrackPage";
-import { useTrack } from "~/renderer/analytics/segment";
+import { track } from "~/renderer/analytics/segment";
 import DeviceModelPicker from "~/renderer/components/CustomImage/DeviceModelPicker";
 import { useCompleteActionCallback } from "~/renderer/components/PostOnboardingHub/logic/useCompleteAction";
 import RemoveCustomImage from "../manager/DeviceDashboard/DeviceInformationSummary/RemoveCustomImage";
@@ -67,7 +67,6 @@ const CustomImage: React.FC<Props> = props => {
     setHasCustomLockScreen,
   } = props;
   const { t } = useTranslation();
-  const track = useTrack();
   const { setAnalyticsDrawerName } = useContext(analyticsDrawerContext);
 
   const isDeviceModelIdUndefined =
@@ -185,9 +184,13 @@ const CustomImage: React.FC<Props> = props => {
   const error = stepError[step];
 
   const handleErrorRetryClicked = useCallback(() => {
-    if (error?.name) track("button_clicked2", { button: "Retry" });
+    if (error?.name)
+      track("button_clicked2", {
+        drawer: analyticsDrawerName,
+        button: "Retry",
+      });
     setStepWrapper(Step.chooseImage);
-  }, [error?.name, setStepWrapper, track]);
+  }, [error?.name, setStepWrapper]);
 
   const previousStep: Step | undefined = orderedSteps[orderedSteps.findIndex(s => s === step) - 1];
 

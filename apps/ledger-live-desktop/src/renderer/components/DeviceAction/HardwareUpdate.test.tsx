@@ -7,7 +7,6 @@ import { openURL } from "~/renderer/linking";
 jest.mock("~/renderer/analytics/segment", () => ({
   track: jest.fn(),
   trackPage: jest.fn(),
-  useTrack: () => jest.fn(),
 }));
 
 jest.mock("~/renderer/linking", () => ({
