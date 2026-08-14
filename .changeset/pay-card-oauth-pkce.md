@@ -11,7 +11,7 @@ Start the Baanx login with a PKCE challenge and a CSRF state (LIVE-34738)
 
 Pressing Login now mints a login attempt client-side — a 16-byte `state` and a 32-byte PKCE verifier,
 with `code_challenge = BASE64URL(SHA256(verifier))` — and sends it to
-`GET /v1/auth/oauth/authorize/initiate`, whose `{ token, url }` answer is opened in the platform
+`GET /v1/auth/oauth/authorize/initiate`, whose `url` answer is opened in the platform
 secure browser as before. The randomness comes from the platform CSPRNG on each side: `expo-crypto`
 on mobile, WebCrypto on desktop.
 
@@ -21,7 +21,9 @@ opener only opens the URL; the redirect goes back to the app, so the browser res
 closing the browser shows no error — a cancelled login is not a failed one.
 
 The initiation carries `mode=api`. Without it the endpoint answers `302` and redirects to the hosted
-UI, which a `fetch` follows into an HTML page; `api` returns the same URL as JSON instead.
+UI, which a `fetch` follows into an HTML page; `api` returns the same URL as JSON instead. That answer
+also carries the JWT of Baanx's programmatic flow, which the hosted UI does not need, so the schema
+drops it instead of parking a short-lived credential in the cache.
 
 The request goes through `useInitiateAuthorizeMutation` from `@domain/api-card-management`, which owns
 the Card Auth contract and injects it into the shared `cardApi` service. Every endpoint there is

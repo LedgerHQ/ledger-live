@@ -25,7 +25,7 @@ const attempt = {
 const oauthConfig = { clientId: "client-id", redirectUri: "ledgerlive://paytab" };
 
 function authorizeResponse(url: string) {
-  return { token: "jwt", url };
+  return { url };
 }
 
 describe("useCardLoginViewModel", () => {

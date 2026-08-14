@@ -48,8 +48,7 @@ export const cardManagementApi = cardApi
           body: {
             grant_type: "authorization_code",
             code,
-            // The provider compares it with the one the authorization carried, so it comes back
-            // from the initiation rather than from the store.
+            // The provider compares it with the one the authorization carried.
             redirect_uri: redirectUri,
             code_verifier: codeVerifier,
           },
