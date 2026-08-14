@@ -761,14 +761,30 @@ export const getTransactionsWithCheckpointDigestsGraphQL = async (
   address: string,
   pageSize: number,
   filter?: { beforeCheckpoint?: number; afterCheckpoint?: number },
-): Promise<{ tx: SuiTransactionBlockResponse; checkpointDigest: string | undefined }[]> => {
+  /**
+   * Direction of travel, which picks the pagination window (see
+   * `TRANSACTIONS_BY_AFFECTED_ADDRESS`). Passing the wrong one does not reorder a page — it returns
+   * the wrong page entirely.
+   */
+  order: "asc" | "desc" = "desc",
+): Promise<{
+  pairs: { tx: SuiTransactionBlockResponse; checkpointDigest: string | undefined }[];
+  /** Older transactions exist beyond this page — the "more to come" signal for a `desc` walk. */
+  hasPreviousPage: boolean;
+  /** Newer transactions exist beyond this page — the same signal for an `asc` walk. */
+  hasNextPage: boolean;
+}> => {
   const ownerAddr = normalizeSuiAddress(address);
+  // Only one pair may be non-null; the other is sent as null.
+  const window =
+    order === "desc"
+      ? { last: pageSize, before: null, first: null, after: null }
+      : { first: pageSize, after: null, last: null, before: null };
   const res = await api.query({
     query: TRANSACTIONS_BY_AFFECTED_ADDRESS,
     variables: {
       address: ownerAddr,
-      last: pageSize,
-      before: null,
+      ...window,
       eventsFirst: EVENTS_PAGE_SIZE,
       ...(filter?.beforeCheckpoint !== undefined && {
         beforeCheckpoint: filter.beforeCheckpoint,
@@ -779,12 +795,21 @@ export const getTransactionsWithCheckpointDigestsGraphQL = async (
     },
   });
   const conn = unwrapGraphQL("TransactionsByAffectedAddress", res).transactions;
-  const nodes = (conn?.nodes ?? []).slice().reverse(); // newest-first across the page
-  // Skip not-yet-finalized nodes (indexing lag) — they'd map to bogus Failed/1970 ops.
-  return nodes.filter(isFinalizedTxNode).map(node => ({
-    tx: graphqlTxToJsonRpcResponse(node),
-    checkpointDigest: node.effects?.checkpoint?.digest ?? undefined,
-  }));
+  // Nodes arrive in connection (ascending) order either way, and callers re-sort, so this only keeps
+  // the returned page self-consistent with the requested direction.
+  const inConnectionOrder = conn?.nodes ?? [];
+  const nodes = order === "desc" ? inConnectionOrder.slice().reverse() : inConnectionOrder;
+  return {
+    // Skip not-yet-finalized nodes (indexing lag) — they'd map to bogus Failed/1970 ops.
+    pairs: nodes.filter(isFinalizedTxNode).map(node => ({
+      tx: graphqlTxToJsonRpcResponse(node),
+      checkpointDigest: node.effects?.checkpoint?.digest ?? undefined,
+    })),
+    // Surfaced so the caller can ask the server whether more history exists rather than inferring it
+    // from how many nodes survived filtering here and cursor-dropping downstream.
+    hasPreviousPage: conn?.pageInfo?.hasPreviousPage ?? false,
+    hasNextPage: conn?.pageInfo?.hasNextPage ?? false,
+  };
 };
 
 /**

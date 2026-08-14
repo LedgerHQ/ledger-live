@@ -33,8 +33,22 @@ Add a gRPC-web transport to the Sui coin module
   though it were real.
 - Degradation telemetry keeps its per-transport keys: GraphQL still logs `sui-graphql:*`, and the
   gRPC arm logs the same events under `sui-grpc:*`.
-- Fix: paging operation history skipped transactions that shared a checkpoint with the page cursor.
-  Both the GraphQL and gRPC arms excluded the cursor's own checkpoint from the next query, so when a
-  page boundary fell inside a checkpoint holding several of an account's transactions, the remainder
-  never appeared. The bound now includes that checkpoint and the already-seen items are filtered
-  client-side, with a guard for the case where one checkpoint fills a whole page.
+- Fix: reading operation history skipped transactions that shared a checkpoint with the resume point.
+  Both the GraphQL and gRPC arms excluded that checkpoint from the next query, so when a page boundary
+  fell inside a checkpoint holding several of an account's transactions, the remainder never appeared.
+  This affected account sync (`getOperations`) as well as paging (`getListOperations`). Both now keep
+  the checkpoint in range; sync relies on `mergeOps` to dedupe re-delivered operations, and paging
+  filters them client-side with a guard for a checkpoint that fills a whole page.
+- Paging asks the server whether more history exists (`pageInfo` on GraphQL, the raw page count on
+  gRPC) instead of inferring it from how many operations survived that client-side filter, which can
+  never fill a page once the resume point is re-fetched.
+- Fix: ascending paging on GraphQL read the newest slice of the range instead of walking forward from
+  the oldest, so it silently skipped everything in between — the page looked ascending only because
+  the client re-sorted it. The query now requests a forward window (`first`/`after`) when the caller
+  asks for ascending order, and takes "more to come" from `hasNextPage`. JSON-RPC and gRPC page in
+  either direction natively and were unaffected.
+- Known limitations, both narrower than the behaviour they replace but not eliminated: within a single
+  checkpoint, "already delivered" is decided by comparing digests rather than by tracking what was
+  emitted, so a sibling whose digest sorts before the resume point can still be skipped; and a
+  checkpoint holding more than one page of an account's transactions cannot be resumed inside, so
+  paging steps over its remainder to keep moving.

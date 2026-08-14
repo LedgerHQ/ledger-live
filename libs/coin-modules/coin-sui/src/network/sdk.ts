@@ -976,13 +976,20 @@ export const getOperations = async (
       // The bridge passes `cursor = latestHash(operations) = transaction.digest` (see
       // `bridge/synchronisation.ts` + `transactionToOperation`), which is a Sui digest
       // — NOT an opaque GraphQL connection cursor. Translate it to a server-side
-      // `afterCheckpoint` filter so incremental sync returns only newer ops; the
-      // cursor checkpoint's own ops were ingested on the previous sync.
+      // `afterCheckpoint` filter so incremental sync returns only newer ops.
+      //
+      // The bound keeps the cursor's own checkpoint in range: it can hold several of this address's
+      // transactions and the previous sync may have stopped partway through them, so excluding it
+      // would strand the rest. Re-delivered operations are harmless — `mergeOps` dedupes by id and
+      // documents that it expects overlap with what the account already has.
       const cursorDigest = typeof cursor === "string" ? cursor : null;
       let filter: { afterCheckpoint?: number } | undefined;
       if (cursorDigest) {
         const seq = await resolveCheckpointSequenceForDigestGraphQL(api, cursorDigest);
-        if (seq !== null) filter = { afterCheckpoint: seq };
+        // `afterCheckpoint` is exclusive, so keeping checkpoint `seq` in range means bounding at
+        // `seq - 1`. At genesis there is nothing below to exclude, and `afterCheckpoint: 0` would
+        // exclude checkpoint 0 itself — so the bound is dropped instead.
+        if (seq !== null && seq > 0) filter = { afterCheckpoint: seq - 1 };
       }
       // Single-page fetch: server caps `last` at 50; per-page payload (events +
       // balanceChangesJson per tx) is heavy enough that multi-page accumulation
@@ -1000,14 +1007,14 @@ export const getOperations = async (
         .map(transaction => transactionToOperation(accountId, addr, transaction));
     },
     grpc: async api => {
-      // Same digest-cursor translation as the GraphQL arm: the bridge passes a Sui digest, which
-      // becomes a checkpoint lower bound. `startCheckpoint` is inclusive, so start one past the
-      // cursor's own checkpoint — its operations were ingested by the previous sync.
+      // Same digest-cursor translation as the GraphQL arm, and the same inclusive bound:
+      // `startCheckpoint` is inclusive, so passing the cursor's checkpoint keeps its unsynced
+      // siblings in range. `mergeOps` dedupes the ones already stored.
       const cursorDigest = typeof cursor === "string" ? cursor : null;
       let startCheckpoint: number | undefined;
       if (cursorDigest) {
         const seq = await resolveCheckpointForDigestGrpc(api, cursorDigest);
-        if (seq !== null) startCheckpoint = seq + 1;
+        if (seq !== null) startCheckpoint = seq;
       }
       const { transactions } = await listTransactionsByAddressGrpc(api, {
         address: addr,
@@ -1122,6 +1129,10 @@ function isStrictlyAfterCursor(
  * The cost of including it is a page of already-seen items. That is fine except when one checkpoint
  * holds a full page of the address's transactions, where nothing survives the filter and pagination
  * would end early; each arm then steps its bound past that checkpoint once.
+ *
+ * It also follows that a page's surviving count says nothing about whether history remains: the
+ * resume point is re-fetched and dropped every time, so a cursor-fed page never reaches the page size
+ * even mid-history. Each arm therefore takes "is there more?" from the server.
  */
 function dropOperationsBeforeCursor(params: {
   operations: SuiTransactionBlockResponse[];
@@ -1238,24 +1249,36 @@ export const getListOperations = async (
       // ±1 achieves that whether the server treats these filters as strict or inclusive; either way
       // the extra checkpoint's items sit on the wrong side of the cursor and the drop below clears
       // them.
-      const boundsFrom = (seq: number, includeCursorCheckpoint: boolean) =>
-        order === "desc"
-          ? { beforeCheckpoint: includeCursorCheckpoint ? seq + 1 : seq }
-          : { afterCheckpoint: includeCursorCheckpoint ? Math.max(0, seq - 1) : seq };
+      const boundsFrom = (
+        seq: number,
+        includeCursorCheckpoint: boolean,
+      ): { beforeCheckpoint?: number; afterCheckpoint?: number } => {
+        if (order === "desc") {
+          return { beforeCheckpoint: includeCursorCheckpoint ? seq + 1 : seq };
+        }
+        if (!includeCursorCheckpoint) return { afterCheckpoint: seq };
+        // `afterCheckpoint: 0` would exclude checkpoint 0 itself, so genesis drops the bound.
+        return seq === 0 ? {} : { afterCheckpoint: seq - 1 };
+      };
 
       const fetchPage = async (
         filter: { beforeCheckpoint?: number; afterCheckpoint?: number } | undefined,
       ) => {
-        const pairs = await getTransactionsWithCheckpointDigestsGraphQL(
-          api,
-          addr,
-          TRANSACTIONS_LIMIT_PER_QUERY,
-          filter,
-        );
+        const { pairs, hasPreviousPage, hasNextPage } =
+          await getTransactionsWithCheckpointDigestsGraphQL(
+            api,
+            addr,
+            TRANSACTIONS_LIMIT_PER_QUERY,
+            filter,
+            order,
+          );
         const filtered = pairs.filter(({ tx }) => !isSettlementTransaction(tx));
         const sorted = filtered.slice().sort((a, b) => compareOperations(order)(a.tx, b.tx));
         return {
           received: pairs.length,
+          // The connection walks backwards, so "more to come" is `hasPreviousPage` going desc and
+          // `hasNextPage` going asc.
+          serverHasMore: order === "desc" ? hasPreviousPage : hasNextPage,
           sorted,
           afterCursor: dropOperationsBeforeCursor({
             operations: sorted.map(p => p.tx),
@@ -1284,8 +1307,10 @@ export const getListOperations = async (
         transactionToCoinFrameworkOperation(addr, t, digestToHash.get(t.digest)),
       );
       const last = afterCursor.at(-1);
+      // The connection answers "is there more?" directly — see {@link dropOperationsBeforeCursor}
+      // for why the surviving count cannot.
       const next =
-        afterCursor.length >= TRANSACTIONS_LIMIT_PER_QUERY && last?.timestampMs
+        page.serverHasMore && last?.timestampMs
           ? serializeListOperationsCursor({
               digest: last.digest,
               timestamp: Number(last.timestampMs),
@@ -1359,8 +1384,13 @@ export const getListOperations = async (
         ),
       );
       const last = afterCursor.at(-1);
+      // `received` is the raw stream count, before settlement filtering and cursor-dropping, so a
+      // full page means the server may have more — see {@link dropOperationsBeforeCursor} for why the
+      // surviving count cannot say. Exactly `limit` with nothing behind it therefore advertises one
+      // continuation that does not exist; the follow-up page comes back empty and terminates. An exact
+      // answer would need the stream's watermark or a `limit + 1` probe.
       const next =
-        afterCursor.length >= TRANSACTIONS_LIMIT_PER_QUERY && last?.timestampMs
+        page.received >= TRANSACTIONS_LIMIT_PER_QUERY && last?.timestampMs
           ? serializeListOperationsCursor({
               digest: last.digest,
               timestamp: Number(last.timestampMs),

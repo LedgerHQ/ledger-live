@@ -2,7 +2,7 @@ import type { SuiGrpcClient } from "@mysten/sui/grpc";
 import { toBase64 } from "@mysten/sui/utils";
 import type { SuiCoinConfig } from "../config";
 import { createSuiGrpcClient } from "./grpc/client";
-import { getListOperations } from "./sdk";
+import { getListOperations, getOperations } from "./sdk";
 import {
   executeTransactionGrpc,
   fetchCheckpointDigestsGrpc,
@@ -578,5 +578,50 @@ describe("getListOperations cursor bounds on the gRPC transport", () => {
 
     expect(requests[0]).not.toHaveProperty("endCheckpoint");
     expect(requests[0]).not.toHaveProperty("startCheckpoint");
+  });
+
+  // Guards the consequence documented on `dropOperationsBeforeCursor`: a cursor-fed page cannot reach
+  // the page size, so a count-based `next` gate would end the walk at page two.
+  it("emits a cursor while the server returns full pages", async () => {
+    const page = [
+      txFrame("tx-cursor", "12"),
+      ...Array.from({ length: 49 }, (_, i) =>
+        txFrame(`tx-${String(i).padStart(3, "0")}`, "11", TS - 1000),
+      ),
+    ];
+    stubApi([page], 12n);
+
+    const result = await getListOperations(
+      grpcConfig,
+      ADDRESS,
+      "desc",
+      undefined,
+      `${TS}:tx-cursor`,
+    );
+
+    expect(result.items).toHaveLength(49);
+    // Equal timestamps sort by digest descending, so the oldest delivered item is `tx-000`.
+    expect(result.next).toBe(`${TS - 1000}:tx-000`);
+  });
+
+  it("stops when the server returns a short page", async () => {
+    stubApi([[txFrame("tx-m", "12"), txFrame("tx-a", "12")]], 12n);
+
+    const result = await getListOperations(grpcConfig, ADDRESS, "desc", undefined, `${TS}:tx-m`);
+
+    expect(result.items).toHaveLength(1);
+    expect(result.next).toBeUndefined();
+  });
+
+  // The legacy-bridge sync path resumes from the newest stored operation's digest. Its checkpoint can
+  // hold siblings the previous sync never reached, so the bound keeps that checkpoint in range;
+  // `mergeOps` dedupes whatever is re-delivered.
+  it("keeps the cursor's own checkpoint in range on an incremental sync", async () => {
+    const { requests } = stubApi([[txFrame("tx-a", "42")]], 42n);
+
+    await getOperations(grpcConfig, "acc-1", ADDRESS, "0xcursorDigest", undefined);
+
+    // `startCheckpoint` is inclusive, so the cursor's checkpoint is the bound itself.
+    expect(requests[0].startCheckpoint).toBe(42n);
   });
 });
