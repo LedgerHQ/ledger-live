@@ -265,6 +265,7 @@ libs/coin-modules/coin-ton/                                              @ledger
 libs/concordium-core/                                                    @ledgerhq/ledger-partner-hoodies
 
 # PTX team
+libs/transaction-observability/                                           @ledgerhq/ptx
 features/flow/pay-card-auth/                                             @ledgerhq/ptx
 features/platform/card/                                                  @ledgerhq/ptx
 domain/api/card-management/                                              @ledgerhq/ptx
