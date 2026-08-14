@@ -362,7 +362,8 @@
     "src/wallet-api/validation/actionDialogParams.ts",
     "src/domain/isMinEarnUiVersion.ts",
     "src/domain/computeEarnUiVersion.ts",
-    "src/domain/earnUiVersion.ts"
+    "src/domain/earnUiVersion.ts",
+    "src/errors/helpers.ts"
   ],
   "extensions": [
     ".ts",

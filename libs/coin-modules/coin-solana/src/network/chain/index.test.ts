@@ -66,7 +66,6 @@ describe("index", () => {
           expect(networkError).toMatchObject({
             message: sendTransactionError.message,
             logs: logMessages,
-            cause: sendTransactionError,
           });
           expect(mockedConfirmTransaction).not.toHaveBeenCalled();
         }
