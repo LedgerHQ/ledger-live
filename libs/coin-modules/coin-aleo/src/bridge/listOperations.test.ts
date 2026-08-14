@@ -7,14 +7,14 @@ import {
   MOCK_TOKEN_PROGRAM_ID,
 } from "../__tests__/fixtures/currency.fixture";
 import { getMockedOperation } from "../__tests__/fixtures/operation.fixture";
-import { fetchAccountTransactionsFromHeight } from "../network/utils";
+import { fetchAllTransitionsFromHeight } from "../network/utils";
 import { getCalTokens, toBridgeOperation } from "../logic/utils";
 import { listOperations } from "./listOperations";
 
 jest.mock("../network/utils");
 jest.mock("../logic/utils");
 
-const mockFetch = jest.mocked(fetchAccountTransactionsFromHeight);
+const mockFetch = jest.mocked(fetchAllTransitionsFromHeight);
 const mockToBridgeOperation = jest.mocked(toBridgeOperation);
 const mockGetCalTokens = jest.mocked(getCalTokens);
 
@@ -38,10 +38,7 @@ describe("bridge/listOperations", () => {
     const mockOp1 = getMockedOperation({ id: "op1", blockHeight: 100 });
     const mockOp2 = getMockedOperation({ id: "op2", blockHeight: 101 });
 
-    mockFetch.mockResolvedValue({
-      transactions: [mockTx1, mockTx2],
-      nextCursor: mockTx2.block_number.toString(),
-    });
+    mockFetch.mockResolvedValue([mockTx1, mockTx2]);
     mockToBridgeOperation.mockReturnValueOnce(mockOp1).mockReturnValueOnce(mockOp2);
 
     const result = await listOperations({
@@ -55,13 +52,11 @@ describe("bridge/listOperations", () => {
     expect(mockFetch).toHaveBeenCalledWith({
       config: mockConfig,
       address: mockAddress,
-      fetchAllPages: true,
       minBlockHeight: 0,
       order: "asc",
     });
     expect(result.operations).toEqual([mockOp1, mockOp2]);
     expect(result.tokenOperations).toEqual([]);
-    expect(result.nextCursor).toBe(mockTx2.block_number.toString());
     expect(result.calTokens).toEqual(new Map());
   });
 
@@ -81,10 +76,7 @@ describe("bridge/listOperations", () => {
     const firstOp = getMockedOperation({ id: "op1", hash: "tx1" });
     const secondOp = getMockedOperation({ id: "op2", hash: "tx1" });
 
-    mockFetch.mockResolvedValue({
-      transactions: [firstTransition, secondTransition],
-      nextCursor: null,
-    });
+    mockFetch.mockResolvedValue([firstTransition, secondTransition]);
     mockToBridgeOperation.mockReturnValueOnce(firstOp).mockReturnValueOnce(secondOp);
 
     const result = await listOperations({
@@ -102,7 +94,7 @@ describe("bridge/listOperations", () => {
   it("should skip the CAL lookup when tokens are disabled", async () => {
     const mockTx = getMockedTransaction({ transaction_id: "tx1" });
 
-    mockFetch.mockResolvedValue({ transactions: [mockTx], nextCursor: null });
+    mockFetch.mockResolvedValue([mockTx]);
     mockToBridgeOperation.mockReturnValue(getMockedOperation({ id: "op1" }));
 
     await listOperations({
@@ -123,7 +115,7 @@ describe("bridge/listOperations", () => {
   });
 
   it("should return empty operations when no transactions found", async () => {
-    mockFetch.mockResolvedValue({ transactions: [], nextCursor: null });
+    mockFetch.mockResolvedValue([]);
 
     const result = await listOperations({
       config: mockConfig,
@@ -135,12 +127,11 @@ describe("bridge/listOperations", () => {
 
     expect(result.operations).toEqual([]);
     expect(result.tokenOperations).toEqual([]);
-    expect(result.nextCursor).toBeNull();
     expect(result.calTokens).toEqual(new Map());
   });
 
   it("should forward the pagination options untouched", async () => {
-    mockFetch.mockResolvedValue({ transactions: [], nextCursor: null });
+    mockFetch.mockResolvedValue([]);
 
     await listOperations({
       config: mockConfig,
@@ -153,10 +144,9 @@ describe("bridge/listOperations", () => {
     expect(mockFetch).toHaveBeenCalledWith({
       config: mockConfig,
       address: mockAddress,
-      fetchAllPages: true,
       minBlockHeight: 1000,
-      cursor: "500",
-      limit: 20,
+      // The stored block is already synced, so resuming after the whole of it is what sync wants.
+      cursor: { blockNumber: 500 },
       order: "desc",
     });
   });
@@ -175,10 +165,7 @@ describe("bridge/listOperations", () => {
       const nativeOp = getMockedOperation({ id: "native-op" });
       const calTokens = new Map([[MOCK_TOKEN_PROGRAM_ID, mockTokenCurrency]]);
 
-      mockFetch.mockResolvedValue({
-        transactions: [tokenTx, nativeTx],
-        nextCursor: null,
-      });
+      mockFetch.mockResolvedValue([tokenTx, nativeTx]);
       mockGetCalTokens.mockResolvedValue(calTokens);
       mockToBridgeOperation.mockImplementation((_ledgerAccountId, rawTx) =>
         rawTx.program_id === MOCK_TOKEN_PROGRAM_ID ? tokenOp : nativeOp,
@@ -237,10 +224,7 @@ describe("bridge/listOperations", () => {
       const firstOp = getMockedOperation({ id: "op-1", hash: "tx1" });
       const secondOp = getMockedOperation({ id: "op-2", hash: "tx1" });
 
-      mockFetch.mockResolvedValue({
-        transactions: [firstTransition, secondTransition],
-        nextCursor: null,
-      });
+      mockFetch.mockResolvedValue([firstTransition, secondTransition]);
       mockGetCalTokens.mockResolvedValue(
         new Map([
           [MOCK_TOKEN_PROGRAM_ID, mockTokenCurrency],
@@ -267,10 +251,7 @@ describe("bridge/listOperations", () => {
       });
       const mockOp = getMockedOperation({ id: "unknown-op" });
 
-      mockFetch.mockResolvedValue({
-        transactions: [unknownTokenTx],
-        nextCursor: null,
-      });
+      mockFetch.mockResolvedValue([unknownTokenTx]);
       mockGetCalTokens.mockResolvedValue(new Map());
       mockToBridgeOperation.mockReturnValue(mockOp);
 
@@ -301,7 +282,7 @@ describe("bridge/listOperations", () => {
       const op1 = getMockedOperation({ id: "op-1", hash: "tx-1" });
       const op2 = getMockedOperation({ id: "op-2", hash: "tx-2" });
 
-      mockFetch.mockResolvedValue({ transactions: [tx1, tx2], nextCursor: null });
+      mockFetch.mockResolvedValue([tx1, tx2]);
       mockGetCalTokens.mockResolvedValue(
         new Map([
           [MOCK_TOKEN_PROGRAM_ID, mockTokenCurrency],

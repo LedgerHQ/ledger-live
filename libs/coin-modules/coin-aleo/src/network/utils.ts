@@ -5,7 +5,6 @@ import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import {
   AMOUNT_ARG_INDEX,
   DEFAULT_RECORDS_PAGE_SIZE,
-  DEFAULT_TRANSITION_PAGE_SIZE,
   EXPLORER_TRANSFER_TYPES,
   PROGRAM_ID,
   RECIPIENT_ARG_INDEX,
@@ -21,6 +20,8 @@ import type {
   AleoTransition,
   AleoCoinConfig,
   AleoRecordScannerStatusResponse,
+  AleoTransitionCursor,
+  AleoTransitionResume,
 } from "../types";
 import {
   isAleoAddressPlaintext,
@@ -30,17 +31,6 @@ import {
   parseMicrocredits,
 } from "../logic/utils";
 import { apiClient } from "./api";
-
-function limitTransactions(
-  transactions: AleoPublicTransaction[],
-  limit: number,
-): AleoPublicTransaction[] {
-  return transactions.length > limit ? transactions.slice(0, limit) : transactions;
-}
-
-function getLastTransactionCursor(transactions: AleoPublicTransaction[]): string | null {
-  return transactions.at(-1)?.block_number.toString() ?? null;
-}
 
 function hasReachedMinHeight(
   transactions: AleoPublicTransaction[],
@@ -60,178 +50,106 @@ function isBareInnerTransition(tx: AleoPublicTransaction): boolean {
   );
 }
 
-export async function fetchAccountTransactionsFromHeight({
+function toTransitionCursor(tx: AleoPublicTransaction): AleoTransitionResume {
+  return { blockNumber: tx.block_number, transitionId: tx.transition_id };
+}
+
+/** Every transition of the account from `minBlockHeight` (or `cursor`) to the tip. */
+export async function fetchAllTransitionsFromHeight({
   config,
   address,
-  fetchAllPages,
   minBlockHeight,
   cursor,
-  limit = 50,
   order = "asc",
 }: {
   config: AleoCoinConfig;
   address: string;
-  fetchAllPages: boolean;
   minBlockHeight: number;
-  cursor?: string;
-  limit?: number;
+  cursor?: AleoTransitionCursor;
   order?: "asc" | "desc";
-}): Promise<{
-  transactions: AleoPublicTransaction[];
-  nextCursor: string | null;
-}> {
-  const transactions: AleoPublicTransaction[] = [];
-  let currentCursor = cursor ?? null;
-  let hasMorePages = true;
-
-  while (hasMorePages) {
-    const page = await apiClient.getAccountPublicTransactions({
-      config,
-      address,
-      limit,
-      order,
-      ...(currentCursor && { cursor: currentCursor }),
-    });
-
-    const nextCursorBlockNumber = page.next_cursor?.block_number.toString() ?? null;
-    hasMorePages = nextCursorBlockNumber !== null;
-
-    const recentTxs = page.transactions.filter(
-      tx => tx.block_number >= minBlockHeight && !isBareInnerTransition(tx),
-    );
-    transactions.push(...recentTxs);
-
-    // stop if DESC order hit the min height boundary
-    if (order === "desc" && hasReachedMinHeight(page.transactions, minBlockHeight)) {
-      const limitedTxs = limitTransactions(transactions, limit);
-
-      return {
-        transactions: fetchAllPages ? transactions : limitedTxs,
-        nextCursor: null,
-      };
-    }
-
-    // pagination mode: check if we don't have more than requested
-    if (!fetchAllPages && transactions.length >= limit) {
-      const limitedTxs = limitTransactions(transactions, limit);
-      const nextCursor = getLastTransactionCursor(limitedTxs);
-
-      return {
-        transactions: limitedTxs,
-        nextCursor,
-      };
-    }
-
-    // no more pages - return what we have
-    if (!hasMorePages) {
-      const limitedTxs = limitTransactions(transactions, limit);
-
-      return {
-        transactions: fetchAllPages ? transactions : limitedTxs,
-        nextCursor: null,
-      };
-    }
-
-    currentCursor = nextCursorBlockNumber;
-  }
-
-  // should not be reached, just a type guard
-  throw new Error("aleo: unexpected end of loop in fetchAccountTransactionsFromHeight");
-}
-
-/**
- * The last block that is provably whole and already holds `minTransactions` transactions, or `null`
- * while more rows are still needed. The block the stream currently sits on is never a candidate: the
- * explorer pages per transition, so it may still gain rows on the next fetch.
- */
-function resolveCutBlock(
-  transitions: AleoPublicTransaction[],
-  order: "asc" | "desc",
-  minTransactions: number,
-): number | null {
-  const direction = order === "asc" ? 1 : -1;
-  const transactionIdsByBlock = new Map<number, Set<string>>();
-
-  for (const tx of transitions) {
-    const transactionIds = transactionIdsByBlock.get(tx.block_number) ?? new Set<string>();
-    transactionIds.add(tx.transaction_id.trim());
-    transactionIdsByBlock.set(tx.block_number, transactionIds);
-  }
-
-  const blocks = [...transactionIdsByBlock.keys()].sort((a, b) => direction * (a - b));
-  const collected = new Set<string>();
-
-  for (const block of blocks.slice(0, -1)) {
-    for (const transactionId of transactionIdsByBlock.get(block)!) collected.add(transactionId);
-    if (collected.size >= minTransactions) return block;
-  }
-
-  return null;
-}
-
-/**
- * Pages the explorer's per-transition stream in whole blocks: every returned block is complete, and
- * `nextBlock` is the first block left to fetch (`null` once the window is exhausted). A block denser
- * than `minTransactions` degrades to a single large page rather than being split.
- */
-export async function fetchAccountTransitionPage({
-  config,
-  address,
-  fromBlock,
-  toBlock,
-  minTransactions,
-  pageSize = DEFAULT_TRANSITION_PAGE_SIZE,
-  order = "asc",
-}: {
-  config: AleoCoinConfig;
-  address: string;
-  fromBlock: number;
-  toBlock: number;
-  minTransactions: number;
-  pageSize?: number;
-  order?: "asc" | "desc";
-}): Promise<{ transitions: AleoPublicTransaction[]; nextBlock: number | null }> {
-  const isAscending = order === "asc";
+}): Promise<AleoPublicTransaction[]> {
   const transitions: AleoPublicTransaction[] = [];
-  let currentCursor = isAscending ? fromBlock : toBlock;
+  let currentCursor = cursor;
 
   for (;;) {
     const page = await apiClient.getAccountPublicTransactions({
       config,
       address,
-      limit: pageSize,
       order,
-      cursor: currentCursor.toString(),
+      ...(currentCursor && { cursor: currentCursor }),
     });
 
-    for (const tx of page.transactions) {
-      if (tx.block_number < fromBlock || tx.block_number > toBlock) continue;
-      if (isBareInnerTransition(tx)) continue;
-
-      transitions.push(tx);
-    }
-
-    const nextCursor = page.next_cursor?.block_number ?? null;
-    const leftWindow = page.transactions.some(tx =>
-      isAscending ? tx.block_number > toBlock : tx.block_number < fromBlock,
+    transitions.push(
+      ...page.transactions.filter(
+        tx => tx.block_number >= minBlockHeight && !isBareInnerTransition(tx),
+      ),
     );
 
-    if (nextCursor === null || leftWindow) return { transitions, nextBlock: null };
-
-    const cutBlock = resolveCutBlock(transitions, order, minTransactions);
-
-    if (cutBlock !== null) {
-      const nextBlock = isAscending ? cutBlock + 1 : cutBlock - 1;
-      const withinCut = (tx: AleoPublicTransaction) =>
-        isAscending ? tx.block_number <= cutBlock : tx.block_number >= cutBlock;
-
-      return {
-        transitions: transitions.filter(withinCut),
-        nextBlock: nextBlock >= fromBlock && nextBlock <= toBlock ? nextBlock : null,
-      };
+    if (order === "desc" && hasReachedMinHeight(page.transactions, minBlockHeight)) {
+      return transitions;
     }
 
-    currentCursor = nextCursor;
+    const lastRow = page.transactions.at(-1);
+    if (!page.next_cursor || !lastRow) return transitions;
+
+    currentCursor = toTransitionCursor(lastRow);
+  }
+}
+
+/**
+ * One page of the explorer's per-transition stream, cut on a block boundary: the block the stream
+ * stops inside is handed to the next page instead of being split, so a caller can treat the emitted
+ * blocks as whole. `next` is `null` once the stream is exhausted.
+ *
+ * Returning rows and returning `next: null` are the only two outcomes — an empty page always means
+ * exhausted. Callers rely on that to bound record fetching by block height.
+ */
+export async function fetchTransitionPage({
+  config,
+  address,
+  cursor,
+  limit,
+  order = "asc",
+}: {
+  config: AleoCoinConfig;
+  address: string;
+  cursor?: AleoTransitionCursor;
+  limit?: number;
+  order?: "asc" | "desc";
+}): Promise<{
+  transitions: AleoPublicTransaction[];
+  next: AleoTransitionResume | null;
+}> {
+  const transitions: AleoPublicTransaction[] = [];
+  let currentCursor = cursor;
+
+  for (;;) {
+    const page = await apiClient.getAccountPublicTransactions({
+      config,
+      address,
+      order,
+      ...(limit !== undefined && { limit }),
+      ...(currentCursor && { cursor: currentCursor }),
+    });
+
+    transitions.push(...page.transactions.filter(tx => !isBareInnerTransition(tx)));
+
+    const lastRow = page.transactions.at(-1);
+    if (!page.next_cursor || !lastRow) return { transitions, next: null };
+
+    currentCursor = toTransitionCursor(lastRow);
+
+    const openBlock = transitions.at(-1)?.block_number;
+    const whole = transitions.filter(tx => tx.block_number !== openBlock);
+
+    // Only stop once dropping the open block still leaves something; a block holding a whole page of
+    // transitions would otherwise cut down to nothing and never advance.
+    if (whole.length > 0) {
+      return {
+        transitions: whole,
+        next: toTransitionCursor(whole[whole.length - 1]),
+      };
+    }
   }
 }
 
@@ -341,9 +259,6 @@ export async function accessProvableApi({
   provableApi: ProvableApi | null;
 }): Promise<ProvableApi> {
   let uuid = provableApi?.uuid;
-  let synced: boolean | undefined = provableApi?.scannerStatus?.synced ?? false;
-  let percentage: number | undefined = provableApi?.scannerStatus?.percentage ?? 0;
-  let status;
 
   if (!uuid) {
     const { public_key, key_id } = await apiClient.getScannerPublicKey(config);
@@ -364,16 +279,18 @@ export async function accessProvableApi({
     uuid = accountUuid;
   }
 
-  status = await fetchRecordScannerStatus(config, uuid);
-
-  if (status) {
-    synced = status.synced;
-    percentage = status.percentage;
-  }
+  // The endpoint can answer with a null body; keep the status already known rather than resetting it.
+  const status: AleoRecordScannerStatusResponse | null = await fetchRecordScannerStatus(
+    config,
+    uuid,
+  );
 
   return {
     uuid,
-    scannerStatus: { synced, percentage },
+    scannerStatus: {
+      synced: status?.synced ?? provableApi?.scannerStatus?.synced ?? false,
+      percentage: status?.percentage ?? provableApi?.scannerStatus?.percentage ?? 0,
+    },
   };
 }
 

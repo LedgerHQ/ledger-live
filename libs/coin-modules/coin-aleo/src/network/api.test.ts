@@ -185,7 +185,7 @@ describe("apiClient", () => {
     });
 
     it("should fetch transactions with cursor for pagination", async () => {
-      const cursor = "123456";
+      const cursor = { blockNumber: 123456, transitionId: "au1resume" };
       const mockResponse = getMockedAccountPublicTransactions(MOCK_ALEO_ADDRESS, {
         transactions: [],
         prev_cursor: {
@@ -209,7 +209,7 @@ describe("apiClient", () => {
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "GET",
-        url: `${mockConfig.apiUrls.node}/v2/${mockConfig.networkType}/transactions/address/${MOCK_ALEO_ADDRESS}?metadata=true&limit=50&sort=asc&direction=next&token_info=true&cursor_block_number=${cursor}`,
+        url: `${mockConfig.apiUrls.node}/v2/${mockConfig.networkType}/transactions/address/${MOCK_ALEO_ADDRESS}?metadata=true&limit=50&sort=asc&direction=next&token_info=true&cursor_block_number=${cursor.blockNumber}&cursor_transition_id=${cursor.transitionId}`,
       });
     });
 
@@ -234,7 +234,7 @@ describe("apiClient", () => {
     });
 
     it("should fetch transactions with all custom parameters", async () => {
-      const cursor = "999999";
+      const cursor = { blockNumber: 999999 };
       const mockResponse = getMockedAccountPublicTransactions(MOCK_ALEO_ADDRESS, {
         transactions: [
           {
@@ -268,9 +268,28 @@ describe("apiClient", () => {
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "GET",
-        url: `${mockConfig.apiUrls.node}/v2/${mockConfig.networkType}/transactions/address/${MOCK_ALEO_ADDRESS}?metadata=true&limit=20&sort=desc&direction=prev&token_info=true&cursor_block_number=${cursor}`,
+        url: `${mockConfig.apiUrls.node}/v2/${mockConfig.networkType}/transactions/address/${MOCK_ALEO_ADDRESS}?metadata=true&limit=20&sort=desc&direction=prev&token_info=true&cursor_block_number=${cursor.blockNumber}`,
       });
       expect(result).toEqual(mockResponse);
+    });
+
+    it("clamps limit to the highest value the endpoint accepts", async () => {
+      const mockResponse = getMockedAccountPublicTransactions(MOCK_ALEO_ADDRESS, {
+        transactions: [],
+      });
+
+      jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
+
+      await apiClient.getAccountPublicTransactions({
+        config: mockConfig,
+        address: MOCK_ALEO_ADDRESS,
+        limit: 500,
+      });
+
+      expect(network).toHaveBeenCalledWith({
+        method: "GET",
+        url: `${mockConfig.apiUrls.node}/v2/${mockConfig.networkType}/transactions/address/${MOCK_ALEO_ADDRESS}?metadata=true&limit=50&sort=asc&direction=next&token_info=true`,
+      });
     });
 
     it("should throw an error when network request fails", async () => {

@@ -17,7 +17,6 @@ import type {
 } from "@ledgerhq/coin-module-framework/api/index";
 import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
-import invariant from "invariant";
 import { estimateFees, getBalance, lastBlock, listOperations, validateAddress } from "../logic";
 import { getTransactionType } from "../logic/utils";
 import type { AleoContext, AleoCoinConfig, AleoTransactionIntentData } from "../types";
@@ -78,16 +77,19 @@ export function createApi(
       const config = await context.config();
       return lastBlock(config);
     },
-    // Both fields are required: public + private history must be merged in one pass; neither half can be enriched after the fact (ADR-042).
     listOperations: async (context: AleoContext, address, options) => {
       const { provableId, viewKey } = context;
-      invariant(
-        provableId && viewKey,
-        `aleo: listOperations requires provableId and viewKey on the context for ${address}`,
-      );
-
       const config = await context.config(currencyId);
-      return listOperations({ config, address, options, provableId, viewKey });
+
+      // Without both, the private half cannot be read at all — list the public history rather than
+      // failing, so read-only consumers (wallet-cli, integrations) still get something.
+      return listOperations({
+        config,
+        address,
+        options,
+        ...(provableId && { provableId }),
+        ...(viewKey && { viewKey }),
+      });
     },
     getBlock(_context, _height): Promise<Block> {
       throw new Error("getBlock is not supported");

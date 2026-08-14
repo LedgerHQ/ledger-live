@@ -1,6 +1,6 @@
 import type { ListOperationsOptions } from "@ledgerhq/coin-module-framework/api/types";
 import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
-import { fetchAccountTransactionsFromHeight } from "../network/utils";
+import { fetchAllTransitionsFromHeight } from "../network/utils";
 import { getCalTokens, toBridgeOperation } from "../logic/utils";
 import type { AleoCoinConfig } from "../types";
 import type { AleoOperation } from "../types/bridge";
@@ -20,30 +20,28 @@ export async function listOperations({
 }): Promise<{
   operations: AleoOperation[];
   tokenOperations: AleoOperation[];
-  nextCursor: string | null;
   calTokens: Map<string, TokenCurrency>;
 }> {
   const operations: AleoOperation[] = [];
   const tokenOperations: AleoOperation[] = [];
 
-  const result = await fetchAccountTransactionsFromHeight({
+  const transitions = await fetchAllTransitionsFromHeight({
     config,
     address,
-    fetchAllPages: true,
     minBlockHeight: options.minHeight,
-    ...(options.cursor && { cursor: options.cursor }),
-    ...(options.limit && { limit: options.limit }),
+    // The stored block is already synced, and a block-only cursor resumes after all of it.
+    ...(options.cursor && { cursor: { blockNumber: Number(options.cursor) } }),
     ...(options.order && { order: options.order }),
   });
 
   const calTokens = config.enableTokens
     ? await getCalTokens({
         currencyId,
-        programNames: result.transactions.map(rawTx => rawTx.program_id),
+        programNames: transitions.map(rawTx => rawTx.program_id),
       })
     : new Map<string, TokenCurrency>();
 
-  for (const rawTx of result.transactions) {
+  for (const rawTx of transitions) {
     const isTokenTx = calTokens.has(rawTx.program_id);
     const operation = toBridgeOperation(ledgerAccountId, rawTx, address, isTokenTx);
 
@@ -51,5 +49,5 @@ export async function listOperations({
     if (isTokenTx) tokenOperations.push(operation);
   }
 
-  return { operations, tokenOperations, nextCursor: result.nextCursor, calTokens };
+  return { operations, tokenOperations, calTokens };
 }

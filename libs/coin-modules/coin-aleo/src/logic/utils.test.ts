@@ -57,7 +57,7 @@ import {
   isAleoAmountPlaintext,
   determineTransactionType,
   patchAccountWithViewKey,
-  toCoinFrameworkOperation,
+  toMergedOperation,
   toBridgeOperation,
   toPrivateBridgeOperation,
   resolveConfig,
@@ -326,14 +326,14 @@ describe("determineTransactionType", () => {
   );
 });
 
-describe("toCoinFrameworkOperation", () => {
+describe("toMergedOperation", () => {
   const recipientAddress = "aleo1rhgdu77hgyqd3xjj8ucu3jj9r2krwz6mnzyd80gncr5fxcwlh5rsvzp9px";
   const senderAddress = "aleo1a2ehlgqhvs3p7d4hqhs0tvgk954dr8gafu9kxse2mzu9a5sqxvpsrn98pr";
 
   it("should set type to IN when address is the recipient", () => {
     const rawTx = getMockedPublicTransaction();
 
-    const result = toCoinFrameworkOperation(rawTx, recipientAddress);
+    const result = toMergedOperation(rawTx, recipientAddress, false);
 
     expect(result.type).toBe("IN");
   });
@@ -341,7 +341,7 @@ describe("toCoinFrameworkOperation", () => {
   it("should set type to OUT when address is the sender", () => {
     const rawTx = getMockedPublicTransaction();
 
-    const result = toCoinFrameworkOperation(rawTx, senderAddress);
+    const result = toMergedOperation(rawTx, senderAddress, false);
 
     expect(result.type).toBe("OUT");
   });
@@ -349,18 +349,18 @@ describe("toCoinFrameworkOperation", () => {
   it("should resolve a direction for token programs, not just credits", () => {
     const rawTx = getMockedPublicTransaction({ program_id: "custom.aleo" });
 
-    expect(toCoinFrameworkOperation(rawTx, recipientAddress)).toMatchObject({
+    expect(toMergedOperation(rawTx, recipientAddress, false)).toMatchObject({
       type: "IN",
       asset: { type: "arc22", assetReference: "custom.aleo" },
       details: { ledgerOpType: "IN" },
     });
-    expect(toCoinFrameworkOperation(rawTx, rawTx.sender_address).type).toBe("OUT");
+    expect(toMergedOperation(rawTx, rawTx.sender_address, false).type).toBe("OUT");
   });
 
   it("should map core fields from rawTx", () => {
     const rawTx = getMockedPublicTransaction();
 
-    const result = toCoinFrameworkOperation(rawTx, recipientAddress);
+    const result = toMergedOperation(rawTx, recipientAddress, false);
 
     expect(result.id).toBe(rawTx.transaction_id);
     expect(result.senders).toEqual([rawTx.sender_address]);
@@ -375,7 +375,7 @@ describe("toCoinFrameworkOperation", () => {
   it("should derive fees and blockHash from rawTx", () => {
     const rawTx = getMockedPublicTransaction();
 
-    const result = toCoinFrameworkOperation(rawTx, recipientAddress);
+    const result = toMergedOperation(rawTx, recipientAddress, false);
 
     expect(result.tx.fees).toBe(BigInt(rawTx.fee));
     expect(result.tx.block.hash).toBe(rawTx.block_hash);
@@ -384,7 +384,7 @@ describe("toCoinFrameworkOperation", () => {
   it("should set failed to true when transaction_status is not Accepted", () => {
     const rawTx = getMockedPublicTransaction({ transaction_status: "Rejected" });
 
-    const result = toCoinFrameworkOperation(rawTx, recipientAddress);
+    const result = toMergedOperation(rawTx, recipientAddress, false);
 
     expect(result.tx.failed).toBe(true);
   });
@@ -392,12 +392,58 @@ describe("toCoinFrameworkOperation", () => {
   it("should include functionId, transactionType, and ledgerOpType in details", () => {
     const rawTx = getMockedPublicTransaction();
 
-    const result = toCoinFrameworkOperation(rawTx, recipientAddress);
+    const result = toMergedOperation(rawTx, recipientAddress, false);
 
     expect(result.details).toMatchObject({
       functionId: rawTx.function_id,
       ledgerOpType: "IN",
     });
+  });
+
+  it("reports NONE when the account is on neither side of the row", () => {
+    const rawTx = getMockedPublicTransaction();
+
+    expect(toMergedOperation(rawTx, "aleo1stranger", false).type).toBe("NONE");
+  });
+
+  it("fills the account's own private side in when a record it owns shares the transaction", () => {
+    const rawTx = getMockedPublicTransaction({
+      function_id: "transfer_public_to_private",
+      sender_address: senderAddress,
+      recipient_address: "",
+    });
+
+    expect(toMergedOperation(rawTx, senderAddress, true)).toMatchObject({
+      type: "OUT",
+      senders: [senderAddress],
+      recipients: [senderAddress],
+      // OUT of the public balance, which is the side a shield spends from.
+      details: { transactionType: "public", ledgerOpType: "OUT" },
+    });
+  });
+
+  it("reports OUT for an unshield the account is on both sides of", () => {
+    const rawTx = getMockedPublicTransaction({
+      function_id: "transfer_private_to_public",
+      sender_address: "",
+      recipient_address: senderAddress,
+    });
+
+    expect(toMergedOperation(rawTx, senderAddress, true)).toMatchObject({
+      type: "OUT",
+      senders: [senderAddress],
+      recipients: [senderAddress],
+    });
+  });
+
+  it("leaves a blank address blank when no owned record backs the row", () => {
+    const rawTx = getMockedPublicTransaction({
+      function_id: "transfer_public_to_private",
+      sender_address: senderAddress,
+      recipient_address: "",
+    });
+
+    expect(toMergedOperation(rawTx, senderAddress, false).recipients).toEqual([""]);
   });
 });
 

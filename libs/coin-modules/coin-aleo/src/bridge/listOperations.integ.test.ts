@@ -65,8 +65,6 @@ describe("bridge/listOperations", () => {
     // guards that this window actually spans more than a single page at the smallest size
     expect(smallPageSize.operations.length).toBeGreaterThan(5);
     expect(smallPageSize.operations.length).toBe(largePageSize.operations.length);
-    expect(smallPageSize.nextCursor).toBeNull();
-    expect(largePageSize.nextCursor).toBeNull();
 
     const smallIds = smallPageSize.operations.map(op => op.id).sort();
     const largeIds = largePageSize.operations.map(op => op.id).sort();

@@ -4,6 +4,7 @@ import aleoConfig from "../config";
 import { getTestnetIntegConfig } from "../__tests__/fixtures/config.fixture";
 import {
   testnetAddress,
+  testnetDenseHistoryAddress,
   testnetInboundPrivateToPublicTx,
   testnetLedgerAccountId,
   testnetMatchingPrivateRecord,
@@ -21,6 +22,8 @@ import type { AleoPrivateRecord, AleoPublicTransaction } from "../types";
 import {
   accessProvableApi,
   fetchAllOwnedRecords,
+  fetchAllTransitionsFromHeight,
+  fetchTransitionPage,
   getTokenOutDetails,
   patchPublicOperations,
 } from "./utils";
@@ -89,6 +92,53 @@ describe("accessProvableApi", () => {
         provableApi: { uuid: "00000000-0000-0000-0000-000000000000" },
       }),
     ).rejects.toBeInstanceOf(AleoApiConfigurationResetError);
+  });
+});
+
+const rowKey = (tx: AleoPublicTransaction) => tx.transition_id;
+
+describe("paging the public transition stream", () => {
+  it("reaches every transition of an account with blocks holding several of them", async () => {
+    const whole = await fetchAllTransitionsFromHeight({
+      config,
+      address: testnetDenseHistoryAddress,
+      minBlockHeight: 0,
+    });
+
+    const blocks = new Set(whole.map(tx => tx.block_number));
+    expect(whole.length).toBeGreaterThan(50);
+    // Guard on the fixture itself: a block holding one row each could not expose the bug this covers.
+    expect(blocks.size).toBeLessThan(whole.length);
+    expect(new Set(whole.map(rowKey)).size).toBe(whole.length);
+  });
+
+  it("pages to the same set of rows as one full walk, cutting only on block boundaries", async () => {
+    const whole = await fetchAllTransitionsFromHeight({
+      config,
+      address: testnetDenseHistoryAddress,
+      minBlockHeight: 0,
+    });
+
+    const paged: AleoPublicTransaction[] = [];
+    let cursor: { blockNumber: number; transitionId?: string } | undefined;
+
+    for (let page = 0; page < 40; page++) {
+      const result = await fetchTransitionPage({
+        config,
+        address: testnetDenseHistoryAddress,
+        ...(cursor && { cursor }),
+      });
+      paged.push(...result.transitions);
+
+      if (result.next === null) break;
+      // Every page but the last stops on a block boundary, so its rows can be paired with the
+      // block-granular record scanner.
+      expect(result.next.blockNumber).toBe(result.transitions.at(-1)?.block_number);
+      cursor = result.next;
+    }
+
+    expect(new Set(paged.map(rowKey)).size).toBe(paged.length);
+    expect(paged.map(rowKey).sort()).toEqual(whole.map(rowKey).sort());
   });
 });
 

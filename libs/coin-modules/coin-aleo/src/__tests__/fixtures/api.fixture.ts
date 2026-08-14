@@ -215,6 +215,11 @@ export const testnetViewKey = "AViewKey1jyaKC65RhaGN3b6h79hLdwTBk3YAMbRL1MMeCArL
 export const testnetAddress = "aleo1uhf67fhy46jvv5hadf586pkdarax6ppuzq8xtpk7jdk9hhujku8sfa39ml";
 export const testnetLedgerAccountId = `js:2:aleo_testnet:${testnetAddress}:`;
 
+// Hundreds of transitions spread over far fewer blocks (one block holds 11), so paging its history
+// crosses block boundaries mid-block. `testnetAddress` is too small to reach a second page at all.
+export const testnetDenseHistoryAddress =
+  "aleo1zcwqycj02lccfuu57dzjhva7w5dpzc7pngl0sxjhp58t6vlnnqxs6lnp6f";
+
 // Inbound native transfer_public from a third party.
 export const referenceTransferPublicTx = {
   id: "at1tywkrphxmm47ry8zrr30h27ae9st4lnza295mkgu0tgals2qlqpsy797ng",

@@ -224,21 +224,24 @@ describe("createApi", () => {
       expect(result).toEqual({ items: [mockOperation], next: "next-cursor" });
     });
 
+    // Neither half can be enriched after the fact, so a context missing one of them lists the public
+    // history rather than failing the whole call.
     it.each([
       ["no pair at all", {}],
       ["only provableId", { provableId: "uuid-1" }],
       ["only viewKey", { viewKey: "AViewKey1secret" }],
-    ])("should reject a context carrying %s before resolving the config", async (_l, partial) => {
+    ])("should list without the private half for a context carrying %s", async (_l, partial) => {
       const api = createApi("aleo");
-      const configSpy = jest.fn(async () => mockConfig);
+      const options = { minHeight: 1 };
 
-      await expect(
-        api.listOperations({ ...context, ...partial, config: configSpy }, "aleo1test", {
-          minHeight: 1,
-        }),
-      ).rejects.toThrow(/requires provableId and viewKey/);
-      expect(configSpy).not.toHaveBeenCalled();
-      expect(mockedListOperations).not.toHaveBeenCalled();
+      await api.listOperations({ ...context, ...partial }, "aleo1test", options);
+
+      expect(mockedListOperations).toHaveBeenCalledWith({
+        config: mockConfig,
+        address: "aleo1test",
+        options,
+        ...partial,
+      });
     });
   });
 

@@ -14,7 +14,6 @@ import {
 } from "../__tests__/fixtures/api.fixture";
 import { setupCalStore } from "../__tests__/helpers/cal";
 import { getPristineAccount } from "../__tests__/helpers/account";
-import { encodeOperationsCursor } from "../logic/listOperations.helpers";
 import { accessProvableApi } from "../network/utils";
 import type { AleoContext } from "../types";
 
@@ -72,11 +71,7 @@ describe("createApi", () => {
         minHeight: MIN_BLOCK_HEIGHT,
         limit: overrides?.limit ?? 200,
         ...(overrides?.order && { order: overrides.order }),
-        cursor: encodeOperationsCursor({
-          minHeight: MIN_BLOCK_HEIGHT,
-          maxBlockHeight: MAX_BLOCK_HEIGHT,
-          order: overrides?.order ?? "asc",
-        }),
+        cursor: `${MAX_BLOCK_HEIGHT}`,
       });
 
     it("returns each transaction exactly once over the range", async () => {
@@ -115,10 +110,10 @@ describe("createApi", () => {
     it("returns a failed operation for a known rejected transaction", async () => {
       const { items } = await listPinnedRange();
 
-      // this account's only Rejected txs are self-transfers (sender === recipient), which
-      // classify as type "IN" (see referenceFailedTransferPublicTx in api.fixture.ts)
+      // This account's only Rejected txs are self-transfers (sender === recipient). Senders win over
+      // recipients, so they read OUT — the balance they leave is the public one.
       expect(items.find(op => op.tx.hash === referenceFailedTransferPublicTx.id)).toMatchObject({
-        type: "IN",
+        type: "OUT",
         value: BigInt(referenceFailedTransferPublicTx.value),
         asset: { type: "native" },
         senders: [referenceFailedTransferPublicTx.sender],
@@ -176,60 +171,58 @@ describe("createApi", () => {
       expect(heights).toEqual(expected);
     });
 
+    // Pages are cut on block boundaries, so a page carries as many operations as its blocks happen to
+    // hold rather than exactly `limit`. What has to hold is that the page size never changes the set
+    // of operations a full walk produces, and that no operation is served twice.
     it("pages the range with a stable, non-overlapping cursor", async () => {
-      const { items: all } = await listPinnedRange();
-      invariant(all.length > 4, "guard: pinned range must span more than four operations");
+      const walk = async (limit: number) => {
+        const items: Awaited<ReturnType<typeof listPinnedRange>>["items"] = [];
+        let cursor = `${MAX_BLOCK_HEIGHT}`;
 
-      const { items: page1, next: cursor1 } = await listPinnedRange({ limit: 2 });
-      expect(page1).toEqual(all.slice(0, 2));
-      invariant(cursor1, "guard: missing cursor after first page");
+        for (let page = 0; page < 30; page++) {
+          const result = await api.listOperations(context, testnetAddress, {
+            minHeight: MIN_BLOCK_HEIGHT,
+            limit,
+            cursor,
+          });
+          items.push(...result.items);
+          if (!result.next) return items;
+          cursor = result.next;
+        }
 
-      const { items: page2 } = await api.listOperations(context, testnetAddress, {
-        minHeight: MIN_BLOCK_HEIGHT,
-        limit: 2,
-        cursor: cursor1,
-      });
+        throw new Error("guard: listing did not terminate");
+      };
 
-      expect(page2).toEqual(all.slice(2, 4));
-      const page1Hashes = new Set(page1.map(op => op.tx.hash));
-      expect(page2.some(op => page1Hashes.has(op.tx.hash))).toBe(false);
+      const coarse = await walk(50);
+      const fine = await walk(5);
+
+      invariant(coarse.length > 4, "guard: pinned range must span more than four operations");
+      expect(new Set(coarse.map(op => op.id)).size).toBe(coarse.length);
+      expect(fine.map(op => op.id)).toEqual(coarse.map(op => op.id));
     });
 
     it("returns an empty page when the range is empty", async () => {
       const result = await api.listOperations(context, testnetAddress, {
         minHeight: MAX_BLOCK_HEIGHT,
-        cursor: encodeOperationsCursor({
-          minHeight: MAX_BLOCK_HEIGHT,
-          maxBlockHeight: MIN_BLOCK_HEIGHT,
-          order: "asc",
-        }),
+        cursor: `${MIN_BLOCK_HEIGHT}`,
       });
 
       expect(result).toEqual({ items: [], next: undefined });
-    });
-
-    it("rejects a cursor replayed against a different range", async () => {
-      const { next } = await listPinnedRange({ limit: 2 });
-      invariant(next, "guard: missing cursor after first page");
-
-      await expect(
-        api.listOperations(context, testnetAddress, {
-          minHeight: MIN_BLOCK_HEIGHT + 1,
-          cursor: next,
-        }),
-      ).rejects.toThrow(/does not match the requested range/);
     });
 
     it.each([
       ["no pair at all", () => ({})],
       ["only provableId", () => ({ provableId })],
       ["only viewKey", () => ({ viewKey: testnetViewKey })],
-    ])("throws when the context carries %s", async (_label, partial) => {
-      await expect(
-        api.listOperations({ ...contextWithoutPair, ...partial() }, testnetAddress, {
-          minHeight: MIN_BLOCK_HEIGHT,
-        }),
-      ).rejects.toThrow(/requires provableId and viewKey/);
+    ])("lists the public history alone when the context carries %s", async (_label, partial) => {
+      const { items } = await api.listOperations(
+        { ...contextWithoutPair, ...partial() },
+        testnetAddress,
+        { minHeight: MIN_BLOCK_HEIGHT, limit: 5, cursor: `${MAX_BLOCK_HEIGHT}` },
+      );
+
+      expect(items.length).toBeGreaterThan(0);
+      expect(items.every(op => op.details?.transactionType !== "private")).toBe(true);
     });
 
     it("throws for an unknown scanner enrollment id", async () => {

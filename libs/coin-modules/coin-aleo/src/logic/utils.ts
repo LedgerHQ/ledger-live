@@ -157,25 +157,13 @@ export const determineTransactionType = (
   return "public";
 };
 
-// Self-transfer reads IN here; toMergedOperation uses senders-first (OUT) for shield/unshield symmetry.
-function resolvePublicOperationType(rawTx: AleoPublicTransaction, address: string): OperationType {
-  return address === rawTx.recipient_address ? "IN" : "OUT";
-}
-
-function parseTransactionFields(rawTx: AleoPublicTransaction, address: string) {
-  const date = new Date(Number(rawTx.block_timestamp) * 1000);
-  const hasFailed = rawTx.transaction_status !== "Accepted";
-  const fee = rawTx.fee;
-  const blockHash = rawTx.block_hash;
-
-  // Token programs stay NONE here: the bridge derives its operation id from `type`, so widening it
-  // would renumber every persisted token operation. The coin-module mapper resolves its own.
-  const type: OperationType =
-    rawTx.program_id === PROGRAM_ID.CREDITS ? resolvePublicOperationType(rawTx, address) : "NONE";
-
-  const transactionType = determineTransactionType(rawTx.function_id, type);
-
-  return { type, fee, blockHash, transactionType, date, hasFailed };
+function parseTransactionFields(rawTx: AleoPublicTransaction) {
+  return {
+    date: new Date(Number(rawTx.block_timestamp) * 1000),
+    hasFailed: rawTx.transaction_status !== "Accepted",
+    fee: rawTx.fee,
+    blockHash: rawTx.block_hash,
+  };
 }
 
 export function toOperationAsset(programId: string): AssetInfo {
@@ -183,40 +171,6 @@ export function toOperationAsset(programId: string): AssetInfo {
     ? { type: "native" }
     : { type: "arc22", assetReference: programId };
 }
-
-export const toCoinFrameworkOperation = (
-  rawTx: AleoPublicTransaction,
-  address: string,
-): CoinFrameworkOperation => {
-  const { fee, blockHash, date, hasFailed } = parseTransactionFields(rawTx, address);
-  const type = resolvePublicOperationType(rawTx, address);
-  const transactionType = determineTransactionType(rawTx.function_id, type);
-
-  return {
-    id: rawTx.transaction_id.trim(),
-    type,
-    recipients: [rawTx.recipient_address],
-    senders: [rawTx.sender_address],
-    value: BigInt(rawTx.amount.toFixed(0)),
-    asset: toOperationAsset(rawTx.program_id),
-    details: {
-      functionId: rawTx.function_id,
-      transactionType,
-      ledgerOpType: type,
-    },
-    tx: {
-      hash: rawTx.transaction_id.trim(),
-      fees: BigInt(fee.toFixed(0)),
-      date: date,
-      block: {
-        hash: blockHash,
-        height: rawTx.block_number,
-        time: date,
-      },
-      failed: hasFailed ?? false,
-    },
-  };
-};
 
 export const toCoinFrameworkPrivateOperation = (
   enrichedRecord: EnrichedPrivateRecord,
@@ -253,38 +207,52 @@ export const toCoinFrameworkPrivateOperation = (
   };
 };
 
-// Senders-first: a shield and an unshield both report OUT of the balance they leave, even when the account appears on both sides.
-function resolveOperationType(
-  senders: string[],
-  recipients: string[],
-  address: string,
-): OperationType {
-  if (senders.includes(address)) return "OUT";
-  if (recipients.includes(address)) return "IN";
-  return "NONE";
-}
-
+/**
+ * The account's own view of a public transaction, merged with what its private records reveal.
+ *
+ * `hasOwnedRecord` means a record the account owns shares this transaction, so an address the
+ * explorer left blank is the account's own private side. Senders win over recipients: a shield and an
+ * unshield both leave the balance they came from, even when the account is on both sides.
+ */
 export const toMergedOperation = (
   rawTx: AleoPublicTransaction,
   address: string,
   hasOwnedRecord: boolean,
 ): CoinFrameworkOperation => {
-  const operation = toCoinFrameworkOperation(rawTx, address);
-  if (!hasOwnedRecord) return operation;
-
-  const senders = rawTx.sender_address ? operation.senders : [address];
-  const recipients = rawTx.recipient_address ? operation.recipients : [address];
-  const type = resolveOperationType(senders, recipients, address);
+  const { fee, blockHash, date, hasFailed } = parseTransactionFields(rawTx);
+  const hash = rawTx.transaction_id.trim();
+  const senders = [!rawTx.sender_address && hasOwnedRecord ? address : rawTx.sender_address];
+  const recipients = [
+    !rawTx.recipient_address && hasOwnedRecord ? address : rawTx.recipient_address,
+  ];
+  const type: OperationType = senders.includes(address)
+    ? "OUT"
+    : recipients.includes(address)
+      ? "IN"
+      : "NONE";
 
   return {
-    ...operation,
+    id: hash,
     type,
     senders,
     recipients,
+    value: BigInt(rawTx.amount.toFixed(0)),
+    asset: toOperationAsset(rawTx.program_id),
     details: {
-      ...operation.details,
+      functionId: rawTx.function_id,
       transactionType: determineTransactionType(rawTx.function_id, type),
       ledgerOpType: type,
+    },
+    tx: {
+      hash,
+      fees: BigInt(fee.toFixed(0)),
+      date,
+      block: {
+        hash: blockHash,
+        height: rawTx.block_number,
+        time: date,
+      },
+      failed: hasFailed,
     },
   };
 };
@@ -296,10 +264,16 @@ export const toBridgeOperation = (
   isTokenTx?: boolean,
 ): AleoOperation => {
   const value = new BigNumber(rawTx.amount);
-  const { type, fee, blockHash, transactionType, date, hasFailed } = parseTransactionFields(
-    rawTx,
-    address,
-  );
+  const { fee, blockHash, date, hasFailed } = parseTransactionFields(rawTx);
+  // Token programs stay NONE: the operation id below is derived from `type`, so widening it would
+  // renumber every token operation already persisted in an account.
+  const type: OperationType =
+    rawTx.program_id === PROGRAM_ID.CREDITS
+      ? address === rawTx.recipient_address
+        ? "IN"
+        : "OUT"
+      : "NONE";
+  const transactionType = determineTransactionType(rawTx.function_id, type);
 
   if (value.isNaN() || value.lte(0)) {
     log("aleo/toBridgeOperation", `Invalid raw transaction details for ${address}`, rawTx);

@@ -21,8 +21,8 @@ import { getMockedOperation } from "../__tests__/fixtures/operation.fixture";
 import { accessProvableApi } from "./utils";
 import { apiClient } from "./api";
 import {
-  fetchAccountTransactionsFromHeight,
-  fetchAccountTransitionPage,
+  fetchAllTransitionsFromHeight,
+  fetchTransitionPage,
   fetchAllOwnedRecords,
   enrichPrivateRecord,
   patchPublicOperations,
@@ -54,357 +54,196 @@ describe("network/utils", () => {
     jest.clearAllMocks();
   });
 
-  describe("fetchAccountTransactionsFromHeight", () => {
-    describe("with fetchAllPages=true", () => {
-      it("should fetch all transactions across multiple pages", async () => {
-        const minBlockHeight = 100;
-        const mockPage1Txs = [
+  describe("fetchAllTransitionsFromHeight", () => {
+    const mockGetTransactions = jest.mocked(apiClient.getAccountPublicTransactions);
+
+    it("should fetch all transactions across multiple pages", async () => {
+      const page1 = [
+        getMockedPublicTransaction({ block_number: 150, transition_id: "au1" }),
+        getMockedPublicTransaction({ block_number: 140, transition_id: "au2" }),
+      ];
+      const page2 = [
+        getMockedPublicTransaction({ block_number: 130, transition_id: "au3" }),
+        getMockedPublicTransaction({ block_number: 120, transition_id: "au4" }),
+      ];
+
+      mockGetTransactions
+        .mockResolvedValueOnce({
+          address: mockAddress,
+          transactions: page1,
+          next_cursor: { block_number: 140, transition_id: "au2" },
+        })
+        .mockResolvedValueOnce({ address: mockAddress, transactions: page2 });
+
+      const transitions = await fetchAllTransitionsFromHeight({
+        config: mockConfig,
+        address: mockAddress,
+        minBlockHeight: 100,
+      });
+
+      expect(mockGetTransactions).toHaveBeenCalledTimes(2);
+      expect(mockGetTransactions).toHaveBeenNthCalledWith(1, {
+        config: mockConfig,
+        address: mockAddress,
+        order: "asc",
+      });
+      // Resuming on the block alone would skip whatever else block 140 holds.
+      expect(mockGetTransactions).toHaveBeenNthCalledWith(2, {
+        config: mockConfig,
+        address: mockAddress,
+        order: "asc",
+        cursor: { blockNumber: 140, transitionId: "au2" },
+      });
+      expect(transitions).toHaveLength(4);
+    });
+
+    it("should filter out transactions below minBlockHeight", async () => {
+      mockGetTransactions.mockResolvedValueOnce({
+        address: mockAddress,
+        transactions: [
           getMockedPublicTransaction({ block_number: 150 }),
           getMockedPublicTransaction({ block_number: 140 }),
-        ];
-        const mockPage2Txs = [
-          getMockedPublicTransaction({ block_number: 130 }),
           getMockedPublicTransaction({ block_number: 120 }),
-        ];
-
-        jest
-          .mocked(apiClient.getAccountPublicTransactions)
-          .mockResolvedValueOnce({
-            address: mockAddress,
-            transactions: mockPage1Txs,
-            next_cursor: { block_number: 140, transition_id: "au1" },
-          })
-          .mockResolvedValueOnce({
-            address: mockAddress,
-            transactions: mockPage2Txs,
-          });
-
-        const result = await fetchAccountTransactionsFromHeight({
-          config: mockConfig,
-          address: mockAddress,
-          fetchAllPages: true,
-          minBlockHeight,
-        });
-
-        expect(apiClient.getAccountPublicTransactions).toHaveBeenCalledTimes(2);
-        expect(apiClient.getAccountPublicTransactions).toHaveBeenNthCalledWith(1, {
-          config: mockConfig,
-          address: mockAddress,
-          limit: 50,
-          order: "asc",
-        });
-        expect(apiClient.getAccountPublicTransactions).toHaveBeenNthCalledWith(2, {
-          config: mockConfig,
-          address: mockAddress,
-          limit: 50,
-          order: "asc",
-          cursor: "140",
-        });
-        expect(result.transactions).toHaveLength(4);
-        expect(result.nextCursor).toBeNull();
+          getMockedPublicTransaction({ block_number: 100 }),
+        ],
       });
 
-      it("should filter out transactions below minBlockHeight", async () => {
-        const minBlockHeight = 130;
-        const mockTxs = [
-          getMockedPublicTransaction({ block_number: 150 }),
-          getMockedPublicTransaction({ block_number: 140 }),
-          getMockedPublicTransaction({ block_number: 120 }), // below min
-          getMockedPublicTransaction({ block_number: 100 }), // below min
-        ];
-
-        jest.mocked(apiClient.getAccountPublicTransactions).mockResolvedValueOnce({
-          address: mockAddress,
-          transactions: mockTxs,
-        });
-
-        const result = await fetchAccountTransactionsFromHeight({
-          config: mockConfig,
-          address: mockAddress,
-          fetchAllPages: true,
-          minBlockHeight,
-        });
-
-        expect(apiClient.getAccountPublicTransactions).toHaveBeenCalledTimes(1);
-        expect(apiClient.getAccountPublicTransactions).toHaveBeenCalledWith({
-          config: mockConfig,
-          address: mockAddress,
-          limit: 50,
-          order: "asc",
-        });
-        expect(result.transactions).toHaveLength(2);
-        expect(result.transactions[0].block_number).toBe(150);
-        expect(result.transactions[1].block_number).toBe(140);
-        expect(result.nextCursor).toBeNull();
+      const transitions = await fetchAllTransitionsFromHeight({
+        config: mockConfig,
+        address: mockAddress,
+        minBlockHeight: 130,
       });
 
-      it("should handle descending order and stop at minBlockHeight", async () => {
-        const minBlockHeight = 130;
-        const mockTxs = [
+      expect(transitions.map(tx => tx.block_number)).toEqual([150, 140]);
+    });
+
+    it("should handle descending order and stop at minBlockHeight", async () => {
+      mockGetTransactions.mockResolvedValueOnce({
+        address: mockAddress,
+        transactions: [
           getMockedPublicTransaction({ block_number: 150 }),
           getMockedPublicTransaction({ block_number: 140 }),
-          getMockedPublicTransaction({ block_number: 120 }), // below min - should stop
-        ];
+          getMockedPublicTransaction({ block_number: 120 }),
+        ],
+        next_cursor: { block_number: 120, transition_id: "au1" },
+      });
 
-        jest.mocked(apiClient.getAccountPublicTransactions).mockResolvedValueOnce({
-          address: mockAddress,
-          transactions: mockTxs,
-          next_cursor: { block_number: 120, transition_id: "au1" },
-        });
+      const transitions = await fetchAllTransitionsFromHeight({
+        config: mockConfig,
+        address: mockAddress,
+        minBlockHeight: 130,
+        order: "desc",
+      });
 
-        const result = await fetchAccountTransactionsFromHeight({
-          config: mockConfig,
-          address: mockAddress,
-          fetchAllPages: true,
-          minBlockHeight,
-          order: "desc",
-        });
+      expect(mockGetTransactions).toHaveBeenCalledTimes(1);
+      expect(transitions).toHaveLength(2);
+    });
 
-        expect(apiClient.getAccountPublicTransactions).toHaveBeenCalledTimes(1);
-        expect(apiClient.getAccountPublicTransactions).toHaveBeenCalledWith({
-          config: mockConfig,
-          address: mockAddress,
-          limit: 50,
-          order: "desc",
-        });
-        expect(result.transactions).toHaveLength(2);
-        expect(result.nextCursor).toBeNull();
+    it("starts from the caller's cursor", async () => {
+      mockGetTransactions.mockResolvedValueOnce({
+        address: mockAddress,
+        transactions: [getMockedPublicTransaction({ block_number: 190 })],
+      });
+
+      await fetchAllTransitionsFromHeight({
+        config: mockConfig,
+        address: mockAddress,
+        minBlockHeight: 100,
+        cursor: { blockNumber: 200 },
+      });
+
+      expect(mockGetTransactions).toHaveBeenCalledWith({
+        config: mockConfig,
+        address: mockAddress,
+        order: "asc",
+        cursor: { blockNumber: 200 },
       });
     });
 
-    describe("with fetchAllPages=false (pagination mode)", () => {
-      it("should return limited transactions with cursor", async () => {
-        const limit = 2;
-        const minBlockHeight = 100;
-        const mockTxs = [
-          getMockedPublicTransaction({
-            block_number: 150,
-            transaction_id: "tx1",
-          }),
-          getMockedPublicTransaction({
-            block_number: 140,
-            transaction_id: "tx2",
-          }),
-          getMockedPublicTransaction({
-            block_number: 130,
-            transaction_id: "tx3",
-          }),
-        ];
+    it("should handle empty transaction list", async () => {
+      mockGetTransactions.mockResolvedValueOnce({ address: mockAddress, transactions: [] });
 
-        jest.mocked(apiClient.getAccountPublicTransactions).mockResolvedValueOnce({
-          address: mockAddress,
-          transactions: mockTxs,
-          next_cursor: { block_number: 130, transition_id: "au1" },
-        });
-
-        const result = await fetchAccountTransactionsFromHeight({
-          config: mockConfig,
-          address: mockAddress,
-          fetchAllPages: false,
-          minBlockHeight,
-          limit,
-        });
-
-        expect(apiClient.getAccountPublicTransactions).toHaveBeenCalledTimes(1);
-        expect(apiClient.getAccountPublicTransactions).toHaveBeenCalledWith({
-          config: mockConfig,
-          address: mockAddress,
-          limit,
-          order: "asc",
-        });
-        expect(result.transactions).toHaveLength(2);
-        expect(result.nextCursor).toBe("140");
+      const transitions = await fetchAllTransitionsFromHeight({
+        config: mockConfig,
+        address: mockAddress,
+        minBlockHeight: 100,
       });
 
-      it("should handle no more pages scenario", async () => {
-        const limit = 10;
-        const minBlockHeight = 100;
-        const mockTxs = [
-          getMockedPublicTransaction({ block_number: 150 }),
-          getMockedPublicTransaction({ block_number: 140 }),
-        ];
+      expect(transitions).toHaveLength(0);
+    });
 
-        jest.mocked(apiClient.getAccountPublicTransactions).mockResolvedValueOnce({
-          address: mockAddress,
-          transactions: mockTxs,
-        });
-
-        const result = await fetchAccountTransactionsFromHeight({
-          config: mockConfig,
-          address: mockAddress,
-          fetchAllPages: false,
-          minBlockHeight,
-          limit,
-        });
-
-        expect(apiClient.getAccountPublicTransactions).toHaveBeenCalledTimes(1);
-        expect(apiClient.getAccountPublicTransactions).toHaveBeenCalledWith({
-          config: mockConfig,
-          address: mockAddress,
-          limit,
-          order: "asc",
-        });
-        expect(result.transactions).toHaveLength(2);
-        expect(result.nextCursor).toBeNull();
+    it("stops when the explorer reports no further page", async () => {
+      mockGetTransactions.mockResolvedValueOnce({
+        address: mockAddress,
+        transactions: [getMockedPublicTransaction({ block_number: 150 })],
       });
 
-      it("should use provided cursor for pagination", async () => {
-        const cursor = "200";
-        const minBlockHeight = 100;
-        const mockTxs = [getMockedPublicTransaction({ block_number: 190 })];
+      await fetchAllTransitionsFromHeight({
+        config: mockConfig,
+        address: mockAddress,
+        minBlockHeight: 100,
+        order: "desc",
+      });
 
-        jest.mocked(apiClient.getAccountPublicTransactions).mockResolvedValueOnce({
-          address: mockAddress,
-          transactions: mockTxs,
-        });
-
-        await fetchAccountTransactionsFromHeight({
-          config: mockConfig,
-          address: mockAddress,
-          fetchAllPages: false,
-          minBlockHeight,
-          cursor,
-        });
-
-        expect(apiClient.getAccountPublicTransactions).toHaveBeenCalledTimes(1);
-        expect(apiClient.getAccountPublicTransactions).toHaveBeenCalledWith({
-          config: mockConfig,
-          address: mockAddress,
-          limit: 50,
-          order: "asc",
-          cursor,
-        });
+      expect(mockGetTransactions).toHaveBeenCalledTimes(1);
+      expect(mockGetTransactions).toHaveBeenCalledWith({
+        config: mockConfig,
+        address: mockAddress,
+        order: "desc",
       });
     });
 
-    describe("edge cases", () => {
-      it("should handle empty transaction list", async () => {
-        const minBlockHeight = 100;
+    it("should skip batcher outer call transitions that have transfer in function_id but empty addresses", async () => {
+      const commonTxId = "at1batcher";
 
-        jest.mocked(apiClient.getAccountPublicTransactions).mockResolvedValueOnce({
-          address: mockAddress,
-          transactions: [],
-        });
-
-        const result = await fetchAccountTransactionsFromHeight({
-          config: mockConfig,
-          address: mockAddress,
-          fetchAllPages: true,
-          minBlockHeight,
-        });
-
-        expect(result.transactions).toHaveLength(0);
-        expect(result.nextCursor).toBeNull();
+      // batcher outer call: function_id contains "transfer" but no account involvement
+      // testnet example: at1lqugdt847uwnfem2xhzwq6ewrnd6ysjv2gumvglytskutxj3kcpsmc3rrf
+      const batcherOuterCall = getMockedPublicTransaction({
+        block_number: 150,
+        transaction_id: commonTxId,
+        function_id: "transfer_private_to_public_8",
+        sender_address: "",
+        recipient_address: "",
+        amount: 0,
       });
 
-      it("should respect custom limit parameter", async () => {
-        const customLimit = 25;
-        const minBlockHeight = 100;
-        const mockTxs = [getMockedPublicTransaction({ block_number: 150 })];
-
-        jest.mocked(apiClient.getAccountPublicTransactions).mockResolvedValueOnce({
-          address: mockAddress,
-          transactions: mockTxs,
-        });
-
-        await fetchAccountTransactionsFromHeight({
-          config: mockConfig,
-          address: mockAddress,
-          fetchAllPages: true,
-          minBlockHeight,
-          limit: customLimit,
-        });
-
-        expect(apiClient.getAccountPublicTransactions).toHaveBeenCalledTimes(1);
-        expect(apiClient.getAccountPublicTransactions).toHaveBeenCalledWith({
-          config: mockConfig,
-          address: mockAddress,
-          limit: customLimit,
-          order: "asc",
-        });
+      // inner transition for the same tx — carries the real amount and addresses
+      const realTransfer = getMockedPublicTransaction({
+        block_number: 150,
+        transaction_id: commonTxId,
+        function_id: "transfer_private_to_public",
+        sender_address: "",
+        recipient_address: "aleo1recipient",
+        amount: 1000000,
       });
 
-      it("should handle descending order parameter", async () => {
-        const minBlockHeight = 100;
-        const mockTxs = [getMockedPublicTransaction({ block_number: 150 })];
-
-        jest.mocked(apiClient.getAccountPublicTransactions).mockResolvedValueOnce({
-          address: mockAddress,
-          transactions: mockTxs,
-        });
-
-        await fetchAccountTransactionsFromHeight({
-          config: mockConfig,
-          address: mockAddress,
-          fetchAllPages: true,
-          minBlockHeight,
-          order: "desc",
-        });
-
-        expect(apiClient.getAccountPublicTransactions).toHaveBeenCalledTimes(1);
-        expect(apiClient.getAccountPublicTransactions).toHaveBeenCalledWith({
-          config: mockConfig,
-          address: mockAddress,
-          limit: 50,
-          order: "desc",
-        });
+      // standalone NONE operation with empty addresses — must NOT be filtered
+      const initializeTx = getMockedPublicTransaction({
+        block_number: 150,
+        transaction_id: "at1initialize",
+        function_id: "initialize",
+        sender_address: "",
+        recipient_address: "",
+        amount: 0,
       });
 
-      it("should skip batcher outer call transitions that have transfer in function_id but empty addresses", async () => {
-        const minBlockHeight = 100;
-        const commonTxId = "at1batcher";
-
-        // batcher outer call: function_id contains "transfer" but no account involvement
-        // testnet example: at1lqugdt847uwnfem2xhzwq6ewrnd6ysjv2gumvglytskutxj3kcpsmc3rrf
-        const batcherOuterCall = getMockedPublicTransaction({
-          block_number: 150,
-          transaction_id: commonTxId,
-          function_id: "transfer_private_to_public_8",
-          sender_address: "",
-          recipient_address: "",
-          amount: 0,
-        });
-
-        // inner transition for the same tx — carries the real amount and addresses
-        const realTransfer = getMockedPublicTransaction({
-          block_number: 150,
-          transaction_id: commonTxId,
-          function_id: "transfer_private_to_public",
-          sender_address: "",
-          recipient_address: "aleo1recipient",
-          amount: 1000000,
-        });
-
-        // standalone NONE operation with empty addresses — must NOT be filtered
-        const initializeTx = getMockedPublicTransaction({
-          block_number: 150,
-          transaction_id: "at1initialize",
-          function_id: "initialize",
-          sender_address: "",
-          recipient_address: "",
-          amount: 0,
-        });
-
-        jest.mocked(apiClient.getAccountPublicTransactions).mockResolvedValueOnce({
-          address: mockAddress,
-          transactions: [batcherOuterCall, realTransfer, initializeTx],
-        });
-
-        const result = await fetchAccountTransactionsFromHeight({
-          config: mockConfig,
-          address: mockAddress,
-          fetchAllPages: true,
-          minBlockHeight,
-        });
-
-        expect(result.transactions).toHaveLength(2);
-        expect(result.transactions).toContainEqual(realTransfer);
-        expect(result.transactions).toContainEqual(initializeTx);
-        expect(result.transactions).not.toContainEqual(batcherOuterCall);
+      mockGetTransactions.mockResolvedValueOnce({
+        address: mockAddress,
+        transactions: [batcherOuterCall, realTransfer, initializeTx],
       });
+
+      const transitions = await fetchAllTransitionsFromHeight({
+        config: mockConfig,
+        address: mockAddress,
+        minBlockHeight: 100,
+      });
+
+      expect(transitions).toHaveLength(2);
+      expect(transitions).toContainEqual(realTransfer);
+      expect(transitions).toContainEqual(initializeTx);
+      expect(transitions).not.toContainEqual(batcherOuterCall);
     });
   });
-
   describe("accessProvableApi", () => {
     const mockViewKey = "AViewKey1mockviewkey";
     const mockUUID = "uuid-abc-def";
@@ -1794,168 +1633,162 @@ describe("network/utils", () => {
     });
   });
 
-  describe("fetchAccountTransitionPage", () => {
+  describe("fetchTransitionPage", () => {
     const mockGetTransactions = jest.mocked(apiClient.getAccountPublicTransactions);
 
-    const transition = (transactionId: string, blockNumber: number) =>
+    const transition = (transitionId: string, blockNumber: number) =>
       getMockedPublicTransaction({
-        transaction_id: transactionId,
+        transaction_id: `at1${transitionId}`,
+        transition_id: transitionId,
         block_number: blockNumber,
       });
 
-    const explorerPage = (
-      transactions: ReturnType<typeof transition>[],
-      nextBlock: number | null,
-    ) => ({
+    // The explorer echoes the last row it returned on every page, including the last one.
+    const explorerPage = (transactions: ReturnType<typeof transition>[], exhausted = false) => ({
       address: mockAddress,
       transactions,
-      ...(nextBlock !== null && {
-        next_cursor: { block_number: nextBlock, transition_id: "au1" },
-      }),
+      ...(!exhausted &&
+        transactions.length > 0 && {
+          next_cursor: {
+            block_number: transactions[transactions.length - 1].block_number,
+            transition_id: transactions[transactions.length - 1].transition_id,
+          },
+        }),
     });
 
-    const fetchPage = (minTransactions: number, fromBlock = 0, toBlock = Number.MAX_SAFE_INTEGER) =>
-      fetchAccountTransitionPage({
-        config: mockConfig,
-        address: mockAddress,
-        fromBlock,
-        toBlock,
-        minTransactions,
-      });
+    const fetchPage = (cursor?: { blockNumber: number; transitionId?: string }) =>
+      fetchTransitionPage({ config: mockConfig, address: mockAddress, ...(cursor && { cursor }) });
 
     beforeEach(() => jest.clearAllMocks());
 
-    it("starts the ascending walk at the requested block", async () => {
-      mockGetTransactions.mockResolvedValue(explorerPage([transition("tx1", 500)], null));
+    it("passes the caller's cursor through untouched", async () => {
+      mockGetTransactions.mockResolvedValue(explorerPage([transition("au1", 500)], true));
 
-      await fetchPage(5, 500);
+      await fetchPage({ blockNumber: 499, transitionId: "au0" });
 
       expect(mockGetTransactions).toHaveBeenCalledWith(
-        expect.objectContaining({ cursor: "500", limit: 50, order: "asc" }),
+        expect.objectContaining({
+          cursor: { blockNumber: 499, transitionId: "au0" },
+          order: "asc",
+        }),
       );
     });
 
-    it("reports no next block once the explorer runs out", async () => {
+    it("keeps every row once the explorer runs out, open block included", async () => {
       mockGetTransactions.mockResolvedValue(
-        explorerPage([transition("tx1", 100), transition("tx2", 101)], null),
+        explorerPage([transition("au1", 100), transition("au2", 101)], true),
       );
 
-      const { transitions, nextBlock } = await fetchPage(5);
+      const { transitions, next } = await fetchPage();
 
-      expect(transitions).toHaveLength(2);
-      expect(nextBlock).toBeNull();
+      expect(transitions.map(tx => tx.transition_id)).toEqual(["au1", "au2"]);
+      expect(next).toBeNull();
       expect(mockGetTransactions).toHaveBeenCalledTimes(1);
     });
 
-    it("cuts the page on a block boundary and resumes at the next block", async () => {
-      mockGetTransactions
-        .mockResolvedValueOnce(explorerPage([transition("tx1", 100)], 101))
-        .mockResolvedValueOnce(explorerPage([transition("tx2", 101)], 102));
-
-      const { transitions, nextBlock } = await fetchPage(1);
-
-      expect(transitions.map(tx => tx.transaction_id)).toEqual(["tx1"]);
-      expect(nextBlock).toBe(101);
-    });
-
-    it("returns a block denser than the target whole rather than splitting it", async () => {
-      mockGetTransactions
-        .mockResolvedValueOnce(explorerPage([transition("tx1", 100)], 100))
-        .mockResolvedValueOnce(explorerPage([transition("tx2", 100)], 100))
-        .mockResolvedValueOnce(explorerPage([transition("tx3", 100), transition("tx4", 101)], 102));
-
-      const { transitions, nextBlock } = await fetchPage(1);
-
-      expect(transitions.map(tx => tx.transaction_id)).toEqual(["tx1", "tx2", "tx3"]);
-      expect(nextBlock).toBe(101);
-    });
-
-    it("keeps paging while a transaction spans several explorer pages", async () => {
-      mockGetTransactions
-        .mockResolvedValueOnce(explorerPage([transition("tx1", 100)], 100))
-        .mockResolvedValueOnce(explorerPage([transition("tx1", 100)], 100))
-        .mockResolvedValueOnce(explorerPage([transition("tx1", 100)], null));
-
-      const { transitions, nextBlock } = await fetchPage(1);
-
-      expect(transitions).toHaveLength(3);
-      expect(nextBlock).toBeNull();
-    });
-
-    it("stops once the walk leaves the window", async () => {
-      mockGetTransactions.mockResolvedValue(
-        explorerPage([transition("tx1", 100), transition("tx-above", 101)], 102),
+    it("hands the block the stream stops inside to the next page", async () => {
+      mockGetTransactions.mockResolvedValueOnce(
+        explorerPage([transition("au1", 100), transition("au2", 101)]),
       );
 
-      const { transitions, nextBlock } = await fetchPage(5, 0, 100);
+      const { transitions, next } = await fetchPage();
 
-      expect(transitions.map(tx => tx.transaction_id)).toEqual(["tx1"]);
-      expect(nextBlock).toBeNull();
+      expect(transitions.map(tx => tx.transition_id)).toEqual(["au1"]);
+      // Resumes at the last row it emitted, so block 101 is re-read in full rather than skipped.
+      expect(next).toEqual({ blockNumber: 100, transitionId: "au1" });
+      expect(mockGetTransactions).toHaveBeenCalledTimes(1);
     });
 
-    it("drops transitions outside the window and bare inner transitions", async () => {
+    it("resumes an explorer page at its last row, never at its block alone", async () => {
+      mockGetTransactions
+        .mockResolvedValueOnce(explorerPage([transition("au1", 100)]))
+        .mockResolvedValueOnce(explorerPage([transition("au2", 100), transition("au3", 101)]));
+
+      await fetchPage();
+
+      expect(mockGetTransactions).toHaveBeenNthCalledWith(
+        2,
+        expect.objectContaining({ cursor: { blockNumber: 100, transitionId: "au1" } }),
+      );
+    });
+
+    it("keeps pulling while a single block fills whole pages", async () => {
+      mockGetTransactions
+        .mockResolvedValueOnce(explorerPage([transition("au1", 100)]))
+        .mockResolvedValueOnce(explorerPage([transition("au2", 100)]))
+        .mockResolvedValueOnce(explorerPage([transition("au3", 100), transition("au4", 101)]));
+
+      const { transitions, next } = await fetchPage();
+
+      expect(transitions.map(tx => tx.transition_id)).toEqual(["au1", "au2", "au3"]);
+      expect(next).toEqual({ blockNumber: 100, transitionId: "au3" });
+      expect(mockGetTransactions).toHaveBeenCalledTimes(3);
+    });
+
+    it("stops rather than looping when a dense block is also the end of the stream", async () => {
+      mockGetTransactions
+        .mockResolvedValueOnce(explorerPage([transition("au1", 100)]))
+        .mockResolvedValueOnce(explorerPage([transition("au2", 100)], true));
+
+      const { transitions, next } = await fetchPage();
+
+      expect(transitions.map(tx => tx.transition_id)).toEqual(["au1", "au2"]);
+      expect(next).toBeNull();
+    });
+
+    it("drops bare inner transitions", async () => {
       mockGetTransactions.mockResolvedValue(
         explorerPage(
           [
-            transition("tx-low", 10),
-            transition("tx-ok", 100),
+            transition("au-ok", 100),
             getMockedPublicTransaction({
-              transaction_id: "tx-inner",
+              transaction_id: "at1inner",
+              transition_id: "au-inner",
               block_number: 100,
               function_id: "transfer_public",
               sender_address: "",
               recipient_address: "",
             }),
           ],
-          null,
+          true,
         ),
       );
 
-      const { transitions } = await fetchPage(5, 50, 200);
+      const { transitions } = await fetchPage();
 
-      expect(transitions.map(tx => tx.transaction_id)).toEqual(["tx-ok"]);
+      expect(transitions.map(tx => tx.transition_id)).toEqual(["au-ok"]);
     });
 
-    it("starts the descending walk at the top of the window and resumes below the cut", async () => {
-      mockGetTransactions
-        .mockResolvedValueOnce(explorerPage([transition("tx1", 200)], 199))
-        .mockResolvedValueOnce(explorerPage([transition("tx2", 199)], 198));
+    it("forwards the requested limit and order", async () => {
+      mockGetTransactions.mockResolvedValue(explorerPage([transition("au1", 100)], true));
 
-      const { transitions, nextBlock } = await fetchAccountTransitionPage({
+      await fetchTransitionPage({
         config: mockConfig,
         address: mockAddress,
-        fromBlock: 50,
-        toBlock: 200,
-        minTransactions: 1,
+        limit: 10,
         order: "desc",
       });
 
       expect(mockGetTransactions).toHaveBeenCalledWith(
-        expect.objectContaining({ cursor: "200", order: "desc" }),
+        expect.objectContaining({ limit: 10, order: "desc" }),
       );
-      expect(transitions.map(tx => tx.transaction_id)).toEqual(["tx1"]);
-      expect(nextBlock).toBe(199);
     });
 
-    it("stops descending once it walks below the window", async () => {
-      mockGetTransactions.mockResolvedValue(
-        explorerPage([transition("tx1", 100), transition("tx-below", 10)], 9),
+    it("cuts descending pages on a block boundary too", async () => {
+      mockGetTransactions.mockResolvedValueOnce(
+        explorerPage([transition("au1", 200), transition("au2", 199)]),
       );
 
-      const { transitions, nextBlock } = await fetchAccountTransitionPage({
+      const { transitions, next } = await fetchTransitionPage({
         config: mockConfig,
         address: mockAddress,
-        fromBlock: 50,
-        toBlock: 200,
-        minTransactions: 5,
         order: "desc",
       });
 
-      expect(transitions.map(tx => tx.transaction_id)).toEqual(["tx1"]);
-      expect(nextBlock).toBeNull();
+      expect(transitions.map(tx => tx.transition_id)).toEqual(["au1"]);
+      expect(next).toEqual({ blockNumber: 200, transitionId: "au1" });
     });
   });
-
   describe("fetchAllOwnedRecords", () => {
     const mockUUID = "uuid-abc-def";
     const mockGetAccountOwnedRecords = jest.mocked(apiClient.getAccountOwnedRecords);
