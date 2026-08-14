@@ -42,7 +42,9 @@ function initializeTrustchain() {
     LedgerSyncCliHelper.pushLedgerSyncData,
   ];
 }
-test.describe("Ledger Sync", () => {
+// TODO: Unskip once LIVE-35808 is fixed — staging cloud-sync cannot verify the JWT that
+// staging trustchain issues, so every cloud-sync call fails with 400 on the Authorization header.
+test.describe.skip("Ledger Sync", () => {
   setupSeed();
   test.use({
     teamOwner: Team.WALLET_XP,
@@ -76,7 +78,7 @@ test.describe("Ledger Sync", () => {
     },
     async ({ app, page }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-      await addBugLink(["LIVE-31799"]);
+      await addBugLink(["LIVE-31799", "LIVE-35808"]);
 
       await app.portfolio.expectAddAccountButtonVisible();
 
