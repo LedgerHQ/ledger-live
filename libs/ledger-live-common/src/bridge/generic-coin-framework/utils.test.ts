@@ -9,6 +9,7 @@ import {
   findCryptoCurrencyByNetwork,
   frameworkExtraFromRaw,
   frameworkExtraToRaw,
+  isOperationType,
   mergeExtra,
   nextSequenceWithPending,
   toGasOptionsFromUnknown,
@@ -1693,5 +1694,21 @@ describe("coin-framework utils", () => {
         expect(({} as Record<string, unknown>).polluted).toBeUndefined();
       });
     });
+  });
+
+  describe("isOperationType", () => {
+    it.each(["IN", "OUT", "FEES", "NONE", "DELEGATE", "NFT_IN", "STAKE", "TOP_UP_NEURON"])(
+      "returns true for known type %s",
+      type => {
+        expect(isOperationType(type)).toBe(true);
+      },
+    );
+
+    it.each(["", "in", "CLAIM_REWARD", "transfer", "unknown_type"])(
+      "returns false for unknown string %s",
+      type => {
+        expect(isOperationType(type)).toBe(false);
+      },
+    );
   });
 });
