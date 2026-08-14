@@ -184,7 +184,7 @@ describe("OnboardModal Integration", () => {
     await new Promise(r => setTimeout(r, 0));
   });
 
-  it("should complete pairing and reach sign step with real bridge", async () => {
+  it("should complete pairing and account creation with real bridge", async () => {
     setupSuccessfulPairing();
     setupSuccessfulAccountCreation();
 
@@ -207,12 +207,9 @@ describe("OnboardModal Integration", () => {
     });
     expect(screen.getByRole("group", { name: /confirmation code/i })).toBeVisible();
 
-    // Real bridge flows: getPublicKey → getSession → requestCreateAccount → sign
-    await waitFor(() => {
-      expect(screen.getByText(/sign transaction on your ledger device/i)).toBeVisible();
-    }, WAIT_OPTS);
-
-    // MSW intercepts submitCredential; full success depends on network/axios interception
+    // Real bridge flows: getPublicKey → getSession → requestCreateAccount → sign.
+    // SIGN screen not asserted: the success emit cancels its still pending
+    // setStateWithTimeout transition (see LIVE-34490). MSW intercepts submitCredential.
     await waitFor(
       () => {
         expect(

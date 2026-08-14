@@ -179,10 +179,9 @@ describe("OnboardModal", () => {
     });
     expect(screen.getByRole("group", { name: /confirmation code/i })).toBeVisible();
 
-    await waitFor(() => {
-      expect(screen.getByText(/sign transaction on your ledger device/i)).toBeVisible();
-    }, WAIT_OPTS);
-
+    // SIGN step intentionally not asserted here: the account emit cancels the still
+    // pending setStateWithTimeout transition, so the screen may never render (see
+    // LIVE-34490). Covered by components/__tests__/StepCreate.test.tsx.
     await waitFor(() => {
       expect(
         screen.getByText(/your concordium account has been created successfully/i),
