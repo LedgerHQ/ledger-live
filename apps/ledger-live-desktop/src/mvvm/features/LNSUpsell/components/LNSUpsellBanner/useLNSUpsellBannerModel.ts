@@ -1,6 +1,7 @@
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useLNSUpsellBannerState } from "LLD/features/LNSUpsell/hooks/useLNSUpsellBannerState";
 import type { LNSBannerLocation, LNSBannerState } from "LLD/features/LNSUpsell/types";
+import { toLargeScreenUpsellDeviceModelAnalyticsValue } from "LLD/features/LargeScreenUpsell/analytics";
 import { track } from "~/renderer/analytics/segment";
 import { openURL } from "~/renderer/linking";
 import lnsUpsellPortfolioImageUrl from "~/renderer/images/lns-upsell-banner-portfolio.webp";
@@ -20,13 +21,17 @@ export function useLNSUpsellBannerModel(location: LNSBannerLocation): LNSBannerM
   const state = useLNSUpsellBannerState(location);
   const { shouldDisplayBrazePlacement } = useWalletFeaturesConfig("desktop");
 
-  const { ctaLink, discountPercent: discount } = state;
+  const { ctaLink, discountPercent: discount, deviceModelId } = state;
   const analyticsPage = AnalyticsPageMap[location];
   const imageUrl = lnsUpsellImageByLocation[location];
+  const deviceModel = deviceModelId
+    ? toLargeScreenUpsellDeviceModelAnalyticsValue(deviceModelId)
+    : undefined;
 
   const handleCTAClick = () => {
     track("button_clicked", {
       button: ANALYTICS_BUTTON_CLICK,
+      ...(deviceModel ? { deviceModel } : {}),
       link: ctaLink,
       page: analyticsPage,
     });

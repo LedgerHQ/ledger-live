@@ -1,3 +1,4 @@
+import type { NanoDeviceModelId } from "@features/flow-large-screen-upsell";
 import type { Features } from "@shared/feature-flags";
 
 export type LNSBannerLocation = "manager" | "accounts" | "notification_center" | "portfolio";
@@ -7,6 +8,7 @@ export type LNSBannerState = {
   tracking: "opted_in" | "opted_out";
   ctaLink?: string;
   discountPercent?: number;
+  deviceModelId?: NanoDeviceModelId;
 };
 
 type LargeScreenUpsellParams = NonNullable<Features["largeScreenUpsell"]["params"]>;
