@@ -48,11 +48,11 @@ describe("usePayCardBalance", () => {
 
   it("should heal a stale persisted filter back to all", async () => {
     const { result, store } = renderHook(() => usePayCardBalance(), {
-      initialState: { ...initialState, payCard: { balanceFilter: "ethereum/erc20/gone" } },
+      initialState: { ...initialState, payCardBalance: { balanceFilter: "ethereum/erc20/gone" } },
     });
 
     expect(result.current.filter).toBe("all");
-    await waitFor(() => expect(store.getState().payCard.balanceFilter).toBe("all"));
+    await waitFor(() => expect(store.getState().payCardBalance.balanceFilter).toBe("all"));
   });
 
   it("should persist the confirmed filter", async () => {
@@ -60,7 +60,7 @@ describe("usePayCardBalance", () => {
 
     act(() => result.current.onConfirmFilter(USDC.id));
 
-    await waitFor(() => expect(store.getState().payCard.balanceFilter).toBe(USDC.id));
+    await waitFor(() => expect(store.getState().payCardBalance.balanceFilter).toBe(USDC.id));
   });
 
   it("should forward tracking events to analytics", () => {

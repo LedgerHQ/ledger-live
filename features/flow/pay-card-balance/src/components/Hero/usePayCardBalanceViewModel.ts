@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
-import { PAY_CARD_BALANCE_FILTER_ALL } from "@domain/entity-pay-card";
+import { PAY_CARD_BALANCE_FILTER_ALL } from "../../state";
 import { resolveSelection } from "../../logic/resolveSelection";
 import type { PayCardBalanceProps, PayCardBalanceViewProps } from "../../types";
 

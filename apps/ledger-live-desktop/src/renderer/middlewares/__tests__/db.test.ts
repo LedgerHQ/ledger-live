@@ -45,10 +45,15 @@ jest.mock("@domain/entity-client-identity", () => ({
   exportIdentitiesForPersistence: jest.fn(s => s),
 }));
 
-jest.mock("@domain/entity-pay-card", () => ({
-  payCardPersistedSelector: (state: FakeState) => ({
-    hasSeenFeatureTour: state.payCard.hasSeenFeatureTour,
-    balanceFilter: state.payCard.balanceFilter,
+jest.mock("@features/flow-pay-card-balance/state", () => ({
+  payCardBalancePersistedSelector: (state: FakeState) => ({
+    balanceFilter: state.payCardBalance.balanceFilter,
+  }),
+}));
+
+jest.mock("@features/flow-pay-card-feature-tour/state", () => ({
+  payCardFeatureTourPersistedSelector: (state: FakeState) => ({
+    hasSeenFeatureTour: state.payCardFeatureTour.hasSeenFeatureTour,
   }),
 }));
 
@@ -69,11 +74,11 @@ type FakeState = {
   featureFlags: { overrides: unknown; bannerVisible: unknown; remoteFlagsReady?: unknown };
   coinConfigOverrides: { overrides: Record<string, unknown> };
   largeScreenUpsellModal: { retries: number; lastSeenAt: number | null };
-  payCard: {
-    isOpen: boolean;
-    params: unknown;
-    hasSeenFeatureTour: boolean;
+  payCardBalance: {
     balanceFilter: string;
+  };
+  payCardFeatureTour: {
+    hasSeenFeatureTour: boolean;
   };
   trustchain?: unknown;
 };
@@ -89,7 +94,8 @@ const baseState = (): FakeState => ({
   featureFlags: { overrides: {}, bannerVisible: false },
   coinConfigOverrides: { overrides: {} },
   largeScreenUpsellModal: { retries: 0, lastSeenAt: null },
-  payCard: { isOpen: false, params: null, hasSeenFeatureTour: false, balanceFilter: "all" },
+  payCardBalance: { balanceFilter: "all" },
+  payCardFeatureTour: { hasSeenFeatureTour: false },
 });
 
 function runMiddleware(states: FakeState[], action: { type: string; payload?: unknown }) {
@@ -233,28 +239,36 @@ describe("DBMiddleware - payCard branch", () => {
     mockedSetKey.mockReset();
   });
 
-  it("persists only { hasSeenFeatureTour, balanceFilter } under app/payCard on payCard/* actions", () => {
+  it("persists the composed { hasSeenFeatureTour, balanceFilter } blob on payCardFeatureTour/* actions", () => {
     const state: FakeState = {
       ...baseState(),
-      payCard: {
-        isOpen: true,
-        params: { platform: "cl-card" },
-        hasSeenFeatureTour: true,
-        balanceFilter: "ethereum/erc20/usd__coin",
-      },
+      payCardFeatureTour: { hasSeenFeatureTour: true },
+      payCardBalance: { balanceFilter: "ethereum/erc20/usd__coin" },
     };
 
-    runMiddleware([state, state], { type: "payCard/markPayCardFeatureTourSeen" });
+    runMiddleware([state, state], { type: "payCardFeatureTour/markPayCardFeatureTourSeen" });
 
     expect(mockedSetKey).toHaveBeenCalledTimes(1);
     expect(mockedSetKey).toHaveBeenCalledWith("app", "payCard", {
       hasSeenFeatureTour: true,
       balanceFilter: "ethereum/erc20/usd__coin",
     });
+  });
 
-    const persisted = mockedSetKey.mock.calls[0][2] as Record<string, unknown>;
-    expect(persisted).not.toHaveProperty("isOpen");
-    expect(persisted).not.toHaveProperty("params");
+  it("persists the composed blob on payCardBalance/* actions", () => {
+    const state: FakeState = {
+      ...baseState(),
+      payCardFeatureTour: { hasSeenFeatureTour: true },
+      payCardBalance: { balanceFilter: "ethereum/erc20/usd__coin" },
+    };
+
+    runMiddleware([state, state], { type: "payCardBalance/setPayCardBalanceFilter" });
+
+    expect(mockedSetKey).toHaveBeenCalledTimes(1);
+    expect(mockedSetKey).toHaveBeenCalledWith("app", "payCard", {
+      hasSeenFeatureTour: true,
+      balanceFilter: "ethereum/erc20/usd__coin",
+    });
   });
 });
 

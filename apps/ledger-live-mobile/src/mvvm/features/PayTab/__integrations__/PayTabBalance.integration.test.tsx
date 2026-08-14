@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen, waitFor, within } from "@tests/test-renderer";
-import { PAY_CARD_BALANCE_FILTER_ALL } from "@domain/entity-pay-card";
+import { PAY_CARD_BALANCE_FILTER_ALL } from "@features/flow-pay-card-balance/state";
 import type { State } from "~/reducers/types";
 import { PayTabScreen } from "LLM/features/PayTab";
 
@@ -56,7 +56,7 @@ const heldUsdc = (value: number) => ({
 
 const tourSeen = (state: State): State => ({
   ...state,
-  payCard: { ...state.payCard, hasSeenFeatureTour: true },
+  payCardFeatureTour: { ...state.payCardFeatureTour, hasSeenFeatureTour: true },
 });
 
 function mockStablecoins(overrides: Record<string, unknown> = {}) {
@@ -135,7 +135,7 @@ describe("PayTab balance integration", () => {
     await user.press(screen.getByTestId("pay-card-balance-filter-confirm"));
 
     await waitFor(() => {
-      expect(store.getState().payCard.balanceFilter).not.toBe(PAY_CARD_BALANCE_FILTER_ALL);
+      expect(store.getState().payCardBalance.balanceFilter).not.toBe(PAY_CARD_BALANCE_FILTER_ALL);
     });
 
     const pill = screen.getByTestId("pay-card-balance-filter-pill");

@@ -5,16 +5,14 @@ import {
   formatCurrencyUnitFragment,
 } from "@ledgerhq/live-common/currencies/index";
 import {
-  usePayCardBalanceData,
-  type FormattedValue,
-  type PayCardBalanceData,
-} from "@features/flow-pay-card-balance";
-import {
   PAY_CARD_BALANCE_FILTER_ALL,
   selectPayCardBalanceFilter,
   setPayCardBalanceFilter,
+  usePayCardBalanceData,
+  type FormattedValue,
+  type PayCardBalanceData,
   type PayCardBalanceFilter,
-} from "@domain/entity-pay-card";
+} from "@features/flow-pay-card-balance";
 import type { Unit } from "@domain/entity-currency-unit";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { useTranslation } from "~/context/Locale";

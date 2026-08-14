@@ -1,5 +1,5 @@
 ---
-"@domain/entity-pay-card": minor
+"@features/flow-pay-card-balance": minor
 "live-mobile": patch
 "ledger-live-desktop": patch
 ---

@@ -1,4 +1,4 @@
-import { PAY_CARD_BALANCE_FILTER_ALL } from "@domain/entity-pay-card";
+import { PAY_CARD_BALANCE_FILTER_ALL } from "../state";
 import { aggregatePayCardBalance } from "../logic/aggregatePayCardBalance";
 import type { FormattedValue, PayCardPortfolioPort } from "../types";
 

@@ -1,5 +1,5 @@
 import React from "react";
-import type { PayCardBalanceFilter } from "@domain/entity-pay-card";
+import type { PayCardBalanceFilter } from "../../state";
 import { BalanceFilterPickerView } from "./BalanceFilterPickerView";
 import { useBalanceFilterPickerViewModel } from "./useBalanceFilterPickerViewModel";
 import type { PayCardBalanceFilterLabels, PayCardBalanceFilterOption } from "../../types";

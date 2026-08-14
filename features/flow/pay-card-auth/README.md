@@ -16,9 +16,10 @@ import { CardLogin } from "@features/flow-pay-card-auth";
 The host app provides `openHostedLogin` so platform-specific navigation remains at the app
 composition root.
 
-App composition and DevTools consume shared Pay Card entity state through
-`@domain/entity-pay-card`. Auth-only runtime state (`hasCard`) lives in this flow's
-`payCardAuth` slice, exposed through `@features/flow-pay-card-auth/state`.
+Auth-only runtime state (`hasCard`) lives in this flow's `payCardAuth` slice, exposed through
+`@features/flow-pay-card-auth/state`. Other Pay Card UI state is owned by the flow it belongs to:
+the balance filter by `@features/flow-pay-card-balance` and the feature-tour flag by
+`@features/flow-pay-card-feature-tour`.
 
 ## Card API
 

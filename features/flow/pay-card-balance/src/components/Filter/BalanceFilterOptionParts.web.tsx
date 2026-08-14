@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
 import { Card, Spot } from "@ledgerhq/lumen-ui-react";
 import { Placeholder } from "@ledgerhq/lumen-ui-react/symbols";
-import type { PayCardBalanceFilter } from "@domain/entity-pay-card";
+import type { PayCardBalanceFilter } from "../../state";
 
 export {
   CardContent,

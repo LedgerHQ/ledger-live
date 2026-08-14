@@ -1,4 +1,4 @@
-import type { PayCardBalanceFilter } from "@domain/entity-pay-card";
+import type { PayCardBalanceFilter } from "./state";
 import type { FormattedValue } from "@ledgerhq/lumen-utils-shared";
 import type { ActionTilesProps } from "./components/ActionTiles/types";
 

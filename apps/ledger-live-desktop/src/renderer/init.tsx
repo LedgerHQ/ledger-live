@@ -11,7 +11,8 @@ import {
   LARGE_SCREEN_UPSELL_MODAL,
   restoreLargeScreenUpsellModalState,
 } from "@features/flow-large-screen-upsell";
-import { restorePayCardPersistedState } from "@domain/entity-pay-card";
+import { restorePayCardBalanceFilter } from "@features/flow-pay-card-balance/state";
+import { restorePayCardFeatureTour } from "@features/flow-pay-card-feature-tour/state";
 import i18n from "i18next";
 import { webFrame, ipcRenderer } from "electron";
 import each from "lodash/each";
@@ -337,7 +338,8 @@ async function init() {
 
   const payCardState = await getKey("app", "payCard");
   if (payCardState !== undefined) {
-    store.dispatch(restorePayCardPersistedState(payCardState));
+    store.dispatch(restorePayCardFeatureTour(payCardState));
+    store.dispatch(restorePayCardBalanceFilter(payCardState));
   }
 
   r(<ReactRoot store={store} language={language} initialCountervalues={initialCountervalues} />);

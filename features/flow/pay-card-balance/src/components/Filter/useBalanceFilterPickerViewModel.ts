@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { PAY_CARD_BALANCE_FILTER_ALL, type PayCardBalanceFilter } from "@domain/entity-pay-card";
+import { PAY_CARD_BALANCE_FILTER_ALL, type PayCardBalanceFilter } from "../../state";
 import type { BalanceFilterPickerViewModel, BalanceFilterPickerViewModelParams } from "../../types";
 
 export function useBalanceFilterPickerViewModel({
