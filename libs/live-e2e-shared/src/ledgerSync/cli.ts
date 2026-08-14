@@ -6,17 +6,21 @@ import {
   walletSyncSchema,
   type WalletSyncDistantState as LiveData,
 } from "@ledgerhq/live-wallet/walletSyncComposition";
-import { getEnv } from "@shared/env";
 import type { LedgerKeyRingProtocolOpts, LedgerSyncOpts } from "../runCli";
+import { trustchainApiBaseUrl } from "./environment";
 
 /**
  * Ledger Sync CLI entry points, shared by the desktop and mobile e2e suites. Unlike the other
  * `runCli*` helpers these do not spawn the CLI binary: they drive the SDKs in-process, reaching
  * Speculos through whichever transport module the caller registered.
+ *
+ * `apiBaseUrl` defaults to the resolved environment rather than a fixed one: it is the trustchain
+ * that mints the JWT cloud-sync validates, so defaulting it independently of `cloudSyncApiBaseUrl`
+ * would let a caller authenticate against one environment and call the other.
  */
 export function ledgerKeyRingProtocol(opts: LedgerKeyRingProtocolOpts) {
   const {
-    apiBaseUrl = getEnv("TRUSTCHAIN_API_STAGING"),
+    apiBaseUrl = trustchainApiBaseUrl,
     applicationId = 16,
     name = "CLI",
     initMemberCredentials,
@@ -69,7 +73,7 @@ export function resolveApplicationPath(
   opts: LedgerKeyRingProtocolOpts,
 ): Promise<string | undefined> {
   const {
-    apiBaseUrl = getEnv("TRUSTCHAIN_API_STAGING"),
+    apiBaseUrl = trustchainApiBaseUrl,
     applicationId = 16,
     name = "CLI",
     pubKey,
@@ -98,7 +102,7 @@ export function ledgerSync(opts: LedgerSyncOpts) {
   const {
     applicationId = 16,
     name = "CLI",
-    apiBaseUrl = getEnv("TRUSTCHAIN_API_STAGING"),
+    apiBaseUrl = trustchainApiBaseUrl,
     pubKey,
     privateKey,
     rootId,

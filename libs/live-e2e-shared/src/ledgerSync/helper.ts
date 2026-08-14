@@ -1,8 +1,8 @@
 import { readFile, writeFile } from "node:fs/promises";
 import invariant from "invariant";
-import { getEnv } from "@shared/env";
 import { activateLedgerSync } from "../speculos";
 import { ledgerKeyRingProtocol, ledgerSync, resolveApplicationPath } from "./cli";
+import { cloudSyncApiBaseUrl, trustchainApiBaseUrl } from "./environment";
 import type { LedgerSyncAccountDescriptor } from "./testData";
 
 interface LedgerKeyRingProtocolArgs {
@@ -44,26 +44,11 @@ function isLedgerOutput(output: unknown): output is LedgerOutput {
   return typeof output === "object" && output !== null;
 }
 
-export const ledgerSyncEnvironment =
-  process.env.LEDGER_SYNC_ENVIRONMENT === "PROD" ? "PROD" : "STAGING";
-
 export class LedgerSyncCliHelper {
-  private static environment = ledgerSyncEnvironment;
-
-  private static cloudSyncApiBaseUrl =
-    LedgerSyncCliHelper.environment == "PROD"
-      ? getEnv("CLOUD_SYNC_API_PROD")
-      : getEnv("CLOUD_SYNC_API_STAGING");
-
-  private static apiBaseUrl =
-    LedgerSyncCliHelper.environment == "PROD"
-      ? getEnv("TRUSTCHAIN_API_PROD")
-      : getEnv("TRUSTCHAIN_API_STAGING");
-
   static ledgerKeyRingProtocolArgs: LedgerKeyRingProtocolArgs = {
     pubKey: "",
     privateKey: "",
-    apiBaseUrl: LedgerSyncCliHelper.apiBaseUrl,
+    apiBaseUrl: trustchainApiBaseUrl,
   };
 
   static ledgerSyncPushDataArgs: LedgerSyncPushDataArgs = {
@@ -72,7 +57,7 @@ export class LedgerSyncCliHelper {
     applicationPath: "",
     push: true,
     data: JSON.stringify({ accounts: [], accountNames: {} }),
-    cloudSyncApiBaseUrl: LedgerSyncCliHelper.cloudSyncApiBaseUrl,
+    cloudSyncApiBaseUrl,
   };
 
   static ledgerSyncPullDataArgs: LedgerSyncPullDataArgs = {
@@ -84,7 +69,7 @@ export class LedgerSyncCliHelper {
     push: false,
     pull: true,
     data: "",
-    cloudSyncApiBaseUrl: LedgerSyncCliHelper.cloudSyncApiBaseUrl,
+    cloudSyncApiBaseUrl,
   };
 
   private static updateKeysAndArgs(output: unknown) {

@@ -4,10 +4,8 @@ import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
-import {
-  LedgerSyncCliHelper,
-  ledgerSyncEnvironment,
-} from "@ledgerhq/live-e2e-shared/ledgerSync/helper";
+import { LedgerSyncCliHelper } from "@ledgerhq/live-e2e-shared/ledgerSync/helper";
+import { ledgerSyncEnvironment } from "@ledgerhq/live-e2e-shared/ledgerSync/environment";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
 import { ethAccount, secondEthAccount } from "@ledgerhq/live-e2e-shared/ledgerSync/testData";
 import {
