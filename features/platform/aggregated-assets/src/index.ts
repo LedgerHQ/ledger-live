@@ -4,6 +4,7 @@ export * from "./hooks/useChunkedAssetsData";
 export * from "./hooks/useStocksData";
 export * from "./hooks/useStockAssetIds";
 export * from "./hooks/useStablecoinTickers";
+export * from "./hooks/useDefaultStablecoins";
 export * from "./hooks/useInterestRatesByCurrencies";
 export * from "./hooks/useMarketByCurrencies";
 export * from "./hooks/useLazyLedgerCurrency";

@@ -1,2 +1,1 @@
-export * from "./components/PayCardBalance";
-export * from "./components/ActionTiles";
+export * from "./exports";

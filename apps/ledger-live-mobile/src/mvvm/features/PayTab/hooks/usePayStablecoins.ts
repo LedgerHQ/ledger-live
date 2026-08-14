@@ -1,5 +1,6 @@
 import { useMemo } from "react";
-import { useDistribution } from "~/renderer/actions/general";
+import VersionNumber from "react-native-version-number";
+import useEnv from "@features/platform-env";
 import {
   useStablecoinTickers,
   useDefaultStablecoins,
@@ -9,11 +10,9 @@ import {
   useCategorizedAssets,
   type CategorizedAssetItem,
 } from "@ledgerhq/asset-aggregation/assetCategorization/index";
-import { useSelector } from "LLD/hooks/redux";
-import {
-  blacklistedTokenIdsSelector,
-  hideEmptyTokenAccountsSelector,
-} from "~/renderer/reducers/settings";
+import { useDistribution } from "~/actions/general";
+import { useSelector } from "~/context/hooks";
+import { blacklistedTokenIdsSelector } from "~/reducers/settings";
 
 export type PayStablecoins = Readonly<{
   stablecoins: CategorizedAssetItem[];
@@ -23,11 +22,10 @@ export type PayStablecoins = Readonly<{
 }>;
 
 export function usePayStablecoins(): PayStablecoins {
-  const hideEmptyTokenAccount = useSelector(hideEmptyTokenAccountsSelector);
+  const hideEmptyTokenAccount = useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
+  const version = VersionNumber.appVersion ?? "";
 
-  // Force cross-chain asset grouping so each stablecoin is a single aggregated item,
-  // independent of the aggregatedAssets wallet flag.
   const distribution = useDistribution({
     showEmptyAccounts: true,
     hideEmptyTokenAccount,
@@ -38,13 +36,13 @@ export function usePayStablecoins(): PayStablecoins {
     tickers: stablecoinTickers,
     isLoading: isLoadingStablecoinTickers,
     isError: isStablecoinTickersError,
-  } = useStablecoinTickers("lld", __APP_VERSION__);
+  } = useStablecoinTickers("llm", version);
 
   const {
     defaultStablecoins,
     isLoading: isLoadingDefaultStablecoins,
     isError: isDefaultStablecoinsError,
-  } = useDefaultStablecoins("lld", __APP_VERSION__);
+  } = useDefaultStablecoins("llm", version);
 
   const categorized = useCategorizedAssets(distribution, stablecoinTickers);
 

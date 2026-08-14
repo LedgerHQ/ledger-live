@@ -170,7 +170,7 @@ describe("PayTab", () => {
 
     fireEvent.click(screen.getByTestId("pay-card-balance-filter-pill"));
 
-    const dialog = await screen.findByTestId("pay-card-balance-filter-dialog");
+    const dialog = await screen.findByTestId("pay-card-balance-filter-picker");
     expect(dialog).toHaveTextContent("USD Coin");
     expect(dialog).toHaveTextContent("Tether USD");
     expect(mockedTrack).toHaveBeenCalledWith("button_clicked", { button: "balance_filter" });
@@ -193,7 +193,7 @@ describe("PayTab", () => {
     fireEvent.click(screen.getByTestId("pay-card-balance-filter-confirm"));
 
     await waitFor(() => {
-      expect(screen.queryByTestId("pay-card-balance-filter-dialog")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("pay-card-balance-filter-picker")).not.toBeInTheDocument();
     });
 
     expect(store.getState().payCard.balanceFilter).toBe(USDC.id);

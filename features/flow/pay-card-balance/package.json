@@ -28,7 +28,9 @@
     "unimported": "pnpm knip --directory ../../.. -W features/flow/pay-card-balance"
   },
   "dependencies": {
+    "@domain/entity-currency-unit": "workspace:^",
     "@domain/entity-pay-card": "workspace:^",
+    "@shared/ui-queued-bottom-sheet": "workspace:*",
     "@ledgerhq/lumen-utils-shared": "catalog:",
     "@ledgerhq/crypto-icons": "catalog:"
   },
