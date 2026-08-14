@@ -12,7 +12,7 @@ import { toShortStructTag } from "../utils";
 import { createSuiGrpcClient } from "./grpc/client";
 import { executionErrorMessage, grpcTxToJsonRpcResponse } from "./grpc/transactions";
 import { protoValueToJson } from "./grpc/struct";
-import { promiseAllBatched } from "@ledgerhq/live-promise";
+import { promiseAllBatched } from "@ledgerhq/coin-module-framework/promises";
 import type { SuiValidator } from "../types";
 import {
   applyValidatorApy,
