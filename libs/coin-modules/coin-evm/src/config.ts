@@ -15,6 +15,8 @@ export {
  */
 export type BlockFinalizationTag = "latest" | "safe" | "finalized";
 
+export type NftStandard = "erc721" | "erc1155";
+
 /** Fallbacks mirroring the `EXPLORER` / `EIP1559_BASE_FEE_MULTIPLIER` env defaults. */
 export const DEFAULT_LEDGER_EXPLORER_URI = "https://explorers.api.live.ledger.com";
 export const DEFAULT_EIP1559_BASE_FEE_MULTIPLIER = 1.6;
@@ -63,7 +65,12 @@ export type EvmConfig = {
     type: "ledger";
     explorerId: LedgerExplorerId;
   };
-  showNfts: boolean;
+  /**
+   * NFT token standards to surface for this chain. Each standard is independent: an empty
+   * array (or a standard being absent) disables the corresponding NFT operations. Replaces
+   * the deprecated `showNfts` boolean and the `isNFTActive` env gate.
+   */
+  supportedTokens?: NftStandard[];
   /**
    * The block tag used to fetch the latest block. Defaults to "latest" if not set.
    * Use "safe" or "finalized" on chains where reorg protection is needed.

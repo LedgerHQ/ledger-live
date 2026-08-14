@@ -27,7 +27,6 @@ export const scenarioRobinhoodTestnet: Scenario<GenericTransaction, Account> = {
       name: "Robinhood Chain Testnet",
       node: { type: "external", uri: "http://127.0.0.1:8545" },
       explorer: { type: "none" },
-      showNfts: false,
     };
     LiveConfig.setConfig({
       config_currency_robinhood_testnet: {

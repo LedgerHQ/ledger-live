@@ -33,7 +33,7 @@ describe("getBlock ERC20 transfers", () => {
         type: "blockscout",
         uri: "https://evmexplorer.velas.com/api",
       },
-      showNfts: true,
+      supportedTokens: ["erc721", "erc1155"],
     };
 
     beforeAll(() => {
@@ -95,7 +95,7 @@ describe("getBlock ERC20 transfers", () => {
         type: "ledger",
         explorerId: "bnb",
       },
-      showNfts: true,
+      supportedTokens: ["erc721", "erc1155"],
     };
     beforeAll(() => {
       module = createApi("bsc");
@@ -150,7 +150,7 @@ describe("getBlock ERC20 transfers", () => {
       explorer: {
         type: "none",
       },
-      showNfts: true,
+      supportedTokens: ["erc721", "erc1155"],
     };
     beforeAll(() => {
       module = createApi("zksync");

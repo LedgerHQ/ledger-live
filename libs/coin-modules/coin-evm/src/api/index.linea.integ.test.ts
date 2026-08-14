@@ -33,7 +33,6 @@ describe("Linea (etherscan explorer)", () => {
         type: "etherscan",
         uri: "https://proxyetherscan.api.live.ledger.com/v2/api/59144",
       },
-      showNfts: false,
     };
 
     beforeAll(() => {
