@@ -18,6 +18,7 @@ import {
 import { deriveEarnTransactionType, type EarnTransactionType } from "./earnTransactionType";
 import { deriveFromOperationType } from "./operationType";
 import { getRawTransactionType, getStakeTarget, type TransactionLike } from "./transactionShape";
+import { recallSignContext } from "./signContext";
 import { classifyTransactionError, ErrorCategory, toError, unwrapRpcError } from "./errorCategory";
 
 type Attribution = {
@@ -116,10 +117,27 @@ function stakeTargetFromOperation(operation: Operation): string[] | undefined {
  * `compoundReward`, since both become `REWARD`.
  */
 export function buildBroadcastCommonEvent(
-  attribution: Attribution & { operation: Operation },
+  attribution: Attribution & { signedOperation: SignedOperation },
 ): CommonLogEvent {
-  const { operation, mainAccount } = attribution;
+  const { signedOperation, mainAccount } = attribution;
+  const { operation } = signedOperation;
   const family = mainAccount.currency.family;
+
+  // The sign stage saw the real transaction. Where that correlates, its data is strictly
+  // better than anything recoverable here — and for the families that report a generic
+  // operation type it is the only thing that makes the action legible at all.
+  const signed = recallSignContext(signedOperation);
+  if (signed?.earnTransactionType) {
+    return buildCommon(attribution, {
+      ...signed,
+      // Celo and tron put the target only on the optimistic operation (`celoSourceValidator`,
+      // `extra.votes`), where the sign stage cannot see it — so take whichever stage has one
+      // rather than letting a correlation hit throw the other away.
+      validators: signed.validators ?? stakeTargetFromOperation(operation),
+      dataSource: TransactionDataSource.Sign,
+    });
+  }
+
   const rawMode = (operation.transactionRaw as { mode?: string } | undefined)?.mode;
   const fromRawMode = deriveEarnTransactionType(family, rawMode);
 

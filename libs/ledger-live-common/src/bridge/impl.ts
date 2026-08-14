@@ -28,13 +28,14 @@ import {
 import { defaultBridgeExtensions } from "./defaultBridgeExtensions";
 import { isZcashShieldedEnabled } from "./zcashRouting";
 import { throwError } from "rxjs";
-import { catchError } from "rxjs/operators";
+import { catchError, tap } from "rxjs/operators";
 import {
   buildBroadcastCommonEvent,
   buildSignCommonEvent,
   buildTransactionFailureEvent,
   buildTransactionSuccessEvent,
   emitTransactionEvent,
+  rememberSignContext,
   TransactionPathway,
   TransactionStage,
 } from "@ledgerhq/transaction-observability";
@@ -250,6 +251,17 @@ export async function wrapAccountBridge<T extends TransactionCommon>(
      */
     signOperation: (arg0: Parameters<typeof bridge.signOperation>[0]) =>
       bridge.signOperation(arg0).pipe(
+        // The signed operation is the same object `broadcast` is handed later, so remembering
+        // against it carries the transaction's own wording and target across the stages.
+        tap(event => {
+          if (event.type === "signed") {
+            rememberSignContext(
+              event.signedOperation,
+              arg0.account.currency.family,
+              arg0.transaction,
+            );
+          }
+        }),
         catchError(error => {
           emitTransactionEvent(
             buildTransactionFailureEvent(
@@ -278,7 +290,7 @@ export async function wrapAccountBridge<T extends TransactionCommon>(
         pathway,
         manifestId,
         source: arg0.broadcastConfig?.source,
-        operation: arg0.signedOperation.operation,
+        signedOperation: arg0.signedOperation,
       });
       try {
         const operation = await bridge.broadcast(arg0);

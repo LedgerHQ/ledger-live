@@ -169,6 +169,58 @@ describe("wrapAccountBridge — transaction observability seam", () => {
     expect(events[0]).not.toHaveProperty("txPayload");
   });
 
+  // Solana is the case that only works because of correlation: its stake actions become a
+  // DELEGATE/IN/OUT operation, and it copies no validator into the optimistic operation.
+  test("a sign followed by a broadcast reports the transaction's own action and target", async () => {
+    const solanaAccount = {
+      id: "acc",
+      type: "Account",
+      currency: { id: "solana", family: "solana", ticker: "SOL" },
+    } as unknown as Account;
+    const solanaSignedOperation = {
+      signature: "sig",
+      operation: { type: "DELEGATE", extra: {} },
+    } as never;
+
+    const bridge = makeBridge({
+      signOperation: jest.fn().mockReturnValue(
+        new Observable(subscriber => {
+          subscriber.next({ type: "signed", signedOperation: solanaSignedOperation });
+          subscriber.complete();
+        }),
+      ),
+      broadcast: jest.fn().mockResolvedValue({ id: "op-1" }),
+    });
+    const wrapped = await wrapAccountBridge(bridge, "solana");
+
+    await lastValueFrom(
+      wrapped.signOperation({
+        account: solanaAccount,
+        transaction: {
+          family: "solana",
+          model: { kind: "stake.createAccount", uiState: { voteAccAddr: "voteAcc" } },
+        } as never,
+        deviceId: "device",
+      }),
+    );
+    await wrapped.broadcast({
+      account: solanaAccount,
+      signedOperation: solanaSignedOperation,
+      broadcastConfig: coinModuleSource,
+    });
+
+    expect(events[0]).toMatchObject({
+      status: "success",
+      earnTransactionType: "delegate",
+      // The family's own wording, not the operation type it was flattened to.
+      rawTransactionType: "stake.createAccount",
+      validators: ["voteAcc"],
+      dataSource: "sign",
+      // Attribution still comes from the broadcast, which is the only stage that knows it.
+      pathway: "send",
+    });
+  });
+
   test("signOperation: does not emit on sign success", async () => {
     const bridge = makeBridge({
       signOperation: jest.fn().mockReturnValue(
