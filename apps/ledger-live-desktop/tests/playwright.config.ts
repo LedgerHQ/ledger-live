@@ -15,7 +15,7 @@ const reporters: ReporterDescription[] = process.env.CI
 // Additive + inert — it never replaces the reporters above, and normal
 // (non-wrapped) runs are unaffected because the env is unset.
 if (process.env.PLAYWRIGHT_JSON_OUTPUT_NAME) {
-  reporters.push(["json"]);
+  reporters.push(["json", { outputFile: process.env.PLAYWRIGHT_JSON_OUTPUT_NAME }]);
 }
 
 const config: PlaywrightTestConfig = {

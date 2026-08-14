@@ -1,7 +1,8 @@
 {
   "namedInputs": {
     "quarantine": [
-      "{workspaceRoot}/quarantine/**/*"
+      "{workspaceRoot}/quarantine/**/*",
+      "{workspaceRoot}/quarantine/.bypass-allow"
     ],
     "sharedGlobals": [
       "{workspaceRoot}/nx.json",

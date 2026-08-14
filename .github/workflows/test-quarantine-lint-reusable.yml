@@ -35,7 +35,7 @@ jobs:
       # Only the tool itself is needed (yaml + zod). The bypass guard scans
       # package.json files on disk (no install of the scanned packages required).
       - name: Install dependencies
-        run: pnpm i --filter="@ledgerhq/test-quarantine..." --no-frozen-lockfile --unsafe-perm
+        run: pnpm i --filter="@ledgerhq/test-quarantine..." --frozen-lockfile --unsafe-perm
 
       # validate: schema, dates, unique title-level titles (PRD §9, hard-fail).
       # bypass-guard: every jest-invoking allowlisted script routes through the
