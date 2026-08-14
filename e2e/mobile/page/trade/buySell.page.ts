@@ -35,8 +35,21 @@ export default class BuySellPage {
 
   @Step("Open page via deeplink")
   async openViaDeeplink(page: "Buy" | "Sell") {
-    await openDeeplink(page.toLowerCase());
-    await waitForElementById(app.common.walletApiWebview, 60000, { checkVisibility: false });
+    const maxAttempts = 3;
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+      await openDeeplink(page.toLowerCase());
+      try {
+        // Can show "generic-error-modal" ("App not found") right after boot if
+        // the live-app catalog isn't ready yet - fail fast and retry instead.
+        await waitForElementById(app.common.walletApiWebview, 5000, {
+          checkVisibility: false,
+          errorElementId: "generic-error-modal",
+        });
+        return;
+      } catch (error) {
+        if (attempt === maxAttempts) throw error;
+      }
+    }
   }
 
   @Step("Expect Buy screen to be visible")
