@@ -1,5 +1,5 @@
 import { openAuthSessionAsync } from "expo-web-browser";
-import type { HostedLoginResult } from "../../state/ports";
+import type { HostedLoginResult } from "../../state/types";
 
 /**
  * The redirect URI has to reach the session itself: `ASWebAuthenticationSession` needs it to know

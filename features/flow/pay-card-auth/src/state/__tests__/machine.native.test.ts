@@ -1,7 +1,6 @@
 import { createActor, waitFor, type Actor } from "xstate";
 import { cardLoginMachine } from "../machine";
-import type { CardLoginPorts } from "../ports";
-import type { CardLoginOauthConfig, PayCardAuthCallback } from "../types";
+import type { CardLoginOauthConfig, CardLoginPorts, PayCardAuthCallback } from "../types";
 
 const oauthConfig: CardLoginOauthConfig = {
   clientId: "client-key",

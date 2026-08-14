@@ -3,8 +3,12 @@ import { fromPromise } from "xstate";
 import { parseCallbackUrl } from "./callbackUrl";
 import { MissingLoginStateError } from "./errors";
 import type { PayCardLoginErrorKind } from "./errors";
-import type { CardLoginPorts } from "./ports";
-import type { CardLoginInitiation, CardLoginOauthConfig, PayCardAuthCallback } from "./types";
+import type {
+  CardLoginInitiation,
+  CardLoginOauthConfig,
+  CardLoginPorts,
+  PayCardAuthCallback,
+} from "./types";
 
 /**
  * Every asynchronous step of the login, as an invoked actor. Each one takes what it needs as input and

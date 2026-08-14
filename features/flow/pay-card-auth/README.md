@@ -29,8 +29,8 @@ pass it yet (LIVE-34740).
 
 An XState 5 machine owns the journey. It is three files: the states, guards and transitions in
 [`machine.ts`](./src/state/machine.ts), the asynchronous steps in
-[`actors.ts`](./src/state/actors.ts), and the context, events and input in
-[`types.ts`](./src/state/types.ts).
+[`actors.ts`](./src/state/actors.ts), and every shape they trade — the ports, the context, the events
+and the input — in [`types.ts`](./src/state/types.ts).
 
 ```text
 PKCE minted and stored → authorize initiation → OS browser → redirect → state compared
@@ -38,8 +38,8 @@ PKCE minted and stored → authorize initiation → OS browser → redirect → 
 ```
 
 The machine holds no React, no redux and no platform API. Everything it touches is a port
-(`src/state/ports.ts`), and `createCardLoginPorts` binds those ports to RTK Query, to this flow's PKCE
-store and to `@features/platform-card`. That is what makes every path testable with plain
+(`CardLoginPorts` in `src/state/types.ts`), and `createCardLoginPorts` binds those ports to RTK Query,
+to this flow's PKCE store and to `@features/platform-card`. That is what makes every path testable with plain
 `jest.fn()`s — see `src/state/__tests__/machine.native.test.ts`.
 
 Two secrets, two owners:
@@ -126,11 +126,10 @@ pay-card-auth/
     │   ├── crypto.web.ts                   # CSPRNG and SHA-256 through WebCrypto
     │   ├── errors.ts                       # Error kinds, and the 401 test
     │   ├── machine.ts                      # States, guards and transitions
-    │   ├── ports.ts                        # What the machine needs from the outside
     │   ├── selectors.ts                    # Auth selectors
     │   ├── slice.ts                        # Auth-only runtime state (`hasCard`)
     │   ├── store.ts                        # Public state subpath
-    │   └── types.ts                        # Flow types, machine types, auth Redux state
+    │   └── types.ts                        # Flow types, ports, machine types, Redux state
     ├── utils/                              # Flow-local helpers
     ├── index.native.ts                     # Native public API
     └── index.ts                            # Default/web public API

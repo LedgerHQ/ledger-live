@@ -1,4 +1,4 @@
-import type { HostedLoginResult } from "../../state/ports";
+import type { HostedLoginResult } from "../../state/types";
 
 /**
  * Desktop opens the hosted page in the user's own browser, which reports nothing back. The custom

@@ -3,7 +3,7 @@ import { cardSession, getCardSessionToken } from "@features/platform-card";
 import type { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
 import { clearAttempt, loadAttempt, saveAttempt } from "./attemptStore";
 import { createAuthorizeAttempt } from "./authorizeAttempt";
-import type { CardLoginPorts, OpenHostedLogin } from "./ports";
+import type { CardLoginPorts, OpenHostedLogin } from "./types";
 
 /**
  * The app store's `dispatch`, used to run the Card api's `initiate` thunks. The Card api reducer must

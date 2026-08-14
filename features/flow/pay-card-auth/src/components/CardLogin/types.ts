@@ -1,5 +1,4 @@
-import type { OpenHostedLogin } from "../../state/ports";
-import type { CardLoginOauthConfig, PayCardAuthCallback } from "../../state/types";
+import type { CardLoginOauthConfig, OpenHostedLogin, PayCardAuthCallback } from "../../state/types";
 
 export type CardLoginProps = {
   readonly oauthConfig: CardLoginOauthConfig;
