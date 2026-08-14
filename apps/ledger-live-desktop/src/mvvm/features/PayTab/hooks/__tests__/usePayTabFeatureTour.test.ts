@@ -1,6 +1,6 @@
 import { renderHook } from "@testing-library/react";
 import { track } from "~/renderer/analytics/segment";
-import { usePayTabFeatureTour } from "./usePayTabFeatureTour";
+import { usePayTabFeatureTour } from "../usePayTabFeatureTour";
 
 jest.mock("~/renderer/analytics/segment", () => ({
   track: jest.fn(),

@@ -898,6 +898,11 @@
         "dialogBanner": "Manage all other assets in your home",
         "confirm": "Confirm"
       }
+    },
+    "actions": {
+      "deposit": "Add stablecoin",
+      "request": "Request",
+      "pay": "New payment"
     }
   },
   "lend": {
