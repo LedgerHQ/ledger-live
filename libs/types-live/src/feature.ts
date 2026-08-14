@@ -331,6 +331,7 @@ export type Features = CurrencyFeatures & {
   llmTransferButtonCopyVariant: Feature_LlmTransferButtonCopyVariant;
   lldTezosStaking: DefaultFeature;
   llmTezosStaking: DefaultFeature;
+  llmIcpStaking: DefaultFeature;
   swapToEarn: DefaultFeature;
 };
 

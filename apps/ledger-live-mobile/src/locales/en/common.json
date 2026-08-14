@@ -1,4 +1,24 @@
 {
+  "internetComputer": {
+    "stakeBanner": {
+      "stakeICP": {
+        "title": "Stake ICP",
+        "description": "Stake ICP and gain rewards by participating in its governance.",
+        "cta": "Stake ICP"
+      }
+    },
+    "headerManageActions": {
+      "manageNeurons": {
+        "title": "Manage Neurons"
+      }
+    },
+    "summaryFooter": {
+      "stakedBalance": "Staked Balance",
+      "stakedBalanceTooltip": "The total amount of ICP tokens currently staked in neurons. Staked ICP earns voting rewards and can be used for governance.",
+      "totalMaturity": "Total Maturity",
+      "totalMaturityTooltip": "The total accumulated rewards from staking, including both staked and liquid maturity. These rewards can be either staked again or claimed as liquid ICP."
+    }
+  },
   "buyCurrency": {
     "buyCTA": "Buy {{ currencyNameOrTicker }}"
   },
