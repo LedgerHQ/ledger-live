@@ -496,6 +496,20 @@ describe("apiClient", () => {
       expect(result.percentage).toBe(42);
     });
 
+    it("should return a status with a null synced_up_to", async () => {
+      const mockResponse = {
+        synced: false,
+        percentage: 0,
+        sync_start_height: 100,
+        synced_up_to: null,
+      };
+      jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
+
+      const result = await apiClient.getRecordScannerStatus(mockConfig, mockUuid);
+
+      expect(result).toEqual(mockResponse);
+    });
+
     it("should use the correct network type in the URL", async () => {
       jest.mocked(network).mockResolvedValue({
         data: { synced: true, percentage: 100, sync_start_height: 0, synced_up_to: 20985061 },

@@ -36,7 +36,6 @@ describe("getAccountInfo", () => {
       startHeight: 0,
       scannedHeight: 20985061,
     });
-    // ADR-042 sketched synced as a number; the live scanner returns a boolean.
     expect(typeof info.synced).toBe("boolean");
   });
 
@@ -56,6 +55,25 @@ describe("getAccountInfo", () => {
       percentage: 42,
       startHeight: 100,
       scannedHeight: 5000,
+    });
+  });
+
+  it("falls back to the start height when synced_up_to is null", async () => {
+    mockGetRecordScannerStatus.mockResolvedValue({
+      synced: false,
+      percentage: 0,
+      sync_start_height: 100,
+      synced_up_to: null,
+    });
+
+    const info = (await getAccountInfo(config, provableId)) as AleoAccountInfo;
+
+    expect(info).toEqual({
+      type: "aleo",
+      synced: false,
+      percentage: 0,
+      startHeight: 100,
+      scannedHeight: 100,
     });
   });
 

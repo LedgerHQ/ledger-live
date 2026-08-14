@@ -2,7 +2,6 @@ import type { AccountInfo } from "@ledgerhq/coin-module-framework/api/types";
 import { getRecordScannerStatusOrThrow } from "../network/utils";
 import type { AleoAccountInfo, AleoCoinConfig } from "../types";
 
-/** One `POST /scanner/{network}/status` call for a live `provableId`. Never registers (ADR-046). */
 export async function getAccountInfo(
   config: AleoCoinConfig,
   provableId: string,
@@ -14,7 +13,8 @@ export async function getAccountInfo(
     synced: status.synced,
     percentage: status.percentage,
     startHeight: status.sync_start_height,
-    scannedHeight: status.synced_up_to,
+    // synced_up_to is null until the scanner has made progress past sync_start_height
+    scannedHeight: status.synced_up_to ?? status.sync_start_height,
   };
   return accountInfo;
 }

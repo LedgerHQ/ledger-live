@@ -98,7 +98,7 @@ export interface AleoRecordScannerStatusResponse {
   synced: boolean;
   percentage: number;
   sync_start_height: number;
-  synced_up_to: number;
+  synced_up_to: number | null;
 }
 
 export interface AleoPrivateRecord {

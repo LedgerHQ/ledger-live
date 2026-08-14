@@ -196,10 +196,6 @@ export async function fetchAllOwnedRecords({
   return allRecords;
 }
 
-/**
- * Fetches the record scanner status, translating a 422 (stale/unknown UUID) into
- * {@link AleoApiConfigurationResetError} so every caller reacts to it the same way.
- */
 export async function getRecordScannerStatusOrThrow(
   config: AleoCoinConfig,
   uuid: string,

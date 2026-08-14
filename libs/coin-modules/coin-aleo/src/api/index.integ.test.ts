@@ -14,6 +14,16 @@ import { setupCalStore } from "../__tests__/helpers/cal";
 import { getPristineAccount } from "../__tests__/helpers/account";
 import type { AleoAccountInfo, AleoContext } from "../types";
 
+type AleoApi = ReturnType<typeof createApi>;
+
+function requireGetAccountInfo(api: AleoApi): NonNullable<AleoApi["getAccountInfo"]> {
+  const { getAccountInfo } = api;
+  if (!getAccountInfo) {
+    throw new Error("guard: api.getAccountInfo is not implemented");
+  }
+  return getAccountInfo;
+}
+
 async function withPrivacyContext(context: AleoContext, viewKey: string): Promise<AleoContext> {
   const config = await context.config();
   const provableApi = await accessProvableApi({
@@ -34,11 +44,13 @@ describe("createApi", () => {
     logger: () => {},
   };
   let emptyAddress: string;
+  let privacyContext: AleoContext;
 
   beforeAll(async () => {
     setupCalStore();
     const pristineAccount = await getPristineAccount();
     emptyAddress = pristineAccount.address;
+    privacyContext = await withPrivacyContext(context, testnetViewKey);
   });
 
   describe("estimateFees", () => {
@@ -230,13 +242,9 @@ describe("createApi", () => {
 
   describe("getAccountInfo", () => {
     it("returns the aleo scan status for a registered provableId", async () => {
-      // getAccountInfo never registers; withPrivacyContext mints a provableId to exercise the read side.
-      const contextWithPrivacy = await withPrivacyContext(context, testnetViewKey);
+      const getAccountInfo = requireGetAccountInfo(api);
 
-      const info = (await api.getAccountInfo!(
-        contextWithPrivacy,
-        testnetAddress,
-      )) as AleoAccountInfo;
+      const info = (await getAccountInfo(privacyContext, testnetAddress)) as AleoAccountInfo;
 
       expect(info.type).toBe("aleo");
       expect(typeof info.synced).toBe("boolean");
@@ -247,13 +255,14 @@ describe("createApi", () => {
     });
 
     it("throws AleoApiConfigurationResetError for an unknown provableId", async () => {
+      const getAccountInfo = requireGetAccountInfo(api);
       const contextWithUnknownProvableId: AleoContext = {
         ...context,
         provableId: "00000000-0000-0000-0000-000000000000",
       };
 
       await expect(
-        api.getAccountInfo!(contextWithUnknownProvableId, testnetAddress),
+        getAccountInfo(contextWithUnknownProvableId, testnetAddress),
       ).rejects.toBeInstanceOf(AleoApiConfigurationResetError);
     });
   });
