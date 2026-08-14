@@ -30,6 +30,7 @@ import {
   FAST_PRIVATE_RECORDS_PER_TRANSACTION,
   MAX_PRIVATE_RECORDS_PER_TRANSACTION,
   MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION,
+  PRIVATE_TRANSFER_FUNCTIONS,
   PROGRAM_ID,
   SINGLE_CALL_SIGNING_TIME,
   TOKEN_RECORD_NAME,
@@ -189,6 +190,10 @@ export const determineTransactionType = (
   return "public";
 };
 
+function resolveTransactionAmount(rawTx: AleoPublicTransaction): BigNumber {
+  return new BigNumber(rawTx.amount_u128 ?? rawTx.amount);
+}
+
 function parseTransactionFields(rawTx: AleoPublicTransaction, address: string) {
   const date = new Date(Number(rawTx.block_timestamp) * 1000);
   const hasFailed = rawTx.transaction_status !== "Accepted";
@@ -218,7 +223,7 @@ export const toCoinFrameworkOperation = (
     type,
     recipients: [rawTx.recipient_address],
     senders: [rawTx.sender_address],
-    value: BigInt(rawTx.amount.toFixed(0)),
+    value: BigInt(resolveTransactionAmount(rawTx).toFixed(0)),
     asset: { type: "native" },
     details: {
       functionId: rawTx.function_id,
@@ -245,14 +250,18 @@ export const toBridgeOperation = (
   address: string,
   isTokenTx?: boolean,
 ): AleoOperation => {
-  const value = new BigNumber(rawTx.amount);
+  const value = resolveTransactionAmount(rawTx);
   const { type, fee, blockHash, transactionType, date, hasFailed } = parseTransactionFields(
     rawTx,
     address,
   );
 
-  if (value.isNaN() || value.lte(0)) {
+  if (value.isNaN() || value.isNegative()) {
     log("aleo/toBridgeOperation", `Invalid raw transaction details for ${address}`, rawTx);
+  }
+
+  if (value.isZero() && rawTx.function_id.includes("transfer")) {
+    log("aleo/toBridgeOperation", `Zero value transaction for ${address}`, rawTx);
   }
 
   return {
@@ -1224,4 +1233,54 @@ export function isAleoAddressPlaintext(v: string): boolean {
 
 export function isAleoAmountPlaintext(v: string): boolean {
   return /^\d+u\d+$/.test(normalizeAleoPlaintext(v));
+}
+
+/**
+ * Whether a transition's (recipient, amount) arguments can be located by scanning for the first
+ * address-shaped argument. Ledger's batching wrappers suffix the function with the record count
+ * (transfer_private_4) but keep the wrapped function's argument order.
+ *
+ * Excludes transfer_from_*, whose first address argument is the sender, not the recipient.
+ */
+export function isParsableTransferFunction(functionName: string): boolean {
+  return PRIVATE_TRANSFER_FUNCTIONS.has(functionName.replace(/_\d+$/, ""));
+}
+
+/**
+ * Takes a transfer transition's arguments in order (null where undecryptable or not a value) and
+ * returns the first address-shaped one plus the first amount-shaped one after it.
+ *
+ * No fixed offset works — all three argument layouts are deployed:
+ *   credits.aleo, ARC-20   (record, recipient, amount)
+ *   ARC-21, ARC-22         (recipient, amount, record, …)
+ *   token_registry.aleo    (token_id, recipient, amount, flag) for transfer_public_to_private
+ */
+export function findTransferArguments(plaintexts: (string | null)[]): {
+  recipient: string;
+  amount: string;
+} | null {
+  let recipient: string | null = null;
+
+  for (const plaintext of plaintexts) {
+    if (!plaintext) {
+      continue;
+    }
+
+    if (!recipient) {
+      if (isAleoAddressPlaintext(plaintext)) {
+        recipient = normalizeAleoPlaintext(plaintext);
+      }
+
+      continue;
+    }
+
+    if (isAleoAmountPlaintext(plaintext)) {
+      return {
+        recipient,
+        amount: normalizeAleoPlaintext(plaintext),
+      };
+    }
+  }
+
+  return null;
 }

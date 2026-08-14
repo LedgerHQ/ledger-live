@@ -58,6 +58,8 @@ import {
   normalizeAleoPlaintext,
   isAleoAddressPlaintext,
   isAleoAmountPlaintext,
+  isParsableTransferFunction,
+  findTransferArguments,
   determineTransactionType,
   patchAccountWithViewKey,
   toCoinFrameworkOperation,
@@ -217,6 +219,75 @@ describe("isAleoAmountPlaintext", () => {
     ["", false],
   ])("(%j) → %s", (input, expected) => {
     expect(isAleoAmountPlaintext(input)).toBe(expected);
+  });
+});
+
+describe("isParsableTransferFunction", () => {
+  it.each([
+    ["transfer_private", true],
+    ["transfer_private_to_public", true],
+    ["transfer_public_to_private", true],
+    ["transfer_private_2", true],
+    ["transfer_private_13", true],
+    ["transfer_private_to_public_4", true],
+    ["transfer_public_to_private_3", true],
+    ["transfer_from_public", false],
+    ["transfer_from_public_to_private", false],
+    ["transfer_public", false],
+    ["transfer_public_as_signer", false],
+    ["mint_private", false],
+    ["burn_private", false],
+    ["join", false],
+    ["join_5", false],
+    ["split", false],
+    ["fee_private", false],
+    ["", false],
+  ])("(%j) → %s", (input, expected) => {
+    expect(isParsableTransferFunction(input)).toBe(expected);
+  });
+});
+
+describe("findTransferArguments", () => {
+  const to = "aleo1recipient123";
+
+  it.each([
+    [
+      "credits.aleo / ARC-20 (record, recipient, amount)",
+      [null, to, "150000u64"],
+      { recipient: to, amount: "150000u64" },
+    ],
+    [
+      "ARC-21 / ARC-22 (recipient, amount, record)",
+      [to, "700u64", null],
+      { recipient: to, amount: "700u64" },
+    ],
+    [
+      "token_registry.aleo (token_id, recipient, amount, flag)",
+      ["1field", to, "500u128", "true"],
+      { recipient: to, amount: "500u128" },
+    ],
+    [
+      "batcher wrapper (external records, recipient, amount, proof)",
+      [null, null, to, "250000u64", "proof"],
+      { recipient: to, amount: "250000u64" },
+    ],
+    [
+      "trailing amount-shaped merkle proof is ignored",
+      [null, to, "42u64", "9999u64"],
+      { recipient: to, amount: "42u64" },
+    ],
+    [
+      "visibility suffixes are stripped",
+      [`${to}.private`, "42u64.public"],
+      { recipient: to, amount: "42u64" },
+    ],
+    ["undecryptable amount", [null, to, null], null],
+    ["no amount-shaped argument after the recipient", [null, to, null, "notanamount"], null],
+    ["no address-shaped argument (join)", [null, null], null],
+    ["amount before the recipient", ["42u64", to], null],
+    ["no arguments", [], null],
+  ])("%s", (_label, plaintexts, expected) => {
+    expect(findTransferArguments(plaintexts)).toEqual(expected);
   });
 });
 
@@ -385,6 +456,15 @@ describe("toCoinFrameworkOperation", () => {
     expect(result.tx.block.hash).toBe(rawTx.block_hash);
   });
 
+  it("should use amount_u128 over amount when provided, including values beyond JS safe integer range", () => {
+    const amountU128 = "123456789012345678901234567890";
+    const rawTx = getMockedPublicTransaction({ amount: 10000000, amount_u128: amountU128 });
+
+    const result = toCoinFrameworkOperation(rawTx, recipientAddress);
+
+    expect(result.value).toBe(BigInt(amountU128));
+  });
+
   it("should set failed to true when transaction_status is not Accepted", () => {
     const rawTx = getMockedPublicTransaction({ transaction_status: "Rejected" });
 
@@ -440,6 +520,15 @@ describe("toBridgeOperation", () => {
     expect(result.hasFailed).toBe(false);
   });
 
+  it("should use amount_u128 over amount when provided, including values beyond JS safe integer range", () => {
+    const amountU128 = "123456789012345678901234567890";
+    const rawTx = getMockedPublicTransaction({ amount: 10000000, amount_u128: amountU128 });
+
+    const result = toBridgeOperation(ledgerAccountId, rawTx, recipientAddress);
+
+    expect(result.value).toEqual(new BigNumber(amountU128));
+  });
+
   it("should generate different ids for different account ids", () => {
     const rawTx = getMockedPublicTransaction();
     const otherId = "js:2:aleo:aleo1other:";
@@ -473,7 +562,6 @@ describe("toBridgeOperation", () => {
 
   it.each([
     ["NaN amount", { amount: NaN as number }],
-    ["zero amount", { amount: 0 }],
     ["negative amount", { amount: -1 }],
   ])("should log invalid raw transaction details for %s", (_label, amountOverride) => {
     const rawTx = getMockedPublicTransaction(amountOverride);
@@ -486,6 +574,19 @@ describe("toBridgeOperation", () => {
       rawTx,
     );
     expect(result.value).toEqual(new BigNumber(rawTx.amount));
+  });
+
+  it("should log a zero amount apart from invalid details for transfer functions", () => {
+    const rawTx = getMockedPublicTransaction({ amount: 0, function_id: "transfer_private" });
+
+    toBridgeOperation(ledgerAccountId, rawTx, recipientAddress);
+
+    expect(log).toHaveBeenCalledTimes(1);
+    expect(log).toHaveBeenCalledWith(
+      "aleo/toBridgeOperation",
+      `Zero value transaction for ${recipientAddress}`,
+      rawTx,
+    );
   });
 
   it("should not log when amount is valid", () => {
