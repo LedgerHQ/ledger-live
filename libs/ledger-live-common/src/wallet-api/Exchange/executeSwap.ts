@@ -18,7 +18,7 @@ import {
 } from "@ledgerhq/wallet-api-exchange-module";
 import { BigNumber } from "bignumber.js";
 import get from "lodash/get";
-import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
+import type { Transaction as EvmTransaction } from "../../families/evm/types";
 import { padHexString } from "@ledgerhq/hw-app-eth";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { getAccountBridge } from "../../bridge";
