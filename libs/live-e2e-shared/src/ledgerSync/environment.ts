@@ -13,3 +13,8 @@ export const ledgerSyncEnvironment: LedgerSyncEnvironment =
  */
 export const { trustchainApiBaseUrl, cloudSyncApiBaseUrl } =
   getWalletSyncEnvironmentParams(ledgerSyncEnvironment);
+
+// Which backend the run targets is the first thing to check when a Ledger Sync test misbehaves.
+console.log(
+  `[E2E] Ledger Sync environment: ${ledgerSyncEnvironment} (trustchain: ${trustchainApiBaseUrl}, cloud-sync: ${cloudSyncApiBaseUrl})`,
+);
