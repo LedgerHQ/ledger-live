@@ -37,6 +37,9 @@ export function createApi(): CoinModuleApi<CasperConfig, CasperMemo> {
     async call() {
       throw new Error("call is not supported");
     },
+    async register() {
+      throw new Error("register is not supported");
+    },
     getValidators(
       _context: CasperContext,
       _options?: { cursor?: Cursor },

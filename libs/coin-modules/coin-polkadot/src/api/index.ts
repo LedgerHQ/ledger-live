@@ -48,6 +48,9 @@ export function createApi(): CoinModuleApi<PolkadotCoinConfig> {
     async call(_context: PolkadotContext) {
       throw new Error("call is not supported");
     },
+    async register() {
+      throw new Error("register is not supported");
+    },
     combine: (_context: PolkadotContext, _tx: string, _signature: string[]) => {
       throw new Error("UnsupportedMethod");
     },

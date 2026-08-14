@@ -237,4 +237,10 @@ describe("createApi", () => {
     const context = createMockKaspaContext();
     await expect(api.call(context, {})).rejects.toThrow("call is not supported");
   });
+
+  it("rejects for register (not supported)", async () => {
+    const api = createApi();
+    const context = createMockKaspaContext();
+    await expect(api.register(context, SENDER)).rejects.toThrow("register is not supported");
+  });
 });

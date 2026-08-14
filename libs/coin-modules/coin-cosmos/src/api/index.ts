@@ -54,6 +54,9 @@ export function createApi(currencyId: string): CosmosCoinModuleApi {
     async call() {
       throw new Error("call is not supported");
     },
+    async register() {
+      throw new Error("register is not supported");
+    },
     getBalance: async (context, address, options) => {
       const { api } = await resolve(context, currencyId);
       return rejectBalanceOptions(() => getBalance(api, address), options);

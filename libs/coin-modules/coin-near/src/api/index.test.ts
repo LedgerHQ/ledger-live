@@ -142,4 +142,8 @@ describe("createApi", () => {
   it("does not support contract calls", async () => {
     await expect(api.call(context, {})).rejects.toThrow("call is not supported");
   });
+
+  it("does not support account registration", async () => {
+    await expect(api.register(context, "sender.near")).rejects.toThrow("register is not supported");
+  });
 });

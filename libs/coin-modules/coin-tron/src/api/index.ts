@@ -49,6 +49,9 @@ export function createApi(): CoinModuleApi<TronCoinConfig, TronMemo> {
     call() {
       throw new Error("call is not supported");
     },
+    async register() {
+      throw new Error("register is not supported");
+    },
     combine: (_context, tx, signature) => combine(tx, signature),
     craftTransaction: async (context, transactionIntent, options) => {
       const config = await context.config();

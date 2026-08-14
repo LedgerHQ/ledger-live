@@ -44,6 +44,9 @@ export function createApi(): CoinModuleApi<AptosCoinConfig> {
     async call(_context: AptosContext) {
       throw new Error("call is not supported");
     },
+    async register() {
+      throw new Error("register is not supported");
+    },
     broadcast: async (
       context: AptosContext,
       tx: string,
