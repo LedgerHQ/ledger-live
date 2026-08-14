@@ -57,10 +57,8 @@ export const mapSmallSquareContentCard = (
     tag: extras.tag,
     media: extras.media,
     mediaType:
-      mediaType === "video" || mediaType === "image" || mediaType === "gif"
-        ? mediaType
-        : undefined,
-    filledMedia: Boolean(extras.filledMedia),
+      mediaType === "video" || mediaType === "image" || mediaType === "gif" ? mediaType : undefined,
+    filledMedia: extras.filledMedia === "true" || extras.filledMedia === "1",
     link: appendDeeplinkLocationIfDefined(extras.link, location),
     location,
     order: parseOrder(extras.order),

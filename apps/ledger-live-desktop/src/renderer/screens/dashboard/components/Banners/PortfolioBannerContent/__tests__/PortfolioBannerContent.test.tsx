@@ -169,7 +169,7 @@ describe("PortfolioBannerContent", () => {
 
     render(<PortfolioBannerContent />);
 
-    expect(screen.getByTestId("postonboarding-banner-entry-point")).toBeInTheDocument();
+    expect(screen.getByTestId("postonboarding-banner-entry-point")).toBeVisible();
   });
 
   it("renders FinishOnboardingWidget branch when post-onboarding is visible and finish widget is visible", () => {
@@ -183,7 +183,7 @@ describe("PortfolioBannerContent", () => {
       dbMiddleware,
     });
     render(<PortfolioBannerContent />, { store });
-    expect(screen.getByTestId("finish-onboarding-widget")).toBeInTheDocument();
+    expect(screen.getByTestId("finish-onboarding-widget")).toBeVisible();
   });
 
   describe("Wallet40 finish-onboarding gating (shouldDisplayFinishOnboardingWidget)", () => {
@@ -212,8 +212,8 @@ describe("PortfolioBannerContent", () => {
 
       render(<PortfolioBannerContent />);
 
-      expect(screen.getByTestId("finish-onboarding-widget")).toBeInTheDocument();
-      expect(screen.getByTestId("recover-widget")).toBeInTheDocument();
+      expect(screen.getByTestId("finish-onboarding-widget")).toBeVisible();
+      expect(screen.getByTestId("recover-widget")).toBeVisible();
     });
 
     it("renders only recover widget when finish widget is off but recover banner should show", () => {
@@ -227,7 +227,7 @@ describe("PortfolioBannerContent", () => {
       render(<PortfolioBannerContent />);
 
       expect(screen.queryByTestId("finish-onboarding-widget")).not.toBeInTheDocument();
-      expect(screen.getByTestId("recover-widget")).toBeInTheDocument();
+      expect(screen.getByTestId("recover-widget")).toBeVisible();
     });
 
     it("stacks portfolio category content cards when finish and recover are both off", () => {
@@ -240,7 +240,7 @@ describe("PortfolioBannerContent", () => {
 
       render(<PortfolioBannerContent />);
 
-      expect(screen.getByTestId("portfolio-category-content-cards")).toBeInTheDocument();
+      expect(screen.getByTestId("portfolio-category-content-cards")).toBeVisible();
     });
 
     it("stacks LNS upsell into portfolio category content cards when finish and recover are off", () => {
@@ -253,7 +253,7 @@ describe("PortfolioBannerContent", () => {
 
       render(<PortfolioBannerContent />);
 
-      expect(screen.getByTestId("portfolio-category-content-cards")).toBeInTheDocument();
+      expect(screen.getByTestId("portfolio-category-content-cards")).toBeVisible();
       expect(screen.getByTestId("lns-upsell-banner")).toBeVisible();
       expect(screen.queryByTestId("finish-onboarding-widget")).not.toBeInTheDocument();
       expect(screen.queryByTestId("recover-widget")).not.toBeInTheDocument();
@@ -272,7 +272,7 @@ describe("PortfolioBannerContent", () => {
       expect(screen.getByTestId("lns-upsell-banner")).toBeVisible();
       expect(screen.queryByTestId("recover-widget")).not.toBeInTheDocument();
       expect(screen.queryByTestId("finish-onboarding-widget")).not.toBeInTheDocument();
-      expect(screen.getByTestId("portfolio-category-content-cards")).toBeInTheDocument();
+      expect(screen.getByTestId("portfolio-category-content-cards")).toBeVisible();
     });
 
     it("stacks LNS upsell with portfolio category content cards when finish onboarding is visible", () => {
@@ -288,7 +288,7 @@ describe("PortfolioBannerContent", () => {
       expect(screen.getByTestId("lns-upsell-banner")).toBeVisible();
       expect(screen.queryByTestId("finish-onboarding-widget")).not.toBeInTheDocument();
       expect(screen.queryByTestId("recover-widget")).not.toBeInTheDocument();
-      expect(screen.getByTestId("portfolio-category-content-cards")).toBeInTheDocument();
+      expect(screen.getByTestId("portfolio-category-content-cards")).toBeVisible();
     });
 
     it("stacks finish onboarding widget with portfolio category content cards when recover is off", () => {
@@ -301,9 +301,9 @@ describe("PortfolioBannerContent", () => {
 
       render(<PortfolioBannerContent />);
 
-      expect(screen.getByTestId("finish-onboarding-widget")).toBeInTheDocument();
+      expect(screen.getByTestId("finish-onboarding-widget")).toBeVisible();
       expect(screen.queryByTestId("recover-widget")).not.toBeInTheDocument();
-      expect(screen.getByTestId("portfolio-category-content-cards")).toBeInTheDocument();
+      expect(screen.getByTestId("portfolio-category-content-cards")).toBeVisible();
     });
 
     it("stacks portfolio category content cards when recover widget visibility gates are off", () => {
@@ -319,7 +319,7 @@ describe("PortfolioBannerContent", () => {
 
       render(<PortfolioBannerContent />);
 
-      expect(screen.getByTestId("portfolio-category-content-cards")).toBeInTheDocument();
+      expect(screen.getByTestId("portfolio-category-content-cards")).toBeVisible();
       expect(screen.queryByTestId("recover-widget")).not.toBeInTheDocument();
     });
   });
@@ -334,8 +334,8 @@ describe("PortfolioBannerContent", () => {
 
       render(<PortfolioBannerContent />);
 
-      expect(screen.getByTestId("action-content-cards")).toBeInTheDocument();
-      expect(screen.getByTestId("portfolio-category-content-cards")).toBeInTheDocument();
+      expect(screen.getByTestId("action-content-cards")).toBeVisible();
+      expect(screen.getByTestId("portfolio-category-content-cards")).toBeVisible();
     });
 
     it("stacks LNS upsell with portfolio category content cards when action cards are off", () => {
@@ -348,7 +348,7 @@ describe("PortfolioBannerContent", () => {
 
       render(<PortfolioBannerContent />);
 
-      expect(screen.getByTestId("portfolio-category-content-cards")).toBeInTheDocument();
+      expect(screen.getByTestId("portfolio-category-content-cards")).toBeVisible();
       expect(screen.getByTestId("lns-upsell-banner")).toBeVisible();
       expect(screen.queryByTestId("action-content-cards")).not.toBeInTheDocument();
     });
@@ -363,7 +363,7 @@ describe("PortfolioBannerContent", () => {
 
       render(<PortfolioBannerContent />);
 
-      expect(screen.getByTestId("portfolio-category-content-cards")).toBeInTheDocument();
+      expect(screen.getByTestId("portfolio-category-content-cards")).toBeVisible();
     });
   });
 });

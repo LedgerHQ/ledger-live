@@ -21,10 +21,7 @@ const brazeChildCard = (overrides: Record<string, string> = {}, id = "child-1"):
 
 describe("mapSmallSquareContentCard", () => {
   it("should map a small_square Braze card to UI props", () => {
-    const mapped = mapSmallSquareContentCard(
-      brazeChildCard(),
-      LocationContentCard.Portfolio,
-    );
+    const mapped = mapSmallSquareContentCard(brazeChildCard(), LocationContentCard.Portfolio);
 
     expect(mapped).toEqual({
       id: "child-1",
@@ -52,5 +49,16 @@ describe("mapSmallSquareContentCard", () => {
     );
 
     expect(mapped).toBeNull();
+  });
+
+  it.each([
+    ["true", true],
+    ["1", true],
+    ["false", false],
+    ["0", false],
+  ])("should map filledMedia value %s to %s", (filledMedia, expected) => {
+    const mapped = mapSmallSquareContentCard(brazeChildCard({ filledMedia }));
+
+    expect(mapped?.filledMedia).toBe(expected);
   });
 });

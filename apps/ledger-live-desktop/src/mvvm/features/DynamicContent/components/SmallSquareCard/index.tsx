@@ -40,18 +40,22 @@ function SmallSquareCard({
     onDismiss?.();
   };
 
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (!onClick || event.target !== event.currentTarget) return;
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      onClick();
+    }
+  };
+
   const showClose = Boolean(isDismissable && onDismiss);
 
   return (
-    <div
-      className={`relative w-full min-w-0 ${onClick ? "cursor-pointer" : "cursor-default"}`}
-      onClick={onClick}
-      data-testid="small-square-card"
-    >
+    <div className="relative w-full min-w-0">
       {tag || showClose ? (
         <div className="pointer-events-none absolute inset-0 z-[1] flex items-start gap-8 p-12">
           {tag ? (
-            <div className="pointer-events-auto min-w-0 shrink">
+            <div className="min-w-0 shrink">
               <Tag label={tag} size="sm" />
             </div>
           ) : null}
@@ -70,9 +74,14 @@ function SmallSquareCard({
         </div>
       ) : null}
       <div
+        role={onClick ? "button" : undefined}
+        tabIndex={onClick ? 0 : undefined}
         className={`flex w-full flex-col overflow-hidden rounded-lg bg-surface ${
           isMediaOnly ? "items-center justify-center" : ""
-        }`}
+        } ${onClick ? "cursor-pointer" : "cursor-default"}`}
+        onClick={onClick}
+        onKeyDown={handleKeyDown}
+        data-testid="small-square-card"
         style={{ height: CARD_HEIGHT_PX }}
       >
         <div
