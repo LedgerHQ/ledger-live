@@ -157,10 +157,7 @@ export const determineTransactionType = (
   return "public";
 };
 
-/**
- * Direction of a public row, resolved against the recipient so a self-transfer reads IN. Merged
- * operations use the opposite precedence — see {@link toMergedOperation}.
- */
+// Self-transfer reads IN here; toMergedOperation uses senders-first (OUT) for shield/unshield symmetry.
 function resolvePublicOperationType(rawTx: AleoPublicTransaction, address: string): OperationType {
   return address === rawTx.recipient_address ? "IN" : "OUT";
 }
@@ -181,7 +178,6 @@ function parseTransactionFields(rawTx: AleoPublicTransaction, address: string) {
   return { type, fee, blockHash, transactionType, date, hasFailed };
 }
 
-/** Resolving the program id to a currency is the caller's job (ADR-042) — no CAL lookup here. */
 export function toOperationAsset(programId: string): AssetInfo {
   return programId === PROGRAM_ID.CREDITS
     ? { type: "native" }
@@ -193,8 +189,6 @@ export const toCoinFrameworkOperation = (
   address: string,
 ): CoinFrameworkOperation => {
   const { fee, blockHash, date, hasFailed } = parseTransactionFields(rawTx, address);
-  // Unlike the bridge, this surface reports a direction for every program: token transfers are
-  // first-class here, keyed by `assetReference` rather than resolved through CAL (ADR-042).
   const type = resolvePublicOperationType(rawTx, address);
   const transactionType = determineTransactionType(rawTx.function_id, type);
 
@@ -224,7 +218,6 @@ export const toCoinFrameworkOperation = (
   };
 };
 
-/** Maps a decrypted record to an operation, for transactions that have no public row at all. */
 export const toCoinFrameworkPrivateOperation = (
   enrichedRecord: EnrichedPrivateRecord,
   address: string,
@@ -260,11 +253,7 @@ export const toCoinFrameworkPrivateOperation = (
   };
 };
 
-/**
- * A public↔private self-transfer puts the account on both sides. `senders` is checked first so both
- * shapes report OUT of the balance they leave — a shield leaves the public balance, an unshield the
- * private one — even though an unshield's public row is the receiving leg.
- */
+// Senders-first: a shield and an unshield both report OUT of the balance they leave, even when the account appears on both sides.
 function resolveOperationType(
   senders: string[],
   recipients: string[],
@@ -275,10 +264,6 @@ function resolveOperationType(
   return "NONE";
 }
 
-/**
- * Completes a public row with its private side. Owning a record produced by the transaction is proof
- * that this account is the counterparty the explorer left blank, so no decryption is needed.
- */
 export const toMergedOperation = (
   rawTx: AleoPublicTransaction,
   address: string,

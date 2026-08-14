@@ -139,20 +139,8 @@ export async function fetchAccountTransactionsFromHeight({
   throw new Error("aleo: unexpected end of loop in fetchAccountTransactionsFromHeight");
 }
 
-/**
- * Fetches transitions forward from `startBlock`, stopping as soon as more than `targetTransactions`
- * distinct transactions are in hand — the bounded counterpart of
- * {@link fetchAccountTransactionsFromHeight}, for callers that page rather than take the whole history.
- *
- * `startBlock` is passed to the explorer as its cursor, so the walk begins near the requested height
- * instead of at the account's first transaction. Callers must still treat the height as a filter, not
- * a guarantee: the explorer resumes at block granularity, so the first block comes back whole and may
- * repeat rows an earlier page already saw.
- *
- * One more transaction than asked for is deliberate. The explorer pages per transition, so the
- * transaction the stream ends on may still have rows beyond the boundary; `complete: false` tells the
- * caller not to trust it, and the surplus is what lets the caller discard it and still fill a page.
- */
+// Fetches one more transaction than asked for: the explorer pages per transition, so the last tx
+// may have rows beyond the boundary. `complete: false` signals the caller to drop it.
 export async function fetchAccountTransitionPage({
   config,
   address,
@@ -192,7 +180,6 @@ export async function fetchAccountTransitionPage({
 
     const nextCursor = page.next_cursor?.block_number.toString() ?? null;
 
-    // Walking down past the floor means the range is fully covered, whatever the explorer still holds.
     const reachedFloor = order === "desc" && hasReachedMinHeight(page.transactions, minBlockHeight);
     if (nextCursor === null || reachedFloor) return { transitions, complete: true };
 

@@ -3,18 +3,8 @@ import type { Operation } from "@ledgerhq/coin-module-framework/api/types";
 
 export type OperationsOrder = "asc" | "desc";
 
-/**
- * Opaque pagination state — callers must not parse it.
- *
- * It carries the identity of the stream, not just a position: `maxBlockHeight` is pinned on the
- * first page so a paging run stays a consistent snapshot as the scanner advances, and
- * `minHeight` / `order` are echoed back so a cursor replayed against a different window is rejected.
- *
- * `resume` names the last operation actually emitted, by `(block, transactionId)` — the same pair the
- * total order sorts on. The framework requires a non-volatile cursor, which is why it is an identity
- * and not an offset: a count of operations at a height is recomputed on every call, so a late-indexed
- * row or a reorg would shift it and the next page would skip or repeat rows.
- */
+// `resume` is an identity (block + transactionId), not an offset — recomputing a count on every
+// call would shift on a late-indexed row or a reorg, causing skips or repeats.
 export type OperationsCursor = {
   minHeight: number;
   maxBlockHeight: number;
@@ -61,10 +51,6 @@ export function decodeOperationsCursor(raw: string | undefined): OperationsCurso
   return { minHeight, maxBlockHeight, order, resume };
 }
 
-/**
- * A position is only meaningful relative to the window it was cut from, so a caller that changes
- * `minHeight` or flips `order` mid-run is told, not silently served rows it has already seen.
- */
 export function assertCursorMatchesRequest(
   cursor: OperationsCursor,
   minHeight: number,
@@ -76,11 +62,7 @@ export function assertCursorMatchesRequest(
   );
 }
 
-/**
- * The height range to fetch. A resume reopens *on* the boundary block rather than after it: the
- * explorer resumes at block granularity, and operations already emitted from that block are dropped
- * locally by {@link dropThroughResumePoint}.
- */
+// A resume reopens *on* the boundary block — already-emitted rows are dropped by dropThroughResumePoint.
 export function resolveHeightWindow(
   cursor: OperationsCursor | null,
   minHeight: number,
@@ -111,13 +93,7 @@ function toOrderKey(operation: Operation): {
   return { block: operation.tx.block.height, transactionId: operation.tx.hash };
 }
 
-/**
- * Drops the operations an earlier page already emitted.
- *
- * Compares against the resume point in the stream's own total order rather than looking the operation
- * up by identity, so a resume point that has since vanished from the range — a reorg dropped it, the
- * explorer re-indexed it — still cuts at the right place instead of replaying the page.
- */
+// Compares by order position, not identity, so a reorg-dropped resume point still cuts correctly.
 export function dropThroughResumePoint(
   ordered: Operation[],
   resume: OperationsCursor["resume"],
@@ -128,7 +104,6 @@ export function dropThroughResumePoint(
   return ordered.filter(operation => compareOperations(toOrderKey(operation), resume, order) > 0);
 }
 
-/** Where the next page picks up: the last operation this page emitted. */
 export function buildResumePoint(items: Operation[]): OperationsCursor["resume"] {
   const last = items.at(-1);
 

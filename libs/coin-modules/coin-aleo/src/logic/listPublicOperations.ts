@@ -1,15 +1,8 @@
 import { fetchAccountTransactionsFromHeight, fetchAccountTransitionPage } from "../network/utils";
 import type { AleoCoinConfig, AleoPublicTransaction } from "../types";
 
-/**
- * The explorer pages per transition, so a multi-transition transaction arrives as several rows
- * sharing one transaction_id. Only one can represent the transaction, and the choice must be
- * deterministic across calls or a replayed page would rewrite rows it already emitted.
- *
- * Rows carrying an address are preferred over the bare inner transitions of a batching contract
- * (testnet: at1lqugdt847uwnfem2xhzwq6ewrnd6ysjv2gumvglytskutxj3kcpsmc3rrf), and `transition_id`
- * breaks the remaining ties.
- */
+// Prefer rows with an address (real transfers) over bare inner transitions of batching contracts.
+// `transition_id` breaks remaining ties so the pick is stable across calls.
 function pickTransactionRepresentatives(
   transactions: AleoPublicTransaction[],
 ): AleoPublicTransaction[] {
@@ -39,18 +32,8 @@ function isBetterRepresentative(
   return candidate.transition_id < current.transition_id;
 }
 
-/**
- * A bounded page of the public history, normalised to one row per transaction.
- *
- * The explorer pages per transition, so the transaction the stream ends on may still have rows past
- * the boundary — its representative would be picked from a partial set, and the pick has to be stable
- * across calls. So that trailing transaction is dropped and left for the next page, which refetches
- * from its block and sees it whole. Nothing is lost: the caller resumes from the last transaction it
- * actually emitted.
- *
- * `complete` means the explorer had nothing left, so every transaction in hand is whole and the
- * trailing-drop does not apply.
- */
+// Drops the trailing transaction when incomplete: its representative may change as more transitions
+// arrive on the next fetch, so only the caller's resumed transaction can be trusted whole.
 export async function listPublicOperationsPage({
   config,
   address,
@@ -86,7 +69,6 @@ export async function listPublicOperationsPage({
   };
 }
 
-/** The whole public half of the Aleo history, normalised to one row per transaction. */
 export async function listPublicOperations({
   config,
   address,
@@ -105,11 +87,10 @@ export async function listPublicOperations({
   transactions: AleoPublicTransaction[];
   nextCursor: string | null;
 }> {
+  // fetchAllPages: per-transition cursor can't page a per-transaction stream; normalisation must see every row of a tx.
   const { transactions, nextCursor } = await fetchAccountTransactionsFromHeight({
     config,
     address,
-    // Always exhaustive: a per-transition cursor cannot page a per-transaction stream, so the
-    // normalisation has to see every row of a transaction before it picks one.
     fetchAllPages: true,
     minBlockHeight,
     ...(cursor && { cursor }),

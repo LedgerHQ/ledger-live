@@ -5,10 +5,6 @@ import { getCalTokens, toBridgeOperation } from "../logic/utils";
 import type { AleoCoinConfig } from "../types";
 import type { AleoOperation } from "../types/bridge";
 
-/**
- * The public half of the bridge history. Token operations are resolved through CAL here, unlike the
- * coin-module surface which reports them by program id (ADR-042).
- */
 export async function listOperations({
   config,
   currencyId,
@@ -22,10 +18,10 @@ export async function listOperations({
   options: ListOperationsOptions;
   ledgerAccountId: string;
 }): Promise<{
-  readonly operations: AleoOperation[];
-  readonly tokenOperations: AleoOperation[];
-  readonly nextCursor: string | null;
-  readonly calTokens: Map<string, TokenCurrency>;
+  operations: AleoOperation[];
+  tokenOperations: AleoOperation[];
+  nextCursor: string | null;
+  calTokens: Map<string, TokenCurrency>;
 }> {
   const operations: AleoOperation[] = [];
   const tokenOperations: AleoOperation[] = [];
