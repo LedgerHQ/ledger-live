@@ -491,6 +491,9 @@
     "FeeTooHigh" : {
       "title" : "网络费用超过数额的10%"
     },
+    "RecipientIsNewAccount" : {
+      "title" : "This address has never received funds, activating it costs a higher network fee"
+    },
     "FeeTooLow" : {
       "title" : "费用过低，无法被网络接受。请增加费用"
     },
@@ -3025,6 +3028,8 @@
       "UNSTAKE" : "已解除权益质押",
       "WITHDRAW_UNSTAKED" : "已提取",
       "FINALIZE_UNSTAKE" : "已解除权益质押",
+      "STAKE_NEURON" : "已质押",
+      "TOP_UP_NEURON" : "质押已增加",
       "ASSOCIATE_TOKEN" : "关联代币",
       "CONTRACT_CALL" : "合约调用",
       "UPDATE_ACCOUNT" : "已更新的账户"
@@ -4466,6 +4471,8 @@
     "sign" : {
       "title" : "继续在您的 {{productName}} 上操作",
       "description" : "按照安全屏幕上的说明进行操作",
+      "termsAndConditions" : "签署此交易，即表示您接受 <0>{{appName}} 的使用条款</0>。",
+      "termsAndConditionsWithPrivacy" : "签署此交易，即表示您接受 <0>{{appName}} 的使用条款</0>和<1>隐私政策</1>。",
       "cancelled" : {
         "title" : "设备拒绝了操作",
         "close" : "关闭",
@@ -9503,14 +9510,18 @@
   "lnsUpsell" : {
     "opted_in" : {
       "title" : "查看更多。更安全地签署",
-      "description" : "升级到任意触摸屏签署设备，可享八折优惠。",
+      "description" : "升级立享八折优惠。",
       "cta" : "升级 Ledger 设备"
     },
     "opted_out" : {
       "title" : "更加安全。更强掌控",
-      "description" : "详细了解高级安全功能。",
+      "description" : "详细了解安全功能。",
       "cta" : "了解更多"
     }
+  },
+  "lazyOnboardingBanner" : {
+    "title" : "探索 Ledger 设备",
+    "description" : "浏览我们最新的产品和配件"
   },
   "marketBanner" : {
     "title" : "市场",
@@ -10195,7 +10206,11 @@
       "domainNotFound" : "未找到此网域的地址",
       "sanctionedAddress" : "该地址已被制裁，无法使用。",
       "validationUnavailable" : "地址验证暂时不可用",
-      "ensDisclaimer" : "ENS 名称解析为钱包地址。在继续之前，请务必验证解析后的地址。"
+      "ensDisclaimer" : "ENS 名称解析为钱包地址。在继续之前，请务必验证解析后的地址。",
+      "sanctioned" : {
+        "description" : "该地址已被标记，Ledger 不允许向其发送",
+        "learnMore" : "了解更多"
+      }
     },
     "addAddressName" : {
       "title" : "命名地址",
@@ -10216,6 +10231,7 @@
       "addressCount_other" : "{{count}} 个地址"
     },
     "detail" : {
+      "meDisplayName" : "{{name}}（我）",
       "ledgerWalletAddresses" : "Ledger Wallet 地址",
       "myAddresses" : "我的地址",
       "emptyState" : {
@@ -10255,10 +10271,28 @@
       "confirm" : "删除",
       "cancel" : "取消"
     },
+    "deleteAddress" : {
+      "title" : "删除地址？",
+      "description" : "该地址将从联系人中移除。",
+      "confirm" : "删除",
+      "cancel" : "取消"
+    },
+    "editAddress" : {
+      "title" : "编辑地址",
+      "inputLabel" : "地址名称",
+      "applyChanges" : "应用更改",
+      "invalidLabelError" : "不允许使用特殊字符。"
+    },
     "editSigner" : {
       "title" : "在设备上确认",
       "description" : "连接并解锁您的 Ledger 设备以确认此更改。",
       "confirm" : "继续",
+      "cancel" : "取消"
+    },
+    "editSignerMismatch" : {
+      "title" : "需使用添加此联系人时的同一 Ledger 设备",
+      "description" : "已连接的设备不一致。",
+      "connectDifferentDevice" : "连接其他设备",
       "cancel" : "取消"
     },
     "ledgerSyncIntroduction" : {
