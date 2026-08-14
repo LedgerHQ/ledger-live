@@ -1,9 +1,6 @@
 import { useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  markPayCardFeatureTourSeen,
-  selectPayCardHasSeenFeatureTour,
-} from "@domain/entity-pay-card";
+import { markPayCardFeatureTourSeen, selectPayCardHasSeenFeatureTour } from "../../state";
 import type { FeatureTourProps, FeatureTourRow } from "./types";
 
 export type FeatureTourViewModel = Readonly<{

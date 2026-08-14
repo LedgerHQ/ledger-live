@@ -34,7 +34,7 @@ describe.skip("estimateFees", () => {
       asset: { type: "native" },
     };
 
-    const { fees, gasBudget } = await estimateFees(transactionIntent);
+    const { fees, gasBudget } = await estimateFees(coinConfig.getCoinConfig(), transactionIntent);
 
     expect(typeof fees).toBe("bigint");
     // Net gas (`fees`) can be negative when a tx nets a storage rebate; the gas budget is the
@@ -60,7 +60,7 @@ describe.skip("estimateFees", () => {
       },
     };
 
-    const { fees, gasBudget } = await estimateFees(transactionIntent);
+    const { fees, gasBudget } = await estimateFees(coinConfig.getCoinConfig(), transactionIntent);
 
     expect(typeof fees).toBe("bigint");
     // Net gas (`fees`) can be negative when a tx nets a storage rebate; the gas budget is the
@@ -83,7 +83,7 @@ describe.skip("estimateFees", () => {
     // Run multiple concurrent estimations
     const promises = Array(5)
       .fill(0)
-      .map(() => estimateFees(transactionIntent));
+      .map(() => estimateFees(coinConfig.getCoinConfig(), transactionIntent));
     const results = await Promise.all(promises);
 
     // All results should be valid

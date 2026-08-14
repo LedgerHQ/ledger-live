@@ -1,3 +1,4 @@
+import { mockNearContext } from "../../test/context";
 import { http, HttpResponse } from "msw";
 import { setMockCoinConfig } from "../../test/coinConfig";
 import { mockServer, NEAR_BASE_URL_MOCKED } from "../../network/node.mock";
@@ -34,7 +35,7 @@ describe("listOperations (MSW)", () => {
       ),
     );
 
-    const page = await listOperations(ADDRESS, { minHeight: 0 });
+    const page = await listOperations(mockNearContext, ADDRESS, { minHeight: 0 });
 
     expect(page.items).toHaveLength(1);
     expect(page.items[0]).toMatchObject({
@@ -55,7 +56,7 @@ describe("listOperations (MSW)", () => {
       }),
     );
 
-    const page = await listOperations(ADDRESS, { cursor, minHeight: 0 });
+    const page = await listOperations(mockNearContext, ADDRESS, { cursor, minHeight: 0 });
 
     expect(requestedNext).toBe(cursor);
     expect(page.next).toBe(cursor);
@@ -68,7 +69,7 @@ describe("listOperations (MSW)", () => {
       ),
     );
 
-    const page = await listOperations(ADDRESS, { minHeight: 0 });
+    const page = await listOperations(mockNearContext, ADDRESS, { minHeight: 0 });
 
     expect(page.items).toEqual([]);
     expect(page.next).toBeUndefined();
@@ -87,7 +88,7 @@ describe("listOperations (MSW)", () => {
       ),
     );
 
-    const page = await listOperations(ADDRESS, { minHeight: 100 });
+    const page = await listOperations(mockNearContext, ADDRESS, { minHeight: 100 });
 
     expect(page.items.map(o => o.id)).toEqual(["above"]);
     expect(page.next).toBeUndefined();
@@ -102,15 +103,15 @@ describe("listOperations (MSW)", () => {
       }),
     );
 
-    await listOperations(ADDRESS, { limit: 500, minHeight: 0 });
+    await listOperations(mockNearContext, ADDRESS, { limit: 500, minHeight: 0 });
 
     expect(requestedLimit).toBe("100");
   });
 
   it("rejects ascending order without issuing a request", async () => {
     // No handler registered: a request would fail the suite via onUnhandledRequest.
-    await expect(listOperations(ADDRESS, { order: "asc", minHeight: 0 })).rejects.toThrow(
-      "ascending order is not supported",
-    );
+    await expect(
+      listOperations(mockNearContext, ADDRESS, { order: "asc", minHeight: 0 }),
+    ).rejects.toThrow("ascending order is not supported");
   });
 });

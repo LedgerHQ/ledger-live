@@ -6,7 +6,7 @@ import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { getUnbondingPeriodDays } from "@ledgerhq/live-common/families/evm/staking/logic";
 import { isStakingAccount } from "@ledgerhq/live-common/families/evm/staking/types";
-import type { TransactionStatus } from "@ledgerhq/coin-evm/types/index";
+import type { TransactionStatus } from "@ledgerhq/live-common/families/evm/types";
 import { Alert, Flex, Text } from "@ledgerhq/native-ui";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";

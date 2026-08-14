@@ -1,4 +1,5 @@
 import { ContactIdSchema } from "@domain/entity-contact";
+import { createMockContactSignerValidationPort } from "../../../platform/contactSignerValidationPort";
 import { createContactDetailActionsController } from "./contactActionsController";
 import type { ContactDetailActionsPorts } from "./ports";
 
@@ -12,6 +13,7 @@ function createPorts(
     deletion: {
       deleteContact: jest.fn().mockResolvedValue(undefined),
     },
+    signerValidation: createMockContactSignerValidationPort(),
     ...overrides,
   };
 }

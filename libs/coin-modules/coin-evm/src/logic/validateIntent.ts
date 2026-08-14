@@ -15,7 +15,7 @@ import {
   InvalidAddress,
   NotEnoughBalance,
   RecipientRequired,
-} from "@ledgerhq/ledger-wallet-framework/errors";
+} from "@ledgerhq/coin-module-framework/errors";
 import {
   ClaimRewardsFeesWarning,
   ETHAddressNonEIP,
@@ -33,7 +33,7 @@ import {
 import { getFeesUnit } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
-import { getCoinConfig } from "../config";
+import { EvmConfigInfo, type EvmContext } from "../config";
 import { getGasTracker } from "../network/gasTracker";
 import { getNodeApi } from "../network/node";
 import { isNative, StakingOperation, TransactionTypes } from "../types";
@@ -117,6 +117,7 @@ function validateFeeRatio(
  * token contract, which always exists.
  */
 async function validateNewAccountRecipient(
+  config: EvmConfigInfo,
   currency: CryptoCurrency,
   intent: TransactionIntent<MemoNotSupported, BufferTxData>,
   amount: bigint,
@@ -133,7 +134,7 @@ async function validateNewAccountRecipient(
   }
 
   try {
-    const nodeApi = getNodeApi(currency);
+    const nodeApi = getNodeApi(config, currency);
     const [balance, nonce] = await Promise.all([
       nodeApi.getCoinBalance(currency, intent.recipient),
       nodeApi.getTransactionCount(currency, intent.recipient),
@@ -183,6 +184,7 @@ function validateRecipient(
  * Validate gas properties of a transaction, depending on its type and the account emitter
  */
 async function validateGas(
+  config: EvmConfigInfo,
   currency: CryptoCurrency,
   intent: TransactionIntent<MemoNotSupported, BufferTxData>,
   balances: Balance[],
@@ -191,9 +193,7 @@ async function validateGas(
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
 
-  const { minGasPrice, calldataFloorGasPerToken, calldataFloorZeroByteTokens } = getCoinConfig(
-    currency.id,
-  ).info;
+  const { minGasPrice, calldataFloorGasPerToken, calldataFloorZeroByteTokens } = config;
   const minGasPriceFloor = typeof minGasPrice === "string" ? BigInt(minGasPrice) : null;
 
   const nativeBalance = findBalance({ type: "native" }, balances);
@@ -295,9 +295,10 @@ async function validateGas(
         }
       }
 
-      const gasTracker = getGasTracker(currency);
+      const gasTracker = getGasTracker(config, currency);
       const gasOptions = await gasTracker?.getGasOptions({
         currency,
+        config,
         options: { useEIP1559: true },
       });
 
@@ -454,14 +455,16 @@ function refreshEstimationValue(
 }
 
 export async function validateIntent(
+  context: EvmContext,
   currency: CryptoCurrency,
   intent: TransactionIntent<MemoNotSupported, BufferTxData>,
   balances: Balance[],
   customFees?: FeeEstimation,
 ): Promise<TransactionValidation> {
+  const config = await context.config(currency.id);
   const estimatedFees = customFees?.parameters
     ? { ...customFees, value: refreshEstimationValue(intent, customFees.parameters) }
-    : await estimateFees(currency, intent);
+    : await estimateFees(context, currency, intent);
   const balance = findBalance(intent.asset, balances);
   const amount = computeAmount(currency, intent, estimatedFees, balance);
   const additionalFees =
@@ -485,6 +488,7 @@ export async function validateIntent(
     isStakingIntent(intent) ? intent.mode : undefined,
   );
   const { errors: gasErr, warnings: gasWarn } = await validateGas(
+    config,
     currency,
     intent,
     balances,
@@ -501,6 +505,7 @@ export async function validateIntent(
     estimatedFees,
   );
   const { errors: newAccountErr, warnings: newAccountWarn } = await validateNewAccountRecipient(
+    config,
     currency,
     intent,
     amount,

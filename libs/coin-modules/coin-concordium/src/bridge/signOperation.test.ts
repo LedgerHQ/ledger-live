@@ -6,6 +6,7 @@ import {
   createFixtureAccount,
   createFixtureTransaction,
   createFixtureOperation,
+  setupTestnetCoinConfig,
   VALID_ADDRESS,
 } from "../test/fixtures";
 import { buildSignOperation } from "./signOperation";
@@ -45,6 +46,7 @@ jest.mock("./getTransactionStatus", () => ({
 describe("signOperation", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    setupTestnetCoinConfig();
   });
 
   describe("buildSignOperation", () => {
@@ -369,7 +371,7 @@ describe("signOperation", () => {
       // THEN
       expect(combine).toHaveBeenCalledWith(
         expect.stringMatching(/^[a-f0-9]+$/), // serialized hex
-        expect.stringMatching(/^[a-f0-9]{128}$/), // 64-byte signature as hex
+        [expect.stringMatching(/^[a-f0-9]{128}$/)], // 64-byte signature as hex
       );
     });
 

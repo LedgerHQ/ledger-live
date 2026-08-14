@@ -4,6 +4,10 @@ import CommonPage from "../common.page";
 import { retryUntilTimeout } from "../../utils/retry";
 import { checkForErrorModals } from "../../helpers/errorHelpers";
 
+// Short enough that retryUntilTimeout's own budget still allows a re-tap; the default 60s would
+// consume the whole budget in a single attempt.
+const CONTINUE_DISMISS_TIMEOUT = 5_000;
+
 export default class AddAccountDrawer extends CommonPage {
   baseLink = "add-account";
   deselectAllButtonId = "add-accounts-deselect-all";
@@ -59,7 +63,11 @@ export default class AddAccountDrawer extends CommonPage {
   async finishAccountsDiscovery() {
     await retryUntilTimeout(async () => {
       await tapById(this.continueButtonId);
-      await waitForElementNotVisible(this.continueButtonId);
+      const dismissed = await waitForElementNotVisible(
+        this.continueButtonId,
+        CONTINUE_DISMISS_TIMEOUT,
+      );
+      if (!dismissed) throw new Error(`${this.continueButtonId} still visible after tap`);
     });
   }
 

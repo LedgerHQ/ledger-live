@@ -1,7 +1,10 @@
 import { getBlock as getBlockFromNetwork } from "../../network";
+import { createMockVechainContext, mockVechainConfig } from "../../test/context";
 import { getBlock } from "./getBlock";
 
 jest.mock("../../network", () => ({ getBlock: jest.fn() }));
+
+const context = createMockVechainContext();
 
 describe("getBlock", () => {
   afterEach(() => {
@@ -31,10 +34,10 @@ describe("getBlock", () => {
       ],
     });
 
-    const block = await getBlock(10);
+    const block = await getBlock(context, 10);
 
     expect(getBlockFromNetwork).toHaveBeenCalledTimes(1);
-    expect(getBlockFromNetwork).toHaveBeenCalledWith(10, true);
+    expect(getBlockFromNetwork).toHaveBeenCalledWith(mockVechainConfig, 10, true);
     expect(block.info).toEqual({
       height: 10,
       hash: "0xabc",
@@ -69,7 +72,7 @@ describe("getBlock", () => {
       ],
     });
 
-    const block = await getBlock(10);
+    const block = await getBlock(context, 10);
 
     expect(block.transactions[0].failed).toBe(true);
     expect(block.transactions[0].operations).toEqual([]);
@@ -78,7 +81,7 @@ describe("getBlock", () => {
   it("throws when there is no block at the given height", async () => {
     jest.mocked(getBlockFromNetwork).mockResolvedValueOnce(null);
 
-    await expect(getBlock(1)).rejects.toThrow("vechain: no block at height 1");
+    await expect(getBlock(context, 1)).rejects.toThrow("vechain: no block at height 1");
   });
 
   it("uses the VIP-191 gasPayer as feesPayer when a tx is fee-delegated", async () => {
@@ -99,7 +102,7 @@ describe("getBlock", () => {
       ],
     });
 
-    const block = await getBlock(10);
+    const block = await getBlock(context, 10);
 
     expect(block.transactions[0].feesPayer).toBe("0xdelegate");
   });

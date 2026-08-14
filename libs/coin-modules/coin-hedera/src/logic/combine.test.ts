@@ -25,7 +25,7 @@ describe("combine", () => {
     (PublicKey.fromString as jest.Mock).mockReturnValue(mockBufferPublicKey);
     (serializeTransaction as jest.Mock).mockReturnValue(mockSerializedTxWithSignature);
 
-    const result = combine(tx, signature, publicKey);
+    const result = combine(tx, [signature], publicKey);
 
     expect(deserializeTransaction).toHaveBeenCalledTimes(1);
     expect(deserializeTransaction).toHaveBeenCalledWith(tx);
@@ -47,7 +47,7 @@ describe("combine", () => {
     const tx = "serialized-transaction";
     const signature = "serialized-signature";
 
-    expect(() => combine(tx, signature, undefined)).toThrow();
+    expect(() => combine(tx, [signature], undefined)).toThrow();
     expect(deserializeTransaction).not.toHaveBeenCalled();
     expect(deserializeSignature).not.toHaveBeenCalled();
     expect(PublicKey.fromString).not.toHaveBeenCalled();
@@ -64,7 +64,7 @@ describe("combine", () => {
       throw error;
     });
 
-    expect(() => combine(tx, signature, publicKey)).toThrow(error);
+    expect(() => combine(tx, [signature], publicKey)).toThrow(error);
     expect(deserializeTransaction).toHaveBeenCalledTimes(1);
     expect(deserializeTransaction).toHaveBeenCalledWith(tx);
     expect(deserializeSignature).not.toHaveBeenCalled();
@@ -84,7 +84,7 @@ describe("combine", () => {
       throw error;
     });
 
-    expect(() => combine(tx, signature, publicKey)).toThrow(error);
+    expect(() => combine(tx, [signature], publicKey)).toThrow(error);
     expect(deserializeTransaction).toHaveBeenCalledTimes(1);
     expect(deserializeTransaction).toHaveBeenCalledWith(tx);
     expect(deserializeSignature).toHaveBeenCalledTimes(1);
@@ -107,7 +107,7 @@ describe("combine", () => {
       throw error;
     });
 
-    expect(() => combine(tx, signature, publicKey)).toThrow(error);
+    expect(() => combine(tx, [signature], publicKey)).toThrow(error);
     expect(deserializeTransaction).toHaveBeenCalledTimes(1);
     expect(deserializeTransaction).toHaveBeenCalledWith(tx);
     expect(deserializeSignature).toHaveBeenCalledTimes(1);

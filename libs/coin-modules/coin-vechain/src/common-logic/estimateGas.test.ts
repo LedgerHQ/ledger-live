@@ -2,6 +2,7 @@ import { estimateGas } from "./estimateGas";
 import { getThorClient } from "./getThorClient";
 import { TransactionClause } from "@vechain/sdk-core";
 import { EstimateGasResult } from "@vechain/sdk-network";
+import { mockVechainConfig } from "../test/context";
 
 // Mock dependencies
 jest.mock("./getThorClient");
@@ -45,7 +46,7 @@ describe("estimateGas", () => {
   it("should estimate gas for transaction clauses", async () => {
     mockThorClient.gas.estimateGas.mockResolvedValue(mockEstimateGasResult);
 
-    const result = await estimateGas(mockClauses, mockOrigin);
+    const result = await estimateGas(mockVechainConfig, mockClauses, mockOrigin);
 
     expect(mockedGetThorClient).toHaveBeenCalledTimes(1);
     expect(mockThorClient.gas.estimateGas).toHaveBeenCalledWith(mockClauses, mockOrigin);
@@ -56,7 +57,7 @@ describe("estimateGas", () => {
     const singleClause: TransactionClause[] = [mockClauses[0]];
     mockThorClient.gas.estimateGas.mockResolvedValue(mockEstimateGasResult);
 
-    const result = await estimateGas(singleClause, mockOrigin);
+    const result = await estimateGas(mockVechainConfig, singleClause, mockOrigin);
 
     expect(mockThorClient.gas.estimateGas).toHaveBeenCalledWith(singleClause, mockOrigin);
     expect(result).toEqual(mockEstimateGasResult);
@@ -71,7 +72,7 @@ describe("estimateGas", () => {
       vmErrors: [],
     });
 
-    const result = await estimateGas(emptyClauses, mockOrigin);
+    const result = await estimateGas(mockVechainConfig, emptyClauses, mockOrigin);
 
     expect(mockThorClient.gas.estimateGas).toHaveBeenCalledWith(emptyClauses, mockOrigin);
     expect(result.totalGas).toBe(0);
@@ -86,7 +87,7 @@ describe("estimateGas", () => {
     };
     mockThorClient.gas.estimateGas.mockResolvedValue(revertedResult);
 
-    const result = await estimateGas(mockClauses, mockOrigin);
+    const result = await estimateGas(mockVechainConfig, mockClauses, mockOrigin);
 
     expect(result).toEqual(revertedResult);
     expect(result.reverted).toBe(true);
@@ -102,7 +103,7 @@ describe("estimateGas", () => {
     };
     mockThorClient.gas.estimateGas.mockResolvedValue(highGasResult);
 
-    const result = await estimateGas(mockClauses, mockOrigin);
+    const result = await estimateGas(mockVechainConfig, mockClauses, mockOrigin);
 
     expect(result.totalGas).toBe(500000);
   });
@@ -111,7 +112,9 @@ describe("estimateGas", () => {
     const errorMessage = "Network error";
     mockThorClient.gas.estimateGas.mockRejectedValue(new Error(errorMessage));
 
-    await expect(estimateGas(mockClauses, mockOrigin)).rejects.toThrow(errorMessage);
+    await expect(estimateGas(mockVechainConfig, mockClauses, mockOrigin)).rejects.toThrow(
+      errorMessage,
+    );
   });
 
   it("should handle clauses with data for token transfers", async () => {
@@ -131,7 +134,7 @@ describe("estimateGas", () => {
     };
     mockThorClient.gas.estimateGas.mockResolvedValue(tokenGasResult);
 
-    const result = await estimateGas(tokenTransferClause, mockOrigin);
+    const result = await estimateGas(mockVechainConfig, tokenTransferClause, mockOrigin);
 
     expect(mockThorClient.gas.estimateGas).toHaveBeenCalledWith(tokenTransferClause, mockOrigin);
     expect(result.totalGas).toBe(37000);
@@ -140,8 +143,8 @@ describe("estimateGas", () => {
   it("should get a new thor client instance for each call", async () => {
     mockThorClient.gas.estimateGas.mockResolvedValue(mockEstimateGasResult);
 
-    await estimateGas(mockClauses, mockOrigin);
-    await estimateGas(mockClauses, mockOrigin);
+    await estimateGas(mockVechainConfig, mockClauses, mockOrigin);
+    await estimateGas(mockVechainConfig, mockClauses, mockOrigin);
 
     expect(mockedGetThorClient).toHaveBeenCalledTimes(2);
   });
@@ -155,7 +158,7 @@ describe("estimateGas", () => {
     };
     mockThorClient.gas.estimateGas.mockResolvedValue(exactResult);
 
-    const result = await estimateGas(mockClauses, mockOrigin);
+    const result = await estimateGas(mockVechainConfig, mockClauses, mockOrigin);
 
     expect(result).toBe(exactResult);
   });

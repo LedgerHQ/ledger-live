@@ -6,6 +6,7 @@ import {
 } from "@ledgerhq/coin-module-framework/api/index";
 import { txToMessages } from "../../buildTransaction";
 import cryptoFactory from "../../chain/chain";
+import { type CosmosCoinConfig } from "../../config";
 import { CosmosAPI } from "../../network/Cosmos";
 import { validateAddress } from "../validateAddress";
 import { estimateFees } from "./estimateFees";
@@ -38,12 +39,13 @@ export async function craftTransaction(
   currencyId: string,
   intent: TransactionIntent,
   customFees?: FeeEstimation,
+  config?: CosmosCoinConfig,
 ): Promise<CraftedTransaction> {
   if (!(await validateAddress(intent.sender, { currencyId }))) {
     throw new Error(`cosmos: invalid sender address: ${intent.sender}`);
   }
   const params = intentToMessageParams(intent, currencyId, api.getCurrency().units[1].code);
-  const chainInstance = cryptoFactory(currencyId);
+  const chainInstance = cryptoFactory(currencyId, config);
 
   const { aminoMsgs, protoMsgs } = txToMessages(params, chainInstance);
   const { accountNumber, sequence, pubKeyType } = await api.getAccount(intent.sender);

@@ -1,4 +1,5 @@
-import { setCoinConfig, EvmCoinConfig } from "@ledgerhq/coin-evm/config";
+import type { EvmCoinConfig } from "@ledgerhq/coin-evm/config";
+import { setCoinConfig } from "../config";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import BigNumber from "bignumber.js";

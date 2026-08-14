@@ -1,20 +1,19 @@
 import { AssertionError, fail } from "assert";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
-import { delay } from "@ledgerhq/live-promise";
+import { delay } from "@ledgerhq/coin-module-framework/promises";
 import { CryptoCurrency, CryptoCurrencyIdSchema } from "@ledgerhq/ledger-wallet-framework/types";
 import axios from "axios";
 import BigNumber from "bignumber.js";
 import { Transaction } from "ethers";
 import { GasEstimationError } from "../../errors";
 import { makeAccount } from "../../fixtures/common.fixtures";
-import { Transaction as EvmTransaction } from "../../types";
 import { getGasOptions } from "../gasTracker/ledger";
 import { createLedgerNodeApi } from "./ledger";
 
 jest.useFakeTimers({ doNotFake: ["setTimeout"] });
 
 jest.mock("axios");
-jest.mock("@ledgerhq/live-promise");
+jest.mock("@ledgerhq/coin-module-framework/promises");
 jest.mock("../gasTracker/ledger", () => ({
   getGasOptions: jest.fn(),
 }));
@@ -336,7 +335,7 @@ describe("EVM Family", () => {
               };
         });
 
-        const transaction: EvmTransaction = {
+        const transaction = {
           family: "evm",
           mode: "send",
           recipient: "0xBob",
@@ -383,18 +382,18 @@ describe("EVM Family", () => {
           },
         }));
 
-        const slowFeeData = await api.getFeeData(currency, {
+        const slowFeeData = await api.getFeeData({} as any, currency, {
           type: 2,
           feesStrategy: "slow",
         } as any);
-        const mediumFeeData = await api.getFeeData(currency, {
+        const mediumFeeData = await api.getFeeData({} as any, currency, {
           type: 2,
           feesStrategy: "medium",
         } as any);
-        const fastFeeData = await api.getFeeData(currency, {
+        const fastFeeData = await api.getFeeData({} as any, currency, {
           type: 2,
           feesStrategy: "fast",
-        } as any);
+        });
 
         expect(slowFeeData).toEqual({
           maxFeePerGas: new BigNumber(1),
@@ -439,7 +438,7 @@ describe("EVM Family", () => {
           },
         }));
 
-        const feeData = await api.getFeeData(currency, { type: 2 } as any);
+        const feeData = await api.getFeeData({} as any, currency, { type: 2 } as any);
 
         expect(feeData).toEqual({
           maxFeePerGas: new BigNumber(5),

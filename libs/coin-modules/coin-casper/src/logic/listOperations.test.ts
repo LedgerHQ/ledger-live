@@ -11,6 +11,7 @@ import {
   txWith,
 } from "../__tests__/fixtures";
 import { CASPER_INDEXER_MAX_PAGE_SIZE as PAGE_SIZE } from "../constants";
+import { createMockContext } from "../__tests__/fixtures/config.fixture";
 import { fetchTxsPage } from "../network/api";
 import { ITxnHistoryData } from "../types/network";
 import { getEstimatedFees } from "./estimateFees";
@@ -20,9 +21,10 @@ import { casperAccountHashFromPublicKey } from "./validateAddress";
 jest.mock("../network/api");
 
 const mockFetchTxsPage = jest.mocked(fetchTxsPage);
+const context = createMockContext();
 
 function serve(records: ITxnHistoryData[]): void {
-  mockFetchTxsPage.mockImplementation(async (_address, page) => ({
+  mockFetchTxsPage.mockImplementation(async (_config, _address, page) => ({
     data: records.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE),
     page_count: Math.ceil(records.length / PAGE_SIZE),
     item_count: records.length,
@@ -51,7 +53,7 @@ describe("listOperations", () => {
     it("maps an outgoing transfer with the amount and the charged cost kept separate", async () => {
       serve([OUTGOING_TX]);
 
-      const { items } = await listOperations(INDEXER_PUBLIC_KEY, {
+      const { items } = await listOperations(context, INDEXER_PUBLIC_KEY, {
         minHeight: 0,
       });
 
@@ -83,7 +85,7 @@ describe("listOperations", () => {
     it("maps an incoming transfer", async () => {
       serve([INCOMING_TX]);
 
-      const { items } = await listOperations(INDEXER_PUBLIC_KEY, {
+      const { items } = await listOperations(context, INDEXER_PUBLIC_KEY, {
         minHeight: 0,
       });
 
@@ -107,7 +109,7 @@ describe("listOperations", () => {
       });
       serve([selfTransfer]);
 
-      const { items } = await listOperations(INDEXER_PUBLIC_KEY, {
+      const { items } = await listOperations(context, INDEXER_PUBLIC_KEY, {
         minHeight: 0,
       });
 
@@ -120,7 +122,7 @@ describe("listOperations", () => {
     it("hashes a PublicKey target and uses a ByteArray target as-is", async () => {
       // The captured PublicKey-target record is sent by the counterparty, so list it for them.
       serve([PUBLIC_KEY_TARGET_TX]);
-      const { items } = await listOperations(COUNTERPARTY_PUBLIC_KEY, {
+      const { items } = await listOperations(context, COUNTERPARTY_PUBLIC_KEY, {
         minHeight: 0,
       });
 
@@ -129,7 +131,7 @@ describe("listOperations", () => {
       expect(items[0].recipients[0]).not.toBe(target);
 
       serve([OUTGOING_TX]);
-      const byteArray = await listOperations(INDEXER_PUBLIC_KEY, {
+      const byteArray = await listOperations(context, INDEXER_PUBLIC_KEY, {
         minHeight: 0,
       });
       expect(byteArray.items[0].recipients).toEqual([OUTGOING_TX.args.target.parsed]);
@@ -138,7 +140,7 @@ describe("listOperations", () => {
     it("flags a failed operation from error_message", async () => {
       serve([txWith(OUTGOING_TX, { error_message: "User error: 1" })]);
 
-      const { items } = await listOperations(INDEXER_PUBLIC_KEY, { minHeight: 0 });
+      const { items } = await listOperations(context, INDEXER_PUBLIC_KEY, { minHeight: 0 });
 
       expect(items.map(o => o.tx.failed)).toEqual([true]);
     });
@@ -148,7 +150,7 @@ describe("listOperations", () => {
     it("omits the transfer id when the indexer reports it as null", async () => {
       serve([OUTGOING_TX]);
 
-      const { items } = await listOperations(INDEXER_PUBLIC_KEY, {
+      const { items } = await listOperations(context, INDEXER_PUBLIC_KEY, {
         minHeight: 0,
       });
 
@@ -158,7 +160,7 @@ describe("listOperations", () => {
     it("carries a numeric transfer id through as a string", async () => {
       serve([INCOMING_TX]);
 
-      const { items } = await listOperations(INDEXER_PUBLIC_KEY, {
+      const { items } = await listOperations(context, INDEXER_PUBLIC_KEY, {
         minHeight: 0,
       });
 
@@ -171,7 +173,7 @@ describe("listOperations", () => {
       });
       serve([noId]);
 
-      const { items } = await listOperations(INDEXER_PUBLIC_KEY, {
+      const { items } = await listOperations(context, INDEXER_PUBLIC_KEY, {
         minHeight: 0,
       });
 
@@ -189,7 +191,7 @@ describe("listOperations", () => {
         }),
       ]);
 
-      const { items } = await listOperations(INDEXER_PUBLIC_KEY, {
+      const { items } = await listOperations(context, INDEXER_PUBLIC_KEY, {
         minHeight: 0,
       });
 
@@ -201,7 +203,7 @@ describe("listOperations", () => {
     it("skips the staking deploys the same feed carries", async () => {
       serve([OUTGOING_TX, STAKING_TX]);
 
-      const { items } = await listOperations(INDEXER_PUBLIC_KEY, {
+      const { items } = await listOperations(context, INDEXER_PUBLIC_KEY, {
         minHeight: 0,
       });
 
@@ -221,7 +223,7 @@ describe("listOperations", () => {
         txWith(OUTGOING_TX, { deploy_hash: "good-2", block_height: 1_000_000 }),
       ]);
 
-      const { items } = await listOperations(INDEXER_PUBLIC_KEY, {
+      const { items } = await listOperations(context, INDEXER_PUBLIC_KEY, {
         minHeight: 0,
       });
 
@@ -231,7 +233,7 @@ describe("listOperations", () => {
     it("returns an empty page for an account with no history", async () => {
       serve([]);
 
-      const result = await listOperations(INDEXER_PUBLIC_KEY, { minHeight: 0 });
+      const result = await listOperations(context, INDEXER_PUBLIC_KEY, { minHeight: 0 });
 
       expect(result.items).toEqual([]);
       expect(result.next).toBeUndefined();
@@ -243,7 +245,7 @@ describe("listOperations", () => {
       const all = history(600);
       serve(all);
 
-      const { items, next } = await listOperations(INDEXER_PUBLIC_KEY, {
+      const { items, next } = await listOperations(context, INDEXER_PUBLIC_KEY, {
         minHeight: 0,
       });
 
@@ -255,7 +257,7 @@ describe("listOperations", () => {
     it("honours minHeight and stops once a whole page falls below it", async () => {
       serve(history(600));
 
-      const { items } = await listOperations(INDEXER_PUBLIC_KEY, {
+      const { items } = await listOperations(context, INDEXER_PUBLIC_KEY, {
         minHeight: 999_600,
       });
 
@@ -268,7 +270,7 @@ describe("listOperations", () => {
     it("accepts order desc, which is the indexer's native order", async () => {
       serve(history(3));
 
-      const { items } = await listOperations(INDEXER_PUBLIC_KEY, {
+      const { items } = await listOperations(context, INDEXER_PUBLIC_KEY, {
         minHeight: 0,
         order: "desc",
       });
@@ -280,7 +282,7 @@ describe("listOperations", () => {
       serve(history(3));
 
       await expect(
-        listOperations(INDEXER_PUBLIC_KEY, { minHeight: 0, order: "asc" }),
+        listOperations(context, INDEXER_PUBLIC_KEY, { minHeight: 0, order: "asc" }),
       ).rejects.toThrow(/order "asc" is not supported/);
     });
   });
@@ -290,16 +292,16 @@ describe("listOperations", () => {
       serve(history(30));
 
       await expect(
-        listOperations(INDEXER_PUBLIC_KEY, { minHeight: 0, cursor: "deploy-0009" }),
+        listOperations(context, INDEXER_PUBLIC_KEY, { minHeight: 0, cursor: "deploy-0009" }),
       ).rejects.toThrow(/cursor is not supported/);
     });
 
     it("rejects a limit rather than silently truncating the history", async () => {
       serve(history(30));
 
-      await expect(listOperations(INDEXER_PUBLIC_KEY, { minHeight: 0, limit: 10 })).rejects.toThrow(
-        /limit is not supported/,
-      );
+      await expect(
+        listOperations(context, INDEXER_PUBLIC_KEY, { minHeight: 0, limit: 10 }),
+      ).rejects.toThrow(/limit is not supported/);
     });
   });
 });

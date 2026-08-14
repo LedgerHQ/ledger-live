@@ -1,6 +1,7 @@
-import { CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
+import { Context, CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
 
-export type NearCoinConfig = () => CurrencyConfig & {
+/** Resolved coin configuration for Near. */
+export type NearConfig = CurrencyConfig & {
   infra: {
     // Can be used for sensitive or rate limited requests
     API_NEAR_PRIVATE_NODE: string;
@@ -9,6 +10,15 @@ export type NearCoinConfig = () => CurrencyConfig & {
     API_NEARBLOCKS_INDEXER: string;
   };
 };
+
+/**
+ * Legacy config accessor kept for the classic bridge path and the getCoinConfig() singleton that the
+ * network/logic layers resolve config through. The new Alpaca `api/` path threads a {@link NearContext}.
+ */
+export type NearCoinConfig = () => NearConfig;
+
+/** The {@link Context} threaded through the coin-near Alpaca api layer (ADR-019). */
+export type NearContext = Context<NearConfig>;
 
 let coinConfig: NearCoinConfig | undefined;
 

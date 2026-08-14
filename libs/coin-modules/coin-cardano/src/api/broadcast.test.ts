@@ -1,5 +1,6 @@
+import type { Context } from "@ledgerhq/coin-module-framework/config";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
-import type { CardanoConfig } from "../config";
+import type { CardanoCoinConfig, CardanoConfig } from "../config";
 import { broadcast } from "../logic/broadcast";
 import { createApi } from ".";
 
@@ -11,6 +12,10 @@ const mockBroadcast = jest.mocked(broadcast);
 
 const config: CardanoConfig = { maxFeesWarning: 0, maxFeesError: 0 };
 const currency = getCryptoCurrencyById("cardano");
+const mockCtx: Context<CardanoCoinConfig> = {
+  config: async () => ({ ...config, status: { type: "active" } }),
+  logger: () => {},
+};
 
 describe("api.broadcast", () => {
   beforeEach(() => {
@@ -19,9 +24,9 @@ describe("api.broadcast", () => {
 
   it("delegates to the broadcast logic with the resolved currency and signature", async () => {
     mockBroadcast.mockResolvedValue("txHash");
-    const api = createApi(config, "cardano");
+    const api = createApi("cardano");
 
-    const result = await api.broadcast("signedTxPayload");
+    const result = await api.broadcast(mockCtx, "signedTxPayload");
 
     expect(mockBroadcast).toHaveBeenCalledTimes(1);
     expect(mockBroadcast).toHaveBeenCalledWith(currency, {
@@ -33,10 +38,10 @@ describe("api.broadcast", () => {
 
   it("forwards the broadcastConfig to the broadcast logic", async () => {
     mockBroadcast.mockResolvedValue("txHash");
-    const api = createApi(config, "cardano");
+    const api = createApi("cardano");
     const broadcastConfig = { mevProtected: true };
 
-    await api.broadcast("signedTxPayload", broadcastConfig);
+    await api.broadcast(mockCtx, "signedTxPayload", { broadcastConfig });
 
     expect(mockBroadcast).toHaveBeenCalledWith(currency, {
       signature: "signedTxPayload",
@@ -47,8 +52,8 @@ describe("api.broadcast", () => {
   it("propagates errors thrown by the broadcast logic", async () => {
     mockBroadcast.mockRejectedValue(new Error("tx submission failed"));
 
-    const api = createApi(config, "cardano");
+    const api = createApi("cardano");
 
-    await expect(api.broadcast("signedTxPayload")).rejects.toThrow("tx submission failed");
+    await expect(api.broadcast(mockCtx, "signedTxPayload")).rejects.toThrow("tx submission failed");
   });
 });

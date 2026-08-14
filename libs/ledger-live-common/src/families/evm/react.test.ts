@@ -3,10 +3,11 @@
  */
 import BigNumber from "bignumber.js";
 import { renderHook, waitFor } from "@testing-library/react";
-import { Transaction } from "@ledgerhq/coin-evm/types/index";
+import { Transaction } from "@ledgerhq/live-common/families/evm/types";
 import { getGasTracker } from "@ledgerhq/coin-evm/network/gasTracker/index";
 import type { GasTrackerApi } from "@ledgerhq/coin-evm/network/gasTracker/types";
 import { CryptoCurrency, CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { useGasOptions } from "./react";
 
 jest.useFakeTimers();
@@ -63,6 +64,14 @@ const expectedGasOptions = {
 };
 
 describe("useGasOptions", () => {
+  beforeAll(() => {
+    // useGasOptions reads currency config via getCurrencyConfiguration (LiveConfig). The gas tracker
+    // is mocked, so config content is irrelevant — a minimal entry avoids "No currency configuration".
+    LiveConfig.setConfig({
+      config_currency_my_new_chain: { type: "object", default: {} },
+    } as never);
+  });
+
   beforeEach(() => {
     mockedGetGasTracker.mockImplementation(() => ({ getGasOptions: mockedGetGasOptions }));
     mockedGetGasOptions.mockReturnValue(Promise.resolve(expectedGasOptions));
@@ -155,6 +164,7 @@ describe("useGasOptions", () => {
     await waitFor(() =>
       expect(mockedGetGasOptions).toHaveBeenCalledWith({
         currency: fakeCurrency,
+        config: {},
         options: { useEIP1559: true },
       }),
     );
@@ -178,6 +188,7 @@ describe("useGasOptions", () => {
     await waitFor(() =>
       expect(mockedGetGasOptions).toHaveBeenCalledWith({
         currency: fakeCurrency,
+        config: {},
         options: { useEIP1559: false },
       }),
     );

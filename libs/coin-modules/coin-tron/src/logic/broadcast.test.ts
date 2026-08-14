@@ -1,3 +1,4 @@
+import type { TronCoinConfig } from "../config";
 import { broadcastHexTron, broadcastTron } from "../network";
 import { broadcast } from "./broadcast";
 
@@ -9,6 +10,11 @@ jest.mock("../network", () => ({
 const mockBroadcastHexTron = broadcastHexTron as jest.Mock;
 const mockBroadcastTron = broadcastTron as jest.Mock;
 
+const mockConfig = {
+  status: { type: "active" },
+  explorer: { url: "https://api.trongrid.io" },
+} as TronCoinConfig;
+
 describe("broadcast function", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -18,11 +24,11 @@ describe("broadcast function", () => {
     mockBroadcastHexTron.mockResolvedValue("mockedTxID");
 
     // "0008" (hex-string length of raw_data) + raw_data hex "abcd1234" + signature hex "aabbccdd"
-    const result = await broadcast("0008abcd1234aabbccdd");
+    const result = await broadcast(mockConfig, "0008abcd1234aabbccdd");
 
     // Assembled Transaction protobuf: field 1 (raw_data) = 0x0a 0x04 + abcd1234,
     // field 2 (signature) = 0x12 0x04 + aabbccdd.
-    expect(mockBroadcastHexTron).toHaveBeenCalledWith("0a04abcd12341204aabbccdd");
+    expect(mockBroadcastHexTron).toHaveBeenCalledWith(mockConfig, "0a04abcd12341204aabbccdd");
     expect(mockBroadcastTron).not.toHaveBeenCalled();
     expect(result).toBe("mockedTxID");
   });
@@ -34,10 +40,10 @@ describe("broadcast function", () => {
     const signature = "cd".repeat(4);
     const lengthPrefix = rawTx.length.toString(16).padStart(4, "0"); // "0104"
 
-    await broadcast(`${lengthPrefix}${rawTx}${signature}`);
+    await broadcast(mockConfig, `${lengthPrefix}${rawTx}${signature}`);
 
     // field 1 (raw_data): 0x0a + varint(130)=0x8201 ; field 2 (signature): 0x12 + varint(4)=0x04
-    expect(mockBroadcastHexTron).toHaveBeenCalledWith(`0a8201${rawTx}1204${signature}`);
+    expect(mockBroadcastHexTron).toHaveBeenCalledWith(mockConfig, `0a8201${rawTx}1204${signature}`);
   });
 
   it("should broadcast a TxObject successfully", async () => {
@@ -49,23 +55,25 @@ describe("broadcast function", () => {
 
     mockBroadcastTron.mockResolvedValue("mockedTxID");
 
-    const result = await broadcast(txObject);
+    const result = await broadcast(mockConfig, txObject);
 
     expect(mockBroadcastHexTron).not.toHaveBeenCalled();
-    expect(mockBroadcastTron).toHaveBeenCalledWith(txObject);
+    expect(mockBroadcastTron).toHaveBeenCalledWith(mockConfig, txObject);
     expect(result).toBe("mockedTxID");
   });
 
   it("should throw an error if broadcastHexTron fails", async () => {
     mockBroadcastHexTron.mockRejectedValue(new Error("Broadcasting failed"));
 
-    await expect(broadcast("0008abcd1234aabbccdd")).rejects.toThrow("Broadcasting failed");
+    await expect(broadcast(mockConfig, "0008abcd1234aabbccdd")).rejects.toThrow(
+      "Broadcasting failed",
+    );
   });
 
   it("should throw on a malformed signed transaction string", async () => {
     // Non-hex prefix, and a truncated payload whose raw_data is shorter than its length prefix.
-    await expect(broadcast("zzzz")).rejects.toThrow(/malformed/);
-    await expect(broadcast("0008abcd")).rejects.toThrow(/malformed/);
+    await expect(broadcast(mockConfig, "zzzz")).rejects.toThrow(/malformed/);
+    await expect(broadcast(mockConfig, "0008abcd")).rejects.toThrow(/malformed/);
     expect(mockBroadcastHexTron).not.toHaveBeenCalled();
   });
 });

@@ -1,0 +1,33 @@
+services:
+  casper-devnet:
+    image: ghcr.io/veles-labs/casper-devnet:v0.10.1@sha256:c691d3f30e1c75c6366e80fa6e3be2baddae5fa0eaca07b91c1cefc3f87a39bc
+    container_name: coin-tester-casper
+    # amd64-only image; pinned so an arm64 host fails the pull instead of
+    # exec-ing a foreign-format binary.
+    platform: linux/amd64
+    command:
+      - casper-devnet
+      - start
+      - --network-name
+      - casper
+      # min_peers_for_initialization = 3 is baked into the image with no
+      # override, so anything below 4 nodes stalls awaiting peers.
+      - --node-count
+      - "4"
+      # Sender + recipient, plus a spare for devnet.test.ts.
+      - --users
+      - "3"
+      - --delay
+      - "3"
+    # JSON-RPC only, host loopback only — the endpoint is unauthenticated and
+    # the module uses nothing but API_CASPER_NODE_ENDPOINT.
+    ports:
+      - "127.0.0.1:11101:11101"
+    # Exit 0 only once the network has observed a block. The wide budget
+    # covers CI runners slower than local at getting 4 nodes through genesis.
+    healthcheck:
+      test: ["CMD-SHELL", "casper-devnet network casper is-ready"]
+      interval: 3s
+      timeout: 10s
+      retries: 60
+      start_period: 30s

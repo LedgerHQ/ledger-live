@@ -1,7 +1,7 @@
 import type { MemoNotSupported, Operation } from "@ledgerhq/coin-module-framework/api/types";
 import { isNFTActive } from "@ledgerhq/ledger-wallet-framework/nft/support";
 import { getEnv } from "@ledgerhq/live-env";
-import { delay } from "@ledgerhq/live-promise";
+import { delay } from "@ledgerhq/coin-module-framework/promises";
 import axios from "axios";
 import {
   ledgerERC1155EventToOperations,
@@ -10,7 +10,6 @@ import {
   ledgerInternalTransactionToOperations,
   ledgerOperationToOperations,
 } from "../../adapters/index";
-import { getCoinConfig } from "../../config";
 import { LedgerExplorerUsedIncorrectly } from "../../errors";
 import { LedgerExplorerOperation } from "../../types";
 import { ExplorerApi, isLedgerExplorerConfig, NO_TOKEN } from "./types";
@@ -81,8 +80,12 @@ export async function fetchPaginatedOpsWithRetries(
  * so pagination parameters are ignored and nextPagingToken is always empty.
  * Pagination may be supported in the future.
  */
-export const getOperations: ExplorerApi["getOperations"] = async (currency, address, fromBlock) => {
-  const config = getCoinConfig(currency.id).info;
+export const getOperations: ExplorerApi["getOperations"] = async (
+  config,
+  currency,
+  address,
+  fromBlock,
+) => {
   const { explorer } = config || /* istanbul ignore next */ {};
   if (!isLedgerExplorerConfig(explorer)) {
     throw new LedgerExplorerUsedIncorrectly(

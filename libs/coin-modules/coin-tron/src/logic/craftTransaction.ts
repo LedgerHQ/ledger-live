@@ -4,12 +4,14 @@ import {
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/index";
 import BigNumber from "bignumber.js";
+import type { TronCoinConfig } from "../config";
 import { craftStandardTransaction, craftTrc20Transaction } from "../network";
 import { decode58Check } from "../network/format";
 import { TronMemo } from "../types";
 import { feesToNumber } from "./utils";
 
 export async function craftTransaction(
+  config: TronCoinConfig,
   transactionIntent: TransactionIntent<TronMemo>,
   customFees?: FeeEstimation,
 ): Promise<CraftedTransaction> {
@@ -33,6 +35,7 @@ export async function craftTransaction(
     }
 
     const { raw_data_hex: rawDataHex } = await craftTrc20Transaction(
+      config,
       asset.assetReference,
       recipientAddress,
       senderAddress,
@@ -45,6 +48,7 @@ export async function craftTransaction(
     const isTransferAsset = asset.type === "trc10";
     const tokenId = asset.type === "trc10" ? asset.assetReference : undefined;
     const { raw_data_hex: rawDataHex } = await craftStandardTransaction(
+      config,
       tokenId,
       recipientAddress,
       senderAddress,

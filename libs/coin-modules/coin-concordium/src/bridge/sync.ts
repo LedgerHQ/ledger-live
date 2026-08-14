@@ -36,7 +36,9 @@ export async function getBalance(
   currencyId: string,
   address: string,
 ): Promise<{ balance: BigNumber; spendableBalance: BigNumber }> {
+  const config = coinConfig.getCoinConfig(currencyId);
   const { finalizedBalance: { accountAmount, accountAtDisposal } = {} } = await getAccountBalance(
+    config,
     currencyId,
     address,
   ).catch((error): { finalizedBalance: { accountAmount: string; accountAtDisposal: string } } => {
@@ -47,7 +49,7 @@ export async function getBalance(
   });
 
   const balance = valueToBigNumber(accountAmount);
-  const minReserve = coinConfig.getCoinConfig(currencyId).minReserve;
+  const minReserve = config.minReserve;
 
   let spendableBalance = accountAtDisposal
     ? valueToBigNumber(accountAtDisposal)
@@ -66,7 +68,9 @@ export async function syncOperations(
   const lastBlockHeight = oldOperations[0]?.blockHeight ?? 0;
   const minHeight = lastBlockHeight > 0 ? lastBlockHeight + 1 : 0;
 
+  const config = coinConfig.getCoinConfig(currencyId);
   const result = await listOperations(
+    config,
     address,
     { minHeight, limit: 100, order: "desc" },
     currencyId,
@@ -94,8 +98,10 @@ export const getAccountShape: GetAccountShape<ConcordiumAccount> = async info =>
     derivationMode,
   });
 
+  const config = coinConfig.getCoinConfig(currency.id);
+
   try {
-    const accountsResponse = await getAccountsByPublicKey(currency.id, publicKey);
+    const accountsResponse = await getAccountsByPublicKey(config, currency.id, publicKey);
 
     if (!accountsResponse?.length) {
       return {
@@ -122,7 +128,7 @@ export const getAccountShape: GetAccountShape<ConcordiumAccount> = async info =>
     const [{ balance, spendableBalance }, operations, blockHeight] = await Promise.all([
       getBalance(currency.id, account.address),
       syncOperations(currency.id, account.address, accountId, initialAccount?.operations ?? []),
-      getConsensusInfo(currency.id)
+      getConsensusInfo(config, currency.id)
         .then(info => info.lastFinalizedBlockHeight)
         .catch(() => 0),
     ]);

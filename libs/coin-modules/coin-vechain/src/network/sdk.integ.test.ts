@@ -3,9 +3,10 @@ import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 import { EventLog, TransferLog, VetTxsQuery } from "../types";
 import { TEST_VECHAIN_ENDPOINT } from "../test/constants";
-import { setCoinConfig } from "../config";
+import { setCoinConfig, type VechainCurrencyConfig } from "../config";
 
 const BASE_URL = TEST_VECHAIN_ENDPOINT;
+const config: VechainCurrencyConfig = { status: { type: "active" }, node: { url: BASE_URL } };
 const LAST_BLOCK_COUNT = 24580112;
 const MAX_OPS_IN_BLOCK_RANGE = 1000;
 const N_OPS_IN_BLOCK = 3;
@@ -114,6 +115,7 @@ describe("sdk", () => {
     describe("when logged operations are less than 1000 in the given range", () => {
       test("retrieves all the operations", async () => {
         const operations = await getOperations(
+          config,
           "my-account-id",
           "0xmy-address",
           LAST_BLOCK_COUNT - 332,
@@ -128,6 +130,7 @@ describe("sdk", () => {
     describe("when logged operations are more than 1000 in the given range", () => {
       test("retrieves all the operations", async () => {
         const operations = await getOperations(
+          config,
           "my-account-id",
           "0xmy-address",
           LAST_BLOCK_COUNT - 333,
@@ -148,6 +151,7 @@ describe("sdk", () => {
       test("rethrows the error", async () => {
         try {
           await getOperations(
+            config,
             "my-account-id",
             "0xmy-address",
             LAST_BLOCK_COUNT - 5,
@@ -167,6 +171,7 @@ describe("sdk", () => {
     describe("when logged operations are less than 1000 in the given range", () => {
       test("retrieves all the operations", async () => {
         const operations = await getTokenOperations(
+          config,
           "my-account-id",
           "0xmy-address",
           "0xmy-token-address",
@@ -182,6 +187,7 @@ describe("sdk", () => {
     describe("when logged operations are more than 1000 in the given range", () => {
       test("retrieves all the operations", async () => {
         const operations = await getTokenOperations(
+          config,
           "my-account-id",
           "0xmy-address",
           "0xmy-token-address",
@@ -203,6 +209,7 @@ describe("sdk", () => {
       test("rethrows the error", async () => {
         try {
           await getTokenOperations(
+            config,
             "my-account-id",
             "0xmy-address",
             "0xmy-token-address",

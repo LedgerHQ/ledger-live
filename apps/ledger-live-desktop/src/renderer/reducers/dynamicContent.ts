@@ -3,6 +3,7 @@ import { handleActions } from "redux-actions";
 import { createSelector } from "reselect";
 import {
   ActionContentCard,
+  CategoryContentCard,
   NotificationContentCard,
   PortfolioContentCard,
 } from "~/types/dynamicContent";
@@ -18,14 +19,23 @@ export type DynamicContentState = {
   bottomPortfolioCards: PortfolioContentCard[];
   actionCards: ActionContentCard[];
   notificationsCards: NotificationContentCard[];
+  /** Category container cards, grouping child cards that share their categoryId */
+  categoriesCards: CategoryContentCard[];
+  /** Debug categories from the Braze dev tools, merged in selectors so Braze pushes don't wipe them */
+  localCategoriesCards: CategoryContentCard[];
+  /** Debug category children from the Braze dev tools, merged in selectors */
+  localCategoryChildCards: BrazeCard[];
 };
 
-const state: DynamicContentState = {
+export const INITIAL_STATE: DynamicContentState = {
   desktopCards: [],
   portfolioCards: [],
   bottomPortfolioCards: [],
   actionCards: [],
   notificationsCards: [],
+  categoriesCards: [],
+  localCategoriesCards: [],
+  localCategoryChildCards: [],
 };
 
 type HandlersPayloads = {
@@ -34,6 +44,11 @@ type HandlersPayloads = {
   DYNAMIC_CONTENT_SET_BOTTOM_PORTFOLIO_CARDS: PortfolioContentCard[];
   DYNAMIC_CONTENT_SET_ACTION_CARDS: ActionContentCard[];
   DYNAMIC_CONTENT_SET_NOTIFICATIONS_CARDS: NotificationContentCard[];
+  DYNAMIC_CONTENT_SET_CATEGORIES_CARDS: CategoryContentCard[];
+  DYNAMIC_CONTENT_SET_LOCAL_CATEGORY_CARDS: {
+    categories: CategoryContentCard[];
+    childCards: BrazeCard[];
+  };
 };
 type DynamicContentHandlers<PreciseKey = true> = Handlers<
   DynamicContentState,
@@ -77,6 +92,21 @@ const handlers: DynamicContentHandlers = {
     ...state,
     notificationsCards: payload,
   }),
+  DYNAMIC_CONTENT_SET_CATEGORIES_CARDS: (
+    state: DynamicContentState,
+    { payload }: { payload: CategoryContentCard[] },
+  ) => ({
+    ...state,
+    categoriesCards: payload,
+  }),
+  DYNAMIC_CONTENT_SET_LOCAL_CATEGORY_CARDS: (
+    state: DynamicContentState,
+    { payload }: { payload: { categories: CategoryContentCard[]; childCards: BrazeCard[] } },
+  ) => ({
+    ...state,
+    localCategoriesCards: payload.categories,
+    localCategoryChildCards: payload.childCards,
+  }),
 };
 
 // Selectors
@@ -93,6 +123,29 @@ export const bottomPortfolioContentCardSelector = (state: {
 
 export const actionContentCardSelector = (state: { dynamicContent: DynamicContentState }) =>
   state.dynamicContent.actionCards;
+
+export const categoriesContentCardSelector = createSelector(
+  (state: { dynamicContent: DynamicContentState }) => state.dynamicContent.categoriesCards,
+  (state: { dynamicContent: DynamicContentState }) => state.dynamicContent.localCategoriesCards,
+  (categoriesCards, localCategoriesCards) => categoriesCards.concat(localCategoriesCards),
+);
+
+export const categoryChildCardsSelector = createSelector(
+  (state: { dynamicContent: DynamicContentState }) => state.dynamicContent.desktopCards,
+  (state: { dynamicContent: DynamicContentState }) => state.dynamicContent.localCategoryChildCards,
+  (desktopCards, localCategoryChildCards) => desktopCards.concat(localCategoryChildCards),
+);
+
+export const categoriesContentCardFromBrazeSelector = (state: {
+  dynamicContent: DynamicContentState;
+}) => state.dynamicContent.categoriesCards;
+
+export const localCategoriesContentCardSelector = (state: {
+  dynamicContent: DynamicContentState;
+}) => state.dynamicContent.localCategoriesCards;
+
+export const localCategoryChildCardsSelector = (state: { dynamicContent: DynamicContentState }) =>
+  state.dynamicContent.localCategoryChildCards;
 
 type NotificationsContentCardState = {
   dynamicContent: DynamicContentState;
@@ -114,5 +167,5 @@ export const notificationsContentCardSelector = createSelector(
 
 export default handleActions<DynamicContentState, HandlersPayloads[keyof HandlersPayloads]>(
   handlers as unknown as DynamicContentHandlers<false>,
-  state,
+  INITIAL_STATE,
 );

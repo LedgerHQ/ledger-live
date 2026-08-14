@@ -1,14 +1,19 @@
+import type { Context } from "@ledgerhq/coin-module-framework/config";
 import { createApi } from ".";
-import { type CardanoConfig } from "../config";
+import { type CardanoCoinConfig, type CardanoConfig } from "../config";
 
 const config: CardanoConfig = { maxFeesWarning: 0, maxFeesError: 0 };
+const mockCtx: Context<CardanoCoinConfig> = {
+  config: async () => ({ ...config, status: { type: "active" } }),
+  logger: () => {},
+};
 
 describe("craftRawTransaction", () => {
   it("throws an unsupported error", () => {
-    const api = createApi(config, "cardano");
+    const api = createApi("cardano");
 
-    expect(() => api.craftRawTransaction("rawTransaction", "sender", "publicKey", 0n)).toThrow(
-      "craftRawTransaction is not supported",
-    );
+    expect(() =>
+      api.craftRawTransaction(mockCtx, "rawTransaction", "sender", "publicKey", 0n),
+    ).toThrow("craftRawTransaction is not supported");
   });
 });

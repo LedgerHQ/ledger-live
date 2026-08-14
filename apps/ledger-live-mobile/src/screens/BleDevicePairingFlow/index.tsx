@@ -1,4 +1,5 @@
-import { Device, DeviceModelId, DevicesWithTouchScreen } from "@ledgerhq/types-devices";
+import { DevicesWithTouchScreen } from "@ledgerhq/device-core";
+import { DeviceModelId, type Device } from "@ledgerhq/types-devices";
 import { DiscoveredDevice } from "@ledgerhq/device-management-kit";
 import React, { useCallback } from "react";
 import { Flex } from "@ledgerhq/native-ui";

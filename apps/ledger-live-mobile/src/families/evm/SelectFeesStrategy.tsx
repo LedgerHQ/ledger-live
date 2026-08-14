@@ -1,6 +1,7 @@
-import { getEstimatedFees } from "@ledgerhq/coin-evm/utils";
+import { getEstimatedFees } from "@ledgerhq/live-common/families/evm/utils";
 import { getTypedTransaction } from "@ledgerhq/live-common/families/evm/transaction";
-import type { FeeData, GasOptions, Strategy, Transaction } from "@ledgerhq/coin-evm/types/index";
+import type { FeeData, GasOptions, Strategy } from "@ledgerhq/coin-evm/types/index";
+import type { Transaction } from "@ledgerhq/live-common/families/evm/types";
 import { getFeesCurrency, getFeesUnit, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import type { Account, AccountLike, TransactionStatusCommon } from "@ledgerhq/types-live";
@@ -17,7 +18,7 @@ import {
   TouchableOpacityProps,
   View,
 } from "react-native";
-import { useAnalytics } from "~/analytics";
+import { track } from "~/analytics";
 import CounterValue from "~/components/CounterValue";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import LText from "~/components/LText";
@@ -74,7 +75,6 @@ export default function SelectFeesStrategy({
   transactionToUpdate,
   status,
 }: Props) {
-  const { track } = useAnalytics();
   const { t } = useTranslation();
   const { colors } = useTheme();
   const mainAccount = getMainAccount(account, parentAccount);
@@ -103,7 +103,7 @@ export default function SelectFeesStrategy({
       });
       onStrategySelect({ feesStrategy: strategy });
     },
-    [onStrategySelect, track],
+    [onStrategySelect],
   );
 
   const onBuy = useCallback(

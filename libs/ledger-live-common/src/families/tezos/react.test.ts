@@ -20,6 +20,13 @@ jest.mock("./bakers", () => ({
   loadAccountDelegation: jest.fn().mockResolvedValue(null),
 }));
 
+// useBaker resolves config via getCurrencyConfiguration("tezos") before delegating to the (mocked)
+// baker loader; stub it so the hook doesn't hit an unseeded LiveConfig.
+jest.mock("../../config", () => ({
+  ...jest.requireActual("../../config"),
+  getCurrencyConfiguration: jest.fn(() => ({ status: { type: "active" } })),
+}));
+
 import { bakers } from "@ledgerhq/coin-tezos/network/index";
 import { getAccountDelegationSync } from "./bakers";
 import { isAwaitingDelegation, useBaker, useTezosStakingInfo } from "./react";
@@ -310,8 +317,8 @@ describe("useBaker", () => {
     await Promise.resolve();
     rerender({ addr: "tz1b" });
     await Promise.resolve();
-    expect(mockBakers.loadBaker).toHaveBeenNthCalledWith(1, "tz1a");
-    expect(mockBakers.loadBaker).toHaveBeenNthCalledWith(2, "tz1b");
+    expect(mockBakers.loadBaker).toHaveBeenNthCalledWith(1, expect.anything(), "tz1a");
+    expect(mockBakers.loadBaker).toHaveBeenNthCalledWith(2, expect.anything(), "tz1b");
   });
 
   it("skips loadBaker when addr is empty", () => {

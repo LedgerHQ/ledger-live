@@ -9,7 +9,7 @@ import type {
   SignTransactionIntentJobState,
 } from "@ledgerhq/live-common/intents/signTransactionIntent";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import { useAnalytics } from "~/analytics";
+import { track, usePageNameFromRoute } from "~/analytics";
 import { getSendFlowTrackingProperties } from "@ledgerhq/ledger-wallet-framework/tracking/send";
 
 const deviceConnectionParams = { acceptedDeviceModelIds: [] };
@@ -34,18 +34,20 @@ export function SignatureScreenView({
   account,
   parentAccount,
 }: SignatureScreenViewProps) {
-  const { track } = useAnalytics();
   const trackingProperties = useMemo(() => {
     return getSendFlowTrackingProperties(account ?? null, parentAccount);
   }, [account, parentAccount]);
+
+  const page = usePageNameFromRoute();
 
   useEffect(() => {
     track("send_modal", {
       ...trackingProperties,
       name: "step review device",
+      page,
       flow: "send",
     });
-  }, [track, trackingProperties]);
+  }, [page, trackingProperties]);
 
   return (
     <View style={{ flex: 1 }} testID="send-signature-step">

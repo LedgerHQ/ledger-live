@@ -17,14 +17,18 @@ function decodeSignature(signature: string): Buffer {
 
 // Attaches a device signature and returns the signed, base64'd transaction ready to broadcast. The
 // key type is read back from the transaction's own public key, so it always matches the crafting key.
-export function combine(tx: string, signature: string, _pubkey?: string): string {
+export function combine(tx: string, signature: string[], _pubkey?: string): string {
+  if (signature.length !== 1) {
+    throw new Error(`NEAR combine expects exactly one signature, got ${signature.length}`);
+  }
+
   const transaction = nearAPI.transactions.Transaction.decode(Buffer.from(tx, "base64"));
 
   const signedTransaction = new nearAPI.transactions.SignedTransaction({
     transaction,
     signature: new nearAPI.transactions.Signature({
       keyType: transaction.publicKey.keyType,
-      data: decodeSignature(signature),
+      data: decodeSignature(signature[0]),
     }),
   });
 

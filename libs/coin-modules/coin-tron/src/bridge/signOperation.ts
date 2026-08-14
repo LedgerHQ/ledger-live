@@ -2,6 +2,7 @@ import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { SignOperationEvent, SignOperationFnSignature, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { Observable } from "rxjs";
+import coinConfig from "../config";
 import {
   claimRewardTronTransaction,
   createTronTransaction,
@@ -92,29 +93,30 @@ const prepareTransactionForSignature = (
   subAccount: TokenAccount | undefined,
   transaction: Transaction,
 ) => {
+  const config = coinConfig.getCoinConfig();
   switch (transaction.mode) {
     case "freeze":
-      return freezeTronTransaction(account, transaction);
+      return freezeTronTransaction(config, account, transaction);
 
     case "unfreeze":
-      return unfreezeTronTransaction(account, transaction);
+      return unfreezeTronTransaction(config, account, transaction);
 
     case "vote":
-      return voteTronSuperRepresentatives(account, transaction);
+      return voteTronSuperRepresentatives(config, account, transaction);
 
     case "claimReward":
-      return claimRewardTronTransaction(account);
+      return claimRewardTronTransaction(config, account);
 
     case "withdrawExpireUnfreeze":
-      return withdrawExpireUnfreezeTronTransaction(account, transaction);
+      return withdrawExpireUnfreezeTronTransaction(config, account, transaction);
 
     case "unDelegateResource":
-      return unDelegateResourceTransaction(account, transaction);
+      return unDelegateResourceTransaction(config, account, transaction);
 
     case "legacyUnfreeze":
-      return legacyUnfreezeTronTransaction(account, transaction);
+      return legacyUnfreezeTronTransaction(config, account, transaction);
 
     default:
-      return createTronTransaction(account, transaction, subAccount);
+      return createTronTransaction(config, account, transaction, subAccount);
   }
 };

@@ -1,5 +1,6 @@
-import { CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
+import { Context, CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
 import { LedgerExplorerId } from "@ledgerhq/ledger-wallet-framework/types";
+import { log } from "@ledgerhq/logs";
 import type { InternalTxSourceList } from "./internalTxSources";
 
 export type { InternalTxSource, InternalTxSourceList, NonEmptySource } from "./internalTxSources";
@@ -133,3 +134,25 @@ export const getCoinConfig = (currencyId: string): EvmCoinConfig => {
 
   return coinConfig(currencyId);
 };
+
+/**
+ * The {@link Context} threaded through the coin-evm public API (ADR-019).
+ *
+ * NOTE: The EVM low layers still resolve configuration through the module-level singleton
+ * (keyed by `currency.id`), so `context` is currently threaded for framework conformance but
+ * the config it carries mirrors the singleton. `config`/`logger` are provided for completeness
+ * and for callers that build a context explicitly.
+ */
+export type EvmContext = Context<EvmConfigInfo>;
+
+/**
+ * Builds an {@link EvmContext} from the module-level singleton and `@ledgerhq/logs`.
+ *
+ * The returned `config` accessor reads from the singleton (`getCoinConfig`), preserving the
+ * existing `setCoinConfig` side-effect flow used by external consumers of `createApi`.
+ */
+export const createContext = (): EvmContext => ({
+  config: async (currencyId?: string): Promise<EvmConfigInfo> =>
+    getCoinConfig(currencyId ?? "").info,
+  logger: (...args: unknown[]): void => log("coin-evm", args.map(String).join(" ")),
+});

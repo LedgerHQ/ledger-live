@@ -1,4 +1,4 @@
-import { TransactionRaw } from "@ledgerhq/coin-evm/types/index";
+import { TransactionRaw } from "@ledgerhq/live-common/families/evm/types";
 import { DomainServiceProvider } from "@ledgerhq/domain-service/hooks/index";
 import { Account, AccountLike, TransactionCommonRaw } from "@ledgerhq/types-live";
 import React, { memo, useCallback, useState } from "react";

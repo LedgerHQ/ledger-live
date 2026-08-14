@@ -1,6 +1,7 @@
 import { crypto } from "@ledgerhq/hw-ledger-key-ring-protocol";
 import { HttpResponse, http } from "msw";
 import { setupServer } from "msw/node";
+import { WalletAuthMissingBaseUrlError } from "@ledgerhq/ledger-auth";
 import { setAuthEnvironment, type AuthProvider } from "@shared/auth";
 import { importTrustchainStoreState } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { CHALLENGE } from "@ledgerhq/ledger-key-ring-protocol/__mocks__/challenge";
@@ -126,29 +127,43 @@ describe("mobile store", () => {
       expect(endpoints.stagingKeycloakAuth).not.toHaveBeenCalled();
     });
 
-    it("should keep a stable auth provider facade when ledger auth is disabled at runtime", async () => {
+    it("should retry authentication after the environment becomes available", async () => {
+      endpoints.prodKeycloakAuth.mockImplementation(() =>
+        HttpResponse.json({ tlv: CHALLENGE.tlv, json: CHALLENGE.json }),
+      );
+      endpoints.lkrpAuth.mockImplementation(() => HttpResponse.json("auth-code-xyz"));
+      endpoints.lkrpToken.mockImplementation(() =>
+        HttpResponse.json({ access_token: LKRP_TOKEN, token_type: "Bearer" }),
+      );
+      endpoints.tokenExchange.mockImplementation(() =>
+        HttpResponse.json({ access_token: KEYCLOAK_JWT, token_type: "Bearer" }),
+      );
+
       const { store } = require("./configureStore");
-      let injectedAuthProvider: AuthProvider | undefined;
-
-      await dispatchThunk(store, async (_dispatch, _getState, extra) => {
-        injectedAuthProvider = extra.authProvider;
-      });
-
       store.dispatch(setOverride({ key: "lwmAuth", value: { enabled: true } }));
+
+      await expect(
+        dispatchThunk(store, (_dispatch, _getState, extra) =>
+          extra.authProvider.withToken({ queryFn }),
+        ),
+      ).rejects.toMatchObject({ name: WalletAuthMissingBaseUrlError.name });
+
       store.dispatch(setAuthEnvironment("PROD"));
-
-      await dispatchThunk(store, async (_dispatch, _getState, extra) => {
-        expect(extra.authProvider).toBe(injectedAuthProvider);
-      });
-
-      store.dispatch(setOverride({ key: "lwmAuth", value: { enabled: false } }));
+      store.dispatch(
+        importTrustchainStoreState({
+          trustchain: null,
+          memberCredentials: MEMBER_CREDENTIALS,
+        }),
+      );
 
       await dispatchThunk(store, (_dispatch, _getState, extra) =>
         extra.authProvider.withToken({ queryFn }),
       );
 
-      expect(queryFn).toHaveBeenCalledWith();
-      expect(endpoints.prodKeycloakAuth).not.toHaveBeenCalled();
+      expect(queryFn).toHaveBeenCalledWith(
+        expect.objectContaining({ accessToken: KEYCLOAK_JWT, tokenType: "Bearer" }),
+      );
+      expect(endpoints.prodKeycloakAuth).toHaveBeenCalledTimes(1);
     });
 
     it("should use the staging Keycloak URL for a staging Trustchain SDK", async () => {
@@ -236,52 +251,6 @@ describe("mobile store", () => {
           }),
         }),
       );
-    });
-
-    it("should authenticate without attestation when trustchain store only has credentials", async () => {
-      endpoints.prodKeycloakAuth.mockImplementation(() =>
-        HttpResponse.json({ tlv: CHALLENGE.tlv, json: CHALLENGE.json }),
-      );
-      endpoints.lkrpAuth.mockImplementation(() => HttpResponse.json("auth-code-xyz"));
-      endpoints.lkrpToken.mockImplementation(() =>
-        HttpResponse.json({ access_token: LKRP_TOKEN, token_type: "Bearer" }),
-      );
-      endpoints.tokenExchange.mockImplementation(() =>
-        HttpResponse.json({ access_token: KEYCLOAK_JWT, token_type: "Bearer" }),
-      );
-
-      const { store } = require("./configureStore");
-      store.dispatch(setAuthEnvironment("PROD"));
-      store.dispatch(setOverride({ key: "lwmAuth", value: { enabled: true } }));
-      store.dispatch(
-        importTrustchainStoreState({
-          trustchain: null,
-          memberCredentials: MEMBER_CREDENTIALS,
-        }),
-      );
-
-      await dispatchThunk(store, async (_dispatch, _getState, extra) =>
-        extra.authProvider.withToken({
-          queryFn,
-          refreshAndRetryWhen: () => true,
-        }),
-      );
-
-      expect(queryFn).toHaveBeenCalledWith(
-        expect.objectContaining({ accessToken: KEYCLOAK_JWT, tokenType: "Bearer" }),
-      );
-
-      const challengeRequest = await endpoints.lkrpAuth.mock.calls.at(-1)?.[0].request.json();
-      expect(challengeRequest).toEqual(
-        expect.objectContaining({
-          signature: expect.objectContaining({
-            credential: expect.objectContaining({
-              publicKey: MEMBER_CREDENTIALS.pubkey,
-            }),
-          }),
-        }),
-      );
-      expect(challengeRequest.signature).not.toHaveProperty("attestation");
     });
   });
 });

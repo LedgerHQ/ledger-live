@@ -1,29 +1,23 @@
+import type { TronCoinConfig } from "../config";
 import { SendTransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
-import coinConfig from "../config";
 import { DEFAULT_TRC20_FEES_LIMIT } from "../network";
 import { decode58Check } from "../network/format";
 import { craftTransaction } from "./craftTransaction";
 import { decodeTransaction } from "./utils";
 
-describe("Testing craftTransaction function", () => {
-  beforeAll(() => {
-    coinConfig.setCoinConfig(() => ({
-      status: {
-        type: "active",
-      },
-      explorer: {
-        url: "https://tron.coin.ledger.com",
-      },
-    }));
-  });
+const mockConfig = {
+  status: { type: "active" },
+  explorer: { url: "https://tron.coin.ledger.com" },
+} as TronCoinConfig;
 
+describe("Testing craftTransaction function", () => {
   it("should create a valid transaction with minimum required fields", async () => {
     const amount = BigInt(3);
     const sender = "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9";
     const recipient = "TPswDDCAWhJAZGdHPidFg5nEf8TkNToDX1";
 
     // WHEN
-    const { transaction: result } = await craftTransaction({
+    const { transaction: result } = await craftTransaction(mockConfig, {
       intentType: "transaction",
       type: "send",
       asset: {
@@ -65,7 +59,7 @@ describe("Testing craftTransaction function", () => {
     const recipient = "TPswDDCAWhJAZGdHPidFg5nEf8TkNToDX1";
 
     // WHEN
-    const { transaction: result } = await craftTransaction({
+    const { transaction: result } = await craftTransaction(mockConfig, {
       intentType: "transaction",
       type: "send",
       asset: {
@@ -105,7 +99,7 @@ describe("Testing craftTransaction function", () => {
     const sender = "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9";
     const recipient = "TPswDDCAWhJAZGdHPidFg5nEf8TkNToDX1";
 
-    const { transaction: result } = await craftTransaction({
+    const { transaction: result } = await craftTransaction(mockConfig, {
       intentType: "transaction",
       type: "send",
       asset: {
@@ -133,6 +127,7 @@ describe("Testing craftTransaction function", () => {
     const recipient = "TPswDDCAWhJAZGdHPidFg5nEf8TkNToDX1";
 
     const { transaction: result } = await craftTransaction(
+      mockConfig,
       {
         intentType: "transaction",
         type: "send",
@@ -179,6 +174,7 @@ describe("Testing craftTransaction function", () => {
 
     const customFees = 99n;
     const { transaction: result } = await craftTransaction(
+      mockConfig,
       {
         intentType: "transaction",
         type: "send",
@@ -209,7 +205,7 @@ describe("Testing craftTransaction function", () => {
     const recipient = "TPswDDCAWhJAZGdHPidFg5nEf8TkNToDX1";
 
     // WHEN
-    const { transaction: result } = await craftTransaction({
+    const { transaction: result } = await craftTransaction(mockConfig, {
       intentType: "transaction",
       asset: { type: "native" },
       type: "send",
@@ -247,7 +243,7 @@ describe("Testing craftTransaction function", () => {
     const recipient = "TPswDDCAWhJAZGdHPidFg5nEf8TkNToDX1";
 
     // WHEN
-    const { transaction: result } = await craftTransaction({
+    const { transaction: result } = await craftTransaction(mockConfig, {
       intentType: "transaction",
       asset: { type: "native" },
       type: "send",
@@ -278,7 +274,7 @@ describe("Testing craftTransaction function", () => {
     const recipient = "TPswDDCAWhJAZGdHPidFg5nEf8TkNToDX1";
 
     await expect(
-      craftTransaction({
+      craftTransaction(mockConfig, {
         intentType: "transaction",
         type: "send",
         asset: {
@@ -305,7 +301,7 @@ describe("Testing craftTransaction function", () => {
     const before = Date.now();
 
     // WHEN
-    const { transaction: result } = await craftTransaction({
+    const { transaction: result } = await craftTransaction(mockConfig, {
       intentType: "transaction",
       asset: { type: "native" },
       type: "send",
@@ -338,7 +334,7 @@ describe("Testing craftTransaction function", () => {
     const before = Date.now();
 
     // WHEN
-    const { transaction: result } = await craftTransaction({
+    const { transaction: result } = await craftTransaction(mockConfig, {
       intentType: "transaction",
       asset: { type: "native" },
       type: "send",

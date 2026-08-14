@@ -1,5 +1,5 @@
-import { getGasLimit } from "@ledgerhq/coin-evm/utils";
-import { Transaction } from "@ledgerhq/coin-evm/types/index";
+import { getGasLimit } from "@ledgerhq/live-common/families/evm/utils";
+import { Transaction } from "@ledgerhq/live-common/families/evm/types";
 import { Account } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";

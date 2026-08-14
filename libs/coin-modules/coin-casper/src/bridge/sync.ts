@@ -6,6 +6,7 @@ import flatMap from "lodash/flatMap";
 import { fetchBalance, fetchLastBlock, fetchAccountStateInfo, fetchTxs } from "../network/api";
 import { ITxnHistoryData } from "../types/network";
 import { mapTxToOps } from "../logic/listOperations";
+import { getCoinConfig } from "../config";
 
 export const getAccountShape: GetAccountShape = async info => {
   const { address, currency, derivationMode } = info;
@@ -20,12 +21,14 @@ export const getAccountShape: GetAccountShape = async info => {
 
   log("debug", `Generation account shape for ${address}`);
 
-  const { purseUref, accountHash } = await fetchAccountStateInfo(address);
+  const config = getCoinConfig();
 
-  const { height: blockHeight } = await fetchLastBlock();
+  const { purseUref, accountHash } = await fetchAccountStateInfo(config, address);
 
-  const balance = purseUref ? await fetchBalance(purseUref) : new BigNumber(0);
-  const txs: ITxnHistoryData[] = purseUref ? await fetchTxs(address) : [];
+  const { height: blockHeight } = await fetchLastBlock(config);
+
+  const balance = purseUref ? await fetchBalance(config, purseUref) : new BigNumber(0);
+  const txs: ITxnHistoryData[] = purseUref ? await fetchTxs(config, address) : [];
 
   return {
     id: accountId,

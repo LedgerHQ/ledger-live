@@ -189,8 +189,9 @@ function makeGetGasEstimation(
 async function getFeeData(
   _fetch: LedgerFetch,
   config: LedgerNodeConfig,
-  currency: CryptoCurrency,
-  transaction: Parameters<NodeApi["getFeeData"]>[1],
+  evmConfig: Parameters<NodeApi["getFeeData"]>[0],
+  currency: Parameters<NodeApi["getFeeData"]>[1],
+  transaction: Parameters<NodeApi["getFeeData"]>[2],
 ): Promise<Awaited<ReturnType<NodeApi["getFeeData"]>>> {
   const options = await getGasOptions({
     currency: {
@@ -199,6 +200,7 @@ async function getFeeData(
         ...currency.ethereumLikeInfo!,
       },
     },
+    config: evmConfig,
     options: {
       useEIP1559: getEnv("EVM_FORCE_LEGACY_TRANSACTIONS") ? false : transaction.type === 2,
       overrideGasTracker: { type: "ledger", explorerId: config.explorerId },
@@ -429,7 +431,10 @@ export function createLedgerNodeApi(config: LedgerNodeConfig): NodeApi {
     getTransactionCount: make(getTransactionCount, config, fetch),
     getTransaction: make(getTransaction, config, fetch),
     getGasEstimation: makeGetGasEstimation(config, fetch),
-    getFeeData: make(getFeeData, config, fetch),
+    // getFeeData takes `config` (EvmConfigInfo) first, not `currency`, so it doesn't fit the
+    // currency-first `make` type bound; bind it directly (same fetch/config passthrough as `make`).
+    getFeeData: ((...args: Parameters<NodeApi["getFeeData"]>) =>
+      getFeeData(fetch, config, ...args)) as NodeApi["getFeeData"],
     broadcastTransaction: make(broadcastTransaction, config, fetch),
     getOptimismAdditionalFees: make(getOptimismAdditionalFees, config, fetch),
     getScrollAdditionalFees: make(getScrollAdditionalFees, config, fetch),

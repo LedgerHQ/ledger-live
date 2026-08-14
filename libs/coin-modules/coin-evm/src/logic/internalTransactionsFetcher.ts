@@ -3,7 +3,7 @@ import { log } from "@ledgerhq/logs";
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { traceBlockItemsToOperationsByHash } from "../adapters/blockOperations";
 import { internalTxsToOperationsByHash } from "../adapters/etherscan";
-import { getCoinConfig } from "../config";
+import type { EvmConfigInfo } from "../config";
 import type { InternalTxSource } from "../internalTxSources";
 import { SourceUnavailableError } from "../errors";
 import { getInternalTransactionsByBlock } from "../network/explorer/etherscan";
@@ -67,10 +67,10 @@ export function composeInternalTxsFetcher(
 }
 
 export function makeSourceFetchers(
+  config: EvmConfigInfo,
   nodeApi: NodeApi,
   currency: CryptoCurrency,
 ): Record<InternalTxSource, SourceFetcher> {
-  const config = getCoinConfig(currency.id).info;
   const { explorer } = config || {};
 
   return {
@@ -108,7 +108,7 @@ export function makeSourceFetchers(
           ),
         );
       }
-      return getInternalTransactionsByBlock(currency, height)
+      return getInternalTransactionsByBlock(config, currency, height)
         .then(internalTxsToOperationsByHash)
         .catch(error => {
           log("coin-evm", "debug: explorer internal txs failed, falling through", {
@@ -124,9 +124,10 @@ export function makeSourceFetchers(
 }
 
 export function createInternalTransactionsFetcher(
+  config: EvmConfigInfo,
   nodeApi: NodeApi,
   currency: CryptoCurrency,
   sources: readonly InternalTxSource[],
 ): SourceFetcher {
-  return composeInternalTxsFetcher(sources, makeSourceFetchers(nodeApi, currency));
+  return composeInternalTxsFetcher(sources, makeSourceFetchers(config, nodeApi, currency));
 }

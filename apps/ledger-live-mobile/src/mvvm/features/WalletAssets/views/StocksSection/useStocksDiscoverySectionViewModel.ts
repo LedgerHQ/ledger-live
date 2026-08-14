@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { StockSuggestion } from "@features/platform-aggregated-assets";
-import { useAnalytics } from "~/analytics";
+import { track } from "~/analytics";
 import { ScreenName } from "~/const";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { useAssetDetailNavigation } from "LLM/features/AssetDetail/hooks/useAssetDetailNavigation";
@@ -19,14 +19,13 @@ export interface StocksDiscoverySectionViewModelResult {
 
 export function useStocksDiscoverySectionViewModel(): StocksDiscoverySectionViewModelResult {
   const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
-  const { track } = useAnalytics();
   const { openFromMarket } = useAssetDetailNavigation();
   const { stocks, isLoading, isError } = useDefaultStocksAssets(true, MAX_DISCOVERY_STOCKS);
 
   const onPressExploreAll = useCallback(() => {
     track("button_clicked", { button: "explore_all", type: "stocks", page: "Wallet" });
     navigation.navigate(ScreenName.MarketList, { category: "stocks" });
-  }, [navigation, track]);
+  }, [navigation]);
 
   const onItemPress = useCallback(
     (stock: StockSuggestion) => {
@@ -37,7 +36,7 @@ export function useStocksDiscoverySectionViewModel(): StocksDiscoverySectionView
         source: "portfolio",
       });
     },
-    [openFromMarket, track],
+    [openFromMarket],
   );
 
   return { stocks, isLoading, isError, onPressExploreAll, onItemPress };

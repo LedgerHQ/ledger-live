@@ -1,6 +1,7 @@
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
+import { type PolkadotCoinConfig } from "../config";
 import * as sidecar from "./sidecar";
 import network from ".";
 
@@ -8,6 +9,7 @@ jest.mock("./sidecar");
 const mockedSidecar = jest.mocked(sidecar);
 
 const currency: CryptoCurrency = getCryptoCurrencyById("polkadot");
+const config = {} as PolkadotCoinConfig;
 
 describe("getMetadata", () => {
   afterEach(() => {
@@ -25,6 +27,7 @@ describe("getMetadata", () => {
     const includedInSignedData = "0x" + "aa".repeat(105);
 
     const result = await network.getMetadata(
+      config,
       callData,
       includedInExtrinsic,
       includedInSignedData,
@@ -34,6 +37,7 @@ describe("getMetadata", () => {
     expect(result).toEqual({ metadataBlob: "0xmetadatablob", metadataHash: "0xmetadatahash" });
     expect(mockedSidecar.getMetadata).toHaveBeenCalledTimes(1);
     expect(mockedSidecar.getMetadata).toHaveBeenCalledWith(
+      config,
       callData,
       includedInExtrinsic,
       includedInSignedData,
@@ -49,13 +53,13 @@ describe("getMinimumBondBalance", () => {
 
   it("is called once due to cache", async () => {
     mockedSidecar.getMinimumBondBalance.mockResolvedValueOnce(new BigNumber("12"));
-    let minBond = await network.getMinimumBondBalance(currency);
+    let minBond = await network.getMinimumBondBalance(config, currency);
     expect(minBond).toEqual(new BigNumber("12"));
     expect(mockedSidecar.getMinimumBondBalance).toHaveBeenCalledTimes(1);
 
     // This new value should never been called as the previous one is cached
     mockedSidecar.getMinimumBondBalance.mockResolvedValueOnce(new BigNumber("13"));
-    minBond = await network.getMinimumBondBalance(currency);
+    minBond = await network.getMinimumBondBalance(config, currency);
     expect(minBond).toEqual(new BigNumber("12"));
     expect(mockedSidecar.getMinimumBondBalance).toHaveBeenCalledTimes(1);
   });
@@ -68,14 +72,14 @@ describe("isNewAccount", () => {
 
   it("is called once due to cache", async () => {
     mockedSidecar.isNewAccount.mockResolvedValueOnce(false);
-    let isNewAccount = await network.isNewAccount("0xfff", currency);
+    let isNewAccount = await network.isNewAccount(config, "0xfff", currency);
     expect(isNewAccount).toEqual(false);
     expect(mockedSidecar.isNewAccount).toHaveBeenCalledTimes(1);
     expect(mockedSidecar.getMinimumBondBalance).toHaveBeenCalledTimes(0);
 
     // This new value should never been called as the previous one is cached
     mockedSidecar.isNewAccount.mockResolvedValueOnce(true);
-    isNewAccount = await network.isNewAccount("0xfff", currency);
+    isNewAccount = await network.isNewAccount(config, "0xfff", currency);
     expect(isNewAccount).toEqual(false);
     expect(mockedSidecar.isNewAccount).toHaveBeenCalledTimes(1);
     expect(mockedSidecar.getMinimumBondBalance).toHaveBeenCalledTimes(0);

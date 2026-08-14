@@ -10,6 +10,19 @@ Ledger Key Ring Protocol layer.
 > [`docs/ledger-sync`](../../docs/ledger-sync/README.md) — notably
 > [TrustchainSDK](../../docs/ledger-sync/02-trustchain-sdk.md).
 
+## Authentication identity provider
+
+`LkrpIdentityProvider` requires a callback that resolves the current trustchain
+credentials:
+
+```ts
+const provider = new LkrpIdentityProvider(() => store.getState().trustchain);
+```
+
+The callback may return the credentials directly or as a promise, allowing headless
+consumers to load secrets from external storage. It is called for every authentication;
+results are passed directly to challenge signing and are not retained by the provider.
+
 ## Testing the SDK with recorded scenarios
 
 The SDK is exercised end-to-end through **scenarios** that are recorded once against

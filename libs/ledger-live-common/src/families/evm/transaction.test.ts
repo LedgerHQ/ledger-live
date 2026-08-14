@@ -17,12 +17,12 @@ import {
   toTransactionRaw,
   toTransactionStatusRaw,
 } from "./transaction";
-import {
+import { FeeData } from "@ledgerhq/coin-evm/types/index";
+import type {
   Transaction as EvmTransaction,
   EvmTransactionEIP1559,
   EvmTransactionLegacy,
-  FeeData,
-} from "@ledgerhq/coin-evm/types/index";
+} from "./types";
 
 describe("EVM Family", () => {
   describe("transaction.ts", () => {

@@ -1,6 +1,13 @@
 import { JsonRpcHTTPTransport } from "@mysten/sui/jsonRpc";
 import { createSuiGraphQLClient } from "./graphql/client";
 import coinConfig from "../config";
+import type { SuiCoinConfig } from "../config";
+
+const config = {
+  node: { url: "https://mockapi.sui.io", graphqlUrl: "https://mockapi.sui.io/graphql" },
+  status: { type: "active" },
+  features: { graphql: true },
+} as unknown as SuiCoinConfig;
 import { fetcher } from "./fetcher";
 import { GRAPHQL_MAINNET_URL } from "./graphql/constants";
 import {
@@ -66,7 +73,9 @@ describe("isGraphQLEnabled", () => {
       status: { type: "active" },
       features: { graphql: true },
     }));
-    expect(isGraphQLEnabled()).toBe(true);
+    expect(isGraphQLEnabled({ features: { graphql: true } } as unknown as SuiCoinConfig)).toBe(
+      true,
+    );
   });
 
   it("should return false when features.graphql === false", () => {
@@ -75,7 +84,9 @@ describe("isGraphQLEnabled", () => {
       status: { type: "active" },
       features: { graphql: false },
     }));
-    expect(isGraphQLEnabled()).toBe(false);
+    expect(isGraphQLEnabled({ features: { graphql: false } } as unknown as SuiCoinConfig)).toBe(
+      false,
+    );
   });
 
   it("should treat the feature flag as the single source of truth, not node.url", () => {
@@ -85,7 +96,9 @@ describe("isGraphQLEnabled", () => {
       status: { type: "active" },
       features: { graphql: false },
     }));
-    expect(isGraphQLEnabled()).toBe(false);
+    expect(isGraphQLEnabled({ features: { graphql: false } } as unknown as SuiCoinConfig)).toBe(
+      false,
+    );
   });
 });
 
@@ -104,7 +117,7 @@ describe("unwrapGraphQL: error envelope handling", () => {
     mockNext({ query });
 
     // WHEN / THEN
-    await expect(getCheckpoint("99", "sui-graphql-errors-aggregate")).rejects.toThrow(
+    await expect(getCheckpoint(config, "99")).rejects.toThrow(
       /first thing went wrong; second thing went wrong; third thing went wrong/,
     );
   });
@@ -115,7 +128,7 @@ describe("unwrapGraphQL: error envelope handling", () => {
     mockNext({ query });
 
     // WHEN / THEN
-    await expect(getCheckpoint("99", "sui-graphql-errors-no-data")).rejects.toThrow(
+    await expect(getCheckpoint(config, "99")).rejects.toThrow(
       /CheckpointBySequence failed: no data/,
     );
   });
@@ -138,10 +151,10 @@ describe("SuiAddress normalisation at GraphQL entry points", () => {
       expected: ("0xABCDEF" + "0".repeat(58)).toLowerCase(),
       key: "sui-graphql-norm-2",
     },
-  ])("should $name before querying", async ({ input, expected, key }) => {
+  ])("should $name before querying", async ({ input, expected }) => {
     const query = jest.fn().mockResolvedValueOnce(fakeBalancesPage([]));
     mockNext({ query });
-    await getAllBalancesCached(input, key);
+    await getAllBalancesCached(config, input);
     expect(query.mock.calls[0][0].variables).toEqual({ owner: expected, cursor: null });
   });
 });
@@ -220,10 +233,17 @@ describe("dispatcher dual-URL routing", () => {
     const captured = jest.fn();
 
     // WHEN
-    await withApi(async () => {
-      captured();
-      return null;
-    });
+    await withApi(
+      {
+        node: { url: JSON_RPC_URL, graphqlUrl: GRAPHQL_URL },
+        status: { type: "active" },
+        features: { graphql: true },
+      } as unknown as SuiCoinConfig,
+      async () => {
+        captured();
+        return null;
+      },
+    );
 
     // THEN
     expect(captured).toHaveBeenCalledTimes(1);
@@ -238,10 +258,17 @@ describe("dispatcher dual-URL routing", () => {
     mockNext();
 
     // WHEN
-    await withGraphQLApi(async () => {
-      captured();
-      return null;
-    });
+    await withGraphQLApi(
+      {
+        node: { url: JSON_RPC_URL, graphqlUrl: GRAPHQL_URL },
+        status: { type: "active" },
+        features: { graphql: true },
+      } as unknown as SuiCoinConfig,
+      async () => {
+        captured();
+        return null;
+      },
+    );
 
     // THEN
     expect(captured).toHaveBeenCalledTimes(1);
@@ -269,7 +296,7 @@ describe("getBlock/getBlockInfo digest routing", () => {
   it("getBlockInfo with a digest input never constructs a GraphQL client (routes to JSON-RPC)", async () => {
     // 44-char base58-ish digest; not numeric, so isSequenceNumber returns false.
     const digest = "5f7c9b3a2e1d0c4b6f8a9e2d1c3b4a5f6e7d8c9b0a1f2e3d4c5b6a7f8e9d0c1b";
-    await expect(getBlockInfo(digest)).rejects.toThrow();
+    await expect(getBlockInfo(config, digest)).rejects.toThrow();
     // GraphQL client must NOT have been created — JSON-RPC arm took over.
     expect(factoryMock).not.toHaveBeenCalled();
     // JSON-RPC transport WAS constructed (then the mocked SuiJsonRpcClient throws on any call).
@@ -278,7 +305,7 @@ describe("getBlock/getBlockInfo digest routing", () => {
 
   it("getBlock with a digest input never constructs a GraphQL client (routes to JSON-RPC)", async () => {
     const digest = "5f7c9b3a2e1d0c4b6f8a9e2d1c3b4a5f6e7d8c9b0a1f2e3d4c5b6a7f8e9d0c1b";
-    await expect(getBlock(digest)).rejects.toThrow();
+    await expect(getBlock(config, digest)).rejects.toThrow();
     expect(factoryMock).not.toHaveBeenCalled();
     expect(JsonRpcHTTPTransportMock).toHaveBeenCalled();
   });
@@ -296,7 +323,7 @@ describe("getBlock/getBlockInfo digest routing", () => {
         },
       }),
     });
-    const out = await getBlockInfo("42");
+    const out = await getBlockInfo(config, "42");
     expect(factoryMock).toHaveBeenCalled();
     expect(out.hash).toBe("0xdgst");
   });
@@ -304,7 +331,7 @@ describe("getBlock/getBlockInfo digest routing", () => {
   it("isSequenceNumber rejects 16+ digit numerics above 2^53-1", async () => {
     // 17-digit number — Number(id) would silently lose precision; must route to JSON-RPC.
     const bigNumeric = "99999999999999999";
-    await expect(getBlockInfo(bigNumeric)).rejects.toThrow();
+    await expect(getBlockInfo(config, bigNumeric)).rejects.toThrow();
     expect(factoryMock).not.toHaveBeenCalled();
     expect(JsonRpcHTTPTransportMock).toHaveBeenCalled();
   });

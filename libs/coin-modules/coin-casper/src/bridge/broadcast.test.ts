@@ -39,12 +39,12 @@ describe("broadcast", () => {
     expect(combine).toHaveBeenCalledTimes(1);
     expect(combine).toHaveBeenCalledWith(
       mockSignedOperation.rawData.tx,
-      mockSignedOperation.signature,
+      [mockSignedOperation.signature],
       mockAccount.freshAddress,
     );
 
     expect(logicBroadcast).toHaveBeenCalledTimes(1);
-    expect(logicBroadcast).toHaveBeenCalledWith("mockedCombinedTx");
+    expect(logicBroadcast).toHaveBeenCalledWith(expect.anything(), "mockedCombinedTx");
 
     expect(result.hash).toBe("mockedTxHash");
     expect(result).toEqual({

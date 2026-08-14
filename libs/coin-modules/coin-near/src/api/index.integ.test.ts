@@ -5,6 +5,7 @@ import type {
 import * as nearAPI from "near-api-js";
 import { combine } from "../logic/combine";
 import { getActionCosts } from "../network/protocolConfig";
+import { createMockNearContext } from "../test/context";
 import { createApi } from "./index";
 
 /**
@@ -17,7 +18,7 @@ import { createApi } from "./index";
 const NODE = "https://near.coin.ledger.com/node";
 const INDEXER = "https://near-indexer.coin.ledger.com";
 
-const config = () => ({
+const config = {
   status: { type: "active" as const },
   infra: {
     API_NEAR_PRIVATE_NODE: NODE,
@@ -25,10 +26,10 @@ const config = () => ({
     API_NEAR_INDEXER: "https://near.coin.ledger.com/indexer",
     API_NEARBLOCKS_INDEXER: INDEXER,
   },
-});
+};
 
 const ACCOUNT_WITH_HISTORY = "nearkat.near";
-const DELEGATOR = "81afe80a9d91c82f66122c35ef400da709bde01eada5aae8d7a63bbf68f42040";
+const DELEGATOR = "c351fce3fadaff7902f04aefcc5f519c87923a734ba5c0867f690d226a33c0a1";
 const IMPLICIT_RECIPIENT = "4e7de0a21d8a20f970c86b6edf407906d7ba9e205979c3268270eef80a286e2d";
 const NAMED_RECIPIENT = "recipient.near";
 const DUMMY_SIGNATURE = "ab".repeat(64);
@@ -74,13 +75,13 @@ const sendIntent = (overrides: Partial<TransactionIntent> = {}): TransactionInte
   }) as TransactionIntent;
 
 describe("CoinModuleApi (integration)", () => {
-  const api = createApi(config, "near");
-
+  const api = createApi();
+  const context = createMockNearContext(config);
   beforeEach(() => getActionCosts.reset());
 
   describe("blocks", () => {
     it("reads the latest final block", async () => {
-      const block = await api.lastBlock();
+      const block = await api.lastBlock(context);
 
       expect(block.height).toBeGreaterThan(100_000_000);
       expect(block.hash).toMatch(/\S/);
@@ -89,12 +90,12 @@ describe("CoinModuleApi (integration)", () => {
     });
 
     it("reads a past block by height and agrees with the head it came from", async () => {
-      const head = await api.lastBlock();
+      const head = await api.lastBlock(context);
 
-      const same = await api.getBlockInfo(head.height);
+      const same = await api.getBlockInfo(context, head.height);
       expect(same).toEqual(head);
 
-      const past = await api.getBlockInfo(head.height - 100);
+      const past = await api.getBlockInfo(context, head.height - 100);
       expect(past.height).toBe(head.height - 100);
       expect(past.hash).not.toBe(head.hash);
       expect(past.time.getTime()).toBeLessThan(head.time.getTime());
@@ -102,13 +103,13 @@ describe("CoinModuleApi (integration)", () => {
 
     it("rejects a height the chain cannot have", async () => {
       // The node answers with an UNKNOWN_BLOCK error rather than a header.
-      await expect(api.getBlockInfo(999_999_999_999)).rejects.toThrow("Server error");
+      await expect(api.getBlockInfo(context, 999_999_999_999)).rejects.toThrow("Server error");
     });
   });
 
   describe("balances", () => {
     it("reports the native balance first, with the storage deposit locked", async () => {
-      const balances = await api.getBalance(ACCOUNT_WITH_HISTORY);
+      const balances = await api.getBalance(context, ACCOUNT_WITH_HISTORY);
 
       const [native] = balances;
       expect(native.asset).toEqual({ type: "native" });
@@ -119,7 +120,7 @@ describe("CoinModuleApi (integration)", () => {
     });
 
     it("surfaces staking positions of a delegating account as extra balances", async () => {
-      const balances = await api.getBalance(DELEGATOR);
+      const balances = await api.getBalance(context, DELEGATOR);
       const stakes = balances.filter(balance => balance.stake !== undefined);
 
       expect(stakes.length).toBeGreaterThan(0);
@@ -133,7 +134,7 @@ describe("CoinModuleApi (integration)", () => {
     it("reports zero for an account that does not exist on chain", async () => {
       // The node answers UNKNOWN_ACCOUNT with a 200 and no result, which must not turn into a
       // phantom balance made of the storage reserve.
-      const balances = await api.getBalance("this-account-does-not-exist-421337.near");
+      const balances = await api.getBalance(context, "this-account-does-not-exist-421337.near");
 
       expect(balances).toHaveLength(1);
       expect(balances[0].value).toBe(0n);
@@ -142,7 +143,7 @@ describe("CoinModuleApi (integration)", () => {
 
     it("rejects balance options it does not implement", async () => {
       await expect(
-        api.getBalance(ACCOUNT_WITH_HISTORY, { includeAssets: async () => true }),
+        api.getBalance(context, ACCOUNT_WITH_HISTORY, { includeAssets: async () => true }),
       ).rejects.toThrow("getBalance does not support the options parameter");
     });
   });
@@ -150,7 +151,7 @@ describe("CoinModuleApi (integration)", () => {
   describe("operations", () => {
     it("maps a real history without inflating outgoing values by the fee", async () => {
       const limit = 25;
-      const page = await api.listOperations(ACCOUNT_WITH_HISTORY, { minHeight: 0, limit });
+      const page = await api.listOperations(context, ACCOUNT_WITH_HISTORY, { minHeight: 0, limit });
 
       expect(page.items.length).toBeGreaterThan(0);
 
@@ -199,12 +200,15 @@ describe("CoinModuleApi (integration)", () => {
     }, 120_000);
 
     it("pages forward with the indexer cursor without repeating operations", async () => {
-      const first = await api.listOperations(ACCOUNT_WITH_HISTORY, { minHeight: 0, limit: 10 });
+      const first = await api.listOperations(context, ACCOUNT_WITH_HISTORY, {
+        minHeight: 0,
+        limit: 10,
+      });
 
       expect(first.items).toHaveLength(10);
       expect(first.next).toMatch(/\S/);
 
-      const second = await api.listOperations(ACCOUNT_WITH_HISTORY, {
+      const second = await api.listOperations(context, ACCOUNT_WITH_HISTORY, {
         minHeight: 0,
         limit: 10,
         cursor: first.next,
@@ -215,9 +219,11 @@ describe("CoinModuleApi (integration)", () => {
     }, 120_000);
 
     it("filters out everything below minHeight", async () => {
-      const head = await api.lastBlock();
+      const head = await api.lastBlock(context);
 
-      const page = await api.listOperations(ACCOUNT_WITH_HISTORY, { minHeight: head.height });
+      const page = await api.listOperations(context, ACCOUNT_WITH_HISTORY, {
+        minHeight: head.height,
+      });
 
       expect(page.items).toEqual([]);
       expect(page.next).toBeUndefined();
@@ -225,28 +231,31 @@ describe("CoinModuleApi (integration)", () => {
 
     it("refuses ascending order", async () => {
       await expect(
-        api.listOperations(ACCOUNT_WITH_HISTORY, { minHeight: 0, order: "asc" }),
+        api.listOperations(context, ACCOUNT_WITH_HISTORY, { minHeight: 0, order: "asc" }),
       ).rejects.toThrow("ascending order is not supported");
     });
   });
 
   describe("fees", () => {
     it("prices a transfer from the live gas price and protocol config", async () => {
-      const { value, parameters } = await api.estimateFees(sendIntent());
+      const { value, parameters } = await api.estimateFees(context, sendIntent());
 
       expect(value).toBeGreaterThan(0n);
       expect(String(parameters?.gasPrice)).toMatch(/^\d+$/);
     });
 
     it("charges more for an implicit recipient it has to create", async () => {
-      const named = await api.estimateFees(sendIntent());
-      const implicit = await api.estimateFees(sendIntent({ recipient: IMPLICIT_RECIPIENT }));
+      const named = await api.estimateFees(context, sendIntent());
+      const implicit = await api.estimateFees(
+        context,
+        sendIntent({ recipient: IMPLICIT_RECIPIENT }),
+      );
 
       expect(implicit.value).toBeGreaterThan(named.value);
     });
 
     it("prices a delegation differently from a transfer", async () => {
-      const staking = await api.estimateFees({
+      const staking = await api.estimateFees(context, {
         ...sendIntent(),
         intentType: "staking",
         type: "delegate",
@@ -255,7 +264,7 @@ describe("CoinModuleApi (integration)", () => {
       } as StakingTransactionIntent);
 
       expect(staking.value).toBeGreaterThan(0n);
-      expect(staking.value).not.toBe((await api.estimateFees(sendIntent())).value);
+      expect(staking.value).not.toBe((await api.estimateFees(context, sendIntent())).value);
     });
   });
 
@@ -264,6 +273,7 @@ describe("CoinModuleApi (integration)", () => {
       const { publicKey, nonce } = await firstFullAccessKey(ACCOUNT_WITH_HISTORY);
 
       const { transaction } = await api.craftTransaction(
+        context,
         sendIntent({ senderPublicKey: publicKey }),
       );
 
@@ -278,7 +288,7 @@ describe("CoinModuleApi (integration)", () => {
       const { publicKey } = await firstFullAccessKey(DELEGATOR);
       const pool = "astro-stakers.poolv1.near";
 
-      const { transaction, details } = await api.craftTransaction({
+      const { transaction, details } = await api.craftTransaction(context, {
         ...sendIntent({ sender: DELEGATOR, senderPublicKey: publicKey }),
         intentType: "staking",
         type: "delegate",
@@ -294,11 +304,12 @@ describe("CoinModuleApi (integration)", () => {
     it("combines a live-crafted transaction into a signed payload", async () => {
       const { publicKey } = await firstFullAccessKey(ACCOUNT_WITH_HISTORY);
       const { transaction } = await api.craftTransaction(
+        context,
         sendIntent({ senderPublicKey: publicKey }),
       );
 
       // Signed with a dummy signature and deliberately never broadcast.
-      const signed = combine(transaction, DUMMY_SIGNATURE);
+      const signed = combine(transaction, [DUMMY_SIGNATURE]);
       const decoded = nearAPI.transactions.SignedTransaction.decode(Buffer.from(signed, "base64"));
 
       expect(decoded.transaction.signerId).toBe(ACCOUNT_WITH_HISTORY);
@@ -309,17 +320,19 @@ describe("CoinModuleApi (integration)", () => {
       const { publicKey } = await firstFullAccessKey(DELEGATOR);
 
       await expect(
-        api.craftTransaction(sendIntent({ senderPublicKey: publicKey })),
+        api.craftTransaction(context, sendIntent({ senderPublicKey: publicKey })),
       ).rejects.toThrow(`no access key found for ${ACCOUNT_WITH_HISTORY}`);
     });
   });
 
   describe("validation", () => {
     it("accepts a funded transfer against live balances", async () => {
-      const balances = await api.getBalance(ACCOUNT_WITH_HISTORY);
-      const fees = await api.estimateFees(sendIntent());
+      const balances = await api.getBalance(context, ACCOUNT_WITH_HISTORY);
+      const fees = await api.estimateFees(context, sendIntent());
 
-      const result = await api.validateIntent(sendIntent(), balances, fees);
+      const result = await api.validateIntent(context, sendIntent(), balances, {
+        customFees: fees,
+      });
 
       expect(result.estimatedFees).toBe(fees.value);
       expect(result.amount).toBe(1_000_000_000_000_000_000_000n);
@@ -327,26 +340,27 @@ describe("CoinModuleApi (integration)", () => {
     });
 
     it("rejects a transfer to a named account that does not exist", async () => {
-      const balances = await api.getBalance(ACCOUNT_WITH_HISTORY);
+      const balances = await api.getBalance(context, ACCOUNT_WITH_HISTORY);
 
       const result = await api.validateIntent(
+        context,
         sendIntent({ recipient: "this-account-does-not-exist-421337.near" }),
         balances,
-        { value: 0n },
+        { customFees: { value: 0n } },
       );
 
       expect(result.errors.recipient?.name).toBe("NearNewNamedAccountError");
     });
 
     it("validates address formats", async () => {
-      await expect(api.validateAddress(ACCOUNT_WITH_HISTORY, {})).resolves.toBe(true);
-      await expect(api.validateAddress("NOT VALID", {})).resolves.toBe(false);
+      await expect(api.validateAddress(context, ACCOUNT_WITH_HISTORY, {})).resolves.toBe(true);
+      await expect(api.validateAddress(context, "NOT VALID", {})).resolves.toBe(false);
     });
   });
 
   describe("staking", () => {
     it("reads the positions of a delegating account", async () => {
-      const page = await api.getStakes(DELEGATOR);
+      const page = await api.getStakes(context, DELEGATOR);
 
       expect(page.items.length).toBeGreaterThan(0);
       page.items.forEach(stake => {
@@ -359,7 +373,7 @@ describe("CoinModuleApi (integration)", () => {
     }, 120_000);
 
     it("reads the validator set", async () => {
-      const page = await api.getValidators();
+      const page = await api.getValidators(context);
 
       expect(page.items).toHaveLength(200);
       expect(new Set(page.items.map(validator => validator.address)).size).toBe(200);

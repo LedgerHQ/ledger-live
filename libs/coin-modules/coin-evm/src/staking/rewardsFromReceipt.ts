@@ -1,5 +1,5 @@
 import { log } from "@ledgerhq/logs";
-import { promiseAllBatched } from "@ledgerhq/live-promise";
+import { promiseAllBatched } from "@ledgerhq/coin-module-framework/promises";
 import type { MemoNotSupported, Operation } from "@ledgerhq/coin-module-framework/api/types";
 import { STAKING_CONTRACTS } from "./contracts";
 import type { RewardsEventDecoder } from "../types/staking";

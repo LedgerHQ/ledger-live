@@ -1,7 +1,7 @@
 import React from "react";
 import { configureStore } from "@reduxjs/toolkit";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
-import { markPayCardFeatureTourSeen, payCardSlice } from "@domain/entity-pay-card";
+import { markPayCardFeatureTourSeen, payCardFeatureTourSlice } from "../../../state";
 import { Provider } from "react-redux";
 import { FeatureTour } from "../FeatureTour";
 import type { FeatureTourContent, FeatureTourProps } from "../types";
@@ -11,22 +11,26 @@ const CONTENT: FeatureTourContent = {
   description: "Stablecoin closes the gap between crypto and real life spending",
   ctaLabel: "Got it",
   rows: [
-    { icon: "Globe", title: "Spend everywhere", description: "Use your balance around the world" },
     {
-      icon: "Chart2",
-      title: "Beat volatility",
-      description: "Hold stablecoins pegged to the dollar",
+      icon: "Globe",
+      title: "Pay and get paid globally",
+      description: "Benefits from low networks fees",
+    },
+    {
+      icon: "Chart5",
+      title: "Minimal volatility",
+      description: "Stablecoin are based on fiat",
     },
     {
       icon: "CreditCard",
-      title: "Earn cashback",
-      description: "Spend with a card and get 1% cashback",
+      title: "Spend with a card and get 1% cashback",
+      description: "Pay in USDC, USDT, BTC, ETH and more",
     },
   ],
 };
 
 function makeStore() {
-  return configureStore({ reducer: { payCard: payCardSlice.reducer } });
+  return configureStore({ reducer: { payCardFeatureTour: payCardFeatureTourSlice.reducer } });
 }
 
 function renderTour(props: Partial<FeatureTourProps> = {}, store = makeStore()) {
@@ -66,7 +70,7 @@ describe("FeatureTour (Web)", () => {
 
     fireEvent.click(screen.getByText("Got it"));
 
-    expect(store.getState().payCard.hasSeenFeatureTour).toBe(true);
+    expect(store.getState().payCardFeatureTour.hasSeenFeatureTour).toBe(true);
     expect(onTrackEvent).toHaveBeenCalledWith("button_clicked", {
       button: "got it",
       page: "$page",

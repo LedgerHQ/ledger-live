@@ -1,4 +1,5 @@
 import type { Cursor, Page, Stake, StakeAction } from "@ledgerhq/coin-module-framework/api/index";
+import type { NearContext } from "../config";
 import { getStakingPositions } from "../network";
 import type { NearStakingPosition } from "../network/sdk.types";
 import { canUnstake, canWithdraw } from "../logic";
@@ -54,8 +55,13 @@ export function toStakes(address: string, positions: NearStakingPosition[]): Sta
 }
 
 /** Staking positions across every pool the account has delegated to. Single page. */
-export async function getStakes(address: string, _cursor?: Cursor): Promise<Page<Stake>> {
-  const { stakingPositions } = await getStakingPositions(address);
+export async function getStakes(
+  context: NearContext,
+  address: string,
+  _cursor?: Cursor,
+): Promise<Page<Stake>> {
+  const config = await context.config();
+  const { stakingPositions } = await getStakingPositions(config, address);
 
   return { items: toStakes(address, stakingPositions), next: undefined };
 }

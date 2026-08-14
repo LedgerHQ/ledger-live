@@ -1,7 +1,7 @@
 import network from "@ledgerhq/live-network";
 import { log } from "@ledgerhq/logs";
 import { STAKING_CONTRACTS } from "./contracts";
-import { getCoinConfig } from "../config";
+import type { EvmConfigInfo } from "../config";
 import { isExternalNodeConfig } from "../network/node/types";
 import { parseDecimalIntegerPart } from "../utils";
 import { getCosmosAddr } from "./redelegations";
@@ -54,6 +54,7 @@ async function fetchCosmosRestRewards(
 // chain's `rewardsStrategy`. Empty map on any failure: rewards display falls
 // back to zero without blocking the staking sync.
 export async function fetchRewards(
+  evmConfig: EvmConfigInfo,
   currencyId: string,
   evmAddress: string,
 ): Promise<Map<string, bigint>> {
@@ -66,7 +67,7 @@ export async function fetchRewards(
       case "cosmos-rest": {
         const apiConfig = config.apiConfig;
         if (!apiConfig?.baseUrl || !apiConfig.precompileAddress) return new Map();
-        const node = getCoinConfig(currencyId).info.node;
+        const node = evmConfig.node;
         const evmRpcUrl = isExternalNodeConfig(node) ? node.uri : undefined;
         if (!evmRpcUrl) return new Map();
         return await fetchCosmosRestRewards(

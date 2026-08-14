@@ -3,8 +3,14 @@ import { getChainAPI } from "../../network";
 import { endpointByCurrencyId } from "../../utils";
 import { getBalance } from "../getBalance";
 import type { Balance } from "@ledgerhq/coin-module-framework/api/types";
+import type { SolanaCoinConfig } from "../../config";
 
-const api = getChainAPI({ endpoint: endpointByCurrencyId("solana") });
+const config: SolanaCoinConfig = {
+  token2022Enabled: false,
+  legacyOCMSMaxVersion: "1.0.0",
+  status: { type: "active" },
+};
+const api = getChainAPI({ endpoint: endpointByCurrencyId(config, "solana") });
 
 const FUNDED_ADDRESS = "7V4CBuNyQaAhZVHf3fgsNxpk32bR61XRVZuAdR7isRu9";
 const UNFUNDED_ADDRESS = Keypair.generate().publicKey.toBase58();

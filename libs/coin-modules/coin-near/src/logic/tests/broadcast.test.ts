@@ -1,3 +1,4 @@
+import { mockNearContext } from "../../test/context";
 import { http, HttpResponse } from "msw";
 import { setMockCoinConfig } from "../../test/coinConfig";
 import { mockServer, NEAR_BASE_URL_MOCKED } from "../../network/node.mock";
@@ -26,7 +27,7 @@ describe("broadcast (MSW)", () => {
       }),
     );
 
-    await expect(broadcast("ZmFrZS1zaWduZWQtdHg=")).resolves.toBe(
+    await expect(broadcast(mockNearContext, "ZmFrZS1zaWduZWQtdHg=")).resolves.toBe(
       "GkQ7Uh8oPPGtVfyPz1yLKmqPqZ8ZyxvGtN5MmYq8mF1w",
     );
     expect(sentPayload).toBe("ZmFrZS1zaWduZWQtdHg=");
@@ -43,7 +44,7 @@ describe("broadcast (MSW)", () => {
       ),
     );
 
-    await expect(broadcast("ZmFrZS1zaWduZWQtdHg=")).rejects.toThrow(
+    await expect(broadcast(mockNearContext, "ZmFrZS1zaWduZWQtdHg=")).rejects.toThrow(
       "INVALID_TRANSACTION: nonce too small",
     );
   });

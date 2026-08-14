@@ -1,45 +1,49 @@
-import {
-  CoinModuleApi,
-  BufferTxData,
-  MemoNotSupported,
-} from "@ledgerhq/coin-module-framework/api/types";
-import { EvmConfig } from "../config";
+import type { EvmConfigInfo } from "../config";
+import { createMockEvmContext } from "../fixtures/context.fixtures";
 import { createApi } from "./index";
 
 describe("EVM Cronos Network (blockscout explorer)", () => {
-  let module: CoinModuleApi<MemoNotSupported, BufferTxData>;
+  let module: ReturnType<typeof createApi>;
 
+  const config: Partial<EvmConfigInfo> = {
+    node: {
+      type: "external",
+      uri: "https://cronos.coin.ledger.com",
+    },
+    explorer: {
+      type: "blockscout",
+      uri: "https://cronos.org/explorer/api",
+    },
+  };
   beforeAll(() => {
-    const config = {
-      node: {
-        type: "external",
-        uri: "https://cronos.coin.ledger.com",
-      },
-      explorer: {
-        type: "blockscout",
-        uri: "https://cronos.org/explorer/api",
-      },
-    };
-    module = createApi(config as EvmConfig, "cronos");
+    module = createApi("cronos");
   });
 
   describe("listOperations", () => {
     it("paginates with distinct cursors across pages", async () => {
-      const page1 = await module.listOperations("0x24b8bfd98f38322435699595358b4f997ceefd16", {
-        minHeight: 0,
-        order: "asc",
-        limit: 100,
-      });
+      const page1 = await module.listOperations(
+        createMockEvmContext(config),
+        "0x24b8bfd98f38322435699595358b4f997ceefd16",
+        {
+          minHeight: 0,
+          order: "asc",
+          limit: 100,
+        },
+      );
 
       expect(page1.items.length).toBeGreaterThan(0);
       expect(page1.next?.length).toBeGreaterThan(0);
 
-      const page2 = await module.listOperations("0x24b8bfd98f38322435699595358b4f997ceefd16", {
-        minHeight: 0,
-        order: "asc",
-        limit: 100,
-        ...(page1.next ? { cursor: page1.next } : {}),
-      });
+      const page2 = await module.listOperations(
+        createMockEvmContext(config),
+        "0x24b8bfd98f38322435699595358b4f997ceefd16",
+        {
+          minHeight: 0,
+          order: "asc",
+          limit: 100,
+          ...(page1.next ? { cursor: page1.next } : {}),
+        },
+      );
 
       expect(page2.items.length).toBeGreaterThan(0);
       expect(page2.next?.length).toBeGreaterThan(0);
@@ -49,7 +53,7 @@ describe("EVM Cronos Network (blockscout explorer)", () => {
 
   describe("getBlock", () => {
     it("should return block 61398731 without failing on unsigned typed transactions", async () => {
-      const block = await module.getBlock(61398731);
+      const block = await module.getBlock(createMockEvmContext(config), 61398731);
       const transaction = block.transactions.find(
         tx => tx.hash === "0x49a46bf29edb4faf38d062ea8d799915209f45dc96c0ff1f4c919d260c76642c",
       );

@@ -1,5 +1,6 @@
 import network from "@ledgerhq/live-network";
 import { getBlock } from "./getBlock";
+import { mockVechainConfig } from "../test/context";
 
 jest.mock("@ledgerhq/live-network", () => jest.fn());
 
@@ -12,7 +13,7 @@ describe("getBlock", () => {
     const block = { id: "0xabc", number: 42, timestamp: 1_700_000_000, transactions: [] };
     jest.mocked(network).mockResolvedValueOnce({ data: block, status: 200 });
 
-    const result = await getBlock(42);
+    const result = await getBlock(mockVechainConfig, 42, undefined);
 
     expect(result).toEqual(block);
   });
@@ -20,7 +21,7 @@ describe("getBlock", () => {
   it("requests expanded=false by default", async () => {
     jest.mocked(network).mockResolvedValueOnce({ data: null, status: 200 });
 
-    await getBlock(42);
+    await getBlock(mockVechainConfig, 42, undefined);
 
     expect(network).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -33,7 +34,7 @@ describe("getBlock", () => {
   it("requests expanded=true when asked", async () => {
     jest.mocked(network).mockResolvedValueOnce({ data: null, status: 200 });
 
-    await getBlock(42, true);
+    await getBlock(mockVechainConfig, 42, true);
 
     expect(network).toHaveBeenCalledWith(
       expect.objectContaining({ url: expect.stringContaining("expanded=true") }),
@@ -41,18 +42,22 @@ describe("getBlock", () => {
   });
 
   it("rejects a negative revision without making a network call", async () => {
-    await expect(getBlock(-1)).rejects.toThrow("vechain: getBlock: invalid revision -1");
+    await expect(getBlock(mockVechainConfig, -1, undefined)).rejects.toThrow(
+      "vechain: getBlock: invalid revision -1",
+    );
     expect(network).not.toHaveBeenCalled();
   });
 
   it("rejects a non-integer revision without making a network call", async () => {
-    await expect(getBlock(1.5)).rejects.toThrow("vechain: getBlock: invalid revision 1.5");
+    await expect(getBlock(mockVechainConfig, 1.5, undefined)).rejects.toThrow(
+      "vechain: getBlock: invalid revision 1.5",
+    );
     expect(network).not.toHaveBeenCalled();
   });
 
   it("propagates a network error", async () => {
     jest.mocked(network).mockRejectedValueOnce(new Error("status 500"));
 
-    await expect(getBlock(42)).rejects.toThrow("status 500");
+    await expect(getBlock(mockVechainConfig, 42, undefined)).rejects.toThrow("status 500");
   });
 });

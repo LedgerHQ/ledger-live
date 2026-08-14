@@ -4,7 +4,7 @@ import {
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/types";
 import { createApi } from ".";
-import coinConfig, { TronConfig } from "../config";
+import { TronCoinConfig, TronContext } from "../config";
 import {
   broadcast,
   combine,
@@ -15,10 +15,6 @@ import {
   lastBlock,
   listOperations,
 } from "../logic";
-
-jest.mock("../config", () => ({
-  setCoinConfig: jest.fn(),
-}));
 
 jest.mock("../logic", () => ({
   broadcast: jest.fn(),
@@ -37,32 +33,30 @@ jest.mock("../network", () => ({
 }));
 
 describe("createApi", () => {
-  const mockTronConfig: TronConfig = { explorer: { url: "iamaurl" } } as TronConfig;
-  let setCoinConfigSpy: jest.SpyInstance;
+  const mockTronConfig: TronCoinConfig = {
+    explorer: { url: "iamaurl" },
+    status: { type: "active" },
+  } as TronCoinConfig;
+
+  const context: TronContext = {
+    config: jest.fn().mockResolvedValue(mockTronConfig),
+    logger: jest.fn(),
+  };
 
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  it("should set the coin config value", () => {
-    setCoinConfigSpy = jest.spyOn(coinConfig, "setCoinConfig");
+  it("should resolve the coin config from the context and thread it down", async () => {
+    const api: CoinModuleApi<TronCoinConfig> = createApi();
+    await api.getBalance(context, "address");
 
-    createApi(mockTronConfig);
-
-    const config = setCoinConfigSpy.mock.calls[0][0]();
-
-    expect(setCoinConfigSpy).toHaveBeenCalled();
-
-    expect(config).toEqual(
-      expect.objectContaining({
-        ...mockTronConfig,
-        status: { type: "active" },
-      }),
-    );
+    expect(context.config).toHaveBeenCalled();
+    expect(getBalance).toHaveBeenCalledWith(mockTronConfig, "address");
   });
 
   it("should pass parameters correctly", async () => {
-    const api: CoinModuleApi = createApi(mockTronConfig);
+    const api: CoinModuleApi<TronCoinConfig> = createApi();
     const intent: TransactionIntent = {
       intentType: "transaction",
       type: "send",
@@ -75,25 +69,25 @@ describe("createApi", () => {
       },
     };
     // Simulate calling all methods
-    await api.broadcast("transaction");
-    api.combine("tx", "signature", "pubkey");
-    await api.craftTransaction(intent);
-    await api.estimateFees(intent);
-    await api.getBalance("address");
-    await api.getAccountInfo!("address");
-    await api.lastBlock();
+    await api.broadcast(context, "transaction");
+    api.combine(context, "tx", ["signature"], { pubkey: "pubkey" });
+    await api.craftTransaction(context, intent);
+    await api.estimateFees(context, intent);
+    await api.getBalance(context, "address");
+    await api.getAccountInfo!(context, "address");
+    await api.lastBlock(context);
     const minHeight = 14;
-    await api.listOperations("address", { minHeight, order: "asc" });
+    await api.listOperations(context, "address", { minHeight, order: "asc" });
 
-    // Test that each of the methods was called with correct arguments
-    expect(broadcast).toHaveBeenCalledWith("transaction");
-    expect(combine).toHaveBeenCalledWith("tx", "signature", "pubkey");
-    expect(estimateFees).toHaveBeenCalledWith(intent);
-    expect(craftTransaction).toHaveBeenCalledWith(intent);
-    expect(getBalance).toHaveBeenCalledWith("address");
-    expect(getAccountInfo).toHaveBeenCalledWith("address");
-    expect(lastBlock).toHaveBeenCalled();
-    expect(listOperations).toHaveBeenCalledWith("address", {
+    // Test that each of the methods was called with correct arguments, threading the config
+    expect(broadcast).toHaveBeenCalledWith(mockTronConfig, "transaction");
+    expect(combine).toHaveBeenCalledWith("tx", ["signature"]);
+    expect(estimateFees).toHaveBeenCalledWith(mockTronConfig, intent);
+    expect(craftTransaction).toHaveBeenCalledWith(mockTronConfig, intent, undefined);
+    expect(getBalance).toHaveBeenCalledWith(mockTronConfig, "address");
+    expect(getAccountInfo).toHaveBeenCalledWith(mockTronConfig, "address");
+    expect(lastBlock).toHaveBeenCalledWith(mockTronConfig);
+    expect(listOperations).toHaveBeenCalledWith(mockTronConfig, "address", {
       limit: 200,
       minTimestamp: 0,
       order: "asc",
@@ -102,20 +96,23 @@ describe("createApi", () => {
   });
 
   it("should throw when limit > 200", async () => {
-    const api: CoinModuleApi = createApi(mockTronConfig);
-    await expect(api.listOperations("address", { minHeight: 0, limit: 201 })).rejects.toThrow(
-      "limit must be <= 200 for Tron (TronGrid API restriction)",
-    );
+    const api: CoinModuleApi<TronCoinConfig> = createApi();
+    await expect(
+      api.listOperations(context, "address", { minHeight: 0, limit: 201 }),
+    ).rejects.toThrow("limit must be <= 200 for Tron (TronGrid API restriction)");
     expect(listOperations).not.toHaveBeenCalled();
   });
 
   it("should not throw when limit is exactly 200", async () => {
-    const api: CoinModuleApi = createApi(mockTronConfig);
-    await expect(api.listOperations("address", { minHeight: 0, limit: 200 })).resolves.toEqual({
+    const api: CoinModuleApi<TronCoinConfig> = createApi();
+    await expect(
+      api.listOperations(context, "address", { minHeight: 0, limit: 200 }),
+    ).resolves.toEqual({
       items: [],
       next: undefined,
     });
     expect(listOperations).toHaveBeenCalledWith(
+      mockTronConfig,
       "address",
       expect.objectContaining({ limit: 200, minTimestamp: 0 }),
     );
@@ -123,9 +120,9 @@ describe("createApi", () => {
 
   describe("getBalance", () => {
     it("should throw an exception when options is provided", async () => {
-      const api = createApi(mockTronConfig);
+      const api = createApi();
       await expect(
-        api.getBalance("random address", {} as unknown as BalanceOptions),
+        api.getBalance(context, "random address", {} as unknown as BalanceOptions),
       ).rejects.toMatchObject({ name: "InvalidParameterError" });
     });
   });

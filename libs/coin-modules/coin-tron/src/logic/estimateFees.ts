@@ -1,6 +1,7 @@
 import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
+import type { TronCoinConfig } from "../config";
 import {
   fetchTronAccount,
   getChainParameters,
@@ -38,11 +39,14 @@ export const estimatedTxSize = (intent: TransactionIntent<TronMemo>): number => 
   }
 };
 
-export const estimateEnergy = async (intent: TransactionIntent<TronMemo>): Promise<number> => {
+export const estimateEnergy = async (
+  config: TronCoinConfig,
+  intent: TransactionIntent<TronMemo>,
+): Promise<number> => {
   if (intent.asset.type !== "trc20" || !intent.asset.assetReference) {
     return 0;
   }
-  const response = await triggerConstantContract({
+  const response = await triggerConstantContract(config, {
     ownerAddress: decode58Check(intent.sender),
     contractAddress: decode58Check(intent.asset.assetReference),
     functionSelector: "transfer(address,uint256)",
@@ -117,17 +121,18 @@ const fallbackFee = (intent: TransactionIntent<TronMemo>): bigint => {
 };
 
 export async function estimateFees(
+  config: TronCoinConfig,
   transactionIntent: TransactionIntent<TronMemo>,
 ): Promise<bigint> {
   try {
     const [networkInfo, recipientAccount, chainParams, energyNeeded] = await Promise.all([
-      getTronAccountNetwork(transactionIntent.sender),
+      getTronAccountNetwork(config, transactionIntent.sender),
       // Only native sends need the recipient account for the activation-fee branch.
       transactionIntent.type === "send" && transactionIntent.asset.type === "native"
-        ? fetchTronAccount(transactionIntent.recipient).then(accounts => accounts[0])
+        ? fetchTronAccount(config, transactionIntent.recipient).then(accounts => accounts[0])
         : Promise.resolve<AccountTronAPI | undefined>(undefined),
-      getChainParameters(),
-      estimateEnergy(transactionIntent),
+      getChainParameters(config),
+      estimateEnergy(config, transactionIntent),
     ]);
 
     const total = computeBandwidthFee(estimatedTxSize(transactionIntent), networkInfo, chainParams)

@@ -11,6 +11,7 @@ import {
   makeAssetTransferTxnWithSuggestedParamsFromObject,
   makePaymentTxnWithSuggestedParamsFromObject,
 } from "algosdk";
+import type { AlgorandContext, AlgorandCoinConfig } from "../config";
 import { getTransactionParams } from "../network";
 import type { AlgorandMemo } from "../types";
 import { estimateFees } from "./estimateFees";
@@ -22,21 +23,25 @@ export type CraftedAlgorandTransaction = {
 
 /**
  * Craft an unsigned Algorand transaction
+ * @param config - The resolved coin configuration
  * @param input - Transaction parameters
  * @returns Serialized unsigned transaction and payload
  */
-export async function craftTransaction(input: {
-  sender: string;
-  recipient: string;
-  amount: bigint;
-  memo?: string | undefined;
-  assetId?: string | undefined;
-  fees?: bigint | undefined;
-}): Promise<CraftedAlgorandTransaction> {
+export async function craftTransaction(
+  config: AlgorandCoinConfig,
+  input: {
+    sender: string;
+    recipient: string;
+    amount: bigint;
+    memo?: string | undefined;
+    assetId?: string | undefined;
+    fees?: bigint | undefined;
+  },
+): Promise<CraftedAlgorandTransaction> {
   const { sender, recipient, amount, memo, assetId, fees } = input;
 
   const note = memo ? new TextEncoder().encode(memo) : undefined;
-  const params = await getTransactionParams();
+  const params = await getTransactionParams(config);
 
   if (typeof fees === "bigint") {
     params.fee = 0;
@@ -84,11 +89,12 @@ export async function craftTransaction(input: {
  * @returns Serialized unsigned transaction
  */
 export async function craftOptInTransaction(
+  config: AlgorandCoinConfig,
   sender: string,
   assetId: string,
   fees?: bigint,
 ): Promise<CraftedAlgorandTransaction> {
-  return craftTransaction({
+  return craftTransaction(config, {
     sender,
     recipient: sender, // Opt-in sends to self
     amount: 0n,
@@ -98,6 +104,7 @@ export async function craftOptInTransaction(
 }
 
 export async function craftApiTransaction(
+  context: AlgorandContext,
   transactionIntent: TransactionIntent<AlgorandMemo>,
   customFees?: FeeEstimation,
 ): Promise<CraftedTransaction> {
@@ -105,14 +112,15 @@ export async function craftApiTransaction(
     throw new Error("Only send transaction intent is supported");
   }
 
-  const fees = customFees?.value ?? (await estimateFees()).value;
+  const config = await context.config();
+  const fees = customFees?.value ?? (await estimateFees(context)).value;
 
   const memo = transactionIntent.memo?.type === "string" ? transactionIntent.memo.value : undefined;
 
   const assetId =
     transactionIntent.asset.type === "asa" ? transactionIntent.asset.assetReference : undefined;
 
-  const result = await craftTransaction({
+  const result = await craftTransaction(config, {
     sender: transactionIntent.sender,
     recipient: transactionIntent.recipient,
     amount: transactionIntent.amount,

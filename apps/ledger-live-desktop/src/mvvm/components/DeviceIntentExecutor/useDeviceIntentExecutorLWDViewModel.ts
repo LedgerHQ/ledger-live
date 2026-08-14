@@ -7,7 +7,9 @@ import type {
 import {
   dmkToLedgerDeviceIdMap,
   type DeviceIntentTrackingProperties,
+  type DeviceIntentExecutorHeaderContextValue,
   type SourceFlow,
+  useDeviceIntentExecutorHeaderOverrideRequests,
 } from "@ledgerhq/live-dmk-shared";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 import type { InitializerConfig } from "./DeviceContextInitializerComponentLWD";
@@ -33,6 +35,8 @@ type Props<JobState, Input, ExtraProps> = DeviceIntentExecutorProps<
 
 export type DeviceIntentExecutorLWDViewModel<JobState, Input, ExtraProps> = {
   wrappedProps: Props<JobState, Input, ExtraProps>;
+  hasHeaderOverride: boolean;
+  headerContextValue: DeviceIntentExecutorHeaderContextValue;
   onOpenChange: (open: boolean) => void;
   /**
    * Tracks the "Close" `button_clicked` event when the dialog header close button is pressed.
@@ -80,6 +84,7 @@ export function useDeviceIntentExecutorLWDViewModel<JobState, Input, ExtraProps>
   const flowStartedRef = useRef(false);
   const initializationCompletedRef = useRef(false);
   const cancelTrackedRef = useRef(false);
+  const { hasHeaderOverride, headerContextValue } = useDeviceIntentExecutorHeaderOverrideRequests();
 
   useEffect(() => {
     if (!enabled) {
@@ -137,6 +142,8 @@ export function useDeviceIntentExecutorLWDViewModel<JobState, Input, ExtraProps>
   );
 
   return {
+    hasHeaderOverride,
+    headerContextValue,
     wrappedProps: {
       ...props,
       onExecutorStateChanged: wrappedOnExecutorStateChanged,

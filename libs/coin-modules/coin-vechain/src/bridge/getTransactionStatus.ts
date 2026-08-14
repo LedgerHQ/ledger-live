@@ -11,6 +11,7 @@ import { AccountBridge } from "@ledgerhq/types-live";
 import { calculateTransactionInfo, parseAddress } from "../common-logic";
 import type { Transaction } from "../types";
 import { NotEnoughVTHO } from "../errors";
+import { getCoinConfig } from "../config";
 
 export const getTransactionStatus: AccountBridge<Transaction>["getTransactionStatus"] = async (
   account,
@@ -21,6 +22,7 @@ export const getTransactionStatus: AccountBridge<Transaction>["getTransactionSta
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
   const { isTokenAccount, spendableBalance } = await calculateTransactionInfo(
+    getCoinConfig(),
     account,
     transaction,
     {

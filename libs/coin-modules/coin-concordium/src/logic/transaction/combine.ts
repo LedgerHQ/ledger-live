@@ -9,9 +9,12 @@
  * @param signature - Transaction signature (hex-encoded)
  * @returns JSON string containing both transaction and signature
  */
-export function combine(transaction: string, signature: string): string {
+export function combine(transaction: string, signature: string[]): string {
+  if (signature.length !== 1) {
+    throw new Error(`Concordium combine expects exactly one signature, got ${signature.length}`);
+  }
   return JSON.stringify({
     transactionBody: transaction,
-    signature: signature,
+    signature: signature[0],
   });
 }

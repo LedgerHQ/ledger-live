@@ -5,7 +5,9 @@ import {
   type ExecutorPlatformConfiguration,
 } from "@ledgerhq/device-intent";
 import {
+  DeviceIntentExecutorHeaderContext,
   DeviceIntentTrackingProvider,
+  OverrideDeviceIntentExecutorHeader,
   type DeviceIntentTrackingProperties,
   type SourceFlow,
 } from "@ledgerhq/live-dmk-shared";
@@ -61,8 +63,15 @@ const emptyAnalyticsProperties: DeviceIntentTrackingProperties = {};
 export function DeviceIntentExecutorLWD<JobState, Input, ExtraProps>(
   props: Props<JobState, Input, ExtraProps>,
 ): React.ReactElement | null {
-  const { wrappedProps, onOpenChange, onHeaderClosePressed, onOverlayDismiss, onEscapeKeyDown } =
-    useDeviceIntentExecutorLWDViewModel(props);
+  const {
+    wrappedProps,
+    hasHeaderOverride,
+    headerContextValue,
+    onOpenChange,
+    onHeaderClosePressed,
+    onOverlayDismiss,
+    onEscapeKeyDown,
+  } = useDeviceIntentExecutorLWDViewModel(props);
   const analyticsProperties = props.analyticsProperties ?? emptyAnalyticsProperties;
   const trackingContextValue = React.useMemo(
     () => ({ sourceFlow: props.sourceFlow, analyticsProperties }),
@@ -82,14 +91,18 @@ export function DeviceIntentExecutorLWD<JobState, Input, ExtraProps>(
       >
         <DialogBackgroundToneProvider>
           <DeviceIntentTrackingProvider value={trackingContextValue}>
-            <DialogHeader density="compact" onClose={onHeaderClosePressed} className="!mb-0" />
-            <DialogBody className="!mb-0 flex min-h-0 flex-col px-24 pb-24">
-              <DeviceIntentExecutor
-                {...wrappedProps}
-                platformConfig={platformConfig}
-                initializerConfig={wrappedProps.initializerConfig}
-              />
-            </DialogBody>
+            <DeviceIntentExecutorHeaderContext.Provider value={headerContextValue}>
+              {!hasHeaderOverride && (
+                <DialogHeader density="compact" onClose={onHeaderClosePressed} className="!mb-0" />
+              )}
+              <DialogBody className="!mb-0 flex min-h-0 flex-col px-24 pb-24">
+                <DeviceIntentExecutor
+                  {...wrappedProps}
+                  platformConfig={platformConfig}
+                  initializerConfig={wrappedProps.initializerConfig}
+                />
+              </DialogBody>
+            </DeviceIntentExecutorHeaderContext.Provider>
           </DeviceIntentTrackingProvider>
         </DialogBackgroundToneProvider>
       </DialogContent>

@@ -19,6 +19,7 @@ import {
   useEmptyContactDetail,
   usePopulatedContactDetail,
 } from "@features/flow-contacts";
+import { createMockContactDeviceIntentsPort } from "@features/platform-contacts";
 import type { BaseNavigationComposite } from "~/components/RootNavigator/types/helpers";
 import { NavigatorName, ScreenName } from "~/const";
 import { useDispatch } from "~/context/hooks";
@@ -59,6 +60,7 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
   const { isEnabled, eligibleAddressFamilies } = useContactsFeature("mobile");
   const { t } = useTranslation();
   const currencyPort = useContactsAddressCurrencyAdapter();
+  const deviceIntents = useMemo(() => createMockContactDeviceIntentsPort(), []);
   const emptyContact = useEmptyContactDetail(route.params.contactId);
   const populatedContactDetail = usePopulatedContactDetail(route.params.contactId, currencyPort);
   const {
@@ -88,7 +90,7 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
     addressValidation,
     manualValidationDebounceMs: MANUAL_ADDRESS_VALIDATION_DEBOUNCE_MS,
   });
-  const completeMockAddressConfirmation = useCallback(() => {
+  const completeMockAddressConfirmation = useCallback(async () => {
     if (addAddressFlowState.status !== "confirmationRequired") {
       hasCompletedMockConfirmation.current = false;
       return;
@@ -98,21 +100,45 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
       return;
     }
 
+    if (contact === undefined) {
+      return;
+    }
+
     hasCompletedMockConfirmation.current = true;
 
+    const signedAddress = await deviceIntents.registerExternalAddress({
+      contact,
+      currencyId: addAddressFlowState.selectedCurrencyId,
+      label: addAddressFlowState.addressLabel.label,
+      address: addAddressFlowState.addressEntry.resolvedAddress,
+    });
     const address = contactAddress({
       id: `address-${uuid()}`,
       currencyId: addAddressFlowState.selectedCurrencyId,
       label: addAddressFlowState.addressLabel.label,
       address: addAddressFlowState.addressEntry.resolvedAddress,
+      device: signedAddress.addressDeviceContext,
     });
 
-    dispatch(addAddress({ contactId: addAddressFlowState.selectedContactId, address }));
+    dispatch(
+      addAddress({
+        contactId: addAddressFlowState.selectedContactId,
+        address,
+        deviceCredentials: signedAddress.deviceCredentials,
+      }),
+    );
     completeMockConfirmation();
     closeAddAddress();
-  }, [addAddressFlowState, closeAddAddress, completeMockConfirmation, dispatch]);
+  }, [
+    addAddressFlowState,
+    closeAddAddress,
+    completeMockConfirmation,
+    contact,
+    deviceIntents,
+    dispatch,
+  ]);
   useEffect(() => {
-    completeMockAddressConfirmation();
+    void completeMockAddressConfirmation();
   }, [completeMockAddressConfirmation]);
   const onAddAddress = useCallback(() => {
     if (!contact || eligibleNetworkIds.length === 0) return;

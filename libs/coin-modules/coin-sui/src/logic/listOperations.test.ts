@@ -1,6 +1,9 @@
 import { type Operation as Op, type Page } from "@ledgerhq/coin-module-framework/api/types";
 import { getListOperations, withApi } from "../network/sdk";
+import type { SuiCoinConfig } from "../config";
 import { listOperations } from "./listOperations";
+
+const config = {} as SuiCoinConfig;
 
 jest.mock("../network/sdk");
 
@@ -64,7 +67,7 @@ describe("List Operations", () => {
   });
 
   it("should return operations and next cursor", async () => {
-    const { items: operations, next } = await listOperations(mockAddress, {
+    const { items: operations, next } = await listOperations(config, mockAddress, {
       order: mockOrder,
       minHeight: 0,
     });
@@ -72,10 +75,10 @@ describe("List Operations", () => {
     expect(operations).toEqual(mockOperations.items);
     expect(next).toBe(mockOperations.next);
     expect(mockGetListOperations).toHaveBeenCalledWith(
+      config,
       mockAddress,
       "asc",
       withApi,
-      undefined,
       undefined,
     );
   });
@@ -83,7 +86,7 @@ describe("List Operations", () => {
   it("should return empty array and undefined when no operations", async () => {
     mockGetListOperations.mockResolvedValueOnce({ items: [], next: "" });
 
-    const { items: operations, next } = await listOperations(mockAddress, {
+    const { items: operations, next } = await listOperations(config, mockAddress, {
       order: mockOrder,
       minHeight: 0,
     });
@@ -94,7 +97,7 @@ describe("List Operations", () => {
 
   it("should handle pagination parameters", async () => {
     const mockCursor = "cursor123";
-    const { items: operations } = await listOperations(mockAddress, {
+    const { items: operations } = await listOperations(config, mockAddress, {
       order: mockOrder,
       cursor: mockCursor,
       minHeight: 0,
@@ -102,16 +105,16 @@ describe("List Operations", () => {
 
     expect(operations).toEqual(mockOperations.items);
     expect(mockGetListOperations).toHaveBeenCalledWith(
+      config,
       mockAddress,
       "asc",
       withApi,
       mockCursor,
-      undefined,
     );
   });
 
   it("should return operations sorted by date in ascending order", async () => {
-    const { items: operations } = await listOperations(mockAddress, {
+    const { items: operations } = await listOperations(config, mockAddress, {
       order: mockOrder,
       minHeight: 0,
     });

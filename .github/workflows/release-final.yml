@@ -11,6 +11,15 @@ on:
         type: string
         description: "the workflow that called this one"
         required: true
+    secrets:
+      GH_BOT_APP_ID:
+        required: true
+      GH_BOT_PRIVATE_KEY:
+        required: true
+      NPMJS_TOKEN:
+        required: true
+      SLACK_BOT_USER_OAUTH_ACCESS_TOKEN:
+        required: true
   workflow_dispatch:
     inputs:
       app:

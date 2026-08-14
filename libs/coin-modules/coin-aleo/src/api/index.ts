@@ -17,35 +17,40 @@ import type {
 } from "@ledgerhq/coin-module-framework/api/index";
 import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
-import coinConfig from "../config";
 import { estimateFees, getBalance, lastBlock, listOperations, validateAddress } from "../logic";
 import { getTransactionType } from "../logic/utils";
-import type { AleoCoinConfig, AleoConfig, AleoTransactionIntentData } from "../types";
+import type { AleoContext, AleoCoinConfig, AleoTransactionIntentData } from "../types";
 
+// currencyId is captured here (it can't live on the Context). The logic functions are shared with
+// the classic bridge (config-based), so each method resolves config via context.config() and passes
+// it down — no context-first wrappers.
 export function createApi(
-  config: AleoConfig,
   currencyId: string,
-): CoinModuleApi<MemoNotSupported, AleoTransactionIntentData> {
-  const aleoCoinConfig: AleoCoinConfig = { ...config, status: { type: "active" } };
-  coinConfig.setCoinConfig(() => aleoCoinConfig);
-
+): CoinModuleApi<AleoCoinConfig, MemoNotSupported, AleoTransactionIntentData> {
   return {
     async call() {
       throw new Error("call is not supported");
     },
-    broadcast: (_signature: string): Promise<string> => {
+    broadcast: (_context: AleoContext, _signature: string): Promise<string> => {
       throw new Error("broadcast is not supported");
     },
-    combine: (_transaction: string, _signature: string, _publicKey: string | undefined): string => {
+    combine: (
+      _context: AleoContext,
+      _transaction: string,
+      _signature: string[],
+      _options?: { pubkey?: string },
+    ): string => {
       throw new Error("combine is not supported");
     },
-    craftTransaction: async (
+    craftTransaction: (
+      _context: AleoContext,
       _txIntent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData>,
-      _customFees?: FeeEstimation,
+      _options?: { customFees?: FeeEstimation },
     ): Promise<CraftedTransaction> => {
       throw new Error("craftTransaction is not supported");
     },
     craftRawTransaction: (
+      _context: AleoContext,
       _transaction: string,
       _sender: string,
       _publicKey: string,
@@ -53,53 +58,64 @@ export function createApi(
     ): Promise<CraftedTransaction> => {
       throw new Error("craftRawTransaction is not supported");
     },
-    estimateFees: async (intent): Promise<FeeEstimation> => {
-      const transactionType = getTransactionType(intent);
-      return estimateFees({ configOrCurrencyId: aleoCoinConfig, transactionType });
+    estimateFees: async (context: AleoContext, intent): Promise<FeeEstimation> => {
+      const config = await context.config();
+      return estimateFees({
+        configOrCurrencyId: config,
+        transactionType: getTransactionType(intent),
+      });
     },
-    getBalance: (address: string, options?: BalanceOptions): Promise<Balance[]> => {
-      return rejectBalanceOptions(() => getBalance(aleoCoinConfig, address), options);
+    getBalance: async (
+      context: AleoContext,
+      address: string,
+      options?: BalanceOptions,
+    ): Promise<Balance[]> => {
+      const config = await context.config();
+      return rejectBalanceOptions(() => getBalance(config, address), options);
     },
-    lastBlock: async (): Promise<BlockInfo> => {
-      return lastBlock(aleoCoinConfig);
+    lastBlock: async (context: AleoContext): Promise<BlockInfo> => {
+      const config = await context.config();
+      return lastBlock(config);
     },
-    listOperations: async (address, options) => {
+    listOperations: async (context: AleoContext, address, options) => {
+      const config = await context.config();
       const { operations, nextCursor } = await listOperations({
-        config: aleoCoinConfig,
+        config,
         currencyId,
         address,
         options,
         mode: "coin-framework",
       });
-
       return { items: operations, next: nextCursor ?? undefined };
     },
-    getBlock(_height): Promise<Block> {
+    getBlock(_context, _height): Promise<Block> {
       throw new Error("getBlock is not supported");
     },
-    getBlockInfo(_height: number): Promise<BlockInfo> {
+    getBlockInfo(_context, _height: number): Promise<BlockInfo> {
       throw new Error("getBlockInfo is not supported");
     },
-    getStakes(_address: string, _cursor?: Cursor): Promise<Page<Stake>> {
+    getStakes(_context, _address: string, _options?: { cursor?: Cursor }): Promise<Page<Stake>> {
       throw new Error("getStakes is not supported");
     },
-    getRewards(_address: string, _cursor?: Cursor): Promise<Page<Reward>> {
+    getRewards(_context, _address: string, _options?: { cursor?: Cursor }): Promise<Page<Reward>> {
       throw new Error("getRewards is not supported");
     },
-    getValidators(_cursor?: Cursor): Promise<Page<Validator>> {
+    getValidators(_context, _options?: { cursor?: Cursor }): Promise<Page<Validator>> {
       throw new Error("getValidators is not supported");
     },
-    validateIntent: async (
-      _transactionIntent: TransactionIntent,
+    validateIntent: (
+      _context: AleoContext,
+      _transactionIntent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData>,
       _balances: Balance[],
-      _customFees?: FeeEstimation,
+      _options?: { customFees?: FeeEstimation },
     ): Promise<TransactionValidation> => {
       throw new Error("validateIntent is not supported");
     },
-    getNextSequence: async (_address: string) => {
+    getNextSequence: (_context: AleoContext, _address: string) => {
       throw new Error("getNextSequence is not supported");
     },
-    validateAddress,
-    craftTransactionData,
+    validateAddress: (_context: AleoContext, address, parameters) =>
+      validateAddress(address, parameters),
+    craftTransactionData: (_context, intent) => craftTransactionData(intent),
   };
 }

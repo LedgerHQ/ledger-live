@@ -7,7 +7,7 @@ describe("combine", () => {
     const signature = "SIGNATURE";
 
     // WHEN
-    const result = combine(transaction, signature);
+    const result = combine(transaction, [signature]);
 
     // THEN
     expect(JSON.parse(result)).toEqual({

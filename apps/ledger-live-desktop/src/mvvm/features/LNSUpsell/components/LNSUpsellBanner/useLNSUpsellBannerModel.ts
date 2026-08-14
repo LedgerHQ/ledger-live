@@ -3,17 +3,26 @@ import { useLNSUpsellBannerState } from "LLD/features/LNSUpsell/hooks/useLNSUpse
 import type { LNSBannerLocation, LNSBannerState } from "LLD/features/LNSUpsell/types";
 import { track } from "~/renderer/analytics/segment";
 import { openURL } from "~/renderer/linking";
-import lnsUpsellFallbackImageUrl from "~/renderer/images/lns-upsell-banner.webp";
+import lnsUpsellPortfolioImageUrl from "~/renderer/images/lns-upsell-banner-portfolio.webp";
+import lnsUpsellManagerImageUrl from "~/renderer/images/lns-upsell-banner-manager.webp";
+import lnsUpsellNotificationCenterImageUrl from "~/renderer/images/lns-upsell-banner-notification-center.webp";
 import type { LNSBannerModel } from "./types";
+
+// Accounts reuses the Notification Center illustration (same audience, no dedicated asset).
+const lnsUpsellImageByLocation: Record<LNSBannerLocation, string> = {
+  portfolio: lnsUpsellPortfolioImageUrl,
+  manager: lnsUpsellManagerImageUrl,
+  notification_center: lnsUpsellNotificationCenterImageUrl,
+  accounts: lnsUpsellNotificationCenterImageUrl,
+};
 
 export function useLNSUpsellBannerModel(location: LNSBannerLocation): LNSBannerModel {
   const state = useLNSUpsellBannerState(location);
   const { shouldDisplayBrazePlacement } = useWalletFeaturesConfig("desktop");
 
-  const { "%": discount, link: ctaLink, img } = state.params ?? {};
+  const { ctaLink, discountPercent: discount } = state;
   const analyticsPage = AnalyticsPageMap[location];
-
-  const imageUrl = typeof img === "string" && img.length > 0 ? img : lnsUpsellFallbackImageUrl;
+  const imageUrl = lnsUpsellImageByLocation[location];
 
   const handleCTAClick = () => {
     track("button_clicked", {
@@ -55,5 +64,5 @@ function getVariant(location: LNSBannerLocation, state: LNSBannerState): LNSBann
     return { type: "notification", icon };
   }
 
-  return { type: "banner", image: state.params?.img };
+  return { type: "banner" };
 }

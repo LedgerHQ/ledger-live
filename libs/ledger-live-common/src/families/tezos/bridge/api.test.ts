@@ -40,6 +40,7 @@ beforeAll(() => {
           contractAddress: "KT1XnTn74bUtxHfDtBmm2bGZAQfhPbvKWR8o",
           parentCurrencyId: CryptoCurrencyIdSchema.parse("tezos"),
           tokenType: "fa2",
+          tokenIdentifier: "0",
           name: "Tether USD",
           ticker: "USDt",
           delisted: false,
@@ -61,6 +62,7 @@ beforeAll(() => {
           contractAddress: "KT18fp5rcTW7mbWDmzFwjLDUhs5MeJmagDSZ",
           parentCurrencyId: CryptoCurrencyIdSchema.parse("tezos"),
           tokenType: "fa2",
+          tokenIdentifier: "17",
           name: "Wrapped USDC",
           ticker: "wUSDC",
           delisted: false,
@@ -159,6 +161,7 @@ describe("generic-coin-framework Tezos token", () => {
         contractAddress: "KT1XnTn74bUtxHfDtBmm2bGZAQfhPbvKWR8o",
         parentCurrencyId: CryptoCurrencyIdSchema.parse("tezos"),
         tokenType: "fa2",
+        tokenIdentifier: "0",
         name: "Tether USD",
         ticker: "USDt",
         delisted: false,
@@ -184,6 +187,7 @@ describe("generic-coin-framework Tezos token", () => {
         contractAddress: "KT18fp5rcTW7mbWDmzFwjLDUhs5MeJmagDSZ",
         parentCurrencyId: CryptoCurrencyIdSchema.parse("tezos"),
         tokenType: "fa2",
+        tokenIdentifier: "17",
         name: "Wrapped USDC",
         ticker: "wUSDC",
         delisted: false,
@@ -200,6 +204,25 @@ describe("generic-coin-framework Tezos token", () => {
       });
     });
 
+    it("returns undefined when tokenIdentifier is missing", () => {
+      const token: TokenCurrency = {
+        type: "TokenCurrency",
+        id: TokenCurrencyIdSchema.parse(
+          "tezos/fa2/tether_usd_kt1xntn74butxhfdtbmm2bgzaqfhpbvkwr8o",
+        ),
+        contractAddress: "KT1XnTn74bUtxHfDtBmm2bGZAQfhPbvKWR8o",
+        parentCurrencyId: CryptoCurrencyIdSchema.parse("tezos"),
+        tokenType: "fa2",
+        name: "Tether USD",
+        ticker: "USDt",
+        delisted: false,
+        disableCountervalue: false,
+        units: [{ name: "Tether USD", code: "USDt", magnitude: 6 }],
+      };
+
+      expect(getAssetFromToken(token, "tz1owner")).toBeUndefined();
+    });
+
     it("round-trips: getAssetFromToken → getTokenFromAsset", async () => {
       const token: TokenCurrency = {
         type: "TokenCurrency",
@@ -209,6 +232,7 @@ describe("generic-coin-framework Tezos token", () => {
         contractAddress: "KT18fp5rcTW7mbWDmzFwjLDUhs5MeJmagDSZ",
         parentCurrencyId: CryptoCurrencyIdSchema.parse("tezos"),
         tokenType: "fa2",
+        tokenIdentifier: "17",
         name: "Wrapped USDC",
         ticker: "wUSDC",
         delisted: false,
@@ -217,6 +241,7 @@ describe("generic-coin-framework Tezos token", () => {
       };
 
       const asset = getAssetFromToken(token, "tz1owner");
+      if (!asset) fail("expected AssetInfo");
       const resolved = await getTokenFromAsset(asset);
       expect(resolved?.id).toBe(token.id);
     });
@@ -233,7 +258,7 @@ describe("getAccountReadiness", () => {
   it("is ready when the account is revealed", async () => {
     getAccountInfoMock.mockResolvedValueOnce({ type: "tezos", revealed: true });
     await expect(getAccountReadiness(currency, "tz1revealed")).resolves.toEqual({ ready: true });
-    expect(getAccountInfoMock).toHaveBeenCalledWith("tz1revealed");
+    expect(getAccountInfoMock).toHaveBeenCalledWith(expect.anything(), "tz1revealed");
   });
 
   it("is not ready with reason 'unrevealed' when the account is not revealed", async () => {
@@ -242,6 +267,6 @@ describe("getAccountReadiness", () => {
       ready: false,
       reason: "unrevealed",
     });
-    expect(getAccountInfoMock).toHaveBeenCalledWith("tz1unrevealed");
+    expect(getAccountInfoMock).toHaveBeenCalledWith(expect.anything(), "tz1unrevealed");
   });
 });

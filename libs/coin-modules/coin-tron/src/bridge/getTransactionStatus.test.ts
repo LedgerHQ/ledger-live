@@ -32,9 +32,16 @@ import {
   TronVoteRequired,
 } from "../types/errors";
 import getTransactionStatus from "./getTransactionStatus";
+import coinConfig, { type TronCoinConfig } from "../config";
 
 jest.mock("../network");
 jest.mock("../logic/energyRent");
+
+const mockCoinConfig = {
+  status: { type: "active" },
+  explorer: { url: "https://api.trongrid.io" },
+} as TronCoinConfig;
+coinConfig.setCoinConfig(() => mockCoinConfig);
 
 const mockFetchTronAccount = jest.mocked(fetchTronAccount);
 const mockFetchTronContract = jest.mocked(fetchTronContract);
@@ -477,7 +484,10 @@ describe("getTransactionStatus", () => {
       mockGetTronSuperRepresentatives.mockResolvedValue([]);
       const status = await getTransactionStatus(
         createAccount(),
-        createTransaction({ mode: "vote", votes: [{ address: RECIPIENT_ADDRESS, voteCount: 1 }] }),
+        createTransaction({
+          mode: "vote",
+          votes: [{ name: null, address: RECIPIENT_ADDRESS, voteCount: 1 }],
+        }),
       );
       expect(status.errors.vote).toBeInstanceOf(InvalidAddress);
     });
@@ -488,7 +498,10 @@ describe("getTransactionStatus", () => {
       ] as unknown as Awaited<ReturnType<typeof getTronSuperRepresentatives>>);
       const status = await getTransactionStatus(
         createAccount({ tronResources: { ...createAccount().tronResources, tronPower: 0 } }),
-        createTransaction({ mode: "vote", votes: [{ address: RECIPIENT_ADDRESS, voteCount: 5 }] }),
+        createTransaction({
+          mode: "vote",
+          votes: [{ name: null, address: RECIPIENT_ADDRESS, voteCount: 5 }],
+        }),
       );
       expect(status.errors.vote).toBeInstanceOf(TronNotEnoughTronPower);
     });

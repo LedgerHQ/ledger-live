@@ -1,5 +1,7 @@
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import BigNumber from "bignumber.js";
+import { setCoinConfig } from "./config";
+import { mockAlgorandConfig } from "./test/context";
 
 // Mock the network module
 jest.mock("./network", () => ({
@@ -35,6 +37,7 @@ describe("Synchronization", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    setCoinConfig(() => mockAlgorandConfig);
   });
 
   describe("getAccountShape", () => {
@@ -565,7 +568,11 @@ describe("Synchronization", () => {
         );
 
         // Should start from blockHeight + 1
-        expect(getAllAccountTransactionsSpy).toHaveBeenCalledWith(accountAddress, 50000001);
+        expect(getAllAccountTransactionsSpy).toHaveBeenCalledWith(
+          mockAlgorandConfig,
+          accountAddress,
+          50000001,
+        );
       });
     });
 

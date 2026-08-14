@@ -1,13 +1,18 @@
 import { SyncConfig } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { fetchBalance, fetchLastBlock, fetchAccountStateInfo, fetchTxs } from "../network/api";
-import { createMockAccountShapeData } from "../__tests__/fixtures";
+import { casperMainnetResolvedConfig, createMockAccountShapeData } from "../__tests__/fixtures";
 import { getAccountShape } from "./sync";
 import { mapTxToOps } from "../logic/listOperations";
 
 // Mock dependencies
 jest.mock("../network/api");
 jest.mock("../logic/listOperations");
+jest.mock("../config", () => ({
+  getCoinConfig: () => require("../__tests__/fixtures/config.fixture").casperMainnetResolvedConfig,
+}));
+
+const config = casperMainnetResolvedConfig;
 
 describe("getAccountShape", () => {
   const {
@@ -50,10 +55,10 @@ describe("getAccountShape", () => {
   test("should return the correct account shape for an account with balance", async () => {
     const accountShape = await getAccountShape(mockAccountInfo, mockSyncConfig);
 
-    expect(fetchAccountStateInfo).toHaveBeenCalledWith(mockAddress);
+    expect(fetchAccountStateInfo).toHaveBeenCalledWith(config, mockAddress);
     expect(fetchLastBlock).toHaveBeenCalled();
-    expect(fetchBalance).toHaveBeenCalledWith(mockPurseUref);
-    expect(fetchTxs).toHaveBeenCalledWith(mockAddress);
+    expect(fetchBalance).toHaveBeenCalledWith(config, mockPurseUref);
+    expect(fetchTxs).toHaveBeenCalledWith(config, mockAddress);
     expect(mapTxToOps).toHaveBeenCalledWith(mockAccountId, mockAccountHash);
 
     expect(accountShape).toEqual({
@@ -73,7 +78,7 @@ describe("getAccountShape", () => {
 
     const accountShape = await getAccountShape(mockAccountInfo, mockSyncConfig);
 
-    expect(fetchAccountStateInfo).toHaveBeenCalledWith(mockAddress);
+    expect(fetchAccountStateInfo).toHaveBeenCalledWith(config, mockAddress);
     expect(fetchLastBlock).toHaveBeenCalled();
     expect(fetchBalance).not.toHaveBeenCalled();
     expect(fetchTxs).not.toHaveBeenCalled();
@@ -95,10 +100,10 @@ describe("getAccountShape", () => {
 
     const accountShape = await getAccountShape(mockAccountInfo, mockSyncConfig);
 
-    expect(fetchAccountStateInfo).toHaveBeenCalledWith(mockAddress);
+    expect(fetchAccountStateInfo).toHaveBeenCalledWith(config, mockAddress);
     expect(fetchLastBlock).toHaveBeenCalled();
-    expect(fetchBalance).toHaveBeenCalledWith(mockPurseUref);
-    expect(fetchTxs).toHaveBeenCalledWith(mockAddress);
+    expect(fetchBalance).toHaveBeenCalledWith(config, mockPurseUref);
+    expect(fetchTxs).toHaveBeenCalledWith(config, mockAddress);
     expect(mapTxToOps).toHaveBeenCalledWith(mockAccountId, "");
 
     expect(accountShape).toEqual({
@@ -116,7 +121,7 @@ describe("getAccountShape", () => {
 
     await expect(getAccountShape(mockAccountInfo, mockSyncConfig)).rejects.toThrow(errorMessage);
 
-    expect(fetchAccountStateInfo).toHaveBeenCalledWith(mockAddress);
+    expect(fetchAccountStateInfo).toHaveBeenCalledWith(config, mockAddress);
     expect(fetchLastBlock).not.toHaveBeenCalled();
     expect(fetchBalance).not.toHaveBeenCalled();
     expect(fetchTxs).not.toHaveBeenCalled();

@@ -3,14 +3,16 @@ import type {
   BlockOperation,
   BlockTransaction,
 } from "@ledgerhq/coin-module-framework/api/index";
+import type { VechainContext } from "../../config";
 import { getBlock as getBlockFromNetwork } from "../../network";
 import type { ApiResponseBlockTransaction } from "../../types";
 import { toBlockInfo } from "./getBlockInfo";
 
 // Full expanded block; block info is derived from it (no separate fetch). Only native VET transfers
 // map to operations; VTHO (VIP-180) movements are ABI-encoded events, not decoded here.
-export async function getBlock(height: number): Promise<Block> {
-  const block = await getBlockFromNetwork(height, true);
+export async function getBlock(context: VechainContext, height: number): Promise<Block> {
+  const config = await context.config();
+  const block = await getBlockFromNetwork(config, height, true);
 
   if (!block) {
     throw new Error(`vechain: no block at height ${height}`);

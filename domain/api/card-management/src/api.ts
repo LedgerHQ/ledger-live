@@ -1,0 +1,99 @@
+import { cardApi } from "@shared/api-services";
+import { CARD_MANAGEMENT_TAGS } from "./constants";
+import {
+  PayCardAuthorizeInitiateResponseSchema,
+  PayCardLogoutResponseSchema,
+  PayCardSessionResponseSchema,
+  PayCardSessionSchema,
+  PayCardUserResponseSchema,
+} from "./schema";
+import { transformPayCardSessionResponse } from "./transforms";
+import type {
+  PayCardAuthorizationCodeRequest,
+  PayCardAuthorizeInitiate,
+  PayCardAuthorizeInitiateRequest,
+  PayCardLogoutResult,
+  PayCardRefreshSessionRequest,
+  PayCardSession,
+  PayCardUser,
+} from "./types";
+
+export const cardManagementApi = cardApi
+  .enhanceEndpoints({ addTagTypes: CARD_MANAGEMENT_TAGS })
+  .injectEndpoints({
+    endpoints: build => ({
+      /** A mutation, not a query: every attempt carries a fresh `state` and PKCE challenge. */
+      initiateAuthorize: build.mutation<PayCardAuthorizeInitiate, PayCardAuthorizeInitiateRequest>({
+        query: ({ clientId, redirectUri, state, codeChallenge }) => ({
+          url: "/v1/auth/oauth/authorize/initiate",
+          method: "GET",
+          params: {
+            client_id: clientId,
+            response_type: "code",
+            redirect_uri: redirectUri,
+            state,
+            code_challenge: codeChallenge,
+            code_challenge_method: "S256",
+          },
+        }),
+        responseSchema: PayCardAuthorizeInitiateResponseSchema,
+      }),
+
+      exchangeAuthorizationCode: build.mutation<PayCardSession, PayCardAuthorizationCodeRequest>({
+        query: ({ code, redirectUri, codeVerifier }) => ({
+          url: "/v1/auth/oauth/token",
+          method: "POST",
+          body: {
+            grant_type: "authorization_code",
+            code,
+            redirect_uri: redirectUri,
+            code_verifier: codeVerifier,
+          },
+        }),
+        rawResponseSchema: PayCardSessionResponseSchema,
+        transformResponse: transformPayCardSessionResponse,
+        responseSchema: PayCardSessionSchema,
+      }),
+
+      /** Same endpoint as the code exchange, separated by `grant_type`. */
+      refreshSession: build.mutation<PayCardSession, PayCardRefreshSessionRequest>({
+        query: ({ refreshToken }) => ({
+          url: "/v1/auth/oauth/token",
+          method: "POST",
+          body: {
+            grant_type: "refresh_token",
+            refresh_token: refreshToken,
+          },
+        }),
+        rawResponseSchema: PayCardSessionResponseSchema,
+        transformResponse: transformPayCardSessionResponse,
+        responseSchema: PayCardSessionSchema,
+      }),
+
+      logout: build.mutation<PayCardLogoutResult, void>({
+        query: () => ({
+          url: "/v1/auth/logout",
+          method: "POST",
+        }),
+        responseSchema: PayCardLogoutResponseSchema,
+      }),
+
+      getUser: build.query<PayCardUser, void>({
+        query: () => ({
+          url: "/v1/user",
+          method: "GET",
+        }),
+        responseSchema: PayCardUserResponseSchema,
+      }),
+    }),
+  });
+
+export type CardManagementApi = typeof cardManagementApi;
+
+export const {
+  useInitiateAuthorizeMutation,
+  useExchangeAuthorizationCodeMutation,
+  useRefreshSessionMutation,
+  useLogoutMutation,
+  useGetUserQuery,
+} = cardManagementApi;

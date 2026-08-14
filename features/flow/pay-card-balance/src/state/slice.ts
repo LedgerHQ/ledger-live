@@ -1,0 +1,28 @@
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import { PAY_CARD_BALANCE_FILTER_ALL } from "./constants";
+import type { PayCardBalanceFilter, PayCardBalanceState } from "./types";
+
+export const payCardBalanceInitialState: PayCardBalanceState = {
+  balanceFilter: PAY_CARD_BALANCE_FILTER_ALL,
+};
+
+export const payCardBalanceSlice = createSlice({
+  name: "payCardBalance",
+  initialState: payCardBalanceInitialState,
+  reducers: {
+    setPayCardBalanceFilter: (state, action: PayloadAction<PayCardBalanceFilter>) => {
+      state.balanceFilter = action.payload;
+    },
+    restorePayCardBalanceFilter: (
+      state,
+      action: PayloadAction<Partial<PayCardBalanceState> | undefined>,
+    ) => {
+      const { balanceFilter } = action.payload ?? {};
+      if (typeof balanceFilter === "string" && balanceFilter.length > 0) {
+        state.balanceFilter = balanceFilter;
+      }
+    },
+  },
+});
+
+export const { setPayCardBalanceFilter, restorePayCardBalanceFilter } = payCardBalanceSlice.actions;

@@ -19,6 +19,7 @@ import useReadOnlyPortfolioViewModel from "./useReadOnlyPortfolioViewModel";
 import { GenericAwarenessModalDrawer } from "LLM/features/GenericAwarenessModal/screens/GenericAwarenessModalDrawer";
 import { RecoverIntroPortfolioMount } from "LLM/features/BackupHub";
 import { LargeScreenUpsellModalPortfolioMount } from "LLM/features/LargeScreenUpsell";
+import { LazyOnboardingTourPortfolioMount } from "LLM/features/LazyOnboardingBanner";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<PortfolioNavigatorStackParamList, ScreenName.Portfolio>
@@ -66,6 +67,7 @@ function ReadOnlyPortfolioScreen({ navigation }: NavigationProps) {
       <GenericAwarenessModalDrawer />
       <RecoverIntroPortfolioMount />
       <LargeScreenUpsellModalPortfolioMount />
+      <LazyOnboardingTourPortfolioMount />
     </>
   );
 }

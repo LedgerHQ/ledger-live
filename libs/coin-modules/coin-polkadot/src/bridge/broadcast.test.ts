@@ -1,6 +1,9 @@
 import { Operation } from "@ledgerhq/types-live";
+import coinConfig, { type PolkadotCoinConfig } from "../config";
 import { createFixtureAccount, createFixtureOperation } from "../types/bridge.fixture";
 import { broadcast } from "./broadcast";
+
+coinConfig.setCoinConfig(() => ({}) as unknown as PolkadotCoinConfig);
 
 const mockSubmitExtrinsic = jest.fn();
 
@@ -13,7 +16,7 @@ jest.mock("../network", () => {
 const logicBroadcastMock = jest.fn();
 jest.mock("../logic", () => {
   return {
-    broadcast: (signature: string, currencyId?: string) =>
+    broadcast: (_config: PolkadotCoinConfig, signature: string, currencyId?: string) =>
       logicBroadcastMock(signature, currencyId),
   };
 });

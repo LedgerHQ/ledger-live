@@ -1,6 +1,7 @@
 import { concat, defer, from, of, type Observable } from "rxjs";
 import { catchError, switchMap } from "rxjs/operators";
 import { craftTransaction } from "@ledgerhq/coin-evm/logic/craftTransaction";
+import { createContext } from "@ledgerhq/coin-evm/config";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { Account } from "@ledgerhq/types-live";
 import type { DeviceConnectionResult, Job } from "@ledgerhq/device-intent";
@@ -24,7 +25,7 @@ async function buildUnsignedSwapTxHex(
   const calldataHex = transactionData.data.replace(/^0x/, "");
   const data = calldataHex.length > 0 ? Buffer.from(calldataHex, "hex") : Buffer.alloc(0);
 
-  const { transaction } = await craftTransaction(currency, {
+  const { transaction } = await craftTransaction(createContext(), currency, {
     transactionIntent: {
       intentType: "transaction",
       type: "send-eip1559",
@@ -33,7 +34,7 @@ async function buildUnsignedSwapTxHex(
       amount: BigInt(transactionData.value || "0"),
       asset: { type: "native" },
       data: { type: "buffer", value: data },
-    } satisfies Parameters<typeof craftTransaction>[1]["transactionIntent"],
+    } satisfies Parameters<typeof craftTransaction>[2]["transactionIntent"],
     customFees: {
       value: 0n,
       // Pin the medium tier and gasLimit; `craftTransaction` fetches

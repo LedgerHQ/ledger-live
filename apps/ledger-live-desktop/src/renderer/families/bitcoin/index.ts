@@ -3,6 +3,7 @@ import sendAmountFields from "./SendAmountFields";
 import sendRecipientFields from "./SendRecipientFields";
 import StepReceiveFundsPostAlert from "./StepReceiveFundsPostAlert";
 import SendStepRecipientFromSelector from "./ZcashTransferFromSelector";
+import SendStepAboveRecipientInput from "./ZcashSelfTransferToggle";
 import SendModalTitle from "./SendModalTitle";
 import accountHeaderManageActions from "./AccountHeaderManageActions";
 import AccountBalanceSummaryFooter from "./AccountBalanceSummaryFooter";
@@ -15,6 +16,7 @@ const family: BitcoinFamily = {
   sendRecipientFields,
   StepReceiveFundsPostAlert,
   SendStepRecipientFromSelector,
+  SendStepAboveRecipientInput,
   SendModalTitle,
   accountHeaderManageActions,
   AccountBalanceSummaryFooter,

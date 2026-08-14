@@ -1,7 +1,7 @@
 import type { CryptoAssetMeta } from "@domain/entity-aggregated-asset";
 import {
   allSettled,
-  assertDadaApiUrl,
+  assertDadaApiHost,
   chunkCurrencyIds,
   deepMergeCryptoAssets,
   emptyAssetsData,
@@ -153,11 +153,11 @@ describe("emptyAssetsData", () => {
   });
 });
 
-describe("assertDadaApiUrl", () => {
+describe("assertDadaApiHost", () => {
   it.each(["https://dada.api.ledger.com/assets", "https://dada.api.ledger-test.com/assets"])(
     "allows the known DADA host %s",
     href => {
-      expect(() => assertDadaApiUrl(new URL(href))).not.toThrow();
+      expect(() => assertDadaApiHost(href)).not.toThrow();
     },
   );
 
@@ -170,17 +170,17 @@ describe("assertDadaApiUrl", () => {
     "https://dada.api.ledger.com.evil.example.com/assets",
     "https://ledger.com/assets",
   ])("blocks %s", href => {
-    expect(() => assertDadaApiUrl(new URL(href))).toThrow(/untrusted host/);
+    expect(() => assertDadaApiHost(href)).toThrow(/untrusted host/);
   });
 
   it("names the rejected hostname in the error", () => {
-    expect(() => assertDadaApiUrl(new URL("https://evil.example.com/assets"))).toThrow(
+    expect(() => assertDadaApiHost("https://evil.example.com/assets")).toThrow(
       "Blocked request to untrusted host: evil.example.com",
     );
   });
 
   it("matches on hostname only, ignoring port and protocol", () => {
-    expect(() => assertDadaApiUrl(new URL("http://dada.api.ledger.com:8080/x"))).not.toThrow();
+    expect(() => assertDadaApiHost("http://dada.api.ledger.com:8080/x")).not.toThrow();
   });
 });
 

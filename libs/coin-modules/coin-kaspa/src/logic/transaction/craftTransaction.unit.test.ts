@@ -1,5 +1,4 @@
 import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
-import { getFeeEstimate, getUtxosForAddresses } from "../../network";
 import { craftTransaction, UnsignedKaspaTransaction } from "./craftTransaction";
 
 const mockGetUtxosForAddresses = jest.fn();

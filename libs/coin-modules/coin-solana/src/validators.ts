@@ -11,6 +11,7 @@ import {
   ledgerFirstValidators,
   profitableValidators,
 } from "./utils";
+import coinConfig from "./config";
 
 // one entry per solana currency id
 const VALIDATORS_CACHE = minutes(15, 3);
@@ -19,7 +20,11 @@ export async function fetchValidators(currencyId: string): Promise<ValidatorsApp
   const cluster = clusterByCurrencyId(currencyId);
 
   if (cluster === "devnet") {
-    return fetchDevnetValidators(getChainAPI({ endpoint: endpointByCurrencyId(currencyId) }));
+    return fetchDevnetValidators(
+      getChainAPI({
+        endpoint: endpointByCurrencyId(coinConfig.getCoinConfig(currencyId), currencyId),
+      }),
+    );
   }
 
   const validators = await getValidators(cluster);

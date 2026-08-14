@@ -3,6 +3,7 @@ import type {
   CoinModuleApi,
   BalanceOptions,
   CraftedTransaction,
+  ListOperationsOptions,
   Operation,
   TransactionValidation,
 } from "@ledgerhq/coin-module-framework/api/index";
@@ -11,7 +12,7 @@ import { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import { validateAddress } from "../bridge/validateAddress";
-import hederaCoinConfig, { type HederaCoinConfig, type HederaConfig } from "../config";
+import { type HederaCoinConfig, type HederaContext } from "../config";
 import {
   HARDCODED_BLOCK_HEIGHT,
   HEDERA_OPERATION_TYPES,
@@ -41,15 +42,16 @@ import { apiClient } from "../network/api";
 import { getERC20BalancesForAccountV2, toEVMAddress } from "../network/utils";
 import type { EstimateFeesParams, HederaMemo, HederaTxData } from "../types";
 
+// The `currencyId` selector is captured here; the caller builds the {@link HederaContext} (config +
+// logger) and passes it to each method. Each method resolves the coin configuration from the context
+// via `context.config()` and threads it explicitly into the logic layer rather than seeding the
+// module-level singleton (ADR-019).
 export function createApi(
-  config: HederaConfig,
   currencyId: string,
-): CoinModuleApi<HederaMemo, HederaTxData> & BridgeApi {
-  const coinConfig: HederaCoinConfig = { ...config, status: { type: "active" } };
-  hederaCoinConfig.setCoinConfig(() => coinConfig);
-
+): CoinModuleApi<HederaCoinConfig, HederaMemo, HederaTxData> & BridgeApi {
   return {
-    broadcast: async tx => {
+    broadcast: async (context: HederaContext, tx) => {
+      const coinConfig = await context.config();
       const response = await logicBroadcast({
         configOrCurrencyId: coinConfig,
         txWithSignature: tx,
@@ -60,13 +62,14 @@ export function createApi(
     async call() {
       throw new Error("call is not supported");
     },
-    combine,
-    craftTransaction: async (txIntent, customFees) => {
+    combine: (_context, tx, signature, options) => combine(tx, signature, options?.pubkey),
+    craftTransaction: async (context: HederaContext, txIntent, options) => {
       invariant(!txIntent.useAllAmount, "useAllAmount is not supported");
+      const coinConfig = await context.config();
       const { serializedTx } = await craftTransaction({
         configOrCurrencyId: coinConfig,
         txIntent,
-        ...(customFees && { customFees }),
+        ...(options?.customFees && { customFees: options.customFees }),
       });
 
       return {
@@ -74,6 +77,7 @@ export function createApi(
       };
     },
     craftRawTransaction: (
+      _context: HederaContext,
       _transaction: string,
       _sender: string,
       _publicKey: string,
@@ -81,11 +85,12 @@ export function createApi(
     ): Promise<CraftedTransaction> => {
       throw new Error("craftRawTransaction is not supported");
     },
-    estimateFees: async txIntent => {
+    estimateFees: async (context: HederaContext, txIntent) => {
       let estimateFeesParams: EstimateFeesParams;
       const operationType = mapIntentToSDKOperation(txIntent);
 
       if (operationType === HEDERA_OPERATION_TYPES.ContractCall) {
+        const coinConfig = await context.config();
         estimateFeesParams = { configOrCurrencyId: coinConfig, operationType, txIntent };
       } else {
         estimateFeesParams = { currencyId, operationType };
@@ -97,18 +102,28 @@ export function createApi(
         value: BigInt(estimatedFee.tinybars.toString()),
       };
     },
-    getBalance: (address: string, options?: BalanceOptions) =>
-      rejectBalanceOptions(() => getBalance({ config: coinConfig, currencyId, address }), options),
-    getBlock: height => {
+    getBalance: (context: HederaContext, address: string, options?: BalanceOptions) =>
+      rejectBalanceOptions(async () => {
+        const coinConfig = await context.config();
+        return getBalance(coinConfig, { address });
+      }, options),
+    getBlock: async (context: HederaContext, height) => {
+      const coinConfig = await context.config();
       return getBlockV2({ configOrCurrencyId: coinConfig, height });
     },
-    getBlockInfo: height => getBlockInfo(height),
-    lastBlock: () => {
+    getBlockInfo: (_context: HederaContext, height) => getBlockInfo(height),
+    lastBlock: async (context: HederaContext) => {
+      const coinConfig = await context.config();
       return lastBlockV2({ configOrCurrencyId: coinConfig });
     },
-    listOperations: async (address, { cursor, limit, order, minHeight }) => {
+    listOperations: async (
+      context: HederaContext,
+      address: string,
+      { cursor, limit, order, minHeight }: ListOperationsOptions,
+    ) => {
       invariant(minHeight === 0, "minHeight is not supported");
 
+      const coinConfig = await context.config();
       const evmAddress = await toEVMAddress({
         configOrCurrencyId: coinConfig,
         accountId: address,
@@ -119,8 +134,7 @@ export function createApi(
         getERC20BalancesForAccountV2({ configOrCurrencyId: coinConfig, address }),
       ]);
 
-      const latestAccountOperations = await logicListOperationsV2({
-        config: coinConfig,
+      const latestAccountOperations = await logicListOperationsV2(coinConfig, {
         currencyId,
         address,
         evmAddress,
@@ -214,21 +228,30 @@ export function createApi(
         next: latestAccountOperations.nextCursor || undefined,
       };
     },
-    getValidators: cursor => getValidators({ configOrCurrencyId: coinConfig, cursor }),
-    getStakes: async address => getStakes({ configOrCurrencyId: coinConfig, address }),
-    getRewards: async (address, cursor) =>
-      getRewards({ configOrCurrencyId: coinConfig, address, cursor }),
+    getValidators: async (context: HederaContext, options) => {
+      const coinConfig = await context.config();
+      return getValidators({ configOrCurrencyId: coinConfig, cursor: options?.cursor });
+    },
+    getStakes: async (context: HederaContext, address) => {
+      const coinConfig = await context.config();
+      return getStakes({ configOrCurrencyId: coinConfig, address });
+    },
+    getRewards: async (context: HederaContext, address, options) => {
+      const coinConfig = await context.config();
+      return getRewards({ configOrCurrencyId: coinConfig, address, cursor: options?.cursor });
+    },
     validateIntent: async (
+      _context: HederaContext,
       _transactionIntent,
       _balances,
-      _customFees,
+      _options,
     ): Promise<TransactionValidation> => {
       throw new Error("validateIntent is not supported");
     },
-    getNextSequence: async (_address): Promise<bigint> => {
+    getNextSequence: async (_context: HederaContext, _address): Promise<bigint> => {
       throw new Error("getNextSequence is not supported");
     },
-    validateAddress,
-    craftTransactionData,
+    validateAddress: (_context, address, parameters) => validateAddress(address, parameters),
+    craftTransactionData: (_context, intent) => craftTransactionData(intent),
   };
 }

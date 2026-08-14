@@ -21,4 +21,9 @@
 
 ## Usage context
 
-Ledger Live Desktop and Mobile expose a stable `AuthProvider` through their Redux thunk extra argument. That facade lazily creates and caches `AuthSDK` when authentication is enabled and its environment is known.
+Ledger Wallet apps expose a stable `AuthProvider` backed by one `AuthSDK`
+through their Redux thunk extra argument.
+`AuthSDK` accepts either a static Keycloak base URL or a callback. The callback remains unevaluated
+until authentication needs a Keycloak endpoint and is resolved whenever the service derives one.
+It may return `null` while configuration is unavailable; authentication then rejects with
+`WalletAuthMissingBaseUrlError` and a later attempt resolves the callback again.

@@ -3,7 +3,8 @@ import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/inde
 import { calculateClausesVet, calculateClausesVtho, parseAddress } from "../../common-logic";
 import { estimateGas } from "../../common-logic/estimateGas";
 import { getThorClient } from "../../common-logic/getThorClient";
-import { setCoinConfig } from "../../config";
+import type { VechainCurrencyConfig } from "../../config";
+import { createMockVechainContext } from "../../test/context";
 import { getAccount, getBlockRef } from "../../network";
 import { craftTransaction } from "./craftTransaction";
 
@@ -44,7 +45,14 @@ function mockBuildTransactionBody() {
   };
 }
 
+const DEFAULT_CONFIG: VechainCurrencyConfig = {
+  status: { type: "active" },
+  node: { url: "https://vechain.coin.ledger.com" },
+};
+
 describe("craftTransaction", () => {
+  let context = createMockVechainContext(DEFAULT_CONFIG);
+
   beforeEach(() => {
     jest
       .mocked(calculateClausesVet)
@@ -55,10 +63,7 @@ describe("craftTransaction", () => {
     jest.mocked(estimateGas).mockResolvedValue({ totalGas: 21000 } as never);
     jest.mocked(getThorClient).mockReturnValue(mockBuildTransactionBody() as never);
     jest.mocked(getBlockRef).mockResolvedValue("0xblockref12345678");
-    setCoinConfig(() => ({
-      status: { type: "active" },
-      node: { url: "https://vechain.coin.ledger.com" },
-    }));
+    context = createMockVechainContext(DEFAULT_CONFIG);
   });
 
   afterEach(() => {
@@ -66,7 +71,7 @@ describe("craftTransaction", () => {
   });
 
   it("crafts a native VET transaction using calculateClausesVet", async () => {
-    const crafted = await craftTransaction(NATIVE_INTENT);
+    const crafted = await craftTransaction(context, NATIVE_INTENT);
 
     expect(calculateClausesVet).toHaveBeenCalled();
     expect(calculateClausesVtho).not.toHaveBeenCalled();
@@ -78,27 +83,23 @@ describe("craftTransaction", () => {
   });
 
   it("defaults chainTag to mainnet (74) when the config has no chainTag", async () => {
-    const crafted = await craftTransaction(NATIVE_INTENT);
+    const crafted = await craftTransaction(context, NATIVE_INTENT);
 
     const body = JSON.parse(crafted.transaction);
     expect(body.chainTag).toBe(74);
   });
 
   it("uses the config-provided chainTag when set", async () => {
-    setCoinConfig(() => ({
-      status: { type: "active" },
-      node: { url: "https://vechain.coin.ledger.com" },
-      chainTag: 39,
-    }));
+    context = createMockVechainContext({ ...DEFAULT_CONFIG, chainTag: 39 });
 
-    const crafted = await craftTransaction(NATIVE_INTENT);
+    const crafted = await craftTransaction(context, NATIVE_INTENT);
 
     const body = JSON.parse(crafted.transaction);
     expect(body.chainTag).toBe(39);
   });
 
   it("crafts a VTHO transaction using calculateClausesVtho", async () => {
-    const crafted = await craftTransaction(TOKEN_INTENT);
+    const crafted = await craftTransaction(context, TOKEN_INTENT);
 
     expect(calculateClausesVtho).toHaveBeenCalled();
     expect(calculateClausesVet).not.toHaveBeenCalled();
@@ -106,7 +107,7 @@ describe("craftTransaction", () => {
   });
 
   it("computes the fee as maxFeePerGas * gas", async () => {
-    const crafted = await craftTransaction(NATIVE_INTENT);
+    const crafted = await craftTransaction(context, NATIVE_INTENT);
 
     expect(crafted.details?.fee).toBe((1000 * 21000).toString());
   });
@@ -118,14 +119,14 @@ describe("craftTransaction", () => {
       hasCode: false,
     });
 
-    await craftTransaction({ ...NATIVE_INTENT, useAllAmount: true, amount: 0n });
+    await craftTransaction(context, { ...NATIVE_INTENT, useAllAmount: true, amount: 0n });
 
-    expect(getAccount).toHaveBeenCalledWith(SENDER);
+    expect(getAccount).toHaveBeenCalledWith(DEFAULT_CONFIG, SENDER);
     expect(calculateClausesVet).toHaveBeenCalledWith(RECIPIENT, expect.any(Object));
   });
 
   it("uses custom fee parameters instead of re-estimating gas when provided", async () => {
-    await craftTransaction(NATIVE_INTENT, {
+    await craftTransaction(context, NATIVE_INTENT, {
       value: 5000n,
       parameters: { gas: 30000, maxFeePerGas: 50, maxPriorityFeePerGas: 5 },
     });
@@ -134,7 +135,7 @@ describe("craftTransaction", () => {
   });
 
   it("applies a partial fee override (gas only) over the estimate instead of discarding it", async () => {
-    const crafted = await craftTransaction(NATIVE_INTENT, {
+    const crafted = await craftTransaction(context, NATIVE_INTENT, {
       value: 0n,
       parameters: { gas: 30000 },
     });
@@ -149,7 +150,7 @@ describe("craftTransaction", () => {
   it("coerces bigint fee parameters to numbers so the body stays JSON-serializable", async () => {
     // The generic coin-framework hands fee parameters back as bigint; JSON.stringify cannot
     // serialize a bigint, so craftTransaction must coerce them to numbers before building the body.
-    const crafted = await craftTransaction(NATIVE_INTENT, {
+    const crafted = await craftTransaction(context, NATIVE_INTENT, {
       value: 5000n,
       parameters: { gas: 30000n, maxFeePerGas: 50n, maxPriorityFeePerGas: 5n },
     } as never);
@@ -162,7 +163,7 @@ describe("craftTransaction", () => {
   });
 
   it("throws when the recipient is missing", async () => {
-    await expect(craftTransaction({ ...NATIVE_INTENT, recipient: "" })).rejects.toThrow(
+    await expect(craftTransaction(context, { ...NATIVE_INTENT, recipient: "" })).rejects.toThrow(
       "vechain: recipient is required",
     );
   });
@@ -170,13 +171,13 @@ describe("craftTransaction", () => {
   it("throws when the sender is not a valid address", async () => {
     jest.mocked(parseAddress).mockReturnValueOnce(false);
 
-    await expect(craftTransaction({ ...NATIVE_INTENT, sender: "0xbad" })).rejects.toThrow(
+    await expect(craftTransaction(context, { ...NATIVE_INTENT, sender: "0xbad" })).rejects.toThrow(
       "vechain: invalid sender address",
     );
   });
 
   it("throws when the resolved amount is not positive", async () => {
-    await expect(craftTransaction({ ...NATIVE_INTENT, amount: 0n })).rejects.toThrow(
+    await expect(craftTransaction(context, { ...NATIVE_INTENT, amount: 0n })).rejects.toThrow(
       "vechain: transaction amount must be positive",
     );
   });
@@ -186,7 +187,7 @@ describe("craftTransaction", () => {
       .mocked(getAccount)
       .mockResolvedValueOnce({ balance: "0x0", energy: "0x5F5E100", hasCode: false });
 
-    await craftTransaction({ ...TOKEN_INTENT, useAllAmount: true, amount: 0n });
+    await craftTransaction(context, { ...TOKEN_INTENT, useAllAmount: true, amount: 0n });
 
     const calls = jest.mocked(calculateClausesVtho).mock.calls;
     expect(calls).toHaveLength(2);
@@ -199,12 +200,12 @@ describe("craftTransaction", () => {
       .mockResolvedValueOnce({ balance: "0x0", energy: "0x3E8", hasCode: false });
 
     await expect(
-      craftTransaction({ ...TOKEN_INTENT, useAllAmount: true, amount: 0n }),
+      craftTransaction(context, { ...TOKEN_INTENT, useAllAmount: true, amount: 0n }),
     ).rejects.toThrow("vechain: VTHO balance too low to cover the transaction gas fee");
   });
 
   it("crafts a dust native amount (1 wei)", async () => {
-    const crafted = await craftTransaction({ ...NATIVE_INTENT, amount: 1n });
+    const crafted = await craftTransaction(context, { ...NATIVE_INTENT, amount: 1n });
 
     expect(calculateClausesVet).toHaveBeenCalledWith(RECIPIENT, expect.any(Object));
     expect(JSON.parse(crafted.transaction).gas).toBe(21000);
@@ -215,7 +216,7 @@ describe("craftTransaction", () => {
       .mocked(getAccount)
       .mockResolvedValueOnce({ balance: "0x0", energy: "21000001", hasCode: false });
 
-    await craftTransaction({ ...TOKEN_INTENT, useAllAmount: true, amount: 0n });
+    await craftTransaction(context, { ...TOKEN_INTENT, useAllAmount: true, amount: 0n });
 
     const calls = jest.mocked(calculateClausesVtho).mock.calls;
     expect(calls[calls.length - 1][1].toString()).toBe("1");
@@ -227,7 +228,7 @@ describe("craftTransaction", () => {
       .mockResolvedValueOnce({ balance: "0x0", energy: "21000000", hasCode: false });
 
     await expect(
-      craftTransaction({ ...TOKEN_INTENT, useAllAmount: true, amount: 0n }),
+      craftTransaction(context, { ...TOKEN_INTENT, useAllAmount: true, amount: 0n }),
     ).rejects.toThrow("vechain: VTHO balance too low to cover the transaction gas fee");
   });
 });

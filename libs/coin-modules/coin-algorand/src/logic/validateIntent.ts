@@ -14,6 +14,7 @@ import {
   NotEnoughBalanceBecauseDestinationNotCreated,
 } from "@ledgerhq/ledger-wallet-framework/errors";
 import { isValidAddress } from "algosdk";
+import type { AlgorandContext } from "../config";
 import { AlgorandASANotOptInInRecipient, AlgorandMemoExceededSizeError } from "../errors";
 import { getAccount } from "../network";
 import type { AlgorandMemo } from "../types";
@@ -28,6 +29,7 @@ import { validateMemo } from "./validateMemo";
  * @returns Validation result with errors, warnings, and amounts
  */
 export async function validateIntent(
+  context: AlgorandContext,
   intent: TransactionIntent<AlgorandMemo>,
   balances: Balance[],
   customFees?: FeeEstimation,
@@ -110,7 +112,8 @@ export async function validateIntent(
   // Validate recipient account (fetch once for both ASA opt-in and native minimum balance checks)
   if (!errors.recipient && intent.recipient) {
     try {
-      const recipientAccount = await getAccount(intent.recipient);
+      const config = await context.config();
+      const recipientAccount = await getAccount(config, intent.recipient);
 
       if (isTokenTransfer) {
         // Check if recipient has opted in to the ASA token

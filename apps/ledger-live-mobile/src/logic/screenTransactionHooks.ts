@@ -4,7 +4,7 @@ import { concatMap, filter } from "rxjs/operators";
 import { useState, useCallback, useEffect, useRef } from "react";
 import { InteractionManager, Platform } from "react-native";
 import { log } from "@ledgerhq/logs";
-import { useRoute, useNavigation } from "@react-navigation/native";
+import { useRoute, useNavigation, type RouteProp } from "@react-navigation/native";
 import type {
   Account,
   AccountLike,
@@ -117,8 +117,10 @@ const completeSignedTxBroadcast = ({
   });
 };
 
+type TransactionParamList = Record<string, { transaction?: Transaction } | undefined>;
+
 export const useTransactionChangeFromNavigation = (setTransaction: (_: Transaction) => void) => {
-  const route = useRoute<Route>();
+  const route = useRoute<RouteProp<TransactionParamList>>();
   const navigationTransaction = route.params?.transaction;
   // Start at `undefined` so the first time `navigationTransaction` is set we
   // dispatch — including the case where the screen mounts (or remounts via

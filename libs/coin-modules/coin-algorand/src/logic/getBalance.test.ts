@@ -1,6 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import * as network from "../network";
 import { getBalance } from "./getBalance";
+import { mockAlgorandContext } from "../test/context";
 
 jest.mock("../network");
 
@@ -18,7 +19,7 @@ describe("getBalance", () => {
       assets: [],
     });
 
-    const result = await getBalance("ALGO_ADDRESS");
+    const result = await getBalance(mockAlgorandContext, "ALGO_ADDRESS");
 
     expect(result).toEqual([
       {
@@ -39,7 +40,7 @@ describe("getBalance", () => {
       ],
     });
 
-    const result = await getBalance("ALGO_ADDRESS");
+    const result = await getBalance(mockAlgorandContext, "ALGO_ADDRESS");
 
     // Native balance with locked amount accounting for 2 assets
     expect(result).toEqual([
@@ -72,7 +73,7 @@ describe("getBalance", () => {
       ],
     });
 
-    const result = await getBalance("ALGO_ADDRESS");
+    const result = await getBalance(mockAlgorandContext, "ALGO_ADDRESS");
 
     // 0.1 ALGO base + 0.5 ALGO for 5 assets = 600000 microAlgos
     expect(result[0].locked).toEqual(600000n);
@@ -85,7 +86,7 @@ describe("getBalance", () => {
       assets: [],
     });
 
-    const result = await getBalance("ALGO_ADDRESS");
+    const result = await getBalance(mockAlgorandContext, "ALGO_ADDRESS");
 
     expect(result[0].value).toEqual(0n);
     expect(result[0].locked).toEqual(100000n);
@@ -98,7 +99,7 @@ describe("getBalance", () => {
       assets: [],
     });
 
-    const result = await getBalance("ALGO_ADDRESS");
+    const result = await getBalance(mockAlgorandContext, "ALGO_ADDRESS");
 
     expect(result[0].value).toEqual(1000000000000n);
   });
@@ -106,6 +107,8 @@ describe("getBalance", () => {
   it("should propagate network errors", async () => {
     mockGetAccount.mockRejectedValue(new Error("Account not found"));
 
-    await expect(getBalance("INVALID_ADDRESS")).rejects.toThrow("Account not found");
+    await expect(getBalance(mockAlgorandContext, "INVALID_ADDRESS")).rejects.toThrow(
+      "Account not found",
+    );
   });
 });

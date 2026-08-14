@@ -77,7 +77,7 @@ export const getAccountShape: GetAccountShape<HederaAccount> = async (
     currencyId: currency.id,
   });
 
-  const latestAccountOperations = await listOperationsV2({
+  const latestAccountOperations = await listOperationsV2(config, {
     currencyId: currency.id,
     address,
     evmAddress,

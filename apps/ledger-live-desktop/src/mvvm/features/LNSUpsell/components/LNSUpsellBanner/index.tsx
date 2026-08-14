@@ -40,8 +40,8 @@ function View({
         {...boxProps}
       >
         <LNSUpsellMediaBanner
-          title={t(`lnsUpsellMediaBanner.${tracking}.title`)}
-          description={t(`lnsUpsellMediaBanner.${tracking}.description`)}
+          title={t(`lnsUpsell.${tracking}.title`)}
+          description={t(`lnsUpsell.${tracking}.description`, { discount })}
           imageUrl={imageUrl}
           onClick={handleCTAClick}
         />
@@ -65,7 +65,7 @@ function View({
               {t(`lnsUpsell.${tracking}.cta`)}
             </Button>
           }
-          image={variant.image}
+          image={imageUrl}
           borderRadius="5px"
           onClick={handleCTAClick}
         />
@@ -75,6 +75,7 @@ function View({
       return (
         <NotificationCard
           {...boxProps}
+          title={t(`lnsUpsell.${tracking}.title`)}
           description={
             <Trans i18nKey={`lnsUpsell.${tracking}.description`} values={{ discount }}>
               <span />

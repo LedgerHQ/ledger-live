@@ -1,12 +1,11 @@
 import { createApi as createTezosApi } from "@ledgerhq/coin-tezos/api/index";
-import type { TezosCoinConfig } from "@ledgerhq/coin-tezos/config";
 import type { AssetInfo } from "@ledgerhq/coin-module-framework/api/types";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { AccountReadiness } from "@ledgerhq/types-live";
 import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
-import { getCurrencyConfiguration } from "../../../config";
+import { buildContext } from "../../../bridge/generic-coin-framework/api/context";
 
 export async function getTokenFromAsset(asset: AssetInfo): Promise<TokenCurrency | undefined> {
   if (!("assetReference" in asset) || typeof asset.assetReference !== "string") {
@@ -17,22 +16,11 @@ export async function getTokenFromAsset(asset: AssetInfo): Promise<TokenCurrency
   return store.findTokenByAddressInCurrency(contractAddress, "tezos", tokenIdentifier);
 }
 
-/**
- * Derives the FA2 tokenId from a TokenCurrency's CAL id.
- * CAL ids follow the pattern `tezos/fa2/{name}_{contract}` (tokenId=0)
- * or `tezos/fa2/{name}_{contract}_{tokenId}` (multi-asset).
- */
-function deriveTokenId(token: TokenCurrency): string {
-  const contractLower = token.contractAddress.toLowerCase();
-  const suffix = token.id.split(contractLower)[1];
-  return suffix?.match(/^_(\d+)$/)?.[1] ?? "0";
-}
-
-export function getAssetFromToken(token: TokenCurrency, owner: string): AssetInfo {
-  const tokenId = deriveTokenId(token);
+export function getAssetFromToken(token: TokenCurrency, owner: string): AssetInfo | undefined {
+  if (!token.tokenIdentifier) return undefined;
   return {
     type: token.tokenType,
-    assetReference: `${token.contractAddress}:${tokenId}`,
+    assetReference: `${token.contractAddress}:${token.tokenIdentifier}`,
     assetOwner: owner,
     name: token.name,
     unit: token.units[0],
@@ -64,8 +52,8 @@ export async function getAccountReadiness(
   currency: CryptoCurrency,
   address: string,
 ): Promise<AccountReadiness> {
-  const api = createTezosApi(getCurrencyConfiguration<TezosCoinConfig>(currency.id));
-  const { revealed } = await api.getAccountInfo(address);
+  const api = createTezosApi();
+  const { revealed } = await api.getAccountInfo!(buildContext(currency.id), address);
   return revealed ? { ready: true } : { ready: false, reason: "unrevealed" };
 }
 

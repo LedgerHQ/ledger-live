@@ -3,15 +3,17 @@ import { createApi } from ".";
 describe("Algorand Api (mainnet)", () => {
   // Algorand Foundation address - a well-known address with transaction history
   const SENDER = "737777777777777777777777777777777777777777777777777UFEJ2CI";
-  const api = createApi({
+  const mainnetConfig: AlgorandConfig = {
     node: "https://algorand.coin.ledger.com/ps2/v2",
     indexer: "https://algorand.coin.ledger.com/idx2/v2",
-  });
+  };
+  const api = createApi();
+  const context = { config: async () => mainnetConfig, logger: () => {} };
 
   describe("getBalance", () => {
     it("returns a balance for an existing address", async () => {
       // When
-      const result = await api.getBalance(SENDER);
+      const result = await api.getBalance(context, SENDER);
 
       // Then
       expect(result.length).toBeGreaterThanOrEqual(1);
@@ -22,7 +24,7 @@ describe("Algorand Api (mainnet)", () => {
 
     it("returns balance with locked amount (minimum balance)", async () => {
       // When
-      const result = await api.getBalance(SENDER);
+      const result = await api.getBalance(context, SENDER);
 
       // Then
       // Algorand requires minimum balance of 0.1 ALGO (100000 microAlgos)
@@ -33,7 +35,7 @@ describe("Algorand Api (mainnet)", () => {
   describe("lastBlock", () => {
     it("returns last block info", async () => {
       // When
-      const result = await api.lastBlock();
+      const result = await api.lastBlock(context);
 
       // Then
       expect(result.height).toBeGreaterThan(0);
@@ -45,11 +47,11 @@ describe("Algorand Api (mainnet)", () => {
   describe("getBlockInfo", () => {
     it("returns block info for a specific height", async () => {
       // Given - Get the current block height first
-      const lastBlockInfo = await api.lastBlock();
+      const lastBlockInfo = await api.lastBlock(context);
       const targetHeight = lastBlockInfo.height - 10; // Get a block from 10 rounds ago
 
       // When
-      const result = await api.getBlockInfo(targetHeight);
+      const result = await api.getBlockInfo(context, targetHeight);
 
       // Then
       expect(result.height).toBe(targetHeight);
@@ -62,7 +64,7 @@ describe("Algorand Api (mainnet)", () => {
   describe("estimateFees", () => {
     it("returns estimated fees", async () => {
       // When
-      const result = await api.estimateFees({
+      const result = await api.estimateFees(context, {
         intentType: "transaction",
         asset: { type: "native" },
         type: "send",
@@ -82,7 +84,7 @@ describe("Algorand Api (mainnet)", () => {
       const RECIPIENT = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ";
 
       // When
-      const result = await api.estimateFees({
+      const result = await api.estimateFees(context, {
         intentType: "transaction",
         asset: { type: "asa", assetReference: USDC_ASSET_ID },
         type: "send",
@@ -101,7 +103,7 @@ describe("Algorand Api (mainnet)", () => {
   describe("listOperations", () => {
     it("returns operations for an address", async () => {
       // When
-      const { items, next } = await api.listOperations(SENDER, {
+      const { items, next } = await api.listOperations(context, SENDER, {
         minHeight: 0,
         order: "desc",
       });
@@ -126,7 +128,7 @@ describe("Algorand Api (mainnet)", () => {
 
     it("returns operations in ascending order when specified", async () => {
       // When
-      const { items } = await api.listOperations(SENDER, {
+      const { items } = await api.listOperations(context, SENDER, {
         minHeight: 0,
         order: "asc",
       });
@@ -145,7 +147,7 @@ describe("Algorand Api (mainnet)", () => {
       const limit = 5;
 
       // When - fetch first page
-      const { items: firstPageOps, next: firstToken } = await api.listOperations(SENDER, {
+      const { items: firstPageOps, next: firstToken } = await api.listOperations(context, SENDER, {
         minHeight: 0,
         limit,
         order: "asc",
@@ -157,12 +159,16 @@ describe("Algorand Api (mainnet)", () => {
       expect(firstToken).not.toBe("");
 
       // When - fetch second page using the cursor
-      const { items: secondPageOps, next: secondToken } = await api.listOperations(SENDER, {
-        minHeight: 0,
-        limit,
-        order: "asc",
-        cursor: firstToken,
-      });
+      const { items: secondPageOps, next: secondToken } = await api.listOperations(
+        context,
+        SENDER,
+        {
+          minHeight: 0,
+          limit,
+          order: "asc",
+          cursor: firstToken,
+        },
+      );
 
       // Then - second page should also have results
       expect(secondPageOps.length).toBeGreaterThan(0);
@@ -185,7 +191,7 @@ describe("Algorand Api (mainnet)", () => {
 
     it("returns a crafted transaction for native ALGO transfer", async () => {
       // When
-      const { transaction, details } = await api.craftTransaction({
+      const { transaction, details } = await api.craftTransaction(context, {
         intentType: "transaction",
         asset: { type: "native" },
         type: "send",
@@ -207,6 +213,7 @@ describe("Algorand Api (mainnet)", () => {
 
       // When
       const { transaction } = await api.craftTransaction(
+        context,
         {
           intentType: "transaction",
           asset: { type: "native" },
@@ -233,7 +240,7 @@ describe("Algorand Api (mainnet)", () => {
 
     it("returns a crafted transaction for ASA token transfer", async () => {
       // When
-      const { transaction, details } = await api.craftTransaction({
+      const { transaction, details } = await api.craftTransaction(context, {
         intentType: "transaction",
         asset: { type: "asa", assetReference: USDC_ASSET_ID },
         type: "send",
@@ -257,6 +264,7 @@ describe("Algorand Api (mainnet)", () => {
 
       // When
       const { transaction, details } = await api.craftTransaction(
+        context,
         {
           intentType: "transaction",
           asset: { type: "asa", assetReference: USDC_ASSET_ID },
@@ -285,13 +293,17 @@ describe("Algorand Api (mainnet)", () => {
       };
 
       // When - First estimate fees
-      const feeEstimate = await api.estimateFees(transactionIntent);
+      const feeEstimate = await api.estimateFees(context, transactionIntent);
 
       // Then - Verify fee estimate is reasonable
       expect(feeEstimate.value).toBeGreaterThanOrEqual(1000n);
 
       // When - Use estimated fees to craft transaction
-      const { transaction, details } = await api.craftTransaction(transactionIntent, feeEstimate);
+      const { transaction, details } = await api.craftTransaction(
+        context,
+        transactionIntent,
+        feeEstimate,
+      );
 
       // Then - Verify transaction was crafted
       expect(transaction.length).toBeGreaterThan(0);
@@ -302,7 +314,7 @@ describe("Algorand Api (mainnet)", () => {
 
     it("crafts ASA transfer with zero amount (opt-in style)", async () => {
       // When - sending 0 amount to self is how opt-in works
-      const { transaction, details } = await api.craftTransaction({
+      const { transaction, details } = await api.craftTransaction(context, {
         intentType: "transaction",
         asset: { type: "asa", assetReference: USDT_ASSET_ID },
         type: "send",
@@ -319,7 +331,7 @@ describe("Algorand Api (mainnet)", () => {
 
     it("crafts ASA transfer with memo", async () => {
       // When
-      const { transaction, details } = await api.craftTransaction({
+      const { transaction, details } = await api.craftTransaction(context, {
         intentType: "transaction",
         asset: { type: "asa", assetReference: USDC_ASSET_ID },
         type: "send",
@@ -337,7 +349,7 @@ describe("Algorand Api (mainnet)", () => {
 
     it("crafts different ASA tokens with different asset IDs", async () => {
       // When - craft USDC transfer
-      const { transaction: usdcTx } = await api.craftTransaction({
+      const { transaction: usdcTx } = await api.craftTransaction(context, {
         intentType: "transaction",
         asset: { type: "asa", assetReference: USDC_ASSET_ID },
         type: "send",
@@ -347,7 +359,7 @@ describe("Algorand Api (mainnet)", () => {
       });
 
       // When - craft USDT transfer
-      const { transaction: usdtTx } = await api.craftTransaction({
+      const { transaction: usdtTx } = await api.craftTransaction(context, {
         intentType: "transaction",
         asset: { type: "asa", assetReference: USDT_ASSET_ID },
         type: "send",
@@ -365,43 +377,50 @@ describe("Algorand Api (mainnet)", () => {
 
   describe("unsupported methods", () => {
     it("getBlock throws not supported error", () => {
-      expect(() => api.getBlock(100)).toThrow("getBlock is not supported for Algorand");
+      expect(() => api.getBlock(context, 100)).toThrow("getBlock is not supported for Algorand");
     });
 
     it("getNextSequence throws not applicable error", () => {
-      expect(() => api.getNextSequence(SENDER)).toThrow(
+      expect(() => api.getNextSequence(context, SENDER)).toThrow(
         "getNextSequence is not applicable for Algorand",
       );
     });
 
     it("getStakes throws not supported error", () => {
-      expect(() => api.getStakes(SENDER)).toThrow("getStakes is not supported for Algorand");
+      expect(() => api.getStakes(context, SENDER)).toThrow(
+        "getStakes is not supported for Algorand",
+      );
     });
 
     it("getRewards throws not supported error", () => {
-      expect(() => api.getRewards(SENDER)).toThrow("getRewards is not supported for Algorand");
+      expect(() => api.getRewards(context, SENDER)).toThrow(
+        "getRewards is not supported for Algorand",
+      );
     });
 
     it("getValidators throws not supported error", () => {
-      expect(() => api.getValidators()).toThrow("getValidators is not supported for Algorand");
+      expect(() => api.getValidators(context)).toThrow(
+        "getValidators is not supported for Algorand",
+      );
     });
   });
 });
 
 describe("Algorand Api (testnet)", () => {
   // Testnet endpoints from Algonode
-  const api = createApi({
+  const api = createApi();
+  const testnetConfig: AlgorandConfig = {
     node: "https://testnet-api.algonode.cloud/v2",
     indexer: "https://testnet-idx.algonode.cloud/v2",
-  });
-
+  };
+  const context = { config: async () => testnetConfig, logger: () => {} };
   // Zero address - valid for testing
   const TESTNET_ADDRESS = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ";
 
   describe("lastBlock", () => {
     it("returns last block info from testnet", async () => {
       // When
-      const result = await api.lastBlock();
+      const result = await api.lastBlock(context);
 
       // Then
       expect(result.height).toBeGreaterThan(0);
@@ -411,7 +430,7 @@ describe("Algorand Api (testnet)", () => {
   describe("estimateFees", () => {
     it("returns minimum fee on testnet", async () => {
       // When
-      const result = await api.estimateFees({
+      const result = await api.estimateFees(context, {
         intentType: "transaction",
         asset: { type: "native" },
         type: "send",

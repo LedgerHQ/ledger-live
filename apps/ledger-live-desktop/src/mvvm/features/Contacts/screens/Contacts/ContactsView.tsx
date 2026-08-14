@@ -48,6 +48,7 @@ export function ContactsView({
       <ContactsRenameContactDialog {...editDeleteDialogs.renameDialog} />
       <ContactsDeleteContactDialog {...editDeleteDialogs.deleteDialog} />
       <ContactsEditSignerDialog {...editDeleteDialogs.signerDialog} />
+      <ContactsEditSignerMismatchDialog {...editDeleteDialogs.signerMismatchDialog} />
       <ContactsDeleteAddressDialog {...addressDetailActionsDialogs.deleteDialog} />
       <ContactsRenameAddressDialog {...addressDetailActionsDialogs.renameDialog} />
       <ContactsEditSignerDialog {...addressDetailActionsDialogs.signerDialog} />

@@ -1,4 +1,5 @@
 import { BigNumber } from "bignumber.js";
+import { getCoinConfig } from "./config";
 import { getAccount } from "./network";
 import type { AlgorandOperationMode } from "./types";
 
@@ -8,7 +9,7 @@ export const recipientHasAsset = async (
   recipientAddress: string,
   assetId: string,
 ): Promise<boolean> => {
-  const recipientAccount = await getAccount(recipientAddress);
+  const recipientAccount = await getAccount(getCoinConfig(), recipientAddress);
   return recipientAccount.assets.map(a => a.assetId).includes(assetId);
 };
 
@@ -16,7 +17,7 @@ export const isAmountValid = async (
   recipientAddress: string,
   amount: BigNumber,
 ): Promise<boolean> => {
-  const recipientAccount = await getAccount(recipientAddress);
+  const recipientAccount = await getAccount(getCoinConfig(), recipientAddress);
   return recipientAccount.balance.isZero() ? amount.gte(ALGORAND_MIN_ACCOUNT_BALANCE) : true;
 };
 

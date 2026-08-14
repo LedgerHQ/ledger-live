@@ -22,5 +22,5 @@ export function createLocalCeloApi(currencyId: string): CoinModuleApi<any> & Bri
   });
   // coin-celo's createApi is typed with concrete <MemoNotSupported, BufferTxData>
   // params, so widen via `unknown` to the framework's `CoinModuleApi<any>`.
-  return createCeloApi(getCurrencyConfig, currencyId) as unknown as CoinModuleApi<any> & BridgeApi;
+  return createCeloApi(currencyId) as unknown as CoinModuleApi<any> & BridgeApi;
 }

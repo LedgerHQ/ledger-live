@@ -188,7 +188,7 @@ describe("getAccountShape", () => {
       value: new BigNumber(20),
       fee: new BigNumber(5),
     });
-    mockedFetchTronAccountTxs.mockImplementationOnce(async (_addr, predicate) => {
+    mockedFetchTronAccountTxs.mockImplementationOnce(async (_config, _addr, predicate) => {
       const txs = [parentOp, trc10Op, trc20Op];
       predicate([]);
       return txs;

@@ -1,6 +1,6 @@
+import type { TronCoinConfig } from "../config";
 import { TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
 import { randomBytes } from "crypto";
-import coinConfig from "../config";
 import { getChainParameters, getTronAccountNetwork } from "../network";
 import { encode58Check } from "../network/format";
 import { estimateFees } from "./estimateFees";
@@ -25,18 +25,16 @@ const sendIntent = (overrides: Partial<TransactionIntent>): TransactionIntent =>
   ...overrides,
 });
 
-describe("estimateFees [integ]", () => {
-  beforeAll(() => {
-    coinConfig.setCoinConfig(() => ({
-      status: { type: "active" },
-      explorer: { url: "https://tron.coin.ledger.com" },
-    }));
-  });
+const mockConfig = {
+  status: { type: "active" },
+  explorer: { url: "https://tron.coin.ledger.com" },
+} as TronCoinConfig;
 
+describe("estimateFees [integ]", () => {
   describe("sanity", () => {
     // If this fails, the SR changed its staking policy — pick another one.
     it("the Super Representative has enough bandwidth and energy to absorb tx-level fees", async () => {
-      const info = await getTronAccountNetwork(SUPER_REPRESENTATIVE);
+      const info = await getTronAccountNetwork(mockConfig, SUPER_REPRESENTATIVE);
 
       const bandwidth = info.freeNetLimit
         .minus(info.freeNetUsed)
@@ -52,15 +50,15 @@ describe("estimateFees [integ]", () => {
   describe("Super Representative sender (bandwidth + energy fully covered)", () => {
     describe("native", () => {
       it("to an active recipient costs 0", async () => {
-        const fee = await estimateFees(sendIntent({ recipient: ACTIVE_RECIPIENT }));
+        const fee = await estimateFees(mockConfig, sendIntent({ recipient: ACTIVE_RECIPIENT }));
 
         expect(fee).toBe(0n);
       });
 
       it("to a fresh recipient costs exactly createAccountFee + createNewAccountFeeInSystemContract", async () => {
         const [fee, params] = await Promise.all([
-          estimateFees(sendIntent({ recipient: freshAddress() })),
-          getChainParameters(),
+          estimateFees(mockConfig, sendIntent({ recipient: freshAddress() })),
+          getChainParameters(mockConfig),
         ]);
 
         expect(fee).toBe(
@@ -72,6 +70,7 @@ describe("estimateFees [integ]", () => {
     describe("TRC10", () => {
       it("to an active recipient costs 0", async () => {
         const fee = await estimateFees(
+          mockConfig,
           sendIntent({ asset: { type: "trc10", assetReference: BTT_ASSET } }),
         );
 
@@ -82,6 +81,7 @@ describe("estimateFees [integ]", () => {
     describe("TRC20", () => {
       it("to an active recipient costs 0", async () => {
         const fee = await estimateFees(
+          mockConfig,
           sendIntent({ asset: { type: "trc20", assetReference: USDT_CONTRACT } }),
         );
 
@@ -90,6 +90,7 @@ describe("estimateFees [integ]", () => {
 
       it("to a fresh recipient costs 0 — no native activation fee for contracts", async () => {
         const fee = await estimateFees(
+          mockConfig,
           sendIntent({
             recipient: freshAddress(),
             asset: { type: "trc20", assetReference: USDT_CONTRACT },
@@ -105,7 +106,10 @@ describe("estimateFees [integ]", () => {
         asset: { type: "trc20", assetReference: USDT_CONTRACT },
       });
 
-      const [first, second] = await Promise.all([estimateFees(intent), estimateFees(intent)]);
+      const [first, second] = await Promise.all([
+        estimateFees(mockConfig, intent),
+        estimateFees(mockConfig, intent),
+      ]);
 
       expect(first).toBe(second);
     });

@@ -70,8 +70,6 @@ Use `authApiExtra` to provide a stable `authProvider` through RTK Query's
 ([Redux thunk `extraArgument`](https://redux-toolkit.js.org/api/getDefaultMiddleware#customizing-the-included-middleware)):
 
 ```ts
-const listenerMiddleware = createListenerMiddleware<State>();
-
 const store = configureStore({
   reducer,
   middleware: getDefaultMiddleware =>
@@ -79,36 +77,32 @@ const store = configureStore({
       thunk: {
         extraArgument: {
           ...authApiExtra({
-            startListening: listenerMiddleware.startListening,
-            authFeatureId: "lwdAuth",
-            providerParams: { provider: identityProvider },
-            createAuthProvider: (environment, providerParams) =>
-              new AuthSDK(getAuthConfig(environment), providerParams),
+            isFeatureEnabled: () => selectFeature(store.getState(), "lwdAuth").enabled,
+            authProvider: new AuthSDK(
+              {
+                ...authConfig,
+                keycloakBaseUrl: () => resolveKeycloakBaseUrl(store.getState()),
+              },
+              { provider: identityProvider },
+            ),
           }),
         },
       },
-    }).prepend(listenerMiddleware.middleware),
+    }),
 });
 ```
 
-The facade calls queries without a token while authentication is disabled. Once
-authentication is enabled and an environment is selected, it creates and caches
-the injected `AuthProvider`. `AuthSDK` from `@ledgerhq/ledger-auth` is one concrete
+The facade evaluates `isFeatureEnabled` for every request. It calls queries without a
+token while authentication is disabled and delegates to the same injected
+`AuthProvider` while enabled. Provider creation, feature selection, and environment
+availability remain app-owned. `AuthSDK` from `@ledgerhq/ledger-auth` is one concrete
 implementation behind this thunk contract.
-
-No initialization action is required: the integration reads the complete state
-whenever the auth environment or feature flags change, regardless of which action
-arrives first. Apps must publish the auth environment before starting authenticated
-queries.
-
-The typed `authFeatureId` selects either `lwdAuth` or `lwmAuth` from
-`@shared/feature-flags`; the Redux state must include its `featureFlags` slice.
 
 ## Scope
 
-This package owns the RTK Query adapter, auth environment state, and generic
-feature/environment lifecycle. Concrete provider construction, credentials, and
-platform cryptography remain in each app's composition root.
+This package owns the RTK Query adapter and auth environment state. Concrete provider
+construction, feature selection, credentials, and platform cryptography remain in each
+app's composition root.
 
 ## Validation
 

@@ -2,6 +2,7 @@ import { Observable } from "rxjs";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { Account, DeviceId, SignOperationEvent, AccountBridge } from "@ledgerhq/types-live";
 import { getCoinModuleApi } from "./api";
+import { buildContext } from "./api/context";
 import { getBridgeApi } from "./bridge";
 import {
   bigNumberToBigIntDeep,
@@ -33,6 +34,7 @@ export const genericSignOperation =
     new Observable(o => {
       async function main() {
         const coinModuleApi = await getCoinModuleApi(account.currency.id, kind);
+        const context = buildContext(account.currency.id);
         const bridgeApi = await getBridgeApi(account.currency, network);
         if (!transaction.fees) throw new FeeNotLoaded();
         const customFees = bigNumberToBigIntDeep({
@@ -58,14 +60,18 @@ export const genericSignOperation =
             account,
             { ...transaction },
             bridgeApi.computeIntentType,
-            coinModuleApi.craftTransactionData,
+            intent => coinModuleApi.craftTransactionData(context, intent),
+            bridgeApi.buildIntentData,
           );
           transactionIntent.senderPublicKey = publicKey;
 
           if (typeof transactionIntent.sequence !== "bigint" || transactionIntent.sequence < 0n) {
             // The network sequence source lags behind a just-broadcast tx, so combine it with
             // locally-tracked pending operations to avoid reusing a nonce on rapid consecutive sends.
-            const networkSequence = await coinModuleApi.getNextSequence(transactionIntent.sender);
+            const networkSequence = await coinModuleApi.getNextSequence(
+              context,
+              transactionIntent.sender,
+            );
             transactionIntent.sequence = nextSequenceWithPending(
               account.pendingOperations ?? [],
               networkSequence,
@@ -74,8 +80,9 @@ export const genericSignOperation =
 
           /* Craft unsigned blob via coin-framework */
           const { transaction: unsigned } = await coinModuleApi.craftTransaction(
+            context,
             transactionIntent,
-            customFees,
+            { customFees },
           );
 
           /* Notify UI that the device is now showing the tx */
@@ -83,6 +90,7 @@ export const genericSignOperation =
           /* Sign on Ledger device */
           const txnSig = await signer.signTransaction(derivationPath, unsigned, {
             ...transaction.recipientDomain,
+            ...bridgeApi.getDeviceSignOptions?.(transaction, account),
             derivationMode: account.derivationMode,
           });
           return {
@@ -99,11 +107,19 @@ export const genericSignOperation =
 
         /* Combine payload + signature for broadcast */
         const combined = await coinModuleApi.combine(
+          context,
           signedInfo.unsigned,
-          signedInfo.txnSig,
-          signedInfo.publicKey,
+          [signedInfo.txnSig],
+          {
+            pubkey: signedInfo.publicKey,
+          },
         );
-        const operation = buildOptimisticOperation(account, transaction, signedInfo.sequence);
+        const operation = buildOptimisticOperation(
+          account,
+          transaction,
+          signedInfo.sequence,
+          bridgeApi.describeOptimisticOperation,
+        );
         if (!operation.id) {
           log("Generic coin-framework", "buildOptimisticOperation", operation);
         }

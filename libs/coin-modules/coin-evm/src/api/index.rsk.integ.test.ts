@@ -1,26 +1,22 @@
-import {
-  CoinModuleApi,
-  BufferTxData,
-  MemoNotSupported,
-} from "@ledgerhq/coin-module-framework/api/types";
-import { EvmConfig } from "../config";
+import type { EvmConfigInfo } from "../config";
+import { createMockEvmContext } from "../fixtures/context.fixtures";
 import { createApi } from "./index";
 
 describe("EVM RSK Network", () => {
-  let module: CoinModuleApi<MemoNotSupported, BufferTxData>;
+  let module: ReturnType<typeof createApi>;
 
+  const config: Partial<EvmConfigInfo> = {
+    node: {
+      type: "external",
+      uri: "https://rsk.coin.ledger.com",
+    },
+    explorer: {
+      type: "blockscout",
+      uri: "https://rootstock.blockscout.com/api",
+    },
+  };
   beforeAll(() => {
-    const config = {
-      node: {
-        type: "external",
-        uri: "https://rsk.coin.ledger.com",
-      },
-      explorer: {
-        type: "blockscout",
-        uri: "https://rootstock.blockscout.com/api",
-      },
-    };
-    module = createApi(config as EvmConfig, "rsk");
+    module = createApi("rsk");
   });
 
   describe("getBalance with EIP-1191 checksummed address", () => {
@@ -33,7 +29,7 @@ describe("EVM RSK Network", () => {
       const rskAddress = "0xeF7778f630098Df7aD87cFEd8F4476e4c03eE329";
 
       // This should not throw "bad address checksum" error
-      const result = await module.getBalance(rskAddress);
+      const result = await module.getBalance(createMockEvmContext(config), rskAddress);
 
       expect(result).toBeInstanceOf(Array);
       expect(result[0]).toEqual({
@@ -48,7 +44,7 @@ describe("EVM RSK Network", () => {
       const rskAddress = "0xeF7778f630098Df7aD87cFEd8F4476e4c03eE329";
 
       // This should not throw "bad address checksum" error
-      const result = await module.getNextSequence(rskAddress);
+      const result = await module.getNextSequence(createMockEvmContext(config), rskAddress);
 
       expect(typeof result).toBe("bigint");
     });

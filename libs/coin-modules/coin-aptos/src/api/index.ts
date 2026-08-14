@@ -13,33 +13,56 @@ import {
 import type {
   Balance,
   BalanceOptions,
+  BroadcastConfig,
   FeeEstimation,
+  ListOperationsOptions,
+  Operation,
+  StakingTransactionIntent,
   TransactionIntent,
   TransactionValidation,
 } from "@ledgerhq/coin-module-framework/api/types";
 import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
-import type { AptosConfig as AptosConfigApi } from "../config";
-import coinConfig from "../config";
+import type { AptosCoinConfig, AptosContext } from "../config";
 import { combine } from "../logic/combine";
 import { craftTransaction } from "../logic/craftTransaction";
 import { getBalances } from "../logic/getBalances";
 import { validateAddress } from "../logic/validateAddress";
 import { AptosAPI } from "../network";
 
-export function createApi(config: AptosConfigApi): CoinModuleApi {
-  coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
+/**
+ * Resolves the coin configuration from the {@link AptosContext} and builds the {@link AptosAPI}
+ * client from the context's `aptosSettings` rather than seeding the module-level singleton
+ * (ADR-019).
+ */
+async function clientFromContext(context: AptosContext): Promise<AptosAPI> {
+  const config = await context.config();
+  return new AptosAPI(config.aptosSettings);
+}
 
-  const client = new AptosAPI(config.aptosSettings);
-
+export function createApi(): CoinModuleApi<AptosCoinConfig> {
   return {
-    async call() {
+    async call(_context: AptosContext) {
       throw new Error("call is not supported");
     },
-    broadcast: (tx: string) => client.broadcast(tx),
-    combine: (tx, signature, pubkey): string => combine(tx, signature, pubkey),
-    craftTransaction: (transactionIntent, _customFees): Promise<CraftedTransaction> =>
-      craftTransaction(client, transactionIntent),
+    broadcast: async (
+      context: AptosContext,
+      tx: string,
+      _options?: { broadcastConfig?: BroadcastConfig },
+    ): Promise<string> => (await clientFromContext(context)).broadcast(tx),
+    combine: (
+      _context: AptosContext,
+      tx: string,
+      signature: string[],
+      options?: { pubkey?: string },
+    ): string => combine(tx, signature, options?.pubkey),
+    craftTransaction: async (
+      context: AptosContext,
+      transactionIntent: TransactionIntent | StakingTransactionIntent,
+      _options?: { customFees?: FeeEstimation },
+    ): Promise<CraftedTransaction> =>
+      craftTransaction(await clientFromContext(context), transactionIntent as TransactionIntent),
     craftRawTransaction: (
+      _context: AptosContext,
       _transaction: string,
       _sender: string,
       _publicKey: string,
@@ -47,37 +70,71 @@ export function createApi(config: AptosConfigApi): CoinModuleApi {
     ): Promise<CraftedTransaction> => {
       throw new Error("craftRawTransaction is not supported");
     },
-    estimateFees: (transactionIntent: TransactionIntent) => client.estimateFees(transactionIntent),
-    getBalance: (address: string, options?: BalanceOptions) =>
-      rejectBalanceOptions(() => getBalances(client, address), options),
-    lastBlock: () => client.getLastBlock(),
-    listOperations: (address: string, { minHeight }) => client.listOperations(address, minHeight),
-    getBlock(_height): Promise<Block> {
+    estimateFees: async (
+      context: AptosContext,
+      transactionIntent: TransactionIntent,
+    ): Promise<FeeEstimation> => (await clientFromContext(context)).estimateFees(transactionIntent),
+    getBalance: async (
+      context: AptosContext,
+      address: string,
+      options?: BalanceOptions,
+    ): Promise<Balance[]> =>
+      rejectBalanceOptions(
+        async () => getBalances(await clientFromContext(context), address),
+        options,
+      ),
+    lastBlock: async (context: AptosContext) => (await clientFromContext(context)).getLastBlock(),
+    listOperations: async (
+      context: AptosContext,
+      address: string,
+      options: ListOperationsOptions,
+    ): Promise<Page<Operation>> =>
+      (await clientFromContext(context)).listOperations(address, options.minHeight),
+    getBlock(_context: AptosContext, _height: number): Promise<Block> {
       throw new Error("getBlock is not supported");
     },
-    getBlockInfo(_height: number): Promise<BlockInfo> {
+    getBlockInfo(_context: AptosContext, _height: number): Promise<BlockInfo> {
       throw new Error("getBlockInfo is not supported");
     },
-    getStakes(_address: string, _cursor?: Cursor): Promise<Page<Stake>> {
+    getStakes(
+      _context: AptosContext,
+      _address: string,
+      _options?: { cursor?: Cursor },
+    ): Promise<Page<Stake>> {
       throw new Error("getStakes is not supported");
     },
-    getRewards(_address: string, _cursor?: Cursor): Promise<Page<Reward>> {
+    getRewards(
+      _context: AptosContext,
+      _address: string,
+      _options?: { cursor?: Cursor },
+    ): Promise<Page<Reward>> {
       throw new Error("getRewards is not supported");
     },
-    getValidators(_cursor?: Cursor): Promise<Page<Validator>> {
+    getValidators(
+      _context: AptosContext,
+      _options?: { cursor?: Cursor },
+    ): Promise<Page<Validator>> {
       throw new Error("getValidators is not supported");
     },
     validateIntent: async (
-      _transactionIntent: TransactionIntent,
+      _context: AptosContext,
+      _transactionIntent: TransactionIntent | StakingTransactionIntent,
       _balances: Balance[],
-      _customFees?: FeeEstimation,
+      _options?: { customFees?: FeeEstimation },
     ): Promise<TransactionValidation> => {
       throw new Error("validateIntent is not supported");
     },
-    getNextSequence: async (_address: string) => {
+    getNextSequence: async (_context: AptosContext, _address: string): Promise<bigint> => {
       throw new Error("getNextSequence is not supported");
     },
-    validateAddress,
-    craftTransactionData,
+    validateAddress: (
+      _context: AptosContext,
+      address: string,
+      parameters: Parameters<typeof validateAddress>[1],
+    ): Promise<boolean> => validateAddress(address, parameters),
+    craftTransactionData: (
+      _context: AptosContext,
+      intent: TransactionIntent,
+    ): ReturnType<typeof craftTransactionData> => craftTransactionData(intent),
   };
 }

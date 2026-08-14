@@ -1,5 +1,5 @@
 import { act, renderHook } from "@testing-library/react-native";
-import { useAnalytics } from "~/analytics";
+import { track } from "~/analytics";
 import { useMemoViewModel } from "../../../../components/Memo/hooks/useMemoViewModel";
 import { useSendFlowData } from "../../../../context/SendFlowContext";
 import { useRecipientScreenView } from "../useRecipientScreenView";
@@ -17,13 +17,12 @@ jest.mock("~/logic/keyboardVisible", () => ({
   shouldUseKeyboardAvoidance: jest.fn(() => true),
 }));
 
-const mockedUseAnalytics = jest.mocked(useAnalytics);
+const mockedTrack = jest.mocked(track);
 const mockedUseMemoViewModel = jest.mocked(useMemoViewModel);
 const mockedUseSendFlowData = jest.mocked(useSendFlowData);
 const mockedUseRecipientScreenView = jest.mocked(useRecipientScreenView);
 
 const account = createMockAccount({ id: "account_1" });
-const track = jest.fn();
 const handleAddressSelect = jest.fn();
 const onMemoProceed = jest.fn();
 
@@ -67,7 +66,6 @@ const memoViewModel = {
 describe("useRecipientScreenContentViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockedUseAnalytics.mockReturnValue({ track } as never);
     mockedUseSendFlowData.mockReturnValue({
       uiConfig: { hasMemo: true },
     } as never);
@@ -93,13 +91,13 @@ describe("useRecipientScreenContentViewModel", () => {
     expect(result.current.showMemo).toBe(true);
     expect(result.current.showMatched).toBe(true);
     expect(result.current.keyboardBehavior).toBe("padding");
-    expect(track).toHaveBeenCalledTimes(2);
-    expect(track).toHaveBeenNthCalledWith(
+    expect(mockedTrack).toHaveBeenCalledTimes(2);
+    expect(mockedTrack).toHaveBeenNthCalledWith(
       1,
       "send_modal",
       expect.objectContaining({ name: "step memo" }),
     );
-    expect(track).toHaveBeenNthCalledWith(
+    expect(mockedTrack).toHaveBeenNthCalledWith(
       2,
       "send_modal",
       expect.objectContaining({ name: "step memo", button: "skip" }),
@@ -117,7 +115,7 @@ describe("useRecipientScreenContentViewModel", () => {
       result.current.handleMatchedAddress("destination", "name.eth");
     });
 
-    expect(track).toHaveBeenCalledWith(
+    expect(mockedTrack).toHaveBeenCalledWith(
       "button_clicked",
       expect.objectContaining({ button: "my accounts", page: "step recipient" }),
     );
@@ -132,7 +130,7 @@ describe("useRecipientScreenContentViewModel", () => {
       onSkip();
     });
 
-    expect(track).toHaveBeenCalledWith(
+    expect(mockedTrack).toHaveBeenCalledWith(
       "button_clicked",
       expect.objectContaining({ button: "skip", page: "step memo" }),
     );

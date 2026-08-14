@@ -6,6 +6,12 @@ import { initYaciIndexer } from "./yaciIndexer";
 // adapter serves captured Ledger-proxy fixtures (see fixtures/ledgerPools.ts), so this is hermetic and
 // needs no devnet. Exercises getValidators end-to-end through the CoinModule API on real-shaped data.
 const config: CardanoConfig = { maxFeesWarning: 0, maxFeesError: 0 };
+// createApi() is context-driven (framework v6); the getValidators impl ignores the context, but the
+// signature requires one. Derive its type from the api to avoid a direct coin-module-framework dep.
+const context: Parameters<ReturnType<typeof createApi>["getValidators"]>[0] = {
+  config: async () => ({ ...config, status: { type: "active" } }),
+  logger: () => {},
+};
 
 describe("getValidators (Yaci adapter, fixture-backed)", () => {
   let close: (() => void) | undefined;
@@ -15,7 +21,7 @@ describe("getValidators (Yaci adapter, fixture-backed)", () => {
   afterAll(() => close?.());
 
   it("returns a non-empty page of well-formed validators", async () => {
-    const page = await createApi(config, "cardano_testnet").getValidators();
+    const page = await createApi("cardano_testnet").getValidators(context);
 
     expect(page.items.length).toBeGreaterThan(0);
     const v = page.items[0];

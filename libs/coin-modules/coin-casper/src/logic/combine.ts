@@ -10,19 +10,23 @@ const SIGNATURE_HEX_LENGTH = 130;
  *
  * `pubkey` is required: unlike some chains, Casper can't recover a signer from its signature.
  */
-export function combine(tx: string, signature: string, pubkey?: string): string {
+export function combine(tx: string, signature: string[], pubkey?: string): string {
+  if (signature.length !== 1) {
+    throw new Error(`Casper combine expects exactly one signature, got ${signature.length}`);
+  }
+
   invariant(pubkey, "casper: combine requires the signer public key");
 
   invariant(
-    signature.length === SIGNATURE_HEX_LENGTH,
+    signature[0].length === SIGNATURE_HEX_LENGTH,
     "casper: combine expects a 65-byte (tag + signature) hex signature",
   );
 
-  const signatureBytes = Buffer.from(signature, "hex");
+  const signatureBytes = Buffer.from(signature[0], "hex");
 
   // Buffer.from(.., "hex") silently truncates at the first non-hex pair, so verify the
   // round-trip to reject malformed hex with an actionable message.
-  const isValidHex = signatureBytes.toString("hex") === signature.toLowerCase();
+  const isValidHex = signatureBytes.toString("hex") === signature[0].toLowerCase();
   invariant(isValidHex, "casper: invalid hex signature");
 
   const transaction = Transaction.fromJSON(tx);

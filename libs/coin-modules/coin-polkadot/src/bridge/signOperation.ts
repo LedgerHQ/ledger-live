@@ -6,6 +6,7 @@ import type { AccountBridge } from "@ledgerhq/types-live";
 import { hexToU8a } from "@polkadot/util";
 import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
+import coinConfig from "../config";
 import { signExtrinsic } from "../logic";
 import polkadotAPI from "../network";
 import type { PolkadotAccount, PolkadotSigner, Transaction } from "../types";
@@ -48,6 +49,7 @@ export const buildSignOperation =
             method: true,
           });
         const currency = getCryptoCurrencyById(account.currency.id);
+        const config = coinConfig.getCoinConfig(account.currency.id);
         // Decompose the ExtrinsicPayload into its three parts for the sidecar metadata-blob endpoint
         // payload = callData ++ includedInExtrinsic (extra) ++ includedInSignedData (additional_signed)
         const callData = unsigned.method;
@@ -73,6 +75,7 @@ export const buildSignOperation =
 
         // First sidecar call: get the real metadataHash (placeholder is in includedInSignedData)
         const { metadataHash } = await polkadotAPI.getMetadata(
+          config,
           callData,
           includedInExtrinsic,
           includedInSignedData,
@@ -98,6 +101,7 @@ export const buildSignOperation =
 
         // Second sidecar call: get the correct metadataBlob with the real metadataHash
         const { metadataBlob } = await polkadotAPI.getMetadata(
+          config,
           callData,
           includedInExtrinsic,
           finalIncludedInSignedData,

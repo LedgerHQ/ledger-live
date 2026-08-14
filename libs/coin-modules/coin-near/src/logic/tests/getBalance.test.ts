@@ -1,3 +1,4 @@
+import { mockNearContext } from "../../test/context";
 import { http, HttpResponse } from "msw";
 import { setMockCoinConfig } from "../../test/coinConfig";
 import { mockServer, NEAR_BASE_URL_MOCKED } from "../../network/node.mock";
@@ -50,7 +51,7 @@ describe("getBalance (MSW)", () => {
   it("reports the account total as value, and the storage reserve as locked", async () => {
     mockAccount("1000000000000000000000000");
 
-    const [native] = await getBalance(ADDRESS);
+    const [native] = await getBalance(mockNearContext, ADDRESS);
 
     expect(native.asset).toEqual({ type: "native" });
     expect(native.stake).toBeUndefined();
@@ -62,7 +63,7 @@ describe("getBalance (MSW)", () => {
   it("never locks more than the account holds", async () => {
     mockAccount("1000000000000000000000"); // below the reserve
 
-    const [native] = await getBalance(ADDRESS);
+    const [native] = await getBalance(mockNearContext, ADDRESS);
 
     expect(native.value).toBe(1_000_000_000_000_000_000_000n);
     expect(native.locked).toBe(native.value);

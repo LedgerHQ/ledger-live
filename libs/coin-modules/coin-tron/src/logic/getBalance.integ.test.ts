@@ -1,5 +1,11 @@
+import type { TronCoinConfig } from "../config";
 import coinConfig from "../config";
 import { getBalance } from "./getBalance";
+
+const mockConfig = {
+  status: { type: "active" },
+  explorer: { url: "https://api.trongrid.io" },
+} as TronCoinConfig;
 
 describe("getBalance", () => {
   beforeAll(() => {
@@ -14,7 +20,7 @@ describe("getBalance", () => {
   });
 
   it("fetches native and token balances for TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9", async () => {
-    const balances = await getBalance("TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9");
+    const balances = await getBalance(mockConfig, "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9");
 
     expect(balances[0].asset).toEqual({ type: "native" });
     // Backend either returns trc10 or trc20 first (randomly)
@@ -25,7 +31,7 @@ describe("getBalance", () => {
   });
 
   it("returns 0 when address is not found", async () => {
-    const result = await getBalance("TPqmGMoidNTbMZ8ApgcbPMf7JDyiHi1sv0");
+    const result = await getBalance(mockConfig, "TPqmGMoidNTbMZ8ApgcbPMf7JDyiHi1sv0");
 
     expect(result).toEqual([{ value: BigInt(0), asset: { type: "native" } }]);
   });

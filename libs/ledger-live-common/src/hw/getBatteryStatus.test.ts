@@ -1,5 +1,4 @@
-import getBatteryStatus, { BatteryStatusTypes } from "./getBatteryStatus";
-import { ChargingModes } from "@ledgerhq/types-devices";
+import getBatteryStatus, { BatteryStatusTypes, ChargingModes } from "./getBatteryStatus";
 
 const mockTransportGenerator = out => ({ send: () => out });
 describe("getBatteryStatus", () => {

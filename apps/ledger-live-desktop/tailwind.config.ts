@@ -6,7 +6,6 @@ const SEARCH_PLACEHOLDER_SLIDE = "400ms cubic-bezier(0, 0, 0.58, 1) forwards";
 const config = {
   content: [
     "./src/**/*.{js,ts,jsx,tsx}",
-    "./node_modules/@ledgerhq/lumen-ui-react/dist/lib/**/*.{js,ts,jsx,tsx}",
     "../../features/**/src/**/*.{ts,tsx}",
     "../../devtools/**/src/**/*.{ts,tsx}",
   ],

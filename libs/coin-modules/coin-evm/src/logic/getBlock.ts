@@ -5,11 +5,11 @@ import type {
   BlockTransaction,
   TransferBlockOperation,
 } from "@ledgerhq/coin-module-framework/api/index";
-import { promiseAllBatched } from "@ledgerhq/live-promise";
+import { promiseAllBatched } from "@ledgerhq/coin-module-framework/promises";
 import { log } from "@ledgerhq/logs";
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { rpcTransactionToBlockOperations } from "../adapters/blockOperations";
-import { DEFAULT_INTERNAL_TX_SOURCES, getCoinConfig } from "../config";
+import { DEFAULT_INTERNAL_TX_SOURCES, type EvmContext } from "../config";
 import { UnsupportedRpcMethodError } from "../errors";
 import { getNodeApi } from "../network/node";
 import { BlockReceiptInfo, PrefetchedBlockTransaction } from "../network/node/types";
@@ -17,17 +17,26 @@ import { createInternalTransactionsFetcher } from "./internalTransactionsFetcher
 import { dropRootTraceDuplicates } from "./rootTraceDedup";
 import { buildSmartContractDetails, safeEncodeEIP55 } from "../utils";
 
-export async function getBlock(currency: CryptoCurrency, height: number): Promise<Block> {
+export async function getBlock(
+  context: EvmContext,
+  currency: CryptoCurrency,
+  height: number,
+): Promise<Block> {
   // Note: to use RPC calls efficiently, the strategy here is:
   //  - fetch the block + transactions in one call (using prefetchTxs=true)
   //  - fetch transaction receipts in one call using eth_getBlockReceipts
   //  - if the RPC does not support prefetchTxs or eth_getBlockReceipts, fall back to fetching the transaction+receipts
   //    one by one
   //  - in parallel, fetch internal transactions from explorer (etherscan/blockscout) and merge into block transactions
-  const nodeApi = getNodeApi(currency);
-  const config = getCoinConfig(currency.id).info;
+  const config = await context.config(currency.id);
+  const nodeApi = getNodeApi(config, currency);
   const internalTxSources = config.getBlockInternalTxsSources ?? DEFAULT_INTERNAL_TX_SOURCES;
-  const fetchInternalTxs = createInternalTransactionsFetcher(nodeApi, currency, internalTxSources);
+  const fetchInternalTxs = createInternalTransactionsFetcher(
+    config,
+    nodeApi,
+    currency,
+    internalTxSources,
+  );
   const [result, internalTxs] = await Promise.all([
     nodeApi.getBlockByHeight(currency, height, true),
     fetchInternalTxs(height),

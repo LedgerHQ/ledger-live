@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { Pressable } from "react-native";
 import { Text, Flex } from "@ledgerhq/native-ui";
+import type { AnalyticsDeliveryStatus } from "../../analytics";
 import { LoggableEventRenderable } from "./types";
 
 type Props = LoggableEventRenderable & {
@@ -8,11 +9,21 @@ type Props = LoggableEventRenderable & {
   isLast?: boolean;
 };
 
+const deliveryStatusColor: Record<AnalyticsDeliveryStatus, string> = {
+  enqueued: "black",
+  flushed: "purple",
+  skipped_no_token: "red",
+  skipped_no_client: "red",
+  skipped_no_store: "red",
+  failed: "red",
+};
+
 const Event: React.FC<Props> = ({
   eventName,
   eventProperties,
   eventPropertiesWithoutExtra,
   date,
+  deliveryStatus,
   showExtraProps = false,
   isLast,
 }) => {
@@ -40,10 +51,16 @@ const Event: React.FC<Props> = ({
         borderLeftWidth={2}
         borderLeftColor={isLast ? "black" : "transparent"}
       >
-        <Flex flexDirection="row" flexWrap="wrap">
-          <Text color="black" fontWeight="bold">
+        <Flex flexDirection="row" flexWrap="wrap" alignItems="center">
+          <Text
+            color={deliveryStatus ? deliveryStatusColor[deliveryStatus] : "black"}
+            fontWeight="bold"
+          >
             {eventName}
           </Text>
+          {deliveryStatus && deliveryStatus !== "enqueued" ? (
+            <Text color="grey"> {deliveryStatus}</Text>
+          ) : null}
           <Text color="grey"> {date?.toLocaleTimeString()}</Text>
         </Flex>
         <Text color="black">{propertiesText}</Text>

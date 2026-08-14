@@ -4,6 +4,7 @@ import {
   ContactDetailActionsMenu,
   ContactsDeleteContactDialog,
   ContactsEditSignerDialog,
+  ContactsEditSignerMismatchDialog,
   ContactsRenameContactDrawer,
 } from "@features/flow-contacts";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -18,6 +19,7 @@ export function ContactDetailEditDeleteSheets({
   renameDrawer,
   deleteDrawer,
   signerDrawer,
+  signerMismatchSheet,
 }: ContactDetailEditDeleteSheetsProps): React.JSX.Element {
   const { bottom: bottomInset } = useSafeAreaInsets();
   const { keyboardHeight } = useKeyboardVisible({
@@ -26,7 +28,11 @@ export function ContactDetailEditDeleteSheets({
   const keyboardInset = shouldUseKeyboardAvoidance(Platform.OS, Platform.Version)
     ? keyboardHeight
     : 0;
-  const { onClose: onCloseActionsMenuFromMenu, ...actionsMenuProps } = actionsMenu;
+  const {
+    onClose: onCloseActionsMenuFromMenu,
+    onHidden: onActionsMenuHidden,
+    ...actionsMenuProps
+  } = actionsMenu;
   const onCloseActionsMenu = useCallback(() => {
     onCloseActionsMenuFromMenu();
   }, [onCloseActionsMenuFromMenu]);
@@ -36,12 +42,16 @@ export function ContactDetailEditDeleteSheets({
   const onCloseSigner = useCallback(() => {
     signerDrawer.onCancel();
   }, [signerDrawer]);
+  const onCloseSignerMismatch = useCallback(() => {
+    signerMismatchSheet.onCancel();
+  }, [signerMismatchSheet]);
 
   return (
     <>
       <QueuedBottomSheet
         isRequestingToBeOpened={actionsMenu.isOpen}
         onClose={onCloseActionsMenu}
+        onModalHide={onActionsMenuHidden}
         testID="contacts-detail-actions-sheet"
         enableDynamicSizing
       >
@@ -74,6 +84,15 @@ export function ContactDetailEditDeleteSheets({
         enableDynamicSizing
       >
         <ContactsEditSignerDialog {...signerDrawer} bottomInset={bottomInset} />
+      </QueuedBottomSheet>
+      <QueuedBottomSheet
+        isRequestingToBeOpened={signerMismatchSheet.isOpen}
+        isForcingToBeOpened={signerMismatchSheet.isOpen}
+        onClose={onCloseSignerMismatch}
+        testID="contacts-edit-signer-mismatch-sheet"
+        enableDynamicSizing
+      >
+        <ContactsEditSignerMismatchDialog {...signerMismatchSheet} bottomInset={bottomInset} />
       </QueuedBottomSheet>
     </>
   );

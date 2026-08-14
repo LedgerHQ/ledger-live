@@ -7,6 +7,10 @@ export type {
   LazyOnboardingBannerContext,
   LazyOnboardingBannerDecision,
   LazyOnboardingBannerHiddenReason,
+  LazyOnboardingBannerMode,
+  LazyOnboardingBannerTapAction,
   LazyOnboardingBannerUserState,
 } from "./types";
 export { buildLazyOnboardingBannerLink } from "./utils/buildLazyOnboardingBannerLink";
+export { parseLazyOnboardingBannerMode } from "./utils/parseLazyOnboardingBannerMode";
+export { resolveLazyOnboardingBannerTapAction } from "./utils/resolveLazyOnboardingBannerTapAction";

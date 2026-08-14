@@ -1,13 +1,18 @@
+import type { Context } from "@ledgerhq/coin-module-framework/config";
 import { createApi } from ".";
-import { type CardanoConfig } from "../config";
+import { type CardanoCoinConfig, type CardanoConfig } from "../config";
 
 const config: CardanoConfig = { maxFeesWarning: 0, maxFeesError: 0 };
+const mockCtx: Context<CardanoCoinConfig> = {
+  config: async () => ({ ...config, status: { type: "active" } }),
+  logger: () => {},
+};
 
 describe("getNextSequence", () => {
   it("throws — Cardano is UTXO-based with no account sequence to advance", () => {
-    const api = createApi(config, "cardano");
+    const api = createApi("cardano");
 
-    expect(() => api.getNextSequence("address")).toThrow(
+    expect(() => api.getNextSequence(mockCtx, "address")).toThrow(
       "getNextSequence is not applicable for Cardano",
     );
   });

@@ -11,12 +11,11 @@ import type { UnsignedKaspaTransaction } from "./craftTransaction";
  * (mirrors `bridge/signOperation.ts`'s `JSON.stringify(tx.toApiJSON())` serialization).
  *
  * Kaspa requires one signature per input (each input can be backed by a different key), so
- * unlike single-witness account chains, `signature` here is a JSON-encoded array of hex
- * signatures, aligned by index with the crafted transaction's `inputs` array.
+ * unlike single-witness account chains, `signature` here holds one hex signature per input,
+ * aligned by index with the crafted transaction's `inputs` array.
  */
-export function combine(tx: string, signature: string): string {
+export function combine(tx: string, signatures: string[]): string {
   const unsigned: UnsignedKaspaTransaction = JSON.parse(tx);
-  const signatures: string[] = JSON.parse(signature);
 
   if (signatures.length !== unsigned.inputs.length) {
     throw new Error(
