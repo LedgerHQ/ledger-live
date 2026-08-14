@@ -245,15 +245,18 @@ export async function buildTransactionJob(
  * Builds a PCZT for an Ironwood send, then immediately parses it back into the
  * structured `PcztTransaction` the device signer expects.
  *
- * Note: `finalizeIronwoodTransaction` is not yet in the shipped NAPI — finalization
- * for Ironwood PCZTs is pending a future NAPI update. This job covers the build
- * path only.
+ * Finalization is not a separate Ironwood entry point: `finalizeTransaction`
+ * handles both pools once given `ironwoodSignatures` (@ledgerhq/zcash-utils
+ * >= 2.0.0), so this job covers the build path and `finalizeTransactionJob`
+ * covers the rest.
  */
 export async function buildIronwoodTransactionJob(
   args: Omit<BuildIronwoodTransactionArgs, "requestId">,
 ): Promise<BuildIronwoodTransactionResult> {
   const native = await getPcztModule();
+
   const built = await native.buildIronwoodTransaction(args);
+
   const rawPczt = native.parsePczt(built.pcztHex); // synchronous NAPI call — no await
   const pcztTransaction = adaptPcztForSigner(rawPczt);
 
@@ -282,18 +285,20 @@ export async function buildIronwoodTransactionJob(
 }
 
 /**
- * Injects device signatures into the PCZT and extracts the final signed V5
- * transaction. CPU-bound; dispatched to spawn_blocking in the Rust layer.
+ * Injects device signatures into the PCZT and extracts the final signed
+ * transaction — V5 for an Orchard/transparent send, V6 for an Ironwood
+ * (NU6.3) one. CPU-bound; dispatched to spawn_blocking in the Rust layer.
  */
 export async function finalizeTransactionJob(
   args: Omit<FinalizeTransactionArgs, "requestId">,
 ): Promise<FinalizeTransactionResult> {
   const native = await getPcztModule();
+
   return native.finalizeTransaction(args);
 }
 
 /**
- * Broadcasts a signed V5 transaction to the Zaino gRPC endpoint.
+ * Broadcasts a signed transaction (V5 or V6) to the Zaino gRPC endpoint.
  * Returns the txid (64-char hex, big-endian display order).
  */
 export async function broadcastTransactionJob(grpcUrl: string, txHex: string): Promise<string> {
