@@ -27,7 +27,10 @@ pass it yet (LIVE-34740).
 
 ## The login
 
-An XState 5 machine in [`src/state/machine.ts`](./src/state/machine.ts) owns the journey:
+An XState 5 machine owns the journey. It is three files: the states, guards and transitions in
+[`machine.ts`](./src/state/machine.ts), the asynchronous steps in
+[`actors.ts`](./src/state/actors.ts), and the context, events and input in
+[`types.ts`](./src/state/types.ts).
 
 ```text
 PKCE minted and stored → authorize initiation → OS browser → redirect → state compared
@@ -113,6 +116,7 @@ pay-card-auth/
     │   ├── __tests__/                      # Machine, store, parser and slice tests
     │   ├── internals/
     │   │   └── attemptPayload.ts           # The PKCE key, and its encode/decode
+    │   ├── actors.ts                       # The machine's asynchronous steps
     │   ├── attemptStore.native.ts          # PKCE in the keychain
     │   ├── attemptStore.web.ts             # PKCE in renderer memory
     │   ├── authorizeAttempt.ts             # Mints one CSRF state and PKCE pair
@@ -121,12 +125,12 @@ pay-card-auth/
     │   ├── crypto.native.ts                # CSPRNG and SHA-256 through expo-crypto
     │   ├── crypto.web.ts                   # CSPRNG and SHA-256 through WebCrypto
     │   ├── errors.ts                       # Error kinds, and the 401 test
-    │   ├── machine.ts                      # The login state machine
+    │   ├── machine.ts                      # States, guards and transitions
     │   ├── ports.ts                        # What the machine needs from the outside
     │   ├── selectors.ts                    # Auth selectors
     │   ├── slice.ts                        # Auth-only runtime state (`hasCard`)
     │   ├── store.ts                        # Public state subpath
-    │   └── types.ts                        # Flow types and the auth Redux state type
+    │   └── types.ts                        # Flow types, machine types, auth Redux state
     ├── utils/                              # Flow-local helpers
     ├── index.native.ts                     # Native public API
     └── index.ts                            # Default/web public API

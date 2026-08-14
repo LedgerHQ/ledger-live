@@ -1,3 +1,7 @@
+import type { PayCardSession } from "@domain/api-card-management";
+import type { PayCardLoginErrorKind } from "./errors";
+import type { CardLoginPorts } from "./ports";
+
 /**
  * One login attempt: the `state` the callback must echo back, the PKCE verifier the token exchange
  * must present, and the challenge derived from that verifier for the authorize initiation.
@@ -38,3 +42,43 @@ export type CardLoginOauthConfig = Readonly<{
 export type PayCardAuthState = Readonly<{
   hasCard: boolean;
 }>;
+
+/** What the ViewModel hands the machine when it starts. */
+export type CardLoginMachineInput = Readonly<{
+  ports: CardLoginPorts;
+  oauthConfig: CardLoginOauthConfig;
+  /** A redirect the app already held when the screen mounted, from a cold start on the deep link. */
+  callback?: PayCardAuthCallback | null;
+}>;
+
+/** The public halves of one attempt: the CSRF state, and the PKCE challenge derived from the verifier. */
+export type CardLoginInitiation = Readonly<{
+  state: string;
+  codeChallenge: string;
+}>;
+
+/**
+ * The machine's working memory. No secret is kept here as a source of truth: the PKCE verifier lives
+ * in the flow's store and the session lives in platform-card. `session` holds the freshly exchanged
+ * tokens for the one step between the exchange and the disk write, and is dropped again straight
+ * after.
+ */
+export type CardLoginContext = {
+  ports: CardLoginPorts;
+  oauthConfig: CardLoginOauthConfig;
+  callback: PayCardAuthCallback | null;
+  initiation: CardLoginInitiation | null;
+  loginUrl: string | null;
+  session: PayCardSession | null;
+  errorKind: PayCardLoginErrorKind | null;
+  /** Set when the session on disk turned out to be dead, so the wipe takes it as well. */
+  clearSession: boolean;
+  /** Set when the wipe is only hygiene and a valid session is waiting behind it. */
+  resumeAuthenticated: boolean;
+};
+
+/** Everything the outside world can tell the machine. Actor results drive the rest. */
+export type CardLoginEvent =
+  | { type: "LOGIN" }
+  | { type: "RETRY" }
+  | { type: "CALLBACK_RECEIVED"; code: string; state: string };
