@@ -52,6 +52,19 @@ function parseSip010AssetReference(assetReference: string): {
   return { contractAddress, contractName, assetName };
 }
 
+/** Every pox-5 contract-call target (the pox contract itself, a delegate's signer-manager) is a
+ * `ADDRESS.NAME` contract principal string from an external source (the node's `/v2/pox`, a
+ * caller-supplied `valAddress`, a synthesized `Stake.delegate`) -- validate the shape here once
+ * rather than letting a malformed value reach `contractPrincipalCV` with an `undefined` part and
+ * fail with a less actionable error deeper in `@stacks/transactions`. */
+function parseContractPrincipal(value: string, context: string): { address: string; name: string } {
+  const [address, name] = value.split(".");
+  if (!address || !name) {
+    throw new Error(`stacks: invalid contract principal "${value}" (${context})`);
+  }
+  return { address, name };
+}
+
 /** `useAllAmount` isn't guaranteed to be pre-resolved by the caller (CoinModuleApi is
  * general-purpose, unlike the framework's own `prepareTransaction`), so it's resolved
  * defensively here too. Fee is native STX, so only subtracted for a native sweep. */
@@ -139,14 +152,20 @@ async function buildStaking(
   }
 
   const poxInfo = await fetchPoxInfo();
-  const [poxAddress, poxName] = poxInfo.contract_id.split(".");
+  const { address: poxAddress, name: poxName } = parseContractPrincipal(
+    poxInfo.contract_id,
+    "pox contract_id from /v2/pox",
+  );
 
   if (intent.mode === "delegate") {
     const { numCycles, startBurnHt, signerCalldata } = intent.data;
     if (numCycles === undefined || startBurnHt === undefined) {
       throw new Error("stacks: staking requires data.numCycles and data.startBurnHt");
     }
-    const [signerAddress, signerName] = intent.valAddress.split(".");
+    const { address: signerAddress, name: signerName } = parseContractPrincipal(
+      intent.valAddress,
+      "intent.valAddress",
+    );
 
     return makeUnsignedContractCall({
       contractAddress: poxAddress,
@@ -175,7 +194,10 @@ async function buildStaking(
     if (!signerManager) {
       throw new Error("stacks: no active stake found to undelegate");
     }
-    const [signerAddress, signerName] = signerManager.split(".");
+    const { address: signerAddress, name: signerName } = parseContractPrincipal(
+      signerManager,
+      "Stake.delegate from getStakes",
+    );
 
     return makeUnsignedContractCall({
       contractAddress: poxAddress,
