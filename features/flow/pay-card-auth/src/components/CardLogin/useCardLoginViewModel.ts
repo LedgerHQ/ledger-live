@@ -20,14 +20,14 @@ export function useCardLoginViewModel({
       try {
         const { state, codeChallenge } = await createAuthorizeAttempt();
 
-        const { url, redirectUri } = await initiateAuthorize({
+        const { url } = await initiateAuthorize({
           clientId: oauthConfig.clientId,
           redirectUri: oauthConfig.redirectUri,
           state,
           codeChallenge,
         }).unwrap();
 
-        await openHostedLogin(url, redirectUri);
+        await openHostedLogin(url, oauthConfig.redirectUri);
       } catch (error) {
         setErrorMessage(
           error instanceof Error && error.message ? error.message : "Unable to start login",

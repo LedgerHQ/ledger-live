@@ -6,10 +6,6 @@ export const PayCardAuthorizeInitiateResponseSchema = z.object({
   url: z.string().url().startsWith("https://"),
 });
 
-export const PayCardAuthorizeInitiateSchema = PayCardAuthorizeInitiateResponseSchema.extend({
-  redirectUri: z.string().min(1),
-});
-
 /** Both grants — `authorization_code` and `refresh_token` — answer with this shape. */
 export const PayCardSessionResponseSchema = z.object({
   access_token: z.string().min(1),

@@ -20,8 +20,8 @@ The native opener forwards the opaque login URL unchanged. Callback exchange, OA
 and session persistence are outside this package's current scope.
 
 `CardLogin` takes the OAuth client id and redirect URI as an `oauthConfig` prop: both are the app's to
-know, and the provider matches the redirect URI verbatim. The authorization initiation echoes it back
-with the hosted URL, so the native opener can end the secure browser session on it.
+know, and the provider matches the redirect URI verbatim. That same value goes to the authorization
+initiation and to the secure browser, which needs it to know which callback ends the session.
 
 App composition and DevTools consume shared Pay Card entity state through
 `@domain/entity-pay-card`. Auth-only runtime state (`hasCard`) lives in this flow's

@@ -1,28 +1,4 @@
-import {
-  transformPayCardAuthorizeInitiateResponse,
-  transformPayCardSessionResponse,
-} from "./transforms";
-
-describe("transformPayCardAuthorizeInitiateResponse", () => {
-  it("carries the redirect URI of the request over to the answer", () => {
-    expect(
-      transformPayCardAuthorizeInitiateResponse(
-        { token: "jwt", url: "https://card.test/login" },
-        undefined,
-        {
-          clientId: "client-id",
-          redirectUri: "ledgerlive://paytab",
-          state: "state-value",
-          codeChallenge: "challenge-value",
-        },
-      ),
-    ).toEqual({
-      token: "jwt",
-      url: "https://card.test/login",
-      redirectUri: "ledgerlive://paytab",
-    });
-  });
-});
+import { transformPayCardSessionResponse } from "./transforms";
 
 describe("transformPayCardSessionResponse", () => {
   it("maps the snake_case token response onto the canonical session", () => {

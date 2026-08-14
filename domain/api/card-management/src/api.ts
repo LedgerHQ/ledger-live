@@ -2,16 +2,12 @@ import { cardApi } from "@shared/api-services";
 import { CARD_MANAGEMENT_TAGS } from "./constants";
 import {
   PayCardAuthorizeInitiateResponseSchema,
-  PayCardAuthorizeInitiateSchema,
   PayCardLogoutResponseSchema,
   PayCardSessionResponseSchema,
   PayCardSessionSchema,
   PayCardUserResponseSchema,
 } from "./schema";
-import {
-  transformPayCardAuthorizeInitiateResponse,
-  transformPayCardSessionResponse,
-} from "./transforms";
+import { transformPayCardSessionResponse } from "./transforms";
 import type {
   PayCardAuthorizationCodeRequest,
   PayCardAuthorizeInitiate,
@@ -42,9 +38,7 @@ export const cardManagementApi = cardApi
             mode: "api",
           },
         }),
-        rawResponseSchema: PayCardAuthorizeInitiateResponseSchema,
-        transformResponse: transformPayCardAuthorizeInitiateResponse,
-        responseSchema: PayCardAuthorizeInitiateSchema,
+        responseSchema: PayCardAuthorizeInitiateResponseSchema,
       }),
 
       exchangeAuthorizationCode: build.mutation<PayCardSession, PayCardAuthorizationCodeRequest>({

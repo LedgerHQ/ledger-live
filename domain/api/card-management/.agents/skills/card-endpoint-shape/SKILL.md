@@ -11,15 +11,15 @@ description: |
 Every endpoint is a declaration. Four keys, always in this order:
 
 ```typescript
-initiateAuthorize: build.mutation<PayCardAuthorizeInitiate, PayCardAuthorizeInitiateRequest>({
-  query: ({ clientId, redirectUri, state, codeChallenge }) => ({
-    url: "/v1/auth/oauth/authorize/initiate",
-    method: "GET",
-    params: { client_id: clientId, redirect_uri: redirectUri, state, code_challenge: codeChallenge },
+refreshSession: build.mutation<PayCardSession, PayCardRefreshSessionRequest>({
+  query: ({ refreshToken }) => ({
+    url: "/v1/auth/oauth/token",
+    method: "POST",
+    body: { grant_type: "refresh_token", refresh_token: refreshToken },
   }),
-  rawResponseSchema: PayCardAuthorizeInitiateResponseSchema, // the wire shape
-  transformResponse: transformPayCardAuthorizeInitiateResponse, // wire -> canonical
-  responseSchema: PayCardAuthorizeInitiateSchema, // what callers receive
+  rawResponseSchema: PayCardSessionResponseSchema, // the wire shape
+  transformResponse: transformPayCardSessionResponse, // wire -> canonical
+  responseSchema: PayCardSessionSchema, // what callers receive
 });
 ```
 
@@ -31,7 +31,10 @@ initiateAuthorize: build.mutation<PayCardAuthorizeInitiate, PayCardAuthorizeInit
 | `responseSchema` | What the caller gets | `schema.ts` |
 
 Drop the keys you do not need. An endpoint whose wire shape is already canonical declares
-`responseSchema` alone.
+`responseSchema` alone — `initiateAuthorize`, `logout` and `getUser` all do.
+
+**Return the wire contract, nothing more.** A field the backend never sent does not belong on the
+answer. If a caller needs one of its own request values afterwards, it already has it.
 
 ## Never use `queryFn`
 
@@ -55,20 +58,11 @@ neighbours.
   from `cardApiExtra` in [`@shared/api-services`](../../../../../../shared/api-services/README.md). Never
   restate it in an endpoint.
 - **Everything else is a request argument.** The OAuth client id and redirect URI are the app's to
-  know, so they arrive on the `oauth` prop and travel down as arguments. Reaching for `queryFn` to
-  read them out of `cardApiExtra` is the trap this rule exists to close.
+  know, so they arrive on the `oauthConfig` prop and travel down as arguments. Reaching for `queryFn`
+  to read them out of `cardApiExtra` is the trap this rule exists to close.
 
-Need a request value on the answer? `transformResponse` receives the argument as its third parameter:
-
-```typescript
-export function transformPayCardAuthorizeInitiateResponse(
-  response: PayCardAuthorizeInitiateResponse,
-  _meta: unknown,
-  { redirectUri }: PayCardAuthorizeInitiateRequest,
-): PayCardAuthorizeInitiate {
-  return { ...response, redirectUri };
-}
-```
+`transformResponse` does receive the request as its third argument, after the base query's `meta`.
+Use it to map, never to staple a request value back onto the answer.
 
 ## Rules
 

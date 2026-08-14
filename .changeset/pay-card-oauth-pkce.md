@@ -30,8 +30,8 @@ is validated at the boundary and mapped in one place. `cardApiExtra` keeps only 
 needs: the base URL, the Baanx client key for the `x-client-key` header, and the session accessors.
 
 The OAuth client id and redirect URI are the app's, so they reach `CardLogin` as an `oauthConfig`
-prop and travel on to the initiation, which echoes the redirect URI back with the hosted URL. Baanx
-uses the same value for the client key and the OAuth `client_id`, and the provider matches
+prop: one value goes to the initiation and to the secure browser, and the token exchange will send it
+again. Baanx uses the same value for the client key and the OAuth `client_id`, and the provider matches
 `ledgerlive://paytab` verbatim on the token exchange. Each platform container opens the returned URL
 itself, and no host-provided opener is needed. The Baanx secret key stays server-side and is never
 sent from the apps.

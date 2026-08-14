@@ -106,11 +106,7 @@ describe("cardManagementApi requests", () => {
       });
       expect(request(fetchSpy).headers.get("x-client-key")).toBe("client-key");
       expect(request(fetchSpy).headers.get("authorization")).toBeNull();
-      expect(result.data).toEqual({
-        token: "jwt",
-        url: "https://card.test/login",
-        redirectUri: "ledgerlive://paytab",
-      });
+      expect(result.data).toEqual({ token: "jwt", url: "https://card.test/login" });
     });
   });
 

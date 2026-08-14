@@ -23,10 +23,9 @@ const attempt = {
 };
 
 const oauthConfig = { clientId: "client-id", redirectUri: "ledgerlive://paytab" };
-const { redirectUri } = oauthConfig;
 
 function authorizeResponse(url: string) {
-  return { token: "jwt", url, redirectUri };
+  return { token: "jwt", url };
 }
 
 describe("useCardLoginViewModel", () => {
@@ -58,7 +57,7 @@ describe("useCardLoginViewModel", () => {
         state: attempt.state,
         codeChallenge: attempt.codeChallenge,
       });
-      expect(openHostedLogin).toHaveBeenCalledWith(url, redirectUri);
+      expect(openHostedLogin).toHaveBeenCalledWith(url, oauthConfig.redirectUri);
     });
   });
 

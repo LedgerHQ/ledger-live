@@ -1,6 +1,5 @@
 import { z } from "zod";
 import {
-  PayCardAuthorizeInitiateSchema,
   PayCardAuthorizeInitiateResponseSchema,
   PayCardLogoutResponseSchema,
   PayCardSessionResponseSchema,
@@ -8,11 +7,7 @@ import {
   PayCardUserResponseSchema,
 } from "./schema";
 
-export type PayCardAuthorizeInitiateResponse = z.infer<
-  typeof PayCardAuthorizeInitiateResponseSchema
->;
-
-export type PayCardAuthorizeInitiate = z.infer<typeof PayCardAuthorizeInitiateSchema>;
+export type PayCardAuthorizeInitiate = z.infer<typeof PayCardAuthorizeInitiateResponseSchema>;
 
 /** Wire shape of a token response, before it is mapped onto {@link PayCardSession}. */
 export type PayCardSessionResponse = z.infer<typeof PayCardSessionResponseSchema>;
@@ -25,7 +20,7 @@ export type PayCardUser = z.infer<typeof PayCardUserResponseSchema>;
 
 export type PayCardAuthorizeInitiateRequest = {
   readonly clientId: string;
-  /** Whitelisted with the provider, and echoed back on the answer for the exchange to reuse. */
+  /** Whitelisted with the provider. The token exchange has to send the same value. */
   readonly redirectUri: string;
   /** CSRF token echoed back on the redirect. The backend requires at least 8 characters. */
   readonly state: string;
