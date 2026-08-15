@@ -1,6 +1,5 @@
-# Builds a `clarinet-cli` binary with the fixes in `bollard-fix.patch` and
-# `bitcoin-node-patience.patch` applied on top of a pinned `stx-labs/clarinet` commit -- see the
-# package README's "Known limitations" for all three:
+# Builds a `clarinet-cli` binary with the fixes below applied on top of a pinned
+# `stx-labs/clarinet` commit -- see the package README's "Known limitations" for full detail:
 # 1. The published `ghcr.io/stx-labs/clarinet` image ships `bollard` 0.17, which mis-parses some
 #    Docker Engine API responses as empty JSON and breaks the postgres container boot (reproduces
 #    on native arm64 and, being an HTTP JSON-parsing bug unrelated to CPU architecture, is expected
@@ -13,6 +12,10 @@
 #    treats that as fatal, tearing the whole devnet down -- too tight on a CI runner cold-pulling
 #    the bitcoind image, verified reproducing there (never reproduces locally, where the image is
 #    already cached).
+# 4. The bitcoin-node container's `HostConfig.auto_remove` is hardcoded `true`, so a container that
+#    crashes or never becomes ready is deleted by the Docker daemon the instant it exits -- before
+#    `docker logs`/`docker inspect` can ever see it. Disabled for diagnosis (temporary: see
+#    `bitcoin-node-no-autoremove.patch` and the README).
 # Built locally/in CI rather than depending on an upstream release picking up any of these.
 FROM rust:1-bookworm AS builder
 
@@ -32,6 +35,9 @@ RUN cd /src && git apply /tmp/bollard-fix.patch
 
 COPY bitcoin-node-patience.patch /tmp/bitcoin-node-patience.patch
 RUN cd /src && git apply /tmp/bitcoin-node-patience.patch
+
+COPY bitcoin-node-no-autoremove.patch /tmp/bitcoin-node-no-autoremove.patch
+RUN cd /src && git apply /tmp/bitcoin-node-no-autoremove.patch
 
 # Nightly is required (not just installed defensively): a transitive `stacks-core`/`stacks-common`
 # git dependency at this commit uses unstable features (`debug_closure_helpers`, `slice_as_array`)

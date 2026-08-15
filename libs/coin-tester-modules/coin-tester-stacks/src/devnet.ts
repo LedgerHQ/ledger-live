@@ -88,7 +88,11 @@ function ensureClarinetBinary(): string {
         throw new Error("coin-tester-stacks: failed to clone stx-labs/clarinet");
       }
       spawnSync("git", ["checkout", CLARINET_COMMIT], { cwd: sourceDir, stdio: "inherit" });
-      for (const patch of ["bollard-fix.patch", "bitcoin-node-patience.patch"]) {
+      for (const patch of [
+        "bollard-fix.patch",
+        "bitcoin-node-patience.patch",
+        "bitcoin-node-no-autoremove.patch",
+      ]) {
         const apply = spawnSync("git", ["apply", path.join(DOCKER_DIR, patch)], {
           cwd: sourceDir,
           stdio: "inherit",

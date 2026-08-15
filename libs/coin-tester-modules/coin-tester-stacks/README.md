@@ -29,17 +29,19 @@ that produced it.)
 
 ## Known limitations (discovered while implementing)
 
-Three real, upstream `clarinet` bugs were found and fixed via a pinned, patched build (see
+Several real, upstream `clarinet` bugs were found and fixed via a pinned, patched build (see
 `docker/clarinet/`) — no manual local setup needed, `spawnDevnet()` (`src/devnet.ts`) builds and
 caches the patched binary automatically on first use (via Docker on Linux, extracting the built
 binary — no host Rust toolchain needed there; via a local `cargo +nightly` build elsewhere, e.g.
-macOS, since a container-built Linux binary can't run natively there). A fourth `clarinet` bug
+macOS, since a container-built Linux binary can't run natively there). One further `clarinet` bug
 (sustained block mining sometimes stalling, see below) could not be source-patched the same way —
 its root cause inside `clarinet`'s own Rust orchestrator was not found despite substantial
 investigation — so it is **worked around** instead, from this package's own code
-(`scripts/bitcoin-miner.js`), not silently left broken.
+(`scripts/bitcoin-miner.js`), not silently left broken. A CI-only devnet-boot failure is still
+**under active investigation** (see below) — not yet resolved, being tracked transparently rather
+than papered over with another blind timeout adjustment.
 
-### Devnet infrastructure — four real, fixed `clarinet` bugs
+### Devnet infrastructure — real, fixed `clarinet` bugs
 
 The published `ghcr.io/stx-labs/clarinet` image is `linux/amd64`-only and, under QEMU emulation on
 Apple Silicon, its own `bollard` Docker-API client fails on certain calls (`JsonSerdeError { err:
@@ -67,16 +69,34 @@ and mines correctly.
   resolved to a deployment batch the devnet doesn't reliably reach within a short scenario run.
 - **`clarinet` gives up waiting on the `bitcoind` container after ~15s** (`MAX_ERRORS: u32 = 30`,
   polled every 500ms in `orchestrator.rs`) and treats that as fatal, tearing the whole devnet
-  network down — never reproduces locally (the `bitcoind` image is already cached there), but
-  reproduces reliably in CI, where a cold image pull alone can exceed 15s. Bumped to `600` (~5min)
-  in the patch; this constant is local to the bitcoin-node-boot function, so the fix doesn't loosen
-  any other component's failure detection (postgres, stacks-node, ...).
+  network down. Bumped to `600` (~5min) in the patch as a legitimate safety margin regardless (a
+  cold image pull alone can exceed 15s), but **this alone does not fix CI** — see the next bullet:
+  the CI failure is not a patience problem, the container never comes up at all within any budget.
+- **[Under active investigation, CI-only] `bitcoin-node`'s container is created and started
+  successfully (clarinet's own log reaches `"Configuring bitcoin-node"`, proving
+  `docker start` returned success) but is gone from `docker ps -a` within seconds — before it ever
+  answers RPC.** Root-caused so far (via a `DEBUG=1` + `docker events`-style polling step in CI,
+  see `.github/workflows/test-coin-tester.yml`'s temporary diagnostics): the container's
+  `HostConfig.auto_remove` is hardcoded `true` upstream, so if `bitcoind`'s own process inside the
+  container crashes or exits for any reason, Docker deletes the container **immediately** — before
+  `docker logs`/`docker inspect` can capture why. This is why the "gave up after ~15s" and
+  "gave up after ~5min" failures look identical: both are downstream symptoms of the same
+  never-listening port, not the actual cause. Two theories were checked against clarinet's own
+  source and **ruled out**: (a) the deprecated `clarinet integrate` command using a different/buggy
+  code path than `devnet start` — `cli.rs` shows `Integrate` is a thin wrapper that calls the
+  identical `devnet_start()` function, so switching commands changes nothing; (b) a race with the
+  (skipped) snapshot-copy step — this package passes `--from-genesis`, which `cli.rs` maps directly
+  to `no_snapshot: true`, so `copy_snapshot_to_container` never runs at all. `auto_remove` is
+  disabled via `bitcoin-node-no-autoremove.patch` so the next CI run captures `bitcoind`'s actual
+  crash log instead of a wiped container — not yet a fix for the crash itself, a diagnostic step to
+  find one. Never reproduces locally; the CI runner (`public-ledgerhq-shared-small`) is a real,
+  non-containerized Azure VM with only 2 CPUs / 7.75GiB RAM, confirmed via the same diagnostics.
 
-Three of these four are Rust source fixes, captured as two patches,
-`docker/clarinet/bollard-fix.patch` (bollard + rpc_port) and
-`docker/clarinet/bitcoin-node-patience.patch`, applied on top of pinned commit
+Three of the fixes above are Rust source fixes, captured as patches
+(`docker/clarinet/bollard-fix.patch`, `docker/clarinet/bitcoin-node-patience.patch`,
+`docker/clarinet/bitcoin-node-no-autoremove.patch`), applied on top of pinned commit
 `4220f34773a20960ce955a6b76590c97751e8a60` — see `docker/clarinet/Dockerfile` for the exact build.
-The fourth (epoch pinning) is a `Clarinet.toml` config choice, not a source patch. Running
+Epoch pinning is a `Clarinet.toml` config choice, not a source patch. Running
 `clarinet` itself was deliberately kept
 as a **native host process**, never inside a container: an earlier version of this fix ran
 `clarinet integrate` inside a Docker image, which works for the `bollard`/`rpc_port` fixes but hits
