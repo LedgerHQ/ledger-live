@@ -1,5 +1,5 @@
 import { getEnv } from "@shared/env";
-import { toA4Network, resolveA4BaseUrl, normalizeAccountKey } from "./utils";
+import { toA4Network, resolveA4BaseUrl, normalizeAccountKey, checksumAccountKey } from "./utils";
 
 jest.mock("@shared/env");
 
@@ -39,6 +39,36 @@ describe("normalizeAccountKey", () => {
     ["tron", "TJmV3QHMiDHpFSs9v5BKxJaVxpAV3q6QnF"],
   ])("keeps %s address verbatim", (_, input) => {
     expect(normalizeAccountKey(input)).toEqual(input);
+  });
+});
+
+describe("checksumAccountKey", () => {
+  it("returns EIP-55 checksummed address for valid 40-hex EVM address", () => {
+    expect(checksumAccountKey("0x742d35cc6634c0532925a3b844bc454e4438f44e")).toEqual(
+      "0x742d35Cc6634C0532925a3b844Bc454e4438f44e",
+    );
+  });
+
+  it("is idempotent — already-checksummed address returns unchanged", () => {
+    const checksummed = "0x742d35Cc6634C0532925a3b844Bc454e4438f44e";
+    expect(checksumAccountKey(checksummed)).toEqual(checksummed);
+  });
+
+  it.each([
+    [
+      "bitcoin xpub",
+      "xpub6CUGRUonZSQ4TWtTMmzXdrXDtypWKiKrhko4egpiMZbpiaQL2jkwSB1icqYh2cfDfVxdx4df189oLKnC5fSwqPfgyP3hooxujYzAu3fDVmz",
+    ],
+    ["ripple", "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh"],
+    ["solana", "EkmJ7PEGdPhUH1MSHcjLnz5MN8aJMGrxvfDz5kJKsmYT"],
+    ["tron", "TJmV3QHMiDHpFSs9v5BKxJaVxpAV3q6QnF"],
+  ])("passes through non-EVM key verbatim: %s", (_, input) => {
+    expect(checksumAccountKey(input)).toEqual(input);
+  });
+
+  it("returns original value as fallback for malformed hex (wrong length)", () => {
+    const bad = "0xdeadbeef";
+    expect(checksumAccountKey(bad)).toEqual(bad);
   });
 });
 

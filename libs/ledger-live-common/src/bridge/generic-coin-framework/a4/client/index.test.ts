@@ -271,7 +271,7 @@ describe("A4Client", () => {
 
       expect(mockNetwork).toHaveBeenCalledWith(
         expect.objectContaining({
-          params: expect.objectContaining({ blocks: '[0,"latest"]', size: 50 }),
+          params: expect.objectContaining({ blocks: "[0,latest]", size: 50 }),
         }),
       );
     });
