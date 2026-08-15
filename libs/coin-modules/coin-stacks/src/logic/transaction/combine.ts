@@ -1,5 +1,5 @@
 import { deserializeTransaction } from "@stacks/transactions";
-import { applySignatureToTransaction } from "../../bridge/utils/transactions";
+import { applySignatureToTransaction } from "../../common-logic";
 
 /** Deserializes the crafted (unsigned) transaction, attaches the device signature, and
  * re-serializes to the hex string `broadcast` expects. */

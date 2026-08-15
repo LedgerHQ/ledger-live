@@ -6,7 +6,7 @@ import type {
 } from "@ledgerhq/coin-module-framework/api/index";
 import { cvToJSON, deserializeCV } from "@stacks/transactions";
 import BigNumber from "bignumber.js";
-import { hexMemoToString, bufferMemoToString } from "../../bridge/utils/memoUtils";
+import { hexMemoToString, bufferMemoToString } from "../../common-logic";
 import { MAX_STACKS_PAGE_LIMIT, SEND_MANY_MEMO_CONTRACT_ID } from "../../constants";
 import { fetchAllTransactions } from "../../network/api";
 import type { DecodedSendManyFunctionArgsCV, TransactionResponse } from "../../types/api";

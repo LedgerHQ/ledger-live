@@ -4,10 +4,7 @@ import type {
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/index";
 import { makeUnsignedContractCall, Pc, transactionToHex } from "@stacks/transactions";
-import {
-  createStxTransferTransaction,
-  createTokenTransferTransaction,
-} from "../../bridge/utils/transactions";
+import { createStxTransferTransaction, createTokenTransferTransaction } from "../../common-logic";
 import { STACKS_DUMMY_ADDRESS } from "../../constants";
 import { fetchPoxInfo } from "../../network/pox";
 import type { StacksTxData } from "../../types";
@@ -20,7 +17,11 @@ import { estimateFees } from "./estimateFees";
 jest.mock("../account/getBalance");
 jest.mock("../account/getNextSequence");
 jest.mock("./estimateFees");
-jest.mock("../../bridge/utils/transactions");
+jest.mock("../../common-logic", () => ({
+  ...jest.requireActual("../../common-logic"),
+  createStxTransferTransaction: jest.fn(),
+  createTokenTransferTransaction: jest.fn(),
+}));
 jest.mock("../../network/pox");
 jest.mock("../getStakes");
 jest.mock("@stacks/transactions", () => {

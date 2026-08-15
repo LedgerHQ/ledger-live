@@ -1,11 +1,11 @@
 import { deserializeTransaction } from "@stacks/transactions";
-import { applySignatureToTransaction } from "../../bridge/utils/transactions";
+import { applySignatureToTransaction } from "../../common-logic";
 import { combine } from "./combine";
 
 jest.mock("@stacks/transactions", () => ({
   deserializeTransaction: jest.fn(),
 }));
-jest.mock("../../bridge/utils/transactions", () => ({
+jest.mock("../../common-logic", () => ({
   applySignatureToTransaction: jest.fn(),
 }));
 

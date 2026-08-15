@@ -12,8 +12,8 @@ import {
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
   RecipientRequired,
-} from "@ledgerhq/ledger-wallet-framework/errors";
-import { validateAddress as isValidStacksAddress } from "../bridge/utils/addresses";
+} from "@ledgerhq/coin-module-framework/errors";
+import { validateAddress as isValidStacksAddress } from "../common-logic";
 import type { StacksTxData } from "../types";
 
 /** pox-5's `MAX_NUM_CYCLES` (`pox-5.clar:78`). Client-side check only -- the contract's own
