@@ -249,7 +249,11 @@ export async function spawnDevnet(): Promise<void> {
     console.error(chalk.red("coin-tester-stacks: failed to spawn clarinet"), err);
   });
 
-  await waitUntilReady(5 * 60 * 1000);
+  // CI's shared runner is markedly slower/more resource-constrained than a local machine at
+  // booting bitcoind + stacks-node + stacks-signer + the bundled stacks-blockchain-api/Postgres
+  // pair -- verified failing at 5 min there twice in a row while consistently ready well within
+  // that budget locally. 15 min matches waitForContractDeployment's own budget below.
+  await waitUntilReady(15 * 60 * 1000);
   startBitcoinMiningWorkaround();
   console.log(chalk.bgBlueBright(" -  STACKS DEVNET READY ✅  - "));
 }
