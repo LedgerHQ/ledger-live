@@ -38,10 +38,14 @@ macOS, since a container-built Linux binary can't run natively there). One furth
 its root cause inside `clarinet`'s own Rust orchestrator was not found despite substantial
 investigation — so it is **worked around** instead, from this package's own code
 (`scripts/bitcoin-miner.js`), not silently left broken. A CI-only devnet-boot failure (`bitcoind`
-crashing on a host/container UID mismatch, see below) was root-caused and fixed via a one-line
-`settings/Devnet.toml` config change — pending confirmation on the next CI run before calling it
-closed, consistent with two earlier timeout-based attempts that looked plausible but didn't
-actually fix it.
+crashing on a host/container UID mismatch, see below) was root-caused and fixed by adjusting the
+bind-mounted data directory's permissions — pending confirmation on the next CI run before calling
+it closed, consistent with two earlier timeout-based attempts that looked plausible but didn't
+actually fix it (and one same-day config-only attempt — disabling the bind mount entirely — that
+fixed the permission error but exposed a second, previously-masked bug: bitcoind's container CMD
+launches immediately on `docker start`, before clarinet's own post-start `mkdir` exec call runs, so
+without the bind mount's directory already existing at that point, bitcoind fails immediately with
+"data directory does not exist" instead).
 
 ### Devnet infrastructure — real, fixed `clarinet` bugs
 
@@ -88,24 +92,33 @@ and mines correctly.
   the same evidence — before the CI workflow's separate diagnostic step ever runs), the real error
   surfaced: `` Error: filesystem error: cannot create directories: Permission denied
   [/home/bitcoin/.bitcoin/regtest/wallets] ``. Root cause: `bind_containers_volumes` (`clarinet`'s
-  own `network_manifest.rs`, defaults to `true`) bind-mounts each container's data directory from a
-  host path that `clarinet` itself creates — owned by whatever user runs `clarinet` (the CI
-  runner's own account), not by the container's `user: "1000"`. bitcoind then fails writing a
-  subdirectory under it. Never reproduces locally because Docker Desktop for Mac's bind-mount layer
-  doesn't enforce the same host/container UID match a real Linux Docker host does. Fixed with a
-  one-line `bind_containers_volumes = false` in `settings/Devnet.toml` — this package spawns a
-  fresh devnet per scenario and tears it down after, so there's no need for chain data to survive
-  on the host, and disabling the bind sidesteps the UID mismatch entirely rather than reconciling
-  it. Two earlier theories were checked against clarinet's own source and **ruled out** along the
-  way: (a) the deprecated `clarinet integrate` command using a different/buggy code path than
-  `devnet start` — `cli.rs` shows `Integrate` is a thin wrapper calling the identical
+  own `network_manifest.rs`, defaults to `true`, left at default) bind-mounts each container's data
+  directory from a host path that `clarinet` itself creates — owned by whatever user runs
+  `clarinet` (the CI runner's own account), not by the container's `user: "1000"`. bitcoind then
+  fails writing a subdirectory under it. Never reproduces locally because Docker Desktop for Mac's
+  bind-mount layer doesn't enforce the same host/container UID match a real Linux Docker host does.
+  Fixed via `bitcoin-node-datadir-permissions.patch` — `chmod 777` on the host directory right after
+  `clarinet` creates it, before the container ever starts. (An earlier same-day attempt disabled
+  the bind mount entirely instead of fixing its permissions — `bind_containers_volumes = false` —
+  which does remove the UID mismatch, but exposes a *second*, previously-masked bug: without the
+  mount pre-populating `/home/bitcoin/.bitcoin` as part of container start, bitcoind's own CMD
+  process — launched immediately on `docker start`, before clarinet's separate post-start `mkdir`
+  *exec* call can run — finds the directory missing and exits immediately with `Specified data
+  directory "/home/bitcoin/.bitcoin" does not exist`. `docker exec` requires an already-running
+  container, so that ordering isn't a bug to fix, it's a hard Docker API constraint — the bind
+  mount was accidentally the only thing making the directory exist in time. Chmod-ing the
+  bind-mounted directory instead keeps that existing synchronization and only fixes the
+  permission.) Two earlier theories were checked against clarinet's own source and **ruled out**
+  along the way: (a) the deprecated `clarinet integrate` command using a different/buggy code path
+  than `devnet start` — `cli.rs` shows `Integrate` is a thin wrapper calling the identical
   `devnet_start()` function; (b) a race with the (skipped) snapshot-copy step — this package passes
   `--from-genesis`, which `cli.rs` maps directly to `no_snapshot: true`, so
   `copy_snapshot_to_container` never runs at all.
 
-Three of the fixes above are Rust source fixes, captured as patches
+Four of the fixes above are Rust source fixes, captured as patches
 (`docker/clarinet/bollard-fix.patch`, `docker/clarinet/bitcoin-node-patience.patch`,
-`docker/clarinet/bitcoin-node-no-autoremove.patch`), applied on top of pinned commit
+`docker/clarinet/bitcoin-node-no-autoremove.patch`,
+`docker/clarinet/bitcoin-node-datadir-permissions.patch`), applied on top of pinned commit
 `4220f34773a20960ce955a6b76590c97751e8a60` — see `docker/clarinet/Dockerfile` for the exact build.
 Epoch pinning is a `Clarinet.toml` config choice, not a source patch. Running
 `clarinet` itself was deliberately kept

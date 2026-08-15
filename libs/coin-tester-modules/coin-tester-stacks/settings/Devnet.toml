@@ -49,16 +49,6 @@ disable_stacks_explorer = true
 disable_bitcoin_explorer = true
 disable_stacks_api = false
 disable_postgres = false
-# Default (true) bind-mounts each container's data dir from a clarinet-created host directory --
-# on a real Linux Docker host that directory is owned by whatever user runs `clarinet` (the CI
-# runner's own user), not by the container's own `user: "1000"`. bitcoind then crashes on boot:
-# `filesystem error: cannot create directories: Permission denied [/home/bitcoin/.bitcoin/regtest/
-# wallets]` -- root-caused via CI-only diagnostics (never reproduces locally: Docker Desktop for
-# Mac's bind-mount layer doesn't enforce the same host/container UID match). This package spawns a
-# fresh devnet per scenario and tears it down after, so there's no need for chain data to survive
-# on the host between runs -- disabling the bind entirely sidesteps the UID mismatch rather than
-# reconciling it.
-bind_containers_volumes = false
 # Left at Clarinet's own default (matches `@stacks/network`'s StacksDevnet/StacksMocknet default
 # URL, http://localhost:3999 — see `src/devnet.ts`).
 # stacks_api_port = 3999

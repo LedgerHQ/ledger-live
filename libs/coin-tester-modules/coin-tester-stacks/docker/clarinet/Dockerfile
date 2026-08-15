@@ -14,8 +14,12 @@
 #    already cached).
 # 4. The bitcoin-node container's `HostConfig.auto_remove` is hardcoded `true`, so a container that
 #    crashes or never becomes ready is deleted by the Docker daemon the instant it exits -- before
-#    `docker logs`/`docker inspect` can ever see it. Disabled for diagnosis (temporary: see
-#    `bitcoin-node-no-autoremove.patch` and the README).
+#    `docker logs`/`docker inspect` can ever see it. Disabled permanently -- see
+#    `bitcoin-node-no-autoremove.patch` and the README.
+# 5. The bind-mounted bitcoin-node data directory is created on the host without adjusting its
+#    permissions, so on a real Linux Docker host (unlike Docker Desktop for Mac) the container's
+#    `user: "1000"` cannot write into it -- bitcoind crashes on boot. Fixed by
+#    `bitcoin-node-datadir-permissions.patch` (chmod 777 right after creation).
 # Built locally/in CI rather than depending on an upstream release picking up any of these.
 FROM rust:1-bookworm AS builder
 
@@ -38,6 +42,9 @@ RUN cd /src && git apply /tmp/bitcoin-node-patience.patch
 
 COPY bitcoin-node-no-autoremove.patch /tmp/bitcoin-node-no-autoremove.patch
 RUN cd /src && git apply /tmp/bitcoin-node-no-autoremove.patch
+
+COPY bitcoin-node-datadir-permissions.patch /tmp/bitcoin-node-datadir-permissions.patch
+RUN cd /src && git apply /tmp/bitcoin-node-datadir-permissions.patch
 
 # Nightly is required (not just installed defensively): a transitive `stacks-core`/`stacks-common`
 # git dependency at this commit uses unstable features (`debug_closure_helpers`, `slice_as_array`)

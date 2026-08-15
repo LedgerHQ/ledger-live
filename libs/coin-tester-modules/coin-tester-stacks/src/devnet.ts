@@ -92,6 +92,7 @@ function ensureClarinetBinary(): string {
         "bollard-fix.patch",
         "bitcoin-node-patience.patch",
         "bitcoin-node-no-autoremove.patch",
+        "bitcoin-node-datadir-permissions.patch",
       ]) {
         const apply = spawnSync("git", ["apply", path.join(DOCKER_DIR, patch)], {
           cwd: sourceDir,
