@@ -141,5 +141,10 @@ jobs:
 
       - name: Run Coin Tester
         uses: LedgerHQ/ledger-live/tools/actions/composites/run-coin-tester@develop
+        env:
+          # Temporary diagnostic: surfaces the clarinet/docker devnet boot output on CI for the
+          # stacks coin-tester, which is otherwise silent (stdio: "ignore" unless DEBUG is set) --
+          # investigating a "devnet never became ready" timeout on this runner. Remove once diagnosed.
+          DEBUG: ${{ matrix.chain == 'stacks' && '1' || '' }}
         with:
           chain: ${{ matrix.chain }}
