@@ -94,7 +94,7 @@ const ReceiveModal = (props: GlobalModalData["MODAL_RECEIVE"]) => {
   // kept stable: a new identity on every render re-triggers the address verification
   const handleChangeAddressVerified = useCallback(
     (isAddressVerified?: boolean | null, err?: Error | null) => {
-      if (err && err.name !== "UserRefusedAddress") {
+      if (err && err.name !== "UserRefusedAddress" && err.name !== "UserRefusedOnDevice") {
         logger.critical(err);
       }
       setIsAddressVerified(isAddressVerified);

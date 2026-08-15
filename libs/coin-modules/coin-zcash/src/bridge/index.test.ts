@@ -19,7 +19,7 @@ const coinConfig = () => ({ info: { status: { type: "active" as const } } });
 
 const account = {
   currency,
-  freshAddressPath: "m/32'/133'/0'",
+  freshAddressPath: "44'/133'/0'/0/4",
 } as unknown as ZcashAccount;
 
 function makeSignerContext(getFullViewingKey: jest.Mock): SignerContext {
@@ -33,8 +33,8 @@ describe("createBridges", () => {
 
     await expect(
       accountBridge.getFullViewingKey(account, { deviceId: "device-1" }),
-    ).resolves.toEqual({ viewKey: "uview1test", path: "m/32'/133'/0'" });
-    expect(getFullViewingKey).toHaveBeenCalledWith("m/32'/133'/0'");
+    ).resolves.toEqual({ viewKey: "uview1test", path: "44'/133'/0'/0/4" });
+    expect(getFullViewingKey).toHaveBeenCalledWith("44'/133'/0'/0/4");
   });
 
   it("honours an explicit path", async () => {
@@ -73,7 +73,7 @@ describe("createBridges", () => {
     const result = await accountBridge.getShieldedAddress(account, { deviceId: "device-1" });
 
     expect(result).toEqual({ address: "u1testunified" });
-    expect(getShieldedAddress).toHaveBeenCalledWith("m/32'/133'/0'", undefined);
+    expect(getShieldedAddress).toHaveBeenCalledWith("44'/133'/0'/0/4", undefined);
   });
 
   it("getShieldedAddress passes display=true when requested", async () => {
@@ -85,6 +85,6 @@ describe("createBridges", () => {
 
     await accountBridge.getShieldedAddress(account, { deviceId: "device-1", display: true });
 
-    expect(getShieldedAddress).toHaveBeenCalledWith("m/32'/133'/0'", true);
+    expect(getShieldedAddress).toHaveBeenCalledWith("44'/133'/0'/0/4", true);
   });
 });

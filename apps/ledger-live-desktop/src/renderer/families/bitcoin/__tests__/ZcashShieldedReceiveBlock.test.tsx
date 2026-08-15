@@ -1,5 +1,13 @@
 import React from "react";
-import { act, render, screen, waitFor, withFlagOverrides } from "tests/testSetup";
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+  withFlagOverrides,
+} from "tests/testSetup";
 import { createFixtureAccount } from "@ledgerhq/coin-bitcoin/fixtures/common.fixtures";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
@@ -20,6 +28,7 @@ const mockDevice: Device = {
 };
 
 const SHIELDED = "u1testshieldedaddressfortesting000xyz";
+const SHIELDED_TESTNET = "utest1shieldedaddressfortesting000xyz";
 const UFVK = "uview1testufvkkey";
 
 const baseAccount = {
@@ -45,7 +54,7 @@ const renderBlock = (overrides: Partial<ZcashShieldedReceiveBlockProps> = {}) =>
         device: mockDevice,
         isAddressVerified: null,
         onChangeAddressVerified: jest.fn(),
-        closeModal: jest.fn(),
+        transitionTo: jest.fn(),
         ...overrides,
       }}
     />,
@@ -65,50 +74,122 @@ describe("ZcashShieldedReceiveBlock — rendering", () => {
     expect(screen.getByTestId("receive-private-address-block")).toBeInTheDocument();
   });
 
-  it("renders the activation CTA when ufvk is absent", () => {
-    renderBlock({ account: buildAccount({}) as never });
-    expect(screen.getByText("Enable private balance")).toBeInTheDocument();
+  it("renders the private address block for a testnet shielded address (utest1…)", () => {
+    renderBlock({
+      account: buildAccount({ shieldedAddress: SHIELDED_TESTNET, ufvk: UFVK }) as never,
+    });
+    const block = screen.getByTestId("receive-private-address-block");
+    expect(block).toBeInTheDocument();
+    expect(block).toHaveTextContent(SHIELDED_TESTNET);
   });
 
-  it("renders nothing when ufvk is present but shieldedAddress is null", () => {
-    renderBlock({ account: buildAccount({ ufvk: UFVK, shieldedAddress: null }) as never });
+  it.each([
+    ["no UFVK", buildAccount({})],
+    ["UFVK present but shielded address not yet derived", buildAccount({ ufvk: UFVK })],
+  ])("renders a warning alert (no CTA) when %s", (_label, account) => {
+    renderBlock({ account: account as never });
     expect(screen.queryByTestId("receive-private-address-block")).not.toBeInTheDocument();
+    expect(
+      screen.getByText("Enable your private balance to receive to a private address."),
+    ).toBeInTheDocument();
+    // No CTA — 0x40 transparent verification runs in the parent
     expect(screen.queryByText("Enable private balance")).not.toBeInTheDocument();
+  });
+});
+
+describe("ZcashShieldedReceiveBlock — QR modal security", () => {
+  // The LLD Modal portal target: document.getElementById("modals")
+  beforeEach(() => {
+    const container = document.createElement("div");
+    container.id = "modals";
+    document.body.appendChild(container);
+  });
+  afterEach(() => {
+    document.getElementById("modals")?.remove();
+  });
+
+  it("private QR modal shows the shielded address — same address as the private block", async () => {
+    renderBlock();
+
+    // The private block shows the shielded address
+    const privateBlock = screen.getByTestId("receive-private-address-block");
+    expect(privateBlock).toHaveTextContent(SHIELDED);
+    // No QR modal yet
+    expect(screen.queryByTestId("private-qr-modal-address")).not.toBeInTheDocument();
+
+    // Open the private QR modal via the Show QR Code link inside the block
+    fireEvent.click(within(privateBlock).getByText("Show QR Code"));
+
+    // The modal's address container must appear and show the shielded address
+    const modalAddress = await screen.findByTestId("private-qr-modal-address");
+    expect(modalAddress).toHaveTextContent(SHIELDED);
   });
 });
 
 describe("ZcashShieldedReceiveBlock — verification", () => {
   it("calls onChangeAddressVerified(true, null) when device returns matching address", async () => {
     const onChangeAddressVerified = jest.fn();
-    mockBridge(jest.fn().mockResolvedValue({ address: SHIELDED }));
+    const getShieldedAddressMock = jest.fn().mockResolvedValue({ address: SHIELDED });
+    mockBridge(getShieldedAddressMock);
 
     renderBlock({ onChangeAddressVerified });
 
     await waitFor(() => expect(onChangeAddressVerified).toHaveBeenCalledWith(true, null));
-  });
-
-  it("calls onChangeAddressVerified(false, Error) when device returns a different address", async () => {
-    const onChangeAddressVerified = jest.fn();
-    mockBridge(jest.fn().mockResolvedValue({ address: "u1wrongaddress" }));
-
-    renderBlock({ onChangeAddressVerified });
-
-    await waitFor(() =>
-      expect(onChangeAddressVerified).toHaveBeenCalledWith(false, expect.any(Error)),
+    // Exactly one exchange with the device, and display:true is passed (0x51 covers both addresses).
+    expect(getShieldedAddressMock).toHaveBeenCalledTimes(1);
+    expect(getShieldedAddressMock).toHaveBeenCalledWith(
+      expect.objectContaining({ currency: { id: "zcash", family: "bitcoin" } }),
+      { deviceId: "mock-device-id", display: true },
     );
   });
 
-  it("calls onChangeAddressVerified with a sanitized error when getShieldedAddress rejects", async () => {
+  it("advances to the receive step once the device confirmed the address", async () => {
+    const transitionTo = jest.fn();
+    mockBridge(jest.fn().mockResolvedValue({ address: SHIELDED }));
+
+    renderBlock({ transitionTo });
+
+    await waitFor(() => expect(transitionTo).toHaveBeenCalledWith("receive"));
+  });
+
+  it("calls onChangeAddressVerified(false, WrongDeviceForAccount) when device returns a different address", async () => {
     const onChangeAddressVerified = jest.fn();
-    const err = new Error("device transport failure — contains sensitive payload");
+    const transitionTo = jest.fn();
+    mockBridge(jest.fn().mockResolvedValue({ address: "u1wrongaddress" }));
+
+    renderBlock({ onChangeAddressVerified, transitionTo });
+
+    await waitFor(() =>
+      expect(onChangeAddressVerified).toHaveBeenCalledWith(
+        false,
+        expect.objectContaining({ name: "WrongDeviceForAccount" }),
+      ),
+    );
+    expect(transitionTo).not.toHaveBeenCalled();
+  });
+
+  it("passes the error through unchanged when getShieldedAddress rejects", async () => {
+    const onChangeAddressVerified = jest.fn();
+    const err = new Error("device transport failure");
     mockBridge(jest.fn().mockRejectedValue(err));
+
+    renderBlock({ onChangeAddressVerified });
+
+    await waitFor(() => expect(onChangeAddressVerified).toHaveBeenCalledWith(false, err));
+  });
+
+  it("calls onChangeAddressVerified(false, error) when bridge does not implement getShieldedAddress", async () => {
+    const onChangeAddressVerified = jest.fn();
+    mockedUseAccountBridge.mockReturnValue({} as unknown as ReturnType<typeof useAccountBridge>);
 
     renderBlock({ onChangeAddressVerified });
 
     await waitFor(() =>
       expect(onChangeAddressVerified).toHaveBeenCalledWith(
         false,
-        expect.objectContaining({ message: "Verification failed", name: err.name }),
+        expect.objectContaining({
+          message: "ZcashAccountBridge: getShieldedAddress not available",
+        }),
       ),
     );
   });
@@ -120,16 +201,5 @@ describe("ZcashShieldedReceiveBlock — verification", () => {
 
     await act(async () => {});
     expect(onChangeAddressVerified).not.toHaveBeenCalled();
-  });
-});
-
-describe("ZcashShieldedReceiveBlock — CTA", () => {
-  it("calls closeModal and dispatches openModal when activation button is clicked", () => {
-    const closeModal = jest.fn();
-    renderBlock({ account: buildAccount({}) as never, closeModal });
-
-    screen.getByText("Enable private balance").click();
-
-    expect(closeModal).toHaveBeenCalledTimes(1);
   });
 });

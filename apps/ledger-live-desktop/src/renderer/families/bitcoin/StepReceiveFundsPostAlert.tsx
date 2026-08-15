@@ -14,8 +14,14 @@ const AlertBoxContainer = styled.div`
 `;
 
 const StepReceiveFundsPostAlert = (props: StepProps) => {
-  const { account, parentAccount, device, isAddressVerified, onChangeAddressVerified, closeModal } =
-    props;
+  const {
+    account,
+    parentAccount,
+    device,
+    isAddressVerified,
+    onChangeAddressVerified,
+    transitionTo,
+  } = props;
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   invariant(account && mainAccount, "No account given");
 
@@ -30,7 +36,7 @@ const StepReceiveFundsPostAlert = (props: StepProps) => {
           device={device}
           isAddressVerified={isAddressVerified}
           onChangeAddressVerified={onChangeAddressVerified}
-          closeModal={closeModal}
+          transitionTo={transitionTo}
         />
       ) : null}
       {mainAccount.currency.id === "dash" ? (

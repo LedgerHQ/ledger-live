@@ -9029,7 +9029,10 @@
       },
       "receive": {
         "verifyAddresses": "Verify both your transparent and private addresses on your Ledger",
-        "privateFor": "Private address for <1><0>{{name}}</0></1>"
+        "privateFor": "Private address for <0>{{name}}</0>",
+        "noUfvk": {
+          "description": "Enable your private balance to receive to a private address."
+        }
       },
       "flows": {
         "export": {
@@ -9068,12 +9071,6 @@
             }
           }
         }
-      }
-    },
-    "receive": {
-      "noUfvk": {
-        "description": "Enable your private balance to receive to a private address.",
-        "cta": "Enable private balance"
       }
     },
     "operationDetails": {

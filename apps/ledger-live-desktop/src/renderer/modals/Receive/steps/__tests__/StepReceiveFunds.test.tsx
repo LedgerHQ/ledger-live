@@ -61,50 +61,48 @@ beforeEach(() => {
 });
 
 describe("StepReceiveFunds — device animation block", () => {
-  it("shows the Zcash device animation when shielded address is set", () => {
-    render(
-      <StepReceiveFunds
-        {...baseProps({
-          account: makeAccount("zcash", { shieldedAddress: SHIELDED, ufvk: "uview1test" }) as never,
-          currencyName: "zcash",
-        })}
-      />,
-      { initialState: withFlagOverrides({ zcashShielded: { enabled: true } }) },
-    );
-    expect(screen.getByTestId("zcash-receive-device-animation")).toBeInTheDocument();
-    expect(screen.queryByTestId("receive-device-animation")).not.toBeInTheDocument();
-  });
-
-  it("shows no device animation for Zcash when in the activation CTA state (no shielded address)", () => {
-    render(
-      <StepReceiveFunds
-        {...baseProps({ account: makeAccount("zcash") as never, currencyName: "zcash" })}
-      />,
-      { initialState: withFlagOverrides({ zcashShielded: { enabled: true } }) },
-    );
-    expect(screen.queryByTestId("zcash-receive-device-animation")).not.toBeInTheDocument();
-    expect(screen.queryByTestId("receive-device-animation")).not.toBeInTheDocument();
-  });
-
-  it("shows the standard device animation for non-Zcash accounts", () => {
-    render(<StepReceiveFunds {...baseProps()} />, {
-      initialState: withFlagOverrides({ zcashShielded: { enabled: true } }),
-    });
+  it("shows the standard device animation when the family provides no animation slot", () => {
+    render(<StepReceiveFunds {...baseProps()} />);
     expect(screen.getByTestId("receive-device-animation")).toBeInTheDocument();
-    expect(screen.queryByTestId("zcash-receive-device-animation")).not.toBeInTheDocument();
+  });
+
+  it("delegates to the family animation slot when one is provided", () => {
+    useLLDCoinFamily.mockReturnValue({
+      useCustomConfirmAddress: true,
+      StepReceiveFundsDeviceAnimation: () => <div data-testid="family-device-animation" />,
+    });
+
+    render(<StepReceiveFunds {...baseProps()} />);
+
+    expect(screen.getByTestId("family-device-animation")).toBeInTheDocument();
+    expect(screen.queryByTestId("receive-device-animation")).not.toBeInTheDocument();
+  });
+
+  it("gives the animation slot the standard animation as fallback", () => {
+    useLLDCoinFamily.mockReturnValue({
+      useCustomConfirmAddress: true,
+      StepReceiveFundsDeviceAnimation: ({ fallback }: { fallback: React.ReactNode }) => (
+        <>{fallback}</>
+      ),
+    });
+
+    render(<StepReceiveFunds {...baseProps()} />);
+
+    expect(screen.getByTestId("receive-device-animation")).toBeInTheDocument();
   });
 });
 
-describe("StepReceiveFunds — Zcash shielded effects", () => {
-  it("suppresses the standard 0x40 confirmAddress call for Zcash even without a shielded address", async () => {
-    // Allow the real confirmAddress effect to run (useCustomConfirmAddress: false)
-    useLLDCoinFamily.mockReturnValue({});
+describe("StepReceiveFunds — custom confirm address", () => {
+  it("suppresses the standard confirmation when the family function returns true", async () => {
+    const useCustomConfirmAddress = jest.fn(() => true);
+    useLLDCoinFamily.mockReturnValue({ useCustomConfirmAddress });
     const onChangeAddressVerified = jest.fn();
+    const account = makeAccount("zcash", { shieldedAddress: SHIELDED });
 
     render(
       <StepReceiveFunds
         {...baseProps({
-          account: makeAccount("zcash") as never, // no shieldedAddress — CTA state
+          account: account as never,
           currencyName: "zcash",
           onChangeAddressVerified,
         })}
@@ -112,26 +110,57 @@ describe("StepReceiveFunds — Zcash shielded effects", () => {
       { initialState: withFlagOverrides({ zcashShielded: { enabled: true } }) },
     );
 
+    expect(useCustomConfirmAddress).toHaveBeenCalledWith(
+      expect.objectContaining({ privateInfo: { shieldedAddress: SHIELDED } }),
+      expect.objectContaining({ zcashShielded: expect.objectContaining({ enabled: true }) }),
+    );
     await act(async () => {});
-    // If confirmAddress() had fired and failed, it would have called onChangeAddressVerified(false, err).
     expect(onChangeAddressVerified).not.toHaveBeenCalled();
   });
 
-  it("calls transitionTo('receive') when isAddressVerified becomes true after shielded verification", async () => {
-    const transitionTo = jest.fn();
+  it("runs the standard confirmation when the family function returns false", async () => {
+    useLLDCoinFamily.mockReturnValue({ useCustomConfirmAddress: () => false });
+    const onChangeAddressVerified = jest.fn();
 
     render(
       <StepReceiveFunds
         {...baseProps({
-          account: makeAccount("zcash", { shieldedAddress: SHIELDED, ufvk: "uview1test" }) as never,
+          account: makeAccount("zcash") as never,
           currencyName: "zcash",
-          isAddressVerified: true,
-          transitionTo,
+          onChangeAddressVerified,
         })}
+      />,
+    );
+
+    // confirmAddress() fires; it resolves or rejects in the test env, but it
+    // must NOT be suppressed — onChangeAddressVerified is called either way.
+    await waitFor(() => expect(onChangeAddressVerified).toHaveBeenCalled());
+  });
+});
+
+describe("StepReceiveFunds — two-block address isolation", () => {
+  it("public block shows freshAddress and private block shows shieldedAddress, addresses differ", () => {
+    // Primary funds-loss guard: crossing QR/copy targets would send funds to the wrong address.
+    const PrivateMock = () => <div data-testid="receive-private-address-block">{SHIELDED}</div>;
+    useLLDCoinFamily.mockReturnValue({
+      useCustomConfirmAddress: true,
+      StepReceiveFundsPostAlert: PrivateMock,
+    });
+
+    const account = makeAccount("zcash", { shieldedAddress: SHIELDED, ufvk: "uview1test" });
+
+    render(
+      <StepReceiveFunds
+        {...baseProps({ account: account as never, currencyName: "zcash", device: mockDevice })}
       />,
       { initialState: withFlagOverrides({ zcashShielded: { enabled: true } }) },
     );
 
-    await waitFor(() => expect(transitionTo).toHaveBeenCalledWith("receive"));
+    const publicBlock = screen.getByTestId("receive-public-address-block");
+    const privateBlock = screen.getByTestId("receive-private-address-block");
+
+    expect(publicBlock).toHaveTextContent(account.freshAddress);
+    expect(privateBlock).toHaveTextContent(SHIELDED);
+    expect(account.freshAddress).not.toBe(SHIELDED);
   });
 });

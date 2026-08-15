@@ -12,7 +12,6 @@ export type StepProps = {
   stepId: StepId;
   device: Device | undefined | null;
   account: AccountLike | undefined | null;
-  source?: "receive";
   error: Error | undefined;
   transitionTo: (a: string) => void;
   openModal: OpenModal;

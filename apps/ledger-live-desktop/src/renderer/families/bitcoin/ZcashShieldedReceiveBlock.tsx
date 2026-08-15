@@ -3,7 +3,6 @@ import { Trans } from "react-i18next";
 import styled from "styled-components";
 import Alert from "~/renderer/components/Alert";
 import Box from "~/renderer/components/Box";
-import Button from "~/renderer/components/Button";
 import Ellipsis from "~/renderer/components/Ellipsis";
 import LinkShowQRCode from "~/renderer/components/LinkShowQRCode";
 import Modal from "~/renderer/components/Modal";
@@ -11,8 +10,7 @@ import ModalBody from "~/renderer/components/Modal/ModalBody";
 import QRCode from "~/renderer/components/QRCode";
 import ReadOnlyAddressField from "~/renderer/components/ReadOnlyAddressField";
 import Text from "~/renderer/components/Text";
-import { openModal } from "~/renderer/actions/modals";
-import { useDispatch } from "LLD/hooks/redux";
+import { WrongDeviceForAccount } from "@ledgerhq/ledger-wallet-framework/errors";
 import { useMaybeAccountName } from "~/renderer/reducers/wallet";
 import { getDefaultAccountName } from "@domain/entity-account-name";
 import type { ZcashAccount } from "@ledgerhq/live-common/families/bitcoin/types";
@@ -40,6 +38,7 @@ type ZcashShieldedVerifyProps = {
   device: Device | undefined | null;
   isAddressVerified: boolean | undefined | null;
   onChangeAddressVerified: (b?: boolean | null, a?: Error | null) => void;
+  transitionTo: (id: string) => void;
 };
 
 function ZcashShieldedVerify({
@@ -48,6 +47,7 @@ function ZcashShieldedVerify({
   device,
   isAddressVerified,
   onChangeAddressVerified,
+  transitionTo,
 }: ZcashShieldedVerifyProps) {
   const bridge = useAccountBridge(account) as unknown as ZcashAccountBridge;
   // Ref so background sync producing new account object references does not
@@ -63,12 +63,22 @@ function ZcashShieldedVerify({
     /* istanbul ignore next */
     if (getEnv("MOCK")) {
       const t = setTimeout(() => {
-        if (!cancelled) onChangeAddressVerified(true);
+        if (cancelled) return;
+        onChangeAddressVerified(true);
+        transitionTo("receive");
       }, 1000);
       return () => {
         cancelled = true;
         clearTimeout(t);
       };
+    }
+
+    if (typeof bridge.getShieldedAddress !== "function") {
+      onChangeAddressVerified(
+        false,
+        new Error("ZcashAccountBridge: getShieldedAddress not available"),
+      );
+      return;
     }
 
     // A single 0x51 call covers both addresses: the device derives the
@@ -81,23 +91,20 @@ function ZcashShieldedVerify({
       .then(({ address }) => {
         if (cancelled) return;
         const match = address === shieldedAddress;
-        onChangeAddressVerified(match, match ? null : new Error("Address mismatch"));
+        onChangeAddressVerified(match, match ? null : new WrongDeviceForAccount());
+        // Mirrors the standard confirmation path, which advances to the success
+        // step as soon as the device has confirmed the address.
+        if (match) transitionTo("receive");
       })
       .catch(err => {
         if (cancelled) return;
-        // Strip the message before propagating: device/IPC errors can echo the
-        // UFVK back in their message string, and onChangeAddressVerified feeds
-        // into logger.critical in ReceiveModal for non-user-refusal errors.
-        const safeErr = Object.assign(new Error("Verification failed"), {
-          name: err instanceof Error ? err.name : "Error",
-        });
-        onChangeAddressVerified(false, safeErr);
+        onChangeAddressVerified(false, err instanceof Error ? err : new Error(String(err)));
       });
 
     return () => {
       cancelled = true;
     };
-  }, [bridge, shieldedAddress, device, isAddressVerified, onChangeAddressVerified]);
+  }, [bridge, shieldedAddress, device, isAddressVerified, onChangeAddressVerified, transitionTo]);
 
   return null;
 }
@@ -107,7 +114,7 @@ export type ZcashShieldedReceiveBlockProps = {
   device: Device | undefined | null;
   isAddressVerified: boolean | undefined | null;
   onChangeAddressVerified: (b?: boolean | null, a?: Error | null) => void;
-  closeModal: () => void;
+  transitionTo: (id: string) => void;
 };
 
 export function ZcashShieldedReceiveBlock({
@@ -115,9 +122,8 @@ export function ZcashShieldedReceiveBlock({
   device,
   isAddressVerified,
   onChangeAddressVerified,
-  closeModal,
+  transitionTo,
 }: Readonly<ZcashShieldedReceiveBlockProps>) {
-  const dispatch = useDispatch();
   const maybeAccountName = useMaybeAccountName(account);
   const name = maybeAccountName || getDefaultAccountName(account);
 
@@ -127,7 +133,6 @@ export function ZcashShieldedReceiveBlock({
 
   const privateInfo = account.privateInfo as ZcashPrivateInfo | undefined;
   const shieldedAddress = privateInfo?.shieldedAddress ?? null;
-  const ufvk = privateInfo?.ufvk ?? null;
 
   if (shieldedAddress) {
     return (
@@ -138,15 +143,17 @@ export function ZcashShieldedReceiveBlock({
           device={device}
           isAddressVerified={isAddressVerified}
           onChangeAddressVerified={onChangeAddressVerified}
+          transitionTo={transitionTo}
         />
         <AlertBoxContainer data-testid="receive-private-address-block">
           <Box horizontal alignItems="center" flow={2} mb={4}>
             <Text ff="Inter|SemiBold" color="neutral.c100" fontSize={4} style={{ flex: 1 }}>
               <Ellipsis>
-                <Trans i18nKey="zcash.shielded.receive.privateFor">
-                  {"Private address for "}
-                  <strong>{name}</strong>
-                </Trans>
+                <Trans
+                  i18nKey="zcash.shielded.receive.privateFor"
+                  values={{ name }}
+                  components={[<strong key="account-name" />]}
+                />
               </Ellipsis>
             </Text>
             <LinkShowQRCode onClick={showPrivateQR} address={shieldedAddress} />
@@ -160,7 +167,7 @@ export function ZcashShieldedReceiveBlock({
                   <QRCodeWrapper>
                     <QRCode size={160} data={shieldedAddress} />
                   </QRCodeWrapper>
-                  <Box mt={6}>
+                  <Box mt={6} data-testid="private-qr-modal-address">
                     <ReadOnlyAddressField address={shieldedAddress} />
                   </Box>
                 </Box>
@@ -172,31 +179,12 @@ export function ZcashShieldedReceiveBlock({
     );
   }
 
-  if (!ufvk) {
-    return (
-      <AlertBoxContainer>
-        <Alert type="secondary">
-          <Trans i18nKey="zcash.receive.noUfvk.description" />
-        </Alert>
-        <Box mt={3}>
-          <Button
-            primary
-            onClick={() => {
-              closeModal();
-              dispatch(
-                openModal("MODAL_ZCASH_EXPORT_KEY", {
-                  account,
-                  source: "receive",
-                }),
-              );
-            }}
-          >
-            <Trans i18nKey="zcash.receive.noUfvk.cta" />
-          </Button>
-        </Box>
-      </AlertBoxContainer>
-    );
-  }
-
-  return null;
+  // No shielded address yet — transparent 0x40 verification runs in the parent.
+  return (
+    <AlertBoxContainer>
+      <Alert type="secondary">
+        <Trans i18nKey="zcash.shielded.receive.noUfvk.description" />
+      </Alert>
+    </AlertBoxContainer>
+  );
 }

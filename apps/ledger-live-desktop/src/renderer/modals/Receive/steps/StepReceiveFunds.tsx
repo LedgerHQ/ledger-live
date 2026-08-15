@@ -30,7 +30,7 @@ import ModalBody from "~/renderer/components/Modal/ModalBody";
 import QRCode from "~/renderer/components/QRCode";
 import { getEnv } from "@shared/env";
 import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
-import { FeatureToggle, useFeature } from "@features/platform-feature-flags";
+import { FeatureToggle, useFeature, useFeatureFlags } from "@features/platform-feature-flags";
 import { LOCAL_STORAGE_KEY_PREFIX } from "./StepReceiveStakingFlow";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 
@@ -79,7 +79,7 @@ const Receive1ShareAddress = ({
   const shouldRenderMemoTagInfo = currency.family && MEMO_TAG_COINS.includes(currency.family);
 
   return (
-    <Box data-testid="receive-public-address-block">
+    <Box data-testid="receive-public-address-block" style={{ display: "contents" }}>
       <Box horizontal alignItems="center" flow={2} mb={4}>
         <Text
           style={{
@@ -165,20 +165,6 @@ const Receive2Device = ({ name, device }: { name: string; device: Device }) => {
   );
 };
 
-const ZcashReceive2Device = ({ device }: { device: Device }) => {
-  const type = useTheme().theme;
-  return (
-    <>
-      <Box horizontal alignItems="center" flow={2} data-testid="zcash-receive-device-animation">
-        <Text style={{ flexShrink: "unset" }} ff="Inter|SemiBold" color="neutral.c100" fontSize={4}>
-          <Trans i18nKey="zcash.shielded.receive.verifyAddresses" />
-        </Text>
-      </Box>
-      {renderVerifyUnwrapped({ modelId: device.modelId, type })}
-    </>
-  );
-};
-
 const StepReceiveFunds = (props: StepProps) => {
   const {
     isAddressVerified,
@@ -201,6 +187,7 @@ const StepReceiveFunds = (props: StepProps) => {
   const specific = useLLDCoinFamily(
     account ? getMainAccount(account, parentAccount)?.currency.family : undefined,
   );
+  const featureFlags = useFeatureFlags();
 
   const receiveStakingFlowConfig = useFeature("receiveStakingFlowConfigDesktop");
   const stakePrograms = useVersionedStakePrograms();
@@ -329,49 +316,35 @@ const StepReceiveFunds = (props: StepProps) => {
   // custom family UI for StepReceiveFunds
   const CustomStepReceiveFunds = specific?.StepReceiveFunds;
 
-  const zcashShieldedFeature = useFeature("zcashShielded");
-  const isZcashShielded =
-    mainAccount?.currency.id === "zcash" && zcashShieldedFeature?.enabled === true;
-  const zcashShieldedAddress = isZcashShielded
-    ? ((mainAccount as { privateInfo?: { shieldedAddress?: string | null } }).privateInfo
-        ?.shieldedAddress ?? null)
-    : null;
+  // Evaluated during render, so it must stay hook-free: the resolved family
+  // changes when the user switches account.
+  const customConfirmAddress = specific?.useCustomConfirmAddress;
+  const usesCustomConfirm =
+    typeof customConfirmAddress === "function"
+      ? customConfirmAddress(mainAccount, featureFlags)
+      : (customConfirmAddress ?? false);
 
-  // Families that own their confirm-address lifecycle opt out of the shared auto-trigger.
-  // Zcash with the shielded feature on never uses 0x40: verification is handled by
-  // ZcashShieldedVerify (0x51) when a shieldedAddress exists, or skipped entirely
-  // when showing the "Enable private balance" activation CTA.
   useEffect(() => {
-    if (specific?.useCustomConfirmAddress || isZcashShielded) return;
+    if (usesCustomConfirm) return;
     if (isAddressVerified === null) {
       confirmAddress();
     }
-  }, [specific?.useCustomConfirmAddress, isZcashShielded, isAddressVerified, confirmAddress]);
-
-  // After successful shielded verification, advance to the "receive" success
-  // step — mirrors what confirmAddress() does for the standard 0x40 path.
-  useEffect(() => {
-    if (zcashShieldedAddress !== null && isAddressVerified === true) {
-      transitionTo("receive");
-    }
-  }, [zcashShieldedAddress, isAddressVerified, transitionTo]);
+  }, [usesCustomConfirm, isAddressVerified, confirmAddress]);
 
   if (CustomStepReceiveFunds) {
     return <CustomStepReceiveFunds {...props} />;
   }
 
-  const deviceAnimationBlock = isZcashShielded ? (
-    zcashShieldedAddress !== null ? (
-      <>
-        <Separator />
-        <ZcashReceive2Device device={device!} />
-      </>
-    ) : null
-  ) : (
-    // "Enable private balance" CTA state — no device animation
+  const DeviceAnimationSlot = specific?.StepReceiveFundsDeviceAnimation;
+  const standardDeviceAnimation = <Receive2Device device={device!} name={name} />;
+  const deviceAnimationBlock = (
     <>
       <Separator />
-      <Receive2Device device={device!} name={name} />
+      {DeviceAnimationSlot ? (
+        <DeviceAnimationSlot {...props} fallback={standardDeviceAnimation} />
+      ) : (
+        standardDeviceAnimation
+      )}
     </>
   );
 

@@ -21,7 +21,6 @@ import { ZcashSyncState } from "@ledgerhq/coin-zcash/network/types";
 
 export type Data = {
   account: BitcoinAccount;
-  source?: "receive";
 };
 
 type OwnProps = {
@@ -106,7 +105,7 @@ const Body = ({
   handleSyncFromZero,
   handleEnableShieldedBalance,
 }: Props) => {
-  const { account, source } = params;
+  const { account } = params;
 
   const handleStepChange = useCallback(
     (s: StepperProps) => onStepIdChanged(s.id),
@@ -148,7 +147,6 @@ const Body = ({
     handleBirthdayChange,
     handleSyncFromZero,
     handleEnableShieldedBalance,
-    source,
   };
 
   return (
