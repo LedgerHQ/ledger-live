@@ -1,11 +1,12 @@
-import React, { SyntheticEvent, useCallback, useEffect, useRef, useState } from "react";
+import React, { SyntheticEvent, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { ImageBase64Data, ImageDimensions } from "./types";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import { Button, Flex, IconsLegacy } from "@ledgerhq/react-ui";
 import Cropper, { Area, CropperProps } from "react-easy-crop";
 import { createCanvas, getRadianAngle, rotateSize } from "./imageUtils";
 import { ImageCropError } from "@ledgerhq/live-common/customImage/errors";
-import { useTrack } from "~/renderer/analytics/segment";
+import { track } from "~/renderer/analytics/segment";
+import { analyticsDrawerContext } from "~/renderer/drawers/Provider";
 import { useTranslation } from "react-i18next";
 
 export type CropResult = ImageDimensions & ImageBase64Data;
@@ -141,7 +142,7 @@ const ImageCropper: React.FC<Props> = props => {
     children,
   } = props;
 
-  const track = useTrack();
+  const { analyticsDrawerName } = useContext(analyticsDrawerContext);
 
   const [crop, setCrop] = useState<CropState>({ x: 0, y: 0 });
   const [completeCropPixel, setCompleteCropPixel] = useState<Crop>();
@@ -189,11 +190,14 @@ const ImageCropper: React.FC<Props> = props => {
   }, [debouncedCompleteCropPixel, targetDimensions, onResult, setLoading]);
 
   const rotateCounterClockwise: () => void = useCallback(() => {
-    track("button_clicked2", { button: "Rotate" });
+    track("button_clicked2", {
+      ...(analyticsDrawerName ? { drawer: analyticsDrawerName } : {}),
+      button: "Rotate",
+    });
     setLoading(true);
     /** the increments are of 90° so 360°/4 */
     setRotationIncrements((rotationIncrements - 1) % 4);
-  }, [track, setLoading, rotationIncrements]);
+  }, [analyticsDrawerName, setLoading, rotationIncrements]);
 
   const handleCropChange = useCallback(
     (crop: CropState) => {

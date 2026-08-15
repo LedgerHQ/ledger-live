@@ -1,13 +1,9 @@
 import { ethers } from "ethers";
 import { MemoNotSupported } from "@ledgerhq/coin-module-framework/api/index";
 import { TransactionIntent, BufferTxData } from "@ledgerhq/coin-module-framework/api/types";
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { getStakingABI } from "./abis";
 import { buildStakingTransactionParams } from "./transactionData";
 import { STAKING_CONTRACTS } from "./contracts";
-
-const asCurrency = (id: string): CryptoCurrency =>
-  ({ id, family: "evm", ethereumLikeInfo: { chainId: 1 } }) as CryptoCurrency;
 
 const delegateIntent = (
   fields: Partial<Record<string, unknown>>,
@@ -31,7 +27,7 @@ describe("buildStakingTransactionParams", () => {
       valAddress: "0xDisplayAddressIgnoredByEncoder",
     });
 
-    const { to, data, value } = buildStakingTransactionParams(asCurrency("monad"), intent);
+    const { to, data, value } = buildStakingTransactionParams("monad", intent);
 
     const iface = new ethers.Interface(getStakingABI("monad") as ethers.InterfaceAbi);
     expect("0x" + data.toString("hex")).toEqual(iface.encodeFunctionData("delegate", [42n]));
@@ -47,7 +43,7 @@ describe("buildStakingTransactionParams", () => {
       valAddress: "0xDisplayAddressIgnoredByEncoder",
     });
 
-    const { to, data, value } = buildStakingTransactionParams(asCurrency("monad"), intent);
+    const { to, data, value } = buildStakingTransactionParams("monad", intent);
 
     const iface = new ethers.Interface(getStakingABI("monad") as ethers.InterfaceAbi);
     expect("0x" + data.toString("hex")).toEqual(iface.encodeFunctionData("compound", [42n]));
@@ -57,7 +53,7 @@ describe("buildStakingTransactionParams", () => {
 
   it("throws when a Monad delegate intent has no valId", () => {
     expect(() => {
-      buildStakingTransactionParams(asCurrency("monad"), delegateIntent({}));
+      buildStakingTransactionParams("monad", delegateIntent({}));
     }).toThrow("monad staking requires valId");
   });
 
@@ -69,7 +65,7 @@ describe("buildStakingTransactionParams", () => {
       valAddress: "0xDisplayAddressIgnoredByEncoder",
     });
 
-    const { to, data, value } = buildStakingTransactionParams(asCurrency("monad"), intent);
+    const { to, data, value } = buildStakingTransactionParams("monad", intent);
 
     const iface = new ethers.Interface(getStakingABI("monad") as ethers.InterfaceAbi);
     expect("0x" + data.toString("hex")).toEqual(iface.encodeFunctionData("withdraw", [42n, 7n]));
@@ -79,10 +75,7 @@ describe("buildStakingTransactionParams", () => {
 
   it("throws when a Monad withdraw intent has no withdrawId", () => {
     expect(() => {
-      buildStakingTransactionParams(
-        asCurrency("monad"),
-        delegateIntent({ mode: "withdraw", valId: "42" }),
-      );
+      buildStakingTransactionParams("monad", delegateIntent({ mode: "withdraw", valId: "42" }));
     }).toThrow("monad withdraw requires withdrawId");
   });
 
@@ -90,7 +83,7 @@ describe("buildStakingTransactionParams", () => {
     const valAddress = "seivaloper1y82m5y3wevjneamzg0pmx87dzanyxzht0kepvn";
     const intent = delegateIntent({ valAddress });
 
-    const { to, data, value } = buildStakingTransactionParams(asCurrency("sei_evm"), intent);
+    const { to, data, value } = buildStakingTransactionParams("sei_evm", intent);
 
     const iface = new ethers.Interface(getStakingABI("sei_evm") as ethers.InterfaceAbi);
     expect("0x" + data.toString("hex")).toEqual(iface.encodeFunctionData("delegate", [valAddress]));
@@ -102,7 +95,7 @@ describe("buildStakingTransactionParams", () => {
     const valAddress = "seivaloper1y82m5y3wevjneamzg0pmx87dzanyxzht0kepvn";
     const intent = delegateIntent({ mode: "claimReward", valAddress });
 
-    const { to } = buildStakingTransactionParams(asCurrency("sei_evm"), intent);
+    const { to } = buildStakingTransactionParams("sei_evm", intent);
 
     expect(to).toEqual("0x0000000000000000000000000000000000001007");
   });
@@ -113,7 +106,7 @@ describe("buildStakingTransactionParams", () => {
   ])("ignores txValue for '%s'", (currencyId, fields) => {
     const intent = delegateIntent({ ...fields, txValue: 999n });
 
-    const { value } = buildStakingTransactionParams(asCurrency(currencyId), intent);
+    const { value } = buildStakingTransactionParams(currencyId, intent);
 
     expect(value).toEqual(1000000000000000000n);
   });
@@ -126,7 +119,7 @@ describe("0G / zero_gravity delegate", () => {
       sender: "0x0000000000000000000000000000000000000002",
     });
 
-    const { to, data, value } = buildStakingTransactionParams(asCurrency("zero_gravity"), intent);
+    const { to, data, value } = buildStakingTransactionParams("zero_gravity", intent);
 
     const iface = new ethers.Interface(getStakingABI("zero_gravity") as ethers.InterfaceAbi);
     expect("0x" + data.toString("hex")).toEqual(
@@ -138,14 +131,14 @@ describe("0G / zero_gravity delegate", () => {
 
   it("throws when valAddress is missing", () => {
     expect(() => {
-      buildStakingTransactionParams(asCurrency("zero_gravity"), delegateIntent({}));
+      buildStakingTransactionParams("zero_gravity", delegateIntent({}));
     }).toThrow("0G staking requires a validator address");
   });
 
   it("throws when delegator is missing", () => {
     expect(() => {
       buildStakingTransactionParams(
-        asCurrency("zero_gravity"),
+        "zero_gravity",
         delegateIntent({ valAddress: "0x0000000000000000000000000000000000000001", sender: "" }),
       );
     }).toThrow("zero_gravity staking requires delegator");
@@ -166,7 +159,7 @@ describe("0G / zero_gravity undelegate", () => {
       txValue: 50_000_000_000n,
     });
 
-    const { to, data, value } = buildStakingTransactionParams(asCurrency("zero_gravity"), intent);
+    const { to, data, value } = buildStakingTransactionParams("zero_gravity", intent);
 
     const iface = new ethers.Interface(getStakingABI("zero_gravity") as ethers.InterfaceAbi);
     expect("0x" + data.toString("hex")).toEqual(
@@ -179,7 +172,7 @@ describe("0G / zero_gravity undelegate", () => {
   it("throws when shares is missing", () => {
     expect(() => {
       buildStakingTransactionParams(
-        asCurrency("zero_gravity"),
+        "zero_gravity",
         delegateIntent({ mode: "undelegate", valAddress: VAL }),
       );
     }).toThrow("zero_gravity undelegate requires shares");

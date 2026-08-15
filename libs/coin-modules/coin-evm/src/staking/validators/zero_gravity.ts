@@ -3,8 +3,8 @@ import network from "@ledgerhq/live-network";
 import { log } from "@ledgerhq/logs";
 import type { Page } from "@ledgerhq/coin-module-framework/api/index";
 import type { AssetInfo, Stake, Validator } from "@ledgerhq/coin-module-framework/api/types";
-import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { EvmConfigInfo } from "../../config";
+import { evmUnit } from "../../logic/evmUnit";
 import { withApi } from "../../network/node/rpc.common";
 import { isExternalNodeConfig } from "../../network/node/types";
 import type { StakingContractConfig } from "../../types/staking";
@@ -215,9 +215,9 @@ export const fetchZeroGravityStakes = async (
   evmConfig: EvmConfigInfo,
   address: string,
   _config: StakingContractConfig,
-  currency: CryptoCurrency,
+  currencyId: string,
 ): Promise<Stake[]> => {
-  const abi = getStakingABI(currency.id);
+  const abi = getStakingABI(currencyId);
   if (!abi) return [];
 
   const node = evmConfig.node;
@@ -225,19 +225,20 @@ export const fetchZeroGravityStakes = async (
 
   const { items: validators } = await zeroGravityValidatorApi.fetchValidators(
     evmConfig,
-    currency.id,
+    currencyId,
   );
   if (validators.length === 0) return [];
 
   const asset: AssetInfo = {
     type: "native",
-    name: currency.name,
-    unit: currency.units[0],
+    name: evmConfig.name,
+    unit: evmUnit[currencyId],
   };
 
   try {
     return await withApi(
-      currency,
+      evmConfig,
+      currencyId,
       async provider => {
         const iface = new ethers.Interface(abi as ethers.InterfaceAbi);
         const stakes: Stake[] = [];
@@ -291,7 +292,7 @@ export const fetchZeroGravityStakes = async (
     );
   } catch (error) {
     log("coin-evm/staking", "fetchZeroGravityStakes: delegations fetch failed", {
-      currencyId: currency.id,
+      currencyId,
       error: error instanceof Error ? error.message : String(error),
     });
     return [];

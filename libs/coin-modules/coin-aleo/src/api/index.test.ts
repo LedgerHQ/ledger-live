@@ -247,4 +247,12 @@ describe("createApi", () => {
       );
     });
   });
+
+  describe("register", () => {
+    it("should throw unsupported error", async () => {
+      const api = createApi("aleo");
+
+      await expect(api.register(context, "aleo1test")).rejects.toThrow("register is not supported");
+    });
+  });
 });

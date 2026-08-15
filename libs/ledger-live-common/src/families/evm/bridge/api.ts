@@ -1,6 +1,7 @@
 import type { AssetInfo, BalanceOptions } from "@ledgerhq/coin-module-framework/api/types";
 import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import type {
+  AccountReadiness,
   Operation as LiveOperation,
   StakingRedelegation,
   StakingResources,
@@ -16,7 +17,7 @@ import {
   fetchRedelegations,
   buildRedelegationsFromOps,
 } from "@ledgerhq/coin-evm/staking/redelegations";
-import { STAKING_CONTRACTS } from "@ledgerhq/coin-evm/staking/index";
+import { STAKING_CONTRACTS, isSeiAccountUnassociated } from "@ledgerhq/coin-evm/staking/index";
 import { getNodeApi } from "@ledgerhq/coin-evm/network/node/index";
 import { getNextSequence } from "@ledgerhq/coin-evm/logic/index";
 import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
@@ -102,7 +103,7 @@ async function enrichStakingResources(
 
   // Reconstruct active redelegations from the REDELEGATE operation history by
   // decoding the ABI-encoded calldata fetched directly from the RPC node.
-  const opsRedelegations = await buildRedelegationsFromOps(config, currency, operations);
+  const opsRedelegations = await buildRedelegationsFromOps(config, currency.id, operations);
 
   // Merge both sources, deduplicating by (src, dst) validator pair.
   const key = (r: StakingRedelegation) => `${r.validatorSrcAddress}|${r.validatorDstAddress}`;
@@ -120,15 +121,15 @@ async function getOperationStatus(
   op: LiveOperation,
 ): Promise<LiveOperation | null> {
   try {
-    const nodeApi = getNodeApi(getCurrencyConfiguration<EvmConfigInfo>(currency.id), currency);
+    const nodeApi = getNodeApi(getCurrencyConfiguration<EvmConfigInfo>(currency.id), currency.id);
     const { blockHeight, blockHash, nonce, gasPrice, gasUsed, value } =
-      await nodeApi.getTransaction(currency, op.hash);
+      await nodeApi.getTransaction(currency.id, op.hash);
 
     if (!blockHeight) {
       throw new Error("getOperationStatus: Transaction has no block");
     }
 
-    const { timestamp } = await nodeApi.getBlockByHeight(currency, blockHeight);
+    const { timestamp } = await nodeApi.getBlockByHeight(currency.id, blockHeight);
     const date = new Date(timestamp);
     const fee = new BigNumber(gasPrice).multipliedBy(gasUsed);
 
@@ -164,16 +165,32 @@ export async function refreshOperations(
   return refreshedOperationsOrNull.filter((op): op is LiveOperation => !!op);
 }
 
+/**
+ * A Sei account can only transact (swap included) once its EVM (0x) address is
+ * associated on-chain with its Cosmos (sei1) address.
+ */
+export async function getAccountReadiness(
+  currency: CryptoCurrency,
+  address: string,
+): Promise<AccountReadiness> {
+  const config = getCurrencyConfiguration<EvmConfigInfo>(currency.id);
+  const unassociated = await isSeiAccountUnassociated(config, currency.id, address);
+  return unassociated ? { ready: false, reason: "activationRequired" } : { ready: true };
+}
+
 export async function validateTransaction(
   currency: CryptoCurrency,
   { signature }: { signature: string },
 ): Promise<{ error: Error | undefined }> {
-  const nodeApi = getNodeApi(getCurrencyConfiguration<EvmConfigInfo>(currency.id), currency);
+  const nodeApi = getNodeApi(getCurrencyConfiguration<EvmConfigInfo>(currency.id), currency.id);
   const transaction = ethers.Transaction.from(signature);
 
   if (transaction.hash) {
     try {
-      const { hash, blockHeight = null } = await nodeApi.getTransaction(currency, transaction.hash);
+      const { hash, blockHeight = null } = await nodeApi.getTransaction(
+        currency.id,
+        transaction.hash,
+      );
       if (blockHeight) {
         return { error: new InvalidTransactionError("transaction is already mined") };
       }
@@ -188,7 +205,7 @@ export async function validateTransaction(
   if (transaction.from) {
     const currentNonce = await getNextSequence(
       buildContext(currency.id),
-      currency,
+      currency.id,
       transaction.from,
     );
     if (typeof transaction.nonce === "number") {
@@ -214,6 +231,8 @@ export default function evmBridge(currency: CryptoCurrency): BridgeApi {
     enrichStakingResources: (c, addr, ops, sr) => enrichStakingResources(c, addr, ops, sr),
     validateTransaction: (signature: string) => validateTransaction(currency, { signature }),
     ...(STAKING_CONTRACTS[currency.id] ? { stakingSupported: true } : {}),
+    // Only Sei has an activation concept; elsewhere readiness stays undefined (= ready).
+    ...(currency.id === "sei_evm" ? { getAccountReadiness } : {}),
     // Config comes from `getCurrencyConfiguration` (the live-common config source), available at
     // bridge-assembly time. Only expose refreshOperations
     // for explorer-less chains (e.g. core) — explorer-backed chains rely on the explorer's results.

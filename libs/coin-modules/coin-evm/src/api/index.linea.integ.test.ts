@@ -23,6 +23,8 @@ describe("Linea (etherscan explorer)", () => {
 
     let module: ReturnType<typeof createApi>;
     const lineaConfig: EvmConfig = {
+      chainId: 59144,
+      name: "Linea",
       node: {
         type: "external",
         uri: "https://rpc.linea.build",

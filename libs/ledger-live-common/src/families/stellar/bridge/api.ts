@@ -33,10 +33,11 @@ export async function getTokenFromAsset(asset: AssetInfo): Promise<TokenCurrency
   return result;
 }
 
-export function getAssetFromToken(token: TokenCurrency): AssetInfo {
+export function getAssetFromToken(token: TokenCurrency): AssetInfo | undefined {
+  if (!token.tokenIdentifier) return undefined;
   return {
     type: token.tokenType,
-    assetReference: token.name,
+    assetReference: token.tokenIdentifier,
     assetOwner: token.contractAddress,
     name: token.name,
     unit: token.units[0],

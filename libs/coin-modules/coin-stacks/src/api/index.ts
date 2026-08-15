@@ -101,6 +101,9 @@ export function createApi(): CoinModuleApi<StacksCurrencyConfig, MemoNotSupporte
     async call(_context: StacksContext) {
       throw new Error("call is not supported");
     },
+    async register() {
+      throw new Error("register is not supported");
+    },
     craftRawTransaction: (
       _context: StacksContext,
       _transaction: string,

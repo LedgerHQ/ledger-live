@@ -93,6 +93,8 @@ export const scenarioBnb: Scenario<GenericTransaction, Account> = {
       status: {
         type: "active",
       },
+      chainId: 56,
+      name: "BNB Chain",
       gasTracker: {
         type: "ledger",
         explorerId: "bnb",

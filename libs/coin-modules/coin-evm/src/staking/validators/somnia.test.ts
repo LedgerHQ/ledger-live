@@ -1,6 +1,5 @@
 import { ethers } from "ethers";
 import network from "@ledgerhq/live-network";
-import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import somniaAbi from "../../abis/somnia.abi.json";
 import type { EvmConfigInfo } from "../../config";
 import { withApi } from "../../network/node/rpc.common";
@@ -8,18 +7,13 @@ import { clearValidatorsCache, getValidators } from "./index";
 import { clearValidatorNamesCache, fetchSomniaStakes, fetchValidatorNames } from "./somnia";
 
 jest.mock("../../network/node/rpc.common", () => ({ __esModule: true, withApi: jest.fn() }));
-jest.mock("@ledgerhq/ledger-wallet-framework/currencies", () => ({
-  __esModule: true,
-  ...jest.requireActual("@ledgerhq/ledger-wallet-framework/currencies"),
-  getCryptoCurrencyById: jest.fn(),
-}));
 jest.mock("@ledgerhq/live-network", () => ({ __esModule: true, default: jest.fn() }));
 
 const mockedWithApi = jest.mocked(withApi);
-const mockedGetCryptoCurrencyById = jest.mocked(getCryptoCurrencyById);
 const mockedNetwork = jest.mocked(network);
 
 const mockConfig = {
+  name: "Somnia",
   node: { type: "external", uri: "https://somnia-rpc.publicnode.com" },
 } as unknown as EvmConfigInfo;
 const ledgerConfig = { node: { type: "ledger" } } as unknown as EvmConfigInfo;
@@ -33,13 +27,8 @@ const DELEGATOR = ethers.getAddress("0x" + "cc".repeat(20));
 type CallHandler = (request: { to?: string; data?: string }) => Promise<string>;
 
 const setupRpc = (handler: CallHandler) => {
-  mockedGetCryptoCurrencyById.mockReturnValue({
-    id: "somnia",
-    name: "Somnia",
-    units: [{ name: "STT", code: "STT", magnitude: 18 }],
-  } as unknown as ReturnType<typeof getCryptoCurrencyById>);
   const callMock = jest.fn(handler);
-  mockedWithApi.mockImplementation(async (_currency, fn) =>
+  mockedWithApi.mockImplementation(async (_config, _currencyId, fn) =>
     fn({ call: callMock } as unknown as Parameters<typeof fn>[0]),
   );
   return callMock;
@@ -285,7 +274,7 @@ describe("staking/validators/somnia", () => {
 
   describe("fetchSomniaStakes", () => {
     const fetchStakes = (config: EvmConfigInfo = mockConfig) =>
-      fetchSomniaStakes(config, DELEGATOR, {} as never, { id: "somnia" } as never);
+      fetchSomniaStakes(config, DELEGATOR, {} as never, "somnia");
 
     const defaultStakeHandlers = (
       overrides: {
@@ -311,7 +300,7 @@ describe("staking/validators/somnia", () => {
         asset: {
           type: "native",
           name: "Somnia",
-          unit: { name: "STT", code: "STT", magnitude: 18 },
+          unit: { name: "SOMI", code: "SOMI", magnitude: 18 },
         },
         amount: 100n,
         actions: [],

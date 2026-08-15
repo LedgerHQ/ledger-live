@@ -23,7 +23,7 @@ export const useGasOptions = ({
 }): [GasOptions | undefined, Error | null, boolean] => {
   const shouldUseEip1559 = transaction.type === 2;
   const config = useMemo(() => getCurrencyConfiguration<EvmConfigInfo>(currency.id), [currency]);
-  const gasTracker = useMemo(() => getGasTracker(config, currency), [currency, config]);
+  const gasTracker = useMemo(() => getGasTracker(config), [config]);
   const [error, setError] = useState<Error | null>(null);
   const [gasOptions, setGasOptions] = useState<GasOptions | undefined>(undefined);
   const [loading, setLoading] = useState(true);
@@ -36,7 +36,11 @@ export const useGasOptions = ({
 
     const getGasOptionsCallback = async () =>
       gasTracker
-        .getGasOptions({ currency, config, options: { useEIP1559: shouldUseEip1559 } })
+        .getGasOptions({
+          currencyId: currency.id,
+          config,
+          options: { useEIP1559: shouldUseEip1559 },
+        })
         .then(setGasOptions)
         .catch(setError)
         .finally(() => setLoading(false));

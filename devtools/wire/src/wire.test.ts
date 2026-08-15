@@ -1,6 +1,12 @@
 import { buildTargetUrl, buildTransport, isMatch, isValidWsUrl } from "./wire";
 import type { MessageMap, TransportProtocol, WebSocketLike } from "@devtools/transport";
 
+beforeEach(() => jest.useFakeTimers());
+afterEach(() => {
+  jest.clearAllTimers();
+  jest.useRealTimers();
+});
+
 const protocol: TransportProtocol<MessageMap> = {
   onReceive: jest.fn(),
 };

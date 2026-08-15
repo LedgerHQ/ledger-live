@@ -19,6 +19,7 @@
   },
   "devDependencies": {
     "@swc/core": "catalog:",
+    "@devtools/protocols": "workspace:*",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",

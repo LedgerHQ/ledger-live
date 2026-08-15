@@ -7,7 +7,6 @@ import type { State } from "~/reducers/types";
 
 jest.mock("~/analytics", () => ({
   TrackScreen: () => null,
-  useTrack: () => jest.fn(),
   track: jest.fn(),
 }));
 

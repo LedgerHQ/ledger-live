@@ -50,6 +50,7 @@ describe("api/index", () => {
       getValidators: expect.any(Function),
       lastBlock: expect.any(Function),
       listOperations: expect.any(Function),
+      register: expect.any(Function),
       validateAddress: expect.any(Function),
       validateIntent: expect.any(Function),
       craftTransactionData: expect.any(Function),

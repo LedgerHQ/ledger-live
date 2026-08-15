@@ -453,7 +453,7 @@ describe("convertShieldedTransactionsToOperations", () => {
 
     expect(result).toHaveLength(3);
     expect(result[0].type).toBe("SHIELDED_TX_ORCHARD_OUT");
-    expect(result[1].type).toBe("SHIELDED_TX_INTERNAL");
+    expect(result[1].type).toBe("NONE");
     expect(result[2].type).toBe("UNKNOWN");
   });
 
@@ -555,7 +555,10 @@ describe("convertShieldedTransactionsToOperations", () => {
     expect(op.value).toEqual(new BigNumber(1_000_000));
   });
 
-  it("op.value for internal tx is 0", () => {
+  // A self-transfer keeps its `SHIELDED_TX_INTERNAL` classification — the fee and
+  // balance logic read it — but the operation it produces is typed `NONE`, which
+  // the platform leaves out of the history lists.
+  it("op.value for internal tx is 0 and the operation is typed NONE", () => {
     const tx: ShieldedTransaction = {
       id: "tx-internal",
       hex: "00",
@@ -569,8 +572,37 @@ describe("convertShieldedTransactionsToOperations", () => {
         ironwood_outputs: [{ amount: new BigNumber(5000), memo: "", transfer_type: "internal" }],
       },
     };
+    expect(getTxType(tx)).toBe("SHIELDED_TX_INTERNAL");
+
     const [op] = convertShieldedTransactionsToOperations([tx], "acc-1");
-    expect(op.type).toBe("SHIELDED_TX_INTERNAL");
+    expect(op.type).toBe("NONE");
+    expect(op.value).toEqual(new BigNumber(0));
+    expect(op.id).toContain("-NONE");
+  });
+
+  // The shielded leg of a t→z sweep whose whole amount landed on the internal
+  // address: the transparent operation already reports this transaction, so the
+  // shielded one must not add a second row for it.
+  it("types the shielded leg of a transparent-funded self-transfer NONE", () => {
+    const tx: ShieldedTransaction = {
+      id: "81d8cc46d43817a62a9cb18def6fbfc840d4e6f29f4097e49e3e726086517c23",
+      hex: "00",
+      blockHeight: 3_430_137,
+      blockHash: "hash",
+      timestamp: 1_785_396_985,
+      fee: new BigNumber(0),
+      transparentOut: new BigNumber(0),
+      hasTransparentInputs: true,
+      decryptedData: {
+        orchard_outputs: [],
+        sapling_outputs: [],
+        ironwood_outputs: [
+          { amount: new BigNumber(1_079_834), memo: "", transfer_type: "internal" },
+        ],
+      },
+    };
+    const [op] = convertShieldedTransactionsToOperations([tx], "acc-1");
+    expect(op.type).toBe("NONE");
     expect(op.value).toEqual(new BigNumber(0));
   });
 

@@ -1,5 +1,4 @@
 import type { BlockOperation } from "@ledgerhq/coin-module-framework/api/index";
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { type EvmConfigInfo, internalTxSourcesFromList } from "../config";
 import { SourceUnavailableError } from "../errors";
 import { getInternalTransactionsByBlock } from "../network/explorer/etherscan";
@@ -169,7 +168,7 @@ describe("makeSourceFetchers", () => {
       explorer: { type: "ledger" },
     } as unknown as EvmConfigInfo;
 
-    const fetchers = makeSourceFetchers(config, mockNodeApi(), {} as CryptoCurrency);
+    const fetchers = makeSourceFetchers(config, mockNodeApi(), "");
     await expect(fetchers.explorer(1)).rejects.toBeInstanceOf(SourceUnavailableError);
   });
 
@@ -179,7 +178,7 @@ describe("makeSourceFetchers", () => {
     } as unknown as EvmConfigInfo;
 
     const { traceBlockErigon: _traceBlockErigon, ...nodeApiWithoutErigon } = mockNodeApi();
-    const fetchers = makeSourceFetchers(config, nodeApiWithoutErigon, {} as CryptoCurrency);
+    const fetchers = makeSourceFetchers(config, nodeApiWithoutErigon, "");
     await expect(fetchers.trace_block(1)).rejects.toBeInstanceOf(SourceUnavailableError);
   });
 
@@ -192,9 +191,7 @@ describe("makeSourceFetchers", () => {
     const mockGetInternalTransactionsByBlock = jest.mocked(getInternalTransactionsByBlock);
     mockGetInternalTransactionsByBlock.mockRejectedValueOnce(new Error("explorer error"));
 
-    const fetchers = makeSourceFetchers(config, mockNodeApi(), {
-      id: "ethereum",
-    } as CryptoCurrency);
+    const fetchers = makeSourceFetchers(config, mockNodeApi(), "ethereum");
     await expect(fetchers.explorer(99)).rejects.toBeInstanceOf(SourceUnavailableError);
   });
 
@@ -207,12 +204,10 @@ describe("makeSourceFetchers", () => {
     const mockGetInternalTransactionsByBlock = jest.mocked(getInternalTransactionsByBlock);
     mockGetInternalTransactionsByBlock.mockResolvedValueOnce([]);
 
-    const fetchers = makeSourceFetchers(config, mockNodeApi(), {
-      id: "ethereum",
-    } as CryptoCurrency);
+    const fetchers = makeSourceFetchers(config, mockNodeApi(), "ethereum");
     await fetchers.explorer(99);
 
-    expect(mockGetInternalTransactionsByBlock).toHaveBeenCalledWith(config, { id: "ethereum" }, 99);
+    expect(mockGetInternalTransactionsByBlock).toHaveBeenCalledWith(config, 99);
   });
 
   it("empty always resolves to an empty map", async () => {
@@ -220,7 +215,7 @@ describe("makeSourceFetchers", () => {
       node: { type: "external" as const, retries: 0 },
     } as unknown as EvmConfigInfo;
 
-    const fetchers = makeSourceFetchers(config, mockNodeApi(), {} as CryptoCurrency);
+    const fetchers = makeSourceFetchers(config, mockNodeApi(), "");
     await expect(fetchers.empty(1)).resolves.toEqual(new Map<string, BlockOperation[]>());
   });
 });

@@ -2,7 +2,6 @@ import type {
   TransactionIntent,
   MemoNotSupported,
 } from "@ledgerhq/coin-module-framework/api/index";
-import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { isStakingIntent } from "../utils";
 import { isPayable } from "./abis";
 import { STAKING_CONTRACTS } from "./contracts";
@@ -14,7 +13,7 @@ import { buildTransactionParams } from "./operations";
  * Builds transaction parameters for staking transactions
  */
 export function buildStakingTransactionParams(
-  currency: CryptoCurrency,
+  currencyId: string,
   intent: TransactionIntent<MemoNotSupported>,
 ): {
   to: string;
@@ -28,16 +27,16 @@ export function buildStakingTransactionParams(
   const { amount, sender, mode, valAddress, valId, dstValAddress, withdrawId, txValue, shares } =
     intent;
 
-  const config = STAKING_CONTRACTS[currency.id];
+  const config = STAKING_CONTRACTS[currencyId];
   if (!config) {
-    throw new Error(`Unsupported staking currency: ${currency.id}`);
+    throw new Error(`Unsupported staking currency: ${currencyId}`);
   }
 
   if (!mode || !isStakingOperation(mode)) {
     throw new Error(`Invalid staking operation: ${mode}`);
   }
 
-  const stakingParams = buildTransactionParams(currency.id, mode, {
+  const stakingParams = buildTransactionParams(currencyId, mode, {
     valAddress,
     valId,
     amount,
@@ -50,7 +49,7 @@ export function buildStakingTransactionParams(
   const to = config.contractAddress({ mode, valAddress });
   const data = Buffer.from(
     encodeStakingData({
-      currencyId: currency.id,
+      currencyId,
       operation: mode,
       config,
       params: stakingParams,
@@ -63,7 +62,7 @@ export function buildStakingTransactionParams(
     throw new Error(`No function mapping found for the operation: ${mode}`);
   }
 
-  const value = isPayable(currency.id, functionName)
+  const value = isPayable(currencyId, functionName)
     ? config.value({ mode, amount, ...(typeof txValue === "bigint" ? { txValue } : {}) })
     : 0n;
 

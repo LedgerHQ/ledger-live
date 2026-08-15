@@ -1,6 +1,7 @@
 export * from "./state";
 export * from "./types";
 export * from "./decision/getLargeScreenUpsellDecision";
+export * from "./decision/getLargeScreenUpsellEligibility";
 export * from "./hooks/useLargeScreenUpsellDecision";
 export * from "./utils/upsellCta";
 export * from "./utils/upsellContent";

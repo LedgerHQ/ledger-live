@@ -17,11 +17,12 @@ export function ActionTilesView({ tiles }: ActionTilesViewProps) {
     <div className="flex gap-8" data-testid="action-tiles">
       {tiles.map(tile => (
         <Button
+          appearance={tile.appearance}
           key={tile.id}
           icon={ICONS[tile.id]}
           onClick={tile.onPress}
           data-testid={`action-tile-${tile.id}`}
-          isFull
+          size="sm"
         >
           {tile.label}
         </Button>

@@ -14,29 +14,36 @@ export class BrazePlugin extends Plugin {
 
   execute(event: SegmentEvent): SegmentEvent | undefined {
     if (event.type === EventType.IdentifyEvent) {
+      const traits = event.traits ?? {};
+      const shouldSkipBrazeDestination = !("braze_external_id" in traits);
+
       // We don't check for some traits as they are sure to be different every time
-      const traits = {
-        ...event.traits,
+      const debouncedTraits = {
+        ...traits,
         appTimeToInteractiveMilliseconds: undefined,
         stakingProvidersEnabled: undefined,
       };
       if (
         this.lastSeenTraits?.userId === event.userId &&
         this.lastSeenTraits?.anonymousId === event.anonymousId &&
-        isEqual(this.lastSeenTraits?.traits, traits)
+        isEqual(this.lastSeenTraits?.traits, debouncedTraits)
       ) {
-        const integrations = event.integrations;
-
-        // If the traits didn't changed, disable braze integration
-        if (integrations !== undefined) {
-          integrations[this.key] = false;
-        }
+        // If the traits didn't change, disable braze integration
+        const integrations = event.integrations ?? {};
+        integrations[this.key] = false;
+        event.integrations = integrations;
       } else {
         this.lastSeenTraits = {
           anonymousId: event.anonymousId ?? "",
           userId: event.userId,
-          traits: traits,
+          traits: debouncedTraits,
         };
+      }
+
+      if (shouldSkipBrazeDestination) {
+        const integrations = event.integrations ?? {};
+        integrations[this.key] = false;
+        event.integrations = integrations;
       }
     }
     return event;

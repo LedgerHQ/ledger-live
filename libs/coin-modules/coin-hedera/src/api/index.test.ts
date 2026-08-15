@@ -119,6 +119,14 @@ describe("createApi", () => {
     });
   });
 
+  describe("register", () => {
+    it("should throw 'register is not supported'", async () => {
+      await expect(api.register(mockContext, "address")).rejects.toThrow(
+        "register is not supported",
+      );
+    });
+  });
+
   describe("craftRawTransaction", () => {
     it("should throw when called", () => {
       expect(() => api.craftRawTransaction(mockContext, "tx", "sender", "pubkey", 1n)).toThrow(

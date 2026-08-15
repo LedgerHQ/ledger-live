@@ -1,4 +1,4 @@
-import { delay } from "@ledgerhq/live-promise";
+import { delay } from "@ledgerhq/coin-module-framework/promises";
 
 /**
  * Executes an async function and retries on failure.

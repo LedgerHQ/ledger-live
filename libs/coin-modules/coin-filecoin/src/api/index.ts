@@ -43,6 +43,9 @@ export function createApi(): CoinModuleApi<FilecoinCoinConfig> {
     async call(_context: FilecoinContext) {
       throw new Error("call is not supported");
     },
+    async register() {
+      throw new Error("register is not supported");
+    },
 
     combine: (
       _context: FilecoinContext,

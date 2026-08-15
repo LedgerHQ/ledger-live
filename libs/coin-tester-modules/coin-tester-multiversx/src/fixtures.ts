@@ -29,6 +29,9 @@ export const RECIPIENT = "erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8
 /** Initial EGLD funding for the scenario account: 100 EGLD (18 decimals). */
 export const INITIAL_EGLD_FUNDING = "100000000000000000000";
 
+/** All ESDT tokens are owned by the single on-chain ESDT system smart contract. */
+const ESDT_SYSTEM_SC = "erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u";
+
 /**
  * ESDT tokens are issued at runtime (the on-chain identifier carries a protocol-assigned
  * random suffix), so the token currency isn't known until `setup()`. The mock crypto-assets
@@ -42,7 +45,8 @@ export function makeEsdtToken(identifier: string, decimals: number): TokenCurren
   return {
     type: "TokenCurrency",
     id: `elrond/esdt/${Buffer.from(identifier).toString("hex")}`,
-    contractAddress: identifier,
+    contractAddress: ESDT_SYSTEM_SC,
+    tokenIdentifier: identifier,
     parentCurrencyId: ELROND.id,
     tokenType: "esdt",
     name: ticker,
@@ -55,7 +59,7 @@ export function makeEsdtToken(identifier: string, decimals: number): TokenCurren
 
 /** Make an issued token resolvable by the bridges (by identifier and by token id). */
 export function registerEsdtToken(token: TokenCurrency): void {
-  esdtTokens.set(token.contractAddress, token);
+  if (token.tokenIdentifier) esdtTokens.set(token.tokenIdentifier, token);
   esdtTokens.set(token.id, token);
 }
 

@@ -1,24 +1,23 @@
 import { Page, Stake } from "@ledgerhq/coin-module-framework/api/types";
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { EvmContext } from "../config";
 import { STAKING_CONTRACTS, STAKING_CONFIG } from "../staking";
 
 export const getStakes = async (
   context: EvmContext,
-  currency: CryptoCurrency,
+  currencyId: string,
   address: string,
 ): Promise<Page<Stake>> => {
-  const contractConfig = STAKING_CONTRACTS[currency.id];
+  const contractConfig = STAKING_CONTRACTS[currencyId];
 
   if (!contractConfig) {
     return { items: [] };
   }
 
   try {
-    const config = await context.config(currency.id);
-    const stakingStrategy = STAKING_CONFIG[currency.id];
+    const config = await context.config(currencyId);
+    const stakingStrategy = STAKING_CONFIG[currencyId];
     const stakes =
-      (await stakingStrategy?.fetcher(config, address, contractConfig, currency)) || [];
+      (await stakingStrategy?.fetcher(config, address, contractConfig, currencyId)) || [];
     return { items: stakes };
   } catch {
     return { items: [] };

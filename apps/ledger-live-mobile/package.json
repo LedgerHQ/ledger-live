@@ -100,7 +100,6 @@
     "@domain/entity-analytics-consent": "workspace:*",
     "@domain/entity-client-identity": "workspace:*",
     "@domain/entity-contact": "workspace:*",
-    "@domain/entity-pay-card": "workspace:*",
     "@domain/entity-currency": "workspace:^",
     "@domain/entity-currency-crypto": "workspace:*",
     "@domain/entity-currency-fiat": "workspace:^",

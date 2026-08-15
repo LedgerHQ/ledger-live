@@ -53,7 +53,7 @@ describe("isTransactionConfirmed", () => {
     const result = await isTransactionConfirmed({ account, hash });
 
     expect(result).toBe(true);
-    expect(nodeApiMock.getTransaction).toHaveBeenCalledWith(account.currency, hash);
+    expect(nodeApiMock.getTransaction).toHaveBeenCalledWith(account.currency.id, hash);
   });
 
   test("should return false if blockHeight is null", async () => {
@@ -66,6 +66,6 @@ describe("isTransactionConfirmed", () => {
     const result = await isTransactionConfirmed({ account, hash });
 
     expect(result).toBe(false);
-    expect(nodeApiMock.getTransaction).toHaveBeenCalledWith(account.currency, hash);
+    expect(nodeApiMock.getTransaction).toHaveBeenCalledWith(account.currency.id, hash);
   });
 });

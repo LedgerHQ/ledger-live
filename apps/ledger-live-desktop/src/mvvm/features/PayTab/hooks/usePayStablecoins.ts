@@ -2,13 +2,9 @@ import { useMemo } from "react";
 import { useDistribution } from "~/renderer/actions/general";
 import {
   useStablecoinTickers,
-  selectTopAssetsByCategory,
+  useDefaultStablecoins,
+  type DefaultStablecoin,
 } from "@features/platform-aggregated-assets";
-import {
-  useGetAssetsDataInfiniteQuery,
-  AssetCategory,
-  mergeAssetsDataPages,
-} from "@domain/api-aggregated-assets";
 import {
   useCategorizedAssets,
   type CategorizedAssetItem,
@@ -18,18 +14,6 @@ import {
   blacklistedTokenIdsSelector,
   hideEmptyTokenAccountsSelector,
 } from "~/renderer/reducers/settings";
-
-const STABLECOIN_CATEGORIES = [AssetCategory.Stablecoins];
-
-// Always-offered rows, taken from the top of the market-cap-ordered stablecoins (USDC/USDT).
-const DEFAULT_STABLECOIN_COUNT = 2;
-
-export type DefaultStablecoin = Readonly<{
-  id: string;
-  ticker: string;
-  name: string;
-  magnitude: number;
-}>;
 
 export type PayStablecoins = Readonly<{
   stablecoins: CategorizedAssetItem[];
@@ -57,14 +41,10 @@ export function usePayStablecoins(): PayStablecoins {
   } = useStablecoinTickers("lld", __APP_VERSION__);
 
   const {
-    data: stablecoinAssets,
-    isLoading: isLoadingStablecoinAssets,
-    isError: isStablecoinAssetsError,
-  } = useGetAssetsDataInfiniteQuery({
-    categories: STABLECOIN_CATEGORIES,
-    product: "lld",
-    version: __APP_VERSION__,
-  });
+    defaultStablecoins,
+    isLoading: isLoadingDefaultStablecoins,
+    isError: isDefaultStablecoinsError,
+  } = useDefaultStablecoins("lld", __APP_VERSION__);
 
   const categorized = useCategorizedAssets(distribution, stablecoinTickers);
 
@@ -73,25 +53,10 @@ export function usePayStablecoins(): PayStablecoins {
     return categorized.stablecoins.filter(({ currency }) => !blacklist.has(currency.id));
   }, [categorized.stablecoins, blacklistedTokenIds]);
 
-  const defaultStablecoins = useMemo<DefaultStablecoin[]>(() => {
-    const merged = mergeAssetsDataPages(stablecoinAssets?.pages);
-    if (!merged) return [];
-    const { stablecoins: top } = selectTopAssetsByCategory(merged, stablecoinTickers, {
-      maxCryptos: 0,
-      maxStablecoins: DEFAULT_STABLECOIN_COUNT,
-    });
-    return top.map(({ currency }) => ({
-      id: currency.id,
-      ticker: currency.ticker,
-      name: currency.name,
-      magnitude: currency.units[0]?.magnitude ?? 0,
-    }));
-  }, [stablecoinAssets, stablecoinTickers]);
-
   return {
     stablecoins,
     defaultStablecoins,
-    isLoading: isLoadingStablecoinTickers || isLoadingStablecoinAssets || distribution.isLoading,
-    isError: isStablecoinTickersError || isStablecoinAssetsError,
+    isLoading: isLoadingStablecoinTickers || isLoadingDefaultStablecoins || distribution.isLoading,
+    isError: isStablecoinTickersError || isDefaultStablecoinsError,
   };
 }

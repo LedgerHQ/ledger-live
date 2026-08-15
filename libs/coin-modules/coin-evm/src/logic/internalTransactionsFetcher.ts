@@ -1,6 +1,5 @@
 import type { BlockOperation } from "@ledgerhq/coin-module-framework/api/index";
 import { log } from "@ledgerhq/logs";
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { traceBlockItemsToOperationsByHash } from "../adapters/blockOperations";
 import { internalTxsToOperationsByHash } from "../adapters/etherscan";
 import type { EvmConfigInfo } from "../config";
@@ -69,7 +68,7 @@ export function composeInternalTxsFetcher(
 export function makeSourceFetchers(
   config: EvmConfigInfo,
   nodeApi: NodeApi,
-  currency: CryptoCurrency,
+  currencyId: string,
 ): Record<InternalTxSource, SourceFetcher> {
   const { explorer } = config || {};
 
@@ -77,19 +76,19 @@ export function makeSourceFetchers(
     trace_block: (height: number) => {
       if (nodeApi.traceBlockErigon === undefined) {
         log("coin-evm", "debug: trace_block internal tx source unavailable", {
-          currencyId: currency.id,
+          currencyId,
           blockHeight: height,
         });
         return Promise.reject(
           new SourceUnavailableError("trace_block is not supported by this RPC provider"),
         );
       }
-      return nodeApi.traceBlockErigon(currency, height).then(traceBlockItemsToOperationsByHash);
+      return nodeApi.traceBlockErigon(currencyId, height).then(traceBlockItemsToOperationsByHash);
     },
     debug_traceBlockByNumber: (height: number) => {
       if (nodeApi.traceBlockGeth === undefined) {
         log("coin-evm", "debug: debug_traceBlockByNumber internal tx source unavailable", {
-          currencyId: currency.id,
+          currencyId,
           blockHeight: height,
         });
         return Promise.reject(
@@ -98,21 +97,21 @@ export function makeSourceFetchers(
           ),
         );
       }
-      return nodeApi.traceBlockGeth(currency, height).then(traceBlockItemsToOperationsByHash);
+      return nodeApi.traceBlockGeth(currencyId, height).then(traceBlockItemsToOperationsByHash);
     },
     explorer: (height: number) => {
       if (!isEtherscanLikeExplorerConfig(explorer)) {
         return Promise.reject(
           new SourceUnavailableError(
-            `explorer internal txs not configured for currency ${currency.id}`,
+            `explorer internal txs not configured for currency ${currencyId}`,
           ),
         );
       }
-      return getInternalTransactionsByBlock(config, currency, height)
+      return getInternalTransactionsByBlock(config, height)
         .then(internalTxsToOperationsByHash)
         .catch(error => {
           log("coin-evm", "debug: explorer internal txs failed, falling through", {
-            currencyId: currency.id,
+            currencyId,
             blockHeight: height,
             error,
           });
@@ -126,8 +125,8 @@ export function makeSourceFetchers(
 export function createInternalTransactionsFetcher(
   config: EvmConfigInfo,
   nodeApi: NodeApi,
-  currency: CryptoCurrency,
+  currencyId: string,
   sources: readonly InternalTxSource[],
 ): SourceFetcher {
-  return composeInternalTxsFetcher(sources, makeSourceFetchers(config, nodeApi, currency));
+  return composeInternalTxsFetcher(sources, makeSourceFetchers(config, nodeApi, currencyId));
 }

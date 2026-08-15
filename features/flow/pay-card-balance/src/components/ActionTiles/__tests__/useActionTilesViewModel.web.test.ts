@@ -2,8 +2,18 @@ import { renderHook } from "@testing-library/react";
 import { useActionTilesViewModel } from "../useActionTilesViewModel";
 import type { ActionTile, ActionTilesProps } from "../types";
 
-const deposit: ActionTile = { id: "deposit", label: "Deposit", onPress: jest.fn() };
-const request: ActionTile = { id: "request", label: "Request", onPress: jest.fn() };
+const deposit: ActionTile = {
+  id: "deposit",
+  label: "Deposit",
+  onPress: jest.fn(),
+  appearance: "base",
+};
+const request: ActionTile = {
+  id: "request",
+  label: "Request",
+  onPress: jest.fn(),
+  appearance: "transparent",
+};
 
 function buildProps(overrides: Partial<ActionTilesProps> = {}): ActionTilesProps {
   return { tiles: [deposit, request], page: "Pay", ...overrides };
@@ -50,7 +60,12 @@ describe("useActionTilesViewModel", () => {
   });
 
   it("should expose all input tiles in the output", () => {
-    const pay: ActionTile = { id: "pay", label: "New payment", onPress: jest.fn() };
+    const pay: ActionTile = {
+      id: "pay",
+      label: "New payment",
+      onPress: jest.fn(),
+      appearance: "transparent",
+    };
     const { result } = renderHook(() =>
       useActionTilesViewModel(buildProps({ tiles: [deposit, request, pay] })),
     );

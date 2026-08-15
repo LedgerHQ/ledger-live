@@ -90,6 +90,9 @@ export function createApi(
       _context: CeloContext,
       _options?: { cursor?: Cursor },
     ): Promise<Page<Validator>> => getValidators(),
+    async register() {
+      throw new Error("register is not supported");
+    },
     stakingSupported: true,
     validateIntent: (
       context: CeloContext,

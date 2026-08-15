@@ -250,6 +250,9 @@ export const getNetworkCoinModuleApi = (networkFamily: string) =>
     async call(_context: Context<any>) {
       throw new Error("call is not supported");
     },
+    async register() {
+      throw new Error("register is not supported");
+    },
     craftTransactionData: (_context: Context<any>, intent: TransactionIntent) =>
       craftTransactionDataImpl(intent),
   }) satisfies CoinModuleApi<any> & BridgeApi;

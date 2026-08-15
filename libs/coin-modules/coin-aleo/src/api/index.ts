@@ -31,6 +31,9 @@ export function createApi(
     async call() {
       throw new Error("call is not supported");
     },
+    async register() {
+      throw new Error("register is not supported");
+    },
     broadcast: (_context: AleoContext, _signature: string): Promise<string> => {
       throw new Error("broadcast is not supported");
     },

@@ -40,11 +40,13 @@ describe("TokenCurrencySchema", () => {
       delisted: true,
       disableCountervalue: true,
       ledgerSignature: "3045022100abc",
+      tokenIdentifier: "USDC-c76f1f",
     });
     const result = TokenCurrencySchema.parse(token);
     expect(result.delisted).toBe(true);
     expect(result.disableCountervalue).toBe(true);
     expect(result.ledgerSignature).toBe("3045022100abc");
+    expect(result.tokenIdentifier).toBe("USDC-c76f1f");
   });
 
   it("optional fields default to undefined", () => {
@@ -52,6 +54,7 @@ describe("TokenCurrencySchema", () => {
     expect(result.delisted).toBeUndefined();
     expect(result.disableCountervalue).toBeUndefined();
     expect(result.ledgerSignature).toBeUndefined();
+    expect(result.tokenIdentifier).toBeUndefined();
   });
 
   it("parentCurrencyId is a string FK, not an embedded object", () => {

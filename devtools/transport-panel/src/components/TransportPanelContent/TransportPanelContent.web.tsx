@@ -1,9 +1,21 @@
-import { IconButton, TextInput } from "@ledgerhq/lumen-ui-react";
+import {
+  IconButton,
+  TextInput,
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectList,
+  SelectItem,
+  SelectItemText,
+} from "@ledgerhq/lumen-ui-react";
 import { Refresh, Repair } from "@ledgerhq/lumen-ui-react/symbols";
-import { useState } from "react";
+import { useRef, useState, useSyncExternalStore } from "react";
 import { TransportDebug } from "../TransportDebug";
 import type { MessageMap } from "@devtools/transport";
 import type { TransportPanelProps } from "../../types";
+
+type SelectItem = { value: string; label: string };
+const NO_DEVICE: SelectItem = { value: "__none__", label: "No devices Connected" };
 
 interface TransportPanelContentProps<M extends MessageMap> {
   readonly transportConfig: TransportPanelProps<M>;
@@ -12,25 +24,43 @@ interface TransportPanelContentProps<M extends MessageMap> {
 export function TransportPanelContent<M extends MessageMap>({
   transportConfig,
 }: Readonly<TransportPanelContentProps<M>>) {
-  const { transport, target, setTarget, hubUrl, setHubUrl, role } = transportConfig;
+  const { transport, target, setTarget, hubUrl, setHubUrl, role, devices } = transportConfig;
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const { status } = useSyncExternalStore(transport.subscribe, transport.getState);
+  const lastItemsRef = useRef<SelectItem[]>([]);
+
+  const setValue = (value: string | null) => {
+    if (value === null || value === NO_DEVICE.value) {
+      setTarget?.("");
+    } else {
+      setTarget?.(value);
+    }
+  };
+
+  const mappedItems = devices?.length ? devices.map(d => ({ value: d.id, label: d.name })) : null;
+
+  if (mappedItems) lastItemsRef.current = mappedItems;
+
+  const items = mappedItems ?? (status === "open" ? [NO_DEVICE] : lastItemsRef.current);
+
   return (
     <div className="p-10 flex flex-col gap-8">
       <div className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-8 items-center">
         {role === "tool" && (
-          <>
-            <label htmlFor="target" className="body-3 text-muted">
-              Target
-            </label>
-            <TextInput
-              id="target"
-              value={target ?? ""}
-              onChange={e => setTarget?.(e.target.value)}
-              containerClassName="!h-32 !px-8 !rounded-xs"
-              hideClearButton
-              style={{ fontSize: "12px" }}
-            />
-          </>
+          <div className="min-w-0 overflow-hidden">
+            <Select items={items} value={target ?? ""} onValueChange={setValue}>
+              <SelectTrigger label="Target" />
+              <SelectContent>
+                <SelectList
+                  renderItem={item => (
+                    <SelectItem key={item.value} value={item.value}>
+                      <SelectItemText>{item.label}</SelectItemText>
+                    </SelectItem>
+                  )}
+                />
+              </SelectContent>
+            </Select>
+          </div>
         )}
         <label htmlFor="hubUrl" className="body-3 text-muted">
           Hub URL

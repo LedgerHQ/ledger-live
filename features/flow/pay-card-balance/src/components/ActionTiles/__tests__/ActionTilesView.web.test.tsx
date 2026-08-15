@@ -10,9 +10,9 @@ function renderWithStyle(ui: React.ReactElement) {
 
 const defaultProps: ActionTilesViewProps = {
   tiles: [
-    { id: "deposit", label: "Deposit", onPress: jest.fn() },
-    { id: "request", label: "Request", onPress: jest.fn() },
-    { id: "pay", label: "New payment", onPress: jest.fn() },
+    { id: "deposit", label: "Deposit", onPress: jest.fn(), appearance: "base" },
+    { id: "request", label: "Request", onPress: jest.fn(), appearance: "transparent" },
+    { id: "pay", label: "New payment", onPress: jest.fn(), appearance: "transparent" },
   ],
 };
 
@@ -27,7 +27,11 @@ describe("ActionTilesView (Web)", () => {
 
   it("should call onPress when a tile is clicked", () => {
     const onPress = jest.fn();
-    renderWithStyle(<ActionTilesView tiles={[{ id: "deposit", label: "Deposit", onPress }]} />);
+    renderWithStyle(
+      <ActionTilesView
+        tiles={[{ id: "deposit", label: "Deposit", onPress, appearance: "base" }]}
+      />,
+    );
 
     fireEvent.click(screen.getByTestId("action-tile-deposit"));
 

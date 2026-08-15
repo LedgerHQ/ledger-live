@@ -39,7 +39,8 @@ import { exportSelector as knownDevicesExportSelector } from "~/reducers/knownDe
 import { exportLargeMoverSelector } from "~/reducers/largeMover";
 import { exportMarketSelector, exportMarketListConfigSelector } from "~/reducers/market";
 import { marketBannerStoreSelector } from "~/reducers/marketBanner";
-import { payCardPersistedSelector } from "@domain/entity-pay-card";
+import { payCardBalancePersistedSelector } from "@features/flow-pay-card-balance/state";
+import { payCardFeatureTourPersistedSelector } from "@features/flow-pay-card-feature-tour/state";
 import { settingsStoreSelector } from "~/reducers/settings";
 import type { State } from "~/reducers/types";
 import { Maybe } from "../types/helpers";
@@ -186,6 +187,17 @@ const getLargeScreenUpsellModalStateChanged = (a: State, b: State) =>
 const marketNotEquals = (a: State, b: State) => a.market !== b.market;
 const marketListConfigNotEquals = (a: State, b: State) => a.marketListConfig !== b.marketListConfig;
 const marketBannerNotEquals = (a: State, b: State) => a.marketBanner !== b.marketBanner;
+
+export const payCardPersistedSelector = (state: State) => ({
+  ...payCardFeatureTourPersistedSelector(state),
+  ...payCardBalancePersistedSelector(state),
+});
+
+const payCardDbSaveSliceSelector = createSelector(
+  (state: State) => state.payCardBalance,
+  (state: State) => state.payCardFeatureTour,
+  (payCardBalance, payCardFeatureTour) => ({ payCardBalance, payCardFeatureTour }),
+);
 const payCardPersistedNotEquals = (a: State, b: State) =>
   !isEqual(payCardPersistedSelector(a), payCardPersistedSelector(b));
 const trustchainNotEquals = (a: State, b: State) => a.trustchain !== b.trustchain;
@@ -297,7 +309,7 @@ export const ConfigureDBSaveEffects = () => {
   });
 
   useDBSaveEffect({
-    stateSelector: (state: State) => state.payCard,
+    stateSelector: payCardDbSaveSliceSelector,
     save: savePayCardState,
     throttle: 500,
     getChangesStats: payCardPersistedNotEquals,

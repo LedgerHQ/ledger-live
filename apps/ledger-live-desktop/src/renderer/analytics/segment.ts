@@ -13,7 +13,6 @@ import type { AccountLike } from "@ledgerhq/types-live";
 import { idsToLanguage } from "@ledgerhq/types-live";
 import type { Feature, FeatureId, Features } from "@shared/feature-flags";
 import invariant from "invariant";
-import { useCallback, useContext } from "react";
 import type * as Redux from "redux";
 import { ReplaySubject } from "rxjs";
 import { v4 as uuid } from "uuid";
@@ -39,7 +38,6 @@ import {
   sidebarCollapsedSelector,
   trackingEnabledSelector,
 } from "~/renderer/reducers/settings";
-import { analyticsDrawerContext } from "../drawers/Provider";
 import { accountsSelector } from "../reducers/accounts";
 import { currentRouteNameRef, previousRouteNameRef } from "./screenRefs";
 import {
@@ -558,33 +556,6 @@ export const track = (
     date: new Date(),
   });
 };
-
-/**
- * Returns an enriched track function that uses the context to add contextual
- * props to events.
- *
- * For now it's only adding the "drawer" property if it's defined.
- * */
-export function useTrack() {
-  const { analyticsDrawerName } = useContext(analyticsDrawerContext);
-  return useCallback(
-    (
-      eventName: string,
-      properties?: Record<string, unknown> | null,
-      mandatory?: boolean | null,
-    ) => {
-      track(
-        eventName,
-        {
-          ...(analyticsDrawerName ? { drawer: analyticsDrawerName } : {}),
-          ...(properties ?? {}),
-        },
-        mandatory,
-      );
-    },
-    [analyticsDrawerName],
-  );
-}
 
 /**
  * Track an event which will have the name `Page ${category}${name ? " " + name : ""}`.

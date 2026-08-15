@@ -215,7 +215,9 @@
       "SHIELDED_TX_SAPLING_IN": "Received",
       "SHIELDED_TX_SAPLING_OUT": "Sent",
       "SHIELDED_TX_ORCHARD_IN": "Received",
-      "SHIELDED_TX_ORCHARD_OUT": "Sent"
+      "SHIELDED_TX_ORCHARD_OUT": "Sent",
+      "SHIELDED_TX_IRONWOOD_IN": "Received",
+      "SHIELDED_TX_IRONWOOD_OUT": "Sent"
     },
     "edit": {
       "title": "Speed up or Cancel",
@@ -898,6 +900,11 @@
         "dialogBanner": "Manage all other assets in your home",
         "confirm": "Confirm"
       }
+    },
+    "actions": {
+      "deposit": "Add stablecoin",
+      "request": "Request",
+      "pay": "New payment"
     }
   },
   "lend": {
@@ -9037,7 +9044,8 @@
       "txType": "Transaction type",
       "transparentTx": "Transparent",
       "shieldedSaplingTx": "🛡 Private (Sapling)",
-      "shieldedOrchardTx": "🛡 Private (Orchard)"
+      "shieldedOrchardTx": "🛡 Private (Orchard)",
+      "shieldedIronwoodTx": "🛡 Private (Ironwood)"
     }
   },
   "aleo": {

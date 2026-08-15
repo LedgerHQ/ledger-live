@@ -7,6 +7,8 @@ describe("Flare (external node)", () => {
     let module: ReturnType<typeof createApi>;
 
     const flareConfig: EvmConfig = {
+      chainId: 14,
+      name: "Flare",
       node: {
         type: "external",
         uri: "https://rpc.au.cc/flare",

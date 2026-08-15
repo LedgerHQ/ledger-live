@@ -28,6 +28,7 @@ describe("createApi", () => {
       getRewards: expect.any(Function),
       getStakes: expect.any(Function),
       getValidators: expect.any(Function),
+      register: expect.any(Function),
       validateAddress: expect.any(Function),
       validateIntent: expect.any(Function),
       craftTransactionData: expect.any(Function),
