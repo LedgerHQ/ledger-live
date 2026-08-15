@@ -4,7 +4,7 @@ import type { GetAccountShape } from "@ledgerhq/ledger-wallet-framework/bridge/j
 import { makeSync, mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { inferSubOperations } from "@ledgerhq/ledger-wallet-framework/serialization";
-import { promiseAllBatched } from "@ledgerhq/live-promise";
+import { promiseAllBatched } from "@ledgerhq/coin-module-framework/promises";
 
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { SyncConfig, Account, TokenAccount, OperationType } from "@ledgerhq/types-live";

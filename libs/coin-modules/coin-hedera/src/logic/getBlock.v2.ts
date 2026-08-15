@@ -4,7 +4,7 @@ import type {
   BlockOperation,
   BlockTransaction,
 } from "@ledgerhq/coin-module-framework/api/types";
-import { promiseAllBatched } from "@ledgerhq/live-promise";
+import { promiseAllBatched } from "@ledgerhq/coin-module-framework/promises";
 import type { HederaCoinConfig } from "../config";
 import { FINALITY_MS, HEDERA_TRANSACTION_NAMES } from "../constants";
 import { apiClient } from "../network/api";

@@ -1,5 +1,3 @@
-import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
-import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { JsonRpcProvider } from "ethers";
 import type { EvmConfigInfo } from "../config";
 import { createMockEvmContext } from "../fixtures/context.fixtures";
@@ -28,7 +26,10 @@ const mockDecodeStakingResult = decodeStakingResult as jest.Mock;
 const mockGetValidators = getValidators as jest.Mock;
 
 const externalNodeConfig = { type: "external" as const, uri: "https://test" };
-const context = createMockEvmContext({ node: externalNodeConfig } as Partial<EvmConfigInfo>);
+const context = createMockEvmContext({
+  node: externalNodeConfig,
+  name: "Celo",
+} as Partial<EvmConfigInfo>);
 const makeValidator = (validatorAddress: string) => ({
   id: validatorAddress,
   address: validatorAddress,
@@ -44,9 +45,7 @@ describe("EVM Staking - getStakes", () => {
   });
 
   it("should return stake objects with positive amounts for supported currencies", async () => {
-    const currency = getCryptoCurrencyById("celo");
-
-    mockWithApi.mockImplementation(async (_cur, fn) => {
+    mockWithApi.mockImplementation(async (_cur, _currencyId, fn) => {
       const api = { call: jest.fn().mockResolvedValue("0x") } as unknown as JsonRpcProvider;
       return fn(api);
     });
@@ -54,7 +53,7 @@ describe("EVM Staking - getStakes", () => {
     mockEncodeStakingData.mockReturnValue("0xdeadbeef");
     mockDecodeStakingResult.mockReturnValue([{ toString: (): string => "1000000" }] as any);
 
-    const result = await getStakes(context, currency, address);
+    const result = await getStakes(context, "celo", address);
 
     expect(result).toEqual({
       items: [
@@ -78,16 +77,14 @@ describe("EVM Staking - getStakes", () => {
   });
 
   it("should filter out stakes with zero amounts", async () => {
-    const currency = getCryptoCurrencyById("celo");
-
-    mockWithApi.mockImplementation(async (_cur, fn) => {
+    mockWithApi.mockImplementation(async (_cur, _currencyId, fn) => {
       const api = { call: jest.fn().mockResolvedValue("0x") } as unknown as JsonRpcProvider;
       return fn(api);
     });
     mockEncodeStakingData.mockReturnValue("0xdeadbeef");
     mockDecodeStakingResult.mockReturnValue([{ toString: (): string => "0" }] as any);
 
-    const result = await getStakes(context, currency, address);
+    const result = await getStakes(context, "celo", address);
 
     expect(result).toEqual({
       items: [],
@@ -95,14 +92,12 @@ describe("EVM Staking - getStakes", () => {
   });
 
   it("should handle multiple validators and filter zero amounts", async () => {
-    const currency = getCryptoCurrencyById("sei_evm");
-
     mockGetValidators.mockResolvedValue({
       items: [makeValidator("seivaloper1abc"), makeValidator("seivaloper1def")],
       next: undefined,
     });
 
-    mockWithApi.mockImplementation(async (_cur, fn) => {
+    mockWithApi.mockImplementation(async (_cur, _currencyId, fn) => {
       const api = { call: jest.fn().mockResolvedValue("0x") } as unknown as JsonRpcProvider;
       return fn(api);
     });
@@ -122,7 +117,7 @@ describe("EVM Staking - getStakes", () => {
       },
     ] as any);
 
-    const result = await getStakes(context, currency, address);
+    const result = await getStakes(context, "sei_evm", address);
 
     expect(result).toEqual({
       items: [
@@ -141,9 +136,7 @@ describe("EVM Staking - getStakes", () => {
   });
 
   it("should return empty list for currencies not configured for staking", async () => {
-    const unsupportedCurrency = getCryptoCurrencyById("ethereum");
-
-    const result = await getStakes(context, unsupportedCurrency, address);
+    const result = await getStakes(context, "ethereum", address);
 
     expect(result).toEqual({
       items: [],
@@ -151,9 +144,7 @@ describe("EVM Staking - getStakes", () => {
   });
 
   it("should handle RPC call failures gracefully without crashing", async () => {
-    const currency = getCryptoCurrencyById("celo");
-
-    mockWithApi.mockImplementation(async (_cur, fn) => {
+    mockWithApi.mockImplementation(async (_cur, _currencyId, fn) => {
       const api = {
         call: jest.fn().mockRejectedValue(new Error("rpc error")),
       } as unknown as JsonRpcProvider;
@@ -161,7 +152,7 @@ describe("EVM Staking - getStakes", () => {
     });
     mockEncodeStakingData.mockReturnValue("0xdeadbeef");
 
-    const result = await getStakes(context, currency, address);
+    const result = await getStakes(context, "celo", address);
 
     expect(result).toEqual({
       items: [],
@@ -169,13 +160,11 @@ describe("EVM Staking - getStakes", () => {
   });
 
   it("should treat SEI missing delegation reverts as an empty stake without logging", async () => {
-    const currency = getCryptoCurrencyById("sei_evm");
-
     mockGetValidators.mockResolvedValue({
       items: [makeValidator("seivaloper1abc")],
       next: undefined,
     });
-    mockWithApi.mockImplementation(async (_cur, fn) => {
+    mockWithApi.mockImplementation(async (_cur, _currencyId, fn) => {
       const api = {
         call: jest.fn().mockRejectedValue(
           Object.assign(new Error("missing revert data"), {
@@ -191,7 +180,7 @@ describe("EVM Staking - getStakes", () => {
     });
     mockEncodeStakingData.mockReturnValue("0xdeadbeef");
 
-    const result = await getStakes(context, currency, address);
+    const result = await getStakes(context, "sei_evm", address);
 
     expect(result).toEqual({
       items: [],
@@ -200,11 +189,9 @@ describe("EVM Staking - getStakes", () => {
   });
 
   it("should handle SEI when no validators are available", async () => {
-    const currency = getCryptoCurrencyById("sei_evm");
-
     mockGetValidators.mockResolvedValue({ items: [], next: undefined });
 
-    const result = await getStakes(context, currency, address);
+    const result = await getStakes(context, "sei_evm", address);
 
     expect(result).toEqual({
       items: [],
@@ -212,11 +199,9 @@ describe("EVM Staking - getStakes", () => {
   });
 
   it("should survive network failures during validator fetching", async () => {
-    const currency = getCryptoCurrencyById("sei_evm");
-
     mockGetValidators.mockRejectedValue(new Error("Network unreachable"));
 
-    const result = await getStakes(context, currency, address);
+    const result = await getStakes(context, "sei_evm", address);
 
     expect(result).toEqual({
       items: [],
@@ -224,11 +209,7 @@ describe("EVM Staking - getStakes", () => {
   });
 
   it("should handle completely unsupported currencies", async () => {
-    const unsupportedCurrency = {
-      id: "unsupported_currency" as CryptoCurrency["id"],
-    } as CryptoCurrency;
-
-    const result = await getStakes(context, unsupportedCurrency, address);
+    const result = await getStakes(context, "unsupported_currency", address);
 
     expect(result).toEqual({
       items: [],
@@ -236,13 +217,11 @@ describe("EVM Staking - getStakes", () => {
   });
 
   it("should handle extreme edge cases and system failures", async () => {
-    const currency = getCryptoCurrencyById("celo");
-
     mockWithApi.mockImplementation(async () => {
       throw new Error("API Error");
     });
 
-    const result = await getStakes(context, currency, address);
+    const result = await getStakes(context, "celo", address);
 
     expect(result).toEqual({
       items: [],

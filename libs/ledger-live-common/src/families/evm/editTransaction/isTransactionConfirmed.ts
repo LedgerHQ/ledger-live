@@ -24,11 +24,11 @@ export const isTransactionConfirmed = async ({
   }
   const nodeApi = getNodeApi(
     getCurrencyConfiguration<EvmConfigInfo>(account.currency.id),
-    account.currency,
+    account.currency.id,
   );
 
   try {
-    const { blockHeight = null } = await nodeApi.getTransaction(account.currency, hash);
+    const { blockHeight = null } = await nodeApi.getTransaction(account.currency.id, hash);
     return blockHeight !== null;
   } catch (e: unknown) {
     const err = e as { name?: string; status?: number } | null | undefined;

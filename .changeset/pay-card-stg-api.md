@@ -1,7 +1,6 @@
 ---
 "@domain/api-card-management": minor
 "@features/flow-pay-card-auth": minor
-"@domain/entity-pay-card": patch
 "@devtools/pay-card": patch
 "ledger-live-desktop": minor
 "live-mobile": minor
@@ -20,7 +19,8 @@ slice and the `CardLogin` component; `useCardLoginViewModel` imports its hook fr
 `@domain/api-card-management`, and that import is what triggers the injection. `@domain/api-pay-card`
 and its in-process mock transport are removed, along with the Pay Card mocks.
 
-`@domain/entity-pay-card` continues to own the shared Pay Card Redux state that both apps register.
+Pay Card UI Redux state is owned by the feature flows that use it: the balance filter by
+`@features/flow-pay-card-balance` and the feature-tour flag by `@features/flow-pay-card-feature-tour`.
 
 Only the login step ships here. The callback code exchange and the card status read stay behind until
 the session has an owner that can store and refresh it.

@@ -13,5 +13,5 @@ export type LNSBannerModel = {
 
 export type LNSBannerVariant =
   | { type: "none" }
-  | { type: "banner"; image?: string }
+  | { type: "banner" }
   | { type: "notification"; icon: keyof typeof Icons };

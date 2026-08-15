@@ -8,3 +8,4 @@ export {
   type Role,
 } from "./handshake";
 export { createTransport } from "./createTransport";
+export { createEnvelope, encodeMessage } from "./envelope";

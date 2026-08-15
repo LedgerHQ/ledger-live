@@ -1,7 +1,6 @@
 import { AssertionError, fail } from "assert";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
-import { delay } from "@ledgerhq/live-promise";
-import { CryptoCurrency, CryptoCurrencyIdSchema } from "@ledgerhq/ledger-wallet-framework/types";
+import { delay } from "@ledgerhq/coin-module-framework/promises";
 import axios from "axios";
 import eip55 from "eip55";
 import { getCoinConfig } from "../../config";
@@ -15,17 +14,10 @@ import {
 import * as LEDGER_API from "./ledger";
 
 jest.mock("axios");
-jest.mock("@ledgerhq/live-promise");
+jest.mock("@ledgerhq/coin-module-framework/promises");
 (delay as jest.Mock).mockImplementation(
   () => new Promise(resolve => setTimeout(resolve, 1)), // mocking the delay supposed to happen after each try
 );
-
-const fakeCurrency = Object.freeze<Partial<CryptoCurrency>>({
-  id: CryptoCurrencyIdSchema.parse("ethereum"),
-  ethereumLikeInfo: {
-    chainId: 1,
-  },
-}) as CryptoCurrency;
 
 jest.mock("../../config");
 const mockGetConfig = jest.mocked(getCoinConfig);
@@ -159,17 +151,10 @@ describe("EVM Family", () => {
           };
         });
 
-        const badCurrency = {
-          id: "ethereum",
-          ethereumLikeInfo: {
-            chainId: 1,
-          },
-        } as CryptoCurrency;
-
         try {
           await LEDGER_API.getOperations(
-            getCoinConfig(badCurrency.id).info,
-            badCurrency,
+            getCoinConfig("ethereum").info,
+            "ethereum",
             "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
             0,
           );
@@ -188,6 +173,8 @@ describe("EVM Family", () => {
       ])("uses the %s batch size", async (_s, configuredBatchSize, expectedBatchSize) => {
         mockGetConfig.mockImplementationOnce(() => ({
           info: {
+            chainId: 1,
+            name: "Ethereum",
             status: { type: "active" },
             node: { type: "ledger", explorerId: "matic" },
             explorer: { type: "ledger", explorerId: "matic", batchSize: configuredBatchSize },
@@ -197,8 +184,8 @@ describe("EVM Family", () => {
         const request = jest.spyOn(axios, "request").mockResolvedValue({ data: { data: [] } });
 
         await LEDGER_API.getOperations(
-          getCoinConfig(fakeCurrency.id).info,
-          fakeCurrency,
+          getCoinConfig("ethereum").info,
+          "ethereum",
           "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
           0,
         );
@@ -216,8 +203,8 @@ describe("EVM Family", () => {
         }));
 
         const response = await LEDGER_API.getOperations(
-          getCoinConfig(fakeCurrency.id).info,
-          fakeCurrency,
+          getCoinConfig("ethereum").info,
+          "ethereum",
           "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
           0,
         );
@@ -439,8 +426,8 @@ describe("EVM Family", () => {
           }));
 
           const response = await LEDGER_API.getOperations(
-            getCoinConfig(fakeCurrency.id).info,
-            fakeCurrency,
+            getCoinConfig("ethereum").info,
+            "ethereum",
             "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
             0,
           );
@@ -468,8 +455,8 @@ describe("EVM Family", () => {
           }));
 
           const response = await LEDGER_API.getOperations(
-            getCoinConfig(fakeCurrency.id).info,
-            fakeCurrency,
+            getCoinConfig("ethereum").info,
+            "ethereum",
             "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
             0,
           );
@@ -484,8 +471,8 @@ describe("EVM Family", () => {
           }));
 
           const response = await LEDGER_API.getOperations(
-            getCoinConfig(fakeCurrency.id).info,
-            fakeCurrency,
+            getCoinConfig("ethereum").info,
+            "ethereum",
             "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
             0,
           );
@@ -500,8 +487,8 @@ describe("EVM Family", () => {
           }));
 
           const response = await LEDGER_API.getOperations(
-            getCoinConfig(fakeCurrency.id).info,
-            fakeCurrency,
+            getCoinConfig("ethereum").info,
+            "ethereum",
             "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
             0,
           );
@@ -516,8 +503,8 @@ describe("EVM Family", () => {
           }));
 
           const response = await LEDGER_API.getOperations(
-            getCoinConfig(fakeCurrency.id).info,
-            fakeCurrency,
+            getCoinConfig("ethereum").info,
+            "ethereum",
             "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
             0,
           );

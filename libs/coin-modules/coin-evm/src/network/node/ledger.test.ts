@@ -1,19 +1,16 @@
 import { AssertionError, fail } from "assert";
-import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
-import { delay } from "@ledgerhq/live-promise";
-import { CryptoCurrency, CryptoCurrencyIdSchema } from "@ledgerhq/ledger-wallet-framework/types";
+import { delay } from "@ledgerhq/coin-module-framework/promises";
 import axios from "axios";
 import BigNumber from "bignumber.js";
 import { Transaction } from "ethers";
 import { GasEstimationError } from "../../errors";
-import { makeAccount } from "../../fixtures/common.fixtures";
 import { getGasOptions } from "../gasTracker/ledger";
 import { createLedgerNodeApi } from "./ledger";
 
 jest.useFakeTimers({ doNotFake: ["setTimeout"] });
 
 jest.mock("axios");
-jest.mock("@ledgerhq/live-promise");
+jest.mock("@ledgerhq/coin-module-framework/promises");
 jest.mock("../gasTracker/ledger", () => ({
   getGasOptions: jest.fn(),
 }));
@@ -24,12 +21,8 @@ const mockGetGasOptions = getGasOptions as jest.Mock;
   () => new Promise(resolve => setTimeout(resolve, 1)), // mocking the delay supposed to happen after each try
 );
 
-const currency = {
-  ...getCryptoCurrencyById("ethereum"),
-  ethereumLikeInfo: {},
-} as CryptoCurrency;
-
-const account = makeAccount("0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d", currency);
+const currencyId = "ethereum";
+const address = "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d";
 
 const ledgerConfig = { type: "ledger" as const, explorerId: "eth" as const, retries: 2 };
 
@@ -59,7 +52,7 @@ describe("EVM Family", () => {
           ],
         }));
 
-        const result = await api.call(currency, { to: USDC, data: DECIMALS_SELECTOR });
+        const result = await api.call(currencyId, { to: USDC, data: DECIMALS_SELECTOR });
 
         expect(result).toEqual(DECIMALS_RESPONSE);
         expect(spy).toHaveBeenCalledWith(
@@ -82,7 +75,7 @@ describe("EVM Family", () => {
           ],
         }));
 
-        await api.call(currency, { to: USDC, data: DECIMALS_SELECTOR, block: 123 });
+        await api.call(currencyId, { to: USDC, data: DECIMALS_SELECTOR, block: 123 });
 
         expect(spy).toHaveBeenCalledWith(
           expect.objectContaining({
@@ -102,7 +95,7 @@ describe("EVM Family", () => {
           ],
         }));
 
-        await expect(api.call(currency, { to: USDC, data: DECIMALS_SELECTOR })).rejects.toThrow(
+        await expect(api.call(currencyId, { to: USDC, data: DECIMALS_SELECTOR })).rejects.toThrow(
           "EVM call failed",
         );
       });
@@ -132,7 +125,7 @@ describe("EVM Family", () => {
             },
           };
         });
-        const response = await api.getTransaction(currency, "0xHash");
+        const response = await api.getTransaction(currencyId, "0xHash");
         expect(response.hash).toEqual("0xabc");
         expect(spy).toHaveBeenCalledTimes(3);
       });
@@ -149,7 +142,7 @@ describe("EVM Family", () => {
           return { data: {} };
         });
         try {
-          await api.getTransaction(currency, "0xHash");
+          await api.getTransaction(currencyId, "0xHash");
           fail("Promise should have been rejected");
         } catch (e) {
           if (e instanceof AssertionError) {
@@ -208,7 +201,7 @@ describe("EVM Family", () => {
           },
         }));
 
-        const response = await api.getTransaction(currency, "0xHash");
+        const response = await api.getTransaction(currencyId, "0xHash");
         expect(response).toEqual({
           gasPrice: "83953611012",
           gasUsed: "21000",
@@ -251,7 +244,7 @@ describe("EVM Family", () => {
           data: { balance: "6969" },
         }));
 
-        expect(await api.getCoinBalance(currency, "0xkvn")).toEqual(new BigNumber("6969"));
+        expect(await api.getCoinBalance(currencyId, "0xkvn")).toEqual(new BigNumber("6969"));
       });
     });
 
@@ -265,7 +258,7 @@ describe("EVM Family", () => {
           ],
         }));
 
-        expect(await api.getTokenBalance(currency, "0xusdc", "0xkvn")).toEqual(
+        expect(await api.getTokenBalance(currencyId, "0xusdc", "0xkvn")).toEqual(
           new BigNumber("6969"),
         );
       });
@@ -278,7 +271,7 @@ describe("EVM Family", () => {
           data: { address: "0xkvn", nonce: 123 },
         }));
 
-        expect(await api.getTransactionCount(currency, "0xkvn")).toEqual(123);
+        expect(await api.getTransactionCount(currencyId, "0xkvn")).toEqual(123);
       });
     });
 
@@ -290,7 +283,7 @@ describe("EVM Family", () => {
         });
 
         try {
-          await api.getGasEstimation(account, {} as any);
+          await api.getGasEstimation(currencyId, address, {} as any);
           fail("Promise should have been rejected");
         } catch (e) {
           if (e instanceof AssertionError) {
@@ -307,7 +300,7 @@ describe("EVM Family", () => {
           .mockImplementation(() => Promise.reject({ code: "ECONNABORTED" }));
 
         try {
-          await api.getGasEstimation(account, {} as any);
+          await api.getGasEstimation(currencyId, address, {} as any);
           fail("Promise should have been rejected");
         } catch (e) {
           if (e instanceof AssertionError) {
@@ -351,8 +344,10 @@ describe("EVM Family", () => {
           data: Buffer.from("ffff", "hex"),
         };
 
-        expect(await api.getGasEstimation(account, transaction)).toEqual(new BigNumber(789));
-        expect(await api.getGasEstimation(account, transactionWithData)).toEqual(
+        expect(await api.getGasEstimation(currencyId, address, transaction)).toEqual(
+          new BigNumber(789),
+        );
+        expect(await api.getGasEstimation(currencyId, address, transactionWithData)).toEqual(
           new BigNumber(1_000_000),
         );
       });
@@ -382,15 +377,15 @@ describe("EVM Family", () => {
           },
         }));
 
-        const slowFeeData = await api.getFeeData({} as any, currency, {
+        const slowFeeData = await api.getFeeData({} as any, currencyId, {
           type: 2,
           feesStrategy: "slow",
         } as any);
-        const mediumFeeData = await api.getFeeData({} as any, currency, {
+        const mediumFeeData = await api.getFeeData({} as any, currencyId, {
           type: 2,
           feesStrategy: "medium",
         } as any);
-        const fastFeeData = await api.getFeeData({} as any, currency, {
+        const fastFeeData = await api.getFeeData({} as any, currencyId, {
           type: 2,
           feesStrategy: "fast",
         });
@@ -438,7 +433,7 @@ describe("EVM Family", () => {
           },
         }));
 
-        const feeData = await api.getFeeData({} as any, currency, { type: 2 } as any);
+        const feeData = await api.getFeeData({} as any, currencyId, { type: 2 } as any);
 
         expect(feeData).toEqual({
           maxFeePerGas: new BigNumber(5),
@@ -458,7 +453,7 @@ describe("EVM Family", () => {
           },
         }));
 
-        expect(await api.broadcastTransaction(currency, "0xSigneTx")).toEqual("0xHash");
+        expect(await api.broadcastTransaction(currencyId, "0xSigneTx")).toEqual("0xHash");
       });
 
       it("should include mevProtected=true in the request parameters when specified", async () => {
@@ -469,7 +464,7 @@ describe("EVM Family", () => {
           },
         }));
 
-        await api.broadcastTransaction(currency, "0xSignedTx", { mevProtected: true });
+        await api.broadcastTransaction(currencyId, "0xSignedTx", { mevProtected: true });
 
         expect(mockRequest).toHaveBeenCalledWith(
           expect.objectContaining({
@@ -490,7 +485,7 @@ describe("EVM Family", () => {
           },
         }));
 
-        await api.broadcastTransaction(currency, "0xSignedTx", {
+        await api.broadcastTransaction(currencyId, "0xSignedTx", {
           mevProtected: false,
           source: { type: "live-app", name: "test-manifest-id" },
         });
@@ -515,7 +510,7 @@ describe("EVM Family", () => {
           },
         }));
 
-        await api.broadcastTransaction(currency, "0xSignedTx", { mevProtected: false });
+        await api.broadcastTransaction(currencyId, "0xSignedTx", { mevProtected: false });
 
         expect(mockRequest).toHaveBeenCalledWith(
           expect.objectContaining({
@@ -557,14 +552,14 @@ describe("EVM Family", () => {
           };
         });
 
-        expect(await api.getBlockByHeight(currency, 12)).toEqual({
+        expect(await api.getBlockByHeight(currencyId, 12)).toEqual({
           hash: "0xhash",
           height: 123,
           timestamp: Date.now(),
           parentHash: "0xparentHash",
           transactionHashes: ["0xTx1", "0xTx2"],
         });
-        expect(await api.getBlockByHeight(currency, "latest")).toEqual({
+        expect(await api.getBlockByHeight(currencyId, "latest")).toEqual({
           hash: "0xhashLatest",
           height: 456,
           timestamp: Date.now(),
@@ -577,7 +572,9 @@ describe("EVM Family", () => {
     describe("getOptimismAdditionalFees", () => {
       it("should return 0 for an incompatible currency", async () => {
         const api = createLedgerNodeApi(ledgerConfig);
-        expect(await api.getOptimismAdditionalFees(currency, {} as any)).toEqual(new BigNumber(0));
+        expect(await api.getOptimismAdditionalFees(currencyId, {} as any)).toEqual(
+          new BigNumber(0),
+        );
       });
 
       it("should return the expected payload", async () => {
@@ -610,12 +607,9 @@ describe("EVM Family", () => {
           },
         });
 
-        expect(
-          await api.getOptimismAdditionalFees(
-            { ...currency, id: CryptoCurrencyIdSchema.parse("optimism") },
-            transaction.serialized,
-          ),
-        ).toEqual(new BigNumber("100000000"));
+        expect(await api.getOptimismAdditionalFees("optimism", transaction.serialized)).toEqual(
+          new BigNumber("100000000"),
+        );
       });
 
       it.each(["blast", "blast_sepolia", "base", "base_sepolia"])(
@@ -650,12 +644,9 @@ describe("EVM Family", () => {
             },
           });
 
-          expect(
-            await api.getOptimismAdditionalFees(
-              { ...currency, id: CryptoCurrencyIdSchema.parse(currencyId) },
-              transaction.serialized,
-            ),
-          ).toEqual(new BigNumber("100000000"));
+          expect(await api.getOptimismAdditionalFees(currencyId, transaction.serialized)).toEqual(
+            new BigNumber("100000000"),
+          );
         },
       );
     });
@@ -663,7 +654,7 @@ describe("EVM Family", () => {
     describe("getScrollAdditionalFees", () => {
       it("should return 0 for an incompatible currency", async () => {
         const api = createLedgerNodeApi(ledgerConfig);
-        expect(await api.getScrollAdditionalFees(currency, {} as any)).toEqual(new BigNumber(0));
+        expect(await api.getScrollAdditionalFees(currencyId, {} as any)).toEqual(new BigNumber(0));
       });
 
       it("should return the expected payload", async () => {
@@ -696,12 +687,9 @@ describe("EVM Family", () => {
           },
         });
 
-        expect(
-          await api.getScrollAdditionalFees(
-            { ...currency, id: CryptoCurrencyIdSchema.parse("scroll") },
-            transaction.serialized,
-          ),
-        ).toEqual(new BigNumber("100000000"));
+        expect(await api.getScrollAdditionalFees("scroll", transaction.serialized)).toEqual(
+          new BigNumber("100000000"),
+        );
       });
     });
   });

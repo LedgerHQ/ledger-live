@@ -50,6 +50,18 @@ export function TransportDebug<M extends MessageMap>({
             <Button onClick={handleSend}>Send</Button>
           </div>
           {sendError && <span className="body-4 text-error">{sendError}</span>}
+          {transportConfig.role === "tool" &&
+            transportConfig.target !== undefined &&
+            transportConfig.setTarget && (
+              <div className="flex items-center gap-8">
+                <span className="body-4">Change target manually</span>
+                <TextInput
+                  label="Target"
+                  value={transportConfig.target}
+                  onChange={e => transportConfig.setTarget?.(e.target.value)}
+                />
+              </div>
+            )}
         </DialogFooter>
       </DialogContent>
     </Dialog>

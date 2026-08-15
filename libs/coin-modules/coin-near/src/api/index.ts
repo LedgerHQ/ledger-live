@@ -128,6 +128,9 @@ export function createApi(): CoinModuleApi<NearConfig> {
     call: async (_context: NearContext) => {
       throw new Error("call is not supported");
     },
+    async register() {
+      throw new Error("register is not supported");
+    },
   };
 }
 

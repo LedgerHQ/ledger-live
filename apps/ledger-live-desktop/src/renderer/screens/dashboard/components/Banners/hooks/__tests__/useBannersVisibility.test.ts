@@ -68,7 +68,6 @@ describe("useBannersVisibility", () => {
     mockUsePostOnboardingEntryPointVisibleOnWallet.mockReturnValue(false);
     mockUseLNSUpsellBannerState.mockReturnValue({
       isShown: false,
-      params: undefined,
       tracking: "opted_out",
     });
     mockUseActionCards.mockReturnValue({
@@ -223,7 +222,6 @@ describe("useBannersVisibility", () => {
   it("should return true for isLNSUpsellBannerVisible when LNS upsell banner is shown", () => {
     mockUseLNSUpsellBannerState.mockReturnValue({
       isShown: true,
-      params: undefined,
       tracking: "opted_in",
     });
 
@@ -260,7 +258,6 @@ describe("useBannersVisibility", () => {
     mockUsePostOnboardingEntryPointVisibleOnWallet.mockReturnValue(true);
     mockUseLNSUpsellBannerState.mockReturnValue({
       isShown: true,
-      params: undefined,
       tracking: "opted_in",
     });
 

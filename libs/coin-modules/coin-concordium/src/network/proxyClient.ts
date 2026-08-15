@@ -1,6 +1,6 @@
 import network from "@ledgerhq/live-network";
 import type { LiveNetworkRequest } from "@ledgerhq/live-network/network";
-import { retry } from "@ledgerhq/live-promise";
+import { retry } from "@ledgerhq/coin-module-framework/promises";
 import type { ConcordiumCoinConfig } from "../types";
 import type {
   AccountBalanceResponse,

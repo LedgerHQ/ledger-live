@@ -36,6 +36,9 @@ export function createApi(): CoinModuleApi<AlgorandCoinConfig, AlgorandMemo> {
     async call() {
       throw new Error("call is not supported");
     },
+    async register() {
+      throw new Error("register is not supported");
+    },
     combine: (_context: AlgorandContext, unsignedTx: string, signature: string[]) =>
       combine(unsignedTx, signature),
     craftTransaction: (

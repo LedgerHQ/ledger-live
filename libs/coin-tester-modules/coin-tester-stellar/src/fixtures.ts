@@ -68,6 +68,7 @@ export const USDC_TOKEN: TokenCurrency = {
   type: "TokenCurrency",
   id: TokenCurrencyIdSchema.parse(`stellar/asset/${USDC_ASSET_CODE}:${ISSUER_ADDRESS}`),
   contractAddress: ISSUER_ADDRESS,
+  tokenIdentifier: USDC_ASSET_CODE,
   parentCurrencyId: CryptoCurrencyIdSchema.parse("stellar"),
   tokenType: "stellar",
   name: USDC_ASSET_CODE,

@@ -1,6 +1,5 @@
 import { AssertionError, fail } from "assert";
-import { delay } from "@ledgerhq/live-promise";
-import type { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/ledger-wallet-framework/types";
+import { delay } from "@ledgerhq/coin-module-framework/promises";
 import BigNumber from "bignumber.js";
 import {
   FetchRequest,
@@ -11,9 +10,8 @@ import {
   TransactionResponse,
   ethers,
 } from "ethers";
-import { getCoinConfig } from "../../config";
+import { EvmConfigInfo, getCoinConfig } from "../../config";
 import { GasEstimationError, InsufficientFunds, UnsupportedRpcMethodError } from "../../errors";
-import { makeAccount } from "../../fixtures/common.fixtures";
 import {
   createNodeApi,
   DEFAULT_RETRIES_RPC_METHODS,
@@ -25,7 +23,15 @@ import {
   ERC20_MINT_TOPIC,
 } from "./rpc.common";
 
-const nodeApi = createNodeApi({
+const currencyId = "my_new_chain";
+
+const evmConfig = {
+  chainId: 1,
+  name: "My New Chain",
+  node: { type: "external", uri: "http://test" },
+} as EvmConfigInfo;
+
+const nodeApi = createNodeApi(evmConfig, {
   type: "external",
   uri: "http://test",
   retries: DEFAULT_RETRIES_RPC_METHODS,
@@ -38,20 +44,9 @@ const mockGetConfig = jest.mocked(getCoinConfig);
 
 const now = Math.floor(Date.now() / 1000);
 
-const fakeCurrency: Partial<CryptoCurrency> = {
-  id: "my_new_chain" as CryptoCurrencyId,
-  ethereumLikeInfo: {
-    chainId: 1,
-  },
-  units: [{ code: "ETH", name: "ETH", magnitude: 18 }],
-};
+const address = "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d";
 
-const account = makeAccount(
-  "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
-  fakeCurrency as CryptoCurrency,
-);
-
-jest.mock("@ledgerhq/live-promise");
+jest.mock("@ledgerhq/coin-module-framework/promises");
 (delay as jest.Mock).mockImplementation(
   () => new Promise(resolve => setTimeout(resolve, 1)), // mocking the delay supposed to happen after each try
 );
@@ -175,7 +170,7 @@ describe("EVM Family", () => {
           return true;
         });
         const nodeConfig = { type: "external" as const, uri: "my-rpc.com", retries: 2 };
-        const response = await withApi(fakeCurrency as CryptoCurrency, spy, nodeConfig);
+        const response = await withApi(evmConfig, currencyId, spy, nodeConfig);
 
         expect(response).toBe(true);
         // it should fail 2 times and succeed on the next try
@@ -201,7 +196,7 @@ describe("EVM Family", () => {
         };
 
         try {
-          await withApi(fakeCurrency as CryptoCurrency, spy, nodeConfig);
+          await withApi(evmConfig, currencyId, spy, nodeConfig);
           fail("Promise should have been rejected");
         } catch (e) {
           if (e instanceof AssertionError) {
@@ -212,29 +207,43 @@ describe("EVM Family", () => {
       });
 
       it("provider cache should reuse the same JsonRpcProvider for the same currency id and same uri", async () => {
-        const currency = {
-          ...fakeCurrency,
-          id: "provider_cache_by_currency" as CryptoCurrencyId,
-        } as CryptoCurrency;
+        const testCurrencyId = "provider_cache_by_currency";
         const nodeConfig = { type: "external" as const, uri: "https://rpc-a.example", retries: 0 };
-        const first = await withApi(currency, api => Promise.resolve(api), nodeConfig);
-        const second = await withApi(currency, api => Promise.resolve(api), nodeConfig);
+        const first = await withApi(
+          evmConfig,
+          testCurrencyId,
+          api => Promise.resolve(api),
+          nodeConfig,
+        );
+        const second = await withApi(
+          evmConfig,
+          testCurrencyId,
+          api => Promise.resolve(api),
+          nodeConfig,
+        );
 
         expect(first).toBe(second);
         expect(first).toBeInstanceOf(JsonRpcProvider);
       });
 
       it("provider cache should use distinct JsonRpcProviders for the same currency id but different uri", async () => {
-        const currency = {
-          ...fakeCurrency,
-          id: "provider_cache_by_currency" as CryptoCurrencyId,
-        } as CryptoCurrency;
+        const testCurrencyId = "provider_cache_by_currency";
 
         const nodeConfig1 = { type: "external" as const, uri: "https://rpc-a.example", retries: 0 };
-        const first = await withApi(currency, api => Promise.resolve(api), nodeConfig1);
+        const first = await withApi(
+          evmConfig,
+          testCurrencyId,
+          api => Promise.resolve(api),
+          nodeConfig1,
+        );
 
         const nodeConfig2 = { ...nodeConfig1, uri: "https://rpc-b.example" };
-        const second = await withApi(currency, api => Promise.resolve(api), nodeConfig2);
+        const second = await withApi(
+          evmConfig,
+          testCurrencyId,
+          api => Promise.resolve(api),
+          nodeConfig2,
+        );
 
         expect(first).not.toBe(second);
         expect(first).toBeInstanceOf(JsonRpcProvider);
@@ -247,16 +256,10 @@ describe("EVM Family", () => {
           uri: "https://shared-rpc.example",
           retries: 0,
         };
-        const c1 = {
-          ...fakeCurrency,
-          id: "provider_cache_currency_one" as CryptoCurrencyId,
-        } as CryptoCurrency;
-        const c2 = {
-          ...fakeCurrency,
-          id: "provider_cache_currency_two" as CryptoCurrencyId,
-        } as CryptoCurrency;
-        const p1 = await withApi(c1, api => Promise.resolve(api), nodeConfig);
-        const p2 = await withApi(c2, api => Promise.resolve(api), nodeConfig);
+        const currencyIdOne = "provider_cache_currency_one";
+        const currencyIdTwo = "provider_cache_currency_two";
+        const p1 = await withApi(evmConfig, currencyIdOne, api => Promise.resolve(api), nodeConfig);
+        const p2 = await withApi(evmConfig, currencyIdTwo, api => Promise.resolve(api), nodeConfig);
 
         expect(p1).not.toBe(p2);
         expect(p1).toBeInstanceOf(JsonRpcProvider);
@@ -264,10 +267,7 @@ describe("EVM Family", () => {
       });
 
       it("should disable ethers built-in HTTP retries by setting maxAttempts: 1 on FetchRequest", async () => {
-        const currency = {
-          ...fakeCurrency,
-          id: "provider_fetch_throttle_test" as CryptoCurrencyId,
-        } as CryptoCurrency;
+        const testCurrencyId = "provider_fetch_throttle_test";
         const nodeConfig = {
           type: "external" as const,
           uri: "https://rpc-throttle-test.example",
@@ -276,7 +276,7 @@ describe("EVM Family", () => {
 
         const setThrottleParamsSpy = jest.spyOn(FetchRequest.prototype, "setThrottleParams");
 
-        await withApi(currency, api => Promise.resolve(api), nodeConfig);
+        await withApi(evmConfig, testCurrencyId, api => Promise.resolve(api), nodeConfig);
 
         expect(setThrottleParamsSpy).toHaveBeenCalledWith({ maxAttempts: 1 });
       });
@@ -286,7 +286,7 @@ describe("EVM Family", () => {
       it("should return the expected payload", async () => {
         expect(
           await nodeApi.getTransaction(
-            fakeCurrency as CryptoCurrency,
+            currencyId,
             "0x435b00d28a10febbcfefbdea080134d08ef843df122d5bc9174b09de7fce6a59",
           ),
         ).toEqual({
@@ -638,7 +638,7 @@ describe("EVM Family", () => {
           .mockResolvedValueOnce("0x00000001");
 
         await expect(
-          nodeApi.call(fakeCurrency as CryptoCurrency, {
+          nodeApi.call(currencyId, {
             to: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
             data: "0x1234",
             block: 42,
@@ -658,7 +658,7 @@ describe("EVM Family", () => {
       it("should return the expected payload", async () => {
         expect(
           await nodeApi.getCoinBalance(
-            fakeCurrency as CryptoCurrency,
+            currencyId,
             "0x435b00d28a10febbcfefbdea080134d08ef843df122d5bc9174b09de7fce6a59",
           ),
         ).toEqual(new BigNumber(420));
@@ -670,7 +670,7 @@ describe("EVM Family", () => {
     it("should return the expected payload", async () => {
       expect(
         await nodeApi.getTokenBalance(
-          fakeCurrency as CryptoCurrency,
+          currencyId,
           "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
           "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
         ),
@@ -681,10 +681,7 @@ describe("EVM Family", () => {
   describe("getTransactionCount", () => {
     it("should return the expected payload", async () => {
       expect(
-        await nodeApi.getTransactionCount(
-          fakeCurrency as CryptoCurrency,
-          "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
-        ),
+        await nodeApi.getTransactionCount(currencyId, "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"),
       ).toEqual(5);
     });
   });
@@ -700,7 +697,7 @@ describe("EVM Family", () => {
           return null;
         });
       expect(
-        await nodeApi.getGasEstimation(account, {
+        await nodeApi.getGasEstimation(currencyId, address, {
           recipient: "0x0000000000000000000000000000000000000000",
           amount: new BigNumber(2),
           data: Buffer.from(""),
@@ -719,7 +716,7 @@ describe("EVM Family", () => {
         });
 
       await expect(
-        nodeApi.getGasEstimation(account, {
+        nodeApi.getGasEstimation(currencyId, address, {
           recipient: "wrongAddress",
           amount: new BigNumber(1),
           data: Buffer.from(""),
@@ -760,11 +757,7 @@ describe("EVM Family", () => {
       });
 
       expect(
-        await nodeApi.getFeeData(
-          getCoinConfig(fakeCurrency.id as string).info,
-          fakeCurrency as CryptoCurrency,
-          eip1559Tx,
-        ),
+        await nodeApi.getFeeData(getCoinConfig(currencyId).info, currencyId, eip1559Tx),
       ).toEqual({
         maxFeePerGas: new BigNumber("6000000014"),
         maxPriorityFeePerGas: new BigNumber("5999999988"),
@@ -790,11 +783,7 @@ describe("EVM Family", () => {
       });
 
       expect(
-        await nodeApi.getFeeData(
-          getCoinConfig(fakeCurrency.id as string).info,
-          fakeCurrency as CryptoCurrency,
-          eip1559Tx,
-        ),
+        await nodeApi.getFeeData(getCoinConfig(currencyId).info, currencyId, eip1559Tx),
       ).toEqual({
         maxFeePerGas: new BigNumber("1000000026"),
         maxPriorityFeePerGas: new BigNumber(1e9),
@@ -818,11 +807,7 @@ describe("EVM Family", () => {
       it("defaults to 5 blocks (0x5) when not configured", async () => {
         const sendSpy = stubFeeHistory();
 
-        await nodeApi.getFeeData(
-          getCoinConfig(fakeCurrency.id as string).info,
-          fakeCurrency as CryptoCurrency,
-          eip1559Tx,
-        );
+        await nodeApi.getFeeData(getCoinConfig(currencyId).info, currencyId, eip1559Tx);
 
         expect(sendSpy).toHaveBeenCalledWith("eth_feeHistory", ["0x5", "latest", [50]]);
       });
@@ -830,11 +815,7 @@ describe("EVM Family", () => {
       it("defaults to the 50th percentile when feeHistoryRewardPercentile is not configured", async () => {
         const sendSpy = stubFeeHistory();
 
-        await nodeApi.getFeeData(
-          getCoinConfig(fakeCurrency.id as string).info,
-          fakeCurrency as CryptoCurrency,
-          eip1559Tx,
-        );
+        await nodeApi.getFeeData(getCoinConfig(currencyId).info, currencyId, eip1559Tx);
 
         expect(sendSpy).toHaveBeenCalledWith("eth_feeHistory", ["0x5", "latest", [50]]);
       });
@@ -856,11 +837,7 @@ describe("EVM Family", () => {
           }));
           const sendSpy = stubFeeHistory();
 
-          await nodeApi.getFeeData(
-            getCoinConfig(fakeCurrency.id as string).info,
-            fakeCurrency as CryptoCurrency,
-            eip1559Tx,
-          );
+          await nodeApi.getFeeData(getCoinConfig(currencyId).info, currencyId, eip1559Tx);
 
           expect(sendSpy).toHaveBeenCalledWith("eth_feeHistory", ["0x5", "latest", [expected]]);
         },
@@ -876,11 +853,7 @@ describe("EVM Family", () => {
         }));
         const sendSpy = stubFeeHistory();
 
-        await nodeApi.getFeeData(
-          getCoinConfig(fakeCurrency.id as string).info,
-          fakeCurrency as CryptoCurrency,
-          eip1559Tx,
-        );
+        await nodeApi.getFeeData(getCoinConfig(currencyId).info, currencyId, eip1559Tx);
 
         expect(sendSpy).toHaveBeenCalledWith("eth_feeHistory", ["0x14", "latest", [75]]);
       });
@@ -902,11 +875,7 @@ describe("EVM Family", () => {
           }));
           const sendSpy = stubFeeHistory();
 
-          await nodeApi.getFeeData(
-            getCoinConfig(fakeCurrency.id as string).info,
-            fakeCurrency as CryptoCurrency,
-            eip1559Tx,
-          );
+          await nodeApi.getFeeData(getCoinConfig(currencyId).info, currencyId, eip1559Tx);
 
           expect(sendSpy).toHaveBeenCalledWith("eth_feeHistory", [expectedHex, "latest", [50]]);
         },
@@ -935,11 +904,7 @@ describe("EVM Family", () => {
             }
           });
 
-        await nodeApi.getFeeData(
-          getCoinConfig(fakeCurrency.id as string).info,
-          fakeCurrency as CryptoCurrency,
-          legacyTx,
-        );
+        await nodeApi.getFeeData(getCoinConfig(currencyId).info, currencyId, legacyTx);
 
         expect(sendSpy).not.toHaveBeenCalledWith("eth_feeHistory", expect.anything());
       });
@@ -966,8 +931,8 @@ describe("EVM Family", () => {
           });
 
         const result = await nodeApi.getFeeData(
-          getCoinConfig(fakeCurrency.id as string).info,
-          fakeCurrency as CryptoCurrency,
+          getCoinConfig(currencyId).info,
+          currencyId,
           eip1559Tx,
         );
 
@@ -996,8 +961,8 @@ describe("EVM Family", () => {
       });
 
       const result = await nodeApi.getFeeData(
-        getCoinConfig(fakeCurrency.id as string).info,
-        fakeCurrency as CryptoCurrency,
+        getCoinConfig(currencyId).info,
+        currencyId,
         eip1559Tx,
       );
 
@@ -1026,8 +991,8 @@ describe("EVM Family", () => {
       });
 
       const result = await nodeApi.getFeeData(
-        getCoinConfig(fakeCurrency.id as string).info,
-        fakeCurrency as CryptoCurrency,
+        getCoinConfig(currencyId).info,
+        currencyId,
         eip1559Tx,
       );
 
@@ -1063,11 +1028,7 @@ describe("EVM Family", () => {
         maxPriorityFeePerGas: 0n,
       } as ethers.FeeData);
 
-      const result = await nodeApi.getFeeData(
-        getCoinConfig(fakeCurrency.id as string).info,
-        fakeCurrency as CryptoCurrency,
-        legacyTx,
-      );
+      const result = await nodeApi.getFeeData(getCoinConfig(currencyId).info, currencyId, legacyTx);
 
       expect(result.gasPrice).toEqual(new BigNumber("20000000000"));
     });
@@ -1089,11 +1050,7 @@ describe("EVM Family", () => {
       });
 
       expect(
-        await nodeApi.getFeeData(
-          getCoinConfig("zero_gravity").info,
-          { ...fakeCurrency, id: "zero_gravity" } as CryptoCurrency,
-          eip1559Tx,
-        ),
+        await nodeApi.getFeeData(getCoinConfig("zero_gravity").info, "zero_gravity", eip1559Tx),
       ).toEqual({
         maxFeePerGas: new BigNumber("2000000026"),
         maxPriorityFeePerGas: new BigNumber(2e9),
@@ -1134,14 +1091,7 @@ describe("EVM Family", () => {
       });
 
       expect(
-        await nodeApi.getFeeData(
-          getCoinConfig("optimism").info,
-          {
-            ...fakeCurrency,
-            id: "optimism",
-          } as CryptoCurrency,
-          legacyTx,
-        ),
+        await nodeApi.getFeeData(getCoinConfig("optimism").info, "optimism", legacyTx),
       ).toEqual({
         maxFeePerGas: null,
         maxPriorityFeePerGas: null,
@@ -1155,9 +1105,9 @@ describe("EVM Family", () => {
     it("should return the expected payload", async () => {
       const serializedTransaction =
         "0x02f873012d85010c388d0085077715912682520894c2907efcce4011c491bbeda8a0fa63ba7aab596c87038d7ea4c6800080c001a0bbffe7ba303ab03f697d64672c4a288ae863df8a62ffc67ba72872ce8c227f6fa01261e7c9f06af13631f03fad9b88d3c48931d353b6b41b4072fddcca5ec41629";
-      expect(
-        await nodeApi.broadcastTransaction(fakeCurrency as CryptoCurrency, serializedTransaction),
-      ).toEqual("0x435b00d28a10febbcfefbdea080134d08ef843df122d5bc9174b09de7fce6a59");
+      expect(await nodeApi.broadcastTransaction(currencyId, serializedTransaction)).toEqual(
+        "0x435b00d28a10febbcfefbdea080134d08ef843df122d5bc9174b09de7fce6a59",
+      );
     });
 
     it("should throw an insufficient funds errors", async () => {
@@ -1165,7 +1115,7 @@ describe("EVM Family", () => {
         "0x02f873012d85010c388d0085077715912682520894c2907efcce4011c491bbeda8a0fa63ba7aab596c87038d7ea4c6800080c001a0bbffe7ba303ab03f697d64672c4a288ae863df8a62ffc67ba72872ce8c227f6fa01261e7c9f06af13631f03fad9b88d3c48931d353b6b41b4072fddcca5ec41628";
 
       try {
-        await nodeApi.broadcastTransaction(fakeCurrency as CryptoCurrency, serializedTransaction);
+        await nodeApi.broadcastTransaction(currencyId, serializedTransaction);
         fail("Promise should have been rejected");
       } catch (e) {
         if (e instanceof AssertionError) {
@@ -1180,7 +1130,7 @@ describe("EVM Family", () => {
         "0x02f873012d85010c388d0085077715912682520894c2907efcce4011c491bbeda8a0fa63ba7aab596c87038d7ea4c6800080c001a0bbffe7ba303ab03f697d64672c4a288ae863df8a62ffc67ba72872ce8c227f6fa01261e7c9f06af13631f03fad9b88d3c48931d353b6b41b4072fddcca5ec41625";
 
       try {
-        await nodeApi.broadcastTransaction(fakeCurrency as CryptoCurrency, serializedTransaction);
+        await nodeApi.broadcastTransaction(currencyId, serializedTransaction);
         fail("Promise should have been rejected");
       } catch (e) {
         if (e instanceof AssertionError) {
@@ -1193,7 +1143,7 @@ describe("EVM Family", () => {
 
   describe("getBlock", () => {
     it("should return the expected payload", async () => {
-      expect(await nodeApi.getBlockByHeight(fakeCurrency as CryptoCurrency, 0)).toEqual({
+      expect(await nodeApi.getBlockByHeight(currencyId, 0)).toEqual({
         hash: "0x474dee0136108e9412e9d84197b468bb057a8dad0f2024fc55adebc4a28fa8c5",
         // for this specific assertion we can't use Date.now() directly because
         // the timestamp returned by ethers (and mocked at the beginning of
@@ -1222,7 +1172,7 @@ describe("EVM Family", () => {
         ],
       } as any);
 
-      expect(await nodeApi.getBlockByHeight(fakeCurrency as CryptoCurrency, 1, true)).toEqual({
+      expect(await nodeApi.getBlockByHeight(currencyId, 1, true)).toEqual({
         hash: "0x474dee0136108e9412e9d84197b468bb057a8dad0f2024fc55adebc4a28fa8c5",
         timestamp: now * 1000,
         height: 1,
@@ -1254,7 +1204,7 @@ describe("EVM Family", () => {
         },
       } as any);
 
-      expect(await nodeApi.getBlockByHeight(fakeCurrency as CryptoCurrency, 1, true)).toEqual({
+      expect(await nodeApi.getBlockByHeight(currencyId, 1, true)).toEqual({
         hash: "0x474dee0136108e9412e9d84197b468bb057a8dad0f2024fc55adebc4a28fa8c5",
         timestamp: now * 1000,
         height: 1,
@@ -1293,9 +1243,7 @@ describe("EVM Family", () => {
         };
       });
 
-      expect(
-        await nodeApi.getBlockByHeight(fakeCurrency as CryptoCurrency, 69174056, true),
-      ).toEqual({
+      expect(await nodeApi.getBlockByHeight(currencyId, 69174056, true)).toEqual({
         hash: "0x9e5af7a45cf98e8f32d1233092d1714f21ab15e2d24263c3fd5bef091d4736af",
         timestamp: 1742556350000,
         height: 69174056,
@@ -1331,7 +1279,7 @@ describe("EVM Family", () => {
         throw new Error(`Method not mocked: ${method}`);
       });
 
-      expect(await nodeApi.getBlockReceipts!(fakeCurrency as CryptoCurrency, 1)).toEqual([
+      expect(await nodeApi.getBlockReceipts!(currencyId, 1)).toEqual([
         {
           hash: "0x435b00d28a10febbcfefbdea080134d08ef843df122d5bc9174b09de7fce6a59",
           gasUsed: "500000",
@@ -1357,7 +1305,7 @@ describe("EVM Family", () => {
         }
         throw new Error(`Method not mocked: ${method}`);
       });
-      expect(await nodeApi.getBlockReceipts!(fakeCurrency as CryptoCurrency, 1)).toEqual([
+      expect(await nodeApi.getBlockReceipts!(currencyId, 1)).toEqual([
         {
           hash: "0x435b00d28a10febbcfefbdea080134d08ef843df122d5bc9174b09de7fce6a59",
           gasUsed: "21000",
@@ -1379,9 +1327,9 @@ describe("EVM Family", () => {
         throw new Error(`Method not mocked: ${method}`);
       });
 
-      await expect(
-        nodeApi.getBlockReceipts!(fakeCurrency as CryptoCurrency, 1),
-      ).rejects.toBeInstanceOf(UnsupportedRpcMethodError);
+      await expect(nodeApi.getBlockReceipts!(currencyId, 1)).rejects.toBeInstanceOf(
+        UnsupportedRpcMethodError,
+      );
     });
 
     it("should throw UnsupportedRpcMethodError for nested responseBody code", async () => {
@@ -1401,9 +1349,9 @@ describe("EVM Family", () => {
         throw new Error(`Method not mocked: ${method}`);
       });
 
-      await expect(
-        nodeApi.getBlockReceipts!(fakeCurrency as CryptoCurrency, 1),
-      ).rejects.toBeInstanceOf(UnsupportedRpcMethodError);
+      await expect(nodeApi.getBlockReceipts!(currencyId, 1)).rejects.toBeInstanceOf(
+        UnsupportedRpcMethodError,
+      );
     });
   });
 
@@ -1434,7 +1382,7 @@ describe("EVM Family", () => {
         throw new Error(`Method not mocked: ${method}`);
       });
 
-      const result = await nodeApi.traceBlockErigon!(fakeCurrency as CryptoCurrency, 120647648);
+      const result = await nodeApi.traceBlockErigon!(currencyId, 120647648);
       expect(result).toEqual([traceItem]);
     });
 
@@ -1461,7 +1409,7 @@ describe("EVM Family", () => {
           throw new Error(`Method not mocked: ${method}`);
         });
 
-        const err = await nodeApi.traceBlockErigon!(fakeCurrency as CryptoCurrency, 1).then(
+        const err = await nodeApi.traceBlockErigon!(currencyId, 1).then(
           () => null,
           (e: unknown) => e,
         );
@@ -1493,7 +1441,7 @@ describe("EVM Family", () => {
         throw new Error(`Method not mocked: ${method}`);
       });
 
-      const result = await nodeApi.traceBlockGeth!(fakeCurrency as CryptoCurrency, 42);
+      const result = await nodeApi.traceBlockGeth!(currencyId, 42);
       expect(result).toEqual([
         {
           action: {
@@ -1531,7 +1479,7 @@ describe("EVM Family", () => {
           throw new Error(`Method not mocked: ${method}`);
         });
 
-        const err = await nodeApi.traceBlockGeth!(fakeCurrency as CryptoCurrency, 1).then(
+        const err = await nodeApi.traceBlockGeth!(currencyId, 1).then(
           () => null,
           (e: unknown) => e,
         );
@@ -1551,7 +1499,7 @@ describe("EVM Family", () => {
         throw new Error(`Method not mocked: ${method}`);
       });
 
-      const err = await nodeApi.traceBlockGeth!(fakeCurrency as CryptoCurrency, 1).then(
+      const err = await nodeApi.traceBlockGeth!(currencyId, 1).then(
         () => null,
         (e: unknown) => e,
       );
@@ -1564,7 +1512,7 @@ describe("EVM Family", () => {
     it("should return the expected payload", async () => {
       expect(
         await nodeApi.getOptimismAdditionalFees(
-          { ...fakeCurrency, id: "optimism" } as CryptoCurrency,
+          "optimism",
           // Build a serialized transaction, the exact same way we do in `estimateFees`
           Transaction.from({
             to: "0xc2907efcce4011c491bbeda8a0fa63ba7aab596c",
@@ -1588,7 +1536,7 @@ describe("EVM Family", () => {
     it("should return 0 if the currency isn't optimism", async () => {
       expect(
         await nodeApi.getOptimismAdditionalFees(
-          fakeCurrency as CryptoCurrency,
+          currencyId,
           // Build a serialized transaction, the exact same way we do in `estimateFees`
           Transaction.from({
             to: "0xc2907efcce4011c491bbeda8a0fa63ba7aab596c",
@@ -1614,7 +1562,7 @@ describe("EVM Family", () => {
     it("should return the expected payload", async () => {
       expect(
         await nodeApi.getScrollAdditionalFees(
-          { ...fakeCurrency, id: "scroll" } as CryptoCurrency,
+          "scroll",
           // Build a serialized transaction, the exact same way we do in `estimateFees`
           Transaction.from({
             to: "0xc2907efcce4011c491bbeda8a0fa63ba7aab596c",
@@ -1638,7 +1586,7 @@ describe("EVM Family", () => {
     it("should return 0 if the currency isn't optimism", async () => {
       expect(
         await nodeApi.getScrollAdditionalFees(
-          fakeCurrency as CryptoCurrency,
+          currencyId,
           // Build a serialized transaction, the exact same way we do in `estimateFees`
           Transaction.from({
             to: "0xc2907efcce4011c491bbeda8a0fa63ba7aab596c",
@@ -1682,7 +1630,7 @@ describe("EVM Family", () => {
           .spyOn(JsonRpcProvider.prototype, "getBalance")
           .mockResolvedValue(BigInt(100));
 
-        await nodeApi.getCoinBalance(fakeCurrency as CryptoCurrency, EIP1191_CHECKSUMMED_ADDRESS);
+        await nodeApi.getCoinBalance(currencyId, EIP1191_CHECKSUMMED_ADDRESS);
 
         expect(getBalanceSpy).toHaveBeenCalledWith(NORMALIZED_ADDRESS);
       });
@@ -1700,7 +1648,7 @@ describe("EVM Family", () => {
           .mockResolvedValue("0x0000000000000000000000000000000000000000000000000000000000000064");
 
         await nodeApi.getTokenBalance(
-          fakeCurrency as CryptoCurrency,
+          currencyId,
           EIP1191_CHECKSUMMED_ADDRESS,
           EIP1191_TOKEN_ADDRESS,
         );
@@ -1723,10 +1671,7 @@ describe("EVM Family", () => {
           .spyOn(JsonRpcProvider.prototype, "getTransactionCount")
           .mockResolvedValue(10);
 
-        await nodeApi.getTransactionCount(
-          fakeCurrency as CryptoCurrency,
-          EIP1191_CHECKSUMMED_ADDRESS,
-        );
+        await nodeApi.getTransactionCount(currencyId, EIP1191_CHECKSUMMED_ADDRESS);
 
         expect(getTransactionCountSpy).toHaveBeenCalledWith(NORMALIZED_ADDRESS, "pending");
       });
@@ -1749,7 +1694,7 @@ describe("EVM Family", () => {
             return null;
           });
 
-        await nodeApi.getGasEstimation(account, {
+        await nodeApi.getGasEstimation(currencyId, address, {
           recipient: EIP1191_RECIPIENT,
           amount: new BigNumber(1000),
           data: Buffer.from(""),
@@ -1760,7 +1705,7 @@ describe("EVM Family", () => {
         // but we verify the 'to' field is lowercase before ethers processes it
         expect(capturedTransaction?.to?.toLowerCase()).toBe(NORMALIZED_RECIPIENT);
         // The 'from' address should also be lowercase
-        expect(capturedTransaction?.from?.toLowerCase()).toBe(account.freshAddress.toLowerCase());
+        expect(capturedTransaction?.from?.toLowerCase()).toBe(address.toLowerCase());
       });
     });
   });

@@ -9,8 +9,8 @@ import type { CryptoCurrency } from "../types";
 import { CollectionMetadataInput, NftMetadataInput, NftRequestsBatcher } from "./types";
 import { makeBatcher } from "@ledgerhq/live-network/batcher";
 
-export function isNFTActive(currency: CryptoCurrency | undefined | null): boolean {
-  return !!currency && getEnv("NFT_CURRENCIES").includes(currency?.id);
+export function isNFTActive(currencyId: string | undefined | null): boolean {
+  return !!currencyId && getEnv("NFT_CURRENCIES").includes(currencyId);
 }
 
 const nftCapabilities: Record<string, NFTStandard[]> = {

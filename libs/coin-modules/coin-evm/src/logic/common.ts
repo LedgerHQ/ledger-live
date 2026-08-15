@@ -8,7 +8,6 @@ import {
   isSendTransactionIntent,
   isStakingTransactionIntent,
 } from "@ledgerhq/coin-module-framework/utils";
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
 import type { EvmConfigInfo } from "../config";
@@ -117,7 +116,7 @@ function buildSendTxParams(intent: TransactionIntent<MemoNotSupported, BufferTxD
 }
 
 async function estimateGas(
-  currency: CryptoCurrency,
+  currencyId: string,
   node: ReturnType<typeof getNodeApi>,
   sender: string,
   params: { to: string; data: Buffer; value: bigint },
@@ -128,52 +127,54 @@ async function estimateGas(
   // trying to send more token asset than available.
   // Fallback to an estimation of 0 to not break the UI.
   return node
-    .getGasEstimation(
-      { currency, freshAddress: sender },
-      { amount: BigNumber(params.value.toString()), recipient: params.to, data: params.data },
-    )
+    .getGasEstimation(currencyId, sender, {
+      amount: BigNumber(params.value.toString()),
+      recipient: params.to,
+      data: params.data,
+    })
     .catch(async () => {
       if (!isStakingTransactionIntent(transactionIntent)) return new BigNumber(0);
       // Retry staking gas estimation with the chain min calldata unit (LIVE-32750).
       // Rebuild calldata + value to keep `msg.value` consistent with calldata-encoded amounts (e.g. Somnia).
-      const minUnit = STAKING_CONTRACTS[currency.id]?.calldataAmountScale ?? 1n;
+      const minUnit = STAKING_CONTRACTS[currencyId]?.calldataAmountScale ?? 1n;
       // Reuse the already-prepared staking intent (enrichment done above) and only
       // override the amount, so we don't repeat the async on-chain lookups.
-      const retry = buildStakingTransactionParams(currency, {
+      const retry = buildStakingTransactionParams(currencyId, {
         ...(preparedStakingIntent ?? transactionIntent),
         amount: minUnit,
       });
       return node
-        .getGasEstimation(
-          { currency, freshAddress: sender },
-          { amount: new BigNumber(retry.value.toString()), recipient: retry.to, data: retry.data },
-        )
+        .getGasEstimation(currencyId, sender, {
+          amount: new BigNumber(retry.value.toString()),
+          recipient: retry.to,
+          data: retry.data,
+        })
         .catch(() => new BigNumber(0));
     });
 }
 
 export async function prepareUnsignedTxParams(
   config: EvmConfigInfo,
-  currency: CryptoCurrency,
+  currencyId: string,
   transactionIntent: TransactionIntent<MemoNotSupported, BufferTxData>,
   customFeesParameters?: FeeEstimation["parameters"],
 ): Promise<TransactionLikeWithPreparedParams> {
   const { sender, type } = transactionIntent;
   const transactionType = getTransactionType(type);
-  const node = getNodeApi(config, currency);
+  const node = getNodeApi(config, currencyId);
   const isSend = isSendTransactionIntent(transactionIntent);
 
   // Prepare staking intents once (can require async on-chain lookups). See: LIVE-32750
   const preparedStakingIntent = isSend
     ? undefined
-    : await prepareStakingIntent(config, currency, transactionIntent);
+    : await prepareStakingIntent(config, currencyId, transactionIntent);
 
   const { to, data, value } = isSend
     ? buildSendTxParams(transactionIntent)
-    : buildStakingTransactionParams(currency, preparedStakingIntent ?? transactionIntent);
+    : buildStakingTransactionParams(currencyId, preparedStakingIntent ?? transactionIntent);
 
   const stakingGasMultiplier = isStakingTransactionIntent(transactionIntent)
-    ? (STAKING_CONTRACTS[currency.id]?.gasMultiplier?.({ mode: transactionIntent.mode }) ??
+    ? (STAKING_CONTRACTS[currencyId]?.gasMultiplier?.({ mode: transactionIntent.mode }) ??
       new BigNumber(1))
     : new BigNumber(1);
 
@@ -187,7 +188,7 @@ export async function prepareUnsignedTxParams(
       ? BigNumber(customGasLimit.toString())
       : (
           await estimateGas(
-            currency,
+            currencyId,
             node,
             sender,
             { to, data, value },

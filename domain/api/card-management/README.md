@@ -29,6 +29,4 @@ Reaching the backend belongs to the service, not here: base URL, `x-client-key`,
 `@shared/api-services`, `services/card`.
 
 > [!NOTE]
-> The `PayCard*` schemas and types here are the **wire** contracts. `@domain/entity-pay-card` exports
-> some of the same names for the app-facing model, with different shapes. The two are reconciled
-> under LIVE-34769, which gives the session an owner.
+> The `PayCard*` schemas and types here are the **wire** contracts, owned by this API package.

@@ -1,5 +1,4 @@
 import { ethers } from "ethers";
-import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { EvmConfigInfo } from "../config";
 import { withApi } from "../network/node/rpc.common";
 import { isExternalNodeConfig } from "../network/node/types";
@@ -57,7 +56,9 @@ function makeCallHandler(options: {
 }
 
 function setupProvider(callHandler: ReturnType<typeof jest.fn>) {
-  mockedWithApi.mockImplementation(async (_currency, fn) => fn({ call: callHandler } as never));
+  mockedWithApi.mockImplementation(async (_config, _currencyId, fn) =>
+    fn({ call: callHandler } as never),
+  );
 }
 
 describe("prepareStakingIntent / zero_gravity", () => {
@@ -77,7 +78,7 @@ describe("prepareStakingIntent / zero_gravity", () => {
 
     const result = await prepareStakingIntent(
       mockConfig,
-      { id: "zero_gravity" } as CryptoCurrency,
+      "zero_gravity",
       makeIntent({ useAllAmount: false }),
     );
 
@@ -88,11 +89,7 @@ describe("prepareStakingIntent / zero_gravity", () => {
     setupProvider(makeCallHandler({ getDelegationShares: 0n }));
 
     await expect(
-      prepareStakingIntent(
-        mockConfig,
-        { id: "zero_gravity" } as CryptoCurrency,
-        makeIntent({ useAllAmount: false }),
-      ),
+      prepareStakingIntent(mockConfig, "zero_gravity", makeIntent({ useAllAmount: false })),
     ).rejects.toThrow("no shares to undelegate from this validator");
   });
 
@@ -107,7 +104,7 @@ describe("prepareStakingIntent / zero_gravity", () => {
 
     const result = await prepareStakingIntent(
       mockConfig,
-      { id: "zero_gravity" } as CryptoCurrency,
+      "zero_gravity",
       makeIntent({ useAllAmount: false }),
     );
 
@@ -125,7 +122,7 @@ describe("prepareStakingIntent / zero_gravity", () => {
 
     const result = await prepareStakingIntent(
       mockConfig,
-      { id: "zero_gravity" } as CryptoCurrency,
+      "zero_gravity",
       makeIntent({ useAllAmount: false }),
     );
 
@@ -142,11 +139,7 @@ describe("prepareStakingIntent / zero_gravity", () => {
     );
 
     await expect(
-      prepareStakingIntent(
-        mockConfig,
-        { id: "zero_gravity" } as CryptoCurrency,
-        makeIntent({ useAllAmount: false }),
-      ),
+      prepareStakingIntent(mockConfig, "zero_gravity", makeIntent({ useAllAmount: false })),
     ).rejects.toThrow("requested amount exceeds delegated shares");
   });
 
@@ -160,11 +153,7 @@ describe("prepareStakingIntent / zero_gravity", () => {
     );
 
     await expect(
-      prepareStakingIntent(
-        mockConfig,
-        { id: "zero_gravity" } as CryptoCurrency,
-        makeIntent({ useAllAmount: false }),
-      ),
+      prepareStakingIntent(mockConfig, "zero_gravity", makeIntent({ useAllAmount: false })),
     ).rejects.toThrow("shares below 0G contract minimum");
   });
 
@@ -173,7 +162,7 @@ describe("prepareStakingIntent / zero_gravity", () => {
 
     const result = await prepareStakingIntent(
       mockConfig,
-      { id: "zero_gravity" } as CryptoCurrency,
+      "zero_gravity",
       makeIntent({ useAllAmount: true }),
     );
 
@@ -183,7 +172,7 @@ describe("prepareStakingIntent / zero_gravity", () => {
   it("is a no-op when shares is already set", async () => {
     const result = await prepareStakingIntent(
       mockConfig,
-      { id: "zero_gravity" } as CryptoCurrency,
+      "zero_gravity",
       makeIntent({ shares: 42n }),
     );
 
@@ -198,7 +187,7 @@ describe("prepareStakingIntent / zero_gravity", () => {
   it("is a no-op when mode is not undelegate", async () => {
     const result = await prepareStakingIntent(
       mockConfig,
-      { id: "zero_gravity" } as CryptoCurrency,
+      "zero_gravity",
       makeIntent({ mode: "delegate" }),
     );
 
@@ -212,11 +201,7 @@ describe("prepareStakingIntent / zero_gravity", () => {
   it("is a no-op when node is not external", async () => {
     mockedIsExternalNodeConfig.mockReturnValue(false);
 
-    const result = await prepareStakingIntent(
-      mockConfig,
-      { id: "zero_gravity" } as CryptoCurrency,
-      makeIntent(),
-    );
+    const result = await prepareStakingIntent(mockConfig, "zero_gravity", makeIntent());
 
     expect(result).toMatchObject({
       mode: "undelegate",
@@ -226,11 +211,7 @@ describe("prepareStakingIntent / zero_gravity", () => {
   });
 
   it("is a no-op for unknown currencies", async () => {
-    const result = await prepareStakingIntent(
-      mockConfig,
-      { id: "unknown_chain" } as CryptoCurrency,
-      makeIntent(),
-    );
+    const result = await prepareStakingIntent(mockConfig, "unknown_chain", makeIntent());
 
     expect(result).toMatchObject({
       mode: "undelegate",

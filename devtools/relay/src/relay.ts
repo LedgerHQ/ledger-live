@@ -7,6 +7,7 @@ import { generateToken, isLoopback, validateToken } from "./token";
 import { createLogger } from "./log";
 import type { Logger, LanIpResolver } from "./types";
 import { msg } from "./messages";
+import { createToolManager } from "./toolManager";
 
 export type RelayHubOptions = {
   /** Bind address. Defaults to 0.0.0.0 (all interfaces, including Wi-Fi). */
@@ -52,6 +53,7 @@ export function createRelayHub(options: RelayHubOptions = {}) {
 
   const registry = createSessionRegistry<WebSocket>();
   const ws = new WebSocketServer({ port, host });
+  const toolManager = createToolManager();
 
   ws.once("listening", () => {
     const address = ws.address();
@@ -95,6 +97,16 @@ export function createRelayHub(options: RelayHubOptions = {}) {
       if (attached.paired) log(msg.paired(attached.descriptor?.uid ?? "unknown"));
     }
 
+    if (me.role === "tool") {
+      toolManager.addTool(socket);
+      toolManager.sendDevicesTo(socket);
+    } else if (me.role === "host" && attached.status === "filed") {
+      const { uid } = attached.descriptor!;
+      const name = [me.id, me.platform, me.version].filter(Boolean).join(" ");
+      toolManager.addHost(uid, { id: uid, name });
+      toolManager.sendDevicesToAll();
+    }
+
     const peerRole = me.role === "tool" ? "host" : "tool";
     socket.on("message", (data, isBinary) => {
       const peers = registry.peersOf(socket);
@@ -114,6 +126,13 @@ export function createRelayHub(options: RelayHubOptions = {}) {
 
     socket.on("close", () => {
       const entry = registry.detach(socket);
+      if (entry?.role === "host") {
+        if (entry.descriptor) {
+          toolManager.removeHost(entry.descriptor.uid);
+          toolManager.sendDevicesToAll();
+        }
+      } else toolManager.removeTool(socket);
+
       if (entry) log(msg.disconnectedPeer(entry.role, me.id, entry.descriptor?.uid ?? "unknown"));
       else log(msg.disconnected(me.id));
       closeLogger();

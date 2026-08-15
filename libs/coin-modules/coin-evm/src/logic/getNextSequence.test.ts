@@ -1,4 +1,3 @@
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { EvmConfigInfo } from "../config";
 import { createMockEvmContext } from "../fixtures/context.fixtures";
 import { getNodeApi } from "../network/node";
@@ -18,7 +17,7 @@ describe("getNextSequence", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockGetNodeApi.mockImplementation((config: EvmConfigInfo, _currency: CryptoCurrency) => {
+    mockGetNodeApi.mockImplementation((config: EvmConfigInfo, _currencyId: string) => {
       return config?.node?.type === "ledger" ? ledgerMocks : externalMocks;
     });
   });
@@ -30,6 +29,6 @@ describe("getNextSequence", () => {
     const context = createMockEvmContext({ node: { type } } as Partial<EvmConfigInfo>);
     nodeApiMock.getTransactionCount.mockResolvedValue(42);
 
-    expect(await getNextSequence(context, {} as CryptoCurrency, "")).toEqual(42n);
+    expect(await getNextSequence(context, "", "")).toEqual(42n);
   });
 });

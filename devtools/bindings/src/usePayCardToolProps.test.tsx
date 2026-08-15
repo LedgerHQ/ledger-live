@@ -3,12 +3,18 @@ import { act, renderHook } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
 import featureFlagsReducer, { createFeatureFlagsMiddleware } from "@shared/feature-flags";
-import { payCardSlice, markPayCardFeatureTourSeen } from "@domain/entity-pay-card";
+import {
+  payCardFeatureTourSlice,
+  markPayCardFeatureTourSeen,
+} from "@features/flow-pay-card-feature-tour/state";
 import { usePayCardToolProps } from "./usePayCardToolProps";
 
 function buildStore() {
   return configureStore({
-    reducer: { featureFlags: featureFlagsReducer, payCard: payCardSlice.reducer },
+    reducer: {
+      featureFlags: featureFlagsReducer,
+      payCardFeatureTour: payCardFeatureTourSlice.reducer,
+    },
     middleware: gdm => gdm().concat(createFeatureFlagsMiddleware({ resolutionConfig: {} })),
   });
 }
@@ -151,7 +157,7 @@ describe("usePayCardToolProps", () => {
       result.current.resetPayCardFeatureTourSeen();
     });
 
-    expect(store.getState().payCard.hasSeenFeatureTour).toBe(false);
+    expect(store.getState().payCardFeatureTour.hasSeenFeatureTour).toBe(false);
     expect(result.current.hasSeenFeatureTour).toBe(false);
   });
 });

@@ -11,7 +11,7 @@ import { useNavigate } from "react-router";
 import { track, trackPage } from "~/renderer/analytics/segment";
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
 import { BTC_ACCOUNT, ETH_ACCOUNT_WITH_USDC } from "LLD/features/__mocks__/accounts.mock";
-import { payCardInitialState } from "@domain/entity-pay-card";
+import { payCardFeatureTourInitialState } from "@features/flow-pay-card-feature-tour/state";
 import PayTab from "LLD/features/PayTab";
 import { usePayStablecoins, type PayStablecoins } from "../hooks/usePayStablecoins";
 import { USDC, USDT, makeItem } from "../hooks/__tests__/fixtures";
@@ -37,7 +37,9 @@ const EMPTY_DESCRIPTION = "Start by depositing stablecoin to your wallet";
 const FEATURE_TOUR_ROW = "Minimal volatility";
 
 const onboardedState = { settings: { ...AFTER_ONBOARDING_STATE, counterValue: "USD" } };
-const tourSeenState = { payCard: { ...payCardInitialState, hasSeenFeatureTour: true } };
+const tourSeenState = {
+  payCardFeatureTour: { ...payCardFeatureTourInitialState, hasSeenFeatureTour: true },
+};
 const fundedState = {
   ...onboardedState,
   ...tourSeenState,
@@ -81,7 +83,9 @@ describe("PayTab", () => {
 
   it("should show the feature tour on first visit", () => {
     render(<PayTab />, {
-      initialState: { payCard: { ...payCardInitialState, hasSeenFeatureTour: false } },
+      initialState: {
+        payCardFeatureTour: { ...payCardFeatureTourInitialState, hasSeenFeatureTour: false },
+      },
     });
 
     expect(screen.getByText(FEATURE_TOUR_ROW)).toBeVisible();
@@ -90,7 +94,9 @@ describe("PayTab", () => {
 
   it("should persist dismissal and hide the tour after clicking Got it", async () => {
     const { user, store } = render(<PayTab />, {
-      initialState: { payCard: { ...payCardInitialState, hasSeenFeatureTour: false } },
+      initialState: {
+        payCardFeatureTour: { ...payCardFeatureTourInitialState, hasSeenFeatureTour: false },
+      },
     });
 
     expect(screen.getByText(FEATURE_TOUR_ROW)).toBeVisible();
@@ -98,7 +104,7 @@ describe("PayTab", () => {
     await user.click(screen.getByRole("button", { name: "Got it" }));
 
     await waitFor(() => {
-      expect(store.getState().payCard.hasSeenFeatureTour).toBe(true);
+      expect(store.getState().payCardFeatureTour.hasSeenFeatureTour).toBe(true);
       expect(screen.queryByText(FEATURE_TOUR_ROW)).not.toBeInTheDocument();
     });
   });
@@ -170,7 +176,7 @@ describe("PayTab", () => {
 
     fireEvent.click(screen.getByTestId("pay-card-balance-filter-pill"));
 
-    const dialog = await screen.findByTestId("pay-card-balance-filter-dialog");
+    const dialog = await screen.findByTestId("pay-card-balance-filter-picker");
     expect(dialog).toHaveTextContent("USD Coin");
     expect(dialog).toHaveTextContent("Tether USD");
     expect(mockedTrack).toHaveBeenCalledWith("button_clicked", { button: "balance_filter" });
@@ -193,10 +199,10 @@ describe("PayTab", () => {
     fireEvent.click(screen.getByTestId("pay-card-balance-filter-confirm"));
 
     await waitFor(() => {
-      expect(screen.queryByTestId("pay-card-balance-filter-dialog")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("pay-card-balance-filter-picker")).not.toBeInTheDocument();
     });
 
-    expect(store.getState().payCard.balanceFilter).toBe(USDC.id);
+    expect(store.getState().payCardBalance.balanceFilter).toBe(USDC.id);
 
     const pill = screen.getByTestId("pay-card-balance-filter-pill");
     expect(within(pill).getByText("USDC")).toBeVisible();

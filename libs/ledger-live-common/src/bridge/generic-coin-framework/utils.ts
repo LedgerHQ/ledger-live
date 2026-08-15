@@ -230,7 +230,7 @@ export function getPendingTokenSpent(pendingOperations: Operation[]): BigNumber 
 
 export function extractBalances(
   account: Account,
-  getAssetFromToken?: (token: TokenCurrency, owner: string) => AssetInfo,
+  getAssetFromToken?: (token: TokenCurrency, owner: string) => AssetInfo | undefined,
 ): Balance[] {
   const nativeReserve = BigNumber.max(account.balance.minus(account.spendableBalance), 0);
   const nativePending = getPendingNativeSpent(account.pendingOperations ?? []);
@@ -252,6 +252,7 @@ export function extractBalances(
 
   for (const subAccount of account.subAccounts) {
     const asset = getAssetFromToken(subAccount.token, account.freshAddress);
+    if (!asset) continue;
     const tokenReserve = BigNumber.max(subAccount.balance.minus(subAccount.spendableBalance), 0);
     const tokenPending = getPendingTokenSpent(subAccount.pendingOperations ?? []);
     balances.push({
@@ -297,8 +298,72 @@ export function computeUseAllAmount(
   return raw.idiv(scale).times(scale);
 }
 
-function isStringArray(value: unknown): value is string[] {
+export function isStringArray(value: unknown): value is string[] {
   return Array.isArray(value) && value.every(item => typeof item === "string");
+}
+
+const OPERATION_TYPES: ReadonlySet<string> = new Set<OperationType>([
+  "IN",
+  "OUT",
+  "NONE",
+  "CREATE",
+  "REVEAL",
+  "UNKNOWN",
+  "DELEGATE",
+  "UNDELEGATE",
+  "REDELEGATE",
+  "REWARD",
+  "FEES",
+  "FREEZE",
+  "UNFREEZE",
+  "WITHDRAW_EXPIRE_UNFREEZE",
+  "UNDELEGATE_RESOURCE",
+  "LEGACY_UNFREEZE",
+  "VOTE",
+  "REWARD_PAYOUT",
+  "BOND",
+  "UNBOND",
+  "WITHDRAW_UNBONDED",
+  "SET_CONTROLLER",
+  "SLASH",
+  "NOMINATE",
+  "CHILL",
+  "APPROVE",
+  "OPT_IN",
+  "OPT_OUT",
+  "LOCK",
+  "UNLOCK",
+  "WITHDRAW",
+  "REVOKE",
+  "ACTIVATE",
+  "REGISTER",
+  "NFT_IN",
+  "NFT_OUT",
+  "STAKE",
+  "UNSTAKE",
+  "WITHDRAW_UNSTAKED",
+  "FINALIZE_UNSTAKE",
+  "BURN",
+  "ASSOCIATE_TOKEN",
+  "CONTRACT_CALL",
+  "UPDATE_ACCOUNT",
+  "PRE_APPROVAL",
+  "TRANSFER_PROPOSAL",
+  "TRANSFER_REJECTED",
+  "TRANSFER_WITHDRAWN",
+  "SHIELDED_TX_SAPLING_IN",
+  "SHIELDED_TX_SAPLING_OUT",
+  "SHIELDED_TX_ORCHARD_IN",
+  "SHIELDED_TX_ORCHARD_OUT",
+  "SHIELDED_TX_IRONWOOD_IN",
+  "SHIELDED_TX_IRONWOOD_OUT",
+  "SHIELDED_TX_INTERNAL",
+  "STAKE_NEURON",
+  "TOP_UP_NEURON",
+]);
+
+export function isOperationType(value: string): value is OperationType {
+  return OPERATION_TYPES.has(value);
 }
 
 function isDelegationMode(mode: GenericTransaction["mode"]): mode is StakingOperation {
@@ -382,7 +447,7 @@ function asRecord(value: unknown): Record<string, unknown> | undefined {
     : undefined;
 }
 
-function readFamilyExtra(details: CoreOperation["details"]): JsonSafeRecord | undefined {
+export function readFamilyExtra(details: CoreOperation["details"]): JsonSafeRecord | undefined {
   const raw = asRecord(details?.[FAMILY_EXTRA_DETAILS_KEY]);
   return raw ? (toJsonSafe(raw) as JsonSafeRecord) : undefined;
 }

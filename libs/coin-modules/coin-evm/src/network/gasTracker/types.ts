@@ -1,14 +1,13 @@
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { EvmConfigInfo } from "../../config";
 import { GasOptions } from "../../types";
 
 export type GasTrackerApi = {
   getGasOptions: ({
-    currency,
+    currencyId,
     config,
     options,
   }: {
-    currency: CryptoCurrency;
+    currencyId: string;
     config: EvmConfigInfo;
     options?: {
       useEIP1559: boolean;

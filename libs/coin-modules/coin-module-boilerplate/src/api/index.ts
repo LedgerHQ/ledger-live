@@ -36,6 +36,9 @@ export function createApi(): CoinModuleApi<BoilerplateCoinConfig> {
     async call() {
       throw new Error("call is not supported");
     },
+    async register() {
+      throw new Error("register is not supported");
+    },
     combine: (_context, tx, signature, options) => combine(tx, signature, options?.pubkey),
     craftTransaction: (_context, transactionIntent) => craft(transactionIntent),
     craftRawTransaction: (

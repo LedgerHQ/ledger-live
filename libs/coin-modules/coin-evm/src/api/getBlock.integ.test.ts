@@ -23,6 +23,8 @@ describe("getBlock ERC20 transfers", () => {
     let module: ReturnType<typeof createApi>;
 
     const velasEvmConfig: EvmConfig = {
+      chainId: 111,
+      name: "Velas EVM",
       node: {
         type: "external",
         uri: "https://evmexplorer.velas.com/rpc",
@@ -83,6 +85,8 @@ describe("getBlock ERC20 transfers", () => {
     let module: ReturnType<typeof createApi>;
 
     const bscConfig: EvmConfig = {
+      chainId: 56,
+      name: "Binance Smart Chain",
       node: {
         type: "ledger",
         explorerId: "bnb",
@@ -137,6 +141,8 @@ describe("getBlock ERC20 transfers", () => {
     let module: ReturnType<typeof createApi>;
 
     const zkSyncConfig: EvmConfig = {
+      chainId: 324,
+      name: "zkSync Era",
       node: {
         type: "external",
         uri: "https://mainnet.era.zksync.io",

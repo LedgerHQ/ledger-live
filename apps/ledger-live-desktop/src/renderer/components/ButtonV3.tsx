@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Button as BaseButton, InvertTheme } from "@ledgerhq/react-ui";
 import { ButtonProps as BaseButtonProps } from "@ledgerhq/react-ui/components/cta/Button/index";
-import { useTrack } from "~/renderer/analytics/segment";
+import { track } from "~/renderer/analytics/segment";
+import { analyticsDrawerContext } from "~/renderer/drawers/Provider";
 import styled from "styled-components";
 
 export const Base = styled(BaseButton)<{ big?: boolean }>`
@@ -34,12 +35,15 @@ function Button({
   buttonTestId,
   ...rest
 }: Props) {
-  const track = useTrack();
+  const { analyticsDrawerName } = useContext(analyticsDrawerContext);
   const isClickDisabled = disabled || isLoading;
   const onClickHandler = (e: React.SyntheticEvent<HTMLButtonElement, Event>) => {
     if (onClick) {
       if (event) {
-        track(event, eventProperties || {});
+        track(event, {
+          ...(analyticsDrawerName ? { drawer: analyticsDrawerName } : {}),
+          ...(eventProperties || {}),
+        });
       }
       onClick(e);
     }

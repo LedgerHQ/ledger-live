@@ -13,9 +13,9 @@ Shared Pay hero (Desktop and Mobile) for the aggregated stablecoin balance. Rend
 ## Usage
 
 ```tsx
-import { PayCardBalance } from "@features/flow-pay-card-balance";
+import { Balance } from "@features/flow-pay-card-balance";
 
-<PayCardBalance
+<Balance
   status={status}
   stableBalance={stableBalance}
   filter={filter}
@@ -28,33 +28,50 @@ The host passes the balance data (aggregated stable balance, `status`, `filter` 
 formatter) and the display `labels` directly, so the views stay props-only and platform navigation
 and data access remain at the app composition root.
 
-## Shared aggregation (`aggregatePayCardBalance`)
+Store, persistence and test setup should import the slice from
+`@features/flow-pay-card-balance/state` so they do not load the hero UI.
+
+## Shared data hook (`useBalanceData`)
 
 Both apps derive the balance data from their own portfolio source, then feed it through the shared
-`aggregatePayCardBalance` helper so the filtering, summing and status mapping live in one place
-(LIVE-34898). Each app only writes a thin adapter that maps its `useCategorizedAssetsFromPortfolio`
-result into a `PayCardPortfolioPort`:
+`useBalanceData` hook so the filter-option building, filtering, summing, status mapping and
+stale-filter self-heal all live in one place (LIVE-34898). Each app only writes a thin adapter that
+supplies its portfolio source, formatters and Redux/analytics callbacks:
 
 ```tsx
-import { aggregatePayCardBalance } from "@features/flow-pay-card-balance";
+import { useBalanceData } from "@features/flow-pay-card-balance";
 
-return aggregatePayCardBalance({
-  stablecoins: categorizedAssets.stablecoins,
+return useBalanceData({
+  stablecoins,
+  defaultStablecoins,
   filter,
-  isLoading: isLoadingStablecoinTickers,
-  isError: isStablecoinTickersError,
+  isLoading,
+  isError,
+  allLabel,
+  formatFiat,
+  formatCrypto,
   formatCountervalue,
+  onConfirmFilter,
+  onResetFilter,
+  onTrackEvent,
 });
 ```
+
+Under the hood the hook memoizes the pure `buildBalanceData` (which composes
+`buildBalanceFilterOptions` + `aggregateBalance`) and runs the reset side effect when the
+persisted filter no longer matches an available option. `aggregateBalance` matches held rows
+to the active filter by ticker (falling back to currencyId) so market-id defaults and chain-specific
+held ids still sum correctly.
 
 `FormattedValue` is re-exported from `@ledgerhq/lumen-utils-shared` (the shared source used by both
 lumen `AmountDisplay` packages) so the contract stays platform-agnostic and tracks Lumen API changes.
 
 ## Platform resolution
 
-Only the view and state components carry a platform suffix (`.web` / `.native`). The container, view
-model, aggregation, types and barrels are platform-agnostic and import without a suffix; TypeScript
-`moduleSuffixes`, the bundlers (Rspack / Metro) and the jest preset resolve the right side.
+Only the view, state and filter-primitive components carry a platform suffix (`.web` / `.native`).
+The `logic/` functions, the `hooks/` host hook, `types.ts`, the containers and view models are
+platform-agnostic and import without a suffix; TypeScript `moduleSuffixes`, the bundlers
+(Rspack / Metro) and the jest preset resolve the right side.
 
 | Tooling          | How it resolves                                                            |
 | ---------------- | ------------------------------------------------------------------------- |
@@ -70,36 +87,45 @@ file it can reach through no other path would be reported as dead.
 ## Structure
 
 This package follows the [Structure & Flow ADR](https://ledgerhq.atlassian.net/wiki/spaces/WXP/pages/6111232117/Guideline+Monorepo+DDD+Re-architecture+Structure+Flow).
-Every `index.*` is a pure barrel (`export *` only); the components live in named files.
+Every `index.*` is a pure barrel (`export *` only). UI lives under `components/` (one folder per
+component); the platform-agnostic logic lives in `logic/`, the host hook in `hooks/`, Redux in
+`state/` (also exported as `./state`) and the shared contracts in `types.ts`.
 
 ```text
 pay-card-balance/
-├── package.json                                # Package metadata and public exports
+├── package.json                              # Package metadata and public exports
 └── src/
+    ├── __tests__/                            # Tests + shared fixtures (fixtures.tsx, renderWithStyle.web.tsx)
     ├── components/
-    │   └── PayCardBalance/
-    │       ├── __tests__/
-    │       │   ├── aggregatePayCardBalance.web.test.ts
-    │       │   ├── PayCardBalanceEmptyState.web.test.tsx
-    │       │   ├── PayCardBalanceEmptyState.native.test.tsx
-    │       │   ├── PayCardBalanceFundedState.web.test.tsx
-    │       │   ├── PayCardBalanceFundedState.native.test.tsx
-    │       │   ├── PayCardBalanceView.web.test.tsx
-    │       │   ├── PayCardBalanceView.native.test.tsx
-    │       │   └── usePayCardBalanceViewModel.web.test.ts
-    │       ├── PayCardBalance.tsx               # Component container (platform-agnostic)
-    │       ├── PayCardBalanceView.web.tsx       # Web presentational UI (state switch)
-    │       ├── PayCardBalanceView.native.tsx    # Native presentational UI (state switch)
-    │       ├── PayCardBalanceEmptyState.web.tsx
-    │       ├── PayCardBalanceEmptyState.native.tsx
-    │       ├── PayCardBalanceFundedState.web.tsx
-    │       ├── PayCardBalanceFundedState.native.tsx
-    │       ├── aggregatePayCardBalance.ts       # Shared portfolio aggregation
-    │       ├── index.ts                         # Barrel
-    │       ├── types.ts                         # Component + port contracts
-    │       └── usePayCardBalanceViewModel.ts    # Shared state derivation
-    ├── index.ts                                 # Public API (barrel)
-    └── index.native.ts                          # Native public API (barrel)
+    │   ├── Hero/                             # The balance hero component
+    │   │   ├── Balance.tsx                   # Container (platform-agnostic)
+    │   │   ├── useBalanceViewModel.ts
+    │   │   ├── BalanceView.web.tsx           # Platform chrome around the body
+    │   │   ├── BalanceView.native.tsx
+    │   │   ├── BalanceBody.tsx               # Shared funded/empty tree
+    │   │   ├── BalanceEmptyState.web.tsx / .native.tsx
+    │   │   └── BalanceFundedState.web.tsx / .native.tsx
+    │   └── Filter/                           # Filter picker + trigger
+    │       ├── BalanceFilterPicker.tsx
+    │       ├── BalanceFilterPickerView.web.tsx / .native.tsx
+    │       ├── useBalanceFilterPickerViewModel.ts
+    │       ├── BalanceFilterOptionRow.tsx    # Shared option-row composition
+    │       ├── BalanceFilterOptionParts.web.tsx / .native.tsx  # Platform primitives
+    │       ├── BalanceFilterPill.web.tsx
+    │       ├── BalanceFilterSelect.native.tsx / BalanceFilterSelectView.native.tsx
+    │       └── useBalanceFilterSelectViewModel.ts
+    ├── hooks/
+    │   └── useBalanceData.ts                 # Host-facing data hook
+    ├── logic/                                # Platform-agnostic logic (no suffix)
+    │   ├── aggregateBalance.ts               # Filter + sum + status mapping
+    │   ├── buildBalanceFilterOptions.ts      # Filter option rows
+    │   ├── buildBalanceData.ts               # build + aggregate + reset decision
+    │   └── resolveSelection.ts               # Heal a stale persisted filter
+    ├── state/                                # UI-free Redux slice (`./state` export)
+    ├── types.ts                              # Component + port contracts
+    ├── exports.ts                            # Public surface (Hero container, hook, model, types)
+    ├── index.ts                              # Public API barrel → ./exports
+    └── index.native.ts                       # Native public API barrel → ./exports
 ```
 
 ## Tracking

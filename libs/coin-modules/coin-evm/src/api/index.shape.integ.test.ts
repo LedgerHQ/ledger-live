@@ -6,6 +6,8 @@ import { createApi } from "./index";
 describe("Shape (external node)", () => {
   describe("getBlock", () => {
     const shapeConfig: EvmConfig = {
+      chainId: 360,
+      name: "Shape",
       node: {
         type: "external",
         uri: "https://mainnet.shape.network",

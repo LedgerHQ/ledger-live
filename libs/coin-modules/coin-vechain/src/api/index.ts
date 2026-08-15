@@ -109,6 +109,9 @@ export function createApi(): CoinModuleApi<VechainCurrencyConfig> {
     call: (_context: VechainContext) => {
       throw new Error("call is not supported");
     },
+    async register() {
+      throw new Error("register is not supported");
+    },
     getStakes: (
       _context: VechainContext,
       _address: string,

@@ -22,11 +22,11 @@ export async function getTokenFromAsset(
   return result;
 }
 
-export function getAssetFromToken(token: TokenCurrency): AssetInfo {
+export function getAssetFromToken(token: TokenCurrency): AssetInfo | undefined {
+  if (!token.tokenIdentifier) return undefined;
   return {
     type: token.tokenType,
-    // TODO: replace with token.tokenIdentifier when available on TokenCurrency
-    assetReference: token.contractAddress,
+    assetReference: token.tokenIdentifier,
     assetOwner: token.contractAddress,
     name: token.name,
     unit: token.units[0],

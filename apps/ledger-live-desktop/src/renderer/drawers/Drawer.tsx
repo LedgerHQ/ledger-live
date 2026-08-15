@@ -1,9 +1,9 @@
 import React, { useContext, useCallback, useEffect, useState, useRef, Suspense } from "react";
-import { context, State } from "./Provider";
+import { analyticsDrawerContext, context, State } from "./Provider";
 import { SideDrawer } from "~/renderer/components/SideDrawer";
 import styled from "styled-components";
 import { Transition, TransitionGroup, TransitionStatus } from "react-transition-group";
-import { useTrack } from "../analytics/segment";
+import { track } from "../analytics/segment";
 const transitionStyles = {
   entering: {},
   entered: {
@@ -70,14 +70,17 @@ const Drawer = () => {
       if (t) clearTimeout(t);
     };
   }, [queue]);
-  const track = useTrack();
+  const { analyticsDrawerName } = useContext(analyticsDrawerContext);
   const onRequestClose = useCallback(() => {
-    track("button_clicked2", { button: "Close" });
+    track("button_clicked2", {
+      ...(analyticsDrawerName ? { drawer: analyticsDrawerName } : {}),
+      button: "Close",
+    });
     if (state?.props?.onRequestClose) {
       onRequestClose();
     }
     setDrawer();
-  }, [setDrawer, state?.props?.onRequestClose, track]);
+  }, [analyticsDrawerName, setDrawer, state?.props?.onRequestClose]);
 
   const refsMapRef = useRef<Map<string, React.RefObject<HTMLDivElement | null>>>(new Map());
 

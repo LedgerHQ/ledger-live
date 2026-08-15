@@ -163,7 +163,7 @@ describe("useGasOptions", () => {
 
     await waitFor(() =>
       expect(mockedGetGasOptions).toHaveBeenCalledWith({
-        currency: fakeCurrency,
+        currencyId: fakeCurrency.id,
         config: {},
         options: { useEIP1559: true },
       }),
@@ -187,7 +187,7 @@ describe("useGasOptions", () => {
 
     await waitFor(() =>
       expect(mockedGetGasOptions).toHaveBeenCalledWith({
-        currency: fakeCurrency,
+        currencyId: fakeCurrency.id,
         config: {},
         options: { useEIP1559: false },
       }),
