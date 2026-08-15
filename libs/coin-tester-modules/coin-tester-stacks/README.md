@@ -37,9 +37,11 @@ macOS, since a container-built Linux binary can't run natively there). One furth
 (sustained block mining sometimes stalling, see below) could not be source-patched the same way —
 its root cause inside `clarinet`'s own Rust orchestrator was not found despite substantial
 investigation — so it is **worked around** instead, from this package's own code
-(`scripts/bitcoin-miner.js`), not silently left broken. A CI-only devnet-boot failure is still
-**under active investigation** (see below) — not yet resolved, being tracked transparently rather
-than papered over with another blind timeout adjustment.
+(`scripts/bitcoin-miner.js`), not silently left broken. A CI-only devnet-boot failure (`bitcoind`
+crashing on a host/container UID mismatch, see below) was root-caused and fixed via a one-line
+`settings/Devnet.toml` config change — pending confirmation on the next CI run before calling it
+closed, consistent with two earlier timeout-based attempts that looked plausible but didn't
+actually fix it.
 
 ### Devnet infrastructure — real, fixed `clarinet` bugs
 
@@ -69,28 +71,37 @@ and mines correctly.
   resolved to a deployment batch the devnet doesn't reliably reach within a short scenario run.
 - **`clarinet` gives up waiting on the `bitcoind` container after ~15s** (`MAX_ERRORS: u32 = 30`,
   polled every 500ms in `orchestrator.rs`) and treats that as fatal, tearing the whole devnet
-  network down. Bumped to `600` (~5min) in the patch as a legitimate safety margin regardless (a
-  cold image pull alone can exceed 15s), but **this alone does not fix CI** — see the next bullet:
-  the CI failure is not a patience problem, the container never comes up at all within any budget.
-- **[Under active investigation, CI-only] `bitcoin-node`'s container is created and started
-  successfully (clarinet's own log reaches `"Configuring bitcoin-node"`, proving
-  `docker start` returned success) but is gone from `docker ps -a` within seconds — before it ever
-  answers RPC.** Root-caused so far (via a `DEBUG=1` + `docker events`-style polling step in CI,
-  see `.github/workflows/test-coin-tester.yml`'s temporary diagnostics): the container's
-  `HostConfig.auto_remove` is hardcoded `true` upstream, so if `bitcoind`'s own process inside the
-  container crashes or exits for any reason, Docker deletes the container **immediately** — before
-  `docker logs`/`docker inspect` can capture why. This is why the "gave up after ~15s" and
-  "gave up after ~5min" failures look identical: both are downstream symptoms of the same
-  never-listening port, not the actual cause. Two theories were checked against clarinet's own
-  source and **ruled out**: (a) the deprecated `clarinet integrate` command using a different/buggy
-  code path than `devnet start` — `cli.rs` shows `Integrate` is a thin wrapper that calls the
-  identical `devnet_start()` function, so switching commands changes nothing; (b) a race with the
-  (skipped) snapshot-copy step — this package passes `--from-genesis`, which `cli.rs` maps directly
-  to `no_snapshot: true`, so `copy_snapshot_to_container` never runs at all. `auto_remove` is
-  disabled via `bitcoin-node-no-autoremove.patch` so the next CI run captures `bitcoind`'s actual
-  crash log instead of a wiped container — not yet a fix for the crash itself, a diagnostic step to
-  find one. Never reproduces locally; the CI runner (`public-ledgerhq-shared-small`) is a real,
-  non-containerized Azure VM with only 2 CPUs / 7.75GiB RAM, confirmed via the same diagnostics.
+  network down. Bumped to `600` (~5min) in the patch as a legitimate safety margin (a cold image
+  pull alone can exceed 15s) — kept even though it turned out not to be this bug's actual cause
+  (see below): `waitUntilReady` (`src/devnet.ts`) now also fails fast the moment the `clarinet`
+  process itself exits, so a longer Rust-side budget no longer costs extra wall-clock time when
+  the real problem is elsewhere.
+- **CI-only: `bitcoind` itself crashed on boot with `Permission Denied`, not a networking or
+  patience problem.** `bitcoin-node`'s container was created and started successfully (clarinet's
+  own log reached `"Configuring bitcoin-node"`), then vanished from `docker ps -a` within seconds —
+  clarinet's `HostConfig.auto_remove: true` deletes a container the instant it exits, before
+  `docker logs`/`docker inspect` can see why (fixed via `bitcoin-node-no-autoremove.patch`, kept
+  permanently — this package's own `killDevnet()` already cleans up every container on every
+  scenario exit regardless, so nothing is left lingering). With that patch plus a `DEBUG=1` dump of
+  `docker logs`/`docker inspect` *inside* `killDevnet()` itself (needed because
+  `scenarii.test.ts`'s own failure handler calls `killDevnet()` — and would otherwise force-remove
+  the same evidence — before the CI workflow's separate diagnostic step ever runs), the real error
+  surfaced: `` Error: filesystem error: cannot create directories: Permission denied
+  [/home/bitcoin/.bitcoin/regtest/wallets] ``. Root cause: `bind_containers_volumes` (`clarinet`'s
+  own `network_manifest.rs`, defaults to `true`) bind-mounts each container's data directory from a
+  host path that `clarinet` itself creates — owned by whatever user runs `clarinet` (the CI
+  runner's own account), not by the container's `user: "1000"`. bitcoind then fails writing a
+  subdirectory under it. Never reproduces locally because Docker Desktop for Mac's bind-mount layer
+  doesn't enforce the same host/container UID match a real Linux Docker host does. Fixed with a
+  one-line `bind_containers_volumes = false` in `settings/Devnet.toml` — this package spawns a
+  fresh devnet per scenario and tears it down after, so there's no need for chain data to survive
+  on the host, and disabling the bind sidesteps the UID mismatch entirely rather than reconciling
+  it. Two earlier theories were checked against clarinet's own source and **ruled out** along the
+  way: (a) the deprecated `clarinet integrate` command using a different/buggy code path than
+  `devnet start` — `cli.rs` shows `Integrate` is a thin wrapper calling the identical
+  `devnet_start()` function; (b) a race with the (skipped) snapshot-copy step — this package passes
+  `--from-genesis`, which `cli.rs` maps directly to `no_snapshot: true`, so
+  `copy_snapshot_to_container` never runs at all.
 
 Three of the fixes above are Rust source fixes, captured as patches
 (`docker/clarinet/bollard-fix.patch`, `docker/clarinet/bitcoin-node-patience.patch`,
