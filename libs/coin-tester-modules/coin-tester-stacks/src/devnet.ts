@@ -156,6 +156,19 @@ async function waitUntilReady(timeoutMs: number): Promise<void> {
   const deadline = Date.now() + timeoutMs;
 
   while (Date.now() < deadline) {
+    // `clarinet` gives up on its own internal boot sequence (e.g. bitcoind never becoming
+    // reachable) well before this function's own timeout and exits -- polling stacks-api for the
+    // remaining budget at that point is pure wasted CI time against a process that no longer
+    // exists. Fail fast instead, with a distinct message so this isn't confused with "still
+    // booting, just slow".
+    if (
+      clarinetProcess &&
+      (clarinetProcess.exitCode !== null || clarinetProcess.signalCode !== null)
+    ) {
+      throw new Error(
+        `coin-tester-stacks: clarinet process exited (code=${clarinetProcess.exitCode}, signal=${clarinetProcess.signalCode}) before the devnet became ready -- see the clarinet output above for the actual boot failure`,
+      );
+    }
     try {
       // `/v2/info` only confirms the raw stacks-node is up; the bundled stacks-blockchain-api
       // (a separate container, serving the `/extended/...` surface coin-stacks actually calls)
@@ -288,6 +301,22 @@ export async function killDevnet(): Promise<void> {
 
   const containerIds = await execAsync(`docker ps -aq --filter "network=${DEVNET_NETWORK_NAME}"`);
   if (containerIds) {
+    // Temporary diagnostic: on a scenario failure this runs (via `scenarii.test.ts`'s catch
+    // blocks) *before* the CI workflow's own "Show network diagnostics" step ever gets a chance
+    // to run -- disabling clarinet's own `auto_remove` (see `bitcoin-node-no-autoremove.patch`)
+    // is useless if this call force-removes the same containers moments later, in the same
+    // process. Dump each container's exit state and logs right here, first, while they still
+    // exist. Remove once the CI-only devnet-boot failure is diagnosed.
+    if (process.env.DEBUG) {
+      for (const id of containerIds.split("\n")) {
+        const info = await execAsync(
+          `docker inspect ${id} --format '{{.Name}} status={{.State.Status}} exitCode={{.State.ExitCode}} error={{.State.Error}}'`,
+        );
+        console.log(`[killDevnet diagnostic] ${info}`);
+        const logs = await execAsync(`docker logs --tail 100 ${id} 2>&1`);
+        console.log(`[killDevnet diagnostic] logs for ${id}:\n${logs}`);
+      }
+    }
     await execAsync(`docker rm -f ${containerIds.split("\n").join(" ")}`);
   }
   await execAsync(`docker network rm ${DEVNET_NETWORK_NAME}`);
