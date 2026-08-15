@@ -11,7 +11,7 @@ import { c32address } from "c32check";
 import invariant from "invariant";
 import { getStacksBaseUrl } from "../network/api";
 import { Transaction } from "../types";
-import { validateAddress } from "./utils/addresses";
+import { validateAddress } from "../common-logic";
 import { findNextNonce, getAddress } from "./utils/misc";
 import { getSubAccount } from "./utils/token";
 import { createTransaction } from "./utils/transactions";

@@ -9,14 +9,14 @@ import BigNumber from "bignumber.js";
 import { getStacksBaseUrl } from "../network/api";
 import { Transaction } from "../types";
 import { prepareTransaction } from "./prepareTransaction";
-import { validateAddress } from "./utils/addresses";
+import { validateAddress } from "../common-logic";
 import { findNextNonce, getAddress } from "./utils/misc";
 import { getSubAccount } from "./utils/token";
 import { createTransaction } from "./utils/transactions";
 
 jest.mock("@ledgerhq/ledger-wallet-framework/bridge/jsHelpers");
 jest.mock("@stacks/transactions");
-jest.mock("./utils/addresses");
+jest.mock("../common-logic");
 jest.mock("./utils/misc");
 jest.mock("./utils/token");
 jest.mock("./utils/transactions");

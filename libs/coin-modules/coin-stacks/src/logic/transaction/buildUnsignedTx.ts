@@ -20,8 +20,8 @@ import BigNumber from "bignumber.js";
 import {
   createStxTransferTransaction,
   createTokenTransferTransaction,
-} from "../../bridge/utils/transactions";
-import { validateAddress } from "../../bridge/utils/addresses";
+  validateAddress,
+} from "../../common-logic";
 import { STACKS_DUMMY_ADDRESS } from "../../constants";
 import { fetchPoxInfo } from "../../network/pox";
 import type { StacksTxData } from "../../types";

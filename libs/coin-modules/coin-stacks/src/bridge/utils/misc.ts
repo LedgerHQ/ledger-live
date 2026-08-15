@@ -16,7 +16,7 @@ import {
   TransactionResponse,
 } from "../../network/index";
 import { StacksOperation } from "../../types";
-import { bufferMemoToString, hexMemoToString } from "./memoUtils";
+import { bufferMemoToString, hexMemoToString } from "../../common-logic";
 
 type ContractCallArg = {
   hex: string;
