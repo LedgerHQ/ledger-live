@@ -26,14 +26,19 @@ jest.setTimeout(50 * 60 * 1000);
   }),
 );
 
-// The send/SIP-010 scenario only runs "legacy" here: `helpers.ts` also supports
-// "generic-adapter" for it, but re-running the same 4-transaction scenario a second time under
-// that strategy isn't exercised by this suite yet -- pox-5 staking below is generic-adapter-only
-// (the legacy bridge has no staking code at all), so it gets its own scenario/devnet lifecycle.
-describe("Stacks (legacy strategy)", () => {
+// The send/SIP-010 scenario runs through both strategies (mirrors coin-tester-vechain/near):
+// `helpers.ts`'s `adaptLegacyBridge` wraps the legacy bridge behind the same
+// `AccountBridge<GenericTransaction>` shape the generic-adapter path already exposes, so the
+// identical 4-transaction scenario exercises both `coin-stacks`'s legacy bridge and its Alpaca
+// (CoinModuleApi) transfer path. Staking below is generic-adapter-only (the legacy bridge has no
+// staking code at all), so it keeps its own scenario/devnet lifecycle.
+describe.each([["legacy"], ["generic-adapter"]] as const)("Stacks (%s strategy)", strategy => {
   it("scenario stacks", async () => {
     try {
-      await executeScenario(scenarioStacks, "legacy");
+      await executeScenario(
+        { ...scenarioStacks, name: `${scenarioStacks.name} [${strategy} strategy]` },
+        strategy,
+      );
     } catch (e) {
       if (e !== "done") {
         await killDevnet();

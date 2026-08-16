@@ -1,10 +1,8 @@
 import BigNumber from "bignumber.js";
-import type { Account, AccountBridge } from "@ledgerhq/types-live";
+import type { Account } from "@ledgerhq/types-live";
 import type { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
-import type { Transaction } from "@ledgerhq/coin-stacks/types";
 import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
 import { fetchPoxInfo } from "@ledgerhq/coin-stacks/network/pox";
-import { encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account";
 import {
   DEPLOYER_ADDRESS,
   DEPLOYER_PRIVATE_KEY,
@@ -28,7 +26,7 @@ let recipientAddress = "";
 let stakingValAddress = "";
 let startBurnHt = 0;
 
-type Tx = ScenarioTransaction<Transaction, Account>;
+type Tx = ScenarioTransaction<GenericTransaction, Account>;
 type StakingTx = ScenarioTransaction<GenericTransaction, Account>;
 
 const SIGNER_MANAGER_CONTRACT_NAME = "signer-manager-stub";
@@ -45,10 +43,9 @@ function makeTransactions(): Tx[] {
 
   const sendStx: Tx = {
     name: "Send 1 STX",
-    network: "devnet",
     amount: new BigNumber(1_000_000), // 1 STX (6 decimals)
     recipient: recipientAddress,
-    fee: NATIVE_FEE,
+    customFees: { parameters: { fees: NATIVE_FEE } },
     expect: (prev, curr) => {
       expect(curr.operations.length).toBeGreaterThan(prev.operations.length);
       const [latestOp] = curr.operations;
@@ -62,11 +59,10 @@ function makeTransactions(): Tx[] {
 
   const sendMaxStx: Tx = {
     name: "Send max STX",
-    network: "devnet",
     amount: new BigNumber(0),
     useAllAmount: true,
     recipient: recipientAddress,
-    fee: NATIVE_FEE,
+    customFees: { parameters: { fees: NATIVE_FEE } },
     expect: (prev, curr) => {
       expect(curr.operations.length).toBeGreaterThan(prev.operations.length);
       const [latestOp] = curr.operations;
@@ -79,11 +75,10 @@ function makeTransactions(): Tx[] {
 
   const sendToken: Tx = {
     name: "Send 10 CTT",
-    network: "devnet",
     amount: new BigNumber(10_000_000), // 10 CTT (6 decimals)
     recipient: recipientAddress,
     subAccountId,
-    fee: TOKEN_FEE,
+    customFees: { parameters: { fees: TOKEN_FEE } },
     expect: (prev, curr) => {
       const sub = curr.subAccounts?.find(s => s.id === subAccountId);
       const prevSub = prev.subAccounts?.find(s => s.id === subAccountId);
@@ -100,12 +95,11 @@ function makeTransactions(): Tx[] {
 
   const sendMaxToken: Tx = {
     name: "Send max CTT",
-    network: "devnet",
     amount: new BigNumber(0),
     useAllAmount: true,
     recipient: recipientAddress,
     subAccountId,
-    fee: TOKEN_FEE,
+    customFees: { parameters: { fees: TOKEN_FEE } },
     expect: (_prev, curr) => {
       const sub = curr.subAccounts?.find(s => s.id === subAccountId);
       expect(sub).toBeDefined();
@@ -124,7 +118,7 @@ function makeTransactions(): Tx[] {
   return [sendToken, sendMaxToken, sendStx, sendMaxStx];
 }
 
-export const scenarioStacks: Scenario<Transaction, Account> = {
+export const scenarioStacks: Scenario<GenericTransaction, Account> = {
   name: "Ledger Live Stacks (STX + SIP-010 token)",
 
   setup: async strategy => {
@@ -147,15 +141,13 @@ export const scenarioStacks: Scenario<Transaction, Account> = {
       generic: genericFunder.signer,
     });
     const account = makeAccount(funder.publicKey, funder.address);
-    subAccountId = encodeTokenAccountId(account.id, TEST_TOKEN);
 
     // retryLimit bumped from 40 to 90 (200s -> 450s headroom): occasionally, a balance/
     // spendableBalance assertion took longer than 300s to catch up through the indexer during
     // verification, intermittently exhausting a smaller limit even on otherwise-successful runs.
-    // `getBridges` returns a strategy-dependent union; this scenario only ever runs "legacy".
     return {
       currencyBridge,
-      accountBridge: accountBridge as AccountBridge<Transaction>,
+      accountBridge,
       account,
       retryInterval: 5000,
       retryLimit: 90,
@@ -167,16 +159,26 @@ export const scenarioStacks: Scenario<Transaction, Account> = {
   beforeAll: account => {
     expect(account.currency.id).toBe(STACKS.id);
     expect(account.balance.gt(0)).toBe(true);
-    const token = account.subAccounts?.find(s => s.id === subAccountId);
+    // Matched by the token's own stable identity, not by a pre-computed parent-account-id-based
+    // string: the legacy bridge keys `account.id` on the public key (`makeAccount`'s doc-comment)
+    // while the generic-adapter's own sync keys it on the address, so the two strategies produce
+    // differently-shaped (but equally valid) subAccount ids for the same underlying account.
+    // `getTransactions()` runs after this hook, so every transaction below picks up the
+    // strategy-correct id via this module-level variable.
+    const token = account.subAccounts?.find(s => s.token.id === TEST_TOKEN.id);
     expect(token).toBeDefined();
     expect(token!.balance.gt(0)).toBe(true);
+    subAccountId = token!.id;
   },
 
-  afterAll: account => {
-    // 2 native STX sends + 2 SIP-010 sends, each of which also echoes as a zero-value "parent" OUT
-    // operation on the main account (`sip010OpToParentOp`, alongside the sub-account's own
-    // operation) — 4 total, not 2.
-    expect(account.operations.filter(op => op.type === "OUT")).toHaveLength(4);
+  afterAll: (account, strategy) => {
+    // Legacy (`sip010OpToParentOp`, bridge/utils/misc.ts) echoes each SIP-010 send as a zero-value
+    // "parent" OUT operation alongside the sub-account's own OUT -- 2 native + 2 token-echoed-as-OUT
+    // = 4. generic-coin-framework's own parent-op synthesis for a token-only tx
+    // (`syntheticParentForTokenOnlyTx`, getAccountShape.ts) instead types that echo "FEES" (the
+    // account paid the tx fee) or "NONE", never "OUT" -- so only the 2 native sends count there.
+    const expectedParentOutCount = strategy === "legacy" ? 4 : 2;
+    expect(account.operations.filter(op => op.type === "OUT")).toHaveLength(expectedParentOutCount);
     const token = account.subAccounts?.find(s => s.id === subAccountId);
     expect(token).toBeDefined();
     expect(token!.operations.filter(op => op.type === "OUT")).toHaveLength(2);
@@ -286,7 +288,7 @@ export const scenarioStacksStaking: Scenario<GenericTransaction, Account> = {
 
     return {
       currencyBridge,
-      accountBridge: accountBridge as AccountBridge<GenericTransaction>,
+      accountBridge,
       account,
       retryInterval: 5000,
       retryLimit: 90,
