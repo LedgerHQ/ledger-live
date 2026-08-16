@@ -25,6 +25,14 @@ export async function getTokenFromAsset(
 export function getAssetFromToken(token: TokenCurrency, owner: string): AssetInfo {
   return {
     type: "token",
+    // NOT lowercased, deliberately: unlike `getBalance`/`listOperations`'s own composite string
+    // (used only as a matchable identifier), this `assetReference` is also split back into a real
+    // on-chain contract address by `buildUnsignedTx.ts`'s `parseSip010AssetReference` when crafting
+    // an actual transfer -- a Stacks c32 address is only valid in its canonical case (decoding
+    // requires the literal "S" prefix), so lowercasing it here would break every real send. Callers
+    // that only need to *match* this reference against `getBalance`'s lowercased one compare
+    // case-insensitively instead (`resolveAmount`, `validateIntent`'s `spendable`, `buildSubAccounts`,
+    // `getAccountShape`'s vanished-token detection).
     assetReference: token.contractAddress,
     assetOwner: owner,
     name: token.name,
