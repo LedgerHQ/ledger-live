@@ -20,11 +20,16 @@ type Props = {
   emptyState: React.ReactNode;
 };
 
+const ALIGNMENT = {
+  left: "flex-start",
+  center: "center",
+  right: "flex-end",
+} as const satisfies Record<NonNullable<NeuronColumn["align"]>, string>;
+
 const Cell = styled(Box)<{ width: string; align: NeuronColumn["align"] }>`
   flex: 0 0 ${p => p.width};
   max-width: ${p => p.width};
-  align-items: ${p =>
-    p.align === "right" ? "flex-end" : p.align === "center" ? "center" : "flex-start"};
+  align-items: ${p => ALIGNMENT[p.align ?? "left"]};
   overflow: hidden;
 `;
 

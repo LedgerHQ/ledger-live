@@ -109,11 +109,14 @@ const Body = ({
   const handleStepChange = useCallback((step: Step) => onChangeStepId(step.id), [onChangeStepId]);
 
   const error = transactionError || bridgeError;
-  const errorSteps = transactionError
-    ? [steps.findIndex(step => step.id === signingStepId)]
-    : bridgeError
-      ? [0]
-      : [];
+  // A signing failure marks the step that was signing; a bridge error belongs to the first step,
+  // since it means the transaction never became valid in the first place.
+  const failedStepIndex = () => {
+    if (transactionError) return steps.findIndex(step => step.id === signingStepId);
+    return bridgeError ? 0 : -1;
+  };
+  const errorStepIndex = failedStepIndex();
+  const errorSteps = errorStepIndex < 0 ? [] : [errorStepIndex];
 
   const stepperProps: Omit<StepProps, "transitionTo"> & {
     title: string;
