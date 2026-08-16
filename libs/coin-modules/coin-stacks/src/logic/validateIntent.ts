@@ -21,10 +21,16 @@ import type { StacksTxData } from "../types";
 const MAX_NUM_CYCLES = 96;
 
 function spendable(balances: Balance[], isToken: boolean, assetReference?: string): bigint {
+  // Case-insensitive: same reasoning as `buildUnsignedTx.ts`'s `resolveAmount` -- `getBalance`'s
+  // SIP-010 entries are always lowercased (`fetchAllTokenBalances`'s own normalization,
+  // network/api.ts), but `assetReference` here comes from `getAssetFromToken`
+  // (families/stacks/bridge/api.ts), which passes `token.contractAddress` through verbatim, and a
+  // Stacks address's canonical form is uppercase.
   const asset = balances.find(b => {
     const balanceAssetReference = "assetReference" in b.asset ? b.asset.assetReference : undefined;
     return isToken
-      ? b.asset.type !== "native" && balanceAssetReference === assetReference
+      ? b.asset.type !== "native" &&
+          balanceAssetReference?.toLowerCase() === assetReference?.toLowerCase()
       : b.asset.type === "native";
   });
   return (asset?.value ?? 0n) - (asset?.locked ?? 0n);

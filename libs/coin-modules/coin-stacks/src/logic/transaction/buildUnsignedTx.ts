@@ -86,14 +86,30 @@ async function resolveAmount(
     return new BigNumber(intent.amount.toString());
   }
 
+  // The framework (generic-coin-framework/prepareTransaction.ts) already resolves a token sweep's
+  // amount from the synced subAccount's own spendableBalance before this ever runs, and trusting
+  // it -- rather than re-deriving from a fresh `getBalance()` RPC call below, a different
+  // consistency snapshot that can momentarily disagree with the already-synced account -- avoids a
+  // sweep silently leaving a non-zero residual. Only a genuinely unresolved intent (amount still the
+  // raw 0 placeholder, e.g. a non-framework CoinModuleApi caller) falls through to derive it here.
+  const preResolved = new BigNumber(intent.amount.toString());
+  if (preResolved.gt(0)) {
+    return preResolved;
+  }
+
   const balances = await getBalance(intent.sender);
   const isToken = intent.asset.type !== "native";
   const assetReference = "assetReference" in intent.asset ? intent.asset.assetReference : undefined;
+  // Case-insensitive: `getBalance`'s SIP-010 entries are always lowercased (`fetchAllTokenBalances`'s
+  // own normalization, network/api.ts), but `assetReference` here comes from `getAssetFromToken`
+  // (families/stacks/bridge/api.ts), which passes `token.contractAddress` through verbatim -- and a
+  // Stacks address's canonical form is uppercase, so a case-sensitive match would silently miss every
+  // real token here, always resolving to a 0 spendable balance for a max-amount sweep.
   const balance = balances.find(b =>
     isToken
       ? b.asset.type !== "native" &&
         "assetReference" in b.asset &&
-        b.asset.assetReference === assetReference
+        b.asset.assetReference?.toLowerCase() === assetReference?.toLowerCase()
       : b.asset.type === "native",
   );
   const spendable = (balance?.value ?? 0n) - (balance?.locked ?? 0n) - (isToken ? 0n : fee);
