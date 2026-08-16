@@ -302,12 +302,13 @@ export async function killDevnet(): Promise<void> {
 
   const containerIds = await execAsync(`docker ps -aq --filter "network=${DEVNET_NETWORK_NAME}"`);
   if (containerIds) {
-    // Temporary diagnostic: on a scenario failure this runs (via `scenarii.test.ts`'s catch
-    // blocks) *before* the CI workflow's own "Show network diagnostics" step ever gets a chance
-    // to run -- disabling clarinet's own `auto_remove` (see `bitcoin-node-no-autoremove.patch`)
-    // is useless if this call force-removes the same containers moments later, in the same
-    // process. Dump each container's exit state and logs right here, first, while they still
-    // exist. Remove once the CI-only devnet-boot failure is diagnosed.
+    // On a scenario failure this runs (via `scenarii.test.ts`'s catch blocks) immediately, in the
+    // same process -- disabling clarinet's own `auto_remove` (see
+    // `bitcoin-node-no-autoremove.patch`) is useless if this call force-removes the same
+    // containers moments later before anyone can inspect them. Dump each container's exit state
+    // and logs right here, first, while they still exist, gated behind `DEBUG` since it's verbose
+    // and only useful when actively investigating a devnet-boot failure like the one this surfaced
+    // (see the README's "Known limitations").
     if (process.env.DEBUG) {
       for (const id of containerIds.split("\n")) {
         const info = await execAsync(

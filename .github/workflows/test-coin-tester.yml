@@ -139,55 +139,7 @@ jobs:
       - name: Setup environment
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-coin-tester-env@develop
 
-      - name: Diagnose Docker networking (temporary)
-        if: matrix.chain == 'stacks'
-        shell: bash
-        run: |
-          echo "--- is this job's own process running inside a container? ---"
-          ls -la /.dockerenv 2>&1 || echo "/.dockerenv absent"
-          cat /proc/self/cgroup 2>&1 || echo "no /proc/self/cgroup"
-          echo "--- network view from this job's process ---"
-          hostname
-          hostname -I 2>&1 || true
-          uname -m 2>&1 || true
-          echo "--- docker daemon info ---"
-          docker info 2>&1 || true
-          docker version 2>&1 || true
-          # Background poller: bitcoin-node's container only exists transiently during the coin-
-          # tester run, so capture its state (running? crash-looping? published ports? IP?) while
-          # the test is still going, not after clarinet has already torn the network down on
-          # failure. `docker logs` is the most direct signal -- bitcoind's own stdout/stderr, which
-          # tells us if the process itself ever came up at all vs. a pure networking/reachability
-          # problem once it's already listening.
-          nohup bash -c '
-            while true; do
-              echo "=== $(date) ===";
-              docker ps -a --format "table {{.Names}}\t{{.Status}}\t{{.Image}}" 2>&1;
-              echo "--- bitcoin-node inspect (network + ports, raw JSON) ---";
-              docker inspect bitcoin-node.coin-tester-stacks.devnet --format "{{json .NetworkSettings}}" 2>&1;
-              echo "--- bitcoin-node logs (own stdout/stderr) ---";
-              docker logs --tail 30 bitcoin-node.coin-tester-stacks.devnet 2>&1;
-              sleep 5;
-            done
-          ' > /tmp/network-diag.log 2>&1 &
-          echo "started background network diagnostic poller (pid $!)"
-
       - name: Run Coin Tester
         uses: LedgerHQ/ledger-live/tools/actions/composites/run-coin-tester@develop
-        env:
-          # Temporary diagnostic: surfaces the clarinet/docker devnet boot output on CI for the
-          # stacks coin-tester, which is otherwise silent (stdio: "ignore" unless DEBUG is set) --
-          # investigating a "devnet never became ready" timeout on this runner. Remove once diagnosed.
-          DEBUG: ${{ matrix.chain == 'stacks' && '1' || '' }}
         with:
           chain: ${{ matrix.chain }}
-
-      - name: Show network diagnostics (temporary)
-        if: always() && matrix.chain == 'stacks'
-        shell: bash
-        run: |
-          echo "--- background poller log (may be empty if it didn't survive across steps) ---"
-          cat /tmp/network-diag.log 2>&1 || echo "no diagnostic log captured"
-          echo "--- direct, guaranteed-to-run fallback: bitcoin-node's own logs right now ---"
-          docker logs bitcoin-node.coin-tester-stacks.devnet 2>&1 || echo "bitcoin-node container no longer exists (already torn down)"
-          docker ps -a 2>&1 || true
