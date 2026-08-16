@@ -1,4 +1,6 @@
 import { KNOWN_TOPICS } from "@ledgerhq/live-common/families/internet_computer/consts";
+import { isDeviceControlledNeuron } from "@ledgerhq/live-common/families/internet_computer/neuron";
+import { useICPPrincipal } from "@ledgerhq/live-common/families/internet_computer/react";
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import Box from "~/renderer/components/Box";
@@ -12,12 +14,17 @@ const TOPICS = Object.keys(KNOWN_TOPICS) as FollowTopic[];
 
 /** Picks the governance topic whose followees the next step edits. */
 const StepFollowTopic = ({
+  account,
   neurons,
   selectedNeuronId,
   setFollowTopic,
   transitionTo,
 }: StepProps) => {
+  const principal = useICPPrincipal(account);
   const neuron = neurons.find(n => n.id?.toString() === selectedNeuronId);
+  // Following is a voting action a hot key may take — except on NeuronManagement, which the
+  // canister reserves for the controller (governance.rs, `follow`).
+  const isControlled = !!neuron && isDeviceControlledNeuron(neuron, principal);
 
   const onSelect = useCallback(
     (topic: FollowTopic) => {
@@ -38,10 +45,12 @@ const StepFollowTopic = ({
       <Box flow={2} style={{ maxHeight: 320, overflowY: "auto" }}>
         {TOPICS.map(topic => {
           const followees = neuron?.followees.find(f => f.topic === KNOWN_TOPICS[topic]);
+          const controllerOnly = topic === "NeuronManagement" && !isControlled;
           return (
             <Button
               key={topic}
               outline
+              disabled={controllerOnly}
               onClick={() => onSelect(topic)}
               data-testid={`icp-follow-topic-${topic}`}
             >

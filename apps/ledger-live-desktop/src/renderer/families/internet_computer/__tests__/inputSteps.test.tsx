@@ -6,7 +6,15 @@ import {
 } from "@ledgerhq/live-common/families/internet_computer/consts";
 import BigNumber from "bignumber.js";
 import React from "react";
-import { render, screen } from "tests/testSetup";
+import { fireEvent, render, screen } from "tests/testSetup";
+
+const TEST_PRINCIPAL = "test-principal";
+
+jest.mock("@ledgerhq/live-common/families/internet_computer/react", () => ({
+  ...jest.requireActual("@ledgerhq/live-common/families/internet_computer/react"),
+  // The account's real principal comes from a device-provided key genAccount cannot fake.
+  useICPPrincipal: () => TEST_PRINCIPAL,
+}));
 import StepAddHotKey from "../ManageNeuronFlowModal/steps/StepAddHotKey";
 import StepFollowTopic from "../ManageNeuronFlowModal/steps/StepFollowTopic";
 import StepSelectFollowees from "../ManageNeuronFlowModal/steps/StepSelectFollowees";
@@ -141,19 +149,25 @@ describe("StepStakeMaturity", () => {
     expect(container.textContent?.replace(/\u00a0/g, " ")).toContain("1 ICP");
   });
 
-  it("caps the entry at three digits and drops non-numeric input", async () => {
+  // The input is controlled by the transaction prop, which these tests hold fixed, so typing a
+  // multi-character string would only ever exercise the last keystroke. Drive the handler with a
+  // whole value instead.
+  it.each([
+    ["50", "50"],
+    ["1a2b", "12"],
+    ["1234", "123"],
+  ])("normalizes %s to %s", async (typed, expected) => {
     const props = makeStepProps({
       neurons: [withMaturity],
       selectedNeuronId: "5",
       transaction: { type: "stake_maturity", percentageToStake: "" },
     });
-    const { user } = render(<StepStakeMaturity {...props} />);
+    render(<StepStakeMaturity {...props} />);
 
-    await user.type(screen.getByTestId("icp-stake-maturity-input"), "1a2b3c4");
+    fireEvent.change(screen.getByTestId("icp-stake-maturity-input"), { target: { value: typed } });
 
-    const calls = (props.onUpdateTransaction as jest.Mock).mock.calls;
-    const patched = applyUpdate(props.onUpdateTransaction as jest.Mock, {}, calls.length - 1);
-    expect(patched.percentageToStake).toBe("4");
+    const patched = applyUpdate(props.onUpdateTransaction as jest.Mock, {});
+    expect(patched.percentageToStake).toBe(expected);
   });
 
   it("keeps continue disabled until a percentage is entered", () => {
@@ -165,18 +179,15 @@ describe("StepStakeMaturity", () => {
 });
 
 describe("StepAddHotKey", () => {
-  it("stores the typed principal on the transaction", async () => {
+  it("stores the entered principal on the transaction verbatim", () => {
     const props = stepProps({ transaction: { type: "add_hot_key", hotKeyToAdd: "" } });
-    const { user } = render(<StepAddHotKey {...props} />);
+    render(<StepAddHotKey {...props} />);
 
-    await user.type(screen.getByTestId("icp-hot-key-input"), "aaaaa-aa");
+    fireEvent.change(screen.getByTestId("icp-hot-key-input"), { target: { value: "aaaaa-aa" } });
 
-    const patched = applyUpdate(
-      props.onUpdateTransaction as jest.Mock,
-      {},
-      (props.onUpdateTransaction as jest.Mock).mock.calls.length - 1,
-    );
-    expect(patched.hotKeyToAdd).toBe("a");
+    const patched = applyUpdate(props.onUpdateTransaction as jest.Mock, {});
+    // Unvalidated here on purpose: the bridge rejects a malformed principal.
+    expect(patched.hotKeyToAdd).toBe("aaaaa-aa");
   });
 });
 
@@ -200,6 +211,26 @@ describe("StepFollowTopic", () => {
 
     expect(props.setFollowTopic).toHaveBeenCalledWith("Governance");
     expect(props.transitionTo).toHaveBeenCalledWith("selectFollowees");
+  });
+
+  // NeuronManagement is the one topic the canister reserves for the controller, even though hot
+  // keys may set following on every other topic.
+  const renderTopicsFor = (controller: string) => {
+    const neuron = makeHealthyNeuron({ id: 5n, controller });
+    render(<StepFollowTopic {...makeStepProps({ neurons: [neuron], selectedNeuronId: "5" })} />);
+  };
+
+  it("locks NeuronManagement for a hot-key holder, leaving other topics open", () => {
+    renderTopicsFor("someone-else");
+
+    expect(screen.getByTestId("icp-follow-topic-NeuronManagement")).toBeDisabled();
+    expect(screen.getByTestId("icp-follow-topic-Governance")).toBeEnabled();
+  });
+
+  it("opens NeuronManagement to the controller", () => {
+    renderTopicsFor(TEST_PRINCIPAL);
+
+    expect(screen.getByTestId("icp-follow-topic-NeuronManagement")).toBeEnabled();
   });
 });
 
