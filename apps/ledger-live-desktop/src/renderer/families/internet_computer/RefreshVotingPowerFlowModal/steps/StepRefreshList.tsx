@@ -30,6 +30,9 @@ const COLUMNS: readonly NeuronColumn[] = [
   },
 ];
 
+// Matches the key NeuronList rows on, so the countdown lookup cannot drift from the rendered row.
+const rowKey = (neuron: ICPNeuron) => neuron.id?.toString() ?? neuron.accountIdentifier;
+
 /**
  * Lists the neurons whose voting power is on a periodic-confirmation clock, soonest first. Neurons
  * the canister reported no refresh timestamp for are left out: their staleness is unknown, and
@@ -48,16 +51,22 @@ const StepRefreshList = ({
   const formatDuration = useFormatDuration();
   const bridge = useAccountBridge<Transaction>(account);
 
-  const expiring = useMemo(
-    () =>
-      neurons
-        .filter(neuron => getSecondsTillVotingPowerExpires(neuron) !== undefined)
-        .sort(
-          (a, b) =>
-            (getSecondsTillVotingPowerExpires(a) ?? 0) - (getSecondsTillVotingPowerExpires(b) ?? 0),
-        ),
-    [neurons],
-  );
+  // The countdown is measured once for the whole list. Reading it inside the comparator would let
+  // the clock tick between comparisons, which breaks the ordering contract and can reorder rows.
+  const { expiring, secondsFor } = useMemo(() => {
+    const nowSeconds = Math.floor(Date.now() / 1000);
+    const entries = neurons
+      .map(neuron => ({ neuron, seconds: getSecondsTillVotingPowerExpires(neuron, nowSeconds) }))
+      .filter(
+        (entry): entry is { neuron: ICPNeuron; seconds: number } => entry.seconds !== undefined,
+      )
+      .sort((a, b) => a.seconds - b.seconds);
+    const byKey = new Map(entries.map(({ neuron, seconds }) => [rowKey(neuron), seconds]));
+    return {
+      expiring: entries.map(({ neuron }) => neuron),
+      secondsFor: (neuron: ICPNeuron) => byKey.get(rowKey(neuron)) ?? 0,
+    };
+  }, [neurons]);
 
   const onConfirm = useCallback(
     (neuron: ICPNeuron) => {
@@ -84,7 +93,7 @@ const StepRefreshList = ({
             </Text>
           );
         case "expiry": {
-          const seconds = getSecondsTillVotingPowerExpires(neuron) ?? 0;
+          const seconds = secondsFor(neuron);
           return (
             <Text
               ff="Inter|Regular"
@@ -112,7 +121,7 @@ const StepRefreshList = ({
           return null;
       }
     },
-    [formatDuration, onConfirm, t],
+    [formatDuration, onConfirm, secondsFor, t],
   );
 
   if (error) return <ErrorDisplay error={error} withExportLogs />;

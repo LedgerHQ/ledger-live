@@ -56,12 +56,31 @@ describe("StepManage", () => {
     expect(screen.queryByText(/You hold a hot key on this neuron/)).not.toBeInTheDocument();
   });
 
-  it("withholds those actions from a hot-key holder and says why", () => {
+  it("withholds the stake-moving actions from a hot-key holder and says why", () => {
     renderManage(makeHealthyNeuron({ id: 7n, controller: "someone-else" }));
 
     expect(screen.getByText(/You hold a hot key on this neuron/)).toBeInTheDocument();
     expect(screen.queryByTestId("icp-increase-stake-button")).not.toBeInTheDocument();
     expect(screen.queryByText("Add hot key")).not.toBeInTheDocument();
+    expect(screen.queryByText("Split neuron")).not.toBeInTheDocument();
+  });
+
+  // The canister authorizes follow and refresh_voting_power for hot keys, not just the controller
+  // (governance.rs gates both on is_authorized_to_vote). Locking these would leave a hot-key holder
+  // unable to do the only two things a hot key exists for.
+  it("still lets a hot-key holder set following and confirm it", () => {
+    renderManage(makeHealthyNeuron({ id: 7n, controller: "someone-else" }));
+
+    expect(screen.getByText("Edit following")).toBeInTheDocument();
+    expect(screen.getByText("Confirm following")).toBeInTheDocument();
+  });
+
+  // The label used to sit on the age-bonus row, reading as though "Locked" were the bonus value.
+  it("shows the neuron state on its own row, separate from the age bonus", () => {
+    renderManage(controlled({ state: NeuronState.Locked }));
+
+    expect(screen.getByText("State")).toBeInTheDocument();
+    expect(screen.getByText("Age bonus")).toBeInTheDocument();
   });
 
   it.each([
