@@ -8,7 +8,7 @@ import { steps } from "./steps";
 export type Props = Data;
 
 // Steps that are mid-signature or already broadcast: closing by accident there is destructive.
-const LOCKED_STEPS: StepId[] = ["device", "manageAction", "confirmation"];
+const LOCKED_STEPS = new Set<StepId>(["device", "manageAction", "confirmation"]);
 
 const ManageNeuronFlowModal = () => {
   const { t } = useTranslation();
@@ -21,7 +21,7 @@ const ManageNeuronFlowModal = () => {
       centered
       width={700}
       onHide={onReset}
-      preventBackdropClick={LOCKED_STEPS.includes(stepId)}
+      preventBackdropClick={LOCKED_STEPS.has(stepId)}
       render={({ onClose, data }) => (
         <Body
           stepId={stepId}

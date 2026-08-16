@@ -44,7 +44,8 @@ export const NeuronSection = ({ title, tooltip, value, children }: SectionProps)
 );
 
 export type NeuronDetailAction = {
-  label: React.ReactNode;
+  // A plain string, not a node: it doubles as the React key, and every caller passes translated text.
+  label: string;
   onClick: () => void;
   disabled?: boolean;
   testId?: string;
@@ -81,9 +82,9 @@ export const NeuronDetailRow = ({ label, tooltip, value, actions }: DetailRowPro
     </Box>
     {actions?.length ? (
       <Box horizontal style={{ gap: 8 }}>
-        {actions.map((action, index) => (
+        {actions.map(action => (
           <Button
-            key={index}
+            key={action.label}
             outline
             small
             onClick={action.onClick}
