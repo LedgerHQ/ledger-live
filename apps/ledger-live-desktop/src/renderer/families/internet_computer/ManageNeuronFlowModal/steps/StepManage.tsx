@@ -32,6 +32,12 @@ import type { StepProps } from "../../neuronFlow/types";
 // Percentage above the 1x base, as the bonus is presented to the user.
 const bonusPercent = (multiplier: number) => Math.round((multiplier - 1) * 100);
 
+// Following and periodic confirmation are voting actions, which the canister authorizes for hot keys
+// as well as the controller (governance.rs: `follow` and `refresh_voting_power` both gate on
+// `is_authorized_to_vote`). Gating these on the controller would lock a hot-key holder out of the
+// only two things a hot key is for.
+const votingActions = (action: () => void, label: string) => [{ label, onClick: action }];
+
 const StepManage = ({
   account,
   neurons,
@@ -66,7 +72,7 @@ const StepManage = ({
   const maturity = neuron.maturityE8sEquivalent + neuron.stakedMaturityE8sEquivalent;
   const followedTopics = neuron.followees.length;
 
-  // Only the controller can change a neuron; a hot key may vote and follow but nothing else.
+  // Anything that moves the stake needs the controller.
   const controlledActions = (available: boolean, action: () => void, label: string) =>
     isControlled && available ? [{ label, onClick: action }] : [];
 
@@ -133,11 +139,10 @@ const StepManage = ({
               : []
           }
         />
+        {/* State owns the lifecycle actions. It used to share a row with the age bonus, which read
+            as though "Locked" were the bonus's value. */}
         <NeuronDetailRow
-          label={t("internetComputer.manageNeuronFlow.manage.votingPower.ageBonus", {
-            percent: bonusPercent(ageMultiplier(neuron.ageSeconds)),
-          })}
-          tooltip={t("internetComputer.manageNeuronFlow.manage.votingPower.ageBonusTooltip")}
+          label={t("internetComputer.manageNeuronFlow.manage.votingPower.state")}
           value={t(`internetComputer.neuronState.${getNeuronState(neuron)}`)}
           actions={[
             ...controlledActions(
@@ -156,6 +161,13 @@ const StepManage = ({
               t("internetComputer.common.stopDissolving"),
             ),
           ]}
+        />
+        <NeuronDetailRow
+          label={t("internetComputer.manageNeuronFlow.manage.votingPower.ageBonus")}
+          tooltip={t("internetComputer.manageNeuronFlow.manage.votingPower.ageBonusTooltip")}
+          value={t("internetComputer.manageNeuronFlow.manage.votingPower.bonusValue", {
+            percent: bonusPercent(ageMultiplier(neuron.ageSeconds)),
+          })}
         />
         <NeuronDetailRow
           label={t("internetComputer.manageNeuronFlow.manage.votingPower.dissolveDelayBonus", {
@@ -193,8 +205,7 @@ const StepManage = ({
             tooltip={t(
               "internetComputer.manageNeuronFlow.manage.votingPower.confirmFollowingTooltip",
             )}
-            actions={controlledActions(
-              true,
+            actions={votingActions(
               actions.onClickConfirmFollowing,
               t("internetComputer.manageNeuronFlow.manage.votingPower.confirmFollowing"),
             )}
@@ -270,8 +281,7 @@ const StepManage = ({
         ))}
         <NeuronDetailRow
           label={t("internetComputer.manageNeuronFlow.manage.following.edit")}
-          actions={controlledActions(
-            true,
+          actions={votingActions(
             actions.onClickFollow,
             t("internetComputer.manageNeuronFlow.manage.following.follow"),
           )}
