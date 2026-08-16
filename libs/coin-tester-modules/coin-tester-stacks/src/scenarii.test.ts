@@ -13,9 +13,16 @@ global.console = require("console");
 // would cut a scenario off before its own, more specific timeouts get a chance to.
 jest.setTimeout(50 * 60 * 1000);
 
-["exit", "SIGINT", "SIGQUIT", "SIGTERM", "SIGUSR1", "SIGUSR2", "uncaughtException"].forEach(e =>
+// `exit` deliberately excluded: its handler must be synchronous (the event loop is already
+// unwinding), so an `await killDevnet()` there would never get a chance to finish. Signals and
+// uncaught exceptions can do async cleanup, but registering a handler for them suppresses Node's
+// default terminate-the-process behavior -- without an explicit `process.exit(1)` after cleanup,
+// the process would just keep running afterward instead of actually exiting, potentially hanging
+// Jest/CI instead of failing fast.
+["SIGINT", "SIGQUIT", "SIGTERM", "SIGUSR1", "SIGUSR2", "uncaughtException"].forEach(e =>
   process.on(e, async () => {
     await killDevnet();
+    process.exit(1);
   }),
 );
 
