@@ -67,7 +67,7 @@ const StepManage = ({
   const followedTopics = neuron.followees.length;
 
   // Only the controller can change a neuron; a hot key may vote and follow but nothing else.
-  const controlledActions = (available: boolean, action: () => void, label: React.ReactNode) =>
+  const controlledActions = (available: boolean, action: () => void, label: string) =>
     isControlled && available ? [{ label, onClick: action }] : [];
 
   return (

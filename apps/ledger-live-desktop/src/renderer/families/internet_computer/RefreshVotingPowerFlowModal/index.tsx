@@ -7,7 +7,7 @@ import { steps } from "./steps";
 
 export type Props = Data;
 
-const LOCKED_STEPS: StepId[] = ["manageAction", "confirmation"];
+const LOCKED_STEPS = new Set<StepId>(["manageAction", "confirmation"]);
 
 const RefreshVotingPowerFlowModal = () => {
   const { t } = useTranslation();
@@ -20,7 +20,7 @@ const RefreshVotingPowerFlowModal = () => {
       centered
       width={700}
       onHide={onReset}
-      preventBackdropClick={LOCKED_STEPS.includes(stepId)}
+      preventBackdropClick={LOCKED_STEPS.has(stepId)}
       render={({ onClose, data }) => (
         <Body
           stepId={stepId}
