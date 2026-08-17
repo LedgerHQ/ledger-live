@@ -9,7 +9,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 1`] = `
     "freshAddressPath": "44/3030",
     "hederaResources": {
       "delegation": {
-        "delegated": "91736207521",
+        "delegated": "46861718925",
         "nodeId": 20,
       },
       "isAutoTokenAssociationEnabled": false,
@@ -17,7 +17,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 1`] = `
     },
     "id": "js:2:hedera:0.0.1040977:hederaBip44",
     "index": 0,
-    "operationsCount": 103,
+    "operationsCount": 106,
     "pendingOperations": [],
     "seedIdentifier": "9e92a312233d5fd6b5a723875aeea2cea81a8e48ffc00341cff6dffcfd3ab7f2",
     "subAccounts": [],
@@ -2461,6 +2461,29 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 10,
       "extra": {
+        "consensusTimestamp": "1786459559.876185104",
+        "feesPayer": "0.0.10231006",
+        "pagingToken": "1786459559.876185104",
+        "transactionId": "0.0.10231006-1786459554-563588816",
+      },
+      "fee": "150082",
+      "hasFailed": false,
+      "hash": "UREzEHjIbEaxC5T-tfkaA6wppPLCPcnkZErPoK_uCXn-X-tlGh_Jd4pMibV-1_-G",
+      "id": "js:2:hedera:0.0.1040977:hederaBip44-UREzEHjIbEaxC5T-tfkaA6wppPLCPcnkZErPoK_uCXn-X-tlGh_Jd4pMibV-1_-G-IN",
+      "recipients": [
+        "0.0.1040977",
+      ],
+      "senders": [
+        "0.0.10231006",
+      ],
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:hedera:0.0.1040977:hederaBip44",
+      "blockHash": null,
+      "blockHeight": 10,
+      "extra": {
         "consensusTimestamp": "1767958580.114519000",
         "feesPayer": "0.0.7305122",
         "pagingToken": "1767958580.114519000",
@@ -2776,6 +2799,53 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       ],
       "type": "OUT",
       "value": "10193637",
+    },
+    {
+      "accountId": "js:2:hedera:0.0.1040977:hederaBip44",
+      "blockHash": null,
+      "blockHeight": 10,
+      "extra": {
+        "consensusTimestamp": "1786459548.360271754",
+        "feesPayer": "0.0.1040977",
+        "memo": "4050915970",
+        "pagingToken": "1786459548.360271754",
+        "transactionId": "0.0.1040977-1786459543-174421481",
+      },
+      "fee": "150082",
+      "hasFailed": false,
+      "hash": "ZRYCY_iCxa-IoOWMtIMv9bgn6gDmpaV_1ENwMDF1s45UvN5QGxEvJw20k06bmemO",
+      "id": "js:2:hedera:0.0.1040977:hederaBip44-ZRYCY_iCxa-IoOWMtIMv9bgn6gDmpaV_1ENwMDF1s45UvN5QGxEvJw20k06bmemO-OUT",
+      "recipients": [
+        "0.0.9372120",
+      ],
+      "senders": [
+        "0.0.1040977",
+      ],
+      "type": "OUT",
+      "value": "44891512983",
+    },
+    {
+      "accountId": "js:2:hedera:0.0.1040977:hederaBip44",
+      "blockHash": null,
+      "blockHeight": 10,
+      "extra": {
+        "consensusTimestamp": "1786459548.360271754",
+        "feesPayer": "0.0.1040977",
+        "memo": "4050915970",
+        "pagingToken": "1786459548.360271754",
+        "transactionId": "0.0.1040977-1786459543-174421481",
+      },
+      "fee": "0",
+      "hash": "ZRYCY_iCxa-IoOWMtIMv9bgn6gDmpaV_1ENwMDF1s45UvN5QGxEvJw20k06bmemO-staking-reward",
+      "id": "js:2:hedera:0.0.1040977:hederaBip44-ZRYCY_iCxa-IoOWMtIMv9bgn6gDmpaV_1ENwMDF1s45UvN5QGxEvJw20k06bmemO-staking-reward-REWARD",
+      "recipients": [
+        "0.0.1040977",
+      ],
+      "senders": [
+        "0.0.800",
+      ],
+      "type": "REWARD",
+      "value": "17024386",
     },
     {
       "accountId": "js:2:hedera:0.0.1040977:hederaBip44",
