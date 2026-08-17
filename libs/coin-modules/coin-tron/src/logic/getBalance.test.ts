@@ -249,4 +249,10 @@ describe("getBalance", () => {
 
     expect(balance).toEqual([{ asset: { type: "native" }, value: 1_781_772n }]);
   });
+
+  it("propagates upstream API errors", async () => {
+    mockedFetchTronAccount.mockRejectedValueOnce(new Error("upstream API error"));
+
+    await expect(getBalance(mockConfig, address)).rejects.toThrow("upstream API error");
+  });
 });

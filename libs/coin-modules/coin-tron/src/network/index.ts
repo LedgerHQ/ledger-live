@@ -467,12 +467,8 @@ export async function fetchTronAccount(
   config: TronCoinConfig,
   addr: string,
 ): Promise<AccountTronAPI[]> {
-  try {
-    const data = await fetch(config, `/v1/accounts/${addr}`);
-    return data.data;
-  } catch {
-    return [];
-  }
+  const data = await fetch(config, `/v1/accounts/${addr}`);
+  return data.data;
 }
 
 export async function getLastBlock(config: TronCoinConfig): Promise<Block> {

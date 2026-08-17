@@ -99,7 +99,7 @@ describe("post / fetch error handling", () => {
 
   it("propagates GET errors from fetch", async () => {
     mockedNetwork.mockResolvedValueOnce(mockResponse({ Error: { message: "get-boom" } }));
-    await expect(fetchTronAccount(mockConfig, senderBase58)).resolves.toEqual([]);
+    await expect(fetchTronAccount(mockConfig, senderBase58)).rejects.toThrow();
   });
 });
 
@@ -454,9 +454,9 @@ describe("fetchTronAccount", () => {
     expect(result).toEqual([{ address: senderHex }]);
   });
 
-  it("returns [] on network error", async () => {
+  it("propagates network errors", async () => {
     mockedNetwork.mockRejectedValueOnce(new Error("network"));
-    await expect(fetchTronAccount(mockConfig, senderBase58)).resolves.toEqual([]);
+    await expect(fetchTronAccount(mockConfig, senderBase58)).rejects.toThrow("network");
   });
 });
 
