@@ -380,6 +380,69 @@ describe("listPrivateOperations", () => {
     expect(result.consumedRecordTags).toEqual(new Set(["consumed-tag-1"]));
   });
 
+  it("should collect consumed record tags from ARC-20 record_with_dynamic_id inputs", async () => {
+    const record = getMockedRecord({
+      program_name: "arc20_eth.aleo",
+      function_name: EXPLORER_TRANSFER_TYPES.PRIVATE,
+    });
+    const mockEnriched = getMockedEnrichedPrivateRecord({
+      rawRecord: { sender: mockAddress },
+      details: {
+        execution: {
+          transitions: [
+            {
+              id: "au1",
+              scm: "s",
+              tcm: "t",
+              tpk: "tpk1",
+              inputs: [
+                {
+                  id: "in0",
+                  type: "record_with_dynamic_id",
+                  tag: "consumed-token-tag",
+                  dynamic_id: "dynamic-id-0",
+                },
+                { id: "in1", type: "private", value: "cipher_recipient" },
+                { id: "in2", type: "private", value: "cipher_amount" },
+              ],
+              outputs: [],
+              program: "arc20_eth.aleo",
+              function: "transfer_private",
+            },
+            {
+              id: "au2",
+              scm: "s",
+              tcm: "t",
+              tpk: "tpk2",
+              inputs: [
+                { id: "in0", type: "private", value: "cipher_token_id" },
+                { id: "in1", type: "record_dynamic" },
+                { id: "in2", type: "private", value: "cipher_recipient" },
+                { id: "in3", type: "private", value: "cipher_amount" },
+              ],
+              outputs: [],
+              program: "mm1_ldg_arc20_p_28.aleo",
+              function: "transfer_private_1",
+            },
+          ],
+        },
+      },
+    });
+
+    mockEnrichPrivateRecord.mockResolvedValue(mockEnriched);
+    mockToPrivateBridgeOperation.mockReturnValue(mockOp);
+
+    const result = await listPrivateOperations({
+      config: mockConfig,
+      viewKey: mockViewKey,
+      address: mockAddress,
+      ledgerAccountId: mockLedgerAccountId,
+      privateRecords: [record],
+    });
+
+    expect(result.consumedRecordTags).toEqual(new Set(["consumed-token-tag"]));
+  });
+
   it("should not collect tags from incoming transactions where sender is not this address", async () => {
     const record = getMockedRecord({
       program_name: PROGRAM_ID.CREDITS,
