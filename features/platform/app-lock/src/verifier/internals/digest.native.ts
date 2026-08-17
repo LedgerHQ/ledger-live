@@ -1,3 +1,6 @@
+// Referenced, not just declared: consumers compile these sources, and an ambient declaration only
+// reaches the program that includes it.
+/// <reference path="../../react-native-fast-crypto.d.ts" />
 import type { ScryptParams } from "@shared/password-verifier";
 import { scrypt } from "react-native-fast-crypto";
 // React Native has no Buffer global; the package brings its own rather than lean on the app's.

@@ -99,3 +99,8 @@ export async function readPasswordVerifier(): Promise<PasswordVerifier | null> {
 export async function clearPasswordVerifier(): Promise<void> {
   await Keychain.resetGenericPassword({ service: SERVICE });
 }
+
+// Existence only: an unparsable record still means the user has a password.
+export async function hasStoredVerifier(): Promise<boolean> {
+  return (await Keychain.getGenericPassword({ service: SERVICE })) !== false;
+}

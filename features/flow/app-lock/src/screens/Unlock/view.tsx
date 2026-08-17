@@ -1,7 +1,7 @@
 import { Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
 import { useTranslation } from "@shared/i18n";
-import React from "react";
-import { Pressable } from "react-native";
+import React, { useEffect, useRef } from "react";
+import { Keyboard, Pressable, type TextInput } from "react-native";
 import { PasswordField } from "../../components/PasswordField";
 import type { UnlockViewProps } from "./types";
 
@@ -16,12 +16,29 @@ export function UnlockView({
   onRetryBiometrics,
   onForgotPassword,
   hasFailed = false,
+  isAppActive = true,
   logo,
   topInset = 0,
   bottomInset = 0,
   keyboardHeight = 0,
 }: UnlockViewProps): React.JSX.Element {
   const { t } = useTranslation();
+  const fieldRef = useRef<TextInput | null>(null);
+
+  // The lock mounts while the app is backgrounded or still starting, where focus cannot raise a
+  // keyboard: the field draws as focused and nothing opens. So it is asked for again once active.
+  useEffect(() => {
+    if (isAppActive) {
+      fieldRef.current?.focus();
+    }
+  }, [isAppActive]);
+
+  // Without this the field keeps focus after the keyboard goes, drawn as if still being typed into.
+  useEffect(() => {
+    const hidden = Keyboard.addListener("keyboardDidHide", () => fieldRef.current?.blur());
+
+    return () => hidden.remove();
+  }, []);
 
   let helperText: string | undefined;
   if (hasFailed) {
@@ -42,6 +59,7 @@ export function UnlockView({
       <Box lx={{ alignItems: "center", paddingTop: "s112", paddingBottom: "s16" }}>{logo}</Box>
 
       <PasswordField
+        inputRef={fieldRef}
         value={password}
         onChangeText={onPasswordChange}
         helperText={helperText}
@@ -55,15 +73,17 @@ export function UnlockView({
 
       <Box lx={{ flex: 1 }} />
 
-      <Pressable
-        accessibilityRole="button"
-        onPress={onForgotPassword}
-        testID="app-lock-unlock-forgot-password"
-      >
-        <Text lx={{ textAlign: "center", textDecorationLine: "underline" }}>
-          {t("appLock.unlock.forgotPassword")}
-        </Text>
-      </Pressable>
+      {onForgotPassword ? (
+        <Pressable
+          accessibilityRole="button"
+          onPress={onForgotPassword}
+          testID="app-lock-unlock-forgot-password"
+        >
+          <Text lx={{ textAlign: "center", textDecorationLine: "underline" }}>
+            {t("appLock.unlock.forgotPassword")}
+          </Text>
+        </Pressable>
+      ) : null}
 
       <Button
         appearance="base"

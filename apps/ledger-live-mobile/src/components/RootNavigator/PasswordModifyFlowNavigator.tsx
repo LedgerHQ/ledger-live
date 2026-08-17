@@ -3,7 +3,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTranslation } from "~/context/Locale";
 import { useTheme } from "styled-components/native";
 import { AppLockPasswordModifyNavigator } from "LLM/features/AppLock/ModifyNavigator";
-import { useFeature } from "@features/platform-feature-flags";
+import { useAppLockScheme } from "LLM/features/AppLock/hooks/useAppLockScheme";
 import { ScreenName } from "~/const";
 import PasswordRemove from "~/screens/Settings/General/PasswordRemove";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
@@ -29,9 +29,15 @@ function LegacyPasswordModifyFlowNavigator() {
 }
 
 export default function PasswordModifyFlowNavigator() {
-  const isRevampEnabled = useFeature("lwmPasswordRevamp")?.enabled ?? false;
+  // The resolved scheme, not the raw flag: a stored verifier keeps the revamped flow even with the
+  // flag off, and the legacy removal screen cannot clear a verifier.
+  const scheme = useAppLockScheme();
 
-  return isRevampEnabled ? (
+  if (scheme === undefined) {
+    return null;
+  }
+
+  return scheme === "revamped" ? (
     <AppLockPasswordModifyNavigator />
   ) : (
     <LegacyPasswordModifyFlowNavigator />
