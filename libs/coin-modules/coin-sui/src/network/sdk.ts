@@ -284,6 +284,17 @@ export function isSettlementTransaction(tx: SuiTransactionBlockResponse): boolea
 }
 
 /**
+ * gRPC counterpart of the GraphQL arm's `isFinalizedTxNode`.
+ *
+ * `ListTransactions` is meant to return executed transactions only, but the mapper leaves
+ * `timestampMs` unset when the proto omits it, and such a record becomes an operation dated 1970 —
+ * sorted to the bottom of the account's history and unusable as a pagination cursor, which reads as
+ * the end of history. The GraphQL arm drops the equivalent records rather than mapping them.
+ */
+const isFinalizedGrpcTx = (tx: SuiTransactionBlockResponse): boolean =>
+  tx.timestampMs !== null && tx.timestampMs !== undefined;
+
+/**
  * Accumulator events report `ty` as `0x2::balance::Balance<INNER>`, while
  * `BalanceChange.coinType` uses the bare `INNER` form. Normalise to the inner
  * coin type so the two can be compared and merged.
@@ -1040,7 +1051,7 @@ export const getOperations = async (
         ...(startCheckpoint !== undefined && { startCheckpoint }),
       });
       return transactions
-        .filter(tx => !isSettlementTransaction(tx))
+        .filter(tx => isFinalizedGrpcTx(tx) && !isSettlementTransaction(tx))
         .sort(compareOperations("desc"))
         .map(transaction => transactionToOperation(accountId, addr, transaction));
     },
@@ -1290,13 +1301,15 @@ export const getListOperations = async (
             filter,
             order,
           );
-        const filtered = pairs.filter(({ tx }) => !isSettlementTransaction(tx));
-        const sorted = filtered.slice().sort((a, b) => compareOperations(order)(a.tx, b.tx));
+        const sortedPairs = pairs.slice().sort((a, b) => compareOperations(order)(a.tx, b.tx));
+        const sorted = sortedPairs.filter(({ tx }) => !isSettlementTransaction(tx));
         return {
           received: pairs.length,
           // The connection walks backwards, so "more to come" is `hasPreviousPage` going desc and
           // `hasNextPage` going asc.
           serverHasMore: order === "desc" ? hasPreviousPage : hasNextPage,
+          // Resume point when nothing survives the client-side filters — see the `next` gate below.
+          boundary: sortedPairs.at(-1)?.tx,
           sorted,
           afterCursor: dropOperationsBeforeCursor({
             operations: sorted.map(p => p.tx),
@@ -1324,7 +1337,9 @@ export const getListOperations = async (
       const items = afterCursor.map(t =>
         transactionToCoinFrameworkOperation(addr, t, digestToHash.get(t.digest)),
       );
-      const last = afterCursor.at(-1);
+      // Same boundary fallback as the gRPC arm: a page whose survivors were all filtered out must
+      // still hand back a resume point, or the caller reads the empty cursor as the end of history.
+      const last = afterCursor.at(-1) ?? page.boundary;
       // The connection answers "is there more?" directly — see {@link dropOperationsBeforeCursor}
       // for why the surviving count cannot.
       const next =
@@ -1358,9 +1373,8 @@ export const getListOperations = async (
           order,
           ...bounds,
         });
-        const sorted = transactions
-          .filter(tx => !isSettlementTransaction(tx))
-          .sort(compareOperations(order));
+        const finalized = transactions.filter(isFinalizedGrpcTx).sort(compareOperations(order));
+        const sorted = finalized.filter(tx => !isSettlementTransaction(tx));
         return {
           received: transactions.length,
           serverHasMore: grpcPageMayHaveMore(
@@ -1368,6 +1382,10 @@ export const getListOperations = async (
             transactions.length,
             TRANSACTIONS_LIMIT_PER_QUERY,
           ),
+          // Furthest point the server actually reached, before settlement filtering and
+          // cursor-dropping. It is the resume point when nothing survives those, so a page made
+          // entirely of settlement transactions still advances the walk — see the `next` gate below.
+          boundary: finalized.at(-1),
           afterCursor: dropOperationsBeforeCursor({
             operations: sorted,
             order,
@@ -1406,7 +1424,11 @@ export const getListOperations = async (
           tx.checkpoint ? checkpointDigests.get(tx.checkpoint) : undefined,
         ),
       );
-      const last = afterCursor.at(-1);
+      // Falling back to the page's own boundary keeps the walk moving when the server has more but
+      // nothing survived the client-side filters: without it the cursor collapses to `undefined` and
+      // the caller reads that as the end of history. Only a page that returned nothing at all leaves
+      // no resume point — the opaque watermark that would cover it does not fit this cursor format.
+      const last = afterCursor.at(-1) ?? page.boundary;
       // The stream's own stop reason answers "is there more?" — see {@link grpcPageMayHaveMore}. The
       // surviving count cannot: settlement filtering and cursor-dropping both shrink a page that had
       // more behind it, and a filtered scan can stop on its server-side budget short of the limit.

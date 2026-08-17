@@ -35,7 +35,11 @@ Add a gRPC-web transport to the Sui coin module
 - Fix: reading history skipped transactions that shared a checkpoint with the resume point, in
   account sync (`getOperations`) as well as paging (`getListOperations`).
 - Fix: paging inferred "more to come" from how many operations survived client-side filtering, which
-  ended the walk early. GraphQL now reads `pageInfo`, gRPC the stream's `QueryEnd` reason.
+  ended the walk early. GraphQL now reads `pageInfo`, gRPC the stream's `QueryEnd` reason. A page
+  whose transactions were all filtered out now resumes from the page's own boundary instead of
+  reporting the end of history.
+- Fix: a gRPC history record with no timestamp became an operation dated 1970 that could not serve as
+  a pagination cursor. Those records are now dropped, as the GraphQL arm already did.
 - Fix: ascending paging on GraphQL returned the newest slice of the range instead of walking forward
   from the oldest.
 - Fix: the Sui fetcher dropped `X-Ledger-Client-Version` and all gRPC-web headers when passed a

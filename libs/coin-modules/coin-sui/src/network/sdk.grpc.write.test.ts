@@ -841,6 +841,55 @@ describe("getListOperations cursor bounds on the gRPC transport", () => {
     expect(result.next).toBe(`${TS}:tx-a`);
   });
 
+  // Settlement transactions match the affected-address filter and are stripped client-side, so a
+  // page can survive to nothing while the server still holds more. Collapsing the cursor there ends
+  // pagination for good; the page's own boundary keeps the walk moving.
+  it("still emits a continuation when every transaction on the page was filtered out", async () => {
+    const settlement = {
+      transaction: {
+        digest: "tx-settlement",
+        checkpoint: "12",
+        timestampMs: String(TS),
+        effects: { status: { status: "success" }, gasUsed },
+        transaction: {
+          data: {
+            transaction: {
+              kind: "ProgrammableTransaction",
+              inputs: [
+                { type: "object", objectType: "sharedObject", mutable: true, objectId: "0xacc" },
+              ],
+              transactions: [],
+            },
+          },
+        },
+      },
+    };
+    // QueryEndReason: ITEM_LIMIT = 1.
+    stubApi([[settlement, { end: { reason: 1 } }]], undefined);
+
+    const result = await getListOperations(grpcConfig, ADDRESS, "desc", undefined, undefined);
+
+    expect(result.items).toHaveLength(0);
+    expect(result.next).toBe(`${TS}:tx-settlement`);
+  });
+
+  // A record with no timestamp maps to a 1970-dated operation and cannot serve as a cursor. The
+  // GraphQL arm drops the equivalent node rather than mapping it.
+  it("drops a transaction that carries no timestamp", async () => {
+    const undated = {
+      transaction: {
+        digest: "tx-undated",
+        checkpoint: "12",
+        effects: { status: { status: "success" }, gasUsed },
+      },
+    };
+    stubApi([[txFrame("tx-dated", "12"), undated, { end: { reason: 5 } }]], undefined);
+
+    const result = await getListOperations(grpcConfig, ADDRESS, "desc", undefined, undefined);
+
+    expect(result.items.map(op => op.tx.hash)).toEqual(["tx-dated"]);
+  });
+
   it("advertises no continuation for a full page that reached the ledger tip", async () => {
     // QueryEndReason: LEDGER_TIP = 5.
     const full = Array.from({ length: 50 }, (_, i) =>
