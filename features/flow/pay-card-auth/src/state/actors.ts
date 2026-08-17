@@ -134,9 +134,15 @@ export const getUser = fromPromise(({ input }: { input: { ports: CardLoginPorts 
 
 export const logout = fromPromise(async ({ input }: { input: { ports: CardLoginPorts } }) => {
   await input.ports.logout().catch(() => undefined);
-  await input.ports.clearSession();
-  await input.ports.clearAttempt().catch(() => undefined);
-  input.ports.forgetUser();
+
+  try {
+    await input.ports.clearSession();
+  } finally {
+    // These run even when the session store refuses. A user left in the Card cache would keep every
+    // other screen showing whoever just logged out.
+    await input.ports.clearAttempt().catch(() => undefined);
+    input.ports.forgetUser();
+  }
 });
 
 /**

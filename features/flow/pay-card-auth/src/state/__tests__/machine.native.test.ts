@@ -374,8 +374,8 @@ describe("cardLoginMachine logout", () => {
     expect(ports.forgetUser).toHaveBeenCalledTimes(1);
   });
 
-  it("returns to the login action even when the store refuses to forget", async () => {
-    const { actor } = await signedIn({
+  it("finishes the local cleanup even when the session store refuses to forget", async () => {
+    const { ports, actor } = await signedIn({
       clearSession: jest.fn(async () => Promise.reject(new Error("keychain locked"))),
     });
 
@@ -383,6 +383,9 @@ describe("cardLoginMachine logout", () => {
 
     await settledAt(actor, "idle");
     expect(actor.getSnapshot().context.errorKind).toBeNull();
+    // A user left in the Card cache would keep every other screen showing whoever just logged out.
+    expect(ports.clearAttempt).toHaveBeenCalled();
+    expect(ports.forgetUser).toHaveBeenCalledTimes(1);
   });
 
   it("offers a new login after the logout", async () => {
