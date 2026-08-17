@@ -7,6 +7,7 @@ type ContactNameInputProps = Readonly<{
   value: string;
   placeholder: string;
   errorMessage?: string;
+  isEditable?: boolean;
   onChangeText: (name: string) => void;
 }>;
 
@@ -14,6 +15,7 @@ export function ContactNameInput({
   value,
   placeholder,
   errorMessage,
+  isEditable = true,
   onChangeText,
 }: ContactNameInputProps): React.JSX.Element {
   const isAtNameLengthLimit = value.length === CONTACT_NAME_MAX_LENGTH;
@@ -27,6 +29,7 @@ export function ContactNameInput({
         value={value}
         onChangeText={onChangeText}
         maxLength={CONTACT_NAME_MAX_LENGTH}
+        editable={isEditable}
         status={errorMessage ? "error" : undefined}
       />
       <Box
