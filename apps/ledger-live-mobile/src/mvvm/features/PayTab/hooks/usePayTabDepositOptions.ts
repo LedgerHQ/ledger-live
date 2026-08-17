@@ -28,6 +28,7 @@ export function usePayTabDepositOptions(
   const { handleOpenReceiveDrawer } = useOpenReceiveDrawer({
     currencyIds: stablecoinCurrencyIds,
     sourceScreenName: DEPOSIT_PAGE,
+    fromMenu: true,
   });
   const { handleOpenSwap } = useOpenSwap({ sourceScreenName: DEPOSIT_PAGE });
   const { handleOpenBuySell } = useOpenBuySell({ sourceScreenName: DEPOSIT_PAGE });
