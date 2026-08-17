@@ -40,8 +40,16 @@ base query reads one small key per request.
 
 The access token is the only key the request path reads, so it is written **last** and removed
 **first**. It therefore exists only while the whole session does: a cold key that fails to write leaves
-no Bearer behind, and a cleared session stops sending one immediately. `clear` never rejects, because
-the base query awaits `refreshCardSession` on a `401` without a try/catch.
+no Bearer behind, and a cleared session stops sending one immediately. A failed access-token write
+removes the keys it already wrote, so an aborted login leaves no refresh token behind either.
+
+`set` and `clear` take turns on one queue. They have callers that know nothing about each other — `set`
+runs from the login machine, `clear` runs from `refreshCardSession`, which the base query calls on any
+Card `401`, outside React and outside the machine. Interleaved, a removal could land between the two
+halves of a write and leave the access token alone on disk. Reads never wait for a turn: they cannot
+break the invariant, and the request path must not queue behind a login.
+
+`clear` never rejects, because the base query awaits `refreshCardSession` without a try/catch.
 
 ## Status
 

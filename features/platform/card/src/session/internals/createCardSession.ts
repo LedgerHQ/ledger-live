@@ -6,7 +6,22 @@ import { CARD_SESSION_KEYS, type CardSessionStore } from "./sessionStore";
  * Card session is the same on every platform.
  */
 export function createCardSession(store: CardSessionStore) {
-  async function set(session: PayCardSession): Promise<void> {
+  /**
+   * `set` and `clear` take turns. They have callers that know nothing about each other: `set` runs from
+   * the login machine, and `clear` runs from `refreshCardSession`, which the Card base query calls on
+   * any 401 — outside React, and outside the machine. Interleaved, the removal of the cold keys could
+   * land between this write's two phases and leave the access token alone on disk.
+   */
+  let turn: Promise<unknown> = Promise.resolve();
+
+  function takeTurn<T>(operation: () => Promise<T>): Promise<T> {
+    const result = turn.then(operation, operation);
+    // A failed turn must not poison the queue for the next one.
+    turn = result.catch(() => undefined);
+    return result;
+  }
+
+  async function writeSession(session: PayCardSession): Promise<void> {
     // The access token is written last, because it is the only key the request path reads. A cold key
     // that fails then leaves no Bearer behind for a session `get` would refuse to report.
     await Promise.all([
@@ -20,7 +35,13 @@ export function createCardSession(store: CardSessionStore) {
       ),
     ]);
 
-    await store.write(CARD_SESSION_KEYS.accessToken, session.accessToken);
+    try {
+      await store.write(CARD_SESSION_KEYS.accessToken, session.accessToken);
+    } catch (error) {
+      // The login is over, so the refresh token it wrote is a credential nothing will ever spend.
+      await removeSession();
+      throw error;
+    }
   }
 
   async function get(): Promise<PayCardSession | null> {
@@ -46,7 +67,7 @@ export function createCardSession(store: CardSessionStore) {
    * without a try/catch, so a rejection here would turn a handled 401 into a thrown error that has lost
    * its `status`, and the login machine would read it as a network fault and keep the dead session.
    */
-  async function clear(): Promise<void> {
+  async function removeSession(): Promise<void> {
     await store.remove(CARD_SESSION_KEYS.accessToken).catch(() => undefined);
     await Promise.all([
       store.remove(CARD_SESSION_KEYS.refreshToken).catch(() => undefined),
@@ -54,7 +75,15 @@ export function createCardSession(store: CardSessionStore) {
     ]);
   }
 
-  /** The reader `cardApiExtra` gets. One key, because the header needs one value. */
+  const set = (session: PayCardSession) => takeTurn(() => writeSession(session));
+  const clear = () => takeTurn(removeSession);
+
+  /**
+   * The reader `cardApiExtra` gets. One key, because the header needs one value.
+   *
+   * It never waits for a turn. Reads cannot break the invariant — the access token exists only while
+   * the whole session does — and the request path must not queue behind a login.
+   */
   async function getCardSessionToken(): Promise<string | null> {
     return store.read(CARD_SESSION_KEYS.accessToken);
   }

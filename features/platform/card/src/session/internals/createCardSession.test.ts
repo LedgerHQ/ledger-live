@@ -91,6 +91,51 @@ describe("createCardSession", () => {
     expect(slots.has(CARD_SESSION_KEYS.accessToken)).toBe(false);
   });
 
+  it("removes the keys it already wrote when the access token cannot be written", async () => {
+    const { store, slots } = fakeStore();
+    jest.mocked(store.write).mockImplementation(async (key, value) => {
+      if (key === CARD_SESSION_KEYS.accessToken) {
+        throw new Error("keychain full");
+      }
+      slots.set(key, value);
+    });
+
+    await expect(createCardSession(store).cardSession.set(session)).rejects.toThrow(
+      "keychain full",
+    );
+
+    // The login is over, so the refresh token it wrote is a credential nothing will ever spend.
+    expect(slots.size).toBe(0);
+  });
+
+  it("does not let a clear land between the two halves of a set", async () => {
+    // The Card base query calls `refreshCardSession` on any 401, from outside the login machine, so
+    // this interleaving is reachable: it would remove the cold keys and leave the access token alone.
+    const { store, slots } = fakeStore();
+    let releaseColdWrite = () => undefined as void;
+    const coldWriteReached = new Promise<void>(resolve => {
+      jest.mocked(store.write).mockImplementation(async (key, value) => {
+        if (key === CARD_SESSION_KEYS.refreshToken) {
+          resolve();
+          await new Promise<void>(release => {
+            releaseColdWrite = release;
+          });
+        }
+        slots.set(key, value);
+      });
+    });
+    const { cardSession } = createCardSession(store);
+
+    const setting = cardSession.set(session);
+    await coldWriteReached;
+    const clearing = cardSession.clear();
+    releaseColdWrite();
+    await Promise.all([setting, clearing]);
+
+    // The clear waited its turn, so it removed the whole session rather than half of it.
+    expect(slots.size).toBe(0);
+  });
+
   it("clears every key, the access token first", async () => {
     const { store, slots } = fakeStore();
     const { cardSession } = createCardSession(store);
