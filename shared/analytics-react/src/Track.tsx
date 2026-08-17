@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useRef } from "react";
+import { memo, useEffect, useRef } from "react";
 import isEqual from "lodash/isEqual";
 import { track } from "@shared/analytics";
 
@@ -16,12 +16,13 @@ const TrackComponent = (props: TrackProps): null => {
   const { onMount, onUnmount, onUpdate } = props;
   const previousPropsRef = useRef<TrackProps | null>(null);
 
-  const trackEvent = useCallback(() => {
+  const trackEvent = () => {
     const { event, onMount, onUnmount, onUpdate, mandatory, ...properties } = props;
     track(event, properties, mandatory);
-  }, [props]);
+  };
 
-  // Read through a ref so unmount reports the props the component had when it went away.
+  // Read through a ref so unmount reports the props the component had when it went away, and so the
+  // effects below never need this function as a dependency.
   const trackEventRef = useRef(trackEvent);
   trackEventRef.current = trackEvent;
 
@@ -39,11 +40,11 @@ const TrackComponent = (props: TrackProps): null => {
 
     const previousProps = previousPropsRef.current;
     if (previousProps && !isEqual(previousProps, props)) {
-      trackEvent();
+      trackEventRef.current();
     }
 
     previousPropsRef.current = { ...props };
-  }, [onUpdate, props, trackEvent]);
+  }, [onUpdate, props]);
 
   return null;
 };
