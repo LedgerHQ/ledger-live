@@ -1,6 +1,8 @@
 import React from "react";
 import { Box, Button } from "@ledgerhq/lumen-ui-rnative";
-import { applyRatio } from "../utils/applyRatio";
+import { applyRatio } from "./applyRatio";
+
+export { applyRatio };
 
 type RatioPickerProps = Readonly<{
   value: number;
@@ -8,6 +10,7 @@ type RatioPickerProps = Readonly<{
   decimalPlaces: number;
   onChange: (value: number) => void;
   onMax: () => void;
+  testIDPrefix: string;
   disabled?: boolean;
 }>;
 
@@ -17,12 +20,19 @@ const RATIOS = [
   { label: "75%", ratio: 0.75 },
 ];
 
+const MAX_LABEL = "MAX";
+
+/**
+ * Percentage pills that fill an amount field with a share of `maxValue`.
+ * A pill is disabled once the field already holds the value it would set.
+ */
 export function RatioPicker({
   value,
   maxValue,
   decimalPlaces,
   onChange,
   onMax,
+  testIDPrefix,
   disabled,
 }: RatioPickerProps) {
   const maxOption = applyRatio(maxValue, 1, decimalPlaces);
@@ -39,7 +49,7 @@ export function RatioPicker({
             lx={{ flex: 1 }}
             disabled={disabled || maxValue === 0 || value === ratioValue}
             onPress={() => onChange(ratioValue)}
-            testID={`perps-deposit-ratio-${label}`}
+            testID={`${testIDPrefix}-${label}`}
           >
             {label}
           </Button>
@@ -51,9 +61,9 @@ export function RatioPicker({
         lx={{ flex: 1 }}
         disabled={disabled || maxValue === 0 || value === maxOption}
         onPress={onMax}
-        testID="perps-deposit-ratio-MAX"
+        testID={`${testIDPrefix}-${MAX_LABEL}`}
       >
-        MAX
+        {MAX_LABEL}
       </Button>
     </Box>
   );

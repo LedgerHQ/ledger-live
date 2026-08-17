@@ -3,12 +3,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { AmountInput, Box, Button, Skeleton, Text } from "@ledgerhq/lumen-ui-rnative";
 import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
 import { useTranslation } from "~/context/Locale";
-import { AmountKeypad } from "./components/AmountKeypad";
+import { AmountKeypad } from "~/mvvm/components/AmountKeypad";
+import { RatioPicker } from "~/mvvm/components/RatioPicker";
 import { DepositAccountSelector } from "./components/DepositAccountSelector";
-import { RatioPicker } from "./components/RatioPicker";
 import type { PerpsDepositViewModel } from "./usePerpsDepositViewModel";
 
-const QUOTED_AMOUNT_SKELETON_SIZE = { width: 120, height: 16 };
+const QUOTED_AMOUNT_SKELETON_SIZE = { width: 112, height: 16 };
 
 function QuotedAmount({
   formattedDepositAmount,
@@ -147,9 +147,14 @@ export function PerpsDepositView({
           decimalPlaces={maxDecimalLength}
           onChange={setDepositAmount}
           onMax={selectMax}
+          testIDPrefix="perps-deposit-ratio"
         />
 
-        <AmountKeypad onKeyPress={pressAmountKey} />
+        <AmountKeypad
+          onKeyPress={pressAmountKey}
+          testIDPrefix="perps-deposit-key"
+          deleteAccessibilityLabel={t("perpsDeposit.keypadDelete")}
+        />
       </Box>
 
       <Box lx={{ paddingHorizontal: "s16", paddingTop: "s16" }}>

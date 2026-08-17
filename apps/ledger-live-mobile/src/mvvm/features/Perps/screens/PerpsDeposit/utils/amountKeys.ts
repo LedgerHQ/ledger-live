@@ -1,8 +1,9 @@
 import BigNumber from "bignumber.js";
+import { KEYPAD_DELETE_KEY } from "~/mvvm/components/AmountKeypad";
 
 export const AMOUNT_MAX_INTEGER_DIGITS = 8;
 
-export const AMOUNT_DELETE_KEY = "delete";
+const AMOUNT_DELETE_KEY = KEYPAD_DELETE_KEY;
 
 /**
  * Returns the amount text after pressing `key` on the in-app keypad.
@@ -10,7 +11,6 @@ export const AMOUNT_DELETE_KEY = "delete";
 export function applyAmountKey(currentText: string, key: string, maxDecimalDigits: number): string {
   if (key === AMOUNT_DELETE_KEY) return currentText.slice(0, -1);
 
-  // A leading separator becomes "0." so the user can keep typing decimals.
   if (key === ".") {
     if (maxDecimalDigits === 0 || currentText.includes(".")) return currentText;
     return `${currentText || "0"}.`;
