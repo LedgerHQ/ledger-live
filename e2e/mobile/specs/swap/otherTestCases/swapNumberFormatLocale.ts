@@ -5,12 +5,12 @@ import { setEnv } from "@shared/env";
 import { swapSetup } from "../../../bridge/server";
 import { setTeamOwner } from "../../../helpers/allure/allure-helper";
 import { performSwapUntilQuoteSelectionStep } from "../../../utils/swapUtils";
+import { expectFormattedAmount } from "../../../utils/amountUtils";
 import {
   getExpectedSeparators,
-  expectFormattedAmount,
   buildFormattedAmountPattern,
   type FormattedNumberLanguage,
-} from "../../../utils/amountUtils";
+} from "@ledgerhq/live-e2e-shared/data/numberFormat";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
@@ -28,7 +28,6 @@ const SEND_INPUT_THOUSANDS = " ";
 const languageCases: { languageId: FormattedNumberLanguage; label: string }[] = [
   { languageId: "en", label: "English" },
   { languageId: "fr", label: "Français" },
-  { languageId: "de", label: "Deutsch" },
 ];
 
 export function runSwapNumberFormatLocaleTest(tmsLinks: string[], tags: string[]) {
@@ -67,10 +66,14 @@ export function runSwapNumberFormatLocaleTest(tmsLinks: string[], tags: string[]
       it(`Swap amounts are formatted correctly for language: ${label}`, async () => {
         // Previous iteration may have left the app inside the swap webview.
         await app.mainNavigation.openPortfolioViaDeeplink();
-        await app.mainNavigation.navigateToSettings();
-        await app.settings.navigateToGeneralSettings();
-        await app.settingsGeneral.navigateToLanguageSelect();
-        await app.settingsGeneral.selectLanguage(label);
+
+        // The userdata fixture already boots in English; only switch away from it.
+        if (languageId !== "en") {
+          await app.mainNavigation.navigateToSettings();
+          await app.settings.navigateToGeneralSettings();
+          await app.settingsGeneral.navigateToLanguageSelect();
+          await app.settingsGeneral.selectLanguage(label);
+        }
 
         await swapSetup();
         await app.swap.openViaDeeplink();

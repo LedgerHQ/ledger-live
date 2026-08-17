@@ -29,6 +29,11 @@ export class SwapPage extends WebViewAppPage {
     "../artifacts/ledgerwallet-swap-history.csv",
   );
   private static readonly PROVIDER_NAME_PREFIX = "lumen-quote-card-provider-name-";
+  private static readonly AMOUNT_LABEL_SUFFIX = "amount-label";
+  private static readonly FIAT_AMOUNT_LABEL_SUFFIX = "fiatAmount-label";
+  private static readonly NETWORK_FEES_HEADING_SUFFIX = "networkFees-heading";
+  private static readonly EXTRA_FEES_CONTAINER_SUFFIX = "extraFeesContainer";
+  private static readonly RATE_INFO_ICON_SUFFIX = "rate-infoIcon";
 
   private readonly fullSwapContainer = this.page.getByTestId("swap-web-app-container-full");
   private readonly embeddedSwapContainer = this.page.getByTestId("swap-web-app-container-embedded");
@@ -165,11 +170,11 @@ export class SwapPage extends WebViewAppPage {
     const webview = await this.getWebView();
     const provider = SwapProvider.getNameByUiName(providerUiName);
     const amount = await webview
-      .locator(this.providerContainerInfoSelector(provider, "amount-label"))
+      .locator(this.providerContainerInfoSelector(provider, SwapPage.AMOUNT_LABEL_SUFFIX))
       .first()
       .textContent();
     const fiatAmount = await webview
-      .locator(this.providerContainerInfoSelector(provider, "fiatAmount-label"))
+      .locator(this.providerContainerInfoSelector(provider, SwapPage.FIAT_AMOUNT_LABEL_SUFFIX))
       .first()
       .textContent();
     return { amount, fiatAmount };
@@ -181,29 +186,33 @@ export class SwapPage extends WebViewAppPage {
     const provider = SwapProvider.getNameByUiName(providerList[0]);
 
     await webview
-      .locator(this.providerContainerInfoSelector(provider, "amount-label"))
+      .locator(this.providerContainerInfoSelector(provider, SwapPage.AMOUNT_LABEL_SUFFIX))
       .first()
       .click();
     await expect(
-      webview.locator(this.providerContainerInfoSelector(provider, "amount-label")),
+      webview.locator(this.providerContainerInfoSelector(provider, SwapPage.AMOUNT_LABEL_SUFFIX)),
     ).toBeVisible();
     await expect(
-      webview.locator(this.providerContainerInfoSelector(provider, "fiatAmount-label")),
+      webview.locator(
+        this.providerContainerInfoSelector(provider, SwapPage.FIAT_AMOUNT_LABEL_SUFFIX),
+      ),
     ).toBeVisible();
     await expect(
-      webview.locator(this.providerContainerInfoSelector(provider, "networkFees-heading")),
+      webview.locator(
+        this.providerContainerInfoSelector(provider, SwapPage.NETWORK_FEES_HEADING_SUFFIX),
+      ),
     ).toBeVisible();
     await expect(
       webview
-        .locator(this.providerContainerInfoSelector(provider, "extraFeesContainer"))
+        .locator(this.providerContainerInfoSelector(provider, SwapPage.EXTRA_FEES_CONTAINER_SUFFIX))
         .getByText(/Floating rate|Fixed rate/),
     ).toBeVisible();
     await expect(
-      webview.locator(this.providerContainerInfoSelector(provider, "rate-infoIcon")),
+      webview.locator(this.providerContainerInfoSelector(provider, SwapPage.RATE_INFO_ICON_SUFFIX)),
     ).toBeVisible();
     await expect(
       webview
-        .locator(this.providerContainerInfoSelector(provider, "extraFeesContainer"))
+        .locator(this.providerContainerInfoSelector(provider, SwapPage.EXTRA_FEES_CONTAINER_SUFFIX))
         .getByText(ticker),
     ).toBeVisible();
     if (
@@ -214,12 +223,16 @@ export class SwapPage extends WebViewAppPage {
     ) {
       await expect(
         webview
-          .locator(this.providerContainerInfoSelector(provider, "extraFeesContainer"))
+          .locator(
+            this.providerContainerInfoSelector(provider, SwapPage.EXTRA_FEES_CONTAINER_SUFFIX),
+          )
           .getByText("Max Slippage"),
       ).toBeVisible();
       await expect(
         webview
-          .locator(this.providerContainerInfoSelector(provider, "extraFeesContainer"))
+          .locator(
+            this.providerContainerInfoSelector(provider, SwapPage.EXTRA_FEES_CONTAINER_SUFFIX),
+          )
           .getByText("%"),
       ).toBeVisible();
     }

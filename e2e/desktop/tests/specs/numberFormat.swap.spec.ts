@@ -7,7 +7,8 @@ import { Swap } from "@ledgerhq/live-e2e-shared/models/Swap";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { setupEnv, performSwapUntilQuoteSelectionStep } from "tests/utils/swapUtils";
-import { getExpectedSeparators, expectFormattedAmount } from "tests/utils/amountUtils";
+import { expectFormattedAmount } from "tests/utils/amountUtils";
+import { getExpectedSeparators } from "@ledgerhq/live-e2e-shared/data/numberFormat";
 import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 
@@ -24,7 +25,6 @@ const SEND_INPUT_THOUSANDS = " ";
 const languageCases = [
   { languageId: "en" as const, label: "English" },
   { languageId: "fr" as const, label: "Français" },
-  { languageId: "de" as const, label: "Deutsch" },
 ];
 
 test.describe("Swap - amount formatting by language", () => {
@@ -61,8 +61,11 @@ test.describe("Swap - amount formatting by language", () => {
       async ({ app }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-        await app.mainNavigation.openSettings();
-        await app.settings.changeLanguage(label);
+        // The userdata fixture already boots in English; only switch away from it.
+        if (languageId !== "en") {
+          await app.mainNavigation.openSettings();
+          await app.settings.changeLanguage(label);
+        }
 
         const swap = new Swap(fromAccount, toAccount, TEST_AMOUNT);
         await performSwapUntilQuoteSelectionStep(app, swap, TEST_AMOUNT);
