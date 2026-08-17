@@ -1,5 +1,5 @@
 import React from "react";
-import { fireEvent, render, screen } from "@testing-library/react-native";
+import { render, screen, userEvent } from "@testing-library/react-native";
 import { ContactIdSchema } from "@domain/entity-contact";
 import { ContactsMeListItem } from "./ContactsMeListItem.native";
 
@@ -23,9 +23,10 @@ describe("ContactsMeListItem", () => {
     expect(avatar.props.appearance).toBe("thin");
   });
 
-  it("should open Me when its row is pressed", () => {
+  it("should open Me when its row is pressed", async () => {
     const contactId = ContactIdSchema.parse("contact-me");
     const onOpen = jest.fn();
+    const user = userEvent.setup();
 
     render(
       <ContactsMeListItem
@@ -36,7 +37,7 @@ describe("ContactsMeListItem", () => {
       />,
     );
 
-    fireEvent.press(screen.getByTestId("contacts-me-item"));
+    await user.press(screen.getByTestId("contacts-me-item"));
 
     expect(onOpen).toHaveBeenCalledWith(contactId);
   });

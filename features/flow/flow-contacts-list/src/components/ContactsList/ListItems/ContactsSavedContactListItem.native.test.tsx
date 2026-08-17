@@ -1,5 +1,5 @@
 import React from "react";
-import { fireEvent, render, screen } from "@testing-library/react-native";
+import { render, screen, userEvent } from "@testing-library/react-native";
 import { ContactIdSchema } from "@domain/entity-contact";
 import { ContactsSavedContactListItem } from "./ContactsSavedContactListItem.native";
 
@@ -18,9 +18,10 @@ describe("ContactsSavedContactListItem", () => {
     expect(screen.getByTestId(`contacts-avatar-${contactId}`).props.size).toBe("md");
   });
 
-  it("should open the saved contact when its row is pressed", () => {
+  it("should open the saved contact when its row is pressed", async () => {
     const contactId = ContactIdSchema.parse("contact-ada");
     const onOpen = jest.fn();
+    const user = userEvent.setup();
 
     render(
       <ContactsSavedContactListItem
@@ -30,7 +31,7 @@ describe("ContactsSavedContactListItem", () => {
       />,
     );
 
-    fireEvent.press(screen.getByTestId(`contacts-saved-contact-${contactId}`));
+    await user.press(screen.getByTestId(`contacts-saved-contact-${contactId}`));
 
     expect(onOpen).toHaveBeenCalledWith(contactId);
   });
