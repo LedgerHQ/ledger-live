@@ -9,6 +9,7 @@ describe("largeScreenUpsell", () => {
       "notification-center": true,
       accounts: true,
       homepage: true,
+      profile: true,
     });
   });
 
@@ -32,6 +33,7 @@ describe("largeScreenUpsell", () => {
       "notification-center": true,
       accounts: true,
       homepage: false,
+      profile: true,
     });
   });
 
@@ -50,6 +52,7 @@ describe("largeScreenUpsell", () => {
       "notification-center": true,
       accounts: true,
       homepage: true,
+      profile: true,
     });
   });
 

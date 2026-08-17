@@ -32,6 +32,7 @@ const DEFAULT_BANNERS = {
   "notification-center": true,
   accounts: true,
   homepage: true,
+  profile: true,
 } as const;
 
 const bannersSchema = z
@@ -40,6 +41,7 @@ const bannersSchema = z
     "notification-center": z.boolean().default(true),
     accounts: z.boolean().default(true),
     homepage: z.boolean().default(true),
+    profile: z.boolean().default(true),
   })
   .default(DEFAULT_BANNERS);
 
