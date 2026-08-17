@@ -34,9 +34,12 @@ describe("buildLargeScreenUpsellCtaLink", () => {
       "desktop",
       LARGE_SCREEN_UPSELL_BACKUPS_UTM_CONTENT,
     );
-    expect(result).toBe(
-      "https://example.com/offer?utm_source=ledger_wallet_desktop&utm_medium=ledger_live&utm_campaign=nano_upgrade_program&utm_content=backups_cta",
-    );
+    const url = new URL(result);
+
+    expect(url.searchParams.get("utm_source")).toBe("ledger_wallet_desktop");
+    expect(url.searchParams.get("utm_medium")).toBe("ledger_live");
+    expect(url.searchParams.get("utm_campaign")).toBe("nano_upgrade_program");
+    expect(url.searchParams.get("utm_content")).toBe("backups_cta");
   });
 
   it("should preserve existing query params while setting UTM values", () => {

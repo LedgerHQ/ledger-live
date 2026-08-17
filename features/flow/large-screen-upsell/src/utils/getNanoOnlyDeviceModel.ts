@@ -1,18 +1,19 @@
+import type { NanoDeviceModelId } from "../types";
 import {
   mapDevicesModelListToUpsellInputs,
-  type NanoDeviceModelId,
-} from "@features/flow-large-screen-upsell";
+  toNanoDeviceModelId,
+} from "./mapDevicesModelListToUpsellInputs";
 
-export function getRecoveryKeyIncompatibleModel(
+export function getNanoOnlyDeviceModel(
   devicesModelList: readonly string[],
   lastSeenModelId?: string | null,
 ): NanoDeviceModelId | undefined {
   const { seenNanoModelIds, hasSeenTouchscreenDevice } =
     mapDevicesModelListToUpsellInputs(devicesModelList);
 
-  if (hasSeenTouchscreenDevice || seenNanoModelIds.length === 0) {
+  if (hasSeenTouchscreenDevice) {
     return undefined;
   }
 
-  return seenNanoModelIds.find(id => id === lastSeenModelId) ?? seenNanoModelIds[0];
+  return (lastSeenModelId ? toNanoDeviceModelId(lastSeenModelId) : null) ?? seenNanoModelIds[0];
 }
