@@ -16,15 +16,19 @@ and registers them here. There is no Segment client inside this package.
 ## The pipeline
 
 ```text
-track(event, props, mandatory?)
+track(event, props, mandatory?) / trackPage(…) / screen(…)
+  → update route refs   (trackPage & screen only, BEFORE the gate — see unification 1 below)
   → consent gate        (registered tracking selector, or always-on when none)
-  → route refs          (inject `page` / `source`; refs update BEFORE the gate)
+  → build the base      (inject `page` from the refs, or `source`, then the caller's props)
+  → filter the base     (registered property filter, e.g. desktop's confidentialityFilter)
   → enrich              (registered enricher, or the mandatory enricher when `mandatory`)
-  → filter              (registered property filter, e.g. desktop's confidentialityFilter)
   → merge               (extras win over caller props)
   → transport.track()   (app-owned Segment client)
   → trackSubject.next() (dev bus, with delivery status)
 ```
+
+The filter runs on the base only, so it can scrub ref-derived and caller properties but never the
+enricher's extras.
 
 ## Injection points
 
@@ -88,8 +92,9 @@ Both apps had drifted; the pipeline picks one behaviour for each divergence.
    analytics off `getCurrentTrackingPage()` returned `""` to its non-analytics consumers.
 2. **Extras win over caller props** (Mobile's `track` / `screen`, Desktop's `trackPage`). Desktop's
    `track` used to let caller props win.
-3. **The property filter applies to the merged base**, so ref-derived `page` / `source` are scrubbed
-   too — previously only when the caller passed them explicitly.
+3. **The property filter applies to the whole base** — the ref-derived `page` / `source` as well as
+   the caller's props, where previously only the caller's props were scrubbed. It still never sees
+   the enricher's extras, which are merged in afterwards.
 
 ## Usage
 
