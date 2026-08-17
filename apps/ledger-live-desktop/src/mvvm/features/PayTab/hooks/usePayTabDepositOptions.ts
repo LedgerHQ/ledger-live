@@ -1,21 +1,19 @@
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
-import type {
-  DepositOptionId,
-  DepositOptionsLabels,
-  DepositOptionsProps,
-  PayCardTrackEvent,
+import {
+  useDepositOptionsAdapter,
+  type DepositOptionId,
+  type DepositOptionsLabels,
+  type PayCardTrackEvent,
+  type UseDepositOptionsAdapter,
 } from "@features/flow-pay-card-deposit";
 import { useOpenAssetFlow } from "../../ModularDialog/hooks/useOpenAssetFlow";
 
 const DEPOSIT_PAGE = "Pay";
 
-export type UsePayTabDepositOptions = Readonly<{
-  open: () => void;
-  depositOptions: DepositOptionsProps;
-}>;
+export type UsePayTabDepositOptions = UseDepositOptionsAdapter;
 
 export function usePayTabDepositOptions(
   onTrackEvent: PayCardTrackEvent | undefined,
@@ -23,16 +21,12 @@ export function usePayTabDepositOptions(
 ): UsePayTabDepositOptions {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [isOpen, setIsOpen] = useState(false);
 
   const { openAssetFlow } = useOpenAssetFlow(
     { location: ModularDrawerLocation.ADD_ACCOUNT },
     DEPOSIT_PAGE,
     "MODAL_RECEIVE",
   );
-
-  const onClose = useCallback(() => setIsOpen(false), []);
-  const open = useCallback(() => setIsOpen(true), []);
 
   const onSelect = useCallback(
     (id: DepositOptionId) => {
@@ -76,15 +70,5 @@ export function usePayTabDepositOptions(
     },
   };
 
-  return {
-    open,
-    depositOptions: {
-      isOpen,
-      page: DEPOSIT_PAGE,
-      labels,
-      onClose,
-      onSelect,
-      onTrackEvent,
-    },
-  };
+  return useDepositOptionsAdapter({ labels, page: DEPOSIT_PAGE, onSelect, onTrackEvent });
 }
