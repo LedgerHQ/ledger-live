@@ -21,9 +21,17 @@ Add a gRPC-web transport to the Sui coin module
 - Fix: account sync read a single page of history on GraphQL and gRPC, capping an account at its
   newest 50 operations for good — sync resumes from the newest stored operation and never re-reads
   what it skipped. Both arms now walk up to `TRANSACTIONS_LIMIT` (300), the depth JSON-RPC reached.
+- Fix: a resumed sync on GraphQL and gRPC read backwards from the tip, so when more than
+  `TRANSACTIONS_LIMIT` transactions arrived between two syncs, the ones in the middle were skipped
+  and the next sync resumed above them — a permanent hole. Both arms now walk forward from the
+  cursor, as the JSON-RPC arm already did, leaving anything unread newer than the next resume point.
 - Fix: an account holding no operations resumed from its stored `syncHash`, so a cleared cache came
   back with only the transactions that arrived after it. Such an account now re-reads its history,
-  which is also how one truncated by the bug above recovers.
+  which is also how one truncated by the bug above recovers. Token operations count as history: they
+  live in the subaccounts, so a token-only account is no longer treated as empty.
+- Fix: on gRPC, any failure to resolve a cursor's digest — including a transient network error — was
+  read as "unknown digest", which falls back to an unbounded page from the tip and made paging report
+  the end of history. Only a `NOT_FOUND` does that now; everything else propagates and is retried.
 - Fix: reading history skipped transactions that shared a checkpoint with the resume point, in
   account sync (`getOperations`) as well as paging (`getListOperations`).
 - Fix: paging inferred "more to come" from how many operations survived client-side filtering, which

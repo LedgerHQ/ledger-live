@@ -506,23 +506,35 @@ const sameCursor = (a: Uint8Array | undefined, b: Uint8Array | undefined): boole
   a.every((byte, i) => byte === b[i]);
 
 /**
- * Whole history for an address, newest-first: repeated {@link listTransactionsByAddressGrpc} pages
- * until the server reports nothing more, `limit` transactions are collected, or the walk stops
- * advancing. This is the gRPC counterpart of `getTransactionsByAddressGraphQL`'s connection walk —
- * the legacy bridge sync reads history once per sync and always resumes from the newest stored
- * operation, so whatever a single page leaves behind is never requested again.
+ * Whole history for an address: repeated {@link listTransactionsByAddressGrpc} pages until the
+ * server reports nothing more, `limit` transactions are collected, or the walk stops advancing.
+ * This is the gRPC counterpart of `getTransactionsByAddressGraphQL`'s connection walk — the legacy
+ * bridge sync reads history once per sync and always resumes from the newest stored operation, so
+ * whatever a single page leaves behind is never requested again.
  *
  * Each page resumes from the previous page's watermark cursor: exclusive, transaction-precise, and
  * still correct when a page ends in the middle of a checkpoint — no checkpoint arithmetic and no
  * overlap to dedupe. Continuation is gated on `endReason` rather than on a full page, because a
  * filtered scan may stop on its own budget with matches still unread.
  *
- * `startCheckpoint` (inclusive) bounds an incremental sync from below; the server applies it to
- * every page and closes the walk with `CHECKPOINT_BOUND`.
+ * `order` is the direction the walk travels, and it decides which end of the history `limit` cuts
+ * off. A first sync reads `desc` from the tip, keeping the newest `limit`. A resumed sync must read
+ * `asc` from `startCheckpoint` (inclusive): the caller stores the newest operation it received as
+ * the next resume point, so a descending walk that stops at `limit` would strand everything between
+ * the old cursor and the oldest transaction it happened to reach — permanently, since the next sync
+ * starts above it. Ascending leaves the unread remainder *newer* than the new cursor, which the
+ * following sync then picks up. This mirrors the JSON-RPC arm, which pages ascending whenever it has
+ * a cursor.
  */
 export const listHistoryByAddressGrpc = async (
   api: SuiGrpcClient,
-  params: { address: string; limit: number; pageSize: number; startCheckpoint?: number },
+  params: {
+    address: string;
+    limit: number;
+    pageSize: number;
+    order: "asc" | "desc";
+    startCheckpoint?: number;
+  },
 ): Promise<SuiTransactionBlockResponse[]> => {
   const collected = new Map<string, SuiTransactionBlockResponse>();
   let cursorBound: Uint8Array | undefined;
@@ -531,7 +543,7 @@ export const listHistoryByAddressGrpc = async (
     const { transactions, cursor, endReason } = await listTransactionsByAddressGrpc(api, {
       address: params.address,
       limit: params.pageSize,
-      order: "desc",
+      order: params.order,
       ...(params.startCheckpoint !== undefined && { startCheckpoint: params.startCheckpoint }),
       ...(cursorBound && { cursorBound }),
     });
@@ -590,7 +602,28 @@ export const fetchCheckpointDigestsGrpc = async (
   return digests;
 };
 
-/** Checkpoint holding a transaction, for translating a digest cursor into a checkpoint bound. */
+/** gRPC status code for `NOT_FOUND`, the one failure that means "this digest is unknown". */
+const GRPC_STATUS_NOT_FOUND = 5;
+
+/**
+ * A digest the server does not know, as opposed to a request that failed to reach an answer.
+ *
+ * protobuf-ts throws `RpcError` with a textual `code`; the numeric form is accepted too, since the
+ * proxy in front of the node can surface either.
+ */
+const isNotFoundError = (error: unknown): boolean => {
+  const code = (error as { code?: unknown } | null)?.code;
+  return code === "NOT_FOUND" || code === GRPC_STATUS_NOT_FOUND;
+};
+
+/**
+ * Checkpoint holding a transaction, for translating a digest cursor into a checkpoint bound.
+ *
+ * Only an unknown digest resolves to `null`. Every other failure is rethrown: the callers read
+ * `null` as "no bound" and fall back to an unbounded page from the tip, which a cursor-fed caller
+ * then discards entirely as already-seen — ending pagination early and reporting the end of history
+ * because of one transient error. A rejected sync is retried; a silently truncated one is not.
+ */
 export const resolveCheckpointForDigestGrpc = async (
   api: SuiGrpcClient,
   digest: string,
@@ -602,9 +635,9 @@ export const resolveCheckpointForDigestGrpc = async (
     });
     const checkpoint = response.transaction?.checkpoint;
     return checkpoint === undefined ? null : Number(checkpoint);
-  } catch {
-    // An unknown digest is not fatal: the caller falls back to an unbounded page.
-    return null;
+  } catch (error) {
+    if (isNotFoundError(error)) return null;
+    throw error;
   }
 };
 

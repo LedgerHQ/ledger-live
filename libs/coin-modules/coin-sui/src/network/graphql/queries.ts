@@ -297,6 +297,7 @@ export const TRANSACTIONS_BY_AFFECTED_ADDRESS = graphql(`
         hasPreviousPage
         hasNextPage
         startCursor
+        endCursor
       }
       nodes {
         digest

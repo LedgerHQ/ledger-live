@@ -1000,6 +1000,10 @@ export const getOperations = async (
       // the depth the JSON-RPC arm reaches through `loadOperations`. A single page would cap the
       // account at its newest 50 operations permanently: this path runs once per sync and always
       // resumes from the newest stored digest, so what it skips is never requested again.
+      // Ascending only once the cursor gave a real lower bound, so the operations `limit` leaves
+      // unread stay newer than the resume point the caller stores. Without a bound — a first sync, or
+      // a digest this index no longer holds — ascending would read the oldest slice of all history
+      // and never reach the recent operations, so the walk stays descending from the tip.
       const { items } = await getTransactionsByAddressGraphQL(
         api,
         addr,
@@ -1007,9 +1011,11 @@ export const getOperations = async (
         TRANSACTIONS_LIMIT_PER_QUERY,
         null,
         filter,
+        filter?.afterCheckpoint === undefined ? "desc" : "asc",
       );
       return items
         .filter(tx => !isSettlementTransaction(tx))
+        .sort(compareOperations("desc"))
         .map(transaction => transactionToOperation(accountId, addr, transaction));
     },
     grpc: async api => {
@@ -1022,11 +1028,15 @@ export const getOperations = async (
         const seq = await resolveCheckpointForDigestGrpc(api, cursorDigest);
         if (seq !== null) startCheckpoint = seq;
       }
-      // Same depth as the GraphQL arm above, which documents why one page is not enough.
+      // Same depth as the GraphQL arm above, which documents why one page is not enough. The
+      // direction follows the JSON-RPC arm: descending from the tip for a first sync, ascending from
+      // the cursor for a resumed one, so the operations `limit` leaves unread stay newer than the
+      // resume point the caller stores — see {@link listHistoryByAddressGrpc}.
       const transactions = await listHistoryByAddressGrpc(api, {
         address: addr,
         limit: TRANSACTIONS_LIMIT,
         pageSize: TRANSACTIONS_LIMIT_PER_QUERY,
+        order: startCheckpoint === undefined ? "desc" : "asc",
         ...(startCheckpoint !== undefined && { startCheckpoint }),
       });
       return transactions

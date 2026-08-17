@@ -272,7 +272,10 @@ describe("listHistoryByAddressGrpc", () => {
 
   /** One entry per `listTransactions` call; the last page repeats if the walk asks for more. */
   const stub = (pages: unknown[][]) => {
-    type Request = { startCheckpoint?: bigint; options?: { before?: Uint8Array } };
+    type Request = {
+      startCheckpoint?: bigint;
+      options?: { before?: Uint8Array; after?: Uint8Array; ordering?: number };
+    };
     const requests: Request[] = [];
     let call = 0;
     const listTransactions = jest.fn((req: Request) => {
@@ -287,6 +290,19 @@ describe("listHistoryByAddressGrpc", () => {
     return { api: { ledgerService: { listTransactions } } as unknown as SuiGrpcClient, requests };
   };
 
+  /** Descending walk unless a test says otherwise — the direction a first sync uses. */
+  const walk = (
+    api: SuiGrpcClient,
+    params: { limit?: number; order?: "asc" | "desc"; startCheckpoint?: number } = {},
+  ) =>
+    listHistoryByAddressGrpc(api, {
+      address: ADDRESS,
+      limit: params.limit ?? 100,
+      pageSize: PAGE_SIZE,
+      order: params.order ?? "desc",
+      ...(params.startCheckpoint !== undefined && { startCheckpoint: params.startCheckpoint }),
+    });
+
   const fullPage = (from: number) => Array.from({ length: PAGE_SIZE }, (_, i) => `tx-${from - i}`);
 
   // The resume contract: the next page continues strictly below the last watermark cursor, which is
@@ -298,11 +314,7 @@ describe("listHistoryByAddressGrpc", () => {
       page(["tx-10"], 10, LEDGER_TIP),
     ]);
 
-    const transactions = await listHistoryByAddressGrpc(api, {
-      address: ADDRESS,
-      limit: 100,
-      pageSize: PAGE_SIZE,
-    });
+    const transactions = await walk(api);
 
     expect(requests).toHaveLength(3);
     expect(requests[0].options?.before).toBeUndefined();
@@ -310,6 +322,53 @@ describe("listHistoryByAddressGrpc", () => {
     expect(requests[2].options?.before).toEqual(new Uint8Array([15]));
     expect(transactions).toHaveLength(11);
     expect(transactions.at(-1)?.digest).toBe("tx-10");
+  });
+
+  // A resumed sync must travel forward from the cursor. The caller stores the newest operation it
+  // received, so a descending walk cut short by `limit` would strand everything between the old
+  // cursor and the oldest transaction it reached — the next sync starts above the gap and never
+  // returns to it. Ascending leaves the unread remainder newer than the new cursor instead.
+  it("walks forward from the cursor bound when resuming", async () => {
+    const { api, requests } = stub([
+      page(["tx-1", "tx-2", "tx-3", "tx-4", "tx-5"], 5, ITEM_LIMIT),
+      page(["tx-6", "tx-7"], 7, LEDGER_TIP),
+    ]);
+
+    const transactions = await walk(api, { order: "asc", startCheckpoint: 1 });
+
+    // Ordering enum: ASCENDING = 0. The resume bound goes on `after`, not `before`.
+    expect(requests.every(r => r.options?.ordering === 0)).toBe(true);
+    expect(requests[1].options?.after).toEqual(new Uint8Array([5]));
+    expect(requests[1].options?.before).toBeUndefined();
+    expect(transactions.map(t => t.digest)).toEqual([
+      "tx-1",
+      "tx-2",
+      "tx-3",
+      "tx-4",
+      "tx-5",
+      "tx-6",
+      "tx-7",
+    ]);
+  });
+
+  // The gap-free property: what `limit` drops must be the newest, so the next sync picks it up.
+  it("keeps the oldest transactions after the cursor when the limit truncates an ascending walk", async () => {
+    const { api } = stub([
+      page(["tx-1", "tx-2", "tx-3", "tx-4", "tx-5"], 5, ITEM_LIMIT),
+      page(["tx-6", "tx-7", "tx-8", "tx-9", "tx-10"], 10, ITEM_LIMIT),
+    ]);
+
+    const transactions = await walk(api, { order: "asc", startCheckpoint: 1, limit: 7 });
+
+    expect(transactions.map(t => t.digest)).toEqual([
+      "tx-1",
+      "tx-2",
+      "tx-3",
+      "tx-4",
+      "tx-5",
+      "tx-6",
+      "tx-7",
+    ]);
   });
 
   // The trap this walk exists to avoid: a filtered scan can exhaust its server-side budget and
@@ -320,11 +379,7 @@ describe("listHistoryByAddressGrpc", () => {
       page(["tx-19"], 19, LEDGER_TIP),
     ]);
 
-    const transactions = await listHistoryByAddressGrpc(api, {
-      address: ADDRESS,
-      limit: 100,
-      pageSize: PAGE_SIZE,
-    });
+    const transactions = await walk(api);
 
     expect(requests).toHaveLength(2);
     expect(transactions.map(t => t.digest)).toEqual(["tx-20", "tx-19"]);
@@ -336,7 +391,7 @@ describe("listHistoryByAddressGrpc", () => {
   ])("stops when the server reports %s", async (_label, reason) => {
     const { api, requests } = stub([page(fullPage(20), 20, reason)]);
 
-    await listHistoryByAddressGrpc(api, { address: ADDRESS, limit: 100, pageSize: PAGE_SIZE });
+    await walk(api);
 
     expect(requests).toHaveLength(1);
   });
@@ -348,11 +403,7 @@ describe("listHistoryByAddressGrpc", () => {
       page(fullPage(10), 10, ITEM_LIMIT),
     ]);
 
-    const transactions = await listHistoryByAddressGrpc(api, {
-      address: ADDRESS,
-      limit: 7,
-      pageSize: PAGE_SIZE,
-    });
+    const transactions = await walk(api, { limit: 7 });
 
     expect(requests).toHaveLength(2);
     expect(transactions).toHaveLength(7);
@@ -364,12 +415,7 @@ describe("listHistoryByAddressGrpc", () => {
       page(fullPage(15), 15, CHECKPOINT_BOUND),
     ]);
 
-    await listHistoryByAddressGrpc(api, {
-      address: ADDRESS,
-      limit: 100,
-      pageSize: PAGE_SIZE,
-      startCheckpoint: 16,
-    });
+    await walk(api, { startCheckpoint: 16 });
 
     expect(requests).toHaveLength(2);
     expect(requests.every(r => r.startCheckpoint === 16n)).toBe(true);
@@ -382,11 +428,7 @@ describe("listHistoryByAddressGrpc", () => {
       page(["tx-15"], 15, undefined),
     ]);
 
-    const transactions = await listHistoryByAddressGrpc(api, {
-      address: ADDRESS,
-      limit: 100,
-      pageSize: PAGE_SIZE,
-    });
+    const transactions = await walk(api);
 
     expect(requests).toHaveLength(2);
     expect(transactions).toHaveLength(6);
@@ -402,7 +444,7 @@ describe("listHistoryByAddressGrpc", () => {
       page(fullPage(15), secondCursor, ITEM_LIMIT),
     ]);
 
-    await listHistoryByAddressGrpc(api, { address: ADDRESS, limit: 100, pageSize: PAGE_SIZE });
+    await walk(api);
 
     // The stub repeats its last page, so a walk that did not stop here would run to `MAX_PAGES`.
     expect(requests).toHaveLength(2);
@@ -542,11 +584,31 @@ describe("resolveCheckpointForDigestGrpc", () => {
     await expect(resolveCheckpointForDigestGrpc(api, "d1")).resolves.toBeNull();
   });
 
-  // An unknown digest must not fail the sync: the caller falls back to an unbounded page.
-  it("returns null when the lookup throws", async () => {
-    const { api } = stub(() => Promise.reject(new Error("not found")));
+  // Callers read `null` as "no bound" and fall back to an unbounded page from the tip, which a
+  // cursor-fed caller then drops entirely as already-seen — reporting the end of history because of
+  // one transient error. Only a genuinely unknown digest may resolve to `null`.
+  it.each([
+    ["a textual NOT_FOUND", "NOT_FOUND"],
+    ["a numeric NOT_FOUND", 5],
+  ])("returns null for %s", async (_label, code) => {
+    const getTransaction = jest.fn(() => {
+      throw Object.assign(new Error("not found"), { code });
+    });
+    const api = { ledgerService: { getTransaction } } as unknown as SuiGrpcClient;
 
-    await expect(resolveCheckpointForDigestGrpc(api, "nope")).resolves.toBeNull();
+    await expect(resolveCheckpointForDigestGrpc(api, "d1")).resolves.toBeNull();
+  });
+
+  it.each([
+    ["a transport failure", "UNAVAILABLE"],
+    ["an error with no code", undefined],
+  ])("rethrows %s rather than reporting the end of history", async (_label, code) => {
+    const getTransaction = jest.fn(() => {
+      throw Object.assign(new Error("boom"), code === undefined ? {} : { code });
+    });
+    const api = { ledgerService: { getTransaction } } as unknown as SuiGrpcClient;
+
+    await expect(resolveCheckpointForDigestGrpc(api, "d1")).rejects.toThrow("boom");
   });
 });
 
@@ -646,7 +708,7 @@ describe("getListOperations cursor bounds on the gRPC transport", () => {
     type Request = {
       startCheckpoint?: bigint;
       endCheckpoint?: bigint;
-      options?: { before?: Uint8Array };
+      options?: { before?: Uint8Array; after?: Uint8Array; ordering?: number };
     };
     const requests: Request[] = [];
     let call = 0;
@@ -811,6 +873,29 @@ describe("getListOperations cursor bounds on the gRPC transport", () => {
 
     // `startCheckpoint` is inclusive, so the cursor's checkpoint is the bound itself.
     expect(requests[0].startCheckpoint).toBe(42n);
+  });
+
+  // Direction decides which end `TRANSACTIONS_LIMIT` truncates. A resumed sync walks forward so the
+  // operations it cannot fit stay newer than the digest it reports back as the next resume point;
+  // descending would strand the ones in between, and the following sync starts above them.
+  // Ordering enum: ASCENDING = 0, DESCENDING = 1.
+  it("walks forward from the cursor on an incremental sync", async () => {
+    const { requests } = stubApi([[txFrame("tx-a", "42")]], 42n);
+
+    await getOperations(grpcConfig, "acc-1", ADDRESS, "0xcursorDigest", undefined);
+
+    expect(requests[0].options?.ordering).toBe(0);
+  });
+
+  // Without a resolved bound there is nothing to walk forward from: ascending would read the oldest
+  // slice of the whole history and never reach the recent operations.
+  it("walks back from the tip when there is no cursor", async () => {
+    const { requests } = stubApi([[txFrame("tx-a", "42")]], undefined);
+
+    await getOperations(grpcConfig, "acc-1", ADDRESS, undefined, undefined);
+
+    expect(requests[0].options?.ordering).toBe(1);
+    expect(requests[0]).not.toHaveProperty("startCheckpoint");
   });
 
   // The reported history bug: a first sync that stops at one page leaves the account permanently

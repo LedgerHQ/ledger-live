@@ -642,10 +642,20 @@ export const getValidatorsGraphQL = async (api: SuiGraphQLClient): Promise<SuiVa
 // ============================================================================
 
 /**
- * Paginated transaction history via the `affectedAddress` filter — covers
- * sender, sponsor, and recipient in one query. Backward pagination
- * (`last`/`before`) yields newest-first order. `beforeCheckpoint`/
- * `afterCheckpoint` translate alpaca-style cursors to a server-side filter.
+ * Paginated transaction history via the `affectedAddress` filter — covers sender, sponsor, and
+ * recipient in one query. `beforeCheckpoint`/`afterCheckpoint` translate alpaca-style cursors to a
+ * server-side filter.
+ *
+ * `order` is the direction the walk travels, and it decides which end of the range `limit` cuts off.
+ * `desc` reads backwards (`last`/`before`) from the newest, which is what a first sync wants. `asc`
+ * reads forwards (`first`/`after`) from `afterCheckpoint`, which is what a resumed sync needs: the
+ * caller stores the newest operation it received as the next resume point, so a descending walk that
+ * stops at `limit` would strand everything between the old cursor and the oldest transaction it
+ * reached, and the next sync would start above the gap. The JSON-RPC arm pages ascending from a
+ * cursor for the same reason.
+ *
+ * Returns the continuation cursor for the direction travelled, or `null` once the connection is
+ * exhausted.
  */
 export const getTransactionsByAddressGraphQL = async (
   api: SuiGraphQLClient,
@@ -654,27 +664,30 @@ export const getTransactionsByAddressGraphQL = async (
   pageSize: number,
   cursor: string | null = null,
   filter?: { beforeCheckpoint?: number; afterCheckpoint?: number },
+  order: "asc" | "desc" = "desc",
 ): Promise<{
   items: SuiTransactionBlockResponse[];
   startCursor: string | null;
 }> => {
   const ownerAddr = normalizeSuiAddress(address);
+  const ascending = order === "asc";
   const accumulated: SuiTransactionBlockResponse[] = [];
-  let nextBefore: string | null = cursor;
+  let pageCursor: string | null = cursor;
   let pages = 0;
 
   while (accumulated.length < limit) {
     if (pages >= MAX_PAGES) {
       throw new Error(
-        `getTransactionsByAddressGraphQL: exceeded ${MAX_PAGES} pages — server hasPreviousPage may be misreporting.`,
+        `getTransactionsByAddressGraphQL: exceeded ${MAX_PAGES} pages — server pageInfo may be misreporting.`,
       );
     }
     const res = await api.query({
       query: TRANSACTIONS_BY_AFFECTED_ADDRESS,
       variables: {
         address: ownerAddr,
-        last: pageSize,
-        before: nextBefore,
+        ...(ascending
+          ? { first: pageSize, after: pageCursor }
+          : { last: pageSize, before: pageCursor }),
         eventsFirst: EVENTS_PAGE_SIZE,
         ...(filter?.beforeCheckpoint !== undefined && {
           beforeCheckpoint: filter.beforeCheckpoint,
@@ -686,27 +699,30 @@ export const getTransactionsByAddressGraphQL = async (
     });
     const conn = unwrapGraphQL("TransactionsByAffectedAddress", res).transactions;
     if (!conn) break;
-    // `last/before` returns ascending-within-page; reverse so the accumulated array stays
-    // newest-first across pages, matching the JSON-RPC contract. Skip not-yet-finalized nodes
-    // (indexing lag right after broadcast) — mapping them yields bogus Failed/1970 ops; they
-    // reappear, complete, on a later sync. Then cap the accumulator at `limit`.
+    // A page arrives oldest-first either way, so a descending walk reverses it to keep the
+    // accumulated array newest-first across pages, matching the JSON-RPC contract; an ascending walk
+    // keeps it as delivered. Skip not-yet-finalized nodes (indexing lag right after broadcast) —
+    // mapping them yields bogus Failed/1970 ops; they reappear, complete, on a later sync. Then cap
+    // the accumulator at `limit`.
+    const nodes = conn.nodes ?? [];
     accumulated.push(
-      ...(conn.nodes ?? [])
-        .slice()
-        .reverse()
+      ...(ascending ? nodes.slice() : nodes.slice().reverse())
         .filter(isFinalizedTxNode)
         .map(graphqlTxToJsonRpcResponse),
     );
     if (accumulated.length > limit) accumulated.length = limit;
-    if (!conn.pageInfo.hasPreviousPage || !conn.pageInfo.startCursor) {
-      nextBefore = null;
+
+    const hasMore = ascending ? conn.pageInfo.hasNextPage : conn.pageInfo.hasPreviousPage;
+    const nextCursor = ascending ? conn.pageInfo.endCursor : conn.pageInfo.startCursor;
+    if (!hasMore || !nextCursor) {
+      pageCursor = null;
       break;
     }
-    nextBefore = conn.pageInfo.startCursor;
+    pageCursor = nextCursor;
     pages++;
   }
 
-  return { items: accumulated, startCursor: nextBefore };
+  return { items: accumulated, startCursor: pageCursor };
 };
 
 /**

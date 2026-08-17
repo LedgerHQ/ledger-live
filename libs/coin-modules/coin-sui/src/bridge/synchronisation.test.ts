@@ -298,6 +298,51 @@ describe("getAccountShape", () => {
     );
   });
 
+  // `getOperationCoinType` files a transaction under the token it moves, and this account keeps only
+  // native-SUI operations, so an account that only ever moved tokens has an empty `operations` while
+  // its history sits in the subaccounts. Treating that as "nothing stored" would drop the cursor and
+  // re-read the whole history on every sync, forever.
+  it("resumes from the stored syncHash when only a token subaccount holds operations", async () => {
+    // GIVEN
+    const initialAccount = createFixtureAccount({
+      operations: [],
+      syncHash: "0xtoken-cursor",
+      subAccounts: [
+        {
+          type: "TokenAccount",
+          id: "js:2:sui:0x1:sui+token",
+          operations: [createFixtureOperation({ id: "sui:token-op" })],
+          token: { ticker: "USDC", id: "sui/token", contractAddress: "0x9::usdc::USDC" },
+        },
+      ],
+    });
+    mockGetAccountBalances.mockResolvedValue([createAccountBalance()]);
+    mockGetOperations.mockResolvedValue([]);
+    mockGetStakesRaw.mockResolvedValue([]);
+
+    // WHEN
+    await getAccountShape(
+      {
+        index: 0,
+        derivationPath: "44'/784'/0'/0'/0'",
+        currency: getCryptoCurrencyById("sui"),
+        address: "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0",
+        initialAccount,
+        derivationMode: "sui",
+      },
+      { blacklistedTokenIds: [], paginationConfig: {} },
+    );
+
+    // THEN
+    expect(mockGetOperations).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.any(String),
+      expect.any(String),
+      "0xtoken-cursor",
+      undefined,
+    );
+  });
+
   it("resumes from the stored syncHash when the account has operations", async () => {
     // GIVEN
     const initialAccount = createFixtureAccount({
