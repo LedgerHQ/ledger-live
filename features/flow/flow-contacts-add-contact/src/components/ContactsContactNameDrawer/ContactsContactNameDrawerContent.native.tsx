@@ -54,7 +54,7 @@ export function ContactsContactNameDrawerContent({
       {isOpen ? (
         <Box lx={{ gap: "s24" }}>
           <BottomSheetHeader />
-          <Box lx={{ gap: "s16", paddingHorizontal: "s16" }}>
+          <Box testID="contacts-add-contact-form" lx={{ gap: "s16" }}>
             <Text typography="heading3SemiBold" lx={{ color: "base" }}>
               {labels.title}
             </Text>
