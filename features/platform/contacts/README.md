@@ -19,5 +19,6 @@ analytics building blocks used by flow packages.
   resolves the React Native implementation.
 - `ContactDeviceIntentsPort`: defines the typed boundary for Contacts device interactions.
 - `createMockContactDeviceIntentsPort()`: returns temporary typed device results for Contacts flows.
-- Contacts analytics building blocks: `ContactsGlobalProperties` and
-  `buildContactsGlobalProperties()` for shared global event properties.
+- Contacts analytics building blocks: `ContactsGlobalProperties`,
+  `buildContactsGlobalProperties()`, and `resolveContactsCurrencyAnalytics()` for shared global
+  event properties and currency resolution.
