@@ -125,6 +125,7 @@ export async function listOperations(
       },
       details: {
         ...(op.details ?? {}),
+        sequence: op.details?.sequence ?? parent.details?.sequence,
         parentSenders: parent.senders,
         parentRecipients: parent.recipients,
         ...parentContractDetails,

@@ -889,6 +889,58 @@ describe("listOperations", () => {
     expect(sameTxFees).toEqual([parentFee, parentFee]);
   });
 
+  it("inherits the parent nonce on token ops, whose fees-only native op is dropped", async () => {
+    // LIVE-35844: the Ledger explorer only reports the nonce on the native op
+    const testContext = ctxWithExplorer({ type: "ledger" });
+
+    const address = "0xb69b37a4fb4a18b3258f974ff6e9f529ad2647b1";
+    const txHash = "0xf034ecf17ad61bc29bab12fc303296428d6c7c8a285bd92b2e30a92b1dd5f3bc";
+    const block = { height: 25745506, hash: "0xblock", time: new Date("2026-08-13T10:29:00.000Z") };
+    const tx = { hash: txHash, block, fees: 41826029222736n, date: block.time, failed: false };
+
+    jest.spyOn(ledgerExplorer, "getOperations").mockResolvedValue({
+      lastCoinOperations: [
+        {
+          id: "coin-fees",
+          type: "FEES",
+          senders: [address],
+          recipients: ["0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"],
+          value: 0n,
+          asset: { type: "native" as const },
+          tx: { ...tx, feesPayer: address },
+          details: { sequence: 316 },
+        },
+      ],
+      lastTokenOperations: [
+        {
+          id: "token-out",
+          type: "OUT",
+          senders: [address],
+          recipients: [address],
+          value: 0n,
+          asset: {
+            type: "erc20" as const,
+            assetReference: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+            assetOwner: address,
+          },
+          tx,
+          details: { ledgerOpType: "OUT", assetAmount: "0" },
+        },
+      ],
+      lastNftOperations: [],
+      lastInternalOperations: [],
+      nextPagingToken: "",
+    });
+
+    const { items } = await listOperations(testContext, "", address, {
+      minHeight: 0,
+      order: "asc",
+    });
+
+    // a cancel is a self transfer of 0, so the explorer reports both sides
+    expect(items.map(op => op.details?.sequence)).toEqual([316, 316]);
+  });
+
   it("should emit both native and token operations when tx has native value > 0 and token transfers", async () => {
     const testContext = ctxWithExplorer({ type: "ledger" });
 
