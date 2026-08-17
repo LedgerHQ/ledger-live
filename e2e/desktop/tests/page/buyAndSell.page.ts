@@ -42,6 +42,8 @@ export class BuyAndSellPage extends WebViewAppPage {
   private fiatDrawerInput = "fiat-drawer-search-input";
   private saveRegionFiatOptionsSelector = "save-region-and-fiat-options";
   private showMoreQuotes = "SHOW MORE QUOTES";
+  private amountInputError = "amount-input-section-error";
+  private maxAmountButton = "max";
   private providerTitleCssSelector =
     "[data-testid^='provider_title_'][data-testid$='_title_container']";
 
@@ -235,8 +237,9 @@ export class BuyAndSellPage extends WebViewAppPage {
     await this.verifyElementText(this.infoBox, "Sell securely with Ledger");
   }
 
+  // Falls back to the max sellable balance if the requested amount exceeds it.
   @step("Enter amount to pay $0")
-  async setAmountToPay(amount: string, operation: string) {
+  async setAmountToPay(amount: string, operation: string): Promise<string> {
     await this.setValue(this.amountInputSection, amount);
 
     await this.verifyElementText(
@@ -244,8 +247,30 @@ export class BuyAndSellPage extends WebViewAppPage {
       operation === OperationType.Buy ? "Select quote to continue" : "Set an amount to get quotes",
     );
     await this.verifyElementIsNotEnabled(this.formCta);
+
+    let balanceTooLow = false;
+    if (operation === OperationType.Sell) {
+      try {
+        await this.verifyElementIsVisible(this.amountInputError, 2000);
+        balanceTooLow = true;
+      } catch {
+        // No error shown — balance covers the requested amount.
+      }
+    }
+    if (balanceTooLow) {
+      await this.clickElement(this.maxAmountButton);
+    }
+
     await this.verifyElementIsVisible(this.paymentSelector);
+    const finalAmount = await (
+      await this.getWebViewElementByTestId(this.amountInputSection)
+    ).inputValue();
+    // Max must have lowered the amount; guards against a click that silently did nothing.
+    if (balanceTooLow) {
+      expect(Number(finalAmount)).toBeLessThan(Number(amount));
+    }
     await this.verifyElementIsVisible(this.providersList);
+    return finalAmount;
   }
 
   @step("Select provider quote")
