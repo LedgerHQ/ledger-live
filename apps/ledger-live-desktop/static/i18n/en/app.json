@@ -7886,6 +7886,10 @@
     "SomeSuiForUnstake": {
       "title": "Please ensure you reserve at least 0.1 SUI in your wallet to cover future network fees and undelegate your stake"
     },
+    "SuiAddressBalanceAppUpdateRequired": {
+      "title": "Update your Sui app",
+      "description": "Your Ledger Sui app can't sign a transfer from your SUI address balance. Update the Sui app on your Ledger device and try again."
+    },
     "NotEnoughBalanceForUnstaking": {
       "message": "Your available (non-staked) balance is currently {{currentBalance}} which is insufficient to pay for the network fees to unstake your {{assetName}}.",
       "oneCta": "<cta1>{{cta1Label}}</cta1> {{assetName}} into your account.",

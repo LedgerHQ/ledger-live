@@ -754,6 +754,10 @@
     "OneSuiMinForUnstakeToBeLeft": {
       "title": "At least 1 SUI should be left in stake"
     },
+    "SuiAddressBalanceAppUpdateRequired": {
+      "title": "Update your Sui app",
+      "description": "Your Ledger Sui app can't sign a transfer from your SUI address balance. Update the Sui app on your Ledger device and try again."
+    },
     "PasswordIncorrect": {
       "title": "Incorrect password",
       "description": "Please try again."
