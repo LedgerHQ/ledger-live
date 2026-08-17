@@ -4,6 +4,7 @@ import { AleoApiConfigurationResetError } from "../errors";
 import {
   EXPLORER_TRANSFER_TYPES,
   DEFAULT_RECORDS_PAGE_SIZE,
+  DEFAULT_TOKENS_PAGE_SIZE,
   PROGRAM_ID,
   TOKEN_RECORD_NAME,
   RECIPIENT_ARG_INDEX,
@@ -17,18 +18,22 @@ import {
   getMockedPublicTransaction,
   getMockedTransactionDetails,
   getMockedDecryptedRecord,
+  getMockedTokenDetails,
+  getMockedGetTokensResponse,
 } from "../__tests__/fixtures/api.fixture";
 import { getMockedOperation } from "../__tests__/fixtures/operation.fixture";
 import { apiClient } from "./api";
 import {
   fetchAccountTransactionsFromHeight,
   fetchAllOwnedRecords,
+  fetchAllTokens,
   enrichPrivateRecord,
   patchPublicOperations,
   getTokenOutDetails,
   getRecordScannerStatusOrThrow,
   accessProvableApi,
   decryptRecordAmount,
+  sumUnspentRecords,
 } from "./utils";
 
 jest.mock("./api");
@@ -2074,6 +2079,177 @@ describe("network/utils", () => {
       ).rejects.toMatchObject({ name: "AbortError" });
 
       expect(mockGetAccountOwnedRecords).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("fetchAllTokens", () => {
+    const mockGetTokens = jest.mocked(apiClient.getTokens);
+
+    beforeEach(() => {
+      jest.clearAllMocks();
+    });
+
+    it("should return every token when they fit in a single page", async () => {
+      const tokenA = getMockedTokenDetails({ program_name: "token_a.aleo" });
+      const tokenB = getMockedTokenDetails({ program_name: "token_b.aleo" });
+      mockGetTokens.mockResolvedValueOnce(
+        getMockedGetTokensResponse({
+          data: [tokenA, tokenB],
+          pagination: {
+            limit: 100,
+            offset: 0,
+            total_count: 2,
+            has_next: false,
+            has_previous: false,
+          },
+        }),
+      );
+
+      const result = await fetchAllTokens({ config: mockConfig });
+
+      expect(mockGetTokens).toHaveBeenCalledTimes(1);
+      expect(mockGetTokens).toHaveBeenCalledWith({
+        config: mockConfig,
+        options: { limit: DEFAULT_TOKENS_PAGE_SIZE, offset: 0 },
+      });
+      expect(result).toEqual([tokenA, tokenB]);
+    });
+
+    it("should paginate using offset until has_next is false", async () => {
+      const pageSize = 2;
+      const tokenA = getMockedTokenDetails({ program_name: "token_a.aleo" });
+      const tokenB = getMockedTokenDetails({ program_name: "token_b.aleo" });
+      const tokenC = getMockedTokenDetails({ program_name: "token_c.aleo" });
+      mockGetTokens
+        .mockResolvedValueOnce(
+          getMockedGetTokensResponse({
+            data: [tokenA, tokenB],
+            pagination: {
+              limit: pageSize,
+              offset: 0,
+              total_count: 3,
+              has_next: true,
+              has_previous: false,
+            },
+          }),
+        )
+        .mockResolvedValueOnce(
+          getMockedGetTokensResponse({
+            data: [tokenC],
+            pagination: {
+              limit: pageSize,
+              offset: pageSize,
+              total_count: 3,
+              has_next: false,
+              has_previous: true,
+            },
+          }),
+        );
+
+      const result = await fetchAllTokens({ config: mockConfig, resultsPerPage: pageSize });
+
+      expect(mockGetTokens).toHaveBeenCalledTimes(2);
+      expect(mockGetTokens).toHaveBeenNthCalledWith(1, {
+        config: mockConfig,
+        options: { limit: pageSize, offset: 0 },
+      });
+      expect(mockGetTokens).toHaveBeenNthCalledWith(2, {
+        config: mockConfig,
+        options: { limit: pageSize, offset: pageSize },
+      });
+      expect(result).toEqual([tokenA, tokenB, tokenC]);
+    });
+
+    it("should return an empty array when the registry has no tokens", async () => {
+      mockGetTokens.mockResolvedValueOnce(getMockedGetTokensResponse({ data: [] }));
+
+      const result = await fetchAllTokens({ config: mockConfig });
+
+      expect(result).toEqual([]);
+    });
+
+    it("should propagate errors thrown by the underlying API call", async () => {
+      mockGetTokens.mockRejectedValueOnce(new Error("Tokens endpoint unavailable"));
+
+      await expect(fetchAllTokens({ config: mockConfig })).rejects.toThrow(
+        "Tokens endpoint unavailable",
+      );
+    });
+  });
+
+  describe("sumUnspentRecords", () => {
+    const mockViewKey = "AViewKey1sumtest";
+
+    it("returns zero without calling decryptRecord when there are no records", async () => {
+      const result = await sumUnspentRecords({
+        config: mockConfig,
+        viewKey: mockViewKey,
+        records: [],
+      });
+
+      expect(result.toFixed(0)).toBe("0");
+      expect(mockDecryptRecord).not.toHaveBeenCalled();
+    });
+
+    it("sums the decrypted amount of every unspent record", async () => {
+      const records = [
+        getMockedRecord({ commitment: "a", record_ciphertext: "cipher-a" }),
+        getMockedRecord({ commitment: "b", record_ciphertext: "cipher-b" }),
+      ];
+      mockDecryptRecord
+        .mockResolvedValueOnce(
+          getMockedDecryptedRecord({ data: { microcredits: "100u64.private" } }),
+        )
+        .mockResolvedValueOnce(
+          getMockedDecryptedRecord({ data: { microcredits: "250u64.private" } }),
+        );
+
+      const result = await sumUnspentRecords({
+        config: mockConfig,
+        viewKey: mockViewKey,
+        records,
+      });
+
+      expect(result.toFixed(0)).toBe("350");
+    });
+
+    it("excludes records scanned past maxBlockHeight", async () => {
+      const records = [
+        getMockedRecord({ commitment: "eligible", block_height: 100 }),
+        getMockedRecord({ commitment: "over-height", block_height: 101 }),
+      ];
+      mockDecryptRecord.mockResolvedValue(
+        getMockedDecryptedRecord({ data: { microcredits: "100u64.private" } }),
+      );
+
+      const result = await sumUnspentRecords({
+        config: mockConfig,
+        viewKey: mockViewKey,
+        records,
+        maxBlockHeight: 100,
+      });
+
+      expect(result.toFixed(0)).toBe("100");
+      expect(mockDecryptRecord).toHaveBeenCalledTimes(1);
+    });
+
+    it("sums every record when maxBlockHeight is omitted", async () => {
+      const records = [
+        getMockedRecord({ commitment: "a", block_height: 100 }),
+        getMockedRecord({ commitment: "b", block_height: 1_000_000 }),
+      ];
+      mockDecryptRecord.mockResolvedValue(
+        getMockedDecryptedRecord({ data: { microcredits: "50u64.private" } }),
+      );
+
+      const result = await sumUnspentRecords({
+        config: mockConfig,
+        viewKey: mockViewKey,
+        records,
+      });
+
+      expect(result.toFixed(0)).toBe("100");
+      expect(mockDecryptRecord).toHaveBeenCalledTimes(2);
     });
   });
 

@@ -17,7 +17,15 @@ import type {
   BalanceOptions,
 } from "@ledgerhq/coin-module-framework/api/index";
 import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
-import { estimateFees, getAccountInfo, lastBlock, listOperations, validateAddress } from "../logic";
+import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
+import {
+  estimateFees,
+  getAccountInfo,
+  getBalance,
+  lastBlock,
+  listOperations,
+  validateAddress,
+} from "../logic";
 import { getTransactionType } from "../logic/utils";
 import type { AleoContext, AleoCoinConfig, AleoTransactionIntentData } from "../types";
 
@@ -77,11 +85,11 @@ export function createApi(
       return getAccountInfo(config, provableId);
     },
     getBalance: async (
-      _context: AleoContext,
-      _address: string,
-      _options?: BalanceOptions,
+      context: AleoContext,
+      address: string,
+      options?: BalanceOptions,
     ): Promise<Balance[]> => {
-      throw new Error("getBalance is not supported");
+      return rejectBalanceOptions(() => getBalance(context, address), options);
     },
     lastBlock: async (context: AleoContext): Promise<BlockInfo> => {
       const config = await context.config();

@@ -45,12 +45,14 @@ describe("createApi", () => {
   };
   let emptyAddress: string;
   let privacyContext: AleoContext;
+  let emptyAddressViewKey: string;
 
   beforeAll(async () => {
     setupCalStore();
     const pristineAccount = await getPristineAccount();
-    emptyAddress = pristineAccount.address;
     privacyContext = await withPrivacyContext(context, testnetViewKey);
+    emptyAddress = pristineAccount.address;
+    emptyAddressViewKey = pristineAccount.viewKey;
   });
 
   describe("estimateFees", () => {
@@ -238,6 +240,40 @@ describe("createApi", () => {
       await expect(
         getAccountInfo(contextWithUnknownProvableId, testnetAddress),
       ).rejects.toBeInstanceOf(AleoApiConfigurationResetError);
+    });
+  });
+
+  describe("getBalance", () => {
+    it("throws when no privacy context is given", async () => {
+      await expect(api.getBalance(context, testnetAddress)).rejects.toThrow(
+        "aleo: provableId is missing",
+      );
+    });
+
+    it("throws an error for an invalid address", async () => {
+      const invalidAddress = "invalid_address";
+
+      await expect(api.getBalance(privacyContext, invalidAddress)).rejects.toMatchObject({
+        name: "LedgerAPI4xx",
+        status: 404,
+      });
+    });
+
+    it("combines public and private balances for a native + token account", async () => {
+      const balance = await api.getBalance(privacyContext, testnetAddress);
+      const native = balance.find(entry => entry.asset.type === "native");
+      const tokens = balance.filter(entry => entry.asset.type === "arc22");
+
+      expect(native?.value).toBeGreaterThan(0n);
+      expect(tokens.length).toBeGreaterThan(0);
+    });
+
+    it("returns a zero native entry for a non-existing valid address", async () => {
+      const emptyPrivacyContext = await withPrivacyContext(context, emptyAddressViewKey);
+
+      const balance = await api.getBalance(emptyPrivacyContext, emptyAddress);
+
+      expect(balance).toEqual([{ value: 0n, asset: { type: "native" } }]);
     });
   });
 });

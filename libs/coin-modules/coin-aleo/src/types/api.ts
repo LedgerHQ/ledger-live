@@ -124,6 +124,35 @@ export interface AleoDecryptedCiphertextResponse {
   plaintext: string;
 }
 
+export interface AleoTokenDetails {
+  token_id: string;
+  token_id_datatype: string | null;
+  token_standard: string | null;
+  symbol: string;
+  display: string;
+  program_name: string;
+  decimals: number;
+  total_supply: string | null;
+  verified: boolean;
+  token_icon_url: string;
+  price: string | null;
+  price_change_percentage_24h: string;
+  fully_diluted_value: null;
+  total_market_cap: string | null;
+  volume_24h: string | null;
+}
+
+export interface AleoGetTokensResponse {
+  data: AleoTokenDetails[];
+  pagination: {
+    limit: number;
+    offset: number;
+    total_count: number;
+    has_next: boolean;
+    has_previous: boolean;
+  };
+}
+
 interface DelegatedProvingTransitionResponse {
   id: string;
   program: string;

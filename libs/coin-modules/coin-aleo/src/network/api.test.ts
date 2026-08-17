@@ -10,6 +10,7 @@ import {
   getMockedAuthorization,
   getMockedFeeAuthorization,
   getMockedDelegatedProvingResponse,
+  getMockedGetTokensResponse,
 } from "../__tests__/fixtures/api.fixture";
 import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
 import { apiClient } from "./api";
@@ -361,6 +362,60 @@ describe("apiClient", () => {
         method: "GET",
         url: `${testnetConfig.apiUrls.node}/v2/${testnetConfig.networkType}/program/credits.aleo/mapping/account/${MOCK_ALEO_ADDRESS}`,
       });
+    });
+  });
+
+  describe("getTokens", () => {
+    it("should fetch the token registry with no params by default", async () => {
+      const mockResponse = getMockedGetTokensResponse();
+      jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
+
+      const result = await apiClient.getTokens({ config: mockConfig });
+
+      expect(network).toHaveBeenCalledTimes(1);
+      expect(network).toHaveBeenCalledWith({
+        method: "GET",
+        url: `${mockConfig.apiUrls.node}/v2/${mockConfig.networkType}/tokens?`,
+      });
+      expect(result).toEqual(mockResponse);
+    });
+
+    it("should forward limit and offset as query params", async () => {
+      const mockResponse = getMockedGetTokensResponse();
+      jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
+
+      await apiClient.getTokens({
+        config: mockConfig,
+        options: { limit: 100, offset: 200 },
+      });
+
+      expect(network).toHaveBeenCalledTimes(1);
+      expect(network).toHaveBeenCalledWith({
+        method: "GET",
+        url: `${mockConfig.apiUrls.node}/v2/${mockConfig.networkType}/tokens?limit=100&offset=200`,
+      });
+    });
+
+    it("should forward verified and symbol as query params", async () => {
+      const mockResponse = getMockedGetTokensResponse();
+      jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
+
+      await apiClient.getTokens({
+        config: mockConfig,
+        options: { verified: true, symbol: "usdc" },
+      });
+
+      expect(network).toHaveBeenCalledTimes(1);
+      expect(network).toHaveBeenCalledWith({
+        method: "GET",
+        url: `${mockConfig.apiUrls.node}/v2/${mockConfig.networkType}/tokens?symbol=usdc&verified=true`,
+      });
+    });
+
+    it("should throw an error when network request fails", async () => {
+      jest.mocked(network).mockRejectedValue(new Error("Network error"));
+
+      await expect(apiClient.getTokens({ config: mockConfig })).rejects.toThrow("Network error");
     });
   });
 

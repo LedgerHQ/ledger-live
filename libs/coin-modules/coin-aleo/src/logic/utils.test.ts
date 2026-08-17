@@ -8,6 +8,7 @@ import {
   EXPLORER_TRANSFER_TYPES,
   MAX_PRIVATE_RECORDS_PER_TRANSACTION,
   MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION,
+  PROGRAM_ID,
   TRANSACTION_TYPE,
 } from "../constants";
 import {
@@ -28,6 +29,8 @@ import {
 import {
   getMockedTransaction as getMockedPublicTransaction,
   getMockedEnrichedPrivateRecord,
+  getMockedRecord,
+  getMockedTokenDetails,
 } from "../__tests__/fixtures/api.fixture";
 import { getMockedOperation } from "../__tests__/fixtures/operation.fixture";
 import { getMockedPreparedRequestResponse } from "../__tests__/fixtures/sdk.fixture";
@@ -48,7 +51,7 @@ import {
   mockTxIntentConvertTokenPrivateToPublic,
   mockTxIntentConvertTokenPrivateToPublic2,
 } from "../__tests__/fixtures/transaction.fixture";
-import type { AleoOperationExtra, ProvableApi } from "../types";
+import type { AleoContext, AleoOperationExtra, ProvableApi } from "../types";
 import {
   parseMicrocredits,
   parseAmount,
@@ -96,6 +99,9 @@ import {
   getStrategyConfig,
   isAleoAccount,
   isAleoTransaction,
+  isTokenRecord,
+  classifyAleoTokenType,
+  resolvePrivacyContext,
 } from "./utils";
 
 jest.mock("../config");
@@ -2624,5 +2630,120 @@ describe("getCalTokens", () => {
 
     expect(result.size).toBe(1);
     expect(result.get(MOCK_TOKEN_PROGRAM_ID)).toEqual(mockTokenCurrency);
+  });
+});
+
+describe("isTokenRecord", () => {
+  it("returns true for a Token record on a non-credits program", () => {
+    const record = getMockedRecord({
+      record_name: "Token",
+      program_name: "token_a.aleo",
+    });
+
+    expect(isTokenRecord(record)).toBe(true);
+  });
+
+  it("is case-insensitive on record_name", () => {
+    const record = getMockedRecord({
+      record_name: "TOKEN",
+      program_name: "token_a.aleo",
+    });
+
+    expect(isTokenRecord(record)).toBe(true);
+  });
+
+  it("returns false for a Token record on credits.aleo", () => {
+    const record = getMockedRecord({
+      record_name: "Token",
+      program_name: PROGRAM_ID.CREDITS,
+    });
+
+    expect(isTokenRecord(record)).toBe(false);
+  });
+
+  it("returns false for a non-Token record", () => {
+    const record = getMockedRecord({
+      record_name: "credits",
+      program_name: "token_a.aleo",
+    });
+
+    expect(isTokenRecord(record)).toBe(false);
+  });
+});
+
+describe("classifyAleoTokenType", () => {
+  it.each([
+    [
+      "token_standard is ARC-20",
+      { token_standard: "ARC-20", program_name: "arc20_program.aleo" },
+      "arc20",
+    ],
+    [
+      "token_standard is lowercase arc-20",
+      { token_standard: "arc-20", program_name: "arc20_program.aleo" },
+      "arc20",
+    ],
+    [
+      "program_name is the shared token_registry.aleo program",
+      { token_standard: null, program_name: PROGRAM_ID.TOKEN_REGISTRY },
+      "arc21",
+    ],
+    [
+      "token_standard wins over a token_registry.aleo program match",
+      { token_standard: "ARC-20", program_name: PROGRAM_ID.TOKEN_REGISTRY },
+      "arc20",
+    ],
+    [
+      "program_name contains stablecoin",
+      { token_standard: null, program_name: "usdcx_stablecoin.aleo" },
+      "arc22",
+    ],
+    [
+      "no rule matches",
+      { token_standard: null, program_name: "some_random_program.aleo" },
+      "unknown",
+    ],
+  ] as const)("%s → %s", (_description, overrides, expected) => {
+    const token = getMockedTokenDetails(overrides);
+
+    expect(classifyAleoTokenType(token)).toBe(expected);
+  });
+});
+
+describe("resolvePrivacyContext", () => {
+  const mockConfigFn = async () => getMockedConfig("mainnet");
+
+  it("returns provableId and viewKey when both are present", () => {
+    const context: AleoContext = {
+      config: mockConfigFn,
+      logger: () => {},
+      provableId: "provable-id-1",
+      viewKey: "AViewKey1mock",
+    };
+
+    expect(resolvePrivacyContext(context)).toEqual({
+      provableId: "provable-id-1",
+      viewKey: "AViewKey1mock",
+    });
+  });
+
+  it("throws when provableId is missing", () => {
+    const context: AleoContext = {
+      config: mockConfigFn,
+      logger: () => {},
+      viewKey: "AViewKey1mock",
+    };
+
+    expect(() => resolvePrivacyContext(context)).toThrow("aleo: provableId is missing");
+  });
+
+  it("throws when viewKey is missing", () => {
+    const context: AleoContext = {
+      config: mockConfigFn,
+      logger: () => {},
+      provableId: "provable-id-1",
+    };
+
+    expect(() => resolvePrivacyContext(context)).toThrow("aleo: viewKey is missing");
   });
 });

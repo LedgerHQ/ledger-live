@@ -3,11 +3,13 @@ import { PROGRAM_ID } from "../../constants";
 import type { DelegatedProvingResponse } from "../../types";
 import {
   AleoDecryptedRecordResponse,
+  AleoGetTokensResponse,
   AleoPrivateRecord,
   AleoPublicTransaction,
   AleoPublicTransactionDetailsResponse,
   AleoPublicTransactionsResponse,
   AleoRecordScannerStatusResponse,
+  AleoTokenDetails,
   EnrichedPrivateRecord,
 } from "../../types";
 
@@ -469,6 +471,39 @@ export const getMockedRecordScannerStatus = (
   percentage: 100,
   sync_start_height: 0,
   synced_up_to: 20985061,
+  ...overrides,
+});
+
+export const getMockedTokenDetails = (overrides?: Partial<AleoTokenDetails>): AleoTokenDetails => ({
+  token_id: "token123field",
+  token_id_datatype: null,
+  token_standard: null,
+  symbol: "TKN",
+  display: "Token",
+  program_name: "token_b.aleo",
+  decimals: 6,
+  total_supply: "1000000000000",
+  verified: true,
+  token_icon_url: "https://example.com/token.png",
+  price: "1.23",
+  price_change_percentage_24h: "0.5",
+  fully_diluted_value: null,
+  total_market_cap: "1230000000",
+  volume_24h: "45000",
+  ...overrides,
+});
+
+export const getMockedGetTokensResponse = (
+  overrides?: Partial<AleoGetTokensResponse>,
+): AleoGetTokensResponse => ({
+  pagination: {
+    limit: 20,
+    offset: 0,
+    total_count: 1,
+    has_next: false,
+    has_previous: false,
+  },
+  data: [getMockedTokenDetails()],
   ...overrides,
 });
 
