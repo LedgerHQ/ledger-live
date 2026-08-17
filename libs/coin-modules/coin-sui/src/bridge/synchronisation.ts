@@ -48,7 +48,7 @@ export const getAccountShape: GetAccountShape<SuiAccount> = async (info, syncCon
     oldOperations.length > 0 ||
     (initialAccount?.subAccounts ?? []).some(sub => sub.operations.length > 0);
   let syncHash = hasStoredHistory ? (initialAccount?.syncHash ?? latestHash(oldOperations)) : null;
-  const newOperations = await getOperations(config, accountId, address, syncHash, undefined);
+  const newOperations = await getOperations(config, accountId, address, syncHash);
   const operations = mergeOps(oldOperations, newOperations);
   syncHash = latestHash(operations);
 

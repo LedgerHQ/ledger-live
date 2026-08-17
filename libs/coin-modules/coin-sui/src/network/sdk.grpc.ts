@@ -499,11 +499,10 @@ export const grpcPageMayHaveMore = (
   endReason === undefined ? received >= limit : QUERY_END_MAY_HAVE_MORE.has(endReason);
 
 /** A repeated resume cursor means the walk stopped advancing. */
-const sameCursor = (a: Uint8Array | undefined, b: Uint8Array | undefined): boolean =>
-  a !== undefined &&
-  b !== undefined &&
-  a.length === b.length &&
-  a.every((byte, i) => byte === b[i]);
+const sameCursor = (a: Uint8Array | undefined, b: Uint8Array | undefined): boolean => {
+  if (a === undefined || b === undefined) return false;
+  return a.length === b.length && a.every((byte, i) => byte === b[i]);
+};
 
 /**
  * Whole history for an address: repeated {@link listTransactionsByAddressGrpc} pages until the

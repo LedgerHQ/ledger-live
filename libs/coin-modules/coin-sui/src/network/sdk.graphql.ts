@@ -641,6 +641,23 @@ export const getValidatorsGraphQL = async (api: SuiGraphQLClient): Promise<SuiVa
 // Transaction history (`getOperations` path)
 // ============================================================================
 
+type ConnectionPageInfo = {
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+  startCursor: string | null;
+  endCursor: string | null;
+};
+
+/** Connection arguments for the direction travelled. */
+const pageWindow = (ascending: boolean, pageSize: number, cursor: string | null) =>
+  ascending ? { first: pageSize, after: cursor } : { last: pageSize, before: cursor };
+
+/** Continuation state for the direction travelled. */
+const pageStep = (ascending: boolean, pageInfo: ConnectionPageInfo) =>
+  ascending
+    ? { hasMore: pageInfo.hasNextPage, nextCursor: pageInfo.endCursor }
+    : { hasMore: pageInfo.hasPreviousPage, nextCursor: pageInfo.startCursor };
+
 /**
  * Paginated transaction history via the `affectedAddress` filter — covers sender, sponsor, and
  * recipient in one query. `beforeCheckpoint`/`afterCheckpoint` translate alpaca-style cursors to a
@@ -683,9 +700,7 @@ export const getTransactionsByAddressGraphQL = async (
       query: TRANSACTIONS_BY_AFFECTED_ADDRESS,
       variables: {
         address: ownerAddr,
-        ...(ascending
-          ? { first: pageSize, after: pageCursor }
-          : { last: pageSize, before: pageCursor }),
+        ...pageWindow(ascending, pageSize, pageCursor),
         eventsFirst: EVENTS_PAGE_SIZE,
         ...(filter?.beforeCheckpoint !== undefined && {
           beforeCheckpoint: filter.beforeCheckpoint,
@@ -710,8 +725,7 @@ export const getTransactionsByAddressGraphQL = async (
     );
     if (accumulated.length > limit) accumulated.length = limit;
 
-    const hasMore = ascending ? conn.pageInfo.hasNextPage : conn.pageInfo.hasPreviousPage;
-    const nextCursor = ascending ? conn.pageInfo.endCursor : conn.pageInfo.startCursor;
+    const { hasMore, nextCursor } = pageStep(ascending, conn.pageInfo);
     if (!hasMore || !nextCursor) {
       pageCursor = null;
       break;

@@ -294,7 +294,6 @@ describe("getAccountShape", () => {
       expect.any(String),
       expect.any(String),
       null,
-      undefined,
     );
   });
 
@@ -337,7 +336,6 @@ describe("getAccountShape", () => {
       expect.any(String),
       expect.any(String),
       "0xtoken-cursor",
-      undefined,
     );
   });
 
@@ -372,7 +370,6 @@ describe("getAccountShape", () => {
       expect.any(String),
       expect.any(String),
       "0xresume-here",
-      undefined,
     );
   });
 
