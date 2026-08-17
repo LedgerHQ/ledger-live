@@ -218,6 +218,9 @@ export const cardLoginMachine = setup({
     },
 
     authenticated: {
+      // The resume is spent. Left set, a later 401 would send `clearingAttempt` back here instead of to
+      // `idle`, and the machine would loop between the two while the session was already gone.
+      entry: assign({ resumeAuthenticated: false }),
       always: { target: "fetchingUser" },
     },
 

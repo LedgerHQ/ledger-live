@@ -121,7 +121,10 @@ export const persistSession = fromPromise(
     }
 
     await input.ports.persistSession(input.session);
-    await input.ports.clearAttempt();
+
+    // Wiping the attempt is hygiene, and the session is already on disk. A store that refuses to
+    // forget must not report a login that succeeded as `persist_failed`.
+    await input.ports.clearAttempt().catch(() => undefined);
   },
 );
 

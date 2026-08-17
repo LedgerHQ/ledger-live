@@ -262,6 +262,21 @@ describe("cardLoginMachine failures", () => {
     expect(actor.getSnapshot().context.errorKind).toBe(errorKind);
   });
 
+  it("reports a login that succeeded even when the attempt cannot be wiped", async () => {
+    const ports = stubPorts({
+      loadAttempt: jest.fn(async () => attempt),
+      clearAttempt: jest.fn(async () => Promise.reject(new Error("keychain locked"))),
+    });
+    const actor = start(ports);
+    await settledAt(actor, "idle");
+
+    actor.send({ type: "LOGIN" });
+
+    // The session reached the disk, so a failed wipe is hygiene, not a failed login.
+    await settledAt(actor, "ready");
+    expect(ports.persistSession).toHaveBeenCalledWith(session);
+  });
+
   it("reports a redirect whose state does not match the attempt", async () => {
     const ports = stubPorts({
       loadAttempt: jest.fn(async () => ({ ...attempt, state: "another-state" })),
@@ -285,6 +300,22 @@ describe("cardLoginMachine failures", () => {
     await settledAt(actor, "idle");
     expect(ports.clearSession).toHaveBeenCalledTimes(1);
     expect(actor.getSnapshot().context.errorKind).toBeNull();
+  });
+
+  it("does not bounce back to authenticated after a 401 on a resumed session", async () => {
+    // hydrate finds a session and a leftover attempt, so it resumes through `clearingAttempt`. If the
+    // resume outlived that hop, the 401 below would return here and the two states would loop.
+    const ports = stubPorts({
+      hasSession: jest.fn(async () => true),
+      loadAttempt: jest.fn(async () => attempt),
+      getUser: jest.fn(async () => Promise.reject({ status: 401 })),
+    });
+
+    const actor = start(ports);
+
+    await settledAt(actor, "idle");
+    expect(ports.getUser).toHaveBeenCalledTimes(1);
+    expect(ports.clearSession).toHaveBeenCalledTimes(1);
   });
 
   it("keeps the session when the user endpoint cannot be reached", async () => {
