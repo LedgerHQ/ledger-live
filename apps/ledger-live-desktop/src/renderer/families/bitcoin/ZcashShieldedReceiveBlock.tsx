@@ -20,6 +20,7 @@ import type { ZcashPrivateInfo } from "@ledgerhq/coin-zcash/network/types";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { getEnv } from "@shared/env";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
+import { UTXOAddressAlert } from "~/renderer/components/UTXOAddressAlert";
 
 const AlertBoxContainer = styled.div`
   margin-top: 20px;
@@ -174,6 +175,9 @@ export function ZcashShieldedReceiveBlock({
               )}
             />
           </Modal>
+        </AlertBoxContainer>
+        <AlertBoxContainer>
+          <UTXOAddressAlert />
         </AlertBoxContainer>
       </>
     );

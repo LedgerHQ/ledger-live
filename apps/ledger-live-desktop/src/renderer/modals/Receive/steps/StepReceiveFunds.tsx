@@ -67,11 +67,13 @@ const Receive1ShareAddress = ({
   name,
   address,
   showQRCodeModal,
+  suppressUTXOAlert,
 }: {
   account: Account;
   name: string;
   address: string;
   showQRCodeModal: () => void;
+  suppressUTXOAlert?: boolean;
 }) => {
   const { currency } = account;
 
@@ -107,7 +109,7 @@ const Receive1ShareAddress = ({
       </Box>
       <ReadOnlyAddressField address={address} />
 
-      {isUTXOCompliantCurrency && (
+      {isUTXOCompliantCurrency && !suppressUTXOAlert && (
         <Box mt={3}>
           <UTXOAddressAlert />
         </Box>
@@ -336,17 +338,6 @@ const StepReceiveFunds = (props: StepProps) => {
   }
 
   const DeviceAnimationSlot = specific?.StepReceiveFundsDeviceAnimation;
-  const standardDeviceAnimation = <Receive2Device device={device!} name={name} />;
-  const deviceAnimationBlock = (
-    <>
-      <Separator />
-      {DeviceAnimationSlot ? (
-        <DeviceAnimationSlot {...props} fallback={standardDeviceAnimation} />
-      ) : (
-        standardDeviceAnimation
-      )}
-    </>
-  );
 
   const CustomPostAlertReceiveFunds = specific?.StepReceiveFundsPostAlert;
 
@@ -396,6 +387,7 @@ const StepReceiveFunds = (props: StepProps) => {
                 name={name}
                 address={address}
                 showQRCodeModal={showQRCodeModal}
+                suppressUTXOAlert={usesCustomConfirm}
               />
               {CustomPostAlertReceiveFunds && <CustomPostAlertReceiveFunds {...props} />}
               <Alert type="security" learnMoreUrl={urls.recipientAddressInfo} mt={4}>
@@ -417,9 +409,21 @@ const StepReceiveFunds = (props: StepProps) => {
                 name={name}
                 address={address}
                 showQRCodeModal={showQRCodeModal}
+                suppressUTXOAlert={usesCustomConfirm}
               />
               {CustomPostAlertReceiveFunds && <CustomPostAlertReceiveFunds {...props} />}
-              {deviceAnimationBlock}
+              <>
+                <Separator />
+                {DeviceAnimationSlot ? (
+                  <DeviceAnimationSlot
+                    {...props}
+                    device={device}
+                    fallback={<Receive2Device device={device} name={name} />}
+                  />
+                ) : (
+                  <Receive2Device device={device} name={name} />
+                )}
+              </>
             </>
           ) : null // should not happen
         }
