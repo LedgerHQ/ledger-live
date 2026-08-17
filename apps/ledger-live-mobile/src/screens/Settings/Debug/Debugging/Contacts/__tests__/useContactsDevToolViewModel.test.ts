@@ -97,4 +97,21 @@ describe("useContactsDevToolViewModel", () => {
       expect.objectContaining({ id: "contact-me", isMe: true, name: "Me" }),
     ]);
   });
+
+  it("should toggle the Contacts feature introduction dismissed state", () => {
+    const { result, store } = renderHook(() => useContactsDevToolViewModel(), {
+      overrideInitialState: state => ({
+        ...state,
+        settings: { ...state.settings, hasDismissedContactsFeatureIntroduction: true },
+      }),
+    });
+
+    expect(result.current.hasDismissedFeatureIntroduction).toBe(true);
+
+    act(() => {
+      result.current.handleToggleFeatureIntroductionDismissed();
+    });
+
+    expect(store.getState().settings.hasDismissedContactsFeatureIntroduction).toBe(false);
+  });
 });
