@@ -20,13 +20,22 @@ describe("Track (native entry point)", () => {
   it("sends the event on mount when asked to", () => {
     render(<Track onMount event="Some Event" foo="bar" />);
 
+    expect(track).toHaveBeenCalledTimes(1);
     expect(track).toHaveBeenCalledWith("Some Event", { page: undefined, foo: "bar" });
+  });
+
+  it("sends the mount event once, however often the component is re-evaluated", () => {
+    const { rerender } = render(<Track onMount event="Some Event" foo="bar" />);
+    rerender(<Track onMount event="Some Event" foo="baz" />);
+
+    expect(track).toHaveBeenCalledTimes(1);
   });
 
   it("sends the event when a property changes and onUpdate is set", () => {
     const { rerender } = render(<Track onUpdate event="Filter Changed" filter="all" />);
     rerender(<Track onUpdate event="Filter Changed" filter="favourites" />);
 
+    expect(track).toHaveBeenCalledTimes(1);
     expect(track).toHaveBeenCalledWith("Filter Changed", {
       page: undefined,
       filter: "favourites",

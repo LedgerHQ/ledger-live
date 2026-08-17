@@ -18,10 +18,18 @@ describe("Track", () => {
   it("sends the event on mount when asked to", () => {
     render(<Track onMount event="Discoverability - Prompt" language="en" />);
 
+    expect(track).toHaveBeenCalledTimes(1);
     expect(track).toHaveBeenCalledWith("Discoverability - Prompt", {
       page: undefined,
       language: "en",
     });
+  });
+
+  it("sends the mount event once, however often the component is re-evaluated", () => {
+    const { rerender } = render(<Track onMount event="Discoverability - Prompt" language="en" />);
+    rerender(<Track onMount event="Discoverability - Prompt" language="fr" />);
+
+    expect(track).toHaveBeenCalledTimes(1);
   });
 
   it("sends nothing on mount by default", () => {
@@ -36,6 +44,7 @@ describe("Track", () => {
 
     unmount();
 
+    expect(track).toHaveBeenCalledTimes(1);
     expect(track).toHaveBeenCalledWith("Drawer Closed", { page: undefined });
   });
 
@@ -65,6 +74,13 @@ describe("Track", () => {
   it("sends nothing when re-rendered with equal properties", () => {
     const { rerender } = render(<Track onUpdate event="Filter Changed" filter="all" />);
     rerender(<Track onUpdate event="Filter Changed" filter="all" />);
+
+    expect(track).not.toHaveBeenCalled();
+  });
+
+  it("sends nothing when re-rendered with a new but equal object property", () => {
+    const { rerender } = render(<Track onUpdate event="Filter Changed" filter={{ tag: "all" }} />);
+    rerender(<Track onUpdate event="Filter Changed" filter={{ tag: "all" }} />);
 
     expect(track).not.toHaveBeenCalled();
   });
