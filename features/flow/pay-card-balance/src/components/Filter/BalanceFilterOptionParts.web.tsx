@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
 import { Card, Spot } from "@ledgerhq/lumen-ui-react";
-import { Placeholder } from "@ledgerhq/lumen-ui-react/symbols";
+import { Bundle } from "@ledgerhq/lumen-ui-react/symbols";
 import type { BalanceFilter } from "../../state";
 
 export {
@@ -51,7 +51,7 @@ type FilterOptionIconProps = Readonly<{
 
 export function FilterOptionIcon({ ledgerId, ticker }: FilterOptionIconProps) {
   if (ledgerId == null) {
-    return <Spot appearance="icon" icon={Placeholder} size={48} />;
+    return <Spot appearance="icon" icon={Bundle} size={48} />;
   }
   return <CryptoIcon ledgerId={ledgerId} ticker={ticker ?? ""} size={48} />;
 }
