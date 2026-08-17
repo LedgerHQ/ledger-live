@@ -19,6 +19,11 @@ jest.mock("@ledgerhq/live-countervalues-react", () => ({
   useCalculateCountervalueCallback: () => (_currency: unknown, value: BigNumber) => value,
 }));
 
+const mockUsePerpsDepositQuote = jest.fn();
+jest.mock("../usePerpsDepositQuote", () => ({
+  usePerpsDepositQuote: () => mockUsePerpsDepositQuote(),
+}));
+
 function createAccount(id: string, spendableBalance: number): AccountLike {
   return {
     type: "Account",
@@ -36,6 +41,7 @@ describe("PerpsDeposit integration", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockOpenAssetAndAccount.mockResolvedValue({ account: fundingAccount });
+    mockUsePerpsDepositQuote.mockReturnValue({ amountTo: new BigNumber(42) });
   });
 
   it("should not render the form until a deposit is opened", () => {
@@ -69,6 +75,19 @@ describe("PerpsDeposit integration", () => {
     await user.click(screen.getByTestId("perps-deposit-ratio-MAX"));
 
     expect(screen.getByTestId("perps-deposit-review-cta")).not.toBeDisabled();
+  });
+
+  it("should shimmer the quoted amount and keep the CTA disabled while quoting", async () => {
+    mockUsePerpsDepositQuote.mockReturnValue(undefined);
+    const { user } = render(<PerpsDepositRoot />);
+
+    act(() => openPerpsDeposit({ receiverAccount }));
+
+    await user.click(screen.getByTestId("perps-deposit-select-currency"));
+    await user.click(screen.getByTestId("perps-deposit-ratio-MAX"));
+
+    expect(screen.getByTestId("perps-deposit-quote-skeleton")).toBeVisible();
+    expect(screen.getByTestId("perps-deposit-review-cta")).toBeDisabled();
   });
 
   it("should restore a draft when the deposit is reopened from the review", () => {

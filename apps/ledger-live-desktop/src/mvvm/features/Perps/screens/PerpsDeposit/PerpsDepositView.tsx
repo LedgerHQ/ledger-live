@@ -16,7 +16,10 @@ export function PerpsDepositView({
   headerDescription,
   depositAmount,
   formattedDepositAmount,
+  depositAmountTicker,
+  isQuoteLoading,
   counterValueCode,
+  maxDecimalLength,
   changeDepositAmount,
   setDepositAmount,
   depositCurrencyTicker,
@@ -53,14 +56,15 @@ export function PerpsDepositView({
 
         <DepositAmountStatus
           formattedAmount={formattedDepositAmount}
-          currencyTicker={depositCurrencyTicker}
-          hasAmount={depositAmount > 0}
+          currencyTicker={depositAmountTicker}
+          isQuoteLoading={isQuoteLoading}
           error={submitError}
         />
 
         <RatioPicker
           maxValue={maxAmount}
           value={depositAmount}
+          decimalPlaces={maxDecimalLength}
           onChange={setDepositAmount}
           onMax={selectMax}
           className="justify-around"

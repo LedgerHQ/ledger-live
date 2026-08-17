@@ -4,7 +4,12 @@ import type { AccountLike } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit, valueFromUnit } from "@ledgerhq/live-common/currencies/index";
 import { PERPS_UI_USE_CASE } from "@ledgerhq/live-common/wallet-api/ModularDrawer/uiUseCase";
-import { useCalculateCountervalueCallback } from "@ledgerhq/live-countervalues-react";
+import {
+  useCalculateCountervalueCallback,
+  useCountervaluesState,
+} from "@ledgerhq/live-countervalues-react";
+import { calculate } from "@ledgerhq/live-countervalues/logic";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { useSelector } from "~/context/hooks";
 import { counterValueCurrencySelector, localeSelector } from "~/reducers/settings";
 import { accountNameWithDefaultSelector, walletSelector } from "~/reducers/wallet";
@@ -16,7 +21,9 @@ import {
   PERPS_DEPOSIT_DEFAULT_FUNDING_CURRENCY_ID,
   PERPS_DEPOSIT_DEFAULT_FUNDING_TICKER,
 } from "../../constants/depositFunding";
+import { usePerpsDepositQuote } from "./usePerpsDepositQuote";
 import { AMOUNT_MAX_INTEGER_DIGITS, applyAmountKey, toAmountText } from "./utils/amountKeys";
+import { toAmountValue } from "./utils/toAmountValue";
 import { validateDepositFlow } from "./utils/validateDepositFlow";
 
 type NavigationProps = RootComposite<
@@ -28,6 +35,8 @@ export type PerpsDepositViewModel = Readonly<{
   amountText: string;
   depositAmount: number;
   formattedDepositAmount: string;
+  depositAmountTicker: string;
+  isQuoteLoading: boolean;
   counterValueCode: string;
   maxIntegerLength: number;
   maxDecimalLength: number;
@@ -88,6 +97,21 @@ export function usePerpsDepositViewModel({ route }: NavigationProps): PerpsDepos
   );
 
   const calculateCountervalue = useCalculateCountervalueCallback({ to: counterValueCurrency });
+  const countervaluesState = useCountervaluesState();
+
+  /** Prices the typed amount back into `currency`, in its smallest unit. */
+  const toCurrencyAmount = useCallback(
+    (currency: CryptoOrTokenCurrency) =>
+      new BigNumber(
+        calculate(countervaluesState, {
+          from: currency,
+          to: counterValueCurrency,
+          value: new BigNumber(depositAmount).shiftedBy(counterValueUnit.magnitude).toNumber(),
+          reverse: true,
+        }) ?? 0,
+      ),
+    [counterValueCurrency, counterValueUnit.magnitude, countervaluesState, depositAmount],
+  );
 
   const receiverAccountName = useMemo(
     () => accountNameWithDefaultSelector(walletState, receiverAccount),
@@ -106,7 +130,6 @@ export function usePerpsDepositViewModel({ route }: NavigationProps): PerpsDepos
     receiverCurrency,
   ]);
 
-  // Balance of the funding account, in the smallest unit of the counter value currency.
   const depositAccountBalanceCounterValue = useMemo(() => {
     if (!depositAccount || !depositCurrency) return null;
     return calculateCountervalue(depositCurrency, depositAccount.spendableBalance) ?? null;
@@ -127,16 +150,6 @@ export function usePerpsDepositViewModel({ route }: NavigationProps): PerpsDepos
 
   const selectMax = useCallback(() => setDepositAmount(maxAmount), [maxAmount, setDepositAmount]);
 
-  const formattedDepositAmount = useMemo(
-    () =>
-      formatCurrencyUnit(
-        counterValueUnit,
-        valueFromUnit(new BigNumber(depositAmount), counterValueUnit),
-        { showCode: false, locale },
-      ),
-    [counterValueUnit, depositAmount, locale],
-  );
-
   const submitError = useMemo(
     () => validateDepositFlow({ amount: depositAmount, maxAmount }),
     [depositAmount, maxAmount],
@@ -144,7 +157,33 @@ export function usePerpsDepositViewModel({ route }: NavigationProps): PerpsDepos
 
   const exceedsBalance = Boolean(depositAccount) && depositAmount > maxAmount;
   const missingAccount = !depositAccount && depositAmount > 0;
-  const canReview = depositAmount > 0 && Boolean(depositAccount) && submitError === null;
+  const isFormComplete = depositAmount > 0 && Boolean(depositAccount) && submitError === null;
+
+  const sentAmount = useMemo(() => {
+    if (!isFormComplete || !depositAccount || !depositCurrency) return "";
+    const atomicAmount = BigNumber.min(
+      toCurrencyAmount(depositCurrency),
+      depositAccount.spendableBalance,
+    ).integerValue(BigNumber.ROUND_FLOOR);
+    return toAmountValue(atomicAmount, depositCurrency.units[0].magnitude);
+  }, [isFormComplete, depositAccount, depositCurrency, toCurrencyAmount]);
+
+  const quote = usePerpsDepositQuote({ depositAccount, receiverAccount, amount: sentAmount });
+
+  const canReview = isFormComplete && quote !== undefined;
+
+  const receiverUnit = receiverCurrency.units[0];
+
+  const formattedDepositAmount = useMemo(
+    () =>
+      quote
+        ? formatCurrencyUnit(receiverUnit, valueFromUnit(quote.amountTo, receiverUnit), {
+            showCode: false,
+            locale,
+          })
+        : "",
+    [locale, quote, receiverUnit],
+  );
 
   const pickDepositAccount = useCallback(() => {
     openDrawer({
@@ -165,6 +204,8 @@ export function usePerpsDepositViewModel({ route }: NavigationProps): PerpsDepos
     amountText,
     depositAmount,
     formattedDepositAmount,
+    depositAmountTicker: receiverCurrency.ticker,
+    isQuoteLoading: isFormComplete && quote === undefined,
     counterValueCode: counterValueUnit.code,
     maxIntegerLength: AMOUNT_MAX_INTEGER_DIGITS,
     maxDecimalLength,

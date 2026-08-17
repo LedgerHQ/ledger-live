@@ -18,6 +18,11 @@ jest.mock("@ledgerhq/live-countervalues-react", () => ({
   useCalculateCountervalueCallback: () => (_currency: unknown, value: BigNumber) => value,
 }));
 
+const mockUsePerpsDepositQuote = jest.fn();
+jest.mock("../usePerpsDepositQuote", () => ({
+  usePerpsDepositQuote: () => mockUsePerpsDepositQuote(),
+}));
+
 function createAccount(id: string, currencyId: string, spendableBalance: number): AccountLike {
   return {
     type: "Account",
@@ -49,6 +54,7 @@ describe("usePerpsDepositViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockOpenAssetAndAccount.mockResolvedValue({ account: fundingAccount });
+    mockUsePerpsDepositQuote.mockReturnValue({ amountTo: new BigNumber(42) });
   });
 
   it("starts with an empty amount and no funding account", () => {
@@ -132,6 +138,20 @@ describe("usePerpsDepositViewModel", () => {
     expect(result.current.depositAmount).toBe(20);
     expect(result.current.depositCurrencyTicker).toBe("ETH");
     expect(result.current.canReview).toBe(true);
+  });
+
+  it("holds the review CTA back until the quote lands", async () => {
+    mockUsePerpsDepositQuote.mockReturnValue(undefined);
+    const { result } = renderViewModel();
+
+    await pickFundingAccount(result);
+    act(() => result.current.changeDepositAmount("20"));
+
+    // The form itself is valid, so only the missing quote keeps the CTA disabled.
+    expect(result.current.submitError).toBeNull();
+    expect(result.current.canReview).toBe(false);
+    expect(result.current.isQuoteLoading).toBe(true);
+    expect(result.current.formattedDepositAmount).toBe("");
   });
 
   it("closes the dialog when the form is ready to review", () => {

@@ -1,12 +1,46 @@
 import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { AmountInput, Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
+import { AmountInput, Box, Button, Skeleton, Text } from "@ledgerhq/lumen-ui-rnative";
 import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
 import { useTranslation } from "~/context/Locale";
 import { AmountKeypad } from "./components/AmountKeypad";
 import { DepositAccountSelector } from "./components/DepositAccountSelector";
 import { RatioPicker } from "./components/RatioPicker";
 import type { PerpsDepositViewModel } from "./usePerpsDepositViewModel";
+
+const QUOTED_AMOUNT_SKELETON_SIZE = { width: 120, height: 16 };
+
+function QuotedAmount({
+  formattedDepositAmount,
+  depositAmountTicker,
+  isQuoteLoading,
+}: Pick<
+  PerpsDepositViewModel,
+  "formattedDepositAmount" | "depositAmountTicker" | "isQuoteLoading"
+>) {
+  const { t } = useTranslation();
+
+  if (isQuoteLoading) {
+    return (
+      <Skeleton
+        testID="perps-deposit-quote-skeleton"
+        lx={{ borderRadius: "sm" }}
+        style={QUOTED_AMOUNT_SKELETON_SIZE}
+      />
+    );
+  }
+
+  if (!formattedDepositAmount) return null;
+
+  return (
+    <Text typography="body3" lx={{ color: "muted" }}>
+      {t("perpsDeposit.inputDepositAmount", {
+        value: formattedDepositAmount,
+        currencyTicker: depositAmountTicker,
+      })}
+    </Text>
+  );
+}
 
 function AmountMessage({
   submitError,
@@ -38,6 +72,8 @@ export function PerpsDepositView({
   amountText,
   depositAmount,
   formattedDepositAmount,
+  depositAmountTicker,
+  isQuoteLoading,
   counterValueCode,
   maxIntegerLength,
   maxDecimalLength,
@@ -87,12 +123,11 @@ export function PerpsDepositView({
             isInvalid={submitError?.isVisible ?? false}
             testID="perps-deposit-amount-input"
           />
-          <Text typography="body3" lx={{ color: "muted" }}>
-            {t("perpsDeposit.inputDepositAmount", {
-              value: formattedDepositAmount,
-              currencyTicker: depositCurrencyTicker,
-            })}
-          </Text>
+          <QuotedAmount
+            formattedDepositAmount={formattedDepositAmount}
+            depositAmountTicker={depositAmountTicker}
+            isQuoteLoading={isQuoteLoading}
+          />
           <AmountMessage submitError={submitError} depositAmount={depositAmount} />
         </Box>
 

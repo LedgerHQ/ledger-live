@@ -23,6 +23,11 @@ jest.mock("@ledgerhq/live-countervalues/logic", () => ({
   calculate: () => 20000000000000000,
 }));
 
+const mockUsePerpsDepositQuote = jest.fn();
+jest.mock("../usePerpsDepositQuote", () => ({
+  usePerpsDepositQuote: () => mockUsePerpsDepositQuote(),
+}));
+
 function createAccount(id: string, spendableBalance: number): AccountLike {
   return {
     type: "Account",
@@ -40,7 +45,10 @@ const mockNavigation = { navigate: jest.fn(), goBack: jest.fn(), setOptions: jes
 const mockRoute = { params: { receiverAccount } };
 
 describe("PerpsDeposit integration", () => {
-  beforeEach(() => jest.clearAllMocks());
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockUsePerpsDepositQuote.mockReturnValue({ amountTo: new BigNumber(42) });
+  });
 
   it("should let the user pick a funding account before reviewing", async () => {
     const { user } = render(
@@ -86,5 +94,22 @@ describe("PerpsDeposit integration", () => {
     await user.press(screen.getByTestId("perps-deposit-key-0"));
 
     expect(screen.getByTestId("perps-deposit-review-cta")).not.toBeDisabled();
+  });
+
+  it("should shimmer the quoted amount and keep the CTA disabled while quoting", async () => {
+    mockUsePerpsDepositQuote.mockReturnValue(undefined);
+    const { user } = render(
+      <PerpsDepositScreen navigation={mockNavigation as never} route={mockRoute as never} />,
+    );
+
+    await user.press(screen.getByTestId("perps-deposit-select-currency"));
+    const { onAccountSelected } = mockOpenDrawer.mock.calls[0][0];
+    act(() => onAccountSelected(fundingAccount));
+
+    await user.press(screen.getByTestId("perps-deposit-key-2"));
+    await user.press(screen.getByTestId("perps-deposit-key-0"));
+
+    expect(screen.getByTestId("perps-deposit-quote-skeleton")).toBeOnTheScreen();
+    expect(screen.getByTestId("perps-deposit-review-cta")).toBeDisabled();
   });
 });
