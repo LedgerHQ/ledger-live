@@ -3,27 +3,26 @@ import { useCallback, useEffect, useRef } from "react";
 export type UseContactsFeatureIntroductionActionsInput = Readonly<{
   isOpen: boolean;
   onComplete: () => void;
-  onDefer: () => void;
+  onClose: () => void;
 }>;
 
 export type ContactsFeatureIntroductionActions = Readonly<{
   complete: () => void;
-  defer: () => void;
   onClose: () => void;
 }>;
 
 export function useContactsFeatureIntroductionActions({
   isOpen,
   onComplete,
-  onDefer,
+  onClose: onCloseCallback,
 }: UseContactsFeatureIntroductionActionsInput): ContactsFeatureIntroductionActions {
   const hasCompleted = useRef(false);
-  const hasDeferred = useRef(false);
+  const hasClosed = useRef(false);
 
   useEffect(() => {
     if (isOpen) {
       hasCompleted.current = false;
-      hasDeferred.current = false;
+      hasClosed.current = false;
     }
   }, [isOpen]);
 
@@ -36,20 +35,14 @@ export function useContactsFeatureIntroductionActions({
     onComplete();
   }, [onComplete]);
 
-  const defer = useCallback(() => {
-    if (hasDeferred.current) {
+  const onClose = useCallback(() => {
+    if (hasCompleted.current || hasClosed.current) {
       return;
     }
 
-    hasDeferred.current = true;
-    onDefer();
-  }, [onDefer]);
+    hasClosed.current = true;
+    onCloseCallback();
+  }, [onCloseCallback]);
 
-  const onClose = useCallback(() => {
-    if (!hasCompleted.current) {
-      defer();
-    }
-  }, [defer]);
-
-  return { complete, defer, onClose };
+  return { complete, onClose };
 }

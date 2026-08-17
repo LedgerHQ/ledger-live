@@ -2,11 +2,11 @@ import { act, renderHook } from "@testing-library/react";
 import { useContactsFeatureIntroductionActions } from "./useContactsFeatureIntroductionActions";
 
 describe("useContactsFeatureIntroductionActions", () => {
-  it("should call complete once and not defer when the introduction closes after completion", () => {
+  it("should call complete once and not close when the introduction closes after completion", () => {
     const onComplete = jest.fn();
-    const onDefer = jest.fn();
+    const onClose = jest.fn();
     const { result } = renderHook(() =>
-      useContactsFeatureIntroductionActions({ isOpen: true, onComplete, onDefer }),
+      useContactsFeatureIntroductionActions({ isOpen: true, onComplete, onClose }),
     );
 
     act(() => {
@@ -16,29 +16,29 @@ describe("useContactsFeatureIntroductionActions", () => {
     });
 
     expect(onComplete).toHaveBeenCalledTimes(1);
-    expect(onDefer).not.toHaveBeenCalled();
+    expect(onClose).not.toHaveBeenCalled();
   });
 
-  it("should defer once and reset its actions when the introduction reopens", () => {
+  it("should close once and reset its actions when the introduction reopens", () => {
     const onComplete = jest.fn();
-    const onDefer = jest.fn();
+    const onClose = jest.fn();
     const { result, rerender } = renderHook(
-      ({ isOpen }) => useContactsFeatureIntroductionActions({ isOpen, onComplete, onDefer }),
+      ({ isOpen }) => useContactsFeatureIntroductionActions({ isOpen, onComplete, onClose }),
       { initialProps: { isOpen: true } },
     );
 
     act(() => {
-      result.current.defer();
+      result.current.onClose();
       result.current.onClose();
     });
-    expect(onDefer).toHaveBeenCalledTimes(1);
+    expect(onClose).toHaveBeenCalledTimes(1);
 
     rerender({ isOpen: false });
     rerender({ isOpen: true });
     act(() => {
-      result.current.defer();
+      result.current.onClose();
     });
 
-    expect(onDefer).toHaveBeenCalledTimes(2);
+    expect(onClose).toHaveBeenCalledTimes(2);
   });
 });

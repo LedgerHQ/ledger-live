@@ -317,7 +317,7 @@ export function useContactsViewModel(): ContactsPageViewModel {
   const onCompleteFeatureIntroduction = useCallback(() => {
     featureIntroductionState.dismiss();
   }, [featureIntroductionState]);
-  const onDeferFeatureIntroduction = useCallback(() => {
+  const onCloseFeatureIntroduction = useCallback(() => {
     navigate(-1);
   }, [navigate]);
 
@@ -343,9 +343,8 @@ export function useContactsViewModel(): ContactsPageViewModel {
       description: t("contacts.featureIntroduction.description"),
       highlights: featureIntroductionHighlights,
       primaryActionLabel: t("contacts.featureIntroduction.primaryAction"),
-      secondaryActionLabel: t("contacts.featureIntroduction.secondaryAction"),
       onComplete: onCompleteFeatureIntroduction,
-      onDefer: onDeferFeatureIntroduction,
+      onClose: onCloseFeatureIntroduction,
     },
     ledgerSyncIntroduction: {
       isOpen: isLedgerSyncIntroductionOpen,

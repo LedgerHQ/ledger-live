@@ -84,26 +84,6 @@ describe("Contacts feature introduction integration", () => {
     });
   });
 
-  it("should defer the introduction from Maybe later without persisting dismissal", async () => {
-    const { user, store } = render(<ContactsFeatureIntroductionTestApp />, {
-      navigationInitialState: contactsNavigationState,
-      overrideInitialState: withFlagOverrides(
-        { lwmContacts: { enabled: true, params: { newBadge: false } } },
-        state => ({
-          ...state,
-          settings: { ...state.settings, hasDismissedContactsFeatureIntroduction: false },
-        }),
-      ),
-    });
-
-    await user.press(screen.getByTestId("contacts-feature-introduction-secondary"));
-
-    await waitFor(() => {
-      expect(store.getState().settings.hasDismissedContactsFeatureIntroduction).toBe(false);
-      expect(screen.getByTestId("my-wallet-home")).toBeVisible();
-    });
-  });
-
   it("should navigate to the introduction from My Wallet when the feature flag is enabled", async () => {
     const { user } = render(<MyWalletNavigator />, {
       overrideInitialState: withFlagOverrides(
