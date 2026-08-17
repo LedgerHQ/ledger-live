@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
 import { getAssetByCurrency } from "../utils/getAssetByCurrency";
 import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { ModularDialogStep } from "../types";
@@ -13,6 +13,7 @@ import {
   modularDialogOnAccountSelectedSelector,
   modularDialogOnAssetSelectedSelector,
   modularDialogSearchedSelector,
+  modularDialogSelectableNetworkIdsSelector,
 } from "~/renderer/reducers/modularDialog";
 import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
 import { useAcceptedCurrency } from "@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency";
@@ -34,12 +35,27 @@ export function useModularDialogFlowState({
   const { trackModularDialogEvent } = useModularDialogAnalytics();
   const searchedValue = useSelector(modularDialogSearchedSelector);
   const currencyIds = useSelector(modularDialogCurrenciesSelector);
+  const selectableNetworkIds = useSelector(modularDialogSelectableNetworkIdsSelector);
   const onAssetSelected = useSelector(modularDialogOnAssetSelectedSelector);
   const onAccountSelected = useSelector(modularDialogOnAccountSelectedSelector);
 
   const [selectedAsset, setSelectedAsset] = useState<CryptoOrTokenCurrency>();
   const [selectedNetwork, setSelectedNetwork] = useState<CryptoOrTokenCurrency>();
   const [providers, setProviders] = useState<AssetData>();
+  const selectableNetworkIdSet = useMemo(
+    () => (selectableNetworkIds === undefined ? undefined : new Set(selectableNetworkIds)),
+    [selectableNetworkIds],
+  );
+
+  const isSelectableNetwork = useCallback(
+    (network: CryptoOrTokenCurrency) => {
+      if (selectableNetworkIdSet === undefined) return true;
+
+      const networkId = network.type === "CryptoCurrency" ? network.id : network.parentCurrencyId;
+      return selectableNetworkIdSet.has(networkId);
+    },
+    [selectableNetworkIdSet],
+  );
 
   const goBackToAssetSelection = useCallback(() => {
     setSelectedAsset(undefined);
@@ -78,6 +94,7 @@ export function useModularDialogFlowState({
   const handleNetworkSelected = useCallback(
     (network: CryptoOrTokenCurrency) => {
       if (!providers) return;
+      if (!isSelectableNetwork(network)) return;
       const correspondingCurrency =
         providers.networks.find(elem => belongsToSameNetwork(elem, network)) ?? network;
 
@@ -87,19 +104,22 @@ export function useModularDialogFlowState({
         onAssetSelected?.(correspondingCurrency);
       }
     },
-    [goToAccountSelection, onAccountSelected, onAssetSelected, providers],
+    [goToAccountSelection, isSelectableNetwork, onAccountSelected, onAssetSelected, providers],
   );
 
   const getNetworksFromProvider = useCallback(
     (provider: AssetData) => {
       return provider.networks.filter(elem => {
-        const isAllowedByFilter =
-          !currencyIds || currencyIds.length === 0 || currencyIds.includes(elem.id);
+        const isAllowedByCurrencyFilter =
+          selectableNetworkIds !== undefined ||
+          !currencyIds ||
+          currencyIds.length === 0 ||
+          currencyIds.includes(elem.id);
 
-        return isAcceptedCurrency(elem) && isAllowedByFilter;
+        return isAcceptedCurrency(elem) && isAllowedByCurrencyFilter;
       });
     },
-    [isAcceptedCurrency, currencyIds],
+    [currencyIds, isAcceptedCurrency, selectableNetworkIds],
   );
 
   const handleNoProvider = useCallback(
@@ -134,6 +154,15 @@ export function useModularDialogFlowState({
   const handleAssetSelected = useCallback(
     (currency: CryptoOrTokenCurrency) => {
       const currentProvider = getAssetByCurrency(currency, assets);
+      if (
+        currentProvider
+          ? !currentProvider.networks.some(
+              network => isAcceptedCurrency(network) && isSelectableNetwork(network),
+            )
+          : !isSelectableNetwork(currency)
+      ) {
+        return;
+      }
       setProviders(currentProvider);
 
       if (!currentProvider) {
@@ -155,6 +184,8 @@ export function useModularDialogFlowState({
       getNetworksFromProvider,
       handleMultipleNetworks,
       handleSingleNetwork,
+      isAcceptedCurrency,
+      isSelectableNetwork,
     ],
   );
 
