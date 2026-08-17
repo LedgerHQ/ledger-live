@@ -11,15 +11,14 @@ export function ContactsFeatureIntroductionDialog({
   description,
   highlights,
   primaryActionLabel,
-  secondaryActionLabel,
   heroImageSrc,
   onComplete,
-  onDefer,
+  onClose: onCloseCallback,
 }: ContactsFeatureIntroduction): React.ReactNode {
-  const { complete, defer, onClose } = useContactsFeatureIntroductionActions({
+  const { complete, onClose } = useContactsFeatureIntroductionActions({
     isOpen,
     onComplete,
-    onDefer,
+    onClose: onCloseCallback,
   });
   const heroImage = heroImageSrc ?? CONTACTS_FEATURE_INTRODUCTION_HERO_IMAGE;
 
@@ -36,7 +35,7 @@ export function ContactsFeatureIntroductionDialog({
         className="max-h-[90vh] w-[480px] bg-canvas-sheet p-0"
         data-testid="contacts-feature-introduction-dialog"
       >
-        <DialogHeader density="expanded" onClose={defer} />
+        <DialogHeader density="expanded" onClose={onClose} />
         <DialogBody className="flex min-h-0 flex-1 flex-col gap-24 overflow-hidden px-24 pb-24">
           <ContactsFeatureIntroductionDialogContent
             title={title}
@@ -44,7 +43,7 @@ export function ContactsFeatureIntroductionDialog({
             highlights={highlights}
             heroImage={heroImage}
           />
-          <div className="flex w-full shrink-0 flex-col items-center gap-16">
+          <div className="flex w-full shrink-0 flex-col items-center">
             <Button
               appearance="base"
               size="lg"
@@ -53,15 +52,6 @@ export function ContactsFeatureIntroductionDialog({
               data-testid="contacts-feature-introduction-primary"
             >
               {primaryActionLabel}
-            </Button>
-            <Button
-              appearance="gray"
-              size="lg"
-              onClick={defer}
-              className="w-full"
-              data-testid="contacts-feature-introduction-secondary"
-            >
-              {secondaryActionLabel}
             </Button>
           </div>
         </DialogBody>

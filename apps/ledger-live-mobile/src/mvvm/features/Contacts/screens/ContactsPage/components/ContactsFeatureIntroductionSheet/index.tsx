@@ -13,22 +13,22 @@ export type ContactsFeatureIntroductionSheetProps = ContactsFeatureIntroduction;
 export function ContactsFeatureIntroductionSheet({
   isOpen,
   onComplete,
-  onDefer,
+  onClose: onCloseCallback,
   ...contentProps
 }: ContactsFeatureIntroductionSheetProps): React.JSX.Element {
   const { bottom: bottomInset } = useSafeAreaInsets();
-  const { complete, defer, onClose } = useContactsFeatureIntroductionActions({
+  const { complete, onClose } = useContactsFeatureIntroductionActions({
     isOpen,
     onComplete,
-    onDefer,
+    onClose: onCloseCallback,
   });
 
   return (
     <QueuedBottomSheet
       isRequestingToBeOpened={isOpen}
       onClose={onClose}
-      onHeaderClosePressed={defer}
-      onBackdropPress={defer}
+      onHeaderClosePressed={onClose}
+      onBackdropPress={onClose}
       testID="contacts-feature-introduction-drawer"
       enableDynamicSizing
       // iOS: allow the sheet to grow with content; uncapped on Android to avoid excess empty space.
@@ -37,7 +37,6 @@ export function ContactsFeatureIntroductionSheet({
       <ContactsFeatureIntroductionContent
         isOpen={isOpen}
         onComplete={complete}
-        onDefer={defer}
         bottomInset={bottomInset}
         {...contentProps}
       />

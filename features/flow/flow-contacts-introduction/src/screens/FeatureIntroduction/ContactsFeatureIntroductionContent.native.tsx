@@ -11,11 +11,9 @@ export function ContactsFeatureIntroductionContent({
   description,
   highlights,
   primaryActionLabel,
-  secondaryActionLabel,
   heroImageSrc,
   bottomInset,
   onComplete,
-  onDefer,
 }: ContactsFeatureIntroductionContentProps): React.JSX.Element {
   const heroImage = heroImageSrc ?? CONTACTS_FEATURE_INTRODUCTION_HERO_IMAGE;
 
@@ -41,6 +39,7 @@ export function ContactsFeatureIntroductionContent({
               lx={{ backgroundColor: "muted" }}
             >
               <Image
+                testID="contacts-feature-introduction-hero-image"
                 source={heroImage as ImageSourcePropType}
                 accessibilityIgnoresInvertColors
                 style={{ width: "100%", height: "100%" }}
@@ -72,7 +71,7 @@ export function ContactsFeatureIntroductionContent({
                 </Box>
               );
             })}
-            <Box lx={{ gap: "s12", paddingTop: "s8" }}>
+            <Box lx={{ paddingTop: "s8" }}>
               <Button
                 appearance="base"
                 size="lg"
@@ -81,15 +80,6 @@ export function ContactsFeatureIntroductionContent({
                 testID="contacts-feature-introduction-primary"
               >
                 {primaryActionLabel}
-              </Button>
-              <Button
-                appearance="gray"
-                size="lg"
-                isFull
-                onPress={onDefer}
-                testID="contacts-feature-introduction-secondary"
-              >
-                {secondaryActionLabel}
               </Button>
             </Box>
           </Box>

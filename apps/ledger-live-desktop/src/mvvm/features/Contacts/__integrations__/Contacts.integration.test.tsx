@@ -355,21 +355,6 @@ describe("Contacts integration", () => {
     expect(screen.getByTestId("contacts-list")).toBeVisible();
   });
 
-  it("should defer the feature introduction on Maybe later without persisting dismissal", async () => {
-    mockNavigate.mockClear();
-
-    const { user, store } = renderContactsScreen({
-      settings: { hasDismissedContactsFeatureIntroduction: false },
-    });
-
-    expect(screen.getByTestId("contacts-feature-introduction-dialog")).toBeVisible();
-
-    await user.click(screen.getByTestId("contacts-feature-introduction-secondary"));
-
-    expect(mockNavigate).toHaveBeenCalledWith(-1);
-    expect(store.getState().settings.hasDismissedContactsFeatureIntroduction).toBe(false);
-  });
-
   it("should render populated Me detail on load when populated contacts are persisted", () => {
     renderContactsScreen(populatedContactsPageState);
 
