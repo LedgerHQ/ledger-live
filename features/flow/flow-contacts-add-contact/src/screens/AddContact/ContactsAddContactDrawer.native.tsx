@@ -23,7 +23,7 @@ export function ContactsAddContactDrawer({
       invalidNameError={invalidNameError}
       bottomInset={bottomInset}
       keyboardInset={keyboardInset}
-      isInputEditable={!isSaving}
+      isEditable={!isSaving}
       labels={labels}
       confirmLabel={labels.confirmName}
       onDraftNameChange={onDraftNameChange}
