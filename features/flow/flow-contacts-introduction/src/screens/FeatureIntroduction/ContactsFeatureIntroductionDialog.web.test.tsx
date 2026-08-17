@@ -32,6 +32,7 @@ describe("ContactsFeatureIntroductionDialog", () => {
     const user = userEvent.setup();
 
     expect(screen.getByTestId("contacts-feature-introduction-dialog")).toBeVisible();
+    expect(screen.getByTestId("contacts-feature-introduction-dialog")).toHaveClass("w-[400px]");
     expect(screen.getByTestId("contacts-feature-introduction-hero")).toBeVisible();
     expect(screen.getByText("Save recipients")).toBeVisible();
 
