@@ -1,3 +1,4 @@
+import { PASSWORD_MAX_LENGTH } from "@features/platform-app-lock";
 import { TextInput } from "@ledgerhq/lumen-ui-rnative";
 import { Eye, EyeCross } from "@ledgerhq/lumen-ui-rnative/symbols";
 import React, { useCallback, useState } from "react";
@@ -28,6 +29,7 @@ export function PasswordField({
       autoCorrect={false}
       autoComplete="off"
       spellCheck={false}
+      maxLength={PASSWORD_MAX_LENGTH}
       helperText={helperText}
       status={hasError ? "error" : undefined}
       hideClearButton
