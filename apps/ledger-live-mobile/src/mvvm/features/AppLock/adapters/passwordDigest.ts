@@ -40,15 +40,31 @@ export async function derivePasswordDigest(
   return digest;
 }
 
-let derivations: Promise<unknown> = Promise.resolve();
+let queue: Promise<unknown> = Promise.resolve();
+let depth = 0;
 
-// One at a time: concurrent setups would interleave and could store a verifier whose salt belongs
-// to the other run, leaving a password that never opens.
+// One at a time, so concurrent setups cannot store a verifier whose salt belongs to the other run.
+// Re-entrant on purpose: queueing a nested call behind the outer run awaiting it would hang the
+// module-level queue for good.
 export function serialiseDerivation<T>(run: () => Promise<T>): Promise<T> {
-  const next = derivations.then(run, run);
-  derivations = next.then(
+  if (depth > 0) {
+    return run();
+  }
+
+  const next = queue.then(async () => {
+    depth += 1;
+
+    try {
+      return await run();
+    } finally {
+      depth -= 1;
+    }
+  });
+
+  queue = next.then(
     () => undefined,
     () => undefined,
   );
+
   return next;
 }

@@ -7,18 +7,20 @@ export type PasswordCheck =
   | Readonly<{ status: "incorrect" }>
   | Readonly<{ status: "notSet" }>;
 
+export async function checkPasswordInline(password: string): Promise<PasswordCheck> {
+  const verifier = await readPasswordVerifier();
+
+  if (!verifier) {
+    return { status: "notSet" };
+  }
+
+  const digest = await derivePasswordDigest(password, verifier.salt, verifier.scrypt);
+
+  return matchesPasswordVerifier(verifier, digest)
+    ? { status: "correct", verifier }
+    : { status: "incorrect" };
+}
+
 export function checkPassword(password: string): Promise<PasswordCheck> {
-  return serialiseDerivation(async () => {
-    const verifier = await readPasswordVerifier();
-
-    if (!verifier) {
-      return { status: "notSet" } as const;
-    }
-
-    const digest = await derivePasswordDigest(password, verifier.salt, verifier.scrypt);
-
-    return matchesPasswordVerifier(verifier, digest)
-      ? ({ status: "correct", verifier } as const)
-      : ({ status: "incorrect" } as const);
-  });
+  return serialiseDerivation(() => checkPasswordInline(password));
 }

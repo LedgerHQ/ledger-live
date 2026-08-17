@@ -12,7 +12,12 @@ describe("AuthenticationTypeSchema", () => {
 
 describe("AppLockStateSchema", () => {
   it("parses a complete protection state", () => {
-    const state = { hasPassword: true, biometricsEnabled: false, isLocked: true };
+    const state = {
+      hasPassword: true,
+      biometricsEnabled: false,
+      isLocked: true,
+      needsLongerPassword: false,
+    };
 
     expect(AppLockStateSchema.parse(state)).toEqual(state);
   });

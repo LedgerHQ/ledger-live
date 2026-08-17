@@ -7,18 +7,21 @@ import {
 import React, { useEffect, useState } from "react";
 import { AppState, StyleSheet, View } from "react-native";
 import { useDispatch, useSelector } from "~/context/hooks";
-import { useAppLockHydration } from "./hooks/useAppLockHydration";
+import { useAppLockBootstrap } from "./hooks/useAppLockBootstrap";
+import { useLegacyPasswordMigration } from "./hooks/useLegacyPasswordMigration";
 import { UnlockScreen } from "./screens/Unlock";
 
 export function AppLockGate({ children }: Readonly<{ children: React.ReactNode }>) {
   const dispatch = useDispatch();
-  const isHydrated = useAppLockHydration();
+  const isReady = useAppLockBootstrap();
+
+  useLegacyPasswordMigration();
   const protection = useSelector(selectAppLock);
   const isLocked = useSelector(selectIsLocked);
   const [hasDecidedInitialLock, setHasDecidedInitialLock] = useState(false);
 
   useEffect(() => {
-    if (!isHydrated || hasDecidedInitialLock) {
+    if (!isReady || hasDecidedInitialLock) {
       return;
     }
 
@@ -27,7 +30,7 @@ export function AppLockGate({ children }: Readonly<{ children: React.ReactNode }
     }
 
     setHasDecidedInitialLock(true);
-  }, [dispatch, hasDecidedInitialLock, isHydrated, protection]);
+  }, [dispatch, hasDecidedInitialLock, isReady, protection]);
 
   useEffect(() => {
     const subscription = AppState.addEventListener("change", nextState => {

@@ -80,6 +80,10 @@ export async function writePasswordVerifier(verifier: PasswordVerifier): Promise
   await Keychain.setGenericPassword(USERNAME, serialisePasswordVerifier(verifier), writeOptions);
 }
 
+export async function hasPasswordVerifier(): Promise<boolean> {
+  return Keychain.hasGenericPassword({ service: SERVICE });
+}
+
 export async function readPasswordVerifier(): Promise<PasswordVerifier | null> {
   const credentials = await Keychain.getGenericPassword({ service: SERVICE });
 

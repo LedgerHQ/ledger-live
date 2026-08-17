@@ -16,6 +16,7 @@ describe("appLockSlice", () => {
       hasPassword: false,
       biometricsEnabled: false,
       isLocked: false,
+      needsLongerPassword: false,
     });
   });
 
@@ -25,6 +26,7 @@ describe("appLockSlice", () => {
       hasPassword: true,
       biometricsEnabled: false,
       isLocked: false,
+      needsLongerPassword: false,
     });
 
     const withBoth = reduce(withPassword, setBiometricsEnabled(true));
@@ -35,6 +37,7 @@ describe("appLockSlice", () => {
       hasPassword: false,
       biometricsEnabled: true,
       isLocked: false,
+      needsLongerPassword: false,
     });
   });
 
@@ -42,7 +45,12 @@ describe("appLockSlice", () => {
     const configured = reduce(appLockInitialState, setHasPassword(true));
 
     const locked = reduce(configured, lockApp());
-    expect(locked).toEqual({ hasPassword: true, biometricsEnabled: false, isLocked: true });
+    expect(locked).toEqual({
+      hasPassword: true,
+      biometricsEnabled: false,
+      isLocked: true,
+      needsLongerPassword: false,
+    });
 
     expect(reduce(locked, unlockApp()).isLocked).toBe(false);
     expect(reduce(locked, unlockApp()).hasPassword).toBe(true);

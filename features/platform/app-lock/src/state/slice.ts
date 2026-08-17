@@ -5,6 +5,7 @@ export const appLockInitialState: AppLockState = {
   hasPassword: false,
   biometricsEnabled: false,
   isLocked: false,
+  needsLongerPassword: false,
 };
 
 export const appLockSlice = createSlice({
@@ -17,6 +18,9 @@ export const appLockSlice = createSlice({
     setBiometricsEnabled: (state, action: PayloadAction<boolean>) => {
       state.biometricsEnabled = action.payload;
     },
+    setNeedsLongerPassword: (state, action: PayloadAction<boolean>) => {
+      state.needsLongerPassword = action.payload;
+    },
     lockApp: state => {
       state.isLocked = true;
     },
@@ -27,5 +31,11 @@ export const appLockSlice = createSlice({
   },
 });
 
-export const { setHasPassword, setBiometricsEnabled, lockApp, unlockApp, resetAppLock } =
-  appLockSlice.actions;
+export const {
+  setHasPassword,
+  setBiometricsEnabled,
+  setNeedsLongerPassword,
+  lockApp,
+  unlockApp,
+  resetAppLock,
+} = appLockSlice.actions;

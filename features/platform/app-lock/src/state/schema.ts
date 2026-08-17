@@ -11,4 +11,5 @@ export const AppLockStateSchema = z.object({
   hasPassword: z.boolean(),
   biometricsEnabled: z.boolean(),
   isLocked: z.boolean(),
+  needsLongerPassword: z.boolean(),
 });

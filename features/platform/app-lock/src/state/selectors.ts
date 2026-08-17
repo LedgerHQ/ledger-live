@@ -21,6 +21,10 @@ export function selectIsLocked(state: WithAppLock): boolean {
   return selectAppLock(state).isLocked;
 }
 
+export function selectNeedsLongerPassword(state: WithAppLock): boolean {
+  return selectAppLock(state).needsLongerPassword;
+}
+
 export function selectAuthenticationType(state: WithAppLock): AuthenticationType {
   return getAuthenticationType(selectAppLock(state));
 }
