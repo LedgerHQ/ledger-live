@@ -1,22 +1,8 @@
 import {
-  parseLargeMoverLedgerIds,
   validateLargeMoverLedgerIds,
   validateMarketAssetPath,
   validateMarketListCategory,
 } from "../validation";
-
-describe("parseLargeMoverLedgerIds", () => {
-  it("trims, lowercases and dedupes ledger ids", () => {
-    expect(parseLargeMoverLedgerIds(" Bitcoin, ethereum ,bitcoin ")).toEqual([
-      "bitcoin",
-      "ethereum",
-    ]);
-  });
-
-  it("filters out empty segments", () => {
-    expect(parseLargeMoverLedgerIds("btc,,eth")).toEqual(["btc", "eth"]);
-  });
-});
 
 describe("validateLargeMoverLedgerIds", () => {
   it("should return null when ledgerIds is null", () => {

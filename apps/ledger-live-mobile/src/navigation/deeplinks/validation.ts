@@ -9,6 +9,7 @@ import { DdRum, ErrorSource } from "@datadog/mobile-react-native";
 import { parseLedgerAssetPath, type LedgerAssetPath } from "@ledgerhq/asset-detail";
 import { validateUrl } from "@ledgerhq/live-common/wallet-api/validation/validateUrl";
 import { parseMarketListCategory } from "@ledgerhq/live-common/market/utils/category";
+import { parseLargeMoverLedgerIds } from "LLM/features/LandingPages/screens/LargeMoverLandingPage/utils/parseLargeMoverLedgerIds";
 import { isDatadogEnabled } from "../../datadog";
 import type { MarketListCategory, OptionMetadata } from "../../reducers/types";
 
@@ -229,14 +230,6 @@ export function validateEarnDepositScreen(
     cryptoAssetId: sanitizeString(cryptoAssetId || "", MAX_TITLE_LENGTH),
     accountId: sanitizeString(accountId || "", MAX_TITLE_LENGTH),
   };
-}
-
-export function parseLargeMoverLedgerIds(ledgerIds: string): string[] {
-  const ids = ledgerIds
-    .split(",")
-    .map(id => id.trim().toLowerCase())
-    .filter(Boolean);
-  return [...new Set(ids)];
 }
 
 export function validateLargeMoverLedgerIds(ledgerIds: string | null): string | null {

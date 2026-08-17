@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useAssetsData } from "@features/platform-aggregated-assets";
 import VersionNumber from "react-native-version-number";
-import { parseLargeMoverLedgerIds } from "~/navigation/deeplinks/validation";
+import { parseLargeMoverLedgerIds } from "../utils/parseLargeMoverLedgerIds";
 import { useMapLedgerIdsToCoinGeckoIds } from "./useLedgerMapping";
 
 type UseLargeMoverProps = {
