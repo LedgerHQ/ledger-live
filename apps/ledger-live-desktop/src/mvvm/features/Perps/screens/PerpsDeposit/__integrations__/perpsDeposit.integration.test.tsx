@@ -77,6 +77,19 @@ describe("PerpsDeposit integration", () => {
     expect(screen.getByTestId("perps-deposit-review-cta")).not.toBeDisabled();
   });
 
+  it("should only advertise the provider once an amount is entered", async () => {
+    const { user } = render(<PerpsDepositRoot />);
+
+    act(() => openPerpsDeposit({ receiverAccount }));
+
+    expect(screen.queryByText("Swap and deposit via SwapKit")).not.toBeInTheDocument();
+
+    await user.click(screen.getByTestId("perps-deposit-select-currency"));
+    await user.click(screen.getByTestId("perps-deposit-ratio-MAX"));
+
+    expect(screen.getByText("Swap and deposit via SwapKit")).toBeVisible();
+  });
+
   it("should shimmer the quoted amount and keep the CTA disabled while quoting", async () => {
     mockUsePerpsDepositQuote.mockReturnValue(undefined);
     const { user } = render(<PerpsDepositRoot />);

@@ -7,6 +7,7 @@ type DepositAmountStatusProps = Readonly<{
   formattedAmount: string;
   currencyTicker: string;
   isQuoteLoading: boolean;
+  hasAmount: boolean;
   error: DepositFormError | null;
 }>;
 
@@ -39,6 +40,7 @@ export function DepositAmountStatus({
   formattedAmount,
   currencyTicker,
   isQuoteLoading,
+  hasAmount,
   error,
 }: DepositAmountStatusProps) {
   const { t } = useTranslation();
@@ -49,7 +51,9 @@ export function DepositAmountStatus({
     </div>
   ) : null;
 
-  const providerNotice = <div className="body-2 text-base">{t("perpsDeposit.inputSubText")}</div>;
+  const providerNotice = hasAmount ? (
+    <div className="body-2 text-base">{t("perpsDeposit.inputSubText")}</div>
+  ) : null;
 
   return (
     <div className="mb-40 flex flex-col items-center gap-8 text-center">

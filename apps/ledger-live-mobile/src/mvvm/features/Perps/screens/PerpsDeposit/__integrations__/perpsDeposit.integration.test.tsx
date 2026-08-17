@@ -96,6 +96,23 @@ describe("PerpsDeposit integration", () => {
     expect(screen.getByTestId("perps-deposit-review-cta")).not.toBeDisabled();
   });
 
+  it("should only advertise the provider once an amount is entered", async () => {
+    const { user } = render(
+      <PerpsDepositScreen navigation={mockNavigation as never} route={mockRoute as never} />,
+    );
+
+    expect(screen.queryByText("Swap and deposit via SwapKit")).not.toBeOnTheScreen();
+
+    await user.press(screen.getByTestId("perps-deposit-select-currency"));
+    const { onAccountSelected } = mockOpenDrawer.mock.calls[0][0];
+    act(() => onAccountSelected(fundingAccount));
+
+    await user.press(screen.getByTestId("perps-deposit-key-2"));
+    await user.press(screen.getByTestId("perps-deposit-key-0"));
+
+    expect(screen.getByText("Swap and deposit via SwapKit")).toBeOnTheScreen();
+  });
+
   it("should shimmer the quoted amount and keep the CTA disabled while quoting", async () => {
     mockUsePerpsDepositQuote.mockReturnValue(undefined);
     const { user } = render(

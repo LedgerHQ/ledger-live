@@ -58,6 +58,7 @@ export function PerpsDepositView({
           formattedAmount={formattedDepositAmount}
           currencyTicker={depositAmountTicker}
           isQuoteLoading={isQuoteLoading}
+          hasAmount={depositAmount > 0}
           error={submitError}
         />
 
