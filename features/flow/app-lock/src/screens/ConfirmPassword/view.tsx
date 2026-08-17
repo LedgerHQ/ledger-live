@@ -16,11 +16,12 @@ export function ConfirmPasswordView({
 }: ConfirmPasswordViewProps): React.JSX.Element {
   const { t } = useTranslation();
 
-  const helperText = hasSaveFailed
-    ? t("appLock.confirmPassword.saveFailed")
-    : hasMismatch
-      ? t("appLock.confirmPassword.mismatch")
-      : t("appLock.field.minLength");
+  let helperText = t("appLock.field.minLength");
+  if (hasSaveFailed) {
+    helperText = t("appLock.confirmPassword.saveFailed");
+  } else if (hasMismatch) {
+    helperText = t("appLock.confirmPassword.mismatch");
+  }
 
   return (
     <Box

@@ -6,7 +6,10 @@
   "main": "src/index.ts",
   "types": "src/index.ts",
   "exports": {
-    ".": "./src/index.ts",
+    ".": {
+      "react-native": "./src/index.native.ts",
+      "default": "./src/index.ts"
+    },
     "./package.json": "./package.json"
   },
   "sideEffects": false,
@@ -21,6 +24,10 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "catalog:",
+    "@shared/password-verifier": "workspace:*",
+    "buffer": "catalog:",
+    "react-native-fast-crypto": "catalog:",
+    "react-native-keychain": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {
@@ -30,7 +37,6 @@
     "@types/jest": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
-    "react-native-keychain": "catalog:",
     "typescript": "catalog:"
   }
 }

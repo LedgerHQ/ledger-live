@@ -136,6 +136,7 @@ catalog:
   babel-jest: 30.5.0
   bs58: ^4.0.1
   bs58check: ^2.1.2
+  buffer: 6.0.3
   class-variance-authority: 0.7.1
   clsx: 2.1.1
   electron: 43.1.1
@@ -170,6 +171,7 @@ catalog:
   react-dom: 19.1.4
   react-i18next: 16.5.0
   react-native-config: 1.5.3
+  react-native-fast-crypto: "3"
   react-native-keychain: 10.0.0
   react-native-reanimated: 4.3.0
   react-native-worklets: 0.8.1

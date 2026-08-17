@@ -1,5 +1,7 @@
 import type { PasswordVerifier, ScryptParams } from "@shared/password-verifier";
 import * as Keychain from "react-native-keychain";
+// React Native has no Buffer global; the package brings its own rather than lean on the app's.
+import { Buffer } from "buffer";
 
 const SERVICE = "com.ledger.live.appLock.passwordVerifier";
 const USERNAME = "app-lock";
