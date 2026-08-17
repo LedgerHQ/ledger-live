@@ -1536,6 +1536,7 @@
       "title": "Confirm password",
       "description": "You'll need this password each time you open the app. If you lose it, reinstall the app and restore your wallet.",
       "mismatch": "Passwords don't match",
+      "saveFailed": "We couldn't save your password. Please try again.",
       "cta": "Confirm"
     }
   },
