@@ -26,6 +26,7 @@ import {
   enrichPrivateRecord,
   patchPublicOperations,
   getTokenOutDetails,
+  getRecordScannerStatusOrThrow,
 } from "./utils";
 
 jest.mock("./api");
@@ -395,6 +396,52 @@ describe("network/utils", () => {
     });
   });
 
+  describe("getRecordScannerStatusOrThrow", () => {
+    const mockUUID = "uuid-abc-def";
+
+    beforeEach(() => {
+      jest.clearAllMocks();
+    });
+
+    it("should return the scanner status", async () => {
+      const status = {
+        synced: true,
+        percentage: 100,
+        sync_start_height: 0,
+        synced_up_to: 20985061,
+      };
+      mockGetRecordScannerStatus.mockResolvedValue(status);
+
+      const result = await getRecordScannerStatusOrThrow(mockConfig, mockUUID);
+
+      expect(mockGetRecordScannerStatus).toHaveBeenCalledTimes(1);
+      expect(mockGetRecordScannerStatus).toHaveBeenCalledWith(mockConfig, mockUUID);
+      expect(result).toEqual(status);
+    });
+
+    it("should throw AleoApiConfigurationResetError on a 422 error", async () => {
+      const error422 = new LedgerAPI4xx("Unprocessable Entity", {
+        status: 422,
+        url: undefined,
+        method: "POST",
+      });
+      mockGetRecordScannerStatus.mockRejectedValue(error422);
+
+      await expect(getRecordScannerStatusOrThrow(mockConfig, mockUUID)).rejects.toThrow(
+        AleoApiConfigurationResetError,
+      );
+    });
+
+    it("should rethrow a non-422 error unchanged", async () => {
+      const networkError = new LedgerAPI5xx("Internal Server Error");
+      mockGetRecordScannerStatus.mockRejectedValue(networkError);
+
+      await expect(getRecordScannerStatusOrThrow(mockConfig, mockUUID)).rejects.toThrow(
+        LedgerAPI5xx,
+      );
+    });
+  });
+
   describe("accessProvableApi", () => {
     const mockViewKey = "AViewKey1mockviewkey";
     const mockUUID = "uuid-abc-def";
@@ -415,7 +462,12 @@ describe("network/utils", () => {
         };
 
         mockRegisterForScanningAccountRecords.mockResolvedValue({ uuid: mockUUID });
-        mockGetRecordScannerStatus.mockResolvedValue({ synced: false, percentage: 5 });
+        mockGetRecordScannerStatus.mockResolvedValue({
+          synced: false,
+          percentage: 5,
+          sync_start_height: 0,
+          synced_up_to: 0,
+        });
 
         const result = await accessProvableApi({
           config: mockConfig,
@@ -447,7 +499,12 @@ describe("network/utils", () => {
           scannerStatus: { synced: false, percentage: 50 },
         };
 
-        mockGetRecordScannerStatus.mockResolvedValue({ synced: false, percentage: 60 });
+        mockGetRecordScannerStatus.mockResolvedValue({
+          synced: false,
+          percentage: 60,
+          sync_start_height: 0,
+          synced_up_to: 0,
+        });
 
         const result = await accessProvableApi({
           config: mockConfig,
@@ -467,7 +524,12 @@ describe("network/utils", () => {
           scannerStatus: { synced: false, percentage: 50 },
         };
 
-        mockGetRecordScannerStatus.mockResolvedValue({ synced: true, percentage: 100 });
+        mockGetRecordScannerStatus.mockResolvedValue({
+          synced: true,
+          percentage: 100,
+          sync_start_height: 0,
+          synced_up_to: 20985061,
+        });
 
         const result = await accessProvableApi({
           config: mockConfig,
@@ -539,7 +601,12 @@ describe("network/utils", () => {
 
       it("should initialize scanner status with defaults when provableApi is null", async () => {
         mockRegisterForScanningAccountRecords.mockResolvedValue({ uuid: mockUUID });
-        mockGetRecordScannerStatus.mockResolvedValue({ synced: false, percentage: 0 });
+        mockGetRecordScannerStatus.mockResolvedValue({
+          synced: false,
+          percentage: 0,
+          sync_start_height: 0,
+          synced_up_to: 0,
+        });
 
         const result = await accessProvableApi({
           config: mockConfig,

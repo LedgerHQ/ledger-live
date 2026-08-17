@@ -461,7 +461,12 @@ describe("apiClient", () => {
     const mockUuid = "scan-uuid-789";
 
     it("should fetch the record scanner status successfully", async () => {
-      const mockResponse = { synced: true, percentage: 100 };
+      const mockResponse = {
+        synced: true,
+        percentage: 100,
+        sync_start_height: 0,
+        synced_up_to: 20985061,
+      };
       jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
       const result = await apiClient.getRecordScannerStatus(mockConfig, mockUuid);
@@ -477,7 +482,12 @@ describe("apiClient", () => {
     });
 
     it("should return partial sync status", async () => {
-      const mockResponse = { synced: false, percentage: 42 };
+      const mockResponse = {
+        synced: false,
+        percentage: 42,
+        sync_start_height: 100,
+        synced_up_to: 5000,
+      };
       jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
       const result = await apiClient.getRecordScannerStatus(mockConfig, mockUuid);
@@ -486,10 +496,25 @@ describe("apiClient", () => {
       expect(result.percentage).toBe(42);
     });
 
+    it("should return a status with a null synced_up_to", async () => {
+      const mockResponse = {
+        synced: false,
+        percentage: 0,
+        sync_start_height: 100,
+        synced_up_to: null,
+      };
+      jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
+
+      const result = await apiClient.getRecordScannerStatus(mockConfig, mockUuid);
+
+      expect(result).toEqual(mockResponse);
+    });
+
     it("should use the correct network type in the URL", async () => {
-      jest
-        .mocked(network)
-        .mockResolvedValue({ data: { synced: true, percentage: 100 }, status: 200 });
+      jest.mocked(network).mockResolvedValue({
+        data: { synced: true, percentage: 100, sync_start_height: 0, synced_up_to: 20985061 },
+        status: 200,
+      });
 
       await apiClient.getRecordScannerStatus(testnetConfig, mockUuid);
 

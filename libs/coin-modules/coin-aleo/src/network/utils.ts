@@ -19,6 +19,7 @@ import type {
   AleoOperation,
   AleoTransition,
   AleoCoinConfig,
+  AleoRecordScannerStatusResponse,
 } from "../types";
 import {
   isAleoAddressPlaintext,
@@ -195,6 +196,21 @@ export async function fetchAllOwnedRecords({
   return allRecords;
 }
 
+export async function getRecordScannerStatusOrThrow(
+  config: AleoCoinConfig,
+  uuid: string,
+): Promise<AleoRecordScannerStatusResponse> {
+  try {
+    return await apiClient.getRecordScannerStatus(config, uuid);
+  } catch (error) {
+    const err = error as { name?: string; status?: number } | null | undefined;
+    if (err?.name === "LedgerAPI4xx" && err?.status === 422) {
+      throw new AleoApiConfigurationResetError();
+    }
+    throw error;
+  }
+}
+
 /**
  * Manages access to the Provable API by handling authentication and account registration.
  *
@@ -246,15 +262,7 @@ export async function accessProvableApi({
     uuid = accountUuid;
   }
 
-  try {
-    status = await apiClient.getRecordScannerStatus(config, uuid);
-  } catch (error) {
-    const err = error as { name?: string; status?: number } | null | undefined;
-    if (err?.name === "LedgerAPI4xx" && err?.status === 422) {
-      throw new AleoApiConfigurationResetError();
-    }
-    throw error;
-  }
+  status = await getRecordScannerStatusOrThrow(config, uuid);
 
   if (status) {
     synced = status.synced;
