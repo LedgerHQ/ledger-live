@@ -21,7 +21,10 @@ Redux — can consume the pipeline without pulling React into its bundle.
 (one event per mount) and screen events are Mobile's (one event per focus, de-dupable). Desktop keeps
 using `<TrackPage>`, Mobile keeps using `<TrackScreen>`.
 
-Every prop other than the named ones is sent as an event property.
+Every prop other than the named ones is sent as an event property, **flat**. There is no
+`eventProperties` wrapper prop: passing `eventProperties={{ language: "fr" }}` sends a nested
+`{ eventProperties: { language: "fr" } }`. Desktop's `<Button>` does take a prop of that name, which
+makes this an easy mistake.
 
 ## Usage
 
@@ -31,7 +34,7 @@ import { Track } from "@shared/analytics-react";
 <Track
   onMount
   event={`Discoverability - Prompt - ${defaultLanguage}`}
-  eventProperties={{ language: defaultLanguage }}
+  language={defaultLanguage}
 />;
 ```
 
