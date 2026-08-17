@@ -77,12 +77,13 @@ import { currentRouteNameRef, getCurrentTrackingPage, setTrackingSource } from "
 ```
 
 Route names live in the React-free core because the pipeline reads them. They are **ref objects**,
-not module-level `let`s: an exported `let` cannot be assigned by an importer, and at least one
-consumer writes `currentRouteNameRef.current` directly.
+not module-level `let`s: an exported `let` cannot be assigned by an importer, and app code assigns
+`currentRouteNameRef.current` directly in around a dozen files — the wallet-API webviews on both
+apps, and mobile's global search.
 
 > [!NOTE]
 > Exporting the raw refs next to the getters is **interim**. LIVE-36002 narrows this subpath to a
-> function-only API.
+> function-only API — which will need a setter for the current page, not just `setTrackingSource`.
 
 ## Behaviour this package unifies
 
