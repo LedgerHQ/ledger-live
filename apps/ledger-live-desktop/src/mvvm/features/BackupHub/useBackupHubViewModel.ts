@@ -2,6 +2,9 @@ import { useCallback, useEffect, useMemo } from "react";
 import { useFeature } from "@features/platform-feature-flags";
 import {
   LARGE_SCREEN_UPSELL_BACKUPS_UTM_CONTENT,
+  LARGE_SCREEN_UPSELL_UTM_CAMPAIGN,
+  LARGE_SCREEN_UPSELL_UTM_MEDIUM,
+  LARGE_SCREEN_UPSELL_UTM_SOURCE_BY_PLATFORM,
   buildLargeScreenUpsellCtaLink,
   getNanoOnlyDeviceModel,
 } from "@features/flow-large-screen-upsell";
@@ -23,7 +26,6 @@ import {
   BACKUP_HUB_TRACKING_BUTTON,
   BACKUP_HUB_TRACKING_PAGE_NAME,
   BACKUP_HUB_RECOVER_DEEPLINK_QUERY,
-  BACKUP_HUB_UPSELL_DEEPLINK,
   BACKUP_HUB_UPSELL_FALLBACK_LINK,
   RECOVER_DEEPLINK_BASE,
 } from "./constants";
@@ -136,9 +138,9 @@ export function useBackupHubViewModel({ onBack, onClose }: BackupHubParams): Bac
     });
     track("deeplink_clicked", {
       page: BACKUP_HUB_TRACKING_PAGE_NAME,
-      deeplinkSource: BACKUP_HUB_UPSELL_DEEPLINK.source,
-      deeplinkMedium: BACKUP_HUB_UPSELL_DEEPLINK.medium,
-      deeplinkCampaign: BACKUP_HUB_UPSELL_DEEPLINK.campaign,
+      deeplinkSource: LARGE_SCREEN_UPSELL_UTM_SOURCE_BY_PLATFORM.desktop,
+      deeplinkMedium: LARGE_SCREEN_UPSELL_UTM_MEDIUM,
+      deeplinkCampaign: LARGE_SCREEN_UPSELL_UTM_CAMPAIGN,
       ...sharedProps,
     });
     openURL(upsellLink);

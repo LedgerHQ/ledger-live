@@ -1,5 +1,11 @@
 import React from "react";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import {
+  LARGE_SCREEN_UPSELL_BACKUPS_UTM_CONTENT,
+  LARGE_SCREEN_UPSELL_UTM_CAMPAIGN,
+  LARGE_SCREEN_UPSELL_UTM_MEDIUM,
+  LARGE_SCREEN_UPSELL_UTM_SOURCE_BY_PLATFORM,
+} from "@features/flow-large-screen-upsell";
 import { render, screen, waitFor, withFlagOverrides } from "tests/testSetup";
 import { useAccountPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 import { DeviceModelInfo } from "@ledgerhq/types-live";
@@ -15,7 +21,6 @@ import {
   BACKUP_HUB_RECOVER_DEEPLINK_QUERY,
   BACKUP_HUB_TRACKING_BUTTON,
   BACKUP_HUB_TRACKING_PAGE_NAME,
-  BACKUP_HUB_UPSELL_DEEPLINK,
   RECOVER_DEEPLINK_BASE,
 } from "LLD/features/BackupHub/constants";
 
@@ -279,10 +284,14 @@ describe("BackupHub", () => {
       expect(openedUrl.origin + openedUrl.pathname).toBe(
         "https://shop.ledger.com/pages/ledger-nano-upgrade-program",
       );
-      expect(openedUrl.searchParams.get("utm_source")).toBe("ledger_wallet_desktop");
-      expect(openedUrl.searchParams.get("utm_medium")).toBe("ledger_live");
-      expect(openedUrl.searchParams.get("utm_campaign")).toBe("nano_upgrade_program");
-      expect(openedUrl.searchParams.get("utm_content")).toBe("backups_cta");
+      expect(openedUrl.searchParams.get("utm_source")).toBe(
+        LARGE_SCREEN_UPSELL_UTM_SOURCE_BY_PLATFORM.desktop,
+      );
+      expect(openedUrl.searchParams.get("utm_medium")).toBe(LARGE_SCREEN_UPSELL_UTM_MEDIUM);
+      expect(openedUrl.searchParams.get("utm_campaign")).toBe(LARGE_SCREEN_UPSELL_UTM_CAMPAIGN);
+      expect(openedUrl.searchParams.get("utm_content")).toBe(
+        LARGE_SCREEN_UPSELL_BACKUPS_UTM_CONTENT,
+      );
       const upsellAnalyticsProps = {
         deviceModel: NANO_UPSELL_DEVICE_MODEL[deviceModelId],
         personalRecoOptIn: false,
@@ -296,9 +305,9 @@ describe("BackupHub", () => {
       });
       expect(track).toHaveBeenCalledWith("deeplink_clicked", {
         page: BACKUP_HUB_TRACKING_PAGE_NAME,
-        deeplinkSource: BACKUP_HUB_UPSELL_DEEPLINK.source,
-        deeplinkMedium: BACKUP_HUB_UPSELL_DEEPLINK.medium,
-        deeplinkCampaign: BACKUP_HUB_UPSELL_DEEPLINK.campaign,
+        deeplinkSource: LARGE_SCREEN_UPSELL_UTM_SOURCE_BY_PLATFORM.desktop,
+        deeplinkMedium: LARGE_SCREEN_UPSELL_UTM_MEDIUM,
+        deeplinkCampaign: LARGE_SCREEN_UPSELL_UTM_CAMPAIGN,
         ...upsellAnalyticsProps,
       });
     },
