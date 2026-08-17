@@ -48,6 +48,15 @@ describe("TrackScreen", () => {
     expect(track).toHaveBeenCalledWith("Page Asset Bitcoin", { source: undefined });
   });
 
+  it("sends nothing more when a focused screen loses focus", () => {
+    const { rerender } = render(<TrackScreen category="Asset" name="Bitcoin" />);
+
+    mockUseIsFocused.mockReturnValue(false);
+    rerender(<TrackScreen category="Asset" name="Bitcoin" />);
+
+    expect(track).toHaveBeenCalledTimes(1);
+  });
+
   it("suppresses a remount of the same screen when avoiding duplicates", () => {
     render(<TrackScreen category="Portfolio" avoidDuplicates />).unmount();
     render(<TrackScreen category="Portfolio" avoidDuplicates />);
