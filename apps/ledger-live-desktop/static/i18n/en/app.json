@@ -9639,7 +9639,7 @@
       "cta": {
         "openMyLedger": "Open My Ledger",
         "goToMyLedger": "Go to My Ledger",
-        "setupDevice": "Setup Ledger device",
+        "setupDevice": "Set up Ledger device",
         "updateLedgerOs": "Update Ledger OS",
         "cancelOperation": "Cancel operation",
         "contactLedgerSupport": "Contact Ledger support"

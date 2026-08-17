@@ -20,12 +20,12 @@ describe("DeviceNotOnboardedView", () => {
     expect(screen.getByText("Your Ledger device needs to be set up")).toBeVisible();
   });
 
-  it("GIVEN the device not onboarded view WHEN clicking Setup Ledger device THEN it calls the setup action", async () => {
+  it("GIVEN the device not onboarded view WHEN clicking Set up Ledger device THEN it calls the setup action", async () => {
     // GIVEN
     const { user, onSetupDevice } = renderView();
 
     // WHEN
-    await user.click(screen.getByRole("button", { name: "Setup Ledger device" }));
+    await user.click(screen.getByRole("button", { name: "Set up Ledger device" }));
 
     // THEN
     expect(onSetupDevice).toHaveBeenCalledTimes(1);
