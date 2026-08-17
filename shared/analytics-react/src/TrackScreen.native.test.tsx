@@ -8,12 +8,12 @@ import { currentRouteNameRef, previousRouteNameRef } from "@shared/analytics/scr
 import { TrackScreen } from "./TrackScreen.native";
 
 const mockUseIsFocused = useIsFocused as jest.Mock;
-const transportTrack = jest.fn();
+const track = jest.fn();
 
 beforeEach(() => {
-  transportTrack.mockClear();
+  track.mockClear();
   mockUseIsFocused.mockReturnValue(true);
-  setAnalytics({ track: transportTrack });
+  setAnalytics({ track });
   setStore({ getState: () => ({}) });
   setTrackingSelector(() => true);
   currentRouteNameRef.current = undefined;
@@ -24,7 +24,7 @@ describe("TrackScreen", () => {
   it("sends a screen event named after the category and name once focused", () => {
     render(<TrackScreen category="Asset" name="Bitcoin" ticker="BTC" />);
 
-    expect(transportTrack).toHaveBeenCalledWith("Page Asset Bitcoin", {
+    expect(track).toHaveBeenCalledWith("Page Asset Bitcoin", {
       source: undefined,
       ticker: "BTC",
     });
@@ -35,7 +35,7 @@ describe("TrackScreen", () => {
 
     render(<TrackScreen category="Asset" name="Bitcoin" />);
 
-    expect(transportTrack).not.toHaveBeenCalled();
+    expect(track).not.toHaveBeenCalled();
   });
 
   it("sends the event when an unfocused screen gains focus", () => {
@@ -45,21 +45,21 @@ describe("TrackScreen", () => {
     mockUseIsFocused.mockReturnValue(true);
     rerender(<TrackScreen category="Asset" name="Bitcoin" />);
 
-    expect(transportTrack).toHaveBeenCalledWith("Page Asset Bitcoin", { source: undefined });
+    expect(track).toHaveBeenCalledWith("Page Asset Bitcoin", { source: undefined });
   });
 
   it("suppresses a remount of the same screen when avoiding duplicates", () => {
     render(<TrackScreen category="Portfolio" avoidDuplicates />).unmount();
     render(<TrackScreen category="Portfolio" avoidDuplicates />);
 
-    expect(transportTrack).toHaveBeenCalledTimes(1);
+    expect(track).toHaveBeenCalledTimes(1);
   });
 
   it("emits a remount of the same screen by default", () => {
     render(<TrackScreen category="Market" />).unmount();
     render(<TrackScreen category="Market" />);
 
-    expect(transportTrack).toHaveBeenCalledTimes(2);
+    expect(track).toHaveBeenCalledTimes(2);
   });
 
   it("becomes the source of the next screen event", () => {
@@ -67,7 +67,7 @@ describe("TrackScreen", () => {
     render(<TrackScreen category="Market" />);
 
     expect(currentRouteNameRef.current).toBe("Market");
-    expect(transportTrack).toHaveBeenLastCalledWith("Page Market", { source: "Portfolio" });
+    expect(track).toHaveBeenLastCalledWith("Page Market", { source: "Portfolio" });
   });
 
   it("sends a mandatory screen event even when consent is refused", () => {
@@ -75,6 +75,6 @@ describe("TrackScreen", () => {
 
     render(<TrackScreen category="Analytics Consent" mandatory />);
 
-    expect(transportTrack).toHaveBeenCalledWith("Page Analytics Consent", { source: undefined });
+    expect(track).toHaveBeenCalledWith("Page Analytics Consent", { source: undefined });
   });
 });

@@ -4,11 +4,11 @@ import { setAnalytics, setStore, setTrackingSelector } from "@shared/analytics";
 import { currentRouteNameRef, previousRouteNameRef } from "@shared/analytics/screenRefs";
 import { TrackPage } from "./TrackPage";
 
-const transportTrack = jest.fn();
+const track = jest.fn();
 
 beforeEach(() => {
-  transportTrack.mockClear();
-  setAnalytics({ track: transportTrack });
+  track.mockClear();
+  setAnalytics({ track });
   setStore({ getState: () => ({}) });
   setTrackingSelector(() => true);
   currentRouteNameRef.current = undefined;
@@ -21,8 +21,8 @@ describe("TrackPage", () => {
   it("sends a page event named after the category and name on mount", () => {
     render(<TrackPage category="Analytics Consent" name="Optional" flow="test-flow" />);
 
-    expect(transportTrack).toHaveBeenCalledTimes(1);
-    expect(transportTrack).toHaveBeenCalledWith("Page Analytics Consent Optional", {
+    expect(track).toHaveBeenCalledTimes(1);
+    expect(track).toHaveBeenCalledWith("Page Analytics Consent Optional", {
       source: undefined,
       flow: "test-flow",
     });
@@ -34,7 +34,7 @@ describe("TrackPage", () => {
     render(<TrackPage category="Market" />);
 
     expect(currentRouteNameRef.current).toBe("Market");
-    expect(transportTrack).toHaveBeenLastCalledWith("Page Market", { source: "Portfolio" });
+    expect(track).toHaveBeenLastCalledWith("Page Market", { source: "Portfolio" });
   });
 
   it("leaves the current page untouched when it does not refresh the source", () => {
@@ -49,7 +49,7 @@ describe("TrackPage", () => {
     const { rerender } = render(<TrackPage category="Portfolio" />);
     rerender(<TrackPage category="Portfolio" />);
 
-    expect(transportTrack).toHaveBeenCalledTimes(1);
+    expect(track).toHaveBeenCalledTimes(1);
   });
 
   it("sends a mandatory page event even when consent is refused", () => {
@@ -57,7 +57,7 @@ describe("TrackPage", () => {
 
     render(<TrackPage category="Analytics Consent" name="Mandatory" mandatory />);
 
-    expect(transportTrack).toHaveBeenCalledWith("Page Analytics Consent Mandatory", {
+    expect(track).toHaveBeenCalledWith("Page Analytics Consent Mandatory", {
       source: undefined,
     });
   });
@@ -67,7 +67,7 @@ describe("TrackPage", () => {
 
     render(<TrackPage category="Portfolio" />);
 
-    expect(transportTrack).not.toHaveBeenCalled();
+    expect(track).not.toHaveBeenCalled();
     expect(currentRouteNameRef.current).toBe("Portfolio");
   });
 });

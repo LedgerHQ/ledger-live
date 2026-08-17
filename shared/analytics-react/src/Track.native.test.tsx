@@ -7,11 +7,11 @@ import { render } from "@testing-library/react-native";
 import { setAnalytics, setStore, setTrackingSelector } from "@shared/analytics";
 import { Track } from "./index.native";
 
-const transportTrack = jest.fn();
+const track = jest.fn();
 
 beforeEach(() => {
-  transportTrack.mockClear();
-  setAnalytics({ track: transportTrack });
+  track.mockClear();
+  setAnalytics({ track });
   setStore({ getState: () => ({}) });
   setTrackingSelector(() => true);
 });
@@ -20,6 +20,6 @@ describe("Track (native entry point)", () => {
   it("sends the event on mount when asked to", () => {
     render(<Track onMount event="Some Event" foo="bar" />);
 
-    expect(transportTrack).toHaveBeenCalledWith("Some Event", { page: undefined, foo: "bar" });
+    expect(track).toHaveBeenCalledWith("Some Event", { page: undefined, foo: "bar" });
   });
 });
