@@ -146,6 +146,22 @@ describe("enrichment", () => {
     });
   });
 
+  it("reports failed without rejecting when an async enricher rejects", async () => {
+    const transport = register();
+    setEnricher(() => Promise.reject(new Error("permission read failed")));
+
+    await expect(track("Unenrichable", { foo: "bar" })).resolves.toBeUndefined();
+
+    expect(transport.track).not.toHaveBeenCalled();
+    expect(events).toEqual([
+      expect.objectContaining({
+        eventName: "Unenrichable",
+        eventProperties: { page: undefined, foo: "bar" },
+        deliveryStatus: "failed",
+      }),
+    ]);
+  });
+
   it("passes the store state to the enricher", () => {
     register();
     const enricher = jest.fn(() => ({}));

@@ -33,6 +33,9 @@ function reportBlocked(
 /**
  * Resolves the enricher without forcing a microtask when it is synchronous: desktop asserts on
  * `trackSubject` synchronously after render, mobile awaits native permission state.
+ *
+ * A rejecting async enricher drops the event rather than sending it half-enriched, and never
+ * rejects: callers are fire-and-forget effects, so a rejection here would go unhandled.
  */
 function send(
   kind: "track" | "page",
@@ -50,7 +53,17 @@ function send(
     });
 
   const extras = resolveExtraProperties(state, mandatory);
-  return isThenable<Props>(extras) ? extras.then(dispatch) : dispatch(extras);
+  if (!isThenable<Props>(extras)) return dispatch(extras);
+
+  return extras.then(dispatch, () => {
+    trackSubject.next({
+      eventName,
+      eventProperties: base,
+      eventPropertiesWithoutExtra: base,
+      date: new Date(),
+      deliveryStatus: "failed",
+    });
+  });
 }
 
 export function track(
