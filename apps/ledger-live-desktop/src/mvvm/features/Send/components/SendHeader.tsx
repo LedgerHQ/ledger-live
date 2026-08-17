@@ -4,54 +4,37 @@ import { AddressInput, DialogHeader } from "@ledgerhq/lumen-ui-react";
 import { useFlowWizard } from "../../FlowWizard/FlowWizardContext";
 import { useSendFlowData, useSendFlowActions } from "../context/SendFlowContext";
 import { useSendAmountDisplayMode } from "@ledgerhq/live-common/flows/send/amount/SendAmountDisplayModeContext";
-import { track } from "~/renderer/analytics/segment";
-import { getSendFlowTrackingProperties } from "../utils/tracking";
-import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import {
   SEND_FLOW_STEP,
   type SendFlowBusinessContext,
   type SendFlowStep,
 } from "@ledgerhq/live-common/flows/send/types";
-import { getMemoFamilyCurrencyId } from "@ledgerhq/live-common/flows/send/utils/memoFamilyCurrencyId";
 import { useAvailableBalance } from "../hooks/useAvailableBalance";
+import { useSendHeaderMemo } from "../hooks/useSendHeaderMemo";
 import { useSendHeaderModel } from "../hooks/useSendHeaderModel";
 import { AddressDisclaimer } from "./AddressDisclaimer";
 import { MemoTypeSelect } from "../screens/Recipient/components/Memo/MemoTypeSelect";
 import { MemoValueInput } from "../screens/Recipient/components/Memo/MemoValueInput";
 import { SkipMemoSection } from "../screens/Recipient/components/Memo/SkipMemoSection";
-import { useRecipientMemo } from "../screens/Recipient/hooks/useRecipientMemo";
 import { RecipientQrScanner } from "../screens/Recipient/components/RecipientQrScanner";
 import type { SendStepConfig } from "../types";
 
 export function SendHeader() {
   const wizard = useFlowWizard<SendFlowStep, SendFlowBusinessContext, SendStepConfig>();
   const { state, uiConfig, recipientSearch } = useSendFlowData();
-  const { close, transaction } = useSendFlowActions();
+  const { close } = useSendFlowActions();
   const { displayMode } = useSendAmountDisplayMode();
   const { t } = useTranslation();
-  const { navigation, currentStep } = wizard;
+  const { currentStep } = wizard;
 
   const headerDisplayMode = currentStep === SEND_FLOW_STEP.COIN_CONTROL ? "crypto" : displayMode;
   const availableText = useAvailableBalance(state.account.account, headerDisplayMode);
 
-  const currencyId = getMemoFamilyCurrencyId(state.account.currency);
-
-  const sendFlowTrackingProperties = useMemo(
-    () => getSendFlowTrackingProperties(state.account.account, state.account.parentAccount),
-    [state.account.account, state.account.parentAccount],
-  );
-
-  const memoDefaultOption = useMemo(() => {
-    return sendFeatures.getMemoDefaultOption(state.account.currency ?? undefined);
-  }, [state.account.currency]);
-
-  const memoTypeOptions = useMemo(() => {
-    return uiConfig.memoOptions ?? [];
-  }, [uiConfig]);
-
   const {
+    currencyId,
     hasMemoTypeOptions,
     memo,
+    memoTypeOptions,
     onMemoTypeChange,
     showMemoValueInput,
     onMemoValueChange,
@@ -61,27 +44,7 @@ export function SendHeader() {
     onSkipMemoCancelConfirm,
     onSkipMemoConfirm,
     resetViewState,
-  } = useRecipientMemo({
-    hasMemo: uiConfig.hasMemo,
-    memoDefaultOption,
-    memoType: uiConfig.memoType,
-    memoTypeOptions,
-    onMemoChange: memo => {
-      const address = state.recipient?.address ?? recipientSearch.value;
-      transaction.setRecipient({ ...state.recipient, address, memo });
-    },
-    onMemoSkip: () => {
-      track("button_clicked", {
-        button: "skip memo",
-        page: "step recipient",
-        ...sendFlowTrackingProperties,
-      });
-      navigation.goToNextStep();
-    },
-    resetKey: `${state.account.account?.id ?? ""}|${currencyId ?? ""}|${
-      recipientSearch.value.length === 0 ? "empty" : "filled"
-    }`,
-  });
+  } = useSendHeaderMemo();
 
   const {
     addressInputValue,
