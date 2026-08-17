@@ -29,6 +29,12 @@ import {
   getPrivateBalance,
   getTransparentBalance,
 } from "@ledgerhq/coin-zcash/logic/account/balance";
+import {
+  getMaturingIronwoodBalance,
+  getSpendableIronwoodBalance,
+  hasMaturingIronwoodNotes,
+} from "@ledgerhq/coin-zcash/logic/account/spendability";
+import { getReservedNullifiers } from "@ledgerhq/coin-zcash/bridge/note-reservation";
 import { selectShieldedSubscriptions } from "~/renderer/reducers/shieldedSyncSubscriptions";
 import { useZcashShieldedSync } from "./useZcashShieldedSync";
 
@@ -95,6 +101,13 @@ const AmountValue = styled(Text).attrs(() => ({
 }))<{ paddingRight?: number }>`
   ${p => p.paddingRight && `padding-right: ${p.paddingRight}px`};
 `;
+
+const MaturingAmount = styled(Text).attrs(() => ({
+  fontSize: 2,
+  ff: "Inter|Regular",
+  color: "neutral.c70",
+  mt: 1,
+}))``;
 
 const ActionButton = ({
   t,
@@ -339,12 +352,32 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
   // flag-ON no longer yields an under-reported or negative transparent balance.
   const bitcoinResources = "bitcoinResources" in account ? account.bitcoinResources : undefined;
   const _transparentBalance = getTransparentBalance(bitcoinResources?.utxos);
+  // The account page reports holdings, so this stays the account's total
+  // private balance -- funds held by an immature note remain part of it and
+  // stay visible, never made to look like they vanished.
   const _privateBalance = getPrivateBalance(privateInfo);
   const _availableBalance = balance ?? BigNumber(0);
+
+  const zcashAccount = account as ZcashAccount;
+  const hasMaturingFunds = hasMaturingIronwoodNotes(zcashAccount);
+  // Spending one note returns its whole remainder as a single fresh note, so
+  // right after a send nearly the entire private balance is maturing. Leading
+  // with what is still spendable is what keeps that from reading as "all your
+  // funds are locked", and it is the figure the send flow will actually offer.
+  const _spendableBalance = getSpendableIronwoodBalance(
+    zcashAccount,
+    getReservedNullifiers(zcashAccount),
+  );
+  // Counted from immaturity alone, not as `total - spendable`: that difference
+  // also swallows the notes an in-flight spend has reserved, which would label
+  // a pending transaction of the user's own as "maturing".
+  const _maturingAmount = getMaturingIronwoodBalance(zcashAccount);
 
   const transparentBalanceLabel = formatCurrencyUnit(unit, _transparentBalance, formatConfig);
   const privateBalanceLabel = formatCurrencyUnit(unit, _privateBalance, formatConfig);
   const availableBalanceLabel = formatCurrencyUnit(unit, _availableBalance, formatConfig);
+  const maturingAmountLabel = formatCurrencyUnit(unit, _maturingAmount, formatConfig);
+  const spendableBalanceLabel = formatCurrencyUnit(unit, _spendableBalance, formatConfig);
 
   return (
     <Container>
@@ -387,6 +420,16 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
           <AmountValue>
             <Discreet>{privateBalanceLabel}</Discreet>
           </AmountValue>
+          {hasMaturingFunds ? (
+            <MaturingAmount data-testid="zcash-private-maturing-amount">
+              <Discreet>
+                <Trans
+                  i18nKey="zcash.account.privateBalanceMaturing"
+                  values={{ spendable: spendableBalanceLabel, maturing: maturingAmountLabel }}
+                />
+              </Discreet>
+            </MaturingAmount>
+          ) : null}
         </BalanceDetail>
         <BalanceDetail>
           <div

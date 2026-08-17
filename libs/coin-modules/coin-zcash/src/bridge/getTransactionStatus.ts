@@ -9,6 +9,8 @@ import {
   isTransparentInputTransfer,
   resolveTransparentUtxos,
 } from "./statusHelpers";
+import { getReservedNullifiers } from "./note-reservation";
+import { getSpendableIronwoodBalance } from "../logic/account/spendability";
 
 /**
  * Transaction status for a transparent-input (Public→*) send: the recipient
@@ -75,8 +77,10 @@ export const getTransactionStatus: AccountBridge<
     };
   }
 
-  // Shielded sends spend the Ironwood pool, so validate the amount against it.
-  const poolBalance = privateInfo.ironwoodBalance ?? new BigNumber(0);
+  // Shielded sends spend the Ironwood pool, so validate the amount against the
+  // mature, unreserved figure -- the same one selection draws from, so the
+  // status can never accept an amount selection cannot cover.
+  const poolBalance = getSpendableIronwoodBalance(account, getReservedNullifiers(account));
   const fee = transaction.zcashFee ?? new BigNumber(ZIP317_MINIMUM_FEE);
   const totalSpent = transaction.amount.plus(fee);
 

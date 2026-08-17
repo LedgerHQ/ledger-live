@@ -36,6 +36,45 @@ const makeUtxo = (value: number) => ({
   isChange: false,
 });
 
+// Reference height for note maturity: the spendable-balance figure and the
+// maturing-funds warning are both derived from real Ironwood notes, mature
+// once buried at least ZCASH_SHIELDED_SPENDABILITY_DELAY_BLOCKS below
+// `lastProcessedBlock`. `collectIronwoodSpendableNotes` (and so the maturity
+// filter) only ever admits "incoming"/"internal" notes carrying every
+// spending field, which is what this note fixture provides.
+const TIP = 1_000_000; // latest scanned block height
+const MATURE_BLOCK = TIP - ZCASH_SHIELDED_SPENDABILITY_DELAY_BLOCKS;
+const ironwoodNote = (
+  amount: number,
+  index: number,
+  transferType: "incoming" | "internal" = "incoming",
+) => ({
+  amount: new BigNumber(amount),
+  transfer_type: transferType,
+  memo: "",
+  nullifier: index.toString(16).padStart(2, "0").repeat(32),
+  rho: "ee".repeat(32),
+  rseed: "ff".repeat(32),
+  cmx: "11".repeat(32),
+  position: String(index),
+  recipient: "22".repeat(43),
+  isSpent: false,
+});
+const shieldedTx = (
+  blockHeight: number,
+  notes: ReturnType<typeof ironwoodNote>[],
+): ShieldedTransaction =>
+  ({
+    blockHeight,
+    decryptedData: {
+      orchard_outputs: [],
+      sapling_outputs: [],
+      ironwood_outputs: notes,
+    },
+  }) as unknown as ShieldedTransaction;
+const recentShieldedTx = () => shieldedTx(TIP - 1, [ironwoodNote(5000, 0)]);
+const oldShieldedTx = () => shieldedTx(MATURE_BLOCK, [ironwoodNote(5000, 0)]);
+
 const buildAccount = (overrides: Partial<typeof DEFAULT_ZCASH_PRIVATE_INFO> = {}, isZcash = true) =>
   ({
     ...baseAccount,
@@ -129,6 +168,8 @@ describe("ZcashTransferFromSelector", () => {
         orchardBalance: new BigNumber(0),
         saplingBalance: new BigNumber(0),
         ufvk: "uview-test",
+        lastProcessedBlock: TIP,
+        transactions: [shieldedTx(MATURE_BLOCK, [ironwoodNote(50_000_000, 0)])],
       }),
       {},
     );
@@ -176,6 +217,8 @@ describe("ZcashTransferFromSelector", () => {
         ...buildAccount({
           ironwoodBalance: new BigNumber(50_000_000),
           ufvk: "uview-test",
+          lastProcessedBlock: TIP,
+          transactions: [shieldedTx(MATURE_BLOCK, [ironwoodNote(50_000_000, 0)])],
         }),
         // Stale provenance: balance − ironwood would wrongly yield 0.4 ZEC;
         // UTXOs keep Public correct at 0.1 ZEC.
@@ -189,19 +232,6 @@ describe("ZcashTransferFromSelector", () => {
     expect(screen.getByTestId("transfer-from-public")).not.toHaveTextContent(/0\.4 ZEC/);
     expect(screen.getByTestId("transfer-from-private")).toHaveTextContent(/0\.5 ZEC/);
   });
-
-  const TIP = 1_000_000; // latest scanned block height
-  const outgoingShieldedTx = (blockHeight: number) =>
-    ({
-      blockHeight,
-      decryptedData: {
-        orchard_outputs: [],
-        sapling_outputs: [],
-        ironwood_outputs: [{ amount: new BigNumber(5000), memo: "", transfer_type: "outgoing" }],
-      },
-    }) as unknown as ShieldedTransaction;
-  const recentShieldedTx = () => outgoingShieldedTx(TIP - 1);
-  const oldShieldedTx = () => outgoingShieldedTx(TIP - ZCASH_SHIELDED_SPENDABILITY_DELAY_BLOCKS);
 
   it(`shows the spendable-balance warning when Private is selected and funds were shielded within the last ${ZCASH_SHIELDED_SPENDABILITY_DELAY_BLOCKS} blocks`, () => {
     renderSelector(

@@ -7,11 +7,12 @@ import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import type { Account } from "@ledgerhq/types-live";
 import type { Transaction, ZcashAccount } from "@ledgerhq/live-common/families/bitcoin/types";
 import type { Transaction as ZcashTransaction } from "@ledgerhq/coin-zcash/types";
+import { getTransparentBalance } from "@ledgerhq/coin-zcash/logic/account/balance";
 import {
-  getPrivateBalance,
-  getTransparentBalance,
-  hasRecentlyShieldedFunds,
-} from "@ledgerhq/coin-zcash/logic/account/balance";
+  getSpendableIronwoodBalance,
+  hasMaturingIronwoodNotes,
+} from "@ledgerhq/coin-zcash/logic/account/spendability";
+import { getReservedNullifiers } from "@ledgerhq/coin-zcash/bridge/note-reservation";
 import { useSelector } from "LLD/hooks/redux";
 import { localeSelector } from "~/renderer/reducers/settings";
 import Box from "~/renderer/components/Box/Box";
@@ -102,15 +103,19 @@ const ZcashTransferFromSelector = ({ account, transaction, onChange }: Props) =>
   const zcashAccount = account as ZcashAccount;
   const privateInfo = zcashAccount.privateInfo;
   const fvkAvailable = Boolean(privateInfo?.ufvk);
-  // Same helpers as AccountBalanceSummaryFooter: private = Ironwood only
-  // (deprecated Orchard/Sapling send flows are gone), transparent = own UTXOs
-  // (not balance − private, which diverges across flag/module provenance).
-  const privateBalance = getPrivateBalance(privateInfo);
+  // Unlike AccountBalanceSummaryFooter's total, this figure is what the send
+  // flow can actually select from: mature, unreserved Ironwood notes.
+  // transparent = own UTXOs (not balance − private, which diverges across
+  // flag/module provenance).
+  const privateBalance = getSpendableIronwoodBalance(
+    zcashAccount,
+    getReservedNullifiers(zcashAccount),
+  );
   const transparentBalance = getTransparentBalance(zcashAccount.bitcoinResources?.utxos);
-  // Only warn while a freshly shielded note may still be maturing (until its
-  // transaction has enough confirmations); once everything is spendable the
-  // private balance no longer trails the total.
-  const showSpendableWarning = sender === "private" && hasRecentlyShieldedFunds(privateInfo);
+  // Only warn while a freshly shielded or changed note may still be maturing
+  // (until its transaction has enough confirmations); once everything is
+  // spendable the private balance no longer trails the total.
+  const showSpendableWarning = sender === "private" && hasMaturingIronwoodNotes(zcashAccount);
 
   const formatConfig = { showCode: true, discreet, locale };
   const transparentLabel = formatCurrencyUnit(unit, transparentBalance, formatConfig);
