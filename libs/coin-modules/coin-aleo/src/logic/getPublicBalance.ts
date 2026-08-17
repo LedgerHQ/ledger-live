@@ -3,7 +3,10 @@ import type { AleoCoinConfig } from "../types";
 import { apiClient } from "../network/api";
 import { parseMicrocredits } from "./utils";
 
-export async function getBalance(config: AleoCoinConfig, address: string): Promise<Balance[]> {
+export async function getPublicBalance(
+  config: AleoCoinConfig,
+  address: string,
+): Promise<Balance[]> {
   const microcreditsU64 = await apiClient.getAccountBalance(config, address);
 
   if (!microcreditsU64) {

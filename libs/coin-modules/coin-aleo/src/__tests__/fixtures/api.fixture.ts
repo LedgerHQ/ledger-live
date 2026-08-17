@@ -2,10 +2,12 @@ import BigNumber from "bignumber.js";
 import { PROGRAM_ID } from "../../constants";
 import type { DelegatedProvingResponse } from "../../types";
 import {
+  AleoDecryptedRecordResponse,
   AleoPrivateRecord,
   AleoPublicTransaction,
   AleoPublicTransactionDetailsResponse,
   AleoPublicTransactionsResponse,
+  AleoRecordScannerStatusResponse,
   EnrichedPrivateRecord,
 } from "../../types";
 
@@ -447,6 +449,26 @@ export const getMockedRecord = (overrides?: Partial<AleoPrivateRecord>): AleoPri
   tag: "tag123",
   transition_id: "transition123",
   transaction_index: 0,
+  ...overrides,
+});
+
+export const getMockedDecryptedRecord = (
+  overrides?: Partial<AleoDecryptedRecordResponse>,
+): AleoDecryptedRecordResponse => ({
+  owner: "aleo1zcwqycj02lccfuu57dzjhva7w5dpzc7pngl0sxjhp58t6vlnnqxs6lnp6f.private",
+  data: { microcredits: "800000u64.private" },
+  nonce: "7349790946519678882609199286010273702044020144797298963772495833343454197352group",
+  version: 1,
+  ...overrides,
+});
+
+export const getMockedRecordScannerStatus = (
+  overrides?: Partial<AleoRecordScannerStatusResponse>,
+): AleoRecordScannerStatusResponse => ({
+  synced: true,
+  percentage: 100,
+  sync_start_height: 0,
+  synced_up_to: 20985061,
   ...overrides,
 });
 

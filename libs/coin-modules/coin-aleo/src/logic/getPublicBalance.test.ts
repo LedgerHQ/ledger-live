@@ -1,13 +1,13 @@
 import { apiClient } from "../network/api";
 import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
 import { getMockedAccount } from "../__tests__/fixtures/account.fixture";
-import { getBalance } from "./getBalance";
+import { getPublicBalance } from "./getPublicBalance";
 
 jest.mock("../network/api");
 
 const mockGetAccountBalance = jest.mocked(apiClient.getAccountBalance);
 
-describe("getBalance", () => {
+describe("getPublicBalance", () => {
   const mockConfig = getMockedConfig("mainnet");
   const mockAccount = getMockedAccount();
 
@@ -18,7 +18,7 @@ describe("getBalance", () => {
   it("should return balance when account has funds", async () => {
     mockGetAccountBalance.mockResolvedValue("1000000u64");
 
-    const result = await getBalance(mockConfig, mockAccount.freshAddress);
+    const result = await getPublicBalance(mockConfig, mockAccount.freshAddress);
 
     expect(result).toEqual([
       {
@@ -33,7 +33,7 @@ describe("getBalance", () => {
   it("should handle zero balance", async () => {
     mockGetAccountBalance.mockResolvedValue("0u64");
 
-    const result = await getBalance(mockConfig, mockAccount.freshAddress);
+    const result = await getPublicBalance(mockConfig, mockAccount.freshAddress);
 
     expect(result).toEqual([
       {
@@ -46,7 +46,7 @@ describe("getBalance", () => {
   it("should handle large balance values", async () => {
     mockGetAccountBalance.mockResolvedValue("999999999999999999u64");
 
-    const result = await getBalance(mockConfig, mockAccount.freshAddress);
+    const result = await getPublicBalance(mockConfig, mockAccount.freshAddress);
 
     expect(result).toEqual([
       {
@@ -59,7 +59,7 @@ describe("getBalance", () => {
   it("should parse balance correctly by removing last 3 characters (u64)", async () => {
     mockGetAccountBalance.mockResolvedValue("123456789u64");
 
-    const result = await getBalance(mockConfig, mockAccount.freshAddress);
+    const result = await getPublicBalance(mockConfig, mockAccount.freshAddress);
 
     expect(result).toEqual([
       {
@@ -72,7 +72,7 @@ describe("getBalance", () => {
   it("should return empty array when API returns null", async () => {
     mockGetAccountBalance.mockResolvedValue(null);
 
-    const result = await getBalance(mockConfig, mockAccount.freshAddress);
+    const result = await getPublicBalance(mockConfig, mockAccount.freshAddress);
 
     expect(result).toEqual([]);
   });
@@ -80,13 +80,13 @@ describe("getBalance", () => {
   it("should throw error when balance format is invalid (missing u64)", async () => {
     mockGetAccountBalance.mockResolvedValue("1000000");
 
-    await expect(getBalance(mockConfig, mockAccount.freshAddress)).rejects.toThrow();
+    await expect(getPublicBalance(mockConfig, mockAccount.freshAddress)).rejects.toThrow();
   });
 
   it("should parse balance with u32 suffix", async () => {
     mockGetAccountBalance.mockResolvedValue("1000000u32");
 
-    const result = await getBalance(mockConfig, mockAccount.freshAddress);
+    const result = await getPublicBalance(mockConfig, mockAccount.freshAddress);
 
     expect(result).toEqual([
       {
@@ -99,12 +99,12 @@ describe("getBalance", () => {
   it("should throw error when balance format has incomplete unit suffix", async () => {
     mockGetAccountBalance.mockResolvedValue("1000000u");
 
-    await expect(getBalance(mockConfig, mockAccount.freshAddress)).rejects.toThrow();
+    await expect(getPublicBalance(mockConfig, mockAccount.freshAddress)).rejects.toThrow();
   });
 
   it("should throw error when balance format is completely invalid", async () => {
     mockGetAccountBalance.mockResolvedValue("invalid");
 
-    await expect(getBalance(mockConfig, mockAccount.freshAddress)).rejects.toThrow();
+    await expect(getPublicBalance(mockConfig, mockAccount.freshAddress)).rejects.toThrow();
   });
 });

@@ -16,9 +16,9 @@ import {
   getMockedRecord,
   getMockedPublicTransaction,
   getMockedTransactionDetails,
+  getMockedDecryptedRecord,
 } from "../__tests__/fixtures/api.fixture";
 import { getMockedOperation } from "../__tests__/fixtures/operation.fixture";
-import { accessProvableApi } from "./utils";
 import { apiClient } from "./api";
 import {
   fetchAccountTransactionsFromHeight,
@@ -27,6 +27,8 @@ import {
   patchPublicOperations,
   getTokenOutDetails,
   getRecordScannerStatusOrThrow,
+  accessProvableApi,
+  decryptRecordAmount,
 } from "./utils";
 
 jest.mock("./api");
@@ -393,6 +395,45 @@ describe("network/utils", () => {
         expect(result.transactions).toContainEqual(initializeTx);
         expect(result.transactions).not.toContainEqual(batcherOuterCall);
       });
+    });
+  });
+
+  describe("decryptRecordAmount", () => {
+    const mockViewKey = "AViewKey1abc";
+
+    it("should decrypt the record and parse the amount", async () => {
+      const record = getMockedRecord({ record_ciphertext: "ciphertext123" });
+      const details = getMockedDecryptedRecord({ data: { amount: "500000u64.private" } });
+      mockDecryptRecord.mockResolvedValueOnce(details);
+
+      const result = await decryptRecordAmount(mockConfig, mockViewKey, record);
+
+      expect(mockDecryptRecord).toHaveBeenCalledWith({
+        config: mockConfig,
+        viewKey: mockViewKey,
+        ciphertext: "ciphertext123",
+      });
+      expect(result.amount).toEqual(new BigNumber(500000));
+      expect(result.details).toEqual(details);
+    });
+
+    it.each([
+      ["balance", { balance: "200000u64.private" }],
+      ["microcredits", { microcredits: "100000u64.private" }],
+    ])("should fall back to %s when amount is missing", async (_label, data) => {
+      mockDecryptRecord.mockResolvedValueOnce(getMockedDecryptedRecord({ data }));
+
+      const result = await decryptRecordAmount(mockConfig, mockViewKey, getMockedRecord());
+
+      expect(result.amount).toEqual(new BigNumber(Object.values(data)[0].replace(/u64.*/, "")));
+    });
+
+    it("should return zero when no known amount field is present", async () => {
+      mockDecryptRecord.mockResolvedValueOnce(getMockedDecryptedRecord({ data: {} }));
+
+      const result = await decryptRecordAmount(mockConfig, mockViewKey, getMockedRecord());
+
+      expect(result.amount).toEqual(new BigNumber(0));
     });
   });
 
