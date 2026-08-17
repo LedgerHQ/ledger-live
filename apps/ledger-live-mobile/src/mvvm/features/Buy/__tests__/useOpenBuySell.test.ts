@@ -159,7 +159,7 @@ describe("useOpenBuySell (Market / QuickActions origin)", () => {
       screen: ScreenName.ExchangeBuy,
       params: {
         defaultCurrencyId: bitcoin.id,
-        goBackOnAccountRequestCancel: "true",
+        goBackOnAccountRequestCancel: true,
       },
     });
     expect(mockNavigate.mock.calls[0][1].params.defaultAccountId).toBeUndefined();
@@ -185,7 +185,7 @@ describe("useOpenBuySell (Market / QuickActions origin)", () => {
       screen: ScreenName.ExchangeBuy,
       params: {
         defaultCurrencyId: usdcToken.id,
-        goBackOnAccountRequestCancel: "true",
+        goBackOnAccountRequestCancel: true,
       },
     });
     expect(mockNavigate.mock.calls[0][1].params.defaultAccountId).toBeUndefined();

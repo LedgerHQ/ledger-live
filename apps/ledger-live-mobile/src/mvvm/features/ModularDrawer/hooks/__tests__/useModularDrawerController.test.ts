@@ -114,6 +114,29 @@ describe("useModularDrawerController", () => {
       expect(onCancel).not.toHaveBeenCalled();
       expect(onAccountSelected).toHaveBeenCalledTimes(1);
     });
+
+    it("should not invoke onCancel when handleCurrencySelected is used", () => {
+      const onCancel = jest.fn();
+      const onCurrencySelected = jest.fn();
+      const { result } = renderHook(() => useModularDrawerController());
+
+      act(() => {
+        result.current.openDrawer({
+          flow: "test_flow",
+          source: "test_source",
+          completionMode: "currency",
+          onCancel,
+          onCurrencySelected,
+        });
+      });
+
+      act(() => {
+        result.current.handleCurrencySelected(mockEthCryptoCurrency);
+      });
+
+      expect(onCancel).not.toHaveBeenCalled();
+      expect(onCurrencySelected).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe("handleAccountSelected", () => {

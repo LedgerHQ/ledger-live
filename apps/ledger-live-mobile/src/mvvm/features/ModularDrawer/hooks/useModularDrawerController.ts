@@ -9,6 +9,16 @@ import { DrawerParams, DrawerRemoteParams } from "../types";
 import { useCallbackRegistry } from "./useCallbackRegistry";
 import { generateCallbackId } from "../utils/callbackIdGenerator";
 
+function resolveCallbackId<T>(
+  callback: T | undefined,
+  register: (id: string, cb: T) => void,
+): string | undefined {
+  if (!callback) return undefined;
+  const id = generateCallbackId();
+  register(id, callback);
+  return id;
+}
+
 /**
  * Hook to manage the global state of the Modular Drawer.
  *
@@ -77,28 +87,19 @@ export const useModularDrawerController = () => {
       }
       resetAll();
 
-      let callbackIdToUse: string | undefined;
-      if (onAccountSelected) {
-        const id = generateCallbackId();
-        const wrappedCallback = (account: AccountLike, parentAccount?: AccountLike) => {
-          const typedParentAccount =
-            parentAccount && "derivationMode" in parentAccount ? parentAccount : undefined;
-          onAccountSelected(account, typedParentAccount);
-        };
-        registerCallback(id, wrappedCallback);
-        callbackIdToUse = id;
-      } else if (onCurrencySelected) {
-        const id = generateCallbackId();
-        registerCurrencyCallback(id, onCurrencySelected);
-        callbackIdToUse = id;
-      }
+      const wrappedAccountCallback = onAccountSelected
+        ? (account: AccountLike, parentAccount?: AccountLike) => {
+            const typedParentAccount =
+              parentAccount && "derivationMode" in parentAccount ? parentAccount : undefined;
+            onAccountSelected(account, typedParentAccount);
+          }
+        : undefined;
 
-      let cancelCallbackIdToUse: string | undefined;
-      if (onCancel) {
-        const id = generateCallbackId();
-        registerCancelCallback(id, onCancel);
-        cancelCallbackIdToUse = id;
-      }
+      const callbackIdToUse =
+        resolveCallbackId(wrappedAccountCallback, registerCallback) ??
+        resolveCallbackId(onCurrencySelected, registerCurrencyCallback);
+
+      const cancelCallbackIdToUse = resolveCallbackId(onCancel, registerCancelCallback);
 
       const paramsWithIds: DrawerRemoteParams = {
         ...otherParams,
