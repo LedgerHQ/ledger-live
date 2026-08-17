@@ -10378,7 +10378,6 @@
       "title": "Introducing Contacts",
       "description": "Your address book for crypto — save the wallets you send to, all in one place.",
       "primaryAction": "Try contacts",
-      "secondaryAction": "Maybe later",
       "highlights": {
         "saveAddresses": {
           "title": "Save addresses once",

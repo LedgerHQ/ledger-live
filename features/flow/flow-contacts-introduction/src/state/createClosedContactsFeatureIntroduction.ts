@@ -2,7 +2,7 @@ import type { ContactsFeatureIntroduction } from "./types";
 
 export function createClosedContactsFeatureIntroduction(
   onComplete: () => void = () => undefined,
-  onDefer: () => void = () => undefined,
+  onClose: () => void = () => undefined,
 ): ContactsFeatureIntroduction {
   return {
     isOpen: false,
@@ -10,8 +10,7 @@ export function createClosedContactsFeatureIntroduction(
     description: "",
     highlights: [],
     primaryActionLabel: "",
-    secondaryActionLabel: "",
     onComplete,
-    onDefer,
+    onClose,
   };
 }

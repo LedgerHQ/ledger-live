@@ -1,10 +1,10 @@
 import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react-native";
+import { CONTACTS_FEATURE_INTRODUCTION_HERO_IMAGE } from "./assets";
 import { ContactsFeatureIntroductionContent } from "./ContactsFeatureIntroductionContent";
 
 function renderContent(isOpen = true) {
   const onComplete = jest.fn();
-  const onDefer = jest.fn();
 
   render(
     <ContactsFeatureIntroductionContent
@@ -15,29 +15,29 @@ function renderContent(isOpen = true) {
         { icon: "Contact", title: "Save recipients", description: "Reuse an address safely." },
       ]}
       primaryActionLabel="Get started"
-      secondaryActionLabel="Not now"
-      heroImageSrc="https://example.com/contacts.webp"
       bottomInset={12}
       onComplete={onComplete}
-      onDefer={onDefer}
     />,
   );
 
-  return { onComplete, onDefer };
+  return { onComplete };
 }
 
 describe("ContactsFeatureIntroductionContent", () => {
-  it("should render the native introduction and dispatch its actions", () => {
-    const { onComplete, onDefer } = renderContent();
+  it("should render the native introduction with its bundled hero and complete it", () => {
+    const { onComplete } = renderContent();
 
     expect(screen.getByTestId("contacts-feature-introduction-hero")).toBeVisible();
+    expect(screen.getByTestId("contacts-feature-introduction-hero-image")).toHaveProp(
+      "source",
+      CONTACTS_FEATURE_INTRODUCTION_HERO_IMAGE,
+    );
     expect(screen.getByText("Save recipients")).toBeVisible();
+    expect(screen.queryByTestId("contacts-feature-introduction-secondary")).toBeNull();
 
     fireEvent.press(screen.getByTestId("contacts-feature-introduction-primary"));
-    fireEvent.press(screen.getByTestId("contacts-feature-introduction-secondary"));
 
     expect(onComplete).toHaveBeenCalledTimes(1);
-    expect(onDefer).toHaveBeenCalledTimes(1);
   });
 
   it("should hide the introduction content when it is closed", () => {
