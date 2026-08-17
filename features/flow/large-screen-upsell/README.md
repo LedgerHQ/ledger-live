@@ -8,7 +8,7 @@ state (schema, slice, selectors).
 
 ## Exports
 
-- `largeScreenUpsellModalSlice` / selectors / actions — display-frequency state (`retries`, `lastSeenAt`, `session`)
+- `largeScreenUpsellModalSlice` / selectors / actions — display-frequency state (`retriesModal`, `lastSeenAt`, `session`)
 - `getLargeScreenUpsellDecision` / `useLargeScreenUpsellDecision` — audience + cooldown + frequency
 - `mapDevicesModelListToUpsellInputs` — `DeviceModelId[]` → decision inputs
 - `buildLargeScreenUpsellCtaLink` / `buildLargeScreenUpsellContent` — pure helpers

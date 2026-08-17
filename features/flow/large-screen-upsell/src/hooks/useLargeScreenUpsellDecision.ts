@@ -17,7 +17,7 @@ export function useLargeScreenUpsellDecision(
   input: UseLargeScreenUpsellDecisionInput,
 ): LargeScreenUpsellDecision {
   const feature = useFeature("largeScreenUpsell");
-  const retries = useSelector(retriesUpsellModalSelector);
+  const retriesModal = useSelector(retriesUpsellModalSelector);
   const lastSeenAt = useSelector(lastSeenUpsellModalSelector);
   const params = feature?.params;
 
@@ -26,7 +26,7 @@ export function useLargeScreenUpsellDecision(
       seenNanoModelIds: input.seenNanoModelIds,
       hasSeenTouchscreenDevice: input.hasSeenTouchscreenDevice,
       onboardingDate: input.onboardingDate,
-      frequency: { retries, lastSeenAt },
+      frequency: { retriesModal, lastSeenAt },
     },
     {
       isFeatureEnabled: Boolean(feature?.enabled && params?.[input.variant].enabled),

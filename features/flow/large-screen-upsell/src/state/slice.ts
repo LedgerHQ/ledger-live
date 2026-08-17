@@ -23,17 +23,37 @@ export const largeScreenUpsellModalSlice = createSlice({
     ) => {
       const restored = RestorableLargeScreenUpsellModalStateSchema.parse(action.payload);
 
-      state.retries = restored.retries;
+      state.retriesModal = restored.retriesModal;
       state.lastSeenAt = restored.lastSeenAt;
     },
     recordUpsellModalDisplay: {
       reducer: (state, action: PayloadAction<number>) => {
-        state.retries += 1;
+        state.retriesModal += 1;
         state.lastSeenAt = action.payload;
       },
       prepare: (timestamp: number = Date.now()) => ({
         payload: timestamp,
       }),
+    },
+    /**
+     * Undo a display that was recorded but preempted by a competing app-start modal
+     * before the user could interact with the upsell.
+     */
+    rollbackUpsellModalDisplay: (
+      state,
+      action: PayloadAction<{ previousLastSeenAt: number | null }>,
+    ) => {
+      if (state.retriesModal > 0) {
+        state.retriesModal -= 1;
+      }
+      const { previousLastSeenAt } = action.payload;
+      if (previousLastSeenAt === null) {
+        state.lastSeenAt = null;
+        return;
+      }
+      if (isStorableTimestamp(previousLastSeenAt)) {
+        state.lastSeenAt = previousLastSeenAt;
+      }
     },
     markDismissed: state => {
       state.session = "dismissed";
@@ -44,12 +64,12 @@ export const largeScreenUpsellModalSlice = createSlice({
       }
     },
     resetUpsellModalRetries: state => {
-      state.retries = initialState.retries;
+      state.retriesModal = initialState.retriesModal;
     },
     setUpsellModalRetries: (state, action: PayloadAction<number>) => {
       const retries = action.payload;
       if (Number.isSafeInteger(retries) && retries >= 0) {
-        state.retries = retries;
+        state.retriesModal = retries;
       }
     },
     setLastSeenUpsellModal: (state, action: PayloadAction<number | null>) => {
@@ -66,10 +86,10 @@ export const largeScreenUpsellModalSlice = createSlice({
   selectors: {
     largeScreenUpsellModalSelector: state => state,
     persistedLargeScreenUpsellModalSelector: (state): RestorableLargeScreenUpsellModalState => ({
-      retries: state.retries,
+      retriesModal: state.retriesModal,
       lastSeenAt: state.lastSeenAt,
     }),
-    retriesUpsellModalSelector: state => state.retries,
+    retriesUpsellModalSelector: state => state.retriesModal,
     lastSeenUpsellModalSelector: state => state.lastSeenAt,
     sessionSelector: state => state.session,
   },
@@ -78,6 +98,7 @@ export const largeScreenUpsellModalSlice = createSlice({
 export const {
   restoreLargeScreenUpsellModalState,
   recordUpsellModalDisplay,
+  rollbackUpsellModalDisplay,
   markDismissed,
   markBlockedByCompeting,
   resetUpsellModalRetries,
