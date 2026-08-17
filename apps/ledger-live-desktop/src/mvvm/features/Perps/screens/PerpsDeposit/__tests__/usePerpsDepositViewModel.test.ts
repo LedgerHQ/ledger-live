@@ -187,7 +187,8 @@ describe("usePerpsDepositViewModel", () => {
       receiverAccount,
       depositAccount: fundingAccount,
       amountSent: { value: "0.000000000000002", currencyId: "ethereum" },
-      amountReceived: { value: "0.000000000000002", currencyId: "ethereum" },
+      // The received side is whatever the provider quoted, not a local conversion.
+      amountTo: { value: "42", currencyId: "ethereum" },
       draft: { depositAccount: fundingAccount, depositAmount: 20 },
     });
     expect(onClose).toHaveBeenCalled();

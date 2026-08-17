@@ -215,7 +215,7 @@ export function usePerpsDepositViewModel(
         value: sentAmount,
         currencyId: depositCurrency.id,
       },
-      amountReceived: quote && {
+      amountTo: quote && {
         value: quote.amountTo.toFixed(),
         currencyId: receiverCurrency.id,
       },

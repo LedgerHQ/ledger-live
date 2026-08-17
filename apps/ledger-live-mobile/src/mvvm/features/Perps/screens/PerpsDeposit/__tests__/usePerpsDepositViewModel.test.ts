@@ -201,12 +201,13 @@ describe("usePerpsDepositViewModel", () => {
     act(() => result.current.handleReview());
 
     expect(result.current.isReviewOpen).toBe(true);
-    // $20 priced back into ETH's 18 decimals, for both the funding and receiving side.
+    // $20 priced back into ETH's 18 decimals on the funding side; the received
+    // side is whatever the provider quoted, not a local conversion.
     expect(result.current.reviewParams).toEqual({
       depositAccount: fundingAccount,
       receiverAccount,
       amountSent: { value: "0.000000000000002", currencyId: "ethereum" },
-      amountReceived: { value: "0.000000000000002", currencyId: "ethereum" },
+      amountTo: { value: "42", currencyId: "ethereum" },
     });
   });
 
