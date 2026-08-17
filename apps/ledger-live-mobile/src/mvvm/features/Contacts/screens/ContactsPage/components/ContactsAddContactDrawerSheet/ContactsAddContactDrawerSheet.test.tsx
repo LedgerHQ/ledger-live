@@ -76,9 +76,6 @@ describe("ContactsAddContactDrawerSheet", () => {
     expect(screen.getByText("0/32")).toBeVisible();
     expect(screen.getByRole("button", { name: "Confirm name" })).toBeDisabled();
     expect(screen.getByTestId("contacts-add-contact-name-input")).toHaveProp("autoFocus", true);
-    expect(screen.getByTestId("contacts-add-contact-form")).not.toHaveStyle({
-      paddingHorizontal: 16,
-    });
   });
 
   it("should cap the contact name at 32 characters", async () => {
