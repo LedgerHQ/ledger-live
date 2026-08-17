@@ -9325,7 +9325,8 @@
       },
       "recoveryKey": {
         "title": "Ledger Recovery Key",
-        "description": "A PIN-protected smart card."
+        "description": "A PIN-protected smart card.",
+        "incompatible": "Not compatible with your device"
       },
       "secretRecoveryPhrase": {
         "title": "24-word metal storage",
