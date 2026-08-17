@@ -248,18 +248,25 @@ export class BuyAndSellPage extends WebViewAppPage {
     );
     await this.verifyElementIsNotEnabled(this.formCta);
 
-    try {
-      await this.verifyElementIsVisible(this.paymentSelector);
-    } catch (error) {
-      if (operation !== OperationType.Sell) throw error;
-      await this.verifyElementIsVisible(this.amountInputError);
+    let balanceTooLow = false;
+    if (operation === OperationType.Sell) {
+      try {
+        await this.verifyElementIsVisible(this.amountInputError, 2000);
+        balanceTooLow = true;
+      } catch {
+        // No error shown — balance covers the requested amount.
+      }
+    }
+    if (balanceTooLow) {
       await this.clickElement(this.maxAmountButton);
-      amount = await (await this.getWebViewElementByTestId(this.amountInputSection)).inputValue();
-      await this.verifyElementIsVisible(this.paymentSelector);
     }
 
+    await this.verifyElementIsVisible(this.paymentSelector);
+    const finalAmount = await (
+      await this.getWebViewElementByTestId(this.amountInputSection)
+    ).inputValue();
     await this.verifyElementIsVisible(this.providersList);
-    return amount;
+    return finalAmount;
   }
 
   @step("Select provider quote")
