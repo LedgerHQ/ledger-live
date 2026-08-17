@@ -1538,6 +1538,13 @@
       "mismatch": "Passwords don't match",
       "saveFailed": "We couldn't save your password. Please try again.",
       "cta": "Confirm"
+    },
+    "deactivatePassword": {
+      "title": "Deactivate password",
+      "description": "Enter your password to deactivate it.",
+      "wrongPassword": "Incorrect password",
+      "failed": "We couldn't deactivate your password. Please try again.",
+      "cta": "Confirm"
     }
   },
   "auth": {
