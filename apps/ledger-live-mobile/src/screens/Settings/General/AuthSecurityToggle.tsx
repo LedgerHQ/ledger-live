@@ -3,7 +3,7 @@ import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { useSelector } from "~/context/hooks";
 import { useTranslation } from "~/context/Locale";
 import { Switch } from "@ledgerhq/native-ui";
-import { AppLockPasswordRow } from "LLM/features/AppLock/components/PasswordRow";
+import { AppLockPasswordRow } from "LLM/features/AppLock/components/AppLockRow";
 import { useAppLockScheme } from "LLM/features/AppLock/hooks/useAppLockScheme";
 import { NavigatorName, ScreenName } from "~/const";
 import { privacySelector } from "~/reducers/settings";

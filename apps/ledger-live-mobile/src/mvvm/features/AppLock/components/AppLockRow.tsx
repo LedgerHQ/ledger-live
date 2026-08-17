@@ -7,10 +7,12 @@ import SettingsRow from "~/components/SettingsRow";
 import { NavigatorName, ScreenName } from "~/const";
 import { useSelector } from "~/context/hooks";
 import { useTranslation } from "~/context/Locale";
+import { useAppLockHydration } from "../hooks/useAppLockHydration";
 
-export function AppLockPasswordRow(): React.JSX.Element {
+export function AppLockPasswordRow(): React.JSX.Element | null {
   const { t } = useTranslation();
   const { navigate } = useNavigation();
+  const isHydrated = useAppLockHydration();
   const hasPassword = useSelector(selectHasPassword);
 
   const onValueChange = useCallback(
@@ -25,6 +27,10 @@ export function AppLockPasswordRow(): React.JSX.Element {
     },
     [navigate],
   );
+
+  if (!isHydrated) {
+    return null;
+  }
 
   return (
     <SettingsRow
