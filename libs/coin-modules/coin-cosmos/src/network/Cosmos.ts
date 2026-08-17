@@ -591,6 +591,11 @@ export class CosmosAPI {
         }
         maxTxs = total;
         allTxs = allTxs.concat(txs);
+
+        // A page shorter than the limit is the last one. `total` can exceed what the node actually
+        // serves, and asking for the page after the last 500s on cosmos-sdk ("page should be within
+        // [1, N] range") — which the catch below would turn into an empty history.
+        if (txs.length < paginationSize) break;
       } while (allTxs.length < maxTxs);
 
       return allTxs;
@@ -665,8 +670,10 @@ export class CosmosAPI {
     });
 
     return {
-      txs: data.tx_responses,
-      total: "total" in data ? data.total : data.pagination.total,
+      // Some nodes serialize an empty result as `null` rather than `[]`.
+      txs: data.tx_responses ?? [],
+      // uint64 comes over the wire as a string ("934"), despite the declared type.
+      total: Number("total" in data ? data.total : data.pagination.total),
     };
   }
 

@@ -355,6 +355,37 @@ describe("CosmosApi", () => {
       // sender + recipient
       expect(txs.length).toEqual(simulatedTotal * 2);
     });
+
+    it("stops on a short page even when total overstates what the node serves", async () => {
+      // Node counts 50 but only serves 3: requesting page 2 would 500 with
+      // "page should be within [1, 1] range, given 2".
+      // @ts-expect-error method is mocked
+      network.mockImplementation((networkOptions: { url: string }) => {
+        if (networkOptions.url.includes("node_info")) {
+          return Promise.resolve({
+            data: { application_version: { cosmos_sdk_version: "0.50.1" } },
+          });
+        }
+        if (networkOptions.url.includes("page=1")) {
+          return Promise.resolve({
+            data: {
+              total: 50,
+              tx_responses: [{ txhash: "a" }, { txhash: "b" }, { txhash: "c" }],
+            },
+          });
+        }
+        return Promise.reject(new Error("out of range page requested"));
+      });
+
+      const txs = await cosmosApi.getTransactions("address", 10);
+
+      // 3 txs per stream, and no page=2 request on either
+      expect(txs.length).toEqual(6);
+      const requestedPages = (network as unknown as jest.Mock).mock.calls
+        .map(([{ url }]: [{ url: string }]) => url)
+        .filter(url => url.includes("/txs?"));
+      expect(requestedPages.every(url => url.includes("page=1"))).toBe(true);
+    });
   });
 
   describe("getTransactionsPage", () => {
@@ -636,7 +667,8 @@ describe("CosmosApi", () => {
     };
     const expectedTxs = {
       txs: mockNetworkTxsResponse.tx_responses,
-      total: "1",
+      // the wire payload carries "1" as a string; fetchTransactions normalizes it
+      total: 1,
     };
     it("should fetch a pre v0.47 payload", async () => {
       const params = new URLSearchParams({
