@@ -16,19 +16,32 @@ type PerpsDepositQuoteParams = {
   amount: string;
 };
 
-/** Debounced quote for the funding pair. `undefined` until one lands. */
+export type PerpsDepositQuoteState = {
+  quote: PerpsDepositQuote | undefined;
+  isLoading: boolean;
+};
+
+const IDLE: PerpsDepositQuoteState = { quote: undefined, isLoading: false };
+
+/**
+ * Debounced quote for the funding pair. 
+ */
 export function usePerpsDepositQuote({
   depositAccount,
   receiverAccount,
   amount,
-}: PerpsDepositQuoteParams): PerpsDepositQuote | undefined {
+}: PerpsDepositQuoteParams): PerpsDepositQuoteState {
   const accounts = useSelector(flattenAccountsSelector);
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
-  const [quote, setQuote] = useState<PerpsDepositQuote>();
+  const [state, setState] = useState<PerpsDepositQuoteState>(IDLE);
 
   useEffect(() => {
-    setQuote(undefined);
-    if (!depositAccount || !amount) return;
+    if (!depositAccount || !amount) {
+      setState(IDLE);
+      return;
+    }
+
+    setState({ quote: undefined, isLoading: true });
 
     let stale = false;
     const timeout = setTimeout(() => {
@@ -40,9 +53,11 @@ export function usePerpsDepositQuote({
         counterValueCurrency: counterValueCurrency.ticker,
       })
         .then(received => {
-          if (!stale) setQuote(received);
+          if (!stale) setState({ quote: received, isLoading: false });
         })
-        .catch(() => undefined);
+        .catch(() => {
+          if (!stale) setState(IDLE);
+        });
     }, QUOTE_DEBOUNCE_MS);
 
     return () => {
@@ -51,5 +66,5 @@ export function usePerpsDepositQuote({
     };
   }, [accounts, amount, counterValueCurrency.ticker, depositAccount, receiverAccount]);
 
-  return quote;
+  return state;
 }

@@ -161,7 +161,11 @@ export function usePerpsDepositViewModel(
     return toAmountValue(atomicAmount, depositCurrency.units[0].magnitude);
   }, [isFormComplete, depositAccount, depositCurrency, toCurrencyAmount]);
 
-  const quote = usePerpsDepositQuote({ depositAccount, receiverAccount, amount: sentAmount });
+  const { quote, isLoading: isQuoteLoading } = usePerpsDepositQuote({
+    depositAccount,
+    receiverAccount,
+    amount: sentAmount,
+  });
 
   const canReview = isFormComplete && quote !== undefined;
 
@@ -207,7 +211,7 @@ export function usePerpsDepositViewModel(
     depositAmount,
     formattedDepositAmount,
     depositAmountTicker: receiverCurrency.ticker,
-    isQuoteLoading: isFormComplete && quote === undefined,
+    isQuoteLoading,
     counterValueCode: counterValueUnit.code,
     maxDecimalLength,
     changeDepositAmount,

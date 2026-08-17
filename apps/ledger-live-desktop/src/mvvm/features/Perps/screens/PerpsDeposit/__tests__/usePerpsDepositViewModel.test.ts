@@ -54,7 +54,10 @@ describe("usePerpsDepositViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockOpenAssetAndAccount.mockResolvedValue({ account: fundingAccount });
-    mockUsePerpsDepositQuote.mockReturnValue({ amountTo: new BigNumber(42) });
+    mockUsePerpsDepositQuote.mockReturnValue({
+      quote: { amountTo: new BigNumber(42) },
+      isLoading: false,
+    });
   });
 
   it("starts with an empty amount and no funding account", () => {
@@ -141,7 +144,7 @@ describe("usePerpsDepositViewModel", () => {
   });
 
   it("holds the review CTA back until the quote lands", async () => {
-    mockUsePerpsDepositQuote.mockReturnValue(undefined);
+    mockUsePerpsDepositQuote.mockReturnValue({ quote: undefined, isLoading: true });
     const { result } = renderViewModel();
 
     await pickFundingAccount(result);
@@ -152,6 +155,18 @@ describe("usePerpsDepositViewModel", () => {
     expect(result.current.canReview).toBe(false);
     expect(result.current.isQuoteLoading).toBe(true);
     expect(result.current.formattedDepositAmount).toBe("");
+  });
+
+  it("stops shimmering when the provider settles on no quote", async () => {
+    mockUsePerpsDepositQuote.mockReturnValue({ quote: undefined, isLoading: false });
+    const { result } = renderViewModel();
+
+    await pickFundingAccount(result);
+    act(() => result.current.changeDepositAmount("20"));
+
+    // A pair the provider cannot route is an answer, not a pending request.
+    expect(result.current.isQuoteLoading).toBe(false);
+    expect(result.current.canReview).toBe(false);
   });
 
   it("closes the dialog when the form is ready to review", () => {

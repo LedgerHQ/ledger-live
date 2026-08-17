@@ -47,7 +47,10 @@ const mockRoute = { params: { receiverAccount } };
 describe("PerpsDeposit integration", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockUsePerpsDepositQuote.mockReturnValue({ amountTo: new BigNumber(42) });
+    mockUsePerpsDepositQuote.mockReturnValue({
+      quote: { amountTo: new BigNumber(42) },
+      isLoading: false,
+    });
   });
 
   it("should let the user pick a funding account before reviewing", async () => {
@@ -114,7 +117,7 @@ describe("PerpsDeposit integration", () => {
   });
 
   it("should shimmer the quoted amount and keep the CTA disabled while quoting", async () => {
-    mockUsePerpsDepositQuote.mockReturnValue(undefined);
+    mockUsePerpsDepositQuote.mockReturnValue({ quote: undefined, isLoading: true });
     const { user } = render(
       <PerpsDepositScreen navigation={mockNavigation as never} route={mockRoute as never} />,
     );

@@ -36,13 +36,30 @@ describe("usePerpsDepositQuote", () => {
   it("returns the amount the provider quotes for the funding pair", async () => {
     const { result } = renderQuote({ amount: "2000", depositAccount });
 
-    await waitFor(() => expect(result.current?.amountTo.toString()).toBe("19.75"), {
+    await waitFor(() => expect(result.current.quote?.amountTo.toString()).toBe("19.75"), {
       timeout: 2000,
     });
-    expect(result.current?.quoteId).toBe("quote-1");
+    expect(result.current.quote?.quoteId).toBe("quote-1");
+    expect(result.current.isLoading).toBe(false);
     expect(mockFetchPerpsDepositQuote).toHaveBeenCalledWith(
       expect.objectContaining({ depositAccount, receiverAccount, amount: "2000" }),
     );
+  });
+
+  it("stops loading when the provider has no route for the pair", async () => {
+    mockFetchPerpsDepositQuote.mockResolvedValue(undefined);
+    const { result } = renderQuote({ amount: "2000", depositAccount });
+
+    await waitFor(() => expect(result.current.isLoading).toBe(false), { timeout: 2000 });
+    expect(result.current.quote).toBeUndefined();
+  });
+
+  it("stops loading when the provider request fails", async () => {
+    mockFetchPerpsDepositQuote.mockRejectedValue(new Error("network down"));
+    const { result } = renderQuote({ amount: "2000", depositAccount });
+
+    await waitFor(() => expect(result.current.isLoading).toBe(false), { timeout: 2000 });
+    expect(result.current.quote).toBeUndefined();
   });
 
   it("only quotes the amount the form settled on", async () => {
@@ -58,20 +75,23 @@ describe("usePerpsDepositQuote", () => {
   });
 
   it("quotes nothing without an amount or a funding account", async () => {
-    renderQuote({ amount: "", depositAccount });
+    const { result } = renderQuote({ amount: "", depositAccount });
     renderQuote({ amount: "2000", depositAccount: undefined });
 
     await passDebounce();
 
     expect(mockFetchPerpsDepositQuote).not.toHaveBeenCalled();
+    // Nothing to quote is idle, not pending.
+    expect(result.current).toEqual({ quote: undefined, isLoading: false });
   });
 
   it("drops the quoted amount once the amount changes", async () => {
     const { result, rerender } = renderQuote({ amount: "2000", depositAccount });
 
-    await waitFor(() => expect(result.current).toBeDefined(), { timeout: 2000 });
+    await waitFor(() => expect(result.current.quote).toBeDefined(), { timeout: 2000 });
     rerender({ amount: "3000", depositAccount });
 
-    expect(result.current).toBeUndefined();
+    expect(result.current.quote).toBeUndefined();
+    expect(result.current.isLoading).toBe(true);
   });
 });

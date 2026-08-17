@@ -41,7 +41,10 @@ describe("PerpsDeposit integration", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockOpenAssetAndAccount.mockResolvedValue({ account: fundingAccount });
-    mockUsePerpsDepositQuote.mockReturnValue({ amountTo: new BigNumber(42) });
+    mockUsePerpsDepositQuote.mockReturnValue({
+      quote: { amountTo: new BigNumber(42) },
+      isLoading: false,
+    });
   });
 
   it("should not render the form until a deposit is opened", () => {
@@ -91,7 +94,7 @@ describe("PerpsDeposit integration", () => {
   });
 
   it("should shimmer the quoted amount and keep the CTA disabled while quoting", async () => {
-    mockUsePerpsDepositQuote.mockReturnValue(undefined);
+    mockUsePerpsDepositQuote.mockReturnValue({ quote: undefined, isLoading: true });
     const { user } = render(<PerpsDepositRoot />);
 
     act(() => openPerpsDeposit({ receiverAccount }));
