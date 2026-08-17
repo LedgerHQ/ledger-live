@@ -1,5 +1,4 @@
 import { memo, useEffect, useRef } from "react";
-import isEqual from "lodash/isEqual";
 import { track } from "@shared/analytics";
 
 export type TrackProps = {
@@ -14,7 +13,7 @@ export type TrackProps = {
 /** Tracks `event` through the React lifecycle. Every other prop is sent as an event property. */
 const TrackComponent = (props: TrackProps): null => {
   const { onMount, onUnmount, onUpdate } = props;
-  const previousPropsRef = useRef<TrackProps | null>(null);
+  const hasMountedRef = useRef(false);
 
   const trackEvent = () => {
     const { event, onMount, onUnmount, onUpdate, mandatory, ...properties } = props;
@@ -35,15 +34,15 @@ const TrackComponent = (props: TrackProps): null => {
     // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // `memo` bails out of the render when the parent re-renders with shallow-equal props, so reaching
+  // this effect a second time means a prop really did change — no comparison of our own needed.
   useEffect(() => {
-    if (!onUpdate) return;
-
-    const previousProps = previousPropsRef.current;
-    if (previousProps && !isEqual(previousProps, props)) {
-      trackEventRef.current();
+    if (!hasMountedRef.current) {
+      hasMountedRef.current = true;
+      return;
     }
 
-    previousPropsRef.current = { ...props };
+    if (onUpdate) trackEventRef.current();
   }, [onUpdate, props]);
 
   return null;

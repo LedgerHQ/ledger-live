@@ -78,9 +78,16 @@ describe("Track", () => {
     expect(track).not.toHaveBeenCalled();
   });
 
-  it("sends nothing when re-rendered with a new but equal object property", () => {
+  it("compares properties shallowly, so a new but equal object counts as a change", () => {
     const { rerender } = render(<Track onUpdate event="Filter Changed" filter={{ tag: "all" }} />);
     rerender(<Track onUpdate event="Filter Changed" filter={{ tag: "all" }} />);
+
+    expect(track).toHaveBeenCalledTimes(1);
+  });
+
+  it("sends nothing on re-render when onUpdate is not set", () => {
+    const { rerender } = render(<Track event="Filter Changed" filter="all" />);
+    rerender(<Track event="Filter Changed" filter="favourites" />);
 
     expect(track).not.toHaveBeenCalled();
   });
