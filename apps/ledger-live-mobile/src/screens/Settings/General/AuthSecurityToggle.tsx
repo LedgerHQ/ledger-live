@@ -3,13 +3,15 @@ import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { useSelector } from "~/context/hooks";
 import { useTranslation } from "~/context/Locale";
 import { Switch } from "@ledgerhq/native-ui";
+import { AppLockPasswordRow } from "LLM/features/AppLock/components/PasswordRow";
+import { useAppLockScheme } from "LLM/features/AppLock/hooks/useAppLockScheme";
 import { NavigatorName, ScreenName } from "~/const";
 import { privacySelector } from "~/reducers/settings";
 import SettingsRow from "~/components/SettingsRow";
 import BiometricsRow from "./BiometricsRow";
 import { track } from "~/analytics";
 
-export default function AuthSecurityToggle() {
+function LegacyAuthSecurityToggle() {
   const { t } = useTranslation();
 
   const privacy = useSelector(privacySelector);
@@ -43,14 +45,26 @@ export default function AuthSecurityToggle() {
       : t("settings.display.passwordDesc");
 
   return (
+    <SettingsRow
+      event="AuthSecurityToggle"
+      title={t("settings.display.password")}
+      desc={getPasswordDesc()}
+    >
+      <Switch checked={isToggleOn} onChange={onValueChange} testID="password-settings-switch" />
+    </SettingsRow>
+  );
+}
+
+export default function AuthSecurityToggle() {
+  const scheme = useAppLockScheme();
+
+  return (
     <>
-      <SettingsRow
-        event="AuthSecurityToggle"
-        title={t("settings.display.password")}
-        desc={getPasswordDesc()}
-      >
-        <Switch checked={isToggleOn} onChange={onValueChange} testID="password-settings-switch" />
-      </SettingsRow>
+      {scheme === undefined ? null : scheme === "revamped" ? (
+        <AppLockPasswordRow />
+      ) : (
+        <LegacyAuthSecurityToggle />
+      )}
       <BiometricsRow />
     </>
   );
