@@ -108,20 +108,30 @@ describe("createCardSession", () => {
     expect(slots.size).toBe(0);
   });
 
-  it("removes the cold key that landed when the other cold key fails", async () => {
+  it("removes a cold key that finishes after the other cold write fails", async () => {
     const { store, slots } = fakeStore();
-    jest.mocked(store.write).mockImplementation(async (key, value) => {
-      if (key === CARD_SESSION_KEYS.lifetimes) {
-        throw new Error("keychain full");
-      }
-      slots.set(key, value);
+    let releaseRefreshTokenWrite = () => undefined as void;
+    const refreshTokenWriteStarted = new Promise<void>(resolveStarted => {
+      jest.mocked(store.write).mockImplementation(async (key, value) => {
+        if (key === CARD_SESSION_KEYS.refreshToken) {
+          resolveStarted();
+          await new Promise<void>(resolve => {
+            releaseRefreshTokenWrite = resolve;
+          });
+        } else if (key === CARD_SESSION_KEYS.lifetimes) {
+          throw new Error("keychain full");
+        }
+        slots.set(key, value);
+      });
     });
 
-    await expect(createCardSession(store).cardSession.set(session)).rejects.toThrow(
-      "keychain full",
-    );
+    const setting = createCardSession(store).cardSession.set(session);
+    const rejection = expect(setting).rejects.toThrow("keychain full");
+    await refreshTokenWriteStarted;
+    await new Promise(resolve => setImmediate(resolve));
+    releaseRefreshTokenWrite();
+    await rejection;
 
-    // The refresh token is a credential too, so an aborted login may not leave it behind.
     expect(slots.size).toBe(0);
   });
 

@@ -34,7 +34,7 @@ export function createCardSession(store: CardSessionStore) {
   async function writeSession(session: PayCardSession): Promise<void> {
     try {
       // The access token is written last, because it is the only key the request path reads.
-      await Promise.all([
+      const coldWriteResults = await Promise.allSettled([
         store.write(CARD_SESSION_KEYS.refreshToken, session.refreshToken),
         store.write(
           CARD_SESSION_KEYS.lifetimes,
@@ -44,6 +44,12 @@ export function createCardSession(store: CardSessionStore) {
           }),
         ),
       ]);
+      const failedColdWrite = coldWriteResults.find(
+        (result): result is PromiseRejectedResult => result.status === "rejected",
+      );
+      if (failedColdWrite) {
+        throw failedColdWrite.reason;
+      }
 
       await store.write(CARD_SESSION_KEYS.accessToken, session.accessToken);
     } catch (error) {
