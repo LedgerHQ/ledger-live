@@ -28,7 +28,7 @@ export function ContactsButton({
     <ListItem
       onPress={onPress}
       testID="my-wallet-contacts-button"
-      lx={{ backgroundColor: "surface", borderRadius: "md", paddingVertical: "s4" }}
+      lx={{ backgroundColor: "surface", borderRadius: "md" }}
     >
       <ListItemLeading>
         <Spot appearance="icon" icon={BookOpen} size={48} />
