@@ -52,6 +52,31 @@ describe("TrackPage", () => {
     expect(track).toHaveBeenCalledTimes(1);
   });
 
+  it("sends nothing more when re-rendered with a changed property", () => {
+    const { rerender } = render(<TrackPage category="Portfolio" balance={1} />);
+    rerender(<TrackPage category="Portfolio" balance={2} />);
+
+    expect(track).toHaveBeenCalledTimes(1);
+    expect(track).toHaveBeenCalledWith("Page Portfolio", { source: undefined, balance: 1 });
+  });
+
+  it("sends nothing more when re-rendered with a new but equal object property", () => {
+    const { rerender } = render(<TrackPage category="Portfolio" meta={{ tab: "assets" }} />);
+    rerender(<TrackPage category="Portfolio" meta={{ tab: "assets" }} />);
+
+    expect(track).toHaveBeenCalledTimes(1);
+  });
+
+  // A page view belongs to the mount. Swapping the category on a mounted <TrackPage> is not how the
+  // component is meant to be used, so it deliberately stays silent; render one per page instead.
+  it("sends nothing more when the category changes on a mounted component", () => {
+    const { rerender } = render(<TrackPage category="Portfolio" />);
+    rerender(<TrackPage category="Market" />);
+
+    expect(track).toHaveBeenCalledTimes(1);
+    expect(track).toHaveBeenCalledWith("Page Portfolio", { source: undefined });
+  });
+
   it("sends a mandatory page event even when consent is refused", () => {
     setTrackingSelector(() => false);
 
