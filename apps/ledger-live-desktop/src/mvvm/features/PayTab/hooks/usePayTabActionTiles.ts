@@ -6,13 +6,19 @@ const noop = () => {};
 
 export function usePayTabActionTiles(
   onTrackEvent: ActionTilesProps["onTrackEvent"],
+  onDeposit: () => void,
 ): ActionTilesProps {
   const { t } = useTranslation();
 
   return useMemo(
     () => ({
       tiles: [
-        { id: "deposit", label: t("payTab.actions.deposit"), onPress: noop, appearance: "base" },
+        {
+          id: "deposit",
+          label: t("payTab.actions.deposit"),
+          onPress: onDeposit,
+          appearance: "base",
+        },
         {
           id: "request",
           label: t("payTab.actions.request"),
@@ -24,6 +30,6 @@ export function usePayTabActionTiles(
       page: "Pay",
       onTrackEvent,
     }),
-    [t, onTrackEvent],
+    [t, onTrackEvent, onDeposit],
   );
 }

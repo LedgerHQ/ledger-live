@@ -1,20 +1,20 @@
 import React from "react";
 import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { DepositOptionCard, DepositOptionIcon } from "../DepositOptionParts.web";
+import { DepositOptionIcon, DepositOptionListItem } from "../DepositOptionParts.web";
 
 describe("DepositOptionParts (Web)", () => {
   afterEach(() => {
     cleanup();
   });
 
-  it("selects the option when the card is clicked", async () => {
+  it("selects the option when the list item is clicked", async () => {
     const user = userEvent.setup();
     const onSelect = jest.fn();
     render(
-      <DepositOptionCard optionId="swap" onSelect={onSelect}>
+      <DepositOptionListItem optionId="swap" onSelect={onSelect}>
         <DepositOptionIcon optionId="swap" />
-      </DepositOptionCard>,
+      </DepositOptionListItem>,
     );
 
     await user.click(screen.getByTestId("pay-card-deposit-option-swap"));

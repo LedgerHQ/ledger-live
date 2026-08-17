@@ -1,12 +1,11 @@
 import React from "react";
 import {
-  CardContent,
-  CardContentDescription,
-  CardContentTitle,
-  CardHeader,
-  CardLeading,
-  DepositOptionCard,
   DepositOptionIcon,
+  DepositOptionListItem,
+  ListItemContent,
+  ListItemDescription,
+  ListItemLeading,
+  ListItemTitle,
 } from "./DepositOptionParts";
 import type { DepositOption, DepositOptionId } from "../../types";
 
@@ -17,16 +16,14 @@ type DepositOptionRowProps = Readonly<{
 
 export function DepositOptionRow({ option, onSelect }: DepositOptionRowProps) {
   return (
-    <DepositOptionCard optionId={option.id} onSelect={onSelect}>
-      <CardHeader>
-        <CardLeading>
-          <DepositOptionIcon optionId={option.id} />
-          <CardContent>
-            <CardContentTitle>{option.title}</CardContentTitle>
-            <CardContentDescription>{option.description}</CardContentDescription>
-          </CardContent>
-        </CardLeading>
-      </CardHeader>
-    </DepositOptionCard>
+    <DepositOptionListItem optionId={option.id} onSelect={onSelect}>
+      <ListItemLeading>
+        <DepositOptionIcon optionId={option.id} />
+        <ListItemContent>
+          <ListItemTitle>{option.title}</ListItemTitle>
+          <ListItemDescription>{option.description}</ListItemDescription>
+        </ListItemContent>
+      </ListItemLeading>
+    </DepositOptionListItem>
   );
 }
