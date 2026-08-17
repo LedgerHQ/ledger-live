@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/generators",
-  "version": "0.0.0",
+  "version": "0.1.0-next.0",
   "private": true,
   "main": "./generators.json",
   "generators": "./generators.json",

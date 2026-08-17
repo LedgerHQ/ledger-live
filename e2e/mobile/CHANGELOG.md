@@ -1,5 +1,16 @@
 # ledger-live-mobile-e2e-tests
 
+## 0.35.0-next.0
+
+### Minor Changes
+
+- [#20571](https://github.com/LedgerHQ/ledger-live/pull/20571) [`7c8d5df`](https://github.com/LedgerHQ/ledger-live/commit/7c8d5dfa862a2e9c3a35251b5d06a3cd4f905d2a) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Thread the coin-module `Context` (ADR-019) explicitly through the coin-evm, coin-vechain and coin-near api and logic layers instead of resolving configuration from the module-level `getCoinConfig` singleton. Exported logic functions now take the context as their first argument, resolve `config` from it (`await context.config(currencyId)`), and pass an explicit, required `config` down to the network layer — no `config?` optionals and no singleton reads on the data path. `getCoinConfig`/`setCoinConfig` remain only as the compatibility surface for the classic account bridge. Ledger Live consumers (live-common, desktop, mobile and coin-celo) are updated to resolve and pass config/context explicitly. Also fixes a coin-polkadot type-inference issue where `getTransactionMaterialWithMetadata`'s cache-key extractor narrowed the cached signature and dropped the `config` argument.
+
+- [#20716](https://github.com/LedgerHQ/ledger-live/pull/20716) [`7277426`](https://github.com/LedgerHQ/ledger-live/commit/7277426ab6387ba6faff6d06eefa1a25125f3734) Thanks [@jeportie](https://github.com/jeportie)! - Fix mobile swap cross-account warning E2E: pin the send account (Ethereum 1) so it can't collapse onto the receive account when the drawer re-orders USDT accounts by balance
+
+- [#19909](https://github.com/LedgerHQ/ledger-live/pull/19909) [`311e79f`](https://github.com/LedgerHQ/ledger-live/commit/311e79f15f334f2a7b0499dbbfe57fa835e8b0b2) Thanks [@henri-ly](https://github.com/henri-ly)! - add new send flow tokens test, and type the amount in crypto (the step opens in fiat) by tagging
+  the amount fiat/crypto toggle with a `amount-mode-toggle` testID
+
 ## 0.34.0
 
 ### Minor Changes

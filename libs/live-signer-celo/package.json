@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-signer-celo",
-  "version": "1.2.2",
+  "version": "1.2.3-next.0",
   "private": true,
   "description": "Ledger Hardware Wallet Celo Application API",
   "keywords": [

@@ -1,5 +1,16 @@
 # @devtools/protocols
 
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#20725](https://github.com/LedgerHQ/ledger-live/pull/20725) [`0fc43c1`](https://github.com/LedgerHQ/ledger-live/commit/0fc43c15841f585c0a9aaa5152587225978f7e2b) Thanks [@Sebastien-Dav1d](https://github.com/Sebastien-Dav1d)! - Add relay-tracked device list and device-name select in transport panel
+
+### Patch Changes
+
+- Updated dependencies [[`0fc43c1`](https://github.com/LedgerHQ/ledger-live/commit/0fc43c15841f585c0a9aaa5152587225978f7e2b)]:
+  - @devtools/transport@0.5.0-next.0
+
 ## 0.2.2
 
 ### Patch Changes

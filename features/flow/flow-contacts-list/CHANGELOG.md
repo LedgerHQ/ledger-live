@@ -1,5 +1,13 @@
 # @features/flow-contacts-list
 
+## 0.2.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`8605089`](https://github.com/LedgerHQ/ledger-live/commit/8605089242fd91da0ee4c6a7e8ea2f5a9f58962a), [`f2f3ec9`](https://github.com/LedgerHQ/ledger-live/commit/f2f3ec9ef1f2869c44190e2f6aa16dc362f2891f), [`f040998`](https://github.com/LedgerHQ/ledger-live/commit/f04099812f60fc328ee101b5f4f0457b1d1c4bfa)]:
+  - @domain/entity-contact@0.7.0-next.0
+  - @features/platform-contacts@0.3.0-next.0
+
 ## 0.2.0
 
 ### Minor Changes
