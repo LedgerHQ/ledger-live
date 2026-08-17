@@ -26,6 +26,7 @@ export function usePayTabDepositOptions(
     { location: ModularDrawerLocation.ADD_ACCOUNT },
     DEPOSIT_PAGE,
     "MODAL_RECEIVE",
+    { shouldUseReceiveOptions: false },
   );
 
   const onSelect = useCallback(
