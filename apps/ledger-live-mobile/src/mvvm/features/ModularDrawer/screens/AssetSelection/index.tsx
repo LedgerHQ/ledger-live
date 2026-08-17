@@ -32,6 +32,10 @@ import { modularDrawerFlowSelector, modularDrawerSourceSelector } from "~/reduce
 import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
 import { groupCurrenciesByAsset } from "@ledgerhq/live-common/modularDrawer/utils/groupCurrenciesByAsset";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
+import {
+  getPerpsUiUseCase,
+  PERPS_UI_USE_CASE,
+} from "@ledgerhq/live-common/wallet-api/ModularDrawer/uiUseCase";
 
 export type AssetSelectionStepProps = {
   isOpen: boolean;
@@ -43,6 +47,7 @@ export type AssetSelectionStepProps = {
   refetch?: () => void;
   loadNext?: () => void;
   assetsSorted?: AssetData[];
+  uiUseCase?: string;
 };
 
 const SAFE_MARGIN_BOTTOM = 48;
@@ -57,9 +62,20 @@ const AssetSelection = ({
   refetch,
   loadNext,
   assetsSorted,
+  uiUseCase,
 }: Readonly<AssetSelectionStepProps>) => {
   const { t } = useTranslation();
   const { isInternetReachable } = useNetInfo();
+
+  const isPerpsFund = getPerpsUiUseCase(uiUseCase) === PERPS_UI_USE_CASE.fund;
+
+  const headerTitle = isPerpsFund
+    ? t("modularDrawer.selectDepositCurrencyTitle")
+    : t("modularDrawer.selectAsset");
+
+  const headerDescription = isPerpsFund
+    ? t("modularDrawer.selectDepositCurrencyDescription")
+    : undefined;
 
   const flow = useSelector(modularDrawerFlowSelector);
   const source = useSelector(modularDrawerSourceSelector);
@@ -173,7 +189,8 @@ const AssetSelection = ({
       )}
       <BottomSheetHeader
         spacing
-        title={t("modularDrawer.selectAsset")}
+        title={headerTitle}
+        description={headerDescription}
         testID="modular-drawer-Asset-title"
         density="expanded"
       />

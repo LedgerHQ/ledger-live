@@ -8726,6 +8726,10 @@
     "selectAsset": "Select asset",
     "selectNetwork": "Select network",
     "selectAccount": "Select account",
+    "selectAccountPerpsTitle": "Select Hyperliquid account",
+    "selectAccountPerpsDescription": "To fund your perps, you need a Hyperliquid account. Add one to continue.",
+    "selectDepositCurrencyTitle": "Select asset to deposit",
+    "selectDepositCurrencyDescription": "Any supported asset works. It will be swapped automatically if needed.",
     "accountCount_one": "{{count}} account",
     "accountCount_other": "{{count}} accounts",
     "accountsAdded": {
