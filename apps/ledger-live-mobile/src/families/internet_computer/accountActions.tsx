@@ -50,7 +50,7 @@ const getMainActions = ({
       navigationParams: stakeNavigationParams,
       label: <Trans i18nKey={label} />,
       Icon: IconsLegacy.CoinsMedium,
-      eventProperties: { currency: "INTERNET_COMPUTER" },
+      eventProperties: { currency: "ICP" },
     },
   ];
 
@@ -66,7 +66,7 @@ const getMainActions = ({
       ],
       label: <Trans i18nKey="internetComputer.headerManageActions.manageNeurons.title" />,
       Icon: IconsLegacy.CoinsMedium,
-      eventProperties: { currency: "INTERNET_COMPUTER" },
+      eventProperties: { currency: "ICP" },
     });
   }
 

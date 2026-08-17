@@ -7,7 +7,7 @@ import type { InternetComputerNeuronManageFlowParamList } from "./types";
 // Stub navigator reserved for LIVE-29098 (the "NeuronManageFlow"). Registered now so the
 // "Manage Neurons" account action wired in LIVE-29097 has a navigation target. LIVE-29098 replaces
 // the placeholder screen with the neuron list and per-action screens, reusing these names.
-const PlaceholderScreen = () => <View />;
+const PlaceholderScreen = () => <View style={{ flex: 1 }} />;
 
 function NeuronManageFlow() {
   return (

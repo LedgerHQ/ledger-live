@@ -49,10 +49,9 @@ describe("internet_computer accountActions.getMainActions", () => {
   });
 
   it("routes Stake into the staking flow when the balance can afford a neuron", () => {
-    const [stake, ...rest] = callMainActions(
-      makeAccount({ spendableBalance: ENOUGH_TO_STAKE }),
-      { enabled: true },
-    );
+    const [stake, ...rest] = callMainActions(makeAccount({ spendableBalance: ENOUGH_TO_STAKE }), {
+      enabled: true,
+    });
 
     expect(stake.id).toBe("stake");
     expect(rest).toHaveLength(0);
