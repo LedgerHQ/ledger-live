@@ -751,7 +751,7 @@ export function transactionToCoinFrameworkOperation(
   const coinType = getOperationCoinType(transaction);
   const hash = transaction.digest;
 
-  const blockHeight = Number.parseInt(transaction.checkpoint || "0");
+  const blockHeight = Number.parseInt(transaction.checkpoint || "0", 10);
   const blockHash =
     checkpointHash || (blockHeight > 0 ? `synthetic-${transaction.checkpoint}` : "");
 
@@ -801,7 +801,7 @@ export function toBlockInfo(
   const info: BlockInfo = {
     height: Number(checkpoint.sequenceNumber),
     hash: checkpoint.digest,
-    time: new Date(parseInt(checkpoint.timestampMs)),
+    time: new Date(Number.parseInt(checkpoint.timestampMs, 10)),
   };
 
   if (typeof checkpoint.previousDigest === "string") {
