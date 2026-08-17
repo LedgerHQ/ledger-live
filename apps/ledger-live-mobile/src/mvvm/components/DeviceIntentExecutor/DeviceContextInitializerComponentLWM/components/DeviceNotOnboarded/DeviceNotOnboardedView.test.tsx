@@ -15,19 +15,15 @@ describe("DeviceNotOnboardedView", () => {
   it("should render the not-onboarded copy with the product name", () => {
     renderView();
 
-    expect(screen.getByText("Your Ledger is not ready to use yet")).toBeVisible();
-    expect(
-      screen.getByText(
-        "You need to set up your Flex first. We will guide you through the device setup process",
-      ),
-    ).toBeVisible();
-    expect(screen.getByText("Set up device")).toBeVisible();
+    expect(screen.getByText("Your Ledger device needs to be set up")).toBeVisible();
+    expect(screen.getByText("Set it up to continue.")).toBeVisible();
+    expect(screen.getByText("Setup Ledger device")).toBeVisible();
   });
 
   it("should call onSetupDevice when the primary action is pressed", async () => {
     const { user, onSetupDevice } = renderView();
 
-    await user.press(screen.getByText("Set up device"));
+    await user.press(screen.getByText("Setup Ledger device"));
 
     expect(onSetupDevice).toHaveBeenCalledTimes(1);
   });

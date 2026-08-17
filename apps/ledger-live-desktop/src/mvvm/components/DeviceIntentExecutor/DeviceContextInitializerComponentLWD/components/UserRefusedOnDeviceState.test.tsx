@@ -34,7 +34,7 @@ describe("UserRefusedOnDeviceState", () => {
     renderState();
 
     // THEN
-    expect(screen.getByText("Operation rejected on device")).toBeVisible();
+    expect(screen.getByText("Operation rejected on Ledger device")).toBeVisible();
   });
 
   it("GIVEN the user refused state WHEN clicking Close THEN it calls cancel", async () => {

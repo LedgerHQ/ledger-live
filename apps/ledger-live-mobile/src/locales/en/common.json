@@ -5050,29 +5050,28 @@
   "deviceIntentExecutor": {
     "genericStates": {
       "retryableDeviceLocked": {
-        "title": "Device is locked",
-        "description": "Unlock your device to continue."
+        "title": "Unlock your Ledger device and then select Retry below"
       },
       "unlockDevice": {
         "title": "Unlock your {{productName}}"
       },
       "continueOnDevice": {
         "title": "Continue on your {{productName}}",
-        "description": "Follow the instructions displayed on your Secure Screen"
+        "description": "Follow the instructions displayed on your Secure Screen."
       }
     },
     "errors": {
       "connectionError": {
-        "title": "Device disconnected",
-        "description": "Your Ledger is no longer connected. Make sure it's powered on and within Bluetooth range or plugged in."
+        "title": "Ledger Device disconnected",
+        "description": "Make sure it's powered on and within Bluetooth range or plugged in."
       },
       "intentError": {
         "title": "Unknown error",
-        "description": "An error occurred. Please try again or contact Ledger support if the issue persists."
+        "description": "Try again or contact Ledger support if the issue continues."
       },
       "invalidOperation": {
-        "title": "Invalid state",
-        "description": "An error occurred. Please try again or contact Ledger support if the issue persists."
+        "title": "An error occurred",
+        "description": "Try again or contact Ledger Support if the issue continues."
       }
     },
     "initialization": {
@@ -5088,42 +5087,42 @@
       },
       "retryable": {
         "userRefused": {
-          "title": "Operation rejected on device"
+          "title": "Operation rejected on Ledger device"
         },
         "deviceBusy": {
-          "title": "Action pending on your Ledger device",
-          "description": "Complete it and then select Retry."
+          "title": "Action needed on your Ledger device",
+          "description": "Finish the action on your device, then select “Retry” below."
         }
       },
       "blocking": {
         "deviceNotOnboarded": {
-          "title": "Your Ledger is not ready to use yet",
-          "description": "You need to set up your {{productName}} first. We will guide you through the device setup process"
+          "title": "Your Ledger device needs to be set up",
+          "description": "Set it up to continue."
         },
         "unsupportedFirmwareVersion": {
           "title": "Ledger OS update required"
         },
         "unsupportedApplication": {
           "title": "Unsupported feature",
-          "description": "The app required for this operation is not currently available on your Ledger device. Please contact Ledger support for details."
+          "description": "The app needed for this action is not supported by your Ledger device. Please contact Ledger Support for details."
         },
         "unsupportedFeature": {
           "title": "Unsupported feature",
-          "description": "The app required for this operation is not currently available on your Ledger device. Please contact Ledger support for details."
+          "description": "The app needed for this action is not supported by your Ledger device. Please contact Ledger Support for details."
         },
         "wrongDeviceForAccount": {
-          "title": "Wrong Secret Recovery Phrase",
-          "description": "This Ledger isn’t set up with the recovery phrase linked to the selected account. Check that you're using the correct device."
+          "title": "Use the Ledger device you originally set up this account with",
+          "description": "This Ledger isn't set up with the Secret Recovery Phrase linked to the selected crypto account."
         },
         "deviceOutOfStorageSpace": {
-          "title": "Not enough device memory",
-          "description": "Your device doesn’t have enough memory. Please uninstall apps and try again."
+          "title": "Uninstall some apps to free up Ledger device memory",
+          "description": "Your device doesn’t have enough memory."
         }
       },
       "cta": {
         "openMyLedger": "Open My Ledger",
         "goToMyLedger": "Go to My Ledger",
-        "setupDevice": "Set up device",
+        "setupDevice": "Setup Ledger device",
         "updateLedgerOs": "Update Ledger OS",
         "cancelOperation": "Cancel operation",
         "contactLedgerSupport": "Contact Ledger support"
@@ -5137,7 +5136,7 @@
       },
       "states": {
         "connecting": {
-          "title": "Loading"
+          "title": "Connecting to your Ledger device"
         },
         "connectionError": {
           "errors": {
@@ -5157,7 +5156,7 @@
             },
             "unknown": {
               "title": "Pairing unsuccessful",
-              "description": "Please try again or read our Bluetooth troubleshooting article below.",
+              "description": "Please try again or read our Bluetooth troubleshooting article below for more guidance.",
               "tip": "Make sure your device is unlocked.",
               "cta": {
                 "retry": "Try again",
@@ -5172,24 +5171,24 @@
         "discoveryError": {
           "errors": {
             "bluetoothPermissionDeniedPromptable": {
-              "title": "Allow Bluetooth access",
-              "description": "Allow Bluetooth to scan for nearby Ledger devices.",
+              "title": "Connect to your Ledger device via Bluetooth",
+              "description": "Ledger Wallet needs Bluetooth to find and pair with nearby Ledger devices. No data is shared via Bluetooth.",
               "cta": {
-                "retry": "Allow",
+                "retry": "Allow Bluetooth",
                 "ignore": "Continue with USB"
               }
             },
             "bluetoothPermissionDeniedManualSettings": {
-              "title": "Allow Bluetooth access",
-              "description": "Bluetooth permission is required. Go to Settings → Apps → Ledger Wallet → Permissions → Nearby devices, then come back.",
+              "title": "Enable Bluetooth in your phone’s Settings",
+              "description": "Ledger Wallet needs Bluetooth permission to find your Ledger device. Go to Settings → Apps → Ledger Wallet → Permissions → Nearby devices, then come back.",
               "cta": {
                 "retry": "I enabled it, try again",
-                "ignore": "Continue with USB"
+                "ignore": "Continue with USB instead"
               }
             },
             "bluetoothPermissionUnauthorizedManualSettings": {
-              "title": "Allow Bluetooth access",
-              "description": "Ledger Wallet needs Bluetooth permission to find your device. Enable it in Settings.",
+              "title": "Enable Bluetooth in your phone’s Settings",
+              "description": "Ledger Wallet needs Bluetooth permission to find your Ledger device. Enable it in Settings.",
               "cta": {
                 "platform": {
                   "ios": {
@@ -5197,22 +5196,22 @@
                   },
                   "android": {
                     "retry": "I enabled it, try again",
-                    "ignore": "Continue with USB"
+                    "ignore": "Continue with USB instead"
                   }
                 }
               }
             },
             "bluetoothDisabledPromptable": {
-              "title": "Turn on Bluetooth",
-              "description": "Bluetooth is off. Turn it on to find your Ledger device.",
+              "title": "Enable Bluetooth on your phone",
+              "description": "Enable to scan for nearby Ledger devices.",
               "cta": {
-                "retry": "Turn on Bluetooth",
-                "ignore": "Continue with USB"
+                "retry": "Enable Bluetooth",
+                "ignore": "Continue with USB instead"
               }
             },
             "bluetoothDisabledManualAction": {
-              "title": "Turn on Bluetooth",
-              "description": "Bluetooth is off. Turn it on in your Settings → Bluetooth, then come back.",
+              "title": "Enable Bluetooth on your phone",
+              "description": "Enable Bluetooth, then come back to retry. Open Settings → Bluetooth. Toggle Bluetooth on, then select the button below.",
               "cta": {
                 "platform": {
                   "ios": {
@@ -5220,7 +5219,7 @@
                   },
                   "android": {
                     "retry": "I enabled Bluetooth, try again",
-                    "ignore": "Continue with USB"
+                    "ignore": "Continue with USB instead"
                   }
                 }
               }
@@ -5245,47 +5244,47 @@
               }
             },
             "locationPermissionDeniedPromptable": {
-              "title": "Allow location access",
-              "description": "Android needs Location permission to scan for Bluetooth devices.",
+              "title": "Android needs Location enabled to scan for Bluetooth devices",
+              "description": "Ledger does not access or store your location.",
               "cta": {
-                "retry": "Allow",
-                "ignore": "Continue with USB"
+                "retry": "Enable",
+                "ignore": "Continue with USB instead"
               }
             },
             "locationPermissionDeniedManualSettings": {
-              "title": "Allow location access",
-              "description": "Location permission is required to scan for Bluetooth devices. Go to Settings → Apps → Ledger Wallet → Permissions → Location, then come back.",
+              "title": "Enable Location in Settings",
+              "description": "Android requires this to scan for nearby Bluetooth devices. Go to Settings → Apps → Ledger Wallet → Permissions → Location. Set to \"Allow\", then select the button below.",
               "cta": {
                 "retry": "I enabled it, try again",
-                "ignore": "Continue with USB"
+                "ignore": "Continue with USB instead"
               }
             },
             "locationDisabledPromptable": {
-              "title": "Turn on Location",
-              "description": "Location services are off. Turn them on to scan for Bluetooth devices.",
+              "title": "Enable location to scan for Bluetooth devices",
+              "description": "Android requires this to scan for nearby Bluetooth devices. Ledger does not access or store your location.",
               "cta": {
-                "retry": "Turn on Location",
-                "ignore": "Continue with USB"
+                "retry": "Enable Location",
+                "ignore": "Continue with USB instead"
               }
             },
             "locationDisabledManualAction": {
-              "title": "Turn on Location",
-              "description": "Location services are off. Turn them on from Settings → Location, then come back.",
+              "title": "Location is needed to scan for nearby Bluetooth devices",
+              "description": "Open Settings → Location. Toggle Location on, then come back here and select the button below. Ledger never accesses or stores your location.",
               "cta": {
-                "retry": "I enabled Location, try again",
-                "ignore": "Continue with USB"
+                "retry": "I enabled it, try again",
+                "ignore": "Continue with USB instead"
               }
             },
             "locationServicePermissionMissing": {
-              "title": "Allow location access",
-              "description": "Location permission seems missing. Tap below to try again.",
+              "title": "Location permission couldn't be confirmed",
+              "description": "Select “Try again”, this often resolves it. If not, check Settings → Apps → Ledger Wallet → Permissions → Location.",
               "cta": {
                 "retry": "Try again",
-                "ignore": "Continue with USB"
+                "ignore": "Continue with USB instead"
               }
             },
             "unknown": {
-              "title": "Something went wrong",
+              "title": "Bluetooth scanning unsuccessful",
               "description": "We couldn’t start the Bluetooth scan. Please try again or contact Ledger support.",
               "cta": {
                 "retry": "Try again"
@@ -5298,9 +5297,9 @@
         },
         "noKnownDevice": {
           "title": "Ledger device required",
-          "description": "To continue, set up or connect your signer.",
+          "description": "To continue, set up or connect your Ledger device.",
           "connectLedgerDevice": "Connect Ledger device",
-          "noLedgerDevice": "I don't have a Ledger device"
+          "noLedgerDevice": "I don’t have a Ledger device"
         },
         "waitingForSelectedDevice": {
           "title": "Power on and unlock your {{productName}}"
