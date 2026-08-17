@@ -1,14 +1,13 @@
 import React, { useCallback } from "react";
-import { Card, Spot } from "@ledgerhq/lumen-ui-react";
+import { ListItem, Spot } from "@ledgerhq/lumen-ui-react";
 import { ArrowDown, Bank, Cart, Exchange } from "@ledgerhq/lumen-ui-react/symbols";
 import type { DepositOptionId } from "../../types";
 
 export {
-  CardContent,
-  CardContentDescription,
-  CardContentTitle,
-  CardHeader,
-  CardLeading,
+  ListItemContent,
+  ListItemDescription,
+  ListItemLeading,
+  ListItemTitle,
 } from "@ledgerhq/lumen-ui-react";
 
 type SpotIcon = typeof Bank;
@@ -20,25 +19,25 @@ const OPTION_ICONS: Readonly<Record<DepositOptionId, SpotIcon>> = {
   buy: Cart,
 };
 
-type DepositOptionCardProps = Readonly<{
+type DepositOptionListItemProps = Readonly<{
   optionId: DepositOptionId;
   onSelect: (id: DepositOptionId) => void;
   children: React.ReactNode;
 }>;
 
-export function DepositOptionCard({ optionId, onSelect, children }: DepositOptionCardProps) {
+export function DepositOptionListItem({
+  optionId,
+  onSelect,
+  children,
+}: DepositOptionListItemProps) {
   const handlePress = useCallback(() => {
     onSelect(optionId);
   }, [onSelect, optionId]);
 
   return (
-    <Card
-      type="interactive"
-      onClick={handlePress}
-      data-testid={`pay-card-deposit-option-${optionId}`}
-    >
+    <ListItem onClick={handlePress} data-testid={`pay-card-deposit-option-${optionId}`}>
       {children}
-    </Card>
+    </ListItem>
   );
 }
 
