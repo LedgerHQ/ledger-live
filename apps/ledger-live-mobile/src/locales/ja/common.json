@@ -491,6 +491,9 @@
     "FeeTooHigh" : {
       "title" : "ネットワーク手数料が10%を超えています。"
     },
+    "RecipientIsNewAccount" : {
+      "title" : "このアドレスは資金を受け取ったことがなく、有効化にはより高いネットワーク手数料がかかります。"
+    },
     "FeeTooLow" : {
       "title" : "手数料が低すぎるため、ネットワークに承認されません。増額してください"
     },
@@ -1548,10 +1551,6 @@
     }
   },
   "graph" : {
-    "week" : "1週",
-    "month" : "1月",
-    "year" : "1年",
-    "all" : "ALL",
     "graphNotSupported" : "このトークンでは、グラフを使用できません"
   },
   "carousel" : {
@@ -1697,10 +1696,8 @@
     "cta" : "Ledgerを今すぐ購入",
     "footer" : "所有するLedgerをセットアップ",
     "bannerTitle" : "暗号資産とNFTの一流のセキュリティ",
-    "bannerTitle2" : "トレードにはLedgerが必要です",
     "bannerSubtitle" : "Ledger Flexで実現",
     "bannerButtonTitle" : "Flexの詳細を知る",
-    "bannerButtonTitle2" : "Ledgerを購入する",
     "setupCta" : "所有するLedgerをセットアップ"
   },
   "rebornBuyDevice" : {
@@ -2829,44 +2826,18 @@
       "skipCTA" : "後で"
     }
   },
-  "tabs" : {
-    "accounts" : "アカウント",
-    "transfer" : "送金",
-    "manager" : "My Ledger",
-    "myWallet" : "ウォレット",
-    "settings" : "設定",
-    "platform" : "Live Apps",
-    "discover" : "アプリ一覧",
-    "nanoX" : "Nano X",
-    "market" : "Market",
-    "earn" : "報酬獲得",
-    "card" : "カード",
-    "swap" : "スワップ"
-  },
   "portfolio" : {
     "totalBalance" : "総資産",
-    "syncError" : "同期エラー",
-    "syncFailed" : "同期に失敗しました。",
     "syncPending" : "同期中...",
     "transactionsPendingConfirmation" : {
       "title" : "未同期残高",
       "desc" : "一部のトランザクションはまだ承認されていません。これらは承認後に残高に反映され、使用可能になります。"
     },
     "emptyState" : {
-      "noAppsTitle" : "デバイスにアプリをインストールする。",
-      "noAppsDesc" : "Ledger Walletでアカウントを追加する前に、デバイスにアプリをインストールしてください。My Ledgerに移動してアプリをインストールしてください。",
-      "noAccountsTitle" : "アカウントを持っていません…",
-      "noAccountsDesc" : "ポートフォリオにアカウントを追加してください。",
       "buttons" : {
         "import" : "資産を追加",
-        "buy" : "購入",
         "manager" : "アプリをインストール",
         "managerSecondary" : "デバイスにアプリをインストールする。"
-      },
-      "addAccounts" : {
-        "addAccounts" : "資産を追加",
-        "title" : "ご利用ガイド",
-        "description" : "パートナーから暗号資産を購入、またはウォレットをセットアップ可能です"
       }
     },
     "noOpState" : {
@@ -2874,7 +2845,8 @@
       "desc" : "暗号資産を受取アドレスに送金して、アプリが同期するのを待ちましょう。"
     },
     "carousel" : {
-      "title" : "お客様へ"
+      "title" : "お客様へ",
+      "closeAll" : "すべて閉じる"
     },
     "perpsEntry" : {
       "title" : "無期限先物",
@@ -2886,14 +2858,6 @@
       "cardDescription" : "競争力のあるレートで借りる",
       "cta" : "探索"
     },
-    "recommended" : {
-      "title" : "おすすめ"
-    },
-    "topGainers" : {
-      "title" : "トップ変動(24時間)",
-      "seeMarket" : "すべて表示"
-    },
-    "walletBalance" : "ウォレット残高",
     "balance" : {
       "noSigner" : "安全な\n暗号資産ウォレット",
       "noAccounts" : "まずはウォレットへの\n入金から始めましょう"
@@ -2926,8 +2890,7 @@
       "sell" : "売却",
       "swap" : "スワップ",
       "send" : "送付",
-      "deposit" : "受け取る",
-      "stake" : "ステーキング"
+      "deposit" : "受け取る"
     },
     "quickActionsCtas" : {
       "transfer" : "送金",
@@ -3065,6 +3028,8 @@
       "UNSTAKE" : "ステーキング解除済み",
       "WITHDRAW_UNSTAKED" : "引き出し済み",
       "FINALIZE_UNSTAKE" : "ステーキング解除済み",
+      "STAKE_NEURON" : "ステーキング済み",
+      "TOP_UP_NEURON" : "ステーキング増加",
       "ASSOCIATE_TOKEN" : "トークンの関連付け",
       "CONTRACT_CALL" : "コントラクトコール",
       "UPDATE_ACCOUNT" : "アカウント更新"
@@ -3865,8 +3830,7 @@
       "learnMore" : "タグ/メモについて詳しく知る"
     },
     "send" : {
-      "title" : "送付",
-      "description" : "暗号資産を別のウォレットに送付する。"
+      "title" : "送付"
     },
     "fees" : {
       "title" : "手数料を編集"
@@ -3999,21 +3963,12 @@
       "title" : "購入",
       "description" : "暗号資産を安全に購入する。"
     },
-    "sell" : {
-      "title" : "売却",
-      "description" : "暗号資産を安全に売却する。"
-    },
     "exchange" : {
       "title" : "購入/売却",
       "connectingTo" : "{{provider}}に接続中"
     },
-    "stake" : {
-      "title" : "ステーキング",
-      "description" : "お持ちの暗号資産で報酬を獲得しましょう。"
-    },
     "swap" : {
       "title" : "スワップ",
-      "description" : "暗号資産を別の暗号資産と交換する。",
       "selectDevice" : "お使いのデバイスを選択してください",
       "broadcasting" : "スワップをブロードキャスト中",
       "loadingFees" : "ネットワーク手数料を読み込み中…",
@@ -4493,11 +4448,6 @@
     "walletConnect" : {
       "title" : "WalletConnect",
       "description" : "ウォレットをDAppに接続する。"
-    },
-    "recover" : {
-      "title" : "Ledger Recover",
-      "description" : "より手軽にウォレットを復元する。",
-      "tag" : "1ヶ月間無料"
     }
   },
   "signMessage" : {
@@ -4521,6 +4471,8 @@
     "sign" : {
       "title" : "{{productName}}で続ける",
       "description" : "画面に表示される手順に従ってください。",
+      "termsAndConditions" : "このトランザクションへの署名により、<0>{{appName}}の利用規約</0>に同意したことになります。",
+      "termsAndConditionsWithPrivacy" : "この取引に署名することにより、お客様は<0>{{appName}}の利用規約</0>および<1>プライバシーポリシー</1>に同意したものとみなされます。",
       "cancelled" : {
         "title" : "デバイス上で操作が却下されました。",
         "close" : "閉じる",
@@ -4540,6 +4492,11 @@
       "title" : "{{currency}}を送付",
       "available" : "利用可能: {{amount}}",
       "to" : "宛先：",
+      "addressDisclaimer" : {
+        "accessibilityLabel" : "受取アドレスについて",
+        "title" : "Ledgerデバイスでアドレスを認証する",
+        "description" : "Ledgerデバイスにアドレスのすべてが安全に表示されます。元のアドレスと一致していることを確認してください。"
+      },
       "placeholder" : "アドレスまたはENSを入力してください",
       "placeholderNoENS" : "アドレスを入力",
       "pasteFromClipboard" : {
@@ -9552,15 +9509,19 @@
   },
   "lnsUpsell" : {
     "opted_in" : {
-      "title" : "Ledger Nano S™をアップグレード",
-      "description" : "限定特典、最新のLedger署名用デバイスが20%OFF。",
+      "title" : "詳細を表示。より安全に署名。",
+      "description" : "アップグレードして20％OFF。",
       "cta" : "Ledgerをアップグレード"
     },
     "opted_out" : {
-      "title" : "Ledger Nano S™をアップグレード",
-      "description" : "Ledger Nano Sの限られたメモリでは、最新機能やブロックチェーンの変更、セキュリティ強化が制限されます。",
+      "title" : "さらなるセキュリティ。より確実なコントロール",
+      "description" : "セキュリティ機能についての詳細をご確認ください。",
       "cta" : "詳細はこちら"
     }
+  },
+  "lazyOnboardingBanner" : {
+    "title" : "Ledgerデバイスのアプリ一覧",
+    "description" : "最新の製品やアクセサリーをチェック"
   },
   "marketBanner" : {
     "title" : "マーケット",
@@ -10122,7 +10083,7 @@
       "stepViewKeyWarning" : {
         "title" : "Aleoプライベート残高の設定",
         "description" : "Ledger Walletは、プライベート残高を表示するためにお客様の閲覧キーを保存し、プライベートな取引の処理には外部サービスを使用します。<0>詳細を見る</0>",
-        "bullets" : ["プライベート残高を復号するための読み取り専用アクセス権", "Ledgerがお客様の資金を送金または使用することはできません", "お客様の資金の署名と使用ができるのはお客様のみです", "処理の高速化のため、証明の生成は外部のプルーバー（証明）サービスによって行われます", "プルーバーがお客様の資金にアクセスしたり使用したりすることはできません"],
+        "bullets" : ["閲覧キーにより、Ledger Wallet内のプライベート残高を復号するための読み取り専用アクセスが可能になります。", "Ledgerデバイス署名用デバイスを介して、お客様の資金の署名と使用ができるのはお客様のみです。", "Aleoのトランザクションにはゼロ知識証明が必要であり、これには多大な計算能力を要します。", "トランザクションを迅速化するため、証明の生成は外部のAleo Networkサービスによって処理されます。"],
         "cta" : {
           "allow" : "許可する",
           "cancel" : "キャンセル"
@@ -10232,7 +10193,33 @@
       "namePlaceholder" : "連絡先名",
       "namingDisclaimer" : "プライバシー保護のため、フルネームや姓の入力は避けてください。ニックネーム、または名前＋イニシャルなどをご使用ください。例：「John S」",
       "confirmName" : "名前を確定",
-      "invalidNameError" : "特殊文字は使用できません。"
+      "invalidNameError" : "特殊文字は使用できません。",
+      "duplicateNameError" : "この連絡先名はすでに使用されています。"
+    },
+    "addAddressEntry" : {
+      "title" : "アドレスを入力",
+      "addressPlaceholder" : "アドレスまたはENS",
+      "confirmAddress" : "アドレスを確認",
+      "validatingAddress" : "アドレスを検証中",
+      "validAddress" : "有効なアドレス",
+      "invalidAddress" : "無効なアドレス",
+      "domainNotFound" : "このドメインのアドレスが見つかりません",
+      "sanctionedAddress" : "このアドレスは制裁対象のため、使用できません。",
+      "validationUnavailable" : "アドレスの検証は一時的にご利用いただけません。",
+      "ensDisclaimer" : "ENS名はウォレットアドレスに解決されます。続行する前に、解決されたアドレスを必ず認証してください。",
+      "sanctioned" : {
+        "description" : "このアドレスは警告対象のため、送付が許可されていません",
+        "learnMore" : "詳細はこちら"
+      }
+    },
+    "addAddressName" : {
+      "title" : "アドレスに名前を付ける",
+      "inputLabel" : "アドレス名",
+      "namingDisclaimer" : "必要な時に簡単に見つけられるよう、このアドレスに名前を付けることをお勧めします。これはお客様のみに表示されます。",
+      "continueToReview" : "確認に進む",
+      "invalidLabel" : "特殊文字は使用できません。",
+      "duplicateLabel" : "このアドレス名は、すでに使用されています。",
+      "labelTooLong" : "このアドレス名は長すぎます。"
     },
     "addressCount_zero" : "0件のアドレス",
     "addressCount_one" : "{{count}}件のアドレス",
@@ -10244,6 +10231,7 @@
       "addressCount_other" : "{{count}}アドレス"
     },
     "detail" : {
+      "meDisplayName" : "{{name}}（自分）",
       "ledgerWalletAddresses" : "Ledger Walletアドレス",
       "myAddresses" : "マイアドレス",
       "emptyState" : {
@@ -10252,6 +10240,60 @@
         "meDescription" : "取引や他のウォレットで所有している外部アドレスを保存します。次回ご自身に送金する際、設定した名前がお使いのLedgerデバイスに表示されます。",
         "contactDescription" : "{{name}}に送信するためのウォレットアドレスを保存"
       }
+    },
+    "addressDetail" : {
+      "send" : "送付",
+      "copy" : "コピー",
+      "copyAddress" : "アドレスをコピー",
+      "copied" : "コピー済み",
+      "edit" : "編集",
+      "share" : "共有する",
+      "delete" : "削除",
+      "networkTag" : "{{name}}ネットワーク"
+    },
+    "detailActions" : {
+      "editName" : "名前を編集",
+      "deleteContact" : "連絡先を削除",
+      "menuAccessibilityLabel" : "連絡先のオプション"
+    },
+    "editContact" : {
+      "title" : "連絡先を編集",
+      "namePlaceholder" : "連絡先名",
+      "namingDisclaimer" : "プライバシー保護のため、フルネームや姓の入力は避けてください。ニックネーム、または名前＋イニシャルなどをご使用ください。例：「John S.」",
+      "confirmName" : "名前を確定",
+      "applyChanges" : "変更を適用",
+      "invalidNameError" : "特殊文字は使用できません。"
+    },
+    "deleteContact" : {
+      "title" : "連絡先を削除しますか？",
+      "description" : "この連絡先を削除すると、関連付けられているすべてのアドレスが消去されます。",
+      "mobileDescription" : "この連絡先を削除すると、関連付けられているすべてのアドレスが消去されます。",
+      "confirm" : "削除",
+      "cancel" : "キャンセル"
+    },
+    "deleteAddress" : {
+      "title" : "アドレスを削除しますか？",
+      "description" : "このアドレスは連絡先から削除されます。",
+      "confirm" : "削除",
+      "cancel" : "キャンセル"
+    },
+    "editAddress" : {
+      "title" : "アドレスを編集",
+      "inputLabel" : "アドレス名",
+      "applyChanges" : "変更を適用",
+      "invalidLabelError" : "特殊文字は使用できません。"
+    },
+    "editSigner" : {
+      "title" : "デバイスで確定する",
+      "description" : "この変更を確認するには、Ledgerデバイスを接続してロック解除を行ってください。",
+      "confirm" : "続行",
+      "cancel" : "キャンセル"
+    },
+    "editSignerMismatch" : {
+      "title" : "連絡先の追加で使用したものと同じLedgerデバイスを使用してください",
+      "description" : "接続されたデバイスが一致しません。",
+      "connectDifferentDevice" : "別のデバイスを接続してください",
+      "cancel" : "キャンセル"
     },
     "ledgerSyncIntroduction" : {
       "title" : "連絡先を保存するにはLedger Syncをオンにする",

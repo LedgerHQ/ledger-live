@@ -491,6 +491,9 @@
     "FeeTooHigh" : {
       "title" : "Les frais de réseau représentent plus de 10% du montant"
     },
+    "RecipientIsNewAccount" : {
+      "title" : "Cette adresse n’a jamais reçu d’actifs : son activation entraîne des frais de réseau plus élevés"
+    },
     "FeeTooLow" : {
       "title" : "Les frais sont trop bas pour être acceptés par le réseau. Veuillez les augmenter"
     },
@@ -3025,6 +3028,8 @@
       "UNSTAKE" : "Déstaké",
       "WITHDRAW_UNSTAKED" : "Retiré",
       "FINALIZE_UNSTAKE" : "Déstaké",
+      "STAKE_NEURON" : "Staké",
+      "TOP_UP_NEURON" : "Augmentation du montant staké",
       "ASSOCIATE_TOKEN" : "Association de token",
       "CONTRACT_CALL" : "Appel de contrat",
       "UPDATE_ACCOUNT" : "Compte mis à jour"
@@ -4466,6 +4471,8 @@
     "sign" : {
       "title" : "Continuez sur votre {{productName}}",
       "description" : "Consultez les instructions sur son écran sécurisé.",
+      "termsAndConditions" : "En signant cette transaction, vous acceptez les <0>Conditions d’utilisation de {{appName}}</0>.",
+      "termsAndConditionsWithPrivacy" : "En signant cette transaction, vous acceptez les <0>Conditions d’utilisation de {{appName}}</0> et sa <1>Politique de confidentialité</1>.",
       "cancelled" : {
         "title" : "Action rejetée sur l’appareil",
         "close" : "Fermer",
@@ -9503,14 +9510,18 @@
   "lnsUpsell" : {
     "opted_in" : {
       "title" : "Voyez plus grand",
-      "description" : "Adoptez un signer à écran tactile sécurisé à -20%.",
+      "description" : "Passez au niveau supérieur avec -20%.",
       "cta" : "Choisir mon Ledger"
     },
     "opted_out" : {
       "title" : "Sécurité et contrôle renforcés",
-      "description" : "Fonctionnalités de sécurité avancées à découvrir.",
+      "description" : "Fonctionnalités de sécurité à découvrir.",
       "cta" : "En savoir plus"
     }
+  },
+  "lazyOnboardingBanner" : {
+    "title" : "Découvrez les appareils Ledger",
+    "description" : "Explorez les derniers modèles et accessoires."
   },
   "marketBanner" : {
     "title" : "Marché",
@@ -10195,7 +10206,11 @@
       "domainNotFound" : "Aucune adresse trouvée pour ce domaine",
       "sanctionedAddress" : "Cette adresse est sanctionnée et ne peut pas être utilisée.",
       "validationUnavailable" : "La validation de l’adresse est temporairement indisponible",
-      "ensDisclaimer" : "Les noms ENS correspondent à des adresses de wallet. Vérifiez toujours l’adresse avant de continuer."
+      "ensDisclaimer" : "Les noms ENS correspondent à des adresses de wallet. Vérifiez toujours l’adresse avant de continuer.",
+      "sanctioned" : {
+        "description" : "Les transactions vers cette adresse ne sont pas possibles.",
+        "learnMore" : "En savoir plus"
+      }
     },
     "addAddressName" : {
       "title" : "Donner un nom à cette adresse",
@@ -10216,6 +10231,7 @@
       "addressCount_other" : "{{count}} adresses"
     },
     "detail" : {
+      "meDisplayName" : "{{name}} (Moi)",
       "ledgerWalletAddresses" : "Adresses Ledger Wallet",
       "myAddresses" : "Mes adresses",
       "emptyState" : {
@@ -10255,10 +10271,28 @@
       "confirm" : "Supprimer",
       "cancel" : "Annuler"
     },
+    "deleteAddress" : {
+      "title" : "Supprimer l’adresse ?",
+      "description" : "Cette adresse sera supprimée du contact.",
+      "confirm" : "Supprimer",
+      "cancel" : "Annuler"
+    },
+    "editAddress" : {
+      "title" : "Modifier l’adresse",
+      "inputLabel" : "Nom de l’adresse",
+      "applyChanges" : "Appliquer les modifications",
+      "invalidLabelError" : "Les caractères spéciaux ne sont pas pris en charge."
+    },
     "editSigner" : {
       "title" : "Confirmez sur votre appareil",
       "description" : "Connectez votre appareil Ledger et déverrouillez-le pour confirmer ce changement.",
       "confirm" : "Continuer",
+      "cancel" : "Annuler"
+    },
+    "editSignerMismatch" : {
+      "title" : "Utilisez le même appareil Ledger que vous avez utilisé pour ajouter ce contact",
+      "description" : "L’appareil connecté ne correspond pas.",
+      "connectDifferentDevice" : "Connecter un autre appareil",
       "cancel" : "Annuler"
     },
     "ledgerSyncIntroduction" : {

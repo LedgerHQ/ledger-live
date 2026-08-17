@@ -1,5 +1,47 @@
 # @domain/entity-currency-token
 
+## 0.4.0
+
+### Minor Changes
+
+- [#20582](https://github.com/LedgerHQ/ledger-live/pull/20582) [`cc8b5b9`](https://github.com/LedgerHQ/ledger-live/commit/cc8b5b9af4a2ec488b6912d3fcb08bcc8f4b72c3) Thanks [@ysitbon](https://github.com/ysitbon)! - Move the currency id schemas to the packages that own them.
+
+  `CryptoCurrencyIdSchema`, `TokenCurrencyIdSchema` and `FiatCurrencyIdSchema` (and their inferred
+  types) now live in `@domain/entity-currency-crypto`, `@domain/entity-currency-token` and
+  `@domain/entity-currency-fiat` respectively, instead of `@shared/schema-primitives`. A primitives
+  package has no business knowing about crypto, tokens or fiat.
+
+  The crypto and token packages used to re-export these symbols from primitives, which made them
+  proxies: two import paths for the same thing, and no obvious original provider. Consumers already
+  importing from `@domain/entity-currency-*` are unaffected, since the symbols genuinely moved there.
+  Anything importing them from `@shared/schema-primitives` must now import the owning domain package.
+
+### Patch Changes
+
+- Updated dependencies [[`cc8b5b9`](https://github.com/LedgerHQ/ledger-live/commit/cc8b5b9af4a2ec488b6912d3fcb08bcc8f4b72c3)]:
+  - @domain/entity-currency-crypto@0.10.0
+
+## 0.4.0-next.0
+
+### Minor Changes
+
+- [#20582](https://github.com/LedgerHQ/ledger-live/pull/20582) [`cc8b5b9`](https://github.com/LedgerHQ/ledger-live/commit/cc8b5b9af4a2ec488b6912d3fcb08bcc8f4b72c3) Thanks [@ysitbon](https://github.com/ysitbon)! - Move the currency id schemas to the packages that own them.
+
+  `CryptoCurrencyIdSchema`, `TokenCurrencyIdSchema` and `FiatCurrencyIdSchema` (and their inferred
+  types) now live in `@domain/entity-currency-crypto`, `@domain/entity-currency-token` and
+  `@domain/entity-currency-fiat` respectively, instead of `@shared/schema-primitives`. A primitives
+  package has no business knowing about crypto, tokens or fiat.
+
+  The crypto and token packages used to re-export these symbols from primitives, which made them
+  proxies: two import paths for the same thing, and no obvious original provider. Consumers already
+  importing from `@domain/entity-currency-*` are unaffected, since the symbols genuinely moved there.
+  Anything importing them from `@shared/schema-primitives` must now import the owning domain package.
+
+### Patch Changes
+
+- Updated dependencies [[`cc8b5b9`](https://github.com/LedgerHQ/ledger-live/commit/cc8b5b9af4a2ec488b6912d3fcb08bcc8f4b72c3)]:
+  - @domain/entity-currency-crypto@0.10.0-next.0
+
 ## 0.3.0
 
 ### Minor Changes
