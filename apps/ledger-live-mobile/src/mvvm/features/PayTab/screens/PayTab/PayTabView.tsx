@@ -7,6 +7,7 @@ import {
   type BalanceData,
   type BalanceLabels,
 } from "@features/flow-pay-card-balance";
+import { DepositOptions, type DepositOptionsProps } from "@features/flow-pay-card-deposit";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import { TrackScreen } from "~/analytics";
 
@@ -17,6 +18,7 @@ type PayTabViewProps = {
   readonly balance: BalanceData;
   readonly balanceLabels: BalanceLabels;
   readonly actionTiles: ActionTilesProps;
+  readonly depositOptions: DepositOptionsProps;
 };
 
 export function PayTabView({
@@ -26,6 +28,7 @@ export function PayTabView({
   balance,
   balanceLabels,
   actionTiles,
+  depositOptions,
 }: PayTabViewProps) {
   return (
     <Box
@@ -35,6 +38,7 @@ export function PayTabView({
     >
       <TrackScreen category="Pay" balance_filter={balance.filter} />
       <Balance {...balance} labels={balanceLabels} actionTiles={actionTiles} />
+      <DepositOptions {...depositOptions} />
       <CardLogin openHostedLogin={openHostedLogin} />
       <FeatureTour {...featureTour} />
     </Box>

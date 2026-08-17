@@ -1,7 +1,5 @@
 import { useCallback } from "react";
-import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router";
-import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
+import { useNavigation } from "@react-navigation/native";
 import {
   useDepositOptionsAdapter,
   type DepositOptionId,
@@ -9,9 +7,14 @@ import {
   type PayCardTrackEvent,
   type UseDepositOptionsAdapter,
 } from "@features/flow-pay-card-deposit";
-import { useOpenAssetFlow } from "../../ModularDialog/hooks/useOpenAssetFlow";
+import { useTranslation } from "~/context/Locale";
+import { NavigatorName, ScreenName } from "~/const";
+import { useOpenReceiveDrawer } from "LLM/features/Receive";
+import { useOpenSwap } from "LLM/features/Swap";
+import { useOpenBuySell } from "LLM/features/Buy";
 
 const DEPOSIT_PAGE = "Pay";
+const FIAT_PROVIDER_MANIFEST_ID = "noah";
 
 export type UsePayTabDepositOptions = UseDepositOptionsAdapter;
 
@@ -20,32 +23,36 @@ export function usePayTabDepositOptions(
   stablecoinCurrencyIds: string[],
 ): UsePayTabDepositOptions {
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const navigation = useNavigation();
 
-  const { openAssetFlow } = useOpenAssetFlow(
-    { location: ModularDrawerLocation.ADD_ACCOUNT },
-    DEPOSIT_PAGE,
-    "MODAL_RECEIVE",
-  );
+  const { handleOpenReceiveDrawer } = useOpenReceiveDrawer({
+    currencyIds: stablecoinCurrencyIds,
+    sourceScreenName: DEPOSIT_PAGE,
+  });
+  const { handleOpenSwap } = useOpenSwap({ sourceScreenName: DEPOSIT_PAGE });
+  const { handleOpenBuySell } = useOpenBuySell({ sourceScreenName: DEPOSIT_PAGE });
 
   const onSelect = useCallback(
     (id: DepositOptionId) => {
       switch (id) {
         case "bankTransfer":
-          navigate("/bank");
+          navigation.navigate(NavigatorName.ReceiveFunds, {
+            screen: ScreenName.ReceiveProvider,
+            params: { manifestId: FIAT_PROVIDER_MANIFEST_ID, fromMenu: true },
+          });
           break;
         case "swap":
-          navigate("/swap");
+          handleOpenSwap();
           break;
         case "buy":
-          navigate("/exchange", { state: { mode: "buy", returnTo: "/paytab" } });
+          handleOpenBuySell("buy");
           break;
         case "receive":
-          openAssetFlow(undefined, stablecoinCurrencyIds);
+          handleOpenReceiveDrawer();
           break;
       }
     },
-    [navigate, openAssetFlow, stablecoinCurrencyIds],
+    [navigation, handleOpenSwap, handleOpenBuySell, handleOpenReceiveDrawer],
   );
 
   const labels: DepositOptionsLabels = {

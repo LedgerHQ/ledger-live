@@ -26,6 +26,31 @@ jest.mock("LLM/features/PayTab/hooks/usePayCardBalance", () => ({
   usePayCardBalance: () => balance,
 }));
 
+const mockDepositOpen = jest.fn();
+const mockDepositOptions = {
+  isOpen: false,
+  page: "Pay",
+  labels: { title: "Add stablecoins", options: {} },
+  onClose: jest.fn(),
+  onSelect: jest.fn(),
+};
+
+jest.mock("LLM/features/PayTab/hooks/usePayStablecoins", () => ({
+  usePayStablecoins: () => ({
+    stablecoins: [],
+    defaultStablecoins: [{ id: "ethereum/erc20/usd__coin" }],
+    isLoading: false,
+    isError: false,
+  }),
+}));
+
+jest.mock("LLM/features/PayTab/hooks/usePayTabDepositOptions", () => ({
+  usePayTabDepositOptions: () => ({
+    open: mockDepositOpen,
+    depositOptions: mockDepositOptions,
+  }),
+}));
+
 const mockedTrack = jest.mocked(track);
 
 describe("usePayTabViewModel", () => {
@@ -67,6 +92,16 @@ describe("usePayTabViewModel", () => {
       expect(row.title).toBeTruthy();
       expect(row.description).toBeTruthy();
     });
+  });
+
+  it("should expose the deposit options and wire the deposit tile to open them", () => {
+    const { result } = renderHook(() => usePayTabViewModel());
+
+    expect(result.current.depositOptions).toBe(mockDepositOptions);
+
+    const depositTile = result.current.actionTiles.tiles.find(tile => tile.id === "deposit");
+    depositTile?.onPress();
+    expect(mockDepositOpen).toHaveBeenCalledTimes(1);
   });
 
   it("should wire the tour analytics callbacks to track", () => {
