@@ -44,13 +44,13 @@ const errorCases = [
     type: DiscoveryErrorTypes.BluetoothPermissionDeniedManualSettings,
     title: "Enable Bluetooth in your phone’s Settings",
     description:
-      "Ledger Wallet needs Bluetooth permission to find your Ledger device. Go to Settings → Apps → Ledger Wallet → Permissions → Nearby devices, then come back.",
+      "Ledger Wallet needs Bluetooth permission to find your Ledger device.\n\nGo to Settings → Apps → Ledger Wallet → Permissions → Nearby devices, then come back.",
   },
   {
     type: DiscoveryErrorTypes.BluetoothPermissionUnauthorizedManualSettings,
     title: "Enable Bluetooth in your phone’s Settings",
     description:
-      "Ledger Wallet needs Bluetooth permission to find your Ledger device. Enable it in Settings.",
+      "Ledger Wallet needs Bluetooth permission to find your Ledger device.\n\nGo to Settings → Apps → Ledger Wallet → Bluetooth, then come back.",
   },
   {
     type: DiscoveryErrorTypes.BluetoothDisabledPromptable,
@@ -254,6 +254,21 @@ describe("DiscoveryErrorState", () => {
       expect(screen.getByText(description)).toBeVisible();
     },
   );
+
+  it("GIVEN an unauthorized Bluetooth error on iOS WHEN rendering THEN it renders the iOS settings copy", () => {
+    // GIVEN / WHEN
+    renderState({
+      type: DiscoveryErrorTypes.BluetoothPermissionUnauthorizedManualSettings,
+      platform: "ios",
+    });
+
+    // THEN
+    expect(
+      screen.getByText(
+        "Ledger Wallet needs Bluetooth permission to find your device. Open Settings → Ledger Wallet. Turn on Bluetooth, then tap the button below.",
+      ),
+    ).toBeVisible();
+  });
 
   it("should render the translated retry cta when a retry callback is available", async () => {
     const retry = jest.fn();

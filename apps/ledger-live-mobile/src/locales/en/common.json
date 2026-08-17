@@ -5180,7 +5180,7 @@
             },
             "bluetoothPermissionDeniedManualSettings": {
               "title": "Enable Bluetooth in your phone’s Settings",
-              "description": "Ledger Wallet needs Bluetooth permission to find your Ledger device. Go to Settings → Apps → Ledger Wallet → Permissions → Nearby devices, then come back.",
+              "description": "Ledger Wallet needs Bluetooth permission to find your Ledger device.\n\nGo to Settings → Apps → Ledger Wallet → Permissions → Nearby devices, then come back.",
               "cta": {
                 "retry": "I enabled it, try again",
                 "ignore": "Continue with USB instead"
@@ -5188,7 +5188,12 @@
             },
             "bluetoothPermissionUnauthorizedManualSettings": {
               "title": "Enable Bluetooth in your phone’s Settings",
-              "description": "Ledger Wallet needs Bluetooth permission to find your Ledger device. Enable it in Settings.",
+              "description": {
+                "platform": {
+                  "ios": "Ledger Wallet needs Bluetooth permission to find your device. Open Settings → Ledger Wallet. Turn on Bluetooth, then tap the button below.",
+                  "android": "Ledger Wallet needs Bluetooth permission to find your Ledger device.\n\nGo to Settings → Apps → Ledger Wallet → Bluetooth, then come back."
+                }
+              },
               "cta": {
                 "platform": {
                   "ios": {
