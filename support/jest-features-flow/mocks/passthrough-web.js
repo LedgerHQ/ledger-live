@@ -1,6 +1,28 @@
 const React = require("react");
 const TooltipOpenContext = React.createContext();
 
+function resolveAvatarColor(identifier) {
+  return `avatar-color:${identifier}`;
+}
+
+function Avatar(avatarProps) {
+  const { alt, fallbackColor, fallbackText, size = "md", ...props } = avatarProps;
+  const hasAriaLabel = Object.hasOwn(avatarProps, "aria-label");
+  const hasRole = Object.hasOwn(avatarProps, "role");
+
+  return React.createElement(
+    "div",
+    {
+      ...props,
+      role: hasRole ? avatarProps.role : "img",
+      "aria-label": hasAriaLabel ? avatarProps["aria-label"] : alt,
+      "data-fallback-color": fallbackColor,
+      "data-size": size,
+    },
+    fallbackText,
+  );
+}
+
 function InteractiveIcon({ icon: _icon, iconType: _iconType, size: _size, ...props }) {
   return React.createElement("button", { type: "button", ...props });
 }
@@ -50,7 +72,15 @@ function createPassthroughComponent() {
 // Generic Lumen (web) stub: every named export becomes a component that forwards props
 // to a minimal DOM node so tests can query data-testid and fire events.
 module.exports = new Proxy(
-  { __esModule: true, InteractiveIcon, Tooltip, TooltipContent, TooltipTrigger },
+  {
+    __esModule: true,
+    Avatar,
+    InteractiveIcon,
+    resolveAvatarColor,
+    Tooltip,
+    TooltipContent,
+    TooltipTrigger,
+  },
   {
     get(target, prop) {
       if (prop in target) return target[prop];
