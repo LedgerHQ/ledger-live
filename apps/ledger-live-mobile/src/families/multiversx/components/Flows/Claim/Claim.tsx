@@ -17,7 +17,7 @@ import ValidationError from "./components/ValidationError";
 import ValidationSuccess from "./components/ValidationSuccess";
 
 import type { MultiversXClaimRewardsFlowParamList } from "./types";
-import { useNotificationsContext } from "LLM/features/NotificationsPrompt";
+import { useNotificationsPrompt } from "LLM/features/NotificationsPrompt";
 
 const Stack = createNativeStackNavigator<MultiversXClaimRewardsFlowParamList>();
 const totalSteps = "3";
@@ -32,7 +32,7 @@ const options = {
 const Claim = () => {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const { notifyFlowCompleted } = useNotificationsContext();
+  const { notifyFlowCompleted } = useNotificationsPrompt();
 
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
 

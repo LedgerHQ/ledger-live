@@ -10,10 +10,7 @@ import { component } from "../index";
 import { HEDERA_ACCOUNT_1, overrideWithHederaAccount1 } from "../../__mocks__/account.mock";
 import { makeMockAccountBridge } from "../../__mocks__/bridge.mock";
 import { mockEnrichedDelegation } from "../../__mocks__/delegation.mock";
-
-jest.mock("LLM/features/NotificationsPrompt", () => ({
-  useNotificationsContext: () => ({ notifyFlowCompleted: jest.fn() }),
-}));
+import { NotificationsPromptProvider } from "LLM/features/NotificationsPrompt";
 
 jest.mock(
   "@ledgerhq/live-common/hw/actions/app",
@@ -72,9 +69,11 @@ const OuterStack = createNativeStackNavigator();
 
 function RedelegationFlowHarness() {
   return (
-    <OuterStack.Navigator screenOptions={{ headerShown: false }}>
-      <OuterStack.Screen name={NavigatorName.HederaRedelegationFlow} component={component} />
-    </OuterStack.Navigator>
+    <NotificationsPromptProvider>
+      <OuterStack.Navigator screenOptions={{ headerShown: false }}>
+        <OuterStack.Screen name={NavigatorName.HederaRedelegationFlow} component={component} />
+      </OuterStack.Navigator>
+    </NotificationsPromptProvider>
   );
 }
 

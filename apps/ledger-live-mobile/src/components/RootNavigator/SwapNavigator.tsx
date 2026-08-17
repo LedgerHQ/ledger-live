@@ -17,7 +17,7 @@ import { StackNavigatorNavigation, StackNavigatorProps } from "./types/helpers";
 import { SwapNavigatorParamList } from "./types/SwapNavigator";
 import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
 import SwapCustomError from "~/screens/Swap/SubScreens/SwapCustomError";
-import { useNotificationsContext } from "LLM/features/NotificationsPrompt";
+import { useNotificationsPrompt } from "LLM/features/NotificationsPrompt";
 
 const TRACKING_SOURCES = {
   Accounts: "Account",
@@ -55,7 +55,7 @@ export default function SwapNavigator(
   const noNanoBuyNanoWallScreenOptions = useNoNanoBuyNanoWallScreenOptions();
   const track = useTrack();
   const navigation = useNavigation<StackNavigatorNavigation<SwapNavigatorParamList>>();
-  const { notifyFlowCompleted } = useNotificationsContext();
+  const { notifyFlowCompleted } = useNotificationsPrompt();
 
   const trackButtonClick = useCallback(
     (source: string) => {

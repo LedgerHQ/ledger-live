@@ -27,7 +27,7 @@ export function useNotificationsPromptDrawerScheduler() {
         eventTimeoutRef.current = null;
       }
 
-      eventTimeoutRef.current = setTimeout(() => {
+      const commit = () => {
         eventTimeoutRef.current = null;
         const resolvedPromptTarget =
           source === "inactivity" ? "globalPushNotifications" : drawerPromptTarget;
@@ -35,7 +35,14 @@ export function useNotificationsPromptDrawerScheduler() {
         dispatch(setNotificationsDrawerSource(source));
         dispatch(setNotificationsDrawerPromptTarget(resolvedPromptTarget));
         dispatch(setNotificationsModalOpen(true));
-      }, timer);
+      };
+
+      if (timer <= 0) {
+        commit();
+        return;
+      }
+
+      eventTimeoutRef.current = setTimeout(commit, timer);
     },
     [dispatch],
   );

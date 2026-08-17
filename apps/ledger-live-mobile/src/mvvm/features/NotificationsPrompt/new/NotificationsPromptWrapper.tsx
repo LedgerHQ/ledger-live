@@ -1,12 +1,10 @@
 import React from "react";
 import { FeatureToggle } from "@features/platform-feature-flags";
 import { NotificationsPromptDrawer } from "LLM/features/NotificationsPrompt/screens/NotificationsPromptDrawer";
-import { NotificationsPromptBootstrap } from "LLM/features/NotificationsPrompt/new/NotificationsPromptBootstrap";
 
 export function NotificationsPromptWrapper() {
   return (
     <FeatureToggle featureId="brazePushNotifications">
-      <NotificationsPromptBootstrap />
       <NotificationsPromptDrawer />
     </FeatureToggle>
   );

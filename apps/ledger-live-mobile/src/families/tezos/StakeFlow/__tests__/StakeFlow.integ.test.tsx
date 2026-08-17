@@ -9,16 +9,11 @@ import { component as StakeFlow } from "../index";
 import { NavigatorName, ScreenName } from "~/const";
 import { makeMockTezosAccount } from "../../__tests__/testUtils";
 import type { TezosStakeFlowParamList } from "../types";
+import { NotificationsPromptProvider } from "LLM/features/NotificationsPrompt";
 
 jest.mock("@ledgerhq/live-dmk-mobile", () => ({}), { virtual: true });
 
 const mockAccount = makeMockTezosAccount("tezos-stake-integ");
-
-// The stake flow completes a notification prompt on flow exit; stub the context so the
-// navigator doesn't need the real provider tree.
-jest.mock("LLM/features/NotificationsPrompt", () => ({
-  useNotificationsContext: () => ({ notifyFlowCompleted: jest.fn() }),
-}));
 
 jest.mock("LLM/hooks/useAccountScreen", () => ({
   useAccountScreen: () => ({ account: mockAccount, parentAccount: null }),
@@ -103,14 +98,16 @@ const EntryScreen = ({
 };
 
 const TestNavigator = () => (
-  <RootStack.Navigator initialRouteName="Entry">
-    <RootStack.Screen name="Entry" component={EntryScreen} />
-    <RootStack.Screen
-      name={NavigatorName.TezosStakeFlow}
-      component={StakeFlow}
-      options={{ headerShown: false }}
-    />
-  </RootStack.Navigator>
+  <NotificationsPromptProvider>
+    <RootStack.Navigator initialRouteName="Entry">
+      <RootStack.Screen name="Entry" component={EntryScreen} />
+      <RootStack.Screen
+        name={NavigatorName.TezosStakeFlow}
+        component={StakeFlow}
+        options={{ headerShown: false }}
+      />
+    </RootStack.Navigator>
+  </NotificationsPromptProvider>
 );
 
 describe("Tezos stake flow (integration)", () => {

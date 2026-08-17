@@ -16,7 +16,7 @@ import SendValidationError from "~/screens/SendFunds/07-ValidationError";
 import { getStackNavigatorConfig, bridgeSuspenseScreenLayout } from "~/navigation/navigatorConfig";
 import StepHeader from "../StepHeader";
 import type { SendFundsNavigatorStackParamList } from "./types/SendFundsNavigator";
-import { useNotificationsContext } from "LLM/features/NotificationsPrompt";
+import { useNotificationsPrompt } from "LLM/features/NotificationsPrompt";
 import perFamilySendFlow from "~/generated/customSendFlow";
 
 const totalSteps = "5";
@@ -26,7 +26,7 @@ const Stack = createNativeStackNavigator<SendFundsNavigatorStackParamList>();
 export default function SendFundsNavigator() {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const { notifyFlowCompleted } = useNotificationsContext();
+  const { notifyFlowCompleted } = useNotificationsPrompt();
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
 
   return (

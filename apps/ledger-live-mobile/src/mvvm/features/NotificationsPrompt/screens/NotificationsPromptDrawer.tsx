@@ -1,7 +1,12 @@
 import React, { useCallback, useRef } from "react";
 import { useTranslation } from "~/context/Locale";
 import { Flex, Link as TextLink, Button } from "@ledgerhq/native-ui";
-import { useNotifications } from "LLM/features/NotificationsPrompt";
+import {
+  useNotificationsData,
+  useNotificationsDrawer,
+  useNotificationsPromptEligibility,
+} from "LLM/features/NotificationsPrompt";
+import { useNotificationsPermission } from "LLM/hooks/useNotificationsPermission";
 import QueuedDrawer from "LLM/components/QueuedDrawer";
 import { NotificationsDrawerIllustration } from "LLM/features/NotificationsPrompt/components/NotificationsDrawerIllustration";
 import { NotificationsPromptContent } from "LLM/features/NotificationsPrompt/components/NotificationsPromptContent";
@@ -18,6 +23,21 @@ type DrawerDisplayState = {
 
 export const NotificationsPromptDrawer = () => {
   const { t } = useTranslation();
+  const { permissionStatus, requestPushNotificationsPermission } = useNotificationsPermission();
+  const {
+    notifications,
+    pushNotificationsDataOfUser,
+    enableAppNotifications,
+    markUserAsOptIn,
+    markUserAsOptOut,
+    updateUserLastInactiveTime,
+  } = useNotificationsData();
+  const { nextRepromptDelay } = useNotificationsPromptEligibility({
+    permissionStatus,
+    areNotificationsAllowed: notifications.areNotificationsAllowed,
+    transactionsAlertsCategory: notifications.transactionsAlertsCategory,
+    pushNotificationsDataOfUser,
+  });
   const {
     drawerSource,
     drawerPromptTarget,
@@ -25,9 +45,16 @@ export const NotificationsPromptDrawer = () => {
     handleAllowNotificationsPress,
     handleDelayLaterPress,
     handleCloseFromBackdropPress,
-    nextRepromptDelay,
+  } = useNotificationsDrawer({
+    permissionStatus,
     pushNotificationsDataOfUser,
-  } = useNotifications();
+    nextRepromptDelay,
+    markUserAsOptOut,
+    markUserAsOptIn,
+    enableAppNotifications,
+    requestPushNotificationsPermission,
+    updateUserLastInactiveTime,
+  });
 
   const drawerDisplayStateRef = useRef<DrawerDisplayState>({
     drawerSource: undefined,

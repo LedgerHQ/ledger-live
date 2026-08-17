@@ -18,12 +18,12 @@ import ClaimRewardsValidation from "./03-Validation";
 import ClaimRewardsValidationError from "./03-ValidationError";
 import ClaimRewardsValidationSuccess from "./03-ValidationSuccess";
 import type { AlgorandClaimRewardsFlowParamList } from "./type";
-import { useNotificationsContext } from "LLM/features/NotificationsPrompt";
+import { useNotificationsPrompt } from "LLM/features/NotificationsPrompt";
 
 function ClaimRewardsFlow() {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const { notifyFlowCompleted } = useNotificationsContext();
+  const { notifyFlowCompleted } = useNotificationsPrompt();
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
   return (
     <Stack.Navigator

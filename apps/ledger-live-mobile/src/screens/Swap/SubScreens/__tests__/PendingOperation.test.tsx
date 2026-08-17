@@ -6,14 +6,17 @@ import { BASE_NAVIGATOR_ID, ScreenName } from "~/const";
 import { track } from "~/analytics";
 import type { State } from "~/reducers/types";
 import { PendingOperation } from "../PendingOperation";
+import { NotificationsPromptProvider } from "LLM/features/NotificationsPrompt";
 
-const mockNotifyFlowCompleted = jest.fn();
+const AFTER_ACTION_TRACK_EVENT = "attempt_to_trigger_push_notification_drawer_after_action";
 
-jest.mock("LLM/features/NotificationsPrompt", () => ({
-  useNotificationsContext: () => ({
-    notifyFlowCompleted: mockNotifyFlowCompleted,
-  }),
-}));
+function renderPendingOperation(ui: React.ReactElement) {
+  return render(<NotificationsPromptProvider>{ui}</NotificationsPromptProvider>);
+}
+
+function afterActionTrackCalls() {
+  return jest.mocked(track).mock.calls.filter(([event]) => event === AFTER_ACTION_TRACK_EVENT);
+}
 
 function getCloseOnPress(navigation: ReturnType<typeof buildNavigation>): () => void {
   const opts = navigation.setOptions.mock.calls
@@ -70,12 +73,11 @@ const routeWithOptionalParams = {
 describe("PendingOperation", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockNotifyFlowCompleted.mockClear();
   });
 
   it("should navigate to swap history and open transaction status details", async () => {
     const navigation = buildNavigation([ScreenName.SwapTab, ScreenName.SwapHistory]);
-    const { store, user } = render(
+    const { store, user } = renderPendingOperation(
       <PendingOperation route={route as never} navigation={navigation as never} />,
     );
 
@@ -102,7 +104,7 @@ describe("PendingOperation", () => {
 
   it("should navigate locally to swap history and open transaction status details when SwapTab is unavailable", async () => {
     const navigation = buildNavigation([ScreenName.SwapHistory]);
-    const { store, user } = render(
+    const { store, user } = renderPendingOperation(
       <PendingOperation route={route as never} navigation={navigation as never} />,
     );
 
@@ -129,11 +131,15 @@ describe("PendingOperation", () => {
 
   it("should call notifyFlowCompleted and navigate to SwapTab when close button is pressed", async () => {
     const navigation = buildNavigation([ScreenName.SwapTab, ScreenName.SwapHistory]);
-    render(<PendingOperation route={route as never} navigation={navigation as never} />);
+    renderPendingOperation(
+      <PendingOperation route={route as never} navigation={navigation as never} />,
+    );
 
     getCloseOnPress(navigation)();
 
-    expect(mockNotifyFlowCompleted).toHaveBeenCalledWith("swap");
+    expect(afterActionTrackCalls()).toEqual([
+      [AFTER_ACTION_TRACK_EVENT, expect.objectContaining({ action: "swap" })],
+    ]);
     expect(navigation.dispatch).toHaveBeenCalledWith(
       CommonActions.reset({ index: 0, routes: [{ name: ScreenName.SwapTab }] }),
     );
@@ -141,7 +147,9 @@ describe("PendingOperation", () => {
 
   it("should track analytics when close button is pressed", () => {
     const navigation = buildNavigation([ScreenName.SwapTab, ScreenName.SwapHistory]);
-    render(<PendingOperation route={route as never} navigation={navigation as never} />);
+    renderPendingOperation(
+      <PendingOperation route={route as never} navigation={navigation as never} />,
+    );
 
     getCloseOnPress(navigation)();
 
@@ -153,19 +161,23 @@ describe("PendingOperation", () => {
 
   it("should guard against double-tap on close button", () => {
     const navigation = buildNavigation([ScreenName.SwapTab, ScreenName.SwapHistory]);
-    render(<PendingOperation route={route as never} navigation={navigation as never} />);
+    renderPendingOperation(
+      <PendingOperation route={route as never} navigation={navigation as never} />,
+    );
 
     const onPress = getCloseOnPress(navigation);
     onPress();
     onPress();
 
-    expect(mockNotifyFlowCompleted).toHaveBeenCalledTimes(1);
+    expect(afterActionTrackCalls()).toHaveLength(1);
     expect(navigation.dispatch).toHaveBeenCalledTimes(1);
   });
 
   it("should call notifyFlowCompleted on native back gesture", () => {
     const navigation = buildNavigation([ScreenName.SwapTab, ScreenName.SwapHistory]);
-    render(<PendingOperation route={route as never} navigation={navigation as never} />);
+    renderPendingOperation(
+      <PendingOperation route={route as never} navigation={navigation as never} />,
+    );
 
     const beforeRemoveListener = navigation.addListener.mock.calls.find(
       ([event]: [string]) => event === "beforeRemove",
@@ -177,12 +189,14 @@ describe("PendingOperation", () => {
       data: { action: CommonActions.goBack() },
     });
 
-    expect(mockNotifyFlowCompleted).toHaveBeenCalledWith("swap");
+    expect(afterActionTrackCalls()).toEqual([
+      [AFTER_ACTION_TRACK_EVENT, expect.objectContaining({ action: "swap" })],
+    ]);
   });
 
   it("should render with isEmbeddedSwap, sponsored, and toCurrency when provided", async () => {
     const navigation = buildNavigation([ScreenName.SwapTab, ScreenName.SwapHistory]);
-    render(
+    renderPendingOperation(
       <PendingOperation
         route={routeWithOptionalParams as never}
         navigation={navigation as never}
@@ -194,7 +208,9 @@ describe("PendingOperation", () => {
 
   it("should not call notifyFlowCompleted on native back when close button already fired it", () => {
     const navigation = buildNavigation([ScreenName.SwapTab, ScreenName.SwapHistory]);
-    render(<PendingOperation route={route as never} navigation={navigation as never} />);
+    renderPendingOperation(
+      <PendingOperation route={route as never} navigation={navigation as never} />,
+    );
 
     getCloseOnPress(navigation)();
 
@@ -206,7 +222,6 @@ describe("PendingOperation", () => {
       data: { action: CommonActions.goBack() },
     });
 
-    // Only one call — from the close button; beforeRemove skips because allowRemovalRef is true
-    expect(mockNotifyFlowCompleted).toHaveBeenCalledTimes(1);
+    expect(afterActionTrackCalls()).toHaveLength(1);
   });
 });

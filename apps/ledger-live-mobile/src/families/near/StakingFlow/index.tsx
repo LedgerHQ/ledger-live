@@ -16,14 +16,14 @@ import StakingSummary from "./02-Summary";
 import StakingValidationError from "./04-ValidationError";
 import StakingValidationSuccess from "./04-ValidationSuccess";
 import { NearStakingFlowParamList } from "./types";
-import { useNotificationsContext } from "LLM/features/NotificationsPrompt";
+import { useNotificationsPrompt } from "LLM/features/NotificationsPrompt";
 
 const totalSteps = "3";
 
 function StakingFlow() {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const { notifyFlowCompleted } = useNotificationsContext();
+  const { notifyFlowCompleted } = useNotificationsPrompt();
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
   return (
     <Stack.Navigator

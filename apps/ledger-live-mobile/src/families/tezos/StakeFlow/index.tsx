@@ -12,14 +12,14 @@ import StakeConnectDevice from "~/screens/ConnectDevice";
 import StakeValidationSuccess from "./02-ValidationSuccess";
 import StakeValidationError from "./02-ValidationError";
 import type { TezosStakeFlowParamList } from "./types";
-import { useNotificationsContext } from "LLM/features/NotificationsPrompt";
+import { useNotificationsPrompt } from "LLM/features/NotificationsPrompt";
 
 const totalSteps = "3";
 
 function StakeFlow() {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const { notifyFlowCompleted } = useNotificationsContext();
+  const { notifyFlowCompleted } = useNotificationsPrompt();
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
   return (
     <Stack.Navigator

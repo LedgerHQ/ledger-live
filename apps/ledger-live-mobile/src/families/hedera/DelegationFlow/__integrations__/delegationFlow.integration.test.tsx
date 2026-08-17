@@ -9,10 +9,7 @@ import { NavigatorName, ScreenName } from "~/const";
 import { component } from "../index";
 import { HEDERA_ACCOUNT_1, overrideWithHederaAccount1 } from "../../__mocks__/account.mock";
 import { makeMockAccountBridge } from "../../__mocks__/bridge.mock";
-
-jest.mock("LLM/features/NotificationsPrompt", () => ({
-  useNotificationsContext: () => ({ notifyFlowCompleted: jest.fn() }),
-}));
+import { NotificationsPromptProvider } from "LLM/features/NotificationsPrompt";
 
 jest.mock("@ledgerhq/live-common/families/hedera/react", () => ({
   useHederaValidators: jest.fn(() => [
@@ -76,9 +73,11 @@ const OuterStack = createNativeStackNavigator();
 
 function DelegationFlowHarness() {
   return (
-    <OuterStack.Navigator screenOptions={{ headerShown: false }}>
-      <OuterStack.Screen name={NavigatorName.HederaDelegationFlow} component={component} />
-    </OuterStack.Navigator>
+    <NotificationsPromptProvider>
+      <OuterStack.Navigator screenOptions={{ headerShown: false }}>
+        <OuterStack.Screen name={NavigatorName.HederaDelegationFlow} component={component} />
+      </OuterStack.Navigator>
+    </NotificationsPromptProvider>
   );
 }
 
