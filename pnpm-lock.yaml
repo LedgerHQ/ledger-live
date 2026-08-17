@@ -4974,6 +4974,9 @@ importers:
       '@features/platform-app-lock':
         specifier: workspace:*
         version: link:../../platform/app-lock
+      '@shared/ui-queued-bottom-sheet':
+        specifier: workspace:*
+        version: link:../../../shared/ui-queued-bottom-sheet
     devDependencies:
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'

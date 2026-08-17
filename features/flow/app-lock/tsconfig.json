@@ -7,7 +7,8 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
     "noEmit": true,
-    "types": ["jest"]
+    "types": ["jest"],
+    "moduleSuffixes": [".native", ""]
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "lib"]
