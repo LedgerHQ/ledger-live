@@ -463,12 +463,30 @@ export const broadcastHexTron = async (
 /**
  * {@link https://github.com/tronprotocol/java-tron/blob/develop/framework/src/main/java/org/tron/core/services/http/GetAccountServlet.java | Tron Framework}
  */
-export async function fetchTronAccount(
+export async function fetchTronAccountOrFail(
   config: TronCoinConfig,
   addr: string,
 ): Promise<AccountTronAPI[]> {
   const data = await fetch(config, `/v1/accounts/${addr}`);
   return data.data;
+}
+
+export async function fetchTronAccountOrEmpty(
+  config: TronCoinConfig,
+  addr: string,
+): Promise<AccountTronAPI[]> {
+  try {
+    return await fetchTronAccountOrFail(config, addr);
+  } catch {
+    return [];
+  }
+}
+
+export async function fetchTronAccount(
+  config: TronCoinConfig,
+  addr: string,
+): Promise<AccountTronAPI[]> {
+  return fetchTronAccountOrEmpty(config, addr);
 }
 
 export async function getLastBlock(config: TronCoinConfig): Promise<Block> {
