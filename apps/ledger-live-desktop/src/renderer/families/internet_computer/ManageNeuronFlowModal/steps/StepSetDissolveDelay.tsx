@@ -36,12 +36,18 @@ const StepSetDissolveDelay = ({
   const value = isIncrease
     ? (transaction?.additionalDissolveDelay ?? "")
     : (transaction?.dissolveDelay ?? "");
-  const days = value ? String(Math.round(Number(value) / SECONDS_IN_DAY)) : "";
+  const enteredSeconds = value ? BigInt(value) : 0n;
+  const days = value ? String(enteredSeconds / BigInt(SECONDS_IN_DAY)) : "";
 
   const onChange = useCallback(
     (nextDays: string) => {
       const digits = nextDays.replace(/\D/g, "");
-      const seconds = digits ? String(Number(digits) * SECONDS_IN_DAY) : "";
+      // Parsed as BigInt, not Number: a pasted 300-digit value overflows to Infinity, which then
+      // throws inside BigInt() while the resulting delay renders. Clamping holds the input to the
+      // bound the description already advertises, rather than leaving it to submit-time validation.
+      const entered = digits ? BigInt(digits) : 0n;
+      const clamped = entered > BigInt(MAX_DAYS) ? BigInt(MAX_DAYS) : entered;
+      const seconds = digits ? String(clamped * BigInt(SECONDS_IN_DAY)) : "";
       onUpdateTransaction(tx => ({
         ...tx,
         ...(isIncrease ? { additionalDissolveDelay: seconds } : { dissolveDelay: seconds }),
@@ -52,9 +58,7 @@ const StepSetDissolveDelay = ({
 
   if (!neuron) return null;
 
-  const resultingSeconds = isIncrease
-    ? currentSeconds + BigInt(Number(value) || 0)
-    : BigInt(Number(value) || 0);
+  const resultingSeconds = isIncrease ? currentSeconds + enteredSeconds : enteredSeconds;
 
   return (
     <Box flow={3} px={4}>

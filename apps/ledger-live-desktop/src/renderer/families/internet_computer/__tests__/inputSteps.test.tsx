@@ -1,6 +1,7 @@
 import {
   KNOWN_TOPICS,
   MIN_NEURON_STAKE,
+  NNS_MAXIMUM_DISSOLVE_DELAY,
   NNS_MINIMUM_DISSOLVE_DELAY_TO_VOTE,
   SECONDS_IN_DAY,
 } from "@ledgerhq/live-common/families/internet_computer/consts";
@@ -58,6 +59,37 @@ describe("StepSetDissolveDelay", () => {
 
     const patched = applyUpdate(props.onUpdateTransaction as jest.Mock, {});
     expect(patched.dissolveDelay).toBe(String(7 * SECONDS_IN_DAY));
+  });
+
+  // The protocol maximum is 730.5 days; entry is in whole days, so the clamp lands on 730.
+  const MAX_ENTERABLE_SECONDS = String(
+    Math.floor(NNS_MAXIMUM_DISSOLVE_DELAY / SECONDS_IN_DAY) * SECONDS_IN_DAY,
+  );
+
+  it("clamps an entry above the maximum to the maximum", () => {
+    const props = stepProps({ transaction: { type: "set_dissolve_delay", dissolveDelay: "" } });
+    render(<StepSetDissolveDelay {...props} />);
+
+    fireEvent.change(screen.getByTestId("icp-dissolve-delay-input"), {
+      target: { value: "99999" },
+    });
+
+    const patched = applyUpdate(props.onUpdateTransaction as jest.Mock, {});
+    expect(patched.dissolveDelay).toBe(MAX_ENTERABLE_SECONDS);
+  });
+
+  // Number() turns a pasted 300-digit value into Infinity, which used to throw inside BigInt()
+  // while rendering the resulting delay — a crash of the step, not a blocked submit.
+  it("survives a pasted number too large for a double", () => {
+    const props = stepProps({ transaction: { type: "set_dissolve_delay", dissolveDelay: "" } });
+    render(<StepSetDissolveDelay {...props} />);
+
+    fireEvent.change(screen.getByTestId("icp-dissolve-delay-input"), {
+      target: { value: "9".repeat(400) },
+    });
+
+    const patched = applyUpdate(props.onUpdateTransaction as jest.Mock, {});
+    expect(patched.dissolveDelay).toBe(MAX_ENTERABLE_SECONDS);
   });
 
   it("warns when the resulting delay would be too short to vote", () => {
