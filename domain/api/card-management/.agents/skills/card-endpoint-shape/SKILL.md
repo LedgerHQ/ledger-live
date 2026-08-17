@@ -1,9 +1,6 @@
 ---
 name: card-endpoint-shape
-description: |
-  The shape of an endpoint in @domain/api-card-management: `query` only, never `queryFn`, with
-  `rawResponseSchema`, `transformResponse` and `responseSchema` doing the rest.
-  Read this before adding or editing an endpoint in `domain/api/card-management/src/api.ts`.
+description: Read this before adding or editing an endpoint in `domain/api/card-management/src/api.ts`.
 ---
 
 # Card endpoint shape
