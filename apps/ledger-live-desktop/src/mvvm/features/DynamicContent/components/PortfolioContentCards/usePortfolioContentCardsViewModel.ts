@@ -3,9 +3,9 @@ import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import type { PortfolioContentCard } from "~/types/dynamicContent";
 import { usePortfolioCarouselCards } from "../../hooks/usePortfolioCarouselCards";
 import type { CarouselActions } from "../../types";
+import { MAX_DESKTOP_BRAZE_PLACEMENT_CARDS } from "../../utils/constants";
 
-/** Desktop Braze placement grid: max 2 cards in the row (LN upsell counts as one when present). */
-export const MAX_DESKTOP_BRAZE_PLACEMENT_CARDS = 2;
+export { MAX_DESKTOP_BRAZE_PLACEMENT_CARDS } from "../../utils/constants";
 
 export type BrazeCarouselEntry = {
   card: PortfolioContentCard;
