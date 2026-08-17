@@ -20,7 +20,7 @@
 "@ledgerhq/coin-canton": major
 "@ledgerhq/coin-module-boilerplate": major
 "@ledgerhq/coin-kaspa": major
-"@ledgerhq/live-common": patch
+"@ledgerhq/live-common": minor
 ---
 
 Update combine to accept string[] per ADR-047

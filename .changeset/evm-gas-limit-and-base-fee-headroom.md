@@ -1,6 +1,6 @@
 ---
-"@ledgerhq/coin-evm": patch
-"@shared/env": patch
+"@ledgerhq/coin-evm": minor
+"@shared/env": minor
 ---
 
 Fix EVM transactions being signed with a zero gas limit, and widen the EIP-1559 max fee headroom.

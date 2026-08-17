@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/live-signer-zcash": patch
+"@ledgerhq/live-signer-zcash": minor
 ---
 
 Report a real error when the coin being spent came from a V6 (NU6.3 / Ironwood) transaction and the installed Zcash app cannot read one.

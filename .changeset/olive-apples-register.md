@@ -20,7 +20,7 @@
 "@ledgerhq/coin-canton": minor
 "@ledgerhq/coin-module-boilerplate": minor
 "@ledgerhq/coin-kaspa": minor
-"@ledgerhq/live-common": patch
+"@ledgerhq/live-common": minor
 ---
 
 Add unsupported `register` to CoinModuleApi implementations (ADR-046)
