@@ -17,6 +17,7 @@ import {
   mockUnspentTokenRecord2,
 } from "./account.fixture";
 import { MOCK_TOKEN_PROGRAM_ID } from "./currency.fixture";
+import { TEST_TOKEN_PROGRAM_ID, testnetSpentTokenRecord } from "./api.fixture";
 
 export const getMockedTransaction = (overrides?: Partial<Transaction>): Transaction => {
   return {
@@ -49,6 +50,13 @@ const baseTxIntentFields = {
   recipient: "aleo172yejeypnffsdft3nrlpwnu964sn83p7ga6dm5zj7ucmqfqjk5rq3pmx6f",
 } as const satisfies Partial<AleoTransactionIntent>;
 
+// must match SDK backend validation (top byte capped at 01/02/03 so each value stays below the curve's field modulus)
+export const MOCK_MULTI_RECORD_TVKS = [
+  "aa".repeat(31) + "01",
+  "bb".repeat(31) + "02",
+  "cc".repeat(31) + "03",
+];
+
 export const mockTxIntentTransferPublic: AleoTransactionIntent = {
   ...baseTxIntentFields,
   amount: 100n,
@@ -62,6 +70,7 @@ export const mockTxIntentTransferPrivate: AleoTransactionIntent = {
   data: {
     type: TRANSACTION_TYPE.TRANSFER_PRIVATE,
     records: [mockUnspentRecord1.decryptedData],
+    tvks: [],
   },
 };
 
@@ -72,6 +81,7 @@ export const mockTxIntentTransferPrivate2: AleoTransactionIntent = {
   data: {
     type: TRANSACTION_TYPE.TRANSFER_PRIVATE,
     records: [mockUnspentRecord1.decryptedData, mockUnspentRecord2.decryptedData],
+    tvks: MOCK_MULTI_RECORD_TVKS,
   },
 };
 
@@ -88,6 +98,7 @@ export const mockTxIntentSelfTransferToPublic: AleoTransactionIntent = {
   data: {
     type: TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC,
     records: [mockUnspentRecord1.decryptedData],
+    tvks: [],
   },
 };
 
@@ -98,6 +109,7 @@ export const mockTxIntentSelfTransferToPublic2: AleoTransactionIntent = {
   data: {
     type: TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC,
     records: [mockUnspentRecord1.decryptedData, mockUnspentRecord2.decryptedData],
+    tvks: MOCK_MULTI_RECORD_TVKS,
   },
 };
 
@@ -154,6 +166,7 @@ export const mockTxIntentTransferTokenPrivate: AleoTransactionIntent = {
     type: TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE,
     programId: MOCK_TOKEN_PROGRAM_ID,
     records: [mockUnspentTokenRecord1.decryptedData],
+    tvks: [],
   },
 };
 
@@ -165,6 +178,7 @@ export const mockTxIntentTransferTokenPrivate2: AleoTransactionIntent = {
     type: TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE,
     programId: MOCK_TOKEN_PROGRAM_ID,
     records: [mockUnspentTokenRecord1.decryptedData, mockUnspentTokenRecord2.decryptedData],
+    tvks: MOCK_MULTI_RECORD_TVKS,
   },
 };
 
@@ -176,6 +190,31 @@ export const mockTxIntentConvertTokenPrivateToPublic: AleoTransactionIntent = {
     type: TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC,
     programId: MOCK_TOKEN_PROGRAM_ID,
     records: [mockUnspentTokenRecord1.decryptedData],
+    tvks: [],
+  },
+};
+
+export const mockTxIntentTransferTokenPrivateReal: AleoTransactionIntent = {
+  ...baseTxIntentFields,
+  amount: 1n,
+  type: TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE,
+  data: {
+    type: TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE,
+    programId: TEST_TOKEN_PROGRAM_ID,
+    records: [testnetSpentTokenRecord],
+    tvks: [],
+  },
+};
+
+export const mockTxIntentConvertTokenPrivateToPublicReal: AleoTransactionIntent = {
+  ...baseTxIntentFields,
+  amount: 1n,
+  type: TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC,
+  data: {
+    type: TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC,
+    programId: TEST_TOKEN_PROGRAM_ID,
+    records: [testnetSpentTokenRecord],
+    tvks: [],
   },
 };
 
@@ -187,6 +226,7 @@ export const mockTxIntentConvertTokenPrivateToPublic2: AleoTransactionIntent = {
     type: TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC,
     programId: MOCK_TOKEN_PROGRAM_ID,
     records: [mockUnspentTokenRecord1.decryptedData, mockUnspentTokenRecord2.decryptedData],
+    tvks: MOCK_MULTI_RECORD_TVKS,
   },
 };
 

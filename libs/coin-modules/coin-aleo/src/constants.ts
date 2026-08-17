@@ -24,6 +24,8 @@ export const TRANSACTION_TYPE = {
   CONVERT_TOKEN_PUBLIC_TO_PRIVATE: "convert_token_public_to_private",
 } as const;
 
+export const FEE_INTENT_TYPES = new Set(["fee_public", "fee_private"]);
+
 // Function names that represent actual private token transfers between parties.
 // Used to exclude internal operations (split, join, fee_private, etc.) from history.
 export const PRIVATE_TRANSFER_FUNCTIONS = new Set([

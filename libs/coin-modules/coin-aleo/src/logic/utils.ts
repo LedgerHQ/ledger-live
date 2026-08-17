@@ -54,6 +54,7 @@ import type {
   TransactionPrivate,
   AleoCoinConfig,
   AleoPrivateRecord,
+  FeeConfiguration,
   AleoUnspentRecord,
   AleoTransactionIntent,
   SigningStrategy,
@@ -320,6 +321,22 @@ export function getTransactionType(intent: TransactionIntent): TransactionType {
   invariant(transactionType, `aleo: unsupported transaction intent type: ${intent.type}`);
 
   return transactionType;
+}
+
+export function buildFeeConfigurationForRootIntent({
+  isPrivate,
+  maxBaseFee,
+  maxPriorityFee,
+}: {
+  isPrivate: boolean;
+  maxBaseFee: bigint;
+  maxPriorityFee: bigint;
+}): FeeConfiguration {
+  return {
+    function_name: isPrivate ? "fee_private" : "fee_public",
+    max_base_fee: maxBaseFee.toString(),
+    max_priority_fee: maxPriorityFee.toString(),
+  };
 }
 
 export function getAleoSubAccount(
@@ -873,9 +890,11 @@ function buildTransactionIntentBase(
 export function createTransactionIntent({
   account,
   transaction,
+  tvks = [],
 }: {
   account: AleoAccount;
   transaction: Transaction;
+  tvks?: string[];
 }): AleoTransactionIntent {
   const tokenAccount = isTokenTransaction(transaction)
     ? getAleoSubAccount(account, transaction.subAccountId)
@@ -899,6 +918,7 @@ export function createTransactionIntent({
             maxRecords: MAX_PRIVATE_RECORDS_PER_TRANSACTION,
             findRecord: commitment => getRecordByCommitment({ account, commitment }),
           }),
+          tvks,
         },
       };
 
@@ -929,6 +949,7 @@ export function createTransactionIntent({
             maxRecords: MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION,
             findRecord: commitment => getRecordByCommitment({ account, commitment, tokenAccount }),
           }),
+          tvks,
         },
       };
     }

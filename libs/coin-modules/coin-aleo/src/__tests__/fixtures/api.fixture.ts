@@ -365,6 +365,13 @@ export const testnetInboundPrivateToPublicTx: AleoPublicTransaction = {
 
 export const TEST_TOKEN_PROGRAM_ID = "test_usad_stablecoin.aleo";
 
+export const testnetSpentTokenRecord: AleoDecryptedRecordResponse = {
+  owner: `${testnetAddress}.private`,
+  data: { amount: "1u128.private" },
+  nonce: "1344917106254048670972991786623247617474892323390373138993206886249401722645group",
+  version: 1,
+};
+
 // Outgoing transfer_private_to_public (credits) — testnetAddress converts a private record to
 // a THIRD PARTY's public balance (not itself). Exercises getTokenOutDetails's PRIVATE_TO_PUBLIC
 // branch, which is program-agnostic (reads plaintext public inputs, no token-argument offset).
