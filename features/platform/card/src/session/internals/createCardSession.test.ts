@@ -108,6 +108,23 @@ describe("createCardSession", () => {
     expect(slots.size).toBe(0);
   });
 
+  it("removes the cold key that landed when the other cold key fails", async () => {
+    const { store, slots } = fakeStore();
+    jest.mocked(store.write).mockImplementation(async (key, value) => {
+      if (key === CARD_SESSION_KEYS.lifetimes) {
+        throw new Error("keychain full");
+      }
+      slots.set(key, value);
+    });
+
+    await expect(createCardSession(store).cardSession.set(session)).rejects.toThrow(
+      "keychain full",
+    );
+
+    // The refresh token is a credential too, so an aborted login may not leave it behind.
+    expect(slots.size).toBe(0);
+  });
+
   it("does not let a clear land between the two halves of a set", async () => {
     // The Card base query calls `refreshCardSession` on any 401, from outside the login machine, so
     // this interleaving is reachable: it would remove the cold keys and leave the access token alone.
@@ -192,6 +209,31 @@ describe("createCardSession", () => {
 
     // The base query awaits this on a 401 without a try/catch; a rejection would lose the 401.
     await expect(cardSession.clear()).resolves.toBeUndefined();
+  });
+
+  it("stops serving the token after a clear the store refused", async () => {
+    const { store } = fakeStore();
+    const { cardSession, getCardSessionToken } = createCardSession(store);
+    await cardSession.set(session);
+    jest.mocked(store.remove).mockRejectedValue(new Error("keychain locked"));
+
+    await cardSession.clear();
+
+    // The value is still on disk, so only the cleared flag can keep the Bearer off the next request.
+    await expect(getCardSessionToken()).resolves.toBeNull();
+    await expect(cardSession.get()).resolves.toBeNull();
+  });
+
+  it("serves the token again after the next successful login", async () => {
+    const { store } = fakeStore();
+    const { cardSession, getCardSessionToken } = createCardSession(store);
+    jest.mocked(store.remove).mockRejectedValue(new Error("keychain locked"));
+    await cardSession.clear();
+
+    await cardSession.set(session);
+
+    await expect(getCardSessionToken()).resolves.toBe("at_token");
+    await expect(cardSession.get()).resolves.toEqual(session);
   });
 });
 

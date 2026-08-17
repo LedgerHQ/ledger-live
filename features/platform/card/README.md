@@ -39,9 +39,14 @@ therefore gets its own key, with the two lifetimes in a third. It also makes the
 base query reads one small key per request.
 
 The access token is the only key the request path reads, so it is written **last** and removed
-**first**. It therefore exists only while the whole session does: a cold key that fails to write leaves
-no Bearer behind, and a cleared session stops sending one immediately. A failed access-token write
-removes the keys it already wrote, so an aborted login leaves no refresh token behind either.
+**first**. It therefore exists only while the whole session does. A write that fails at any point removes
+every key it managed to store: the refresh token is a credential as much as the access token, and an
+aborted login must not leave either behind.
+
+A cleared session stops sending a Bearer even when the store refuses to forget. Removals are best
+effort, so a locked keychain would leave the value readable — an in-memory flag, raised before the first
+removal and lowered by the next successful write, closes that gap for the life of the process. A restart
+reads the store again, and a token that outlived its session answers `401`, which clears it for good.
 
 `set` and `clear` take turns on one queue. They have callers that know nothing about each other — `set`
 runs from the login machine, `clear` runs from `refreshCardSession`, which the base query calls on any

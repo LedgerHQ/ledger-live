@@ -21,30 +21,46 @@ export function createCardSession(store: CardSessionStore) {
     return result;
   }
 
-  async function writeSession(session: PayCardSession): Promise<void> {
-    // The access token is written last, because it is the only key the request path reads. A cold key
-    // that fails then leaves no Bearer behind for a session `get` would refuse to report.
-    await Promise.all([
-      store.write(CARD_SESSION_KEYS.refreshToken, session.refreshToken),
-      store.write(
-        CARD_SESSION_KEYS.lifetimes,
-        JSON.stringify({
-          expiresIn: session.expiresIn,
-          refreshTokenExpiresIn: session.refreshTokenExpiresIn,
-        }),
-      ),
-    ]);
+  /**
+   * True from the moment a session is cleared until a write succeeds.
+   *
+   * The store can refuse to forget — a locked keychain rejects every removal — and the access token
+   * would still read back afterwards. This flag makes "cleared means no Bearer" hold for the life of the
+   * process whatever the store did. A restart reads the store again, and a token that outlived its
+   * session answers 401, which clears it for good.
+   */
+  let isCleared = false;
 
+  async function writeSession(session: PayCardSession): Promise<void> {
     try {
+      // The access token is written last, because it is the only key the request path reads.
+      await Promise.all([
+        store.write(CARD_SESSION_KEYS.refreshToken, session.refreshToken),
+        store.write(
+          CARD_SESSION_KEYS.lifetimes,
+          JSON.stringify({
+            expiresIn: session.expiresIn,
+            refreshTokenExpiresIn: session.refreshTokenExpiresIn,
+          }),
+        ),
+      ]);
+
       await store.write(CARD_SESSION_KEYS.accessToken, session.accessToken);
     } catch (error) {
-      // The login is over, so the refresh token it wrote is a credential nothing will ever spend.
+      // Any failure ends the login, and every key it managed to write is a credential — the refresh
+      // token as much as the access token. Remove whatever landed.
       await removeSession();
       throw error;
     }
+
+    isCleared = false;
   }
 
   async function get(): Promise<PayCardSession | null> {
+    if (isCleared) {
+      return null;
+    }
+
     const [accessToken, refreshToken, lifetimes] = await Promise.all([
       store.read(CARD_SESSION_KEYS.accessToken),
       store.read(CARD_SESSION_KEYS.refreshToken),
@@ -61,13 +77,17 @@ export function createCardSession(store: CardSessionStore) {
 
   /**
    * The access token goes first, and no removal may reject. Every Card request reads that key, so a
-   * cleared session must stop sending a Bearer even when the store refuses to forget.
+   * cleared session must stop sending a Bearer even when the store refuses to forget — which is what
+   * `isCleared` guarantees, because a rejected removal leaves the value readable.
    *
    * Never throwing is the load-bearing part: the base query awaits `refreshCardSession` on a 401
    * without a try/catch, so a rejection here would turn a handled 401 into a thrown error that has lost
    * its `status`, and the login machine would read it as a network fault and keep the dead session.
    */
   async function removeSession(): Promise<void> {
+    // Raised before the first removal, so a store that refuses to forget cannot keep the session alive.
+    isCleared = true;
+
     await store.remove(CARD_SESSION_KEYS.accessToken).catch(() => undefined);
     await Promise.all([
       store.remove(CARD_SESSION_KEYS.refreshToken).catch(() => undefined),
@@ -85,7 +105,7 @@ export function createCardSession(store: CardSessionStore) {
    * the whole session does — and the request path must not queue behind a login.
    */
   async function getCardSessionToken(): Promise<string | null> {
-    return store.read(CARD_SESSION_KEYS.accessToken);
+    return isCleared ? null : store.read(CARD_SESSION_KEYS.accessToken);
   }
 
   /** No renewal yet (LIVE-34741): a 401 ends the session. */
