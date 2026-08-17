@@ -1805,6 +1805,9 @@ importers:
       '@features/platform-aggregated-assets':
         specifier: workspace:*
         version: link:../../features/platform/aggregated-assets
+      '@features/platform-app-lock':
+        specifier: workspace:*
+        version: link:../../features/platform/app-lock
       '@features/platform-card':
         specifier: workspace:*
         version: link:../../features/platform/card
@@ -2072,6 +2075,9 @@ importers:
       '@shared/i18n':
         specifier: workspace:*
         version: link:../../shared/i18n
+      '@shared/password-verifier':
+        specifier: workspace:*
+        version: link:../../shared/password-verifier
       '@shared/ui-info-state':
         specifier: workspace:*
         version: link:../../shared/ui-info-state
@@ -7651,6 +7657,9 @@ importers:
 
   features/platform/app-lock:
     dependencies:
+      '@reduxjs/toolkit':
+        specifier: 'catalog:'
+        version: 2.11.2
       zod:
         specifier: 'catalog:'
         version: 4.3.6
