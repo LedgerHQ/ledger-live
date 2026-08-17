@@ -18,8 +18,10 @@ export default function DebugContacts() {
     isEnabled,
     newBadge,
     eligibleAddressFamilies,
+    hasDismissedFeatureIntroduction,
     handleToggleEnabled,
     handleToggleNewBadge,
+    handleToggleFeatureIntroductionDismissed,
     handleSetEligibleAddressFamilies,
     handleRestoreDefaults,
     handleLoadSamples,
@@ -74,6 +76,25 @@ export default function DebugContacts() {
             isEnabled={isEnabled}
             families={eligibleAddressFamilies}
             onPresetSelect={handleSetEligibleAddressFamilies}
+          />
+        </Box>
+
+        <SectionHeader title="FEATURE INTRODUCTION" />
+
+        <Box
+          lx={{
+            backgroundColor: "surface",
+            borderRadius: "md",
+            padding: "s8",
+            marginBottom: "s24",
+          }}
+        >
+          <FeatureParamRow
+            label="Show introduction"
+            isFeatureEnabled
+            value={!hasDismissedFeatureIntroduction}
+            onToggle={handleToggleFeatureIntroductionDismissed}
+            testID="debug-contacts-feature-introduction-switch"
           />
         </Box>
 
