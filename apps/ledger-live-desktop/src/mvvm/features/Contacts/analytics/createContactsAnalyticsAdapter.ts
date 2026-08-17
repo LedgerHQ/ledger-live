@@ -5,7 +5,7 @@ import type {
 } from "@features/flow-contacts";
 import { track, trackPage } from "~/renderer/analytics/segment";
 import { CONTACTS_ANALYTICS_PLATFORM } from "./constants";
-import { mapContactsPageEventToSegmentCategory } from "./mapContactsPageEventToSegmentCategory";
+import { mapContactsPageEventToScreenCategory } from "./mapContactsPageEventToScreenCategory";
 
 export function createContactsAnalyticsAdapter(): ContactsAnalyticsAdapter {
   return {
@@ -16,7 +16,7 @@ export function createContactsAnalyticsAdapter(): ContactsAnalyticsAdapter {
       });
     },
     trackPage<T extends ContactsPageEventPayload["page"]>(payload: ContactsPageEventPayload<T>) {
-      const { category, name } = mapContactsPageEventToSegmentCategory(payload.page);
+      const { category, name } = mapContactsPageEventToScreenCategory(payload.page);
 
       trackPage(
         category,

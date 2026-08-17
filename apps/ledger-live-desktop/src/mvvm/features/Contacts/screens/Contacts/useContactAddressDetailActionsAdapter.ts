@@ -11,11 +11,8 @@ import {
   resolveContactAddressDetailActionsLabels,
   useContactAddressDetailActionsFlowBindings,
   useContactsAddressDetailActionsPorts,
-  CONTACTS_EVENT_SOURCE,
-  CONTACTS_PAGE_PROPERTY,
-  CONTACTS_TRACK_EVENTS,
   CONTACTS_TRACKING_BUTTON,
-  type ContactsTrackingButton,
+  trackContactAddressDetailQuickAction,
 } from "@features/flow-contacts";
 import { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
@@ -58,13 +55,8 @@ export function useContactAddressDetailActionsAdapter(
   const isSelectionActive = contactId !== undefined && addressId !== undefined;
   const labels = useMemo(() => resolveContactAddressDetailActionsLabels({ t }), [t]);
   const trackQuickAction = useCallback(
-    (button: ContactsTrackingButton) => {
-      analytics.trackEvent(CONTACTS_TRACK_EVENTS.BUTTON_CLICKED, {
-        source: CONTACTS_EVENT_SOURCE.QUICK_ACTION,
-        button,
-        page: CONTACTS_PAGE_PROPERTY.ADDRESS_DETAIL,
-        ...(asset ? { asset } : {}),
-      });
+    (button: Parameters<typeof trackContactAddressDetailQuickAction>[1]) => {
+      trackContactAddressDetailQuickAction(analytics, button, asset);
     },
     [analytics, asset],
   );

@@ -1,15 +1,22 @@
 import type { ContactAddress } from "@domain/entity-contact";
 import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 
 export type ContactsCurrencyAnalytics = Readonly<{
   network: string;
   asset: string;
 }>;
 
-async function findTokenCurrency(currencyId: ContactAddress["currencyId"]) {
+export type ResolveContactsCurrencyAnalyticsDependencies = Readonly<{
+  findTokenById(currencyId: ContactAddress["currencyId"]): Promise<TokenCurrency | undefined>;
+}>;
+
+async function findTokenCurrency(
+  currencyId: ContactAddress["currencyId"],
+  findTokenById: ResolveContactsCurrencyAnalyticsDependencies["findTokenById"],
+) {
   try {
-    return await getCryptoAssetsStore().findTokenById(currencyId);
+    return await findTokenById(currencyId);
   } catch {
     return undefined;
   }
@@ -17,6 +24,7 @@ async function findTokenCurrency(currencyId: ContactAddress["currencyId"]) {
 
 export async function resolveContactsCurrencyAnalytics(
   currencyId: ContactAddress["currencyId"],
+  dependencies: ResolveContactsCurrencyAnalyticsDependencies,
 ): Promise<ContactsCurrencyAnalytics> {
   const cryptoCurrency = findCryptoCurrencyById(currencyId);
 
@@ -27,7 +35,7 @@ export async function resolveContactsCurrencyAnalytics(
     };
   }
 
-  const token = await findTokenCurrency(currencyId);
+  const token = await findTokenCurrency(currencyId, dependencies.findTokenById);
 
   if (token) {
     const parentCurrency = findCryptoCurrencyById(token.parentCurrencyId);

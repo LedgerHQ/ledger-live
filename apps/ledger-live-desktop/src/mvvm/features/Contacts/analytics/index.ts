@@ -1,5 +1,5 @@
 export * from "./constants";
 export * from "./createContactsAnalyticsAdapter";
-export * from "./mapContactsPageEventToSegmentCategory";
-export * from "./resolveContactsCurrencyAnalytics";
+export { mapContactsPageEventToScreenCategory } from "./mapContactsPageEventToScreenCategory";
+export { resolveContactsCurrencyAnalytics } from "@features/platform-contacts";
 export * from "./useContactsAnalytics";

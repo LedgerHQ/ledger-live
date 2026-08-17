@@ -25,7 +25,9 @@
     "unimported": "pnpm knip --directory ../../.. -W features/platform/contacts"
   },
   "dependencies": {
-    "@domain/entity-contact": "workspace:*"
+    "@domain/entity-contact": "workspace:*",
+    "@domain/entity-currency-crypto": "workspace:*",
+    "@domain/entity-currency-token": "workspace:*"
   },
   "peerDependencies": {
     "react": ">=19.0.0",
