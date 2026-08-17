@@ -171,6 +171,11 @@ export async function getEnvs() {
   return fetchData({ type: "getEnvs", id: uniqueId() });
 }
 
+/** Last Buy/Sell handoff URL (`goToManifest` + `goToURL`) seen by the app, or "" if none yet. */
+export async function getPtxHandoff() {
+  return fetchData({ type: "getPtxHandoff", id: uniqueId() });
+}
+
 async function fetchData(message: MessageData, timeout = RESPONSE_TIMEOUT): Promise<string> {
   return new Promise<string>(resolve => {
     postMessage(message);
@@ -219,6 +224,14 @@ function onMessage(messageStr: string) {
       const pending = global.pendingCallbacks?.get("getLogs");
       if (pending) {
         global.pendingCallbacks.delete("getLogs");
+        pending.callback(msg.payload);
+      }
+      break;
+    }
+    case "ptxHandoff": {
+      const pending = global.pendingCallbacks?.get("getPtxHandoff");
+      if (pending) {
+        global.pendingCallbacks.delete("getPtxHandoff");
         pending.callback(msg.payload);
       }
       break;
