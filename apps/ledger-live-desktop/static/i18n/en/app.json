@@ -10223,9 +10223,10 @@
       "listTitle": "Neurons",
       "description": "Confirming your following restores a neuron's voting power for another six months.",
       "timeUntilLoss": "Voting power lost in",
+      "losing": "{{duration}} — losing power now",
       "expired": "Already lost",
       "confirm": "Confirm",
-      "empty": "None of your neurons need confirming right now."
+      "empty": "None of your neurons are on a confirmation clock right now."
     },
     "summaryFooter": {
       "stakedBalance": "Staked Balance",

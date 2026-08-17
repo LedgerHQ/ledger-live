@@ -1,5 +1,8 @@
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
-import { getSecondsTillVotingPowerExpires } from "@ledgerhq/live-common/families/internet_computer/neuron";
+import {
+  getSecondsTillVotingPowerExpires,
+  votingPowerNeedsRefresh,
+} from "@ledgerhq/live-common/families/internet_computer/neuron";
 import type {
   ICPNeuron,
   Transaction,
@@ -37,6 +40,10 @@ const rowKey = (neuron: ICPNeuron) => neuron.id?.toString() ?? neuron.accountIde
  * Lists the neurons whose voting power is on a periodic-confirmation clock, soonest first. Neurons
  * the canister reported no refresh timestamp for are left out: their staleness is unknown, and
  * showing them as expiring would be a guess.
+ *
+ * A neuron only starts losing power in the last month of that clock, which no reading of the
+ * countdown alone reveals, so the row says so outright. Confirming earlier is allowed — the NNS
+ * takes it at any time — which is why the healthy ones stay listed rather than being filtered out.
  */
 const StepRefreshList = ({
   account,
@@ -53,7 +60,7 @@ const StepRefreshList = ({
 
   // The countdown is measured once for the whole list. Reading it inside the comparator would let
   // the clock tick between comparisons, which breaks the ordering contract and can reorder rows.
-  const { expiring, secondsFor } = useMemo(() => {
+  const { expiring, stateFor } = useMemo(() => {
     const nowSeconds = Math.floor(Date.now() / 1000);
     const entries = neurons
       .map(neuron => ({ neuron, seconds: getSecondsTillVotingPowerExpires(neuron, nowSeconds) }))
@@ -61,10 +68,15 @@ const StepRefreshList = ({
         (entry): entry is { neuron: ICPNeuron; seconds: number } => entry.seconds !== undefined,
       )
       .sort((a, b) => a.seconds - b.seconds);
-    const byKey = new Map(entries.map(({ neuron, seconds }) => [rowKey(neuron), seconds]));
+    const byKey = new Map(
+      entries.map(({ neuron, seconds }) => [
+        rowKey(neuron),
+        { seconds, decaying: votingPowerNeedsRefresh([neuron], nowSeconds) },
+      ]),
+    );
     return {
       expiring: entries.map(({ neuron }) => neuron),
-      secondsFor: (neuron: ICPNeuron) => byKey.get(rowKey(neuron)) ?? 0,
+      stateFor: (neuron: ICPNeuron) => byKey.get(rowKey(neuron)) ?? { seconds: 0, decaying: true },
     };
   }, [neurons]);
 
@@ -93,16 +105,21 @@ const StepRefreshList = ({
             </Text>
           );
         case "expiry": {
-          const seconds = secondsFor(neuron);
+          const { seconds, decaying } = stateFor(neuron);
+          if (seconds === 0) {
+            return (
+              <Text ff="Inter|Regular" fontSize={3} color="error.c60">
+                {t("internetComputer.refreshVotingPowerFlow.expired")}
+              </Text>
+            );
+          }
           return (
-            <Text
-              ff="Inter|Regular"
-              fontSize={3}
-              color={seconds > 0 ? "neutral.c100" : "warning.c70"}
-            >
-              {seconds > 0
-                ? formatDuration(seconds)
-                : t("internetComputer.refreshVotingPowerFlow.expired")}
+            <Text ff="Inter|Regular" fontSize={3} color={decaying ? "warning.c70" : "neutral.c100"}>
+              {decaying
+                ? t("internetComputer.refreshVotingPowerFlow.losing", {
+                    duration: formatDuration(seconds),
+                  })
+                : formatDuration(seconds)}
             </Text>
           );
         }
@@ -121,7 +138,7 @@ const StepRefreshList = ({
           return null;
       }
     },
-    [formatDuration, onConfirm, secondsFor, t],
+    [formatDuration, onConfirm, stateFor, t],
   );
 
   if (error) return <ErrorDisplay error={error} withExportLogs />;
