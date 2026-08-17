@@ -107,10 +107,15 @@ export type BitcoinCreateTransactionLike = {
   onDeviceSignatureGranted?: () => void;
 };
 
+export type ZcashShieldedAddress = {
+  address: string;
+};
+
 export type ZcashSigner = {
   getAppConfig: () => Promise<ZcashAppConfig>;
   getAddress: (path: string, display?: boolean) => Promise<ZcashAddress>;
   getFullViewingKey: (path: string) => Promise<ZcashViewKey>;
+  getShieldedAddress: (path: string, display?: boolean) => Promise<ZcashShieldedAddress>;
   createPaymentTransaction: (arg: BitcoinCreateTransactionLike) => Promise<string>;
   signPcztTransaction: (pczt: PcztTransaction) => Promise<SignPcztTransactionResult>;
   signMessage: (path: string, messageHex: string) => Promise<ZcashSignature>;

@@ -3,6 +3,7 @@ import type {
   PcztTransaction,
   SignPcztTransactionResult,
   ZcashAddress,
+  ZcashShieldedAddress,
   ZcashViewKey,
 } from "@ledgerhq/live-signer-zcash";
 
@@ -18,7 +19,6 @@ import type {
 // getFullViewingKey / signPcztTransaction). Kept named `BitcoinSigner` for
 // continuity with the copied adapter code and tests.
 
-export type BitcoinXPub = string;
 export type BitcoinAddress = {
   publicKey: string;
   bitcoinAddress: string;
@@ -28,6 +28,7 @@ export type BitcoinAddress = {
 export interface BitcoinSigner {
   getAddress(path: string, display?: boolean): Promise<ZcashAddress>;
   getFullViewingKey(path: string): Promise<ZcashViewKey>;
+  getShieldedAddress(path: string, display?: boolean): Promise<ZcashShieldedAddress>;
   signPcztTransaction(pczt: PcztTransaction): Promise<SignPcztTransactionResult>;
 }
 

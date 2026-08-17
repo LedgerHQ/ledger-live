@@ -2,6 +2,7 @@ import "./live-common-setup";
 import sendAmountFields from "./SendAmountFields";
 import sendRecipientFields from "./SendRecipientFields";
 import StepReceiveFundsPostAlert from "./StepReceiveFundsPostAlert";
+import StepReceiveFundsDeviceAnimation from "./ZcashReceiveDeviceAnimation";
 import SendStepRecipientFromSelector from "./ZcashTransferFromSelector";
 import SendStepAboveRecipientInput from "./ZcashSelfTransferToggle";
 import SendModalTitle from "./SendModalTitle";
@@ -10,11 +11,23 @@ import AccountBalanceSummaryFooter from "./AccountBalanceSummaryFooter";
 import operationDetails from "./operationDetails";
 import AccountBodyHeader from "./AccountBodyHeader";
 import { BitcoinFamily } from "./types";
+import type { ZcashAccount } from "@ledgerhq/live-common/families/bitcoin/types";
+import type { ZcashPrivateInfo } from "@ledgerhq/coin-zcash/network/types";
 
 const family: BitcoinFamily = {
   sendAmountFields,
   sendRecipientFields,
   StepReceiveFundsPostAlert,
+  StepReceiveFundsDeviceAnimation,
+  // A Zcash account with a shielded address confirms its transparent and shielded
+  // addresses with a single device exchange, so the shared receive step must not
+  // also run the standard transparent-only confirmation. Anything else — no
+  // shielded address yet, or the feature turned off — keeps the standard path.
+  useCustomConfirmAddress: (account, featureFlags) => {
+    if (!featureFlags.zcashShielded?.enabled || account.currency.id !== "zcash") return false;
+    const privateInfo = (account as ZcashAccount).privateInfo as ZcashPrivateInfo | undefined;
+    return !!privateInfo?.shieldedAddress;
+  },
   SendStepRecipientFromSelector,
   SendStepAboveRecipientInput,
   SendModalTitle,

@@ -19,6 +19,7 @@ describe("DmkSignerZcash", () => {
   const mockSignerZcash = {
     getAddress: jest.fn(),
     getFullViewingKey: jest.fn(),
+    getShieldedAddress: jest.fn(),
     signTransaction: jest.fn(),
     signPcztTransaction: jest.fn(),
   };
@@ -189,6 +190,44 @@ describe("DmkSignerZcash", () => {
       await expect(signer.getFullViewingKey("44'/133'/0'/0/0")).rejects.toThrow(
         "Unexpected full viewing key response mode",
       );
+    });
+  });
+
+  describe("getShieldedAddress", () => {
+    it("returns the unified address from the device action output", async () => {
+      mockSignerZcash.getShieldedAddress.mockReturnValue({
+        observable: createCompletedObservable({ address: "u1testshieldedaddress" }),
+      });
+
+      const result = await signer.getShieldedAddress("m/32'/133'/0'");
+
+      expect(result).toEqual({ address: "u1testshieldedaddress" });
+    });
+
+    it("passes checkOnDevice=false when display is omitted", async () => {
+      mockSignerZcash.getShieldedAddress.mockReturnValue({
+        observable: createCompletedObservable({ address: "u1testshieldedaddress" }),
+      });
+
+      await signer.getShieldedAddress("m/32'/133'/0'");
+
+      expect(mockSignerZcash.getShieldedAddress).toHaveBeenCalledWith("m/32'/133'/0'", {
+        checkOnDevice: false,
+        skipOpenApp: true,
+      });
+    });
+
+    it("passes checkOnDevice=true when display is true", async () => {
+      mockSignerZcash.getShieldedAddress.mockReturnValue({
+        observable: createCompletedObservable({ address: "u1testshieldedaddress" }),
+      });
+
+      await signer.getShieldedAddress("m/32'/133'/0'", true);
+
+      expect(mockSignerZcash.getShieldedAddress).toHaveBeenCalledWith("m/32'/133'/0'", {
+        checkOnDevice: true,
+        skipOpenApp: true,
+      });
     });
   });
 

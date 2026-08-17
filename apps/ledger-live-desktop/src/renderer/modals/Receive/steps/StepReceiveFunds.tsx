@@ -30,7 +30,7 @@ import ModalBody from "~/renderer/components/Modal/ModalBody";
 import QRCode from "~/renderer/components/QRCode";
 import { getEnv } from "@shared/env";
 import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
-import { FeatureToggle, useFeature } from "@features/platform-feature-flags";
+import { FeatureToggle, useFeature, useFeatureFlags } from "@features/platform-feature-flags";
 import { LOCAL_STORAGE_KEY_PREFIX } from "./StepReceiveStakingFlow";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 
@@ -67,11 +67,13 @@ const Receive1ShareAddress = ({
   name,
   address,
   showQRCodeModal,
+  suppressUTXOAlert,
 }: {
   account: Account;
   name: string;
   address: string;
   showQRCodeModal: () => void;
+  suppressUTXOAlert?: boolean;
 }) => {
   const { currency } = account;
 
@@ -79,7 +81,7 @@ const Receive1ShareAddress = ({
   const shouldRenderMemoTagInfo = currency.family && MEMO_TAG_COINS.includes(currency.family);
 
   return (
-    <>
+    <Box data-testid="receive-public-address-block" style={{ display: "contents" }}>
       <Box horizontal alignItems="center" flow={2} mb={4}>
         <Text
           style={{
@@ -107,7 +109,7 @@ const Receive1ShareAddress = ({
       </Box>
       <ReadOnlyAddressField address={address} />
 
-      {isUTXOCompliantCurrency && (
+      {isUTXOCompliantCurrency && !suppressUTXOAlert && (
         <Box mt={3}>
           <UTXOAddressAlert />
         </Box>
@@ -119,14 +121,14 @@ const Receive1ShareAddress = ({
           </Box>
         )}
       </FeatureToggle>
-    </>
+    </Box>
   );
 };
 const Receive2Device = ({ name, device }: { name: string; device: Device }) => {
   const type = useTheme().theme;
   return (
     <>
-      <Box horizontal alignItems="center" flow={2}>
+      <Box horizontal alignItems="center" flow={2} data-testid="receive-device-animation">
         <Text
           style={{
             flexShrink: "unset",
@@ -187,6 +189,7 @@ const StepReceiveFunds = (props: StepProps) => {
   const specific = useLLDCoinFamily(
     account ? getMainAccount(account, parentAccount)?.currency.family : undefined,
   );
+  const featureFlags = useFeatureFlags();
 
   const receiveStakingFlowConfig = useFeature("receiveStakingFlowConfigDesktop");
   const stakePrograms = useVersionedStakePrograms();
@@ -315,17 +318,26 @@ const StepReceiveFunds = (props: StepProps) => {
   // custom family UI for StepReceiveFunds
   const CustomStepReceiveFunds = specific?.StepReceiveFunds;
 
-  // Families that own their confirm-address lifecycle opt out of the shared auto-trigger.
+  // Evaluated during render, so it must stay hook-free: the resolved family
+  // changes when the user switches account.
+  const customConfirmAddress = specific?.useCustomConfirmAddress;
+  const usesCustomConfirm =
+    typeof customConfirmAddress === "function"
+      ? customConfirmAddress(mainAccount, featureFlags)
+      : (customConfirmAddress ?? false);
+
   useEffect(() => {
-    if (specific?.useCustomConfirmAddress) return;
+    if (usesCustomConfirm) return;
     if (isAddressVerified === null) {
       confirmAddress();
     }
-  }, [specific?.useCustomConfirmAddress, isAddressVerified, confirmAddress]);
+  }, [usesCustomConfirm, isAddressVerified, confirmAddress]);
 
   if (CustomStepReceiveFunds) {
     return <CustomStepReceiveFunds {...props} />;
   }
+
+  const DeviceAnimationSlot = specific?.StepReceiveFundsDeviceAnimation;
 
   const CustomPostAlertReceiveFunds = specific?.StepReceiveFundsPostAlert;
 
@@ -375,6 +387,7 @@ const StepReceiveFunds = (props: StepProps) => {
                 name={name}
                 address={address}
                 showQRCodeModal={showQRCodeModal}
+                suppressUTXOAlert={usesCustomConfirm}
               />
               {CustomPostAlertReceiveFunds && <CustomPostAlertReceiveFunds {...props} />}
               <Alert type="security" learnMoreUrl={urls.recipientAddressInfo} mt={4}>
@@ -396,10 +409,21 @@ const StepReceiveFunds = (props: StepProps) => {
                 name={name}
                 address={address}
                 showQRCodeModal={showQRCodeModal}
+                suppressUTXOAlert={usesCustomConfirm}
               />
               {CustomPostAlertReceiveFunds && <CustomPostAlertReceiveFunds {...props} />}
-              <Separator />
-              <Receive2Device device={device} name={name} />
+              <>
+                <Separator />
+                {DeviceAnimationSlot ? (
+                  <DeviceAnimationSlot
+                    {...props}
+                    device={device}
+                    fallback={<Receive2Device device={device} name={name} />}
+                  />
+                ) : (
+                  <Receive2Device device={device} name={name} />
+                )}
+              </>
             </>
           ) : null // should not happen
         }

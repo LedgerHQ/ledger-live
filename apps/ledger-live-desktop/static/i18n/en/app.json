@@ -9027,6 +9027,13 @@
         "label": "Birthday height",
         "tooltip": "The birthday height is the point on the blockchain where your wallet begins scanning for your funds."
       },
+      "receive": {
+        "verifyAddresses": "Verify both your transparent and private addresses on your Ledger",
+        "privateFor": "Private address for <0>{{name}}</0>",
+        "noUfvk": {
+          "description": "Enable your private balance to receive to a private address."
+        }
+      },
       "flows": {
         "export": {
           "title": "Enable Zcash private balance",

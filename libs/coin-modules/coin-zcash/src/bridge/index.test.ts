@@ -19,7 +19,7 @@ const coinConfig = () => ({ info: { status: { type: "active" as const } } });
 
 const account = {
   currency,
-  freshAddressPath: "m/32'/133'/0'",
+  freshAddressPath: "44'/133'/0'/0/4",
 } as unknown as ZcashAccount;
 
 function makeSignerContext(getFullViewingKey: jest.Mock): SignerContext {
@@ -33,8 +33,8 @@ describe("createBridges", () => {
 
     await expect(
       accountBridge.getFullViewingKey(account, { deviceId: "device-1" }),
-    ).resolves.toEqual({ viewKey: "uview1test", path: "m/32'/133'/0'" });
-    expect(getFullViewingKey).toHaveBeenCalledWith("m/32'/133'/0'");
+    ).resolves.toEqual({ viewKey: "uview1test", path: "44'/133'/0'/0/4" });
+    expect(getFullViewingKey).toHaveBeenCalledWith("44'/133'/0'/0/4");
   });
 
   it("honours an explicit path", async () => {
@@ -61,5 +61,30 @@ describe("createBridges", () => {
 
     expect(deriveShieldedAddress).toHaveBeenCalledWith("uview1testufvk");
     expect(result).toBe("u1derived");
+  });
+
+  it("getShieldedAddress delegates to the signer with the account's freshAddressPath by default", async () => {
+    const getShieldedAddress = jest.fn().mockResolvedValue({ address: "u1testunified" });
+    const signerContext: SignerContext = jest.fn(async (_deviceId, fn) =>
+      fn({ getShieldedAddress }),
+    ) as unknown as SignerContext;
+    const { accountBridge } = createBridges(signerContext, coinConfig);
+
+    const result = await accountBridge.getShieldedAddress(account, { deviceId: "device-1" });
+
+    expect(result).toEqual({ address: "u1testunified" });
+    expect(getShieldedAddress).toHaveBeenCalledWith("44'/133'/0'/0/4", undefined);
+  });
+
+  it("getShieldedAddress passes display=true when requested", async () => {
+    const getShieldedAddress = jest.fn().mockResolvedValue({ address: "u1testunified" });
+    const signerContext: SignerContext = jest.fn(async (_deviceId, fn) =>
+      fn({ getShieldedAddress }),
+    ) as unknown as SignerContext;
+    const { accountBridge } = createBridges(signerContext, coinConfig);
+
+    await accountBridge.getShieldedAddress(account, { deviceId: "device-1", display: true });
+
+    expect(getShieldedAddress).toHaveBeenCalledWith("44'/133'/0'/0/4", true);
   });
 });
