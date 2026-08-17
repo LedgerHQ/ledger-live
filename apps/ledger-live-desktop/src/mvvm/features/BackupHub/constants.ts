@@ -7,6 +7,15 @@ export const BACKUP_HUB_TRACKING_BUTTON = {
   secretRecoveryPhrase: "Secret Recovery Phrase",
 } as const;
 
+export const BACKUP_HUB_UPSELL_FALLBACK_LINK =
+  "https://shop.ledger.com/pages/ledger-nano-upgrade-program";
+
+export const BACKUP_HUB_UPSELL_DEEPLINK = {
+  source: "ledger_wallet_desktop",
+  medium: "ledger_live",
+  campaign: "nano_upgrade_program",
+} as const;
+
 export const RECOVER_DEEPLINK_BASE = "ledgerlive://recover";
 
 export const BACKUP_HUB_RECOVER_DEEPLINK_QUERY = {

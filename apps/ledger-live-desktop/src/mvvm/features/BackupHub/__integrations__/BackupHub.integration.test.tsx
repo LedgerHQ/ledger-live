@@ -1,6 +1,8 @@
 import React from "react";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 import { render, screen, waitFor, withFlagOverrides } from "tests/testSetup";
 import { useAccountPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
+import { addNewDeviceModel } from "~/renderer/actions/settings";
 import { setRecoverState } from "~/renderer/reducers/recoverState";
 import { LedgerRecoverSubscriptionStateEnum } from "~/types/recoverSubscriptionState";
 import { isModalOpened } from "~/renderer/reducers/modals";
@@ -10,7 +12,9 @@ import { ContextMenu } from "LLD/features/MyWallet/components/ContextMenu";
 import { RECOVER_NOTIFICATION_DOT_TEST_ID } from "LLD/features/BackupHub/components/ShieldCheckNotificationIcon";
 import {
   BACKUP_HUB_RECOVER_DEEPLINK_QUERY,
+  BACKUP_HUB_TRACKING_BUTTON,
   BACKUP_HUB_TRACKING_PAGE_NAME,
+  BACKUP_HUB_UPSELL_DEEPLINK,
   RECOVER_DEEPLINK_BASE,
 } from "LLD/features/BackupHub/constants";
 
@@ -50,8 +54,28 @@ const backupHubState = withFlagOverrides({
   lwdBackupHub: { enabled: true },
 });
 
+const NANO_S_UPSELL_ANALYTICS_PROPS = {
+  deviceModel: "lns",
+  personalRecoOptIn: false,
+  offerType: "none",
+  platform: "lwd",
+} as const;
+
 const openHub = async (options?: Parameters<typeof render>[1]) => {
   const utils = render(<ContextMenu />, { initialState: backupHubState, ...options });
+
+  await utils.user.click(screen.getByRole("button", { name: "My Wallet" }));
+  await utils.user.click(await screen.findByTestId("my-wallet-action-recover"));
+  await screen.findByTestId("backup-hub");
+
+  return utils;
+};
+
+const openHubWithDevices = async (devicesModelList: DeviceModelId[]) => {
+  const utils = render(<ContextMenu />, { initialState: backupHubState });
+  for (const deviceModelId of devicesModelList) {
+    utils.store.dispatch(addNewDeviceModel({ deviceModelId }));
+  }
 
   await utils.user.click(screen.getByRole("button", { name: "My Wallet" }));
   await utils.user.click(await screen.findByTestId("my-wallet-action-recover"));
@@ -196,6 +220,51 @@ describe("BackupHub", () => {
     );
     expect(calledWith).toContain("utm_source=Ledger_Wallet");
     expect(calledWith).toContain("utm_campaign=26-06-AlwaysOn-ALL-Awareness-LLD");
+  });
+
+  it.each([DeviceModelId.nanoS, DeviceModelId.nanoSP, DeviceModelId.nanoX])(
+    "shows the Recovery Key warning copy for %s",
+    async deviceModelId => {
+      await openHubWithDevices([deviceModelId]);
+
+      expect(screen.getByText("Not compatible with your device")).toBeVisible();
+      expect(screen.queryByText("A PIN-protected smart card.")).not.toBeInTheDocument();
+    },
+  );
+
+  it("keeps the Recovery Key row unchanged when a large-screen device is known", async () => {
+    await openHubWithDevices([DeviceModelId.nanoS, DeviceModelId.stax]);
+
+    expect(screen.getByText("A PIN-protected smart card.")).toBeVisible();
+    expect(screen.queryByText("Not compatible with your device")).not.toBeInTheDocument();
+  });
+
+  it("opens the upsell LP with backups UTM when Recovery Key is clicked on Nano S", async () => {
+    const { user } = await openHubWithDevices([DeviceModelId.nanoS]);
+
+    await user.click(screen.getByTestId("backup-hub-physical-row-recovery-key"));
+
+    expect(mockOpenURL).toHaveBeenCalledTimes(1);
+    const openedUrl = new URL(String(mockOpenURL.mock.calls[0][0]));
+    expect(openedUrl.origin + openedUrl.pathname).toBe(
+      "https://shop.ledger.com/pages/ledger-nano-upgrade-program",
+    );
+    expect(openedUrl.searchParams.get("utm_source")).toBe("ledger_wallet_desktop");
+    expect(openedUrl.searchParams.get("utm_medium")).toBe("ledger_live");
+    expect(openedUrl.searchParams.get("utm_campaign")).toBe("nano_upgrade_program");
+    expect(openedUrl.searchParams.get("utm_content")).toBe("backups_cta");
+    expect(track).toHaveBeenCalledWith("button_clicked", {
+      button: BACKUP_HUB_TRACKING_BUTTON.recoveryKey,
+      page: BACKUP_HUB_TRACKING_PAGE_NAME,
+      ...NANO_S_UPSELL_ANALYTICS_PROPS,
+    });
+    expect(track).toHaveBeenCalledWith("deeplink_clicked", {
+      page: BACKUP_HUB_TRACKING_PAGE_NAME,
+      deeplinkSource: BACKUP_HUB_UPSELL_DEEPLINK.source,
+      deeplinkMedium: BACKUP_HUB_UPSELL_DEEPLINK.medium,
+      deeplinkCampaign: BACKUP_HUB_UPSELL_DEEPLINK.campaign,
+      ...NANO_S_UPSELL_ANALYTICS_PROPS,
+    });
   });
 
   it("returns to the menu when pressing back", async () => {

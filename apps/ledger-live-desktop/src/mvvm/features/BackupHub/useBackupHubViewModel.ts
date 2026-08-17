@@ -1,15 +1,30 @@
 import { useCallback, useEffect, useMemo } from "react";
+import { useFeature } from "@features/platform-feature-flags";
+import {
+  LARGE_SCREEN_UPSELL_BACKUPS_UTM_CONTENT,
+  buildLargeScreenUpsellCtaLink,
+} from "@features/flow-large-screen-upsell";
+import { useSelector } from "LLD/hooks/redux";
+import { toLargeScreenUpsellDeviceModelAnalyticsValue } from "LLD/features/LargeScreenUpsell/analytics";
 import { track } from "~/renderer/analytics/segment";
 import { openURL } from "~/renderer/linking";
 import { urls } from "~/config/urls";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { DEFAULT_PROTECT_ID, useRecoverBannerState } from "~/renderer/hooks/useRecoverBannerState";
 import { useRecoverEntry } from "LLD/hooks/useRecoverEntry";
+import {
+  devicesModelListSelector,
+  lastSeenDeviceSelector,
+  sharePersonalizedRecommendationsSelector,
+} from "~/renderer/reducers/settings";
 import { getBackupBucket } from "./utils/getBackupBucket";
+import { getRecoveryKeyIncompatibleModel } from "./utils/getRecoveryKeyIncompatibleModel";
 import {
   BACKUP_HUB_TRACKING_BUTTON,
   BACKUP_HUB_TRACKING_PAGE_NAME,
   BACKUP_HUB_RECOVER_DEEPLINK_QUERY,
+  BACKUP_HUB_UPSELL_DEEPLINK,
+  BACKUP_HUB_UPSELL_FALLBACK_LINK,
   RECOVER_DEEPLINK_BASE,
 } from "./constants";
 import type { BackupBucket, PhysicalRowId } from "./types";
@@ -24,6 +39,7 @@ export type BackupHubParams = {
 export type PhysicalRowData = {
   id: PhysicalRowId;
   image: string;
+  isWarning: boolean;
   onClick: () => void;
 };
 
@@ -43,6 +59,26 @@ export function useBackupHubViewModel({ onBack, onClose }: BackupHubParams): Bac
 
   const recoveryKeyUrl = useLocalizedUrl(urls.backupHub.recoveryKey);
   const secretRecoveryPhraseUrl = useLocalizedUrl(urls.backupHub.secretRecoveryPhrase);
+
+  const devicesModelList = useSelector(devicesModelListSelector);
+  const lastSeenDevice = useSelector(lastSeenDeviceSelector);
+  const personalRecoOptIn = useSelector(sharePersonalizedRecommendationsSelector);
+  const largeScreenUpsell = useFeature("largeScreenUpsell");
+
+  const incompatibleModel = getRecoveryKeyIncompatibleModel(
+    devicesModelList,
+    lastSeenDevice?.modelId,
+  );
+
+  const upsellLink = useMemo(() => {
+    const variant = personalRecoOptIn ? "opted_in" : "opted_out";
+    const configuredLink = largeScreenUpsell?.params?.[variant].link?.trim();
+    return buildLargeScreenUpsellCtaLink(
+      configuredLink || BACKUP_HUB_UPSELL_FALLBACK_LINK,
+      "desktop",
+      LARGE_SCREEN_UPSELL_BACKUPS_UTM_CONTENT,
+    );
+  }, [largeScreenUpsell?.params, personalRecoOptIn]);
 
   useEffect(() => {
     track("page_viewed", { page: BACKUP_HUB_TRACKING_PAGE_NAME });
@@ -83,21 +119,52 @@ export function useBackupHubViewModel({ onBack, onClose }: BackupHubParams): Bac
     [onClose],
   );
 
+  const onRecoveryKeyClick = useCallback(() => {
+    if (!incompatibleModel) {
+      openShop(recoveryKeyUrl, BACKUP_HUB_TRACKING_BUTTON.recoveryKey);
+      return;
+    }
+
+    const sharedProps = {
+      deviceModel: toLargeScreenUpsellDeviceModelAnalyticsValue(incompatibleModel),
+      personalRecoOptIn,
+      offerType: personalRecoOptIn ? ("discount" as const) : ("none" as const),
+      platform: "lwd" as const,
+    };
+
+    track("button_clicked", {
+      button: BACKUP_HUB_TRACKING_BUTTON.recoveryKey,
+      page: BACKUP_HUB_TRACKING_PAGE_NAME,
+      ...sharedProps,
+    });
+    track("deeplink_clicked", {
+      page: BACKUP_HUB_TRACKING_PAGE_NAME,
+      deeplinkSource: BACKUP_HUB_UPSELL_DEEPLINK.source,
+      deeplinkMedium: BACKUP_HUB_UPSELL_DEEPLINK.medium,
+      deeplinkCampaign: BACKUP_HUB_UPSELL_DEEPLINK.campaign,
+      ...sharedProps,
+    });
+    openURL(upsellLink);
+    onClose();
+  }, [incompatibleModel, onClose, openShop, personalRecoOptIn, recoveryKeyUrl, upsellLink]);
+
   const physicalRows = useMemo<readonly PhysicalRowData[]>(
     () => [
       {
         id: "recovery-key",
         image: recoveryKeyImage,
-        onClick: () => openShop(recoveryKeyUrl, BACKUP_HUB_TRACKING_BUTTON.recoveryKey),
+        isWarning: incompatibleModel !== undefined,
+        onClick: onRecoveryKeyClick,
       },
       {
         id: "secret-recovery-phrase",
         image: secretRecoveryPhraseImage,
+        isWarning: false,
         onClick: () =>
           openShop(secretRecoveryPhraseUrl, BACKUP_HUB_TRACKING_BUTTON.secretRecoveryPhrase),
       },
     ],
-    [openShop, recoveryKeyUrl, secretRecoveryPhraseUrl],
+    [incompatibleModel, onRecoveryKeyClick, openShop, secretRecoveryPhraseUrl],
   );
 
   return {
