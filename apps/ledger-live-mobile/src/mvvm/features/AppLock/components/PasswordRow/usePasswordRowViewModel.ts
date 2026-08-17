@@ -7,7 +7,6 @@ import { useSelector } from "~/context/hooks";
 
 export type PasswordRowViewModel = Readonly<{
   hasPassword: boolean;
-  canRemove: boolean;
   onValueChange: (enabled: boolean) => void;
 }>;
 
@@ -28,7 +27,7 @@ function usePasswordRowViewModel(): PasswordRowViewModel {
     [navigate],
   );
 
-  return { hasPassword, canRemove: false, onValueChange };
+  return { hasPassword, onValueChange };
 }
 
 export default usePasswordRowViewModel;

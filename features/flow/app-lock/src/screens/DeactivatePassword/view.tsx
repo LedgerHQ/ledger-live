@@ -2,25 +2,25 @@ import { Box, Button } from "@ledgerhq/lumen-ui-rnative";
 import { useTranslation } from "@shared/i18n";
 import React from "react";
 import { PasswordField } from "../../components/PasswordField";
-import type { ConfirmPasswordViewProps } from "./types";
+import type { DeactivatePasswordViewProps } from "./types";
 
-export function ConfirmPasswordView({
+export function DeactivatePasswordView({
   password,
   isConfirmEnabled,
-  hasMismatch,
-  isSaving,
+  hasWrongPassword,
+  isSubmitting,
   onPasswordChange,
   onConfirm,
-  hasSaveFailed = false,
+  hasFailed = false,
   keyboardHeight = 0,
-}: ConfirmPasswordViewProps): React.JSX.Element {
+}: DeactivatePasswordViewProps): React.JSX.Element {
   const { t } = useTranslation();
 
-  const helperText = hasSaveFailed
-    ? t("appLock.confirmPassword.saveFailed")
-    : hasMismatch
-      ? t("appLock.confirmPassword.mismatch")
-      : t("appLock.field.minLength");
+  const helperText = hasFailed
+    ? t("appLock.deactivatePassword.failed")
+    : hasWrongPassword
+      ? t("appLock.deactivatePassword.wrongPassword")
+      : undefined;
 
   return (
     <Box
@@ -31,20 +31,20 @@ export function ConfirmPasswordView({
         value={password}
         onChangeText={onPasswordChange}
         helperText={helperText}
-        hasError={hasMismatch || hasSaveFailed}
+        hasError={hasWrongPassword || hasFailed}
         autoFocus
         onSubmitEditing={onConfirm}
-        testID="app-lock-confirm-password-field"
+        testID="app-lock-deactivate-password-field"
       />
       <Box lx={{ flex: 1 }} />
       <Button
         appearance="base"
         disabled={!isConfirmEnabled}
-        loading={isSaving}
+        loading={isSubmitting}
         onPress={onConfirm}
-        testID="app-lock-confirm-password-confirm"
+        testID="app-lock-deactivate-password-confirm"
       >
-        {t("appLock.confirmPassword.cta")}
+        {t("appLock.deactivatePassword.cta")}
       </Button>
     </Box>
   );
