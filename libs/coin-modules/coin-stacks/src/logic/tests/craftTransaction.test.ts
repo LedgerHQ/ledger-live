@@ -68,7 +68,7 @@ describe("craftTransaction", () => {
     const result = await craftTransaction(transferIntent());
 
     expect(getNextSequence).toHaveBeenCalledWith(SENDER);
-    expect(estimateFees).toHaveBeenCalled();
+    expect(estimateFees).toHaveBeenCalledWith(expect.objectContaining({ sequence: 5n }));
     expect(createStxTransferTransaction).toHaveBeenCalledWith(
       expect.anything(),
       RECIPIENT,
