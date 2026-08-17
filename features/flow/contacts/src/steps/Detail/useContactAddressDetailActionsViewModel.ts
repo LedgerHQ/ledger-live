@@ -62,7 +62,6 @@ export function useContactAddressDetailActionsViewModel(
     [contactId, addressId],
   );
   const isSignerRequiredForEdit = isSignerConfirmationRequired(editIntent?.editRequirement);
-  const isSignerRequiredForDelete = isSignerConfirmationRequired(deleteIntent.deleteRequirement);
 
   const openDelete = useCallback(() => {
     setDeleteLifecycle(createOpenContactAddressDeleteLifecycle(contactId, addressId));
@@ -82,7 +81,6 @@ export function useContactAddressDetailActionsViewModel(
     deleteIntent,
     deleteLifecycle,
     isSignerRequiredForEdit,
-    isSignerRequiredForDelete,
     openDelete,
     cancelDelete,
     confirmDelete,

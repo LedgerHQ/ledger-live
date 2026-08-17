@@ -872,7 +872,7 @@ describe("Contacts integration", () => {
     });
   });
 
-  it("should open the signer sheet before deleting an address", async () => {
+  it("should open the delete sheet without requiring a device connection", async () => {
     const { user } = render(<MyWalletNavigator />, {
       overrideInitialState: withContactsPageReadyState(
         { lwmContacts: { enabled: true, params: { newBadge: false } } },
@@ -885,17 +885,9 @@ describe("Contacts integration", () => {
     await user.press(await screen.findByTestId("contacts-detail-address-row-address-ethereum"));
     await user.press(await screen.findByTestId("contacts-address-detail-delete"));
 
-    expect(await screen.findByTestId("contacts-edit-signer-confirm")).toBeVisible();
-    expect(screen.getByText("Confirm on your device")).toBeVisible();
-    expect(screen.queryByTestId("contacts-delete-address-confirm")).toBeNull();
-
-    await user.press(screen.getByTestId("contacts-edit-signer-confirm"));
-
-    await waitFor(() => {
-      expect(screen.queryByTestId("contacts-edit-signer-confirm")).toBeNull();
-      expect(screen.getByTestId("contacts-delete-address-confirm")).toBeVisible();
-      expect(screen.getByText("Delete address?")).toBeVisible();
-    });
+    expect(await screen.findByTestId("contacts-delete-address-confirm")).toBeVisible();
+    expect(screen.getByText("Delete address?")).toBeVisible();
+    expect(screen.queryByTestId("contacts-edit-signer-confirm")).toBeNull();
   });
 
   it("should delete an address and close the address detail sheet", async () => {
@@ -910,11 +902,8 @@ describe("Contacts integration", () => {
     await user.press(await screen.findByTestId("contacts-saved-contact-contact-ben"));
     await user.press(await screen.findByTestId("contacts-detail-address-row-address-ethereum"));
     await user.press(await screen.findByTestId("contacts-address-detail-delete"));
-    await user.press(await screen.findByTestId("contacts-edit-signer-confirm"));
 
-    await waitFor(() => {
-      expect(screen.getByTestId("contacts-delete-address-confirm")).toBeVisible();
-    });
+    expect(await screen.findByTestId("contacts-delete-address-confirm")).toBeVisible();
 
     await user.press(screen.getByTestId("contacts-delete-address-confirm"));
 
