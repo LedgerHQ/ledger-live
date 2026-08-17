@@ -1011,10 +1011,9 @@ export const getOperations = async (
       // the depth the JSON-RPC arm reaches through `loadOperations`. A single page would cap the
       // account at its newest 50 operations permanently: this path runs once per sync and always
       // resumes from the newest stored digest, so what it skips is never requested again.
-      // Ascending only once the cursor gave a real lower bound, so the operations `limit` leaves
-      // unread stay newer than the resume point the caller stores. Without a bound — a first sync, or
-      // a digest this index no longer holds — ascending would read the oldest slice of all history
-      // and never reach the recent operations, so the walk stays descending from the tip.
+      // Ascending only once the cursor gave a real lower bound. Without one — a first sync, or a
+      // digest this index no longer holds — ascending would read the oldest slice of all history and
+      // never reach the recent operations.
       const { items } = await getTransactionsByAddressGraphQL(
         api,
         addr,
@@ -1039,10 +1038,8 @@ export const getOperations = async (
         const seq = await resolveCheckpointForDigestGrpc(api, cursorDigest);
         if (seq !== null) startCheckpoint = seq;
       }
-      // Same depth as the GraphQL arm above, which documents why one page is not enough. The
-      // direction follows the JSON-RPC arm: descending from the tip for a first sync, ascending from
-      // the cursor for a resumed one, so the operations `limit` leaves unread stay newer than the
-      // resume point the caller stores — see {@link listHistoryByAddressGrpc}.
+      // Same depth as the GraphQL arm above, and the same direction rule as the JSON-RPC arm:
+      // descending for a first sync, ascending from a cursor — see {@link listHistoryByAddressGrpc}.
       const transactions = await listHistoryByAddressGrpc(api, {
         address: addr,
         limit: TRANSACTIONS_LIMIT,
@@ -1337,8 +1334,7 @@ export const getListOperations = async (
       const items = afterCursor.map(t =>
         transactionToCoinFrameworkOperation(addr, t, digestToHash.get(t.digest)),
       );
-      // Same boundary fallback as the gRPC arm: a page whose survivors were all filtered out must
-      // still hand back a resume point, or the caller reads the empty cursor as the end of history.
+      // Same boundary fallback as the gRPC arm.
       const last = afterCursor.at(-1) ?? page.boundary;
       // The connection answers "is there more?" directly — see {@link dropOperationsBeforeCursor}
       // for why the surviving count cannot.
@@ -1424,10 +1420,8 @@ export const getListOperations = async (
           tx.checkpoint ? checkpointDigests.get(tx.checkpoint) : undefined,
         ),
       );
-      // Falling back to the page's own boundary keeps the walk moving when the server has more but
-      // nothing survived the client-side filters: without it the cursor collapses to `undefined` and
-      // the caller reads that as the end of history. Only a page that returned nothing at all leaves
-      // no resume point — the opaque watermark that would cover it does not fit this cursor format.
+      // Only a page that returned nothing at all leaves no resume point: the opaque watermark that
+      // would cover it does not fit this cursor format.
       const last = afterCursor.at(-1) ?? page.boundary;
       // The stream's own stop reason answers "is there more?" — see {@link grpcPageMayHaveMore}. The
       // surviving count cannot: settlement filtering and cursor-dropping both shrink a page that had

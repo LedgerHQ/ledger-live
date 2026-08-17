@@ -298,10 +298,8 @@ describe("getAccountShape", () => {
     );
   });
 
-  // `getOperationCoinType` files a transaction under the token it moves, and this account keeps only
-  // native-SUI operations, so an account that only ever moved tokens has an empty `operations` while
-  // its history sits in the subaccounts. Treating that as "nothing stored" would drop the cursor and
-  // re-read the whole history on every sync, forever.
+  // A token-only account has an empty `operations` with its history in the subaccounts, so treating
+  // that as "nothing stored" would re-read the whole history on every sync, forever.
   it("resumes from the stored syncHash when only a token subaccount holds operations", async () => {
     // GIVEN
     const initialAccount = createFixtureAccount({

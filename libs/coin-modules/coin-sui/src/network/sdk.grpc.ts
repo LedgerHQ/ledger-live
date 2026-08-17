@@ -517,14 +517,12 @@ const sameCursor = (a: Uint8Array | undefined, b: Uint8Array | undefined): boole
  * overlap to dedupe. Continuation is gated on `endReason` rather than on a full page, because a
  * filtered scan may stop on its own budget with matches still unread.
  *
- * `order` is the direction the walk travels, and it decides which end of the history `limit` cuts
- * off. A first sync reads `desc` from the tip, keeping the newest `limit`. A resumed sync must read
- * `asc` from `startCheckpoint` (inclusive): the caller stores the newest operation it received as
- * the next resume point, so a descending walk that stops at `limit` would strand everything between
- * the old cursor and the oldest transaction it happened to reach — permanently, since the next sync
- * starts above it. Ascending leaves the unread remainder *newer* than the new cursor, which the
- * following sync then picks up. This mirrors the JSON-RPC arm, which pages ascending whenever it has
- * a cursor.
+ * `order` decides which end of the history `limit` cuts off. A first sync reads `desc` from the tip,
+ * keeping the newest `limit`. A resumed sync must read `asc` from `startCheckpoint` (inclusive):
+ * the caller stores the newest operation it received as the next resume point, so a descending walk
+ * stopping at `limit` strands everything between the old cursor and the oldest transaction it
+ * reached — permanently, since the next sync starts above it. Ascending leaves the unread remainder
+ * newer than the new cursor. The JSON-RPC arm pages ascending from a cursor for the same reason.
  */
 export const listHistoryByAddressGrpc = async (
   api: SuiGrpcClient,

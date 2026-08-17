@@ -40,10 +40,10 @@ export const getAccountShape: GetAccountShape<SuiAccount> = async (info, syncCon
   // sync, or a cleared cache, since `clearAccount` empties `operations` but keeps `syncHash`.
   // Resuming there would leave the account with only what arrived after the cursor.
   //
-  // Token operations count: `getOperationCoinType` files a transaction under the token it moves, and
-  // this account keeps only native-SUI operations, so an account whose activity is purely token
-  // transfers has an empty `operations` while its history lives in the subaccounts. Reading only the
-  // parent list would drop the cursor on every sync and re-read the whole history each time.
+  // Token operations count: `getOperationCoinType` files a transaction under the token it moves and
+  // this account keeps only native-SUI operations, so a token-only account has an empty `operations`
+  // while its history lives in the subaccounts. Reading the parent list alone would drop the cursor
+  // on every sync.
   const hasStoredHistory =
     oldOperations.length > 0 ||
     (initialAccount?.subAccounts ?? []).some(sub => sub.operations.length > 0);

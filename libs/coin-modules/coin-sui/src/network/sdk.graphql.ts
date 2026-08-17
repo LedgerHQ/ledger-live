@@ -646,13 +646,11 @@ export const getValidatorsGraphQL = async (api: SuiGraphQLClient): Promise<SuiVa
  * recipient in one query. `beforeCheckpoint`/`afterCheckpoint` translate alpaca-style cursors to a
  * server-side filter.
  *
- * `order` is the direction the walk travels, and it decides which end of the range `limit` cuts off.
- * `desc` reads backwards (`last`/`before`) from the newest, which is what a first sync wants. `asc`
- * reads forwards (`first`/`after`) from `afterCheckpoint`, which is what a resumed sync needs: the
- * caller stores the newest operation it received as the next resume point, so a descending walk that
- * stops at `limit` would strand everything between the old cursor and the oldest transaction it
- * reached, and the next sync would start above the gap. The JSON-RPC arm pages ascending from a
- * cursor for the same reason.
+ * `order` decides which end of the range `limit` cuts off. `desc` reads backwards (`last`/`before`)
+ * from the newest, which a first sync wants. `asc` reads forwards (`first`/`after`) from
+ * `afterCheckpoint`, which a resumed sync needs: the caller stores the newest operation it received
+ * as the next resume point, so a descending walk stopping at `limit` strands everything between the
+ * old cursor and the oldest transaction it reached, and the next sync starts above the gap.
  *
  * Returns the continuation cursor for the direction travelled, or `null` once the connection is
  * exhausted.

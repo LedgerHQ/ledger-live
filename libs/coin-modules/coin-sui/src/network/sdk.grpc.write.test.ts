@@ -324,10 +324,8 @@ describe("listHistoryByAddressGrpc", () => {
     expect(transactions.at(-1)?.digest).toBe("tx-10");
   });
 
-  // A resumed sync must travel forward from the cursor. The caller stores the newest operation it
-  // received, so a descending walk cut short by `limit` would strand everything between the old
-  // cursor and the oldest transaction it reached — the next sync starts above the gap and never
-  // returns to it. Ascending leaves the unread remainder newer than the new cursor instead.
+  // A resumed sync travels forward, so what `limit` drops stays newer than the next resume point —
+  // see {@link listHistoryByAddressGrpc} for why descending strands the gap permanently.
   it("walks forward from the cursor bound when resuming", async () => {
     const { api, requests } = stub([
       page(["tx-1", "tx-2", "tx-3", "tx-4", "tx-5"], 5, ITEM_LIMIT),
@@ -584,9 +582,8 @@ describe("resolveCheckpointForDigestGrpc", () => {
     await expect(resolveCheckpointForDigestGrpc(api, "d1")).resolves.toBeNull();
   });
 
-  // Callers read `null` as "no bound" and fall back to an unbounded page from the tip, which a
-  // cursor-fed caller then drops entirely as already-seen — reporting the end of history because of
-  // one transient error. Only a genuinely unknown digest may resolve to `null`.
+  // `null` means "no bound", which a cursor-fed caller turns into a page it discards entirely —
+  // reporting the end of history. Only a genuinely unknown digest may resolve to it.
   it.each([
     ["a textual NOT_FOUND", "NOT_FOUND"],
     ["a numeric NOT_FOUND", 5],
@@ -924,10 +921,8 @@ describe("getListOperations cursor bounds on the gRPC transport", () => {
     expect(requests[0].startCheckpoint).toBe(42n);
   });
 
-  // Direction decides which end `TRANSACTIONS_LIMIT` truncates. A resumed sync walks forward so the
-  // operations it cannot fit stay newer than the digest it reports back as the next resume point;
-  // descending would strand the ones in between, and the following sync starts above them.
-  // Ordering enum: ASCENDING = 0, DESCENDING = 1.
+  // Direction decides which end `TRANSACTIONS_LIMIT` truncates; descending on a resumed sync strands
+  // the operations in between. Ordering enum: ASCENDING = 0, DESCENDING = 1.
   it("walks forward from the cursor on an incremental sync", async () => {
     const { requests } = stubApi([[txFrame("tx-a", "42")]], 42n);
 
