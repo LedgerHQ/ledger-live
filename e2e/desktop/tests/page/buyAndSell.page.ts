@@ -265,6 +265,10 @@ export class BuyAndSellPage extends WebViewAppPage {
     const finalAmount = await (
       await this.getWebViewElementByTestId(this.amountInputSection)
     ).inputValue();
+    // Max must have lowered the amount; guards against a click that silently did nothing.
+    if (balanceTooLow) {
+      expect(Number(finalAmount)).toBeLessThan(Number(amount));
+    }
     await this.verifyElementIsVisible(this.providersList);
     return finalAmount;
   }
