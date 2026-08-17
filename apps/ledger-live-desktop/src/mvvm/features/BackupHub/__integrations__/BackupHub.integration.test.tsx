@@ -5,6 +5,7 @@ import {
   LARGE_SCREEN_UPSELL_UTM_CAMPAIGN,
   LARGE_SCREEN_UPSELL_UTM_MEDIUM,
   LARGE_SCREEN_UPSELL_UTM_SOURCE_BY_PLATFORM,
+  type NanoDeviceModelId,
 } from "@features/flow-large-screen-upsell";
 import { render, screen, waitFor, withFlagOverrides } from "tests/testSetup";
 import { useAccountPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
@@ -64,7 +65,7 @@ const NANO_UPSELL_DEVICE_MODEL = {
   [DeviceModelId.nanoS]: "lns",
   [DeviceModelId.nanoSP]: "lnsp",
   [DeviceModelId.nanoX]: "lnx",
-} as const;
+} as const satisfies Record<NanoDeviceModelId, string>;
 
 const openHub = async (options?: Parameters<typeof render>[1]) => {
   const utils = render(<ContextMenu />, { initialState: backupHubState, ...options });
@@ -272,7 +273,7 @@ describe("BackupHub", () => {
     );
   });
 
-  it.each([DeviceModelId.nanoS, DeviceModelId.nanoSP, DeviceModelId.nanoX])(
+  it.each([DeviceModelId.nanoS, DeviceModelId.nanoSP, DeviceModelId.nanoX] as const)(
     "opens the upsell LP with backups UTM when Recovery Key is clicked on %s",
     async deviceModelId => {
       const { user } = await openHubWithDevices([deviceModelId]);
