@@ -4,7 +4,7 @@ import { ContactIdSchema } from "@domain/entity-contact";
 import { ContactsMeListItem } from "./ContactsMeListItem.native";
 
 describe("ContactsMeListItem", () => {
-  it("should render a 48px avatar for Me", () => {
+  it("should render the Me avatar with the Figma size and border", () => {
     const contactId = ContactIdSchema.parse("contact-me");
 
     render(
@@ -16,7 +16,11 @@ describe("ContactsMeListItem", () => {
       />,
     );
 
-    expect(screen.getByTestId("contacts-me-avatar").props.size).toBe("md");
+    const avatar = screen.getByTestId("contacts-me-avatar");
+
+    expect(avatar).toBeVisible();
+    expect(avatar.props.size).toBe("md");
+    expect(avatar.props.appearance).toBe("thin");
   });
 
   it("should open Me when its row is pressed", () => {
