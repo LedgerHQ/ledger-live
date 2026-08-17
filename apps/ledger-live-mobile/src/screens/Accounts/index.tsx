@@ -126,7 +126,7 @@ function Accounts({ navigation, route }: NavigationProps) {
           </Flex>
         ) : (
           <List
-            testID={`accounts-list-${flattenedAccounts.length}`}
+            testID="accounts-list"
             data={flattenedAccounts}
             renderItem={renderItem}
             keyExtractor={(i: AccountLike) => i.id}
