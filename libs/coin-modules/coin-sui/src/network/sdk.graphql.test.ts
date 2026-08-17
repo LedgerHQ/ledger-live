@@ -1012,6 +1012,46 @@ describe("getOperations on GraphQL transport", () => {
     expect(Array.isArray(ops)).toBe(true);
   });
 
+  // The bridge sync path never revisits what it skipped — it always resumes from the newest stored
+  // digest — so stopping after one page would cap an account at its newest 50 operations for good.
+  it("walks past the first page until the connection is exhausted", async () => {
+    const ADDR = addr("11");
+    const node = (digest: string, sequenceNumber: number) => ({
+      digest,
+      effects: {
+        status: "SUCCESS",
+        checkpoint: { sequenceNumber, digest: `0xcp${sequenceNumber}` },
+        timestamp: "2026-05-12T00:00:00.000Z",
+      },
+      transactionJson: { sender: ADDR, gasData: { owner: ADDR } },
+    });
+    const query = jest
+      .fn()
+      .mockResolvedValueOnce({
+        data: {
+          transactions: {
+            nodes: [node("0xtx50", 50)],
+            pageInfo: { hasPreviousPage: true, startCursor: "cursor-page-2" },
+          },
+        },
+      })
+      .mockResolvedValueOnce({
+        data: {
+          transactions: {
+            nodes: [node("0xtx1", 1)],
+            pageInfo: { hasPreviousPage: false, startCursor: null },
+          },
+        },
+      });
+    mockNext({ query });
+
+    const ops = await getOperations(config, "acc-1", ADDR, undefined, undefined);
+
+    expect(query).toHaveBeenCalledTimes(2);
+    expect(query.mock.calls[1][0].variables.before).toBe("cursor-page-2");
+    expect(ops.map(o => o.hash)).toEqual(["0xtx50", "0xtx1"]);
+  });
+
   // Incremental sync resumes from the digest of the newest stored operation. That transaction's
   // checkpoint may hold siblings the previous sync never reached, so the bound has to keep it in
   // range; `mergeOps` dedupes whatever comes back twice.

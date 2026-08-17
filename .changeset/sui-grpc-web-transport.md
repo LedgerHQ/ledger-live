@@ -39,9 +39,21 @@ Add a gRPC-web transport to the Sui coin module
   This affected account sync (`getOperations`) as well as paging (`getListOperations`). Both now keep
   the checkpoint in range; sync relies on `mergeOps` to dedupe re-delivered operations, and paging
   filters them client-side with a guard for a checkpoint that fills a whole page.
-- Paging asks the server whether more history exists (`pageInfo` on GraphQL, the raw page count on
-  gRPC) instead of inferring it from how many operations survived that client-side filter, which can
-  never fill a page once the resume point is re-fetched.
+- Paging asks the server whether more history exists (`pageInfo` on GraphQL, the stream's `QueryEnd`
+  reason on gRPC) instead of inferring it from how many operations survived that client-side filter,
+  which can never fill a page once the resume point is re-fetched. On gRPC the stop reason also
+  distinguishes a page that ended at the ledger tip from one cut short by the server's scan budget,
+  which a page-size comparison reads as the end of history.
+- Fix: account sync read a single page of history on GraphQL and gRPC, so an account was capped at
+  its newest 50 operations. Sync reads history once and always resumes from the newest stored
+  operation, so everything older than that first page was never requested again and the account
+  showed no history before the day it was added. Both arms now walk pages up to `TRANSACTIONS_LIMIT`
+  (300), the depth JSON-RPC already reached. The gRPC walk resumes from each page's watermark cursor,
+  which is transaction-precise and stays exact when a page ends mid-checkpoint.
+- Fix: account sync resumed from the stored `syncHash` even when the account held no operations, so a
+  cleared cache (`clearAccount` empties `operations` but keeps `syncHash`) came back with only the
+  transactions that arrived after that point. An account with no operations now re-reads its whole
+  history, which is also how an account truncated by the single-page bug above recovers.
 - Fix: ascending paging on GraphQL read the newest slice of the range instead of walking forward from
   the oldest, so it silently skipped everything in between — the page looked ascending only because
   the client re-sorted it. The query now requests a forward window (`first`/`after`) when the caller

@@ -419,7 +419,13 @@ const affectedAddressFilter = (address: string): GrpcTypes.TransactionFilter => 
  * carries a resume watermark and the last one seen is the cursor for the next page.
  *
  * `startCheckpoint` is inclusive and `endCheckpoint` exclusive, so a caller resuming past a known
- * checkpoint passes `seq + 1` when ascending but `seq` when descending.
+ * checkpoint passes `seq + 1` when ascending but `seq` when descending. `cursorBound` is the
+ * transaction-precise alternative: an opaque watermark cursor, exclusive in ledger order, that
+ * intersects with the checkpoint range rather than replacing it. It is the proto's own resume
+ * contract, and it stays exact when the previous page ended in the middle of a checkpoint.
+ *
+ * `endReason` reports why the server stopped ({@link grpcPageMayHaveMore}) — the only reliable
+ * "is there more?" signal, because a page can come back short of `limit` with matches still unread.
  */
 export const listTransactionsByAddressGrpc = async (
   api: SuiGrpcClient,
@@ -429,13 +435,26 @@ export const listTransactionsByAddressGrpc = async (
     order: "asc" | "desc";
     startCheckpoint?: number;
     endCheckpoint?: number;
+    cursorBound?: Uint8Array;
   },
-): Promise<{ transactions: SuiTransactionBlockResponse[]; cursor?: Uint8Array }> => {
+): Promise<{
+  transactions: SuiTransactionBlockResponse[];
+  cursor?: Uint8Array;
+  endReason?: number;
+}> => {
+  const descending = params.order === "desc";
   const call = api.ledgerService.listTransactions({
     filter: affectedAddressFilter(normalizeSuiAddress(params.address)),
     readMask: HISTORY_READ_MASK,
-    // Ordering enum: ASCENDING = 0, DESCENDING = 1.
-    options: { limit: params.limit, ordering: params.order === "asc" ? 0 : 1 },
+    options: {
+      limit: params.limit,
+      // Ordering enum: ASCENDING = 0, DESCENDING = 1.
+      ordering: descending ? 1 : 0,
+      // Both cursor bounds are exclusive, and the scan travels away from the cursor: a descending
+      // read continues below it (`before`), an ascending one above it (`after`).
+      ...(params.cursorBound &&
+        (descending ? { before: params.cursorBound } : { after: params.cursorBound })),
+    },
     ...(params.startCheckpoint !== undefined && {
       startCheckpoint: BigInt(params.startCheckpoint),
     }),
@@ -444,12 +463,90 @@ export const listTransactionsByAddressGrpc = async (
 
   const transactions: SuiTransactionBlockResponse[] = [];
   let cursor: Uint8Array | undefined;
+  let endReason: number | undefined;
   for await (const frame of call.responses) {
     if (frame.watermark?.cursor) cursor = frame.watermark.cursor;
+    if (frame.end) endReason = frame.end.reason;
     if (frame.transaction) transactions.push(grpcTxToJsonRpcResponse(frame.transaction));
   }
 
-  return { transactions, ...(cursor && { cursor }) };
+  return { transactions, ...(cursor && { cursor }), ...(endReason !== undefined && { endReason }) };
+};
+
+/**
+ * `QueryEndReason` values that leave matching transactions unread, so the caller must ask for
+ * another page: `ITEM_LIMIT` (1) — the page filled up; `SCAN_LIMIT` (2) — the server hit its
+ * per-request scan budget for a filtered query *before* reaching the interval bound, which is how a
+ * page shorter than the limit can still have more behind it.
+ *
+ * The terminal reasons are `CHECKPOINT_BOUND` (3), `CURSOR_BOUND` (4) and `LEDGER_TIP` (5). The SDK
+ * exports the enum as a type only, so the numbers are spelled out as they are elsewhere here.
+ */
+const QUERY_END_MAY_HAVE_MORE = new Set([1, 2]);
+
+/**
+ * Whether a `ListTransactions` page leaves matches unread, from the server's own stop reason.
+ *
+ * A stream that fails or is cancelled sends no `QueryEnd`, so a missing reason falls back to the
+ * page-size heuristic — which under-reports on `SCAN_LIMIT` and over-reports on an exactly-full
+ * final page.
+ */
+export const grpcPageMayHaveMore = (
+  endReason: number | undefined,
+  received: number,
+  limit: number,
+): boolean =>
+  endReason === undefined ? received >= limit : QUERY_END_MAY_HAVE_MORE.has(endReason);
+
+/** A repeated resume cursor means the walk stopped advancing. */
+const sameCursor = (a: Uint8Array | undefined, b: Uint8Array | undefined): boolean =>
+  a !== undefined &&
+  b !== undefined &&
+  a.length === b.length &&
+  a.every((byte, i) => byte === b[i]);
+
+/**
+ * Whole history for an address, newest-first: repeated {@link listTransactionsByAddressGrpc} pages
+ * until the server reports nothing more, `limit` transactions are collected, or the walk stops
+ * advancing. This is the gRPC counterpart of `getTransactionsByAddressGraphQL`'s connection walk —
+ * the legacy bridge sync reads history once per sync and always resumes from the newest stored
+ * operation, so whatever a single page leaves behind is never requested again.
+ *
+ * Each page resumes from the previous page's watermark cursor: exclusive, transaction-precise, and
+ * still correct when a page ends in the middle of a checkpoint — no checkpoint arithmetic and no
+ * overlap to dedupe. Continuation is gated on `endReason` rather than on a full page, because a
+ * filtered scan may stop on its own budget with matches still unread.
+ *
+ * `startCheckpoint` (inclusive) bounds an incremental sync from below; the server applies it to
+ * every page and closes the walk with `CHECKPOINT_BOUND`.
+ */
+export const listHistoryByAddressGrpc = async (
+  api: SuiGrpcClient,
+  params: { address: string; limit: number; pageSize: number; startCheckpoint?: number },
+): Promise<SuiTransactionBlockResponse[]> => {
+  const collected = new Map<string, SuiTransactionBlockResponse>();
+  let cursorBound: Uint8Array | undefined;
+
+  for (let page = 0; page < MAX_PAGES && collected.size < params.limit; page++) {
+    const { transactions, cursor, endReason } = await listTransactionsByAddressGrpc(api, {
+      address: params.address,
+      limit: params.pageSize,
+      order: "desc",
+      ...(params.startCheckpoint !== undefined && { startCheckpoint: params.startCheckpoint }),
+      ...(cursorBound && { cursorBound }),
+    });
+    for (const tx of transactions) {
+      if (tx.digest) collected.set(tx.digest, tx);
+    }
+
+    // Without a cursor, or with one that did not move, there is nothing to resume from and
+    // continuing would re-read the page just consumed.
+    const mayHaveMore = grpcPageMayHaveMore(endReason, transactions.length, params.pageSize);
+    if (!mayHaveMore || !cursor || sameCursor(cursor, cursorBound)) break;
+    cursorBound = cursor;
+  }
+
+  return [...collected.values()].slice(0, params.limit);
 };
 
 /**

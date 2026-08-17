@@ -78,6 +78,8 @@ import {
   executeTransactionGrpc,
   getDelegatedStakesGrpc,
   fetchCheckpointDigestsGrpc,
+  grpcPageMayHaveMore,
+  listHistoryByAddressGrpc,
   listTransactionsByAddressGrpc,
   resolveCheckpointForDigestGrpc,
   simulateTransactionGrpc,
@@ -931,7 +933,10 @@ export const getLastBlock = (
  * calls (FromAddress + ToAddress) merged + deduped by `filterOperations`.
  * GraphQL: a single `transactions(filter: { affectedAddress })` query covers
  * sender/sponsor/recipient in one round-trip (no IN+OUT merge needed). gRPC:
- * one `ListTransactions` stream on the affected-address filter, same single-pass shape.
+ * `ListTransactions` streams on the affected-address filter, same single-pass shape.
+ *
+ * All three arms accumulate up to `TRANSACTIONS_LIMIT` operations, walking pages of
+ * `TRANSACTIONS_LIMIT_PER_QUERY`.
  */
 export const getOperations = async (
   config: SuiCoinConfig,
@@ -991,13 +996,14 @@ export const getOperations = async (
         // exclude checkpoint 0 itself — so the bound is dropped instead.
         if (seq !== null && seq > 0) filter = { afterCheckpoint: seq - 1 };
       }
-      // Single-page fetch: server caps `last` at 50; per-page payload (events +
-      // balanceChangesJson per tx) is heavy enough that multi-page accumulation
-      // can outrun the bridge's sync window on high-traffic addresses.
+      // The server caps `last` at 50, so pages of that size accumulate up to `TRANSACTIONS_LIMIT` —
+      // the depth the JSON-RPC arm reaches through `loadOperations`. A single page would cap the
+      // account at its newest 50 operations permanently: this path runs once per sync and always
+      // resumes from the newest stored digest, so what it skips is never requested again.
       const { items } = await getTransactionsByAddressGraphQL(
         api,
         addr,
-        TRANSACTIONS_LIMIT_PER_QUERY,
+        TRANSACTIONS_LIMIT,
         TRANSACTIONS_LIMIT_PER_QUERY,
         null,
         filter,
@@ -1016,14 +1022,16 @@ export const getOperations = async (
         const seq = await resolveCheckpointForDigestGrpc(api, cursorDigest);
         if (seq !== null) startCheckpoint = seq;
       }
-      const { transactions } = await listTransactionsByAddressGrpc(api, {
+      // Same depth as the GraphQL arm above, which documents why one page is not enough.
+      const transactions = await listHistoryByAddressGrpc(api, {
         address: addr,
-        limit: TRANSACTIONS_LIMIT_PER_QUERY,
-        order: "desc",
+        limit: TRANSACTIONS_LIMIT,
+        pageSize: TRANSACTIONS_LIMIT_PER_QUERY,
         ...(startCheckpoint !== undefined && { startCheckpoint }),
       });
       return transactions
         .filter(tx => !isSettlementTransaction(tx))
+        .sort(compareOperations("desc"))
         .map(transaction => transactionToOperation(accountId, addr, transaction));
     },
   });
@@ -1334,7 +1342,7 @@ export const getListOperations = async (
           : { startCheckpoint: includeCursorCheckpoint ? seq : seq + 1 };
 
       const fetchPage = async (bounds: { startCheckpoint?: number; endCheckpoint?: number }) => {
-        const { transactions } = await listTransactionsByAddressGrpc(api, {
+        const { transactions, endReason } = await listTransactionsByAddressGrpc(api, {
           address: addr,
           limit: TRANSACTIONS_LIMIT_PER_QUERY,
           order,
@@ -1345,6 +1353,11 @@ export const getListOperations = async (
           .sort(compareOperations(order));
         return {
           received: transactions.length,
+          serverHasMore: grpcPageMayHaveMore(
+            endReason,
+            transactions.length,
+            TRANSACTIONS_LIMIT_PER_QUERY,
+          ),
           afterCursor: dropOperationsBeforeCursor({
             operations: sorted,
             order,
@@ -1384,13 +1397,11 @@ export const getListOperations = async (
         ),
       );
       const last = afterCursor.at(-1);
-      // `received` is the raw stream count, before settlement filtering and cursor-dropping, so a
-      // full page means the server may have more — see {@link dropOperationsBeforeCursor} for why the
-      // surviving count cannot say. Exactly `limit` with nothing behind it therefore advertises one
-      // continuation that does not exist; the follow-up page comes back empty and terminates. An exact
-      // answer would need the stream's watermark or a `limit + 1` probe.
+      // The stream's own stop reason answers "is there more?" — see {@link grpcPageMayHaveMore}. The
+      // surviving count cannot: settlement filtering and cursor-dropping both shrink a page that had
+      // more behind it, and a filtered scan can stop on its server-side budget short of the limit.
       const next =
-        page.received >= TRANSACTIONS_LIMIT_PER_QUERY && last?.timestampMs
+        page.serverHasMore && last?.timestampMs
           ? serializeListOperationsCursor({
               digest: last.digest,
               timestamp: Number(last.timestampMs),

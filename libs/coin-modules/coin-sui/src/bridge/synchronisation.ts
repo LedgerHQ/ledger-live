@@ -35,7 +35,12 @@ export const getAccountShape: GetAccountShape<SuiAccount> = async (info, syncCon
   const config = suiConfig.getCoinConfig(currency.id);
   const stakes = await getDelegatedStakes(config, address);
 
-  let syncHash = initialAccount?.syncHash ?? latestHash(oldOperations);
+  // `syncHash` holds the resume digest of the newest stored operation, from which `getOperations`
+  // reads forward. An account with no operations has nothing to resume from — a first sync, or a
+  // cleared cache, since `clearAccount` empties `operations` but keeps `syncHash`. Resuming there
+  // would leave the account holding only what arrived after the cursor.
+  let syncHash =
+    oldOperations.length > 0 ? (initialAccount?.syncHash ?? latestHash(oldOperations)) : null;
   const newOperations = await getOperations(config, accountId, address, syncHash, undefined);
   const operations = mergeOps(oldOperations, newOperations);
   syncHash = latestHash(operations);

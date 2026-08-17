@@ -6,6 +6,7 @@ import { getListOperations, getOperations } from "./sdk";
 import {
   executeTransactionGrpc,
   fetchCheckpointDigestsGrpc,
+  listHistoryByAddressGrpc,
   listTransactionsByAddressGrpc,
   resolveCheckpointForDigestGrpc,
   simulateTransactionGrpc,
@@ -248,6 +249,166 @@ describe("listTransactionsByAddressGrpc", () => {
   });
 });
 
+describe("listHistoryByAddressGrpc", () => {
+  const PAGE_SIZE = 5;
+
+  // QueryEndReason: ITEM_LIMIT = 1, SCAN_LIMIT = 2, CHECKPOINT_BOUND = 3, LEDGER_TIP = 5.
+  const ITEM_LIMIT = 1;
+  const SCAN_LIMIT = 2;
+  const CHECKPOINT_BOUND = 3;
+  const LEDGER_TIP = 5;
+
+  /**
+   * One `listTransactions` response: `digests` become transaction frames, and the stream closes
+   * with a watermark carrying `cursor` plus the `QueryEnd` frame the server always sends.
+   */
+  const page = (digests: string[], cursor: number | undefined, reason: number | undefined) => [
+    ...digests.map(digest => ({ transaction: { digest } })),
+    {
+      ...(cursor !== undefined && { watermark: { cursor: new Uint8Array([cursor]) } }),
+      ...(reason !== undefined && { end: { reason } }),
+    },
+  ];
+
+  /** One entry per `listTransactions` call; the last page repeats if the walk asks for more. */
+  const stub = (pages: unknown[][]) => {
+    type Request = { startCheckpoint?: bigint; options?: { before?: Uint8Array } };
+    const requests: Request[] = [];
+    let call = 0;
+    const listTransactions = jest.fn((req: Request) => {
+      requests.push(req);
+      const frames = pages[Math.min(call++, pages.length - 1)];
+      return {
+        responses: (async function* () {
+          for (const frame of frames) yield frame;
+        })(),
+      };
+    });
+    return { api: { ledgerService: { listTransactions } } as unknown as SuiGrpcClient, requests };
+  };
+
+  const fullPage = (from: number) => Array.from({ length: PAGE_SIZE }, (_, i) => `tx-${from - i}`);
+
+  // The resume contract: the next page continues strictly below the last watermark cursor, which is
+  // exact even when the previous page stopped in the middle of a checkpoint.
+  it("resumes each page from the previous watermark cursor", async () => {
+    const { api, requests } = stub([
+      page(fullPage(20), 20, ITEM_LIMIT),
+      page(fullPage(15), 15, ITEM_LIMIT),
+      page(["tx-10"], 10, LEDGER_TIP),
+    ]);
+
+    const transactions = await listHistoryByAddressGrpc(api, {
+      address: ADDRESS,
+      limit: 100,
+      pageSize: PAGE_SIZE,
+    });
+
+    expect(requests).toHaveLength(3);
+    expect(requests[0].options?.before).toBeUndefined();
+    expect(requests[1].options?.before).toEqual(new Uint8Array([20]));
+    expect(requests[2].options?.before).toEqual(new Uint8Array([15]));
+    expect(transactions).toHaveLength(11);
+    expect(transactions.at(-1)?.digest).toBe("tx-10");
+  });
+
+  // The trap this walk exists to avoid: a filtered scan can exhaust its server-side budget and
+  // return fewer transactions than asked for while matches remain, so a short page is not an end.
+  it("keeps going after a short page that ended on the scan budget", async () => {
+    const { api, requests } = stub([
+      page(["tx-20"], 20, SCAN_LIMIT),
+      page(["tx-19"], 19, LEDGER_TIP),
+    ]);
+
+    const transactions = await listHistoryByAddressGrpc(api, {
+      address: ADDRESS,
+      limit: 100,
+      pageSize: PAGE_SIZE,
+    });
+
+    expect(requests).toHaveLength(2);
+    expect(transactions.map(t => t.digest)).toEqual(["tx-20", "tx-19"]);
+  });
+
+  it.each([
+    ["the ledger tip", LEDGER_TIP],
+    ["a checkpoint bound", CHECKPOINT_BOUND],
+  ])("stops when the server reports %s", async (_label, reason) => {
+    const { api, requests } = stub([page(fullPage(20), 20, reason)]);
+
+    await listHistoryByAddressGrpc(api, { address: ADDRESS, limit: 100, pageSize: PAGE_SIZE });
+
+    expect(requests).toHaveLength(1);
+  });
+
+  it("stops once the limit is reached", async () => {
+    const { api, requests } = stub([
+      page(fullPage(20), 20, ITEM_LIMIT),
+      page(fullPage(15), 15, ITEM_LIMIT),
+      page(fullPage(10), 10, ITEM_LIMIT),
+    ]);
+
+    const transactions = await listHistoryByAddressGrpc(api, {
+      address: ADDRESS,
+      limit: 7,
+      pageSize: PAGE_SIZE,
+    });
+
+    expect(requests).toHaveLength(2);
+    expect(transactions).toHaveLength(7);
+  });
+
+  it("applies the incremental lower bound to every page", async () => {
+    const { api, requests } = stub([
+      page(fullPage(20), 20, ITEM_LIMIT),
+      page(fullPage(15), 15, CHECKPOINT_BOUND),
+    ]);
+
+    await listHistoryByAddressGrpc(api, {
+      address: ADDRESS,
+      limit: 100,
+      pageSize: PAGE_SIZE,
+      startCheckpoint: 16,
+    });
+
+    expect(requests).toHaveLength(2);
+    expect(requests.every(r => r.startCheckpoint === 16n)).toBe(true);
+  });
+
+  // A stream that fails sends no `QueryEnd`; the page-size heuristic is all that is left.
+  it("falls back to the page size when the stream reports no end reason", async () => {
+    const { api, requests } = stub([
+      page(fullPage(20), 20, undefined),
+      page(["tx-15"], 15, undefined),
+    ]);
+
+    const transactions = await listHistoryByAddressGrpc(api, {
+      address: ADDRESS,
+      limit: 100,
+      pageSize: PAGE_SIZE,
+    });
+
+    expect(requests).toHaveLength(2);
+    expect(transactions).toHaveLength(6);
+  });
+
+  // Without a cursor, or with one that did not move, resuming would re-read the same page forever.
+  it.each([
+    ["no cursor is returned", undefined],
+    ["the cursor does not advance", 20],
+  ])("stops when %s", async (_label, secondCursor) => {
+    const { api, requests } = stub([
+      page(fullPage(20), 20, ITEM_LIMIT),
+      page(fullPage(15), secondCursor, ITEM_LIMIT),
+    ]);
+
+    await listHistoryByAddressGrpc(api, { address: ADDRESS, limit: 100, pageSize: PAGE_SIZE });
+
+    // The stub repeats its last page, so a walk that did not stop here would run to `MAX_PAGES`.
+    expect(requests).toHaveLength(2);
+  });
+});
+
 const checkpointFrame = (sequenceNumber: bigint | undefined, digest?: string) => ({
   checkpoint: { sequenceNumber, ...(digest !== undefined && { digest }) },
 });
@@ -482,19 +643,22 @@ describe("getListOperations cursor bounds on the gRPC transport", () => {
 
   /** `pages` is consumed one `listTransactions` call at a time, so a retry sees the next page. */
   const stubApi = (pages: unknown[][], cursorCheckpoint: bigint | undefined) => {
-    const requests: { startCheckpoint?: bigint; endCheckpoint?: bigint }[] = [];
+    type Request = {
+      startCheckpoint?: bigint;
+      endCheckpoint?: bigint;
+      options?: { before?: Uint8Array };
+    };
+    const requests: Request[] = [];
     let call = 0;
-    const listTransactions = jest.fn(
-      (req: { startCheckpoint?: bigint; endCheckpoint?: bigint }) => {
-        requests.push(req);
-        const frames = pages[Math.min(call++, pages.length - 1)];
-        return {
-          responses: (async function* () {
-            for (const frame of frames) yield frame;
-          })(),
-        };
-      },
-    );
+    const listTransactions = jest.fn((req: Request) => {
+      requests.push(req);
+      const frames = pages[Math.min(call++, pages.length - 1)];
+      return {
+        responses: (async function* () {
+          for (const frame of frames) yield frame;
+        })(),
+      };
+    });
     const getTransaction = jest.fn(() => ({
       response: { transaction: { checkpoint: cursorCheckpoint } },
     }));
@@ -604,6 +768,30 @@ describe("getListOperations cursor bounds on the gRPC transport", () => {
     expect(result.next).toBe(`${TS - 1000}:tx-000`);
   });
 
+  // The stream says why it stopped, and that beats counting: a filtered scan can stop on its own
+  // budget while short of the limit, and a page that fills the limit exactly can still be the last.
+  it("advertises a continuation for a short page that ended on the scan budget", async () => {
+    // QueryEndReason: SCAN_LIMIT = 2.
+    stubApi([[txFrame("tx-a", "12"), { end: { reason: 2 } }]], undefined);
+
+    const result = await getListOperations(grpcConfig, ADDRESS, "desc", undefined, undefined);
+
+    expect(result.next).toBe(`${TS}:tx-a`);
+  });
+
+  it("advertises no continuation for a full page that reached the ledger tip", async () => {
+    // QueryEndReason: LEDGER_TIP = 5.
+    const full = Array.from({ length: 50 }, (_, i) =>
+      txFrame(`tx-${String(i).padStart(3, "0")}`, "12"),
+    );
+    stubApi([[...full, { end: { reason: 5 } }]], undefined);
+
+    const result = await getListOperations(grpcConfig, ADDRESS, "desc", undefined, undefined);
+
+    expect(result.items).toHaveLength(50);
+    expect(result.next).toBeUndefined();
+  });
+
   it("stops when the server returns a short page", async () => {
     stubApi([[txFrame("tx-m", "12"), txFrame("tx-a", "12")]], 12n);
 
@@ -623,5 +811,29 @@ describe("getListOperations cursor bounds on the gRPC transport", () => {
 
     // `startCheckpoint` is inclusive, so the cursor's checkpoint is the bound itself.
     expect(requests[0].startCheckpoint).toBe(42n);
+  });
+
+  // The reported history bug: a first sync that stops at one page leaves the account permanently
+  // capped at its newest 50 operations, because later syncs only ever page toward the tip.
+  it("walks the whole history on a first sync rather than keeping one page", async () => {
+    // QueryEndReason: ITEM_LIMIT = 1 (more to read), LEDGER_TIP = 5 (nothing left).
+    const firstPage = [
+      ...Array.from({ length: 50 }, (_, i) =>
+        txFrame(`tx-${String(100 - i).padStart(3, "0")}`, String(100 - i), TS - i * 1000),
+      ),
+      { watermark: { cursor: new Uint8Array([51]) }, end: { reason: 1 } },
+    ];
+    const secondPage = [
+      txFrame("tx-oldest", "50", TS - 60_000),
+      { watermark: { cursor: new Uint8Array([50]) }, end: { reason: 5 } },
+    ];
+    const { requests } = stubApi([firstPage, secondPage], undefined);
+
+    const ops = await getOperations(grpcConfig, "acc-1", ADDRESS, undefined, undefined);
+
+    expect(requests).toHaveLength(2);
+    expect(requests[1].options?.before).toEqual(new Uint8Array([51]));
+    expect(ops).toHaveLength(51);
+    expect(ops.at(-1)?.hash).toBe("tx-oldest");
   });
 });

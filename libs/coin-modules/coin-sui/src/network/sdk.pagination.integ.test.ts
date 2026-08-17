@@ -8,7 +8,7 @@
 import { getEnv } from "@ledgerhq/live-env";
 import type { SuiCoinConfig, SuiTransport } from "../config";
 import { FIGMENT_SUI_VALIDATOR_ADDRESS } from "../constants";
-import { getListOperations, TRANSACTIONS_LIMIT_PER_QUERY } from "./sdk";
+import { getListOperations, getOperations, TRANSACTIONS_LIMIT_PER_QUERY } from "./sdk";
 
 const configFor = (transport: SuiTransport): SuiCoinConfig => ({
   status: { type: "active" },
@@ -75,6 +75,20 @@ describe("getListOperations pagination (live mainnet)", () => {
       expect(seen.size).toBeGreaterThan(2 * TRANSACTIONS_LIMIT_PER_QUERY);
     },
     120_000,
+  );
+
+  // Account sync reads history once and resumes from the newest stored operation, so a single page
+  // caps the account at its newest 50 operations permanently. Only a live node proves the walk
+  // continues: the depth depends on the server's own stop reason and resume cursor.
+  it.each(TRANSPORTS)(
+    "syncs deeper than one page on %s",
+    async transport => {
+      const operations = await getOperations(configFor(transport), "js:2:sui:x:", ACCOUNT);
+
+      expect(operations.length).toBeGreaterThan(TRANSACTIONS_LIMIT_PER_QUERY);
+      expect(new Set(operations.map(op => op.hash)).size).toBe(operations.length);
+    },
+    180_000,
   );
 
   it.each(TRANSPORTS)(
