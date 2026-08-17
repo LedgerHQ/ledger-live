@@ -23,7 +23,7 @@ function setupEnv(disableBroadcast?: boolean) {
 const e2eDelegationAccounts = [
   {
     delegate: new Delegate(Account.ATOM_1, "0.001", "Ledger"),
-    xrayTicket: "B2CQA-2740, B2CQA-2770",
+    xrayTicket: "B2CQA-2740",
     transactionType: "Delegated",
   },
   {
@@ -41,7 +41,6 @@ const e2eDelegationAccounts = [
     delegate: new Delegate(Account.OSMO_1, "0.0001", "Ledger by Figment"),
     xrayTicket: "B2CQA-3022",
     transactionType: "Delegated",
-    bugTicket: "NAPPS-1357",
   },
   {
     delegate: new Delegate(Account.SUI_1, "1", "Ledger by P2P.ORG"),
@@ -54,7 +53,7 @@ const e2eDelegationAccounts = [
 const validators = [
   {
     delegate: new Delegate(Account.ATOM_2, "0.001", "Ledger"),
-    xrayTicket: "B2CQA-2731, B2CQA-2763",
+    xrayTicket: "B2CQA-2731",
   },
   {
     delegate: new Delegate(Account.SOL_3, "0.001", "Ledger by Figment"),
@@ -75,7 +74,6 @@ const validators = [
   {
     delegate: new Delegate(Account.OSMO_2, "1", "Ledger by Figment"),
     xrayTicket: "B2CQA-2768",
-    bugTicket: "NAPPS-1357",
   },
 ];
 
@@ -419,7 +417,7 @@ test.describe("Select a validator", () => {
       tag: buildTags({ currencyId: delegateAccount.account.currency.id }),
       annotation: {
         type: "TMS",
-        description: "B2CQA-2771, B2CQA-3289",
+        description: "B2CQA-2771",
       },
     },
     async ({ app }) => {
@@ -500,7 +498,7 @@ test.describe("Delegate", () => {
       tag: [...deviceTagsWithoutLNS(), "@sei_evm", "@family-evm"],
       annotation: {
         type: "TMS",
-        description: "B2CQA-5964",
+        description: "B2CQA-5740",
       },
     },
     async ({ app }) => {

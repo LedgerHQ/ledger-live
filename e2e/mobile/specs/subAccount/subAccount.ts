@@ -2,6 +2,8 @@ import { verifyAppValidationSendInfo } from "../../models/send";
 import { TransactionType } from "@ledgerhq/live-e2e-shared/models/Transaction";
 import { AccountType } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
+
+const BST_ADD_SUBACCOUNT_PARENT_CURRENCIES = new Set(["algorand", "sui"]);
 import { Addresses } from "@ledgerhq/live-e2e-shared/enum/Addresses";
 import { getEnv } from "@shared/env";
 import { TransactionStatus } from "@ledgerhq/live-e2e-shared/enum/TransactionStatus";
@@ -144,7 +146,11 @@ export function runAddSubAccountTest(testConfig: {
       await app.mainNavigation.waitForWallet40Ready();
     });
 
-    setTeamOwner(Team.COIN_INTEGRATION);
+    setTeamOwner(
+      BST_ADD_SUBACCOUNT_PARENT_CURRENCIES.has(asset.parentAccount?.currency.id ?? "")
+        ? Team.BST
+        : Team.COIN_INTEGRATION,
+    );
     tmslinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     it(`[${asset.currency.testLabel}] - Add sub-account without parent`, async () => {
