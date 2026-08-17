@@ -242,7 +242,7 @@ export const test = base.extend<TestFixtures>({
     await use(electronApp);
 
     // Attach merged feature flags on failure only — they add noise to green tests (QAA-1433).
-    if (testInfo.status !== "passed") {
+    if (testInfo.status === "failed" || testInfo.status === "timedOut") {
       await attachMergedFeatureFlags(testInfo, mergedFeatureFlags);
     }
 
