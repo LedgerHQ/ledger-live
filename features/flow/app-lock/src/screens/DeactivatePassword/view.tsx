@@ -22,6 +22,7 @@ export function DeactivatePasswordView({
         labels={labels}
         helperText={helperText}
         hasError={hasWrongPassword || errorText !== undefined}
+        autoFocus
         onSubmitEditing={onConfirm}
         testID="app-lock-deactivate-password-field"
       />

@@ -1539,6 +1539,13 @@
       "saveFailed": "We couldn't save your password. Please try again.",
       "cta": "Confirm"
     },
+    "unlock": {
+      "wrongPassword": "Incorrect password",
+      "forgotPassword": "Forgot your password?",
+      "retryBiometrics": "Use biometrics",
+      "failed": "We couldn't check your password. Please try again.",
+      "cta": "Confirm"
+    },
     "deactivatePassword": {
       "title": "Deactivate password",
       "description": "Enter your password to deactivate it.",
