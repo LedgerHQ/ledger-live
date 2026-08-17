@@ -32,7 +32,9 @@ function reportBlocked(
 
 /**
  * Resolves the enricher without forcing a microtask when it is synchronous: desktop asserts on
- * `trackSubject` synchronously after render, mobile awaits native permission state.
+ * `trackSubject` synchronously after render, mobile awaits native permission state. `emit` defers
+ * too when the transport returns a thenable, so a synchronous enricher alone does not buy a
+ * synchronous emission — see the sync fast path in the README.
  *
  * A rejecting async enricher drops the event rather than sending it half-enriched, and never
  * rejects: callers are fire-and-forget effects, so a rejection here would go unhandled.

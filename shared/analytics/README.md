@@ -67,8 +67,19 @@ a **track** event — neither app calls Segment's `page()` / `screen()`, and tha
 ### The sync fast path
 
 `track` resolves the enricher without forcing a microtask when the enricher is synchronous, so
-Desktop's `trackSubject` assertions still hold synchronously after a render. Only Mobile's async
-enricher makes `track` return a promise.
+Desktop's `trackSubject` assertions can still hold synchronously after a render.
+
+**Both halves have to be synchronous.** `emit` also defers `trackSubject.next` whenever
+`transport.track` returns a thenable, so returning Segment's promise re-introduces the microtask
+even with a sync enricher — and `AnalyticsBrowser.track` does return one. A Desktop transport that
+wants the synchronous guarantee has to drop it:
+
+```ts
+setAnalytics({ track: (event, properties) => void segment.track(event, properties) });
+```
+
+The trade-off is the delivery status: a transport that returns nothing is always reported as
+`enqueued`, because there is no longer anything to await before deciding it `failed`.
 
 ## `@shared/analytics/screenRefs`
 
