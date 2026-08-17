@@ -3,6 +3,7 @@ import { ContentCardsLayout, ContentCardsType, LocationContentCard } from "~/typ
 import {
   buildDefaultHardwareCarouselValues,
   buildHardwareCarouselDebugCards,
+  buildRandomLedgerImageUrl,
   getHardwareCarouselProductImage,
   HARDWARE_CAROUSEL_LOCAL_IMAGE_URLS,
   HARDWARE_CAROUSEL_PRODUCTS,
@@ -22,6 +23,7 @@ describe("hardwareCarouselDebug", () => {
 
   it("should use bundled app device images for random media and sample cards", () => {
     expect(HARDWARE_CAROUSEL_LOCAL_IMAGE_URLS.length).toBeGreaterThan(0);
+    expect(HARDWARE_CAROUSEL_LOCAL_IMAGE_URLS).toContain(buildRandomLedgerImageUrl());
     HARDWARE_CAROUSEL_SAMPLE_PRODUCTS.forEach(sample => {
       expect(HARDWARE_CAROUSEL_LOCAL_IMAGE_URLS).toContain(sample.mediaUrl);
     });

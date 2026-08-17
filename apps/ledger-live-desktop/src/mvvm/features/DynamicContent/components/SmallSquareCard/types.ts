@@ -1,4 +1,4 @@
-export type SmallSquareCardProps = {
+export type SmallSquareCardProps = Readonly<{
   title?: string;
   subDescription?: string;
   tag?: string;
@@ -8,4 +8,4 @@ export type SmallSquareCardProps = {
   isDismissable?: boolean;
   onClick?: () => void;
   onDismiss?: () => void;
-};
+}>;

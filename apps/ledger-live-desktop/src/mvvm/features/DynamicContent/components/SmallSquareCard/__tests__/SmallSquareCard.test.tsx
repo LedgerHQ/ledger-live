@@ -28,6 +28,20 @@ describe("SmallSquareCard", () => {
     expect(onClick).not.toHaveBeenCalled();
   });
 
+  it("should expose a generic accessible name for media-only clickable cards", () => {
+    render(<SmallSquareCard media="https://example.com/device.png" onClick={jest.fn()} />);
+
+    expect(screen.getByRole("button", { name: "Content card" })).toBeVisible();
+  });
+
+  it("should use the tag as the accessible name when the title is missing", () => {
+    render(
+      <SmallSquareCard media="https://example.com/device.png" tag="30% off" onClick={jest.fn()} />,
+    );
+
+    expect(screen.getByRole("button", { name: "30% off" })).toBeVisible();
+  });
+
   it("should not expose button semantics when the card is not clickable", () => {
     render(<SmallSquareCard title="Ledger Stax" />);
 

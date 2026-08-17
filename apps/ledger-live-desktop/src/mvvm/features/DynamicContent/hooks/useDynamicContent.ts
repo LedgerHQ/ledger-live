@@ -136,9 +136,11 @@ export function useDynamicContent(): UseDynamicContentResult {
 
   const trackContentCardEvent = useCallback(
     (event: ContentCardInteractionEvent, properties: ContentCardEventProperties) => {
+      if (!isTrackedUser) return;
+
       trackContentCard(event, properties);
     },
-    [],
+    [isTrackedUser],
   );
 
   return {

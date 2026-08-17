@@ -29,8 +29,6 @@ export const HARDWARE_CAROUSEL_LOCAL_IMAGE_URLS = [
 
 export const HARDWARE_CAROUSEL_PRODUCTS = ["Ledger Stax", "Nano Pod", "Ledger Flex"] as const;
 
-/** Deliberately mixes a card without a price (Ledger Flex™) so the QA preview shows
- * the media/title shifting position depending on whether the price line is present. */
 export const HARDWARE_CAROUSEL_SAMPLE_PRODUCTS = [
   { productTitle: "Nano Pod", subDescription: "$50", tag: "30% off", mediaUrl: apexImage },
   { productTitle: "Nano Case", subDescription: "$89", tag: "", mediaUrl: blueImage },
@@ -64,10 +62,16 @@ export function getHardwareCarouselProductImage(productTitle: string): string | 
   ];
 }
 
-/** @deprecated Debug/QA only — not cryptographically secure. */
 export function buildRandomLedgerImageUrl(): string {
-  const randomIndex = Math.floor(Math.random() * HARDWARE_CAROUSEL_LOCAL_IMAGE_URLS.length);
-  return HARDWARE_CAROUSEL_LOCAL_IMAGE_URLS[randomIndex];
+  const range = HARDWARE_CAROUSEL_LOCAL_IMAGE_URLS.length;
+  const maxUnbiased = Math.floor(0x1_0000_0000 / range) * range;
+  let randomValue: number;
+
+  do {
+    [randomValue] = crypto.getRandomValues(new Uint32Array(1));
+  } while (randomValue >= maxUnbiased);
+
+  return HARDWARE_CAROUSEL_LOCAL_IMAGE_URLS[randomValue % range];
 }
 
 /** Mirrors mobile `topWalletHardwareCarousel` preset defaults. */
