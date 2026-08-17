@@ -266,6 +266,7 @@ jobs:
     permissions:
       id-token: write
       contents: read
+      security-events: write
     uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-e2e-lint-reusable.yml@develop
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
