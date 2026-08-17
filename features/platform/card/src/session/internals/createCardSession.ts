@@ -7,8 +7,9 @@ import { CARD_SESSION_KEYS, type CardSessionStore } from "./sessionStore";
  */
 export function createCardSession(store: CardSessionStore) {
   async function set(session: PayCardSession): Promise<void> {
+    // The access token is written last, because it is the only key the request path reads. A cold key
+    // that fails then leaves no Bearer behind for a session `get` would refuse to report.
     await Promise.all([
-      store.write(CARD_SESSION_KEYS.accessToken, session.accessToken),
       store.write(CARD_SESSION_KEYS.refreshToken, session.refreshToken),
       store.write(
         CARD_SESSION_KEYS.lifetimes,
@@ -18,6 +19,8 @@ export function createCardSession(store: CardSessionStore) {
         }),
       ),
     ]);
+
+    await store.write(CARD_SESSION_KEYS.accessToken, session.accessToken);
   }
 
   async function get(): Promise<PayCardSession | null> {
@@ -35,13 +38,19 @@ export function createCardSession(store: CardSessionStore) {
     return { accessToken, refreshToken, ...parsedLifetimes };
   }
 
+  /**
+   * The access token goes first, and no removal may reject. Every Card request reads that key, so a
+   * cleared session must stop sending a Bearer even when the store refuses to forget.
+   *
+   * Never throwing is the load-bearing part: the base query awaits `refreshCardSession` on a 401
+   * without a try/catch, so a rejection here would turn a handled 401 into a thrown error that has lost
+   * its `status`, and the login machine would read it as a network fault and keep the dead session.
+   */
   async function clear(): Promise<void> {
-    // The access token goes first. Every Card request reads that key, so a cleared session must stop
-    // sending a Bearer even if one of the other removals fails.
-    await store.remove(CARD_SESSION_KEYS.accessToken);
+    await store.remove(CARD_SESSION_KEYS.accessToken).catch(() => undefined);
     await Promise.all([
-      store.remove(CARD_SESSION_KEYS.refreshToken),
-      store.remove(CARD_SESSION_KEYS.lifetimes),
+      store.remove(CARD_SESSION_KEYS.refreshToken).catch(() => undefined),
+      store.remove(CARD_SESSION_KEYS.lifetimes).catch(() => undefined),
     ]);
   }
 

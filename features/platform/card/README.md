@@ -38,6 +38,11 @@ says it may throw in a later SDK, and two JWTs in one JSON blob can pass that li
 therefore gets its own key, with the two lifetimes in a third. It also makes the hot path cheap: the
 base query reads one small key per request.
 
+The access token is the only key the request path reads, so it is written **last** and removed
+**first**. It therefore exists only while the whole session does: a cold key that fails to write leaves
+no Bearer behind, and a cleared session stops sending one immediately. `clear` never rejects, because
+the base query awaits `refreshCardSession` on a `401` without a try/catch.
+
 ## Status
 
 `refreshCardSession` still clears the session and reports it cannot be renewed. The wire contract

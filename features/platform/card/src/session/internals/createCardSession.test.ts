@@ -65,6 +65,32 @@ describe("createCardSession", () => {
     expect(store.read).toHaveBeenCalledWith(CARD_SESSION_KEYS.accessToken);
   });
 
+  it("writes the access token last, after the keys the request path never reads", async () => {
+    const { store } = fakeStore();
+
+    await createCardSession(store).cardSession.set(session);
+
+    const written = jest.mocked(store.write).mock.calls.map(([key]) => key);
+    expect(written.at(-1)).toBe(CARD_SESSION_KEYS.accessToken);
+  });
+
+  it("leaves no access token behind when a cold key cannot be written", async () => {
+    const { store, slots } = fakeStore();
+    jest.mocked(store.write).mockImplementation(async (key, value) => {
+      if (key === CARD_SESSION_KEYS.refreshToken) {
+        throw new Error("keychain full");
+      }
+      slots.set(key, value);
+    });
+
+    await expect(createCardSession(store).cardSession.set(session)).rejects.toThrow(
+      "keychain full",
+    );
+
+    // A lone access token would send a Bearer for a session `get` reports as absent.
+    expect(slots.has(CARD_SESSION_KEYS.accessToken)).toBe(false);
+  });
+
   it("clears every key, the access token first", async () => {
     const { store, slots } = fakeStore();
     const { cardSession } = createCardSession(store);
@@ -113,6 +139,15 @@ describe("createCardSession", () => {
       await expect(cardSession.get()).resolves.toBeNull();
     },
   );
+
+  it("never rejects when the store refuses to forget", async () => {
+    const { store } = fakeStore();
+    jest.mocked(store.remove).mockRejectedValue(new Error("keychain locked"));
+    const { cardSession } = createCardSession(store);
+
+    // The base query awaits this on a 401 without a try/catch; a rejection would lose the 401.
+    await expect(cardSession.clear()).resolves.toBeUndefined();
+  });
 });
 
 describe("refreshCardSession", () => {
