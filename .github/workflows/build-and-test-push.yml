@@ -260,13 +260,14 @@ jobs:
   test-additional:
     name: "Test Additional"
     uses: LedgerHQ/ledger-live/.github/workflows/test-additional.yml@develop
+    permissions: 
+      security-events: write
 
   test-mobile-e2e-lint:
     name: "Mobile E2E Lint & Typecheck"
     permissions:
       id-token: write
       contents: read
-      security-events: write
     uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-e2e-lint-reusable.yml@develop
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
