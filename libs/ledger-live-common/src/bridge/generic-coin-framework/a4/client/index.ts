@@ -127,7 +127,7 @@ export class A4Client {
     const url = this.url("account", accountId, "state", "operations");
     const headers = this.versionHeader(ifVersion);
     const { blocks = [0, "latest"], ...rest } = params;
-    const serializedParams = { ...rest, blocks: JSON.stringify(blocks) };
+    const serializedParams = { ...rest, blocks: `[${blocks.join(",")}]` };
     try {
       const { data, headers: responseHeaders } = await network<A4ListOperationsResponse>({
         method: "GET",

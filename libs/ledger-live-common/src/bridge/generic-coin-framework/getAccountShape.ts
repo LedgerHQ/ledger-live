@@ -7,6 +7,7 @@ import groupBy from "lodash/groupBy";
 import { A4Client } from "./a4/client/index";
 import { deriveA4AccountId } from "./a4/client/accountId";
 import { ensureA4Registered } from "./a4/client/registration";
+import { fetchA4Operations } from "./a4/client/operations";
 import { toA4Network, resolveA4BaseUrl } from "./a4/client/utils";
 import { resolveA4ChainConfig } from "./a4/config";
 import { getCoinModuleApi } from "./api";
@@ -519,14 +520,30 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     const minHeight = syncFromScratch ? 0 : (oldOps[0]?.blockHeight ?? 0) + 1;
     const paginationCursor = cursor && !syncFromScratch ? cursor : undefined;
 
-    const { items: newCoreOps } = await coinModuleApi.listOperations(context, address, {
-      minHeight,
-      cursor: paginationCursor,
-      order: "desc",
-    });
-    const newOps = newCoreOps
-      .filter(op => !isNftCoreOp(op) && (!isIncomingCoreOp(op) || !op.tx.failed))
-      .map(op => adaptCoreOperationToLiveOperation(accountId, op)) as OperationCommon[];
+    async function resolveNewOps(
+      minHeight: number,
+      opsCursor: string | undefined,
+    ): Promise<OperationCommon[]> {
+      const a4Network = toA4Network(currency.id);
+      if (a4Network !== null) {
+        const { read, environment } = resolveA4ChainConfig(a4Network);
+        if (read) {
+          const a4AccountId = deriveA4AccountId(address);
+          const client = new A4Client(resolveA4BaseUrl(environment), a4Network);
+          const ops = await fetchA4Operations(client, a4AccountId, accountId, address, minHeight);
+          return ops as OperationCommon[];
+        }
+      }
+      const { items: newCoreOps } = await coinModuleApi.listOperations(context, address, {
+        minHeight,
+        cursor: opsCursor,
+        order: "desc",
+      });
+      return newCoreOps
+        .filter(op => !isNftCoreOp(op) && (!isIncomingCoreOp(op) || !op.tx.failed))
+        .map(op => adaptCoreOperationToLiveOperation(accountId, op)) as OperationCommon[];
+    }
+    const newOps = await resolveNewOps(minHeight, paginationCursor);
 
     const newAssetOperations = newOps.filter(
       operation =>
