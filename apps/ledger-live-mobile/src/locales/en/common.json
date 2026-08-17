@@ -10030,6 +10030,27 @@
     "actions": {
       "deposit": "Add stablecoin",
       "request": "Request"
+    },
+    "deposit": {
+      "title": "Add stablecoins",
+      "options": {
+        "bankTransfer": {
+          "title": "Bank transfer",
+          "description": "Transfer USD or EUR to receive stablecoins."
+        },
+        "swap": {
+          "title": "Swap from crypto",
+          "description": "Swap your crypto for stablecoins."
+        },
+        "receive": {
+          "title": "Crypto address",
+          "description": "Receive stablecoins from another wallet."
+        },
+        "buy": {
+          "title": "Buy",
+          "description": "Buy stablecoins with credit card."
+        }
+      }
     }
   },
   "syncIndicator": {

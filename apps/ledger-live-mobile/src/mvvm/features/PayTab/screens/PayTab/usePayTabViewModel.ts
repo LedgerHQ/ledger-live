@@ -7,6 +7,8 @@ import type { BalanceLabels } from "@features/flow-pay-card-balance";
 import { useNavigationBarHeights } from "LLM/hooks/useNavigationBarHeights";
 import { usePayCardBalance } from "LLM/features/PayTab/hooks/usePayCardBalance";
 import { usePayTabActionTiles } from "LLM/features/PayTab/hooks/usePayTabActionTiles";
+import { usePayTabDepositOptions } from "LLM/features/PayTab/hooks/usePayTabDepositOptions";
+import { usePayStablecoins } from "LLM/features/PayTab/hooks/usePayStablecoins";
 import { track } from "~/analytics";
 
 export function usePayTabViewModel() {
@@ -14,7 +16,12 @@ export function usePayTabViewModel() {
   const { t } = useTranslation();
 
   const balance = usePayCardBalance();
-  const actionTiles = usePayTabActionTiles(balance.onTrackEvent);
+  const { defaultStablecoins } = usePayStablecoins();
+  const deposit = usePayTabDepositOptions(
+    balance.onTrackEvent,
+    defaultStablecoins.map(stablecoin => stablecoin.id),
+  );
+  const actionTiles = usePayTabActionTiles(balance.onTrackEvent, deposit.open);
 
   const balanceLabels: BalanceLabels = useMemo(
     () => ({
@@ -62,5 +69,13 @@ export function usePayTabViewModel() {
     [t],
   );
 
-  return { top, openHostedLogin, featureTour, balance, balanceLabels, actionTiles };
+  return {
+    top,
+    openHostedLogin,
+    featureTour,
+    balance,
+    balanceLabels,
+    actionTiles,
+    depositOptions: deposit.depositOptions,
+  };
 }
