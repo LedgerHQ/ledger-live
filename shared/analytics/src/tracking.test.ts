@@ -106,6 +106,20 @@ describe("consent", () => {
     });
   });
 
+  it("still sends the mandatory properties and not the enricher's when consent is granted", () => {
+    const transport = register();
+    setEnricher(() => ({ secret: "personal" }));
+    setMandatoryEnricher(() => ({ optInAnalytics: true }));
+
+    track("Analytics Consent", { flow: "onboarding" }, true);
+
+    expect(transport.track).toHaveBeenCalledWith("Analytics Consent", {
+      page: undefined,
+      flow: "onboarding",
+      optInAnalytics: true,
+    });
+  });
+
   it("sends no extra properties for a mandatory event when no mandatory enricher is registered", () => {
     const transport = register();
     setTrackingSelector(() => false);
@@ -138,6 +152,7 @@ describe("enrichment", () => {
 
     const result = track("Async Event");
 
+    expect(result).toBeInstanceOf(Promise);
     expect(transport.track).not.toHaveBeenCalled();
     await result;
     expect(transport.track).toHaveBeenCalledWith("Async Event", {
@@ -190,6 +205,26 @@ describe("property filter", () => {
     ...properties,
     ...(properties.page ? { page: "scrubbed" } : {}),
     ...(properties.source ? { source: "scrubbed" } : {}),
+  });
+
+  it("hands the filter a page key even when no route has been visited", () => {
+    register();
+    const filter = jest.fn((properties: Props) => properties);
+    setPropertyFilter(filter);
+
+    track("Unvisited");
+
+    expect(Object.keys(filter.mock.calls[0][0])).toContain("page");
+  });
+
+  it("hands the filter a source key even when no route has been visited", () => {
+    register();
+    const filter = jest.fn((properties: Props) => properties);
+    setPropertyFilter(filter);
+
+    trackPage("Portfolio");
+
+    expect(Object.keys(filter.mock.calls[0][0])).toContain("source");
   });
 
   it("scrubs the ref-derived page of a track event", () => {
@@ -304,6 +339,16 @@ describe("screen", () => {
     expect(transport.track).toHaveBeenCalledTimes(1);
   });
 
+  it("stays silent on trackSubject when consent is refused", () => {
+    const transport = register();
+    setTrackingSelector(() => false);
+
+    screen("Portfolio", "Blocked");
+
+    expect(transport.track).not.toHaveBeenCalled();
+    expect(events).toEqual([]);
+  });
+
   it("emits a repeat of the same screen event when not avoiding duplicates", () => {
     const transport = register();
 
@@ -338,6 +383,14 @@ describe("delivery status", () => {
     await track("Overridden");
 
     expect(events[0].deliveryStatus).toBe("skipped_no_token");
+  });
+
+  it("defaults to enqueued for a transport resolving nothing", async () => {
+    register(createTransport(async () => {}));
+
+    await track("Async Void");
+
+    expect(events[0].deliveryStatus).toBe("enqueued");
   });
 
   it("reports failed when the transport throws", () => {
