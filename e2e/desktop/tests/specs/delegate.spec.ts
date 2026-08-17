@@ -20,7 +20,14 @@ function setupEnv(disableBroadcast?: boolean) {
   });
 }
 
-const e2eDelegationAccounts = [
+const e2eDelegationAccounts: Array<{
+  delegate: Delegate;
+  xrayTicket: string;
+  transactionType: string;
+  requiresExpertMode?: boolean;
+  supportsLNS?: boolean;
+  bugTicket?: string;
+}> = [
   {
     delegate: new Delegate(Account.ATOM_1, "0.001", "Ledger"),
     xrayTicket: "B2CQA-2740",
@@ -50,7 +57,11 @@ const e2eDelegationAccounts = [
   },
 ];
 
-const validators = [
+const validators: Array<{
+  delegate: Delegate;
+  xrayTicket: string;
+  bugTicket?: string;
+}> = [
   {
     delegate: new Delegate(Account.ATOM_2, "0.001", "Ledger"),
     xrayTicket: "B2CQA-2731",
