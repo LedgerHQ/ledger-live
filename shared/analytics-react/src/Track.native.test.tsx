@@ -22,4 +22,14 @@ describe("Track (native entry point)", () => {
 
     expect(track).toHaveBeenCalledWith("Some Event", { page: undefined, foo: "bar" });
   });
+
+  it("sends the event when a property changes and onUpdate is set", () => {
+    const { rerender } = render(<Track onUpdate event="Filter Changed" filter="all" />);
+    rerender(<Track onUpdate event="Filter Changed" filter="favourites" />);
+
+    expect(track).toHaveBeenCalledWith("Filter Changed", {
+      page: undefined,
+      filter: "favourites",
+    });
+  });
 });
