@@ -21,7 +21,7 @@ function mockModularDrawerController(
   overrides: Partial<ReturnType<typeof useModularDrawerController>> = {},
 ) {
   mockedUseModularDrawerController.mockReturnValue({
-    areCurrenciesFiltered: true,
+    areCurrenciesFiltered: undefined,
     assetsConfiguration: undefined,
     closeDrawer,
     completionMode: "currency",
@@ -33,6 +33,7 @@ function mockModularDrawerController(
     openDrawer,
     presentation: "embedded",
     preselectedCurrencies: [mockEthCryptoCurrency.id, mockBtcCryptoCurrency.id],
+    selectableNetworkIds: undefined,
     uiUseCase: undefined,
     useCase: undefined,
     ...overrides,
@@ -58,13 +59,12 @@ describe("useContactsCurrencySelectionAdapter", () => {
     );
 
     expect(openDrawer).toHaveBeenCalledWith({
-      currencies: networkIds,
-      areCurrenciesFiltered: true,
       completionMode: "currency",
       enableAccountSelection: false,
       flow: "contacts_add_address",
       presentation: "embedded",
       source: ScreenName.MyWalletContactDetail,
+      selectableNetworkIds: networkIds,
       onCurrencySelected: expect.any(Function),
     });
   });
@@ -120,12 +120,13 @@ describe("useContactsCurrencySelectionAdapter", () => {
     );
 
     expect(result.current.flowProps).toMatchObject({
-      areCurrenciesFiltered: true,
+      areCurrenciesFiltered: undefined,
       currencies: [mockEthCryptoCurrency.id, mockBtcCryptoCurrency.id],
       isOpen: true,
       onAccountSelected: handleAccountSelected,
       onClose: closeDrawer,
       onCurrencySelected: handleCurrencySelected,
+      selectableNetworkIds: undefined,
     });
   });
 

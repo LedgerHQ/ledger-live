@@ -322,6 +322,13 @@ function withContactsPageReadyState(
   });
 }
 
+const evmOnlyContactsFeatureFlag: Parameters<typeof withContactsPageReadyState>[0] = {
+  lwmContacts: {
+    enabled: true,
+    params: { newBadge: false, eligibleAddressFamilies: ["evm"] },
+  },
+};
+
 describe("Contacts integration", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -633,12 +640,7 @@ describe("Contacts integration", () => {
   it("should continue Add Address with the final currency selected in the shared drawer", async () => {
     const { user } = render(<ContactDetailViewModelTestApp />, {
       navigationInitialState: contactDetailNavigationState,
-      overrideInitialState: withContactsPageReadyState({
-        lwmContacts: {
-          enabled: true,
-          params: { newBadge: false, eligibleAddressFamilies: ["evm"] },
-        },
-      }),
+      overrideInitialState: withContactsPageReadyState(evmOnlyContactsFeatureFlag),
     });
 
     await user.press(screen.getByTestId("contacts-start-add-address"));
@@ -660,15 +662,10 @@ describe("Contacts integration", () => {
     const contact = mockContact({ id: "contact-benoit", name: "Benoit" });
     const { user } = render(<ContactDetailAddressEntryTestApp />, {
       navigationInitialState: savedContactDetailNavigationState,
-      overrideInitialState: withContactsPageReadyState(
-        {
-          lwmContacts: {
-            enabled: true,
-            params: { newBadge: false, eligibleAddressFamilies: ["evm"] },
-          },
-        },
-        state => ({ ...state, contacts: { contacts: [mockMeContact(), contact] } }),
-      ),
+      overrideInitialState: withContactsPageReadyState(evmOnlyContactsFeatureFlag, state => ({
+        ...state,
+        contacts: { contacts: [mockMeContact(), contact] },
+      })),
     });
 
     await user.press(screen.getByTestId("contacts-detail-add-address"));
@@ -725,12 +722,7 @@ describe("Contacts integration", () => {
   it("should keep the currency selector usable when searching for a network", async () => {
     const { user } = render(<ContactDetailAddressEntryTestApp />, {
       navigationInitialState: contactDetailNavigationState,
-      overrideInitialState: withContactsPageReadyState({
-        lwmContacts: {
-          enabled: true,
-          params: { newBadge: false, eligibleAddressFamilies: ["evm"] },
-        },
-      }),
+      overrideInitialState: withContactsPageReadyState(evmOnlyContactsFeatureFlag),
     });
 
     await user.press(screen.getByTestId("contacts-detail-add-address"));
@@ -745,15 +737,37 @@ describe("Contacts integration", () => {
     });
   });
 
+  it("should keep the standard catalog visible while disabling ineligible asset and network rows", async () => {
+    const { user } = render(<ContactDetailAddressEntryTestApp />, {
+      navigationInitialState: contactDetailNavigationState,
+      overrideInitialState: withContactsPageReadyState(evmOnlyContactsFeatureFlag),
+    });
+
+    await user.press(screen.getByTestId("contacts-detail-add-address"));
+
+    const bitcoinAsset = await screen.findByTestId("asset-item-BTC");
+    const tetherAsset = screen.getByTestId("asset-item-USDT");
+    expect(bitcoinAsset).toBeDisabled();
+    expect(tetherAsset).toBeEnabled();
+
+    await user.press(tetherAsset);
+
+    const solanaNetwork = await screen.findByTestId("network-item-Solana");
+    const ethereumNetwork = screen.getByTestId("network-item-Ethereum");
+    expect(solanaNetwork).toBeDisabled();
+    expect(ethereumNetwork).toBeEnabled();
+
+    await user.press(ethereumNetwork);
+
+    await waitFor(() => {
+      expect(screen.getByTestId("contacts-add-address-input")).toBeVisible();
+    });
+  });
+
   it("should return to currency selection without removing the contact detail route", async () => {
     const { user } = render(<ContactDetailAddressEntryTestApp />, {
       navigationInitialState: contactDetailNavigationState,
-      overrideInitialState: withContactsPageReadyState({
-        lwmContacts: {
-          enabled: true,
-          params: { newBadge: false, eligibleAddressFamilies: ["evm"] },
-        },
-      }),
+      overrideInitialState: withContactsPageReadyState(evmOnlyContactsFeatureFlag),
     });
 
     await user.press(screen.getByTestId("contacts-detail-add-address"));
