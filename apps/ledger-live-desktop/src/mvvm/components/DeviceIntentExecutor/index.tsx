@@ -13,6 +13,7 @@ import {
 } from "@ledgerhq/live-dmk-shared";
 import { Dialog, DialogBody, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
 import { DialogBackgroundToneProvider } from "LLD/components/DialogBackgroundGradient";
+import { useDeviceBlocked } from "~/renderer/components/DeviceAction/DeviceBlocker";
 import { DeviceDisconnected } from "./components/DeviceDisconnected";
 import { IntentError } from "./components/IntentError";
 import { InvalidOperation } from "./components/InvalidOperation";
@@ -72,6 +73,7 @@ export function DeviceIntentExecutorLWD<JobState, Input, ExtraProps>(
     onOverlayDismiss,
     onEscapeKeyDown,
   } = useDeviceIntentExecutorLWDViewModel(props);
+  const isDeviceBlocked = useDeviceBlocked();
   const analyticsProperties = props.analyticsProperties ?? emptyAnalyticsProperties;
   const trackingContextValue = React.useMemo(
     () => ({ sourceFlow: props.sourceFlow, analyticsProperties }),
@@ -81,19 +83,41 @@ export function DeviceIntentExecutorLWD<JobState, Input, ExtraProps>(
   if (!wrappedProps.enabled) return null;
 
   return (
-    <Dialog open={wrappedProps.enabled} onOpenChange={onOpenChange} height="fit">
+    <Dialog
+      open={wrappedProps.enabled}
+      onOpenChange={open => {
+        if (!isDeviceBlocked) onOpenChange(open);
+      }}
+      height="fit"
+    >
       <DialogContent
         aria-describedby={undefined}
         className="max-h-[90vh] w-[400px] bg-base p-0"
         data-testid="device-intent-executor-dialog"
-        onPointerDownOutside={onOverlayDismiss}
-        onEscapeKeyDown={onEscapeKeyDown}
+        onPointerDownOutside={event => {
+          if (isDeviceBlocked) {
+            event.preventDefault();
+            return;
+          }
+          onOverlayDismiss();
+        }}
+        onEscapeKeyDown={event => {
+          if (isDeviceBlocked) {
+            event.preventDefault();
+            return;
+          }
+          onEscapeKeyDown();
+        }}
       >
         <DialogBackgroundToneProvider>
           <DeviceIntentTrackingProvider value={trackingContextValue}>
             <DeviceIntentExecutorHeaderContext.Provider value={headerContextValue}>
               {!hasHeaderOverride && (
-                <DialogHeader density="compact" onClose={onHeaderClosePressed} className="!mb-0" />
+                <DialogHeader
+                  density="compact"
+                  onClose={isDeviceBlocked ? undefined : onHeaderClosePressed}
+                  className="!mb-0"
+                />
               )}
               <DialogBody className="!mb-0 flex min-h-0 flex-col px-24 pb-24">
                 <DeviceIntentExecutor

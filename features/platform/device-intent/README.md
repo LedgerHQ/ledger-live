@@ -43,6 +43,8 @@ See the [ADR: Device Intent Executor component](https://ledgerhq.atlassian.net/w
   - [Intent implementation checklist](#intent-implementation-checklist)
   - [Mounting the executor](#mounting-the-executor)
   - [Custom headers from intent components](#custom-headers-from-intent-components)
+  - [Preventing the user from closing the drawer (LWM)](#preventing-the-user-from-closing-the-drawer-lwm)
+  - [Preventing the user from closing the dialog (LWD)](#preventing-the-user-from-closing-the-dialog-lwd)
   - [Building the `deviceInitializationInput`](#building-the-deviceinitializationinput)
   - [Defining intents](#defining-intents)
   - [Structuring intents (single vs. multiple)](#structuring-intents-single-vs-multiple)
@@ -504,6 +506,40 @@ The device-context initialization phase already does this for the states where a
 device action is pending or an operation is ongoing (`UnlockDevice`,
 `AllowSecureConnection`, `ConfirmOpenApp`, `InstallingApp` and `Loading`), so you
 only need to handle the pending states specific to your own intent.
+
+### Preventing the user from closing the dialog (LWD)
+
+The `DeviceIntentExecutorLWD` dialog is dismissable by default. During a pending
+device action or operation, mount `DeviceBlocker` from
+`~/renderer/components/DeviceAction/DeviceBlocker` in the active desktop
+initializer or intent component:
+
+```tsx
+import { DeviceBlocker } from "~/renderer/components/DeviceAction/DeviceBlocker";
+
+function MySignIntentComponent({ jobState }: Props) {
+  const awaitingUserOnDevice = jobState?.type === "awaiting-signature";
+
+  return (
+    <>
+      {awaitingUserOnDevice && <DeviceBlocker />}
+      {/* intent content */}
+    </>
+  );
+}
+```
+
+While it is mounted, the executor prevents dismissal through the close button,
+Escape, backdrop click, and Lumen's `onOpenChange(false)` callback. It restores
+normal dismissal as soon as it unmounts. The parent still owns explicit flow
+closure through `enabled={false}`, and intent components can still use their
+injected `onClose` callback for an explicit close CTA.
+
+The device-context initialization phase already mounts `DeviceBlocker` for the
+same pending states as LWM (`UnlockDevice`, `AllowSecureConnection`,
+`ConfirmOpenApp`, `InstallingApp` and `Loading`). For intent-specific pending
+states, mount it in the platform renderer only for as long as the device action
+is pending.
 
 ### Building the `deviceInitializationInput`
 
