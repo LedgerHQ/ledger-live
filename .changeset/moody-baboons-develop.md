@@ -1,7 +1,7 @@
 ---
-"@ledgerhq/coin-evm": patch
-"live-mobile": patch
-"@ledgerhq/live-common": patch
+"@ledgerhq/coin-evm": minor
+"live-mobile": minor
+"@ledgerhq/live-common": minor
 ---
 
 chore(coin-evm): move `getDefaultFeeUnit` and `getMessageProperties` to llc

@@ -1,6 +1,6 @@
 ---
-"@ledgerhq/evm-tools": patch
-"@ledgerhq/live-common": patch
+"@ledgerhq/evm-tools": minor
+"@ledgerhq/live-common": minor
 ---
 
 Fix wrong EVM dApp transaction types reported to analytics.

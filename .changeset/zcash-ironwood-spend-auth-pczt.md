@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-zcash": patch
+"@ledgerhq/coin-zcash": minor
 ---
 
 Forward Ironwood spend-auth signatures to PCZT finalization (LIVE-35956).

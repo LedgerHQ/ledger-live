@@ -1,6 +1,6 @@
 ---
-"@ledgerhq/coin-zcash": patch
-"ledger-live-desktop": patch
+"@ledgerhq/coin-zcash": minor
+"ledger-live-desktop": minor
 ---
 
 Name the Ironwood shielded operations and stop listing Zcash self-transfers.

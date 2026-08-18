@@ -1,6 +1,6 @@
 ---
-"ledger-live-mobile-e2e-tests": patch
-"live-mobile": patch
+"ledger-live-mobile-e2e-tests": minor
+"live-mobile": minor
 ---
 
 Fix scroll targeting and silent failures in the Ledger Wallet Mobile E2E suite: target leaf rows

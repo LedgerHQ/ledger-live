@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/hw-app-btc": patch
+"@ledgerhq/hw-app-btc": minor
 ---
 
 Fix Zcash sends failing before the device prompt when the coin being spent came from a V6-format transaction.

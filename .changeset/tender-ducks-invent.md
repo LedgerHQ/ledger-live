@@ -1,10 +1,10 @@
 ---
-"@domain/entity-currency-token": patch
-"@ledgerhq/ledger-wallet-framework": patch
-"@domain/api-currency-token": patch
-"@ledgerhq/live-common": patch
-"@ledgerhq/coin-tester-multiversx": patch
-"@ledgerhq/coin-tester-stellar": patch
+"@domain/entity-currency-token": minor
+"@ledgerhq/ledger-wallet-framework": minor
+"@domain/api-currency-token": minor
+"@ledgerhq/live-common": minor
+"@ledgerhq/coin-tester-multiversx": minor
+"@ledgerhq/coin-tester-stellar": minor
 ---
 
 chore(llc): expose `tokenIdentifier` through `TokenCurrency`

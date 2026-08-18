@@ -1,7 +1,7 @@
 ---
-"@ledgerhq/live-common": patch
-"@ledgerhq/coin-evm": patch
-"@ledgerhq/ledger-wallet-framework": patch
+"@ledgerhq/live-common": minor
+"@ledgerhq/coin-evm": minor
+"@ledgerhq/ledger-wallet-framework": minor
 ---
 
 Fix an ERC-20 operation staying stuck on "Sending..." after a speed up or a cancel, which also kept
