@@ -83,7 +83,7 @@ const errorCases = [
     type: DiscoveryErrorTypes.LocationPermissionDeniedManualSettings,
     title: "Enable Location in Settings",
     description:
-      'Android requires this to scan for nearby Bluetooth devices. Go to Settings → Apps → Ledger Wallet → Permissions → Location. Set to "Allow", then select the button below.',
+      'Android requires this to scan for nearby Bluetooth devices. Go to Settings → Apps → Ledger Wallet → Permissions → Location. Set to "Allow", then select the button below. Ledger does not access or store your location.',
   },
   {
     type: DiscoveryErrorTypes.LocationDisabledPromptable,
@@ -101,7 +101,7 @@ const errorCases = [
     type: DiscoveryErrorTypes.LocationServicePermissionMissing,
     title: "Location permission couldn't be confirmed",
     description:
-      "Select “Try again”, this often resolves it. If not, check Settings → Apps → Ledger Wallet → Permissions → Location.",
+      "Android requires this to scan for nearby Bluetooth devices. Select “Try again”, this often resolves it. If not, check Settings → Apps → Ledger Wallet → Permissions → Location. Ledger does not access or store your location.",
   },
   {
     type: BaseDiscoveryErrorTypes.Unknown,
