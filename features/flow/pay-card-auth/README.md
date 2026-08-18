@@ -46,8 +46,8 @@ Two secrets, two owners:
 
 | Secret | Owner | Store |
 | --- | --- | --- |
-| PKCE `{ state, codeVerifier }` | this flow | `expo-secure-store` (native) / memory (web) |
-| Access and refresh tokens | [`@features/platform-card`](../../platform/card/README.md) | `expo-secure-store` (native) / memory (web) |
+| PKCE `{ state, codeVerifier }` | this flow | `react-native-keychain` (native) / memory (web) |
+| Access and refresh tokens | [`@features/platform-card`](../../platform/card/README.md) | `react-native-keychain` (native) / memory (web) |
 
 The redirect can arrive twice, from the browser session and from the app's deep link. The first one
 wins and the second is ignored.
