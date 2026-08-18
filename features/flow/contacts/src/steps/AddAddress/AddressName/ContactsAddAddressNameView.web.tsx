@@ -1,11 +1,10 @@
 import React from "react";
-import { AddressInput, Button, TextInput } from "@ledgerhq/lumen-ui-react";
+import { Banner, Button, TextInput } from "@ledgerhq/lumen-ui-react";
 import { LedgerLogo } from "@ledgerhq/lumen-ui-react/symbols";
 import { CONTACT_ADDRESS_LABEL_MAX_LENGTH } from "@domain/entity-contact";
 import type { ContactsAddAddressNameViewProps } from "./types";
 
 export function ContactsAddAddressNameView({
-  address,
   addressLabel,
   labels,
   validationMessage,
@@ -15,23 +14,12 @@ export function ContactsAddAddressNameView({
 }: ContactsAddAddressNameViewProps): React.JSX.Element {
   return (
     <div className="flex flex-col gap-24">
-      <AddressInput
-        autoComplete="off"
-        autoCorrect="off"
-        data-testid="contacts-add-address-confirmed-input"
-        helperText={labels.validAddress}
-        hideClearButton
-        prefix=""
-        readOnly
-        spellCheck={false}
-        status="success"
-        value={address}
-      />
       <TextInput
         autoComplete="off"
         autoCorrect="off"
         data-testid="contacts-add-address-name-input"
         helperText={validationMessage}
+        hideClearButton
         label={labels.inputLabel}
         maxCount={CONTACT_ADDRESS_LABEL_MAX_LENGTH}
         maxLength={CONTACT_ADDRESS_LABEL_MAX_LENGTH}
@@ -39,6 +27,11 @@ export function ContactsAddAddressNameView({
         spellCheck={false}
         status={addressLabel.status === "invalid" ? "error" : undefined}
         value={addressLabel.value}
+      />
+      <Banner
+        appearance="info"
+        data-testid="contacts-add-address-name-disclaimer"
+        description={labels.namingDisclaimer}
       />
       <Button
         appearance="base"

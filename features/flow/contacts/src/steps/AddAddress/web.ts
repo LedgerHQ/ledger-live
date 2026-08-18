@@ -4,6 +4,8 @@ export type { SanctionedAddressBannerProps } from "./ContactsAddAddressEntry.typ
 export type { AddAddressEntryLabels as ContactsAddAddressEntryLabels } from "./types";
 export { ContactsAddAddressNameInput as ContactsAddAddressName } from "./AddressName/Input/ContactsAddAddressNameInput.web";
 export { ContactsAddAddressCompletion } from "./Completion/ContactsAddAddressCompletion.web";
+export { ContactsAddAddressReview } from "./Review";
+export type { ContactsAddAddressReviewLabels, ContactsAddAddressReviewProps } from "./Review";
 export {
   ContactsAddAddressFlowContent,
   resolveAddAddressWebFlowStep,

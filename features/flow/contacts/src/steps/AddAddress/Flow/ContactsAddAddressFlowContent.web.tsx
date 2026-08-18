@@ -3,6 +3,7 @@ import { ContactsAddAddressEntry } from "../ContactsAddAddressEntry.web";
 import { ContactsAddAddressNameInput } from "../AddressName/Input/ContactsAddAddressNameInput.web";
 import type { ContactsAddAddressNameLabels } from "../AddressName/types";
 import { ContactsAddAddressCompletion } from "../Completion/ContactsAddAddressCompletion.web";
+import { ContactsAddAddressReview, type ContactsAddAddressReviewLabels } from "../Review";
 import type {
   AddAddressCompletionLabels,
   AddAddressEntryLabels,
@@ -21,6 +22,7 @@ export type ContactsAddAddressFlowContentProps = Readonly<{
   entryLabels: AddAddressEntryLabels;
   sanctionedAddressBanner?: SanctionedAddressBannerProps;
   nameLabels: ContactsAddAddressNameLabels;
+  reviewLabels: ContactsAddAddressReviewLabels;
   completionLabels: AddAddressCompletionLabels;
   onAddressChange: (address: string, inputMethod: AddAddressInputSource) => void;
   onContinueFromAddressDetails: () => void;
@@ -63,6 +65,7 @@ export function ContactsAddAddressFlowContent({
   entryLabels,
   sanctionedAddressBanner,
   nameLabels,
+  reviewLabels,
   completionLabels,
   onAddressChange,
   onContinueFromAddressDetails,
@@ -89,7 +92,6 @@ export function ContactsAddAddressFlowContent({
     case "namingAddress":
       return (
         <ContactsAddAddressNameInput
-          addressEntry={state.addressEntry}
           addressLabel={state.addressLabel}
           labels={nameLabels}
           onAddressLabelChange={onAddressLabelChange}
@@ -106,12 +108,20 @@ export function ContactsAddAddressFlowContent({
         />
       );
     case "reviewingAddress":
-      return (
+      return state.entryMode === "prefilled" ? (
+        <ContactsAddAddressReview
+          addressEntry={state.addressEntry}
+          addressLabel={state.addressLabel}
+          displayContext={state.displayContext}
+          labels={reviewLabels}
+          onContinue={onContinueFromReview}
+        />
+      ) : (
         <ContactsAddAddressCompletion
-          buttonLabel={completionLabels.continue}
+          buttonLabel={reviewLabels.continue}
           onContinue={onContinueFromReview}
           testID="contacts-add-address-review"
-          title={completionLabels.title}
+          title={reviewLabels.title}
         />
       );
     case "success":

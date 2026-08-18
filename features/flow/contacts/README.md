@@ -18,6 +18,8 @@ Shared Contacts flow package for Desktop and Mobile.
 - Contacts orchestration through `ContactsView`, which composes List, Detail, and Introduction
   journeys
 - Add Address session, address-entry validation state, and address-label state
+- Prefill Add Address entry (`startWithPrefilled` / `OpenPrefillAddAddressParams`) that bypasses
+  MAD and address entry and starts on the naming screen
 - Add Address network eligibility and final currency selection state (MAD integration uses an
   injected selection port)
 - Shared UI components (`.web.tsx` / `.native.tsx`)

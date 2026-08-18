@@ -3,22 +3,16 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import {
   CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME,
   ContactAddressLabelSchema,
-  ContactAddressValueSchema,
   DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME,
   INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME,
 } from "@domain/entity-contact";
 import { ContactsAddAddressNameView } from "./ContactsAddAddressNameView.web";
 import type { ContactsAddAddressNameViewProps } from "./types";
 
-const RESOLVED_ADDRESS = ContactAddressValueSchema.parse(
-  "0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034",
-);
-
 function createProps(
   overrides: Partial<ContactsAddAddressNameViewProps> = {},
 ): ContactsAddAddressNameViewProps {
   return {
-    address: RESOLVED_ADDRESS,
     addressLabel: {
       status: "valid",
       value: "Ethereum",
@@ -30,7 +24,6 @@ function createProps(
       namingDisclaimer: "Address naming disclaimer",
       namingDisclaimerAccessibilityLabel: "Address name information",
       continueToReview: "Continue to review",
-      validAddress: "Valid address",
       validationErrors: {
         [INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME]: "Special characters are not allowed.",
         [DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME]:
@@ -46,17 +39,15 @@ function createProps(
 }
 
 describe("ContactsAddAddressNameView", () => {
-  it("should render the address details and forward input actions", () => {
+  it("should render only the name input with disclaimer and forward actions", () => {
     const onAddressLabelChange = jest.fn();
     const onContinue = jest.fn();
 
     render(<ContactsAddAddressNameView {...createProps({ onAddressLabelChange, onContinue })} />);
 
-    expect(screen.getByTestId("contacts-add-address-confirmed-input")).toHaveAttribute(
-      "value",
-      RESOLVED_ADDRESS,
-    );
+    expect(screen.queryByTestId("contacts-add-address-confirmed-input")).not.toBeInTheDocument();
     expect(screen.getByTestId("contacts-add-address-name-input")).toHaveValue("Ethereum");
+    expect(screen.getByTestId("contacts-add-address-name-disclaimer")).toBeInTheDocument();
 
     fireEvent.change(screen.getByTestId("contacts-add-address-name-input"), {
       target: { value: "Exchange" },

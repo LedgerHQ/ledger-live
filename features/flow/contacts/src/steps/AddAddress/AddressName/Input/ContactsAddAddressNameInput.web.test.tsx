@@ -5,25 +5,14 @@ import {
   DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME,
   INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME,
   ContactAddressLabelSchema,
-  ContactAddressValueSchema,
 } from "@domain/entity-contact";
 import { ContactsAddAddressNameInput } from "./ContactsAddAddressNameInput.web";
 import type { ContactsAddAddressNameProps } from "../types";
-
-const RESOLVED_ADDRESS = ContactAddressValueSchema.parse(
-  "0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034",
-);
 
 function createProps(
   overrides: Partial<ContactsAddAddressNameProps> = {},
 ): ContactsAddAddressNameProps {
   return {
-    addressEntry: {
-      status: "valid",
-      value: RESOLVED_ADDRESS,
-      resolvedAddress: RESOLVED_ADDRESS,
-      inputMethod: "manual",
-    },
     addressLabel: {
       status: "valid",
       value: "Ethereum",
@@ -35,7 +24,6 @@ function createProps(
       namingDisclaimer: "Address naming disclaimer",
       namingDisclaimerAccessibilityLabel: "Address name information",
       continueToReview: "Continue to review",
-      validAddress: "Valid address",
       validationErrors: {
         [INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME]: "Special characters are not allowed.",
         [DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME]:
@@ -51,18 +39,16 @@ function createProps(
 }
 
 describe("ContactsAddAddressNameInput", () => {
-  it("should render the confirmed address and prefilled label with the 32-character limit", () => {
+  it("should render only the name input with the 32-character limit", () => {
     render(<ContactsAddAddressNameInput {...createProps()} />);
 
-    expect(screen.getByTestId("contacts-add-address-confirmed-input")).toHaveAttribute(
-      "value",
-      RESOLVED_ADDRESS,
-    );
+    expect(screen.queryByTestId("contacts-add-address-confirmed-input")).not.toBeInTheDocument();
     expect(screen.getByTestId("contacts-add-address-name-input")).toHaveValue("Ethereum");
     expect(screen.getByTestId("contacts-add-address-name-input")).toHaveAttribute(
       "maxlength",
       "32",
     );
+    expect(screen.getByTestId("contacts-add-address-name-disclaimer")).toBeInTheDocument();
     expect(screen.getByTestId("contacts-add-address-name-continue")).toBeEnabled();
   });
 

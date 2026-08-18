@@ -1,22 +1,16 @@
 import type { ChangeEvent } from "react";
 import type { ContactAddressLabelValidationErrorName } from "@domain/entity-contact";
-import type {
-  AddAddressLabelState,
-  AddAddressNameLabels,
-  ValidAddAddressEntryState,
-} from "../types";
+import type { AddAddressLabelState, AddAddressNameLabels } from "../types";
 
 export type ContactsAddAddressNameLabels = Readonly<{
   inputLabel: string;
   namingDisclaimer: string;
   namingDisclaimerAccessibilityLabel: string;
   continueToReview: string;
-  validAddress: string;
   validationErrors: Record<ContactAddressLabelValidationErrorName, string>;
 }>;
 
 export type ContactsAddAddressNameProps = Readonly<{
-  addressEntry: ValidAddAddressEntryState;
   addressLabel: AddAddressLabelState;
   labels: ContactsAddAddressNameLabels;
   onAddressLabelChange: (value: string) => void;
@@ -24,7 +18,6 @@ export type ContactsAddAddressNameProps = Readonly<{
 }>;
 
 export type ContactsAddAddressNameViewProps = Readonly<{
-  address: string;
   addressLabel: AddAddressLabelState;
   labels: ContactsAddAddressNameLabels;
   validationMessage?: string;

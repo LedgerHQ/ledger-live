@@ -16,6 +16,33 @@ export type AddAddressCurrencySelection = Readonly<{
   assetDisplayName: string;
 }>;
 
+export type AddAddressNetworkContext = Readonly<{
+  networkId: string;
+  displayName: string;
+}>;
+
+export type AddAddressEntryMode = "mad" | "prefilled";
+
+export type AddAddressDisplayContext = Readonly<{
+  assetDisplayName: string;
+  network: AddAddressNetworkContext;
+}>;
+
+export type PrefillAddAddressParams = Readonly<{
+  contact: AddAddressContact;
+  address: string;
+  currency: AddAddressCurrencySelection;
+  network: AddAddressNetworkContext;
+}>;
+
+export type PrefillAddAddressStartResult =
+  | Readonly<{ status: "started" }>
+  | Readonly<{
+      status: "invalid_address";
+      error: "invalid_format" | "domain_not_found" | "sanctioned";
+    }>
+  | Readonly<{ status: "unavailable" }>;
+
 export type AddAddressEntryState =
   | Readonly<{
       status: "empty";
@@ -76,6 +103,8 @@ type AddAddressSession = Readonly<{
   selectedContactId: ContactId;
   existingAddressLabels: readonly ContactAddress["label"][];
   selectedCurrencyId: ContactAddress["currencyId"];
+  entryMode: AddAddressEntryMode;
+  displayContext: AddAddressDisplayContext;
   addressEntry: AddAddressEntryState;
   addressLabel: AddAddressLabelState;
 }>;
@@ -119,6 +148,7 @@ export type AddAddressFlowState =
 export type AddAddressFlowViewModel = Readonly<{
   state: AddAddressFlowState;
   start: (contact: AddAddressContact) => void;
+  startWithPrefilled: (params: PrefillAddAddressParams) => Promise<PrefillAddAddressStartResult>;
   completeCurrencySelection: (contactId: ContactId, selection: AddAddressCurrencySelection) => void;
   updateAddress: (address: string, inputMethod: AddAddressInputSource) => Promise<void>;
   updateAddressLabel: (label: string) => void;

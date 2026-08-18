@@ -15,6 +15,7 @@ export function ContactsAddAddressFlowDialog({
   sanctionedAddressBanner,
   nameLabels,
   reviewLabels,
+  completionLabels,
   onAddressChange,
   onContinueFromAddressDetails,
   onAddressLabelChange,
@@ -39,10 +40,11 @@ export function ContactsAddAddressFlowDialog({
             modularDialog.content
           ) : (
             <ContactsAddAddressFlowContent
-              completionLabels={reviewLabels}
+              completionLabels={completionLabels}
               entryLabels={entryLabels}
               sanctionedAddressBanner={sanctionedAddressBanner}
               nameLabels={nameLabels}
+              reviewLabels={reviewLabels}
               onAddressChange={onAddressChange}
               onAddressLabelChange={onAddressLabelChange}
               onClose={onClose}

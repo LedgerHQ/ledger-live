@@ -2,7 +2,6 @@ import { useCallback, useMemo, type ChangeEvent } from "react";
 import type { ContactsAddAddressNameProps, ContactsAddAddressNameViewProps } from "./types";
 
 export function useContactsAddAddressNameViewModel({
-  addressEntry,
   addressLabel,
   labels,
   onAddressLabelChange,
@@ -21,7 +20,6 @@ export function useContactsAddAddressNameViewModel({
   );
 
   return {
-    address: addressEntry.value,
     addressLabel,
     labels,
     validationMessage,

@@ -29,7 +29,6 @@ const nameLabels: ContactsAddAddressNameLabels = {
   namingDisclaimer: "Address naming disclaimer",
   namingDisclaimerAccessibilityLabel: "Address name information",
   continueToReview: "Continue to review",
-  validAddress: "Valid address",
   validationErrors: {
     InvalidContactAddressLabelError: "Special characters are not allowed.",
     DuplicateContactAddressLabelError: "Duplicate address name.",
