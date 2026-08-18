@@ -1,6 +1,6 @@
 import React from "react";
 import { render } from "@tests/test-renderer";
-import type { DeviceConnectionResult } from "@ledgerhq/device-intent";
+import type { DeviceConnectionResult } from "@features/platform-device-intent";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { LoadingStateType } from "@ledgerhq/live-dmk-shared";
 import type { EnsureAppReadyUseCaseDependencies } from "@ledgerhq/live-common/device/use-cases/ensureAppReady/ensureAppReadyUseCase";
@@ -22,7 +22,6 @@ const mockedView = jest.mocked(DeviceContextInitializerComponentLWMView);
 
 const connectionResult: DeviceConnectionResult = {
   compatDeviceId: "device-id",
-  compatDeviceModelId: DeviceModelId.nanoX,
   compatDeviceName: "Ledger Nano X",
   compatDeviceWired: false,
   connectedDevice: Object.create(null),

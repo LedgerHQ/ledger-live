@@ -1,4 +1,4 @@
-import type { IntentDefinition } from "@ledgerhq/device-intent";
+import type { IntentDefinition } from "@features/platform-device-intent";
 import type { Account, EIP712Message } from "@ledgerhq/types-live";
 
 /**

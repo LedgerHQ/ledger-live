@@ -1,5 +1,5 @@
 import React from "react";
-import type { DeviceContextInitializerComponent } from "@ledgerhq/device-intent";
+import type { DeviceContextInitializerComponent } from "@features/platform-device-intent";
 import type { EnsureAppReadyUseCaseDependencies } from "@ledgerhq/live-common/device/use-cases/ensureAppReady/ensureAppReadyUseCase";
 import type { InitializationInput } from "../types";
 import { DeviceContextInitializerComponentLWDView } from "./DeviceContextInitializerComponentLWDView";

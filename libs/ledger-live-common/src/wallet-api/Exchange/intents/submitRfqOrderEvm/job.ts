@@ -1,6 +1,6 @@
 import { Observable, of, concat } from "rxjs";
 import { catchError } from "rxjs/operators";
-import type { Job } from "@ledgerhq/device-intent";
+import type { Job } from "@features/platform-device-intent";
 import { getSwapAPIBaseURL } from "../../../../exchange/swap";
 import type {
   SubmitRfqOrderEvmIntentInput,

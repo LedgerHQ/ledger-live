@@ -43,7 +43,6 @@ export const makeConnectionResult = (sessionId = "session-1"): DeviceConnectionR
   sessionId,
   connectedDevice: {} as DeviceConnectionResult["connectedDevice"],
   compatDeviceId: "compat-1",
-  compatDeviceModelId: "nanoX" as DeviceConnectionResult["compatDeviceModelId"],
   compatDeviceName: "Test device",
   compatDeviceWired: true,
 });

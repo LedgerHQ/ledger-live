@@ -7,7 +7,7 @@ import {
 } from "@ledgerhq/device-management-kit";
 import { SignTransactionDAStep } from "@ledgerhq/device-signer-kit-ethereum";
 import { combine } from "@ledgerhq/coin-evm/logic/combine";
-import type { DeviceConnectionResult } from "@ledgerhq/device-intent";
+import type { DeviceConnectionResult } from "@features/platform-device-intent";
 import { DmkSignerEth } from "@ledgerhq/live-signer-evm";
 import { mapDmkSignerError } from "./mapDmkSignerError";
 

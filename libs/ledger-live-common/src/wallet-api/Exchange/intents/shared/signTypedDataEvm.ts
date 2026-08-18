@@ -3,7 +3,7 @@ import { catchError, filter, finalize, map } from "rxjs/operators";
 import { Signature as EthersSignature } from "ethers";
 import { DeviceActionStatus, UserInteractionRequired } from "@ledgerhq/device-management-kit";
 import { SignTypedDataDAStateStep } from "@ledgerhq/device-signer-kit-ethereum";
-import type { DeviceConnectionResult } from "@ledgerhq/device-intent";
+import type { DeviceConnectionResult } from "@features/platform-device-intent";
 import type { EIP712Message } from "@ledgerhq/types-live";
 import { DmkSignerEth } from "@ledgerhq/live-signer-evm";
 import { mapDmkSignerError } from "./mapDmkSignerError";

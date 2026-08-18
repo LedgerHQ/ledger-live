@@ -1,5 +1,8 @@
-import type { ConnectedDevice, DeviceManagementKit } from "@ledgerhq/device-management-kit";
-import type { DeviceModelId } from "@ledgerhq/types-devices";
+import type {
+  ConnectedDevice,
+  DeviceManagementKit,
+  DeviceModelId,
+} from "@ledgerhq/device-management-kit";
 import type React from "react";
 import type { Observable } from "rxjs";
 import { v4 as uuidv4 } from "uuid";
@@ -25,7 +28,6 @@ export type DeviceConnectionResult = {
   connectedDevice: ConnectedDevice;
   /** Legacy device identifier, usable by existing `withDevice` / `DeviceAction` flows. */
   compatDeviceId: string;
-  compatDeviceModelId: DeviceModelId;
   compatDeviceName: string;
   compatDeviceWired: boolean;
 };

@@ -1,5 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { DeviceConnectionParams, DeviceConnectionResult } from "@ledgerhq/device-intent";
+import type {
+  DeviceConnectionParams,
+  DeviceConnectionResult,
+} from "@features/platform-device-intent";
 import { dmkToLedgerDeviceIdMap, useDeviceIntentTracking } from "@ledgerhq/live-dmk-shared";
 import {
   connectDevice,
@@ -98,7 +101,9 @@ export function useDeviceConnectionComponentLWDViewModel({
 
     const subscription = connectDevice({
       knownDevices,
-      acceptedDeviceModelIds: deviceConnectionParams.acceptedDeviceModelIds,
+      acceptedDeviceModelIds: deviceConnectionParams.acceptedDeviceModelIds.map(
+        deviceModelId => dmkToLedgerDeviceIdMap[deviceModelId],
+      ),
       dmk,
       onConnected: wrappedOnConnected,
     }).subscribe({

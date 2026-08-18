@@ -1,4 +1,8 @@
-import type { Intent, IntentDefinition, IntentPlatformDefinition } from "@ledgerhq/device-intent";
+import type {
+  Intent,
+  IntentDefinition,
+  IntentPlatformDefinition,
+} from "@features/platform-device-intent";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 import type { Account, AccountLike, AnyMessage } from "@ledgerhq/types-live";
 

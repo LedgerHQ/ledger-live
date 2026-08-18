@@ -1,4 +1,4 @@
-# @ledgerhq/device-intent
+# @features/platform-device-intent
 
 ## 5.0.0
 

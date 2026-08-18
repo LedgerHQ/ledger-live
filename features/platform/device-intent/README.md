@@ -1,4 +1,4 @@
-# @ledgerhq/device-intent
+# @features/platform-device-intent
 
 > [!CAUTION]
 > **Status: UNSTABLE** — The Device Intent Executor (DIE) pattern is actively rolling out across wallet flows; API may change.
@@ -31,6 +31,7 @@ See the [ADR: Device Intent Executor component](https://ledgerhq.atlassian.net/w
   - [LWM (Ledger Wallet Mobile)](#lwm-ledger-wallet-mobile)
   - [LWD (Ledger Wallet Desktop)](#lwd-ledger-wallet-desktop)
   - [CLI](#cli)
+- [Device model identifiers](#device-model-identifiers)
 - [What is a Device Intent?](#what-is-a-device-intent)
   - [Anatomy of an Intent](#anatomy-of-an-intent)
 - [What is the Device Intent Executor?](#what-is-the-device-intent-executor)
@@ -106,6 +107,32 @@ _and_ power CLI commands directly, without duplicating device-interaction
 code per platform.
 
 [die-sm]: ./src/DeviceIntentExecutorStateMachine.ts
+
+## Device model identifiers
+
+The platform contract uses DMK `DeviceModelId` values exclusively:
+
+- `DeviceConnectionParams.acceptedDeviceModelIds` accepts DMK IDs.
+- `DeviceConnectionResult.connectedDevice.modelId` is the connected model ID.
+- `compatDeviceModelId` does not exist.
+
+Callers must adapt only at legacy boundaries. For example, Desktop and Mobile
+convert accepted DMK IDs before calling the current legacy connection APIs:
+
+```ts
+const acceptedDeviceModelIds = deviceConnectionParams.acceptedDeviceModelIds.map(
+  deviceModelId => dmkToLedgerDeviceIdMap[deviceModelId],
+);
+```
+
+Likewise, code using a legacy bridge, persistence, analytics, or
+`@ledgerhq/devices.getDeviceModel` derives its Ledger Wallet ID from the
+connected device:
+
+```ts
+const legacyModelId =
+  dmkToLedgerDeviceIdMap[deviceConnectionResult.connectedDevice.modelId];
+```
 
 ## What is a Device Intent?
 
@@ -233,7 +260,7 @@ sequenceDiagram
 | Export                                                  | Description                                                                  |
 | ------------------------------------------------------- | ---------------------------------------------------------------------------- |
 | `DeviceConnectionParams`                                | Declarative params for device selection                                      |
-| `DeviceConnectionResult`                                | Result of a device connection (DMK session + compat ID)                      |
+| `DeviceConnectionResult`                                | Result of a device connection (DMK session + connected device)               |
 | `DeviceExtractedContext`                                | Normalised info produced once the initializer has established device context |
 | `Job<JobState, Input>`                                  | Execution logic for one step, returns `Observable<JobState>`                 |
 | `IntentDefinition<JobState, Input>`                     | Reusable, cross-platform definition of one step                              |
@@ -253,6 +280,12 @@ sequenceDiagram
 | `ExecutorPlatformConfiguration`                                     | Groups all platform-injected UI components (connection, initialisation, intent errors, invalid-operation) |
 | `ExecutorState`                                                     | Discriminated union of executor lifecycle states                                                          |
 | `DeviceIntentExecutorProps<JobState, Input, ExtraProps, InitInput>` | Props for the `DeviceIntentExecutor` component                                                            |
+
+### Component (`src/DeviceIntentExecutor.tsx`)
+
+| Export                 | Description                                                                                                                                      |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `DeviceIntentExecutor` | Cross-platform React component that maps executor lifecycle phases to the platform-injected UI. Used by `DeviceIntentExecutorLWM` / `LWD` wrappers. |
 
 ## Usage Guide
 
@@ -346,7 +379,7 @@ Each platform provides a thin wrapper (`DeviceIntentExecutorLWM` /
 (device connection, context initialiser, error screens). The caller screen
 mounts that wrapper and passes all the required props:
 
-Do not import the raw `DeviceIntentExecutor` from `@ledgerhq/device-intent`;
+Do not import the raw `DeviceIntentExecutor` from `@features/platform-device-intent`;
 always use the existing platform wrapper.
 
 Both platform wrappers require a `sourceFlow` value for analytics. It is
@@ -354,7 +387,7 @@ passed as a property on all DIE tracking events so they can be attributed to
 the originating user flow.
 
 ```tsx
-import { createIntent } from "@ledgerhq/device-intent";
+import { createIntent } from "@features/platform-device-intent";
 
 function MyFlowScreen({ enabled, onDone }: Props) {
   const [intent, setIntent] = useState(() =>
@@ -495,9 +528,9 @@ Under the hood, `buildDeviceInitializationInput` simply forwards to
 [`buildEnsureAppReadyInput`][build-input], the shared cross-platform helper —
 LWM consumers should prefer the scoped name.
 
-[ensure-app-ready-uc]: ../../libs/ledger-live-common/src/device/use-cases/ensureAppReady/ensureAppReadyUseCase.ts
-[build-input]: ../../libs/ledger-live-common/src/device/use-cases/ensureAppReady/buildEnsureAppReadyInput.ts
-[build-input-lwm]: ../../apps/ledger-live-mobile/src/mvvm/components/DeviceIntentExecutor/DeviceContextInitializerComponentLWM/utils/buildDeviceInitializationInput.ts
+[ensure-app-ready-uc]: ../../../libs/ledger-live-common/src/device/use-cases/ensureAppReady/ensureAppReadyUseCase.ts
+[build-input]: ../../../libs/ledger-live-common/src/device/use-cases/ensureAppReady/buildEnsureAppReadyInput.ts
+[build-input-lwm]: ../../../apps/ledger-live-mobile/src/mvvm/components/DeviceIntentExecutor/DeviceContextInitializerComponentLWM/utils/buildDeviceInitializationInput.ts
 
 #### Example: Sign Transaction flow
 
@@ -508,7 +541,7 @@ A "send / sign transaction" screen already has everything it needs to build an
 
 ```tsx
 import { useEffect, useMemo, useState } from "react";
-import { createIntent } from "@ledgerhq/device-intent";
+import { createIntent } from "@features/platform-device-intent";
 import {
   buildDeviceInitializationInput,
   type InitializationInput,
@@ -657,7 +690,7 @@ Example of a synchronous initial emission in an RxJS pipeline:
 ```typescript
 import { of } from "rxjs";
 import { map, catchError, startWith } from "rxjs/operators";
-import type { Job } from "@ledgerhq/device-intent";
+import type { Job } from "@features/platform-device-intent";
 
 type MyJobState =
   | { step: "waiting-for-confirmation" }
@@ -1169,7 +1202,7 @@ final `cancelled` state and completes the job:
 
 ```typescript
 import { Observable } from "rxjs";
-import type { Job } from "@ledgerhq/device-intent";
+import type { Job } from "@features/platform-device-intent";
 
 type TransactionWarning = { message: string };
 
@@ -1238,7 +1271,7 @@ expects a `Transport`:
 import { DmkCompatTransport } from "@ledgerhq/live-dmk-shared";
 import Eth from "@ledgerhq/hw-app-eth";
 import { defer, map, catchError, of } from "rxjs";
-import type { Job } from "@ledgerhq/device-intent";
+import type { Job } from "@features/platform-device-intent";
 
 const myJob: Job<MyJobState, { txHex: string }> = ({ deviceConnectionResult, input }) =>
   defer(async () => {
@@ -1479,7 +1512,7 @@ This is an internal package. It is available to other packages in the monorepo v
 ```json
 {
   "dependencies": {
-    "@ledgerhq/device-intent": "workspace:*"
+    "@features/platform-device-intent": "workspace:*"
   }
 }
 ```

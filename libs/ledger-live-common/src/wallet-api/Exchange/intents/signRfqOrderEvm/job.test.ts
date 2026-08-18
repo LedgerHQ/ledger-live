@@ -1,5 +1,8 @@
 import { lastValueFrom, of, toArray } from "rxjs";
-import type { DeviceConnectionResult, DeviceExtractedContext } from "@ledgerhq/device-intent";
+import type {
+  DeviceConnectionResult,
+  DeviceExtractedContext,
+} from "@features/platform-device-intent";
 import type { Account, EIP712Message } from "@ledgerhq/types-live";
 import type { SignTypedDataEvmRunState } from "../shared/signTypedDataEvm";
 

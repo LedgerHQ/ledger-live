@@ -3,7 +3,10 @@ import { act, renderHook, withFlagOverrides } from "@tests/test-renderer";
 import { Linking } from "react-native";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { DeviceModelId as DMKDeviceModelId } from "@ledgerhq/device-management-kit";
-import type { DeviceConnectionParams, DeviceConnectionResult } from "@ledgerhq/device-intent";
+import type {
+  DeviceConnectionParams,
+  DeviceConnectionResult,
+} from "@features/platform-device-intent";
 import {
   connectDevice,
   ConnectDeviceUIStateTypes,
@@ -162,7 +165,6 @@ function makeConnectionResult(
   return {
     compatDeviceId: "device-id",
     compatDeviceName: "Ledger Nano X",
-    compatDeviceModelId: DeviceModelId.nanoX,
     compatDeviceWired: false,
     connectedDevice: {
       id: "device-id",
@@ -205,7 +207,7 @@ describe("useDeviceConnectionComponentLWMViewModel", () => {
 
   it("should pass accepted device model ids to the connect device flow", () => {
     // GIVEN
-    const acceptedDeviceModelIds = [DeviceModelId.stax];
+    const acceptedDeviceModelIds = [DMKDeviceModelId.STAX];
 
     // WHEN
     renderViewModel({
@@ -215,7 +217,7 @@ describe("useDeviceConnectionComponentLWMViewModel", () => {
     // THEN
     expect(mockedConnectDevice).toHaveBeenCalledWith(
       expect.objectContaining({
-        acceptedDeviceModelIds,
+        acceptedDeviceModelIds: [DeviceModelId.stax],
       }),
     );
   });
