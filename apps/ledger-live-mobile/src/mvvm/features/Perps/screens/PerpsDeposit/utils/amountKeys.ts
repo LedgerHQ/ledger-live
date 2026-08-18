@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { KEYPAD_DELETE_KEY } from "~/mvvm/components/AmountKeypad";
+import { KEYPAD_DELETE_KEY } from "LLM/components/AmountKeypad";
 
 export const AMOUNT_MAX_INTEGER_DIGITS = 8;
 

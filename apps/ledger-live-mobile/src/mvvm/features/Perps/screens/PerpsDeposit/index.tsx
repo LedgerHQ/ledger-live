@@ -3,8 +3,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { AmountInput, Box, Button, Skeleton, Text } from "@ledgerhq/lumen-ui-rnative";
 import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
 import { useTranslation } from "~/context/Locale";
-import { AmountKeypad } from "~/mvvm/components/AmountKeypad";
-import { RatioPicker } from "~/mvvm/components/RatioPicker";
+import { AmountKeypad } from "LLM/components/AmountKeypad";
+import { RatioPicker } from "LLM/components/RatioPicker";
 import { DepositAccountSelector } from "./components/DepositAccountSelector";
 import type { PerpsDepositViewModel } from "./usePerpsDepositViewModel";
 
