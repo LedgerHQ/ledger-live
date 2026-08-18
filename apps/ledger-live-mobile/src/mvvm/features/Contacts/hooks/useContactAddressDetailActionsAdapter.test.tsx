@@ -12,6 +12,14 @@ jest.mock("LLM/features/Send/hooks/useOpenSendFlow", () => ({
   useOpenSendFlow: () => ({ handleOpenSendFlow: jest.fn() }),
 }));
 
+jest.mock("../analytics/useContactsAnalytics", () => ({
+  useContactsAnalytics: () => ({
+    trackEvent: jest.fn(),
+    trackPage: jest.fn(),
+    getGlobalProperties: jest.fn(),
+  }),
+}));
+
 function makeWrapper(contacts: ReturnType<typeof contactsSlice.getInitialState>["contacts"]) {
   const store = configureStore({
     reducer: { contacts: contactsSlice.reducer },
@@ -24,6 +32,18 @@ function makeWrapper(contacts: ReturnType<typeof contactsSlice.getInitialState>[
 }
 
 describe("useContactAddressDetailActionsAdapter", () => {
+  it("should return inactive actions when no address is selected", () => {
+    const Wrapper = makeWrapper([mockMeContact()]);
+    const { result } = renderHook(
+      () => useContactAddressDetailActionsAdapter(undefined, undefined, jest.fn()),
+      { wrapper: Wrapper },
+    );
+
+    expect(result.current.addressDetailDialog.canEdit).toBe(false);
+    expect(result.current.addressDetailDialog.canDelete).toBe(false);
+    expect(result.current.deleteSheet.isOpen).toBe(false);
+  });
+
   it("should reopen the same address after cancelling the rename drawer", () => {
     const contact = mockContactWithAddress();
     const address = contact.addresses[0]!;
