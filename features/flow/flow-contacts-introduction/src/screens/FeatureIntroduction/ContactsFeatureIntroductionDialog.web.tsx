@@ -32,7 +32,7 @@ export function ContactsFeatureIntroductionDialog({
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogContent
         aria-describedby={undefined}
-        className="max-h-[90vh] w-[480px] bg-canvas-sheet p-0"
+        className="max-h-[90vh] bg-canvas-sheet p-0"
         data-testid="contacts-feature-introduction-dialog"
       >
         <DialogHeader density="expanded" onClose={onClose} />
