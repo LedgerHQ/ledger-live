@@ -55,8 +55,6 @@ describe("fetchTrustchain", () => {
   });
 
   it("should not dispatch when storage returns an encrypted string (app is password-locked)", async () => {
-    // `app.trustchain` is an encrypted db path: before unlock it reads back as ciphertext.
-    // Importing it would wipe the persisted trustchain and mint new credentials (LIVE-36130).
     jest.mocked(getKey).mockResolvedValue("6a9f1c...ciphertext..." as unknown as TrustchainStore);
 
     await fetchTrustchain()(dispatch, jest.fn(), undefined);
