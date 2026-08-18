@@ -55,16 +55,18 @@ effort, so a locked keychain would leave the value readable — an in-memory fla
 removal and lowered by the next successful write, closes that gap for the life of the process. A restart
 reads the store again, and a token that outlived its session answers `401`, which clears it for good.
 
-`set` and `clear` take turns on one queue. They have callers that know nothing about each other — `set`
-runs from the login machine, `clear` runs from `refreshCardSession`, which the base query calls on any
-Card `401`, outside React and outside the machine. Interleaved, a removal could land between the two
-halves of a write and leave the access token alone on disk. `get` takes a turn as well, because it reads
-all three keys, and a login over a live session replaces the two cold keys before the access token — a
-read between the two halves would pair the previous access token with the new refresh token.
-`getCardSessionToken` never waits: one key cannot disagree with itself, the previous access token stays
-valid until the new one lands, and the request path must not queue behind a login.
+`set`, `clear` and `get` take turns on one queue, because each one touches more than one key. Their
+callers know nothing about each other: `set` runs from the login machine, and `clear` runs from
+`refreshCardSession`, which the base query calls on any Card `401`. Unqueued, a removal lands between
+the two halves of a write and leaves the access token alone on disk, and a read pairs the previous
+access token with the new refresh token.
 
-`clear` never rejects, because the base query awaits `refreshCardSession` without a try/catch.
+`getCardSessionToken` never waits: one key cannot disagree with itself. During a write it answers the
+previous access token, which stays valid until the new one lands, and the request path must not queue
+behind a login.
+
+`clear` never rejects. `isCleared` has already ended the session, so a removal the store refused leaves
+nothing for the caller to handle.
 
 ## Status
 

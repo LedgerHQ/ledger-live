@@ -214,9 +214,8 @@ describe("createCardSession", () => {
     const setting = cardSession.set(session);
     await accessTokenWrite.reached;
 
-    // The request path must not queue behind a login, and the old token is valid until the new one
-    // lands. A gate over the whole write would answer null here, and that 401 would clear the session
-    // the login just wrote.
+    // The old token stays valid until the new one lands. A gate over the whole write would answer null
+    // here, and that 401 would clear the session the login just wrote.
     await expect(getCardSessionToken()).resolves.toBe("at_old");
     accessTokenWrite.release();
     await setting;
@@ -278,7 +277,7 @@ describe("createCardSession", () => {
     jest.mocked(store.remove).mockRejectedValue(new Error("keychain locked"));
     const { cardSession } = createCardSession(store);
 
-    // The base query awaits this on a 401 without a try/catch; a rejection would lose the 401.
+    // `isCleared` has already ended the session, so a refused removal leaves nothing to handle.
     await expect(cardSession.clear()).resolves.toBeUndefined();
   });
 

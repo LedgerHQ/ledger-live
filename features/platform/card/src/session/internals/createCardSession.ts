@@ -7,10 +7,11 @@ import { CARD_SESSION_KEYS, type CardSessionStore } from "./sessionStore";
  */
 export function createCardSession(store: CardSessionStore) {
   /**
-   * `set` and `clear` take turns. They have callers that know nothing about each other: `set` runs from
-   * the login machine, and `clear` runs from `refreshCardSession`, which the Card base query calls on
-   * any 401 — outside React, and outside the machine. Interleaved, the removal of the cold keys could
-   * land between this write's two phases and leave the access token alone on disk.
+   * One queue for `set`, `clear` and `get`, because each one touches more than one key.
+   *
+   * Their callers know nothing about each other: `set` runs from the login machine, and `clear` runs
+   * from `refreshCardSession`, which the base query calls on any 401. Unqueued, a `clear` lands between
+   * the two phases of a `set` and leaves the access token alone on disk.
    */
   let turn: Promise<unknown> = Promise.resolve();
 
@@ -22,12 +23,11 @@ export function createCardSession(store: CardSessionStore) {
   }
 
   /**
-   * True from the moment a session is cleared until a write succeeds.
+   * True from a clear until the next successful write.
    *
-   * The store can refuse to forget — a locked keychain rejects every removal — and the access token
-   * would still read back afterwards. This flag makes "cleared means no Bearer" hold for the life of the
-   * process whatever the store did. A restart reads the store again, and a token that outlived its
-   * session answers 401, which clears it for good.
+   * A locked keychain rejects every removal, so a cleared access token can still read back. The flag
+   * keeps "cleared means no Bearer" true for the life of the process. A restart reads the store again,
+   * and a token that outlived its session answers 401, which clears it for good.
    */
   let isCleared = false;
 
@@ -53,8 +53,8 @@ export function createCardSession(store: CardSessionStore) {
 
       await store.write(CARD_SESSION_KEYS.accessToken, session.accessToken);
     } catch (error) {
-      // Any failure ends the login, and every key it managed to write is a credential — the refresh
-      // token as much as the access token. Remove whatever landed.
+      // The login is over. Every key that landed is a credential, the refresh token included, so
+      // remove them all.
       await removeSession();
       throw error;
     }
@@ -73,6 +73,8 @@ export function createCardSession(store: CardSessionStore) {
       store.read(CARD_SESSION_KEYS.lifetimes),
     ]);
 
+    // A session is only a session when all three keys agree. Half of one reads as none, which sends
+    // the user to the login screen instead of into a broken state.
     const parsedLifetimes = parseLifetimes(lifetimes);
     if (!accessToken || !refreshToken || !parsedLifetimes) {
       return null;
@@ -82,13 +84,12 @@ export function createCardSession(store: CardSessionStore) {
   }
 
   /**
-   * The access token goes first, and no removal may reject. Every Card request reads that key, so a
-   * cleared session must stop sending a Bearer even when the store refuses to forget — which is what
-   * `isCleared` guarantees, because a rejected removal leaves the value readable.
+   * Removes the access token first, and never rejects.
    *
-   * Never throwing is the load-bearing part: the base query awaits `refreshCardSession` on a 401
-   * without a try/catch, so a rejection here would turn a handled 401 into a thrown error that has lost
-   * its `status`, and the login machine would read it as a network fault and keep the dead session.
+   * First, because every Card request reads that key. Never rejects, because `isCleared` has already
+   * ended the session: a removal the store refused leaves a value that nothing will serve, so the
+   * caller has nothing to handle. `refreshCardSession` therefore always answers the base query, whose
+   * guard against a rejected port never fires here.
    */
   async function removeSession(): Promise<void> {
     // Raised before the first removal, so a store that refuses to forget cannot keep the session alive.
@@ -105,19 +106,18 @@ export function createCardSession(store: CardSessionStore) {
   const clear = () => takeTurn(removeSession);
 
   /**
-   * `get` takes a turn too, because it reads all three keys. A write replaces the two cold keys before
-   * the access token, so a read that landed between the two phases would pair the previous access token
-   * with the new refresh token and the new lifetimes. A turn makes "all three keys agree" hold for
-   * every caller, and `get` is not on the request path, so the wait costs nothing there.
+   * Takes a turn, because it reads all three keys. A `set` over a live session replaces the two cold
+   * keys before the access token, so an unqueued read pairs the previous access token with the new
+   * refresh token. `get` is off the request path, so the wait costs nothing there.
    */
   const get = () => takeTurn(readSession);
 
   /**
    * The reader `cardApiExtra` gets. One key, because the header needs one value.
    *
-   * It never waits for a turn. One key cannot disagree with itself, and a write over a live session
-   * answers the previous access token until the new one lands — both are valid. The request path must
-   * not queue behind a login.
+   * It never waits for a turn: one key cannot disagree with itself. During a `set` it answers the
+   * previous access token, which stays valid until the new one lands. The request path must not queue
+   * behind a login.
    */
   async function getCardSessionToken(): Promise<string | null> {
     return isCleared ? null : store.read(CARD_SESSION_KEYS.accessToken);
@@ -132,10 +132,7 @@ export function createCardSession(store: CardSessionStore) {
   return { cardSession: { set, get, clear }, getCardSessionToken, refreshCardSession };
 }
 
-/**
- * A session is only a session when all three keys agree. A half-written or unreadable payload reads
- * as no session, which sends the user back to the login screen instead of into a broken state.
- */
+/** Unreadable or incomplete lifetimes answer null, so the caller reports no session. */
 function parseLifetimes(
   value: string | null,
 ): Pick<PayCardSession, "expiresIn" | "refreshTokenExpiresIn"> | null {
