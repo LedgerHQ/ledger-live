@@ -966,6 +966,8 @@ jobs:
       - name: Watch Android emulator liveness (background)
         run: |
           export ARTIFACTS_DIR="${{ env.MOBILE_ARTIFACTS_ROOT }}"
+          export WATCH_STOP_FILE="${{ env.MOBILE_ARTIFACTS_ROOT }}/.watchdog-stop"
+          rm -f "$WATCH_STOP_FILE"
           nohup bash tools/scripts/watch-android-emulators-ci.sh \
             >> "${{ env.MOBILE_ARTIFACTS_ROOT }}/emulator-watchdog.log" 2>&1 &
           echo "ℹ️ Emulator liveness watchdog started."
@@ -1036,6 +1038,14 @@ jobs:
           E2E_FEATURE_FLAGS_JSON: ${{ env.E2E_FEATURE_FLAGS_JSON }}
           E2E_MOBILE_FEATURE_FLAGS: ${{ env.ANDROID_FEATURE_FLAGS }}
         run: pnpm run mobile e2e:ci -p android -t --e2e $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') $SHARD_TEST_FILES --outputFile=artifacts/${{ env.E2E_TEST_RESULTS_PREFIX_ANDROID }}-${{ matrix.shard }}.json
+
+      - name: Stop emulator watchdog
+        if: always()
+        continue-on-error: true
+        shell: bash
+        run: |
+          # Everything after this point is teardown; a serial going away now is expected.
+          touch "${{ env.MOBILE_ARTIFACTS_ROOT }}/.watchdog-stop"
 
       - name: Report emulator deaths
         if: always()
