@@ -184,7 +184,7 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
       addAddress: t("contacts.addAddress"),
       addYourAddress: t("contacts.addYourAddress"),
       emptyMeTitle: t("contacts.detail.emptyState.meTitle"),
-      emptyContactTitle: () => t("contacts.detail.emptyState.title"),
+      emptyContactTitle: name => t("contacts.detail.emptyState.contactTitle", { name }),
       emptyMeDescription: t("contacts.detail.emptyState.meDescription"),
       emptyContactDescription: name => t("contacts.detail.emptyState.contactDescription", { name }),
       ledgerWalletAddresses: t("contacts.detail.ledgerWalletAddresses"),

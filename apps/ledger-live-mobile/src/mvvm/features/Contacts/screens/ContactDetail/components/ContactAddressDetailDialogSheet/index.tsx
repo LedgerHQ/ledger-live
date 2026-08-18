@@ -4,6 +4,7 @@ import {
   ContactAddressDetailDialog,
   type ContactAddressDetailDialogNativeProps,
 } from "@features/flow-contacts";
+import { Share } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 
@@ -15,6 +16,9 @@ export function ContactAddressDetailDialogSheet({
   const { bottom: bottomInset } = useSafeAreaInsets();
   const onCopyAddress = useCallback((address: string) => {
     Clipboard.setString(address);
+  }, []);
+  const onShareAddress = useCallback((address: string) => {
+    void Share.share({ message: address }).catch(() => undefined);
   }, []);
 
   return (
@@ -30,6 +34,7 @@ export function ContactAddressDetailDialogSheet({
         onClose={onClose}
         bottomInset={bottomInset}
         onCopyAddress={onCopyAddress}
+        onShareAddress={onShareAddress}
       />
     </QueuedBottomSheet>
   );
