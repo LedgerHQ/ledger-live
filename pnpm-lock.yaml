@@ -1725,6 +1725,9 @@ importers:
       '@features/flow-fear-and-greed':
         specifier: workspace:^
         version: link:../../features/flow/fear-and-greed
+      '@features/flow-large-screen-upsell':
+        specifier: workspace:^
+        version: link:../../features/flow/large-screen-upsell
       '@features/flow-lazy-onboarding-banner':
         specifier: workspace:^
         version: link:../../features/flow/lazy-onboarding-banner
