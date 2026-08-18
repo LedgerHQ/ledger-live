@@ -68,6 +68,24 @@ describe("buildLargeScreenUpsellCtaLink", () => {
     );
   });
 
+  it("should set recover_trigger utm_content", () => {
+    const result = buildLargeScreenUpsellCtaLink(
+      "https://example.com/offer",
+      "desktop",
+      LARGE_SCREEN_UPSELL_UTM.content.recover_trigger,
+    );
+    const url = new URL(result);
+
+    expect(url.searchParams.get("utm_source")).toBe(
+      LARGE_SCREEN_UPSELL_UTM.sourceByPlatform.desktop,
+    );
+    expect(url.searchParams.get("utm_medium")).toBe(LARGE_SCREEN_UPSELL_UTM.medium);
+    expect(url.searchParams.get("utm_campaign")).toBe(LARGE_SCREEN_UPSELL_UTM.campaign);
+    expect(url.searchParams.get("utm_content")).toBe(
+      LARGE_SCREEN_UPSELL_UTM.content.recover_trigger,
+    );
+  });
+
   it("should set profile_cta utm_content", () => {
     const result = buildLargeScreenUpsellCtaLink(
       "https://example.com/offer",

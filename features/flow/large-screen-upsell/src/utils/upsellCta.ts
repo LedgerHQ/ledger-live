@@ -9,17 +9,16 @@ export const LARGE_SCREEN_UPSELL_UTM = {
     app_start_modal: "app_start_modal",
     backups_cta: "backups_cta",
     profile_cta: "profile_cta",
+    recover_trigger: "recover_trigger",
   },
 } as const;
 
 export const LARGE_SCREEN_UPSELL_MODAL_UTM_CONTENT =
   LARGE_SCREEN_UPSELL_UTM.content.app_start_modal;
-export const LARGE_SCREEN_UPSELL_BACKUPS_UTM_CONTENT =
-  LARGE_SCREEN_UPSELL_UTM.content.backups_cta;
+export const LARGE_SCREEN_UPSELL_BACKUPS_UTM_CONTENT = LARGE_SCREEN_UPSELL_UTM.content.backups_cta;
 export const LARGE_SCREEN_UPSELL_UTM_MEDIUM = LARGE_SCREEN_UPSELL_UTM.medium;
 export const LARGE_SCREEN_UPSELL_UTM_CAMPAIGN = LARGE_SCREEN_UPSELL_UTM.campaign;
-export const LARGE_SCREEN_UPSELL_UTM_SOURCE_BY_PLATFORM =
-  LARGE_SCREEN_UPSELL_UTM.sourceByPlatform;
+export const LARGE_SCREEN_UPSELL_UTM_SOURCE_BY_PLATFORM = LARGE_SCREEN_UPSELL_UTM.sourceByPlatform;
 
 export type LargeScreenUpsellUtmContent =
   (typeof LARGE_SCREEN_UPSELL_UTM.content)[keyof typeof LARGE_SCREEN_UPSELL_UTM.content];

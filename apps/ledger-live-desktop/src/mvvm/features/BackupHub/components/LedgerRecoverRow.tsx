@@ -54,7 +54,16 @@ export function LedgerRecoverRow({
       </ListItemLeading>
       <ListItemTrailing>
         {showCta ? (
-          <Button appearance="base" size="sm" onClick={onClick}>
+          <Button
+            appearance="base"
+            size="sm"
+            onClick={event => {
+              // Discover Button.onClick bubbles to ListItem.onClick.
+              // Both call onRecoverClick / openRecover and push Recover twice.
+              event.stopPropagation();
+              onClick();
+            }}
+          >
             {ctaLabel}
           </Button>
         ) : (

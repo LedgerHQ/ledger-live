@@ -8685,6 +8685,12 @@
       "title": "Spot scams before signing",
       "subtitle": "Learn more about advanced security features that enable real-time threat detection.",
       "cta": "Learn more"
+    },
+    "recoverTrigger": {
+      "title": "Want peace-of-mind recovery?",
+      "subtitle": "While your Nano S is perfectly secure, it isn't compatible with Ledger Recover. Upgrade to a newer model to unlock secure, ID-based wallet backup.",
+      "cta": "Learn more",
+      "dismiss": "Not now"
     }
   },
   "modularAssetDrawer": {
