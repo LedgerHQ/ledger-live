@@ -3,6 +3,7 @@ import {
   OPERATION_TYPE_OUT_FAMILY,
   OPERATION_TYPE_STAKE_FAMILY,
 } from "@ledgerhq/ledger-wallet-framework/operation";
+import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import type {
   Account,
   Operation,
@@ -143,6 +144,21 @@ export function extractBalance(balances: Balance[], type: string): Balance {
       value: 0n,
     }
   );
+}
+
+/**
+ * Default `getTokenFromAsset` strategy for chains whose token registry is keyed by a bare,
+ * chain-specific reference string (VeChain's VTHO address, Stacks' SIP-010 composite key, etc.):
+ * guard native assets and an absent/empty reference, then look up by that reference directly.
+ */
+export async function defaultGetTokenFromAssetByAddress(
+  currency: CryptoCurrency,
+  asset: AssetInfo,
+): Promise<TokenCurrency | undefined> {
+  if (asset.type === "native" || !("assetReference" in asset) || !asset.assetReference) {
+    return undefined;
+  }
+  return getCryptoAssetsStore().findTokenByAddressInCurrency(asset.assetReference, currency.id);
 }
 
 // A sponsored (gasless) transaction has its fee paid by a third party, not by the

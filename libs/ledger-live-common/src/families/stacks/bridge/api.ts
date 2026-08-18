@@ -1,26 +1,18 @@
 import type { AssetInfo } from "@ledgerhq/coin-module-framework/api/types";
-import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import type { StacksTxData } from "@ledgerhq/coin-stacks/types";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
+import { defaultGetTokenFromAssetByAddress } from "../../../bridge/generic-coin-framework/utils";
 
 /**
  * Stacks SIP-010 tokens are keyed in the registry by the same composite
  * `"ADDRESS.CONTRACT::ASSET"` string `coin-stacks`'s `getBalance`/`listOperations` already
  * populate `assetReference` with (matching the legacy bridge's `network/transformers.ts`), so no
- * extra parsing is needed here -- unlike VeChain's single bare-address VTHO lookup, this is a
- * plain string passthrough that happens to work for any number of tokens.
+ * extra parsing is needed here -- this is a plain string passthrough that happens to work for any
+ * number of tokens, same address-keyed strategy as VeChain's single VTHO lookup.
  */
-export async function getTokenFromAsset(
-  currency: CryptoCurrency,
-  asset: AssetInfo,
-): Promise<TokenCurrency | undefined> {
-  if (asset.type === "native" || !("assetReference" in asset) || !asset.assetReference) {
-    return undefined;
-  }
-  return getCryptoAssetsStore().findTokenByAddressInCurrency(asset.assetReference, currency.id);
-}
+export const getTokenFromAsset = defaultGetTokenFromAssetByAddress;
 
 export function getAssetFromToken(token: TokenCurrency, owner: string): AssetInfo {
   return {
