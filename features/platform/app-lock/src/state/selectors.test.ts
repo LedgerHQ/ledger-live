@@ -4,6 +4,7 @@ import {
   selectAuthenticationType,
   selectBiometricsEnabled,
   selectHasPassword,
+  selectIsAppLockBlocking,
   selectIsAppLockConfigured,
   selectIsLocked,
 } from "./selectors";
@@ -61,5 +62,14 @@ describe("selectors", () => {
     expect(selectAuthenticationType(state({ biometricsEnabled: true }))).toBe("biometrics");
     expect(selectIsAppLockConfigured(state())).toBe(false);
     expect(selectIsAppLockConfigured(state({ biometricsEnabled: true }))).toBe(true);
+  });
+
+  it.each([
+    ["nothing is up", {}, false],
+    ["locked", { isLocked: true }, true],
+    ["a longer password is owed", { needsLongerPassword: true }, true],
+    ["both", { isLocked: true, needsLongerPassword: true }, true],
+  ])("report the lock holding the screen when %s", (_case, overrides, expected) => {
+    expect(selectIsAppLockBlocking(state(overrides))).toBe(expected);
   });
 });

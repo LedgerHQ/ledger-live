@@ -1,14 +1,20 @@
 import {
+  isAppBackgrounded,
   isAppLockConfigured,
   lockApp,
   selectAppLock,
+  selectIsAppLockBlocking,
   selectIsLocked,
+  selectNeedsLongerPassword,
 } from "@features/platform-app-lock";
-import React, { useEffect, useState } from "react";
-import { AppState, StyleSheet, View } from "react-native";
+import React, { useCallback, useEffect, useState } from "react";
+import { AppState, BackHandler, Platform } from "react-native";
+import StyleProvider from "~/StyleProvider";
 import { useDispatch, useSelector } from "~/context/hooks";
+import { AppLockOverlayHost } from "./components/AppLockOverlayHost";
 import { useAppLockBootstrap } from "./hooks/useAppLockBootstrap";
 import { useLegacyPasswordMigration } from "./hooks/useLegacyPasswordMigration";
+import { LongerPasswordScreen } from "./screens/LongerPassword";
 import { UnlockScreen } from "./screens/Unlock";
 
 export function AppLockGate({ children }: Readonly<{ children: React.ReactNode }>) {
@@ -18,7 +24,17 @@ export function AppLockGate({ children }: Readonly<{ children: React.ReactNode }
   useLegacyPasswordMigration();
   const protection = useSelector(selectAppLock);
   const isLocked = useSelector(selectIsLocked);
+  const needsLongerPassword = useSelector(selectNeedsLongerPassword);
+  const isBlocking = useSelector(selectIsAppLockBlocking);
   const [hasDecidedInitialLock, setHasDecidedInitialLock] = useState(false);
+  const [isLongerPasswordFlowOpen, setIsLongerPasswordFlowOpen] = useState(false);
+  const closeLongerPasswordFlow = useCallback(() => setIsLongerPasswordFlowOpen(false), []);
+
+  useEffect(() => {
+    if (needsLongerPassword) {
+      setIsLongerPasswordFlowOpen(true);
+    }
+  }, [needsLongerPassword]);
 
   useEffect(() => {
     if (!isReady || hasDecidedInitialLock) {
@@ -34,7 +50,7 @@ export function AppLockGate({ children }: Readonly<{ children: React.ReactNode }
 
   useEffect(() => {
     const subscription = AppState.addEventListener("change", nextState => {
-      if (nextState !== "active" && isAppLockConfigured(protection)) {
+      if (isAppBackgrounded(nextState, Platform.OS) && isAppLockConfigured(protection)) {
         dispatch(lockApp());
       }
     });
@@ -42,25 +58,31 @@ export function AppLockGate({ children }: Readonly<{ children: React.ReactNode }
     return () => subscription.remove();
   }, [dispatch, protection]);
 
+  useEffect(() => {
+    if (!isBlocking) {
+      return;
+    }
+
+    const subscription = BackHandler.addEventListener("hardwareBackPress", () => true);
+
+    return () => subscription.remove();
+  }, [isBlocking]);
+
   return (
     <>
       {children}
       {isLocked ? (
-        <View style={styles.overlay}>
-          <UnlockScreen />
-        </View>
+        <StyleProvider selectedPalette="dark">
+          <AppLockOverlayHost>
+            <UnlockScreen />
+          </AppLockOverlayHost>
+        </StyleProvider>
+      ) : null}
+      {!isLocked && isLongerPasswordFlowOpen ? (
+        <AppLockOverlayHost>
+          <LongerPasswordScreen onDone={closeLongerPasswordFlow} />
+        </AppLockOverlayHost>
       ) : null}
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  overlay: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    bottom: 0,
-    right: 0,
-    zIndex: 10,
-  },
-});

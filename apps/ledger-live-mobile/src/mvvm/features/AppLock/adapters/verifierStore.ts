@@ -14,6 +14,12 @@ type SerialisedVerifier = Readonly<{
   scrypt: ScryptParams;
   salt: string;
   digest: string;
+  needsLongerPassword?: boolean;
+}>;
+
+export type StoredPassword = Readonly<{
+  verifier: PasswordVerifier;
+  needsLongerPassword: boolean;
 }>;
 
 function toBase64(bytes: Uint8Array): string {
@@ -24,12 +30,13 @@ function fromBase64(value: string): Uint8Array {
   return new Uint8Array(Buffer.from(value, "base64"));
 }
 
-export function serialisePasswordVerifier(verifier: PasswordVerifier): string {
+export function serialiseStoredPassword({ verifier, needsLongerPassword }: StoredPassword): string {
   const serialised: SerialisedVerifier = {
     version: verifier.version,
     scrypt: verifier.scrypt,
     salt: toBase64(verifier.salt),
     digest: toBase64(verifier.digest),
+    needsLongerPassword,
   };
 
   return JSON.stringify(serialised);
@@ -50,7 +57,7 @@ function toScryptParams(value: unknown): ScryptParams | null {
     : null;
 }
 
-export function deserialisePasswordVerifier(raw: string): PasswordVerifier | null {
+export function deserialiseStoredPassword(raw: string): StoredPassword | null {
   try {
     const parsed: unknown = JSON.parse(raw);
 
@@ -58,7 +65,8 @@ export function deserialisePasswordVerifier(raw: string): PasswordVerifier | nul
       return null;
     }
 
-    const { version, scrypt, salt, digest } = parsed as Partial<SerialisedVerifier>;
+    const { version, scrypt, salt, digest, needsLongerPassword } =
+      parsed as Partial<SerialisedVerifier>;
     const params = toScryptParams(scrypt);
 
     if (
@@ -70,24 +78,38 @@ export function deserialisePasswordVerifier(raw: string): PasswordVerifier | nul
       return null;
     }
 
-    return { version, scrypt: params, salt: fromBase64(salt), digest: fromBase64(digest) };
+    return {
+      verifier: { version, scrypt: params, salt: fromBase64(salt), digest: fromBase64(digest) },
+      needsLongerPassword: needsLongerPassword === true,
+    };
   } catch {
     return null;
   }
 }
 
-export async function writePasswordVerifier(verifier: PasswordVerifier): Promise<void> {
-  await Keychain.setGenericPassword(USERNAME, serialisePasswordVerifier(verifier), writeOptions);
+export async function writePasswordVerifier(
+  verifier: PasswordVerifier,
+  { needsLongerPassword = false }: Readonly<{ needsLongerPassword?: boolean }> = {},
+): Promise<void> {
+  await Keychain.setGenericPassword(
+    USERNAME,
+    serialiseStoredPassword({ verifier, needsLongerPassword }),
+    writeOptions,
+  );
 }
 
 export async function hasPasswordVerifier(): Promise<boolean> {
   return Keychain.hasGenericPassword({ service: SERVICE });
 }
 
-export async function readPasswordVerifier(): Promise<PasswordVerifier | null> {
+export async function readStoredPassword(): Promise<StoredPassword | null> {
   const credentials = await Keychain.getGenericPassword({ service: SERVICE });
 
-  return credentials ? deserialisePasswordVerifier(credentials.password) : null;
+  return credentials ? deserialiseStoredPassword(credentials.password) : null;
+}
+
+export async function readPasswordVerifier(): Promise<PasswordVerifier | null> {
+  return (await readStoredPassword())?.verifier ?? null;
 }
 
 export async function clearPasswordVerifier(): Promise<void> {

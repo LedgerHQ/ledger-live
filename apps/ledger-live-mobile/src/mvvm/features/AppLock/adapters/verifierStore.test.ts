@@ -1,5 +1,5 @@
 import { createPasswordVerifier, type ScryptParams } from "@shared/password-verifier";
-import { deserialisePasswordVerifier, serialisePasswordVerifier } from "./verifierStore";
+import { deserialiseStoredPassword, serialiseStoredPassword } from "./verifierStore";
 
 const scrypt: ScryptParams = {
   cost: 16384,
@@ -14,19 +14,21 @@ const verifier = createPasswordVerifier({
   scrypt,
 });
 
+const stored = { verifier, needsLongerPassword: false } as const;
+
 describe("password verifier codec", () => {
   it("round-trips a verifier through storage", () => {
-    const restored = deserialisePasswordVerifier(serialisePasswordVerifier(verifier));
+    const restored = deserialiseStoredPassword(serialiseStoredPassword(stored));
 
-    expect(restored).toEqual(verifier);
-    expect(restored?.salt).toBeInstanceOf(Uint8Array);
-    expect(restored?.digest).toBeInstanceOf(Uint8Array);
+    expect(restored).toEqual(stored);
+    expect(restored?.verifier.salt).toBeInstanceOf(Uint8Array);
+    expect(restored?.verifier.digest).toBeInstanceOf(Uint8Array);
   });
 
   it("keeps the scrypt parameters, so an older verifier stays checkable", () => {
-    const restored = deserialisePasswordVerifier(serialisePasswordVerifier(verifier));
+    const restored = deserialiseStoredPassword(serialiseStoredPassword(stored));
 
-    expect(restored?.scrypt).toEqual(scrypt);
+    expect(restored?.verifier.scrypt).toEqual(scrypt);
   });
 
   it("round-trips bytes that are not valid UTF-8", () => {
@@ -35,8 +37,23 @@ describe("password verifier codec", () => {
       salt: Uint8Array.from([255, 0, 1, 128]),
       scrypt,
     });
+    const record = { verifier: binary, needsLongerPassword: false } as const;
 
-    expect(deserialisePasswordVerifier(serialisePasswordVerifier(binary))).toEqual(binary);
+    expect(deserialiseStoredPassword(serialiseStoredPassword(record))).toEqual(record);
+  });
+
+  it("carries an under-minimum password across a restart", () => {
+    const record = { verifier, needsLongerPassword: true } as const;
+
+    expect(deserialiseStoredPassword(serialiseStoredPassword(record))?.needsLongerPassword).toBe(
+      true,
+    );
+  });
+
+  it("reads a record written before the mark existed as not owing a longer password", () => {
+    const legacy = `{"version":1,"scrypt":${JSON.stringify(scrypt)},"salt":"AAAA","digest":"AAAA"}`;
+
+    expect(deserialiseStoredPassword(legacy)?.needsLongerPassword).toBe(false);
   });
 
   const params = JSON.stringify(scrypt);
@@ -62,6 +79,6 @@ describe("password verifier codec", () => {
       '{"version":1,"scrypt":{"cost":16384,"blockSize":8,"parallelization":1,"digestLength":0},"salt":"AA","digest":"AA"}',
     ],
   ])("treats %s as unreadable rather than throwing", (_case, raw) => {
-    expect(deserialisePasswordVerifier(raw)).toBeNull();
+    expect(deserialiseStoredPassword(raw)).toBeNull();
   });
 });

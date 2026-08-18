@@ -34,6 +34,8 @@ export type UnlockViewProps = UnlockViewModel &
     labels: UnlockLabels;
     errorText?: string;
     logo?: React.ReactNode;
+
+    isCovered?: boolean;
     topInset?: number;
     bottomInset?: number;
     keyboardHeight?: number;

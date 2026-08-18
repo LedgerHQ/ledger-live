@@ -24,12 +24,15 @@ export function migrateLegacyPassword(): Promise<MigrationResult> {
       return { status: "notNeeded" } as const;
     }
 
+    const needsLongerPassword = !isPasswordLongEnough(legacyPassword);
+
     if (!(await hasPasswordVerifier())) {
       const salt = await getRandomBytesAsync(APP_LOCK_SALT_LENGTH);
       const digest = await derivePasswordDigest(legacyPassword, salt, APP_LOCK_SCRYPT_PARAMS);
 
       await writePasswordVerifier(
         createPasswordVerifier({ digest, salt, scrypt: APP_LOCK_SCRYPT_PARAMS }),
+        { needsLongerPassword },
       );
     }
 
@@ -39,9 +42,6 @@ export function migrateLegacyPassword(): Promise<MigrationResult> {
 
     await clearLegacyPassword();
 
-    return {
-      status: "migrated",
-      needsLongerPassword: !isPasswordLongEnough(legacyPassword),
-    } as const;
+    return { status: "migrated", needsLongerPassword } as const;
   });
 }

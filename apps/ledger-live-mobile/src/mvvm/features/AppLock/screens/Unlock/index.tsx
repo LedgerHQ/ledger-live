@@ -1,26 +1,26 @@
-import { selectBiometricsEnabled, unlockApp } from "@features/platform-app-lock";
+import {
+  isPasswordLongEnough,
+  selectBiometricsEnabled,
+  setNeedsLongerPassword,
+  unlockApp,
+} from "@features/platform-app-lock";
 import { UnlockView, useUnlockViewModel, type UnlockLabels } from "@features/flow-app-lock";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import { Logos } from "@ledgerhq/native-ui";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { Keyboard } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "styled-components/native";
-import StyleProvider from "~/StyleProvider";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { useTranslation } from "~/context/Locale";
 import { checkPassword } from "../../adapters/passwordVerification";
+import { ForgotPasswordSheet } from "../../components/ForgotPasswordSheet";
 import { useBiometricUnlock } from "../../hooks/useBiometricUnlock";
 import { useKeyboardInset } from "../../hooks/useKeyboardInset";
 
-export function UnlockScreen(): React.JSX.Element {
-  return (
-    <StyleProvider selectedPalette="dark">
-      <UnlockScreenContent />
-    </StyleProvider>
-  );
-}
+type ForgotPasswordPhase = "closed" | "dismissingKeyboard" | "open" | "hiding";
 
-function UnlockScreenContent(): React.JSX.Element {
+export function UnlockScreen(): React.JSX.Element {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { colors } = useTheme();
@@ -54,6 +54,7 @@ function UnlockScreenContent(): React.JSX.Element {
           return "incorrect" as const;
         }
 
+        dispatch(setNeedsLongerPassword(!isPasswordLongEnough(password)));
         dispatch(unlockApp());
         return "unlocked" as const;
       } catch {
@@ -70,16 +71,49 @@ function UnlockScreenContent(): React.JSX.Element {
     onRetryBiometrics: runBiometricUnlock,
   });
 
+  const [forgotPassword, setForgotPassword] = useState<ForgotPasswordPhase>("closed");
+  const openForgotPassword = useCallback(() => {
+    if (!Keyboard.isVisible()) {
+      setForgotPassword("open");
+      return;
+    }
+
+    // A sheet measured against a keyboard mid-dismissal ends up drawn in one place and touchable in
+    // another, which leaves it impossible to close.
+    setForgotPassword("dismissingKeyboard");
+    Keyboard.dismiss();
+  }, []);
+
+  useEffect(() => {
+    if (forgotPassword !== "dismissingKeyboard") {
+      return;
+    }
+
+    const hidden = Keyboard.addListener("keyboardDidHide", () => setForgotPassword("open"));
+
+    return () => hidden.remove();
+  }, [forgotPassword]);
+  const closeForgotPassword = useCallback(() => setForgotPassword("hiding"), []);
+  const onForgotPasswordHidden = useCallback(() => setForgotPassword("closed"), []);
+
   return (
     <Box lx={{ flex: 1, backgroundColor: "canvas" }}>
       <UnlockView
+        key={forgotPassword}
+        isCovered={forgotPassword !== "closed"}
         {...viewModel}
         labels={labels}
         errorText={failure}
         logo={<Logos.LedgerLiveAltRegular color={colors.neutral.c100} width={67} height={56} />}
+        onForgotPassword={openForgotPassword}
         topInset={insets.top}
         bottomInset={insets.bottom}
         keyboardHeight={keyboardInset}
+      />
+      <ForgotPasswordSheet
+        isOpen={forgotPassword === "open"}
+        onClose={closeForgotPassword}
+        onHidden={onForgotPasswordHidden}
       />
     </Box>
   );

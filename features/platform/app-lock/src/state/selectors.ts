@@ -32,3 +32,9 @@ export function selectAuthenticationType(state: WithAppLock): AuthenticationType
 export function selectIsAppLockConfigured(state: WithAppLock): boolean {
   return isAppLockConfigured(selectAppLock(state));
 }
+
+export function selectIsAppLockBlocking(state: WithAppLock): boolean {
+  const { isLocked, needsLongerPassword } = selectAppLock(state);
+
+  return isLocked || needsLongerPassword;
+}

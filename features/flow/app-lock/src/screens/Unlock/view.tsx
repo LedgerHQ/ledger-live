@@ -17,6 +17,7 @@ export function UnlockView({
   labels,
   errorText,
   logo,
+  isCovered = false,
   topInset = 0,
   bottomInset = 0,
   keyboardHeight = 0,
@@ -41,6 +42,7 @@ export function UnlockView({
         labels={labels}
         helperText={helperText}
         hasError={hasWrongPassword || errorText !== undefined}
+        autoFocus={!isCovered}
         canReveal={false}
         onSubmitEditing={onUnlock}
         onBiometrics={canRetryBiometrics ? onRetryBiometrics : undefined}
@@ -55,7 +57,10 @@ export function UnlockView({
           onPress={onForgotPassword}
           testID="app-lock-unlock-forgot-password"
         >
-          <Text lx={{ textAlign: "center", textDecorationLine: "underline" }}>
+          <Text
+            typography="body2SemiBold"
+            lx={{ color: "muted", textAlign: "center", textDecorationLine: "underline" }}
+          >
             {labels.forgotPassword}
           </Text>
         </Pressable>

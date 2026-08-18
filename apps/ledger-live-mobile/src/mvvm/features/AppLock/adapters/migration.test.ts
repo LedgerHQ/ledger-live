@@ -76,6 +76,22 @@ describe("migrateLegacyPassword", () => {
     });
   });
 
+  it.each([
+    ["under the minimum", "1234", true],
+    ["at or above it", "longenough", false],
+  ])(
+    "writes the mark for a password %s alongside the verifier, so quitting cannot lose it",
+    async (_case, password, expected) => {
+      legacy.password = password;
+
+      await migrateLegacyPassword();
+
+      expect(writePasswordVerifier).toHaveBeenCalledWith(expect.anything(), {
+        needsLongerPassword: expected,
+      });
+    },
+  );
+
   it("destroys the legacy entry only after the verifier is proven to open", async () => {
     legacy.password = "longenough";
     const order: string[] = [];

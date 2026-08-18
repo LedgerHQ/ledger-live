@@ -1542,9 +1542,31 @@
     "unlock": {
       "wrongPassword": "Incorrect password",
       "forgotPassword": "Forgot your password?",
+      "forgotPasswordSheet": {
+        "title": "Forgot password",
+        "description": "If you've lost your password, reinstall the app and restore your wallet.",
+        "cta": "Got it"
+      },
       "retryBiometrics": "Use biometrics",
       "failed": "We couldn't check your password. Please try again.",
       "cta": "Confirm"
+    },
+    "longerPassword": {
+      "prompt": {
+        "title": "Change your password",
+        "description": "For better security, enter a password of at least 6 characters.",
+        "cta": "Change password"
+      },
+      "choose": {
+        "title": "Enter new password"
+      },
+      "confirm": {
+        "title": "Confirm new password"
+      },
+      "changed": {
+        "title": "Password changed",
+        "cta": "Got it"
+      }
     },
     "deactivatePassword": {
       "title": "Deactivate password",

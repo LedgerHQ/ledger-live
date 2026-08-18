@@ -1,4 +1,4 @@
-import { setHasPassword } from "@features/platform-app-lock";
+import { setHasPassword, setNeedsLongerPassword } from "@features/platform-app-lock";
 import { createPasswordVerifier } from "@shared/password-verifier";
 import { getRandomBytesAsync } from "expo-crypto";
 import { useCallback } from "react";
@@ -31,6 +31,7 @@ export function usePasswordSetup(): PasswordSetup {
 
         await writePasswordVerifier(verifier);
         dispatch(setHasPassword(true));
+        dispatch(setNeedsLongerPassword(false));
       }),
     [dispatch],
   );

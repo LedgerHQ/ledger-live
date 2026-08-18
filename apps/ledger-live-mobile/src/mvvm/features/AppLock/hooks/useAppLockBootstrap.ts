@@ -1,7 +1,7 @@
-import { setHasPassword } from "@features/platform-app-lock";
+import { setHasPassword, setNeedsLongerPassword } from "@features/platform-app-lock";
 import { useEffect, useState } from "react";
 import { useDispatch } from "~/context/hooks";
-import { hasPasswordVerifier } from "../adapters/verifierStore";
+import { readStoredPassword } from "../adapters/verifierStore";
 
 export function useAppLockBootstrap(): boolean {
   const dispatch = useDispatch();
@@ -10,10 +10,11 @@ export function useAppLockBootstrap(): boolean {
   useEffect(() => {
     let cancelled = false;
 
-    hasPasswordVerifier()
-      .then(exists => {
+    readStoredPassword()
+      .then(stored => {
         if (!cancelled) {
-          dispatch(setHasPassword(exists));
+          dispatch(setHasPassword(stored !== null));
+          dispatch(setNeedsLongerPassword(stored?.needsLongerPassword ?? false));
           setIsReady(true);
         }
       })
