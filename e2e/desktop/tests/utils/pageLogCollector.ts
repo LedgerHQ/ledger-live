@@ -44,9 +44,39 @@ const NETWORK_NOISE_HOSTS = [
   "countervalues.api.live.ledger.com",
 ];
 
-const NETWORK_NOISE_ASSET_PATH = /\/_next\/static\//i;
-const NETWORK_NOISE_ASSET_EXT =
-  /\.(?:js|mjs|css|map|woff2?|ttf|otf|eot|png|jpe?g|gif|svg|ico|webp|avif|wasm|mp4)(?:$|[?#])/i;
+const NETWORK_NOISE_ASSET_PATH = "/_next/static/";
+
+const NETWORK_NOISE_ASSET_EXTENSIONS = new Set([
+  // code / styles
+  "js",
+  "mjs",
+  "css",
+  "map",
+  // fonts
+  "woff",
+  "woff2",
+  "ttf",
+  "otf",
+  "eot",
+  // images / media
+  "png",
+  "jpg",
+  "jpeg",
+  "gif",
+  "svg",
+  "ico",
+  "webp",
+  "avif",
+  "mp4",
+  "wasm",
+]);
+
+/** Lowercased file extension of a path, or "" when it has none. */
+function pathExtension(pathname: string): string {
+  const lastSegment = pathname.slice(pathname.lastIndexOf("/") + 1);
+  const dotIndex = lastSegment.lastIndexOf(".");
+  return dotIndex === -1 ? "" : lastSegment.slice(dotIndex + 1);
+}
 
 /** True when `url` is app-asset / font / telemetry / CDN start-up noise (not a real API call). */
 export function isNoiseNetworkUrl(url: string): boolean {
@@ -57,11 +87,13 @@ export function isNoiseNetworkUrl(url: string): boolean {
     host = parsed.host;
     pathname = parsed.pathname;
   } catch {
-    // Non-URL (onRequest only stores http(s), so this is unexpected) — fall back to raw matching.
+    // Non-URL (onRequest only stores http(s), so this is unexpected) — fall back to raw matching,
+    // dropping any query/hash so the extension lookup still sees the bare path.
+    pathname = url.split(/[?#]/)[0];
   }
-  if (NETWORK_NOISE_ASSET_PATH.test(pathname) || NETWORK_NOISE_ASSET_EXT.test(pathname)) {
-    return true;
-  }
+  const lowerPath = pathname.toLowerCase();
+  if (lowerPath.includes(NETWORK_NOISE_ASSET_PATH)) return true;
+  if (NETWORK_NOISE_ASSET_EXTENSIONS.has(pathExtension(lowerPath))) return true;
   return NETWORK_NOISE_HOSTS.some(
     noiseHost => host === noiseHost || host.endsWith(`.${noiseHost}`),
   );
@@ -213,7 +245,7 @@ export class PageLogCollector {
       return "PAYLOAD (Backend Swap Payload Retrieval)";
     }
     if (text.includes("CompleteExchangeError")) {
-      const deviceStep = text.match(/"step"\s*:\s*"([^"]+)"/)?.[1] ?? "INIT";
+      const deviceStep = /"step"\s*:\s*"([^"]+)"/.exec(text)?.[1] ?? "INIT";
       return `device Exchange app (${deviceStep})`;
     }
     return null;
@@ -240,7 +272,7 @@ export class PageLogCollector {
   /** Remove `%c` console format tokens and their CSS style arguments, keeping the label text. */
   private static stripConsoleStyling(text: string): string {
     return text
-      .replace(/%c/g, "")
+      .replaceAll("%c", "")
       .replace(/background:[^;]*;?/gi, "")
       .replace(/color:\s*#[0-9a-f]{3,8};?/gi, "")
       .replace(/\s+/g, " ")
