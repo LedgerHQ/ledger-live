@@ -13,3 +13,7 @@ Each key is a keychain `service` of its own, and the access token sits alone in 
 base query reads one small value per request. `AFTER_FIRST_UNLOCK` on iOS and `AES_GCM_NO_AUTH` on
 Android state the same rule: no prompt, and a value a background launch can read, but nothing before
 the first unlock after boot.
+
+`cardSession.get` reads all three keys, so it waits its turn behind a write. A login over a live
+session replaces the two cold keys before the access token, and a read between the two would report
+the previous access token with the new refresh token.

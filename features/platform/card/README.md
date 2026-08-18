@@ -58,8 +58,11 @@ reads the store again, and a token that outlived its session answers `401`, whic
 `set` and `clear` take turns on one queue. They have callers that know nothing about each other — `set`
 runs from the login machine, `clear` runs from `refreshCardSession`, which the base query calls on any
 Card `401`, outside React and outside the machine. Interleaved, a removal could land between the two
-halves of a write and leave the access token alone on disk. Reads never wait for a turn: they cannot
-break the invariant, and the request path must not queue behind a login.
+halves of a write and leave the access token alone on disk. `get` takes a turn as well, because it reads
+all three keys, and a login over a live session replaces the two cold keys before the access token — a
+read between the two halves would pair the previous access token with the new refresh token.
+`getCardSessionToken` never waits: one key cannot disagree with itself, the previous access token stays
+valid until the new one lands, and the request path must not queue behind a login.
 
 `clear` never rejects, because the base query awaits `refreshCardSession` without a try/catch.
 

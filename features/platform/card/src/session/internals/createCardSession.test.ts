@@ -8,6 +8,14 @@ const session = {
   refreshTokenExpiresIn: 15897600,
 };
 
+/** The session a re-login writes over. Every field differs, so a mixed read is visible. */
+const previousSession = {
+  accessToken: "at_old",
+  expiresIn: 60,
+  refreshToken: "rt_old",
+  refreshTokenExpiresIn: 120,
+};
+
 function fakeStore(initial: Record<string, string> = {}) {
   const slots = new Map(Object.entries(initial));
   const store: CardSessionStore = {
@@ -20,6 +28,23 @@ function fakeStore(initial: Record<string, string> = {}) {
     }),
   };
   return { store, slots };
+}
+
+/** Holds one key's write open, so a test can read while the store carries half of each session. */
+function pauseWriteOf(store: CardSessionStore, slots: Map<string, string>, pausedKey: string) {
+  let release = () => undefined as void;
+  const reached = new Promise<void>(resolveReached => {
+    jest.mocked(store.write).mockImplementation(async (key, value) => {
+      if (key === pausedKey) {
+        resolveReached();
+        await new Promise<void>(resolveRelease => {
+          release = resolveRelease;
+        });
+      }
+      slots.set(key, value);
+    });
+  });
+  return { reached, release: () => release() };
 }
 
 describe("createCardSession", () => {
@@ -161,6 +186,42 @@ describe("createCardSession", () => {
 
     // The clear waited its turn, so it removed the whole session rather than half of it.
     expect(slots.size).toBe(0);
+  });
+
+  it("never reports a mix of the two sessions while a set runs over a live one", async () => {
+    const { store, slots } = fakeStore();
+    const { cardSession } = createCardSession(store);
+    await cardSession.set(previousSession);
+    // Paused here, the cold keys hold the new session and the access token still holds the old one.
+    const accessTokenWrite = pauseWriteOf(store, slots, CARD_SESSION_KEYS.accessToken);
+
+    const setting = cardSession.set(session);
+    await accessTokenWrite.reached;
+    const reading = cardSession.get();
+    accessTokenWrite.release();
+    await setting;
+
+    // Without a turn this pairs the old access token with the new refresh token and lifetimes.
+    await expect(reading).resolves.toEqual(session);
+  });
+
+  it("keeps serving the previous access token while a set runs over a live session", async () => {
+    const { store, slots } = fakeStore();
+    const { cardSession, getCardSessionToken } = createCardSession(store);
+    await cardSession.set(previousSession);
+    const accessTokenWrite = pauseWriteOf(store, slots, CARD_SESSION_KEYS.accessToken);
+
+    const setting = cardSession.set(session);
+    await accessTokenWrite.reached;
+
+    // The request path must not queue behind a login, and the old token is valid until the new one
+    // lands. A gate over the whole write would answer null here, and that 401 would clear the session
+    // the login just wrote.
+    await expect(getCardSessionToken()).resolves.toBe("at_old");
+    accessTokenWrite.release();
+    await setting;
+
+    await expect(getCardSessionToken()).resolves.toBe("at_token");
   });
 
   it("clears every key, the access token first", async () => {

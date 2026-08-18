@@ -62,7 +62,7 @@ export function createCardSession(store: CardSessionStore) {
     isCleared = false;
   }
 
-  async function get(): Promise<PayCardSession | null> {
+  async function readSession(): Promise<PayCardSession | null> {
     if (isCleared) {
       return null;
     }
@@ -105,10 +105,19 @@ export function createCardSession(store: CardSessionStore) {
   const clear = () => takeTurn(removeSession);
 
   /**
+   * `get` takes a turn too, because it reads all three keys. A write replaces the two cold keys before
+   * the access token, so a read that landed between the two phases would pair the previous access token
+   * with the new refresh token and the new lifetimes. A turn makes "all three keys agree" hold for
+   * every caller, and `get` is not on the request path, so the wait costs nothing there.
+   */
+  const get = () => takeTurn(readSession);
+
+  /**
    * The reader `cardApiExtra` gets. One key, because the header needs one value.
    *
-   * It never waits for a turn. Reads cannot break the invariant — the access token exists only while
-   * the whole session does — and the request path must not queue behind a login.
+   * It never waits for a turn. One key cannot disagree with itself, and a write over a live session
+   * answers the previous access token until the new one lands — both are valid. The request path must
+   * not queue behind a login.
    */
   async function getCardSessionToken(): Promise<string | null> {
     return isCleared ? null : store.read(CARD_SESSION_KEYS.accessToken);
