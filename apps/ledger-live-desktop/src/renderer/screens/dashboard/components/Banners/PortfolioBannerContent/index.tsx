@@ -19,7 +19,7 @@ type PortfolioBannerStackProps = Readonly<{
   categoryLeadingSlide?: ReactNode;
 }>;
 
-const PortfolioBannerStack = memo(function PortfolioBannerStack({
+function PortfolioBannerStack({
   topContent,
   lnsUpsellBanner,
   categoryLeadingSlide,
@@ -31,7 +31,7 @@ const PortfolioBannerStack = memo(function PortfolioBannerStack({
       <PortfolioCategoryContentCards leadingSlide={categoryLeadingSlide} />
     </div>
   );
-});
+}
 
 /**
  * Wallet40 row: Finish/Recover widgets take priority over Braze cards.
