@@ -172,7 +172,14 @@ export const useModularDrawerController = () => {
         resetAll();
       }
     },
-    [callbackId, cancelCallbackId, dispatch, executeCurrencyCallback, unregisterCancelCallback, resetAll],
+    [
+      callbackId,
+      cancelCallbackId,
+      dispatch,
+      executeCurrencyCallback,
+      unregisterCancelCallback,
+      resetAll,
+    ],
   );
 
   return {
