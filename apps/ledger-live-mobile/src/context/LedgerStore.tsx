@@ -92,6 +92,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
   const init = useCallback(async () => {
     try {
       const readStorageStart = Date.now();
+      logStartupEvent("Init start");
       mmkvStorageWrapper.monitor(true);
       const [
         bleData,
@@ -163,11 +164,13 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
       // This ensures tokens are available when decoding accounts (which now uses findTokenById)
       // Cross-caching is automatic: tokens are cached under both ID and address lookups
       // parsePersistedCAL validates version + schema; returns null for missing/corrupt/legacy blobs.
+      logStartupEvent("Init storage read");
       const persistedCryptoAssets = parsePersistedCAL(cryptoAssetsCache);
       if (persistedCryptoAssets) {
         const TOKEN_CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
         await restoreTokensToCache(store.dispatch, persistedCryptoAssets, TOKEN_CACHE_TTL);
       }
+      logStartupEvent("Init CAL restored");
 
       // Handle account import with error recovery for async issues
       try {
@@ -178,6 +181,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         // Continue with app initialization even if account import fails
         // This prevents blocking deeplink navigation
       }
+      logStartupEvent("Init accounts imported");
 
       if (postOnboardingState) {
         store.dispatch(importPostOnboardingState({ newState: postOnboardingState }));
@@ -227,6 +231,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
 
       // Initialize identities (single source of truth): migrate from legacy "user" if present, then persist under "identities" only
       await initIdentities(store, persistedIdentities ?? null, legacyUser ?? null);
+      logStartupEvent("Init identities done");
 
       if (persistedFeatureFlags) {
         store.dispatch(setAllOverrides(persistedFeatureFlags.overrides));
@@ -271,6 +276,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         }
       }
 
+      logStartupEvent("Init done");
       setInitialCountervalues(initialCountervalues);
       setReady(true);
       onInitFinished();
