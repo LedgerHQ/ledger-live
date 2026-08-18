@@ -8,6 +8,8 @@ import { TransactionStatus } from "@ledgerhq/live-e2e-shared/enum/TransactionSta
 import { setTeamOwner } from "../../helpers/allure/allure-helper";
 import invariant from "invariant";
 
+const BST_ADD_SUBACCOUNT_PARENT_CURRENCIES = new Set(["algorand", "sui"]);
+
 const beforeAllFunction = async (transaction: TransactionType, setAccountToCredit: boolean) => {
   await app.init({
     userdata: "skip-onboarding",
@@ -144,7 +146,11 @@ export function runAddSubAccountTest(testConfig: {
       await app.mainNavigation.waitForWallet40Ready();
     });
 
-    setTeamOwner(Team.COIN_INTEGRATION);
+    setTeamOwner(
+      BST_ADD_SUBACCOUNT_PARENT_CURRENCIES.has(asset.parentAccount?.currency.id ?? "")
+        ? Team.BST
+        : Team.COIN_INTEGRATION,
+    );
     tmslinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     it(`[${asset.currency.testLabel}] - Add sub-account without parent`, async () => {
