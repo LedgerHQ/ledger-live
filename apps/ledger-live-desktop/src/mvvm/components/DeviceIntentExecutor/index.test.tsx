@@ -87,7 +87,7 @@ type Props = DeviceIntentExecutorProps<unknown, unknown, unknown, Initialization
 
 function makeProps(): Props {
   return {
-    deviceConnectionParams: {},
+    deviceConnectionParams: { acceptedDeviceModelIds: [] },
     deviceInitializationInput: {} as InitializationInput,
     onExecutorStateChanged: jest.fn(),
     intent: {} as Props["intent"],

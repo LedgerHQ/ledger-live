@@ -309,7 +309,7 @@ describe("useDeviceIntentExecutorLWDViewModel", () => {
       mockedTrack.mockClear();
 
       act(() => {
-        result.current.onHeaderClosePressed();
+        result.current.onHeaderClosePressed?.();
       });
 
       expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
@@ -453,7 +453,7 @@ describe("useDeviceIntentExecutorLWDViewModel", () => {
       mockedTrack.mockClear();
 
       act(() => {
-        result.current.onHeaderClosePressed();
+        result.current.onHeaderClosePressed?.();
       });
 
       expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
