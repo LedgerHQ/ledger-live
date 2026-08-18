@@ -28,7 +28,6 @@ import {
   getAccountInfo,
   getBalance,
   lastBlock,
-  listOperations,
   register,
   validateAddress,
 } from "../logic";
@@ -53,7 +52,7 @@ function requireViewKey(context: AleoContext, action: string): string {
 // currencyId is captured here (it can't live on the Context). The logic functions are shared with
 // the classic bridge (config-based), so each method resolves config via context.config() and passes
 // it down — no context-first wrappers.
-export function createApi(currencyId: string): AleoCoinModuleApi {
+export function createApi(_currencyId: string): AleoCoinModuleApi {
   return {
     async call() {
       throw new Error("call is not supported");
@@ -169,16 +168,8 @@ export function createApi(currencyId: string): AleoCoinModuleApi {
       const config = await context.config();
       return lastBlock(config);
     },
-    listOperations: async (context: AleoContext, address, options) => {
-      const config = await context.config();
-      const { operations, nextCursor } = await listOperations({
-        config,
-        currencyId,
-        address,
-        options,
-        mode: "coin-framework",
-      });
-      return { items: operations, next: nextCursor ?? undefined };
+    listOperations: (_context, _address, _options) => {
+      throw new Error("listOperations is not supported");
     },
     getBlock(_context, _height): Promise<Block> {
       throw new Error("getBlock is not supported");

@@ -1,4 +1,3 @@
-import { promiseAllBatched } from "@ledgerhq/coin-module-framework/promises";
 import type {
   AleoOperation,
   AleoPrivateRecord,
@@ -6,7 +5,7 @@ import type {
   AleoTransitionValue,
   AleoCoinConfig,
 } from "../types";
-import { enrichPrivateRecord } from "../network/utils";
+import { enrichPrivateRecords } from "../network/utils";
 import { toPrivateBridgeOperation } from "./utils";
 
 // Records forwarded to another program carry no tag; the callee's transition holds it.
@@ -16,8 +15,7 @@ function onlyTaggedRecordValue(
   return "tag" in value;
 }
 
-// Build the set of record tags consumed as inputs in outgoing transactions.
-// This is used to compensate for the record scanner returning already-spent records as unspent.
+// Compensates for the record scanner returning already-spent records as unspent.
 export function buildConsumedRecordTags(
   enrichedRecords: (EnrichedPrivateRecord | null)[],
   address: string,
@@ -69,12 +67,13 @@ export async function listPrivateOperations({
   const recordsToEnrich = tokenRecords ? [...privateRecords, ...tokenRecords] : privateRecords;
   const nativeRecordTags = new Set(privateRecords.map(record => record.tag));
 
-  let completed = 0;
-  const enrichedRecords = await promiseAllBatched(2, recordsToEnrich, async rawRecord => {
-    signal?.throwIfAborted();
-    const result = await enrichPrivateRecord({ config, rawRecord, address, viewKey });
-    onProgress?.(++completed, recordsToEnrich.length);
-    return result;
+  const enrichedRecords = await enrichPrivateRecords({
+    config,
+    viewKey,
+    address,
+    records: recordsToEnrich,
+    ...(onProgress && { onProgress }),
+    ...(signal && { signal }),
   });
 
   const consumedRecordTags = buildConsumedRecordTags(enrichedRecords, address);
