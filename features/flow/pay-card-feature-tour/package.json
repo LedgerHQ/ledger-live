@@ -1,6 +1,6 @@
 {
   "name": "@features/flow-pay-card-feature-tour",
-  "version": "0.2.0",
+  "version": "0.3.0-next.0",
   "private": true,
   "description": "First-time Pay tab feature tour for Ledger Wallet (native bottom sheet, web dialog)",
   "main": "src/index.ts",

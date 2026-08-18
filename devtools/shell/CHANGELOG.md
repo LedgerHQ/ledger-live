@@ -1,5 +1,12 @@
 # @devtools/shell
 
+## 0.8.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`dd0e578`](https://github.com/LedgerHQ/ledger-live/commit/dd0e578b82b8fc94fa8690cd8111f5826254b197)]:
+  - @devtools/registry@0.3.0-next.0
+
 ## 0.8.0
 
 ### Minor Changes
