@@ -39,6 +39,10 @@ on:
         required: true
       NX_KEY:
         required: true
+      FLAKE_API_KEY:
+        required: false
+      FLAKE_API_HOST:
+        required: false
 
 permissions:
   id-token: write
@@ -52,6 +56,8 @@ jobs:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
       CI_OS: ubuntu-22.04
+      FLAKE_API_KEY: ${{ secrets.FLAKE_API_KEY }}
+      FLAKE_API_HOST: ${{ secrets.FLAKE_API_HOST }}
     outputs:
       coverage_generated: ${{ contains(steps.generate_coverage.outcome, 'success') }}
 
