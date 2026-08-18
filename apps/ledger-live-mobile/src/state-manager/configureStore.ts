@@ -1,6 +1,7 @@
 import Config from "react-native-config";
 import { configureStore, type StoreEnhancer } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/query";
+import { ofacGeoBlockApi } from "@ledgerhq/live-common/api/ofacGeoBlockApi";
 import { authApiExtra, authEnvironmentSelector } from "@shared/auth";
 import { AuthSDK } from "@ledgerhq/ledger-auth";
 import { LkrpIdentityProvider } from "@ledgerhq/ledger-key-ring-protocol";
@@ -142,3 +143,10 @@ setupListeners(store.dispatch, (dispatch, { onOnline, onOffline }) => {
 connectRecentAddressesStore(store, recentAddressesSelector);
 setupCryptoAssetsStore(store);
 setSwapQuotesStore(store.dispatch);
+
+// LIVE-34096 follow-up: start the OFAC geo-block check as early as possible.
+// `WaitForAppReady` gates the navigator - and therefore the splash fade - on this query. Until
+// PR #20197 it was fired by `InitialQueriesProvider`, which mounted outside the `ready` branch, so
+// the round-trip overlapped store hydration and had usually settled by the time the gate mounted.
+// Firing it here restores that parallelism; the gate then reads the cached result.
+store.dispatch(ofacGeoBlockApi.endpoints.check.initiate());
