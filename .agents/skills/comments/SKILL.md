@@ -7,7 +7,7 @@ description: Stop writing so many comments. Follow these suggestions instead!
 
 ## 🧀 Avoid comments
 
-Comments are _code smells_ because they go out-of-date, bloat context and leading to confusion.
+Comments are _code smells_ because they go out-of-date, bloat context, and lead to confusion.
 
 **Don't reference existing comments in the codebase – follow these rules**
 
@@ -23,7 +23,7 @@ When code isn't clear, make it clearer:
 - Extract variables and functions to improve readability
 - Use assertions to explain behaviour
 
-### Use test names to explain none-obvious details
+### Use test names to explain non-obvious details
 
 **❌ Bad**
 
