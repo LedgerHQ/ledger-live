@@ -8,6 +8,7 @@ import {
   type ContactId,
 } from "@domain/entity-contact";
 import type { ContactsAddressValidationPort, ContactsAddressValidationResult } from "./model/ports";
+import { wait } from "../../utils/wait";
 import type {
   AddAddressContact,
   AddAddressCurrencySelection,
@@ -37,10 +38,6 @@ export type UseAddAddressFlowViewModelOptions = Readonly<{
   addressValidation?: ContactsAddressValidationPort;
   manualValidationDebounceMs?: number;
 }>;
-
-function wait(delayMs: number): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, delayMs));
-}
 
 function createAddressLabelState(
   value: string,
