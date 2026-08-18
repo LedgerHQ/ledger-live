@@ -6,6 +6,7 @@ import {
   getCheckpointGrpc,
   getLastBlockGrpc,
   getStakingEventsByDigestGrpc,
+  withoutBuildSimulation,
 } from "./sdk.grpc";
 
 const CANONICAL_SUI = `0x${"0".repeat(63)}2::sui::SUI`;
@@ -526,5 +527,56 @@ describe("fetchExchangeRatesGrpc", () => {
       chunksFailed: 0,
     });
     expect(batchGetObjects).not.toHaveBeenCalled();
+  });
+});
+
+// `Transaction.build()` resolves via
+// `client.core?.resolveTransactionPlugin() ?? coreClientResolveTransactionPlugin`, so yielding
+// `undefined` is what puts gRPC back on the shared fallback the other transports use.
+describe("withoutBuildSimulation", () => {
+  class FakeCore {
+    #secret = "core-private";
+    resolveTransactionPlugin() {
+      return async () => undefined;
+    }
+    getObject() {
+      return this.#secret;
+    }
+  }
+
+  class FakeClient {
+    #secret = "client-private";
+    core = new FakeCore();
+    getBalance() {
+      return this.#secret;
+    }
+  }
+
+  const fake = () => new FakeClient() as unknown as SuiGrpcClient;
+
+  it("disables the resolve plugin so the SDK falls back to the shared resolver", () => {
+    const client = fake();
+    expect(client.core.resolveTransactionPlugin()).toEqual(expect.any(Function));
+
+    expect(withoutBuildSimulation(client).core.resolveTransactionPlugin()).toBeUndefined();
+  });
+
+  it("leaves the original client untouched", () => {
+    const client = fake();
+    withoutBuildSimulation(client);
+
+    expect(client.core.resolveTransactionPlugin()).toEqual(expect.any(Function));
+  });
+
+  // Both clients hold private fields, so a spread or `Object.create` copy would throw on the first
+  // real call. Every proxied member must stay bound to the original instance.
+  it("proxies other members with `this` still bound to the original instance", () => {
+    const wrapped = withoutBuildSimulation(fake()) as unknown as {
+      getBalance: () => string;
+      core: { getObject: () => string };
+    };
+
+    expect(wrapped.getBalance()).toBe("client-private");
+    expect(wrapped.core.getObject()).toBe("core-private");
   });
 });

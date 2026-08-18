@@ -87,6 +87,7 @@ import {
   getStakingEventsByDigestGrpc,
   getValidatorsGrpc,
   withGrpcApi,
+  withoutBuildSimulation,
 } from "./sdk.grpc";
 
 type AsyncApiFunction<T> = (api: SuiJsonRpcClient) => Promise<T>;
@@ -1873,8 +1874,8 @@ const createTransactionForDelegate = (
     jsonRpc: api => buildDelegateBody(address, transaction, withObjects, api),
     graphql: api =>
       buildDelegateBody(address, transaction, withObjects, makeSuiClientFromGraphQL(api)),
-    // `SuiGrpcClient` is a `ClientWithCoreApi`, so the build path takes it directly — no adapter.
-    grpc: api => buildDelegateBody(address, transaction, withObjects, api),
+    // Already a `ClientWithCoreApi`, so no adapter — only its throwing resolve plugin comes off.
+    grpc: api => buildDelegateBody(address, transaction, withObjects, withoutBuildSimulation(api)),
   });
 
 const buildUndelegateBody = async (
@@ -1923,8 +1924,9 @@ const createTransactionForUndelegate = (
     jsonRpc: api => buildUndelegateBody(address, transaction, withObjects, api),
     graphql: api =>
       buildUndelegateBody(address, transaction, withObjects, makeSuiClientFromGraphQL(api)),
-    // `SuiGrpcClient` is a `ClientWithCoreApi`, so the build path takes it directly — no adapter.
-    grpc: api => buildUndelegateBody(address, transaction, withObjects, api),
+    // Already a `ClientWithCoreApi`, so no adapter — only its throwing resolve plugin comes off.
+    grpc: api =>
+      buildUndelegateBody(address, transaction, withObjects, withoutBuildSimulation(api)),
   });
 
 /**
@@ -2003,8 +2005,8 @@ const createTransactionForOthers = (
     jsonRpc: api => buildOthersBody(address, transaction, withObjects, api),
     graphql: api =>
       buildOthersBody(address, transaction, withObjects, makeSuiClientFromGraphQL(api)),
-    // `SuiGrpcClient` is a `ClientWithCoreApi`, so the build path takes it directly — no adapter.
-    grpc: api => buildOthersBody(address, transaction, withObjects, api),
+    // Already a `ClientWithCoreApi`, so no adapter — only its throwing resolve plugin comes off.
+    grpc: api => buildOthersBody(address, transaction, withObjects, withoutBuildSimulation(api)),
   });
 
 /**

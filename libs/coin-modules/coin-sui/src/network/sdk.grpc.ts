@@ -50,6 +50,40 @@ export async function withGrpcApi<T>(
   return execute(createSuiGrpcClient({ url }));
 }
 
+/**
+ * Build-path view of a `SuiGrpcClient` with the SDK's gRPC resolve plugin switched off.
+ *
+ * `GrpcCoreClient.resolveTransactionPlugin` runs `SimulateTransaction` with `checks: ENABLED` on
+ * every `Transaction.build()` and throws `SimulationError` on any MoveAbort. The other two arms
+ * never do that: JSON-RPC's plugin only simulates to fill an unset gas budget and the builders set
+ * one up front, and `makeSuiClientFromGraphQL` opts out explicitly. Leaving it on made gRPC reject
+ * builds the others accept — including fee estimation for an amount the user has not entered yet,
+ * where the throw pre-empts `getTransactionStatus` and hides the bridge's own minimum-stake errors
+ * behind a raw MoveAbort.
+ *
+ * Returning `undefined` selects the SDK's own fallback:
+ * `getClient(options).core?.resolveTransactionPlugin() ?? coreClientResolveTransactionPlugin`
+ * (`@mysten/sui/transactions/resolve`). The fallback is not exported, so this is the only hook.
+ *
+ * Proxied rather than spread because both clients hold private fields; every non-overridden member
+ * is read from, and every method bound to, the original instance.
+ */
+export const withoutBuildSimulation = (client: SuiGrpcClient): SuiGrpcClient => {
+  const bind = <T extends object>(target: T, prop: string | symbol) => {
+    const value = Reflect.get(target, prop);
+    return typeof value === "function" ? value.bind(target) : value;
+  };
+
+  const core = new Proxy(client.core, {
+    get: (target, prop) =>
+      prop === "resolveTransactionPlugin" ? () => undefined : bind(target, prop),
+  });
+
+  return new Proxy(client, {
+    get: (target, prop) => (prop === "core" ? core : bind(target, prop)),
+  });
+};
+
 /** Checkpoint fields the block/checkpoint mappers read, in JSON-RPC's stringly-typed shape. */
 export type GrpcCheckpointFields = Pick<
   Checkpoint,
