@@ -92,7 +92,9 @@ const DBMiddleware: Middleware<object, State> = store => next => action => {
   if (action.type.startsWith(trustchainStoreActionTypePrefix)) {
     const res = next(action);
     const state = store.getState();
-    setKey("app", "trustchain", trustchainStoreSelector(state));
+    if (!state.application.isLocked) {
+      setKey("app", "trustchain", trustchainStoreSelector(state));
+    }
     return res;
   }
 
