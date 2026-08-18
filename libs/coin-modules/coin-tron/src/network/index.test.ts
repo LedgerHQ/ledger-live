@@ -476,7 +476,7 @@ describe("fetchTronAccountOrFail", () => {
 
   it("propagates GET errors from fetch", async () => {
     mockedNetwork.mockResolvedValueOnce(mockResponse({ Error: { message: "get-boom" } }));
-    await expect(fetchTronAccountOrFail(mockConfig, senderBase58)).rejects.toThrow();
+    await expect(fetchTronAccountOrFail(mockConfig, senderBase58)).rejects.toThrow("get-boom");
   });
 
   it("propagates network errors", async () => {
