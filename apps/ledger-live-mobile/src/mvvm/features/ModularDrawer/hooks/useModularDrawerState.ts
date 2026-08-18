@@ -10,6 +10,7 @@ import { useSelector, useDispatch } from "~/context/hooks";
 import {
   modularDrawerCompletionModeSelector,
   modularDrawerEnableAccountSelectionSelector,
+  modularDrawerFlowSelector,
   setStep,
 } from "~/reducers/modularDrawer";
 import { useAcceptedCurrency } from "@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency";
@@ -35,7 +36,8 @@ export function useModularDrawerState({
   onAccountSelected,
   onCurrencySelected,
 }: ModularDrawerStateProps) {
-  const isAcceptedCurrency = useAcceptedCurrency();
+  const flow = useSelector(modularDrawerFlowSelector);
+  const isAcceptedCurrency = useAcceptedCurrency({ flow });
   const enableAccountSelection = useSelector(modularDrawerEnableAccountSelectionSelector);
   const completionMode = useSelector(modularDrawerCompletionModeSelector);
   const dispatch = useDispatch();
