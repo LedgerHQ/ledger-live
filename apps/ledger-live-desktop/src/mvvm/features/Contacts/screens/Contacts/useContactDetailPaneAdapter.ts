@@ -21,7 +21,6 @@ import {
 } from "@features/flow-contacts";
 import { MY_WALLET_AVATAR_USER_URL } from "LLD/features/MyWallet/components/UserAvatar/constants";
 import { useContactsAnalytics } from "../../analytics";
-import { useContactsAddressCurrencyAdapter } from "../../hooks/useContactsAddressCurrencyAdapter";
 import { useContactAddressDetailActionsAdapter } from "./useContactAddressDetailActionsAdapter";
 import { useContactDetailEditDeleteAdapter } from "./useContactDetailEditDeleteAdapter";
 
@@ -39,7 +38,6 @@ export function useContactDetailPaneAdapter(
   const navigate = useNavigate();
   const analytics = useContactsAnalytics();
   const meContact = useContactsMeContact();
-  const currencyPort = useContactsAddressCurrencyAdapter();
   const trackedContactDetailId = useRef<ContactId | undefined>(undefined);
   const trackedAddressDetailId = useRef<string | undefined>(undefined);
   const [detailContactId, setDetailContactId] = useState<ContactId | undefined>(meContact.id);
@@ -48,7 +46,7 @@ export function useContactDetailPaneAdapter(
   }, [meContact.id]);
   const editDeleteDialogs = useContactDetailEditDeleteAdapter(detailContactId, onDeleteSuccess);
   const emptyContact = useEmptyContactDetail(detailContactId);
-  const populatedContactDetail = usePopulatedContactDetail(detailContactId, currencyPort);
+  const populatedContactDetail = usePopulatedContactDetail(detailContactId);
   const {
     isOpen,
     selection,
