@@ -57,11 +57,13 @@ export function useContactDetailPaneAdapter(
     clearSelection,
   } = useContactAddressDetailDialog(populatedContactDetail);
   const addressDetailAsset = selection?.network.networkTicker;
+  const addressDetailNetwork = selection?.network.networkName;
   const addressDetailActionsDialogs = useContactAddressDetailActionsAdapter(
     detailContactId,
     selection?.row?.addressId,
     onCloseAddressDetail,
     addressDetailAsset,
+    addressDetailNetwork,
   );
   const labels = useMemo<ContactDetailLabels>(
     () => ({
