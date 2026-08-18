@@ -7,6 +7,7 @@ import {
   Box,
   Button,
 } from "@ledgerhq/lumen-ui-rnative";
+import { CONTACTS_NATIVE_ADDRESS_INPUT_PROPS } from "../../model/addressInputFieldProps.native";
 import type { ContactsAddAddressEntryViewProps } from "./ContactsAddAddressEntry.types";
 import { SanctionedAddressBanner } from "./components/SanctionedAddressBanner/SanctionedAddressBanner.native";
 
@@ -42,9 +43,7 @@ export function ContactsAddAddressEntryView({
             status={inputStatus}
             helperText={helperText}
             autoFocus
-            autoCapitalize="none"
-            autoCorrect={false}
-            spellCheck={false}
+            {...CONTACTS_NATIVE_ADDRESS_INPUT_PROPS}
           />
           {sanctionedAddressBanner ? (
             <SanctionedAddressBanner {...sanctionedAddressBanner} />
