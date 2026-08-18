@@ -957,6 +957,9 @@ describe("Contacts integration", () => {
       expect(screen.queryByTestId("contacts-edit-signer-dialog")).not.toBeInTheDocument();
       expect(screen.queryByTestId("contacts-address-detail-dialog")).not.toBeInTheDocument();
       expect(screen.getByTestId("contacts-rename-address-dialog")).toBeVisible();
+      expect(screen.getByTestId("contacts-edit-address-input")).toHaveValue(
+        "0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034",
+      );
     });
   });
 
@@ -984,6 +987,43 @@ describe("Contacts integration", () => {
       expect(screen.getByTestId("contacts-detail-address-row-address-ethereum")).toHaveTextContent(
         "Main ETH",
       );
+    });
+  });
+
+  it("should update an address value and close the edit dialog", async () => {
+    const newAddress = "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd";
+    const { user } = renderContactsScreen(populatedContactsPageState);
+
+    await user.click(screen.getByTestId("contacts-saved-row-contact-ben"));
+    await user.click(screen.getByTestId("contacts-detail-address-row-address-ethereum"));
+
+    await user.click(screen.getByTestId("contacts-address-detail-edit"));
+    await user.click(screen.getByTestId("contacts-edit-signer-confirm"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("contacts-rename-address-dialog")).toBeVisible();
+    });
+
+    fireEvent.change(screen.getByTestId("contacts-edit-address-input"), {
+      target: { value: newAddress },
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId("contacts-rename-address-confirm")).not.toBeDisabled();
+    });
+
+    await user.click(screen.getByTestId("contacts-rename-address-confirm"));
+
+    await waitFor(() => {
+      expect(screen.queryByTestId("contacts-rename-address-dialog")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("contacts-address-detail-dialog")).not.toBeInTheDocument();
+    });
+
+    await user.click(screen.getByTestId("contacts-detail-address-row-address-ethereum"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("contacts-address-detail-dialog")).toBeVisible();
+      expect(screen.getByTestId("contacts-address-detail-dialog")).toHaveTextContent(newAddress);
     });
   });
 });

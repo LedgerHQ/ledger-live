@@ -19,6 +19,9 @@ import { useCallback, useMemo } from "react";
 import { ScreenName } from "~/const";
 import { useTranslation } from "~/context/Locale";
 import { useContactsAnalytics } from "../analytics/useContactsAnalytics";
+import { useContactsAddressValidationAdapter } from "./useContactsAddressValidationAdapter";
+
+const MANUAL_ADDRESS_VALIDATION_DEBOUNCE_MS = 200;
 
 export type ContactAddressDetailActionsFlowProps = Readonly<{
   addressDetailDialog: Pick<
@@ -52,6 +55,7 @@ export function useContactAddressDetailActionsAdapter(
   const { t } = useTranslation();
   const analytics = useContactsAnalytics();
   const ports = useContactsAddressDetailActionsPorts();
+  const addressValidation = useContactsAddressValidationAdapter();
   const { handleOpenSendFlow } = useOpenSendFlow({
     sourceScreenName: ScreenName.MyWalletContactDetail,
   });
@@ -90,6 +94,8 @@ export function useContactAddressDetailActionsAdapter(
     contactId: contactId ?? ContactIdSchema.parse("contact-me"),
     addressId: isSelectionActive ? addressId : undefined,
     ports,
+    addressValidation,
+    manualValidationDebounceMs: MANUAL_ADDRESS_VALIDATION_DEBOUNCE_MS,
     onSend,
     onCloseAddressDetail,
   });
