@@ -6,7 +6,7 @@ function buildExtra(overrides: Partial<CardApiExtra> = {}): CardApiExtra {
   return {
     cardApiBaseUrl: "https://card.test",
     cardBaanxClientKey: "test-client-key",
-    getCardSessionToken: () => "session-token",
+    getCardSessionToken: async () => "session-token",
     refreshCardSession: async () => "refreshed-token",
     ...overrides,
   };
@@ -90,7 +90,7 @@ describe("cardBaseQuery", () => {
     fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({}));
 
     const { api, store } = probeStore(
-      cardApiExtra(buildExtra({ getCardSessionToken: () => null })),
+      cardApiExtra(buildExtra({ getCardSessionToken: async () => null })),
     );
     await store.dispatch(api.endpoints.probe.initiate());
 
@@ -119,6 +119,38 @@ describe("cardBaseQuery", () => {
   it("returns the 401 error when the session cannot be refreshed", async () => {
     fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({}, 401));
     const refreshCardSession = jest.fn(async () => null);
+
+    const { api, store } = probeStore(cardApiExtra(buildExtra({ refreshCardSession })));
+    const result = await store.dispatch(api.endpoints.probe.initiate());
+
+    expect(refreshCardSession).toHaveBeenCalledTimes(1);
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
+    expect(result.error).toMatchObject({ status: 401 });
+  });
+
+  it("reports a structured error and sends nothing when the token read rejects", async () => {
+    fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({}));
+
+    const { api, store } = probeStore(
+      cardApiExtra(
+        buildExtra({
+          getCardSessionToken: async () => {
+            throw new Error("keychain unavailable");
+          },
+        }),
+      ),
+    );
+    const result = await store.dispatch(api.endpoints.probe.initiate());
+
+    expect(fetchSpy).not.toHaveBeenCalled();
+    expect(result.error).toEqual({ status: "CUSTOM_ERROR", error: "keychain unavailable" });
+  });
+
+  it("returns the 401 when the refresh rejects", async () => {
+    fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({}, 401));
+    const refreshCardSession = jest.fn(async () => {
+      throw new Error("keychain unavailable");
+    });
 
     const { api, store } = probeStore(cardApiExtra(buildExtra({ refreshCardSession })));
     const result = await store.dispatch(api.endpoints.probe.initiate());

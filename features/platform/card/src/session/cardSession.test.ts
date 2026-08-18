@@ -5,15 +5,15 @@ describe("cardSession", () => {
     cardSession.clear();
   });
 
-  it("starts empty", () => {
+  it("starts empty", async () => {
     expect(cardSession.getToken()).toBeNull();
-    expect(getCardSessionToken()).toBeNull();
+    await expect(getCardSessionToken()).resolves.toBeNull();
   });
 
-  it("stores and reads the session token", () => {
+  it("stores and reads the session token", async () => {
     cardSession.set("session-token");
     expect(cardSession.getToken()).toBe("session-token");
-    expect(getCardSessionToken()).toBe("session-token");
+    await expect(getCardSessionToken()).resolves.toBe("session-token");
   });
 
   it("treats a nullish token as cleared", () => {
