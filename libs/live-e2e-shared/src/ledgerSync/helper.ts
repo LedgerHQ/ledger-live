@@ -60,6 +60,14 @@ export class LedgerSyncCliHelper {
     cloudSyncApiBaseUrl,
   };
 
+  /**
+   * The member the trustchain was created with — the CLI. `addTrustchainMember` replaces the
+   * working credentials with the new member's, and the app is then seeded with those, so this is
+   * the only handle a test has on the *other* instance. Removing the seeded one is refused by the
+   * app: "You can't remove this phone while you're using it".
+   */
+  static readonly initialMember = { pubKey: "" };
+
   static readonly ledgerSyncPullDataArgs: LedgerSyncPullDataArgs = {
     pubKey: "",
     privateKey: "",
@@ -128,6 +136,7 @@ export class LedgerSyncCliHelper {
    * used as a `cliCommands` entry directly — wrap it in a no-arg command.
    */
   static async addTrustchainMember(name: string) {
+    LedgerSyncCliHelper.initialMember.pubKey = LedgerSyncCliHelper.ledgerKeyRingProtocolArgs.pubKey;
     await LedgerSyncCliHelper.initializeLedgerKeyRingProtocol();
 
     const output = ledgerKeyRingProtocol({

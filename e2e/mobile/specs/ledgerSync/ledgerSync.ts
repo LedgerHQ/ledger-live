@@ -200,14 +200,18 @@ export function runLedgerSyncDeleteInstanceTest(tmsLinks: string[], tags: string
     tmsLinks.forEach(link => $TmsLink(link));
     tags.forEach(tag => $Tag(tag));
     it("Removing an instance drops it from the synchronized list", async () => {
-      // The app was seeded with the member added last, so the CLI is the other instance.
-      const cliMemberPubKey = app.ledgerSync.ledgerKeyRingProtocolArgs.pubKey;
+      // The app was seeded with the member added last, so the CLI is the other instance — the
+      // only one the app will let us remove.
+      const cliMemberPubKey = app.ledgerSync.initialMemberPubKey;
 
       await openLedgerSyncSettings();
       await app.ledgerSync.openManageInstances();
       await app.ledgerSync.expectInstanceVisible(cliMemberPubKey);
 
+      // Removing an instance navigates to device selection first, unlike desktop where the row's
+      // Remove button goes straight to the device.
       await app.ledgerSync.removeInstance(cliMemberPubKey);
+      await app.common.selectKnownDevice();
       await app.ledgerSync.removeMemberFromLedgerSyncOnSpeculos();
       await app.ledgerSync.expectInstanceRemoved(cliMemberPubKey);
     });

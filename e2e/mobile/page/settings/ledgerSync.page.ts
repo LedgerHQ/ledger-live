@@ -10,6 +10,11 @@ export default class LedgerSyncPage {
     return LedgerSyncCliHelper.ledgerKeyRingProtocolArgs;
   }
 
+  /** The CLI member: the instance a test can remove, since the app is seeded as the other one. */
+  get initialMemberPubKey() {
+    return LedgerSyncCliHelper.initialMember.pubKey;
+  }
+
   get ledgerSyncPushDataArgs() {
     return LedgerSyncCliHelper.ledgerSyncPushDataArgs;
   }
@@ -84,9 +89,10 @@ export default class LedgerSyncPage {
     await detoxExpect(getElementById(this.instanceRowId(memberPubKey))).not.toBeVisible();
   }
 
+  /** The row itself is not touchable — only the Remove CTA inside it is. */
   @Step("Remove instance $0")
   async removeInstance(memberPubKey: string) {
-    await tapById(this.instanceRowId(memberPubKey));
+    await tapById(`${this.instanceRowId(memberPubKey)}-cta`);
   }
 
   @Step("Select delete sync")
@@ -134,13 +140,6 @@ export default class LedgerSyncPage {
   }
 
   /**
-   * Setup commands are reached through the page object rather than imported by the spec. The test
-   * environment builds the page objects in Jest's host module registry while a spec's own imports
-   * are evaluated in the sandbox one, so a spec importing the shared helper gets a second copy of
-   * it: the trustchain would be created against one set of statics and read back from an empty
-   * other. Everything that touches trustchain state has to enter through `app`.
-   */
-  /**
    * Speculos reads `process.env.SEED` when it launches, and Jest hands each test file a *copy* of
    * `process.env` — so a spec setting the seed itself would only ever change its own copy while
    * Speculos keeps booting on the shell's real seed. The swap has to happen on this side.
@@ -156,6 +155,13 @@ export default class LedgerSyncPage {
     else process.env.SEED = previousSeed;
   }
 
+  /**
+   * Setup commands are reached through the page object rather than imported by the spec. The test
+   * environment builds the page objects in Jest's host module registry while a spec's own imports
+   * are evaluated in the sandbox one, so a spec importing the shared helper gets a second copy of
+   * it: the trustchain would be created against one set of statics and read back from an empty
+   * other. Everything that touches trustchain state has to enter through `app`.
+   */
   initializeEmptyTrustchain() {
     return ledgerSyncSetup.initializeEmptyTrustchain();
   }
