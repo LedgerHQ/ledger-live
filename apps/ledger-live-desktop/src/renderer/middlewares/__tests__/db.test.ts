@@ -318,3 +318,34 @@ describe("DBMiddleware - coinConfigOverrides branch", () => {
     expect(mockedSetKey).toHaveBeenCalledWith("app", "coinConfigOverrides", { overrides: {} });
   });
 });
+
+describe("DBMiddleware - trustchain branch", () => {
+  beforeEach(() => {
+    mockedSetKey.mockReset();
+  });
+
+  it("persists the trustchain on TRUSTCHAIN_STORE_* actions when the app is unlocked", () => {
+    const state: FakeState = {
+      ...baseState(),
+      trustchain: { trustchain: { rootId: "root-id" }, memberCredentials: { pubkey: "ab" } },
+    };
+
+    runMiddleware([state, state], { type: "TRUSTCHAIN_STORE_IMPORT_STATE" });
+
+    expect(mockedSetKey).toHaveBeenCalledWith("app", "trustchain", state.trustchain);
+  });
+
+  it("does not persist the trustchain while the app is locked", () => {
+    // app.trustchain is an encrypted path: writing before setEncryptionKey would overwrite the
+    // ciphertext on disk with plaintext and destroy the persisted trustchain (LIVE-36130).
+    const state: FakeState = {
+      ...baseState(),
+      application: { isLocked: true },
+      trustchain: { trustchain: null, memberCredentials: { pubkey: "ab" } },
+    };
+
+    runMiddleware([state, state], { type: "TRUSTCHAIN_STORE_IMPORT_STATE" });
+
+    expect(mockedSetKey).not.toHaveBeenCalled();
+  });
+});
