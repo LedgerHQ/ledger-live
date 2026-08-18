@@ -52,6 +52,7 @@ describe("createMockContactDeviceIntentsPort", () => {
         contact,
         address,
         label: ContactAddressLabelSchema.parse("Treasury"),
+        updatedAddress: address.address,
       }),
     ).resolves.toMatchObject({
       blockchainFamily: address.device.blockchainFamily,

@@ -19,6 +19,7 @@ export const CONTACTS_EVENT_SOURCE = {
   PICTURE: "picture",
   CONTACT_DETAIL: "contact_detail",
   ADD_ADDRESS: "add_address",
+  EDIT_ADDRESS: "edit_address",
   ADDRESS_DETAIL: "address_detail",
   QUICK_ACTION: "quick_action",
 } as const;
@@ -33,6 +34,7 @@ export const CONTACTS_TRACK_EVENTS = {
   ERROR_DISPLAYED: "error_displayed",
   CONTACT_ADDED: "contact_added",
   ADDRESS_ADDED: "address_added",
+  ADDRESS_EDITED: "address_edited",
 } as const;
 
 export type ContactsTrackEventName =
@@ -45,6 +47,7 @@ export const CONTACTS_PAGE_EVENTS = {
   ADD_CONTACT: "Page Add Contact",
   CONTACT_DETAIL: "Page Contact detail",
   ADDRESS_DETAIL: "Page Contacts Address detail",
+  EDIT_ADDRESS: "Page Edit address",
 } as const;
 
 export type ContactsPageEventName =
@@ -59,6 +62,7 @@ export const CONTACTS_PAGE_PROPERTY = {
   ADD_CONTACT: "add contact",
   LEDGER_SYNC_GATE: "ledger sync gate",
   ADDRESS_DETAIL: "address detail",
+  EDIT_ADDRESS: "edit address",
 } as const;
 
 export type ContactsPageProperty =
@@ -77,6 +81,7 @@ export const CONTACTS_TRACKING_BUTTON = {
   addAddress: "add address",
   disabledNetworkTooltip: "disabled network tooltip",
   saveAddress: "save address",
+  applyChanges: "apply changes",
   send: "send",
   edit: "edit",
   delete: "delete",
@@ -143,6 +148,14 @@ export type ContactsTrackEventInputParams = {
     isEns: boolean;
     flow: ContactsFlow | (string & {});
   }>;
+  [CONTACTS_TRACK_EVENTS.ADDRESS_EDITED]: Readonly<{
+    source: typeof CONTACTS_EVENT_SOURCE.EDIT_ADDRESS;
+    network: string;
+    asset: string;
+    inputMethod: ContactsAddressInputMethod | (string & {});
+    isEns: boolean;
+    flow: ContactsFlow | (string & {});
+  }>;
 };
 
 export type ContactsPageEventInputParams = {
@@ -165,6 +178,11 @@ export type ContactsPageEventInputParams = {
   }>;
   [CONTACTS_PAGE_EVENTS.ADDRESS_DETAIL]: Readonly<{
     source: typeof CONTACTS_EVENT_SOURCE.ADDRESS_DETAIL;
+    network: string;
+    asset: string;
+  }>;
+  [CONTACTS_PAGE_EVENTS.EDIT_ADDRESS]: Readonly<{
+    source: typeof CONTACTS_EVENT_SOURCE.EDIT_ADDRESS;
     network: string;
     asset: string;
   }>;
