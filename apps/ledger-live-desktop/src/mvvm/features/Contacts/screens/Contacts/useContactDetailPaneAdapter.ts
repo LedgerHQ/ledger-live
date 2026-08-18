@@ -2,9 +2,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 import type { ContactId } from "@domain/entity-contact";
+import { useContactsMeContact } from "@features/platform-contacts";
 import {
-  type AddAddressContact,
-  useContactsMeContact,
   useContactDetailSharedState,
   useEmptyContactDetail,
   usePopulatedContactDetail,
@@ -19,6 +18,7 @@ import {
   trackContactsAddAddressClick,
   trackContactsListContactOpen,
 } from "@features/flow-contacts";
+import type { AddAddressContact } from "@features/flow-contacts-add-address";
 import { MY_WALLET_AVATAR_USER_URL } from "LLD/features/MyWallet/components/UserAvatar/constants";
 import { useContactsAnalytics } from "../../analytics";
 import { useContactAddressDetailActionsAdapter } from "./useContactAddressDetailActionsAdapter";

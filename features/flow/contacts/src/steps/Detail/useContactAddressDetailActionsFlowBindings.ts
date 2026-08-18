@@ -7,7 +7,7 @@ import {
 import { ContactAddressIdSchema } from "@domain/entity-contact";
 import { useMemo } from "react";
 import { useSelector } from "react-redux";
-import type { ContactsAddressValidationPort } from "../AddAddress/model/addressValidation/types";
+import type { ContactsAddressValidationPort } from "@features/platform-contacts";
 import type { ContactAddressEditSavePayload } from "../EditAddress/types";
 import { useRenameAddressDialogViewModel } from "../EditAddress/useRenameAddressDialogViewModel";
 import type { ContactAddressDetailActionsPorts } from "./model/ports";

@@ -5,7 +5,7 @@ import {
   resolveContactsFeatureParams,
   updateContactsFeatureValue,
   type ContactsFeatureValuePatch,
-} from "@features/flow-contacts";
+} from "@features/platform-contacts";
 import { setOverride } from "@shared/feature-flags";
 import { setHasDismissedContactsFeatureIntroduction } from "~/actions/settings";
 import { useDispatch, useSelector } from "~/context/hooks";

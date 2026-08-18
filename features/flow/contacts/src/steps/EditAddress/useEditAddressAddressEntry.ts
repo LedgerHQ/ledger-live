@@ -1,8 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { ContactAddress } from "@domain/entity-contact";
-import type { AddAddressEntryState, AddAddressInputSource } from "../AddAddress/types";
-import type { ContactsAddressValidationPort } from "../AddAddress/model/addressValidation/types";
-import { wait } from "../../utils/wait";
+import { wait } from "@features/platform-contacts";
+import type {
+  ContactsAddressEntryState,
+  ContactsAddressInputSource,
+  ContactsAddressValidationPort,
+} from "@features/platform-contacts";
 import {
   addressesMatch,
   applyAddressEntryState,
@@ -26,8 +29,8 @@ export type UseEditAddressAddressEntryOptions = Readonly<{
 }>;
 
 export type UseEditAddressAddressEntryResult = Readonly<{
-  addressEntry: AddAddressEntryState;
-  onAddressChange: (value: string, inputMethod: AddAddressInputSource) => void;
+  addressEntry: ContactsAddressEntryState;
+  onAddressChange: (value: string, inputMethod: ContactsAddressInputSource) => void;
 }>;
 
 export function useEditAddressAddressEntry({
@@ -37,7 +40,7 @@ export function useEditAddressAddressEntry({
   isActive,
   manualValidationDebounceMs = 0,
 }: UseEditAddressAddressEntryOptions): UseEditAddressAddressEntryResult {
-  const [addressEntry, setAddressEntry] = useState<AddAddressEntryState>(() =>
+  const [addressEntry, setAddressEntry] = useState<ContactsAddressEntryState>(() =>
     currentAddress === undefined
       ? EMPTY_EDIT_ADDRESS_ENTRY_STATE
       : createInitialEditAddressEntryState(currentAddress),
@@ -81,7 +84,7 @@ export function useEditAddressAddressEntry({
   );
 
   const onAddressChange = useCallback(
-    (value: string, inputMethod: AddAddressInputSource) => {
+    (value: string, inputMethod: ContactsAddressInputSource) => {
       const normalizedAddress = value.trim();
       const requestId = validationRequestId.current + 1;
       validationRequestId.current = requestId;

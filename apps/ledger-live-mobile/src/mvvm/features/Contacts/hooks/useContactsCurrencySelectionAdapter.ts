@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { ContactCurrencyIdSchema } from "@domain/entity-contact";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
-import type { AddAddressCurrencySelection } from "@features/flow-contacts";
+import type { AddAddressCurrencySelection } from "@features/flow-contacts-add-address";
 import { ScreenName } from "~/const";
 import {
   type ModularDrawerFlowProps,

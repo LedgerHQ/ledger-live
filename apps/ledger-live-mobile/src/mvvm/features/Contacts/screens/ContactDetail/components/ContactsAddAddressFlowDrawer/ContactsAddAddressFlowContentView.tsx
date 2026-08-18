@@ -1,5 +1,5 @@
 import React from "react";
-import { ContactsAddAddressFlowContent } from "@features/flow-contacts";
+import { ContactsAddAddressFlowContent } from "@features/flow-contacts-add-address";
 import {
   QueuedDrawerFlow,
   type QueuedDrawerFlowOptions,

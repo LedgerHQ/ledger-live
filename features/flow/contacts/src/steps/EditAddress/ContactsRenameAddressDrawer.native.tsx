@@ -9,7 +9,7 @@ import {
   TextInput,
 } from "@ledgerhq/lumen-ui-rnative";
 import { CONTACT_ADDRESS_LABEL_MAX_LENGTH } from "@domain/entity-contact";
-import { CONTACTS_NATIVE_ADDRESS_INPUT_PROPS } from "../../model/addressInputFieldProps.native";
+import { CONTACTS_NATIVE_ADDRESS_INPUT_PROPS } from "@features/platform-contacts/native";
 import type { ContactsRenameAddressDrawerProps } from "./types";
 import { useEditAddressAddressEntryPresentation } from "./useEditAddressAddressEntryPresentation.native";
 

@@ -3,7 +3,7 @@ import { ContactCurrencyIdSchema } from "@domain/entity-contact";
 import type {
   AddAddressCurrencySelection,
   ContactsCurrencySelectionPort,
-} from "@features/flow-contacts";
+} from "@features/flow-contacts-add-address";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import {

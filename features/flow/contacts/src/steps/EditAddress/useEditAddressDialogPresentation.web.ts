@@ -1,7 +1,9 @@
 import { useCallback, useMemo, type ChangeEvent, type ClipboardEvent } from "react";
-import { resolveAddressInputPresentation } from "../AddAddress/model/addressInputPresentation";
-import type { AddAddressEntryState, AddAddressInputSource } from "../AddAddress/types";
-import { getPastedValue } from "../../utils/getPastedValue.web";
+import { getPastedValue, resolveAddressInputPresentation } from "@features/platform-contacts";
+import type {
+  ContactsAddressEntryState,
+  ContactsAddressInputSource,
+} from "@features/platform-contacts";
 import type { ContactsEditAddressValidationLabels } from "./types";
 
 export function useEditAddressDialogPresentation({
@@ -9,9 +11,9 @@ export function useEditAddressDialogPresentation({
   labels,
   onAddressChange,
 }: Readonly<{
-  addressEntry: AddAddressEntryState;
+  addressEntry: ContactsAddressEntryState;
   labels: ContactsEditAddressValidationLabels;
-  onAddressChange: (value: string, inputMethod: AddAddressInputSource) => void;
+  onAddressChange: (value: string, inputMethod: ContactsAddressInputSource) => void;
 }>) {
   const presentation = useMemo(
     () => resolveAddressInputPresentation(addressEntry, labels),

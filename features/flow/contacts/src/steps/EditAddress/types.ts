@@ -6,15 +6,15 @@ import type {
   ContactId,
 } from "@domain/entity-contact";
 import type {
-  AddAddressEntryState,
-  AddAddressInputMethod,
-  AddAddressInputSource,
-} from "../AddAddress/types";
+  ContactsAddressEntryState,
+  ContactsAddressInputMethod,
+  ContactsAddressInputSource,
+} from "@features/platform-contacts";
 import type { ContactAddressEditPort } from "../Detail/model/ports";
 
 export type ContactAddressEditSavePayload = Readonly<{
   currencyId: ContactAddress["currencyId"] | undefined;
-  inputMethod: AddAddressInputMethod | null;
+  inputMethod: ContactsAddressInputMethod | null;
   labelChanged: boolean;
   addressChanged: boolean;
 }>;
@@ -29,11 +29,11 @@ export type RenameAddressDialogViewModel = RenameAddressViewModel &
   Readonly<{
     isOpen: boolean;
     isSaving: boolean;
-    addressEntry: AddAddressEntryState;
+    addressEntry: ContactsAddressEntryState;
     onOpen: () => void;
     onClose: () => void;
     onDraftLabelChange: (label: string) => void;
-    onAddressChange: (value: string, inputMethod: AddAddressInputSource) => void;
+    onAddressChange: (value: string, inputMethod: ContactsAddressInputSource) => void;
     onConfirm: () => Promise<void>;
   }>;
 
@@ -91,14 +91,14 @@ export type RenameAddressController = Readonly<{
     draftLabel: string,
     currentLabel: string,
     currentAddress: ContactAddress["address"] | undefined,
-    addressEntry: AddAddressEntryState,
+    addressEntry: ContactsAddressEntryState,
     existingLabels: readonly ContactAddressLabel[],
   ) => RenameAddressViewModel;
   save: (
     contactId: ContactId,
     addressId: ContactAddressId,
     draftLabel: string,
-    addressEntry: AddAddressEntryState,
+    addressEntry: ContactsAddressEntryState,
     existingLabels: readonly ContactAddressLabel[],
   ) => Promise<ContactAddress>;
 }>;

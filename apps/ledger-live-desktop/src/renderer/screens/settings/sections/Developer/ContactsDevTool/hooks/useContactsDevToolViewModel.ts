@@ -7,7 +7,7 @@ import {
   resolveContactsFeatureParams,
   updateContactsFeatureValue,
   type ContactsFeatureValuePatch,
-} from "@features/flow-contacts";
+} from "@features/platform-contacts";
 import { setOverride } from "@shared/feature-flags";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { setHasDismissedContactsFeatureIntroduction } from "~/renderer/actions/settings";

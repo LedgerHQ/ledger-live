@@ -1,7 +1,7 @@
 import React from "react";
 import { Text, View } from "react-native";
 import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
-import { ContactAvatar } from "@features/platform-contacts";
+import { ContactAvatar } from "@features/platform-contacts/native";
 import type { RecipientHeaderContact } from "@ledgerhq/live-common/flows/send/recipient/utils/getRecipientHeaderPresentation";
 import type { ContactId } from "@domain/entity-contact";
 

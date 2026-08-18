@@ -7,8 +7,7 @@ import { useAddressMatchedSectionViewModel } from "../useAddressMatchedSectionVi
 import { useSendFlowData } from "../../../../context/SendFlowContext";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
-import { useContactsFeature } from "@features/flow-contacts";
-import { useContacts } from "@features/platform-contacts";
+import { useContacts, useContactsFeature } from "@features/platform-contacts";
 import {
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
@@ -30,9 +29,6 @@ jest.mock("../../../../../FlowWizard/FlowWizardContext", () => ({
 jest.mock("@ledgerhq/live-common/account/index");
 jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features");
 jest.mock("@features/platform-contacts");
-jest.mock("@features/flow-contacts", () => ({
-  useContactsFeature: jest.fn(),
-}));
 jest.mock("~/renderer/reducers/wallet", () => ({
   useMaybeAccountName: jest.fn(),
   useBatchMaybeAccountName: jest.fn(() => []),

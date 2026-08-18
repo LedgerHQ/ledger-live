@@ -5,18 +5,12 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { v4 as uuid } from "uuid";
 import { addAddress, contactAddress } from "@domain/entity-contact";
 import {
-  type AddAddressFlowState,
-  type AddAddressInputSource,
   type ContactAddressDetailDialogNativeLabels,
   type ContactAddressDetailDialogNativeProps,
   type ContactDetailLabels,
   type ContactDetailViewProps,
-  resolveEligibleAddressCurrencyIds,
-  useAddAddressFlowViewModel,
   useContactDetailSharedState,
   useContactAddressDetailDialog,
-  useContactsFeature,
-  useContactsMeContact,
   useEmptyContactDetail,
   usePopulatedContactDetail,
   CONTACTS_EVENT_SOURCE,
@@ -27,7 +21,17 @@ import {
   CONTACTS_TRACKING_BUTTON,
   trackContactsAddAddressClick,
 } from "@features/flow-contacts";
-import { createMockContactDeviceIntentsPort } from "@features/platform-contacts";
+import {
+  useAddAddressFlowViewModel,
+  type AddAddressFlowState,
+  type AddAddressInputSource,
+} from "@features/flow-contacts-add-address";
+import {
+  createMockContactDeviceIntentsPort,
+  resolveEligibleAddressCurrencyIds,
+  useContactsFeature,
+  useContactsMeContact,
+} from "@features/platform-contacts";
 import {
   resolveContactsCurrencyAnalytics,
   useContactsAnalytics,

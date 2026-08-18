@@ -19,7 +19,7 @@ jest.mock("~/renderer/analytics/segment", () => ({
   trackPage: jest.fn(),
 }));
 jest.mock("LLD/hooks/redux");
-jest.mock("@features/flow-contacts", () => ({
+jest.mock("@features/platform-contacts", () => ({
   useContactsFeature: jest.fn(() => ({ isEnabled: false })),
 }));
 jest.mock("@ledgerhq/live-common/currencies/index", () => ({
@@ -34,7 +34,7 @@ import { track } from "~/renderer/analytics/segment";
 import { decodeURIScheme } from "@ledgerhq/live-common/currencies/index";
 import { RecipientScannerProvider } from "../../context/RecipientScannerContext";
 import { useSelector } from "LLD/hooks/redux";
-import { useContactsFeature } from "@features/flow-contacts";
+import { useContactsFeature } from "@features/platform-contacts";
 
 type VM = ReturnType<typeof useSendHeaderModel>;
 let container: HTMLElement;

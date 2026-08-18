@@ -1,6 +1,6 @@
 import { CONTACT_ADDRESS_LABEL_MAX_LENGTH } from "@domain/entity-contact";
 import { useCallback, useEffect, useState } from "react";
-import type { ContactsAddressValidationPort } from "../AddAddress/model/addressValidation/types";
+import type { ContactsAddressValidationPort } from "@features/platform-contacts";
 import { useEditAddressAddressEntry } from "./useEditAddressAddressEntry";
 import { useRenameAddressViewModel } from "./useRenameAddressViewModel";
 import type { RenameAddressDialogViewModel, UseRenameAddressDialogViewModelOptions } from "./types";

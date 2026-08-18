@@ -5,8 +5,8 @@ import {
   EMPTY_ADDRESS_ENTRY_STATE,
   requestAddressValidation,
   resolveAddressEntryState,
-} from "../../AddAddress/model/addressEntryState";
-import type { AddAddressEntryState } from "../../AddAddress/types";
+} from "@features/platform-contacts";
+import type { ContactsAddressEntryState } from "@features/platform-contacts";
 
 export {
   applyAddressEntryIfCurrent as applyAddressEntryState,
@@ -19,7 +19,7 @@ export const EMPTY_EDIT_ADDRESS_ENTRY_STATE = EMPTY_ADDRESS_ENTRY_STATE;
 
 export function createInitialEditAddressEntryState(
   currentAddress: ContactAddress["address"],
-): AddAddressEntryState {
+): ContactsAddressEntryState {
   return {
     status: "valid",
     value: currentAddress,

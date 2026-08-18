@@ -1,5 +1,5 @@
 import { ContactIdSchema } from "@domain/entity-contact";
-import { ContactAvatar } from "@features/platform-contacts";
+import { ContactAvatar } from "@features/platform-contacts/web";
 import type { MatchedContact } from "@ledgerhq/live-common/flows/send/recipient/types";
 import {
   Button,
