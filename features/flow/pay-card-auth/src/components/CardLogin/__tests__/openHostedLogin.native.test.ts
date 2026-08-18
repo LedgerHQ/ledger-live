@@ -34,7 +34,9 @@ describe("openHostedLoginInSecureBrowser", () => {
     });
   });
 
-  it.each(["cancel", "dismiss", "locked"] as const)(
+  // The whole non-success half of `WebBrowserAuthSessionResult`. `opened` is the Android answer, and
+  // there the deep link carries the redirect instead.
+  it.each(["cancel", "dismiss", "opened", "locked"] as const)(
     "should report a dismissal when the session ends with %s",
     async type => {
       mockedOpenAuthSessionAsync.mockResolvedValue({

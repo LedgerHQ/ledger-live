@@ -15,7 +15,8 @@ describe("openHostedLoginInBrowser", () => {
   });
 
   it("should open the exact hosted login URL in a new browsing context", async () => {
-    open.mockReturnValue({} as Window);
+    // `noopener` is what keeps the hosted page away from `window.opener`.
+    open.mockReturnValue(null);
 
     await openHostedLoginInBrowser(loginUrl);
 
@@ -23,14 +24,18 @@ describe("openHostedLoginInBrowser", () => {
   });
 
   it("should report a dismissal, because the browser reports nothing back", async () => {
-    open.mockReturnValue({} as Window);
+    // `noopener` makes the answer `null` for every login, so it cannot report a failure.
+    open.mockReturnValue(null);
 
     await expect(openHostedLoginInBrowser(loginUrl)).resolves.toEqual({ type: "dismissed" });
   });
 
-  it("should reject when the browsing context cannot be opened", async () => {
-    open.mockReturnValue(null);
+  it("should reject when the platform refuses to open a context at all", async () => {
+    open.mockImplementation(() => {
+      throw new Error("blocked");
+    });
 
-    await expect(openHostedLoginInBrowser(loginUrl)).rejects.toThrow("Unable to start login");
+    // The machine turns a throw into `browser_open_failed`.
+    await expect(openHostedLoginInBrowser(loginUrl)).rejects.toThrow("blocked");
   });
 });
