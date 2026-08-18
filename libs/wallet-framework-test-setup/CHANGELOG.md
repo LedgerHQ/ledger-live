@@ -1,5 +1,12 @@
 # @ledgerhq/wallet-framework-test-setup
 
+## 0.1.6-next.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/ledger-wallet-framework@3.0.0-next.1
+
 ## 0.1.6-next.0
 
 ### Patch Changes

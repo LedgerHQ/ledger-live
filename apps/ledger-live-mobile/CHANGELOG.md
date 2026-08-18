@@ -1,5 +1,40 @@
 # live-mobile
 
+## 4.17.0-next.1
+
+### Minor Changes
+
+- [#20907](https://github.com/LedgerHQ/ledger-live/pull/20907) [`da0a5ce`](https://github.com/LedgerHQ/ledger-live/commit/da0a5ceb8f889f1bace45ed2d3d4c640cdf24ca8) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Add Solana TXC flag
+
+### Patch Changes
+
+- Updated dependencies [[`da0a5ce`](https://github.com/LedgerHQ/ledger-live/commit/da0a5ceb8f889f1bace45ed2d3d4c640cdf24ca8)]:
+  - @shared/feature-flags@0.19.0-next.1
+  - @ledgerhq/types-live@6.120.0-next.1
+  - @devtools/bindings@0.4.0-next.1
+  - @features/flow-contacts@0.7.0-next.1
+  - @features/platform-currencies@0.6.1-next.1
+  - @features/platform-feature-flags@0.6.6-next.1
+  - @ledgerhq/coin-bitcoin@0.51.1-next.1
+  - @ledgerhq/coin-canton@1.0.0-next.1
+  - @ledgerhq/coin-casper@3.0.0-next.1
+  - @ledgerhq/coin-concordium@1.0.0-next.1
+  - @ledgerhq/coin-cosmos@1.0.0-next.1
+  - @ledgerhq/coin-evm@5.0.0-next.1
+  - @ledgerhq/coin-filecoin@2.0.0-next.1
+  - @ledgerhq/coin-multiversx@1.0.0-next.1
+  - @ledgerhq/coin-stacks@0.28.1-next.1
+  - @ledgerhq/device-core@0.11.12-next.1
+  - @ledgerhq/domain-service@1.8.15-next.1
+  - @ledgerhq/ledger-wallet-framework@3.0.0-next.1
+  - @ledgerhq/live-countervalues@0.24.3-next.1
+  - @ledgerhq/live-countervalues-react@0.16.7-next.1
+  - @ledgerhq/live-wallet@1.0.1-next.1
+  - @ledgerhq/wallet-analytics@0.3.4-next.1
+  - @ledgerhq/wallet-pnl@0.7.7-next.1
+  - @features/flow-analytics-consent@0.2.2-next.1
+  - @devtools/shell@0.8.1-next.1
+
 ## 4.17.0-next.0
 
 ### Minor Changes

@@ -1,5 +1,16 @@
 # ledger-live-desktop-e2e-tests
 
+## 0.37.1-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`da0a5ce`](https://github.com/LedgerHQ/ledger-live/commit/da0a5ceb8f889f1bace45ed2d3d4c640cdf24ca8)]:
+  - @ledgerhq/live-common@37.3.0-next.1
+  - @shared/feature-flags@0.19.0-next.1
+  - @ledgerhq/live-cli@26.3.2-next.1
+  - @ledgerhq/live-e2e-shared@0.8.0-next.1
+  - @ledgerhq/live-wallet@1.0.1-next.1
+
 ## 0.37.1-next.0
 
 ### Patch Changes

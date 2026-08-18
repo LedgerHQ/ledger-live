@@ -1,5 +1,13 @@
 # @ledgerhq/live-signer-evm
 
+## 0.22.3-next.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/ledger-wallet-framework@3.0.0-next.1
+  - @ledgerhq/hw-app-eth@7.8.15-next.1
+
 ## 0.22.3-next.0
 
 ### Patch Changes

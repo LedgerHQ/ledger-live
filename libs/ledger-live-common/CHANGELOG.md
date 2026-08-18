@@ -1,5 +1,62 @@
 # @ledgerhq/live-common
 
+## 37.3.0-next.1
+
+### Minor Changes
+
+- [#20907](https://github.com/LedgerHQ/ledger-live/pull/20907) [`da0a5ce`](https://github.com/LedgerHQ/ledger-live/commit/da0a5ceb8f889f1bace45ed2d3d4c640cdf24ca8) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Add Solana TXC flag
+
+### Patch Changes
+
+- Updated dependencies [[`da0a5ce`](https://github.com/LedgerHQ/ledger-live/commit/da0a5ceb8f889f1bace45ed2d3d4c640cdf24ca8)]:
+  - @ledgerhq/live-signer-solana@0.20.0-next.1
+  - @shared/feature-flags@0.19.0-next.1
+  - @features/platform-feature-flags@0.6.6-next.1
+  - @ledgerhq/asset-aggregation@0.13.1-next.1
+  - @ledgerhq/coin-aleo@2.0.0-next.1
+  - @ledgerhq/coin-algorand@2.0.0-next.1
+  - @ledgerhq/coin-aptos@4.0.0-next.1
+  - @ledgerhq/coin-bitcoin@0.51.1-next.1
+  - @ledgerhq/coin-canton@1.0.0-next.1
+  - @ledgerhq/coin-cardano@1.0.0-next.1
+  - @ledgerhq/coin-casper@3.0.0-next.1
+  - @ledgerhq/coin-celo@3.0.0-next.1
+  - @ledgerhq/coin-concordium@1.0.0-next.1
+  - @ledgerhq/coin-cosmos@1.0.0-next.1
+  - @ledgerhq/coin-evm@5.0.0-next.1
+  - @ledgerhq/coin-filecoin@2.0.0-next.1
+  - @ledgerhq/coin-hedera@2.0.0-next.1
+  - @ledgerhq/coin-icon@0.29.1-next.1
+  - @ledgerhq/coin-internet_computer@1.29.1-next.1
+  - @ledgerhq/coin-kaspa@2.0.0-next.1
+  - @ledgerhq/coin-mina@1.21.1-next.1
+  - @ledgerhq/coin-multiversx@1.0.0-next.1
+  - @ledgerhq/coin-near@1.0.0-next.1
+  - @ledgerhq/coin-polkadot@7.0.0-next.1
+  - @ledgerhq/coin-solana@1.0.0-next.1
+  - @ledgerhq/coin-stacks@0.28.1-next.1
+  - @ledgerhq/coin-sui@1.0.0-next.1
+  - @ledgerhq/coin-ton@0.37.0-next.1
+  - @ledgerhq/coin-tron@7.0.0-next.1
+  - @ledgerhq/coin-vechain@4.0.0-next.1
+  - @ledgerhq/coin-zcash@0.4.0-next.1
+  - @ledgerhq/device-core@0.11.12-next.1
+  - @ledgerhq/domain-service@1.8.15-next.1
+  - @ledgerhq/evm-tools@1.14.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.0.0-next.1
+  - @ledgerhq/hw-app-eth@7.8.15-next.1
+  - @ledgerhq/live-countervalues@0.24.3-next.1
+  - @ledgerhq/live-countervalues-react@0.16.7-next.1
+  - @ledgerhq/live-signer-aleo@0.19.7-next.1
+  - @ledgerhq/live-signer-canton@0.9.16-next.1
+  - @ledgerhq/live-signer-celo@1.2.3-next.1
+  - @ledgerhq/live-signer-cosmos@0.4.6-next.1
+  - @ledgerhq/live-signer-evm@0.22.3-next.1
+  - @ledgerhq/live-signer-icp@0.1.2-next.1
+  - @ledgerhq/live-signer-zcash@0.10.0-next.0
+  - @ledgerhq/live-signer-concordium@0.6.6-next.1
+  - @ledgerhq/wallet-btc@0.3.0
+
 ## 37.3.0-next.0
 
 ### Minor Changes

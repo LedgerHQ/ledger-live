@@ -1,5 +1,24 @@
 # web-tools
 
+## 0.53.0-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`da0a5ce`](https://github.com/LedgerHQ/ledger-live/commit/da0a5ceb8f889f1bace45ed2d3d4c640cdf24ca8)]:
+  - @ledgerhq/live-common@37.3.0-next.1
+  - @shared/feature-flags@0.19.0-next.1
+  - @ledgerhq/types-live@6.120.0-next.1
+  - @devtools/bindings@0.4.0-next.1
+  - @features/platform-currencies@0.6.1-next.1
+  - @features/platform-feature-flags@0.6.6-next.1
+  - @ledgerhq/domain-service@1.8.15-next.1
+  - @ledgerhq/ledger-wallet-framework@3.0.0-next.1
+  - @ledgerhq/hw-app-eth@7.8.15-next.1
+  - @ledgerhq/live-countervalues@0.24.3-next.1
+  - @ledgerhq/live-wallet@1.0.1-next.1
+  - @ledgerhq/wallet-pnl@0.7.7-next.1
+  - @devtools/shell@0.8.1-next.1
+
 ## 0.53.0-next.0
 
 ### Minor Changes

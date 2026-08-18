@@ -1,5 +1,12 @@
 # @features/platform-currencies
 
+## 0.6.1-next.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @features/platform-feature-flags@0.6.6-next.1
+
 ## 0.6.1-next.0
 
 ### Patch Changes

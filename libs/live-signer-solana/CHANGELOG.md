@@ -1,5 +1,17 @@
 # @ledgerhq/live-signer-solana
 
+## 0.20.0-next.1
+
+### Minor Changes
+
+- [#20907](https://github.com/LedgerHQ/ledger-live/pull/20907) [`da0a5ce`](https://github.com/LedgerHQ/ledger-live/commit/da0a5ceb8f889f1bace45ed2d3d4c640cdf24ca8) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Add Solana TXC flag
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-solana@1.0.0-next.1
+  - @ledgerhq/ledger-wallet-framework@3.0.0-next.1
+
 ## 0.19.2-next.0
 
 ### Patch Changes
