@@ -1,14 +1,15 @@
 import {
-  createStacksPrivateKey,
   deserializeTransaction,
   getAddressFromPrivateKey,
-  pubKeyfromPrivKey,
-  publicKeyToString,
+  privateKeyToPublic,
+  publicKeyToHex,
   TransactionSigner,
-  TransactionVersion,
-} from "@stacks/transactions";
-import type { SingleSigSpendingCondition } from "@stacks/transactions/dist/authorization";
+} from "@stacks/transactions-v7";
 import type { StacksSigner } from "@ledgerhq/coin-stacks/types/signer";
+
+// Only the field this signer reads — `SingleSigSpendingCondition` isn't re-exported from the
+// package root, and the coin-tester otherwise has no reason to deep-import `dist/authorization`.
+type SingleSigSpendingCondition = { signature?: { data: string } };
 
 export type StacksTestAccount = {
   address: string;
@@ -21,11 +22,13 @@ const OK_RETURN_CODE = 0x9000;
 /**
  * Builds an in-memory legacy `StacksSigner` (`showAddressAndPubKey`/`getAddressAndPubKey`/`sign`)
  * from a raw secp256k1 private key — one of Clarinet's own well-known devnet dev accounts (see
- * `settings/Devnet.toml`), no device/Speculos involved.
+ * `settings/Devnet.toml`), no device/Speculos involved. `coin-stacks` (both its legacy bridge and
+ * the generic-adapter path) is on `@stacks/transactions@^7.6.0`, so this signer targets the same
+ * v7 API `genericSigner.ts` does rather than a separately-pinned older major.
  *
- * Addresses are derived with `TransactionVersion.Testnet`: Clarinet's devnet uses the same address
+ * Addresses are derived with the `"testnet"` network name: Clarinet's devnet uses the same address
  * version as testnet (`StacksDevnet`/`StacksMocknet extends StacksNetwork` both set
- * `version = TransactionVersion.Testnet`, verified in the installed `@stacks/network@6.17.0`).
+ * `version = TransactionVersion.Testnet`, verified in the installed `@stacks/network@7.x`).
  *
  * `sign` reuses `@stacks/transactions`'s own `TransactionSigner` on the exact serialized unsigned
  * transaction bytes `coin-stacks` hands the signer, rather than reimplementing the Stacks
@@ -35,9 +38,8 @@ const OK_RETURN_CODE = 0x9000;
  * `signatureVRS`.
  */
 export function buildStacksTestSigner(privateKeyHex: string): StacksTestAccount {
-  const address = getAddressFromPrivateKey(privateKeyHex, TransactionVersion.Testnet);
-  const publicKey = publicKeyToString(pubKeyfromPrivKey(privateKeyHex));
-  const privateKey = createStacksPrivateKey(privateKeyHex);
+  const address = getAddressFromPrivateKey(privateKeyHex, "testnet");
+  const publicKey = publicKeyToHex(privateKeyToPublic(privateKeyHex));
 
   const getAddressAndPubKey: StacksSigner["getAddressAndPubKey"] = async () => ({
     address,
@@ -52,7 +54,7 @@ export function buildStacksTestSigner(privateKeyHex: string): StacksTestAccount 
     sign: async (_path: string, message: Buffer) => {
       const tx = deserializeTransaction(message);
       const txSigner = new TransactionSigner(tx);
-      txSigner.signOrigin(privateKey);
+      txSigner.signOrigin(privateKeyHex);
 
       // Always a single-sig standard-principal spending condition in this package's scenarios
       // (STX transfers and SIP-010 calls signed by one key) — `MultiSigSpendingCondition` has no

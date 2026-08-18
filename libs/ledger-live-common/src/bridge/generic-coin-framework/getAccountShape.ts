@@ -443,20 +443,31 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
         .filter((ref): ref is string => !!ref)
         .map(ref => ref.toLowerCase()),
     );
-    const vanishedTokenBalances: Balance[] = getAssetFromToken
-      ? (initialAccount?.subAccounts ?? []).flatMap(subAccount => {
-          const asset = getAssetFromToken(subAccount.token, address);
-          if (
-            !asset ||
-            !("assetReference" in asset) ||
-            !asset.assetReference ||
-            freshAssetReferences.has(asset.assetReference.toLowerCase())
-          ) {
-            return [];
-          }
-          return [{ value: 0n, asset }];
-        })
-      : [];
+    // Only trusted when the fresh response actually carries at least one token: a degraded/
+    // truncated 200 (native balance present, token list empty) would otherwise read as "every
+    // token vanished" and zero out the whole token portfolio until the next successful sync.
+    const balanceListLooksComplete = freshTokenAssetsBalances.length > 0;
+    const vanishedTokenBalances: Balance[] =
+      getAssetFromToken && balanceListLooksComplete
+        ? (initialAccount?.subAccounts ?? []).flatMap(subAccount => {
+            // A throwing family implementation must not fail the whole sync over one sub-account.
+            let asset: ReturnType<typeof getAssetFromToken>;
+            try {
+              asset = getAssetFromToken(subAccount.token, address);
+            } catch {
+              return [];
+            }
+            if (
+              !asset ||
+              !("assetReference" in asset) ||
+              !asset.assetReference ||
+              freshAssetReferences.has(asset.assetReference.toLowerCase())
+            ) {
+              return [];
+            }
+            return [{ value: 0n, asset }];
+          })
+        : [];
     const allTokenAssetsBalances = [...freshTokenAssetsBalances, ...vanishedTokenBalances];
 
     const usesStakingPositions = bridgeApi.usesStakingPositions === true;

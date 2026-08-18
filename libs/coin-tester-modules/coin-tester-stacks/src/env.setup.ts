@@ -13,5 +13,9 @@ setEnv("API_STACKS_ENDPOINT", STACKS_DEVNET_URL);
 // addresses, not mainnet (`SP...`) ones — see `bridge/synchronization.ts`'s `API_STACKS_NETWORK`
 // read, added specifically so a devnet/testnet consumer can get the correctly-versioned address.
 setEnv("API_STACKS_NETWORK", "testnet");
+// This devnet's fee estimator has no historical data for a fresh chain, so `prepareTransaction`'s
+// network estimate is unusable here — the "legacy" strategy's scenarios pre-set their own fixed
+// `customFees` instead (`scenarii/stacks.ts`) and rely on this flag to have them honored verbatim.
+setEnv("API_STACKS_SKIP_FEE_ESTIMATE", true);
 
 global.console = require("console");

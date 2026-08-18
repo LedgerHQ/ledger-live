@@ -5,7 +5,10 @@ import {
   publicKeyToHex,
   TransactionSigner,
 } from "@stacks/transactions-v7";
-import type { SingleSigSpendingCondition } from "@stacks/transactions-v7/dist/authorization";
+
+// Only the field this signer reads — `SingleSigSpendingCondition` isn't re-exported from the
+// package root, and the coin-tester otherwise has no reason to deep-import `dist/authorization`.
+type SingleSigSpendingCondition = { signature?: { data: string } };
 
 /**
  * Generic-adapter (Alpaca) signer contract, mirrors `GetCoinFrameworkAccountBridge`'s expectation

@@ -238,6 +238,37 @@ describe("genericGetAccountShape", () => {
         { asset: heldAsset, value: 500n },
       ]);
     });
+
+    it("does not inject a vanished-token entry when the fresh response has no tokens at all", async () => {
+      getBalanceMock.mockResolvedValue([{ asset: { type: "native" }, value: 100n, locked: 0n }]);
+      getBridgeApiMock.mockImplementationOnce(() => ({
+        ...defaultBridgeApi(),
+        getAssetFromToken: () => ({
+          type: "token",
+          assetReference: "0xvanished",
+          assetOwner: "addr1",
+          name: "Vanished",
+        }),
+      }));
+
+      await callWithSubAccountToken();
+
+      expect(buildSubAccountsMock.mock.calls[0][0].allTokenAssetsBalances).toEqual([]);
+    });
+
+    it("does not fail the whole sync when getAssetFromToken throws for a sub-account", async () => {
+      getBridgeApiMock.mockImplementationOnce(() => ({
+        ...defaultBridgeApi(),
+        getAssetFromToken: () => {
+          throw new Error("boom");
+        },
+      }));
+
+      await expect(callWithSubAccountToken()).resolves.toBeDefined();
+      expect(buildSubAccountsMock.mock.calls[0][0].allTokenAssetsBalances).toEqual([
+        { asset: heldAsset, value: 500n },
+      ]);
+    });
   });
 
   describe.each(chains)("$currency.id", ({ currency, network }) => {

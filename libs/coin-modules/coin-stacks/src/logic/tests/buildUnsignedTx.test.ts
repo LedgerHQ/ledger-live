@@ -2,6 +2,7 @@ import type {
   MemoNotSupported,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/index";
+import { setEnv } from "@ledgerhq/live-env";
 import { createStxTransferTransaction, createTokenTransferTransaction } from "../../common-logic";
 import type { StacksTxData } from "../../types";
 import { getBalance } from "../getBalance";
@@ -62,23 +63,18 @@ describe("buildUnsignedTx", () => {
     });
   });
 
-  describe("NETWORK", () => {
-    it("falls back to mainnet for an unset/invalid API_STACKS_NETWORK value", () => {
-      jest.isolateModules(() => {
-        const { setEnv } = require("@ledgerhq/live-env");
-        setEnv("API_STACKS_NETWORK", "not-a-real-network");
-        const { NETWORK } = require("../buildUnsignedTx");
-        expect(NETWORK).toBe("mainnet");
-      });
+  describe("network selection", () => {
+    afterEach(() => {
+      setEnv("API_STACKS_NETWORK", "");
     });
 
-    it("picks up a valid API_STACKS_NETWORK override", () => {
-      jest.isolateModules(() => {
-        const { setEnv } = require("@ledgerhq/live-env");
-        setEnv("API_STACKS_NETWORK", "testnet");
-        const { NETWORK } = require("../buildUnsignedTx");
-        expect(NETWORK).toBe("testnet");
-      });
+    it("passes the configured network through when building a transfer", async () => {
+      setEnv("API_STACKS_NETWORK", "testnet");
+
+      await buildUnsignedTx(transferIntent(), 300n, 5n);
+
+      const call = (createStxTransferTransaction as jest.Mock).mock.calls[0];
+      expect(call[3]).toBe("testnet");
     });
   });
 });

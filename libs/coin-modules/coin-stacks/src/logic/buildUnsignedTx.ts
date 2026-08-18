@@ -14,12 +14,11 @@ import {
   StacksTransactionWire,
   uintCV,
 } from "@stacks/transactions";
-import { StacksNetworks, type StacksNetworkName } from "@stacks/network";
-import { getEnv } from "@ledgerhq/live-env";
 import BigNumber from "bignumber.js";
 import {
   createStxTransferTransaction,
   createTokenTransferTransaction,
+  getConfiguredStacksNetwork,
   validateAddress,
 } from "../common-logic";
 import { STACKS_DUMMY_ADDRESS } from "../constants";
@@ -34,20 +33,6 @@ import { getStakes } from "./getStakes";
 function resolveRecipient(recipient: string): string {
   return validateAddress(recipient).isValid ? recipient : STACKS_DUMMY_ADDRESS;
 }
-
-/** Alpaca (CoinModuleApi) selects a network by coin config/env, not per transaction-intent, unlike
- * the legacy bridge's per-account `network` field. Shares `API_STACKS_NETWORK` with the legacy
- * bridge's own address-derivation fix (`bridge/synchronization.ts`) rather than introducing a
- * second, parallel config mechanism -- one env var controls network for both code paths.
- * `API_STACKS_NETWORK` isn't registered in `@ledgerhq/live-env`'s typed definitions, so `getEnv`
- * returns `unknown` here -- validated against the network's own known names and defaulted to
- * `"mainnet"` otherwise, so real callers (who never set this) see no behavior change. */
-const configuredNetwork = getEnv("API_STACKS_NETWORK");
-export const NETWORK: StacksNetworkName = StacksNetworks.includes(
-  configuredNetwork as StacksNetworkName,
-)
-  ? (configuredNetwork as StacksNetworkName)
-  : "mainnet";
 
 function parseSip010AssetReference(assetReference: string): {
   contractAddress: string;
@@ -124,6 +109,7 @@ async function buildTransfer(
   if (!intent.senderPublicKey) {
     throw new Error("stacks: senderPublicKey is required to craft a transaction");
   }
+  const network = getConfiguredStacksNetwork();
   const feeAmount = new BigNumber(fee.toString());
   const nonceAmount = new BigNumber(nonce.toString());
   const amount = await resolveAmount(intent, fee);
@@ -138,7 +124,7 @@ async function buildTransfer(
       amount,
       resolveRecipient(intent.recipient),
       AnchorMode.Any,
-      NETWORK,
+      network,
       intent.senderPublicKey,
       {
         fee: feeAmount,
@@ -161,7 +147,7 @@ async function buildTransfer(
     senderAddress: intent.sender,
     recipientAddress: resolveRecipient(intent.recipient),
     anchorMode: AnchorMode.Any,
-    network: NETWORK,
+    network,
     publicKey: intent.senderPublicKey,
     fee: feeAmount,
     nonce: nonceAmount,
@@ -176,6 +162,7 @@ async function buildStaking(
   if (!intent.senderPublicKey) {
     throw new Error("stacks: senderPublicKey is required to craft a transaction");
   }
+  const network = getConfiguredStacksNetwork();
 
   const poxInfo = await fetchPoxInfo();
   const { address: poxAddress, name: poxName } = parseContractPrincipal(
@@ -204,7 +191,7 @@ async function buildStaking(
         uintCV(startBurnHt),
         signerCalldata ? someCV(bufferCV(Buffer.from(signerCalldata, "hex"))) : noneCV(),
       ],
-      network: NETWORK,
+      network,
       publicKey: intent.senderPublicKey,
       fee: fee.toString(),
       nonce: nonce.toString(),
@@ -230,7 +217,7 @@ async function buildStaking(
       contractName: poxName,
       functionName: "unstake",
       functionArgs: [contractPrincipalCV(signerAddress, signerName)],
-      network: NETWORK,
+      network,
       publicKey: intent.senderPublicKey,
       fee: fee.toString(),
       nonce: nonce.toString(),

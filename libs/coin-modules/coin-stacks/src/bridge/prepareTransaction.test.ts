@@ -1,4 +1,5 @@
 import { updateTransaction } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import { setEnv } from "@ledgerhq/live-env";
 import { Account } from "@ledgerhq/types-live";
 import {
   estimateTransactionByteLength,
@@ -77,6 +78,7 @@ describe("prepareTransaction", () => {
     (estimateTransactionByteLength as jest.Mock).mockReturnValue(200);
     (serializePayload as jest.Mock).mockReturnValue("0x00");
     (getStacksBaseUrl as jest.Mock).mockReturnValue("https://stacks.test.invalid");
+    setEnv("API_STACKS_SKIP_FEE_ESTIMATE", false);
   });
 
   it("should update fee field with estimated fee", async () => {
@@ -117,7 +119,8 @@ describe("prepareTransaction", () => {
     expect(newTx).toEqual(mockTransaction);
   });
 
-  it("should use a pre-set positive fee and skip the network estimate call", async () => {
+  it("uses a pre-set positive fee and skips the network estimate call, but only when API_STACKS_SKIP_FEE_ESTIMATE is set (coin-tester devnet)", async () => {
+    setEnv("API_STACKS_SKIP_FEE_ESTIMATE", true);
     const txWithFee = {
       ...mockTransaction,
       fee: new BigNumber(4321),
@@ -127,6 +130,18 @@ describe("prepareTransaction", () => {
     const newTx = await prepareTransaction(mockAccount, txWithFee);
     expect(newTx.fee).toEqual(new BigNumber(4321));
     expect(fetchFeeEstimateTransactionSpy).not.toHaveBeenCalled();
+  });
+
+  it("always re-estimates the fee for a real user, even when the transaction already carries a positive fee from a prior prepareTransaction call", async () => {
+    const alreadyPreparedTx = {
+      ...mockTransaction,
+      fee: new BigNumber(4321),
+    } as unknown as Transaction;
+
+    fetchFeeEstimateTransactionSpy.mockClear();
+    const newTx = await prepareTransaction(mockAccount, alreadyPreparedTx);
+    expect(fetchFeeEstimateTransactionSpy).toHaveBeenCalled();
+    expect(newTx.fee).toEqual(new BigNumber(2000));
   });
 
   it("should throw error when xpub is missing", async () => {

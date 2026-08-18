@@ -5,13 +5,12 @@ import {
   encodeTokenAccountId,
 } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { GetAccountShape, makeSync } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
-import { getEnv } from "@ledgerhq/live-env";
 import { log } from "@ledgerhq/logs";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { getAddressFromPublicKey } from "@stacks/transactions";
-import { StacksNetworks, type StacksNetworkName } from "@stacks/network";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
+import { getConfiguredStacksNetwork } from "../common-logic";
 import { TransactionResponse } from "../network";
 import {
   fetchAllTokenBalances,
@@ -186,14 +185,8 @@ export const getAccountShape: GetAccountShape = async info => {
   // devnet/testnet consumer (e.g. the coin-tester) derive the correctly-versioned address instead
   // of a mainnet one that was never funded on that chain. v7's `getAddressFromPublicKey` takes the
   // network name directly (no more `TransactionVersion` enum), so this env var's value passes
-  // straight through. `API_STACKS_NETWORK` isn't registered in `@ledgerhq/live-env`'s typed
-  // definitions, so `getEnv` returns `unknown` here -- validated against the network's own known
-  // names rather than force-cast, since a real user never sets this at all.
-  const configuredNetwork = getEnv("API_STACKS_NETWORK");
-  const network: StacksNetworkName = StacksNetworks.includes(configuredNetwork as StacksNetworkName)
-    ? (configuredNetwork as StacksNetworkName)
-    : "mainnet";
-  const address = getAddressFromPublicKey(pubKey, network);
+  // straight through.
+  const address = getAddressFromPublicKey(pubKey, getConfiguredStacksNetwork());
 
   // Make API calls in parallel for better performance
   const [blockHeight, balanceResp, txsResult, tokenBalances, mempoolTxs] = await Promise.all([
