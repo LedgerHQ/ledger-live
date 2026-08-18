@@ -15,6 +15,7 @@ import {
   getBalance,
   lastBlock,
   listOperations,
+  register,
 } from "../logic";
 import { buildFeeConfigurationForRootIntent, getTransactionType } from "../logic/utils";
 import type { AleoContext } from "../types";
@@ -37,6 +38,7 @@ describe("createApi", () => {
   const mockedGetBalance = jest.mocked(getBalance);
   const mockedLastBlock = jest.mocked(lastBlock);
   const mockedListOperations = jest.mocked(listOperations);
+  const mockedRegister = jest.mocked(register);
   const mockedGetTransactionType = jest.mocked(getTransactionType);
   const mockedBuildFeeConfigurationForRootIntent = jest.mocked(buildFeeConfigurationForRootIntent);
 
@@ -59,6 +61,7 @@ describe("createApi", () => {
       max_base_fee: "1234",
       max_priority_fee: "0",
     });
+    mockedRegister.mockResolvedValue({ type: "aleo", provableId: "scan-uuid-123" });
   });
 
   it("should return an API object with coin module api methods", () => {
@@ -73,6 +76,7 @@ describe("createApi", () => {
     expect(api.listOperations).toBeInstanceOf(Function);
     expect(api.craftTransactionData).toBeInstanceOf(Function);
     expect(api.getAccountInfo).toBeInstanceOf(Function);
+    expect(api.register).toBeInstanceOf(Function);
   });
 
   describe("getAccountInfo", () => {
@@ -423,10 +427,38 @@ describe("createApi", () => {
   });
 
   describe("register", () => {
-    it("should throw unsupported error", async () => {
+    it("reads the view key off the context and delegates to logic register, returning the handle", async () => {
+      const api = createApi("aleo");
+      const enrolledContext: AleoContext = { ...context, viewKey: "AViewKey1mockviewkey" };
+
+      const result = await api.register(enrolledContext, "aleo1test");
+
+      expect(mockedRegister).toHaveBeenCalledTimes(1);
+      expect(mockedRegister).toHaveBeenCalledWith(mockConfig, "AViewKey1mockviewkey");
+      expect(result).toEqual({ type: "aleo", provableId: "scan-uuid-123" });
+    });
+
+    it("rejects before any network call when the context carries no view key", async () => {
       const api = createApi("aleo");
 
-      await expect(api.register(context, "aleo1test")).rejects.toThrow("register is not supported");
+      await expect(api.register(context, "aleo1test")).rejects.toThrow(/view key is required/);
+      expect(mockedRegister).not.toHaveBeenCalled();
+    });
+
+    it("rejects before any network call when the view key is empty", async () => {
+      const api = createApi("aleo");
+      const emptyContext: AleoContext = { ...context, viewKey: "" };
+
+      await expect(api.register(emptyContext, "aleo1test")).rejects.toThrow(/view key is required/);
+      expect(mockedRegister).not.toHaveBeenCalled();
+    });
+
+    it("keeps the raw view key out of the rejection message", async () => {
+      const api = createApi("aleo");
+
+      await expect(api.register(context, "aleo1test")).rejects.toThrow(
+        expect.objectContaining({ message: expect.not.stringContaining("AViewKey") }),
+      );
     });
   });
 });

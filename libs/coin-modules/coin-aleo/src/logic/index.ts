@@ -6,5 +6,6 @@ export { getAccountInfo } from "./getAccountInfo";
 export { getBalance } from "./getBalance";
 export { lastBlock } from "./lastBlock";
 export { listOperations } from "./listOperations";
+export { register } from "./register";
 export { validateIntent } from "./validateIntent";
 export { validateAddress } from "./validateAddress";
