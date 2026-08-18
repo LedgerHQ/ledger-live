@@ -336,8 +336,6 @@ describe("DBMiddleware - trustchain branch", () => {
   });
 
   it("does not persist the trustchain while the app is locked", () => {
-    // app.trustchain is an encrypted path: writing before setEncryptionKey would overwrite the
-    // ciphertext on disk with plaintext and destroy the persisted trustchain (LIVE-36130).
     const state: FakeState = {
       ...baseState(),
       application: { isLocked: true },
