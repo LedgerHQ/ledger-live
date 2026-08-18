@@ -129,14 +129,25 @@ describe("Bitcoin Account Balance Summary Footer", () => {
     });
 
     const now = new Date();
+    const updater = jest.fn();
+    const syncMock = jest.fn(
+      () =>
+        new Observable<(account: unknown) => unknown>(subscriber => {
+          subscriber.next(updater);
+        }),
+    );
+    mockedGetAccountBridge.mockReturnValue({
+      sync: syncMock,
+    } as unknown as ReturnType<typeof getAccountBridge>);
 
-    render(
+    const { user } = render(
       <AccountBalanceSummaryFooter
         account={{
           ...account,
           currency: { id: "zcash" } as CryptoCurrency,
           privateInfo: {
             ...DEFAULT_ZCASH_PRIVATE_INFO,
+            ufvk: "test-ufvk",
             syncState: "complete",
             lastSyncTimestamp: now.getTime(),
           },
@@ -152,6 +163,25 @@ describe("Bitcoin Account Balance Summary Footer", () => {
       expect(
         screen.getByText(/last sync: \d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}/i),
       ).toBeInTheDocument();
+    });
+
+    // The complete-state CTA is offered and enabled, never disabled, unlike
+    // the old "Up to date" button it replaces.
+    const upToDateButton = screen.getByTestId("up-to-date-button");
+    expect(upToDateButton).toBeEnabled();
+
+    // Clicking it actually invokes the bridge rather than being a dead button:
+    // same observable assertion shape as the "start sync" test above.
+    await user.click(upToDateButton);
+
+    expect(mockedGetAccountBridge).toHaveBeenCalledWith(
+      expect.objectContaining({ id: account.id }),
+    );
+    await waitFor(() => {
+      expect(syncMock).toHaveBeenCalledWith(expect.objectContaining({ id: account.id }), {
+        paginationConfig: {},
+        syncType: SYNC_TYPE_SHIELDED,
+      });
     });
   });
 
@@ -185,7 +215,7 @@ describe("Bitcoin Account Balance Summary Footer", () => {
     });
   });
 
-  it("should stop shielded sync when sync state is running with no subscription for account", async () => {
+  it("does not stop a running sync just because no subscription is tracked for it (regression: this is the normal shape of the automatic wallet-sync leg, not a zombie)", async () => {
     mockedUseAccountUnit.mockReturnValue({
       code: "ZEC",
       name: "Zcash",
@@ -210,12 +240,17 @@ describe("Bitcoin Account Balance Summary Footer", () => {
       },
     );
 
+    // Give any effect a chance to run, then assert it did NOT force-stop the
+    // sync. The automatic (BridgeSync-driven) leg never registers a
+    // subscription in this reducer, only the manually-triggered one does, so
+    // "running" with none tracked is expected, not evidence of a stuck sync.
     await waitFor(() => {
-      expect(mockedSyncStateUpdater).toHaveBeenCalledWith(
-        expect.objectContaining({ id: account.id }),
-        expect.objectContaining({ syncState: "stopped", progress: 0 }),
-      );
+      expect(screen.getByTestId("stop-sync-button")).toBeInTheDocument();
     });
+    expect(mockedSyncStateUpdater).not.toHaveBeenCalledWith(
+      expect.objectContaining({ id: account.id }),
+      expect.objectContaining({ syncState: "stopped" }),
+    );
   });
 
   it("should not render a private balance field if the account is not a zcash account", async () => {

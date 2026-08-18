@@ -20,7 +20,8 @@ import logger from "~/renderer/logger";
 import Stepper from "~/renderer/components/Stepper";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import { closeModal, openModal } from "~/renderer/actions/modals";
-import { accountsSelector } from "~/renderer/reducers/accounts";
+import { useSelector } from "LLD/hooks/redux";
+import { accountsSelector, flattenAccountsSelector } from "~/renderer/reducers/accounts";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import Track from "~/renderer/analytics/Track";
@@ -208,6 +209,20 @@ const Body = ({
     if (stepId) onChangeStepId(stepId);
   }, [onChangeStepId, params]);
 
+  // Keep the modal's account fresh as the store updates in the background
+  // (e.g. a coin-specific side-sync completing). `updateAccount` is guarded on
+  // id equality, so this can never switch the modal to a different account,
+  // it only ever refreshes data on the one already open. The in-progress
+  // transaction (recipient, amount, memo) is untouched by this.
+  const liveAccounts = useSelector(flattenAccountsSelector);
+  useEffect(() => {
+    if (!account) return;
+    const liveAccount = liveAccounts.find(a => a.id === account.id);
+    if (liveAccount && liveAccount !== account) {
+      updateAccount(liveAccount);
+    }
+  }, [liveAccounts, account, updateAccount]);
+
   // Apply pre-filled recipient and amount to transaction when skipping steps
   useEffect(() => {
     if (!transaction) return;
@@ -370,6 +385,13 @@ const Body = ({
     >
       {stepId === "confirmation" ? null : <SyncSkipUnderPriority priority={100} />}
       <Track onUnmount event="CloseModalSend" />
+      {specific?.PostBroadcastEffect && optimisticOperation && mainAccount && transaction ? (
+        <specific.PostBroadcastEffect
+          account={mainAccount}
+          transaction={transaction}
+          operation={optimisticOperation}
+        />
+      ) : null}
     </Stepper>
   );
 };

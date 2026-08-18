@@ -1,5 +1,5 @@
 import { BigNumber } from "bignumber.js";
-import { firstValueFrom, lastValueFrom, of, toArray } from "rxjs";
+import { firstValueFrom, lastValueFrom, Observable, of, throwError, toArray } from "rxjs";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { SYNC_TYPE_SHIELDED, SYNC_TYPE_TRANSPARENT } from "@ledgerhq/types-live";
 import type { SyncConfig } from "@ledgerhq/types-live";
@@ -13,6 +13,7 @@ import {
   zcashSyncShielded,
 } from "./sync";
 import { clearTransactionDetailsCache } from "./transaction-details";
+import { ZCASH_AUTO_SYNC_TIMEOUT_MS } from "../constants";
 import type { ZcashAccount } from "../types/bridge";
 import type { SignerContext } from "../types/signer";
 
@@ -490,7 +491,7 @@ describe("buildExtraSyncObservable", () => {
     ).toBe(undefined);
   });
 
-  it.each(["ready", "running", "stopped", "outdated"])(
+  it.each(["ready", "running", "stopped", "outdated", "complete"])(
     "scans an account whose shielded state is %s",
     async syncState => {
       getZCashClient.mockResolvedValue({
@@ -523,6 +524,61 @@ describe("buildExtraSyncObservable", () => {
       });
     },
   );
+
+  it("degrades to a stopped state instead of propagating when the shielded leg errors", async () => {
+    getZCashClient.mockResolvedValue({
+      syncShielded: () => throwError(() => new Error("engine down")),
+      findBlockHeight: jest.fn(),
+    });
+    const observable = buildExtraSyncObservable(
+      info({
+        initialAccount: {
+          id: "js:2:zcash:xpub6DZ:",
+          operations: [],
+          privateInfo: privateInfo({ syncState: "ready", lastProcessedBlock: 1 }),
+        },
+      }),
+      { syncType: SYNC_TYPE_SHIELDED } as SyncConfig,
+    );
+
+    const emissions = await lastValueFrom(observable!.pipe(toArray()));
+
+    expect(emissions).toHaveLength(1);
+    expect(emissions[0].privateInfo).toMatchObject({ syncState: "stopped" });
+  });
+
+  it("times out rather than hanging when the shielded leg never emits or completes", async () => {
+    jest.useFakeTimers();
+    try {
+      getZCashClient.mockResolvedValue({
+        syncShielded: () => new Observable<never>(() => {}),
+        findBlockHeight: jest.fn(),
+      });
+      const observable = buildExtraSyncObservable(
+        info({
+          initialAccount: {
+            id: "js:2:zcash:xpub6DZ:",
+            operations: [],
+            privateInfo: privateInfo({ syncState: "ready", lastProcessedBlock: 1 }),
+          },
+        }),
+        { syncType: SYNC_TYPE_SHIELDED } as SyncConfig,
+      );
+
+      const resultPromise = firstValueFrom(observable!);
+      // Let the getZCashClient()/resolveStartBlockHeight() promise chain settle
+      // before the timeout window is exhausted, native promises are not
+      // affected by fake timers.
+      await Promise.resolve();
+      await Promise.resolve();
+      jest.advanceTimersByTime(ZCASH_AUTO_SYNC_TIMEOUT_MS + 1);
+
+      const result = await resultPromise;
+      expect(result.privateInfo).toMatchObject({ syncState: "stopped" });
+    } finally {
+      jest.useRealTimers();
+    }
+  });
 });
 
 describe("buildSyncObservables", () => {
@@ -565,6 +621,35 @@ describe("buildSyncObservables", () => {
     expect(transparent).toMatchObject({ balance: new BigNumber(70_000) });
     expect(shielded.privateInfo).toMatchObject({ syncState: "complete", lastProcessedBlock: 3 });
   });
+
+  it("keeps the transparent leg intact when the shielded leg fails", async () => {
+    getAccountUnspentUtxos.mockResolvedValue([output()]);
+    getZCashClient.mockResolvedValue({
+      syncShielded: () => throwError(() => new Error("engine down")),
+      findBlockHeight: jest.fn(),
+    });
+    const eligible = info({
+      initialAccount: {
+        id: "js:2:zcash:xpub6DZ:",
+        operations: [],
+        bitcoinResources: { utxos: [], walletAccount: walletAccount() },
+        privateInfo: privateInfo({ lastProcessedBlock: 1 }),
+      },
+    });
+
+    const { syncs, syncType } = buildSyncObservables(
+      eligible,
+      { syncType: SYNC_TYPE_TRANSPARENT | SYNC_TYPE_SHIELDED } as SyncConfig,
+      signerContext,
+    );
+
+    // Isolation proof: the shielded leg failing does not stop the transparent
+    // leg's own observable from resolving with its own result.
+    expect(syncType).toBe(SYNC_TYPE_TRANSPARENT | SYNC_TYPE_SHIELDED);
+    const [transparent, shielded] = await Promise.all(syncs.map(sync => firstValueFrom(sync)));
+    expect(transparent).toMatchObject({ balance: new BigNumber(70_000) });
+    expect(shielded.privateInfo).toMatchObject({ syncState: "stopped" });
+  });
 });
 
 describe("makeGetAccountShape", () => {
@@ -593,5 +678,34 @@ describe("makeGetAccountShape", () => {
     await expect(
       firstValueFrom(makeGetAccountShape(signerContext)(info(), {} as SyncConfig)),
     ).rejects.toThrow("explorer down");
+  });
+
+  it("completes rather than erroring when only the shielded leg fails, still reporting a stopped state", async () => {
+    getAccountUnspentUtxos.mockResolvedValue([output()]);
+    getZCashClient.mockResolvedValue({
+      syncShielded: () => throwError(() => new Error("engine down")),
+      findBlockHeight: jest.fn(),
+    });
+    const eligible = info({
+      initialAccount: {
+        id: "js:2:zcash:xpub6DZ:",
+        operations: [],
+        bitcoinResources: { utxos: [], walletAccount: walletAccount() },
+        privateInfo: privateInfo({ lastProcessedBlock: 1 }),
+      },
+    });
+
+    // toArray()/lastValueFrom only resolve on a `complete` notification, they
+    // reject if the source errors instead, so resolving here is itself the
+    // proof that the merged observable completed rather than propagating the
+    // shielded leg's failure.
+    const shapes = await lastValueFrom(
+      makeGetAccountShape(signerContext)(eligible, {
+        syncType: SYNC_TYPE_TRANSPARENT | SYNC_TYPE_SHIELDED,
+      } as SyncConfig).pipe(toArray()),
+    );
+
+    expect(shapes.some(shape => shape.privateInfo?.syncState === "stopped")).toBe(true);
+    expect(shapes.some(shape => shape.balance?.eq(new BigNumber(70_000)))).toBe(true);
   });
 });

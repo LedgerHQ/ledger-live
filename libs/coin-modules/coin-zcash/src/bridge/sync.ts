@@ -1,6 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import { log } from "@ledgerhq/logs";
-import { defer, from, map, merge, mergeMap, Observable, scan } from "rxjs";
+import { catchError, defer, from, map, merge, mergeMap, Observable, of, scan, timeout } from "rxjs";
 import type {
   AccountShapeInfo,
   GetAccountShapeStream,
@@ -41,7 +41,12 @@ import {
   computeIronwoodBalanceFromNotes,
   convertShieldedTransactionsToOperations,
 } from "./operations";
-import { DEFAULT_ZCASH_PRIVATE_INFO, getZainoEndpoint, ZCASH_LOG_TYPE } from "../constants";
+import {
+  DEFAULT_ZCASH_PRIVATE_INFO,
+  getZainoEndpoint,
+  ZCASH_AUTO_SYNC_TIMEOUT_MS,
+  ZCASH_LOG_TYPE,
+} from "../constants";
 import { getZCashClient } from "../logic/engineClient";
 import { resolveTransactionDetails, type ResolvedTransactions } from "./transaction-details";
 import { composeXpub } from "../signer/xpub";
@@ -915,12 +920,31 @@ export function buildExtraSyncObservable(
     (zcashInitialAccount.privateInfo?.syncState === "ready" ||
       zcashInitialAccount.privateInfo?.syncState === "running" ||
       zcashInitialAccount.privateInfo?.syncState === "stopped" ||
-      zcashInitialAccount.privateInfo?.syncState === "outdated");
+      zcashInitialAccount.privateInfo?.syncState === "outdated" ||
+      zcashInitialAccount.privateInfo?.syncState === "complete");
 
   if (!ufvkIsPresent || !syncStateIsEnabled) return undefined;
 
   const shieldedSyncRaw = zcashSyncShielded(info, syncConfig);
-  return createShieldedSyncObservable(info, shieldedSyncRaw);
+  return createShieldedSyncObservable(info, shieldedSyncRaw).pipe(
+    timeout(ZCASH_AUTO_SYNC_TIMEOUT_MS),
+    catchError(error => {
+      log(ZCASH_LOG_TYPE, `shielded sync failed/timed out: ${String(error)}`);
+      // This bridge is registered with shouldMergeOps: false (bridge/index.ts),
+      // so whatever `operations` this emission carries REPLACES the account's
+      // operations wholesale -- omitting it here would wipe the account's
+      // entire transaction history down to `[]` on every timeout/error. Carry
+      // the pre-sync operations forward unchanged, the same way a successful
+      // emission always seeds from `info.initialAccount?.operations` too.
+      return of<Partial<ZcashAccount>>({
+        operations: (zcashInitialAccount?.operations ?? []) as BtcOperation[],
+        privateInfo: {
+          ...(zcashInitialAccount?.privateInfo ?? DEFAULT_ZCASH_PRIVATE_INFO),
+          syncState: "stopped",
+        },
+      });
+    }),
+  );
 }
 
 // ── Merged getAccountShape (transparent + shielded) ─────────────────────

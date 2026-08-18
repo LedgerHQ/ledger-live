@@ -1,7 +1,8 @@
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { useFeesStrategy } from "@ledgerhq/live-common/families/bitcoin/react";
-import { Transaction } from "@ledgerhq/live-common/families/bitcoin/types";
-import React, { useCallback, useState } from "react";
+import { Transaction, ZcashAccount } from "@ledgerhq/live-common/families/bitcoin/types";
+import type { Transaction as ZcashTransaction } from "@ledgerhq/coin-zcash/types";
+import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { track } from "~/renderer/analytics/segment";
@@ -15,6 +16,8 @@ import CoinControlModal from "./CoinControlModal";
 import { FeesField } from "./FeesField";
 import { BitcoinFamily } from "./types";
 import useBitcoinPickingStrategy from "./useBitcoinPickingStrategy";
+import { useZcashShieldedSync } from "./useZcashShieldedSync";
+import ZcashSyncStateBanner from "./ZcashSyncStateBanner";
 
 type Props = NonNullable<BitcoinFamily["sendAmountFields"]>["component"];
 
@@ -41,6 +44,16 @@ const Fields: Props = ({
   // advanced/custom controls — is removed. The ZIP-317 fee is applied
   // automatically (see getAccountNetworkInfo).
   const hideFeeSelection = account.currency.id === "zcash";
+  const zcashTx = transaction as unknown as ZcashTransaction;
+  const { startShieldedSync } = useZcashShieldedSync(account as ZcashAccount);
+
+  useEffect(() => {
+    if (hideFeeSelection && zcashTx.sender === "private") startShieldedSync();
+    // Re-fire only when the source account or the chosen pool changes, not on
+    // every amount keystroke.
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
+  }, [account.id, zcashTx.sender]);
+
   const [advanceMode, setAdvanceMode] = useState(
     !transaction.feesStrategy || transaction.feesStrategy === "custom",
   );
@@ -91,7 +104,11 @@ const Fields: Props = ({
     },
     [onChange, trackProperties],
   );
-  if (hideFeeSelection) return null;
+  if (hideFeeSelection) {
+    return zcashTx.sender === "private" ? (
+      <ZcashSyncStateBanner account={account as ZcashAccount} sender={zcashTx.sender} />
+    ) : null;
+  }
 
   return (
     <>
