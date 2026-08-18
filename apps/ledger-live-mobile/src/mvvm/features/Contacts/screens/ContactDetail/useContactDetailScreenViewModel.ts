@@ -282,13 +282,15 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
   const onDeleteSuccess = useCallback(() => {
     navigation.navigate(ScreenName.MyWalletContacts);
   }, [navigation]);
-  const addressDetailAsset = selection?.network.networkTicker;
+  const addressDetailAsset = selection?.network?.networkTicker;
+  const addressDetailNetwork = selection?.network?.networkName;
   const editDeleteFlow = useContactDetailEditDeleteAdapter(route.params.contactId, onDeleteSuccess);
   const addressDetailActions = useContactAddressDetailActionsAdapter(
     route.params.contactId,
     selection?.row?.addressId,
     onCloseAddressDetail,
     addressDetailAsset,
+    addressDetailNetwork,
   );
   const onCloseAddressDetailSheet = useCallback(() => {
     if (
