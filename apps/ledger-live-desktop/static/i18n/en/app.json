@@ -8971,7 +8971,7 @@
       "privateBalance": "Private balance",
       "privateBalanceTooltip": "Balance that is hidden from the public",
       "privateBalanceWarning": "Private balance excludes Sapling and Orchard shielded funds",
-      "privateBalanceMaturing": "{{spendable}} spendable · {{maturing}} maturing"
+      "privateBalanceMaturing": "Private balance: {{spendable}} spendable · {{maturing}} maturing"
     },
     "shielded": {
       "send": {
