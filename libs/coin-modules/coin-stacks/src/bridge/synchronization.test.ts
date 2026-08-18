@@ -1,14 +1,24 @@
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import * as accountIndex from "@ledgerhq/ledger-wallet-framework/account/index";
+import { setEnv } from "@ledgerhq/live-env";
 import { log } from "@ledgerhq/logs";
 import { Account } from "@ledgerhq/types-live";
+import { getAddressFromPublicKey } from "@stacks/transactions";
 import BigNumber from "bignumber.js";
 import { TransactionResponse } from "../network";
+import {
+  fetchAllTokenBalances,
+  fetchBalances,
+  fetchBlockHeight,
+  fetchFullMempoolTxs,
+  fetchFullTxs,
+} from "../network/api";
 import { TokenPrefix } from "../types";
 import {
   buildTokenAccounts,
   calculateSpendableBalance,
   createTokenAccount,
+  getAccountShape,
 } from "./synchronization";
 
 jest.mock("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore");
@@ -17,6 +27,8 @@ jest.mock("@ledgerhq/ledger-wallet-framework/account/index", () => ({
   ...jest.requireActual("@ledgerhq/ledger-wallet-framework/account/index"),
   encodeTokenAccountId: jest.fn(),
 }));
+jest.mock("@stacks/transactions", () => ({ getAddressFromPublicKey: jest.fn() }));
+jest.mock("../network/api");
 
 let mockFindTokenById: jest.Mock;
 let mockFindTokenByAddressInCurrency: jest.Mock;
@@ -636,6 +648,51 @@ describe("calculateSpendableBalance", () => {
     const result = calculateSpendableBalance(new BigNumber(1_000_000), []);
 
     expect(result).toEqual(new BigNumber(1_000_000));
+  });
+});
+
+describe("getAccountShape", () => {
+  const mockPublicKey = "02" + "ab".repeat(32);
+  const info = {
+    currency: { id: "stacks" },
+    rest: { publicKey: mockPublicKey },
+    derivationMode: "",
+  } as Parameters<typeof getAccountShape>[0];
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    (fetchBlockHeight as jest.Mock).mockResolvedValue({ chain_tip: { block_height: 100 } });
+    (fetchBalances as jest.Mock).mockResolvedValue({ balance: "0" });
+    (fetchFullTxs as jest.Mock).mockResolvedValue([[], {}]);
+    (fetchAllTokenBalances as jest.Mock).mockResolvedValue({});
+    (fetchFullMempoolTxs as jest.Mock).mockResolvedValue([]);
+    (getAddressFromPublicKey as jest.Mock).mockReturnValue("SP_TEST_ADDRESS");
+  });
+
+  it("derives the address for mainnet when API_STACKS_NETWORK is unset", async () => {
+    await getAccountShape(info, { paginationConfig: {} });
+
+    expect(getAddressFromPublicKey).toHaveBeenCalledWith(mockPublicKey, "mainnet");
+  });
+
+  it("derives the address for the configured network when API_STACKS_NETWORK is a valid override", async () => {
+    setEnv("API_STACKS_NETWORK", "testnet");
+
+    await getAccountShape(info, { paginationConfig: {} });
+
+    expect(getAddressFromPublicKey).toHaveBeenCalledWith(mockPublicKey, "testnet");
+
+    setEnv("API_STACKS_NETWORK", "");
+  });
+
+  it("falls back to mainnet for an invalid API_STACKS_NETWORK value", async () => {
+    setEnv("API_STACKS_NETWORK", "not-a-real-network");
+
+    await getAccountShape(info, { paginationConfig: {} });
+
+    expect(getAddressFromPublicKey).toHaveBeenCalledWith(mockPublicKey, "mainnet");
+
+    setEnv("API_STACKS_NETWORK", "");
   });
 });
 
