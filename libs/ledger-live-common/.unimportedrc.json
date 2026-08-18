@@ -642,6 +642,7 @@
     "src/flows/send/recipient/types.ts",
     "src/flows/send/recipient/utils/addressesMatch.ts",
     "src/flows/send/recipient/utils/findMatchedContact.ts",
+    "src/flows/send/recipient/utils/getRecipientHeaderPresentation.ts",
     "src/flows/send/recipient/utils/getRecipientMatchPresentation.ts",
     "src/flows/send/recipient/utils/hasContactsOnNetwork.ts",
     "src/flows/send/recipient/utils/memoValue.ts",
