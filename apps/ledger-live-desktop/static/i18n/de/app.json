@@ -215,7 +215,9 @@
       "SHIELDED_TX_SAPLING_IN": "Empfangen",
       "SHIELDED_TX_SAPLING_OUT": "Gesendet",
       "SHIELDED_TX_ORCHARD_IN": "Empfangen",
-      "SHIELDED_TX_ORCHARD_OUT": "Gesendet"
+      "SHIELDED_TX_ORCHARD_OUT": "Gesendet",
+      "SHIELDED_TX_IRONWOOD_IN": "Empfangen",
+      "SHIELDED_TX_IRONWOOD_OUT": "Gesendet"
     },
     "edit": {
       "title": "Beschleunigen oder Abbrechen",
@@ -867,6 +869,43 @@
     "iAlreadyHaveACard": "Ich habe eine Karte",
     "unlockLiquidity": "Gib Krypto im echten Leben aus",
     "exploreCryptoCardsDescription": "Entdecke unsere Kryptokarten und finde die, die am besten zu dir passt."
+  },
+  "payTab": {
+    "featureTour": {
+      "title": "Bezahlen und bezahlt werden",
+      "description": "Stablecoin schließen die Lücke zwischen Krypto und alltäglichen Ausgaben",
+      "cta": "Verstanden",
+      "rows": {
+        "global": {
+          "title": "Weltweit bezahlen und bezahlt werden",
+          "description": "Von niedrigen Netzwerkgebühren profitieren"
+        },
+        "volatility": {
+          "title": "Minimale Volatilität",
+          "description": "Stablecoins basieren auf FIAT"
+        },
+        "card": {
+          "title": "Mit einer Karte bezahlen und 1 % Cashback erhalten",
+          "description": "In USDC, USDT, BTC, ETH und mehr bezahlen"
+        }
+      }
+    },
+    "balance": {
+      "emptyTitle": "Bezahlen und bezahlt werden",
+      "emptyDescription": "Zahle zu Beginn Stablecoin auf deine Wallet ein",
+      "filter": {
+        "allStablecoins": "Alle Stablecoins",
+        "dialogTitle": "Kontostand filtern",
+        "dialogDescription": "Nutze Stablecoin, um weltweit mit geringen Gebühren und minimaler Volatilität zu bezahlen.",
+        "dialogBanner": "Verwalte alle anderen Assets auf deiner Startseite",
+        "confirm": "Bestätigen"
+      }
+    },
+    "actions": {
+      "deposit": "Stablecoin hinzufügen",
+      "request": "Anfordern",
+      "pay": "Neue Zahlung"
+    }
   },
   "lend": {
     "title": "Kryptowährungen verleihen",
@@ -2476,7 +2515,9 @@
     "addressMatched": "Adressen passen",
     "addressNotFound": "Adresse nicht gefunden",
     "alreadyUsed": "Bereits genutzt · {{date}}",
+    "addressBookUnsupported": "{{family}} wird noch nicht unterstützt",
     "recentSendWillAppear": "Deine letzten Transfers erscheinen hier",
+    "contactsWillAppear": "Kontakte werden hier angezeigt",
     "securityInfo": {
       "title": "Wie versendet man sicher?",
       "items": {
@@ -2494,6 +2535,10 @@
         "description": "In deinem aktuellen Verlauf kannst du sofort erkennen, ob du bereits an eine bestimmte Adresse gesendet hast oder nicht. Dies könnte mögliche Fehler beim Kopieren und Einfügen oder das Hacken verhindern. Dein Verlauf enthält die letzten 12 Adressen, an die du über Ledger Wallet Krypto gesendet hast.",
         "cta": "Verstanden"
       }
+    },
+    "addContact": {
+      "newContact": "Neuen Kontakt hinzufügen",
+      "existingContact": "Zu einem bestehenden Kontakt hinzufügen"
     },
     "relativeDate": {
       "justNow": "Jetzt gerade",
@@ -7001,6 +7046,9 @@
       "title": "Entschuldigung, Guthaben reicht nicht aus",
       "description": "Bitte vergewissere dich, dass das Konto über ausreichende Deckung verfügt."
     },
+    "NotEnoughTransferAmount": {
+      "title": "Ein Minimum von 1 ICP ist erforderlich, um in ein Neuron zu staken."
+    },
     "UnstakeNotEnoughStakedBalanceLeft": {
       "title": "Wenn du mehr als {{maxAmount}} unstakest, wird das Staking des Gesamtbetrags von {{totalAmount}} aufgehoben.",
       "description": "Wenn du mehr als {{maxAmount}} unstakest, wird das Staking des Gesamtbetrags von {{totalAmount}} aufgehoben."
@@ -7434,6 +7482,9 @@
     },
     "FeeTooHigh": {
       "title": "Die Netzwerkgebühren liegen über 10 % des Betrags"
+    },
+    "RecipientIsNewAccount": {
+      "title": "Diese Adresse hat noch nie Guthaben empfangen, ihre Aktivierung kostet eine höhere Netzwerkgebühr."
     },
     "DustLimit": {
       "title": "Die Menge ist niedriger als das Staub (dust) -Limit"
@@ -8588,23 +8639,14 @@
   },
   "lnsUpsell": {
     "opted_in": {
-      "title": "Eingeschränkter Speicher, eingeschränkte Nutzung",
-      "description": "Führe ein Upgrade deiner Ledger Nano S auf ein neueres Ledger-Gerät durch – z. B. die Ledger Flex – und profitiere von mehr Speicherplatz, den neuesten Sicherheitsverbesserungen, innovativen Funktionen und <0>einem exklusiven Rabatt in Höhe von {{discount}} %</>.",
+      "title": "Mehr anzeigen. Sicherer signieren",
+      "description": "Upgrade und {{discount}}% Rabatt erhalten.",
       "cta": "Ledger-Upgrade durchführen"
     },
     "opted_out": {
-      "description": "Der begrenzte Speicher deiner Ledger Nano S schränkt deinen Zugang zu aktuellen Funktionen, Blockchain-Änderungen und Sicherheitsverbesserungen ein. Für die längerfristige Nutzung solltest du auf ein neueres Ledger-Gerät aufrüsten.",
-      "cta": "Weitere Informationen"
-    }
-  },
-  "lnsUpsellMediaBanner": {
-    "opted_in": {
-      "title": "Mehr anzeigen. Sicherer signieren",
-      "description": "Upgrade und 20 % Rabatt erhalten."
-    },
-    "opted_out": {
       "title": "Mehr Sicherheit. Mehr Kontrolle",
-      "description": "Erfahre mehr über Sicherheitsfunktionen."
+      "description": "Erfahre mehr über Sicherheitsfunktionen.",
+      "cta": "Weitere Informationen"
     }
   },
   "largeScreenUpsellModal": {
@@ -8897,7 +8939,8 @@
       "transparentBalance": "Transparenter Saldo",
       "transparentBalanceTooltip": "Guthaben, das öffentlich einsehbar ist",
       "privateBalance": "Privater Saldo",
-      "privateBalanceTooltip": "Guthaben, das nicht öffentlich einsehbar ist"
+      "privateBalanceTooltip": "Guthaben, das nicht öffentlich einsehbar ist",
+      "privateBalanceWarning": "Der private Kontostand schließt geschützte Sapling- und Orchard-Guthaben aus"
     },
     "shielded": {
       "send": {
@@ -8917,7 +8960,8 @@
             "title": "Privater Saldo",
             "subtitle": "Abgeschirmt",
             "unavailable": "Privater Kontostand nicht verfügbar"
-          }
+          },
+          "spendableWarning": "Der verfügbare Kontostand kann niedriger sein als der gesamte Kontostand. Kürzlich geschütztes Guthaben benötigt Bestätigungen und ein vollständiges Scannen (~15 Minuten), bevor es ausgegeben werden kann."
         },
         "memo": {
           "label": "Memo (Optional)",
@@ -8937,6 +8981,12 @@
             "message": "Kontostand ist eventuell nicht ganz aktuell",
             "cta": "Kontostand synchronisieren"
           }
+        },
+        "selfTransfer": {
+          "toPrivate": "Selbstüberweisung auf den privaten Kontostand",
+          "toPublic": "Selbstüberweisung auf den öffentlichen Kontostand",
+          "unavailable": "Deine private Adresse ist noch nicht verfügbar. Exportiere deinen Viewkey, um dies zu aktivieren.",
+          "privacyWarning": "Dies verknüpft dein geschütztes Guthaben mit der öffentlichen Adresse deines Kontos, die für jeden sichtbar ist. Durch das Senden an eine externe private Adresse bleiben diese unverknüpft."
         }
       },
       "state": {
@@ -8994,7 +9044,8 @@
       "txType": "Art der Transaktion",
       "transparentTx": "Transparent",
       "shieldedSaplingTx": "🛡 Privat (Sapling)",
-      "shieldedOrchardTx": "🛡 Privat (Orchard)"
+      "shieldedOrchardTx": "🛡 Privat (Orchard)",
+      "shieldedIronwoodTx": "🛡 Privat (Ironwood)"
     }
   },
   "aleo": {
@@ -9270,7 +9321,8 @@
       },
       "recoveryKey": {
         "title": "Ledger Recovery Key",
-        "description": "Eine PIN-geschützte Smart Card"
+        "description": "Eine PIN-geschützte Smart Card",
+        "incompatible": "Nicht kompatibel mit deinem Gerät"
       },
       "secretRecoveryPhrase": {
         "title": "24-Wort-Metall-Verwahrung",
@@ -9392,10 +9444,10 @@
       "cancel": "Abbrechen"
     },
     "editSignerMismatch": {
-      "title": "Use the same Ledger device you used to add this contact",
-      "description": "The connected device isn't a match.",
-      "connectDifferentDevice": "Connect a different device",
-      "cancel": "Cancel"
+      "title": "Verwende dasselbe Ledger-Gerät, das du zum Hinzufügen dieses Kontakts verwendet hast",
+      "description": "Das verbundene Gerät passt nicht.",
+      "connectDifferentDevice": "Verbinde ein anderes Gerät",
+      "cancel": "Abbrechen"
     },
     "ledgerSyncIntroduction": {
       "description": "Deine Kontakte sind mit deinem Ledger Ende-zu-Ende verschlüsselt und werden mit deinen Geräten synchronisiert – nur du kannst sie entsperren.",
@@ -9677,5 +9729,30 @@
       }
     },
     "disclaimer": "Diese Daten dienen ausschließlich Informationszwecken und stellen keine Finanzberatung dar. Nicht für Steuerzwecke verwenden."
+  },
+  "internetComputer": {
+    "memoField": {
+      "increaseStake": "Diese Transaktion erhöht den Stake eines bestehenden Neurons. Gib den zu stakenden Betrag in das obige Betragsfeld ein.",
+      "createNeuron": "Bei dieser Transaktion wird ein Neuron mit gestaketen ICP erstellt. Gib den zu stakenden Betrag in das obige Betragsfeld ein.",
+      "tooltip": "Hiermit erkennt Internet Computer die Transaktion, um ICP im Neuron zu staken."
+    },
+    "stakeBanner": {
+      "stakeICP": {
+        "title": "ICP staken",
+        "description": "Stake ICP und erhalte Prämien, indem du dich an der Governance beteiligst.",
+        "cta": "ICP staken"
+      }
+    },
+    "headerManageActions": {
+      "manageNeurons": {
+        "title": "Neuronen verwalten"
+      }
+    },
+    "summaryFooter": {
+      "stakedBalance": "Kontostand gestaked",
+      "stakedBalanceTooltip": "Die Gesamtzahl der ICP-Token, die aktuell in Neuronen gestaket sind. Gestakete ICP bringen dir Prämien und können für Governance genutzt werden.",
+      "totalMaturity": "Gesamtfälligkeit",
+      "totalMaturityTooltip": "Die gesammelten Prämien aus dem Staking, inklusive gestakete und liquide Fälligkeit. Diese Prämien kannst du entweder wieder staken oder als liquide ICP abheben."
+    }
   }
 }
