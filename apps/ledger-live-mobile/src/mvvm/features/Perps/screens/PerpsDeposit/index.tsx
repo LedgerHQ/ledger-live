@@ -48,7 +48,7 @@ function AmountMessage({
 }: Pick<PerpsDepositViewModel, "submitError" | "depositAmount">) {
   const { t } = useTranslation();
 
-  if (submitError?.isVisible) {
+  if (submitError) {
     return (
       <Text typography="body3" lx={{ color: "error" }} testID="perps-deposit-form-error">
         {t(submitError.labelKey)}
@@ -120,7 +120,7 @@ export function PerpsDepositView({
             showSoftInputOnFocus={false}
             // The in-app keypad is the only input path, so the field is display-only.
             onChangeText={() => undefined}
-            isInvalid={submitError?.isVisible ?? false}
+            isInvalid={submitError !== null}
             testID="perps-deposit-amount-input"
           />
           <QuotedAmount

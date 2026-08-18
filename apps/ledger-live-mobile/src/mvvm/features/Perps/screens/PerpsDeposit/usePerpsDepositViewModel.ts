@@ -151,11 +151,16 @@ export function usePerpsDepositViewModel({ route }: NavigationProps): PerpsDepos
   const selectMax = useCallback(() => setDepositAmount(maxAmount), [maxAmount, setDepositAmount]);
 
   const submitError = useMemo(
-    () => validateDepositFlow({ amount: depositAmount, maxAmount }),
-    [depositAmount, maxAmount],
+    () =>
+      validateDepositFlow({
+        amount: depositAmount,
+        maxAmount,
+        hasFundingAccount: Boolean(depositAccount),
+      }),
+    [depositAccount, depositAmount, maxAmount],
   );
 
-  const exceedsBalance = Boolean(depositAccount) && depositAmount > maxAmount;
+  const exceedsBalance = submitError !== null;
   const missingAccount = !depositAccount && depositAmount > 0;
   const isFormComplete = depositAmount > 0 && Boolean(depositAccount) && submitError === null;
 

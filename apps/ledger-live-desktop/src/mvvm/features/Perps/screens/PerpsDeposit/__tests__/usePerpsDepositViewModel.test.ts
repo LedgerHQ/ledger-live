@@ -69,16 +69,13 @@ describe("usePerpsDepositViewModel", () => {
     expect(result.current.canReview).toBe(false);
   });
 
-  it("reports the minimum deposit error below the floor", () => {
+  it("leaves the deposit floor to the live app and only misses the funding account", () => {
     const { result } = renderViewModel();
 
     act(() => result.current.changeDepositAmount("3"));
 
     expect(result.current.depositAmount).toBe(3);
-    expect(result.current.submitError).toEqual({
-      isVisible: true,
-      labelKey: "perpsDeposit.formErrors.minDeposit",
-    });
+    expect(result.current.submitError).toBeNull();
     expect(result.current.missingAccount).toBe(true);
     expect(result.current.canReview).toBe(false);
   });
@@ -116,7 +113,6 @@ describe("usePerpsDepositViewModel", () => {
 
     expect(result.current.exceedsBalance).toBe(true);
     expect(result.current.submitError).toEqual({
-      isVisible: true,
       labelKey: "perpsDeposit.formErrors.amountExceedsBalance",
     });
     expect(result.current.canReview).toBe(false);

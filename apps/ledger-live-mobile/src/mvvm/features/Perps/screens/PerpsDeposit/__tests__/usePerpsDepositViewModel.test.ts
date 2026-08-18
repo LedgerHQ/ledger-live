@@ -76,7 +76,7 @@ describe("usePerpsDepositViewModel", () => {
     expect(result.current.canReview).toBe(false);
   });
 
-  it("keeps partially typed decimals and reports the minimum deposit error", () => {
+  it("keeps partially typed decimals and leaves the deposit floor to the live app", () => {
     const { props } = createProps();
     const { result } = renderHook(() => usePerpsDepositViewModel(props));
 
@@ -84,10 +84,7 @@ describe("usePerpsDepositViewModel", () => {
 
     expect(result.current.amountText).toBe("3.");
     expect(result.current.depositAmount).toBe(3);
-    expect(result.current.submitError).toEqual({
-      isVisible: true,
-      labelKey: "perpsDeposit.formErrors.minDeposit",
-    });
+    expect(result.current.submitError).toBeNull();
     expect(result.current.missingAccount).toBe(true);
     expect(result.current.canReview).toBe(false);
   });
@@ -147,7 +144,6 @@ describe("usePerpsDepositViewModel", () => {
 
     expect(result.current.exceedsBalance).toBe(true);
     expect(result.current.submitError).toEqual({
-      isVisible: true,
       labelKey: "perpsDeposit.formErrors.amountExceedsBalance",
     });
     expect(result.current.canReview).toBe(false);

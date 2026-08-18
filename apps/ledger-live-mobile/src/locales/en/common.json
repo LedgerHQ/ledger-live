@@ -9663,9 +9663,7 @@
     "review": "Review",
     "keypadDelete": "Delete last digit",
     "formErrors": {
-      "enterAmount": "Enter an amount",
-      "minDeposit": "Minimum deposit is $5",
-      "amountExceedsBalance": "Amount exceeds available balance"
+      "amountExceedsBalance": "Insufficient balance"
     }
   },
   "swapErrors": {

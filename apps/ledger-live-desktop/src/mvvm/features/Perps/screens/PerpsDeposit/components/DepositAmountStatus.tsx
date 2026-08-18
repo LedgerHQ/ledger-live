@@ -45,7 +45,7 @@ export function DepositAmountStatus({
 }: DepositAmountStatusProps) {
   const { t } = useTranslation();
 
-  const errorMessage = error?.isVisible ? (
+  const errorMessage = error ? (
     <div className="body-3 text-error" data-testid="perps-deposit-form-error">
       {t(error.labelKey)}
     </div>
