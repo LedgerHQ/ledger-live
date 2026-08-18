@@ -21,7 +21,9 @@ import StepFollowTopic from "../ManageNeuronFlowModal/steps/StepFollowTopic";
 import StepSelectFollowees from "../ManageNeuronFlowModal/steps/StepSelectFollowees";
 import StepSetDissolveDelay from "../ManageNeuronFlowModal/steps/StepSetDissolveDelay";
 import StepSplitNeuron from "../ManageNeuronFlowModal/steps/StepSplitNeuron";
-import StepStakeMaturity from "../ManageNeuronFlowModal/steps/StepStakeMaturity";
+import StepStakeMaturity, {
+  StepStakeMaturityFooter,
+} from "../ManageNeuronFlowModal/steps/StepStakeMaturity";
 import SubmitFooter from "../ManageNeuronFlowModal/steps/SubmitFooter";
 import { makeHealthyNeuron, makeStepProps } from "./testUtils";
 
@@ -187,7 +189,8 @@ describe("StepStakeMaturity", () => {
   it.each([
     ["50", "50"],
     ["1a2b", "12"],
-    ["1234", "123"],
+    ["1234", "100"],
+    ["007", "7"],
   ])("normalizes %s to %s", async (typed, expected) => {
     const props = makeStepProps({
       neurons: [withMaturity],
@@ -202,11 +205,47 @@ describe("StepStakeMaturity", () => {
     expect(patched.percentageToStake).toBe(expected);
   });
 
-  it("keeps continue disabled until a percentage is entered", () => {
-    const props = makeStepProps({ transaction: { type: "stake_maturity" } });
-    render(<SubmitFooter {...props} canContinue={!!props.transaction?.percentageToStake} />);
+  it("survives a pasted number too large for a double", () => {
+    const props = makeStepProps({
+      neurons: [withMaturity],
+      selectedNeuronId: "5",
+      transaction: { type: "stake_maturity", percentageToStake: "" },
+    });
+    render(<StepStakeMaturity {...props} />);
+
+    fireEvent.change(screen.getByTestId("icp-stake-maturity-input"), {
+      target: { value: "9".repeat(400) },
+    });
+
+    const patched = applyUpdate(props.onUpdateTransaction as jest.Mock, {});
+    expect(patched.percentageToStake).toBe("100");
+  });
+
+  it("previews nothing rather than throwing on a stored value that is not a whole number", () => {
+    const props = makeStepProps({
+      neurons: [withMaturity],
+      selectedNeuronId: "5",
+      transaction: { type: "stake_maturity", percentageToStake: "33.3" },
+    });
+    const { container } = render(<StepStakeMaturity {...props} />);
+
+    expect(container.textContent?.replace(/\u00a0/g, " ")).toContain("0 ICP");
+  });
+
+  // The bridge rejects both, but no ICP error carries a translation, so leaning on the error banner
+  // would surface "ICPInvalidPercentage" to the user.
+  it.each(["", "0"])("keeps continue disabled for the percentage %p", percentageToStake => {
+    const props = makeStepProps({ transaction: { type: "stake_maturity", percentageToStake } });
+    render(<StepStakeMaturityFooter {...props} />);
 
     expect(screen.getByTestId("icp-continue-button")).toBeDisabled();
+  });
+
+  it.each(["1", "100"])("allows continue for the percentage %p", percentageToStake => {
+    const props = makeStepProps({ transaction: { type: "stake_maturity", percentageToStake } });
+    render(<StepStakeMaturityFooter {...props} />);
+
+    expect(screen.getByTestId("icp-continue-button")).toBeEnabled();
   });
 });
 

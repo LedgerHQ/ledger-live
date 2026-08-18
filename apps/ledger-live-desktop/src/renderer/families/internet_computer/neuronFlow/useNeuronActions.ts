@@ -14,7 +14,8 @@ type Params = Pick<
   StepProps,
   "account" | "onChangeTransaction" | "transitionTo" | "setLastAction"
 > & {
-  neuron: ICPNeuron;
+  /** Absent when the selected neuron is gone: the caller still has to run the hook unconditionally. */
+  neuron: ICPNeuron | undefined;
 };
 
 /**
@@ -34,7 +35,7 @@ export function useNeuronActions({
 }: Params) {
   const dispatch = useDispatch();
   const bridge = useAccountBridge<Transaction>(account);
-  const neuronId = neuron.id?.toString();
+  const neuronId = neuron?.id?.toString();
 
   // Seeds the transaction for the chosen operation and moves to the step that finishes it. Input
   // steps then only patch their own field, so none of them has to know how to build a transaction.
@@ -88,7 +89,7 @@ export function useNeuronActions({
       onClickConfirmFollowing: () => submit("refresh_voting_power"),
       // The canister has no toggle: which call ends the dissolve depends on the current state.
       onClickStartStopDissolving: () =>
-        submit(neuron.state === NeuronState.Dissolving ? "stop_dissolving" : "start_dissolving"),
+        submit(neuron?.state === NeuronState.Dissolving ? "stop_dissolving" : "start_dissolving"),
       onClickAutoStakeMaturity: (autoStakeMaturity: boolean) =>
         submit("auto_stake_maturity", { autoStakeMaturity }),
       onClickRemoveHotKey: (hotKeyToRemove: string) => submit("remove_hot_key", { hotKeyToRemove }),
@@ -99,9 +100,9 @@ export function useNeuronActions({
       // A dissolved neuron sets its delay from zero; a locked one may only increase it.
       onClickSetDissolveDelay: goTo(
         "setDissolveDelay",
-        neuron.state === NeuronState.Dissolved ? "set_dissolve_delay" : "increase_dissolve_delay",
+        neuron?.state === NeuronState.Dissolved ? "set_dissolve_delay" : "increase_dissolve_delay",
       ),
     }),
-    [goTo, neuron.state, onClickIncreaseStake, submit],
+    [goTo, neuron?.state, onClickIncreaseStake, submit],
   );
 }
