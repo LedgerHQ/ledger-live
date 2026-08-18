@@ -2,6 +2,7 @@ import { act, renderHook } from "@testing-library/react-native";
 import { track } from "~/analytics";
 import { useMemoViewModel } from "../../../../components/Memo/hooks/useMemoViewModel";
 import { useSendFlowData } from "../../../../context/SendFlowContext";
+import { useAddressMatchedSectionViewModel } from "../useAddressMatchedSectionViewModel";
 import { useRecipientScreenView } from "../useRecipientScreenView";
 import { createMockAccount } from "./accounts";
 import { useRecipientScreenContentViewModel } from "../useRecipientScreenContentViewModel";
@@ -10,6 +11,7 @@ jest.mock("~/analytics");
 jest.mock("../../../../components/Memo/hooks/useMemoViewModel");
 jest.mock("../../../../context/SendFlowContext");
 jest.mock("../useRecipientScreenView");
+jest.mock("../useAddressMatchedSectionViewModel");
 jest.mock("@ledgerhq/ledger-wallet-framework/tracking/send", () => ({
   getSendFlowTrackingProperties: jest.fn(() => ({ currency: "bitcoin" })),
 }));
@@ -21,6 +23,7 @@ const mockedTrack = jest.mocked(track);
 const mockedUseMemoViewModel = jest.mocked(useMemoViewModel);
 const mockedUseSendFlowData = jest.mocked(useSendFlowData);
 const mockedUseRecipientScreenView = jest.mocked(useRecipientScreenView);
+const mockedUseAddressMatchedSectionViewModel = jest.mocked(useAddressMatchedSectionViewModel);
 
 const account = createMockAccount({ id: "account_1" });
 const handleAddressSelect = jest.fn();
@@ -38,6 +41,7 @@ const recipientViewModel = {
     bridgeWarnings: {},
     hasBridgeValidationResult: true,
     matchedAccounts: [],
+    matchedContact: undefined,
     isLedgerAccount: false,
     isFirstInteraction: false,
   },
@@ -56,12 +60,21 @@ const recipientViewModel = {
   addressValidationErrorType: null,
   clipboardAddress: null,
   handlePasteFromClipboard: jest.fn(),
+  isContactsFeatureEnabled: true,
 } as never;
 
 const memoViewModel = {
   hasFilledMemo: true,
   memoError: undefined,
 } as never;
+
+const addressMatchedSectionViewModel = {
+  isVisible: true,
+  showHeader: false,
+  addressMatchedLabel: "Address matched",
+  suggestion: null,
+  showFirstInteractionWarning: false,
+};
 
 describe("useRecipientScreenContentViewModel", () => {
   beforeEach(() => {
@@ -71,6 +84,9 @@ describe("useRecipientScreenContentViewModel", () => {
     } as never);
     mockedUseRecipientScreenView.mockReturnValue(recipientViewModel);
     mockedUseMemoViewModel.mockReturnValue(memoViewModel);
+    mockedUseAddressMatchedSectionViewModel.mockReturnValue(
+      addressMatchedSectionViewModel as never,
+    );
   });
 
   function renderViewModel() {
@@ -91,6 +107,7 @@ describe("useRecipientScreenContentViewModel", () => {
     expect(result.current.showMemo).toBe(true);
     expect(result.current.showMatched).toBe(true);
     expect(result.current.keyboardBehavior).toBe("padding");
+    expect(result.current.addressMatchedSectionViewModel).toEqual(addressMatchedSectionViewModel);
     expect(mockedTrack).toHaveBeenCalledTimes(2);
     expect(mockedTrack).toHaveBeenNthCalledWith(
       1,
@@ -109,10 +126,11 @@ describe("useRecipientScreenContentViewModel", () => {
   });
 
   it("tracks and forwards matched-address selection", () => {
-    const { result } = renderViewModel();
+    renderViewModel();
+    const { onSelect } = mockedUseAddressMatchedSectionViewModel.mock.calls[0][0];
 
     act(() => {
-      result.current.handleMatchedAddress("destination", "name.eth");
+      onSelect("destination", "name.eth");
     });
 
     expect(mockedTrack).toHaveBeenCalledWith(
