@@ -35,7 +35,7 @@ import { SwapPage } from "./swap.page";
 import { ModularScanAccountsDrawer } from "./drawer/modular.scan.accounts.drawer";
 import { ModularDialog } from "./dialog/modular.dialog";
 import { MarketBannerPage } from "./marketBanner.page";
-import { TrustchainPage } from "./trustchain.page";
+import type { TrustchainPage } from "./trustchain.page";
 import { MyWalletPage } from "./myWallet.page";
 import { FearAndGreedDialog } from "./dialog/fearGreed.dialog";
 import { NewSendModal } from "./modal/new.send.modal";
@@ -94,7 +94,20 @@ export class Application extends PageHolder {
   public myWallet = new MyWalletPage(this.page);
   public fearAndGreedDialog = new FearAndGreedDialog(this.page);
   public swapTransactionStatusDialog = new SwapTransactionStatusDialog(this.page);
-  public trustchain = new TrustchainPage();
+  private trustchainPage: TrustchainPage | undefined;
+
+  /**
+   * Required on first use rather than imported at the top: the trustchain page pulls in the
+   * key-ring and cloud-sync SDKs, which only the ledger sync suites need. A static import would
+   * load that graph in every worker.
+   */
+  public get trustchain(): TrustchainPage {
+    if (!this.trustchainPage) {
+      const module: typeof import("./trustchain.page") = require("./trustchain.page");
+      this.trustchainPage = new module.TrustchainPage();
+    }
+    return this.trustchainPage;
+  }
   public history = new HistoryPage(this.page);
   public mainNavigation = new MainNavigationPage(this.page);
   public tezosStake = new TezosStakeModal(this.page);

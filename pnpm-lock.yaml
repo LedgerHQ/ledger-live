@@ -4648,12 +4648,6 @@ importers:
 
   e2e/desktop:
     dependencies:
-      '@features/platform-wallet-sync':
-        specifier: workspace:^
-        version: link:../../features/platform/wallet-sync
-      '@ledgerhq/ledger-key-ring-protocol':
-        specifier: workspace:^
-        version: link:../../libs/ledger-key-ring-protocol
       '@ledgerhq/live-cli':
         specifier: workspace:^
         version: link:../../apps/cli/dist
@@ -4666,9 +4660,6 @@ importers:
       '@ledgerhq/live-e2e-shared':
         specifier: workspace:^
         version: link:../../libs/live-e2e-shared
-      '@ledgerhq/live-wallet':
-        specifier: workspace:^
-        version: link:../../libs/live-wallet
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.17.0
@@ -4678,9 +4669,6 @@ importers:
       '@playwright/test':
         specifier: 'catalog:'
         version: 1.60.0
-      '@shared/cloud-sync':
-        specifier: workspace:^
-        version: link:../../shared/cloud-sync
       '@shared/env':
         specifier: workspace:*
         version: link:../../shared/env
