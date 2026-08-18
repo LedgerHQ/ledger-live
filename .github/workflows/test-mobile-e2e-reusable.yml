@@ -565,7 +565,10 @@ jobs:
       contents: read
     with:
       ref: ${{ inputs.ref || github.sha }}
-      disable-nx-cache: false
+      # TEMPORARY (QAA-1505 validation): force live-common to be rebuilt from this
+      # branch's source instead of restored from the nx remote cache, so the run
+      # cannot be reading a build that predates the fix. Revert before review.
+      disable-nx-cache: true
       build-android-js: ${{ needs.determine-builds.outputs.android_js_exists == 'false' }}
       build-android-native: ${{ needs.determine-builds.outputs.android_native_exists == 'false' }}
       android-native-cache-key: ${{ needs.determine-builds.outputs.android_native_key }}
