@@ -44,8 +44,9 @@ export function PtxScreen({ route, config }: Props) {
   const devMode = useEnv("MANAGER_DEV_MODE").toString();
   const { theme } = useTheme();
   const { platform, ...params } = route.params || {};
-  const goBackOnAccountRequestCancel = (route.params as { goBackOnAccountRequestCancel?: boolean } | undefined)
-    ?.goBackOnAccountRequestCancel;
+  const goBackOnAccountRequestCancel = (
+    route.params as { goBackOnAccountRequestCancel?: boolean } | undefined
+  )?.goBackOnAccountRequestCancel;
   const searchParams = route.path
     ? new URL("ledgerlive://" + route.path).searchParams
     : new URLSearchParams();
