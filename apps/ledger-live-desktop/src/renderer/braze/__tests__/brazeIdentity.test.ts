@@ -1,23 +1,9 @@
 import { UserId, DUMMY_USER_ID } from "@domain/entity-client-identity";
-import { generateAnonymousId } from "@ledgerhq/live-common/braze/anonymousUsers";
-import {
-  resolveDesktopBrazeUserId,
-  shouldPersistAnonymousBrazeId,
-  ensureLegacyAnonymousBrazeIdStored,
-} from "../brazeIdentity";
+import { resolveDesktopBrazeUserId } from "../brazeIdentity";
 
-jest.mock("@ledgerhq/live-common/braze/anonymousUsers", () => ({
-  generateAnonymousId: jest.fn(() => "anonymous_id_1"),
-}));
-
-const mockedGenerateAnonymousId = jest.mocked(generateAnonymousId);
 const REAL_USER_ID = UserId.fromString("11111111-1111-1111-1111-111111111111");
 
 describe("brazeIdentity", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
   describe("resolveDesktopBrazeUserId", () => {
     it("returns null for dummy user id", () => {
       expect(
@@ -51,10 +37,9 @@ describe("brazeIdentity", () => {
             brazeOptOutIdentityCleanup: false,
           }),
         ).toBe("stored_anonymous");
-        expect(mockedGenerateAnonymousId).not.toHaveBeenCalled();
       });
 
-      it("generates anonymous id when opted out and none persisted", () => {
+      it("returns null when opted out and no anonymous id is persisted", () => {
         expect(
           resolveDesktopBrazeUserId({
             isTrackedUser: false,
@@ -62,7 +47,7 @@ describe("brazeIdentity", () => {
             anonymousBrazeId: null,
             brazeOptOutIdentityCleanup: false,
           }),
-        ).toBe("anonymous_id_1");
+        ).toBeNull();
       });
     });
 
@@ -87,37 +72,7 @@ describe("brazeIdentity", () => {
             brazeOptOutIdentityCleanup: true,
           }),
         ).toBeNull();
-        expect(mockedGenerateAnonymousId).not.toHaveBeenCalled();
       });
-    });
-  });
-
-  describe("shouldPersistAnonymousBrazeId", () => {
-    it("returns true when flag is off", () => {
-      expect(shouldPersistAnonymousBrazeId(false)).toBe(true);
-    });
-
-    it("returns false when flag is on", () => {
-      expect(shouldPersistAnonymousBrazeId(true)).toBe(false);
-    });
-  });
-
-  describe("ensureLegacyAnonymousBrazeIdStored", () => {
-    it("persists a generated anonymous id when legacy mode is active", () => {
-      expect(ensureLegacyAnonymousBrazeIdStored(null, false)).toEqual({
-        anonymousBrazeId: "anonymous_id_1",
-        action: { type: "SET_ANONYMOUS_BRAZE_ID", payload: "anonymous_id_1" },
-      });
-    });
-
-    it("returns null when an anonymous id is already stored", () => {
-      expect(ensureLegacyAnonymousBrazeIdStored("stored_anonymous", false)).toBeNull();
-      expect(mockedGenerateAnonymousId).not.toHaveBeenCalled();
-    });
-
-    it("returns null when brazeOptOutIdentityCleanup is enabled", () => {
-      expect(ensureLegacyAnonymousBrazeIdStored(null, true)).toBeNull();
-      expect(mockedGenerateAnonymousId).not.toHaveBeenCalled();
     });
   });
 });
