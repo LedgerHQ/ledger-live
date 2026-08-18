@@ -8,6 +8,18 @@ import { toBigNumber } from "../../amounts";
 import SubmitFooter from "./SubmitFooter";
 import type { StepProps } from "../../neuronFlow/types";
 
+const MAX_PERCENTAGE = 100n;
+
+// Guarded rather than a bare BigInt(): a value not written by this step's own onChange would throw
+// inside the conversion while the preview renders.
+const enteredPercentage = (percentage: string): bigint =>
+  /^\d+$/.test(percentage) ? BigInt(percentage) : 0n;
+
+const isInRange = (percentage: string): boolean => {
+  const entered = enteredPercentage(percentage);
+  return entered >= 1n && entered <= MAX_PERCENTAGE;
+};
+
 /** Stakes a share of the neuron's liquid maturity back into it. The canister takes a percentage. */
 const StepStakeMaturity = ({
   account,
@@ -22,15 +34,19 @@ const StepStakeMaturity = ({
 
   const onChange = useCallback(
     (next: string) => {
-      const digits = next.replace(/\D/g, "").slice(0, 3);
-      onUpdateTransaction(tx => ({ ...tx, percentageToStake: digits }));
+      const digits = next.replace(/\D/g, "");
+      // Clamped like the dissolve delay entry: unclamped, "999" previews an amount to stake ten times
+      // the maturity the neuron actually has.
+      const entered = digits ? BigInt(digits) : 0n;
+      const clamped = entered > MAX_PERCENTAGE ? MAX_PERCENTAGE : entered;
+      onUpdateTransaction(tx => ({ ...tx, percentageToStake: digits ? String(clamped) : "" }));
     },
     [onUpdateTransaction],
   );
 
   if (!neuron) return null;
 
-  const selected = (neuron.maturityE8sEquivalent * BigInt(Number(percentage) || 0)) / 100n;
+  const selected = (neuron.maturityE8sEquivalent * enteredPercentage(percentage)) / MAX_PERCENTAGE;
 
   return (
     <Box flow={3} px={4}>
@@ -65,8 +81,10 @@ const StepStakeMaturity = ({
   );
 };
 
+// Gated on the range rather than on mere presence: the bridge rejects 0 too, but its error has no
+// translation, so the banner would read "ICPInvalidPercentage".
 export const StepStakeMaturityFooter = (props: StepProps) => (
-  <SubmitFooter {...props} canContinue={!!props.transaction?.percentageToStake} />
+  <SubmitFooter {...props} canContinue={isInRange(props.transaction?.percentageToStake ?? "")} />
 );
 
 export default StepStakeMaturity;

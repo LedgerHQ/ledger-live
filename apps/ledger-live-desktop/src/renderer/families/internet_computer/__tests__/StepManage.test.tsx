@@ -48,6 +48,15 @@ describe("StepManage", () => {
     expect(container.firstChild).toBeNull();
   });
 
+  // useNeuronActions runs before the guard above, so it has to tolerate an absent neuron. It used to
+  // be handed `neurons[0]`, which is itself undefined once the snapshot comes back empty.
+  it("renders nothing rather than throwing when the snapshot has no neurons at all", () => {
+    const props = makeStepProps({ neurons: [], selectedNeuronId: "7" });
+    const { container } = render(<StepManage {...props} />);
+
+    expect(container.firstChild).toBeNull();
+  });
+
   it("offers the controller the actions that change the neuron", () => {
     renderManage();
 
@@ -73,6 +82,15 @@ describe("StepManage", () => {
 
     expect(screen.getByText("Edit following")).toBeInTheDocument();
     expect(screen.getByText("Confirm following")).toBeInTheDocument();
+  });
+
+  // The key used to be `common.none`, which no translation file defines, so the row read
+  // "common.none". Any neuron under the 14-day voting threshold reaches this branch.
+  it("names the absence of voting power instead of printing a translation key", () => {
+    renderManage(controlled({ dissolveDelaySeconds: 0n }));
+
+    expect(screen.getByText("None")).toBeInTheDocument();
+    expect(screen.queryByText(/common\.none/)).not.toBeInTheDocument();
   });
 
   // The label used to sit on the age-bonus row, reading as though "Locked" were the bonus value.

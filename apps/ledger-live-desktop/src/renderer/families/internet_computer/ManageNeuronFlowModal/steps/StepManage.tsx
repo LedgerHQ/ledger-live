@@ -54,9 +54,9 @@ const StepManage = ({
   const neuron = neurons.find(n => n.id?.toString() === selectedNeuronId);
   const actions = useNeuronActions({
     account,
-    // The hook is unconditional; the guard below keeps a missing neuron off the screen. A neuron can
-    // disappear between steps if a refresh lands while the manage step is open.
-    neuron: neuron ?? neurons[0],
+    // A neuron can disappear between steps if a refresh lands while this step is open, so the hook
+    // takes it as optional and the guard below keeps a missing one off the screen.
+    neuron,
     onChangeTransaction,
     transitionTo,
     setLastAction,
@@ -113,7 +113,7 @@ const StepManage = ({
           votingPower > 0n ? (
             <FormattedVal val={toBigNumber(votingPower)} unit={unit} disableRounding />
           ) : (
-            <Trans i18nKey="common.none" />
+            <Trans i18nKey="internetComputer.common.none" />
           )
         }
       >
