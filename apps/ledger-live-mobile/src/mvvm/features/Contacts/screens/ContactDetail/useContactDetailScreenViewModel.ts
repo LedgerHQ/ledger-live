@@ -39,7 +39,6 @@ import { useDispatch } from "~/context/hooks";
 import { useTranslation } from "~/context/Locale";
 import { USER_AVATAR_URL } from "LLM/components/UserAvatar/constants";
 import type { MyWalletNavigatorStackParamList } from "LLM/features/MyWallet/types";
-import { useContactsAddressCurrencyAdapter } from "../../hooks/useContactsAddressCurrencyAdapter";
 import { useContactsAddressValidationAdapter } from "../../hooks/useContactsAddressValidationAdapter";
 import type { ContactsAddAddressFlowDrawerProps } from "./components/ContactsAddAddressFlowDrawer/types";
 import type { ContactDetailEditDeleteFlowProps } from "./hooks/useContactDetailEditDeleteAdapter";
@@ -76,10 +75,9 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
     useRoute<RouteProp<MyWalletNavigatorStackParamList, typeof ScreenName.MyWalletContactDetail>>();
   const { isEnabled, eligibleAddressFamilies } = useContactsFeature("mobile");
   const { t } = useTranslation();
-  const currencyPort = useContactsAddressCurrencyAdapter();
   const deviceIntents = useMemo(() => createMockContactDeviceIntentsPort(), []);
   const emptyContact = useEmptyContactDetail(route.params.contactId);
-  const populatedContactDetail = usePopulatedContactDetail(route.params.contactId, currencyPort);
+  const populatedContactDetail = usePopulatedContactDetail(route.params.contactId);
   const {
     isOpen,
     selection,
