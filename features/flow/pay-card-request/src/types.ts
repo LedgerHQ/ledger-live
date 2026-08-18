@@ -1,3 +1,5 @@
+import type { AddressParts } from "./utils/splitAddress";
+
 export type PayCardTrackEvent = (event: string, params: Record<string, unknown>) => void;
 
 export type VerifyAddressPhase = "hidden" | "intro" | "success";
@@ -63,4 +65,40 @@ export type VerifyAddressSuccessViewProps = Readonly<{
   gotItCta: string;
   onGotIt: () => void;
   onClose: () => void;
+}>;
+
+/**
+ * Display data for the requested asset.
+ */
+export type RequestReceiveAsset = Readonly<{
+  name: string;
+  ticker: string;
+}>;
+
+export type RequestActionCallbacks = Readonly<{
+  onShare: (address: string) => void;
+  onCopy: (address: string) => void;
+  onSave: (address: string) => void;
+  onVerify: (address: string) => void;
+}>;
+
+export type RequestReceiveViewModelParams = RequestActionCallbacks &
+  Readonly<{
+    address: string;
+    asset: RequestReceiveAsset;
+    network: string;
+    page: string;
+    onTrackEvent?: PayCardTrackEvent;
+  }>;
+
+export type RequestReceiveViewModel = Readonly<{
+  asset: RequestReceiveAsset;
+  network: string;
+  address: string;
+  addressParts: AddressParts;
+  qrPayload: string;
+  onShare: () => void;
+  onCopy: () => void;
+  onSave: () => void;
+  onVerify: () => void;
 }>;
