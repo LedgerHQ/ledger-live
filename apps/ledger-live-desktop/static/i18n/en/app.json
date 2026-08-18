@@ -7904,6 +7904,9 @@
     "OneSuiMinForUnstakeToBeLeft": {
       "title": "At least 1 SUI should be left in stake"
     },
+    "SuiStakeNotFound": {
+      "title": "Stake details unavailable. Please resynchronise your account and try again"
+    },
     "SomeSuiForUnstake": {
       "title": "Please ensure you reserve at least 0.1 SUI in your wallet to cover future network fees and undelegate your stake"
     },

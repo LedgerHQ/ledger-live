@@ -11,6 +11,13 @@ import {
 import BigNumber from "bignumber.js";
 import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
 import getTransactionStatus from "./getTransactionStatus";
+import { ONE_SUI } from "../constants";
+import {
+  OneSuiMinForStake,
+  OneSuiMinForUnstake,
+  OneSuiMinForUnstakeToBeLeft,
+  SuiStakeNotFound,
+} from "../errors";
 
 const account = createFixtureAccount();
 
@@ -177,5 +184,145 @@ describe("getTransactionStatus", () => {
 
     const expected = { amount: new NotEnoughBalanceInParentAccount() };
     expect(result.errors).toEqual(expected);
+  });
+
+  // Move enforces these: `validator_set::request_add_stake` aborts `EStakingBelowThreshold` (10)
+  // below 1 SUI, and `staking_pool::split` aborts `EStakedSuiBelowThreshold` (18) unless BOTH the
+  // withdrawn amount and the remainder reach 1 SUI. Reaching the chain costs gas and surfaces a raw
+  // MoveAbort, so these must fail here first.
+  describe("minimum stake thresholds", () => {
+    const STAKED_SUI_ID = "0xstake1";
+
+    const accountWithStake = (principal: string) =>
+      createFixtureAccount({
+        suiResources: {
+          nonce: 0,
+          stakes: [{ stakes: [{ stakedSuiId: STAKED_SUI_ID, principal }] }],
+        },
+      });
+
+    it("rejects a delegation below 1 SUI", async () => {
+      const transaction = createFixtureTransaction({
+        mode: "delegate",
+        amount: BigNumber(ONE_SUI / 2),
+      });
+      const result = await getTransactionStatus(account, transaction);
+
+      expect(result.errors.amount).toEqual(new OneSuiMinForStake());
+    });
+
+    it("accepts a delegation of exactly 1 SUI", async () => {
+      const transaction = createFixtureTransaction({
+        mode: "delegate",
+        amount: BigNumber(ONE_SUI),
+      });
+      const result = await getTransactionStatus(account, transaction);
+
+      expect(result.errors.amount).toBeUndefined();
+    });
+
+    // The QA case: 0.25 SUI out of a 1 SUI position. Both `split` asserts fail, and the remainder
+    // one is the more specific message.
+    it("rejects an unstake that would leave less than 1 SUI in the position", async () => {
+      const transaction = createFixtureTransaction({
+        mode: "undelegate",
+        stakedSuiId: STAKED_SUI_ID,
+        amount: BigNumber(ONE_SUI / 4),
+      });
+      const result = await getTransactionStatus(accountWithStake(String(ONE_SUI)), transaction);
+
+      expect(result.errors.amount).toEqual(new OneSuiMinForUnstakeToBeLeft());
+    });
+
+    it("rejects an unstake below 1 SUI even when the remainder is large", async () => {
+      const transaction = createFixtureTransaction({
+        mode: "undelegate",
+        stakedSuiId: STAKED_SUI_ID,
+        amount: BigNumber(ONE_SUI / 2),
+      });
+      const result = await getTransactionStatus(accountWithStake(String(3 * ONE_SUI)), transaction);
+
+      expect(result.errors.amount).toEqual(new OneSuiMinForUnstake());
+    });
+
+    it("accepts a partial unstake leaving at least 1 SUI on both sides", async () => {
+      const transaction = createFixtureTransaction({
+        mode: "undelegate",
+        stakedSuiId: STAKED_SUI_ID,
+        amount: BigNumber(1.5 * ONE_SUI),
+      });
+      const result = await getTransactionStatus(accountWithStake(String(3 * ONE_SUI)), transaction);
+
+      expect(result.errors.amount).toBeUndefined();
+    });
+
+    // A stale, degraded, or cleared sync can lose the position, and nothing downstream catches what
+    // this guard lets through.
+    describe("when the position is missing from the synced stakes", () => {
+      it("still rejects a partial unstake below 1 SUI", async () => {
+        const transaction = createFixtureTransaction({
+          mode: "undelegate",
+          stakedSuiId: "0xnot-synced",
+          amount: BigNumber(ONE_SUI / 4),
+        });
+        const result = await getTransactionStatus(accountWithStake(String(ONE_SUI)), transaction);
+
+        expect(result.errors.amount).toEqual(new OneSuiMinForUnstake());
+      });
+
+      // The remainder cannot be computed without the principal, so an otherwise legal-looking amount
+      // must not proceed.
+      it("blocks a partial unstake whose remainder cannot be verified", async () => {
+        const transaction = createFixtureTransaction({
+          mode: "undelegate",
+          stakedSuiId: "0xnot-synced",
+          amount: BigNumber(2 * ONE_SUI),
+        });
+        const result = await getTransactionStatus(
+          accountWithStake(String(3 * ONE_SUI)),
+          transaction,
+        );
+
+        expect(result.errors.amount).toEqual(new SuiStakeNotFound());
+      });
+
+      it("blocks a partial unstake when the account carries no stakes at all", async () => {
+        const transaction = createFixtureTransaction({
+          mode: "undelegate",
+          stakedSuiId: STAKED_SUI_ID,
+          amount: BigNumber(2 * ONE_SUI),
+        });
+        const result = await getTransactionStatus(account, transaction);
+
+        expect(result.errors.amount).toEqual(new SuiStakeNotFound());
+      });
+
+      // A full withdrawal never splits, so it stays legal without the principal.
+      it("allows a full unstake", async () => {
+        const transaction = createFixtureTransaction({
+          mode: "undelegate",
+          stakedSuiId: "0xnot-synced",
+          amount: BigNumber(ONE_SUI),
+          useAllAmount: true,
+        });
+        const result = await getTransactionStatus(accountWithStake(String(ONE_SUI)), transaction);
+
+        expect(result.errors.amount).toBeUndefined();
+      });
+    });
+
+    // A full withdrawal takes the no-split path on chain, so the thresholds do not apply — this is
+    // the only legal unstake for a 1 SUI position.
+    it("accepts a full unstake of a 1 SUI position", async () => {
+      const transaction = createFixtureTransaction({
+        mode: "undelegate",
+        stakedSuiId: STAKED_SUI_ID,
+        amount: BigNumber(ONE_SUI),
+        useAllAmount: true,
+      });
+      const result = await getTransactionStatus(accountWithStake(String(ONE_SUI)), transaction);
+
+      expect(result.errors.amount).toBeUndefined();
+    });
   });
 });
