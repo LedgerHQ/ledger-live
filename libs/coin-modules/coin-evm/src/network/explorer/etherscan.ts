@@ -529,7 +529,15 @@ export const getInternalOperations = async (
       params: paginationParams(params),
     });
   } catch (e) {
-    if ((e as { name?: string })?.name === "LedgerAPI4xx") {
+    // Some blockscout proxies (e.g. Cronos) do not expose txlistinternal and return
+    // a 4xx with message "NOTOK". Only swallow that specific case; re-throw auth
+    // failures, rate-limits, bad-param errors, etc.
+    const err = e as { name?: string; status?: number; message?: string };
+    if (
+      err?.name === "LedgerAPI4xx" &&
+      [404, 405, 400].includes(err.status ?? 0) &&
+      err.message === "NOTOK"
+    ) {
       return EMPTY_RESULT;
     }
     throw e;
