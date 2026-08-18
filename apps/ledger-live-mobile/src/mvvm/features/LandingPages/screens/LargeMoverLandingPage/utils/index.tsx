@@ -1,6 +1,5 @@
 import i18next from "i18next";
 import { KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
-import { findCryptoCurrencyByTicker } from "@domain/entity-currency-crypto";
 
 function getTimeAgoCode(date: Date): string {
   const now = new Date();
@@ -41,11 +40,4 @@ const rangeMap: Record<string, KeysPriceChange> = {
   year: KeysPriceChange.year,
 };
 
-function getCurrencyIdsFromTickers(tickers: string[]): string[] {
-  return tickers.flatMap(ticker => {
-    const currency = findCryptoCurrencyByTicker(ticker);
-    return currency?.id ? [currency.id] : [];
-  });
-}
-
-export { getTimeAgoCode, getColors, rangeMap, getCurrencyIdsFromTickers };
+export { getTimeAgoCode, getColors, rangeMap };
