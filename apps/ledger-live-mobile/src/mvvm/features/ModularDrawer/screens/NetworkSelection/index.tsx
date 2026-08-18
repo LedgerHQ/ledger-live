@@ -1,5 +1,6 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { CryptoOrTokenCurrency } from "@domain/entity-currency";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { NetworkRow, NetworkRowData } from "./components/NetworkRow";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import {
@@ -25,6 +26,7 @@ export type NetworkSelectionStepProps = {
   availableNetworks: CryptoOrTokenCurrency[];
   onNetworkSelected: (asset: CryptoOrTokenCurrency) => void;
   networksConfiguration?: EnhancedModularDrawerConfiguration["networks"];
+  selectableNetworkIds?: readonly string[];
 };
 
 const SAFE_MARGIN_BOTTOM = 48;
@@ -33,14 +35,29 @@ const NetworkSelection = ({
   availableNetworks,
   onNetworkSelected,
   networksConfiguration,
+  selectableNetworkIds,
 }: Readonly<NetworkSelectionStepProps>) => {
   const { t } = useTranslation();
   const flow = useSelector(modularDrawerFlowSelector);
   const source = useSelector(modularDrawerSourceSelector);
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
+  const selectableNetworkIdSet = useMemo(
+    () => (selectableNetworkIds === undefined ? undefined : new Set(selectableNetworkIds)),
+    [selectableNetworkIds],
+  );
+
+  const isSelectableNetwork = useCallback(
+    (networkId: string) => {
+      if (selectableNetworkIdSet === undefined) return true;
+
+      return selectableNetworkIdSet.has(networkId);
+    },
+    [selectableNetworkIdSet],
+  );
 
   const handleNetworkClick = useCallback(
     (networkId: string) => {
+      if (!isSelectableNetwork(networkId)) return;
       const originalNetwork = availableNetworks.find(n =>
         n.type === "CryptoCurrency" ? n.id === networkId : n.parentCurrencyId === networkId,
       );
@@ -50,7 +67,7 @@ const NetworkSelection = ({
           {
             flow,
             source,
-            network: originalNetwork.name,
+            network: getCryptoCurrencyById(networkId).name,
             page: MODULAR_DRAWER_PAGE_NAME.MODULAR_NETWORK_SELECTION,
           },
           {
@@ -69,6 +86,7 @@ const NetworkSelection = ({
       source,
       networksConfiguration,
       onNetworkSelected,
+      isSelectableNetwork,
     ],
   );
 
@@ -103,7 +121,11 @@ const NetworkSelection = ({
         data={formattedNetworks}
         keyExtractor={keyExtractor}
         renderItem={({ item }: { item: NetworkRowData }) => (
-          <NetworkRow {...item} onClick={() => handleNetworkClick(item.id)} />
+          <NetworkRow
+            {...item}
+            disabled={isSelectableNetwork(item.id) ? undefined : true}
+            onClick={() => handleNetworkClick(item.id)}
+          />
         )}
         contentContainerStyle={{
           paddingBottom: SAFE_MARGIN_BOTTOM,

@@ -117,7 +117,6 @@ export type DeviceConnectionResult = {
   connectedDevice: ConnectedDevice;
   /** Legacy device identifier, usable by existing `withDevice` / `DeviceAction` flows. */
   compatDeviceId: string;
-  compatDeviceModelId: DeviceModelId;
   compatDeviceName: string;
   compatDeviceWired: boolean;
 };

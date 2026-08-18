@@ -16,6 +16,7 @@ import { Close } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useTranslation } from "~/context/Locale";
 
 import { AddressDisclaimer } from "./AddressDisclaimer";
+import { RecipientContactRow } from "./RecipientContactRow";
 import { useSendHeaderViewModel } from "../hooks/useSendHeaderViewModel";
 import { useSendFlowData } from "../context/SendFlowContext";
 import { track, usePageNameFromRoute } from "~/analytics";
@@ -121,15 +122,23 @@ export function SendHeader({ headerRight }: SendHeaderProps) {
             />
           ) : (
             <>
-              <AddressInput
-                prefix={t("send.newSendFlow.to")}
-                value={viewModel.formattedAddress}
-                editable={false}
-                hideClearButton
-                placeholder={viewModel.recipientPlaceholder}
-                inputStyle={styles.addressValue}
-                suffix={<AddressDisclaimer />}
-              />
+              {viewModel.recipientContact ? (
+                <RecipientContactRow
+                  contact={viewModel.recipientContact}
+                  label={t("send.newSendFlow.to")}
+                  value={viewModel.formattedAddress}
+                />
+              ) : (
+                <AddressInput
+                  prefix={t("send.newSendFlow.to")}
+                  value={viewModel.formattedAddress}
+                  editable={false}
+                  hideClearButton
+                  placeholder={viewModel.recipientPlaceholder}
+                  inputStyle={styles.addressValue}
+                  suffix={<AddressDisclaimer />}
+                />
+              )}
               <Pressable
                 style={styles.editOverlay}
                 accessibilityRole="button"

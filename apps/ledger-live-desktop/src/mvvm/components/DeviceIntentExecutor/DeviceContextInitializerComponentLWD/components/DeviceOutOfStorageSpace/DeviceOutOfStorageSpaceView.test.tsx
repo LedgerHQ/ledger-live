@@ -20,7 +20,7 @@ describe("DeviceOutOfStorageSpaceView", () => {
     renderView();
 
     // THEN
-    expect(screen.getByText("Not enough device memory")).toBeVisible();
+    expect(screen.getByText("Uninstall some apps to free up Ledger device memory")).toBeVisible();
     expect(screen.getByText("Apps to manage: Ethereum, Bitcoin")).toBeVisible();
   });
 

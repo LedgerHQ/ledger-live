@@ -15,12 +15,17 @@ import { LegacySignerSolana, DmkSignerSol } from "@ledgerhq/live-signer-solana";
 import { DeviceManagementKit } from "@ledgerhq/device-management-kit";
 
 let _solanaLdmkFFEnabled: boolean = false;
+let _solanaTxcFFEnabled: boolean = true;
 
 // temporary solution to dynamically enable/disable the Solana DMK signer,
 // waiting for LIVE-20250 to be implemented
 // to be removed together with useFeature("ldmkSolanaSigner")
 export function setSolanaLdmkEnabled(enabled: boolean): void {
   _solanaLdmkFFEnabled = enabled;
+}
+
+export function setSolanaTxcEnabled(enabled: boolean): void {
+  _solanaTxcFFEnabled = enabled;
 }
 
 const canDMKSignerBeUsed = (
@@ -34,7 +39,9 @@ export function getSolanaSignerInstance(
   transport: Transport & Partial<{ dmk: DeviceManagementKit; sessionId: string }>,
 ): SolanaSigner {
   if (canDMKSignerBeUsed(transport)) {
-    return new DmkSignerSol(transport.dmk, transport.sessionId);
+    return new DmkSignerSol(transport.dmk, transport.sessionId, {
+      transactionChecks: !_solanaTxcFFEnabled,
+    });
   }
   return new LegacySignerSolana(transport);
 }

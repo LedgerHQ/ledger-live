@@ -21,40 +21,57 @@ import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craf
 import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
 import { FEE_INTENT_TYPES } from "../constants";
 import {
+  broadcast,
+  combine,
   craftTransaction,
   estimateFees,
   getAccountInfo,
   getBalance,
   lastBlock,
-  listOperations,
+  register,
   validateAddress,
 } from "../logic";
 import { buildFeeConfigurationForRootIntent, getTransactionType } from "../logic/utils";
-import type { AleoContext, AleoCoinConfig, AleoTransactionIntentData } from "../types";
+import type {
+  AleoContext,
+  AleoCoinConfig,
+  AleoRegistration,
+  AleoTransactionIntentData,
+} from "../types";
+
+type AleoCoinModuleApi = CoinModuleApi<AleoCoinConfig, MemoNotSupported, AleoTransactionIntentData>;
+
+function requireViewKey(context: AleoContext, action: string): string {
+  const { viewKey } = context;
+  if (typeof viewKey !== "string" || viewKey.length === 0) {
+    throw new Error(`aleo: a view key is required to ${action}`);
+  }
+  return viewKey;
+}
 
 // currencyId is captured here (it can't live on the Context). The logic functions are shared with
 // the classic bridge (config-based), so each method resolves config via context.config() and passes
 // it down — no context-first wrappers.
-export function createApi(
-  currencyId: string,
-): CoinModuleApi<AleoCoinConfig, MemoNotSupported, AleoTransactionIntentData> {
+export function createApi(_currencyId: string): AleoCoinModuleApi {
   return {
     async call() {
       throw new Error("call is not supported");
     },
-    async register() {
-      throw new Error("register is not supported");
+    broadcast: async (context: AleoContext, signedTransaction: string): Promise<string> => {
+      const config = await context.config();
+      return broadcast({
+        configOrCurrencyId: config,
+        signedTx: signedTransaction,
+      });
     },
-    broadcast: (_context: AleoContext, _signature: string): Promise<string> => {
-      throw new Error("broadcast is not supported");
-    },
-    combine: (
-      _context: AleoContext,
-      _transaction: string,
-      _signature: string[],
-      _options?: { pubkey?: string },
-    ): string => {
-      throw new Error("combine is not supported");
+    combine: async (
+      context: AleoContext,
+      transaction: string,
+      signatures: string[],
+    ): Promise<string> => {
+      const config = await context.config();
+      const viewKey = requireViewKey(context, "combine a transaction");
+      return combine({ config, transaction, signatures, viewKey });
     },
     craftTransaction: async (
       context: AleoContext,
@@ -73,7 +90,7 @@ export function createApi(
         invariant(!options?.customFees, "aleo: customFees is not supported for fee intents");
 
         if (isPrivateFeeIntent) {
-          invariant(context.viewKey, "aleo: viewKey is missing");
+          requireViewKey(context, "craft a private fee transaction");
         }
 
         // txIntent.amount -> base fee
@@ -88,7 +105,7 @@ export function createApi(
       }
 
       if (isPrivateIntent) {
-        invariant(context.viewKey, "aleo: viewKey is missing");
+        requireViewKey(context, "craft a private transaction");
       }
 
       const maxBaseFee = options?.customFees
@@ -151,16 +168,8 @@ export function createApi(
       const config = await context.config();
       return lastBlock(config);
     },
-    listOperations: async (context: AleoContext, address, options) => {
-      const config = await context.config();
-      const { operations, nextCursor } = await listOperations({
-        config,
-        currencyId,
-        address,
-        options,
-        mode: "coin-framework",
-      });
-      return { items: operations, next: nextCursor ?? undefined };
+    listOperations: (_context, _address, _options) => {
+      throw new Error("listOperations is not supported");
     },
     getBlock(_context, _height): Promise<Block> {
       throw new Error("getBlock is not supported");
@@ -191,5 +200,11 @@ export function createApi(
     validateAddress: (_context: AleoContext, address, parameters) =>
       validateAddress(address, parameters),
     craftTransactionData: (_context, intent) => craftTransactionData(intent),
+    // `address` is unused: enrollment is keyed by the view key, not the address.
+    register: async (context: AleoContext, _address: string): Promise<AleoRegistration> => {
+      const viewKey = requireViewKey(context, "register with the Provable scanner");
+      const config = await context.config();
+      return register(config, viewKey);
+    },
   };
 }

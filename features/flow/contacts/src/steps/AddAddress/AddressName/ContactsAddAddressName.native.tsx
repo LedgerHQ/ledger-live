@@ -26,7 +26,7 @@ export function ContactsAddAddressName({
   return (
     <BottomSheetView
       testID="contacts-add-address-name-screen"
-      style={{ bottom: bottomOffset, paddingBottom: 32 }}
+      style={{ bottom: 0, paddingBottom: 32 + bottomOffset }}
     >
       <BottomSheetHeader density="expanded" title={labels.title} />
       <Box style={{ flex: 1 }} lx={{ justifyContent: "space-between", gap: "s16" }}>

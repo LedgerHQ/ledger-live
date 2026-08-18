@@ -2,7 +2,10 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Linking, Platform } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import type { DeviceConnectionParams, DeviceConnectionResult } from "@ledgerhq/device-intent";
+import type {
+  DeviceConnectionParams,
+  DeviceConnectionResult,
+} from "@features/platform-device-intent";
 import { log } from "@ledgerhq/logs";
 import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import {
@@ -175,7 +178,9 @@ export function useDeviceConnectionComponentLWMViewModel({
   useEffect(() => {
     const subscription = connectDevice({
       knownDevices,
-      acceptedDeviceModelIds: deviceConnectionParams.acceptedDeviceModelIds,
+      acceptedDeviceModelIds: deviceConnectionParams.acceptedDeviceModelIds.map(
+        deviceModelId => dmkToLedgerDeviceIdMap[deviceModelId],
+      ),
       dmk,
       onConnected: wrappedOnConnected,
     }).subscribe({ next: setState });

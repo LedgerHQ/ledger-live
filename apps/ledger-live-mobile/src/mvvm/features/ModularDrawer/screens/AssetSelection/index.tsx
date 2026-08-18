@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from "react";
+import React, { useCallback, useMemo, useRef } from "react";
 import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { AssetRow, AssetRowData } from "./components/AssetRow";
 import { MarketPriceIndicator } from "../../components/MarketPriceIndicator";
@@ -48,6 +48,7 @@ export type AssetSelectionStepProps = {
   loadNext?: () => void;
   assetsSorted?: AssetData[];
   uiUseCase?: string;
+  selectableNetworkIds?: readonly string[];
 };
 
 const SAFE_MARGIN_BOTTOM = 48;
@@ -63,6 +64,7 @@ const AssetSelection = ({
   loadNext,
   assetsSorted,
   uiUseCase,
+  selectableNetworkIds,
 }: Readonly<AssetSelectionStepProps>) => {
   const { t } = useTranslation();
   const { isInternetReachable } = useNetInfo();
@@ -92,6 +94,10 @@ const AssetSelection = ({
   };
 
   const assetsMap = groupCurrenciesByAsset(assetsSorted || []);
+  const selectableNetworkIdSet = useMemo(
+    () => (selectableNetworkIds === undefined ? undefined : new Set(selectableNetworkIds)),
+    [selectableNetworkIds],
+  );
 
   const formattedAssets = useAssetConfiguration(availableAssets ?? [], {
     ApyIndicator,
@@ -101,10 +107,20 @@ const AssetSelection = ({
     balanceItem,
     assetsMap,
     ...assetsConfiguration,
+  }).map(asset => {
+    if (selectableNetworkIdSet === undefined) return asset;
+
+    const isSelectable = assetsMap.get(asset.id)?.currencies.some(network => {
+      const networkId = network.type === "CryptoCurrency" ? network.id : network.parentCurrencyId;
+      return selectableNetworkIdSet.has(networkId);
+    });
+
+    return { ...asset, disabled: !isSelectable };
   });
 
   const handleAssetClick = useCallback(
     (asset: AssetRowData) => {
+      if (asset.disabled) return;
       const originalAsset = availableAssets.find(a => a.id === asset.id);
       if (originalAsset) {
         collapse();

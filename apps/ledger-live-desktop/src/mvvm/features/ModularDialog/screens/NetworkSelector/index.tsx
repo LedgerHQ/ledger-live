@@ -10,6 +10,7 @@ export type NetworkSelectorProps = {
   networksConfiguration: EnhancedModularDrawerConfiguration["networks"];
   onNetworkSelected: (network: CryptoOrTokenCurrency) => void;
   selectedAssetId?: string;
+  selectableNetworkIds?: readonly string[];
 };
 
 export function NetworkSelector({
@@ -17,6 +18,7 @@ export function NetworkSelector({
   onNetworkSelected,
   networksConfiguration,
   selectedAssetId,
+  selectableNetworkIds,
 }: Readonly<NetworkSelectorProps>) {
   return (
     <>
@@ -30,6 +32,7 @@ export function NetworkSelector({
         onNetworkSelected={onNetworkSelected}
         networksConfig={networksConfiguration}
         selectedAssetId={selectedAssetId}
+        selectableNetworkIds={selectableNetworkIds}
       />
     </>
   );

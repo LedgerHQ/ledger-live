@@ -1,6 +1,5 @@
 import type { BalanceOptions } from "@ledgerhq/coin-module-framework/api/types";
 import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
-import { getMockedCoinFrameworkOperation } from "../__tests__/fixtures/operation.fixture";
 import {
   createMockTransactionIntent,
   mockTxIntentFeePrivate,
@@ -9,12 +8,14 @@ import {
   mockTxIntentTransferPublic,
 } from "../__tests__/fixtures/transaction.fixture";
 import {
+  broadcast,
+  combine,
   craftTransaction,
   estimateFees,
   getAccountInfo,
   getBalance,
   lastBlock,
-  listOperations,
+  register,
 } from "../logic";
 import { buildFeeConfigurationForRootIntent, getTransactionType } from "../logic/utils";
 import type { AleoContext } from "../types";
@@ -30,35 +31,33 @@ describe("createApi", () => {
     config: async () => mockConfig,
     logger: () => {},
   };
-  const mockOperation = getMockedCoinFrameworkOperation();
+  const mockedBroadcast = jest.mocked(broadcast);
+  const mockedCombine = jest.mocked(combine);
   const mockedCraftTransaction = jest.mocked(craftTransaction);
   const mockedEstimateFees = jest.mocked(estimateFees);
   const mockedGetAccountInfo = jest.mocked(getAccountInfo);
   const mockedGetBalance = jest.mocked(getBalance);
   const mockedLastBlock = jest.mocked(lastBlock);
-  const mockedListOperations = jest.mocked(listOperations);
+  const mockedRegister = jest.mocked(register);
   const mockedGetTransactionType = jest.mocked(getTransactionType);
   const mockedBuildFeeConfigurationForRootIntent = jest.mocked(buildFeeConfigurationForRootIntent);
 
   beforeEach(() => {
     jest.clearAllMocks();
 
+    mockedBroadcast.mockResolvedValue("tx-hash");
+    mockedCombine.mockResolvedValue("combined-hex");
     mockedCraftTransaction.mockResolvedValue({ transaction: "crafted_tx" });
     mockedEstimateFees.mockReturnValue({ value: BigInt(1234) });
     mockedGetBalance.mockResolvedValue([{ value: BigInt(10), asset: { type: "native" } }]);
     mockedLastBlock.mockResolvedValue({ hash: "blockHash", height: 42, time: new Date() });
-    mockedListOperations.mockResolvedValue({
-      operations: [mockOperation],
-      tokenOperations: [],
-      calTokens: new Map(),
-      nextCursor: "next-cursor",
-    });
     mockedGetTransactionType.mockReturnValue("transfer_public");
     mockedBuildFeeConfigurationForRootIntent.mockReturnValue({
       function_name: "fee_public",
       max_base_fee: "1234",
       max_priority_fee: "0",
     });
+    mockedRegister.mockResolvedValue({ type: "aleo", provableId: "scan-uuid-123" });
   });
 
   it("should return an API object with coin module api methods", () => {
@@ -73,6 +72,7 @@ describe("createApi", () => {
     expect(api.listOperations).toBeInstanceOf(Function);
     expect(api.craftTransactionData).toBeInstanceOf(Function);
     expect(api.getAccountInfo).toBeInstanceOf(Function);
+    expect(api.register).toBeInstanceOf(Function);
   });
 
   describe("getAccountInfo", () => {
@@ -113,16 +113,39 @@ describe("createApi", () => {
   });
 
   describe("broadcast", () => {
-    it("should throw unsupported error", () => {
-      expect(() => api.broadcast(context, "test-signature")).toThrow("broadcast is not supported");
+    it("should resolve config from the context and delegate to logic broadcast", async () => {
+      const result = await api.broadcast(context, "signed-tx-hex");
+
+      expect(mockedBroadcast).toHaveBeenCalledTimes(1);
+      expect(mockedBroadcast).toHaveBeenCalledWith({
+        configOrCurrencyId: mockConfig,
+        signedTx: "signed-tx-hex",
+      });
+      expect(result).toBe("tx-hash");
     });
   });
 
   describe("combine", () => {
-    it("should throw unsupported error", () => {
-      expect(() =>
-        api.combine(context, "transaction", ["signature"], { pubkey: "publicKey" }),
-      ).toThrow("combine is not supported");
+    const contextWithViewKey: AleoContext = { ...context, viewKey: "AViewKey1test" };
+
+    it("resolves config and view key from the context and delegates to logic combine", async () => {
+      const result = await api.combine(contextWithViewKey, "crafted-tx", ["root-sig"]);
+
+      expect(mockedCombine).toHaveBeenCalledTimes(1);
+      expect(mockedCombine).toHaveBeenCalledWith({
+        config: mockConfig,
+        transaction: "crafted-tx",
+        signatures: ["root-sig"],
+        viewKey: "AViewKey1test",
+      });
+      expect(result).toBe("combined-hex");
+    });
+
+    it("throws error and skips combine when the view key is absent", async () => {
+      await expect(api.combine(context, "crafted-tx", ["root-sig"])).rejects.toThrow(
+        "aleo: a view key is required to combine a transaction",
+      );
+      expect(mockedCombine).not.toHaveBeenCalled();
     });
   });
 
@@ -254,43 +277,37 @@ describe("createApi", () => {
       ["undefined", undefined],
       ["null", null],
       ["empty string", ""],
-    ])(
-      "throws AleoIncompletePrivacyContextError for a private root intent when viewKey is %s",
-      async (_label, viewKey) => {
-        const privateContext = {
-          ...context,
-          ...(viewKey !== undefined && { viewKey }),
-        } as AleoContext;
+    ])("throws error for a private root intent when viewKey is %s", async (_label, viewKey) => {
+      const privateContext = {
+        ...context,
+        ...(viewKey !== undefined && { viewKey }),
+      } as AleoContext;
 
-        await expect(
-          api.craftTransaction(privateContext, mockTxIntentTransferPrivate),
-        ).rejects.toThrow("aleo: viewKey is missing");
+      await expect(
+        api.craftTransaction(privateContext, mockTxIntentTransferPrivate),
+      ).rejects.toThrow("aleo: a view key is required to craft a private transaction");
 
-        expect(mockedCraftTransaction).not.toHaveBeenCalled();
-        expect(mockedBuildFeeConfigurationForRootIntent).not.toHaveBeenCalled();
-      },
-    );
+      expect(mockedCraftTransaction).not.toHaveBeenCalled();
+      expect(mockedBuildFeeConfigurationForRootIntent).not.toHaveBeenCalled();
+    });
 
     it.each([
       ["undefined", undefined],
       ["null", null],
       ["empty string", ""],
-    ])(
-      "throws AleoIncompletePrivacyContextError for a fee_private intent when viewKey is %s",
-      async (_label, viewKey) => {
-        const privateFeeContext = {
-          ...context,
-          config: async () => ({ ...mockConfig, isFeeSponsored: false }),
-          ...(viewKey !== undefined && { viewKey }),
-        } as AleoContext;
+    ])("throws error for a fee_private intent when viewKey is %s", async (_label, viewKey) => {
+      const privateFeeContext = {
+        ...context,
+        config: async () => ({ ...mockConfig, isFeeSponsored: false }),
+        ...(viewKey !== undefined && { viewKey }),
+      } as AleoContext;
 
-        await expect(
-          api.craftTransaction(privateFeeContext, mockTxIntentFeePrivate),
-        ).rejects.toThrow("aleo: viewKey is missing");
+      await expect(api.craftTransaction(privateFeeContext, mockTxIntentFeePrivate)).rejects.toThrow(
+        "aleo: a view key is required to craft a private fee transaction",
+      );
 
-        expect(mockedCraftTransaction).not.toHaveBeenCalled();
-      },
-    );
+      expect(mockedCraftTransaction).not.toHaveBeenCalled();
+    });
   });
 
   describe("craftRawTransaction", () => {
@@ -384,31 +401,12 @@ describe("createApi", () => {
   });
 
   describe("listOperations", () => {
-    it("should call listOperations and return operations with proper structure", async () => {
-      const options = { minHeight: 10, limit: 5 };
-      const result = await api.listOperations(context, "aleo1test", options);
+    it("should throw unsupported error", () => {
+      const api = createApi("aleo");
 
-      expect(mockedListOperations).toHaveBeenCalledTimes(1);
-      expect(mockedListOperations).toHaveBeenCalledWith({
-        config: mockConfig,
-        currencyId: "aleo",
-        address: "aleo1test",
-        options,
-        mode: "coin-framework",
-      });
-      expect(result).toEqual({ items: [mockOperation], next: "next-cursor" });
-    });
-
-    it("should return undefined next when listOperations has no next cursor", async () => {
-      mockedListOperations.mockResolvedValueOnce({
-        operations: [mockOperation],
-        tokenOperations: [],
-        calTokens: new Map(),
-        nextCursor: null,
-      });
-      const result = await api.listOperations(context, "aleo1test", { minHeight: 1 });
-
-      expect(result).toEqual({ items: [mockOperation], next: undefined });
+      expect(() => api.listOperations(context, "aleo1test", { minHeight: 0 })).toThrow(
+        "listOperations is not supported",
+      );
     });
   });
 
@@ -423,10 +421,32 @@ describe("createApi", () => {
   });
 
   describe("register", () => {
-    it("should throw unsupported error", async () => {
-      const api = createApi("aleo");
+    it("reads the view key off the context and delegates to logic register, returning the handle", async () => {
+      const enrolledContext: AleoContext = { ...context, viewKey: "AViewKey1mockviewkey" };
 
-      await expect(api.register(context, "aleo1test")).rejects.toThrow("register is not supported");
+      const result = await api.register(enrolledContext, "aleo1test");
+
+      expect(mockedRegister).toHaveBeenCalledTimes(1);
+      expect(mockedRegister).toHaveBeenCalledWith(mockConfig, "AViewKey1mockviewkey");
+      expect(result).toEqual({ type: "aleo", provableId: "scan-uuid-123" });
+    });
+
+    it("rejects before any network call when the context carries no view key", async () => {
+      await expect(api.register(context, "aleo1test")).rejects.toThrow(/view key is required/);
+      expect(mockedRegister).not.toHaveBeenCalled();
+    });
+
+    it("rejects before any network call when the view key is empty", async () => {
+      const emptyContext: AleoContext = { ...context, viewKey: "" };
+
+      await expect(api.register(emptyContext, "aleo1test")).rejects.toThrow(/view key is required/);
+      expect(mockedRegister).not.toHaveBeenCalled();
+    });
+
+    it("keeps the raw view key out of the rejection message", async () => {
+      await expect(api.register(context, "aleo1test")).rejects.toThrow(
+        expect.objectContaining({ message: expect.not.stringContaining("AViewKey") }),
+      );
     });
   });
 });

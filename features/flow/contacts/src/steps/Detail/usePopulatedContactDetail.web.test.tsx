@@ -5,27 +5,11 @@ import { Provider } from "react-redux";
 import { ContactIdSchema, contactsSlice } from "@domain/entity-contact";
 import {
   mockContact,
+  mockContactAddress,
   mockContactWithAddress,
-  mockContactWithMultipleAddresses,
   mockMeContact,
 } from "@domain/entity-contact/schema.mock";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import type { ContactAddressCurrencyPort } from "./model/ports";
 import { usePopulatedContactDetail } from "./usePopulatedContactDetail";
-
-const currencyPort: ContactAddressCurrencyPort = {
-  resolveNetworkId: currencyId => {
-    if (currencyId === getCryptoCurrencyById("ethereum").id) {
-      return getCryptoCurrencyById("ethereum").id;
-    }
-
-    if (currencyId === getCryptoCurrencyById("polygon").id) {
-      return getCryptoCurrencyById("polygon").id;
-    }
-
-    return undefined;
-  },
-};
 
 function makeWrapper(contacts: ReturnType<typeof contactsSlice.getInitialState>["contacts"]) {
   const store = configureStore({
@@ -42,7 +26,7 @@ describe("usePopulatedContactDetail", () => {
   it("should return populated detail state when the contact has addresses", () => {
     const contact = mockContactWithAddress();
     const Wrapper = makeWrapper([mockMeContact(), contact]);
-    const { result } = renderHook(() => usePopulatedContactDetail(contact.id, currencyPort), {
+    const { result } = renderHook(() => usePopulatedContactDetail(contact.id), {
       wrapper: Wrapper,
     });
 
@@ -56,7 +40,7 @@ describe("usePopulatedContactDetail", () => {
   it("should return undefined when the contact has no addresses", () => {
     const contact = mockContact();
     const Wrapper = makeWrapper([mockMeContact(), contact]);
-    const { result } = renderHook(() => usePopulatedContactDetail(contact.id, currencyPort), {
+    const { result } = renderHook(() => usePopulatedContactDetail(contact.id), {
       wrapper: Wrapper,
     });
 
@@ -66,22 +50,43 @@ describe("usePopulatedContactDetail", () => {
   it("should return undefined when the contact does not exist", () => {
     const Wrapper = makeWrapper([mockMeContact()]);
     const { result } = renderHook(
-      () => usePopulatedContactDetail(ContactIdSchema.parse("contact-missing"), currencyPort),
+      () => usePopulatedContactDetail(ContactIdSchema.parse("contact-missing")),
       { wrapper: Wrapper },
     );
 
     expect(result.current).toBeUndefined();
   });
 
-  it("should expose address groups ordered by network", () => {
-    const contact = mockContactWithMultipleAddresses();
+  it("should group token addresses under their parent network", () => {
+    const contact = mockContact({
+      addresses: [
+        mockContactAddress({
+          id: "address-polygon",
+          currencyId: "polygon",
+          label: "Polygon",
+        }),
+        mockContactAddress({
+          id: "address-usdc",
+          currencyId: "ethereum/erc20/usd_coin",
+          label: "USDC",
+        }),
+        mockContactAddress(),
+      ],
+    });
     const Wrapper = makeWrapper([mockMeContact(), contact]);
-    const { result } = renderHook(() => usePopulatedContactDetail(contact.id, currencyPort), {
+    const { result } = renderHook(() => usePopulatedContactDetail(contact.id), {
       wrapper: Wrapper,
     });
 
-    expect(
-      result.current?.addressGroups.flatMap(group => group.rows.map(row => row.addressId)),
-    ).toEqual(["address-ethereum", "address-polygon"]);
+    expect(result.current?.addressGroups).toMatchObject([
+      {
+        networkId: "ethereum",
+        rows: [{ addressId: "address-ethereum" }, { addressId: "address-usdc" }],
+      },
+      {
+        networkId: "polygon",
+        rows: [{ addressId: "address-polygon" }],
+      },
+    ]);
   });
 });

@@ -30,6 +30,7 @@ const transactionsAmountInvalid = [
     transaction: new Transaction(Account.XRP_1, Account.XRP_3, "0.1", undefined, "noTag"),
     expectedErrorMessage: "Recipient address is inactive. Send at least 1 XRP to activate it",
     xrayTicket: "B2CQA-2571",
+    teamOwner: Team.BST,
   },
   {
     transaction: new Transaction(Account.DOT_1, Account.DOT_3, "0.5"),
@@ -45,6 +46,7 @@ const transactionsAmountInvalid = [
     transaction: new Transaction(Account.HEDERA_1, Account.HEDERA_2, "100000", undefined, "noTag"),
     expectedErrorMessage: "Sorry, insufficient funds",
     xrayTicket: "B2CQA-4287",
+    teamOwner: Team.BST,
   },
 ];
 
@@ -72,6 +74,7 @@ const transactionsAddressInvalid = [
     address: undefined,
     expectedErrorMessage: "Recipient address is the same as the sender address",
     xrayTicket: "B2CQA-2712",
+    teamOwner: Team.BST,
   },
   {
     transaction: new Transaction(Account.ATOM_1, Account.ATOM_1, "0.00001"),
@@ -83,6 +86,7 @@ const transactionsAddressInvalid = [
     transaction: new Transaction(Account.HEDERA_1, Account.HEDERA_1, "0.00001", undefined, "noTag"),
     expectedErrorMessage: "Recipient address is the same as the sender address",
     xrayTicket: "B2CQA-4282",
+    teamOwner: Team.BST,
   },
 ];
 
@@ -110,12 +114,14 @@ const transactionAddressValid = [
     expectedWarningMessage: null,
     testName: "with tag",
     xrayTicket: "B2CQA-2718",
+    teamOwner: Team.BST,
   },
   {
     transaction: new Transaction(Account.XRP_1, Account.XRP_2, "2"),
     expectedWarningMessage: null,
     testName: "without tag",
     xrayTicket: "B2CQA-2719",
+    teamOwner: Team.BST,
   },
   {
     transaction: new Transaction(Account.ATOM_1, Account.ATOM_2, "0.00001", undefined, "123456"),
@@ -192,6 +198,7 @@ const transactionE2E = [
   {
     transaction: new Transaction(Account.ALGO_1, Account.ALGO_2, "0.001"),
     xrayTicket: "B2CQA-2810",
+    teamOwner: Team.BST,
   },
   {
     transaction: new Transaction(Account.SOL_1, Account.SOL_2, "0.000001", undefined, "noTag"),
@@ -213,14 +220,17 @@ const transactionE2E = [
   {
     transaction: new Transaction(Account.ADA_1, Account.ADA_2, "1", undefined, "noTag"),
     xrayTicket: "B2CQA-2815",
+    teamOwner: Team.BST,
   },
   {
     transaction: new Transaction(Account.XRP_1, Account.XRP_2, "0.0001", undefined, "noTag"),
     xrayTicket: "B2CQA-2816",
+    teamOwner: Team.BST,
   },
   {
     transaction: new Transaction(Account.APTOS_1, Account.APTOS_2, "0.0001"),
     xrayTicket: "B2CQA-2920",
+    teamOwner: Team.BST,
   },
   {
     transaction: new Transaction(
@@ -238,10 +248,12 @@ const transactionE2E = [
   {
     transaction: new Transaction(Account.KASPA_1, Account.KASPA_2, "0.2"),
     xrayTicket: "B2CQA-3840",
+    teamOwner: Team.BST,
   },
   {
     transaction: new Transaction(Account.SUI_1, Account.SUI_2, "0.0001", undefined),
     xrayTicket: "B2CQA-3802",
+    teamOwner: Team.BST,
   },
   {
     transaction: new Transaction(Account.BASE_1, Account.BASE_2, "0.000001"),
@@ -251,24 +263,29 @@ const transactionE2E = [
   {
     transaction: new Transaction(Account.VET_1, Account.VET_2, "0.1"),
     xrayTicket: "B2CQA-4247",
+    teamOwner: Team.BST,
   },
   {
     transaction: new Transaction(Account.ZEC_1, Account.ZEC_2, "0.001"),
     xrayTicket: "B2CQA-4299",
     disableBroadcast: true,
+    teamOwner: Team.BST,
   },
   {
     transaction: new Transaction(Account.HEDERA_1, Account.HEDERA_2, "0.00001", undefined, "noTag"),
     xrayTicket: "B2CQA-4284",
+    teamOwner: Team.BST,
   },
   {
     transaction: new Transaction(Account.ICP_1, Account.ICP_2, "0.001"),
     xrayTicket: "B2CQA-4742",
+    teamOwner: Team.BST,
   },
   {
     transaction: new Transaction(Account.ALEO_1, Account.ALEO_2, "0.000001"),
     xrayTicket: "B2CQA-6267",
     extraCliCommands: [shareViewKeyCommand(Account.ALEO_1)],
+    teamOwner: Team.BST,
   },
 ];
 
@@ -276,7 +293,7 @@ test.describe("Send", () => {
   for (const transaction of transactionE2E) {
     test.describe("Send from 1 account to another", () => {
       test.use({
-        teamOwner: Team.COIN_INTEGRATION,
+        teamOwner: (transaction as { teamOwner?: Team }).teamOwner ?? Team.COIN_INTEGRATION,
         userdata: "skip-onboarding-with-last-seen-device",
         speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
         cliCommands: [
@@ -333,7 +350,7 @@ test.describe("Send", () => {
   for (const transaction of transactionsAmountInvalid) {
     test.describe("Send - invalid amount input", () => {
       test.use({
-        teamOwner: Team.COIN_INTEGRATION,
+        teamOwner: (transaction as { teamOwner?: Team }).teamOwner ?? Team.COIN_INTEGRATION,
         userdata: "skip-onboarding-with-last-seen-device",
         speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
         cliCommands: [liveDataWithRecipientAddressCommand(transaction.transaction)],
@@ -425,7 +442,7 @@ test.describe("Send", () => {
   for (const transaction of transactionAddressValid) {
     test.describe("Send - valid address input", () => {
       test.use({
-        teamOwner: Team.COIN_INTEGRATION,
+        teamOwner: (transaction as { teamOwner?: Team }).teamOwner ?? Team.COIN_INTEGRATION,
         userdata: "skip-onboarding-with-last-seen-device",
         speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
         cliCommands: [
@@ -477,7 +494,7 @@ test.describe("Send", () => {
   for (const transaction of transactionsAddressInvalid) {
     test.describe("Send - invalid address input", () => {
       test.use({
-        teamOwner: Team.COIN_INTEGRATION,
+        teamOwner: (transaction as { teamOwner?: Team }).teamOwner ?? Team.COIN_INTEGRATION,
         userdata: "skip-onboarding-with-last-seen-device",
         speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
         cliCommands: [
@@ -602,7 +619,7 @@ test.describe("Send", () => {
     );
 
     test.use({
-      teamOwner: Team.COIN_INTEGRATION,
+      teamOwner: Team.BST,
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: ccdTx.accountToDebit.currency.speculosApp,
       cliCommands: [

@@ -38,4 +38,5 @@ export type ContactAddressDetailDialogNativeProps = Omit<
     labels: ContactAddressDetailDialogNativeLabels;
     bottomInset?: number;
     onCopyAddress?: (address: string) => void;
+    onShareAddress?: (address: string) => void;
   }>;

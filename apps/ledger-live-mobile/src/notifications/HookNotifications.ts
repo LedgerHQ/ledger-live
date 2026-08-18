@@ -51,8 +51,10 @@ const HookNotifications = () => {
   }, [syncBrazeIdentity]);
 
   useEffect(() => {
-    updateUserPreferences(notifications);
-  }, [notifications]);
+    updateUserPreferences(notifications, isTrackedUser, {
+      brazeOptOutIdentityCleanup: brazeOptOutIdentityCleanup?.enabled ?? false,
+    });
+  }, [notifications, isTrackedUser, brazeOptOutIdentityCleanup?.enabled]);
 
   return null;
 };

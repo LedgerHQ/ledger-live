@@ -6,7 +6,7 @@ import {
   ListItemLeading,
   ListItemTitle,
 } from "@ledgerhq/lumen-ui-react";
-import { getContactAvatarColorClass } from "@features/platform-contacts";
+import { ContactAvatar } from "@features/platform-contacts";
 import type { ContactsListItem } from "../../../types";
 
 type ContactsSavedListItemProps = Readonly<{
@@ -20,21 +20,19 @@ export function ContactsSavedListItem({
   formatAddressCount,
   onOpen,
 }: ContactsSavedListItemProps): React.ReactNode {
-  const avatarColorClass = getContactAvatarColorClass(contact.contactId);
-
   return (
     <ListItem
       onClick={() => onOpen(contact.contactId)}
       data-testid={`contacts-saved-row-${contact.contactId}`}
     >
       <ListItemLeading>
-        <div
-          className={`body-1-semi-bold flex size-48 shrink-0 items-center justify-center rounded-full ${avatarColorClass}`}
-          aria-hidden
-          data-testid={`contacts-saved-avatar-${contact.contactId}`}
-        >
-          {contact.initial}
-        </div>
+        <ContactAvatar
+          contactId={contact.contactId}
+          name={contact.name}
+          size="md"
+          ariaHidden
+          testId={`contacts-saved-avatar-${contact.contactId}`}
+        />
         <ListItemContent>
           <ListItemTitle>{contact.name}</ListItemTitle>
           <ListItemDescription>{formatAddressCount(contact.addressCount)}</ListItemDescription>

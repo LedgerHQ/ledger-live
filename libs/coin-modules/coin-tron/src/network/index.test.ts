@@ -13,6 +13,8 @@ import {
   createTronTransaction,
   defaultFetchParams,
   fetchTronAccount,
+  fetchTronAccountOrEmpty,
+  fetchTronAccountOrFail,
   fetchTronAccountTxs,
   fetchTronAccountTxsPage,
   fetchTronContract,
@@ -97,7 +99,7 @@ describe("post / fetch error handling", () => {
     await expect(post(mockConfig, "/wallet/anything", {})).rejects.toThrow("raw-string");
   });
 
-  it("propagates GET errors from fetch", async () => {
+  it("returns [] on GET errors from fetch", async () => {
     mockedNetwork.mockResolvedValueOnce(mockResponse({ Error: { message: "get-boom" } }));
     await expect(fetchTronAccount(mockConfig, senderBase58)).resolves.toEqual([]);
   });
@@ -457,6 +459,29 @@ describe("fetchTronAccount", () => {
   it("returns [] on network error", async () => {
     mockedNetwork.mockRejectedValueOnce(new Error("network"));
     await expect(fetchTronAccount(mockConfig, senderBase58)).resolves.toEqual([]);
+  });
+
+  it("fetchTronAccountOrEmpty matches fetchTronAccount behavior", async () => {
+    mockedNetwork.mockRejectedValueOnce(new Error("network"));
+    await expect(fetchTronAccountOrEmpty(mockConfig, senderBase58)).resolves.toEqual([]);
+  });
+});
+
+describe("fetchTronAccountOrFail", () => {
+  it("returns parsed data on success", async () => {
+    mockedNetwork.mockResolvedValueOnce(mockResponse({ data: [{ address: senderHex }] }));
+    const result = await fetchTronAccountOrFail(mockConfig, senderBase58);
+    expect(result).toEqual([{ address: senderHex }]);
+  });
+
+  it("propagates GET errors from fetch", async () => {
+    mockedNetwork.mockResolvedValueOnce(mockResponse({ Error: { message: "get-boom" } }));
+    await expect(fetchTronAccountOrFail(mockConfig, senderBase58)).rejects.toThrow("get-boom");
+  });
+
+  it("propagates network errors", async () => {
+    mockedNetwork.mockRejectedValueOnce(new Error("network"));
+    await expect(fetchTronAccountOrFail(mockConfig, senderBase58)).rejects.toThrow("network");
   });
 });
 

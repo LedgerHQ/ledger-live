@@ -1,10 +1,19 @@
-import axios from "axios";
 import { JsonRpcProvider, Signature, Transaction, isError } from "ethers";
 import { filter, firstValueFrom } from "rxjs";
 import { getEnv } from "@shared/env";
+import { DeviceModelId } from "@ledgerhq/devices";
 import { DeviceManagementKitTransportSpeculos } from "@ledgerhq/live-dmk-speculos";
 import { DmkSignerEth } from "@ledgerhq/live-signer-evm";
 import type { EvmSignature } from "@ledgerhq/live-signer-evm";
+import {
+  acceptEnableTransactionCheck,
+  fetchCurrentScreenTexts,
+  pressUntilTextFound,
+} from "../speculos";
+import { getSpeculosModel, isTouchDevice } from "../speculosAppVersion";
+import { longPressAndRelease } from "../deviceInteraction/TouchDeviceSimulator";
+import { withDeviceController } from "../deviceInteraction/DeviceController";
+import { DeviceLabels } from "../enum/DeviceLabels";
 import type { EvmSignablePayload } from "./types";
 
 export type SpeculosDmkTransport = Awaited<
@@ -17,50 +26,55 @@ function prefix0x(hex: string): string {
 
 const sleep = (ms: number): Promise<void> => new Promise(r => setTimeout(r, ms));
 
-/** Screen labels that mean "confirm & sign" on the Ethereum app review carousel. */
-const CONFIRM = /sign transaction|accept and send|hold to sign/i;
-/** The idle dashboard — we must not press buttons here (it opens Settings/Quit). */
+/** The idle dashboard — we must not navigate here (it opens Settings/Quit). */
 const READY = /is ready/i;
+const REVIEW_POLL_ATTEMPTS = 40;
+const REVIEW_POLL_INTERVAL_MS = 300;
 
 /**
- * Actively approves the transaction on Speculos: waits for the review to
- * appear, presses right until the "Sign transaction" screen, then presses
- * both. This is the button-device flow (default nanoSP); set
- * `BORROW_MANUAL_APPROVE=1` to approve by hand via VNC instead.
+ * The sign APDU is sent concurrently with the approval, so the device can still
+ * be showing the dashboard when we start driving it.
+ */
+async function waitForDeviceReview(apiPort: number): Promise<void> {
+  for (let i = 0; i < REVIEW_POLL_ATTEMPTS; i++) {
+    const texts = await fetchCurrentScreenTexts(apiPort).catch(() => "");
+    if (texts.trim() && !READY.test(texts)) return;
+    await sleep(REVIEW_POLL_INTERVAL_MS);
+  }
+}
+
+const approveOnTouchDevice = async (): Promise<void> => {
+  await pressUntilTextFound(DeviceLabels.HOLD_TO_SIGN);
+  await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
+};
+
+const approveOnButtonDevice = withDeviceController(
+  ({ getButtonsController }) =>
+    async (confirmLabel: string): Promise<void> => {
+      await pressUntilTextFound(confirmLabel);
+      await getButtonsController().both();
+    },
+);
+
+/**
+ * Actively approves the transaction on Speculos: clears the Transaction Check
+ * opt-in the Ethereum app shows before the first review, then walks the review
+ * carousel to the confirm screen and signs — swipe + hold-to-sign on touch
+ * devices, right + both on button devices. Set `BORROW_MANUAL_APPROVE=1` to
+ * approve by hand via VNC instead.
  *
- * We drive the Speculos REST API directly (rather than the automation rule)
+ * We drive the device ourselves (rather than the Speculos automation rule)
  * because a blind rule can walk past "Sign transaction" onto "Reject".
  */
 async function approveOnDevice(apiPort: number): Promise<void> {
   if (process.env.BORROW_MANUAL_APPROVE) return;
-  const base = `http://localhost:${apiPort}`;
-  const screen = async (): Promise<string> => {
-    const { data } = await axios.get(`${base}/events?currentscreenonly=true`);
-    const events: { text: string }[] = data.events ?? [];
-    return events.map(e => e.text).join(" | ");
-  };
-  const pressRight = (): Promise<unknown> =>
-    axios.post(`${base}/button/right`, { action: "press-and-release" });
-  const pressBoth = (): Promise<unknown> =>
-    axios.post(`${base}/button/both`, { action: "press-and-release" });
-
-  // Wait for the review to come up (don't press while on the dashboard).
-  for (let i = 0; i < 40; i++) {
-    const s = await screen().catch(() => "");
-    if (s.trim() && !READY.test(s)) break;
-    await sleep(300);
+  await acceptEnableTransactionCheck();
+  await waitForDeviceReview(apiPort);
+  if (isTouchDevice()) return approveOnTouchDevice();
+  if (getSpeculosModel() === DeviceModelId.nanoS) {
+    return approveOnButtonDevice(DeviceLabels.ACCEPT_AND_SEND);
   }
-  // Walk the review carousel to the confirm screen, then sign.
-  for (let i = 0; i < 24; i++) {
-    const s = await screen().catch(() => "");
-    if (CONFIRM.test(s)) {
-      await pressBoth();
-      return;
-    }
-    await pressRight().catch(() => {});
-    await sleep(350);
-  }
-  throw new Error("[borrow] could not find the 'Sign transaction' screen to approve");
+  return approveOnButtonDevice(DeviceLabels.SIGN_TRANSACTION);
 }
 
 export interface ExecutorConfig {
@@ -115,8 +129,9 @@ export class EvmSpeculosExecutor {
           ),
         ),
     );
-    await approveOnDevice(this.config.speculosApiPort);
-    const { value } = await signed;
+    // Promise.all so a signer failure surfaces as a rejection here instead of an
+    // unhandled one while the approval is still driving the device.
+    const [{ value }] = await Promise.all([signed, approveOnDevice(this.config.speculosApiPort)]);
     return value;
   }
 

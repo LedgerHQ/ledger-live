@@ -33,7 +33,7 @@ describe("RetryableDeviceLockedState", () => {
     renderState();
 
     // THEN
-    expect(screen.getByText("Device is locked")).toBeVisible();
+    expect(screen.getByText("Unlock your Ledger device and then select Retry below")).toBeVisible();
   });
 
   it("GIVEN the retryable device locked state WHEN clicking Retry THEN it calls retry", async () => {

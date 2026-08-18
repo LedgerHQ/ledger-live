@@ -1,34 +1,10 @@
 import { TokenAccount } from "@ledgerhq/types-live";
-import {
-  StacksTransaction,
-  AnchorMode,
-  PostConditionType,
-  FungibleConditionCode,
-  StacksMessageType,
-} from "@stacks/transactions";
-import {
-  makeUnsignedSTXTokenTransfer,
-  makeUnsignedContractCall,
-  createMessageSignature,
-  createStandardPrincipal,
-  createAssetInfo,
-  standardPrincipalCV,
-  uintCV,
-} from "@stacks/transactions";
+import { StacksTransactionWire, AnchorMode } from "@stacks/transactions";
+import { makeUnsignedSTXTokenTransfer, makeUnsignedContractCall } from "@stacks/transactions";
 import BigNumber from "bignumber.js";
 import { StacksNetwork } from "../../network/api";
 import { FamilyType, Transaction } from "../../types";
-import { memoToBufferCV } from "./memoUtils";
-import {
-  getTokenContractDetails,
-  createTokenTransferFunctionArgs,
-  createTokenTransferPostConditions,
-  createTokenTransferTransaction,
-  createStxTransferTransaction,
-  createTransaction,
-  applySignatureToTransaction,
-  getTxToBroadcast,
-} from "./transactions";
+import { getTokenContractDetails, createTransaction, getTxToBroadcast } from "./transactions";
 
 // Mock dependencies
 jest.mock("@stacks/transactions", () => {
@@ -38,14 +14,12 @@ jest.mock("@stacks/transactions", () => {
     makeUnsignedSTXTokenTransfer: jest.fn(),
     makeUnsignedContractCall: jest.fn(),
     createMessageSignature: jest.fn(),
-    createStandardPrincipal: jest.fn(),
-    createAssetInfo: jest.fn(),
     standardPrincipalCV: jest.fn(),
     uintCV: jest.fn(),
   };
 });
 
-jest.mock("./memoUtils", () => ({
+jest.mock("../../common-logic/memoUtils", () => ({
   memoToBufferCV: jest.fn(),
 }));
 
@@ -94,258 +68,8 @@ describe("transactions utility functions", () => {
     });
   });
 
-  describe("createTokenTransferFunctionArgs", () => {
-    beforeEach(() => {
-      (memoToBufferCV as jest.Mock).mockReturnValue("MOCK_MEMO_BUFFER_CV");
-      (standardPrincipalCV as jest.Mock).mockImplementation(addr => `MOCK_PRINCIPAL_${addr}`);
-      (uintCV as jest.Mock).mockImplementation(val => `MOCK_UINT_${val}`);
-    });
-
-    test("should create function args with memo", () => {
-      const amount = new BigNumber(1000);
-      const senderAddress = "SP_SENDER";
-      const recipientAddress = "SP_RECIPIENT";
-      const memo = "Test memo";
-
-      const result = createTokenTransferFunctionArgs(amount, senderAddress, recipientAddress, memo);
-
-      expect(result).toEqual([
-        "MOCK_UINT_1000",
-        "MOCK_PRINCIPAL_SP_SENDER",
-        "MOCK_PRINCIPAL_SP_RECIPIENT",
-        "MOCK_MEMO_BUFFER_CV",
-      ]);
-      expect(memoToBufferCV).toHaveBeenCalledWith(memo);
-    });
-
-    test("should create function args without memo", () => {
-      const amount = new BigNumber(1000);
-      const senderAddress = "SP_SENDER";
-      const recipientAddress = "SP_RECIPIENT";
-
-      const result = createTokenTransferFunctionArgs(amount, senderAddress, recipientAddress);
-
-      expect(result).toEqual([
-        "MOCK_UINT_1000",
-        "MOCK_PRINCIPAL_SP_SENDER",
-        "MOCK_PRINCIPAL_SP_RECIPIENT",
-        "MOCK_MEMO_BUFFER_CV",
-      ]);
-      expect(memoToBufferCV).toHaveBeenCalledWith(undefined);
-    });
-  });
-
-  describe("createTokenTransferPostConditions", () => {
-    beforeEach(() => {
-      (createStandardPrincipal as jest.Mock).mockReturnValue("MOCK_STANDARD_PRINCIPAL");
-      (createAssetInfo as jest.Mock).mockReturnValue("MOCK_ASSET_INFO");
-    });
-
-    test("should create post conditions for token transfer", () => {
-      const senderAddress = "SP_SENDER";
-      const amount = new BigNumber(1000);
-      const contractAddress = "SP_CONTRACT";
-      const contractName = "token-contract";
-      const assetName = "TOKEN-X";
-
-      const result = createTokenTransferPostConditions(
-        senderAddress,
-        amount,
-        contractAddress,
-        contractName,
-        assetName,
-      );
-
-      expect(result).toEqual(
-        expect.arrayContaining([
-          {
-            type: StacksMessageType.PostCondition,
-            conditionType: PostConditionType.Fungible,
-            principal: "MOCK_STANDARD_PRINCIPAL",
-            conditionCode: FungibleConditionCode.Equal,
-            amount: BigInt(1000),
-            assetInfo: "MOCK_ASSET_INFO",
-          },
-        ]),
-      );
-      expect(createStandardPrincipal).toHaveBeenCalledWith(senderAddress);
-      expect(createAssetInfo).toHaveBeenCalledWith(contractAddress, contractName, assetName);
-    });
-  });
-
-  describe("createTokenTransferTransaction", () => {
-    const mockTx = { serialize: jest.fn() } as unknown as StacksTransaction;
-
-    beforeEach(() => {
-      (makeUnsignedContractCall as jest.Mock).mockResolvedValue(mockTx);
-    });
-
-    test("should create token transfer transaction with all parameters", async () => {
-      const contractAddress = "SP_CONTRACT";
-      const contractName = "token-contract";
-      const assetName = "TOKEN-X";
-      const amount = new BigNumber(1000);
-      const senderAddress = "SP_SENDER";
-      const recipientAddress = "SP_RECIPIENT";
-      const anchorMode = AnchorMode.Any;
-      const network = "mainnet";
-      const publicKey = "PUBLIC_KEY";
-      const fee = new BigNumber(100);
-      const nonce = new BigNumber(5);
-      const memo = "Test memo";
-
-      const result = await createTokenTransferTransaction({
-        contractAddress,
-        contractName,
-        assetName,
-        amount,
-        senderAddress,
-        recipientAddress,
-        anchorMode,
-        network,
-        publicKey,
-        fee,
-        nonce,
-        memo,
-      });
-
-      expect(makeUnsignedContractCall).toHaveBeenCalledWith(
-        expect.objectContaining({
-          contractAddress,
-          contractName,
-          functionName: "transfer",
-          anchorMode,
-          network: StacksNetwork[network],
-          publicKey,
-          fee: "100",
-          nonce: "5",
-        }),
-      );
-      expect(result).toBe(mockTx);
-    });
-
-    test("should create token transfer transaction without optional parameters", async () => {
-      const contractAddress = "SP_CONTRACT";
-      const contractName = "token-contract";
-      const assetName = "TOKEN-X";
-      const amount = new BigNumber(1000);
-      const senderAddress = "SP_SENDER";
-      const recipientAddress = "SP_RECIPIENT";
-      const anchorMode = AnchorMode.Any;
-      const network = "mainnet";
-      const publicKey = "PUBLIC_KEY";
-
-      const result = await createTokenTransferTransaction({
-        contractAddress,
-        contractName,
-        assetName,
-        amount,
-        senderAddress,
-        recipientAddress,
-        anchorMode,
-        network,
-        publicKey,
-      });
-
-      expect(makeUnsignedContractCall).toHaveBeenCalledWith(
-        expect.objectContaining({
-          contractAddress,
-          contractName,
-          functionName: "transfer",
-          anchorMode,
-          network: StacksNetwork[network],
-          publicKey,
-        }),
-      );
-      expect(makeUnsignedContractCall).toHaveBeenCalledWith(
-        expect.not.objectContaining({
-          fee: expect.anything(),
-          nonce: expect.anything(),
-        }),
-      );
-      expect(result).toBe(mockTx);
-    });
-  });
-
-  describe("createStxTransferTransaction", () => {
-    const mockTx = { serialize: jest.fn() } as unknown as StacksTransaction;
-
-    beforeEach(() => {
-      (makeUnsignedSTXTokenTransfer as jest.Mock).mockResolvedValue(mockTx);
-    });
-
-    test("should create STX transfer transaction with all parameters", async () => {
-      const amount = new BigNumber(1000);
-      const recipientAddress = "SP_RECIPIENT";
-      const anchorMode = AnchorMode.Any;
-      const network = "mainnet";
-      const publicKey = "PUBLIC_KEY";
-      const fee = new BigNumber(100);
-      const nonce = new BigNumber(5);
-      const memo = "Test memo";
-
-      const result = await createStxTransferTransaction(
-        amount,
-        recipientAddress,
-        anchorMode,
-        network,
-        publicKey,
-        fee,
-        nonce,
-        memo,
-      );
-
-      expect(makeUnsignedSTXTokenTransfer).toHaveBeenCalledWith(
-        expect.objectContaining({
-          amount: "1000",
-          recipient: recipientAddress,
-          anchorMode,
-          network: StacksNetwork[network],
-          publicKey,
-          fee: "100",
-          nonce: "5",
-          memo,
-        }),
-      );
-      expect(result).toBe(mockTx);
-    });
-
-    test("should create STX transfer transaction without optional parameters", async () => {
-      const amount = new BigNumber(1000);
-      const recipientAddress = "SP_RECIPIENT";
-      const anchorMode = AnchorMode.Any;
-      const network = "mainnet";
-      const publicKey = "PUBLIC_KEY";
-
-      const result = await createStxTransferTransaction(
-        amount,
-        recipientAddress,
-        anchorMode,
-        network,
-        publicKey,
-      );
-
-      expect(makeUnsignedSTXTokenTransfer).toHaveBeenCalledWith(
-        expect.objectContaining({
-          amount: "1000",
-          recipient: recipientAddress,
-          anchorMode,
-          network: StacksNetwork[network],
-          publicKey,
-        }),
-      );
-      expect(makeUnsignedSTXTokenTransfer).toHaveBeenCalledWith(
-        expect.not.objectContaining({
-          fee: expect.anything(),
-          nonce: expect.anything(),
-        }),
-      );
-      expect(result).toBe(mockTx);
-    });
-  });
-
   describe("createTransaction", () => {
-    const mockTx = { serialize: jest.fn() } as unknown as StacksTransaction;
+    const mockTx = { serialize: jest.fn() } as unknown as StacksTransactionWire;
 
     beforeEach(() => {
       (makeUnsignedSTXTokenTransfer as jest.Mock).mockResolvedValue(mockTx);
@@ -415,47 +139,18 @@ describe("transactions utility functions", () => {
     });
   });
 
-  describe("applySignatureToTransaction", () => {
-    test("should apply signature to transaction and return serialized buffer", () => {
-      // Use a simple object with casting for testing
-      const mockTx = {
-        auth: {
-          spendingCondition: {},
-        },
-        serialize: jest.fn().mockReturnValue(new Uint8Array([1, 2, 3])),
-      } as unknown as StacksTransaction;
-
-      (createMessageSignature as jest.Mock).mockReturnValue("MOCK_SIGNATURE");
-
-      const signature = "SIGNATURE_HEX";
-
-      // Bypass TypeScript for test mocks
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      const result = applySignatureToTransaction(mockTx, signature);
-
-      expect(createMessageSignature).toHaveBeenCalledWith(signature);
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      expect(mockTx.auth.spendingCondition.signature).toBe("MOCK_SIGNATURE");
-      expect(mockTx.serialize).toHaveBeenCalled();
-      expect(result).toBeInstanceOf(Buffer);
-      expect(result.toString("hex")).toBe("010203");
-    });
-  });
-
   describe("getTxToBroadcast", () => {
+    // serialize() returns a hex string on @stacks/transactions@7, not the pre-v7 Uint8Array.
     const mockTx = {
       auth: {
         spendingCondition: {},
       },
-      serialize: jest.fn().mockReturnValue(new Uint8Array([1, 2, 3])),
-    } as unknown as StacksTransaction;
+      serialize: jest.fn().mockReturnValue("010203"),
+    } as unknown as StacksTransactionWire;
 
     beforeEach(() => {
       (makeUnsignedContractCall as jest.Mock).mockResolvedValue(mockTx);
       (makeUnsignedSTXTokenTransfer as jest.Mock).mockResolvedValue(mockTx);
-      (createMessageSignature as jest.Mock).mockReturnValue("MOCK_SIGNATURE");
     });
 
     test("should create token transfer transaction when token details are provided", async () => {
@@ -488,7 +183,6 @@ describe("transactions utility functions", () => {
 
       expect(makeUnsignedContractCall).toHaveBeenCalled();
       expect(makeUnsignedSTXTokenTransfer).not.toHaveBeenCalled();
-      expect(createMessageSignature).toHaveBeenCalledWith(signature);
       expect(result).toBeInstanceOf(Buffer);
     });
 
@@ -525,7 +219,6 @@ describe("transactions utility functions", () => {
         }),
       );
       expect(makeUnsignedContractCall).not.toHaveBeenCalled();
-      expect(createMessageSignature).toHaveBeenCalledWith(signature);
       expect(result).toBeInstanceOf(Buffer);
     });
 

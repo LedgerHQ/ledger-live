@@ -49,7 +49,8 @@ export const buildSignOperation =
 
         // Sign by device
         const result = await signerContext(deviceId, async signer => {
-          return signer.sign(getPath(derivationPath), Buffer.from(tx.serialize()));
+          // v7's serialize() returns a hex string, not raw bytes -- decode it explicitly.
+          return signer.sign(getPath(derivationPath), Buffer.from(tx.serialize(), "hex"));
         });
 
         throwIfError(result);

@@ -18,7 +18,9 @@ describe("WrongDeviceForAccountView", () => {
     renderView();
 
     // THEN
-    expect(screen.getByText("Wrong Secret Recovery Phrase")).toBeVisible();
+    expect(
+      screen.getByText("Use the Ledger device you originally set up this account with"),
+    ).toBeVisible();
   });
 
   it("GIVEN the wrong device view WHEN clicking Close THEN it calls cancel", async () => {

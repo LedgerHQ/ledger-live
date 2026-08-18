@@ -9,6 +9,7 @@ export type AssetType = {
   numberOfNetworks?: number;
   assetId?: string;
   shouldDisplayId?: boolean;
+  disabled?: boolean;
 };
 
 export const NAVIGATION_DIRECTION = {

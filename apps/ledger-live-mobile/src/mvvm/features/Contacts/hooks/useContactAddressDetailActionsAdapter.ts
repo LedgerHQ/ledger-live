@@ -11,11 +11,17 @@ import {
   resolveContactAddressDetailActionsLabels,
   useContactAddressDetailActionsFlowBindings,
   useContactsAddressDetailActionsPorts,
+  CONTACTS_TRACKING_BUTTON,
+  trackContactAddressDetailQuickAction,
 } from "@features/flow-contacts";
 import { useOpenSendFlow } from "LLM/features/Send/hooks/useOpenSendFlow";
 import { useCallback, useMemo } from "react";
 import { ScreenName } from "~/const";
 import { useTranslation } from "~/context/Locale";
+import { useContactsAnalytics } from "../analytics/useContactsAnalytics";
+import { useContactsAddressValidationAdapter } from "./useContactsAddressValidationAdapter";
+
+const MANUAL_ADDRESS_VALIDATION_DEBOUNCE_MS = 200;
 
 export type ContactAddressDetailActionsFlowProps = Readonly<{
   addressDetailDialog: Pick<
@@ -44,9 +50,12 @@ export function useContactAddressDetailActionsAdapter(
   contactId: ContactId | undefined,
   addressId: ContactAddressId | undefined,
   onCloseAddressDetail: () => void,
+  asset?: string,
 ): ContactAddressDetailActionsFlowProps {
   const { t } = useTranslation();
+  const analytics = useContactsAnalytics();
   const ports = useContactsAddressDetailActionsPorts();
+  const addressValidation = useContactsAddressValidationAdapter();
   const { handleOpenSendFlow } = useOpenSendFlow({
     sourceScreenName: ScreenName.MyWalletContactDetail,
   });
@@ -59,20 +68,34 @@ export function useContactAddressDetailActionsAdapter(
       }),
     [t],
   );
+  const trackQuickAction = useCallback(
+    (
+      button:
+        | typeof CONTACTS_TRACKING_BUTTON.send
+        | typeof CONTACTS_TRACKING_BUTTON.edit
+        | typeof CONTACTS_TRACKING_BUTTON.delete,
+    ) => {
+      trackContactAddressDetailQuickAction(analytics, button, asset);
+    },
+    [analytics, asset],
+  );
   const onSend = useCallback(
     (intent: ContactAddressDetailSendIntent) => {
+      trackQuickAction(CONTACTS_TRACKING_BUTTON.send);
       handleOpenSendFlow({
         currencyIds: [intent.currencyId],
         recipient: intent.address,
       });
       onCloseAddressDetail();
     },
-    [handleOpenSendFlow, onCloseAddressDetail],
+    [handleOpenSendFlow, onCloseAddressDetail, trackQuickAction],
   );
   const { flow, renameViewModel } = useContactAddressDetailActionsFlowBindings({
     contactId: contactId ?? ContactIdSchema.parse("contact-me"),
     addressId: isSelectionActive ? addressId : undefined,
     ports,
+    addressValidation,
+    manualValidationDebounceMs: MANUAL_ADDRESS_VALIDATION_DEBOUNCE_MS,
     onSend,
     onCloseAddressDetail,
   });
@@ -81,6 +104,14 @@ export function useContactAddressDetailActionsAdapter(
     closeRenameViewModel();
     onCloseAddressDetail();
   }, [closeRenameViewModel, onCloseAddressDetail]);
+  const onEdit = useCallback(() => {
+    trackQuickAction(CONTACTS_TRACKING_BUTTON.edit);
+    flow.onEditPress();
+  }, [flow, trackQuickAction]);
+  const onDelete = useCallback(() => {
+    trackQuickAction(CONTACTS_TRACKING_BUTTON.delete);
+    flow.onDeletePress();
+  }, [flow, trackQuickAction]);
 
   if (!isSelectionActive) {
     return mapUiStateToFlowProps(createInactiveContactAddressDetailActionsUiState(labels));
@@ -92,6 +123,11 @@ export function useContactAddressDetailActionsAdapter(
 
   return {
     ...uiState,
+    addressDetailDialog: {
+      ...uiState.addressDetailDialog,
+      onEdit,
+      onDelete,
+    },
     renameSheet: {
       ...uiState.renameSheet,
       onClose: onCloseRename,

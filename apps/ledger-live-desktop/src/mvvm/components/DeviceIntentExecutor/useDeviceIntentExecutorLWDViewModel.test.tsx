@@ -4,7 +4,7 @@ import type {
   DeviceExtractedContext,
   DeviceIntentExecutorProps,
   ExecutorState,
-} from "@ledgerhq/device-intent";
+} from "@features/platform-device-intent";
 import { ledgerToDmkDeviceIdMap } from "@ledgerhq/live-dmk-shared";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { track } from "~/renderer/analytics/segment";

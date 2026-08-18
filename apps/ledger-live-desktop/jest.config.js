@@ -43,7 +43,7 @@ const moduleNameMapper = {
   "~/(.*)": "<rootDir>/src/$1",
   "^@ledgerhq/lumen-ui-react$": "<rootDir>/node_modules/@ledgerhq/lumen-ui-react",
   "^@ledgerhq/lumen-ui-react/symbols$":
-    "<rootDir>/node_modules/@ledgerhq/lumen-ui-react/dist/lib/Symbols/index.js",
+    "<rootDir>/node_modules/@ledgerhq/lumen-ui-react/dist/lib/Components/symbols/index.js",
   "^@ledgerhq/lumen-design-core$": "<rootDir>/node_modules/@ledgerhq/lumen-design-core",
   "\\.(jpg|ico|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga|lottie)$":
     "<rootDir>/fileMock.js",

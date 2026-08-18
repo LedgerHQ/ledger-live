@@ -5,13 +5,14 @@ const COPY_FEEDBACK_MS = 3000;
 
 type ContactAddressDetailDialogViewModelInput = Pick<
   ContactAddressDetailDialogNativeProps,
-  "isOpen" | "row" | "network" | "onCopyAddress"
+  "isOpen" | "row" | "network" | "onCopyAddress" | "onShareAddress"
 >;
 
 export type ContactAddressDetailDialogViewModel = Readonly<{
   hasSelection: boolean;
   hasCopied: boolean;
   onCopy: () => void;
+  onShare: (() => void) | undefined;
 }>;
 
 export function useContactAddressDetailDialogViewModel({
@@ -19,6 +20,7 @@ export function useContactAddressDetailDialogViewModel({
   row,
   network,
   onCopyAddress,
+  onShareAddress,
 }: ContactAddressDetailDialogViewModelInput): ContactAddressDetailDialogViewModel {
   const [hasCopied, setHasCopied] = useState(false);
 
@@ -47,11 +49,20 @@ export function useContactAddressDetailDialogViewModel({
     setHasCopied(true);
   }, [onCopyAddress, row]);
 
+  const onShare = useCallback(() => {
+    if (row === undefined || onShareAddress === undefined) {
+      return;
+    }
+
+    onShareAddress(row.address);
+  }, [onShareAddress, row]);
+
   const hasSelection = isOpen && row !== undefined && network !== undefined;
 
   return {
     hasSelection,
     hasCopied,
     onCopy,
+    onShare: onShareAddress === undefined ? undefined : onShare,
   };
 }
