@@ -31,7 +31,7 @@ const packageRoot = fileURLToPath(new URL("..", import.meta.url));
 function resolveJestBin(): string | undefined {
   if (process.env.TEST_QUARANTINE_JEST_BIN) return process.env.TEST_QUARANTINE_JEST_BIN;
   try {
-    return createRequire(import.meta.url).resolve("jest-cli/bin/jest");
+    return createRequire(import.meta.url).resolve("jest/bin/jest");
   } catch {
     return undefined;
   }
@@ -128,33 +128,48 @@ function createFixtureProject(): { root: string; counterFile: string } {
   return { root, counterFile };
 }
 
-function runJest(jestBin: string, root: string, env: NodeJS.ProcessEnv): Promise<number> {
-  return new Promise(resolve => {
-    const child = spawn(process.execPath, [jestBin, "--config", join(root, "jest.config.js")], {
-      cwd: root,
-      env: { ...process.env, ...env },
-      stdio: "pipe",
-    });
-    child.on("close", code => resolve(code ?? 1));
+/**
+ * Runs jest and returns its exit code plus everything it printed.
+ *
+ * The output must be drained: an unread pipe blocks the child once it fills, and
+ * `node --test` has no default timeout, so that would hang the suite rather than
+ * fail it. Returning the output also makes a failed assertion diagnosable.
+ */
+async function runJest(
+  jestBin: string,
+  root: string,
+  env: NodeJS.ProcessEnv,
+): Promise<{ code: number; output: string }> {
+  const child = spawn(process.execPath, [jestBin, "--config", join(root, "jest.config.js")], {
+    cwd: root,
+    env: { ...process.env, ...env },
+    stdio: ["ignore", "pipe", "pipe"],
   });
+
+  let output = "";
+  child.stdout.on("data", chunk => (output += chunk));
+  child.stderr.on("data", chunk => (output += chunk));
+
+  const code = await new Promise<number>(resolve => child.on("close", c => resolve(c ?? 1)));
+  return { code, output };
 }
 
 const jestBin = resolveJestBin();
-const skip = jestBin ? false : "jest-cli is not installed; run pnpm install for this package";
+const skip = jestBin ? false : "jest is not installed; run pnpm install for this package";
 
 test("a real jest run reports a genuinely flaky test", { skip }, async () => {
   const ingest = await startIngestStub();
   const { root } = createFixtureProject();
 
   try {
-    const exitCode = await runJest(jestBin as string, root, {
+    const { code, output } = await runJest(jestBin as string, root, {
       CI: "true",
       FLAKE_API_KEY: "test-key",
       FLAKE_API_HOST: ingest.url,
       QUARANTINE_REPO_ROOT: root,
     });
 
-    assert.equal(exitCode, 0, "the retried test passes, so the run is green");
+    assert.equal(code, 0, output || "the retried test passes, so the run is green");
     assert.equal(ingest.requests.length, 1, "exactly one ingest request");
 
     const { events, apiKey } = ingest.requests[0];
@@ -178,14 +193,14 @@ test("a real jest run reports nothing when no test is retried", { skip }, async 
   writeFileSync(counterFile, "1");
 
   try {
-    const exitCode = await runJest(jestBin as string, root, {
+    const { code, output } = await runJest(jestBin as string, root, {
       CI: "true",
       FLAKE_API_KEY: "test-key",
       FLAKE_API_HOST: ingest.url,
       QUARANTINE_REPO_ROOT: root,
     });
 
-    assert.equal(exitCode, 0);
+    assert.equal(code, 0, output);
     assert.equal(ingest.requests.length, 0, "a clean run posts nothing");
   } finally {
     await ingest.close();
@@ -244,14 +259,14 @@ test("a real jest run stays green when the ingest API returns 500", { skip }, as
   const { root } = createFixtureProject();
 
   try {
-    const exitCode = await runJest(jestBin as string, root, {
+    const { code, output } = await runJest(jestBin as string, root, {
       CI: "true",
       FLAKE_API_KEY: "test-key",
       FLAKE_API_HOST: ingest.url,
       QUARANTINE_REPO_ROOT: root,
     });
 
-    assert.equal(exitCode, 0, "a broken ingest API must never fail a test run");
+    assert.equal(code, 0, output || "a broken ingest API must never fail a test run");
     assert.equal(ingest.requests.length, 1, "it did try");
   } finally {
     await ingest.close();
@@ -262,27 +277,27 @@ test("a real jest run stays green when nothing is listening", { skip }, async ()
   const { root } = createFixtureProject();
 
   // Port 9 (discard) refuses connections.
-  const exitCode = await runJest(jestBin as string, root, {
+  const { code, output } = await runJest(jestBin as string, root, {
     CI: "true",
     FLAKE_API_KEY: "test-key",
     FLAKE_API_HOST: "http://127.0.0.1:9",
     QUARANTINE_REPO_ROOT: root,
   });
 
-  assert.equal(exitCode, 0, "an unreachable ingest API must never fail a test run");
+  assert.equal(code, 0, output || "an unreachable ingest API must never fail a test run");
 });
 
 test("a real jest run stays green when the host is malformed", { skip }, async () => {
   const { root } = createFixtureProject();
 
-  const exitCode = await runJest(jestBin as string, root, {
+  const { code, output } = await runJest(jestBin as string, root, {
     CI: "true",
     FLAKE_API_KEY: "test-key",
     FLAKE_API_HOST: "definitely not a url",
     QUARANTINE_REPO_ROOT: root,
   });
 
-  assert.equal(exitCode, 0, "a misconfigured host must never fail a test run");
+  assert.equal(code, 0, output || "a misconfigured host must never fail a test run");
 });
 
 test("same-titled cases are not reported as a flake by a real jest run", { skip }, async () => {
@@ -303,14 +318,14 @@ test("same-titled cases are not reported as a flake by a real jest run", { skip 
   );
 
   try {
-    const exitCode = await runJest(jestBin as string, root, {
+    const { code, output } = await runJest(jestBin as string, root, {
       CI: "true",
       FLAKE_API_KEY: "test-key",
       FLAKE_API_HOST: ingest.url,
       QUARANTINE_REPO_ROOT: root,
     });
 
-    assert.equal(exitCode, 1, "the hard failure still fails the run");
+    assert.equal(code, 1, output || "the hard failure still fails the run");
     assert.equal(ingest.requests.length, 0, "and is not reported as a flake");
   } finally {
     await ingest.close();
