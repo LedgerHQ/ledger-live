@@ -6,6 +6,7 @@ import { Account, AccountType } from "@ledgerhq/live-e2e-shared/enum/Account";
 export default class AccountPage {
   baseLink = "account";
   accountListTitleId = "accounts-list-title";
+  accountsListId = "accounts-list";
   accountScreenScrollView = "account-screen-scrollView";
   accountAdvancedLogsId = "account-advanced-logs";
   earnButtonId = "account-quick-action-button-earn";
@@ -16,7 +17,6 @@ export default class AccountPage {
   accountNameRegExp = new RegExp(`${this.baseAccountName}.*`);
   operationRowRegexp = /operation-row-.*/;
   operationHistorySection = "operations-history-";
-  operationHistorySectionRegexp = new RegExp(this.operationHistorySection + ".*");
   accountSettingsButtonId = "account-settings-button";
   receiveButtonId = "account-quick-action-button-receive";
   sendButtonId = "account-quick-action-button-send";
@@ -66,7 +66,7 @@ export default class AccountPage {
 
   @Step("Go to the account with the name")
   async goToAccountByName(name: string) {
-    await scrollToId(this.baseAccountName + name);
+    await scrollToId(this.baseAccountName + name, this.accountsListId);
     await tapById(this.baseAccountName + name);
   }
 
@@ -74,7 +74,7 @@ export default class AccountPage {
   async goToAccountById(id: string) {
     const elementId = this.baseAccountRow + id;
     const element = getElementById(elementId);
-    await scrollToId(elementId);
+    await scrollToId(elementId, this.accountsListId);
     await waitForElement(element);
     await detoxExpect(element).toBeVisible();
     await tapByElement(element);
@@ -121,40 +121,23 @@ export default class AccountPage {
     await typeTextById(this.accountRenameTextInputId, name);
   }
 
-  // The operations history section wraps the whole operations list, so it is
-  // taller than the viewport and can never reach the default 75% visibility.
-  // A lower threshold still proves the section scrolled into view.
-  operationHistoryVisibilityPercentage = 35;
-
   @Step("Expect operation history to be visible")
   async expectOperationHistoryVisible(accountId: string) {
-    const id = this.operationHistorySectionId(accountId);
-    await scrollToId(
-      id,
-      this.accountScreenScrollView,
-      250,
-      "down",
-      undefined,
-      this.operationHistoryVisibilityPercentage,
-    );
-    await detoxExpect(getElementById(id)).toBeVisible(this.operationHistoryVisibilityPercentage);
+    await scrollToId(this.operationRowRegexp, this.accountScreenScrollView, 250, "down");
+    await detoxExpect(getElementById(this.operationHistorySectionId(accountId))).toExist();
+    await detoxExpect(getElementById(this.operationRowRegexp, 0)).toBeVisible();
   }
 
   @Step("Scroll to operation history")
   async scrollToTransactions() {
     await waitForElementById(this.accountScreenScrollView);
-    await scrollToId(
-      this.operationHistorySectionRegexp,
-      this.accountScreenScrollView,
-      300,
-      "bottom",
-    );
+    await scrollToId(this.operationRowRegexp, this.accountScreenScrollView, 300, "down");
   }
 
   @Step("Scroll to a Specific SubAccount Row")
   async scrollToSubAccount(subAccountId: string) {
     await waitForElementById(this.accountScreenScrollView);
-    await scrollToId(subAccountId, this.accountScreenScrollView, 650, "down");
+    await scrollToId(subAccountId, this.accountScreenScrollView);
   }
 
   @Step("Expect account balance to be visible")

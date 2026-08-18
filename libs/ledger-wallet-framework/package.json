@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/ledger-wallet-framework",
-  "version": "2.7.0",
+  "version": "2.8.0",
   "description": "Framework for Ledger Wallet",
   "keywords": [
     "Ledger",
@@ -124,6 +124,7 @@
     "@types/imurmurhash": "^0.1.4",
     "@types/node": "catalog:",
     "@ledgerhq/live-dmk-speculos": "workspace:^",
+    "@ledgerhq/wallet-framework-test-setup": "workspace:^",
     "@types/invariant": "^2.2.2",
     "@types/jest": "catalog:",
     "@types/lodash": "catalog:",

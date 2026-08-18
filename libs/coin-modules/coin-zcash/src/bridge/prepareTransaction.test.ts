@@ -3,6 +3,7 @@ import { prepareTransaction } from "./prepareTransaction";
 import { estimateMaxSpendable } from "./estimateMaxSpendable";
 import { reserveNotes, _resetReservationsForTest } from "./note-reservation";
 import { ZIP317_MINIMUM_FEE } from "../logic/coin-selection";
+import { ZCASH_SHIELDED_SPENDABILITY_DELAY_BLOCKS } from "../constants";
 import type { BitcoinOutput, Transaction, ZcashAccount, ZcashTransferType } from "../types/bridge";
 
 const T_ADDRESS = "t1b1Rbw2shhJkP6MCnCyxCPuyFedHrwKty8";
@@ -14,6 +15,9 @@ const IN_FLIGHT_TX = "76ec3b38";
 // The account fixture offsets the Ironwood pool by this much so the two pools
 // never share a nullifier or a position.
 const IRONWOOD_INDEX_OFFSET = 100;
+// Comfortably past every fixture note's block height, so the default account
+// carries only mature notes unless a test overrides it to probe maturity.
+const DEFAULT_LAST_PROCESSED_BLOCK = 3_500_000;
 
 const nullifierAt = (index: number) => index.toString(16).padStart(2, "0").repeat(32);
 
@@ -47,13 +51,20 @@ function account({
   utxos = [100_000, 25_000],
   notes = [40_000, 10_000],
   ironwoodNotes = [30_000, 20_000],
-}: { utxos?: number[]; notes?: number[]; ironwoodNotes?: number[] } = {}): ZcashAccount {
+  lastProcessedBlock = DEFAULT_LAST_PROCESSED_BLOCK,
+}: {
+  utxos?: number[];
+  notes?: number[];
+  ironwoodNotes?: number[];
+  lastProcessedBlock?: number | null;
+} = {}): ZcashAccount {
   return {
     type: "Account",
     id: ACCOUNT_ID,
     currency: { id: "zcash", name: "Zcash" },
     bitcoinResources: { utxos: utxos.map((value, i) => utxo(value, i)) },
     privateInfo: {
+      lastProcessedBlock,
       transactions: [
         {
           id: "932c99c7",
@@ -451,5 +462,114 @@ describe("reserved notes", () => {
         new BigNumber(20_000),
       );
     });
+  });
+});
+
+// Reproduces the field failure: a change note is scanned back into the pool a
+// few blocks after the send that created it, and a second send prepared
+// before it matures must not select it.
+describe("prepareTransaction, note maturity", () => {
+  const REFERENCE_HEIGHT = 3_450_000;
+  const MATURE_BLOCK = REFERENCE_HEIGHT - ZCASH_SHIELDED_SPENDABILITY_DELAY_BLOCKS;
+  const FRESH_CHANGE_BLOCK = REFERENCE_HEIGHT - 3;
+
+  function accountWithChangeNote({
+    matureAmount,
+    freshChangeAmount,
+    lastProcessedBlock = REFERENCE_HEIGHT,
+  }: {
+    matureAmount: number;
+    freshChangeAmount: number;
+    lastProcessedBlock?: number;
+  }): ZcashAccount {
+    return {
+      type: "Account",
+      id: ACCOUNT_ID,
+      currency: { id: "zcash", name: "Zcash" },
+      bitcoinResources: { utxos: [] },
+      privateInfo: {
+        lastProcessedBlock,
+        transactions: [
+          {
+            id: "confirmed-send",
+            hex: "00",
+            blockHeight: MATURE_BLOCK,
+            blockHash: "cc".repeat(32),
+            timestamp: 1_700_000_000,
+            fee: new BigNumber(15_000),
+            decryptedData: {
+              orchard_outputs: [],
+              sapling_outputs: [],
+              ironwood_outputs: [note(matureAmount, IRONWOOD_INDEX_OFFSET)],
+            },
+          },
+          {
+            id: "fresh-change",
+            hex: "00",
+            blockHeight: FRESH_CHANGE_BLOCK,
+            blockHash: "dd".repeat(32),
+            timestamp: 1_700_000_100,
+            fee: new BigNumber(10_000),
+            decryptedData: {
+              orchard_outputs: [],
+              sapling_outputs: [],
+              ironwood_outputs: [note(freshChangeAmount, IRONWOOD_INDEX_OFFSET + 1)],
+            },
+          },
+        ],
+      },
+    } as unknown as ZcashAccount;
+  }
+
+  // Largest-first would otherwise pick the 50k fresh change note over the 30k
+  // mature one; the maturity filter must keep it out of the selection.
+  it("excludes the fresh change note even though it is largest, selecting the mature one instead", async () => {
+    const acc = accountWithChangeNote({ matureAmount: 30_000, freshChangeAmount: 50_000 });
+
+    const prepared = await prepareTransaction(
+      acc,
+      transaction({
+        transferType: "shielded",
+        recipient: U_ADDRESS,
+        amount: new BigNumber(15_000),
+      }),
+    );
+
+    expect(prepared.selectedNotes?.map(n => n.amount.toNumber())).toEqual([30_000]);
+  });
+
+  it("reports a reset (no selection) when only the fresh change note could cover the amount", async () => {
+    const acc = accountWithChangeNote({ matureAmount: 10_000, freshChangeAmount: 50_000 });
+
+    const prepared = await prepareTransaction(
+      acc,
+      transaction({
+        transferType: "shielded",
+        recipient: U_ADDRESS,
+        amount: new BigNumber(25_000),
+      }),
+    );
+
+    expect(prepared.selectedNotes).toEqual([]);
+    expect(prepared).not.toHaveProperty("zcashFee");
+  });
+
+  it("makes the change note selectable once the reference height advances past the threshold", async () => {
+    const matured = accountWithChangeNote({
+      matureAmount: 10_000,
+      freshChangeAmount: 50_000,
+      lastProcessedBlock: FRESH_CHANGE_BLOCK + ZCASH_SHIELDED_SPENDABILITY_DELAY_BLOCKS,
+    });
+
+    const prepared = await prepareTransaction(
+      matured,
+      transaction({
+        transferType: "shielded",
+        recipient: U_ADDRESS,
+        amount: new BigNumber(25_000),
+      }),
+    );
+
+    expect(prepared.selectedNotes?.map(n => n.amount.toNumber())).toEqual([50_000]);
   });
 });

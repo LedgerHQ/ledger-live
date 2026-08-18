@@ -25,7 +25,7 @@ module.exports = {
     "!src/test/**/*.ts",
   ],
   coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../../" }], "text"],
-  coveragePathIgnorePatterns: ["src/test", "src/types", "src/index.ts", "src/logic/index.ts"],
+  coveragePathIgnorePatterns: ["src/test", "src/types", "src/index.ts"],
   reporters: [
     "default",
     ...(process.env.CI ? ["github-actions"] : []),

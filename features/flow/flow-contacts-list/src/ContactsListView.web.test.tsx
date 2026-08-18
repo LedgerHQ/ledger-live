@@ -24,7 +24,6 @@ type RenderContactsPageOptions = Readonly<{
   isLedgerSyncChecking?: boolean;
   isFeatureIntroductionOpen?: boolean;
   onCompleteFeatureIntroduction?: () => void;
-  onDeferFeatureIntroduction?: () => void;
   isIntroductionOpen?: boolean;
   onDismissIntroduction?: () => void;
   onOpenMe?: (contactId: ContactId) => void;
@@ -39,7 +38,6 @@ function renderContactsPage({
   isLedgerSyncChecking = false,
   isFeatureIntroductionOpen = false,
   onCompleteFeatureIntroduction = jest.fn(),
-  onDeferFeatureIntroduction = jest.fn(),
   isIntroductionOpen = false,
   onDismissIntroduction = jest.fn(),
   onOpenMe = jest.fn(),
@@ -64,7 +62,6 @@ function renderContactsPage({
           <div>
             <p>Introducing Contacts</p>
             <button onClick={onCompleteFeatureIntroduction}>Try contacts</button>
-            <button onClick={onDeferFeatureIntroduction}>Maybe later</button>
           </div>
         ) : undefined
       }
@@ -84,7 +81,6 @@ function renderContactsPage({
 
   return {
     onCompleteFeatureIntroduction,
-    onDeferFeatureIntroduction,
     onDismissIntroduction,
     onOpenMe,
     onOpenContact,
@@ -183,22 +179,6 @@ describe("ContactsPage", () => {
     fireEvent.click(screen.getByText("Try contacts"));
 
     expect(onCompleteFeatureIntroduction).toHaveBeenCalledTimes(1);
-  });
-
-  it("calls onDefer when Maybe later is pressed", () => {
-    const onDeferFeatureIntroduction = jest.fn();
-
-    renderContactsPage({
-      isFeatureIntroductionOpen: true,
-      onDeferFeatureIntroduction,
-    });
-
-    expect(screen.getByTestId("contacts-list")).toBeVisible();
-    expect(screen.getByText("Introducing Contacts")).toBeVisible();
-
-    fireEvent.click(screen.getByText("Maybe later"));
-
-    expect(onDeferFeatureIntroduction).toHaveBeenCalledTimes(1);
   });
 
   it("shows the Ledger Sync introduction over the Contacts page and dismisses it", () => {

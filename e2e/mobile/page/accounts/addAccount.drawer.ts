@@ -1,5 +1,6 @@
+import { device } from "detox";
 import { Step } from "jest-allure2-reporter/api";
-import { delay, openDeeplink } from "../../helpers/commonHelpers";
+import { openDeeplink } from "../../helpers/commonHelpers";
 import CommonPage from "../common.page";
 import { retryUntilTimeout } from "../../utils/retry";
 import { checkForErrorModals } from "../../helpers/errorHelpers";
@@ -32,21 +33,24 @@ export default class AddAccountDrawer extends CommonPage {
 
   @Step("Wait for accounts discovery")
   async waitAccountsDiscovery() {
-    const DISCOVERY_TIMEOUT = 240000;
-    const ERROR_CHECK_INTERVAL = 2000;
+    const DISCOVERY_TIMEOUT = 240_000;
     const startTime = Date.now();
 
-    while (Date.now() - startTime < DISCOVERY_TIMEOUT) {
-      if (await IsIdVisible(this.continueButtonId, 1000)) {
-        return;
+    // disable sync to avoid Detox hanging during busy account discovery and UI animations
+    await device.disableSynchronization();
+    try {
+      while (Date.now() - startTime < DISCOVERY_TIMEOUT) {
+        if (await IsIdVisible(this.continueButtonId, 10_000)) {
+          return;
+        }
+        await checkForErrorModals(1_000, "Account discovery failed");
       }
-      await checkForErrorModals(1000, "Account discovery failed");
-      await delay(ERROR_CHECK_INTERVAL);
+      throw new Error(
+        `Account discovery timed out after ${DISCOVERY_TIMEOUT}ms. Expected button "${this.continueButtonId}" not found.`,
+      );
+    } finally {
+      await device.enableSynchronization();
     }
-
-    throw new Error(
-      `Account discovery timed out after ${DISCOVERY_TIMEOUT / 1000} seconds. Expected button "${this.continueButtonId}" not found.`,
-    );
   }
 
   @Step("Get number of accounts displayed by the blockchain scan")

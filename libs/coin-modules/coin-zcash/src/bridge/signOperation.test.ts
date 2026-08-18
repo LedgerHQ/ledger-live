@@ -21,6 +21,7 @@ import {
 import type { SpendableNote } from "../network/types";
 import type { SignerContext } from "../types/signer";
 import type { Transaction, ZcashAccount } from "../types/bridge";
+import { ZcashNotesNotYetSpendable } from "../types/errors";
 
 jest.mock("../logic/transaction/craftTransaction");
 jest.mock("../logic/transaction/combine");
@@ -381,6 +382,29 @@ describe("bridge/signOperation", () => {
         } as never),
       ),
     ).rejects.toThrow("V6 (Ironwood)");
+  });
+
+  // The maturity filter (logic/account/spendability) is meant to make this
+  // unreachable; this is the safety net for backend drift between the zaino
+  // instance the scan used and the one the builder queries.
+  it("surfaces a note-position-past-anchor build failure as the typed domain error", async () => {
+    mockCraftIronwoodTransaction.mockRejectedValue(
+      new Error(
+        "Error invoking remote method 'zcash:buildIronwoodTransaction': " +
+          "compute_ironwood_witnesses: note position 55985 is at or past anchor_total_leaves 55976 at anchor height 3447474",
+      ),
+    );
+    const signOp = buildSignOperation(makeSignerContext());
+
+    await expect(
+      lastValueFrom(
+        signOp({
+          account: makeAccount(),
+          deviceId: "device-1",
+          transaction: makeTx("shielded"),
+        } as never),
+      ),
+    ).rejects.toThrow(ZcashNotesNotYetSpendable);
   });
 
   it("rejects when the signer does not expose signPcztTransaction", async () => {

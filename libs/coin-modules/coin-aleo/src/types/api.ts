@@ -10,6 +10,16 @@ export type AleoTransitionValue =
       id: string;
       type: "record";
       tag: string;
+    }
+  | {
+      id: string;
+      type: "record_with_dynamic_id";
+      tag: string;
+      dynamic_id: string;
+    }
+  | {
+      id: string;
+      type: "external_record" | "record_dynamic";
     };
 
 export interface AleoTransition {
@@ -43,6 +53,7 @@ export interface AleoPublicTransaction {
   block_timestamp: string;
   function_id: string;
   amount: number;
+  amount_u128?: string;
   sender_address: string;
   recipient_address: string;
   program_id: string;
@@ -97,6 +108,8 @@ export interface AleoGetProvePublicKeyResponse {
 export interface AleoRecordScannerStatusResponse {
   synced: boolean;
   percentage: number;
+  sync_start_height: number;
+  synced_up_to: number | null;
 }
 
 export interface AleoPrivateRecord {
@@ -120,6 +133,35 @@ export interface AleoPrivateRecord {
 
 export interface AleoDecryptedCiphertextResponse {
   plaintext: string;
+}
+
+export interface AleoTokenDetails {
+  token_id: string;
+  token_id_datatype: string | null;
+  token_standard: string | null;
+  symbol: string;
+  display: string;
+  program_name: string;
+  decimals: number;
+  total_supply: string | null;
+  verified: boolean;
+  token_icon_url: string;
+  price: string | null;
+  price_change_percentage_24h: string;
+  fully_diluted_value: null;
+  total_market_cap: string | null;
+  volume_24h: string | null;
+}
+
+export interface AleoGetTokensResponse {
+  data: AleoTokenDetails[];
+  pagination: {
+    limit: number;
+    offset: number;
+    total_count: number;
+    has_next: boolean;
+    has_previous: boolean;
+  };
 }
 
 interface DelegatedProvingTransitionResponse {

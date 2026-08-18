@@ -21,8 +21,7 @@ export type ContactsFeatureIntroduction = Readonly<{
   description: string;
   highlights: readonly ContactsFeatureIntroductionHighlight[];
   primaryActionLabel: string;
-  secondaryActionLabel: string;
   heroImageSrc?: string;
   onComplete: () => void;
-  onDefer: () => void;
+  onClose: () => void;
 }>;

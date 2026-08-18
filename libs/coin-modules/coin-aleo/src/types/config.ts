@@ -22,4 +22,7 @@ export type AleoCoinConfig = CurrencyConfig & AleoConfig;
  *
  * The free-form `Record` part carries a `currencyId` needed by some methods (e.g. listOperations).
  */
-export type AleoContext = Context<AleoCoinConfig>;
+export type AleoContext = Context<AleoCoinConfig> & {
+  provableId?: string;
+  viewKey?: string;
+};

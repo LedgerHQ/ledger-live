@@ -877,7 +877,10 @@ export const hasSeenAnalyticsOptInPromptSelector = (state: State) =>
 export const dismissedContentCardsSelector = (state: State) => state.settings.dismissedContentCards;
 export const anonymousBrazeIdSelector = (state: State) => state.settings.anonymousBrazeId;
 
-export const starredMarketCoinsSelector = (state: State) => state.settings.starredMarketCoins;
+const EMPTY_STARRED_MARKET_COINS: string[] = [];
+
+export const starredMarketCoinsSelector = (state: State): string[] =>
+  state.settings.starredMarketCoins ?? EMPTY_STARRED_MARKET_COINS;
 export const hasBeenUpsoldRecoverSelector = (state: State) => state.settings.hasBeenUpsoldRecover;
 export const onboardingUseCaseSelector = (state: State) => state.settings.onboardingUseCase;
 export const hasBeenRedirectedToPostOnboardingSelector = (state: State) =>

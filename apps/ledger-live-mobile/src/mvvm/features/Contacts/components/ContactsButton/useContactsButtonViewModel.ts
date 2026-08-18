@@ -3,12 +3,14 @@ import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useTranslation } from "~/context/Locale";
 import { ScreenName } from "~/const";
-import { track } from "~/analytics";
-import { useContactsFeature } from "@features/flow-contacts";
 import {
-  MY_WALLET_TRACKING_BUTTON,
-  MY_WALLET_TRACKING_PAGE_NAME,
-} from "LLM/features/MyWallet/constants";
+  CONTACTS_EVENT_SOURCE,
+  CONTACTS_PAGE_PROPERTY,
+  CONTACTS_TRACK_EVENTS,
+  CONTACTS_TRACKING_BUTTON,
+  useContactsFeature,
+} from "@features/flow-contacts";
+import { useContactsAnalytics } from "../../analytics/useContactsAnalytics";
 
 export type ContactsButtonViewModel = {
   isEnabled: boolean;
@@ -23,14 +25,16 @@ export function useContactsButtonViewModel(): ContactsButtonViewModel {
     useNavigation<NativeStackNavigationProp<{ [key: string]: object | undefined }>>();
   const { t } = useTranslation();
   const { isEnabled, showNewBadge } = useContactsFeature("mobile");
+  const analytics = useContactsAnalytics();
 
   const handleClick = useCallback(() => {
-    track("button_clicked", {
-      button: MY_WALLET_TRACKING_BUTTON.contacts,
-      page: MY_WALLET_TRACKING_PAGE_NAME,
+    analytics.trackEvent(CONTACTS_TRACK_EVENTS.BUTTON_CLICKED, {
+      source: CONTACTS_EVENT_SOURCE.ENTRY,
+      button: CONTACTS_TRACKING_BUTTON.contacts,
+      page: CONTACTS_PAGE_PROPERTY.MY_WALLET,
     });
     navigation.navigate(ScreenName.MyWalletContacts);
-  }, [navigation]);
+  }, [analytics, navigation]);
 
   return {
     isEnabled,

@@ -213,47 +213,32 @@ describe("useContactAddressDetailActionsFlowViewModel", () => {
     });
   });
 
-  it("should open the signer dialog before deleting an address", () => {
+  it("should open delete state without signer validation", () => {
     const contact = mockContactWithAddress();
     const address = contact.addresses[0]!;
+    const getExpectedSignerId = jest
+      .fn()
+      .mockRejectedValue(new Error("signer should not be checked"));
+    const getCurrentSignerId = jest
+      .fn()
+      .mockRejectedValue(new Error("signer should not be checked"));
+    const signerValidation: ContactSignerValidationPort = {
+      getExpectedSignerId,
+      getCurrentSignerId,
+    };
     const Wrapper = makeWrapper([mockMeContact(), contact]);
     const { result } = renderHook(
       () =>
         useContactAddressDetailActionsFlowViewModel({
           contactId: contact.id,
           addressId: address.id,
-          ports: createPorts(),
+          ports: createPorts({ signerValidation }),
         }),
       { wrapper: Wrapper },
     );
 
     act(() => {
       result.current.onDeletePress();
-    });
-
-    expect(result.current.editUiState).toBe("signer-open");
-    expect(result.current.deleteLifecycle).toEqual({ status: "idle" });
-  });
-
-  it("should open delete state after signer confirmation", async () => {
-    const contact = mockContactWithAddress();
-    const address = contact.addresses[0]!;
-    const Wrapper = makeWrapper([mockMeContact(), contact]);
-    const { result } = renderHook(
-      () =>
-        useContactAddressDetailActionsFlowViewModel({
-          contactId: contact.id,
-          addressId: address.id,
-          ports: createPorts(),
-        }),
-      { wrapper: Wrapper },
-    );
-
-    act(() => {
-      result.current.onDeletePress();
-    });
-    await act(async () => {
-      await result.current.onSignerConfirm();
     });
 
     expect(result.current.editUiState).toBe("closed");
@@ -262,6 +247,8 @@ describe("useContactAddressDetailActionsFlowViewModel", () => {
       contactId: contact.id,
       addressId: address.id,
     });
+    expect(getExpectedSignerId).not.toHaveBeenCalled();
+    expect(getCurrentSignerId).not.toHaveBeenCalled();
   });
 
   it("should delete an address and close the detail dialog on success", async () => {
@@ -283,9 +270,6 @@ describe("useContactAddressDetailActionsFlowViewModel", () => {
 
     act(() => {
       result.current.onDeletePress();
-    });
-    await act(async () => {
-      await result.current.onSignerConfirm();
     });
 
     expect(result.current.deleteLifecycle).toEqual({

@@ -1,33 +1,12 @@
 import { useCallback, useState } from "react";
 import { useInitiateAuthorizeMutation } from "@domain/api-card-management";
-import type { PayCardAuthorizeInitiateRequest } from "@domain/api-card-management";
-import type { CardLoginProps, CardLoginViewProps } from "./types";
+import { createAuthorizeAttempt } from "../../state/authorizeAttempt";
+import type { CardLoginViewModelParams, CardLoginViewProps } from "./types";
 
-const PLACEHOLDER_AUTHORIZE_REQUEST: PayCardAuthorizeInitiateRequest = {
-  clientId: "",
-  redirectUri: "",
-  state: "",
-  codeChallenge: "",
-};
-
-function getSecureHostedLoginUrl(loginUrl: string): string {
-  const url = new URL(loginUrl);
-  if (url.protocol !== "https:") {
-    throw new Error("Unable to start login");
-  }
-  return url.toString();
-}
-
-// An RTK rejection is a `FetchBaseQueryError` carrying the raw response, which must not be rendered.
-function getLoginErrorMessage(error: unknown): string {
-  if (error instanceof Error && error.message) {
-    return error.message;
-  }
-
-  return "Unable to start login";
-}
-
-export function useCardLoginViewModel({ openHostedLogin }: CardLoginProps): CardLoginViewProps {
+export function useCardLoginViewModel({
+  openHostedLogin,
+  oauthConfig,
+}: CardLoginViewModelParams): CardLoginViewProps {
   const [initiateAuthorize, { isLoading: isInitiateAuthorizeLoading }] =
     useInitiateAuthorizeMutation();
   const [isOpeningHostedLogin, setIsOpeningHostedLogin] = useState(false);
@@ -39,15 +18,25 @@ export function useCardLoginViewModel({ openHostedLogin }: CardLoginProps): Card
     void (async () => {
       setIsOpeningHostedLogin(true);
       try {
-        const { url } = await initiateAuthorize(PLACEHOLDER_AUTHORIZE_REQUEST).unwrap();
-        await openHostedLogin(getSecureHostedLoginUrl(url));
+        const { state, codeChallenge } = await createAuthorizeAttempt();
+
+        const { url } = await initiateAuthorize({
+          clientId: oauthConfig.clientId,
+          redirectUri: oauthConfig.redirectUri,
+          state,
+          codeChallenge,
+        }).unwrap();
+
+        await openHostedLogin(url, oauthConfig.redirectUri);
       } catch (error) {
-        setErrorMessage(getLoginErrorMessage(error));
+        setErrorMessage(
+          error instanceof Error && error.message ? error.message : "Unable to start login",
+        );
       } finally {
         setIsOpeningHostedLogin(false);
       }
     })();
-  }, [openHostedLogin, initiateAuthorize]);
+  }, [openHostedLogin, initiateAuthorize, oauthConfig.clientId, oauthConfig.redirectUri]);
 
   return {
     title: "Card",

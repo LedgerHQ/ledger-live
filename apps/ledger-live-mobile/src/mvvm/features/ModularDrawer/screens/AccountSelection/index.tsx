@@ -1,5 +1,5 @@
 import { FlatList } from "react-native";
-import { BottomSheetVirtualizedList, BottomSheetHeader, Banner } from "@ledgerhq/lumen-ui-rnative";
+import { BottomSheetVirtualizedList, BottomSheetHeader } from "@ledgerhq/lumen-ui-rnative";
 import {
   TrackDrawerScreen,
   EVENTS_NAME,
@@ -16,6 +16,10 @@ import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import React, { useCallback, useRef } from "react";
 import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { AccountLike } from "@ledgerhq/types-live";
+import {
+  getPerpsUiUseCase,
+  PERPS_UI_USE_CASE,
+} from "@ledgerhq/live-common/wallet-api/ModularDrawer/uiUseCase";
 
 export type AccountSelectionStepProps = {
   onAccountSelected?: (account: AccountLike, parentAccount?: AccountLike) => void;
@@ -64,30 +68,34 @@ const AccountSelectionContent = ({
 
   const renderFooter = useCallback(() => {
     return (
-      <>
-        {uiUseCase === "perpetuals" && (
-          <Banner
-            appearance="info"
-            title={t("modularDrawer.perpetualsBanner")}
-            lx={{ marginTop: "s16" }}
-          />
-        )}
-        <AddAccountButton label={t("modularDrawer.addAccount")} onClick={onAddNewAccountOnClick} />
-      </>
+      <AddAccountButton label={t("modularDrawer.addAccount")} onClick={onAddNewAccountOnClick} />
     );
-  }, [onAddNewAccountOnClick, t, uiUseCase]);
+  }, [onAddNewAccountOnClick, t]);
+
+  const isPerpsReceive = getPerpsUiUseCase(uiUseCase) === PERPS_UI_USE_CASE.receive;
+
+  const headerTitle = isPerpsReceive
+    ? t("modularDrawer.selectAccountPerpsTitle")
+    : t("modularDrawer.selectAccount");
+
+  const emptyAccountsDescription =
+    detailedAccounts.length === 0
+      ? t("modularDrawer.emptyAccounts", { network: asset.name })
+      : undefined;
+
+  const perpsDescription = isPerpsReceive
+    ? t("modularDrawer.selectAccountPerpsDescription")
+    : undefined;
+
+  const headerDescription = emptyAccountsDescription ?? perpsDescription;
 
   return (
     <>
       <TrackDrawerScreen page={EVENTS_NAME.MODULAR_ACCOUNT_SELECTION} flow={flow} source={source} />
       <BottomSheetHeader
         spacing
-        title={t("modularDrawer.selectAccount")}
-        description={
-          detailedAccounts.length === 0
-            ? t("modularDrawer.emptyAccounts", { network: asset.name })
-            : undefined
-        }
+        title={headerTitle}
+        description={headerDescription}
         density="expanded"
       />
       <BottomSheetVirtualizedList

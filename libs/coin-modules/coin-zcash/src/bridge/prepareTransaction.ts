@@ -2,7 +2,6 @@ import type { BigNumber } from "bignumber.js";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import type { Transaction, ZcashAccount } from "../types/bridge";
 import type { SpendableNote } from "../network/types";
-import { collectIronwoodSpendableNotes } from "./operations";
 import {
   estimateMaxSpendableAmount,
   estimateMaxSpendableTransparent,
@@ -11,6 +10,7 @@ import {
 } from "../logic/coin-selection";
 import { isTransparentInputTransfer, resolveTransparentUtxos } from "./statusHelpers";
 import { getReservedNullifiers } from "./note-reservation";
+import { collectSelectableIronwoodNotes } from "../logic/account/spendability";
 
 // Strip any stale fee/change from a prior prepare and reset the amount so the UI
 // never shows a spendable amount without a matching fee.
@@ -79,9 +79,6 @@ export const prepareTransaction: AccountBridge<
     return prepareTransparentTransaction(account, tx);
   }
 
-  const transactions = account.privateInfo?.transactions ?? [];
-  const allNotes = collectIronwoodSpendableNotes(transactions);
-  const reserved = getReservedNullifiers(account);
-  const notes = reserved.size > 0 ? allNotes.filter(n => !reserved.has(n.nullifier)) : allNotes;
+  const notes = collectSelectableIronwoodNotes(account, getReservedNullifiers(account));
   return prepareNoteTransaction(notes, tx);
 };

@@ -8,6 +8,7 @@ import {
   EXPLORER_TRANSFER_TYPES,
   MAX_PRIVATE_RECORDS_PER_TRANSACTION,
   MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION,
+  PROGRAM_ID,
   TRANSACTION_TYPE,
 } from "../constants";
 import {
@@ -28,6 +29,8 @@ import {
 import {
   getMockedTransaction as getMockedPublicTransaction,
   getMockedEnrichedPrivateRecord,
+  getMockedRecord,
+  getMockedTokenDetails,
 } from "../__tests__/fixtures/api.fixture";
 import { getMockedOperation } from "../__tests__/fixtures/operation.fixture";
 import { getMockedPreparedRequestResponse } from "../__tests__/fixtures/sdk.fixture";
@@ -48,13 +51,15 @@ import {
   mockTxIntentConvertTokenPrivateToPublic,
   mockTxIntentConvertTokenPrivateToPublic2,
 } from "../__tests__/fixtures/transaction.fixture";
-import type { AleoOperationExtra, ProvableApi } from "../types";
+import type { AleoContext, AleoOperationExtra, ProvableApi } from "../types";
 import {
   parseMicrocredits,
   parseAmount,
   normalizeAleoPlaintext,
   isAleoAddressPlaintext,
   isAleoAmountPlaintext,
+  isParsableTransferFunction,
+  findTransferArguments,
   determineTransactionType,
   patchAccountWithViewKey,
   toCoinFrameworkOperation,
@@ -62,6 +67,7 @@ import {
   toPrivateBridgeOperation,
   resolveConfig,
   getTransactionType,
+  buildFeeConfigurationForRootIntent,
   getAleoSubAccount,
   calculateAmount,
   isProvableApiConfigured,
@@ -96,6 +102,9 @@ import {
   getStrategyConfig,
   isAleoAccount,
   isAleoTransaction,
+  isTokenRecord,
+  classifyAleoTokenType,
+  resolvePrivacyContext,
 } from "./utils";
 
 jest.mock("../config");
@@ -210,6 +219,75 @@ describe("isAleoAmountPlaintext", () => {
     ["", false],
   ])("(%j) → %s", (input, expected) => {
     expect(isAleoAmountPlaintext(input)).toBe(expected);
+  });
+});
+
+describe("isParsableTransferFunction", () => {
+  it.each([
+    ["transfer_private", true],
+    ["transfer_private_to_public", true],
+    ["transfer_public_to_private", true],
+    ["transfer_private_2", true],
+    ["transfer_private_13", true],
+    ["transfer_private_to_public_4", true],
+    ["transfer_public_to_private_3", true],
+    ["transfer_from_public", false],
+    ["transfer_from_public_to_private", false],
+    ["transfer_public", false],
+    ["transfer_public_as_signer", false],
+    ["mint_private", false],
+    ["burn_private", false],
+    ["join", false],
+    ["join_5", false],
+    ["split", false],
+    ["fee_private", false],
+    ["", false],
+  ])("(%j) → %s", (input, expected) => {
+    expect(isParsableTransferFunction(input)).toBe(expected);
+  });
+});
+
+describe("findTransferArguments", () => {
+  const to = "aleo1recipient123";
+
+  it.each([
+    [
+      "credits.aleo / ARC-20 (record, recipient, amount)",
+      [null, to, "150000u64"],
+      { recipient: to, amount: "150000u64" },
+    ],
+    [
+      "ARC-21 / ARC-22 (recipient, amount, record)",
+      [to, "700u64", null],
+      { recipient: to, amount: "700u64" },
+    ],
+    [
+      "token_registry.aleo (token_id, recipient, amount, flag)",
+      ["1field", to, "500u128", "true"],
+      { recipient: to, amount: "500u128" },
+    ],
+    [
+      "batcher wrapper (external records, recipient, amount, proof)",
+      [null, null, to, "250000u64", "proof"],
+      { recipient: to, amount: "250000u64" },
+    ],
+    [
+      "trailing amount-shaped merkle proof is ignored",
+      [null, to, "42u64", "9999u64"],
+      { recipient: to, amount: "42u64" },
+    ],
+    [
+      "visibility suffixes are stripped",
+      [`${to}.private`, "42u64.public"],
+      { recipient: to, amount: "42u64" },
+    ],
+    ["undecryptable amount", [null, to, null], null],
+    ["no amount-shaped argument after the recipient", [null, to, null, "notanamount"], null],
+    ["no address-shaped argument (join)", [null, null], null],
+    ["amount before the recipient", ["42u64", to], null],
+    ["no arguments", [], null],
+  ])("%s", (_label, plaintexts, expected) => {
+    expect(findTransferArguments(plaintexts)).toEqual(expected);
   });
 });
 
@@ -378,6 +456,15 @@ describe("toCoinFrameworkOperation", () => {
     expect(result.tx.block.hash).toBe(rawTx.block_hash);
   });
 
+  it("should use amount_u128 over amount when provided, including values beyond JS safe integer range", () => {
+    const amountU128 = "123456789012345678901234567890";
+    const rawTx = getMockedPublicTransaction({ amount: 10000000, amount_u128: amountU128 });
+
+    const result = toCoinFrameworkOperation(rawTx, recipientAddress);
+
+    expect(result.value).toBe(BigInt(amountU128));
+  });
+
   it("should set failed to true when transaction_status is not Accepted", () => {
     const rawTx = getMockedPublicTransaction({ transaction_status: "Rejected" });
 
@@ -433,6 +520,15 @@ describe("toBridgeOperation", () => {
     expect(result.hasFailed).toBe(false);
   });
 
+  it("should use amount_u128 over amount when provided, including values beyond JS safe integer range", () => {
+    const amountU128 = "123456789012345678901234567890";
+    const rawTx = getMockedPublicTransaction({ amount: 10000000, amount_u128: amountU128 });
+
+    const result = toBridgeOperation(ledgerAccountId, rawTx, recipientAddress);
+
+    expect(result.value).toEqual(new BigNumber(amountU128));
+  });
+
   it("should generate different ids for different account ids", () => {
     const rawTx = getMockedPublicTransaction();
     const otherId = "js:2:aleo:aleo1other:";
@@ -466,7 +562,6 @@ describe("toBridgeOperation", () => {
 
   it.each([
     ["NaN amount", { amount: NaN as number }],
-    ["zero amount", { amount: 0 }],
     ["negative amount", { amount: -1 }],
   ])("should log invalid raw transaction details for %s", (_label, amountOverride) => {
     const rawTx = getMockedPublicTransaction(amountOverride);
@@ -479,6 +574,19 @@ describe("toBridgeOperation", () => {
       rawTx,
     );
     expect(result.value).toEqual(new BigNumber(rawTx.amount));
+  });
+
+  it("should log a zero amount apart from invalid details for transfer functions", () => {
+    const rawTx = getMockedPublicTransaction({ amount: 0, function_id: "transfer_private" });
+
+    toBridgeOperation(ledgerAccountId, rawTx, recipientAddress);
+
+    expect(log).toHaveBeenCalledTimes(1);
+    expect(log).toHaveBeenCalledWith(
+      "aleo/toBridgeOperation",
+      `Zero value transaction for ${recipientAddress}`,
+      rawTx,
+    );
   });
 
   it("should not log when amount is valid", () => {
@@ -540,6 +648,39 @@ describe("getTransactionType", () => {
     const mockTx: TransactionIntent = {};
 
     expect(() => getTransactionType(mockTx)).toThrow();
+  });
+});
+
+describe("buildFeeConfigurationForRootIntent", () => {
+  it("returns function_name fee_public when isPrivate is false", () => {
+    const result = buildFeeConfigurationForRootIntent({
+      isPrivate: false,
+      maxBaseFee: 1234n,
+      maxPriorityFee: 0n,
+    });
+
+    expect(result.function_name).toBe("fee_public");
+  });
+
+  it("returns function_name fee_private when isPrivate is true", () => {
+    const result = buildFeeConfigurationForRootIntent({
+      isPrivate: true,
+      maxBaseFee: 1234n,
+      maxPriorityFee: 0n,
+    });
+
+    expect(result.function_name).toBe("fee_private");
+  });
+
+  it("stringifies maxBaseFee and maxPriorityFee", () => {
+    const result = buildFeeConfigurationForRootIntent({
+      isPrivate: false,
+      maxBaseFee: 4242n,
+      maxPriorityFee: 10n,
+    });
+
+    expect(result.max_base_fee).toBe("4242");
+    expect(result.max_priority_fee).toBe("10");
   });
 });
 
@@ -2624,5 +2765,120 @@ describe("getCalTokens", () => {
 
     expect(result.size).toBe(1);
     expect(result.get(MOCK_TOKEN_PROGRAM_ID)).toEqual(mockTokenCurrency);
+  });
+});
+
+describe("isTokenRecord", () => {
+  it("returns true for a Token record on a non-credits program", () => {
+    const record = getMockedRecord({
+      record_name: "Token",
+      program_name: "token_a.aleo",
+    });
+
+    expect(isTokenRecord(record)).toBe(true);
+  });
+
+  it("is case-insensitive on record_name", () => {
+    const record = getMockedRecord({
+      record_name: "TOKEN",
+      program_name: "token_a.aleo",
+    });
+
+    expect(isTokenRecord(record)).toBe(true);
+  });
+
+  it("returns false for a Token record on credits.aleo", () => {
+    const record = getMockedRecord({
+      record_name: "Token",
+      program_name: PROGRAM_ID.CREDITS,
+    });
+
+    expect(isTokenRecord(record)).toBe(false);
+  });
+
+  it("returns false for a non-Token record", () => {
+    const record = getMockedRecord({
+      record_name: "credits",
+      program_name: "token_a.aleo",
+    });
+
+    expect(isTokenRecord(record)).toBe(false);
+  });
+});
+
+describe("classifyAleoTokenType", () => {
+  it.each([
+    [
+      "token_standard is ARC-20",
+      { token_standard: "ARC-20", program_name: "arc20_program.aleo" },
+      "arc20",
+    ],
+    [
+      "token_standard is lowercase arc-20",
+      { token_standard: "arc-20", program_name: "arc20_program.aleo" },
+      "arc20",
+    ],
+    [
+      "program_name is the shared token_registry.aleo program",
+      { token_standard: null, program_name: PROGRAM_ID.TOKEN_REGISTRY },
+      "arc21",
+    ],
+    [
+      "token_standard wins over a token_registry.aleo program match",
+      { token_standard: "ARC-20", program_name: PROGRAM_ID.TOKEN_REGISTRY },
+      "arc20",
+    ],
+    [
+      "program_name contains stablecoin",
+      { token_standard: null, program_name: "usdcx_stablecoin.aleo" },
+      "arc22",
+    ],
+    [
+      "no rule matches",
+      { token_standard: null, program_name: "some_random_program.aleo" },
+      "unknown",
+    ],
+  ] as const)("%s → %s", (_description, overrides, expected) => {
+    const token = getMockedTokenDetails(overrides);
+
+    expect(classifyAleoTokenType(token)).toBe(expected);
+  });
+});
+
+describe("resolvePrivacyContext", () => {
+  const mockConfigFn = async () => getMockedConfig("mainnet");
+
+  it("returns provableId and viewKey when both are present", () => {
+    const context: AleoContext = {
+      config: mockConfigFn,
+      logger: () => {},
+      provableId: "provable-id-1",
+      viewKey: "AViewKey1mock",
+    };
+
+    expect(resolvePrivacyContext(context)).toEqual({
+      provableId: "provable-id-1",
+      viewKey: "AViewKey1mock",
+    });
+  });
+
+  it("throws when provableId is missing", () => {
+    const context: AleoContext = {
+      config: mockConfigFn,
+      logger: () => {},
+      viewKey: "AViewKey1mock",
+    };
+
+    expect(() => resolvePrivacyContext(context)).toThrow("aleo: provableId is missing");
+  });
+
+  it("throws when viewKey is missing", () => {
+    const context: AleoContext = {
+      config: mockConfigFn,
+      logger: () => {},
+      provableId: "provable-id-1",
+    };
+
+    expect(() => resolvePrivacyContext(context)).toThrow("aleo: viewKey is missing");
   });
 });

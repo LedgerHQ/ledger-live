@@ -13,18 +13,20 @@ export async function craftTransaction({
   txIntent,
   feeConfiguration,
   viewKey,
-  tvks,
 }: {
   config: AleoCoinConfig;
   txIntent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData>;
   feeConfiguration: FeeConfiguration | null;
   viewKey?: string;
-  tvks?: string[];
 }): Promise<CraftedTransaction> {
+  const tvks = "data" in txIntent && "records" in txIntent.data ? txIntent.data.tvks : undefined;
   const intent = mapTransactionIntentToSdkIntent(txIntent);
 
   if ("records" in intent && intent.records.length > 1) {
-    invariant(tvks, "aleo: tvks are required for transactions with nested calls");
+    invariant(
+      tvks && tvks.length > 0,
+      "aleo: tvks are required for transactions with nested calls",
+    );
   }
 
   const response = await sdkClient.createRequestFromIntent({
@@ -32,7 +34,7 @@ export async function craftTransaction({
     intent,
     feeConfiguration,
     ...(viewKey !== undefined && { viewKey }),
-    ...(tvks !== undefined && { tvks }),
+    ...(tvks && tvks.length > 0 && { tvks }),
   });
 
   const transaction = toHex(response);

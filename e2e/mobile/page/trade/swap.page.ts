@@ -93,7 +93,6 @@ export default class SwapPage extends CommonPage {
 
   @Step("Check swap history feedback form URL")
   async checkSwapHistoryFeedbackFormUrl(expectedUrl: string) {
-    await scrollToId(this.swapHistoryFeedbackLink);
     await detoxExpect(getElementById(this.swapHistoryFeedbackLink)).toBeVisible();
     const { value, label } = await getAttributesOfElement(this.swapHistoryFeedbackLink);
     // iOS: accessibilityValue: value; Android: accessibilityLabel: label

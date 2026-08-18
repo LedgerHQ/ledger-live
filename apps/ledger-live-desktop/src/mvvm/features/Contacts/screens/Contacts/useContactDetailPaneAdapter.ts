@@ -16,9 +16,8 @@ import {
   type ContactsViewProps,
   CONTACTS_EVENT_SOURCE,
   CONTACTS_PAGE_EVENTS,
-  CONTACTS_PAGE_PROPERTY,
-  CONTACTS_TRACK_EVENTS,
-  CONTACTS_TRACKING_BUTTON,
+  trackContactsAddAddressClick,
+  trackContactsListContactOpen,
 } from "@features/flow-contacts";
 import { MY_WALLET_AVATAR_USER_URL } from "LLD/features/MyWallet/components/UserAvatar/constants";
 import { useContactsAnalytics } from "../../analytics";
@@ -99,12 +98,7 @@ export function useContactDetailPaneAdapter(
   }, [navigate]);
   const openContact = useCallback(
     (contactId: ContactId) => {
-      analytics.trackEvent(CONTACTS_TRACK_EVENTS.BUTTON_CLICKED, {
-        source: CONTACTS_EVENT_SOURCE.LIST,
-        button: CONTACTS_TRACKING_BUTTON.contact,
-        page: CONTACTS_PAGE_PROPERTY.CONTACTS,
-        myContact: contactId === meContact.id,
-      });
+      trackContactsListContactOpen(analytics, contactId, meContact.id);
       setDetailContactId(contactId);
       clearSelection();
     },
@@ -112,12 +106,7 @@ export function useContactDetailPaneAdapter(
   );
   const handleAddAddress = useCallback(
     (contact: AddAddressContact) => {
-      analytics.trackEvent(CONTACTS_TRACK_EVENTS.BUTTON_CLICKED, {
-        source: CONTACTS_EVENT_SOURCE.CONTACT_DETAIL,
-        button: CONTACTS_TRACKING_BUTTON.addAddress,
-        page: CONTACTS_PAGE_PROPERTY.CONTACT_DETAIL,
-        type: contact.id === meContact.id ? "me" : "other",
-      });
+      trackContactsAddAddressClick(analytics, contact.id, meContact.id);
       onAddAddress(contact);
     },
     [analytics, meContact.id, onAddAddress],

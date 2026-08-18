@@ -1,5 +1,5 @@
 import React from "react";
-import { CardLogin, type OpenHostedLogin } from "@features/flow-pay-card-auth";
+import { CardLogin, type CardLoginOauthConfig } from "@features/flow-pay-card-auth";
 import { FeatureTour, type FeatureTourProps } from "@features/flow-pay-card-feature-tour";
 import {
   Balance,
@@ -7,25 +7,28 @@ import {
   type BalanceData,
   type BalanceLabels,
 } from "@features/flow-pay-card-balance";
+import { DepositOptions, type DepositOptionsProps } from "@features/flow-pay-card-deposit";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import { TrackScreen } from "~/analytics";
 
 type PayTabViewProps = {
   readonly top: number;
-  readonly openHostedLogin: OpenHostedLogin;
+  readonly oauthConfig: CardLoginOauthConfig;
   readonly featureTour: FeatureTourProps;
   readonly balance: BalanceData;
   readonly balanceLabels: BalanceLabels;
   readonly actionTiles: ActionTilesProps;
+  readonly depositOptions: DepositOptionsProps;
 };
 
 export function PayTabView({
   top,
-  openHostedLogin,
+  oauthConfig,
   featureTour,
   balance,
   balanceLabels,
   actionTiles,
+  depositOptions,
 }: PayTabViewProps) {
   return (
     <Box
@@ -35,7 +38,8 @@ export function PayTabView({
     >
       <TrackScreen category="Pay" balance_filter={balance.filter} />
       <Balance {...balance} labels={balanceLabels} actionTiles={actionTiles} />
-      <CardLogin openHostedLogin={openHostedLogin} />
+      <DepositOptions {...depositOptions} />
+      <CardLogin oauthConfig={oauthConfig} />
       <FeatureTour {...featureTour} />
     </Box>
   );

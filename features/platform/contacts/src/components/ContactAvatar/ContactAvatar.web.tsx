@@ -1,8 +1,11 @@
 import React from "react";
-import { Avatar } from "@ledgerhq/lumen-ui-react";
+import {
+  Avatar,
+  resolveAvatarColor,
+  type AvatarProps as LumenAvatarProps,
+} from "@ledgerhq/lumen-ui-react";
 import type { ContactId } from "@domain/entity-contact";
-import { getContactAvatarColorClass } from "../../utils/getContactAvatarColorClass";
-import { getContactInitial } from "../../utils/getContactInitial";
+import { getContactAvatarInitials } from "../../utils/getContactAvatarInitials";
 
 export type ContactAvatarProps = Readonly<{
   contactId: ContactId;
@@ -11,14 +14,9 @@ export type ContactAvatarProps = Readonly<{
   src?: string;
   ariaHidden?: boolean;
   ariaLabel?: string;
-  size?: "sm" | "xl";
+  size?: LumenAvatarProps["size"];
   testId?: string;
 }>;
-
-const avatarSizeClasses = {
-  sm: "body-2-semi-bold size-32",
-  xl: "heading-3-semi-bold size-80",
-} as const;
 
 export function ContactAvatar({
   contactId,
@@ -41,19 +39,30 @@ export function ContactAvatar({
     accessibilityProps = { "aria-hidden": true };
   } else if (resolvedAriaLabel) {
     accessibilityProps = { role: "img", "aria-label": resolvedAriaLabel };
+  } else {
+    accessibilityProps = { role: undefined, "aria-label": undefined };
   }
 
   if (isMe) {
-    return <Avatar size={size} src={src} data-testid={resolvedTestId} {...accessibilityProps} />;
+    return (
+      <Avatar
+        size={size}
+        src={src}
+        alt={resolvedAriaLabel}
+        data-testid={resolvedTestId}
+        {...accessibilityProps}
+      />
+    );
   }
 
   return (
-    <div
-      className={`flex shrink-0 items-center justify-center rounded-full ${avatarSizeClasses[size]} ${getContactAvatarColorClass(contactId)}`}
+    <Avatar
+      size={size}
+      alt={resolvedAriaLabel}
+      fallbackText={getContactAvatarInitials(name)}
+      fallbackColor={resolveAvatarColor(contactId)}
       data-testid={resolvedTestId}
       {...accessibilityProps}
-    >
-      {getContactInitial(name)}
-    </div>
+    />
   );
 }

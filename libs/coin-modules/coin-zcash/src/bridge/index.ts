@@ -14,6 +14,7 @@ import getAddress from "../signer/getAddress";
 import getFullViewingKeyResolver, {
   type GetFullViewingKeyResult,
 } from "../signer/getFullViewingKey";
+import getShieldedAddressResolver from "../signer/getShieldedAddress";
 import { getSerializedAddressParameters } from "./exchange";
 import { validateAddress } from "../logic/validateAddress";
 import { broadcast } from "./broadcast";
@@ -39,6 +40,10 @@ export type ZcashAccountBridge = AccountBridge<Transaction, ZcashAccount, Transa
     options: { deviceId: string; path?: string },
   ) => Promise<GetFullViewingKeyResult>;
   deriveShieldedAddress: (ufvk: string) => Promise<string>;
+  getShieldedAddress: (
+    account: ZcashAccount,
+    options: { deviceId: string; path?: string; display?: boolean },
+  ) => Promise<{ address: string }>;
 };
 
 /**
@@ -53,6 +58,7 @@ export function createBridges(signerContext: SignerContext, coinConfig: CoinConf
 
   const getAddressFn = getAddress(signerContext);
   const getFullViewingKeyFn = getFullViewingKeyResolver(signerContext);
+  const getShieldedAddressFn = getShieldedAddressResolver(signerContext);
   const getAccountShape = makeGetAccountShape(signerContext);
 
   const scanAccounts = makeScanAccounts<ZcashAccount>({
@@ -105,6 +111,11 @@ export function createBridges(signerContext: SignerContext, coinConfig: CoinConf
       const client = await getZCashClient(getZainoEndpoint());
       return client.deriveShieldedAddress(ufvk);
     },
+    getShieldedAddress: (account, { deviceId, path, display }) =>
+      getShieldedAddressFn(deviceId, {
+        path: path ?? account.freshAddressPath,
+        ...(display !== undefined && { display }),
+      }),
   };
 
   return {

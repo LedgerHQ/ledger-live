@@ -289,8 +289,14 @@ export const LiveAppDrawer = () => {
             message: "User closed the drawer",
           });
         }
+        // A completed exchange tears down the swap <webview> that had focus before the
+        // drawer opened, so restoring focus to it on close crashes (focus-trap calls
+        // WebViewElement.focus() on a detached guest). Only restore focus when the drawer
+        // is dismissed before completing, where the webview is still alive. Set the flag
+        // before dispatching the close so SideDrawer never reads a stale value on the close
+        // render (mirrors onCloseExchangeComplete's ordering).
+        setShouldRestoreDrawerFocusOnClose(!exchangeCompleted);
         dispatch(closePlatformAppDrawer());
-        setShouldRestoreDrawerFocusOnClose(true);
         // Reset state for next time
         setExchangeCompleted(false);
       }}

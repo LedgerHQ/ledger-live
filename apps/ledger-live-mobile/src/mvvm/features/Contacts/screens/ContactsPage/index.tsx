@@ -2,7 +2,6 @@ import React, { useCallback, useLayoutEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useContactsFeature } from "@features/flow-contacts";
-import { TrackScreen } from "~/analytics";
 import { ContactsPageContent } from "./components/ContactsPageContent";
 import { useContactsAddContactDrawerAdapter } from "./hooks/useContactsAddContactDrawerAdapter";
 import { useContactsPageNavigationViewModel } from "./hooks/useContactsPageNavigationViewModel";
@@ -44,10 +43,5 @@ export function ContactsScreen() {
     return <ContactsScreenRedirect />;
   }
 
-  return (
-    <>
-      <TrackScreen category="Contacts" />
-      <ContactsScreenContent />
-    </>
-  );
+  return <ContactsScreenContent />;
 }

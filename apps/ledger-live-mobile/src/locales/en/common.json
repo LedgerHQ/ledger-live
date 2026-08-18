@@ -9629,13 +9629,16 @@
     "selectAsset": "Select asset",
     "selectNetwork": "Select network",
     "selectAccount": "Select account",
+    "selectAccountPerpsTitle": "Select Hyperliquid account",
+    "selectAccountPerpsDescription": "To fund your perps, you need a Hyperliquid account. Add one to continue.",
+    "selectDepositCurrencyTitle": "Select asset to deposit",
+    "selectDepositCurrencyDescription": "Any supported asset works. It will be swapped automatically if needed.",
     "searchPlaceholder": "Search by name or address",
     "emptyAssetList": "No assets found",
     "accountCount_one": "{{count}} account",
     "accountCount_other": "{{count}} accounts",
     "emptyAccounts": "You don't have {{network}} accounts yet. Please add one to continue",
     "addAccount": "Add account",
-    "perpetualsBanner": "Currently only supported with USDC on Arbitrum chain.",
     "errors": {
       "title": "Connection failed",
       "backend": "Something went wrong on our end. Please try again later",
@@ -10027,6 +10030,27 @@
     "actions": {
       "deposit": "Add stablecoin",
       "request": "Request"
+    },
+    "deposit": {
+      "title": "Add stablecoins",
+      "options": {
+        "bankTransfer": {
+          "title": "Bank transfer",
+          "description": "Transfer USD or EUR to receive stablecoins."
+        },
+        "swap": {
+          "title": "Swap from crypto",
+          "description": "Swap your crypto for stablecoins."
+        },
+        "receive": {
+          "title": "Crypto address",
+          "description": "Receive stablecoins from another wallet."
+        },
+        "buy": {
+          "title": "Buy",
+          "description": "Buy stablecoins with credit card."
+        }
+      }
     }
   },
   "syncIndicator": {
@@ -10304,10 +10328,10 @@
       "ledgerWalletAddresses": "Ledger Wallet addresses",
       "myAddresses": "My addresses",
       "emptyState": {
-        "title": "No address yet",
+        "contactTitle": "No saved addresses for {{name}}",
         "meTitle": "Save your own addresses",
         "meDescription": "Save the external addresses you own on exchanges or other wallets. Next time you send to yourself, your Ledger device will show the name you chose.",
-        "contactDescription": "Save a wallet address to send to {{name}}"
+        "contactDescription": "Save their wallet addresses to send to them by name next time"
       }
     },
     "addressDetail": {
@@ -10375,7 +10399,6 @@
       "title": "Introducing Contacts",
       "description": "Your address book for crypto — save the wallets you send to, all in one place.",
       "primaryAction": "Try contacts",
-      "secondaryAction": "Maybe later",
       "highlights": {
         "saveAddresses": {
           "title": "Save addresses once",

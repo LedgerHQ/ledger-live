@@ -7,7 +7,7 @@ import { Box, Switch, Text, Button, IconsLegacy } from "@ledgerhq/native-ui";
 import SettingsNavigationScrollView from "../SettingsNavigationScrollView";
 import SettingsRow from "~/components/SettingsRow";
 import { track, TrackScreen, trackWithRoute, updateIdentify } from "~/analytics";
-import { notificationsSelector } from "~/reducers/settings";
+import { notificationsSelector, trackingEnabledSelector } from "~/reducers/settings";
 import { setNotifications } from "~/actions/settings";
 import type { State } from "~/reducers/types";
 import { useNotifications } from "LLM/features/NotificationsPrompt";
@@ -34,6 +34,8 @@ type NotificationRowProps = {
 function NotificationSettingsRow({ disabled, notificationKey, label }: NotificationRowProps) {
   const dispatch = useDispatch();
   const notifications = useSelector(notificationsSelector);
+  const isTrackedUser = useSelector(trackingEnabledSelector);
+  const brazeOptOutIdentityCleanup = useFeature("brazeOptOutIdentityCleanup");
   const { markUserAsOptIn, permissionStatus, markUserAsOptOut } = useNotifications();
 
   const { t } = useTranslation();
@@ -65,16 +67,24 @@ function NotificationSettingsRow({ disabled, notificationKey, label }: Notificat
       });
 
       updateIdentify();
-      updateUserPreferences({
-        ...notifications,
-        [notificationKey]: value,
-      });
+      updateUserPreferences(
+        {
+          ...notifications,
+          [notificationKey]: value,
+        },
+        isTrackedUser,
+        {
+          brazeOptOutIdentityCleanup: brazeOptOutIdentityCleanup?.enabled ?? false,
+        },
+      );
     },
     [
       dispatch,
       notificationKey,
       capitalizedKey,
       notifications,
+      isTrackedUser,
+      brazeOptOutIdentityCleanup?.enabled,
       markUserAsOptOut,
       permissionStatus,
       markUserAsOptIn,

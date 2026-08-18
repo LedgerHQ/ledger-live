@@ -3,6 +3,7 @@ import type {
   ZcashAddress,
   ZcashViewKey,
   ZcashTrustedInput,
+  ZcashShieldedAddress,
   ZcashSigner,
   ZcashSignature,
   SignerTransactionLike,
@@ -26,6 +27,7 @@ import {
   SignerZcashBuilder,
   type GetAddressDAError,
   type GetFullViewingKeyDAError,
+  type GetShieldedAddressDAError,
   type SignerZcash,
   type LegacyCreateTransactionArg,
   type LegacyTransaction,
@@ -188,6 +190,17 @@ export class DmkSignerZcash implements ZcashSigner {
     return {
       viewKey: result.fullViewingKey,
     };
+  }
+
+  async getShieldedAddress(path: string, display?: boolean): Promise<ZcashShieldedAddress> {
+    const { observable } = this.signer.getShieldedAddress(path, {
+      checkOnDevice: !!display,
+      skipOpenApp: true,
+    });
+    const result = await this.resolveDeviceAction<{ address: string }, GetShieldedAddressDAError>(
+      observable,
+    );
+    return { address: result.address };
   }
 
   async getTrustedInput(): Promise<ZcashTrustedInput> {

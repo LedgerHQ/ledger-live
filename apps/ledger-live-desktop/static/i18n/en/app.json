@@ -905,6 +905,27 @@
       "deposit": "Add stablecoin",
       "request": "Request",
       "pay": "New payment"
+    },
+    "deposit": {
+      "title": "Add stablecoins",
+      "options": {
+        "bankTransfer": {
+          "title": "Bank transfer",
+          "description": "Transfer USD or EUR to receive stablecoins."
+        },
+        "swap": {
+          "title": "Swap from crypto",
+          "description": "Swap your crypto for stablecoins."
+        },
+        "receive": {
+          "title": "Crypto address",
+          "description": "Receive stablecoins from another wallet."
+        },
+        "buy": {
+          "title": "Buy",
+          "description": "Buy stablecoins with credit card."
+        }
+      }
     }
   },
   "lend": {
@@ -8726,6 +8747,10 @@
     "selectAsset": "Select asset",
     "selectNetwork": "Select network",
     "selectAccount": "Select account",
+    "selectAccountPerpsTitle": "Select Hyperliquid account",
+    "selectAccountPerpsDescription": "To fund your perps, you need a Hyperliquid account. Add one to continue.",
+    "selectDepositCurrencyTitle": "Select asset to deposit",
+    "selectDepositCurrencyDescription": "Any supported asset works. It will be swapped automatically if needed.",
     "accountCount_one": "{{count}} account",
     "accountCount_other": "{{count}} accounts",
     "accountsAdded": {
@@ -8940,7 +8965,8 @@
       "transparentBalanceTooltip": "Balance that is visible to the public",
       "privateBalance": "Private balance",
       "privateBalanceTooltip": "Balance that is hidden from the public",
-      "privateBalanceWarning": "Private balance excludes Sapling and Orchard shielded funds"
+      "privateBalanceWarning": "Private balance excludes Sapling and Orchard shielded funds",
+      "privateBalanceMaturing": "{{spendable}} spendable · {{maturing}} maturing"
     },
     "shielded": {
       "send": {
@@ -9000,6 +9026,13 @@
       "datepicker": {
         "label": "Birthday height",
         "tooltip": "The birthday height is the point on the blockchain where your wallet begins scanning for your funds."
+      },
+      "receive": {
+        "verifyAddresses": "Verify both your transparent and private addresses on your Ledger",
+        "privateFor": "Private address for <0>{{name}}</0>",
+        "noUfvk": {
+          "description": "Enable your private balance to receive to a private address."
+        }
       },
       "flows": {
         "export": {
@@ -9321,7 +9354,8 @@
       },
       "recoveryKey": {
         "title": "Ledger Recovery Key",
-        "description": "A PIN-protected smart card."
+        "description": "A PIN-protected smart card.",
+        "incompatible": "Not compatible with your device"
       },
       "secretRecoveryPhrase": {
         "title": "24-word metal storage",
@@ -9395,7 +9429,7 @@
         "meTitle": "No saved addresses for you",
         "contactTitle": "No saved addresses for {{name}}",
         "meDescription": "Save your wallet addresses to receive crypto by name next time.",
-        "contactDescription": "Save their wallet addresses to send to them by name next time."
+        "contactDescription": "Save their wallet addresses to send to them by name next time"
       }
     },
     "addressDetail": {
@@ -9456,7 +9490,6 @@
       "title": "Introducing Contacts",
       "description": "Your address book for crypto — save the wallets you send to, all in one place.",
       "primaryAction": "Try contacts",
-      "secondaryAction": "Maybe later",
       "highlights": {
         "saveAddresses": {
           "title": "Save addresses once",

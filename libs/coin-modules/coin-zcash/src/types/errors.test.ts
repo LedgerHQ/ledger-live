@@ -1,4 +1,5 @@
 import {
+  ZcashNotesNotYetSpendable,
   ZcashSaplingRecipientNotSupported,
   ZcashSignerNotSupported,
   ZcashSigningCancelled,
@@ -12,6 +13,7 @@ describe("zcash errors", () => {
     [ZcashSaplingRecipientNotSupported, "Sapling recipients are not supported"],
     [ZcashSignerNotSupported, "Signer does not support Zcash PCZT signing"],
     [ZcashSigningCancelled, "Zcash signing was cancelled"],
+    [ZcashNotesNotYetSpendable, "These funds are not spendable yet, try again in a few minutes"],
   ])("names %p and gives it a readable default message", (Err, message) => {
     const error = new Err();
 

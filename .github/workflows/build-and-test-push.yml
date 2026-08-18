@@ -260,6 +260,9 @@ jobs:
   test-additional:
     name: "Test Additional"
     uses: LedgerHQ/ledger-live/.github/workflows/test-additional.yml@develop
+    permissions: 
+      security-events: write
+      contents: read
 
   test-mobile-e2e-lint:
     name: "Mobile E2E Lint & Typecheck"

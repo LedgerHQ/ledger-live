@@ -2,7 +2,7 @@ import { getMainAccount, getRecentAddressesStore } from "../../account/index";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction } from "../../coin-modules/transaction-types";
 import { formatAddress } from "../../utils/addressUtils";
-import type { RecipientData } from "./types";
+import type { Memo, RecipientData } from "./types";
 
 function getEnsNameFromTransaction(transaction: Transaction): string | undefined {
   if (!("recipientDomain" in transaction)) return undefined;
@@ -60,4 +60,32 @@ export function getRecipientSearchPrefillValue(
 ): string | undefined {
   if (!recipient) return "";
   return recipient.ensName?.trim() ? recipient.ensName : recipient.address;
+}
+
+/**
+ * Resolves which recipient to persist when the memo changes.
+ */
+export function buildRecipientForMemoChange(
+  searchValue: string,
+  previousRecipient: RecipientData | null,
+  memo: Memo,
+): RecipientData {
+  const previousAddress = previousRecipient?.address;
+  const previousEnsName = previousRecipient?.ensName;
+  const searchMatchesPrevious =
+    searchValue.length > 0 && (searchValue === previousAddress || searchValue === previousEnsName);
+
+  if (searchMatchesPrevious) {
+    return {
+      address: previousAddress ?? searchValue,
+      ensName: previousEnsName,
+      memo,
+    };
+  }
+
+  return {
+    address: searchValue,
+    ensName: undefined,
+    memo,
+  };
 }

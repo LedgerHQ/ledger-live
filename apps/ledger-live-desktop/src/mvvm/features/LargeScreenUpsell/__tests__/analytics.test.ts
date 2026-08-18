@@ -2,6 +2,7 @@ import { track, trackPage } from "~/renderer/analytics/segment";
 import {
   LARGE_SCREEN_UPSELL_MODAL_PAGE_NAME,
   toLargeScreenUpsellDeviceModelAnalyticsValue,
+  trackLargeScreenUpsellModalBlockedByCompeting,
   trackLargeScreenUpsellModalCtaClicked,
   trackLargeScreenUpsellModalDismissed,
   trackLargeScreenUpsellModalViewed,
@@ -53,6 +54,19 @@ describe("LargeScreenUpsell analytics", () => {
       page: LARGE_SCREEN_UPSELL_MODAL_PAGE_NAME,
       dismissMethod: "escape key down",
       ...SHARED_PROPS,
+    });
+  });
+
+  it("should emit modal_blocked when a competing app-start modal has preference", () => {
+    trackLargeScreenUpsellModalBlockedByCompeting("wallet_v4_tour");
+
+    expect(track).toHaveBeenCalledWith("modal_blocked", {
+      modal: "upgrade modal",
+      page: LARGE_SCREEN_UPSELL_MODAL_PAGE_NAME,
+      reason: "competing_app_start_modal",
+      competitor: "wallet_v4_tour",
+      platform: "lwd",
+      sourceFlow: "app start",
     });
   });
 });

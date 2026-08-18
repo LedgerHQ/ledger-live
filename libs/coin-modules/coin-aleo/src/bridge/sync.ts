@@ -15,7 +15,8 @@ import { SyncConfig, SYNC_TYPE_SHIELDED, SYNC_TYPE_TRANSPARENT } from "@ledgerhq
 import type { TokenAccount } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import { AleoApiConfigurationResetError } from "../errors";
-import { getBalance, lastBlock, listOperations } from "../logic";
+import { lastBlock, listOperations } from "../logic";
+import { getPublicBalance } from "../logic/getPublicBalance";
 import {
   extractViewKey,
   isProvableApiConfigured,
@@ -76,7 +77,7 @@ export async function performPublicSync(
   const config = resolveConfig(currency.id);
 
   const [balances, latestBlock] = await Promise.all([
-    getBalance(config, address),
+    getPublicBalance(config, address),
     lastBlock(config),
   ]);
 

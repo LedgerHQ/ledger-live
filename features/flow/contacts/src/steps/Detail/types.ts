@@ -141,7 +141,6 @@ export type ContactAddressDetailDeleteIntent = Readonly<{
   type: "delete-address";
   contactId: ContactId;
   addressId: ContactAddressId;
-  deleteRequirement: ContactEditRequirement;
 }>;
 
 export type ContactAddressDeleteLifecycle =
@@ -156,5 +155,4 @@ export type ContactAddressDetailActionsViewModel = Readonly<{
   deleteIntent: ContactAddressDetailDeleteIntent;
   deleteLifecycle: ContactAddressDeleteLifecycle;
   isSignerRequiredForEdit: boolean;
-  isSignerRequiredForDelete: boolean;
 }>;

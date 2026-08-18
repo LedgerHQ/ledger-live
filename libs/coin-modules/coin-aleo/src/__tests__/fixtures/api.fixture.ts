@@ -2,10 +2,14 @@ import BigNumber from "bignumber.js";
 import { PROGRAM_ID } from "../../constants";
 import type { DelegatedProvingResponse } from "../../types";
 import {
+  AleoDecryptedRecordResponse,
+  AleoGetTokensResponse,
   AleoPrivateRecord,
   AleoPublicTransaction,
   AleoPublicTransactionDetailsResponse,
   AleoPublicTransactionsResponse,
+  AleoRecordScannerStatusResponse,
+  AleoTokenDetails,
   EnrichedPrivateRecord,
 } from "../../types";
 
@@ -361,6 +365,13 @@ export const testnetInboundPrivateToPublicTx: AleoPublicTransaction = {
 
 export const TEST_TOKEN_PROGRAM_ID = "test_usad_stablecoin.aleo";
 
+export const testnetSpentTokenRecord: AleoDecryptedRecordResponse = {
+  owner: `${testnetAddress}.private`,
+  data: { amount: "1u128.private" },
+  nonce: "1344917106254048670972991786623247617474892323390373138993206886249401722645group",
+  version: 1,
+};
+
 // Outgoing transfer_private_to_public (credits) — testnetAddress converts a private record to
 // a THIRD PARTY's public balance (not itself). Exercises getTokenOutDetails's PRIVATE_TO_PUBLIC
 // branch, which is program-agnostic (reads plaintext public inputs, no token-argument offset).
@@ -447,6 +458,59 @@ export const getMockedRecord = (overrides?: Partial<AleoPrivateRecord>): AleoPri
   tag: "tag123",
   transition_id: "transition123",
   transaction_index: 0,
+  ...overrides,
+});
+
+export const getMockedDecryptedRecord = (
+  overrides?: Partial<AleoDecryptedRecordResponse>,
+): AleoDecryptedRecordResponse => ({
+  owner: "aleo1zcwqycj02lccfuu57dzjhva7w5dpzc7pngl0sxjhp58t6vlnnqxs6lnp6f.private",
+  data: { microcredits: "800000u64.private" },
+  nonce: "7349790946519678882609199286010273702044020144797298963772495833343454197352group",
+  version: 1,
+  ...overrides,
+});
+
+export const getMockedRecordScannerStatus = (
+  overrides?: Partial<AleoRecordScannerStatusResponse>,
+): AleoRecordScannerStatusResponse => ({
+  synced: true,
+  percentage: 100,
+  sync_start_height: 0,
+  synced_up_to: 20985061,
+  ...overrides,
+});
+
+export const getMockedTokenDetails = (overrides?: Partial<AleoTokenDetails>): AleoTokenDetails => ({
+  token_id: "token123field",
+  token_id_datatype: null,
+  token_standard: null,
+  symbol: "TKN",
+  display: "Token",
+  program_name: "token_b.aleo",
+  decimals: 6,
+  total_supply: "1000000000000",
+  verified: true,
+  token_icon_url: "https://example.com/token.png",
+  price: "1.23",
+  price_change_percentage_24h: "0.5",
+  fully_diluted_value: null,
+  total_market_cap: "1230000000",
+  volume_24h: "45000",
+  ...overrides,
+});
+
+export const getMockedGetTokensResponse = (
+  overrides?: Partial<AleoGetTokensResponse>,
+): AleoGetTokensResponse => ({
+  pagination: {
+    limit: 20,
+    offset: 0,
+    total_count: 1,
+    has_next: false,
+    has_previous: false,
+  },
+  data: [getMockedTokenDetails()],
   ...overrides,
 });
 

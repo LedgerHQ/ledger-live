@@ -45,7 +45,7 @@ export function getLargeScreenUpsellDecision(
   }
 
   if (
-    frequency.retries >= killThreshold &&
+    frequency.retriesModal >= killThreshold &&
     frequency.lastSeenAt !== null &&
     !isCooldownElapsed({
       elapsedSinceDate: new Date(frequency.lastSeenAt),

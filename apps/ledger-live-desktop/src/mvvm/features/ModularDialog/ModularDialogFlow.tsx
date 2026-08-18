@@ -3,6 +3,10 @@ import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useModularDrawerConfiguration } from "@ledgerhq/live-common/modularDrawer/hooks/useModularDrawerConfiguration";
 import {
+  getPerpsUiUseCase,
+  PERPS_UI_USE_CASE,
+} from "@ledgerhq/live-common/wallet-api/ModularDrawer/uiUseCase";
+import {
   modularDialogConfigurationSelector,
   modularDialogFlowSelector,
   modularDialogIsOpenSelector,
@@ -26,6 +30,35 @@ const TRANSLATION_KEYS: Record<ModularDialogStep, string> = {
   [MODULAR_DIALOG_STEP.NETWORK_SELECTION]: "modularAssetDrawer.selectNetwork",
   [MODULAR_DIALOG_STEP.ACCOUNT_SELECTION]: "modularAssetDrawer.selectAccount",
 };
+
+type StepHeading = {
+  titleKey: string;
+  descriptionKey?: string;
+};
+
+/** Translation keys for a step's title and description, given the perps use case. */
+function getStepHeading(step: ModularDialogStep, uiUseCase?: string): StepHeading {
+  const perpsUseCase = getPerpsUiUseCase(uiUseCase);
+
+  if (step === MODULAR_DIALOG_STEP.ASSET_SELECTION && perpsUseCase === PERPS_UI_USE_CASE.fund) {
+    return {
+      titleKey: "modularAssetDrawer.selectDepositCurrencyTitle",
+      descriptionKey: "modularAssetDrawer.selectDepositCurrencyDescription",
+    };
+  }
+
+  if (
+    step === MODULAR_DIALOG_STEP.ACCOUNT_SELECTION &&
+    perpsUseCase === PERPS_UI_USE_CASE.receive
+  ) {
+    return {
+      titleKey: "modularAssetDrawer.selectAccountPerpsTitle",
+      descriptionKey: "modularAssetDrawer.selectAccountPerpsDescription",
+    };
+  }
+
+  return { titleKey: TRANSLATION_KEYS[step] };
+}
 
 export function ModularDialogFlow({
   children,
@@ -136,19 +169,25 @@ export function ModularDialogFlow({
       {renderStepContent(currentStep)}
     </AnimatedScreenWrapper>
   );
-  const description =
+
+  const accountSelectionDescription =
     currentStep === MODULAR_DIALOG_STEP.ACCOUNT_SELECTION && selectedNetwork?.name && !hasAccounts
       ? t("dialogs.selectAccount.description", {
           network: selectedNetwork.name,
         })
       : undefined;
 
+  const { titleKey, descriptionKey } = getStepHeading(currentStep, uiUseCase);
+  const title = t(titleKey);
+  const description =
+    accountSelectionDescription ?? (descriptionKey ? t(descriptionKey) : undefined);
+
   return (
     <>
       {children({
         content,
         currentStep,
-        title: t(TRANSLATION_KEYS[currentStep]),
+        title,
         description,
         hasBackButton: Boolean(handleBack),
         isOpen,

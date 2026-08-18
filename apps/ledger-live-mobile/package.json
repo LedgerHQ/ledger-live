@@ -1,6 +1,6 @@
 {
   "name": "live-mobile",
-  "version": "4.15.0",
+  "version": "4.16.0",
   "private": true,
   "scripts": {
     "postinstall": "zx ./scripts/post.mjs",
@@ -113,6 +113,7 @@
     "@features/flow-analytics-consent": "workspace:*",
     "@features/flow-pay-card-auth": "workspace:^",
     "@features/flow-pay-card-balance": "workspace:^",
+    "@features/flow-pay-card-deposit": "workspace:^",
     "@features/flow-pay-card-feature-tour": "workspace:^",
     "@features/flow-contacts": "workspace:^",
     "@features/platform-contacts": "workspace:^",

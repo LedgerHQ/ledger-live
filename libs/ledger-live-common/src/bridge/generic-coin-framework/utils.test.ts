@@ -1500,6 +1500,18 @@ describe("coin-framework utils", () => {
         fee: new BigNumber(25),
       });
     });
+
+    it.each([
+      [0, new BigNumber(0)],
+      [3, new BigNumber(3)],
+      [undefined, undefined],
+    ])("adapts a sequence of %s", (sequence, expected) => {
+      const op = { ...baseOp, details: { sequence } };
+
+      const result = adaptCoreOperationToLiveOperation(accountId, op);
+
+      expect(result.transactionSequenceNumber).toEqual(expected);
+    });
   });
 
   describe("nextSequenceWithPending", () => {

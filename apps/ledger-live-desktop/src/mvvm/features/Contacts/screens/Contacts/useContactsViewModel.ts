@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
+import { useCallback, useEffect, useMemo, useState, type ChangeEvent } from "react";
+import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 import { urls } from "~/config/urls";
@@ -28,10 +29,11 @@ import {
   type ContactsViewProps,
   CONTACTS_EVENT_SOURCE,
   CONTACTS_FLOW,
-  CONTACTS_PAGE_EVENTS,
   CONTACTS_PAGE_PROPERTY,
   CONTACTS_TRACK_EVENTS,
   CONTACTS_TRACKING_BUTTON,
+  useContactsListPageAnalytics,
+  trackContactsLedgerSyncDismiss,
 } from "@features/flow-contacts";
 import {
   CONTACTS_FEATURE_INTRODUCTION_HIGHLIGHTS,
@@ -69,8 +71,6 @@ export function useContactsViewModel(): ContactsPageViewModel {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const analytics = useContactsAnalytics();
-  const hasTrackedListPage = useRef(false);
-  const hasTrackedLedgerSyncGate = useRef(false);
   const helpCenterUrl = useLocalizedUrl(urls.helpModal.helpCenter);
   const handleSanctionedAddressLearnMore = useCallback(() => {
     openURL(helpCenterUrl);
@@ -106,6 +106,9 @@ export function useContactsViewModel(): ContactsPageViewModel {
 
     const { network, asset } = await resolveContactsCurrencyAnalytics(
       addAddressFlowState.selectedCurrencyId,
+      {
+        findTokenById: currencyId => getCryptoAssetsStore().findTokenById(currencyId),
+      },
     );
     const inputMethod = addAddressFlowState.addressEntry.inputMethod ?? "manual";
 
@@ -334,11 +337,7 @@ export function useContactsViewModel(): ContactsPageViewModel {
   }, []);
   const onClearSearch = useCallback(() => setSearchQuery(""), []);
   const onDismissLedgerSyncIntroduction = useCallback(() => {
-    analytics.trackEvent(CONTACTS_TRACK_EVENTS.BUTTON_CLICKED, {
-      source: CONTACTS_EVENT_SOURCE.LEDGER_SYNC_GATE,
-      button: CONTACTS_TRACKING_BUTTON.dismiss,
-      page: CONTACTS_PAGE_PROPERTY.LEDGER_SYNC_GATE,
-    });
+    trackContactsLedgerSyncDismiss(analytics);
     setIsLedgerSyncIntroductionDismissed(true);
   }, [analytics]);
 
@@ -356,61 +355,17 @@ export function useContactsViewModel(): ContactsPageViewModel {
   const onCompleteFeatureIntroduction = useCallback(() => {
     featureIntroductionState.dismiss();
   }, [featureIntroductionState]);
-  const onDeferFeatureIntroduction = useCallback(() => {
+  const onCloseFeatureIntroduction = useCallback(() => {
     navigate(-1);
   }, [navigate]);
-
-  useEffect(() => {
-    if (hasTrackedListPage.current) {
-      return;
-    }
-
-    hasTrackedListPage.current = true;
-    analytics.trackPage(CONTACTS_PAGE_EVENTS.CONTACTS, {
-      source: CONTACTS_EVENT_SOURCE.LIST,
-      page: CONTACTS_PAGE_PROPERTY.CONTACTS,
-    });
-  }, [analytics]);
-
   const searchHasResults = !("status" in viewModel && viewModel.status === "no-results");
 
-  useEffect(() => {
-    const trimmedQuery = searchQuery.trim();
-
-    if (trimmedQuery.length === 0) {
-      return;
-    }
-
-    const timeoutId = setTimeout(() => {
-      analytics.trackEvent(CONTACTS_TRACK_EVENTS.SEARCH_QUERY, {
-        source: CONTACTS_EVENT_SOURCE.SEARCH,
-        page: CONTACTS_PAGE_PROPERTY.CONTACTS,
-        queryLength: trimmedQuery.length,
-        hasResults: searchHasResults,
-      });
-    }, 500);
-
-    return () => clearTimeout(timeoutId);
-  }, [analytics, searchHasResults, searchQuery]);
-
-  useEffect(() => {
-    if (!isLedgerSyncIntroductionOpen || hasTrackedLedgerSyncGate.current) {
-      return;
-    }
-
-    hasTrackedLedgerSyncGate.current = true;
-    analytics.trackPage(CONTACTS_PAGE_EVENTS.ACTIVATE_LEDGER_SYNC, {
-      source: CONTACTS_EVENT_SOURCE.LEDGER_SYNC_GATE,
-      flow: CONTACTS_FLOW.CONTACTS,
-      previousPage: CONTACTS_PAGE_PROPERTY.CONTACTS,
-    });
-  }, [analytics, isLedgerSyncIntroductionOpen]);
-
-  useEffect(() => {
-    if (!isLedgerSyncIntroductionOpen) {
-      hasTrackedLedgerSyncGate.current = false;
-    }
-  }, [isLedgerSyncIntroductionOpen]);
+  useContactsListPageAnalytics({
+    analytics,
+    searchQuery,
+    searchHasResults,
+    isLedgerSyncIntroductionOpen,
+  });
 
   return {
     addAddressFlowState,
@@ -434,9 +389,8 @@ export function useContactsViewModel(): ContactsPageViewModel {
       description: t("contacts.featureIntroduction.description"),
       highlights: featureIntroductionHighlights,
       primaryActionLabel: t("contacts.featureIntroduction.primaryAction"),
-      secondaryActionLabel: t("contacts.featureIntroduction.secondaryAction"),
       onComplete: onCompleteFeatureIntroduction,
-      onDefer: onDeferFeatureIntroduction,
+      onClose: onCloseFeatureIntroduction,
     },
     ledgerSyncIntroduction: {
       isOpen: isLedgerSyncIntroductionOpen,

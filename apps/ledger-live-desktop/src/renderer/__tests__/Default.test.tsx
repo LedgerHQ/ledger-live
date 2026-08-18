@@ -1,6 +1,7 @@
 import React from "react";
 import { FEATURE_FLAGS_DEFAULTS, FEATURE_FLAGS_INITIAL_STATE } from "@shared/feature-flags";
 import { render, waitFor } from "tests/testSetup";
+import { INITIAL_STATE } from "~/renderer/reducers/settings";
 import Default from "../Default";
 import { updateIdentify } from "../analytics/segment";
 
@@ -31,6 +32,19 @@ jest.mock("LLD/features/AppBlockers/components/AppVersionBlocker", () => {
   return { AppVersionBlocker: ({ children }: { children: React.ReactNode }) => <>{children}</> };
 });
 
+jest.mock(
+  "@ledgerhq/live-common/wallet-api/ModularDrawer/uiUseCase",
+  () => ({
+    PERPS_UI_USE_CASE: {
+      legacy: "perpetuals",
+      receive: "perpetuals:receive",
+      fund: "perpetuals:fund",
+    },
+    getPerpsUiUseCase: () => undefined,
+  }),
+  { virtual: true },
+);
+
 jest.mock("../analytics/segment", () => ({
   ...jest.requireActual("../analytics/segment"),
   updateIdentify: jest.fn(),
@@ -52,7 +66,7 @@ describe("Default", () => {
     });
 
     it("retains consent flags on mount (test regression for LIVE-30334)", async () => {
-      const { store } = render(<Default />, {
+      const { store, unmount } = render(<Default />, {
         initialState: {
           devices: { currentDevice: null, devices: [] },
           featureFlags: (() => {
@@ -72,16 +86,12 @@ describe("Default", () => {
             };
           })(),
           settings: {
+            ...INITIAL_STATE,
             loaded: true,
             hasCompletedOnboarding: true,
             hasSeenAnalyticsOptInPrompt: false,
             shareAnalytics: true,
             sharePersonalizedRecommandations: true,
-            lastUsedVersion: __APP_VERSION__,
-            vaultSigner: { enabled: false, host: "", token: "", workspace: "" },
-            devicesModelList: [],
-            anonymousUserNotifications: {},
-            orderAccounts: "balance|desc",
           },
         },
         initialRoute: "/",
@@ -93,6 +103,7 @@ describe("Default", () => {
 
       expect(store.getState().settings.shareAnalytics).toBe(true);
       expect(store.getState().settings.sharePersonalizedRecommandations).toBe(true);
+      unmount();
     });
   });
 });

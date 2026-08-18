@@ -9,10 +9,11 @@ import type {
 import { enrichPrivateRecord } from "../network/utils";
 import { toPrivateBridgeOperation } from "./utils";
 
-function onlyRecordValue(
+// Records forwarded to another program carry no tag; the callee's transition holds it.
+function onlyTaggedRecordValue(
   value: AleoTransitionValue,
-): value is Extract<AleoTransitionValue, { type: "record" }> {
-  return value.type === "record";
+): value is Extract<AleoTransitionValue, { tag: string }> {
+  return "tag" in value;
 }
 
 // Build the set of record tags consumed as inputs in outgoing transactions.
@@ -31,7 +32,9 @@ export function buildConsumedRecordTags(
       enriched.details.fee.transition,
     ];
 
-    const inputRecords = txTransitions.flatMap(({ inputs }) => inputs.filter(onlyRecordValue));
+    const inputRecords = txTransitions.flatMap(({ inputs }) =>
+      inputs.filter(onlyTaggedRecordValue),
+    );
 
     for (const input of inputRecords) {
       tags.add(input.tag);

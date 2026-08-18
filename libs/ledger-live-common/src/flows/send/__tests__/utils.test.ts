@@ -1,4 +1,5 @@
 import {
+  buildRecipientForMemoChange,
   getRecipientDisplayValue,
   getRecipientSearchPrefillValue,
   saveRecentSendRecipient,
@@ -104,5 +105,59 @@ describe("getRecipientSearchPrefillValue", () => {
     expect(
       getRecipientSearchPrefillValue({ address: "0x1234567890abcdef", ensName: "vitalik.eth" }),
     ).toBe("vitalik.eth");
+  });
+});
+
+describe("buildRecipientForMemoChange", () => {
+  const memo = { value: "", type: "NO_MEMO" };
+
+  it("should use the search value when there is no committed recipient", () => {
+    expect(buildRecipientForMemoChange("rNewRecipient", null, memo)).toEqual({
+      address: "rNewRecipient",
+      ensName: undefined,
+      memo,
+    });
+  });
+
+  it("should use the new search value after the recipient is edited", () => {
+    expect(
+      buildRecipientForMemoChange(
+        "rNewRecipient",
+        { address: "rOldRecipient", memo: { value: "", type: "NO_MEMO" } },
+        memo,
+      ),
+    ).toEqual({
+      address: "rNewRecipient",
+      ensName: undefined,
+      memo,
+    });
+  });
+
+  it("should keep the committed address and ENS when the search still matches", () => {
+    expect(
+      buildRecipientForMemoChange(
+        "vitalik.eth",
+        { address: ADDRESS, ensName: "vitalik.eth" },
+        memo,
+      ),
+    ).toEqual({
+      address: ADDRESS,
+      ensName: "vitalik.eth",
+      memo,
+    });
+  });
+
+  it("should drop the previous ENS when the search no longer matches", () => {
+    expect(
+      buildRecipientForMemoChange(
+        "rNewRecipient",
+        { address: ADDRESS, ensName: "vitalik.eth" },
+        memo,
+      ),
+    ).toEqual({
+      address: "rNewRecipient",
+      ensName: undefined,
+      memo,
+    });
   });
 });

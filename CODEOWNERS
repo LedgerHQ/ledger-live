@@ -127,7 +127,10 @@ features/flow/flow-contacts-list/                         @ledgerhq/wallet-xp
 
 # Wallet — Pay Card
 features/flow/pay-card-balance/                          @ledgerhq/wallet-xp
+features/flow/pay-card-deposit/                          @ledgerhq/wallet-xp
 features/flow/pay-card-feature-tour/                     @ledgerhq/wallet-xp
+features/flow/pay-card-request/                          @ledgerhq/wallet-xp
+
 features/platform/card/                                  @ledgerhq/wallet-xp
 domain/api/card-management/                              @ledgerhq/wallet-xp
 /shared/api-services/src/services/card/                  @ledgerhq/wallet-xp
@@ -256,6 +259,9 @@ libs/concordium-core/                                                    @ledger
 
 # PTX team
 features/flow/pay-card-auth/                                             @ledgerhq/ptx
+features/platform/card/                                                  @ledgerhq/ptx
+domain/api/card-management/                                              @ledgerhq/ptx
+/shared/api-services/src/services/card/                                  @ledgerhq/ptx
 apps/cli/src/commands/ptx                                            					@ledgerhq/ptx
 apps/ledger-live-desktop/src/renderer/components/ProviderIcon/       					@ledgerhq/ptx
 apps/ledger-live-desktop/src/renderer/components/WebPTXPlayer/       					@ledgerhq/ptx
@@ -385,6 +391,7 @@ libs/ledger-live-common/src/device/                                @ledgerhq/liv
 libs/ledger-live-common/src/deviceSDK/                             @ledgerhq/live-devices
 libs/device-core/                                                  @ledgerhq/live-devices
 libs/device-intent/                                                @ledgerhq/live-devices
+features/platform/device-intent/                                   @ledgerhq/live-devices
 libs/device-react/                                                 @ledgerhq/live-devices
 libs/live-dmk/                                                     @ledgerhq/live-devices
 libs/speculos-transport/                                           @ledgerhq/live-devices @ledgerhq/qaa

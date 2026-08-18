@@ -1,21 +1,20 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import { ContactIdSchema } from "@domain/entity-contact";
-import { getContactAvatarColorClass } from "../../utils/getContactAvatarColorClass";
 import { ContactAvatar } from "./ContactAvatar";
 
 describe("ContactAvatar", () => {
-  it("should bind a contact initial and stable color for the default list size", () => {
+  it("should bind a contact initial and Lumen pastel color for the default list size", () => {
     const contactId = ContactIdSchema.parse("contact-elodie");
 
-    render(<ContactAvatar contactId={contactId} name="élodie" />);
+    render(<ContactAvatar contactId={contactId} name="élodie Martin" />);
 
-    const avatar = screen.getByRole("img", { name: "élodie" });
+    const avatar = screen.getByRole("img", { name: "élodie Martin" });
 
     expect(avatar).toBeVisible();
-    expect(avatar).toHaveTextContent("É");
-    expect(avatar).toHaveClass("size-32");
-    expect(avatar).toHaveClass(...getContactAvatarColorClass(contactId).split(" "));
+    expect(avatar).toHaveTextContent("ÉM");
+    expect(avatar).toHaveAttribute("data-size", "sm");
+    expect(avatar).toHaveAttribute("data-fallback-color", "avatar-color:contact-elodie");
   });
 
   it("should support the detail size and a custom test identifier", () => {
@@ -24,7 +23,7 @@ describe("ContactAvatar", () => {
     render(
       <ContactAvatar
         contactId={contactId}
-        name="Benoit"
+        name="Benoit Jean"
         size="xl"
         testId="contacts-detail-avatar"
       />,
@@ -33,9 +32,20 @@ describe("ContactAvatar", () => {
     const avatar = screen.getByTestId("contacts-detail-avatar");
 
     expect(avatar).toBeVisible();
-    expect(avatar).toHaveTextContent("B");
-    expect(avatar).toHaveClass("size-80");
+    expect(avatar).toHaveTextContent("BJ");
+    expect(avatar).toHaveAttribute("data-size", "xl");
   });
+
+  it.each([["xs"], ["sm"], ["md"], ["lg"], ["xl"], ["2xl"]] as const)(
+    "should support the %s Lumen avatar size",
+    size => {
+      const contactId = ContactIdSchema.parse(`contact-${size}`);
+
+      render(<ContactAvatar contactId={contactId} name="Benoit" size={size} />);
+
+      expect(screen.getByTestId(`contacts-avatar-${contactId}`)).toHaveAttribute("data-size", size);
+    },
+  );
 
   it("should render the Me profile image instead of a generated initial", () => {
     const contactId = ContactIdSchema.parse("contact-me");

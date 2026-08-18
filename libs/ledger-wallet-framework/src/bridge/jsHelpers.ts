@@ -122,7 +122,17 @@ function normalizeToObservable<T>(value: Promise<T> | Observable<T>): Observable
 // compare that two dates are roughly the same date in order to update the case it would have drastically changed
 const sameDate = (a: Date, b: Date) => Math.abs(a.getTime() - b.getTime()) < 1000 * 60 * 30;
 
+// a later sync can report a sequence number the stored operation is missing, but a fetch that
+// reports none must never erase one: `mergeOps` replaces `stored` by `fetched` when they differ
+const sameSequenceNumber = (stored: Operation, fetched: Operation) => {
+  const next = fetched.transactionSequenceNumber;
+  if (next === undefined) return true;
+  const current = stored.transactionSequenceNumber;
+  return current !== undefined && current.isEqualTo(next);
+};
+
 // an operation is relatively immutable, however we saw that sometimes it can temporarily change due to reorg,..
+// NOTE not symmetrical: `a` is the stored operation, `b` the freshly fetched one
 export const sameOp = (a: Operation, b: Operation): boolean =>
   a === b ||
   (a.id === b.id && // hash, accountId, type are in id
@@ -131,6 +141,7 @@ export const sameOp = (a: Operation, b: Operation): boolean =>
     a.nftOperations?.length === b.nftOperations?.length &&
     sameDate(a.date, b.date) &&
     a.blockHeight === b.blockHeight &&
+    sameSequenceNumber(a, b) &&
     isEqual(a.senders, b.senders) &&
     isEqual(a.recipients, b.recipients));
 

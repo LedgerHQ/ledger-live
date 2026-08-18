@@ -70,11 +70,7 @@ jest.mock("@features/flow-pay-card-auth", () => ({
   CardLogin: () => <button type="button">Login</button>,
 }));
 
-jest.mock("~/renderer/linking", () => ({
-  openURL: jest.fn(),
-}));
-
-describe("PayTab", () => {
+describe("PayTab integration", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockPayStablecoins();
@@ -180,6 +176,20 @@ describe("PayTab", () => {
     expect(dialog).toHaveTextContent("USD Coin");
     expect(dialog).toHaveTextContent("Tether USD");
     expect(mockedTrack).toHaveBeenCalledWith("button_clicked", { button: "balance_filter" });
+  });
+
+  it("should open the deposit options dialog from the deposit action tile", async () => {
+    mockFundedPayStablecoins();
+
+    renderWithMockedCounterValuesProvider(<PayTab />, {
+      initialState: fundedState,
+    });
+
+    const depositTile = await screen.findByRole("button", { name: "Add stablecoin" });
+    fireEvent.click(depositTile);
+
+    expect(await screen.findByTestId("pay-card-deposit-options")).toBeVisible();
+    expect(screen.getByTestId("pay-card-deposit-option-swap")).toBeVisible();
   });
 
   it("should persist the selected stablecoin, update the hero pill and track the confirmation", async () => {

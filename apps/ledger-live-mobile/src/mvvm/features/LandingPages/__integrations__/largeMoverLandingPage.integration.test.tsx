@@ -28,7 +28,7 @@ const mockRoute: RouteProp<LandingPagesNavigatorParamList, ScreenName.LargeMover
   key: "LargeMoverRouteKey",
   name: ScreenName.LargeMoverLandingPage,
   params: {
-    currencyIds: "BTC,ETH",
+    ledgerIds: "bitcoin,ethereum",
     initialRange: InitialRange.Day,
   },
 };
@@ -139,7 +139,7 @@ describe("LargeMoverLandingPage Integration Tests", () => {
     const multiCurrencyRoute = {
       ...mockRoute,
       params: {
-        currencyIds: "BTC,ETH",
+        ledgerIds: "bitcoin,ethereum",
         initialRange: InitialRange.Day,
       },
     };
@@ -263,7 +263,7 @@ describe("LargeMoverLandingPage Integration Tests", () => {
       <MockedLargeMoverLandingPage
         key={mockRoute.key}
         name={mockRoute.name}
-        params={{ currencyIds: "BTC", initialRange: InitialRange.Day }}
+        params={{ ledgerIds: "bitcoin", initialRange: InitialRange.Day }}
       />,
       {
         overrideInitialState: (state: State) => ({
@@ -307,7 +307,7 @@ describe("LargeMoverLandingPage Integration Tests", () => {
         <MockedLargeMoverLandingPage
           key={mockRoute.key}
           name={mockRoute.name}
-          params={{ currencyIds: "BTC", initialRange: InitialRange.Day }}
+          params={{ ledgerIds: "bitcoin", initialRange: InitialRange.Day }}
         />,
         {
           overrideInitialState: (state: State) => ({
@@ -345,7 +345,7 @@ describe("LargeMoverLandingPage Integration Tests", () => {
         <MockedLargeMoverLandingPage
           key={mockRoute.key}
           name={mockRoute.name}
-          params={{ currencyIds: "BTC", initialRange: InitialRange.Day }}
+          params={{ ledgerIds: "bitcoin", initialRange: InitialRange.Day }}
         />,
         {
           overrideInitialState: (state: State) => ({
@@ -371,7 +371,6 @@ describe("LargeMoverLandingPage Integration Tests", () => {
         key: "LargeMoverTokenRouteKey",
         name: ScreenName.LargeMoverLandingPage,
         params: {
-          currencyIds: "BTC",
           ledgerIds: "ethereum/erc20/usd__coin",
           initialRange: InitialRange.Day,
         },

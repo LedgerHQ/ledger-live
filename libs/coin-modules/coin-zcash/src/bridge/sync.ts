@@ -31,7 +31,7 @@ import {
   isTaprootDerivationMode,
 } from "@ledgerhq/ledger-wallet-framework/derivation";
 import type { BitcoinOutput, BtcOperation, ZcashAccount } from "../types/bridge";
-import type { BitcoinXPub, SignerContext } from "../types/signer";
+import type { SignerContext } from "../types/signer";
 import type { ShieldedSyncResult, ShieldedTransaction, ZcashPrivateInfo } from "../network/types";
 import { toWalletBtcCurrency } from "../walletBtcCurrency";
 import { computeZcashBalance, getTransparentBalance } from "../logic/account/balance";
@@ -516,7 +516,7 @@ type XpubGenerateParameter = {
 async function generateXpubIfNeeded(
   providedXpub: string | undefined,
   params: XpubGenerateParameter,
-): Promise<BitcoinXPub> {
+): Promise<string> {
   if (providedXpub) return providedXpub;
 
   const { deviceId, currency, signerContext, accountPath } = params;

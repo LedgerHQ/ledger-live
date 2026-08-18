@@ -21,22 +21,20 @@ import type {
 } from "@ledgerhq/coin-module-framework/api/index";
 import type { StacksContext, StacksCurrencyConfig } from "../config";
 import type { StacksTxData } from "../types";
-import {
-  broadcast,
-  combine,
-  craftTransaction,
-  craftTransactionData,
-  estimateFees,
-  getBalance,
-  getBlock,
-  getBlockInfo,
-  getNextSequence,
-  getStakes,
-  lastBlock,
-  listOperations,
-  validateAddress,
-  validateIntent,
-} from "../logic";
+import { broadcast } from "../logic/broadcast";
+import { combine } from "../logic/combine";
+import { craftTransaction } from "../logic/craftTransaction";
+import { craftTransactionData } from "../logic/craftTransactionData";
+import { estimateFees } from "../logic/estimateFees";
+import { getBalance } from "../logic/getBalance";
+import { getBlock } from "../logic/getBlock";
+import { getBlockInfo } from "../logic/getBlockInfo";
+import { getNextSequence } from "../logic/getNextSequence";
+import { getStakes } from "../logic/getStakes";
+import { lastBlock } from "../logic/lastBlock";
+import { listOperations } from "../logic/listOperations";
+import { validateAddress } from "../logic/validateAddress";
+import { validateIntent } from "../logic/validateIntent";
 
 // CoinModuleApi (Alpaca) factory for STX + SIP-010 tokens, alongside the existing account bridge
 // (bridge path untouched). Every method resolves its config from `context.config()` (ADR-019),

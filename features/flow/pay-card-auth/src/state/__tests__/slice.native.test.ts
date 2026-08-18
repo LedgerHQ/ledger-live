@@ -11,12 +11,12 @@ describe("payCardAuth slice", () => {
 
   it("sets hasCard", () => {
     const state = reducer(undefined, setHasCard(true));
-    expect(state).toEqual({ hasCard: true });
+    expect(state).toEqual({ ...payCardAuthInitialState, hasCard: true });
   });
 
   it("clears hasCard", () => {
     const withCard = reducer(undefined, setHasCard(true));
-    expect(reducer(withCard, setHasCard(false))).toEqual({ hasCard: false });
+    expect(reducer(withCard, setHasCard(false))).toEqual(payCardAuthInitialState);
   });
 });
 

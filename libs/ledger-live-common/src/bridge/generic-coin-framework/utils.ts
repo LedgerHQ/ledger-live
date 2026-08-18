@@ -601,9 +601,8 @@ export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOpe
     senders: extra.parentSenders ?? op.senders,
     recipients: extra.parentRecipients ?? op.recipients,
     date: op.tx.date,
-    transactionSequenceNumber: op.details?.sequence
-      ? new BigNumber(op.details?.sequence.toString())
-      : undefined,
+    transactionSequenceNumber:
+      op.details?.sequence != null ? new BigNumber(op.details.sequence.toString()) : undefined,
     hasFailed,
     extra,
   };
