@@ -130,7 +130,7 @@ describe("useContactsCurrencySelectionAdapter", () => {
       onAccountSelected: handleAccountSelected,
       onClose: closeDrawer,
       onCurrencySelected: handleCurrencySelected,
-      selectableNetworkIds: undefined,
+      selectableNetworkIds: [mockEthCryptoCurrency.id],
     });
   });
 

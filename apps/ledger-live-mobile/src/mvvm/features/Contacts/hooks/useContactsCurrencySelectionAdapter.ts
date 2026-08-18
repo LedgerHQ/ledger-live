@@ -54,7 +54,6 @@ export function useContactsCurrencySelectionAdapter({
     isOpen: isModularDrawerOpen,
     openDrawer,
     preselectedCurrencies,
-    selectableNetworkIds,
     uiUseCase,
     useCase,
   } = useModularDrawerController();
@@ -117,7 +116,7 @@ export function useContactsCurrencySelectionAdapter({
       onCurrencySelected: handleCurrencySelected,
       uiUseCase,
       useCase,
-      selectableNetworkIds,
+      selectableNetworkIds: networkIds,
     }),
     [
       areCurrenciesFiltered,
@@ -125,8 +124,8 @@ export function useContactsCurrencySelectionAdapter({
       handleAccountSelected,
       handleCurrencySelected,
       isModularDrawerOpen,
+      networkIds,
       preselectedCurrencies,
-      selectableNetworkIds,
       uiUseCase,
       useCase,
     ],
