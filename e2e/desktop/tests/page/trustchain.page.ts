@@ -43,8 +43,14 @@ export class TrustchainPage {
   @step("Expect trustchain to hold exactly the accounts $0")
   async expectAccountIds(accountIds: string[], timeout = 60_000) {
     await expect
-      .poll(async () => (await this.getAccounts()).map(account => account.id).sort(), { timeout })
-      .toEqual([...accountIds].sort());
+      .poll(
+        async () =>
+          (await this.getAccounts())
+            .map(account => account.id ?? "")
+            .sort((a, b) => a.localeCompare(b)),
+        { timeout },
+      )
+      .toEqual(accountIds.toSorted((a, b) => a.localeCompare(b)));
   }
 
   @step("Expect account $0 to keep its default name in the trustchain")

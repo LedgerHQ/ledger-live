@@ -1,4 +1,4 @@
-import { randomUUID } from "crypto";
+import { randomUUID } from "node:crypto";
 import { LedgerSyncCliHelper } from "./helper";
 import type { LedgerSyncAccountDescriptor } from "./testData";
 
@@ -36,11 +36,17 @@ export function addTrustchainMember(name: string): LedgerSyncCliCommand {
   return () => LedgerSyncCliHelper.addTrustchainMember(name);
 }
 
-/** Raised when the trustchain no longer exists, so a test that deleted it has nothing to clean. */
+/**
+ * Raised when the trustchain no longer exists, so a test that deleted it has nothing to clean.
+ * `TrustchainEjected` and `TrustchainNotAllowed` come from `withAuth` once the member is gone;
+ * `LedgerAPI4xx` is the raw form when the 4xx message misses the strings the SDK maps on; and
+ * `CloudSyncHttpError` is what the cloud-sync delete throws for data that was never pushed.
+ */
 const ALREADY_DESTROYED_ERRORS = new Set([
+  "CloudSyncHttpError",
+  "LedgerAPI4xx",
   "TrustchainEjected",
   "TrustchainNotAllowed",
-  "TrustchainNotFound",
 ]);
 
 /**

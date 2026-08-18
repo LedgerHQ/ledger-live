@@ -9,6 +9,8 @@ import {
 import type { LedgerKeyRingProtocolOpts, LedgerSyncOpts } from "../runCli";
 import { trustchainApiBaseUrl } from "./environment";
 
+const CREDENTIALS_REQUIRED = "pubKey and privateKey are required";
+
 /**
  * Ledger Sync CLI entry points, shared by the desktop and mobile e2e suites. Unlike the other
  * `runCli*` helpers these do not spawn the CLI binary: they drive the SDKs in-process, reaching
@@ -42,7 +44,7 @@ export function ledgerKeyRingProtocol(opts: LedgerKeyRingProtocolOpts) {
 
   if (getKeyRingTree) {
     if (!pubKey || !privateKey) {
-      return Promise.reject("pubKey and privateKey are required");
+      return Promise.reject(new Error(CREDENTIALS_REQUIRED));
     }
     return sdk
       .getOrCreateTrustchain(device || "", { pubkey: pubKey, privatekey: privateKey })
@@ -50,10 +52,12 @@ export function ledgerKeyRingProtocol(opts: LedgerKeyRingProtocolOpts) {
   }
 
   if (destroyKeyRingTree) {
-    if (!pubKey || !privateKey) return Promise.reject("pubKey and privateKey are required");
-    if (!rootId) return Promise.reject("rootId is required");
-    if (!walletSyncEncryptionKey) return Promise.reject("walletSyncEncryptionKey is required");
-    if (!applicationPath) return Promise.reject("applicationPath is required");
+    if (!pubKey || !privateKey) return Promise.reject(new Error(CREDENTIALS_REQUIRED));
+    if (!rootId) return Promise.reject(new Error("rootId is required"));
+    if (!walletSyncEncryptionKey) {
+      return Promise.reject(new Error("walletSyncEncryptionKey is required"));
+    }
+    if (!applicationPath) return Promise.reject(new Error("applicationPath is required"));
 
     return sdk["destroyTrustchain"](
       { rootId, walletSyncEncryptionKey, applicationPath },
@@ -61,17 +65,16 @@ export function ledgerKeyRingProtocol(opts: LedgerKeyRingProtocolOpts) {
     );
   }
 
-  return Promise.reject("No function specified");
+  return Promise.reject(new Error("No function specified"));
 }
 
 /**
- * Resolves the application path the backend currently accepts for a trustchain. Removing a
- * member rotates the application stream onto the next path (`sdk.removeMember`), which leaves
- * any locally cached `applicationPath` stale. The JWT permissions are the source of truth.
+ * Re-reads the trustchain the backend currently accepts. Removing a member rotates the application
+ * stream onto the next path (`sdk.removeMember`), which leaves both a cached `applicationPath` and
+ * the `walletSyncEncryptionKey` derived from it stale. Only `rootId` is read from the argument: the
+ * SDK resolves the stream itself, so the other two fields can be whatever the caller last cached.
  */
-export function resolveApplicationPath(
-  opts: LedgerKeyRingProtocolOpts,
-): Promise<string | undefined> {
+export function restoreTrustchain(opts: LedgerKeyRingProtocolOpts) {
   const {
     apiBaseUrl = trustchainApiBaseUrl,
     applicationId = 16,
@@ -80,22 +83,22 @@ export function resolveApplicationPath(
     privateKey,
     rootId,
     walletSyncEncryptionKey,
+    applicationPath,
   } = opts;
 
-  if (!pubKey || !privateKey) return Promise.reject("pubKey and privateKey are required");
-  if (!rootId) return Promise.reject("rootId is required");
+  if (!pubKey || !privateKey) return Promise.reject(new Error(CREDENTIALS_REQUIRED));
+  if (!rootId) return Promise.reject(new Error("rootId is required"));
 
   const sdk = getSdk(false, { applicationId, name, apiBaseUrl }, withDevice);
 
-  return sdk
-    .withAuth(
-      { rootId, walletSyncEncryptionKey: walletSyncEncryptionKey ?? "", applicationPath: "" },
-      { pubkey: pubKey, privatekey: privateKey },
-      jwt => Promise.resolve(Object.keys(jwt.permissions?.[rootId] ?? {})),
-      undefined,
-      true,
-    )
-    .then(paths => paths.find(path => path.startsWith(`m/0'/${applicationId}'/`)) ?? paths[0]);
+  return sdk.restoreTrustchain(
+    {
+      rootId,
+      walletSyncEncryptionKey: walletSyncEncryptionKey ?? "",
+      applicationPath: applicationPath ?? "",
+    },
+    { pubkey: pubKey, privatekey: privateKey },
+  );
 }
 
 export function ledgerSync(opts: LedgerSyncOpts) {

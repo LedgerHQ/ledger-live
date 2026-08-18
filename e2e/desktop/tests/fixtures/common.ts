@@ -1,5 +1,5 @@
 import { test as base, Page, ElectronApplication, ChromiumBrowserContext } from "@playwright/test";
-import { execFileSync } from "child_process";
+import { execFileSync } from "node:child_process";
 import { mkdir, readFile, writeFile } from "fs/promises";
 import merge from "lodash/merge";
 import * as path from "path";

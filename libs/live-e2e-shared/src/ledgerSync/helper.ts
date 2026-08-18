@@ -1,7 +1,7 @@
 import { readFile, writeFile } from "node:fs/promises";
 import invariant from "invariant";
 import { activateLedgerSync } from "../speculos";
-import { ledgerKeyRingProtocol, ledgerSync, resolveApplicationPath } from "./cli";
+import { ledgerKeyRingProtocol, ledgerSync, restoreTrustchain } from "./cli";
 import { cloudSyncApiBaseUrl, trustchainApiBaseUrl } from "./environment";
 import type { LedgerSyncAccountDescriptor } from "./testData";
 
@@ -45,13 +45,13 @@ function isLedgerOutput(output: unknown): output is LedgerOutput {
 }
 
 export class LedgerSyncCliHelper {
-  static ledgerKeyRingProtocolArgs: LedgerKeyRingProtocolArgs = {
+  static readonly ledgerKeyRingProtocolArgs: LedgerKeyRingProtocolArgs = {
     pubKey: "",
     privateKey: "",
     apiBaseUrl: trustchainApiBaseUrl,
   };
 
-  static ledgerSyncPushDataArgs: LedgerSyncPushDataArgs = {
+  static readonly ledgerSyncPushDataArgs: LedgerSyncPushDataArgs = {
     rootId: "",
     walletSyncEncryptionKey: "",
     applicationPath: "",
@@ -60,7 +60,7 @@ export class LedgerSyncCliHelper {
     cloudSyncApiBaseUrl,
   };
 
-  static ledgerSyncPullDataArgs: LedgerSyncPullDataArgs = {
+  static readonly ledgerSyncPullDataArgs: LedgerSyncPullDataArgs = {
     pubKey: "",
     privateKey: "",
     rootId: "",
@@ -168,40 +168,68 @@ export class LedgerSyncCliHelper {
   }
 
   /**
-   * Re-reads the application path from the backend. Removing a member rotates the trustchain onto
-   * the next application path, leaving the path captured at creation time stale; without this a
-   * later delete is rejected with `TrustchainOutdated`. Best effort: on failure the cached path is
-   * kept so the caller still gets the underlying error.
+   * Re-reads the trustchain from the backend. Removing a member rotates it onto the next
+   * application path and re-derives the encryption key from that path, leaving both values captured
+   * at creation time stale; without this a later delete is rejected with `TrustchainOutdated`.
+   * Best effort: on failure the cached values are kept so the caller still gets the real error.
    */
-  static async refreshApplicationPath() {
+  static async refreshTrustchain() {
     try {
-      const applicationPath = await resolveApplicationPath({
+      const { walletSyncEncryptionKey, applicationPath } = await restoreTrustchain({
         ...LedgerSyncCliHelper.ledgerKeyRingProtocolArgs,
         ...LedgerSyncCliHelper.ledgerSyncPushDataArgs,
       });
-      if (applicationPath) {
-        LedgerSyncCliHelper.ledgerSyncPushDataArgs.applicationPath = applicationPath;
-        LedgerSyncCliHelper.ledgerSyncPullDataArgs.applicationPath = applicationPath;
-      }
+      Object.assign(LedgerSyncCliHelper.ledgerSyncPushDataArgs, {
+        walletSyncEncryptionKey,
+        applicationPath,
+      });
+      Object.assign(LedgerSyncCliHelper.ledgerSyncPullDataArgs, {
+        walletSyncEncryptionKey,
+        applicationPath,
+      });
     } catch {
-      // keep the cached path: the caller surfaces the real failure
+      // keep the cached values: the caller surfaces the real failure
     }
   }
 
+  /**
+   * Destroying the trustchain is what stops a run leaking one onto the backend, so it has to happen
+   * even when there is no cloud-sync data to delete — which is the normal case for a suite that
+   * never pushed any.
+   *
+   * When both legs fail the destroy error is the one thrown: it is the one that means a trustchain
+   * was left behind, and `destroyTrustchain` goes quiet on the delete error's usual
+   * `CloudSyncHttpError`, which would hide the leak. The delete error is logged rather than
+   * dropped, since it explains what started the failure.
+   */
   static async deleteLedgerSyncData() {
-    await LedgerSyncCliHelper.refreshApplicationPath();
+    await LedgerSyncCliHelper.refreshTrustchain();
 
-    await ledgerSync({
-      deleteData: true,
-      ...LedgerSyncCliHelper.ledgerKeyRingProtocolArgs,
-      ...LedgerSyncCliHelper.ledgerSyncPushDataArgs,
-    });
+    let deleteError: unknown;
+    try {
+      await ledgerSync({
+        deleteData: true,
+        ...LedgerSyncCliHelper.ledgerKeyRingProtocolArgs,
+        ...LedgerSyncCliHelper.ledgerSyncPushDataArgs,
+      });
+    } catch (error) {
+      deleteError = error;
+    }
 
-    await ledgerKeyRingProtocol({
-      destroyKeyRingTree: true,
-      ...LedgerSyncCliHelper.ledgerKeyRingProtocolArgs,
-      ...LedgerSyncCliHelper.ledgerSyncPushDataArgs,
-    });
+    try {
+      await ledgerKeyRingProtocol({
+        destroyKeyRingTree: true,
+        ...LedgerSyncCliHelper.ledgerKeyRingProtocolArgs,
+        ...LedgerSyncCliHelper.ledgerSyncPushDataArgs,
+      });
+    } catch (error) {
+      if (deleteError !== undefined) {
+        console.error("[E2E] Ledger Sync: the cloud-sync delete failed too:", deleteError);
+      }
+      throw error;
+    }
+
+    if (deleteError !== undefined) throw deleteError;
   }
 
   /**
