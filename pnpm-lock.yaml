@@ -14549,7 +14549,7 @@ importers:
         specifier: 0.24.14
         version: 0.24.14
       '@expo/metro-config':
-        specifier: ^0.19.11
+        specifier: 0.19.12
         version: 0.19.12
       '@react-native-async-storage/async-storage':
         specifier: 2.1.2
@@ -46099,12 +46099,12 @@ snapshots:
     dependencies:
       '@babel/core': 7.28.5
       '@babel/generator': 7.28.5
-      '@babel/parser': 7.27.0
-      '@babel/types': 7.27.0
+      '@babel/parser': 7.29.2
+      '@babel/types': 7.29.0
       '@expo/config': 10.0.11
       '@expo/env': 0.4.2
       '@expo/json-file': 9.0.2
-      '@expo/spawn-async': 1.7.2
+      '@expo/spawn-async': 1.8.0
       chalk: 4.1.2
       debug: 4.4.3
       fs-extra: 9.1.0
