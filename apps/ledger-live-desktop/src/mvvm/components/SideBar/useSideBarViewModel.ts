@@ -5,7 +5,6 @@ import { useNavigateToMyLedger } from "~/renderer/hooks/useNavigateToMyLedger";
 import { useDeviceHasUpdatesAvailable } from "@ledgerhq/live-common/manager/useDeviceHasUpdatesAvailable";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
-import { useAccountPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 import { accountsSelector, starredAccountsSelector } from "~/renderer/reducers/accounts";
 import { sidebarCollapsedSelector, lastSeenDeviceSelector } from "~/renderer/reducers/settings";
 import { isNavigationLocked } from "~/renderer/reducers/application";
@@ -14,6 +13,7 @@ import { setSidebarCollapsed } from "~/renderer/actions/settings";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { track } from "~/renderer/analytics/segment";
 import { RECEIVE_SOURCE_PAGE } from "LLD/features/Receive/types";
+import { useRecoverEntry } from "LLD/hooks/useRecoverEntry";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 import { useOpenSendFlow } from "LLD/features/Send/hooks/useOpenSendFlow";
 import { HIDE_BAR_THRESHOLD } from "~/renderer/screens/dashboard/AssetDistribution/constants";
@@ -137,8 +137,7 @@ export function useSideBarViewModel(): SideBarViewModel {
 
   const referralProgramConfig = useFeature("referralProgramDesktopSidebar");
   const payTabFeature = useFeature("lwdPayTab");
-  const recoverFeature = useFeature("protectServicesDesktop");
-  const recoverHomePath = useAccountPath(recoverFeature);
+  const { recoverFeature, recoverHomePath, openRecover } = useRecoverEntry();
 
   const isPayTabEnabled = !!payTabFeature?.enabled;
 
@@ -235,25 +234,9 @@ export function useSideBarViewModel(): SideBarViewModel {
   }, [dispatch, maybeRedirectToAccounts, trackEntry]);
 
   const handleClickRecover = useCallback(() => {
-    const enabled = recoverFeature?.enabled;
-    const openRecoverFromSidebar = recoverFeature?.params?.openRecoverFromSidebar;
-    const liveAppId = recoverFeature?.params?.protectId;
-
-    if (enabled && openRecoverFromSidebar && liveAppId && recoverHomePath) {
-      navigate(recoverHomePath);
-    } else if (enabled) {
-      dispatch(openModal("MODAL_PROTECT_DISCOVER", undefined));
-    }
+    openRecover();
     trackEntry("recover");
-  }, [
-    recoverFeature?.enabled,
-    recoverFeature?.params?.openRecoverFromSidebar,
-    recoverFeature?.params?.protectId,
-    recoverHomePath,
-    navigate,
-    dispatch,
-    trackEntry,
-  ]);
+  }, [openRecover, trackEntry]);
 
   const liveAppPaths = [referralProgramConfig?.params?.path].filter(
     (path): path is string => !!path,
