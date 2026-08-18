@@ -3,6 +3,7 @@ import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { useSelector } from "~/context/hooks";
 import { useTranslation } from "~/context/Locale";
 import { Switch } from "@ledgerhq/native-ui";
+import { AppLockBiometricsRow } from "LLM/features/AppLock/components/AppLockBiometricsRow";
 import { AppLockPasswordRow } from "LLM/features/AppLock/components/AppLockRow";
 import { useAppLockScheme } from "LLM/features/AppLock/hooks/useAppLockScheme";
 import { NavigatorName, ScreenName } from "~/const";
@@ -58,13 +59,18 @@ function LegacyAuthSecurityToggle() {
 export default function AuthSecurityToggle() {
   const scheme = useAppLockScheme();
 
-  return (
+  if (scheme === undefined) {
+    return null;
+  }
+
+  return scheme === "revamped" ? (
     <>
-      {scheme === undefined ? null : scheme === "revamped" ? (
-        <AppLockPasswordRow />
-      ) : (
-        <LegacyAuthSecurityToggle />
-      )}
+      <AppLockPasswordRow />
+      <AppLockBiometricsRow />
+    </>
+  ) : (
+    <>
+      <LegacyAuthSecurityToggle />
       <BiometricsRow />
     </>
   );

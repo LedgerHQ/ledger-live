@@ -36,6 +36,11 @@ export type UnlockViewProps = UnlockViewModel &
     logo?: React.ReactNode;
 
     isCovered?: boolean;
+
+    hasPassword?: boolean;
+
+    isAwaitingBiometrics?: boolean;
+    isAppActive?: boolean;
     topInset?: number;
     bottomInset?: number;
     keyboardHeight?: number;

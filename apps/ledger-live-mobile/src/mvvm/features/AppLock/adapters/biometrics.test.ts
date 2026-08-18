@@ -1,3 +1,7 @@
+jest.mock("react-native-biometrics", () =>
+  jest.fn().mockImplementation(() => ({ simplePrompt: mockSimplePrompt })),
+);
+
 jest.mock("react-native-keychain", () => ({
   ACCESS_CONTROL: { BIOMETRY_ANY_OR_DEVICE_PASSCODE: "biometryAnyOrDevicePasscode" },
   ACCESSIBLE: { WHEN_UNLOCKED_THIS_DEVICE_ONLY: "whenUnlockedThisDeviceOnly" },
@@ -8,6 +12,8 @@ jest.mock("react-native-keychain", () => ({
   resetGenericPassword: jest.fn(),
 }));
 
+const mockSimplePrompt = jest.fn();
+
 import {
   armBiometricPrompt,
   disarmBiometricPrompt,
@@ -17,6 +23,7 @@ import {
 } from "./biometrics";
 
 const keychain = jest.requireMock("react-native-keychain");
+const ReactNativeBiometrics = jest.requireMock("react-native-biometrics");
 
 beforeEach(() => jest.clearAllMocks());
 
@@ -38,43 +45,48 @@ describe("getBiometricsAvailability", () => {
 });
 
 describe("promptBiometrics", () => {
-  it("succeeds when the canary can be read", async () => {
-    keychain.getGenericPassword.mockResolvedValue({ password: "armed" });
+  it("succeeds when the OS confirms the owner", async () => {
+    mockSimplePrompt.mockResolvedValue({ success: true });
 
     await expect(promptBiometrics("Unlock")).resolves.toEqual({ status: "succeeded" });
-    expect(keychain.getGenericPassword).toHaveBeenCalledWith(
-      expect.objectContaining({ authenticationPrompt: { title: "Unlock" } }),
-    );
   });
 
-  it("fails when the canary is gone", async () => {
-    keychain.getGenericPassword.mockResolvedValue(false);
+  it("offers the device PIN alongside biometrics, so a broken finger is not a lockout", async () => {
+    mockSimplePrompt.mockResolvedValue({ success: true });
 
-    await expect(promptBiometrics("Unlock")).resolves.toEqual({ status: "failed" });
+    await promptBiometrics("Unlock");
+
+    expect(ReactNativeBiometrics).toHaveBeenCalledWith({ allowDeviceCredentials: true });
+    expect(mockSimplePrompt).toHaveBeenCalledWith({ promptMessage: "Unlock" });
   });
 
   it("tells a refusal apart from a dismissal", async () => {
-    keychain.getGenericPassword.mockRejectedValueOnce({ code: -128, message: "canceled" });
+    mockSimplePrompt.mockResolvedValue({ success: false, error: "User cancelled" });
     await expect(promptBiometrics("Unlock")).resolves.toEqual({ status: "cancelled" });
 
-    keychain.getGenericPassword.mockRejectedValueOnce(new Error("Authentication failed"));
+    mockSimplePrompt.mockResolvedValue({ success: false, error: "Authentication failed" });
     await expect(promptBiometrics("Unlock")).resolves.toEqual({ status: "failed" });
 
-    keychain.getGenericPassword.mockRejectedValueOnce(new Error("Too many attempts"));
+    mockSimplePrompt.mockResolvedValue({ success: false, error: "Too many attempts" });
     await expect(promptBiometrics("Unlock")).resolves.toEqual({ status: "lockedOut" });
+  });
+
+  it("reports a prompt that could not be shown as a failure", async () => {
+    mockSimplePrompt.mockRejectedValue(new Error("no fragment activity"));
+
+    await expect(promptBiometrics("Unlock")).resolves.toEqual({ status: "failed" });
   });
 });
 
-describe("the armed prompt", () => {
-  it("arms behind biometrics or the device passcode", async () => {
-    keychain.setGenericPassword.mockResolvedValue({ service: "canary" });
+describe("the armed record", () => {
+  it("records it as a plain item, so recording it does not raise a prompt of its own", async () => {
+    keychain.setGenericPassword.mockResolvedValue({ service: "app-lock" });
 
     await expect(armBiometricPrompt()).resolves.toBe(true);
-    expect(keychain.setGenericPassword).toHaveBeenCalledWith(
-      "app-lock",
-      "armed",
-      expect.objectContaining({ accessControl: "biometryAnyOrDevicePasscode" }),
-    );
+
+    const [, , options] = keychain.setGenericPassword.mock.calls[0];
+    expect(options).not.toHaveProperty("accessControl");
+    expect(options).toMatchObject({ accessible: "whenUnlockedThisDeviceOnly" });
   });
 
   it("reports arming that the keychain refused", async () => {
@@ -89,7 +101,7 @@ describe("the armed prompt", () => {
     await expect(hasArmedBiometricPrompt()).resolves.toBe(true);
   });
 
-  it("disarms by destroying the canary", async () => {
+  it("disarms by destroying the record", async () => {
     keychain.resetGenericPassword.mockResolvedValue(true);
 
     await disarmBiometricPrompt();

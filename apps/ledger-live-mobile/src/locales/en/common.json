@@ -1541,6 +1541,7 @@
     },
     "unlock": {
       "wrongPassword": "Incorrect password",
+      "biometricsPrompt": "Unlock Ledger Wallet",
       "forgotPassword": "Forgot your password?",
       "forgotPasswordSheet": {
         "title": "Forgot password",
@@ -1550,6 +1551,11 @@
       "retryBiometrics": "Use biometrics",
       "failed": "We couldn't check your password. Please try again.",
       "cta": "Confirm"
+    },
+    "biometrics": {
+      "title": "{{biometricsType}}",
+      "desc": "Unlock the app with {{biometricsType}}.",
+      "prompt": "Confirm {{biometricsType}} to use it for unlocking"
     },
     "longerPassword": {
       "prompt": {

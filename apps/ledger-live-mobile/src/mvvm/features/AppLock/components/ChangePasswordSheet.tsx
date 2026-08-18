@@ -3,6 +3,7 @@ import { Lock } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { QueuedBottomSheet, useBottomSheetBackgroundTone } from "@shared/ui-queued-bottom-sheet";
 import { InfoState } from "LLM/components/InfoState";
 import React from "react";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTranslation } from "~/context/Locale";
 
 type Props = Readonly<{
@@ -12,6 +13,8 @@ type Props = Readonly<{
 }>;
 
 export function ChangePasswordSheet({ isOpen, onConfirm, onHidden }: Props): React.JSX.Element {
+  const insets = useSafeAreaInsets();
+
   return (
     <QueuedBottomSheet
       isForcingToBeOpened={isOpen}
@@ -21,7 +24,7 @@ export function ChangePasswordSheet({ isOpen, onConfirm, onHidden }: Props): Rea
       onModalHide={onHidden}
       testID="app-lock-change-password-sheet"
     >
-      <BottomSheetView>
+      <BottomSheetView style={{ paddingBottom: insets.bottom }}>
         <ChangePasswordContent onConfirm={onConfirm} />
       </BottomSheetView>
     </QueuedBottomSheet>

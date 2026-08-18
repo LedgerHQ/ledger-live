@@ -2,6 +2,7 @@ import { BottomSheetHeader, BottomSheetView } from "@ledgerhq/lumen-ui-rnative";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { InfoState } from "LLM/components/InfoState";
 import React from "react";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTranslation } from "~/context/Locale";
 
 type Props = Readonly<{
@@ -12,6 +13,7 @@ type Props = Readonly<{
 
 export function ForgotPasswordSheet({ isOpen, onClose, onHidden }: Props): React.JSX.Element {
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
 
   return (
     <QueuedBottomSheet
@@ -22,7 +24,7 @@ export function ForgotPasswordSheet({ isOpen, onClose, onHidden }: Props): React
       enableDynamicSizing
       testID="app-lock-forgot-password-sheet"
     >
-      <BottomSheetView>
+      <BottomSheetView style={{ paddingBottom: insets.bottom }}>
         <BottomSheetHeader />
         <InfoState
           size="hug"

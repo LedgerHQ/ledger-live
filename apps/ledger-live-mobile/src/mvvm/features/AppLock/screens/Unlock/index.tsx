@@ -1,14 +1,20 @@
 import {
   isPasswordLongEnough,
   selectBiometricsEnabled,
+  selectHasPassword,
   setNeedsLongerPassword,
   unlockApp,
 } from "@features/platform-app-lock";
-import { UnlockView, useUnlockViewModel, type UnlockLabels } from "@features/flow-app-lock";
+import {
+  isShowingSplash,
+  UnlockView,
+  useUnlockViewModel,
+  type UnlockLabels,
+} from "@features/flow-app-lock";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import { Logos } from "@ledgerhq/native-ui";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { Keyboard } from "react-native";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Keyboard, useWindowDimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "styled-components/native";
 import { useDispatch, useSelector } from "~/context/hooks";
@@ -16,7 +22,12 @@ import { useTranslation } from "~/context/Locale";
 import { checkPassword } from "../../adapters/passwordVerification";
 import { ForgotPasswordSheet } from "../../components/ForgotPasswordSheet";
 import { useBiometricUnlock } from "../../hooks/useBiometricUnlock";
+import { useIsAppActive } from "../../hooks/useIsAppActive";
 import { useKeyboardInset } from "../../hooks/useKeyboardInset";
+
+// The mark's own viewBox, 38 by 32: sizing it square would letterbox it inside the box we give it.
+const MARK_ASPECT_RATIO = 38 / 32;
+const DESIGN_MARK_WIDTH = 67;
 
 type ForgotPasswordPhase = "closed" | "dismissingKeyboard" | "open" | "hiding";
 
@@ -25,8 +36,10 @@ export function UnlockScreen(): React.JSX.Element {
   const dispatch = useDispatch();
   const { colors } = useTheme();
   const biometricsEnabled = useSelector(selectBiometricsEnabled);
+  const hasPassword = useSelector(selectHasPassword);
   const { runBiometricUnlock } = useBiometricUnlock();
   const insets = useSafeAreaInsets();
+  const isAppActive = useIsAppActive();
   const keyboardInset = useKeyboardInset();
   const [failure, setFailure] = useState<string | undefined>(undefined);
 
@@ -71,6 +84,33 @@ export function UnlockScreen(): React.JSX.Element {
     onRetryBiometrics: runBiometricUnlock,
   });
 
+  const [isAwaitingBiometrics, setIsAwaitingBiometrics] = useState(biometricsEnabled);
+  const isPromptingRef = useRef(false);
+
+  useEffect(() => {
+    if (!isAwaitingBiometrics || !isAppActive || isPromptingRef.current) {
+      return;
+    }
+
+    isPromptingRef.current = true;
+
+    void runBiometricUnlock().then(unlocked => {
+      isPromptingRef.current = false;
+
+      if (!unlocked) {
+        setIsAwaitingBiometrics(false);
+      }
+    });
+  }, [isAppActive, isAwaitingBiometrics, runBiometricUnlock]);
+
+  // The launch artwork is a square fitted to the screen in which the mark spans 441 of 1920 units,
+  // so this screen draws it at the same size while it stands in for the splash.
+  const { width, height } = useWindowDimensions();
+  const splashMarkWidth = Math.round(Math.min(width, height) * (441 / 1920));
+  const markWidth = isShowingSplash({ hasPassword, isAwaitingBiometrics })
+    ? splashMarkWidth
+    : DESIGN_MARK_WIDTH;
+
   const [forgotPassword, setForgotPassword] = useState<ForgotPasswordPhase>("closed");
   const openForgotPassword = useCallback(() => {
     if (!Keyboard.isVisible()) {
@@ -99,12 +139,20 @@ export function UnlockScreen(): React.JSX.Element {
   return (
     <Box lx={{ flex: 1, backgroundColor: "canvas" }}>
       <UnlockView
-        key={forgotPassword}
         isCovered={forgotPassword !== "closed"}
+        hasPassword={hasPassword}
+        isAwaitingBiometrics={isAwaitingBiometrics}
+        isAppActive={isAppActive}
         {...viewModel}
         labels={labels}
         errorText={failure}
-        logo={<Logos.LedgerLiveAltRegular color={colors.neutral.c100} width={67} height={56} />}
+        logo={
+          <Logos.LedgerLiveAltRegular
+            color={colors.neutral.c100}
+            width={markWidth}
+            height={Math.round(markWidth / MARK_ASPECT_RATIO)}
+          />
+        }
         onForgotPassword={openForgotPassword}
         topInset={insets.top}
         bottomInset={insets.bottom}
