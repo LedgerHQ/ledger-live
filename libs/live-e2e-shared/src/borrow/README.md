@@ -147,7 +147,11 @@ against it in parallel**. `playwright.config.ts` is `fullyParallel: true`, `work
   either — so a fully-repaid, collateral-only position is still withdrawable.
 - Arbitrary borrow calldata (e.g. the Morpho `repay`) requires **Blind signing enabled** on the
   Speculos Ethereum app, or the device rejects with `6a80`. The ERC-20 approval clear-signs.
-- Auto-approval walks the review carousel to the **"Sign transaction"** screen and presses both
-  (nanoSP). Confirm labels vary by device model; use `BORROW_MANUAL_APPROVE=1` to confirm by hand.
+- Auto-approval first clears the **"Enable Transaction Check?"** opt-in that the Ethereum app shows
+  before its first review (it blocks the review, and swipes/presses do not dismiss it), then walks
+  the review carousel to the confirm screen and signs, per `SPECULOS_DEVICE`:
+  swipe to **"Hold to sign"** then long-press on stax/flex/nanoGen5, right to **"Sign transaction"**
+  then both on nanoSP/nanoX, **"Accept and send"** on nanoS. Use `BORROW_MANUAL_APPROVE=1` to
+  confirm by hand instead.
 - A full dry-run close (`--dry-run`) is validated end-to-end: approval + repay + withdraw all sign
   on Speculos and produce valid signed transactions (no broadcast).
