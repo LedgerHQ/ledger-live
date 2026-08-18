@@ -53,4 +53,13 @@ describe("fetchTrustchain", () => {
       },
     });
   });
+
+  it("should not dispatch when storage returns an encrypted string (app is password-locked)", async () => {
+    jest.mocked(getKey).mockResolvedValue("6a9f1c...ciphertext..." as unknown as TrustchainStore);
+
+    await fetchTrustchain()(dispatch, jest.fn(), undefined);
+
+    expect(getKey).toHaveBeenCalledWith("app", "trustchain");
+    expect(dispatch).not.toHaveBeenCalled();
+  });
 });
