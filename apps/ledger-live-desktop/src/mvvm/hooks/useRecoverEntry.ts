@@ -23,37 +23,24 @@ export function useRecoverEntry() {
     }
   }, [hasClickedRecover, dispatch]);
 
-  const navigateToRecover = useCallback(
-    (path: string) => {
-      navigate(path, {
-        state: {
-          from: {
-            pathname: location.pathname,
-            search: location.search,
-            hash: location.hash,
-          },
-        },
-      });
-    },
-    [location.hash, location.pathname, location.search, navigate],
-  );
-
   const openRecover = useCallback(() => {
     markRecoverSeen();
 
     const enabled = recoverFeature?.enabled;
-    const protectId = recoverFeature?.params?.protectId;
-    const recoverPath = recoverHomePath ?? (protectId ? `/recover/${protectId}` : undefined);
-    const liveAppPath =
-      enabled && recoverFeature?.params?.openRecoverFromSidebar && protectId && recoverHomePath;
+    const openRecoverFromSidebar = recoverFeature?.params?.openRecoverFromSidebar;
+    const liveAppId = recoverFeature?.params?.protectId;
+    const liveAppPath = enabled && openRecoverFromSidebar && liveAppId && recoverHomePath;
+    const lnsRecoverPath = enabled && isNanoSOnlyWallet(devicesModelList) && recoverHomePath;
 
-    if (liveAppPath) {
-      navigateToRecover(recoverHomePath);
-      return;
-    }
-
-    if (enabled && isNanoSOnlyWallet(devicesModelList) && recoverPath) {
-      navigateToRecover(recoverPath);
+    if (liveAppPath || lnsRecoverPath) {
+      navigate(recoverHomePath, {
+        state: {
+          from: {
+            pathname: location.pathname,
+            search: location.search,
+          },
+        },
+      });
       return;
     }
 
@@ -65,7 +52,9 @@ export function useRecoverEntry() {
     recoverFeature,
     recoverHomePath,
     devicesModelList,
-    navigateToRecover,
+    navigate,
+    location.pathname,
+    location.search,
     dispatch,
   ]);
 
