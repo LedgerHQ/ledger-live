@@ -17,7 +17,7 @@ type PendingCurrencySelection = Readonly<{
 }>;
 
 export type OpenCurrencyFlow = (
-  networkIds: readonly CryptoCurrency["id"][],
+  selectableNetworkIds: readonly CryptoCurrency["id"][],
   options?: Readonly<{
     presentation?: ModularDialogPresentation;
   }>,
@@ -38,7 +38,7 @@ export function useOpenCurrencyFlow(): Readonly<{
   }, [dispatch]);
 
   const openCurrencyFlow = useCallback<OpenCurrencyFlow>(
-    (networkIds, options) => {
+    (selectableNetworkIds, options) => {
       cancelCurrencyFlow();
 
       return new Promise(resolve => {
@@ -65,7 +65,7 @@ export function useOpenCurrencyFlow(): Readonly<{
 
         dispatch(
           openDialog({
-            networkIds: [...networkIds],
+            selectableNetworkIds: [...selectableNetworkIds],
             presentation: options?.presentation,
             onAssetSelected,
             onClose: () => {

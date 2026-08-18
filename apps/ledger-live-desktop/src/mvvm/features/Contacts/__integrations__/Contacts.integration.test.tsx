@@ -406,14 +406,14 @@ describe("Contacts integration", () => {
     expect(screen.getByTestId("contacts-detail-add-address")).toBeVisible();
   });
 
-  it("should open MAD from the real Add Address CTA with the eligible network ids", async () => {
+  it("should open MAD from the real Add Address CTA with the eligible selectable network ids", async () => {
     const { store, user } = renderContactsScreen();
 
     await user.click(screen.getByTestId("contacts-me-row"));
     await user.click(screen.getByTestId("contacts-detail-add-address"));
 
     expect(store.getState().modularDialog.isOpen).toBe(true);
-    expect(store.getState().modularDialog.dialogParams?.networkIds).toEqual(
+    expect(store.getState().modularDialog.dialogParams?.selectableNetworkIds).toEqual(
       resolveEligibleAddressCurrencyIds(["evm"]),
     );
     expect(store.getState().modularDialog.dialogParams?.presentation).toBe("embedded");

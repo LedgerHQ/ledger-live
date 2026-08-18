@@ -9,6 +9,7 @@ export type ModularDialogPresentation = "dialog" | "embedded";
 export interface ModularDialogParams {
   currencies?: string[];
   networkIds?: readonly string[];
+  selectableNetworkIds?: readonly string[];
   presentation?: ModularDialogPresentation;
   dialogConfiguration?: EnhancedModularDrawerConfiguration;
   useCase?: string;
@@ -58,6 +59,9 @@ const modularDialogSlice = createSlice({
       state.dialogParams = {
         ...action.payload,
         networkIds: action.payload.networkIds ? [...action.payload.networkIds] : undefined,
+        selectableNetworkIds: action.payload.selectableNetworkIds
+          ? [...action.payload.selectableNetworkIds]
+          : undefined,
         presentation: action.payload.presentation ?? "dialog",
       };
       state.isOpen = true;
@@ -87,6 +91,8 @@ export const modularDialogCurrenciesSelector = (state: State) =>
   state.modularDialog.dialogParams?.currencies;
 export const modularDialogNetworkIdsSelector = (state: State) =>
   state.modularDialog.dialogParams?.networkIds;
+export const modularDialogSelectableNetworkIdsSelector = (state: State) =>
+  state.modularDialog.dialogParams?.selectableNetworkIds;
 export const modularDialogUseCaseSelector = (state: State) =>
   state.modularDialog.dialogParams?.useCase;
 export const modularDialogUiUseCaseSelector = (state: State) =>

@@ -58,14 +58,17 @@ export const AssetListItem = ({
   numberOfNetworks,
   assetId,
   shouldDisplayId,
+  disabled,
 }: AssetListItemProps) => {
   const handleClick = () => {
+    if (disabled) return;
     onClick({ name, ticker, id });
   };
 
   return (
     <ListItem
       className="-outline-offset-2"
+      disabled={disabled}
       onClick={handleClick}
       data-testid={`asset-item-ticker-${ticker.toLowerCase()}`}
     >
