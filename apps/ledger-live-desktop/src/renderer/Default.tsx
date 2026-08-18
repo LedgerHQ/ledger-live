@@ -62,7 +62,10 @@ import { useSuppressQ2TourForNewUsers } from "LLD/features/Q2Tour/hooks/useSuppr
 import { useDeviceManagementKit } from "@ledgerhq/live-dmk-desktop";
 import { AppGeoBlocker } from "LLD/features/AppBlockers/components/AppGeoBlocker";
 import { AppVersionBlocker } from "LLD/features/AppBlockers/components/AppVersionBlocker";
-import { setSolanaLdmkEnabled } from "@ledgerhq/live-common/families/solana/setup";
+import {
+  setSolanaLdmkEnabled,
+  setSolanaTxcEnabled,
+} from "@ledgerhq/live-common/families/solana/setup";
 import { setCosmosLdmkEnabled } from "@ledgerhq/live-common/families/cosmos/setup";
 import { setSuiGraphqlEnabled } from "@ledgerhq/live-common/families/sui/setup";
 import { themeSelector } from "./actions/general";
@@ -377,6 +380,7 @@ export default function Default() {
   const themeConsoleActive = useEnv("DEBUG_THEME");
   const providerNumber = useEnv("FORCE_PROVIDER");
   const ldmkSolanaSignerFeatureFlag = useFeature("ldmkSolanaSigner");
+  const ldmkSolanaSignerIsTxcActiveFeatureFlag = useFeature("ldmkSolanaSignerIsTxcActive");
   const ldmkCosmosSignerFeatureFlag = useFeature("ldmkCosmosSigner");
   const suiGraphqlTransportFeatureFlag = useFeature("suiGraphqlTransport");
 
@@ -400,6 +404,12 @@ export default function Default() {
       setSolanaLdmkEnabled(ldmkSolanaSignerFeatureFlag?.enabled);
     }
   }, [ldmkSolanaSignerFeatureFlag]);
+
+  useEffect(() => {
+    if (typeof ldmkSolanaSignerIsTxcActiveFeatureFlag?.enabled === "boolean") {
+      setSolanaTxcEnabled(ldmkSolanaSignerIsTxcActiveFeatureFlag?.enabled);
+    }
+  }, [ldmkSolanaSignerIsTxcActiveFeatureFlag]);
 
   useEffect(() => {
     if (typeof ldmkCosmosSignerFeatureFlag?.enabled === "boolean") {
