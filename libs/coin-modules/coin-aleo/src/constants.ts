@@ -74,6 +74,9 @@ export const PROGRESS_AFTER_PARSING_RECORDS = 30; // 65 → 95
 export const PROGRESS_DONE = 100;
 export const PROGRESS_THROTTLE_MIN_STEP = 5;
 
+// Root transition + up to 30 nested calls, within the device limit of n < 32 per signing session.
+export const MAX_SIGNATURES_PER_TRANSACTION = 31;
+
 // The maximum number of private records that can be included in a single transaction.
 export const MAX_PRIVATE_RECORDS_PER_TRANSACTION = 14;
 
