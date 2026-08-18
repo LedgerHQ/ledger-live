@@ -356,9 +356,17 @@ describe("CosmosApi", () => {
       expect(txs.length).toEqual(simulatedTotal * 2);
     });
 
-    it("stops on a short page even when total overstates what the node serves", async () => {
-      // Node counts 50 but only serves 3: requesting page 2 would 500 with
-      // "page should be within [1, 1] range, given 2".
+    // Both messages are real, captured from cosmoshub/injective mainnet LCDs.
+    it.each([
+      [
+        "a page past the last",
+        "failed to search for txs: page should be within [1, 1] range, given 2",
+      ],
+      [
+        "a tx the node cannot decode",
+        "unable to resolve type URL /tendermint.liquidity.v1beta1.MsgDepositWithinBatch: tx parse error",
+      ],
+    ])("keeps the pages already fetched when %s fails", async (_label, message) => {
       // @ts-expect-error method is mocked
       network.mockImplementation((networkOptions: { url: string }) => {
         if (networkOptions.url.includes("node_info")) {
@@ -369,22 +377,45 @@ describe("CosmosApi", () => {
         if (networkOptions.url.includes("page=1")) {
           return Promise.resolve({
             data: {
-              total: 50,
+              total: "50",
               tx_responses: [{ txhash: "a" }, { txhash: "b" }, { txhash: "c" }],
             },
           });
         }
-        return Promise.reject(new Error("out of range page requested"));
+        return Promise.reject(new Error(message));
       });
 
       const txs = await cosmosApi.getTransactions("address", 10);
 
-      // 3 txs per stream, and no page=2 request on either
+      // kept, not dropped to []
       expect(txs.length).toEqual(6);
-      const requestedPages = (network as unknown as jest.Mock).mock.calls
-        .map(([{ url }]: [{ url: string }]) => url)
-        .filter(url => url.includes("/txs?"));
-      expect(requestedPages.every(url => url.includes("page=1"))).toBe(true);
+    });
+
+    it("does not stop early when the node caps the page size below the requested limit", async () => {
+      // CometBFT clamps per_page to 100, so asking for 150 yields short-but-not-last pages.
+      const simulatedTotal = 250;
+      const serverCap = 100;
+      // @ts-expect-error method is mocked
+      network.mockImplementation((networkOptions: { url: string }) => {
+        if (networkOptions.url.includes("node_info")) {
+          return Promise.resolve({
+            data: { application_version: { cosmos_sdk_version: "0.50.1" } },
+          });
+        }
+        const page = Number(networkOptions.url.split("page=")[1].split("&")[0]);
+        const served = Math.max(0, Math.min(serverCap, simulatedTotal - (page - 1) * serverCap));
+        return Promise.resolve({
+          data: {
+            total: String(simulatedTotal),
+            tx_responses: Array.from({ length: served }, (_, i) => ({ txhash: `${page}_${i}` })),
+          },
+        });
+      });
+
+      const txs = await cosmosApi.getTransactions("address", 150);
+
+      // sender + recipient, not truncated at the first short page
+      expect(txs.length).toEqual(simulatedTotal * 2);
     });
   });
 

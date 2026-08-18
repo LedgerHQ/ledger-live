@@ -582,7 +582,12 @@ export class CosmosAPI {
           params.set("pagination.reverse", "true");
         }
 
-        const { txs, total } = await this.fetchTransactions(params);
+        const result = await this.fetchTransactions(params).catch(e => {
+          log("debug", "Could not fetch txs page", { e, page, paginationOffset });
+          return null;
+        });
+        if (!result) break;
+        const { txs, total } = result;
 
         if (useModernParams) {
           page += 1;
@@ -591,11 +596,6 @@ export class CosmosAPI {
         }
         maxTxs = total;
         allTxs = allTxs.concat(txs);
-
-        // A page shorter than the limit is the last one. `total` can exceed what the node actually
-        // serves, and asking for the page after the last 500s on cosmos-sdk ("page should be within
-        // [1, N] range") — which the catch below would turn into an empty history.
-        if (txs.length < paginationSize) break;
       } while (allTxs.length < maxTxs);
 
       return allTxs;
@@ -669,10 +669,9 @@ export class CosmosAPI {
       url: `${this.defaultEndpoint}/cosmos/tx/${this.version}/txs?${params.toString()}`,
     });
 
+    // The wire is looser than the type: empty results come back as `null`, uint64 total as a string.
     return {
-      // Some nodes serialize an empty result as `null` rather than `[]`.
       txs: data.tx_responses ?? [],
-      // uint64 comes over the wire as a string ("934"), despite the declared type.
       total: Number("total" in data ? data.total : data.pagination.total),
     };
   }
