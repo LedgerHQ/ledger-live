@@ -119,7 +119,6 @@ describe("DeviceIntentExecutorLWD", () => {
       headerContextValue: {
         requestHeaderOverride: jest.fn(() => jest.fn()),
       },
-      isDeviceBlocked: false,
       onOpenChange,
       onHeaderClosePressed,
       onOverlayDismiss,
@@ -143,16 +142,15 @@ describe("DeviceIntentExecutorLWD", () => {
     expect(onHeaderClosePressed).toHaveBeenCalledTimes(1);
   });
 
-  it("prevents dialog dismiss interactions while a device operation is blocked", () => {
+  it("uses lock-aware handlers provided by the ViewModel", () => {
     mockedUseViewModel.mockReturnValue({
       wrappedProps: makeProps(),
       hasHeaderOverride: false,
       headerContextValue: {
         requestHeaderOverride: jest.fn(() => jest.fn()),
       },
-      isDeviceBlocked: true,
       onOpenChange,
-      onHeaderClosePressed,
+      onHeaderClosePressed: undefined,
       onOverlayDismiss,
       onEscapeKeyDown,
     });
@@ -163,10 +161,9 @@ describe("DeviceIntentExecutorLWD", () => {
     mockDialogContentProps?.onEscapeKeyDown({ preventDefault });
     mockDialogProps?.onOpenChange(false);
 
-    expect(preventDefault).toHaveBeenCalledTimes(2);
-    expect(onOverlayDismiss).not.toHaveBeenCalled();
-    expect(onEscapeKeyDown).not.toHaveBeenCalled();
-    expect(onOpenChange).not.toHaveBeenCalled();
+    expect(onOverlayDismiss).toHaveBeenCalledWith({ preventDefault });
+    expect(onEscapeKeyDown).toHaveBeenCalledWith({ preventDefault });
+    expect(onOpenChange).toHaveBeenCalledWith(false);
     expect(mockDialogHeaderProps?.onClose).toBeUndefined();
   });
 });

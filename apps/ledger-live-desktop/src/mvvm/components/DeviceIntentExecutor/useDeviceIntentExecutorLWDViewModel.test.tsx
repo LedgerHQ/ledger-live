@@ -99,12 +99,18 @@ describe("useDeviceIntentExecutorLWDViewModel", () => {
   });
 
   describe("GIVEN the ViewModel mounts", () => {
-    it("WHEN a device action is blocked THEN it exposes the dialog lock state", () => {
+    it("WHEN a device action is blocked THEN it prevents dialog dismissal", () => {
       mockedUseDeviceBlocked.mockReturnValue(true);
 
-      const { result } = renderViewModel();
+      const { result, props } = renderViewModel();
+      const preventDefault = jest.fn();
+      result.current.onOpenChange(false);
+      result.current.onOverlayDismiss({ preventDefault });
+      result.current.onEscapeKeyDown({ preventDefault });
 
-      expect(result.current.isDeviceBlocked).toBe(true);
+      expect(props.onUserCancel).not.toHaveBeenCalled();
+      expect(preventDefault).toHaveBeenCalledTimes(2);
+      expect(result.current.onHeaderClosePressed).toBeUndefined();
     });
 
     it("WHEN the hook renders again THEN it fires deviceflow_started exactly once with the sourceFlow", () => {
@@ -318,7 +324,7 @@ describe("useDeviceIntentExecutorLWDViewModel", () => {
       mockedTrack.mockClear();
 
       act(() => {
-        result.current.onOverlayDismiss();
+        result.current.onOverlayDismiss({ preventDefault: jest.fn() });
       });
 
       expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
@@ -333,7 +339,7 @@ describe("useDeviceIntentExecutorLWDViewModel", () => {
       mockedTrack.mockClear();
 
       act(() => {
-        result.current.onEscapeKeyDown();
+        result.current.onEscapeKeyDown({ preventDefault: jest.fn() });
       });
 
       expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {

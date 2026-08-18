@@ -71,7 +71,6 @@ export function DeviceIntentExecutorLWD<JobState, Input, ExtraProps>(
     onHeaderClosePressed,
     onOverlayDismiss,
     onEscapeKeyDown,
-    isDeviceBlocked,
   } = useDeviceIntentExecutorLWDViewModel(props);
   const analyticsProperties = props.analyticsProperties ?? emptyAnalyticsProperties;
   const trackingContextValue = React.useMemo(
@@ -82,41 +81,19 @@ export function DeviceIntentExecutorLWD<JobState, Input, ExtraProps>(
   if (!wrappedProps.enabled) return null;
 
   return (
-    <Dialog
-      open={wrappedProps.enabled}
-      onOpenChange={open => {
-        if (!isDeviceBlocked) onOpenChange(open);
-      }}
-      height="fit"
-    >
+    <Dialog open={wrappedProps.enabled} onOpenChange={onOpenChange} height="fit">
       <DialogContent
         aria-describedby={undefined}
         className="max-h-[90vh] w-[400px] bg-base p-0"
         data-testid="device-intent-executor-dialog"
-        onPointerDownOutside={event => {
-          if (isDeviceBlocked) {
-            event.preventDefault();
-            return;
-          }
-          onOverlayDismiss();
-        }}
-        onEscapeKeyDown={event => {
-          if (isDeviceBlocked) {
-            event.preventDefault();
-            return;
-          }
-          onEscapeKeyDown();
-        }}
+        onPointerDownOutside={onOverlayDismiss}
+        onEscapeKeyDown={onEscapeKeyDown}
       >
         <DialogBackgroundToneProvider>
           <DeviceIntentTrackingProvider value={trackingContextValue}>
             <DeviceIntentExecutorHeaderContext.Provider value={headerContextValue}>
               {!hasHeaderOverride && (
-                <DialogHeader
-                  density="compact"
-                  onClose={isDeviceBlocked ? undefined : onHeaderClosePressed}
-                  className="!mb-0"
-                />
+                <DialogHeader density="compact" onClose={onHeaderClosePressed} className="!mb-0" />
               )}
               <DialogBody className="!mb-0 flex min-h-0 flex-col px-24 pb-24">
                 <DeviceIntentExecutor
