@@ -9,6 +9,7 @@ import { ledgerToDmkDeviceIdMap } from "@ledgerhq/live-dmk-shared";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { track } from "~/renderer/analytics/segment";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
+import { useDeviceBlocked } from "~/renderer/components/DeviceAction/DeviceBlocker";
 import type { InitializerConfig } from "./DeviceContextInitializerComponentLWD";
 import type { InitializationInput } from "./types";
 import { PAGE_DEVICE_ACTION } from "./utils/trackDeviceIntent";
@@ -18,7 +19,12 @@ jest.mock("~/renderer/analytics/segment", () => ({
   track: jest.fn(),
 }));
 
+jest.mock("~/renderer/components/DeviceAction/DeviceBlocker", () => ({
+  useDeviceBlocked: jest.fn(),
+}));
+
 const mockedTrack = jest.mocked(track);
+const mockedUseDeviceBlocked = jest.mocked(useDeviceBlocked);
 
 const layerABaseProperties = {
   deviceUxV2: true,
@@ -89,9 +95,18 @@ describe("useDeviceIntentExecutorLWDViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     currentRouteNameRef.current = "Connect Device - Connecting";
+    mockedUseDeviceBlocked.mockReturnValue(false);
   });
 
   describe("GIVEN the ViewModel mounts", () => {
+    it("WHEN a device action is blocked THEN it exposes the dialog lock state", () => {
+      mockedUseDeviceBlocked.mockReturnValue(true);
+
+      const { result } = renderViewModel();
+
+      expect(result.current.isDeviceBlocked).toBe(true);
+    });
+
     it("WHEN the hook renders again THEN it fires deviceflow_started exactly once with the sourceFlow", () => {
       const { rerender } = renderViewModel();
       rerender(undefined);

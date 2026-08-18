@@ -1,7 +1,6 @@
 import React from "react";
 import { render } from "@testing-library/react";
-import type { DeviceIntentExecutorProps } from "@ledgerhq/device-intent";
-import { useDeviceBlocked } from "~/renderer/components/DeviceAction/DeviceBlocker";
+import type { DeviceIntentExecutorProps } from "@features/platform-device-intent";
 import { DeviceIntentExecutorLWD } from ".";
 import type { InitializerConfig } from "./DeviceContextInitializerComponentLWD";
 import type { InitializationInput } from "./types";
@@ -42,7 +41,7 @@ jest.mock("@ledgerhq/lumen-ui-react", () => ({
 }));
 
 jest.mock(
-  "@ledgerhq/device-intent",
+  "@features/platform-device-intent",
   () => ({
     DeviceIntentExecutor: () => null,
   }),
@@ -75,15 +74,10 @@ jest.mock("./components/InvalidOperation", () => ({
   InvalidOperation: () => null,
 }));
 
-jest.mock("~/renderer/components/DeviceAction/DeviceBlocker", () => ({
-  useDeviceBlocked: jest.fn(),
-}));
-
 jest.mock("./useDeviceIntentExecutorLWDViewModel", () => ({
   useDeviceIntentExecutorLWDViewModel: jest.fn(),
 }));
 
-const mockedUseDeviceBlocked = jest.mocked(useDeviceBlocked);
 const mockedUseViewModel = jest.mocked(useDeviceIntentExecutorLWDViewModel);
 
 type Props = DeviceIntentExecutorProps<unknown, unknown, unknown, InitializationInput> & {
@@ -125,6 +119,7 @@ describe("DeviceIntentExecutorLWD", () => {
       headerContextValue: {
         requestHeaderOverride: jest.fn(() => jest.fn()),
       },
+      isDeviceBlocked: false,
       onOpenChange,
       onHeaderClosePressed,
       onOverlayDismiss,
@@ -133,7 +128,6 @@ describe("DeviceIntentExecutorLWD", () => {
   });
 
   it("allows dialog dismiss interactions when no device operation is blocked", () => {
-    mockedUseDeviceBlocked.mockReturnValue(false);
     render(<DeviceIntentExecutorLWD {...makeProps()} />);
     const preventDefault = jest.fn();
 
@@ -150,7 +144,18 @@ describe("DeviceIntentExecutorLWD", () => {
   });
 
   it("prevents dialog dismiss interactions while a device operation is blocked", () => {
-    mockedUseDeviceBlocked.mockReturnValue(true);
+    mockedUseViewModel.mockReturnValue({
+      wrappedProps: makeProps(),
+      hasHeaderOverride: false,
+      headerContextValue: {
+        requestHeaderOverride: jest.fn(() => jest.fn()),
+      },
+      isDeviceBlocked: true,
+      onOpenChange,
+      onHeaderClosePressed,
+      onOverlayDismiss,
+      onEscapeKeyDown,
+    });
     render(<DeviceIntentExecutorLWD {...makeProps()} />);
     const preventDefault = jest.fn();
 

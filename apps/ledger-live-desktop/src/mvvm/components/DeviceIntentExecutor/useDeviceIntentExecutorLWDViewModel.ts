@@ -12,6 +12,7 @@ import {
   useDeviceIntentExecutorHeaderOverrideRequests,
 } from "@ledgerhq/live-dmk-shared";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
+import { useDeviceBlocked } from "~/renderer/components/DeviceAction/DeviceBlocker";
 import type { InitializerConfig } from "./DeviceContextInitializerComponentLWD";
 import type { InitializationInput } from "./types";
 import {
@@ -37,6 +38,7 @@ export type DeviceIntentExecutorLWDViewModel<JobState, Input, ExtraProps> = {
   wrappedProps: Props<JobState, Input, ExtraProps>;
   hasHeaderOverride: boolean;
   headerContextValue: DeviceIntentExecutorHeaderContextValue;
+  isDeviceBlocked: boolean;
   onOpenChange: (open: boolean) => void;
   /**
    * Tracks the "Close" `button_clicked` event when the dialog header close button is pressed.
@@ -85,6 +87,7 @@ export function useDeviceIntentExecutorLWDViewModel<JobState, Input, ExtraProps>
   const initializationCompletedRef = useRef(false);
   const cancelTrackedRef = useRef(false);
   const { hasHeaderOverride, headerContextValue } = useDeviceIntentExecutorHeaderOverrideRequests();
+  const isDeviceBlocked = useDeviceBlocked();
 
   useEffect(() => {
     if (!enabled) {
@@ -144,6 +147,7 @@ export function useDeviceIntentExecutorLWDViewModel<JobState, Input, ExtraProps>
   return {
     hasHeaderOverride,
     headerContextValue,
+    isDeviceBlocked,
     wrappedProps: {
       ...props,
       onExecutorStateChanged: wrappedOnExecutorStateChanged,

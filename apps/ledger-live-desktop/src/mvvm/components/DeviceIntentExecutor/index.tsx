@@ -13,7 +13,6 @@ import {
 } from "@ledgerhq/live-dmk-shared";
 import { Dialog, DialogBody, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
 import { DialogBackgroundToneProvider } from "LLD/components/DialogBackgroundGradient";
-import { useDeviceBlocked } from "~/renderer/components/DeviceAction/DeviceBlocker";
 import { DeviceDisconnected } from "./components/DeviceDisconnected";
 import { IntentError } from "./components/IntentError";
 import { InvalidOperation } from "./components/InvalidOperation";
@@ -72,8 +71,8 @@ export function DeviceIntentExecutorLWD<JobState, Input, ExtraProps>(
     onHeaderClosePressed,
     onOverlayDismiss,
     onEscapeKeyDown,
+    isDeviceBlocked,
   } = useDeviceIntentExecutorLWDViewModel(props);
-  const isDeviceBlocked = useDeviceBlocked();
   const analyticsProperties = props.analyticsProperties ?? emptyAnalyticsProperties;
   const trackingContextValue = React.useMemo(
     () => ({ sourceFlow: props.sourceFlow, analyticsProperties }),
