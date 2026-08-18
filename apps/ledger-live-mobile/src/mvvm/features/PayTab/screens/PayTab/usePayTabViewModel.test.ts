@@ -1,6 +1,6 @@
-import { Linking } from "react-native";
 import { renderHook } from "@tests/test-renderer";
 import type { BalanceData } from "@features/flow-pay-card-balance";
+import { getEnv } from "@shared/env";
 import { track } from "~/analytics";
 import { usePayTabViewModel } from "./usePayTabViewModel";
 
@@ -64,20 +64,22 @@ describe("usePayTabViewModel", () => {
     expect(result.current.top).toBe(24);
   });
 
+  it("should expose the OAuth client configuration", () => {
+    const { result } = renderHook(() => usePayTabViewModel());
+
+    // The redirect URI is matched verbatim on the token exchange, so both values come from the app.
+    expect(result.current.oauthConfig).toEqual({
+      clientId: getEnv("CARD_BAANX_CLIENT_KEY"),
+      redirectUri: getEnv("CARD_OAUTH_REDIRECT_URI"),
+    });
+  });
+
   it("should expose the balance data and empty-state labels for the hero", () => {
     const { result } = renderHook(() => usePayTabViewModel());
 
     expect(result.current.balance).toBe(balance);
     expect(result.current.balanceLabels.emptyTitle).toBeTruthy();
     expect(result.current.balanceLabels.emptyDescription).toBeTruthy();
-  });
-
-  it("should open the hosted login URL", async () => {
-    const { result } = renderHook(() => usePayTabViewModel());
-
-    await result.current.openHostedLogin("https://card.example.com/login");
-
-    expect(Linking.openURL).toHaveBeenCalledWith("https://card.example.com/login");
   });
 
   it("should build the feature tour content with the three feature rows", () => {

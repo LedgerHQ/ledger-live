@@ -70,11 +70,7 @@ jest.mock("@features/flow-pay-card-auth", () => ({
   CardLogin: () => <button type="button">Login</button>,
 }));
 
-jest.mock("~/renderer/linking", () => ({
-  openURL: jest.fn(),
-}));
-
-describe("PayTab", () => {
+describe("PayTab integration", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockPayStablecoins();
