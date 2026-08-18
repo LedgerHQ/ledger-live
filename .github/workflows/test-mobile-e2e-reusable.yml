@@ -960,6 +960,17 @@ jobs:
           echo "ℹ️ Android emulators boot started in background."
         shell: bash
 
+      # QAA-1497: an emulator can vanish mid-run, after which every later spec fails with
+      # a misleading assertion error. Record the moment it happens plus the host-side
+      # evidence our artifacts cannot otherwise show.
+      - name: Watch Android emulator liveness (background)
+        run: |
+          export ARTIFACTS_DIR="${{ env.MOBILE_ARTIFACTS_ROOT }}"
+          nohup bash tools/scripts/watch-android-emulators-ci.sh \
+            >> "${{ env.MOBILE_ARTIFACTS_ROOT }}/emulator-watchdog.log" 2>&1 &
+          echo "ℹ️ Emulator liveness watchdog started."
+        shell: bash
+
       - name: Setup Speculos image and Coin Apps
         id: setup-speculos
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-speculos_image@develop
@@ -1025,6 +1036,27 @@ jobs:
           E2E_FEATURE_FLAGS_JSON: ${{ env.E2E_FEATURE_FLAGS_JSON }}
           E2E_MOBILE_FEATURE_FLAGS: ${{ env.ANDROID_FEATURE_FLAGS }}
         run: pnpm run mobile e2e:ci -p android -t --e2e $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') $SHARD_TEST_FILES --outputFile=artifacts/${{ env.E2E_TEST_RESULTS_PREFIX_ANDROID }}-${{ matrix.shard }}.json
+
+      - name: Report emulator deaths
+        if: always()
+        continue-on-error: true
+        shell: bash
+        run: |
+          DEATHS="${{ env.MOBILE_ARTIFACTS_ROOT }}/emulator-deaths.log"
+          if [ -s "$DEATHS" ]; then
+            {
+              echo "### ❌ Emulator died during this shard"
+              echo '```'
+              cat "$DEATHS"
+              echo '```'
+              echo "Test failures after this point are not meaningful - see QAA-1497."
+            } >> "$GITHUB_STEP_SUMMARY"
+            while read -r line; do
+              echo "::error title=Emulator died (QAA-1497)::$line"
+            done < "$DEATHS"
+          else
+            echo "✅ No emulator disappeared during this shard." >> "$GITHUB_STEP_SUMMARY"
+          fi
 
       - name: Stop resource usage sampler
         if: always()
