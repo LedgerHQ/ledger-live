@@ -99,18 +99,42 @@ describe("useDeviceIntentExecutorLWDViewModel", () => {
   });
 
   describe("GIVEN the ViewModel mounts", () => {
-    it("WHEN a device action is blocked THEN it prevents dialog dismissal", () => {
-      mockedUseDeviceBlocked.mockReturnValue(true);
+    describe("GIVEN a device action is blocked", () => {
+      beforeEach(() => {
+        mockedUseDeviceBlocked.mockReturnValue(true);
+      });
 
-      const { result, props } = renderViewModel();
-      const preventDefault = jest.fn();
-      result.current.onOpenChange(false);
-      result.current.onOverlayDismiss({ preventDefault });
-      result.current.onEscapeKeyDown({ preventDefault });
+      it("WHEN the dialog requests to close THEN it does not cancel the flow", () => {
+        const { result, props } = renderViewModel();
 
-      expect(props.onUserCancel).not.toHaveBeenCalled();
-      expect(preventDefault).toHaveBeenCalledTimes(2);
-      expect(result.current.onHeaderClosePressed).toBeUndefined();
+        result.current.onOpenChange(false);
+
+        expect(props.onUserCancel).not.toHaveBeenCalled();
+      });
+
+      it("WHEN the overlay is pressed THEN it prevents dismissal", () => {
+        const { result } = renderViewModel();
+        const preventDefault = jest.fn();
+
+        result.current.onOverlayDismiss({ preventDefault });
+
+        expect(preventDefault).toHaveBeenCalledTimes(1);
+      });
+
+      it("WHEN Escape is pressed THEN it prevents dismissal", () => {
+        const { result } = renderViewModel();
+        const preventDefault = jest.fn();
+
+        result.current.onEscapeKeyDown({ preventDefault });
+
+        expect(preventDefault).toHaveBeenCalledTimes(1);
+      });
+
+      it("THEN it does not provide a header close handler", () => {
+        const { result } = renderViewModel();
+
+        expect(result.current.onHeaderClosePressed).toBeUndefined();
+      });
     });
 
     it("WHEN the hook renders again THEN it fires deviceflow_started exactly once with the sourceFlow", () => {
