@@ -868,6 +868,43 @@
     "unlockLiquidity": "Utilisez vos cryptos au quotidien",
     "exploreCryptoCardsDescription": "Découvrez les cartes crypto et trouvez celle qui est faite pour vous."
   },
+  "payTab": {
+    "featureTour": {
+      "title": "Payez et faites-vous payer",
+      "description": "Les stablecoins intègrent vos cryptos directement dans vos dépenses de tous les jours.",
+      "cta": "Compris",
+      "rows": {
+        "global": {
+          "title": "Paiements dans le monde entier",
+          "description": "Profitez de faibles frais de réseau."
+        },
+        "volatility": {
+          "title": "Volatilité minimale",
+          "description": "Les stablecoins sont basés sur les monnaies fiduciaires."
+        },
+        "card": {
+          "title": "Cashback à 1% sur les dépenses par carte",
+          "description": "Payez avec vos USDC, USDT, BTC, ETH et plus."
+        }
+      }
+    },
+    "balance": {
+      "emptyTitle": "Payez et faites-vous payer",
+      "emptyDescription": "Commencez par déposer des stablecoins sur votre wallet.",
+      "filter": {
+        "allStablecoins": "Tous les stablecoins",
+        "dialogTitle": "Filtrer le solde",
+        "dialogDescription": "Payez partout dans le monde avec vos stablecoins : profitez de faibles frais et d’une volatilité minime.",
+        "dialogBanner": "Gérez tous vos autres actifs sur votre page Accueil",
+        "confirm": "Confirmer"
+      }
+    },
+    "actions": {
+      "deposit": "Ajouter un stablecoin",
+      "request": "Demander",
+      "pay": "Nouveau paiement"
+    }
+  },
   "lend": {
     "title": "Prêter",
     "tabs": {
@@ -2476,7 +2513,9 @@
     "addressMatched": "Adresse correspondante",
     "addressNotFound": "Adresse introuvable",
     "alreadyUsed": "Déjà utilisée · {{date}}",
+    "addressBookUnsupported": "{{family}} n’est pas encore pris en charge",
     "recentSendWillAppear": "Vos dernières transactions émises apparaîtront ici.",
+    "contactsWillAppear": "Vos contacts apparaîtront ici.",
     "securityInfo": {
       "title": "Comment envoyer en toute sécurité ?",
       "items": {
@@ -2494,6 +2533,10 @@
         "description": "Votre historique vous permet de voir instantanément si vous avez déjà envoyé des cryptos à une adresse spécifique. Cela pourrait permettre d’éviter d’éventuelles erreurs de copier/coller ou les piratages. Votre historique contient les 12 dernières adresses auxquelles vous avez envoyé des cryptos via Ledger Wallet.",
         "cta": "Compris"
       }
+    },
+    "addContact": {
+      "newContact": "Ajouter un nouveau contact",
+      "existingContact": "Ajouter à un contact"
     },
     "relativeDate": {
       "justNow": "À l’instant",
@@ -7001,6 +7044,9 @@
       "title": "Solde insuffisant",
       "description": "Vérifiez que ce compte a un solde suffisant."
     },
+    "NotEnoughTransferAmount": {
+      "title": "Un minimum de 1 ICP est requis pour staker dans un neurone."
+    },
     "UnstakeNotEnoughStakedBalanceLeft": {
       "title": "Déstaker plus de {{maxAmount}} entraîne un déstaking intégral ({{totalAmount}})",
       "description": "Si vous déstakez plus de {{maxAmount}}, le montant total que vous avez mis en staking ({{totalAmount}}) sera déstaké."
@@ -7434,6 +7480,9 @@
     },
     "FeeTooHigh": {
       "title": "Les frais de réseau représentent plus de 10% du montant"
+    },
+    "RecipientIsNewAccount": {
+      "title": "Cette adresse n’a jamais reçu d’actifs : son activation entraîne des frais de réseau plus élevés"
     },
     "DustLimit": {
       "title": "Montant inférieur à la limite de poussière (dust limit)"
@@ -8588,23 +8637,14 @@
   },
   "lnsUpsell": {
     "opted_in": {
-      "title": "Mémoire limitée, expérience limitée",
-      "description": "Passez du Ledger Nano S à un modèle plus récent, tel que le Ledger Flex. À la clé : plus de mémoire, les dernières améliorations de sécurité, de nouvelles fonctionnalités et <0>-{{discount}}% en exclusivité</0>.",
+      "title": "Voyez plus grand",
+      "description": "Passez au niveau supérieur avec -{{discount}}%.",
       "cta": "Choisir mon Ledger"
     },
     "opted_out": {
-      "description": "Avec sa mémoire limitée, votre Ledger Nano S vous prive des dernières fonctionnalités, innovations blockchain et améliorations de sécurité. Pour en bénéficier, choisissez un appareil Ledger plus récent.",
-      "cta": "En savoir plus"
-    }
-  },
-  "lnsUpsellMediaBanner": {
-    "opted_in": {
-      "title": "Voyez plus grand",
-      "description": "Passez au niveau supérieur avec -20%."
-    },
-    "opted_out": {
       "title": "Sécurité et contrôle renforcés",
-      "description": "Fonctionnalités de sécurité à découvrir."
+      "description": "Fonctionnalités de sécurité à découvrir.",
+      "cta": "En savoir plus"
     }
   },
   "largeScreenUpsellModal": {
@@ -8897,7 +8937,9 @@
       "transparentBalance": "Solde transparent",
       "transparentBalanceTooltip": "Le solde qui est visible publiquement.",
       "privateBalance": "Solde privé",
-      "privateBalanceTooltip": "Le solde qui est masqué."
+      "privateBalanceTooltip": "Le solde qui est masqué.",
+      "privateBalanceWarning": "Le solde privé exclut les actifs masqués sur Sapling et Orchard",
+      "privateBalanceMaturing": "{{spendable}} disponibles · {{maturing}} en cours de maturation"
     },
     "shielded": {
       "send": {
@@ -8917,7 +8959,8 @@
             "title": "Solde privé",
             "subtitle": "Protégé",
             "unavailable": "Solde privé indisponible"
-          }
+          },
+          "spendableWarning": "Le solde disponible peut être inférieur au solde total. Plusieurs confirmations et un scan complet (~15 minutes) sont requises avant de pouvoir utiliser des actifs récemment shielded."
         },
         "memo": {
           "label": "Mémo (facultatif)",
@@ -8937,6 +8980,12 @@
             "message": "Le solde peut ne pas être à jour",
             "cta": "Synchroniser"
           }
+        },
+        "selfTransfer": {
+          "toPrivate": "Transfert interne vers le solde privé",
+          "toPublic": "Transfert interne vers le solde public",
+          "unavailable": "Votre adresse privée n’est pas encore disponible. Exportez votre clé de consultation pour l’activer.",
+          "privacyWarning": "Vos actifs shielded seront alors associés à l’adresse publique de votre compte, visible de tous. Un envoi vers une adresse privée externe les maintient dissociés."
         }
       },
       "state": {
@@ -9677,5 +9726,30 @@
       }
     },
     "disclaimer": "Ces données sont fournies à titre indicatif uniquement et ne constituent pas un conseil financier. Ne pas utiliser à des fins fiscales."
+  },
+  "internetComputer": {
+    "memoField": {
+      "increaseStake": "Cette transaction va augmenter le montant en staking d’un neurone existant. Saisissez le montant à staker dans le champ ci-dessus.",
+      "createNeuron": "Cette transaction va créer un neurone avec les ICP stakés. Saisissez le montant à staker dans le champ ci-dessus.",
+      "tooltip": "Internet Computer l’utilise pour identifier la transaction de staking d’ICP dans le neurone."
+    },
+    "stakeBanner": {
+      "stakeICP": {
+        "title": "Stakez vos ICP",
+        "description": "Stakez des ICP et recevez des récompenses en participant à la gouvernance du réseau.",
+        "cta": "Staker mes ICP"
+      }
+    },
+    "headerManageActions": {
+      "manageNeurons": {
+        "title": "Gérez vos neurones"
+      }
+    },
+    "summaryFooter": {
+      "stakedBalance": "Solde de staking",
+      "stakedBalanceTooltip": "Montant total des tokens ICP actuellement stakés dans des neurones. Les ICP mis en staking génèrent des récompenses de vote et permettent de participer à la gouvernance du réseau.",
+      "totalMaturity": "Maturité totale",
+      "totalMaturityTooltip": "Le total des récompenses générées par le staking, incluant à la fois les récompenses (\"maturity\") stakées et liquides. Vous pouvez soit restaker ces récompenses, soit les récupérer sous forme d’ICP liquides."
+    }
   }
 }
