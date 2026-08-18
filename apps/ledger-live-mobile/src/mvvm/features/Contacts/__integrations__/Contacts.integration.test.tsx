@@ -565,7 +565,10 @@ describe("Contacts integration", () => {
     await waitFor(() => {
       expect(screen.getByTestId("contacts-detail-screen")).toBeVisible();
       expect(screen.getByTestId("contacts-detail-add-address")).toHaveTextContent("Add address");
-      expect(screen.getByText("Save a wallet address to send to Benoit")).toBeVisible();
+      expect(screen.getByText("No saved addresses for Benoit")).toBeVisible();
+      expect(
+        screen.getByText("Save their wallet addresses to send to them by name next time"),
+      ).toBeVisible();
       expect(screen.getByTestId("contacts-detail-avatar")).toBeVisible();
       expect(screen.queryByTestId("contacts-detail-ledger-wallet-addresses")).toBeNull();
     });

@@ -101,6 +101,15 @@ describe("ContactAddressDetailDialog", () => {
     });
   });
 
+  it("should share the selected address when sharing is available", () => {
+    const onShareAddress = jest.fn();
+    render(<ContactAddressDetailDialog {...createProps({ onShareAddress })} />);
+
+    fireEvent.press(screen.getByTestId("contacts-address-detail-share"));
+
+    expect(onShareAddress).toHaveBeenCalledWith("0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034");
+  });
+
   it("should render nothing when row or network is missing", () => {
     render(<ContactAddressDetailDialog {...createProps({ row: undefined })} />);
 

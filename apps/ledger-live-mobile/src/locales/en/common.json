@@ -10328,10 +10328,10 @@
       "ledgerWalletAddresses": "Ledger Wallet addresses",
       "myAddresses": "My addresses",
       "emptyState": {
-        "title": "No address yet",
+        "contactTitle": "No saved addresses for {{name}}",
         "meTitle": "Save your own addresses",
         "meDescription": "Save the external addresses you own on exchanges or other wallets. Next time you send to yourself, your Ledger device will show the name you chose.",
-        "contactDescription": "Save a wallet address to send to {{name}}"
+        "contactDescription": "Save their wallet addresses to send to them by name next time"
       }
     },
     "addressDetail": {
