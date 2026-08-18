@@ -4,8 +4,9 @@
 > **Status: UNSTABLE** — In active development; API may change.
 
 Dual-platform flow package for the Pay tab **Request receive-screen** experience for Ledger Wallet:
-a shared view-model and (soon) receive-screen component (QR, highlighted address, action slot,
-shareable card) consumed by the platform presentations on desktop and mobile.
+a shared view-model and receive-screen component (highlighted address, action tiles) consumed by
+the platform presentations on desktop and mobile. QR rendering and the shareable card are added
+separately (LIVE-36118 / LIVE-36121).
 
 ## View-model
 
@@ -45,6 +46,45 @@ Each action emits `button_clicked { button, buttonLocation: "request", page }` v
 
 ## Components
 
+### `RequestReceive`
+
+Receive dialog/screen for the Pay Request flow. It consumes `useRequestReceiveViewModel` and renders
+the asset icon, network row, highlighted address and the action tiles. The host injects copy,
+icons, the visible actions and the side-effect callbacks; the component stays i18n-, device- and
+navigation-agnostic.
+
+> Web only for now — the native screen is delivered with the LWM wiring (LIVE-35188), and the
+> branded QR is added via `@shared/qr-code` (LIVE-36118).
+
+```tsx
+import { RequestReceive } from "@features/flow-pay-card-request";
+
+<RequestReceive
+  isOpen={isOpen}
+  address={address}
+  asset={{ name: "USD Coin", ticker: "USDC" }}
+  network="Base"
+  page="Pay"
+  labels={{
+    title: "Request USD Coin",
+    networkLabel: "Base network",
+    actions: { share: "Share", copy: "Copy", copied: "Copied", save: "Save", verify: "Verify" },
+  }}
+  assetIcon={{ ledgerId: "usd_coin", ticker: "USDC", network: "base" }}
+  networkIcon={{ ledgerId: "base", ticker: "ETH" }}
+  visibleActions={["save", "copy", "verify"]}
+  onShare={shareCard}
+  onCopy={copyToClipboard}
+  onSave={saveCardImage}
+  onVerify={verifyOnDevice}
+  onClose={close}
+  onTrackEvent={track}
+/>;
+```
+
+`visibleActions` controls which tiles render, in order. Desktop uses `["save", "copy", "verify"]`;
+mobile will use `["share", "verify"]`. The Copy tile flips to the `copied` label briefly after use.
+
 ### `VerifyAddress`
 
 On-device address-verification overlay used by the Pay Request receive screen. It renders two
@@ -81,6 +121,10 @@ Only views carry a platform suffix (`.web` / `.native`). The container, view-mod
 are platform-agnostic and import without a suffix; TypeScript `moduleSuffixes`, the bundlers
 (Rspack / Metro) and the jest preset resolve the right side.
 
+Each view also has a test importing it through its full platform filename. Dead-code analysis
+(knip) reads only the solution `tsconfig.json`, which declares no `moduleSuffixes`, so a suffixed
+file it can reach through no other path would be reported as dead.
+
 ## Structure
 
 Every `index.*` is a pure barrel (`export *` only).
@@ -98,7 +142,10 @@ pay-card-request/
     │   └── __tests__/
     └── components/
         ├── RequestReceive/
-        │   ├── useRequestReceiveViewModel.ts   # pure VM: display data + tracked handlers
+        │   ├── RequestReceive.tsx                 # Container (platform-agnostic)
+        │   ├── useRequestReceiveViewModel.ts      # pure VM: display data + tracked handlers
+        │   ├── RequestReceiveView.web.tsx         # Dialog (LWD)
+        │   ├── RequestReceiveView.native.tsx      # Stub until LIVE-35188
         │   └── __tests__/
         └── VerifyAddress/
             ├── VerifyAddress.tsx                  # Container; switches phase

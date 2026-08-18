@@ -1,11 +1,13 @@
 import { useCallback, useMemo } from "react";
-import type { RequestReceiveViewModel, RequestReceiveViewModelParams } from "../../types";
+import type {
+  RequestReceiveActionId,
+  RequestReceiveViewModel,
+  RequestReceiveViewModelParams,
+} from "../../types";
 import { splitAddress } from "../../utils/splitAddress";
 
-type RequestActionId = "share" | "copy" | "save" | "verify";
-
 // Analytics button names per the Pay Tracking Plan (wording still to confirm with product).
-const TRACK_BUTTON: Readonly<Record<RequestActionId, string>> = {
+const TRACK_BUTTON: Readonly<Record<RequestReceiveActionId, string>> = {
   share: "share",
   copy: "copy address",
   save: "save",
@@ -26,7 +28,7 @@ export function useRequestReceiveViewModel({
   const addressParts = useMemo(() => splitAddress(address), [address]);
 
   const runAction = useCallback(
-    (id: RequestActionId, callback: (address: string) => void) => {
+    (id: RequestReceiveActionId, callback: (address: string) => void) => {
       onTrackEvent?.("button_clicked", {
         button: TRACK_BUTTON[id],
         buttonLocation: "request",
