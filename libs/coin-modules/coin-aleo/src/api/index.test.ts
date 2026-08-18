@@ -1,6 +1,5 @@
 import type { BalanceOptions } from "@ledgerhq/coin-module-framework/api/types";
 import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
-import { getMockedCoinFrameworkOperation } from "../__tests__/fixtures/operation.fixture";
 import {
   createMockTransactionIntent,
   mockTxIntentFeePrivate,
@@ -16,7 +15,6 @@ import {
   getAccountInfo,
   getBalance,
   lastBlock,
-  listOperations,
   register,
 } from "../logic";
 import { buildFeeConfigurationForRootIntent, getTransactionType } from "../logic/utils";
@@ -33,7 +31,6 @@ describe("createApi", () => {
     config: async () => mockConfig,
     logger: () => {},
   };
-  const mockOperation = getMockedCoinFrameworkOperation();
   const mockedBroadcast = jest.mocked(broadcast);
   const mockedCombine = jest.mocked(combine);
   const mockedCraftTransaction = jest.mocked(craftTransaction);
@@ -41,7 +38,6 @@ describe("createApi", () => {
   const mockedGetAccountInfo = jest.mocked(getAccountInfo);
   const mockedGetBalance = jest.mocked(getBalance);
   const mockedLastBlock = jest.mocked(lastBlock);
-  const mockedListOperations = jest.mocked(listOperations);
   const mockedRegister = jest.mocked(register);
   const mockedGetTransactionType = jest.mocked(getTransactionType);
   const mockedBuildFeeConfigurationForRootIntent = jest.mocked(buildFeeConfigurationForRootIntent);
@@ -55,12 +51,6 @@ describe("createApi", () => {
     mockedEstimateFees.mockReturnValue({ value: BigInt(1234) });
     mockedGetBalance.mockResolvedValue([{ value: BigInt(10), asset: { type: "native" } }]);
     mockedLastBlock.mockResolvedValue({ hash: "blockHash", height: 42, time: new Date() });
-    mockedListOperations.mockResolvedValue({
-      operations: [mockOperation],
-      tokenOperations: [],
-      calTokens: new Map(),
-      nextCursor: "next-cursor",
-    });
     mockedGetTransactionType.mockReturnValue("transfer_public");
     mockedBuildFeeConfigurationForRootIntent.mockReturnValue({
       function_name: "fee_public",
@@ -411,31 +401,12 @@ describe("createApi", () => {
   });
 
   describe("listOperations", () => {
-    it("should call listOperations and return operations with proper structure", async () => {
-      const options = { minHeight: 10, limit: 5 };
-      const result = await api.listOperations(context, "aleo1test", options);
+    it("should throw unsupported error", () => {
+      const api = createApi("aleo");
 
-      expect(mockedListOperations).toHaveBeenCalledTimes(1);
-      expect(mockedListOperations).toHaveBeenCalledWith({
-        config: mockConfig,
-        currencyId: "aleo",
-        address: "aleo1test",
-        options,
-        mode: "coin-framework",
-      });
-      expect(result).toEqual({ items: [mockOperation], next: "next-cursor" });
-    });
-
-    it("should return undefined next when listOperations has no next cursor", async () => {
-      mockedListOperations.mockResolvedValueOnce({
-        operations: [mockOperation],
-        tokenOperations: [],
-        calTokens: new Map(),
-        nextCursor: null,
-      });
-      const result = await api.listOperations(context, "aleo1test", { minHeight: 1 });
-
-      expect(result).toEqual({ items: [mockOperation], next: undefined });
+      expect(() => api.listOperations(context, "aleo1test", { minHeight: 0 })).toThrow(
+        "listOperations is not supported",
+      );
     });
   });
 

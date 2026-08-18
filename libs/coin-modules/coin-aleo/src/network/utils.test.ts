@@ -27,6 +27,7 @@ import {
   fetchAllOwnedRecords,
   fetchAllTokens,
   enrichPrivateRecord,
+  enrichPrivateRecords,
   patchPublicOperations,
   getTokenOutDetails,
   getRecordScannerStatusOrThrow,
@@ -1642,6 +1643,73 @@ describe("network/utils", () => {
     });
   });
 
+  describe("enrichPrivateRecords", () => {
+    const mockViewKey = "AViewKey1testviewkey";
+    // fee_private records short-circuit before any backend call, keeping these tests network-free
+    const feeRecords = (count: number) =>
+      Array.from({ length: count }, (_, index) =>
+        getMockedRecord({
+          function_name: EXPLORER_TRANSFER_TYPES.FEE_PRIVATE,
+          transaction_id: `tx${index}`,
+        }),
+      );
+
+    it("should return one entry per record, in order", async () => {
+      const records = feeRecords(3);
+
+      const result = await enrichPrivateRecords({
+        config: mockConfig,
+        viewKey: mockViewKey,
+        address: mockAddress,
+        records,
+      });
+
+      expect(result).toEqual([null, null, null]);
+    });
+
+    it("should return an empty array for no records", async () => {
+      const result = await enrichPrivateRecords({
+        config: mockConfig,
+        viewKey: mockViewKey,
+        address: mockAddress,
+        records: [],
+      });
+
+      expect(result).toEqual([]);
+    });
+
+    it("should report progress once per record with a stable total", async () => {
+      const onProgress = jest.fn();
+
+      await enrichPrivateRecords({
+        config: mockConfig,
+        viewKey: mockViewKey,
+        address: mockAddress,
+        records: feeRecords(2),
+        onProgress,
+      });
+
+      expect(onProgress.mock.calls).toEqual([
+        [1, 2],
+        [2, 2],
+      ]);
+    });
+
+    it("should throw AbortError when the signal is already aborted", async () => {
+      const controller = new AbortController();
+      controller.abort();
+
+      await expect(
+        enrichPrivateRecords({
+          config: mockConfig,
+          viewKey: mockViewKey,
+          address: mockAddress,
+          records: feeRecords(1),
+          signal: controller.signal,
+        }),
+      ).rejects.toMatchObject({ name: "AbortError" });
+    });
+  });
   describe("patchPublicOperations", () => {
     const patchAddress = "aleo1patchowner123";
     const ledgerAccountId = "js:2:aleo:aleo1patchowner123::AViewKey123";

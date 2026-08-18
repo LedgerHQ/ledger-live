@@ -5,8 +5,9 @@ import { log } from "@ledgerhq/logs";
 import { SyncConfig, DerivationMode } from "@ledgerhq/types-live";
 import { firstValueFrom, toArray, type Observable } from "rxjs";
 import { SYNC_TYPE_TRANSPARENT, SYNC_TYPE_SHIELDED } from "@ledgerhq/types-live";
-import { lastBlock, listOperations } from "../logic";
 import { getPublicBalance } from "../logic/getPublicBalance";
+import { lastBlock } from "../logic";
+import { listOperations } from "./listOperations";
 import {
   getMockedCurrency,
   getMockedTokenCurrency,
@@ -27,7 +28,7 @@ import { getMockedOperation } from "../__tests__/fixtures/operation.fixture";
 import { getMockedRecord, MOCK_ALEO_ADDRESS } from "../__tests__/fixtures/api.fixture";
 import coinConfig from "../config";
 import { accessProvableApi, fetchAllOwnedRecords, patchPublicOperations } from "../network/utils";
-import { listPrivateOperations } from "../logic/listPrivateOperations";
+import { listPrivateOperations } from "./listPrivateOperations";
 import { getPrivateBalance } from "../logic/getPrivateBalance";
 import {
   performPublicSync,
@@ -50,8 +51,9 @@ jest.mock("../network/utils", () => ({
   fetchAllOwnedRecords: jest.fn(),
   patchPublicOperations: jest.fn(),
 }));
+jest.mock("./listOperations");
 jest.mock("../network/api");
-jest.mock("../logic/listPrivateOperations");
+jest.mock("./listPrivateOperations");
 jest.mock("../logic/getPrivateBalance");
 jest.mock("../logic/getPublicBalance");
 jest.mock("../network/sdk");
@@ -259,7 +261,6 @@ describe("sync.ts", () => {
         currencyId: mockCurrency.id,
         address: mockAccount.freshAddress,
         ledgerAccountId: expect.any(String),
-        mode: "bridge",
         options: {
           minHeight: 0,
           order: "asc",
@@ -300,7 +301,6 @@ describe("sync.ts", () => {
         currencyId: mockCurrency.id,
         address: mockAccount.freshAddress,
         ledgerAccountId: mockInitialAccount.id,
-        mode: "bridge",
         options: {
           minHeight: 0,
           order: "asc",
@@ -1264,7 +1264,6 @@ describe("sync.ts", () => {
       const accountWithOps = { ...mockInitialAccount, operations: [oldPublicOp] };
 
       mockListOperations.mockResolvedValueOnce({
-        // @ts-expect-error - bridge operation type is expected in this test
         operations: [newPublicOp],
         tokenOperations: [],
         calTokens: new Map(),

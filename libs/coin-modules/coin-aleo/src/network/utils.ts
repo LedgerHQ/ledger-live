@@ -587,6 +587,31 @@ export async function enrichPrivateRecord({
   return { rawRecord, details, ...enrichedRecordData };
 }
 
+export async function enrichPrivateRecords({
+  config,
+  viewKey,
+  address,
+  records,
+  onProgress,
+  signal,
+}: {
+  config: AleoCoinConfig;
+  viewKey: string;
+  address: string;
+  records: AleoPrivateRecord[];
+  onProgress?: (completed: number, total: number) => void;
+  signal?: AbortSignal;
+}): Promise<(EnrichedPrivateRecord | null)[]> {
+  let completed = 0;
+
+  return promiseAllBatched(2, records, async rawRecord => {
+    signal?.throwIfAborted();
+    const result = await enrichPrivateRecord({ config, rawRecord, address, viewKey });
+    onProgress?.(++completed, records.length);
+    return result;
+  });
+}
+
 function splitPublicAndSemiPublicOperations(
   operations: AleoOperation[],
 ): [AleoOperation[], AleoOperation[]] {
