@@ -1,5 +1,5 @@
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { findSubAccountById, getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account";
 import { formatTransactionStatus } from "@ledgerhq/ledger-wallet-framework/formatters";
 import {

@@ -1,0 +1,1 @@
+export { validateAddress } from "../validateAddress";

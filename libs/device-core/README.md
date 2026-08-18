@@ -1,5 +1,8 @@
 # device-core
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 `@ledgerhq/device-core` is the core library for interacting with Ledger hardware devices in Ledger Live. It provides low-level device commands (APDU wrappers), high-level flows (firmware update, manager API), capability detection, and custom lock screen support — shared across desktop and mobile.
 
 ## What it does
@@ -22,4 +25,5 @@
 
 ## Usage context
 
-Used by `apps/ledger-live-desktop` and `apps/ledger-live-mobile`, and by `@ledgerhq/device-intent` for higher-level device interaction flows. Also consumed by `@ledgerhq/live-common` for device-dependent operations.
+Used by `apps/ledger-live-desktop`, `apps/ledger-live-mobile`, and
+`@ledgerhq/live-common` for device-dependent operations.

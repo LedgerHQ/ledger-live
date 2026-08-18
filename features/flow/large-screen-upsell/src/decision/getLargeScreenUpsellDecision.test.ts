@@ -7,7 +7,7 @@ const baseUserState: LargeScreenUpsellUserState = {
   seenNanoModelIds: ["nanoX"],
   hasSeenTouchscreenDevice: false,
   onboardingDate: new Date("2026-06-01T12:00:00.000Z"),
-  frequency: { retries: 0, lastSeenAt: null },
+  frequency: { retriesModal: 0, lastSeenAt: null },
 };
 
 const baseContext: LargeScreenUpsellContext = {
@@ -85,7 +85,7 @@ describe("getLargeScreenUpsellDecision", () => {
     {
       description: "the onboarding date is null",
       userState: { onboardingDate: null },
-      expected: { shouldShow: false, reason: "cooldown", deviceModelId: "nanoX" },
+      expected: { shouldShow: true, deviceModelId: "nanoX" },
     },
     {
       description: "eligible and never displayed before",
@@ -93,17 +93,23 @@ describe("getLargeScreenUpsellDecision", () => {
     },
     {
       description: "under the kill threshold regardless of last display",
-      userState: { frequency: { retries: 2, lastSeenAt: Date.parse("2026-07-14T12:00:00.000Z") } },
+      userState: {
+        frequency: { retriesModal: 2, lastSeenAt: Date.parse("2026-07-14T12:00:00.000Z") },
+      },
       expected: { shouldShow: true, deviceModelId: "nanoX" },
     },
     {
       description: "past the kill threshold and within the cadence window",
-      userState: { frequency: { retries: 3, lastSeenAt: Date.parse("2026-07-14T12:00:00.000Z") } },
+      userState: {
+        frequency: { retriesModal: 3, lastSeenAt: Date.parse("2026-07-14T12:00:00.000Z") },
+      },
       expected: { shouldShow: false, reason: "throttled", deviceModelId: "nanoX" },
     },
     {
       description: "past the kill threshold but the cadence window has elapsed",
-      userState: { frequency: { retries: 3, lastSeenAt: Date.parse("2026-05-01T12:00:00.000Z") } },
+      userState: {
+        frequency: { retriesModal: 3, lastSeenAt: Date.parse("2026-05-01T12:00:00.000Z") },
+      },
       expected: { shouldShow: true, deviceModelId: "nanoX" },
     },
   ])("resolves as expected when $description", ({ userState, context, expected }) => {

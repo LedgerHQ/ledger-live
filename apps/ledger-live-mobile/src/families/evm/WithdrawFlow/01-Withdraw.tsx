@@ -2,7 +2,7 @@
 import invariant from "invariant";
 import React, { useCallback } from "react";
 import { StyleSheet, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "~/components/SafeAreaView";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { Alert, Flex, Text } from "@ledgerhq/native-ui";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
@@ -10,7 +10,7 @@ import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge"
 import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
 import { getStakingContractAddress } from "@ledgerhq/coin-evm/staking/index";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import type { TransactionStatus } from "@ledgerhq/coin-evm/types/index";
+import type { TransactionStatus } from "@ledgerhq/live-common/families/evm/types";
 import { Trans } from "~/context/Locale";
 import { TrackScreen } from "~/analytics";
 import Button from "~/components/Button";

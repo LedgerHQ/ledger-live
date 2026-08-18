@@ -116,7 +116,12 @@ describe("estimateMaxSpendable", () => {
       });
 
       expect(result).toEqual(new BigNumber("999790000000000000000")); // 1000 - 0.21 VTHO
-      expect(mockedCalculateGasFees).toHaveBeenCalledWith(mockTransaction, true, "0x123");
+      expect(mockedCalculateGasFees).toHaveBeenCalledWith(
+        expect.anything(),
+        mockTransaction,
+        true,
+        "0x123",
+      );
     });
 
     it("should calculate max spendable for token account with sufficient balance, when parentAccount provided", async () => {
@@ -128,6 +133,7 @@ describe("estimateMaxSpendable", () => {
 
       expect(result).toEqual(new BigNumber("999790000000000000000")); // 1000 - 0.21 VTHO
       expect(mockedCalculateGasFees).toHaveBeenCalledWith(
+        expect.anything(),
         mockTransaction,
         true,
         mockAccount.freshAddress,
@@ -190,7 +196,12 @@ describe("estimateMaxSpendable", () => {
         transaction: mockTransaction,
       });
 
-      expect(mockedCalculateGasFees).toHaveBeenCalledWith(mockTransaction, true, "0x123");
+      expect(mockedCalculateGasFees).toHaveBeenCalledWith(
+        expect.anything(),
+        mockTransaction,
+        true,
+        "0x123",
+      );
       expect(mockedCalculateGasFees).toHaveBeenCalledTimes(1);
     });
 
@@ -263,7 +274,12 @@ describe("estimateMaxSpendable", () => {
         transaction: tokenTransaction,
       });
 
-      expect(mockedCalculateGasFees).toHaveBeenCalledWith(tokenTransaction, true, "0x123");
+      expect(mockedCalculateGasFees).toHaveBeenCalledWith(
+        expect.anything(),
+        tokenTransaction,
+        true,
+        "0x123",
+      );
     });
   });
 

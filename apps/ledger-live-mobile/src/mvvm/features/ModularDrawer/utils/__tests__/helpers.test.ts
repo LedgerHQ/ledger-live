@@ -9,7 +9,7 @@ import {
   maticEth,
   maticBsc,
 } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 
 describe("helpers", () => {
   const acceptAll = () => true;

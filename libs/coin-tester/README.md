@@ -1,5 +1,8 @@
 # Coin-tester
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 - [Setup](#setup)
 - [Run tests for a coin module](#runtests)
 

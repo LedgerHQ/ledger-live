@@ -2,17 +2,19 @@ import { filterAccountsExcludingBlacklisted } from "./filterAccountsExcludingBla
 import { loadBlacklistedTokenSections } from "./helpers";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/index";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-
-jest.mock("@ledgerhq/cryptoassets/state");
+import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
+import type { TokenCurrency } from "@domain/entity-currency-token";
+import { TokenCurrencyIdSchema } from "@domain/entity-currency-token";
+jest.mock("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore");
 
 const mockGetCryptoAssetsStore = getCryptoAssetsStore as jest.MockedFunction<
   typeof getCryptoAssetsStore
 >;
 
 const mockEthereumCurrency: CryptoCurrency = {
-  id: "ethereum",
+  id: CryptoCurrencyIdSchema.parse("ethereum"),
   name: "Ethereum",
   ticker: "ETH",
   type: "CryptoCurrency",
@@ -32,12 +34,12 @@ const mockEthereumCurrency: CryptoCurrency = {
 };
 
 const mockUsdtToken: TokenCurrency = {
-  id: "ethereum/erc20/usdt",
+  id: TokenCurrencyIdSchema.parse("ethereum/erc20/usdt"),
   type: "TokenCurrency",
   name: "Tether USD",
   ticker: "USDT",
   contractAddress: "0xdac17f958d2ee523a2206206994597c13d831ec7",
-  parentCurrencyId: "ethereum",
+  parentCurrencyId: CryptoCurrencyIdSchema.parse("ethereum"),
   tokenType: "erc20",
   units: [
     {
@@ -49,12 +51,12 @@ const mockUsdtToken: TokenCurrency = {
 };
 
 const mockUsdcToken: TokenCurrency = {
-  id: "ethereum/erc20/usdc",
+  id: TokenCurrencyIdSchema.parse("ethereum/erc20/usdc"),
   type: "TokenCurrency",
   name: "USD Coin",
   ticker: "USDC",
   contractAddress: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
-  parentCurrencyId: "ethereum",
+  parentCurrencyId: CryptoCurrencyIdSchema.parse("ethereum"),
   tokenType: "erc20",
   units: [
     {
@@ -66,12 +68,12 @@ const mockUsdcToken: TokenCurrency = {
 };
 
 const mockMaticUsdtToken: TokenCurrency = {
-  id: "polygon/erc20/usdt",
+  id: TokenCurrencyIdSchema.parse("polygon/erc20/usdt"),
   type: "TokenCurrency",
   name: "Tether USD (Polygon)",
   ticker: "USDT",
   contractAddress: "0xc2132d05d31c914a87c6611c10748aeb04b58e8f",
-  parentCurrencyId: "polygon",
+  parentCurrencyId: CryptoCurrencyIdSchema.parse("polygon"),
   tokenType: "erc20",
   units: [
     {
@@ -87,7 +89,7 @@ describe("filterAccountsExcludingBlacklisted", () => {
   const btcAccount = genAccount("btc", {
     currency: {
       ...mockEthereumCurrency,
-      id: "bitcoin",
+      id: CryptoCurrencyIdSchema.parse("bitcoin"),
       name: "Bitcoin",
       ticker: "BTC",
       type: "CryptoCurrency",
@@ -129,7 +131,7 @@ describe("loadBlacklistedTokenSections", () => {
 
     expect(result).toHaveLength(1);
     expect(result[0].parentCurrency.id).toBe("ethereum");
-    expect(result[0].tokens).toEqual([mockUsdtToken]);
+    expect(result[0].assets).toEqual([mockUsdtToken]);
   });
 
   it("should group multiple tokens from the same parent currency", async () => {
@@ -143,8 +145,8 @@ describe("loadBlacklistedTokenSections", () => {
 
     expect(result).toHaveLength(1);
     expect(result[0].parentCurrency.id).toBe("ethereum");
-    expect(result[0].tokens).toHaveLength(2);
-    expect(result[0].tokens).toEqual([mockUsdtToken, mockUsdcToken]);
+    expect(result[0].assets).toHaveLength(2);
+    expect(result[0].assets).toEqual([mockUsdtToken, mockUsdcToken]);
   });
 
   it("should create separate sections for different parent currencies", async () => {
@@ -158,9 +160,9 @@ describe("loadBlacklistedTokenSections", () => {
 
     expect(result).toHaveLength(2);
     expect(result[0].parentCurrency.id).toBe("ethereum");
-    expect(result[0].tokens).toEqual([mockUsdtToken]);
+    expect(result[0].assets).toEqual([mockUsdtToken]);
     expect(result[1].parentCurrency.id).toBe("polygon");
-    expect(result[1].tokens).toEqual([mockMaticUsdtToken]);
+    expect(result[1].assets).toEqual([mockMaticUsdtToken]);
   });
 
   it("should filter out null/undefined tokens", async () => {
@@ -176,8 +178,8 @@ describe("loadBlacklistedTokenSections", () => {
 
     expect(result).toHaveLength(1);
     expect(result[0].parentCurrency.id).toBe("ethereum");
-    expect(result[0].tokens).toHaveLength(2);
-    expect(result[0].tokens).toEqual([mockUsdtToken, mockUsdcToken]);
+    expect(result[0].assets).toHaveLength(2);
+    expect(result[0].assets).toEqual([mockUsdtToken, mockUsdcToken]);
   });
 
   it("should handle complex scenario with mixed parent currencies and null tokens", async () => {
@@ -195,11 +197,11 @@ describe("loadBlacklistedTokenSections", () => {
 
     expect(result).toHaveLength(2);
     expect(result[0].parentCurrency.id).toBe("ethereum");
-    expect(result[0].tokens).toHaveLength(2);
-    expect(result[0].tokens).toEqual([mockUsdtToken, mockUsdcToken]);
+    expect(result[0].assets).toHaveLength(2);
+    expect(result[0].assets).toEqual([mockUsdtToken, mockUsdcToken]);
     expect(result[1].parentCurrency.id).toBe("polygon");
-    expect(result[1].tokens).toHaveLength(1);
-    expect(result[1].tokens).toEqual([mockMaticUsdtToken]);
+    expect(result[1].assets).toHaveLength(1);
+    expect(result[1].assets).toEqual([mockMaticUsdtToken]);
   });
 
   it("should call findTokenById for all token IDs in parallel", async () => {
@@ -212,5 +214,43 @@ describe("loadBlacklistedTokenSections", () => {
     expect(mockFindTokenById).toHaveBeenCalledWith("token1");
     expect(mockFindTokenById).toHaveBeenCalledWith("token2");
     expect(mockFindTokenById).toHaveBeenCalledWith("token3");
+  });
+
+  it("should resolve a native coin id from the registry without a CAL lookup", async () => {
+    const result = await loadBlacklistedTokenSections(["bitcoin"]);
+
+    expect(mockFindTokenById).not.toHaveBeenCalled();
+    expect(result).toHaveLength(1);
+    expect(result[0].parentCurrency.id).toBe("bitcoin");
+    expect(result[0].assets).toHaveLength(1);
+    expect(result[0].assets[0].id).toBe("bitcoin");
+  });
+
+  it("should merge a native coin and a token sharing the same parent currency", async () => {
+    mockFindTokenById.mockResolvedValueOnce(mockUsdtToken);
+
+    const result = await loadBlacklistedTokenSections(["ethereum", "ethereum/erc20/usdt"]);
+
+    expect(result).toHaveLength(1);
+    expect(result[0].parentCurrency.id).toBe("ethereum");
+    expect(result[0].assets).toHaveLength(2);
+    expect(result[0].assets[0].id).toBe("ethereum");
+    expect(result[0].assets[1]).toEqual(mockUsdtToken);
+  });
+
+  it("should isolate a failing token lookup without discarding the other entries", async () => {
+    mockFindTokenById.mockResolvedValueOnce(mockUsdtToken);
+    mockFindTokenById.mockRejectedValueOnce(new Error("CAL unavailable"));
+    mockFindTokenById.mockResolvedValueOnce(mockUsdcToken);
+
+    const result = await loadBlacklistedTokenSections([
+      "ethereum/erc20/usdt",
+      "ethereum/erc20/unknown",
+      "ethereum/erc20/usdc",
+    ]);
+
+    expect(result).toHaveLength(1);
+    expect(result[0].parentCurrency.id).toBe("ethereum");
+    expect(result[0].assets).toEqual([mockUsdtToken, mockUsdcToken]);
   });
 });

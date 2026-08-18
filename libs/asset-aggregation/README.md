@@ -1,5 +1,8 @@
 # asset-aggregation
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 `@ledgerhq/asset-aggregation` aggregates and categorizes assets across all user accounts for portfolio display in Ledger Live. It computes per-asset totals, groups assets by category, and calculates the distribution of holdings — feeding the portfolio and asset screens on both desktop and mobile.
 
 ## What it does

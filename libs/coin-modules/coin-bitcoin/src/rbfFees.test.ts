@@ -1,7 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import { Transaction as BitcoinTransaction } from "bitcoinjs-lib";
-import { getWalletAccount } from "./wallet-btc/getWalletAccount";
-import { getIncrementalFeeFloorSatVb } from "./wallet-btc/utils";
+import { getWalletAccount } from "./getWalletAccount";
+import { getIncrementalFeeFloorSatVb } from "@ledgerhq/wallet-btc/utils";
 import * as rbfFees from "./rbfFees";
 
 const { getUtxoValue, getMinReplacementFeeRateSatVb } = rbfFees;
@@ -12,11 +12,11 @@ jest.mock("bitcoinjs-lib", () => ({
   },
 }));
 
-jest.mock("./wallet-btc/getWalletAccount", () => ({
+jest.mock("./getWalletAccount", () => ({
   getWalletAccount: jest.fn(),
 }));
 
-jest.mock("./wallet-btc/utils", () => ({
+jest.mock("@ledgerhq/wallet-btc/utils", () => ({
   getIncrementalFeeFloorSatVb: jest.fn(),
 }));
 

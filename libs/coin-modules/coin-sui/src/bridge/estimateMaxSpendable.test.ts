@@ -1,6 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import { SuiAccount, Transaction } from "../types";
 import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
+import coinConfig from "../config";
 import { estimateMaxSpendable } from "./estimateMaxSpendable";
 
 const mockEstimateFees = jest.fn();
@@ -9,6 +10,7 @@ jest.mock("../logic", () => ({
 }));
 
 describe("estimateMaxSpendable", () => {
+  beforeEach(() => coinConfig.setCoinConfig(() => ({}) as never));
   it("should return the correct spendable amount when fees are deducted", async () => {
     // GIVEN
     const balance = new BigNumber(100);

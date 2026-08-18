@@ -1,5 +1,5 @@
 import { type EnsureAppReadyUseCaseDependencies } from "@ledgerhq/live-common/device/use-cases/ensureAppReady/ensureAppReadyUseCase";
-import type { DeviceContextInitializerComponent } from "@ledgerhq/device-intent";
+import type { DeviceContextInitializerComponent } from "@features/platform-device-intent";
 import React from "react";
 import type { InitializationInput } from "../types";
 import { DeviceContextInitializerComponentLWMView } from "./DeviceContextInitializerComponentLWMView";
@@ -15,7 +15,7 @@ const DeviceContextInitializerComponentLWM: DeviceContextInitializerComponent<
   InitializationInput,
   InitializerConfig
 > = ({ connectionResult, deviceInitializationInput, onContextInitialized, config, onClose }) => {
-  const { state, device, sourceFlow } = useDeviceContextInitializerComponentLWMViewModel({
+  const { state, device } = useDeviceContextInitializerComponentLWMViewModel({
     connectionResult,
     deviceInitializationInput,
     onContextInitialized,
@@ -23,12 +23,7 @@ const DeviceContextInitializerComponentLWM: DeviceContextInitializerComponent<
   });
 
   return (
-    <DeviceContextInitializerComponentLWMView
-      state={state}
-      device={device}
-      sourceFlow={sourceFlow}
-      onCancel={onClose}
-    />
+    <DeviceContextInitializerComponentLWMView state={state} device={device} onCancel={onClose} />
   );
 };
 

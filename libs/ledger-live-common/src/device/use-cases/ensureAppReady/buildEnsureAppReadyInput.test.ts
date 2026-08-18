@@ -1,5 +1,5 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getDefaultAccountName } from "@domain/entity-account-name";
 import {
   createFixtureAccount,
   createFixtureTokenAccount,
@@ -56,7 +56,6 @@ describe("ensureAppReady buildEnsureAppReadyInput", () => {
       appName: "Ethereum",
       dependencies: [],
       requireLatestFirmware: false,
-      allowPartialDependencies: false,
       requiresDerivation: {
         currencyId: "ethereum",
         derivationMode: "ethM",
@@ -87,7 +86,6 @@ describe("ensureAppReady buildEnsureAppReadyInput", () => {
       appName: "Ethereum",
       dependencies: [],
       requireLatestFirmware: false,
-      allowPartialDependencies: false,
       requiresDerivation: {
         currencyId: "ethereum",
         derivationMode: "ethM",

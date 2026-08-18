@@ -1,5 +1,8 @@
 # @domain/api-currency-fiat
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 Domain API client for **fiat currencies**, backed by the Ledger Countervalues Service (CVS). RTK
 Query endpoint and helpers, typed on the Zod-first `@domain/entity-currency-fiat` entity. Owns no
 env/config/logging dependency.

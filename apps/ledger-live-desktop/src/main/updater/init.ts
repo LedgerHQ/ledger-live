@@ -2,6 +2,7 @@ import { app, BrowserWindow } from "electron";
 import { autoUpdater, UpdateDownloadedEvent } from "electron-updater";
 import { getMainWindow } from "~/main/window-lifecycle";
 import createElectronAppUpdater from "./createElectronAppUpdater";
+import { isStoreDistribution } from "~/helpers/distributionChannel";
 
 export type UpdateStatus =
   | "idle"
@@ -45,7 +46,11 @@ const handleDownload = async (info: UpdateDownloadedEvent) => {
     }
   }
 };
-const init = () => {
+export const init = () => {
+  // Store distributions manage their own updates; keep the in-app updater off there.
+  if (isStoreDistribution()) {
+    return;
+  }
   autoUpdater.on("checking-for-update", () => sendStatus("checking-for-update"));
   autoUpdater.on("update-available", info => sendStatus("update-available", info));
   autoUpdater.on("update-not-available", info => sendStatus("update-not-available", info));

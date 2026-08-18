@@ -2,7 +2,8 @@ import React, { memo, useCallback } from "react";
 import { Flex, Text, IconsLegacy } from "@ledgerhq/native-ui";
 import { useTranslation } from "~/context/Locale";
 import counterValueFormatter from "@ledgerhq/live-common/market/utils/countervalueFormatter";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
+import type { Unit } from "@domain/entity-currency-unit";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import DeltaVariation from "LLM/features/Market/components/DeltaVariation";
 import Touchable from "~/components/Touchable";
@@ -16,10 +17,10 @@ import { useAssetDetailNavigation } from "LLM/features/AssetDetail/hooks/useAsse
 type Props = {
   currency: CryptoOrTokenCurrency;
   selectedCoinData: MarketCurrencyData;
-  counterCurrency: string | undefined;
+  counterValueUnit: Unit;
 };
 
-const MarketPrice = ({ currency, selectedCoinData, counterCurrency }: Props) => {
+const MarketPrice = ({ currency, selectedCoinData, counterValueUnit }: Props) => {
   const { t } = useTranslation();
   const { locale } = useSettings();
   const { openFromMarket } = useAssetDetailNavigation();
@@ -57,7 +58,7 @@ const MarketPrice = ({ currency, selectedCoinData, counterCurrency }: Props) => 
             <Text variant="large" fontWeight="medium">
               {counterValueFormatter({
                 value: selectedCoinData?.price || 0,
-                currency: counterCurrency,
+                unit: counterValueUnit,
                 locale,
               })}
             </Text>

@@ -7,7 +7,7 @@ import {
 } from "@ledgerhq/lumen-ui-react";
 import type { AssetMarketData } from "@ledgerhq/asset-detail";
 import type { DistributionItem } from "@ledgerhq/types-live";
-import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { OptionsMenu } from "../OptionsMenu";
 import type { AssetHeaderViewModel } from "./useAssetHeaderViewModel";
 

@@ -4,7 +4,7 @@ import { useSelector } from "~/context/hooks";
 import { Trans, useTranslation } from "~/context/Locale";
 import { Box, Flex, Text } from "@ledgerhq/native-ui";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Currency } from "@ledgerhq/types-cryptoassets";
+import { Currency } from "@domain/entity-currency";
 import { useFocusEffect } from "@react-navigation/native";
 import ReadOnlyGraphCard from "~/components/ReadOnlyGraphCard";
 import ReadOnlyFabActions from "~/components/FabActions/ReadOnlyFabActions";
@@ -22,7 +22,7 @@ import { AnalyticsContext } from "~/analytics/AnalyticsContext";
 import type { AccountsNavigatorParamList } from "~/components/RootNavigator/types/AccountsNavigator";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
-import { useCurrencyById } from "@ledgerhq/cryptoassets/hooks";
+import { useCurrencyById } from "@features/platform-currencies";
 
 type Props = StackNavigatorProps<AccountsNavigatorParamList, ScreenName.Account>;
 

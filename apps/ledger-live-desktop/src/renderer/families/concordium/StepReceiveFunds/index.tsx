@@ -4,11 +4,11 @@ import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { firstValueFrom } from "rxjs";
 import { Account } from "@ledgerhq/types-live";
-import { ConcordiumTrustedMetadataServiceError, DisconnectedDevice } from "@ledgerhq/errors";
-import { getEnv } from "@ledgerhq/live-env";
+import { DisconnectedDevice } from "@ledgerhq/hw-transport/errors";
+import { getEnv } from "@shared/env";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
+import { getDefaultAccountName } from "@domain/entity-account-name";
 import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useMaybeAccountName } from "~/renderer/reducers/wallet";
@@ -146,7 +146,7 @@ const StepReceiveFunds = ({
     } catch (err) {
       // Trusted-metadata-service failures (network/5xx) are transient — route
       // to the fallback UI instead of the hard error screen.
-      if (err instanceof ConcordiumTrustedMetadataServiceError) {
+      if ((err as { name?: string })?.name === "ConcordiumTrustedMetadataServiceError") {
         onChangeAddressVerified(false, null);
       } else if (err instanceof Error) {
         onChangeAddressVerified(false, err);

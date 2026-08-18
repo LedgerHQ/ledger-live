@@ -1,5 +1,8 @@
 # `@ledgerhq/react-ui`
 
+> [!WARNING]
+> **Status: DEPRECATED** — Deprecated. Migrate to `@ledgerhq/lumen-ui-react`.
+
 [![npm](https://img.shields.io/npm/v/@ledgerhq/react-ui)](https://www.npmjs.com/package/@ledgerhq/react-ui)
 [![storybook](https://img.shields.io/badge/Storybook-📚-61DBFB)](https://react-ui-storybook.vercel.app)
 

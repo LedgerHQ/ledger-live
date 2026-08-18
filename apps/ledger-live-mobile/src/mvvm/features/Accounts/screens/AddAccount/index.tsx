@@ -1,7 +1,8 @@
 import React from "react";
 import useAddAccountViewModel from "./useAddAccountViewModel";
 import QueuedDrawer from "~/components/QueuedDrawer";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@domain/entity-currency-crypto";
+import { TokenCurrency } from "@domain/entity-currency-token";
 import DrawerHeader from "LLM/features/WalletSync/components/Synchronize/DrawerHeader";
 import { Flex } from "@ledgerhq/native-ui";
 import StepFlow from "./components/StepFlow";

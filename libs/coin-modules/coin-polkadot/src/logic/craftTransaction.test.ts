@@ -1,7 +1,10 @@
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { TypeRegistry } from "@polkadot/types";
+import { type PolkadotCoinConfig } from "../config";
 import { createFixtureAccount } from "../types/bridge.fixture";
 import { craftTransaction, defaultExtrinsicArg } from "./craftTransaction";
+
+const config = {} as PolkadotCoinConfig;
 
 const registry = new TypeRegistry();
 
@@ -21,8 +24,11 @@ jest.mock("../network", () => {
         registry: registry,
         extrinsics: mockExtrinsics(),
       }),
-    getTransactionParams: (currency?: CryptoCurrency, { force } = { force: false }) =>
-      mockGetTransactionParams(currency, force),
+    getTransactionParams: (
+      _config: PolkadotCoinConfig,
+      currency?: CryptoCurrency,
+      { force } = { force: false },
+    ) => mockGetTransactionParams(currency, force),
   };
 });
 
@@ -62,8 +68,9 @@ describe("craftTransaction", () => {
     });
 
     // WHEN
-    const result = (await craftTransaction(address, 0, defaultExtrinsicArg(amount, recipient)))
-      .unsigned;
+    const result = (
+      await craftTransaction(config, address, 0, defaultExtrinsicArg(amount, recipient))
+    ).unsigned;
 
     // THEN
     expect(spyRegistry).toHaveBeenCalledTimes(3);
@@ -120,7 +127,7 @@ describe("craftTransaction", () => {
     // WHEN
     const extrinsicArg = defaultExtrinsicArg(amount, recipient);
     extrinsicArg.useAllAmount = true;
-    const result = await craftTransaction(address, 0, extrinsicArg);
+    const result = await craftTransaction(config, address, 0, extrinsicArg);
 
     // THEN
     expect(mockTransferAll).toHaveBeenCalledTimes(1);
@@ -160,7 +167,7 @@ describe("craftTransaction", () => {
       const extrinsicArg = defaultExtrinsicArg(amount, recipient);
       extrinsicArg.mode = "withdrawUnbonded";
       extrinsicArg.numSlashingSpans = txNumSlashingSpans;
-      const result = await craftTransaction(address, 0, extrinsicArg);
+      const result = await craftTransaction(config, address, 0, extrinsicArg);
 
       // THEN
       expect(mockWithdrawUnbonded).toHaveBeenCalledTimes(1);
@@ -194,7 +201,7 @@ describe("craftTransaction", () => {
     // WHEN
     const extrinsicArg = defaultExtrinsicArg(amount, recipient);
     extrinsicArg.mode = "setController";
-    const result = await craftTransaction(address, 0, extrinsicArg);
+    const result = await craftTransaction(config, address, 0, extrinsicArg);
 
     // THEN
     expect(mockSetController).toHaveBeenCalledTimes(1);
@@ -227,7 +234,7 @@ describe("craftTransaction", () => {
     // WHEN
     const extrinsicArg = defaultExtrinsicArg(amount, recipient);
     extrinsicArg.mode = "chill";
-    const result = await craftTransaction(address, 0, extrinsicArg);
+    const result = await craftTransaction(config, address, 0, extrinsicArg);
 
     // THEN
     expect(mockChill).toHaveBeenCalledTimes(1);

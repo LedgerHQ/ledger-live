@@ -5,7 +5,7 @@ import {
   useSwapTransactionStatusDisplayViewModel,
   type SwapTransactionStatusTransactionExplorerBuilder,
 } from "@ledgerhq/live-common/exchange/swapTransactionStatus/index";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { useSelector } from "LLD/hooks/redux";
 import { useLLDCoinFamily } from "~/renderer/families";
 import { accountsSelector } from "~/renderer/reducers/accounts";

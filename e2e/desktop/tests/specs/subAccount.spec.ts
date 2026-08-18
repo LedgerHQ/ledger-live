@@ -21,7 +21,13 @@ import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { FF_NEW_SEND_FLOW_DISABLED } from "tests/utils/featureFlagUtils";
 import { buildTags } from "tests/utils/tagsUtils";
 
-const subAccounts = [
+const subAccounts: Array<{
+  account: TokenAccount;
+  xrayTicket1: string;
+  xrayTicket2: string;
+  notPreSeeded?: boolean;
+  teamOwner?: Team;
+}> = [
   {
     account: TokenAccount.ETH_USDT_1,
     xrayTicket1: "B2CQA-2577, B2CQA-1079",
@@ -36,6 +42,7 @@ const subAccounts = [
     account: TokenAccount.ALGO_USDT_1,
     xrayTicket1: "B2CQA-2575",
     xrayTicket2: "B2CQA-2581",
+    teamOwner: Team.BST,
   },
   {
     account: TokenAccount.TRX_USDT,
@@ -56,6 +63,13 @@ const subAccounts = [
     account: TokenAccount.SUI_USDC_1,
     xrayTicket1: "B2CQA-3904",
     xrayTicket2: "B2CQA-3905",
+    teamOwner: Team.BST,
+  },
+  {
+    account: TokenAccount.SOL_GIGA_1,
+    xrayTicket1: "B2CQA-6119",
+    xrayTicket2: "B2CQA-6128",
+    notPreSeeded: true,
   },
 ];
 
@@ -64,41 +78,39 @@ const subAccountReceive: Array<{
   xrayTicket: string;
   shouldSelectTokenOnReceiveFlow?: boolean;
   shouldSelectReceiveCryptoOption?: boolean;
+  teamOwner?: Team;
 }> = [
   {
     account: TokenAccount.ETH_USDT_1,
     xrayTicket: "B2CQA-2492",
     shouldSelectReceiveCryptoOption: true,
   },
-  {
-    account: TokenAccount.ETH_LIDO,
-    xrayTicket: "B2CQA-2491",
-    shouldSelectReceiveCryptoOption: true,
-  },
   { account: TokenAccount.TRX_USDT, xrayTicket: "B2CQA-2496" },
   { account: TokenAccount.BSC_BUSD_1, xrayTicket: "B2CQA-2489" },
   { account: TokenAccount.POL_DAI_1, xrayTicket: "B2CQA-2493" },
   { account: TokenAccount.POL_UNI, xrayTicket: "B2CQA-2494" },
-  { account: TokenAccount.SUI_USDC_1, xrayTicket: "B2CQA-3906" },
+  { account: TokenAccount.SUI_USDC_1, xrayTicket: "B2CQA-3906", teamOwner: Team.BST },
 ];
 
+const shouldSkipLNS = (account: TokenAccount): boolean => {
+  const parentCurrencyId = account.parentAccount?.currency.id;
+  return parentCurrencyId === Currency.SUI.id || parentCurrencyId === Currency.SOL.id;
+};
+
 for (const token of subAccounts) {
-  test.describe("legacy send flow - Add subAccount without parent", () => {
+  test.describe("Add sub-account", () => {
     test.use({
-      teamOwner: Team.COIN_INTEGRATION,
+      teamOwner: token.teamOwner ?? Team.COIN_INTEGRATION,
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: token.account.parentAccount?.currency.speculosApp,
-      featureFlags: {
-        ...FF_NEW_SEND_FLOW_DISABLED,
-      },
     });
 
     test(
-      `Add Sub Account without parent (${token.account.currency.speculosApp.name}) - ${token.account.currency.ticker}`,
+      `[${token.account.currency.testLabel}] - Add sub-account without parent`,
       {
         tag: buildTags({
           currencyId: token.account.currency.id,
-          skipLNS: token.account.parentAccount?.currency.id === Currency.SUI.id,
+          skipLNS: shouldSkipLNS(token.account),
           extraTags: token.account === TokenAccount.ETH_USDT_1 ? ["@smoke"] : [],
         }),
         annotation: {
@@ -138,22 +150,19 @@ for (const token of subAccounts) {
 }
 
 for (const token of subAccountReceive) {
-  test.describe("legacy send flow - Add subAccount when parent exists", () => {
+  test.describe("Add sub-account", () => {
     test.use({
-      teamOwner: Team.COIN_INTEGRATION,
+      teamOwner: token.teamOwner ?? Team.COIN_INTEGRATION,
       userdata: "speculos-subAccount",
       speculosApp: token.account.currency.speculosApp,
-      featureFlags: {
-        ...FF_NEW_SEND_FLOW_DISABLED,
-      },
     });
 
     test(
-      `[${token.account.currency.speculosApp.name}] Add subAccount when parent exists (${token.account.currency.ticker})`,
+      `[${token.account.currency.testLabel}] - Add sub-account when parent exists`,
       {
         tag: buildTags({
           currencyId: token.account.currency.id,
-          skipLNS: token.account.parentAccount?.currency.id === Currency.SUI.id,
+          skipLNS: shouldSkipLNS(token.account),
         }),
         annotation: {
           type: "TMS",
@@ -189,22 +198,19 @@ for (const token of subAccountReceive) {
   });
 }
 
-for (const token of subAccounts) {
-  test.describe("legacy send flow - Token visible in parent account", () => {
+for (const token of subAccounts.filter(subAccount => !subAccount.notPreSeeded)) {
+  test.describe("Add sub-account", () => {
     test.use({
-      teamOwner: Team.COIN_INTEGRATION,
+      teamOwner: token.teamOwner ?? Team.COIN_INTEGRATION,
       userdata: "speculos-subAccount",
-      featureFlags: {
-        ...FF_NEW_SEND_FLOW_DISABLED,
-      },
     });
 
     test(
-      `Token visible in parent account (${token.account.currency.speculosApp.name}) - ${token.account.currency.ticker}`,
+      `[${token.account.currency.testLabel}] - Token visible in parent account`,
       {
         tag: buildTags({
           currencyId: token.account.currency.id,
-          skipLNS: token.account.parentAccount?.currency.id === Currency.SUI.id,
+          skipLNS: shouldSkipLNS(token.account),
           extraTags: token.account === TokenAccount.ETH_USDT_1 ? ["@smoke"] : [],
         }),
         annotation: {
@@ -224,7 +230,12 @@ for (const token of subAccounts) {
   });
 }
 
-const transactionE2E = [
+const transactionE2E: Array<{
+  tx: Transaction;
+  xrayTicket: string;
+  checkInputValidity?: boolean;
+  extraTags?: string[];
+}> = [
   {
     tx: new Transaction(
       TokenAccount.SOL_GIGA_1,
@@ -234,11 +245,18 @@ const transactionE2E = [
       "noTag",
     ),
     xrayTicket: "B2CQA-3055, B2CQA-3057",
+    extraTags: ["@solana", "@family-solana"],
+  },
+  {
+    tx: new Transaction(TokenAccount.ETH_USDT_1, TokenAccount.ETH_USDT_3, "1", Fee.MEDIUM),
+    xrayTicket: "B2CQA-2703, B2CQA-475, B2CQA-3901",
+    checkInputValidity: true,
+    extraTags: ["@ethereum", "@family-evm"],
   },
 ];
 
 for (const transaction of transactionE2E) {
-  test.describe("legacy send flow - Send token - E2E", () => {
+  test.describe("Send - token", () => {
     test.use({
       teamOwner: Team.COIN_INTEGRATION,
       userdata: "skip-onboarding-with-last-seen-device",
@@ -255,9 +273,9 @@ for (const transaction of transactionE2E) {
     });
 
     test(
-      `Send from ${transaction.tx.accountToDebit.accountName} to ${transaction.tx.accountToCredit.accountName} - ${transaction.tx.accountToDebit.currency.name} - E2E test`,
+      `[${transaction.tx.accountToDebit.currency.testLabel}] - Send`,
       {
-        tag: buildTags({ skipLNS: true, extraTags: ["@solana", "@family-solana"] }),
+        tag: buildTags({ skipLNS: true, extraTags: transaction.extraTags ?? [] }),
         annotation: {
           type: "TMS",
           description: transaction.xrayTicket,
@@ -272,7 +290,18 @@ for (const transaction of transactionE2E) {
         );
         await app.account.navigateToTokenInAccount(transaction.tx.accountToDebit);
         await app.account.clickSend();
-        await app.send.craftTx(transaction.tx);
+
+        if (transaction.checkInputValidity) {
+          await app.send.fillRecipient(transaction.tx.accountToCredit.address);
+          await app.send.checkContinueButtonEnable();
+          await app.send.checkInputErrorVisibility("hidden");
+          await app.send.continue();
+          await app.send.fillAmount(transaction.tx.amount);
+          await app.send.checkContinueButtonEnable();
+        } else {
+          await app.send.craftTx(transaction.tx);
+        }
+
         await app.send.continueAmountModal();
         await app.send.expectTxInfoValidity(transaction.tx);
         await app.send.clickContinueToDevice();
@@ -299,6 +328,7 @@ const transactionsAddressInvalid = [
     recipient: undefined,
     expectedErrorMessage: "Recipient account has not opted in the selected ASA.",
     xrayTicket: "B2CQA-2702",
+    teamOwner: Team.BST,
   },
   {
     transaction: new Transaction(TokenAccount.SOL_GIGA_1, TokenAccount.SOL_WIF_2, "0.1", undefined),
@@ -333,9 +363,9 @@ const transactionsAddressInvalid = [
 ];
 
 for (const transaction of transactionsAddressInvalid) {
-  test.describe("legacy send flow - Send token - invalid address input", () => {
+  test.describe("Send - token", () => {
     test.use({
-      teamOwner: Team.COIN_INTEGRATION,
+      teamOwner: (transaction as { teamOwner?: Team }).teamOwner ?? Team.COIN_INTEGRATION,
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
       cliCommands: [
@@ -356,7 +386,7 @@ for (const transaction of transactionsAddressInvalid) {
     });
 
     test(
-      `Send from ${transaction.transaction.accountToDebit.accountName} to ${transaction.transaction.accountToCredit.accountName} - ${transaction.transaction.accountToCredit.currency.name} - ${transaction.expectedErrorMessage}`,
+      `[${transaction.transaction.accountToDebit.currency.testLabel}-${transaction.transaction.accountToCredit.currency.testLabel}] - Send invalid address error: ${transaction.expectedErrorMessage}`,
       {
         tag: buildTags({ currencyId: transaction.transaction.accountToDebit.currency.id }),
         annotation: {
@@ -394,7 +424,7 @@ const transactionsAddressValid = [
 ];
 
 for (const transaction of transactionsAddressValid) {
-  test.describe("legacy send flow - Send token - valid address input", () => {
+  test.describe("Send - token", () => {
     test.use({
       teamOwner: Team.COIN_INTEGRATION,
       userdata: "skip-onboarding-with-last-seen-device",
@@ -406,7 +436,7 @@ for (const transaction of transactionsAddressValid) {
     });
 
     test(
-      `Send from ${transaction.transaction.accountToDebit.accountName} to ${transaction.transaction.accountToCredit.accountName} - ${transaction.transaction.accountToDebit.currency.name} - valid address input`,
+      `[${transaction.transaction.accountToDebit.currency.testLabel}] - Send valid address input`,
       {
         tag: buildTags({ currencyId: transaction.transaction.accountToDebit.currency.id }),
         annotation: {
@@ -467,7 +497,7 @@ const tokenTransactionInvalid = [
 ];
 
 for (const transaction of tokenTransactionInvalid) {
-  test.describe("legacy send flow - Send token (subAccount) - invalid amount input", () => {
+  test.describe("Send - token", () => {
     test.use({
       teamOwner: Team.COIN_INTEGRATION,
       userdata: "skip-onboarding-with-last-seen-device",
@@ -484,7 +514,7 @@ for (const transaction of tokenTransactionInvalid) {
     });
 
     test(
-      `Send from ${transaction.tx.accountToDebit.accountName} ${transaction.tx.accountToDebit.index} to ${transaction.tx.accountToCredit.accountName} - invalid amount input`,
+      `[${transaction.tx.accountToDebit.currency.testLabel}] - Send invalid amount error (${transaction.tx.amount})`,
       {
         tag: buildTags({ currencyId: transaction.tx.accountToDebit.currency.id }),
         annotation: {
@@ -512,62 +542,3 @@ for (const transaction of tokenTransactionInvalid) {
     );
   });
 }
-
-test.describe("legacy send flow - Send token (subAccount) - valid address & amount input", () => {
-  const tokenTransactionValid = new Transaction(
-    TokenAccount.ETH_USDT_1,
-    TokenAccount.ETH_USDT_3,
-    "1",
-    Fee.MEDIUM,
-  );
-  test.use({
-    teamOwner: Team.COIN_INTEGRATION,
-    userdata: "skip-onboarding-with-last-seen-device",
-    speculosApp: tokenTransactionValid.accountToDebit.currency.speculosApp,
-    cliCommands: [
-      liveDataWithParentAddressCommand(
-        tokenTransactionValid.accountToDebit,
-        tokenTransactionValid.accountToCredit,
-      ),
-    ],
-    featureFlags: {
-      ...FF_NEW_SEND_FLOW_DISABLED,
-    },
-  });
-
-  test(
-    `Send from ${tokenTransactionValid.accountToDebit.accountName} to ${tokenTransactionValid.accountToCredit.accountName} - valid address & amount input`,
-    {
-      tag: buildTags({ extraTags: ["@ethereum", "@family-evm"] }),
-      annotation: {
-        type: "TMS",
-        description: "B2CQA-2703, B2CQA-475, B2CQA-3901",
-      },
-    },
-    async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
-      await app.mainNavigation.openTargetFromMainNavigation("accounts");
-      await app.accounts.navigateToAccountByName(
-        getParentAccountName(tokenTransactionValid.accountToDebit),
-      );
-      await app.account.navigateToTokenInAccount(tokenTransactionValid.accountToDebit);
-      await app.account.clickSend();
-      await app.send.fillRecipient(tokenTransactionValid.accountToCredit.address);
-      await app.send.checkContinueButtonEnable();
-      await app.send.checkInputErrorVisibility("hidden");
-      await app.send.continue();
-      await app.send.fillAmount(tokenTransactionValid.amount);
-      await app.send.checkContinueButtonEnable();
-
-      await app.send.continueAmountModal();
-      await app.send.expectTxInfoValidity(tokenTransactionValid);
-      await app.send.clickContinueToDevice();
-
-      await app.speculos.signSendTransaction(tokenTransactionValid);
-      await app.send.expectTxSent();
-      await app.account.navigateToViewDetails();
-      await app.sendDrawer.addressValueIsVisible(tokenTransactionValid.accountToCredit.address);
-    },
-  );
-});

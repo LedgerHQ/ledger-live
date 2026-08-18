@@ -1,17 +1,18 @@
 import { Balance } from "@ledgerhq/coin-module-framework/api/types";
 import { getDelegatedStakes, getAllBalancesCached } from "../network";
 import { toStakes, toSuiAsset } from "../network/sdk";
+import type { SuiCoinConfig } from "../config";
 
-export async function getBalance(address: string, currencyId?: string): Promise<Balance[]> {
+export async function getBalance(config: SuiCoinConfig, address: string): Promise<Balance[]> {
   const [native, staking] = await Promise.all([
-    getNativeBalance(address, currencyId),
-    getStakingBalances(address, currencyId),
+    getNativeBalance(config, address),
+    getStakingBalances(config, address),
   ]);
   return [...native, ...staking];
 }
 
-const getNativeBalance = async (address: string, currencyId?: string): Promise<Balance[]> => {
-  const balances = await getAllBalancesCached(address, currencyId);
+const getNativeBalance = async (config: SuiCoinConfig, address: string): Promise<Balance[]> => {
+  const balances = await getAllBalancesCached(config, address);
   return balances.length
     ? balances.map(({ coinType, totalBalance }) => ({
         value: BigInt(totalBalance),
@@ -20,8 +21,8 @@ const getNativeBalance = async (address: string, currencyId?: string): Promise<B
     : [{ value: 0n, asset: { type: "native" } }];
 };
 
-const getStakingBalances = (address: string, currencyId?: string): Promise<Balance[]> =>
-  getDelegatedStakes(address, currencyId).then(delegations =>
+const getStakingBalances = (config: SuiCoinConfig, address: string): Promise<Balance[]> =>
+  getDelegatedStakes(config, address).then(delegations =>
     delegations
       .flatMap(d => toStakes(address, d))
       .map(stake => ({

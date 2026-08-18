@@ -1,4 +1,4 @@
-import { ConcordiumSessionExpiredError } from "@ledgerhq/errors";
+import { ConcordiumSessionExpiredError } from "../types";
 import { firstValueFrom, toArray } from "rxjs";
 import coinConfig from "../config";
 import { submitCredential } from "../network/proxyClient";
@@ -266,11 +266,12 @@ describe("onboard (testnet integration)", () => {
 
       const currency = createFixtureCurrency();
       const mockData = { v: 0, value: {} } as never;
+      const config = coinConfig.getCoinConfig(currency.id);
 
-      const result = await submitCredential(currency.id, mockData);
+      const result = await submitCredential(config, currency.id, mockData);
 
       expect(result).toEqual({ submissionId: "test-submission-123" });
-      expect(mockSubmitCredential).toHaveBeenCalledWith(currency.id, mockData);
+      expect(mockSubmitCredential).toHaveBeenCalledWith(config, currency.id, mockData);
     }, 15000);
 
     it("should use correct testnet configuration", () => {

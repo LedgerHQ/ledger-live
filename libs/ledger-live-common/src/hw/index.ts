@@ -4,7 +4,7 @@ import { catchError } from "rxjs/operators";
 import type { DeviceModel } from "@ledgerhq/types-devices";
 import Transport from "@ledgerhq/hw-transport";
 import { TraceContext, trace } from "@ledgerhq/logs";
-import { CantOpenDevice } from "@ledgerhq/errors";
+import { CantOpenDevice } from "@ledgerhq/hw-transport/errors";
 
 export const LOG_TYPE = "hw";
 

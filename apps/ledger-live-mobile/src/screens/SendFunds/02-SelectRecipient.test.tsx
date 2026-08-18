@@ -133,6 +133,44 @@ describe("SendSelectRecipient", () => {
 
 const mockGetCustomSendFlow = jest.mocked(getCustomSendFlow);
 
+const accountState = (state: Parameters<typeof Object>[0]) => ({
+  ...state,
+  accounts: {
+    active: [
+      {
+        id: "parentId",
+        type: "Account",
+        currency: { units: [], family: "aleo", id: "aleo" },
+        subAccounts: [],
+        operations: [],
+        operationsCount: 0,
+        balance: { gt: () => true },
+        spendableBalance: { gt: () => true },
+      } as unknown as Account,
+    ],
+  },
+});
+
+const mockBridgeTransaction = (overrides: Record<string, unknown> = {}) =>
+  jest.spyOn(useBridgeTransactionModule, "default").mockReturnValue({
+    transaction: { recipient: "aleo1abc", family: "aleo" },
+    status: { errors: {}, warnings: {} },
+    ...overrides,
+  } as unknown as useBridgeTransactionModule.Result);
+
+const renderRecipient = (params: Record<string, unknown> = {}) =>
+  render(
+    <SendSelectRecipient
+      route={
+        { params: { accountId: "parentId", ...params } } as unknown as RouteProp<
+          SendFundsNavigatorStackParamList,
+          ScreenName.SendSelectRecipient
+        >
+      }
+    />,
+    { overrideInitialState: accountState },
+  );
+
 describe("SendSelectRecipient — custom send flow", () => {
   const mockNavigateAfterRecipient = jest.fn();
 
@@ -142,24 +180,6 @@ describe("SendSelectRecipient — custom send flow", () => {
     mockGetCustomSendFlow.mockReturnValue(null);
   });
 
-  const accountState = (state: Parameters<typeof Object>[0]) => ({
-    ...state,
-    accounts: {
-      active: [
-        {
-          id: "parentId",
-          type: "Account",
-          currency: { units: [], family: "aleo", id: "aleo" },
-          subAccounts: [],
-          operations: [],
-          operationsCount: 0,
-          balance: { gt: () => true },
-          spendableBalance: { gt: () => true },
-        } as unknown as Account,
-      ],
-    },
-  });
-
   it("calls navigateAfterRecipient and returns early when it returns true", async () => {
     mockNavigateAfterRecipient.mockReturnValue(true);
     mockGetCustomSendFlow.mockReturnValue({
@@ -167,24 +187,9 @@ describe("SendSelectRecipient — custom send flow", () => {
       navigateAfterRecipient: mockNavigateAfterRecipient,
     });
 
-    jest.spyOn(useBridgeTransactionModule, "default").mockReturnValue({
-      transaction: { recipient: "aleo1abc", family: "aleo" },
-      status: { errors: {}, warnings: {} },
-    } as unknown as useBridgeTransactionModule.Result);
+    mockBridgeTransaction();
 
-    const { user } = render(
-      <SendSelectRecipient
-        route={
-          {
-            params: { accountId: "parentId" },
-          } as unknown as RouteProp<
-            SendFundsNavigatorStackParamList,
-            ScreenName.SendSelectRecipient
-          >
-        }
-      />,
-      { overrideInitialState: accountState },
-    );
+    const { user } = renderRecipient();
 
     await user.press(screen.getByTestId("enabled-recipient-continue-button"));
 
@@ -199,28 +204,27 @@ describe("SendSelectRecipient — custom send flow", () => {
       navigateAfterRecipient: mockNavigateAfterRecipient,
     });
 
-    jest.spyOn(useBridgeTransactionModule, "default").mockReturnValue({
-      transaction: { recipient: "aleo1abc", family: "aleo" },
-      status: { errors: {}, warnings: {} },
-    } as unknown as useBridgeTransactionModule.Result);
+    mockBridgeTransaction();
 
-    const { user } = render(
-      <SendSelectRecipient
-        route={
-          {
-            params: { accountId: "parentId" },
-          } as unknown as RouteProp<
-            SendFundsNavigatorStackParamList,
-            ScreenName.SendSelectRecipient
-          >
-        }
-      />,
-      { overrideInitialState: accountState },
-    );
+    const { user } = renderRecipient();
 
     await user.press(screen.getByTestId("enabled-recipient-continue-button"));
 
     expect(mockNavigateAfterRecipient).toHaveBeenCalledTimes(1);
     expect(mockNavigate).toHaveBeenCalledWith(ScreenName.SendAmountCoin, expect.anything());
+  });
+});
+
+describe("SendSelectRecipient — transaction mirrored from a later step", () => {
+  it("adopts the transaction pushed onto its route params", () => {
+    const setTransaction = jest.fn();
+    const editedTransaction = { recipient: "aleo1abc", family: "aleo", memo: "123" };
+
+    mockBridgeTransaction({ setTransaction });
+
+    renderRecipient({ transaction: editedTransaction });
+
+    expect(setTransaction).toHaveBeenCalledTimes(1);
+    expect(setTransaction).toHaveBeenCalledWith(editedTransaction);
   });
 });

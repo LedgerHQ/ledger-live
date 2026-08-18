@@ -7,7 +7,7 @@ import { CLI } from "tests/utils/cliUtils";
 import { LedgerSyncCliHelper } from "tests/utils/ledgerSyncCliUtils";
 import { expectPulledDataToMatchAccountChanges } from "tests/utils/ledgerSyncPulledDataUtils";
 import { accountNames, accounts } from "tests/testdata/ledgerSyncTestData";
-import { getEnv, setEnv } from "@ledgerhq/live-env";
+import { getEnv, setEnv } from "@shared/env";
 import { deviceTagsWithoutLNS } from "tests/utils/tagsUtils";
 
 const app: AppInfos = AppInfos.LS;
@@ -42,7 +42,9 @@ function initializeTrustchain() {
     LedgerSyncCliHelper.pushLedgerSyncData,
   ];
 }
-test.describe(`[${app.name}] Sync Accounts`, () => {
+// TODO: Unskip once LIVE-35808 is fixed — staging cloud-sync cannot verify the JWT that
+// staging trustchain issues, so every cloud-sync call fails with 400 on the Authorization header.
+test.describe.skip("Ledger Sync", () => {
   setupSeed();
   test.use({
     teamOwner: Team.WALLET_XP,
@@ -66,7 +68,7 @@ test.describe(`[${app.name}] Sync Accounts`, () => {
   });
 
   test(
-    "Sync instances, rename and delete accounts, delete instance then delete the backup",
+    "Sync instances, rename and delete accounts, then delete the backup",
     {
       tag: deviceTagsWithoutLNS(),
       annotation: {
@@ -76,7 +78,7 @@ test.describe(`[${app.name}] Sync Accounts`, () => {
     },
     async ({ app, page }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-      await addBugLink(["LIVE-31799"]);
+      await addBugLink(["LIVE-31799", "LIVE-35808"]);
 
       await app.portfolio.expectAddAccountButtonVisible();
 

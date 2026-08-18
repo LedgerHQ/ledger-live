@@ -1,10 +1,9 @@
-import { BatteryStatusFlags } from "@ledgerhq/types-devices";
 import { DeviceId } from "@ledgerhq/types-live";
 import { Observable } from "rxjs";
 import { scan } from "rxjs/operators";
 import { FullActionState, initialSharedActionState, sharedReducer } from "./core";
 import { getBatteryStatusTask, GetBatteryStatusesTaskError } from "../tasks/getBatteryStatuses";
-import { BatteryStatusTypes } from "../../hw/getBatteryStatus";
+import { BatteryStatusTypes, type BatteryStatusFlags } from "../../hw/getBatteryStatus";
 
 export type GetBatteryStatusesActionArgs = {
   deviceId: DeviceId;

@@ -1,5 +1,8 @@
 # coin-tester-modules
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 A workspace directory of coin-specific end-to-end test packages for Ledger Live. Each sub-package implements the test scenarios, fixtures, and hardware-wallet signer integration needed to run the coin tester against a real (or simulated) Ledger device for a specific blockchain.
 
 ## What it does
@@ -14,6 +17,7 @@ A workspace directory of coin-specific end-to-end test packages for Ledger Live.
 | Package | Blockchain |
 |---|---|
 | `@ledgerhq/coin-tester-bitcoin` | Bitcoin |
+| `@ledgerhq/coin-tester-casper` | Casper |
 | `@ledgerhq/coin-tester-cardano` | Cardano |
 | `@ledgerhq/coin-tester-cosmos` | Cosmos |
 | `@ledgerhq/coin-tester-evm` | EVM chains (Ethereum, etc.) |

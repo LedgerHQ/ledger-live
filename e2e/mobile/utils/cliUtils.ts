@@ -1,9 +1,12 @@
 import { getSdk } from "@ledgerhq/ledger-key-ring-protocol";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
-import { CloudSyncSDK, type UpdateEvent } from "@ledgerhq/live-wallet/cloudsync/index";
-import { DistantState as LiveData, liveSlug } from "@ledgerhq/live-wallet/walletsync/index";
-import walletsync from "@ledgerhq/live-wallet/walletsync/root";
-import { getEnv } from "@ledgerhq/live-env";
+import { CloudSyncSDK, type UpdateEvent } from "@shared/cloud-sync";
+import { liveSlug } from "@features/platform-wallet-sync";
+import {
+  walletSyncSchema,
+  type WalletSyncDistantState as LiveData,
+} from "@ledgerhq/live-wallet/walletSyncComposition";
+import { getEnv } from "@shared/env";
 import {
   registerTransportModule,
   unregisterAllTransportModules,
@@ -116,7 +119,7 @@ export const CLI = {
     const cloudSyncSDK = new CloudSyncSDK({
       apiBaseUrl: cloudSyncApiBaseUrl,
       slug: liveSlug,
-      schema: walletsync.schema,
+      schema: walletSyncSchema,
       trustchainSdk: ledgerKeyRingProtocolSDK,
       getCurrentVersion: () => version ?? 0,
       saveNewUpdate: async (event: UpdateEvent<LiveData>) => {

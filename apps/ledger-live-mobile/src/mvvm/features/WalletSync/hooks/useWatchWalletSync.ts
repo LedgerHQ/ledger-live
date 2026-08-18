@@ -1,30 +1,30 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useStore, useSelector, useDispatch } from "~/context/hooks";
 import noop from "lodash/noop";
-import { CloudSyncSDK } from "@ledgerhq/live-wallet/cloudsync/index";
-import walletsync, {
+import { CloudSyncSDK } from "@shared/cloud-sync";
+import {
+  createWalletSyncWatchLoop,
   liveSlug,
-  DistantState,
-  walletSyncWatchLoop,
-  LocalState,
-  Schema,
   makeSaveNewUpdate,
   makeLocalIncrementalUpdate,
-} from "@ledgerhq/live-wallet/walletsync/index";
+} from "@features/platform-wallet-sync";
+import { bulkSetAccountNames } from "@domain/entity-account-name";
+import { updateRecentAddresses } from "@domain/entity-recent-addresses";
+import { setNonImportedAccounts } from "@ledgerhq/live-wallet/accounts";
+import {
+  createWalletsync,
+  parseDistantState,
+  type Walletsync,
+  type WalletSyncDistantState,
+  type WalletSyncLocalState,
+} from "@ledgerhq/live-wallet/walletSyncComposition";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import {
   memberCredentialsSelector,
   resetTrustchainStore,
   trustchainSelector,
 } from "@ledgerhq/ledger-key-ring-protocol/store";
-import {
-  setAccountNames,
-  setNonImportedAccounts,
-  updateRecentAddresses,
-  walletSyncStateSelector,
-  walletSyncUpdate,
-  WSState,
-} from "@ledgerhq/live-wallet/store";
+import { walletSyncUpdate } from "@domain/entity-wallet-sync";
 import { useTrustchainSdk } from "./useTrustchainSdk";
 import { useOnTrustchainRefreshNeeded } from "./useOnTrustchainRefreshNeeded";
 import { Dispatch } from "redux";
@@ -34,16 +34,35 @@ import {
   latestDistantVersionSelector,
 } from "~/reducers/wallet";
 import { State } from "~/reducers/types";
+import { blacklistedTokenIdsSelector } from "~/reducers/settings";
 import { bridgeCache } from "~/bridge/cache";
 import { replaceAccounts } from "~/actions/accounts";
 import { useFeature } from "@features/platform-feature-flags";
 import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
-import { TrustchainNotAllowed, TrustchainEjected } from "@ledgerhq/ledger-key-ring-protocol/errors";
 
-const latestWalletStateSelector = (s: State): WSState => walletSyncStateSelector(walletSelector(s));
+type Schema = Walletsync["schema"];
+type DistantState = WalletSyncDistantState;
+type LocalState = WalletSyncLocalState;
 
-function localStateSelector(state: State): LocalState {
-  // READ. connect the redux state to the walletsync modules
+function useWalletsync(): Walletsync {
+  const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
+  return useMemo(
+    () => createWalletsync({ getAccountBridge, bridgeCache, blacklistedTokenIds }),
+    [blacklistedTokenIds],
+  );
+}
+
+function makeLatestWalletStateSelector(walletsync: Walletsync) {
+  return (s: State): { data: DistantState | null; version: number } => {
+    const ws = walletSelector(s).walletSync.walletSyncState;
+    return {
+      data: parseDistantState(walletsync, ws.data),
+      version: ws.version,
+    };
+  };
+}
+
+function localStateSelector(state: State) {
   return {
     accounts: {
       list: state.accounts.active,
@@ -60,17 +79,14 @@ async function save(
   newLocalState: LocalState | null,
   dispatch: Dispatch,
 ) {
-  // WRITE. save the state for the walletsync modules
-  dispatch(walletSyncUpdate(data, version));
+  dispatch(walletSyncUpdate({ data, version }));
   if (newLocalState) {
     dispatch(setNonImportedAccounts(newLocalState.accounts.nonImportedAccountInfos));
-    dispatch(setAccountNames(newLocalState.accountNames));
+    dispatch(bulkSetAccountNames(newLocalState.accountNames));
     dispatch(updateRecentAddresses(newLocalState.recentAddresses));
     dispatch(replaceAccounts(newLocalState.accounts.list)); // IMPORTANT: keep this one last, it's doing the DB:* trigger to save the data
   }
 }
-
-const ctx = { getAccountBridge, bridgeCache, blacklistedTokenIds: [] };
 
 export function useCloudSyncSDK(): CloudSyncSDK<Schema> {
   const featureWalletSync = useFeature("llmWalletSync");
@@ -78,24 +94,23 @@ export function useCloudSyncSDK(): CloudSyncSDK<Schema> {
     featureWalletSync?.params?.environment,
   );
   const trustchainSdk = useTrustchainSdk();
+  const walletsync = useWalletsync();
   const getState = useGetState();
-  const getCurrentVersion = useCallback(
-    () => latestWalletStateSelector(getState()).version,
-    [getState],
-  );
+  const getCurrentVersion = useCallback(() => latestDistantVersionSelector(getState()), [getState]);
   const saveUpdate = useSaveUpdate();
 
   const saveNewUpdate = useMemo(
     () =>
       makeSaveNewUpdate({
-        ctx,
+        walletsync,
         getState,
-        latestDistantStateSelector,
+        latestDistantStateSelector: s =>
+          parseDistantState(walletsync, latestDistantStateSelector(s)),
         latestDistantVersionSelector,
         localStateSelector,
         saveUpdate,
       }),
-    [getState, saveUpdate],
+    [walletsync, getState, saveUpdate],
   );
 
   const cloudSyncSDK = useMemo(
@@ -108,7 +123,7 @@ export function useCloudSyncSDK(): CloudSyncSDK<Schema> {
         getCurrentVersion,
         saveNewUpdate,
       }),
-    [cloudSyncApiBaseUrl, trustchainSdk, getCurrentVersion, saveNewUpdate],
+    [cloudSyncApiBaseUrl, walletsync.schema, trustchainSdk, getCurrentVersion, saveNewUpdate],
   );
 
   return cloudSyncSDK;
@@ -125,6 +140,7 @@ export function useWatchWalletSync(): WalletSyncUserState {
   const saveUpdate = useSaveUpdate();
   const getState = useGetState();
   const dispatch = useDispatch();
+  const walletsync = useWalletsync();
   const memberCredentials = useSelector(memberCredentialsSelector);
   const trustchain = useSelector(trustchainSelector);
   const trustchainSdk = useTrustchainSdk();
@@ -135,19 +151,23 @@ export function useWatchWalletSync(): WalletSyncUserState {
   const [walletSyncError, setWalletSyncError] = useState<Error | null>(null);
   const onUserRefreshRef = useRef<() => void>(noop);
   const state = useMemo(
-    () => ({ visualPending, walletSyncError, onUserRefresh: onUserRefreshRef.current }),
+    () => ({
+      visualPending,
+      walletSyncError,
+      onUserRefresh: onUserRefreshRef.current,
+    }),
     [visualPending, walletSyncError],
   );
 
   const resetLedgerSync = useCallback(() => {
     dispatch(resetTrustchainStore());
-    dispatch(walletSyncUpdate(null, 0));
+    dispatch(walletSyncUpdate({ data: null, version: 0 }));
   }, [dispatch]);
 
   useEffect(() => {
     if (walletSyncError) {
-      if (walletSyncError instanceof TrustchainNotAllowed) resetLedgerSync();
-      if (walletSyncError instanceof TrustchainEjected) resetLedgerSync();
+      if (walletSyncError?.name === "TrustchainNotAllowed") resetLedgerSync();
+      if (walletSyncError?.name === "TrustchainEjected") resetLedgerSync();
     }
   }, [dispatch, resetLedgerSync, walletSyncError]);
 
@@ -163,14 +183,15 @@ export function useWatchWalletSync(): WalletSyncUserState {
     }
 
     const localIncrementUpdate = makeLocalIncrementalUpdate({
-      ctx,
+      walletsync,
       getState,
-      latestWalletStateSelector,
+      latestWalletStateSelector: makeLatestWalletStateSelector(walletsync),
       localStateSelector,
       saveUpdate,
     });
 
-    const { unsubscribe, onUserRefreshIntent } = walletSyncWatchLoop({
+    const { unsubscribe, onUserRefreshIntent } = createWalletSyncWatchLoop({
+      walletsync,
       walletSyncSdk,
       watchConfig: featureWalletSync?.params?.watchConfig,
       localIncrementUpdate,
@@ -179,7 +200,7 @@ export function useWatchWalletSync(): WalletSyncUserState {
       setVisualPending,
       getState,
       localStateSelector,
-      latestDistantStateSelector,
+      latestDistantStateSelector: s => parseDistantState(walletsync, latestDistantStateSelector(s)),
       onError: e => setWalletSyncError(e && e instanceof Error ? e : new Error(String(e))),
       onStartPolling: () => setWalletSyncError(null),
       onTrustchainRefreshNeeded,
@@ -192,6 +213,7 @@ export function useWatchWalletSync(): WalletSyncUserState {
     featureWalletSync,
     getState,
     trustchainSdk,
+    walletsync,
     walletSyncSdk,
     trustchain,
     memberCredentials,

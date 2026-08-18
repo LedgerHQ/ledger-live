@@ -24,14 +24,12 @@ const BOLOS_INPUT: InitializationInput = {
   appName: "BOLOS",
   dependencies: [],
   requireLatestFirmware: false,
-  allowPartialDependencies: false,
 };
 
 const ETHEREUM_INPUT: InitializationInput = {
   appName: "Ethereum",
   dependencies: [],
   requireLatestFirmware: false,
-  allowPartialDependencies: false,
   requiresDerivation: {
     currencyId: "ethereum",
     path: "44'/60'/0'/0/0",
@@ -44,7 +42,6 @@ const BITCOIN_INPUT: InitializationInput = {
   appName: "Bitcoin",
   dependencies: [],
   requireLatestFirmware: false,
-  allowPartialDependencies: false,
   requiresDerivation: {
     currencyId: "bitcoin",
     path: "84'/0'/0'/0/0",

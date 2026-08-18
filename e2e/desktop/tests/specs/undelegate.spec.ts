@@ -16,12 +16,12 @@ test.use({
   cliCommands: [liveDataCommand(account.account)],
 });
 
-test.describe("SUI - Undelegate", () => {
+test.describe("Undelegate", () => {
   test(
-    `[${account.account.currency.name}] Undelegate`,
+    `[${account.account.currency.testLabel}] - Undelegate`,
     {
       tag: buildTags({ currencyId: account.account.currency.id, skipLNS: true }),
-      annotation: { type: "TMS", description: "B2CQA-387-2" },
+      annotation: { type: "TMS", description: "B2CQA-387" },
     },
     async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));

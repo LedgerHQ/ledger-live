@@ -1,10 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { marketSentimentApi, marketSentimentApiExtra, useGetFearAndGreedLatestQuery } from "./api";
+import { coinMarketCapApiExtra, coinMarketCapApi } from "@shared/api-services";
+import { marketSentimentApi, useGetFearAndGreedLatestQuery } from "./api";
 import { mockFearAndGreedLatest } from "./fearAndGreed.mock";
 
 describe("marketSentimentApi configuration", () => {
-  it("has the correct reducer path", () => {
-    expect(marketSentimentApi.reducerPath).toBe("marketSentimentApi");
+  it("is the CoinMarketCap service api, mutated in place by injectEndpoints", () => {
+    expect(marketSentimentApi).toBe(coinMarketCapApi);
+    expect(marketSentimentApi.reducerPath).toBe("coinMarketCapApi");
   });
 
   it("exposes the getFearAndGreedLatest endpoint and its hook", () => {
@@ -13,32 +15,22 @@ describe("marketSentimentApi configuration", () => {
   });
 });
 
-describe("marketSentimentApiExtra", () => {
-  it("returns the validated config", () => {
-    expect(marketSentimentApiExtra({ coinMarketCapApiUrl: "https://cmc.test" })).toEqual({
-      coinMarketCapApiUrl: "https://cmc.test",
-    });
-  });
-
-  it("throws when the url is missing or empty", () => {
-    // @ts-expect-error — coinMarketCapApiUrl is required
-    expect(() => marketSentimentApiExtra({})).toThrow();
-    expect(() => marketSentimentApiExtra({ coinMarketCapApiUrl: "" })).toThrow();
-  });
-});
-
 describe("marketSentimentApi requests", () => {
   let fetchSpy: jest.SpyInstance;
 
+  // Wired the way the apps wire it: the store registers the *service api*, and the endpoint only
+  // exists because importing this package injected it.
   const makeStore = () =>
     configureStore({
-      reducer: { [marketSentimentApi.reducerPath]: marketSentimentApi.reducer },
+      reducer: {
+        [coinMarketCapApi.reducerPath]: coinMarketCapApi.reducer,
+      },
       middleware: gdm =>
         gdm({
           thunk: {
-            extraArgument: marketSentimentApiExtra({ coinMarketCapApiUrl: "https://cmc.test" }),
+            extraArgument: coinMarketCapApiExtra({ coinMarketCapApiUrl: "https://cmc.test" }),
           },
-        }).concat(marketSentimentApi.middleware),
+        }).concat(coinMarketCapApi.middleware),
     });
 
   afterEach(() => {

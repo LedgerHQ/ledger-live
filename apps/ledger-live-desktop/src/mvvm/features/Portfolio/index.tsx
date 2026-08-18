@@ -7,6 +7,7 @@ import {
   useWalletV4TourDrawerViewModel,
   WalletV4TourDialog,
 } from "LLD/features/WalletV4Tour/Drawer";
+import { LargeScreenUpsellModalMount } from "LLD/features/LargeScreenUpsell";
 import { usePortfolioViewModel } from "./hooks/usePortfolioViewModel";
 import { PortfolioView } from "./PortfolioView";
 
@@ -33,6 +34,7 @@ const Portfolio = () => {
   return (
     <>
       <PortfolioView {...viewModel} />
+      <LargeScreenUpsellModalMount />
       <AnalyticsConsentDialog />
       {lwdProductTour?.enabled ? <ProductTourDialog {...productTourDialogViewModel} /> : null}
       <Q2TourDialog

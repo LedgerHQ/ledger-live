@@ -48,7 +48,6 @@ const basePostOnboarding = {
 };
 
 const wallet40WithFinishWidget = withFlagOverrides({
-  lldActionCarousel: { enabled: false },
   onboardingWidget: { enabled: true },
 });
 
@@ -69,7 +68,6 @@ describe("useBannersVisibility", () => {
     mockUsePostOnboardingEntryPointVisibleOnWallet.mockReturnValue(false);
     mockUseLNSUpsellBannerState.mockReturnValue({
       isShown: false,
-      params: undefined,
       tracking: "opted_out",
     });
     mockUseActionCards.mockReturnValue({
@@ -130,7 +128,6 @@ describe("useBannersVisibility", () => {
       initialState: {
         ...defaultInitialState,
         ...withFlagOverrides({
-          lldActionCarousel: { enabled: false },
           onboardingWidget: { enabled: false },
         }),
       },
@@ -205,27 +202,7 @@ describe("useBannersVisibility", () => {
     expect(result.current.hasAnyContentBannerVisible).toBe(true);
   });
 
-  it("should return true for isActionCardsVisible when action cards campaign is running and feature is enabled", () => {
-    mockUseActionCards.mockReturnValue({
-      actionCards: [createMockActionCard()],
-      onClick: jest.fn(),
-      onDismiss: jest.fn(),
-    });
-
-    const { result } = renderHook(() => useBannersVisibility(), {
-      initialState: {
-        ...defaultInitialState,
-        ...withFlagOverrides({ lldActionCarousel: { enabled: true } }),
-      },
-    });
-
-    expect(result.current.isPostOnboardingBannerVisible).toBe(false);
-    expect(result.current.isFinishOnboardingWidgetVisible).toBe(false);
-    expect(result.current.isActionCardsVisible).toBe(true);
-    expect(result.current.hasAnyContentBannerVisible).toBe(true);
-  });
-
-  it("should return false for isActionCardsVisible when action cards exist but feature is disabled", () => {
+  it("should return true for isActionCardsVisible when action cards campaign is running", () => {
     mockUseActionCards.mockReturnValue({
       actionCards: [createMockActionCard()],
       onClick: jest.fn(),
@@ -238,14 +215,13 @@ describe("useBannersVisibility", () => {
 
     expect(result.current.isPostOnboardingBannerVisible).toBe(false);
     expect(result.current.isFinishOnboardingWidgetVisible).toBe(false);
-    expect(result.current.isActionCardsVisible).toBe(false);
-    expect(result.current.hasAnyContentBannerVisible).toBe(false);
+    expect(result.current.isActionCardsVisible).toBe(true);
+    expect(result.current.hasAnyContentBannerVisible).toBe(true);
   });
 
   it("should return true for isLNSUpsellBannerVisible when LNS upsell banner is shown", () => {
     mockUseLNSUpsellBannerState.mockReturnValue({
       isShown: true,
-      params: undefined,
       tracking: "opted_in",
     });
 
@@ -282,7 +258,6 @@ describe("useBannersVisibility", () => {
     mockUsePostOnboardingEntryPointVisibleOnWallet.mockReturnValue(true);
     mockUseLNSUpsellBannerState.mockReturnValue({
       isShown: true,
-      params: undefined,
       tracking: "opted_in",
     });
 

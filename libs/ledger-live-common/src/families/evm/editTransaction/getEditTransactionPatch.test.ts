@@ -1,6 +1,6 @@
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import BigNumber from "bignumber.js";
-import { getCoinConfig } from "@ledgerhq/coin-evm/config";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { makeAccount } from "../common.fixtures";
 import {
   eip1559Tx,
@@ -24,7 +24,6 @@ const mockedGetMinEip1559Fees = jest.mocked(getMinEip1559Fees);
 const mockedGetGasOptions = jest.fn();
 
 jest.mock("@ledgerhq/coin-evm/config");
-const mockGetConfig = jest.mocked(getCoinConfig);
 
 const currency = getCryptoCurrencyById("ethereum");
 const account = makeAccount(
@@ -209,9 +208,11 @@ const gasOptionFastAndMinFeesByTypeAndTest = {
 
 describe.each(["speedup", "cancel"])("with editType %s", editType => {
   beforeEach(() => {
-    mockGetConfig.mockImplementation((): any => {
-      return { info: {} };
-    });
+    // The source reads config via `getCurrencyConfiguration` (live-common LiveConfig); the value
+    // only flows into the mocked gasTracker, so a minimal entry is enough to avoid "Config not set".
+    LiveConfig.setConfig({
+      config_currency_ethereum: { type: "object", default: {} },
+    } as never);
   });
 
   describe("without gasTracker", () => {

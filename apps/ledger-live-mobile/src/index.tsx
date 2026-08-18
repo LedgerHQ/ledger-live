@@ -7,20 +7,15 @@ import "./utils/tanstack-setup";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import React, { Component, useMemo, useEffect, useRef } from "react";
 import { StyleSheet, LogBox, Appearance, AppState, View } from "react-native";
-import {
-  SafeAreaProvider,
-  SafeAreaInsetsContext,
-  useSafeAreaInsets,
-} from "react-native-safe-area-context";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import { I18nextProvider } from "react-i18next";
 import Transport from "@ledgerhq/hw-transport";
-import { NotEnoughBalance } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import { checkLibs } from "@ledgerhq/live-common/sanityChecks";
 import "./config/configInit";
 import "./config/bridge-setup";
 import Config from "react-native-config";
-import useEnv from "@ledgerhq/live-common/hooks/useEnv";
+import useEnv from "@features/platform-env";
 import { init } from "~/e2e/bridge/client";
 import logger from "./logger";
 import { BridgeSyncProvider } from "~/bridge/BridgeSyncContext";
@@ -46,9 +41,7 @@ import SegmentSetup from "~/analytics/SegmentSetup";
 import HookNotifications from "~/notifications/HookNotifications";
 import RootNavigator from "~/components/RootNavigator";
 import SetEnvsFromSettings from "~/components/SetEnvsFromSettings";
-import ExperimentalHeader, {
-  useIsExperimentalHeaderVisible,
-} from "~/screens/Settings/Experimental/ExperimentalHeader";
+import ExperimentalHeader from "~/screens/Settings/Experimental/ExperimentalHeader";
 import Modals from "~/screens/Modals";
 import NavBarColorHandler from "~/components/NavBarColorHandler";
 import { TermsAndConditionMigrateLegacyData } from "~/logic/terms";
@@ -75,7 +68,7 @@ import { selectFeature, type FeatureId } from "@shared/feature-flags";
 import { useSettings } from "~/hooks";
 import AppProviders from "./AppProviders";
 import { useAutoDismissPostOnboardingEntryPoint } from "@ledgerhq/live-common/postOnboarding/hooks/index";
-import QueuedDrawersContextProvider from "LLM/components/QueuedDrawer/QueuedDrawersContextProvider";
+import QueuedBottomSheetsProvider from "LLM/components/QueuedDrawer/QueuedBottomSheetsProvider";
 import { registerTransports } from "~/services/registerTransports";
 import { useDeviceManagementKit } from "@ledgerhq/live-dmk-mobile";
 import { WaitForAppReady } from "LLM/contexts/WaitForAppReady";
@@ -113,7 +106,6 @@ if (Config.DISABLE_YELLOW_BOX) {
 }
 
 checkLibs({
-  NotEnoughBalance,
   React,
   log,
   Transport,
@@ -271,16 +263,6 @@ function App() {
  * SafeAreaView).
  */
 function AppView() {
-  const insets = useSafeAreaInsets();
-  const isExperimentalHeaderVisible = useIsExperimentalHeaderVisible();
-
-  // When ExperimentalHeader is visible it occupies the top safe-area space so
-  // components inside the navigator must not re-apply insets.top.
-  const adjustedInsets = useMemo(
-    () => (isExperimentalHeaderVisible ? { ...insets, top: 0 } : insets),
-    [insets, isExperimentalHeaderVisible],
-  );
-
   // TODO: Normally, we should use a SafeAreaView as root view to avoid
   // importing it everywhere and recalculating the insets.
   return (
@@ -293,11 +275,9 @@ function AppView() {
       }}
     >
       <ExperimentalHeader />
-      <SafeAreaInsetsContext.Provider value={adjustedInsets}>
-        <View style={{ flex: 1 }}>
-          <RootNavigator />
-        </View>
-      </SafeAreaInsetsContext.Provider>
+      <View style={{ flex: 1 }}>
+        <RootNavigator />
+      </View>
     </View>
   );
 }
@@ -373,7 +353,7 @@ export default class Root extends Component {
               <HookDynamicContentCards />
               <HookDevTools />
               <TermsAndConditionMigrateLegacyData />
-              <QueuedDrawersContextProvider>
+              <QueuedBottomSheetsProvider>
                 <I18nextProvider i18n={i18n}>
                   <LocaleProvider>
                     <PlatformAppProviderWrapper>
@@ -402,7 +382,7 @@ export default class Root extends Component {
                     </PlatformAppProviderWrapper>
                   </LocaleProvider>
                 </I18nextProvider>
-              </QueuedDrawersContextProvider>
+              </QueuedBottomSheetsProvider>
             </RebootProvider>
           ) : (
             <LoadingApp />

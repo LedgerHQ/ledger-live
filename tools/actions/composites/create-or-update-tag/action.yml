@@ -28,13 +28,17 @@ runs:
   steps:
     - name: Create or update tag
       id: tag
-      uses: actions/github-script@v8
+      uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+      env:
+        REF: ${{ inputs.ref }}
+        TAG_NAME: ${{ inputs.tagName }}
+        OVERWRITE: ${{ inputs.overwrite }}
       with:
         github-token: ${{ inputs.token }}
         script: |
-          const ref = '${{ inputs.ref }}';
-          const tagName = '${{ inputs.tagName }}';
-          const overwrite = '${{ inputs.overwrite }}' === 'true';
+          const ref = process.env.REF;
+          const tagName = process.env.TAG_NAME;
+          const overwrite = process.env.OVERWRITE === 'true';
           
           try {
             // Try to get the existing tag

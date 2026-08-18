@@ -1,5 +1,8 @@
 # @ledgerhq/coin-tester-multiversx
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 Deterministic coin tester for the MultiversX (`coin-multiversx`) bridge. It runs
 the full bridge flow — sync, craft, sign, broadcast, account-state assertions —
 against a local [MultiversX Chain Simulator](https://github.com/multiversx/mx-chain-simulator-go)

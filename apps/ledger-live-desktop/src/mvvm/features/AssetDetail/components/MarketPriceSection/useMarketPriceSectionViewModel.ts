@@ -83,6 +83,7 @@ export function useMarketPriceSectionViewModel({
   const { prices: chartPrices } = useAssetDetailChartSeries({
     id: marketAssetId,
     counterCurrency: counterValueCurrency.ticker.toLowerCase(),
+    isCryptoCountervalue: counterValueCurrency.type === "CryptoCurrency",
     selectedRange,
     ath: data?.ath,
     atl: data?.atl,

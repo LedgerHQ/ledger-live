@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 import { BigNumber } from "bignumber.js";
 import { act, renderHook } from "@testing-library/react-native";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { createMockAccount } from "../../../Recipient/hooks/__tests__/accounts";
 import { useCoinControlAmountInput } from "../useCoinControlAmountInput";
 import type { Account } from "@ledgerhq/types-live";

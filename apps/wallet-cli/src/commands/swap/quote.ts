@@ -1,6 +1,6 @@
 import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { getQuotes, type QuotesError } from "@ledgerhq/live-common/wallet-api/Exchange/index";
 import { WALLET_CLI_SUPPORTED_CRYPTO_CURRENCY_IDS } from "../../live-common-setup";
 import { createCommandOutput } from "../../output";

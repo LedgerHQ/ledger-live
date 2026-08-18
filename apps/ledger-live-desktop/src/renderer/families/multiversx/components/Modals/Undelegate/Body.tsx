@@ -5,7 +5,6 @@ import { compose } from "redux";
 import { connect } from "react-redux";
 import { useDispatch } from "LLD/hooks/redux";
 import { createStructuredSelector } from "reselect";
-import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
@@ -116,7 +115,7 @@ const Body = (props: Props) => {
     [account, dispatch],
   );
   const handleTransactionError = useCallback((error: Error) => {
-    if (!(error instanceof UserRefusedOnDevice)) {
+    if (error?.name !== "UserRefusedOnDevice") {
       logger.critical(error);
     }
     setTransactionError(error);

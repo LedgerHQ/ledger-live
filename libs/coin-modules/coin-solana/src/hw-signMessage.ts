@@ -1,6 +1,5 @@
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { Account, AnyMessage, DeviceId } from "@ledgerhq/types-live";
-import { LockedDeviceError, UserRefusedOnDevice } from "@ledgerhq/errors";
 import bs58 from "bs58";
 import invariant from "invariant";
 import semver from "semver";
@@ -14,8 +13,8 @@ import { SolanaSigner } from "./signer";
 // Handles both DmkSignerSol (maps to typed errors) and LegacySignerSolana
 // (propagates raw TransportStatusError with a numeric statusCode).
 function isFormatRejection(err: unknown): boolean {
-  if (err instanceof UserRefusedOnDevice) return false;
-  if (err instanceof LockedDeviceError) return false;
+  if ((err as { name?: string })?.name === "UserRefusedOnDevice") return false;
+  if ((err as { name?: string })?.name === "LockedDeviceError") return false;
   // TransportStatusError duck-type: 0x6985 = user refused, 0x5515 = device locked
   if (err && typeof err === "object" && "statusCode" in err) {
     const { statusCode } = err as { statusCode: number };

@@ -1,8 +1,7 @@
+import { LEGACY_ONBOARDING_DATE } from "@ledgerhq/live-common/postOnboarding/logic/legacyOnboardingDate";
 import { createStore } from "@tests/test-renderer";
 import type { State } from "~/reducers/types";
 import { backfillOnboardingDate } from "../backfillOnboardingDate";
-
-const now = new Date("2026-01-02T03:04:05.000Z");
 
 function makeStore({
   hasCompletedOnboarding,
@@ -26,11 +25,11 @@ describe("backfillOnboardingDate", () => {
     const save = jest.fn().mockResolvedValue(undefined);
     const postOnboardingBefore = store.getState().postOnboarding;
 
-    backfillOnboardingDate(store, { now, save });
+    backfillOnboardingDate(store, { save });
 
     expect(store.getState().postOnboarding).toEqual({
       ...postOnboardingBefore,
-      onboardingDate: now.toISOString(),
+      onboardingDate: LEGACY_ONBOARDING_DATE.toISOString(),
     });
     expect(save).toHaveBeenCalledTimes(1);
   });
@@ -39,7 +38,7 @@ describe("backfillOnboardingDate", () => {
     const store = makeStore({ hasCompletedOnboarding: false, onboardingDate: null });
     const save = jest.fn().mockResolvedValue(undefined);
 
-    backfillOnboardingDate(store, { now, save });
+    backfillOnboardingDate(store, { save });
 
     expect(store.getState().postOnboarding.onboardingDate).toBe(null);
     expect(save).not.toHaveBeenCalled();
@@ -50,7 +49,7 @@ describe("backfillOnboardingDate", () => {
     const store = makeStore({ hasCompletedOnboarding: true, onboardingDate: existingDate });
     const save = jest.fn().mockResolvedValue(undefined);
 
-    backfillOnboardingDate(store, { now, save });
+    backfillOnboardingDate(store, { save });
 
     expect(store.getState().postOnboarding.onboardingDate).toBe(existingDate);
     expect(save).not.toHaveBeenCalled();

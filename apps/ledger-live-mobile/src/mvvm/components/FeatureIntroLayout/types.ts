@@ -7,6 +7,6 @@ export type FeatureIntroViewModel = Readonly<{
 }>;
 
 export type FeatureIntroLayoutProps = Readonly<{
-  onClose: () => void;
+  onClose: (options?: { logDismiss?: boolean }) => void;
   viewModel: FeatureIntroViewModel;
 }>;

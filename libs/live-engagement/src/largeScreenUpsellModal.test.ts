@@ -83,12 +83,7 @@ describe("largeScreenUpsellModal", () => {
   });
 
   it("restores only non-negative timestamps representable by JS Date", () => {
-    const invalidLastSeenAtValues = [
-      2.7,
-      -1,
-      Number.MAX_SAFE_INTEGER,
-      Number.MAX_SAFE_INTEGER + 1,
-    ];
+    const invalidLastSeenAtValues = [2.7, -1, Number.MAX_SAFE_INTEGER, Number.MAX_SAFE_INTEGER + 1];
 
     for (const lastSeenAt of invalidLastSeenAtValues) {
       expect(
@@ -193,7 +188,10 @@ describe("largeScreenUpsellModal", () => {
     const lastSeenAt = Date.parse("2026-07-01T12:00:00.000Z");
 
     expect(
-      largeScreenUpsellModalReducer({ retries: 1, lastSeenAt: null }, setLastSeenUpsellModal(lastSeenAt)),
+      largeScreenUpsellModalReducer(
+        { retries: 1, lastSeenAt: null },
+        setLastSeenUpsellModal(lastSeenAt),
+      ),
     ).toEqual({
       retries: 1,
       lastSeenAt,

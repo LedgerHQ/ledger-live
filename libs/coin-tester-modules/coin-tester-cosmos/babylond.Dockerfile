@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 babylonlabs/babylond:v4.3.0
+FROM --platform=linux/amd64 babylonlabs/babylond:v4.3.0@sha256:9143d4317c5d7ee51392ae87b6ff4080a7a6beb34b1df08d792db208fea0e00a
 
 USER root
 

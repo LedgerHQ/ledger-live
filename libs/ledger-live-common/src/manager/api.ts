@@ -1,4 +1,5 @@
 /* eslint-disable camelcase */
+import { NetworkDown } from "@ledgerhq/live-network/errors";
 import {
   DeviceOnDashboardExpected,
   FirmwareNotRecognized,
@@ -6,10 +7,8 @@ import {
   ManagerDeviceLockedError,
   ManagerFirmwareNotEnoughSpaceError,
   ManagerNotEnoughSpaceError,
-  NetworkDown,
-  TransportStatusError,
   UserRefusedFirmwareUpdate,
-} from "@ledgerhq/errors";
+} from "../errors";
 import Transport from "@ledgerhq/hw-transport";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import network from "@ledgerhq/live-network/network";
@@ -32,7 +31,7 @@ import { catchError, map } from "rxjs/operators";
 import semver from "semver";
 import URL from "url";
 import { version as livecommonversion } from "../../package.json";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { createDeviceSocket } from "../socket";
 import {
   bulkSocketMock,
@@ -60,10 +59,11 @@ const remapSocketError = (context?: string) =>
       return throwError(() => new DeviceOnDashboardExpected());
     }
 
+    const statusCode = (e as { statusCode?: number }).statusCode;
     const status =
-      e instanceof TransportStatusError
-        ? e.statusCode.toString(16)
-        : (e as Error).message.slice((e as Error).message.length - 4);
+      (e as { name?: string })?.name === "TransportStatusError" && statusCode !== undefined
+        ? statusCode.toString(16)
+        : (e as { message?: string })?.message?.slice(-4);
 
     // TODO use StatusCode instead of this.
     switch (status) {

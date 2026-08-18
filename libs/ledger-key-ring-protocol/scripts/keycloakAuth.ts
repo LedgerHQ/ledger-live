@@ -14,7 +14,7 @@ import { readMemberCredentials } from "./utils/readMemberCredentials";
  *   - LEDGER_AUTH_CLIENT_ID
  */
 const KEYCLOAK_BASE_URL =
-  process.env.LEDGER_AUTH_KEYCLOAK_BASE_URL ?? "https://keycloak.api.live.aws.stg.ldg-tech.com";
+  process.env.LEDGER_AUTH_KEYCLOAK_BASE_URL ?? "https://global.api.stg.ledger-test.com/keycloak";
 const KEYCLOAK_REALM = process.env.LEDGER_AUTH_KEYCLOAK_REALM ?? "ledger-bc-customers";
 const CLIENT_ID = process.env.LEDGER_AUTH_CLIENT_ID ?? "ledger-keycloak";
 
@@ -26,11 +26,7 @@ main()
   });
 
 async function main(): Promise<void> {
-  const provider = new LkrpIdentityProvider();
-
   const credentials = await readMemberCredentials();
-  provider.setKeypair(credentials);
-  provider.setTrustchainId(credentials.trustchainId);
 
   console.log("[CHECK] keycloak base url:", KEYCLOAK_BASE_URL);
   console.log("[CHECK] keycloak realm:", KEYCLOAK_REALM);
@@ -43,7 +39,10 @@ async function main(): Promise<void> {
       keycloakRealm: KEYCLOAK_REALM,
     },
     {
-      provider,
+      provider: new LkrpIdentityProvider(() => ({
+        trustchain: credentials.trustchainId ? { rootId: credentials.trustchainId } : null,
+        memberCredentials: credentials,
+      })),
       fetch: makeFetchCookie(fetch),
     },
   ).withToken({

@@ -113,4 +113,36 @@ describe("useStepNavigation", () => {
     act(() => result.current.proceedToNextStep(mockBtcCryptoCurrency, arbitrumToken));
     expect(navigateToDeviceWithCurrency).toHaveBeenCalledWith(mockBtcCryptoCurrency);
   });
+
+  it("proceedToNextStep returns the currency without navigating to device in currency mode", () => {
+    const navigateToDeviceWithCurrency = jest.fn();
+    const onCurrencySelected = jest.fn();
+    const { result, store } = renderHook(
+      () =>
+        useStepNavigation({
+          availableNetworksCount: 2,
+          hasOneCurrency: false,
+          resetSelection: jest.fn(),
+          clearNetwork: jest.fn(),
+          selectNetwork: jest.fn(),
+          navigateToDeviceWithCurrency,
+          onCurrencySelected,
+        }),
+      {
+        overrideInitialState: (state: State) => ({
+          ...state,
+          modularDrawer: {
+            ...state.modularDrawer,
+            completionMode: "currency",
+          },
+        }),
+      },
+    );
+
+    act(() => result.current.proceedToNextStep(mockBtcCryptoCurrency, arbitrumToken));
+
+    expect(onCurrencySelected).toHaveBeenCalledWith(mockBtcCryptoCurrency);
+    expect(navigateToDeviceWithCurrency).not.toHaveBeenCalled();
+    expect(store.getState().modularDrawer.step).toBe(ModularDrawerStep.Asset);
+  });
 });

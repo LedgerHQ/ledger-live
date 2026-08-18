@@ -2,10 +2,14 @@ import React from "react";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import { Banner } from "@ledgerhq/lumen-ui-react";
+import {
+  getPerpsUiUseCase,
+  PERPS_UI_USE_CASE,
+} from "@ledgerhq/live-common/wallet-api/ModularDrawer/uiUseCase";
 import { AddAccountButton } from "./components/AddAccountButton";
 import { AccountSelectorContent } from "./components/AccountSelectorContent";
 import { AccountLike, Account } from "@ledgerhq/types-live";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { useDetailedAccounts } from "../../hooks/useDetailedAccounts";
 import TrackDialogScreen from "../../analytics/TrackDialogScreen";
 import {
@@ -36,7 +40,7 @@ export const AccountSelector = ({
 
   const BottomComponent = (
     <>
-      {uiUseCase === "perpetuals" && (
+      {getPerpsUiUseCase(uiUseCase) === PERPS_UI_USE_CASE.legacy && (
         <Banner
           appearance="info"
           title={t("drawers.selectAccount.perpetualsBanner")}

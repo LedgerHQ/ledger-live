@@ -4,11 +4,6 @@ import { useDispatch } from "LLD/hooks/redux";
 import { ErrorType } from "./type.hooks";
 import { setFlow } from "~/renderer/actions/walletSync";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
-import {
-  TrustchainEjected,
-  TrustchainNotAllowed,
-  TrustchainOutdated,
-} from "@ledgerhq/ledger-key-ring-protocol/errors";
 import { useRestoreTrustchain } from "./useRestoreTrustchain";
 import { useTrustchainSdk } from "./useTrustchainSdk";
 
@@ -32,10 +27,10 @@ export const useLifeCycle = () => {
   function handleError(error: Error) {
     console.error("GetMember :" + error);
 
-    if (error instanceof TrustchainEjected) reset();
-    if (error instanceof TrustchainNotAllowed) reset();
+    if (error?.name === "TrustchainEjected") reset();
+    if (error?.name === "TrustchainNotAllowed") reset();
 
-    if (error instanceof TrustchainOutdated) restoreTrustchain();
+    if (error?.name === "TrustchainOutdated") restoreTrustchain();
 
     const errorToHandle = Object.entries(includesErrorActions).find(([err, _action]) =>
       error.message.includes(err),

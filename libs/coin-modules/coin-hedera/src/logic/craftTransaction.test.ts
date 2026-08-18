@@ -30,7 +30,7 @@ const mockToEVMAddress = jest.mocked(toEVMAddress);
 const mockSerializeTransaction = jest.mocked(serializeTransaction);
 
 describe("craftTransaction", () => {
-  const mockConfig = { ...getMockedConfig(), useNetworkTimestamp: false };
+  const mockConfig = getMockedConfig();
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -370,6 +370,197 @@ describe("craftTransaction", () => {
 
     expect(mockGetLatestBlock).toHaveBeenCalledTimes(1);
     expect(result.tx).toBeInstanceOf(sdk.TransferTransaction);
+  });
+
+  it("should craft a delegate staking transaction", async () => {
+    const txIntent = {
+      intentType: "transaction",
+      type: HEDERA_TRANSACTION_MODES.Delegate,
+      amount: BigInt(0),
+      recipient: "",
+      sender: "0.0.54321",
+      asset: { type: "native" },
+      memo: {
+        kind: "text",
+        type: "string",
+        value: "Delegate staking",
+      },
+      data: {
+        type: "staking",
+        stakingNodeId: 5,
+      },
+    } satisfies TransactionIntent<HederaMemo, HederaTxData>;
+
+    const result = await craftTransaction({ configOrCurrencyId: mockConfig, txIntent });
+
+    expect(result.tx).toBeInstanceOf(sdk.AccountUpdateTransaction);
+    invariant(
+      result.tx instanceof sdk.AccountUpdateTransaction,
+      "AccountUpdateTransaction type guard",
+    );
+    expect(result.tx.stakedNodeId).toEqual(sdk.Long.fromNumber(5));
+    expect(serializeTransaction).toHaveBeenCalled();
+  });
+
+  it("should craft an undelegate transaction (stakingNodeId=null clears staked node)", async () => {
+    const txIntent = {
+      intentType: "transaction",
+      type: HEDERA_TRANSACTION_MODES.Undelegate,
+      amount: BigInt(0),
+      recipient: "",
+      sender: "0.0.54321",
+      asset: { type: "native" },
+      memo: {
+        kind: "text",
+        type: "string",
+        value: "Undelegate staking",
+      },
+      data: {
+        type: "staking",
+        stakingNodeId: null,
+      },
+    } satisfies TransactionIntent<HederaMemo, HederaTxData>;
+
+    const result = await craftTransaction({ configOrCurrencyId: mockConfig, txIntent });
+
+    expect(result.tx).toBeInstanceOf(sdk.AccountUpdateTransaction);
+    expect(serializeTransaction).toHaveBeenCalled();
+  });
+
+  it("should use DEFAULT_GAS_LIMIT when ERC20 txIntent has no data field", async () => {
+    mockToEVMAddress.mockResolvedValue("0x0000000000000000000000000000000000003039");
+
+    const result = await craftTransaction({
+      configOrCurrencyId: mockConfig,
+      txIntent: {
+        intentType: "transaction",
+        type: HEDERA_TRANSACTION_MODES.Send,
+        amount: BigInt(1000),
+        recipient: "0.0.12345",
+        sender: "0.0.54321",
+        asset: { type: "erc20", assetReference: "0x39ceba2b467fa987546000eb5d1373acf1f3a2e1" },
+        memo: { kind: "text", type: "string", value: "ERC20 no data" },
+      },
+    });
+
+    expect(result.tx).toBeInstanceOf(sdk.ContractExecuteTransaction);
+  });
+
+  it("should use undefined stakingNodeId when staking txIntent has no data field", async () => {
+    const result = await craftTransaction({
+      configOrCurrencyId: mockConfig,
+      txIntent: {
+        intentType: "transaction",
+        type: HEDERA_TRANSACTION_MODES.Delegate,
+        amount: BigInt(0),
+        recipient: "",
+        sender: "0.0.54321",
+        asset: { type: "native" },
+        memo: { kind: "text", type: "string", value: "No staking data" },
+      },
+    });
+
+    expect(result.tx).toBeInstanceOf(sdk.AccountUpdateTransaction);
+  });
+
+  it("should apply custom fees to delegate staking transaction", async () => {
+    const customFees: FeeEstimation = { value: BigInt(60000) };
+
+    const result = await craftTransaction({
+      configOrCurrencyId: mockConfig,
+      txIntent: {
+        intentType: "transaction",
+        type: HEDERA_TRANSACTION_MODES.Delegate,
+        amount: BigInt(0),
+        recipient: "",
+        sender: "0.0.54321",
+        asset: { type: "native" },
+        memo: { kind: "text", type: "string", value: "Delegate with fee" },
+        data: { type: "staking", stakingNodeId: 3 },
+      },
+      customFees,
+    });
+
+    expect(result.tx).toBeInstanceOf(sdk.AccountUpdateTransaction);
+    invariant(
+      result.tx instanceof sdk.AccountUpdateTransaction,
+      "AccountUpdateTransaction type guard",
+    );
+    expect(result.tx.maxTransactionFee).toEqual(sdk.Hbar.fromTinybars(customFees.value.toString()));
+  });
+
+  it("should apply custom fees to HTS token transfer", async () => {
+    const customFees: FeeEstimation = { value: BigInt(75000) };
+
+    const result = await craftTransaction({
+      configOrCurrencyId: mockConfig,
+      txIntent: {
+        intentType: "transaction",
+        type: HEDERA_TRANSACTION_MODES.Send,
+        amount: BigInt(1000),
+        recipient: "0.0.12345",
+        sender: "0.0.54321",
+        asset: { type: "hts", assetReference: "0.0.7890" },
+        memo: { kind: "text", type: "string", value: "HTS with fee" },
+      },
+      customFees,
+    });
+
+    expect(result.tx).toBeInstanceOf(sdk.TransferTransaction);
+    invariant(result.tx instanceof sdk.TransferTransaction, "TransferTransaction type guard");
+    expect(result.tx.maxTransactionFee).toEqual(sdk.Hbar.fromTinybars(customFees.value.toString()));
+  });
+
+  it("should apply custom fees to ERC20 token transfer", async () => {
+    mockToEVMAddress.mockResolvedValue("0x0000000000000000000000000000000000003039");
+    const customFees: FeeEstimation = { value: BigInt(90000) };
+
+    const result = await craftTransaction({
+      configOrCurrencyId: mockConfig,
+      txIntent: {
+        intentType: "transaction",
+        type: HEDERA_TRANSACTION_MODES.Send,
+        amount: BigInt(1000),
+        recipient: "0.0.12345",
+        sender: "0.0.54321",
+        asset: { type: "erc20", assetReference: "0x39ceba2b467fa987546000eb5d1373acf1f3a2e1" },
+        memo: { kind: "text", type: "string", value: "ERC20 with fee" },
+        data: { type: "erc20", gasLimit: BigInt(100000) },
+      },
+      customFees,
+    });
+
+    expect(result.tx).toBeInstanceOf(sdk.ContractExecuteTransaction);
+    invariant(
+      result.tx instanceof sdk.ContractExecuteTransaction,
+      "ContractExecuteTransaction type guard",
+    );
+    expect(result.tx.maxTransactionFee).toEqual(sdk.Hbar.fromTinybars(customFees.value.toString()));
+  });
+
+  it("should apply custom fees to token associate transaction", async () => {
+    const customFees: FeeEstimation = { value: BigInt(55000) };
+
+    const result = await craftTransaction({
+      configOrCurrencyId: mockConfig,
+      txIntent: {
+        intentType: "transaction",
+        type: HEDERA_TRANSACTION_MODES.TokenAssociate,
+        amount: BigInt(0),
+        recipient: "",
+        sender: "0.0.54321",
+        asset: { type: "hts", assetReference: "0.0.7890" },
+        memo: { kind: "text", type: "string", value: "Associate with fee" },
+      },
+      customFees,
+    });
+
+    expect(result.tx).toBeInstanceOf(sdk.TokenAssociateTransaction);
+    invariant(
+      result.tx instanceof sdk.TokenAssociateTransaction,
+      "TokenAssociateTransaction type guard",
+    );
+    expect(result.tx.maxTransactionFee).toEqual(sdk.Hbar.fromTinybars(customFees.value.toString()));
   });
 
   it("should use mirror timestamp when system clock is skewed", async () => {

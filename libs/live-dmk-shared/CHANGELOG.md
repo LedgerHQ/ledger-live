@@ -1,5 +1,57 @@
 # @ledgerhq/live-dmk
 
+## 0.30.0
+
+### Minor Changes
+
+- [#20503](https://github.com/LedgerHQ/ledger-live/pull/20503) [`8a3a0bb`](https://github.com/LedgerHQ/ledger-live/commit/8a3a0bbd8361706daac364d4c89894f56431fc57) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Export the shared Device Intent Executor tracking context.
+
+### Patch Changes
+
+- Updated dependencies [[`1e9db75`](https://github.com/LedgerHQ/ledger-live/commit/1e9db750a4882f9db7f95278e33c00262487b37b)]:
+  - @ledgerhq/types-devices@6.32.0
+
+## 0.30.0-next.0
+
+### Minor Changes
+
+- [#20503](https://github.com/LedgerHQ/ledger-live/pull/20503) [`8a3a0bb`](https://github.com/LedgerHQ/ledger-live/commit/8a3a0bbd8361706daac364d4c89894f56431fc57) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Export the shared Device Intent Executor tracking context.
+
+### Patch Changes
+
+- Updated dependencies [[`1e9db75`](https://github.com/LedgerHQ/ledger-live/commit/1e9db750a4882f9db7f95278e33c00262487b37b)]:
+  - @ledgerhq/types-devices@6.32.0-next.0
+
+## 0.29.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.35.7
+
+## 0.29.1-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.35.7-next.0
+
+## 0.29.0
+
+### Minor Changes
+
+- [#19794](https://github.com/LedgerHQ/ledger-live/pull/19794) [`2388d41`](https://github.com/LedgerHQ/ledger-live/commit/2388d4171bd2e5caa2009e8eadcd06548d2209ef) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Handle non-onboarded devices according to the requirements of each Connect App flow
+
+- [#19681](https://github.com/LedgerHQ/ledger-live/pull/19681) [`762b5eb`](https://github.com/LedgerHQ/ledger-live/commit/762b5ebf332566879a10ab1f16ef85a3da360fe7) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Fix USB transport routing for Device Intent Executor legacy `withDevice` intents.
+
+## 0.29.0-next.0
+
+### Minor Changes
+
+- [#19794](https://github.com/LedgerHQ/ledger-live/pull/19794) [`2388d41`](https://github.com/LedgerHQ/ledger-live/commit/2388d4171bd2e5caa2009e8eadcd06548d2209ef) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Handle non-onboarded devices according to the requirements of each Connect App flow
+
+- [#19681](https://github.com/LedgerHQ/ledger-live/pull/19681) [`762b5eb`](https://github.com/LedgerHQ/ledger-live/commit/762b5ebf332566879a10ab1f16ef85a3da360fe7) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Fix USB transport routing for Device Intent Executor legacy `withDevice` intents.
+
 ## 0.28.0
 
 ### Minor Changes

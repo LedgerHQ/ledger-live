@@ -7,7 +7,7 @@ import SafeAreaView from "~/components/SafeAreaView";
 import { useTranslation } from "~/context/Locale";
 import { useGlobalSyncState } from "@ledgerhq/live-common/bridge/react/index";
 import { FlatList, FlatListProps, type ListRenderItem } from "react-native";
-import useEnv from "@ledgerhq/live-common/hooks/useEnv";
+import useEnv from "@features/platform-env";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 
 import { useDistribution, useRefreshAccountsOrdering } from "~/actions/general";

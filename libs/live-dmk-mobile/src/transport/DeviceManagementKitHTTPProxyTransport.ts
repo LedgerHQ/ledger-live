@@ -6,7 +6,7 @@ import {
   DeviceDisconnectedBeforeSendingApdu,
   type DiscoveredDevice,
 } from "@ledgerhq/device-management-kit";
-import { DisconnectedDevice } from "@ledgerhq/errors";
+import { DisconnectedDevice } from "@ledgerhq/hw-transport/errors";
 import Transport from "@ledgerhq/hw-transport";
 import { firstValueFrom, type Subscription } from "rxjs";
 import { filter, timeout } from "rxjs/operators";

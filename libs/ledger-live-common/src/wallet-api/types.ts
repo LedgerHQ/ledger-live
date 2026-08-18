@@ -1,5 +1,6 @@
 import type { AccountLike, SignedOperation } from "@ledgerhq/types-live";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { Transaction as WalletAPITransaction } from "@ledgerhq/wallet-api-core";
 import type { CustomHandlers as WalletAPICustomHandlers } from "@ledgerhq/wallet-api-server";
 import type { Transaction } from "../coin-modules/transaction-types";

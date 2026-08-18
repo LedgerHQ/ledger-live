@@ -1,5 +1,5 @@
 import React from "react";
-import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { Box, Skeleton, Text } from "@ledgerhq/lumen-ui-rnative";
 import CurrencyIcon from "~/components/CurrencyIcon";
 import { useTransactionHeaderViewModel } from "../hooks/useTransactionHeaderViewModel";

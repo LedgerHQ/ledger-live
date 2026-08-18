@@ -11,9 +11,8 @@ import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge"
 import { HEDERA_TRANSACTION_MODES } from "@ledgerhq/live-common/families/hedera/constants";
 import type { Transaction } from "@ledgerhq/live-common/families/hedera/types";
 import { isTokenAssociationRequired } from "@ledgerhq/live-common/families/hedera/utils";
-import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import type { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import Track from "~/renderer/analytics/Track";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
@@ -242,7 +241,7 @@ const Body = ({
   }, [onChangeAddressVerified, setDisabledSteps, steps, onChangeStepId]);
 
   const handleTransactionError = useCallback((error: Error) => {
-    if (!(error instanceof UserRefusedOnDevice)) {
+    if (error?.name !== "UserRefusedOnDevice") {
       logger.critical(error);
     }
     setTransactionError(error);

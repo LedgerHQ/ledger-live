@@ -1,7 +1,8 @@
 import BigNumber from "bignumber.js";
 import { useEffect, useMemo, useState } from "react";
 import { getAccountCurrency, getMainAccount } from "../../../account/index";
-import { formatCurrencyUnit, getCryptoCurrencyById } from "../../../currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { formatCurrencyUnit } from "../../../currencies/index";
 import { getSwapProvider, type AdditionalProviderConfig } from "../../providers/swap";
 import { getProviderName } from "../../swap/utils/index";
 import type { SwapTransactionStatusControllerViewModel } from "../hooks/useSwapTransactionStatusController";
@@ -10,11 +11,8 @@ import {
   getDefaultExplorerView,
   getTransactionExplorer as getDefaultTransactionExplorer,
 } from "../../../explorers";
-import type {
-  CryptoCurrency,
-  CryptoOrTokenCurrency,
-  ExplorerView,
-} from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, ExplorerView } from "@domain/entity-currency-crypto";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import type { TransactionStatusValue } from "@ledgerhq/wallet-api-exchange-module";
 
@@ -125,6 +123,22 @@ const PROVIDER_EXPLORERS: Record<string, ProviderExplorer> = {
   },
 };
 
+export function findSwapSendOperation(
+  accounts: AccountLike[],
+  operationHash: string | undefined,
+): Operation | undefined {
+  if (!operationHash) return undefined;
+
+  for (const account of accounts) {
+    const operation =
+      account.operations?.find(op => op.hash === operationHash) ??
+      account.pendingOperations?.find(op => op.hash === operationHash);
+    if (operation) return operation;
+  }
+
+  return undefined;
+}
+
 export function resolveSwapTransactionStatusAccountLike(
   accounts: AccountLike[],
   accountId: string | undefined,
@@ -168,12 +182,14 @@ export function getSwapTransactionStatusExplorerUrl({
   provider,
   swapId,
   operationHash,
+  operation,
   fromCurrency,
   getTransactionExplorer,
 }: {
   provider: string | undefined;
   swapId: string;
   operationHash: string | undefined;
+  operation?: Operation;
   fromCurrency: CryptoOrTokenCurrency | undefined;
   getTransactionExplorer?: SwapTransactionStatusTransactionExplorerBuilder;
 }): string | undefined {
@@ -194,7 +210,12 @@ export function getSwapTransactionStatusExplorerUrl({
   }
 
   if (!mainCurrency || !operationHash) return undefined;
-  return getCurrencyTransactionExplorerUrl(mainCurrency, operationHash, getTransactionExplorer);
+  return getCurrencyTransactionExplorerUrl(
+    mainCurrency,
+    operationHash,
+    operation,
+    getTransactionExplorer,
+  );
 }
 
 export function formatSwapTransactionStatusCreatedAt(timestamp: number, locale: string): string {
@@ -401,10 +422,15 @@ export function useSwapTransactionStatusDisplayViewModel({
     currentStatus,
     sendStatus,
   );
+  const sendOperation = useMemo(
+    () => findSwapSendOperation(accounts, details?.operationHash),
+    [accounts, details?.operationHash],
+  );
   const explorerUrl = getSwapTransactionStatusExplorerUrl({
     provider,
     swapId: params.swapId,
     operationHash: details?.operationHash,
+    operation: sendOperation,
     fromCurrency: sendCurrency,
     getTransactionExplorer,
   });
@@ -444,13 +470,17 @@ function limitDisplayDecimals(rawAtomic: string, unitMagnitude: number): BigNumb
 function getCurrencyTransactionExplorerUrl(
   mainCurrency: CryptoCurrency,
   operationHash: string,
+  operation: Operation | undefined,
   getTransactionExplorer: SwapTransactionStatusTransactionExplorerBuilder | undefined,
 ): string | undefined {
   const explorerView = getDefaultExplorerView(mainCurrency);
-  const operation = { hash: operationHash, extra: {} } as Operation;
+  // Prefer the real operation (it carries family-specific `extra` such as Hedera's
+  // consensusTimestamp / transactionId that some explorers rely on) and fall back to a
+  // minimal synthetic operation built from the hash when it cannot be resolved.
+  const resolvedOperation = operation ?? ({ hash: operationHash, extra: {} } as Operation);
 
   return (
-    getTransactionExplorer?.(explorerView, operation) ??
+    getTransactionExplorer?.(explorerView, resolvedOperation) ??
     getDefaultTransactionExplorer(explorerView, operationHash)
   );
 }

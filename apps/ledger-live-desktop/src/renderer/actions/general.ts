@@ -13,7 +13,7 @@ import { resolveTrackingPairs } from "@ledgerhq/live-countervalues/logic";
 import {
   flattenSortAccounts,
   sortAccountsComparatorFromOrder,
-} from "@ledgerhq/live-wallet/ordering";
+} from "@ledgerhq/live-common/account/ordering";
 import { useDistribution as useLegacyDistribution } from "@ledgerhq/live-countervalues-react/portfolio";
 import {
   useAssetDistribution,
@@ -63,7 +63,7 @@ export function useSortAccountsComparator() {
   const orderAccounts = useSelector(getOrderAccounts);
   const calc = useCalculateCountervalueCallback();
   const walletState = useSelector(walletSelector);
-  return sortAccountsComparatorFromOrder(orderAccounts, walletState, calc);
+  return sortAccountsComparatorFromOrder(orderAccounts, walletState.accountNames, calc);
 }
 export function useFlattenSortAccounts(options?: FlattenAccountsOptions) {
   const accounts = useSelector(accountsSelector);

@@ -1,12 +1,18 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById, CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
+import type { TokenCurrency } from "@domain/entity-currency-token";
+import { TokenCurrencyIdSchema } from "@domain/entity-currency-token";
 import { genAccount } from "../../mock/account";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { getAccountTuplesForCurrency } from "../getAccountTuplesForCurrency";
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 
 // Setup mock store for unit tests
-setupMockCryptoAssetsStore();
+setCryptoAssetsStore({
+  findTokenById: async () => undefined,
+  findTokenByAddressInCurrency: async () => undefined,
+  getTokensSyncHash: async () => "",
+});
 
 function* accountGenerator(currency: CryptoCurrency): Generator<Account> {
   let id = 0;
@@ -59,12 +65,12 @@ describe("getAccountTuplesForCurrency", () => {
   describe("TokenCurrency", () => {
     const aaveToken = {
       type: "TokenCurrency" as const,
-      id: "ethereum/erc20/aave",
+      id: TokenCurrencyIdSchema.parse("ethereum/erc20/aave"),
       name: "Aave Token",
       ticker: "AAVE",
       units: [{ name: "Aave Token", code: "AAVE", magnitude: 18 }],
       contractAddress: "0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9",
-      parentCurrencyId: "ethereum",
+      parentCurrencyId: CryptoCurrencyIdSchema.parse("ethereum"),
       tokenType: "erc20" as const,
     };
 

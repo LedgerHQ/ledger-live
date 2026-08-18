@@ -3,16 +3,29 @@ import { useNavigation } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";
 import { useTranslation } from "~/context/Locale";
 import { useMaybeAccountName } from "~/reducers/wallet";
+import { ScreenName } from "~/const";
+import type { BaseNavigationComposite } from "~/components/RootNavigator/types/helpers";
 
 import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
 import { useSendAmountDisplayMode } from "@ledgerhq/live-common/flows/send/amount/SendAmountDisplayModeContext";
+import {
+  buildTransactionPatchFromURIScheme,
+  type DecodedURISchemePayment,
+} from "@ledgerhq/live-common/flows/send/utils/uriScheme";
 import { useSendFlowData, useSendFlowActions } from "../context/SendFlowContext";
 import { useAvailableBalance } from "./useAvailableBalance";
 import { useCurrentSendFlowStep } from "./useCurrentSendFlowStep";
 import {
-  getRecipientDisplayValue,
   getRecipientSearchPrefillValue,
+  SEND_ADDRESS_FORMAT_OPTIONS,
 } from "@ledgerhq/live-common/flows/send/utils";
+import { getRecipientHeaderPresentation } from "@ledgerhq/live-common/flows/send/recipient/utils/getRecipientHeaderPresentation";
+import type { RecipientHeaderContact } from "@ledgerhq/live-common/flows/send/recipient/utils/getRecipientHeaderPresentation";
+import { useContactsFeature } from "@features/flow-contacts";
+import { selectContacts } from "@domain/entity-contact";
+import { useSelector } from "~/context/hooks";
+import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
+import type { SendFlowNavigationProp } from "../types";
 
 export type SendHeaderViewModel = {
   title: string;
@@ -29,6 +42,7 @@ export type SendHeaderViewModel = {
     clear: () => void;
   };
   formattedAddress: string;
+  recipientContact: RecipientHeaderContact | undefined;
   recipientPlaceholder: string;
   handleBackPress: () => void;
   handleClose: () => void;
@@ -39,12 +53,14 @@ export type SendHeaderViewModel = {
 };
 
 export function useSendHeaderViewModel(): SendHeaderViewModel {
-  const navigation = useNavigation();
+  const navigation = useNavigation<BaseNavigationComposite<SendFlowNavigationProp>>();
   const { t } = useTranslation();
   const { uiConfig, recipientSearch, state } = useSendFlowData();
   const { close, transaction, setRecipientSearchValue, clearRecipientSearch } =
     useSendFlowActions();
   const { displayMode } = useSendAmountDisplayMode();
+  const { isEnabled: isContactsFeatureEnabled } = useContactsFeature("mobile");
+  const contacts = useSelector(selectContacts);
 
   const accountName = useMaybeAccountName(state.account.account);
   const [currentStep, currentStepConfig] = useCurrentSendFlowStep();
@@ -82,20 +98,32 @@ export function useSendHeaderViewModel(): SendHeaderViewModel {
     return { address } as const;
   }, [state.transaction.transaction?.recipient]);
 
+  const recipientHeader = useMemo(
+    () =>
+      getRecipientHeaderPresentation({
+        recipient: recipientFromTransaction,
+        contacts,
+        currencyId: state.account.currency?.id,
+        isContactsFeatureEnabled: isContactsFeatureEnabled && isAmountStep,
+      }),
+    [
+      contacts,
+      isAmountStep,
+      isContactsFeatureEnabled,
+      recipientFromTransaction,
+      state.account.currency?.id,
+    ],
+  );
+
   const formattedAddress = useMemo(() => {
     if (isRecipientStep) {
-      return recipientSearch.value.length > 11
-        ? `${recipientSearch.value.slice(0, 4)}...${recipientSearch.value.slice(-4)}`
-        : recipientSearch.value;
+      return formatAddress(recipientSearch.value, SEND_ADDRESS_FORMAT_OPTIONS);
     }
     if (isAmountStep) {
-      return getRecipientDisplayValue(recipientFromTransaction, {
-        prefixLength: 4,
-        suffixLength: 4,
-      });
+      return recipientHeader.label;
     }
     return "";
-  }, [isRecipientStep, isAmountStep, recipientSearch.value, recipientFromTransaction]);
+  }, [isRecipientStep, isAmountStep, recipientHeader.label, recipientSearch.value]);
 
   const handleBackPress = useCallback(() => {
     if (canGoBack) {
@@ -128,9 +156,39 @@ export function useSendHeaderViewModel(): SendHeaderViewModel {
     navigation.goBack();
   }, [isAmountStep, navigation, recipientFromTransaction, setRecipientSearchValue]);
 
+  const handleScannedURI = useCallback(
+    (decoded: DecodedURISchemePayment) => {
+      setRecipientSearchValue(decoded.address);
+
+      const currentTransaction = state.transaction.transaction;
+      if (currentTransaction) {
+        const patch = buildTransactionPatchFromURIScheme(currentTransaction, decoded);
+        if (Object.keys(patch).length > 0) {
+          transaction.updateTransaction(tx => ({ ...tx, ...patch }) as typeof tx);
+        }
+      }
+    },
+    [setRecipientSearchValue, state.transaction.transaction, transaction],
+  );
+
   const handleQrCodeClick = useCallback(() => {
-    // Implementation of QR code scanning on Recipient screen
-  }, []);
+    if (!state.account.account) return;
+
+    clearRecipientSearch();
+    navigation.navigate(ScreenName.ScanRecipient, {
+      accountId: state.account.account.id,
+      parentId: state.account.parentAccount?.id,
+      transaction: state.transaction.transaction ?? undefined,
+      onScannedURI: handleScannedURI,
+    });
+  }, [
+    clearRecipientSearch,
+    handleScannedURI,
+    navigation,
+    state.account.account,
+    state.account.parentAccount?.id,
+    state.transaction.transaction,
+  ]);
 
   const recipientPlaceholder = uiConfig.recipientSupportsDomain
     ? t("send.newSendFlow.placeholder")
@@ -147,6 +205,7 @@ export function useSendHeaderViewModel(): SendHeaderViewModel {
     showRecipientInput,
     recipientSearch,
     formattedAddress,
+    recipientContact: recipientHeader.contact,
     recipientPlaceholder,
     handleBackPress,
     handleClose,

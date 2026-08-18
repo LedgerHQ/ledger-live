@@ -1,8 +1,13 @@
+import { device } from "detox";
 import { Step } from "jest-allure2-reporter/api";
-import { delay, openDeeplink } from "../../helpers/commonHelpers";
+import { openDeeplink } from "../../helpers/commonHelpers";
 import CommonPage from "../common.page";
 import { retryUntilTimeout } from "../../utils/retry";
 import { checkForErrorModals } from "../../helpers/errorHelpers";
+
+// Short enough that retryUntilTimeout's own budget still allows a re-tap; the default 60s would
+// consume the whole budget in a single attempt.
+const CONTINUE_DISMISS_TIMEOUT = 5_000;
 
 export default class AddAccountDrawer extends CommonPage {
   baseLink = "add-account";
@@ -28,28 +33,45 @@ export default class AddAccountDrawer extends CommonPage {
 
   @Step("Wait for accounts discovery")
   async waitAccountsDiscovery() {
-    const DISCOVERY_TIMEOUT = 240000;
-    const ERROR_CHECK_INTERVAL = 2000;
+    const DISCOVERY_TIMEOUT = 240_000;
     const startTime = Date.now();
 
-    while (Date.now() - startTime < DISCOVERY_TIMEOUT) {
-      if (await IsIdVisible(this.continueButtonId, 1000)) {
-        return;
+    // disable sync to avoid Detox hanging during busy account discovery and UI animations
+    await device.disableSynchronization();
+    try {
+      while (Date.now() - startTime < DISCOVERY_TIMEOUT) {
+        if (await IsIdVisible(this.continueButtonId, 10_000)) {
+          return;
+        }
+        await checkForErrorModals(1_000, "Account discovery failed");
       }
-      await checkForErrorModals(1000, "Account discovery failed");
-      await delay(ERROR_CHECK_INTERVAL);
+      throw new Error(
+        `Account discovery timed out after ${DISCOVERY_TIMEOUT}ms. Expected button "${this.continueButtonId}" not found.`,
+      );
+    } finally {
+      await device.enableSynchronization();
     }
+  }
 
-    throw new Error(
-      `Account discovery timed out after ${DISCOVERY_TIMEOUT / 1000} seconds. Expected button "${this.continueButtonId}" not found.`,
-    );
+  @Step("Get number of accounts displayed by the blockchain scan")
+  async getNumberOfScannedAccounts(): Promise<number> {
+    await this.waitAccountsDiscovery();
+    const scannedAccounts = await countElements(getElementsById(this.accountItemRegExp()));
+    if (scannedAccounts === 0) {
+      throw new Error("No account found on the blockchain scan screen");
+    }
+    return scannedAccounts;
   }
 
   @Step("Finish account discovery")
   async finishAccountsDiscovery() {
     await retryUntilTimeout(async () => {
       await tapById(this.continueButtonId);
-      await waitForElementNotVisible(this.continueButtonId);
+      const dismissed = await waitForElementNotVisible(
+        this.continueButtonId,
+        CONTINUE_DISMISS_TIMEOUT,
+      );
+      if (!dismissed) throw new Error(`${this.continueButtonId} still visible after tap`);
     });
   }
 

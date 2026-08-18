@@ -5,7 +5,7 @@ import {
   RecipientRequired,
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import type { Account, AccountBridge, AccountLike, CurrencyBridge } from "@ledgerhq/types-live";
 import { CASPER_DUMMY_ADDRESS } from "@ledgerhq/coin-casper/constants";
 import type { Transaction, TransactionStatus } from "../types";
@@ -17,13 +17,16 @@ import {
   sync,
   makeAccountBridgeReceive,
 } from "../../../bridge/mockHelpers";
-import { getEstimatedFees } from "@ledgerhq/coin-casper/bridge/bridgeHelpers/fee";
+import {
+  getAddress,
+  getEstimatedFees,
+  isAddressValid,
+  validateMemo,
+} from "@ledgerhq/coin-casper/logic";
 import {
   getSerializedAddressParameters,
   updateTransaction,
 } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
-import { getAddress, isAddressValid } from "@ledgerhq/coin-casper/bridge/bridgeHelpers/addresses";
-import { validateMemo } from "@ledgerhq/coin-casper/logic/validateMemo";
 import {
   CasperInvalidTransferId,
   InvalidMinimumAmount,

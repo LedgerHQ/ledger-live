@@ -1,5 +1,6 @@
 import type { DeviceId } from "@domain/entity-client-identity";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 import type { Account, DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 import type { FlowName } from "../../../device-action/utils";
@@ -40,7 +41,6 @@ export type EnsureAppReadyInput = {
   appName: string;
   dependencies: string[];
   requireLatestFirmware: boolean;
-  allowPartialDependencies: boolean;
   requiresDerivation?: RequiresDerivation;
   expectedAccount?: ExpectedAccountIdentity;
   deprecation?: DeprecationPresentationInput;
@@ -51,6 +51,10 @@ export type ConnectAppInitSideEffects = {
   onLastSeenDeviceInfoObserved: (params: {
     modelId: DeviceModelId;
     deviceInfo: DeviceInfo;
+    apps: Array<{
+      name: string;
+      version: string;
+    }>;
     latestFirmware: FirmwareUpdateContext | null;
   }) => void;
 };

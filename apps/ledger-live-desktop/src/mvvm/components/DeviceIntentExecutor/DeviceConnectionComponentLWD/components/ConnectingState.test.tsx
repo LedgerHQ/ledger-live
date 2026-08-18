@@ -3,7 +3,7 @@ import { ConnectDeviceUIStateTypes, type ConnectDeviceUIState } from "@ledgerhq/
 import { screen } from "@testing-library/react";
 import { render } from "tests/testSetup";
 
-import { makeKnownDevice } from "../testUtils";
+import { DeviceIntentTrackingTestWrapper, makeKnownDevice } from "../testUtils";
 import { ConnectingState } from "./ConnectingState";
 
 type ConnectingUIState = Extract<
@@ -20,9 +20,9 @@ describe("ConnectingState", () => {
     };
 
     // WHEN
-    render(<ConnectingState state={state} />);
+    render(<ConnectingState state={state} />, { wrapper: DeviceIntentTrackingTestWrapper });
 
     // THEN
-    expect(screen.getByText("Loading")).toBeVisible();
+    expect(screen.getByText("Connecting to your Ledger device")).toBeVisible();
   });
 });

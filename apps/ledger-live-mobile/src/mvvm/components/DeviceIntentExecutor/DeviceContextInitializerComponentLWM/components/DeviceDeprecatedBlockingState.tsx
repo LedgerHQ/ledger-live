@@ -5,7 +5,8 @@ import {
   DeviceDeprecationScreen,
   DeviceDeprecationScreens,
 } from "~/components/DeviceAction/Screen/DeviceDeprecationScreen";
-import { TrackScreen } from "~/analytics";
+import { TrackDIEScreen } from "../../components/TrackDIEScreen";
+import { useDeviceIntentTracking } from "../../utils/DeviceIntentTrackingContext";
 import {
   CONNECT_APP_BUTTON,
   PAGE_CONNECT_APP,
@@ -20,8 +21,8 @@ type DeviceDeprecatedBlockingStateProps = BaseInitializerStateProps<
 export function DeviceDeprecatedBlockingState({
   state,
   device,
-  sourceFlow,
 }: DeviceDeprecatedBlockingStateProps) {
+  const { sourceFlow, analyticsProperties } = useDeviceIntentTracking();
   const { decision } = state;
   const modelId = device.modelId;
 
@@ -30,6 +31,7 @@ export function DeviceDeprecatedBlockingState({
       sourceFlow,
       modelId,
       button: CONNECT_APP_BUTTON.LearnMore,
+      extraProperties: analyticsProperties,
     });
   };
 
@@ -38,17 +40,16 @@ export function DeviceDeprecatedBlockingState({
       sourceFlow,
       modelId,
       button: CONNECT_APP_BUTTON.DiscoverUpgradeProgram,
+      extraProperties: analyticsProperties,
     });
   };
 
   return (
     <>
-      <TrackScreen
+      <TrackDIEScreen
         category={PAGE_CONNECT_APP.DeviceDeprecatedBlocking}
-        sourceFlow={sourceFlow}
         modelId={modelId}
         refreshSource
-        deviceUxV2
       />
       <DeviceDeprecationScreen
         coinName={decision.currencyName}

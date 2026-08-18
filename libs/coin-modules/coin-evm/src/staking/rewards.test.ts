@@ -1,17 +1,19 @@
 import { ethers } from "ethers";
 import { fetchRewards } from "./rewards";
+import type { EvmConfigInfo } from "../config";
 import { USEI_TO_EVM_SCALE } from "../utils";
 
 jest.mock("@ledgerhq/live-network", () => jest.fn());
-jest.mock("../config");
 jest.mock("../network/node/types");
 
 const mockNetwork = jest.mocked(require("@ledgerhq/live-network"));
-const mockGetCoinConfig = jest.mocked(require("../config").getCoinConfig);
 const mockIsExternalNodeConfig = jest.mocked(require("../network/node/types").isExternalNodeConfig);
 
 const EVM_ADDRESS = "0x1234567890abcdef1234567890abcdef12345678";
 const COSMOS_ADDRESS = "sei1defaultcosmosaddressfortest";
+
+const mockNode = { type: "external", uri: "https://sei-evm.coin.ledger.com" };
+const mockConfig = { node: mockNode } as unknown as EvmConfigInfo;
 
 type RewardCoin = { denom: string; amount: string };
 const restResponse = (rewards: Array<{ validator_address: string; reward: RewardCoin[] }>) => ({
@@ -31,8 +33,6 @@ describe("fetchRewards", () => {
       .spyOn(ethers, "Contract" as any)
       .mockReturnValue({ getSeiAddr: mockGetSeiAddr });
 
-    const mockNode = { type: "external", uri: "https://sei-evm.coin.ledger.com" };
-    mockGetCoinConfig.mockReturnValue({ info: { node: mockNode } });
     mockIsExternalNodeConfig.mockImplementation((node: unknown) => node === mockNode);
   });
 
@@ -61,7 +61,7 @@ describe("fetchRewards", () => {
     },
   ])("returns an empty map when $case", async ({ currencyId, setup }) => {
     setup();
-    expect(await fetchRewards(currencyId, EVM_ADDRESS)).toEqual(new Map());
+    expect(await fetchRewards(mockConfig, currencyId, EVM_ADDRESS)).toEqual(new Map());
   });
 
   it("resolves the EVM address to its canonical Cosmos bech32 via the precompile", async () => {
@@ -69,7 +69,7 @@ describe("fetchRewards", () => {
     mockGetSeiAddr.mockResolvedValueOnce(canonicalCosmosAddress);
     mockNetwork.mockResolvedValueOnce(restResponse([]));
 
-    await fetchRewards("sei_evm", "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3");
+    await fetchRewards(mockConfig, "sei_evm", "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3");
 
     expect((mockNetwork.mock.calls[0][0] as { url: string }).url).toContain(canonicalCosmosAddress);
   });
@@ -85,7 +85,7 @@ describe("fetchRewards", () => {
       ]),
     );
 
-    const result = await fetchRewards("sei_evm", EVM_ADDRESS);
+    const result = await fetchRewards(mockConfig, "sei_evm", EVM_ADDRESS);
 
     expect(result.size).toBe(1);
     expect(result.get("seivaloper1one")).toBe(569n * USEI_TO_EVM_SCALE);
@@ -104,7 +104,7 @@ describe("fetchRewards", () => {
       ]),
     );
 
-    const result = await fetchRewards("sei_evm", EVM_ADDRESS);
+    const result = await fetchRewards(mockConfig, "sei_evm", EVM_ADDRESS);
 
     expect(result.get("seivaloper1one")).toBe(123n * USEI_TO_EVM_SCALE);
   });
@@ -122,7 +122,7 @@ describe("fetchRewards", () => {
       ]),
     );
 
-    const result = await fetchRewards("sei_evm", EVM_ADDRESS);
+    const result = await fetchRewards(mockConfig, "sei_evm", EVM_ADDRESS);
 
     expect(result.get("seivaloper1one")).toBe(500n * USEI_TO_EVM_SCALE);
   });
@@ -138,7 +138,7 @@ describe("fetchRewards", () => {
       ]),
     );
 
-    const result = await fetchRewards("sei_evm", EVM_ADDRESS);
+    const result = await fetchRewards(mockConfig, "sei_evm", EVM_ADDRESS);
 
     expect(result.has("seivaloper1dust")).toBe(false);
     expect(result.get("seivaloper1real")).toBe(42n * USEI_TO_EVM_SCALE);
@@ -153,7 +153,7 @@ describe("fetchRewards", () => {
       ]),
     );
 
-    const result = await fetchRewards("sei_evm", EVM_ADDRESS);
+    const result = await fetchRewards(mockConfig, "sei_evm", EVM_ADDRESS);
 
     expect(result.size).toBe(3);
     expect(result.get("seivaloper1a")).toBe(10n * USEI_TO_EVM_SCALE);
@@ -171,7 +171,7 @@ describe("fetchRewards", () => {
       ]),
     );
 
-    const result = await fetchRewards("sei_evm", EVM_ADDRESS);
+    const result = await fetchRewards(mockConfig, "sei_evm", EVM_ADDRESS);
 
     expect(result.has("seivaloper1bad")).toBe(false);
   });
@@ -189,7 +189,7 @@ describe("fetchRewards", () => {
       ]),
     );
 
-    const result = await fetchRewards("sei_evm", EVM_ADDRESS);
+    const result = await fetchRewards(mockConfig, "sei_evm", EVM_ADDRESS);
 
     expect(result.get("seivaloper1mixed")).toBe(100n * USEI_TO_EVM_SCALE);
   });

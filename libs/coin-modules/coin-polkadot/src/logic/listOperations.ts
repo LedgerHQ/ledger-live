@@ -1,16 +1,25 @@
 import { Operation } from "@ledgerhq/coin-module-framework/api/types";
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import { type PolkadotCoinConfig } from "../config";
 import network from "../network";
 import { PolkadotOperation } from "../types";
 
 export async function listOperations(
+  config: PolkadotCoinConfig,
   addr: string,
   { limit, startAt }: { limit: number; startAt?: number | undefined },
   currency?: CryptoCurrency,
 ): Promise<[Operation[], number]> {
   //The accountId is used to map Operations to Live types.
   const fakeAccountId = "";
-  const operations = await network.getOperations(fakeAccountId, addr, currency, startAt, limit);
+  const operations = await network.getOperations(
+    config,
+    fakeAccountId,
+    addr,
+    currency,
+    startAt,
+    limit,
+  );
   const blockHeight = operations.length > 0 ? (operations.slice(-1)[0].blockHeight ?? 0) : 0;
   return [operations.map(convertToCoreOperation), blockHeight];
 }

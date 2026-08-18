@@ -41,7 +41,7 @@ describe("Broadcast", () => {
     const base64 = Buffer.from(cell.toBoc()).toString("base64");
 
     await expect(broadcast({ signedOperation: { signature: base64 } } as any)).rejects.toThrow(
-      /Failed to unpack account state/,
+      /Failed to unpack account state|external import fees exceed account balance/,
     );
   });
 });

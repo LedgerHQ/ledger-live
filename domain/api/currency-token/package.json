@@ -1,6 +1,6 @@
 {
   "name": "@domain/api-currency-token",
-  "version": "0.2.0",
+  "version": "0.4.0",
   "private": true,
   "description": "Domain API client for token currencies (Crypto Asset List): RTK Query endpoints typed on @domain/entity-currency-token",
   "main": "src/index.ts",
@@ -18,11 +18,12 @@
     "unimported": "pnpm knip --directory ../../.. -W domain/api/currency-token"
   },
   "dependencies": {
+    "@shared/api-services": "workspace:*",
     "@domain/entity-currency-crypto": "workspace:*",
     "@domain/entity-currency-token": "workspace:*",
     "@domain/entity-currency-unit": "workspace:*",
     "@reduxjs/toolkit": "catalog:",
-    "lodash": "^4.17.21",
+    "lodash": "catalog:",
     "zod": "catalog:"
   },
   "peerDependencies": {
@@ -34,7 +35,7 @@
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
-    "@types/lodash": "^4.14.191",
+    "@types/lodash": "catalog:",
     "@types/node": "catalog:",
     "jest": "catalog:",
     "react": "catalog:",

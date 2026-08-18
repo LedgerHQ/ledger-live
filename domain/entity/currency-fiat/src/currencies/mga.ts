@@ -2,7 +2,6 @@ import { fiat } from "../define";
 
 export const mga = fiat({
   type: "FiatCurrency",
-  id: "mga",
   ticker: "MGA",
   name: "Malagasy Ariary",
   symbol: "Ar",

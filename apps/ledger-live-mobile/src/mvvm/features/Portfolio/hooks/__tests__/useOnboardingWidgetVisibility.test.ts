@@ -2,7 +2,7 @@ import { renderHook, withFlagOverrides } from "@tests/test-renderer";
 import BigNumber from "bignumber.js";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { Account } from "@ledgerhq/types-live";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { usePostOnboardingEntryPointVisibleOnWallet } from "@ledgerhq/live-common/postOnboarding/hooks/usePostOnboardingEntryPointVisibleOnWallet";
 import { useOnboardingWidgetVisibility } from "../useOnboardingWidgetVisibility";
@@ -35,7 +35,6 @@ function stateWith({
   return {
     overrideInitialState: withFlagOverrides(
       {
-        lwmWallet40: { enabled: !featureFlagOff },
         onboardingWidget: { enabled: !featureFlagOff },
       },
       state => ({

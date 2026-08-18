@@ -1,4 +1,4 @@
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { getTestProviderInfo, type ExchangeProviderNameAndSignature } from ".";
 import calService, { SWAP_DATA_CDN } from "@ledgerhq/ledger-cal-service";
 import { isIntegrationTestEnv } from "../swap/utils/isIntegrationTestEnv";
@@ -287,7 +287,7 @@ const DEFAULT_SWAP_PROVIDERS: Record<string, ProviderConfig & Partial<Additional
     type: "DEX",
     needsKYC: false,
     needsBearerToken: false,
-    termsOfUseUrl: "https://files.paraswap.io/tos_v4.pdf",
+    termsOfUseUrl: "https://www.velora.xyz/terms/terms-of-use",
     supportUrl: "https://help.paraswap.io/en/",
     mainUrl: "https://www.velora.xyz/",
   },
@@ -303,9 +303,13 @@ const DEFAULT_SWAP_PROVIDERS: Record<string, ProviderConfig & Partial<Additional
 };
 
 export const dexProvidersContractAddress: { [key: string]: string } = {
+  // Uniswap Universal Router (Ethereum mainnet): v1.2, v2.0 and v2.1.1 respectively.
   "0x3fc91a3afd70395cd496c647d5a6cc9d4b2b7fad": "Uniswap",
+  "0x66a9893cc07d91d95644aedd05d03f95e1dba8af": "Uniswap",
+  "0x4c82d1fbfe28c977cbb58d8c7ff8fcf9f70a2cca": "Uniswap",
   "0x111111125421ca6dc452d289314280a0f8842a65": "1inch",
   "0x6a000f20005980200259b80c5102003040001068": "velora",
+  "0x334f5d28a71432f8fc21c7b2b6f5dbbcd8b32a7b": "Kiln",
 };
 
 export const termsOfUse: { [key: string]: string } = {
@@ -314,10 +318,13 @@ export const termsOfUse: { [key: string]: string } = {
   Uniswap: "https://uniswap.org/terms-of-service",
   velora: "https://www.velora.xyz/terms/terms-of-use",
   okx: "https://web3.okx.com/help/okx-web3-build-user-agreement",
+  Kiln: "https://www.kiln.fi/terms-and-conditions",
 };
 
 export const privacyPolicy: { [key: string]: string } = {
   Uniswap: "https://uniswap.org/privacy-policy",
+  velora: "https://www.velora.xyz/terms/privacy-policy",
+  Kiln: "https://www.kiln.fi/legal#Privacy-Policy",
 };
 
 type CurrencyData = {

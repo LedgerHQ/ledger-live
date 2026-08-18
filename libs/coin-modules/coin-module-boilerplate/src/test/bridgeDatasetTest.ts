@@ -1,4 +1,4 @@
-import { InvalidAddressBecauseDestinationIsAlsoSource } from "@ledgerhq/errors";
+import { InvalidAddressBecauseDestinationIsAlsoSource } from "@ledgerhq/ledger-wallet-framework/errors";
 import { DatasetTest } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { fromTransactionRaw } from "../bridge/transaction";

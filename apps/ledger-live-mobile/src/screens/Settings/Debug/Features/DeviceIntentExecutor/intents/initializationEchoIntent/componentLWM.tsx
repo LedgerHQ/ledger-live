@@ -1,7 +1,7 @@
 import React from "react";
 import { BottomSheetHeader } from "@ledgerhq/lumen-ui-rnative";
+import { OverrideDeviceIntentExecutorHeader } from "@ledgerhq/live-dmk-shared";
 import { Text, Flex } from "@ledgerhq/native-ui";
-import { OverrideDeviceIntentExecutorHeader } from "LLM/components/DeviceIntentExecutor";
 import type { InitializationEchoIntentJobState } from "./types";
 
 export function InitializationEchoIntentComponentLWM({

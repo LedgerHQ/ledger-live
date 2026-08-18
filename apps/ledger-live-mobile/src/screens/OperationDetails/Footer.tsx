@@ -1,7 +1,8 @@
 import React, { memo } from "react";
 import { Linking, Platform } from "react-native";
 import { Trans } from "~/context/Locale";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@domain/entity-currency-crypto";
+import { TokenCurrency } from "@domain/entity-currency-token";
 import { Flex } from "@ledgerhq/native-ui";
 
 import ExternalLink from "~/icons/ExternalLink";

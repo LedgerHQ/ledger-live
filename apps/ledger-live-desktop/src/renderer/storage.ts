@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { ipcRenderer } from "electron";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { useDBRaw } from "@ledgerhq/live-common/hooks/useDBRaw";
 import { DiscoverDB } from "@ledgerhq/live-common/wallet-api/types";
 import accountModel from "~/helpers/accountModel";
@@ -17,11 +17,16 @@ import { trustchainStoreSelector } from "@ledgerhq/ledger-key-ring-protocol/stor
 import { marketStoreSelector } from "./reducers/market";
 import { marketBannerStoreSelector } from "./reducers/marketBanner";
 import { knownDevicesStoreSelector } from "./reducers/knownDevices";
-import { ExportedWalletState } from "@ledgerhq/live-wallet/store";
+import { ExportedWalletState } from "~/renderer/reducers/wallet";
 import type { PersistedCAL } from "@domain/api-currency-token";
 import type { PersistedIdentities } from "@domain/entity-client-identity";
 import type { FeatureFlagsState } from "@shared/feature-flags";
-import type { LargeScreenUpsellModalState } from "@domain/entity-large-screen-upsell-modal";
+import type { RestorableLargeScreenUpsellModalState } from "@features/flow-large-screen-upsell";
+import type { PayCardBalanceState } from "@features/flow-pay-card-balance/state";
+import type { PayCardFeatureTourState } from "@features/flow-pay-card-feature-tour/state";
+
+/** Persisted pay card blob: the tour flag and the balance filter, stored under one key. */
+type PayCardPersistedState = PayCardFeatureTourState & PayCardBalanceState;
 
 /*
   This file serve as an interface for the RPC binding to the main thread that now manage the config file.
@@ -42,6 +47,7 @@ export type Settings = ReturnType<typeof settingsStoreSelector>;
 export type Market = ReturnType<typeof marketStoreSelector>;
 export type MarketBanner = ReturnType<typeof marketBannerStoreSelector>;
 export type KnownDevices = ReturnType<typeof knownDevicesStoreSelector>;
+export type PayCard = PayCardPersistedState;
 
 export type TrustchainStore = ReturnType<typeof trustchainStoreSelector>;
 
@@ -69,7 +75,8 @@ type DatabaseValues = {
   ptx: {
     lastScreen: string;
   };
-  largeScreenUpsellModal: LargeScreenUpsellModalState;
+  largeScreenUpsellModal: RestorableLargeScreenUpsellModalState;
+  payCard: PayCard;
 };
 
 // Infers the type seen from the user side (non-raw).

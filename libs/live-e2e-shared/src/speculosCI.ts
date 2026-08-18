@@ -33,8 +33,9 @@ function slugify(name: string): string {
  */
 function makeRunId(deviceParams: DeviceParams): string {
   const slug = slugify(deviceParams.appName) || "app";
-  const suffix = uniqueId().replace(/-/g, "").slice(0, 12);
-  const combined = `${slug.slice(0, 20)}-${suffix}`;
+  const id = uniqueId().replaceAll("-", "").slice(0, 12);
+  const environment = process.env.CI ? "ci" : "local";
+  const combined = `${slug.slice(0, 20)}-lw-${environment}-${id}`;
   return combined.slice(0, 63);
 }
 

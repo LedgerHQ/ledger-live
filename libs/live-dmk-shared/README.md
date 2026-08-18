@@ -1,5 +1,8 @@
 # live-dmk-shared
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 Platform-agnostic shared logic for the Ledger Device Management Kit (DMK) integration in Ledger Live. Contains device discovery interfaces, device-action orchestration, transport abstractions, and cross-platform services used by both the desktop and mobile DMK adapters.
 
 ## What it does
@@ -11,6 +14,10 @@ Platform-agnostic shared logic for the Ledger Device Management Kit (DMK) integr
   - `LedgerLiveLogger` — logging adapter bridging DMK events to Ledger Live's log system
   - `LiveBlindSigningReporter` — reports blind-signing events for analytics/safety
   - `UserHashService` — hashed user identifier for DMK telemetry
+- `DeviceIntentTrackingProvider` / `useDeviceIntentTracking` — shared context contract for
+  platform-specific Device Intent Executor tracking
+- `DeviceIntentExecutorHeaderContext` / `OverrideDeviceIntentExecutorHeader` — shared
+  header-override contract for platform-specific Device Intent Executor chrome
 - Centralises DMK configuration
 
 ## Key exports / concepts

@@ -1,5 +1,7 @@
 import React from "react";
 import { useLocation } from "react-router";
+import { isMarketCurrencyData } from "@ledgerhq/asset-detail";
+import type { MarketStateSlice } from "@ledgerhq/asset-aggregation/assetDistribution/index";
 import { RightPanelView } from "./RightPanelView";
 import {
   DEFAULT_RIGHT_PANEL_VIEW_MODEL,
@@ -10,10 +12,11 @@ import {
 interface AssetRightPanelProps {
   readonly pathname: string;
   readonly routeAssetId: string;
+  readonly marketState?: MarketStateSlice;
 }
 
-const AssetRightPanel = ({ pathname, routeAssetId }: AssetRightPanelProps) => {
-  const viewModel = useRightPanelViewModel({ pathname, routeAssetId });
+const AssetRightPanel = ({ pathname, routeAssetId, marketState }: AssetRightPanelProps) => {
+  const viewModel = useRightPanelViewModel({ pathname, routeAssetId, marketState });
   return <RightPanelView viewModel={viewModel} />;
 };
 
@@ -24,14 +27,17 @@ const AssetRightPanel = ({ pathname, routeAssetId }: AssetRightPanelProps) => {
  * Note: Visibility is controlled by PageView.
  */
 const RightPanel = () => {
-  const { pathname } = useLocation();
+  const { pathname, state } = useLocation();
   const routeAssetId = getRightPanelRouteAssetId(pathname);
+  const marketState = isMarketCurrencyData(state) ? state : undefined;
 
   if (!routeAssetId) {
     return <RightPanelView viewModel={DEFAULT_RIGHT_PANEL_VIEW_MODEL} />;
   }
 
-  return <AssetRightPanel pathname={pathname} routeAssetId={routeAssetId} />;
+  return (
+    <AssetRightPanel pathname={pathname} routeAssetId={routeAssetId} marketState={marketState} />
+  );
 };
 
 export default RightPanel;

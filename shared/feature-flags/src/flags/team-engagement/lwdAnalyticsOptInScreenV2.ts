@@ -1,4 +1,4 @@
 import { flag } from "../../define";
 
-/** Rollout: internal QA → staged B traffic on Welcome onboarding only (with lldAnalyticsOptInPrompt variant B). */
+/** Rollout of the Welcome onboarding analytics opt-in screen (V2). Portfolio keeps the legacy drawer. */
 export const lwdAnalyticsOptInScreenV2 = flag();

@@ -11,7 +11,7 @@ import {
   type SignerCosmos,
 } from "@ledgerhq/device-signer-kit-cosmos";
 import { DeviceActionStatus, DeviceManagementKit } from "@ledgerhq/device-management-kit";
-import { LockedDeviceError, UserRefusedOnDevice } from "@ledgerhq/errors";
+import { LockedDeviceError, UserRefusedOnDevice } from "@ledgerhq/hw-transport/errors";
 
 type DAError = GetAddressDAError | SignTransactionDAError;
 

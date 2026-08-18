@@ -1,4 +1,4 @@
-import { EvmCoinConfig, setCoinConfig } from "../config";
+import type { EvmCoinConfig } from "../config";
 import { getValidators } from "./validators";
 
 describe("getValidators", () => {
@@ -25,20 +25,29 @@ describe("getValidators", () => {
         },
       } as EvmCoinConfig,
     ],
+    [
+      "somnia",
+      {
+        info: {
+          node: {
+            type: "external",
+            uri: "https://somnia-rpc.publicnode.com",
+          },
+        },
+      } as EvmCoinConfig,
+    ],
   ])("fetches validators on '%s'", async (currencyId, config) => {
-    setCoinConfig(() => config);
-
-    const firstPage = await getValidators(currencyId);
+    const firstPage = await getValidators(config.info, currencyId);
     expect(firstPage.items.length).toBeGreaterThan(0);
 
     const validator = firstPage.items[0];
-    expect(validator.validatorAddress).toMatch(/^0x[0-9a-fA-F]{40}$/);
+    expect(validator.address).toMatch(/^0x[0-9a-fA-F]{40}$/);
     // Name is either resolved from the validator-info overlay or the `Validator {id}`
     // fallback — both are non-empty strings.
     expect(typeof validator.name).toBe("string");
     expect(validator.name.length).toBeGreaterThan(0);
-    expect(BigInt(validator.tokens)).toBeGreaterThan(0n);
-    expect(validator.commission).toBeGreaterThanOrEqual(0);
-    expect(validator.commission).toBeLessThanOrEqual(1);
+    expect(validator.balance).toBeGreaterThan(0n);
+    expect(parseFloat(validator.commissionRate ?? "0")).toBeGreaterThanOrEqual(0);
+    expect(parseFloat(validator.commissionRate ?? "0")).toBeLessThanOrEqual(1);
   });
 });

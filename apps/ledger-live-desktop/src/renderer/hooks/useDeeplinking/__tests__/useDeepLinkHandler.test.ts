@@ -2,7 +2,7 @@
 
 import { renderHook, waitFor, withFlagOverrides } from "tests/testSetup";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { getCryptoCurrencyById, findCryptoCurrencyByKeyword } from "@domain/entity-currency-crypto";
 import { openModal, closeAllModal } from "~/renderer/actions/modals";
 import {
@@ -85,8 +85,8 @@ const mockGetCryptoAssetsStore = {
   findTokenById: jest.fn(),
 };
 
-jest.mock("@ledgerhq/cryptoassets/state", () => ({
-  ...jest.requireActual("@ledgerhq/cryptoassets/state"),
+jest.mock("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore", () => ({
+  ...jest.requireActual("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore"),
   getCryptoAssetsStore: () => mockGetCryptoAssetsStore,
 }));
 

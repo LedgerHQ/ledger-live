@@ -1,5 +1,5 @@
-import type { LargeScreenUpsellModalState } from "@domain/entity-large-screen-upsell-modal";
 import type { Features } from "@shared/feature-flags";
+import type { RestorableLargeScreenUpsellModalState } from "./state";
 
 type LargeScreenUpsellParams = NonNullable<Features["largeScreenUpsell"]["params"]>;
 
@@ -18,13 +18,17 @@ export type LargeScreenUpsellDecision =
         | "touchscreen_seen"
         | "model_disabled";
     }
-  | { shouldShow: false; reason: "cooldown" | "throttled"; deviceModelId: NanoDeviceModelId };
+  | {
+      shouldShow: false;
+      reason: "cooldown" | "throttled";
+      deviceModelId: NanoDeviceModelId;
+    };
 
 export type LargeScreenUpsellUserState = {
   seenNanoModelIds: NanoDeviceModelId[];
   hasSeenTouchscreenDevice: boolean;
   onboardingDate: Date | null;
-  frequency: LargeScreenUpsellModalState;
+  frequency: RestorableLargeScreenUpsellModalState;
 };
 
 export type LargeScreenUpsellContext = {
@@ -36,3 +40,25 @@ export type LargeScreenUpsellContext = {
   cadenceDays: number;
   now: Date;
 };
+
+export type LargeScreenUpsellEligibilityUserState = Pick<
+  LargeScreenUpsellUserState,
+  "seenNanoModelIds" | "hasSeenTouchscreenDevice" | "onboardingDate"
+>;
+
+export type LargeScreenUpsellEligibilityContext = Pick<
+  LargeScreenUpsellContext,
+  "audienceModels" | "cooldownDays" | "now"
+>;
+
+export type LargeScreenUpsellEligibility =
+  | { isEligible: true; deviceModelId: NanoDeviceModelId }
+  | {
+      isEligible: false;
+      reason: "no_nano" | "touchscreen_seen" | "model_disabled";
+    }
+  | {
+      isEligible: false;
+      reason: "cooldown";
+      deviceModelId: NanoDeviceModelId;
+    };

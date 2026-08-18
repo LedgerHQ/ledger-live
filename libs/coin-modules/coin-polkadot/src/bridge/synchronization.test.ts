@@ -13,8 +13,10 @@ jest.mock("../config", () => ({
 const mockGetAccount = jest.fn();
 const mockGetOperations = jest.fn();
 jest.mock("../network", () => ({
-  getAccount: (address: string, currency?: CryptoCurrency) => mockGetAccount(address, currency),
+  getAccount: (_config: unknown, address: string, currency?: CryptoCurrency) =>
+    mockGetAccount(address, currency),
   getOperations: (
+    _config: unknown,
     accountId: string,
     addr: string,
     currency?: CryptoCurrency,

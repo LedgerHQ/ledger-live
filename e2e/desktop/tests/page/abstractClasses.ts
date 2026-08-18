@@ -1,11 +1,21 @@
 import { Page, expect, ElectronApplication } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
+import { softExpect } from "tests/utils/softExpect";
+
+import type { SoftExpectMatcher, SoftExpectOptions } from "tests/utils/softExpect";
 
 export abstract class PageHolder {
   constructor(
     protected page: Page,
     protected readonly electronApp?: ElectronApplication,
   ) {}
+
+  protected async softExpect(
+    assertion: (soft: SoftExpectMatcher) => Promise<void>,
+    options: SoftExpectOptions = {},
+  ) {
+    await softExpect({ page: this.page, assertion }, options);
+  }
 
   getPage() {
     return this.page;
@@ -50,4 +60,6 @@ export abstract class Component extends PageHolder {
   }
 }
 
-export abstract class AppPage extends Component {}
+export abstract class AppPage extends Component {
+  readonly pageView = (pageId: string) => this.page.getByTestId(`page-view-${pageId}`);
+}

@@ -5,6 +5,9 @@
 
 Welcome to Ledger's @ledgerhq/live-config JavaScript lib.
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 ### Introduction
 
 @ledgerhq/live-config is a versatile TypeScript library designed to manage application configurations dynamically. It supports various data types and integrates seamlessly with different configuration providers.
@@ -29,6 +32,7 @@ yarn add @ledgerhq/live-config
 
 ### Usage
 ## Initializing LiveConfig
+
 LiveConfig is a singleton class. To use it, you must first set a provider and a configuration schema.
 
 Set a Provider

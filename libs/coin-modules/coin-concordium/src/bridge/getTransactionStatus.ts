@@ -6,7 +6,7 @@ import {
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
   RecipientRequired,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import type { Account, AccountBridge } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { MAX_MEMO_LENGTH, AccountAddress } from "@ledgerhq/concordium-core";

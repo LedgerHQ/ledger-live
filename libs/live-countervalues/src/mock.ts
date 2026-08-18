@@ -70,6 +70,7 @@ export const TICKER_TO_ID_AND_VALUE: Record<string, [string, number]> = {
     "energi/erc20/chainlink_0x68ca48ca2626c415a89756471d4ade2cc9034008",
     0.0004308891233488705,
   ],
+  ALEO: ["aleo", 0.0000018004678299540296],
 };
 
 // getBTCValues retourne seulement les valeurs filtrées

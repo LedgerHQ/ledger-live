@@ -365,8 +365,13 @@ function parseTokenOperations(
   const postTokenBalances = tx.meta?.postTokenBalances ?? [];
   if (preTokenBalances.length === 0 && postTokenBalances.length === 0) return [];
 
-  const tokenChanges = computeTokenBalanceDeltas(address, preTokenBalances, postTokenBalances);
   const accountKeys = tx.transaction.message.accountKeys.map(k => k.pubkey.toBase58());
+  const tokenChanges = computeTokenBalanceDeltas(
+    address,
+    preTokenBalances,
+    postTokenBalances,
+    accountKeys,
+  );
   const ops: Operation[] = [];
   let operationIndex = 1;
 
@@ -397,20 +402,23 @@ function buildTokenOperation(
   meta: TxMeta,
   operationIndex: number,
 ): Operation {
-  const { mint, delta, tokenType } = change;
-  const asset: AssetInfo = { type: tokenType, assetReference: mint, assetOwner: address };
+  const { mint, delta, tokenType, owner } = change;
+  // Emit the operation against the wallet owner (not the queried address): when
+  // coin-service queries by a token-account/ATA address, senders/recipients and
+  // assetOwner must still resolve to the wallet, matching a wallet-address query.
+  const asset: AssetInfo = { type: tokenType, assetReference: mint, assetOwner: owner };
 
   const opType = delta > 0n ? "IN" : "OUT";
   const value = delta > 0n ? delta : -delta;
 
   const counterparty = findTokenCounterparty(
-    address,
+    owner,
     mint,
     preTokenBalances,
     postTokenBalances,
     accountKeys,
   );
-  const { senders, recipients } = buildParties(opType, address, counterparty);
+  const { senders, recipients } = buildParties(opType, owner, counterparty);
 
   return makeOperation({
     address,
@@ -431,7 +439,28 @@ function buildTokenOperation(
   });
 }
 
-type TokenChange = { mint: string; delta: bigint; tokenType: SolanaTokenProgram };
+type TokenChange = {
+  mint: string;
+  delta: bigint;
+  tokenType: SolanaTokenProgram;
+  owner: string;
+};
+
+/**
+ * A token balance belongs to the queried address when the address is either the
+ * wallet owner (Solana's `owner` field) or the token account itself. Ledger Live
+ * addresses token sub-accounts by their token-account (ATA) address, so
+ * coin-service queries operations by that address — but Solana's balance records
+ * only carry the wallet `owner`. Matching both makes token operations surface for
+ * either kind of query.
+ */
+function tokenBalanceMatchesAddress(
+  tb: TokenBalance,
+  address: string,
+  accountKeys: string[],
+): boolean {
+  return tb.owner === address || accountKeys[tb.accountIndex] === address;
+}
 
 /** Maps a program ID to the internal token type name, defaulting to SPL_TOKEN for unknown IDs. */
 function resolveTokenType(programId: string | undefined): SolanaTokenProgram {
@@ -440,44 +469,57 @@ function resolveTokenType(programId: string | undefined): SolanaTokenProgram {
 }
 
 /**
- * Computes per-mint balance deltas for the given owner across a transaction.
+ * Computes per-mint balance deltas for the given address across a transaction.
+ * The address may be the wallet owner or one of its token accounts (see
+ * {@link tokenBalanceMatchesAddress}).
  *
  * Two passes:
- *  1. Iterate postTokenBalances for the owner → delta = post − (matched pre or 0).
+ *  1. Iterate postTokenBalances for the address → delta = post − (matched pre or 0).
  *     Covers tokens that still exist after the tx (increase, decrease, or unchanged).
  *  2. Iterate preTokenBalances for entries not yet seen → delta = −pre.
  *     Covers tokens fully consumed by the tx (e.g. account closed / all tokens sent away).
  */
 function computeTokenBalanceDeltas(
-  ownerAddress: string,
+  address: string,
   preTokenBalances: TokenBalance[],
   postTokenBalances: TokenBalance[],
+  accountKeys: string[],
 ): Map<string, TokenChange> {
   const changes = new Map<string, TokenChange>();
 
   const preBalancesByMint = new Map<string, bigint>();
   for (const pre of preTokenBalances) {
-    if (pre.owner !== ownerAddress) continue;
+    if (!tokenBalanceMatchesAddress(pre, address, accountKeys)) continue;
     if (!preBalancesByMint.has(pre.mint)) {
       preBalancesByMint.set(pre.mint, BigInt(pre.uiTokenAmount.amount));
     }
   }
 
   for (const post of postTokenBalances) {
-    if (post.owner !== ownerAddress) continue;
+    if (!tokenBalanceMatchesAddress(post, address, accountKeys)) continue;
     const tokenType = resolveTokenType(post.programId);
     const key = `${post.mint}-${tokenType}`;
     const postAmount = BigInt(post.uiTokenAmount.amount);
     const preAmount = preBalancesByMint.get(post.mint) ?? 0n;
-    changes.set(key, { mint: post.mint, delta: postAmount - preAmount, tokenType });
+    changes.set(key, {
+      mint: post.mint,
+      delta: postAmount - preAmount,
+      tokenType,
+      owner: post.owner ?? address,
+    });
   }
 
   for (const pre of preTokenBalances) {
-    if (pre.owner !== ownerAddress) continue;
+    if (!tokenBalanceMatchesAddress(pre, address, accountKeys)) continue;
     const tokenType = resolveTokenType(pre.programId);
     const key = `${pre.mint}-${tokenType}`;
     if (!changes.has(key)) {
-      changes.set(key, { mint: pre.mint, delta: -BigInt(pre.uiTokenAmount.amount), tokenType });
+      changes.set(key, {
+        mint: pre.mint,
+        delta: -BigInt(pre.uiTokenAmount.amount),
+        tokenType,
+        owner: pre.owner ?? address,
+      });
     }
   }
 

@@ -22,6 +22,7 @@ export type ConnectAppDAOutput = {
 
 export type ConnectAppDAInput = OpenAppWithDependenciesDAInput & {
   readonly allowMissingApplication: boolean;
+  readonly allowNonOnboardedDevice?: boolean;
   readonly requiredDerivation?: () => Promise<ConnectAppDerivation>;
   readonly deprecationConfig?: DeviceDeprecationConfigs;
 };

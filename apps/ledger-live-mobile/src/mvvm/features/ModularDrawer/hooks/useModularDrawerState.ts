@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { ModularDrawerStep } from "../types";
 import { useStepNavigation } from "./useStepNavigation";
 import { useDeviceNavigation } from "./useDeviceNavigation";
@@ -7,7 +7,11 @@ import { useDrawerLifecycle } from "./useDrawerLifecycle";
 import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
 import { getNetworksForAsset, resolveCurrency } from "../utils/helpers";
 import { useSelector, useDispatch } from "~/context/hooks";
-import { modularDrawerEnableAccountSelectionSelector, setStep } from "~/reducers/modularDrawer";
+import {
+  modularDrawerCompletionModeSelector,
+  modularDrawerEnableAccountSelectionSelector,
+  setStep,
+} from "~/reducers/modularDrawer";
 import { useAcceptedCurrency } from "@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency";
 import type { ModularDrawerProps } from "../ModularDrawer";
 
@@ -18,7 +22,9 @@ type ModularDrawerStateProps = {
   isDrawerOpen?: boolean;
   onClose?: () => void;
   onAccountSelected: ModularDrawerProps["onAccountSelected"];
+  onCurrencySelected?: NonNullable<ModularDrawerProps["onCurrencySelected"]>;
   hasSearchedValue?: boolean;
+  selectableNetworkIds?: readonly string[];
 };
 
 export function useModularDrawerState({
@@ -28,15 +34,35 @@ export function useModularDrawerState({
   onClose,
   hasSearchedValue,
   onAccountSelected,
+  onCurrencySelected,
+  selectableNetworkIds,
 }: ModularDrawerStateProps) {
   const isAcceptedCurrency = useAcceptedCurrency();
   const enableAccountSelection = useSelector(modularDrawerEnableAccountSelectionSelector);
+  const completionMode = useSelector(modularDrawerCompletionModeSelector);
   const dispatch = useDispatch();
 
   const [asset, setAsset] = useState<CryptoOrTokenCurrency>();
   const [network, setNetwork] = useState<CryptoOrTokenCurrency>();
   const [availableNetworks, setAvailableNetworks] = useState<CryptoOrTokenCurrency[]>([]);
   const autoSelectRef = useRef(false);
+  const selectableNetworkIdSet = useMemo(
+    () => (selectableNetworkIds === undefined ? undefined : new Set(selectableNetworkIds)),
+    [selectableNetworkIds],
+  );
+
+  const isSelectableNetwork = useCallback(
+    (selectedNetwork: CryptoOrTokenCurrency) => {
+      if (selectableNetworkIdSet === undefined) return true;
+
+      const networkId =
+        selectedNetwork.type === "CryptoCurrency"
+          ? selectedNetwork.id
+          : selectedNetwork.parentCurrencyId;
+      return selectableNetworkIdSet.has(networkId);
+    },
+    [selectableNetworkIdSet],
+  );
 
   const singleCurrency = useMemo(
     () => (assetsSorted?.length === 1 ? assetsSorted[0].networks[0] : undefined),
@@ -73,17 +99,21 @@ export function useModularDrawerState({
     clearNetwork,
     selectNetwork: setNetwork,
     navigateToDeviceWithCurrency,
+    onCurrencySelected,
   });
 
   // Handle asset selection and determine next step
   const handleAsset = useCallback(
     (selected: CryptoOrTokenCurrency) => {
-      setAsset(selected);
       const availableNetworksList = getNetworksForAsset(
         assetsSorted,
         selected.id,
         isAcceptedCurrency,
       );
+      if (selectableNetworkIds !== undefined && !availableNetworksList.some(isSelectableNetwork)) {
+        return;
+      }
+      setAsset(selected);
 
       if (availableNetworksList.length > 1) {
         setAvailableNetworks(availableNetworksList);
@@ -98,6 +128,8 @@ export function useModularDrawerState({
         );
         const currencyToUse = resolvedCurrency ?? selected;
         proceedToNextStep(currencyToUse, singleNetwork);
+      } else if (completionMode === "currency") {
+        onCurrencySelected?.(selected);
       } else if (enableAccountSelection) {
         dispatch(setStep(ModularDrawerStep.Account));
       } else {
@@ -106,11 +138,15 @@ export function useModularDrawerState({
     },
     [
       assetsSorted,
+      completionMode,
       enableAccountSelection,
       dispatch,
       navigateToDeviceWithCurrency,
+      onCurrencySelected,
       proceedToNextStep,
       isAcceptedCurrency,
+      isSelectableNetwork,
+      selectableNetworkIds,
     ],
   );
 
@@ -118,6 +154,7 @@ export function useModularDrawerState({
   const handleNetwork = useCallback(
     (selectedNetwork: CryptoOrTokenCurrency) => {
       if (!asset) return;
+      if (!isSelectableNetwork(selectedNetwork)) return;
       const correspondingCurrency = resolveCurrency(
         assetsSorted,
         isAcceptedCurrency,
@@ -128,7 +165,7 @@ export function useModularDrawerState({
         proceedToNextStep(correspondingCurrency, selectedNetwork);
       }
     },
-    [asset, assetsSorted, proceedToNextStep, isAcceptedCurrency],
+    [asset, assetsSorted, proceedToNextStep, isAcceptedCurrency, isSelectableNetwork],
   );
 
   const { handleBackButton, handleCloseButton } = useDrawerLifecycle({

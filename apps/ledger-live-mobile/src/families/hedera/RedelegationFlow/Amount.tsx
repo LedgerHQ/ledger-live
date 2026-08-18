@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import invariant from "invariant";
 import { StyleSheet, View } from "react-native";
 import { Trans } from "~/context/Locale";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "~/components/SafeAreaView";
 import { useTheme } from "@react-navigation/native";
 import { Text } from "@ledgerhq/native-ui";
 import type { AccountBridge } from "@ledgerhq/types-live";
@@ -43,7 +43,7 @@ function RedelegationAmount({ navigation, route }: Props) {
     const transaction = bridge.updateTransaction(t, {
       mode: HEDERA_TRANSACTION_MODES.Redelegate,
       properties: {
-        stakingNodeId: route.params.selectedValidator.nodeId,
+        stakingNodeId: Number(route.params.selectedValidator.id),
       } as const,
     });
 

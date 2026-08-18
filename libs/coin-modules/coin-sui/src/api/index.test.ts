@@ -1,14 +1,15 @@
 import { BalanceOptions, Page, Reward, Stake } from "@ledgerhq/coin-module-framework/api/types";
-import { InvalidParameterError } from "@ledgerhq/errors";
-import type { SuiCoinConfig } from "../config";
+import type { SuiCoinConfig, SuiContext } from "../config";
 import * as logic from "../logic";
 import { createApi } from "./index";
 
 jest.mock("../logic");
+
+const mockSetCoinConfig = jest.fn();
 jest.mock("../config", () => ({
   __esModule: true,
   default: {
-    setCoinConfig: jest.fn(),
+    setCoinConfig: (...args: unknown[]) => mockSetCoinConfig(...args),
     getCoinConfig: jest.fn(),
   },
 }));
@@ -19,15 +20,20 @@ const mockConfig: SuiCoinConfig = {
   features: { graphql: false },
 };
 
+const context: SuiContext = {
+  config: async () => mockConfig,
+  logger: () => {},
+};
+
 describe("api/index", () => {
   let api: ReturnType<typeof createApi>;
 
   beforeEach(() => {
     jest.clearAllMocks();
-    api = createApi(mockConfig);
+    api = createApi();
   });
 
-  it("should set coin config and return API object", () => {
+  it("should return API object", () => {
     expect(typeof api).toBe("object");
     expect(Object.keys(api)).toEqual(
       expect.arrayContaining([
@@ -45,16 +51,16 @@ describe("api/index", () => {
 
   it("should call broadcast from logic", async () => {
     const mockBroadcast = jest.spyOn(logic, "broadcast").mockResolvedValue("broadcasted");
-    const result = await api.broadcast("tx");
-    expect(mockBroadcast).toHaveBeenCalledWith("tx");
+    const result = await api.broadcast(context, "tx");
+    expect(mockBroadcast).toHaveBeenCalledWith(mockConfig, "tx");
     expect(result).toBe("broadcasted");
   });
 
   it("should call combine from logic", async () => {
     const mockCombine = jest.spyOn(logic, "combine").mockReturnValue("combined-tx");
     const arg1 = "txstring";
-    const arg2 = "sigstring";
-    const result = api.combine(arg1, arg2);
+    const arg2 = ["sigstring"];
+    const result = api.combine(context, arg1, arg2);
     expect(mockCombine).toHaveBeenCalledWith(arg1, arg2);
     expect(result).toBe("combined-tx");
   });
@@ -63,25 +69,25 @@ describe("api/index", () => {
     const unsigned = Buffer.from("unsignedTx");
     jest.spyOn(logic, "craftTransaction").mockResolvedValue({ unsigned });
     const txIntent = { foo: "bar" } as any;
-    const { transaction: result } = await api.craftTransaction(txIntent);
+    const { transaction: result } = await api.craftTransaction(context, txIntent);
     expect(result).toBe(unsigned.toString("hex"));
-    expect(logic.craftTransaction).toHaveBeenCalledWith(txIntent, true);
+    expect(logic.craftTransaction).toHaveBeenCalledWith(mockConfig, txIntent, true, undefined);
   });
 
   it("should call estimateFees via estimate wrapper and return FeeEstimation", async () => {
     jest.spyOn(logic, "estimateFees").mockResolvedValue({ fees: 123n, gasBudget: 200n });
     const txIntent = { foo: "bar" } as any;
-    const result = await api.estimateFees(txIntent);
+    const result = await api.estimateFees(context, txIntent);
     expect(result).toEqual({ value: 200n }); // framework reports the positive gas budget
-    expect(logic.estimateFees).toHaveBeenCalledWith(txIntent);
+    expect(logic.estimateFees).toHaveBeenCalledWith(mockConfig, txIntent);
   });
 
   it("should call getBalance from logic", async () => {
     const mockGetBalance = jest
       .spyOn(logic, "getBalance")
       .mockResolvedValue([{ value: 42n, asset: { type: "native" } }]);
-    const result = await api.getBalance("address");
-    expect(mockGetBalance).toHaveBeenCalledWith("address");
+    const result = await api.getBalance(context, "address");
+    expect(mockGetBalance).toHaveBeenCalledWith(mockConfig, "address");
     expect(result).toEqual([{ value: 42n, asset: { type: "native" } }]);
   });
 
@@ -89,7 +95,7 @@ describe("api/index", () => {
     const mockLastBlock = jest
       .spyOn(logic, "lastBlock")
       .mockResolvedValue({ hash: "h", height: 1, time: new Date() });
-    const result = await api.lastBlock();
+    const result = await api.lastBlock(context);
     expect(mockLastBlock).toHaveBeenCalled();
     expect(result).toHaveProperty("hash");
     expect(result).toHaveProperty("height");
@@ -115,8 +121,11 @@ describe("api/index", () => {
     const mockListOperations = jest
       .spyOn(logic, "listOperations")
       .mockResolvedValue({ items: [minimalOperation], next: undefined });
-    const result = await api.listOperations("address", { minHeight: 0, order: "asc" });
-    expect(mockListOperations).toHaveBeenCalledWith("address", { minHeight: 0, order: "asc" });
+    const result = await api.listOperations(context, "address", { minHeight: 0, order: "asc" });
+    expect(mockListOperations).toHaveBeenCalledWith(mockConfig, "address", {
+      minHeight: 0,
+      order: "asc",
+    });
     expect(result).toEqual({ items: [minimalOperation], next: undefined });
   });
 
@@ -138,8 +147,8 @@ describe("api/index", () => {
       ],
     } as Page<Stake>;
     const mockGetStakes = jest.spyOn(logic, "getStakes").mockResolvedValue(value);
-    const result = await api.getStakes("address");
-    expect(mockGetStakes).toHaveBeenCalledWith("address");
+    const result = await api.getStakes(context, "address");
+    expect(mockGetStakes).toHaveBeenCalledWith(mockConfig, "address", undefined);
     expect(result).toEqual(value);
   });
 
@@ -155,26 +164,26 @@ describe("api/index", () => {
       ],
     } as Page<Reward>;
     const mockGetRewards = jest.spyOn(logic, "getRewards").mockResolvedValue(value);
-    const result = await api.getRewards("address");
-    expect(mockGetRewards).toHaveBeenCalledWith("address");
+    const result = await api.getRewards(context, "address");
+    expect(mockGetRewards).toHaveBeenCalledWith("address", undefined);
     expect(result).toEqual(value);
   });
 
   it("should throw if craftTransaction throws", async () => {
     jest.spyOn(logic, "craftTransaction").mockRejectedValue(new Error("fail"));
-    await expect(api.craftTransaction({} as any)).rejects.toThrow("fail");
+    await expect(api.craftTransaction(context, {} as any)).rejects.toThrow("fail");
   });
 
   it("should throw if estimateFees throws", async () => {
     jest.spyOn(logic, "estimateFees").mockRejectedValue(new Error("fail"));
-    await expect(api.estimateFees({} as any)).rejects.toThrow("fail");
+    await expect(api.estimateFees(context, {} as any)).rejects.toThrow("fail");
   });
 
   describe("getBalance", () => {
     it("should throw an exception when options is provided", async () => {
       await expect(
-        api.getBalance("random address", {} as unknown as BalanceOptions),
-      ).rejects.toThrow(InvalidParameterError);
+        api.getBalance(context, "random address", {} as unknown as BalanceOptions),
+      ).rejects.toMatchObject({ name: "InvalidParameterError" });
     });
   });
 });

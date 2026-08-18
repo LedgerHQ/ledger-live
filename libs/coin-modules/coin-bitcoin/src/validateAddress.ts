@@ -1,6 +1,6 @@
 import type { AddressValidationCurrencyParameters } from "@ledgerhq/coin-module-framework/api/types";
-import { isValidAddress } from "./wallet-btc/utils";
-import { Currency } from "./wallet-btc";
+import { isValidAddress } from "@ledgerhq/wallet-btc/utils";
+import { Currency } from "@ledgerhq/wallet-btc/index";
 
 export async function validateAddress(
   address: string,

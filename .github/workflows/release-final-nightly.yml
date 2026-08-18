@@ -7,12 +7,14 @@ on:
 
 permissions:
   contents: read
-  id-token: write
 
 jobs:
   nightly-release:
     name: Nightly Release
-    runs-on: ubuntu-24.04
+    permissions:
+      id-token: write
+      contents: read
+    runs-on: ledger-live-linux-8CPU-32RAM
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
@@ -25,9 +27,11 @@ jobs:
           repositories: |
             ledger-live
             ledger-live-build
+          permission-contents: write
+          permission-actions: write
 
       - name: Checkout Repo
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           ref: develop
           fetch-depth: 1
@@ -49,9 +53,14 @@ jobs:
           gh-token: ${{ secrets.GITHUB_TOKEN }}
           skip-nx-cache: "true"
 
-      - uses: ruby/setup-ruby@v1
+      - uses: ruby/setup-ruby@95ef2b042f9d7a56d8268cba8559e2842e2ad01b # v1
         with:
           ruby-version: 3.3.0
+
+      - name: JFrog npm auth
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        with:
+          registry: ${{ vars.ARTIFACTORY_URL }}
 
       - name: install dependencies
         run: pnpm i -F "ledger-live" -F "{libs/**}..." -F "@ledgerhq/live-cli"
@@ -69,15 +78,33 @@ jobs:
         with:
           path: ${{ github.workspace }}/apps/wallet-cli
 
+        #JFrog publishing - if statements to be removed when all is migrated
+
+      - name: JFrog npm auth (publish registry)
+        if: ${{ vars.ARTIFACTORY_PUBLISH_URL != '' }}
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        with:
+          registry: ${{ vars.ARTIFACTORY_PUBLISH_URL }}
+
+      - name: publish nightly (JFrog)
+        if: ${{ vars.ARTIFACTORY_PUBLISH_URL != '' }}
+        run: npm_config_registry="https://${{ vars.ARTIFACTORY_PUBLISH_URL }}/" pnpm changeset publish --tag nightly --no-git-tag
+
+        #NPM publishing - to be removed when all is migrated
+
       - name: authenticate with npm
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        if: ${{ vars.ARTIFACTORY_PUBLISH_URL == '' }}
         with:
           registry-url: "https://registry.npmjs.org"
 
       - name: publish nightly
         run: pnpm changeset publish --tag nightly --no-git-tag
+        if: ${{ vars.ARTIFACTORY_PUBLISH_URL == '' }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPMJS_TOKEN }}
+
+      #NPM publishing - end removal
 
       - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
         id: post-desktop-version
@@ -97,7 +124,7 @@ jobs:
           token: ${{ steps.generate-token.outputs.token }}
           overwrite: true
 
-      - uses: actions/github-script@v7
+      - uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         name: trigger nightly build of desktop
         with:
           github-token: ${{ steps.generate-token.outputs.token }}
@@ -112,7 +139,7 @@ jobs:
               }
             });
 
-      - uses: actions/github-script@v7
+      - uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         name: trigger nightly build of mobile
         with:
           github-token: ${{ steps.generate-token.outputs.token }}
@@ -127,7 +154,7 @@ jobs:
               }
             });
 
-      - uses: actions/github-script@v7
+      - uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         name: trigger nightly wallet-cli sign and JFrog publish
         with:
           github-token: ${{ steps.generate-token.outputs.token }}
@@ -153,7 +180,7 @@ jobs:
     steps:
       - name: post to a Slack channel
         id: slack
-        uses: slackapi/slack-github-action@v2.0.0
+        uses: slackapi/slack-github-action@dcb1066f776dd043e64d0e8ba94ca15cc7e1875d # v4.0.0
         with:
           token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
           method: chat.postMessage

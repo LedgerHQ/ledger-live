@@ -1,5 +1,5 @@
 import type { Dispatch, MiddlewareAPI, UnknownAction } from "@reduxjs/toolkit";
-import { LARGE_SCREEN_UPSELL_MODAL } from "@domain/entity-large-screen-upsell-modal";
+import { LARGE_SCREEN_UPSELL_MODAL } from "@features/flow-large-screen-upsell";
 import { setKey } from "~/renderer/storage";
 import type { State } from "../../reducers";
 import DBMiddleware from "../db";
@@ -21,7 +21,7 @@ jest.mock("../../reducers/settings", () => ({
   areSettingsLoaded: (state: FakeState) => state.settings.loaded === true,
 }));
 
-jest.mock("@ledgerhq/live-wallet/store", () => ({
+jest.mock("~/renderer/reducers/wallet", () => ({
   accountUserDataExportSelector: jest.fn(() => null),
   walletStateExportShouldDiffer: jest.fn(() => false),
   exportWalletState: jest.fn(s => s),
@@ -45,6 +45,18 @@ jest.mock("@domain/entity-client-identity", () => ({
   exportIdentitiesForPersistence: jest.fn(s => s),
 }));
 
+jest.mock("@features/flow-pay-card-balance/state", () => ({
+  payCardBalancePersistedSelector: (state: FakeState) => ({
+    balanceFilter: state.payCardBalance.balanceFilter,
+  }),
+}));
+
+jest.mock("@features/flow-pay-card-feature-tour/state", () => ({
+  payCardFeatureTourPersistedSelector: (state: FakeState) => ({
+    hasSeenFeatureTour: state.payCardFeatureTour.hasSeenFeatureTour,
+  }),
+}));
+
 jest.mock("@ledgerhq/live-common/account/index", () => ({
   accountsPersistedStateChanged: jest.fn(() => false),
 }));
@@ -61,7 +73,13 @@ type FakeState = {
   history: unknown;
   featureFlags: { overrides: unknown; bannerVisible: unknown; remoteFlagsReady?: unknown };
   coinConfigOverrides: { overrides: Record<string, unknown> };
-  largeScreenUpsellModal: { retries: number; lastSeenAt: number | null };
+  largeScreenUpsellModal: { retriesModal: number; lastSeenAt: number | null };
+  payCardBalance: {
+    balanceFilter: string;
+  };
+  payCardFeatureTour: {
+    hasSeenFeatureTour: boolean;
+  };
   trustchain?: unknown;
 };
 
@@ -75,7 +93,9 @@ const baseState = (): FakeState => ({
   history: {},
   featureFlags: { overrides: {}, bannerVisible: false },
   coinConfigOverrides: { overrides: {} },
-  largeScreenUpsellModal: { retries: 0, lastSeenAt: null },
+  largeScreenUpsellModal: { retriesModal: 0, lastSeenAt: null },
+  payCardBalance: { balanceFilter: "all" },
+  payCardFeatureTour: { hasSeenFeatureTour: false },
 });
 
 function runMiddleware(states: FakeState[], action: { type: string; payload?: unknown }) {
@@ -198,7 +218,7 @@ describe("DBMiddleware - largeScreenUpsellModal branch", () => {
   it("persists largeScreenUpsellModal under app/largeScreenUpsellModal on largeScreenUpsellModal/* actions", () => {
     const state: FakeState = {
       ...baseState(),
-      largeScreenUpsellModal: { retries: 2, lastSeenAt: 1_720_000_000_000 },
+      largeScreenUpsellModal: { retriesModal: 2, lastSeenAt: 1_720_000_000_000 },
     };
 
     runMiddleware([state, state], {
@@ -207,11 +227,48 @@ describe("DBMiddleware - largeScreenUpsellModal branch", () => {
     });
 
     expect(mockedSetKey).toHaveBeenCalledTimes(1);
-    expect(mockedSetKey).toHaveBeenCalledWith(
-      "app",
-      LARGE_SCREEN_UPSELL_MODAL,
-      state.largeScreenUpsellModal,
-    );
+    expect(mockedSetKey).toHaveBeenCalledWith("app", LARGE_SCREEN_UPSELL_MODAL, {
+      retriesModal: 2,
+      lastSeenAt: 1_720_000_000_000,
+    });
+  });
+});
+
+describe("DBMiddleware - payCard branch", () => {
+  beforeEach(() => {
+    mockedSetKey.mockReset();
+  });
+
+  it("persists the composed { hasSeenFeatureTour, balanceFilter } blob on payCardFeatureTour/* actions", () => {
+    const state: FakeState = {
+      ...baseState(),
+      payCardFeatureTour: { hasSeenFeatureTour: true },
+      payCardBalance: { balanceFilter: "ethereum/erc20/usd__coin" },
+    };
+
+    runMiddleware([state, state], { type: "payCardFeatureTour/markPayCardFeatureTourSeen" });
+
+    expect(mockedSetKey).toHaveBeenCalledTimes(1);
+    expect(mockedSetKey).toHaveBeenCalledWith("app", "payCard", {
+      hasSeenFeatureTour: true,
+      balanceFilter: "ethereum/erc20/usd__coin",
+    });
+  });
+
+  it("persists the composed blob on payCardBalance/* actions", () => {
+    const state: FakeState = {
+      ...baseState(),
+      payCardFeatureTour: { hasSeenFeatureTour: true },
+      payCardBalance: { balanceFilter: "ethereum/erc20/usd__coin" },
+    };
+
+    runMiddleware([state, state], { type: "payCardBalance/setPayCardBalanceFilter" });
+
+    expect(mockedSetKey).toHaveBeenCalledTimes(1);
+    expect(mockedSetKey).toHaveBeenCalledWith("app", "payCard", {
+      hasSeenFeatureTour: true,
+      balanceFilter: "ethereum/erc20/usd__coin",
+    });
   });
 });
 

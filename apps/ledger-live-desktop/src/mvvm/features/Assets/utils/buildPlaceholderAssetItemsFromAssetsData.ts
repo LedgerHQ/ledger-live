@@ -1,6 +1,6 @@
-import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { selectCurrencyForMetaId } from "@ledgerhq/live-common/dada-client/utils/currencySelection";
-import type { AssetsDataWithPagination } from "@ledgerhq/live-common/dada-client/state-manager/types";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
+import { selectCurrencyForMetaId } from "@features/platform-aggregated-assets";
+import type { AssetsDataWithPagination } from "@domain/api-aggregated-assets";
 import type { AssetTableItem } from "../types";
 
 function toPlaceholderItem(currency: CryptoOrTokenCurrency, marketId: string): AssetTableItem {

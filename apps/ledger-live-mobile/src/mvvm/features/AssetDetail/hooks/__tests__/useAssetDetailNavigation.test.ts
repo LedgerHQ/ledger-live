@@ -15,7 +15,7 @@ jest.mock("@react-navigation/native", () => ({
 
 const withAggregatedAssets = (enabled: boolean) =>
   withFlagOverrides({
-    lwmWallet40: { enabled: true, params: { aggregatedAssets: enabled } },
+    lwmWallet40: { params: { aggregatedAssets: enabled } },
   });
 
 describe("useAssetDetailNavigation", () => {

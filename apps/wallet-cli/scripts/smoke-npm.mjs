@@ -60,7 +60,10 @@ const destination = await mkdtemp(path.join(tmpdir(), "wallet-cli-smoke-pack-"))
 const installDir = await mkdtemp(path.join(tmpdir(), "wallet-cli-smoke-install-"));
 
 try {
-  const platformTarball = await pack(path.join(root, platformPackagePath, ".npm-package"), destination);
+  const platformTarball = await pack(
+    path.join(root, platformPackagePath, ".npm-package"),
+    destination,
+  );
   const mainTarball = await pack(path.join(root, ".npm-package"), destination);
 
   await writeFile(

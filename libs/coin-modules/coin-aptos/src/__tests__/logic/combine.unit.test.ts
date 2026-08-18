@@ -24,7 +24,7 @@ describe("combine", () => {
     const account = createFixtureAccount();
     const signature = "0x7aa193705193f4";
 
-    expect(() => combine(hexRawTx, signature, account.xpub)).toThrow(
+    expect(() => combine(hexRawTx, [signature], account.xpub)).toThrow(
       "account must have a public key",
     );
 
@@ -35,7 +35,7 @@ describe("combine", () => {
     const account = createFixtureAccount();
     const signature = "signature";
 
-    expect(() => combine(hexRawTx, signature, account.xpub)).toThrow(
+    expect(() => combine(hexRawTx, [signature], account.xpub)).toThrow(
       "signature must be a valid hex value",
     );
 
@@ -46,7 +46,7 @@ describe("combine", () => {
     const account = createFixtureAccount();
     const signature = "0x7aa193705193f4";
 
-    expect(() => combine("tx", signature, account.xpub)).toThrow("tx must be a valid hex value");
+    expect(() => combine("tx", [signature], account.xpub)).toThrow("tx must be a valid hex value");
 
     expect(generateSignedTransaction).not.toHaveBeenCalled();
   });
@@ -57,7 +57,7 @@ describe("combine", () => {
     const account = createFixtureAccount();
     account.xpub = "0xb69a68cc64f7aa193705193f4dd598320a0a74baf7e4b50c9980c5bd60a82390";
 
-    const result = combine(hexRawTx, signature, account.xpub);
+    const result = combine(hexRawTx, [signature], account.xpub);
 
     expect(generateSignedTransaction).toHaveBeenCalledTimes(1);
     expect(result).not.toBe("");

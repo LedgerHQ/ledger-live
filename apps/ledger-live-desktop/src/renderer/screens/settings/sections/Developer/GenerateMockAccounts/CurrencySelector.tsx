@@ -8,7 +8,7 @@ import Input from "~/renderer/components/Input";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/hooks";
 import AngleDown from "~/renderer/icons/AngleDown";
-import type { Currency } from "@ledgerhq/types-cryptoassets";
+import type { Currency } from "@domain/entity-currency";
 import { useTranslation } from "react-i18next";
 
 const SelectContainer = styled(Box)`

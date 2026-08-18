@@ -91,24 +91,22 @@ describe("AccountBalanceHeader", () => {
     expect(toJSON()).toBeNull();
   });
 
-  it("returns null when balance is zero", () => {
+  it("renders the balances breakdown when balance is zero but resources are present", () => {
     const account: AleoAccount = {
       ...baseAccount,
       balance: new BigNumber(0),
+      aleoResources: {
+        ...baseAleoResources,
+        transparentBalance: new BigNumber(0),
+        privateBalance: new BigNumber(0),
+      },
     };
 
-    const { toJSON } = render(<AccountBalanceHeader account={account} />);
-    expect(toJSON()).toBeNull();
-  });
+    render(<AccountBalanceHeader account={account} />);
 
-  it("returns null when balance is negative", () => {
-    const account: AleoAccount = {
-      ...baseAccount,
-      balance: new BigNumber(-1),
-    };
-
-    const { toJSON } = render(<AccountBalanceHeader account={account} />);
-    expect(toJSON()).toBeNull();
+    expect(screen.getByText("aleo.balancesSection")).toBeOnTheScreen();
+    expect(screen.getByText("aleo.info.transparent.title")).toBeOnTheScreen();
+    expect(screen.getByText("aleo.info.private.title")).toBeOnTheScreen();
   });
 
   it("shows the private sync button for a regular account", () => {
@@ -160,13 +158,19 @@ describe("AccountBalanceHeader", () => {
       expect(toJSON()).toBeNull();
     });
 
-    it("returns null when the token's balance is zero", () => {
-      const account: AleoTokenAccount = { ...tokenAccount, balance: new BigNumber(0) };
+    it("renders the balances breakdown when the token's balance is zero but transparentBalance is present", () => {
+      const account: AleoTokenAccount = {
+        ...tokenAccount,
+        balance: new BigNumber(0),
+        transparentBalance: new BigNumber(0),
+        privateBalance: new BigNumber(0),
+      };
 
-      const { toJSON } = render(
-        <AccountBalanceHeader account={account} parentAccount={baseAccount} />,
-      );
-      expect(toJSON()).toBeNull();
+      render(<AccountBalanceHeader account={account} parentAccount={baseAccount} />);
+
+      expect(screen.getByText("aleo.balancesSection")).toBeOnTheScreen();
+      expect(screen.getByText("aleo.info.transparent.title")).toBeOnTheScreen();
+      expect(screen.getByText("aleo.info.private.title")).toBeOnTheScreen();
     });
 
     it("returns null instead of throwing when parentAccount is missing", () => {

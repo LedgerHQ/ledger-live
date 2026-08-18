@@ -63,8 +63,8 @@ export function findCryptoCurrencyByScheme(scheme: string | undefined): CryptoCu
  * when unknown.
  *
  * When two non-testnet currencies share a ticker, the one whose `keywords` list contains that
- * ticker (case-insensitive) wins. This matches the tiebreak introduced in and applied
- * by `registerCurrencyInStore` in `@ledgerhq/cryptoassets`.
+ * ticker (case-insensitive) wins. This matches the tiebreak previously applied by the
+ * legacy currency registry.
  *
  * @deprecated Tickers are not globally unique — the result can be ambiguous. Prefer
  * {@link findCryptoCurrencyById} when the currency id is available.

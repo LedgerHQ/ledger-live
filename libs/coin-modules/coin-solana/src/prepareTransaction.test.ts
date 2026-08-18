@@ -1,14 +1,14 @@
-import { NotEnoughGas } from "@ledgerhq/errors";
-import { Account, VersionedMessage } from "@solana/web3.js";
-import BigNumber from "bignumber.js";
-import { transaction } from "./__tests__/fixtures/helpers.fixture";
 import {
+  NotEnoughGas,
   SolanaMemoIsTooLong,
   SolanaRecipientAccountNotFunded,
   SolanaStakeAccountAmountTooLow,
   SolanaStakeAccountNothingToWithdraw,
   SolanaStakeNoWithdrawAuth,
 } from "./errors";
+import { Account, VersionedMessage } from "@solana/web3.js";
+import BigNumber from "bignumber.js";
+import { transaction } from "./__tests__/fixtures/helpers.fixture";
 import { estimateFeeAndSpendable } from "./estimateMaxSpendable";
 import * as logicValidateMemo from "./logic/validateMemo";
 import { ChainAPI } from "./network";

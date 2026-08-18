@@ -8,6 +8,10 @@ import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { MarketCurrencyData, KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
 import { MarketAction } from "./types";
 import { getMarketOrAssetDetailPath } from "LLD/utils/marketAssetNavigation";
+import counterValueFormatter from "@ledgerhq/live-common/market/utils/countervalueFormatter";
+import { roundFiatPrice } from "@ledgerhq/live-currency-format";
+import { useSelector } from "LLD/hooks/redux";
+import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";
 
 type UseRowItemViewModelProps = {
   currency?: MarketCurrencyData | null;
@@ -19,6 +23,8 @@ export function useRowItemViewModel({ currency, toggleStar, range }: UseRowItemV
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { shouldDisplayAggregatedAssets } = useWalletFeaturesConfig("desktop");
+  const counterValueUnit = useSelector(counterValueCurrencySelector).units[0];
+  const locale = useSelector(localeSelector);
 
   const {
     onBuy,
@@ -82,11 +88,25 @@ export function useRowItemViewModel({ currency, toggleStar, range }: UseRowItemV
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const currentPriceChangePercentage = currency?.priceChangePercentage[range as KeysPriceChange];
 
+  const formattedPrice = counterValueFormatter({
+    value: roundFiatPrice(currency?.price ?? 0),
+    unit: counterValueUnit,
+    locale,
+  });
+  const formattedMarketCap = counterValueFormatter({
+    shorten: true,
+    unit: counterValueUnit,
+    value: currency?.marketcap,
+    locale,
+  });
+
   return {
     onCurrencyClick,
     onStarClick,
     actions,
     hasActions: actions.length > 0,
     currentPriceChangePercentage,
+    formattedPrice,
+    formattedMarketCap,
   };
 }

@@ -23,7 +23,6 @@ concurrency:
   cancel-in-progress: true
 
 permissions:
-  id-token: write
   contents: read
 
 jobs:
@@ -45,15 +44,17 @@ jobs:
         with:
           app-id: ${{ secrets.GH_BOT_APP_ID }}
           private-key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+          permission-contents: write
+          permission-pull-requests: read
 
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         if: ${{ inputs.ref != null }}
         with:
           ref: ${{ inputs.ref }}
           fetch-depth: 0
           token: ${{ steps.generate-token.outputs.token }}
 
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         if: ${{ !inputs.ref }}
         with:
           fetch-depth: 0
@@ -61,9 +62,10 @@ jobs:
 
       - name: Checkout PR
         if: ${{ inputs.number != null }}
-        run: gh pr checkout ${{ inputs.number }}
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+          PR_NUMBER: ${{ inputs.number }}
+        run: gh pr checkout "$PR_NUMBER"
 
       - name: Setup git user
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
@@ -80,6 +82,11 @@ jobs:
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
+
+      - name: JFrog npm auth
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        with:
+          registry: ${{ vars.ARTIFACTORY_URL }}
 
       - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@develop
         id: setup-test-desktop
@@ -104,24 +111,30 @@ jobs:
         with:
           app-id: ${{ secrets.GH_BOT_APP_ID }}
           private-key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+          permission-issues: write
+          permission-actions: read
       - name: report start
-        uses: actions/github-script@v7
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        env:
+          ISSUE_NUMBER: ${{ inputs.number }}
+          LOGIN: ${{ inputs.login }}
+          COMMENT_ID: ${{ inputs.commentId }}
         with:
           github-token: ${{ steps.generate-token.outputs.token }}
           result-encoding: string
           retries: 3
           script: |
-            const {repo: {owner, repo}, run_id} = context
-            const issue_number = ${{ inputs.number }}
+            const {repo: {owner, repo}} = context
+            const issue_number = Number(process.env.ISSUE_NUMBER)
             const body = `\
-            @${{ inputs.login }}
+            @${process.env.LOGIN}
 
             [Generating screenshots: workflow started](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
             `
             await github.rest.issues.updateComment({
               owner,
               repo,
-              comment_id: "${{ inputs.commentId }}",
+              comment_id: process.env.COMMENT_ID,
               body,
             });
 
@@ -137,8 +150,13 @@ jobs:
         with:
           app-id: ${{ secrets.GH_BOT_APP_ID }}
           private-key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+          permission-issues: write
+          permission-actions: read
       - name: report jobs status
-        uses: actions/github-script@v7
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        env:
+          LOGIN: ${{ inputs.login }}
+          COMMENT_ID: ${{ inputs.commentId }}
         with:
           github-token: ${{ steps.generate-token.outputs.token }}
           result-encoding: string
@@ -149,7 +167,7 @@ jobs:
             const {data: {jobs}} = await github.rest.actions.listJobsForWorkflowRun({
               owner,
               repo,
-              run_id: ${{ github.run_id }},
+              run_id: context.runId,
             });
 
             const jobsStatusString = jobs
@@ -158,7 +176,7 @@ jobs:
               .join("\n")
 
             const body = `\
-            @${{ inputs.login }}
+            @${process.env.LOGIN}
 
             [Generating screenshots: workflow ended](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
 
@@ -172,11 +190,11 @@ jobs:
 
             fs.writeFileSync("summary.json", JSON.stringify(output), "utf-8");
 
-            if(${{ inputs.commentId != '' }}) {
+            if(process.env.COMMENT_ID) {
               await github.rest.issues.updateComment({
                 owner,
                 repo,
-                comment_id: "${{ inputs.commentId }}",
+                comment_id: process.env.COMMENT_ID,
                 body
               });
             }

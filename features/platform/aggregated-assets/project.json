@@ -1,0 +1,8 @@
+{
+  "name": "@features/platform-aggregated-assets",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

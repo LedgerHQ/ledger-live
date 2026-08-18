@@ -1,11 +1,12 @@
 import type { Account, AccountLike, Operation } from "@ledgerhq/types-live";
-import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { Transaction, TransactionStatus } from "../../coin-modules/transaction-types";
 import type { FlowStatus, FlowStatusActions, FlowStepConfig, FlowConfig } from "../wizard/types";
 
 export const SEND_FLOW_STEP = {
   RECIPIENT: "RECIPIENT",
   RECENT_HISTORY: "RECENT_HISTORY",
+  ADD_CONTACT: "ADD_CONTACT",
   AMOUNT: "AMOUNT",
   CUSTOM_FEES: "CUSTOM_FEES",
   COIN_CONTROL: "COIN_CONTROL",
@@ -34,6 +35,7 @@ export type SendFlowUiConfig = Readonly<{
   hasFeePresets: boolean;
   hasCustomFees: boolean;
   hasCoinControl: boolean;
+  hasDefaultStrategy: boolean;
 }>;
 
 export type Memo = { value: string; type?: string };

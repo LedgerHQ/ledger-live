@@ -17,8 +17,8 @@ import { DEVICE_TAGS } from "tests/utils/tagsUtils";
  *
  */
 
-test.describe("Wallet 4.0 - Asset Aggregation / Asset Market / Asset Detail", () => {
-  test.describe("Scenario 1: Asset aggregation on portfolio", () => {
+test.describe("Asset aggregation", () => {
+  test.describe("Portfolio aggregation", () => {
     test.use({
       teamOwner: Team.WALLET_XP,
       userdata: "portfolioWithManyStablecoins",
@@ -26,7 +26,7 @@ test.describe("Wallet 4.0 - Asset Aggregation / Asset Market / Asset Detail", ()
     });
 
     test(
-      "Aggregated assets show a single row per asset and list holding addresses per network",
+      `[${Currency.ETH_USDC.testLabel}] - Aggregated assets show one row per asset and list holding addresses`,
       {
         tag: [...DEVICE_TAGS],
         annotation: {
@@ -43,10 +43,11 @@ test.describe("Wallet 4.0 - Asset Aggregation / Asset Market / Asset Detail", ()
 
         await app.portfolio.assetsView.clickAggregatedAssetInSection("stablecoins", "USD Coin");
         await expect(app.layout.getPage()).toHaveURL(/\/asset\//);
-        await app.assetDetail.expectLoaded();
-        await app.assetDetail.expectAddressListVisible();
-        expect(await app.assetDetail.countAddressRows()).toBeGreaterThanOrEqual(2);
-        await app.assetDetail.expectAddressRowsHaveBalance();
+        const assetDetail = app.assetDetail(Currency.ETH_USDC.id);
+        await assetDetail.expectLoaded();
+        await assetDetail.expectAddressListVisible();
+        expect(await assetDetail.countAddressRows()).toBeGreaterThanOrEqual(2);
+        await assetDetail.expectAddressRowsHaveBalance();
 
         await app.mainNavigation.openTargetFromMainNavigation("home");
         await app.portfolio.assetsView.waitForAssetsToLoad();
@@ -54,7 +55,7 @@ test.describe("Wallet 4.0 - Asset Aggregation / Asset Market / Asset Detail", ()
     );
   });
 
-  test.describe("Scenario 2: Asset market and detail", () => {
+  test.describe("Asset detail", () => {
     test.use({
       teamOwner: Team.WALLET_XP,
       userdata: "1AccountBTC1AccountETH",
@@ -62,7 +63,7 @@ test.describe("Wallet 4.0 - Asset Aggregation / Asset Market / Asset Detail", ()
     });
 
     test(
-      "Asset detail shows market info, balance, addresses, add-address and transaction history",
+      `[${Currency.BTC.testLabel}] - Asset detail shows market info, balances, addresses and transaction history`,
       {
         tag: [...DEVICE_TAGS],
         annotation: {
@@ -77,22 +78,23 @@ test.describe("Wallet 4.0 - Asset Aggregation / Asset Market / Asset Detail", ()
         await app.portfolio.assetsView.waitForAssetsToLoad();
         await app.portfolio.assetsView.clickAssetInSection("cryptos", Currency.BTC);
         await expect(app.layout.getPage()).toHaveURL(/\/asset\//);
-        await app.assetDetail.expectLoaded();
+        const assetDetail = app.assetDetail(Currency.BTC.id);
+        await assetDetail.expectLoaded();
 
-        await app.assetDetail.expectMarketInfoVisible();
+        await assetDetail.expectMarketInfoVisible();
 
-        await app.assetDetail.expectTotalBalanceVisible();
-        await app.assetDetail.expectAddressListVisible();
-        await app.assetDetail.expectAddAddressVisible();
-        await app.assetDetail.expectTransactionsVisible();
+        await assetDetail.expectTotalBalanceVisible();
+        await assetDetail.expectAddressListVisible();
+        await assetDetail.expectAddAddressVisible();
+        await assetDetail.expectTransactionsVisible();
 
-        await app.assetDetail.clickFirstTransaction();
+        await assetDetail.clickFirstTransaction();
         await app.operationDrawer.waitForDrawerToBeVisible();
         await app.operationDrawer.closeDrawer();
 
-        await app.assetDetail.expectPnlCardsVisible();
-        await app.assetDetail.openPnlCardDetail();
-        await app.assetDetail.closePnlCardDetail();
+        await assetDetail.expectPnlCardsVisible();
+        await assetDetail.openPnlCardDetail();
+        await assetDetail.closePnlCardDetail();
 
         await app.mainNavigation.openTargetFromMainNavigation("home");
         await app.portfolio.assetsView.waitForAssetsToLoad();
@@ -100,7 +102,7 @@ test.describe("Wallet 4.0 - Asset Aggregation / Asset Market / Asset Detail", ()
     );
   });
 
-  test.describe("Scenario 3: Star assets", () => {
+  test.describe("Star assets", () => {
     test.use({
       teamOwner: Team.WALLET_XP,
       userdata: "1AccountBTC1AccountETH",
@@ -108,7 +110,7 @@ test.describe("Wallet 4.0 - Asset Aggregation / Asset Market / Asset Detail", ()
     });
 
     test(
-      "Star an asset from its detail page and filter the market list by starred",
+      `[${Currency.BTC.testLabel}] - Star an asset and filter the market list by starred`,
       {
         tag: [...DEVICE_TAGS],
         annotation: {
@@ -124,9 +126,10 @@ test.describe("Wallet 4.0 - Asset Aggregation / Asset Market / Asset Detail", ()
         await app.mainNavigation.openTargetFromMainNavigation("home");
         await app.portfolio.assetsView.waitForAssetsToLoad();
         await app.portfolio.assetsView.clickAssetInSection("cryptos", Currency.BTC);
-        await app.assetDetail.expectLoaded();
-        await app.assetDetail.addToFavorites();
-        await app.assetDetail.expectFavorited();
+        const assetDetail = app.assetDetail(Currency.BTC.id);
+        await assetDetail.expectLoaded();
+        await assetDetail.addToFavorites();
+        await assetDetail.expectFavorited();
 
         await app.mainNavigation.openTargetFromMainNavigation("home");
         await app.portfolio.assetsView.waitForAssetsToLoad();
@@ -137,11 +140,11 @@ test.describe("Wallet 4.0 - Asset Aggregation / Asset Market / Asset Detail", ()
 
         await app.market.clickCoinRow(ticker);
         await expect(app.layout.getPage()).toHaveURL(/\/asset\//);
-        await app.assetDetail.expectLoaded();
-        await app.assetDetail.expectFavorited();
+        await assetDetail.expectLoaded();
+        await assetDetail.expectFavorited();
 
-        await app.assetDetail.removeFromFavorites();
-        await app.assetDetail.expectNotFavorited();
+        await assetDetail.removeFromFavorites();
+        await assetDetail.expectNotFavorited();
         await app.mainNavigation.openTargetFromMainNavigation("home");
         await app.portfolio.assetsView.waitForAssetsToLoad();
         await app.marketBanner.clickExploreMarketHeader();
@@ -153,7 +156,7 @@ test.describe("Wallet 4.0 - Asset Aggregation / Asset Market / Asset Detail", ()
     );
   });
 
-  test.describe("Scenario 4: Address detail", () => {
+  test.describe("Address detail", () => {
     test.use({
       teamOwner: Team.WALLET_XP,
       userdata: "1AccountBTC1AccountETH",
@@ -161,7 +164,7 @@ test.describe("Wallet 4.0 - Asset Aggregation / Asset Market / Asset Detail", ()
     });
 
     test(
-      "Opening a holding address shows the address detail page",
+      `[${Currency.ETH.testLabel}] - Opening a holding address shows the address detail page`,
       {
         tag: [...DEVICE_TAGS],
         annotation: {
@@ -175,9 +178,10 @@ test.describe("Wallet 4.0 - Asset Aggregation / Asset Market / Asset Detail", ()
         await app.mainNavigation.openTargetFromMainNavigation("home");
         await app.portfolio.assetsView.waitForAssetsToLoad();
         await app.portfolio.assetsView.clickAssetInSection("cryptos", Currency.ETH);
-        await app.assetDetail.expectLoaded();
-        await app.assetDetail.expectAddressListVisible();
-        await app.assetDetail.clickFirstAddressRow();
+        const assetDetail = app.assetDetail(Currency.ETH.id);
+        await assetDetail.expectLoaded();
+        await assetDetail.expectAddressListVisible();
+        await assetDetail.clickFirstAddressRow();
         await expect(app.layout.getPage()).toHaveURL(/\/account\//);
 
         await app.account.expectAccountHeaderVisible();

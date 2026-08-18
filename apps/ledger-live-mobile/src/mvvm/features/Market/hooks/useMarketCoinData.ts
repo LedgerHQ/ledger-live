@@ -7,6 +7,7 @@ import { applyUsdRateToMarket } from "@ledgerhq/live-common/market/utils/applyUs
 
 import { useSelector } from "~/context/hooks";
 import { marketParamsSelector } from "~/reducers/market";
+import { counterValueCurrencySelector } from "~/reducers/settings";
 
 type HookProps = {
   currencyId: string;
@@ -14,6 +15,7 @@ type HookProps = {
 
 export const useMarketCoinData = ({ currencyId }: HookProps) => {
   const marketParams = useSelector(marketParamsSelector);
+  const counterValueCurrency = useSelector(counterValueCurrencySelector);
 
   const { counterCurrency: settingsCounterCurrency = "usd" } = marketParams;
   const {
@@ -24,6 +26,7 @@ export const useMarketCoinData = ({ currencyId }: HookProps) => {
   } = useResolveMarketCounterCurrency({
     counterCurrency: settingsCounterCurrency,
     fallbackForCryptoCountervalues: true,
+    isCryptoCountervalue: counterValueCurrency.type === "CryptoCurrency",
   });
   const shouldFetchCurrency = !isResolutionLoading;
 
@@ -57,6 +60,7 @@ export const useMarketCoinData = ({ currencyId }: HookProps) => {
 
 export const useMarketCoinDataWithChart = ({ currencyId }: HookProps) => {
   const marketParams = useSelector(marketParamsSelector);
+  const counterValueCurrency = useSelector(counterValueCurrencySelector);
 
   const { counterCurrency = "usd", range = "24h" } = marketParams;
 
@@ -64,6 +68,7 @@ export const useMarketCoinDataWithChart = ({ currencyId }: HookProps) => {
     counterCurrency,
     id: currencyId,
     range,
+    isCryptoCountervalue: counterValueCurrency.type === "CryptoCurrency",
   });
 
   const { currency, loading, refetch } = useMarketCoinData({ currencyId });

@@ -1,8 +1,8 @@
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { getGasLimit } from "@ledgerhq/coin-evm/utils";
-import type { EvmTransactionEIP1559 } from "@ledgerhq/coin-evm/types/index";
+import { getGasLimit } from "@ledgerhq/live-common/families/evm/utils";
+import type { EvmTransactionEIP1559 } from "@ledgerhq/live-common/families/evm/types";
 import { Account } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";

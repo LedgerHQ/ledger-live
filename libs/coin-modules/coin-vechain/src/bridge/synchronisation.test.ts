@@ -1,9 +1,13 @@
 import { createEmptyHistoryCache } from "@ledgerhq/ledger-wallet-framework/account";
 import { makeScanAccounts } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
-import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
+import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
+import {
+  CryptoCurrencyIdSchema,
+  TokenCurrencyIdSchema,
+  type TokenCurrency,
+} from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
 import { setupServer } from "msw/node";
 import { firstValueFrom } from "rxjs";
@@ -34,9 +38,9 @@ describe("scanAccounts", () => {
   beforeAll(() => {
     const vthoToken: TokenCurrency = {
       type: "TokenCurrency",
-      id: "vechain/vip180/vtho",
+      id: TokenCurrencyIdSchema.parse("vechain/vip180/vtho"),
       contractAddress: "0x0000000000000000000000000000456E65726779",
-      parentCurrencyId: "vechain",
+      parentCurrencyId: CryptoCurrencyIdSchema.parse("vechain"),
       tokenType: "vip180",
       name: "VeThor",
       ticker: "VTHO",
@@ -45,13 +49,15 @@ describe("scanAccounts", () => {
       units: [{ name: "VeThor", code: "VTHO", magnitude: 18 }],
     };
 
-    setupMockCryptoAssetsStore({
+    setCryptoAssetsStore({
       findTokenById: async (id: string) => {
         if (id === "vechain/vip180/vtho") {
           return vthoToken;
         }
         return undefined;
       },
+      findTokenByAddressInCurrency: async () => undefined,
+      getTokensSyncHash: async () => "",
     });
 
     setupServer().listen({ onUnhandledRequest: "error" });

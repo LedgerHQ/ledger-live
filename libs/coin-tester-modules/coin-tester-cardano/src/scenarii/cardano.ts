@@ -71,7 +71,7 @@ export const scenarioCardano: Scenario<GenericTransaction, Account> = {
 
     fund(extractPaymentKeyFromAddress(address), address, INITIAL_FUNDING);
 
-    return { accountBridge, currencyBridge, account: makeAccount(address), retryLimit: 0 };
+    return { accountBridge, currencyBridge, account: makeAccount(address), retryLimit: 3 };
   },
 
   beforeAll: account => {

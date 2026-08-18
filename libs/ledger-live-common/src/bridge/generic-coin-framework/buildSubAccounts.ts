@@ -3,7 +3,7 @@ import {
   emptyHistoryCache,
   encodeTokenAccountId,
 } from "@ledgerhq/ledger-wallet-framework/account/index";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { SyncConfig, TokenAccount } from "@ledgerhq/types-live";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { AssetInfo, Balance } from "@ledgerhq/coin-module-framework/api/types";
@@ -116,13 +116,13 @@ export function mergeSubAccounts(
   }
 
   const oldSubAccountsByTokenId = Object.fromEntries(
-    oldSubAccounts.map(account => [account.token.id, account]),
+    oldSubAccounts.map((account): [string, TokenAccount] => [String(account.token.id), account]),
   );
 
   const newSubAccountsToAdd: Array<TokenAccount> = [];
 
   for (const newSubAccount of newSubAccounts) {
-    const existingSubAccount = oldSubAccountsByTokenId[newSubAccount.token.id];
+    const existingSubAccount = oldSubAccountsByTokenId[String(newSubAccount.token.id)];
 
     if (!existingSubAccount) {
       // New sub account does not exist yet. Just add it as is.
@@ -132,7 +132,7 @@ export function mergeSubAccounts(
 
     // New sub account is already known, probably outdated
     const operations = mergeOps(existingSubAccount.operations, newSubAccount.operations);
-    oldSubAccountsByTokenId[newSubAccount.token.id] = {
+    oldSubAccountsByTokenId[String(newSubAccount.token.id)] = {
       ...existingSubAccount,
       balance: newSubAccount.balance,
       spendableBalance: newSubAccount.spendableBalance,

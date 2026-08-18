@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
 import { BigNumber } from "bignumber.js";
 import { getDescriptor, getSendDescriptor } from "./descriptor/registry";
@@ -60,6 +60,7 @@ describe("getDescriptor", () => {
     const descriptor = getDescriptor(currency);
     expect(descriptor).toMatchObject({
       send: {
+        addressBook: true,
         inputs: { recipientSupportsDomain: true },
         fees: {
           hasPresets: true,
@@ -207,7 +208,7 @@ describe("sendFeatures", () => {
 
   it.each([
     ["solana", true],
-    ["algorand", false],
+    ["algorand", true],
     ["bitcoin", false],
   ])("should check memo support for %s", (currencyId, expected) => {
     const currency = getCryptoCurrencyById(currencyId);
@@ -539,7 +540,7 @@ describe("sendFeatures", () => {
 
   describe("applyMemoToTransaction", () => {
     describe("fallback behavior", () => {
-      it.each(["cosmos", "hedera", "stacks", "internet_computer", "mina"])(
+      it.each(["algorand", "cosmos", "hedera", "stacks", "internet_computer", "mina"])(
         "should use default memo field for %s",
         family => {
           const result = applyMemoToTransaction(family, "test memo");
@@ -655,6 +656,20 @@ describe("sendFeatures", () => {
 
   it("should return impossible as default self transfer policy", () => {
     expect(sendFeatures.getSelfTransferPolicy(undefined)).toBe("impossible");
+  });
+
+  it.each([
+    ["ethereum", true],
+    ["tron", false],
+    ["bitcoin", false],
+    ["solana", false],
+  ])("should get address book support for %s", (currencyId, expected) => {
+    const currency = getCryptoCurrencyById(currencyId);
+    expect(sendFeatures.hasAddressBook(currency)).toBe(expected);
+  });
+
+  it("should return false for address book support when currency is undefined", () => {
+    expect(sendFeatures.hasAddressBook(undefined)).toBe(false);
   });
 
   it.each([

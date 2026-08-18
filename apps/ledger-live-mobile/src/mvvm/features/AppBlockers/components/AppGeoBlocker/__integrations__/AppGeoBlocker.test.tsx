@@ -1,8 +1,16 @@
 import React from "react";
 import { render, screen } from "@testing-library/react-native";
-
-import { InitialQueriesContext } from "LLM/contexts/InitialQueriesContext";
 import AppGeoBlocker from "../index";
+
+jest.mock("@ledgerhq/live-common/api/ofacGeoBlockApi", () => ({
+  ofacGeoBlockApi: {
+    useCheckQuery: jest.fn(() => ({ data: false })),
+  },
+}));
+
+const { ofacGeoBlockApi: mockedOfacApi } = jest.requireMock(
+  "@ledgerhq/live-common/api/ofacGeoBlockApi",
+) as { ofacGeoBlockApi: { useCheckQuery: jest.Mock } };
 
 jest.mock("LLM/hooks/useLocalizedUrls", () => ({
   useLocalizedUrl: () => (url: string) => url,
@@ -38,34 +46,34 @@ describe("AppGeoBlocker", () => {
     jest.clearAllMocks();
   });
 
-  it("renders children when not loading and not blocked", async () => {
+  it("renders children when not blocked", () => {
+    mockedOfacApi.useCheckQuery.mockReturnValue({ data: false });
     const Child = () => <Text>Allowed</Text>;
     render(
       <AppGeoBlocker>
         <Child />
       </AppGeoBlocker>,
-      { wrapper: getWrapper({ blocked: false, isLoading: false }) },
     );
     expect(screen.toJSON()).toBe("Allowed");
   });
 
-  it("don't block children rendering while loading", () => {
+  it("renders children while query is still loading (data undefined)", () => {
+    mockedOfacApi.useCheckQuery.mockReturnValue({ data: undefined });
     const Child = () => <Text>Allowed</Text>;
     render(
       <AppGeoBlocker>
         <Child />
       </AppGeoBlocker>,
-      { wrapper: getWrapper({ blocked: false, isLoading: true }) },
     );
     expect(screen.toJSON()).toBe("Allowed");
   });
 
   it("renders block screen when blocked", () => {
+    mockedOfacApi.useCheckQuery.mockReturnValue({ data: true });
     render(
       <AppGeoBlocker>
         <Text>Allowed</Text>
       </AppGeoBlocker>,
-      { wrapper: getWrapper({ blocked: true, isLoading: false }) },
     );
 
     const renderedNode = screen.toJSON();
@@ -73,10 +81,3 @@ describe("AppGeoBlocker", () => {
     expect(renderedNode.includes("Ledger Wallet is not available in this location.")).toBeTruthy();
   });
 });
-
-function getWrapper(ofacResult: { blocked: boolean; isLoading: boolean }) {
-  const value = { ofacResult, firebaseIsReady: true, fiatsReady: true };
-  return ({ children }: React.PropsWithChildren) => (
-    <InitialQueriesContext.Provider value={value}>{children}</InitialQueriesContext.Provider>
-  );
-}

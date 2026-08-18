@@ -1,6 +1,6 @@
 import semver from "semver";
 import Transport from "@ledgerhq/hw-transport";
-import { UpdateYourApp } from "@ledgerhq/errors";
+import { UpdateYourApp } from "./errors";
 import {
   CantonSigner,
   CantonAddress,

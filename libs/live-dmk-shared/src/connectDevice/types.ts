@@ -117,7 +117,6 @@ export type DeviceConnectionResult = {
   connectedDevice: ConnectedDevice;
   /** Legacy device identifier, usable by existing `withDevice` / `DeviceAction` flows. */
   compatDeviceId: string;
-  compatDeviceModelId: DeviceModelId;
   compatDeviceName: string;
   compatDeviceWired: boolean;
 };
@@ -132,6 +131,7 @@ export type ConnectDeviceStateMachineInput<
   deviceDiscoveryService: DeviceDiscoveryService<TDiscoveryError>;
   observer: Observer<ConnectDeviceUIState<TDiscoveryError, TConnectionError>>;
   onConnected: (result: DeviceConnectionResult) => void;
+  buildCompatDeviceId?: (device: ConnectedDevice) => string;
   matchDiscoveredDevices: ConnectDeviceMatchDiscoveredDevices;
   mapConnectionError: ConnectDeviceMapConnectionError<TConnectionError>;
 };

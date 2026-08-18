@@ -11,6 +11,7 @@ type StoryProgressBarProps = {
   durationMs?: number;
   isActivated?: boolean;
   isCompleted?: boolean;
+  restartKey?: number;
 };
 
 /**
@@ -22,6 +23,7 @@ export function StoryProgressBar({
   durationMs = 5000,
   isActivated = false,
   isCompleted = false,
+  restartKey = 0,
 }: Readonly<StoryProgressBarProps>) {
   const progress = useSharedValue(0);
 
@@ -30,7 +32,7 @@ export function StoryProgressBar({
     if (isActivated) {
       progress.value = withTiming(100, { duration: durationMs, easing: Easing.linear });
     }
-  }, [durationMs, isActivated, isCompleted, progress]);
+  }, [durationMs, isActivated, isCompleted, progress, restartKey]);
 
   const animatedStyles = useAnimatedStyle(() => {
     return {

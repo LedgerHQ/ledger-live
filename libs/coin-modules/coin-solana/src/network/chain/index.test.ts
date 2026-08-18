@@ -1,4 +1,4 @@
-import { NetworkError } from "@ledgerhq/errors";
+import { NetworkError } from "../../errors";
 import { Config, getChainAPI } from ".";
 import { Connection, SendTransactionError } from "@solana/web3.js";
 
@@ -66,7 +66,6 @@ describe("index", () => {
           expect(networkError).toMatchObject({
             message: sendTransactionError.message,
             logs: logMessages,
-            cause: sendTransactionError,
           });
           expect(mockedConfirmTransaction).not.toHaveBeenCalled();
         }

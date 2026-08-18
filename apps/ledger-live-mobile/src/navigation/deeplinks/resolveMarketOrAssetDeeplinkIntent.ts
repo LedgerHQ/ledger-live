@@ -59,8 +59,7 @@ export function resolveMarketOrAssetDeeplinkIntent({
       return { type: "legacy-path", currencyId: action.currencyId };
     }
 
-    // Token id on legacy screens is unsupported.
-    return hostname === "market" ? { type: "market-banner" } : { type: "portfolio" };
+    return { type: "market-banner" };
   }
 
   const hasPath = pathname.trim().split("/").some(Boolean);
@@ -74,7 +73,11 @@ export function resolveMarketOrAssetDeeplinkIntent({
     return { type: "market-banner", category };
   }
 
-  if (hasPath || shouldDisplayAggregatedAssets) {
+  if (hasPath) {
+    return { type: "market-banner" };
+  }
+
+  if (shouldDisplayAggregatedAssets) {
     return { type: "portfolio" };
   }
 

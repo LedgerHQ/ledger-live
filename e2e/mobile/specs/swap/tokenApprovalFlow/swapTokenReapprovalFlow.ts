@@ -10,6 +10,7 @@ import { beforeAllFunctionSwap } from "../swap.setup";
 import { setTeamOwner } from "../../../helpers/allure/allure-helper";
 import BigNumber from "bignumber.js";
 import { pickRotatingProvider } from "@ledgerhq/live-e2e-shared/swap";
+import { BroadcastFlow, shouldRunBroadcastFlow } from "../../../helpers/broadcastRotation";
 
 export function runSwapTokenReapprovalFlow(
   fromAccount: TokenAccount,
@@ -18,13 +19,17 @@ export function runSwapTokenReapprovalFlow(
   tmsLinks: string[],
   tags: string[],
 ) {
-  const isBroadcastEnabled = process.env.DISABLE_TRANSACTION_BROADCAST === "0";
-  if (!isBroadcastEnabled) {
+  const runHere = shouldRunBroadcastFlow(BroadcastFlow.REAPPROVAL);
+  if (!runHere) {
+    const broadcastEnabled = process.env.DISABLE_TRANSACTION_BROADCAST === "0";
+    const bothPlatformsBroadcast = process.env.E2E_BROADCAST_BOTH_MOBILE_PLATFORMS === "true";
     console.warn(
-      "[reapproval.swap.spec] Skipping — requires DISABLE_TRANSACTION_BROADCAST=0 (Monday nightly only)",
+      broadcastEnabled && bothPlatformsBroadcast
+        ? "[reapproval.swap.spec] Skipping — rotated to the other platform for this run (avoids shared-account broadcast race)"
+        : "[reapproval.swap.spec] Skipping — requires DISABLE_TRANSACTION_BROADCAST=0",
     );
   }
-  (isBroadcastEnabled ? describe : describe.skip)("Token reapproval - flow", () => {
+  (runHere ? describe : describe.skip)("Swap - token reapproval", () => {
     beforeAll(async () => {
       await app.speculos.setExchangeDependencies(fromAccount, toAccount);
       await beforeAllFunctionSwap({
@@ -48,7 +53,7 @@ export function runSwapTokenReapprovalFlow(
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
 
-    it("Swap - token reapproval flow", async () => {
+    it(`[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap token reapproval flow`, async () => {
       const provider = await pickRotatingProvider(swapProviders, fromAccount, toAccount);
       await app.swap.logSelectedProvider(provider.uiName);
       await revokeTokenApproval(fromAccount, provider);
@@ -63,6 +68,8 @@ export function runSwapTokenReapprovalFlow(
         true,
       );
       await app.swapLiveApp.selectSpecificProvider(provider.uiName);
+      // Allowance only covers smallAmount, not the full swap, so the CTA reads "Continue".
+      await app.swapLiveApp.checkQuoteCardCta(provider.uiName, true);
       await app.swapLiveApp.tapExecuteSwap(provider.uiName);
       await app.swapLiveApp.expectResetApprovalScreen();
       await app.swapLiveApp.tapRevokeApprovalButton();

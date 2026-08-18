@@ -23,7 +23,7 @@ export async function preload(currency: CryptoCurrency): Promise<HederaPreloadDa
       : new BigNumber(0);
 
     return {
-      nodeId: mirrorNode.node_id,
+      id: mirrorNode.node_id.toString(),
       address: mirrorNode.node_account_id,
       addressChecksum: getChecksum(mirrorNode.node_account_id),
       name: extractCompanyFromNodeDescription(mirrorNode.description),
@@ -45,9 +45,20 @@ export async function preload(currency: CryptoCurrency): Promise<HederaPreloadDa
   return data;
 }
 
-function mapRawValidatorToValidator(validatorRaw: HederaValidatorRaw): HederaValidator {
+// caches written before `nodeId` was renamed to `id` still hold `nodeId: number`
+type HederaValidatorRawLegacy = Omit<HederaValidatorRaw, "id"> & { id?: string; nodeId?: number };
+
+function mapRawValidatorToValidator(
+  validatorRaw: HederaValidatorRawLegacy,
+): HederaValidator | null {
+  const id = validatorRaw.id ?? validatorRaw.nodeId?.toString();
+
+  if (id === undefined) {
+    return null;
+  }
+
   return {
-    nodeId: validatorRaw.nodeId,
+    id,
     address: validatorRaw.address,
     addressChecksum: validatorRaw.addressChecksum,
     name: validatorRaw.name,
@@ -64,7 +75,9 @@ function fromHydratePreloadData(data: unknown): HederaPreloadData {
 
   if (data && typeof data === "object" && "validators" in data) {
     if (Array.isArray(data.validators)) {
-      validators = data.validators.map(mapRawValidatorToValidator);
+      validators = data.validators
+        .map(mapRawValidatorToValidator)
+        .filter((validator): validator is HederaValidator => validator !== null);
     }
   }
 

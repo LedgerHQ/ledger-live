@@ -1,8 +1,7 @@
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
-import { Account, BroadcastConfig } from "@ledgerhq/types-live";
+import type { BroadcastConfig } from "@ledgerhq/coin-module-framework/api/types";
 import BigNumber from "bignumber.js";
 import { BlockFinalizationTag, EvmConfigInfo } from "../../config";
-import { Transaction as EvmTransaction, FeeData } from "../../types";
+import { FeeData } from "../../types";
 
 /**
  * Asset information for token transfers
@@ -172,51 +171,53 @@ export type EvmCallParams = {
 };
 
 export type NodeApi = {
-  call: (currency: CryptoCurrency, params: EvmCallParams) => Promise<string>;
-  getTransaction: (currency: CryptoCurrency, hash: string) => Promise<TransactionInfo>;
-  getCoinBalance: (currency: CryptoCurrency, address: string) => Promise<BigNumber>;
+  call: (currencyId: string, params: EvmCallParams) => Promise<string>;
+  getTransaction: (currencyId: string, hash: string) => Promise<TransactionInfo>;
+  getCoinBalance: (currencyId: string, address: string) => Promise<BigNumber>;
   getTokenBalance: (
-    currency: CryptoCurrency,
+    currencyId: string,
     address: string,
     contractAddress: string,
   ) => Promise<BigNumber>;
   getTokenAllowance: (
-    currency: CryptoCurrency,
+    currencyId: string,
     ownerAddress: string,
     contractAddress: string,
     spenderAddress: string,
   ) => Promise<BigNumber>;
-  getTransactionCount: (currency: CryptoCurrency, address: string) => Promise<number>;
+  getTransactionCount: (currencyId: string, address: string) => Promise<number>;
   getGasEstimation: (
-    account: Pick<Account, "currency" | "freshAddress">,
-    transaction: Pick<EvmTransaction, "amount" | "data" | "recipient">,
+    currencyId: string,
+    address: string,
+    transaction: { amount: BigNumber; data?: Buffer | null | undefined; recipient: string },
   ) => Promise<BigNumber>;
   getFeeData: (
-    currency: CryptoCurrency,
-    transaction: Pick<EvmTransaction, "type" | "feesStrategy">,
+    config: EvmConfigInfo,
+    currencyId: string,
+    transaction: { type?: number | undefined; feesStrategy?: string | null | undefined },
   ) => Promise<FeeData>;
   broadcastTransaction: (
-    currency: CryptoCurrency,
+    currencyId: string,
     signedTxHex: string,
     broadcastConfig?: BroadcastConfig,
   ) => Promise<string>;
   getBlockByHeight: (
-    currency: CryptoCurrency,
+    currencyId: string,
     blockHeight: number | BlockFinalizationTag,
     prefetchTxs?: boolean,
     // timestamp is in milliseconds
   ) => Promise<BlockByHeightResult>;
   getBlockReceipts?: (
-    currency: CryptoCurrency,
+    currencyId: string,
     blockHeight: number | "latest",
   ) => Promise<BlockReceiptInfo[]>;
   traceBlockErigon?: (
-    currency: CryptoCurrency,
+    currencyId: string,
     blockHeight: number | "latest",
   ) => Promise<TraceBlockItem[]>;
-  traceBlockGeth?: (currency: CryptoCurrency, blockHeight: number) => Promise<TraceBlockItem[]>;
-  getOptimismAdditionalFees: (currency: CryptoCurrency, transaction: string) => Promise<BigNumber>;
-  getScrollAdditionalFees: (currency: CryptoCurrency, transaction: string) => Promise<BigNumber>;
+  traceBlockGeth?: (currencyId: string, blockHeight: number) => Promise<TraceBlockItem[]>;
+  getOptimismAdditionalFees: (currencyId: string, transaction: string) => Promise<BigNumber>;
+  getScrollAdditionalFees: (currencyId: string, transaction: string) => Promise<BigNumber>;
 };
 
 type NodeConfig = EvmConfigInfo["node"];

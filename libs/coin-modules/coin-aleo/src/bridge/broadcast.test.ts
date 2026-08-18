@@ -55,7 +55,6 @@ describe("bridge broadcast", () => {
     expect(mockLogicBroadcast).toHaveBeenCalledTimes(1);
     expect(mockLogicBroadcast).toHaveBeenCalledWith({
       configOrCurrencyId: mockConfig,
-      account,
       signedTx: signature,
     });
     expect(mockPatchOperationWithHash).toHaveBeenCalledTimes(1);

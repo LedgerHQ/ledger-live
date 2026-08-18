@@ -16,7 +16,6 @@ import OnboardingTerms from "~/screens/Onboarding/steps/terms";
 import OnboardingDeviceSelection from "~/screens/Onboarding/steps/deviceSelection";
 import OnboardingUseCase from "~/screens/Onboarding/steps/useCaseSelection";
 import OnboardingNewDeviceInfo from "~/screens/Onboarding/steps/newDeviceInfo";
-import OnboardingNewDiscoverLiveInfo from "~/screens/Onboarding/steps/discoverLiveInfo";
 import OnboardingNewDevice from "~/screens/Onboarding/steps/setupDevice";
 import OnboardingRecoveryPhrase from "~/screens/Onboarding/steps/recoveryPhrase";
 import OnboardingInfoModal from "../OnboardingStepperView/OnboardingInfoModal";
@@ -165,10 +164,6 @@ export default function OnboardingNavigator() {
         name={NavigatorName.OnboardingPreQuiz}
         component={OnboardingPreQuizModalNavigator}
         options={modalOptions}
-      />
-      <Stack.Screen
-        name={ScreenName.OnboardingModalDiscoverLive}
-        component={OnboardingNewDiscoverLiveInfo}
       />
       <Stack.Screen
         name={ScreenName.OnboardingModalSetupNewDevice}

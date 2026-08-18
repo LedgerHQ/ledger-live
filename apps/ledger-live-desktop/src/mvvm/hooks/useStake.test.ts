@@ -2,12 +2,13 @@ import { useStake } from "LLD/hooks/useStake";
 import BigNumber from "bignumber.js";
 import { renderHookWithLiveAppProvider, withFlagOverrides } from "tests/testSetup";
 
-import { accountRawToAccountUserData, WalletState } from "@ledgerhq/live-wallet/store";
+import { accountRawToAccountUserData } from "@ledgerhq/live-common/account/index";
+import type { WalletState } from "~/renderer/reducers/wallet";
 
 import { AccountRaw, TokenAccount } from "@ledgerhq/types-live";
 
 import { fromAccountRaw } from "@ledgerhq/ledger-wallet-framework/serialization/account";
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 
 const raw: AccountRaw = {
   id: "js:2:ethereum:0x01:",
@@ -40,7 +41,9 @@ const rawTron: AccountRaw = {
   balance: "100000000000000",
 };
 
-setupMockCryptoAssetsStore({
+setCryptoAssetsStore({
+  findTokenById: async () => undefined,
+  findTokenByAddressInCurrency: async () => undefined,
   getTokensSyncHash: async () => "test_hash",
 });
 
@@ -99,10 +102,7 @@ const mockUSDCTokenAccount: TokenAccount = {
 const walletState: WalletState = {
   accountNames: new Map(),
   starredAccountIds: new Set(),
-  walletSyncState: {
-    data: null,
-    version: 0,
-  },
+  walletSync: { walletSyncState: { data: null, version: 0 } },
   nonImportedAccountInfos: [],
   recentAddresses: {},
 };

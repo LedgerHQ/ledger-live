@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
-import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import useAddAccountAnalytics from "LLD/features/AddAccountDrawer/analytics/useAddAccountAnalytics";
 import type { WarningReason } from "LLD/features/AddAccountDrawer/domain";

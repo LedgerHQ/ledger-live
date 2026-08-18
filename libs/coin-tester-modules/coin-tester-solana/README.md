@@ -1,5 +1,8 @@
 # @ledgerhq/coin-tester-solana
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 This package contains the deterministic testing infrastructure for Solana in Ledger Live.
 
 ## Features

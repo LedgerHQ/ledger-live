@@ -1,8 +1,11 @@
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
+import coinConfig, { type PolkadotCoinConfig } from "../config";
 import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
 import getTransactionStatus from "./getTransactionStatus";
+
+coinConfig.setCoinConfig(() => ({}) as unknown as PolkadotCoinConfig);
 
 const stubIsNewAccount = jest.fn();
 const stubIsElectionClosed = jest.fn();
@@ -11,11 +14,14 @@ const stubVerifyValidatorAddresses = jest.fn();
 
 jest.mock("../network", () => {
   return {
-    isNewAccount: (addr: string, currency: CryptoCurrency | undefined) =>
+    isNewAccount: (_config: unknown, addr: string, currency: CryptoCurrency | undefined) =>
       stubIsNewAccount(addr, currency),
     isElectionClosed: () => stubIsElectionClosed(),
-    isControllerAddress: (address: string, currency: CryptoCurrency | undefined) =>
-      stubIsControllerAddress(address, currency),
+    isControllerAddress: (
+      _config: unknown,
+      address: string,
+      currency: CryptoCurrency | undefined,
+    ) => stubIsControllerAddress(address, currency),
     verifyValidatorAddresses: () => stubVerifyValidatorAddresses(),
   };
 });

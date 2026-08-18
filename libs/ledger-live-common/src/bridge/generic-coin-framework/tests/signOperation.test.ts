@@ -2,12 +2,17 @@ import BigNumber from "bignumber.js";
 import { lastValueFrom } from "rxjs";
 import { toArray } from "rxjs/operators";
 import { genericSignOperation } from "../signOperation";
-import { FeeNotLoaded } from "@ledgerhq/errors";
+import { FeeNotLoaded } from "@ledgerhq/ledger-wallet-framework/errors";
 import { getCoinModuleApi } from "../api";
+import { getBridgeApi } from "../bridge";
 import { buildOptimisticOperation } from "../utils";
 
 jest.mock("../api", () => ({
   getCoinModuleApi: jest.fn(),
+}));
+
+jest.mock("../bridge", () => ({
+  getBridgeApi: jest.fn(),
 }));
 
 jest.mock("../utils", () => ({
@@ -35,6 +40,9 @@ describe("genericSignOperation", () => {
   } as any;
 
   const craftTransaction = jest.fn();
+  // The framework threads a context and calls `craftTransactionData(context, intent)`; mirror the
+  // default impl (`{ type: "none" }`).
+  const craftTransactionData = () => ({ type: "none" });
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -42,12 +50,14 @@ describe("genericSignOperation", () => {
     craftTransaction.mockResolvedValue({ transaction: "unsignedTx" });
     (getCoinModuleApi as jest.Mock).mockReturnValue({
       craftTransaction,
+      craftTransactionData,
       getAccountInfo: jest.fn().mockResolvedValue("pubKey"),
       combine: jest.fn().mockResolvedValue("signedTx"),
       getNextSequence: jest.fn().mockResolvedValue(1n),
     });
 
     (buildOptimisticOperation as jest.Mock).mockReturnValue({ id: "mock-op" });
+    (getBridgeApi as jest.Mock).mockResolvedValue({});
 
     mockSigner.getAddress.mockResolvedValue({ publicKey: "pubKey" });
     mockSigner.signTransaction.mockResolvedValue("sig");
@@ -83,6 +93,7 @@ describe("genericSignOperation", () => {
       derivationMode: undefined,
     });
     expect(craftTransaction).toHaveBeenCalledWith(
+      expect.anything(), // context (framework v6)
       expect.objectContaining({
         memo: { type: "map", memos: new Map([["destinationTag", "1234"]]) },
       }),
@@ -94,6 +105,7 @@ describe("genericSignOperation", () => {
     const validateIntent = jest.fn();
     (getCoinModuleApi as jest.Mock).mockReturnValue({
       craftTransaction,
+      craftTransactionData,
       getAccountInfo: jest.fn().mockResolvedValue("pubKey"),
       combine: jest.fn().mockResolvedValue("signedTx"),
       getNextSequence: jest.fn().mockResolvedValue(1n),
@@ -111,8 +123,77 @@ describe("genericSignOperation", () => {
 
     expect(validateIntent).not.toHaveBeenCalled();
     expect(craftTransaction).toHaveBeenCalledWith(
+      expect.anything(), // context (framework v6)
       expect.objectContaining({ amount: 100000n }),
       expect.anything(),
+    );
+  });
+
+  it("hands the device signer whatever the family declares", async () => {
+    const getDeviceSignOptions = jest
+      .fn()
+      .mockReturnValue({ familyOwnedSignOption: { id: "asset-1", ledgerSignature: "sig" } });
+    (getBridgeApi as jest.Mock).mockResolvedValue({ getDeviceSignOptions });
+
+    const signOperation = genericSignOperation("mainnet", "xrp")(mockSignerContext);
+    const observable = signOperation({ account, transaction, deviceId: "" });
+
+    await lastValueFrom(observable.pipe(toArray()));
+
+    expect(mockSigner.signTransaction).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.anything(),
+      expect.objectContaining({ familyOwnedSignOption: { id: "asset-1", ledgerSignature: "sig" } }),
+    );
+  });
+
+  it("keeps the account's derivationMode when the family declares one of its own", async () => {
+    const getDeviceSignOptions = jest.fn().mockReturnValue({ derivationMode: "tezosSecp256k1" });
+    (getBridgeApi as jest.Mock).mockResolvedValue({ getDeviceSignOptions });
+
+    const signOperation = genericSignOperation("mainnet", "tezos")(mockSignerContext);
+    const observable = signOperation({
+      account: { ...account, derivationMode: "tezosbip32-ed25519" },
+      transaction,
+      deviceId: "",
+    });
+
+    await lastValueFrom(observable.pipe(toArray()));
+
+    expect(mockSigner.signTransaction).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.anything(),
+      expect.objectContaining({ derivationMode: "tezosbip32-ed25519" }),
+    );
+  });
+
+  it("crafts from the family's own intent data", async () => {
+    const buildIntentData = jest.fn().mockReturnValue({ type: "familyx" });
+    (getBridgeApi as jest.Mock).mockResolvedValue({ buildIntentData });
+
+    const signOperation = genericSignOperation("mainnet", "xrp")(mockSignerContext);
+    await lastValueFrom(signOperation({ account, transaction, deviceId: "" }).pipe(toArray()));
+
+    expect(buildIntentData).toHaveBeenCalledWith(transaction);
+    expect(craftTransaction).toHaveBeenCalledWith(
+      expect.anything(), // context
+      expect.objectContaining({ data: { type: "familyx" } }),
+      expect.anything(),
+    );
+  });
+
+  it("hands the family's optimistic-operation descriptor to buildOptimisticOperation", async () => {
+    const describeOptimisticOperation = jest.fn();
+    (getBridgeApi as jest.Mock).mockResolvedValue({ describeOptimisticOperation });
+
+    const signOperation = genericSignOperation("mainnet", "xrp")(mockSignerContext);
+    await lastValueFrom(signOperation({ account, transaction, deviceId: "" }).pipe(toArray()));
+
+    expect(buildOptimisticOperation).toHaveBeenCalledWith(
+      account,
+      transaction,
+      expect.anything(),
+      describeOptimisticOperation,
     );
   });
 

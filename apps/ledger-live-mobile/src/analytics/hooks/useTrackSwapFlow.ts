@@ -2,14 +2,6 @@ import { useEffect, useRef } from "react";
 import { CONNECTION_TYPES, HOOKS_TRACKING_LOCATIONS } from "./variables";
 import { track } from "../segment";
 import { Device } from "@ledgerhq/types-devices";
-import {
-  CantOpenDevice,
-  LockedDeviceError,
-  TransportError,
-  UserRefusedAllowManager,
-  UserRefusedOnDevice,
-  TransportRaceCondition,
-} from "@ledgerhq/errors";
 import { LedgerError } from "~/types/error";
 
 export type UseTrackSwapFlow = {
@@ -62,32 +54,36 @@ export const useTrackSwapFlow = ({
       track("Wrong device association", defaultPayload);
     }
 
-    if (error instanceof UserRefusedAllowManager) {
+    if (error?.name === "UserRefusedAllowManager") {
       // user refused secured channel
       track("Secure Channel refused", defaultPayload);
     }
 
-    if (error instanceof CantOpenDevice) {
+    if (error?.name === "CantOpenDevice") {
       // device disconnected during swap flow
       track("Connection failed", defaultPayload);
     }
 
-    if (error instanceof TransportError) {
+    if (error?.name === "TransportError") {
       // transport error during swap flow
       track("Transport error", defaultPayload);
     }
 
-    if (error instanceof TransportRaceCondition) {
+    if (error?.name === "TransportRaceCondition") {
       // transport race condition
       track("Transport race condition", defaultPayload);
     }
 
-    if (isLocked || error instanceof LockedDeviceError) {
+    if (isLocked || error?.name === "LockedDeviceError") {
       // device locked during swap flow
       track("Device locked", defaultPayload);
     }
 
-    if (previousRequestOpenApp.current && !requestOpenApp && error instanceof UserRefusedOnDevice) {
+    if (
+      previousRequestOpenApp.current &&
+      !requestOpenApp &&
+      error?.name === "UserRefusedOnDevice"
+    ) {
       // user refused to open app
       track("Open app denied", defaultPayload);
     } else if (previousRequestOpenApp.current && !requestOpenApp && !error) {

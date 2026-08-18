@@ -8,36 +8,100 @@ on:
       - hotfix
 
 permissions:
-  id-token: write
   contents: read
-  pull-requests: write
 
 jobs:
   # LLD
   build-desktop:
     name: "Build Desktop"
+    permissions:
+      id-token: write
+      contents: read
     uses: LedgerHQ/ledger-live/.github/workflows/build-desktop-reusable.yml@develop
-    secrets: inherit
+    secrets:
+      AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+      AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+      AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
+      AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+      GH_BOT_CLIENT_ID: ${{ secrets.GH_BOT_CLIENT_ID }}
+      GH_BOT_PRIVATE_KEY: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+      NX_KEY: ${{ secrets.NX_KEY }}
 
   test-desktop:
     name: "Desktop E2E & Mock Tests"
+    permissions:
+      id-token: write
+      contents: read
     uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-reusable.yml@develop
-    secrets: inherit
+    secrets:
+      ALLURE_LEDGER_LIVE_PASSWORD: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
+      AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+      AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+      AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
+      AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+      GH_BOT_CLIENT_ID: ${{ secrets.GH_BOT_CLIENT_ID }}
+      GH_BOT_PRIVATE_KEY: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+      MITMPROXY_LOGS_KEY: ${{ secrets.MITMPROXY_LOGS_KEY }}
+      NX_KEY: ${{ secrets.NX_KEY }}
+      SEED_QAA_B2C: ${{ secrets.SEED_QAA_B2C }}
+      SLACK_LIVE_CI_BOT_TOKEN: ${{ secrets.SLACK_LIVE_CI_BOT_TOKEN }}
 
   codecheck-desktop:
     name: "Desktop Lint & Unit Tests"
+    permissions:
+      id-token: write
+      contents: read
     uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-codechecks-reusable.yml@develop
-    secrets: inherit
+    secrets:
+      AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+      AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+      AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
+      AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+      NX_KEY: ${{ secrets.NX_KEY }}
+      SLACK_LIVE_CI_BOT_TOKEN: ${{ secrets.SLACK_LIVE_CI_BOT_TOKEN }}
 
   test-mobile:
     name: "Test Mobile"
+    permissions:
+      id-token: write
+      contents: read
     uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-reusable.yml@develop
-    secrets: inherit
+    secrets:
+      AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+      AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+      AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
+      AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+      NX_KEY: ${{ secrets.NX_KEY }}
 
   build-test-mobile:
     name: "Build & Test Mobile"
+    permissions:
+      id-token: write
+      contents: read
     uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-mock-reusable.yml@develop
-    secrets: inherit
+    secrets:
+      ALLURE_LEDGER_LIVE_PASSWORD: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
+      ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+      ANDROID_KEYSTORE_PATH: ${{ secrets.ANDROID_KEYSTORE_PATH }}
+      AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+      AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+      AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
+      AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+      GH_BOT_APP_ID: ${{ secrets.GH_BOT_APP_ID }}
+      GH_BOT_CLIENT_ID: ${{ secrets.GH_BOT_CLIENT_ID }}
+      GH_BOT_PRIVATE_KEY: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+      NX_KEY: ${{ secrets.NX_KEY }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      S3_DIRECTCONNECT_ENDPOINT: ${{ secrets.S3_DIRECTCONNECT_ENDPOINT }}
+      SEED_QAA_B2C: ${{ secrets.SEED_QAA_B2C }}
+      SPECULINHO_URL: ${{ secrets.SPECULINHO_URL }}
     with:
       macos-specificity-runner-label: "general-pool"
       skip-bundle-size-reporting: true
@@ -47,35 +111,186 @@ jobs:
   # Tests
   test-libraries:
     name: "Test Libraries"
+    permissions:
+      id-token: write
+      contents: read
     uses: LedgerHQ/ledger-live/.github/workflows/test-libs-reusable.yml@develop
-    secrets: inherit
+    secrets:
+      AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+      AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+      AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
+      AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+      NX_KEY: ${{ secrets.NX_KEY }}
 
   test-features:
     name: "Test Features"
+    permissions:
+      id-token: write
+      contents: read
     uses: LedgerHQ/ledger-live/.github/workflows/test-features-reusable.yml@develop
-    secrets: inherit
+    secrets:
+      AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+      AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+      AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
+      AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+      NX_KEY: ${{ secrets.NX_KEY }}
+
+  test-shared:
+    name: "Test Shared"
+    permissions:
+      id-token: write
+      contents: read
+    uses: LedgerHQ/ledger-live/.github/workflows/test-shared-reusable.yml@develop
+    secrets:
+      AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+      AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+      AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
+      AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+      NX_KEY: ${{ secrets.NX_KEY }}
+
+  test-domain:
+    name: "Test Domain"
+    permissions:
+      id-token: write
+      contents: read
+    uses: LedgerHQ/ledger-live/.github/workflows/test-domain-reusable.yml@develop
+    secrets:
+      AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+      AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+      AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
+      AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+      NX_KEY: ${{ secrets.NX_KEY }}
+
+  test-devtools:
+    name: "Test DevTools"
+    permissions:
+      id-token: write
+      contents: read
+    uses: LedgerHQ/ledger-live/.github/workflows/test-devtools-reusable.yml@develop
+    secrets:
+      AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+      AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+      AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
+      AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+      NX_KEY: ${{ secrets.NX_KEY }}
+
+  test-support:
+    name: "Test Support"
+    permissions:
+      id-token: write
+      contents: read
+    uses: LedgerHQ/ledger-live/.github/workflows/test-support-reusable.yml@develop
+    secrets:
+      AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+      AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+      AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
+      AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+      NX_KEY: ${{ secrets.NX_KEY }}
 
   test-design-system:
     name: "Test UI Libs"
+    permissions:
+      id-token: write
+      contents: read
     uses: LedgerHQ/ledger-live/.github/workflows/test-design-system-reusable.yml@develop
-    secrets: inherit
+    secrets:
+      AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+      AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+      AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
+      AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+      NX_KEY: ${{ secrets.NX_KEY }}
 
   build-web-tools:
     name: "Build Web Tools"
+    permissions:
+      id-token: write
+      contents: read
+      pull-requests: write
     uses: LedgerHQ/ledger-live/.github/workflows/build-web-tools-reusable.yml@develop
-    secrets: inherit
+    secrets:
+      AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+      AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+      AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
+      AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+      NX_KEY: ${{ secrets.NX_KEY }}
+      VERCEL_LEDGER_WALLET_TEAM_ID: ${{ secrets.VERCEL_LEDGER_WALLET_TEAM_ID }}
+      VERCEL_LEDGER_WALLET_TOKEN: ${{ secrets.VERCEL_LEDGER_WALLET_TOKEN }}
+      VERCEL_PROJECT_NATIVE_STORYBOOK: ${{ secrets.VERCEL_PROJECT_NATIVE_STORYBOOK }}
+      VERCEL_PROJECT_REACT_STORYBOOK: ${{ secrets.VERCEL_PROJECT_REACT_STORYBOOK }}
+      VERCEL_PROJECT_WEBTOOLS: ${{ secrets.VERCEL_PROJECT_WEBTOOLS }}
     with:
       vercel-production: ${{ github.ref_name == 'develop' && 'true' || 'false' }}
 
   test-cli:
     name: "Test CLI"
+    permissions:
+      id-token: write
+      contents: read
     uses: LedgerHQ/ledger-live/.github/workflows/test-cli-reusable.yml@develop
-    secrets: inherit
+    secrets:
+      AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+      AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+      AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
+      AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+      NX_KEY: ${{ secrets.NX_KEY }}
 
   build-wallet-cli:
     name: "Build Wallet CLI"
+    permissions:
+      id-token: write
+      contents: read
     uses: LedgerHQ/ledger-live/.github/workflows/build-wallet-cli-reusable.yml@develop
-    secrets: inherit
+    secrets:
+      AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+      AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+      AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
+      AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+      NX_KEY: ${{ secrets.NX_KEY }}
+
+  test-additional:
+    name: "Test Additional"
+    uses: LedgerHQ/ledger-live/.github/workflows/test-additional.yml@develop
+    permissions: 
+      security-events: write
+      contents: read
+
+  test-mobile-e2e-lint:
+    name: "Mobile E2E Lint & Typecheck"
+    permissions:
+      id-token: write
+      contents: read
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-e2e-lint-reusable.yml@develop
+    secrets:
+      AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+      AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+      AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
+      AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+      NX_KEY: ${{ secrets.NX_KEY }}
+
+  test-desktop-e2e-lint:
+    name: "Desktop E2E Lint & Typecheck"
+    permissions:
+      id-token: write
+      contents: read
+    uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-e2e-lint-reusable.yml@develop
+    secrets:
+      AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+      AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+      AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
+      AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+      NX_KEY: ${{ secrets.NX_KEY }}
 
   # Final Check required
   ok:
@@ -88,10 +303,17 @@ jobs:
       - build-test-mobile
       - test-libraries
       - test-features
+      - test-shared
+      - test-domain
+      - test-devtools
+      - test-support
       - test-design-system
       - build-web-tools
       - test-cli
       - build-wallet-cli
+      - test-additional
+      - test-mobile-e2e-lint
+      - test-desktop-e2e-lint
     runs-on: ubuntu-22.04
     if: always() && !cancelled()
     steps:

@@ -17,7 +17,7 @@ import { TransactionStatus, Transaction } from "@ledgerhq/coin-casper/types";
 import { CasperGetAddrResponse, CasperSignature, CasperSigner } from "./types";
 import { getCurrencyConfiguration } from "../../config";
 import { getPath, isError } from "./common";
-import { CasperCoinConfig } from "@ledgerhq/coin-casper/config";
+import type { CasperCoinConfig } from "@ledgerhq/coin-casper/types";
 
 const createSigner: CreateSigner<CasperSigner> = (transport: Transport) => {
   const casper = new Casper(transport);

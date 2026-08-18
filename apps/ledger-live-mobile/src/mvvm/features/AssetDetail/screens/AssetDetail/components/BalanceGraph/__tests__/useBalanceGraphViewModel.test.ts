@@ -12,9 +12,9 @@ import {
   mockBtcCryptoCurrency,
   mockEthCryptoCurrency,
 } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById, type CryptoCurrency } from "@domain/entity-currency-crypto";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { TokenCurrencyIdSchema, type TokenCurrency } from "@domain/entity-currency-token";
 import BigNumber from "bignumber.js";
 import type { State } from "~/reducers/types";
 import { marketCurrencyData } from "../../../__fixtures__/marketCurrencyData";
@@ -44,7 +44,7 @@ const handleOpenReceiveDrawer = jest.fn();
 
 const eursToken: TokenCurrency = {
   type: "TokenCurrency",
-  id: "ethereum/erc20/stasis_eurs",
+  id: TokenCurrencyIdSchema.parse("ethereum/erc20/stasis_eurs"),
   contractAddress: "0xdB25f211AB05b1c97D595516F45794528a807ad8",
   parentCurrencyId: mockEthCryptoCurrency.id,
   tokenType: "erc20",
@@ -476,32 +476,19 @@ describe("useBalanceGraphViewModel", () => {
       }),
     };
 
-    it("fetches the chart in USD (not the crypto ticker)", () => {
-      mockUseUsdToFiatRate.mockReturnValue({ status: "ready", rate: 0.5 });
-
+    it("fetches the chart in BTC directly (natively supported by CoinGecko)", () => {
       renderVM({ currency: mockBtcCryptoCurrency }, withBtcCounterValue);
 
       expect(mockUseGetAssetChartDataQuery).toHaveBeenCalledWith(
-        expect.objectContaining({ counterCurrency: "usd" }),
+        expect.objectContaining({ counterCurrency: "btc" }),
         expect.anything(),
       );
     });
 
-    it("rescales the USD chart by the USD→BTC rate so the series is populated", () => {
-      const rate = 0.5;
-      mockUseUsdToFiatRate.mockReturnValue({ status: "ready", rate });
-
+    it("serves the BTC-denominated series directly without rescaling", () => {
       const { result } = renderVM({ currency: mockBtcCryptoCurrency }, withBtcCounterValue);
 
-      expect(result.current.series[0]?.data).toEqual([100, 110, 120].map(value => value * rate));
-    });
-
-    it("withholds the series (empty, not stale USD values) while the rate is unavailable", () => {
-      mockUseUsdToFiatRate.mockReturnValue({ status: "error", rate: null });
-
-      const { result } = renderVM({ currency: mockBtcCryptoCurrency }, withBtcCounterValue);
-
-      expect(result.current.series[0]?.data).toEqual([]);
+      expect(result.current.series[0]?.data).toEqual([100, 110, 120]);
     });
   });
 

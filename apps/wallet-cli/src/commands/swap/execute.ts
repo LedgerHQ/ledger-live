@@ -4,13 +4,15 @@ import { z } from "zod";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { makeBridgeCacheSystem } from "@ledgerhq/live-common/bridge/cache";
 import { makeEmptyTokenAccount } from "@ledgerhq/live-common/account/index";
-import { findCryptoCurrencyById, parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getQuotes } from "@ledgerhq/live-common/wallet-api/Exchange/index";
 import type { Quote } from "@ledgerhq/live-common/wallet-api/Exchange/quotes/types";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import { getCurrencyForAccount, type Account, type AccountLike } from "@ledgerhq/types-live";
 import { getMainAccount, getParentAccount } from "@ledgerhq/ledger-wallet-framework/account/index";
-import { integrateNewAccountDescriptor } from "@ledgerhq/live-wallet/walletsync/modules/accounts";
+import { integrateNewAccountDescriptor } from "@ledgerhq/live-wallet/accounts";
 import { createCommandOutput } from "../../output";
 import {
   accountOption,
@@ -23,7 +25,7 @@ import { networkStringFromCurrencyId } from "../../shared/accountDescriptor";
 import { OutputFormatSchema } from "../../wallet/models";
 import { runFullSwapPipeline as runFullSwapPipelineDefault } from "./cli-swap-pipeline";
 import { runCliSwapDie as runCliSwapDiePipelineDefault } from "./cli-swap-die-pipeline";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import {
   isDieExecutionProvider,
   resolveSwapProvider,
@@ -317,6 +319,7 @@ export async function executeSwapCommand({
       operationHash: result.operationHash,
       swapId: result.swapId,
       amountExpectedTo: result.amountExpectedTo,
+      amountExpectedToAtomic: result.amountExpectedToAtomic,
       magnitudeAwareRate: result.magnitudeAwareRate,
     });
   });

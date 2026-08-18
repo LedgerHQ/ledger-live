@@ -1,5 +1,5 @@
 import { ipcRenderer } from "electron";
-import { setEnvUnsafe } from "@ledgerhq/live-env";
+import { setEnvUnsafe } from "@shared/env";
 
 export const setEnvOnAllThreads = (name: string, value: unknown): boolean => {
   if (setEnvUnsafe(name, value)) {

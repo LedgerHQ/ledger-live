@@ -1,10 +1,5 @@
 import { resetTrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { useDispatch } from "~/context/hooks";
-import {
-  TrustchainEjected,
-  TrustchainNotAllowed,
-  TrustchainOutdated,
-} from "@ledgerhq/ledger-key-ring-protocol/errors";
 import { ErrorType } from "./type.hooks";
 import { StackActions, useNavigation } from "@react-navigation/native";
 import { AnalyticsEvents } from "LLM/features/WalletSync/Analytics/enums";
@@ -34,10 +29,10 @@ export const useLifeCycle = () => {
   };
 
   function handleError(error: Error) {
-    if (error instanceof TrustchainEjected) reset();
-    if (error instanceof TrustchainNotAllowed) reset();
+    if (error?.name === "TrustchainEjected") reset();
+    if (error?.name === "TrustchainNotAllowed") reset();
 
-    if (error instanceof TrustchainOutdated) restoreTrustchain();
+    if (error?.name === "TrustchainOutdated") restoreTrustchain();
 
     const errorToHandle = Object.entries(includesErrorActions).find(([err, _action]) =>
       error.message.includes(err),

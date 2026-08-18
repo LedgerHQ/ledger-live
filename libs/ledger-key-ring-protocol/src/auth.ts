@@ -1,4 +1,3 @@
-import { LedgerAPI4xx } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import { AuthCachePolicy, JWT } from "./types";
 import { TrustchainNotAllowed, TrustchainOutdated } from "./errors";
@@ -74,20 +73,39 @@ type JwtExpirationCheck = {
   isUncaughtClientError: boolean;
 };
 
+/**
+ * Contract for HTTP errors reaching this layer, which any transport used to call the trustchain
+ * or cloud-sync backends must satisfy — see `CloudSyncHttpError` in @shared/cloud-sync and
+ * `LedgerAPI4xx` in @ledgerhq/live-network:
+ *
+ *  - `status`: the numeric HTTP status. JWT recovery only engages on a 4xx.
+ *  - `message`: the backend's message, verbatim. The backend discriminates JWT failures through
+ *    it ("JWT is expired", "JWT contains no permission", "path does not match"), so a transport
+ *    that drops the response body silently downgrades every 4xx to a full re-authentication and
+ *    stops producing TrustchainNotAllowed / TrustchainOutdated.
+ *
+ * A transport whose errors are not Error-shaped (RTK Query's FetchBaseQueryError carries the body
+ * on `data` and has no `message`) must remap to this shape at its boundary.
+ */
+function isClientError(error: unknown): boolean {
+  const status = (error as { status?: unknown })?.status;
+  return typeof status === "number" && status >= 400 && status < 500;
+}
+
 function networkCheckJwtExpiration(error: unknown): JwtExpirationCheck {
   let hasExpired = false;
   let canBeRefreshed = false;
   let isNotPermitted = false;
   let isTrustchainOutdated = false;
   let isUncaughtClientError = false;
-  // this assume live-network is used and we adapt to its error's format
-  if (error instanceof LedgerAPI4xx) {
-    if (error.message.includes("JWT is expired")) {
+  if (isClientError(error)) {
+    const message = (error as Error)?.message ?? "";
+    if (message.includes("JWT is expired")) {
       hasExpired = true;
-      canBeRefreshed = error.message.includes("/refresh");
-    } else if (error.message.includes("JWT contains no permission")) {
+      canBeRefreshed = message.includes("/refresh");
+    } else if (message.includes("JWT contains no permission")) {
       isNotPermitted = true;
-    } else if (error.message.includes("path does not match")) {
+    } else if (message.includes("path does not match")) {
       isTrustchainOutdated = true;
     } else {
       isUncaughtClientError = true;

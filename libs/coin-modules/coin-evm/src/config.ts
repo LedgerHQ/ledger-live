@@ -1,5 +1,6 @@
-import { CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
+import { Context, CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
 import { LedgerExplorerId } from "@ledgerhq/ledger-wallet-framework/types";
+import { log } from "@ledgerhq/logs";
 import type { InternalTxSourceList } from "./internalTxSources";
 
 export type { InternalTxSource, InternalTxSourceList, NonEmptySource } from "./internalTxSources";
@@ -15,6 +16,8 @@ export {
 export type BlockFinalizationTag = "latest" | "safe" | "finalized";
 
 export type EvmConfig = {
+  chainId: number;
+  name: string;
   node:
     | {
         type: "external";
@@ -93,6 +96,14 @@ export type EvmConfig = {
    */
   feeHistoryRewardPercentile?: number;
   /**
+   * Calldata floor cost, used as a gas validation lower bound. Default to 10 and 1 (EIP-7623).
+   * EIP-7976 raises them to 16 and 4, i.e. 64 gas per byte — set both, or zero-byte calldata is
+   * under-estimated. 64 is the resulting gas per byte, not a value to set here.
+   * @see https://eips.ethereum.org/EIPS/eip-7976
+   */
+  calldataFloorGasPerToken?: number;
+  calldataFloorZeroByteTokens?: number;
+  /**
    * Ordered list of internal-tx sources for `getBlock`. Built via `internalTxSourcesFromList()`.
    * Defaults to explorer-first, then node traces, then `empty` (resolves only when no
    * real trace runtime error was remembered; trace failures still propagate for retry).
@@ -125,3 +136,25 @@ export const getCoinConfig = (currencyId: string): EvmCoinConfig => {
 
   return coinConfig(currencyId);
 };
+
+/**
+ * The {@link Context} threaded through the coin-evm public API (ADR-019).
+ *
+ * NOTE: The EVM low layers still resolve configuration through the module-level singleton
+ * (keyed by `currency.id`), so `context` is currently threaded for framework conformance but
+ * the config it carries mirrors the singleton. `config`/`logger` are provided for completeness
+ * and for callers that build a context explicitly.
+ */
+export type EvmContext = Context<EvmConfigInfo>;
+
+/**
+ * Builds an {@link EvmContext} from the module-level singleton and `@ledgerhq/logs`.
+ *
+ * The returned `config` accessor reads from the singleton (`getCoinConfig`), preserving the
+ * existing `setCoinConfig` side-effect flow used by external consumers of `createApi`.
+ */
+export const createContext = (): EvmContext => ({
+  config: async (currencyId?: string): Promise<EvmConfigInfo> =>
+    getCoinConfig(currencyId ?? "").info,
+  logger: (...args: unknown[]): void => log("coin-evm", args.map(String).join(" ")),
+});

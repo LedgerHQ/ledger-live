@@ -2,10 +2,9 @@ import { Account, TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import { allure } from "jest-allure2-reporter/api";
 import { floatNumberRegex } from "@ledgerhq/live-e2e-shared/data/regexes";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import BigNumber from "bignumber.js";
 import { deleteSpeculos, launchSpeculos, registerSpeculos } from "./speculosUtils";
-import { log } from "detox";
 
 /**
  * Mirrors swap-live-app's remote-config decimal cap (currently defaults to 8, see
@@ -52,8 +51,9 @@ export async function performSwapUntilQuoteSelectionStep(
   amount: string,
   continueToQuotes: boolean = true,
   selectSpecificToAccount: boolean = false,
+  selectSpecificFromAccount: boolean = false,
 ) {
-  await selectCurrency(accountToDebit, true);
+  await selectCurrency(accountToDebit, true, selectSpecificFromAccount);
   await selectCurrency(accountToCredit, false, selectSpecificToAccount);
   await app.swapLiveApp.inputAmount(amount);
   if (continueToQuotes) {
@@ -67,15 +67,8 @@ export async function ensureTokenApproval(
   provider: SwapProvider,
   minAmount: string,
 ) {
-  if (!provider.contractAddress || !fromAccount.parentAccount) return;
-
-  const currentAllowance = await isTokenAllowanceSufficientCommand(
-    fromAccount,
-    provider.contractAddress,
-    minAmount,
-  );
-  log.warn("CLI result: Current Allowance: ", currentAllowance);
-  if (currentAllowance) return;
+  const approvalNeeded = await isTokenApprovalExpected(fromAccount, provider, minAmount);
+  if (!approvalNeeded) return;
 
   const previousSpeculosPort = getEnv("SPECULOS_API_PORT");
   const speculos = await launchSpeculos(fromAccount.currency.speculosApp.name);
@@ -83,7 +76,8 @@ export async function ensureTokenApproval(
   try {
     const result = await approveTokenCommand(
       fromAccount,
-      provider.contractAddress,
+      // approvalNeeded is only true when isTokenApprovalExpected confirmed contractAddress is set.
+      provider.contractAddress!,
       new BigNumber(minAmount).times(12).div(10).toFixed(),
     );
     allure.description(`Token approval result for ${provider.uiName}:\n\n ${result}`);
@@ -93,6 +87,23 @@ export async function ensureTokenApproval(
       await registerSpeculos(previousSpeculosPort);
     }
   }
+}
+
+// Mirrors swap-live-app's approval check: no contractAddress (native asset or a
+// deposit-based provider, e.g. NEAR Intents/MoonPay) means nothing to approve.
+export async function isTokenApprovalExpected(
+  fromAccount: Account | TokenAccount,
+  provider: SwapProvider,
+  amount: string,
+): Promise<boolean> {
+  if (!provider.contractAddress || !fromAccount.parentAccount) return false;
+
+  const sufficientAllowance = await isTokenAllowanceSufficientCommand(
+    fromAccount,
+    provider.contractAddress,
+    amount,
+  );
+  return !sufficientAllowance;
 }
 
 export async function revokeTokenApproval(

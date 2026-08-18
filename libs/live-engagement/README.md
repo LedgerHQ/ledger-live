@@ -1,5 +1,8 @@
 # live-engagement
 
+> [!CAUTION]
+> **Status: UNSTABLE** — New engagement module under active development; API may evolve as use cases grow.
+
 `@ledgerhq/live-engagement` holds shared Redux state for engagement surfaces (upsells, awareness modals, cooldown/frequency tracking) that more than one app needs, without growing `live-common` (frozen - see [libs/README.md](../README.md)).
 
 ## Scope

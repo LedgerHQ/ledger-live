@@ -32,7 +32,6 @@ import { NearWithdrawingFlowParamList } from "../WithdrawingFlow/types";
 import { useSettings } from "~/hooks";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import NotEnoughFundFeesAlert from "../../shared/StakingErrors/NotEnoughFundFeesAlert";
-import { NotEnoughBalance } from "@ledgerhq/errors";
 import AmountInput from "~/screens/SendFunds/AmountInput";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
@@ -96,7 +95,7 @@ function StakingAmount({ navigation, route }: Props) {
     behaviorParam = "padding";
   }
 
-  const errorDuringUnstaking = error instanceof NotEnoughBalance && transaction.mode === "unstake";
+  const errorDuringUnstaking = error?.name === "NotEnoughBalance" && transaction.mode === "unstake";
 
   return (
     <View

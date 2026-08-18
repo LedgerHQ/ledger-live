@@ -1,5 +1,5 @@
 import { Account, TokenAccount } from "@ledgerhq/types-live";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { useCallback, useMemo, useState } from "react";
 import {
   ADD_ACCOUNT_EVENTS_NAME,

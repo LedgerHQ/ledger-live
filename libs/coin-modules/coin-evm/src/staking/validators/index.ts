@@ -1,9 +1,10 @@
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import type { Cursor, Page, Validator } from "@ledgerhq/coin-module-framework/api/index";
-import type { StakingValidatorItem } from "@ledgerhq/types-live";
+import type { EvmConfigInfo } from "../../config";
 import { STAKING_CONTRACTS } from "../contracts";
 import monadValidatorApi from "./monad";
 import seiValidatorApi from "./sei";
+import somniaValidatorApi from "./somnia";
 import zeroGravityValidatorApi from "./zero_gravity";
 import type { ValidatorApi } from "./types";
 
@@ -21,18 +22,21 @@ export const getValidatorApi = (currencyId: string): ValidatorApi | undefined =>
       return monadValidatorApi;
     case "zero_gravity":
       return zeroGravityValidatorApi;
+    case "somnia":
+      return somniaValidatorApi;
     default:
       return undefined;
   }
 };
 
 const resolveValidators = async (
+  config: EvmConfigInfo,
   currencyId: string,
   cursor?: Cursor,
-): Promise<Page<StakingValidatorItem>> => {
+): Promise<Page<Validator>> => {
   const api = getValidatorApi(currencyId);
   if (!api) return { items: [], next: undefined };
-  return api.fetchValidators(currencyId, cursor);
+  return api.fetchValidators(config, currencyId, cursor);
 };
 
 // One cache key per page, so each page of a paginated chain (e.g. Monad) is
@@ -42,8 +46,10 @@ const resolveValidators = async (
 const pageKey = (currencyId: string, cursor?: Cursor): string => `${currencyId}-${cursor ?? ""}`;
 
 const validatorsCache = makeLRUCache(
-  (currencyId: string, cursor?: Cursor) => resolveValidators(currencyId, cursor),
-  (currencyId: string, cursor?: Cursor) => pageKey(currencyId, cursor),
+  (config: EvmConfigInfo, currencyId: string, cursor?: Cursor) =>
+    resolveValidators(config, currencyId, cursor),
+  // config is deterministic per currency, so it is intentionally excluded from the cache key.
+  (_config: EvmConfigInfo, currencyId: string, cursor?: Cursor) => pageKey(currencyId, cursor),
   { max: 50, ttl: CACHE_MAX_AGE_MS },
 );
 
@@ -69,14 +75,15 @@ export const clearValidatorsCache = (currencyId?: string): void => {
 };
 
 export const getValidators = async (
+  config: EvmConfigInfo,
   currencyId: string,
   cursor?: Cursor,
-): Promise<Page<StakingValidatorItem>> => {
+): Promise<Page<Validator>> => {
   const key = pageKey(currencyId, cursor);
   issuedKeys.add(key);
 
   try {
-    const page = await validatorsCache(currencyId, cursor);
+    const page = await validatorsCache(config, currencyId, cursor);
     // Never keep an empty page cached, so a transient empty response is retried next time.
     if (page.items.length === 0) {
       validatorsCache.clear(key);
@@ -96,8 +103,8 @@ export const getValidators = async (
  * cache entry already returns without a network call, so repeated calls are cheap.
  * Only the first page is warmed; subsequent pages are fetched lazily by the hook.
  */
-export const prefetchValidators = (currencyId: string): void => {
-  void getValidators(currencyId).catch(() => {
+export const prefetchValidators = (config: EvmConfigInfo, currencyId: string): void => {
+  void getValidators(config, currencyId).catch(() => {
     /* swallow: the hook surfaces errors via its own flow */
   });
 };
@@ -114,6 +121,14 @@ export const getUnbondingPeriodDays = (currencyId: string): number | undefined =
 export const getMaxRedelegations = (currencyId: string): number | undefined =>
   STAKING_CONTRACTS[currencyId]?.maxRedelegations;
 
+export const getDelegationVisibilityDelayMinutes = (currencyId: string): number | undefined =>
+  STAKING_CONTRACTS[currencyId]?.delegationVisibilityDelayMinutes;
+
+export const hasDelegationVisibilityDelay = (currencyId: string): boolean => {
+  const minutes = getDelegationVisibilityDelayMinutes(currencyId);
+  return typeof minutes === "number" && minutes > 0;
+};
+
 export const hasUnbondingPeriod = (currencyId: string): boolean => {
   const days = getUnbondingPeriodDays(currencyId);
   return typeof days === "number" && days > 0;
@@ -125,28 +140,9 @@ export const hasRedelegation = (currencyId: string): boolean =>
 export const hasCompound = (currencyId: string): boolean =>
   typeof STAKING_CONTRACTS[currencyId]?.functions.compoundReward === "string";
 
-const toValidatorBalance = (tokens: string): bigint => {
-  try {
-    const balance = BigInt(tokens);
-    return balance > 0n ? balance : 0n;
-  } catch {
-    return 0n;
-  }
+export const hasChainRewards = (currencyId: string): boolean => {
+  const config = STAKING_CONTRACTS[currencyId];
+  return typeof config?.functions.claimReward === "string";
 };
 
-export const getValidatorsPage = async (
-  currencyId: string,
-  cursor?: Cursor,
-): Promise<Page<Validator>> => {
-  const page = await getValidators(currencyId, cursor);
-  return {
-    items: page.items.map(v => ({
-      address: v.validatorAddress,
-      name: v.name,
-      balance: toValidatorBalance(v.tokens),
-      commissionRate: v.commission.toString(),
-      apy: v.estimatedYearlyRewardsRate,
-    })),
-    next: page.next,
-  };
-};
+export const getValidatorsPage = getValidators;

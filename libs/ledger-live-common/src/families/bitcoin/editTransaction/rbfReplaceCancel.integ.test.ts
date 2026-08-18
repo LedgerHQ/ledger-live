@@ -14,9 +14,10 @@
 import { BigNumber } from "bignumber.js";
 import { emptyHistoryCache } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import { DerivationModes } from "@ledgerhq/coin-bitcoin/wallet-btc/index";
-import BitcoinLikeWallet from "@ledgerhq/coin-bitcoin/wallet-btc/wallet";
-import type { Account as WalletAccount } from "@ledgerhq/coin-bitcoin/wallet-btc/index";
+import { walletBtcCurrencyById } from "@ledgerhq/coin-bitcoin/walletBtcCurrency";
+import { DerivationModes } from "@ledgerhq/wallet-btc/index";
+import BitcoinLikeWallet from "@ledgerhq/wallet-btc/wallet";
+import type { Account as WalletAccount } from "@ledgerhq/wallet-btc/index";
 import { buildRbfCancelTx, buildRbfSpeedUpTx } from "./buildRbfTransaction";
 import { getEditTransactionPatch } from "./getEditTransactionPatch";
 import { buildTransaction } from "@ledgerhq/coin-bitcoin/buildTransaction";
@@ -144,7 +145,7 @@ describe("RBF replace and cancel integration (single UTXO)", () => {
         network: "mainnet",
         derivationMode: DerivationModes.LEGACY,
       },
-      getCryptoCurrencyById("bitcoin"),
+      walletBtcCurrencyById("bitcoin"),
     );
 
     walletAccount.xpub.explorer = mockExplorer as unknown as typeof walletAccount.xpub.explorer;
@@ -476,7 +477,7 @@ describe("RBF replace and cancel integration (multiple UTXOs)", () => {
         network: "mainnet",
         derivationMode: DerivationModes.LEGACY,
       },
-      getCryptoCurrencyById("bitcoin"),
+      walletBtcCurrencyById("bitcoin"),
     );
 
     walletAccount.xpub.explorer = mockExplorer as unknown as typeof walletAccount.xpub.explorer;

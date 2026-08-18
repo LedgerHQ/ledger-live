@@ -6,4 +6,7 @@
 
 ## @ledgerhq/live-signer-zcash
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 Ledger Hardware Wallet ZCash JavaScript bindings via DMK.

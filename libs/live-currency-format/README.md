@@ -1,5 +1,8 @@
 # live-currency-format
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 Locale-aware currency formatting utilities for Ledger Live. Handles display of crypto and fiat amounts, parsing user input back into BigNumber values, RTL language support, and price formatting. Used across both desktop and mobile UIs wherever a balance, fee, or price must be rendered as a human-readable string.
 
 ## What it does

@@ -1,5 +1,8 @@
 import React from "react";
+import type { Card as BrazeCard } from "@braze/web-sdk";
 import { fireEvent, render, screen, waitFor } from "tests/testSetup";
+import type { State } from "~/renderer/reducers";
+import { INITIAL_STATE as DYNAMIC_CONTENT_INITIAL_STATE } from "~/renderer/reducers/dynamicContent";
 import { track, trackPage } from "~/renderer/analytics/segment";
 import { closeGenericAwarenessModalDialog } from "LLD/features/GenericAwarenessModal/genericAwarenessModalDialog";
 import GenericAwarenessModalView from "../GenericAwarenessModalView";
@@ -20,6 +23,14 @@ import {
   createGenericAwarenessModalTestState,
   renderOpenAwarenessModalView,
 } from "../testUtils/modalTestUtils";
+
+const mockLogContentCardImpressions = jest.fn();
+
+jest.mock("@braze/web-sdk", () => ({
+  logContentCardImpressions: (...args: unknown[]) => mockLogContentCardImpressions(...args),
+  logContentCardClick: jest.fn(),
+  logCardDismissal: jest.fn(),
+}));
 
 jest.mock("LLD/features/GenericAwarenessModal/genericAwarenessModalDialog", () => ({
   closeGenericAwarenessModalDialog: jest.fn(() => jest.fn()),
@@ -59,6 +70,26 @@ describe("GenericAwarenessModalView", () => {
 
       expect(onClose).not.toHaveBeenCalled();
     });
+  });
+
+  it("should log one Braze impression when the modal opens", () => {
+    renderOpenAwarenessModalView(carouselCampaignCard, {
+      initialState: createGenericAwarenessModalTestState({
+        dynamicContent: {
+          ...DYNAMIC_CONTENT_INITIAL_STATE,
+          desktopCards: [
+            { id: CAROUSEL_CAMPAIGN_ID, title: "Carousel card" } as unknown as BrazeCard,
+          ],
+        },
+        settings: {
+          shareAnalytics: true,
+          sharePersonalizedRecommandations: false,
+          dismissedContentCards: {},
+        } as State["settings"],
+      }),
+    });
+
+    expect(mockLogContentCardImpressions).toHaveBeenCalledTimes(1);
   });
 
   it("should render feature intro, track the page, and hide carousel controls", () => {

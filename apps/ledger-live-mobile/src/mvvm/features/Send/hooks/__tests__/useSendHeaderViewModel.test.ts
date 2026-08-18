@@ -3,6 +3,7 @@ import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
 import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { renderHook } from "@testing-library/react-native";
+import { ScreenName } from "~/const";
 import { useMaybeAccountName } from "~/reducers/wallet";
 
 import { useSendFlowActions, useSendFlowData } from "../../context/SendFlowContext";
@@ -10,6 +11,8 @@ import { useSendAmountDisplayMode } from "@ledgerhq/live-common/flows/send/amoun
 import { useAvailableBalance } from "../useAvailableBalance";
 import { useCurrentSendFlowStep } from "../useCurrentSendFlowStep";
 import { useSendHeaderViewModel } from "../useSendHeaderViewModel";
+import { useSelector } from "~/context/hooks";
+import { useContactsFeature } from "@features/flow-contacts";
 
 jest.mock("@react-navigation/native", () => ({
   useNavigation: jest.fn(),
@@ -25,6 +28,10 @@ jest.mock("../../context/SendFlowContext");
 jest.mock("@ledgerhq/live-common/flows/send/amount/SendAmountDisplayModeContext");
 jest.mock("../useAvailableBalance");
 jest.mock("../useCurrentSendFlowStep");
+jest.mock("~/context/hooks");
+jest.mock("@features/flow-contacts", () => ({
+  useContactsFeature: jest.fn(() => ({ isEnabled: false })),
+}));
 
 const mockedUseNavigation = jest.mocked(useNavigation);
 const mockedUseMaybeAccountName = jest.mocked(useMaybeAccountName);
@@ -51,12 +58,19 @@ const mockRecipientSearch = {
 };
 
 describe("useSendHeaderViewModel", () => {
+  const mockNavigate = jest.fn();
+  const mockGoBack = jest.fn();
+  const mockCanGoBack = jest.fn(() => false);
+  const mockClearRecipientSearch = jest.fn();
+  const mockSetRecipientSearchValue = jest.fn();
+
   beforeEach(() => {
     jest.clearAllMocks();
 
     mockedUseNavigation.mockReturnValue({
-      canGoBack: jest.fn(() => false),
-      goBack: jest.fn(),
+      canGoBack: mockCanGoBack,
+      goBack: mockGoBack,
+      navigate: mockNavigate,
     } as never);
     mockedUseMaybeAccountName.mockReturnValue("Base 1");
     mockedUseSendAmountDisplayMode.mockReturnValue({
@@ -106,8 +120,8 @@ describe("useSendHeaderViewModel", () => {
       transaction: {
         updateTransaction: jest.fn(),
       },
-      setRecipientSearchValue: jest.fn(),
-      clearRecipientSearch: jest.fn(),
+      setRecipientSearchValue: mockSetRecipientSearchValue,
+      clearRecipientSearch: mockClearRecipientSearch,
     } as never);
   });
 
@@ -150,5 +164,168 @@ describe("useSendHeaderViewModel", () => {
     renderHook(() => useSendHeaderViewModel());
 
     expect(mockedUseAvailableBalance).toHaveBeenCalledWith(mockAccount, "crypto");
+  });
+
+  it("navigates to ScanRecipient and fills the search with the scanned address", () => {
+    const { result } = renderHook(() => useSendHeaderViewModel());
+
+    result.current.handleQrCodeClick();
+
+    expect(mockClearRecipientSearch).toHaveBeenCalled();
+    expect(mockNavigate).toHaveBeenCalledWith(
+      ScreenName.ScanRecipient,
+      expect.objectContaining({
+        accountId: mockAccount.id,
+        parentId: undefined,
+        transaction: undefined,
+        onScannedURI: expect.any(Function),
+      }),
+    );
+
+    const { onScannedURI } = mockNavigate.mock.calls[0][1] as {
+      onScannedURI: (result: { address: string }) => void;
+    };
+    onScannedURI({ address: "0xscanned" });
+
+    expect(mockSetRecipientSearchValue).toHaveBeenCalledWith("0xscanned");
+  });
+
+  it("prefills the transaction amount from a scanned EIP681 URI while staying on recipient", () => {
+    const amount = new BigNumber("1000000000000000000");
+    const mockUpdateTransaction = jest.fn();
+    const currentTransaction = {
+      family: "evm",
+      amount: new BigNumber(0),
+      recipient: "",
+      useAllAmount: false,
+    };
+
+    mockedUseSendFlowData.mockReturnValue({
+      uiConfig: {
+        recipientSupportsDomain: true,
+      },
+      recipientSearch: mockRecipientSearch,
+      state: {
+        account: {
+          account: mockAccount,
+          parentAccount: null,
+          currency: mockAccount.currency,
+        },
+        transaction: {
+          transaction: currentTransaction,
+          status: {},
+          bridgeError: null,
+          bridgePending: false,
+        },
+        recipient: null,
+        operation: {
+          optimisticOperation: null,
+          transactionError: null,
+          signed: false,
+        },
+        isLoading: false,
+        flowStatus: "idle",
+      },
+    } as never);
+    mockedUseSendFlowActions.mockReturnValue({
+      close: jest.fn(),
+      transaction: {
+        updateTransaction: mockUpdateTransaction,
+      },
+      setRecipientSearchValue: mockSetRecipientSearchValue,
+      clearRecipientSearch: mockClearRecipientSearch,
+    } as never);
+
+    const { result } = renderHook(() => useSendHeaderViewModel());
+
+    result.current.handleQrCodeClick();
+
+    const { onScannedURI } = mockNavigate.mock.calls[0][1] as {
+      onScannedURI: (result: { address: string; amount?: BigNumber }) => void;
+    };
+    onScannedURI({ address: "0xscanned", amount });
+
+    expect(mockSetRecipientSearchValue).toHaveBeenCalledWith("0xscanned");
+    expect(mockUpdateTransaction).toHaveBeenCalledTimes(1);
+    const updater = mockUpdateTransaction.mock.calls[0][0];
+    expect(updater(currentTransaction)).toEqual(
+      expect.objectContaining({
+        amount,
+        useAllAmount: false,
+      }),
+    );
+    expect(mockGoBack).not.toHaveBeenCalled();
+  });
+
+  describe("recipient display on the amount step", () => {
+    const ADDRESS = "0x1234567890abcdef1234567890abcdef12345678";
+    const CONTACT = {
+      id: "contact-benoit",
+      isMe: false,
+      name: "Benoit Jean",
+      addresses: [{ id: "address-1", currencyId: "ethereum", label: "Eth main", address: ADDRESS }],
+    };
+
+    const mockAmountStep = () => {
+      mockedUseCurrentSendFlowStep.mockReturnValue([
+        SEND_FLOW_STEP.AMOUNT,
+        {
+          id: SEND_FLOW_STEP.AMOUNT,
+          addressInput: true,
+          canGoBack: true,
+          showTitle: true,
+          showHeaderRight: true,
+        },
+      ]);
+      mockedUseSendFlowData.mockReturnValue({
+        uiConfig: { recipientSupportsDomain: true },
+        recipientSearch: mockRecipientSearch,
+        state: {
+          account: {
+            account: mockAccount,
+            parentAccount: null,
+            currency: { ...mockAccount.currency, id: "ethereum" },
+          },
+          transaction: { transaction: { recipient: ADDRESS }, status: {} },
+          recipient: { address: ADDRESS },
+        },
+      } as never);
+    };
+
+    it("shows the contact name when the recipient is a contact", () => {
+      jest.mocked(useContactsFeature).mockReturnValue({ isEnabled: true } as never);
+      jest.mocked(useSelector).mockReturnValue([CONTACT] as never);
+      mockAmountStep();
+
+      const { result } = renderHook(() => useSendHeaderViewModel());
+
+      expect(result.current.recipientContact).toEqual({
+        id: "contact-benoit",
+        name: "Benoit Jean",
+      });
+      expect(result.current.formattedAddress).toBe("Benoit Jean");
+    });
+
+    it("shows the formatted address when the recipient is not a contact", () => {
+      jest.mocked(useContactsFeature).mockReturnValue({ isEnabled: true } as never);
+      jest.mocked(useSelector).mockReturnValue([] as never);
+      mockAmountStep();
+
+      const { result } = renderHook(() => useSendHeaderViewModel());
+
+      expect(result.current.recipientContact).toBeUndefined();
+      expect(result.current.formattedAddress).toBe("0x123456...12345678");
+    });
+
+    it("shows the formatted address when the contacts feature is disabled", () => {
+      jest.mocked(useContactsFeature).mockReturnValue({ isEnabled: false } as never);
+      jest.mocked(useSelector).mockReturnValue([CONTACT] as never);
+      mockAmountStep();
+
+      const { result } = renderHook(() => useSendHeaderViewModel());
+
+      expect(result.current.recipientContact).toBeUndefined();
+      expect(result.current.formattedAddress).toBe("0x123456...12345678");
+    });
   });
 });

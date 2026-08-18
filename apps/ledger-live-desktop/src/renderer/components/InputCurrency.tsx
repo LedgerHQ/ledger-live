@@ -9,7 +9,7 @@ import noop from "lodash/noop";
 import Box from "~/renderer/components/Box";
 import Input, { Props as InputProps } from "~/renderer/components/Input";
 import Select from "~/renderer/components/Select";
-import { Unit } from "@ledgerhq/types-cryptoassets";
+import { Unit } from "@domain/entity-currency-unit";
 import type { ReactNode } from "react";
 
 const unitGetOptionValue = (unit: Unit) => String(unit.magnitude);
@@ -119,6 +119,7 @@ function InputCurrency(props: Props) {
   // ref exposing `.current`) keeps working, and expose it to any forwarded ref.
   const innerRef = useRef<HTMLInputElement | null>(null);
   const caretRef = useRef<number | null>(null);
+  const lastTypedRef = useRef<BigNumber | null>(null);
   useImperativeHandle(forwardedRef, () => innerRef.current as HTMLInputElement, []);
 
   const syncInput = useCallback(
@@ -142,10 +143,19 @@ function InputCurrency(props: Props) {
     [unit, locale, showAllDigits, subMagnitude, allowZero, value],
   );
 
-  // Synchronously reformat display when value/unit change while not focused
+  // Reformat the display when the value/unit prop changes.
   useLayoutEffect(() => {
     setState(prev => {
-      if (prev.isFocused && !disabled) return prev;
+      // An external value change (ratio preset, "send max") must win even while
+      // focused; only an echo of what the user just typed preserves their edit.
+      if (prev.isFocused && prev.rawValue && !disabled) {
+        const isEcho =
+          lastTypedRef.current != null &&
+          value != null &&
+          !value.isNaN() &&
+          lastTypedRef.current.isEqualTo(value);
+        if (isEcho) return prev;
+      }
       const displayValue =
         !value || value.isNaN() || value.isZero()
           ? ""
@@ -178,6 +188,7 @@ function InputCurrency(props: Props) {
       }
 
       const satoshiValue = BigNumber(r.value);
+      lastTypedRef.current = satoshiValue;
       if (!value || !value.isEqualTo(satoshiValue)) {
         onChange(satoshiValue, unit);
       }

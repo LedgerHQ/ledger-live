@@ -10,10 +10,10 @@ import { existsSync } from "fs";
 import path from "path";
 import { createSpeculosDeviceCI, releaseSpeculosDeviceCI } from "./speculosCI";
 import { DeviceModelId } from "@ledgerhq/devices";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import axios from "axios";
-import { getEnv } from "@ledgerhq/live-env";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getEnv } from "@shared/env";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { DeviceLabels } from "./enum/DeviceLabels";
 import { Account } from "./enum/Account";
 import { Currency } from "./enum/Currency";
@@ -62,15 +62,20 @@ import { getDeviceCoordinates } from "./deviceCoordinates";
 import { sendInternetComputer } from "./families/internet_computer";
 import { sleep } from "./index";
 import { delegateMina } from "./families/mina";
+import { sendAleo } from "./families/aleo";
 
 const isSpeculosRemote = process.env.REMOTE_SPECULOS === "true";
 const SCREEN_POLL_INTERVAL_MS = 500;
 const SWAP_REVIEW_TRANSACTION_TIMEOUT_MS = 120_000;
 // Derived from timeout + interval so the budget can't silently drift if either changes.
-const SWAP_REVIEW_TRANSACTION_MAX_ATTEMPTS = Math.ceil(
+export const SWAP_REVIEW_TRANSACTION_MAX_ATTEMPTS = Math.ceil(
   SWAP_REVIEW_TRANSACTION_TIMEOUT_MS / SCREEN_POLL_INTERVAL_MS,
 );
 
+const SEND_REVIEW_TRANSACTION_TIMEOUT_MS = 120_000;
+const SEND_REVIEW_TRANSACTION_MAX_ATTEMPTS = Math.ceil(
+  SEND_REVIEW_TRANSACTION_TIMEOUT_MS / SCREEN_POLL_INTERVAL_MS,
+);
 export type Spec = {
   currency?: CryptoCurrency;
   appQuery: {
@@ -561,7 +566,11 @@ export function drainSpeculosScreenshots(port: number): Buffer[] {
   return screenshots;
 }
 
-export async function waitFor(text: string, maxAttempts = 60): Promise<string> {
+export async function waitFor(
+  text: string,
+  maxAttempts = 60,
+  { matchFullEvents = false }: { matchFullEvents?: boolean } = {},
+): Promise<string> {
   const port = getEnv("SPECULOS_API_PORT");
   let texts = "";
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
@@ -574,14 +583,47 @@ export async function waitFor(text: string, maxAttempts = 60): Promise<string> {
     await sleep(SCREEN_POLL_INTERVAL_MS);
   }
 
+  if (matchFullEvents) {
+    try {
+      const allEvents = (await fetchAllEvents(port)).join(" ");
+      const shot = await takeScreenshot(port);
+      console.warn(
+        `[waitFor] "${text}" not matched after ${maxAttempts} polls on port ${port}. ` +
+          `currentscreenonly=true => "${texts}" | currentscreenonly=false => "${allEvents}" | ` +
+          `screenshot(${port}) => ${shot ? `${shot.length} bytes` : "unreachable"}`,
+      );
+    } catch (err) {
+      console.warn(`[waitFor] failed to dump diagnostics on port ${port}: ${sanitizeError(err)}`);
+    }
+  }
+
   throw new Error(
     `Text "${text}" not found on device screen after ${maxAttempts} attempts. Last screen text: "${texts}"`,
   );
 }
 
-export async function waitForReviewTransaction(maxAttempts = 60): Promise<void> {
+const SWAP_INIT_STALL_HINT =
+  `\nHint: The device Exchange app is ready but Ledger Live never ` +
+  `delivered the swap payload, so "Review transaction" was never reached.\nSee the ` +
+  `"⚠️ Swap-init error" attachment.`;
+
+function isExchangeAppReadyStall(screenText: string): boolean {
+  return screenText.toLowerCase().includes(DeviceLabels.EXCHANGE_APP_IS_READY.toLowerCase());
+}
+
+export async function waitForReviewTransaction(
+  maxAttempts = 60,
+  { matchFullEvents = false }: { matchFullEvents?: boolean } = {},
+): Promise<void> {
   if (!isTouchDevice()) {
-    await waitFor(DeviceLabels.REVIEW_TRANSACTION, maxAttempts);
+    try {
+      await waitFor(DeviceLabels.REVIEW_TRANSACTION, maxAttempts, { matchFullEvents });
+    } catch (error) {
+      if (error instanceof Error && isExchangeAppReadyStall(error.message)) {
+        error.message += SWAP_INIT_STALL_HINT;
+      }
+      throw error;
+    }
     return;
   }
 
@@ -600,9 +642,8 @@ export async function waitForReviewTransaction(maxAttempts = 60): Promise<void> 
     await sleep(SCREEN_POLL_INTERVAL_MS);
   }
 
-  throw new Error(
-    `Text "${DeviceLabels.REVIEW_TRANSACTION}" not found on device screen after ${maxAttempts} attempts. Last screen text: "${texts}"`,
-  );
+  const base = `Text "${DeviceLabels.REVIEW_TRANSACTION}" not found on device screen after ${maxAttempts} attempts. Last screen text: "${texts}"`;
+  throw new Error(isExchangeAppReadyStall(texts) ? base + SWAP_INIT_STALL_HINT : base);
 }
 
 export async function fetchCurrentScreenTexts(speculosApiPort: number): Promise<string> {
@@ -697,6 +738,14 @@ export function containsSubstringInEvent(targetString: string, events: string[])
   }
 
   return result;
+}
+
+/** Asserts memo/tag appears on Speculos screens when the tx includes one. */
+export function expectMemoTagInEvents(tx: Transaction, events: string[]) {
+  if (!tx.memoTag || tx.memoTag === "noTag") {
+    return;
+  }
+  expect(containsSubstringInEvent(tx.memoTag, events)).toBeTruthy();
 }
 
 export async function takeScreenshot(port?: number): Promise<Buffer | undefined> {
@@ -896,6 +945,7 @@ export async function signSendTransaction(tx: Transaction) {
     case Currency.ETH.id:
     case Currency.ETH_USDT.id:
     case Currency.SEI_EVM.id:
+    case Currency.BASE_AERODROME.id:
       await sendEVM(tx);
       break;
     case Currency.BTC.id:
@@ -923,6 +973,7 @@ export async function signSendTransaction(tx: Transaction) {
       await sendStellar(tx);
       break;
     case Currency.ATOM.id:
+    case Currency.OSMO.id:
       await sendCosmos(tx);
       break;
     case Currency.ADA.id:
@@ -953,16 +1004,22 @@ export async function signSendTransaction(tx: Transaction) {
     case Currency.CCD_TESTNET.id:
       await sendConcordium(tx);
       break;
+    case Currency.ALEO.id:
+      await sendAleo(tx);
+      break;
     default:
       throw new Error(`Unsupported currency: ${tx.accountToDebit.currency.ticker}`);
   }
 }
 
-export async function getSendEvents(tx: Transaction): Promise<string[]> {
+export async function getSendEvents(
+  tx: Transaction,
+  verifyMaxAttempts: number = SEND_REVIEW_TRANSACTION_MAX_ATTEMPTS,
+): Promise<string[]> {
   const { sendVerifyLabel, sendConfirmLabel } = getDeviceLabels(
     tx.accountToDebit.currency.speculosApp,
   );
-  await waitFor(sendVerifyLabel);
+  await waitFor(sendVerifyLabel, verifyMaxAttempts);
   return await pressUntilTextFound(sendConfirmLabel);
 }
 

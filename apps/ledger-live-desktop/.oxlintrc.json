@@ -10,7 +10,6 @@
     "INDEX_URL": "readonly",
     "Atomics": "readonly",
     "SharedArrayBuffer": "readonly",
-    "__SENTRY_URL__": "readonly",
     "__APP_VERSION__": "readonly",
     "__GIT_REVISION__": "readonly",
     "__PRERELEASE__": "readonly",
@@ -23,20 +22,8 @@
     "suspicious": "warn",
     "pedantic": "off"
   },
-  "plugins": [
-    "eslint",
-    "import",
-    "oxc",
-    "unicorn",
-    "typescript",
-    "react",
-    "jest"
-  ],
-  "ignorePatterns": [
-    "*.min.js",
-    "src/mvvm/hooks/redux.ts",
-    "tests/artifacts/**"
-  ],
+  "plugins": ["eslint", "import", "oxc", "unicorn", "typescript", "react", "jest"],
+  "ignorePatterns": ["*.min.js", "src/mvvm/hooks/redux.ts", "tests/artifacts/**"],
   "rules": {
     "eslint/no-unused-vars": "warn",
     "eslint/no-empty-pattern": "warn",
@@ -65,27 +52,51 @@
             "name": "react-redux",
             "importNames": ["useSelector", "useDispatch", "useStore"],
             "message": "Import typed hooks from 'LLD/hooks/redux' instead of 'react-redux' to ensure proper TypeScript typing."
+          },
+          {
+            "name": "@ledgerhq/ledger-wallet-framework/types",
+            "importNames": [
+              "CryptoCurrency",
+              "TokenCurrency",
+              "Currency",
+              "Unit",
+              "FiatCurrency",
+              "ExplorerView",
+              "CryptoCurrencyId",
+              "TokenCurrencyId",
+              "CryptoCurrencyIdSchema",
+              "TokenCurrencyIdSchema"
+            ],
+            "message": "Wallet-framework currency types are for coin-modules. Import from @domain/entity-currency-* (unions from @domain/entity-currency)."
+          },
+          {
+            "name": "@ledgerhq/ledger-wallet-framework/api",
+            "importNames": [
+              "CryptoCurrency",
+              "TokenCurrency",
+              "Currency",
+              "Unit",
+              "FiatCurrency",
+              "ExplorerView",
+              "CryptoCurrencyId",
+              "TokenCurrencyId",
+              "CryptoCurrencyIdSchema",
+              "TokenCurrencyIdSchema"
+            ],
+            "message": "Wallet-framework currency types are for coin-modules. Import from @domain/entity-currency-* (unions from @domain/entity-currency)."
           }
         ],
         "patterns": [
           {
-            "group": [
-              "@ledgerhq/live-common/lib/**",
-              "@ledgerhq/live-common/lib-es/**"
-            ],
+            "group": ["@ledgerhq/live-common/lib/**", "@ledgerhq/live-common/lib-es/**"],
             "message": "Please remove the /lib import from live-common import."
           },
           {
-            "group": [
-              "~/mvvm/**"
-            ],
+            "group": ["~/mvvm/**"],
             "message": "Use 'LLD' alias instead of '~/mvvm'. Replace '~/mvvm' with 'LLD' in your imports."
           },
           {
-            "group": [
-              "**/renderer/families/*/**",
-              "~/renderer/families/*/**"
-            ],
+            "group": ["**/renderer/families/*/**", "~/renderer/families/*/**"],
             "message": "families files must not be imported directly. use the bridge or export them through the LLDCoinFamily interface instead."
           },
           {
@@ -99,6 +110,15 @@
             ],
             "importNamePattern": "^(useFeature|useFeatureFlags|useHasLocallyOverriddenFeatureFlags|useWalletFeaturesConfig|FeatureToggle|DEFAULT_FEATURES|groupedFeatures|GroupedFeature)$",
             "message": "Use @features/platform-feature-flags for hooks/FeatureToggle, @shared/feature-flags for actions/selectors/types/constants (e.g. FEATURE_FLAGS_DEFAULTS, groupedFeatures, GroupedFeature)."
+          },
+          {
+            "group": [
+              "@ledgerhq/live-common/currencies",
+              "@ledgerhq/live-common/currencies/index",
+              "@ledgerhq/live-common/currencies/helpers"
+            ],
+            "importNamePattern": "^(listCryptoCurrencies|getCryptoCurrencyById|hasCryptoCurrencyId|findCryptoCurrency|findCryptoCurrencyById|findCryptoCurrencyByScheme|findCryptoCurrencyByKeyword|findCryptoCurrencyByTicker|listFiatCurrencies|findFiatCurrencyByTicker|getFiatCurrencyByTicker|hasFiatCurrencyTicker)$",
+            "message": "Currency accessors are owned by the domain layer. Import crypto accessors from @domain/entity-currency-crypto and fiat accessors from @domain/entity-currency-fiat."
           }
         ]
       }
@@ -123,9 +143,7 @@
       "env": {
         "jest": true
       },
-      "plugins": [
-        "jest"
-      ],
+      "plugins": ["jest"],
       "rules": {
         "typescript/no-explicit-any": "warn"
       }

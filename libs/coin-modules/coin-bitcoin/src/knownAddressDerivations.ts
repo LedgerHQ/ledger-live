@@ -1,6 +1,6 @@
 import { pathStringToArray } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { extractHashFromScriptPubKey } from "@ledgerhq/psbtv2";
-import type { Account as WalletAccount } from "./wallet-btc";
+import type { Account as WalletAccount } from "@ledgerhq/wallet-btc/index";
 
 export type KnownAddressDerivationsMap = Map<string, { pubkey: Buffer; path: number[] }>;
 

@@ -1,10 +1,12 @@
 import { act, renderHook } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { FinalStateType, type EnsureAppReadyState } from "@ledgerhq/live-dmk-shared";
+import React from "react";
 import { track } from "~/analytics";
 import { useInitializerActions } from "../../hooks/useInitializerActions";
 import { useFinalErrorViewModel } from "./useFinalErrorViewModel";
 import type { InitializerDevice } from "../../types";
+import { DeviceIntentTrackingProvider } from "../../../utils/DeviceIntentTrackingContext";
 
 jest.mock("~/analytics", () => {
   const actual = jest.requireActual("~/analytics");
@@ -21,6 +23,11 @@ const mockedUseInitializerActions = jest.mocked(useInitializerActions);
 const SOURCE_FLOW = "my_ledger";
 const openSupport = jest.fn();
 const onCancel = jest.fn();
+const wrapper = ({ children }: React.PropsWithChildren) => (
+  <DeviceIntentTrackingProvider value={{ sourceFlow: SOURCE_FLOW }}>
+    {children}
+  </DeviceIntentTrackingProvider>
+);
 
 const device: InitializerDevice = {
   id: "device-id",
@@ -48,9 +55,9 @@ describe("useFinalErrorViewModel", () => {
   });
 
   it("GIVEN an error WHEN rendering THEN it exposes the view props", () => {
-    const { result } = renderHook(() =>
-      useFinalErrorViewModel({ state, device, sourceFlow: SOURCE_FLOW, onCancel }),
-    );
+    const { result } = renderHook(() => useFinalErrorViewModel({ state, device, onCancel }), {
+      wrapper,
+    });
 
     expect(result.current).toEqual(
       expect.objectContaining({
@@ -60,9 +67,9 @@ describe("useFinalErrorViewModel", () => {
   });
 
   it("GIVEN an error WHEN contacting support THEN it tracks Contact Ledger Support and opens support", () => {
-    const { result } = renderHook(() =>
-      useFinalErrorViewModel({ state, device, sourceFlow: SOURCE_FLOW, onCancel }),
-    );
+    const { result } = renderHook(() => useFinalErrorViewModel({ state, device, onCancel }), {
+      wrapper,
+    });
 
     act(() => {
       result.current.onContactSupport();
@@ -78,9 +85,9 @@ describe("useFinalErrorViewModel", () => {
   });
 
   it("GIVEN an error WHEN cancelling THEN it tracks Close and forwards to onCancel", () => {
-    const { result } = renderHook(() =>
-      useFinalErrorViewModel({ state, device, sourceFlow: SOURCE_FLOW, onCancel }),
-    );
+    const { result } = renderHook(() => useFinalErrorViewModel({ state, device, onCancel }), {
+      wrapper,
+    });
 
     act(() => {
       result.current.onCancel();

@@ -1,6 +1,5 @@
-import { CantOpenDevice, LockedDeviceError } from "@ledgerhq/errors";
 import { DeviceInfo } from "@ledgerhq/types-live";
-import { from, Observable, TimeoutError } from "rxjs";
+import { from, Observable } from "rxjs";
 import { retryWhen, timeout } from "rxjs/operators";
 import { retryWhileErrors, withDevice } from "./deviceAccess";
 import getDeviceInfo from "./getDeviceInfo";
@@ -61,7 +60,7 @@ export const getDeviceRunningMode = ({
               return false;
             }
 
-            if (e instanceof CantOpenDevice) {
+            if ((e as { name?: string })?.name === "CantOpenDevice") {
               if (cantOpenDeviceRetryCount < cantOpenDeviceRetryLimit) {
                 cantOpenDeviceRetryCount++;
                 return true;
@@ -88,7 +87,7 @@ export const getDeviceRunningMode = ({
           if (isLockedDeviceError(e)) {
             o.next({ type: "lockedDevice" });
             o.complete();
-          } else if (e instanceof CantOpenDevice) {
+          } else if ((e as { name?: string })?.name === "CantOpenDevice") {
             o.next({ type: "disconnectedOrlockedDevice" });
             o.complete();
           } else {
@@ -100,5 +99,6 @@ export const getDeviceRunningMode = ({
   });
 
 const isLockedDeviceError = (e: Error) => {
-  return e && (e instanceof TimeoutError || e instanceof LockedDeviceError);
+  const eName = (e as { name?: string })?.name;
+  return e && (eName === "TimeoutError" || eName === "LockedDeviceError");
 };

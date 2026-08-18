@@ -1,4 +1,4 @@
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { getParentAccount } from "@ledgerhq/ledger-wallet-framework/account/index";
 import type { AccountLike } from "@ledgerhq/types-live";
 
@@ -15,8 +15,8 @@ import { normalizeQuote } from "./normalizer";
 import { sortQuotes } from "./sorting/sortQuotes";
 import {
   QuotesErrorCodes,
-  type GetQuotesArgs,
   type GetQuotesResponse,
+  type GetQuotesWireArgs,
   type QuotesAppPlatform,
 } from "./types";
 import { isUnsupportedPair } from "./unsupportedPairs";
@@ -79,8 +79,10 @@ function getParentCurrencyId(accounts: AccountLike[], walletAccountId: string): 
   return account ? getParentAccount(account, accounts)?.currency.id : undefined;
 }
 
+// `GetQuotesWireArgs` omits `signal`: no caller supplies one, and live apps
+// cannot — an `AbortSignal` does not survive the wallet-api boundary.
 export async function getQuotes(
-  args: GetQuotesArgs,
+  args: GetQuotesWireArgs,
   context: GetQuotesContext,
 ): Promise<GetQuotesResponse> {
   const quotesInput = resolveQuotesInput(args.data, context.accounts);

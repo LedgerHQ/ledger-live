@@ -24,7 +24,7 @@ import { flattenAccountsSelector } from "~/reducers/accounts";
 import { useInternalAppIds } from "@ledgerhq/live-common/hooks/useInternalAppIds";
 import { INTERNAL_APP_IDS, WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
 import { walletSelector } from "~/reducers/wallet";
-import useEnv from "@ledgerhq/live-common/hooks/useEnv";
+import useEnv from "@features/platform-env";
 import { counterValueCurrencySelector, discreetModeSelector } from "~/reducers/settings";
 import { useSettings } from "~/hooks";
 import { ProviderInterstitial } from "LLM/components/ProviderInterstitial";
@@ -79,14 +79,18 @@ export function PtxScreen({ route, config }: Props) {
         const parentAccount = isTokenAccount(account)
           ? getParentAccount(account, flattenedAccounts)
           : undefined;
-        params.account = accountToWalletAPIAccount(walletState, account, parentAccount).id;
+        params.account = accountToWalletAPIAccount(
+          walletState.accountNames,
+          account,
+          parentAccount,
+        ).id;
       }
     }
 
     if (params?.goToURL) params.goToURL = decodeURIComponent(params.goToURL);
 
     return params;
-  }, [walletState, flattenedAccounts, manifest?.apiVersion, params]);
+  }, [walletState.accountNames, flattenedAccounts, manifest?.apiVersion, params]);
 
   /**
    * Given the user is on an internal app (webview url is owned by LL) we must reset the session

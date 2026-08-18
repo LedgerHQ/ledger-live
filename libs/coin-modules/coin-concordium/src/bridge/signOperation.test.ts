@@ -1,4 +1,4 @@
-import { FeeNotLoaded } from "@ledgerhq/errors";
+import { FeeNotLoaded } from "@ledgerhq/ledger-wallet-framework/errors";
 import BigNumber from "bignumber.js";
 import { firstValueFrom, toArray } from "rxjs";
 import { AccountAddress } from "@ledgerhq/concordium-core";
@@ -6,6 +6,7 @@ import {
   createFixtureAccount,
   createFixtureTransaction,
   createFixtureOperation,
+  setupTestnetCoinConfig,
   VALID_ADDRESS,
 } from "../test/fixtures";
 import { buildSignOperation } from "./signOperation";
@@ -45,6 +46,7 @@ jest.mock("./getTransactionStatus", () => ({
 describe("signOperation", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    setupTestnetCoinConfig();
   });
 
   describe("buildSignOperation", () => {
@@ -369,7 +371,7 @@ describe("signOperation", () => {
       // THEN
       expect(combine).toHaveBeenCalledWith(
         expect.stringMatching(/^[a-f0-9]+$/), // serialized hex
-        expect.stringMatching(/^[a-f0-9]{128}$/), // 64-byte signature as hex
+        [expect.stringMatching(/^[a-f0-9]{128}$/)], // 64-byte signature as hex
       );
     });
 

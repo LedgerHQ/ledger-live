@@ -3,6 +3,7 @@ import type {
   ZcashAddress,
   ZcashViewKey,
   ZcashTrustedInput,
+  ZcashShieldedAddress,
   ZcashSigner,
   ZcashSignature,
   SignerTransactionLike,
@@ -11,7 +12,12 @@ import type {
   SignPcztTransactionResult,
 } from "./types";
 import { lastValueFrom, type Observable } from "rxjs";
-import { UserRefusedOnDevice } from "@ledgerhq/errors";
+import {
+  UNSUPPORTED_V6_TRANSACTION_ERROR_CODE,
+  UNSUPPORTED_V6_TRANSACTION_ERROR_TAG,
+  UnsupportedV6SourceTransaction,
+  UserRefusedOnDevice,
+} from "./errors";
 import {
   DeviceActionStatus,
   type DeviceActionState,
@@ -21,6 +27,7 @@ import {
   SignerZcashBuilder,
   type GetAddressDAError,
   type GetFullViewingKeyDAError,
+  type GetShieldedAddressDAError,
   type SignerZcash,
   type LegacyCreateTransactionArg,
   type LegacyTransaction,
@@ -40,6 +47,26 @@ type ZcashGetFullViewingKeyResult = {
   fullViewingKey: string | Uint8Array;
 };
 
+/** Mask clearing ZIP-202's fOverwintered bit, leaving the transaction version. */
+const OVERWINTERED_FLAG_MASK = 0x7fffffff;
+
+/** First version whose shielded bundles live outside `extraData` (NU5 / V5). */
+const FIRST_BUNDLE_CARRYING_VERSION = 5;
+
+function transactionVersion(version: Uint8Array): number {
+  if (version.length < 4) return 0;
+  const view = new DataView(version.buffer, version.byteOffset, version.byteLength);
+  return view.getUint32(0, true) & OVERWINTERED_FLAG_MASK;
+}
+
+function safeDescribe(value: unknown): string {
+  try {
+    return JSON.stringify(value) ?? String(value);
+  } catch {
+    return String(value);
+  }
+}
+
 export class DmkSignerZcash implements ZcashSigner {
   private readonly signer: SignerZcash;
 
@@ -48,10 +75,33 @@ export class DmkSignerZcash implements ZcashSigner {
   }
 
   private mapError<E extends { _tag: string }>(error: E): Error {
-    if ("errorCode" in error && (error as { errorCode?: unknown }).errorCode === "6985") {
+    // A task can also reject with an untagged value, down to a primitive, so
+    // nothing here may assume an object shape (LIVE-35215).
+    const details: { errorCode?: unknown; _tag?: unknown; message?: unknown } =
+      typeof error === "object" && error !== null ? error : {};
+
+    if (details.errorCode === "6985") {
       return new UserRefusedOnDevice();
     }
-    return new Error(error._tag);
+    if (
+      details.errorCode === UNSUPPORTED_V6_TRANSACTION_ERROR_CODE ||
+      details._tag === UNSUPPORTED_V6_TRANSACTION_ERROR_TAG
+    ) {
+      // The signer kit already phrased the condition and named the installed app
+      // version, so its message is surfaced as it is: the `_tag` branch below would
+      // otherwise report a bare "UnsupportedV6TransactionError", as opaque as the
+      // "ZcashAppCommandError" this case used to end up as (LIVE-35358).
+      return new UnsupportedV6SourceTransaction(
+        typeof details.message === "string" && details.message.length > 0
+          ? details.message
+          : undefined,
+      );
+    }
+    if (typeof details._tag === "string" && details._tag.length > 0) {
+      return new Error(details._tag);
+    }
+    if (error instanceof Error) return error;
+    return new Error(`Untagged device action error: ${safeDescribe(error)}`);
   }
 
   private mapResult<T, E extends { _tag: string }>(state: DeviceActionState<T, E, unknown>): T {
@@ -142,11 +192,33 @@ export class DmkSignerZcash implements ZcashSigner {
     };
   }
 
+  async getShieldedAddress(path: string, display?: boolean): Promise<ZcashShieldedAddress> {
+    const { observable } = this.signer.getShieldedAddress(path, {
+      checkOnDevice: !!display,
+      skipOpenApp: true,
+    });
+    const result = await this.resolveDeviceAction<{ address: string }, GetShieldedAddressDAError>(
+      observable,
+    );
+    return { address: result.address };
+  }
+
   async getTrustedInput(): Promise<ZcashTrustedInput> {
     throw new Error("Not implemented");
   }
 
   private toLegacyTransaction(tx: SignerTransactionLike): LegacyTransaction {
+    // A V5+ source can carry a shielded bundle that serializeTransaction strips,
+    // leaving the device to hash truncated bytes and derive a txid absent from
+    // the chain; the raw bytes let it hash the original. The override must stay
+    // scoped to V5+ because the signer kit splits raw bytes on the V5 header
+    // layout: a V4 header is shorter, so the input count is read at the wrong
+    // offset. V4 keeps the serialized-fields path (LIVE-35215).
+    const carriesShieldedBundle = transactionVersion(tx.version) >= FIRST_BUNDLE_CARRYING_VERSION;
+    const serializedPreviousTransactionOverride =
+      carriesShieldedBundle && tx.rawTxHex !== undefined
+        ? Buffer.from(tx.rawTxHex, "hex")
+        : undefined;
     return {
       version: tx.version,
       inputs: tx.inputs.map(input => ({
@@ -163,6 +235,9 @@ export class DmkSignerZcash implements ZcashSigner {
       ...(tx.nVersionGroupId !== undefined ? { nVersionGroupId: tx.nVersionGroupId } : {}),
       ...(tx.nExpiryHeight !== undefined ? { nExpiryHeight: tx.nExpiryHeight } : {}),
       ...(tx.extraData !== undefined ? { extraData: tx.extraData } : {}),
+      ...(serializedPreviousTransactionOverride !== undefined
+        ? { serializedPreviousTransactionOverride }
+        : {}),
     };
   }
 
@@ -220,13 +295,14 @@ export class DmkSignerZcash implements ZcashSigner {
   }
 
   /**
-   * Sign an Orchard PCZT via the DMK signer.
+   * Sign a PCZT via the DMK signer (Orchard V5 and Ironwood V6).
    *
    * Delegates to the DMK `signPcztTransaction` device action, which streams the
    * PCZT bundle to the device and collects all spend-authorization signatures
    * atomically. Returns `SignPcztTransactionResult` containing per-action Orchard
-   * signatures and per-input transparent signatures — callers must not reorder
-   * them before passing to `finalizeTransaction`.
+   * signatures (`orchard`), per-action Ironwood signatures (`ironwood`), and
+   * per-input transparent signatures (`transparentInputSigs`) — callers must not
+   * reorder any of these arrays before passing to `finalizeTransaction`.
    *
    * `skipOpenApp: true` is consistent with the other signer methods; the caller
    * (signOperation orchestration) is responsible for ensuring the Zcash app is open.

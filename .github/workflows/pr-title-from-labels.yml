@@ -1,8 +1,10 @@
 name: "[CI] - PR Title - Auto Update from Labels"
 run-name: "@PR • Title update triggered by ${{ github.actor }} ${{ format('on branch {0}', github.head_ref) }}"
 
+# pull_request_target is required for fork PR write access (retitle from labels).
+# No PR code is checked out, so the elevated token cannot execute attacker-controlled code.
 on:
-  pull_request_target:
+  pull_request_target: # zizmor: ignore[dangerous-triggers]
     types: [labeled, unlabeled]
 
 jobs:
@@ -18,9 +20,10 @@ jobs:
         with:
           app-id: ${{ secrets.GH_BOT_APP_ID }}
           private-key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+          permission-pull-requests: write
 
       - name: Update PR Title from Labels
-        uses: actions/github-script@v7
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         with:
           github-token: ${{ steps.generate-token.outputs.token }}
           script: |

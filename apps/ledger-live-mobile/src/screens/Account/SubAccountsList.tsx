@@ -5,7 +5,7 @@ import take from "lodash/take";
 import { StyleSheet, View, FlatList, ListRenderItem } from "react-native";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
-import useEnv from "@ledgerhq/live-common/hooks/useEnv";
+import useEnv from "@features/platform-env";
 import { getAccountCurrency, listSubAccounts } from "@ledgerhq/live-common/account/index";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { DropdownMedium, DropupMedium, PlusMedium } from "@ledgerhq/native-ui/assets/icons";

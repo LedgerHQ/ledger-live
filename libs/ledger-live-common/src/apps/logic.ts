@@ -4,11 +4,11 @@ import flatMap from "lodash/flatMap";
 import semver from "semver";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { AppOp, State, Action, ListAppsResult, AppsDistribution, SkipReason } from "./types";
-import { findCryptoCurrency, findCryptoCurrencyById, isCurrencySupported } from "../currencies";
-import { NoSuchAppOnProvider } from "../errors";
+import { findCryptoCurrency, findCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { isCurrencySupported } from "../currencies";
+import { NoSuchAppOnProvider, LatestFirmwareVersionRequired } from "../errors";
 import { App } from "@ledgerhq/types-live";
-import { getEnv } from "@ledgerhq/live-env";
-import { LatestFirmwareVersionRequired } from "@ledgerhq/errors";
+import { getEnv } from "@shared/env";
 
 const RESERVED_BLOCKS = 1;
 
@@ -155,7 +155,7 @@ export const reducer = (state: State, action: Action): State => {
 
         /*
           const error = event.error;
-          if (error instanceof ManagerDeviceLockedError) {
+          if ((error as { name?: string })?.name === "ManagerDeviceLocked") {
             return {
               ...state,
               currentError: {

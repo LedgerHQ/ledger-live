@@ -1,6 +1,6 @@
 import React, { useCallback, useState, memo } from "react";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import { Currency } from "@ledgerhq/types-cryptoassets";
+import { Currency } from "@domain/entity-currency";
 import { Portfolio } from "@ledgerhq/types-live";
 import styled, { useTheme } from "styled-components/native";
 import Animated, {

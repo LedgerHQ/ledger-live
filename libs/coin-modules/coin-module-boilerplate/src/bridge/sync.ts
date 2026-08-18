@@ -76,7 +76,7 @@ export const getAccountShape: GetAccountShape = async info => {
   const blockHeight = await getBlockHeight();
 
   // Account info retrieval + spendable balance calculation
-  const accountInfo = await getAccountInfo(address);
+  const accountInfo = await getAccountInfo(coinConfig.getCoinConfig(), address);
   const balance = new BigNumber(accountInfo.account_data.Balance);
   const reserveMin = coinConfig.getCoinConfig().minReserve;
   const spendableBalance = new BigNumber(accountInfo.account_data.Balance).minus(reserveMin);

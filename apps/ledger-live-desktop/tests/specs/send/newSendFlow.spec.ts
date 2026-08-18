@@ -1,4 +1,5 @@
 import test from "../../fixtures/common";
+import { FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED } from "tests/utils/featureFlagUtils";
 import { expect, Page } from "@playwright/test";
 import { AccountPage } from "../../page/account.page";
 import { AccountsPage } from "../../page/accounts.page";
@@ -47,6 +48,7 @@ test.use({
   userdata:
     "1AccountBTC1AccountETH1AccountARB1AccountSOL1AccountXTZ1AccountXLM1AccountALGO1AccountXRP",
   featureFlags: {
+    ...FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED,
     newSendFlow: {
       enabled: true,
       params: {
@@ -659,7 +661,7 @@ test.describe("New Send Flow", () => {
         page,
         ACCOUNT_NAMES.algorand,
         TEST_ADDRESSES.algorandRecipient,
-        false,
+        true,
       );
       await app.newSendFlow.fillCryptoAmount("0.1");
       await expect(app.newSendFlow.feesMenuTrigger).toBeHidden();
@@ -892,6 +894,8 @@ test.describe("New Send Flow", () => {
         accountName: ACCOUNT_NAMES.algorand,
         address: TEST_ADDRESSES.algorandRecipient,
         amount: "0.1",
+        hasMemo: true,
+        memoValue: "some random memo",
       },
       {
         name: "Bitcoin",

@@ -4,12 +4,13 @@ import {
   customRenderHookWithLiveAppProvider as renderHook,
   withFlagOverrides,
 } from "@tests/test-renderer";
-import { accountRawToAccountUserData, WalletState } from "@ledgerhq/live-wallet/store";
+import { accountRawToAccountUserData } from "@ledgerhq/live-common/account/index";
+import type { WalletState } from "~/reducers/wallet";
 
 import { AccountRaw, TokenAccount } from "@ledgerhq/types-live";
 
 import { fromAccountRaw } from "@ledgerhq/ledger-wallet-framework/serialization/account";
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 
 const raw: AccountRaw = {
   id: "js:2:ethereum:0x01:",
@@ -42,7 +43,11 @@ const rawTron: AccountRaw = {
   balance: "100000000000000",
 };
 
-setupMockCryptoAssetsStore();
+setCryptoAssetsStore({
+  findTokenById: async () => undefined,
+  findTokenByAddressInCurrency: async () => undefined,
+  getTokensSyncHash: async () => "",
+});
 let mockEthereumAccount: Awaited<ReturnType<typeof fromAccountRaw>>;
 let mockTronAccount: Awaited<ReturnType<typeof fromAccountRaw>>;
 
@@ -115,10 +120,7 @@ const mockUSDSTokenAccount: TokenAccount = {
 const walletState: WalletState = {
   accountNames: new Map(),
   starredAccountIds: new Set(),
-  walletSyncState: {
-    data: null,
-    version: 0,
-  },
+  walletSync: { walletSyncState: { data: null, version: 0 } },
   nonImportedAccountInfos: [],
   recentAddresses: {},
 };

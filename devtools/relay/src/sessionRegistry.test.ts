@@ -10,6 +10,15 @@ function makeSocket() {
   };
 }
 
+function attachHost(registry: ReturnType<typeof createSessionRegistry>, id = "app") {
+  const socket = makeSocket();
+  const result = registry.attach({ role: "host", id }, socket) as Extract<
+    AttachResult,
+    { status: "filed" }
+  >;
+  return { socket, result, uid: result.descriptor!.uid };
+}
+
 describe("sessionRegistry — attach", () => {
   it("returns sessionless when a tool has no target", () => {
     const registry = createSessionRegistry();
@@ -20,87 +29,89 @@ describe("sessionRegistry — attach", () => {
     expect(result).toEqual({ status: "sessionless" });
   });
 
-  it("files a host without pairing when no tool exists yet", () => {
+  it("returns sessionless when a tool targets an unknown uid", () => {
     const registry = createSessionRegistry();
-    const result = registry.attach({ role: "host", id: "app" }, makeSocket());
-    expect(result).toEqual({
-      status: "filed",
-      role: "host",
-      hostId: "app",
-      evicted: false,
-      paired: false,
-    });
+    const result = registry.attach({ role: "tool", id: "web-tools", target: "999" }, makeSocket());
+    expect(result).toEqual({ status: "sessionless" });
   });
 
-  it("files a tool without pairing when no host exists yet", () => {
+  it("files a host and mints a descriptor", () => {
     const registry = createSessionRegistry();
-    const result = registry.attach({ role: "tool", id: "web-tools", target: "app" }, makeSocket());
-    expect(result).toEqual({
-      status: "filed",
-      role: "tool",
-      hostId: "app",
-      evicted: false,
-      paired: false,
-    });
+    const { result } = attachHost(registry);
+    expect(result).toEqual(
+      expect.objectContaining({
+        status: "filed",
+        role: "host",
+        paired: false,
+        descriptor: expect.objectContaining({ uid: "1" }),
+      }),
+    );
   });
 
-  it("reports paired when both host and tool are attached", () => {
+  it("reports paired when host then tool attach", () => {
     const registry = createSessionRegistry();
-    registry.attach({ role: "host", id: "app" }, makeSocket());
+    const { uid } = attachHost(registry);
     const result = registry.attach(
-      { role: "tool", id: "web-tools", target: "app" },
+      { role: "tool", id: "web-tools", target: uid },
       makeSocket(),
     ) as Extract<AttachResult, { status: "filed" }>;
     expect(result.paired).toBe(true);
   });
 
-  it("evicts the previous occupant of the same role", () => {
+  it("reports paired when a second tool attaches to a session that already has a host", () => {
     const registry = createSessionRegistry();
-    const first = makeSocket();
-    registry.attach({ role: "host", id: "app" }, first);
-    const result = registry.attach({ role: "host", id: "app" }, makeSocket()) as Extract<
-      AttachResult,
-      { status: "filed" }
-    >;
-    expect(first.closed).toBe(true);
-    expect(result.evicted).toBe(true);
-  });
-
-  it("unpairs the evicted tool from its peer", () => {
-    const registry = createSessionRegistry();
-    const host = makeSocket();
-    const tool1 = makeSocket();
-    registry.attach({ role: "host", id: "app" }, host);
-    registry.attach({ role: "tool", id: "web-tools", target: "app" }, tool1);
-    registry.attach({ role: "tool", id: "web-tools-v2", target: "app" }, makeSocket());
-    expect(registry.peerOf(tool1)).toBeUndefined();
+    const { uid } = attachHost(registry);
+    registry.attach({ role: "tool", id: "web-tools", target: uid }, makeSocket());
+    const result = registry.attach(
+      { role: "tool", id: "web-tools-v2", target: uid },
+      makeSocket(),
+    ) as Extract<AttachResult, { status: "filed" }>;
+    expect(result.paired).toBe(true);
   });
 });
 
-describe("sessionRegistry — peerOf", () => {
+describe("sessionRegistry — peersOf", () => {
   it("returns undefined when only the host is attached", () => {
     const registry = createSessionRegistry();
-    const host = makeSocket();
-    registry.attach({ role: "host", id: "app" }, host);
-    expect(registry.peerOf(host)).toBeUndefined();
+    const { socket: host } = attachHost(registry);
+    expect(registry.peersOf(host)).toBeUndefined();
   });
 
-  it("returns the tool from the host's perspective after pairing", () => {
+  it("returns a Set containing the tool from the host's perspective after pairing", () => {
     const registry = createSessionRegistry();
-    const host = makeSocket();
+    const { socket: host, uid } = attachHost(registry);
     const tool = makeSocket();
-    registry.attach({ role: "host", id: "app" }, host);
-    registry.attach({ role: "tool", id: "web-tools", target: "app" }, tool);
-    expect(registry.peerOf(host)).toBe(tool);
+    registry.attach({ role: "tool", id: "web-tools", target: uid }, tool);
+    expect(registry.peersOf(host)).toEqual(new Set([tool]));
   });
 
-  it("returns the host from the tool's perspective after pairing", () => {
+  it("returns a Set containing the host from the tool's perspective after pairing", () => {
     const registry = createSessionRegistry();
-    const host = makeSocket();
+    const { socket: host, uid } = attachHost(registry);
     const tool = makeSocket();
-    registry.attach({ role: "host", id: "app" }, host);
-    registry.attach({ role: "tool", id: "web-tools", target: "app" }, tool);
-    expect(registry.peerOf(tool)).toBe(host);
+    registry.attach({ role: "tool", id: "web-tools", target: uid }, tool);
+    expect(registry.peersOf(tool)).toEqual(new Set([host]));
+  });
+
+  it("host's peers include all connected tools", () => {
+    const registry = createSessionRegistry();
+    const { socket: host, uid } = attachHost(registry);
+    const tool1 = makeSocket();
+    const tool2 = makeSocket();
+    registry.attach({ role: "tool", id: "web-tools", target: uid }, tool1);
+    registry.attach({ role: "tool", id: "web-tools-v2", target: uid }, tool2);
+    expect(registry.peersOf(host)).toEqual(new Set([tool1, tool2]));
+  });
+
+  it("each tool's peers include the host and its sibling tools but not itself", () => {
+    const registry = createSessionRegistry();
+    const { socket: host, uid } = attachHost(registry);
+    const tool1 = makeSocket();
+    const tool2 = makeSocket();
+    registry.attach({ role: "tool", id: "web-tools", target: uid }, tool1);
+    registry.attach({ role: "tool", id: "web-tools-v2", target: uid }, tool2);
+    expect(registry.peersOf(tool1)).toEqual(new Set([host, tool2]));
+    expect(registry.peersOf(tool2)).toEqual(new Set([host, tool1]));
   });
 });
 
@@ -110,51 +121,61 @@ describe("sessionRegistry — detach", () => {
     expect(registry.detach(makeSocket())).toBeUndefined();
   });
 
-  it("returns role and hostId for a filed socket", () => {
+  it("returns role and descriptor for a detached host", () => {
     const registry = createSessionRegistry();
-    const host = makeSocket();
-    registry.attach({ role: "host", id: "app" }, host);
-    expect(registry.detach(host)).toEqual({ role: "host", hostId: "app" });
+    const { socket: host } = attachHost(registry);
+    expect(registry.detach(host)).toEqual(
+      expect.objectContaining({
+        role: "host",
+        descriptor: expect.objectContaining({ uid: "1" }),
+      }),
+    );
   });
 
-  it("unpairs the peer when a socket detaches", () => {
+  it("unpairs all tools when the host detaches", () => {
     const registry = createSessionRegistry();
-    const host = makeSocket();
+    const { socket: host, uid } = attachHost(registry);
     const tool = makeSocket();
-    registry.attach({ role: "host", id: "app" }, host);
-    registry.attach({ role: "tool", id: "web-tools", target: "app" }, tool);
+    registry.attach({ role: "tool", id: "web-tools", target: uid }, tool);
     registry.detach(host);
-    expect(registry.peerOf(tool)).toBeUndefined();
+    expect(registry.peersOf(tool)).toBeUndefined();
   });
 
-  it("does not clobber the replacement when a stale evicted socket is detached", () => {
+  it("removes the uid from the index when a host detaches", () => {
     const registry = createSessionRegistry();
-    const host1 = makeSocket();
-    const tool = makeSocket();
-    registry.attach({ role: "host", id: "app" }, host1);
-    registry.attach({ role: "tool", id: "web-tools", target: "app" }, tool);
-    const host2 = makeSocket();
-    registry.attach({ role: "host", id: "app" }, host2);
-    registry.detach(host1);
-    expect(registry.peerOf(tool)).toBe(host2);
+    const { socket: host, uid } = attachHost(registry);
+    registry.detach(host);
+    const result = registry.attach({ role: "tool", id: "web-tools", target: uid }, makeSocket());
+    expect(result).toEqual({ status: "sessionless" });
   });
 
-  it("drops the session once both slots are detached", () => {
+  it("removes only the detached tool and keeps the rest paired", () => {
     const registry = createSessionRegistry();
-    const host = makeSocket();
+    const { socket: host, uid } = attachHost(registry);
+    const tool1 = makeSocket();
+    const tool2 = makeSocket();
+    registry.attach({ role: "tool", id: "web-tools", target: uid }, tool1);
+    registry.attach({ role: "tool", id: "web-tools-v2", target: uid }, tool2);
+    registry.detach(tool1);
+    expect(registry.peersOf(tool2)).toEqual(new Set([host]));
+    expect(registry.peersOf(host)).toEqual(new Set([tool2]));
+    expect(registry.peersOf(tool1)).toBeUndefined();
+  });
+
+  it("drops the session once both host and all tools have detached", () => {
+    const registry = createSessionRegistry();
+    const { socket: host, uid } = attachHost(registry);
     const tool = makeSocket();
-    registry.attach({ role: "host", id: "app" }, host);
-    registry.attach({ role: "tool", id: "web-tools", target: "app" }, tool);
+    registry.attach({ role: "tool", id: "web-tools", target: uid }, tool);
     registry.detach(host);
     registry.detach(tool);
-    const newHost = makeSocket();
-    const result = registry.attach({ role: "host", id: "app" }, newHost);
-    expect(result).toEqual({
-      status: "filed",
-      role: "host",
-      hostId: "app",
-      evicted: false,
-      paired: false,
-    });
+    const { result } = attachHost(registry);
+    expect(result).toEqual(
+      expect.objectContaining({
+        status: "filed",
+        role: "host",
+        paired: false,
+      }),
+    );
   });
 });

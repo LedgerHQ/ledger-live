@@ -52,3 +52,11 @@ export class WalletAuthHttpError extends WalletAuthError {
     this.status = status;
   }
 }
+
+export class WalletAuthMissingBaseUrlError extends WalletAuthError {
+  override name = "WalletAuthMissingBaseUrlError";
+
+  constructor() {
+    super("Missing Keycloak base URL");
+  }
+}

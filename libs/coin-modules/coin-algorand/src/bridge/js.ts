@@ -27,6 +27,8 @@ import { AlgorandSigner } from "../signer";
 import { getAccountShape, sync } from "../synchronization";
 import type { AlgorandAccount, AlgorandOperation, Transaction, TransactionStatus } from "../types";
 import { validateAddress } from "../validateAddress";
+import { setCoinConfig, type AlgorandCoinConfig } from "../config";
+import type { CoinConfig } from "@ledgerhq/coin-module-framework/config";
 
 export function buildCurrencyBridge(signerContext: SignerContext<AlgorandSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
@@ -75,7 +77,11 @@ export function buildAccountBridge(
   };
 }
 
-export function createBridges(signerContext: SignerContext<AlgorandSigner>) {
+export function createBridges(
+  signerContext: SignerContext<AlgorandSigner>,
+  coinConfig: CoinConfig<AlgorandCoinConfig>,
+) {
+  setCoinConfig(coinConfig);
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),

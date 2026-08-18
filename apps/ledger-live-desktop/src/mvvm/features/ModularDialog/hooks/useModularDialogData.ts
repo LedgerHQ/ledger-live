@@ -1,17 +1,18 @@
 import { useMemo } from "react";
 import { LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 import { getLoadingStatus } from "@ledgerhq/live-common/modularDrawer/utils/getLoadingStatus";
-import { useAssetsData } from "@ledgerhq/live-common/dada-client/hooks/useAssetsData";
+import { useAssetsData } from "@features/platform-aggregated-assets";
 import {
   modularDialogAreCurrenciesFilteredSelector,
   modularDialogCurrenciesSelector,
+  modularDialogNetworkIdsSelector,
   modularDialogUseCaseSelector,
   modularDialogSearchedSelector,
 } from "~/renderer/reducers/modularDialog";
 import { useSelector } from "LLD/hooks/redux";
 import { useFeature } from "@features/platform-feature-flags";
-import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
-import useEnv from "@ledgerhq/live-common/hooks/useEnv";
+import { buildAssetsSorted } from "@ledgerhq/live-common/modularDrawer/utils/buildAssetsSorted";
+import useEnv from "@features/platform-env";
 
 export function useModularDialogData() {
   const modularDrawerFeature = useFeature("lldModularDrawer");
@@ -24,41 +25,33 @@ export function useModularDialogData() {
   const searchedValue = useSelector(modularDialogSearchedSelector);
 
   const currencyIds = useSelector(modularDialogCurrenciesSelector);
+  const networkIds = useSelector(modularDialogNetworkIdsSelector);
+  const resolvedNetworkIds = networkIds?.length ? networkIds : undefined;
   const useCase = useSelector(modularDialogUseCaseSelector);
   const areCurrenciesFiltered = useSelector(modularDialogAreCurrenciesFilteredSelector);
 
   const { data, isLoading, isSuccess, error, errorInfo, loadNext, refetch } = useAssetsData({
     search: searchedValue,
-    currencyIds,
+    currencyIds: resolvedNetworkIds === undefined ? currencyIds : undefined,
+    networkIds: resolvedNetworkIds,
     product: "lld",
     version: __APP_VERSION__,
     useCase,
-    areCurrenciesFiltered,
+    areCurrenciesFiltered: resolvedNetworkIds === undefined ? areCurrenciesFiltered : false,
     isStaging,
     includeTestNetworks: devMode,
   });
 
-  const assetsSorted: AssetData[] | undefined = useMemo(() => {
-    if (!data?.currenciesOrder.metaCurrencyIds) return undefined;
-
-    return data.currenciesOrder.metaCurrencyIds
-      .filter(currencyId => data.cryptoAssets[currencyId])
-      .map(currencyId => {
-        const firstNetworkId = Object.values(data.cryptoAssets[currencyId].assetsIds)[0];
-        return {
-          asset: {
-            ...data.cryptoAssets[currencyId],
-            id: firstNetworkId,
-            metaCurrencyId: currencyId,
-          },
-          networks: Object.values(data.cryptoAssets[currencyId].assetsIds)
-            .map(assetId => data.cryptoOrTokenCurrencies[assetId])
-            .filter(network => network !== undefined),
-          interestRates: data.interestRates?.[firstNetworkId],
-          market: data.markets?.[firstNetworkId],
-        };
-      });
-  }, [data]);
+  const assetsSorted = useMemo(
+    () =>
+      data
+        ? buildAssetsSorted(data, {
+            includeMetaCurrencyId: true,
+            networkIds: resolvedNetworkIds,
+          })
+        : undefined,
+    [data, resolvedNetworkIds],
+  );
 
   const loadingStatus: LoadingStatus = getLoadingStatus({ isLoading, isSuccess, error });
 

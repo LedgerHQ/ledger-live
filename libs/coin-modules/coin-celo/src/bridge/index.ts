@@ -7,6 +7,7 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import { setCoinConfig, type CeloCoinConfig } from "../config";
 import { CELO_DUMMY_ADDRESS } from "../constants";
 import resolver from "../signer/hw-getAddress";
 import { CeloSigner } from "../signer/signer";
@@ -17,6 +18,7 @@ import { estimateMaxSpendable } from "./estimateMaxSpendable";
 import { getTransactionStatus } from "./getTransactionStatus";
 import { getPreloadStrategy, preload, hydrate } from "./preload";
 import { prepareTransaction } from "./prepareTransaction";
+import { buildResilientIterateResult } from "./scanResilience";
 import {
   assignFromAccountRaw,
   assignToAccountRaw,
@@ -31,9 +33,11 @@ import { validateAddress } from "./validateAddress";
 
 export function buildCurrencyBridge(signerContext: SignerContext<CeloSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
+  const getAddressFn = getAddressWrapper(getAddress);
   const scanAccounts = makeScanAccounts({
     getAccountShape,
-    getAddressFn: getAddressWrapper(getAddress),
+    getAddressFn,
+    buildIterateResult: buildResilientIterateResult(getAddressFn),
   });
 
   return {
@@ -75,7 +79,11 @@ export function buildAccountBridge(
   };
 }
 
-export function createBridges(signerContext: SignerContext<CeloSigner>) {
+export function createBridges(
+  signerContext: SignerContext<CeloSigner>,
+  coinConfig: CeloCoinConfig,
+) {
+  setCoinConfig(coinConfig);
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),

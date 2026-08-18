@@ -4,7 +4,7 @@ import {
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
   RecipientRequired,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import { isTokenAccount } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { AccountBridge } from "@ledgerhq/types-live";
 import { toNano } from "@ton/core";
@@ -97,10 +97,11 @@ const validateAmount = (
       errors.amount = new TonNotEnoughBalanceInParentAccount(); // "Sorry, insufficient funds in the parent account"
     }
     warnings.amount = new TonExcessFee();
-  } else {
-    if (account.balance.isLessThan(new BigNumber(toNano(MINIMUM_REQUIRED_BALANCE).toString()))) {
-      errors.amount = new TonMinimumRequired();
-    }
+  } else if (
+    !errors.amount &&
+    account.balance.isLessThan(new BigNumber(toNano(MINIMUM_REQUIRED_BALANCE).toString()))
+  ) {
+    errors.amount = new TonMinimumRequired();
   }
 
   return [errors, warnings];

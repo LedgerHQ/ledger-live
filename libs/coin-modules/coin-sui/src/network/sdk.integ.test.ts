@@ -49,7 +49,11 @@ describe("SUI SDK Integration tests", () => {
       const testingAccount = "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164";
 
       beforeAll(async () => {
-        operations = await getOperations("mockAccoundId", testingAccount);
+        operations = await getOperations(
+          coinConfig.getCoinConfig(),
+          "mockAccoundId",
+          testingAccount,
+        );
       });
 
       describe("List", () => {
@@ -107,7 +111,7 @@ describe("SUI SDK Integration tests", () => {
 
           it("live RPC: balance change amounts are strings; unprefixed address needs normalized match for getOperationAmount", async () => {
             const txHash = "rkTA5Tn9dgrWPnHgj2WK7rVnk5t9jC3ViPcHU9dewDg";
-            const tx = await withApi(async api =>
+            const tx = await withApi(coinConfig.getCoinConfig(), async api =>
               api.getTransactionBlock({
                 digest: txHash,
                 options: {
@@ -192,13 +196,13 @@ describe("SUI SDK Integration tests", () => {
     const testingAccount = "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164";
 
     it("getOperations returns no settlement transactions", async () => {
-      const ops = await getOperations("test-account", testingAccount);
+      const ops = await getOperations(coinConfig.getCoinConfig(), "test-account", testingAccount);
       expect(ops.length).toBeGreaterThan(0);
 
       const opsToCheck = ops.slice(0, 10);
       await Promise.all(
         opsToCheck.map(async op => {
-          const raw = await withApi(async (api: SuiJsonRpcClient) =>
+          const raw = await withApi(coinConfig.getCoinConfig(), async (api: SuiJsonRpcClient) =>
             api.getTransactionBlock({ digest: op.hash, options: { showInput: true } }),
           );
           expect(isSettlementTransaction(raw)).toBe(false);
@@ -207,13 +211,13 @@ describe("SUI SDK Integration tests", () => {
     });
 
     it("getListOperations returns no settlement transactions", async () => {
-      const page = await getListOperations(testingAccount, "desc");
+      const page = await getListOperations(coinConfig.getCoinConfig(), testingAccount, "desc");
       expect(page.items.length).toBeGreaterThan(0);
 
       const itemsToCheck = page.items.slice(0, 10);
       await Promise.all(
         itemsToCheck.map(async op => {
-          const raw = await withApi(async (api: SuiJsonRpcClient) =>
+          const raw = await withApi(coinConfig.getCoinConfig(), async (api: SuiJsonRpcClient) =>
             api.getTransactionBlock({ digest: op.tx.hash, options: { showInput: true } }),
           );
           expect(isSettlementTransaction(raw)).toBe(false);
@@ -225,7 +229,7 @@ describe("SUI SDK Integration tests", () => {
   describe("getBalance", () => {
     test("getAccountBalances should return account balance with SIP-58 fields", async () => {
       const address = "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164";
-      const balances = await getAccountBalances(address);
+      const balances = await getAccountBalances(coinConfig.getCoinConfig(), address);
       expect(balances.length).toBeGreaterThan(0);
       expect(balances[0]).toHaveProperty("blockHeight");
       expect(balances[0]).toHaveProperty("balance");
@@ -235,7 +239,7 @@ describe("SUI SDK Integration tests", () => {
 
     test("fundsInAddressBalance is valid for all coin types", async () => {
       const address = "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164";
-      const balances = await getAccountBalances(address);
+      const balances = await getAccountBalances(coinConfig.getCoinConfig(), address);
 
       for (const b of balances) {
         expect(b.balance.isFinite()).toBe(true);
@@ -257,13 +261,18 @@ describe("SUI SDK Integration tests", () => {
         recipient: "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164",
         errors: {},
       };
-      const { unsigned: tx } = await createTransaction(address, transaction);
+      const { unsigned: tx } = await createTransaction(
+        coinConfig.getCoinConfig(),
+        address,
+        transaction,
+      );
       expect(tx).toBeInstanceOf(Uint8Array);
     });
 
     test("createTransaction returns BCS objects when withObjects=true", async () => {
       const address = "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164";
       const result = await createTransaction(
+        coinConfig.getCoinConfig(),
         address,
         {
           mode: "send",
@@ -284,7 +293,7 @@ describe("SUI SDK Integration tests", () => {
 
     test("createTransaction omits objects when withObjects=false", async () => {
       const address = "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164";
-      const result = await createTransaction(address, {
+      const result = await createTransaction(coinConfig.getCoinConfig(), address, {
         mode: "send",
         coinType: DEFAULT_COIN_TYPE,
         amount: new BigNumber(100),
@@ -299,6 +308,7 @@ describe("SUI SDK Integration tests", () => {
       const validatorAddress = "0xcb7530490045f19514eed2f7efa4bca56854e54470fa23e8c91c46eb8a78d72f";
 
       const result = await createTransaction(
+        coinConfig.getCoinConfig(),
         FIGMENT_SUI_VALIDATOR_ADDRESS,
         {
           mode: "delegate",
@@ -325,7 +335,7 @@ describe("SUI SDK Integration tests", () => {
         recipient: "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164",
         errors: {},
       };
-      const info = await paymentInfo(sender, fakeTransaction);
+      const info = await paymentInfo(coinConfig.getCoinConfig(), sender, fakeTransaction);
       expect(info).toHaveProperty("gasBudget");
       expect(info).toHaveProperty("totalGasUsed");
       expect(info).toHaveProperty("fees");
@@ -337,7 +347,7 @@ describe("SUI SDK Integration tests", () => {
     test("paymentInfo returns valid gas budget for delegate", async () => {
       const validatorAddress = "0xcb7530490045f19514eed2f7efa4bca56854e54470fa23e8c91c46eb8a78d72f";
 
-      const info = await paymentInfo(FIGMENT_SUI_VALIDATOR_ADDRESS, {
+      const info = await paymentInfo(coinConfig.getCoinConfig(), FIGMENT_SUI_VALIDATOR_ADDRESS, {
         mode: "delegate" as const,
         family: "sui" as const,
         coinType: DEFAULT_COIN_TYPE,
@@ -360,10 +370,10 @@ describe("SUI SDK Integration tests", () => {
       // (epoch, previousDigest, transactions) — fields the public
       // `getCheckpoint` export intentionally drops to keep the dual-path
       // contract honest. Talk to the JSON-RPC client directly here.
-      const checkpointById = await withApi(api =>
+      const checkpointById = await withApi(coinConfig.getCoinConfig(), api =>
         api.getCheckpoint({ id: "3Q4zW4ieWnNgKLEq6kvVfP35PX2tBDUJERTWYyyz4eyS" }),
       );
-      const checkpointBySequenceNumber = await withApi(api =>
+      const checkpointBySequenceNumber = await withApi(coinConfig.getCoinConfig(), api =>
         api.getCheckpoint({ id: "164167623" }),
       );
       expect(checkpointById.epoch).toEqual("814");
@@ -378,8 +388,11 @@ describe("SUI SDK Integration tests", () => {
 
   describe("getBlockInfo", () => {
     test("getBlockInfo should get block info by id or sequence number", async () => {
-      const blockById = await getBlockInfo("3Q4zW4ieWnNgKLEq6kvVfP35PX2tBDUJERTWYyyz4eyS");
-      const blockBySequenceNumber = await getBlockInfo("164167623");
+      const blockById = await getBlockInfo(
+        coinConfig.getCoinConfig(),
+        "3Q4zW4ieWnNgKLEq6kvVfP35PX2tBDUJERTWYyyz4eyS",
+      );
+      const blockBySequenceNumber = await getBlockInfo(coinConfig.getCoinConfig(), "164167623");
       expect(blockById.height).toEqual(164167623);
       expect(blockById.hash).toEqual("3Q4zW4ieWnNgKLEq6kvVfP35PX2tBDUJERTWYyyz4eyS");
       expect(blockById.time).toEqual(new Date(1751696298663));
@@ -391,8 +404,11 @@ describe("SUI SDK Integration tests", () => {
 
   describe("getBlock", () => {
     test("getBlock should get block by id or sequence number", async () => {
-      const blockById = await getBlock("3Q4zW4ieWnNgKLEq6kvVfP35PX2tBDUJERTWYyyz4eyS");
-      const blockBySequenceNumber = await getBlock("164167623");
+      const blockById = await getBlock(
+        coinConfig.getCoinConfig(),
+        "3Q4zW4ieWnNgKLEq6kvVfP35PX2tBDUJERTWYyyz4eyS",
+      );
+      const blockBySequenceNumber = await getBlock(coinConfig.getCoinConfig(), "164167623");
       expect(blockById.info.height).toEqual(164167623);
       expect(blockById.info.hash).toEqual("3Q4zW4ieWnNgKLEq6kvVfP35PX2tBDUJERTWYyyz4eyS");
       expect(blockById.info.time).toEqual(new Date(1751696298663));
@@ -411,8 +427,8 @@ describe("SUI SDK Integration tests", () => {
 
     beforeAll(async () => {
       [descPage, ascPage] = await Promise.all([
-        getListOperations(account, "desc"),
-        getListOperations(account, "asc"),
+        getListOperations(coinConfig.getCoinConfig(), account, "desc"),
+        getListOperations(coinConfig.getCoinConfig(), account, "asc"),
       ]);
     });
 
@@ -442,7 +458,7 @@ describe("SUI SDK Integration tests", () => {
       const itemsToCheck = descPage.items.slice(0, 10);
       await Promise.all(
         itemsToCheck.map(async op => {
-          const raw = await withApi(async (api: SuiJsonRpcClient) =>
+          const raw = await withApi(coinConfig.getCoinConfig(), async (api: SuiJsonRpcClient) =>
             api.getTransactionBlock({ digest: op.tx.hash, options: { showInput: true } }),
           );
           expect(isSettlementTransaction(raw)).toBe(false);
@@ -495,7 +511,7 @@ describe("SUI SDK Integration tests", () => {
     const DELEGATE_TX_DIGEST = "EkJbwk9R2pmJhxfAVpRqbfDYQN1yiNap1qMPVrKedwZf";
 
     it("UNDELEGATE: validatorAddress, rewardAmount and withdrawnAmount are populated from live events", async () => {
-      const raw = await withApi(api =>
+      const raw = await withApi(coinConfig.getCoinConfig(), api =>
         api.getTransactionBlock({
           digest: UNDELEGATE_TX_DIGEST,
           options: {
@@ -516,7 +532,7 @@ describe("SUI SDK Integration tests", () => {
     });
 
     it("DELEGATE: validatorAddress is populated from live events", async () => {
-      const raw = await withApi(api =>
+      const raw = await withApi(coinConfig.getCoinConfig(), api =>
         api.getTransactionBlock({
           digest: DELEGATE_TX_DIGEST,
           options: {
@@ -594,7 +610,7 @@ describe("SUI SDK Integration tests", () => {
       });
 
       const fetchTx = () =>
-        withApi(api =>
+        withApi(coinConfig.getCoinConfig(), api =>
           api.getTransactionBlock({
             digest: TX_DIGEST,
             options: { showInput: true, showBalanceChanges: true, showEffects: true },
@@ -687,7 +703,7 @@ describe("SUI SDK Integration tests", () => {
       });
 
       const fetchTx = () =>
-        withApi(api =>
+        withApi(coinConfig.getCoinConfig(), api =>
           api.getTransactionBlock({
             digest: TX_DIGEST,
             options: { showInput: true, showBalanceChanges: true, showEffects: true },
@@ -764,7 +780,7 @@ describe("SUI SDK Integration tests", () => {
       });
 
       test("getAccountBalances reports a non-zero fundsInAddressBalance for the sender", async () => {
-        const balances = await getAccountBalances(SENDER);
+        const balances = await getAccountBalances(coinConfig.getCoinConfig(), SENDER);
         const sui = balances.find(b => b.coinType === DEFAULT_COIN_TYPE);
         expect(sui).not.toBeUndefined();
         expect(sui!.fundsInAddressBalance.isGreaterThan(0)).toBe(true);

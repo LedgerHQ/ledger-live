@@ -1,6 +1,5 @@
 import { OnboardStatus } from "@ledgerhq/coin-canton/types";
-import { LockedDeviceError, UserRefusedOnDevice } from "@ledgerhq/errors";
-import { getDefaultAccountNameForCurrencyIndex } from "@ledgerhq/live-wallet/accountName";
+import { getDefaultAccountNameForCurrencyIndex } from "@domain/entity-account-name";
 import { isAxiosError } from "axios";
 import React from "react";
 import { Trans } from "react-i18next";
@@ -112,8 +111,8 @@ const getStatusMessage = (status?: OnboardStatus): string => {
 };
 
 const getErrorMessage = (error: Error | null) => {
-  if (error instanceof UserRefusedOnDevice || error instanceof LockedDeviceError) {
-    return <Trans i18nKey={error.message} />;
+  if (error?.name === "UserRefusedOnDevice" || error?.name === "LockedDeviceError") {
+    return <Trans i18nKey={error?.message} />;
   }
   return <Trans i18nKey="families.canton.addAccount.onboard.error" />;
 };

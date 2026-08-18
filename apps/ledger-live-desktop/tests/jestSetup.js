@@ -1,4 +1,4 @@
-import { setEnv } from "@ledgerhq/live-env";
+import { setEnv } from "@shared/env";
 import "../src/live-common-set-supported-currencies";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { setCurrenciesResolver } from "@ledgerhq/ledger-wallet-framework/currencies";
@@ -32,8 +32,15 @@ setFrameworkCryptoAssetsStore({
 });
 import "@jest/globals";
 import "@testing-library/jest-dom";
+import { configure } from "@testing-library/react";
 import { server } from "./server";
 import { EventEmitter } from "events";
+
+// testing-library defaults `waitFor`/`findBy*` to 1s. Suites that mount large trees (Default,
+// OnboardModal) exceed that on CI, where jest runs one worker per core: the element does show up,
+// just later than 1s. Kept well below `testTimeout` so a genuine miss still reports the query error
+// rather than a bare jest timeout.
+configure({ asyncUtilTimeout: 5_000 });
 
 // Disable max listeners warning for MSW (known issue with multiple tests)
 EventEmitter.defaultMaxListeners = 0;
@@ -73,14 +80,6 @@ afterEach(() => {
 });
 afterAll(() => server.close());
 
-jest.mock("src/sentry/install", () => ({
-  init: jest.fn(),
-  setUser: jest.fn(),
-  captureException: jest.fn(),
-  addBreadcrumb: jest.fn(),
-  setTags: jest.fn(),
-}));
-
 Object.defineProperty(window, "matchMedia", {
   writable: true,
   value: jest.fn().mockImplementation(query => ({
@@ -96,6 +95,8 @@ Object.defineProperty(window, "matchMedia", {
 });
 
 jest.mock("@ledgerhq/react-ui/assets/fonts", () => ({}));
+
+jest.mock("@braze/web-sdk", () => require("tests/mocks/brazeWebSdk").getBrazeWebSdkJestMock());
 
 class WorkerMock {
   constructor(stringUrl) {
@@ -129,19 +130,12 @@ jest.mock("src/renderer/analytics/segment", () => ({
   start: jest.fn(),
   track: jest.fn(),
   trackPage: jest.fn(),
-  useTrack: jest.fn(),
   updateIdentify: jest.fn().mockResolvedValue(undefined),
 }));
 
 jest.mock("src/renderer/analytics/originFlow", () => ({
   getOriginFlow: jest.fn(() => ""),
   setOriginFlow: jest.fn(),
-}));
-
-jest.mock("src/sentry/renderer", () => ({
-  captureException: jest.fn(),
-  captureBreadcrumb: jest.fn(),
-  setTags: jest.fn(),
 }));
 
 if (!globalThis.Buffer) {

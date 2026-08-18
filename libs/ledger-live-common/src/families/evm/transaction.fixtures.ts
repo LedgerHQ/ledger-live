@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import type {
   EvmTransactionEIP1559,
   EvmTransactionEIP1559Raw,
@@ -8,7 +8,7 @@ import type {
   Transaction as EvmTransaction,
   EvmNftTransaction,
   EvmNftTransactionRaw,
-} from "@ledgerhq/coin-evm/types/index";
+} from "./types";
 import { makeTokenAccount } from "./common.fixtures";
 import usdcTokenData from "./ethereum-erc20-usd__coin.json";
 

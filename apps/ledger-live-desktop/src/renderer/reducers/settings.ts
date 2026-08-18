@@ -2,14 +2,19 @@ import { DeviceModelId } from "@ledgerhq/devices";
 import { getBrazeCampaignCutoff } from "@ledgerhq/live-common/braze/anonymousUsers";
 import {
   getCryptoCurrencyById,
+  findCryptoCurrencyById,
+  CryptoCurrency,
+} from "@domain/entity-currency-crypto";
+import {
   getFiatCurrencyByTicker,
   findFiatCurrencyByTicker,
-  findCryptoCurrencyById,
-  OFAC_CURRENCIES,
-} from "@ledgerhq/live-common/currencies/index";
-import { getEnv } from "@ledgerhq/live-env";
-import { CryptoCurrency, Currency, Unit } from "@ledgerhq/types-cryptoassets";
-import { selectSupportedFiats, type FiatCurrency } from "@domain/entity-currency-fiat";
+  selectSupportedFiats,
+  type FiatCurrency,
+} from "@domain/entity-currency-fiat";
+import { OFAC_CURRENCIES } from "@ledgerhq/live-common/currencies/index";
+import { getEnv } from "@shared/env";
+import { Currency } from "@domain/entity-currency";
+import { Unit } from "@domain/entity-currency-unit";
 import {
   AccountLike,
   DeviceInfo,
@@ -33,6 +38,7 @@ import regionsByKey from "~/renderer/screens/settings/sections/General/regions.j
 import { State } from ".";
 import {
   PURGE_EXPIRED_ANONYMOUS_USER_NOTIFICATIONS,
+  SET_HAS_DISMISSED_CONTACTS_FEATURE_INTRODUCTION,
   SET_PRODUCT_TOUR_COMPLETED,
   TOGGLE_MEMOTAG_INFO,
   TOGGLE_MEV,
@@ -40,11 +46,14 @@ import {
 } from "../actions/constants";
 import { OnboardingUseCase } from "../components/Onboarding/OnboardingUseCase";
 import { Handlers } from "./types";
+import type { AnalyticsConsentInfo } from "@domain/entity-analytics-consent";
 import {
-  needsConsentRenewal,
+  getAnalyticsConsentDecision,
   resolveAnalyticsOptInParams,
-} from "@ledgerhq/live-common/analyticsConsent/index";
+} from "@features/flow-analytics-consent";
 import { selectFeature } from "@shared/feature-flags";
+
+export type { AnalyticsConsentInfo };
 
 /* Initial state */
 
@@ -53,11 +62,6 @@ export type VaultSigner = {
   host: string;
   workspace: string;
   token: string;
-};
-
-export type AnalyticsConsentInfo = {
-  consentDate: string | null;
-  privacyPolicyVersion: number | null;
 };
 
 export type SettingsState = {
@@ -89,7 +93,7 @@ export type SettingsState = {
   shareAnalytics: boolean;
   sharePersonalizedRecommandations: boolean;
   analyticsConsentInfo: AnalyticsConsentInfo;
-  sentryLogs: boolean; // also used for Datadog RUM opt-in
+  crashReporting: boolean;
   lastUsedVersion: string;
   dismissedBanners: string[];
   accountsViewMode: "card" | "list";
@@ -136,11 +140,12 @@ export type SettingsState = {
   hasSeenWalletV4Tour: boolean;
   hasSeenQ2Tour: boolean;
   productTourCompleted: boolean;
+  hasDismissedContactsFeatureIntroduction: boolean;
   hasClickedRecover: boolean;
   doNotAskAgainSkipMemo: boolean;
   deprecationDoNotRemind: string[];
   lastAnalyticsConsentDate: string | null;
-  privacyPolicyVersion: number | null;
+  privacyPolicyVersion: number | string | null;
 };
 
 export const getInitialLanguageAndLocale = (): { language: Language; locale: Locale } => {
@@ -166,9 +171,12 @@ export const getInitialLanguageAndLocale = (): { language: Language; locale: Loc
   return { language: DEFAULT_LANGUAGE.id, locale: DEFAULT_LANGUAGE.locales.default };
 };
 
+const DEFAULT_COUNTERVALUE_TICKER = "USD";
+const OFAC_CURRENCIES_SET = new Set(OFAC_CURRENCIES);
+
 export const INITIAL_STATE: SettingsState = {
   hasCompletedOnboarding: false,
-  counterValue: "USD",
+  counterValue: DEFAULT_COUNTERVALUE_TICKER,
   ...getInitialLanguageAndLocale(),
   theme: "dark",
   region: null,
@@ -187,7 +195,7 @@ export const INITIAL_STATE: SettingsState = {
     privacyPolicyVersion: null,
   },
   hasSeenAnalyticsOptInPrompt: false,
-  sentryLogs: true,
+  crashReporting: true,
   lastUsedVersion: __APP_VERSION__,
   dismissedBanners: [],
   accountsViewMode: "list",
@@ -242,6 +250,7 @@ export const INITIAL_STATE: SettingsState = {
   hasSeenWalletV4Tour: false,
   hasSeenQ2Tour: false,
   productTourCompleted: false,
+  hasDismissedContactsFeatureIntroduction: false,
   hasClickedRecover: false,
   doNotAskAgainSkipMemo: false,
   deprecationDoNotRemind: [],
@@ -310,6 +319,7 @@ type HandlersPayloads = {
   SET_HAS_SEEN_WALLET_V4_TOUR: boolean;
   SET_HAS_SEEN_Q2_TOUR: boolean;
   [SET_PRODUCT_TOUR_COMPLETED]: boolean;
+  [SET_HAS_DISMISSED_CONTACTS_FEATURE_INTRODUCTION]: boolean;
   SET_HAS_CLICKED_RECOVER: boolean;
 };
 type SettingsHandlers<PreciseKey = true> = Handlers<SettingsState, HandlersPayloads, PreciseKey>;
@@ -552,6 +562,10 @@ const handlers: SettingsHandlers = {
     ...state,
     productTourCompleted: payload,
   }),
+  [SET_HAS_DISMISSED_CONTACTS_FEATURE_INTRODUCTION]: (state: SettingsState, { payload }) => ({
+    ...state,
+    hasDismissedContactsFeatureIntroduction: payload,
+  }),
   SET_HAS_CLICKED_RECOVER: (state: SettingsState, { payload }) => ({
     ...state,
     hasClickedRecover: payload,
@@ -656,13 +670,13 @@ export const discreetModeSelector = (state: State): boolean => state.settings.di
 export const lastSeenCustomImageSelector = (state: State) => state.settings.lastSeenCustomImage;
 export const deepLinkUrlSelector = (state: State) => state.settings.deepLinkUrl;
 export const counterValueCurrencyLocalSelector = (state: SettingsState): Currency => {
-  if (OFAC_CURRENCIES.includes(state.counterValue)) {
-    return getFiatCurrencyByTicker("USD");
+  if (OFAC_CURRENCIES_SET.has(state.counterValue)) {
+    return getFiatCurrencyByTicker(DEFAULT_COUNTERVALUE_TICKER);
   }
   return (
     findFiatCurrencyByTicker(state.counterValue) ||
     findCryptoCurrencyById(state.counterValue) ||
-    getFiatCurrencyByTicker("USD")
+    getFiatCurrencyByTicker(DEFAULT_COUNTERVALUE_TICKER)
   );
 };
 
@@ -782,7 +796,7 @@ export const accountUnitSelector = (state: State, account: AccountLike): Unit =>
 export const preferredDeviceModelSelector = (state: State) => state.settings.preferredDeviceModel;
 export const sidebarCollapsedSelector = (state: State) => state.settings.sidebarCollapsed;
 export const accountsViewModeSelector = (state: State) => state.settings.accountsViewMode;
-export const sentryLogsSelector = (state: State) => state.settings.sentryLogs;
+export const crashReportingSelector = (state: State) => state.settings.crashReporting;
 export const autoLockTimeoutSelector = (state: State) => state.settings.autoLockTimeout;
 export const shareAnalyticsSelector = (state: State) => state.settings.shareAnalytics;
 export const sharePersonalizedRecommendationsSelector = (state: State) =>
@@ -794,18 +808,16 @@ export const analyticsConsentInfoSelector = (state: State): AnalyticsConsentInfo
     privacyPolicyVersion: null,
   };
 
-// Plain selector (not createSelector): wall-clock "now" is not in Redux, so the consent window must be recomputed on every read.
 export const trackingEnabledSelector = (state: State) => {
   const s = state.settings;
   const analyticsOptIn = state.featureFlags?.resolved?.analyticsOptIn;
 
   if (analyticsOptIn?.enabled) {
-    if (!s.lastAnalyticsConsentDate) {
-      return false;
-    }
-
-    const { consentValidityDays } = resolveAnalyticsOptInParams(analyticsOptIn);
-    if (needsConsentRenewal(s.lastAnalyticsConsentDate, consentValidityDays)) {
+    const decision = getAnalyticsConsentDecision(
+      analyticsConsentInfoSelector(state),
+      resolveAnalyticsOptInParams(analyticsOptIn),
+    );
+    if (decision.kind === "renewal") {
       return false;
     }
   }
@@ -865,7 +877,10 @@ export const hasSeenAnalyticsOptInPromptSelector = (state: State) =>
 export const dismissedContentCardsSelector = (state: State) => state.settings.dismissedContentCards;
 export const anonymousBrazeIdSelector = (state: State) => state.settings.anonymousBrazeId;
 
-export const starredMarketCoinsSelector = (state: State) => state.settings.starredMarketCoins;
+const EMPTY_STARRED_MARKET_COINS: string[] = [];
+
+export const starredMarketCoinsSelector = (state: State): string[] =>
+  state.settings.starredMarketCoins ?? EMPTY_STARRED_MARKET_COINS;
 export const hasBeenUpsoldRecoverSelector = (state: State) => state.settings.hasBeenUpsoldRecover;
 export const onboardingUseCaseSelector = (state: State) => state.settings.onboardingUseCase;
 export const hasBeenRedirectedToPostOnboardingSelector = (state: State) =>
@@ -879,6 +894,9 @@ export const anonymousUserNotificationsSelector = (state: State) =>
 export const hasSeenWalletV4TourSelector = (state: State) => state.settings.hasSeenWalletV4Tour;
 export const hasSeenQ2TourSelector = (state: State) => state.settings.hasSeenQ2Tour;
 export const productTourCompletedSelector = (state: State) => state.settings.productTourCompleted;
+
+export const hasDismissedContactsFeatureIntroductionSelector = (state: State) =>
+  state.settings.hasDismissedContactsFeatureIntroduction;
 export const hasClickedRecoverSelector = (state: State) => state.settings.hasClickedRecover;
 
 // Last onboarded device is the device set when a user goes through the onboarding flow.

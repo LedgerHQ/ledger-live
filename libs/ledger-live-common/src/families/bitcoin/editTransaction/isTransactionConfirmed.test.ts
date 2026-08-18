@@ -1,8 +1,8 @@
 import { isTransactionConfirmed } from "./isTransactionConfirmed";
-import wallet, { type BitcoinLikeWallet } from "@ledgerhq/coin-bitcoin/wallet-btc/index";
+import wallet, { type BitcoinLikeWallet } from "@ledgerhq/wallet-btc/index";
 import type { AccountLike } from "@ledgerhq/types-live";
 
-jest.mock("@ledgerhq/coin-bitcoin/wallet-btc/index", () => ({
+jest.mock("@ledgerhq/wallet-btc/index", () => ({
   __esModule: true,
   default: {
     getAccountTxBlockHeight: jest.fn(),

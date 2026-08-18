@@ -1,7 +1,6 @@
 import { useMemo } from "react";
-import useEnv from "@ledgerhq/live-common/hooks/useEnv";
-import { useStablecoinTickers } from "@ledgerhq/live-common/dada-client/hooks/useStablecoinTickers";
-import { useStockAssetIds } from "@ledgerhq/live-common/dada-client/hooks/useStockAssetIds";
+import useEnv from "@features/platform-env";
+import { useStablecoinTickers, useStockAssetIds } from "@features/platform-aggregated-assets";
 import {
   useCategorizedAssets,
   type CategorizedAssetItem,

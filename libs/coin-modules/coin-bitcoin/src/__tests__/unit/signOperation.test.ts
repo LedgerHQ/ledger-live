@@ -33,17 +33,18 @@ jest.mock("../../networks", () => ({
   getNetworkParameters: jest.fn().mockReturnValue({ sigHash: 1 }),
 }));
 
-// Wallet mock to capture parameters and simulate device callbacks
-jest.mock("../../wallet-btc", () => ({
-  __esModule: true,
-  default: {
-    // will be inspected and controlled via jest.requireMock in tests
-    signAccountTx: jest.fn(),
-  },
+// getWalletAccount mock to capture parameters and simulate device callbacks
+jest.mock("../../getWalletAccount", () => ({
   getWalletAccount: jest.fn().mockReturnValue({
     params: { path: "m/84'/0'/0'", index: 0 },
     xpub: {},
   }),
+}));
+
+// signAccountTx now lives in coin-bitcoin's buildAndSign; it is inspected/controlled via requireMock.
+jest.mock("../../buildAndSign", () => ({
+  ...jest.requireActual("../../buildAndSign"),
+  signAccountTx: jest.fn(),
 }));
 
 // Keep derivation helpers deterministic
@@ -96,27 +97,29 @@ const makeAccount = (over: Partial<Account> = {}): Account => ({
 
 import type { BitcoinSigner, SignerContext } from "../../signer";
 
-type WalletBtcMock = {
-  default: {
-    // narrow to the shape we exercise in these tests
-    signAccountTx: jest.Mock<
-      Promise<string>,
-      [
-        {
-          onDeviceSignatureRequested?: () => void;
-          onDeviceSignatureGranted?: () => void;
-          onDeviceStreaming?: (arg: { progress: number; total: number; index: number }) => void;
-        },
-      ]
-    >;
-  };
+type GetWalletAccountMock = {
   getWalletAccount: jest.Mock;
 };
 
-const walletBtcMock: WalletBtcMock = jest.requireMock("../../wallet-btc");
+type BuildAndSignMock = {
+  // narrow to the shape we exercise in these tests
+  signAccountTx: jest.Mock<
+    Promise<string>,
+    [
+      {
+        onDeviceSignatureRequested?: () => void;
+        onDeviceSignatureGranted?: () => void;
+        onDeviceStreaming?: (arg: { progress: number; total: number; index: number }) => void;
+      },
+    ]
+  >;
+};
 
-const signAccountTx = walletBtcMock.default.signAccountTx;
-const getWalletAccount = walletBtcMock.getWalletAccount;
+const getWalletAccountMock: GetWalletAccountMock = jest.requireMock("../../getWalletAccount");
+const buildAndSignMock: BuildAndSignMock = jest.requireMock("../../buildAndSign");
+
+const signAccountTx = buildAndSignMock.signAccountTx;
+const getWalletAccount = getWalletAccountMock.getWalletAccount;
 
 const dummySigner: BitcoinSigner = {
   getWalletXpub: jest.fn(),

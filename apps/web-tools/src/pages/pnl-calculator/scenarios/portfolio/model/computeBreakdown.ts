@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import type { FiatCurrency } from "@ledgerhq/types-cryptoassets";
+import type { FiatCurrency } from "@domain/entity-currency-fiat";
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 import {
   flattenAccounts,

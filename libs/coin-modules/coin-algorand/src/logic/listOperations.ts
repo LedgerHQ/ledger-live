@@ -1,4 +1,5 @@
 import { Operation, Page } from "@ledgerhq/coin-module-framework/api/types";
+import type { AlgorandContext } from "../config";
 import {
   getAccountTransactions,
   AlgoTransaction,
@@ -12,17 +13,20 @@ const SECONDS_TO_MILLISECONDS = 1000;
 
 /**
  * List operations for an Algorand account
+ * @param context - The coin-module context (config + logger)
  * @param address - The account address
  * @param options - Pagination and filter options
  * @returns Tuple of operations array and next pagination token
  */
 export async function listOperations(
+  context: AlgorandContext,
   address: string,
   options: ListOperationsOptions,
 ): Promise<Page<Operation>> {
   const { minHeight, order, limit, cursor } = options;
 
-  const result = await getAccountTransactions(address, {
+  const config = await context.config();
+  const result = await getAccountTransactions(config, address, {
     minRound: minHeight,
     limit,
     nextToken: cursor,

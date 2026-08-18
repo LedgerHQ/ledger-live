@@ -170,6 +170,24 @@ export const mockedAccountList = [
 export const expectedCurrencyList = [
   {
     type: "CryptoCurrency",
+    id: "aleo",
+    ticker: "ALEO",
+    name: "Aleo",
+    family: "aleo",
+    color: "#121212",
+    decimals: 6,
+  },
+  {
+    type: "CryptoCurrency",
+    id: "aleo_testnet",
+    ticker: "ALEO",
+    name: "Aleo (Testnet)",
+    family: "aleo",
+    color: "#121212",
+    decimals: 6,
+  },
+  {
+    type: "CryptoCurrency",
     id: "algorand",
     ticker: "ALGO",
     name: "Algorand",
@@ -373,15 +391,6 @@ export const expectedCurrencyList = [
     name: "SecretNetwork",
     family: "cosmos",
     color: "#a3b0bd",
-    decimals: 6,
-  },
-  {
-    type: "CryptoCurrency",
-    id: "umee",
-    ticker: "UMEE",
-    name: "Umee",
-    family: "cosmos",
-    color: "#bb90f8",
     decimals: 6,
   },
   {
@@ -989,15 +998,6 @@ export const expectedCurrencyList = [
   },
   {
     type: "CryptoCurrency",
-    id: "scroll_sepolia",
-    ticker: "ETH",
-    name: "Scroll Sepolia",
-    family: "ethereum",
-    color: "#ff0000",
-    decimals: 18,
-  },
-  {
-    type: "CryptoCurrency",
     id: "shape",
     ticker: "ETH",
     name: "Shape",
@@ -1130,6 +1130,15 @@ export const expectedCurrencyList = [
     family: "hedera",
     color: "#000",
     decimals: 8,
+  },
+  {
+    type: "CryptoCurrency",
+    id: "hypercore",
+    ticker: "USDC",
+    name: "Hyperliquid",
+    family: "hypercore",
+    color: "#97FCE4",
+    decimals: 6,
   },
   {
     type: "CryptoCurrency",

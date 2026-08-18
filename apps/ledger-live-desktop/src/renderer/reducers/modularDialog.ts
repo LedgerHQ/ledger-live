@@ -1,11 +1,16 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { State } from ".";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
+
+export type ModularDialogPresentation = "dialog" | "embedded";
 
 export interface ModularDialogParams {
   currencies?: string[];
+  networkIds?: readonly string[];
+  selectableNetworkIds?: readonly string[];
+  presentation?: ModularDialogPresentation;
   dialogConfiguration?: EnhancedModularDrawerConfiguration;
   useCase?: string;
   uiUseCase?: string;
@@ -51,7 +56,14 @@ const modularDialogSlice = createSlice({
       state.source = action.payload;
     },
     openDialog: (state, action: PayloadAction<ModularDialogParams>) => {
-      state.dialogParams = action.payload;
+      state.dialogParams = {
+        ...action.payload,
+        networkIds: action.payload.networkIds ? [...action.payload.networkIds] : undefined,
+        selectableNetworkIds: action.payload.selectableNetworkIds
+          ? [...action.payload.selectableNetworkIds]
+          : undefined,
+        presentation: action.payload.presentation ?? "dialog",
+      };
       state.isOpen = true;
     },
     closeDialog: state => {
@@ -65,6 +77,8 @@ export const modularDialogSearchedSelector = (state: State) => state.modularDial
 export const modularDialogFlowSelector = (state: State) => state.modularDialog.flow;
 export const modularDialogSourceSelector = (state: State) => state.modularDialog.source;
 export const modularDialogIsOpenSelector = (state: State) => state.modularDialog.isOpen;
+export const modularDialogPresentationSelector = (state: State): ModularDialogPresentation =>
+  state.modularDialog.dialogParams?.presentation ?? "dialog";
 export const modularDialogOnCloseSelector = (state: State) =>
   state.modularDialog.dialogParams?.onClose;
 export const modularDialogOnAccountSelectedSelector = (state: State) =>
@@ -75,6 +89,10 @@ export const modularDialogConfigurationSelector = (state: State) =>
   state.modularDialog.dialogParams?.dialogConfiguration;
 export const modularDialogCurrenciesSelector = (state: State) =>
   state.modularDialog.dialogParams?.currencies;
+export const modularDialogNetworkIdsSelector = (state: State) =>
+  state.modularDialog.dialogParams?.networkIds;
+export const modularDialogSelectableNetworkIdsSelector = (state: State) =>
+  state.modularDialog.dialogParams?.selectableNetworkIds;
 export const modularDialogUseCaseSelector = (state: State) =>
   state.modularDialog.dialogParams?.useCase;
 export const modularDialogUiUseCaseSelector = (state: State) =>

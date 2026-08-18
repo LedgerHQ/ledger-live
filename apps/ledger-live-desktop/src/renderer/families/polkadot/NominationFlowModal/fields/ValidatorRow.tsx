@@ -2,7 +2,7 @@ import { BigNumber } from "bignumber.js";
 import React, { useCallback, useMemo, memo } from "react";
 import styled, { css } from "styled-components";
 import { Trans } from "react-i18next";
-import { Unit } from "@ledgerhq/types-cryptoassets";
+import { Unit } from "@domain/entity-currency-unit";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { PolkadotValidator } from "@ledgerhq/live-common/families/polkadot/types";
 import Box from "~/renderer/components/Box";

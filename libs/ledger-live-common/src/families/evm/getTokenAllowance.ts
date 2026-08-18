@@ -1,6 +1,6 @@
 import type { Account } from "@ledgerhq/types-live";
-import type { Unit } from "@ledgerhq/types-cryptoassets";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import type { Unit } from "@domain/entity-currency-unit";
+import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { createApi } from "@ledgerhq/coin-evm/api/index";
 import { getNodeApi } from "@ledgerhq/coin-evm/network/node/index";
 import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
@@ -49,11 +49,14 @@ export async function getEvmTokenAllowance(
   }
 
   // Ensure EVM coin config is set (e.g. when CLI runs tokenAllowance without having used the bridge)
-  createApi(getCurrencyConfiguration<EvmConfigInfo>(account.currency.id), account.currency.id);
+  createApi(account.currency.id);
 
-  const nodeApi = getNodeApi(account.currency);
+  const nodeApi = getNodeApi(
+    getCurrencyConfiguration<EvmConfigInfo>(account.currency.id),
+    account.currency.id,
+  );
   const allowance = await nodeApi.getTokenAllowance(
-    account.currency,
+    account.currency.id,
     account.freshAddress,
     tokenCurrency.contractAddress,
     spender,

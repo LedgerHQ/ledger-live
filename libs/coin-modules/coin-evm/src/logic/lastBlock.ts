@@ -1,12 +1,12 @@
 import type { BlockInfo } from "@ledgerhq/coin-module-framework/api/index";
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
-import { getCoinConfig } from "../config";
+import type { EvmContext } from "../config";
 import { getNodeApi } from "../network/node";
 
-export async function lastBlock(currency: CryptoCurrency): Promise<BlockInfo> {
-  const api = getNodeApi(currency);
-  const { finalizationLevel = "latest" } = getCoinConfig(currency.id).info;
-  const result = await api.getBlockByHeight(currency, finalizationLevel);
+export async function lastBlock(context: EvmContext, currencyId: string): Promise<BlockInfo> {
+  const config = await context.config(currencyId);
+  const api = getNodeApi(config, currencyId);
+  const { finalizationLevel = "latest" } = config;
+  const result = await api.getBlockByHeight(currencyId, finalizationLevel);
 
   return {
     height: result.height,

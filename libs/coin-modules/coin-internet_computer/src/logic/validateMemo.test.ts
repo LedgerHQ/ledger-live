@@ -1,21 +1,11 @@
-import { validateMemo as icpValidateMemo } from "@zondax/ledger-live-icp/utils";
 import { validateMemo } from "./validateMemo";
 
-jest.mock("@zondax/ledger-live-icp/utils");
-
 describe("validateMemo", () => {
-  const mockedIcpValidateMemo = jest.mocked(icpValidateMemo);
-
-  beforeEach(() => {
-    mockedIcpValidateMemo.mockClear();
+  it.each(["0", "42", undefined])("returns true for valid memo %p", memo => {
+    expect(validateMemo(memo)).toBe(true);
   });
 
-  it.each([true, false])(
-    "should return the result from ICP validateMemo (%s)",
-    (expectedResult: boolean) => {
-      mockedIcpValidateMemo.mockReturnValueOnce({ isValid: expectedResult });
-      const result = validateMemo("some random memo");
-      expect(result).toBe(expectedResult);
-    },
-  );
+  it.each(["-1", "abc"])("returns false for invalid memo %p", memo => {
+    expect(validateMemo(memo)).toBe(false);
+  });
 });

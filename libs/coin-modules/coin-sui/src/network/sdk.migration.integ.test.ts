@@ -62,8 +62,8 @@ beforeAll(async () => {
   // endpoint can lag the JSON-RPC fullnode by hundreds of checkpoints during
   // re-index; min(rpc, gql) avoids spurious "not found" failures.
   const [rpcLatest, gqlLatest] = await Promise.all([
-    getLastBlock(JSON_RPC_ID),
-    getLastBlock(GRAPHQL_ID),
+    getLastBlock(coinConfig.getCoinConfig(JSON_RPC_ID)),
+    getLastBlock(coinConfig.getCoinConfig(GRAPHQL_ID)),
   ]);
   const lagging =
     BigInt(rpcLatest.sequenceNumber) < BigInt(gqlLatest.sequenceNumber)
@@ -224,8 +224,14 @@ describe.skip("JSON-RPC vs GraphQL shape parity (live mainnet)", () => {
     };
 
     it("each entry has the same shape across transports; coin-type sets overlap", async () => {
-      const rpc = await getAllBalancesCached(FIGMENT_SUI_VALIDATOR_ADDRESS, JSON_RPC_ID);
-      const gql = await getAllBalancesCached(FIGMENT_SUI_VALIDATOR_ADDRESS, GRAPHQL_ID);
+      const rpc = await getAllBalancesCached(
+        coinConfig.getCoinConfig(JSON_RPC_ID),
+        FIGMENT_SUI_VALIDATOR_ADDRESS,
+      );
+      const gql = await getAllBalancesCached(
+        coinConfig.getCoinConfig(GRAPHQL_ID),
+        FIGMENT_SUI_VALIDATOR_ADDRESS,
+      );
 
       assertShapeBoth(rpc, gql, { array: balanceItem, minLen: 1 }, "getAllBalancesCached");
 
@@ -247,8 +253,14 @@ describe.skip("JSON-RPC vs GraphQL shape parity (live mainnet)", () => {
     };
 
     it("each entry has the same bridge-shape across transports", async () => {
-      const rpc = await getAccountBalances(FIGMENT_SUI_VALIDATOR_ADDRESS, JSON_RPC_ID);
-      const gql = await getAccountBalances(FIGMENT_SUI_VALIDATOR_ADDRESS, GRAPHQL_ID);
+      const rpc = await getAccountBalances(
+        coinConfig.getCoinConfig(JSON_RPC_ID),
+        FIGMENT_SUI_VALIDATOR_ADDRESS,
+      );
+      const gql = await getAccountBalances(
+        coinConfig.getCoinConfig(GRAPHQL_ID),
+        FIGMENT_SUI_VALIDATOR_ADDRESS,
+      );
       assertShapeBoth(rpc, gql, { array: accountBalanceItem, minLen: 1 }, "getAccountBalances");
 
       const rpcByCoin = new Map(rpc.map(b => [b.coinType, b]));
@@ -269,8 +281,8 @@ describe.skip("JSON-RPC vs GraphQL shape parity (live mainnet)", () => {
     };
 
     it("returns the same shape on both transports", async () => {
-      const rpc = await getLastBlock(JSON_RPC_ID);
-      const gql = await getLastBlock(GRAPHQL_ID);
+      const rpc = await getLastBlock(coinConfig.getCoinConfig(JSON_RPC_ID));
+      const gql = await getLastBlock(coinConfig.getCoinConfig(GRAPHQL_ID));
       assertShapeBoth(rpc, gql, lastBlockShape, "getLastBlock");
       // Both should report a positive sequence; exact value drifts between calls.
       expect(BigInt(rpc.sequenceNumber)).toBeGreaterThan(0n);
@@ -288,8 +300,14 @@ describe.skip("JSON-RPC vs GraphQL shape parity (live mainnet)", () => {
     };
 
     it("returns the same shape on both transports for a finalised historical checkpoint", async () => {
-      const rpc = await getCheckpoint(stableCheckpointSequence, JSON_RPC_ID);
-      const gql = await getCheckpoint(stableCheckpointSequence, GRAPHQL_ID);
+      const rpc = await getCheckpoint(
+        coinConfig.getCoinConfig(JSON_RPC_ID),
+        stableCheckpointSequence,
+      );
+      const gql = await getCheckpoint(
+        coinConfig.getCoinConfig(GRAPHQL_ID),
+        stableCheckpointSequence,
+      );
       assertShapeBoth(rpc, gql, checkpointShape, "getCheckpoint");
       // Historical checkpoint is immutable: digest+seq+timestamp are deterministic.
       // If the GraphQL endpoint is currently lagging the JSON-RPC endpoint indexing,
@@ -300,11 +318,15 @@ describe.skip("JSON-RPC vs GraphQL shape parity (live mainnet)", () => {
     });
 
     it("GraphQL rejects digest input; JSON-RPC accepts it", async () => {
-      const latest = await getLastBlock(JSON_RPC_ID);
-      await expect(getCheckpoint(latest.digest, JSON_RPC_ID)).resolves.toMatchObject({
+      const latest = await getLastBlock(coinConfig.getCoinConfig(JSON_RPC_ID));
+      await expect(
+        getCheckpoint(coinConfig.getCoinConfig(JSON_RPC_ID), latest.digest),
+      ).resolves.toMatchObject({
         digest: latest.digest,
       });
-      await expect(getCheckpoint(latest.digest, GRAPHQL_ID)).rejects.toThrow(/sequence number/i);
+      await expect(
+        getCheckpoint(coinConfig.getCoinConfig(GRAPHQL_ID), latest.digest),
+      ).rejects.toThrow(/sequence number/i);
     });
   });
 
@@ -321,8 +343,14 @@ describe.skip("JSON-RPC vs GraphQL shape parity (live mainnet)", () => {
     };
 
     it("returns the same shape on both transports for a finalised checkpoint", async () => {
-      const rpc = await getBlockInfo(stableCheckpointSequence, JSON_RPC_ID);
-      const gql = await getBlockInfo(stableCheckpointSequence, GRAPHQL_ID);
+      const rpc = await getBlockInfo(
+        coinConfig.getCoinConfig(JSON_RPC_ID),
+        stableCheckpointSequence,
+      );
+      const gql = await getBlockInfo(
+        coinConfig.getCoinConfig(GRAPHQL_ID),
+        stableCheckpointSequence,
+      );
       assertShapeBoth(rpc, gql, blockInfoShape, "getBlockInfo");
       expect(gql.height).toBe(rpc.height);
       expect(gql.hash).toBe(rpc.hash);
@@ -338,7 +366,7 @@ describe.skip("JSON-RPC vs GraphQL shape parity (live mainnet)", () => {
       // that bound to compare exact tx-set membership.
       let seq = BigInt(stableCheckpointSequence);
       for (let i = 0; i < 50; i++) {
-        const block = await getBlock(seq.toString(), JSON_RPC_ID);
+        const block = await getBlock(coinConfig.getCoinConfig(JSON_RPC_ID), seq.toString());
         if (block.transactions.length <= 50) {
           smallBlockSequence = seq.toString();
           break;
@@ -375,8 +403,8 @@ describe.skip("JSON-RPC vs GraphQL shape parity (live mainnet)", () => {
     };
 
     it("returns the same shape on both transports; tx digest sets overlap", async () => {
-      const rpc = await getBlock(smallBlockSequence, JSON_RPC_ID);
-      const gql = await getBlock(smallBlockSequence, GRAPHQL_ID);
+      const rpc = await getBlock(coinConfig.getCoinConfig(JSON_RPC_ID), smallBlockSequence);
+      const gql = await getBlock(coinConfig.getCoinConfig(GRAPHQL_ID), smallBlockSequence);
       assertShapeBoth(rpc, gql, blockShape, "getBlock");
       // Historical block is immutable: tx digest set is deterministic.
       const rpcByHash = new Map(rpc.transactions.map(t => [t.hash, t]));
@@ -407,8 +435,14 @@ describe.skip("JSON-RPC vs GraphQL shape parity (live mainnet)", () => {
     };
 
     it("returns the same shape on both transports; stake IDs and principals match", async () => {
-      const rpc = await getDelegatedStakes(FIGMENT_SUI_VALIDATOR_ADDRESS, JSON_RPC_ID);
-      const gql = await getDelegatedStakes(FIGMENT_SUI_VALIDATOR_ADDRESS, GRAPHQL_ID);
+      const rpc = await getDelegatedStakes(
+        coinConfig.getCoinConfig(JSON_RPC_ID),
+        FIGMENT_SUI_VALIDATOR_ADDRESS,
+      );
+      const gql = await getDelegatedStakes(
+        coinConfig.getCoinConfig(GRAPHQL_ID),
+        FIGMENT_SUI_VALIDATOR_ADDRESS,
+      );
       assertShapeBoth(rpc, gql, { array: delegationItem }, "getDelegatedStakes");
 
       // stakedSuiId + principal are deterministic (deposits don't change post-stake).
@@ -447,8 +481,8 @@ describe.skip("JSON-RPC vs GraphQL shape parity (live mainnet)", () => {
     };
 
     it("returns the same shape on both transports; active set is identical at the same checkpoint", async () => {
-      const rpc = await getValidators(JSON_RPC_ID);
-      const gql = await getValidators(GRAPHQL_ID);
+      const rpc = await getValidators(coinConfig.getCoinConfig(JSON_RPC_ID));
+      const gql = await getValidators(coinConfig.getCoinConfig(GRAPHQL_ID));
       assertShapeBoth(rpc, gql, { array: validatorItem, minLen: 1 }, "getValidators");
 
       const rpcByAddr = new Map(rpc.map(v => [v.suiAddress, v]));
@@ -491,8 +525,20 @@ describe.skip("JSON-RPC vs GraphQL shape parity (live mainnet)", () => {
 
     it("returns the same op shape on both transports; digest sets overlap", async () => {
       const accountId = `js:2:sui:${ACTIVE_ACCOUNT}:sui`;
-      const rpc = await getOperations(accountId, ACTIVE_ACCOUNT, undefined, undefined, JSON_RPC_ID);
-      const gql = await getOperations(accountId, ACTIVE_ACCOUNT, undefined, undefined, GRAPHQL_ID);
+      const rpc = await getOperations(
+        coinConfig.getCoinConfig(JSON_RPC_ID),
+        accountId,
+        ACTIVE_ACCOUNT,
+        undefined,
+        undefined,
+      );
+      const gql = await getOperations(
+        coinConfig.getCoinConfig(GRAPHQL_ID),
+        accountId,
+        ACTIVE_ACCOUNT,
+        undefined,
+        undefined,
+      );
       assertShapeBoth(rpc, gql, { array: opItem, minLen: 1 }, "getOperations");
 
       const rpcByHash = new Map(rpc.map(o => [o.hash, o]));
@@ -538,18 +584,18 @@ describe.skip("JSON-RPC vs GraphQL shape parity (live mainnet)", () => {
 
     it("first page: returns the same op shape on both transports; id sets overlap", async () => {
       const rpcPage = await getListOperations(
+        coinConfig.getCoinConfig(JSON_RPC_ID),
         ACTIVE_ACCOUNT,
         "desc",
         undefined,
         undefined,
-        JSON_RPC_ID,
       );
       const gqlPage = await getListOperations(
+        coinConfig.getCoinConfig(GRAPHQL_ID),
         ACTIVE_ACCOUNT,
         "desc",
         undefined,
         undefined,
-        GRAPHQL_ID,
       );
       assertShapeBoth(
         rpcPage.items,
@@ -578,11 +624,11 @@ describe.skip("JSON-RPC vs GraphQL shape parity (live mainnet)", () => {
 
     it("second page (cursor-driven): both transports return strictly older items than the cursor", async () => {
       const first = await getListOperations(
+        coinConfig.getCoinConfig(JSON_RPC_ID),
         ACTIVE_ACCOUNT,
         "desc",
         undefined,
         undefined,
-        JSON_RPC_ID,
       );
       // Multi-page precondition: if the address's history is below one page, the
       // cursor-mapping path can't be exercised. Fail loudly so the test summary
@@ -596,18 +642,18 @@ describe.skip("JSON-RPC vs GraphQL shape parity (live mainnet)", () => {
       const cursorTs = Number(first.next.split(":")[0]);
 
       const rpcPage = await getListOperations(
+        coinConfig.getCoinConfig(JSON_RPC_ID),
         ACTIVE_ACCOUNT,
         "desc",
         undefined,
         first.next,
-        JSON_RPC_ID,
       );
       const gqlPage = await getListOperations(
+        coinConfig.getCoinConfig(GRAPHQL_ID),
         ACTIVE_ACCOUNT,
         "desc",
         undefined,
         first.next,
-        GRAPHQL_ID,
       );
 
       for (const it of [...rpcPage.items, ...gqlPage.items]) {
@@ -629,8 +675,8 @@ describe.skip("JSON-RPC vs GraphQL shape parity (live mainnet)", () => {
 
     it("returns the same shape on both transports for the same dry-run input", async () => {
       const fakeTx = createFixtureTransaction();
-      const rpc = await paymentInfo(ACTIVE_ACCOUNT, fakeTx, JSON_RPC_ID);
-      const gql = await paymentInfo(ACTIVE_ACCOUNT, fakeTx, GRAPHQL_ID);
+      const rpc = await paymentInfo(coinConfig.getCoinConfig(JSON_RPC_ID), ACTIVE_ACCOUNT, fakeTx);
+      const gql = await paymentInfo(coinConfig.getCoinConfig(GRAPHQL_ID), ACTIVE_ACCOUNT, fakeTx);
       assertShapeBoth(rpc, gql, paymentInfoShape, "paymentInfo");
       expect(gql.gasBudget).toBe(rpc.gasBudget); // SDK-set, deterministic per fixture
     });
@@ -658,8 +704,16 @@ describe.skip("JSON-RPC vs GraphQL shape parity (live mainnet)", () => {
     };
 
     it("Page<Stake> shape matches across transports; uid + amountDeposited identical for matched stakes", async () => {
-      const rpc = await logicGetStakes(FIGMENT_SUI_VALIDATOR_ADDRESS, undefined, JSON_RPC_ID);
-      const gql = await logicGetStakes(FIGMENT_SUI_VALIDATOR_ADDRESS, undefined, GRAPHQL_ID);
+      const rpc = await logicGetStakes(
+        coinConfig.getCoinConfig(JSON_RPC_ID),
+        FIGMENT_SUI_VALIDATOR_ADDRESS,
+        undefined,
+      );
+      const gql = await logicGetStakes(
+        coinConfig.getCoinConfig(GRAPHQL_ID),
+        FIGMENT_SUI_VALIDATOR_ADDRESS,
+        undefined,
+      );
       assertShapeBoth(rpc, gql, pageShape, "logic.getStakes");
 
       const rpcById = new Map(rpc.items.map(s => [s.uid, s]));
@@ -682,15 +736,15 @@ describe.skip("JSON-RPC vs GraphQL shape parity (live mainnet)", () => {
   describe("unused-address parity", () => {
     // Empty-page semantics — most likely silent divergence between transports.
     it("getDelegatedStakes returns an empty array on both transports", async () => {
-      const rpc = await getDelegatedStakes(ACCOUNT_EMPTY, JSON_RPC_ID);
-      const gql = await getDelegatedStakes(ACCOUNT_EMPTY, GRAPHQL_ID);
+      const rpc = await getDelegatedStakes(coinConfig.getCoinConfig(JSON_RPC_ID), ACCOUNT_EMPTY);
+      const gql = await getDelegatedStakes(coinConfig.getCoinConfig(GRAPHQL_ID), ACCOUNT_EMPTY);
       expect(rpc).toEqual([]);
       expect(gql).toEqual([]);
     });
 
     it("getAllBalancesCached returns an empty array on both transports", async () => {
-      const rpc = await getAllBalancesCached(ACCOUNT_EMPTY, JSON_RPC_ID);
-      const gql = await getAllBalancesCached(ACCOUNT_EMPTY, GRAPHQL_ID);
+      const rpc = await getAllBalancesCached(coinConfig.getCoinConfig(JSON_RPC_ID), ACCOUNT_EMPTY);
+      const gql = await getAllBalancesCached(coinConfig.getCoinConfig(GRAPHQL_ID), ACCOUNT_EMPTY);
       expect(rpc).toEqual([]);
       expect(gql).toEqual([]);
     });

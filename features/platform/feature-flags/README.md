@@ -1,5 +1,8 @@
 # `@features/platform-feature-flags`
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 Redux-backed React hooks for resolved feature flags. Drop-in replacement for the
 Context-based hooks exported from `@ledgerhq/live-common/featureFlags`.
 

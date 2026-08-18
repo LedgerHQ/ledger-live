@@ -8,7 +8,7 @@ import { Item } from "~/components/Graph/types";
 import { RANGES } from "LLM/features/Market/utils";
 import { MarketCoinDataChart } from "@ledgerhq/live-common/market/utils/types";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { rangeDataTable } from "@ledgerhq/live-common/cg-client/utils/rangeDataTable";
 
 const { width } = getWindowDimensions();

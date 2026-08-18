@@ -176,7 +176,7 @@ export type HederaOperationExtra = {
 };
 
 export type HederaValidator = {
-  nodeId: number;
+  id: string;
   minStake: BigNumber;
   maxStake: BigNumber;
   activeStake: BigNumber;
@@ -188,7 +188,7 @@ export type HederaValidator = {
 };
 
 export type HederaValidatorRaw = {
-  nodeId: number;
+  id: string;
   minStake: string;
   maxStake: string;
   activeStake: string;

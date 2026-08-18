@@ -6,6 +6,7 @@ import type {
 } from "@ledgerhq/coin-module-framework/api/index";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
+import type { TronCoinConfig } from "../config";
 import {
   getBlock as networkGetBlock,
   getBlockWithTransactions,
@@ -19,12 +20,12 @@ import type { TrongridTxInfo, TrongridTxType } from "../types";
 
 type BlockTxInfo = TrongridTxInfo;
 
-export async function getBlockInfo(height: number): Promise<BlockInfo> {
+export async function getBlockInfo(config: TronCoinConfig, height: number): Promise<BlockInfo> {
   if (!Number.isSafeInteger(height) || height <= 0) {
     throw new Error(`Invalid block height: ${height}`);
   }
 
-  const block = await networkGetBlock(height);
+  const block = await networkGetBlock(config, height);
   return {
     height: block.height,
     hash: block.hash,
@@ -32,14 +33,14 @@ export async function getBlockInfo(height: number): Promise<BlockInfo> {
   };
 }
 
-export async function getBlock(height: number): Promise<Block> {
+export async function getBlock(config: TronCoinConfig, height: number): Promise<Block> {
   if (!Number.isSafeInteger(height) || height <= 0) {
     throw new Error(`Invalid block height: ${height}`);
   }
 
   const [data, txInfos] = await Promise.all([
-    getBlockWithTransactions(height),
-    getTransactionInfoByBlockNum(height).catch(error => {
+    getBlockWithTransactions(config, height),
+    getTransactionInfoByBlockNum(config, height).catch(error => {
       log("tron/getBlock", "Failed to fetch transaction info, falling back to ret fees", {
         height,
         error,

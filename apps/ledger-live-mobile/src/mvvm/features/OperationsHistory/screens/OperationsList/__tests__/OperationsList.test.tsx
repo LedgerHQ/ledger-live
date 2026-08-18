@@ -8,7 +8,7 @@ import type { OperationsHistoryNavigatorParamsList } from "LLM/features/Operatio
 import type { State } from "~/reducers/types";
 import { ScreenName } from "~/const/navigation";
 import OperationsList from "../index";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 
 function withTwoCalendarDaySections(account: Account): Account {
   const newerDayMs = new Date("2020-06-15T15:00:00.000Z").getTime();

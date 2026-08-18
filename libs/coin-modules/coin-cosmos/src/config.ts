@@ -1,5 +1,6 @@
 import buildCoinConfig, {
   type CoinConfig,
+  type Context,
   type CurrencyConfig,
 } from "@ledgerhq/coin-module-framework/config";
 import { ConfigInfo } from "@ledgerhq/live-config/LiveConfig";
@@ -116,16 +117,6 @@ export const cosmosConfig: CosmosConfig = {
       },
     },
   },
-  config_currency_umee: {
-    type: "object",
-    default: {
-      lcd: "https://umee-api.polkachu.com",
-      minGasPrice: 0.1,
-      status: {
-        type: "active",
-      },
-    },
-  },
   config_currency_coreum: {
     type: "object",
     default: {
@@ -182,7 +173,7 @@ export const cosmosConfig: CosmosConfig = {
   config_currency_zenrock: {
     type: "object",
     default: {
-      lcd: "https://zenrock.api.m.stavr.tech",
+      lcd: "https://zenrock.api.m.anode.team",
       minGasPrice: 2.5,
       status: {
         type: "active",
@@ -203,6 +194,13 @@ export const cosmosConfig: CosmosConfig = {
 };
 
 export type CosmosCoinConfig = CurrencyConfig & CosmosConfig;
+
+/**
+ * The {@link Context} threaded through the coin-cosmos low layers (ADR-019). The concrete
+ * Cosmos-family chain is selected via the free-form `currencyId` carried on the context.
+ */
+export type CosmosContext = Context<CosmosCoinConfig>;
+
 const coinConfig: {
   setCoinConfig: (config: CoinConfig<CosmosCoinConfig>) => void;
   getCoinConfig: (currencyId?: string) => CosmosCoinConfig;

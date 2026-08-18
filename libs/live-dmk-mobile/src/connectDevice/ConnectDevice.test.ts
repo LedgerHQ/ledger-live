@@ -10,7 +10,7 @@ import { EMPTY } from "rxjs";
 import { connectDevice } from "./connectDevice";
 import { RnBleDeviceDiscoverySource } from "./discoveryService/sources/RnBleDeviceDiscoverySource";
 import { RnHidDeviceDiscoverySource } from "./discoveryService/sources/RnHidDeviceDiscoverySource";
-import { createConnectionError, filterMatchedDevices } from "./utils";
+import { buildMobileCompatDeviceId, createConnectionError, filterMatchedDevices } from "./utils";
 
 jest.mock("@ledgerhq/live-dmk-shared", () => {
   const actual = jest.requireActual("@ledgerhq/live-dmk-shared");
@@ -75,6 +75,7 @@ describe("mobile connectDevice", () => {
       deviceDiscoveryService: expect.any(DefaultDeviceDiscoveryService),
       matchDiscoveredDevices: filterMatchedDevices,
       mapConnectionError: createConnectionError,
+      buildCompatDeviceId: buildMobileCompatDeviceId,
     });
     expect(mockedSharedConnectDeviceUseCase.mock.calls[0][0]).not.toHaveProperty(
       "mapUnexpectedDiscoveryError",

@@ -15,6 +15,8 @@ import {
   zCashOutCiphertextSize,
   zCashEncCiphertextSize,
   zCashProofsSaplingSize,
+  zCashV6Version,
+  zCashV6VersionGroupId,
 } from "./constants";
 
 export function splitTransaction(
@@ -37,11 +39,21 @@ export function splitTransaction(
   const isZcash = additionals.includes("zcash");
   const transaction = Buffer.from(transactionHex, "hex");
   const version = transaction.slice(offset, offset + 4);
+  const isZcashv5 = isZcash && version.equals(Buffer.from([0x05, 0x00, 0x00, 0x80]));
+  const isZcashv6 = isZcash && version.equals(zCashV6Version);
   const overwinter =
     version.equals(Buffer.from([0x03, 0x00, 0x00, 0x80])) ||
     version.equals(Buffer.from([0x04, 0x00, 0x00, 0x80])) ||
-    version.equals(Buffer.from([0x05, 0x00, 0x00, 0x80]));
-  const isZcashv5 = isZcash && version.equals(Buffer.from([0x05, 0x00, 0x00, 0x80]));
+    version.equals(Buffer.from([0x05, 0x00, 0x00, 0x80])) ||
+    // v3/v4/v5 match on the version word alone because the other overwinter-style
+    // chains share those layouts under their own currency id. v6 is Zcash's alone,
+    // so it is gated on isZcash: otherwise a v6 hex carrying non-Zcash additionals
+    // would take this branch but not the isZcashv5Plus one below, consume only 8
+    // header bytes, and read the input count off the consensus branch id.
+    isZcashv6;
+  // A v6 (ZIP-229) reuses the v5 header and transparent layout, so the two are read
+  // the same way. Their shielded sections differ, and only a v5 one is parsed below.
+  const isZcashv5Plus = isZcashv5 || isZcashv6;
   offset += 4;
   if (
     isSegwitSupported &&
@@ -57,7 +69,18 @@ export function splitTransaction(
     nVersionGroupId = transaction.slice(offset, 4 + offset);
     offset += 4;
   }
-  if (isZcashv5) {
+  // ZIP-229 pins the v6 version group id. Refuse anything else before the fixed-offset
+  // header read below commits to the v6 layout: a variant format sharing the version
+  // word would be misframed rather than rejected.
+  if (isZcashv6 && !nVersionGroupId.equals(zCashV6VersionGroupId)) {
+    throw new Error(
+      `splitTransaction: unexpected Zcash v6 version group id ${nVersionGroupId.toString("hex")}`,
+    );
+  }
+  if (isZcashv5Plus) {
+    // ZIP-233 (zcash_unstable="nu7" + feature="zip-233") would add 8 bytes of
+    // zip233Amount after expiryHeight; if that activates, offset += 12 under-reads
+    // a v6 header and every field that follows lands at the wrong position.
     locktime = transaction.slice(offset + 4, offset + 8);
     nExpiryHeight = transaction.slice(offset + 8, offset + 12);
     offset += 12;
@@ -118,6 +141,9 @@ export function splitTransaction(
   let sapling: SaplingData | undefined;
   let orchard: OrchardData | undefined;
   if (hasExtraData) {
+    // A v6 is deliberately excluded: ZIP-229 adds an Ironwood pool this parser does
+    // not model, so reading its shielded section as a v5 one would misreport it.
+    // Callers that need it work from the raw bytes instead.
     if (isZcashv5) {
       ({ sapling, offset } = splitSaplingPart(transaction, offset));
 
@@ -130,19 +156,19 @@ export function splitTransaction(
   if (witness) {
     witnessScript = transaction.slice(offset, -4);
     locktime = transaction.slice(transaction.length - 4);
-  } else if (!isZcashv5) {
+  } else if (!isZcashv5Plus) {
     locktime = transaction.slice(offset, offset + 4);
   }
 
   offset += 4;
 
-  if ((overwinter || isDecred) && !isZcashv5) {
+  if ((overwinter || isDecred) && !isZcashv5Plus) {
     nExpiryHeight = transaction.slice(offset, offset + 4);
     offset += 4;
   }
 
   if (hasExtraData) {
-    if (!isZcashv5) {
+    if (!isZcashv5Plus) {
       extraData = transaction.slice(offset);
     }
   }

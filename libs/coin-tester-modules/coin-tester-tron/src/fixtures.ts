@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import {
   getDerivationScheme,
   runDerivationScheme,
@@ -87,7 +87,7 @@ export function makeTrc20Token(asset: Trc20Asset): TokenCurrency {
 }
 
 export function registerTronTokensInMockStore(trc10: TokenCurrency, trc20: TokenCurrency): void {
-  setupMockCryptoAssetsStore({
+  setCryptoAssetsStore({
     findTokenById: async (id: string) =>
       id === trc10.id ? trc10 : id === trc20.id ? trc20 : undefined,
     findTokenByAddressInCurrency: async (address: string, currencyId: string) => {
@@ -96,5 +96,6 @@ export function registerTronTokensInMockStore(trc10: TokenCurrency, trc20: Token
       if (address === trc20.contractAddress) return trc20;
       return undefined;
     },
+    getTokensSyncHash: async () => "",
   });
 }

@@ -35,7 +35,6 @@ interface BannerVisibilityState {
  * indicating if at least one banner is displayed.
  */
 export function useBannersVisibility(): BannerVisibilityState {
-  const lldActionCarousel = useFeature("lldActionCarousel");
   const onboardingWidgetFeature = useFeature("onboardingWidget");
   const shouldDisplayFinishOnboardingWidget = onboardingWidgetFeature?.enabled ?? false;
 
@@ -53,8 +52,7 @@ export function useBannersVisibility(): BannerVisibilityState {
 
   // Action cards carousel
   const { actionCards } = useActionCards();
-  const isActionCardsCampaignRunning = actionCards.length > 0;
-  const isActionCardsVisible = isActionCardsCampaignRunning && Boolean(lldActionCarousel?.enabled);
+  const isActionCardsVisible = actionCards.length > 0;
 
   // LNS upsell banner
   const isLNSUpsellBannerVisible = useLNSUpsellBannerState("portfolio").isShown;

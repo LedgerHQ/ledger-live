@@ -12,7 +12,16 @@ jest.mock("../createTransaction", () => ({
   createTransaction: jest.fn().mockReturnValue({}),
 }));
 
+const getBridgeApiMock = jest.fn().mockResolvedValue({});
+jest.mock("../bridge", () => ({
+  getBridgeApi: (...a: unknown[]) => getBridgeApiMock(...a),
+}));
+
 const mockedGetCoinModuleApi = coinframework.getCoinModuleApi as jest.Mock;
+
+// The framework threads a context and calls `craftTransactionData(context, intent)` on the coin
+// module api; mirror the default impl (`{ type: "none" }`) so the mocked api exposes it.
+const craftTransactionData = () => ({ type: "none" });
 
 describe("genericEstimateMaxSpendable", () => {
   const estimateFeesMock = jest.fn();
@@ -36,7 +45,10 @@ describe("genericEstimateMaxSpendable", () => {
   });
 
   it("returns the token account spendable balance directly for a TokenAccount", async () => {
-    mockedGetCoinModuleApi.mockReturnValue({ estimateFees: estimateFeesMock });
+    mockedGetCoinModuleApi.mockReturnValue({
+      craftTransactionData,
+      estimateFees: estimateFeesMock,
+    });
 
     const estimate = genericEstimateMaxSpendable("testnet", "local");
     const result = await estimate({
@@ -51,6 +63,7 @@ describe("genericEstimateMaxSpendable", () => {
 
   it("subtracts estimated fee from spendable balance", async () => {
     mockedGetCoinModuleApi.mockReturnValue({
+      craftTransactionData,
       estimateFees: estimateFeesMock.mockResolvedValue({ value: 10000n }),
     });
 
@@ -64,8 +77,35 @@ describe("genericEstimateMaxSpendable", () => {
     expect(result.toString()).toBe("49990000");
   });
 
+  it("prices the send-max against the family's own intent data", async () => {
+    const buildIntentData = jest.fn().mockReturnValue({ type: "familyx" });
+    getBridgeApiMock.mockResolvedValueOnce({ buildIntentData });
+    mockedGetCoinModuleApi.mockReturnValue({
+      estimateFees: estimateFeesMock.mockResolvedValue({ value: 10000n }),
+    });
+
+    const estimate = genericEstimateMaxSpendable("testnet", "local");
+    await estimate({
+      account: dummyAccount,
+      parentAccount: null,
+      transaction: { familySpecificData: { resource: "ENERGY" } } as any,
+    });
+
+    expect(buildIntentData).toHaveBeenCalledWith(
+      expect.objectContaining({
+        useAllAmount: true,
+        familySpecificData: { resource: "ENERGY" },
+      }),
+    );
+    expect(estimateFeesMock).toHaveBeenCalledWith(
+      expect.anything(), // context
+      expect.objectContaining({ data: { type: "familyx" } }),
+    );
+  });
+
   it("subtracts additionalFees surfaced in parameters", async () => {
     mockedGetCoinModuleApi.mockReturnValue({
+      craftTransactionData,
       estimateFees: estimateFeesMock.mockResolvedValue({
         value: 10000n,
         parameters: { additionalFees: 5000n },
@@ -84,6 +124,7 @@ describe("genericEstimateMaxSpendable", () => {
 
   it("subtracts funds committed by pending native operations from the send-max", async () => {
     mockedGetCoinModuleApi.mockReturnValue({
+      craftTransactionData,
       estimateFees: estimateFeesMock.mockResolvedValue({ value: 10000n }),
     });
 
@@ -106,6 +147,7 @@ describe("genericEstimateMaxSpendable", () => {
 
   it("uses parameters.amount when the coin module provides it", async () => {
     mockedGetCoinModuleApi.mockReturnValue({
+      craftTransactionData,
       estimateFees: estimateFeesMock.mockResolvedValue({
         value: 10000n,
         parameters: { amount: 42n },
@@ -124,6 +166,7 @@ describe("genericEstimateMaxSpendable", () => {
 
   it("falls back to 0 when parameters.amount is not numeric", async () => {
     mockedGetCoinModuleApi.mockReturnValue({
+      craftTransactionData,
       estimateFees: estimateFeesMock.mockResolvedValue({
         value: 10000n,
         parameters: { amount: null },
@@ -147,6 +190,7 @@ describe("genericEstimateMaxSpendable", () => {
     };
 
     mockedGetCoinModuleApi.mockReturnValue({
+      craftTransactionData,
       estimateFees: estimateFeesMock.mockResolvedValue({ value: 10000n }),
     });
 
@@ -212,6 +256,7 @@ describe("genericEstimateMaxSpendable", () => {
 
   it("returns full spendable balance if fee is 0", async () => {
     mockedGetCoinModuleApi.mockReturnValue({
+      craftTransactionData,
       estimateFees: estimateFeesMock.mockResolvedValue({ value: 0n }),
     });
 
@@ -227,6 +272,7 @@ describe("genericEstimateMaxSpendable", () => {
 
   it("overrides the estimated fee value with the provided one but keeps coin parameters", async () => {
     mockedGetCoinModuleApi.mockReturnValue({
+      craftTransactionData,
       estimateFees: estimateFeesMock.mockResolvedValue({
         value: 999n,
         parameters: { amount: 42n },
@@ -247,6 +293,7 @@ describe("genericEstimateMaxSpendable", () => {
 
   it("overrides the estimated fee value with the provided fees + additionalFees", async () => {
     mockedGetCoinModuleApi.mockReturnValue({
+      craftTransactionData,
       estimateFees: estimateFeesMock.mockResolvedValue({ value: 999n }),
     });
 

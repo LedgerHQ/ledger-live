@@ -11,7 +11,7 @@ import {
 import type { DisplayedDevice } from "@ledgerhq/live-dmk-mobile";
 import { getDeviceSymbolByModelId } from "LLM/utils/getDeviceIcon";
 import { useTranslation } from "~/context/Locale";
-import { useSourceFlow } from "../../utils/SourceFlowContext";
+import { useDeviceIntentTracking } from "../../utils/DeviceIntentTrackingContext";
 import { trackDeviceSelected } from "../../utils/trackDeviceIntent";
 
 type DeviceListItemProps = {
@@ -24,11 +24,15 @@ function getDeviceName(device: DisplayedDevice["knownDevice"], fallbackName: str
 
 export function DeviceListItem({ device }: Readonly<DeviceListItemProps>): React.ReactNode {
   const { t } = useTranslation();
-  const sourceFlow = useSourceFlow();
+  const { sourceFlow, analyticsProperties } = useDeviceIntentTracking();
   const DeviceIcon = getDeviceSymbolByModelId(device.knownDevice.deviceModelId);
   const isAvailable = device.type === "available";
   const handleSelect = () => {
-    trackDeviceSelected({ sourceFlow, device: device.knownDevice });
+    trackDeviceSelected({
+      sourceFlow,
+      device: device.knownDevice,
+      extraProperties: analyticsProperties,
+    });
     device.onSelect();
   };
 

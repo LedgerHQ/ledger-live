@@ -1,10 +1,10 @@
 import React, { useMemo } from "react";
 import { StyleSheet } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Box } from "@ledgerhq/lumen-ui-rnative";
+import { Box, type IconButtonProps } from "@ledgerhq/lumen-ui-rnative";
 import {
   TOP_BAR_CONTENT_HEIGHT,
   TOP_BAR_WRAPPER_PADDING_TOP,
+  useAdjustedSafeAreaInsets,
 } from "LLM/hooks/useNavigationBarHeights";
 import { useSwapTopBarHeaderViewModel } from "./useSwapTopBarHeaderViewModel";
 import {
@@ -13,17 +13,32 @@ import {
   useMyLedgerTopBarAction,
 } from "LLM/components/CustomTopBar";
 import { MyWalletTopBarAction } from "LLM/components/TopBar/components/MyWalletTopBarAction";
+import { SyncErrorBottomSheet } from "LLM/components/TopBar/components/SyncErrorBottomSheet";
+import { ICON_SIZE } from "LLM/components/TopBar/const";
 
-import { Clock } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { Clock, Warning } from "@ledgerhq/lumen-ui-rnative/symbols";
+
+const syncIcon: IconButtonProps["icon"] = ({ size, style }) => (
+  <Warning size={size ?? ICON_SIZE} style={style} color="base" />
+);
 
 export function SwapTopBarHeader() {
-  const insets = useSafeAreaInsets();
+  const insets = useAdjustedSafeAreaInsets();
   const {
     onMyLedgerPress,
     onMyWalletPress,
     shouldDisplayMyWallet,
     hasUnreadNotifications,
     onSwapHistoryPress,
+    hasAccounts,
+    isSyncError,
+    isSyncPending,
+    listOfErrorAccountNames,
+    syncAccessibilityLabel,
+    isSyncDrawerOpen,
+    openSyncDrawer,
+    closeSyncDrawer,
+    onTryRefresh,
   } = useSwapTopBarHeaderViewModel();
   const myLedgerAction = useMyLedgerTopBarAction(onMyLedgerPress);
   const containerStyle = useMemo(
@@ -40,18 +55,38 @@ export function SwapTopBarHeader() {
     [shouldDisplayMyWallet, myLedgerAction],
   );
 
-  const trailingIcons: readonly TopBarActionIcon[] = useMemo(
-    () => [
-      {
-        id: "swap-history",
-        icon: Clock,
-        callback: onSwapHistoryPress,
-        testID: "topbar-swap-history",
-        accessibilityLabel: "Swap History",
-      },
-    ],
-    [onSwapHistoryPress],
-  );
+  const displaySyncStatusIcon = hasAccounts && isSyncError;
+
+  const trailingIcons: readonly TopBarActionIcon[] = useMemo(() => {
+    const icons: TopBarActionIcon[] = [];
+
+    if (displaySyncStatusIcon) {
+      icons.push({
+        id: "sync",
+        icon: syncIcon,
+        callback: openSyncDrawer,
+        testID: "topbar-sync",
+        accessibilityLabel: syncAccessibilityLabel,
+        loading: isSyncPending,
+      });
+    }
+
+    icons.push({
+      id: "swap-history",
+      icon: Clock,
+      callback: onSwapHistoryPress,
+      testID: "topbar-swap-history",
+      accessibilityLabel: "Swap History",
+    });
+
+    return icons;
+  }, [
+    displaySyncStatusIcon,
+    openSyncDrawer,
+    syncAccessibilityLabel,
+    isSyncPending,
+    onSwapHistoryPress,
+  ]);
 
   return (
     <Box style={containerStyle}>
@@ -59,6 +94,13 @@ export function SwapTopBarHeader() {
         leadingElement={leadingElement}
         leadingIcons={leadingIcons}
         trailingIcons={trailingIcons}
+      />
+
+      <SyncErrorBottomSheet
+        isOpen={isSyncDrawerOpen}
+        onClose={closeSyncDrawer}
+        listOfErrorAccountNames={listOfErrorAccountNames}
+        onTryRefresh={onTryRefresh}
       />
     </Box>
   );

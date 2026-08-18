@@ -1,152 +1,117 @@
 import invariant from "invariant";
-import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
-import { getEnv } from "@ledgerhq/live-env";
 import { createApi } from "../api";
 import { TRANSACTION_TYPE } from "../constants";
-import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
+import { AleoApiConfigurationResetError } from "../errors";
+import { fromHex } from "../logic/utils";
+import { accessProvableApi } from "../network/utils";
+import { getTestnetIntegConfig } from "../__tests__/fixtures/config.fixture";
+import { testnetAddress, testnetViewKey } from "../__tests__/fixtures/api.fixture";
+import { setupCalStore } from "../__tests__/helpers/cal";
+import { getPristineAccount } from "../__tests__/helpers/account";
+import type { AleoAccountInfo, AleoContext, PreparedRequestResponse } from "../types";
+import {
+  mockTxIntentTransferPrivate,
+  mockTxIntentTransferPublic,
+} from "../__tests__/fixtures/transaction.fixture";
+
+type AleoApi = ReturnType<typeof createApi>;
+
+function requireGetAccountInfo(api: AleoApi): NonNullable<AleoApi["getAccountInfo"]> {
+  const { getAccountInfo } = api;
+  if (!getAccountInfo) {
+    throw new Error("guard: api.getAccountInfo is not implemented");
+  }
+  return getAccountInfo;
+}
+
+async function withPrivacyContext(context: AleoContext, viewKey: string): Promise<AleoContext> {
+  const config = await context.config();
+  const provableApi = await accessProvableApi({
+    config,
+    viewKey,
+    provableApi: null,
+  });
+
+  invariant(provableApi.uuid, "guard: missing provableApi.uuid");
+
+  return { ...context, provableId: provableApi.uuid, viewKey };
+}
 
 describe("createApi", () => {
-  const emptyAccountAddress = "aleo172yejeypnffsdft3nrlpwnu964sn83p7ga6dm5zj7ucmqfqjk5rq3pmx6f";
-  const testAccountAddress = "aleo1rhgdu77hgyqd3xjj8ucu3jj9r2krwz6mnzyd80gncr5fxcwlh5rsvzp9px";
-  const mockConfig = getMockedConfig("testnet");
+  const api = createApi("aleo_testnet");
+  const context: AleoContext = {
+    config: async () => getTestnetIntegConfig(),
+    logger: () => {},
+  };
+  let emptyAddress: string;
+  let privacyContext: AleoContext;
+  let emptyAddressViewKey: string;
 
-  const api = createApi(
-    {
-      ...mockConfig,
-      apiUrls: {
-        node: getEnv("ALEO_NODE_ENDPOINT"),
-        sdk: getEnv("ALEO_TESTNET_SDK_ENDPOINT"),
-      },
-    },
-    "aleo",
-  );
+  beforeAll(async () => {
+    setupCalStore();
+    const pristineAccount = await getPristineAccount();
+    privacyContext = await withPrivacyContext(context, testnetViewKey);
+    emptyAddress = pristineAccount.address;
+    emptyAddressViewKey = pristineAccount.viewKey;
+  });
 
-  beforeAll(() => {
-    setupCalClientStore();
+  describe("craftTransaction", () => {
+    it("crafts a prepared request for a public root intent", async () => {
+      const result = await api.craftTransaction(context, mockTxIntentTransferPublic);
+
+      const preparedRequest = fromHex<PreparedRequestResponse>(result.transaction);
+      expect(preparedRequest.function_name.toLowerCase()).toContain(
+        Buffer.from("transfer_public").toString("hex"),
+      );
+    });
+
+    it("crafts a prepared request for a private root intent when a viewKey is present", async () => {
+      const contextWithPrivacy = await withPrivacyContext(context, testnetViewKey);
+
+      const result = await api.craftTransaction(contextWithPrivacy, mockTxIntentTransferPrivate);
+
+      const preparedRequest = fromHex<PreparedRequestResponse>(result.transaction);
+      expect(preparedRequest.function_name.toLowerCase()).toContain(
+        Buffer.from("transfer_private").toString("hex"),
+      );
+    });
+  });
+
+  describe("combine", () => {
+    it("rejects an invalid signature with an HTTP error from the backend", async () => {
+      const contextWithViewKey: AleoContext = { ...context, viewKey: testnetViewKey };
+      const crafted = await api.craftTransaction(context, mockTxIntentTransferPublic);
+
+      await expect(
+        api.combine(contextWithViewKey, crafted.transaction, ["sign1invalidsignatureplaceholder"]),
+      ).rejects.toMatchObject({ status: expect.any(Number) });
+    });
+
+    it("rejects before any network call when the context carries no view key", async () => {
+      await expect(api.combine(context, "crafted-tx", ["root-sig"])).rejects.toThrow(
+        /view key is required/,
+      );
+    });
   });
 
   describe("estimateFees", () => {
     it("returns fee for coin transfer transaction", async () => {
-      const fees = await api.estimateFees({
+      const fees = await api.estimateFees(context, {
         intentType: "transaction",
         asset: { type: "native" },
         type: TRANSACTION_TYPE.TRANSFER_PUBLIC,
         amount: 100n,
-        sender: testAccountAddress,
-        recipient: emptyAccountAddress,
+        sender: testnetAddress,
+        recipient: emptyAddress,
       });
 
       expect(fees.value).toBeGreaterThanOrEqual(0n);
     });
   });
 
-  describe("listOperations", () => {
-    it("returns empty array for pristine account", async () => {
-      const { items: operations } = await api.listOperations(emptyAccountAddress, {
-        minHeight: 0,
-        order: "desc",
-      });
-
-      expect(operations).toEqual([]);
-    });
-
-    it("returns operations with correct metadata", async () => {
-      const testTxId = "at1qe8ml060qvvqp5caxejnc2r4sj3yjx83nfe9mykyx0zyhv5h5yzsfa85j0";
-      const testBlockHashOfTx = "ab1ae88smgn0cr80yzzd84kvupawre67j69xcpthcegmcutqew8wgrs6hrxh8";
-      const { items: page } = await api.listOperations(testAccountAddress, {
-        minHeight: 0,
-        limit: 10,
-        order: "asc",
-      });
-
-      const operation = page.find(op => op.tx.hash === testTxId);
-
-      expect(operation).toMatchObject({
-        value: 20n,
-        asset: { type: "native" },
-        tx: {
-          hash: testTxId,
-          fees: 51060n,
-          failed: false,
-          block: {
-            hash: testBlockHashOfTx,
-            height: 168835,
-          },
-        },
-      });
-    });
-    it.each(["desc", "asc"] as const)(
-      "returns paginated operations for account with high activity (%s)",
-      async order => {
-        const limit = 10;
-        const { items: page1, next: cursor1 } = await api.listOperations(testAccountAddress, {
-          minHeight: 0,
-          limit,
-          order,
-        });
-
-        const { items: page2, next: cursor2 } = await api.listOperations(
-          testAccountAddress,
-          cursor1
-            ? {
-                minHeight: 0,
-                limit,
-                order,
-                cursor: cursor1,
-              }
-            : {
-                minHeight: 0,
-                limit,
-                order,
-              },
-        );
-
-        const firstPage1Timestamp = page1[0]?.tx?.date;
-        const firstPage2Timestamp = page2[0]?.tx?.date;
-        const lastPage1Timestamp = page1.at(-1)?.tx?.date;
-        const lastPage2Timestamp = page2.at(-1)?.tx?.date;
-        const page1Hashes = new Set(page1.map(op => op.tx.hash));
-        const page2Hashes = new Set(page2.map(op => op.tx.hash));
-        const hasOverlap = [...page2Hashes].some(hash => page1Hashes.has(hash));
-
-        // NOTE: this won't be equal to limit, because single transaction can generate multiple operations
-        expect(page1.length).toBeGreaterThanOrEqual(limit);
-        expect(page2.length).toBeGreaterThanOrEqual(limit);
-        expect(cursor1).not.toBe("");
-        expect(cursor2).not.toBe("");
-        expect(hasOverlap).toBe(false);
-        expect(firstPage1Timestamp).toBeInstanceOf(Date);
-        expect(firstPage2Timestamp).toBeInstanceOf(Date);
-        expect(lastPage1Timestamp).toBeInstanceOf(Date);
-        expect(lastPage2Timestamp).toBeInstanceOf(Date);
-        invariant(firstPage1Timestamp, "guard: missing firstPage1Timestamp");
-        invariant(firstPage2Timestamp, "guard: missing firstPage2Timestamp");
-        invariant(lastPage1Timestamp, "guard: missing lastPage1Timestamp");
-        invariant(lastPage2Timestamp, "guard: missing lastPage2Timestamp");
-        expect(lastPage1Timestamp > firstPage2Timestamp).toBe(order === "desc");
-        expect(firstPage1Timestamp < lastPage2Timestamp).toBe(order === "asc");
-      },
-    );
-
-    it.each(["desc", "asc"] as const)(
-      "returns operations with min height filter (%s)",
-      async order => {
-        const minHeight = order === "asc" ? 200_000 : 13_940_000;
-        const { items: page } = await api.listOperations(testAccountAddress, {
-          minHeight,
-          limit: 10,
-          order,
-        });
-
-        expect(page.length).toBeGreaterThan(0);
-        expect(page.every(op => op.tx.block.height >= minHeight)).toBe(true);
-      },
-    );
-  });
-
   describe("lastBlock", () => {
     it("returns the last block information", async () => {
-      const lastBlock = await api.lastBlock();
+      const lastBlock = await api.lastBlock(context);
 
       expect(lastBlock.height).toBeGreaterThan(0);
       expect(lastBlock.hash?.length).toBeGreaterThan(0);
@@ -154,29 +119,80 @@ describe("createApi", () => {
     });
   });
 
-  describe("getBalance", () => {
-    it("returns the balance for a valid address", async () => {
-      const address = "aleo1zcwqycj02lccfuu57dzjhva7w5dpzc7pngl0sxjhp58t6vlnnqxs6lnp6f";
-      const balance = await api.getBalance(address);
+  describe("getAccountInfo", () => {
+    it("returns the aleo scan status for a registered provableId", async () => {
+      const getAccountInfo = requireGetAccountInfo(api);
 
-      expect(balance).toBeInstanceOf(Array);
-      expect(balance.length).toBeGreaterThanOrEqual(0);
-      balance.forEach(b => {
-        expect(b.value).toBeGreaterThan(0n);
-      });
+      const info = (await getAccountInfo(privacyContext, testnetAddress)) as AleoAccountInfo;
+
+      expect(info.type).toBe("aleo");
+      expect(typeof info.synced).toBe("boolean");
+      expect(typeof info.percentage).toBe("number");
+      expect(typeof info.startHeight).toBe("number");
+      expect(typeof info.scannedHeight).toBe("number");
+      expect(info.scannedHeight).toBeGreaterThanOrEqual(info.startHeight);
     });
 
-    it("returns an empty array for a non-existing valid address", async () => {
-      const address = "aleo1g82wnc9um2f50a64a8xnsfz6meqkl3e7rk3q327vc47kykxway8qphwg9p";
-      const balance = await api.getBalance(address);
+    it("throws AleoApiConfigurationResetError for an unknown provableId", async () => {
+      const getAccountInfo = requireGetAccountInfo(api);
+      const contextWithUnknownProvableId: AleoContext = {
+        ...context,
+        provableId: "00000000-0000-0000-0000-000000000000",
+      };
 
-      expect(balance).toEqual([]);
+      await expect(
+        getAccountInfo(contextWithUnknownProvableId, testnetAddress),
+      ).rejects.toBeInstanceOf(AleoApiConfigurationResetError);
+    });
+  });
+
+  describe("getBalance", () => {
+    it("throws when no privacy context is given", async () => {
+      await expect(api.getBalance(context, testnetAddress)).rejects.toThrow(
+        "aleo: provableId is missing",
+      );
     });
 
     it("throws an error for an invalid address", async () => {
       const invalidAddress = "invalid_address";
 
-      await expect(api.getBalance(invalidAddress)).rejects.toThrow();
+      await expect(api.getBalance(privacyContext, invalidAddress)).rejects.toMatchObject({
+        name: "LedgerAPI4xx",
+        status: 404,
+      });
+    });
+
+    it("combines public and private balances for a native + token account", async () => {
+      const balance = await api.getBalance(privacyContext, testnetAddress);
+      const native = balance.find(entry => entry.asset.type === "native");
+      const tokens = balance.filter(entry => entry.asset.type === "arc22");
+
+      expect(native?.value).toBeGreaterThan(0n);
+      expect(tokens.length).toBeGreaterThan(0);
+    });
+
+    it("returns a zero native entry for a non-existing valid address", async () => {
+      const emptyPrivacyContext = await withPrivacyContext(context, emptyAddressViewKey);
+
+      const balance = await api.getBalance(emptyPrivacyContext, emptyAddress);
+
+      expect(balance).toEqual([{ value: 0n, asset: { type: "native" } }]);
+    });
+  });
+
+  describe("register", () => {
+    it("reads the view key off the context and enrolls it into the testnet scanner", async () => {
+      const contextWithViewKey: AleoContext = { ...context, viewKey: testnetViewKey };
+
+      const result = await api.register(contextWithViewKey, testnetAddress);
+
+      invariant(result.type === "aleo", "guard: expected an aleo registration handle");
+      expect(typeof result.provableId).toBe("string");
+      expect(result.provableId.length).toBeGreaterThan(0);
+    });
+
+    it("rejects before any network call when the context carries no view key", async () => {
+      await expect(api.register(context, testnetAddress)).rejects.toThrow(/view key is required/);
     });
   });
 });

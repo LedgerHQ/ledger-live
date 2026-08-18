@@ -29,7 +29,6 @@ export default function Features() {
   const osUpdateBannerMode = useSelector(debugOsUpdateBannerModeSelector);
   const navigateToLargeMover = () => {
     navigation.navigate(ScreenName.LargeMoverLandingPage, {
-      currencyIds: "BTC,ETH,SOL",
       initialRange: InitialRange.Day,
       ledgerIds: "bitcoin,ethereum,solana,ethereum/erc20/usd__coin,ethereum/erc20/wrapped_bitcoin",
     });

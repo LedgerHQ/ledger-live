@@ -2,6 +2,9 @@
 
 ## coderofstuff/hw-app-kaspa
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 Ledger Hardware Wallet Kaspa JavaScript bindings.
 
 

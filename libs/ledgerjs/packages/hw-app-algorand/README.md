@@ -6,6 +6,9 @@
 
 ## @ledgerhq/hw-app-algorand
 
+> \[!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 Ledger Hardware Wallet Algorand JavaScript bindings.
 
 ***

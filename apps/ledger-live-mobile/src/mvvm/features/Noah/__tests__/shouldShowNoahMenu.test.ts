@@ -1,4 +1,5 @@
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@domain/entity-currency-crypto";
+import { TokenCurrency } from "@domain/entity-currency-token";
 import { shouldShowNoahMenu, NoahParams } from "../shouldShowNoahMenu";
 
 const ACTIVE_CURRENCY_IDS = ["ethereum/erc20/usd__coin"];

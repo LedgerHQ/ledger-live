@@ -4,7 +4,7 @@ import * as S from "../styles";
 import { openURL } from "~/renderer/linking";
 import { getSafeStringLinks, isAbsoluteUrl } from "../utils";
 
-export function useErrorLinks(error?: Error | null): Record<string, ReactElement> {
+export function useErrorLinks(error?: unknown): Record<string, ReactElement> {
   const safeStringLinks = getSafeStringLinks(error);
 
   const navigate = useNavigate();

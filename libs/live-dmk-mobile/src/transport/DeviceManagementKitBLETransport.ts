@@ -1,4 +1,8 @@
-import Transport from "@ledgerhq/hw-transport";
+import Transport, {
+  type DescriptorEvent,
+  type Observer as TransportObserver,
+  type Subscription as TransportSubscription,
+} from "@ledgerhq/hw-transport";
 import {
   DeviceId,
   DeviceManagementKit,
@@ -24,15 +28,10 @@ import {
   Subscription,
 } from "rxjs";
 import { first, filter, tap, timeout, retry, map } from "rxjs/operators";
-import { DescriptorEvent, DeviceModel } from "@ledgerhq/types-devices";
-import type {
-  Observer as TransportObserver,
-  Subscription as TransportSubscription,
-} from "@ledgerhq/hw-transport";
-import { HwTransportError, PairingFailed, PeerRemovedPairing } from "@ledgerhq/errors";
+import { HwTransportError } from "@ledgerhq/hw-transport/errors";
+import { PairingFailed, PeerRemovedPairing, isPeerRemovedPairingError } from "../errors";
 import { getDeviceManagementKit } from "../hooks/useDeviceManagementKit";
 import { BlePlxManager } from "./BlePlxManager";
-import { isPeerRemovedPairingError } from "../errors";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { findMatchingDiscoveredDevice, matchDeviceByName } from "../utils/matchDevicesByNameOrId";
 
@@ -234,7 +233,7 @@ export class DeviceManagementKitBLETransport extends Transport {
               // NB: in LLM, we don't have a specific error for pairing refused, so we remap it to PairingFailed
               return throwError(() => new PairingFailed());
             } else if (
-              error instanceof PeerRemovedPairing ||
+              (error as { name?: string })?.name === "PeerRemovedPairing" ||
               error instanceof OpeningConnectionError
             ) {
               return throwError(() => error);
@@ -289,9 +288,7 @@ export class DeviceManagementKitBLETransport extends Transport {
             type: "add",
             descriptor: "",
             device: device,
-            deviceModel: {
-              id,
-            } as DeviceModel,
+            deviceModel: getDeviceModel(id),
           });
         }
       },

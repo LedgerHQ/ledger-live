@@ -9,7 +9,7 @@ import {
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalanceBecauseDestinationNotCreated,
   NotEnoughSpendableBalance,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import { STELLAR_DUMMY_ADDRESS } from "@ledgerhq/coin-stellar/constants";
 import { getSerializedAddressParameters } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
@@ -115,9 +115,7 @@ const getTransactionStatus = async (a: Account, t: Transaction) => {
   }
 
   if (multiSignAddresses.includes(a.freshAddress)) {
-    errors.recipient = new StellarSourceHasMultiSign("", {
-      currencyName: a.currency.name,
-    });
+    errors.recipient = new StellarSourceHasMultiSign();
   }
 
   if (!t.fees || !t.baseReserve) {

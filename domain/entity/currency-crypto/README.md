@@ -1,5 +1,8 @@
 # @domain/entity-currency-crypto
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 Zod-first canonical schema and static registry for the `CryptoCurrency` domain entity.
 
 ## Responsibility
@@ -10,23 +13,15 @@ Zod-first canonical schema and static registry for the `CryptoCurrency` domain e
 
 No Redux slice, no selectors — the currency list is fully static. Consumers resolve currencies directly from the registry.
 
-## Source of truth & dual maintenance
+## Source of truth
 
-This registry is the **primary** source of truth for crypto-currency data. During the migration off
-`@ledgerhq/cryptoassets`, the legacy registry (`libs/ledgerjs/packages/cryptoassets/src/currencies.ts`)
-still ships to external consumers, so the two are **dual-maintained**: when you add or edit a currency,
-update **both** this registry and the legacy `cryptocurrenciesById` map until legacy is dropped.
-
-A CI parity test — `libs/ledgerjs/packages/cryptoassets/src/currencies.domain-parity.test.ts` — fails if
-the two diverge (a missing/extra currency, or any changed field), so neither can drift unnoticed. After
-changing legacy you can re-sync this registry by re-running the generator (see [Codegen](#codegen)); the
-parity test compares by `.id`.
+This registry is the **sole** source of truth for crypto-currency data — add or edit a currency here.
 
 ## Dependencies
 
 | Package | Why |
 |---|---|
-| `@shared/schema-primitives` | `CurrencyIdSchema` branded value object |
+| `@shared/schema-primitives` | `CryptoCurrencyIdSchema` branded value object |
 | `@domain/entity-currency-unit` | `UnitSchema` embedded value object |
 
 ## Public API
@@ -58,24 +53,14 @@ src/
     bitcoin.ts            export const bitcoin = currency({...})
     ethereum.ts
     ...                   one file per currency (200+)
-scripts/
-  generate-currencies.mts   codegen — run when the currency list changes
-```
-
-## Codegen
-
-Currency files are generated and committed. To regenerate:
-
-```sh
-NODE_OPTIONS="--conditions=@ledgerhq/source" npx tsx scripts/generate-currencies.mts
 ```
 
 ## Design decisions
 
 **Zod-first, not a wrapper.** `CryptoCurrencySchema` is written from scratch. TypeScript types are derived via `z.infer<>`.
 
-**`currency()` is a branded-type constructor, not a validator.** `CryptoCurrency.id` is typed as `CurrencyId` — a branded string (`string & { __brand: "CurrencyId" }`). A plain type annotation (`const bitcoin: CryptoCurrency = { id: "bitcoin", ... }`) fails because `"bitcoin"` is not assignable to the branded type. `currency()` calls `CryptoCurrencySchema.parse()` which applies the brand, eliminating the need for `as CurrencyId` casts across all currency files.
+**`currency()` is a branded-type constructor, not a validator.** `CryptoCurrency.id` is typed as `CryptoCurrencyId` — a branded string (`string & { __brand: "CryptoCurrencyId" }`). A plain type annotation (`const bitcoin: CryptoCurrency = { id: "bitcoin", ... }`) fails because `"bitcoin"` is not assignable to the branded type. `currency()` calls `CryptoCurrencySchema.parse()` which applies the brand, eliminating the need for `as CryptoCurrencyId` casts across all currency files.
 
 **Static registry, no store.** Currency data never changes at runtime. Putting it in Redux would imply reactivity that doesn't exist — consumers resolve currencies directly from `CRYPTO_CURRENCIES_REGISTRY`.
 
-**No embedded parent reference.** `@domain/entity-currency-token` uses `parentCurrencyId: CurrencyId` (FK) instead of an embedded `CryptoCurrency` object, which eliminates the `fromTokenCurrencyRaw` lookup-at-restore problem that made `cal-client/persistence.ts` complex.
+**No embedded parent reference.** `@domain/entity-currency-token` uses `parentCurrencyId: CryptoCurrencyId` (FK) instead of an embedded `CryptoCurrency` object, which eliminates the `fromTokenCurrencyRaw` lookup-at-restore problem that made `cal-client/persistence.ts` complex.

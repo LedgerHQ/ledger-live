@@ -21,8 +21,15 @@ export default function WelcomePage() {
 
   useMarkWalletV4TourSeenAtOnboardingStart();
 
-  const { welcomeVideos, currentVideoIndex, videoDurations, onLoad, onPrevious, onNext } =
-    useWelcomeStories();
+  const {
+    welcomeVideos,
+    currentVideoIndex,
+    currentStoryRestartKey,
+    videoDurations,
+    onLoad,
+    onPrevious,
+    onNext,
+  } = useWelcomeStories();
   const { onLogoTouchStart, onLogoTouchEnd } = useWelcomeNavigation();
 
   return (
@@ -35,6 +42,7 @@ export default function WelcomePage() {
               videoSource={source}
               titleKey={`onboarding.stepWelcome.videoTitles.${index}`}
               isOnStage={currentVideoIndex === index}
+              restartKey={currentVideoIndex === index ? currentStoryRestartKey : 0}
               key={`welcome-video-${id}`}
               onVideoEnd={onNext}
               onVideoLoad={onLoad(index)}
@@ -53,6 +61,7 @@ export default function WelcomePage() {
                 durationMs={durationMs}
                 isActivated={currentVideoIndex === index}
                 isCompleted={currentVideoIndex > index}
+                restartKey={currentVideoIndex === index ? currentStoryRestartKey : 0}
               />
             ))}
         </StoryProgressView>

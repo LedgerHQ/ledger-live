@@ -27,7 +27,7 @@ runs:
         sudo apt-get update
         sudo apt-get install -y libudev-dev build-essential
       shell: bash
-    - uses: ruby/setup-ruby@v1
+    - uses: ruby/setup-ruby@95ef2b042f9d7a56d8268cba8559e2842e2ad01b # v1
       if: ${{ !inputs.skip_ruby }}
       with:
         ruby-version: 3.3.0
@@ -53,9 +53,10 @@ runs:
     - name: Build LLD app for testing
       env:
         GOMEMLIMIT: 5GiB
+        INPUTS_BUILD_TYPE: ${{ inputs.build_type }}
       if: ${{ !inputs.skip_builds }}
       run: |
-        pnpm desktop build:${{ inputs.build_type || 'testing' }}
+        pnpm desktop build:${INPUTS_BUILD_TYPE:-testing}
       shell: bash
     - name: Build Dummy Live SDK and Dummy Wallet API apps for testing
       if: ${{ !inputs.skip_builds }}

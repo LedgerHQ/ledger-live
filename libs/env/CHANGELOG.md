@@ -1,5 +1,83 @@
 # @ledgerhq/live-env
 
+## 3.0.0
+
+### Major Changes
+
+- [#20076](https://github.com/LedgerHQ/ledger-live/pull/20076) [`c475d28`](https://github.com/LedgerHQ/ledger-live/commit/c475d288b4978aa3011c9e76f3e9a1e2f9733010) Thanks [@gre-ledger](https://github.com/gre-ledger)! - **Breaking change**: all env API functions (`getEnv`, `setEnv`, `setEnvUnsafe`, `getEnvDefault`, `getAllEnvs`, `getAllEnvNames`, `getDefinition`, `getEnvDesc`, `isEnvDefault`) now throw if called before `injectDefinitions()`.
+
+  Previously, `@ledgerhq/live-env` bundled ~200 env var definitions and made them available on import. The definitions have been extracted into the new workspace-private `@shared/env` package. The framework layer (`@ledgerhq/live-env`) is now definition-free and requires an explicit bootstrap call.
+
+  **Migration for app consumers** — switch to `@shared/env` (recommended):
+
+  ```ts
+  // before
+  import { getEnv } from "@ledgerhq/live-env";
+
+  // after
+  import { getEnv } from "@shared/env"; // auto-calls injectDefinitions at import time
+  ```
+
+  **Migration for published libs** that need `@ledgerhq/live-env` directly (e.g. test setup):
+
+  ```ts
+  import { injectDefinitions, stringParser } from "@ledgerhq/live-env";
+
+  injectDefinitions({
+    MY_VAR: { def: "default", parser: stringParser, desc: "..." },
+  });
+  // now getEnv / setEnv work
+  ```
+
+  New exports: `injectDefinitions`, `EnvDef<T>`, `EnvDefs`, `EnvChange`, and all parser helpers (`intParser`, `floatParser`, `boolParser`, `stringParser`, `jsonParser`, `stringArrayParser`).
+
+## 3.0.0-next.0
+
+### Major Changes
+
+- [#20076](https://github.com/LedgerHQ/ledger-live/pull/20076) [`c475d28`](https://github.com/LedgerHQ/ledger-live/commit/c475d288b4978aa3011c9e76f3e9a1e2f9733010) Thanks [@gre-ledger](https://github.com/gre-ledger)! - **Breaking change**: all env API functions (`getEnv`, `setEnv`, `setEnvUnsafe`, `getEnvDefault`, `getAllEnvs`, `getAllEnvNames`, `getDefinition`, `getEnvDesc`, `isEnvDefault`) now throw if called before `injectDefinitions()`.
+
+  Previously, `@ledgerhq/live-env` bundled ~200 env var definitions and made them available on import. The definitions have been extracted into the new workspace-private `@shared/env` package. The framework layer (`@ledgerhq/live-env`) is now definition-free and requires an explicit bootstrap call.
+
+  **Migration for app consumers** — switch to `@shared/env` (recommended):
+
+  ```ts
+  // before
+  import { getEnv } from "@ledgerhq/live-env";
+
+  // after
+  import { getEnv } from "@shared/env"; // auto-calls injectDefinitions at import time
+  ```
+
+  **Migration for published libs** that need `@ledgerhq/live-env` directly (e.g. test setup):
+
+  ```ts
+  import { injectDefinitions, stringParser } from "@ledgerhq/live-env";
+
+  injectDefinitions({
+    MY_VAR: { def: "default", parser: stringParser, desc: "..." },
+  });
+  // now getEnv / setEnv work
+  ```
+
+  New exports: `injectDefinitions`, `EnvDef<T>`, `EnvDefs`, `EnvChange`, and all parser helpers (`intParser`, `floatParser`, `boolParser`, `stringParser`, `jsonParser`, `stringArrayParser`).
+
+## 2.42.0
+
+### Minor Changes
+
+- [#19439](https://github.com/LedgerHQ/ledger-live/pull/19439) [`a15b864`](https://github.com/LedgerHQ/ledger-live/commit/a15b864576d901f15d480070b475314c3b23c1dd) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update default values for `CAL_SERVICE_URL` and `CAL_SERVICE_URL_STAGING` to the Gravitee gateway URLs (`https://global.api.prd.ledger.com/cal` and `https://global.api.stg.ledger-test.com/cal`).
+
+- [#19507](https://github.com/LedgerHQ/ledger-live/pull/19507) [`fc44f1e`](https://github.com/LedgerHQ/ledger-live/commit/fc44f1e6ddcca939c117e0cb8bc49c404163b003) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - feat(solana): update default validators summary base url for prod
+
+## 2.42.0-next.0
+
+### Minor Changes
+
+- [#19439](https://github.com/LedgerHQ/ledger-live/pull/19439) [`a15b864`](https://github.com/LedgerHQ/ledger-live/commit/a15b864576d901f15d480070b475314c3b23c1dd) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update default values for `CAL_SERVICE_URL` and `CAL_SERVICE_URL_STAGING` to the Gravitee gateway URLs (`https://global.api.prd.ledger.com/cal` and `https://global.api.stg.ledger-test.com/cal`).
+
+- [#19507](https://github.com/LedgerHQ/ledger-live/pull/19507) [`fc44f1e`](https://github.com/LedgerHQ/ledger-live/commit/fc44f1e6ddcca939c117e0cb8bc49c404163b003) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - feat(solana): update default validators summary base url for prod
+
 ## 2.41.0
 
 ### Minor Changes

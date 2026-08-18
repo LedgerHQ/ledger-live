@@ -9,11 +9,14 @@ let currentExplorer: any = {
   getNetwork: jest.fn().mockResolvedValue({ relay_fee: "0.00001000" }), // 1 sat/vB
 };
 
-jest.mock("./wallet-btc", () => ({
+jest.mock("@ledgerhq/wallet-btc/index", () => ({
   __esModule: true,
   default: {
     estimateAccountMaxSpendable: (...args: any[]) => estimateAccountMaxSpendable(...args),
   },
+}));
+
+jest.mock("./getWalletAccount", () => ({
   getWalletAccount: jest.fn((_account: any) => ({
     xpub: { explorer: currentExplorer },
   })),

@@ -9,7 +9,7 @@ import {
   isAutoTokenAssociationEnabled,
   isTokenAssociationRequired,
 } from "@ledgerhq/live-common/families/hedera/utils";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { TokenCurrency } from "@domain/entity-currency-token";
 import { track } from "~/analytics";
 import Alert from "~/components/Alert";
 import { NavigatorName, ScreenName } from "~/const";

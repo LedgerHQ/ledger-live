@@ -15,10 +15,12 @@ import {
 } from "./runCli";
 import type { TokenApprovalOpts } from "./runCli";
 import { sleep } from "./index";
+import { setEnv } from "@shared/env";
 import { runWithCrossProcessLock } from "./crossProcessLock";
 import { getCcdAccountAddress } from "./families/concordium";
 import { approveToken } from "./families/evm";
-import { getCryptoCurrencyById, parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import {
   applyGeneratedUserdata,
   getGeneratedAddress,
@@ -396,6 +398,10 @@ async function runTokenApprovalWithRetry(opts: TokenApprovalOpts): Promise<strin
     // holding the flag set across the awaits below could leak it into unrelated
     // work in the same worker process. The finally is kept as a safety net.
     setDisableTransactionBroadcastEnv(original);
+
+    const cliSpeculosPort = process.env.SPECULOS_API_PORT;
+    if (cliSpeculosPort) setEnv("SPECULOS_API_PORT", Number(cliSpeculosPort));
+
     const cliSettled = result.catch(() => undefined);
 
     try {

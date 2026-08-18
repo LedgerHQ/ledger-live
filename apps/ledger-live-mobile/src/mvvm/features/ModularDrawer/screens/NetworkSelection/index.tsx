@@ -1,8 +1,7 @@
-import React, { useCallback } from "react";
-import { StyleSheet } from "react-native";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { AssetType, NetworkItem, Network as NetworkType } from "@ledgerhq/native-ui/pre-ldls/index";
-import { Flex } from "@ledgerhq/native-ui";
+import React, { useCallback, useMemo } from "react";
+import { CryptoOrTokenCurrency } from "@domain/entity-currency";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { NetworkRow, NetworkRowData } from "./components/NetworkRow";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import {
   useModularDrawerAnalytics,
@@ -10,7 +9,7 @@ import {
   EVENTS_NAME,
   MODULAR_DRAWER_PAGE_NAME,
 } from "../../analytics";
-import { BottomSheetFlatList, BottomSheetHeader } from "@ledgerhq/lumen-ui-rnative";
+import { BottomSheetFlatList, BottomSheetHeader, Box } from "@ledgerhq/lumen-ui-rnative";
 import { useTranslation } from "~/context/Locale";
 import { useNetworkConfiguration } from "@ledgerhq/live-common/modularDrawer/modules/createNetworkConfiguration";
 import { accountsCount } from "../../components/AccountCount";
@@ -27,7 +26,7 @@ export type NetworkSelectionStepProps = {
   availableNetworks: CryptoOrTokenCurrency[];
   onNetworkSelected: (asset: CryptoOrTokenCurrency) => void;
   networksConfiguration?: EnhancedModularDrawerConfiguration["networks"];
-  useLumenBottomSheet?: boolean;
+  selectableNetworkIds?: readonly string[];
 };
 
 const SAFE_MARGIN_BOTTOM = 48;
@@ -36,15 +35,29 @@ const NetworkSelection = ({
   availableNetworks,
   onNetworkSelected,
   networksConfiguration,
-  useLumenBottomSheet = false,
+  selectableNetworkIds,
 }: Readonly<NetworkSelectionStepProps>) => {
   const { t } = useTranslation();
   const flow = useSelector(modularDrawerFlowSelector);
   const source = useSelector(modularDrawerSourceSelector);
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
+  const selectableNetworkIdSet = useMemo(
+    () => (selectableNetworkIds === undefined ? undefined : new Set(selectableNetworkIds)),
+    [selectableNetworkIds],
+  );
+
+  const isSelectableNetwork = useCallback(
+    (networkId: string) => {
+      if (selectableNetworkIdSet === undefined) return true;
+
+      return selectableNetworkIdSet.has(networkId);
+    },
+    [selectableNetworkIdSet],
+  );
 
   const handleNetworkClick = useCallback(
     (networkId: string) => {
+      if (!isSelectableNetwork(networkId)) return;
       const originalNetwork = availableNetworks.find(n =>
         n.type === "CryptoCurrency" ? n.id === networkId : n.parentCurrencyId === networkId,
       );
@@ -54,7 +67,7 @@ const NetworkSelection = ({
           {
             flow,
             source,
-            network: originalNetwork.name,
+            network: getCryptoCurrencyById(networkId).name,
             page: MODULAR_DRAWER_PAGE_NAME.MODULAR_NETWORK_SELECTION,
           },
           {
@@ -73,6 +86,7 @@ const NetworkSelection = ({
       source,
       networksConfiguration,
       onNetworkSelected,
+      isSelectableNetwork,
     ],
   );
 
@@ -86,10 +100,13 @@ const NetworkSelection = ({
     ...networksConfiguration,
   });
 
-  const keyExtractor = useCallback((item: AssetType, index: number) => `${item.id}-${index}`, []);
+  const keyExtractor = useCallback(
+    (item: NetworkRowData, index: number) => `${item.id}-${index}`,
+    [],
+  );
 
   return (
-    <Flex flexGrow={1}>
+    <Box lx={{ flexGrow: 1 }}>
       <TrackDrawerScreen
         page={EVENTS_NAME.MODULAR_NETWORK_SELECTION}
         flow={flow}
@@ -97,33 +114,26 @@ const NetworkSelection = ({
         networksConfig={networksConfiguration}
         formatNetworkConfig
       />
-      {useLumenBottomSheet && (
-        <BottomSheetHeader spacing title={t("modularDrawer.selectNetwork")} density="expanded" />
-      )}
+      <BottomSheetHeader spacing title={t("modularDrawer.selectNetwork")} density="expanded" />
       <BottomSheetFlatList
         scrollEnabled={true}
         showsVerticalScrollIndicator={false}
         data={formattedNetworks}
         keyExtractor={keyExtractor}
-        renderItem={({ item }: { item: NetworkType }) => (
-          <NetworkItem {...item} onClick={() => handleNetworkClick(item.id)} />
+        renderItem={({ item }: { item: NetworkRowData }) => (
+          <NetworkRow
+            {...item}
+            disabled={isSelectableNetwork(item.id) ? undefined : true}
+            onClick={() => handleNetworkClick(item.id)}
+          />
         )}
-        style={useLumenBottomSheet ? undefined : LEGACY_LIST_STYLE}
         contentContainerStyle={{
           paddingBottom: SAFE_MARGIN_BOTTOM,
         }}
         testID="modular-drawer-network-selection-scrollView"
       />
-    </Flex>
+    </Box>
   );
 };
-
-/**
- * Temporary: cancels QueuedDrawerGorhom's paddingHorizontal: 16 so list items
- * align with the header. Will be removed when Gorhom fallback is deleted.
- */
-const LEGACY_LIST_STYLE = StyleSheet.create({
-  list: { marginHorizontal: -16 },
-}).list;
 
 export default withDiscreetMode(React.memo(NetworkSelection));

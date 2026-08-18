@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useAdjustedSafeAreaInsets } from "LLM/hooks/useNavigationBarHeights";
 import {
   CONTENT_AREA_HEIGHT,
   MIN_CONTENT_AREA_HEIGHT,
@@ -14,7 +14,7 @@ interface PortfolioHeaderSectionViewModel {
 }
 
 export function usePortfolioHeaderSectionViewModel(): PortfolioHeaderSectionViewModel {
-  const { top: safeAreaTop } = useSafeAreaInsets();
+  const { top: safeAreaTop } = useAdjustedSafeAreaInsets();
 
   const [bannerHeight, setBannerHeight] = useState(0);
   const onBannerHeightChange = useCallback((height: number) => {

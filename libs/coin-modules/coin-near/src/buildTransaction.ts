@@ -1,10 +1,10 @@
 import { log } from "@ledgerhq/logs";
 import type { Account } from "@ledgerhq/types-live";
 import * as nearAPI from "near-api-js";
-import { Action } from "near-api-js/lib/transaction";
 import { Transaction as NearApiTransaction } from "near-api-js/lib/transaction";
-import { getAccessKey } from "./api";
-import { getStakingGas } from "./logic";
+import { buildActions } from "./logic/actions";
+import { getAccessKey } from "./network";
+import { getCoinConfig } from "./config";
 import type { Transaction } from "./types";
 
 export const buildTransaction = async (
@@ -12,61 +12,16 @@ export const buildTransaction = async (
   t: Transaction,
   publicKey: string,
 ): Promise<NearApiTransaction> => {
-  const { nonce, block_hash } = await getAccessKey({
+  const { nonce, block_hash } = await getAccessKey(getCoinConfig(), {
     address: a.freshAddress,
     publicKey,
   });
 
-  const parsedNearAmount = t.amount.toFixed();
-
-  const actions: Action[] = [];
-
-  switch (t.mode) {
-    case "stake":
-      actions.push(
-        nearAPI.transactions.functionCall(
-          "deposit_and_stake",
-          {},
-          getStakingGas().toFixed(),
-          parsedNearAmount,
-        ),
-      );
-      break;
-    case "unstake":
-      if (t.useAllAmount) {
-        actions.push(
-          nearAPI.transactions.functionCall("unstake_all", {}, getStakingGas().toFixed(), "0"),
-        );
-      } else {
-        actions.push(
-          nearAPI.transactions.functionCall(
-            "unstake",
-            { amount: parsedNearAmount },
-            getStakingGas().toFixed(),
-            "0",
-          ),
-        );
-      }
-      break;
-    case "withdraw":
-      if (t.useAllAmount) {
-        actions.push(
-          nearAPI.transactions.functionCall("withdraw_all", {}, getStakingGas(t).toNumber(), "0"),
-        );
-      } else {
-        actions.push(
-          nearAPI.transactions.functionCall(
-            "withdraw",
-            { amount: parsedNearAmount },
-            getStakingGas().toFixed(),
-            "0",
-          ),
-        );
-      }
-      break;
-    default:
-      actions.push(nearAPI.transactions.transfer(parsedNearAmount));
-  }
+  const actions = buildActions({
+    mode: t.mode,
+    amount: t.amount.toFixed(),
+    useAllAmount: t.useAllAmount ?? false,
+  });
 
   try {
     const transaction = nearAPI.transactions.createTransaction(

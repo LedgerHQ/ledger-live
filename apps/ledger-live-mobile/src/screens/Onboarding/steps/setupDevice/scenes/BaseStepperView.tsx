@@ -4,7 +4,7 @@ import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { RenderTransitionProps } from "@ledgerhq/native-ui/components/Navigation/FlowStepper/index";
 import { Flex, FlowStepper, IconsLegacy, Transitions, SlideIndicator } from "@ledgerhq/native-ui";
 
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "~/components/SafeAreaView";
 import styled from "styled-components/native";
 import { DeviceModelId } from "@ledgerhq/devices";
 import Button from "~/components/PreventDoubleClickButton";

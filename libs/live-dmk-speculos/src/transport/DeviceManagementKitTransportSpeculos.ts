@@ -12,7 +12,7 @@ import {
   HttpSpeculosDatasource,
   speculosTransportFactory,
 } from "@ledgerhq/device-transport-kit-speculos";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { ButtonKey, deviceControllerClientFactory } from "@ledgerhq/speculos-device-controller";
 import { withTransientHttpRetries } from "./speculosTransientHttpRetry";
 

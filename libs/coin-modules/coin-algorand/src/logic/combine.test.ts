@@ -34,7 +34,7 @@ describe("combine", () => {
     const sigBytes = Buffer.alloc(80, 0xab);
     const signature = sigBytes.toString("hex");
 
-    const result = combine(unsignedTx, signature);
+    const result = combine(unsignedTx, [signature]);
 
     expect(result).toMatch(/^[a-f0-9]+$/i);
 
@@ -49,7 +49,7 @@ describe("combine", () => {
     const unsignedTx = Buffer.from("some-tx-data").toString("hex");
     const longSig = Buffer.alloc(128, 0xff).toString("hex");
 
-    const result = combine(unsignedTx, longSig);
+    const result = combine(unsignedTx, [longSig]);
 
     const decoded = v8.deserialize(Buffer.from(result, "hex")) as MockSignedTransaction;
 
@@ -60,7 +60,7 @@ describe("combine", () => {
     const unsignedTx = Buffer.from("tx-bytes").toString("hex");
     const signature = Buffer.alloc(64, 0x01).toString("hex");
 
-    const result = combine(unsignedTx, signature);
+    const result = combine(unsignedTx, [signature]);
 
     const decoded = v8.deserialize(Buffer.from(result, "hex")) as MockSignedTransaction;
 

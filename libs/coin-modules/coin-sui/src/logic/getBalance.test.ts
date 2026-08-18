@@ -1,6 +1,9 @@
 import type { DelegatedStake } from "@mysten/sui/jsonRpc";
 import { getAllBalancesCached, getDelegatedStakes } from "../network";
+import type { SuiCoinConfig } from "../config";
 import { getBalance } from "./getBalance";
+
+const config = {} as SuiCoinConfig;
 
 jest.mock("../network", () => ({
   getAllBalancesCached: jest.fn().mockResolvedValue([
@@ -19,7 +22,7 @@ describe("getBalance", () => {
 
   it("should return the correct native SUI balance", async () => {
     const address = "0x123";
-    const result = await getBalance(address);
+    const result = await getBalance(config, address);
 
     expect(result[0]).toMatchObject({
       value: BigInt(1000000000),
@@ -29,7 +32,7 @@ describe("getBalance", () => {
 
   it("should return the correct USDT token balance", async () => {
     const address = "0x123";
-    const result = await getBalance(address);
+    const result = await getBalance(config, address);
 
     expect(result[1]).toMatchObject({
       value: BigInt(500000000),
@@ -58,10 +61,10 @@ describe("getBalance", () => {
     mockedGetDelegatedStakes.mockResolvedValueOnce(mockDelegations);
 
     const address = "0x123";
-    const result = await getBalance(address);
+    const result = await getBalance(config, address);
 
-    expect(getAllBalancesCached).toHaveBeenCalledWith(address, undefined);
-    expect(getDelegatedStakes).toHaveBeenCalledWith(address, undefined);
+    expect(getAllBalancesCached).toHaveBeenCalledWith(config, address);
+    expect(getDelegatedStakes).toHaveBeenCalledWith(config, address);
     expect(result).toHaveLength(3);
 
     expect(result[2]).toMatchObject({

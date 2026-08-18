@@ -1,1 +1,0 @@
-export { getContactInitial } from "./getContactInitial";

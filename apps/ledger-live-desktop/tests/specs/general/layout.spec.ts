@@ -7,8 +7,10 @@ import path from "path";
 
 test.use({
   userdata: "1AccountBTC1AccountETH",
+  env: { ENABLE_MSW: "true" },
   featureFlags: {
     noah: { enabled: false },
+    ptxPerpsLiveApp: { enabled: false },
   },
   simulateCamera: path.join(
     __dirname,

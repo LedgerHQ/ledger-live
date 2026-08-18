@@ -1,18 +1,11 @@
-import {
-  needsConsentRenewal,
-  needsPrivacyPolicyAck,
-  resolveAnalyticsOptInParams,
-} from "@ledgerhq/live-common/analyticsConsent/index";
+import { useAnalyticsConsentDecision } from "@features/flow-analytics-consent";
 import { isGenericAwarenessModalContentCardReady } from "@ledgerhq/live-common/genericAwarenessModal";
 import { useFeature } from "@features/platform-feature-flags";
 import { useSelector } from "~/context/hooks";
 import { selectIsBackupHubFeatureIntroOpen } from "~/reducers/backupHubFeatureIntro";
+import { selectIsProductTourDrawerOpen } from "~/reducers/productTourDrawer";
 import { selectGenericAwarenessModalContentCards } from "~/reducers/genericAwarenessModal";
-import {
-  analyticsConsentInfoSelector,
-  hasCompletedOnboardingSelector,
-  productTourCompletedSelector,
-} from "~/reducers/settings";
+import { analyticsConsentInfoSelector, hasCompletedOnboardingSelector } from "~/reducers/settings";
 
 const APP_START_PREFIX = "app_start";
 
@@ -22,17 +15,13 @@ const hasGenericAwarenessAppStartPrefix = (id: string) =>
 export function useCompetingAppStartModalsPresent(): boolean {
   const cards = useSelector(selectGenericAwarenessModalContentCards);
   const isBackupHubFeatureIntroOpen = useSelector(selectIsBackupHubFeatureIntroOpen);
-  const productTourCompleted = useSelector(productTourCompletedSelector);
+  const isProductTourDrawerOpen = useSelector(selectIsProductTourDrawerOpen);
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const analyticsConsentInfo = useSelector(analyticsConsentInfoSelector);
 
-  const productTourFlag = useFeature("lwmProductTour");
   const genericAwarenessModalFlag = useFeature("lwmGenericAwarenessModal");
-  const analyticsOptInFlag = useFeature("analyticsOptIn");
-
-  const hasProductTourCompeting = Boolean(
-    productTourFlag?.enabled && hasCompletedOnboarding && !productTourCompleted,
-  );
+  const { isFeatureEnabled: isAnalyticsOptInEnabled, decision: analyticsConsentDecision } =
+    useAnalyticsConsentDecision(analyticsConsentInfo);
 
   const hasGenericAwarenessCompeting = Boolean(
     genericAwarenessModalFlag?.enabled &&
@@ -42,18 +31,12 @@ export function useCompetingAppStartModalsPresent(): boolean {
     ),
   );
 
-  const { consentValidityDays, policyVersion } = resolveAnalyticsOptInParams(analyticsOptInFlag);
-
-  const hasAnalyticsConsentCompeting = Boolean(
-    analyticsOptInFlag?.enabled &&
-    hasCompletedOnboarding &&
-    (needsPrivacyPolicyAck(analyticsConsentInfo.privacyPolicyVersion, policyVersion) ||
-      needsConsentRenewal(analyticsConsentInfo.consentDate, consentValidityDays)),
-  );
+  const hasAnalyticsConsentCompeting =
+    isAnalyticsOptInEnabled && hasCompletedOnboarding && analyticsConsentDecision.kind !== "none";
 
   return (
     isBackupHubFeatureIntroOpen ||
-    hasProductTourCompeting ||
+    isProductTourDrawerOpen ||
     hasGenericAwarenessCompeting ||
     hasAnalyticsConsentCompeting
   );

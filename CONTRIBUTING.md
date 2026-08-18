@@ -12,29 +12,21 @@ Thanks for contributing! These guidelines apply to internal and external contrib
 3. Follow the [main README](README.md) to get started.
 4. Follow additional setup instructions in the README files of the app or lib you are working on.
 
-## Branch & Commit Conventions
+## Branch, Commit & PR Conventions
 
-### Branch naming
+We use repo-wide conventions for branch names, commit messages, pull request
+titles and merge commits.
 
-| Prefix | When to use |
-|--------|-------------|
-| `feat/` | Adding a new feature |
-| `bugfix/` | Fixing a bug |
-| `support/` | Refactors, tests, CI, tooling improvements |
+The canonical rules live in [Git conventions](docs/contributing/git-conventions.md).
 
-### Commit messages
+## Updating your branch with develop
 
-We follow [Conventional Commits](https://www.conventionalcommits.org/) and enforce it with [commitlint](https://commitlint.js.org/).
+**Always prefer rebasing** unless your branch contains merge commits from
+sub-features.
 
-Use `pnpm commit` for an interactive prompt, or `pnpm commitlint --from <target-branch>` to validate your branch.
-
-### Rebase & merge strategy
-
-**Always prefer rebasing** unless your branch contains merge commits from sub-features.
-
-- Small, self-contained branches → rebase on `develop`.
-- Branches with cross-branch merges → merge `develop` into them to stay up to date.
-
+- Small, self-contained branches -> rebase on `develop`.
+- Branches with cross-branch merges -> merge `develop` into them to stay up to
+  date.
 
 ## The PR Lifecycle
 
@@ -61,7 +53,6 @@ Before marking your PR ready for review, ensure all of the following pass:
 - Click **"Ready for review"** to convert from Draft — this automatically requests the relevant code owners via `CODEOWNERS`.
 - When a reviewer leaves feedback and you push a fix, **re-request their review** (GitHub "Re-request" button).
 - If you receive a review request for files you don't own, feel free to remove yourself from the Reviewers panel.
-
 
 > [!IMPORTANT]
 > If you are a code owner, see [REVIEWING.md](REVIEWING.md) for reviewer guidance, including your daily review queue.
@@ -93,9 +84,11 @@ Tools and resources for building on Ledger are at the [Ledger Developer Portal](
 #### Request Copilot while still in Draft
 
 > [!TIP]
+>
 > <img width="500" alt="Request Copilot on a Draft PR" src="https://github.com/user-attachments/assets/1326c947-61bc-4793-b70c-9e39b04eb630" />
 
 #### Re-request review after pushing fixes
 
 > [!TIP]
+>
 > <img width="500" alt="Re-request review on a reviewer that did the review" src="https://github.com/user-attachments/assets/80f83822-0557-4375-8ed6-a4aebfcb5d10" />

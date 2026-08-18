@@ -1,8 +1,6 @@
-import {
-  findCryptoCurrencyByKeyword,
-  parseCurrencyUnit,
-} from "@ledgerhq/live-common/currencies/index";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { findCryptoCurrencyByKeyword } from "@domain/entity-currency-crypto";
+import { parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { closeAllModal, openModal } from "~/renderer/actions/modals";
 import { setDrawer } from "~/renderer/drawers/Provider";

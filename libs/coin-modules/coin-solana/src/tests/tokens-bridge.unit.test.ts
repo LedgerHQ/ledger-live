@@ -1,4 +1,4 @@
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
 import { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { Account } from "@ledgerhq/types-live";
@@ -63,7 +63,8 @@ const mainAccId = encodeAccountId({
 
 const wSolSubAccId = encodeAccountIdWithTokenAccountAddress(mainAccId, testData.ataAddress1);
 
-setupMockCryptoAssetsStore({
+setCryptoAssetsStore({
+  findTokenById: async () => undefined,
   findTokenByAddressInCurrency: async (address: string, _currencyId: string) => {
     if (address === "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v") {
       return USDC_TOKEN;

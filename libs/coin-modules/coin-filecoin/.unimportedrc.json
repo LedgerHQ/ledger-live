@@ -2,23 +2,23 @@
   "ignoreUnresolved": [
     "@jest/expect-utils",
     "@jest/get-type",
-    "jest-util",
     "follow-redirects",
     "form-data",
+    "jest-util",
     "proxy-from-env"
   ],
   "ignoreUnused": [
-    "@ledgerhq/cryptoassets",
     "@ledgerhq/devices"
   ],
   "ignoreUnimported": [
     "src/bridge/deviceTransactionConfig.ts",
     "src/bridge/transaction.ts",
     "src/hw-signMessage.ts",
+    "src/supportedFeatures.ts",
     "src/test/bridgeDatasetTest.ts",
+    "src/test/context.ts",
     "src/test/fixtures.ts",
-    "src/test/index.ts",
-    "src/supportedFeatures.ts"
+    "src/test/index.ts"
   ],
   "entry": [
     "src/index.ts"

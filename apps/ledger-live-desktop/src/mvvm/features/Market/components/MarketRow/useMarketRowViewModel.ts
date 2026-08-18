@@ -14,12 +14,12 @@ import { track } from "~/renderer/analytics/segment";
 import { getCurrentTrackingPage } from "~/renderer/analytics/screenRefs";
 import { useSelector } from "LLD/hooks/redux";
 import { marketCategorySelector } from "~/renderer/reducers/market";
+import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
 
 type UseMarketRowViewModelProps = {
   size: number;
   start: number;
   currency: MarketCurrencyData;
-  counterCurrency?: string;
   locale: string;
   range?: string;
   isStarred: boolean;
@@ -30,7 +30,6 @@ export function useMarketRowViewModel({
   size,
   start,
   currency,
-  counterCurrency,
   locale,
   range,
   isStarred,
@@ -42,6 +41,7 @@ export function useMarketRowViewModel({
 
   const selectedCategory = useSelector(marketCategorySelector);
   const category = getMarketPageCategoryAnalytics(selectedCategory);
+  const counterValueUnit = useSelector(counterValueCurrencySelector).units[0];
   const {
     onBuy,
     onSell,
@@ -100,18 +100,18 @@ export function useMarketRowViewModel({
 
   const formattedPrice = counterValueFormatter({
     value: roundFiatPrice(currency.price ?? 0),
-    currency: counterCurrency,
+    unit: counterValueUnit,
     locale,
   });
   const formattedVolume = counterValueFormatter({
     shorten: true,
-    currency: counterCurrency,
+    unit: counterValueUnit,
     value: currency.totalVolume,
     locale,
   });
   const formattedMarketCap = counterValueFormatter({
     shorten: true,
-    currency: counterCurrency,
+    unit: counterValueUnit,
     value: currency.marketcap,
     locale,
   });

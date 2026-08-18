@@ -10,6 +10,7 @@ import getBLETransport from "~/transport/bleTransport";
 import {
   DeviceManagementKitHIDTransport,
   DeviceManagementKitHTTPProxyTransport,
+  isUsbCompatDeviceId,
 } from "@ledgerhq/live-dmk-mobile";
 import { DeviceManagementKitTransportSpeculos } from "@ledgerhq/live-dmk-speculos";
 import { ledgerToDmkDeviceIdMap } from "@ledgerhq/live-dmk-shared";
@@ -38,11 +39,9 @@ export const registerTransports = () => {
   registerTransportModule({
     id: "hid",
     open: (id, timeoutMs, traceContext) => {
-      if (id.startsWith("usb|")) {
-        const devicePath = JSON.parse(id.slice(4));
-        return DeviceManagementKitHIDTransport.open(devicePath, timeoutMs, traceContext);
-      }
-      return null;
+      return isUsbCompatDeviceId(id)
+        ? DeviceManagementKitHIDTransport.open(id, timeoutMs, traceContext)
+        : null;
     },
     disconnect: () => Promise.resolve(),
   });

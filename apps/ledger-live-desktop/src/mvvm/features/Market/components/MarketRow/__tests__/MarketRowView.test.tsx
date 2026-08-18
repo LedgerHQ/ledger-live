@@ -63,7 +63,7 @@ describe("MarketRowView", () => {
   it("should render the image fallback when ledgerIds is empty", () => {
     const currency = { ...mockCurrency, ledgerIds: [] };
     renderRow(createProps({ currency }));
-    expect(screen.getByAltText("Bitcoin")).toBeVisible();
+    expect(screen.getByRole("img", { name: "Bitcoin" })).toBeVisible();
   });
 
   it("should render '-' when priceChangePercentage is undefined", () => {

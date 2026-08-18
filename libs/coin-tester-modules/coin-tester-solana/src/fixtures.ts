@@ -1,4 +1,5 @@
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import { TokenCurrencyIdSchema } from "@ledgerhq/ledger-wallet-framework/types";
 import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account";
 import {
   getDerivationScheme,
@@ -8,7 +9,7 @@ import { TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { SolanaAccount } from "@ledgerhq/coin-solana/types";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { HttpResponse, bypass, http } from "msw";
 import { setupServer } from "msw/node";
 
@@ -43,7 +44,7 @@ export const SOLANA_CWIF: TokenCurrency = {
 
 export const SOLANA_VIRTUAL: TokenCurrency = {
   type: "TokenCurrency",
-  id: "solana/spl/3iql8bfs2ve7mww4ehaqqhasbmrncrpxizwat2zfyr9y",
+  id: TokenCurrencyIdSchema.parse("solana/spl/3iql8bfs2ve7mww4ehaqqhasbmrncrpxizwat2zfyr9y"),
   name: "Virtual Protocol",
   ticker: "VIRTUAL",
   units: [{ name: "VIRTUAL", code: "VIRTUAL", magnitude: 9 }],
@@ -56,7 +57,9 @@ export const SOLANA_VIRTUAL: TokenCurrency = {
 
 export const SOLANA_TSLAX: TokenCurrency = {
   type: "TokenCurrency",
-  id: "solana/spl/tesla_xstock_xsdovfqebukxuzhwhdvwhbhgehjgnst4mlodqsjhzob",
+  id: TokenCurrencyIdSchema.parse(
+    "solana/spl/tesla_xstock_xsdovfqebukxuzhwhdvwhbhgehjgnst4mlodqsjhzob",
+  ),
   contractAddress: "XsDoVfqeBukxuZHWhdvWHBhgEHjGNst4MLodqsJHzoB",
   parentCurrencyId: SOLANA.id,
   tokenType: "spl",
@@ -67,7 +70,7 @@ export const SOLANA_TSLAX: TokenCurrency = {
   units: [{ name: "TSLAx", code: "TSLAx", magnitude: 8 }],
 };
 
-setupMockCryptoAssetsStore({
+setCryptoAssetsStore({
   findTokenByAddressInCurrency: async (address: string, currencyId: string) => {
     if (currencyId !== "solana") return undefined;
     const normalizedAddress = address.toLowerCase();
@@ -92,6 +95,7 @@ setupMockCryptoAssetsStore({
     if (id === SOLANA_TSLAX.id) return SOLANA_TSLAX;
     return undefined;
   },
+  getTokensSyncHash: async () => "",
 });
 export const WITHDRAWABLE_AMOUNT = 2e9;
 
@@ -369,7 +373,7 @@ export function initMSW(): () => void {
     onUnhandledRequest: request => {
       const hostname = new URL(request.url).hostname;
       if (["127.0.0.1", "localhost"].includes(hostname)) return;
-      throw new Error("Unhandled request");
+      throw new Error(`Unhandled request: ${request.method} ${request.url}`);
     },
   });
   return () => mockServer.close();

@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { View, StyleSheet, ActivityIndicator } from "react-native";
 import { useDispatch } from "~/context/hooks";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "~/components/SafeAreaView";
 import invariant from "invariant";
 import { useTheme } from "@react-navigation/native";
 import { Account } from "@ledgerhq/types-live";

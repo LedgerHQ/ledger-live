@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { Account, AccountLike, DailyOperationsSection, Operation } from "@ledgerhq/types-live";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { buildOperationsSections } from "../useOperationsSections";
 import type { CurrencySettings } from "~/reducers/types";
 

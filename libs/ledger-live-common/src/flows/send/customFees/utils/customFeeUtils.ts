@@ -2,6 +2,10 @@ import { BigNumber } from "bignumber.js";
 import type { Transaction } from "../../../../coin-modules/transaction-types";
 import type { CustomFeeInputDescriptor } from "../../../../bridge/descriptor/types";
 
+export function normalizeDecimalSeparator(value: string): string {
+  return value.replace(",", ".");
+}
+
 export function isValidNumberForInput(inputKey: string, value: string): boolean {
   if (!value.trim()) return false;
 

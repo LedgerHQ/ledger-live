@@ -1,4 +1,5 @@
 import React, { RefObject, useCallback, useMemo } from "react";
+import { useFocusEffect } from "@react-navigation/native";
 import { StyleSheet, View } from "react-native";
 import { Flex } from "@ledgerhq/native-ui";
 import InfiniteLoader from "~/components/InfiniteLoader";
@@ -69,7 +70,12 @@ export function SwapLiveAppWallet40({
     defaultParams,
     webviewResetKey,
     resetWebview,
+    ensureWebviewReset,
   } = useSwapLiveAppState(params);
+
+  // A reset requested while this screen was covered (swap success, history redirect) is
+  // re-applied here if the live app came back on the page it was asked to leave.
+  useFocusEffect(ensureWebviewReset);
 
   const updateWallet40HeaderState = useSwapWallet40HeaderStateUpdater(webviewRef);
 

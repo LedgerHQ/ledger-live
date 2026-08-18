@@ -1,4 +1,5 @@
-import type { FeeData, Transaction } from "@ledgerhq/coin-evm/types/index";
+import type { Transaction } from "../types";
+import type { FeeData } from "@ledgerhq/coin-evm/types/index";
 import { getMinFees } from "./getMinEditTransactionFees";
 
 /**

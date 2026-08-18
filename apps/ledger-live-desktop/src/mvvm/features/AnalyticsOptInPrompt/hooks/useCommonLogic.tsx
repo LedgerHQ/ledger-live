@@ -1,8 +1,9 @@
 import { useState, useCallback, useMemo } from "react";
 import logger from "~/renderer/logger";
 import { useFeature } from "@features/platform-feature-flags";
-import { resolveAnalyticsOptInParams } from "@ledgerhq/live-common/analyticsConsent/index";
+import { resolveAnalyticsOptInParams } from "@features/flow-analytics-consent";
 import {
+  analyticsConsentInfoSelector,
   hasSeenAnalyticsOptInPromptSelector,
   trackingEnabledSelector,
 } from "~/renderer/reducers/settings";
@@ -29,9 +30,12 @@ interface Props {
 export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
   const hasSeenAnalyticsOptInPrompt = useSelector(hasSeenAnalyticsOptInPromptSelector);
   const isTrackingEnabled = useSelector(trackingEnabledSelector);
+  const consentInfo = useSelector(analyticsConsentInfoSelector);
   const lldAnalyticsOptInPromptFlag = useFeature("lldAnalyticsOptInPrompt");
+  const lwdAnalyticsOptInScreenV2 = useFeature("lwdAnalyticsOptInScreenV2");
   const analyticsOptInFlag = useFeature("analyticsOptIn");
-  const { policyVersion } = resolveAnalyticsOptInParams(analyticsOptInFlag);
+  const { currentPolicyVersion } = resolveAnalyticsOptInParams(analyticsOptInFlag);
+  const policyVersion = currentPolicyVersion?.normalized ?? consentInfo.privacyPolicyVersion;
   const shouldWeTrack = isTrackingEnabled || !hasSeenAnalyticsOptInPrompt;
 
   const dispatch = useDispatch();
@@ -43,6 +47,8 @@ export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
   const variant = (lldAnalyticsOptInPromptFlag?.params?.variant ?? "A") as AnalyticsOptInVariant;
   const policyUrlKey = resolveAnalyticsOptInPolicyUrl(entryPoint, variant);
   const policyUrl = useLocalizedUrl(policyUrlKey);
+  const shouldUseScreenV2 =
+    entryPoint === EntryPoint.onboarding && Boolean(lwdAnalyticsOptInScreenV2?.enabled);
 
   const openAnalyticsOptInPrompt = useCallback(
     (routePath: string, callBack: () => void) => {
@@ -56,22 +62,33 @@ export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
     .map(s => s.toLowerCase())
     .includes(entryPoint.toLowerCase());
 
-  const isFlagEnabled = useMemo(
-    () =>
-      isEntryPointIncludedInFlagParams &&
-      lldAnalyticsOptInPromptFlag?.enabled &&
-      (!hasSeenAnalyticsOptInPrompt || entryPoint === EntryPoint.onboarding),
-    [
-      lldAnalyticsOptInPromptFlag,
-      hasSeenAnalyticsOptInPrompt,
-      entryPoint,
-      isEntryPointIncludedInFlagParams,
-    ],
-  );
+  const isFlagEnabled = useMemo(() => {
+    // V2 Welcome path: gated only by lwdAnalyticsOptInScreenV2 + unseen prompt.
+    if (shouldUseScreenV2) {
+      return !hasSeenAnalyticsOptInPrompt;
+    }
+
+    return (
+      Boolean(isEntryPointIncludedInFlagParams) &&
+      Boolean(lldAnalyticsOptInPromptFlag?.enabled) &&
+      (!hasSeenAnalyticsOptInPrompt || entryPoint === EntryPoint.onboarding)
+    );
+  }, [
+    shouldUseScreenV2,
+    hasSeenAnalyticsOptInPrompt,
+    isEntryPointIncludedInFlagParams,
+    lldAnalyticsOptInPromptFlag?.enabled,
+    entryPoint,
+  ]);
 
   const onSubmit = async () => {
     setIsAnalyticsOptInPromptOpened(false);
-    dispatch(setAnalyticsConsentInfo(policyVersion));
+    dispatch(
+      setAnalyticsConsentInfo({
+        consentDate: new Date().toISOString(),
+        privacyPolicyVersion: policyVersion,
+      }),
+    );
     dispatch(setHasSeenAnalyticsOptInPrompt(true));
     try {
       await updateIdentify({ force: true });

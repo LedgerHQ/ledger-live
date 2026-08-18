@@ -1,77 +1,51 @@
 /**
  * @jest-environment jsdom
  */
-import "../../__tests__/test-helpers/dom-polyfill";
-import { renderHook } from "@testing-library/react";
-import { setEnv } from "@ledgerhq/live-env";
-import type { Account, CurrencyBridge } from "@ledgerhq/types-live";
-import type { Transaction } from "@ledgerhq/coin-solana/types";
-import { getCurrentSolanaPreloadData } from "@ledgerhq/coin-solana/preload-data";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { LEDGER_VALIDATOR_DEFAULT } from "@ledgerhq/coin-solana/utils";
-import { getAccountBridge, getCurrencyBridge } from "../../bridge";
-import { getCryptoCurrencyById } from "../../currencies";
-import { makeBridgeCacheSystem } from "../../bridge/cache";
-import { genAccount, genAddingOperationsInAccount } from "../../mock/account";
+import { getSolanaValidators } from "@ledgerhq/coin-solana/validators";
+import { renderHook, waitFor } from "@testing-library/react";
+import "../../__tests__/test-helpers/dom-polyfill";
 import * as hooks from "./react";
 
 jest.setTimeout(2 * 60 * 1000);
 
-const localCache = {};
-const cache = makeBridgeCacheSystem({
-  saveData(c, d) {
-    localCache[c.id] = d;
-    return Promise.resolve();
-  },
+const currency = getCryptoCurrencyById("solana");
 
-  getData(c) {
-    return Promise.resolve(localCache[c.id]);
-  },
-});
 describe("solana/react", () => {
   describe("useValidators", () => {
-    it("should return validators", async () => {
-      const { prepare, account } = await setup();
-      await prepare();
-      const { result } = renderHook(() => hooks.useValidators(account.currency));
-      const data = getCurrentSolanaPreloadData(account.currency);
-
-      expect(result.current).toStrictEqual(data.validators);
+    // reset once, not per test: the whole suite then costs a single fetch
+    beforeAll(() => {
+      getSolanaValidators.reset();
     });
 
-    it("should return validators", async () => {
-      const { prepare, account } = await setup();
-      await prepare();
-      const { result } = renderHook(() => hooks.useValidators(account.currency, "Ledger"));
+    // awaited directly so a network failure surfaces as the actual error
+    it("fetches the validators from the API", async () => {
+      const validators = await getSolanaValidators(currency.id);
 
-      expect(
-        result.current.some(
-          validator => validator.voteAccount === LEDGER_VALIDATOR_DEFAULT.voteAccount,
-        ),
-      ).toBe(true);
+      expect(validators.length).toBeGreaterThan(0);
+    });
+
+    it("exposes the fetched validators through the hook", async () => {
+      const validators = await getSolanaValidators(currency.id);
+
+      const { result } = renderHook(() => hooks.useValidators(currency));
+
+      await waitFor(() => expect(result.current).toEqual(validators));
+    });
+
+    it("returns the Ledger validator when searching for it", async () => {
+      await getSolanaValidators(currency.id);
+
+      const { result } = renderHook(() => hooks.useValidators(currency, "Ledger"));
+
+      await waitFor(() =>
+        expect(
+          result.current.some(
+            validator => validator.voteAccount === LEDGER_VALIDATOR_DEFAULT.voteAccount,
+          ),
+        ).toBe(true),
+      );
     });
   });
 });
-
-async function setup(): Promise<{
-  account: Account;
-  currencyBridge: CurrencyBridge;
-  transaction: Transaction;
-  prepare: () => Promise<any>;
-}> {
-  setEnv("MOCK", "1");
-  const seed = "solana-2";
-  const currency = getCryptoCurrencyById("solana");
-  const a = genAccount(seed, {
-    currency,
-  });
-  const account = await genAddingOperationsInAccount(a, 3, seed);
-  const currencyBridge = await getCurrencyBridge(currency);
-  const bridge = await getAccountBridge(account);
-  const transaction = bridge.createTransaction(account);
-  return {
-    account,
-    currencyBridge,
-    transaction,
-    prepare: async () => cache.prepareCurrency(currency),
-  };
-}

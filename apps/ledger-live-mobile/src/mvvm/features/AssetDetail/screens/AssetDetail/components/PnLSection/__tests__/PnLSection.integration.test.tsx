@@ -1,5 +1,5 @@
 import React from "react";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount } from "@ledgerhq/live-common/mock/account";
 import type { DistributionItem } from "@ledgerhq/types-live";
 import * as walletPnlHooks from "@ledgerhq/wallet-pnl/hooks";
@@ -24,7 +24,7 @@ const emptyDistributionItem: DistributionItem = {
 };
 
 const withPnl = (enabled: boolean) =>
-  withFlagOverrides({ lwmWallet40: { enabled: true, params: { pnl: enabled } } });
+  withFlagOverrides({ lwmWallet40: { params: { pnl: enabled } } });
 
 describe("AssetDetail PnLSection", () => {
   it("renders the section when the pnl flag is on and the asset has accounts", () => {

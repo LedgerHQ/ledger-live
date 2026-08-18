@@ -1,10 +1,14 @@
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import BigNumber from "bignumber.js";
 import { createMockERC20Transfer, TEST_ADDRESSES } from "../test/fixtures";
 import { TxStatus } from "../types";
 import { erc20TxnToOperation } from "./tokenAccounts";
 
-setupMockCryptoAssetsStore();
+setCryptoAssetsStore({
+  findTokenById: async () => undefined,
+  findTokenByAddressInCurrency: async () => undefined,
+  getTokensSyncHash: async () => "",
+});
 
 jest.mock("@ledgerhq/logs", () => ({
   log: jest.fn(),

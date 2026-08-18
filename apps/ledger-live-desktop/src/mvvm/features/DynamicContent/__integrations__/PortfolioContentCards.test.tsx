@@ -8,6 +8,7 @@ import { track } from "~/renderer/analytics/segment";
 import { ContentCardEvent } from "@ledgerhq/live-common/braze/contentCardExtras";
 import { LocationContentCard } from "~/types/dynamicContent";
 import { CONTENT_BANNER_ACTION_CARD_CLOSE_LABEL } from "../components/ContentBannerActionCard/types";
+import { BRAZE_PLACEMENT_GRID_CLASS_NAME } from "../utils/brazePlacementLayout";
 
 let mockShouldDisplayBrazePlacement = false;
 
@@ -126,14 +127,14 @@ function asClassicBrazeCard(
   return Object.assign(Object.create(ClassicCard.prototype), { id, extras });
 }
 
+const desktopCardsForTopCarousel = Cards.map(asClassicBrazeCard);
+const desktopCardsForBrazeGrid = CardsForBrazeGrid.map(asClassicBrazeCard);
+const desktopCardsWithBottomPlacements = [...Cards, ...BottomCards].map(asClassicBrazeCard);
+
 beforeEach(() => {
   jest.clearAllMocks();
   mockShouldDisplayBrazePlacement = false;
 });
-
-const desktopCardsForTopCarousel = Cards.map(asClassicBrazeCard);
-const desktopCardsForBrazeGrid = CardsForBrazeGrid.map(asClassicBrazeCard);
-const desktopCardsWithBottomPlacements = [...Cards, ...BottomCards].map(asClassicBrazeCard);
 
 describe("PortfolioContentCards", () => {
   test("render slides", async () => {
@@ -312,6 +313,108 @@ describe("PortfolioContentCards", () => {
 
     expect(screen.queryByText("Foo")).toBeNull();
     expect(screen.queryByText("Bar")).toBeNull();
+  });
+
+  test("renders leadingSlide alone when there are no portfolio cards", () => {
+    render(<PortfolioContentCards leadingSlide={<div data-testid="upsell-leading" />} />, {
+      initialState: {
+        dynamicContent: { desktopCards: [], portfolioCards: [] },
+        settings: {
+          shareAnalytics: true,
+          sharePersonalizedRecommandations: true,
+          lastAnalyticsConsentDate: new Date().toISOString(),
+          privacyPolicyVersion: 1,
+        },
+      },
+    });
+
+    expect(screen.getByTestId("upsell-leading")).toBeInTheDocument();
+  });
+
+  test("with brazePlacement puts leadingSlide in the Lumen grid beside Braze (not a carousel)", async () => {
+    mockShouldDisplayBrazePlacement = true;
+
+    render(<PortfolioContentCards leadingSlide={<div data-testid="upsell-leading" />} />, {
+      initialState: {
+        dynamicContent: {
+          desktopCards: desktopCardsForBrazeGrid,
+          portfolioCards: CardsForBrazeGrid,
+        },
+        settings: {
+          shareAnalytics: true,
+          sharePersonalizedRecommandations: true,
+          lastAnalyticsConsentDate: new Date().toISOString(),
+          privacyPolicyVersion: 1,
+        },
+      },
+    });
+
+    expect(await screen.findByTestId("upsell-leading")).toBeInTheDocument();
+    // Grid max 2 slots: LNS + 1 Braze (Foo); Bar is truncated.
+    expect(screen.getByText("Foo")).toBeVisible();
+    expect(screen.queryByText("Bar")).toBeNull();
+    expect(screen.queryByTestId("carousel-arrow-next")).not.toBeInTheDocument();
+  });
+
+  test("uses container-query classes to hide extra Braze banners on narrow placement width", async () => {
+    mockShouldDisplayBrazePlacement = true;
+
+    render(<PortfolioContentCards />, {
+      initialState: {
+        dynamicContent: {
+          desktopCards: desktopCardsForBrazeGrid,
+          portfolioCards: CardsForBrazeGrid,
+        },
+        settings: {
+          shareAnalytics: true,
+          sharePersonalizedRecommandations: true,
+          lastAnalyticsConsentDate: new Date().toISOString(),
+          privacyPolicyVersion: 1,
+        },
+      },
+    });
+
+    expect(await screen.findByText("Foo")).toBeVisible();
+    // JSDOM does not evaluate CSS container queries; assert the responsive grid contract instead.
+    expect(screen.getByTestId("portfolio-braze-placement-grid")).toHaveClass(
+      ...BRAZE_PLACEMENT_GRID_CLASS_NAME.split(" "),
+    );
+    expect(screen.getByText("Bar")).toBeInTheDocument();
+  });
+
+  test("classic path stacks leadingSlide above Braze carousel without truncating Braze cards", async () => {
+    const threeCards = [
+      ...Cards,
+      {
+        id: "2",
+        title: "Baz",
+        description: "Third card remains visible on classic path.",
+        path: "ledger-live://deep-link",
+        location: LocationContentCard.Portfolio,
+      },
+    ];
+
+    render(<PortfolioContentCards leadingSlide={<div data-testid="upsell-leading" />} />, {
+      initialState: {
+        dynamicContent: {
+          desktopCards: threeCards.map(asClassicBrazeCard),
+          portfolioCards: threeCards,
+        },
+        settings: {
+          shareAnalytics: true,
+          sharePersonalizedRecommandations: true,
+          lastAnalyticsConsentDate: new Date().toISOString(),
+          privacyPolicyVersion: 1,
+        },
+      },
+    });
+
+    expect(await screen.findByTestId("upsell-leading")).toBeInTheDocument();
+    expect(screen.getByText("Foo")).toBeInTheDocument();
+    expect(screen.getByText("Bar")).toBeInTheDocument();
+    expect(screen.getByText("Baz")).toBeInTheDocument();
+    // Braze-only carousel still has arrows when 2+ Braze slides.
+    expect(screen.getByTestId("carousel-arrow-next")).toBeInTheDocument();
   });
 });
 

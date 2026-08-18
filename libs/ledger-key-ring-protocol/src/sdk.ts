@@ -23,9 +23,7 @@ import {
   Device,
 } from "@ledgerhq/hw-ledger-key-ring-protocol";
 import getApi from "./api";
-import { KeyPair as CryptoKeyPair } from "@ledgerhq/hw-ledger-key-ring-protocol/Crypto";
 import { log } from "@ledgerhq/logs";
-import { LedgerAPI4xx } from "@ledgerhq/errors";
 import {
   TrustchainAlreadyInitialized,
   TrustchainAlreadyInitializedWithOtherSeed,
@@ -35,7 +33,12 @@ import {
 } from "./errors";
 import { HWDeviceProvider } from "./HWDeviceProvider";
 import { genericWithJWT } from "./auth";
-import { convertLiveCredentialsToKeyPair, credentialForPubKey, liveAuthentication } from "./utils";
+import {
+  convertLiveCredentialsToKeyPair,
+  credentialForPubKey,
+  initMemberCredentials,
+  liveAuthentication,
+} from "./utils";
 
 type WithJwt = <T>(job: (jwt: JWT) => Promise<T>) => Promise<T>;
 type WithDevice = <T>(job: (device: Device) => Promise<T>) => Promise<T>;
@@ -96,8 +99,7 @@ export class SDK implements TrustchainSDK {
   }
 
   async initMemberCredentials(): Promise<MemberCredentials> {
-    const kp = crypto.randomKeypair();
-    return convertKeyPairToLiveCredentials(kp);
+    return initMemberCredentials();
   }
 
   async getOrCreateTrustchain(
@@ -450,11 +452,11 @@ export class SDK implements TrustchainSDK {
       })
       .catch(e => {
         if (
-          e instanceof LedgerAPI4xx &&
-          (e.message.includes("Not a member of trustchain") ||
-            e.message.includes("You are not member"))
+          (e as { name?: string })?.name === "LedgerAPI4xx" &&
+          ((e as Error)?.message.includes("Not a member of trustchain") ||
+            (e as Error)?.message.includes("You are not member"))
         ) {
-          throw new TrustchainEjected(e.message);
+          throw new TrustchainEjected((e as Error)?.message);
         }
         throw e;
       });
@@ -515,13 +517,6 @@ export class SDK implements TrustchainSDK {
     };
     return () => withJwt(jwt => this.api.putCommands(jwt, trustchainId, request));
   }
-}
-
-export function convertKeyPairToLiveCredentials(keyPair: CryptoKeyPair): MemberCredentials {
-  return {
-    pubkey: crypto.to_hex(keyPair.publicKey),
-    privatekey: crypto.to_hex(keyPair.privateKey),
-  };
 }
 
 function getSoftwareDevice(memberCredentials: MemberCredentials): SoftwareDevice {

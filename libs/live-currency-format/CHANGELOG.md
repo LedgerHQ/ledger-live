@@ -1,5 +1,57 @@
 # @ledgerhq/live-currency-format
 
+## 0.14.1
+
+### Patch Changes
+
+- Updated dependencies [[`c475d28`](https://github.com/LedgerHQ/ledger-live/commit/c475d288b4978aa3011c9e76f3e9a1e2f9733010)]:
+  - @ledgerhq/live-env@3.0.0
+
+## 0.14.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`c475d28`](https://github.com/LedgerHQ/ledger-live/commit/c475d288b4978aa3011c9e76f3e9a1e2f9733010)]:
+  - @ledgerhq/live-env@3.0.0-next.0
+
+## 0.14.0
+
+### Minor Changes
+
+- [#19802](https://github.com/LedgerHQ/ledger-live/pull/19802) [`6ed8225`](https://github.com/LedgerHQ/ledger-live/commit/6ed8225f2434f70d587aa046e39262c21b538f27) Thanks [@ysitbon](https://github.com/ysitbon)! - Replace direct @ledgerhq/cryptoassets value imports with domain registry accessors
+
+- [#19734](https://github.com/LedgerHQ/ledger-live/pull/19734) [`bb2d2d2`](https://github.com/LedgerHQ/ledger-live/commit/bb2d2d250a1d5b8cde43ba963795d28b10b48be6) Thanks [@ishaba](https://github.com/ishaba)! - remove umee chain related code
+
+## 0.14.0-next.0
+
+### Minor Changes
+
+- [#19802](https://github.com/LedgerHQ/ledger-live/pull/19802) [`6ed8225`](https://github.com/LedgerHQ/ledger-live/commit/6ed8225f2434f70d587aa046e39262c21b538f27) Thanks [@ysitbon](https://github.com/ysitbon)! - Replace direct @ledgerhq/cryptoassets value imports with domain registry accessors
+
+- [#19734](https://github.com/LedgerHQ/ledger-live/pull/19734) [`bb2d2d2`](https://github.com/LedgerHQ/ledger-live/commit/bb2d2d250a1d5b8cde43ba963795d28b10b48be6) Thanks [@ishaba](https://github.com/ishaba)! - remove umee chain related code
+
+## 0.13.0
+
+### Minor Changes
+
+- [#19425](https://github.com/LedgerHQ/ledger-live/pull/19425) [`35f0138`](https://github.com/LedgerHQ/ledger-live/commit/35f0138542fbd98f664b24ee786fc662d7223e10) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(xion): rebrand Xion to Verona (display name/ticker XION -> VERONA, main unit code XION -> VERONA, base denom uxion unchanged) and backport the coin-cosmos default LCD to verona-api.polkachu.com
+
+### Patch Changes
+
+- Updated dependencies [[`a15b864`](https://github.com/LedgerHQ/ledger-live/commit/a15b864576d901f15d480070b475314c3b23c1dd), [`fc44f1e`](https://github.com/LedgerHQ/ledger-live/commit/fc44f1e6ddcca939c117e0cb8bc49c404163b003)]:
+  - @ledgerhq/live-env@2.42.0
+
+## 0.13.0-next.0
+
+### Minor Changes
+
+- [#19425](https://github.com/LedgerHQ/ledger-live/pull/19425) [`35f0138`](https://github.com/LedgerHQ/ledger-live/commit/35f0138542fbd98f664b24ee786fc662d7223e10) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(xion): rebrand Xion to Verona (display name/ticker XION -> VERONA, main unit code XION -> VERONA, base denom uxion unchanged) and backport the coin-cosmos default LCD to verona-api.polkachu.com
+
+### Patch Changes
+
+- Updated dependencies [[`a15b864`](https://github.com/LedgerHQ/ledger-live/commit/a15b864576d901f15d480070b475314c3b23c1dd), [`fc44f1e`](https://github.com/LedgerHQ/ledger-live/commit/fc44f1e6ddcca939c117e0cb8bc49c404163b003)]:
+  - @ledgerhq/live-env@2.42.0-next.0
+
 ## 0.12.0
 
 ### Minor Changes

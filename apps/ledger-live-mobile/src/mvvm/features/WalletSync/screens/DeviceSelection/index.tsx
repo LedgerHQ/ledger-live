@@ -2,7 +2,6 @@ import React, { useCallback, useState, memo } from "react";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { Trans } from "~/context/Locale";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { BluetoothRequired } from "@ledgerhq/errors";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { ScreenName } from "~/const";
 import SelectDevice2, { SetHeaderOptionsRequest } from "~/components/SelectDevice2";
@@ -75,7 +74,7 @@ const WalletSyncActivationDeviceSelection: React.FC<ChooseDeviceProps> = ({
     // By setting back the device to `undefined` it gives back the responsibilities to those select components to check for the bluetooth requirements
     // and avoids a duplicated error drawers/messages.
     // The only drawback: the user has to select again their device once the bluetooth requirements are respected.
-    if (error instanceof BluetoothRequired) {
+    if (error?.name === "BluetoothRequired") {
       selectDevice(undefined);
     }
   };

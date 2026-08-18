@@ -5,7 +5,7 @@ import type {
 } from "@ledgerhq/live-dmk-shared";
 import type { InitializerDevice } from "../../types";
 import { useInitializerActions } from "../../hooks/useInitializerActions";
-import type { SourceFlow } from "../../../utils/SourceFlowContext";
+import { useDeviceIntentTracking } from "../../../utils/DeviceIntentTrackingContext";
 import { CONNECT_APP_BUTTON, trackConnectAppButtonClicked } from "../../../utils/trackDeviceIntent";
 
 type OutdatedAppWarningState = Extract<
@@ -16,10 +16,10 @@ type OutdatedAppWarningState = Extract<
 type Params = Readonly<{
   state: OutdatedAppWarningState;
   device: InitializerDevice;
-  sourceFlow: SourceFlow;
 }>;
 
-export function useOutdatedAppWarningViewModel({ state, device, sourceFlow }: Params) {
+export function useOutdatedAppWarningViewModel({ state, device }: Params) {
+  const { sourceFlow, analyticsProperties } = useDeviceIntentTracking();
   const { openMyLedger } = useInitializerActions(device);
   const modelId = device.modelId;
 
@@ -28,18 +28,20 @@ export function useOutdatedAppWarningViewModel({ state, device, sourceFlow }: Pa
       sourceFlow,
       modelId,
       button: CONNECT_APP_BUTTON.ManageApps,
+      extraProperties: analyticsProperties,
     });
     openMyLedger(state.appName);
-  }, [openMyLedger, state.appName, sourceFlow, modelId]);
+  }, [analyticsProperties, openMyLedger, state.appName, sourceFlow, modelId]);
 
   const onContinue = useCallback(() => {
     trackConnectAppButtonClicked({
       sourceFlow,
       modelId,
       button: CONNECT_APP_BUTTON.Continue,
+      extraProperties: analyticsProperties,
     });
     state.onContinue();
-  }, [state, sourceFlow, modelId]);
+  }, [analyticsProperties, state, sourceFlow, modelId]);
 
   return {
     appName: state.appName,

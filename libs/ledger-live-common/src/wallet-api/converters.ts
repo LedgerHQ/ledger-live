@@ -1,10 +1,16 @@
-import { Account, AccountLike } from "@ledgerhq/types-live";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import type BigNumber from "bignumber.js";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
+import { log } from "@ledgerhq/logs";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { v5 as uuidv5 } from "uuid";
-import { WalletState, accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
+import {
+  accountNameWithDefaultSelector,
+  type AccountNamesState,
+} from "@domain/entity-account-name";
 import { loadWalletApiAdapterForFamily } from "../coin-modules/registry";
 import type { Transaction } from "../coin-modules/transaction-types";
 import { isTokenAccount } from "../account";
+import { getAccountBridge } from "../bridge";
 import {
   WalletAPIAccount,
   WalletAPICurrency,
@@ -28,7 +34,7 @@ export const setWalletApiIdForAccountId = (accountId: string): void => {
 };
 
 export function accountToWalletAPIAccount(
-  walletState: WalletState,
+  accountNames: AccountNamesState,
   account: AccountLike,
   parentAccount?: Account | null,
 ): WalletAPIAccount {
@@ -44,7 +50,7 @@ export function accountToWalletAPIAccount(
 
     uuidToAccountId.set(parentWalletApiId, parentAccount.id);
 
-    const parentAccountName = accountNameWithDefaultSelector(walletState, parentAccount);
+    const parentAccountName = accountNameWithDefaultSelector(accountNames, parentAccount);
 
     return {
       id: walletApiId,
@@ -56,9 +62,10 @@ export function accountToWalletAPIAccount(
       name: `${parentAccountName} (${account.token.ticker})`,
       currency: account.token.id,
       spendableBalance: account.spendableBalance,
+      readiness: parentAccount.readiness,
     };
   }
-  const name = accountNameWithDefaultSelector(walletState, account);
+  const name = accountNameWithDefaultSelector(accountNames, account);
 
   return {
     id: walletApiId,
@@ -69,6 +76,7 @@ export function accountToWalletAPIAccount(
     spendableBalance: account.spendableBalance,
     blockHeight: account.blockHeight,
     lastSyncDate: account.lastSyncDate,
+    readiness: account.readiness,
   };
 }
 
@@ -135,3 +143,20 @@ export const getWalletAPITransactionSignFlowInfos = async ({
     hasFeesProvided: false,
   };
 };
+
+export async function resolveWalletApiSpendableBalance(
+  account: AccountLike,
+  parentAccount?: Account | null,
+): Promise<BigNumber> {
+  try {
+    const bridge = await getAccountBridge(account, parentAccount);
+    return bridge.getWalletApiSpendableBalance(account);
+  } catch (error) {
+    log(
+      "wallet-api/converters",
+      "resolveWalletApiSpendableBalance: falling back to account.spendableBalance",
+      { error: error instanceof Error ? error.message : String(error) },
+    );
+    return account.spendableBalance;
+  }
+}

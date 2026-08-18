@@ -1,13 +1,15 @@
 import type { AssetInfo, BalanceOptions } from "@ledgerhq/coin-module-framework/api/types";
 import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import type {
+  AccountReadiness,
   Operation as LiveOperation,
   StakingRedelegation,
   StakingResources,
 } from "@ledgerhq/types-live";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
-import { InvalidTransactionError } from "@ledgerhq/errors";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { TokenCurrency } from "@domain/entity-currency-token";
+import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
+import { InvalidTransactionError } from "@ledgerhq/ledger-wallet-framework/errors";
 import eip55 from "eip55";
 import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
@@ -15,10 +17,12 @@ import {
   fetchRedelegations,
   buildRedelegationsFromOps,
 } from "@ledgerhq/coin-evm/staking/redelegations";
-import { STAKING_CONTRACTS } from "@ledgerhq/coin-evm/staking/index";
+import { STAKING_CONTRACTS, isSeiAccountUnassociated } from "@ledgerhq/coin-evm/staking/index";
 import { getNodeApi } from "@ledgerhq/coin-evm/network/node/index";
 import { getNextSequence } from "@ledgerhq/coin-evm/logic/index";
-import { getCoinConfig } from "@ledgerhq/coin-evm/config";
+import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
+import { getCurrencyConfiguration } from "../../../config";
+import { buildContext } from "../../../bridge/generic-coin-framework/api/context";
 
 export async function getTokenFromAsset(
   currency: CryptoCurrency,
@@ -94,11 +98,12 @@ async function enrichStakingResources(
 ): Promise<StakingResources> {
   // Fetch redelegations from the Cosmos REST API (may return empty for
   // EVM-precompile-originated redelegations on chains like Sei).
-  const apiRedelegations = await fetchRedelegations(currency.id, address).catch(() => []);
+  const config = getCurrencyConfiguration<EvmConfigInfo>(currency.id);
+  const apiRedelegations = await fetchRedelegations(config, currency.id, address).catch(() => []);
 
   // Reconstruct active redelegations from the REDELEGATE operation history by
   // decoding the ABI-encoded calldata fetched directly from the RPC node.
-  const opsRedelegations = await buildRedelegationsFromOps(currency, operations);
+  const opsRedelegations = await buildRedelegationsFromOps(config, currency.id, operations);
 
   // Merge both sources, deduplicating by (src, dst) validator pair.
   const key = (r: StakingRedelegation) => `${r.validatorSrcAddress}|${r.validatorDstAddress}`;
@@ -116,15 +121,15 @@ async function getOperationStatus(
   op: LiveOperation,
 ): Promise<LiveOperation | null> {
   try {
-    const nodeApi = getNodeApi(currency);
+    const nodeApi = getNodeApi(getCurrencyConfiguration<EvmConfigInfo>(currency.id), currency.id);
     const { blockHeight, blockHash, nonce, gasPrice, gasUsed, value } =
-      await nodeApi.getTransaction(currency, op.hash);
+      await nodeApi.getTransaction(currency.id, op.hash);
 
     if (!blockHeight) {
       throw new Error("getOperationStatus: Transaction has no block");
     }
 
-    const { timestamp } = await nodeApi.getBlockByHeight(currency, blockHeight);
+    const { timestamp } = await nodeApi.getBlockByHeight(currency.id, blockHeight);
     const date = new Date(timestamp);
     const fee = new BigNumber(gasPrice).multipliedBy(gasUsed);
 
@@ -160,16 +165,32 @@ export async function refreshOperations(
   return refreshedOperationsOrNull.filter((op): op is LiveOperation => !!op);
 }
 
+/**
+ * A Sei account can only transact (swap included) once its EVM (0x) address is
+ * associated on-chain with its Cosmos (sei1) address.
+ */
+export async function getAccountReadiness(
+  currency: CryptoCurrency,
+  address: string,
+): Promise<AccountReadiness> {
+  const config = getCurrencyConfiguration<EvmConfigInfo>(currency.id);
+  const unassociated = await isSeiAccountUnassociated(config, currency.id, address);
+  return unassociated ? { ready: false, reason: "activationRequired" } : { ready: true };
+}
+
 export async function validateTransaction(
   currency: CryptoCurrency,
   { signature }: { signature: string },
 ): Promise<{ error: Error | undefined }> {
-  const nodeApi = getNodeApi(currency);
+  const nodeApi = getNodeApi(getCurrencyConfiguration<EvmConfigInfo>(currency.id), currency.id);
   const transaction = ethers.Transaction.from(signature);
 
   if (transaction.hash) {
     try {
-      const { hash, blockHeight = null } = await nodeApi.getTransaction(currency, transaction.hash);
+      const { hash, blockHeight = null } = await nodeApi.getTransaction(
+        currency.id,
+        transaction.hash,
+      );
       if (blockHeight) {
         return { error: new InvalidTransactionError("transaction is already mined") };
       }
@@ -182,7 +203,11 @@ export async function validateTransaction(
   }
 
   if (transaction.from) {
-    const currentNonce = await getNextSequence(currency, transaction.from);
+    const currentNonce = await getNextSequence(
+      buildContext(currency.id),
+      currency.id,
+      transaction.from,
+    );
     if (typeof transaction.nonce === "number") {
       const txNonce = BigInt(transaction.nonce);
       if (txNonce < currentNonce) {
@@ -206,14 +231,16 @@ export default function evmBridge(currency: CryptoCurrency): BridgeApi {
     enrichStakingResources: (c, addr, ops, sr) => enrichStakingResources(c, addr, ops, sr),
     validateTransaction: (signature: string) => validateTransaction(currency, { signature }),
     ...(STAKING_CONTRACTS[currency.id] ? { stakingSupported: true } : {}),
-    // Safe: getBridgeApi is always called right after getCoinModuleApi (which sets the coin config),
-    // so getCoinConfig is populated by the time the bridge is assembled. Only expose refreshOperations
+    // Only Sei has an activation concept; elsewhere readiness stays undefined (= ready).
+    ...(currency.id === "sei_evm" ? { getAccountReadiness } : {}),
+    // Config comes from `getCurrencyConfiguration` (the live-common config source), available at
+    // bridge-assembly time. Only expose refreshOperations
     // for explorer-less chains (e.g. core) — explorer-backed chains rely on the explorer's results.
     // Extra-safe: wrap throwing method in try / catch block
     // TODO: rely on `getTransactions` once https://ledgerhq.atlassian.net/browse/BACK-11373 is done
     ...(() => {
       try {
-        return getCoinConfig(currency.id).info.explorer?.type === "none"
+        return getCurrencyConfiguration<EvmConfigInfo>(currency.id).explorer?.type === "none"
           ? {
               refreshOperations: (operations: LiveOperation[]) =>
                 refreshOperations(currency, operations),

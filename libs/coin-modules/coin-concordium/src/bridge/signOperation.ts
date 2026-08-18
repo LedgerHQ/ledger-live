@@ -1,12 +1,13 @@
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
-import { FeeNotLoaded } from "@ledgerhq/errors";
+import { FeeNotLoaded } from "@ledgerhq/ledger-wallet-framework/errors";
 import type { AccountBridge, Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { Observable } from "rxjs";
 import type { ConcordiumSigner, Transaction } from "../types";
 import { combine, craftTransaction, estimateFees, getNextValidSequence } from "../logic";
 import { getTransactionStatus } from "./getTransactionStatus";
+import coinConfig from "../config";
 
 export const buildSignOperation =
   (signerContext: SignerContext<ConcordiumSigner>): AccountBridge<Transaction>["signOperation"] =>
@@ -23,12 +24,14 @@ export const buildSignOperation =
           type: "device-signature-requested",
         });
 
+        const config = coinConfig.getCoinConfig(account.currency.id);
         const nextSequenceNumber = await getNextValidSequence(
+          config,
           account.freshAddress,
           account.currency.id,
         );
 
-        const estimation = await estimateFees(account.currency.id, transaction.memo);
+        const estimation = await estimateFees(config, account.currency.id, transaction.memo);
 
         const signature = await signerContext(deviceId, async signer => {
           const { freshAddressPath: derivationPath } = account;
@@ -55,7 +58,7 @@ export const buildSignOperation =
             estimation.cost,
           );
 
-          return combine(result.serialized, result.signature);
+          return combine(result.serialized, [result.signature]);
         });
 
         o.next({

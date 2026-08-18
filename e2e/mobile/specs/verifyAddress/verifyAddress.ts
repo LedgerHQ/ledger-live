@@ -2,8 +2,10 @@ import { AccountType } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "../../helpers/allure/allure-helper";
 
+const BST_VERIFY_ADDRESS_CURRENCIES = new Set(["ripple", "tezos"]);
+
 export function runVerifyAddressTest(account: AccountType, tmsLinks: string[], tags: string[]) {
-  describe("Verify Address", () => {
+  describe("Receive", () => {
     beforeAll(async () => {
       await app.init({
         speculosApp: account.currency.speculosApp,
@@ -12,10 +14,12 @@ export function runVerifyAddressTest(account: AccountType, tmsLinks: string[], t
       await app.mainNavigation.waitForWallet40Ready();
     });
 
-    setTeamOwner(Team.COIN_INTEGRATION);
+    setTeamOwner(
+      BST_VERIFY_ADDRESS_CURRENCIES.has(account.currency.id) ? Team.BST : Team.COIN_INTEGRATION,
+    );
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    it(`Verify address on ${account.currency.name}`, async () => {
+    it(`[${account.currency.testLabel}] - Verify address`, async () => {
       await app.account.openViaDeeplink();
       await app.account.goToAccountByName(account.accountName);
       await app.account.tapReceive();

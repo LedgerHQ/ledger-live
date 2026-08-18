@@ -4,10 +4,10 @@ import {
   getParentAccount,
   makeEmptyTokenAccount,
 } from "@ledgerhq/ledger-wallet-framework/account/index";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
-import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
+import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { decodeSwapPayload } from "@ledgerhq/hw-app-exchange";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, AccountLike, getCurrencyForAccount, TokenAccount } from "@ledgerhq/types-live";
 import {
   createAccountNotFound,
@@ -57,7 +57,7 @@ import { CompleteExchangeError, getErrorDetails, getSwapStepFromError } from "..
 import { postSwapCancelled } from "../../exchange/swap";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { setBroadcastTransaction } from "../../exchange/swap/setBroadcastTransaction";
-import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
+import type { Transaction as EvmTransaction } from "../../families/evm/types";
 import { padHexString } from "@ledgerhq/hw-app-eth";
 import { createStepError, StepError, toError } from "./parser";
 import { handleErrors } from "./handleSwapErrors";

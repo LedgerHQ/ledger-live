@@ -1,4 +1,3 @@
-import { LedgerAPI4xx } from "@ledgerhq/errors";
 import network from "@ledgerhq/live-network";
 import type { LiveNetworkResponse } from "@ledgerhq/live-network/network";
 import BigNumber from "bignumber.js";
@@ -45,7 +44,7 @@ async function getAccountsForPublicKey({
       url: `${config.apiUrls.mirrorNode}/api/v1/accounts?account.publicKey=${publicKey}&balance=true&limit=100`,
     });
   } catch (e: unknown) {
-    if (e instanceof LedgerAPI4xx) return [];
+    if ((e as { name?: string })?.name === "LedgerAPI4xx") return [];
     throw e;
   }
 
@@ -92,7 +91,10 @@ async function getAccount({
 
     return account;
   } catch (error) {
-    if (error instanceof LedgerAPI4xx && "status" in error && error.status === 404) {
+    if (
+      (error as { name?: string; status?: number })?.name === "LedgerAPI4xx" &&
+      (error as { status?: number })?.status === 404
+    ) {
       throw new HederaAddAccountError();
     }
 

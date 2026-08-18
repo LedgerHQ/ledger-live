@@ -1,5 +1,8 @@
 # ACRE Wallet API Module
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 This module provides ACRE-specific functionality for the Ledger Live Wallet API, including message signing, transaction signing/broadcasting, and yield-bearing Ethereum address registration.
 
 ## Features
@@ -201,7 +204,6 @@ npm install @ledgerhq/wallet-api-acre-module
 - `@ledgerhq/wallet-api-client`: Core Wallet API client functionality
 - `@ledgerhq/wallet-api-core`: Core types and utilities
 - `@ledgerhq/types-live`: Ledger Live type definitions
-- `@ledgerhq/types-cryptoassets`: Cryptocurrency type definitions
 
 ## Testing
 

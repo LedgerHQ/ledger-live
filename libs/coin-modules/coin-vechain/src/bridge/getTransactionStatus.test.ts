@@ -10,7 +10,7 @@ import {
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
   RecipientRequired,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import { NotEnoughVTHO } from "../errors";
 
 // Mock dependencies
@@ -333,12 +333,17 @@ describe("getTransactionStatus", () => {
     it("should call calculateTransactionInfo with correct parameters", async () => {
       await getTransactionStatus(mockAccount, mockTransaction);
 
-      expect(mockedCalculateTransactionInfo).toHaveBeenCalledWith(mockAccount, mockTransaction, {
-        estimatedGas: mockTransaction.body.gas,
-        estimatedGasFees: new BigNumber(mockTransaction.estimatedFees),
-        maxFeePerGas: mockTransaction.body.maxFeePerGas,
-        maxPriorityFeePerGas: mockTransaction.body.maxPriorityFeePerGas,
-      });
+      expect(mockedCalculateTransactionInfo).toHaveBeenCalledWith(
+        expect.anything(),
+        mockAccount,
+        mockTransaction,
+        {
+          estimatedGas: mockTransaction.body.gas,
+          estimatedGasFees: new BigNumber(mockTransaction.estimatedFees),
+          maxFeePerGas: mockTransaction.body.maxFeePerGas,
+          maxPriorityFeePerGas: mockTransaction.body.maxPriorityFeePerGas,
+        },
+      );
     });
 
     it("should handle calculateTransactionInfo errors", async () => {

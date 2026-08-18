@@ -43,7 +43,7 @@ runs:
         touch /tmp/cache-path.txt
         WORKSPACE="${{ github.workspace }}"
 
-        echo "${{ inputs.path }}" | while IFS= read -r filePath; do
+        echo "${INPUTS_PATH}" | while IFS= read -r filePath; do
           if [ -d "$filePath" ] || [ -f "$filePath" ]; then
               find "$filePath" -type f | while IFS= read -r foundPath; do
                 # Convert absolute paths to relative paths from workspace
@@ -61,6 +61,8 @@ runs:
             echo "Warning: Path $filePath not found, skipping."
           fi
         done
+      env:
+        INPUTS_PATH: ${{ inputs.path }}
 
     - name: Compressing files (Linux)
       shell: bash
@@ -77,14 +79,19 @@ runs:
     - name: Uploading to S3
       shell: bash
       run: |
-        echo "Uploading files to S3 bucket ${{ inputs.bucket }}"
+        echo "Uploading files to S3 bucket ${INPUTS_BUCKET}"
         aws configure set default.s3.max_concurrent_requests 240
         aws configure set default.s3.multipart_chunksize 2MB
-        aws s3 cp --endpoint-url https://${{ inputs.endpoint || format('s3.{0}.amazonaws.com', inputs.region) }} --region ${{ inputs.region }} /tmp/cache.tzst s3://${{ inputs.bucket }}/${{ inputs.key }}/cache.tzst
+        ENDPOINT_URL="${INPUTS_ENDPOINT:-s3.${INPUTS_REGION}.amazonaws.com}"
+        aws s3 cp --endpoint-url "https://${ENDPOINT_URL}" --region ${INPUTS_REGION} /tmp/cache.tzst s3://${INPUTS_BUCKET}/${INPUTS_KEY}/cache.tzst
       env:
         AWS_ACCESS_KEY_ID: ${{ inputs.accessKey }}
         AWS_SECRET_ACCESS_KEY: ${{ inputs.secretKey }}
         AWS_SESSION_TOKEN: ${{ inputs.sessionToken }}
+        INPUTS_BUCKET: ${{ inputs.bucket }}
+        INPUTS_REGION: ${{ inputs.region }}
+        INPUTS_KEY: ${{ inputs.key }}
+        INPUTS_ENDPOINT: ${{ inputs.endpoint }}
 
     - name: Cleanup
       shell: bash

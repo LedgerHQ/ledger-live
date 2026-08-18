@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { ApyType } from "../../../dada-client/types/trend";
-import { useInterestRatesByCurrencies } from "../../../dada-client/hooks/useInterestRatesByCurrencies";
+import { CryptoOrTokenCurrency } from "@domain/entity-currency";
+import type { ApyType } from "@domain/entity-interest-rate";
+import { useInterestRatesByCurrencies } from "@features/platform-aggregated-assets";
 import { getInterestRateForAsset } from "../../utils/getInterestRateForAsset";
 import { AssetConfigurationOptions } from "../../utils/type";
 

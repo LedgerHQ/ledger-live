@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-hedera",
-  "version": "1.6.6",
+  "version": "1.6.7",
   "description": "Ledger Hardware Wallet Hedera Application API",
   "keywords": [
     "Ledger",
@@ -25,7 +25,6 @@
   "types": "lib/Hedera.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
-    "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:*",
     "bip32-path": "^0.4.2"
   },

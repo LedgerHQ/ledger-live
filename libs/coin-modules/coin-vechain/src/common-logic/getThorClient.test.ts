@@ -1,6 +1,6 @@
 import { getThorClient } from "./getThorClient";
 import { ThorClient } from "@vechain/sdk-network";
-import { VECHAIN_NODE_URL } from "../constants";
+import type { VechainCurrencyConfig } from "../config";
 
 // Mock the ThorClient
 jest.mock("@vechain/sdk-network", () => ({
@@ -9,10 +9,9 @@ jest.mock("@vechain/sdk-network", () => ({
   },
 }));
 
-// Mock the constants
-jest.mock("../constants", () => ({
-  VECHAIN_NODE_URL: "https://testnet.veblocks.net",
-}));
+const NODE_URL = "https://testnet.veblocks.net";
+// The endpoint comes from the coin config, threaded in explicitly.
+const config: VechainCurrencyConfig = { status: { type: "active" }, node: { url: NODE_URL } };
 
 const mockedThorClient = jest.mocked(ThorClient);
 
@@ -21,15 +20,15 @@ describe("getThorClient", () => {
     jest.clearAllMocks();
   });
 
-  it("should create a ThorClient instance with VECHAIN_NODE_URL", () => {
+  it("should create a ThorClient instance with the configured node url", () => {
     const mockClient = {
       /* mock ThorClient properties */
     };
     mockedThorClient.at.mockReturnValue(mockClient as any);
 
-    const result = getThorClient();
+    const result = getThorClient(config);
 
-    expect(mockedThorClient.at).toHaveBeenCalledWith(VECHAIN_NODE_URL);
+    expect(mockedThorClient.at).toHaveBeenCalledWith(NODE_URL);
     expect(result).toBe(mockClient);
   });
 
@@ -41,7 +40,7 @@ describe("getThorClient", () => {
     };
     mockedThorClient.at.mockReturnValue(mockClient as any);
 
-    const result = getThorClient();
+    const result = getThorClient(config);
 
     expect(result).toEqual(mockClient);
   });
@@ -50,16 +49,16 @@ describe("getThorClient", () => {
     const mockClient = {};
     mockedThorClient.at.mockReturnValue(mockClient as any);
 
-    getThorClient();
+    getThorClient(config);
 
     expect(mockedThorClient.at).toHaveBeenCalledTimes(1);
   });
 
-  it("should use the correct URL from constants", () => {
+  it("should use the url from the coin config", () => {
     const mockClient = {};
     mockedThorClient.at.mockReturnValue(mockClient as any);
 
-    getThorClient();
+    getThorClient(config);
 
     expect(mockedThorClient.at).toHaveBeenCalledWith("https://testnet.veblocks.net");
   });

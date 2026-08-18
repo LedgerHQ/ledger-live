@@ -1,16 +1,16 @@
 import { useCallback } from "react";
 import type { InitializerDevice } from "../../types";
 import { useInitializerActions } from "../../hooks/useInitializerActions";
-import type { SourceFlow } from "../../../utils/SourceFlowContext";
+import { useDeviceIntentTracking } from "../../../utils/DeviceIntentTrackingContext";
 import { CONNECT_APP_BUTTON, trackConnectAppButtonClicked } from "../../../utils/trackDeviceIntent";
 
 type Params = Readonly<{
   device: InitializerDevice;
-  sourceFlow: SourceFlow;
   onCancel: () => void;
 }>;
 
-export function useWrongDeviceForAccountViewModel({ device, sourceFlow, onCancel }: Params) {
+export function useWrongDeviceForAccountViewModel({ device, onCancel }: Params) {
+  const { sourceFlow, analyticsProperties } = useDeviceIntentTracking();
   const { openSupport } = useInitializerActions(device);
   const modelId = device.modelId;
 
@@ -19,18 +19,20 @@ export function useWrongDeviceForAccountViewModel({ device, sourceFlow, onCancel
       sourceFlow,
       modelId,
       button: CONNECT_APP_BUTTON.Close,
+      extraProperties: analyticsProperties,
     });
     onCancel();
-  }, [onCancel, sourceFlow, modelId]);
+  }, [analyticsProperties, onCancel, sourceFlow, modelId]);
 
   const onContactSupport = useCallback(() => {
     trackConnectAppButtonClicked({
       sourceFlow,
       modelId,
       button: CONNECT_APP_BUTTON.ContactLedgerSupport,
+      extraProperties: analyticsProperties,
     });
     openSupport();
-  }, [openSupport, sourceFlow, modelId]);
+  }, [analyticsProperties, openSupport, sourceFlow, modelId]);
 
   return {
     onCancel: onCancelWithTracking,

@@ -24,12 +24,13 @@ import { LaunchArguments } from "react-native-launch-arguments";
 import logReport from "~/log-report";
 import { webviewLogStore } from "~/e2e/webviewLogStore";
 import { MessageData, ServerData, mockDeviceEventSubject } from "./types";
-import { getAllEnvs, setEnv } from "@ledgerhq/live-env";
+import { getAllEnvs, setEnv } from "@shared/env";
 import Config from "react-native-config";
 import type { FeatureId, Feature, PartialFeatures } from "@shared/feature-flags";
 import { bleDevicesSelector } from "~/reducers/ble";
 import { DeviceManagementKitTransportSpeculos } from "@ledgerhq/live-dmk-speculos";
 import { setSpeculosDeviceModel } from "~/services/registerTransports";
+import { appNetworkLogStore, initAppNetworkLogging } from "../appNetworkLogStore";
 
 export const e2eBridgeClient = new Subject<MessageData>();
 
@@ -55,6 +56,8 @@ export function init() {
     Config.MOCK = "";
   }
   setEnv("DISABLE_TRANSACTION_BROADCAST", disable_broadcast != "0");
+
+  initAppNetworkLogging();
 
   if (ws) {
     ws.close();
@@ -105,7 +108,7 @@ async function onMessage(event: WebSocketMessageEvent) {
         acceptGeneralTerms(store);
         break;
       case "importAccounts": {
-        store.dispatch(await importAccountsRaw({ active: msg.payload }));
+        (await importAccountsRaw({ active: msg.payload }))(store.dispatch);
         try {
           // workaround: persist bridge-imported accounts so they survive app restarts (QAA-1353)
           await saveAccounts(await accountsExportSelector(store.getState()));
@@ -144,6 +147,7 @@ async function onMessage(event: WebSocketMessageEvent) {
       case "getLogs": {
         const payload = JSON.stringify({
           appLogs: logReport.getLogs(),
+          appNetworkLogs: appNetworkLogStore.getNetworkLogs(),
           webviewNetworkLogs: webviewLogStore.getNetworkLogs(),
           webviewConsoleLogs: webviewLogStore.getConsoleLogs(),
           webviewLoadErrors: webviewLogStore.getLoadErrors(),

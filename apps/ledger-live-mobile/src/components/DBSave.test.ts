@@ -1,4 +1,4 @@
-import { featureFlagsLense } from "./DBSave";
+import { featureFlagsLense, payCardPersistedSelector } from "./DBSave";
 import type { State } from "~/reducers/types";
 
 describe("featureFlagsLense", () => {
@@ -16,5 +16,21 @@ describe("featureFlagsLense", () => {
 
     expect(projected).toEqual({ overrides, bannerVisible: false });
     expect(projected).not.toHaveProperty("remoteFlagsReady");
+  });
+});
+
+describe("payCardPersistedSelector (mobile persistence lens)", () => {
+  it("composes { hasSeenFeatureTour, balanceFilter } from both pay card flow slices", () => {
+    const state = {
+      payCardFeatureTour: { hasSeenFeatureTour: true },
+      payCardBalance: { balanceFilter: "ethereum/erc20/usd__coin" },
+    } as unknown as State;
+
+    const projected = payCardPersistedSelector(state);
+
+    expect(projected).toEqual({
+      hasSeenFeatureTour: true,
+      balanceFilter: "ethereum/erc20/usd__coin",
+    });
   });
 });

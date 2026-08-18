@@ -3,7 +3,7 @@ import { renderHook } from "@testing-library/react";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { emptyHistoryCache } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { NATIVE_FEE_CURRENCY_MARKER } from "@ledgerhq/live-common/families/celo/constants";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { type TokenCurrency, TokenCurrencyIdSchema } from "@domain/entity-currency-token";
 import type { TokenAccount } from "@ledgerhq/types-live";
 import type { CeloAccount, CeloOperation } from "@ledgerhq/live-common/families/celo/types";
 
@@ -59,7 +59,7 @@ const buildToken = (
   id = "celo/erc20/test",
 ): TokenCurrency => ({
   type: "TokenCurrency",
-  id,
+  id: TokenCurrencyIdSchema.parse(id),
   contractAddress,
   parentCurrencyId: celo.id,
   tokenType: "erc20",

@@ -12,12 +12,12 @@ import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
 import { track } from "~/renderer/analytics/__mocks__/segment";
 import { ARB_ACCOUNT, BTC_ACCOUNT, ETH_ACCOUNT } from "../__mocks__/accounts.mock";
-import { assetsDataApi } from "@ledgerhq/live-common/dada-client/state-manager/api";
+import { assetsDataApi } from "@domain/api-aggregated-assets";
 import ModularDialogFlowManager from "./ModularDialogFlowManager";
 import { ModularDialogFlowManagerProps } from "./types";
 import modularDialogReducer, { openDialog } from "~/renderer/reducers/modularDialog";
 import { useDispatch } from "LLD/hooks/redux";
-import { setEnv } from "@ledgerhq/live-env";
+import { setEnv } from "@shared/env";
 import { registerAllCoins } from "@ledgerhq/live-common/coin-modules/load-all-coins";
 
 setEnv("MOCK", "true");

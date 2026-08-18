@@ -229,7 +229,7 @@ const modes: Readonly<Record<DerivationMode, ModeSpec>> = Object.freeze({
 //   modes[mode] = spec;
 // }
 
-const legacyDerivations: Partial<Record<CryptoCurrency["id"], DerivationMode[]>> = {
+const legacyDerivations: Partial<Record<string, DerivationMode[]>> = {
   aeternity: ["aeternity"],
   bitcoin_cash: [],
   tezos: ["galleonL", "tezboxL", "tezosSecp256k1", "tezosbip44h", "tezbox"],
@@ -281,8 +281,11 @@ export const asDerivationMode = (derivationMode: string): DerivationMode => {
   return derivationMode;
 };
 export const getAllDerivationModes = (): DerivationMode[] => Object.keys(modes) as DerivationMode[];
-export const getMandatoryEmptyAccountSkip = (derivationMode: DerivationMode): number =>
-  modes[derivationMode]?.mandatoryEmptyAccountSkip ?? 0;
+export const getMandatoryEmptyAccountSkip = (derivationMode: DerivationMode): number => {
+  const keychainObservableRange = getEnv("KEYCHAIN_OBSERVABLE_RANGE") ?? 0;
+  const mandatoryEmptyAccountSkip = modes[derivationMode]?.mandatoryEmptyAccountSkip ?? 0;
+  return Math.max(mandatoryEmptyAccountSkip, keychainObservableRange);
+};
 export const isInvalidDerivationMode = (derivationMode: DerivationMode): boolean =>
   (modes[derivationMode] as { isInvalid: boolean }).isInvalid || false;
 export const isSegwitDerivationMode = (derivationMode: DerivationMode): boolean =>

@@ -2,7 +2,7 @@ import React from "react";
 import { screen } from "@testing-library/react-native";
 import { render } from "@tests/test-renderer";
 import CustomCALRefInput from "./CustomCALRefInput";
-import { setEnv } from "@ledgerhq/live-env";
+import { setEnv } from "@shared/env";
 
 describe("CustomCALRefInput", () => {
   it("does not display any custom CAL ref", () => {

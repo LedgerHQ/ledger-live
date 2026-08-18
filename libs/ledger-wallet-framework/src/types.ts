@@ -1,4 +1,12 @@
-export type CryptoCurrencyId = string;
+import { z } from "zod";
+
+/** Opaque identifier for a crypto currency (e.g. `"bitcoin"`, `"ethereum"`). Non-empty string. */
+export const CryptoCurrencyIdSchema = z.string().min(1).brand<"CryptoCurrencyId">();
+export type CryptoCurrencyId = z.infer<typeof CryptoCurrencyIdSchema>;
+
+/** Opaque identifier for a token (e.g. `"ethereum/erc20/usd-tether"`). Non-empty string. */
+export const TokenCurrencyIdSchema = z.string().min(1).brand<"TokenCurrencyId">();
+export type TokenCurrencyId = z.infer<typeof TokenCurrencyIdSchema>;
 
 export type LedgerExplorerId = string;
 
@@ -20,7 +28,7 @@ export interface ExplorerView {
 
 export interface CryptoCurrency {
   type: "CryptoCurrency";
-  id: string;
+  id: CryptoCurrencyId;
   name: string;
   ticker: string;
   deviceTicker?: string;
@@ -52,16 +60,17 @@ export interface CryptoCurrency {
 
 export interface TokenCurrency {
   type: "TokenCurrency";
-  id: string;
+  id: TokenCurrencyId;
   name: string;
   ticker: string;
   contractAddress: string;
-  parentCurrencyId: string;
+  parentCurrencyId: CryptoCurrencyId;
   units: Unit[];
   tokenType: string;
   delisted?: boolean;
   disableCountervalue?: boolean;
   ledgerSignature?: string;
+  tokenIdentifier?: string;
   symbol?: string;
   keywords?: string[];
 }

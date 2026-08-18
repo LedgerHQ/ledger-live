@@ -1,5 +1,6 @@
 import React from "react";
-import { render, screen } from "@tests/test-renderer";
+import { Dimensions, Platform } from "react-native";
+import { fireEvent, render, screen } from "@tests/test-renderer";
 import {
   GenericAwarenessModalLayout,
   type GenericAwarenessModalFeatureIntro,
@@ -8,25 +9,30 @@ import type { FeatureIntroViewModel } from "LLM/components/FeatureIntroLayout/ty
 import type { LargeScreenUpsellDismissMethod } from "../../../analytics";
 import { LargeScreenUpsellModalDrawer } from "..";
 
-type MockQueuedDrawerBottomSheetProps = Readonly<{
+type MockQueuedBottomSheetProps = Readonly<{
   children: React.ReactNode;
   onClose?: () => void;
   onHeaderClosePressed?: () => void;
   onBackdropPress?: () => void;
+  maxDynamicContentSize?: "fullWithOffset";
 }>;
 
-let capturedDrawerProps: MockQueuedDrawerBottomSheetProps | null = null;
+let capturedDrawerProps: MockQueuedBottomSheetProps | null = null;
+const originalPlatformOS = Platform.OS;
 
-jest.mock("LLM/components/QueuedDrawer/QueuedDrawerBottomSheet", () => ({
-  __esModule: true,
-  default: (props: MockQueuedDrawerBottomSheetProps) => {
-    const React = require("react");
-    const { BottomSheet } = jest.requireActual("@ledgerhq/lumen-ui-rnative");
+jest.mock("@shared/ui-queued-bottom-sheet", () => {
+  const actual = jest.requireActual("@shared/ui-queued-bottom-sheet");
+  return {
+    ...actual,
+    QueuedBottomSheet: (props: MockQueuedBottomSheetProps) => {
+      const React = require("react");
+      const { BottomSheet } = jest.requireActual("@ledgerhq/lumen-ui-rnative");
 
-    capturedDrawerProps = props;
-    return React.createElement(BottomSheet, { snapPoints: ["70%", "90%"] }, props.children);
-  },
-}));
+      capturedDrawerProps = props;
+      return React.createElement(BottomSheet, { snapPoints: ["70%", "90%"] }, props.children);
+    },
+  };
+});
 
 const content: GenericAwarenessModalFeatureIntro = {
   id: "large-screen-upsell-modal",
@@ -52,13 +58,14 @@ const viewModel: FeatureIntroViewModel = {
 function renderLargeScreenUpsellModalDrawer(
   isOpen: boolean,
   onDismiss: (dismissMethod: LargeScreenUpsellDismissMethod) => void = jest.fn(),
+  bottomInset = 0,
 ) {
   return render(
     <LargeScreenUpsellModalDrawer
       isOpen={isOpen}
       onDismiss={onDismiss}
       featureIntroViewModel={viewModel}
-      bottomInset={0}
+      bottomInset={bottomInset}
     />,
   );
 }
@@ -82,6 +89,10 @@ describe("LargeScreenUpsellModalDrawer", () => {
     capturedDrawerProps = null;
   });
 
+  afterEach(() => {
+    Platform.OS = originalPlatformOS;
+  });
+
   it("should not render drawer content before it is opened", () => {
     renderLargeScreenUpsellModalDrawer(false);
 
@@ -92,6 +103,38 @@ describe("LargeScreenUpsellModalDrawer", () => {
     renderLargeScreenUpsellModalDrawer(true);
 
     expect(screen.getByTestId("large-screen-upsell-modal-drawer")).toBeOnTheScreen();
+  });
+
+  it("should shrink the hero to the space left by the other content", () => {
+    renderLargeScreenUpsellModalDrawer(true);
+
+    fireEvent(screen.getByTestId("large-screen-upsell-modal-drawer"), "layout", {
+      nativeEvent: { layout: { height: Dimensions.get("window").height } },
+    });
+
+    expect(screen.getByTestId("large-screen-upsell-modal-hero-container")).toHaveStyle({
+      height: 425,
+    });
+  });
+
+  it("should exclude the iOS-only bottom inset from hero sizing on Android", () => {
+    Platform.OS = "android";
+    renderLargeScreenUpsellModalDrawer(true, jest.fn(), 24);
+
+    fireEvent(screen.getByTestId("large-screen-upsell-modal-drawer"), "layout", {
+      nativeEvent: { layout: { height: Dimensions.get("window").height } },
+    });
+
+    expect(screen.getByTestId("large-screen-upsell-modal-hero-container")).toHaveStyle({
+      height: 425,
+    });
+  });
+
+  it("should leave dynamic content size unconstrained on Android", () => {
+    Platform.OS = "android";
+    renderLargeScreenUpsellModalDrawer(true);
+
+    expect(capturedDrawerProps?.maxDynamicContentSize).toBeUndefined();
   });
 
   it("should ignore close signals before the drawer has opened", () => {

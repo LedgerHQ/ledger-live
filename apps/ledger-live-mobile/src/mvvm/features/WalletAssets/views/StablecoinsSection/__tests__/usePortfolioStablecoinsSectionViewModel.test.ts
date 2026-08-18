@@ -16,7 +16,8 @@ jest.mock("@react-navigation/native", () => ({
 
 const mockAssetsData = jest.fn();
 
-jest.mock("@ledgerhq/live-common/dada-client/hooks/useAssetsData", () => ({
+jest.mock("@features/platform-aggregated-assets", () => ({
+  ...jest.requireActual("@features/platform-aggregated-assets"),
   useAssetsData: () => mockAssetsData(),
 }));
 
@@ -121,7 +122,7 @@ describe("usePortfolioStablecoinsSectionViewModel", () => {
     it("should navigate to Crypto screen on onPressShowAll when assetSection is enabled", () => {
       const { result } = renderHook(() => usePortfolioStablecoinsSectionViewModel(), {
         overrideInitialState: withFlagOverrides({
-          lwmWallet40: { enabled: true, params: { assetSection: true } },
+          lwmWallet40: { params: { assetSection: true } },
         }),
       });
 

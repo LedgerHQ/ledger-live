@@ -26,7 +26,6 @@ export const Delegation = type({
   stake: BigNumFromString,
   activationEpoch: BigNumFromString,
   deactivationEpoch: BigNumFromString,
-  warmupCooldownRate: number(),
 });
 export type Delegation = Infer<typeof Delegation>;
 

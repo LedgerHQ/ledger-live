@@ -330,7 +330,7 @@ export const scenarioBitcoin: Scenario<BtcTransaction, BitcoinAccount> = {
       onUnhandledRequest: request => {
         const hostname = new URL(request.url).hostname;
         if (["127.0.0.1", "localhost"].includes(hostname)) return;
-        throw new Error("Unhandled request");
+        throw new Error(`Unhandled request: ${request.method} ${request.url}`);
       },
     });
 

@@ -8,7 +8,7 @@ import { Provider } from "react-redux";
 import BigNumber from "bignumber.js";
 import type { Account, AccountLike, PostOnboardingState } from "@ledgerhq/types-live";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import postOnboardingReducer, { initialState as postOnboardingInitialState } from "../reducer";
 import { usePostOnboardingPortfolioWidgetVisibility } from "./usePostOnboardingPortfolioWidgetVisibility";

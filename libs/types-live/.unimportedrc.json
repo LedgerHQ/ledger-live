@@ -1,0 +1,13 @@
+{
+  "entry": [
+    "src/index.ts"
+  ],
+  "ignoreUnresolved": [
+    "@jest/expect-utils",
+    "@jest/get-type",
+    "jest-util",
+    "@ledgerhq/types-devices"
+  ],
+  "ignoreUnused": [],
+  "ignoreUnimported": []
+}

@@ -422,7 +422,6 @@ function toSerializableConnectionResult(result: DeviceConnectionResult): unknown
   return {
     sessionId: result.sessionId,
     compatDeviceId: result.compatDeviceId,
-    compatDeviceModelId: result.compatDeviceModelId,
     compatDeviceName: result.compatDeviceName,
     compatDeviceWired: result.compatDeviceWired,
     connectedDevice: {

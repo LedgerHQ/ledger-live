@@ -5,6 +5,7 @@ import { useContactsDevToolViewModel } from "./useContactsDevToolViewModel";
 import {
   ContactsDevToolHeader,
   ContactsEnabledToggle,
+  ContactsSampleDataSection,
   EligibleAddressFamiliesSection,
   FeatureFlagPreview,
   FeatureParamRow,
@@ -17,10 +18,14 @@ export default function DebugContacts() {
     isEnabled,
     newBadge,
     eligibleAddressFamilies,
+    hasDismissedFeatureIntroduction,
     handleToggleEnabled,
     handleToggleNewBadge,
+    handleToggleFeatureIntroductionDismissed,
     handleSetEligibleAddressFamilies,
     handleRestoreDefaults,
+    handleLoadSamples,
+    handleClearContacts,
   } = useContactsDevToolViewModel();
 
   const featureFlagSummary = useMemo(
@@ -41,6 +46,11 @@ export default function DebugContacts() {
       <Box lx={{ paddingHorizontal: "s24", paddingVertical: "s16" }}>
         <ContactsDevToolHeader onRestoreDefaults={handleRestoreDefaults} />
         <ContactsEnabledToggle isEnabled={isEnabled} onToggle={handleToggleEnabled} />
+
+        <ContactsSampleDataSection
+          onLoadSamples={handleLoadSamples}
+          onClearContacts={handleClearContacts}
+        />
 
         <SectionHeader title="FEATURE PARAMETERS" />
 
@@ -66,6 +76,25 @@ export default function DebugContacts() {
             isEnabled={isEnabled}
             families={eligibleAddressFamilies}
             onPresetSelect={handleSetEligibleAddressFamilies}
+          />
+        </Box>
+
+        <SectionHeader title="FEATURE INTRODUCTION" />
+
+        <Box
+          lx={{
+            backgroundColor: "surface",
+            borderRadius: "md",
+            padding: "s8",
+            marginBottom: "s24",
+          }}
+        >
+          <FeatureParamRow
+            label="Show introduction"
+            isFeatureEnabled
+            value={!hasDismissedFeatureIntroduction}
+            onToggle={handleToggleFeatureIntroductionDismissed}
+            testID="debug-contacts-feature-introduction-switch"
           />
         </Box>
 

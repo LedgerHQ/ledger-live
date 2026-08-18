@@ -1,4 +1,5 @@
 import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
+import { SEND_ADDRESS_FORMAT_OPTIONS } from "@ledgerhq/live-common/flows/send/utils";
 import {
   ListItem,
   ListItemContent,
@@ -27,6 +28,7 @@ type AddressListItemProps = Readonly<{
   disabled?: boolean;
   hideDescription?: boolean;
   rightIcon?: React.ReactNode;
+  testID?: string;
 }>;
 
 export function AddressListItem({
@@ -42,14 +44,15 @@ export function AddressListItem({
   disabled = false,
   hideDescription = false,
   rightIcon = <ChevronRight size={24} />,
+  testID,
 }: AddressListItemProps) {
   const { t } = useTranslation();
-  const displayName = name ?? formatAddress(address, { prefixLength: 5, suffixLength: 5 });
+  const displayName = name ?? formatAddress(address, SEND_ADDRESS_FORMAT_OPTIONS);
   const formatRelativeDate = useFormatRelativeDate();
 
   const fallbackDescription = date
     ? formatRelativeDate(date)
-    : formatAddress(address, { prefixLength: 5, suffixLength: 5 });
+    : formatAddress(address, SEND_ADDRESS_FORMAT_OPTIONS);
 
   const subtitle = disabled || hideDescription ? undefined : (description ?? fallbackDescription);
   const icon = isLedgerAccount ? LedgerLogo : Wallet;
@@ -65,7 +68,7 @@ export function AddressListItem({
   const title = showSendTo ? t("send.newSendFlow.sendTo", { address: displayName }) : displayName;
 
   return (
-    <ListItem onPress={disabled ? undefined : onSelect} disabled={disabled}>
+    <ListItem onPress={disabled ? undefined : onSelect} disabled={disabled} testID={testID}>
       <ListItemLeading>
         <Spot appearance="icon" icon={icon} lx={{ marginRight: "s4" }} />
         <ListItemContent>

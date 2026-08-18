@@ -1,5 +1,9 @@
-import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { buildStandaloneCryptoAssetsStore } from "@features/platform-currencies/legacy";
+import {
+  getCryptoAssetsStore,
+  setCryptoAssetsStore,
+  type FrameworkCryptoAssetsStore,
+} from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account";
 import BigNumber from "bignumber.js";
 import { HEDERA_OPERATION_TYPES, HEDERA_TRANSACTION_MODES } from "../constants";
@@ -23,8 +27,12 @@ describe("utils", () => {
   const mockedAccount = getMockedAccount();
 
   beforeAll(() => {
-    // Setup CAL client store (automatically set as global store)
-    setupCalClientStore();
+    setCryptoAssetsStore(
+      buildStandaloneCryptoAssetsStore({
+        calServiceUrl: process.env.CAL_SERVICE_URL ?? "https://global.api.prd.ledger.com/cal",
+        ledgerClientVersion: process.env.LEDGER_CLIENT_VERSION || "coin-hedera-integration-test",
+      }) as unknown as FrameworkCryptoAssetsStore,
+    );
   });
 
   beforeEach(() => {

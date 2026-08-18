@@ -6,7 +6,8 @@ import {
   NativeSyntheticEvent,
 } from "react-native";
 import { Box, PageIndicator } from "@ledgerhq/lumen-ui-rnative";
-import { LNSUpsellBanner } from "LLM/features/LNSUpsell/components/LNSUpsellBanner";
+import { LazyOnboardingBannerView } from "@features/flow-lazy-onboarding-banner";
+import { LNUpsellBanner } from "LLM/features/LNUpsell/components/LNUpsellBanner";
 import ContentCardsLocation from "~/dynamicContent/ContentCardsLocation";
 import { ContentCardLocation } from "~/dynamicContent/types";
 import { width } from "~/helpers/normalizeSize";
@@ -26,7 +27,7 @@ type CarouselSlide = (typeof ONBOARDING_RECOVER_SLIDES)[number];
 
 interface PortfolioBannersSectionProps {
   readonly isFirst: boolean;
-  readonly isLNSUpsellBannerShown: boolean;
+  readonly isLNUpsellBannerShown: boolean;
   readonly showAssets?: boolean;
 }
 
@@ -105,22 +106,41 @@ function OnboardingRecoverCarousel({ carouselIndex, onScroll }: OnboardingRecove
 
 export const PortfolioBannersSection = ({
   isFirst,
-  isLNSUpsellBannerShown,
+  isLNUpsellBannerShown,
   showAssets,
 }: PortfolioBannersSectionProps) => {
   const {
+    lazyOnboardingBanner,
     shouldShowOnboardingWidget: showOnboarding,
     shouldDisplayRecover: showRecover,
     contentCardsPaddingTop,
     hasAssets,
+    canCoexistWithBraze,
     onScroll,
     carouselIndex,
-  } = usePortfolioBannersSectionViewModel({ showAssets });
+  } = usePortfolioBannersSectionViewModel({
+    showAssets,
+    isLNUpsellBannerShown,
+  });
 
-  if (isLNSUpsellBannerShown) {
+  const upsellLeadingSlide = isLNUpsellBannerShown ? (
+    <LNUpsellBanner location="wallet" />
+  ) : undefined;
+
+  if (lazyOnboardingBanner.isShown) {
     return (
       <BannersSectionShell isFirst={isFirst}>
-        <LNSUpsellBanner location="wallet" pt={4} />
+        <PaddedBanner>
+          <LazyOnboardingBannerView {...lazyOnboardingBanner} />
+        </PaddedBanner>
+      </BannersSectionShell>
+    );
+  }
+
+  if (isLNUpsellBannerShown && !canCoexistWithBraze) {
+    return (
+      <BannersSectionShell isFirst={isFirst}>
+        <LNUpsellBanner location="wallet" pt={4} />
       </BannersSectionShell>
     );
   }
@@ -141,6 +161,7 @@ export const PortfolioBannersSection = ({
               key="contentCardsLocationPortfolio"
               locationId={ContentCardLocation.TopWallet}
               mx={-6}
+              leadingSlide={upsellLeadingSlide}
             />
           </Box>
         </Box>

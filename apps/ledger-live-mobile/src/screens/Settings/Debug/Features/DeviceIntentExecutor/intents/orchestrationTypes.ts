@@ -1,4 +1,4 @@
-import type { Intent } from "@ledgerhq/device-intent";
+import type { Intent } from "@features/platform-device-intent";
 import type { InitializationInput } from "LLM/components/DeviceIntentExecutor/types";
 import type {
   GetAddressLegacyWithDeviceDemoIntent,

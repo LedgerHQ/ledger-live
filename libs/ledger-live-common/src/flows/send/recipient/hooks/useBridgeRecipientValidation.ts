@@ -7,7 +7,7 @@ import type {
   TransactionStatus,
 } from "@ledgerhq/live-common/coin-modules/transaction-types";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { BridgeValidationErrors, BridgeValidationWarnings } from "../types";
 
 export type BridgeRecipientValidationResult = {
@@ -61,9 +61,7 @@ export function useBridgeRecipientValidation({
     status: null,
   });
 
-  const lastRecipientRef = useRef<string>("");
-  const lastBaseTransactionRef = useRef<Transaction | null | undefined>(undefined);
-  const validationTriggeredRef = useRef<boolean>(false);
+  const prevRecipientRef = useRef<string>("");
   const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
 
@@ -162,18 +160,15 @@ export function useBridgeRecipientValidation({
     }
   }, [account, recipient, enabled, parentAccount, baseTransaction, memo]);
 
-  if (
-    recipient !== lastRecipientRef.current ||
-    baseTransaction !== lastBaseTransactionRef.current
-  ) {
-    lastRecipientRef.current = recipient;
-    lastBaseTransactionRef.current = baseTransaction;
-    validationTriggeredRef.current = false;
+  // Reset / schedule validation in an effect — never call setState during render.
+  // useLayoutEffect keeps recipient-change resets synchronous before paint so
+  // consumers can tell "awaiting first bridge result" apart from a revalidation
+  // without a flash of the previous settled status.
+  useLayoutEffect(() => {
+    const recipientChanged = recipient !== prevRecipientRef.current;
+    prevRecipientRef.current = recipient;
 
-    if (debounceTimeoutRef.current) {
-      clearTimeout(debounceTimeoutRef.current);
-      debounceTimeoutRef.current = null;
-    }
+    cleanup();
 
     if (!recipient) {
       setValidationState({
@@ -182,22 +177,35 @@ export function useBridgeRecipientValidation({
         isLoading: false,
         status: null,
       });
-    }
-  }
-
-  if (recipient && !validationTriggeredRef.current && enabled) {
-    validationTriggeredRef.current = true;
-
-    if (debounceTimeoutRef.current) {
-      clearTimeout(debounceTimeoutRef.current);
+      return cleanup;
     }
 
-    setValidationState(prev => ({ ...prev, isLoading: true }));
+    // Clear settled results when the recipient changes so consumers can tell
+    // "awaiting first bridge result" apart from a revalidation of the same address.
+    // Keeping the previous status on transaction-only changes avoids UI flicker.
+    if (recipientChanged) {
+      setValidationState({
+        errors: {},
+        warnings: {},
+        isLoading: enabled,
+        status: null,
+      });
+    }
+
+    if (!enabled) {
+      return cleanup;
+    }
+
+    if (!recipientChanged) {
+      setValidationState(prev => ({ ...prev, isLoading: true }));
+    }
 
     debounceTimeoutRef.current = setTimeout(() => {
       validateRecipient();
     }, debounceMs);
-  }
+
+    return cleanup;
+  }, [recipient, baseTransaction, enabled, debounceMs, validateRecipient, cleanup]);
 
   return useMemo(
     () => ({

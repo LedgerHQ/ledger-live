@@ -1,7 +1,6 @@
 import network from "@ledgerhq/live-network";
 import { DEFAULT_SWAP_TIMEOUT_MS } from "../../const/timeout";
 import axios from "axios";
-import { LedgerAPI4xx } from "@ledgerhq/errors";
 import { ExchangeRate, ExchangeRateErrorDefault, ExchangeRateResponseRaw } from "../../types";
 import { Unit } from "@ledgerhq/live-app-sdk";
 import { SwapGenericAPIError } from "../../../../errors";
@@ -126,7 +125,7 @@ export async function fetchRates({
         // TODO: LIVE-8901 (handle request timeout)
       }
     }
-    if (e instanceof LedgerAPI4xx) {
+    if ((e as { name?: string })?.name === "LedgerAPI4xx") {
       // TODO: LIVE-8901 (handle 4xx)
     }
     throw e;

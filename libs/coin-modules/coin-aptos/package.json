@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-aptos",
-  "version": "3.22.0",
+  "version": "3.27.0",
   "description": "Ledger Aptos Coin integration",
   "keywords": [
     "Ledger",
@@ -80,6 +80,11 @@
       "require": "./lib/utils/index.js",
       "default": "./lib-es/utils/index.js"
     },
+    "./errors": {
+      "@ledgerhq/source": "./src/errors.ts",
+      "require": "./lib/errors.js",
+      "default": "./lib-es/errors.js"
+    },
     "./*": {
       "@ledgerhq/source": "./src/*.ts",
       "require": "./lib/*.js",
@@ -97,20 +102,18 @@
     "@apollo/client": "^3.12.6",
     "@aptos-labs/ts-sdk": "^3.1.3",
     "@ledgerhq/coin-module-framework": "catalog:",
-    "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/devices": "workspace:*",
-    "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
-    "@ledgerhq/logs": "workspace:^",
+    "@ledgerhq/logs": "catalog:",
     "@ledgerhq/types-live": "workspace:^",
     "@noble/hashes": "1.8.0",
     "bignumber.js": "^9.1.2",
     "got": "11.8.5",
     "graphql": "^16.10.0",
     "invariant": "^2.2.4",
-    "lodash": "^4.17.21",
+    "lodash": "catalog:",
     "rxjs": "catalog:"
   },
   "devDependencies": {
@@ -120,7 +123,7 @@
     "@swc/jest": "catalog:",
     "@types/invariant": "^2.2.37",
     "@types/jest": "catalog:",
-    "@types/lodash": "^4.17.14",
+    "@types/lodash": "catalog:",
     "@types/node": "catalog:",
     "@types/semver": "catalog:",
     "axios": "catalog:",

@@ -1,6 +1,7 @@
 import { expect } from "@playwright/test";
 import { Fee } from "@ledgerhq/live-e2e-shared/enum/Fee";
 import type { AccountType } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { SEND_ADDRESS_FORMAT_OPTIONS } from "@ledgerhq/live-common/flows/send/utils";
 import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
 import { step } from "tests/misc/reporters/step";
 import { Modal } from "tests/component/modal.component";
@@ -13,6 +14,7 @@ export class NewSendModal extends Modal {
   readonly matchedAddressButtons = this.dialog
     .locator('[data-testid="send-matched-address-button"]')
     .filter({ visible: true });
+  readonly memoInput = this.dialog.getByTestId("send-memo-input");
   readonly skipMemoLink = this.dialog.getByTestId("send-skip-memo-link");
   readonly skipMemoConfirmButton = this.dialog.getByTestId("send-skip-memo-confirm-button");
   readonly amountInput = this.dialog.getByTestId("send-amount-input");
@@ -33,6 +35,7 @@ export class NewSendModal extends Modal {
     .or(this.confirmationErrorContent)
     .or(this.confirmationInfoContent);
   readonly successConfirmationTitle = this.dialog.getByTestId("send-confirmation-success-title");
+  readonly viewDetailsButton = this.dialog.getByTestId("send-confirmation-view-details-button");
   readonly deviceActionLoader = this.page.getByTestId("device-action-loader");
   readonly signaturePrompt = this.dialog.getByTestId("send-signature-prompt");
 
@@ -61,9 +64,7 @@ export class NewSendModal extends Modal {
   async clickOnSendToButton(account?: AccountType) {
     const label =
       account?.ensName ??
-      (account?.address
-        ? formatAddress(account.address, { prefixLength: 5, suffixLength: 5 })
-        : undefined);
+      (account?.address ? formatAddress(account.address, SEND_ADDRESS_FORMAT_OPTIONS) : undefined);
 
     const button = label
       ? this.matchedAddressButtons.filter({ hasText: label }).first()
@@ -72,12 +73,24 @@ export class NewSendModal extends Modal {
     await button.click();
   }
 
+  @step("Type memo: $0")
+  async typeMemo(memo: string) {
+    await this.memoInput.waitFor({ state: "visible" });
+    await this.memoInput.fill(memo);
+    await expect(this.memoInput).toHaveValue(memo);
+  }
+
   @step("Skip memo")
   async skipMemo({ confirm = true }: { confirm?: boolean } = {}) {
     await this.skipMemoLink.click();
     if (confirm) {
       await this.skipMemoConfirmButton.click();
     }
+  }
+
+  @step("Click View details")
+  async clickViewDetails() {
+    await this.viewDetailsButton.click();
   }
 
   @step("Fill crypto amount: $0 (switches to crypto mode first)")

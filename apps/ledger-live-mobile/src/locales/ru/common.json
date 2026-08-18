@@ -28,6 +28,7 @@
     "cryptoAsset" : "Криптоактив",
     "skip" : "Пропустить",
     "next" : "Далее",
+    "new" : "Новое",
     "noCryptoFound" : "Криптоактивы не найдены",
     "needHelp" : "Нужна помощь?",
     "edit" : "Редактировать",
@@ -127,8 +128,16 @@
       "title" : "Повторите попытку",
       "description" : "Счёт устарел, его необходимо синхронизировать"
     },
+    "AccountPublicKeyUnavailable" : {
+      "title" : "Счёт необходимо добавить снова",
+      "description" : "Ledger Wallet не удалось получить публичный ключ этого счёта. Удалите счёт и добавьте его снова, чтобы продолжить"
+    },
     "AlgorandASANotOptInInRecipient" : {
       "title" : "В указанном ASA не выбран счёт получателя."
+    },
+    "AlgorandMemoExceededSizeError" : {
+      "title" : "Слишком длинное Memo",
+      "description" : "Memo в Algorand не могут превышать 1024 байта. Пожалуйста, сократите примечание Memo."
     },
     "BluetoothRequired" : {
       "title" : "Кажется, Bluetooth отключён",
@@ -479,6 +488,12 @@
     "FeeRequired" : {
       "title" : "Необходимо указать комиссию"
     },
+    "FeeTooHigh" : {
+      "title" : "Комиссия составляет 10% от суммы"
+    },
+    "RecipientIsNewAccount" : {
+      "title" : "Этот адрес ещё никогда не получал средства. Для его активации комиссия сети будет увеличена."
+    },
     "FeeTooLow" : {
       "title" : "Комиссия слишком низкая, чтобы сеть её приняла. Попробуйте увеличить её"
     },
@@ -532,6 +547,10 @@
     },
     "InvalidExplorerResponse" : {
       "title" : "Некорректный ответ от обозревателя {{currencyName}}"
+    },
+    "InvalidTransactionError" : {
+      "title" : "Некорректная транзакция",
+      "description" : "Транзакция больше не соответствует состоянию блокчейна. Пожалуйста, запустите поток ещё раз."
     },
     "LanguageInstallRefusedOnDevice" : {
       "title" : "Установка языка на устройстве невозможна",
@@ -902,11 +921,17 @@
     "TezosNotEnoughStaked" : {
       "title" : "Недостаточно баланса в стейкинге"
     },
+    "TezosStakeBlockedByPendingUnstake" : {
+      "title" : "Сначала должен завершиться вывод из стейкинга от вашего предыдущего валидатора"
+    },
     "RecommendSubAccountsToEmpty" : {
       "title" : "Пожалуйста, сначала опустошите все субсчета"
     },
     "NotSupportedLegacyAddress" : {
       "title" : "Старый формат адреса больше не поддерживается"
+    },
+    "RecipientRequired" : {
+      "title" : "Адрес получателя обязателен"
     },
     "SourceHasMultiSign" : {
       "title" : "Пожалуйста, отключите мультиподписи, чтобы отправить {{currencyName}}"
@@ -1376,6 +1401,18 @@
       }
     }
   },
+  "largeScreenUpsellModal" : {
+    "optedIn" : {
+      "title" : "Обзора больше. Действий меньше. Скидка {{discount}}%",
+      "subtitle" : "Оцените увеличенный экран, удобную Проверку транзакций, усиленную защиту и эксклюзивную скидку {{discount}}%.",
+      "cta" : "Изучить сенсорные устройства"
+    },
+    "optedOut" : {
+      "title" : "Распознайте скам до подписания",
+      "subtitle" : "Узнайте больше о продвинутых функциях безопасности, которые позволяют обнаруживать угрозы в реальном времени.",
+      "cta" : "Подробнее"
+    }
+  },
   "earn" : {
     "simulator" : {
       "title" : "Симулятор вознаграждений"
@@ -1514,10 +1551,6 @@
     }
   },
   "graph" : {
-    "week" : "1Н",
-    "month" : "1М",
-    "year" : "1Г",
-    "all" : "ВСЕ",
     "graphNotSupported" : "График этого токена недоступен"
   },
   "carousel" : {
@@ -1663,10 +1696,8 @@
     "cta" : "Купить Ledger",
     "footer" : "У меня уже есть Ledger, настроить его",
     "bannerTitle" : "Передовая защита для ваших монет и NFT",
-    "bannerTitle2" : "Вам понадобится Ledger для проведения сделок",
     "bannerSubtitle" : "с Ledger Flex",
     "bannerButtonTitle" : "Больше о Ledger Flex",
-    "bannerButtonTitle2" : "Купить Ledger",
     "setupCta" : "У меня уже есть Ledger, настроить его"
   },
   "rebornBuyDevice" : {
@@ -2795,44 +2826,18 @@
       "skipCTA" : "Не сейчас"
     }
   },
-  "tabs" : {
-    "accounts" : "Счета",
-    "transfer" : "Перевод",
-    "manager" : "Мой Ledger",
-    "myWallet" : "Мой кошелёк",
-    "settings" : "Настройки",
-    "platform" : "Приложения",
-    "discover" : "Исследуйте",
-    "nanoX" : "Nano X",
-    "market" : "Рынок",
-    "earn" : "Приумножить",
-    "card" : "Карта",
-    "swap" : "Обмен"
-  },
   "portfolio" : {
     "totalBalance" : "Общий баланс",
-    "syncError" : "Ошибка синхронизации",
-    "syncFailed" : "Сбой синхронизации",
     "syncPending" : "Синхронизируем...",
     "transactionsPendingConfirmation" : {
       "title" : "Баланс не синхронизирован",
       "desc" : "Некоторые транзакции ещё не подтверждены. Они будут отражены на вашем балансе и доступны для использования после подтверждения."
     },
     "emptyState" : {
-      "noAppsTitle" : "Установить приложение на устройство",
-      "noAppsDesc" : "Установите приложения на устройство, чтобы создавать счета в Ledger Wallet. Перейдите в «Мой Ledger», чтобы установить приложения.",
-      "noAccountsTitle" : "Счетов пока нет…",
-      "noAccountsDesc" : "Пожалуйста, добавьте счета в Портфель.",
       "buttons" : {
         "import" : "Добавить актив",
-        "buy" : "Купить",
         "manager" : "Установите приложения",
         "managerSecondary" : "Уст. приложения на устройство"
-      },
-      "addAccounts" : {
-        "addAccounts" : "Добавить актив",
-        "title" : "Приступить",
-        "description" : "Вы можете купить криптовалюту у наших партнёров или настроить кошелёк"
       }
     },
     "noOpState" : {
@@ -2840,7 +2845,8 @@
       "desc" : "Просто отправьте криптоактивы получателю и дождитесь синхронизации приложения."
     },
     "carousel" : {
-      "title" : "Специально для вас"
+      "title" : "Специально для вас",
+      "closeAll" : "Закрыть все"
     },
     "perpsEntry" : {
       "title" : "Перпсы (бессрочные фьючерсы)",
@@ -2850,16 +2856,8 @@
       "title" : "Криптозаймы",
       "cardTitle" : "Займы в стейблкойнах",
       "cardDescription" : "Возьмите заём с привлекательной ставкой",
-      "cta" : "Исследуйте"
+      "cta" : "Попробовать"
     },
-    "recommended" : {
-      "title" : "Рекомендуем"
-    },
-    "topGainers" : {
-      "title" : "Прибыльные (24Ч)",
-      "seeMarket" : "Просмотреть все"
-    },
-    "walletBalance" : "Баланс кошелька",
     "balance" : {
       "noSigner" : "Ваш безопасный\nкриптокошелёк",
       "noAccounts" : "Для начала\nпополните кошелёк"
@@ -2892,8 +2890,7 @@
       "sell" : "Продажа",
       "swap" : "Обменять",
       "send" : "Отправить",
-      "deposit" : "Получить",
-      "stake" : "Стейкать"
+      "deposit" : "Получить"
     },
     "quickActionsCtas" : {
       "transfer" : "Перевести",
@@ -2971,6 +2968,8 @@
     "month" : "1М",
     "year" : "1Г",
     "all" : "Все",
+    "second_short" : "сек.",
+    "minute_short" : "мин.",
     "since" : {
       "day" : "за день",
       "week" : "за неделю",
@@ -3029,6 +3028,8 @@
       "UNSTAKE" : "Выведено из стейкинга",
       "WITHDRAW_UNSTAKED" : "Вывод",
       "FINALIZE_UNSTAKE" : "Выведено из стейкинга",
+      "STAKE_NEURON" : "Застейкано",
+      "TOP_UP_NEURON" : "Стейк увеличен",
       "ASSOCIATE_TOKEN" : "Привязка токена",
       "CONTRACT_CALL" : "Вызов контракта",
       "UPDATE_ACCOUNT" : "Обновлённый счёт"
@@ -3042,7 +3043,8 @@
       "more" : "Параметры истории транзакций",
       "hideDustTransactions" : "Скрыть пылевые транзакции",
       "showDustTransactions" : "Показать пылевые транзакции",
-      "dustTransactionsDescription" : "Транзакции на сумму менее {{threshold}} в вашей основной валюте будут скрыты."
+      "dustTransactionsHiddenDescription" : "Транзакции на сумму менее {{threshold}} будут скрыты.",
+      "dustTransactionsDisplayedDescription" : "Транзакции на сумму менее {{threshold}} будут отображаться."
     }
   },
   "operationDetails" : {
@@ -3407,15 +3409,15 @@
     },
     "facebook" : {
       "title" : "Facebook",
-      "desc" : "Поставьте лайк нашей странице"
+      "desc" : "Поставьте «лайк» нашей странице."
     },
     "twitter" : {
       "title" : "Twitter",
-      "desc" : "Подпишитесь на нас"
+      "desc" : "Подпишитесь на нас."
     },
     "github" : {
       "title" : "GitHub",
-      "desc" : "Изучите наш код"
+      "desc" : "Изучите наш код."
     },
     "status" : {
       "title" : "Состояние Ledger",
@@ -3437,8 +3439,6 @@
       "walletSync" : "Ledger Sync",
       "walletSyncDesc" : "Синхронизируйте ваши криптовалютные счета Ledger Wallet между разными смартфонами и ПК.",
       "walletSyncDescription" : "Держите портфель в актуальном состоянии, переключаясь между ПК или смартфонами.",
-      "region" : "Регион",
-      "regionDesc" : "Выберите регион, чтобы обновить форматы дат, времени и валют.",
       "password" : "Блокировка приложения",
       "passwordDesc" : "Установите пароль для блокировки Ledger Wallet.",
       "passwordDescBioCompat" : "Установите пароль или используйте {{biometricsType}} для блокировки Ledger Wallet.",
@@ -3830,8 +3830,7 @@
       "learnMore" : "Подробнее о тегах примечания/Memo"
     },
     "send" : {
-      "title" : "Отправить",
-      "description" : "Отправляйте криптовалюту на другие кошельки."
+      "title" : "Отправить"
     },
     "fees" : {
       "title" : "Расчёт комиссии"
@@ -3964,21 +3963,12 @@
       "title" : "Покупка",
       "description" : "Купить криптовалюту за фиат. Это безопасно."
     },
-    "sell" : {
-      "title" : "Продажа",
-      "description" : "Безопасно продавайте криптовалюту за фиат."
-    },
     "exchange" : {
       "title" : "Покупка/Продажа",
       "connectingTo" : "Подключаем вас к {{provider}}"
     },
-    "stake" : {
-      "title" : "Стейкинг",
-      "description" : "Получайте вознаграждения с вашей крипты"
-    },
     "swap" : {
       "title" : "Обмен",
-      "description" : "Обменивайте один криптоактив на другой.",
       "selectDevice" : "Выберите устройство",
       "broadcasting" : "Транслируем обменную операцию",
       "loadingFees" : "Загружаем комиссию сети...",
@@ -4191,7 +4181,8 @@
               "sendPending" : "Отправка {{ticker}}",
               "sendCompleted" : "Отправка {{ticker}}",
               "receivePending" : "Получение {{ticker}}",
-              "receiveCompleted" : "Получены {{ticker}}"
+              "receiveCompleted" : "Получены {{ticker}}",
+              "estimated" : "(ориентировочно)"
             },
             "details" : {
               "networkFees" : "Комиссия сети",
@@ -4256,7 +4247,11 @@
         "monad_title" : "Ledger Nano S™ не поддерживает обмен Monad",
         "monad_description" : "Для обмена Monad используйте совместимые устройства Ledger. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
         "zcash_title" : "Ledger Nano S™ не поддерживает обмен Zcash",
-        "zcash_description" : "Для обмена Zcash используйте совместимые устройства Ledger. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™."
+        "zcash_description" : "Для обмена Zcash используйте совместимые устройства Ledger. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
+        "aleo_title" : "Ledger Nano S™ не поддерживает обмен Aleo",
+        "aleo_description" : "Используйте другие совместимые устройства Ledger для обмена Aleo. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
+        "aleo_tokens_title" : "Ledger Nano S™ не поддерживает обмен токенов сети Aleo",
+        "aleo_tokens_description" : "Используйте другие совместимые устройства Ledger для обмена токенов сети Aleo. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™."
       }
     },
     "lending" : {
@@ -4453,17 +4448,36 @@
     "walletConnect" : {
       "title" : "WalletConnect",
       "description" : "Подключите кошелёк к децентрализованным приложениям."
-    },
-    "recover" : {
-      "title" : "Ledger Recover",
-      "description" : "Восстановить кошелёк теперь проще простого.",
-      "tag" : "Месяц в подарок"
     }
   },
   "signMessage" : {
     "eip712" : {
       "showFullMessage" : "Показать полное сообщение",
       "hideFullMessage" : "Скрыть полное сообщение"
+    }
+  },
+  "walletApiSignMessage" : {
+    "sign" : {
+      "title" : "Продолжите на {{productName}}",
+      "description" : "Следуйте инструкциям на Защищённом экране",
+      "cancelled" : {
+        "title" : "Операция отклонена на устройстве",
+        "close" : "Закрыть",
+        "retry" : "Повторить"
+      }
+    }
+  },
+  "walletApiSignTransaction" : {
+    "sign" : {
+      "title" : "Продолжите на {{productName}}",
+      "description" : "Следуйте инструкциям на Защищённом экране",
+      "termsAndConditions" : "Подписывая эту транзакцию, вы принимаете <0>Условия использования {{appName}}</0>.",
+      "termsAndConditionsWithPrivacy" : "Подписывая эту транзакцию, вы принимаете <0>Условия использования {{appName}}</0> и <1>Политику конфиденциальности</1>.",
+      "cancelled" : {
+        "title" : "Операция отклонена на устройстве",
+        "close" : "Закрыть",
+        "retry" : "Повторить"
+      }
     }
   },
   "sync" : {
@@ -4478,6 +4492,11 @@
       "title" : "Отправить {{currency}}",
       "available" : "Доступно: {{amount}}",
       "to" : "Куда:",
+      "addressDisclaimer" : {
+        "accessibilityLabel" : "Об адресе получателя",
+        "title" : "Проверьте адрес на устройстве Ledger",
+        "description" : "Устройство Ledger безопасно покажет полный адрес. Он должен совпадать с адресом из первоначального источника."
+      },
       "placeholder" : "Введите адрес или ENS",
       "placeholderNoENS" : "Ввести адрес",
       "pasteFromClipboard" : {
@@ -4541,6 +4560,16 @@
       "feesAmount" : "Сумма комиссии ({{unit}})",
       "gasLimit" : "Лимит Газа ({{unit}})",
       "feesPaid" : "Комиссия сети за обработку вашей транзакции",
+      "tronFees" : {
+        "sufficient" : {
+          "title" : "Комиссия сети в TRX",
+          "description" : "Для оплаты комиссии сети потребуется {{energy}} Energy и {{bandwidth}} Bandwidth."
+        },
+        "insufficient" : {
+          "title" : "Детализация комиссии сети",
+          "description" : "У вас недостаточно Energy и Bandwidth для этого перевода. Недостаток будет покрыт за счёт сжигания TRX."
+        }
+      },
       "insufficientBalanceFees" : "Недостаточный баланс для покрытия комиссии сети",
       "amountToSend" : "Сумма к отправке в ({{currency}})",
       "coinToSend" : "Монета для отправки",
@@ -4565,6 +4594,10 @@
           "description" : "Вы отклонили транзакцию. Она не затронет ваши средства.",
           "close" : "Закрыть",
           "retry" : "Повторить?"
+        },
+        "error" : {
+          "retry" : "Повторить?",
+          "close" : "Закрыть"
         }
       },
       "confirmation" : {
@@ -4581,6 +4614,7 @@
         "maxPriorityFee" : "Макс. комиссия за приоритет ({{unit}})",
         "gasLimit" : "Лимит Газа ({{unit}})",
         "feePerByte" : "Сумма комиссии ({{unit}})",
+        "feesAmount" : "Сумма комиссии ({{unit}})",
         "suggested" : "Рекомендовано",
         "nextBlock" : "Следующий блок",
         "networkFeesInFiat" : "Комиссия сети в {{currency}}",
@@ -4727,6 +4761,7 @@
       "slow" : "Медленно",
       "custom" : "Пользовательская",
       "customFees" : "Пользовательская комиссия",
+      "defaultNetworkFee" : "Стандартная комиссия сети",
       "coinControl" : "Контроль монет",
       "edit" : {
         "title" : "Выберите единицу измерения"
@@ -6725,6 +6760,12 @@
       }
     }
   },
+  "hypercore" : {
+    "operationTypes" : {
+      "IN" : "Пополнение",
+      "OUT" : "Вывод"
+    }
+  },
   "tezos" : {
     "AccountHeader" : {
       "title" : "Можно получать вознаграждения за делегирование счёта",
@@ -6735,7 +6776,8 @@
     },
     "delegation" : {
       "addCustomValidator" : "+ Пользовательский валидатор",
-      "sectionLabel" : "Делегирование"
+      "sectionLabel" : "Делегирование",
+      "pendingUnstakeWarning" : "Вы можете сменить валидатора сейчас, но не сможете стейкать через нового, пока не завершится период ожидания вывода из стейкинга от вашего текущего валидатора (примерно ~4 дня)."
     },
     "staking" : {
       "sectionLabel" : "Стейкинг",
@@ -6916,6 +6958,7 @@
             "allAssetsUsed" : "Использованы все активы",
             "minAmount" : "Мин. сумма: <0>{{min}}</0>",
             "incorrectAmount" : "Макс. сумма: <0>{{max}}</0>",
+            "visibilityDelay" : "Может пройти до {{numberOfMinutes}} мин., прежде чем это делегирование появится на вашей панели делегирования.",
             "cta" : "Продолжить"
           },
           "verification" : {
@@ -8411,9 +8454,6 @@
   "ApplicationVersion" : "v {{version}}",
   "analytics" : {
     "title" : "Аналитика",
-    "allocation" : {
-      "title" : "Распределение"
-    },
     "operations" : {
       "title" : "История транзакций"
     }
@@ -8758,10 +8798,6 @@
           "title" : "Синхронизируйте кошельки",
           "description" : "Поддерживайте синхронизацию между вашими счетами."
         },
-        "customImage" : {
-          "title" : "Настройки экрана блокировки",
-          "description" : "Поместите любимый цифровой арт или фотографию в качестве заставки экрана блокировки вашего устройства."
-        },
         "recover" : {
           "title" : "Завершите создание резервной копии",
           "description" : "Активируйте Ledger Recover"
@@ -8789,10 +8825,6 @@
         "titleCompleted" : "Криптовалюта куплена",
         "description" : "Выбирайте из 500+ монет и токенов.",
         "popupLabel" : "Куплено криптовалюты"
-      },
-      "customImage" : {
-        "titleCompleted" : "Экран блокировки настроен",
-        "popupLabel" : "Экран блокировки настроен"
       },
       "recover" : {
         "titleCompleted" : "Резервная копия создана",
@@ -8841,11 +8873,6 @@
         }
       }
     }
-  },
-  "newsfeed" : {
-    "title" : "Новостная рассылка",
-    "poweredByCryptopanic" : "Разработано Cryptopanic",
-    "noPosts" : "Пока здесь ничего нет"
   },
   "deviceConnect" : {
     "title" : "Добавление устройства"
@@ -9453,6 +9480,13 @@
       "openMenuA11yLabel" : "Параметры графика",
       "hideTransactions" : "Скрыть активность на графике",
       "showTransactions" : "Показать активность на графике"
+    },
+    "footer" : {
+      "moreOptions" : {
+        "accessibilityLabel" : "Больше опций",
+        "sell" : "Продать",
+        "earn" : "Приумножить"
+      }
     }
   },
   "assetSelection" : {
@@ -9475,15 +9509,19 @@
   },
   "lnsUpsell" : {
     "opted_in" : {
-      "title" : "Обновите устройство Ledger Nano S™",
-      "description" : "Получите эксклюзивную скидку 20% на новые устройства подписи Ledger.",
+      "title" : "Больше обзора. Безопаснее подписывать",
+      "description" : "Обновитесь со скидкой 20%.",
       "cta" : "Обновиться"
     },
     "opted_out" : {
-      "title" : "Обновите устройство Ledger Nano S™",
-      "description" : "У Ledger Nano S ограниченный объём памяти, что не позволяет владельцам этого устройства использовать актуальные функции и изменения в блокчейне, а также наслаждаться улучшениями безопасности.",
+      "title" : "Больше безопасности. Больше контроля",
+      "description" : "Узнайте больше об функциях безопасности.",
       "cta" : "Подробнее..."
     }
+  },
+  "lazyOnboardingBanner" : {
+    "title" : "Подробнее об устройствах Ledger",
+    "description" : "Познакомьтесь с нашими новейшими продуктами и аксессуарами"
   },
   "marketBanner" : {
     "title" : "Рынок",
@@ -9567,6 +9605,8 @@
     "emptyAssetList" : "Ничего не нашли :(",
     "accountCount_one" : "1 счёт",
     "accountCount_other" : "Счета: {{count}}",
+    "emptyAccounts" : "У вас ещё нет счетов {{network}}. Добавьте счёт, чтобы продолжить",
+    "addAccount" : "Добавить счёт",
     "perpetualsBanner" : "Пока что поддерживается только USDC в блокчейне Arbitrum.",
     "errors" : {
       "title" : "Сбой подключения",
@@ -9922,7 +9962,8 @@
     "swap" : "Обмен",
     "earn" : "Прирост",
     "yield" : "Доходность",
-    "card" : "Карта"
+    "card" : "Карта",
+    "paytab" : "Платежи"
   },
   "syncIndicator" : {
     "accessibilityLabel" : {
@@ -9969,6 +10010,10 @@
       "backup" : "[L] Recover",
       "help" : "Помощь",
       "referral" : "Рефералы"
+    },
+    "contacts" : {
+      "title" : "Контакты",
+      "description" : "Управление списком контактов"
     },
     "backupHub" : {
       "title" : "Копии вашей фразы восстановления",
@@ -10038,7 +10083,7 @@
       "stepViewKeyWarning" : {
         "title" : "Настройте конфиденциальный баланс Aleo",
         "description" : "Ledger Wallet хранит ваш ключ просмотра, чтобы отображать конфиденциальный баланс, и использует сторонние услуги для обработки конфиденциальных транзакций. <0>Подробнее</0>",
-        "bullets" : ["Доступ только для чтения, чтобы расшифровать ваш конфиденциальный баланс.", "Ledger не может отправлять или тратить ваши криптоактивы", "Только вы можете подписывать операции и тратить криптоактивы", "Генерация доказательства проводится сторонними доказывающими, чтобы обеспечить быструю обработку", "Доказывающие не могут получить доступ к вашим криптоактивам или потратить их"],
+        "bullets" : ["Ключ просмотра даёт доступ только для чтения, чтобы расшифровать ваш приватный баланс в Ledger Wallet", "Только вы можете подписывать транзакции и тратить средства через своё устройство подписи Ledger", "Для транзакций Aleo необходимы доказательства с нулевым разглашением, требующие значительной вычислительной мощности", "Для ускорения транзакций за генерацию доказательств отвечает внешний сервис Aleo Network"],
         "cta" : {
           "allow" : "Принять",
           "cancel" : "Отменить"
@@ -10049,16 +10094,64 @@
         "description" : "Подтвердите экспорт ключа просмотра на устройстве",
         "cancelAlert" : "Вы можете отклонять отдельные счета на устройстве. Если отклонить все счета, новые счета не будут добавляться в ваш портфель.",
         "cancelAllBtn_one" : "Отменить",
-        "cancelAllBtn_other" : "Отменить всё"
+        "cancelAllBtn_other" : "Отменить всё",
+        "redirecting" : "Перенаправляем..."
+      },
+      "stepNoAccountsAdded" : {
+        "title" : "Не добавлены счета {{currency}}",
+        "description" : "Вы не поделились ключом просмотра ни с одним из выбранных счетов. Ключи просмотра необходимы для отображения конфиденциального баланса в Ledger Wallet."
       },
       "stepScanAccounts" : {
         "cta" : {
-          "shareViewKeys" : "Поделиться ключами просмотра"
+          "shareKey_one" : "Поделиться ключом просмотра",
+          "shareKey_other" : "Поделиться ключами просмотра"
         }
       }
     },
     "accountActions" : {
-      "publicToPrivate" : "Перевод себе"
+      "publicToPrivate" : "Обменять"
+    },
+    "send" : {
+      "balanceSelection" : {
+        "title" : "Выберите баланс",
+        "convertToPrivate" : "Перевести с публичного",
+        "convertToPublic" : "Перевести с приватного",
+        "sendPublicly" : "Отправить публично",
+        "sendPrivately" : "Отправить приватно"
+      },
+      "balanceSelector" : {
+        "public" : "Публичный",
+        "private" : "Приватный",
+        "lastUpdate" : "Последнее обновление: {{label}}",
+        "recently" : "недавно"
+      },
+      "mandatoryPrivateSync" : {
+        "title" : "Синхронизируем ваш приватный баланс ({{percentage}}%)",
+        "desc" : "Пожалуйста, подождите",
+        "errorTitle" : "Сбой приватной синхронизации",
+        "errorDesc" : "Что-то пошло не так. Попробуйте ещё раз."
+      },
+      "quickAmountSelector" : {
+        "title" : "Быстрый выбор",
+        "strategies" : {
+          "fast" : "Быстро",
+          "balanced" : "Баланс",
+          "full" : "Целиком"
+        },
+        "recordCount_one" : "{{count}} запись",
+        "recordCount_other" : "Записей ({{count}})",
+        "unavailable" : "Недоступно",
+        "noValue" : "—",
+        "spendableBalance" : "Макс. доступный баланс:",
+        "tooltip" : {
+          "desc" : "Отправитель, сумма и получатель скрыты в блокчейне. До {{max}} записей за отправку."
+        }
+      },
+      "summary" : {
+        "proofGenerationWarning" : "Транзакция Aleo требует создания доказательства. Это может занять некоторое время.",
+        "recordsUsed" : "Использованные записи",
+        "signingTime" : "Время входа"
+      }
     },
     "balancesSection" : "Балансы",
     "info" : {
@@ -10069,6 +10162,164 @@
       "private" : {
         "title" : "Скрытый баланс",
         "description" : "Экранированный баланс в сети Aleo. Этот баланс виден только вам и требует генерации доказательства для приватных транзакций."
+      }
+    },
+    "account" : {
+      "syncButton" : {
+        "startSync" : "Начать синхронизацию",
+        "stopSync" : "Остановить синхронизацию",
+        "syncAgain" : "Синхронизировать повторно",
+        "lastSync" : "Последняя синхронизация: {{date}}"
+      }
+    },
+    "operations" : {
+      "type" : {
+        "public" : "Публичная",
+        "private" : "Конфиденциальная"
+      }
+    },
+    "shared" : {
+      "sponsoredByProvable" : "Спонсируется Provable"
+    }
+  },
+  "contacts" : {
+    "title" : "Контакты",
+    "addContact" : "Добавить контакт",
+    "addAddress" : "Добавить адрес",
+    "addYourAddress" : "Добавить свой адрес",
+    "searchPlaceholder" : "Поиск контакта...",
+    "searchNoResults" : "Контакт не найден",
+    "addContactDrawer" : {
+      "namePlaceholder" : "Имя контакта",
+      "namingDisclaimer" : "В целях конфиденциальности не используйте полные имена и фамилии. Используйте никнейм или просто имя и инициал (например, Вася П.)",
+      "confirmName" : "Подтвердить имя",
+      "invalidNameError" : "Спецсимволы использовать нельзя.",
+      "duplicateNameError" : "Это имя контакта уже используется."
+    },
+    "addAddressEntry" : {
+      "title" : "Введите адрес",
+      "addressPlaceholder" : "Адрес или ENS",
+      "confirmAddress" : "Подтвердить адрес",
+      "validatingAddress" : "Проверяем адрес...",
+      "validAddress" : "Адрес корректный",
+      "invalidAddress" : "Неправильный адрес",
+      "domainNotFound" : "Адрес для домена не найден",
+      "sanctionedAddress" : "Этот адрес находится под санкциями, его нельзя использовать.",
+      "validationUnavailable" : "Проверка адреса временно недоступна",
+      "ensDisclaimer" : "ENS-имена преобразуются в адреса криптокошельков. Всегда перепроверяйте расшифрованный адрес перед тем, как продолжить.",
+      "sanctioned" : {
+        "description" : "Этот адрес помечен, и Ledger не разрешает отправлять на него деньги.",
+        "learnMore" : "Подробнее..."
+      }
+    },
+    "addAddressName" : {
+      "title" : "Имя адреса",
+      "inputLabel" : "Введите имя адреса",
+      "namingDisclaimer" : "Рекомендуем дать этому адресу имя – так его будет проще найти при необходимости. Это будет видно только вам.",
+      "continueToReview" : "Продолжить проверку",
+      "invalidLabel" : "Спецсимволы использовать нельзя.",
+      "duplicateLabel" : "Это имя адреса уже используется для данного контакта.",
+      "labelTooLong" : "Название этого адреса слишком длинное."
+    },
+    "addressCount_zero" : "0 адресов",
+    "addressCount_one" : "{{count}} адрес",
+    "addressCount_other" : "Адресов: {{count}}",
+    "me" : {
+      "name" : "Я",
+      "addressCount_zero" : "0 адресов",
+      "addressCount_one" : "{{count}} адрес",
+      "addressCount_other" : "Адресов: {{count}}"
+    },
+    "detail" : {
+      "meDisplayName" : "{{name}} (Я)",
+      "ledgerWalletAddresses" : "Адреса Ledger Wallet",
+      "myAddresses" : "Мои адреса",
+      "emptyState" : {
+        "title" : "Адресов пока нет",
+        "meTitle" : "Сохраняйте собственные адреса",
+        "meDescription" : "Сохраняйте внешние адреса, которыми вы владеете на биржах или в других криптокошельках. При следующей отправке себе ваше устройство Ledger покажет выбранное вами имя.",
+        "contactDescription" : "Сохраните адрес криптокошелька, чтобы отправлять на {{name}}"
+      }
+    },
+    "addressDetail" : {
+      "send" : "Отправить",
+      "copy" : "Скопировать",
+      "copyAddress" : "Копировать",
+      "copied" : "Скопировано",
+      "edit" : "Редактировать",
+      "share" : "Поделиться",
+      "delete" : "Удалить",
+      "networkTag" : "Сеть {{name}}"
+    },
+    "detailActions" : {
+      "editName" : "Изменить название",
+      "deleteContact" : "Удалить контакт",
+      "menuAccessibilityLabel" : "Параметры контакта"
+    },
+    "editContact" : {
+      "title" : "Изменить контакт",
+      "namePlaceholder" : "Имя контакта",
+      "namingDisclaimer" : "В целях конфиденциальности не используйте полные имена и фамилии. Используйте никнейм или просто имя и инициал, например, «Иван С.»",
+      "confirmName" : "Подтвердить имя",
+      "applyChanges" : "Применить изменения",
+      "invalidNameError" : "Спецсимволы использовать нельзя."
+    },
+    "deleteContact" : {
+      "title" : "Удалить контакт?",
+      "description" : "Удаление этого контакта сотрёт все связанные адреса.",
+      "mobileDescription" : "Удаление этого контакта сотрёт все связанные с ним адреса.",
+      "confirm" : "Удалить",
+      "cancel" : "Отменить"
+    },
+    "deleteAddress" : {
+      "title" : "Удалить адрес?",
+      "description" : "Этот адрес будет удалён из контакта.",
+      "confirm" : "Удалить",
+      "cancel" : "Отменить"
+    },
+    "editAddress" : {
+      "title" : "Изменить адрес",
+      "inputLabel" : "Введите имя адреса",
+      "applyChanges" : "Применить изменения",
+      "invalidLabelError" : "Спецсимволы использовать нельзя."
+    },
+    "editSigner" : {
+      "title" : "Подтвердите на устройстве",
+      "description" : "Подключите и разблокируйте ваше устройство Ledger, чтобы подтвердить это изменение.",
+      "confirm" : "Продолжить",
+      "cancel" : "Отменить"
+    },
+    "editSignerMismatch" : {
+      "title" : "Используйте то же устройство Ledger, которое использовали для добавления этого контакта",
+      "description" : "Подключенное устройство не подходит.",
+      "connectDifferentDevice" : "Подключите другое устройство",
+      "cancel" : "Отменить"
+    },
+    "ledgerSyncIntroduction" : {
+      "title" : "Включите Ledger Sync, чтобы сохранить контакты",
+      "description" : "Ваши контакты защищены сквозным шифрованием устройством Ledger и синхронизируются между вашими устройствами — только вы можете разблокировать их.",
+      "activate" : "Включить Ledger Sync",
+      "dismiss" : "Понятно",
+      "checkingAccessibilityLabel" : "Проверка статуса Ledger Sync"
+    },
+    "featureIntroduction" : {
+      "title" : "Представляем «Контакты»",
+      "description" : "Ваша адресная книга для криптовалюты — сохраняйте криптокошельки для отправки средств, всё в одном месте.",
+      "primaryAction" : "Попробовать",
+      "secondaryAction" : "Позже",
+      "highlights" : {
+        "saveAddresses" : {
+          "title" : "Сохраняйте адреса",
+          "description" : "Удобно храните все адреса для отправки средств."
+        },
+        "sendToRightAddress" : {
+          "title" : "Отправляйте на правильные адреса",
+          "description" : "Средства всегда поступят на нужный криптокошелёк."
+        },
+        "privateAcrossDevices" : {
+          "title" : "Конфиденциальность на всех устройствах",
+          "description" : "Сквозное шифрование благодаря Ledger Sync."
+        }
       }
     }
   }

@@ -1,8 +1,8 @@
 import { http, HttpResponse } from "msw";
 import jsonResponse from "./fixtures/assets/getAssets.json";
-import { RawApiResponse } from "@ledgerhq/live-common/dada-client/entities/index";
-import { mockStablecoinsResponse } from "@ledgerhq/live-common/dada-client/mocks/stablecoins.mock";
-import { mockStocksResponse } from "@ledgerhq/live-common/dada-client/mocks/stocks.mock";
+import type { RawApiResponse } from "@domain/api-aggregated-assets";
+import { mockStablecoinsResponse } from "@domain/api-aggregated-assets/mock/stablecoins";
+import { mockStocksResponse } from "@domain/api-aggregated-assets/mock/stocks";
 
 const handleEthereumAssets = (
   name: "ethereum" | "arbitrum" | "base" | "scroll",

@@ -16,7 +16,7 @@ import { useTheme } from "@react-navigation/native";
 import invariant from "invariant";
 import { Trans, useTranslation } from "~/context/Locale";
 import { Animated, StyleSheet, View, TextStyle, StyleProp } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "~/components/SafeAreaView";
 import { TrackScreen } from "~/analytics";
 import Button from "~/components/Button";
 import Circle from "~/components/Circle";
@@ -56,7 +56,7 @@ export default function DelegationSummary({ navigation, route }: Readonly<Props>
       const transaction = bridge.updateTransaction(t, {
         mode: HEDERA_TRANSACTION_MODES.Delegate,
         properties: {
-          stakingNodeId: defaultValidator?.nodeId ?? null,
+          stakingNodeId: defaultValidator ? Number(defaultValidator.id) : null,
         },
       });
 
@@ -89,9 +89,10 @@ export default function DelegationSummary({ navigation, route }: Readonly<Props>
 
   const currency = getAccountCurrency(account);
   const color = getCurrencyColor(currency);
-  const selectedValidatorNodeId = transaction.properties?.stakingNodeId ?? null;
+  const txStakingNodeId = transaction.properties?.stakingNodeId;
+  const selectedValidatorId = typeof txStakingNodeId === "number" ? String(txStakingNodeId) : null;
   const selectedValidator =
-    validators.find(v => v.nodeId === selectedValidatorNodeId) ?? defaultValidator ?? undefined;
+    validators.find(v => v.id === selectedValidatorId) ?? defaultValidator ?? undefined;
   const hasErrors = Object.keys(status.errors).length > 0;
   const error = Object.values(status.errors)[0];
 
@@ -104,7 +105,7 @@ export default function DelegationSummary({ navigation, route }: Readonly<Props>
         ...prev,
         mode: HEDERA_TRANSACTION_MODES.Delegate,
         properties: {
-          stakingNodeId: validator?.nodeId ?? null,
+          stakingNodeId: validator ? Number(validator.id) : null,
         },
       };
     });
@@ -215,7 +216,7 @@ function SummaryWords({
           <Selectable
             name={
               validator
-                ? t("hedera.delegation.nodeName", { index: validator.nodeId, name: validator.name })
+                ? t("hedera.delegation.nodeName", { index: validator.id, name: validator.name })
                 : ""
             }
             testID="hedera-delegation-summary-validator"

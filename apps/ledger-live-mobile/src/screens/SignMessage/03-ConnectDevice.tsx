@@ -1,7 +1,7 @@
 import invariant from "invariant";
 import React, { useMemo } from "react";
 import { StyleSheet } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "~/components/SafeAreaView";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import DeviceAction from "~/components/DeviceAction";
 import { TrackScreen } from "~/analytics";

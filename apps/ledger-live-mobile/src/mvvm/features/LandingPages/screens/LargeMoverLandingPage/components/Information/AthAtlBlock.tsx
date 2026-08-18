@@ -6,7 +6,7 @@ import { counterValueFormatter } from "LLM/features/Market/utils";
 import { TFunction } from "i18next";
 import { ValueChange } from "@ledgerhq/types-live";
 import { getTimeAgoCode } from "../../utils";
-import type { Currency } from "@ledgerhq/types-cryptoassets";
+import type { Currency } from "@domain/entity-currency";
 
 type AthAtlBlockProps = {
   label: string;
@@ -36,7 +36,7 @@ export const AthAtlBlock: React.FC<AthAtlBlockProps> = ({
           {t(label)}
         </Text>
         <Text style={styles.value}>
-          {counterValueFormatter({ value, currency: counterValueCurrency.ticker, locale, t })}
+          {counterValueFormatter({ value, unit: counterValueCurrency.units[0], locale, t })}
         </Text>
       </Flex>
       <Flex style={styles.rowInside}>

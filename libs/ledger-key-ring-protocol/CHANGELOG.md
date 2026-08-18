@@ -1,5 +1,143 @@
 # @ledgerhq/live-wallet
 
+## 0.19.0
+
+### Minor Changes
+
+- [#20423](https://github.com/LedgerHQ/ledger-live/pull/20423) [`c4a8141`](https://github.com/LedgerHQ/ledger-live/commit/c4a8141369e63e875fb5bfc9aef3f53362150338) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Fix Ledger Sync surfacing a 401 instead of refreshing the expired JWT
+
+  `@shared/cloud-sync` threw a bare `Error` carrying only `HTTP <status> on <method> <url>`, dropping
+  both the HTTP status and the backend's response body. The trustchain JWT recovery in
+  `genericWithJWT` could not classify it, so an expired token was rethrown instead of being refreshed
+  and retried: the 401 reached the UI, and on mobile it fed the wallet-sync error into the account
+  sync indicator ("Some account data couldn't load").
+
+  `CloudSyncHttpError` now carries `status`, `url`, `method` and the backend's verbatim message, and
+  `auth.ts` classifies 4xx from the numeric `status` rather than from the `LedgerAPI4xx` class name,
+  so recovery no longer depends on which transport made the call. The error contract expected by the
+  trustchain layer is documented in `auth.ts`; a transport whose errors are not `Error`-shaped must
+  remap to it at its boundary.
+
+### Patch Changes
+
+- Updated dependencies [[`1e9db75`](https://github.com/LedgerHQ/ledger-live/commit/1e9db750a4882f9db7f95278e33c00262487b37b)]:
+  - @ledgerhq/types-devices@6.32.0
+
+## 0.19.0-next.0
+
+### Minor Changes
+
+- [#20423](https://github.com/LedgerHQ/ledger-live/pull/20423) [`c4a8141`](https://github.com/LedgerHQ/ledger-live/commit/c4a8141369e63e875fb5bfc9aef3f53362150338) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Fix Ledger Sync surfacing a 401 instead of refreshing the expired JWT
+
+  `@shared/cloud-sync` threw a bare `Error` carrying only `HTTP <status> on <method> <url>`, dropping
+  both the HTTP status and the backend's response body. The trustchain JWT recovery in
+  `genericWithJWT` could not classify it, so an expired token was rethrown instead of being refreshed
+  and retried: the 401 reached the UI, and on mobile it fed the wallet-sync error into the account
+  sync indicator ("Some account data couldn't load").
+
+  `CloudSyncHttpError` now carries `status`, `url`, `method` and the backend's verbatim message, and
+  `auth.ts` classifies 4xx from the numeric `status` rather than from the `LedgerAPI4xx` class name,
+  so recovery no longer depends on which transport made the call. The error contract expected by the
+  trustchain layer is documented in `auth.ts`; a transport whose errors are not `Error`-shaped must
+  remap to it at its boundary.
+
+### Patch Changes
+
+- Updated dependencies [[`1e9db75`](https://github.com/LedgerHQ/ledger-live/commit/1e9db750a4882f9db7f95278e33c00262487b37b)]:
+  - @ledgerhq/types-devices@6.32.0-next.0
+
+## 0.18.0
+
+### Minor Changes
+
+- [#19634](https://github.com/LedgerHQ/ledger-live/pull/19634) [`4015ade`](https://github.com/LedgerHQ/ledger-live/commit/4015ade1f9744d4bb575282060fdb1beb9aafc89) Thanks [@thesan](https://github.com/thesan)! - Connect @ledgerhq/ledger-auth to the Ledger Wallet apps Redux store
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/speculos-transport@0.10.10
+
+## 0.18.0-next.0
+
+### Minor Changes
+
+- [#19634](https://github.com/LedgerHQ/ledger-live/pull/19634) [`4015ade`](https://github.com/LedgerHQ/ledger-live/commit/4015ade1f9744d4bb575282060fdb1beb9aafc89) Thanks [@thesan](https://github.com/thesan)! - Connect @ledgerhq/ledger-auth to the Ledger Wallet apps Redux store
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/speculos-transport@0.10.10-next.0
+
+## 0.17.2
+
+### Patch Changes
+
+- Updated dependencies [[`1af9ec9`](https://github.com/LedgerHQ/ledger-live/commit/1af9ec984928e0bf5fd23ce12edcc6131b0302a0)]:
+  - @ledgerhq/live-network@3.0.0
+  - @ledgerhq/hw-transport@6.35.7
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.11.2
+  - @ledgerhq/hw-transport-mocker@6.34.7
+  - @ledgerhq/speculos-transport@0.10.9
+
+## 0.17.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`1af9ec9`](https://github.com/LedgerHQ/ledger-live/commit/1af9ec984928e0bf5fd23ce12edcc6131b0302a0)]:
+  - @ledgerhq/live-network@3.0.0-next.0
+  - @ledgerhq/hw-transport@6.35.7-next.0
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.11.2-next.0
+  - @ledgerhq/hw-transport-mocker@6.34.7-next.0
+  - @ledgerhq/speculos-transport@0.10.9-next.0
+
+## 0.17.1
+
+### Patch Changes
+
+- Updated dependencies [[`e7caf31`](https://github.com/LedgerHQ/ledger-live/commit/e7caf310efbbf82aa777a7e86ceafe60f11e7193)]:
+  - @ledgerhq/live-network@2.7.0
+
+## 0.17.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`e7caf31`](https://github.com/LedgerHQ/ledger-live/commit/e7caf310efbbf82aa777a7e86ceafe60f11e7193)]:
+  - @ledgerhq/live-network@2.7.0-next.0
+
+## 0.17.0
+
+### Minor Changes
+
+- [#19477](https://github.com/LedgerHQ/ledger-live/pull/19477) [`2ee5ac1`](https://github.com/LedgerHQ/ledger-live/commit/2ee5ac15540a462143b61f2d546063ed9c8cfe40) Thanks [@Justkant](https://github.com/Justkant)! - Mock SDK: make `walletSyncEncryptionKey` a valid 64-char hex string (distinct per application index). The value is contractually hex (the real SDK feeds it to `crypto.from_hex`), so consumers deriving keys from it now work against the mock.
+
+- [#19432](https://github.com/LedgerHQ/ledger-live/pull/19432) [`d9dc6e6`](https://github.com/LedgerHQ/ledger-live/commit/d9dc6e621df877b13148688adec0b038983574e0) Thanks [@thesan](https://github.com/thesan)! - Make the attestation optional for the oidc flow
+
+### Patch Changes
+
+- Updated dependencies [[`a15b864`](https://github.com/LedgerHQ/ledger-live/commit/a15b864576d901f15d480070b475314c3b23c1dd), [`84cc6e9`](https://github.com/LedgerHQ/ledger-live/commit/84cc6e9b7a70ffe2780f4b3ef32c10fa8bf9a909), [`189a0d6`](https://github.com/LedgerHQ/ledger-live/commit/189a0d60928e458407c85dcefe954e905bd0ba59), [`fc44f1e`](https://github.com/LedgerHQ/ledger-live/commit/fc44f1e6ddcca939c117e0cb8bc49c404163b003)]:
+  - @ledgerhq/live-env@2.42.0
+  - @ledgerhq/ledger-auth@0.3.0
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.11.1
+  - @ledgerhq/live-network@2.6.8
+  - @ledgerhq/speculos-transport@0.10.8
+
+## 0.17.0-next.0
+
+### Minor Changes
+
+- [#19477](https://github.com/LedgerHQ/ledger-live/pull/19477) [`2ee5ac1`](https://github.com/LedgerHQ/ledger-live/commit/2ee5ac15540a462143b61f2d546063ed9c8cfe40) Thanks [@Justkant](https://github.com/Justkant)! - Mock SDK: make `walletSyncEncryptionKey` a valid 64-char hex string (distinct per application index). The value is contractually hex (the real SDK feeds it to `crypto.from_hex`), so consumers deriving keys from it now work against the mock.
+
+- [#19432](https://github.com/LedgerHQ/ledger-live/pull/19432) [`d9dc6e6`](https://github.com/LedgerHQ/ledger-live/commit/d9dc6e621df877b13148688adec0b038983574e0) Thanks [@thesan](https://github.com/thesan)! - Make the attestation optional for the oidc flow
+
+### Patch Changes
+
+- Updated dependencies [[`a15b864`](https://github.com/LedgerHQ/ledger-live/commit/a15b864576d901f15d480070b475314c3b23c1dd), [`84cc6e9`](https://github.com/LedgerHQ/ledger-live/commit/84cc6e9b7a70ffe2780f4b3ef32c10fa8bf9a909), [`189a0d6`](https://github.com/LedgerHQ/ledger-live/commit/189a0d60928e458407c85dcefe954e905bd0ba59), [`fc44f1e`](https://github.com/LedgerHQ/ledger-live/commit/fc44f1e6ddcca939c117e0cb8bc49c404163b003)]:
+  - @ledgerhq/live-env@2.42.0-next.0
+  - @ledgerhq/ledger-auth@0.3.0-next.0
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.11.1-next.0
+  - @ledgerhq/live-network@2.6.8-next.0
+  - @ledgerhq/speculos-transport@0.10.8-next.0
+
 ## 0.16.0
 
 ### Minor Changes

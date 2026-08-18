@@ -2,6 +2,19 @@ name: "[Module Boundaries] - Test - Called"
 
 on:
   workflow_call:
+    secrets:
+      AWS_ACCOUNT_ID_PROD:
+        required: true
+      AWS_CACHE_OIDC_ROLE_ARN_BRANCH:
+        required: true
+      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP:
+        required: true
+      AWS_CACHE_REGION:
+        required: true
+      AWS_CACHE_ROLE_NAME:
+        required: true
+      NX_KEY:
+        required: true
   workflow_dispatch:
     inputs:
       ref:
@@ -25,7 +38,7 @@ jobs:
       CI_OS: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           ref: ${{ inputs.ref || github.sha }}
 
@@ -47,3 +60,9 @@ jobs:
 
       - name: Enforce module boundaries
         run: pnpm exec nx run enforce-boundaries:lint:boundaries
+
+      - name: Test the package-structure rules
+        run: pnpm exec nx run enforce-package-structure:test
+
+      - name: Enforce package structure
+        run: pnpm exec nx run-many -t lint:structure

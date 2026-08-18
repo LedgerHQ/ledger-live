@@ -1,6 +1,6 @@
 import type { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import type { Features } from "@shared/feature-flags";
-import type { Currency } from "@ledgerhq/types-cryptoassets";
+import type { Currency } from "@domain/entity-currency";
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 import { flattenAccounts } from "@ledgerhq/live-common/account/index";
 import { isSmallValueOperation } from "@ledgerhq/live-common/hideSmallValueTokenOperations/smallValueOperationsThreshold";
@@ -8,7 +8,7 @@ import {
   flattenOperationWithInternalsAndNfts,
   isAddressPoisoningOperation,
 } from "@ledgerhq/ledger-wallet-framework/operation";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { HISTORY_DUST_FILTER_THRESHOLD_USD } from "../constants";
 
 /**

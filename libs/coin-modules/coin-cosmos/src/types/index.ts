@@ -33,6 +33,7 @@ export type CosmosUnbonding = {
   validatorAddress: string;
   amount: BigNumber;
   completionDate: Date;
+  creationHeight?: number;
 };
 
 export type CosmosTx = {

@@ -3,15 +3,19 @@ import { ClassicCard } from "@braze/web-sdk";
 import { generateAnonymousId } from "@ledgerhq/live-common/braze/anonymousUsers";
 import { parseOrder, sanitizeExtras } from "@ledgerhq/live-common/braze/contentCardExtras";
 import { appendDeeplinkLocationIfDefined } from "@ledgerhq/live-common/deeplinks/index";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { useCallback, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
+import { ALWAYS_ON_CATEGORY_ID } from "LLD/features/DynamicContent/utils/constants";
 
 import { userIdSelector } from "@domain/entity-client-identity";
 import { getBrazeConfig } from "~/braze-setup";
 import {
   ActionContentCard,
+  CategoryContentCard,
   ContentCard as LedgerContentCard,
+  ContentCardsLayout,
+  ContentCardsType,
   LocationContentCard,
   NotificationContentCard,
   Platform,
@@ -20,6 +24,7 @@ import {
 import { processGenericAwarenessModalBrazeCards } from "@ledgerhq/live-common/genericAwarenessModal";
 import {
   setActionCards,
+  setCategoriesCards,
   setDesktopCards,
   setNotificationsCards,
   setPortfolioCards,
@@ -46,6 +51,9 @@ const getDesktopCards = (elem: braze.ContentCards) =>
 
 export const filterByPage = (array: braze.Card[], page: LocationContentCard) =>
   array.filter(card => card.extras?.location === page);
+
+export const filterByType = (array: braze.Card[], type: ContentCardsType) =>
+  array.filter(card => card.extras?.type === type);
 
 export const compareCards = (a: LedgerContentCard, b: LedgerContentCard) => {
   if (a.order && !b.order) {
@@ -103,6 +111,36 @@ export const mapAsPortfolioContentCard = (card: ClassicCard): PortfolioContentCa
 export const mapAsBottomPortfolioContentCard = (card: ClassicCard): PortfolioContentCard =>
   mapBrazeCardToPortfolioContentCard(card, LocationContentCard.BottomPortfolio);
 
+export const mapAsCategoryContentCard = (card: ClassicCard): CategoryContentCard => {
+  const location =
+    card.extras?.id === ALWAYS_ON_CATEGORY_ID
+      ? LocationContentCard.Portfolio
+      : // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        (card.extras?.location as LocationContentCard);
+
+  return {
+    id: String(card.id),
+    categoryId: card.extras?.id,
+    location,
+    created: card.updated ?? null,
+    viewed: card.viewed,
+    order: parseOrder(card.extras?.order),
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    cardsLayout: card.extras?.cardsLayout as ContentCardsLayout,
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    cardsType: card.extras?.cardsType as ContentCardsType,
+    type: ContentCardsType.category,
+    title: card.extras?.title,
+    description: card.extras?.description,
+    link: appendDeeplinkLocationIfDefined(card.extras?.link, location),
+    cta: card.extras?.cta,
+    isDismissable: card.extras?.isDismissable === "true",
+    hasPagination: card.extras?.hasPagination === "true",
+    centeredText: card.extras?.centeredText === "true",
+    extras: card.extras,
+  };
+};
+
 export const mapAsNotificationContentCard = (card: ClassicCard): NotificationContentCard => ({
   created: card.updated ?? null,
   cta: card.extras?.cta,
@@ -122,10 +160,15 @@ export const mapAsNotificationContentCard = (card: ClassicCard): NotificationCon
 export function useBraze() {
   const dispatch = useDispatch();
   const devMode = useSelector(developerModeSelector);
-  const contentCardsDissmissed = useSelector(dismissedContentCardsSelector);
+  const contentCardsDismissed = useSelector(dismissedContentCardsSelector);
   const isTrackedUser = useSelector(trackingEnabledSelector);
   const anonymousBrazeId = useRef(useSelector(anonymousBrazeIdSelector));
   const userId = useSelector(userIdSelector);
+
+  // Read through a ref so that dismissing a card does not re-run the whole Braze
+  // init, which would open a new session and stack another card subscription.
+  const contentCardsDismissedRef = useRef(contentCardsDismissed);
+  contentCardsDismissedRef.current = contentCardsDismissed;
 
   const initBraze = useCallback(async () => {
     const brazeConfig = getBrazeConfig();
@@ -158,12 +201,11 @@ export function useBraze() {
 
     braze.requestContentCardsRefresh();
 
-    braze.subscribeToContentCardsUpdates(cards => {
+    const subscriptionId = braze.subscribeToContentCardsUpdates(cards => {
       const desktopCards = getDesktopCards(cards);
-      const dismissedCardIds = Object.keys(contentCardsDissmissed ?? {});
-      const filteredDesktopCards = desktopCards.filter(
-        card => !dismissedCardIds.includes(String(card.id)),
-      );
+      const dismissedCardIds = Object.keys(contentCardsDismissedRef.current ?? {});
+      const hiddenCardIds = new Set(dismissedCardIds);
+      const filteredDesktopCards = desktopCards.filter(card => !hiddenCardIds.has(String(card.id)));
 
       const portfolioCards = filterByPage(filteredDesktopCards, LocationContentCard.Portfolio)
         // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
@@ -191,6 +233,14 @@ export function useBraze() {
         .map(card => mapAsNotificationContentCard(card as ClassicCard))
         .sort(compareCards);
 
+      const categoriesCards = filterByType(filteredDesktopCards, ContentCardsType.category)
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        .map(card => mapAsCategoryContentCard(card as ClassicCard))
+        // A container without an id can never be matched by a child card, and would
+        // otherwise pair with every card that has no categoryId at all.
+        .filter(card => !!card.categoryId)
+        .sort(compareCards);
+
       const genericAwarenessModalBrazeCardsFromBraze = filterByPage(
         filteredDesktopCards,
         LocationContentCard.GenericAwarenessModal,
@@ -209,15 +259,32 @@ export function useBraze() {
       dispatch(setBottomPortfolioCards(bottomPortfolioCards));
       dispatch(setActionCards(actionCards));
       dispatch(setNotificationsCards(notificationsCards));
+      dispatch(setCategoriesCards(categoriesCards));
       dispatch(setGenericAwarenessModalContentCards(genericAwarenessModalContentCards));
     });
 
     braze.automaticallyShowInAppMessages();
     braze.openSession();
-  }, [dispatch, devMode, isTrackedUser, contentCardsDissmissed, anonymousBrazeId, userId]);
+
+    return subscriptionId;
+  }, [dispatch, devMode, isTrackedUser, anonymousBrazeId, userId]);
 
   useEffect(() => {
-    initBraze();
+    let subscriptionId: string | undefined;
+    let cancelled = false;
+
+    initBraze().then(id => {
+      if (cancelled && id) {
+        braze.removeSubscription(id);
+        return;
+      }
+      subscriptionId = id;
+    });
+
+    return () => {
+      cancelled = true;
+      if (subscriptionId) braze.removeSubscription(subscriptionId);
+    };
   }, [initBraze]);
 
   // TODO should there be an interval to periodically purge dismissed cards?

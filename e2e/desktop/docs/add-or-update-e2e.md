@@ -195,3 +195,21 @@ test.use({
 - Use `@step` decorator in Page Objects
 - Access methods via `app` fixture (e.g., `app.layout`, `app.send`, `app.speculos`)
 - **MANDATORY:** Test on all 6 device models (LNS, LNSP, LNX, STAX, FLEX, NG5) before marking tests complete
+- **Every `test()` must include a TMS annotation** with a valid Xray ticket ID. Omitting it causes
+  `getDescription(test.info().annotations, "TMS")` to return the literal string `"Type not found"`,
+  which `addTmsLink()` and the JSON reporter then propagate as a bogus Xray entry.
+
+  ```typescript
+  const xrayTicket = "B2CQA-XXXX"; // obtain from QA before merging
+  test(
+    "description",
+    {
+      tag: buildTags({ currencyId: account.currency.id }),
+      annotation: { type: "TMS", description: xrayTicket },
+    },
+    async ({ app }) => { ... },
+  );
+  ```
+
+- Be aware that there may be environment variables to gate which UI elements you can assert on. For example, CI may set `wallet40-q2` (enabling `earnUpselling: true` → `crowd-favourites`), while a local run without the variable defaults to Q1 (`earnUpselling: false` → different UI). So tests may pass locally but exercise different elements than CI. '
+- As such, you may need to declare flags explicitly in `test.use({ featureFlags })` if your UI varies based on specific feature flag parameters or configurations.

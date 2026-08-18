@@ -1,5 +1,5 @@
 import React from "react";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount } from "@ledgerhq/live-common/mock/account";
 import { render, screen, withFlagOverrides } from "@tests/test-renderer";
 import { State } from "~/reducers/types";
@@ -16,7 +16,7 @@ const withChartState =
   (balanceAvailable = true) =>
   (state: State): State =>
     withFlagOverrides({
-      lwmWallet40: { enabled: true, params: { pnl: true } },
+      lwmWallet40: { params: { pnl: true } },
     })({
       ...state,
       accounts: { ...state.accounts, active: [btcAccount] },

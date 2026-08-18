@@ -6,7 +6,7 @@ const TITLE = "Unrealised return";
 const VALUE = "$243.32";
 
 const withPnl = (enabled: boolean) =>
-  withFlagOverrides({ lwmWallet40: { enabled: true, params: { pnl: enabled } } });
+  withFlagOverrides({ lwmWallet40: { params: { pnl: enabled } } });
 
 describe("PnlCard integration", () => {
   describe("feature flag gating", () => {

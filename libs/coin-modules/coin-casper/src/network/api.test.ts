@@ -1,0 +1,448 @@
+import { CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
+import network from "@ledgerhq/live-network";
+import { log } from "@ledgerhq/logs";
+import BigNumber from "bignumber.js";
+import { AccountIdentifier, HttpHandler, PublicKey, RpcClient, Transaction } from "casper-js-sdk";
+import { NodeErrorCodeAccountNotFound, NodeErrorCodeQueryFailed } from "../constants";
+import { TEST_ADDRESSES } from "../__tests__/fixtures";
+import { ITxnHistoryData, RpcError, IndexerResponseRoot } from "../types/network";
+import {
+  fetchAccountStateInfo,
+  fetchBalance,
+  fetchLastBlock,
+  fetchChainspecToml,
+  fetchTxs,
+  broadcastTx,
+  getCasperNodeRpcClient,
+} from "./api";
+
+// Constants
+const MOCK_NODE_URL = "https://mock.casper.node";
+const MOCK_INDEXER_URL = "https://mock.casper.indexer";
+const MOCK_PUBLIC_KEY = TEST_ADDRESSES.SECP256K1;
+const MOCK_PURSE_UREF = "uref-1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef-007";
+const MOCK_ACCOUNT_HASH =
+  "account-hash-1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef";
+
+// Mock dependencies
+jest.mock("@ledgerhq/logs", () => ({
+  log: jest.fn(),
+}));
+
+jest.mock("@ledgerhq/live-network", () => ({
+  __esModule: true,
+  default: jest.fn(),
+}));
+
+// Type definitions for mocked objects
+type MockedPublicKey = {
+  fromHex: () => { fromHex: boolean };
+};
+
+type MockedAccountInfo = {
+  account: {
+    accountHash: { toHex: () => string };
+    mainPurse: { toPrefixedString: () => string };
+  };
+};
+
+type MockedStateRootHash = {
+  stateRootHash: { toHex: () => string };
+};
+
+type MockedBalance = {
+  balanceValue: string;
+};
+
+type MockedBlock = {
+  block: {
+    height: number;
+    hash: { toHex: () => string };
+    timestamp: { date: Date };
+  };
+};
+
+type MockedTransactionHash = {
+  transactionHash: { toHex: () => string };
+};
+
+type MockedNetworkResponse<T> = {
+  data: IndexerResponseRoot<T>;
+  status: number;
+};
+
+type CasperCoinConfig = {
+  infra: {
+    API_CASPER_NODE_ENDPOINT: string;
+    API_CASPER_INDEXER: string;
+  };
+} & CurrencyConfig;
+
+const MOCK_CONFIG = {
+  infra: {
+    API_CASPER_NODE_ENDPOINT: MOCK_NODE_URL,
+    API_CASPER_INDEXER: MOCK_INDEXER_URL,
+  },
+} as CasperCoinConfig;
+
+// Helper functions for creating mocks
+const createMockRpcClient = (methodOverrides: Partial<Record<keyof RpcClient, jest.Mock>>) => {
+  const defaultMethods = {
+    getAccountInfo: jest.fn(),
+    getStateRootHashLatest: jest.fn(),
+    getBalanceByStateRootHash: jest.fn(),
+    getLatestBlock: jest.fn(),
+    putTransaction: jest.fn(),
+    getChainspec: jest.fn(),
+  };
+
+  // Create a combined mock with defaultMethods overridden by methodOverrides
+  const combinedMock = { ...defaultMethods, ...methodOverrides };
+
+  // Mock the RpcClient implementation to return our mock methods
+  jest.mocked(RpcClient).mockImplementation(() => combinedMock as unknown as RpcClient);
+
+  return combinedMock;
+};
+
+const createNetworkMock = <T>(responseData: T[], pageCount = 1, itemCount = responseData.length) =>
+  ({
+    data: {
+      data: responseData,
+      page_count: pageCount,
+      item_count: itemCount,
+    },
+    status: 200,
+  }) as MockedNetworkResponse<T>;
+
+// Mock casper-js-sdk
+jest.mock("casper-js-sdk", () => {
+  const originalModule = jest.requireActual("casper-js-sdk");
+  return {
+    ...originalModule,
+    RpcClient: jest.fn(),
+    HttpHandler: jest.fn(),
+    AccountIdentifier: jest.fn(),
+    PublicKey: {
+      fromHex: jest.fn(),
+    },
+  };
+});
+
+describe("Casper API Unit Tests", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  describe("getCasperNodeRpcClient", () => {
+    it("should create RPC client with correct URL", () => {
+      getCasperNodeRpcClient(MOCK_CONFIG);
+
+      expect(HttpHandler).toHaveBeenCalledWith(MOCK_NODE_URL);
+      expect(RpcClient).toHaveBeenCalled();
+    });
+
+    it("should throw error if API base URL is not available", () => {
+      expect(() => getCasperNodeRpcClient({ infra: {} } as CasperCoinConfig)).toThrow(
+        "API base URL not available",
+      );
+    });
+  });
+
+  describe("fetchAccountStateInfo", () => {
+    it("should fetch account state info successfully", async () => {
+      // Mock PublicKey
+      const mockPublicKeyInstance: MockedPublicKey = { fromHex: () => ({ fromHex: true }) };
+      jest.mocked(PublicKey.fromHex).mockReturnValue(mockPublicKeyInstance as unknown as PublicKey);
+
+      // Mock AccountIdentifier
+      const mockAccountIdentifier = {};
+      jest
+        .mocked(AccountIdentifier)
+        .mockReturnValue(mockAccountIdentifier as unknown as AccountIdentifier);
+
+      // Mock RpcClient.getAccountInfo
+      const mockGetAccountInfo = jest.fn().mockResolvedValue({
+        account: {
+          accountHash: { toHex: () => MOCK_ACCOUNT_HASH },
+          mainPurse: { toPrefixedString: () => MOCK_PURSE_UREF },
+        },
+      } as MockedAccountInfo);
+
+      createMockRpcClient({
+        getAccountInfo: mockGetAccountInfo,
+      });
+
+      const result = await fetchAccountStateInfo(MOCK_CONFIG, MOCK_PUBLIC_KEY);
+
+      expect(PublicKey.fromHex).toHaveBeenCalledWith(MOCK_PUBLIC_KEY);
+      expect(AccountIdentifier).toHaveBeenCalledWith(undefined, mockPublicKeyInstance);
+      expect(mockGetAccountInfo).toHaveBeenCalledWith(null, mockAccountIdentifier);
+      expect(result).toEqual({
+        purseUref: MOCK_PURSE_UREF,
+        accountHash: MOCK_ACCOUNT_HASH,
+      });
+    });
+
+    it("should return undefined values when account not found", async () => {
+      // Mock error with account not found status code
+      const mockError = new Error("Account not found") as RpcError;
+      mockError.statusCode = NodeErrorCodeAccountNotFound;
+
+      createMockRpcClient({
+        getAccountInfo: jest.fn().mockRejectedValue(mockError),
+      });
+
+      const result = await fetchAccountStateInfo(MOCK_CONFIG, MOCK_PUBLIC_KEY);
+
+      expect(result).toEqual({
+        purseUref: undefined,
+        accountHash: undefined,
+      });
+    });
+
+    it("should return undefined values when query failed", async () => {
+      const mockError = new Error("Query failed") as RpcError;
+      mockError.statusCode = NodeErrorCodeQueryFailed;
+
+      createMockRpcClient({
+        getAccountInfo: jest.fn().mockRejectedValue(mockError),
+      });
+
+      const result = await fetchAccountStateInfo(MOCK_CONFIG, MOCK_PUBLIC_KEY);
+
+      expect(result).toEqual({
+        purseUref: undefined,
+        accountHash: undefined,
+      });
+    });
+
+    it("should throw error for other error cases", async () => {
+      const mockError = new Error("General error");
+
+      createMockRpcClient({
+        getAccountInfo: jest.fn().mockRejectedValue(mockError),
+      });
+
+      await expect(fetchAccountStateInfo(MOCK_CONFIG, MOCK_PUBLIC_KEY)).rejects.toThrow(
+        "General error",
+      );
+    });
+  });
+
+  describe("fetchBalance", () => {
+    it("should fetch balance successfully", async () => {
+      const mockBalanceValue = "10000000000";
+      const mockRootHash = "mocked-root-hash";
+
+      // Create mock methods with implementations that return expected values
+      const mockGetStateRootHashLatest = jest.fn().mockResolvedValue({
+        stateRootHash: { toHex: () => mockRootHash },
+      } as MockedStateRootHash);
+
+      const mockGetBalanceByStateRootHash = jest.fn().mockResolvedValue({
+        balanceValue: mockBalanceValue,
+      } as MockedBalance);
+
+      // Create the mock RPC client with our implementations
+      const mockMethods = createMockRpcClient({
+        getStateRootHashLatest: mockGetStateRootHashLatest,
+        getBalanceByStateRootHash: mockGetBalanceByStateRootHash,
+      });
+
+      const result = await fetchBalance(MOCK_CONFIG, MOCK_PURSE_UREF);
+
+      expect(mockMethods.getStateRootHashLatest).toHaveBeenCalled();
+      expect(mockMethods.getBalanceByStateRootHash).toHaveBeenCalledWith(
+        MOCK_PURSE_UREF,
+        mockRootHash,
+      );
+      expect(result).toEqual(new BigNumber(mockBalanceValue));
+    });
+
+    it("should throw error when balance fetch fails", async () => {
+      const mockError = new Error("Failed to fetch balance");
+
+      createMockRpcClient({
+        getStateRootHashLatest: jest.fn().mockRejectedValue(mockError),
+      });
+
+      await expect(fetchBalance(MOCK_CONFIG, MOCK_PURSE_UREF)).rejects.toThrow(
+        "Failed to fetch balance",
+      );
+      expect(log).toHaveBeenCalledWith("error", "Failed to fetch balance", mockError);
+    });
+  });
+
+  describe("fetchLastBlock", () => {
+    it("should fetch last block info successfully", async () => {
+      const mockTime = new Date("2024-06-01T12:00:00Z");
+
+      createMockRpcClient({
+        getLatestBlock: jest.fn().mockResolvedValue({
+          block: {
+            height: 12345,
+            hash: { toHex: () => "0xabcdef1234567890" },
+            timestamp: { date: mockTime },
+          },
+        } as MockedBlock),
+      });
+
+      const result = await fetchLastBlock(MOCK_CONFIG);
+
+      expect(result).toEqual({
+        height: 12345,
+        hash: "0xabcdef1234567890",
+        time: mockTime,
+      });
+    });
+
+    it("should throw error when last block fetch fails", async () => {
+      const mockError = new Error("Failed to fetch last block");
+
+      createMockRpcClient({
+        getLatestBlock: jest.fn().mockRejectedValue(mockError),
+      });
+
+      await expect(fetchLastBlock(MOCK_CONFIG)).rejects.toThrow("Failed to fetch last block");
+      expect(log).toHaveBeenCalledWith("error", "Failed to fetch last block", mockError);
+    });
+  });
+
+  describe("fetchChainspecToml", () => {
+    it("should decode the hex-encoded chainspec to TOML", async () => {
+      const toml = "[transactions]\nnative_mint_lane = [0, 2048, 1024, 100_000_000, 325]\n";
+
+      createMockRpcClient({
+        getChainspec: jest.fn().mockResolvedValue({
+          chainspecBytes: { chainspecBytes: Buffer.from(toml, "utf8").toString("hex") },
+        }),
+      });
+
+      await expect(fetchChainspecToml(MOCK_CONFIG)).resolves.toBe(toml);
+    });
+
+    it("should throw when the response carries no chainspec bytes", async () => {
+      createMockRpcClient({
+        getChainspec: jest.fn().mockResolvedValue({ chainspecBytes: {} }),
+      });
+
+      await expect(fetchChainspecToml(MOCK_CONFIG)).rejects.toThrow(
+        "Chainspec bytes missing from response",
+      );
+      expect(log).toHaveBeenCalledWith("error", "Failed to fetch chainspec", expect.any(Error));
+    });
+
+    it("should throw error when the chainspec fetch fails", async () => {
+      const mockError = new Error("node unreachable");
+
+      createMockRpcClient({
+        getChainspec: jest.fn().mockRejectedValue(mockError),
+      });
+
+      await expect(fetchChainspecToml(MOCK_CONFIG)).rejects.toThrow("node unreachable");
+      expect(log).toHaveBeenCalledWith("error", "Failed to fetch chainspec", mockError);
+    });
+  });
+
+  describe("fetchTxs", () => {
+    const createMockTxData = (hash: string): ITxnHistoryData => ({
+      deploy_hash: hash,
+      block_hash: "block-hash-1",
+      block_height: 1272937,
+      caller_public_key: MOCK_PUBLIC_KEY,
+      cost: "10000",
+      error_message: null,
+      timestamp: "2023-01-01T12:00:00Z",
+      args: {
+        id: {
+          parsed: 12345,
+          cl_type: {
+            Option: "U64",
+          },
+        },
+        amount: {
+          parsed: "500000000",
+          cl_type: "U512",
+        },
+        target: {
+          parsed: TEST_ADDRESSES.RECIPIENT_SECP256K1,
+          cl_type: "PublicKey",
+        },
+      },
+    });
+
+    const mockTxData = [createMockTxData("deploy-hash-1")];
+
+    const getExpectedNetworkCall = (page: number) => ({
+      method: "GET",
+      url: `${MOCK_INDEXER_URL}/accounts/${MOCK_PUBLIC_KEY}/ledgerlive-deploys?page=${page}&page_size=250`,
+    });
+
+    it("should fetch transactions successfully (single page)", async () => {
+      jest.mocked(network).mockResolvedValueOnce(createNetworkMock(mockTxData));
+
+      const result = await fetchTxs(MOCK_CONFIG, MOCK_PUBLIC_KEY);
+
+      expect(network).toHaveBeenCalledWith(getExpectedNetworkCall(1));
+      expect(result).toEqual(mockTxData);
+    });
+
+    it("should fetch transactions successfully (multiple pages)", async () => {
+      // Mock first page
+      jest.mocked(network).mockResolvedValueOnce(createNetworkMock([mockTxData[0]], 2, 2));
+
+      // Mock second page
+      const secondPageTx = createMockTxData("deploy-hash-2");
+      jest.mocked(network).mockResolvedValueOnce(createNetworkMock([secondPageTx], 2, 2));
+
+      const result = await fetchTxs(MOCK_CONFIG, MOCK_PUBLIC_KEY);
+
+      expect(network).toHaveBeenCalledTimes(2);
+      expect(network).toHaveBeenNthCalledWith(1, getExpectedNetworkCall(1));
+      expect(network).toHaveBeenNthCalledWith(2, getExpectedNetworkCall(2));
+      expect(result).toEqual([mockTxData[0], secondPageTx]);
+    });
+
+    it("should throw error when transactions fetch fails", async () => {
+      const mockError = new Error("Failed to fetch transactions");
+      jest.mocked(network).mockRejectedValueOnce(mockError);
+
+      await expect(fetchTxs(MOCK_CONFIG, MOCK_PUBLIC_KEY)).rejects.toThrow(
+        "Failed to fetch transactions",
+      );
+      expect(log).toHaveBeenCalledWith("error", "Casper indexer error: ", mockError);
+    });
+  });
+
+  describe("broadcastTx", () => {
+    it("should broadcast transaction successfully", async () => {
+      const mockTransaction = {} as Transaction;
+      const mockTxHash = "0123456789abcdef";
+
+      createMockRpcClient({
+        putTransaction: jest.fn().mockResolvedValue({
+          transactionHash: { toHex: () => mockTxHash },
+        } as MockedTransactionHash),
+      });
+
+      const result = await broadcastTx(MOCK_CONFIG, mockTransaction);
+
+      expect(result).toBe(mockTxHash);
+    });
+
+    it("should throw error when broadcast fails", async () => {
+      const mockTransaction = {} as Transaction;
+      const mockError = new Error("Failed to broadcast transaction");
+
+      createMockRpcClient({
+        putTransaction: jest.fn().mockRejectedValue(mockError),
+      });
+
+      await expect(broadcastTx(MOCK_CONFIG, mockTransaction)).rejects.toThrow(
+        "Failed to broadcast transaction",
+      );
+      expect(log).toHaveBeenCalledWith("error", "Failed to broadcast transaction", mockError);
+    });
+  });
+});

@@ -2,12 +2,14 @@ import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 import { crypto } from "@ledgerhq/hw-ledger-key-ring-protocol";
 import { openTransportReplayer, RecordStore } from "@ledgerhq/hw-transport-mocker";
-import { getEnv, setEnv } from "@ledgerhq/live-env";
+import { getEnv, setEnv } from "@shared/env";
+import { setNetworkState } from "@ledgerhq/live-network";
 import { ScenarioOptions } from "./types";
 import { getSdk } from "../../src";
 import { WithDevice } from "../../src/types";
 
 setEnv("GET_CALLS_RETRY", 0);
+setNetworkState({ getCallsRetry: 0 });
 
 /**
  * Volatile headers added by Node.js or MSW that vary between versions.

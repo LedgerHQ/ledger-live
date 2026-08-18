@@ -20,7 +20,11 @@ describe("broadcast", () => {
     const result = await broadcast({
       signedOperation: {
         operation: { extra: { memo: 0 } },
-        rawData: { encodedSignedCallBlob: "00", transferRequestIdHex: "ab".repeat(32) },
+        rawData: {
+          encodedSignedCallBlob: "00",
+          transferRequestIdHex: "ab".repeat(32),
+          methodName: "send",
+        },
       },
     } as any);
 
@@ -53,7 +57,11 @@ describe("broadcast", () => {
         account: {} as never,
         signedOperation: {
           operation: { extra: { memo: 0 } },
-          rawData: { encodedSignedCallBlob: "00", transferRequestIdHex: "ab".repeat(32) },
+          rawData: {
+            encodedSignedCallBlob: "00",
+            transferRequestIdHex: "ab".repeat(32),
+            methodName: "send",
+          },
         },
       } as any),
     ).rejects.toThrow(/InsufficientFunds/);

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "bun:test";
 import { SendApduTimeoutError } from "@ledgerhq/device-management-kit";
-import { LockedDeviceError, ManagerDeviceLockedError } from "@ledgerhq/errors";
+import { LockedDeviceError } from "@ledgerhq/hw-transport/errors";
+import { ManagerDeviceLockedError } from "@ledgerhq/live-common/errors";
 import { StatusCodes, TransportStatusError } from "@ledgerhq/hw-transport";
 import { DEVICE_EXIT_CODES } from "./device-state";
 import { toWalletCliDeviceError, WalletCliDeviceError } from "./wallet-cli-device-error";

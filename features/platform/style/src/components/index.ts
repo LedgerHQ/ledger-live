@@ -1,1 +1,1 @@
-export { StyleProvider } from "./StyleProvider";
+export * from "./StyleProvider";

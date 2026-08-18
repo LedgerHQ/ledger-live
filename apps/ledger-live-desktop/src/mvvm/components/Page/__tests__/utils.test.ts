@@ -1,6 +1,26 @@
-import { isWallet40Page, shouldDisplayRightPanel } from "../utils";
+import { isFullscreenOverlayRoute, isWallet40Page, shouldDisplayRightPanel } from "../utils";
 
 describe("Page utils", () => {
+  describe("isFullscreenOverlayRoute", () => {
+    it("returns true for Recover player routes matching /recover/:appId", () => {
+      expect(isFullscreenOverlayRoute("/recover/protect-prod")).toBe(true);
+    });
+
+    it("returns true for Perps webview routes matching /perps prefix", () => {
+      expect(isFullscreenOverlayRoute("/perps")).toBe(true);
+      expect(isFullscreenOverlayRoute("/perps/market")).toBe(true);
+    });
+
+    it("returns false for standard app routes", () => {
+      expect(isFullscreenOverlayRoute("/")).toBe(false);
+      expect(isFullscreenOverlayRoute("/accounts")).toBe(false);
+      expect(isFullscreenOverlayRoute("/recover-restore")).toBe(false);
+      expect(isFullscreenOverlayRoute("/recover")).toBe(false);
+      expect(isFullscreenOverlayRoute("/recover/")).toBe(false);
+      expect(isFullscreenOverlayRoute("/perps-extra")).toBe(false);
+    });
+  });
+
   describe("isWallet40Page", () => {
     it("returns true for each wallet 4.0 exact-match route", () => {
       expect(isWallet40Page("/")).toBe(true);

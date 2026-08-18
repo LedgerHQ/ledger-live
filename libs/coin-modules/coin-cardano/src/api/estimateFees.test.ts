@@ -1,12 +1,17 @@
 import type { TransactionIntent, StringMemo } from "@ledgerhq/coin-module-framework/api/index";
+import type { Context } from "@ledgerhq/coin-module-framework/config";
 import { createApi } from ".";
-import { type CardanoConfig } from "../config";
+import { type CardanoCoinConfig, type CardanoConfig } from "../config";
 import { estimateFees } from "../logic/estimateFees";
 
 jest.mock("../logic/estimateFees");
 const mockEstimateFees = jest.mocked(estimateFees);
 
 const config: CardanoConfig = { maxFeesWarning: 0, maxFeesError: 0 };
+const mockCtx: Context<CardanoCoinConfig> = {
+  config: async () => ({ ...config, status: { type: "active" } }),
+  logger: () => {},
+};
 
 const intent = {
   intentType: "transaction",
@@ -26,8 +31,8 @@ describe("estimateFees", () => {
     const estimation = { value: 170_000n };
     mockEstimateFees.mockResolvedValue(estimation);
 
-    const api = createApi(config, "cardano");
-    const result = await api.estimateFees(intent);
+    const api = createApi("cardano");
+    const result = await api.estimateFees(mockCtx, intent);
 
     expect(result).toBe(estimation);
     expect(mockEstimateFees).toHaveBeenCalledTimes(1);
@@ -39,8 +44,8 @@ describe("estimateFees", () => {
     const estimation = { value: 170_000n };
     mockEstimateFees.mockResolvedValue(estimation);
 
-    const api = createApi(config, "cardano");
-    const result = await api.estimateFees(intent, { priority: "high" });
+    const api = createApi("cardano");
+    const result = await api.estimateFees(mockCtx, intent, { feeOption: undefined });
 
     expect(result).toBe(estimation);
     // The second positional arg (customFeesParameters) is not forwarded to the logic layer.
@@ -51,8 +56,8 @@ describe("estimateFees", () => {
   it("propagates errors from logic estimateFees", async () => {
     mockEstimateFees.mockRejectedValue(new Error("boom"));
 
-    const api = createApi(config, "cardano");
+    const api = createApi("cardano");
 
-    await expect(api.estimateFees(intent)).rejects.toThrow("boom");
+    await expect(api.estimateFees(mockCtx, intent)).rejects.toThrow("boom");
   });
 });

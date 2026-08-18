@@ -14,16 +14,7 @@
     "suspicious": "warn",
     "pedantic": "off"
   },
-  "plugins": [
-    "eslint",
-    "import",
-    "oxc",
-    "unicorn",
-    "typescript",
-    "react",
-    "jest",
-    "jsx-a11y"
-  ],
+  "plugins": ["eslint", "import", "oxc", "unicorn", "typescript", "react", "jest", "jsx-a11y"],
   "ignorePatterns": [
     "*.min.js",
     "node_modules",
@@ -41,10 +32,7 @@
     "eslint/no-unused-expressions": "warn",
     "eslint/no-unsafe-optional-chaining": "off",
     "eslint/no-useless-rename": "warn",
-    "eslint/no-console": [
-      "error",
-      { "allow": ["warn", "error"] }
-    ],
+    "eslint/no-console": ["error", { "allow": ["warn", "error"] }],
     "eslint/no-restricted-imports": [
       "error",
       {
@@ -64,14 +52,43 @@
             "name": "react-i18next",
             "importNames": ["useTranslation", "Trans"],
             "message": "Use the locale hooks from '~/context/Locale' instead of 'react-i18next' to ensure correct injection of the i18n instance."
+          },
+          {
+            "name": "@ledgerhq/ledger-wallet-framework/types",
+            "importNames": [
+              "CryptoCurrency",
+              "TokenCurrency",
+              "Currency",
+              "Unit",
+              "FiatCurrency",
+              "ExplorerView",
+              "CryptoCurrencyId",
+              "TokenCurrencyId",
+              "CryptoCurrencyIdSchema",
+              "TokenCurrencyIdSchema"
+            ],
+            "message": "Wallet-framework currency types are for coin-modules. Import from @domain/entity-currency-* (unions from @domain/entity-currency)."
+          },
+          {
+            "name": "@ledgerhq/ledger-wallet-framework/api",
+            "importNames": [
+              "CryptoCurrency",
+              "TokenCurrency",
+              "Currency",
+              "Unit",
+              "FiatCurrency",
+              "ExplorerView",
+              "CryptoCurrencyId",
+              "TokenCurrencyId",
+              "CryptoCurrencyIdSchema",
+              "TokenCurrencyIdSchema"
+            ],
+            "message": "Wallet-framework currency types are for coin-modules. Import from @domain/entity-currency-* (unions from @domain/entity-currency)."
           }
         ],
         "patterns": [
           {
-            "group": [
-              "@ledgerhq/live-common/lib/**",
-              "@ledgerhq/live-common/lib-es/**"
-            ],
+            "group": ["@ledgerhq/live-common/lib/**", "@ledgerhq/live-common/lib-es/**"],
             "message": "Please remove the /lib import from live-common import."
           },
           {
@@ -89,6 +106,15 @@
             ],
             "importNamePattern": "^(useFeature|useFeatureFlags|useHasLocallyOverriddenFeatureFlags|useWalletFeaturesConfig|FeatureToggle|DEFAULT_FEATURES|groupedFeatures|GroupedFeature)$",
             "message": "Use @features/platform-feature-flags for hooks/FeatureToggle, @shared/feature-flags for actions/selectors/types/constants (e.g. FEATURE_FLAGS_DEFAULTS, groupedFeatures, GroupedFeature)."
+          },
+          {
+            "group": [
+              "@ledgerhq/live-common/currencies",
+              "@ledgerhq/live-common/currencies/index",
+              "@ledgerhq/live-common/currencies/helpers"
+            ],
+            "importNamePattern": "^(listCryptoCurrencies|getCryptoCurrencyById|hasCryptoCurrencyId|findCryptoCurrency|findCryptoCurrencyById|findCryptoCurrencyByScheme|findCryptoCurrencyByKeyword|findCryptoCurrencyByTicker|listFiatCurrencies|findFiatCurrencyByTicker|getFiatCurrencyByTicker|hasFiatCurrencyTicker)$",
+            "message": "Currency accessors are owned by the domain layer. Import crypto accessors from @domain/entity-currency-crypto and fiat accessors from @domain/entity-currency-fiat."
           }
         ]
       }
@@ -126,11 +152,7 @@
   },
   "overrides": [
     {
-      "files": [
-        "**/*.test.{ts,tsx}",
-        "**/__tests__/**",
-        "e2e/**/*.{ts,tsx}"
-      ],
+      "files": ["**/*.test.{ts,tsx}", "**/__tests__/**", "e2e/**/*.{ts,tsx}"],
       "env": { "jest": true },
       "plugins": ["jest"],
       "rules": {
@@ -154,13 +176,44 @@
         "eslint/no-restricted-imports": [
           "error",
           {
-            "paths": ["lodash"],
+            "paths": [
+              "lodash",
+              {
+                "name": "@ledgerhq/ledger-wallet-framework/types",
+                "importNames": [
+                  "CryptoCurrency",
+                  "TokenCurrency",
+                  "Currency",
+                  "Unit",
+                  "FiatCurrency",
+                  "ExplorerView",
+                  "CryptoCurrencyId",
+                  "TokenCurrencyId",
+                  "CryptoCurrencyIdSchema",
+                  "TokenCurrencyIdSchema"
+                ],
+                "message": "Wallet-framework currency types are for coin-modules. Import from @domain/entity-currency-* (unions from @domain/entity-currency)."
+              },
+              {
+                "name": "@ledgerhq/ledger-wallet-framework/api",
+                "importNames": [
+                  "CryptoCurrency",
+                  "TokenCurrency",
+                  "Currency",
+                  "Unit",
+                  "FiatCurrency",
+                  "ExplorerView",
+                  "CryptoCurrencyId",
+                  "TokenCurrencyId",
+                  "CryptoCurrencyIdSchema",
+                  "TokenCurrencyIdSchema"
+                ],
+                "message": "Wallet-framework currency types are for coin-modules. Import from @domain/entity-currency-* (unions from @domain/entity-currency)."
+              }
+            ],
             "patterns": [
               {
-                "group": [
-                  "@ledgerhq/live-common/lib/**",
-                  "@ledgerhq/live-common/lib-es/**"
-                ],
+                "group": ["@ledgerhq/live-common/lib/**", "@ledgerhq/live-common/lib-es/**"],
                 "message": "Please remove the /lib import from live-common import."
               },
               {
@@ -178,6 +231,15 @@
                 ],
                 "importNamePattern": "^(useFeature|useFeatureFlags|useHasLocallyOverriddenFeatureFlags|useWalletFeaturesConfig|FeatureToggle|DEFAULT_FEATURES|groupedFeatures|GroupedFeature)$",
                 "message": "Use @features/platform-feature-flags for hooks/FeatureToggle, @shared/feature-flags for actions/selectors/types/constants (e.g. FEATURE_FLAGS_DEFAULTS, groupedFeatures, GroupedFeature)."
+              },
+              {
+                "group": [
+                  "@ledgerhq/live-common/currencies",
+                  "@ledgerhq/live-common/currencies/index",
+                  "@ledgerhq/live-common/currencies/helpers"
+                ],
+                "importNamePattern": "^(listCryptoCurrencies|getCryptoCurrencyById|hasCryptoCurrencyId|findCryptoCurrency|findCryptoCurrencyById|findCryptoCurrencyByScheme|findCryptoCurrencyByKeyword|findCryptoCurrencyByTicker|listFiatCurrencies|findFiatCurrencyByTicker|getFiatCurrencyByTicker|hasFiatCurrencyTicker)$",
+                "message": "Currency accessors are owned by the domain layer. Import crypto accessors from @domain/entity-currency-crypto and fiat accessors from @domain/entity-currency-fiat."
               }
             ]
           }

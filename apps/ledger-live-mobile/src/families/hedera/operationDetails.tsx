@@ -13,7 +13,7 @@ import Alert from "~/components/Alert";
 import { NavigatorName, ScreenName } from "~/const";
 import Section from "~/screens/OperationDetails/Section";
 import { urls } from "~/utils/urls";
-import { useTokenByAddressInCurrency } from "@ledgerhq/cryptoassets/hooks";
+import { useTokenByAddressInCurrency } from "@features/platform-currencies";
 
 interface OperationDetailsPostAccountSectionProps {
   operation: HederaOperation;

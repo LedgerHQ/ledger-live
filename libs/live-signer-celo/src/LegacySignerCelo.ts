@@ -3,6 +3,13 @@ import type Transport from "@ledgerhq/hw-transport";
 import { CeloSigner } from "@ledgerhq/coin-celo/signer";
 import { LoadConfig, ResolutionConfig } from "@ledgerhq/hw-app-eth/services/types";
 import { EIP712Message } from "@ledgerhq/types-live";
+import { UpdateYourApp } from "./errors";
+import {
+  CELO_MANAGER_APP_NAME,
+  CELO_MULTIPATH_MIN_VERSION,
+  isUnauthorizedPathError,
+  isVersionBelow,
+} from "./deviceAuthorization";
 
 export class LegacySignerCelo implements CeloSigner {
   private readonly signer: Celo;
@@ -15,8 +22,21 @@ export class LegacySignerCelo implements CeloSigner {
     this.signer.setLoadConfig(loadConfig);
   }
 
-  getAddress(path: string, boolDisplay?: boolean, boolChaincode?: boolean, chainId?: string) {
-    return this.signer.getAddress(path, boolDisplay, boolChaincode, chainId);
+  async getAddress(path: string, boolDisplay?: boolean, boolChaincode?: boolean, chainId?: string) {
+    try {
+      return await this.signer.getAddress(path, boolDisplay, boolChaincode, chainId);
+    } catch (e) {
+      if (isUnauthorizedPathError(e)) {
+        const version = await this.signer
+          .getAppConfiguration()
+          .then(config => config.version)
+          .catch(() => undefined);
+        if (version !== undefined && isVersionBelow(version, CELO_MULTIPATH_MIN_VERSION)) {
+          throw new UpdateYourApp(undefined, { managerAppName: CELO_MANAGER_APP_NAME });
+        }
+      }
+      throw e;
+    }
   }
 
   signTransaction(path: string, rawTxHex: string) {

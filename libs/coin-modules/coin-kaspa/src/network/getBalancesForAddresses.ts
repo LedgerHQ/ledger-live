@@ -20,7 +20,9 @@ export const getBalancesForAddresses = async (
       );
     }
 
-    return (await response.json()) as ApiResponseBalance[];
+    const r = await response.json();
+
+    return r as ApiResponseBalance[];
   } catch (error) {
     throw new Error(`Error fetching balance: ${(error as Error).message}`);
   }

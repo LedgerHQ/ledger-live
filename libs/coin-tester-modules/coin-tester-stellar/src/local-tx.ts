@@ -1,51 +1,54 @@
-import { ed25519 } from "@noble/curves/ed25519";
-import { sha256 } from "@noble/hashes/sha2";
-import { broadcast, combine, craftTransaction } from "@ledgerhq/coin-stellar/logic";
+import BigNumber from "bignumber.js";
+import {
+  Asset,
+  BASE_FEE,
+  Horizon,
+  Keypair,
+  Networks,
+  Operation,
+  TransactionBuilder,
+} from "@stellar/stellar-sdk";
+import { HORIZON_URL } from "./fixtures";
 
 /**
  * Side-channel helpers that drive set-up transactions (pre-funded recipient
- * trustlines, issuer→test token payments) through the SAME coin-stellar
- * craft / combine / broadcast pipeline the bridge uses. The only piece we
- * stand in for is the device: signing is done in-process with a local
- * ed25519 seed.
+ * trustlines, issuer→test token payments) against the local Stellar Quickstart
+ * Horizon.
  *
- * Why we go through the coin module rather than calling stellar-sdk
- * directly: any divergence between the test fixtures and the production
- * craft/sign/broadcast code would mask regressions in coin-stellar itself —
- * which is the whole point of the coin tester.
+ * These deliberately go straight through `@stellar/stellar-sdk` rather than
+ * coin-stellar's craft / combine / broadcast pipeline. This is test *scaffolding*,
+ * not the code under test: routing it through coin-stellar coupled the fixtures
+ * to the very module we're validating and, worse, surfaced coin-stellar's own
+ * failure modes (e.g. `networkDown`) as opaque setup errors. Talking to Horizon
+ * directly keeps the setup path independent of the bridge.
  *
- * `coinConfig.setCoinConfig({ explorer.url, ... })` must be called BEFORE
- * any of the helpers below so the underlying `loadAccount` / `submitTransaction`
- * calls hit the local Stellar Quickstart instance.
+ * The local Quickstart is configured with the PUBLIC network passphrase, so we
+ * sign and build against {@link Networks.PUBLIC} to match.
  */
 
-const DEFAULT_FEE = 100n;
+const server = new Horizon.Server(HORIZON_URL, { allowHttp: true });
 
-/**
- * Stellar tx hash = SHA256(signatureBase). The hardware wallet computes that
- * hash internally before signing; we mirror it here so the signature lines up
- * with what `combine()` will verify against `Transaction.hash()`.
- */
-function signSignatureBase(seed: Uint8Array, signatureBaseB64: string): string {
-  const payload = Buffer.from(signatureBaseB64, "base64");
-  const hash = sha256(payload);
-  const signature = ed25519.sign(hash, seed);
-  return Buffer.from(signature).toString("base64");
+/** Stellar amounts are expressed in whole units; 1 XLM / asset unit = 1e7 stroops. */
+function stroopsToUnits(stroops: bigint): string {
+  return new BigNumber(stroops.toString()).dividedBy(1e7).toFixed(7);
 }
 
-async function craftSignAndSubmit({
-  account,
-  transaction,
-  seed,
-}: {
-  account: { address: string };
-  transaction: Parameters<typeof craftTransaction>[1];
-  seed: Uint8Array;
-}): Promise<string> {
-  const crafted = await craftTransaction(account, transaction);
-  const signatureB64 = signSignatureBase(seed, crafted.signatureBase);
-  const signedXdr = combine(crafted.xdr, signatureB64, account.address);
-  return broadcast(signedXdr);
+async function signAndSubmit(
+  seed: Uint8Array,
+  build: (builder: TransactionBuilder) => TransactionBuilder,
+): Promise<void> {
+  const keypair = Keypair.fromRawEd25519Seed(Buffer.from(seed));
+  const source = await server.loadAccount(keypair.publicKey());
+  const transaction = build(
+    new TransactionBuilder(source, {
+      fee: BASE_FEE,
+      networkPassphrase: Networks.PUBLIC,
+    }),
+  )
+    .setTimeout(30)
+    .build();
+  transaction.sign(keypair);
+  await server.submitTransaction(transaction);
 }
 
 /**
@@ -54,34 +57,23 @@ async function craftSignAndSubmit({
  * account can hold or receive that asset.
  */
 export async function createTrustline({
-  accountAddress,
   accountSeed,
   assetCode,
   assetIssuer,
 }: {
-  accountAddress: string;
   accountSeed: Uint8Array;
   assetCode: string;
   assetIssuer: string;
 }): Promise<void> {
-  await craftSignAndSubmit({
-    account: { address: accountAddress },
-    transaction: {
-      type: "changeTrust",
-      recipient: assetIssuer,
-      amount: 0n,
-      fee: DEFAULT_FEE,
-      assetCode,
-      assetIssuer,
-    },
-    seed: accountSeed,
-  });
+  await signAndSubmit(accountSeed, builder =>
+    builder.addOperation(Operation.changeTrust({ asset: new Asset(assetCode, assetIssuer) })),
+  );
 }
 
 /**
- * Send `amount` (in stroops) of `assetCode` issued by `issuerAddress` from
- * the issuer's own account to `recipientAddress`. The recipient must already
- * have a trustline; otherwise the payment fails with `op_no_trust`.
+ * Send `amountStroops` of `assetCode` issued by `issuerAddress` from the
+ * issuer's own account to `recipientAddress`. The recipient must already have a
+ * trustline; otherwise the payment fails with `op_no_trust`.
  */
 export async function sendIssuerPayment({
   issuerAddress,
@@ -97,16 +89,13 @@ export async function sendIssuerPayment({
   assetCode: string;
   amountStroops: bigint;
 }): Promise<void> {
-  await craftSignAndSubmit({
-    account: { address: issuerAddress },
-    transaction: {
-      type: "send",
-      recipient: recipientAddress,
-      amount: amountStroops,
-      fee: DEFAULT_FEE,
-      assetCode,
-      assetIssuer: issuerAddress,
-    },
-    seed: issuerSeed,
-  });
+  await signAndSubmit(issuerSeed, builder =>
+    builder.addOperation(
+      Operation.payment({
+        destination: recipientAddress,
+        asset: new Asset(assetCode, issuerAddress),
+        amount: stroopsToUnits(amountStroops),
+      }),
+    ),
+  );
 }

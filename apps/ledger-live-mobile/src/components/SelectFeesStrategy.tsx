@@ -29,7 +29,7 @@ import TachometerSlow from "~/icons/TachometerSlow";
 import TachometerMedium from "~/icons/TachometerMedium";
 import TachometerFast from "~/icons/TachometerFast";
 import NetworkFeeInfo from "./NetworkFeeInfo";
-import { useAnalytics } from "~/analytics";
+import { track } from "~/analytics";
 import { sharedSwapTracking } from "~/screens/Swap/utils";
 import Alert from "./Alert";
 import TranslatedError from "./TranslatedError";
@@ -75,7 +75,6 @@ export default function SelectFeesStrategy({
   onCustomFeesPress,
   status,
 }: Props) {
-  const { track } = useAnalytics();
   const { t } = useTranslation();
   const { colors } = useTheme();
   const mainAccount = getMainAccount(account, parentAccount);
@@ -111,7 +110,7 @@ export default function SelectFeesStrategy({
         extra: item.extra,
       });
     },
-    [onStrategySelect, track],
+    [onStrategySelect],
   );
 
   const onBuy = useCallback(

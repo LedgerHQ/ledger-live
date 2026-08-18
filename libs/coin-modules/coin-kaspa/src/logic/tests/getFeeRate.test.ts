@@ -1,6 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import { Transaction } from "../../types";
-import { getFeeRate } from "../getFeeRate";
+import { getFeeRate } from "../transaction/getFeeRate";
 
 describe("getFeeRate", () => {
   it("should return 0 for null transaction", () => {

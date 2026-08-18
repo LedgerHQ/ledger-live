@@ -1,10 +1,10 @@
 import { Account, AccountRaw, AccountUserData, Operation } from "@ledgerhq/types-live";
 import { APTOS_NON_HARDENED_DERIVATION_PATH } from "@ledgerhq/coin-aptos/constants";
-import { accountRawToAccountUserData } from "@ledgerhq/live-wallet/store";
+import { accountRawToAccountUserData } from "./account/serialization";
 import { createDataModel } from "./DataModel";
 import { fromAccountRaw, toAccountRaw } from "./account";
 import { getCurrencyConfiguration } from "./config";
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 
 jest.mock("./config", () => ({
   getCurrencyConfiguration: jest.fn(),
@@ -113,7 +113,11 @@ const evmAccount = {
 };
 
 describe("DataModel", () => {
-  setupMockCryptoAssetsStore();
+  setCryptoAssetsStore({
+    findTokenById: async () => undefined,
+    findTokenByAddressInCurrency: async () => undefined,
+    getTokensSyncHash: async () => "",
+  });
 
   test("createDataModel for crypto.org account", async () => {
     const migratedCryptoOrgAccount = await createDataModel(schema).decode(cryptoOrgAccount);

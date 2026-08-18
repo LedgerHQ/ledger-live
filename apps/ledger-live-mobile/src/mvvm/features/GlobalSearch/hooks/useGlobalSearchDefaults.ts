@@ -1,13 +1,13 @@
 import { useMemo } from "react";
 import VersionNumber from "react-native-version-number";
-import { useAssetsData } from "@ledgerhq/live-common/dada-client/hooks/useAssetsData";
-import { useStocksData } from "@ledgerhq/live-common/dada-client/hooks/useStocksData";
-import { useStablecoinTickers } from "@ledgerhq/live-common/dada-client/hooks/useStablecoinTickers";
-import { useUsdToFiatRate } from "@ledgerhq/live-common/counterValues/hooks/useUsdToFiatRate";
 import {
+  useAssetsData,
+  useStocksData,
+  useStablecoinTickers,
   selectTopAssetsByCategory,
   selectTopStocks,
-} from "@ledgerhq/live-common/dada-client/utils/assetDiscovery";
+} from "@features/platform-aggregated-assets";
+import { useUsdToFiatRate } from "@ledgerhq/live-common/counterValues/hooks/useUsdToFiatRate";
 import type { MarketAssetDisplayData } from "LLM/components/AssetListItem";
 import { useSelector } from "~/context/hooks";
 import { counterValueCurrencySelector } from "~/reducers/settings";
@@ -29,7 +29,6 @@ export function useGlobalSearchDefaults(enabled: boolean): GlobalSearchDefaults 
   const { t } = useTranslation();
   const { locale } = useLocale();
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
-  const counterCurrency = counterValueCurrency.ticker.toLowerCase();
   const counterValueUnit = counterValueCurrency.units[0];
   const { rate: usdToFiatRate, status: rateStatus } = useUsdToFiatRate(counterValueCurrency.ticker);
   const version = VersionNumber.appVersion ?? "";
@@ -67,10 +66,10 @@ export function useGlobalSearchDefaults(enabled: boolean): GlobalSearchDefaults 
       mapDadaMarketToDisplayData(
         { id: meta.id, name: meta.name, ticker: meta.ticker, ledgerId: currency.id },
         market,
-        { counterCurrency, counterValueUnit, usdToFiatRate, locale, t },
+        { counterValueUnit, usdToFiatRate, locale, t },
       ),
     );
-  }, [assetsData, stablecoinTickers, counterCurrency, counterValueUnit, usdToFiatRate, locale, t]);
+  }, [assetsData, stablecoinTickers, counterValueUnit, usdToFiatRate, locale, t]);
 
   const stocks = useMemo(
     () => (stocksData ? selectTopStocks(stocksData, MAX_STOCKS) : []),

@@ -3,22 +3,6 @@ import ExclamationCircleThin from "~/renderer/icons/ExclamationCircleThin";
 import CrossCircle from "~/renderer/icons/CrossCircle";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import Lock from "~/renderer/icons/LockCircle";
-import {
-  UserRefusedAllowManager,
-  UserRefusedFirmwareUpdate,
-  UserRefusedOnDevice,
-  UserRefusedAddress,
-  ManagerDeviceLockedError,
-  UserRefusedDeviceNameChange,
-} from "@ledgerhq/errors";
-import {
-  SwapGenericAPIError,
-  DeviceNotOnboarded,
-  NoSuchAppOnProvider,
-  LanguageInstallRefusedOnDevice,
-  ImageDoesNotExistOnDevice,
-  ImageLoadRefusedOnDevice,
-} from "@ledgerhq/live-common/errors";
 import { IconsLegacy } from "@ledgerhq/react-ui";
 
 export type ErrorIconProps = {
@@ -28,29 +12,30 @@ export type ErrorIconProps = {
 
 const ErrorIcon = ({ error, size = 44 }: ErrorIconProps) => {
   if (!error) return null;
+  const errorName = (error as { name?: string })?.name;
 
-  if (error instanceof DeviceNotOnboarded) {
+  if (errorName === "DeviceNotOnboarded") {
     return <InfoCircle size={size} />;
   }
 
   if (
-    error instanceof UserRefusedFirmwareUpdate ||
-    error instanceof UserRefusedAllowManager ||
-    error instanceof UserRefusedOnDevice ||
-    error instanceof UserRefusedAddress ||
-    error instanceof LanguageInstallRefusedOnDevice ||
-    error instanceof ImageDoesNotExistOnDevice ||
-    error instanceof ImageLoadRefusedOnDevice ||
-    error instanceof UserRefusedDeviceNameChange
+    errorName === "UserRefusedFirmwareUpdate" ||
+    errorName === "UserRefusedAllowManager" ||
+    errorName === "UserRefusedOnDevice" ||
+    errorName === "UserRefusedAddress" ||
+    errorName === "LanguageInstallRefusedOnDevice" ||
+    errorName === "ImageDoesNotExistOnDevice" ||
+    errorName === "ImageLoadRefusedOnDevice" ||
+    errorName === "UserRefusedDeviceNameChange"
   ) {
     return <IconsLegacy.InfoMedium size={size} color="primary.c80" />;
   }
 
-  if (error instanceof SwapGenericAPIError || error instanceof NoSuchAppOnProvider) {
+  if (errorName === "SwapGenericAPIError" || errorName === "NoSuchAppOnProvider") {
     return <CrossCircle size={size} />;
   }
 
-  if (error instanceof ManagerDeviceLockedError) {
+  if (errorName === "ManagerDeviceLocked") {
     return <Lock size={size} />;
   }
 

@@ -1,5 +1,65 @@
 # @ledgerhq/ledger-trust-service
 
+## 0.8.12
+
+### Patch Changes
+
+- Updated dependencies [[`f60f9cb`](https://github.com/LedgerHQ/ledger-live/commit/f60f9cbc79557cfa815ea714b375ace11aea8754), [`4015ade`](https://github.com/LedgerHQ/ledger-live/commit/4015ade1f9744d4bb575282060fdb1beb9aafc89), [`e44d972`](https://github.com/LedgerHQ/ledger-live/commit/e44d97239af10b46ae3ef703e0c6181cc0c87712)]:
+  - @shared/env@0.2.0
+
+## 0.8.12-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`f60f9cb`](https://github.com/LedgerHQ/ledger-live/commit/f60f9cbc79557cfa815ea714b375ace11aea8754), [`4015ade`](https://github.com/LedgerHQ/ledger-live/commit/4015ade1f9744d4bb575282060fdb1beb9aafc89), [`e44d972`](https://github.com/LedgerHQ/ledger-live/commit/e44d97239af10b46ae3ef703e0c6181cc0c87712)]:
+  - @shared/env@0.2.0-next.0
+
+## 0.8.11
+
+### Patch Changes
+
+- Updated dependencies [[`1af9ec9`](https://github.com/LedgerHQ/ledger-live/commit/1af9ec984928e0bf5fd23ce12edcc6131b0302a0)]:
+  - @ledgerhq/live-network@3.0.0
+  - @shared/env@0.1.1
+
+## 0.8.11-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`1af9ec9`](https://github.com/LedgerHQ/ledger-live/commit/1af9ec984928e0bf5fd23ce12edcc6131b0302a0)]:
+  - @ledgerhq/live-network@3.0.0-next.0
+  - @shared/env@0.1.1-next.0
+
+## 0.8.10
+
+### Patch Changes
+
+- Updated dependencies [[`e7caf31`](https://github.com/LedgerHQ/ledger-live/commit/e7caf310efbbf82aa777a7e86ceafe60f11e7193)]:
+  - @ledgerhq/live-network@2.7.0
+
+## 0.8.10-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`e7caf31`](https://github.com/LedgerHQ/ledger-live/commit/e7caf310efbbf82aa777a7e86ceafe60f11e7193)]:
+  - @ledgerhq/live-network@2.7.0-next.0
+
+## 0.8.9
+
+### Patch Changes
+
+- Updated dependencies [[`a15b864`](https://github.com/LedgerHQ/ledger-live/commit/a15b864576d901f15d480070b475314c3b23c1dd), [`fc44f1e`](https://github.com/LedgerHQ/ledger-live/commit/fc44f1e6ddcca939c117e0cb8bc49c404163b003)]:
+  - @ledgerhq/live-env@2.42.0
+  - @ledgerhq/live-network@2.6.8
+
+## 0.8.9-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`a15b864`](https://github.com/LedgerHQ/ledger-live/commit/a15b864576d901f15d480070b475314c3b23c1dd), [`fc44f1e`](https://github.com/LedgerHQ/ledger-live/commit/fc44f1e6ddcca939c117e0cb8bc49c404163b003)]:
+  - @ledgerhq/live-env@2.42.0-next.0
+  - @ledgerhq/live-network@2.6.8-next.0
+
 ## 0.8.8
 
 ### Patch Changes

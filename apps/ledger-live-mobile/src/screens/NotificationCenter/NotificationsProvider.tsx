@@ -1,6 +1,6 @@
 import { ServiceStatusProvider } from "@ledgerhq/live-common/notifications/ServiceStatusProvider/index";
 import type { ServiceStatusApi } from "@ledgerhq/live-common/notifications/ServiceStatusProvider/types";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { isEqual } from "lodash/fp";
 import React from "react";
 import Config from "react-native-config";

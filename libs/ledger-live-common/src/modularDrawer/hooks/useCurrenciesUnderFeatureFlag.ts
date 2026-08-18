@@ -1,8 +1,7 @@
 import { useMemo } from "react";
-import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import type { Feature } from "@shared/feature-flags";
 import { useFeature } from "@features/platform-feature-flags";
-import useEnv from "../../hooks/useEnv";
+import useEnv from "@features/platform-env";
 
 export function useCurrenciesUnderFeatureFlag() {
   const mock = useEnv("MOCK");
@@ -15,7 +14,6 @@ export function useCurrenciesUnderFeatureFlag() {
   const axelar = useFeature("currencyAxelar");
   const stargaze = useFeature("currencyStargaze");
   const secretNetwork = useFeature("currencySecretNetwork");
-  const umee = useFeature("currencyUmee");
   const desmos = useFeature("currencyDesmos");
   const dydx = useFeature("currencyDydx");
   const quicksilver = useFeature("currencyQuicksilver");
@@ -59,7 +57,6 @@ export function useCurrenciesUnderFeatureFlag() {
   const blast = useFeature("currencyBlast");
   const blastSepolia = useFeature("currencyBlastSepolia");
   const scroll = useFeature("currencyScroll");
-  const scrollSepolia = useFeature("currencyScrollSepolia");
   const shape = useFeature("currencyShape");
   const story = useFeature("currencyStory");
   const icon = useFeature("currencyIcon");
@@ -78,6 +75,7 @@ export function useCurrenciesUnderFeatureFlag() {
   const seiNetworkEvm = useFeature("currencySeiNetworkEvm");
   const berachain = useFeature("currencyBerachain");
   const hyperevm = useFeature("currencyHyperevm");
+  const hypercore = useFeature("currencyHypercore");
   const canton = useFeature("currencyCantonNetwork");
   const cantonDevnet = useFeature("currencyCantonNetworkDevnet");
   const cantonTestnet = useFeature("currencyCantonNetworkTestnet");
@@ -102,7 +100,8 @@ export function useCurrenciesUnderFeatureFlag() {
   const robinhoodTestnet = useFeature("currencyRobinhoodTestnet");
 
   const featureFlaggedCurrencies = useMemo(
-    (): Partial<Record<CryptoCurrencyId, Feature<unknown> | null>> => ({
+    (): Partial<Record<string, Feature<unknown> | null>> => ({
+      // TO BE REPLACED soon by branded id
       adi,
       aleo,
       aleo_testnet: aleoTestnet,
@@ -111,7 +110,6 @@ export function useCurrenciesUnderFeatureFlag() {
       axelar,
       stargaze,
       secret_network: secretNetwork,
-      umee,
       desmos,
       dydx,
       quicksilver,
@@ -139,6 +137,7 @@ export function useCurrenciesUnderFeatureFlag() {
       sei_evm: seiNetworkEvm,
       berachain: berachain,
       hyperevm: hyperevm,
+      hypercore: hypercore,
       coreum,
       polygon_amoy: polygonAmoy,
       polygon_zk_evm: polygonZkEvm,
@@ -159,7 +158,6 @@ export function useCurrenciesUnderFeatureFlag() {
       blast,
       blast_sepolia: blastSepolia,
       scroll,
-      scroll_sepolia: scrollSepolia,
       shape,
       story,
       icon,
@@ -206,7 +204,6 @@ export function useCurrenciesUnderFeatureFlag() {
       axelar,
       stargaze,
       secretNetwork,
-      umee,
       desmos,
       dydx,
       quicksilver,
@@ -234,6 +231,7 @@ export function useCurrenciesUnderFeatureFlag() {
       seiNetworkEvm,
       berachain,
       hyperevm,
+      hypercore,
       coreum,
       polygonAmoy,
       polygonZkEvm,
@@ -254,7 +252,6 @@ export function useCurrenciesUnderFeatureFlag() {
       blast,
       blastSepolia,
       scroll,
-      scrollSepolia,
       shape,
       story,
       icon,

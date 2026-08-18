@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
 import { Link, Text } from "@ledgerhq/react-ui";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { Trans, useTranslation } from "react-i18next";
 import { urls } from "~/config/urls";
 import TopBanner from "~/renderer/components/TopBanner";

@@ -1,8 +1,8 @@
 import React from "react";
 import { render, withFlagOverrides } from "@tests/test-renderer";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { TokenAccount } from "@ledgerhq/types-live";
 import AccountBalanceFooter from "./AccountBalanceSummaryFooter";
 

@@ -8,6 +8,7 @@ import {
 } from "@ledgerhq/live-dmk-shared";
 import { TrackScreen, track } from "~/analytics";
 import { DeviceDeprecatedNonBlockingState } from "./DeviceDeprecatedNonBlockingState";
+import { DeviceIntentTrackingProvider } from "../../utils/DeviceIntentTrackingContext";
 import { PAGE_CONNECT_APP } from "../../utils/trackDeviceIntent";
 import type { InitializerDevice } from "../types";
 
@@ -36,22 +37,23 @@ const supportEndDate = new Date("2026-01-01T00:00:00Z");
 function renderState(screenSequence: DeprecationScreenKind[]) {
   const onContinue = jest.fn();
   const view = render(
-    <DeviceDeprecatedNonBlockingState
-      state={{
-        type: AppInteractionRequiredStateType.DeviceDeprecatedNonBlocking,
-        decision: {
-          status: "show",
-          screenSequence,
-          currencyName: "Bitcoin",
-          deviceModelId: DeviceModelId.nanoS,
-          supportEndDate,
-        },
-        onContinue,
-      }}
-      device={device}
-      sourceFlow="my_ledger"
-      onCancel={jest.fn()}
-    />,
+    <DeviceIntentTrackingProvider value={{ sourceFlow: "my_ledger" }}>
+      <DeviceDeprecatedNonBlockingState
+        state={{
+          type: AppInteractionRequiredStateType.DeviceDeprecatedNonBlocking,
+          decision: {
+            status: "show",
+            screenSequence,
+            currencyName: "Bitcoin",
+            deviceModelId: DeviceModelId.nanoS,
+            supportEndDate,
+          },
+          onContinue,
+        }}
+        device={device}
+        onCancel={jest.fn()}
+      />
+    </DeviceIntentTrackingProvider>,
   );
   return { ...view, onContinue };
 }

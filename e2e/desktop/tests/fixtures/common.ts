@@ -1,9 +1,10 @@
 import { test as base, Page, ElectronApplication, ChromiumBrowserContext } from "@playwright/test";
+import { execFileSync } from "child_process";
 import { mkdir, readFile, writeFile } from "fs/promises";
 import merge from "lodash/merge";
 import * as path from "path";
 import type { OptionalFeatureMap } from "@shared/feature-flags";
-import { setEnv } from "@ledgerhq/live-env";
+import { setEnv } from "@shared/env";
 
 import { Application } from "tests/page";
 import { safeAppendFile, NANO_APP_CATALOG_PATH } from "tests/utils/fileUtils";
@@ -15,7 +16,7 @@ import {
   runCliStep,
 } from "tests/utils/allureUtils";
 import { isLastRetry } from "tests/utils/testInfoUtils";
-import { WebviewLogCollector } from "tests/utils/webviewLogCollector";
+import { PageLogCollector } from "tests/utils/pageLogCollector";
 import { randomUUID } from "crypto";
 import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
@@ -43,7 +44,6 @@ type TestFixtures = {
   theme: "light" | "dark" | "no-preference" | undefined;
   speculosApp: AppInfos;
   userdata?: string;
-  extraUserdataFiles?: Record<string, string>;
   settings: Record<string, unknown>;
   userdataDestinationPath: string;
   userdataOriginalFile?: string;
@@ -89,7 +89,6 @@ export const test = base.extend<TestFixtures>({
   speculosApp: undefined,
   cliCommands: [],
   cliCommandsOnApp: [],
-  extraUserdataFiles: undefined,
   localManifestOverride: undefined,
   teamOwner: undefined,
   speculosForSetupOnly: false,
@@ -100,7 +99,7 @@ export const test = base.extend<TestFixtures>({
   },
 
   userdataDestinationPath: async (
-    { userdataOriginalFile, settings, extraUserdataFiles, localManifestOverride },
+    { userdataOriginalFile, settings, localManifestOverride },
     use,
   ) => {
     const userdataDestinationPath = path.join(__dirname, "../artifacts/userdata", randomUUID());
@@ -118,13 +117,6 @@ export const test = base.extend<TestFixtures>({
       userData.data.discover.localLiveApp = localManifestOverride;
     }
     await writeFile(`${userdataDestinationPath}/app.json`, JSON.stringify(userData));
-    if (extraUserdataFiles) {
-      await Promise.all(
-        Object.entries(extraUserdataFiles).map(([name, contents]) =>
-          writeFile(path.join(userdataDestinationPath, name), contents),
-        ),
-      );
-    }
     await use(userdataDestinationPath);
   },
   userdataOriginalFile: async ({ userdata }, use) => {
@@ -253,6 +245,12 @@ export const test = base.extend<TestFixtures>({
     } catch {
       // App may already be closed when capturing failure video
     }
+
+    try {
+      execFileSync("pkill", ["-f", userdataDestinationPath]);
+    } catch {
+      // No lingering process (only Reset App reboots the main process into a new instance)
+    }
   },
   page: async ({ electronApp, speculos, cliCommandsOnApp, teamOwner }, use, testInfo) => {
     // app is ready
@@ -265,6 +263,9 @@ export const test = base.extend<TestFixtures>({
     page.setDefaultTimeout(120000);
 
     attachNetworkLogging(page, testInfo);
+    // capture main app (Ledger Wallet) network logs, attached to Allure on failure
+    const appCollector = new PageLogCollector();
+    appCollector.attach(page);
 
     if (process.env.PLAYWRIGHT_CPU_THROTTLING_RATE) {
       const client = await (page.context() as ChromiumBrowserContext).newCDPSession(page);
@@ -288,8 +289,8 @@ export const test = base.extend<TestFixtures>({
     });
 
     // capture webview console and network logs for debugging (e.g. swap live app)
-    const webviewCollector = new WebviewLogCollector();
-    webviewCollector.start(electronApp);
+    const webviewCollector = new PageLogCollector();
+    webviewCollector.attachWebview(electronApp);
 
     // app is loaded
     await page.waitForLoadState("domcontentloaded");
@@ -303,7 +304,14 @@ export const test = base.extend<TestFixtures>({
       const takeSpeculosScreenshot = Boolean(
         speculos.device || (cliCommandsOnApp?.length ?? 0) > 0,
       );
-      await captureArtifacts(page, testInfo, electronApp, takeSpeculosScreenshot, webviewCollector);
+      await captureArtifacts(
+        page,
+        testInfo,
+        electronApp,
+        takeSpeculosScreenshot,
+        webviewCollector,
+        appCollector,
+      );
     }
 
     // Remove video if test passed

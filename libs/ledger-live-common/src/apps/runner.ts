@@ -12,7 +12,7 @@ import {
 import type { Exec, State, AppOp, RunnerEvent, Action } from "./types";
 import { reducer, getActionPlan, getNextAppOp } from "./logic";
 import { delay } from "../promise";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 
 export const runAppOp = ({
   state,

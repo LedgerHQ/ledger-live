@@ -6,11 +6,11 @@ import {
 import { getEvmDummyAddress } from "@ledgerhq/coin-evm/constants";
 import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
 import type {
-  FeeData,
   Transaction as EvmTransaction,
   TransactionStatus as EvmTransactionStatus,
-} from "@ledgerhq/coin-evm/types/index";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+} from "./types";
+import type { FeeData } from "@ledgerhq/coin-evm/types/index";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { Account, AccountBridgeExtensions, AccountLike } from "@ledgerhq/types-live";
 import { getCurrencyConfiguration } from "../../config";
 import {

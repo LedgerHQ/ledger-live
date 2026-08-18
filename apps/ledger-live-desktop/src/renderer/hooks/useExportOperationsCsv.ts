@@ -1,6 +1,6 @@
 import { ipcRenderer } from "electron";
 import { useState, useCallback, useEffect, useRef } from "react";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { useSelector } from "LLD/hooks/redux";
 import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
 import { useBridgeSync, useBridgeSyncState } from "@ledgerhq/live-common/bridge/react/index";
@@ -85,7 +85,7 @@ export function useExportOperationsCsv({
           accounts.filter(a => checkedIds.includes(a.id)),
           countervalueCurrency,
           countervalueState,
-          walletState,
+          walletState.accountNames,
         );
         const ok = await saveOperationsToFile(path, csv);
         if (ok) {
@@ -109,7 +109,7 @@ export function useExportOperationsCsv({
     getDateTxt,
     onError,
     onSuccess,
-    walletState,
+    walletState.accountNames,
   ]);
 
   const resetState = useCallback(() => {

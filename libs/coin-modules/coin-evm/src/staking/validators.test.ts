@@ -1,10 +1,13 @@
 import network from "@ledgerhq/live-network";
 import {
   clearValidatorsCache,
+  getDelegationVisibilityDelayMinutes,
   getUnbondingPeriodDays,
   getValidatorExplorerUrl,
   getValidators,
   getValidatorsPage,
+  hasDelegationVisibilityDelay,
+  hasChainRewards,
   hasUnbondingPeriod,
   prefetchValidators,
 } from "./validators";
@@ -15,6 +18,10 @@ jest.mock("@ledgerhq/live-network", () => ({
 }));
 
 const mockedNetwork = jest.mocked(network);
+
+const mockConfig = {
+  node: { type: "external", uri: "https://sei-evm.coin.ledger.com" },
+} as unknown as import("../config").EvmConfigInfo;
 
 const cosmosValidatorsPayload = {
   status: 200,
@@ -46,7 +53,7 @@ describe("staking/validators", () => {
     it("fetches Sei validators from REST and caches non-empty results", async () => {
       mockedNetwork.mockResolvedValue(cosmosValidatorsPayload);
 
-      const first = await getValidators("sei_evm");
+      const first = await getValidators(mockConfig, "sei_evm");
 
       expect(mockedNetwork).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -57,61 +64,61 @@ describe("staking/validators", () => {
       expect(first).toEqual({
         items: [
           expect.objectContaining({
-            validatorAddress: "seivaloper1abc",
+            id: "seivaloper1abc",
+            address: "seivaloper1abc",
             name: "John",
-            commission: 0.05,
+            commissionRate: "0.05",
             // REST returns usei (6 decimals); scaled to sei_evm's 18-decimal unit (×10^12).
-            tokens: "100000000000000",
-            votingPower: 0,
-            estimatedYearlyRewardsRate: 0,
+            balance: 100000000000000n,
+            apy: 0,
           }),
           expect.objectContaining({
-            validatorAddress: "seivaloper1def",
+            id: "seivaloper1def",
+            address: "seivaloper1def",
             name: "Doe",
-            commission: 1,
-            tokens: "999000000000000",
-            votingPower: 1,
-            estimatedYearlyRewardsRate: 0,
+            commissionRate: "1",
+            balance: 999000000000000n,
+            apy: 0,
           }),
         ],
         next: undefined,
       });
 
-      expect(await getValidators("sei_evm")).toEqual(first);
+      expect(await getValidators(mockConfig, "sei_evm")).toEqual(first);
       expect(mockedNetwork).toHaveBeenCalledTimes(1);
     });
 
     it("caches each cursor page under a separate key", async () => {
       mockedNetwork.mockResolvedValue(cosmosValidatorsPayload);
 
-      await getValidators("sei_evm");
-      await getValidators("sei_evm", "5");
+      await getValidators(mockConfig, "sei_evm");
+      await getValidators(mockConfig, "sei_evm", "5");
       expect(mockedNetwork).toHaveBeenCalledTimes(2);
 
-      await getValidators("sei_evm");
-      await getValidators("sei_evm", "5");
+      await getValidators(mockConfig, "sei_evm");
+      await getValidators(mockConfig, "sei_evm", "5");
       expect(mockedNetwork).toHaveBeenCalledTimes(2);
     });
 
     it("clearValidatorsCache(currencyId) evicts every cached page of that currency", async () => {
       mockedNetwork.mockResolvedValue(cosmosValidatorsPayload);
 
-      await getValidators("sei_evm");
-      await getValidators("sei_evm", "5");
+      await getValidators(mockConfig, "sei_evm");
+      await getValidators(mockConfig, "sei_evm", "5");
       expect(mockedNetwork).toHaveBeenCalledTimes(2);
 
       clearValidatorsCache("sei_evm");
 
-      await getValidators("sei_evm");
-      await getValidators("sei_evm", "5");
+      await getValidators(mockConfig, "sei_evm");
+      await getValidators(mockConfig, "sei_evm", "5");
       expect(mockedNetwork).toHaveBeenCalledTimes(4);
     });
 
     it("returns cached data without a second network call while fresh", async () => {
       mockedNetwork.mockResolvedValue(cosmosValidatorsPayload);
 
-      await getValidators("sei_evm");
-      await getValidators("sei_evm");
+      await getValidators(mockConfig, "sei_evm");
+      await getValidators(mockConfig, "sei_evm");
 
       expect(mockedNetwork).toHaveBeenCalledTimes(1);
     });
@@ -119,7 +126,10 @@ describe("staking/validators", () => {
     it("deduplicates concurrent in-flight fetches", async () => {
       mockedNetwork.mockResolvedValue(cosmosValidatorsPayload);
 
-      await Promise.all([getValidators("sei_evm"), getValidators("sei_evm")]);
+      await Promise.all([
+        getValidators(mockConfig, "sei_evm"),
+        getValidators(mockConfig, "sei_evm"),
+      ]);
 
       expect(mockedNetwork).toHaveBeenCalledTimes(1);
     });
@@ -127,15 +137,15 @@ describe("staking/validators", () => {
     it("does not cache an empty validator list", async () => {
       mockedNetwork.mockResolvedValue({ status: 200, data: { validators: [] } });
 
-      await getValidators("sei_evm");
-      await getValidators("sei_evm");
+      await getValidators(mockConfig, "sei_evm");
+      await getValidators(mockConfig, "sei_evm");
 
       // empty results are not cached, so each call hits the network again
       expect(mockedNetwork).toHaveBeenCalledTimes(2);
     });
 
     it("returns an empty page for currencies without a validator API", async () => {
-      expect(await getValidators("ethereum")).toEqual({ items: [], next: undefined });
+      expect(await getValidators(mockConfig, "ethereum")).toEqual({ items: [], next: undefined });
       expect(mockedNetwork).not.toHaveBeenCalled();
     });
 
@@ -148,16 +158,16 @@ describe("staking/validators", () => {
       mockedNetwork.mockImplementationOnce(() => firstPending);
       mockedNetwork.mockResolvedValue(cosmosValidatorsPayload);
 
-      const firstCall = getValidators("sei_evm");
+      const firstCall = getValidators(mockConfig, "sei_evm");
 
       clearValidatorsCache("sei_evm");
 
-      const second = await getValidators("sei_evm");
+      const second = await getValidators(mockConfig, "sei_evm");
 
       expect(second).toEqual({
         items: [
-          expect.objectContaining({ validatorAddress: "seivaloper1abc" }),
-          expect.objectContaining({ validatorAddress: "seivaloper1def" }),
+          expect.objectContaining({ address: "seivaloper1abc" }),
+          expect.objectContaining({ address: "seivaloper1def" }),
         ],
         next: undefined,
       });
@@ -191,7 +201,7 @@ describe("staking/validators", () => {
 
       // non-zero base: lru-cache treats a start time of 0 as "no TTL"
       setNow(1000);
-      await getValidators("sei_evm");
+      await getValidators(mockConfig, "sei_evm");
       expect(mockedNetwork).toHaveBeenCalledTimes(1);
 
       // lru-cache debounces its clock read for `ttlResolution` (1ms) via a real
@@ -199,7 +209,7 @@ describe("staking/validators", () => {
       await new Promise(resolve => setTimeout(resolve, 5));
 
       setNow(32000); // 31s later, past the 30s TTL
-      await getValidators("sei_evm");
+      await getValidators(mockConfig, "sei_evm");
 
       expect(mockedNetwork).toHaveBeenCalledTimes(2);
     });
@@ -209,23 +219,23 @@ describe("staking/validators", () => {
     it("warms the cache so a later read hits no network", async () => {
       mockedNetwork.mockResolvedValue(cosmosValidatorsPayload);
 
-      prefetchValidators("sei_evm");
+      prefetchValidators(mockConfig, "sei_evm");
       await Promise.resolve();
       await Promise.resolve();
       expect(mockedNetwork).toHaveBeenCalledTimes(1);
 
       // the warmed entry serves the subsequent read without another network call
-      await getValidators("sei_evm");
+      await getValidators(mockConfig, "sei_evm");
       expect(mockedNetwork).toHaveBeenCalledTimes(1);
     });
 
     it("is a no-op when cache is already fresh", async () => {
       mockedNetwork.mockResolvedValue(cosmosValidatorsPayload);
 
-      await getValidators("sei_evm");
+      await getValidators(mockConfig, "sei_evm");
       expect(mockedNetwork).toHaveBeenCalledTimes(1);
 
-      prefetchValidators("sei_evm");
+      prefetchValidators(mockConfig, "sei_evm");
       await Promise.resolve();
 
       expect(mockedNetwork).toHaveBeenCalledTimes(1);
@@ -260,6 +270,28 @@ describe("staking/validators", () => {
         expect(hasUnbondingPeriod(currencyId)).toBe(false);
       },
     );
+
+    it("getDelegationVisibilityDelayMinutes returns Somnia config", () => {
+      expect(getDelegationVisibilityDelayMinutes("somnia")).toBe(5);
+    });
+
+    it.each(["sei_evm", "__unknown__"])(
+      "getDelegationVisibilityDelayMinutes returns undefined without config (%s)",
+      currencyId => {
+        expect(getDelegationVisibilityDelayMinutes(currencyId)).toBeUndefined();
+      },
+    );
+
+    it("hasDelegationVisibilityDelay is true for Somnia", () => {
+      expect(hasDelegationVisibilityDelay("somnia")).toBe(true);
+    });
+
+    it.each(["sei_evm", "__unknown__"])(
+      "hasDelegationVisibilityDelay is false without configured delay (%s)",
+      currencyId => {
+        expect(hasDelegationVisibilityDelay(currencyId)).toBe(false);
+      },
+    );
   });
 
   describe("getValidatorsPage", () => {
@@ -279,11 +311,12 @@ describe("staking/validators", () => {
         },
       });
 
-      const page = await getValidatorsPage("sei_evm");
+      const page = await getValidatorsPage(mockConfig, "sei_evm");
 
       expect(page.next).toBeUndefined();
       expect(page.items).toEqual([
         {
+          id: "seivaloper1x",
           address: "seivaloper1x",
           name: "X",
           // 42 usei scaled to sei_evm's 18-decimal unit (×10^12).
@@ -292,6 +325,18 @@ describe("staking/validators", () => {
           apy: 0,
         },
       ]);
+    });
+  });
+
+  describe("hasChainRewards", () => {
+    it.each([
+      ["sei_evm", true],
+      ["monad", true],
+      ["somnia", true],
+      ["zero_gravity", false],
+      ["unknown_chain", false],
+    ])("%s returns %s", (currencyId, expected) => {
+      expect(hasChainRewards(currencyId)).toEqual(expected);
     });
   });
 });

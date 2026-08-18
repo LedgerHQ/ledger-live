@@ -1,4 +1,27 @@
-import { shouldForceZeroAmountForDexSwap } from "./completeExchange";
+import { TransportStatusError } from "@ledgerhq/hw-transport/errors";
+import { ErrorStatus } from "@ledgerhq/hw-app-exchange/ReturnCode";
+import BigNumber from "bignumber.js";
+import { CompleteExchangeError } from "../error";
+import {
+  enrichSwapDeserializationError,
+  getBufferedDexGasLimit,
+  shouldForceZeroAmountForDexSwap,
+} from "./completeExchange";
+
+describe("getBufferedDexGasLimit", () => {
+  it.each([
+    ["caps HyperEVM at 2.9M", "hyperevm", 3_000_000, "2900000"],
+    ["keeps a buffered HyperEVM value below the cap", "hyperevm", 2_000_000, "2600000"],
+    ["does not cap other EVM currencies", "ethereum", 3_000_000, "3900000"],
+  ])("%s", (_case, fromCurrencyId, gasLimit, expected) => {
+    expect(
+      getBufferedDexGasLimit({
+        gasLimit: new BigNumber(gasLimit),
+        fromCurrencyId,
+      }).toFixed(),
+    ).toBe(expected);
+  });
+});
 
 describe("shouldForceZeroAmountForDexSwap", () => {
   const base = {
@@ -17,5 +40,59 @@ describe("shouldForceZeroAmountForDexSwap", () => {
     ["non-Arc native coin without sub-account", {}, false],
   ])("%s", (_case, params, expected) => {
     expect(shouldForceZeroAmountForDexSwap({ ...base, ...params })).toBe(expected);
+  });
+});
+
+describe("enrichSwapDeserializationError", () => {
+  // Minimal NewTransactionResponse protobuf with only payin_extra_id (field 2) = 40 * "a",
+  // which is above the device's 19-byte usable limit for that field.
+  const payloadWithOversizedExtraId = "1228" + "61".repeat(40);
+
+  it("enriches a device DESERIALIZATION_FAILED with the precise offending field", () => {
+    const deviceError = new TransportStatusError(ErrorStatus.DESERIALIZATION_FAILED);
+
+    const result = enrichSwapDeserializationError(
+      "PROCESS_TRANSACTION",
+      payloadWithOversizedExtraId,
+      deviceError,
+    );
+
+    expect(result).toBeInstanceOf(CompleteExchangeError);
+    // Title stays the device error's translation key so the user-facing copy is unchanged;
+    // the precise field only enriches the message (logs/analytics).
+    expect(result).toMatchObject({
+      step: "PROCESS_TRANSACTION",
+      title: "deserializationFailed",
+    });
+    expect(result?.message).toContain("payin_extra_id");
+  });
+
+  it("returns undefined for a DESERIALIZATION_FAILED when no field violation is found", () => {
+    const deviceError = new TransportStatusError(ErrorStatus.DESERIALIZATION_FAILED);
+    // Payload cannot be decoded locally -> defer to the device's generic error.
+    expect(
+      enrichSwapDeserializationError("PROCESS_TRANSACTION", "0aff", deviceError),
+    ).toBeUndefined();
+  });
+
+  it("returns undefined for unrelated device status codes", () => {
+    const deviceError = new TransportStatusError(ErrorStatus.INVALID_ADDRESS);
+    expect(
+      enrichSwapDeserializationError(
+        "CHECK_REFUND_ADDRESS",
+        payloadWithOversizedExtraId,
+        deviceError,
+      ),
+    ).toBeUndefined();
+  });
+
+  it("returns undefined for non-transport errors", () => {
+    expect(
+      enrichSwapDeserializationError(
+        "PROCESS_TRANSACTION",
+        payloadWithOversizedExtraId,
+        new Error("boom"),
+      ),
+    ).toBeUndefined();
   });
 });

@@ -7,7 +7,7 @@ import {
 import { RNBleTransportFactory } from "@ledgerhq/device-transport-kit-react-native-ble";
 import { LedgerLiveLogger, UserHashService } from "@ledgerhq/live-dmk-shared";
 import { RNHidTransportFactory } from "@ledgerhq/device-transport-kit-react-native-hid";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { LocalTracer } from "@ledgerhq/logs";
 import { httpProxyTransportFactory, httpProxyUrlSubject } from "../transport/HttpProxyDmkTransport";
 

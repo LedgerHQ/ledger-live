@@ -5,7 +5,7 @@ import {
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
   RecipientRequired,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import { utils as TyphonUtils } from "@stricahq/typhonjs";
 import { BigNumber } from "bignumber.js";
 import { decodeTokenAssetId, decodeTokenCurrencyId } from "../buildSubAccounts";

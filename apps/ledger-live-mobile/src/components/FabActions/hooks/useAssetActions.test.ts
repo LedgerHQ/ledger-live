@@ -1,10 +1,11 @@
 import { renderHook } from "@tests/test-renderer";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import type { State } from "~/reducers/types";
 import { ScreenName } from "~/const";
 import useAssetActions from "./useAssetActions";
 import { getCustomSendFlow } from "~/screens/SendFunds/utils/customSendFlow";
+import { aleoTokenCurrency } from "~/families/aleo/__mocks__/currency.mock";
 
 jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual("@react-navigation/native"),
@@ -53,6 +54,7 @@ const withTwoAccounts = (state: State): State => ({
 
 describe("useAssetActions - custom send flow", () => {
   beforeEach(() => {
+    mockGetCustomSendFlow.mockClear();
     mockGetCustomSendFlow.mockReturnValue(null);
   });
 
@@ -105,6 +107,14 @@ describe("useAssetActions - custom send flow", () => {
     });
   });
 
+  it("resolves family from the parent currency when currency is a token", () => {
+    renderHook(() => useAssetActions({ currency: aleoTokenCurrency, accounts: [ALEO_ACCOUNT_1] }), {
+      overrideInitialState: withSingleAccount,
+    });
+
+    expect(mockGetCustomSendFlow).toHaveBeenCalledWith("aleo");
+  });
+
   it("includes additional family actions from getAdditionalAssetActions", () => {
     const { result } = renderHook(
       () => useAssetActions({ currency: currencyAleo, accounts: [ALEO_ACCOUNT_1] }),
@@ -114,5 +124,17 @@ describe("useAssetActions - custom send flow", () => {
     expect(result.current.mainActions).toEqual(
       expect.arrayContaining([expect.objectContaining({ id: "custom-action" })]),
     );
+  });
+
+  it("omits send and receive for a family that disables them (hypercore)", () => {
+    const currencyHypercore = getCryptoCurrencyById("hypercore");
+
+    const { result } = renderHook(
+      () => useAssetActions({ currency: currencyHypercore, accounts: [ALEO_ACCOUNT_1] }),
+      { overrideInitialState: withSingleAccount },
+    );
+
+    expect(result.current.mainActions.find(a => a.id === "send")).toBeUndefined();
+    expect(result.current.mainActions.find(a => a.id === "receive")).toBeUndefined();
   });
 });

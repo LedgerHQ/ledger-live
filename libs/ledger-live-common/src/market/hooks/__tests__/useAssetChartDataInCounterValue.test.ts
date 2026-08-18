@@ -55,7 +55,12 @@ describe("useAssetChartDataInCounterValue", () => {
   describe("natively supported fiat countervalue", () => {
     it("requests the chart with the fiat ticker and returns the data unchanged", () => {
       const { result } = renderHook(() =>
-        useAssetChartDataInCounterValue({ id: "bitcoin", counterCurrency: "eur", range: "1d" }),
+        useAssetChartDataInCounterValue({
+          id: "bitcoin",
+          counterCurrency: "eur",
+          range: "1d",
+          isCryptoCountervalue: false,
+        }),
       );
 
       expect(mockUseAssetChartData).toHaveBeenCalledWith(
@@ -69,7 +74,12 @@ describe("useAssetChartDataInCounterValue", () => {
 
     it("does not fire a USD rate request (passes 'usd' which short-circuits)", () => {
       renderHook(() =>
-        useAssetChartDataInCounterValue({ id: "bitcoin", counterCurrency: "vnd", range: "1d" }),
+        useAssetChartDataInCounterValue({
+          id: "bitcoin",
+          counterCurrency: "vnd",
+          range: "1d",
+          isCryptoCountervalue: false,
+        }),
       );
 
       expect(mockUseAssetChartData).toHaveBeenCalledWith(
@@ -83,13 +93,17 @@ describe("useAssetChartDataInCounterValue", () => {
   // Two reasons the chart endpoint can't serve a countervalue natively:
   //  - the fiat is outside CoinGecko's supported_vs_currencies (e.g. COP), or
   //  - it is a crypto (BTC/ETH) which CoinGecko lists but the chart endpoint 422s.
-  // BTC is also a pseudo-fiat in fiats.ts, so crypto must be detected by ticker.
   describe("countervalue requiring a USD fallback", () => {
     it("rescales by the USD->fiat rate for an unsupported fiat (COP)", () => {
       mockUseUsdToFiatRate.mockReturnValue({ status: "ready", rate: 0.5 });
 
       const { result } = renderHook(() =>
-        useAssetChartDataInCounterValue({ id: "bitcoin", counterCurrency: "cop", range: "1d" }),
+        useAssetChartDataInCounterValue({
+          id: "bitcoin",
+          counterCurrency: "cop",
+          range: "1d",
+          isCryptoCountervalue: false,
+        }),
       );
 
       expect(mockUseAssetChartData).toHaveBeenCalledWith(
@@ -109,7 +123,12 @@ describe("useAssetChartDataInCounterValue", () => {
       mockUseUsdToFiatRate.mockReturnValue({ status: "ready", rate: 0.5 });
 
       const { result } = renderHook(() =>
-        useAssetChartDataInCounterValue({ id: "ethereum", counterCurrency: "btc", range: "1d" }),
+        useAssetChartDataInCounterValue({
+          id: "ethereum",
+          counterCurrency: "btc",
+          range: "1d",
+          isCryptoCountervalue: true,
+        }),
       );
 
       expect(mockUseAssetChartData).toHaveBeenCalledWith(
@@ -129,7 +148,12 @@ describe("useAssetChartDataInCounterValue", () => {
       mockUseUsdToFiatRate.mockReturnValue({ status: "ready", rate: 0.5 });
 
       renderHook(() =>
-        useAssetChartDataInCounterValue({ id: "bitcoin", counterCurrency: "ETH", range: "1d" }),
+        useAssetChartDataInCounterValue({
+          id: "bitcoin",
+          counterCurrency: "ETH",
+          range: "1d",
+          isCryptoCountervalue: true,
+        }),
       );
 
       expect(mockUseAssetChartData).toHaveBeenCalledWith(
@@ -144,7 +168,12 @@ describe("useAssetChartDataInCounterValue", () => {
       mockUseUsdToFiatRate.mockReturnValue({ status: "ready", rate: 0.5 });
 
       renderHook(() =>
-        useAssetChartDataInCounterValue({ id: "ethereum", counterCurrency: "btc", range: "1d" }),
+        useAssetChartDataInCounterValue({
+          id: "ethereum",
+          counterCurrency: "btc",
+          range: "1d",
+          isCryptoCountervalue: true,
+        }),
       );
 
       expect(mockUseAssetChartData).toHaveBeenCalledWith(
@@ -157,7 +186,12 @@ describe("useAssetChartDataInCounterValue", () => {
       mockSupported(undefined);
 
       const { result } = renderHook(() =>
-        useAssetChartDataInCounterValue({ id: "bitcoin", counterCurrency: "cop", range: "1d" }),
+        useAssetChartDataInCounterValue({
+          id: "bitcoin",
+          counterCurrency: "cop",
+          range: "1d",
+          isCryptoCountervalue: false,
+        }),
       );
 
       expect(mockUseAssetChartData).toHaveBeenCalledWith(
@@ -175,7 +209,7 @@ describe("useAssetChartDataInCounterValue", () => {
 
       const { result } = renderHook(() =>
         useAssetChartDataInCounterValue(
-          { id: "ethereum", counterCurrency: "btc", range: "1d" },
+          { id: "ethereum", counterCurrency: "btc", range: "1d", isCryptoCountervalue: true },
           { skip: true },
         ),
       );
@@ -192,7 +226,12 @@ describe("useAssetChartDataInCounterValue", () => {
       mockUseUsdToFiatRate.mockReturnValue({ status: "loading", rate: null });
 
       const { result } = renderHook(() =>
-        useAssetChartDataInCounterValue({ id: "ethereum", counterCurrency: "btc", range: "1d" }),
+        useAssetChartDataInCounterValue({
+          id: "ethereum",
+          counterCurrency: "btc",
+          range: "1d",
+          isCryptoCountervalue: true,
+        }),
       );
 
       expect(result.current.isLoading).toBe(true);
@@ -203,7 +242,12 @@ describe("useAssetChartDataInCounterValue", () => {
       mockUseUsdToFiatRate.mockReturnValue({ status: "error", rate: null });
 
       const { result } = renderHook(() =>
-        useAssetChartDataInCounterValue({ id: "bitcoin", counterCurrency: "cop", range: "1d" }),
+        useAssetChartDataInCounterValue({
+          id: "bitcoin",
+          counterCurrency: "cop",
+          range: "1d",
+          isCryptoCountervalue: false,
+        }),
       );
 
       expect(result.current.isError).toBe(true);
@@ -215,7 +259,12 @@ describe("useAssetChartDataInCounterValue", () => {
       mockUseUsdToFiatRate.mockReturnValue({ status: "ready", rate: 0.5 });
 
       const { result } = renderHook(() =>
-        useAssetChartDataInCounterValue({ id: "ethereum", counterCurrency: "btc", range: "1d" }),
+        useAssetChartDataInCounterValue({
+          id: "ethereum",
+          counterCurrency: "btc",
+          range: "1d",
+          isCryptoCountervalue: true,
+        }),
       );
 
       expect(result.current.isError).toBe(true);

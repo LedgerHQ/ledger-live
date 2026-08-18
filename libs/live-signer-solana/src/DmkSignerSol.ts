@@ -17,8 +17,10 @@ import {
   SignMessageVersion,
 } from "@ledgerhq/device-signer-kit-solana";
 import { DeviceActionStatus, DeviceManagementKit } from "@ledgerhq/device-management-kit";
+import { ContextModuleBuilder, ContextModuleChainID } from "@ledgerhq/context-module";
+import { getEnv } from "@ledgerhq/live-env";
 import bs58 from "bs58";
-import { LockedDeviceError, UserRefusedOnDevice } from "@ledgerhq/errors";
+import { LockedDeviceError, UserRefusedOnDevice } from "@ledgerhq/hw-transport/errors";
 
 export type DAError =
   | GetAddressDAError
@@ -31,7 +33,10 @@ export type DAError =
  */
 export class DmkSignerSol implements SolanaSigner {
   private dmkSigner: SignerSolana;
-  private readonly DMKPubKeyDisplayMode: { readonly long: string; readonly short: string } = {
+  private readonly DMKPubKeyDisplayMode: {
+    readonly long: string;
+    readonly short: string;
+  } = {
     long: "long",
     short: "short",
   };
@@ -41,11 +46,21 @@ export class DmkSignerSol implements SolanaSigner {
    * @param sessionId - active session ID of the connected device
    */
   constructor(dmk: DeviceManagementKit, sessionId: string) {
+    const originToken = "1e55ba3959f4543af24809d9066a2120bd2ac9246e626e26a1ff77eb109ca0e5"; // gitleaks:allow
+    const calUrl = getEnv("CAL_SERVICE_URL");
+    const calMode = calUrl.includes("ledger-test") || calUrl.includes(".stg.") ? "test" : "prod";
+    const contextModule = new ContextModuleBuilder({ originToken })
+      .setAppSource("ledger-wallet")
+      .setChain(ContextModuleChainID.Solana)
+      .setCalConfig({ url: `${calUrl}/v1`, mode: calMode, branch: "main" })
+      .build();
     this.dmkSigner = new SignerSolanaBuilder({
       dmk,
       sessionId,
-      originToken: "Solana",
-    }).build();
+      originToken,
+    })
+      .withContextModule(contextModule)
+      .build();
   }
 
   private _mapError<E extends DAError>(error: E): Error {

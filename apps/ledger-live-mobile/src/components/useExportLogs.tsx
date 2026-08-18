@@ -4,7 +4,7 @@ import RNFetchBlob from "rn-fetch-blob";
 import logger from "../logger";
 import logReport from "../log-report";
 import getFullAppVersion from "~/logic/version";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { sendFile } from "~/e2e/bridge/client";
 
 const getJSONStringifyReplacer: () => (key: string, value: unknown) => unknown = () => {

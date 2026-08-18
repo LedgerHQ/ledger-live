@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { roundFiatPrice } from "@ledgerhq/live-currency-format";
-import { useMarketByCurrencies } from "../../../dada-client/hooks/useMarketByCurrencies";
+import { useMarketByCurrencies } from "@features/platform-aggregated-assets";
 import counterValueFormatter from "../../../market/utils/countervalueFormatter";
 import { useUsdToFiatRate } from "../../../counterValues/hooks/useUsdToFiatRate";
 import { AssetConfigurationOptions } from "../../utils/type";
@@ -43,7 +43,7 @@ export const useRightMarketTrendModule = (
 
       const priceFormatted = counterValueFormatter({
         value: roundFiatPrice(currencyMarket.price * rate),
-        currency: counterValueCurrency.ticker,
+        unit: counterValueCurrency.units[0],
         locale,
       });
 
@@ -61,7 +61,7 @@ export const useRightMarketTrendModule = (
     marketByCurrencies,
     status,
     rate,
-    counterValueCurrency.ticker,
+    counterValueCurrency.units[0],
     locale,
     MarketPriceIndicator,
   ]);

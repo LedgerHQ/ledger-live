@@ -9,7 +9,7 @@ const testConfig = {
     fiat: { locale: "en-US", currencyTicker: "USD" },
     operation: OperationType.Sell,
   },
-  tmsLinks: ["B2CQA-3524"],
+  tmsLinks: ["B2CQA-6131"],
   provider: BuySellProvider.MOONPAY,
   paymentMethod: "card",
   tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@bitcoin", "@family-bitcoin"],

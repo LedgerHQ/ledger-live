@@ -12,7 +12,7 @@ import { useCallback, useMemo, useState } from "react";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
-import { handleTopologyChangeError, TopologyChangeError } from "../hooks/topologyChangeError";
+import { handleTopologyChangeError } from "../hooks/topologyChangeError";
 import PendingTransferProposalsDetails from "./PendingTransferProposalsDetails";
 import type { GroupedProposals, Modal, ProcessedProposal, TransferProposalAction } from "./types";
 import {
@@ -113,7 +113,7 @@ export function usePendingTransferProposalsViewModel(
           reason: "canton-pending-transaction-action",
         });
       } catch (error) {
-        if (error instanceof TopologyChangeError) {
+        if ((error as { name?: string })?.name === "TopologyChangeError") {
           setModal(prev => ({ ...prev, isOpen: false }));
           if (device) {
             handleTopologyChangeError(dispatch, {

@@ -1,17 +1,19 @@
 import type { Account } from "@ledgerhq/types-live";
+import { DisconnectedDeviceDuringOperation } from "@ledgerhq/hw-transport/errors";
 import {
-  DisconnectedDeviceDuringOperation,
-  TransportStatusError,
+  TransactionRefusedOnDevice,
   WrongDeviceForAccountPayout,
   WrongDeviceForAccountRefund,
-} from "@ledgerhq/errors";
+} from "../../errors";
 import {
   createExchange,
   ExchangeTypes,
+  findSwapPayloadSpecViolation,
   getExchangeErrorMessage,
   PayloadSignatureComputedFormat,
 } from "@ledgerhq/hw-app-exchange";
-import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
+import { ErrorStatus } from "@ledgerhq/hw-app-exchange/ReturnCode";
+import { getDefaultAccountName } from "@domain/entity-account-name";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
@@ -20,22 +22,38 @@ import { secp256k1 } from "@noble/curves/secp256k1";
 import { getCurrencyExchangeConfig } from "../";
 import { getAccountCurrency, getMainAccount } from "../../account";
 import { getAccountBridge } from "../../bridge";
-import { TransactionRefusedOnDevice } from "../../errors";
 import { handleHederaTrustedFlow } from "../../families/hedera/exchange";
 import { withDevicePromise } from "../../hw/deviceAccess";
 import { delay } from "../../promise";
-import { CompleteExchangeStep, convertTransportError } from "../error";
+import { CompleteExchangeError, CompleteExchangeStep, convertTransportError } from "../error";
 import type { CompleteExchangeInputSwap, CompleteExchangeRequestEvent } from "../platform/types";
 import { convertToAppExchangePartnerKey, getSwapProvider } from "../providers";
 import { CEXProviderConfig } from "../providers/swap";
 import { isAddressSanctioned } from "@ledgerhq/ledger-wallet-framework/sanction/index";
 import { AddressesSanctionedError } from "@ledgerhq/ledger-wallet-framework/sanction/errors";
-import { getCryptoCurrencyById } from "../../currencies";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 
 const COMPLETE_EXCHANGE_LOG = "SWAP-CompleteExchange";
 const LIFI_GAS_LIMIT_BUFFER_MULTIPLIER = 1.3;
+const HYPEREVM_GAS_LIMIT_CAP = new BigNumber(2_900_000);
 
 const ARC_CURRENCY_IDS = new Set(["arc", "arc_testnet"]);
+
+export function getBufferedDexGasLimit({
+  gasLimit,
+  fromCurrencyId,
+}: {
+  gasLimit: BigNumber;
+  fromCurrencyId: string;
+}): BigNumber {
+  const bufferedGasLimit = gasLimit
+    .times(LIFI_GAS_LIMIT_BUFFER_MULTIPLIER)
+    .integerValue(BigNumber.ROUND_UP);
+
+  return fromCurrencyId === "hyperevm"
+    ? BigNumber.minimum(bufferedGasLimit, HYPEREVM_GAS_LIMIT_CAP)
+    : bufferedGasLimit;
+}
 
 export function shouldForceZeroAmountForDexSwap({
   isDex,
@@ -50,6 +68,37 @@ export function shouldForceZeroAmountForDexSwap({
 }): boolean {
   if (!isDex || family !== "evm") return false;
   return hasSubAccountId || ARC_CURRENCY_IDS.has(fromCurrencyId);
+}
+
+/**
+ * Device stays the source of truth: only once it rejects the payload with a generic
+ * DESERIALIZATION_FAILED (0x6a81) do we decode it locally to name the field that exceeds
+ * its limit. We keep the device error's title (a translation key, so the user-facing copy
+ * stays unchanged) and only enrich the message with the precise field for logs/analytics.
+ * Returns undefined when the error is unrelated or no violation can be pinpointed, so callers
+ * fall back to the device error. See LIVE-34253.
+ */
+export function enrichSwapDeserializationError(
+  step: CompleteExchangeStep,
+  binaryPayload: string,
+  error: unknown,
+): CompleteExchangeError | undefined {
+  // Duck-type on `name` + `statusCode` rather than `instanceof TransportStatusError`, matching
+  // the rest of this file and the repo-wide migration off shared error class checks (#19849,
+  // which dropped the `TransportStatusError` import from here).
+  const transportErr = error as { name?: string; statusCode?: number } | null | undefined;
+  if (
+    transportErr?.name !== "TransportStatusError" ||
+    transportErr?.statusCode !== ErrorStatus.DESERIALIZATION_FAILED
+  ) {
+    return undefined;
+  }
+
+  const violation = findSwapPayloadSpecViolation(binaryPayload);
+  if (!violation) return undefined;
+
+  const { errorName } = getExchangeErrorMessage(transportErr.statusCode, step);
+  return new CompleteExchangeError(step, errorName, violation.message);
 }
 
 const completeExchange = (
@@ -167,9 +216,10 @@ const completeExchange = (
           transaction.gasLimit &&
           BigNumber.isBigNumber(transaction.gasLimit)
         ) {
-          const gasLimit = transaction.gasLimit
-            .times(LIFI_GAS_LIMIT_BUFFER_MULTIPLIER)
-            .integerValue(BigNumber.ROUND_UP);
+          const gasLimit = getBufferedDexGasLimit({
+            gasLimit: transaction.gasLimit,
+            fromCurrencyId: mainRefundCurrency.id,
+          });
           const transactionFixed = {
             ...transaction,
             fees: undefined, // to be recalculated
@@ -252,9 +302,13 @@ const completeExchange = (
             payoutAddressParameters,
           );
         } catch (e) {
-          if (e instanceof TransportStatusError && e.statusCode === 0x6a83) {
+          const transportErr = e as { name?: string; statusCode?: number } | null | undefined;
+          if (
+            transportErr?.name === "TransportStatusError" &&
+            transportErr?.statusCode === 0x6a83
+          ) {
             throw new WrongDeviceForAccountPayout(
-              getExchangeErrorMessage(e.statusCode, currentStep).errorMessage,
+              getExchangeErrorMessage(transportErr.statusCode, currentStep).errorMessage,
               {
                 accountName: getDefaultAccountName(payoutAccount),
               },
@@ -293,10 +347,14 @@ const completeExchange = (
           );
           log(COMPLETE_EXCHANGE_LOG, "checkrefund address");
         } catch (e) {
-          if (e instanceof TransportStatusError && e.statusCode === 0x6a83) {
+          const transportErr = e as { name?: string; statusCode?: number } | null | undefined;
+          if (
+            transportErr?.name === "TransportStatusError" &&
+            transportErr?.statusCode === 0x6a83
+          ) {
             log(COMPLETE_EXCHANGE_LOG, "transport error");
             throw new WrongDeviceForAccountRefund(
-              getExchangeErrorMessage(e.statusCode, currentStep).errorMessage,
+              getExchangeErrorMessage(transportErr.statusCode, currentStep).errorMessage,
               {
                 accountName: getDefaultAccountName(refundAccount),
               },
@@ -316,12 +374,16 @@ const completeExchange = (
         // During signature delegation, Exchange does not remap refusal errors from the coin app/OS.
         // 0x6a84: user refused the proposal for an owned destination address.
         // 0x5501: BOLOS/OS-level refusal (not an Exchange app error code).
+        const transportErr = e as { name?: string; statusCode?: number } | null | undefined;
         if (
-          e instanceof TransportStatusError &&
-          (e.statusCode === 0x6a84 || e.statusCode === 0x5501)
+          transportErr?.name === "TransportStatusError" &&
+          (transportErr?.statusCode === 0x6a84 || transportErr?.statusCode === 0x5501)
         ) {
           throw new TransactionRefusedOnDevice();
         }
+
+        const enrichedError = enrichSwapDeserializationError(currentStep, binaryPayload, e);
+        if (enrichedError) throw enrichedError;
 
         throw convertTransportError(currentStep, e);
       });

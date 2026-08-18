@@ -1,6 +1,7 @@
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
+import { TokenCurrencyIdSchema } from "@ledgerhq/ledger-wallet-framework/types";
 import { getEnv } from "@ledgerhq/live-env";
 import BigNumber from "bignumber.js";
 import { apiClient } from "../network/api";
@@ -12,6 +13,7 @@ import {
   getMockedERC20TokenCurrency,
   getMockedHTSTokenCurrency,
 } from "../test/fixtures/currency.fixture";
+import { getMockedConfig } from "../test/fixtures/config.fixture";
 import { getMockedERC20TokenTransfer } from "../test/fixtures/hgraph.fixture";
 import {
   getMockedMirrorAccount,
@@ -23,7 +25,11 @@ import type { StakingAnalysis, SyntheticBlock } from "../types";
 import { listOperationsV2 as listOperations } from "./listOperations.v2";
 import * as utils from "./utils";
 
-setupMockCryptoAssetsStore();
+setCryptoAssetsStore({
+  findTokenById: async () => undefined,
+  findTokenByAddressInCurrency: async () => undefined,
+  getTokensSyncHash: async () => "",
+});
 
 jest.mock("@ledgerhq/ledger-wallet-framework/account/accountId", () => ({
   ...jest.requireActual("@ledgerhq/ledger-wallet-framework/account/accountId"),
@@ -47,7 +53,8 @@ jest.mock("./utils", () => ({
 
 describe("listOperationsV2", () => {
   const mockCurrency = getMockedCurrency();
-  const mockMirrorAccount = getMockedMirrorAccount({ account: "0.0.12345" });
+  const mockConfig = getMockedConfig();
+  const mockMirrorAccount = getMockedMirrorAccount();
   const mockSyntheticBlock: SyntheticBlock = {
     blockHeight: 1000000,
     blockHash: "0x100000",
@@ -89,7 +96,7 @@ describe("listOperationsV2", () => {
       nextCursor: null,
     });
 
-    const result = await listOperations({
+    const result = await listOperations(mockConfig, {
       limit: mockLimit,
       order: mockOrder,
       currencyId: mockCurrency.id,
@@ -105,7 +112,7 @@ describe("listOperationsV2", () => {
 
     expect(apiClient.getAccountTransactions).toHaveBeenCalledTimes(1);
     expect(apiClient.getAccountTransactions).toHaveBeenCalledWith({
-      configOrCurrencyId: mockCurrency.id,
+      configOrCurrencyId: mockConfig,
       address: mockMirrorAccount.account,
       fetchAllPages: true,
       pagingToken: null,
@@ -114,7 +121,7 @@ describe("listOperationsV2", () => {
     });
     expect(hgraphClient.getERC20Transfers).toHaveBeenCalledTimes(1);
     expect(hgraphClient.getERC20Transfers).toHaveBeenCalledWith({
-      configOrCurrencyId: mockCurrency.id,
+      configOrCurrencyId: mockConfig,
       address: mockMirrorAccount.account,
       fetchAllPages: true,
       order: mockOrder,
@@ -147,7 +154,7 @@ describe("listOperationsV2", () => {
       nextCursor: null,
     });
 
-    const result = await listOperations({
+    const result = await listOperations(mockConfig, {
       limit: mockLimit,
       order: mockOrder,
       currencyId: mockCurrency.id,
@@ -162,7 +169,6 @@ describe("listOperationsV2", () => {
     });
 
     expect(result.tokenOperations).toEqual([]);
-    expect(result.coinOperations).toHaveLength(1);
     expect(result.coinOperations).toMatchObject([
       {
         type: "OUT",
@@ -206,11 +212,13 @@ describe("listOperationsV2", () => {
       nextCursor: null,
     });
 
-    setupMockCryptoAssetsStore({
+    setCryptoAssetsStore({
+      findTokenById: async () => undefined,
       findTokenByAddressInCurrency: jest.fn().mockResolvedValue(mockTokenHTS),
+      getTokensSyncHash: async () => "",
     });
 
-    const result = await listOperations({
+    const result = await listOperations(mockConfig, {
       limit: mockLimit,
       order: mockOrder,
       currencyId: mockCurrency.id,
@@ -297,11 +305,13 @@ describe("listOperationsV2", () => {
       new BigNumber(sharedTimestamp),
     );
 
-    setupMockCryptoAssetsStore({
+    setCryptoAssetsStore({
+      findTokenById: async () => undefined,
       findTokenByAddressInCurrency: jest.fn().mockResolvedValue(mockTokenERC20),
+      getTokensSyncHash: async () => "",
     });
 
-    const result = await listOperations({
+    const result = await listOperations(mockConfig, {
       limit: mockLimit,
       order: mockOrder,
       currencyId: mockCurrency.id,
@@ -388,11 +398,13 @@ describe("listOperationsV2", () => {
       new BigNumber(sharedTimestamp),
     );
 
-    setupMockCryptoAssetsStore({
+    setCryptoAssetsStore({
+      findTokenById: async () => undefined,
       findTokenByAddressInCurrency: jest.fn().mockResolvedValue(mockTokenERC20),
+      getTokensSyncHash: async () => "",
     });
 
-    const result = await listOperations({
+    const result = await listOperations(mockConfig, {
       limit: mockLimit,
       order: mockOrder,
       currencyId: mockCurrency.id,
@@ -452,11 +464,13 @@ describe("listOperationsV2", () => {
       new BigNumber(sharedTimestamp),
     );
 
-    setupMockCryptoAssetsStore({
+    setCryptoAssetsStore({
+      findTokenById: async () => undefined,
       findTokenByAddressInCurrency: jest.fn().mockResolvedValue(mockTokenERC20),
+      getTokensSyncHash: async () => "",
     });
 
-    const result = await listOperations({
+    const result = await listOperations(mockConfig, {
       limit: mockLimit,
       order: mockOrder,
       currencyId: mockCurrency.id,
@@ -491,7 +505,7 @@ describe("listOperationsV2", () => {
       nextCursor: null,
     });
 
-    const result = await listOperations({
+    const result = await listOperations(mockConfig, {
       limit: mockLimit,
       order: mockOrder,
       currencyId: mockCurrency.id,
@@ -545,7 +559,7 @@ describe("listOperationsV2", () => {
       nextCursor: null,
     });
 
-    const result = await listOperations({
+    const result = await listOperations(mockConfig, {
       limit: mockLimit,
       order: mockOrder,
       currencyId: mockCurrency.id,
@@ -592,7 +606,7 @@ describe("listOperationsV2", () => {
       nextCursor: null,
     });
 
-    const result = await listOperations({
+    const result = await listOperations(mockConfig, {
       limit: mockLimit,
       order: mockOrder,
       currencyId: mockCurrency.id,
@@ -640,7 +654,7 @@ describe("listOperationsV2", () => {
       nextCursor: null,
     });
 
-    const result = await listOperations({
+    const result = await listOperations(mockConfig, {
       limit: mockLimit,
       order: mockOrder,
       currencyId: mockCurrency.id,
@@ -670,7 +684,7 @@ describe("listOperationsV2", () => {
       nextCursor: null,
     });
 
-    await listOperations({
+    await listOperations(mockConfig, {
       limit: customLimit,
       order: customOrder,
       cursor: lastPagingToken,
@@ -687,7 +701,7 @@ describe("listOperationsV2", () => {
 
     expect(apiClient.getAccountTransactions).toHaveBeenCalledTimes(1);
     expect(apiClient.getAccountTransactions).toHaveBeenCalledWith({
-      configOrCurrencyId: mockCurrency.id,
+      configOrCurrencyId: mockConfig,
       address: mockMirrorAccount.account,
       fetchAllPages: true,
       pagingToken: lastPagingToken,
@@ -717,7 +731,7 @@ describe("listOperationsV2", () => {
       nextCursor: null,
     });
 
-    const result = await listOperations({
+    const result = await listOperations(mockConfig, {
       limit: mockLimit,
       order: mockOrder,
       address: mockMirrorAccount.account,
@@ -758,7 +772,7 @@ describe("listOperationsV2", () => {
       nextCursor: null,
     });
 
-    const result = await listOperations({
+    const result = await listOperations(mockConfig, {
       limit: mockLimit,
       order: mockOrder,
       address: mockMirrorAccount.account,
@@ -800,7 +814,7 @@ describe("listOperationsV2", () => {
       nextCursor: null,
     });
 
-    const result = await listOperations({
+    const result = await listOperations(mockConfig, {
       limit: mockLimit,
       order: mockOrder,
       address: mockMirrorAccount.account,
@@ -880,11 +894,13 @@ describe("listOperationsV2", () => {
       new BigNumber(mockMirrorTransaction.consensus_timestamp),
     );
 
-    setupMockCryptoAssetsStore({
+    setCryptoAssetsStore({
+      findTokenById: async () => undefined,
       findTokenByAddressInCurrency: jest.fn().mockResolvedValue(mockTokenERC20),
+      getTokensSyncHash: async () => "",
     });
 
-    const result = await listOperations({
+    const result = await listOperations(mockConfig, {
       limit: mockLimit,
       order: mockOrder,
       currencyId: mockCurrency.id,
@@ -947,7 +963,7 @@ describe("listOperationsV2", () => {
     });
     (networkUtils.analyzeStakingOperation as jest.Mock).mockResolvedValue(mockStakingAnalysis);
 
-    const result = await listOperations({
+    const result = await listOperations(mockConfig, {
       limit: mockLimit,
       order: mockOrder,
       currencyId: mockCurrency.id,
@@ -1002,7 +1018,7 @@ describe("listOperationsV2", () => {
     });
     (networkUtils.analyzeStakingOperation as jest.Mock).mockResolvedValue(mockStakingAnalysis);
 
-    const result = await listOperations({
+    const result = await listOperations(mockConfig, {
       limit: mockLimit,
       order: mockOrder,
       currencyId: mockCurrency.id,
@@ -1056,11 +1072,13 @@ describe("listOperationsV2", () => {
       nextCursor: null,
     });
 
-    setupMockCryptoAssetsStore({
+    setCryptoAssetsStore({
+      findTokenById: async () => undefined,
       findTokenByAddressInCurrency: jest.fn().mockResolvedValue(mockTokenHTS),
+      getTokensSyncHash: async () => "",
     });
 
-    const result = await listOperations({
+    const result = await listOperations(mockConfig, {
       limit: mockLimit,
       order: mockOrder,
       currencyId: mockCurrency.id,
@@ -1099,11 +1117,13 @@ describe("listOperationsV2", () => {
       nextCursor: null,
     });
 
-    setupMockCryptoAssetsStore({
+    setCryptoAssetsStore({
+      findTokenById: async () => undefined,
       findTokenByAddressInCurrency: jest.fn().mockResolvedValue(mockTokenHTS),
+      getTokensSyncHash: async () => "",
     });
 
-    const result = await listOperations({
+    const result = await listOperations(mockConfig, {
       limit: mockLimit,
       order: mockOrder,
       currencyId: mockCurrency.id,
@@ -1163,11 +1183,13 @@ describe("listOperationsV2", () => {
       new BigNumber(sharedTimestamp),
     );
 
-    setupMockCryptoAssetsStore({
+    setCryptoAssetsStore({
+      findTokenById: async () => undefined,
       findTokenByAddressInCurrency: jest.fn().mockResolvedValue(mockTokenERC20),
+      getTokensSyncHash: async () => "",
     });
 
-    const result = await listOperations({
+    const result = await listOperations(mockConfig, {
       limit: mockLimit,
       order: mockOrder,
       currencyId: mockCurrency.id,
@@ -1188,11 +1210,11 @@ describe("listOperationsV2", () => {
   it("should produce two token operations for a swap with two different-token transfers", async () => {
     const sharedHash = "erc20-in-transfer-hash";
     const mockTokenA = getMockedERC20TokenCurrency({
-      id: "hedera/erc20/0xTokenA",
+      id: TokenCurrencyIdSchema.parse("hedera/erc20/0xTokenA"),
       contractAddress: "0xTokenA",
     });
     const mockTokenB = getMockedERC20TokenCurrency({
-      id: "hedera/erc20/0xTokenB",
+      id: TokenCurrencyIdSchema.parse("hedera/erc20/0xTokenB"),
       contractAddress: "0xTokenB",
     });
 
@@ -1229,14 +1251,16 @@ describe("listOperationsV2", () => {
       new BigNumber("1625097600.000000000"),
     );
 
-    setupMockCryptoAssetsStore({
+    setCryptoAssetsStore({
+      findTokenById: async () => undefined,
       findTokenByAddressInCurrency: jest
         .fn()
         .mockResolvedValueOnce(mockTokenA) // for transfer out
         .mockResolvedValueOnce(mockTokenB), // for transfer in
+      getTokensSyncHash: async () => "",
     });
 
-    const result = await listOperations({
+    const result = await listOperations(mockConfig, {
       limit: mockLimit,
       order: mockOrder,
       currencyId: mockCurrency.id,
@@ -1282,11 +1306,13 @@ describe("listOperationsV2", () => {
       nextCursor: null,
     });
 
-    setupMockCryptoAssetsStore({
+    setCryptoAssetsStore({
+      findTokenById: async () => undefined,
       findTokenByAddressInCurrency: jest.fn().mockResolvedValue(mockTokenHTS),
+      getTokensSyncHash: async () => "",
     });
 
-    const result = await listOperations({
+    const result = await listOperations(mockConfig, {
       limit: mockLimit,
       order: mockOrder,
       currencyId: mockCurrency.id,
@@ -1300,7 +1326,7 @@ describe("listOperationsV2", () => {
       useSyntheticBlocks: false,
     });
 
-    expect(result.coinOperations).toHaveLength(0);
+    expect(result.coinOperations).toEqual([]);
     expect(result.tokenOperations).toHaveLength(1);
     expect(result.tokenOperations[0].type).toBe("OUT");
   });
@@ -1326,7 +1352,7 @@ describe("listOperationsV2", () => {
       nextCursor: null,
     });
 
-    const result = await listOperations({
+    const result = await listOperations(mockConfig, {
       limit: mockLimit,
       order: mockOrder,
       currencyId: mockCurrency.id,
@@ -1340,8 +1366,7 @@ describe("listOperationsV2", () => {
       useSyntheticBlocks: false,
     });
 
-    expect(result.coinOperations).toHaveLength(1);
-    expect(result.coinOperations[0].hash).toBe("encoded-hash1");
+    expect(result.coinOperations).toEqual([expect.objectContaining({ hash: "encoded-hash1" })]);
   });
 
   it("should use synthetic blocks when useSyntheticBlocks is true", async () => {
@@ -1365,7 +1390,7 @@ describe("listOperationsV2", () => {
       nextCursor: null,
     });
 
-    const result = await listOperations({
+    const result = await listOperations(mockConfig, {
       limit: mockLimit,
       order: mockOrder,
       currencyId: mockCurrency.id,
@@ -1432,11 +1457,13 @@ describe("listOperationsV2", () => {
       new BigNumber(sharedTimestamp),
     );
 
-    setupMockCryptoAssetsStore({
+    setCryptoAssetsStore({
+      findTokenById: async () => undefined,
       findTokenByAddressInCurrency: jest.fn().mockResolvedValue(mockTokenERC20),
+      getTokensSyncHash: async () => "",
     });
 
-    const result = await listOperations({
+    const result = await listOperations(mockConfig, {
       limit: mockLimit,
       order: mockOrder,
       currencyId: mockCurrency.id,
@@ -1502,11 +1529,13 @@ describe("listOperationsV2", () => {
       new BigNumber(sharedTimestamp),
     );
 
-    setupMockCryptoAssetsStore({
+    setCryptoAssetsStore({
+      findTokenById: async () => undefined,
       findTokenByAddressInCurrency: jest.fn().mockResolvedValue(mockTokenERC20),
+      getTokensSyncHash: async () => "",
     });
 
-    const result = await listOperations({
+    const result = await listOperations(mockConfig, {
       limit: mockLimit,
       order: mockOrder,
       currencyId: mockCurrency.id,
@@ -1563,7 +1592,7 @@ describe("listOperationsV2", () => {
       nextCursor: null,
     });
 
-    const result = await listOperations({
+    const result = await listOperations(mockConfig, {
       limit: mockLimit,
       order: mockOrder,
       currencyId: mockCurrency.id,
@@ -1634,11 +1663,13 @@ describe("listOperationsV2", () => {
       new BigNumber("1625097600.000000003"),
     );
 
-    setupMockCryptoAssetsStore({
+    setCryptoAssetsStore({
+      findTokenById: async () => undefined,
       findTokenByAddressInCurrency: jest.fn().mockResolvedValue(mockTokenERC20),
+      getTokensSyncHash: async () => "",
     });
 
-    const result = await listOperations({
+    const result = await listOperations(mockConfig, {
       limit: mockLimit,
       order: mockOrder,
       currencyId: mockCurrency.id,
@@ -1674,7 +1705,7 @@ describe("listOperationsV2", () => {
     });
     (networkUtils.analyzeStakingOperation as jest.Mock).mockResolvedValue(null);
 
-    const result = await listOperations({
+    const result = await listOperations(mockConfig, {
       limit: mockLimit,
       order: mockOrder,
       currencyId: mockCurrency.id,
@@ -1688,7 +1719,38 @@ describe("listOperationsV2", () => {
       useSyntheticBlocks: false,
     });
 
-    expect(result.coinOperations).toHaveLength(1);
-    expect(result.coinOperations[0].recipients).toEqual([nodeAccountId]);
+    expect(result.coinOperations).toEqual([
+      expect.objectContaining({ recipients: [nodeAccountId] }),
+    ]);
+  });
+
+  it("should return no coin operations for a mirror tx with empty transfers", async () => {
+    const mockTransaction = getMockedMirrorTransaction({
+      token_transfers: [],
+      staking_reward_transfers: [],
+      transfers: [],
+    });
+
+    (apiClient.getAccountTransactions as jest.Mock).mockResolvedValue({
+      transactions: [mockTransaction],
+      nextCursor: null,
+    });
+    (networkUtils.analyzeStakingOperation as jest.Mock).mockResolvedValue(null);
+
+    const result = await listOperations(mockConfig, {
+      limit: mockLimit,
+      order: mockOrder,
+      currencyId: mockCurrency.id,
+      address: mockMirrorAccount.account,
+      evmAddress: mockMirrorAccount.evm_address,
+      mirrorTokens: [],
+      tokenEvmAddresses: [],
+      fetchAllPages: true,
+      skipFeesForTokenOperations: false,
+      useEncodedHash: false,
+      useSyntheticBlocks: false,
+    });
+
+    expect(result.coinOperations).toEqual([]);
   });
 });

@@ -118,6 +118,79 @@ describe("useSwapLiveAppState", () => {
     expect(result.current.webviewResetKey).toBe(2);
   });
 
+  describe("ensureWebviewReset", () => {
+    const SWAP_FORM_URL = "https://swap.live.app/";
+    const SUCCESS_URL = "https://swap.live.app/multi-step-transaction?transactionStatus=complete";
+
+    function renderOnUrl(url: string) {
+      const rendered = renderHook(() => useSwapLiveAppState(null));
+
+      act(() => {
+        rendered.result.current.setWebviewState({ ...initialWebviewState, url });
+      });
+
+      return rendered;
+    }
+
+    it("does nothing when no reset was requested", () => {
+      const { result } = renderOnUrl(SUCCESS_URL);
+
+      act(() => {
+        result.current.ensureWebviewReset();
+      });
+
+      expect(result.current.webviewResetKey).toBe(0);
+    });
+
+    it("resets again when the live app is still on the page the reset should have left", () => {
+      const { result } = renderOnUrl(SUCCESS_URL);
+
+      act(() => {
+        result.current.resetWebview();
+      });
+      expect(result.current.webviewResetKey).toBe(1);
+
+      act(() => {
+        result.current.ensureWebviewReset();
+      });
+
+      expect(result.current.webviewResetKey).toBe(2);
+    });
+
+    it("does not reset again once the webview reloaded to another URL", () => {
+      const { result } = renderOnUrl(SUCCESS_URL);
+
+      act(() => {
+        result.current.resetWebview();
+      });
+      act(() => {
+        result.current.setWebviewState({ ...initialWebviewState, url: SWAP_FORM_URL });
+      });
+
+      act(() => {
+        result.current.ensureWebviewReset();
+      });
+
+      expect(result.current.webviewResetKey).toBe(1);
+    });
+
+    it("only honours a pending reset once", () => {
+      const { result } = renderOnUrl(SUCCESS_URL);
+
+      act(() => {
+        result.current.resetWebview();
+      });
+      act(() => {
+        result.current.ensureWebviewReset();
+      });
+      act(() => {
+        result.current.ensureWebviewReset();
+      });
+
+      expect(result.current.webviewResetKey).toBe(2);
+    });
+  });
+
   it("should return null defaultParams when params are invalid", () => {
     const { result } = renderHook(() => useSwapLiveAppState(null));
     expect(result.current.defaultParams).toBeNull();

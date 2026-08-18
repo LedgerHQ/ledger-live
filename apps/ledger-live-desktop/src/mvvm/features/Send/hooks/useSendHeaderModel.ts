@@ -1,11 +1,15 @@
 import { SendFlowStep, SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
+import { decodeURIScheme } from "@ledgerhq/live-common/currencies/index";
 import { t } from "i18next";
 import { useMemo, useCallback, useRef } from "react";
 import { useFlowWizard } from "../../FlowWizard/FlowWizardContext";
-import {
-  getRecipientDisplayValue,
-  getRecipientSearchPrefillValue,
-} from "@ledgerhq/live-common/flows/send/utils";
+import { getRecipientSearchPrefillValue } from "@ledgerhq/live-common/flows/send/utils";
+import { getRecipientHeaderPresentation } from "@ledgerhq/live-common/flows/send/recipient/utils/getRecipientHeaderPresentation";
+import type { RecipientHeaderContact } from "@ledgerhq/live-common/flows/send/recipient/utils/getRecipientHeaderPresentation";
+import { useContactsFeature } from "@features/flow-contacts";
+import { selectContacts } from "@domain/entity-contact";
+import { useSelector } from "LLD/hooks/redux";
+import { buildTransactionPatchFromURIScheme } from "@ledgerhq/live-common/flows/send/utils/uriScheme";
 import {
   SendFlowBusinessContext,
   useSendFlowActions,
@@ -14,8 +18,9 @@ import {
 import { SendStepConfig } from "../types";
 import BigNumber from "bignumber.js";
 import { useMaybeAccountName } from "~/renderer/reducers/wallet";
-import { trackPage } from "~/renderer/analytics/segment";
+import { track, trackPage } from "~/renderer/analytics/segment";
 import { getSendFlowTrackingProperties } from "../utils/tracking";
+import { useRecipientScanner } from "../context/RecipientScannerContext";
 
 type UseSendHeaderModelParams = Readonly<{
   availableText: string;
@@ -26,6 +31,11 @@ type UseSendHeaderModelResult = Readonly<{
   descriptionText: string | undefined;
   handleBack: () => void;
   handleRecipientInputClick: () => void;
+  handleRecipientInputChange: (value: string) => void;
+  handleQrCodeClick: () => void;
+  handleScanPicked: (code: string) => void;
+  isScannerOpen: boolean;
+  recipientContact: RecipientHeaderContact | undefined;
   showBackButton: boolean;
   showRecipientInput: boolean;
   showMemoControls: boolean;
@@ -41,6 +51,9 @@ export function useSendHeaderModel({
   const wizard = useFlowWizard<SendFlowStep, SendFlowBusinessContext, SendStepConfig>();
   const { state, uiConfig, recipientSearch, isRecipientAddressComplete } = useSendFlowData();
   const { close, transaction } = useSendFlowActions();
+  const { isScannerOpen, closeScanner, toggleScanner } = useRecipientScanner();
+  const { isEnabled: isContactsFeatureEnabled } = useContactsFeature("desktop");
+  const contacts = useSelector(selectContacts);
 
   const currencyName = state.account.currency?.ticker ?? "";
   const accountName = useMaybeAccountName(state.account.account ?? undefined);
@@ -89,6 +102,8 @@ export function useSendHeaderModel({
   const descriptionText = showTitle && showAvailable && accountSummary ? accountSummary : "";
 
   const handleBack = useCallback(() => {
+    closeScanner();
+
     // Per-step state cleanup that runs regardless of whether navigation uses backTarget
     // or goToPreviousStep, so floating steps and regular steps are treated uniformly
     if (currentStep === SEND_FLOW_STEP.AMOUNT) {
@@ -117,13 +132,24 @@ export function useSendHeaderModel({
     } else {
       close();
     }
-  }, [backTarget, close, currentStep, navigation, resetViewState, transaction]);
+  }, [backTarget, close, closeScanner, currentStep, navigation, resetViewState, transaction]);
+
+  const recipientHeader = useMemo(
+    () =>
+      getRecipientHeaderPresentation({
+        recipient: state.recipient,
+        contacts,
+        currencyId: state.account.currency?.id,
+        isContactsFeatureEnabled: isContactsFeatureEnabled && isAmountStep,
+      }),
+    [contacts, isAmountStep, isContactsFeatureEnabled, state.account.currency?.id, state.recipient],
+  );
 
   const addressInputValue = useMemo(() => {
     if (isRecipientStep) return recipientSearch.value;
-    if (isAmountStep) return getRecipientDisplayValue(state.recipient);
+    if (isAmountStep) return recipientHeader.label;
     return recipientSearch.value;
-  }, [isRecipientStep, isAmountStep, recipientSearch.value, state.recipient]);
+  }, [isRecipientStep, isAmountStep, recipientHeader.label, recipientSearch.value]);
 
   const handleRecipientInputClick = useCallback(() => {
     if (!isAmountStep) return;
@@ -136,6 +162,42 @@ export function useSendHeaderModel({
     handleBack();
   }, [handleBack, isAmountStep, recipientSearch, state.recipient]);
 
+  const showScanner = isScannerOpen && isRecipientStep;
+
+  const handleQrCodeClick = useCallback(() => {
+    track(
+      isScannerOpen ? "Send Flow QR Code Closed" : "Send Flow QR Code Opened",
+      trackingProperties,
+    );
+    toggleScanner();
+  }, [isScannerOpen, toggleScanner, trackingProperties]);
+
+  const handleRecipientInputChange = useCallback(
+    (value: string) => {
+      recipientSearch.setValue(value);
+      if (value.length > 0) closeScanner();
+    },
+    [closeScanner, recipientSearch],
+  );
+
+  const handleScanPicked = useCallback(
+    (code: string) => {
+      const decoded = decodeURIScheme(code);
+      recipientSearch.setValue(decoded.address);
+
+      const currentTransaction = state.transaction.transaction;
+      if (currentTransaction) {
+        const patch = buildTransactionPatchFromURIScheme(currentTransaction, decoded);
+        if (Object.keys(patch).length > 0) {
+          transaction.updateTransaction(tx => ({ ...tx, ...patch }) as typeof tx);
+        }
+      }
+
+      closeScanner();
+    },
+    [closeScanner, recipientSearch, state.transaction.transaction, transaction],
+  );
+
   const transactionError = state.transaction.status?.errors?.transaction;
   const transactionErrorName = transactionError?.name;
 
@@ -144,6 +206,11 @@ export function useSendHeaderModel({
     descriptionText,
     handleBack,
     handleRecipientInputClick,
+    handleRecipientInputChange,
+    handleQrCodeClick,
+    handleScanPicked,
+    isScannerOpen: showScanner,
+    recipientContact: recipientHeader.contact,
     showBackButton,
     showMemoControls,
     showRecipientInput,

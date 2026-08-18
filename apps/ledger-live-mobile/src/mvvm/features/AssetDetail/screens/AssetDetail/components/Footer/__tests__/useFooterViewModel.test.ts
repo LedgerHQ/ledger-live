@@ -1,5 +1,5 @@
 import { renderHook, act } from "@tests/test-renderer";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { useTradeAvailability, type TradeAvailability } from "@ledgerhq/asset-detail";
 import type { Account } from "@ledgerhq/types-live";

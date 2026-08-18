@@ -4,7 +4,7 @@ import type { Account } from "@ledgerhq/types-live";
 import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
 import coinConfig from "@ledgerhq/coin-tezos/config";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { makeAccount, ALICE_BAKER_ADDRESS, RECIPIENT, TEZOS, TZKT_MOCK_URL } from "../fixtures";
 import { buildTz1Signer, buildTz2Signer } from "../signer";
 import { getBridges } from "../helpers";
@@ -16,7 +16,7 @@ import {
   TEZOS_RPC,
 } from "../flextesa";
 import { indexBlocks, initMswHandlers, resetIndexer } from "../indexer";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 
 global.console = require("console");
 jest.setTimeout(600_000);
@@ -116,7 +116,11 @@ export const scenarioTezosTz1: Scenario<GenericTransaction, Account> = {
   name: "Ledger Live Tezos — Full scenario (tz1 / ed25519)",
 
   setup: async () => {
-    setupMockCryptoAssetsStore();
+    setCryptoAssetsStore({
+      findTokenById: async () => undefined,
+      findTokenByAddressInCurrency: async () => undefined,
+      getTokensSyncHash: async () => "",
+    });
 
     await spawnFlextesa();
 
@@ -191,7 +195,9 @@ export const scenarioTezosTz1: Scenario<GenericTransaction, Account> = {
     const undelegateOps = account.operations.filter(op => op.type === "UNDELEGATE");
     expect(undelegateOps.length).toBeGreaterThanOrEqual(1);
 
-    expect(account.balance.toNumber()).toBeLessThanOrEqual(300);
+    // Send-max leaves the dust margin behind (DUST_MARGIN_MUTEZ, less the fee-per-gas/op-size
+    // increment), independently of how the `minFees` floor compares to the suggested fee.
+    expect(account.balance.toNumber()).toBeLessThanOrEqual(500);
   },
 
   teardown: async () => {
@@ -206,7 +212,11 @@ export const scenarioTezosTz2: Scenario<GenericTransaction, Account> = {
   name: "Ledger Live Tezos — Full scenario (tz2 / secp256k1)",
 
   setup: async () => {
-    setupMockCryptoAssetsStore();
+    setCryptoAssetsStore({
+      findTokenById: async () => undefined,
+      findTokenByAddressInCurrency: async () => undefined,
+      getTokensSyncHash: async () => "",
+    });
 
     await spawnFlextesa();
     const signer = await buildTz2Signer();
@@ -276,7 +286,9 @@ export const scenarioTezosTz2: Scenario<GenericTransaction, Account> = {
     const undelegateOps = account.operations.filter(op => op.type === "UNDELEGATE");
     expect(undelegateOps.length).toBe(1);
 
-    expect(account.balance.toNumber()).toBeLessThanOrEqual(300);
+    // Send-max leaves the dust margin behind (DUST_MARGIN_MUTEZ, less the fee-per-gas/op-size
+    // increment), independently of how the `minFees` floor compares to the suggested fee.
+    expect(account.balance.toNumber()).toBeLessThanOrEqual(500);
   },
 
   teardown: async () => {

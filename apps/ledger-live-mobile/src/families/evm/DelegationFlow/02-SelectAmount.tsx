@@ -7,11 +7,14 @@ import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import {
   getMaxEstimatedBalance,
   getUnbondingPeriodDays,
+  getDelegationVisibilityDelayMinutes,
   hasUnbondingPeriod,
   isSeiAccountUnassociated,
 } from "@ledgerhq/live-common/families/evm/staking/logic";
 import { isStakingAccount } from "@ledgerhq/live-common/families/evm/staking/types";
-import type { TransactionStatus } from "@ledgerhq/coin-evm/types/index";
+import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
+import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
+import type { TransactionStatus } from "@ledgerhq/live-common/families/evm/types";
 import { Flex, Text, Alert } from "@ledgerhq/native-ui";
 import AlertComponent from "~/components/Alert";
 import BigNumber from "bignumber.js";
@@ -86,12 +89,17 @@ export default function SelectAmount({ navigation, route }: Props) {
   const canContinue =
     !bridgePending && !bridgeError && !hasErrors && amount.gt(0) && maxSpendable.gte(amount);
   const showLockUpWarning = hasUnbondingPeriod(account.currency.id);
+  const visibilityDelayMinutes = getDelegationVisibilityDelayMinutes(account.currency.id);
   const [showSeiAssociationWarning, setShowSeiAssociationWarning] = useState(false);
   const [checkingSeiAssociation, setCheckingSeiAssociation] = useState(true);
   useEffect(() => {
     let cancelled = false;
     setCheckingSeiAssociation(true);
-    isSeiAccountUnassociated(account.currency.id, account.freshAddress)
+    isSeiAccountUnassociated(
+      getCurrencyConfiguration<EvmConfigInfo>(account.currency.id),
+      account.currency.id,
+      account.freshAddress,
+    )
       .then(unassociated => {
         if (!cancelled) setShowSeiAssociationWarning(unassociated);
       })
@@ -180,6 +188,16 @@ export default function SelectAmount({ navigation, route }: Props) {
                     type="info"
                     title={t("cosmos.delegation.flow.steps.starter.steps.1", {
                       numberOfDays: getUnbondingPeriodDays(account.currency.id),
+                    })}
+                  />
+                </View>
+              ) : null}
+              {visibilityDelayMinutes ? (
+                <View style={styles.alertContainer}>
+                  <Alert
+                    type="info"
+                    title={t("evm.delegation.flow.steps.amount.visibilityDelay", {
+                      numberOfMinutes: visibilityDelayMinutes,
                     })}
                   />
                 </View>

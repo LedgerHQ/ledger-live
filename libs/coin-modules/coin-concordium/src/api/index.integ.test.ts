@@ -1,6 +1,6 @@
 import type { CoinModuleApi } from "@ledgerhq/coin-module-framework/api/index";
-import type { ConcordiumMemo } from "../types";
-import { TESTNET_COIN_CONFIG } from "../test/fixtures";
+import type { ConcordiumCoinConfig, ConcordiumMemo } from "../types";
+import { createFixtureContext } from "../test/fixtures";
 import { createApi } from ".";
 
 /**
@@ -10,7 +10,9 @@ import { createApi } from ".";
  * Tests cover all required CoinModuleApi methods as per API docs requirements.
  */
 describe("Concordium Api (testnet)", () => {
-  let api: CoinModuleApi<ConcordiumMemo>;
+  let api: CoinModuleApi<ConcordiumCoinConfig, ConcordiumMemo>;
+
+  const context = createFixtureContext();
 
   // Test account with some balance and transactions
   // https://testnet.ccdscan.io/
@@ -18,12 +20,12 @@ describe("Concordium Api (testnet)", () => {
   const ADDRESS_PRISTINE = "4ox4d7b4S9Mi3qA696v3yYjBQB4f6GDEVATrH9oFnoHUd5zLgh";
 
   beforeAll(() => {
-    api = createApi(TESTNET_COIN_CONFIG, "concordium_testnet");
+    api = createApi("concordium_testnet");
   });
 
   describe("estimateFees", () => {
     it("returns fee estimation for simple transfer", async () => {
-      const result = await api.estimateFees({
+      const result = await api.estimateFees(context, {
         intentType: "transaction",
         asset: { type: "native" },
         type: "send",
@@ -42,7 +44,7 @@ describe("Concordium Api (testnet)", () => {
     });
 
     it("returns higher fee estimation for transfer with memo", async () => {
-      const resultWithoutMemo = await api.estimateFees({
+      const resultWithoutMemo = await api.estimateFees(context, {
         intentType: "transaction",
         asset: { type: "native" },
         type: "send",
@@ -56,7 +58,7 @@ describe("Concordium Api (testnet)", () => {
         },
       });
 
-      const resultWithMemo = await api.estimateFees({
+      const resultWithMemo = await api.estimateFees(context, {
         intentType: "transaction",
         asset: { type: "native" },
         type: "send",
@@ -76,7 +78,7 @@ describe("Concordium Api (testnet)", () => {
 
   describe("getBalance", () => {
     it("returns balance for account with funds", async () => {
-      const result = await api.getBalance(ADDRESS_WITH_BALANCE);
+      const result = await api.getBalance(context, ADDRESS_WITH_BALANCE);
 
       expect(result).toBeInstanceOf(Array);
       expect(result.length).toBeGreaterThanOrEqual(1);
@@ -85,7 +87,7 @@ describe("Concordium Api (testnet)", () => {
     });
 
     it("returns 0 balance for pristine account", async () => {
-      const result = await api.getBalance(ADDRESS_PRISTINE);
+      const result = await api.getBalance(context, ADDRESS_PRISTINE);
 
       expect(result).toEqual([{ value: BigInt(0), asset: { type: "native" } }]);
     });
@@ -93,7 +95,7 @@ describe("Concordium Api (testnet)", () => {
 
   describe("lastBlock", () => {
     it("returns last block info", async () => {
-      const result = await api.lastBlock();
+      const result = await api.lastBlock(context);
 
       expect(result.height).toBeGreaterThan(0);
       expect(result.hash).toMatch(/^[A-Fa-f0-9]{64}$/);
@@ -103,10 +105,10 @@ describe("Concordium Api (testnet)", () => {
 
   describe("getBlockInfo", () => {
     it("returns block info for specific height", async () => {
-      const lastBlock = await api.lastBlock();
+      const lastBlock = await api.lastBlock(context);
       const targetHeight = lastBlock.height - 10;
 
-      const result = await api.getBlockInfo(targetHeight);
+      const result = await api.getBlockInfo(context, targetHeight);
 
       expect(result.height).toBe(targetHeight);
       expect(result.hash).toMatch(/^[A-Fa-f0-9]{64}$/);
@@ -114,11 +116,51 @@ describe("Concordium Api (testnet)", () => {
     });
   });
 
+  describe("getBlock", () => {
+    it("returns block info matching getBlockInfo and a list of transactions", async () => {
+      const lastBlock = await api.lastBlock(context);
+      const targetHeight = lastBlock.height - 10;
+
+      const [block, info] = await Promise.all([
+        api.getBlock(context, targetHeight),
+        api.getBlockInfo(context, targetHeight),
+      ]);
+
+      expect(block.info).toEqual(info);
+      expect(Array.isArray(block.transactions)).toBe(true);
+    });
+
+    it("maps a real CCD transfer to a signed operation pair with fees on the transaction", async () => {
+      const { items } = await api.listOperations(context, ADDRESS_WITH_BALANCE, {
+        minHeight: 0,
+        order: "desc",
+        limit: 20,
+      });
+      const transfer = items.find(op => !op.tx.failed && op.senders[0] && op.recipients[0]);
+      if (!transfer) {
+        throw new Error("no transfer found for ADDRESS_WITH_BALANCE to exercise getBlock");
+      }
+
+      const block = await api.getBlock(context, transfer.tx.block.height);
+      const tx = block.transactions.find(t => t.hash === transfer.tx.hash);
+
+      if (!tx) {
+        throw new Error(
+          `transaction ${transfer.tx.hash} not found in block ${transfer.tx.block.height}`,
+        );
+      }
+      expect(tx.failed).toBe(false);
+      expect(tx.fees).toBeGreaterThanOrEqual(BigInt(0));
+      const transferOps = tx.operations.filter(op => op.type === "transfer");
+      expect(transferOps.length).toBeGreaterThanOrEqual(2);
+    });
+  });
+
   describe("craftTransaction", () => {
     const RECIPIENT = ADDRESS_PRISTINE;
 
     it("returns a hex-encoded raw transaction", async () => {
-      const { transaction } = await api.craftTransaction({
+      const { transaction } = await api.craftTransaction(context, {
         intentType: "transaction",
         asset: { type: "native" },
         type: "send",
@@ -138,7 +180,7 @@ describe("Concordium Api (testnet)", () => {
 
     it("crafts transaction with correct amount and recipient", async () => {
       const amount = BigInt(5000000);
-      const { transaction } = await api.craftTransaction({
+      const { transaction } = await api.craftTransaction(context, {
         intentType: "transaction",
         asset: { type: "native" },
         type: "send",
@@ -157,7 +199,7 @@ describe("Concordium Api (testnet)", () => {
     });
 
     it("crafts transaction with memo", async () => {
-      const { transaction: txWithoutMemo } = await api.craftTransaction({
+      const { transaction: txWithoutMemo } = await api.craftTransaction(context, {
         intentType: "transaction",
         asset: { type: "native" },
         type: "send",
@@ -171,7 +213,7 @@ describe("Concordium Api (testnet)", () => {
         },
       });
 
-      const { transaction: txWithMemo } = await api.craftTransaction({
+      const { transaction: txWithMemo } = await api.craftTransaction(context, {
         intentType: "transaction",
         asset: { type: "native" },
         type: "send",
@@ -189,7 +231,7 @@ describe("Concordium Api (testnet)", () => {
     });
 
     it("should use estimated fees when not provided", async () => {
-      const { transaction } = await api.craftTransaction({
+      const { transaction } = await api.craftTransaction(context, {
         intentType: "transaction",
         asset: { type: "native" },
         type: "send",
@@ -211,7 +253,7 @@ describe("Concordium Api (testnet)", () => {
     it("throws error for invalid transaction", async () => {
       const invalidTx = "deadbeef";
 
-      await expect(api.broadcast(invalidTx)).rejects.toThrow();
+      await expect(api.broadcast(context, invalidTx)).rejects.toThrow();
     });
   });
 
@@ -220,7 +262,7 @@ describe("Concordium Api (testnet)", () => {
       const transaction = "01".repeat(100);
       const signature = "02".repeat(64);
 
-      const result = await api.combine(transaction, signature);
+      const result = await api.combine(context, transaction, [signature]);
 
       const parsed = JSON.parse(result);
       expect(parsed).toHaveProperty("transactionBody");
@@ -231,20 +273,16 @@ describe("Concordium Api (testnet)", () => {
   });
 
   describe("unsupported methods", () => {
-    it("getBlock throws not supported error", async () => {
-      await expect(async () => api.getBlock(100)).rejects.toThrow("getBlock is not supported");
-    });
-
     it("getStakes throws not supported error", async () => {
-      await expect(async () => api.getStakes(ADDRESS_WITH_BALANCE)).rejects.toThrow();
+      await expect(async () => api.getStakes(context, ADDRESS_WITH_BALANCE)).rejects.toThrow();
     });
 
     it("getRewards throws not supported error", async () => {
-      await expect(async () => api.getRewards(ADDRESS_WITH_BALANCE)).rejects.toThrow();
+      await expect(async () => api.getRewards(context, ADDRESS_WITH_BALANCE)).rejects.toThrow();
     });
 
     it("getValidators throws not supported error", async () => {
-      await expect(async () => api.getValidators()).rejects.toThrow();
+      await expect(async () => api.getValidators(context)).rejects.toThrow();
     });
   });
 });

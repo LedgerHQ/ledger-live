@@ -22,7 +22,6 @@ import { ServiceStatusProviderWrapper } from "~/renderer/components/ServiceStatu
 import { PlatformAppProviderWrapper } from "~/renderer/components/PlatformAppProviderWrapper";
 import { ToastProvider } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import { themeSelector } from "./actions/general";
-import { ConnectEnvsToSentry } from "~/renderer/components/ConnectEnvsToSentry";
 import { ConnectEnvsToDatadog } from "~/renderer/components/ConnectEnvsToDatadog";
 import PostOnboardingProviderWrapped from "~/renderer/components/PostOnboardingHub/logic/PostOnboardingProviderWrapped";
 import { useBraze } from "./hooks/useBraze";
@@ -33,7 +32,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { AppDataStorageProvider } from "~/renderer/hooks/storage-provider/useAppDataStorage";
 import { allowDebugReactQuerySelector } from "./reducers/settings";
 import { ThemeProvider } from "@ledgerhq/lumen-ui-react";
-import { setZcashShieldedEnabled } from "@ledgerhq/live-common/families/bitcoin/setup";
+import { setZcashShieldedEnabled } from "@ledgerhq/live-common/families/zcash/setup";
 
 const reloadApp = (event: KeyboardEvent) => {
   if ((event.ctrlKey || event.metaKey) && event.key === "r") {
@@ -68,9 +67,12 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
   const ldmkTransport = useFeature("ldmkTransport");
   const zcashShielded = useFeature("zcashShielded");
 
-  // Mirror the `zcashShielded` feature flag into the Zcash coin module: flag ON routes
-  // every Zcash send through the shielded PCZT/V5 path, flag OFF keeps the legacy
-  // transparent Bitcoin path. The coin module can't read React feature flags directly.
+  // Mirror the `zcashShielded` feature flag: neither a coin module nor the bridge
+  // router can read React feature flags, and the developer drawer's override never
+  // reaches the remote config, so what was resolved here is handed over. Flag ON
+  // serves Zcash accounts with the standalone @ledgerhq/coin-zcash module, where
+  // every send -- transparent t→t included -- is built and signed as a PCZT; OFF
+  // keeps coin-bitcoin's Zcash chain-adapter on its legacy transparent path.
   useEffect(() => {
     setZcashShieldedEnabled(zcashShielded?.enabled ?? false);
   }, [zcashShielded?.enabled]);
@@ -85,7 +87,6 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
             }
           }}
         >
-          <ConnectEnvsToSentry />
           <ConnectEnvsToDatadog />
           <UpdaterProvider>
             <AppDataStorageProvider>

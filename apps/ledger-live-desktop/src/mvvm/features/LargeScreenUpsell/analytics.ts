@@ -70,3 +70,18 @@ export function trackLargeScreenUpsellModalDismissed(
     ...sharedProps,
   });
 }
+
+export type LargeScreenUpsellBlockedCompetitor = "wallet_v4_tour" | "q2_tour" | "generic_awareness";
+
+export function trackLargeScreenUpsellModalBlockedByCompeting(
+  competitor: LargeScreenUpsellBlockedCompetitor,
+) {
+  track("modal_blocked", {
+    modal: "upgrade modal",
+    page: LARGE_SCREEN_UPSELL_MODAL_PAGE_NAME,
+    reason: "competing_app_start_modal",
+    competitor,
+    platform: "lwd",
+    sourceFlow: "app start",
+  });
+}

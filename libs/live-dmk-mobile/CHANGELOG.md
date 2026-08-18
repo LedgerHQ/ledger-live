@@ -1,5 +1,91 @@
 # @ledgerhq/live-dmk-mobile
 
+## 0.29.3
+
+### Patch Changes
+
+- Updated dependencies [[`1e9db75`](https://github.com/LedgerHQ/ledger-live/commit/1e9db750a4882f9db7f95278e33c00262487b37b), [`8a3a0bb`](https://github.com/LedgerHQ/ledger-live/commit/8a3a0bbd8361706daac364d4c89894f56431fc57)]:
+  - @ledgerhq/types-devices@6.32.0
+  - @ledgerhq/live-dmk-shared@0.30.0
+
+## 0.29.3-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`1e9db75`](https://github.com/LedgerHQ/ledger-live/commit/1e9db750a4882f9db7f95278e33c00262487b37b), [`8a3a0bb`](https://github.com/LedgerHQ/ledger-live/commit/8a3a0bbd8361706daac364d4c89894f56431fc57)]:
+  - @ledgerhq/types-devices@6.32.0-next.0
+  - @ledgerhq/live-dmk-shared@0.30.0-next.0
+
+## 0.29.2
+
+### Patch Changes
+
+- Updated dependencies [[`f60f9cb`](https://github.com/LedgerHQ/ledger-live/commit/f60f9cbc79557cfa815ea714b375ace11aea8754), [`4015ade`](https://github.com/LedgerHQ/ledger-live/commit/4015ade1f9744d4bb575282060fdb1beb9aafc89), [`e44d972`](https://github.com/LedgerHQ/ledger-live/commit/e44d97239af10b46ae3ef703e0c6181cc0c87712)]:
+  - @shared/env@0.2.0
+
+## 0.29.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`f60f9cb`](https://github.com/LedgerHQ/ledger-live/commit/f60f9cbc79557cfa815ea714b375ace11aea8754), [`4015ade`](https://github.com/LedgerHQ/ledger-live/commit/4015ade1f9744d4bb575282060fdb1beb9aafc89), [`e44d972`](https://github.com/LedgerHQ/ledger-live/commit/e44d97239af10b46ae3ef703e0c6181cc0c87712)]:
+  - @shared/env@0.2.0-next.0
+
+## 0.29.1
+
+### Patch Changes
+
+- Updated dependencies [[`1070564`](https://github.com/LedgerHQ/ledger-live/commit/107056410174d3da2d45c468232a8d742aea021f)]:
+  - @ledgerhq/errors@7.0.0
+  - @ledgerhq/hw-transport@6.35.7
+  - @shared/env@0.1.1
+  - @ledgerhq/live-dmk-shared@0.29.1
+
+## 0.29.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`1070564`](https://github.com/LedgerHQ/ledger-live/commit/107056410174d3da2d45c468232a8d742aea021f)]:
+  - @ledgerhq/errors@7.0.0-next.0
+  - @ledgerhq/hw-transport@6.35.7-next.0
+  - @shared/env@0.1.1-next.0
+  - @ledgerhq/live-dmk-shared@0.29.1-next.0
+
+## 0.29.0
+
+### Minor Changes
+
+- [#19681](https://github.com/LedgerHQ/ledger-live/pull/19681) [`762b5eb`](https://github.com/LedgerHQ/ledger-live/commit/762b5ebf332566879a10ab1f16ef85a3da360fe7) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Fix USB transport routing for Device Intent Executor legacy `withDevice` intents.
+
+### Patch Changes
+
+- Updated dependencies [[`2388d41`](https://github.com/LedgerHQ/ledger-live/commit/2388d4171bd2e5caa2009e8eadcd06548d2209ef), [`762b5eb`](https://github.com/LedgerHQ/ledger-live/commit/762b5ebf332566879a10ab1f16ef85a3da360fe7)]:
+  - @ledgerhq/live-dmk-shared@0.29.0
+
+## 0.29.0-next.0
+
+### Minor Changes
+
+- [#19681](https://github.com/LedgerHQ/ledger-live/pull/19681) [`762b5eb`](https://github.com/LedgerHQ/ledger-live/commit/762b5ebf332566879a10ab1f16ef85a3da360fe7) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Fix USB transport routing for Device Intent Executor legacy `withDevice` intents.
+
+### Patch Changes
+
+- Updated dependencies [[`2388d41`](https://github.com/LedgerHQ/ledger-live/commit/2388d4171bd2e5caa2009e8eadcd06548d2209ef), [`762b5eb`](https://github.com/LedgerHQ/ledger-live/commit/762b5ebf332566879a10ab1f16ef85a3da360fe7)]:
+  - @ledgerhq/live-dmk-shared@0.29.0-next.0
+
+## 0.28.1
+
+### Patch Changes
+
+- Updated dependencies [[`a15b864`](https://github.com/LedgerHQ/ledger-live/commit/a15b864576d901f15d480070b475314c3b23c1dd), [`fc44f1e`](https://github.com/LedgerHQ/ledger-live/commit/fc44f1e6ddcca939c117e0cb8bc49c404163b003)]:
+  - @ledgerhq/live-env@2.42.0
+
+## 0.28.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`a15b864`](https://github.com/LedgerHQ/ledger-live/commit/a15b864576d901f15d480070b475314c3b23c1dd), [`fc44f1e`](https://github.com/LedgerHQ/ledger-live/commit/fc44f1e6ddcca939c117e0cb8bc49c404163b003)]:
+  - @ledgerhq/live-env@2.42.0-next.0
+
 ## 0.28.0
 
 ### Minor Changes

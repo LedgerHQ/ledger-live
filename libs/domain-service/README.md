@@ -1,5 +1,8 @@
 # Domain Service
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 ### Description
 
 This library is in charge of handling all domain related features for a Wallet

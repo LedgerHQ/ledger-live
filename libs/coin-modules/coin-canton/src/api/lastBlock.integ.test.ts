@@ -1,17 +1,19 @@
 import { CoinModuleApi } from "@ledgerhq/coin-module-framework/api/types";
-import { createMockCoinConfigValue } from "../test/fixtures";
+import { CantonCoinConfig } from "../config";
+import { createMockContext } from "../test/fixtures";
 import { createApi } from ".";
 
-let api: CoinModuleApi;
+const context = createMockContext();
+let api: CoinModuleApi<CantonCoinConfig>;
 
 describe.skip("devnet", () => {
   beforeAll(() => {
-    api = createApi(createMockCoinConfigValue());
+    api = createApi();
   });
 
   describe("lastBlock", () => {
     it("should return ledger end", async () => {
-      const lastBlock = await api.lastBlock();
+      const lastBlock = await api.lastBlock(context);
       expect(lastBlock.height).toBeGreaterThan(0);
     });
   });

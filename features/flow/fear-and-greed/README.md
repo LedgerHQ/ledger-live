@@ -1,5 +1,8 @@
 # @features/flow-fear-and-greed
 
+> [!CAUTION]
+> **Status: UNSTABLE** — In active development.
+
 User-facing Fear & Greed helpers shared across desktop and mobile.
 
 - `utils/fearAndGreed.ts` — maps a Fear & Greed value (0-100) to a `FearAndGreedLevel`, a translation

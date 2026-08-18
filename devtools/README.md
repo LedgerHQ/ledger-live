@@ -44,6 +44,177 @@ host app ──config──▶ <DevTools /> (shell) ──looks up id──▶ @
 
 The `import()` lives in the registry, not the host or shell — the bundler resolves each tool package against the registry's own dependency graph, and tool packages stay completely decoupled.
 
+# How to add a new tool
+
+A tool is a standalone React component packaged as `@devtools/<id>`. The shell never imports it directly: it looks the tool up in `@devtools/registry`, where each tool is declared by a metadata object plus a lazy `loader: () => import("@devtools/<id>")`. The host opts in by listing the tool's id (and its props) in the `DevToolsConfig` array passed to `<DevTools />`.
+
+> [!WARNING]
+> Always use the generator to create a new tool. It scaffolds the package and wires the registry automatically:
+> ```sh
+> pnpm --filter @devtools/registry add-tool
+> ```
+> Run it **before** creating any files manually. If the package already exists, the generator will overwrite the following files:
+>
+> **New tool package:**
+> - `devtools/<name>/package.json`
+> - `devtools/<name>/tsconfig.json`, `tsconfig.web.json`, `tsconfig.native.json`
+> - `devtools/<name>/src/<name>/<ClassName>.tsx`
+> - `devtools/<name>/src/index.ts`, `src/index.native.ts`
+> - `devtools/<name>/src/types.ts` *(if props were requested)*
+>
+> **Registry (rewritten on every generator run — do not edit manually):**
+> - `devtools/registry/src/registry.ts`
+> - `devtools/registry/src/metadata/<team>/index.ts` *(all team barrel files)*
+> - `devtools/registry/src/metadata/index.ts`
+> - `devtools/registry/package.json`
+
+> [!NOTE]
+> The component name (`<ClassName>`) and props type name (`<ClassName>Props`) are derived from the tool id at generation time. Do not rename them after the fact — the registry imports them by those names, and renaming without re-running the generator will break the wiring.
+
+## Wiring
+
+The generator creates and fully populates `devtools/registry/src/metadata/<team>/<tool>.ts` from the answers you gave during the prompts. You do not need to edit it. If the tool has props, the only manual step left is to replace the placeholder in `devtools/<name>/src/types.ts` with the actual props your tool expects:
+
+```ts
+// devtools/my-tool/src/types.ts  — fill this in
+export interface MyToolProps {
+  value: string;
+  onChange: (value: string) => void;
+}
+```
+
+The generator also rebuilds `registry.ts` to include the tool in the `tools` map and extend `DevToolConfig` with its id and props type:
+
+```ts
+export type DevToolConfig =
+  | { id: "my-tool"; config: MyToolProps }
+  | { id: "prop-less-tool"; config: undefined }
+  // …
+```
+
+`DevToolConfig` is the single point where each tool's id is bound to its props type. Every host that includes the tool gets full type-checking automatically.
+
+### Restricting to one platform
+
+Set `platform: "web"` or `platform: "native"` on the metadata to hide the tool from the other platform. Tools with no `platform` field render on both.
+
+<details>
+<summary>Manual wiring reference (troubleshooting / generator not available)</summary>
+
+### Package structure
+
+**Web-only tool:**
+
+```
+devtools/my-tool/
+├── src/
+│   ├── MyTool.web.tsx
+│   ├── types.ts
+│   └── index.ts         # web entry ("main")
+├── package.json         # "name": "@devtools/my-tool", "private": true
+├── tsconfig.json        # base: files: [], references tsconfig.web.json
+└── tsconfig.web.json
+```
+
+**Cross-platform tool:**
+
+```
+devtools/my-tool/
+├── src/
+│   ├── MyTool.web.tsx
+│   ├── MyTool.native.tsx
+│   ├── types.ts
+│   ├── index.ts         # web entry ("main")
+│   └── index.native.ts  # native entry ("react-native")
+├── package.json         # "name": "@devtools/my-tool", "private": true
+├── tsconfig.json        # base: files: [], references both platform configs
+├── tsconfig.web.json
+└── tsconfig.native.json
+```
+
+### Props type
+
+```ts
+// devtools/my-tool/src/types.ts
+export interface MyToolProps {
+  value: string;
+  onChange: (value: string) => void;
+}
+```
+
+### Component
+
+The component takes its props directly — it knows nothing about the shell or the registry. Use `.web` / `.native` suffixes on every file with platform-specific content.
+
+```tsx
+// devtools/my-tool/src/MyTool.web.tsx
+import type { MyToolProps } from "./types";
+
+export default function MyTool({ value, onChange }: MyToolProps) {
+  return <input value={value} onChange={e => onChange(e.target.value)} />;
+}
+```
+
+### Package entries
+
+The registry's loader is `() => import("@devtools/<id>")`. Both entries must default-export the component. Use bare specifiers — `moduleSuffixes` in each platform tsconfig resolves the correct file at build time.
+
+```ts
+// devtools/my-tool/src/index.ts  (web — "main")
+import MyTool from "./MyTool";
+export type { MyToolProps } from "./types";
+export default MyTool;
+```
+
+```ts
+// devtools/my-tool/src/index.native.ts  (native — "react-native")
+import MyTool from "./MyTool";
+export type { MyToolProps } from "./types";
+export default MyTool;
+```
+
+### Registry wiring
+
+1. Add `"@devtools/my-tool": "workspace:*"` to `devtools/registry/package.json` dependencies.
+2. Create `devtools/registry/src/metadata/<team>/my-tool.ts` (see the Wiring section above for the shape).
+3. Re-export it from `devtools/registry/src/metadata/<team>/index.ts`.
+4. Re-export the team barrel from `devtools/registry/src/metadata/index.ts` if the team folder is new.
+5. In `devtools/registry/src/registry.ts`, add the import, add the entry to `tools`, and add the branch to `DevToolConfig`.
+
+</details>
+
+## Use the tool in a host app
+
+The host imports `DevTools` and `DevToolsConfig` from the shell and builds a typed config array:
+
+```tsx
+import { DevTools, type DevToolsConfig } from "@devtools/shell";
+import { useMyToolProps } from "../hooks/useMyToolProps";
+
+export default function DevToolsPage() {
+  const myToolProps = useMyToolProps();
+  const config: DevToolsConfig = [
+    { id: "my-tool", config: myToolProps },
+  ];
+
+  return (
+    <div style={{ height: "100vh" }}>
+      <DevTools config={config} />
+    </div>
+  );
+}
+```
+
+Host-side props can come from any source — Redux selectors, context, a hand-rolled hook. The shell only sees the `config` object you pass.
+
+`config` is consumed as a context value by `DevToolsProvider`; if you derive it from multiple selectors, memoize the entries so unrelated re-renders don't churn every tool.
+
+## Notes
+
+- A tool can be rendered standalone, outside the shell. The shell injects host props through React context at render time, but the component itself only depends on its declared props — `import MyTool from "@devtools/my-tool"` and pass props directly works anywhere in the host app.
+- Use the `owner` field to identify the team responsible for the tool. The shell renders it as a tag next to the tool's title.
+- `ToolMetadata` is validated at the type level via `ToolMetadataSchema` (zod). The schema is also exported from `@devtools/registry` for runtime validation if you need it.
+
 ## Internal structure of a tool package
 
 The internal folder layout is free; organise it however fits the tool's complexity. The example below is a reference, not a requirement:

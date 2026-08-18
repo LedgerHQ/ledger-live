@@ -7,8 +7,8 @@ import {
 import { State } from "~/reducers/types";
 import { AccountRaw } from "@ledgerhq/types-live";
 import { fromAccountRaw } from "@ledgerhq/ledger-wallet-framework/serialization/account";
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 
 const ethereumAccountRaw: AccountRaw = {
   id: "js:2:ethereum:0x01:",
@@ -58,7 +58,11 @@ const bitcoinAccountRaw: AccountRaw = {
   balance: "100000000",
 };
 
-setupMockCryptoAssetsStore();
+setCryptoAssetsStore({
+  findTokenById: async () => undefined,
+  findTokenByAddressInCurrency: async () => undefined,
+  getTokensSyncHash: async () => "",
+});
 
 let mockEthereumAccount1: Awaited<ReturnType<typeof fromAccountRaw>>;
 let mockEthereumAccount2: Awaited<ReturnType<typeof fromAccountRaw>>;

@@ -1,9 +1,9 @@
 import BigNumber from "bignumber.js";
 import { renderHook } from "@testing-library/react-native";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { emptyHistoryCache } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { NATIVE_FEE_CURRENCY_MARKER } from "@ledgerhq/live-common/families/celo/constants";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { TokenCurrencyIdSchema, type TokenCurrency } from "@domain/entity-currency-token";
 import type { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
 
 const mockUseQuery = jest.fn();
@@ -14,7 +14,7 @@ jest.mock("@tanstack/react-query", () => ({
   useQuery: (...args: unknown[]) => mockUseQuery(...args),
 }));
 
-jest.mock("@ledgerhq/cryptoassets/hooks", () => ({
+jest.mock("@features/platform-currencies", () => ({
   useTokenByAddressInCurrency: (...args: unknown[]) => mockUseTokenByAddressInCurrency(...args),
 }));
 
@@ -57,7 +57,7 @@ const buildToken = (
   id = "celo/erc20/test",
 ): TokenCurrency => ({
   type: "TokenCurrency",
-  id,
+  id: TokenCurrencyIdSchema.parse(id),
   contractAddress,
   parentCurrencyId: celo.id,
   tokenType: "erc20",

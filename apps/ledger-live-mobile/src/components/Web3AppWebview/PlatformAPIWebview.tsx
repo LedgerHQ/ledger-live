@@ -5,14 +5,14 @@ import { ActivityIndicator, Linking, Platform, StyleSheet, View } from "react-na
 import { WebView as RNWebView, WebViewMessageEvent } from "react-native-webview";
 import { useNavigation } from "@react-navigation/native";
 import { JSONRPCRequest } from "json-rpc-2.0";
-import { UserRefusedOnDevice } from "@ledgerhq/errors";
+import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import type {
   RawPlatformTransaction,
   RawPlatformSignedTransaction,
   RawPlatformAccount,
 } from "@ledgerhq/live-common/platform/rawTypes";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import {
@@ -38,7 +38,7 @@ import { useInternalAppIds } from "@ledgerhq/live-common/hooks/useInternalAppIds
 import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
 import { useFeature } from "@features/platform-feature-flags";
 import { useFeatureFlaggedCurrencies } from "@features/platform-currencies";
-import useEnv from "@ledgerhq/live-common/hooks/useEnv";
+import useEnv from "@features/platform-env";
 import { NavigatorName, ScreenName } from "~/const";
 import { broadcastSignedTx } from "~/logic/screenTransactionHooks";
 import { flattenAccountsSelector } from "~/reducers/accounts";
@@ -109,7 +109,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>
       >();
     const [device, setDevice] = useState<Device>();
-    const listAccounts = useListPlatformAccounts(walletState, accounts);
+    const listAccounts = useListPlatformAccounts(walletState.accountNames, accounts);
     const { deactivatedCurrencyIds } = useFeatureFlaggedCurrencies(!!useEnv("MOCK"));
     const deactivatedCurrencyIdsSet = useMemo(
       () => new Set(deactivatedCurrencyIds),
@@ -156,7 +156,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
             tracking.platformRequestAccountSuccess(manifest);
             resolve(
               serializePlatformAccount(
-                accountToPlatformAccount(walletState, account, parentAccount),
+                accountToPlatformAccount(walletState.accountNames, account, parentAccount),
               ),
             );
           };
@@ -173,13 +173,13 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
                 : (currentRouteNameRef.current ?? "Unknown"),
           });
         }),
-      [tracking, manifest, deactivatedCurrencyIds, walletState, openModularDrawer],
+      [tracking, manifest, deactivatedCurrencyIds, walletState.accountNames, openModularDrawer],
     );
 
     const receiveOnAccount = useCallback(
       ({ accountId }: { accountId: string }) =>
         receiveOnAccountLogic(
-          walletState,
+          walletState.accountNames,
           { manifest, accounts, tracking },
           accountId,
           (account, parentAccount, accountAddress) =>
@@ -203,7 +203,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
               });
             }),
         ),
-      [walletState, manifest, accounts, navigation, tracking],
+      [walletState.accountNames, manifest, accounts, navigation, tracking],
     );
 
     const signTransaction = useCallback(

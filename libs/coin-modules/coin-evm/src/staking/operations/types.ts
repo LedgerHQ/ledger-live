@@ -5,6 +5,7 @@ export type OperationParams = {
   dstValAddress?: string | undefined;
   delegator?: string | undefined;
   withdrawId?: string | undefined;
+  shares?: bigint | undefined;
 };
 
 export type OperationParamsWithValAddress = OperationParams & {

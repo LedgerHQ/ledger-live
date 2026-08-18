@@ -1,28 +1,32 @@
-import type { CoinModuleApi } from "@ledgerhq/coin-module-framework/api/index";
+import type { CoinModuleApi, Operation } from "@ledgerhq/coin-module-framework/api/index";
+import coinConfig, { type PolkadotCoinConfig } from "../config";
+import { createMockPolkadotContext } from "../test/config.fixture";
 import { createApi } from ".";
 import { ApiPromise, HttpProvider, Keyring } from "@polkadot/api";
 import { type ProviderInterface } from "@polkadot/rpc-provider/types";
 import { cryptoWaitReady, encodeAddress, hdLedger, mnemonicGenerate } from "@polkadot/util-crypto";
 
 describe("Polkadot Api", () => {
-  let module: CoinModuleApi;
+  let module: CoinModuleApi<PolkadotCoinConfig>;
+  const mainnetConfig: PolkadotCoinConfig = {
+    status: { type: "active" },
+    node: {
+      url: "https://polkadot-asset-hub-fullnodes.api.live.ledger.com",
+    },
+    sidecar: {
+      url: "https://polkadot-mainnet-rest-api.coin.ledger.com/v1",
+    },
+    indexer: {
+      url: "https://explorers.api.live.ledger.com/blockchain/dot_asset_hub",
+    },
+  };
+  const context = createMockPolkadotContext(mainnetConfig);
   const address = "144HGaYrSdK3543bi26vT6Rd8Bg7pLPMipJNr2WLc3NuHgD2";
 
   beforeAll(() => {
-    module = createApi({
-      node: {
-        url: "https://polkadot-asset-hub-fullnodes.api.live.ledger.com",
-      },
-      sidecar: {
-        url: "https://polkadot-mainnet-rest-api.coin.ledger.com/v1",
-      },
-      indexer: {
-        url: "https://explorers.api.live.ledger.com/blockchain/dot_asset_hub",
-      },
-      staking: {
-        electionStatusThreshold: 25,
-      },
-    });
+    // The api/logic layers still resolve config through the getCoinConfig() singleton, so seed it.
+    coinConfig.setCoinConfig(() => mainnetConfig);
+    module = createApi();
   });
 
   describe("estimateFees", () => {
@@ -31,7 +35,7 @@ describe("Polkadot Api", () => {
       const amount = BigInt(100);
 
       // When
-      const { value } = await module.estimateFees({
+      const { value } = await module.estimateFees(context, {
         intentType: "transaction",
         asset: { type: "native" },
         type: "send",
@@ -47,21 +51,27 @@ describe("Polkadot Api", () => {
   describe("listOperations", () => {
     it.skip("returns a list regarding address parameter", async () => {
       // When
-      const { items: tx } = await module.listOperations(address, { minHeight: 0, order: "asc" });
+      const { items: tx } = await module.listOperations(context, address, {
+        minHeight: 0,
+        order: "asc",
+      });
 
       // Then
       expect(tx.length).toBeGreaterThanOrEqual(1);
-      tx.forEach(operation => {
+      tx.forEach((operation: Operation) => {
         expect(operation.senders.concat(operation.recipients)).toContainEqual(address);
       });
     }, 20000);
 
     it.skip("returns all operations", async () => {
       // When
-      const { items: tx } = await module.listOperations(address, { minHeight: 0, order: "asc" });
+      const { items: tx } = await module.listOperations(context, address, {
+        minHeight: 0,
+        order: "asc",
+      });
 
       // Then
-      const checkSet = new Set(tx.map(elt => elt.tx.hash));
+      const checkSet = new Set(tx.map((elt: Operation) => elt.tx.hash));
       expect(checkSet.size).toEqual(tx.length);
     });
   });
@@ -69,7 +79,7 @@ describe("Polkadot Api", () => {
   describe("lastBlock", () => {
     it("returns last block info", async () => {
       // When
-      const result = await module.lastBlock();
+      const result = await module.lastBlock(context);
 
       // Then
       expect(result.hash).toMatch(/^0x[a-fA-F0-9]{64}$/);
@@ -81,7 +91,7 @@ describe("Polkadot Api", () => {
   describe("getBalance", () => {
     it("should fetch balance", async () => {
       // When
-      const result = await module.getBalance(address);
+      const result = await module.getBalance(context, address);
 
       // Then
       expect(result[0].asset).toEqual({ type: "native" });
@@ -113,7 +123,9 @@ describe("Polkadot Api", () => {
           .transferKeepAlive(receiverAddress, 15_000_000_000n)
           .signAsync(signerPair, { nonce: 0 });
 
-        await expect(module.broadcast(signedTx.toHex())).rejects.toThrow(/FundsUnavailable/);
+        await expect(module.broadcast(context, signedTx.toHex())).rejects.toThrow(
+          /FundsUnavailable/,
+        );
       } finally {
         await api.disconnect();
       }
@@ -123,7 +135,7 @@ describe("Polkadot Api", () => {
   describe("craftTransaction", () => {
     it("returns a raw transaction", async () => {
       // When
-      const result = await module.craftTransaction({
+      const result = await module.craftTransaction(context, {
         intentType: "transaction",
         asset: { type: "native" },
         type: "send",

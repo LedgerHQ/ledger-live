@@ -1,9 +1,5 @@
-import BigNumber from "bignumber.js";
-import type { Account, AccountRaw } from "@ledgerhq/types-live";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
-import type { BitcoinAccountRaw } from "../../../types";
 import type { BitcoinSigner, SignerContext } from "../../../signer";
-import type { ZcashAccount, ZcashAccountRaw, ZcashPrivateInfo } from "../types";
 import { getChainAdapter } from "../../registry";
 
 // `index.ts` constructs `new DmkSignerZcash(...)` inside `createSigner`. The
@@ -55,82 +51,6 @@ const makeSignerContext = (signer: unknown): jest.Mock & SignerContext => {
 beforeEach(() => {
   jest.clearAllMocks();
 });
-
-// ─── assignToAccountRaw / assignFromAccountRaw ─────────────────────────
-
-describe("zcash chain adapter — privateInfo serialization", () => {
-  const privateInfo: ZcashPrivateInfo = {
-    saplingBalance: new BigNumber(1234),
-    orchardBalance: new BigNumber(5678),
-    syncState: "complete",
-    progress: 100,
-    estimatedTimeRemaining: { hours: 0, minutes: 0 },
-    ufvk: "uview1key",
-    birthday: "2024-01-01",
-    lastSyncTimestamp: 1700000000,
-    lastProcessedBlock: 5000,
-    transactions: [],
-  };
-
-  it("serializes ZcashPrivateInfo into the raw form when present", () => {
-    const account = { privateInfo } as unknown as Account;
-    const accountRaw = {} as AccountRaw;
-
-    adapter.assignToAccountRaw!(account, accountRaw);
-
-    const raw = (accountRaw as ZcashAccountRaw).privateInfo!;
-    expect(raw.saplingBalance).toBe("1234");
-    expect(raw.orchardBalance).toBe("5678");
-    expect(raw.ufvk).toBe("uview1key");
-  });
-
-  it("leaves accountRaw untouched when no privateInfo is set on the account", () => {
-    const account = {} as Account;
-    const accountRaw = { id: "acc-1" } as BitcoinAccountRaw;
-
-    adapter.assignToAccountRaw!(account, accountRaw);
-
-    expect((accountRaw as ZcashAccountRaw).privateInfo).toBeUndefined();
-  });
-
-  it("rehydrates ZcashPrivateInfoRaw into BigNumber-backed fields when present", () => {
-    const accountRaw = {
-      privateInfo: {
-        saplingBalance: "1234",
-        orchardBalance: "5678",
-        syncState: "complete",
-        progress: 100,
-        estimatedTimeRemaining: { hours: 0, minutes: 0 },
-        ufvk: "uview1key",
-        birthday: "2024-01-01",
-        lastSyncTimestamp: 1700000000,
-        lastProcessedBlock: 5000,
-        transactions: [],
-      },
-    } as unknown as ZcashAccountRaw;
-    const account = {} as Account;
-
-    adapter.assignFromAccountRaw!(accountRaw, account);
-
-    const restored = (account as ZcashAccount).privateInfo!;
-    expect(restored.saplingBalance).toEqual(new BigNumber(1234));
-    expect(restored.orchardBalance).toEqual(new BigNumber(5678));
-    expect(restored.ufvk).toBe("uview1key");
-  });
-
-  it("leaves the account untouched when no privateInfo is present on the raw form", () => {
-    const accountRaw = {} as AccountRaw;
-    const account = {} as Account;
-
-    adapter.assignFromAccountRaw!(accountRaw, account);
-
-    expect((account as ZcashAccount).privateInfo).toBeUndefined();
-  });
-});
-
-// PCZT placeholders (signOperation / getTransactionStatus / estimateMaxSpendable
-// / prepareTransaction) are already exhaustively covered in `adapter.test.ts`
-// for every `ZcashTransferType`, so we don't duplicate them here.
 
 // ─── getAddress ────────────────────────────────────────────────────────
 
@@ -370,6 +290,25 @@ describe("zcash chain adapter — createSigner", () => {
     expect(legacyCreatePaymentTransaction).not.toHaveBeenCalled();
   });
 
+  it("carries the original raw hex on the splitTransaction result (rawTxHex)", () => {
+    const dmk = { dmkSentinel: true };
+    const parsedResult = { outputs: [], inputs: [] };
+    const baseSplitTransaction = jest.fn().mockReturnValue(parsedResult);
+    const defaultSigner = {
+      splitTransaction: baseSplitTransaction,
+    } as unknown as BitcoinSigner;
+
+    const signer = adapter.createSigner!({ dmk, sessionId: "s" }, currency, defaultSigner)!;
+    const result = signer.splitTransaction("deadbeef", true, false, ["zcash"]);
+
+    // wallet.signAccountTx discards the raw hex after splitTransaction — without
+    // rawTxHex on the result, DmkSignerZcash cannot populate
+    // serializedPreviousTransactionOverride and the device computes a wrong
+    // ZIP-244 txid (see createSigner's comment).
+    expect(baseSplitTransaction).toHaveBeenCalledWith("deadbeef", true, false, ["zcash"]);
+    expect(result).toEqual({ ...parsedResult, rawTxHex: "deadbeef" });
+  });
+
   it("returns undefined for non-DMK transports (falls through to standard Btc)", () => {
     const defaultSigner = {} as BitcoinSigner;
     expect(adapter.createSigner!({}, currency, defaultSigner)).toBeUndefined();
@@ -381,14 +320,4 @@ describe("zcash chain adapter — createSigner", () => {
   });
 });
 
-// ─── adapter wiring ────────────────────────────────────────────────────
-
-describe("zcash chain adapter — registration", () => {
-  it("registers itself under the 'zcash' currency id", () => {
-    expect(adapter.id).toBe("zcash");
-  });
-
-  it("exposes buildExtraSyncObservable for shielded sync delegation", () => {
-    expect(typeof adapter.buildExtraSyncObservable).toBe("function");
-  });
-});
+// Adapter-wide registration/surface assertions live in adapter.test.ts.

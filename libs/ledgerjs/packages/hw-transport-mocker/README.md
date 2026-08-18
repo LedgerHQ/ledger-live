@@ -2,6 +2,9 @@
 
 ## @ledgerhq/hw-transport-mocker
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 Library for Ledger Hardware Wallets.
 
 [GitHub](https://github.com/LedgerHQ/ledger-live/),

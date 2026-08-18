@@ -1,6 +1,6 @@
 import { useListHeaderComponents } from "../ListHeaderComponent";
 import { BalanceHistoryWithCountervalue, ValueChange } from "@ledgerhq/types-live";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { LayoutChangeEvent } from "react-native";
 import { ColorPalette } from "@ledgerhq/native-ui";
 import * as config from "@ledgerhq/live-common/config/index";
@@ -76,7 +76,10 @@ describe("Testing ListHeaderComponent Component", () => {
       mockIsAccountEmpty.mockImplementation(() => false);
     });
 
-    const getUseListHeaderComponentsResult = (currencyConfig: CurrencyConfig) => {
+    const getUseListHeaderComponentsResult = (
+      currencyConfig: CurrencyConfig,
+      mainActions: ActionButtonEvent[] = [{ label: {} as React.ReactNode } as ActionButtonEvent],
+    ) => {
       let hookResult: ReturnType<typeof useListHeaderComponents> | undefined;
 
       const TestComponent = () => {
@@ -99,6 +102,7 @@ describe("Testing ListHeaderComponent Component", () => {
               main: "#fff",
             },
           } as ColorPalette,
+          mainActions,
           secondaryActions: [
             {
               label: {} as React.ReactNode,
@@ -153,6 +157,26 @@ describe("Testing ListHeaderComponent Component", () => {
       } as unknown as CurrencyConfig);
 
       expect(listHeaderComponents[8]).toBeUndefined();
+    });
+
+    const findByKey = (components: React.ReactNode[], key: string) =>
+      components.find(c => React.isValidElement(c) && c.key === key);
+
+    it("renders the quick actions section when there are main actions", () => {
+      const { listHeaderComponents } = getUseListHeaderComponentsResult(
+        {} as unknown as CurrencyConfig,
+      );
+
+      expect(findByKey(listHeaderComponents, "FabAccountMainActions")).toBeTruthy();
+    });
+
+    it("hides the quick actions section when there are no main actions (e.g. HyperCore)", () => {
+      const { listHeaderComponents } = getUseListHeaderComponentsResult(
+        {} as unknown as CurrencyConfig,
+        [],
+      );
+
+      expect(findByKey(listHeaderComponents, "FabAccountMainActions")).toBeFalsy();
     });
   });
 });

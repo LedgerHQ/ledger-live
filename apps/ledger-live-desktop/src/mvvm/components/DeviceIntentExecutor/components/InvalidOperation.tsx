@@ -1,7 +1,14 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import type { InvalidOperationComponent } from "@ledgerhq/device-intent";
+import type { InvalidOperationComponent } from "@features/platform-device-intent";
+import { useDeviceIntentTracking } from "@ledgerhq/live-dmk-shared";
 import { InfoState } from "LLD/components/InfoState";
+import { TrackDIEScreen } from "./TrackDIEScreen";
+import {
+  DEVICE_ACTION_BUTTON,
+  PAGE_DEVICE_ACTION,
+  trackDeviceActionButtonClicked,
+} from "../utils/trackDeviceIntent";
 
 const devBanner = __DEV__
   ? ({
@@ -16,19 +23,31 @@ const devBanner = __DEV__
 
 export const InvalidOperation: InvalidOperationComponent = ({ onClose }) => {
   const { t } = useTranslation();
+  const { sourceFlow, analyticsProperties } = useDeviceIntentTracking();
+  const handleClose = () => {
+    trackDeviceActionButtonClicked({
+      sourceFlow,
+      button: DEVICE_ACTION_BUTTON.Close,
+      extraProperties: analyticsProperties,
+    });
+    onClose();
+  };
 
   return (
-    <InfoState
-      preset="error"
-      size="hug"
-      title={t("deviceIntentExecutor.errors.invalidOperation.title")}
-      description={t("deviceIntentExecutor.errors.invalidOperation.description")}
-      banner={devBanner}
-      primaryCta={{
-        label: t("common.close"),
-        onPress: onClose,
-      }}
-      testID="device-intent-executor-invalid-operation"
-    />
+    <>
+      <TrackDIEScreen category={PAGE_DEVICE_ACTION.InvalidState} refreshSource />
+      <InfoState
+        preset="error"
+        size="hug"
+        title={t("deviceIntentExecutor.errors.invalidOperation.title")}
+        description={t("deviceIntentExecutor.errors.invalidOperation.description")}
+        banner={devBanner}
+        primaryCta={{
+          label: t("common.close"),
+          onPress: handleClose,
+        }}
+        testID="device-intent-executor-invalid-operation"
+      />
+    </>
   );
 };

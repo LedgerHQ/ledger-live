@@ -1,5 +1,8 @@
 # `@ledgerhq/ui-shared`
 
+> [!WARNING]
+> **Status: DEPRECATED** — Deprecated. Migrate to `@ledgerhq/lumen-design-core`.
+
 [![npm](https://img.shields.io/npm/v/@ledgerhq/ui-shared)](https://www.npmjs.com/package/@ledgerhq/ui-shared)
 
 ### Shared assets and code

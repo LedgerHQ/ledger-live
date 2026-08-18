@@ -4,7 +4,6 @@
     "src/api/index.ts",
     "src/bridge/js.ts",
     "src/bridge.integration.ts",
-    "src/wallet-btc/crypto/secp256k1.ts",
     "src/crypto-util.ts",
     "src/datasets/bitcoin_cash.ts",
     "src/datasets/bitcoin_gold.ts",
@@ -23,27 +22,17 @@
     "src/deviceTransactionConfig.ts",
     "src/errors.ts",
     "src/exchange.ts",
+    "src/explorer.ts",
     "src/hw-getAddress.ts",
     "src/hw-signMessage.ts",
     "src/initAccount.ts",
     "src/mock.ts",
-    "src/mockBtcSigner.ts",
     "src/serialization.ts",
     "src/transaction.ts",
     "src/tokens.ts"
   ],
   "ignoreUnimported": [
     "src/rbfContext.ts",
-    "src/chain-adapters/zcash/ZCash.ts",
-    "src/chain-adapters/zcash/ZCashIPC.ts",
-    "src/chain-adapters/zcash/ipc/contract.ts",
-    "src/chain-adapters/zcash/ipc/main-host.ts",
-    "src/chain-adapters/zcash/ipc/one-shot-router.ts",
-    "src/chain-adapters/zcash/ipc/utility-entry.ts",
-    "src/chain-adapters/zcash/native-engine/engine.ts",
-    "src/chain-adapters/zcash/serialization/rehydrate.ts",
-    "src/chain-adapters/zcash/stubs/ZCash.native.ts",
-    "src/chain-adapters/zcash/sync-estimator.ts",
     "src/fixtures/common.fixtures.ts",
     "src/fixtures/rbf.fixtures.ts",
     "src/operation.ts",
@@ -52,10 +41,6 @@
   "ignoreUnresolved": [
     "@jest/expect-utils",
     "@jest/get-type",
-    "@ledgerhq/coin-bitcoin/chain-adapters/zcash/ZCash",
     "jest-util"
-  ],
-  "ignoreUnused": [
-    "@ledgerhq/zcash-utils"
   ]
 }

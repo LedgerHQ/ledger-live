@@ -1,5 +1,8 @@
-import { AccountOnboardStatus, ConcordiumPairingStatus } from "@ledgerhq/coin-concordium/types";
-import { ConcordiumPairingExpiredError } from "@ledgerhq/errors";
+import {
+  AccountOnboardStatus,
+  ConcordiumPairingStatus,
+  ConcordiumPairingExpiredError,
+} from "@ledgerhq/coin-concordium/types";
 import {
   getConfirmationCode,
   shouldRetryPairing,

@@ -17,6 +17,7 @@ export const getAccountShape: GetAccountShape<PolkadotAccount> = async info => {
 
   const shouldMigrate = currency.id === "polkadot" && assethubConfig.hasBeenMigrated;
   const currencyToUse = shouldMigrate ? assethubCurrency : currency;
+  const config = coinConfig.getCoinConfig(currencyToUse.id);
 
   const {
     blockHeight,
@@ -31,7 +32,7 @@ export const getAccountShape: GetAccountShape<PolkadotAccount> = async info => {
     unlockings,
     nominations,
     numSlashingSpans,
-  } = await polkadotAPI.getAccount(address, currencyToUse);
+  } = await polkadotAPI.getAccount(config, address, currencyToUse);
 
   const accountId = encodeAccountId({
     type: "js",
@@ -42,7 +43,13 @@ export const getAccountShape: GetAccountShape<PolkadotAccount> = async info => {
   });
   const oldOperations = initialAccount?.operations || [];
   const startAt = oldOperations.length ? (oldOperations[0].blockHeight || 0) + 1 : 0;
-  const newOperations = await polkadotAPI.getOperations(accountId, address, currencyToUse, startAt);
+  const newOperations = await polkadotAPI.getOperations(
+    config,
+    accountId,
+    address,
+    currencyToUse,
+    startAt,
+  );
   const operations = mergeOps(oldOperations, newOperations);
 
   return {

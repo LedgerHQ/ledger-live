@@ -1,5 +1,133 @@
 # @ledgerhq/asset-aggregation
 
+## 0.13.0
+
+### Minor Changes
+
+- [#20631](https://github.com/LedgerHQ/ledger-live/pull/20631) [`5171877`](https://github.com/LedgerHQ/ledger-live/commit/5171877faeb78ab9efbbf8c20b9fa6697e61872f) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Derive assetDistribution's DADA views from the domain types instead of hand-declaring them
+
+### Patch Changes
+
+- Updated dependencies [[`cc8b5b9`](https://github.com/LedgerHQ/ledger-live/commit/cc8b5b9af4a2ec488b6912d3fcb08bcc8f4b72c3), [`43bf6d8`](https://github.com/LedgerHQ/ledger-live/commit/43bf6d8f6600f70b7c2a85615660e7e150e798bf), [`aee0e64`](https://github.com/LedgerHQ/ledger-live/commit/aee0e64b491aafc1ca8fea16b1ef124cb183770b), [`64bb8cf`](https://github.com/LedgerHQ/ledger-live/commit/64bb8cfa5bffde5a1e2c24615f1dd11b864094d2), [`1e9db75`](https://github.com/LedgerHQ/ledger-live/commit/1e9db750a4882f9db7f95278e33c00262487b37b), [`bbfc8cf`](https://github.com/LedgerHQ/ledger-live/commit/bbfc8cf7929d9bffc1aa1b9a5e3b9593e3016436), [`647804e`](https://github.com/LedgerHQ/ledger-live/commit/647804ee755d54776e6b8cd96328bee89fb035e4), [`53c3431`](https://github.com/LedgerHQ/ledger-live/commit/53c3431e01b3139ef689cb589bab0adee4ed6152)]:
+  - @domain/entity-currency-crypto@0.10.0
+  - @domain/entity-currency-token@0.4.0
+  - @domain/entity-currency@0.4.0
+  - @ledgerhq/types-live@6.119.0
+  - @domain/api-aggregated-assets@0.3.0
+  - @domain/entity-aggregated-asset@0.3.0
+  - @ledgerhq/live-countervalues@0.24.2
+
+## 0.13.0-next.0
+
+### Minor Changes
+
+- [#20631](https://github.com/LedgerHQ/ledger-live/pull/20631) [`5171877`](https://github.com/LedgerHQ/ledger-live/commit/5171877faeb78ab9efbbf8c20b9fa6697e61872f) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Derive assetDistribution's DADA views from the domain types instead of hand-declaring them
+
+### Patch Changes
+
+- Updated dependencies [[`cc8b5b9`](https://github.com/LedgerHQ/ledger-live/commit/cc8b5b9af4a2ec488b6912d3fcb08bcc8f4b72c3), [`43bf6d8`](https://github.com/LedgerHQ/ledger-live/commit/43bf6d8f6600f70b7c2a85615660e7e150e798bf), [`aee0e64`](https://github.com/LedgerHQ/ledger-live/commit/aee0e64b491aafc1ca8fea16b1ef124cb183770b), [`64bb8cf`](https://github.com/LedgerHQ/ledger-live/commit/64bb8cfa5bffde5a1e2c24615f1dd11b864094d2), [`1e9db75`](https://github.com/LedgerHQ/ledger-live/commit/1e9db750a4882f9db7f95278e33c00262487b37b), [`bbfc8cf`](https://github.com/LedgerHQ/ledger-live/commit/bbfc8cf7929d9bffc1aa1b9a5e3b9593e3016436), [`647804e`](https://github.com/LedgerHQ/ledger-live/commit/647804ee755d54776e6b8cd96328bee89fb035e4), [`53c3431`](https://github.com/LedgerHQ/ledger-live/commit/53c3431e01b3139ef689cb589bab0adee4ed6152)]:
+  - @domain/entity-currency-crypto@0.10.0-next.0
+  - @domain/entity-currency-token@0.4.0-next.0
+  - @domain/entity-currency@0.4.0-next.0
+  - @ledgerhq/types-live@6.119.0-next.0
+  - @domain/api-aggregated-assets@0.3.0-next.0
+  - @domain/entity-aggregated-asset@0.3.0-next.0
+  - @ledgerhq/live-countervalues@0.24.2-next.0
+
+## 0.12.2
+
+### Patch Changes
+
+- Updated dependencies [[`56cfe0b`](https://github.com/LedgerHQ/ledger-live/commit/56cfe0bc6673f416f739c1593abfec718230952d), [`a464f7d`](https://github.com/LedgerHQ/ledger-live/commit/a464f7d6092607ff6b81aa6ec0cd29ef6cfcf35a), [`6a531c5`](https://github.com/LedgerHQ/ledger-live/commit/6a531c54ccd1c65df122286de6f136f9d73b9002), [`53c3431`](https://github.com/LedgerHQ/ledger-live/commit/53c3431e01b3139ef689cb589bab0adee4ed6152)]:
+  - @ledgerhq/types-live@6.118.0
+  - @domain/entity-currency-crypto@0.9.0
+  - @ledgerhq/live-countervalues@0.24.1
+  - @domain/entity-currency@0.3.1
+
+## 0.12.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`56cfe0b`](https://github.com/LedgerHQ/ledger-live/commit/56cfe0bc6673f416f739c1593abfec718230952d), [`a464f7d`](https://github.com/LedgerHQ/ledger-live/commit/a464f7d6092607ff6b81aa6ec0cd29ef6cfcf35a), [`6a531c5`](https://github.com/LedgerHQ/ledger-live/commit/6a531c54ccd1c65df122286de6f136f9d73b9002), [`53c3431`](https://github.com/LedgerHQ/ledger-live/commit/53c3431e01b3139ef689cb589bab0adee4ed6152)]:
+  - @ledgerhq/types-live@6.118.0-next.0
+  - @domain/entity-currency-crypto@0.9.0-next.0
+  - @ledgerhq/live-countervalues@0.24.1-next.0
+  - @domain/entity-currency@0.3.1-next.0
+
+## 0.12.1
+
+### Patch Changes
+
+- Updated dependencies [[`4148019`](https://github.com/LedgerHQ/ledger-live/commit/414801922232b6d9514270e8876e783c11555c2c), [`1e4e519`](https://github.com/LedgerHQ/ledger-live/commit/1e4e51913a9b1971056789ac24ed05092529d799), [`52253f7`](https://github.com/LedgerHQ/ledger-live/commit/52253f70c302056cdc6b367cdd8b1db408b5e07d), [`a534db5`](https://github.com/LedgerHQ/ledger-live/commit/a534db5c41da6957d38a330c1da6f7db1b693763), [`c622459`](https://github.com/LedgerHQ/ledger-live/commit/c622459fcbff5dcc094ee10eb360f2a835036007), [`524d763`](https://github.com/LedgerHQ/ledger-live/commit/524d7636d85a79379a9b086323d3121f3199bd1f), [`dbf8acf`](https://github.com/LedgerHQ/ledger-live/commit/dbf8acf27c9405548e7eb559d163a8e0883a20aa)]:
+  - @domain/entity-currency-crypto@0.8.0
+  - @domain/entity-currency-token@0.3.0
+  - @domain/entity-currency@0.3.0
+  - @ledgerhq/live-countervalues@0.24.0
+  - @ledgerhq/types-live@6.117.0
+
+## 0.12.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`4148019`](https://github.com/LedgerHQ/ledger-live/commit/414801922232b6d9514270e8876e783c11555c2c), [`1e4e519`](https://github.com/LedgerHQ/ledger-live/commit/1e4e51913a9b1971056789ac24ed05092529d799), [`52253f7`](https://github.com/LedgerHQ/ledger-live/commit/52253f70c302056cdc6b367cdd8b1db408b5e07d), [`a534db5`](https://github.com/LedgerHQ/ledger-live/commit/a534db5c41da6957d38a330c1da6f7db1b693763), [`c622459`](https://github.com/LedgerHQ/ledger-live/commit/c622459fcbff5dcc094ee10eb360f2a835036007), [`524d763`](https://github.com/LedgerHQ/ledger-live/commit/524d7636d85a79379a9b086323d3121f3199bd1f), [`dbf8acf`](https://github.com/LedgerHQ/ledger-live/commit/dbf8acf27c9405548e7eb559d163a8e0883a20aa)]:
+  - @domain/entity-currency-crypto@0.8.0-next.0
+  - @domain/entity-currency-token@0.3.0-next.0
+  - @domain/entity-currency@0.3.0-next.0
+  - @ledgerhq/live-countervalues@0.24.0-next.0
+  - @ledgerhq/types-live@6.117.0-next.0
+
+## 0.12.0
+
+### Minor Changes
+
+- [#19800](https://github.com/LedgerHQ/ledger-live/pull/19800) [`0ee3ad8`](https://github.com/LedgerHQ/ledger-live/commit/0ee3ad8ef853baa7b17bb4ca07f41f1bed12268e) Thanks [@ysitbon](https://github.com/ysitbon)! - Repoint cryptoasset/fiat currency lookups off @ledgerhq/cryptoassets onto @domain/entity-currency-crypto and @domain/entity-currency-fiat
+
+### Patch Changes
+
+- Updated dependencies [[`f57602a`](https://github.com/LedgerHQ/ledger-live/commit/f57602a679ed08b437955a2858f84e3086d6e417), [`cdf6cf4`](https://github.com/LedgerHQ/ledger-live/commit/cdf6cf40d658b20dd21a7eabe3615c75baf4cb0a), [`22d4a88`](https://github.com/LedgerHQ/ledger-live/commit/22d4a888228b7e5409593a2d6af072b4ab07bb07), [`ea28df4`](https://github.com/LedgerHQ/ledger-live/commit/ea28df4a67e1c1f64ab0de5fddf7fc016edffa8c), [`6935fe0`](https://github.com/LedgerHQ/ledger-live/commit/6935fe04a6304e046fd217350399446194e96d47), [`bb2d2d2`](https://github.com/LedgerHQ/ledger-live/commit/bb2d2d250a1d5b8cde43ba963795d28b10b48be6), [`c498e25`](https://github.com/LedgerHQ/ledger-live/commit/c498e25ca9f4b6ef5c4e3dfd370dab44ccdebc0f)]:
+  - @ledgerhq/live-countervalues@0.23.0
+  - @ledgerhq/types-live@6.116.0
+  - @domain/entity-currency-crypto@0.7.0
+
+## 0.12.0-next.0
+
+### Minor Changes
+
+- [#19800](https://github.com/LedgerHQ/ledger-live/pull/19800) [`0ee3ad8`](https://github.com/LedgerHQ/ledger-live/commit/0ee3ad8ef853baa7b17bb4ca07f41f1bed12268e) Thanks [@ysitbon](https://github.com/ysitbon)! - Repoint cryptoasset/fiat currency lookups off @ledgerhq/cryptoassets onto @domain/entity-currency-crypto and @domain/entity-currency-fiat
+
+### Patch Changes
+
+- Updated dependencies [[`f57602a`](https://github.com/LedgerHQ/ledger-live/commit/f57602a679ed08b437955a2858f84e3086d6e417), [`cdf6cf4`](https://github.com/LedgerHQ/ledger-live/commit/cdf6cf40d658b20dd21a7eabe3615c75baf4cb0a), [`22d4a88`](https://github.com/LedgerHQ/ledger-live/commit/22d4a888228b7e5409593a2d6af072b4ab07bb07), [`ea28df4`](https://github.com/LedgerHQ/ledger-live/commit/ea28df4a67e1c1f64ab0de5fddf7fc016edffa8c), [`6935fe0`](https://github.com/LedgerHQ/ledger-live/commit/6935fe04a6304e046fd217350399446194e96d47), [`bb2d2d2`](https://github.com/LedgerHQ/ledger-live/commit/bb2d2d250a1d5b8cde43ba963795d28b10b48be6), [`c498e25`](https://github.com/LedgerHQ/ledger-live/commit/c498e25ca9f4b6ef5c4e3dfd370dab44ccdebc0f)]:
+  - @ledgerhq/live-countervalues@0.23.0-next.0
+  - @ledgerhq/types-live@6.116.0-next.0
+  - @domain/entity-currency-crypto@0.7.0-next.0
+
+## 0.11.0
+
+### Minor Changes
+
+- [#19583](https://github.com/LedgerHQ/ledger-live/pull/19583) [`f7d68bb`](https://github.com/LedgerHQ/ledger-live/commit/f7d68bb85919a8029536993b6b6ffa93f20c7683) Thanks [@LucasWerey](https://github.com/LucasWerey)! - fix resolveNormalizedCurrency mapping token meta-currencies to same-named L2 chains when their tickers differ
+
+### Patch Changes
+
+- Updated dependencies [[`0f85077`](https://github.com/LedgerHQ/ledger-live/commit/0f850774ae3b46fd4a06c0da5762d3d4211b26af), [`a15b864`](https://github.com/LedgerHQ/ledger-live/commit/a15b864576d901f15d480070b475314c3b23c1dd), [`e26e68e`](https://github.com/LedgerHQ/ledger-live/commit/e26e68e854ecea6ebbe5e26196c8d8e899329c7d), [`bde85a7`](https://github.com/LedgerHQ/ledger-live/commit/bde85a7ef50cf7990efd2f9bcd7ccc34c0764fb7), [`996c76b`](https://github.com/LedgerHQ/ledger-live/commit/996c76b157553c547f83d877d25199b311ee0f63), [`35f0138`](https://github.com/LedgerHQ/ledger-live/commit/35f0138542fbd98f664b24ee786fc662d7223e10), [`d631f0d`](https://github.com/LedgerHQ/ledger-live/commit/d631f0dd2480950c5f20dec0c9b4aca515ec63f8)]:
+  - @ledgerhq/cryptoassets@13.55.0
+  - @ledgerhq/types-live@6.115.0
+  - @ledgerhq/live-countervalues@0.22.1
+
+## 0.11.0-next.0
+
+### Minor Changes
+
+- [#19583](https://github.com/LedgerHQ/ledger-live/pull/19583) [`f7d68bb`](https://github.com/LedgerHQ/ledger-live/commit/f7d68bb85919a8029536993b6b6ffa93f20c7683) Thanks [@LucasWerey](https://github.com/LucasWerey)! - fix resolveNormalizedCurrency mapping token meta-currencies to same-named L2 chains when their tickers differ
+
+### Patch Changes
+
+- Updated dependencies [[`0f85077`](https://github.com/LedgerHQ/ledger-live/commit/0f850774ae3b46fd4a06c0da5762d3d4211b26af), [`a15b864`](https://github.com/LedgerHQ/ledger-live/commit/a15b864576d901f15d480070b475314c3b23c1dd), [`e26e68e`](https://github.com/LedgerHQ/ledger-live/commit/e26e68e854ecea6ebbe5e26196c8d8e899329c7d), [`bde85a7`](https://github.com/LedgerHQ/ledger-live/commit/bde85a7ef50cf7990efd2f9bcd7ccc34c0764fb7), [`996c76b`](https://github.com/LedgerHQ/ledger-live/commit/996c76b157553c547f83d877d25199b311ee0f63), [`35f0138`](https://github.com/LedgerHQ/ledger-live/commit/35f0138542fbd98f664b24ee786fc662d7223e10), [`d631f0d`](https://github.com/LedgerHQ/ledger-live/commit/d631f0dd2480950c5f20dec0c9b4aca515ec63f8)]:
+  - @ledgerhq/cryptoassets@13.55.0-next.0
+  - @ledgerhq/types-live@6.115.0-next.0
+  - @ledgerhq/live-countervalues@0.22.1-next.0
+
 ## 0.10.0
 
 ### Minor Changes

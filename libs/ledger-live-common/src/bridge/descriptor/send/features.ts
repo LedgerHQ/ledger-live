@@ -1,4 +1,4 @@
-import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { getSendDescriptor } from "../registry";
 import type {
   CoinControlConfig,
@@ -7,8 +7,10 @@ import type {
   FeePresetOption,
   FeeUnitLabel,
   FlowEffect,
+  NetworkFeesInfo,
   SelfTransferPolicy,
   SendDescriptor,
+  TransactionPatch,
 } from "../types";
 
 export function resolveFeeUnitLabel(
@@ -95,12 +97,26 @@ export const sendFeatures = {
     const d = getSendDescriptor(currency);
     return d?.fees.getFeeCurrencyAccountId?.(transaction) ?? null;
   },
+  getNetworkFeesInfo: (
+    currency: CryptoOrTokenCurrency | undefined,
+    ctx: { transaction: unknown; status: unknown },
+  ): NetworkFeesInfo | null => {
+    const d = getSendDescriptor(currency);
+    return d?.fees.getNetworkFeesInfo?.(ctx) ?? null;
+  },
+  hasDefaultStrategy: fromDescriptor(d => d.fees.defaultStrategy != null, false),
+  getDefaultStrategyPatch: (
+    currency: CryptoOrTokenCurrency | undefined,
+  ): TransactionPatch | null => {
+    return getSendDescriptor(currency)?.fees.defaultStrategy?.buildTransactionPatch() ?? null;
+  },
   getMemoType: fromDescriptor(d => d.inputs.memo?.type, undefined),
   getMemoMaxLength: fromDescriptor(d => d.inputs.memo?.maxLength, undefined),
   getMemoMaxValue: fromDescriptor(d => d.inputs.memo?.maxValue, undefined),
   getMemoOptions: fromDescriptor(d => d.inputs.memo?.options, undefined),
   getMemoDefaultOption: fromDescriptor(d => d.inputs.memo?.defaultOption, undefined),
   supportsDomain: fromDescriptor(d => d.inputs.recipientSupportsDomain, false),
+  hasAddressBook: fromDescriptor(d => d.addressBook, false),
   getSelfTransferPolicy: fromDescriptor(d => d.selfTransfer, defaultSelfTransferPolicy),
   getUserRefusedTransactionErrorName: fromDescriptor(
     d => d.errors?.userRefusedTransaction,

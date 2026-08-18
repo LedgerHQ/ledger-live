@@ -158,6 +158,24 @@ describe("Build TON transaction", () => {
     });
   });
 
+  test("Build TON transaction when the comment text is missing", () => {
+    const transaction = {
+      ...baseTransaction,
+      comment: { isEncrypted: false, text: undefined as unknown as string },
+    };
+
+    const tonTransaction = buildTonTransaction(transaction, seqno, account);
+
+    expect({ ...tonTransaction, to: tonTransaction.to.toString() }).toEqual({
+      to: Address.parse(transaction.recipient).toString(),
+      seqno,
+      amount: BigInt(transaction.amount.toString()),
+      bounce: false,
+      timeout: getTransferExpirationTime(),
+      sendMode: 3,
+    });
+  });
+
   test("Build TON transaction when useAllAmount is true and there is a comment", () => {
     const transaction = {
       ...baseTransaction,

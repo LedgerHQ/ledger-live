@@ -9,9 +9,10 @@ import type {
   BitcoinAccountRaw,
   BitcoinAccount,
 } from "./types";
-import wallet from "./wallet-btc";
+import wallet from "@ledgerhq/wallet-btc/index";
 import { Account, AccountRaw } from "@ledgerhq/types-live";
 import { getChainAdapter } from "./chain-adapters/registry";
+import { walletBtcCurrencyById } from "./walletBtcCurrency";
 
 export function toBitcoinInputRaw({
   address,
@@ -75,7 +76,12 @@ export function toBitcoinResourcesRaw(r: BitcoinResources): BitcoinResourcesRaw 
 export function fromBitcoinResourcesRaw(r: BitcoinResourcesRaw): BitcoinResources {
   return {
     utxos: r.utxos.map(fromBitcoinOutputRaw),
-    walletAccount: r.walletAccount && wallet.importFromSerializedAccountSync(r.walletAccount),
+    walletAccount:
+      r.walletAccount &&
+      wallet.importFromSerializedAccountSync(
+        r.walletAccount,
+        walletBtcCurrencyById(r.walletAccount.params.currency),
+      ),
   };
 }
 

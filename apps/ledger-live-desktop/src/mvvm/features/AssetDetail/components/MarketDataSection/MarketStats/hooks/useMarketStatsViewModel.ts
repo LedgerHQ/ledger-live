@@ -11,7 +11,7 @@ const MISSING = "-";
 
 export function useMarketStatsViewModel(currencyData: MarketDataSectionCurrencyData) {
   const { t } = useTranslation();
-  const { data, showSkeleton, counterCurrency, locale, ledgerCurrencyId } = currencyData;
+  const { data, showSkeleton, counterValueUnit, locale, ledgerCurrencyId } = currencyData;
 
   const sectionTitle = t("assetDetails.marketStats");
   const sectionTooltip = t("assetDetails.marketStatsTooltip");
@@ -19,7 +19,7 @@ export function useMarketStatsViewModel(currencyData: MarketDataSectionCurrencyD
   const rows: MarketStatRow[] = useMemo(() => {
     const marketCap = counterValueFormatter({
       value: data?.marketcap,
-      currency: counterCurrency.toUpperCase(),
+      unit: counterValueUnit,
       locale,
       shorten: true,
     });
@@ -40,7 +40,7 @@ export function useMarketStatsViewModel(currencyData: MarketDataSectionCurrencyD
 
     const volume24h = counterValueFormatter({
       value: data?.totalVolume,
-      currency: counterCurrency.toUpperCase(),
+      unit: counterValueUnit,
       locale,
       shorten: true,
     });
@@ -80,7 +80,7 @@ export function useMarketStatsViewModel(currencyData: MarketDataSectionCurrencyD
       },
     ];
   }, [
-    counterCurrency,
+    counterValueUnit,
     data?.circulatingSupply,
     data?.marketcap,
     data?.marketcapRank,

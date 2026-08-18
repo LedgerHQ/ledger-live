@@ -3,7 +3,9 @@ import type { FeatureFlagsState } from "@shared/feature-flags";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { ActionDialogParams } from "@ledgerhq/live-common/wallet-api/validation/actionDialogParams";
 import type { DeviceModelId } from "@ledgerhq/devices";
-import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
+import type { AnalyticsConsentInfo } from "@domain/entity-analytics-consent";
+import type { Currency } from "@domain/entity-currency";
+import type { Unit } from "@domain/entity-currency-unit";
 import { MarketListRequestParams } from "@ledgerhq/live-common/market/utils/types";
 import type { MarketListCategory } from "@ledgerhq/live-common/market/utils/category";
 import { PostOnboardingState } from "@ledgerhq/types-live";
@@ -20,8 +22,9 @@ import {
 } from "../dynamicContent/types";
 import { ProtectStateNumberEnum } from "../components/ServicesWidget/types";
 import { ImageType } from "../components/CustomImage/types";
-import { WalletState } from "@ledgerhq/live-wallet/store";
-import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
+import type { WalletState } from "./wallet";
+import type { AuthEnvironmentState } from "@shared/auth";
+import type { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { Steps } from "LLM/features/WalletSync/types/Activation";
 import { type TabListType as TabPortfolioAssetsType } from "~/screens/Portfolio/TabSection";
 import type { BorrowState } from "./borrow";
@@ -36,7 +39,9 @@ import type { TransferDrawerState } from "./transferDrawer";
 import type { SwapTransactionStatusDrawerState } from "./swapTransactionStatusDrawer";
 import type { PostOnboardingHubDrawerState } from "./postOnboardingHubDrawer";
 import type { SendFlowState } from "./sendFlow";
-import type { PayCardState } from "@domain/entity-pay-card";
+import type { PayCardBalanceState } from "@features/flow-pay-card-balance/state";
+import type { PayCardFeatureTourState } from "@features/flow-pay-card-feature-tour/state";
+import type { PayCardAuthState } from "@features/flow-pay-card-auth/state";
 import type { IdentitiesState } from "@domain/entity-client-identity";
 import type { FirebaseMessagingTypes } from "@react-native-firebase/messaging";
 import { RebornBuyDeviceDrawerState } from "./rebornBuyDeviceDrawer";
@@ -48,6 +53,7 @@ import type { LiveAppModalState } from "./liveAppModal";
 import type { KnownDevicesState } from "./knownDevices";
 import type { GenericAwarenessModalState } from "./genericAwarenessModal";
 import type { BackupHubFeatureIntroState } from "./backupHubFeatureIntro";
+import type { ProductTourDrawerState } from "./productTourDrawer";
 
 // === ACCOUNT STATE ===
 
@@ -299,8 +305,6 @@ export type SettingsState = {
   depositFlow: {
     hasClosedWithdrawBanner: boolean;
   };
-  userNps: number | null;
-  supportedCounterValues: supportedCountervaluesData[];
   hasSeenAnalyticsOptInPrompt: boolean;
   debugOsUpdateBannerMode: DebugOsUpdateBannerMode;
   dismissedContentCards: { [id: string]: number };
@@ -309,6 +313,7 @@ export type SettingsState = {
   mevProtection: boolean;
   selectedTabPortfolioAssets: TabPortfolioAssetsType;
   hasSeenWalletV4Tour: boolean;
+  hasDismissedContactsFeatureIntroduction: boolean;
   productTourCompleted: boolean;
   hasSeenQ2WalletV4Tour: boolean;
   doNotAskAgainSkipMemo: boolean;
@@ -317,10 +322,7 @@ export type SettingsState = {
   hasClickedRecover: boolean;
 };
 
-export type AnalyticsConsentInfo = {
-  consentDate: string | null;
-  privacyPolicyVersion: number | null;
-};
+export type { AnalyticsConsentInfo };
 
 export type NotificationsSettings = {
   areNotificationsAllowed: boolean;
@@ -453,10 +455,12 @@ export type State = LLMRTKApiState & {
   featureFlags: FeatureFlagsState;
   genericAwarenessModal: GenericAwarenessModalState;
   backupHubFeatureIntro: BackupHubFeatureIntroState;
+  productTourDrawer: ProductTourDrawerState;
   history: HistoryState;
   identities: IdentitiesState;
   inView: InViewState;
   knownDevices: KnownDevicesState;
+  authEnvironment: AuthEnvironmentState;
   largeScreenUpsellModal: LargeScreenUpsellModalState;
   largeMover: LargeMoverState;
   market: MarketState;
@@ -473,7 +477,9 @@ export type State = LLMRTKApiState & {
   protect: ProtectState;
   ratings: RatingsState;
   sendFlow: SendFlowState;
-  payCard: PayCardState;
+  payCardBalance: PayCardBalanceState;
+  payCardFeatureTour: PayCardFeatureTourState;
+  payCardAuth: PayCardAuthState;
   settings: SettingsState;
   toasts: ToastState;
   trustchain: TrustchainStore;

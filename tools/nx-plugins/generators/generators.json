@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "generators": {
+    "devtool": {
+      "factory": "./devtool/generator.ts",
+      "schema": "./devtool/schema.json",
+      "description": "Scaffold a new devtool package under devtools/<name> and wire it into the registry"
+    },
+    "reformat-devtool-registry": {
+      "factory": "./devtool/generator.ts#reformatGenerator",
+      "schema": "./reformat-devtool-registry/schema.json",
+      "description": "Rebuild the registry from existing metadata — removes orphans, rewrites barrel files, no new tool added"
+    }
+  }
+}

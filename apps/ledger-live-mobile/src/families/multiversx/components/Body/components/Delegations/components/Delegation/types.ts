@@ -1,4 +1,5 @@
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { DelegationType } from "../../../../../../types";
 import type { DrawerPropsType } from "../../../Drawer/types";
 

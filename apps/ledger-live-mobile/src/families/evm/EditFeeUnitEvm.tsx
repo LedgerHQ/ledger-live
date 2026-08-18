@@ -1,4 +1,4 @@
-import { getDefaultFeeUnit } from "@ledgerhq/coin-evm/logic";
+import { getDefaultFeeUnit } from "@ledgerhq/live-common/families/evm/utils";
 import { Range, projectRangeIndex, reverseRangeIndex } from "@ledgerhq/live-common/range";
 import type { Account } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";

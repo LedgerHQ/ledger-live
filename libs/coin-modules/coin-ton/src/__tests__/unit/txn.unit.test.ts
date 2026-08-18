@@ -1,4 +1,8 @@
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
+import {
+  CryptoCurrencyIdSchema,
+  TokenCurrencyIdSchema,
+} from "@ledgerhq/ledger-wallet-framework/types";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { Builder, Slice } from "@ton/core";
 import BigNumber from "bignumber.js";
@@ -19,7 +23,11 @@ import {
   tonTransactionResponse,
 } from "../fixtures/common.fixtures";
 
-setupMockCryptoAssetsStore();
+setCryptoAssetsStore({
+  findTokenById: async () => undefined,
+  findTokenByAddressInCurrency: async () => undefined,
+  getTokensSyncHash: async () => "",
+});
 
 describe("Transaction functions", () => {
   describe("mapTxToOps", () => {
@@ -135,11 +143,181 @@ describe("Transaction functions", () => {
         },
       ]);
     });
+
+    it("should aggregate a multi-output OUT ton transaction into a single ledger operation", () => {
+      // Regression for LIVE-35577: a TON transaction can carry more than one outgoing
+      // message (e.g. a main transfer plus a small secondary message). These must be
+      // aggregated into a single OUT operation instead of throwing.
+      const base = tonTransactionResponse.transactions[0];
+      const mainRecipient = "0:9220C181A6CFEACD11B7B8F62138DF1BB9CC82B6ED2661D2F5FAEE204B3EFB20";
+      const secondaryRecipient =
+        "0:D49106E94D5220B7BBFAEBE253151FB7F9E5D1173FF857AE85F947E7EAF3A0D0";
+      const addressBook = {
+        [mainRecipient]: { user_friendly: "EQCSIMGBps_qzRG3uPYhON8bucyCtu0mYdL1-u4gSz77IK7z" },
+        [secondaryRecipient]: {
+          user_friendly: "EQDUkQbpTVIgt7v66-JTFR-3-eXRFz_4V66F-Ufn6vOg0KzT",
+        },
+      };
+      const transactions: TonTransaction[] = [{ ...base, in_msg: null, out_msgs: [] }];
+      if (base.in_msg) {
+        transactions[0].out_msgs = [
+          {
+            ...base.in_msg,
+            source: base.account,
+            destination: mainRecipient,
+            value: "37300000000",
+            hash: "outMsgHashMain",
+          },
+          {
+            ...base.in_msg,
+            source: base.account,
+            destination: secondaryRecipient,
+            value: "323750000",
+            hash: "outMsgHashSecondary",
+          },
+        ];
+      }
+      const { now, lt, hash, total_fees, mc_block_seqno } = transactions[0];
+
+      const finalOperation = flatMap(
+        transactions,
+        mapTxToOps(mockAccountId, mockAddress, addressBook),
+      );
+
+      expect(finalOperation).toEqual([
+        {
+          id: encodeOperationId(mockAccountId, hash, "OUT"),
+          hash: "outMsgHashMain",
+          type: "OUT",
+          // 37300000000 + 323750000
+          value: BigNumber("37623750000"),
+          fee: BigNumber(total_fees),
+          blockHeight: mc_block_seqno,
+          blockHash: null,
+          hasFailed: true,
+          accountId: mockAccountId,
+          senders: [transactions[0].account],
+          recipients: [
+            "EQCSIMGBps_qzRG3uPYhON8bucyCtu0mYdL1-u4gSz77IK7z",
+            "EQDUkQbpTVIgt7v66-JTFR-3-eXRFz_4V66F-Ufn6vOg0KzT",
+          ],
+          date: new Date(now * 1000), // now is defined in seconds
+          extra: { comment: { isEncrypted: false, text: "" }, explorerHash: hash, lt },
+        },
+      ]);
+    });
+
+    it("should ignore zero-value out messages when building the OUT operation", () => {
+      // The value-bearing message may not be the first one; the OUT operation must be
+      // built from the actual value-carrying messages, not blindly from out_msgs[0].
+      const base = tonTransactionResponse.transactions[0];
+      const valueRecipient = "0:D49106E94D5220B7BBFAEBE253151FB7F9E5D1173FF857AE85F947E7EAF3A0D0";
+      const addressBook = {
+        [valueRecipient]: { user_friendly: "EQDUkQbpTVIgt7v66-JTFR-3-eXRFz_4V66F-Ufn6vOg0KzT" },
+      };
+      const transactions: TonTransaction[] = [{ ...base, in_msg: null, out_msgs: [] }];
+      if (base.in_msg) {
+        transactions[0].out_msgs = [
+          {
+            ...base.in_msg,
+            source: base.account,
+            destination: "0:0000000000000000000000000000000000000000000000000000000000000000",
+            value: "0",
+            hash: "zeroValueHash",
+          },
+          {
+            ...base.in_msg,
+            source: base.account,
+            destination: valueRecipient,
+            value: "5000000",
+            hash: "valueHash",
+          },
+        ];
+      }
+      const { now, lt, hash, total_fees, mc_block_seqno } = transactions[0];
+
+      const finalOperation = flatMap(
+        transactions,
+        mapTxToOps(mockAccountId, mockAddress, addressBook),
+      );
+
+      expect(finalOperation).toEqual([
+        {
+          id: encodeOperationId(mockAccountId, hash, "OUT"),
+          hash: "valueHash",
+          type: "OUT",
+          value: BigNumber("5000000"),
+          fee: BigNumber(total_fees),
+          blockHeight: mc_block_seqno,
+          blockHash: null,
+          hasFailed: true,
+          accountId: mockAccountId,
+          senders: [transactions[0].account],
+          recipients: ["EQDUkQbpTVIgt7v66-JTFR-3-eXRFz_4V66F-Ufn6vOg0KzT"],
+          date: new Date(now * 1000), // now is defined in seconds
+          extra: { comment: { isEncrypted: false, text: "" }, explorerHash: hash, lt },
+        },
+      ]);
+    });
+
+    it("should deduplicate recipients when several outputs target the same destination", () => {
+      const base = tonTransactionResponse.transactions[0];
+      const recipient = "0:9220C181A6CFEACD11B7B8F62138DF1BB9CC82B6ED2661D2F5FAEE204B3EFB20";
+      const addressBook = {
+        [recipient]: { user_friendly: "EQCSIMGBps_qzRG3uPYhON8bucyCtu0mYdL1-u4gSz77IK7z" },
+      };
+      const transactions: TonTransaction[] = [{ ...base, in_msg: null, out_msgs: [] }];
+      if (base.in_msg) {
+        transactions[0].out_msgs = [
+          {
+            ...base.in_msg,
+            source: base.account,
+            destination: recipient,
+            value: "1000000",
+            hash: "h1",
+          },
+          {
+            ...base.in_msg,
+            source: base.account,
+            destination: recipient,
+            value: "2000000",
+            hash: "h2",
+          },
+        ];
+      }
+      const { now, lt, hash, total_fees, mc_block_seqno } = transactions[0];
+
+      const finalOperation = flatMap(
+        transactions,
+        mapTxToOps(mockAccountId, mockAddress, addressBook),
+      );
+
+      expect(finalOperation).toEqual([
+        {
+          id: encodeOperationId(mockAccountId, hash, "OUT"),
+          hash: "h1",
+          type: "OUT",
+          // 1000000 + 2000000, summed across both messages
+          value: BigNumber("3000000"),
+          fee: BigNumber(total_fees),
+          blockHeight: mc_block_seqno,
+          blockHash: null,
+          hasFailed: true,
+          accountId: mockAccountId,
+          senders: [transactions[0].account],
+          // both outputs target the same destination -> a single recipient
+          recipients: ["EQCSIMGBps_qzRG3uPYhON8bucyCtu0mYdL1-u4gSz77IK7z"],
+          date: new Date(now * 1000), // now is defined in seconds
+          extra: { comment: { isEncrypted: false, text: "" }, explorerHash: hash, lt },
+        },
+      ]);
+    });
   });
 
   describe("mapJettonToOps", () => {
     beforeEach(() => {
-      setupMockCryptoAssetsStore({
+      setCryptoAssetsStore({
+        findTokenById: async () => undefined,
         findTokenByAddressInCurrency: async (address: string, _currencyId: string) => {
           // The address is converted to lowercase in mapJettonTxToOps
           // jetton_master from fixtures: "0:2F956143C461769579BAEF2E32CC2D7BC18283F40D20BB03E432CD603AC33FFC"
@@ -149,10 +327,12 @@ describe("Transaction functions", () => {
             address.includes("2f956143c461769579baef2e32cc2d7bc18283f40d20bb03e432cd603ac33ffc")
           ) {
             return {
-              id: "ton/jetton/eqavlwfdxgf2lxm67y4yzc17wykd9a0guwpkms1gosm__not",
+              id: TokenCurrencyIdSchema.parse(
+                "ton/jetton/eqavlwfdxgf2lxm67y4yzc17wykd9a0guwpkms1gosm__not",
+              ),
               type: "TokenCurrency" as const,
               contractAddress: "EQAVLwfDxGF2LXm67Y4yzC17WYkd9A0gUWPkMS1gOsM__NOT",
-              parentCurrencyId: "ton",
+              parentCurrencyId: CryptoCurrencyIdSchema.parse("ton"),
               tokenType: "jetton",
               name: "NOT",
               ticker: "NOT",

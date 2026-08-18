@@ -2,7 +2,7 @@ import { JSONRPCRequest } from "json-rpc-2.0";
 import React, { forwardRef, useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
-import { UserRefusedOnDevice } from "@ledgerhq/errors";
+import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import { Operation, SignedOperation } from "@ledgerhq/types-live";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import {
@@ -25,7 +25,7 @@ import {
 } from "@ledgerhq/live-common/platform/react";
 import trackingWrapper from "@ledgerhq/live-common/platform/tracking";
 import { useFeatureFlaggedCurrencies } from "@features/platform-currencies";
-import useEnv from "@ledgerhq/live-common/hooks/useEnv";
+import useEnv from "@features/platform-env";
 import { openModal } from "../../actions/modals";
 import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
 import BigSpinner from "../BigSpinner";
@@ -98,7 +98,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     const [widgetLoaded, setWidgetLoaded] = useState(false);
 
     const walletState = useSelector(walletSelector);
-    const listAccounts = useListPlatformAccounts(walletState, accounts);
+    const listAccounts = useListPlatformAccounts(walletState.accountNames, accounts);
     const { deactivatedCurrencyIds: _deactivatedCurrencyIds } = useFeatureFlaggedCurrencies(
       !!useEnv("MOCK"),
     );
@@ -133,20 +133,26 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         dispatch(setSourceValue(source));
 
         return requestAccountLogic(
-          walletState,
+          walletState.accountNames,
           { manifest },
           request,
           deactivatedCurrencyIds,
           openAssetAndAccountSelector,
         );
       },
-      [manifest, dispatch, walletState, deactivatedCurrencyIds, openAssetAndAccountSelector],
+      [
+        manifest,
+        dispatch,
+        walletState.accountNames,
+        deactivatedCurrencyIds,
+        openAssetAndAccountSelector,
+      ],
     );
 
     const receiveOnAccount = useCallback(
       ({ accountId }: { accountId: string }) =>
         receiveOnAccountLogic(
-          walletState,
+          walletState.accountNames,
           { manifest, accounts, tracking },
           accountId,
           (account, parentAccount, accountAddress) => {
@@ -174,7 +180,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
             );
           },
         ),
-      [walletState, manifest, accounts, dispatch, tracking],
+      [walletState.accountNames, manifest, accounts, dispatch, tracking],
     );
 
     const signTransaction = useCallback(

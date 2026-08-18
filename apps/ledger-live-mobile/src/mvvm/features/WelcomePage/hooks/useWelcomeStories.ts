@@ -16,6 +16,7 @@ const welcomeVideos: { source: ReactVideoSource; id: string }[] = [
  */
 export function useWelcomeStories() {
   const [currentVideoIndex, setCurrentVideoIndex] = useState<number>(0);
+  const [currentStoryRestartKey, setCurrentStoryRestartKey] = useState<number>(0);
   const [durations, setDurations] = useState<number[]>(new Array(welcomeVideos.length).fill(0));
 
   const isAppActive = !useIsAppInBackground();
@@ -48,8 +49,13 @@ export function useWelcomeStories() {
   );
 
   const onPrevious = useCallback(() => {
-    setCurrentVideoIndex(index => (index - 1 + welcomeVideos.length) % welcomeVideos.length);
-  }, []);
+    if (currentVideoIndex > 0) {
+      setCurrentVideoIndex(currentVideoIndex - 1);
+      return;
+    }
+
+    setCurrentStoryRestartKey(restartKey => restartKey + 1);
+  }, [currentVideoIndex]);
 
   const onNext = useCallback(() => {
     setCurrentVideoIndex(index => (index + 1) % welcomeVideos.length);
@@ -65,6 +71,7 @@ export function useWelcomeStories() {
   return {
     welcomeVideos,
     currentVideoIndex,
+    currentStoryRestartKey,
     videoDurations: durationsWithId,
     onLoad,
     onPrevious,

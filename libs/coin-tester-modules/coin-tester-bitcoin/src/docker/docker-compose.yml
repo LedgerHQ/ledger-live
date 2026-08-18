@@ -1,6 +1,6 @@
 services:
   postgres:
-    image: postgres:15
+    image: postgres:15@sha256:386166d1a81e5ed9dfbbbbd8d4abe439d35ced9cc845eb3d09bc43b0b3860117
     cpus: 1
     environment:
       POSTGRES_USER: username
@@ -13,16 +13,15 @@ services:
       timeout: 5s
       retries: 5
   btcliked:
-    image: jfrog.ledgerlabs.net/bbs-oci-prod-green/bitcoin-node:28.0
+    image: jfrog.ledgerlabs.net/bbs-oci-prod-green/bitcoin-node:28.0@sha256:01937e511a784fb7ac8b3ecb4476d5e561a3a94d260ce98ecf481b9730ed7d69
     platform: linux/amd64
     command: /app/bitcoin/bin/bitcoind -datadir=/config -regtest -rpcallowip=0.0.0.0/0 -rpcbind=0.0.0.0 -rpcuser=user -rpcpassword=pass -fallbackfee=0.001 -deprecatedrpc=addresses -txindex -zmqpubsequence=tcp://0.0.0.0:19999
     ports:
       - "18443:18443" # exposes RPC
   atlas-pending:
-    image: jfrog.ledgerlabs.net/bbs-oci-prod-green/atlas-bitcoin-pending-v2:rolling
+    image: jfrog.ledgerlabs.net/bbs-oci-prod-green/atlas-bitcoin-pending-v2:rolling@sha256:6aadf5e0b573e4ea9bdb1b80f5ed95961cd3f797ac5e275a6a60f201a82f00a8
     platform: linux/amd64
     cpus: 1
-    pull_policy: always
     command: /app/bin/atlas /config/pending.conf
     volumes:
       - "./atlas:/config"
@@ -38,10 +37,9 @@ services:
       retries: 5
       timeout: 5s
   atlas:
-    image: jfrog.ledgerlabs.net/bbs-oci-prod-green/atlas-bitcoin-v2:rolling
+    image: jfrog.ledgerlabs.net/bbs-oci-prod-green/atlas-bitcoin-v2:rolling@sha256:aedda93fb9b142ece1949a9b31a9bd82c752b3b8bd3508d35052b802e4105ae7
     platform: linux/amd64
     cpus: 1
-    pull_policy: always
     command: /app/bin/atlas /config/bitcoin.conf
     volumes:
       - "./atlas:/config"
@@ -60,14 +58,14 @@ services:
       timeout: 5s
   rabbitmq:
     cpus: 1
-    image: rabbitmq:3
+    image: rabbitmq:3@sha256:d5c647e05eebc9d42ddcd242375a55eaf5e88d2403bbdeb79a96744c532a29ba
     healthcheck:
       test: rabbitmq-diagnostics -q ping
       interval: 5s
       timeout: 30s
       retries: 10
   atlas-nginx:
-    image: nginx:latest
+    image: nginx:latest@sha256:db4f612f385437d11eb26620a4f1d7efb3ff44e1296a3c21540b30454e6e2bf3
     volumes:
       - "./nginx:/etc/nginx/conf.d/"
     depends_on:

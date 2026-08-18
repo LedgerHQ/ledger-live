@@ -2,9 +2,11 @@ import { SwapLiveError } from "@ledgerhq/live-common/exchange/swap/types";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 
 import { handlers as loggerHandlers } from "@ledgerhq/live-common/wallet-api/CustomLogger/server";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 
 import { getNodeApi } from "@ledgerhq/coin-evm/network/node/index";
+import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
+import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
 import { getMainAccount, getParentAccount } from "@ledgerhq/live-common/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
 import {
@@ -395,10 +397,13 @@ const SwapWebView = ({
         const fromParentAccount = getParentAccount(fromAccount, accounts);
         const mainAccount = getMainAccount(fromAccount, fromParentAccount);
 
-        const nodeAPI = getNodeApi(mainAccount.currency);
+        const nodeAPI = getNodeApi(
+          getCurrencyConfiguration<EvmConfigInfo>(mainAccount.currency.id),
+          mainAccount.currency.id,
+        );
 
         try {
-          const tx = await nodeAPI.getTransaction(mainAccount.currency, params.transactionHash);
+          const tx = await nodeAPI.getTransaction(mainAccount.currency.id, params.transactionHash);
           return Promise.resolve(tx);
         } catch {
           // not a real error, the node just didn't find the transaction yet
@@ -486,14 +491,14 @@ const SwapWebView = ({
     // Recompute wallet-API ids when possible; otherwise keep raw deeplink ids.
     const fromAccountIdForUrl = resolvedDefaultFromAccount
       ? accountToWalletAPIAccount(
-          walletState,
+          walletState.accountNames,
           resolvedDefaultFromAccount,
           resolvedDefaultFromParentAccount,
         ).id
       : rawFromAccountId;
     const toAccountIdForUrl = resolvedDefaultToAccount
       ? accountToWalletAPIAccount(
-          walletState,
+          walletState.accountNames,
           resolvedDefaultToAccount,
           resolvedDefaultToParentAccount,
         ).id
@@ -544,7 +549,7 @@ const SwapWebView = ({
     resolvedDefaultToAccount,
     resolvedDefaultToParentAccount,
     state,
-    walletState,
+    walletState.accountNames,
   ]);
 
   const onSwapWebviewError = (error?: SwapLiveError) => {

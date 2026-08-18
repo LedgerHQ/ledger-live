@@ -1,7 +1,12 @@
 // TODO: update path by moving mockHelpers to ledger-wallet-framework
 
 import { BigNumber } from "bignumber.js";
-import { NotEnoughBalance, RecipientRequired, InvalidAddress, FeeTooHigh } from "@ledgerhq/errors";
+import {
+  NotEnoughBalance,
+  RecipientRequired,
+  InvalidAddress,
+  FeeTooHigh,
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import type {
   AlgorandAccount,
   AlgorandTransaction,

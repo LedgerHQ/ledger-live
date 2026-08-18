@@ -1,7 +1,7 @@
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "./abstractClasses";
 import { expect, Locator } from "@playwright/test";
-import { waitForAccountsPersisted, waitForIdentitiesInAppJson } from "tests/utils/userdata";
+import { waitForAccountsPersisted } from "tests/utils/userdata";
 import { isAssetSectionEnabled, isOperationsListEnabled } from "tests/utils/featureFlagUtils";
 import { CryptoAddressesBanner } from "../component/portfolio/cryptoAddressesBanner";
 import { AssetsView } from "tests/component/portfolio/assetsView";
@@ -60,6 +60,8 @@ export class PortfolioPage extends AppPage {
   private readonly stocksSection = this.page.getByTestId("stocks-section");
   private readonly stocksExploreCta = this.page.getByTestId("stocks-explore");
   private readonly stocksSectionHeader = this.page.getByTestId("stocks-section-header-button");
+  private readonly borrowEntryPoint = this.page.getByTestId("portfolio-borrow-entry-point");
+  private readonly borrowEntryCtaButton = this.page.getByTestId("portfolio-borrow-entry-point-cta");
 
   private getExpectedCounterValuePattern(counterValue: string): RegExp {
     const countervalueAliases: Record<string, RegExp> = {
@@ -210,14 +212,6 @@ export class PortfolioPage extends AppPage {
     timeoutMs: number = 5000,
   ) {
     await waitForAccountsPersisted(userdataFile, minCount, timeoutMs);
-  }
-
-  @step("Expect app.json to have identities object within $1ms")
-  async expectIdentitiesPersistedInAppJson(
-    userdataFile: string,
-    timeoutMs: number = 10000,
-  ): Promise<{ userId: string; datadogId: string; deviceIds: string[] }> {
-    return waitForIdentitiesInAppJson(userdataFile, timeoutMs);
   }
 
   /**
@@ -377,5 +371,16 @@ export class PortfolioPage extends AppPage {
   @step("Click the Stocks category title")
   async clickStocksSectionTitle() {
     await this.stocksSectionHeader.click();
+  }
+
+  @step("Expect borrow entry point to be visible")
+  async expectBorrowEntryPointVisible() {
+    await this.borrowEntryPoint.scrollIntoViewIfNeeded();
+    await expect(this.borrowEntryPoint).toBeVisible();
+  }
+
+  @step("Click borrow entry point")
+  async clickBorrowEntryPoint() {
+    await this.borrowEntryCtaButton.click();
   }
 }

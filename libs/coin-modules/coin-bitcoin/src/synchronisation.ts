@@ -2,6 +2,7 @@ import { BigNumber } from "bignumber.js";
 import { log } from "@ledgerhq/logs";
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
+import { toWalletBtcCurrency } from "./walletBtcCurrency";
 import type {
   AccountShapeInfo,
   GetAccountShapeStream,
@@ -14,16 +15,17 @@ import {
   isTaprootDerivationMode,
 } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { DerivationMode, SYNC_TYPE_TRANSPARENT, SyncConfig } from "@ledgerhq/types-live";
-import type { Currency, Output as WalletOutput } from "./wallet-btc";
-import wallet, { DerivationModes as WalletDerivationModes } from "./wallet-btc";
+import type { Currency, Output as WalletOutput } from "@ledgerhq/wallet-btc/index";
+import wallet, { DerivationModes as WalletDerivationModes } from "@ledgerhq/wallet-btc/index";
+import { removeReplaced, deduplicateOperations } from "@ledgerhq/wallet-btc/operations";
+// re-exported for backward compatibility (consumers/tests import it from here)
+export { removeReplaced } from "@ledgerhq/wallet-btc/operations";
 import { BitcoinAccount, BitcoinOutput, BtcOperation } from "./types";
 import { perCoinLogic, mapTxToOperations } from "./logic";
 import { BitcoinXPub, SignerContext } from "./signer";
 import { merge, Observable } from "rxjs";
 import { getChainAdapter } from "./chain-adapters/registry";
-
-const TWO_HOUR_MS = 2 * 60 * 60 * 1000;
-const COINBASE_INPUT_PREFIX = "0000000000000000000000000000000000000000000000000000000000000000";
+import type { ResolvedTransactions } from "./chain-adapters/types";
 
 // Map LL's DerivationMode to wallet-btc's
 const toWalletDerivationMode = (mode: DerivationMode): WalletDerivationModes => {
@@ -58,159 +60,32 @@ export const fromWalletUtxo = (utxo: WalletOutput, changeAddresses: Set<string>)
 };
 
 /**
- * Removes replaced Bitcoin transactions based on inputs and RBF logic.
+ * Replaces the recipients of an operation whose real destination the explorer
+ * could not see.
  *
- * This function is used primarily to handle Replace-By-Fee (RBF) transactions.
- * In some situations, we might fetch both the original (unconfirmed) transaction
- * and the one that replaces it (usually with a higher fee). Without deduplication, both can
- * remain displayed, confusing the user—especially when the replaced one never confirms.
+ * A transaction paying only into a shielded pool has no transparent output but
+ * its own change, which `mapTxToOperations` lists as the recipient for want of
+ * anything better. Once the chain has recovered who was actually paid, that
+ * fallback is no longer the best answer available and gives way — while any
+ * genuine transparent recipient of the same transaction is kept.
  *
- * Key Rules:
- * - A UTXO (input) can only be spent once.
- * - If multiple transactions share an input, we keep the one that is:
- *   1. Confirmed (has a `blockHeight`) over an unconfirmed one.
- *   2. Of higher `blockHeight` if both are confirmed or both are unconfirmed.
- *   3. Of later `date` if both share the same `blockHeight` (or lack thereof).
- * - Coinbase transactions (with input starting with all 0s) are always kept.
- * - Transactions without extra.inputs (usually `OUT` transactions) are always kept.
- *
- * Outcome:
- * The result is a filtered list of operations, cleaned of unconfirmed or superseded
- * transactions that were replaced using RBF logic or similar.
- *
- * @param operations An array of BtcOperation items (e.g. from sync).
- * @returns A filtered array of operations with replaced transactions removed.
- *  The original order of operations is preserved.
+ * Only the outgoing leg is concerned. A transaction can also credit the account
+ * it debits, and the recipient of that incoming leg is an address of ours, not
+ * whoever we paid in the same breath.
  */
-export const removeReplaced = (
-  operations: BtcOperation[],
-  now = Date.now(),
-  preferMostRecentWhenSameHeight = false,
-): BtcOperation[] => {
-  const isConfirmed = (op: BtcOperation): boolean => typeof op.blockHeight === "number";
-  const getInputs = (op: BtcOperation): string[] => op.extra?.inputs ?? [];
-  const isCoinbase = (op: BtcOperation): boolean =>
-    getInputs(op).some((input: string) => input.startsWith(COINBASE_INPUT_PREFIX));
-  const toDateMs = (op: BtcOperation): number => new Date(op.date).getTime();
+function withRecoveredRecipients(
+  op: BtcOperation,
+  payeesByTxId: Map<string, string[]> | undefined,
+  changeAddresses: Set<string>,
+): BtcOperation {
+  if (op.type !== "OUT") return op;
 
-  const shouldReplaceExistingOperation = (existingOp: BtcOperation, op: BtcOperation): boolean => {
-    const existingConfirmed = isConfirmed(existingOp);
-    const newConfirmed = isConfirmed(op);
+  const payees = payeesByTxId?.get(op.hash);
+  if (!payees?.length) return op;
 
-    if (existingConfirmed && !newConfirmed) return false;
-    if (!existingConfirmed && newConfirmed) return true;
-
-    const newHeight = op.blockHeight ?? -1;
-    const existingHeight = existingOp.blockHeight ?? -1;
-
-    if (newHeight !== existingHeight) return newHeight > existingHeight;
-    if (!preferMostRecentWhenSameHeight) return false;
-    return toDateMs(op) > toDateMs(existingOp);
-  };
-
-  const shouldKeepBothWhenSameHeight = (existingOp: BtcOperation, op: BtcOperation): boolean => {
-    if (preferMostRecentWhenSameHeight) return false;
-    return (op.blockHeight ?? -1) === (existingOp.blockHeight ?? -1);
-  };
-
-  const isSupersededUnconfirmedOperation = (
-    op: BtcOperation,
-    txByInput: Map<string, BtcOperation>,
-  ) =>
-    !isConfirmed(op) &&
-    getInputs(op).some((input: string) => {
-      const existing = txByInput.get(input);
-      return existing !== undefined && existing.hash !== op.hash && isConfirmed(existing);
-    });
-
-  const isExpiredUnconfirmed = (op: BtcOperation): boolean =>
-    !isConfirmed(op) && now > toDateMs(op) + TWO_HOUR_MS;
-
-  const addOperationForInput = (
-    input: string,
-    op: BtcOperation,
-    txByInput: Map<string, BtcOperation>,
-    uniqueOperations: Map<string, BtcOperation>,
-  ): void => {
-    txByInput.set(input, op);
-    uniqueOperations.set(op.hash, op);
-  };
-
-  const handleInput = (
-    input: string,
-    op: BtcOperation,
-    txByInput: Map<string, BtcOperation>,
-    uniqueOperations: Map<string, BtcOperation>,
-  ): void => {
-    const existingOp = txByInput.get(input);
-
-    if (!existingOp) {
-      if (!isSupersededUnconfirmedOperation(op, txByInput)) {
-        addOperationForInput(input, op, txByInput, uniqueOperations);
-      }
-      return;
-    }
-
-    if (isConfirmed(existingOp) && !isConfirmed(op)) {
-      uniqueOperations.delete(op.hash);
-      return;
-    }
-
-    if (shouldReplaceExistingOperation(existingOp, op)) {
-      uniqueOperations.delete(existingOp.hash);
-      addOperationForInput(input, op, txByInput, uniqueOperations);
-      return;
-    }
-
-    if (shouldKeepBothWhenSameHeight(existingOp, op)) {
-      uniqueOperations.set(op.hash, op);
-    }
-  };
-
-  // used to track the most recent operation for each input.
-  const txByInput = new Map<string, BtcOperation>();
-
-  // ensures we maintain a list of unique transactions by hash.
-  const uniqueOperations = new Map<string, BtcOperation>(); // Keep track of unique transactions
-
-  for (const op of operations) {
-    const inputs = getInputs(op);
-    if (inputs.length === 0) {
-      uniqueOperations.set(op.hash, op);
-      continue;
-    }
-
-    if (isCoinbase(op)) {
-      uniqueOperations.set(op.hash, op);
-      continue;
-    }
-
-    for (const input of inputs) {
-      handleInput(input, op, txByInput, uniqueOperations);
-    }
-  }
-
-  return operations.filter(op => uniqueOperations.has(op.hash) && !isExpiredUnconfirmed(op));
-};
-
-// wallet-btc limitation: returns all transactions twice (for each side of the tx)
-// so we need to deduplicate them...
-const deduplicateOperations = (operations: (BtcOperation | undefined)[]): BtcOperation[] => {
-  const seen = new Set();
-  const out: BtcOperation[] = [];
-  let j = 0;
-
-  for (const operation of operations) {
-    if (operation) {
-      if (!seen.has(operation.id)) {
-        seen.add(operation.id);
-        out[j++] = operation;
-      }
-    }
-  }
-
-  return out;
-};
+  const transparentRecipients = op.recipients.filter(recipient => !changeAddresses.has(recipient));
+  return { ...op, recipients: [...transparentRecipients, ...payees] };
+}
 
 export async function performTransparentSync(
   info: AccountShapeInfo<BitcoinAccount>,
@@ -255,7 +130,7 @@ export async function performTransparentSync(
         network: walletNetwork,
         derivationMode: walletDerivationMode,
       },
-      currency,
+      toWalletBtcCurrency(currency),
     ));
 
   const oldOperations = (initialAccount?.operations || []) as BtcOperation[];
@@ -276,9 +151,27 @@ export async function performTransparentSync(
   });
   changeAddressesWithInfo.forEach(a => changeAddresses.add(a.address));
 
-  const newOperations = transactions
+  const adapter = getChainAdapter(currency.id);
+
+  // The explorer cannot always see enough of a transaction to report its fee or
+  // its destination. Give the chain a chance to recover both before operations
+  // are derived, so that senders and recipients agree on the fee.
+  //
+  // This reaches the network, and it is an enrichment: a sync that already holds
+  // the explorer's answer must not be lost because that reach failed.
+  let resolved: ResolvedTransactions | undefined;
+  try {
+    resolved = await adapter.resolveTransactionDetails?.(transactions, initialAccount);
+  } catch (error) {
+    log("bitcoin/performTransparentSync", `Keeping the explorer's view of ${currency.id}`, {
+      error,
+    });
+  }
+
+  const newOperations = (resolved?.transactions ?? transactions)
     ?.map(tx => mapTxToOperations(tx, currency.id, accountId, accountAddresses, changeAddresses))
-    .flat();
+    .flat()
+    .map(op => (op ? withRecoveredRecipients(op, resolved?.payeesByTxId, changeAddresses) : op));
 
   const newUniqueOperations = deduplicateOperations(newOperations);
 
@@ -353,7 +246,6 @@ export async function performTransparentSync(
   // Chains with off-transparent funds (e.g. Zcash shielded notes) combine them
   // into `account.balance` via their chain adapter; others use the transparent
   // balance as-is.
-  const adapter = getChainAdapter(currency.id);
   const balance = adapter.computeAccountBalance
     ? adapter.computeAccountBalance(initialAccount, transparentBalance)
     : transparentBalance;
@@ -362,7 +254,10 @@ export async function performTransparentSync(
     id: accountId,
     xpub,
     balance,
-    spendableBalance: transparentBalance,
+    // Every pool counted in `balance` is spendable — Zcash Orchard notes as much
+    // as transparent UTXOs. Reporting only the transparent balance here would
+    // show an account holding nothing but notes as having nothing to spend.
+    spendableBalance: balance,
     operations,
     operationsCount: operations.length,
     freshAddress: walletAccount.xpub.freshAddress,
@@ -390,6 +285,8 @@ export function createTransparentSyncObservable(
           {
             operationsCount: result.operationsCount,
             blockHeight: result.blockHeight,
+            balance: result.balance?.toString(),
+            spendableBalance: result.spendableBalance?.toString(),
           },
         );
         subscriber.next(result);
@@ -519,10 +416,46 @@ async function generateXpubIfNeeded(
   );
 }
 
+/**
+ * Reconcile optimistic operations with their now-confirmed counterparts.
+ *
+ * `shouldRetainPendingOperation` matches on operation id, and an id embeds the
+ * operation type: the optimistic operation created at signing time is an `OUT`,
+ * while the confirmed one a sync produces may carry a chain-specific type (a
+ * Zcash shielded send, for instance). The two never match, so the pending entry
+ * survives next to its own confirmed counterpart until the optimistic retention
+ * window expires. The transaction hash is what actually identifies them.
+ *
+ * Before dropping the optimistic operation, take from it the address the user
+ * actually entered. It is the most faithful answer available — a chain that
+ * recovers a destination from the transaction can only report the receiver it
+ * finds there, which for a unified address bundling several receivers is the
+ * same destination written differently.
+ */
+function reconcileConfirmedPendingOperations(account: BitcoinAccount): BitcoinAccount {
+  if (account.pendingOperations.length === 0) return account;
+
+  const pendingByHash = new Map(account.pendingOperations.map(op => [op.hash, op]));
+  const operations = account.operations.map(op => {
+    const optimistic = pendingByHash.get(op.hash);
+    // An incoming operation shares its hash with the send that produced it, but
+    // it is not the operation that paid the entered address.
+    if (!optimistic?.recipients.length || op.type.endsWith("IN")) return op;
+    return { ...op, recipients: optimistic.recipients };
+  });
+
+  // Only the optimistic operations that now have a confirmed counterpart are
+  // resolved; the rest are still in flight.
+  const confirmedHashes = new Set(account.operations.map(op => op.hash));
+  const pendingOperations = account.pendingOperations.filter(op => !confirmedHashes.has(op.hash));
+
+  return { ...account, operations, pendingOperations };
+}
+
 export const postSync = (initial: BitcoinAccount, synced: BitcoinAccount) => {
   log("bitcoin/postSync", "bitcoinResources");
   const perCoin = perCoinLogic[synced.currency.id];
-  const syncedBtc = synced;
+  let syncedBtc = synced;
   if (perCoin) {
     const { postBuildBitcoinResources, syncReplaceAddress } = perCoin;
 
@@ -541,6 +474,8 @@ export const postSync = (initial: BitcoinAccount, synced: BitcoinAccount) => {
       }
     }
   }
+
+  syncedBtc = reconcileConfirmedPendingOperations(syncedBtc);
 
   log("bitcoin/postSync", "bitcoinResources DONE");
   return syncedBtc;

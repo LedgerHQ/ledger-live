@@ -1,11 +1,11 @@
 import type { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import type { Transaction as BtcTransaction } from "@ledgerhq/coin-bitcoin/types";
-import { getWalletAccount } from "@ledgerhq/coin-bitcoin/wallet-btc/getWalletAccount";
+import { getWalletAccount } from "@ledgerhq/coin-bitcoin/getWalletAccount";
 import { getOriginalTxFeeContext } from "@ledgerhq/coin-bitcoin/rbfFees";
 import { getAdditionalFeeRequiredForRbf, getOriginalTxFeeRateSatVb } from "./rbfValidation";
 
-jest.mock("@ledgerhq/coin-bitcoin/wallet-btc/getWalletAccount", () => ({
+jest.mock("@ledgerhq/coin-bitcoin/getWalletAccount", () => ({
   getWalletAccount: jest.fn(),
 }));
 

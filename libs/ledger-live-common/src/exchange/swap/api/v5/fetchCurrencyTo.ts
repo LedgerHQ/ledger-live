@@ -3,7 +3,6 @@ import { fetchCurrencyToMock } from "./__mocks__/fetchCurrencyTo.mocks";
 import { isIntegrationTestEnv } from "../../utils/isIntegrationTestEnv";
 import { DEFAULT_SWAP_TIMEOUT_MS } from "../../const/timeout";
 import axios from "axios";
-import { LedgerAPI4xx } from "@ledgerhq/errors";
 import { flattenV5CurrenciesToAndFrom } from "../../utils/flattenV5CurrenciesToAndFrom";
 import { getSwapAPIBaseURL, getSwapUserIP } from "../..";
 
@@ -52,7 +51,7 @@ export async function fetchCurrencyTo({
         // TODO: LIVE-8901 (handle request timeout)
       }
     }
-    if (e instanceof LedgerAPI4xx) {
+    if ((e as { name?: string })?.name === "LedgerAPI4xx") {
       // TODO: LIVE-8901 (handle 4xx)
     }
     throw e;

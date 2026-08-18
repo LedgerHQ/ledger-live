@@ -1,8 +1,6 @@
-import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
-
 export type MigrationAddress =
-  | { currencyId: CryptoCurrencyId; address: string; xpub?: never }
-  | { currencyId: CryptoCurrencyId; xpub: string; address?: never };
+  | { currencyId: string; address: string; xpub?: never } // TO BE REPLACED soon by branded id
+  | { currencyId: string; xpub: string; address?: never }; // TO BE REPLACED soon by branded id
 
 export const migrationAddresses: MigrationAddress[] = [
   // bitcoin
@@ -96,10 +94,6 @@ export const migrationAddresses: MigrationAddress[] = [
   {
     currencyId: "stargaze",
     address: "stars1gyauvl44q2apn3u3aujm36q8zrj74vrypyf2yc",
-  },
-  {
-    currencyId: "umee",
-    address: "umee1gyauvl44q2apn3u3aujm36q8zrj74vry8wrgtm",
   },
   {
     currencyId: "polkadot",

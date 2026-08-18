@@ -2,7 +2,8 @@ import { BigNumber } from "bignumber.js";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { getAccountNetworkInfo } from "./getAccountNetworkInfo";
-import wallet, { getWalletAccount } from "./wallet-btc";
+import wallet from "@ledgerhq/wallet-btc/index";
+import { getWalletAccount } from "./getWalletAccount";
 import type { Transaction } from "./types";
 import { getChainAdapter } from "./chain-adapters/registry";
 

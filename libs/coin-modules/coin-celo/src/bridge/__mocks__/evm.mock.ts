@@ -8,8 +8,9 @@ jest.mock("../getTokenFromAsset", () => {
 });
 
 export const mockCoinConfig = jest.fn();
-jest.mock("@ledgerhq/coin-evm/config", () => {
+jest.mock("../../config", () => {
   return {
+    ...jest.requireActual("../../config"),
     getCoinConfig: () => mockCoinConfig(),
   };
 });

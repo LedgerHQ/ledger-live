@@ -1,4 +1,3 @@
-import { InvalidAddress, InvalidAddressBecauseDestinationIsAlsoSource } from "@ledgerhq/errors";
 import { useMemo } from "react";
 import type { AddressSearchResult } from "../types";
 
@@ -23,22 +22,31 @@ export function useRecipientSearchState({
   const bridgeSenderError = result.bridgeErrors?.sender;
 
   const isSelfTransferError =
-    bridgeRecipientError instanceof InvalidAddressBecauseDestinationIsAlsoSource;
+    bridgeRecipientError?.name === "InvalidAddressBecauseDestinationIsAlsoSource";
   const isBridgeInvalidAddress =
-    bridgeRecipientError instanceof InvalidAddress && !isSelfTransferError;
+    bridgeRecipientError?.name === "InvalidAddress" && !isSelfTransferError;
 
   const hasValidatedAddress =
     result.status === "valid" || result.status === "ens_resolved" || result.status === "sanctioned";
+  const hasValidAddress = result.status === "valid" || result.status === "ens_resolved";
 
   const showSearchResults = hasSearchValue && (!isLoading || hasValidatedAddress);
 
+  // Local validation sets status "valid" before the bridge confirms the format.
+  // Wait for the first bridge result for this recipient to avoid briefly treating
+  // incomplete input as a selectable matching address.
   const isAddressComplete = useMemo(() => {
-    return hasValidatedAddress && !isBridgeInvalidAddress;
-  }, [hasValidatedAddress, isBridgeInvalidAddress]);
+    return hasValidatedAddress && !isBridgeInvalidAddress && !result.isBridgeLoading;
+  }, [hasValidatedAddress, isBridgeInvalidAddress, result.isBridgeLoading]);
+
+  const isAddressValid = useMemo(() => {
+    return hasValidAddress && result.hasBridgeValidationResult && !bridgeRecipientError;
+  }, [hasValidAddress, result.hasBridgeValidationResult, bridgeRecipientError]);
 
   const hasAnyMatches =
     (result.matchedAccounts && result.matchedAccounts.length > 0) ||
     !!result.matchedRecentAddress ||
+    !!result.matchedContact ||
     !!result.ensName ||
     result.isLedgerAccount ||
     isSanctioned;
@@ -49,10 +57,12 @@ export function useRecipientSearchState({
     !!bridgeRecipientError && !isBridgeInvalidAddress && !showSanctionedBanner;
   const hasBridgeRecipientWarning = !!bridgeRecipientWarning;
 
+  // Keep a complete match visible while search revalidates
+  // first bridge wait is via isAddressComplete.
   const showMatchedAddress =
     showSearchResults &&
     (hasAnyMatches ||
-      (result.status === "valid" && !result.error && !isBridgeInvalidAddress) ||
+      (isAddressComplete && result.status === "valid" && !result.error) ||
       (isAddressComplete && (hasBridgeRecipientError || hasBridgeRecipientWarning))) &&
     (result.status === "valid" ||
       (recipientSupportsDomain && result.status === "ens_resolved") ||
@@ -63,6 +73,7 @@ export function useRecipientSearchState({
 
   const showAddressValidationError =
     showSearchResults &&
+    !isLoading &&
     !showSanctionedBanner &&
     !hasAnyMatches &&
     (!!result.error || isBridgeInvalidAddress);
@@ -91,6 +102,7 @@ export function useRecipientSearchState({
 
   const showEmptyState =
     showSearchResults &&
+    !isLoading &&
     (!isAddressComplete || !hasAnyMatches) &&
     !showMatchedAddress &&
     !showSanctionedBanner &&
@@ -108,6 +120,7 @@ export function useRecipientSearchState({
     showBridgeRecipientWarning,
     isSanctioned,
     isAddressComplete,
+    isAddressValid,
     addressValidationErrorType,
     bridgeRecipientError,
     bridgeRecipientWarning,

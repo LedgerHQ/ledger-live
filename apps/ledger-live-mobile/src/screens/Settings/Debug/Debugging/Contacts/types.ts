@@ -11,6 +11,11 @@ export type ContactsEnabledToggleProps = {
   readonly onToggle: () => void;
 };
 
+export type ContactsSampleDataSectionProps = {
+  readonly onLoadSamples: () => void;
+  readonly onClearContacts: () => void;
+};
+
 export type FeatureParamRowProps = {
   readonly label: string;
   readonly isFeatureEnabled: boolean;

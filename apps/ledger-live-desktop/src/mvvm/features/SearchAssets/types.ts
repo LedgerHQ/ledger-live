@@ -22,5 +22,4 @@ export type AssetSuggestionsSectionProps = AssetSuggestionSection & {
 
 export type AssetSuggestionsSectionViewProps = AssetSuggestionsSectionProps & {
   locale: string;
-  counterCurrency: string;
 };

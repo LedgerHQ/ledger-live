@@ -5,14 +5,21 @@ import type {
   StringMemo,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/types";
-import { InvalidAddress, NotEnoughBalance, NotEnoughGas } from "@ledgerhq/errors";
+import { InvalidAddress, NotEnoughBalance } from "@ledgerhq/ledger-wallet-framework/errors";
+import { NotEnoughGas } from "../../errors";
 import { getChainAPI } from "../../network";
 import type { ChainAPI } from "../../network";
 import type { FeeEstimation } from "@ledgerhq/coin-module-framework/api/index";
 import { endpointByCurrencyId } from "../../utils";
 import { validateIntent as validateIntentRaw } from "../validateIntent";
+import type { SolanaCoinConfig } from "../../config";
 
-const api = getChainAPI({ endpoint: endpointByCurrencyId("solana") });
+const config: SolanaCoinConfig = {
+  token2022Enabled: false,
+  legacyOCMSMaxVersion: "1.0.0",
+  status: { type: "active" },
+};
+const api = getChainAPI({ endpoint: endpointByCurrencyId(config, "solana") });
 
 const validateIntent = (
   intent: TransactionIntent<StringMemo | MemoNotSupported>,

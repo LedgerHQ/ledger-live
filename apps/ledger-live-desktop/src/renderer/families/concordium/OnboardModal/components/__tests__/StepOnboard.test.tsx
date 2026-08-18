@@ -11,7 +11,8 @@ import {
   createMockStepProps,
 } from "../../__tests__/testUtils";
 
-jest.mock("@ledgerhq/live-wallet/accountName", () => ({
+jest.mock("@domain/entity-account-name", () => ({
+  ...jest.requireActual("@domain/entity-account-name"),
   getDefaultAccountNameForCurrencyIndex: jest.fn(
     ({ currency, index }) => `${currency.name} ${index + 1}`,
   ),
@@ -90,7 +91,7 @@ describe("StepOnboard", () => {
   });
 
   it("should display user refused error message", () => {
-    const { UserRefusedOnDevice } = jest.requireActual("@ledgerhq/errors");
+    const { UserRefusedOnDevice } = jest.requireActual("@ledgerhq/ledger-wallet-framework/errors");
     const userRefusedError = new UserRefusedOnDevice();
     const props = {
       ...defaultProps,
@@ -105,7 +106,7 @@ describe("StepOnboard", () => {
   });
 
   it("should display locked device error message", () => {
-    const { LockedDeviceError } = jest.requireActual("@ledgerhq/errors");
+    const { LockedDeviceError } = jest.requireActual("@ledgerhq/ledger-wallet-framework/errors");
     const lockedError = new LockedDeviceError();
     const props = {
       ...defaultProps,

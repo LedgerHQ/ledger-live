@@ -9,7 +9,7 @@ import { screen } from "@testing-library/react";
 import { render } from "tests/testSetup";
 
 import { DeviceConnectionComponentLWDView } from "./DeviceConnectionComponentLWDView";
-import { makeKnownDevice } from "./testUtils";
+import { DeviceIntentTrackingTestWrapper, makeKnownDevice } from "./testUtils";
 import type { DeviceConnectionComponentLWDViewModel } from "./useDeviceConnectionComponentLWDViewModel";
 
 jest.mock("~/renderer/components/DeviceAction/animations", () => ({
@@ -28,6 +28,7 @@ function renderView(
       onConnectLedgerDevice={callbacks.onConnectLedgerDevice ?? jest.fn()}
       onBuyLedgerDevice={callbacks.onBuyLedgerDevice ?? jest.fn()}
     />,
+    { wrapper: DeviceIntentTrackingTestWrapper },
   );
 }
 
@@ -51,7 +52,7 @@ describe("DeviceConnectionComponentLWDView", () => {
 
     // WHEN
     await user.click(screen.getByRole("button", { name: "Connect Ledger device" }));
-    await user.click(screen.getByRole("button", { name: "I don't have a Ledger device" }));
+    await user.click(screen.getByRole("button", { name: "I don’t have a Ledger device" }));
 
     // THEN
     expect(screen.getByText("Ledger device required")).toBeVisible();
@@ -120,7 +121,7 @@ describe("DeviceConnectionComponentLWDView", () => {
     renderView({ type: ConnectDeviceUIStateTypes.Connecting, device: makeKnownDevice() });
 
     // THEN
-    expect(screen.getByText("Loading")).toBeVisible();
+    expect(screen.getByText("Connecting to your Ledger device")).toBeVisible();
   });
 
   it("GIVEN WebHID connection fails with an unknown error WHEN rendering THEN it shows the connection error", () => {

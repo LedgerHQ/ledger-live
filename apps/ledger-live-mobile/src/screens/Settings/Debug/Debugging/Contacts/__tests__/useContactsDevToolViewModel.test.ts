@@ -70,4 +70,48 @@ describe("useContactsDevToolViewModel", () => {
 
     expect(store.getState().featureFlags.overrides[CONTACTS_FLAG]).toBeUndefined();
   });
+
+  it("should replace saved contacts with 25 sample contacts", () => {
+    const { result, store } = renderHook(() => useContactsDevToolViewModel());
+
+    act(() => {
+      result.current.handleLoadSamples();
+    });
+
+    const contacts = store.getState().contacts.contacts;
+
+    expect(contacts).toHaveLength(26);
+    expect(contacts[0]).toMatchObject({ id: "contact-me", isMe: true, name: "Me" });
+    expect(contacts.filter(contact => !contact.isMe)).toHaveLength(25);
+  });
+
+  it("should preserve Me when clearing saved contacts", () => {
+    const { result, store } = renderHook(() => useContactsDevToolViewModel());
+
+    act(() => {
+      result.current.handleLoadSamples();
+      result.current.handleClearContacts();
+    });
+
+    expect(store.getState().contacts.contacts).toEqual([
+      expect.objectContaining({ id: "contact-me", isMe: true, name: "Me" }),
+    ]);
+  });
+
+  it("should toggle the Contacts feature introduction dismissed state", () => {
+    const { result, store } = renderHook(() => useContactsDevToolViewModel(), {
+      overrideInitialState: state => ({
+        ...state,
+        settings: { ...state.settings, hasDismissedContactsFeatureIntroduction: true },
+      }),
+    });
+
+    expect(result.current.hasDismissedFeatureIntroduction).toBe(true);
+
+    act(() => {
+      result.current.handleToggleFeatureIntroductionDismissed();
+    });
+
+    expect(store.getState().settings.hasDismissedContactsFeatureIntroduction).toBe(false);
+  });
 });

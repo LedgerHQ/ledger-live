@@ -6,6 +6,9 @@
 
 ## @ledgerhq/live-signer-hyperliquid
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 Ledger Hardware Wallet Hyperliquid JavaScript bindings via Device Management Kit (DMK).
 
 This library provides a simple interface to interact with Hyperliquid applications on Ledger devices using the Device Management Kit framework.

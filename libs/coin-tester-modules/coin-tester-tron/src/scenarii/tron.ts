@@ -1,7 +1,11 @@
 import BigNumber from "bignumber.js";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
+import type { Account } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { Transaction, TronAccount } from "@ledgerhq/coin-tron/types/index";
+import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
+import tronCoinConfig from "@ledgerhq/coin-tron/config";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account";
 import {
   TRON,
@@ -11,7 +15,7 @@ import {
   makeTrc20Token,
   registerTronTokensInMockStore,
 } from "../fixtures";
-import { getLegacyBridges } from "../helpers";
+import { getBridges } from "../helpers";
 import { getPrefundedAccounts, killTronbox, spawnTronbox } from "../tronbox";
 import type { PrefundedAccount } from "../tronbox";
 import {
@@ -35,40 +39,43 @@ let trc20: Trc20Asset;
 let trc20Token: TokenCurrency;
 let trc20SubAccountId = "";
 
-type Tx = ScenarioTransaction<Transaction, TronAccount>;
-
-const baseTx = {
-  family: "tron" as const,
-  mode: "send" as const,
-  resource: null,
-  networkInfo: null,
-  duration: 3,
-  votes: [],
-};
+type Tx = ScenarioTransaction<GenericTransaction, Account>;
 
 function makeTransactions(): Tx[] {
   const sendTrx: Tx = {
-    ...baseTx,
     name: "Send 10 TRX",
     amount: new BigNumber(10_000_000),
     recipient: recipient.address,
-    useAllAmount: false,
-    expect: (_prev, curr) => {
+    expect: (prev, curr) => {
+      expect(curr.operations.length).toBeGreaterThan(prev.operations.length);
       const [latestOp] = curr.operations;
       expect(latestOp.type).toBe("OUT");
       expect(latestOp.recipients).toContain(recipient.address);
+      // Native send fits in the 5000 B/day free bandwidth quota → no TRX burn.
       expect(latestOp.fee).toStrictEqual(new BigNumber(0));
       expect(latestOp.value).toStrictEqual(latestOp.fee.plus(10_000_000));
     },
   };
 
+  const sendMaxTrx: Tx = {
+    name: "Send max TRX",
+    useAllAmount: true,
+    recipient: recipient.address,
+    expect: (prev, curr) => {
+      expect(curr.operations.length).toBeGreaterThan(prev.operations.length);
+      const [latestOp] = curr.operations;
+      expect(latestOp.type).toBe("OUT");
+      // useAllAmount keeps the fallback estimateFees worst case in reserve
+      // (ACTIVATION_FEES = 1.1 TRX). Allow some headroom around that.
+      expect(curr.spendableBalance.lt(2_000_000)).toBe(true);
+    },
+  };
+
   const sendTrc10: Tx = {
-    ...baseTx,
     name: `Send 100 ${trc10.symbol} (TRC10)`,
     amount: new BigNumber(100),
     recipient: recipient.address,
     subAccountId: trc10SubAccountId,
-    useAllAmount: false,
     expect: (prev, curr) => {
       const sub = curr.subAccounts?.find(s => s.id === trc10SubAccountId);
       const prevSub = prev.subAccounts?.find(s => s.id === trc10SubAccountId);
@@ -82,12 +89,10 @@ function makeTransactions(): Tx[] {
   };
 
   const sendMaxTrc10: Tx = {
-    ...baseTx,
     name: `Send max ${trc10.symbol} (TRC10)`,
-    amount: new BigNumber(0),
+    useAllAmount: true,
     recipient: recipient.address,
     subAccountId: trc10SubAccountId,
-    useAllAmount: true,
     expect: (_prev, curr) => {
       const sub = curr.subAccounts?.find(s => s.id === trc10SubAccountId);
       expect(sub).toBeDefined();
@@ -96,12 +101,10 @@ function makeTransactions(): Tx[] {
   };
 
   const sendTrc20: Tx = {
-    ...baseTx,
     name: `Send 1 ${trc20.symbol} (TRC20)`,
     amount: new BigNumber(1_000_000),
     recipient: recipient.address,
     subAccountId: trc20SubAccountId,
-    useAllAmount: false,
     expect: (prev, curr) => {
       const sub = curr.subAccounts?.find(s => s.id === trc20SubAccountId);
       const prevSub = prev.subAccounts?.find(s => s.id === trc20SubAccountId);
@@ -110,36 +113,20 @@ function makeTransactions(): Tx[] {
       const [latestOp] = sub!.operations;
       expect(latestOp.type).toBe("OUT");
       expect(latestOp.recipients).toContain(recipient.address);
+      // No frozen energy → TVM call burns TRX for energy.
       expect(latestOp.fee.gt(0)).toBe(true);
     },
   };
 
   const sendMaxTrc20: Tx = {
-    ...baseTx,
     name: `Send max ${trc20.symbol} (TRC20)`,
-    amount: new BigNumber(0),
+    useAllAmount: true,
     recipient: recipient.address,
     subAccountId: trc20SubAccountId,
-    useAllAmount: true,
     expect: (_prev, curr) => {
       const sub = curr.subAccounts?.find(s => s.id === trc20SubAccountId);
       expect(sub).toBeDefined();
       expect(sub!.balance).toStrictEqual(new BigNumber(0));
-    },
-  };
-
-  const sendMaxTrx: Tx = {
-    ...baseTx,
-    name: "Send max TRX",
-    amount: new BigNumber(0),
-    recipient: recipient.address,
-    useAllAmount: true,
-    expect: (_prev, curr) => {
-      const [latestOp] = curr.operations;
-      expect(latestOp.type).toBe("OUT");
-      // useAllAmount keeps the fallback estimateFees worst case in reserve
-      // (ACTIVATION_FEES = 1.1 TRX). Allow some headroom around that.
-      expect(curr.spendableBalance.lt(2_000_000)).toBe(true);
     },
   };
 
@@ -148,10 +135,10 @@ function makeTransactions(): Tx[] {
   return [sendTrx, sendTrc10, sendMaxTrc10, sendTrc20, sendMaxTrc20, sendMaxTrx];
 }
 
-export const scenarioTron: Scenario<Transaction, TronAccount> = {
-  name: "Ledger Live Basic Tron Transactions (TRX + TRC10 + TRC20)",
+export const scenarioTron: Scenario<GenericTransaction, Account> = {
+  name: "Ledger Live Tron (TRX + TRC10 + TRC20)",
 
-  setup: async () => {
+  setup: async strategy => {
     await spawnTronbox();
 
     const accounts = await getPrefundedAccounts();
@@ -184,14 +171,23 @@ export const scenarioTron: Scenario<Transaction, TronAccount> = {
     trc20Token = makeTrc20Token(trc20);
     registerTronTokensInMockStore(trc10Token, trc20Token);
 
+    const localConfig = {
+      status: { type: "active" as const },
+      explorer: { url: TRON_LOCAL_RPC },
+    };
+    tronCoinConfig.setCoinConfig(() => localConfig);
+    LiveConfig.setConfig({
+      config_currency_tron: { type: "object", default: localConfig },
+    });
+
     const headRes = await fetch(`${TRON_LOCAL_RPC}/wallet/getnowblock`);
     const head = (await headRes.json()) as { block_header: { raw_data: { number: number } } };
     startBlock = head.block_header.raw_data.number;
 
     closeMsw = initMswHandlers();
 
-    const { currencyBridge, accountBridge } = await getLegacyBridges(funder.signer);
-    const account = makeTronAccount(funder.address) as unknown as TronAccount;
+    const { currencyBridge, accountBridge } = await getBridges(strategy, funder.signer);
+    const account = makeTronAccount(funder.address);
     trc10SubAccountId = encodeTokenAccountId(account.id, trc10Token);
     trc20SubAccountId = encodeTokenAccountId(account.id, trc20Token);
     return { currencyBridge, accountBridge, account, retryInterval: 4000, retryLimit: 30 };

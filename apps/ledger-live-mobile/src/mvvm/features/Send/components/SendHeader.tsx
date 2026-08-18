@@ -15,14 +15,19 @@ import { Close } from "@ledgerhq/lumen-ui-rnative/symbols";
 
 import { useTranslation } from "~/context/Locale";
 
+import { AddressDisclaimer } from "./AddressDisclaimer";
+import { RecipientContactRow } from "./RecipientContactRow";
 import { useSendHeaderViewModel } from "../hooks/useSendHeaderViewModel";
 import { useSendFlowData } from "../context/SendFlowContext";
-import { useAnalytics } from "~/analytics";
+import { track, usePageNameFromRoute } from "~/analytics";
 import { getSendFlowTrackingProperties } from "@ledgerhq/ledger-wallet-framework/tracking/send";
 
 type SendHeaderProps = Readonly<{
   headerRight?: React.ReactNode;
 }>;
+
+/** Width reserved on the right of the address row for the info icon. */
+const DISCLAIMER_HIT_AREA = 56;
 
 export function SendHeader({ headerRight }: SendHeaderProps) {
   const { t } = useTranslation();
@@ -37,11 +42,12 @@ export function SendHeader({ headerRight }: SendHeaderProps) {
       addressValue: {
         color: theme.colors.text.base,
       },
-      absoluteOverlay: {
+      editOverlay: {
         position: "absolute",
         top: 0,
         left: 0,
-        right: 0,
+        // Stops short of the trailing info icon so the disclaimer stays pressable.
+        right: DISCLAIMER_HIT_AREA,
         bottom: 0,
       },
     }),
@@ -51,10 +57,11 @@ export function SendHeader({ headerRight }: SendHeaderProps) {
   const { state } = useSendFlowData();
   const { account, parentAccount } = state.account;
 
-  const { track } = useAnalytics();
   const trackingProperties = useMemo(() => {
     return getSendFlowTrackingProperties(account ?? null, parentAccount);
   }, [account, parentAccount]);
+
+  const page = usePageNameFromRoute();
 
   useEffect(() => {
     if (!viewModel.isRecipientStep) {
@@ -64,9 +71,10 @@ export function SendHeader({ headerRight }: SendHeaderProps) {
     track("send_modal", {
       ...trackingProperties,
       name: "step recipient",
+      page,
       flow: "send",
     });
-  }, [track, trackingProperties, viewModel.isRecipientStep]);
+  }, [page, trackingProperties, viewModel.isRecipientStep]);
 
   return (
     <>
@@ -103,25 +111,36 @@ export function SendHeader({ headerRight }: SendHeaderProps) {
         <View style={styles.addressInputContainer}>
           {viewModel.isRecipientStep ? (
             <AddressInput
+              testID="recipient-input"
               prefix={t("send.newSendFlow.to")}
               value={viewModel.recipientSearch.value}
               onChangeText={viewModel.recipientSearch.setValue}
               onClear={viewModel.clearRecipientSearch}
               onQrCodeClick={viewModel.handleQrCodeClick}
               placeholder={viewModel.recipientPlaceholder}
+              autoFocus
             />
           ) : (
             <>
-              <AddressInput
-                prefix={t("send.newSendFlow.to")}
-                value={viewModel.formattedAddress}
-                editable={false}
-                hideClearButton
-                placeholder={viewModel.recipientPlaceholder}
-                inputStyle={styles.addressValue}
-              />
+              {viewModel.recipientContact ? (
+                <RecipientContactRow
+                  contact={viewModel.recipientContact}
+                  label={t("send.newSendFlow.to")}
+                  value={viewModel.formattedAddress}
+                />
+              ) : (
+                <AddressInput
+                  prefix={t("send.newSendFlow.to")}
+                  value={viewModel.formattedAddress}
+                  editable={false}
+                  hideClearButton
+                  placeholder={viewModel.recipientPlaceholder}
+                  inputStyle={styles.addressValue}
+                  suffix={<AddressDisclaimer />}
+                />
+              )}
               <Pressable
-                style={styles.absoluteOverlay}
+                style={styles.editOverlay}
                 accessibilityRole="button"
                 accessibilityLabel={t("send.newSendFlow.editRecipientAccessibilityLabel")}
                 onPress={viewModel.handleRecipientInputPress}

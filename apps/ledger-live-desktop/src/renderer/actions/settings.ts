@@ -21,6 +21,7 @@ import { useRefreshAccountsOrdering } from "~/renderer/actions/general";
 import { Language, Locale } from "~/config/languages";
 import {
   PURGE_EXPIRED_ANONYMOUS_USER_NOTIFICATIONS,
+  SET_HAS_DISMISSED_CONTACTS_FEATURE_INTRODUCTION,
   SET_PRODUCT_TOUR_COMPLETED,
   TOGGLE_MEMOTAG_INFO,
   TOGGLE_MEV,
@@ -58,9 +59,9 @@ export const setDiscreetMode = (discreetMode: boolean) =>
   saveSettings({
     discreetMode,
   });
-export const setSentryLogs = (sentryLogs: boolean) =>
+export const setCrashReporting = (crashReporting: boolean) =>
   saveSettings({
-    sentryLogs,
+    crashReporting,
   });
 export const setShareAnalytics = (shareAnalytics: boolean) =>
   saveSettings({
@@ -71,37 +72,15 @@ export const setSharePersonalizedRecommendations = (sharePersonalizedRecommandat
     sharePersonalizedRecommandations,
   });
 
-export const setAnalyticsConsentInfo = (privacyPolicyVersion: number) =>
-  saveAnalyticsConsentInfo({
-    consentDate: new Date().toISOString(),
-    privacyPolicyVersion,
-  });
+export const setAnalyticsConsentInfo = (info: Partial<AnalyticsConsentInfo>) =>
+  saveAnalyticsConsentInfo(info);
 
 /**
  * @deprecated QA / developer tools only. Do not use in production flows.
- * Merges a partial patch into `analyticsConsentInfo` (e.g. force stale privacy version or clear consent date).
+ * Replaces `devicesModelList` so debug screens can simulate audience gates (e.g. pretend Nano seen).
  */
-export const DANGEROUSLY_setAnalyticsConsentInfoForQa = (patch: Partial<AnalyticsConsentInfo>) =>
-  saveAnalyticsConsentInfo(patch);
-
-/**
- * @deprecated QA / developer tools only. Do not use in production flows.
- * Clears consent metadata and turns off analytics sharing flags to simulate a pre-consent state.
- */
-export const DANGEROUSLY_resetAnalyticsOptInStateForQa = () => (dispatch: AppDispatch) => {
-  dispatch(
-    saveSettings({
-      shareAnalytics: false,
-      sharePersonalizedRecommandations: false,
-    }),
-  );
-  dispatch(
-    saveAnalyticsConsentInfo({
-      consentDate: null,
-      privacyPolicyVersion: null,
-    }),
-  );
-};
+export const DANGEROUSLY_setDevicesModelListForQa = (devicesModelList: DeviceModelId[]) =>
+  saveSettings({ devicesModelList });
 
 export const setAutoLockTimeout = (autoLockTimeout: number) =>
   saveSettings({
@@ -431,6 +410,13 @@ export const setHasSeenQ2Tour = (hasSeenQ2Tour: boolean) => ({
 export const setProductTourCompleted = (productTourCompleted: boolean) => ({
   type: SET_PRODUCT_TOUR_COMPLETED,
   payload: productTourCompleted,
+});
+
+export const setHasDismissedContactsFeatureIntroduction = (
+  hasDismissedContactsFeatureIntroduction: boolean,
+) => ({
+  type: SET_HAS_DISMISSED_CONTACTS_FEATURE_INTRODUCTION,
+  payload: hasDismissedContactsFeatureIntroduction,
 });
 
 export const setHasClickedRecover = (hasClickedRecover: boolean) => ({

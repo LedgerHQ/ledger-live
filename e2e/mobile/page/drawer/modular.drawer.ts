@@ -56,7 +56,7 @@ export default class ModularDrawer {
 
   @Step("Validate account(s) present on account list")
   async validateNumberOfAccounts(expectedCount: number) {
-    const elements = await countElementsById(this.accountItem);
+    const elements = await countElements(getElementsById(this.accountItem));
     jestExpect(elements).toBe(expectedCount);
   }
 
@@ -120,6 +120,11 @@ export default class ModularDrawer {
       if (await IsIdVisible(id)) return;
       await scrollView.swipe("up", "slow", 0.2, 0.5);
     }
+    // The last swipe is only useful if its result is checked, so probe once more before failing.
+    if (await IsIdVisible(id)) return;
+    throw new Error(
+      `Network item ${String(id)} not reachable after ${maxAttempts} swipes in ${this.networkSelectionScrollViewId}`,
+    );
   }
 
   private async selectAssetCurrencyAndNetwork(account: Account): Promise<void> {
@@ -138,7 +143,10 @@ export default class ModularDrawer {
   @Step("Select currency then a specific account in modular drawer")
   async selectAssetAndAccount(account: Account): Promise<void> {
     await this.selectAssetCurrencyAndNetwork(account);
-    await this.selectAccount(account.accountName);
+    // Token accounts are listed under their PARENT account's name in the drawer
+    // (useDetailedAccountsCore: name = parentAccountName ?? token name), so pin by parent.
+    const accountName = account.parentAccount?.accountName ?? account.accountName;
+    await this.selectAccount(accountName);
   }
 
   @Step("Validate account(s) present on account list")

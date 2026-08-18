@@ -1,11 +1,20 @@
-import { FiatCurrencySchema } from "./schema";
+import { FiatCurrencyIdSchema, FiatCurrencySchema } from "./schema";
 import { mockFiatCurrency } from "./schema.mock";
+
+describe("FiatCurrencyIdSchema", () => {
+  it("accepts a non-empty string", () => {
+    expect(FiatCurrencyIdSchema.parse("usd")).toBe("usd");
+  });
+  it("rejects an empty string", () => {
+    expect(() => FiatCurrencyIdSchema.parse("")).toThrow();
+  });
+});
 
 describe("FiatCurrencySchema", () => {
   it("parses a valid fiat currency from mock factory", () => {
     const result = FiatCurrencySchema.parse(mockFiatCurrency());
-    expect(result.id).toBe("usd");
     expect(result.type).toBe("FiatCurrency");
+    expect(result.ticker).toBe("USD");
   });
 
   it("requires at least one unit", () => {
@@ -35,7 +44,6 @@ describe("FiatCurrencySchema", () => {
   it("optional fields default to undefined", () => {
     const result = FiatCurrencySchema.parse({
       type: "FiatCurrency",
-      id: "eur",
       name: "Euro",
       ticker: "EUR",
       units: [{ name: "Euro", code: "EUR", magnitude: 2 }],

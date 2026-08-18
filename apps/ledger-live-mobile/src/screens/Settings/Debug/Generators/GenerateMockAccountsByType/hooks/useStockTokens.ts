@@ -1,8 +1,7 @@
 import { useMemo } from "react";
 import VersionNumber from "react-native-version-number";
-import { useStocksData } from "@ledgerhq/live-common/dada-client/hooks/useStocksData";
-import { selectTopStocks } from "@ledgerhq/live-common/dada-client/utils/assetDiscovery";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { useStocksData, selectTopStocks } from "@features/platform-aggregated-assets";
+import { TokenCurrency } from "@domain/entity-currency-token";
 import { MAX_STOCK_TOKENS } from "../constants";
 
 export interface StockTokensResult {

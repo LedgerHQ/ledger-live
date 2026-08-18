@@ -1,12 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import VersionNumber from "react-native-version-number";
-import { useAssetsData } from "@ledgerhq/live-common/dada-client/hooks/useAssetsData";
-import { selectCurrencyForMetaId } from "@ledgerhq/live-common/dada-client/utils/currencySelection";
+import { useAssetsData, selectCurrencyForMetaId } from "@features/platform-aggregated-assets";
 import { useSearchCommon } from "@ledgerhq/live-common/modularDrawer/hooks/useSearch";
 import { useFeatureFlaggedCurrencies } from "@features/platform-currencies";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import { useUsdToFiatRate } from "@ledgerhq/live-common/counterValues/hooks/useUsdToFiatRate";
-import useEnv from "@ledgerhq/live-common/hooks/useEnv";
+import useEnv from "@features/platform-env";
 import { useFeature } from "@features/platform-feature-flags";
 import type { MarketAssetDisplayData } from "LLM/components/AssetListItem";
 import { mapDadaMarketToDisplayData } from "LLM/features/GlobalSearch/utils/mapDadaMarketToDisplayData";
@@ -34,7 +33,6 @@ export function useGlobalSearchResults(): GlobalSearchResults {
   const { t } = useTranslation();
   const { locale } = useLocale();
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
-  const counterCurrency = counterValueCurrency.ticker.toLowerCase();
   const counterValueUnit = counterValueCurrency.units[0];
   const { rate: usdToFiatRate, status: rateStatus } = useUsdToFiatRate(counterValueCurrency.ticker);
   const version = VersionNumber.appVersion ?? "";
@@ -94,20 +92,11 @@ export function useGlobalSearchResults(): GlobalSearchResults {
         mapDadaMarketToDisplayData(
           { id: meta.id, name: meta.name, ticker: meta.ticker, ledgerId: currency.id },
           data.markets[currency.id],
-          { counterCurrency, counterValueUnit, usdToFiatRate, locale, t },
+          { counterValueUnit, usdToFiatRate, locale, t },
         ),
       ];
     });
-  }, [
-    data,
-    query,
-    deactivatedCurrencyIds,
-    counterCurrency,
-    counterValueUnit,
-    usdToFiatRate,
-    locale,
-    t,
-  ]);
+  }, [data, query, deactivatedCurrencyIds, counterValueUnit, usdToFiatRate, locale, t]);
 
   const isLoadingSearch = isSearchActive && (isDebouncing || isLoading || rateStatus === "loading");
   const clearSearch = useCallback(() => handleSearch(""), [handleSearch]);

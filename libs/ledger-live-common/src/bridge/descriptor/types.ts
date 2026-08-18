@@ -1,5 +1,5 @@
 import type { Account, AccountBridge, AccountLike } from "@ledgerhq/types-live";
-import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { BigNumber } from "bignumber.js";
 import type { Transaction } from "../../coin-modules/transaction-types";
 
@@ -7,7 +7,7 @@ import type { Transaction } from "../../coin-modules/transaction-types";
  * Memo field type configuration
  */
 export type MemoType =
-  | "text" // Simple text memo (cosmos, solana)
+  | "text" // Simple text memo (cosmos, solana, algorand)
   | "tag" // Numeric tag (xrp destination tag, casper transfer id)
   | "typed"; // Typed memo with predefined options (stellar)
 
@@ -209,6 +209,18 @@ export type CoinControlConfig = Readonly<{
 }>;
 
 /**
+ * Family-agnostic content for the network-fees info affordance (tooltip/drawer): an i18n key
+ * *suffix* (each app prepends its namespace and appends `.title` and/or `.description`) plus
+ * interpolation values, mirroring the `fees.${presetId}` pattern so coin logic stays out of the apps.
+ */
+export type NetworkFeesInfo = Readonly<{
+  /** i18n key suffix; the UI prepends its namespace and appends `.title` and/or `.description`. */
+  translationKey: string;
+  /** Interpolation values for the resolved translations. */
+  values?: Record<string, string | number>;
+}>;
+
+/**
  * Fee input options
  */
 export type FeeDescriptor = {
@@ -268,6 +280,12 @@ export type FeeDescriptor = {
    * inspecting `transaction.family`.
    */
   getFeeCurrencyAccountId?: (transaction: unknown) => string | null;
+  /** Family-specific network-fees explanation derived from the tx status; `null` ⇒ generic copy. */
+  getNetworkFeesInfo?: (ctx: { transaction: unknown; status: unknown }) => NetworkFeesInfo | null;
+  /** Declares a single network-estimated fee for coins with no user-selectable presets (slow/med/fast)
+   * but with custom fees. Lets the user return from a custom override to the network default. Intended
+   * for preset-less + custom coins; the coin-module owns the revert patch (which override fields to clear). */
+  defaultStrategy?: { buildTransactionPatch: () => TransactionPatch };
 };
 
 /**
@@ -338,6 +356,7 @@ export type SendDescriptor = {
   };
   fees: FeeDescriptor;
   amount?: SendAmountDescriptor;
+  addressBook?: boolean;
   selfTransfer?: SelfTransferPolicy; // Policy for sending to self (same address), defaults to "impossible"
   errors?: ErrorRegistry; // Registry of error class names for this coin
 };

@@ -42,7 +42,6 @@ import {
   logSecurityEvent,
   EarnDeeplinkAction,
   validateEarnDepositScreen,
-  validateLargeMoverCurrencyIds,
   validateLargeMoverLedgerIds,
 } from "./deeplinks/validation";
 import { handleWallet40Deeplink } from "./deeplinks/handleWallet40Deeplink";
@@ -54,6 +53,7 @@ import { handleProductTourDeeplink } from "./deeplinks/handleProductTourDeeplink
 import { handleBackupHubDeeplink } from "./deeplinks/handleBackupHubDeeplink";
 import { SplashScreenHandle } from "LLM/features/LaunchScreen/SplashScreenHandle";
 import { useDeeplinkDrawerCleanup } from "./deeplinks/useDeeplinkDrawerCleanup";
+import { getActionFromAssetDetailDeeplinkState } from "LLM/features/AssetDetail/utils/getActionFromAssetDetailDeeplinkState";
 
 const themes: {
   [key: string]: Theme;
@@ -609,6 +609,7 @@ export const DeeplinksProvider = ({
             sub.remove();
           };
         },
+        getActionFromState: getActionFromAssetDetailDeeplinkState,
         getStateFromPath: (path, config) => {
           const url = new URL(`ledgerwallet://${path}`);
           const { hostname, searchParams, pathname } = url;
@@ -672,15 +673,9 @@ export const DeeplinksProvider = ({
 
           if (hostname === "landing-page-large-mover") {
             const validatedLedgerIds = validateLargeMoverLedgerIds(searchParams.get("ledgerIds"));
-            const validatedCurrencyIds = validateLargeMoverCurrencyIds(
-              searchParams.get("currencyIds"),
-            );
             if (validatedLedgerIds) {
-              url.searchParams.set("currencyIds", "");
+              url.searchParams.delete("currencyIds");
               url.searchParams.set("ledgerIds", validatedLedgerIds);
-            } else if (validatedCurrencyIds) {
-              url.searchParams.delete("ledgerIds");
-              url.searchParams.set("currencyIds", validatedCurrencyIds);
             } else {
               return handleMarketBannerDeeplink();
             }

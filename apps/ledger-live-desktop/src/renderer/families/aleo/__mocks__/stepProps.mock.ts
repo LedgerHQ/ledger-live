@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import type { TFunction } from "i18next";
 
 import type { StepProps } from "~/renderer/modals/Send/types";
 import type { AleoAccount } from "@ledgerhq/live-common/families/aleo/types";
@@ -19,6 +20,7 @@ const makeAleoAccount = (percentage = 0): AleoAccount => ({
 
 export const makeStepProps = (overrides: Partial<StepProps> = {}): StepProps =>
   ({
+    t: jest.fn((key: string) => key) as unknown as TFunction,
     account: makeAleoAccount(0),
     parentAccount: null,
     transitionTo: jest.fn(),

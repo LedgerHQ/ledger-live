@@ -7,18 +7,18 @@ import {
 } from "@ledgerhq/live-common/earn/stakePrograms/index";
 import { runOnceWhen } from "@ledgerhq/live-common/utils/runOnceWhen";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
-import { getEnv } from "@ledgerhq/live-env";
-import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
+import { getEnv } from "@shared/env";
+import { getDefaultAccountName } from "@domain/entity-account-name";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { idsToLanguage } from "@ledgerhq/types-live";
 import type { Feature, FeatureId, Features } from "@shared/feature-flags";
 import invariant from "invariant";
-import { useCallback, useContext } from "react";
 import type * as Redux from "redux";
 import { ReplaySubject } from "rxjs";
 import { v4 as uuid } from "uuid";
 import { userIdSelector } from "@domain/entity-client-identity";
 import { getParsedSystemLocale } from "~/helpers/systemLocale";
+import { getDistributionChannel } from "~/helpers/distributionChannel";
 import { getVersionedRedirects } from "LLD/hooks/useVersionedStakePrograms";
 import logger from "~/renderer/logger";
 import type { State } from "~/renderer/reducers";
@@ -38,7 +38,6 @@ import {
   sidebarCollapsedSelector,
   trackingEnabledSelector,
 } from "~/renderer/reducers/settings";
-import { analyticsDrawerContext } from "../drawers/Provider";
 import { accountsSelector } from "../reducers/accounts";
 import { currentRouteNameRef, previousRouteNameRef } from "./screenRefs";
 import {
@@ -52,6 +51,7 @@ import { getTotalStakeableAssets } from "@ledgerhq/live-common/domain/getTotalSt
 import { getOnboardingCounterfeitWarningAttributes } from "@ledgerhq/live-common/analytics/featureFlagHelpers/onboardingCounterfeitWarning";
 import { getWallet40Attributes } from "@ledgerhq/live-common/analytics/featureFlagHelpers/wallet40";
 import { getNewSendFlowAttribute } from "@ledgerhq/live-common/analytics/featureFlagHelpers/newSendFlow";
+import { scrubAccountId } from "../helpers/scrubAccountId";
 
 type ReduxStore = Redux.MiddlewareAPI<Redux.Dispatch<Redux.UnknownAction>, State>;
 
@@ -151,6 +151,16 @@ const getProductTourAttributes = () => {
 
   return {
     lwdProductTour: !!productTour?.enabled,
+  };
+};
+
+const getPayTabAttributes = () => {
+  if (!analyticsFeatureFlagMethod) return false;
+  const payTab = analyticsFeatureFlagMethod("lwdPayTab");
+
+  return {
+    isEnabled: payTab?.enabled ?? false,
+    card: payTab?.params?.card ?? false,
   };
 };
 
@@ -284,6 +294,7 @@ const extraProperties = (store: ReduxStore) => {
   const addAccountAttributes = getAddAccountAttributes();
   const backupHubAttributes = getBackupHubAttributes();
   const productTourAttributes = getProductTourAttributes();
+  const payTabAttributes = getPayTabAttributes();
   const largeScreenUpsellAttributes = getLargeScreenUpsellAttributes();
 
   const deviceInfo = device
@@ -340,6 +351,7 @@ const extraProperties = (store: ReduxStore) => {
     region,
     environment: process.env.SEGMENT_TEST ? "test" : __DEV__ ? "development" : "production",
     platform: "desktop",
+    distributionChannel: getDistributionChannel(),
     systemLanguage: systemLocale.language,
     systemRegion: systemLocale.region,
     osType,
@@ -373,6 +385,7 @@ const extraProperties = (store: ReduxStore) => {
     totalStakeableAssets: combinedIds.size,
     stakeableAssets: stakeableAssetsList,
     wallet40Attributes,
+    payTabAttributes,
     finishOnboardingWidget: onboardingWidgetFlag?.enabled,
     ...onboardingCounterfeitWarningAttributes,
     newSendFlow,
@@ -443,7 +456,7 @@ function sendTrack(event: string, properties: object | undefined | null) {
 }
 
 const confidentialityFilter = (properties?: Record<string, unknown> | null) => {
-  const { account, parentAccount } = properties || {};
+  const { account, parentAccount, page, source } = properties || {};
   const filterAccount = account
     ? {
         account:
@@ -458,10 +471,25 @@ const confidentialityFilter = (properties?: Record<string, unknown> | null) => {
             : parentAccount,
       }
     : {};
+
+  const filterPage = page
+    ? {
+        page: typeof page === "string" ? scrubAccountId(page) : page,
+      }
+    : {};
+
+  const filterSource = source
+    ? {
+        source: typeof source === "string" ? scrubAccountId(source) : source,
+      }
+    : {};
+
   return {
     ...properties,
     ...filterAccount,
     ...filterParentAccount,
+    ...filterPage,
+    ...filterSource,
   };
 };
 
@@ -530,33 +558,6 @@ export const track = (
 };
 
 /**
- * Returns an enriched track function that uses the context to add contextual
- * props to events.
- *
- * For now it's only adding the "drawer" property if it's defined.
- * */
-export function useTrack() {
-  const { analyticsDrawerName } = useContext(analyticsDrawerContext);
-  return useCallback(
-    (
-      eventName: string,
-      properties?: Record<string, unknown> | null,
-      mandatory?: boolean | null,
-    ) => {
-      track(
-        eventName,
-        {
-          ...(analyticsDrawerName ? { drawer: analyticsDrawerName } : {}),
-          ...(properties ?? {}),
-        },
-        mandatory,
-      );
-    },
-    [analyticsDrawerName],
-  );
-}
-
-/**
  * Track an event which will have the name `Page ${category}${name ? " " + name : ""}`.
  * Extra logic to update the route names used in "screen" and "source"
  * properties of further events can be optionally enabled with the parameters
@@ -575,7 +576,7 @@ export const trackPage = (
   /**
    * Event properties
    */
-  properties?: object | null,
+  properties?: Record<string, unknown> | null,
   /**
    * Should this function call update the previous & current route names.
    * Previous and current route names are used to track:
@@ -611,7 +612,7 @@ export const trackPage = (
 
   const eventPropertiesWithoutExtra = {
     source: previousRouteNameRef.current ?? undefined,
-    ...properties,
+    ...confidentialityFilter(properties),
   };
   const allProperties = {
     ...eventPropertiesWithoutExtra,

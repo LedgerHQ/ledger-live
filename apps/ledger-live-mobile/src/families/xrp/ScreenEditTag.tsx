@@ -1,7 +1,7 @@
 import invariant from "invariant";
 import React, { useCallback, useState } from "react";
 import { View, StyleSheet } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "~/components/SafeAreaView";
 import { useTranslation, i18n } from "~/context/Locale";
 import { BigNumber } from "bignumber.js";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";

@@ -66,14 +66,14 @@
               {
                 "group": [
                   "@ledgerhq/**",
-                  "!@ledgerhq/errors",
-                  "!@ledgerhq/errors/**",
                   "!@ledgerhq/logs",
                   "!@ledgerhq/logs/**",
                   "!@ledgerhq/live-network",
                   "!@ledgerhq/live-network/**",
                   "!@ledgerhq/coin-module-framework",
-                  "!@ledgerhq/coin-module-framework/**"
+                  "!@ledgerhq/coin-module-framework/**",
+                  "!@ledgerhq/ledger-wallet-framework",
+                  "!@ledgerhq/ledger-wallet-framework/**"
                 ]
               }
             ]

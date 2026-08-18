@@ -30,7 +30,7 @@ import {
   inferCurrencyAPIID,
 } from "./helpers";
 import type { Account } from "@ledgerhq/types-live";
-import type { Currency } from "@ledgerhq/types-cryptoassets";
+import type { Currency } from "@ledgerhq/ledger-wallet-framework/types";
 import api from "./api";
 
 /**

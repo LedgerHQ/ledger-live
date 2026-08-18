@@ -1,4 +1,9 @@
-import { canSend, getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
+import {
+  canReceive,
+  canSend,
+  getAccountCurrency,
+  getMainAccount,
+} from "@ledgerhq/live-common/account/index";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 
@@ -33,7 +38,8 @@ import {
   StakeActionDefault,
 } from "./AccountActionsDefault";
 import { useGetSwapTrackingProperties } from "~/renderer/screens/exchange/Swap2/utils/index";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@domain/entity-currency-crypto";
+import { TokenCurrency } from "@domain/entity-currency-token";
 import { useLLDCoinFamily } from "~/renderer/families";
 import { ManageAction } from "~/renderer/families/types";
 import { getAvailableProviders } from "@ledgerhq/live-common/exchange/swap/index";
@@ -398,7 +404,9 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
       {canSendResult ? (
         <SendAction account={account} parentAccount={parentAccount} onClick={onSend} />
       ) : null}
-      <ReceiveAction account={account} parentAccount={parentAccount} onClick={onReceive} />
+      {canReceive(mainAccount, undefined) ? (
+        <ReceiveAction account={account} parentAccount={parentAccount} onClick={onReceive} />
+      ) : null}
     </FadeInButtonsContainer>
   );
 

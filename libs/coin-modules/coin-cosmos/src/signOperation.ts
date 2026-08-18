@@ -1,13 +1,14 @@
 import { makeSignDoc, serializeSignDoc } from "@cosmjs/amino";
 import { Secp256k1Signature } from "@cosmjs/crypto";
 import { Coin } from "@keplr-wallet/proto-types/cosmos/base/v1beta1/coin";
-import { ExpertModeRequired, UserRefusedOnDevice } from "@ledgerhq/errors";
+import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
+import { ExpertModeRequired } from "./errors";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { AccountBridge, Operation, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { Observable } from "rxjs";
-import { buildTransaction, txToMessages } from "./buildTransaction";
+import { buildTransaction, messageParamsFromTransaction, txToMessages } from "./buildTransaction";
 import cryptoFactory from "./chain/chain";
 import { CosmosAPI } from "./network/Cosmos";
 import { CosmosAccount, RETURN_CODES, Transaction } from "./types";
@@ -28,7 +29,10 @@ export const buildSignOperation =
           account.freshAddress,
         );
         o.next({ type: "device-signature-requested" });
-        const { aminoMsgs, protoMsgs } = txToMessages(account, transaction, chainInstance);
+        const { aminoMsgs, protoMsgs } = txToMessages(
+          messageParamsFromTransaction(account, transaction),
+          chainInstance,
+        );
         if (!BigNumber.isBigNumber(transaction.fees) || !BigNumber.isBigNumber(transaction.gas)) {
           throw new Error("Transaction misses gas information");
         }

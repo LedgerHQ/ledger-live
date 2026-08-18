@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { useMemo } from "react";
 import {
   getCurrentHederaPreloadData,
@@ -42,8 +42,8 @@ export function useHederaEnrichedDelegation(
   delegation: HederaDelegation,
 ): HederaEnrichedDelegation {
   const validators = useHederaValidators(account.currency);
-  const validatorByNodeId = new Map(validators.map(v => [v.nodeId, v]));
-  const validator = validatorByNodeId.get(delegation.nodeId) ?? null;
+  const validatorById = new Map(validators.map(v => [v.id, v]));
+  const validator = validatorById.get(String(delegation.nodeId)) ?? null;
 
   return {
     ...delegation,
@@ -52,7 +52,7 @@ export function useHederaEnrichedDelegation(
       name: validator?.name ?? "",
       address: validator?.address ?? "",
       addressChecksum: validator?.addressChecksum ?? null,
-      nodeId: delegation.nodeId,
+      id: String(delegation.nodeId),
       minStake: validator?.minStake ?? new BigNumber(0),
       maxStake: validator?.maxStake ?? new BigNumber(0),
       activeStake: validator?.activeStake ?? new BigNumber(0),

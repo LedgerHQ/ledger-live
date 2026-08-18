@@ -2,11 +2,11 @@ import { ElectronApplication, Page, TestInfo } from "@playwright/test";
 import { promisify } from "util";
 import { readFile } from "fs";
 import { takeScreenshot, drainSpeculosScreenshots } from "@ledgerhq/live-e2e-shared/speculos";
-import { getEnv, setEnv } from "@ledgerhq/live-env";
+import { getEnv, setEnv } from "@shared/env";
 import { listen } from "@ledgerhq/logs";
 import * as allure from "allure-js-commons";
 import { isLastRetry } from "tests/utils/testInfoUtils";
-import { WebviewLogCollector } from "tests/utils/webviewLogCollector";
+import { PageLogCollector } from "tests/utils/pageLogCollector";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 
 const readFileAsync = promisify(readFile);
@@ -189,7 +189,8 @@ export async function captureArtifacts(
   testInfo: TestInfo,
   electronApp: ElectronApplication,
   takeSpeculosScreenshot: boolean,
-  webviewCollector?: WebviewLogCollector,
+  webviewCollector?: PageLogCollector,
+  appCollector?: PageLogCollector,
 ) {
   const screenshot = await page.screenshot();
   await testInfo.attach("Screenshot", { body: screenshot, contentType: "image/png" });
@@ -226,6 +227,23 @@ export async function captureArtifacts(
 
     await testInfo.attach("Webview Network Logs", {
       body: Buffer.from(webviewCollector.getFormattedNetworkLogs()),
+      contentType: "application/json",
+    });
+
+    // Surface the swap-init root cause (QAA-1326) front-and-center: the failing
+    // custom.exchange.swap error is otherwise buried in the full console dump above.
+    const swapInitError = webviewCollector.getSwapInitError();
+    if (swapInitError) {
+      await testInfo.attach("⚠️ Swap-init error", {
+        body: Buffer.from(swapInitError),
+        contentType: "text/plain",
+      });
+    }
+  }
+
+  if (appCollector) {
+    await testInfo.attach("Ledger Wallet Network Logs", {
+      body: Buffer.from(appCollector.getFormattedNetworkLogs()),
       contentType: "application/json",
     });
   }

@@ -1,12 +1,10 @@
 import React, { memo } from "react";
 import { Text, Tooltip } from "@ledgerhq/react-ui";
 import FormattedVal from "~/renderer/components/FormattedVal";
-import counterValueFormatter from "@ledgerhq/live-common/market/utils/countervalueFormatter";
 import { SmallMarketItemChart } from "~/renderer/screens/market/components/MarketItemChart";
 import { Button, IconButton } from "@ledgerhq/lumen-ui-react";
 import { TableRow, TableCell } from "~/renderer/screens/market/components/Table";
 import { formatPercentage } from "~/renderer/screens/market/utils";
-import { roundFiatPrice } from "@ledgerhq/live-currency-format";
 import {
   CryptoCurrencyIconWrapper,
   CryptoNameContainer,
@@ -29,12 +27,12 @@ const ACTION_ICONS: Record<MarketActionType, typeof Plus> = {
 export const RowItemView = memo<RowItemViewProps>(function RowItemView({
   style,
   currency,
-  counterCurrency,
-  locale,
   isStarred,
   hasActions,
   actions,
   currentPriceChangePercentage,
+  formattedPrice,
+  formattedMarketCap,
   onCurrencyClick,
   onStarClick,
 }: RowItemViewProps) {
@@ -98,13 +96,7 @@ export const RowItemView = memo<RowItemViewProps>(function RowItemView({
           ) : null}
         </TableCell>
         <TableCell data-testid={"market-coin-price"}>
-          <Text variant="body">
-            {counterValueFormatter({
-              value: roundFiatPrice(currency.price ?? 0),
-              currency: counterCurrency,
-              locale,
-            })}
-          </Text>
+          <Text variant="body">{formattedPrice}</Text>
         </TableCell>
         <TableCell data-testid={"market-price-change"}>
           {currentPriceChangePercentage ? (
@@ -120,14 +112,7 @@ export const RowItemView = memo<RowItemViewProps>(function RowItemView({
         </TableCell>
 
         <TableCell data-testid={"market-cap"}>
-          <Text>
-            {counterValueFormatter({
-              shorten: true,
-              currency: counterCurrency,
-              value: currency.marketcap,
-              locale,
-            })}
-          </Text>
+          <Text>{formattedMarketCap}</Text>
         </TableCell>
         <TableCell data-testid={"market-small-graph"}>
           {currency.sparklineIn7d && (

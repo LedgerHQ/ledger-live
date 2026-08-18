@@ -1,5 +1,199 @@
 # @shared/feature-flags
 
+## 0.18.0
+
+### Minor Changes
+
+- [#20595](https://github.com/LedgerHQ/ledger-live/pull/20595) [`43bf6d8`](https://github.com/LedgerHQ/ledger-live/commit/43bf6d8f6600f70b7c2a85615660e7e150e798bf) Thanks [@ysitbon](https://github.com/ysitbon)! - Make every new-architecture barrel a pure regrouping point, and enforce it.
+
+  An `index.*` under `shared/`, `domain/` or `features/` may now contain only `export * from "./x"`
+  lines, plus an optional default re-export. Having to sort in the export
+  (`export { a, b } from "./x"`) proved the target file mixed public and private code; an `index.*`
+  holding actual code proved it more loudly. A new nx plugin infers a `lint:structure` target on each
+  of the 49 packages and fails on both, along with two related rules: a barrel may not re-export a
+  private `internals` location, and it may not re-export another workspace package.
+
+  That last rule removes the proxies. A package that re-exported a neighbour gave the same symbol two
+  import paths and hid who actually provided it. Consumers now import the original provider and
+  declare the dependency, which is why the two apps gain `@features/flow-contacts-add-contact` and the
+  desktop app gains `@features/platform-contacts`.
+
+  Renamed or relocated, with the import specifier unchanged for consumers in every case except where
+  noted:
+
+  - `@domain/entity-account-name` no longer exports the `setAccountNames` alias; use
+    `bulkSetAccountNames`, the name the slice actually defines.
+  - `@shared/cloud-sync` exports `getCloudSyncApi` as a named export from its api module instead of
+    re-exporting a default under a different name.
+
+  Five packages are left untouched behind temporary exclusions, each recording how to remove it:
+
+  - `@shared/env`, the facade over the legacy `@ledgerhq/live-env`, which carries the wrapping in its
+    barrel.
+  - the `@ledgerhq/engagement` and `@ledgerhq/ptx` packages (`flow-analytics-consent`,
+    `flow-large-screen-upsell`, `flow-lazy-onboarding-banner`, `flow-pay-card-auth`), so each owning
+    team lands the change on its own schedule. Conformant barrels were prepared and verified for them
+    before being reverted, so the work is deferred rather than open.
+
+- [#20290](https://github.com/LedgerHQ/ledger-live/pull/20290) [`9708010`](https://github.com/LedgerHQ/ledger-live/commit/970801044529fe978ccbb8c562cc64c00277d1de) Thanks [@sarneijim](https://github.com/sarneijim)! - Add the shared lazy onboarding banner flow, its Mobile portfolio view and configurable Shop link feature flag.
+
+## 0.18.0-next.0
+
+### Minor Changes
+
+- [#20595](https://github.com/LedgerHQ/ledger-live/pull/20595) [`43bf6d8`](https://github.com/LedgerHQ/ledger-live/commit/43bf6d8f6600f70b7c2a85615660e7e150e798bf) Thanks [@ysitbon](https://github.com/ysitbon)! - Make every new-architecture barrel a pure regrouping point, and enforce it.
+
+  An `index.*` under `shared/`, `domain/` or `features/` may now contain only `export * from "./x"`
+  lines, plus an optional default re-export. Having to sort in the export
+  (`export { a, b } from "./x"`) proved the target file mixed public and private code; an `index.*`
+  holding actual code proved it more loudly. A new nx plugin infers a `lint:structure` target on each
+  of the 49 packages and fails on both, along with two related rules: a barrel may not re-export a
+  private `internals` location, and it may not re-export another workspace package.
+
+  That last rule removes the proxies. A package that re-exported a neighbour gave the same symbol two
+  import paths and hid who actually provided it. Consumers now import the original provider and
+  declare the dependency, which is why the two apps gain `@features/flow-contacts-add-contact` and the
+  desktop app gains `@features/platform-contacts`.
+
+  Renamed or relocated, with the import specifier unchanged for consumers in every case except where
+  noted:
+
+  - `@domain/entity-account-name` no longer exports the `setAccountNames` alias; use
+    `bulkSetAccountNames`, the name the slice actually defines.
+  - `@shared/cloud-sync` exports `getCloudSyncApi` as a named export from its api module instead of
+    re-exporting a default under a different name.
+
+  Five packages are left untouched behind temporary exclusions, each recording how to remove it:
+
+  - `@shared/env`, the facade over the legacy `@ledgerhq/live-env`, which carries the wrapping in its
+    barrel.
+  - the `@ledgerhq/engagement` and `@ledgerhq/ptx` packages (`flow-analytics-consent`,
+    `flow-large-screen-upsell`, `flow-lazy-onboarding-banner`, `flow-pay-card-auth`), so each owning
+    team lands the change on its own schedule. Conformant barrels were prepared and verified for them
+    before being reverted, so the work is deferred rather than open.
+
+- [#20290](https://github.com/LedgerHQ/ledger-live/pull/20290) [`9708010`](https://github.com/LedgerHQ/ledger-live/commit/970801044529fe978ccbb8c562cc64c00277d1de) Thanks [@sarneijim](https://github.com/sarneijim)! - Add the shared lazy onboarding banner flow, its Mobile portfolio view and configurable Shop link feature flag.
+
+## 0.17.0
+
+### Minor Changes
+
+- [#20219](https://github.com/LedgerHQ/ledger-live/pull/20219) [`2fa6e1f`](https://github.com/LedgerHQ/ledger-live/commit/2fa6e1f3fbcb56ff444ca756135d821e141bc439) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Widen analyticsOptIn policyVersion to number | string for major/minor semantics
+
+- [#20093](https://github.com/LedgerHQ/ledger-live/pull/20093) [`56cfe0b`](https://github.com/LedgerHQ/ledger-live/commit/56cfe0bc6673f416f739c1593abfec718230952d) Thanks [@sarneijim](https://github.com/sarneijim)! - Use the shared large-screen upsell configuration and eligibility for mobile upgrade banners.
+
+- [#19634](https://github.com/LedgerHQ/ledger-live/pull/19634) [`4015ade`](https://github.com/LedgerHQ/ledger-live/commit/4015ade1f9744d4bb575282060fdb1beb9aafc89) Thanks [@thesan](https://github.com/thesan)! - Connect @ledgerhq/ledger-auth to the Ledger Wallet apps Redux store
+
+- [#20232](https://github.com/LedgerHQ/ledger-live/pull/20232) [`d467088`](https://github.com/LedgerHQ/ledger-live/commit/d4670885d7eb77c035d09c225eff9dca0151abb3) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(lwdm): a/b testing show recent banner
+
+- [#20339](https://github.com/LedgerHQ/ledger-live/pull/20339) [`6a531c5`](https://github.com/LedgerHQ/ledger-live/commit/6a531c54ccd1c65df122286de6f136f9d73b9002) Thanks [@qperrot](https://github.com/qperrot)! - Remove Scroll Sepolia testnet support as it is no longer maintained
+
+- [#20265](https://github.com/LedgerHQ/ledger-live/pull/20265) [`5f81208`](https://github.com/LedgerHQ/ledger-live/commit/5f81208308f7e56971cce9329369c12af82185d3) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Remove analytics consentValidityDays and the unused live-common consent expiry helpers
+
+## 0.17.0-next.0
+
+### Minor Changes
+
+- [#20219](https://github.com/LedgerHQ/ledger-live/pull/20219) [`2fa6e1f`](https://github.com/LedgerHQ/ledger-live/commit/2fa6e1f3fbcb56ff444ca756135d821e141bc439) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Widen analyticsOptIn policyVersion to number | string for major/minor semantics
+
+- [#20093](https://github.com/LedgerHQ/ledger-live/pull/20093) [`56cfe0b`](https://github.com/LedgerHQ/ledger-live/commit/56cfe0bc6673f416f739c1593abfec718230952d) Thanks [@sarneijim](https://github.com/sarneijim)! - Use the shared large-screen upsell configuration and eligibility for mobile upgrade banners.
+
+- [#19634](https://github.com/LedgerHQ/ledger-live/pull/19634) [`4015ade`](https://github.com/LedgerHQ/ledger-live/commit/4015ade1f9744d4bb575282060fdb1beb9aafc89) Thanks [@thesan](https://github.com/thesan)! - Connect @ledgerhq/ledger-auth to the Ledger Wallet apps Redux store
+
+- [#20232](https://github.com/LedgerHQ/ledger-live/pull/20232) [`d467088`](https://github.com/LedgerHQ/ledger-live/commit/d4670885d7eb77c035d09c225eff9dca0151abb3) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(lwdm): a/b testing show recent banner
+
+- [#20339](https://github.com/LedgerHQ/ledger-live/pull/20339) [`6a531c5`](https://github.com/LedgerHQ/ledger-live/commit/6a531c54ccd1c65df122286de6f136f9d73b9002) Thanks [@qperrot](https://github.com/qperrot)! - Remove Scroll Sepolia testnet support as it is no longer maintained
+
+- [#20265](https://github.com/LedgerHQ/ledger-live/pull/20265) [`5f81208`](https://github.com/LedgerHQ/ledger-live/commit/5f81208308f7e56971cce9329369c12af82185d3) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Remove analytics consentValidityDays and the unused live-common consent expiry helpers
+
+## 0.16.0
+
+### Minor Changes
+
+- [#19992](https://github.com/LedgerHQ/ledger-live/pull/19992) [`452adf8`](https://github.com/LedgerHQ/ledger-live/commit/452adf85380d1cb74f1894478cdd84849b120ef4) Thanks [@sarneijim](https://github.com/sarneijim)! - Gate each existing mobile Nano S upsell banner placement through the shared large-screen upsell flag.
+
+- [#20152](https://github.com/LedgerHQ/ledger-live/pull/20152) [`44798f3`](https://github.com/LedgerHQ/ledger-live/commit/44798f392deb662a5f60123651ece2b320fbf946) Thanks [@sarneijim](https://github.com/sarneijim)! - Add the `lazyOnboardingBanner` feature flag with shop direct and feature intro modes
+
+- [#20073](https://github.com/LedgerHQ/ledger-live/pull/20073) [`a534db5`](https://github.com/LedgerHQ/ledger-live/commit/a534db5c41da6957d38a330c1da6f7db1b693763) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Remove newsfeedPage feature flag (LIVE-31511)
+
+- [#20054](https://github.com/LedgerHQ/ledger-live/pull/20054) [`c622459`](https://github.com/LedgerHQ/ledger-live/commit/c622459fcbff5dcc094ee10eb360f2a835036007) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - Remove the disabled npsRatingsPrompt feature flag and NPS ratings dead code on mobile
+
+- [#19215](https://github.com/LedgerHQ/ledger-live/pull/19215) [`dfab01f`](https://github.com/LedgerHQ/ledger-live/commit/dfab01f36460bd4e0ea0b0c13aa3d965aef945cd) Thanks [@CremaFR](https://github.com/CremaFR)! - Add a Device Intent Executor based signing path for Wallet API `transaction.sign` and `message.sign` on Ledger Wallet Mobile, gated behind the new `llmWalletApiDeviceIntentSign` feature flag (per-manifest allow-list, off by default). Introduces the `signMessageIntent` module in live-common.
+
+## 0.16.0-next.0
+
+### Minor Changes
+
+- [#19992](https://github.com/LedgerHQ/ledger-live/pull/19992) [`452adf8`](https://github.com/LedgerHQ/ledger-live/commit/452adf85380d1cb74f1894478cdd84849b120ef4) Thanks [@sarneijim](https://github.com/sarneijim)! - Gate each existing mobile Nano S upsell banner placement through the shared large-screen upsell flag.
+
+- [#20152](https://github.com/LedgerHQ/ledger-live/pull/20152) [`44798f3`](https://github.com/LedgerHQ/ledger-live/commit/44798f392deb662a5f60123651ece2b320fbf946) Thanks [@sarneijim](https://github.com/sarneijim)! - Add the `lazyOnboardingBanner` feature flag with shop direct and feature intro modes
+
+- [#20073](https://github.com/LedgerHQ/ledger-live/pull/20073) [`a534db5`](https://github.com/LedgerHQ/ledger-live/commit/a534db5c41da6957d38a330c1da6f7db1b693763) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Remove newsfeedPage feature flag (LIVE-31511)
+
+- [#20054](https://github.com/LedgerHQ/ledger-live/pull/20054) [`c622459`](https://github.com/LedgerHQ/ledger-live/commit/c622459fcbff5dcc094ee10eb360f2a835036007) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - Remove the disabled npsRatingsPrompt feature flag and NPS ratings dead code on mobile
+
+- [#19215](https://github.com/LedgerHQ/ledger-live/pull/19215) [`dfab01f`](https://github.com/LedgerHQ/ledger-live/commit/dfab01f36460bd4e0ea0b0c13aa3d965aef945cd) Thanks [@CremaFR](https://github.com/CremaFR)! - Add a Device Intent Executor based signing path for Wallet API `transaction.sign` and `message.sign` on Ledger Wallet Mobile, gated behind the new `llmWalletApiDeviceIntentSign` feature flag (per-manifest allow-list, off by default). Introduces the `signMessageIntent` module in live-common.
+
+## 0.15.0
+
+### Minor Changes
+
+- [#19734](https://github.com/LedgerHQ/ledger-live/pull/19734) [`bb2d2d2`](https://github.com/LedgerHQ/ledger-live/commit/bb2d2d250a1d5b8cde43ba963795d28b10b48be6) Thanks [@ishaba](https://github.com/ishaba)! - remove umee chain related code
+
+- [#19875](https://github.com/LedgerHQ/ledger-live/pull/19875) [`59a6c82`](https://github.com/LedgerHQ/ledger-live/commit/59a6c82a784b4f484b5fb6a5ea42b6ebb1115818) Thanks [@sarneijim](https://github.com/sarneijim)! - Gate the large-screen upsell modal by the enabled state of the selected opt-in variant
+
+- [#18413](https://github.com/LedgerHQ/ledger-live/pull/18413) [`c498e25`](https://github.com/LedgerHQ/ledger-live/commit/c498e25ca9f4b6ef5c4e3dfd370dab44ccdebc0f) Thanks [@sarneijim](https://github.com/sarneijim)! - Remove lldActionCarousel feature flag (always enabled with variant A)
+
+## 0.15.0-next.0
+
+### Minor Changes
+
+- [#19734](https://github.com/LedgerHQ/ledger-live/pull/19734) [`bb2d2d2`](https://github.com/LedgerHQ/ledger-live/commit/bb2d2d250a1d5b8cde43ba963795d28b10b48be6) Thanks [@ishaba](https://github.com/ishaba)! - remove umee chain related code
+
+- [#19875](https://github.com/LedgerHQ/ledger-live/pull/19875) [`59a6c82`](https://github.com/LedgerHQ/ledger-live/commit/59a6c82a784b4f484b5fb6a5ea42b6ebb1115818) Thanks [@sarneijim](https://github.com/sarneijim)! - Gate the large-screen upsell modal by the enabled state of the selected opt-in variant
+
+- [#18413](https://github.com/LedgerHQ/ledger-live/pull/18413) [`c498e25`](https://github.com/LedgerHQ/ledger-live/commit/c498e25ca9f4b6ef5c4e3dfd370dab44ccdebc0f) Thanks [@sarneijim](https://github.com/sarneijim)! - Remove lldActionCarousel feature flag (always enabled with variant A)
+
+## 0.14.0
+
+### Minor Changes
+
+- [#19252](https://github.com/LedgerHQ/ledger-live/pull/19252) [`c75213b`](https://github.com/LedgerHQ/ledger-live/commit/c75213b0c649cc0acfdbabacd62e07848ccee842) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(lwm): switch to deviceaction instead of die with FF on new send flow
+
+- [#19568](https://github.com/LedgerHQ/ledger-live/pull/19568) [`45584e4`](https://github.com/LedgerHQ/ledger-live/commit/45584e4b87ad8ffea9a0e6ba48e196d14164c84a) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Show an estimated label for configured providers on completed mobile swaps.
+
+- [#19444](https://github.com/LedgerHQ/ledger-live/pull/19444) [`ea792bc`](https://github.com/LedgerHQ/ledger-live/commit/ea792bc06b9eb9931d75823bff63186202d3e2de) Thanks [@deepyjr](https://github.com/deepyjr)! - Add eligible address family configuration to Contacts feature flags.
+
+- [#19377](https://github.com/LedgerHQ/ledger-live/pull/19377) [`75a33a8`](https://github.com/LedgerHQ/ledger-live/commit/75a33a8ef74a6eef6236bb5db873cadd35643705) Thanks [@deepyjr](https://github.com/deepyjr)! - Register Contacts feature flags and expose Contacts flow access.
+
+- [#19380](https://github.com/LedgerHQ/ledger-live/pull/19380) [`bae43dd`](https://github.com/LedgerHQ/ledger-live/commit/bae43ddc50439d2a7f18852f2b727e24de0169ed) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add `card` boolean param to `lwdPayTab` and `lwmPayTab` feature flags
+
+- [#19589](https://github.com/LedgerHQ/ledger-live/pull/19589) [`9479c28`](https://github.com/LedgerHQ/ledger-live/commit/9479c284321915f7d5139746f3f924b1ad2685c3) Thanks [@sarneijim](https://github.com/sarneijim)! - Keep large-screen upsell eligibility read-only and align the fallback CTA link
+
+- [#19378](https://github.com/LedgerHQ/ledger-live/pull/19378) [`fd9da5e`](https://github.com/LedgerHQ/ledger-live/commit/fd9da5e2b3a1e5300d012b826f3707535d07b1d9) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add lwmPayTab feature flag for the Pay Tab in LWM
+
+- [#19367](https://github.com/LedgerHQ/ledger-live/pull/19367) [`8238860`](https://github.com/LedgerHQ/ledger-live/commit/8238860c893b0688d2c59a3e042d7a227031547a) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - add lwdPayTab feature flag for desktop Pay tab
+
+## 0.14.0-next.0
+
+### Minor Changes
+
+- [#19252](https://github.com/LedgerHQ/ledger-live/pull/19252) [`c75213b`](https://github.com/LedgerHQ/ledger-live/commit/c75213b0c649cc0acfdbabacd62e07848ccee842) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(lwm): switch to deviceaction instead of die with FF on new send flow
+
+- [#19568](https://github.com/LedgerHQ/ledger-live/pull/19568) [`45584e4`](https://github.com/LedgerHQ/ledger-live/commit/45584e4b87ad8ffea9a0e6ba48e196d14164c84a) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Show an estimated label for configured providers on completed mobile swaps.
+
+- [#19444](https://github.com/LedgerHQ/ledger-live/pull/19444) [`ea792bc`](https://github.com/LedgerHQ/ledger-live/commit/ea792bc06b9eb9931d75823bff63186202d3e2de) Thanks [@deepyjr](https://github.com/deepyjr)! - Add eligible address family configuration to Contacts feature flags.
+
+- [#19377](https://github.com/LedgerHQ/ledger-live/pull/19377) [`75a33a8`](https://github.com/LedgerHQ/ledger-live/commit/75a33a8ef74a6eef6236bb5db873cadd35643705) Thanks [@deepyjr](https://github.com/deepyjr)! - Register Contacts feature flags and expose Contacts flow access.
+
+- [#19380](https://github.com/LedgerHQ/ledger-live/pull/19380) [`bae43dd`](https://github.com/LedgerHQ/ledger-live/commit/bae43ddc50439d2a7f18852f2b727e24de0169ed) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add `card` boolean param to `lwdPayTab` and `lwmPayTab` feature flags
+
+- [#19589](https://github.com/LedgerHQ/ledger-live/pull/19589) [`9479c28`](https://github.com/LedgerHQ/ledger-live/commit/9479c284321915f7d5139746f3f924b1ad2685c3) Thanks [@sarneijim](https://github.com/sarneijim)! - Keep large-screen upsell eligibility read-only and align the fallback CTA link
+
+- [#19378](https://github.com/LedgerHQ/ledger-live/pull/19378) [`fd9da5e`](https://github.com/LedgerHQ/ledger-live/commit/fd9da5e2b3a1e5300d012b826f3707535d07b1d9) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add lwmPayTab feature flag for the Pay Tab in LWM
+
+- [#19367](https://github.com/LedgerHQ/ledger-live/pull/19367) [`8238860`](https://github.com/LedgerHQ/ledger-live/commit/8238860c893b0688d2c59a3e042d7a227031547a) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - add lwdPayTab feature flag for desktop Pay tab
+
 ## 0.13.0
 
 ### Minor Changes

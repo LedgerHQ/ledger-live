@@ -1,6 +1,6 @@
 {
   "name": "@devtools/relay",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "private": true,
   "description": "DevTools relay hub — localhost-only WebSocket forwarder (dev-only, never shipped)",
   "main": "src/index.ts",
@@ -14,13 +14,16 @@
   },
   "dependencies": {
     "@devtools/transport": "workspace:*",
+    "qrcode-terminal": "^0.12.0",
     "ws": "catalog:"
   },
   "devDependencies": {
     "@swc/core": "catalog:",
+    "@devtools/protocols": "workspace:*",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
+    "@types/qrcode-terminal": "^0.12.0",
     "@types/ws": "catalog:",
     "jest": "catalog:",
     "tsx": "catalog:",

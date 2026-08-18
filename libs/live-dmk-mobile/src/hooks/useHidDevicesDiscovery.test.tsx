@@ -7,6 +7,7 @@ import {
 import { DiscoveredDevice } from "@ledgerhq/device-management-kit";
 import { Observable, Subject } from "rxjs";
 import { renderHook, act } from "@testing-library/react";
+import { buildUsbCompatDeviceId } from "../transport/usbCompatDeviceId";
 
 jest.mock("./useDeviceManagementKit", () => ({
   getDeviceManagementKit: jest.fn(),
@@ -90,35 +91,35 @@ describe("mapDiscoveredDeviceToHIDDiscoveredDevice", () => {
     // then
     expect(devices).toEqual([
       {
-        deviceId: "usb|id0",
+        deviceId: buildUsbCompatDeviceId("id0"),
         deviceName: "Ledger Flex",
         modelId: "europa",
         wired: true,
         discoveredDevice: discoveredDevices[0],
       },
       {
-        deviceId: "usb|id1",
+        deviceId: buildUsbCompatDeviceId("id1"),
         deviceName: "Ledger Stax",
         modelId: "stax",
         wired: true,
         discoveredDevice: discoveredDevices[1],
       },
       {
-        deviceId: "usb|id2",
+        deviceId: buildUsbCompatDeviceId("id2"),
         deviceName: "Ledger Nano X",
         modelId: "nanoX",
         wired: true,
         discoveredDevice: discoveredDevices[2],
       },
       {
-        deviceId: "usb|id3",
+        deviceId: buildUsbCompatDeviceId("id3"),
         deviceName: "Ledger Nano S",
         modelId: "nanoS",
         wired: true,
         discoveredDevice: discoveredDevices[3],
       },
       {
-        deviceId: "usb|id4",
+        deviceId: buildUsbCompatDeviceId("id4"),
         deviceName: "Ledger Nano S Plus",
         modelId: "nanoSP",
         wired: true,

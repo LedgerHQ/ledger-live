@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen } from "@tests/test-renderer";
 import { TrackScreen, track } from "~/analytics";
-import { SourceFlowProvider } from "../utils/SourceFlowContext";
+import { DeviceIntentTrackingProvider } from "../utils/DeviceIntentTrackingContext";
 import { PAGE_DEVICE_ACTION } from "../utils/trackDeviceIntent";
 import { InvalidOperation } from "./InvalidOperation";
 
@@ -19,9 +19,9 @@ const mockedTrack = jest.mocked(track);
 
 function renderState(props: Partial<React.ComponentProps<typeof InvalidOperation>> = {}) {
   return render(
-    <SourceFlowProvider value="my_ledger">
+    <DeviceIntentTrackingProvider value={{ sourceFlow: "my_ledger" }}>
       <InvalidOperation onClose={jest.fn()} error={null} {...props} />
-    </SourceFlowProvider>,
+    </DeviceIntentTrackingProvider>,
   );
 }
 
@@ -34,11 +34,9 @@ describe("InvalidOperation", () => {
     renderState();
 
     expect(screen.getByTestId("device-intent-executor-invalid-operation")).toBeVisible();
-    expect(screen.getByText("Invalid state")).toBeVisible();
+    expect(screen.getByText("An error occurred")).toBeVisible();
     expect(
-      screen.getByText(
-        "An error occurred. Please try again or contact Ledger support if the issue persists.",
-      ),
+      screen.getByText("Try again or contact Ledger Support if the issue continues."),
     ).toBeVisible();
     expect(screen.getByText("Close")).toBeVisible();
   });

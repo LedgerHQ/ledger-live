@@ -1,14 +1,7 @@
 import { useCallback, useState, useRef } from "react";
 import { MemberCredentials, TrustchainMember } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { createQRCodeCandidateInstance } from "@ledgerhq/ledger-key-ring-protocol/qrcode/index";
-import {
-  ScannedOldImportQrCode,
-  ScannedInvalidQrCode,
-  InvalidDigitsError,
-  NoTrustchainInitialized,
-  TrustchainAlreadyInitialized,
-  TrustchainAlreadyInitializedWithOtherSeed,
-} from "@ledgerhq/ledger-key-ring-protocol/errors";
+import { NoTrustchainInitialized } from "@ledgerhq/ledger-key-ring-protocol/errors";
 import { setTrustchain, trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { useNavigation } from "@react-navigation/native";
@@ -77,26 +70,27 @@ export const useSyncWithQrCode = () => {
         onSyncFinished();
         return true;
       } catch (e) {
-        if (e instanceof ScannedOldImportQrCode) {
+        const eName = (e as { name?: string })?.name;
+        if (eName === "ScannedOldImportQrCode") {
           setCurrentStep(Steps.ScannedOldImportQrCode);
           return;
-        } else if (e instanceof ScannedInvalidQrCode) {
+        } else if (eName === "ScannedInvalidQrCode") {
           setCurrentStep(Steps.ScannedInvalidQrCode);
           return;
-        } else if (e instanceof InvalidDigitsError) {
+        } else if (eName === "InvalidDigitsError") {
           setCurrentStep(Steps.SyncError);
           return;
-        } else if (e instanceof NoTrustchainInitialized) {
+        } else if (eName === "NoTrustchainInitialized") {
           setCurrentStep(Steps.UnbackedError);
           return;
-        } else if (e instanceof TrustchainAlreadyInitialized) {
-          if (e.message === trustchain?.rootId) {
+        } else if (eName === "TrustchainAlreadyInitialized") {
+          if ((e as Error)?.message === trustchain?.rootId) {
             setCurrentStep(Steps.AlreadyBacked);
           } else {
             setCurrentStep(Steps.BackedWithDifferentSeeds);
           }
           return;
-        } else if (e instanceof TrustchainAlreadyInitializedWithOtherSeed) {
+        } else if (eName === "TrustchainAlreadyInitializedWithOtherSeed") {
           setCurrentStep(Steps.BackedWithDifferentSeeds);
           return;
         }

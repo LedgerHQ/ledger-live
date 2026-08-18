@@ -1,5 +1,8 @@
 # @ledgerhq/coin-tester-evm
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 This package contains the deterministic testing infrastructure for EVM-based coins in Ledger Live.
 
 ## Features

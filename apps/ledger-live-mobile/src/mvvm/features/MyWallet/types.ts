@@ -1,4 +1,5 @@
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import type { ContactId } from "@domain/entity-contact";
 import { ScreenName } from "~/const";
 
 export type MyWalletNavigatorStackParamList = {
@@ -12,4 +13,5 @@ export type MyWalletNavigatorStackParamList = {
     | undefined;
   [ScreenName.MyWalletHelp]: undefined;
   [ScreenName.MyWalletContacts]: undefined;
+  [ScreenName.MyWalletContactDetail]: { contactId: ContactId };
 };

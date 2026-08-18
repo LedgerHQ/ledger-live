@@ -1,4 +1,4 @@
-import { setEnv } from "@ledgerhq/live-env";
+import { setEnv } from "@shared/env";
 import { registerAllCoins } from "@ledgerhq/live-common/coin-modules/load-all-coins";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { liveConfig } from "@ledgerhq/live-common/config/sharedConfig";
@@ -39,6 +39,13 @@ import mockGorhomBottomSheet from "@gorhom/bottom-sheet/mock";
 import mockAsyncStorage from "@react-native-async-storage/async-storage/jest/async-storage-mock";
 import mockLocalize from "react-native-localize/mock";
 import { EventEmitter } from "events";
+
+jest.mock("expo-crypto", () => ({
+  CryptoDigestAlgorithm: { SHA256: "SHA-256" },
+  CryptoEncoding: { BASE64: "base64" },
+  getRandomBytesAsync: jest.fn(() => Promise.resolve(new Uint8Array(32))),
+  digestStringAsync: jest.fn(() => Promise.resolve("Y29kZS1jaGFsbGVuZ2U=")),
+}));
 
 // Disable max listeners warning for MSW (known issue with multiple tests)
 EventEmitter.defaultMaxListeners = 0;
@@ -200,14 +207,7 @@ jest.mock("~/analytics/segment", () => ({
   track: jest.fn(),
   setAnalyticsFeatureFlagMethod: jest.fn(),
   screen: jest.fn(),
-  useAnalytics: jest.fn(() => ({
-    track: jest.fn(),
-    screen: jest.fn(),
-    identify: jest.fn(),
-    group: jest.fn(),
-    alias: jest.fn(),
-    reset: jest.fn(),
-  })),
+  usePageNameFromRoute: jest.fn(() => "portfolio_navigator"),
 }));
 
 // Mock of Native Modules
@@ -229,7 +229,19 @@ jest.mock("react-redux", () => {
 
 jest.mock("@react-native-async-storage/async-storage", () => mockAsyncStorage);
 
-jest.mock("@gorhom/bottom-sheet", () => mockGorhomBottomSheet);
+// Upstream mock's dismiss() is a no-op that never fires onDismiss, breaking any
+// queued-bottom-sheet cleanup that relies on it. Patched locally until the fix is merged:
+// https://github.com/gorhom/react-native-bottom-sheet/pull/2714
+// TODO: remove this override once @gorhom/bottom-sheet ships the fix.
+jest.mock("@gorhom/bottom-sheet", () => {
+  class BottomSheetModal extends mockGorhomBottomSheet.BottomSheetModal {
+    dismiss() {
+      super.dismiss();
+      this.props?.onDismiss?.();
+    }
+  }
+  return { ...mockGorhomBottomSheet, BottomSheetModal };
+});
 
 jest.mock("react-native-version-number", () => ({
   appVersion: "1.0.0",

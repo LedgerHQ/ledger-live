@@ -1,5 +1,6 @@
 import type { SignedOperation } from "@ledgerhq/types-live";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import { AccountFilters, CurrencyFilters } from "./filters";
 import {
   Account as PlatformAccount,

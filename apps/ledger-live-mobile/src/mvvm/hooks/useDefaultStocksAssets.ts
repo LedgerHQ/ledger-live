@@ -1,9 +1,9 @@
 import { useMemo } from "react";
-import { useStocksData } from "@ledgerhq/live-common/dada-client/hooks/useStocksData";
 import {
+  useStocksData,
   selectTopStocks,
   type StockSuggestion,
-} from "@ledgerhq/live-common/dada-client/utils/assetDiscovery";
+} from "@features/platform-aggregated-assets";
 import VersionNumber from "react-native-version-number";
 
 interface DefaultStocksAssets {

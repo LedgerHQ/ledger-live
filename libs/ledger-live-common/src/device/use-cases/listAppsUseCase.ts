@@ -3,7 +3,7 @@ import Transport from "@ledgerhq/hw-transport";
 import { DeviceInfo } from "@ledgerhq/types-live";
 import { listApps } from "../../apps/listApps";
 import { ListAppsEvent } from "../../apps";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { HttpManagerApiRepositoryFactory } from "../factories/HttpManagerApiRepositoryFactory";
 import { ManagerApiRepository } from "@ledgerhq/device-core";

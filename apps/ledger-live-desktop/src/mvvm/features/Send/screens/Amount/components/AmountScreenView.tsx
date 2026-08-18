@@ -17,10 +17,9 @@ export function AmountScreenView({
   secondaryValue,
   feesRowLabel,
   feesRowValue,
+  feesRowSecondaryValue,
   feesRowStrategyLabel,
-  feePresetOptions,
-  fiatByPreset,
-  legendByPreset,
+  feeSelector,
   quickActions,
   showQuickActions,
   amountMessage,
@@ -28,10 +27,6 @@ export function AmountScreenView({
   reviewShowIcon,
   reviewDisabled,
   reviewLoading,
-  selectedFeeStrategy,
-  onSelectFeeStrategy,
-  onOpenCustomFees,
-  onSelectCoinControl,
   onReview,
   onGetFunds,
   onMessageLinkPress,
@@ -61,14 +56,9 @@ export function AmountScreenView({
       <AmountFooter
         feesRowLabel={feesRowLabel}
         feesRowValue={feesRowValue}
+        feesRowSecondaryValue={feesRowSecondaryValue}
         feesRowStrategyLabel={feesRowStrategyLabel}
-        selectedFeeStrategy={selectedFeeStrategy}
-        feePresetOptions={feePresetOptions}
-        fiatByPreset={fiatByPreset}
-        legendByPreset={legendByPreset}
-        onSelectFeeStrategy={onSelectFeeStrategy}
-        onSelectCustomFees={onOpenCustomFees}
-        onSelectCoinControl={onSelectCoinControl}
+        feeSelector={feeSelector}
         reviewLabel={reviewLabel}
         reviewShowIcon={reviewShowIcon}
         reviewDisabled={reviewDisabled}

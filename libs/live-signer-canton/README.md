@@ -6,4 +6,7 @@
 
 ## @ledgerhq/live-signer-canton
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 Ledger Hardware Wallet Canton JavaScript bindings via legacy hw-app-canton.

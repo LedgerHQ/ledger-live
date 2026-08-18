@@ -2,9 +2,9 @@ import React, { FC, useState, useEffect } from "react";
 import { useTranslation } from "~/context/Locale";
 import AddAccountDrawer from "LLM/features/Accounts/screens/AddAccount";
 import { track } from "~/analytics";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { AddAccountButton as AddAccountButtonComponent } from "@ledgerhq/native-ui/pre-ldls/components/index";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 
 type Props = {

@@ -1,7 +1,7 @@
 import { AssetInfo } from "@ledgerhq/coin-module-framework/api/types";
-import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
-import { EvmCoinConfig, setCoinConfig } from "../config";
+import type { EvmConfigInfo, EvmContext } from "../config";
+import { createMockEvmContext } from "../fixtures/context.fixtures";
 import { getExplorerApi } from "../network/explorer";
 import { getNodeApi } from "../network/node";
 import { mockNodeApi } from "../network/node/node.fixtures";
@@ -25,11 +25,12 @@ const mockGetNodeApi = jest.mocked(getNodeApi);
 const mockGetExplorerApi = jest.mocked(getExplorerApi);
 const mockGetStakes = jest.mocked(getStakes);
 
-const setNativeContracts = (nativeContracts?: string[]) =>
-  setCoinConfig(() => ({ info: { nativeContracts } }) as unknown as EvmCoinConfig);
-
 describe("getBalance", () => {
   const nodeApiMock = mockNodeApi();
+  let context: EvmContext;
+  const setNativeContracts = (nativeContracts?: string[]) => {
+    context = createMockEvmContext({ nativeContracts } as Partial<EvmConfigInfo>);
+  };
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -126,7 +127,7 @@ describe("getBalance", () => {
       ],
     });
 
-    expect(await getBalance({} as CryptoCurrency, "address")).toEqual(expected);
+    expect(await getBalance(context, "", "address")).toEqual(expected);
   });
 
   it.each([
@@ -187,10 +188,10 @@ describe("getBalance", () => {
         getOperations: jest.fn().mockResolvedValue(operations),
       });
 
-      const currency = {} as unknown as CryptoCurrency;
+      const currency = "";
       const userAddress = "0x000";
 
-      await getBalance(currency, userAddress, { includeAssets });
+      await getBalance(context, currency, userAddress, { includeAssets });
 
       expect(nodeApiMock.getTokenBalance).toHaveBeenCalledTimes(expected.length);
       for (const balance of expected) {
@@ -240,7 +241,7 @@ describe("getBalance", () => {
       items: [],
     });
 
-    const result = await getBalance({} as CryptoCurrency, "address");
+    const result = await getBalance(context, "", "address");
 
     expect(result).toEqual([
       { asset: { type: "native" }, value: 10n },
@@ -274,7 +275,7 @@ describe("getBalance", () => {
         }),
       });
 
-      const result = await getBalance({} as CryptoCurrency, "address");
+      const result = await getBalance(context, "", "address");
 
       expect(nodeApiMock.getTokenBalance).toHaveBeenCalledTimes(1);
       expect(nodeApiMock.getTokenBalance).toHaveBeenCalledWith(
@@ -309,7 +310,7 @@ describe("getBalance", () => {
         }),
       });
 
-      await getBalance({} as CryptoCurrency, "address");
+      await getBalance(context, "", "address");
 
       expect(nodeApiMock.getTokenBalance).not.toHaveBeenCalled();
     });
@@ -329,7 +330,7 @@ describe("getBalance", () => {
         }),
       });
 
-      await getBalance({} as CryptoCurrency, "address");
+      await getBalance(context, "", "address");
 
       expect(nodeApiMock.getTokenBalance).toHaveBeenCalledTimes(2);
     });
@@ -347,7 +348,7 @@ describe("getBalance", () => {
       items: [],
     });
 
-    const result = await getBalance({} as CryptoCurrency, "address");
+    const result = await getBalance(context, "", "address");
     expect(result[0]).toEqual({
       value: BigInt("0"),
       asset: { type: "native" },

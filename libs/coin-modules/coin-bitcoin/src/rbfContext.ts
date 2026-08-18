@@ -1,13 +1,14 @@
 import { BigNumber } from "bignumber.js";
 import { Transaction } from "bitcoinjs-lib";
-import wallet, { getWalletAccount, Account as WalletAccount } from "./wallet-btc";
+import wallet, { Account as WalletAccount } from "@ledgerhq/wallet-btc/index";
+import { getWalletAccount } from "./getWalletAccount";
 import { Account } from "@ledgerhq/types-live";
 import { fromWalletUtxo } from "./synchronisation";
 import { getAccountNetworkInfo } from "./getAccountNetworkInfo";
 import type { NetworkInfo } from "./types";
 import { getMinReplacementFeeRateSatVb, RBF_SEQUENCE_THRESHOLD } from "./rbfFees";
-import { Address } from "./wallet-btc/storage/types";
-import { scriptToAddress } from "./wallet-btc/utils";
+import { Address } from "@ledgerhq/wallet-btc/storage/types";
+import { scriptToAddress } from "@ledgerhq/wallet-btc/utils";
 
 export async function getAmountAndRecipient(
   tx: Transaction,

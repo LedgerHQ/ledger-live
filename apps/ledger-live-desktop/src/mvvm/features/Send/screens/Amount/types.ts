@@ -1,7 +1,10 @@
 import type { ChangeEvent } from "react";
-import type { FeePresetOption } from "../../hooks/useFeePresetOptions";
-import type { FeeFiatMap } from "../../hooks/useFeePresetFiatValues";
-import type { FeePresetLegendMap } from "../../hooks/useFeePresetLegends";
+import type {
+  FeeSelectorOptionKind,
+  FeeSelectorOption,
+} from "@ledgerhq/live-common/flows/send/utils/feeSelectorOptions";
+
+export type { FeeSelectorOptionKind, FeeSelectorOption };
 
 export type AmountScreenMessage = Readonly<{
   type: "error" | "warning" | "info";
@@ -47,15 +50,15 @@ type AmountInputProps = Readonly<{
 type FeesProps = Readonly<{
   feesRowLabel: string;
   feesRowValue: string;
+  feesRowSecondaryValue: string | null;
   feesRowStrategyLabel: string;
-  feePresetOptions: readonly FeePresetOption[];
-  fiatByPreset: FeeFiatMap;
-  legendByPreset: FeePresetLegendMap;
   showNetworkFees: boolean;
   selectedFeeStrategy: string | null;
-  onSelectFeeStrategy: (strategy: string) => void;
-  onOpenCustomFees: () => void;
-  onSelectCoinControl: () => void;
+  feeSelector: Readonly<{
+    options: readonly FeeSelectorOption[];
+    selectedId: string;
+    canOpen: boolean;
+  }>;
 }>;
 
 type QuickActionsProps = Readonly<{
@@ -79,6 +82,5 @@ export type AmountScreenViewModel = Omit<
   "onReview" | "onGetFunds" | "onMessageLinkPress"
 > &
   Readonly<{
-    showFeePresets: boolean;
-    onOpenCustomFees: () => void;
+    inputMode: "fiat" | "crypto";
   }>;

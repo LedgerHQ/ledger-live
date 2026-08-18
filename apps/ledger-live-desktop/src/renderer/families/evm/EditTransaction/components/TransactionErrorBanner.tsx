@@ -1,4 +1,4 @@
-import { NotEnoughGas, TransactionHasBeenValidatedError } from "@ledgerhq/errors";
+import { TransactionHasBeenValidatedError } from "@ledgerhq/live-common/errors";
 import React from "react";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 
@@ -13,7 +13,7 @@ export const TransactionErrorBanner = ({
     return <ErrorBanner error={new TransactionHasBeenValidatedError()} />;
   }
 
-  if (errors.gasPrice instanceof NotEnoughGas) {
+  if (errors.gasPrice?.name === "NotEnoughGas") {
     return <ErrorBanner error={errors.gasPrice} fallback={{ description: <></> }} />;
   }
 

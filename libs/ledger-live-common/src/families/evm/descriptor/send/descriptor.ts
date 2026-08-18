@@ -22,6 +22,7 @@ function getEstimatedMs(strategy: string): number {
 }
 
 export const evmSendDescriptor: SendDescriptor = {
+  addressBook: true,
   inputs: {
     recipientSupportsDomain: true,
   },

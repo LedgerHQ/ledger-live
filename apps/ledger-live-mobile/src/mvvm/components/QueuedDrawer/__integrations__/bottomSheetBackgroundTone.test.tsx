@@ -1,10 +1,12 @@
 import React from "react";
 import { Text } from "react-native";
 import { render, screen } from "@tests/test-renderer";
-import type { BottomSheetBackgroundTone } from "LLM/contexts/BottomSheetBackgroundContext";
-import { useBottomSheetBackgroundTone } from "LLM/hooks/useBottomSheetBackgroundTone";
-import QueuedDrawerBottomSheet from "../QueuedDrawerBottomSheet";
-import QueuedDrawersContextProvider from "../QueuedDrawersContextProvider";
+import {
+  QueuedBottomSheet,
+  useBottomSheetBackgroundTone,
+  type BottomSheetBackgroundTone,
+} from "@shared/ui-queued-bottom-sheet";
+import QueuedBottomSheetsProvider from "../QueuedBottomSheetsProvider";
 
 const statusGradientTones = ["error", "info", "success"] as const;
 type MockBottomSheetBackgroundProps = {
@@ -46,11 +48,11 @@ jest.mock("@react-navigation/native", () => ({
   useIsFocused: () => true,
 }));
 
-function renderQueuedDrawerBottomSheet(children: React.ReactNode) {
+function renderQueuedBottomSheet(children: React.ReactNode) {
   return render(
-    <QueuedDrawersContextProvider>
-      <QueuedDrawerBottomSheet>{children}</QueuedDrawerBottomSheet>
-    </QueuedDrawersContextProvider>,
+    <QueuedBottomSheetsProvider>
+      <QueuedBottomSheet>{children}</QueuedBottomSheet>
+    </QueuedBottomSheetsProvider>,
   );
 }
 
@@ -66,7 +68,7 @@ function expectNoStatusGradient() {
   });
 }
 
-describe("QueuedDrawerBottomSheet background tone integration", () => {
+describe("QueuedBottomSheet background tone integration", () => {
   beforeEach(() => {
     mockBottomSheetProps.length = 0;
   });
@@ -76,7 +78,7 @@ describe("QueuedDrawerBottomSheet background tone integration", () => {
       "GIVEN a component inside the bottom sheet WHEN it requests the %s tone THEN the matching background gradient is displayed in the same render pass",
       tone => {
         // GIVEN / WHEN
-        renderQueuedDrawerBottomSheet(<BackgroundToneRequester tone={tone} />);
+        renderQueuedBottomSheet(<BackgroundToneRequester tone={tone} />);
 
         // THEN
         const lastProps = mockBottomSheetProps[mockBottomSheetProps.length - 1];
@@ -89,7 +91,7 @@ describe("QueuedDrawerBottomSheet background tone integration", () => {
   describe("undefined tone requests", () => {
     it("GIVEN a component inside the bottom sheet WHEN it requests an undefined tone THEN no background gradient is displayed", () => {
       // GIVEN / WHEN
-      renderQueuedDrawerBottomSheet(<BackgroundToneRequester tone={undefined} />);
+      renderQueuedBottomSheet(<BackgroundToneRequester tone={undefined} />);
 
       // THEN
       const lastProps = mockBottomSheetProps[mockBottomSheetProps.length - 1];
@@ -101,16 +103,14 @@ describe("QueuedDrawerBottomSheet background tone integration", () => {
   describe("request cleanup", () => {
     it("GIVEN a component requested a defined tone WHEN that component unmounts THEN the background gradient is cleared in the same render pass", () => {
       // GIVEN
-      const { rerender } = renderQueuedDrawerBottomSheet(
-        <BackgroundToneRequester tone="success" />,
-      );
+      const { rerender } = renderQueuedBottomSheet(<BackgroundToneRequester tone="success" />);
       expect(screen.getByTestId("bottom-sheet-status-gradient-success")).toBeVisible();
 
       // WHEN
       rerender(
-        <QueuedDrawersContextProvider>
-          <QueuedDrawerBottomSheet>{null}</QueuedDrawerBottomSheet>
-        </QueuedDrawersContextProvider>,
+        <QueuedBottomSheetsProvider>
+          <QueuedBottomSheet>{null}</QueuedBottomSheet>
+        </QueuedBottomSheetsProvider>,
       );
 
       // THEN
@@ -123,18 +123,18 @@ describe("QueuedDrawerBottomSheet background tone integration", () => {
   describe("successive different tone requesters", () => {
     it("GIVEN a component requesting one tone unmounts and another requesting a different tone mounts THEN the background gradient switches to the new tone with no residual gradient in the same render pass", () => {
       // GIVEN
-      const { rerender } = renderQueuedDrawerBottomSheet(
+      const { rerender } = renderQueuedBottomSheet(
         <BackgroundToneRequester key="first" tone="success" />,
       );
       expect(screen.getByTestId("bottom-sheet-status-gradient-success")).toBeVisible();
 
       // WHEN
       rerender(
-        <QueuedDrawersContextProvider>
-          <QueuedDrawerBottomSheet>
+        <QueuedBottomSheetsProvider>
+          <QueuedBottomSheet>
             <BackgroundToneRequester key="second" tone="error" />
-          </QueuedDrawerBottomSheet>
-        </QueuedDrawersContextProvider>,
+          </QueuedBottomSheet>
+        </QueuedBottomSheetsProvider>,
       );
 
       // THEN

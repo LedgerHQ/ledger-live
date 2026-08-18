@@ -1,6 +1,10 @@
 import Config from "react-native-config";
-import { configureStore, StoreEnhancer } from "@reduxjs/toolkit";
+import { configureStore, type StoreEnhancer } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/query";
+import { authApiExtra, authEnvironmentSelector } from "@shared/auth";
+import { AuthSDK } from "@ledgerhq/ledger-auth";
+import { LkrpIdentityProvider } from "@ledgerhq/ledger-key-ring-protocol";
+import type { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import NetInfo from "@react-native-community/netinfo";
 import { Platform } from "react-native";
 import VersionNumber from "react-native-version-number";
@@ -9,18 +13,30 @@ import { rebootMiddleware } from "~/middleware/rebootMiddleware";
 import { rozeniteDevToolsEnhancer } from "@rozenite/redux-devtools-plugin";
 import { applyLlmRTKApiMiddlewares } from "~/context/rtkQueryApi";
 import { setupCryptoAssetsStore } from "~/config/bridge-setup";
-import { setupRecentAddressesStore } from "LLM/storage/recentAddresses";
-import { createIdentitiesSyncMiddleware, pushDevicesApiExtra } from "@domain/api-push-devices";
+import { setSwapQuotesStore } from "@ledgerhq/live-common/wallet-api/Exchange/quotes/state-manager/store";
+import { connectRecentAddressesStore } from "@domain/entity-recent-addresses";
+import { recentAddressesSelector } from "~/reducers/wallet";
+import { createIdentitiesSyncMiddleware } from "@domain/api-push-devices";
 import { State } from "~/reducers/types";
 import { canPushDeviceIdsSelector, languageSelector } from "~/reducers/settings";
-import { getEnv } from "@ledgerhq/live-env";
-import { calApiExtra } from "@domain/api-currency-token";
-import { cvsApiExtra } from "@domain/api-currency-fiat";
-import { marketSentimentApiExtra } from "@domain/api-market-sentiment";
-import { altcoinsSentimentApiExtra } from "@domain/api-altcoins-sentiment";
-import { payCardApiExtra } from "@domain/api-pay-card";
-import { createFeatureFlagsMiddleware, type PartialFeatures } from "@shared/feature-flags";
+import { getEnv } from "@shared/env";
+import {
+  calApiExtra,
+  cardApiExtra,
+  coinMarketCapApiExtra,
+  cvsApiExtra,
+  pushDevicesApiExtra,
+  swapApiExtra,
+} from "@shared/api-services";
+import { getCardSessionToken, refreshCardSession } from "@features/platform-card";
+import {
+  createFeatureFlagsMiddleware,
+  selectFeature,
+  type PartialFeatures,
+} from "@shared/feature-flags";
 import { fetchRemoteFlags } from "~/firebase/remoteConfig";
+import { sleepingListener } from "./sleepingListener";
+import { createPkcePairWithExpoCrypto } from "~/helpers/pkce";
 
 export const store = configureStore({
   reducer: reducers,
@@ -39,19 +55,43 @@ export const store = configureStore({
             ...cvsApiExtra({
               countervaluesServiceUrl: getEnv("LEDGER_COUNTERVALUES_API"),
             }),
-            ...marketSentimentApiExtra({
+            ...coinMarketCapApiExtra({
               coinMarketCapApiUrl: getEnv("CMC_API_URL"),
             }),
-            ...altcoinsSentimentApiExtra({
-              coinMarketCapApiUrl: getEnv("CMC_API_URL"),
+            ...cardApiExtra({
+              cardApiBaseUrl: getEnv("CARD_API_URL"),
+              cardBaanxClientKey: getEnv("CARD_BAANX_CLIENT_KEY"),
+              getCardSessionToken,
+              refreshCardSession,
             }),
             ...pushDevicesApiExtra({
               pushDevicesServiceUrl: getEnv("PUSH_DEVICES_SERVICE_URL"),
               ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
             }),
-            ...payCardApiExtra({
-              // LIVE-33829: force mocks until Pay Card API base URL is wired.
-              payCardApiMocksEnabled: true,
+            ...swapApiExtra({
+              swapApiBaseUrl: getEnv("SWAP_API_BASE"),
+              ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
+            }),
+            ...authApiExtra({
+              isFeatureEnabled: (): boolean =>
+                selectFeature(store.getState(), "lwmAuth").enabled ?? false,
+              authProvider: new AuthSDK(
+                {
+                  clientId: getEnv("LEDGER_AUTH_CLIENT_ID"),
+                  keycloakBaseUrl(): string | null {
+                    const environment = authEnvironmentSelector(store.getState());
+                    return environment && getEnv(`LEDGER_AUTH_KEYCLOAK_BASE_URL_${environment}`);
+                  },
+                  keycloakRealm: getEnv("LEDGER_AUTH_KEYCLOAK_REALM"),
+                  disablePkce: true,
+                },
+                {
+                  provider: new LkrpIdentityProvider(
+                    (): TrustchainStore => store.getState().trustchain,
+                  ),
+                  createPkcePair: createPkcePairWithExpoCrypto,
+                },
+              ),
             }),
           },
         },
@@ -75,7 +115,8 @@ export const store = configureStore({
           fetchRemoteFlags,
           getAppLanguage: languageSelector,
         }),
-      ),
+      )
+      .concat(sleepingListener.middleware),
 
   enhancers: getDefaultEnhancers => {
     const enhancers = getDefaultEnhancers();
@@ -98,5 +139,6 @@ setupListeners(store.dispatch, (dispatch, { onOnline, onOffline }) => {
   });
   return unsubscribe;
 });
-setupRecentAddressesStore(store);
+connectRecentAddressesStore(store, recentAddressesSelector);
 setupCryptoAssetsStore(store);
+setSwapQuotesStore(store.dispatch);

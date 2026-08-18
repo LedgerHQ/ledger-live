@@ -3,6 +3,7 @@ module.exports = {
   testEnvironment: "node",
   testPathIgnorePatterns: ["lib/", "lib-es/", ".*\\.integ\\.test\\.[tj]s"],
   workerThreads: true,
+  setupFilesAfterEnv: ["./jest.setup.js"],
   transform: {
     "^.+\\.(t|j)sx?$": [
       "@swc/jest",

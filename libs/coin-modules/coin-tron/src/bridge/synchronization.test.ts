@@ -1,5 +1,5 @@
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account";
 import { makeScanAccounts } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
@@ -76,7 +76,7 @@ const mockTokens: Record<string, TokenCurrency> = {
 };
 
 function installCryptoAssetsStore() {
-  setupMockCryptoAssetsStore({
+  setCryptoAssetsStore({
     findTokenById: async (id: string) => mockTokens[id],
     findTokenByAddressInCurrency: async (address: string, currencyId: string) => {
       if (currencyId !== "tron") return undefined;
@@ -84,6 +84,7 @@ function installCryptoAssetsStore() {
         token => token.contractAddress.toLowerCase() === address.toLowerCase(),
       );
     },
+    getTokensSyncHash: async () => "",
   });
 }
 
@@ -187,7 +188,7 @@ describe("getAccountShape", () => {
       value: new BigNumber(20),
       fee: new BigNumber(5),
     });
-    mockedFetchTronAccountTxs.mockImplementationOnce(async (_addr, predicate) => {
+    mockedFetchTronAccountTxs.mockImplementationOnce(async (_config, _addr, predicate) => {
       const txs = [parentOp, trc10Op, trc20Op];
       predicate([]);
       return txs;

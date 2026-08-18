@@ -9,6 +9,8 @@ export const lldDatadog = flagWith(
     traceSampleRate: z.number().optional(),
     allowedTracingUrls: z.array(z.string()).optional(),
     profilingSampleRate: z.number().optional(),
+    trackUserInteractions: z.boolean().optional(),
+    trackResources: z.boolean().optional(),
   },
   {
     enabled: false,
@@ -19,6 +21,8 @@ export const lldDatadog = flagWith(
       traceSampleRate: 100,
       allowedTracingUrls: ["/^https:\\/\\/[^/]+\\.ledger\\.com(\\/|$)/"],
       profilingSampleRate: 25,
+      trackUserInteractions: true,
+      trackResources: true,
     },
   },
 );

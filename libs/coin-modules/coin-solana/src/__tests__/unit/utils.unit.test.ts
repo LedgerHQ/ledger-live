@@ -1,6 +1,6 @@
 import { clusterApiUrl } from "@solana/web3.js";
 import { getEnv } from "@ledgerhq/live-env";
-import coinConfig from "../../config";
+import type { SolanaCoinConfig } from "../../config";
 import {
   endpointByCurrencyId,
   LEDGER_VALIDATOR_BY_FIGMENT,
@@ -8,15 +8,12 @@ import {
   LEDGER_VALIDATOR_DEFAULT,
 } from "../../utils";
 
-jest.mock("../../config", () => ({
-  __esModule: true,
-  default: { getCoinConfig: jest.fn(), setCoinConfig: jest.fn() },
-}));
-
 jest.mock("@ledgerhq/live-env", () => ({ getEnv: jest.fn() }));
 
-const mockGetCoinConfig = coinConfig.getCoinConfig as jest.Mock;
 const mockGetEnv = getEnv as jest.Mock;
+
+const configWithRpcUrls = (rpcUrls?: SolanaCoinConfig["rpcUrls"]): SolanaCoinConfig =>
+  ({ token2022Enabled: false, legacyOCMSMaxVersion: "1.0.0", rpcUrls }) as SolanaCoinConfig;
 
 describe("utils - endpointByCurrencyId", () => {
   beforeEach(() => {
@@ -27,73 +24,50 @@ describe("utils - endpointByCurrencyId", () => {
     jest.clearAllMocks();
   });
 
-  describe("when coin config is not initialised", () => {
-    beforeEach(() => {
-      mockGetCoinConfig.mockImplementation(() => {
-        throw new Error("MissingCoinConfig");
-      });
-    });
-
-    it("falls back to API_SOLANA_PROXY for solana", () => {
-      expect(endpointByCurrencyId("solana")).toBe("https://proxy.solana.example.com");
-    });
-
-    it("falls back to clusterApiUrl for solana_devnet", () => {
-      expect(endpointByCurrencyId("solana_devnet")).toBe(clusterApiUrl("devnet"));
-    });
-
-    it("falls back to clusterApiUrl for solana_testnet", () => {
-      expect(endpointByCurrencyId("solana_testnet")).toBe(clusterApiUrl("testnet"));
-    });
-  });
-
   describe("when coin config has no rpcUrls", () => {
-    beforeEach(() => {
-      mockGetCoinConfig.mockReturnValue({ token2022Enabled: false, legacyOCMSMaxVersion: "1.0.0" });
-    });
+    const config = configWithRpcUrls(undefined);
 
     it("falls back to API_SOLANA_PROXY for solana", () => {
-      expect(endpointByCurrencyId("solana")).toBe("https://proxy.solana.example.com");
+      expect(endpointByCurrencyId(config, "solana")).toBe("https://proxy.solana.example.com");
     });
 
     it("falls back to clusterApiUrl for solana_devnet", () => {
-      expect(endpointByCurrencyId("solana_devnet")).toBe(clusterApiUrl("devnet"));
+      expect(endpointByCurrencyId(config, "solana_devnet")).toBe(clusterApiUrl("devnet"));
     });
 
     it("falls back to clusterApiUrl for solana_testnet", () => {
-      expect(endpointByCurrencyId("solana_testnet")).toBe(clusterApiUrl("testnet"));
+      expect(endpointByCurrencyId(config, "solana_testnet")).toBe(clusterApiUrl("testnet"));
     });
   });
 
   describe("when coin config provides rpcUrls", () => {
-    beforeEach(() => {
-      mockGetCoinConfig.mockReturnValue({
-        token2022Enabled: false,
-        legacyOCMSMaxVersion: "1.0.0",
-        rpcUrls: {
-          solana: "https://custom-mainnet.example.com",
-          solana_devnet: "https://custom-devnet.example.com",
-          solana_testnet: "https://custom-testnet.example.com",
-        },
-      });
+    const config = configWithRpcUrls({
+      solana: "https://custom-mainnet.example.com",
+      solana_devnet: "https://custom-devnet.example.com",
+      solana_testnet: "https://custom-testnet.example.com",
     });
 
     it("uses the configured mainnet URL", () => {
-      expect(endpointByCurrencyId("solana")).toBe("https://custom-mainnet.example.com");
+      expect(endpointByCurrencyId(config, "solana")).toBe("https://custom-mainnet.example.com");
     });
 
     it("uses the configured devnet URL", () => {
-      expect(endpointByCurrencyId("solana_devnet")).toBe("https://custom-devnet.example.com");
+      expect(endpointByCurrencyId(config, "solana_devnet")).toBe(
+        "https://custom-devnet.example.com",
+      );
     });
 
     it("uses the configured testnet URL", () => {
-      expect(endpointByCurrencyId("solana_testnet")).toBe("https://custom-testnet.example.com");
+      expect(endpointByCurrencyId(config, "solana_testnet")).toBe(
+        "https://custom-testnet.example.com",
+      );
     });
   });
 
   it("throws for unknown currency ids", () => {
-    mockGetCoinConfig.mockReturnValue({});
-    expect(() => endpointByCurrencyId("solana_unknown")).toThrow(/unexpected currency id format/);
+    expect(() => endpointByCurrencyId(configWithRpcUrls(undefined), "solana_unknown")).toThrow(
+      /unexpected currency id format/,
+    );
   });
 });
 

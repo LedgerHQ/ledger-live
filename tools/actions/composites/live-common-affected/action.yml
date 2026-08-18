@@ -1,0 +1,77 @@
+name: live-common-affected
+description: Returns live-common paths affected by the current pull request
+author: gre
+
+outputs:
+  is-affected:
+    description: "boolean that tells if code changed"
+    value: ${{ steps.affected.outputs.is-affected }}
+  paths:
+    description: "a list of main directories"
+    value: ${{ steps.affected.outputs.paths }}
+  coins:
+    description: "a list of affected coin names"
+    value: ${{ steps.affected.outputs.coins }}
+
+runs:
+  using: composite
+  steps:
+    - id: affected
+      uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+      with:
+        script: |
+          if (!context.payload.pull_request) {
+            core.setOutput('is-affected', 'false');
+            core.setOutput('paths', '');
+            core.setOutput('coins', '');
+            core.info('Not a pull request — skipping diff');
+            return;
+          }
+
+          const GENERIC_COIN_SERVICE_CHAINS = ['evm', 'xrp', 'stellar', 'tezos'];
+
+          const files = await github.paginate(github.rest.pulls.listFiles, {
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            pull_number: context.payload.pull_request.number,
+            per_page: 100,
+          }).then(fs => fs.map(f => f.filename));
+
+          const pattern = /live-common\/src\/([^/]+)\/([^/]+)|coin-modules\/([^/]+)|coin-tester(?:-modules)?\/([^/]+)|ledger-wallet-framework\/([^/]+)/;
+
+          const coins = new Set();
+          const paths = new Set();
+
+          for (const file of files) {
+            const m = file.match(pattern);
+            if (!m) continue;
+
+            const [full, firstFolder, secondFolder] = m;
+
+            if (full.startsWith('coin-modules/')) {
+              coins.add(full.replace(/^.*coin-/, ''));
+            } else if (full.startsWith('live-common/src/families/')) {
+              coins.add(full.replace(/^live-common\/src\/families\//, ''));
+            }
+
+            if (firstFolder === 'families') {
+              paths.add(`families/${secondFolder}`);
+            } else if (firstFolder === 'bridge' && secondFolder === 'generic-coin-framework') {
+              for (const chain of GENERIC_COIN_SERVICE_CHAINS) paths.add(chain);
+            } else {
+              paths.add(firstFolder || full);
+            }
+          }
+
+          const pathList = [...paths].join(' ');
+          const coinList = [...coins].join(' ');
+
+          core.setOutput('is-affected', String(paths.size > 0));
+          core.setOutput('paths', pathList);
+          core.setOutput('coins', coinList);
+
+          if (paths.size > 0) {
+            core.info(`${paths.size} paths affected: ${pathList}`);
+          } else {
+            core.info('No paths affected');
+          }

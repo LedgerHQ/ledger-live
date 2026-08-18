@@ -1,4 +1,4 @@
-import { DeviceExtractOnboardingStateError } from "@ledgerhq/errors";
+import { DeviceExtractOnboardingStateError } from "../errors";
 import { CharonStatus, extractOnboardingState, OnboardingStep } from "./extractOnboardingState";
 
 describe("@hw/extractOnboardingState", () => {

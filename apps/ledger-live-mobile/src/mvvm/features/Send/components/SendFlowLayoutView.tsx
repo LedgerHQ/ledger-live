@@ -5,8 +5,14 @@ import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
 
 import type { SendFlowLayoutProps } from "./types";
 import { SendHeader } from "./SendHeader";
+import { useIsExperimentalHeaderVisible } from "~/screens/Settings/Experimental/ExperimentalHeader";
 
 export function SendFlowLayoutView({ headerRight, headerContent, children }: SendFlowLayoutProps) {
+  const isExperimentalHeaderVisible = useIsExperimentalHeaderVisible();
+  const safeAreaEdges = isExperimentalHeaderVisible
+    ? (["bottom"] as const)
+    : (["top", "bottom"] as const);
+
   const styles = useStyleSheet(
     theme => ({
       container: {
@@ -27,7 +33,7 @@ export function SendFlowLayoutView({ headerRight, headerContent, children }: Sen
   );
 
   return (
-    <SafeAreaView style={styles.container} edges={["top", "bottom"]}>
+    <SafeAreaView style={styles.container} edges={safeAreaEdges}>
       <SendHeader headerRight={headerRight} />
       {headerContent ? <View style={styles.headerContent}>{headerContent}</View> : null}
       <View style={styles.bodyContent}>{children}</View>

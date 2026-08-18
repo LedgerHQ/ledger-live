@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
 import { View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Flex } from "@ledgerhq/native-ui";
 import TrackScreen from "~/analytics/TrackScreen";
 import CheckLanguageAvailability from "~/components/CheckLanguageAvailability";
@@ -18,14 +19,16 @@ import useReadOnlyPortfolioViewModel from "./useReadOnlyPortfolioViewModel";
 import { GenericAwarenessModalDrawer } from "LLM/features/GenericAwarenessModal/screens/GenericAwarenessModalDrawer";
 import { RecoverIntroPortfolioMount } from "LLM/features/BackupHub";
 import { LargeScreenUpsellModalPortfolioMount } from "LLM/features/LargeScreenUpsell";
+import { LazyOnboardingTourPortfolioMount } from "LLM/features/LazyOnboardingBanner";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<PortfolioNavigatorStackParamList, ScreenName.Portfolio>
 >;
 
 function ReadOnlyPortfolioScreen({ navigation }: NavigationProps) {
-  const { safeAreaTop, isLNSUpsellBannerShown, source, onBackFromUpdate } =
+  const { safeAreaTop, isLNUpsellBannerShown, source, onBackFromUpdate } =
     useReadOnlyPortfolioViewModel(navigation);
+  const { bottom } = useSafeAreaInsets();
 
   const data = useMemo(
     () => [
@@ -39,11 +42,11 @@ function ReadOnlyPortfolioScreen({ navigation }: NavigationProps) {
       </View>,
       <PortfolioNoSignerContent
         key="noSigner"
-        isLNSUpsellBannerShown={isLNSUpsellBannerShown}
+        isLNUpsellBannerShown={isLNUpsellBannerShown}
         variant="readOnly"
       />,
     ],
-    [isLNSUpsellBannerShown, onBackFromUpdate, safeAreaTop],
+    [isLNUpsellBannerShown, onBackFromUpdate, safeAreaTop],
   );
 
   return (
@@ -53,7 +56,7 @@ function ReadOnlyPortfolioScreen({ navigation }: NavigationProps) {
       <TrackScreen category="Wallet" source={source} />
       <CollapsibleHeaderFlatList<React.JSX.Element>
         data={data}
-        contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
+        contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT + bottom }}
         renderItem={({ item }) => item}
         keyExtractor={(_: unknown, index: number) => String(index)}
         showsVerticalScrollIndicator={false}
@@ -64,6 +67,7 @@ function ReadOnlyPortfolioScreen({ navigation }: NavigationProps) {
       <GenericAwarenessModalDrawer />
       <RecoverIntroPortfolioMount />
       <LargeScreenUpsellModalPortfolioMount />
+      <LazyOnboardingTourPortfolioMount />
     </>
   );
 }

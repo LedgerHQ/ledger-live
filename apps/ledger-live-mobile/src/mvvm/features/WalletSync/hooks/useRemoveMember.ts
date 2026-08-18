@@ -5,7 +5,7 @@ import {
 } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { useTrustchainSdk } from "./useTrustchainSdk";
-import { TrustchainEjected, TrustchainNotAllowed } from "@ledgerhq/ledger-key-ring-protocol/errors";
+import { TrustchainEjected } from "@ledgerhq/ledger-key-ring-protocol/errors";
 import { TrustchainMember, Trustchain } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { useCallback } from "react";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -60,7 +60,7 @@ export function useRemoveMember({ device, member }: Props): DrawerProps {
 
         transitionToNextScreen(newTrustchain);
       } catch (error) {
-        if (error instanceof TrustchainNotAllowed) {
+        if ((error as { name?: string })?.name === "TrustchainNotAllowed") {
           setScene({ kind: SceneKind.KeyError });
         } else if (error instanceof Error) {
           setScene({ kind: SceneKind.GenericError, error });

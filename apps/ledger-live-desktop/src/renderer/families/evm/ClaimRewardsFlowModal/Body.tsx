@@ -1,4 +1,3 @@
-import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
@@ -29,7 +28,7 @@ import StepClaimRewards, { StepClaimRewardsFooter } from "./steps/StepClaimRewar
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import { St, StepId, StepProps } from "./types";
 import { findDelegationByValidator } from "./utils";
-import type { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
+import type { Transaction as EvmTransaction } from "@ledgerhq/live-common/families/evm/types";
 import { getStakingContractAddress } from "@ledgerhq/coin-evm/staking/index";
 
 export type Data = {
@@ -139,7 +138,7 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
     onChangeStepId("claimRewards");
   }, [onChangeStepId]);
   const handleTransactionError = useCallback((error: Error) => {
-    if (!(error instanceof UserRefusedOnDevice)) {
+    if (error?.name !== "UserRefusedOnDevice") {
       logger.critical(error);
     }
     setTransactionError(error);

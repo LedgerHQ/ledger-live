@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { Account } from "@ledgerhq/types-live";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import Box, { Tabbable } from "~/renderer/components/Box";
 import CheckBox from "~/renderer/components/CheckBox";
 import CryptoCurrencyIconWithCount from "~/renderer/components/CryptoCurrencyIconWithCount";
@@ -9,7 +9,7 @@ import FormattedVal from "~/renderer/components/FormattedVal";
 import Input from "~/renderer/components/Input";
 import AccountTagDerivationMode from "../AccountTagDerivationMode";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
-import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
+import { getDefaultAccountName } from "@domain/entity-account-name";
 const InputWrapper = styled.div`
   margin-left: 4px;
   width: 100%;

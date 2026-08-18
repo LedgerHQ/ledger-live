@@ -1,4 +1,4 @@
-import { Currency } from "@ledgerhq/types-cryptoassets";
+import type { Currency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { RateGranularity } from "./types";
 
 export const inferCurrencyAPIID = (currency: Currency): string => {

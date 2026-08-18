@@ -6,7 +6,7 @@ import { setTeamOwner } from "../../helpers/allure/allure-helper";
 const isSmokeTestRun = process.env.INPUTS_TEST_FILTER?.includes("@smoke");
 
 setTeamOwner(Team.WALLET_XP);
-describe("Receive Flow", () => {
+describe("Receive", () => {
   const account = Account.ETH_1;
 
   beforeAll(async () => {
@@ -61,6 +61,7 @@ describe("Receive Flow", () => {
     await app.modularDrawer.selectCurrencyByTicker(Account.ETH_1.currency.ticker);
     await app.modularDrawer.selectNetwork(Currency.BASE.name);
     await app.modularDrawer.tapAddNewOrExistingAccountButtonMAD();
+    const scannedAccounts = await app.addAccount.getNumberOfScannedAccounts();
 
     await app.receive.continueCreateAccount();
     await app.receive.doNotVerifyAddress();
@@ -75,7 +76,7 @@ describe("Receive Flow", () => {
 
     await app.modularDrawer.selectCurrencyByTicker(Account.ETH_1.currency.ticker);
     await app.modularDrawer.selectNetwork(Currency.BASE.name);
-    await app.modularDrawer.validateNumberOfAccounts(3);
+    await app.modularDrawer.validateNumberOfAccounts(scannedAccounts - 1);
   });
 
   $TmsLink("B2CQA-650");
@@ -113,7 +114,7 @@ describe("Receive Flow", () => {
 
   $TmsLink("B2CQA-1860");
   $Tag("@smoke");
-  it("Should access to receive after selecting an existing ETH account", async () => {
+  it("[ETH] - Access receive from an existing account", async () => {
     await app.modularDrawer.selectCurrencyByTicker(Account.ETH_1.currency.ticker);
     await app.modularDrawer.selectNetwork(Account.ETH_1.currency.name);
     await app.modularDrawer.selectAccount(Account.ETH_1.accountName);

@@ -1,6 +1,7 @@
 {
   "entry": [
     "src/account.ts",
+    "src/api/index.ts",
     "src/bridge/index.ts",
     "src/deviceTransactionConfig.ts",
     "src/CosmosValidatorsManager.ts",
@@ -23,7 +24,8 @@
   "ignoreUnresolved": [
     "@jest/expect-utils",
     "@jest/get-type",
-    "jest-util"],
+    "jest-util"
+  ],
   "ignoreUnimported": [
     "src/broadcast.ts",
     "src/buildOptimisticOperation.ts",
@@ -32,10 +34,13 @@
     "src/createTransaction.ts",
     "src/estimateMaxSpendable.ts",
     "src/getTransactionStatus.ts",
+    "src/logic/staking/getRedelegations.ts",
     "src/prepareTransaction.ts",
     "src/signOperation.ts",
     "src/synchronisation.ts",
     "src/supportedFeatures.ts"
   ],
-  "ignoreUnused": ["rxjs"]
+  "ignoreUnused": [
+    "rxjs"
+  ]
 }

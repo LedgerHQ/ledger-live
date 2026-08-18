@@ -1,9 +1,7 @@
 import React, { useCallback, useMemo } from "react";
-import { View, Pressable } from "react-native";
-import { Text } from "@ledgerhq/lumen-ui-rnative";
-import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
+import { Box, Button } from "@ledgerhq/lumen-ui-rnative";
 import type { AmountScreenQuickAction } from "../types";
-import { useAnalytics } from "~/analytics";
+import { track } from "~/analytics";
 import { getSendFlowTrackingProperties } from "@ledgerhq/ledger-wallet-framework/tracking/send";
 import { useSendFlowData } from "../../../context/SendFlowContext";
 
@@ -25,39 +23,9 @@ function toTrackButtonLabel(id: string): string {
 }
 
 export function QuickActionsRow({ actions }: QuickActionsRowProps) {
-  const styles = useStyleSheet(
-    theme => ({
-      container: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        gap: theme.spacings.s16,
-        marginTop: theme.spacings.s12,
-      },
-      action: {
-        flex: 1,
-        paddingHorizontal: theme.spacings.s20,
-        paddingVertical: theme.spacings.s12,
-        borderRadius: 999,
-        backgroundColor: theme.colors.bg.muted,
-        minWidth: 64,
-        alignItems: "center",
-        justifyContent: "center",
-      },
-      actionActive: {
-        backgroundColor: theme.colors.bg.active,
-      },
-      actionDisabled: {
-        backgroundColor: theme.colors.bg.disabled,
-        opacity: 0.5,
-      },
-    }),
-    [],
-  );
-
   const { state } = useSendFlowData();
   const { account, parentAccount } = state.account;
 
-  const { track } = useAnalytics();
   const trackingProperties = useMemo(() => {
     return getSendFlowTrackingProperties(account, parentAccount);
   }, [account, parentAccount]);
@@ -77,32 +45,27 @@ export function QuickActionsRow({ actions }: QuickActionsRowProps) {
       });
       onPress();
     },
-    [track, trackingProperties],
+    [trackingProperties],
   );
 
   return (
-    <View style={styles.container}>
+    <Box
+      testID="send-quick-actions-row"
+      lx={{ flexDirection: "row", gap: "s12", marginTop: "s12" }}
+    >
       {actions.map(action => (
-        <Pressable
+        <Button
           key={action.id}
-          style={[
-            styles.action,
-            action.active && styles.actionActive,
-            action.disabled && styles.actionDisabled,
-          ]}
-          onPress={() => handleOnPress(action.id, action.onPress, action.untracked)}
+          testID={`send-quick-actions-${action.id}`}
+          appearance={action.active ? "accent" : "gray"}
+          size="sm"
           disabled={action.disabled}
+          onPress={() => handleOnPress(action.id, action.onPress, action.untracked)}
+          lx={{ flex: 1 }}
         >
-          <Text
-            typography="body2SemiBold"
-            lx={{
-              color: action.active ? "onAccent" : action.disabled ? "disabled" : "base",
-            }}
-          >
-            {action.label}
-          </Text>
-        </Pressable>
+          {action.label}
+        </Button>
       ))}
-    </View>
+    </Box>
   );
 }

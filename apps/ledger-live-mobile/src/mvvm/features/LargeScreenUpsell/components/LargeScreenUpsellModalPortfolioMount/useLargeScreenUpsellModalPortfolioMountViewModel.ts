@@ -65,8 +65,12 @@ export function useLargeScreenUpsellModalPortfolioMountViewModel(): LargeScreenU
     hasSeenCompetingAppStartModalRef.current = true;
   }
 
+  const variant: LargeScreenUpsellVariant = personalizedRecommendationsEnabled
+    ? "opted_in"
+    : "opted_out";
+
   const params = feature?.params;
-  const hasEnabledFeature = Boolean(feature?.enabled && params);
+  const hasEnabledFeature = Boolean(feature?.enabled && params?.[variant].enabled);
   const lastSeenAtDate = typeof lastSeenAt === "number" ? new Date(lastSeenAt) : null;
 
   const isThrottled =
@@ -87,10 +91,6 @@ export function useLargeScreenUpsellModalPortfolioMountViewModel(): LargeScreenU
   );
   const shouldAttemptAutoOpen =
     isEligible && !hasSeenCompetingAppStartModalRef.current && !hasAutoOpenedThisSession;
-
-  const variant: LargeScreenUpsellVariant = personalizedRecommendationsEnabled
-    ? "opted_in"
-    : "opted_out";
 
   const sharedAnalyticsProps: LargeScreenUpsellSharedAnalyticsProps | null = useMemo(() => {
     if (!("deviceModelId" in eligibility)) {

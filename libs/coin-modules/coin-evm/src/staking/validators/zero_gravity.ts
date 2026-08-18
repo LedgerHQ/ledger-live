@@ -2,10 +2,9 @@ import { ethers, type JsonRpcProvider } from "ethers";
 import network from "@ledgerhq/live-network";
 import { log } from "@ledgerhq/logs";
 import type { Page } from "@ledgerhq/coin-module-framework/api/index";
-import type { AssetInfo, Stake } from "@ledgerhq/coin-module-framework/api/types";
-import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
-import type { StakingValidatorItem } from "@ledgerhq/types-live";
-import { getCoinConfig } from "../../config";
+import type { AssetInfo, Stake, Validator } from "@ledgerhq/coin-module-framework/api/types";
+import type { EvmConfigInfo } from "../../config";
+import { evmUnit } from "../../logic/evmUnit";
 import { withApi } from "../../network/node/rpc.common";
 import { isExternalNodeConfig } from "../../network/node/types";
 import type { StakingContractConfig } from "../../types/staking";
@@ -37,7 +36,7 @@ function isExploreMe0gValidator(value: unknown): value is ExploreMe0gValidator {
 }
 
 const zeroGravityValidatorApi: ValidatorApi = {
-  fetchValidators: async (currencyId): Promise<Page<StakingValidatorItem>> => {
+  fetchValidators: async (_config, currencyId): Promise<Page<Validator>> => {
     const apiConfig = STAKING_CONTRACTS[currencyId]?.apiConfig;
     if (!apiConfig?.baseUrl) return { items: [], next: undefined };
 
@@ -49,16 +48,16 @@ const zeroGravityValidatorApi: ValidatorApi = {
         method: "GET",
       });
 
-      const items: StakingValidatorItem[] = Array.isArray(data)
-        ? data.filter(isExploreMe0gValidator).map((v, index) => {
-            const validatorAddress = ethers.getAddress("0x" + v.addr);
+      const items: Validator[] = Array.isArray(data)
+        ? data.filter(isExploreMe0gValidator).map(v => {
+            const address = ethers.getAddress("0x" + v.addr);
             return {
-              validatorAddress,
-              name: v.moniker ?? validatorAddress,
-              commission: parseFloat(v.commission_pct) / 100,
-              tokens: v.voting_power_tokens,
-              votingPower: index,
-              estimatedYearlyRewardsRate: 0,
+              id: address,
+              address,
+              name: v.moniker ?? address,
+              commissionRate: (parseFloat(v.commission_pct) / 100).toString(),
+              balance: BigInt(v.voting_power_tokens),
+              apy: 0,
             };
           })
         : [];
@@ -76,9 +75,19 @@ const zeroGravityValidatorApi: ValidatorApi = {
 const DETAILS_BATCH_SIZE = 10;
 
 type GetDelegationResult = [string, bigint];
+type GetWithdrawResult = [bigint, string, bigint];
 
 function isGetDelegationResult(value: unknown): value is GetDelegationResult {
   return Array.isArray(value) && typeof value[0] === "string" && typeof value[1] === "bigint";
+}
+
+function isGetWithdrawResult(value: unknown): value is GetWithdrawResult {
+  return (
+    Array.isArray(value) &&
+    typeof value[0] === "bigint" &&
+    typeof value[1] === "string" &&
+    typeof value[2] === "bigint"
+  );
 }
 
 const fetchStakeForValidator = async (
@@ -105,6 +114,40 @@ const fetchStakeForValidator = async (
 
   if (amount === 0n) return null;
 
+  const [rewardsResult, delegatorSharesResult, commissionResult] = await Promise.allSettled([
+    provider.call({ to: validatorAddress, data: iface.encodeFunctionData("rewards", []) }),
+    provider.call({ to: validatorAddress, data: iface.encodeFunctionData("delegatorShares", []) }),
+    provider.call({ to: validatorAddress, data: iface.encodeFunctionData("commissionRate", []) }),
+  ]);
+
+  let amountRewarded: bigint | undefined;
+  if (
+    rewardsResult.status === "fulfilled" &&
+    rewardsResult.value !== "0x" &&
+    delegatorSharesResult.status === "fulfilled" &&
+    delegatorSharesResult.value !== "0x" &&
+    commissionResult.status === "fulfilled" &&
+    commissionResult.value !== "0x"
+  ) {
+    const [totalPendingRewards] = iface.decodeFunctionResult("rewards", rewardsResult.value);
+    const [totalShares] = iface.decodeFunctionResult(
+      "delegatorShares",
+      delegatorSharesResult.value,
+    );
+    const [rawCommissionPpm] = iface.decodeFunctionResult("commissionRate", commissionResult.value);
+    if (
+      typeof totalPendingRewards === "bigint" &&
+      typeof totalShares === "bigint" &&
+      typeof rawCommissionPpm === "bigint" &&
+      totalShares > 0n
+    ) {
+      const commissionPpm = rawCommissionPpm > 1_000_000n ? 1_000_000n : rawCommissionPpm;
+      const netRewards =
+        (totalPendingRewards * (1_000_000n - commissionPpm) * shares) / totalShares / 1_000_000n;
+      if (netRewards > 0n) amountRewarded = netRewards;
+    }
+  }
+
   return {
     uid: `${validatorAddress}-${delegatorAddress}`,
     address: delegatorAddress,
@@ -113,54 +156,133 @@ const fetchStakeForValidator = async (
     asset,
     amount,
     actions: [],
+    ...(typeof amountRewarded === "bigint" ? { amountRewarded } : {}),
     details: { contractAddress: validatorAddress, validator: validatorAddress, shares },
   };
 };
 
+const fetchUnbondingsForValidator = async (
+  provider: JsonRpcProvider,
+  iface: ethers.Interface,
+  validatorAddress: string,
+  delegatorAddress: string,
+  currentBlock: bigint,
+  asset: AssetInfo,
+): Promise<Stake[]> => {
+  const rawCount = await provider.call({
+    to: validatorAddress,
+    data: iface.encodeFunctionData("withdrawCount", []),
+  });
+  const decodedCount = iface.decodeFunctionResult("withdrawCount", rawCount);
+  const count =
+    Array.isArray(decodedCount) && typeof decodedCount[0] === "bigint"
+      ? Number(decodedCount[0])
+      : 0;
+  if (count === 0) return [];
+
+  const settled = await Promise.allSettled(
+    Array.from({ length: count }, (_, i) =>
+      provider
+        .call({ to: validatorAddress, data: iface.encodeFunctionData("getWithdraw", [BigInt(i)]) })
+        .then(raw => iface.decodeFunctionResult("getWithdraw", raw)),
+    ),
+  );
+
+  const stakes: Stake[] = [];
+  for (const [i, res] of settled.entries()) {
+    if (res.status === "rejected" || !isGetWithdrawResult(res.value)) continue;
+    const [completionHeight, withdrawDelegator, amount] = res.value;
+    if (withdrawDelegator.toLowerCase() !== delegatorAddress.toLowerCase()) continue;
+    if (amount === 0n) continue;
+    if (completionHeight <= currentBlock) continue;
+    const stateUpdatedAt = new Date(Date.now() + Number(completionHeight - currentBlock) * 1_000);
+    stakes.push({
+      uid: `${validatorAddress}-${delegatorAddress}-unbonding-${i}`,
+      address: delegatorAddress,
+      delegate: validatorAddress,
+      state: "deactivating",
+      stateUpdatedAt,
+      asset,
+      amount,
+      actions: [],
+      details: { contractAddress: validatorAddress, validator: validatorAddress },
+    });
+  }
+  return stakes;
+};
+
 export const fetchZeroGravityStakes = async (
+  evmConfig: EvmConfigInfo,
   address: string,
   _config: StakingContractConfig,
-  currency: CryptoCurrency,
+  currencyId: string,
 ): Promise<Stake[]> => {
-  const abi = getStakingABI(currency.id);
+  const abi = getStakingABI(currencyId);
   if (!abi) return [];
 
-  const node = getCoinConfig(currency.id).info.node;
+  const node = evmConfig.node;
   if (!isExternalNodeConfig(node)) return [];
 
-  const { items: validators } = await zeroGravityValidatorApi.fetchValidators(currency.id);
+  const { items: validators } = await zeroGravityValidatorApi.fetchValidators(
+    evmConfig,
+    currencyId,
+  );
   if (validators.length === 0) return [];
 
   const asset: AssetInfo = {
     type: "native",
-    name: currency.name,
-    unit: currency.units[0],
+    name: evmConfig.name,
+    unit: evmUnit[currencyId],
   };
 
   try {
     return await withApi(
-      currency,
+      evmConfig,
+      currencyId,
       async provider => {
         const iface = new ethers.Interface(abi as ethers.InterfaceAbi);
         const stakes: Stake[] = [];
+        const currentBlock = BigInt(await provider.getBlockNumber());
 
         for (let i = 0; i < validators.length; i += DETAILS_BATCH_SIZE) {
           const chunk = validators.slice(i, i + DETAILS_BATCH_SIZE);
-          const settled = await Promise.allSettled(
-            chunk.map(({ validatorAddress: valAddr }) =>
-              fetchStakeForValidator(provider, iface, valAddr, address, asset),
+          const [activeSettled, unbondingSettled] = await Promise.all([
+            Promise.allSettled(
+              chunk.map(({ address: valAddr }) =>
+                fetchStakeForValidator(provider, iface, valAddr, address, asset),
+              ),
             ),
-          );
+            Promise.allSettled(
+              chunk.map(({ address: valAddr }) =>
+                fetchUnbondingsForValidator(provider, iface, valAddr, address, currentBlock, asset),
+              ),
+            ),
+          ]);
 
-          settled.forEach((res, idx) => {
+          activeSettled.forEach((res, idx) => {
             if (res.status === "rejected") {
               log("coin-evm/staking", "fetchZeroGravityStakes: getDelegation call failed", {
-                validator: chunk[idx].validatorAddress,
+                validator: chunk[idx].address,
                 error: res.reason instanceof Error ? res.reason.message : String(res.reason),
               });
               return;
             }
             if (res.value) stakes.push(res.value);
+          });
+
+          unbondingSettled.forEach((res, idx) => {
+            if (res.status === "rejected") {
+              log(
+                "coin-evm/staking",
+                "fetchZeroGravityStakes: withdrawCount/getWithdraw call failed",
+                {
+                  validator: chunk[idx].address,
+                  error: res.reason instanceof Error ? res.reason.message : String(res.reason),
+                },
+              );
+              return;
+            }
+            stakes.push(...res.value);
           });
         }
 
@@ -170,7 +292,7 @@ export const fetchZeroGravityStakes = async (
     );
   } catch (error) {
     log("coin-evm/staking", "fetchZeroGravityStakes: delegations fetch failed", {
-      currencyId: currency.id,
+      currencyId,
       error: error instanceof Error ? error.message : String(error),
     });
     return [];

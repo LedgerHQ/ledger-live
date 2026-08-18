@@ -32,9 +32,14 @@ function LargeScreenUpsellDebug() {
     isNanoSeen,
     nanoSeenHint,
     handleToggleNanoSeen,
+    isNanoSSeen,
+    nanoSSeenHint,
+    handleToggleNanoSSeen,
     hasSeenTouchscreen,
     seenDevicesHint,
     handleClearSeenDevices,
+    lnPortfolioBanner,
+    handleEnableLnHomepagePlacement,
     handleApplyOnboardingDate,
     handleSetOnboardingDateNull,
     handleApplyRetries,
@@ -191,6 +196,12 @@ function LargeScreenUpsellDebug() {
             onChange={handleToggleNanoSeen}
             description={nanoSeenHint}
           />
+          <ToggleRow
+            label="Nano S seen"
+            value={isNanoSSeen}
+            onChange={handleToggleNanoSSeen}
+            description={nanoSSeenHint}
+          />
           <StatusRow label="Touchscreen seen (blocks upsell)" ok={!hasSeenTouchscreen} />
           <Box lx={{ marginTop: "s8" }}>
             <Button size="md" appearance="base" isFull onPress={handleClearSeenDevices}>
@@ -200,6 +211,54 @@ function LargeScreenUpsellDebug() {
               {seenDevicesHint}
             </Text>
           </Box>
+        </SectionCard>
+
+        <SectionCard
+          title="LN Portfolio banner"
+          subtitle="Gates for the wallet upsell banner (separate from the app-start modal)."
+        >
+          <Text
+            typography="heading5SemiBold"
+            lx={{ color: lnPortfolioBanner.isShown ? "success" : "error", marginBottom: "s8" }}
+          >
+            {lnPortfolioBanner.isShown ? "WILL SHOW" : "WON'T SHOW"}
+          </Text>
+          <StatusRow label="largeScreenUpsell enabled" ok={lnPortfolioBanner.flagEnabled} />
+          <StatusRow
+            label={`params.${lnPortfolioBanner.tracking} CTA`}
+            ok={lnPortfolioBanner.ctaEnabled}
+            hint={lnPortfolioBanner.ctaHint}
+          />
+          <StatusRow
+            label="largeScreenUpsell.banners.homepage"
+            ok={lnPortfolioBanner.homepagePlacementEnabled}
+          />
+          <StatusRow
+            label="Shared eligibility"
+            ok={lnPortfolioBanner.eligibilityOk}
+            hint={lnPortfolioBanner.eligibilityHint}
+          />
+          <StatusRow
+            label="Not excluded by LNS_UPSELL_HIGH_TIER"
+            ok={lnPortfolioBanner.notExcludedByHighTier}
+            hint={lnPortfolioBanner.highTierHint}
+          />
+          <StatusRow
+            label="Personalized recommendations"
+            ok={!lnPortfolioBanner.personalizedRecommendationsEnabled}
+            hint={
+              lnPortfolioBanner.personalizedRecommendationsEnabled
+                ? "ON → uses opted_in CTA params."
+                : "OFF → uses opted_out CTA params."
+            }
+          />
+          {!lnPortfolioBanner.homepagePlacementEnabled || !lnPortfolioBanner.ctaEnabled ? (
+            <Box lx={{ marginTop: "s8" }}>
+              <Button size="md" appearance="base" isFull onPress={handleEnableLnHomepagePlacement}>
+                Enable homepage placement + CTA
+              </Button>
+            </Box>
+          ) : null}
         </SectionCard>
 
         <SectionCard title="Onboarding date" subtitle="Drives the cooldown gate.">

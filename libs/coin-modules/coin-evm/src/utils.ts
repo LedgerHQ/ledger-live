@@ -5,7 +5,6 @@ import type {
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import eip55 from "eip55";
-import type { Transaction as EvmTransaction } from "./types";
 import type { SeiDelegation } from "./types/staking";
 
 /**
@@ -40,23 +39,6 @@ export const safeEncodeEIP55 = (addr: string): string => {
 
     return addr;
   }
-};
-
-/**
- * Helper to get the gas limit value for a tx, depending on if the user has set a custom value or not
- */
-export const getGasLimit = (tx: EvmTransaction): BigNumber => tx.customGasLimit ?? tx.gasLimit;
-
-/**
- * Helper to get total fee value for a tx depending on its type
- */
-export const getEstimatedFees = (tx: EvmTransaction): BigNumber => {
-  const gasLimit = getGasLimit(tx);
-
-  if (tx.type !== 2) {
-    return tx.gasPrice?.multipliedBy(gasLimit) || new BigNumber(0);
-  }
-  return tx.maxFeePerGas?.multipliedBy(gasLimit) || new BigNumber(0);
 };
 
 /**
@@ -380,6 +362,7 @@ export type EvmStakingIntent = StakingTransactionIntent & {
   valId?: string;
   withdrawId?: string;
   txValue?: bigint;
+  shares?: bigint;
 };
 
 export function isStakingIntent(intent: TransactionIntent): intent is EvmStakingIntent {

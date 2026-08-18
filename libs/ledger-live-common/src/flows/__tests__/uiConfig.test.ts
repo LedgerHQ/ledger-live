@@ -1,7 +1,7 @@
 import { getSendUiConfig, DEFAULT_SEND_UI_CONFIG } from "../send/uiConfig";
 import { getSendDescriptor } from "../../bridge/descriptor/registry";
 import { sendFeatures } from "../../bridge/descriptor/send/features";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 
 jest.mock("../../bridge/descriptor/registry", () => ({
   getSendDescriptor: jest.fn(),
@@ -16,6 +16,7 @@ jest.mock("../../bridge/descriptor/send/features", () => ({
     hasFeePresets: jest.fn(),
     hasCustomFees: jest.fn(),
     hasCoinControl: jest.fn(),
+    hasDefaultStrategy: jest.fn(),
   },
 }));
 
@@ -82,6 +83,7 @@ describe("getSendUiConfig", () => {
       mockedSendFeatures.hasFeePresets.mockReturnValue(true);
       mockedSendFeatures.hasCustomFees.mockReturnValue(true);
       mockedSendFeatures.hasCoinControl.mockReturnValue(true);
+      mockedSendFeatures.hasDefaultStrategy.mockReturnValue(false);
 
       const result = getSendUiConfig(mockBitcoinCurrency);
 
@@ -95,6 +97,7 @@ describe("getSendUiConfig", () => {
         hasFeePresets: true,
         hasCustomFees: true,
         hasCoinControl: true,
+        hasDefaultStrategy: false,
       });
     });
   });
@@ -113,6 +116,7 @@ describe("getSendUiConfig", () => {
       mockedSendFeatures.hasFeePresets.mockReturnValue(true);
       mockedSendFeatures.hasCustomFees.mockReturnValue(true);
       mockedSendFeatures.hasCoinControl.mockReturnValue(false);
+      mockedSendFeatures.hasDefaultStrategy.mockReturnValue(false);
 
       const result = getSendUiConfig(mockEthereumCurrency);
 
@@ -126,6 +130,7 @@ describe("getSendUiConfig", () => {
         hasFeePresets: true,
         hasCustomFees: true,
         hasCoinControl: false,
+        hasDefaultStrategy: false,
       });
     });
   });
@@ -146,6 +151,7 @@ describe("getSendUiConfig", () => {
       mockedSendFeatures.hasFeePresets.mockReturnValue(false);
       mockedSendFeatures.hasCustomFees.mockReturnValue(true);
       mockedSendFeatures.hasCoinControl.mockReturnValue(false);
+      mockedSendFeatures.hasDefaultStrategy.mockReturnValue(true);
 
       const result = getSendUiConfig(mockSolanaCurrency);
 
@@ -159,6 +165,7 @@ describe("getSendUiConfig", () => {
         hasFeePresets: false,
         hasCustomFees: true,
         hasCoinControl: false,
+        hasDefaultStrategy: true,
       });
     });
   });
@@ -175,6 +182,7 @@ describe("getSendUiConfig", () => {
         hasFeePresets: false,
         hasCustomFees: false,
         hasCoinControl: false,
+        hasDefaultStrategy: false,
       });
     });
   });

@@ -4,7 +4,7 @@ import { Account } from "@ledgerhq/types-live";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { resetIndexer, initMswHandlers, setBlock, indexBlocks } from "../indexer";
-import { getCoinConfig, setCoinConfig } from "@ledgerhq/coin-evm/config";
+import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
 import { makeAccount } from "../fixtures";
 import { callMyDealer, expectAddressInList, getBridges, polygon, VITALIK } from "../helpers";
 import { killAnvil, spawnAnvil } from "../anvil";
@@ -90,50 +90,33 @@ export const scenarioPolygon: Scenario<GenericTransaction, Account> = {
     // start indexing at next block
     setBlock(lastBlockNumber + 1);
 
-    setCoinConfig(() => ({
-      info: {
-        status: {
-          type: "active",
-        },
-        node: {
-          type: "external",
-          uri: "http://127.0.0.1:8545",
-        },
-        gasTracker: {
-          type: "ledger",
-          explorerId: "matic",
-        },
-        explorer: {
-          type: "ledger",
-          explorerId: "matic",
-        },
-        showNfts: true,
+    const info: EvmConfigInfo = {
+      status: {
+        type: "active",
       },
-    }));
+      chainId: 137,
+      name: "Polygon",
+      node: {
+        type: "external",
+        uri: "http://127.0.0.1:8545",
+      },
+      gasTracker: {
+        type: "ledger",
+        explorerId: "matic",
+      },
+      explorer: {
+        type: "ledger",
+        explorerId: "matic",
+      },
+      showNfts: true,
+    };
     LiveConfig.setConfig({
       config_currency_polygon: {
         type: "object",
-        default: {
-          status: {
-            type: "active",
-          },
-          gasTracker: {
-            type: "ledger",
-            explorerId: "matic",
-          },
-          node: {
-            type: "external",
-            uri: "http://127.0.0.1:8545",
-          },
-          explorer: {
-            type: "ledger",
-            explorerId: "matic",
-          },
-          showNfts: true,
-        },
+        default: info,
       },
     });
-    initMswHandlers(getCoinConfig(polygon.id).info);
+    initMswHandlers(info);
 
     const { currencyBridge, accountBridge, getAddress } = await getBridges(signer);
     const { address } = await getAddress("", {

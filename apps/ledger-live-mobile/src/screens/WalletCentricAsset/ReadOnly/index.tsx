@@ -10,7 +10,7 @@ import { useTranslation } from "~/context/Locale";
 import { Flex } from "@ledgerhq/native-ui";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
-import { useAssetsData } from "@ledgerhq/live-common/dada-client/hooks/useAssetsData";
+import { useAssetsData } from "@features/platform-aggregated-assets";
 import VersionNumber from "react-native-version-number";
 import { Loading } from "~/components/Loading";
 import BigNumber from "bignumber.js";

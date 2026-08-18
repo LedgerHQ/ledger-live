@@ -15,6 +15,7 @@ jest.mock("../network/gateway", () => ({
   ...jest.requireActual("../network/gateway"),
   getLedgerEnd: jest.fn(),
   getOperations: jest.fn(),
+  getPartyById: jest.fn(),
   getPendingTransferProposals: jest.fn(),
   getCalTokensCached: jest.fn(),
   getEnabledInstrumentsCached: jest.fn(),
@@ -26,7 +27,7 @@ jest.mock("../common-logic/account/getBalance");
 const mockFindTokenByAddressInCurrency = jest.fn().mockResolvedValue(undefined);
 const mockFindTokenById = jest.fn().mockResolvedValue(undefined);
 
-jest.mock("@ledgerhq/cryptoassets/state", () => ({
+jest.mock("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore", () => ({
   getCryptoAssetsStore: jest.fn(() => ({
     findTokenByAddressInCurrency: mockFindTokenByAddressInCurrency,
     findTokenById: mockFindTokenById,
@@ -37,6 +38,7 @@ const mockedGetBalance = accountBalance.getBalance as jest.Mock;
 const mockedGetLedgerEnd = gateway.getLedgerEnd as jest.Mock;
 const mockedGetOperations = gateway.getOperations as jest.Mock;
 const mockedGetPendingTransferProposals = gateway.getPendingTransferProposals as jest.Mock;
+const mockedGetPartyById = gateway.getPartyById as jest.Mock;
 const mockedGetCalTokensCached = gateway.getCalTokensCached as unknown as jest.Mock;
 const mockedGetEnabledInstrumentsCached =
   gateway.getEnabledInstrumentsCached as unknown as jest.Mock;
@@ -174,6 +176,7 @@ describe("makeGetAccountShape", () => {
     mockedIsAuthorized.mockResolvedValue(true);
     mockedGetLedgerEnd.mockResolvedValue(12345);
     mockedGetPendingTransferProposals.mockResolvedValue([]);
+    mockedGetPartyById.mockResolvedValue({ party_id: "test-party-id", public_key: "" });
     mockedGetCalTokensCached.mockResolvedValue(new Map());
     mockFindTokenByAddressInCurrency.mockResolvedValue(undefined);
     mockFindTokenById.mockResolvedValue(undefined);
@@ -485,6 +488,35 @@ describe("makeGetAccountShape", () => {
     expect(shape.xpub).toBe("test-party-id");
     // Should not call getAddress since we have xpub
     expect(mockedResolver).not.toHaveBeenCalled();
+  });
+
+  it("backfills publicKey from the gateway when account has xpub but no publicKey (LIVE-34585)", async () => {
+    mockedGetBalance.mockResolvedValue([createMockNativeBalance("1000")]);
+    mockedGetOperations.mockResolvedValue({ operations: [createMockOperationView()] });
+    mockedGetPartyById.mockResolvedValue({
+      party_id: "test-party-id",
+      public_key: "backfilled-public-key",
+    });
+
+    const infoWithXpub = createMockCantonAccountShapeInfo({
+      initialAccount: {
+        xpub: "test-party-id",
+        cantonResources: {
+          isOnboarded: true,
+          instrumentUtxoCounts: {},
+          pendingTransferProposals: [],
+        },
+      } as unknown as CantonAccount,
+    });
+    delete infoWithXpub.deviceId;
+
+    const getAccountShape = makeGetAccountShape(fakeSignerContext);
+    const shape = await getAccountShape(infoWithXpub, { paginationConfig: {} });
+
+    // Deviceless backfill: publicKey now resolves, so validateTopology can run.
+    expect(mockedResolver).not.toHaveBeenCalled();
+    expect(mockedGetPartyById).toHaveBeenCalledWith(sampleCurrency, "test-party-id");
+    expect(shape.cantonResources?.publicKey).toBe("backfilled-public-key");
   });
 
   it("should sync without device when account has publicKey but no xpub", async () => {

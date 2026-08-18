@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-const SentryCli = require("@sentry/cli");
 const yargs = require("yargs");
 const Listr = require("listr");
 const verboseRenderer = require("listr-verbose-renderer");
@@ -11,11 +10,6 @@ const healthChecksTasks = require("./health-checks");
 require("dotenv").config();
 
 let execa;
-
-const releaseSentryDSN =
-  "https://5729b6ee405f416a8998ae4d43c87d58@o118392.ingest.sentry.io/6488660";
-const prereleaseSentryDSN =
-  "https://5514716222674afd816b0961d7b4378c@o118392.ingest.sentry.io/6488659";
 
 const rootFolder = "../../";
 const defaultDatadogSite = "datadoghq.eu";
@@ -68,9 +62,29 @@ const cleaningTasks = _args => [
 //   },
 // ];
 
+// Per-channel MAS deltas, injected as -c overrides onto the single
+// electron-builder-mas.yml. appId isolates each channel's App Store Connect app.
+const masChannelOverrides = args => {
+  if (args.nightly)
+    return {
+      appId: "com.ledger.live.nightly",
+      buildResources: "build-nightly",
+      icon: "build-nightly/icon.icns",
+    };
+  if (args.pre)
+    return {
+      appId: "com.ledger.live.prerelease",
+      buildResources: "build-rc",
+      icon: "build-rc/icon.icns",
+    };
+  return { appId: "com.ledger.live" };
+};
+
 const buildTasks = args => [
   {
     title: "Compiling assets",
+    // MAS re-packages the CDN build's .webpack (build once, package twice) — skip recompile.
+    skip: () => (args.mas ? "reusing existing .webpack bundle (--mas)" : false),
     task: async () => {
       // Matches mobile: prerelease (--pre) shares prod config with release,
       // nightly uses staging.
@@ -85,7 +99,6 @@ const buildTasks = args => [
       }
       const baseEnv = args.release
         ? {
-            SENTRY_URL: releaseSentryDSN,
             DATADOG_APPLICATION_ID: process.env.DATADOG_APPLICATION_ID,
             DATADOG_CLIENT_TOKEN: process.env.DATADOG_CLIENT_TOKEN,
             DATADOG_SITE: process.env.DATADOG_SITE || defaultDatadogSite,
@@ -93,7 +106,6 @@ const buildTasks = args => [
           }
         : args.pre
           ? {
-              SENTRY_URL: prereleaseSentryDSN,
               DATADOG_APPLICATION_ID: process.env.DATADOG_APPLICATION_ID,
               DATADOG_CLIENT_TOKEN: process.env.DATADOG_CLIENT_TOKEN,
               DATADOG_SITE: process.env.DATADOG_SITE || defaultDatadogSite,
@@ -113,41 +125,39 @@ const buildTasks = args => [
     },
   },
   {
-    title: "Upload to Sentry",
-    enabled: () => args.release || args.pre,
-    task: async () => {
-      const cli = new SentryCli(
-        args.release
-          ? "sentry.release.properties"
-          : args.pre
-            ? "sentry.prerelease.properties"
-            : null,
-        {
-          authToken: process.env.SENTRY_AUTH_TOKEN,
-        },
-      );
-      await cli.releases.uploadSourceMaps(pkg.version, {
-        urlPrefix: "app:///.webpack",
-        include: [".webpack"],
-      });
-      await cli.releases.setCommits(pkg.version, { auto: true }).catch(e => {
-        console.error(e);
-        console.log(
-          "Sentry setCommits failed – The failure was ignored because " +
-            "it can be flawky and it was made optional in our builds. " +
-            "We will investigate why and eventually remove this failsafe.",
-        );
-      });
-    },
-  },
-  {
     title: args.publish
       ? "Bundling and publishing the electron application"
       : "Bundling the electron application",
     task: async () => {
       const commands = ["dist:internal", "--"];
       if (args.dir) commands.push("--dir");
-      if (args.nightly) {
+      if (args.mas) {
+        commands.push("--config", "electron-builder-mas.yml");
+        // MAS goes to App Store Connect, never the CDN feed.
+        commands.push("--publish", "never");
+        // Injected as -c overrides because electron-builder doesn't expand ${env.X}
+        // in these fields (e.g. mas.provisioningProfile reaches `security cms` verbatim).
+        const mas = masChannelOverrides(args);
+        commands.push(`-c.appId=${mas.appId}`);
+        if (mas.buildResources) {
+          commands.push(`-c.directories.buildResources=${mas.buildResources}`);
+        }
+        if (mas.icon) {
+          commands.push(`-c.mac.icon=${mas.icon}`);
+        }
+        // CFBundleVersion: next TestFlight build number for this app id (see CI).
+        if (process.env.MAS_BUILD_NUMBER) {
+          commands.push(`-c.buildVersion=${process.env.MAS_BUILD_NUMBER}`);
+        }
+        // App Store Connect requires CFBundleShortVersionString as X.Y.Z — drop any pre-release suffix.
+        commands.push(`-c.mac.bundleShortVersion=${pkg.version.split("-")[0]}`);
+        if (process.env.MAS_PROVISIONING_PROFILE_PATH) {
+          commands.push(`-c.mas.provisioningProfile=${process.env.MAS_PROVISIONING_PROFILE_PATH}`);
+        }
+        if (process.env.DEVELOPER_TEAM_ID) {
+          commands.push(`-c.mac.extendInfo.ElectronTeamID=${process.env.DEVELOPER_TEAM_ID}`);
+        }
+      } else if (args.nightly) {
         commands.push("--config");
         commands.push("electron-builder-nightly.yml");
       } else if (args.pre) {
@@ -161,7 +171,10 @@ const buildTasks = args => [
       }
 
       // Using npm here because pnpm will refuse to rebuild cached modules.
-      await exec("npm", ["run", ...commands]);
+      // For MAS, mark that the mandatory per-channel -c overrides were injected;
+      // scripts/afterPack.js refuses any mas build without this sentinel.
+      const execOptions = args.mas ? { env: { ...process.env, LEDGER_MAS_DIST: "1" } } : {};
+      await exec("npm", ["run", ...commands], execOptions);
     },
   },
 ];
@@ -240,6 +253,12 @@ yargs
         })
         .option("nosign", {
           type: "boolean",
+        })
+        .option("mas", {
+          type: "boolean",
+          describe:
+            "Package for the Mac App Store (.pkg). Combine with the channel flag " +
+            "(--release/--pre/--nightly) and --dirty to re-use the existing .webpack bundle.",
         })
         .option("dirty", {
           type: "boolean",

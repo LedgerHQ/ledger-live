@@ -3,7 +3,6 @@ import { View } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { renderWithReactQuery, screen, waitFor } from "@tests/test-renderer";
-import { overrideInitialStateWithFeatureFlag } from "LLM/features/Portfolio/__integrations__/shared";
 import * as analytics from "~/analytics";
 import { AnalyticsConsentDrawer } from "../index";
 import { withConsentDrawerState } from "../__tests__/helpers";
@@ -57,7 +56,7 @@ function IntegrationNavigator() {
 
 const composePortfolioOverrides =
   (extra: Parameters<typeof withConsentDrawerState>[0]) => (state: State) =>
-    withConsentDrawerState(extra)(overrideInitialStateWithFeatureFlag(state));
+    withConsentDrawerState(extra)(state);
 
 const ANALYTICS_CONSENT_DRAWER_PAGE = "Analytics consent drawer";
 const FRESH_CONSENT_TITLE = "Help us improve Ledger";
@@ -108,7 +107,7 @@ describe("AnalyticsConsentDrawer on Portfolio", () => {
           {
             button: "analytics_consent_opt_in",
             page: ANALYTICS_CONSENT_DRAWER_PAGE,
-            privacyPolicyVersion: 1,
+            privacyPolicyVersion: "1.0",
           },
           true,
         );
@@ -155,7 +154,7 @@ describe("AnalyticsConsentDrawer on Portfolio", () => {
           {
             button: "analytics_consent_opt_out",
             page: ANALYTICS_CONSENT_DRAWER_PAGE,
-            privacyPolicyVersion: 1,
+            privacyPolicyVersion: "1.0",
           },
           true,
         );
@@ -243,7 +242,7 @@ describe("AnalyticsConsentDrawer on Portfolio", () => {
           {
             button: "analytics_consent_opt_in",
             page: ANALYTICS_CONSENT_DRAWER_PAGE,
-            privacyPolicyVersion: 1,
+            privacyPolicyVersion: "1.0",
           },
           true,
         );
@@ -290,7 +289,7 @@ describe("AnalyticsConsentDrawer on Portfolio", () => {
           {
             button: "analytics_consent_opt_out",
             page: ANALYTICS_CONSENT_DRAWER_PAGE,
-            privacyPolicyVersion: 1,
+            privacyPolicyVersion: "1.0",
           },
           true,
         );
@@ -380,7 +379,7 @@ describe("AnalyticsConsentDrawer on Portfolio", () => {
           {
             button: "analytics_consent_opt_in",
             page: ANALYTICS_CONSENT_DRAWER_PAGE,
-            privacyPolicyVersion: 1,
+            privacyPolicyVersion: "1.0",
           },
           true,
         );
@@ -427,7 +426,7 @@ describe("AnalyticsConsentDrawer on Portfolio", () => {
           {
             button: "analytics_consent_opt_out",
             page: ANALYTICS_CONSENT_DRAWER_PAGE,
-            privacyPolicyVersion: 1,
+            privacyPolicyVersion: "1.0",
           },
           true,
         );
@@ -515,7 +514,7 @@ describe("AnalyticsConsentDrawer on Portfolio", () => {
           {
             button: "analytics_consent_opt_in",
             page: ANALYTICS_CONSENT_DRAWER_PAGE,
-            privacyPolicyVersion: 1,
+            privacyPolicyVersion: "1.0",
           },
           true,
         );
@@ -562,7 +561,7 @@ describe("AnalyticsConsentDrawer on Portfolio", () => {
           {
             button: "analytics_consent_opt_out",
             page: ANALYTICS_CONSENT_DRAWER_PAGE,
-            privacyPolicyVersion: 1,
+            privacyPolicyVersion: "1.0",
           },
           true,
         );
@@ -618,6 +617,8 @@ describe("AnalyticsConsentDrawer on Portfolio", () => {
   });
 
   describe("needs privacy policy version update", () => {
+    const consentDate = new Date("2026-01-15T12:00:00.000Z").toISOString();
+
     it("should show the privacy update sheet, persist the policy version, and close after Got it", async () => {
       const { user, store } = renderWithReactQuery(<IntegrationNavigator />, {
         overrideInitialState: composePortfolioOverrides({
@@ -625,8 +626,9 @@ describe("AnalyticsConsentDrawer on Portfolio", () => {
           analyticsOptInEnabled: true,
           analyticsEnabled: true,
           personalizedRecommendationsEnabled: true,
-          consentDate: new Date().toISOString(),
-          privacyPolicyVersion: 0,
+          consentDate,
+          privacyPolicyVersion: 1,
+          analyticsOptInParams: { policyVersion: "1.1" },
         }),
       });
 
@@ -651,7 +653,7 @@ describe("AnalyticsConsentDrawer on Portfolio", () => {
         {
           button: "analytics_consent_privacy_got_it",
           page: ANALYTICS_CONSENT_DRAWER_PAGE,
-          privacyPolicyVersion: 1,
+          privacyPolicyVersion: "1.1",
         },
         true,
       );
@@ -659,7 +661,10 @@ describe("AnalyticsConsentDrawer on Portfolio", () => {
       await waitFor(() => {
         expect(privacySheetTitle).not.toBeOnTheScreen();
       });
-      expect(store.getState().settings.analyticsConsentInfo.privacyPolicyVersion).toBe(1);
+      expect(store.getState().settings.analyticsConsentInfo).toEqual({
+        consentDate,
+        privacyPolicyVersion: "1.1",
+      });
       expect(store.getState().settings.hasSeenAnalyticsOptInPrompt).toBe(true);
       expect(analytics.updateIdentify).toHaveBeenCalledTimes(1);
     });

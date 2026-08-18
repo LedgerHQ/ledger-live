@@ -4,12 +4,22 @@
  * the device action consumes/produces — no local mirror to keep in sync.
  */
 import type {
+  IronwoodActionSignature,
   OrchardActionSignature,
+  PcztIronwoodAction,
+  PcztIronwoodBundle,
   PcztTransaction,
   SignPcztTransactionResult,
 } from "@ledgerhq/device-signer-kit-zcash";
 
-export type { OrchardActionSignature, PcztTransaction, SignPcztTransactionResult };
+export type {
+  IronwoodActionSignature,
+  OrchardActionSignature,
+  PcztIronwoodAction,
+  PcztIronwoodBundle,
+  PcztTransaction,
+  SignPcztTransactionResult,
+};
 
 export type ZcashAppConfig = {
   version: string;
@@ -58,6 +68,12 @@ export type SignerTransactionLike = {
   nVersionGroupId?: Uint8Array;
   nExpiryHeight?: Uint8Array;
   extraData?: Uint8Array;
+  // Raw hex of the source transaction. Set by the Zcash createSigner wrapper
+  // around splitTransaction so toLegacyTransaction can populate
+  // serializedPreviousTransactionOverride — required for any source tx that
+  // carries a shielded bundle (Orchard), whose bytes are stripped by
+  // serializeTransaction, causing the device to compute a wrong ZIP-244 txid.
+  rawTxHex?: string;
 };
 
 /**
@@ -91,10 +107,15 @@ export type BitcoinCreateTransactionLike = {
   onDeviceSignatureGranted?: () => void;
 };
 
+export type ZcashShieldedAddress = {
+  address: string;
+};
+
 export type ZcashSigner = {
   getAppConfig: () => Promise<ZcashAppConfig>;
   getAddress: (path: string, display?: boolean) => Promise<ZcashAddress>;
   getFullViewingKey: (path: string) => Promise<ZcashViewKey>;
+  getShieldedAddress: (path: string, display?: boolean) => Promise<ZcashShieldedAddress>;
   createPaymentTransaction: (arg: BitcoinCreateTransactionLike) => Promise<string>;
   signPcztTransaction: (pczt: PcztTransaction) => Promise<SignPcztTransactionResult>;
   signMessage: (path: string, messageHex: string) => Promise<ZcashSignature>;

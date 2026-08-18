@@ -2,7 +2,7 @@ import { concat, defer, of, timer, type Observable } from "rxjs";
 import { catchError, filter, finalize, ignoreElements, map, takeWhile } from "rxjs/operators";
 import { DeviceActionStatus } from "@ledgerhq/device-management-kit";
 import { SignerEthBuilder } from "@ledgerhq/device-signer-kit-ethereum";
-import type { DeviceConnectionResult, Job } from "@ledgerhq/device-intent";
+import type { DeviceConnectionResult, Job } from "@features/platform-device-intent";
 import type {
   GetEthAddressDMKSignerDemoIntentInput,
   GetEthAddressDMKSignerDemoIntentJobState,

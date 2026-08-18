@@ -206,7 +206,7 @@ export function QuickAmountSelector({
                       numberOfLines={1}
                       adjustsFontSizeToFit
                     >
-                      <CurrencyUnitValue unit={unit} value={tile.rangeSum} showCode />
+                      <CurrencyUnitValue unit={unit} value={tile.rangeSum} showCode showAllDigits />
                     </Text>
                   )}
 
@@ -250,7 +250,7 @@ export function QuickAmountSelector({
                 numberOfLines={1}
                 adjustsFontSizeToFit
               >
-                <CurrencyUnitValue unit={unit} value={spendableBalance} showCode />
+                <CurrencyUnitValue unit={unit} value={spendableBalance} showCode showAllDigits />
               </Text>
             </Box>
             <Box

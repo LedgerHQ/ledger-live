@@ -12,7 +12,7 @@ import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import { setupEnv, performSwapUntilQuoteSelectionStep } from "tests/utils/swapUtils";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { overrideNetworkPayload } from "tests/utils/networkUtils";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
 import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
@@ -26,7 +26,7 @@ const swapEntryPoint = {
   swap: new Swap(Account.BTC_NATIVE_SEGWIT_1, Account.ETH_1, "0.0006"),
 };
 
-test.describe("Swap flow from different entry point", () => {
+test.describe("Swap - entry points", () => {
   setupEnv(true);
 
   const { accountToDebit, accountToCredit } = swapEntryPoint.swap;
@@ -52,7 +52,7 @@ test.describe("Swap flow from different entry point", () => {
   });
 
   test(
-    "Entry Point - Asset Allocation",
+    `[${accountToDebit.currency.testLabel}] - Swap entry point from asset allocation`,
     {
       tag: [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bitcoin", "@family-bitcoin"],
       annotation: {
@@ -64,16 +64,19 @@ test.describe("Swap flow from different entry point", () => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.mainNavigation.openTargetFromMainNavigation("home");
       await app.portfolio.clickAsset(swapEntryPoint.swap.accountToDebit.currency);
-      // aggregatedAssets ON opens swap as the AssetDetail embedded rail; otherwise the legacy
-      // asset page's Swap CTA navigates to the full /swap page.
-      const swapSurface = (await isAggregatedAssetsEnabled(app.getPage())) ? "embedded" : "full";
-      await app.swap.goAndWaitForSwapToBeReady(() => app.assetPage.startSwapFlow(), swapSurface);
+      if (await isAggregatedAssetsEnabled(app.getPage())) {
+        await app
+          .assetDetail(swapEntryPoint.swap.accountToDebit.currency.id)
+          .swapContainer.expectSwapContainerVisible();
+      } else {
+        await app.swap.goAndWaitForSwapToBeReady(() => app.assetPage.startSwapFlow());
+      }
       await app.swap.checkAssetToContains(swapEntryPoint.swap.accountToDebit.currency.ticker);
     },
   );
 
   test(
-    "Entry Point - Market page - Click on swap for any coin",
+    `[${accountToDebit.currency.testLabel}] - Swap entry point from market page`,
     {
       tag: [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bitcoin", "@family-bitcoin"],
       annotation: {
@@ -95,7 +98,7 @@ test.describe("Swap flow from different entry point", () => {
   );
 
   test(
-    "Entry Point - Market page - More than one account for an asset",
+    `[${accountToDebit.currency.testLabel}] - Swap entry point from market page with several accounts`,
     {
       tag: [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bitcoin", "@family-bitcoin"],
       annotation: {
@@ -108,7 +111,9 @@ test.describe("Swap flow from different entry point", () => {
       await app.marketBanner.clickExploreMarketHeader();
       await app.market.clickCoinRow(swapEntryPoint.swap.accountToDebit.currency.ticker);
       if (await isAggregatedAssetsEnabled(app.getPage())) {
-        await app.assetDetail.expectMarketInfoVisible();
+        await app
+          .assetDetail(swapEntryPoint.swap.accountToDebit.currency.id)
+          .swapContainer.expectSwapContainerVisible();
       } else {
         await app.marketCoin.expectMarketCoinPageToBeVisible(
           swapEntryPoint.swap.accountToDebit.currency.id,
@@ -120,7 +125,7 @@ test.describe("Swap flow from different entry point", () => {
   );
 
   test(
-    "Entry Point - Account page",
+    `[${accountToDebit.currency.testLabel}] - Swap entry point from account page`,
     {
       tag: [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bitcoin", "@family-bitcoin"],
       annotation: {
@@ -143,7 +148,7 @@ test.describe("Swap flow from different entry point", () => {
   );
 
   test(
-    "Entry Point - left menu",
+    `[${accountToDebit.currency.testLabel}] - Swap entry point from left menu`,
     {
       tag: [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bitcoin", "@family-bitcoin"],
       annotation: {
@@ -176,7 +181,7 @@ const swapMax = [
 ];
 
 for (const { fromAccount, toAccount, xrayTicket } of swapMax) {
-  test.describe("Swap - Send Max", () => {
+  test.describe("Swap - send max", () => {
     setupEnv(true);
 
     const accPair: string[] = [fromAccount, toAccount].map(acc =>
@@ -212,7 +217,7 @@ for (const { fromAccount, toAccount, xrayTicket } of swapMax) {
     });
 
     test(
-      `Swap max amount from ${fromAccount.currency.name} to ${toAccount.currency.name}`,
+      `[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap max amount`,
       {
         tag: [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bitcoin", "@family-bitcoin"],
         annotation: {
@@ -260,7 +265,7 @@ for (const { fromAccount, toAccount, xrayTicket } of swapMax) {
   });
 }
 
-test.describe("Swap history", () => {
+test.describe("Swap - history", () => {
   const swapHistory = {
     swap: new Swap(Account.SOL_1, Account.ETH_1, "0.07"),
     xrayTicket: "B2CQA-604",
@@ -295,7 +300,7 @@ test.describe("Swap history", () => {
   });
 
   test(
-    `User can export all history operations`,
+    `[${swapHistory.swap.accountToDebit.currency.testLabel}-${swapHistory.swap.accountToCredit.currency.testLabel}] - Export swap history operations`,
     {
       tag: [...DEVICE_TAGS, "@solana", "@family-solana", "@ethereum", "@family-evm"],
       annotation: { type: "TMS", description: "B2CQA-604" },
@@ -321,7 +326,7 @@ test.describe("Swap history", () => {
   );
 
   test(
-    `User should be able to see their swap history from the swap history page`,
+    `[${swapHistory.swap.accountToDebit.currency.testLabel}-${swapHistory.swap.accountToCredit.currency.testLabel}] - Swap history is visible from the swap history page`,
     {
       tag: [...DEVICE_TAGS, "@solana", "@family-solana", "@ethereum", "@family-evm"],
       annotation: { type: "TMS", description: "B2CQA-602" },
@@ -342,7 +347,7 @@ test.describe("Swap history", () => {
   );
 });
 
-test.describe("Swap - Block blacklisted addresses", () => {
+test.describe("Swap - blacklisted address", () => {
   const fromAccount = Account.ETH_1;
   const toAccount = Account.BTC_NATIVE_SEGWIT_1;
   setupEnv(true);
@@ -375,7 +380,7 @@ test.describe("Swap - Block blacklisted addresses", () => {
   });
 
   test(
-    `Swap ${fromAccount.currency.name} to ${toAccount.currency.name}`,
+    `[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap blocked for a blacklisted address`,
     {
       tag: [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bitcoin", "@family-bitcoin"],
       annotation: {

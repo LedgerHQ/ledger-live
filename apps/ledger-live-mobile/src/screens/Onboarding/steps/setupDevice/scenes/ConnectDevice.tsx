@@ -28,7 +28,7 @@ const ConnectDevice = ({ onSuccess }: { onSuccess: () => void }) => {
 
   const onSelectDevice = useCallback(
     (device: Device) => {
-      const isUsbDevice = device.deviceId.startsWith("usb|");
+      const isUsbDevice = device.wired;
       trace({ type: "onboarding", message: "Selected device", data: { isUsbDevice } });
       dispatch(setLastConnectedDevice(device));
       dispatch(setReadOnlyMode(false));

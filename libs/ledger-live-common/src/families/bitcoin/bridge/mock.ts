@@ -5,8 +5,8 @@ import {
   InvalidAddress,
   FeeTooHigh,
   AmountRequired,
-  DustLimit,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/ledger-wallet-framework/errors";
+import { DustLimit } from "@ledgerhq/coin-bitcoin/errors";
 import type { FeeItems, Transaction } from "@ledgerhq/coin-bitcoin/types";
 import {
   makeAccountBridgeReceive,
@@ -24,9 +24,9 @@ import {
 import { getMainAccount } from "../../../account";
 import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import { getBitcoinEstimationRecipient } from "@ledgerhq/coin-bitcoin/constants";
-import cryptoFactory from "@ledgerhq/coin-bitcoin/wallet-btc/crypto/factory";
-import { Currency } from "@ledgerhq/coin-bitcoin/wallet-btc/index";
-import { computeDustAmount } from "@ledgerhq/coin-bitcoin/wallet-btc/utils";
+import cryptoFactory from "@ledgerhq/wallet-btc/crypto/factory";
+import { Currency } from "@ledgerhq/wallet-btc/index";
+import { computeDustAmount } from "@ledgerhq/wallet-btc/utils";
 import { validateAddress } from "../../../bridge/validateAddress";
 
 const receive = makeAccountBridgeReceive();

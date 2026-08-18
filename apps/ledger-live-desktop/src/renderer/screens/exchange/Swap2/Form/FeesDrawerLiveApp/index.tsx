@@ -7,7 +7,7 @@ import { Account, AccountLike, FeeStrategy } from "@ledgerhq/types-live";
 import { t } from "i18next";
 import isEqual from "lodash/isEqual";
 import React, { useCallback, useRef, useState } from "react";
-import { useTrack } from "~/renderer/analytics/segment";
+import { track } from "~/renderer/analytics/segment";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Alert from "~/renderer/components/Alert";
 import Box from "~/renderer/components/Box";
@@ -39,7 +39,6 @@ export default function FeesDrawerLiveApp({
   disableSlowStrategy = false,
 }: Props) {
   const swapDefaultTrack = useGetSwapTrackingProperties();
-  const track = useTrack();
 
   const [isOpen, setIsOpen] = useState(true);
   const [transaction, setTransactionState] = useState(initialTransaction);
@@ -115,7 +114,7 @@ export default function FeesDrawerLiveApp({
           isPreparingRef.current = false;
         });
     },
-    [bridge, mainAccount, swapDefaultTrack, track, transaction],
+    [bridge, mainAccount, swapDefaultTrack, transaction],
   );
 
   const mapStrategies = useCallback(

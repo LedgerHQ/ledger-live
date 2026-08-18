@@ -1,5 +1,5 @@
 import type { BitcoinAccount } from "@ledgerhq/coin-bitcoin/types";
-import wallet from "@ledgerhq/coin-bitcoin/wallet-btc/index";
+import wallet from "@ledgerhq/wallet-btc/index";
 import type { AccountLike } from "@ledgerhq/types-live";
 
 /**

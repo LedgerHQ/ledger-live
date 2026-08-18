@@ -1,9 +1,9 @@
-import React, { memo, useCallback, useEffect, useState } from "react";
+import React, { memo, useCallback, useEffect, useRef, useState } from "react";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { Account } from "@ledgerhq/types-live";
 import type { TFunction } from "i18next";
-import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
+
 import RecipientFieldBase from "./RecipientFieldBase";
 import RecipientFieldDomainService from "./RecipientFieldDomainService";
 import { useFeature } from "@features/platform-feature-flags";
@@ -38,8 +38,23 @@ const RecipientField = <T extends Transaction, TS extends TransactionStatus>({
   );
 
   const { enabled: isDomainResolutionEnabled, params } = useFeature("domainInputResolution") || {};
-  const isCurrencySupported =
-    params?.supportedCurrencyIds?.includes(account.currency.id as CryptoCurrencyId) || false;
+  const isCurrencySupported = params?.supportedCurrencyIds?.includes(account.currency.id) || false;
+
+  const wasReadOnly = useRef(false);
+
+  // Follow the transaction when the recipient is driven externally (the field
+  // is locked). Also runs once on the unlock transition so clearing the
+  // recipient clears the input. Inert wherever recipientIsReadOnly is never
+  // true -- i.e. every currency today -- so typing and bc1... lowercasing in
+  // coin-bitcoin's updateTransaction are untouched.
+  useEffect(() => {
+    const isReadOnly = Boolean(status?.recipientIsReadOnly);
+    if (isReadOnly || wasReadOnly.current) {
+      const next = transaction.recipient || "";
+      if (next !== value) setValue(next);
+    }
+    wasReadOnly.current = isReadOnly;
+  }, [status?.recipientIsReadOnly, transaction.recipient, value]);
 
   useEffect(() => {
     if (value !== "" && value !== transaction.recipient) {

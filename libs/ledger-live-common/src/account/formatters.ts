@@ -4,8 +4,8 @@ import {
   getOperationAmountNumber,
   getOperationAmountNumberWithInternals,
 } from "@ledgerhq/ledger-wallet-framework/operation";
-import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
-import type { Unit } from "@ledgerhq/types-cryptoassets";
+import { getDefaultAccountName } from "@domain/entity-account-name";
+import type { Unit } from "@domain/entity-currency-unit";
 import type { Account, Operation } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";

@@ -3,7 +3,7 @@ import {
   toEnsureAppReadyInput,
   toConnectAppRequest,
 } from "./resolveAppRequestRequirements";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { createFixtureAccount } from "../../../mock/fixtures/cryptoCurrencies";
 
 jest.mock("@ledgerhq/ledger-wallet-framework/derivation", () => ({
@@ -150,16 +150,17 @@ describe("deviceInitialization requirements", () => {
     });
   });
 
-  it("keeps legacy request optionality while normalizing the DIE input", async () => {
+  it("GIVEN partial dependencies WHEN translating requirements THEN only legacy connect-app keeps them", async () => {
     const resolved = await resolveAppRequestRequirements({
       appName: "Ethereum",
+      allowPartialDependencies: true,
     });
 
     expect(toConnectAppRequest(resolved)).toEqual({
       appName: "Ethereum",
       dependencies: undefined,
       requireLatestFirmware: undefined,
-      allowPartialDependencies: false,
+      allowPartialDependencies: true,
       requiresDerivation: undefined,
     });
 
@@ -167,7 +168,6 @@ describe("deviceInitialization requirements", () => {
       appName: "Ethereum",
       dependencies: [],
       requireLatestFirmware: false,
-      allowPartialDependencies: false,
       requiresDerivation: undefined,
     });
   });

@@ -1,18 +1,15 @@
+import { StatusCodes, TransportError } from "@ledgerhq/hw-transport/errors";
 import {
-  DeviceOnDashboardExpected,
   LanguageNotFound,
   ManagerNotEnoughSpaceError,
-  StatusCodes,
-  TransportError,
-  TransportStatusError,
-} from "@ledgerhq/errors";
+  LanguageInstallRefusedOnDevice,
+} from "../errors";
 import { Observable, from, of, throwError } from "rxjs";
 import { catchError, concatMap, delay, mergeMap } from "rxjs/operators";
 
 import Transport from "@ledgerhq/hw-transport";
 import network from "@ledgerhq/live-network/network";
 import { Language, LanguagePackage } from "@ledgerhq/types-live";
-import { LanguageInstallRefusedOnDevice } from "../errors";
 import ManagerAPI from "../manager/api";
 import attemptToQuitApp, { AttemptToQuitAppEvent } from "./attemptToQuitApp";
 import { withDevice } from "./deviceAccess";
@@ -131,11 +128,14 @@ export default function installLanguage({
               subscriber.complete();
             }),
             catchError((e: unknown) => {
+              const eName = (e as { name?: string })?.name;
               if (
-                e instanceof DeviceOnDashboardExpected ||
+                eName === "DeviceOnDashboardExpected" ||
                 (e &&
-                  e instanceof TransportStatusError &&
-                  [0x6e00, 0x6d00, 0x6e01, 0x6d01, 0x6d02].includes(e.statusCode))
+                  eName === "TransportStatusError" &&
+                  [0x6e00, 0x6d00, 0x6e01, 0x6d01, 0x6d02].includes(
+                    (e as { statusCode?: number })?.statusCode ?? -1,
+                  ))
               ) {
                 return from(getAppAndVersion(transport)).pipe(
                   concatMap(appAndVersion => {

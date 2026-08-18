@@ -1,7 +1,7 @@
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { log } from "@ledgerhq/logs";
 import { Account, AnyMessage } from "@ledgerhq/types-live";
-import { getBufferFromString } from "./common-logic/utils";
+import { getBufferFromString } from "./logic/utils";
 import { CasperSigner } from "./types";
 
 export const signMessage =

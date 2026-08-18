@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "~/components/SafeAreaView";
 import { FlatList, StyleSheet } from "react-native";
 import invariant from "invariant";
 import { useTheme } from "@react-navigation/native";
@@ -18,7 +18,7 @@ type Props = BaseComposite<
   StackNavigatorProps<HederaRedelegationFlowParamList, ScreenName.HederaRedelegationSelectValidator>
 >;
 
-const keyExtractor = (v: HederaValidator) => v.nodeId.toString();
+const keyExtractor = (v: HederaValidator) => v.id;
 
 export default function RedelegationSelectValidator({ navigation, route }: Props) {
   const { colors } = useTheme();

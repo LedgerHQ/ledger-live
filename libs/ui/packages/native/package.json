@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/native-ui",
-  "version": "0.64.0",
+  "version": "0.66.0",
   "description": "Ledger Live - Mobile UI",
   "repository": {
     "type": "git",
@@ -33,6 +33,10 @@
     "./pre-ldls": {
       "@ledgerhq/source": "./src/pre-ldls/index.ts",
       "default": "./lib/pre-ldls/index.js"
+    },
+    "./assets/icons": {
+      "@ledgerhq/source": "./src/assets/icons.ts",
+      "default": "./lib/assets/icons.js"
     },
     "./*": {
       "@ledgerhq/source": [
@@ -77,16 +81,12 @@
     "storybook-generate": "sb-rn-get-stories"
   },
   "dependencies": {
-    "@ledgerhq/crypto-icons": "catalog:",
     "@ledgerhq/icons-ui": "workspace:^",
     "@ledgerhq/ui-shared": "workspace:^",
     "color": "^4.0.0",
-    "styled-system": "catalog:",
-    "stylis": "catalog:"
+    "styled-system": "catalog:"
   },
   "peerDependencies": {
-    "@ledgerhq/lumen-design-core": ">=0.1.11",
-    "@ledgerhq/lumen-ui-rnative": ">=0.1.25",
     "react": ">=17",
     "react-native": ">=0.64.0",
     "react-native-reanimated": ">=4.1",
@@ -111,8 +111,6 @@
     "@emotion/native": "^11.0.0",
     "@expo/cli": "0.24.14",
     "@expo/metro-config": "^0.19.11",
-    "@ledgerhq/lumen-design-core": "catalog:",
-    "@ledgerhq/lumen-ui-rnative": "catalog:",
     "@rsbuild/core": "catalog:",
     "@rsbuild/plugin-react": "catalog:",
     "@react-native-async-storage/async-storage": "2.1.2",
@@ -141,7 +139,7 @@
     "@testing-library/user-event": "14.5.2",
     "@types/color": "^3.0.3",
     "@types/hoist-non-react-statics": "^3.3.1",
-    "@types/lodash": "4.17.18",
+    "@types/lodash": "catalog:",
     "@types/node": "catalog:",
     "@types/prop-types": "^15.7.5",
     "@types/react": "catalog:",
@@ -164,7 +162,7 @@
     "expo-modules-core": "catalog:",
     "fs-extra": "^10.0.1",
     "glob": "^7.2.0",
-    "lodash": "4.17.21",
+    "lodash": "catalog:",
     "metro": "0.81.5",
     "metro-config": "0.81.5",
     "metro-core": "0.81.5",

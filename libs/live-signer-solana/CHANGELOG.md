@@ -1,5 +1,133 @@
 # @ledgerhq/live-signer-solana
 
+## 0.19.1
+
+### Patch Changes
+
+- Updated dependencies [[`3d24a89`](https://github.com/LedgerHQ/ledger-live/commit/3d24a898d59de55364ec29de29eaecb7ca14425d), [`9fcbe39`](https://github.com/LedgerHQ/ledger-live/commit/9fcbe39689ff122568ffb031a30dc3805ebb6add), [`9e1412e`](https://github.com/LedgerHQ/ledger-live/commit/9e1412e08ccccd4af4a7078a797332ea92f86c63), [`aee0e64`](https://github.com/LedgerHQ/ledger-live/commit/aee0e64b491aafc1ca8fea16b1ef124cb183770b), [`2e8b946`](https://github.com/LedgerHQ/ledger-live/commit/2e8b94664bb7b6aba049915cad35b51766874696), [`aa3ea09`](https://github.com/LedgerHQ/ledger-live/commit/aa3ea0972205b589d2f92e352ac7154d11f872bc), [`53c3431`](https://github.com/LedgerHQ/ledger-live/commit/53c3431e01b3139ef689cb589bab0adee4ed6152)]:
+  - @ledgerhq/coin-solana@0.62.0
+  - @ledgerhq/ledger-wallet-framework@2.8.0
+
+## 0.19.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`3d24a89`](https://github.com/LedgerHQ/ledger-live/commit/3d24a898d59de55364ec29de29eaecb7ca14425d), [`9fcbe39`](https://github.com/LedgerHQ/ledger-live/commit/9fcbe39689ff122568ffb031a30dc3805ebb6add), [`9e1412e`](https://github.com/LedgerHQ/ledger-live/commit/9e1412e08ccccd4af4a7078a797332ea92f86c63), [`aee0e64`](https://github.com/LedgerHQ/ledger-live/commit/aee0e64b491aafc1ca8fea16b1ef124cb183770b), [`2e8b946`](https://github.com/LedgerHQ/ledger-live/commit/2e8b94664bb7b6aba049915cad35b51766874696), [`aa3ea09`](https://github.com/LedgerHQ/ledger-live/commit/aa3ea0972205b589d2f92e352ac7154d11f872bc), [`53c3431`](https://github.com/LedgerHQ/ledger-live/commit/53c3431e01b3139ef689cb589bab0adee4ed6152)]:
+  - @ledgerhq/coin-solana@0.62.0-next.0
+  - @ledgerhq/ledger-wallet-framework@2.8.0-next.0
+
+## 0.19.0
+
+### Minor Changes
+
+- [#20179](https://github.com/LedgerHQ/ledger-live/pull/20179) [`ec6f940`](https://github.com/LedgerHQ/ledger-live/commit/ec6f9402e65a366bcab2a0a3f845a98c5cbd576d) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Wire CAL_SERVICE_URL (with /v1 path) into DMK ContextModule via setCalConfig
+
+### Patch Changes
+
+- Updated dependencies [[`9fcbe39`](https://github.com/LedgerHQ/ledger-live/commit/9fcbe39689ff122568ffb031a30dc3805ebb6add), [`de041b8`](https://github.com/LedgerHQ/ledger-live/commit/de041b89c67dcacea7bc4eeffab75b76ab1d4bd7), [`c82c09a`](https://github.com/LedgerHQ/ledger-live/commit/c82c09abc5f7f814b68d6db44021d915bc9bc0d7), [`53c3431`](https://github.com/LedgerHQ/ledger-live/commit/53c3431e01b3139ef689cb589bab0adee4ed6152), [`635fa12`](https://github.com/LedgerHQ/ledger-live/commit/635fa12d47f5a98858326f4dd68962dffe82eda9)]:
+  - @ledgerhq/coin-solana@0.61.0
+  - @ledgerhq/ledger-wallet-framework@2.7.0
+  - @ledgerhq/ledger-cal-service@1.19.1
+  - @ledgerhq/ledger-trust-service@0.8.12
+
+## 0.19.0-next.0
+
+### Minor Changes
+
+- [#20179](https://github.com/LedgerHQ/ledger-live/pull/20179) [`ec6f940`](https://github.com/LedgerHQ/ledger-live/commit/ec6f9402e65a366bcab2a0a3f845a98c5cbd576d) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Wire CAL_SERVICE_URL (with /v1 path) into DMK ContextModule via setCalConfig
+
+### Patch Changes
+
+- Updated dependencies [[`9fcbe39`](https://github.com/LedgerHQ/ledger-live/commit/9fcbe39689ff122568ffb031a30dc3805ebb6add), [`de041b8`](https://github.com/LedgerHQ/ledger-live/commit/de041b89c67dcacea7bc4eeffab75b76ab1d4bd7), [`c82c09a`](https://github.com/LedgerHQ/ledger-live/commit/c82c09abc5f7f814b68d6db44021d915bc9bc0d7), [`53c3431`](https://github.com/LedgerHQ/ledger-live/commit/53c3431e01b3139ef689cb589bab0adee4ed6152), [`635fa12`](https://github.com/LedgerHQ/ledger-live/commit/635fa12d47f5a98858326f4dd68962dffe82eda9)]:
+  - @ledgerhq/coin-solana@0.61.0-next.0
+  - @ledgerhq/ledger-wallet-framework@2.7.0-next.0
+  - @ledgerhq/ledger-cal-service@1.19.1-next.0
+  - @ledgerhq/ledger-trust-service@0.8.12-next.0
+
+## 0.18.2
+
+### Patch Changes
+
+- Updated dependencies [[`1070564`](https://github.com/LedgerHQ/ledger-live/commit/107056410174d3da2d45c468232a8d742aea021f), [`24d60d7`](https://github.com/LedgerHQ/ledger-live/commit/24d60d7628696b58764f8fbd4495140a049b3fcc), [`6ac54ab`](https://github.com/LedgerHQ/ledger-live/commit/6ac54abe700847501356adc11231f8437d4a5817), [`9fe07f0`](https://github.com/LedgerHQ/ledger-live/commit/9fe07f0f618e6cde963c922f271ad5d7b29dbce7)]:
+  - @ledgerhq/errors@7.0.0
+  - @ledgerhq/coin-solana@0.60.0
+  - @ledgerhq/ledger-cal-service@1.19.0
+  - @ledgerhq/hw-app-solana@7.10.7
+  - @ledgerhq/hw-transport@6.35.7
+  - @ledgerhq/ledger-trust-service@0.8.11
+  - @ledgerhq/hw-bolos@6.36.7
+
+## 0.18.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`1070564`](https://github.com/LedgerHQ/ledger-live/commit/107056410174d3da2d45c468232a8d742aea021f), [`24d60d7`](https://github.com/LedgerHQ/ledger-live/commit/24d60d7628696b58764f8fbd4495140a049b3fcc), [`6ac54ab`](https://github.com/LedgerHQ/ledger-live/commit/6ac54abe700847501356adc11231f8437d4a5817), [`9fe07f0`](https://github.com/LedgerHQ/ledger-live/commit/9fe07f0f618e6cde963c922f271ad5d7b29dbce7)]:
+  - @ledgerhq/errors@7.0.0-next.0
+  - @ledgerhq/coin-solana@0.60.0-next.0
+  - @ledgerhq/ledger-cal-service@1.19.0-next.0
+  - @ledgerhq/hw-app-solana@7.10.7-next.0
+  - @ledgerhq/hw-transport@6.35.7-next.0
+  - @ledgerhq/ledger-trust-service@0.8.11-next.0
+  - @ledgerhq/hw-bolos@6.36.7-next.0
+
+## 0.18.1
+
+### Patch Changes
+
+- Updated dependencies [[`d8cb7de`](https://github.com/LedgerHQ/ledger-live/commit/d8cb7deff30c3c1a88ae873d7bcddd6ce0d7375f)]:
+  - @ledgerhq/coin-solana@0.59.1
+
+## 0.18.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`d8cb7de`](https://github.com/LedgerHQ/ledger-live/commit/d8cb7deff30c3c1a88ae873d7bcddd6ce0d7375f)]:
+  - @ledgerhq/coin-solana@0.59.1-hotfix.0
+
+## 0.18.0
+
+### Minor Changes
+
+- [#19901](https://github.com/LedgerHQ/ledger-live/pull/19901) [`93194e4`](https://github.com/LedgerHQ/ledger-live/commit/93194e4a6efbdb3ae54c0784e604edaa76e342c7) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Set the Solana DMK signer origin token so clear-signing metadata is resolved correctly
+
+### Patch Changes
+
+- Updated dependencies [[`a128521`](https://github.com/LedgerHQ/ledger-live/commit/a1285211f0482229e5011505fb9e8c9d473cb86a), [`4d99006`](https://github.com/LedgerHQ/ledger-live/commit/4d99006589b6855d1a06a8aa1ece23c3f6f3ddf7)]:
+  - @ledgerhq/coin-solana@0.59.0
+  - @ledgerhq/ledger-cal-service@1.18.5
+  - @ledgerhq/ledger-trust-service@0.8.10
+
+## 0.18.0-next.0
+
+### Minor Changes
+
+- [#19901](https://github.com/LedgerHQ/ledger-live/pull/19901) [`93194e4`](https://github.com/LedgerHQ/ledger-live/commit/93194e4a6efbdb3ae54c0784e604edaa76e342c7) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Set the Solana DMK signer origin token so clear-signing metadata is resolved correctly
+
+### Patch Changes
+
+- Updated dependencies [[`a128521`](https://github.com/LedgerHQ/ledger-live/commit/a1285211f0482229e5011505fb9e8c9d473cb86a), [`4d99006`](https://github.com/LedgerHQ/ledger-live/commit/4d99006589b6855d1a06a8aa1ece23c3f6f3ddf7)]:
+  - @ledgerhq/coin-solana@0.59.0-next.0
+  - @ledgerhq/ledger-cal-service@1.18.5-next.0
+  - @ledgerhq/ledger-trust-service@0.8.10-next.0
+
+## 0.17.1
+
+### Patch Changes
+
+- Updated dependencies [[`4b73f23`](https://github.com/LedgerHQ/ledger-live/commit/4b73f23260ecc28574f46a7fd0f5cd7627d6d13f), [`cd43e66`](https://github.com/LedgerHQ/ledger-live/commit/cd43e6689983aefdc3548ac6dcfb86521a1535ff), [`dcacbc9`](https://github.com/LedgerHQ/ledger-live/commit/dcacbc9b7a21ba36f54c1f9872918cd374b0e4e3)]:
+  - @ledgerhq/coin-solana@0.58.0
+  - @ledgerhq/ledger-cal-service@1.18.4
+  - @ledgerhq/ledger-trust-service@0.8.9
+
+## 0.17.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`4b73f23`](https://github.com/LedgerHQ/ledger-live/commit/4b73f23260ecc28574f46a7fd0f5cd7627d6d13f), [`cd43e66`](https://github.com/LedgerHQ/ledger-live/commit/cd43e6689983aefdc3548ac6dcfb86521a1535ff), [`dcacbc9`](https://github.com/LedgerHQ/ledger-live/commit/dcacbc9b7a21ba36f54c1f9872918cd374b0e4e3)]:
+  - @ledgerhq/coin-solana@0.58.0-next.0
+  - @ledgerhq/ledger-cal-service@1.18.4-next.0
+  - @ledgerhq/ledger-trust-service@0.8.9-next.0
+
 ## 0.17.0
 
 ### Minor Changes

@@ -9,15 +9,8 @@ import { ParamListBase, T } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import { getDeviceModel } from "@ledgerhq/devices";
-import {
-  BluetoothRequired,
-  LockedDeviceError,
-  PeerRemovedPairing,
-  WrongDeviceForAccount,
-  FirmwareNotRecognized,
-  UnsupportedFeatureError,
-  NanoSNotSupported,
-} from "@ledgerhq/errors";
+import { WrongDeviceForAccount } from "@ledgerhq/ledger-wallet-framework/errors";
+import { NanoSNotSupported } from "@ledgerhq/live-common/errors";
 import { isCounterfeitError } from "@ledgerhq/live-common/hw/isCounterfeitError";
 import { isSyncOnboardingSupported } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
 import { ExchangeRate, ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
@@ -26,16 +19,16 @@ import { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import firmwareUpdateRepair from "@ledgerhq/live-common/hw/firmwareUpdate-repair";
 import { isInvalidGetFirmwareMetadataResponseError } from "@ledgerhq/live-dmk-mobile";
-import { WalletState } from "@ledgerhq/live-wallet/store";
+import { WalletState } from "~/reducers/wallet";
 import { BoxedIcon, Flex, Icons, IconsLegacy, Link, Log, Tag, Text } from "@ledgerhq/native-ui";
 import { StuckDeviceActionHint } from "../StuckDeviceActionHint";
 import InfiniteLoader from "~/components/InfiniteLoader";
 import { DownloadMedium } from "@ledgerhq/native-ui/assets/icons";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { TokenCurrency } from "@domain/entity-currency-token";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { DeviceModelInfo } from "@ledgerhq/types-live";
 
-import { TrackScreen, track, useTrack } from "~/analytics";
+import { TrackScreen, track } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
 import { MANAGER_TABS } from "~/const/manager";
 import { getDeviceAnimation, getDeviceAnimationStyles } from "~/helpers/getDeviceAnimation";
@@ -603,9 +596,9 @@ export function renderError({
   currencyName?: string;
   hasExportLogButton?: boolean;
 }) {
-  if (error instanceof LockedDeviceError) {
+  if (error?.name === "LockedDeviceError") {
     return renderLockedDeviceError({ t, onRetry, device });
-  } else if (error instanceof PeerRemovedPairing) {
+  } else if (error?.name === "PeerRemovedPairing") {
     // User needs to forget the device on their phone settings
     const productName = device ? getDeviceModel(device?.modelId).productName : "Ledger Device";
     return (
@@ -629,10 +622,10 @@ export function renderError({
       const getCTA = (error: Error, hasRetry: boolean): CTA => {
         if (
           isInvalidGetFirmwareMetadataResponseError(error) ||
-          error instanceof FirmwareNotRecognized
+          error?.name === "FirmwareNotRecognized"
         ) {
           return "OpenExperimentalSettings";
-        } else if (!(error instanceof PeerRemovedPairing) && hasRetry) {
+        } else if (error?.name !== "PeerRemovedPairing" && hasRetry) {
           return "Retry";
         }
         return "None";
@@ -688,7 +681,7 @@ export function renderError({
             }
           };
           return (
-            <Flex alignSelf="stretch" mb={0} mt={error instanceof BluetoothRequired ? 0 : 8}>
+            <Flex alignSelf="stretch" mb={0} mt={error?.name === "BluetoothRequired" ? 0 : 8}>
               <StyledButton
                 event="DeviceActionErrorRetry"
                 type="main"
@@ -706,7 +699,7 @@ export function renderError({
     };
     return (
       <Wrapper>
-        {error instanceof UnsupportedFeatureError ? (
+        {error?.name === "UnsupportedFeatureError" ? (
           <TrackScreen category="Unsupported Feature" name="Error: App Unavailable" />
         ) : null}
         <GenericErrorView
@@ -797,7 +790,6 @@ export function RequiredFirmwareUpdate({
   device: Device;
 }) {
   const { t } = useTranslation();
-  const track = useTrack();
   const lastSeenDevice: DeviceModelInfo | null | undefined = useSelector(lastSeenDeviceSelector);
   const { shouldDisplayMyWallet } = useWalletFeaturesConfig("mobile");
 

@@ -1,4 +1,4 @@
-import type { CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
+import type { Context, CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
 import type { RecordPickingStrategy, TransactionType } from "./logic";
 
 export type AleoConfig = {
@@ -16,3 +16,13 @@ export type AleoConfig = {
 };
 
 export type AleoCoinConfig = CurrencyConfig & AleoConfig;
+
+/**
+ * The {@link Context} threaded through the coin-aleo low layers (ADR-019).
+ *
+ * The free-form `Record` part carries a `currencyId` needed by some methods (e.g. listOperations).
+ */
+export type AleoContext = Context<AleoCoinConfig> & {
+  provableId?: string;
+  viewKey?: string;
+};

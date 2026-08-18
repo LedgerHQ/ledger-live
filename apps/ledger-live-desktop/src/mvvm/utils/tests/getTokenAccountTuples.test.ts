@@ -1,5 +1,9 @@
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { type TokenCurrency, TokenCurrencyIdSchema } from "@domain/entity-currency-token";
+import {
+  type CryptoCurrency,
+  CryptoCurrencyIdSchema,
+  getCryptoCurrencyById,
+} from "@domain/entity-currency-crypto";
 import { getTokenAccountTuples } from "../getTokenAccountTuples";
 import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
@@ -21,7 +25,7 @@ describe("getTokenAccountTuples", () => {
 
   it("should return an empty array if no matching token accounts are found", () => {
     const result = getTokenAccountTuples(
-      { ...mockedCurrency, id: "nonexistent" },
+      { ...mockedCurrency, id: TokenCurrencyIdSchema.parse("nonexistent") },
       mockedNestedAccounts,
     );
     expect(result).toEqual([]);
@@ -40,11 +44,11 @@ describe("getTokenAccountTuples", () => {
 
 const mockedCurrency = {
   type: "TokenCurrency",
-  id: "ethereum/erc20/usd__coin",
+  id: TokenCurrencyIdSchema.parse("ethereum/erc20/usd__coin"),
   ledgerSignature:
     "3045022100b2e358726e4e6a6752cf344017c0e9d45b9a904120758d45f61b2804f9ad5299022015161ef28d8c4481bd9432c13562def9cce688bcfec896ef244c9a213f106cdd",
   contractAddress: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
-  parentCurrencyId: "ethereum",
+  parentCurrencyId: CryptoCurrencyIdSchema.parse("ethereum"),
   tokenType: "erc20",
   name: "USD Coin",
   ticker: "USDC",
@@ -57,7 +61,7 @@ const mockedCurrency = {
       magnitude: 6,
     },
   ],
-} satisfies CryptoOrTokenCurrency;
+} satisfies CryptoCurrency | TokenCurrency;
 
 const mockedNestedAccounts = [
   {

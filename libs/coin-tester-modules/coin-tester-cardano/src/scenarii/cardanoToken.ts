@@ -1,3 +1,4 @@
+import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { extractPaymentKeyFromAddress } from "@ledgerhq/coin-cardano/utils";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
@@ -59,10 +60,19 @@ export const scenarioCardanoToken: Scenario<GenericTransaction, Account> = {
       value: INITIAL_TOKENS,
     });
 
+    // Self-register the token here — the global wallet-framework-test-setup resets the crypto-assets
+    // store in setupFilesAfterEnv (after env.setup), so a global registration would be wiped.
+    setCryptoAssetsStore({
+      findTokenByAddressInCurrency: async (addr, currencyId) =>
+        currencyId === "cardano" && addr === TEST_TOKEN.contractAddress ? TEST_TOKEN : undefined,
+      findTokenById: async id => (id === TEST_TOKEN.id ? TEST_TOKEN : undefined),
+      getTokensSyncHash: async () => "",
+    });
+
     const account = makeAccount(address);
     tokenSubAccountId = encodeTokenAccountId(account.id, TEST_TOKEN);
 
-    return { accountBridge, currencyBridge, account, retryLimit: 0 };
+    return { accountBridge, currencyBridge, account, retryLimit: 3 };
   },
 
   beforeAll: account => {

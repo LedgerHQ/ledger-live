@@ -7,24 +7,22 @@ import {
   DialogHeader,
   Stepper,
 } from "@ledgerhq/lumen-ui-react";
-import { LedgerDevices } from "@ledgerhq/lumen-ui-react/symbols";
-import { PostOnboardingActionId } from "@ledgerhq/types-live";
 import PostOnboardingAction from "./components/PostOnboardingAction";
 import { cn } from "LLD/utils/cn";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import type { FinishOnboardingDialogViewProps } from "./hooks/useFinishOnboardingDialogViewModel";
 
 const FinishOnboardingDialogView = ({
-  actions,
-  allActionsCompleted,
-  completedActionsAmount,
+  steps,
+  allStepsCompleted,
+  completedStepsAmount,
   deviceModelId,
   isOpen,
   onClose,
   onGotIt,
   onGotItLabel,
   title,
-  totalActionsAmount,
+  totalStepsAmount,
 }: FinishOnboardingDialogViewProps) => {
   const handleOpenChange = (open: boolean) => {
     if (!open) onClose();
@@ -39,49 +37,29 @@ const FinishOnboardingDialogView = ({
       >
         <DialogHeader onClose={onClose} className="!mb-0 shrink-0" />
         <DialogBody className="flex min-h-0 flex-1 flex-col gap-0 overflow-y-auto p-16 pt-0">
-          {/*
-            The first “step” is a hardcoded `deviceOnboarded` row, not from `actions`.
-            `completedActionsAmount` / `totalActionsAmount` include `IMPLICIT_DEVICE_STEP_OFFSET` in
-            `hooks/utils.ts` so the stepper matches that row + `actionList` below.
-          */}
           <div className="flex flex-col p-8 gap-16">
             <Stepper
               className="h-54 w-54 text-interactive-subtle"
-              currentStep={completedActionsAmount}
-              totalSteps={totalActionsAmount}
-              label={`${completedActionsAmount}/${totalActionsAmount}`}
+              currentStep={completedStepsAmount}
+              totalSteps={totalStepsAmount}
+              label={`${completedStepsAmount}/${totalStepsAmount}`}
             />
             <div className="flex flex-col">
               <span className="heading-4-semi-bold text-base">{title}</span>
             </div>
           </div>
-          {/*
-            This row is always `completed` (only the checkmark is shown, not `lumenSymbol`); a
-            concrete symbol is still required by `PostOnboardingAction`.
-          */}
-          <PostOnboardingAction
-            key={PostOnboardingActionId.deviceOnboarded}
-            completed
-            description=""
-            deviceModelId={deviceModelId}
-            lumenSymbol={LedgerDevices}
-            postOnboardingActionId={PostOnboardingActionId.deviceOnboarded}
-            shouldCompleteOnStart={false}
-            startAction={() => {}}
-            title="postOnboarding.dialog.actions.deviceOnboarded.title"
-          />
-          {actions.map(action => (
+          {steps.map(step => (
             <PostOnboardingAction
-              key={action.id}
-              buttonLabelForAnalyticsEvent={action.buttonLabelForAnalyticsEvent}
-              completed={action.completed}
-              description={action.description ?? ""}
+              key={step.id}
+              buttonLabelForAnalyticsEvent={step.buttonLabelForAnalyticsEvent}
+              completed={step.completed}
+              description={step.description ?? ""}
               deviceModelId={deviceModelId}
-              lumenSymbol={action.lumenSymbol}
-              postOnboardingActionId={action.id}
-              shouldCompleteOnStart={action.shouldCompleteOnStart ?? false}
-              startAction={action.startAction}
-              title={action.title}
+              lumenSymbol={step.lumenSymbol}
+              postOnboardingActionId={step.id}
+              shouldCompleteOnStart={step.shouldCompleteOnStart ?? false}
+              startAction={step.startAction}
+              title={step.title}
             />
           ))}
           {/*
@@ -95,12 +73,12 @@ const FinishOnboardingDialogView = ({
               size="lg"
               className={cn(
                 "w-full",
-                !allActionsCompleted && "invisible pointer-events-none select-none",
+                !allStepsCompleted && "invisible pointer-events-none select-none",
               )}
               type="button"
-              onClick={allActionsCompleted ? onGotIt : undefined}
-              tabIndex={allActionsCompleted ? undefined : -1}
-              aria-hidden={!allActionsCompleted}
+              onClick={allStepsCompleted ? onGotIt : undefined}
+              tabIndex={allStepsCompleted ? undefined : -1}
+              aria-hidden={!allStepsCompleted}
             >
               {onGotItLabel}
             </Button>

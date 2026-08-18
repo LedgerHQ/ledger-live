@@ -127,6 +127,27 @@ const cases: Array<[string, ActionWithNonce, object]> = [
       nonce: 99,
     },
   ],
+  [
+    "userSetAbstraction",
+    {
+      nonce: 5,
+      action: {
+        type: "userSetAbstraction",
+        hyperliquidChain: "Mainnet",
+        signatureChainId: "0xa4b1",
+        user: "0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
+        abstraction: "unifiedAccount",
+      },
+    },
+    {
+      type: "userSetAbstraction",
+      hyperliquidChain: "Mainnet",
+      signatureChainId: "0xa4b1",
+      user: "0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
+      abstraction: "unifiedAccount",
+      nonce: 5,
+    },
+  ],
 ];
 
 describe("convertAction", () => {

@@ -8,7 +8,7 @@ import {
   SectionListRenderItemInfo,
 } from "react-native";
 import BigNumber from "bignumber.js";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "~/components/SafeAreaView";
 import { Trans } from "~/context/Locale";
 import type {
   CosmosAccount,

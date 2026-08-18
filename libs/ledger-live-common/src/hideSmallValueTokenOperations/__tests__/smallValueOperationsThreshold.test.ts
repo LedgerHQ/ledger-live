@@ -1,8 +1,9 @@
 import BigNumber from "bignumber.js";
-import { getFiatCurrencyByTicker } from "../../currencies";
+import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 import type { AccountLike, Operation } from "@ledgerhq/types-live";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import {
   clampSmallValueThresholdUsd,
   convertThresholdFromCountervalueMinorUnitToUsd,
@@ -221,9 +222,9 @@ describe("smallValueOperationsThreshold", () => {
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     const regularAccount = { type: "Account", currency: mockNativeCurrency } as AccountLike;
 
-    const buildOp = (type: string, value: BigNumber): Operation =>
+    const buildOp = (type: string, value: BigNumber, date?: Date): Operation =>
       // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-      ({ type, value }) as Operation;
+      ({ type, value, date }) as Operation;
 
     const mockSmallValueCalculations = (
       operationCurrency: CryptoCurrency | TokenCurrency,
@@ -423,6 +424,27 @@ describe("smallValueOperationsThreshold", () => {
       });
 
       expect(result).toBe(true);
+    });
+
+    it("should forward operation.date to calculate so the historical price is used", () => {
+      const txDate = new Date("2021-01-01T00:00:00Z");
+      mockSmallValueCalculations(mockNativeCurrency, 49);
+
+      isSmallValueOperation({
+        operation: buildOp("IN", new BigNumber(1_000_000), txDate),
+        account: regularAccount,
+        countervaluesState: mockCountervaluesState,
+        userCounterValueCurrency: EUR,
+      });
+
+      expect(mockCalculate).toHaveBeenCalledWith(
+        mockCountervaluesState,
+        expect.objectContaining({
+          from: mockNativeCurrency,
+          to: EUR,
+          date: txDate,
+        }),
+      );
     });
 
     it("should return false when the converted threshold is zero", () => {

@@ -16,8 +16,14 @@ describe("applyMemoToTransaction", () => {
       });
     });
 
-    it("generic memo family: empty string clears the memo", () => {
-      expect(applyMemoToTransaction("cosmos", "")).toEqual({ memo: undefined });
+    it("unknown family: empty string clears the generic memo", () => {
+      expect(applyMemoToTransaction("algorand", "")).toEqual({ memo: undefined });
+    });
+
+    it("ton: empty string keeps the comment text an empty string, not undefined", () => {
+      expect(
+        applyMemoToTransaction("ton", "", undefined, { comment: { isEncrypted: false, text: "" } }),
+      ).toEqual({ comment: { isEncrypted: false, text: "" } });
     });
   });
 
@@ -37,8 +43,8 @@ describe("applyMemoToTransaction", () => {
       });
     });
 
-    it("generic memo family: generic memo", () => {
-      expect(applyMemoToTransaction("cosmos", "note")).toEqual({ memo: "note" });
+    it("unknown family: generic memo", () => {
+      expect(applyMemoToTransaction("algorand", "note")).toEqual({ memo: "note" });
     });
   });
 });
@@ -64,6 +70,18 @@ describe("buildRecipientTransactionPatch", () => {
         kind: "transfer",
         uiState: { memo: "solana memo" },
       },
+    });
+  });
+
+  it("keeps ton comment text a string when the memo is left untouched", () => {
+    expect(
+      buildRecipientTransactionPatch(
+        { family: "ton", comment: { isEncrypted: false, text: "" } },
+        { address: "ton-address", memo: { value: "", type: undefined } },
+      ),
+    ).toEqual({
+      recipient: "ton-address",
+      comment: { isEncrypted: false, text: "" },
     });
   });
 

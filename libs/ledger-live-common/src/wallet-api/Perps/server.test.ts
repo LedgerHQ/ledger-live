@@ -1,7 +1,12 @@
 import { from } from "rxjs";
 import calService, { convertCertificateToDeviceData } from "@ledgerhq/ledger-cal-service";
 import { DmkSignerHyperliquid } from "@ledgerhq/live-signer-hyperliquid";
-import { handlers, type PerpsSignParams, type PerpsSignResult } from "./server";
+import {
+  handlers,
+  type PerpsDepositParams,
+  type PerpsSignParams,
+  type PerpsSignResult,
+} from "./server";
 import { getMainAccount, getParentAccount } from "../../account";
 import { withDevice } from "../../hw/deviceAccess";
 import { isDmkTransport } from "../../hw/dmkUtils";
@@ -40,6 +45,10 @@ jest.mock("../converters", () => ({
 jest.mock("../../account", () => ({
   getMainAccount: jest.fn(),
   getParentAccount: jest.fn(),
+  getAccountCurrency: jest.fn(
+    (account: { type: string; currency?: { id: string }; token?: { id: string } }) =>
+      account.type === "TokenAccount" ? account.token : account.currency,
+  ),
 }));
 
 jest.mock("../../hw/deviceAccess", () => ({
@@ -74,10 +83,12 @@ const baseParams = {
 describe("Perps handlers", () => {
   type MockedHandlers = {
     "custom.perps.signActions": (params?: PerpsSignParams) => Promise<PerpsSignResult>;
+    "custom.perps.deposit": (params?: PerpsDepositParams) => Promise<Record<string, never>>;
   };
 
   let mockSignActions: jest.Mock;
   let mockUiSigningExecute: jest.Mock;
+  let mockUiDepositExecute: jest.Mock;
   let serverHandlers: MockedHandlers;
 
   beforeEach(() => {
@@ -118,9 +129,14 @@ describe("Perps handlers", () => {
         }
       });
 
+    mockUiDepositExecute = jest.fn();
+
     serverHandlers = handlers({
       accounts: [mockAccount],
-      uiHooks: { "signing.execute": mockUiSigningExecute },
+      uiHooks: {
+        "signing.execute": mockUiSigningExecute,
+        "deposit.execute": mockUiDepositExecute,
+      },
     }) as unknown as MockedHandlers;
   });
 
@@ -211,6 +227,51 @@ describe("Perps handlers", () => {
       await expect(serverHandlers["custom.perps.signActions"](baseParams)).rejects.toThrow(
         "Not DMK transport",
       );
+    });
+  });
+
+  describe("custom.perps.deposit", () => {
+    const depositParams: PerpsDepositParams = {
+      receiverAccountId: WALLET_ACCOUNT_ID,
+    };
+
+    it("should call deposit.execute with the resolved receiver account", async () => {
+      await serverHandlers["custom.perps.deposit"](depositParams);
+
+      expect(mockUiDepositExecute).toHaveBeenCalledWith({ receiverAccount: mockAccount });
+    });
+
+    it("should resolve once the deposit flow is handed over to the wallet", async () => {
+      const result = await serverHandlers["custom.perps.deposit"](depositParams);
+
+      expect(result).toEqual({});
+    });
+
+    it("should throw a ServerError when params are undefined", async () => {
+      await expect(serverHandlers["custom.perps.deposit"]()).rejects.toThrow("ServerError");
+      expect(mockUiDepositExecute).not.toHaveBeenCalled();
+    });
+
+    it("should throw a ServerError when the client does not implement the deposit hook", async () => {
+      const handlersWithoutDeposit = handlers({
+        accounts: [mockAccount],
+        uiHooks: { "signing.execute": mockUiSigningExecute },
+      }) as unknown as MockedHandlers;
+
+      await expect(handlersWithoutDeposit["custom.perps.deposit"](depositParams)).rejects.toThrow(
+        "ServerError",
+      );
+    });
+
+    it("should throw a ServerError when the receiver account is not found", async () => {
+      jest
+        .mocked(getAccountIdFromWalletAccountId)
+        .mockImplementation(id => (id === "wallet:unknown" ? "unknown-id" : ACCOUNT_ID));
+
+      await expect(
+        serverHandlers["custom.perps.deposit"]({ receiverAccountId: "wallet:unknown" }),
+      ).rejects.toThrow("ServerError");
+      expect(mockUiDepositExecute).not.toHaveBeenCalled();
     });
   });
 });

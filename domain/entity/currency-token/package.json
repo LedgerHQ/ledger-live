@@ -1,6 +1,6 @@
 {
   "name": "@domain/entity-currency-token",
-  "version": "0.2.0",
+  "version": "0.4.0",
   "private": true,
   "description": "Domain entity for token currencies: Zod schema with FK-based parent currency reference",
   "main": "src/index.ts",
@@ -19,8 +19,8 @@
     "unimported": "pnpm knip --directory ../../.. -W domain/entity/currency-token"
   },
   "dependencies": {
+    "@domain/entity-currency-crypto": "workspace:*",
     "@domain/entity-currency-unit": "workspace:*",
-    "@shared/schema-primitives": "workspace:*",
     "zod": "catalog:"
   },
   "devDependencies": {

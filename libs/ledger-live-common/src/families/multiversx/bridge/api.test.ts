@@ -1,16 +1,17 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 import type { AssetInfo } from "@ledgerhq/coin-module-framework/api/types";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { CryptoAssetsStore } from "@ledgerhq/types-live";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { getAssetFromToken, getTokenFromAsset, computeIntentType } from "./api";
 
-jest.mock("@ledgerhq/cryptoassets/state");
+jest.mock("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore");
 
 const mockToken = {
   id: "elrond/esdt/555344432d633736663166",
   tokenType: "esdt",
   contractAddress: "erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u",
+  tokenIdentifier: "USDC-c76f1f",
   name: "WrappedUSDC",
   units: [{ name: "WrappedUSDC", code: "USDC", magnitude: 6 }],
 } as unknown as TokenCurrency;
@@ -45,7 +46,9 @@ describe("multiversx bridge", () => {
     >;
 
     (
-      jest.requireMock("@ledgerhq/cryptoassets/state") as { getCryptoAssetsStore: jest.Mock }
+      jest.requireMock("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore") as {
+        getCryptoAssetsStore: jest.Mock;
+      }
     ).getCryptoAssetsStore.mockReturnValue({
       findTokenByAddressInCurrency: mockFindTokenByAddressInCurrency,
     });
@@ -110,7 +113,7 @@ describe("multiversx bridge", () => {
 
       expect(result).toEqual({
         type: "esdt",
-        assetReference: "erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u",
+        assetReference: "USDC-c76f1f",
         assetOwner: "erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u",
         name: "WrappedUSDC",
         unit: { name: "WrappedUSDC", code: "USDC", magnitude: 6 },
@@ -120,7 +123,7 @@ describe("multiversx bridge", () => {
     it("uses token.tokenType for type", () => {
       const result = getAssetFromToken(mockToken);
 
-      expect(result.type).toBe(mockToken.tokenType);
+      expect(result?.type).toBe(mockToken.tokenType);
     });
 
     it("uses ESDT system SC as assetOwner", () => {
@@ -135,13 +138,19 @@ describe("multiversx bridge", () => {
     it("uses token.units[0] for unit", () => {
       const result = getAssetFromToken(mockToken);
 
-      expect(result.unit).toBe(mockToken.units[0]);
+      expect(result?.unit).toBe(mockToken.units[0]);
     });
 
     it("uses token.name for name", () => {
       const result = getAssetFromToken(mockToken);
 
-      expect(result.name).toBe(mockToken.name);
+      expect(result?.name).toBe(mockToken.name);
+    });
+
+    it("returns undefined when tokenIdentifier is missing", () => {
+      const token = { ...mockToken, tokenIdentifier: undefined } as unknown as TokenCurrency;
+
+      expect(getAssetFromToken(token)).toBeUndefined();
     });
   });
 });

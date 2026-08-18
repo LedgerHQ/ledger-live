@@ -1,5 +1,8 @@
 # Market Banner
 
+> [!CAUTION]
+> **Status: UNSTABLE** — In active development.
+
 Cross-platform banner component for Ledger Live.
 
 ## Usage

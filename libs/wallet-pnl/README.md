@@ -1,5 +1,8 @@
 # wallet-pnl
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 `@ledgerhq/wallet-pnl` computes Profit & Loss (PnL) for crypto assets and the overall portfolio inside Ledger Live. It implements the **Average Cost Basis (ACB)** accounting method to translate on-chain operation history into realised and unrealised gains, percentage returns, and trend indicators.
 
 ## What it does

@@ -4,7 +4,13 @@ import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import groupBy from "lodash/groupBy";
+import { A4Client } from "./a4/client/index";
+import { deriveA4AccountId } from "./a4/client/accountId";
+import { ensureA4Registered } from "./a4/client/registration";
+import { toA4Network, resolveA4BaseUrl } from "./a4/client/utils";
+import { resolveA4ChainConfig } from "./a4/config";
 import { getCoinModuleApi } from "./api";
+import { buildContext } from "./api/context";
 import { getBridgeApi } from "./bridge";
 import { adaptCoreOperationToLiveOperation, cleanedOperation, extractBalance } from "./utils";
 import { inferSubOperations } from "@ledgerhq/ledger-wallet-framework/serialization";
@@ -13,6 +19,7 @@ import type { Balance, Operation, Stake } from "@ledgerhq/coin-module-framework/
 import type { OperationCommon } from "./types";
 import type {
   Account,
+  AccountReadiness,
   StakingDelegation,
   StakingResources,
   StakingUnbonding,
@@ -324,16 +331,51 @@ function buildParentOperations(
   return result;
 }
 
+async function registerWithA4(currencyId: string, address: string): Promise<void> {
+  const a4Network = toA4Network(currencyId);
+  if (a4Network === null) {
+    return;
+  }
+
+  const { register, environment } = resolveA4ChainConfig(a4Network);
+  if (!register) {
+    return;
+  }
+
+  const a4AccountId = deriveA4AccountId(address);
+  const url = resolveA4BaseUrl(environment);
+  const client = new A4Client(url, a4Network);
+  return ensureA4Registered(client, a4AccountId, [address]);
+}
+
 export function genericGetAccountShape(network: string, kind: string): GetAccountShape {
   return async (info, syncConfig) => {
     const { address, initialAccount, currency, derivationMode, rest } = info;
     const coinModuleApi = await getCoinModuleApi(currency.id, kind);
+    const context = buildContext(currency.id);
     const bridgeApi = await getBridgeApi(currency, network);
 
     const chainSpecificValidation = bridgeApi.getChainSpecificRules;
     if (chainSpecificValidation) {
       chainSpecificValidation.getAccountShape(address);
     }
+    // `getAccountInfo` (ADR-045) is fetched only when a family declares a mapper: coin-tezos
+    // implements the fetch without one, so an unconditional call would add a request to every tezos
+    // sync for a result nothing reads.
+    //
+    // Deliberately uncaught, unlike `validatorsPromise` / `readinessPromise` below: those are the
+    // framework's own optional enrichments, whereas what this hook returns is the family's contract —
+    // it may be fields that family's screens require (a tron account derives `isAccountEmpty` from
+    // `tronResources.bandwidth.freeLimit`, so a missing `tronResources` breaks that check and hides
+    // its staking actions) or something cosmetic, and the framework cannot tell. Catching here would impose degradation on every family with no way back; a family whose
+    // contribution is optional catches inside its own hook and returns undefined, which this path
+    // already treats as nothing to contribute.
+    const buildShape = bridgeApi.buildAccountShape;
+    const chainSpecificShapePromise = buildShape
+      ? Promise.resolve(coinModuleApi.getAccountInfo?.(context, address)).then(accountInfo =>
+          buildShape(address, accountInfo),
+        )
+      : Promise.resolve(undefined);
     const accountId = encodeAccountId({
       type: "js",
       version: "2",
@@ -342,9 +384,14 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       derivationMode,
     });
 
+    void registerWithA4(currency.id, address).catch(e => {
+      log("generic-coin-framework", "a4 registration error", {
+        error: e instanceof Error ? e.message : String(e),
+      });
+    });
     const validatorsPromise = bridgeApi.stakingSupported
       ? coinModuleApi
-          .getValidators()
+          .getValidators(context)
           .then(page =>
             page.items.map(validator => ({
               validatorAddress: validator.address,
@@ -358,10 +405,21 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
           .catch(() => [])
       : Promise.resolve([]);
 
-    const [blockInfo, balanceRes, validators] = await Promise.all([
-      coinModuleApi.lastBlock(),
-      coinModuleApi.getBalance(address, bridgeApi.balanceOptions),
+    const readinessPromise: Promise<AccountReadiness | undefined> = bridgeApi.getAccountReadiness
+      ? bridgeApi.getAccountReadiness(currency, address).catch(e => {
+          log("generic-coin-framework", "getAccountReadiness failed, leaving readiness undefined", {
+            error: e instanceof Error ? e.message : String(e),
+          });
+          return undefined;
+        })
+      : Promise.resolve(undefined);
+
+    const [blockInfo, balanceRes, validators, readiness, chainSpecificShape] = await Promise.all([
+      coinModuleApi.lastBlock(context),
+      coinModuleApi.getBalance(context, address, bridgeApi.balanceOptions),
       validatorsPromise,
+      readinessPromise,
+      chainSpecificShapePromise,
     ]);
 
     const nativeAsset = extractBalance(balanceRes, "native");
@@ -461,7 +519,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     const minHeight = syncFromScratch ? 0 : (oldOps[0]?.blockHeight ?? 0) + 1;
     const paginationCursor = cursor && !syncFromScratch ? cursor : undefined;
 
-    const { items: newCoreOps } = await coinModuleApi.listOperations(address, {
+    const { items: newCoreOps } = await coinModuleApi.listOperations(context, address, {
       minHeight,
       cursor: paginationCursor,
       order: "desc",
@@ -546,6 +604,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       stakingResources?: StakingResources;
       stakingPositions?: StakingPositionOnAccount[];
     } = {
+      ...chainSpecificShape,
       id: accountId,
       // `||` (not `??`): a device getAddress may return an empty-string publicKey (e.g. when the
       // chain code is not requested); treat "" as absent and fall back rather than storing a blank xpub.
@@ -557,6 +616,9 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       subAccounts,
       operationsCount: operations.length,
       syncHash,
+      // key omitted rather than set to undefined: jsHelpers merges `{ ...a, ...shape }`, so a failed
+      // readiness lookup retains the last persisted value instead of clearing it.
+      ...(readiness !== undefined ? { readiness } : {}),
       ...stakingShape,
     };
     return res;

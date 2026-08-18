@@ -18,7 +18,6 @@ import Confirmation from "./Confirmation";
 import Restore from "./Restore";
 import { lastSeenDeviceSelector } from "~/reducers/settings";
 import { useAppDeviceAction } from "~/hooks/deviceActions";
-import { UserRefusedAllowManager } from "@ledgerhq/errors";
 
 type Props = {
   restore?: boolean;
@@ -179,7 +178,7 @@ const InstallSetOfApps = ({
         onClose={onWrappedError}
         onModalHide={onWrappedError}
       >
-        {error instanceof UserRefusedAllowManager ? (
+        {error?.name === "UserRefusedAllowManager" ? (
           <TrackScreen
             category="App restoration cancelled on device"
             refreshSource={false}

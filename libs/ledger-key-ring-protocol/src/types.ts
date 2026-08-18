@@ -1,6 +1,8 @@
-import { Observable } from "rxjs";
-import Transport from "@ledgerhq/hw-transport";
-import { TrustchainsResponse } from "./api";
+import type { Observable } from "rxjs";
+import { z } from "zod";
+import type Transport from "@ledgerhq/hw-transport";
+import { crypto } from "@ledgerhq/hw-ledger-key-ring-protocol";
+import type { TrustchainsResponse } from "./api";
 
 /**
  * The JWT is a JSON Web Token that is used to authenticate the user.
@@ -43,16 +45,27 @@ export type Trustchain = {
 /**
  * The Trustchain member credentials are stored on each client, with the privatekey only known by the current client.
  */
-export type MemberCredentials = {
-  /**
-   * The public key of the member (in hexadecimal)
-   */
-  pubkey: string;
-  /**
-   * The private key of the member (in hexadecimal)
-   */
-  privatekey: string;
-};
+export const MemberCredentialsSchema = z
+  .strictObject({
+    pubkey: z.hex().length(66).lowercase(),
+    privatekey: z.hex().length(64).lowercase(),
+  })
+  .refine(
+    ({ pubkey, privatekey }) => {
+      try {
+        const keyPair = crypto.keypairFromSecretKey(crypto.from_hex(privatekey));
+        return crypto.to_hex(keyPair.publicKey) === pubkey;
+      } catch {
+        return false;
+      }
+    },
+    {
+      path: ["pubkey"],
+      message: "Public key does not match private key",
+    },
+  );
+
+export type MemberCredentials = z.infer<typeof MemberCredentialsSchema>;
 
 /**
  * A member of the trustchain

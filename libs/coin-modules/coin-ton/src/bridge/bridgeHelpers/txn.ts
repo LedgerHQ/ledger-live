@@ -1,4 +1,4 @@
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import {
   decodeAccountId,
   encodeTokenAccountId,
@@ -84,8 +84,6 @@ export function mapTxToOps(
   return (tx: TonTransaction): TonOperation[] => {
     const ops: TonOperation[] = [];
 
-    if (tx.out_msgs.length > 1) throw Error(`[ton] txn with > 1 output not expected ${tx}`);
-
     const accountAddr = Address.parse(tx.account).toString({ urlSafe: true, bounceable: false });
 
     if (accountAddr !== addr) throw Error(`[ton] unexpected address ${accountAddr} ${addr}`);
@@ -98,13 +96,20 @@ export function mapTxToOps(
       tx.in_msg.value !== "0" &&
       tx.account === tx.in_msg.destination;
 
-    const isSending =
-      tx.out_msgs.length !== 0 &&
-      tx.out_msgs[0].source &&
-      tx.out_msgs[0].source !== "" &&
-      tx.out_msgs[0].value &&
-      tx.out_msgs[0].value !== "0" &&
-      tx.account === tx.out_msgs[0].source;
+    // A single TON transaction can emit several outgoing messages (e.g. wallet v4/v5
+    // batch sends, or a main transfer alongside a small secondary message). Collect
+    // every value-bearing message originating from this account and aggregate them
+    // into one OUT operation rather than assuming a single output.
+    const outMsgsFromAccount = tx.out_msgs.filter(
+      msg =>
+        msg.source &&
+        msg.source !== "" &&
+        msg.value &&
+        msg.value !== "0" &&
+        tx.account === msg.source,
+    );
+
+    const isSending = outMsgsFromAccount.length > 0;
 
     const date = new Date(tx.now * 1000); // now is defined in seconds
     const hash = tx.in_msg?.hash ?? tx.hash; // this is the hash we know in signature time
@@ -170,27 +175,40 @@ export function mapTxToOps(
     }
 
     if (isSending) {
+      const outValue = outMsgsFromAccount.reduce(
+        (sum, msg) => sum.plus(BigNumber(msg.value ?? 0)),
+        BigNumber(0),
+      );
+      // Dedupe: a batch send may target the same destination in several messages.
+      const recipients = [
+        ...new Set(
+          outMsgsFromAccount.flatMap(msg => getFriendlyAddress(addressBook, msg.destination)),
+        ),
+      ];
+      // The aggregated op sums every out message, but its hash and comment represent
+      // the first (primary) out message of the batch.
+      const [firstOutMsg] = outMsgsFromAccount;
       ops.push({
         id: encodeOperationId(accountId, hash, "OUT"),
-        hash: tx.out_msgs[0].hash,
+        hash: firstOutMsg.hash,
         type: "OUT",
-        value: BigNumber(tx.out_msgs[0].value ?? 0),
+        value: outValue,
         fee: BigNumber(tx.total_fees),
         blockHeight: tx.mc_block_seqno ?? 1,
         blockHash: null,
         hasFailed,
         accountId,
         senders: [accountAddr],
-        recipients: getFriendlyAddress(addressBook, tx.out_msgs[0].destination),
+        recipients,
         date,
         extra: {
           lt: tx.lt,
           explorerHash: tx.hash,
           comment: {
-            isEncrypted: tx.out_msgs[0].message_content?.decoded?.type === "binary_comment",
+            isEncrypted: firstOutMsg.message_content?.decoded?.type === "binary_comment",
             text:
-              tx.out_msgs[0].message_content?.decoded?.type === "text_comment"
-                ? tx.out_msgs[0].message_content.decoded.comment
+              firstOutMsg.message_content?.decoded?.type === "text_comment"
+                ? firstOutMsg.message_content.decoded.comment
                 : "",
           },
         },

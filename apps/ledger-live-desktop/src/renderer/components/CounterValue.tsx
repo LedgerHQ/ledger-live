@@ -1,5 +1,5 @@
 import { useCalculate } from "@ledgerhq/live-countervalues-react";
-import { Currency } from "@ledgerhq/types-cryptoassets";
+import { Currency } from "@domain/entity-currency";
 import { BigNumber } from "bignumber.js";
 import React from "react";
 import { Trans } from "react-i18next";

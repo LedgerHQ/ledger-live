@@ -56,7 +56,7 @@ export function usePricePerformanceViewModel({
 }: Params) {
   const { t } = useTranslation();
   const { locale } = useLocale();
-  const { marketCurrency, counterCurrency, isLoading, isError } = useAssetMarketData({
+  const { marketCurrency, counterValueUnit, isLoading, isError } = useAssetMarketData({
     marketApiId,
     knownLedgerIds,
     knownMarketId,
@@ -86,7 +86,7 @@ export function usePricePerformanceViewModel({
         id: "ath",
         label: t("assetDetail.pricePerformance.allTimeHigh"),
         value: counterValueFormatter({
-          currency: counterCurrency,
+          unit: counterValueUnit,
           value: ath,
           locale,
           t,
@@ -104,7 +104,7 @@ export function usePricePerformanceViewModel({
         id: "atl",
         label: t("assetDetail.pricePerformance.allTimeLow"),
         value: counterValueFormatter({
-          currency: counterCurrency,
+          unit: counterValueUnit,
           value: atl,
           locale,
           t,
@@ -116,7 +116,7 @@ export function usePricePerformanceViewModel({
     }
 
     return result;
-  }, [marketCurrency, counterCurrency, locale, t, dateFormatter]);
+  }, [marketCurrency, counterValueUnit, locale, t, dateFormatter]);
 
   return {
     records,

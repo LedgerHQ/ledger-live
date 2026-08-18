@@ -3,7 +3,7 @@
 import { firstValueFrom, from } from "rxjs";
 import Transport from "@ledgerhq/hw-transport";
 import { Bridge } from "@ledgerhq/types-live";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import Btc from "@ledgerhq/hw-app-btc";
 import { createBridges } from "@ledgerhq/coin-bitcoin/bridge/js";
 import type { BitcoinSigner, SignerContext } from "@ledgerhq/coin-bitcoin/signer";
@@ -60,12 +60,5 @@ const resolver: Resolver = (
   const signerContext: SignerContext = (_, crypto, fn) => fn(createSigner(transport, crypto));
   return bitcoinResolver(signerContext)("", addressOpt);
 };
-
-// Re-exported so the host apps can mirror the `zcashShielded` feature flag into
-// the coin module (via `useFeature` → `setZcashShieldedEnabled`), the same way
-// `setSuiGraphqlEnabled` / `setCosmosLdmkEnabled` are wired. A coin module cannot
-// read React feature flags directly, so routing of Zcash sends through the
-// shielded PCZT/V5 path is gated by this module-level toggle.
-export { setZcashShieldedEnabled } from "@ledgerhq/coin-bitcoin/chain-adapters/zcash/constants";
 
 export { bridge, resolver, messageSigner, signerContext };

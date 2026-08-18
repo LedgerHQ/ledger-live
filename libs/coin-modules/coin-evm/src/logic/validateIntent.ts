@@ -10,28 +10,31 @@ import type {
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
 import {
   AmountRequired,
-  ClaimRewardsFeesWarning,
-  ETHAddressNonEIP,
   FeeNotLoaded,
   FeeTooHigh,
-  GasLessThanEstimate,
   InvalidAddress,
-  MaxFeeTooLow,
   NotEnoughBalance,
+  RecipientRequired,
+} from "@ledgerhq/coin-module-framework/errors";
+import {
+  ClaimRewardsFeesWarning,
+  ETHAddressNonEIP,
+  GasLessThanEstimate,
+  GasPriceTooLow,
+  MaxFeeTooLow,
   NotEnoughGas,
   PriorityFeeHigherThanMaxFee,
   PriorityFeeTooHigh,
   PriorityFeeTooLow,
-  RecipientRequired,
+  RecipientIsNewAccount,
   RedelegateDstValAddressRequired,
   ValAddressRequired,
-} from "@ledgerhq/errors";
-import { GasPriceTooLow } from "../errors";
-import { getFeesUnit } from "@ledgerhq/ledger-wallet-framework/account/helpers";
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+} from "../errors";
 import BigNumber from "bignumber.js";
-import { getCoinConfig } from "../config";
+import { evmUnit } from "./evmUnit";
+import { EvmConfigInfo, type EvmContext } from "../config";
 import { getGasTracker } from "../network/gasTracker";
+import { getNodeApi } from "../network/node";
 import { isNative, StakingOperation, TransactionTypes } from "../types";
 import { STAKING_CONTRACTS } from "../staking";
 import { DEFAULT_GAS_LIMIT, isEthAddress, isStakingIntent } from "../utils";
@@ -42,7 +45,11 @@ import {
   isEip55Address,
   isLegacyFeeEstimation,
 } from "./common";
-import { computeEIP7623GasLimit } from "./computeGasLimit";
+import {
+  computeEIP7623GasLimit,
+  DEFAULT_CALLDATA_FLOOR_GAS_PER_TOKEN,
+  DEFAULT_CALLDATA_FLOOR_ZERO_BYTE_TOKENS,
+} from "./computeGasLimit";
 import estimateFees from "./estimateFees";
 
 function assetsAreEqual(asset1: AssetInfo, asset2: AssetInfo): boolean {
@@ -104,10 +111,49 @@ function validateFeeRatio(
 }
 
 /**
+ * Warn that creating the recipient account costs more gas (EIP-8037). Informational only, as
+ * `eth_estimateGas` already accounts for it. Native sends only: a token transfer's `to` is the
+ * token contract, which always exists.
+ */
+async function validateNewAccountRecipient(
+  config: EvmConfigInfo,
+  currencyId: string,
+  intent: TransactionIntent<MemoNotSupported, BufferTxData>,
+  amount: bigint,
+): Promise<Pick<TransactionValidation, "errors" | "warnings">> {
+  const none = { errors: {}, warnings: {} };
+  const isPlainNativeSend =
+    isNative(intent.asset) &&
+    amount > 0n &&
+    !intent.data?.value?.length &&
+    !isStakingIntent(intent);
+
+  if (!isPlainNativeSend || !isEthAddress(intent.recipient)) {
+    return none;
+  }
+
+  try {
+    const nodeApi = getNodeApi(config, currencyId);
+    const [balance, nonce] = await Promise.all([
+      nodeApi.getCoinBalance(currencyId, intent.recipient),
+      nodeApi.getTransactionCount(currencyId, intent.recipient),
+    ]);
+
+    if (balance.isZero() && nonce === 0) {
+      return { errors: {}, warnings: { amount: new RecipientIsNewAccount() } };
+    }
+  } catch {
+    // An unreachable node must not fail the validation: no message is the current behaviour.
+  }
+
+  return none;
+}
+
+/**
  * Validate an address for a transaction
  */
 function validateRecipient(
-  currency: CryptoCurrency,
+  currencyName: string,
   intent: TransactionIntent,
 ): Pick<TransactionValidation, "errors" | "warnings"> {
   if (!intent.recipient) {
@@ -118,7 +164,7 @@ function validateRecipient(
     return {
       errors: {
         recipient: new InvalidAddress("", {
-          currencyName: currency.name,
+          currencyName,
         }),
       },
       warnings: {},
@@ -137,7 +183,8 @@ function validateRecipient(
  * Validate gas properties of a transaction, depending on its type and the account emitter
  */
 async function validateGas(
-  currency: CryptoCurrency,
+  config: EvmConfigInfo,
+  currencyId: string,
   intent: TransactionIntent<MemoNotSupported, BufferTxData>,
   balances: Balance[],
   estimatedFees: FeeEstimation,
@@ -145,7 +192,7 @@ async function validateGas(
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
 
-  const { minGasPrice } = getCoinConfig(currency.id).info;
+  const { minGasPrice, calldataFloorGasPerToken, calldataFloorZeroByteTokens } = config;
   const minGasPriceFloor = typeof minGasPrice === "string" ? BigInt(minGasPrice) : null;
 
   const nativeBalance = findBalance({ type: "native" }, balances);
@@ -164,6 +211,10 @@ async function validateGas(
   const eip7623GasLimit = computeEIP7623GasLimit(
     BigInt(DEFAULT_GAS_LIMIT.toFixed(0)),
     intent.data.value,
+    {
+      gasPerToken: calldataFloorGasPerToken ?? DEFAULT_CALLDATA_FLOOR_GAS_PER_TOKEN,
+      zeroByteTokens: calldataFloorZeroByteTokens ?? DEFAULT_CALLDATA_FLOOR_ZERO_BYTE_TOKENS,
+    },
   );
 
   // Gas Limit
@@ -201,9 +252,9 @@ async function validateGas(
   ) {
     errors.gasPrice = new NotEnoughGas(undefined, {
       // "You need {{fees}} {{ticker}} for network fees to swap as you are on {{cryptoName}} network. <link0>Buy {{ticker}}</link0>"
-      fees: formatCurrencyUnit(getFeesUnit(currency), new BigNumber(totalFees.toString())),
-      ticker: currency.ticker,
-      cryptoName: currency.name,
+      fees: formatCurrencyUnit(evmUnit[currencyId], new BigNumber(totalFees.toString())),
+      ticker: evmUnit[currencyId].code,
+      cryptoName: config.name,
       links: ["ledgerlive://buy"],
     });
   }
@@ -243,9 +294,10 @@ async function validateGas(
         }
       }
 
-      const gasTracker = getGasTracker(currency);
+      const gasTracker = getGasTracker(config);
       const gasOptions = await gasTracker?.getGasOptions({
-        currency,
+        currencyId,
+        config,
         options: { useEIP1559: true },
       });
 
@@ -336,7 +388,7 @@ function validateStaking(
 }
 
 function computeAmount(
-  currency: CryptoCurrency,
+  currencyId: string,
   intent: TransactionIntent,
   estimatedFees: FeeEstimation,
   balance: Balance,
@@ -355,14 +407,14 @@ function computeAmount(
       // - chains with a large per-chain reserve keep their existing behaviour,
       // - unconfigured chains (reserve = 0n) fall back to the current fees,
       // - high-fee selections never produce an amount the account cannot afford.
-      const configuredReserve = STAKING_CONTRACTS[currency.id]?.delegationMaxAmountReserve ?? 0n;
+      const configuredReserve = STAKING_CONTRACTS[currencyId]?.delegationMaxAmountReserve ?? 0n;
       const effectiveReserve = configuredReserve > totalFees ? configuredReserve : totalFees;
       const rawAmount = available > effectiveReserve ? available - effectiveReserve : 0n;
       // Floor-round to the nearest minimum calldata unit for this chain's staking precompile.
       // Chains like SEI require msg.value to be a whole multiple of their unit scale
       // (e.g. 10^12 wei = 1 usei), otherwise the precompile reverts.
       // For chains without a scale (calldataAmountScale = 1n), this is a no-op.
-      const scale = STAKING_CONTRACTS[currency.id]?.calldataAmountScale ?? 1n;
+      const scale = STAKING_CONTRACTS[currencyId]?.calldataAmountScale ?? 1n;
       return (rawAmount / scale) * scale;
     }
     const additionalFees =
@@ -402,16 +454,18 @@ function refreshEstimationValue(
 }
 
 export async function validateIntent(
-  currency: CryptoCurrency,
+  context: EvmContext,
+  currencyId: string,
   intent: TransactionIntent<MemoNotSupported, BufferTxData>,
   balances: Balance[],
   customFees?: FeeEstimation,
 ): Promise<TransactionValidation> {
+  const config = await context.config(currencyId);
   const estimatedFees = customFees?.parameters
     ? { ...customFees, value: refreshEstimationValue(intent, customFees.parameters) }
-    : await estimateFees(currency, intent);
+    : await estimateFees(context, currencyId, intent);
   const balance = findBalance(intent.asset, balances);
-  const amount = computeAmount(currency, intent, estimatedFees, balance);
+  const amount = computeAmount(currencyId, intent, estimatedFees, balance);
   const additionalFees =
     typeof estimatedFees.parameters?.additionalFees === "bigint"
       ? estimatedFees.parameters.additionalFees
@@ -424,7 +478,7 @@ export async function validateIntent(
       ? amountSpentFromSpendableBalance + totalFees
       : amountSpentFromSpendableBalance;
 
-  const { errors: recipientErr, warnings: recipientWarn } = validateRecipient(currency, intent);
+  const { errors: recipientErr, warnings: recipientWarn } = validateRecipient(config.name, intent);
   const { errors: amountErr, warnings: amountWarn } = await validateAmount(
     balance,
     amount,
@@ -433,7 +487,8 @@ export async function validateIntent(
     isStakingIntent(intent) ? intent.mode : undefined,
   );
   const { errors: gasErr, warnings: gasWarn } = await validateGas(
-    currency,
+    config,
+    currencyId,
     intent,
     balances,
     estimatedFees,
@@ -448,6 +503,12 @@ export async function validateIntent(
     balances,
     estimatedFees,
   );
+  const { errors: newAccountErr, warnings: newAccountWarn } = await validateNewAccountRecipient(
+    config,
+    currencyId,
+    intent,
+    amount,
+  );
 
   const errors = {
     ...recipientErr,
@@ -455,6 +516,7 @@ export async function validateIntent(
     ...gasErr,
     ...feeRatioErr,
     ...stakingErr,
+    ...newAccountErr,
   };
   const warnings = {
     ...recipientWarn,
@@ -462,6 +524,7 @@ export async function validateIntent(
     ...gasWarn,
     ...feeRatioWarn,
     ...stakingWarn,
+    ...newAccountWarn,
   };
 
   return {

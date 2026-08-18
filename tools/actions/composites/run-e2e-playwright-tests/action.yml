@@ -57,28 +57,28 @@ runs:
         fi
         export MOCK=0
 
-        case "${{ inputs.speculos_device }}" in
+        case "${INPUTS_SPECULOS_DEVICE}" in
           nanoS)    device_tag='@LNS' ;;
           nanoSP)   device_tag='@NanoSP' ;;
           nanoX)    device_tag='@NanoX' ;;
           stax)     device_tag='@Stax' ;;
           flex)     device_tag='@Flex' ;;
           nanoGen5)  device_tag='@NanoGen5' ;;
-          *)        echo "Unknown SPECULOS_DEVICE: ${{ inputs.speculos_device }}"; exit 1 ;;
+          *)        echo "Unknown SPECULOS_DEVICE: ${INPUTS_SPECULOS_DEVICE}"; exit 1 ;;
         esac
 
-        if [ -n "${{ inputs.test_filter }}" ]; then
-          if [[ "${{ inputs.test_filter }}" == *' '* && "${{ inputs.test_filter }}" != *'|'* ]]; then
-            or_filter=$(echo "${{ inputs.test_filter }}" | sed 's/ /|/g')
+        if [ -n "${INPUTS_TEST_FILTER}" ]; then
+          if [[ "${INPUTS_TEST_FILTER}" == *' '* && "${INPUTS_TEST_FILTER}" != *'|'* ]]; then
+            or_filter=$(echo "${INPUTS_TEST_FILTER}" | sed 's/ /|/g')
             grep_filter="$device_tag.*($or_filter)|($or_filter).*$device_tag"
           else
-            grep_filter="$device_tag.*(${{ inputs.test_filter }})|(${{ inputs.test_filter }}).*$device_tag"
+            grep_filter="$device_tag.*(${INPUTS_TEST_FILTER})|(${INPUTS_TEST_FILTER}).*$device_tag"
           fi
         else
           grep_filter="$device_tag"
         fi
 
-        if [ "${{ inputs.invert_filter }}" = "true" ]; then
+        if [ "${INPUTS_INVERT_FILTER}" = "true" ]; then
           grep_option="--grep-invert"
         else
           grep_option="--grep"
@@ -87,17 +87,17 @@ runs:
         echo "Running tests with filter: $grep_option $grep_filter"
 
         SHARD_ARG=""
-        if [ -n "${{ inputs.shard_index }}" ] && [ -n "${{ inputs.shard_total }}" ]; then
-          SHARD_ARG="--shard=${{ inputs.shard_index }}/${{ inputs.shard_total }}"
+        if [ -n "${INPUTS_SHARD_INDEX}" ] && [ -n "${INPUTS_SHARD_TOTAL}" ]; then
+          SHARD_ARG="--shard=${INPUTS_SHARD_INDEX}/${INPUTS_SHARD_TOTAL}"
         fi
 
         REPEAT_ARG=""
-        if [ -n "${{ inputs.repeat_each }}" ]; then
-          REPEAT_ARG="--repeat-each=${{ inputs.repeat_each }}"
+        if [ -n "${INPUTS_REPEAT_EACH}" ]; then
+          REPEAT_ARG="--repeat-each=${INPUTS_REPEAT_EACH}"
         fi
 
-        if [ -n "${{ inputs.feature_flags }}" ]; then
-          export E2E_DESKTOP_FEATURE_FLAGS="${{ inputs.feature_flags }}"
+        if [ -n "${INPUTS_FEATURE_FLAGS}" ]; then
+          export E2E_DESKTOP_FEATURE_FLAGS="${INPUTS_FEATURE_FLAGS}"
           echo "Running with feature flags set '${E2E_DESKTOP_FEATURE_FLAGS}'"
         fi
 
@@ -180,3 +180,12 @@ runs:
         # Note: TOTAL=0 case already exits at line 124, so we only reach here when TOTAL > 0
         exit ${TEST_EXIT_CODE}
       shell: bash
+
+      env:
+        INPUTS_SPECULOS_DEVICE: ${{ inputs.speculos_device }}
+        INPUTS_TEST_FILTER: ${{ inputs.test_filter }}
+        INPUTS_INVERT_FILTER: ${{ inputs.invert_filter }}
+        INPUTS_SHARD_INDEX: ${{ inputs.shard_index }}
+        INPUTS_SHARD_TOTAL: ${{ inputs.shard_total }}
+        INPUTS_REPEAT_EACH: ${{ inputs.repeat_each }}
+        INPUTS_FEATURE_FLAGS: ${{ inputs.feature_flags }}

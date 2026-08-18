@@ -1,10 +1,11 @@
 import BigNumber from "bignumber.js";
+import { setupServer } from "msw/node";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import type { Account } from "@ledgerhq/types-live";
 import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
 import coinConfig from "@ledgerhq/coin-xrp/config";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { XRP, XRP_LOCAL_RPC, RECIPIENT, makeXrpAccount } from "../fixtures";
 import { buildXrpSigner } from "../signer";
 import { getBridges } from "../helpers";
@@ -13,6 +14,7 @@ import { fundAccount, spawnRippled, killRippled, waitForOperationInclusion } fro
 global.console = require("console");
 jest.setTimeout(600_000);
 
+const mockServer = setupServer();
 const DESTINATION_TAG = 1337;
 
 /** 10 XRP base reserve in standalone genesis ledger (drops). */
@@ -85,7 +87,11 @@ export const scenarioXrp: Scenario<GenericTransaction, Account> = {
   name: "Ledger Live XRP — basic Payment scenarios",
 
   setup: async () => {
-    setupMockCryptoAssetsStore();
+    setCryptoAssetsStore({
+      findTokenById: async () => undefined,
+      findTokenByAddressInCurrency: async () => undefined,
+      getTokensSyncHash: async () => "",
+    });
 
     await spawnRippled();
 
@@ -126,6 +132,13 @@ export const scenarioXrp: Scenario<GenericTransaction, Account> = {
   },
 
   beforeAll: account => {
+    mockServer.listen({
+      onUnhandledRequest: request => {
+        const hostname = new URL(request.url).hostname;
+        if (["127.0.0.1", "localhost"].includes(hostname)) return;
+        throw new Error(`Unhandled request: ${request.method} ${request.url}`);
+      },
+    });
     expect(account.currency.id).toBe(XRP.id);
     expect(account.balance).toStrictEqual(new BigNumber(50_000_000));
     expect(account.spendableBalance.toNumber()).toBeGreaterThan(0);
@@ -143,6 +156,7 @@ export const scenarioXrp: Scenario<GenericTransaction, Account> = {
   },
 
   teardown: async () => {
+    mockServer.close();
     await killRippled();
   },
 };

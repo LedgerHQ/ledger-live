@@ -5,9 +5,9 @@ import type {
   SendTransactionIntent,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/index";
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
-import { EvmCoinConfig, setCoinConfig } from "../config";
+import type { EvmConfigInfo, EvmContext } from "../config";
+import { createMockEvmContext } from "../fixtures/context.fixtures";
 import { GasEstimationError } from "../errors";
 import { getGasTracker } from "../network/gasTracker";
 import { getNodeApi } from "../network/node";
@@ -34,12 +34,6 @@ const mockGetGasTracker = jest.mocked(getGasTracker);
 const mockGetNodeApi = jest.mocked(getNodeApi);
 
 describe("estimateFees", () => {
-  const mockCurrency = {
-    id: "ethereum",
-    family: "evm",
-    ethereumLikeInfo: { chainId: 1 },
-  } as CryptoCurrency;
-
   const mockNativeAsset: AssetInfo = { type: "native" };
   const mockIntent: TransactionIntent<MemoNotSupported, BufferTxData> = {
     type: "send-legacy",
@@ -52,31 +46,22 @@ describe("estimateFees", () => {
   };
 
   const nodeApiMock = mockNodeApi();
+  const context: EvmContext = createMockEvmContext({
+    gasTracker: { type: "ledger", explorerId: "eth" },
+  } as Partial<EvmConfigInfo>);
 
   beforeEach(() => {
     jest.clearAllMocks();
     jest.resetAllMocks();
     mockGetNodeApi.mockReturnValue(nodeApiMock);
-
-    setCoinConfig(
-      () =>
-        ({
-          info: {
-            gasTracker: { type: "ledger", explorerId: "eth" },
-          },
-        }) as unknown as EvmCoinConfig,
-    );
   });
 
   it("does not try to estimate with an invalid address and returns 0 as fallback", async () => {
     expect(
-      await estimateFees(
-        {} as CryptoCurrency,
-        {
-          type: "send-legacy",
-          recipient: "not-an-address",
-        } as TransactionIntent<MemoNotSupported, BufferTxData>,
-      ),
+      await estimateFees(context, "ethereum", {
+        type: "send-legacy",
+        recipient: "not-an-address",
+      } as TransactionIntent<MemoNotSupported, BufferTxData>),
     ).toEqual({ value: 0n });
     expect(nodeApiMock.getGasEstimation).not.toHaveBeenCalled();
   });
@@ -86,7 +71,8 @@ describe("estimateFees", () => {
     nodeApiMock.getTransactionCount.mockResolvedValue(42);
 
     const result = await estimateFees(
-      mockCurrency,
+      context,
+      "ethereum",
       {
         intentType: "transaction",
         type: "send-legacy",
@@ -182,7 +168,8 @@ describe("estimateFees", () => {
     });
 
     const result = await estimateFees(
-      mockCurrency,
+      context,
+      "ethereum",
       {
         intentType: "transaction",
         type: "send-legacy",
@@ -244,7 +231,8 @@ describe("estimateFees", () => {
     mockGetGasTracker.mockReturnValue(null);
 
     const result = await estimateFees(
-      mockCurrency,
+      context,
+      "ethereum",
       {
         intentType: "transaction",
         type: "send-eip1559",
@@ -274,7 +262,8 @@ describe("estimateFees", () => {
     nodeApiMock.getGasEstimation.mockResolvedValue(new BigNumber("21000"));
     nodeApiMock.getTransactionCount.mockResolvedValue(42);
     const result = await estimateFees(
-      mockCurrency,
+      context,
+      "ethereum",
       {
         intentType: "transaction",
         type: "send-legacy",
@@ -315,7 +304,8 @@ describe("estimateFees", () => {
     mockGetGasTracker.mockReturnValue(null);
 
     const result = await estimateFees(
-      mockCurrency,
+      context,
+      "ethereum",
       {
         intentType: "transaction",
         type: "send-legacy",
@@ -353,7 +343,8 @@ describe("estimateFees", () => {
     mockGetGasTracker.mockReturnValue(null);
 
     const result = await estimateFees(
-      mockCurrency,
+      context,
+      "ethereum",
       {
         intentType: "transaction",
         type: "send-legacy",
@@ -391,18 +382,15 @@ describe("estimateFees", () => {
     mockGetGasTracker.mockReturnValue(null);
     nodeApiMock.getOptimismAdditionalFees.mockResolvedValue(new BigNumber(8000));
 
-    const result = await estimateFees(
-      { ...mockCurrency, id: "optimism", ethereumLikeInfo: { chainId: 10 } },
-      {
-        intentType: "transaction",
-        type: "send-legacy",
-        amount: BigInt("1000000000000000000"),
-        asset: { type: "native" },
-        recipient: "0x7b2C7232f9E38F30E2868f0E5Bf311Cd83554b5A",
-        sender: "0xsender",
-        data: { type: "buffer", value: Buffer.from([]) },
-      },
-    );
+    const result = await estimateFees(context, "optimism", {
+      intentType: "transaction",
+      type: "send-legacy",
+      amount: BigInt("1000000000000000000"),
+      asset: { type: "native" },
+      recipient: "0x7b2C7232f9E38F30E2868f0E5Bf311Cd83554b5A",
+      sender: "0xsender",
+      data: { type: "buffer", value: Buffer.from([]) },
+    });
     expect(result).toEqual({
       value: 420000000000000n,
       parameters: {
@@ -417,6 +405,32 @@ describe("estimateFees", () => {
     });
   });
 
+  it("buffers the L2 additional fees for send-max to absorb L1 base-fee drift before broadcast", async () => {
+    nodeApiMock.getGasEstimation.mockResolvedValue(new BigNumber("21000"));
+    nodeApiMock.getTransactionCount.mockResolvedValue(42);
+    nodeApiMock.getFeeData.mockResolvedValue({
+      gasPrice: new BigNumber("20000000000"),
+      maxFeePerGas: null,
+      maxPriorityFeePerGas: null,
+      nextBaseFee: null,
+    });
+    mockGetGasTracker.mockReturnValue(null);
+    nodeApiMock.getOptimismAdditionalFees.mockResolvedValue(new BigNumber(8000));
+
+    const result = await estimateFees(context, "optimism", {
+      intentType: "transaction",
+      type: "send-legacy",
+      amount: BigInt("1000000000000000000"),
+      asset: { type: "native" },
+      recipient: "0x7b2C7232f9E38F30E2868f0E5Bf311Cd83554b5A",
+      sender: "0xsender",
+      data: { type: "buffer", value: Buffer.from([]) },
+      useAllAmount: true,
+    });
+    // 8000 (raw L1 fee) x SEND_MAX_L1_FEE_BUFFER (2) = 16000
+    expect(result.parameters?.additionalFees).toBe(16000n);
+  });
+
   it("gives 0 additional fees if the transaction is not serializable", async () => {
     nodeApiMock.getGasEstimation.mockResolvedValue(new BigNumber("21000"));
     nodeApiMock.getTransactionCount.mockResolvedValue(42);
@@ -429,20 +443,17 @@ describe("estimateFees", () => {
     mockGetGasTracker.mockReturnValue(null);
     nodeApiMock.getOptimismAdditionalFees.mockResolvedValue(new BigNumber(8000));
 
-    const result = await estimateFees(
-      { ...mockCurrency, id: "optimism", ethereumLikeInfo: { chainId: 10 } },
-      {
-        intentType: "transaction",
-        type: "send-legacy",
-        amount: BigInt("1000000000000000000"),
-        asset: { type: "native" },
-        // Invalid recipient address, fails with
-        // TypeError: bad address checksum (argument="address", value="0x0dFC37693E934F242606CA06417Fb76426442334", code=INVALID_ARGUMENT, version=6.15.0)
-        recipient: "0x0dFC37693E934F242606CA06417Fb76426442334",
-        sender: "0xsender",
-        data: { type: "buffer", value: Buffer.from([]) },
-      },
-    );
+    const result = await estimateFees(context, "optimism", {
+      intentType: "transaction",
+      type: "send-legacy",
+      amount: BigInt("1000000000000000000"),
+      asset: { type: "native" },
+      // Invalid recipient address, fails with
+      // TypeError: bad address checksum (argument="address", value="0x0dFC37693E934F242606CA06417Fb76426442334", code=INVALID_ARGUMENT, version=6.15.0)
+      recipient: "0x0dFC37693E934F242606CA06417Fb76426442334",
+      sender: "0xsender",
+      data: { type: "buffer", value: Buffer.from([]) },
+    });
     expect(result).toEqual({
       value: 420000000000000n,
       parameters: {
@@ -476,10 +487,7 @@ describe("estimateFees", () => {
       valAddress: "seivaloper1y82m5y3wevjneamzg0pmx87dzanyxzht0kepvn",
       amount: 1000000n,
     };
-    const result = await estimateFees(
-      { ...mockCurrency, id: "sei_evm", ethereumLikeInfo: { chainId: 1329 } },
-      tokenIntent,
-    );
+    const result = await estimateFees(context, "sei_evm", tokenIntent);
     expect(result).toEqual({
       value: 420000000000000n,
       parameters: {
@@ -513,10 +521,7 @@ describe("estimateFees", () => {
       amount: 1000000n,
       useAllAmount: true,
     };
-    const result = await estimateFees(
-      { ...mockCurrency, id: "sei_evm", ethereumLikeInfo: { chainId: 1329 } },
-      delegateMaxIntent,
-    );
+    const result = await estimateFees(context, "sei_evm", delegateMaxIntent);
     expect(result.parameters).toMatchObject({
       reserve: 10n ** 17n, // 0.1 SEI reserve
       amountScale: 10n ** 12n, // usei -> wei scale
@@ -534,10 +539,7 @@ describe("estimateFees", () => {
       amount: 1000000n,
     };
 
-    const result = await estimateFees(
-      { ...mockCurrency, id: "sei_evm", ethereumLikeInfo: { chainId: 1329 } },
-      redelegateNoDst,
-    );
+    const result = await estimateFees(context, "sei_evm", redelegateNoDst);
 
     expect(result).toEqual({ value: 0n });
     expect(mockGetNodeApi).not.toHaveBeenCalled();
@@ -564,10 +566,7 @@ describe("estimateFees", () => {
       dstValAddress: "selfvaloper1uvdqeduxvtchfphueyxraag9qkf8zfznzxs30y",
       amount: 1000000n,
     };
-    const result = await estimateFees(
-      { ...mockCurrency, id: "sei_evm", ethereumLikeInfo: { chainId: 1329 } },
-      tokenIntent,
-    );
+    const result = await estimateFees(context, "sei_evm", tokenIntent);
     expect(result).toEqual({
       value: 420000000000000n,
       parameters: {
@@ -581,6 +580,45 @@ describe("estimateFees", () => {
     });
   });
 
+  it("keeps legacy type when custom gasPrice is paired with orphaned EIP-1559 zeros", async () => {
+    // createTransaction seeds maxFeePerGas/maxPriorityFeePerGas as BigNumber(0).
+    // Those zeros are truthy objects and used to flip the tx to type 2 after a
+    // custom legacy fee confirm (e.g. Ethereum Classic).
+    nodeApiMock.getGasEstimation.mockResolvedValue(new BigNumber("21000"));
+    nodeApiMock.getTransactionCount.mockResolvedValue(42);
+
+    const result = await estimateFees(
+      context,
+      "ethereum",
+      {
+        intentType: "transaction",
+        type: "send-legacy",
+        amount: BigInt("1000000000000000000"),
+        asset: { type: "native" },
+        recipient: "0x7b2C7232f9E38F30E2868f0E5Bf311Cd83554b5A",
+        sender: "0xsender",
+        data: { type: "buffer", value: Buffer.from([]) },
+      } as SendTransactionIntent<MemoNotSupported, BufferTxData>,
+      {
+        feesStrategy: "custom",
+        gasPrice: 1_000_000_000n,
+        maxFeePerGas: 0n,
+        maxPriorityFeePerGas: 0n,
+      },
+    );
+
+    expect(result.parameters).toEqual(
+      expect.objectContaining({
+        gasPrice: 1_000_000_000n,
+        maxFeePerGas: null,
+        maxPriorityFeePerGas: null,
+        nextBaseFee: null,
+        type: 0,
+      }),
+    );
+    expect(result.value).toBe(21_000_000_000_000n); // 21000 * 1e9
+  });
+
   it("uses custom gas limit from customFeesParameters", async () => {
     nodeApiMock.getFeeData.mockResolvedValue({
       gasPrice: new BigNumber("20000000000"),
@@ -591,7 +629,8 @@ describe("estimateFees", () => {
     mockGetGasTracker.mockReturnValue(null);
 
     const result = await estimateFees(
-      mockCurrency,
+      context,
+      "ethereum",
       {
         intentType: "transaction",
         type: "send-legacy",

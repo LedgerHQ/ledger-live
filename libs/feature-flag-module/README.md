@@ -1,5 +1,8 @@
 # wallet-api-feature-flag-module
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 `@ledgerhq/wallet-api-feature-flag-module` is a [Wallet API](https://github.com/LedgerHQ/wallet-api) `CustomModule` that lets Live Apps query Ledger Live's feature flags at runtime. A Live App can gate UI or behaviour on whether a specific flag is enabled in the host app, without needing its own flag infrastructure.
 
 ## What it does

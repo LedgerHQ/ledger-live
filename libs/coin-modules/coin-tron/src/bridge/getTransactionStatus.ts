@@ -4,12 +4,12 @@ import {
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
-  NotEnoughGas,
   RecipientRequired,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import { getAccountCurrency, getFeesUnit } from "@ledgerhq/ledger-wallet-framework/account";
 import BigNumber from "bignumber.js";
 import sumBy from "lodash/sumBy";
+import coinConfig from "../config";
 import { ONE_TRX } from "../logic/constants";
 import { validateAddress } from "../logic/validateAddress";
 import {
@@ -18,8 +18,14 @@ import {
   getDelegatedResource,
   getTronSuperRepresentatives,
 } from "../network";
-import { Transaction, TransactionStatus, TronAccount } from "../types";
+import type {
+  SponsoredEnergyEstimate,
+  Transaction,
+  TransactionStatus,
+  TronAccount,
+} from "../types";
 import {
+  NotEnoughGas,
   TronInvalidFreezeAmount,
   TronInvalidUnDelegateResourceAmount,
   TronInvalidVoteCount,
@@ -36,12 +42,17 @@ import {
   TronUnfreezeNotExpired,
   TronVoteRequired,
 } from "../types/errors";
-import getEstimatedFees, { getFeeResourceBreakdown } from "./getEstimateFees";
+import getEstimatedFees, {
+  computeSponsoredEnergyEstimate,
+  computeSponsoredUsdtFee,
+  getFeeResourceBreakdown,
+} from "./getEstimateFees";
 
 const getTransactionStatus = async (
   acc: TronAccount,
   transaction: Transaction,
 ): Promise<TransactionStatus> => {
+  const config = coinConfig.getCoinConfig();
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
   const { family, mode, recipient, resource, votes, useAllAmount = false } = transaction;
@@ -50,8 +61,10 @@ const getTransactionStatus = async (
     : acc.subAccounts && acc.subAccounts.find(ta => ta.id === transaction.subAccountId);
   const account = tokenAccount || acc;
   const isContractInteraction =
-    (await fetchTronContract(tokenAccount ? tokenAccount.token.contractAddress : recipient)) !==
-    undefined;
+    (await fetchTronContract(
+      config,
+      tokenAccount ? tokenAccount.token.contractAddress : recipient,
+    )) !== undefined;
 
   if (mode === "send" && !recipient) {
     errors.recipient = new RecipientRequired();
@@ -70,7 +83,7 @@ const getTransactionStatus = async (
       account.type === "TokenAccount" &&
       account.token.tokenType === "trc20" &&
       !isContractInteraction && // send trc20 to a smart contract is allowed
-      (await fetchTronAccount(recipient)).length === 0
+      (await fetchTronAccount(config, recipient)).length === 0
     ) {
       // send trc20 to a new account is forbidden by us (because it will not activate the account)
       errors.recipient = new TronSendTrc20ToNewAccountForbidden();
@@ -140,7 +153,7 @@ const getTransactionStatus = async (
   }
 
   if (mode === "unDelegateResource" && resource && acc.tronResources) {
-    const delegatedResourceAmount = await getDelegatedResource(acc, transaction, resource);
+    const delegatedResourceAmount = await getDelegatedResource(config, acc, transaction, resource);
     if (delegatedResourceAmount.lt(transaction.amount)) {
       errors.resource = new TronInvalidUnDelegateResourceAmount();
     }
@@ -150,7 +163,7 @@ const getTransactionStatus = async (
     if (votes.length === 0) {
       errors.vote = new TronVoteRequired();
     } else {
-      const superRepresentatives = await getTronSuperRepresentatives();
+      const superRepresentatives = await getTronSuperRepresentatives(config);
       const isValidVoteCounts = votes.every(v => v.voteCount > 0);
       const isValidAddresses = votes.every(v =>
         superRepresentatives.some(s => s.address === v.address),
@@ -197,6 +210,10 @@ const getTransactionStatus = async (
   let bandwidthRequired = new BigNumber(0);
   let bandwidthAvailable = new BigNumber(0);
   let estimatedFees = new BigNumber(0);
+  // Informational savings estimate for a sponsored (Tronify) send (LIVE-32776); null otherwise.
+  let sponsoredEnergy: SponsoredEnergyEstimate | null = null;
+  // USDT rental fee to reserve from the token balance for a sponsored send (LIVE-32777); 0 otherwise.
+  let rentalFee = new BigNumber(0);
 
   if (!hasErrors) {
     const resourceBreakdown = await getFeeResourceBreakdown(acc, transaction, tokenAccount);
@@ -205,12 +222,18 @@ const getTransactionStatus = async (
     bandwidthRequired = resourceBreakdown.bandwidthRequired;
     bandwidthAvailable = resourceBreakdown.bandwidthAvailable;
     estimatedFees = await getEstimatedFees(acc, transaction, tokenAccount, resourceBreakdown);
+    sponsoredEnergy = await computeSponsoredEnergyEstimate(transaction, resourceBreakdown);
+    rentalFee = await computeSponsoredUsdtFee(acc, transaction, tokenAccount, resourceBreakdown);
   }
 
+  // Reserve the USDT rental fee out of the token balance so a sponsored send can't be confirmed
+  // when the balance can't cover fee + amount (LIVE-32777). rentalFee is 0 for non-sponsored sends,
+  // so this is a no-op there. For useAllAmount the max amount below becomes balance − fee (the fee
+  // stays reserved); for an explicit amount, amount > balance below means amount + fee > tokenBalance.
   const balance =
     account.type === "Account"
       ? BigNumber.max(0, account.spendableBalance.minus(estimatedFees))
-      : account.balance;
+      : BigNumber.max(0, account.balance.minus(rentalFee));
   const amount = useAllAmount ? balance : transaction.amount;
   const amountSpent = ["send", "freeze", "undelegateResource"].includes(mode)
     ? amount
@@ -220,8 +243,10 @@ const getTransactionStatus = async (
     errors.amount = new TronInvalidFreezeAmount();
   }
 
-  // fees are applied in the parent only (TRX)
-  const totalSpent = account.type === "Account" ? amountSpent.plus(estimatedFees) : amountSpent;
+  // TRX network fees are applied in the parent only; a sponsored token send also spends the USDT
+  // rental fee out of the token account (LIVE-32777), so include it in the token-account total.
+  const totalSpent =
+    account.type === "Account" ? amountSpent.plus(estimatedFees) : amountSpent.plus(rentalFee);
 
   if (["send", "freeze"].includes(mode)) {
     if (amount.eq(0)) {
@@ -287,6 +312,7 @@ const getTransactionStatus = async (
     energyAvailable,
     bandwidthRequired,
     bandwidthAvailable,
+    sponsoredEnergy,
   });
 };
 

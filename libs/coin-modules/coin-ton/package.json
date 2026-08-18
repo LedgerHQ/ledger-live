@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-ton",
-  "version": "0.31.0",
+  "version": "0.36.0",
   "description": "Ton Coin integration",
   "keywords": [
     "Ledger",
@@ -46,18 +46,16 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/coin-module-framework": "catalog:",
-    "@ledgerhq/cryptoassets": "workspace:^",
-    "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
-    "@ledgerhq/logs": "workspace:^",
+    "@ledgerhq/logs": "catalog:",
     "@ledgerhq/types-live": "workspace:^",
     "@ton/core": "^0.62.0",
     "@ton/crypto": "^3.3.0",
     "@ton/ton": "^15.4.0",
     "bignumber.js": "^9.1.2",
-    "lodash": "^4.17.21",
+    "lodash": "catalog:",
     "msw": "catalog:",
     "rxjs": "catalog:"
   },
@@ -68,7 +66,7 @@
     "@swc/jest": "catalog:",
     "@types/invariant": "^2.2.2",
     "@types/jest": "catalog:",
-    "@types/lodash": "^4.14.191",
+    "@types/lodash": "catalog:",
     "@types/node": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
@@ -86,6 +84,7 @@
     "lint:fix": "oxfmt src && oxlint src --fix --quiet",
     "test": "jest",
     "test-integ": "jest --config=jest.integ.config.js --passWithNoTests",
+    "typecheck": "tsc --noEmit --customConditions node",
     "unimported": "unimported",
     "format": "oxfmt src",
     "format:check": "oxfmt src --check"

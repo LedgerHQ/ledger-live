@@ -1,28 +1,28 @@
 import { ethers } from "ethers";
 import { BigNumber } from "bignumber.js";
-import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
-import type { Operation } from "@ledgerhq/types-live";
 import {
   fetchRedelegations,
   resolveRedelegationValidators,
   resolveStakingValidator,
   buildRedelegationsFromOps,
+  type OperationLike,
 } from "./redelegations";
 import { getStakingABI } from "./abis";
 import { STAKING_CONTRACTS } from "./contracts";
 import { USEI_TO_EVM_SCALE } from "../utils";
 
 jest.mock("@ledgerhq/live-network", () => jest.fn());
-jest.mock("../config");
 jest.mock("../network/node/rpc.common");
 jest.mock("../network/node/types");
 
 const mockNetwork = jest.mocked(require("@ledgerhq/live-network"));
-const mockGetCoinConfig = jest.mocked(require("../config").getCoinConfig);
 const mockWithApi = jest.mocked(require("../network/node/rpc.common").withApi);
 const mockIsExternalNodeConfig = jest.mocked(require("../network/node/types").isExternalNodeConfig);
 
-const SEI_CURRENCY = { id: "sei_evm" } as CryptoCurrency;
+const mockNode = { type: "external", uri: "https://sei-evm.coin.ledger.com" };
+const mockConfig = { node: mockNode } as unknown as import("../config").EvmConfigInfo;
+
+const SEI_CURRENCY = "sei_evm";
 
 function encodeDelegateCalldata(validatorAddress: string): string {
   const abi = getStakingABI("sei_evm")!;
@@ -39,23 +39,16 @@ function encodeRedelegateCalldata(src: string, dst: string, amountUsei: bigint):
   return new ethers.Interface(abi).encodeFunctionData("redelegate", [src, dst, amountUsei]);
 }
 
-function makeOperation(overrides: Partial<Operation> = {}): Operation {
+function makeOperation(overrides: Partial<OperationLike> = {}): OperationLike {
   return {
-    id: "op1",
     hash: "0xdeadbeef",
     type: "DELEGATE",
-    value: new BigNumber(0),
-    fee: new BigNumber(0),
-    senders: [],
-    recipients: [],
-    blockHeight: 1,
-    blockHash: null,
-    accountId: "acc1",
     date: new Date("2025-01-01T00:00:00Z"),
     extra: {},
     hasFailed: false,
+    recipients: [],
     ...overrides,
-  } as unknown as Operation;
+  };
 }
 
 describe("redelegations", () => {
@@ -76,8 +69,6 @@ describe("redelegations", () => {
         .spyOn(ethers, "Contract" as any)
         .mockImplementation(() => ({ getSeiAddr: mockGetSeiAddr }));
 
-      const mockNode = { type: "external", uri: "https://sei-evm.coin.ledger.com" };
-      mockGetCoinConfig.mockReturnValue({ info: { node: mockNode } });
       mockIsExternalNodeConfig.mockImplementation((node: unknown) => node === mockNode);
     });
 
@@ -87,24 +78,32 @@ describe("redelegations", () => {
     });
 
     it("should return [] for an unknown currencyId", async () => {
-      expect(await fetchRedelegations("unknown_chain", "0xabc")).toEqual([]);
+      expect(await fetchRedelegations(mockConfig, "unknown_chain", "0xabc")).toEqual([]);
     });
 
     it("should return [] when the strategy type is 'none'", async () => {
-      expect(await fetchRedelegations("celo", "0xabc")).toEqual([]);
+      expect(await fetchRedelegations(mockConfig, "celo", "0xabc")).toEqual([]);
     });
 
     it("should return [] when the network call fails", async () => {
       mockNetwork.mockRejectedValue(new Error("network error"));
       expect(
-        await fetchRedelegations("sei_evm", "0x1234567890abcdef1234567890abcdef12345678"),
+        await fetchRedelegations(
+          mockConfig,
+          "sei_evm",
+          "0x1234567890abcdef1234567890abcdef12345678",
+        ),
       ).toEqual([]);
     });
 
     it("should return [] when the API response has no redelegation_responses", async () => {
       mockNetwork.mockResolvedValue({ data: {} });
       expect(
-        await fetchRedelegations("sei_evm", "0x1234567890abcdef1234567890abcdef12345678"),
+        await fetchRedelegations(
+          mockConfig,
+          "sei_evm",
+          "0x1234567890abcdef1234567890abcdef12345678",
+        ),
       ).toEqual([]);
     });
 
@@ -132,7 +131,11 @@ describe("redelegations", () => {
         },
       });
       expect(
-        await fetchRedelegations("sei_evm", "0x1234567890abcdef1234567890abcdef12345678"),
+        await fetchRedelegations(
+          mockConfig,
+          "sei_evm",
+          "0x1234567890abcdef1234567890abcdef12345678",
+        ),
       ).toEqual([]);
     });
 
@@ -160,6 +163,7 @@ describe("redelegations", () => {
       });
 
       const result = await fetchRedelegations(
+        mockConfig,
         "sei_evm",
         "0x1234567890abcdef1234567890abcdef12345678",
       );
@@ -182,7 +186,7 @@ describe("redelegations", () => {
       mockGetSeiAddr.mockResolvedValueOnce(canonicalCosmosAddress);
       mockNetwork.mockResolvedValueOnce({ data: { redelegation_responses: [] } });
 
-      await fetchRedelegations("sei_evm", evmAddress);
+      await fetchRedelegations(mockConfig, "sei_evm", evmAddress);
 
       expect(mockNetwork).toHaveBeenCalledTimes(1);
       const calledUrl: string = (mockNetwork.mock.calls[0][0] as { url: string }).url;
@@ -193,7 +197,11 @@ describe("redelegations", () => {
     it("should return [] when the precompile call fails (address not associated)", async () => {
       mockGetSeiAddr.mockRejectedValueOnce(new Error("not associated"));
       expect(
-        await fetchRedelegations("sei_evm", "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3"),
+        await fetchRedelegations(
+          mockConfig,
+          "sei_evm",
+          "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3",
+        ),
       ).toEqual([]);
       expect(mockNetwork).not.toHaveBeenCalled();
     });
@@ -211,7 +219,7 @@ describe("redelegations", () => {
       const calldata = encodeRedelegateCalldata(SRC, DST, AMOUNT_USEI);
       const op = makeOperation({ type: "REDELEGATE", extra: { contractPayload: calldata } });
 
-      const result = await resolveRedelegationValidators(SEI_CURRENCY, op);
+      const result = await resolveRedelegationValidators(mockConfig, SEI_CURRENCY, op);
 
       expect(result).toMatchObject({
         srcValidatorAddress: SRC,
@@ -223,12 +231,13 @@ describe("redelegations", () => {
     it("should fall back to RPC when contractPayload is absent", async () => {
       const calldata = encodeRedelegateCalldata(SRC, DST, AMOUNT_USEI);
       mockIsExternalNodeConfig.mockReturnValue(true);
-      mockGetCoinConfig.mockReturnValue({ info: { node: {} } });
-      mockWithApi.mockImplementation((_currency: unknown, fn: (p: unknown) => unknown) =>
-        fn({ getTransaction: async () => ({ data: calldata }) }),
+      mockWithApi.mockImplementation(
+        (_config: unknown, _currencyId: unknown, fn: (p: unknown) => unknown) =>
+          fn({ getTransaction: async () => ({ data: calldata }) }),
       );
 
       const result = await resolveRedelegationValidators(
+        mockConfig,
         SEI_CURRENCY,
         makeOperation({ type: "REDELEGATE", extra: {} }),
       );
@@ -242,9 +251,9 @@ describe("redelegations", () => {
 
     it("should return null when no payload is available", async () => {
       mockIsExternalNodeConfig.mockReturnValue(false);
-      mockGetCoinConfig.mockReturnValue({ info: { node: {} } });
 
       const result = await resolveRedelegationValidators(
+        mockConfig,
         SEI_CURRENCY,
         makeOperation({ type: "REDELEGATE", extra: {} }),
       );
@@ -256,14 +265,12 @@ describe("redelegations", () => {
         type: "REDELEGATE",
         extra: { contractPayload: encodeRedelegateCalldata(SRC, DST, AMOUNT_USEI) },
       });
-      expect(
-        await resolveRedelegationValidators({ id: "unsupported" } as CryptoCurrency, op),
-      ).toBeNull();
+      expect(await resolveRedelegationValidators(mockConfig, "unsupported", op)).toBeNull();
     });
 
     it("should return null for malformed calldata", async () => {
       const op = makeOperation({ type: "REDELEGATE", extra: { contractPayload: "0xdeadbeef" } });
-      expect(await resolveRedelegationValidators(SEI_CURRENCY, op)).toBeNull();
+      expect(await resolveRedelegationValidators(mockConfig, SEI_CURRENCY, op)).toBeNull();
     });
   });
 
@@ -279,9 +286,7 @@ describe("redelegations", () => {
         type: "DELEGATE",
         extra: { contractPayload: encodeDelegateCalldata(VALIDATOR) },
       });
-      expect(
-        await resolveStakingValidator({ id: "unsupported" } as CryptoCurrency, op, "delegate"),
-      ).toBeNull();
+      expect(await resolveStakingValidator(mockConfig, "unsupported", op, "delegate")).toBeNull();
     });
 
     describe("delegate (Monad, id-keyed validatorId)", () => {
@@ -293,34 +298,28 @@ describe("redelegations", () => {
         });
 
         mockIsExternalNodeConfig.mockReturnValue(true);
-        mockGetCoinConfig.mockReturnValue({
-          info: { node: { type: "external", uri: "https://monad.rpc" } },
-        });
-        mockWithApi.mockImplementation((_currency: unknown, fn: (p: unknown) => unknown) =>
-          fn({
-            call: async () =>
-              monadIface.encodeFunctionResult("getValidator", [
-                "0x0000000000000000000000000000000000000000",
-                0n,
-                0n,
-                0n,
-                0n,
-                0n,
-                0n,
-                0n,
-                0n,
-                0n,
-                "0x036e44a092493800e427b2b08d3427d804348b1368ecd0a6af6510ae40ce507187",
-                "0x",
-              ]),
-          }),
+        mockWithApi.mockImplementation(
+          (_config: unknown, _currencyId: unknown, fn: (p: unknown) => unknown) =>
+            fn({
+              call: async () =>
+                monadIface.encodeFunctionResult("getValidator", [
+                  "0x0000000000000000000000000000000000000000",
+                  0n,
+                  0n,
+                  0n,
+                  0n,
+                  0n,
+                  0n,
+                  0n,
+                  0n,
+                  0n,
+                  "0x036e44a092493800e427b2b08d3427d804348b1368ecd0a6af6510ae40ce507187",
+                  "0x",
+                ]),
+            }),
         );
 
-        const result = await resolveStakingValidator(
-          { id: "monad" } as CryptoCurrency,
-          op,
-          "delegate",
-        );
+        const result = await resolveStakingValidator(mockConfig, "monad", op, "delegate");
 
         expect(result).toMatchObject({
           validatorAddress: ethers.computeAddress(
@@ -342,14 +341,47 @@ describe("redelegations", () => {
           },
         });
 
-        const result = await resolveStakingValidator(
-          { id: "zero_gravity" } as CryptoCurrency,
-          op,
-          "delegate",
-        );
+        const result = await resolveStakingValidator(mockConfig, "zero_gravity", op, "delegate");
 
         expect(result).toMatchObject({
           validatorAddress: "0x2222222222222222222222222222222222222222",
+        });
+      });
+    });
+
+    describe("undelegate (0G, convertToTokens)", () => {
+      it("calls convertToTokens on the validator contract to resolve the display amount", async () => {
+        const zgIface = new ethers.Interface(getStakingABI("zero_gravity")!);
+        const convertIface = new ethers.Interface([
+          "function convertToTokens(uint256 shares) view returns (uint256)",
+        ]);
+        const op = makeOperation({
+          type: "UNDELEGATE",
+          recipients: ["0x3333333333333333333333333333333333333333"],
+          extra: {
+            contractPayload: zgIface.encodeFunctionData("undelegate", [
+              "0x4444444444444444444444444444444444444444",
+              1_284_193_000_000_000n,
+            ]),
+          },
+        });
+
+        const zgNode = { type: "external", uri: "https://0g.rpc" };
+        const zgConfig = { node: zgNode } as unknown as import("../config").EvmConfigInfo;
+        mockIsExternalNodeConfig.mockImplementation((node: unknown) => node === zgNode);
+        mockWithApi.mockImplementation(
+          (_config: unknown, _currencyId: unknown, fn: (p: unknown) => unknown) =>
+            fn({
+              call: async () =>
+                convertIface.encodeFunctionResult("convertToTokens", [13_000_000_000_000_000n]),
+            }),
+        );
+
+        const result = await resolveStakingValidator(zgConfig, "zero_gravity", op, "undelegate");
+
+        expect(result).toEqual({
+          validatorAddress: "0x3333333333333333333333333333333333333333",
+          amount: new BigNumber("13000000000000000"),
         });
       });
     });
@@ -361,7 +393,7 @@ describe("redelegations", () => {
           extra: { contractPayload: encodeDelegateCalldata(VALIDATOR) },
         });
 
-        const result = await resolveStakingValidator(SEI_CURRENCY, op, "delegate");
+        const result = await resolveStakingValidator(mockConfig, SEI_CURRENCY, op, "delegate");
 
         expect(result).not.toBeNull();
         expect(result!.validatorAddress).toBe(VALIDATOR);
@@ -369,12 +401,13 @@ describe("redelegations", () => {
 
       it("should fall back to RPC when contractPayload is absent", async () => {
         mockIsExternalNodeConfig.mockReturnValue(true);
-        mockGetCoinConfig.mockReturnValue({ info: { node: {} } });
-        mockWithApi.mockImplementation((_currency: unknown, fn: (p: unknown) => unknown) =>
-          fn({ getTransaction: async () => ({ data: encodeDelegateCalldata(VALIDATOR) }) }),
+        mockWithApi.mockImplementation(
+          (_config: unknown, _currencyId: unknown, fn: (p: unknown) => unknown) =>
+            fn({ getTransaction: async () => ({ data: encodeDelegateCalldata(VALIDATOR) }) }),
         );
 
         const result = await resolveStakingValidator(
+          mockConfig,
           SEI_CURRENCY,
           makeOperation({ type: "DELEGATE", extra: {} }),
           "delegate",
@@ -386,10 +419,10 @@ describe("redelegations", () => {
 
       it("should return null when no payload is available", async () => {
         mockIsExternalNodeConfig.mockReturnValue(false);
-        mockGetCoinConfig.mockReturnValue({ info: { node: {} } });
 
         expect(
           await resolveStakingValidator(
+            mockConfig,
             SEI_CURRENCY,
             makeOperation({ type: "DELEGATE", extra: {} }),
             "delegate",
@@ -405,7 +438,7 @@ describe("redelegations", () => {
           extra: { contractPayload: encodeUndelegateCalldata(VALIDATOR, AMOUNT_USEI) },
         });
 
-        const result = await resolveStakingValidator(SEI_CURRENCY, op, "undelegate");
+        const result = await resolveStakingValidator(mockConfig, SEI_CURRENCY, op, "undelegate");
 
         expect(result).not.toBeNull();
         expect(result!.validatorAddress).toBe(VALIDATOR);
@@ -415,16 +448,17 @@ describe("redelegations", () => {
 
       it("should fall back to RPC when contractPayload is absent", async () => {
         mockIsExternalNodeConfig.mockReturnValue(true);
-        mockGetCoinConfig.mockReturnValue({ info: { node: {} } });
-        mockWithApi.mockImplementation((_currency: unknown, fn: (p: unknown) => unknown) =>
-          fn({
-            getTransaction: async () => ({
-              data: encodeUndelegateCalldata(VALIDATOR, AMOUNT_USEI),
+        mockWithApi.mockImplementation(
+          (_config: unknown, _currencyId: unknown, fn: (p: unknown) => unknown) =>
+            fn({
+              getTransaction: async () => ({
+                data: encodeUndelegateCalldata(VALIDATOR, AMOUNT_USEI),
+              }),
             }),
-          }),
         );
 
         const result = await resolveStakingValidator(
+          mockConfig,
           SEI_CURRENCY,
           makeOperation({ type: "UNDELEGATE", extra: {} }),
           "undelegate",
@@ -439,7 +473,9 @@ describe("redelegations", () => {
           type: "UNDELEGATE",
           extra: { contractPayload: "0xdeadbeef" },
         });
-        expect(await resolveStakingValidator(SEI_CURRENCY, op, "undelegate")).toBeNull();
+        expect(
+          await resolveStakingValidator(mockConfig, SEI_CURRENCY, op, "undelegate"),
+        ).toBeNull();
       });
     });
   });
@@ -454,14 +490,14 @@ describe("redelegations", () => {
     beforeEach(() => jest.clearAllMocks());
 
     it("should return [] for an unsupported currencyId", async () => {
-      expect(await buildRedelegationsFromOps({ id: "unsupported" } as CryptoCurrency, [])).toEqual(
-        [],
-      );
+      expect(await buildRedelegationsFromOps(mockConfig, "unsupported", [])).toEqual([]);
     });
 
     it("should ignore non-REDELEGATE operations", async () => {
       expect(
-        await buildRedelegationsFromOps(SEI_CURRENCY, [makeOperation({ type: "DELEGATE" })]),
+        await buildRedelegationsFromOps(mockConfig, SEI_CURRENCY, [
+          makeOperation({ type: "DELEGATE" }),
+        ]),
       ).toEqual([]);
     });
 
@@ -472,7 +508,7 @@ describe("redelegations", () => {
         extra: { contractPayload: encodeRedelegateCalldata(SRC, DST, AMOUNT_USEI) },
         date: new Date(),
       });
-      expect(await buildRedelegationsFromOps(SEI_CURRENCY, [op])).toEqual([]);
+      expect(await buildRedelegationsFromOps(mockConfig, SEI_CURRENCY, [op])).toEqual([]);
     });
 
     it("should ignore operations whose unbonding period has already elapsed", async () => {
@@ -481,7 +517,7 @@ describe("redelegations", () => {
         extra: { contractPayload: encodeRedelegateCalldata(SRC, DST, AMOUNT_USEI) },
         date: new Date(Date.now() - unbondingMs - 1000),
       });
-      expect(await buildRedelegationsFromOps(SEI_CURRENCY, [op])).toEqual([]);
+      expect(await buildRedelegationsFromOps(mockConfig, SEI_CURRENCY, [op])).toEqual([]);
     });
 
     it("should build a redelegation from a recent REDELEGATE op with cached calldata", async () => {
@@ -491,7 +527,7 @@ describe("redelegations", () => {
         date: new Date(),
       });
 
-      const result = await buildRedelegationsFromOps(SEI_CURRENCY, [op]);
+      const result = await buildRedelegationsFromOps(mockConfig, SEI_CURRENCY, [op]);
 
       expect(result).toHaveLength(1);
       expect(result[0]).toMatchObject({
@@ -505,14 +541,14 @@ describe("redelegations", () => {
 
     it("should fetch calldata from RPC when contractPayload is absent", async () => {
       mockIsExternalNodeConfig.mockReturnValue(true);
-      mockGetCoinConfig.mockReturnValue({ info: { node: {} } });
-      mockWithApi.mockImplementation((_currency: unknown, fn: (p: unknown) => unknown) =>
-        fn({
-          getTransaction: async () => ({ data: encodeRedelegateCalldata(SRC, DST, AMOUNT_USEI) }),
-        }),
+      mockWithApi.mockImplementation(
+        (_config: unknown, _currencyId: unknown, fn: (p: unknown) => unknown) =>
+          fn({
+            getTransaction: async () => ({ data: encodeRedelegateCalldata(SRC, DST, AMOUNT_USEI) }),
+          }),
       );
 
-      const result = await buildRedelegationsFromOps(SEI_CURRENCY, [
+      const result = await buildRedelegationsFromOps(mockConfig, SEI_CURRENCY, [
         makeOperation({ type: "REDELEGATE", extra: {}, date: new Date() }),
       ]);
 
@@ -526,7 +562,7 @@ describe("redelegations", () => {
         extra: { contractPayload: "0xdeadbeef" },
         date: new Date(),
       });
-      expect(await buildRedelegationsFromOps(SEI_CURRENCY, [op])).toEqual([]);
+      expect(await buildRedelegationsFromOps(mockConfig, SEI_CURRENCY, [op])).toEqual([]);
     });
 
     it("should process multiple operations correctly", async () => {
@@ -543,7 +579,7 @@ describe("redelegations", () => {
         }),
       ];
 
-      const result = await buildRedelegationsFromOps(SEI_CURRENCY, ops);
+      const result = await buildRedelegationsFromOps(mockConfig, SEI_CURRENCY, ops);
       expect(result).toHaveLength(2);
       expect(result[0].validatorSrcAddress).toBe(SRC);
       expect(result[1].validatorSrcAddress).toBe(DST);

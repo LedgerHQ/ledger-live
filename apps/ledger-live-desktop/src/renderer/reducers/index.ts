@@ -13,11 +13,12 @@ import postOnboarding from "@ledgerhq/live-common/postOnboarding/reducer";
 import market, { MarketState } from "./market";
 import marketBanner, { MarketBannerState } from "./marketBanner";
 import wallet from "./wallet";
-import { WalletState } from "@ledgerhq/live-wallet/store";
+import type { WalletState } from "./wallet";
+import { authEnvironmentReducer, type AuthEnvironmentState } from "@shared/auth";
 import walletSync, { WalletSyncState } from "./walletSync";
 import trustchain from "./trustchain";
 import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import countervalues, { CountervaluesState } from "./countervalues";
 import modularDialog, { ModularDialogState } from "./modularDialog";
 import sendFlow, { SendFlowState } from "./sendFlow";
@@ -29,8 +30,16 @@ import { contactsSlice, type ContactsState } from "@domain/entity-contact";
 import {
   largeScreenUpsellModalSlice,
   type LargeScreenUpsellModalState,
-} from "@domain/entity-large-screen-upsell-modal";
-import { payCardSlice, type PayCardState } from "@domain/entity-pay-card";
+} from "@features/flow-large-screen-upsell";
+import {
+  payCardBalanceSlice,
+  type PayCardBalanceState,
+} from "@features/flow-pay-card-balance/state";
+import {
+  payCardFeatureTourSlice,
+  type PayCardFeatureTourState,
+} from "@features/flow-pay-card-feature-tour/state";
+import { payCardAuthSlice, type PayCardAuthState } from "@features/flow-pay-card-auth/state";
 import type { PayloadAction, UnknownAction } from "@reduxjs/toolkit";
 import dialogs, { DialogsState } from "./dialogs";
 import dialogsWithData, { DialogsWithDataState } from "./dialogsWithData";
@@ -60,6 +69,7 @@ export type State = LLDRTKApiState & {
   featureFlags: FeatureFlagsState;
   history: HistoryState;
   identities: IdentitiesState;
+  authEnvironment: AuthEnvironmentState;
   market: MarketState;
   marketBanner: MarketBannerState;
   modals: ModalsState;
@@ -87,7 +97,9 @@ export type State = LLDRTKApiState & {
   supportedFiats: SupportedFiatsState;
   contacts: ContactsState;
   largeScreenUpsellModal: LargeScreenUpsellModalState;
-  payCard: PayCardState;
+  payCardBalance: PayCardBalanceState;
+  payCardFeatureTour: PayCardFeatureTourState;
+  payCardAuth: PayCardAuthState;
 };
 
 const appReducer = combineReducers({
@@ -99,6 +111,7 @@ const appReducer = combineReducers({
   featureFlags,
   history,
   identities: identitiesSlice.reducer,
+  authEnvironment: authEnvironmentReducer,
   modals,
   modularDialog,
   sendFlow,
@@ -126,7 +139,9 @@ const appReducer = combineReducers({
   supportedFiats: supportedFiatsSlice.reducer,
   contacts: contactsSlice.reducer,
   largeScreenUpsellModal: largeScreenUpsellModalSlice.reducer,
-  payCard: payCardSlice.reducer,
+  payCardBalance: payCardBalanceSlice.reducer,
+  payCardFeatureTour: payCardFeatureTourSlice.reducer,
+  payCardAuth: payCardAuthSlice.reducer,
   ...lldRTKApiReducers,
   ...(getEnv("PLAYWRIGHT_RUN") && {
     lastAction: (_: unknown, action: PayloadAction) => action,

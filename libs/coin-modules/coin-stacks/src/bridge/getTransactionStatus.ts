@@ -5,13 +5,13 @@ import {
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
   RecipientRequired,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import { AccountBridge } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { StacksMemoTooLong } from "../errors";
 import { validateMemo } from "../logic/validateMemo";
 import { Transaction, TransactionStatus } from "../types";
-import { validateAddress } from "./utils/addresses";
+import { validateAddress } from "../common-logic";
 import { getAddress } from "./utils/misc";
 import { getSubAccount } from "./utils/token";
 

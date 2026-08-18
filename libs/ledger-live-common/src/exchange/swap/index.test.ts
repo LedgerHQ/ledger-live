@@ -1,6 +1,6 @@
 import { isSwapOperationPending, getSwapAPIVersion } from ".";
 
-import { getEnv, setEnv } from "@ledgerhq/live-env";
+import { getEnv, setEnv } from "@shared/env";
 
 describe("swap/index", () => {
   describe("isSwapOperationPending", () => {

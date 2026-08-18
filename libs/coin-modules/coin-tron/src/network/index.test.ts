@@ -1,8 +1,8 @@
-import { InvalidTransactionError } from "@ledgerhq/errors";
+import { InvalidTransactionError } from "@ledgerhq/ledger-wallet-framework/errors";
 import network from "@ledgerhq/live-network";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import coinConfig from "../config";
+import coinConfig, { type TronCoinConfig } from "../config";
 import { TronTransactionExpired } from "../types/errors";
 import {
   broadcastHexTron,
@@ -13,6 +13,8 @@ import {
   createTronTransaction,
   defaultFetchParams,
   fetchTronAccount,
+  fetchTronAccountOrEmpty,
+  fetchTronAccountOrFail,
   fetchTronAccountTxs,
   fetchTronAccountTxsPage,
   fetchTronContract,
@@ -61,6 +63,11 @@ const mockedNetwork = network as jest.MockedFunction<typeof network>;
 
 const TRON_BASE_URL = "https://tron-test.example.com";
 
+const mockConfig = {
+  status: { type: "active" },
+  explorer: { url: TRON_BASE_URL },
+} as TronCoinConfig;
+
 const senderBase58 = "TQ7pF3NTDL2Tjz5rdJ6ECjQWjaWHpLZJMH";
 const recipientBase58 = "TAVrrARNdnjHgCGMQYeQV7hv4PSu7mVsMj";
 const senderHex = "4105cc125604448afeb6867eb688efb7e80411d57a";
@@ -84,17 +91,17 @@ beforeEach(() => {
 describe("post / fetch error handling", () => {
   it("throws when the response body contains a key 'Error'", async () => {
     mockedNetwork.mockResolvedValueOnce(mockResponse({ Error: { message: "boom" } }));
-    await expect(post("/wallet/anything", {})).rejects.toThrow();
+    await expect(post(mockConfig, "/wallet/anything", {})).rejects.toThrow();
   });
 
   it("throws using error.toString() when stringified Error is empty", async () => {
     mockedNetwork.mockResolvedValueOnce(mockResponse({ Error: "raw-string" }));
-    await expect(post("/wallet/anything", {})).rejects.toThrow("raw-string");
+    await expect(post(mockConfig, "/wallet/anything", {})).rejects.toThrow("raw-string");
   });
 
-  it("propagates GET errors from fetch", async () => {
+  it("returns [] on GET errors from fetch", async () => {
     mockedNetwork.mockResolvedValueOnce(mockResponse({ Error: { message: "get-boom" } }));
-    await expect(fetchTronAccount(senderBase58)).resolves.toEqual([]);
+    await expect(fetchTronAccount(mockConfig, senderBase58)).resolves.toEqual([]);
   });
 });
 
@@ -102,6 +109,7 @@ describe("freeze / unfreeze / withdraw / unDelegate / legacyUnfreeze", () => {
   it("freezeTronTransaction posts to freezebalancev2", async () => {
     mockedNetwork.mockResolvedValueOnce(mockResponse({ raw_data: {} }));
     await freezeTronTransaction(
+      mockConfig,
       { freshAddress: senderBase58 } as Account,
       { amount: new BigNumber(1000), resource: "BANDWIDTH" } as never,
     );
@@ -117,6 +125,7 @@ describe("freeze / unfreeze / withdraw / unDelegate / legacyUnfreeze", () => {
   it("unfreezeTronTransaction posts to unfreezebalancev2", async () => {
     mockedNetwork.mockResolvedValueOnce(mockResponse({ raw_data: {} }));
     await unfreezeTronTransaction(
+      mockConfig,
       { freshAddress: senderBase58 } as Account,
       { amount: new BigNumber(500), resource: "ENERGY" } as never,
     );
@@ -131,6 +140,7 @@ describe("freeze / unfreeze / withdraw / unDelegate / legacyUnfreeze", () => {
   it("withdrawExpireUnfreezeTronTransaction posts to withdrawexpireunfreeze", async () => {
     mockedNetwork.mockResolvedValueOnce(mockResponse({ raw_data: {} }));
     await withdrawExpireUnfreezeTronTransaction(
+      mockConfig,
       { freshAddress: senderBase58 } as Account,
       {} as never,
     );
@@ -142,6 +152,7 @@ describe("freeze / unfreeze / withdraw / unDelegate / legacyUnfreeze", () => {
   it("unDelegateResourceTransaction posts to undelegateresource", async () => {
     mockedNetwork.mockResolvedValueOnce(mockResponse({ raw_data: {} }));
     await unDelegateResourceTransaction(
+      mockConfig,
       { freshAddress: senderBase58 } as Account,
       { amount: new BigNumber(1000), resource: "BANDWIDTH", recipient: recipientBase58 } as never,
     );
@@ -153,6 +164,7 @@ describe("freeze / unfreeze / withdraw / unDelegate / legacyUnfreeze", () => {
   it("legacyUnfreezeTronTransaction with recipient", async () => {
     mockedNetwork.mockResolvedValueOnce(mockResponse({ raw_data: {} }));
     await legacyUnfreezeTronTransaction(
+      mockConfig,
       { freshAddress: senderBase58 } as Account,
       { resource: "ENERGY", recipient: recipientBase58 } as never,
     );
@@ -166,6 +178,7 @@ describe("freeze / unfreeze / withdraw / unDelegate / legacyUnfreeze", () => {
   it("legacyUnfreezeTronTransaction without recipient", async () => {
     mockedNetwork.mockResolvedValueOnce(mockResponse({ raw_data: {} }));
     await legacyUnfreezeTronTransaction(
+      mockConfig,
       { freshAddress: senderBase58 } as Account,
       { resource: "ENERGY", recipient: "" } as never,
     );
@@ -188,6 +201,7 @@ describe("getDelegatedResource", () => {
       }),
     );
     const result = await getDelegatedResource(
+      mockConfig,
       { freshAddress: senderBase58 } as Account,
       { recipient: recipientBase58 } as never,
       "BANDWIDTH",
@@ -205,6 +219,7 @@ describe("getDelegatedResource", () => {
       }),
     );
     const result = await getDelegatedResource(
+      mockConfig,
       { freshAddress: senderBase58 } as Account,
       { recipient: recipientBase58 } as never,
       "ENERGY",
@@ -215,6 +230,7 @@ describe("getDelegatedResource", () => {
   it("returns 0 when no delegatedResource is present", async () => {
     mockedNetwork.mockResolvedValueOnce(mockResponse({}));
     const result = await getDelegatedResource(
+      mockConfig,
       { freshAddress: senderBase58 } as Account,
       { recipient: recipientBase58 } as never,
       "BANDWIDTH",
@@ -230,6 +246,7 @@ describe("craftTrc20Transaction", () => {
       mockResponse({ transaction: { raw_data: { expiration: expirationInFuture } } }),
     );
     await craftTrc20Transaction(
+      mockConfig,
       "TF5Bn4cJCT6GVeUgyCN4rBhDg42KBrpAjg",
       recipientHex,
       senderHex,
@@ -249,6 +266,7 @@ describe("craftTrc20Transaction", () => {
       mockResponse({ transaction: { raw_data: { expiration: expirationInFuture } } }),
     );
     await craftTrc20Transaction(
+      mockConfig,
       "TF5Bn4cJCT6GVeUgyCN4rBhDg42KBrpAjg",
       recipientHex,
       senderHex,
@@ -268,6 +286,7 @@ describe("craftTrc20Transaction", () => {
       mockResponse({ transaction: { raw_data: { expiration: expirationInFuture } } }),
     );
     await craftTrc20Transaction(
+      mockConfig,
       "TF5Bn4cJCT6GVeUgyCN4rBhDg42KBrpAjg",
       recipientHex,
       senderHex,
@@ -288,6 +307,7 @@ describe("craftStandardTransaction", () => {
       mockResponse({ raw_data: { expiration: expirationInFuture } }),
     );
     await craftStandardTransaction(
+      mockConfig,
       "1002000",
       recipientHex,
       senderHex,
@@ -311,7 +331,14 @@ describe("craftStandardTransaction", () => {
     mockedNetwork.mockResolvedValueOnce(
       mockResponse({ raw_data: { expiration: expirationInFuture } }),
     );
-    await craftStandardTransaction(undefined, recipientHex, senderHex, new BigNumber(50), false);
+    await craftStandardTransaction(
+      mockConfig,
+      undefined,
+      recipientHex,
+      senderHex,
+      new BigNumber(50),
+      false,
+    );
     expect(mockedNetwork).toHaveBeenCalledWith(
       expect.objectContaining({ url: expect.stringContaining("/wallet/createtransaction") }),
     );
@@ -353,6 +380,7 @@ describe("createTronTransaction", () => {
         ),
       );
       await createTronTransaction(
+        mockConfig,
         { freshAddress: senderBase58 } as Account,
         { recipient: recipientBase58, amount: new BigNumber(1) } as never,
         subAccount,
@@ -368,6 +396,7 @@ describe("createTronTransaction", () => {
     mockedNetwork.mockResolvedValueOnce(mockResponse({ raw_data: { expiration: pastExpiration } }));
     await expect(
       createTronTransaction(
+        mockConfig,
         { freshAddress: senderBase58 } as Account,
         { recipient: recipientBase58, amount: new BigNumber(1) } as never,
         null,
@@ -379,7 +408,7 @@ describe("createTronTransaction", () => {
 describe("broadcastTron", () => {
   it("returns the txid on success", async () => {
     mockedNetwork.mockResolvedValueOnce(mockResponse({ result: true, txid: "abc" }));
-    await expect(broadcastTron({ signature: ["sig"] } as never)).resolves.toBe("abc");
+    await expect(broadcastTron(mockConfig, { signature: ["sig"] } as never)).resolves.toBe("abc");
   });
 
   it("throws TronTransactionExpired when code is TRANSACTION_EXPIRATION_ERROR", async () => {
@@ -391,7 +420,7 @@ describe("broadcastTron", () => {
         message: "expired",
       }),
     );
-    await expect(broadcastTron({ signature: ["sig"] } as never)).rejects.toBeInstanceOf(
+    await expect(broadcastTron(mockConfig, { signature: ["sig"] } as never)).rejects.toBeInstanceOf(
       TronTransactionExpired,
     );
   });
@@ -400,34 +429,59 @@ describe("broadcastTron", () => {
     mockedNetwork.mockResolvedValueOnce(
       mockResponse({ result: false, txid: "abc", code: "OTHER", message: "msg" }),
     );
-    await expect(broadcastTron({ signature: ["sig"] } as never)).rejects.toThrow("OTHER: msg");
+    await expect(broadcastTron(mockConfig, { signature: ["sig"] } as never)).rejects.toThrow(
+      "OTHER: msg",
+    );
   });
 });
 
 describe("broadcastHexTron", () => {
   it("returns the txid on success", async () => {
     mockedNetwork.mockResolvedValueOnce(mockResponse({ result: true, txid: "hex-tx" }));
-    await expect(broadcastHexTron("raw")).resolves.toBe("hex-tx");
+    await expect(broadcastHexTron(mockConfig, "raw")).resolves.toBe("hex-tx");
   });
 
   it("throws when broadcast fails", async () => {
     mockedNetwork.mockResolvedValueOnce(
       mockResponse({ result: false, txid: "hex-tx", code: "BAD" }),
     );
-    await expect(broadcastHexTron("raw")).rejects.toThrow(/BAD/);
+    await expect(broadcastHexTron(mockConfig, "raw")).rejects.toThrow(/BAD/);
   });
 });
 
 describe("fetchTronAccount", () => {
   it("returns parsed data on success", async () => {
     mockedNetwork.mockResolvedValueOnce(mockResponse({ data: [{ address: senderHex }] }));
-    const result = await fetchTronAccount(senderBase58);
+    const result = await fetchTronAccount(mockConfig, senderBase58);
     expect(result).toEqual([{ address: senderHex }]);
   });
 
   it("returns [] on network error", async () => {
     mockedNetwork.mockRejectedValueOnce(new Error("network"));
-    await expect(fetchTronAccount(senderBase58)).resolves.toEqual([]);
+    await expect(fetchTronAccount(mockConfig, senderBase58)).resolves.toEqual([]);
+  });
+
+  it("fetchTronAccountOrEmpty matches fetchTronAccount behavior", async () => {
+    mockedNetwork.mockRejectedValueOnce(new Error("network"));
+    await expect(fetchTronAccountOrEmpty(mockConfig, senderBase58)).resolves.toEqual([]);
+  });
+});
+
+describe("fetchTronAccountOrFail", () => {
+  it("returns parsed data on success", async () => {
+    mockedNetwork.mockResolvedValueOnce(mockResponse({ data: [{ address: senderHex }] }));
+    const result = await fetchTronAccountOrFail(mockConfig, senderBase58);
+    expect(result).toEqual([{ address: senderHex }]);
+  });
+
+  it("propagates GET errors from fetch", async () => {
+    mockedNetwork.mockResolvedValueOnce(mockResponse({ Error: { message: "get-boom" } }));
+    await expect(fetchTronAccountOrFail(mockConfig, senderBase58)).rejects.toThrow("get-boom");
+  });
+
+  it("propagates network errors", async () => {
+    mockedNetwork.mockRejectedValueOnce(new Error("network"));
+    await expect(fetchTronAccountOrFail(mockConfig, senderBase58)).rejects.toThrow("network");
   });
 });
 
@@ -439,7 +493,7 @@ describe("getLastBlock / getBlock / getBlockWithTransactions / getTransactionInf
         block_header: { raw_data: { number: 10, timestamp: 1739540559000 } },
       }),
     );
-    const block = await getLastBlock();
+    const block = await getLastBlock(mockConfig);
     expect(block).toEqual({ height: 10, hash: "hash", time: new Date(1739540559000) });
   });
 
@@ -447,7 +501,7 @@ describe("getLastBlock / getBlock / getBlockWithTransactions / getTransactionInf
     mockedNetwork.mockResolvedValueOnce(
       mockResponse({ blockID: "h2", block_header: { raw_data: { number: 11 } } }),
     );
-    const block = await getLastBlock();
+    const block = await getLastBlock(mockConfig);
     expect(block.time).toBeUndefined();
   });
 
@@ -458,7 +512,7 @@ describe("getLastBlock / getBlock / getBlockWithTransactions / getTransactionInf
         block_header: { raw_data: { number: 42, timestamp: 1000 } },
       }),
     );
-    const block = await getBlock(42);
+    const block = await getBlock(mockConfig, 42);
     expect(block).toEqual({ height: 42, hash: "h", time: new Date(1000) });
     expect(mockedNetwork).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -477,7 +531,7 @@ describe("getLastBlock / getBlock / getBlockWithTransactions / getTransactionInf
         transactions: [],
       }),
     );
-    await getBlockWithTransactions(42);
+    await getBlockWithTransactions(mockConfig, 42);
     expect(mockedNetwork).toHaveBeenCalledWith(
       expect.objectContaining({ data: { id_or_num: "42", detail: true } }),
     );
@@ -485,7 +539,7 @@ describe("getLastBlock / getBlock / getBlockWithTransactions / getTransactionInf
 
   it("getTransactionInfoByBlockNum forwards num in body", async () => {
     mockedNetwork.mockResolvedValueOnce(mockResponse([{ id: "tx1" }]));
-    const result = await getTransactionInfoByBlockNum(5);
+    const result = await getTransactionInfoByBlockNum(mockConfig, 5);
     expect(result).toEqual([{ id: "tx1" }]);
     expect(mockedNetwork).toHaveBeenCalledWith(expect.objectContaining({ data: { num: 5 } }));
   });
@@ -586,7 +640,7 @@ describe("fetchTronAccountTxs / fetchTronAccountTxsPage", () => {
       .mockResolvedValueOnce(mockResponse({ data: [failedSmart], meta: {} }))
       .mockResolvedValueOnce(mockResponse({ data: [], meta: {} }));
 
-    const result = await fetchTronAccountTxsPage(senderBase58, {
+    const result = await fetchTronAccountTxsPage(mockConfig, senderBase58, {
       limit: 100,
       minTimestamp: 0,
       order: "desc",
@@ -599,7 +653,7 @@ describe("fetchTronAccountTxs / fetchTronAccountTxsPage", () => {
     mockedNetwork
       .mockResolvedValueOnce(mockResponse({ meta: {} }))
       .mockResolvedValueOnce(mockResponse({ data: [], meta: {} }));
-    const result = await fetchTronAccountTxsPage(senderBase58, {
+    const result = await fetchTronAccountTxsPage(mockConfig, senderBase58, {
       limit: 100,
       minTimestamp: 0,
       order: "desc",
@@ -619,7 +673,7 @@ describe("fetchTronAccountTxs / fetchTronAccountTxsPage", () => {
         }),
       );
 
-    const result = await fetchTronAccountTxsPage(senderBase58, {
+    const result = await fetchTronAccountTxsPage(mockConfig, senderBase58, {
       limit: 100,
       minTimestamp: 0,
       order: "desc",
@@ -634,7 +688,7 @@ describe("fetchTronAccountTxs / fetchTronAccountTxsPage", () => {
     mockedNetwork
       .mockResolvedValueOnce(mockResponse({ data: [], meta: {} }))
       .mockResolvedValueOnce(mockResponse({ data: [], meta: {} }));
-    await fetchTronAccountTxsPage(senderBase58, {
+    await fetchTronAccountTxsPage(mockConfig, senderBase58, {
       limit: 10,
       minTimestamp: 0,
       order: "asc",
@@ -658,7 +712,12 @@ describe("fetchTronAccountTxs / fetchTronAccountTxsPage", () => {
       .mockResolvedValueOnce(mockResponse({ data: [validNativeTx], meta: {} }))
       .mockResolvedValueOnce(mockResponse({ data: [], meta: {} }));
 
-    const results = await fetchTronAccountTxs(senderBase58, () => true, defaultFetchParams);
+    const results = await fetchTronAccountTxs(
+      mockConfig,
+      senderBase58,
+      () => true,
+      defaultFetchParams,
+    );
     expect(results).toHaveLength(2);
   });
 
@@ -667,7 +726,7 @@ describe("fetchTronAccountTxs / fetchTronAccountTxsPage", () => {
       .mockResolvedValueOnce(mockResponse({ data: [], meta: {} }))
       .mockResolvedValueOnce(mockResponse({ data: [], meta: {} }));
 
-    await fetchTronAccountTxs(senderBase58, () => true, {
+    await fetchTronAccountTxs(mockConfig, senderBase58, () => true, {
       ...defaultFetchParams,
       hintGlobalLimit: 7,
     });
@@ -686,7 +745,12 @@ describe("fetchTronAccountTxs / fetchTronAccountTxsPage", () => {
       .mockResolvedValueOnce(mockResponse({ data: [trc20WithoutRet], meta: {} }))
       .mockResolvedValueOnce(mockResponse({ data: [validTrc20Tx], meta: {} }));
 
-    const results = await fetchTronAccountTxs(senderBase58, () => true, defaultFetchParams);
+    const results = await fetchTronAccountTxs(
+      mockConfig,
+      senderBase58,
+      () => true,
+      defaultFetchParams,
+    );
     expect(results.map(r => r.txID)).toContain("tx-trc20");
   });
 
@@ -698,38 +762,38 @@ describe("fetchTronAccountTxs / fetchTronAccountTxsPage", () => {
       .mockResolvedValueOnce(mockResponse({ data: [], meta: {} }))
       .mockResolvedValue(mockResponse({ data: [trc20WithoutRet], meta: {} }));
 
-    await expect(fetchTronAccountTxs(senderBase58, () => true, defaultFetchParams)).rejects.toThrow(
-      /couldn't fetch trc20/,
-    );
+    await expect(
+      fetchTronAccountTxs(mockConfig, senderBase58, () => true, defaultFetchParams),
+    ).rejects.toThrow(/couldn't fetch trc20/);
   });
 });
 
 describe("fetchTronContract / getContractUserEnergyRatioConsumption", () => {
   it("returns undefined when contract response is empty", async () => {
     mockedNetwork.mockResolvedValueOnce(mockResponse({}));
-    await expect(fetchTronContract(senderBase58)).resolves.toBeUndefined();
+    await expect(fetchTronContract(mockConfig, senderBase58)).resolves.toBeUndefined();
   });
 
   it("returns the contract data when non-empty", async () => {
     mockedNetwork.mockResolvedValueOnce(mockResponse({ consume_user_resource_percent: 30 }));
-    await expect(fetchTronContract(senderBase58)).resolves.toEqual({
+    await expect(fetchTronContract(mockConfig, senderBase58)).resolves.toEqual({
       consume_user_resource_percent: 30,
     });
   });
 
   it("returns undefined on error", async () => {
     mockedNetwork.mockRejectedValueOnce(new Error("nope"));
-    await expect(fetchTronContract(senderBase58)).resolves.toBeUndefined();
+    await expect(fetchTronContract(mockConfig, senderBase58)).resolves.toBeUndefined();
   });
 
   it("getContractUserEnergyRatioConsumption returns the percent when present", async () => {
     mockedNetwork.mockResolvedValueOnce(mockResponse({ consume_user_resource_percent: 30 }));
-    await expect(getContractUserEnergyRatioConsumption(senderBase58)).resolves.toBe(30);
+    await expect(getContractUserEnergyRatioConsumption(mockConfig, senderBase58)).resolves.toBe(30);
   });
 
   it("getContractUserEnergyRatioConsumption returns 0 when contract is empty", async () => {
     mockedNetwork.mockResolvedValueOnce(mockResponse({}));
-    await expect(getContractUserEnergyRatioConsumption(senderBase58)).resolves.toBe(0);
+    await expect(getContractUserEnergyRatioConsumption(mockConfig, senderBase58)).resolves.toBe(0);
   });
 });
 
@@ -745,7 +809,7 @@ describe("getTronAccountNetwork", () => {
         EnergyLimit: 6,
       }),
     );
-    const ni = await getTronAccountNetwork(senderBase58);
+    const ni = await getTronAccountNetwork(mockConfig, senderBase58);
     expect(ni.freeNetUsed.toNumber()).toBe(1);
     expect(ni.freeNetLimit.toNumber()).toBe(2);
     expect(ni.netUsed.toNumber()).toBe(3);
@@ -756,7 +820,7 @@ describe("getTronAccountNetwork", () => {
 
   it("defaults every missing field to 0", async () => {
     mockedNetwork.mockResolvedValueOnce(mockResponse({}));
-    const ni = await getTronAccountNetwork(senderBase58);
+    const ni = await getTronAccountNetwork(mockConfig, senderBase58);
     expect(ni.freeNetUsed.toNumber()).toBe(0);
     expect(ni.freeNetLimit.toNumber()).toBe(0);
     expect(ni.netUsed.toNumber()).toBe(0);
@@ -772,17 +836,17 @@ describe("getAccountName", () => {
     mockedNetwork.mockResolvedValueOnce(
       mockResponse({ data: [{ address: senderHex, account_name: accountName }] }),
     );
-    await expect(getAccountName(senderBase58)).resolves.toBe("MyAccount");
+    await expect(getAccountName(mockConfig, senderBase58)).resolves.toBe("MyAccount");
   });
 
   it("returns undefined when no account is returned", async () => {
     mockedNetwork.mockResolvedValueOnce(mockResponse({ data: [] }));
-    await expect(getAccountName(senderBase58)).resolves.toBeUndefined();
+    await expect(getAccountName(mockConfig, senderBase58)).resolves.toBeUndefined();
   });
 
   it("returns undefined when account has no name", async () => {
     mockedNetwork.mockResolvedValueOnce(mockResponse({ data: [{ address: senderHex }] }));
-    await expect(getAccountName(senderBase58)).resolves.toBeUndefined();
+    await expect(getAccountName(mockConfig, senderBase58)).resolves.toBeUndefined();
   });
 });
 
@@ -804,7 +868,7 @@ describe("super representatives", () => {
           ],
         }),
       );
-      const list = await mod.getTronSuperRepresentatives();
+      const list = await mod.getTronSuperRepresentatives(mockConfig);
       expect(list.map(w => w.voteCount)).toEqual([100, 50, 0]);
       expect(list[2].isJobs).toBe(false);
       expect(list[1].isJobs).toBe(true);
@@ -823,7 +887,7 @@ describe("super representatives", () => {
       mockedNetwork.mockResolvedValueOnce(
         mockResponse({ data: [{ address: senderHex, account_name: accountName }] }),
       );
-      const name = await mod.accountNamesCache(senderBase58);
+      const name = await mod.accountNamesCache(mockConfig, senderBase58);
       expect(name).toBe("CacheName");
     });
   });
@@ -832,13 +896,13 @@ describe("super representatives", () => {
     hydrateSuperRepresentatives([
       { address: senderBase58, voteCount: 100, isJobs: false } as never,
     ]);
-    const list = await getTronSuperRepresentatives();
+    const list = await getTronSuperRepresentatives(mockConfig);
     expect(list.length).toBeGreaterThan(0);
   });
 
   it("getNextVotingDate returns a Date built from the API's num", async () => {
     mockedNetwork.mockResolvedValueOnce(mockResponse({ num: 1739540559000 }));
-    await expect(getNextVotingDate()).resolves.toEqual(new Date(1739540559000));
+    await expect(getNextVotingDate(mockConfig)).resolves.toEqual(new Date(1739540559000));
   });
 
   it("getTronSuperRepresentativeData applies max and computes totalVotes", async () => {
@@ -847,7 +911,7 @@ describe("super representatives", () => {
       { address: recipientBase58, voteCount: 50, isJobs: false } as never,
     ]);
     mockedNetwork.mockResolvedValueOnce(mockResponse({ num: 1 }));
-    const data = await getTronSuperRepresentativeData(1);
+    const data = await getTronSuperRepresentativeData(mockConfig, 1);
     expect(data.list).toHaveLength(1);
     expect(data.totalVotes).toBe(150);
   });
@@ -858,7 +922,7 @@ describe("super representatives", () => {
       { address: recipientBase58, voteCount: 50, isJobs: false } as never,
     ]);
     mockedNetwork.mockResolvedValueOnce(mockResponse({ num: 1 }));
-    const data = await getTronSuperRepresentativeData(null);
+    const data = await getTronSuperRepresentativeData(mockConfig, null);
     expect(data.list).toHaveLength(2);
   });
 });
@@ -867,6 +931,7 @@ describe("voteTronSuperRepresentatives", () => {
   it("forwards encoded addresses and vote counts", async () => {
     mockedNetwork.mockResolvedValueOnce(mockResponse({ raw_data: {} }));
     await voteTronSuperRepresentatives(
+      mockConfig,
       { freshAddress: senderBase58 } as Account,
       { votes: [{ address: recipientBase58, voteCount: 7 }] } as never,
     );
@@ -884,19 +949,19 @@ describe("voteTronSuperRepresentatives", () => {
 describe("getUnwithdrawnReward", () => {
   it("returns the BigNumber of reward when present", async () => {
     mockedNetwork.mockResolvedValueOnce(mockResponse({ reward: 12345 }));
-    const reward = await getUnwithdrawnReward(senderBase58);
+    const reward = await getUnwithdrawnReward(mockConfig, senderBase58);
     expect(reward.toNumber()).toBe(12345);
   });
 
   it("returns 0 when reward is missing", async () => {
     mockedNetwork.mockResolvedValueOnce(mockResponse({}));
-    const reward = await getUnwithdrawnReward(senderBase58);
+    const reward = await getUnwithdrawnReward(mockConfig, senderBase58);
     expect(reward.toNumber()).toBe(0);
   });
 
   it("returns 0 on network error", async () => {
     mockedNetwork.mockRejectedValueOnce(new Error("network"));
-    const reward = await getUnwithdrawnReward(senderBase58);
+    const reward = await getUnwithdrawnReward(mockConfig, senderBase58);
     expect(reward.toNumber()).toBe(0);
   });
 });
@@ -904,7 +969,7 @@ describe("getUnwithdrawnReward", () => {
 describe("claimRewardTronTransaction", () => {
   it("POSTs to /wallet/withdrawbalance", async () => {
     mockedNetwork.mockResolvedValueOnce(mockResponse({ raw_data: {} }));
-    await claimRewardTronTransaction({ freshAddress: senderBase58 } as Account);
+    await claimRewardTronTransaction(mockConfig, { freshAddress: senderBase58 } as Account);
     expect(mockedNetwork).toHaveBeenCalledWith(
       expect.objectContaining({ url: expect.stringContaining("/wallet/withdrawbalance") }),
     );
@@ -929,7 +994,7 @@ describe("getChainParameters", () => {
   it("parses the four governance-voted parameters used for fee estimation", async () => {
     mockedNetwork.mockResolvedValueOnce(mockResponse(fullParams));
 
-    const params = await getChainParameters();
+    const params = await getChainParameters(mockConfig);
 
     expect(params).toEqual({
       energyFee: 100,
@@ -949,7 +1014,7 @@ describe("getChainParameters", () => {
       }),
     );
 
-    const params = await getChainParameters();
+    const params = await getChainParameters(mockConfig);
 
     expect(params.transactionFee).toBe(1000);
     expect(params.energyFee).toBe(100); // fallback
@@ -960,9 +1025,9 @@ describe("getChainParameters", () => {
   it("caches the result across calls (no second HTTP request)", async () => {
     mockedNetwork.mockResolvedValueOnce(mockResponse(fullParams));
 
-    await getChainParameters();
-    await getChainParameters();
-    await getChainParameters();
+    await getChainParameters(mockConfig);
+    await getChainParameters(mockConfig);
+    await getChainParameters(mockConfig);
 
     expect(mockedNetwork).toHaveBeenCalledTimes(1);
   });
@@ -982,7 +1047,7 @@ describe("triggerConstantContract", () => {
   it("forwards parameters and returns the parsed response on success", async () => {
     mockedNetwork.mockResolvedValueOnce(mockResponse(okResponse));
 
-    const response = await triggerConstantContract({
+    const response = await triggerConstantContract(mockConfig, {
       ownerAddress: senderHex,
       contractAddress: recipientHex,
       functionSelector: "transfer(address,uint256)",
@@ -1008,7 +1073,7 @@ describe("triggerConstantContract", () => {
   it("returns the revert payload without throwing (caller decides what to do)", async () => {
     mockedNetwork.mockResolvedValueOnce(mockResponse(revertResponse));
 
-    const response = await triggerConstantContract({
+    const response = await triggerConstantContract(mockConfig, {
       ownerAddress: senderHex,
       contractAddress: recipientHex,
       functionSelector: "transfer(address,uint256)",

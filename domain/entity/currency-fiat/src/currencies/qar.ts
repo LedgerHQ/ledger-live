@@ -2,7 +2,6 @@ import { fiat } from "../define";
 
 export const qar = fiat({
   type: "FiatCurrency",
-  id: "qar",
   ticker: "QAR",
   name: "Qatari Riyal",
   symbol: "﷼",

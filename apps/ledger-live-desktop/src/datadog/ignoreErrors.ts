@@ -1,6 +1,6 @@
 /**
  * Error messages matching any of these patterns will be dropped in Datadog beforeSend.
- * Ported from sentry/install.ts for parity. Supports string (includes) and RegExp.
+ * Supports string (includes) and RegExp.
  */
 
 const API_ISSUES = [

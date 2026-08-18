@@ -1,5 +1,8 @@
 # coin-canton
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 This repository contains the Coin Canton module for Ledger Live.
 
 ## Overview

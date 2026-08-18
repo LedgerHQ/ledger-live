@@ -2,14 +2,14 @@ import BigNumber from "bignumber.js";
 import { sdkClient } from "../network/sdk";
 import { PROGRAM_ID } from "../constants";
 import { testnetPrivateRecord } from "../__tests__/fixtures/api.fixture";
-import { getMockedCurrency } from "../__tests__/fixtures/currency.fixture";
+import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
 import type { AleoUnspentRecord } from "../types";
 import { getPrivateBalance } from "./getPrivateBalance";
 
 jest.mock("../network/sdk");
 
 describe("getPrivateBalance", () => {
-  const mockCurrency = getMockedCurrency();
+  const mockConfig = getMockedConfig("mainnet");
   const mockViewKey = "AViewKey1mock";
 
   const mockDecryptedRecord = {
@@ -26,7 +26,7 @@ describe("getPrivateBalance", () => {
 
   it("should return zero balance and empty unspentRecords when no records are provided", async () => {
     const { balance, unspentRecords } = await getPrivateBalance({
-      currency: mockCurrency,
+      config: mockConfig,
       viewKey: mockViewKey,
       privateRecords: [],
       oldUnspentRecords: [],
@@ -41,7 +41,7 @@ describe("getPrivateBalance", () => {
     const record = { ...testnetPrivateRecord, spent: false };
 
     const { balance, unspentRecords } = await getPrivateBalance({
-      currency: mockCurrency,
+      config: mockConfig,
       viewKey: mockViewKey,
       privateRecords: [record],
       oldUnspentRecords: [],
@@ -49,7 +49,7 @@ describe("getPrivateBalance", () => {
 
     expect(sdkClient.decryptRecord).toHaveBeenCalledTimes(1);
     expect(sdkClient.decryptRecord).toHaveBeenCalledWith({
-      currency: mockCurrency,
+      config: mockConfig,
       viewKey: mockViewKey,
       ciphertext: record.record_ciphertext,
     });
@@ -78,7 +78,7 @@ describe("getPrivateBalance", () => {
       });
 
     const { balance, unspentRecords } = await getPrivateBalance({
-      currency: mockCurrency,
+      config: mockConfig,
       viewKey: mockViewKey,
       privateRecords: [record1, record2],
       oldUnspentRecords: [],
@@ -93,7 +93,7 @@ describe("getPrivateBalance", () => {
     const spentRecord = { ...testnetPrivateRecord, spent: true };
 
     const { balance, unspentRecords } = await getPrivateBalance({
-      currency: mockCurrency,
+      config: mockConfig,
       viewKey: mockViewKey,
       privateRecords: [spentRecord],
       oldUnspentRecords: [],
@@ -108,7 +108,7 @@ describe("getPrivateBalance", () => {
     const nonCreditsRecord = { ...testnetPrivateRecord, program_name: "other_program.aleo" };
 
     const { balance, unspentRecords } = await getPrivateBalance({
-      currency: mockCurrency,
+      config: mockConfig,
       viewKey: mockViewKey,
       privateRecords: [nonCreditsRecord],
       oldUnspentRecords: [],
@@ -128,7 +128,7 @@ describe("getPrivateBalance", () => {
     const otherRecord = { ...testnetPrivateRecord, program_name: "staking.aleo", spent: false };
 
     const { balance, unspentRecords } = await getPrivateBalance({
-      currency: mockCurrency,
+      config: mockConfig,
       viewKey: mockViewKey,
       privateRecords: [creditsRecord, otherRecord],
       oldUnspentRecords: [],
@@ -144,7 +144,7 @@ describe("getPrivateBalance", () => {
     const unspentRecord = { ...testnetPrivateRecord, commitment: "unspent1", spent: false };
 
     const { balance, unspentRecords } = await getPrivateBalance({
-      currency: mockCurrency,
+      config: mockConfig,
       viewKey: mockViewKey,
       privateRecords: [spentRecord, unspentRecord],
       oldUnspentRecords: [],
@@ -161,7 +161,7 @@ describe("getPrivateBalance", () => {
 
     await expect(
       getPrivateBalance({
-        currency: mockCurrency,
+        config: mockConfig,
         viewKey: mockViewKey,
         privateRecords: [testnetPrivateRecord],
         oldUnspentRecords: [],
@@ -178,7 +178,7 @@ describe("getPrivateBalance", () => {
     };
 
     const { balance, unspentRecords } = await getPrivateBalance({
-      currency: mockCurrency,
+      config: mockConfig,
       viewKey: mockViewKey,
       privateRecords: [record],
       oldUnspentRecords: [cachedUnspentRecord],
@@ -208,7 +208,7 @@ describe("getPrivateBalance", () => {
     });
 
     const { balance, unspentRecords } = await getPrivateBalance({
-      currency: mockCurrency,
+      config: mockConfig,
       viewKey: mockViewKey,
       privateRecords: [cachedRecord, newRecord],
       oldUnspentRecords: [cachedUnspentRecord],
@@ -230,7 +230,7 @@ describe("getPrivateBalance", () => {
     };
 
     const { balance, unspentRecords } = await getPrivateBalance({
-      currency: mockCurrency,
+      config: mockConfig,
       viewKey: mockViewKey,
       privateRecords: [],
       oldUnspentRecords: [spentCachedRecord],
@@ -259,7 +259,7 @@ describe("getPrivateBalance", () => {
     const onProgress = jest.fn();
 
     await getPrivateBalance({
-      currency: mockCurrency,
+      config: mockConfig,
       viewKey: mockViewKey,
       privateRecords: [record1, record2],
       oldUnspentRecords: [],
@@ -277,7 +277,7 @@ describe("getPrivateBalance", () => {
 
     await expect(
       getPrivateBalance({
-        currency: mockCurrency,
+        config: mockConfig,
         viewKey: mockViewKey,
         privateRecords: [testnetPrivateRecord],
         oldUnspentRecords: [],

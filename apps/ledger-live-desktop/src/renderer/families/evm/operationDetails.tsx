@@ -9,6 +9,8 @@ import {
   resolveStakingValidator,
 } from "@ledgerhq/live-common/families/evm/staking/logic";
 import { isStakingAccount } from "@ledgerhq/live-common/families/evm/staking/types";
+import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
+import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
 import { Divider } from "@ledgerhq/react-ui/index";
 import { openURL } from "~/renderer/linking";
 import {
@@ -55,7 +57,12 @@ function DelegateDetails({ operation, account }: { operation: Operation; account
 
   useEffect(() => {
     let cancelled = false;
-    resolveStakingValidator(account.currency, operation, "delegate").then(result => {
+    resolveStakingValidator(
+      getCurrencyConfiguration<EvmConfigInfo>(account.currency.id),
+      account.currency.id,
+      operation,
+      "delegate",
+    ).then(result => {
       if (!cancelled) setResolved(result);
     });
     return () => {
@@ -103,7 +110,12 @@ function UndelegateDetails({ operation, account }: { operation: Operation; accou
 
   useEffect(() => {
     let cancelled = false;
-    resolveStakingValidator(account.currency, operation, "undelegate").then(result => {
+    resolveStakingValidator(
+      getCurrencyConfiguration<EvmConfigInfo>(account.currency.id),
+      account.currency.id,
+      operation,
+      "undelegate",
+    ).then(result => {
       if (!cancelled) setResolved(result);
     });
     return () => {
@@ -155,7 +167,11 @@ function RedelegateDetails({ operation, account }: { operation: Operation; accou
 
   useEffect(() => {
     let cancelled = false;
-    resolveRedelegationValidators(account.currency, operation).then(result => {
+    resolveRedelegationValidators(
+      getCurrencyConfiguration<EvmConfigInfo>(account.currency.id),
+      account.currency.id,
+      operation,
+    ).then(result => {
       if (!cancelled) setResolved(result);
     });
     return () => {
@@ -206,7 +222,11 @@ function RedelegateAmountCell({ operation, unit, currency }: AmountCellExtraProp
 
   useEffect(() => {
     let cancelled = false;
-    resolveRedelegationValidators(currency, operation).then(result => {
+    resolveRedelegationValidators(
+      getCurrencyConfiguration<EvmConfigInfo>(currency.id),
+      currency.id,
+      operation,
+    ).then(result => {
       if (!cancelled && result) setAmount(result.amount);
     });
     return () => {

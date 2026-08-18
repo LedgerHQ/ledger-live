@@ -98,6 +98,7 @@ describe("useMarketCoinData hooks", () => {
       counterCurrency: "eur",
       id: "bitcoin",
       range: "24h",
+      isCryptoCountervalue: false,
     });
     expect(result.current.marketParams).toEqual(
       expect.objectContaining({ counterCurrency: "eur" }),

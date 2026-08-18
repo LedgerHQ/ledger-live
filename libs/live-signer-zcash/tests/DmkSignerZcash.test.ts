@@ -6,7 +6,8 @@ import {
 } from "@ledgerhq/device-management-kit";
 import { SignerZcashBuilder } from "@ledgerhq/device-signer-kit-zcash";
 import { DmkSignerZcash } from "../src/DmkSignerZcash";
-import type { PcztTransaction } from "../src/types";
+import { UnsupportedV6SourceTransaction } from "../src/errors";
+import type { PcztTransaction, SignerTransactionLike } from "../src/types";
 
 jest.mock("@ledgerhq/device-signer-kit-zcash", () => ({
   SignerZcashBuilder: jest.fn(),
@@ -18,6 +19,7 @@ describe("DmkSignerZcash", () => {
   const mockSignerZcash = {
     getAddress: jest.fn(),
     getFullViewingKey: jest.fn(),
+    getShieldedAddress: jest.fn(),
     signTransaction: jest.fn(),
     signPcztTransaction: jest.fn(),
   };
@@ -131,7 +133,10 @@ describe("DmkSignerZcash", () => {
 
     it("rejects with UserRefusedOnDevice (drives the 'Action rejected' UI) on the 6985 status word", async () => {
       mockSignerZcash.getAddress.mockReturnValue({
-        observable: createErrorStatusObservable({ _tag: "ZcashAppCommandError", errorCode: "6985" }),
+        observable: createErrorStatusObservable({
+          _tag: "ZcashAppCommandError",
+          errorCode: "6985",
+        }),
       });
 
       await expect(signer.getAddress("44'/133'/0'/0/0")).rejects.toMatchObject({
@@ -185,6 +190,44 @@ describe("DmkSignerZcash", () => {
       await expect(signer.getFullViewingKey("44'/133'/0'/0/0")).rejects.toThrow(
         "Unexpected full viewing key response mode",
       );
+    });
+  });
+
+  describe("getShieldedAddress", () => {
+    it("returns the unified address from the device action output", async () => {
+      mockSignerZcash.getShieldedAddress.mockReturnValue({
+        observable: createCompletedObservable({ address: "u1testshieldedaddress" }),
+      });
+
+      const result = await signer.getShieldedAddress("m/32'/133'/0'");
+
+      expect(result).toEqual({ address: "u1testshieldedaddress" });
+    });
+
+    it("passes checkOnDevice=false when display is omitted", async () => {
+      mockSignerZcash.getShieldedAddress.mockReturnValue({
+        observable: createCompletedObservable({ address: "u1testshieldedaddress" }),
+      });
+
+      await signer.getShieldedAddress("m/32'/133'/0'");
+
+      expect(mockSignerZcash.getShieldedAddress).toHaveBeenCalledWith("m/32'/133'/0'", {
+        checkOnDevice: false,
+        skipOpenApp: true,
+      });
+    });
+
+    it("passes checkOnDevice=true when display is true", async () => {
+      mockSignerZcash.getShieldedAddress.mockReturnValue({
+        observable: createCompletedObservable({ address: "u1testshieldedaddress" }),
+      });
+
+      await signer.getShieldedAddress("m/32'/133'/0'", true);
+
+      expect(mockSignerZcash.getShieldedAddress).toHaveBeenCalledWith("m/32'/133'/0'", {
+        checkOnDevice: true,
+        skipOpenApp: true,
+      });
     });
   });
 
@@ -338,6 +381,76 @@ describe("DmkSignerZcash", () => {
       });
     });
 
+    // What the signer kit reports for a V6 (Ironwood) source transaction the
+    // installed app cannot read: an `errorCode` that is no device status word, the
+    // kit having failed before sending an APDU, and a message naming the version
+    // the device session reported.
+    const unsupportedV6KitError = {
+      _tag: "UnsupportedV6TransactionError",
+      errorCode: "unsupported_v6_transaction",
+      message:
+        "The Zcash app version 3.0.2 installed on the device does not support V6 " +
+        "(Ironwood) source transactions, so a UTXO received from one cannot be signed. " +
+        "Support is expected in a future Zcash app update.",
+    };
+
+    it("explains an unsupported V6 source transaction instead of reporting the error tag", async () => {
+      mockSignerZcash.signTransaction.mockReturnValue({
+        observable: createErrorStatusObservable(unsupportedV6KitError),
+      });
+
+      await expect(signer.createPaymentTransaction(baseArg)).rejects.toMatchObject({
+        name: "UnsupportedV6SourceTransaction",
+        message: expect.stringContaining("does not support V6 (Ironwood) source transactions"),
+      });
+    });
+
+    it("names the installed app version and no version to install", async () => {
+      mockSignerZcash.signTransaction.mockReturnValue({
+        observable: createErrorStatusObservable(unsupportedV6KitError),
+      });
+
+      const rejection: unknown = await signer
+        .createPaymentTransaction(baseArg)
+        .then(() => undefined)
+        .catch((reason: unknown) => reason);
+
+      expect(rejection).toBeInstanceOf(UnsupportedV6SourceTransaction);
+      expect((rejection as Error).message).toContain("3.0.2");
+      // Only the installed version is named: no version to install is advertised.
+      expect((rejection as Error).message).not.toContain("3.8.0");
+    });
+
+    it("describes the condition itself when the kit reports no message", async () => {
+      mockSignerZcash.signTransaction.mockReturnValue({
+        observable: createErrorStatusObservable({
+          _tag: "UnsupportedV6TransactionError",
+          errorCode: "unsupported_v6_transaction",
+        }),
+      });
+
+      await expect(signer.createPaymentTransaction(baseArg)).rejects.toMatchObject({
+        name: "UnsupportedV6SourceTransaction",
+        message: expect.stringContaining("V6 (Ironwood) source transactions"),
+      });
+    });
+
+    it("still explains the condition when only the kit's error code has drifted", async () => {
+      // Code and tag are matched independently, so renaming one does not send the
+      // user back to a bare tag.
+      mockSignerZcash.signTransaction.mockReturnValue({
+        observable: createErrorStatusObservable({
+          ...unsupportedV6KitError,
+          errorCode: "unsupported_v6_source_transaction",
+        }),
+      });
+
+      await expect(signer.createPaymentTransaction(baseArg)).rejects.toMatchObject({
+        name: "UnsupportedV6SourceTransaction",
+        message: expect.stringContaining("does not support V6 (Ironwood) source transactions"),
+      });
+    });
+
     it("fires device-signing callbacks so Ledger Live can show the on-device UI", async () => {
       mockSignerZcash.signTransaction.mockReturnValue({
         observable: createSigningObservable(
@@ -405,11 +518,135 @@ describe("DmkSignerZcash", () => {
 
       await expect(signer.createPaymentTransaction(baseArg)).resolves.toBe("00signed");
     });
+
+    it("sets serializedPreviousTransactionOverride from rawTxHex so the device hashes the full original transaction", async () => {
+      // A V5 tx containing an Orchard bundle: serializeTransaction strips the
+      // bundle and the device would hash truncated bytes, computing the wrong
+      // ZIP-244 txid. rawTxHex carries the original bytes so the device gets the
+      // full transaction via serializedPreviousTransactionOverride.
+      const rawTxHex = "0500008001" + "ab".repeat(59);
+      const prevTxWithRaw = { ...prevTx, rawTxHex };
+
+      mockSignerZcash.signTransaction.mockReturnValue({
+        observable: createCompletedObservable("00signed"),
+      });
+
+      await signer.createPaymentTransaction({
+        ...baseArg,
+        inputs: [[prevTxWithRaw, 0, null, 0xfffffffd, 2_000_000]] as Parameters<
+          typeof signer.createPaymentTransaction
+        >[0]["inputs"],
+      });
+
+      const [legacyArg] = mockSignerZcash.signTransaction.mock.calls[0];
+      const legacyPrev = legacyArg.inputs[0][0];
+      expect(legacyPrev.serializedPreviousTransactionOverride).toBeInstanceOf(Uint8Array);
+      expect(Buffer.from(legacyPrev.serializedPreviousTransactionOverride).toString("hex")).toBe(
+        rawTxHex,
+      );
+    });
+
+    it("omits serializedPreviousTransactionOverride when rawTxHex is absent (plain transparent source tx)", async () => {
+      // Source transactions without a shielded bundle are handled correctly by
+      // serializeTransaction; no override is needed.
+      mockSignerZcash.signTransaction.mockReturnValue({
+        observable: createCompletedObservable("00signed"),
+      });
+
+      await signer.createPaymentTransaction(baseArg);
+
+      const [legacyArg] = mockSignerZcash.signTransaction.mock.calls[0];
+      const legacyPrev = legacyArg.inputs[0][0];
+      expect(legacyPrev.serializedPreviousTransactionOverride).toBeUndefined();
+    });
+
+    const overrideOf = async (tx: SignerTransactionLike) => {
+      mockSignerZcash.signTransaction.mockReturnValue({
+        observable: createCompletedObservable("00signed"),
+      });
+
+      await signer.createPaymentTransaction({
+        ...baseArg,
+        inputs: [[tx, 0, null, 0xfffffffd, 2_000_000]] as Parameters<
+          typeof signer.createPaymentTransaction
+        >[0]["inputs"],
+      });
+
+      const [legacyArg] = mockSignerZcash.signTransaction.mock.calls[0];
+      return legacyArg.inputs[0][0].serializedPreviousTransactionOverride;
+    };
+
+    it("omits the override for a V4 source transaction even when rawTxHex is available", async () => {
+      // LIVE-35215: the V5 header layout the kit assumes would misplace the
+      // input count of a V4 source and throw before any APDU is sent.
+      const v4Prev = {
+        ...prevTx,
+        version: Buffer.from([0x04, 0x00, 0x00, 0x80]),
+        rawTxHex: "0400008085202f89" + "ab".repeat(59),
+      };
+
+      await expect(overrideOf(v4Prev)).resolves.toBeUndefined();
+    });
+
+    it("keeps the override for a V5 source transaction", async () => {
+      const v5Prev = { ...prevTx, rawTxHex: "0500008001" + "ab".repeat(59) };
+
+      await expect(overrideOf(v5Prev)).resolves.toBeInstanceOf(Uint8Array);
+    });
+
+    it("decides the override per input, so a V4 source among V5 ones is the only one skipped", async () => {
+      // The mix reported in LIVE-35215: two V5-funded inputs, then a V4 one.
+      const firstV5 = { ...prevTx, rawTxHex: "0500008001" + "ab".repeat(59) };
+      const secondV5 = { ...prevTx, rawTxHex: "0500008001" + "cd".repeat(59) };
+      const v4 = {
+        ...prevTx,
+        version: Buffer.from([0x04, 0x00, 0x00, 0x80]),
+        nVersionGroupId: Buffer.from([0x85, 0x20, 0x2f, 0x89]),
+        rawTxHex: "0400008085202f89" + "ef".repeat(59),
+      };
+
+      mockSignerZcash.signTransaction.mockReturnValue({
+        observable: createCompletedObservable("00signed"),
+      });
+
+      await signer.createPaymentTransaction({
+        ...baseArg,
+        inputs: [
+          [firstV5, 0, null, 0xfffffffd, 2_000_000],
+          [secondV5, 1, null, 0xfffffffd, 2_000_001],
+          [v4, 0, null, 0xfffffffd, 2_000_002],
+        ] as Parameters<typeof signer.createPaymentTransaction>[0]["inputs"],
+        associatedKeysets: ["44'/133'/0'/0/0", "44'/133'/0'/0/1", "44'/133'/0'/0/2"],
+      });
+
+      const [legacyArg] = mockSignerZcash.signTransaction.mock.calls[0];
+      const overrides = legacyArg.inputs.map(
+        ([tx]: [{ serializedPreviousTransactionOverride?: Uint8Array }]) =>
+          tx.serializedPreviousTransactionOverride,
+      );
+
+      expect(overrides[0]).toBeInstanceOf(Uint8Array);
+      expect(overrides[1]).toBeInstanceOf(Uint8Array);
+      expect(overrides[2]).toBeUndefined();
+    });
+
+    it("omits the override when the version field is too short to be read", async () => {
+      // Defensive: a truncated version cannot be proven to be bundle-carrying,
+      // so fall back to the path that works for every version.
+      const shortVersion = {
+        ...prevTx,
+        version: Buffer.from([0x05, 0x00]),
+        rawTxHex: "0500008001" + "ab".repeat(59),
+      };
+
+      await expect(overrideOf(shortVersion)).resolves.toBeUndefined();
+    });
   });
 
   describe("signPcztTransaction", () => {
     const orchardSig = new Uint8Array(64).fill(0xab);
     const transparentSig = new Uint8Array(72).fill(0xcd);
+    const ironwoodSig = new Uint8Array(64).fill(0xef);
 
     // Minimal valid-shaped PCZT — the mock doesn't inspect fields
     const minimalPczt: PcztTransaction = {
@@ -427,8 +664,54 @@ describe("DmkSignerZcash", () => {
       orchardBundle: null,
     };
 
+    const minimalV6Pczt: PcztTransaction = {
+      global: {
+        txVersion: 6,
+        versionGroupId: 0xd884b698, // V6_VERSION_GROUP_ID (ZIP-229 / NU6.3)
+        consensusBranchId: 0x37a5165b, // BranchId::Nu6_3 (Ironwood)
+        fallbackLockTime: null,
+        expiryHeight: 0,
+        coinType: 133,
+        txModifiable: 0,
+      },
+      transparentInputs: [],
+      transparentOutputs: [],
+      orchardBundle: null,
+      ironwoodBundle: {
+        actions: [
+          {
+            cvNet: new Uint8Array(32).fill(0x10),
+            nullifier: new Uint8Array(32).fill(0x11),
+            rk: new Uint8Array(32).fill(0x12),
+            spendRecipient: new Uint8Array(43).fill(0x13),
+            spendValue: 1000n,
+            spendRho: new Uint8Array(32).fill(0x14),
+            spendRseed: new Uint8Array(32).fill(0x15),
+            alpha: new Uint8Array(32).fill(0x16),
+            signingPath: "32'/133'/0'",
+            cmx: new Uint8Array(32).fill(0x17),
+            ephemeralKey: new Uint8Array(32).fill(0x18),
+            encCiphertext: new Uint8Array(580).fill(0x19),
+            outCiphertext: new Uint8Array(80).fill(0x1a),
+            recipient: new Uint8Array(43).fill(0x1b),
+            value: 900n,
+            rseed: new Uint8Array(32).fill(0x1c),
+            rcv: new Uint8Array(32).fill(0x1d),
+            notePlaintextVersion: 3,
+          },
+        ],
+        flags: 2,
+        valueBalance: 0n,
+        anchor: new Uint8Array(32).fill(0x1e),
+      },
+    };
+
     it("returns orchard spendAuthSigs and empty transparentInputSigs for a pure-Orchard transaction", async () => {
-      const result = { orchard: [{ spendAuthSig: orchardSig }], transparentInputSigs: [] };
+      const result = {
+        orchard: [{ spendAuthSig: orchardSig }],
+        transparentInputSigs: [],
+        ironwood: [],
+      };
       mockSignerZcash.signPcztTransaction.mockReturnValue({
         observable: createCompletedObservable(result),
       });
@@ -444,6 +727,7 @@ describe("DmkSignerZcash", () => {
       const result = {
         orchard: sigs.map(spendAuthSig => ({ spendAuthSig })),
         transparentInputSigs: [],
+        ironwood: [],
       };
       mockSignerZcash.signPcztTransaction.mockReturnValue({
         observable: createCompletedObservable(result),
@@ -461,6 +745,7 @@ describe("DmkSignerZcash", () => {
       const result = {
         orchard: [{ spendAuthSig: orchardSig }],
         transparentInputSigs: [transparentSig],
+        ironwood: [],
       };
       mockSignerZcash.signPcztTransaction.mockReturnValue({
         observable: createCompletedObservable(result),
@@ -513,6 +798,101 @@ describe("DmkSignerZcash", () => {
         "Unexpected device action status: stopped",
       );
     });
+
+    it("returns ironwood spendAuthSigs for a V6 transaction with an Ironwood bundle", async () => {
+      const result = {
+        orchard: [],
+        transparentInputSigs: [],
+        ironwood: [{ spendAuthSig: ironwoodSig }],
+      };
+      mockSignerZcash.signPcztTransaction.mockReturnValue({
+        observable: createCompletedObservable(result),
+      });
+
+      const out = await signer.signPcztTransaction(minimalV6Pczt);
+
+      expect(out.ironwood).toHaveLength(1);
+      expect(out.ironwood[0].spendAuthSig).toBe(ironwoodSig);
+      expect(mockSignerZcash.signPcztTransaction).toHaveBeenCalledWith(minimalV6Pczt, {
+        skipOpenApp: true,
+      });
+    });
+
+    it("preserves ironwood sig order for multiple Ironwood actions", async () => {
+      const ironwoodSigs = [0x01, 0x02, 0x03].map(b => new Uint8Array(64).fill(b));
+      const result = {
+        orchard: [],
+        transparentInputSigs: [],
+        ironwood: ironwoodSigs.map(spendAuthSig => ({ spendAuthSig })),
+      };
+      mockSignerZcash.signPcztTransaction.mockReturnValue({
+        observable: createCompletedObservable(result),
+      });
+
+      const out = await signer.signPcztTransaction(minimalV6Pczt);
+
+      expect(out.ironwood).toHaveLength(3);
+      out.ironwood.forEach((sig, i) => {
+        expect(sig.spendAuthSig[0]).toBe(i + 1);
+      });
+    });
+
+    it("returns an empty ironwood array when the V6 transaction has no Ironwood actions signed", async () => {
+      const result = { orchard: [], transparentInputSigs: [], ironwood: [] };
+      mockSignerZcash.signPcztTransaction.mockReturnValue({
+        observable: createCompletedObservable(result),
+      });
+
+      const out = await signer.signPcztTransaction(minimalV6Pczt);
+
+      expect(out.ironwood).toEqual([]);
+    });
+  });
+
+  describe("device action error mapping", () => {
+    // LIVE-35215: an untagged task failure used to become `new Error(undefined)`,
+    // reaching users and support logs as a message-less "Something went wrong".
+    const untaggedErrorObservable = (error: unknown) =>
+      of({ status: DeviceActionStatus.Error, error }) as ReturnType<
+        typeof createErrorStatusObservable
+      >;
+
+    it("preserves the message of an untagged Error thrown inside a task", async () => {
+      mockSignerZcash.getAddress.mockReturnValue({
+        observable: untaggedErrorObservable(
+          new RangeError("Offset is outside the bounds of the DataView"),
+        ),
+      });
+
+      await expect(signer.getAddress("44'/133'/0'/0/0")).rejects.toThrow(
+        "Offset is outside the bounds of the DataView",
+      );
+    });
+
+    it("describes an untagged non-Error rejection instead of yielding an empty message", async () => {
+      mockSignerZcash.getAddress.mockReturnValue({
+        observable: untaggedErrorObservable({ reason: "split failed" }),
+      });
+
+      await expect(signer.getAddress("44'/133'/0'/0/0")).rejects.toThrow(
+        'Untagged device action error: {"reason":"split failed"}',
+      );
+    });
+
+    it.each([
+      ["a string", "split failed", 'Untagged device action error: "split failed"'],
+      ["null", null, "Untagged device action error: null"],
+      ["undefined", undefined, "Untagged device action error: undefined"],
+    ])(
+      "describes %s rejection rather than throwing while inspecting it",
+      async (_label, rejection, expected) => {
+        mockSignerZcash.getAddress.mockReturnValue({
+          observable: untaggedErrorObservable(rejection),
+        });
+
+        await expect(signer.getAddress("44'/133'/0'/0/0")).rejects.toThrow(expected);
+      },
+    );
   });
 
   describe("not implemented methods", () => {

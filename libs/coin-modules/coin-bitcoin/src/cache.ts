@@ -1,11 +1,11 @@
-import { RecipientRequired } from "@ledgerhq/errors";
+import { RecipientRequired } from "@ledgerhq/ledger-wallet-framework/errors";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { Account } from "@ledgerhq/types-live";
 import getFeesForTransaction from "./getFeesForTransaction";
 import { isValidRecipient } from "./logic";
 import type { Transaction } from "./types";
-import { Currency, isTaprootAddress } from "./wallet-btc";
+import { Currency, isTaprootAddress } from "@ledgerhq/wallet-btc/index";
 
 const getCacheKeyForCalculateFees = ({
   account,

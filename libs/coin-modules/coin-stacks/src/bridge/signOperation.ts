@@ -1,4 +1,5 @@
-import { FeeNotLoaded, InvalidAddress, InvalidNonce } from "@ledgerhq/errors";
+import { InvalidNonce } from "../errors";
+import { FeeNotLoaded, InvalidAddress } from "@ledgerhq/ledger-wallet-framework/errors";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { AccountBridge } from "@ledgerhq/types-live";
 import invariant from "invariant";
@@ -48,7 +49,8 @@ export const buildSignOperation =
 
         // Sign by device
         const result = await signerContext(deviceId, async signer => {
-          return signer.sign(getPath(derivationPath), Buffer.from(tx.serialize()));
+          // v7's serialize() returns a hex string, not raw bytes -- decode it explicitly.
+          return signer.sign(getPath(derivationPath), Buffer.from(tx.serialize(), "hex"));
         });
 
         throwIfError(result);

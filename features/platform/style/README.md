@@ -1,5 +1,8 @@
 # @features/platform-style
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 Single source of truth for the React theme provider across Ledger Live apps, following the DDD `features/platform` architecture.
 
 ## What it provides

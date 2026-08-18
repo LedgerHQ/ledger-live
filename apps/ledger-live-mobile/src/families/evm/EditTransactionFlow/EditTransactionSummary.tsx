@@ -4,13 +4,15 @@
  * with some changes to make it work with our custom flow
  */
 
-import { Transaction as EvmTransaction, TransactionStatus } from "@ledgerhq/coin-evm/types/index";
+import {
+  Transaction as EvmTransaction,
+  TransactionStatus,
+} from "@ledgerhq/live-common/families/evm/types";
 import { isCurrencySupported } from "@ledgerhq/live-common/currencies/index";
-import { NotEnoughGas } from "@ledgerhq/errors";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import invariant from "invariant";
 import React, { useCallback } from "react";
 import { useFromTransactionRaw } from "~/hooks/useFromTransactionRaw";
@@ -106,7 +108,7 @@ function EditTransactionSummaryContent({ navigation, route, transactionToUpdate 
   const firstError = errors[Object.keys(errors)[0]] ?? bridgeError ?? undefined;
 
   let footerAction;
-  if (firstError && firstError instanceof NotEnoughGas) {
+  if (firstError && firstError?.name === "NotEnoughGas") {
     footerAction = isCurrencySupported(currencyOrToken as CryptoCurrency) ? (
       <Button
         event="SummaryBuyEth"

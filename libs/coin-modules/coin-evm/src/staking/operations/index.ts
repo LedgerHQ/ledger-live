@@ -14,6 +14,8 @@ const STAKING_PROTOCOLS: Record<string, StakingProtocol> = {
   somnia: somniaProtocol as StakingProtocol,
 };
 
+const REQUIRES_VAL_ADDRESS = new Set(["celo", "sei_evm", "somnia"]);
+
 export const buildTransactionParams = (
   currencyId: string,
   transactionType: StakingOperation,
@@ -29,7 +31,7 @@ export const buildTransactionParams = (
     throw new Error(`Unsupported transaction type for ${currencyId}: ${transactionType}`);
   }
 
-  if (!params.valAddress && ["celo", "sei_evm"].includes(currencyId)) {
+  if (!params.valAddress && REQUIRES_VAL_ADDRESS.has(currencyId)) {
     throw new Error(`${currencyId} staking requires valAddress`);
   }
 
@@ -39,6 +41,12 @@ export const buildTransactionParams = (
 
   if (!params.delegator && currencyId === "zero_gravity") {
     throw new Error(`${currencyId} staking requires delegator`);
+  }
+
+  if (currencyId === "zero_gravity" && transactionType === "undelegate") {
+    if (params.shares === undefined || params.shares < 1_000_000_000n) {
+      throw new Error(`${currencyId} undelegate requires shares`);
+    }
   }
 
   if (

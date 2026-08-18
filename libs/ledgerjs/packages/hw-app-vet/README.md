@@ -6,6 +6,9 @@
 
 ## @ledgerhq/hw-app-vet
 
+> \[!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 Ledger Hardware Wallet ETH JavaScript bindings.
 
 ***

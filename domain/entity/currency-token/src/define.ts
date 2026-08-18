@@ -6,7 +6,7 @@ import { TokenCurrencySchema, type TokenCurrency } from "./schema";
  * {@link TokenCurrencySchema} and returning a fully-typed domain object.
  *
  * Calling `TokenCurrencySchema.parse()` constructs branded value objects
- * (e.g. `TokenId`, `CurrencyId`) without explicit casts.
+ * (e.g. `TokenCurrencyId`, `CryptoCurrencyId`) without explicit casts.
  *
  * @example
  * ```ts

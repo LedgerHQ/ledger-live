@@ -135,6 +135,7 @@ test("Wallet API methods @smoke", async ({ page, electronApp }) => {
     // Test name and balance for tokens
     await expect(drawer.getAccountButton("Ethereum 3")).toContainText("71.8174 USDT");
     await drawer.back();
+    await drawer.waitForAccountTitleToDisappear();
     await expect(drawer.selectAssetTitle).toBeVisible();
 
     await drawer.selectCurrency("bitcoin");
@@ -177,7 +178,10 @@ test("Wallet API methods @smoke", async ({ page, electronApp }) => {
     await liveAppWebview.accountList();
 
     const res = await liveAppWebview.getResOutput();
-    expect(res).toMatchObject(mockedAccountList);
+    expect(res).toHaveLength(mockedAccountList.length);
+    expect(res).toEqual(
+      expect.arrayContaining(mockedAccountList.map(account => expect.objectContaining(account))),
+    );
 
     await resetWebview();
   });

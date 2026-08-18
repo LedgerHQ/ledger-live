@@ -1,4 +1,4 @@
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import {
   emptyHistoryCache,
   encodeAccountId,
@@ -10,6 +10,7 @@ import { Account, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import compact from "lodash/compact";
 import get from "lodash/get";
+import coinConfig from "../config";
 import { computeBalanceBridge, lastBlock } from "../logic";
 import { getAccount } from "../logic/getAccount";
 import { getOperationsPageSize } from "../logic/pagination";
@@ -75,8 +76,9 @@ export const getAccountShape: GetAccountShape<TronAccount> = async (
   { initialAccount, currency, address, derivationMode },
   syncConfig,
 ) => {
-  const { height: blockHeight } = await lastBlock();
-  const tronAcc = await getAccount(address);
+  const { height: blockHeight } = await lastBlock(coinConfig.getCoinConfig());
+  const config = coinConfig.getCoinConfig();
+  const tronAcc = await getAccount(config, address);
 
   const accountId = encodeAccountId({
     type: "js",
@@ -103,6 +105,7 @@ export const getAccountShape: GetAccountShape<TronAccount> = async (
   // FIXME: this is not optional especially that we might already have initialAccount
   // use minimalOperationsBuilderSync to reconciliate and KEEP REF
   const txs = await fetchTronAccountTxs(
+    config,
     address,
     txs => txs.length < operationsPageSize,
     defaultFetchParams,

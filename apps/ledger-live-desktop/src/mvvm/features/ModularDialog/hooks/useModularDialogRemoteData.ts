@@ -4,7 +4,9 @@ import { useModularDialogFlowState } from "./useModularDialogFlowState";
 import { useModularDialogBackButton } from "./useModularDialogBackButton";
 import { useMemo, useState } from "react";
 import { useAssetSelection } from "./useAssetSelection";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency } from "@domain/entity-currency";
+import { useSelector } from "LLD/hooks/redux";
+import { modularDialogSelectableNetworkIdsSelector } from "~/renderer/reducers/modularDialog";
 
 interface UseModularDialogRemoteDataProps {
   currentStep: ModularDialogStep;
@@ -27,7 +29,12 @@ export function useModularDialogRemoteData({
     assetsSorted,
   } = useModularDialogData();
 
-  const { assetsToDisplay } = useAssetSelection(sortedCryptoCurrencies);
+  const selectableNetworkIds = useSelector(modularDialogSelectableNetworkIdsSelector);
+  const { assetsToDisplay, disabledAssetIds } = useAssetSelection(
+    sortedCryptoCurrencies,
+    assetsSorted,
+    selectableNetworkIds,
+  );
 
   const {
     selectedAsset,
@@ -59,6 +66,8 @@ export function useModularDialogRemoteData({
     refetch,
     loadingStatus,
     assetsToDisplay,
+    disabledAssetIds,
+    selectableNetworkIds,
     networksToDisplay,
     selectedAsset,
     selectedNetwork,

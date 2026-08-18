@@ -91,12 +91,17 @@ export function BackupHubView({
           {t("myWallet.backupHub.sections.physical")}
         </span>
         <div className="flex flex-col overflow-hidden rounded-md bg-surface">
-          {physicalRows.map(({ id, image, onClick }) => (
+          {physicalRows.map(({ id, image, isWarning, onClick }) => (
             <PhysicalBackupRow
               key={id}
               image={image}
               title={t(PHYSICAL_ROW_I18N[id].titleKey)}
-              description={t(PHYSICAL_ROW_I18N[id].descriptionKey)}
+              description={t(
+                isWarning
+                  ? "myWallet.backupHub.recoveryKey.incompatible"
+                  : PHYSICAL_ROW_I18N[id].descriptionKey,
+              )}
+              isWarning={isWarning}
               onClick={onClick}
               testId={`backup-hub-physical-row-${id}`}
             />

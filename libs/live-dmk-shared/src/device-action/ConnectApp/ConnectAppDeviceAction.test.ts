@@ -12,6 +12,7 @@ import {
   UserInteractionRequired,
 } from "@ledgerhq/device-management-kit";
 import { DeviceModelId as LLDeviceModelId } from "@ledgerhq/types-devices";
+import { lastValueFrom } from "rxjs";
 
 import { makeDeviceActionInternalApiMock } from "../__test-utils__/makeInternalApi";
 import {
@@ -134,6 +135,51 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
       deviceModelId: DeviceModelId.NANO_X,
     } as unknown as DeviceSessionState);
   });
+
+  it.each([
+    {
+      description: "a strict onboarding policy",
+      configuredValue: false,
+      expectedValue: false,
+    },
+    {
+      description: "no explicit onboarding policy",
+      configuredValue: undefined,
+      expectedValue: true,
+    },
+  ])(
+    "GIVEN $description WHEN opening an app THEN initial and refreshed device status checks use the expected onboarding policy",
+    async ({ configuredValue, expectedValue }) => {
+      // GIVEN
+      const statusInputSpy = jest.fn();
+      setupGetDeviceStatusMock(DEVICE_STATUS_ETHEREUM, false, statusInputSpy);
+      setupGetDeviceMetadataMock(DEVICE_METADATA);
+      setupOpenAppWithDependenciesMock(OPEN_APP_RESULT, OPEN_APP_INTERMEDIATE_VALUE);
+      const deviceAction = new ConnectAppDeviceAction({
+        input: {
+          application: { name: "Bitcoin" },
+          dependencies: [],
+          requireLatestFirmware: false,
+          allowMissingApplication: false,
+          allowNonOnboardedDevice: configuredValue,
+        },
+      });
+
+      // WHEN
+      await lastValueFrom(deviceAction._execute(apiMock).observable);
+
+      // THEN
+      expect(statusInputSpy).toHaveBeenCalledTimes(2);
+      expect(statusInputSpy).toHaveBeenNthCalledWith(
+        1,
+        expect.objectContaining({ allowNonOnboardedDevice: expectedValue }),
+      );
+      expect(statusInputSpy).toHaveBeenNthCalledWith(
+        2,
+        expect.objectContaining({ allowNonOnboardedDevice: expectedValue }),
+      );
+    },
+  );
 
   describe("success cases", () => {
     it("Connect app from dashboard", () =>

@@ -4,11 +4,10 @@ import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import type { Cursor, Page } from "@ledgerhq/coin-module-framework/api/index";
 import type { AssetInfo, Stake, StakeState } from "@ledgerhq/coin-module-framework/api/types";
 
-import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { log } from "@ledgerhq/logs";
-import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
-import type { StakingValidatorItem } from "@ledgerhq/types-live";
-import { getCoinConfig } from "../../config";
+import type { Validator } from "@ledgerhq/coin-module-framework/api/types";
+import type { EvmConfigInfo } from "../../config";
+import { evmUnit } from "../../logic/evmUnit";
 import { withApi } from "../../network/node/rpc.common";
 import { isExternalNodeConfig } from "../../network/node/types";
 import type { StakingContractConfig } from "../../types/staking";
@@ -112,27 +111,26 @@ function isDelegationsRaw(value: unknown): value is DelegationsRaw {
 }
 
 type ResolvedContext = {
-  currency: CryptoCurrency;
   abi: ethers.InterfaceAbi;
   node: { type: "external"; uri: string; retries?: number };
   contractAddress: string;
 };
 
-const resolveContext = (currencyId: string): ResolvedContext | undefined => {
+const resolveContext = (
+  evmConfig: EvmConfigInfo,
+  currencyId: string,
+): ResolvedContext | undefined => {
   const config = STAKING_CONTRACTS[currencyId];
   if (!config) return undefined;
 
   const abi = getStakingABI(currencyId);
   if (!abi) return undefined;
 
-  const node = getCoinConfig(currencyId).info.node;
+  const node = evmConfig.node;
   if (!isExternalNodeConfig(node)) return undefined;
 
   try {
-    const currency = getCryptoCurrencyById(currencyId);
-
     return {
-      currency,
       abi: abi as ethers.InterfaceAbi,
       node,
       contractAddress: config.contractAddress(),
@@ -148,8 +146,8 @@ const fetchValidatorDetails = async (
   iface: ethers.Interface,
   contractAddress: string,
   valIds: bigint[],
-): Promise<StakingValidatorItem[]> => {
-  const items: StakingValidatorItem[] = [];
+): Promise<Validator[]> => {
+  const items: Validator[] = [];
 
   for (let i = 0; i < valIds.length; i += DETAILS_BATCH_SIZE) {
     const chunk = valIds.slice(i, i + DETAILS_BATCH_SIZE);
@@ -164,14 +162,12 @@ const fetchValidatorDetails = async (
           secp.length > 0 ? await validatorNameCache(currencyId, secp).catch(() => null) : null;
 
         return {
-          validatorAddress: ethers.computeAddress(secpPubkey),
-          validatorId: valId.toString(),
+          id: valId.toString(),
+          address: ethers.computeAddress(secpPubkey),
           name: name ?? `Validator ${valId.toString()}`,
-          commission: Number.parseFloat(ethers.formatUnits(commission, COMMISSION_DECIMALS)),
-          // StakingValidatorItem.tokens is a string (see LIVE-31520); the bigint
-          // stake serializes losslessly via toString().
-          tokens: stake.toString(),
-          estimatedYearlyRewardsRate: 0,
+          commissionRate: ethers.formatUnits(commission, COMMISSION_DECIMALS),
+          balance: stake,
+          apy: 0,
         };
       }),
     );
@@ -187,7 +183,7 @@ const fetchValidatorDetails = async (
 
       if (!res.value) return;
 
-      items.push({ ...res.value, votingPower: items.length });
+      items.push(res.value);
     });
   }
 
@@ -200,7 +196,7 @@ const fetchPage = async (
   iface: ethers.Interface,
   contractAddress: string,
   startIndex: bigint,
-): Promise<Page<StakingValidatorItem>> => {
+): Promise<Page<Validator>> => {
   const data = iface.encodeFunctionData("getExecutionValidatorSet", [startIndex]);
   const raw = await provider.call({ to: contractAddress, data });
   const decoded = iface.decodeFunctionResult("getExecutionValidatorSet", raw);
@@ -218,17 +214,19 @@ const fetchPage = async (
 };
 
 const fetchValidators = async (
+  evmConfig: EvmConfigInfo,
   currencyId: string,
   cursor?: Cursor,
-): Promise<Page<StakingValidatorItem>> => {
-  const ctx = resolveContext(currencyId);
+): Promise<Page<Validator>> => {
+  const ctx = resolveContext(evmConfig, currencyId);
   if (!ctx) return { items: [], next: undefined };
 
   try {
     const startIndex = cursor === undefined ? 0n : BigInt(cursor);
 
     return await withApi(
-      ctx.currency,
+      evmConfig,
+      currencyId,
       async provider => {
         const iface = new ethers.Interface(ctx.abi);
         return fetchPage(currencyId, provider, iface, ctx.contractAddress, startIndex);
@@ -273,7 +271,8 @@ const fetchDelegatedValIds = async (
 };
 
 const fetchStakeForValId = async (
-  currency: CryptoCurrency,
+  evmConfig: EvmConfigInfo,
+  currencyId: string,
   provider: JsonRpcProvider,
   iface: ethers.Interface,
   contractAddress: string,
@@ -315,14 +314,14 @@ const fetchStakeForValId = async (
     validatorAddress = ethers.computeAddress(secpPubkey);
     const secp = secpPubkey.toLowerCase().replace(/^0x/, "");
     if (secp.length > 0) {
-      validatorName = (await validatorNameCache(currency.id, secp).catch(() => null)) ?? undefined;
+      validatorName = (await validatorNameCache(currencyId, secp).catch(() => null)) ?? undefined;
     }
   }
 
   const asset: AssetInfo = {
     type: "native",
-    name: currency.name,
-    unit: currency.units[0],
+    name: evmConfig.name,
+    unit: evmUnit[currencyId],
   };
   const details = {
     contractAddress,
@@ -369,16 +368,18 @@ const fetchStakeForValId = async (
 };
 
 export const fetchMonadStakes = async (
+  evmConfig: EvmConfigInfo,
   address: string,
   _config: StakingContractConfig,
-  currency: CryptoCurrency,
+  currencyId: string,
 ): Promise<Stake[]> => {
-  const ctx = resolveContext(currency.id);
+  const ctx = resolveContext(evmConfig, currencyId);
   if (!ctx) return [];
 
   try {
     return await withApi(
-      ctx.currency,
+      evmConfig,
+      currencyId,
       async provider => {
         const iface = new ethers.Interface(ctx.abi);
         const valIds = await fetchDelegatedValIds(provider, iface, ctx.contractAddress, address);
@@ -392,7 +393,8 @@ export const fetchMonadStakes = async (
           const settled = await Promise.allSettled(
             chunk.map(valId =>
               fetchStakeForValId(
-                ctx.currency,
+                evmConfig,
+                currencyId,
                 provider,
                 iface,
                 ctx.contractAddress,
@@ -421,7 +423,7 @@ export const fetchMonadStakes = async (
     );
   } catch (error) {
     log("coin-evm/staking", "fetchMonadStakes: delegations fetch failed", {
-      currencyId: currency.id,
+      currencyId,
       error: error instanceof Error ? error.message : String(error),
     });
     return [];
@@ -506,16 +508,18 @@ const fetchWithdrawalRequests = async (
 };
 
 export const findFirstFreeWithdrawId = async (
+  evmConfig: EvmConfigInfo,
   currencyId: string,
   valId: bigint,
   delegator: string,
 ): Promise<number | null> => {
-  const ctx = resolveContext(currencyId);
+  const ctx = resolveContext(evmConfig, currencyId);
   if (!ctx) return null;
 
   try {
     return await withApi(
-      ctx.currency,
+      evmConfig,
+      currencyId,
       async provider => {
         const iface = new ethers.Interface(ctx.abi);
 

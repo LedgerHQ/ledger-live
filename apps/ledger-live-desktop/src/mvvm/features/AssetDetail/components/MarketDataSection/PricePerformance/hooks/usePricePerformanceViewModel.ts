@@ -31,15 +31,14 @@ function formatPctVsReference(
 
 export function usePricePerformanceViewModel(currencyData: MarketDataSectionCurrencyData) {
   const { t } = useTranslation();
-  const { data, showSkeleton, counterCurrency, locale } = currencyData;
+  const { data, showSkeleton, counterValueUnit, locale } = currencyData;
   const formatLongDate = useDateFormatter(longDayFormat);
 
   const sectionTitle = t("assetDetails.pricePerformance");
 
   const fiat = useMemo(
-    () => (value?: number) =>
-      counterValueFormatter({ value, currency: counterCurrency.toUpperCase(), locale }),
-    [counterCurrency, locale],
+    () => (value?: number) => counterValueFormatter({ value, unit: counterValueUnit, locale }),
+    [counterValueUnit, locale],
   );
 
   const athBlock: PricePerformanceBlock = useMemo(() => {

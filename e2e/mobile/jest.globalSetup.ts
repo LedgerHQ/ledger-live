@@ -1,3 +1,4 @@
+import "@shared/env";
 import { globalSetup } from "detox/runners/jest";
 import { log } from "detox";
 import { session as detoxSession, config as detoxConfig } from "detox/internals";
@@ -41,6 +42,11 @@ export default async function setup(): Promise<void> {
   const testSessionIndex = detoxSession.testSessionIndex ?? 0;
   const maxRetries = detoxConfig.testRunner?.retries ?? 0;
   const isLastRetry = maxRetries > 0 && testSessionIndex >= maxRetries;
+
+  if (testSessionIndex > 0) {
+    // warn, not info: CI runs detox with `--loglevel warn`, which hides info lines.
+    log.warn(`[globalSetup] Detox retry: attempt ${testSessionIndex + 1}/${maxRetries + 1}`);
+  }
 
   const videoOptions: DetoxAllure2AdapterOptions["deviceVideos"] = {
     android: {

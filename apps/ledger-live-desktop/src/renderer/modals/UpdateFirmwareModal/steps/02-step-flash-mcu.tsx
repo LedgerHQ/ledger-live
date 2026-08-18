@@ -8,7 +8,7 @@ import { hasFinalFirmware } from "@ledgerhq/live-common/hw/hasFinalFirmware";
 import firmwareUpdateMain from "@ledgerhq/live-common/hw/firmwareUpdate-main";
 import { withDevicePolling } from "@ledgerhq/live-common/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import FlashMCU from "~/renderer/components/FlashMCU";

@@ -1,7 +1,26 @@
-import { useCallback } from "react";
-import type { DeviceIntentExecutorProps } from "@ledgerhq/device-intent";
+import { useCallback, useEffect, useRef } from "react";
+import type {
+  DeviceConnectionResult,
+  DeviceIntentExecutorProps,
+  ExecutorState,
+} from "@features/platform-device-intent";
+import {
+  dmkToLedgerDeviceIdMap,
+  type DeviceIntentTrackingProperties,
+  type DeviceIntentExecutorHeaderContextValue,
+  type SourceFlow,
+  useDeviceIntentExecutorHeaderOverrideRequests,
+} from "@ledgerhq/live-dmk-shared";
+import type { DeviceModelId } from "@ledgerhq/types-devices";
 import type { InitializerConfig } from "./DeviceContextInitializerComponentLWD";
 import type { InitializationInput } from "./types";
+import {
+  trackAppReady,
+  trackDeviceflowCanceled,
+  trackDeviceflowCompleted,
+  trackDeviceflowStarted,
+  trackDrawerCloseButtonClicked,
+} from "./utils/trackDeviceIntent";
 
 type Props<JobState, Input, ExtraProps> = DeviceIntentExecutorProps<
   JobState,
@@ -10,31 +29,129 @@ type Props<JobState, Input, ExtraProps> = DeviceIntentExecutorProps<
   InitializationInput
 > & {
   initializerConfig?: InitializerConfig;
+  sourceFlow: SourceFlow;
+  analyticsProperties?: DeviceIntentTrackingProperties;
 };
 
 export type DeviceIntentExecutorLWDViewModel<JobState, Input, ExtraProps> = {
   wrappedProps: Props<JobState, Input, ExtraProps>;
+  hasHeaderOverride: boolean;
+  headerContextValue: DeviceIntentExecutorHeaderContextValue;
   onOpenChange: (open: boolean) => void;
-  onClose: () => void;
+  /**
+   * Tracks the "Close" `button_clicked` event when the dialog header close button is pressed.
+   * Wired to `DialogHeader.onClose` so tracking reflects real user intent, unlike
+   * `onOpenChange` which can fire for any closing reason.
+   */
+  onHeaderClosePressed: () => void;
+  /**
+   * Tracks the "Close" `button_clicked` event when the dialog overlay is pressed.
+   * Wired to `DialogContent.onPointerDownOutside`.
+   */
+  onOverlayDismiss: () => void;
+  /**
+   * Tracks the "Close" `button_clicked` event when Escape is pressed.
+   * Wired to `DialogContent.onEscapeKeyDown`.
+   */
+  onEscapeKeyDown: () => void;
 };
+
+type ConnectionTrackingInfo = {
+  modelId: DeviceModelId;
+  transport: "ble" | "usb";
+};
+
+const emptyAnalyticsProperties: DeviceIntentTrackingProperties = {};
+
+function mapConnectionResult(result: DeviceConnectionResult): ConnectionTrackingInfo {
+  return {
+    modelId: dmkToLedgerDeviceIdMap[result.connectedDevice.modelId],
+    transport: result.connectedDevice.type === "USB" ? "usb" : "ble",
+  };
+}
 
 export function useDeviceIntentExecutorLWDViewModel<JobState, Input, ExtraProps>(
   props: Props<JobState, Input, ExtraProps>,
 ): DeviceIntentExecutorLWDViewModel<JobState, Input, ExtraProps> {
-  const { onUserCancel } = props;
+  const {
+    enabled,
+    sourceFlow,
+    analyticsProperties = emptyAnalyticsProperties,
+    onExecutorStateChanged,
+    onUserCancel,
+  } = props;
+
+  const flowStartedRef = useRef(false);
+  const initializationCompletedRef = useRef(false);
+  const cancelTrackedRef = useRef(false);
+  const { hasHeaderOverride, headerContextValue } = useDeviceIntentExecutorHeaderOverrideRequests();
+
+  useEffect(() => {
+    if (!enabled) {
+      flowStartedRef.current = false;
+      initializationCompletedRef.current = false;
+      cancelTrackedRef.current = false;
+      return;
+    }
+
+    if (flowStartedRef.current) return;
+    flowStartedRef.current = true;
+    initializationCompletedRef.current = false;
+    trackDeviceflowStarted({ sourceFlow, extraProperties: analyticsProperties });
+  }, [enabled, sourceFlow, analyticsProperties]);
+
+  const wrappedOnExecutorStateChanged = useCallback(
+    (state: ExecutorState) => {
+      if (enabled && state.type === "executingIntent" && !initializationCompletedRef.current) {
+        initializationCompletedRef.current = true;
+        const { modelId, transport } = mapConnectionResult(state.connectionResult);
+        trackAppReady({ sourceFlow, modelId, extraProperties: analyticsProperties });
+        trackDeviceflowCompleted({
+          sourceFlow,
+          modelId,
+          transport,
+          extraProperties: analyticsProperties,
+        });
+      }
+      onExecutorStateChanged(state);
+    },
+    [enabled, onExecutorStateChanged, sourceFlow, analyticsProperties],
+  );
+
+  const trackClose = useCallback(() => {
+    trackDrawerCloseButtonClicked({ sourceFlow, extraProperties: analyticsProperties });
+  }, [sourceFlow, analyticsProperties]);
+
+  const wrappedOnUserCancel = useCallback(() => {
+    if (!cancelTrackedRef.current) {
+      cancelTrackedRef.current = true;
+      if (!initializationCompletedRef.current) {
+        trackDeviceflowCanceled({ sourceFlow, extraProperties: analyticsProperties });
+      }
+    }
+    onUserCancel();
+  }, [onUserCancel, sourceFlow, analyticsProperties]);
 
   const onOpenChange = useCallback(
     (open: boolean) => {
       if (!open) {
-        onUserCancel();
+        wrappedOnUserCancel();
       }
     },
-    [onUserCancel],
+    [wrappedOnUserCancel],
   );
 
   return {
-    wrappedProps: props,
+    hasHeaderOverride,
+    headerContextValue,
+    wrappedProps: {
+      ...props,
+      onExecutorStateChanged: wrappedOnExecutorStateChanged,
+      onUserCancel: wrappedOnUserCancel,
+    },
     onOpenChange,
-    onClose: onUserCancel,
+    onHeaderClosePressed: trackClose,
+    onOverlayDismiss: trackClose,
+    onEscapeKeyDown: trackClose,
   };
 }

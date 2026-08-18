@@ -2,7 +2,10 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Linking, Platform } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import type { DeviceConnectionParams, DeviceConnectionResult } from "@ledgerhq/device-intent";
+import type {
+  DeviceConnectionParams,
+  DeviceConnectionResult,
+} from "@features/platform-device-intent";
 import { log } from "@ledgerhq/logs";
 import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import {
@@ -27,7 +30,7 @@ import {
   trackDeviceConnecting,
   trackDevicePrompted,
 } from "../utils/trackDeviceIntent";
-import { useSourceFlow } from "../utils/SourceFlowContext";
+import { useDeviceIntentTracking } from "../utils/DeviceIntentTrackingContext";
 
 const LOG_TYPE = "DeviceConnectionComponentLWM";
 
@@ -54,7 +57,7 @@ export function useDeviceConnectionComponentLWMViewModel({
   const buyDeviceFromLive = useFeature("buyDeviceFromLive");
   const { shouldDisplayMyWallet } = useWalletFeaturesConfig("mobile");
   const knownDevices = useSelector(knownDevicesSelector);
-  const sourceFlow = useSourceFlow();
+  const { sourceFlow, analyticsProperties } = useDeviceIntentTracking();
   const [state, setState] = useState<ConnectDeviceUIState>({
     type: ConnectDeviceUIStateTypes.Loading,
   });
@@ -80,7 +83,7 @@ export function useDeviceConnectionComponentLWMViewModel({
       case ConnectDeviceUIStateTypes.WaitingForSelectedDevice:
         if (firedRef.current.prompted) return;
         firedRef.current.prompted = true;
-        trackDevicePrompted({ sourceFlow });
+        trackDevicePrompted({ sourceFlow, extraProperties: analyticsProperties });
         return;
       case ConnectDeviceUIStateTypes.Connecting: {
         if (firedRef.current.connecting) return;
@@ -89,11 +92,12 @@ export function useDeviceConnectionComponentLWMViewModel({
           sourceFlow,
           modelId: state.device.deviceModelId,
           transport: state.device.transport === rnHidTransportIdentifier ? "usb" : "ble",
+          extraProperties: analyticsProperties,
         });
         return;
       }
     }
-  }, [state, sourceFlow]);
+  }, [analyticsProperties, state, sourceFlow]);
 
   const onConnectLedgerDevice = useCallback(() => {
     const params = undefined;
@@ -129,7 +133,12 @@ export function useDeviceConnectionComponentLWMViewModel({
       const modelId = dmkToLedgerDeviceIdMap[result.connectedDevice.modelId];
       const transport: "ble" | "usb" = result.connectedDevice.type === "USB" ? "usb" : "ble";
 
-      trackDeviceConnected({ sourceFlow, modelId, transport });
+      trackDeviceConnected({
+        sourceFlow,
+        modelId,
+        transport,
+        extraProperties: analyticsProperties,
+      });
 
       dispatch(
         setLastConnectedDevice({
@@ -163,13 +172,15 @@ export function useDeviceConnectionComponentLWMViewModel({
 
       onConnected(result);
     },
-    [dispatch, onConnected, sourceFlow],
+    [analyticsProperties, dispatch, onConnected, sourceFlow],
   );
 
   useEffect(() => {
     const subscription = connectDevice({
       knownDevices,
-      acceptedDeviceModelIds: deviceConnectionParams.acceptedDeviceModelIds,
+      acceptedDeviceModelIds: deviceConnectionParams.acceptedDeviceModelIds.map(
+        deviceModelId => dmkToLedgerDeviceIdMap[deviceModelId],
+      ),
       dmk,
       onConnected: wrappedOnConnected,
     }).subscribe({ next: setState });

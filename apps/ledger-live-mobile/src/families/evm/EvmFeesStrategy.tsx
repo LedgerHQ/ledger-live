@@ -1,5 +1,5 @@
-import { getEstimatedFees } from "@ledgerhq/coin-evm/utils";
-import type { Transaction, TransactionStatus } from "@ledgerhq/coin-evm/types/index";
+import { getEstimatedFees } from "@ledgerhq/live-common/families/evm/utils";
+import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/evm/types";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { useGasOptions } from "@ledgerhq/live-common/families/evm/react";

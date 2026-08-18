@@ -7,8 +7,8 @@ import {
 } from "@ledgerhq/coin-concordium/network/walletConnect";
 import { getConcordiumBridge } from "@ledgerhq/live-common/families/concordium/bridgeHelper";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { addAccountsAction } from "@ledgerhq/live-common/account/addAccounts";
+import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { Account } from "@ledgerhq/types-live";
 import { log } from "@ledgerhq/logs";
 import { TFunction } from "i18next";

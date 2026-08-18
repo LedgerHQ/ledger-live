@@ -1,4 +1,5 @@
 import { EvmConfig } from "../config";
+import { createMockEvmContext } from "../fixtures/context.fixtures";
 import { safeEncodeEIP55 } from "../utils";
 import { createApi } from "./index";
 
@@ -6,19 +7,21 @@ describe("Fantom (etherscan explorer)", () => {
   describe("getBlock", () => {
     let module: ReturnType<typeof createApi>;
 
+    const fantomConfig: EvmConfig = {
+      chainId: 250,
+      name: "Fantom",
+      node: {
+        type: "external",
+        uri: "https://rpcapi.fantom.network",
+      },
+      explorer: {
+        type: "blockscout",
+        uri: "https://ftmscout.com/api",
+      },
+      showNfts: false,
+    };
     beforeAll(() => {
-      const fantomConfig: EvmConfig = {
-        node: {
-          type: "external",
-          uri: "https://rpcapi.fantom.network",
-        },
-        explorer: {
-          type: "blockscout",
-          uri: "https://ftmscout.com/api",
-        },
-        showNfts: false,
-      };
-      module = createApi(fantomConfig, "fantom");
+      module = createApi("fantom");
     });
 
     it("should include internal native transfer in block transaction", async () => {
@@ -44,7 +47,7 @@ describe("Fantom (etherscan explorer)", () => {
       const addr3 = safeEncodeEIP55("0x68e369edc0d374f86295690cbaa981ee3709c061");
       const addr4 = safeEncodeEIP55("0x10bb279126abd92d886aa3f2a60955c28bf14926");
 
-      const block = await module.getBlock(blockHeight);
+      const block = await module.getBlock(createMockEvmContext(fantomConfig), blockHeight);
 
       expect(block.info.height).toBe(blockHeight);
 

@@ -8,12 +8,18 @@ export function ModularDrawerWrapper() {
     preselectedCurrencies,
     closeDrawer,
     handleAccountSelected,
+    handleCurrencySelected,
+    presentation,
     assetsConfiguration,
     networksConfiguration,
     useCase,
     uiUseCase,
     areCurrenciesFiltered,
   } = useModularDrawerController();
+
+  if (presentation === "embedded") {
+    return null;
+  }
 
   return (
     <ModularDrawer
@@ -23,6 +29,7 @@ export function ModularDrawerWrapper() {
       assetsConfiguration={assetsConfiguration}
       networksConfiguration={networksConfiguration}
       onAccountSelected={handleAccountSelected}
+      onCurrencySelected={handleCurrencySelected}
       useCase={useCase}
       uiUseCase={uiUseCase}
       areCurrenciesFiltered={areCurrenciesFiltered}

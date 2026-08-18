@@ -1,5 +1,5 @@
 import { EntryFunctionPayloadResponse } from "@aptos-labs/ts-sdk";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import {
   encodeTokenAccountId,
   findSubAccountById,

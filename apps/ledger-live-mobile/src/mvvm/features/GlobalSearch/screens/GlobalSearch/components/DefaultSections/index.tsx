@@ -1,6 +1,6 @@
 import React from "react";
 import { ScrollView } from "react-native";
-import type { StockSuggestion } from "@ledgerhq/live-common/dada-client/utils/assetDiscovery";
+import type { StockSuggestion } from "@features/platform-aggregated-assets";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import { Warning } from "@ledgerhq/lumen-ui-rnative/symbols";
 import type { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";

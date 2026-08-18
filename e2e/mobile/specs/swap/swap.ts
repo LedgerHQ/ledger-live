@@ -1,8 +1,12 @@
 import { SwapType } from "@ledgerhq/live-e2e-shared/models/Swap";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { setEnv } from "@ledgerhq/live-env";
-import { performSwapUntilQuoteSelectionStep, truncateSwapAmount } from "../../utils/swapUtils";
+import { setEnv } from "@shared/env";
+import {
+  isTokenApprovalExpected,
+  performSwapUntilQuoteSelectionStep,
+  truncateSwapAmount,
+} from "../../utils/swapUtils";
 import { Fee } from "@ledgerhq/live-e2e-shared/enum/Fee";
 import { setTeamOwner } from "../../helpers/allure/allure-helper";
 import { beforeAllFunctionSwap } from "./swap.setup";
@@ -36,7 +40,7 @@ export function runSwapTest(
   // The amount is resolved at runtime from the provider minimum and set on `swap` inside the test.
   const swap = new Swap(accountToDebit, accountToCredit, "", undefined, fee);
 
-  describe("Swap - Accepted (without tx broadcast)", () => {
+  describe("Swap - accepted", () => {
     beforeAll(async () => {
       await beforeAllFunction(swap);
     });
@@ -44,7 +48,7 @@ export function runSwapTest(
     setTeamOwner(Team.SWAP);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    it(`Swap ${accountToDebit.currency.name} to ${accountToCredit.currency.name}`, async () => {
+    it(`[${accountToDebit.currency.testLabel}-${accountToCredit.currency.testLabel}] - Swap`, async () => {
       const minAmount = await app.swapLiveApp.getMinimumAmount(accountToDebit, accountToCredit);
       const swapAmount = minAmount ? truncateSwapAmount(minAmount) : minAmount;
       swap.amount = swapAmount;
@@ -52,11 +56,9 @@ export function runSwapTest(
       await performSwapUntilQuoteSelectionStep(accountToDebit, accountToCredit, swapAmount);
 
       const provider = await app.swapLiveApp.selectExchange();
-      const exchangeButtonText = await app.swapLiveApp.checkExchangeButtonHasProviderName(
-        provider.uiName,
-        true,
-      );
-      if (app.swapLiveApp.isApprovalRequired(exchangeButtonText, provider.uiName)) {
+      const approvalRequired = await isTokenApprovalExpected(accountToDebit, provider, swapAmount);
+      await app.swapLiveApp.checkQuoteCardCta(provider.uiName, approvalRequired);
+      if (approvalRequired) {
         console.warn(
           `[swap] ${provider.uiName} requires token approval for ${accountToDebit.currency.name}; ` +
             `skipping swap completion (covered by the token-approval spec).`,
@@ -65,7 +67,8 @@ export function runSwapTest(
         await app.common.disableSynchronizationForiOS();
         await app.swapLiveApp.tapExecuteSwap(provider.uiName);
         await app.swap.verifyAmountsAndAcceptSwap(swap, swapAmount);
-        await app.swap.waitForSuccessAndContinue();
+        await app.swap.waitForSuccessAndClose();
+        await app.swap.expectSwapPage();
       }
     });
   });

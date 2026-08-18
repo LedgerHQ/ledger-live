@@ -12,7 +12,6 @@ export const broadcast: AccountBridge<AleoTransaction, AleoAccount>["broadcast"]
 
   const hash = await logicBroadcast({
     configOrCurrencyId: config,
-    account,
     signedTx: signedOperation.signature,
   });
 

@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account";
 import {
   getDerivationScheme,
@@ -29,6 +29,9 @@ export const RECIPIENT = "erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8
 /** Initial EGLD funding for the scenario account: 100 EGLD (18 decimals). */
 export const INITIAL_EGLD_FUNDING = "100000000000000000000";
 
+/** All ESDT tokens are owned by the single on-chain ESDT system smart contract. */
+const ESDT_SYSTEM_SC = "erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u";
+
 /**
  * ESDT tokens are issued at runtime (the on-chain identifier carries a protocol-assigned
  * random suffix), so the token currency isn't known until `setup()`. The mock crypto-assets
@@ -42,7 +45,8 @@ export function makeEsdtToken(identifier: string, decimals: number): TokenCurren
   return {
     type: "TokenCurrency",
     id: `elrond/esdt/${Buffer.from(identifier).toString("hex")}`,
-    contractAddress: identifier,
+    contractAddress: ESDT_SYSTEM_SC,
+    tokenIdentifier: identifier,
     parentCurrencyId: ELROND.id,
     tokenType: "esdt",
     name: ticker,
@@ -55,14 +59,14 @@ export function makeEsdtToken(identifier: string, decimals: number): TokenCurren
 
 /** Make an issued token resolvable by the bridges (by identifier and by token id). */
 export function registerEsdtToken(token: TokenCurrency): void {
-  esdtTokens.set(token.contractAddress, token);
+  if (token.tokenIdentifier) esdtTokens.set(token.tokenIdentifier, token);
   esdtTokens.set(token.id, token);
 }
 
 // Resolve the ESDT identifier -> TokenCurrency the way both bridges expect.
 // The legacy path passes the identifier as `tokenIdentifier` (3rd arg); the generic
 // coin framework passes it as `address` (1st arg, the asset reference).
-setupMockCryptoAssetsStore({
+setCryptoAssetsStore({
   findTokenByAddressInCurrency: async (
     address: string,
     currencyId: string,
@@ -72,6 +76,7 @@ setupMockCryptoAssetsStore({
     return esdtTokens.get(tokenIdentifier ?? address);
   },
   findTokenById: async (id: string) => esdtTokens.get(id),
+  getTokensSyncHash: async () => "",
 });
 
 export function makeAccount(address: string): MultiversXAccount {

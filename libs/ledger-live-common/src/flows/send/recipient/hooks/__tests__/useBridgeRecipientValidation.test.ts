@@ -2,12 +2,12 @@
  * @jest-environment jsdom
  */
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import { InvalidAddress } from "@ledgerhq/errors";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { InvalidAddress } from "@ledgerhq/ledger-wallet-framework/errors";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import type { Account } from "@ledgerhq/types-live";
-import { renderHook, waitFor } from "@testing-library/react";
+import { act, renderHook, waitFor } from "@testing-library/react";
 import { BigNumber } from "bignumber.js";
 import { useBridgeRecipientValidation } from "../useBridgeRecipientValidation";
 
@@ -59,6 +59,7 @@ const mockBridge = {
   hasMinimumFundsToSpeedUp: jest.fn(),
   isStrategyDisabled: jest.fn(),
   isTransactionConfirmed: jest.fn(),
+  getWalletApiSpendableBalance: jest.fn(),
 };
 
 describe("useBridgeRecipientValidation", () => {
@@ -104,7 +105,7 @@ describe("useBridgeRecipientValidation", () => {
 
     expect(result.current.isLoading).toBe(true);
 
-    jest.advanceTimersByTime(300);
+    act(() => jest.advanceTimersByTime(300));
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -131,7 +132,7 @@ describe("useBridgeRecipientValidation", () => {
       }),
     );
 
-    jest.advanceTimersByTime(300);
+    act(() => jest.advanceTimersByTime(300));
 
     await waitFor(() => {
       expect(mockBridge.updateTransaction).toHaveBeenCalledWith(baseTransaction, {
@@ -156,7 +157,7 @@ describe("useBridgeRecipientValidation", () => {
       }),
     );
 
-    jest.advanceTimersByTime(300);
+    act(() => jest.advanceTimersByTime(300));
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -179,7 +180,7 @@ describe("useBridgeRecipientValidation", () => {
       }),
     );
 
-    jest.advanceTimersByTime(300);
+    act(() => jest.advanceTimersByTime(300));
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -202,7 +203,7 @@ describe("useBridgeRecipientValidation", () => {
       }),
     );
 
-    jest.advanceTimersByTime(300);
+    act(() => jest.advanceTimersByTime(300));
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -220,7 +221,7 @@ describe("useBridgeRecipientValidation", () => {
       }),
     );
 
-    jest.advanceTimersByTime(300);
+    act(() => jest.advanceTimersByTime(300));
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -239,7 +240,7 @@ describe("useBridgeRecipientValidation", () => {
       { initialProps: { recipient: "valid_address" } },
     );
 
-    jest.advanceTimersByTime(300);
+    act(() => jest.advanceTimersByTime(300));
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -265,7 +266,7 @@ describe("useBridgeRecipientValidation", () => {
     rerender({ recipient: "addr2" });
     rerender({ recipient: "addr3" });
 
-    jest.advanceTimersByTime(300);
+    act(() => jest.advanceTimersByTime(300));
 
     await waitFor(() => {
       expect(mockBridge.createTransaction).toHaveBeenCalledTimes(1);
@@ -283,7 +284,7 @@ describe("useBridgeRecipientValidation", () => {
       }),
     );
 
-    jest.advanceTimersByTime(300);
+    act(() => jest.advanceTimersByTime(300));
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -308,17 +309,41 @@ describe("useBridgeRecipientValidation", () => {
       { initialProps: { recipient: "addr1" } },
     );
 
-    jest.advanceTimersByTime(150);
+    act(() => jest.advanceTimersByTime(150));
 
     rerender({ recipient: "addr2" });
 
-    jest.advanceTimersByTime(300);
+    act(() => jest.advanceTimersByTime(300));
 
     await waitFor(() => {
       expect(mockBridge.updateTransaction).toHaveBeenLastCalledWith(expect.anything(), {
         recipient: "addr2",
       });
     });
+  });
+
+  it("clears settled status when the recipient changes so first-result loading is detectable", async () => {
+    const { result, rerender } = renderHook(
+      ({ recipient }) =>
+        useBridgeRecipientValidation({
+          recipient,
+          account: mockAccount,
+        }),
+      { initialProps: { recipient: "addr1" } },
+    );
+
+    act(() => jest.advanceTimersByTime(300));
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+      expect(result.current.status).not.toBeNull();
+    });
+
+    rerender({ recipient: "addr2" });
+
+    expect(result.current.isLoading).toBe(true);
+    expect(result.current.status).toBeNull();
+    expect(result.current.errors).toEqual({});
   });
 
   it("returns null status when account is null", () => {
@@ -347,7 +372,7 @@ describe("useBridgeRecipientValidation", () => {
       }),
     );
 
-    jest.advanceTimersByTime(300);
+    act(() => jest.advanceTimersByTime(300));
 
     await waitFor(() => {
       expect(getMainAccount).toHaveBeenCalledWith(mockAccount, parentAccount);

@@ -1,17 +1,17 @@
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import {
   AmountRequired,
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
-  NotEnoughGas,
   RecipientRequired,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import { findSubAccountById } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { updateTransaction } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import {
+  NotEnoughGas,
   SolanaAccountNotFunded,
   SolanaRecipientAccountNotFunded,
   SolanaTokenAccountFrozen,

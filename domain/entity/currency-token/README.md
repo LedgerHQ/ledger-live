@@ -1,10 +1,13 @@
 # @domain/entity-currency-token
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 Domain entity for token currencies: Zod-first schema with FK-based parent currency reference.
 
 ## Key Design
 
-`parentCurrencyId: CurrencyId` (FK) replaces the legacy `parentCurrency: CryptoCurrency` (embedded object). This eliminates the lookup-at-restore problem in `cal-client/persistence.ts` — the serialized form equals the domain form, so no `toTokenCurrencyRaw`/`fromTokenCurrencyRaw` conversion is needed. Resolving the parent for display: `cryptoCurrencyByIdSelector(state, token.parentCurrencyId)`.
+`parentCurrencyId: CryptoCurrencyId` (FK) replaces the legacy `parentCurrency: CryptoCurrency` (embedded object). This eliminates the lookup-at-restore problem in `cal-client/persistence.ts` — the serialized form equals the domain form, so no `toTokenCurrencyRaw`/`fromTokenCurrencyRaw` conversion is needed. Resolving the parent for display: `cryptoCurrencyByIdSelector(state, token.parentCurrencyId)`.
 
 No Redux slice, no static registry — tokens are served dynamically via `@domain/api/crypto-assets` (RTK Query).
 
@@ -43,8 +46,8 @@ const usdt = token({
 | Field                 | Type       | Required | Description                                           |
 | --------------------- | ---------- | -------- | ----------------------------------------------------- |
 | `type`                | `"TokenCurrency"` | yes | Discriminant literal                           |
-| `id`                  | `TokenId`  | yes      | Unique opaque token id (e.g. `"ethereum/erc20/usd-tether"`) |
-| `parentCurrencyId`    | `CurrencyId` | yes    | FK to parent crypto currency (e.g. `"ethereum"`)      |
+| `id`                  | `TokenCurrencyId`  | yes      | Unique opaque token id (e.g. `"ethereum/erc20/usd-tether"`) |
+| `parentCurrencyId`    | `CryptoCurrencyId` | yes    | FK to parent crypto currency (e.g. `"ethereum"`)      |
 | `contractAddress`     | `string`   | yes      | On-chain contract address                             |
 | `tokenType`           | `string`   | yes      | Token standard (e.g. `"erc20"`, `"bep20"`)            |
 | `name`                | `string`   | yes      | Human-readable name (e.g. `"Tether USD"`)             |

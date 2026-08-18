@@ -1,4 +1,4 @@
-import { setCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { fromAccountRaw } from "@ledgerhq/ledger-wallet-framework/serialization";
 import type { DerivationMode, CryptoAssetsStore } from "@ledgerhq/types-live";
 import { loadAccountDelegation } from "./bakers";

@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import type { Operation } from "@ledgerhq/types-live";
-import { LedgerAPI4xx } from "@ledgerhq/errors";
+import { LedgerAPI4xx } from "@ledgerhq/live-network/errors";
 import {
   getAccount,
   getBlockRef,
@@ -11,6 +11,7 @@ import {
 } from "./sdk";
 import { getFees } from "./getFees";
 import type { AccountResponse, VechainSDKTransaction } from "../types";
+import { mockVechainConfig } from "../test/context";
 
 const LAST_BLOCK_COUNT = 24580112;
 const mockAccount = {
@@ -105,21 +106,21 @@ const throws500ServerError = () => {
 describe("sdk", () => {
   describe("getAccount", () => {
     test("retrieves an account", async () => {
-      const account = await getAccount("0xmy-address");
+      const account = await getAccount(mockVechainConfig, "0xmy-address");
       expect(account).toBe(mockAccount);
     });
   });
 
   describe("getLastBlockHeight", () => {
     test("retrieves the last block height", async () => {
-      const account = await getLastBlockHeight();
+      const account = await getLastBlockHeight(mockVechainConfig);
       expect(account).toBe(LAST_BLOCK_COUNT);
     });
   });
 
   describe("getBlockRef", () => {
     test("retrieves the block ref to use in transaction", async () => {
-      const account = await getBlockRef();
+      const account = await getBlockRef(mockVechainConfig);
       expect(account).toBe("abcdefghiklmnopqrs");
     });
   });
@@ -129,14 +130,14 @@ describe("sdk", () => {
       test("retrieves fees paid for the transaction", async () => {
         mockGetFees.mockImplementationOnce(async () => ({ data: {} }));
 
-        const account = await getFees("0xtransaxtion");
+        const account = await getFees(mockVechainConfig, "0xtransaxtion");
         expect(account).toStrictEqual(new BigNumber(0));
       });
     });
 
     describe("when the transaction's receipt has data.paid", () => {
       test("retrieves fees paid for the transaction", async () => {
-        const account = await getFees("0xtransaxtion");
+        const account = await getFees(mockVechainConfig, "0xtransaxtion");
         expect(account).toStrictEqual(new BigNumber(42));
       });
     });
@@ -145,7 +146,7 @@ describe("sdk", () => {
   describe("submit", () => {
     describe("when transaction id is included in the transaction payload returned by the server", () => {
       test("returns the transaction id", async () => {
-        const transactionId = await submit(mockTransaction);
+        const transactionId = await submit(mockVechainConfig, mockTransaction);
         expect(transactionId).toBe("123");
       });
     });
@@ -155,7 +156,7 @@ describe("sdk", () => {
         mockSubmit.mockImplementationOnce(async () => ({ data: {} }));
 
         try {
-          await submit(mockTransaction);
+          await submit(mockVechainConfig, mockTransaction);
         } catch (err: unknown) {
           const error = err as { message: string };
           expect(error.message).toMatch("Expected an ID");
@@ -175,6 +176,7 @@ describe("sdk", () => {
       test("rethrows the error", async () => {
         try {
           await getOperations(
+            mockVechainConfig,
             "my-account-id",
             "0xmy-address",
             LAST_BLOCK_COUNT - 1,
@@ -192,6 +194,7 @@ describe("sdk", () => {
     describe("when logs retrieved in each network request are within the maximum allowed limit", () => {
       test("retrieves all the operations", async () => {
         const operations = await getOperations(
+          mockVechainConfig,
           "my-account-id",
           "0xmy-address",
           LAST_BLOCK_COUNT - 1,
@@ -200,6 +203,22 @@ describe("sdk", () => {
 
         expect(operations.length > 0).toBe(true);
         expect(operations.length).toBe(1);
+      });
+    });
+
+    describe("when the range is inverted (no new block since the last known operation)", () => {
+      test("returns an empty array without querying the network", async () => {
+        mockGetTransferLogs.mockClear();
+        const operations = await getOperations(
+          mockVechainConfig,
+          "my-account-id",
+          "0xmy-address",
+          LAST_BLOCK_COUNT + 1,
+          LAST_BLOCK_COUNT,
+        );
+
+        expect(operations).toEqual([]);
+        expect(mockGetTransferLogs).not.toHaveBeenCalled();
       });
     });
 
@@ -212,6 +231,7 @@ describe("sdk", () => {
         test("throws an error: Unable to split Vechain operations range further", async () => {
           try {
             await getOperations(
+              mockVechainConfig,
               "my-account-id",
               "0xmy-address",
               LAST_BLOCK_COUNT - 1,
@@ -229,6 +249,7 @@ describe("sdk", () => {
       describe("and Vechain operations range can be split further", () => {
         test("retrieves all the operations", async () => {
           const operations = await getOperations(
+            mockVechainConfig,
             "my-account-id",
             "0xmy-address",
             LAST_BLOCK_COUNT - 6,
@@ -251,6 +272,7 @@ describe("sdk", () => {
       test("rethrows the error", async () => {
         try {
           await getOperations(
+            mockVechainConfig,
             "my-account-id",
             "0xmy-address",
             LAST_BLOCK_COUNT - 1,
@@ -268,6 +290,7 @@ describe("sdk", () => {
     describe("when logs retrieved in each network request are within the maximum allowed limit", () => {
       test("retrieves all the operations", async () => {
         const operations = await getTokenOperations(
+          mockVechainConfig,
           "my-account-id",
           "0xmy-address",
           "0xmy-token-address",
@@ -280,6 +303,23 @@ describe("sdk", () => {
       });
     });
 
+    describe("when the range is inverted (no new block since the last known operation)", () => {
+      test("returns an empty array without querying the network", async () => {
+        mockGetEventLogs.mockClear();
+        const operations = await getTokenOperations(
+          mockVechainConfig,
+          "my-account-id",
+          "0xmy-address",
+          "0xmy-token-address",
+          LAST_BLOCK_COUNT + 1,
+          LAST_BLOCK_COUNT,
+        );
+
+        expect(operations).toEqual([]);
+        expect(mockGetEventLogs).not.toHaveBeenCalled();
+      });
+    });
+
     describe("when logged operations exceed limit in the given range", () => {
       beforeEach(() => {
         mockGetEventLogs.mockImplementationOnce(throws403ExceedsLimit);
@@ -289,6 +329,7 @@ describe("sdk", () => {
         test("throws an error: Unable to split Vechain operations range further", async () => {
           try {
             await getTokenOperations(
+              mockVechainConfig,
               "my-account-id",
               "0xmy-address",
               "0xmt-token-address",
@@ -307,6 +348,7 @@ describe("sdk", () => {
       describe("and Vechain operations range can be split further", () => {
         test("retrieves all the operations", async () => {
           const operations = await getTokenOperations(
+            mockVechainConfig,
             "my-account-id",
             "0xmy-address",
             "0xmt-token-address",

@@ -1,9 +1,11 @@
 import { act, renderHook } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import React from "react";
 import { track } from "~/analytics";
 import { useInitializerActions } from "../../hooks/useInitializerActions";
 import { useDeviceNotOnboardedViewModel } from "./useDeviceNotOnboardedViewModel";
 import type { InitializerDevice } from "../../types";
+import { DeviceIntentTrackingProvider } from "../../../utils/DeviceIntentTrackingContext";
 
 jest.mock("~/analytics", () => {
   const actual = jest.requireActual("~/analytics");
@@ -19,6 +21,11 @@ const mockedTrack = jest.mocked(track);
 const mockedUseInitializerActions = jest.mocked(useInitializerActions);
 const SOURCE_FLOW = "my_ledger";
 const openOnboarding = jest.fn();
+const wrapper = ({ children }: React.PropsWithChildren) => (
+  <DeviceIntentTrackingProvider value={{ sourceFlow: SOURCE_FLOW }}>
+    {children}
+  </DeviceIntentTrackingProvider>
+);
 
 const device: InitializerDevice = {
   id: "device-id",
@@ -40,9 +47,7 @@ describe("useDeviceNotOnboardedViewModel", () => {
   });
 
   it("GIVEN a device WHEN rendering THEN it exposes the view props", () => {
-    const { result } = renderHook(() =>
-      useDeviceNotOnboardedViewModel({ device, sourceFlow: SOURCE_FLOW }),
-    );
+    const { result } = renderHook(() => useDeviceNotOnboardedViewModel({ device }), { wrapper });
 
     expect(result.current).toEqual(
       expect.objectContaining({
@@ -52,9 +57,7 @@ describe("useDeviceNotOnboardedViewModel", () => {
   });
 
   it("GIVEN a device WHEN invoking setup device THEN it tracks Set Up Device and opens onboarding", () => {
-    const { result } = renderHook(() =>
-      useDeviceNotOnboardedViewModel({ device, sourceFlow: SOURCE_FLOW }),
-    );
+    const { result } = renderHook(() => useDeviceNotOnboardedViewModel({ device }), { wrapper });
 
     act(() => {
       result.current.onSetupDevice();

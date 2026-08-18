@@ -8,7 +8,7 @@ import type { CryptoCurrency } from "./schema";
  *
  * Used by each file in `src/currencies/` to declare a single currency.
  * Calling `CryptoCurrencySchema.parse()` constructs branded value objects
- * (e.g. `CurrencyId`) without explicit casts.
+ * (e.g. `CryptoCurrencyId`) without explicit casts.
  *
  * @example
  * ```ts

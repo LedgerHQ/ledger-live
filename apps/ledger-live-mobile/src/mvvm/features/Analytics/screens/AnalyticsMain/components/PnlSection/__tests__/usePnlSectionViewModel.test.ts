@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genMockAccount } from "@ledgerhq/live-common/mock/account";
 import type { Account } from "@ledgerhq/types-live";
 import * as walletPnlHooks from "@ledgerhq/wallet-pnl/hooks";
@@ -34,10 +34,7 @@ const compose =
     transforms.reduce((acc, t) => t(acc), state);
 
 const withPnl = (enabled: boolean) =>
-  compose(
-    withAccounts,
-    withFlagOverrides({ lwmWallet40: { enabled: true, params: { pnl: enabled } } }),
-  );
+  compose(withAccounts, withFlagOverrides({ lwmWallet40: { params: { pnl: enabled } } }));
 
 describe("usePnlSectionViewModel", () => {
   it("keeps the detail drawer closed by default", () => {
@@ -85,7 +82,7 @@ describe("usePnlSectionViewModel", () => {
     it("disables the section when there are no accounts even if the flag is on", () => {
       const { result } = renderHook(() => usePnlSectionViewModel(), {
         overrideInitialState: withFlagOverrides({
-          lwmWallet40: { enabled: true, params: { pnl: true } },
+          lwmWallet40: { params: { pnl: true } },
         }),
       });
 

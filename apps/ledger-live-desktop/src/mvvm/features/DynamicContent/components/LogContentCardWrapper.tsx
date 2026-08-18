@@ -67,8 +67,8 @@ const LogContentCardWrapper: React.FC<LogContentCardWrapperProps> = ({
             const cardId = currentCard.id;
             if (!cardId) return;
 
-            const expiresAt = currentCard.expiresAt?.getTime();
-            if (expiresAt !== undefined && anonymousUserNotifications[cardId] !== expiresAt) {
+            const expiresAt = currentCard.expiresAt?.getTime() ?? Date.now();
+            if (anonymousUserNotifications[cardId] !== expiresAt) {
               notificationTimerRef.current = setTimeout(() => {
                 dispatch(
                   updateAnonymousUserNotifications({

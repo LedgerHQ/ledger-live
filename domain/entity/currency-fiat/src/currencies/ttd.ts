@@ -2,7 +2,6 @@ import { fiat } from "../define";
 
 export const ttd = fiat({
   type: "FiatCurrency",
-  id: "ttd",
   ticker: "TTD",
   name: "Trinidad and Tobago Dollar",
   symbol: "TT$",

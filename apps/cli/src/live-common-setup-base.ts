@@ -1,13 +1,11 @@
-import { EnvName, setEnv, setEnvUnsafe, getEnv } from "@ledgerhq/live-env";
+import { EnvName, setEnv, setEnvUnsafe, getEnv } from "@shared/env";
+import { bridgeEnvToNetworkState } from "@ledgerhq/live-common/network/setup";
 import { listen } from "@ledgerhq/logs";
 import { registerAllCoins } from "@ledgerhq/live-common/coin-modules/load-all-coins";
 import { setWalletAPIVersion } from "@ledgerhq/live-common/wallet-api/version";
 import { WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
 import BigNumber from "bignumber.js";
-import { setCryptoCurrenciesStore } from "@ledgerhq/cryptoassets";
 import {
-  CRYPTO_CURRENCIES_REGISTRY,
-  CRYPTO_CURRENCY_ALIASES,
   getCryptoCurrencyById,
   findCryptoCurrencyById,
   findCryptoCurrencyByScheme,
@@ -17,7 +15,6 @@ import {
 import { setCurrenciesResolver } from "@ledgerhq/ledger-wallet-framework/currencies";
 
 // The domain registry is the runtime source of truth for currency data.
-setCryptoCurrenciesStore(Object.values(CRYPTO_CURRENCIES_REGISTRY), CRYPTO_CURRENCY_ALIASES);
 setCurrenciesResolver({
   getCryptoCurrencyById,
   findCryptoCurrencyById,
@@ -66,5 +63,6 @@ if (process.env.VERBOSE) {
 
 const value = "cli/0.0.0";
 setEnv("LEDGER_CLIENT_VERSION", value);
+bridgeEnvToNetworkState();
 
 BigNumber.set({ DECIMAL_PLACES: getEnv("BIG_NUMBER_DECIMAL_PLACES") });

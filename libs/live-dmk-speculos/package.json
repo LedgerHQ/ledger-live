@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-dmk-speculos",
-  "version": "0.10.1",
+  "version": "0.10.4",
   "description": "Ledger Device Management Kit transport module for LLD",
   "private": true,
   "license": "Apache-2.0",
@@ -51,11 +51,11 @@
   },
   "dependencies": {
     "@ledgerhq/device-management-kit": "catalog:",
-    "@ledgerhq/speculos-device-controller": "catalog:",
     "@ledgerhq/device-transport-kit-speculos": "catalog:",
     "@ledgerhq/hw-transport": "workspace:^",
-    "@ledgerhq/logs": "workspace:^",
-    "@ledgerhq/live-env": "workspace:^"
+    "@ledgerhq/logs": "catalog:",
+    "@ledgerhq/speculos-device-controller": "catalog:",
+    "@shared/env": "workspace:*"
   },
   "devDependencies": {
     "@swc/core": "catalog:",

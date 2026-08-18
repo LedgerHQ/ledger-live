@@ -2,7 +2,7 @@ import { ExchangeTypes, PartnerKeyInfo } from "@ledgerhq/hw-app-exchange";
 import { getSwapProvider, getAvailableProviders } from "./swap";
 import { getSellProvider } from "./sell";
 import { getFundProvider } from "./fund";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 
 export { getSwapProvider, getAvailableProviders };
 

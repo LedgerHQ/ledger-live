@@ -1,13 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 import { log } from "@ledgerhq/logs";
-import { BatteryStatusFlags } from "@ledgerhq/types-devices";
 import {
   getBatteryStatusesAction,
   GetBatteryStatusesActionState,
   initialState,
 } from "../actions/getBatteryStatuses";
-import { BatteryStatusTypes } from "../../hw/getBatteryStatus";
-import { useEnv } from "../../env.react";
+import { BatteryStatusTypes, type BatteryStatusFlags } from "../../hw/getBatteryStatus";
+import { useEnv } from "@features/platform-env";
 
 export type UseBatteryStatusesArgs = {
   deviceId?: string;

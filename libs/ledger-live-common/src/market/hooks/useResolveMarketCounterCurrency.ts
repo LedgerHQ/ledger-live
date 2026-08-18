@@ -1,4 +1,3 @@
-import { findCryptoCurrencyByTicker } from "@ledgerhq/cryptoassets";
 import { useSupportedCounterCurrencies } from "../../cg-client/hooks/useCoingeckoDataProvider";
 
 export type MarketCounterCurrencyResolution = {
@@ -12,6 +11,7 @@ export type MarketCounterCurrencyResolution = {
 type UseResolveMarketCounterCurrencyParams = {
   counterCurrency: string | undefined;
   fallbackForCryptoCountervalues?: boolean;
+  isCryptoCountervalue: boolean;
 };
 
 /**
@@ -23,13 +23,11 @@ type UseResolveMarketCounterCurrencyParams = {
 export function useResolveMarketCounterCurrency({
   counterCurrency,
   fallbackForCryptoCountervalues = false,
+  isCryptoCountervalue,
 }: UseResolveMarketCounterCurrencyParams): MarketCounterCurrencyResolution {
   const { data: supportedCounterCurrencies, isError } = useSupportedCounterCurrencies();
   const displayCounterCurrency = counterCurrency?.toLowerCase();
   const isUsd = displayCounterCurrency === "usd";
-  const isCryptoCountervalue = Boolean(
-    displayCounterCurrency && findCryptoCurrencyByTicker(displayCounterCurrency.toUpperCase()),
-  );
 
   const cryptoFallback = fallbackForCryptoCountervalues && isCryptoCountervalue;
   const unsupportedFiatFallback = Boolean(

@@ -2,7 +2,6 @@ import React, { memo } from "react";
 import { useTranslation } from "~/context/Locale";
 import styled from "styled-components/native";
 import { Flex, IconsLegacy, Link } from "@ledgerhq/native-ui";
-import { BluetoothRequired } from "@ledgerhq/errors";
 import { NewIconType } from "@ledgerhq/native-ui/components/Icon/type";
 import useExportLogs from "./useExportLogs";
 import TranslatedError from "./TranslatedError";
@@ -53,7 +52,7 @@ const GenericErrorView = ({
   const subtitleError = outerError ? error : null;
 
   // In case bluetooth was necessary but the `RequiresBle` component could not be used directly
-  if (error instanceof BluetoothRequired) {
+  if ((error as { name?: string })?.name === "BluetoothRequired") {
     return (
       <>
         <BluetoothDisabled />

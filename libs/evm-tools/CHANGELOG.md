@@ -1,5 +1,33 @@
 # @ledgerhq/evm-tools
 
+## 1.13.2
+
+### Patch Changes
+
+- Updated dependencies [[`c475d28`](https://github.com/LedgerHQ/ledger-live/commit/c475d288b4978aa3011c9e76f3e9a1e2f9733010)]:
+  - @ledgerhq/live-env@3.0.0
+
+## 1.13.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`c475d28`](https://github.com/LedgerHQ/ledger-live/commit/c475d288b4978aa3011c9e76f3e9a1e2f9733010)]:
+  - @ledgerhq/live-env@3.0.0-next.0
+
+## 1.13.1
+
+### Patch Changes
+
+- Updated dependencies [[`a15b864`](https://github.com/LedgerHQ/ledger-live/commit/a15b864576d901f15d480070b475314c3b23c1dd), [`fc44f1e`](https://github.com/LedgerHQ/ledger-live/commit/fc44f1e6ddcca939c117e0cb8bc49c404163b003)]:
+  - @ledgerhq/live-env@2.42.0
+
+## 1.13.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`a15b864`](https://github.com/LedgerHQ/ledger-live/commit/a15b864576d901f15d480070b475314c3b23c1dd), [`fc44f1e`](https://github.com/LedgerHQ/ledger-live/commit/fc44f1e6ddcca939c117e0cb8bc49c404163b003)]:
+  - @ledgerhq/live-env@2.42.0-next.0
+
 ## 1.13.0
 
 ### Minor Changes

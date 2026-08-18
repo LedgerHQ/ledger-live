@@ -35,6 +35,15 @@ export const SEND_STEP_CONFIGS: Record<SendFlowStep, SendStepConfig> = {
       title: "",
     },
   },
+  // Not registered yet (absent from SEND_FLOW_STEP_ORDER). Kept to satisfy the
+  // Record<SendFlowStep, SendStepConfig> contract.
+  [SEND_FLOW_STEP.ADD_CONTACT]: {
+    id: SEND_FLOW_STEP.ADD_CONTACT,
+    canGoBack: true,
+    floating: true,
+    showHeaderRight: false,
+    showTitle: false,
+  },
   [SEND_FLOW_STEP.AMOUNT]: {
     id: SEND_FLOW_STEP.AMOUNT,
     canGoBack: true,

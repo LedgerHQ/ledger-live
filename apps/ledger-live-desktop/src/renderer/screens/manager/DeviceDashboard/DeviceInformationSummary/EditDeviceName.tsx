@@ -2,7 +2,7 @@ import React, { useState, useCallback, useMemo } from "react";
 import { Button, Flex, Divider, Text, Input, IconsLegacy, BoxedIcon } from "@ledgerhq/react-ui";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useTranslation } from "react-i18next";
-import { DeviceNameInvalid } from "@ledgerhq/errors";
+import { DeviceNameInvalid } from "@ledgerhq/live-common/errors";
 import Label from "~/renderer/components/Label";
 import TranslatedError from "~/renderer/components/TranslatedError";
 import Box from "~/renderer/components/Box";

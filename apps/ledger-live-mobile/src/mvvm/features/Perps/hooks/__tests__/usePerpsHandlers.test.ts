@@ -3,7 +3,10 @@ import { usePerpsHandlers } from "../usePerpsHandlers";
 import { handlers as perpsHandlers } from "@ledgerhq/live-common/wallet-api/Perps/server";
 
 jest.mock("@ledgerhq/live-common/wallet-api/Perps/server", () => ({
-  handlers: jest.fn().mockReturnValue({ "custom.perps.signActions": jest.fn() }),
+  handlers: jest.fn().mockReturnValue({
+    "custom.perps.signActions": jest.fn(),
+    "custom.perps.deposit": jest.fn(),
+  }),
 }));
 
 const mockNavigate = jest.fn();
@@ -24,7 +27,10 @@ describe("usePerpsHandlers", () => {
 
     expect(mockedPerpsHandlers).toHaveBeenCalledWith({
       accounts,
-      uiHooks: { "signing.execute": expect.any(Function) },
+      uiHooks: {
+        "signing.execute": expect.any(Function),
+        "deposit.execute": expect.any(Function),
+      },
     });
   });
 

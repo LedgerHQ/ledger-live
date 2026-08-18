@@ -1,5 +1,12 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { MODULAR_DRAWER_KEY, ModularDrawerStep } from "LLM/features/ModularDrawer/types";
+import {
+  MODULAR_DRAWER_KEY,
+  ModularDrawerStep,
+  type ModularDrawerCompletionMode,
+  type ModularDrawerPresentation,
+  type DrawerExtras,
+  type DrawerRemoteParams,
+} from "LLM/features/ModularDrawer/types";
 import { State } from "~/reducers/types";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 
@@ -8,6 +15,8 @@ export interface ModularDrawerState {
   preselectedCurrencies: string[];
   callbackId?: string;
   enableAccountSelection?: boolean;
+  completionMode?: ModularDrawerCompletionMode;
+  presentation: ModularDrawerPresentation;
   flow: string;
   source: string;
   assetsConfiguration?: EnhancedModularDrawerConfiguration["assets"];
@@ -15,6 +24,7 @@ export interface ModularDrawerState {
   useCase?: string;
   uiUseCase?: string;
   areCurrenciesFiltered?: boolean;
+  selectableNetworkIds?: string[];
   searchValue: string;
   step: ModularDrawerStep;
 }
@@ -24,6 +34,8 @@ export const INITIAL_STATE: ModularDrawerState = {
   preselectedCurrencies: [],
   callbackId: undefined,
   enableAccountSelection: false,
+  completionMode: undefined,
+  presentation: "drawer",
   flow: "",
   source: "",
   assetsConfiguration: {
@@ -37,6 +49,7 @@ export const INITIAL_STATE: ModularDrawerState = {
   useCase: undefined,
   uiUseCase: undefined,
   areCurrenciesFiltered: undefined,
+  selectableNetworkIds: undefined,
   searchValue: "",
   step: ModularDrawerStep.Asset,
 };
@@ -49,6 +62,9 @@ export const modularDrawerFlowSelector = (state: State) => state.modularDrawer.f
 export const modularDrawerSourceSelector = (state: State) => state.modularDrawer.source;
 export const modularDrawerEnableAccountSelectionSelector = (state: State) =>
   state.modularDrawer.enableAccountSelection;
+export const modularDrawerCompletionModeSelector = (state: State) =>
+  state.modularDrawer.completionMode;
+export const modularDrawerPresentationSelector = (state: State) => state.modularDrawer.presentation;
 export const modularDrawerStepSelector = (state: State) => state.modularDrawer.step;
 
 const modularDrawerSlice = createSlice({
@@ -57,19 +73,7 @@ const modularDrawerSlice = createSlice({
   reducers: {
     openModularDrawer: (
       state,
-      action: PayloadAction<{
-        currencies?: string[];
-        callbackId?: string;
-        enableAccountSelection?: boolean;
-        flow?: string;
-        source?: string;
-        assetsConfiguration?: EnhancedModularDrawerConfiguration["assets"];
-        networksConfiguration?: EnhancedModularDrawerConfiguration["networks"];
-        useCase?: string;
-        uiUseCase?: string;
-        areCurrenciesFiltered?: boolean;
-        step?: ModularDrawerStep;
-      }>,
+      action: PayloadAction<DrawerRemoteParams<DrawerExtras & { step?: ModularDrawerStep }>>,
     ) => {
       state.isOpen = true;
       state.searchValue = "";
@@ -77,6 +81,8 @@ const modularDrawerSlice = createSlice({
         currencies,
         callbackId,
         enableAccountSelection,
+        completionMode,
+        presentation,
         flow,
         source,
         assetsConfiguration,
@@ -84,16 +90,20 @@ const modularDrawerSlice = createSlice({
         useCase,
         uiUseCase,
         areCurrenciesFiltered,
+        selectableNetworkIds,
         step,
       } = action.payload;
+      const isEmbeddedCurrency = completionMode === "currency" && presentation === "embedded";
 
       if (currencies !== undefined) {
         state.preselectedCurrencies = currencies;
       }
-      if (callbackId !== undefined) {
-        state.callbackId = callbackId;
-      }
-      if (enableAccountSelection !== undefined) {
+      state.callbackId = callbackId;
+      state.completionMode = completionMode;
+      state.presentation = completionMode === "currency" ? (presentation ?? "drawer") : "drawer";
+      if (isEmbeddedCurrency) {
+        state.enableAccountSelection = false;
+      } else if (enableAccountSelection !== undefined) {
         state.enableAccountSelection = enableAccountSelection;
       }
       if (flow !== undefined) {
@@ -117,7 +127,12 @@ const modularDrawerSlice = createSlice({
       if (areCurrenciesFiltered !== undefined) {
         state.areCurrenciesFiltered = areCurrenciesFiltered;
       }
-      if (step !== undefined) {
+      if (selectableNetworkIds !== undefined) {
+        state.selectableNetworkIds = selectableNetworkIds;
+      }
+      if (isEmbeddedCurrency) {
+        state.step = ModularDrawerStep.Asset;
+      } else if (step !== undefined) {
         state.step = step;
       }
     },
@@ -126,6 +141,8 @@ const modularDrawerSlice = createSlice({
       state.preselectedCurrencies = [];
       state.callbackId = undefined;
       state.enableAccountSelection = false;
+      state.completionMode = undefined;
+      state.presentation = "drawer";
       state.flow = "";
       state.source = "";
       state.assetsConfiguration = INITIAL_STATE.assetsConfiguration;
@@ -133,6 +150,7 @@ const modularDrawerSlice = createSlice({
       state.useCase = undefined;
       state.uiUseCase = undefined;
       state.areCurrenciesFiltered = undefined;
+      state.selectableNetworkIds = undefined;
       state.searchValue = "";
       state.step = ModularDrawerStep.Asset;
     },

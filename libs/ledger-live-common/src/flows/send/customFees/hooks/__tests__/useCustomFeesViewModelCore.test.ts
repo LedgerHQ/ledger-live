@@ -5,7 +5,8 @@
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { BigNumber } from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
-import type { CryptoCurrency, Currency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { Currency } from "@domain/entity-currency";
 import type { Transaction, TransactionStatus } from "../../../../../coin-modules/transaction-types";
 import type { SendFlowTransactionActions } from "../../../types";
 import { useCustomFeesViewModelCore } from "../useCustomFeesViewModelCore";
@@ -239,6 +240,51 @@ describe("useCustomFeesViewModelCore", () => {
     const updater = (transactionActions.updateTransaction as jest.Mock).mock.calls[0][0];
     const nextTransaction = updater(transaction);
 
+    expect(nextTransaction.feesStrategy).toBe("custom");
+    expect(nextTransaction.fees.toFixed()).toBe("30000000000000000");
+  });
+
+  it("normalizes a comma decimal separator typed on the iOS decimal-pad", async () => {
+    const transaction = createTransaction();
+    const transactionActions = createTransactionActions();
+    const calculateCountervalue = jest.fn(() => new BigNumber(0));
+
+    const { result } = renderHook(() =>
+      useCustomFeesViewModelCore({
+        account: createAccount(),
+        parentAccount: null,
+        transaction,
+        status: createStatus(),
+        currency: celoCurrency,
+        transactionActions,
+        onConfirm: jest.fn(),
+        locale: "fr-FR",
+        discreet: false,
+        counterValueCurrency: usdCurrency,
+        calculateCountervalue,
+        labels,
+      }),
+    );
+
+    act(() => {
+      result.current.onInputChange("fees", "0,03");
+    });
+
+    // The comma is normalized to a dot: displayed with a dot, valid (no error).
+    expect(result.current.inputs[0].value).toBe("0.03");
+    expect(result.current.inputs[0].error).toBeNull();
+
+    await act(async () => {
+      await flushBridgeEstimation();
+    });
+
+    // Confirm applies the fee (would early-return if the value were rejected as invalid).
+    act(() => {
+      result.current.onConfirm();
+    });
+
+    const updater = (transactionActions.updateTransaction as jest.Mock).mock.calls[0][0];
+    const nextTransaction = updater(transaction);
     expect(nextTransaction.feesStrategy).toBe("custom");
     expect(nextTransaction.fees.toFixed()).toBe("30000000000000000");
   });

@@ -6,6 +6,7 @@ import { Transition, TransitionStatus } from "react-transition-group";
 import { createFocusTrap, FocusTrap } from "focus-trap";
 import { createPortal } from "react-dom";
 import { modalsStateSelector } from "~/renderer/reducers/modals";
+import { selectIsAnyDialogOpen } from "~/renderer/reducers/dialogs";
 import { useDeviceBlocked } from "./DeviceAction/DeviceBlocker";
 import SideDrawerHeader from "./SideDrawerHeader";
 
@@ -156,7 +157,9 @@ export function SideDrawer({
   const shouldRestoreFocusOnCloseRef = useRef(shouldRestoreFocusOnClose);
   shouldRestoreFocusOnCloseRef.current = shouldRestoreFocusOnClose;
   const modalsState = useSelector(modalsStateSelector);
-  const shouldDisableFocusTrap = Object.values(modalsState).some(state => state?.isOpened);
+  const isAnyDialogOpen = useSelector(selectIsAnyDialogOpen);
+  const shouldDisableFocusTrap =
+    isAnyDialogOpen || Object.values(modalsState).some(state => state?.isOpened);
   const deactivateFocusTrap = useCallback(() => {
     focusTrap.current?.deactivate({ returnFocus: shouldRestoreFocusOnCloseRef.current });
     focusTrap.current = null;

@@ -1,5 +1,4 @@
 import React, { type ComponentProps, useCallback, useMemo } from "react";
-import { useFeature } from "@features/platform-feature-flags";
 import BackButton from "LLM/features/Web3Hub/components/BackButton";
 import type { MainProps } from "LLM/features/Web3Hub/types";
 import TextInput from "~/components/TextInput";
@@ -15,9 +14,6 @@ const inputWithBackButtonStyle = {
 };
 
 export default function useWeb3HubMainHeaderViewModel(navigation: MainProps["navigation"]) {
-  const lwmWallet40 = useFeature("lwmWallet40");
-  const isWalletV4Enabled = lwmWallet40?.enabled === true;
-
   const goToSearch = useCallback(() => {
     navigation.push(NavigatorName.Web3Hub, {
       screen: ScreenName.Web3HubSearch,
@@ -25,19 +21,15 @@ export default function useWeb3HubMainHeaderViewModel(navigation: MainProps["nav
   }, [navigation]);
 
   const searchInputProps = useMemo<SearchInputProps>(
-    () =>
-      isWalletV4Enabled
-        ? {
-            inputContainerStyle: inputWithBackButtonStyle,
-            renderLeft: <BackButton onPress={navigation.goBack} />,
-          }
-        : {},
-    [isWalletV4Enabled, navigation],
+    () => ({
+      inputContainerStyle: inputWithBackButtonStyle,
+      renderLeft: <BackButton onPress={navigation.goBack} />,
+    }),
+    [navigation],
   );
 
   return {
     goToSearch,
-    isWalletV4Enabled,
     searchInputProps,
   };
 }

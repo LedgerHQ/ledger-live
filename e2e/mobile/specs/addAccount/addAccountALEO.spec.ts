@@ -1,12 +1,11 @@
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "../../helpers/allure/allure-helper";
-import { DEFAULT_TIMEOUT } from "../../helpers/elementHelpers";
 
 const tmsLinks = ["B2CQA-4450", "B2CQA-4451", "B2CQA-4452"];
 const tags = ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@aleo", "@family-aleo"];
 
-describe("Add accounts - Aleo", () => {
+describe("Add account", () => {
   beforeAll(async () => {
     await app.init({
       userdata: "skip-onboarding",
@@ -22,7 +21,7 @@ describe("Add accounts - Aleo", () => {
   tmsLinks.forEach(link => $TmsLink(link));
   tags.forEach(tag => $Tag(tag));
 
-  it(`Perform add account - ${Currency.ALEO.name}`, async () => {
+  it(`[${Currency.ALEO.testLabel}] - Add account`, async () => {
     await app.portfolio.addAccount();
     await app.addAccount.importWithYourLedger();
     await app.modularDrawer.performSearchByTicker(Currency.ALEO.ticker);
@@ -34,9 +33,7 @@ describe("Add accounts - Aleo", () => {
 
     await app.addAccount.addAccountAtIndex(`${Currency.ALEO.name} 1`, Currency.ALEO.id, 0);
 
-    await waitForElementById("aleo-view-key-approve-screen", DEFAULT_TIMEOUT, {
-      checkVisibility: false,
-    });
+    await waitForElementById("aleo-view-key-approve-screen");
 
     await app.speculos.shareViewKey();
     await app.addAccount.tapCloseAddAccountCta();

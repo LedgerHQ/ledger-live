@@ -1,4 +1,4 @@
-import { buildLargeScreenUpsellCtaLink } from "./upsellCta";
+import { LARGE_SCREEN_UPSELL_MODAL_UTM_CONTENT, buildLargeScreenUpsellCtaLink } from "./upsellCta";
 
 export type LargeScreenUpsellVariant = "opted_in" | "opted_out";
 
@@ -39,6 +39,7 @@ export function buildLargeScreenUpsellContent({
   const primaryButtonLink = buildLargeScreenUpsellCtaLink(
     variant === "opted_in" ? optedInLink : optedOutLink,
     medium,
+    LARGE_SCREEN_UPSELL_MODAL_UTM_CONTENT,
   );
 
   const titleKey =
@@ -49,12 +50,16 @@ export function buildLargeScreenUpsellContent({
     variant === "opted_in"
       ? "largeScreenUpsellModal.optedIn.subtitle"
       : "largeScreenUpsellModal.optedOut.subtitle";
+  const ctaKey =
+    variant === "opted_in"
+      ? "largeScreenUpsellModal.optedIn.cta"
+      : "largeScreenUpsellModal.optedOut.cta";
 
   return {
     id,
     title: t(titleKey, { discount: discountPercentage }),
     subtitle: t(subtitleKey, { discount: discountPercentage }),
-    primaryButtonLabel: t("largeScreenUpsellModal.cta"),
+    primaryButtonLabel: t(ctaKey),
     primaryButtonLink,
     imageUrlLight,
     imageUrlDark,

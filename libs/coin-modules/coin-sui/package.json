@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-sui",
-  "version": "0.39.0",
+  "version": "0.44.0",
   "description": "Ledger Sui Coin integration",
   "keywords": [
     "Ledger",
@@ -156,20 +156,17 @@
   "dependencies": {
     "@0no-co/graphql.web": "^1.0.11",
     "@ledgerhq/coin-module-framework": "catalog:",
-    "@ledgerhq/cryptoassets": "workspace:^",
-    "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-app-sui": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
-    "@ledgerhq/live-promise": "workspace:^",
-    "@ledgerhq/logs": "workspace:^",
+    "@ledgerhq/logs": "catalog:",
     "@ledgerhq/types-live": "workspace:^",
     "@mysten/signers": "1.0.1",
     "@mysten/sui": "2.9.0",
     "bignumber.js": "^9.1.2",
     "gql.tada": "^1.9.2",
-    "lodash": "4.17.21",
+    "lodash": "catalog:",
     "rxjs": "catalog:"
   },
   "devDependencies": {
@@ -181,7 +178,7 @@
     "@swc/jest": "catalog:",
     "@types/invariant": "^2.2.2",
     "@types/jest": "catalog:",
-    "@types/lodash": "^4.14.191",
+    "@types/lodash": "catalog:",
     "@types/node": "catalog:",
     "graphql": "^16.10.0",
     "jest": "catalog:",

@@ -1,12 +1,9 @@
 import type { Balance } from "@ledgerhq/coin-module-framework/api/types";
-import { LedgerAPI4xx } from "@ledgerhq/errors";
 import BigNumber from "bignumber.js";
 import { type HederaCoinConfig } from "../config";
-import { HederaAddAccountError } from "../errors";
 import { apiClient } from "../network/api";
 import { getERC20BalancesForAccountV2 } from "../network/utils";
 import type { HederaERC20TokenBalance, HederaMirrorToken } from "../types";
-import { resolveConfig } from "./utils";
 
 function mapMirrorTokenToBalance(token: HederaMirrorToken, address: string): Balance {
   return {
@@ -30,32 +27,29 @@ function mapErc20TokenToBalance(token: HederaERC20TokenBalance, address: string)
   };
 }
 
-export async function getBalance({
-  config,
-  currencyId,
-  address,
-}: {
-  config?: HederaCoinConfig;
-  currencyId: string;
-  address: string;
-}): Promise<Balance[]> {
-  const coinConfig = resolveConfig(config ?? currencyId);
-
+export async function getBalance(
+  config: HederaCoinConfig,
+  {
+    address,
+  }: {
+    address: string;
+  },
+): Promise<Balance[]> {
   try {
     // Fetch only the specific staked node (or nothing at all for non-staking
     // accounts) instead of paginating the full /network/nodes list. The
     // validator lookup is chained on the account promise so it still runs
     // concurrently with the token fetches.
-    const mirrorAccountPromise = apiClient.getAccount({ configOrCurrencyId: coinConfig, address });
+    const mirrorAccountPromise = apiClient.getAccount({ configOrCurrencyId: config, address });
     const validatorPromise = mirrorAccountPromise.then(account =>
       typeof account.staked_node_id === "number" && account.staked_node_id >= 0
-        ? apiClient.getNode({ configOrCurrencyId: coinConfig, nodeId: account.staked_node_id })
+        ? apiClient.getNode({ configOrCurrencyId: config, nodeId: account.staked_node_id })
         : null,
     );
     const [mirrorAccount, mirrorTokens, erc20TokenBalances, validator] = await Promise.all([
       mirrorAccountPromise,
-      apiClient.getAccountTokens({ configOrCurrencyId: coinConfig, address }),
-      getERC20BalancesForAccountV2({ configOrCurrencyId: coinConfig, address }),
+      apiClient.getAccountTokens({ configOrCurrencyId: config, address }),
+      getERC20BalancesForAccountV2({ configOrCurrencyId: config, address }),
       validatorPromise,
     ]);
 
@@ -87,8 +81,10 @@ export async function getBalance({
 
     return [nativeBalance, ...tokenBalances];
   } catch (err) {
+    const errNamed = err as { name?: string; status?: number } | null | undefined;
     const isNonExistentAccount =
-      err instanceof HederaAddAccountError || (err instanceof LedgerAPI4xx && err.status === 404);
+      errNamed?.name === "HederaAddAccountError" ||
+      (errNamed?.name === "LedgerAPI4xx" && errNamed?.status === 404);
 
     if (isNonExistentAccount) {
       return [];

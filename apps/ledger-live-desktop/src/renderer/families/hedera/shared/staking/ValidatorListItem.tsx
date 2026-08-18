@@ -5,7 +5,8 @@ import styled from "styled-components";
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
 import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
 import type { HederaValidator } from "@ledgerhq/live-common/families/hedera/types";
-import type { CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { Unit } from "@domain/entity-currency-unit";
 import { Flex, Icons } from "@ledgerhq/react-ui";
 import Box from "~/renderer/components/Box";
 import ValidatorRow from "~/renderer/components/Delegation/ValidatorRow";
@@ -42,7 +43,7 @@ function ValidatorListItem({ validator, active, unit, currency, onClick }: Reado
       icon={<ValidatorIcon validator={validator} />}
       title={t("hedera.delegation.flow.steps.validator.rowTitle", {
         name: validator.name,
-        index: validator.nodeId,
+        index: validator.id,
       })}
       onExternalLink={onExternalLink}
       unit={unit}

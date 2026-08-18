@@ -7,6 +7,7 @@ import {
   SignedTransaction,
 } from "algosdk";
 
+import { getCoinConfig } from "./config";
 import { getTransactionParams } from "./network";
 import { extractTokenId } from "./tokens";
 import type { AlgorandAccount, Transaction } from "./types";
@@ -22,7 +23,7 @@ export const buildTransactionPayload = async (
 
   const note = memo ? new TextEncoder().encode(memo) : undefined;
 
-  const params = await getTransactionParams();
+  const params = await getTransactionParams(getCoinConfig());
   const suggestedParams = {
     ...params,
     firstValid: params.lastRound,

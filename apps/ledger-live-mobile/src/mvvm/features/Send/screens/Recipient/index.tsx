@@ -1,52 +1,13 @@
-import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { useNavigation } from "@react-navigation/native";
-import React, { useCallback, useMemo } from "react";
-import { ScreenName } from "~/const";
-import { useSendFlowActions, useSendFlowData } from "../../context/SendFlowContext";
-import { SendFlowNavigationProp } from "../../types";
-import { RecipientScreenView } from "./components/RecipientScreenView";
+import React from "react";
+import { RecipientScreenContainer } from "./components/RecipientScreenContainer";
+import { useRecipientScreenViewModel } from "./hooks/useRecipientScreenViewModel";
 
 export function RecipientScreen() {
-  const { state, uiConfig, recipientSearch } = useSendFlowData();
-  const { transaction } = useSendFlowActions();
-  const navigation = useNavigation<SendFlowNavigationProp>();
+  const viewModel = useRecipientScreenViewModel();
 
-  const account = state.account.account;
-  const parentAccount = state.account.parentAccount;
-
-  const currency: CryptoOrTokenCurrency | null = useMemo(() => {
-    if (state.account.currency) return state.account.currency;
-    return account ? getAccountCurrency(account) : null;
-  }, [state.account.currency, account]);
-
-  const goToAmount = useCallback(() => {
-    recipientSearch.clear();
-    navigation.navigate(ScreenName.SendFlowAmount);
-  }, [recipientSearch, navigation]);
-
-  const handleAddressSelected = useCallback(
-    (address: string, ensName?: string) => {
-      transaction.setRecipient({ address, ensName, memo: state.recipient?.memo });
-      recipientSearch.clear();
-      navigation.navigate(ScreenName.SendFlowAmount);
-    },
-    [transaction, state.recipient?.memo, recipientSearch, navigation],
-  );
-
-  if (!account || !currency) {
+  if (!viewModel.ready) {
     return null;
   }
 
-  return (
-    <RecipientScreenView
-      account={account}
-      parentAccount={parentAccount}
-      transaction={state.transaction.transaction}
-      currency={currency}
-      onAddressSelected={handleAddressSelected}
-      recipientSupportsDomain={uiConfig.recipientSupportsDomain}
-      onMemoProceed={goToAmount}
-    />
-  );
+  return <RecipientScreenContainer screenViewModel={viewModel} />;
 }

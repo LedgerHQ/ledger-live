@@ -1,11 +1,11 @@
 import invariant from "invariant";
-import React, { useEffect, useCallback, useState } from "react";
+import React, { useEffect, useCallback, useRef, useState } from "react";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
-import { DisconnectedDevice } from "@ledgerhq/errors";
+import { DisconnectedDevice } from "@ledgerhq/hw-transport/errors";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import useTheme from "~/renderer/hooks/useTheme";
@@ -28,9 +28,9 @@ import Modal from "~/renderer/components/Modal";
 import Alert from "~/renderer/components/Alert";
 import ModalBody from "~/renderer/components/Modal/ModalBody";
 import QRCode from "~/renderer/components/QRCode";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
-import { FeatureToggle, useFeature } from "@features/platform-feature-flags";
+import { FeatureToggle, useFeature, useFeatureFlags } from "@features/platform-feature-flags";
 import { LOCAL_STORAGE_KEY_PREFIX } from "./StepReceiveStakingFlow";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 
@@ -38,7 +38,7 @@ import { openModal } from "~/renderer/actions/modals";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useLLDCoinFamily } from "~/renderer/families";
 import { firstValueFrom } from "rxjs";
-import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
+import { getDefaultAccountName } from "@domain/entity-account-name";
 import { useMaybeAccountName } from "~/renderer/reducers/wallet";
 import { UTXOAddressAlert } from "~/renderer/components/UTXOAddressAlert";
 import { isUTXOCompliant } from "@ledgerhq/live-common/currencies/helpers";
@@ -67,11 +67,13 @@ const Receive1ShareAddress = ({
   name,
   address,
   showQRCodeModal,
+  suppressUTXOAlert,
 }: {
   account: Account;
   name: string;
   address: string;
   showQRCodeModal: () => void;
+  suppressUTXOAlert?: boolean;
 }) => {
   const { currency } = account;
 
@@ -79,7 +81,7 @@ const Receive1ShareAddress = ({
   const shouldRenderMemoTagInfo = currency.family && MEMO_TAG_COINS.includes(currency.family);
 
   return (
-    <>
+    <Box data-testid="receive-public-address-block" style={{ display: "contents" }}>
       <Box horizontal alignItems="center" flow={2} mb={4}>
         <Text
           style={{
@@ -107,7 +109,7 @@ const Receive1ShareAddress = ({
       </Box>
       <ReadOnlyAddressField address={address} />
 
-      {isUTXOCompliantCurrency && (
+      {isUTXOCompliantCurrency && !suppressUTXOAlert && (
         <Box mt={3}>
           <UTXOAddressAlert />
         </Box>
@@ -119,14 +121,14 @@ const Receive1ShareAddress = ({
           </Box>
         )}
       </FeatureToggle>
-    </>
+    </Box>
   );
 };
 const Receive2Device = ({ name, device }: { name: string; device: Device }) => {
   const type = useTheme().theme;
   return (
     <>
-      <Box horizontal alignItems="center" flow={2}>
+      <Box horizontal alignItems="center" flow={2} data-testid="receive-device-animation">
         <Text
           style={{
             flexShrink: "unset",
@@ -187,6 +189,7 @@ const StepReceiveFunds = (props: StepProps) => {
   const specific = useLLDCoinFamily(
     account ? getMainAccount(account, parentAccount)?.currency.family : undefined,
   );
+  const featureFlags = useFeatureFlags();
 
   const receiveStakingFlowConfig = useFeature("receiveStakingFlowConfigDesktop");
   const stakePrograms = useVersionedStakePrograms();
@@ -215,13 +218,18 @@ const StepReceiveFunds = (props: StepProps) => {
   const [modalVisible, setModalVisible] = useState(false);
   const hideQRCodeModal = useCallback(() => setModalVisible(false), [setModalVisible]);
   const showQRCodeModal = useCallback(() => setModalVisible(true), [setModalVisible]);
+  // `isAddressVerified` stays `null` for the whole device confirmation, so without this latch a
+  // re-render would start a concurrent verification and break the ongoing one.
+  const isConfirmingRef = useRef(false);
+
   const confirmAddress = useCallback(async () => {
+    if (isConfirmingRef.current) return;
+    isConfirmingRef.current = true;
     try {
       if (getEnv("MOCK")) {
-        setTimeout(() => {
-          onChangeAddressVerified(true);
-          transitionTo("receive");
-        }, 3000);
+        await new Promise(resolve => setTimeout(resolve, 3000));
+        onChangeAddressVerified(true);
+        transitionTo("receive");
       } else {
         if (!device) {
           throw new DisconnectedDevice();
@@ -240,6 +248,8 @@ const StepReceiveFunds = (props: StepProps) => {
     } catch (err) {
       onChangeAddressVerified(false, err as Error);
       hideQRCodeModal();
+    } finally {
+      isConfirmingRef.current = false;
     }
   }, [device, mainAccount, transitionTo, onChangeAddressVerified, hideQRCodeModal]);
 
@@ -308,17 +318,26 @@ const StepReceiveFunds = (props: StepProps) => {
   // custom family UI for StepReceiveFunds
   const CustomStepReceiveFunds = specific?.StepReceiveFunds;
 
-  // Families that own their confirm-address lifecycle opt out of the shared auto-trigger.
+  // Evaluated during render, so it must stay hook-free: the resolved family
+  // changes when the user switches account.
+  const customConfirmAddress = specific?.useCustomConfirmAddress;
+  const usesCustomConfirm =
+    typeof customConfirmAddress === "function"
+      ? customConfirmAddress(mainAccount, featureFlags)
+      : (customConfirmAddress ?? false);
+
   useEffect(() => {
-    if (specific?.useCustomConfirmAddress) return;
+    if (usesCustomConfirm) return;
     if (isAddressVerified === null) {
       confirmAddress();
     }
-  }, [specific?.useCustomConfirmAddress, isAddressVerified, confirmAddress]);
+  }, [usesCustomConfirm, isAddressVerified, confirmAddress]);
 
   if (CustomStepReceiveFunds) {
     return <CustomStepReceiveFunds {...props} />;
   }
+
+  const DeviceAnimationSlot = specific?.StepReceiveFundsDeviceAnimation;
 
   const CustomPostAlertReceiveFunds = specific?.StepReceiveFundsPostAlert;
 
@@ -368,6 +387,7 @@ const StepReceiveFunds = (props: StepProps) => {
                 name={name}
                 address={address}
                 showQRCodeModal={showQRCodeModal}
+                suppressUTXOAlert={usesCustomConfirm}
               />
               {CustomPostAlertReceiveFunds && <CustomPostAlertReceiveFunds {...props} />}
               <Alert type="security" learnMoreUrl={urls.recipientAddressInfo} mt={4}>
@@ -389,10 +409,21 @@ const StepReceiveFunds = (props: StepProps) => {
                 name={name}
                 address={address}
                 showQRCodeModal={showQRCodeModal}
+                suppressUTXOAlert={usesCustomConfirm}
               />
               {CustomPostAlertReceiveFunds && <CustomPostAlertReceiveFunds {...props} />}
-              <Separator />
-              <Receive2Device device={device} name={name} />
+              <>
+                <Separator />
+                {DeviceAnimationSlot ? (
+                  <DeviceAnimationSlot
+                    {...props}
+                    device={device}
+                    fallback={<Receive2Device device={device} name={name} />}
+                  />
+                ) : (
+                  <Receive2Device device={device} name={name} />
+                )}
+              </>
             </>
           ) : null // should not happen
         }

@@ -28,9 +28,14 @@ import {
 } from "./reducers/knownDevices";
 import type { FeatureFlagsState } from "@shared/feature-flags";
 import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
-import { ExportedWalletState } from "@ledgerhq/live-wallet/store";
+import { ExportedWalletState } from "~/reducers/wallet";
 import { type PersistedCAL } from "@domain/api-currency-token";
 import type { PersistedIdentities } from "@domain/entity-client-identity";
+import type { PayCardBalanceState } from "@features/flow-pay-card-balance/state";
+import type { PayCardFeatureTourState } from "@features/flow-pay-card-feature-tour/state";
+
+/** Persisted pay card blob: the tour flag and the balance filter, stored under one key. */
+type PayCardPersistedState = PayCardFeatureTourState & PayCardBalanceState;
 
 const ACCOUNTS_KEY = "accounts";
 const ACCOUNTS_KEY_SORT = "accounts.sort";
@@ -307,6 +312,14 @@ export function getMarketBannerState(): Promise<MarketBannerState | null> {
 
 export async function saveMarketBannerState(obj: MarketBannerState): Promise<void> {
   await storage.save("marketBanner", obj);
+}
+
+export function getPayCardState(): Promise<PayCardPersistedState | null> {
+  return storage.get("payCard") as Promise<PayCardPersistedState | null>;
+}
+
+export async function savePayCardState(obj: PayCardPersistedState): Promise<void> {
+  await storage.save("payCard", obj);
 }
 
 export function getTrustchainState(): Promise<TrustchainStore> {

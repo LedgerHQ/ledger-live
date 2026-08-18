@@ -1,11 +1,15 @@
 import { BalanceOptions } from "@ledgerhq/coin-module-framework/api/types";
-import { InvalidParameterError } from "@ledgerhq/errors";
 import { createApi } from ".";
-import { BoilerplateConfig } from "../config";
+import { type BoilerplateContext } from "../config";
+
+const context: BoilerplateContext = {
+  config: async () => ({ nodeUrl: "", minReserve: 0, status: { type: "active" } }),
+  logger: () => {},
+};
 
 describe("createApi", () => {
   it("should return every api methods", () => {
-    expect(createApi({} as BoilerplateConfig)).toEqual({
+    expect(createApi()).toEqual({
       broadcast: expect.any(Function),
       call: expect.any(Function),
       combine: expect.any(Function),
@@ -20,6 +24,7 @@ describe("createApi", () => {
       getValidators: expect.any(Function),
       lastBlock: expect.any(Function),
       listOperations: expect.any(Function),
+      register: expect.any(Function),
       validateAddress: expect.any(Function),
       validateIntent: expect.any(Function),
       getNextSequence: expect.any(Function),
@@ -29,10 +34,10 @@ describe("createApi", () => {
 
   describe("getBalance", () => {
     it("should throw an exception when options is provided", async () => {
-      const api = createApi({} as BoilerplateConfig);
+      const api = createApi();
       await expect(
-        api.getBalance("random address", {} as unknown as BalanceOptions),
-      ).rejects.toThrow(InvalidParameterError);
+        api.getBalance(context, "random address", {} as unknown as BalanceOptions),
+      ).rejects.toMatchObject({ name: "InvalidParameterError" });
     });
   });
 });

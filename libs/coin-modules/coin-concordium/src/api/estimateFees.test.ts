@@ -1,5 +1,13 @@
-import { TESTNET_COIN_CONFIG, VALID_ADDRESS, VALID_ADDRESS_2 } from "../test/fixtures";
+import {
+  createFixtureConfig,
+  createFixtureContext,
+  VALID_ADDRESS,
+  VALID_ADDRESS_2,
+} from "../test/fixtures";
 import { createApi } from ".";
+
+const context = createFixtureContext();
+const config = createFixtureConfig();
 
 jest.mock("../logic", () => ({
   craftTransaction: jest.fn(),
@@ -15,7 +23,7 @@ describe("api/estimateFees", () => {
   });
 
   it("should estimate fees for transaction with memo", async () => {
-    const api = createApi(TESTNET_COIN_CONFIG, "concordium_testnet");
+    const api = createApi("concordium_testnet");
     craftTransactionMock.mockResolvedValue({
       type: 22, // TransferWithMemo
       header: {
@@ -41,14 +49,14 @@ describe("api/estimateFees", () => {
       memo: { type: "string" as const, value: "fee test" },
     } as any;
 
-    const result = await api.estimateFees(transactionIntent);
+    const result = await api.estimateFees(context, transactionIntent);
 
-    expect(estimateFeesMock).toHaveBeenCalledWith("concordium_testnet", "fee test");
+    expect(estimateFeesMock).toHaveBeenCalledWith(config, "concordium_testnet", "fee test");
     expect(result).toEqual({ value: BigInt(1500) });
   });
 
   it("should estimate fees for transaction without memo", async () => {
-    const api = createApi(TESTNET_COIN_CONFIG, "concordium_testnet");
+    const api = createApi("concordium_testnet");
     craftTransactionMock.mockResolvedValue({
       type: 3, // Transfer
       header: {
@@ -72,7 +80,7 @@ describe("api/estimateFees", () => {
       asset: { type: "native", ticker: "CCD", id: "ccd" },
     } as any;
 
-    const result = await api.estimateFees(transactionIntent);
+    const result = await api.estimateFees(context, transactionIntent);
 
     expect(result).toEqual({ value: BigInt(1000) });
   });

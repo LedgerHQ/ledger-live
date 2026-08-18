@@ -1,4 +1,8 @@
-import { WalletAuthInvalidChallengeError, WalletAuthInvalidTokenError } from "../errors";
+import {
+  WalletAuthInvalidChallengeError,
+  WalletAuthInvalidTokenError,
+  WalletAuthMissingBaseUrlError,
+} from "../errors";
 import { AuthSDK } from "../authSDK";
 import type { AuthConfig, IdentityProvider, KeycloakService } from "../types";
 
@@ -8,15 +12,16 @@ function makeJwt(payload: Record<string, unknown>): string {
 }
 
 describe("AuthSDK", () => {
+  const KEYCLOAK_BASE_URL = "https://keycloak.test";
   const config: AuthConfig = {
     clientId: "ledger-keycloak",
-    keycloakBaseUrl: "https://keycloak.test",
+    keycloakBaseUrl: KEYCLOAK_BASE_URL,
     keycloakRealm: "ledger-bc-customers",
   };
 
   const keycloakService: jest.Mocked<KeycloakService> = {
-    baseUrl: config.keycloakBaseUrl,
-    realmBaseUrl: `${config.keycloakBaseUrl}/realms/${config.keycloakRealm}`,
+    baseUrl: KEYCLOAK_BASE_URL,
+    realmBaseUrl: `${KEYCLOAK_BASE_URL}/realms/${config.keycloakRealm}`,
     getChallenge: jest.fn(),
   };
 
@@ -37,6 +42,36 @@ describe("AuthSDK", () => {
       tokenType: "Bearer",
       accessToken: "keycloak-jwt",
     });
+  });
+
+  it("should retry authentication after the Keycloak URL becomes available", async () => {
+    const keycloakBaseUrl = jest
+      .fn<string | null, []>()
+      .mockReturnValueOnce(null)
+      .mockReturnValue(KEYCLOAK_BASE_URL);
+    const fetch = jest.fn<Promise<Response>, Parameters<typeof globalThis.fetch>>(async () =>
+      Response.json("challenge"),
+    );
+    const sdk = new AuthSDK(
+      { ...config, keycloakBaseUrl },
+      {
+        provider: identityProvider,
+        fetch,
+      },
+    );
+
+    await expect(sdk.withToken({ queryFn })).rejects.toBeInstanceOf(WalletAuthMissingBaseUrlError);
+    await expect(sdk.withToken({ queryFn })).resolves.toBeUndefined();
+
+    expect(fetch).toHaveBeenCalledTimes(1);
+    expect(String(fetch.mock.calls[0][0])).toContain(
+      `${KEYCLOAK_BASE_URL}/realms/${config.keycloakRealm}/protocol/openid-connect/auth`,
+    );
+    expect(identityProvider.authenticate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        redirectUri: `${KEYCLOAK_BASE_URL}/realms/${config.keycloakRealm}/broker/lkrp/endpoint`,
+      }),
+    );
   });
 
   it("retrieves a Keycloak JWT with PKCE by default", async () => {
@@ -148,7 +183,16 @@ describe("AuthSDK", () => {
       tokenType: "Bearer" as const,
     };
     const deferredToken = createDeferred<typeof token>();
-    identityProvider.authenticate.mockReturnValue(deferredToken.promise);
+    const challengeRequested = createDeferred<void>();
+    const authenticationRequested = createDeferred<void>();
+    keycloakService.getChallenge.mockImplementationOnce(() => {
+      challengeRequested.resolve();
+      return Promise.resolve("challenge");
+    });
+    identityProvider.authenticate.mockImplementationOnce(() => {
+      authenticationRequested.resolve();
+      return deferredToken.promise;
+    });
 
     const sdk = new AuthSDK(config, {
       provider: identityProvider,
@@ -157,8 +201,9 @@ describe("AuthSDK", () => {
 
     const first = sdk.withToken({ queryFn });
     const second = sdk.withToken({ queryFn });
+    await challengeRequested.promise;
+    await authenticationRequested.promise;
 
-    await waitForMicrotasks();
     expect(keycloakService.getChallenge).toHaveBeenCalledTimes(1);
     expect(identityProvider.authenticate).toHaveBeenCalledTimes(1);
 
@@ -287,10 +332,4 @@ function createDeferred<T>() {
   });
 
   return { promise, resolve };
-}
-
-function waitForMicrotasks(): Promise<void> {
-  return new Promise(resolve => {
-    setTimeout(resolve, 0);
-  });
 }

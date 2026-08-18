@@ -5,6 +5,10 @@ import type { MarketAssetChartDataRequestParams, MarketCoinDataChart } from "../
 import { useAssetChartData } from "./useMarketDataProvider";
 import { useResolveMarketCounterCurrency } from "./useResolveMarketCounterCurrency";
 
+type UseAssetChartDataInCounterValueParams = MarketAssetChartDataRequestParams & {
+  isCryptoCountervalue: boolean;
+};
+
 export type UseAssetChartDataInCounterValueResult = {
   data: MarketCoinDataChart | undefined;
   // Data for the current args only; undefined until they load. Read this (not
@@ -21,13 +25,14 @@ export type UseAssetChartDataInCounterValueResult = {
  * rescales by the USD->countervalue rate; supported fiats are passed through.
  */
 export function useAssetChartDataInCounterValue(
-  { id, counterCurrency, range }: MarketAssetChartDataRequestParams,
+  { id, counterCurrency, range, isCryptoCountervalue }: UseAssetChartDataInCounterValueParams,
   options?: { skip?: boolean },
 ): UseAssetChartDataInCounterValueResult {
   const { requestCounterCurrency, displayCounterCurrency, needsUsdFallback, isResolutionLoading } =
     useResolveMarketCounterCurrency({
       counterCurrency,
       fallbackForCryptoCountervalues: true,
+      isCryptoCountervalue,
     });
   const skipChart = options?.skip || isResolutionLoading;
 

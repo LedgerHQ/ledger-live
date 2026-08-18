@@ -1,5 +1,8 @@
 # @domain/api-push-devices
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 Domain API client for the **Push Devices Service** — the Ledger backend endpoint that associates a user's device push tokens with their userId. RTK Query endpoint and Redux middleware, typed on `@domain/entity-client-identity`.
 
 ## Responsibility

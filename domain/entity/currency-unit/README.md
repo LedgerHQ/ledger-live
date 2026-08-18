@@ -1,5 +1,8 @@
 # @domain/entity-currency-unit
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 Zod-first schema for the `Unit` value object.
 
 A `Unit` represents a denomination of a currency (e.g. BTC, mBTC, satoshi). It is a **value object** —

@@ -1,5 +1,5 @@
 import { BigNumber } from "bignumber.js";
-import type { Unit } from "@ledgerhq/types-cryptoassets";
+import type { Unit } from "./types";
 import {
   formatPrice,
   formatPriceFragment,
@@ -7,7 +7,7 @@ import {
   roundFiatPrice,
 } from "./priceFormat";
 
-// Matches what `getFiatCurrencyByTicker("USD").units[0]` returns (see @ledgerhq/cryptoassets/src/fiats.ts).
+// USD unit: magnitude 2, prefixCode true, showAllDigits true.
 const usdUnit: Unit = {
   code: "$",
   name: "US Dollar",

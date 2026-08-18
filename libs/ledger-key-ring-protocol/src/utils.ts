@@ -2,6 +2,18 @@ import { crypto } from "@ledgerhq/hw-ledger-key-ring-protocol";
 import type { KeyPair } from "@ledgerhq/hw-ledger-key-ring-protocol/Crypto";
 import type { MemberCredentials } from "./types";
 
+export function initMemberCredentials(): MemberCredentials {
+  const kp = crypto.randomKeypair();
+  return convertKeyPairToLiveCredentials(kp);
+}
+
+export function convertKeyPairToLiveCredentials(keyPair: KeyPair): MemberCredentials {
+  return {
+    pubkey: crypto.to_hex(keyPair.publicKey),
+    privatekey: crypto.to_hex(keyPair.privateKey),
+  };
+}
+
 export function convertLiveCredentialsToKeyPair(memberCredentials: MemberCredentials): KeyPair {
   return {
     publicKey: crypto.from_hex(memberCredentials.pubkey),

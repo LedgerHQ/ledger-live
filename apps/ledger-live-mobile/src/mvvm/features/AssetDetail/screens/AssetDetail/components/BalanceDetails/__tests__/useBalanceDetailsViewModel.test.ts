@@ -1,8 +1,8 @@
 import { renderHook, act } from "@tests/test-renderer";
 import BigNumber from "bignumber.js";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { TokenCurrencyIdSchema, type TokenCurrency } from "@domain/entity-currency-token";
 import type { AccountLike, DistributionItem } from "@ledgerhq/types-live";
 import {
   mockBtcCryptoCurrency,
@@ -34,7 +34,8 @@ jest.mock("LLM/features/Stake", () => ({
 
 const mockUseInterestRatesByCurrencies = jest.fn().mockReturnValue({});
 
-jest.mock("@ledgerhq/live-common/dada-client/hooks/useInterestRatesByCurrencies", () => ({
+jest.mock("@features/platform-aggregated-assets", () => ({
+  ...jest.requireActual("@features/platform-aggregated-assets"),
   useInterestRatesByCurrencies: (currencies: unknown) =>
     mockUseInterestRatesByCurrencies(currencies),
 }));
@@ -99,7 +100,7 @@ describe("useBalanceDetailsViewModel", () => {
     const algorandCurrency = getCryptoCurrencyById("algorand");
     const usdtEthToken: TokenCurrency = {
       type: "TokenCurrency",
-      id: "ethereum/erc20/usd_tether__erc20_",
+      id: TokenCurrencyIdSchema.parse("ethereum/erc20/usd_tether__erc20_"),
       contractAddress: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
       parentCurrencyId: mockEthCryptoCurrency.id,
       tokenType: "erc20",
@@ -109,7 +110,7 @@ describe("useBalanceDetailsViewModel", () => {
     };
     const usdtAlgoToken: TokenCurrency = {
       type: "TokenCurrency",
-      id: "algorand/asa/312769",
+      id: TokenCurrencyIdSchema.parse("algorand/asa/312769"),
       contractAddress: "312769",
       parentCurrencyId: algorandCurrency.id,
       tokenType: "asa",

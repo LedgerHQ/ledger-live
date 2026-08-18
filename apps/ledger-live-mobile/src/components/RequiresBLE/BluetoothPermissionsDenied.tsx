@@ -4,7 +4,7 @@ import { useTranslation } from "~/context/Locale";
 import { Linking } from "react-native";
 import GenericInformationalDrawerContent from "../GenericInformationalDrawerContent";
 import GenericInformationalView from "../GenericInformationalView";
-import IsInDrawerContext from "~/context/IsInDrawerContext";
+import { IsInBottomSheetContext } from "@shared/ui-queued-bottom-sheet";
 
 type Props = {
   onRetry?: (() => void) | null;
@@ -28,7 +28,7 @@ const BluetoothPermissionsDenied: React.FC<Props> = ({
   forceOpenSettings = false,
 }) => {
   const { t } = useTranslation();
-  const { isInDrawer } = useContext(IsInDrawerContext);
+  const { isInBottomSheet } = useContext(IsInBottomSheetContext);
   const openNativeSettings = useCallback(() => {
     Linking.openSettings();
   }, []);
@@ -50,7 +50,7 @@ const BluetoothPermissionsDenied: React.FC<Props> = ({
     buttonEvent = "BluetoothPermissionDeniedRetryAuthorize";
   }
 
-  if (isInDrawer) {
+  if (isInBottomSheet) {
     return (
       <GenericInformationalDrawerContent
         icon={<Icon name="Bluetooth" size={30} color="neutral.c100" />}

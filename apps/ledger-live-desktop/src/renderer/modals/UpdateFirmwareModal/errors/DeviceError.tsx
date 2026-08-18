@@ -5,12 +5,6 @@ import { useNavigate } from "react-router";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import { context } from "~/renderer/drawers/Provider";
 import UpdateFirmwareError from ".";
-import { LockedDeviceError, UserRefusedFirmwareUpdate } from "@ledgerhq/errors";
-import {
-  ImageCommitRefusedOnDevice,
-  ImageLoadRefusedOnDevice,
-  LanguageInstallRefusedOnDevice,
-} from "@ledgerhq/live-common/errors";
 
 type Props = {
   error: Error;
@@ -33,18 +27,18 @@ const DeviceCancel = ({
   const onCloseReload = useCallback(() => {
     onDrawerClose();
 
-    if (error instanceof UserRefusedFirmwareUpdate && shouldReloadManagerOnCloseIfUpdateRefused) {
+    if (error?.name === "UserRefusedFirmwareUpdate" && shouldReloadManagerOnCloseIfUpdateRefused) {
       navigate("/manager/reload");
       setDrawer();
     }
   }, [error, navigate, onDrawerClose, setDrawer, shouldReloadManagerOnCloseIfUpdateRefused]);
 
-  const isUserRefusedFirmwareUpdate = error instanceof UserRefusedFirmwareUpdate;
-  const isDeviceLockedError = error instanceof LockedDeviceError;
+  const isUserRefusedFirmwareUpdate = error?.name === "UserRefusedFirmwareUpdate";
+  const isDeviceLockedError = error?.name === "LockedDeviceError";
   const isRestoreStepRefusedOnDevice =
-    error instanceof ImageLoadRefusedOnDevice ||
-    error instanceof ImageCommitRefusedOnDevice ||
-    error instanceof LanguageInstallRefusedOnDevice;
+    error?.name === "ImageLoadRefusedOnDevice" ||
+    error?.name === "ImageCommitRefusedOnDevice" ||
+    error?.name === "LanguageInstallRefusedOnDevice";
   const isRetryableError =
     isUserRefusedFirmwareUpdate || isDeviceLockedError || isRestoreStepRefusedOnDevice;
 

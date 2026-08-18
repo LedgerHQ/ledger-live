@@ -50,6 +50,72 @@ export interface BlockInfoResponse {
  */
 export type BlocksAtHeightResponse = string[];
 
+/**
+ * Concordium address as serialized by the node inside transaction events.
+ * Account addresses carry a base58 string; contract addresses carry an index/subindex pair.
+ */
+export type ConcordiumEventAddress =
+  | { type: "AddressAccount"; address: string }
+  | { type: "AddressContract"; address: { index: number; subindex: number } };
+
+/**
+ * A single event inside a successful transaction result. Only transfer-related
+ * tags are modelled explicitly; every other event is kept as an opaque tagged
+ * object so the tag-based mapper can ignore it (PLT/staking tags added later).
+ */
+export interface TransactionEvent {
+  tag: string;
+  [key: string]: unknown;
+}
+
+/**
+ * A native CCD transfer event.
+ */
+export interface TransferredEvent extends TransactionEvent {
+  tag: "Transferred";
+  amount: string; // microCCD as a string
+  from: ConcordiumEventAddress;
+  to: ConcordiumEventAddress;
+}
+
+/**
+ * A memo event. A `transferWithMemo` transaction emits both a `Transferred` and a
+ * separate `TransferMemo` event within the same summary; the memo is hex-encoded CBOR.
+ */
+export interface TransferMemoEvent extends TransactionEvent {
+  tag: "TransferMemo";
+  memo: string; // hex-encoded CBOR
+}
+
+/**
+ * Outcome of a transaction in a block. Rejected transactions still paid fees but
+ * produced no effective balance changes.
+ */
+export type BlockTransactionResult =
+  | { outcome: "success"; events: TransactionEvent[] }
+  | { outcome: "reject"; rejectReason?: { tag: string; contents?: unknown } };
+
+/**
+ * A transaction summary as returned by /v0/blockTransactionEvents/{blockHash}.
+ * This is the raw node `TransactionSummary` shape (structured, tagged events),
+ * distinct from the flattened /v3/accTransactions shape used by listOperations.
+ */
+export interface BlockTransactionSummary {
+  hash: string;
+  sender: string | null;
+  cost: string; // microCCD as a string
+  energyCost?: number;
+  index?: number;
+  type?: { type: string; contents?: string };
+  result: BlockTransactionResult;
+}
+
+/**
+ * Response from /v0/blockTransactionEvents/{blockHash}.
+ * An array of transaction summaries; empty for blocks with no transactions.
+ */
+export type BlockTransactionEventsResponse = BlockTransactionSummary[];
+
 export interface TransactionQueryParams {
   limit?: number;
   order?: "a" | "d"; // ascending or descending

@@ -21,7 +21,6 @@ import {
   getFirstMatchedDeviceFromDiscoveryEvent,
   buildDisplayedDevices,
 } from "./utils";
-import { dmkToLedgerDeviceIdMap } from "../config/dmkToLedgerDeviceIdMap";
 
 const WAITING_FOR_SELECTED_DEVICE_TIMEOUT = 30000;
 
@@ -181,7 +180,7 @@ const createConnectDeviceStateMachine = <
           devices: buildDisplayedDevices(context.knownDevices, context.matchedDevices, self.send),
         });
       },
-      emitWaitingForSelectedDevice: ({ context, self }) => {
+      emitWaitingForSelectedDevice: ({ context }) => {
         context.observer.next({
           type: ConnectDeviceUIStateTypes.WaitingForSelectedDevice,
           device: context.selectedKnownDevice!,
@@ -228,8 +227,7 @@ const createConnectDeviceStateMachine = <
           sessionId: context.sessionId!,
           connectedDevice,
           dmk: context.dmk,
-          compatDeviceId: connectedDevice.id,
-          compatDeviceModelId: dmkToLedgerDeviceIdMap[connectedDevice.modelId],
+          compatDeviceId: context.buildCompatDeviceId?.(connectedDevice) ?? connectedDevice.id,
           compatDeviceName: connectedDevice.name,
           compatDeviceWired: connectedDevice.type === "USB",
         });

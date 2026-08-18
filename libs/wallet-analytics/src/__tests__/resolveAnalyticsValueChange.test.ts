@@ -1,4 +1,4 @@
-import { getFiatCurrencyByTicker } from "@ledgerhq/cryptoassets";
+import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 import { resolveAnalyticsValueChange } from "../resolveAnalyticsValueChange";
 

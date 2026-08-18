@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-network",
-  "version": "2.6.7",
+  "version": "3.0.0",
   "description": "Ledger Live network and cache utilities",
   "keywords": [
     "Ledger"
@@ -30,10 +30,18 @@
       "*": [
         "lib/*",
         "lib/batcher/*"
+      ],
+      "errors": [
+        "lib/errors"
       ]
     }
   },
   "exports": {
+    "./errors": {
+      "@ledgerhq/source": "./src/errors.ts",
+      "require": "./lib/errors.js",
+      "default": "./lib-es/errors.js"
+    },
     "./lib/*": "./lib/*.js",
     "./lib/*.js": "./lib/*.js",
     "./lib-es/*": "./lib-es/*.js",
@@ -67,17 +75,18 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "@ledgerhq/errors": "workspace:^",
-    "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-promise": "workspace:^",
-    "@ledgerhq/logs": "workspace:^",
-    "axios": "catalog:",
+    "@ledgerhq/logs": "catalog:",
     "lru-cache": "^7.14.1"
+  },
+  "peerDependencies": {
+    "axios": "catalog:"
   },
   "devDependencies": {
     "@types/invariant": "^2.2.35",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
+    "axios": "catalog:",
     "jest": "catalog:",
     "@swc/jest": "catalog:",
     "@swc/core": "catalog:"

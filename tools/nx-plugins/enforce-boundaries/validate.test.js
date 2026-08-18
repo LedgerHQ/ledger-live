@@ -9,6 +9,7 @@ const {
   findViolations,
   findSourceImportViolations,
   collectLegacyPackageNames,
+  findBannedDependencyViolations,
 } = require("./validate");
 
 /**
@@ -355,14 +356,14 @@ test("collectLegacyPackageNames skips nodes without scope:libs tag", t => {
 
 test("import from legacy in-repo package is flagged", t => {
   const root = makeTmpWorkspace({
-    "shared/utils/src/index.ts": 'import { something } from "@ledgerhq/errors";',
+    "shared/utils/src/index.ts": 'import { something } from "@ledgerhq/logs";',
   });
   t.after(() => fs.rmSync(root, { recursive: true, force: true }));
-  const legacy = new Set(["@ledgerhq/errors"]);
+  const legacy = new Set(["@ledgerhq/logs"]);
   const violations = findSourceImportViolations(root, legacy);
   assert.equal(violations.length, 1);
   assert.ok(violations[0].file.includes("index.ts"));
-  assert.equal(violations[0].specifier, "@ledgerhq/errors");
+  assert.equal(violations[0].specifier, "@ledgerhq/logs");
 });
 
 test("import from external @ledgerhq/* (not in legacy set) is not flagged", t => {
@@ -370,7 +371,7 @@ test("import from external @ledgerhq/* (not in legacy set) is not flagged", t =>
     "features/ui/src/Banner.tsx": 'import { Box } from "@ledgerhq/lumen-ui-rnative";',
   });
   t.after(() => fs.rmSync(root, { recursive: true, force: true }));
-  const legacy = new Set(["@ledgerhq/errors"]); // lumen not in the set
+  const legacy = new Set(["@ledgerhq/logs"]); // lumen not in the set
   const violations = findSourceImportViolations(root, legacy);
   assert.equal(violations.length, 0);
 });
@@ -399,13 +400,13 @@ test("dynamic import() of legacy package is flagged", t => {
 
 test("sub-path import is matched by package name", t => {
   const root = makeTmpWorkspace({
-    "shared/utils/src/index.ts": 'import type { Foo } from "@ledgerhq/errors/types";',
+    "shared/utils/src/index.ts": 'import type { Foo } from "@ledgerhq/logs/types";',
   });
   t.after(() => fs.rmSync(root, { recursive: true, force: true }));
-  const legacy = new Set(["@ledgerhq/errors"]);
+  const legacy = new Set(["@ledgerhq/logs"]);
   const violations = findSourceImportViolations(root, legacy);
   assert.equal(violations.length, 1);
-  assert.equal(violations[0].specifier, "@ledgerhq/errors/types");
+  assert.equal(violations[0].specifier, "@ledgerhq/logs/types");
 });
 
 test("relative import resolving into libs/ is flagged", t => {
@@ -431,7 +432,7 @@ test("relative import NOT resolving into libs/ is not flagged", t => {
 
 test("files in node_modules/ under new-arch roots are skipped", t => {
   const root = makeTmpWorkspace({
-    "shared/utils/node_modules/@ledgerhq/errors/index.ts":
+    "shared/utils/node_modules/@ledgerhq/logs/index.ts":
       'import something from "@ledgerhq/live-common";',
   });
   t.after(() => fs.rmSync(root, { recursive: true, force: true }));
@@ -442,24 +443,59 @@ test("files in node_modules/ under new-arch roots are skipped", t => {
 
 test("files in dist/ under new-arch roots are skipped", t => {
   const root = makeTmpWorkspace({
-    "domain/entity/foo/dist/index.js": 'const x = require("@ledgerhq/errors");',
+    "domain/entity/foo/dist/index.js": 'const x = require("@ledgerhq/logs");',
   });
   t.after(() => fs.rmSync(root, { recursive: true, force: true }));
-  const legacy = new Set(["@ledgerhq/errors"]);
+  const legacy = new Set(["@ledgerhq/logs"]);
   const violations = findSourceImportViolations(root, legacy);
   assert.equal(violations.length, 0);
 });
 
 test("multiple violations across different layers are all reported", t => {
   const root = makeTmpWorkspace({
-    "shared/a/src/index.ts": 'import { x } from "@ledgerhq/errors";',
+    "shared/a/src/index.ts": 'import { x } from "@ledgerhq/logs";',
     "domain/entity/b/src/index.ts": 'import { y } from "@ledgerhq/live-common";',
-    "features/flow/c/src/index.ts": 'import { z } from "@ledgerhq/errors";',
+    "features/flow/c/src/index.ts": 'import { z } from "@ledgerhq/logs";',
   });
   t.after(() => fs.rmSync(root, { recursive: true, force: true }));
-  const legacy = new Set(["@ledgerhq/errors", "@ledgerhq/live-common"]);
+  const legacy = new Set(["@ledgerhq/logs", "@ledgerhq/live-common"]);
   const violations = findSourceImportViolations(root, legacy);
   assert.equal(violations.length, 3);
+});
+
+test("findViolations: BOUNDARY_EXCEPTIONS skips an otherwise-forbidden edge", () => {
+  const graph = {
+    nodes: {
+      "shared/live-env": { data: { root: "shared/live-env", tags: ["scope:shared"] } },
+      "libs/env": { data: { root: "libs/env", tags: ["scope:libs", "scope:libs-non-ui"] } },
+    },
+    dependencies: {
+      "shared/live-env": [{ target: "libs/env" }],
+      "libs/env": [],
+    },
+  };
+  const exceptions = [
+    { sourceRoot: "shared/live-env", targetRoot: "libs/env", allowedImport: "@ledgerhq/live-env" },
+  ];
+  assert.deepEqual(findViolations(graph, exceptions), []);
+  // Without the exception it would fire:
+  assert.equal(findViolations(graph, []).length, 1);
+});
+
+test("findSourceImportViolations: BOUNDARY_EXCEPTIONS suppresses allowed import", t => {
+  const root = makeTmpWorkspace({
+    "shared/live-env/src/index.ts": 'import { injectDefinitions } from "@ledgerhq/live-env";',
+    "shared/other/src/index.ts": 'import { getEnv } from "@ledgerhq/live-env";',
+  });
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const legacy = new Set(["@ledgerhq/live-env"]);
+  const exceptions = [
+    { sourceRoot: "shared/live-env", targetRoot: "libs/env", allowedImport: "@ledgerhq/live-env" },
+  ];
+  const violations = findSourceImportViolations(root, legacy, exceptions);
+  // shared/other is NOT excepted — only shared/live-env is
+  assert.equal(violations.length, 1);
+  assert.ok(violations[0].file.includes("shared/other"));
 });
 
 test("no violations in a clean workspace", t => {
@@ -469,7 +505,88 @@ test("no violations in a clean workspace", t => {
     "features/flow/c/src/index.ts": 'import { Box } from "@ledgerhq/lumen-ui-rnative";',
   });
   t.after(() => fs.rmSync(root, { recursive: true, force: true }));
-  const legacy = new Set(["@ledgerhq/errors"]); // lumen not in set
+  const legacy = new Set(["@ledgerhq/logs"]); // lumen not in set
   const violations = findSourceImportViolations(root, legacy);
   assert.equal(violations.length, 0);
+});
+
+const BANNED = [{ name: "@ledgerhq/banned", reason: "frozen" }];
+
+/** @param {Record<string, object>} manifests keyed by project root */
+function bannedDepGraph(manifests) {
+  return {
+    nodes: Object.fromEntries(Object.keys(manifests).map(root => [root, { data: { root } }])),
+    dependencies: {},
+  };
+}
+
+test("findBannedDependencyViolations flags a banned dependency", t => {
+  const manifests = {
+    "libs/a": { name: "@ledgerhq/a", dependencies: { "@ledgerhq/banned": "workspace:^" } },
+  };
+  const root = makeTmpWorkspace({
+    "libs/a/package.json": JSON.stringify(manifests["libs/a"]),
+  });
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const violations = findBannedDependencyViolations(bannedDepGraph(manifests), root, BANNED);
+  assert.equal(violations.length, 1);
+  assert.equal(violations[0].manifest, path.join("libs/a", "package.json"));
+  assert.equal(violations[0].dependency, "@ledgerhq/banned");
+  assert.equal(violations[0].field, "dependencies");
+});
+
+test("findBannedDependencyViolations covers every dependency field", t => {
+  const manifests = {
+    "libs/a": { name: "@ledgerhq/a", devDependencies: { "@ledgerhq/banned": "workspace:^" } },
+    "libs/b": { name: "@ledgerhq/b", peerDependencies: { "@ledgerhq/banned": "^6.0.0" } },
+    // optionalDependencies is a real escape hatch: 10 manifests in this repo use it
+    "libs/c": { name: "@ledgerhq/c", optionalDependencies: { "@ledgerhq/banned": "workspace:^" } },
+  };
+  const root = makeTmpWorkspace({
+    "libs/a/package.json": JSON.stringify(manifests["libs/a"]),
+    "libs/b/package.json": JSON.stringify(manifests["libs/b"]),
+    "libs/c/package.json": JSON.stringify(manifests["libs/c"]),
+  });
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const violations = findBannedDependencyViolations(bannedDepGraph(manifests), root, BANNED);
+  assert.equal(violations.length, 3);
+  assert.deepEqual(violations.map(v => v.field).sort(), [
+    "devDependencies",
+    "optionalDependencies",
+    "peerDependencies",
+  ]);
+});
+
+test("findBannedDependencyViolations skips the banned package's own manifest", t => {
+  const manifests = {
+    "libs/banned": { name: "@ledgerhq/banned", dependencies: { "@ledgerhq/banned": "1.0.0" } },
+  };
+  const root = makeTmpWorkspace({
+    "libs/banned/package.json": JSON.stringify(manifests["libs/banned"]),
+  });
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  assert.deepEqual(findBannedDependencyViolations(bannedDepGraph(manifests), root, BANNED), []);
+});
+
+test("findBannedDependencyViolations is a no-op with no banned packages", t => {
+  const manifests = {
+    "libs/a": { name: "@ledgerhq/a", dependencies: { "@ledgerhq/banned": "workspace:^" } },
+  };
+  const root = makeTmpWorkspace({
+    "libs/a/package.json": JSON.stringify(manifests["libs/a"]),
+  });
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  assert.deepEqual(findBannedDependencyViolations(bannedDepGraph(manifests), root, []), []);
+});
+
+test("findBannedDependencyViolations ignores unrelated dependencies and missing manifests", t => {
+  const manifests = {
+    "libs/a": { name: "@ledgerhq/a", dependencies: { "@ledgerhq/logs": "workspace:^" } },
+    "libs/gone": { name: "@ledgerhq/gone" },
+  };
+  const root = makeTmpWorkspace({
+    "libs/a/package.json": JSON.stringify(manifests["libs/a"]),
+  });
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  assert.deepEqual(findBannedDependencyViolations(bannedDepGraph(manifests), root, BANNED), []);
 });

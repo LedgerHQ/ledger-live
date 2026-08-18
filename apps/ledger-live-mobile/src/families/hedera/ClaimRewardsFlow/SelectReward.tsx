@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import invariant from "invariant";
 import { useTheme } from "@react-navigation/native";
 import { View, StyleSheet } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "~/components/SafeAreaView";
 import { HEDERA_TRANSACTION_MODES } from "@ledgerhq/live-common/families/hedera/constants";
 import type { HederaEnrichedDelegation } from "@ledgerhq/live-common/families/hedera/types";
 import { TrackScreen } from "~/analytics";

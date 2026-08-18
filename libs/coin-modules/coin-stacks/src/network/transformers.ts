@@ -1,4 +1,4 @@
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { FungibleTokenMetadataResponse, TransactionResponse } from "../types/api";
 
 // Extracts token transfer transactions from a transaction list

@@ -2,7 +2,6 @@ import { fiat } from "../define";
 
 export const xcd = fiat({
   type: "FiatCurrency",
-  id: "xcd",
   ticker: "XCD",
   name: "East Caribbean Dollar",
   symbol: "$",

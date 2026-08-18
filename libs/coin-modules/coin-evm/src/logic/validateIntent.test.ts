@@ -6,26 +6,28 @@ import type {
 } from "@ledgerhq/coin-module-framework/api/types";
 import {
   AmountRequired,
-  ClaimRewardsFeesWarning,
-  ETHAddressNonEIP,
   FeeNotLoaded,
   FeeTooHigh,
-  GasLessThanEstimate,
   InvalidAddress,
-  MaxFeeTooLow,
   NotEnoughBalance,
+  RecipientRequired,
+} from "@ledgerhq/coin-module-framework/errors";
+import {
+  ClaimRewardsFeesWarning,
+  ETHAddressNonEIP,
+  GasLessThanEstimate,
+  GasPriceTooLow,
+  MaxFeeTooLow,
   NotEnoughGas,
   PriorityFeeHigherThanMaxFee,
   PriorityFeeTooHigh,
   PriorityFeeTooLow,
-  RecipientRequired,
+  RecipientIsNewAccount,
   RedelegateDstValAddressRequired,
   ValAddressRequired,
-} from "@ledgerhq/errors";
-import { GasPriceTooLow } from "../errors";
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+} from "../errors";
 import BigNumber from "bignumber.js";
-import { EvmCoinConfig, setCoinConfig } from "../config";
+import { createContext, EvmCoinConfig, setCoinConfig } from "../config";
 import ledgerExplorer from "../network/explorer/ledger";
 import ledgerGasTracker from "../network/gasTracker/ledger";
 import { getNodeApi } from "../network/node";
@@ -106,6 +108,7 @@ describe("validateIntent", () => {
       () =>
         ({
           info: {
+            name: "Ethereum",
             node: { type: "ledger", explorerId: "eth" },
             explorer: { type: "ledger" },
             gasTracker: { type: "ledger", explorerId: "eth" },
@@ -168,7 +171,8 @@ describe("validateIntent", () => {
       ["does not warn", "erc20", {}],
     ])("%s with too high fees on a %s asset", async (_s, assetType, expectedWarnings) => {
       const res = await validateIntent(
-        {} as CryptoCurrency,
+        createContext(),
+        "ethereum",
         eip1559Intent({
           amount: 1n,
           asset: { type: assetType },
@@ -187,7 +191,8 @@ describe("validateIntent", () => {
   describe("recipient", () => {
     it("detects the missing recipient with an error", async () => {
       const res = await validateIntent(
-        {} as CryptoCurrency,
+        createContext(),
+        "ethereum",
         eip1559Intent({ amount: 1n, recipient: "" }),
         [{ value: 50n, asset: { type: "native" } }],
       );
@@ -201,7 +206,8 @@ describe("validateIntent", () => {
 
     it("detects the incorrect recipient not being an eth address with an error", async () => {
       const res = await validateIntent(
-        { name: "Ethereum" } as CryptoCurrency,
+        createContext(),
+        "ethereum",
         eip1559Intent({ amount: 1n, recipient: "invalid-address" }),
         [{ value: 50n, asset: { type: "native" } }],
       );
@@ -217,7 +223,8 @@ describe("validateIntent", () => {
 
     it("detects the recipient being an ICAP with an error", async () => {
       const res = await validateIntent(
-        { name: "Ethereum" } as CryptoCurrency,
+        createContext(),
+        "ethereum",
         eip1559Intent({
           amount: 1n,
           recipient: "XE89MW3Y75UITCQ4F53YDKR25UFLB1640YM", // ICAP version of recipient address
@@ -233,9 +240,102 @@ describe("validateIntent", () => {
       );
     });
 
+    describe("new account recipient (EIP-8037)", () => {
+      const RECIPIENT = "0xe2ca7390e76c5A992749bB622087310d2e63ca29";
+
+      function nativeSendToRecipient(overrides = {}) {
+        return validateIntent(
+          createContext(),
+          "ethereum",
+          eip1559Intent({ amount: 1n, recipient: RECIPIENT, ...overrides }),
+          [{ value: 50n, asset: { type: "native" } }],
+          { value: 0n, parameters: { gasLimit: 21000n, maxFeePerGas: 1n } },
+        );
+      }
+
+      it("warns when the recipient has no balance and no nonce", async () => {
+        nodeApiMock.getCoinBalance.mockResolvedValue(new BigNumber(0));
+        nodeApiMock.getTransactionCount.mockResolvedValue(0);
+
+        const res = await nativeSendToRecipient();
+
+        expect(res.warnings).toEqual(
+          expect.objectContaining({ amount: new RecipientIsNewAccount() }),
+        );
+        expect(res.errors).not.toEqual(
+          expect.objectContaining({ amount: expect.any(RecipientIsNewAccount) }),
+        );
+      });
+
+      it("does not warn for an emptied account, which has a nonce", async () => {
+        nodeApiMock.getCoinBalance.mockResolvedValue(new BigNumber(0));
+        nodeApiMock.getTransactionCount.mockResolvedValue(4);
+
+        const res = await nativeSendToRecipient();
+
+        expect(res.warnings).not.toEqual(expect.objectContaining({ amount: expect.anything() }));
+      });
+
+      it("does not warn when the recipient holds a balance", async () => {
+        nodeApiMock.getCoinBalance.mockResolvedValue(new BigNumber(10));
+        nodeApiMock.getTransactionCount.mockResolvedValue(0);
+
+        const res = await nativeSendToRecipient();
+
+        expect(res.warnings).not.toEqual(expect.objectContaining({ amount: expect.anything() }));
+      });
+
+      it("does not probe the recipient on a token transfer", async () => {
+        nodeApiMock.getCoinBalance.mockResolvedValue(new BigNumber(0));
+        nodeApiMock.getTransactionCount.mockResolvedValue(0);
+
+        const res = await nativeSendToRecipient({
+          asset: { type: "erc20", assetReference: RECIPIENT },
+        });
+
+        expect(res.warnings).not.toEqual(expect.objectContaining({ amount: expect.anything() }));
+        expect(nodeApiMock.getCoinBalance).not.toHaveBeenCalled();
+      });
+
+      it("does not probe the recipient when the amount is zero", async () => {
+        const res = await nativeSendToRecipient({ amount: 0n });
+
+        expect(nodeApiMock.getCoinBalance).not.toHaveBeenCalled();
+        expect(res.warnings).not.toEqual(expect.objectContaining({ amount: expect.anything() }));
+      });
+
+      it("stays silent and does not throw when the node is unreachable", async () => {
+        nodeApiMock.getCoinBalance.mockRejectedValue(new Error("node down"));
+        nodeApiMock.getTransactionCount.mockResolvedValue(0);
+
+        const res = await nativeSendToRecipient();
+
+        expect(res.warnings).not.toEqual(expect.objectContaining({ amount: expect.anything() }));
+      });
+
+      it("leaves the fees and gas limit untouched", async () => {
+        nodeApiMock.getCoinBalance.mockResolvedValue(new BigNumber(10));
+        nodeApiMock.getTransactionCount.mockResolvedValue(2);
+        const withoutWarning = await nativeSendToRecipient();
+
+        nodeApiMock.getCoinBalance.mockResolvedValue(new BigNumber(0));
+        nodeApiMock.getTransactionCount.mockResolvedValue(0);
+        const withWarning = await nativeSendToRecipient();
+
+        expect(withWarning.warnings).toEqual(
+          expect.objectContaining({ amount: new RecipientIsNewAccount() }),
+        );
+        expect(withoutWarning.totalFees).toEqual(expect.any(BigInt));
+        expect(withWarning.totalFees).toEqual(withoutWarning.totalFees);
+        expect(withWarning.estimatedFees).toEqual(withoutWarning.estimatedFees);
+        expect(withWarning.amount).toEqual(withoutWarning.amount);
+      });
+    });
+
     it("detects the recipient not being an EIP55 address with a warning", async () => {
       const res = await validateIntent(
-        { name: "Ethereum" } as CryptoCurrency,
+        createContext(),
+        "ethereum",
         eip1559Intent({
           amount: 1n,
           recipient: "0xe2ca7390e76c5a992749bb622087310d2e63ca29",
@@ -254,7 +354,8 @@ describe("validateIntent", () => {
   describe("amount", () => {
     it("detects an intent for a smart contract interaction without amount-related errors", async () => {
       const res = await validateIntent(
-        {} as CryptoCurrency,
+        createContext(),
+        "ethereum",
         eip1559Intent({
           amount: 0n,
           asset: { type: "native" },
@@ -272,7 +373,8 @@ describe("validateIntent", () => {
 
     it("detects an intent for native asset sending without amount with an error", async () => {
       const res = await validateIntent(
-        {} as CryptoCurrency,
+        createContext(),
+        "ethereum",
         eip1559Intent({
           amount: 0n,
           asset: { type: "native" },
@@ -291,7 +393,8 @@ describe("validateIntent", () => {
       nodeApiMock.getTransactionCount.mockResolvedValue(10);
 
       const res = await validateIntent(
-        {} as CryptoCurrency,
+        createContext(),
+        "ethereum",
         eip1559Intent({
           recipient: "0xe2ca7390e76c5A992749bB622087310d2e63ca29",
           amount: 0n,
@@ -309,7 +412,8 @@ describe("validateIntent", () => {
 
     it("detects native asset sending intent with an error", async () => {
       const res = await validateIntent(
-        {} as CryptoCurrency,
+        createContext(),
+        "ethereum",
         eip1559Intent({
           amount: 20n,
           asset: { type: "native" },
@@ -342,7 +446,8 @@ describe("validateIntent", () => {
       });
 
       const res = await validateIntent(
-        {} as CryptoCurrency,
+        createContext(),
+        "ethereum",
         eip1559Intent({
           sender: "sender-address",
           recipient: "0xe2ca7390e76c5A992749bB622087310d2e63ca29",
@@ -373,7 +478,8 @@ describe("validateIntent", () => {
 
     it("detects NotEnoughBalance when spending would dip into locked funds", async () => {
       const res = await validateIntent(
-        {} as CryptoCurrency,
+        createContext(),
+        "ethereum",
         eip1559Intent({
           recipient: "0xe2ca7390e76c5A992749bB622087310d2e63ca29",
           amount: 60n,
@@ -407,7 +513,8 @@ describe("validateIntent", () => {
       });
 
       const res = await validateIntent(
-        {} as CryptoCurrency,
+        createContext(),
+        "ethereum",
         legacyIntent({
           recipient: "0xe2ca7390e76c5A992749bB622087310d2e63ca29",
           useAllAmount: true,
@@ -427,18 +534,13 @@ describe("validateIntent", () => {
   });
 
   describe("staking", () => {
-    const stakingCurrency = {
-      name: "Ethereum",
-      ticker: "ETH",
-      units: [{ code: "ETH", name: "ETH", magnitude: 18 }],
-    } as CryptoCurrency;
-
     it("detects missing validator address for delegate with an error", async () => {
       const intent = stakingIntent({ mode: "delegate" }) as Record<string, unknown>;
       delete intent.valAddress;
 
       const res = await validateIntent(
-        stakingCurrency,
+        createContext(),
+        "sei_evm",
         intent as TransactionIntent<MemoNotSupported, BufferTxData>,
         [{ value: 50n, asset: { type: "native" } }],
         {
@@ -462,7 +564,8 @@ describe("validateIntent", () => {
       delete intent.dstValAddress;
 
       const res = await validateIntent(
-        stakingCurrency,
+        createContext(),
+        "sei_evm",
         intent as TransactionIntent<MemoNotSupported, BufferTxData>,
         [{ value: 50n, asset: { type: "native" } }],
         {
@@ -480,7 +583,8 @@ describe("validateIntent", () => {
 
     it("detects delegate total spent greater than spendable balance with an error", async () => {
       const res = await validateIntent(
-        stakingCurrency,
+        createContext(),
+        "sei_evm",
         stakingIntent({
           mode: "delegate",
           amount: 45n,
@@ -502,7 +606,8 @@ describe("validateIntent", () => {
 
     it("allows undelegate when amount exceeds spendable but fees fit in spendable balance", async () => {
       const res = await validateIntent(
-        stakingCurrency,
+        createContext(),
+        "sei_evm",
         stakingIntent({
           mode: "undelegate",
           amount: 100n,
@@ -521,7 +626,8 @@ describe("validateIntent", () => {
 
     it("allows redelegate when amount exceeds spendable but fees fit in spendable balance", async () => {
       const res = await validateIntent(
-        stakingCurrency,
+        createContext(),
+        "sei_evm",
         stakingIntent({
           mode: "redelegate",
           amount: 100n,
@@ -541,7 +647,8 @@ describe("validateIntent", () => {
 
     it("detects staking fees greater than native balance with an error", async () => {
       const res = await validateIntent(
-        stakingCurrency,
+        createContext(),
+        "sei_evm",
         stakingIntent({
           mode: "delegate",
           amount: 1n,
@@ -563,7 +670,8 @@ describe("validateIntent", () => {
 
     it("should return an error when not enough balance for a claim reward", async () => {
       const res = await validateIntent(
-        stakingCurrency,
+        createContext(),
+        "sei_evm",
         stakingIntent({
           amount: 0n,
           mode: "claimReward",
@@ -583,7 +691,8 @@ describe("validateIntent", () => {
 
     it("should return an error when no validator specified for a claim reward", async () => {
       const res = await validateIntent(
-        stakingCurrency,
+        createContext(),
+        "sei_evm",
         stakingIntent({
           amount: 0n,
           mode: "claimReward",
@@ -603,7 +712,8 @@ describe("validateIntent", () => {
 
     it("should return no error for a valid claim reward", async () => {
       const res = await validateIntent(
-        stakingCurrency,
+        createContext(),
+        "sei_evm",
         stakingIntent({
           amount: 0n,
           mode: "claimReward",
@@ -621,12 +731,6 @@ describe("validateIntent", () => {
 
     describe("useAllAmount on delegate", () => {
       // sei_evm has delegationMaxAmountReserve = 10n**17n and calldataAmountScale = 10n**12n.
-      const seiCurrency = {
-        id: "sei_evm",
-        name: "Sei",
-        ticker: "SEI",
-        units: [{ code: "SEI", name: "SEI", magnitude: 18 }],
-      } as CryptoCurrency;
 
       it("uses totalFees as the effective reserve when no reserve is configured for the chain", async () => {
         // Unknown chain → configuredReserve = 0n, effectiveReserve = max(0n, totalFees) = totalFees.
@@ -635,7 +739,8 @@ describe("validateIntent", () => {
         const balance = 1_000_000n;
         const totalFees = 100_000n; // gasLimit(100_000) × gasPrice(1)
         const res = await validateIntent(
-          { id: "unknown_chain" } as CryptoCurrency,
+          createContext(),
+          "unknown_chain",
           stakingIntent({ mode: "delegate", useAllAmount: true }),
           [{ value: balance, asset: { type: "native" } }],
           { value: totalFees, parameters: { gasLimit: 100_000n, gasPrice: 1n } },
@@ -652,7 +757,8 @@ describe("validateIntent", () => {
         const balance = 10n ** 18n;
         const fees = 2n * 10n ** 17n; // > configuredReserve
         const res = await validateIntent(
-          seiCurrency,
+          createContext(),
+          "sei_evm",
           stakingIntent({ mode: "delegate", useAllAmount: true }),
           [{ value: balance, asset: { type: "native" } }],
           {
@@ -674,7 +780,8 @@ describe("validateIntent", () => {
         const balance = 10n ** 18n;
         const fees = 10n ** 14n; // < configuredReserve
         const res = await validateIntent(
-          seiCurrency,
+          createContext(),
+          "sei_evm",
           stakingIntent({ mode: "delegate", useAllAmount: true }),
           [{ value: balance, asset: { type: "native" } }],
           {
@@ -719,7 +826,8 @@ describe("validateIntent", () => {
       },
     ])("$name", async ({ amount, native }) => {
       const res = await validateIntent(
-        stakingCurrency,
+        createContext(),
+        "sei_evm",
         claimRewardIntent({ amount, native }),
         claimRewardBalances(native),
         claimRewardFees,
@@ -745,7 +853,8 @@ describe("validateIntent", () => {
       },
     ])("$name", async ({ amount, native }) => {
       const res = await validateIntent(
-        stakingCurrency,
+        createContext(),
+        "sei_evm",
         claimRewardIntent({ amount, native }),
         claimRewardBalances(native),
         claimRewardFees,
@@ -762,7 +871,8 @@ describe("validateIntent", () => {
       ])("for %s", (_s, createIntent) => {
         it("detects missing fees with an error", async () => {
           const res = await validateIntent(
-            {} as CryptoCurrency,
+            createContext(),
+            "ethereum",
             createIntent({}),
             [{ value: 50n, asset: { type: "native" } }],
             { value: 0n },
@@ -777,7 +887,8 @@ describe("validateIntent", () => {
 
         it("detects a missing gasLimit with an error", async () => {
           const res = await validateIntent(
-            {} as CryptoCurrency,
+            createContext(),
+            "ethereum",
             createIntent({}),
             [{ value: 50n, asset: { type: "native" } }],
             {
@@ -795,7 +906,8 @@ describe("validateIntent", () => {
 
         it("detects a gasLimit = 0 with an error", async () => {
           const res = await validateIntent(
-            {} as CryptoCurrency,
+            createContext(),
+            "ethereum",
             createIntent({}),
             [{ value: 50n, asset: { type: "native" } }],
             {
@@ -813,7 +925,8 @@ describe("validateIntent", () => {
 
         it("detects a customGasLimit = 0 with an error", async () => {
           const res = await validateIntent(
-            {} as CryptoCurrency,
+            createContext(),
+            "ethereum",
             createIntent({}),
             [{ value: 50n, asset: { type: "native" } }],
             {
@@ -831,9 +944,8 @@ describe("validateIntent", () => {
 
         it("if the recipient has been set, detects fees being too high for the account balance with an error", async () => {
           const notEnoughBalanceRes = await validateIntent(
-            {
-              units: [{ code: "ETH", name: "ETH", magnitude: 18 }],
-            } as CryptoCurrency,
+            createContext(),
+            "ethereum",
             createIntent({ recipient: "recipient-address" }),
             [{ value: 10n, asset: { type: "native" } }],
             {
@@ -847,9 +959,8 @@ describe("validateIntent", () => {
             },
           );
           const notEnoughBalanceSponsoredRes = await validateIntent(
-            {
-              units: [{ code: "ETH", name: "ETH", magnitude: 18 }],
-            } as CryptoCurrency,
+            createContext(),
+            "ethereum",
             createIntent({ recipient: "recipient-address" }),
             [{ value: 10n, asset: { type: "native" } }],
             {
@@ -864,9 +975,8 @@ describe("validateIntent", () => {
             },
           );
           const enoughBalanceRes = await validateIntent(
-            {
-              units: [{ code: "ETH", name: "ETH", magnitude: 18 }],
-            } as CryptoCurrency,
+            createContext(),
+            "ethereum",
             createIntent({ recipient: "recipient-address" }),
             [{ value: 10n, asset: { type: "native" } }],
             {
@@ -901,9 +1011,8 @@ describe("validateIntent", () => {
           // gas fee alone fits in the available balance, but the additionalFees
           // (e.g. L1 data fee on L2s) push the total above the native balance.
           const res = await validateIntent(
-            {
-              units: [{ code: "ETH", name: "ETH", magnitude: 18 }],
-            } as CryptoCurrency,
+            createContext(),
+            "ethereum",
             createIntent({ recipient: "recipient-address" }),
             [{ value: 10n, asset: { type: "native" } }],
             {
@@ -927,9 +1036,8 @@ describe("validateIntent", () => {
 
         it("if the recipient has not been set, does not detect gas being too high", async () => {
           const notEnoughBalanceRes = await validateIntent(
-            {
-              units: [{ code: "ETH", name: "ETH", magnitude: 18 }],
-            } as CryptoCurrency,
+            createContext(),
+            "ethereum",
             createIntent({ recipient: "" }),
             [{ value: 10n, asset: { type: "native" } }],
             {
@@ -942,9 +1050,8 @@ describe("validateIntent", () => {
             },
           );
           const enoughBalanceRes = await validateIntent(
-            {
-              units: [{ code: "ETH", name: "ETH", magnitude: 18 }],
-            } as CryptoCurrency,
+            createContext(),
+            "ethereum",
             createIntent({ recipient: "" }),
             [{ value: 10n, asset: { type: "native" } }],
             {
@@ -976,7 +1083,8 @@ describe("validateIntent", () => {
           );
 
           const res = await validateIntent(
-            {} as CryptoCurrency,
+            createContext(),
+            "ethereum",
             createIntent({}),
             [{ value: 50n, asset: { type: "native" } }],
             {
@@ -1001,7 +1109,8 @@ describe("validateIntent", () => {
           );
 
           const res = await validateIntent(
-            {} as CryptoCurrency,
+            createContext(),
+            "ethereum",
             createIntent({}),
             [{ value: 50n, asset: { type: "native" } }],
             {
@@ -1019,9 +1128,57 @@ describe("validateIntent", () => {
           expect(computeGasLimitModule.computeEIP7623GasLimit).toHaveBeenCalledTimes(1);
         });
 
+        describe("calldata floor coin config", () => {
+          it("forwards the configured floor parameters to computeEIP7623GasLimit", async () => {
+            setCoinConfig(
+              () =>
+                ({
+                  info: {
+                    node: { type: "ledger", explorerId: "eth" },
+                    explorer: { type: "ledger" },
+                    gasTracker: { type: "ledger", explorerId: "eth" },
+                    calldataFloorGasPerToken: 16,
+                    calldataFloorZeroByteTokens: 4,
+                  },
+                }) as unknown as EvmCoinConfig,
+            );
+
+            await validateIntent(
+              createContext(),
+              "ethereum",
+              createIntent({}),
+              [{ value: 50n, asset: { type: "native" } }],
+              { value: 0n, parameters: { gasLimit: 21000n } },
+            );
+
+            expect(computeGasLimitModule.computeEIP7623GasLimit).toHaveBeenCalledWith(
+              expect.any(BigInt),
+              expect.any(Buffer),
+              { gasPerToken: 16, zeroByteTokens: 4 },
+            );
+          });
+
+          it("forwards the EIP-7623 defaults when the coin config sets none", async () => {
+            await validateIntent(
+              createContext(),
+              "ethereum",
+              createIntent({}),
+              [{ value: 50n, asset: { type: "native" } }],
+              { value: 0n, parameters: { gasLimit: 21000n } },
+            );
+
+            expect(computeGasLimitModule.computeEIP7623GasLimit).toHaveBeenCalledWith(
+              expect.any(BigInt),
+              expect.any(Buffer),
+              { gasPerToken: 10, zeroByteTokens: 1 },
+            );
+          });
+        });
+
         it("detects customGasLimit being lower than gasLimit with a warning", async () => {
           const res = await validateIntent(
-            {} as CryptoCurrency,
+            createContext(),
+            "ethereum",
             createIntent({}),
             [{ value: 50n, asset: { type: "native" } }],
             {
@@ -1045,7 +1202,8 @@ describe("validateIntent", () => {
     describe("eip1559 specific", () => {
       it("detects a maxPriorityFeePerGas = 0 with an error", async () => {
         const res = await validateIntent(
-          {} as CryptoCurrency,
+          createContext(),
+          "ethereum",
           eip1559Intent({}),
           [{ value: 50n, asset: { type: "native" } }],
           {
@@ -1063,7 +1221,8 @@ describe("validateIntent", () => {
 
       it("detects maxFeePerGas being greater than max gasOptions maxFeePerGas with an error", async () => {
         const res = await validateIntent(
-          {} as CryptoCurrency,
+          createContext(),
+          "ethereum",
           eip1559Intent({}),
           [{ value: 50n, asset: { type: "native" } }],
           {
@@ -1102,7 +1261,8 @@ describe("validateIntent", () => {
         });
 
         const res = await validateIntent(
-          {} as CryptoCurrency,
+          createContext(),
+          "ethereum",
           eip1559Intent({}),
           [{ value: 50n, asset: { type: "native" } }],
           {
@@ -1141,7 +1301,8 @@ describe("validateIntent", () => {
         });
 
         const res = await validateIntent(
-          {} as CryptoCurrency,
+          createContext(),
+          "ethereum",
           eip1559Intent({}),
           [{ value: 50n, asset: { type: "native" } }],
           {
@@ -1180,7 +1341,8 @@ describe("validateIntent", () => {
         });
 
         const res = await validateIntent(
-          {} as CryptoCurrency,
+          createContext(),
+          "ethereum",
           eip1559Intent({}),
           [{ value: 50n, asset: { type: "native" } }],
           {
@@ -1213,7 +1375,8 @@ describe("validateIntent", () => {
 
         it("raises an error when maxPriorityFeePerGas is below the chain minGasPrice", async () => {
           const res = await validateIntent(
-            {} as CryptoCurrency,
+            createContext(),
+            "ethereum",
             eip1559Intent({}),
             [{ value: 50n, asset: { type: "native" } }],
             {
@@ -1231,7 +1394,8 @@ describe("validateIntent", () => {
 
         it("does not raise an error when maxPriorityFeePerGas is above the chain minGasPrice", async () => {
           const res = await validateIntent(
-            {} as CryptoCurrency,
+            createContext(),
+            "ethereum",
             eip1559Intent({}),
             [{ value: 50n, asset: { type: "native" } }],
             {
@@ -1267,7 +1431,8 @@ describe("validateIntent", () => {
 
         it("raises an error when gasPrice is below the chain minGasPrice", async () => {
           const res = await validateIntent(
-            {} as CryptoCurrency,
+            createContext(),
+            "ethereum",
             legacyIntent({ recipient: "0xe2ca7390e76c5A992749bB622087310d2e63ca29" }),
             [{ value: 50n, asset: { type: "native" } }],
             {
@@ -1285,7 +1450,8 @@ describe("validateIntent", () => {
 
         it("does not raise an error when gasPrice is above the chain minGasPrice", async () => {
           const res = await validateIntent(
-            {} as CryptoCurrency,
+            createContext(),
+            "ethereum",
             legacyIntent({ recipient: "0xe2ca7390e76c5A992749bB622087310d2e63ca29" }),
             [{ value: 50n, asset: { type: "native" } }],
             {
@@ -1416,7 +1582,8 @@ describe("validateIntent", () => {
         });
 
         const res = await validateIntent(
-          {} as CryptoCurrency,
+          createContext(),
+          "ethereum",
           legacyIntent({
             ...amount,
             recipient: "0xe2ca7390e76c5A992749bB622087310d2e63ca29",
@@ -1479,7 +1646,8 @@ describe("validateIntent", () => {
         });
 
         const res = await validateIntent(
-          {} as CryptoCurrency,
+          createContext(),
+          "ethereum",
           eip1559Intent({
             ...amount,
             recipient: "0xe2ca7390e76c5A992749bB622087310d2e63ca29",
@@ -1547,7 +1715,8 @@ describe("validateIntent", () => {
         });
 
         const res = await validateIntent(
-          {} as CryptoCurrency,
+          createContext(),
+          "ethereum",
           eip1559Intent({
             ...amount,
             recipient: "0xe2ca7390e76c5A992749bB622087310d2e63ca29",
@@ -1612,7 +1781,8 @@ describe("validateIntent", () => {
     async (_s, createIntent, estimation) => {
       expect(
         await validateIntent(
-          {} as CryptoCurrency,
+          createContext(),
+          "ethereum",
           createIntent({
             amount: 2n,
             recipient: "0xe2ca7390e76c5A992749bB622087310d2e63ca29",

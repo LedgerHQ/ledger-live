@@ -1,12 +1,14 @@
 import type { Account, AccountLike, Operation } from "@ledgerhq/types-live";
+import { shouldRetainPendingOperation } from "@ledgerhq/ledger-wallet-framework/account/pending";
 import BigNumber from "bignumber.js";
 
 /**
  * After each sync or scan, remove operations from the pending pools if necessary
  * Operations stay pending if and only if
- *  - they are confirmed, i.e. their hash appear in the operation list
+ *  - they are not confirmed, i.e. their hash does not appear in the operation list
  *  - they are not outdated, i.e. their sequence number is at least greater than the
  *    sequence number of the latest transaction
+ *  - they are still within the optimistic retention window
  * NOTE Compared to the default behaviour
  *  - pending operations of token accounts are cleaned up, so we don't see both pending and completed
  *    sub operations in the operation details drawer
@@ -15,8 +17,11 @@ import BigNumber from "bignumber.js";
  *    it only contains the OUT sub operation)
  */
 export function postSync(initial: Account, synced: Account): Account {
-  const lastOperation = synced.operations.find(op => ["OUT", "FEES"].includes(op.type));
-  const latestSequence = lastOperation?.transactionSequenceNumber || new BigNumber(-1);
+  // an operation without a sequence number must not collapse the baseline back to -1
+  const lastOperation = synced.operations.find(
+    op => ["OUT", "FEES"].includes(op.type) && op.transactionSequenceNumber !== undefined,
+  );
+  const latestSequence = lastOperation?.transactionSequenceNumber ?? new BigNumber(-1);
 
   function isPending(account: AccountLike, op: Operation): boolean {
     return (
@@ -24,7 +29,9 @@ export function postSync(initial: Account, synced: Account): Account {
       !account.operations.some(o => o.hash === op.hash) &&
       // Operation is not outdated
       op.transactionSequenceNumber !== undefined &&
-      op.transactionSequenceNumber.gt(latestSequence)
+      op.transactionSequenceNumber.gt(latestSequence) &&
+      // Operation is still optimistic. Checked against the parent, which owns the nonce space.
+      shouldRetainPendingOperation(synced, op)
     );
   }
 

@@ -83,6 +83,13 @@ export const FF_LWD_WALLET_40_Q2_NO_ANALYTICS_CONSENT = {
   analyticsOptIn: { enabled: false },
 } satisfies OptionalFeatureMap;
 
+export const FF_BORROW_DESKTOP = {
+  ptxBorrowLiveApp: {
+    enabled: true,
+    params: { manifest_id: "borrow" },
+  },
+} satisfies OptionalFeatureMap;
+
 export const FF_EARN_V2_DESKTOP = {
   ...(useLocalEarnManifest && {
     ptxEarnLiveApp: {
@@ -91,6 +98,11 @@ export const FF_EARN_V2_DESKTOP = {
     },
   }),
   ptxEarnUi: { enabled: true, params: { value: "v2" } },
+} satisfies OptionalFeatureMap;
+
+export const FF_EARN_V2_DESKTOP_WITH_SIMULATOR = {
+  ...FF_EARN_V2_DESKTOP,
+  ...FF_LWD_WALLET_40_Q2_NO_ANALYTICS_CONSENT,
 } satisfies OptionalFeatureMap;
 
 export const FF_STAKE_PROGRAMS_MODAL = {
@@ -132,10 +144,14 @@ export const FF_NEW_SEND_FLOW_DISABLED = {
   },
 } satisfies OptionalFeatureMap;
 
+export const FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED = {
+  newSendFlowFirstInteractionBanner: { enabled: true },
+} satisfies OptionalFeatureMap;
+
 export const getMergedFeatureFlags = ({
   testFlags,
 }: { testFlags?: OptionalFeatureMap } = {}): OptionalFeatureMap => {
-  const ffEnvMapping: Record<string, OptionalFeatureMap> = {
+  const ffPresetMap: Record<string, OptionalFeatureMap> = {
     /*
      * The keys here are the values of the `E2E_DESKTOP_FEATURE_FLAGS` environment variable.
      * We can add more mappings here in the future to test different feature flag combinations.
@@ -143,7 +159,7 @@ export const getMergedFeatureFlags = ({
      * This will reduce friction and provide CI stability for any callers of the workflow.
      * PLEASE NOTE: non-existing keys will return 'undefined' which spreads to an empty object.
      */
-    "wallet40-q2": FF_LWD_WALLET_40_Q2,
+    "wallet40-q1": FF_LWD_WALLET_40_Q1,
   };
 
   const defaultFlags: OptionalFeatureMap = {
@@ -165,9 +181,10 @@ export const getMergedFeatureFlags = ({
       },
     },
     // default flags for wallet 4.0
-    ...FF_LWD_WALLET_40_Q1,
+    ...FF_LWD_WALLET_40_Q2,
+    ...FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED,
     // any flags from env variable (if set)
-    ...ffEnvMapping[process.env.E2E_DESKTOP_FEATURE_FLAGS || ""],
+    ...ffPresetMap[process.env.E2E_DESKTOP_FEATURE_FLAGS || ""],
   };
 
   // parse JSON override flags for any overrides

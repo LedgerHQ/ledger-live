@@ -2,10 +2,18 @@ import { CurrencyType } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "../../helpers/allure/allure-helper";
 
-const BST_ADD_ACCOUNT_CURRENCIES = new Set(["ton", "aptos", "cardano", "tezos"]);
+const BST_ADD_ACCOUNT_CURRENCIES = new Set([
+  "ton",
+  "aptos",
+  "cardano",
+  "tezos",
+  "zcash",
+  "algorand",
+  "ripple",
+]);
 
 export function runAddAccountTest(currency: CurrencyType, tmsLinks: string[], tags: string[]) {
-  describe("Add accounts - Network Based", () => {
+  describe("Add account", () => {
     beforeAll(async () => {
       await app.init({
         userdata: "skip-onboarding",
@@ -17,7 +25,7 @@ export function runAddAccountTest(currency: CurrencyType, tmsLinks: string[], ta
     setTeamOwner(BST_ADD_ACCOUNT_CURRENCIES.has(currency.id) ? Team.BST : Team.COIN_INTEGRATION);
     tmsLinks.forEach(link => $TmsLink(link));
     tags.forEach(tag => $Tag(tag));
-    it(`Perform a Network Based add account - ${currency.name}`, async () => {
+    it(`[${currency.testLabel}] - Add account`, async () => {
       await app.portfolio.addAccount();
       await app.addAccount.importWithYourLedger();
       await app.modularDrawer.performSearchByTicker(currency.ticker);

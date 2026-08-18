@@ -1,4 +1,4 @@
-import cosmosCoinConfig from "../config";
+import cosmosCoinConfig, { type CosmosCoinConfig } from "../config";
 import Axelar from "./Axelar";
 import Babylon from "./Babylon";
 import BinanceBeaconChain from "./BinanceBeaconChain";
@@ -16,7 +16,6 @@ import Quicksilver from "./Quicksilver";
 import SecretNetwork from "./SecretNetwork";
 import Stargaze from "./Stargaze";
 import Stride from "./Stride";
-import Umee from "./Umee";
 import Xion from "./Xion";
 import Zenrock from "./Zenrock";
 import CosmosBase from "./cosmosBase";
@@ -28,7 +27,7 @@ const CURRENCY_ID_ALIASES: Record<string, string> = {
   crypto_org_croeseid: "crypto_org", // croeseid testnet reuses crypto_org's params
 };
 
-export default function cryptoFactory(currencyId: string): CosmosBase {
+export default function cryptoFactory(currencyId: string, config?: CosmosCoinConfig): CosmosBase {
   currencyId = CURRENCY_ID_ALIASES[currencyId] ?? currencyId;
   if (!cosmosChainParams[currencyId]) {
     let chain: CosmosBase;
@@ -69,9 +68,6 @@ export default function cryptoFactory(currencyId: string): CosmosBase {
       case "stride":
         chain = new Stride();
         break;
-      case "umee":
-        chain = new Umee();
-        break;
       case "coreum":
         chain = new Coreum();
         break;
@@ -98,7 +94,7 @@ export default function cryptoFactory(currencyId: string): CosmosBase {
     }
 
     try {
-      const coinConfig = cosmosCoinConfig.getCoinConfig(currencyId);
+      const coinConfig = config ?? cosmosCoinConfig.getCoinConfig(currencyId);
       cosmosChainParams[currencyId] = coinConfig
         ? ({ ...chain, ...coinConfig } as CosmosBase)
         : chain;

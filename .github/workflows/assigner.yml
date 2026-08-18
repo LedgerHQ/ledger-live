@@ -1,7 +1,9 @@
 name: "[CI] - Auto Author Assign - PR"
 
+# pull_request_target is required for fork PR write access (author assign).
+# No PR code is checked out, so the elevated token cannot execute attacker-controlled code.
 on:
-  pull_request_target:
+  pull_request_target: # zizmor: ignore[dangerous-triggers]
     types: [opened, reopened]
 
 permissions:
@@ -11,4 +13,4 @@ jobs:
   assign-author:
     runs-on: ubuntu-22.04
     steps:
-      - uses: toshimaru/auto-author-assign@v1.4.0
+      - uses: toshimaru/auto-author-assign@759f5c7fab82b38cce0e366dfb205997d5fd9aab # v1.4.0

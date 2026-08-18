@@ -1,13 +1,12 @@
 import { KeysPriceChange, MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
 import { formatPrice } from "@ledgerhq/live-currency-format";
-import type { Unit } from "@ledgerhq/types-cryptoassets";
+import type { Unit } from "@domain/entity-currency-unit";
 import type { TFunction } from "i18next";
 import BigNumber from "bignumber.js";
 import type { MarketAssetDisplayData } from "LLM/components/AssetListItem";
 import { counterValueFormatter } from "./index";
 
 interface MapOptions {
-  counterCurrency: string;
   counterValueUnit: Unit;
   range: KeysPriceChange;
   locale: string;
@@ -16,7 +15,7 @@ interface MapOptions {
 
 export function mapMarketCurrencyToDisplayData(
   item: MarketCurrencyData,
-  { counterCurrency, counterValueUnit, range, locale, t }: MapOptions,
+  { counterValueUnit, range, locale, t }: MapOptions,
 ): MarketAssetDisplayData {
   const change = item.priceChangePercentage[range];
   const priceChangePercentage = typeof change === "number" && Number.isFinite(change) ? change : 0;
@@ -33,7 +32,7 @@ export function mapMarketCurrencyToDisplayData(
       item.marketcap == null
         ? "-"
         : counterValueFormatter({
-            currency: counterCurrency,
+            unit: counterValueUnit,
             value: item.marketcap,
             shorten: true,
             locale,

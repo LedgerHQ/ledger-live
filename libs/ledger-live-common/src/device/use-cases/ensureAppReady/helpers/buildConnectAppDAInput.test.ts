@@ -1,6 +1,6 @@
 import { DeviceModelId } from "@ledgerhq/device-management-kit";
 import { DmkCompatTransport } from "@ledgerhq/live-dmk-shared";
-import { getCryptoCurrencyById } from "../../../../currencies";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import getAddress from "../../../../hw/getAddress";
 import type { EnsureAppReadyInput } from "../types";
 import { buildConnectAppDeviceActionInput } from "./buildConnectAppDAInput";
@@ -12,7 +12,8 @@ jest.mock("@ledgerhq/live-dmk-shared", () => ({
   }),
 }));
 
-jest.mock("../../../../currencies", () => ({
+jest.mock("@domain/entity-currency-crypto", () => ({
+  ...jest.requireActual("@domain/entity-currency-crypto"),
   getCryptoCurrencyById: jest.fn((id: string) => ({ id })),
 }));
 
@@ -34,7 +35,6 @@ function makeInput(overrides: Partial<EnsureAppReadyInput> = {}): EnsureAppReady
     appName: "Ethereum",
     dependencies: ["1inch"],
     requireLatestFirmware: false,
-    allowPartialDependencies: false,
     ...overrides,
   };
 }
@@ -54,7 +54,7 @@ describe("buildConnectAppDeviceActionInput", () => {
     mockGetCryptoCurrencyById.mockImplementation((id: string) => ({ id }) as any);
   });
 
-  it("builds application, dependency and firmware requirements", () => {
+  it("GIVEN app requirements WHEN building the input THEN missing applications are rejected", () => {
     // GIVEN
     const dmk = makeDmk();
     mockGetMinVersion.mockImplementation((appName, model) => {
@@ -70,7 +70,6 @@ describe("buildConnectAppDeviceActionInput", () => {
       sessionId: "session-1",
       ensureAppReadyInput: makeInput({
         requireLatestFirmware: true,
-        allowPartialDependencies: true,
       }),
       getDeprecationConfig: mockGetDeprecationConfig,
       getMinVersion: mockGetMinVersion,
@@ -100,7 +99,8 @@ describe("buildConnectAppDeviceActionInput", () => {
         },
       ],
       requireLatestFirmware: true,
-      allowMissingApplication: true,
+      allowMissingApplication: false,
+      allowNonOnboardedDevice: false,
       unlockTimeout: 0,
       deprecationConfig: [{ deviceModelId: "nanoS" }],
     });

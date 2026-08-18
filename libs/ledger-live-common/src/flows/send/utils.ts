@@ -2,7 +2,7 @@ import { getMainAccount, getRecentAddressesStore } from "../../account/index";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction } from "../../coin-modules/transaction-types";
 import { formatAddress } from "../../utils/addressUtils";
-import type { RecipientData } from "./types";
+import type { Memo, RecipientData } from "./types";
 
 function getEnsNameFromTransaction(transaction: Transaction): string | undefined {
   if (!("recipientDomain" in transaction)) return undefined;
@@ -28,6 +28,9 @@ export function saveRecentSendRecipient(
   getRecentAddressesStore().addAddress(mainAccount.currency.id, recipient, ensName);
 }
 
+/** Number of characters displayed on each side of the ellipsis in the send flow. */
+export const SEND_ADDRESS_FORMAT_OPTIONS = { prefixLength: 8, suffixLength: 8 } as const;
+
 /**
  * Get the display value for a recipient (formatted address with optional ENS name).
  */
@@ -38,8 +41,8 @@ export function getRecipientDisplayValue(
   if (!recipient?.address) return "";
 
   const formattedAddress = formatAddress(recipient.address, {
-    prefixLength: options?.prefixLength ?? 5,
-    suffixLength: options?.suffixLength ?? 5,
+    prefixLength: options?.prefixLength ?? SEND_ADDRESS_FORMAT_OPTIONS.prefixLength,
+    suffixLength: options?.suffixLength ?? SEND_ADDRESS_FORMAT_OPTIONS.suffixLength,
   });
 
   if (recipient.ensName?.trim()) {
@@ -57,4 +60,32 @@ export function getRecipientSearchPrefillValue(
 ): string | undefined {
   if (!recipient) return "";
   return recipient.ensName?.trim() ? recipient.ensName : recipient.address;
+}
+
+/**
+ * Resolves which recipient to persist when the memo changes.
+ */
+export function buildRecipientForMemoChange(
+  searchValue: string,
+  previousRecipient: RecipientData | null,
+  memo: Memo,
+): RecipientData {
+  const previousAddress = previousRecipient?.address;
+  const previousEnsName = previousRecipient?.ensName;
+  const searchMatchesPrevious =
+    searchValue.length > 0 && (searchValue === previousAddress || searchValue === previousEnsName);
+
+  if (searchMatchesPrevious) {
+    return {
+      address: previousAddress ?? searchValue,
+      ensName: previousEnsName,
+      memo,
+    };
+  }
+
+  return {
+    address: searchValue,
+    ensName: undefined,
+    memo,
+  };
 }

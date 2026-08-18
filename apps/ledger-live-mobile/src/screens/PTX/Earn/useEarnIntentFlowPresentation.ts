@@ -23,6 +23,7 @@ type Params = {
   webviewUrl?: string;
   webviewUrlRef: React.MutableRefObject<string | undefined>;
   canvasColor: string;
+  isSwapToEarnEnabled?: boolean;
 };
 
 /**
@@ -37,6 +38,7 @@ export function useEarnIntentFlowPresentation({
   webviewUrl,
   webviewUrlRef,
   canvasColor,
+  isSwapToEarnEnabled = false,
 }: Params) {
   const navigation = useNavigation<EarnBaseNavigation>();
   const { t } = useTranslation();
@@ -62,7 +64,7 @@ export function useEarnIntentFlowPresentation({
     if (webviewIntent) {
       navigation
         .getParent(BASE_NAVIGATOR_ID)
-        ?.setOptions(getEarnScreenOptions(webviewIntent, t, canvasColor));
+        ?.setOptions(getEarnScreenOptions(webviewIntent, t, canvasColor, isSwapToEarnEnabled));
     }
   }, [
     hideMainNavigator,
@@ -71,6 +73,7 @@ export function useEarnIntentFlowPresentation({
     navigation,
     t,
     canvasColor,
+    isSwapToEarnEnabled,
     webviewUrlRef,
   ]);
 

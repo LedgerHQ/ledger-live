@@ -1,4 +1,4 @@
-import { cryptocurrenciesById } from "@ledgerhq/cryptoassets";
+import { CRYPTO_CURRENCIES_REGISTRY as cryptocurrenciesById } from "@domain/entity-currency-crypto";
 import type { CategorizedAssetItem, CategorizedAssets } from "../assetCategorization/types";
 import { makeToken } from "../assetCategorization/__tests__/fixtures";
 

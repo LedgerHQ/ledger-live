@@ -1,5 +1,6 @@
 import React, { useCallback } from "react";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import CircleCurrencyIcon from "./CircleCurrencyIcon";
 import styled from "styled-components/native";

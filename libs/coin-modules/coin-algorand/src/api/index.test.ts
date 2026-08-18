@@ -1,5 +1,5 @@
 import { BalanceOptions } from "@ledgerhq/coin-module-framework/api/types";
-import { InvalidParameterError } from "@ledgerhq/errors";
+import type { Context } from "@ledgerhq/coin-module-framework/config";
 import type { AlgorandCoinConfig } from "../config";
 import * as logic from "../logic";
 import { createApi } from "./index";
@@ -22,12 +22,17 @@ const mockConfig: AlgorandCoinConfig = {
   status: { type: "active" },
 };
 
+const mockCtx: Context<AlgorandCoinConfig> = {
+  config: async () => mockConfig,
+  logger: () => {},
+};
+
 describe("Algorand API", () => {
   let api: ReturnType<typeof createApi>;
 
   beforeEach(() => {
     jest.clearAllMocks();
-    api = createApi(mockConfig);
+    api = createApi();
   });
 
   describe("createApi", () => {
@@ -46,8 +51,9 @@ describe("Algorand API", () => {
         getNextSequence: expect.any(Function),
         getStakes: expect.any(Function),
         getValidators: expect.any(Function),
-        lastBlock: logic.lastBlock,
+        lastBlock: expect.any(Function),
         listOperations: expect.any(Function),
+        register: expect.any(Function),
         validateAddress: expect.any(Function),
         validateIntent: expect.any(Function),
         craftTransactionData: expect.any(Function),
@@ -60,9 +66,9 @@ describe("Algorand API", () => {
       const mockTxId = "TXID123456";
       (logic.broadcast as jest.Mock).mockResolvedValue(mockTxId);
 
-      const result = await api.broadcast("deadbeef");
+      const result = await api.broadcast(mockCtx, "deadbeef");
 
-      expect(logic.broadcast).toHaveBeenCalledWith("deadbeef");
+      expect(logic.broadcast).toHaveBeenCalledWith(mockCtx, "deadbeef");
       expect(result).toBe(mockTxId);
     });
   });
@@ -72,9 +78,9 @@ describe("Algorand API", () => {
       const mockSignedTx = "signedTxHex";
       (logic.combine as jest.Mock).mockReturnValue(mockSignedTx);
 
-      const result = api.combine("unsignedTx", "signature");
+      const result = api.combine(mockCtx, "unsignedTx", ["signature"]);
 
-      expect(logic.combine).toHaveBeenCalledWith("unsignedTx", "signature");
+      expect(logic.combine).toHaveBeenCalledWith("unsignedTx", ["signature"]);
       expect(result).toBe(mockSignedTx);
     });
   });
@@ -87,16 +93,16 @@ describe("Algorand API", () => {
       ];
       (logic.getBalance as jest.Mock).mockResolvedValue(mockBalances);
 
-      const result = await api.getBalance("TESTADDRESS");
+      const result = await api.getBalance(mockCtx, "TESTADDRESS");
 
-      expect(logic.getBalance).toHaveBeenCalledWith("TESTADDRESS");
+      expect(logic.getBalance).toHaveBeenCalledWith(mockCtx, "TESTADDRESS");
       expect(result).toEqual(mockBalances);
     });
 
     it("should throw an exception when options is provided", async () => {
       await expect(
-        api.getBalance("random address", {} as unknown as BalanceOptions),
-      ).rejects.toThrow(InvalidParameterError);
+        api.getBalance(mockCtx, "random address", {} as unknown as BalanceOptions),
+      ).rejects.toMatchObject({ name: "InvalidParameterError" });
     });
   });
 
@@ -105,7 +111,7 @@ describe("Algorand API", () => {
       const mockBlockInfo = { height: 12345678, hash: "abc123", time: new Date() };
       (logic.lastBlock as jest.Mock).mockResolvedValue(mockBlockInfo);
 
-      const result = await api.lastBlock();
+      const result = await api.lastBlock(mockCtx);
 
       expect(logic.lastBlock).toHaveBeenCalled();
       expect(result).toEqual(mockBlockInfo);
@@ -117,9 +123,9 @@ describe("Algorand API", () => {
       const mockBlockInfo = { height: 100, hash: "blockhash123", time: new Date() };
       (logic.getBlockInfo as jest.Mock).mockResolvedValue(mockBlockInfo);
 
-      const result = await api.getBlockInfo(100);
+      const result = await api.getBlockInfo(mockCtx, 100);
 
-      expect(logic.getBlockInfo).toHaveBeenCalledWith(100);
+      expect(logic.getBlockInfo).toHaveBeenCalledWith(mockCtx, 100);
       expect(result).toEqual(mockBlockInfo);
     });
   });
@@ -138,7 +144,7 @@ describe("Algorand API", () => {
         asset: { type: "native" as const },
         memo: { type: "string" as const, kind: "note" as const, value: "" },
       };
-      const result = await api.estimateFees(intent);
+      const result = await api.estimateFees(mockCtx, intent);
 
       expect(logic.estimateFees).toHaveBeenCalled();
       expect(result).toEqual(mockFees);
@@ -159,9 +165,9 @@ describe("Algorand API", () => {
         asset: { type: "native" as const },
         memo: { type: "string" as const, kind: "note" as const, value: "" },
       };
-      const result = await api.craftTransaction(intent);
+      const result = await api.craftTransaction(mockCtx, intent);
 
-      expect(logic.craftApiTransaction).toHaveBeenCalledWith(intent);
+      expect(logic.craftApiTransaction).toHaveBeenCalledWith(mockCtx, intent);
       expect(result).toEqual(mockCrafted);
     });
   });
@@ -188,9 +194,9 @@ describe("Algorand API", () => {
       (logic.listOperations as jest.Mock).mockResolvedValue({ items: mockOperations, next: "" });
 
       const pagination = { minHeight: 0, order: "asc" as const };
-      const { items, next } = await api.listOperations("TESTADDRESS", pagination);
+      const { items, next } = await api.listOperations(mockCtx, "TESTADDRESS", pagination);
 
-      expect(logic.listOperations).toHaveBeenCalledWith("TESTADDRESS", pagination);
+      expect(logic.listOperations).toHaveBeenCalledWith(mockCtx, "TESTADDRESS", pagination);
       expect(items).toEqual(mockOperations);
       expect(next).toBe("");
     });
@@ -198,29 +204,35 @@ describe("Algorand API", () => {
 
   describe("unsupported methods", () => {
     it("getBlock should throw not supported error", () => {
-      expect(() => api.getBlock(100)).toThrow("getBlock is not supported for Algorand");
+      expect(() => api.getBlock(mockCtx, 100)).toThrow("getBlock is not supported for Algorand");
     });
 
     it("getNextSequence should throw not applicable error", () => {
-      expect(() => api.getNextSequence("ADDRESS")).toThrow(
+      expect(() => api.getNextSequence(mockCtx, "ADDRESS")).toThrow(
         "getNextSequence is not applicable for Algorand",
       );
     });
 
     it("getStakes should throw not supported error", () => {
-      expect(() => api.getStakes("ADDRESS")).toThrow("getStakes is not supported for Algorand");
+      expect(() => api.getStakes(mockCtx, "ADDRESS")).toThrow(
+        "getStakes is not supported for Algorand",
+      );
     });
 
     it("getRewards should throw not supported error", () => {
-      expect(() => api.getRewards("ADDRESS")).toThrow("getRewards is not supported for Algorand");
+      expect(() => api.getRewards(mockCtx, "ADDRESS")).toThrow(
+        "getRewards is not supported for Algorand",
+      );
     });
 
     it("getValidators should throw not supported error", () => {
-      expect(() => api.getValidators()).toThrow("getValidators is not supported for Algorand");
+      expect(() => api.getValidators(mockCtx)).toThrow(
+        "getValidators is not supported for Algorand",
+      );
     });
 
     it("craftRawTransaction should throw not supported error", () => {
-      expect(() => api.craftRawTransaction("tx", "sender", "pubkey", 0n)).toThrow(
+      expect(() => api.craftRawTransaction(mockCtx, "tx", "sender", "pubkey", 0n)).toThrow(
         "craftRawTransaction is not supported for Algorand",
       );
     });

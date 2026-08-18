@@ -1,6 +1,7 @@
-import { LedgerAPI4xx } from "@ledgerhq/errors";
 import { getNodeApi } from "@ledgerhq/coin-evm/network/node/index";
+import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
 import type { AccountLike } from "@ledgerhq/types-live";
+import { getCurrencyConfiguration } from "../../../config";
 
 /**
  * Check if a transaction has been confirmed on the network
@@ -21,13 +22,17 @@ export const isTransactionConfirmed = async ({
   if (account.type !== "Account") {
     return false;
   }
-  const nodeApi = getNodeApi(account.currency);
+  const nodeApi = getNodeApi(
+    getCurrencyConfiguration<EvmConfigInfo>(account.currency.id),
+    account.currency.id,
+  );
 
   try {
-    const { blockHeight = null } = await nodeApi.getTransaction(account.currency, hash);
+    const { blockHeight = null } = await nodeApi.getTransaction(account.currency.id, hash);
     return blockHeight !== null;
   } catch (e: unknown) {
-    if (e instanceof LedgerAPI4xx && e.status === 404) {
+    const err = e as { name?: string; status?: number } | null | undefined;
+    if (err?.name === "LedgerAPI4xx" && err?.status === 404) {
       return false;
     }
     throw e;

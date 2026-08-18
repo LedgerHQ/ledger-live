@@ -6,7 +6,6 @@ concurrency:
   group: ci-bridge-${{ github.ref }}
 
 permissions:
-  id-token: write
   contents: read
 
 jobs:
@@ -15,28 +14,17 @@ jobs:
       is-affected: ${{ steps.affected.outputs.is-affected }}
       paths: ${{ steps.affected.outputs.paths }}
     runs-on: ubuntu-22.04
+    permissions:
+      pull-requests: read
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
-        with:
-          ref: develop
-          fetch-depth: 0
-      - name: checkout branch (PR)
-        if: ${{ github.event_name == 'pull_request' }}
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          gh pr checkout ${{ github.event.pull_request.number }}
-      - name: checkout branch (not PR)
-        if: ${{ github.event_name != 'pull_request' }}
-        run: |
-          git checkout $GITHUB_SHA
-      - uses: LedgerHQ/ledger-live/tools/actions/live-common-affected@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/live-common-affected@develop
         id: affected
-        with:
-          ref: ${{ github.event_name == 'pull_request' && format('origin/{0}', github.event.pull_request.base.ref) || 'HEAD^' }}
 
   bridge-tests:
     name: "Bridge Tests"
+    permissions:
+      id-token: write
+      contents: read
     needs: is-affected
     if: ${{ needs.is-affected.outputs.is-affected == 'true' }}
     env:
@@ -52,7 +40,7 @@ jobs:
 
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
       - name: Setup the caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         id: setup-caches

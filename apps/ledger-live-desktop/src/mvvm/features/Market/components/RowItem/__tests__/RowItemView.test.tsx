@@ -18,8 +18,8 @@ function createDefaultProps(overrides: Partial<RowItemViewProps> = {}): RowItemV
   return {
     style: {},
     currency: mockCurrency,
-    counterCurrency: "usd",
-    locale: "en",
+    formattedPrice: "$92,258.93",
+    formattedMarketCap: "$1.70T",
     isStarred: false,
     hasActions: false,
     actions: [],

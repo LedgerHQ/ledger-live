@@ -16,15 +16,14 @@ import {
   getSerializedAddressParameters,
   updateTransaction,
 } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById, CryptoCurrency } from "@domain/entity-currency-crypto";
 import {
   AmountRequired,
   FeeTooHigh,
   InvalidAddress,
   NotEnoughBalance,
   RecipientRequired,
-} from "@ledgerhq/errors";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import { getCosmosDummyRecipient } from "@ledgerhq/coin-cosmos/logic";
 import {

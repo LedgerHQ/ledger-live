@@ -1,6 +1,4 @@
 import React, { memo } from "react";
-import ActionContentCards from "~/renderer/screens/dashboard/ActionContentCards";
-import { ABTestingVariants } from "@ledgerhq/types-live";
 import { PageViewModelResult } from "./usePageViewModel";
 import { Wallet40Layout } from "./components";
 import RightPanel from "LLD/components/RightPanel";
@@ -17,12 +15,11 @@ type PageViewProps = PageViewModelResult & {
 export const PageView = memo(function PageView({
   children,
   pageScrollerRef,
-  shouldDisplayBrazePlacement,
-  pathname,
   shouldRenderRightPanel,
+  pageTestId,
 }: PageViewProps) {
   return (
-    <div className="relative flex flex-1 flex-col min-w-0">
+    <div className="relative flex flex-1 flex-col min-w-0" data-testid={pageTestId}>
       <Wallet40TopBar />
 
       <Wallet40Layout
@@ -31,11 +28,6 @@ export const PageView = memo(function PageView({
       >
         {children}
       </Wallet40Layout>
-
-      {/* Only on dashboard; hide sticky variant when Braze placement (cards shown in banner only) */}
-      {pathname === "/" && !shouldDisplayBrazePlacement && (
-        <ActionContentCards variant={ABTestingVariants.variantB} />
-      )}
     </div>
   );
 });

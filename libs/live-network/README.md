@@ -1,5 +1,8 @@
 # live-network
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 `@ledgerhq/live-network` is the shared network layer for Ledger Live. It wraps the underlying HTTP client with Ledger-specific logging, error normalisation, and request optimisation utilities so all services in the monorepo make network calls consistently.
 
 ## What it does

@@ -6,16 +6,12 @@ import { track } from "~/analytics";
 import { isCryptoOrTokenCurrency } from "LLM/utils/isCryptoOrTokenCurrency";
 import { useOpenReceiveDrawer } from "LLM/features/Receive";
 import { useReceiveOptionsDrawerController } from "../useReceiveOptionsDrawerController";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
-
 // Fiat provider manifest ID for Noah integration
 const FIAT_PROVIDER_MANIFEST_ID = "noah";
 
 function useReceiveFundsOptionsViewModel() {
   const { t } = useTranslation();
   const navigation = useNavigation();
-  const { isEnabled } = useWalletFeaturesConfig("mobile");
-
   const { currency, currencyIds, sourceScreenName, fromMenu, isOpen, closeDrawer } =
     useReceiveOptionsDrawerController();
 
@@ -60,7 +56,6 @@ function useReceiveFundsOptionsViewModel() {
     handleGoToCrypto,
     handleClose,
     isOpen,
-    isEnabled,
   };
 }
 

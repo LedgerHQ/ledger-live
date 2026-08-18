@@ -8,7 +8,7 @@ import {
   ListItemTrailing,
 } from "@ledgerhq/lumen-ui-react";
 import { SquaredCryptoIcon } from "LLD/components/SquaredCryptoIcon";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { ReactElement, ReactNode } from "react";
 
 export type NetworkListItemData = {
@@ -20,6 +20,7 @@ export type NetworkListItemData = {
 
 type NetworkListItemProps = NetworkListItemData & {
   onClick: () => void;
+  disabled?: boolean;
 };
 
 export const NetworkListItem = ({
@@ -28,10 +29,13 @@ export const NetworkListItem = ({
   rightElement,
   apy,
   onClick,
+  disabled,
 }: NetworkListItemProps) => {
   return (
     <ListItem
-      onClick={onClick}
+      onClick={disabled ? undefined : onClick}
+      disabled={disabled}
+      aria-disabled={disabled || undefined}
       data-testid={`network-item-name-${currency.name}`}
       className="-outline-offset-2"
     >

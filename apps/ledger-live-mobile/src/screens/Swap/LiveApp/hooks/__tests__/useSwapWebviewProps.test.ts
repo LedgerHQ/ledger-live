@@ -100,7 +100,30 @@ describe("useSwapWebviewProps", () => {
     const { inputs } = result.current;
     expect(inputs.OS).toBe(Platform.OS);
     expect(inputs.platform).toBe("LLM");
+    expect(inputs.discreetMode).toBe("false");
     expect(inputs.lwm40enabled).toBe("true");
+  });
+
+  it("should pass discreet mode to the swap live app inputs", () => {
+    const { result } = renderHook(
+      () =>
+        useSwapWebviewProps({
+          manifest: STUB_MANIFEST,
+          params: null,
+          resetWebview: mockResetWebview,
+        }),
+      {
+        overrideInitialState: state => ({
+          ...state,
+          settings: {
+            ...state.settings,
+            discreetMode: true,
+          },
+        }),
+      },
+    );
+
+    expect(result.current.inputs.discreetMode).toBe("true");
   });
 
   it("should include source from currentRouteNameRef in inputs", () => {

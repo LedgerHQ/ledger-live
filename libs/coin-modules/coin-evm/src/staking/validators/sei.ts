@@ -1,6 +1,6 @@
 import network from "@ledgerhq/live-network";
 import type { Page } from "@ledgerhq/coin-module-framework/api/index";
-import type { StakingValidatorItem } from "@ledgerhq/types-live";
+import type { Validator } from "@ledgerhq/coin-module-framework/api/types";
 import { STAKING_CONTRACTS } from "../contracts";
 import { seiBalanceAmountToNativeMinUnit } from "../../utils";
 import type { ValidatorApi } from "./types";
@@ -27,7 +27,7 @@ type CosmosValidatorsResponse = { validators: CosmosValidator[] };
 // Sei's REST endpoint returns the whole validator set in one response, so it
 // ignores the cursor and always reports `next: undefined` (single page).
 const seiValidatorApi: ValidatorApi = {
-  fetchValidators: async (currencyId): Promise<Page<StakingValidatorItem>> => {
+  fetchValidators: async (_config, currencyId): Promise<Page<Validator>> => {
     const apiConfig = STAKING_CONTRACTS[currencyId]?.apiConfig;
     if (!apiConfig?.baseUrl) return { items: [], next: undefined };
 
@@ -39,16 +39,16 @@ const seiValidatorApi: ValidatorApi = {
         method: "GET",
       });
 
-      const items: StakingValidatorItem[] = Array.isArray(data?.validators)
+      const items: Validator[] = Array.isArray(data?.validators)
         ? data.validators
             .filter((v): v is CosmosValidator => typeof v?.operator_address === "string")
-            .map((v, index) => ({
-              validatorAddress: v.operator_address,
+            .map(v => ({
+              id: v.operator_address,
+              address: v.operator_address,
               name: v.description?.moniker ?? v.operator_address,
-              commission: Number.parseFloat(v.commission?.commission_rates?.rate ?? "0"),
-              tokens: seiBalanceAmountToNativeMinUnit(v.tokens, "usei").toString(),
-              votingPower: index,
-              estimatedYearlyRewardsRate: 0,
+              commissionRate: v.commission?.commission_rates?.rate ?? "0",
+              balance: seiBalanceAmountToNativeMinUnit(v.tokens, "usei"),
+              apy: 0,
             }))
         : [];
 

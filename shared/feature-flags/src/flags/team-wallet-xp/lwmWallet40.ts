@@ -17,7 +17,7 @@ export const lwmWallet40 = flagWith(
     q2Tour: z.boolean().optional(),
   },
   {
-    enabled: false,
+    enabled: true,
     params: {
       tour: true,
       lazyOnboarding: true,

@@ -34,6 +34,7 @@ const { listOperations } = jest.requireMock("../logic/history/listOperations");
 
 const CURRENCY_ID = "concordium_testnet";
 const ACCOUNT_ID = "js:2:concordium_testnet:test:";
+const config = { minReserve: "100000" };
 
 function createRawOpFixture(overrides?: Record<string, unknown>) {
   return {
@@ -120,6 +121,7 @@ describe("syncOperations", () => {
     const result = await syncOperations(CURRENCY_ID, VALID_ADDRESS, ACCOUNT_ID, []);
 
     expect(listOperations).toHaveBeenCalledWith(
+      config,
       VALID_ADDRESS,
       { minHeight: 0, limit: 100, order: "desc" },
       CURRENCY_ID,
@@ -133,6 +135,7 @@ describe("syncOperations", () => {
     await syncOperations(CURRENCY_ID, VALID_ADDRESS, ACCOUNT_ID, [oldOp]);
 
     expect(listOperations).toHaveBeenCalledWith(
+      config,
       VALID_ADDRESS,
       { minHeight: 501, limit: 100, order: "desc" },
       CURRENCY_ID,
@@ -145,6 +148,7 @@ describe("syncOperations", () => {
     await syncOperations(CURRENCY_ID, VALID_ADDRESS, ACCOUNT_ID, [oldOp]);
 
     expect(listOperations).toHaveBeenCalledWith(
+      config,
       VALID_ADDRESS,
       { minHeight: 0, limit: 100, order: "desc" },
       CURRENCY_ID,
@@ -290,7 +294,7 @@ describe("getAccountShape", () => {
       initialAccount,
     });
 
-    expect(getAccountsByPublicKey).toHaveBeenCalledWith(currency.id, PUBLIC_KEY);
+    expect(getAccountsByPublicKey).toHaveBeenCalledWith(config, currency.id, PUBLIC_KEY);
   });
 
   it("should preserve derivationMode, derivationPath, and index", async () => {
@@ -360,6 +364,6 @@ describe("getAccountShape", () => {
 
     expect(getAccountBalance).toHaveBeenCalled();
     expect(listOperations).toHaveBeenCalled();
-    expect(getConsensusInfo).toHaveBeenCalledWith(currency.id);
+    expect(getConsensusInfo).toHaveBeenCalledWith(config, currency.id);
   });
 });

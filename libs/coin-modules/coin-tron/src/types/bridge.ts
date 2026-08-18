@@ -41,6 +41,18 @@ export type NetworkInfoRaw = {
   energyUsed: string;
   energyLimit: string;
 };
+// Gas-sponsoring (Tronify) context — marks a send as sponsored (LIVE-32775). Absent = standard
+// crafting. All-string, so it round-trips without a separate Raw variant.
+export type EnergyProviderInfo = {
+  providerId: string;
+  orderId: string;
+};
+// A disclosable energy-rental provider (LIVE-32776). Resolved from EnergyProviderInfo.providerId via
+// the coin-tron energy-provider registry so the front end can name the third party.
+export type EnergyProvider = {
+  id: string;
+  name: string;
+};
 export type Transaction = TransactionCommon & {
   family: "tron";
   mode: TronOperationMode;
@@ -48,6 +60,7 @@ export type Transaction = TransactionCommon & {
   networkInfo: NetworkInfo | null | undefined;
   duration: number | null | undefined;
   votes: Vote[];
+  energyProviderInfo?: EnergyProviderInfo | null;
 };
 export type TransactionRaw = TransactionCommonRaw & {
   mode: TronOperationMode;
@@ -56,6 +69,7 @@ export type TransactionRaw = TransactionCommonRaw & {
   networkInfo: NetworkInfoRaw | null | undefined;
   duration: number | null | undefined;
   votes: Vote[];
+  energyProviderInfo?: EnergyProviderInfo | null;
 };
 export type TrongridTxType =
   | "TransferContract"
@@ -298,6 +312,16 @@ export function isTronAccount(account: Account): account is TronAccount {
 }
 export type TronAccount = Account & { tronResources: TronResources };
 export type TronAccountRaw = AccountRaw & { tronResources: TronResourcesRaw };
+// Informational savings estimate for a sponsored (Tronify) send (LIVE-32776). Native TRX (SUN); the
+// front end converts to fiat and renders "Saved $X.XX with <provider>". Present only when the send
+// is sponsored and the avoided cost could be estimated — purely informational, it does not change
+// estimatedFees (that re-pricing is LIVE-32892).
+export type SponsoredEnergyEstimate = {
+  provider: EnergyProvider;
+  // What a non-sponsored USDT send would burn on energy, in SUN (native TRX's base unit) — the full
+  // energy cost energyRequired × energyFee. The front end converts SUN to fiat for display.
+  avoidedEnergyFees: BigNumber;
+};
 // Additive resource-breakdown fields for the send-flow UI. Sufficiency is: energyRequired <=
 // energyAvailable && bandwidthRequired <= bandwidthAvailable. On a failed energy estimate,
 // energyRequired is a safe insufficient sentinel. Not mirrored to TransactionStatusRaw.
@@ -306,5 +330,8 @@ export type TransactionStatus = TransactionStatusCommon & {
   energyAvailable: BigNumber;
   bandwidthRequired: BigNumber;
   bandwidthAvailable: BigNumber;
+  // A SponsoredEnergyEstimate for sponsored sends; null for standard crafting. getTransactionStatus
+  // always sets the field (never omits it), so consumers can read it without a presence check.
+  sponsoredEnergy?: SponsoredEnergyEstimate | null;
 };
 export type TransactionStatusRaw = TransactionStatusCommonRaw;

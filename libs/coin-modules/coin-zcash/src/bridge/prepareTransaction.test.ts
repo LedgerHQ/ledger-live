@@ -1,0 +1,575 @@
+import { BigNumber } from "bignumber.js";
+import { prepareTransaction } from "./prepareTransaction";
+import { estimateMaxSpendable } from "./estimateMaxSpendable";
+import { reserveNotes, _resetReservationsForTest } from "./note-reservation";
+import { ZIP317_MINIMUM_FEE } from "../logic/coin-selection";
+import { ZCASH_SHIELDED_SPENDABILITY_DELAY_BLOCKS } from "../constants";
+import type { BitcoinOutput, Transaction, ZcashAccount, ZcashTransferType } from "../types/bridge";
+
+const T_ADDRESS = "t1b1Rbw2shhJkP6MCnCyxCPuyFedHrwKty8";
+const U_ADDRESS =
+  "u1u2h4ce7e2cn3z4nzur95muq2dl4da9x8h8kdp2l80gm9nl9raj8zzpx79ycjnfvar4v5exea5pqr5y9qsnlp0cdunwf9yjjx5c4q7ar9";
+const ACCOUNT_ID = "js:2:zcash:xpub6D:";
+// Reservations are held under the hash of the send that spends the notes.
+const IN_FLIGHT_TX = "76ec3b38";
+// The account fixture offsets the Ironwood pool by this much so the two pools
+// never share a nullifier or a position.
+const IRONWOOD_INDEX_OFFSET = 100;
+// Comfortably past every fixture note's block height, so the default account
+// carries only mature notes unless a test overrides it to probe maturity.
+const DEFAULT_LAST_PROCESSED_BLOCK = 3_500_000;
+
+const nullifierAt = (index: number) => index.toString(16).padStart(2, "0").repeat(32);
+
+/** Nullifier the account fixture gives the i-th Ironwood note. */
+const ironwoodNullifier = (i: number) => nullifierAt(i + IRONWOOD_INDEX_OFFSET);
+
+const note = (amount: number, index: number) => ({
+  amount: new BigNumber(amount),
+  transfer_type: "incoming",
+  memo: "",
+  nullifier: nullifierAt(index),
+  rho: "ee".repeat(32),
+  rseed: "ff".repeat(32),
+  cmx: "11".repeat(32),
+  position: String(index),
+  recipient: "22".repeat(43),
+  isSpent: false,
+});
+
+const utxo = (value: number, outputIndex: number): BitcoinOutput => ({
+  hash: "aa".repeat(32),
+  outputIndex,
+  blockHeight: 3_425_800,
+  address: T_ADDRESS,
+  value: new BigNumber(value),
+  rbf: false,
+  isChange: false,
+});
+
+function account({
+  utxos = [100_000, 25_000],
+  notes = [40_000, 10_000],
+  ironwoodNotes = [30_000, 20_000],
+  lastProcessedBlock = DEFAULT_LAST_PROCESSED_BLOCK,
+}: {
+  utxos?: number[];
+  notes?: number[];
+  ironwoodNotes?: number[];
+  lastProcessedBlock?: number | null;
+} = {}): ZcashAccount {
+  return {
+    type: "Account",
+    id: ACCOUNT_ID,
+    currency: { id: "zcash", name: "Zcash" },
+    bitcoinResources: { utxos: utxos.map((value, i) => utxo(value, i)) },
+    privateInfo: {
+      lastProcessedBlock,
+      transactions: [
+        {
+          id: "932c99c7",
+          hex: "00",
+          blockHeight: 3_425_862,
+          blockHash: "cc".repeat(32),
+          timestamp: 1_700_000_000,
+          fee: new BigNumber(15_000),
+          decryptedData: {
+            orchard_outputs: notes.map(note),
+            sapling_outputs: [],
+            ironwood_outputs: ironwoodNotes.map((amount, i) =>
+              note(amount, i + IRONWOOD_INDEX_OFFSET),
+            ),
+          },
+        },
+      ],
+    },
+  } as unknown as ZcashAccount;
+}
+
+function transaction(overrides: Partial<Transaction> = {}): Transaction {
+  return {
+    family: "zcash",
+    transferType: "transparent",
+    amount: new BigNumber(10_000),
+    recipient: T_ADDRESS,
+    useAllAmount: false,
+    ...overrides,
+  } as Transaction;
+}
+
+const sum = (values: BigNumber[]): BigNumber =>
+  values.reduce((total, v) => total.plus(v), new BigNumber(0));
+
+// The reservation store is module-level and outlives a single test.
+beforeEach(_resetReservationsForTest);
+
+describe("prepareTransaction, transparent-input flows", () => {
+  // Fees are the ZIP-317 figure for the flow's action layout, spelled out here
+  // because the native builder rejects any fee that is not exactly that:
+  // t→t spends 1 UTXO into recipient + change (2 transparent actions, 10k),
+  // while t→z pays 2 Orchard outputs on top of 1 transparent input (3, 15k).
+  it.each([
+    ["transparent", T_ADDRESS, 10_000, 60_000],
+    ["transparent-to-shielded", U_ADDRESS, 15_000, 55_000],
+  ] as [ZcashTransferType, string, number, number][])(
+    "prices %s over its UTXOs and returns the rest as change",
+    async (transferType, recipient, fee, change) => {
+      const acc = account({ utxos: [100_000] });
+      const tx = transaction({ transferType, recipient, amount: new BigNumber(30_000) });
+
+      const prepared = await prepareTransaction(acc, tx);
+
+      expect(prepared).toMatchObject({
+        amount: new BigNumber(30_000),
+        zcashFee: new BigNumber(fee),
+        changeAmount: new BigNumber(change),
+        selectedNotes: [],
+      });
+    },
+  );
+
+  it("spends every UTXO, leaving no change, when the amount is not set by the user", async () => {
+    const acc = account({ utxos: [100_000, 25_000] });
+
+    const prepared = await prepareTransaction(acc, transaction({ useAllAmount: true }));
+
+    // 2 inputs into a single recipient output: 2 actions, so 10k of the 125k.
+    expect(prepared).toMatchObject({
+      amount: new BigNumber(115_000),
+      zcashFee: new BigNumber(10_000),
+      changeAmount: new BigNumber(0),
+    });
+  });
+
+  it("recomputes the max from the current UTXO set rather than a stale amount", async () => {
+    const acc = account({ utxos: [50_000] });
+    const stale = transaction({ useAllAmount: true, amount: new BigNumber(9_999_999) });
+
+    const prepared = await prepareTransaction(acc, stale);
+
+    expect(prepared.amount).toEqual(new BigNumber(40_000));
+  });
+
+  it.each([
+    ["the UTXOs cannot cover the send", [1_000], 500_000, false],
+    // An account whose whole balance is the fee has nothing spendable: the max
+    // is zero, and a zero-amount send is not a transaction.
+    ["the balance is worth exactly its own fee", [10_000], 0, true],
+  ] as [string, number[], number, boolean][])(
+    "clears the fee and change when %s",
+    async (_label, utxos, amount, useAllAmount) => {
+      const tx = transaction({
+        amount: new BigNumber(amount),
+        useAllAmount,
+        zcashFee: new BigNumber(15_000),
+        changeAmount: new BigNumber(1_000),
+      });
+
+      const prepared = await prepareTransaction(account({ utxos }), tx);
+
+      // A stale fee from an earlier prepare must not survive: the UI would show
+      // a spendable amount with a fee that no longer applies to it.
+      expect(prepared).not.toHaveProperty("zcashFee");
+      expect(prepared).not.toHaveProperty("changeAmount");
+      expect(prepared.selectedNotes).toEqual([]);
+      expect(prepared.amount).toEqual(new BigNumber(useAllAmount ? 0 : amount));
+    },
+  );
+
+  it("honours the caller's UTXO selection over the synced set", async () => {
+    const acc = account({ utxos: [100_000, 25_000] });
+    const tx = transaction({ useAllAmount: true, selectedUtxos: [utxo(25_000, 1)] });
+
+    const prepared = await prepareTransaction(acc, tx);
+
+    expect(prepared).toMatchObject({
+      amount: new BigNumber(15_000),
+      zcashFee: new BigNumber(10_000),
+    });
+  });
+});
+
+describe("prepareTransaction, note-spending flows", () => {
+  // Selection is largest-first, and the fee is resolved iteratively because it
+  // depends on how many notes were selected. A shielded send spends the Ironwood
+  // pool (30k/20k). Sending 25k out of that 50k pool:
+  //   z→z  both notes are needed; 2 Orchard-family actions (10k fee), 15k change
+  //   z→t  the transparent output costs a third action, so 15k fee and 10k change
+  it.each([
+    ["shielded", U_ADDRESS, [30_000, 20_000], 10_000, 15_000],
+    ["shielded-to-transparent", T_ADDRESS, [30_000, 20_000], 15_000, 10_000],
+  ] as [ZcashTransferType, string, number[], number, number][])(
+    "selects the notes %s spends, and prices them",
+    async (transferType, recipient, selection, fee, change) => {
+      const prepared = await prepareTransaction(
+        account(),
+        transaction({ transferType, recipient, amount: new BigNumber(25_000) }),
+      );
+
+      expect(prepared.selectedNotes?.map(n => n.amount.toNumber())).toEqual(selection);
+      expect(prepared).toMatchObject({
+        amount: new BigNumber(25_000),
+        zcashFee: new BigNumber(fee),
+        changeAmount: new BigNumber(change),
+      });
+      // What is spent has to close: inputs = amount + fee + change.
+      expect(sum(prepared.selectedNotes?.map(n => n.amount) ?? [])).toEqual(
+        new BigNumber(25_000 + fee + change),
+      );
+    },
+  );
+
+  // A shielded send spends the Ironwood pool only. The deprecated Orchard pool is
+  // never drawn on, even when it holds far more than the send needs.
+  it("never lets a shielded send draw on the Orchard pool", async () => {
+    const prepared = await prepareTransaction(
+      account({ notes: [1_000_000], ironwoodNotes: [20_000] }),
+      transaction({
+        transferType: "shielded",
+        recipient: U_ADDRESS,
+        amount: new BigNumber(500_000),
+      }),
+    );
+
+    expect(prepared.selectedNotes).toEqual([]);
+    expect(prepared).not.toHaveProperty("zcashFee");
+  });
+
+  it("spends the whole pool, leaving no change, when everything is being sent", async () => {
+    const prepared = await prepareTransaction(
+      account({ ironwoodNotes: [40_000, 10_000] }),
+      transaction({ transferType: "shielded", recipient: U_ADDRESS, useAllAmount: true }),
+    );
+
+    expect(prepared.selectedNotes?.map(n => n.amount.toNumber())).toEqual([40_000, 10_000]);
+    expect(prepared).toMatchObject({
+      amount: new BigNumber(40_000),
+      zcashFee: new BigNumber(10_000),
+      changeAmount: new BigNumber(0),
+    });
+  });
+
+  // Change worth less than one action costs more to spend than it holds, so it
+  // goes to the fee instead of becoming a note nobody can use.
+  it("absorbs dust change into the fee rather than leaving an unspendable note", async () => {
+    const prepared = await prepareTransaction(
+      account({ ironwoodNotes: [40_000] }),
+      transaction({
+        transferType: "shielded",
+        recipient: U_ADDRESS,
+        amount: new BigNumber(28_000),
+      }),
+    );
+
+    expect(prepared).toMatchObject({
+      zcashFee: new BigNumber(12_000),
+      changeAmount: new BigNumber(0),
+    });
+  });
+
+  it.each([
+    ["the pool is empty", account({ ironwoodNotes: [] })],
+    ["the account has never been synced", { ...account(), privateInfo: undefined }],
+  ])("clears the selection when %s", async (_label, acc) => {
+    const prepared = await prepareTransaction(
+      acc as unknown as ZcashAccount,
+      transaction({ transferType: "shielded", recipient: U_ADDRESS, useAllAmount: true }),
+    );
+
+    expect(prepared.amount).toEqual(new BigNumber(0));
+    expect(prepared.selectedNotes).toEqual([]);
+    expect(prepared).not.toHaveProperty("zcashFee");
+  });
+});
+
+describe("estimateMaxSpendable", () => {
+  const max = (tx: Transaction | null, acc = account()) =>
+    estimateMaxSpendable({ account: acc, transaction: tx } as never);
+
+  // Each flow's pool, minus the fee for spending all of it into a single
+  // output: 125k of UTXOs costs 2 actions t→t, and 4 as a shielding (the
+  // Orchard bundle is floored to 2 on top of the 2 transparent inputs); a 50k
+  // pool of two notes costs 2 actions, 3 when the recipient is transparent.
+  it.each([
+    ["transparent", 115_000],
+    ["transparent-to-shielded", 105_000],
+    ["shielded", 40_000],
+    ["shielded-to-transparent", 35_000],
+  ] as [ZcashTransferType, number][])(
+    "answers for %s with the pool it spends, minus the fee",
+    async (transferType, spendable) => {
+      expect(await max(transaction({ transferType }))).toEqual(new BigNumber(spendable));
+    },
+  );
+
+  it("falls back to the transparent pool when there is no transaction yet", async () => {
+    expect(await max(null)).toEqual(new BigNumber(115_000));
+  });
+
+  it.each(["transparent", "transparent-to-shielded", "shielded"] as ZcashTransferType[])(
+    "answers zero for an empty pool (%s)",
+    async transferType => {
+      const empty = account({ utxos: [], notes: [], ironwoodNotes: [] });
+
+      expect(await max(transaction({ transferType }), empty)).toEqual(new BigNumber(0));
+    },
+  );
+
+  // A balance worth exactly its own fee leaves nothing to send, and the answer
+  // has to be zero rather than the negative amount the subtraction gives.
+  it("answers zero when the whole balance would go to the fee", async () => {
+    const dust = account({ utxos: [ZIP317_MINIMUM_FEE] });
+
+    expect(await max(transaction({ transferType: "transparent" }), dust)).toEqual(new BigNumber(0));
+  });
+
+  it("counts the caller's UTXO selection rather than the whole account", async () => {
+    const acc = account({ utxos: [100_000, 25_000] });
+
+    expect(await max(transaction({ selectedUtxos: [utxo(25_000, 1)] }), acc)).toEqual(
+      new BigNumber(15_000),
+    );
+  });
+});
+
+// signOperation reserves the notes a signed send spends, so a second send built
+// in the same session cannot select them again and double-spend them. Both
+// selection entry points filter the pool against that reservation, and the two
+// have to answer consistently.
+describe("reserved notes", () => {
+  // 40k + 30k, so which note the reservation removes is visible in the result:
+  // largest-first takes the 40k unless it is reserved.
+  const acc = () => account({ ironwoodNotes: [40_000, 30_000] });
+  const shielded = (overrides: Partial<Transaction> = {}) =>
+    transaction({ transferType: "shielded", recipient: U_ADDRESS, ...overrides });
+  const maxShielded = (a: ZcashAccount) =>
+    estimateMaxSpendable({ account: a, transaction: shielded() } as never);
+
+  it("passes over a reserved note and spends the next one down", async () => {
+    reserveNotes(ACCOUNT_ID, IN_FLIGHT_TX, [ironwoodNullifier(0)]);
+
+    const prepared = await prepareTransaction(acc(), shielded({ amount: new BigNumber(15_000) }));
+
+    expect(prepared.selectedNotes?.map(n => n.amount.toNumber())).toEqual([30_000]);
+    expect(prepared).toMatchObject({
+      zcashFee: new BigNumber(10_000),
+      changeAmount: new BigNumber(5_000),
+    });
+  });
+
+  it("spends the 40k note when nothing is reserved", async () => {
+    const prepared = await prepareTransaction(acc(), shielded({ amount: new BigNumber(15_000) }));
+
+    expect(prepared.selectedNotes?.map(n => n.amount.toNumber())).toEqual([40_000]);
+  });
+
+  it("clears the selection once every note is reserved", async () => {
+    reserveNotes(ACCOUNT_ID, IN_FLIGHT_TX, [ironwoodNullifier(0), ironwoodNullifier(1)]);
+
+    const prepared = await prepareTransaction(acc(), shielded({ amount: new BigNumber(15_000) }));
+
+    expect(prepared.selectedNotes).toEqual([]);
+    expect(prepared).not.toHaveProperty("zcashFee");
+  });
+
+  // Reservations are keyed by account: another account's in-flight send must not
+  // take notes out of this one's pool.
+  it("ignores a reservation held against another account", async () => {
+    reserveNotes("js:2:zcash:xpubOTHER:", IN_FLIGHT_TX, [
+      ironwoodNullifier(0),
+      ironwoodNullifier(1),
+    ]);
+
+    const prepared = await prepareTransaction(acc(), shielded({ amount: new BigNumber(15_000) }));
+
+    expect(prepared.selectedNotes?.map(n => n.amount.toNumber())).toEqual([40_000]);
+  });
+
+  it("counts a note another account has reserved as spendable", async () => {
+    reserveNotes("js:2:zcash:xpubOTHER:", IN_FLIGHT_TX, [
+      ironwoodNullifier(0),
+      ironwoodNullifier(1),
+    ]);
+
+    // The whole 70k pool, minus the 2-action fee for spending both notes.
+    expect(await maxShielded(acc())).toEqual(new BigNumber(60_000));
+  });
+
+  it("drops reserved notes from the max spendable", async () => {
+    // The free 30k note minus the 2-action fee, not the 60k the whole pool offers.
+    reserveNotes(ACCOUNT_ID, IN_FLIGHT_TX, [ironwoodNullifier(0)]);
+
+    expect(await maxShielded(acc())).toEqual(new BigNumber(20_000));
+  });
+
+  it("answers zero for the max spendable once every note is reserved", async () => {
+    reserveNotes(ACCOUNT_ID, IN_FLIGHT_TX, [ironwoodNullifier(0), ironwoodNullifier(1)]);
+
+    expect(await maxShielded(acc())).toEqual(new BigNumber(0));
+  });
+
+  // Both call sites filter the pool themselves, so they can disagree: a max the
+  // send cannot then price is a "send max" the user cannot complete.
+  it("prices a max send over the notes the max spendable counted", async () => {
+    reserveNotes(ACCOUNT_ID, IN_FLIGHT_TX, [ironwoodNullifier(0)]);
+    const spendable = await maxShielded(acc());
+
+    const prepared = await prepareTransaction(acc(), shielded({ useAllAmount: true }));
+
+    expect(prepared.amount).toEqual(spendable);
+    expect(prepared.selectedNotes?.map(n => n.amount.toNumber())).toEqual([30_000]);
+    expect(prepared).toMatchObject({
+      zcashFee: new BigNumber(10_000),
+      changeAmount: new BigNumber(0),
+    });
+  });
+
+  // A send broadcast in a session that ended before it confirmed: the store is
+  // empty, and the notes it spends are known only from the optimistic operation
+  // the account persisted. Selecting them again would double-spend.
+  describe("a send left in flight by a previous session", () => {
+    const withPendingSend = (nullifiers: string[]) =>
+      ({
+        ...acc(),
+        pendingOperations: [
+          {
+            hash: IN_FLIGHT_TX,
+            extra: { zcashShielded: true, shieldedNullifiers: nullifiers },
+          },
+        ],
+      }) as unknown as ZcashAccount;
+
+    it("passes over the notes its pending operation holds", async () => {
+      const prepared = await prepareTransaction(
+        withPendingSend([ironwoodNullifier(0)]),
+        shielded({ amount: new BigNumber(15_000) }),
+      );
+
+      expect(prepared.selectedNotes?.map(n => n.amount.toNumber())).toEqual([30_000]);
+    });
+
+    it("clears the selection when its pending operation holds every note", async () => {
+      const prepared = await prepareTransaction(
+        withPendingSend([ironwoodNullifier(0), ironwoodNullifier(1)]),
+        shielded({ amount: new BigNumber(15_000) }),
+      );
+
+      expect(prepared.selectedNotes).toEqual([]);
+    });
+
+    it("drops those notes from the max spendable too", async () => {
+      expect(await maxShielded(withPendingSend([ironwoodNullifier(0)]))).toEqual(
+        new BigNumber(20_000),
+      );
+    });
+  });
+});
+
+// Reproduces the field failure: a change note is scanned back into the pool a
+// few blocks after the send that created it, and a second send prepared
+// before it matures must not select it.
+describe("prepareTransaction, note maturity", () => {
+  const REFERENCE_HEIGHT = 3_450_000;
+  const MATURE_BLOCK = REFERENCE_HEIGHT - ZCASH_SHIELDED_SPENDABILITY_DELAY_BLOCKS;
+  const FRESH_CHANGE_BLOCK = REFERENCE_HEIGHT - 3;
+
+  function accountWithChangeNote({
+    matureAmount,
+    freshChangeAmount,
+    lastProcessedBlock = REFERENCE_HEIGHT,
+  }: {
+    matureAmount: number;
+    freshChangeAmount: number;
+    lastProcessedBlock?: number;
+  }): ZcashAccount {
+    return {
+      type: "Account",
+      id: ACCOUNT_ID,
+      currency: { id: "zcash", name: "Zcash" },
+      bitcoinResources: { utxos: [] },
+      privateInfo: {
+        lastProcessedBlock,
+        transactions: [
+          {
+            id: "confirmed-send",
+            hex: "00",
+            blockHeight: MATURE_BLOCK,
+            blockHash: "cc".repeat(32),
+            timestamp: 1_700_000_000,
+            fee: new BigNumber(15_000),
+            decryptedData: {
+              orchard_outputs: [],
+              sapling_outputs: [],
+              ironwood_outputs: [note(matureAmount, IRONWOOD_INDEX_OFFSET)],
+            },
+          },
+          {
+            id: "fresh-change",
+            hex: "00",
+            blockHeight: FRESH_CHANGE_BLOCK,
+            blockHash: "dd".repeat(32),
+            timestamp: 1_700_000_100,
+            fee: new BigNumber(10_000),
+            decryptedData: {
+              orchard_outputs: [],
+              sapling_outputs: [],
+              ironwood_outputs: [note(freshChangeAmount, IRONWOOD_INDEX_OFFSET + 1)],
+            },
+          },
+        ],
+      },
+    } as unknown as ZcashAccount;
+  }
+
+  // Largest-first would otherwise pick the 50k fresh change note over the 30k
+  // mature one; the maturity filter must keep it out of the selection.
+  it("excludes the fresh change note even though it is largest, selecting the mature one instead", async () => {
+    const acc = accountWithChangeNote({ matureAmount: 30_000, freshChangeAmount: 50_000 });
+
+    const prepared = await prepareTransaction(
+      acc,
+      transaction({
+        transferType: "shielded",
+        recipient: U_ADDRESS,
+        amount: new BigNumber(15_000),
+      }),
+    );
+
+    expect(prepared.selectedNotes?.map(n => n.amount.toNumber())).toEqual([30_000]);
+  });
+
+  it("reports a reset (no selection) when only the fresh change note could cover the amount", async () => {
+    const acc = accountWithChangeNote({ matureAmount: 10_000, freshChangeAmount: 50_000 });
+
+    const prepared = await prepareTransaction(
+      acc,
+      transaction({
+        transferType: "shielded",
+        recipient: U_ADDRESS,
+        amount: new BigNumber(25_000),
+      }),
+    );
+
+    expect(prepared.selectedNotes).toEqual([]);
+    expect(prepared).not.toHaveProperty("zcashFee");
+  });
+
+  it("makes the change note selectable once the reference height advances past the threshold", async () => {
+    const matured = accountWithChangeNote({
+      matureAmount: 10_000,
+      freshChangeAmount: 50_000,
+      lastProcessedBlock: FRESH_CHANGE_BLOCK + ZCASH_SHIELDED_SPENDABILITY_DELAY_BLOCKS,
+    });
+
+    const prepared = await prepareTransaction(
+      matured,
+      transaction({
+        transferType: "shielded",
+        recipient: U_ADDRESS,
+        amount: new BigNumber(25_000),
+      }),
+    );
+
+    expect(prepared.selectedNotes?.map(n => n.amount.toNumber())).toEqual([50_000]);
+  });
+});

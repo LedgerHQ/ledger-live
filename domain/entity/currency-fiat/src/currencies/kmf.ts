@@ -2,7 +2,6 @@ import { fiat } from "../define";
 
 export const kmf = fiat({
   type: "FiatCurrency",
-  id: "kmf",
   ticker: "KMF",
   name: "Comorian Franc",
   symbol: "CF",

@@ -4,7 +4,7 @@ import { useCurrencySettingsForAccount } from "LLM/hooks/useCurrencySettingsForA
 import { State } from "~/reducers/types";
 import { AccountRaw, TokenAccount } from "@ledgerhq/types-live";
 import { fromAccountRaw } from "@ledgerhq/ledger-wallet-framework/serialization/account";
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import BigNumber from "bignumber.js";
 
 const parentAccountRaw: AccountRaw = {
@@ -23,7 +23,11 @@ const parentAccountRaw: AccountRaw = {
   balance: "1000000000000000000",
 };
 
-setupMockCryptoAssetsStore();
+setCryptoAssetsStore({
+  findTokenById: async () => undefined,
+  findTokenByAddressInCurrency: async () => undefined,
+  getTokensSyncHash: async () => "",
+});
 
 let mockParentAccount: Awaited<ReturnType<typeof fromAccountRaw>>;
 

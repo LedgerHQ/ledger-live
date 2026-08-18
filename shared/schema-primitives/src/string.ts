@@ -1,11 +1,5 @@
 import { z } from "zod";
 
-/** Opaque identifier for a currency (e.g. `"bitcoin"`, `"ethereum"`). Non-empty string. */
-export const CurrencyIdSchema = z.string().min(1).brand<"CurrencyId">();
-
-/** Opaque identifier for a token (e.g. `"ethereum/erc20/usd-tether"`). Non-empty string. */
-export const TokenIdSchema = z.string().min(1).brand<"TokenId">();
-
 /**
  * Arbitrary-precision decimal number encoded as a string.
  * Use this for on-chain amounts to avoid IEEE 754 precision loss.
@@ -48,8 +42,6 @@ export const SemVerSchema = z
   .regex(/^\d+\.\d+\.\d+(?:-[\w.]+)?(?:\+[\w.]+)?$/, "Expected a semver string (e.g. 1.2.3)")
   .brand<"SemVer">();
 
-export type CurrencyId = z.infer<typeof CurrencyIdSchema>;
-export type TokenId = z.infer<typeof TokenIdSchema>;
 export type BigNumberStr = z.infer<typeof BigNumberStrSchema>;
 export type NonEmptyString = z.infer<typeof NonEmptyStringSchema>;
 export type DateTimeIso = z.infer<typeof DateTimeIsoSchema>;

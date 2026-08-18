@@ -1,18 +1,18 @@
+import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { GetAddressFn } from "@ledgerhq/ledger-wallet-framework/bridge/getAddressWrapper";
 import {
-  getSerializedAddressParameters,
-  updateTransaction,
   GetAccountShape,
+  getSerializedAddressParameters,
   makeAccountBridgeReceive,
   makeScanAccounts,
   makeSync,
+  updateTransaction,
 } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { patchOperationWithHash } from "@ledgerhq/ledger-wallet-framework/operation";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
-import { minutes, makeLRUCache } from "@ledgerhq/live-network/cache";
+import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
 import { log } from "@ledgerhq/logs";
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
-import type { AccountBridge, AccountLike, CurrencyBridge } from "@ledgerhq/types-live";
+import type { Account, AccountBridge, AccountLike, CurrencyBridge } from "@ledgerhq/types-live";
 import { BlockhashWithExpiryBlockHeight } from "@solana/web3.js";
 import { SOLANA_DUMMY_ADDRESS } from "../constants";
 import { createTransaction } from "../createTransaction";
@@ -24,21 +24,21 @@ import { broadcast } from "../logic/broadcast";
 import { validateAddress } from "../logic/validateAddress";
 import { ChainAPI, Config } from "../network";
 import nftResolvers from "../nftResolvers";
-import { PRELOAD_MAX_AGE, preloadWithAPI } from "../preload";
 import { prepareTransaction as prepareTransactionWithAPI } from "../prepareTransaction";
 import {
   assignFromAccountRaw,
+  assignFromTokenAccountRaw,
   assignToAccountRaw,
+  assignToTokenAccountRaw,
   fromOperationExtraRaw,
   toOperationExtraRaw,
-  assignFromTokenAccountRaw,
-  assignToTokenAccountRaw,
 } from "../serialization";
 import { buildSignOperation } from "../signOperation";
 import { SolanaSigner } from "../signer";
 import { getAccountShapeWithAPI } from "../synchronization";
-import type { SolanaAccount, SolanaPreloadDataV1, Transaction, TransactionStatus } from "../types";
+import type { SolanaAccount, Transaction, TransactionStatus } from "../types";
 import { endpointByCurrencyId } from "../utils";
+import coinConfig from "../config";
 
 function makePrepare(getChainAPI: (config: Config) => ChainAPI) {
   const prepareTransaction: AccountBridge<Transaction, SolanaAccount>["prepareTransaction"] = (
@@ -46,7 +46,10 @@ function makePrepare(getChainAPI: (config: Config) => ChainAPI) {
     transaction,
   ) => {
     const config: Config = {
-      endpoint: endpointByCurrencyId(mainAccount.currency.id),
+      endpoint: endpointByCurrencyId(
+        coinConfig.getCoinConfig(mainAccount.currency.id),
+        mainAccount.currency.id,
+      ),
     };
 
     const chainAPI = getChainAPI(config);
@@ -59,7 +62,7 @@ function makePrepare(getChainAPI: (config: Config) => ChainAPI) {
 function makeSyncAndScan(getChainAPI: (config: Config) => ChainAPI, getAddress: GetAddressFn) {
   const getAccountShape: GetAccountShape<SolanaAccount> = info => {
     const config: Config = {
-      endpoint: endpointByCurrencyId(info.currency.id),
+      endpoint: endpointByCurrencyId(coinConfig.getCoinConfig(info.currency.id), info.currency.id),
     };
 
     const chainAPI = getChainAPI(config);
@@ -70,6 +73,28 @@ function makeSyncAndScan(getChainAPI: (config: Config) => ChainAPI, getAddress: 
     scan: makeScanAccounts({ getAccountShape, getAddressFn: getAddress }),
   };
 }
+
+/**
+ * Cache key for estimateMaxSpendable.
+ *
+ * Include pending operations so new outgoing txs bust the cache and "send max" stays correct.
+ * See: https://ledgerhq.atlassian.net/browse/LIVE-35129
+ */
+export const estimateMaxSpendableCacheKey = ({
+  account,
+  parentAccount,
+  transaction,
+}: {
+  account: AccountLike;
+  parentAccount?: Account | null | undefined;
+  transaction?: Transaction | null | undefined;
+}): string => {
+  const mainAccount = getMainAccount(account, parentAccount);
+  const pendingOpsSig = (mainAccount.pendingOperations ?? []).map(op => op.hash).join(",");
+  return `${account.id}:${account.spendableBalance.toString()}:pending:${pendingOpsSig}:tx:${
+    transaction?.model.kind ?? "<no transaction>"
+  }`;
+};
 
 function makeEstimateMaxSpendable(getChainAPI: (config: Config) => ChainAPI) {
   const estimateMaxSpendable: AccountBridge<
@@ -86,7 +111,7 @@ function makeEstimateMaxSpendable(getChainAPI: (config: Config) => ChainAPI) {
     }
 
     const config: Config = {
-      endpoint: endpointByCurrencyId(currencyId),
+      endpoint: endpointByCurrencyId(coinConfig.getCoinConfig(currencyId), currencyId),
     };
 
     const api = getChainAPI(config);
@@ -94,19 +119,7 @@ function makeEstimateMaxSpendable(getChainAPI: (config: Config) => ChainAPI) {
     return estimateMaxSpendableWithAPI(arg, api);
   };
 
-  const cacheKeyByAccSpendableBalance = ({
-    account,
-    transaction,
-  }: {
-    account: AccountLike;
-    transaction?: Transaction | null | undefined;
-  }) => {
-    return `${account.id}:${account.spendableBalance.toString()}:tx:${
-      transaction?.model.kind ?? "<no transaction>"
-    }`;
-  };
-
-  return makeLRUCache(estimateMaxSpendable, cacheKeyByAccSpendableBalance, minutes(5));
+  return makeLRUCache(estimateMaxSpendable, estimateMaxSpendableCacheKey, minutes(5));
 }
 
 function makeBroadcast(
@@ -114,7 +127,10 @@ function makeBroadcast(
 ): AccountBridge<Transaction, SolanaAccount>["broadcast"] {
   return async ({ account, signedOperation }) => {
     const config: Config = {
-      endpoint: endpointByCurrencyId(account.currency.id),
+      endpoint: endpointByCurrencyId(
+        coinConfig.getCoinConfig(account.currency.id),
+        account.currency.id,
+      ),
     };
     const api = getChainAPI(config);
     const { signature, operation, rawData } = signedOperation;
@@ -149,29 +165,13 @@ function makeSign(
 ): AccountBridge<Transaction, SolanaAccount>["signOperation"] {
   return info => {
     const config: Config = {
-      endpoint: endpointByCurrencyId(info.account.currency.id),
+      endpoint: endpointByCurrencyId(
+        coinConfig.getCoinConfig(info.account.currency.id),
+        info.account.currency.id,
+      ),
     };
     const api = getChainAPI(config);
     return buildSignOperation(signerContext, api)(info);
-  };
-}
-
-function makePreload(
-  getChainAPI: (config: Config) => ChainAPI,
-): (currency: CryptoCurrency) => Promise<SolanaPreloadDataV1> {
-  const preload = (currency: CryptoCurrency): Promise<SolanaPreloadDataV1> => {
-    const config: Config = {
-      endpoint: endpointByCurrencyId(currency.id),
-    };
-    const api = getChainAPI(config);
-    return preloadWithAPI(currency, api);
-  };
-  return preload;
-}
-
-function getPreloadStrategy() {
-  return {
-    preloadMaxAge: PRELOAD_MAX_AGE,
   };
 }
 
@@ -213,9 +213,7 @@ export function makeBridges({
   };
 
   const currencyBridge: CurrencyBridge = {
-    preload: makePreload(getAPI),
     scanAccounts: scan,
-    getPreloadStrategy,
     nftResolvers,
   };
 

@@ -13,18 +13,13 @@ const SKELETON_COUNT = VISIBLE_RESULTS;
 
 export function SearchResultsList() {
   const { results, navigateToAsset } = useSearchOverlay();
-  const { locale, counterCurrency } = useAssetSuggestionsSectionViewModel();
+  const { locale } = useAssetSuggestionsSectionViewModel();
 
   const renderResult = useCallback(
     (currency: MarketCurrencyData) => (
-      <SearchResultRow
-        currency={currency}
-        counterCurrency={counterCurrency}
-        locale={locale}
-        onClick={navigateToAsset}
-      />
+      <SearchResultRow currency={currency} locale={locale} onClick={navigateToAsset} />
     ),
-    [counterCurrency, locale, navigateToAsset],
+    [locale, navigateToAsset],
   );
 
   if (results.isLoading) {

@@ -1,4 +1,4 @@
-import { FeeNotLoaded } from "@ledgerhq/errors";
+import { FeeNotLoaded } from "@ledgerhq/ledger-wallet-framework/errors";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { LedgerSigner } from "@mysten/signers/ledger";
 import { messageWithIntent as mockMessageWithIntent } from "@mysten/sui/cryptography";

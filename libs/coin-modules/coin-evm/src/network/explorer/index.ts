@@ -1,5 +1,4 @@
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
-import { getCoinConfig } from "../../config";
+import { EvmConfigInfo } from "../../config";
 import { UnknownExplorer } from "../../errors";
 import etherscanLikeApi from "./etherscan";
 import ledgerExplorerApi from "./ledger";
@@ -9,9 +8,7 @@ import { ExplorerApi } from "./types";
 /**
  * Switch to select one of the compatible explorer
  */
-export const getExplorerApi = (currency: CryptoCurrency): ExplorerApi => {
-  const config = getCoinConfig(currency.id).info;
-
+export const getExplorerApi = (config: EvmConfigInfo, currencyId: string): ExplorerApi => {
   switch (config?.explorer?.type) {
     case "etherscan":
     case "blockscout":
@@ -27,6 +24,6 @@ export const getExplorerApi = (currency: CryptoCurrency): ExplorerApi => {
       return noExplorerAPI;
 
     default:
-      throw new UnknownExplorer(`Unknown explorer for currency: ${currency.id}`);
+      throw new UnknownExplorer(`Unknown explorer for currency: ${currencyId}`);
   }
 };

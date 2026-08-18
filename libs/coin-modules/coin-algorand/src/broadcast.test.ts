@@ -1,5 +1,7 @@
 import type { Operation, SignedOperation } from "@ledgerhq/types-live";
 import { broadcast } from "./broadcast";
+import { setCoinConfig } from "./config";
+import { mockAlgorandConfig } from "./test/context";
 import * as network from "./network";
 
 jest.mock("./network");
@@ -14,6 +16,7 @@ const mockBroadcastTransaction = network.broadcastTransaction as jest.MockedFunc
 describe("broadcast", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    setCoinConfig(() => mockAlgorandConfig);
   });
 
   it("should broadcast signed transaction and return patched operation", async () => {
@@ -43,7 +46,10 @@ describe("broadcast", () => {
     const result = await broadcast({ signedOperation, account: {} as never });
 
     expect(result.hash).toBe(txHash);
-    expect(mockBroadcastTransaction).toHaveBeenCalledWith(Buffer.from("abcdef123456", "hex"));
+    expect(mockBroadcastTransaction).toHaveBeenCalledWith(
+      mockAlgorandConfig,
+      Buffer.from("abcdef123456", "hex"),
+    );
   });
 
   it("should convert hex signature to buffer before broadcasting", async () => {
@@ -70,7 +76,7 @@ describe("broadcast", () => {
     await broadcast({ signedOperation, account: {} as never });
 
     const expectedBuffer = Buffer.from("48656c6c6f", "hex");
-    expect(mockBroadcastTransaction).toHaveBeenCalledWith(expectedBuffer);
+    expect(mockBroadcastTransaction).toHaveBeenCalledWith(mockAlgorandConfig, expectedBuffer);
   });
 
   it("should propagate network errors", async () => {

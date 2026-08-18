@@ -7,9 +7,8 @@ import type {
   MarketItemResponse,
 } from "@ledgerhq/live-common/market/utils/types";
 import { REFETCH_TIME_ONE_MINUTE, BASIC_REFETCH } from "@ledgerhq/live-common/market/utils/timers";
-import { assetsDataApi } from "@ledgerhq/live-common/dada-client/state-manager/api";
-import { useAssetsData } from "@ledgerhq/live-common/dada-client/hooks/useAssetsData";
-import { selectCurrency } from "@ledgerhq/live-common/dada-client/utils/currencySelection";
+import { assetsDataApi } from "@domain/api-aggregated-assets";
+import { selectCurrency, useAssetsData } from "@features/platform-aggregated-assets";
 import { useUsdToFiatRate } from "@ledgerhq/live-common/counterValues/hooks/useUsdToFiatRate";
 import { applyDadaMarketFallback } from "../utils/applyDadaMarketFallback";
 import { resolveDadaMarket } from "../utils/resolveDadaMarket";

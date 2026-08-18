@@ -1,5 +1,8 @@
 # @ledgerhq/psbtv2
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 Partially Signed Bitcoin Transaction version 2 (PSBT v2) implementation following BIP370 and BIP174.
 
 ## Overview

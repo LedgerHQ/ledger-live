@@ -1,7 +1,7 @@
 import type { MemoNotSupported, Operation } from "@ledgerhq/coin-module-framework/api/types";
 import { isNFTActive } from "@ledgerhq/ledger-wallet-framework/nft/support";
 import { getEnv } from "@ledgerhq/live-env";
-import { delay } from "@ledgerhq/live-promise";
+import { delay } from "@ledgerhq/coin-module-framework/promises";
 import axios from "axios";
 import {
   ledgerERC1155EventToOperations,
@@ -10,7 +10,6 @@ import {
   ledgerInternalTransactionToOperations,
   ledgerOperationToOperations,
 } from "../../adapters/index";
-import { getCoinConfig } from "../../config";
 import { LedgerExplorerUsedIncorrectly } from "../../errors";
 import { LedgerExplorerOperation } from "../../types";
 import { ExplorerApi, isLedgerExplorerConfig, NO_TOKEN } from "./types";
@@ -81,12 +80,16 @@ export async function fetchPaginatedOpsWithRetries(
  * so pagination parameters are ignored and nextPagingToken is always empty.
  * Pagination may be supported in the future.
  */
-export const getOperations: ExplorerApi["getOperations"] = async (currency, address, fromBlock) => {
-  const config = getCoinConfig(currency.id).info;
+export const getOperations: ExplorerApi["getOperations"] = async (
+  config,
+  currencyId,
+  address,
+  fromBlock,
+) => {
   const { explorer } = config || /* istanbul ignore next */ {};
   if (!isLedgerExplorerConfig(explorer)) {
     throw new LedgerExplorerUsedIncorrectly(
-      `Ledger explorer used incorrectly with currency: ${currency.id}`,
+      `Ledger explorer used incorrectly with currency: ${currencyId}`,
     );
   }
 
@@ -108,7 +111,7 @@ export const getOperations: ExplorerApi["getOperations"] = async (currency, addr
     nativeContractsSet.has(contract.toLowerCase());
 
   for (const ledgerOp of ledgerExplorerOps) {
-    const coinOps = ledgerOperationToOperations(address, currency.id, ledgerOp);
+    const coinOps = ledgerOperationToOperations(address, currencyId, ledgerOp);
 
     const erc20TransferEvents =
       nativeContractsSet.size === 0
@@ -119,13 +122,13 @@ export const getOperations: ExplorerApi["getOperations"] = async (currency, addr
       ledgerERC20EventToOperations(address, coinOps[0], event, index),
     );
     const erc721Ops =
-      isNFTActive(currency) && config.showNfts
+      isNFTActive(currencyId) && config.showNfts
         ? ledgerOp.erc721_transfer_events.flatMap((event, index) =>
             ledgerERC721EventToOperations(address, coinOps[0], event, index),
           )
         : [];
     const erc1155Ops =
-      isNFTActive(currency) && config.showNfts
+      isNFTActive(currencyId) && config.showNfts
         ? ledgerOp.erc1155_transfer_events.flatMap((event, index) =>
             ledgerERC1155EventToOperations(address, coinOps[0], event, index),
           )

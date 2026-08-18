@@ -4,7 +4,7 @@ import {
   type DeviceIntentExecutorProps,
   type DeviceConnectionParams,
   type ExecutorState,
-} from "@ledgerhq/device-intent";
+} from "@features/platform-device-intent";
 import type { InitializationInput } from "LLM/components/DeviceIntentExecutor/types";
 import type {
   AnyDemoJobState,
@@ -27,7 +27,6 @@ const BOLOS_INITIALIZATION_INPUT: InitializationInput = {
   appName: "BOLOS",
   dependencies: [],
   requireLatestFirmware: false,
-  allowPartialDependencies: true,
 };
 
 const ETHEREUM_INITIALIZATION_INPUT: InitializationInput = {

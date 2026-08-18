@@ -1,7 +1,7 @@
-export class AuthenticatedBaseQueryMissingAuthSDKError extends Error {
-  override name = "AuthenticatedBaseQueryMissingAuthSDKError";
+export class AuthProviderMissingError extends Error {
+  override name = "AuthProviderMissingError";
 
   constructor() {
-    super("Authenticated base query requires api.extra.authSDK");
+    super("Authenticated base query requires api.extra.authProvider");
   }
 }

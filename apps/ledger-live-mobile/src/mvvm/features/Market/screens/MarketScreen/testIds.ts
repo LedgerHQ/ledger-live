@@ -7,6 +7,7 @@ export const MARKET_SCREEN_TEST_IDS = {
   assetsSubHeader: "market-screen-assets-subheader",
   assetsFilterButton: "market-screen-assets-filter-button",
   assetsCategorySwitcher: "market-screen-assets-category-switcher",
+  assetsCategorySwitcherContainer: "market-screen-assets-category-switcher-container",
   assetsFavoritesEmptyIcon: "market-screen-assets-favorites-empty-icon",
   assetsStocksEmpty: "market-screen-assets-stocks-empty",
   filtersDrawer: "market-screen-filters-drawer",

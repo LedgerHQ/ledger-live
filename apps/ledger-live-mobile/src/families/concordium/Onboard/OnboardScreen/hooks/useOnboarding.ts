@@ -1,11 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AccountOnboardStatus } from "@ledgerhq/coin-concordium/types";
-import {
-  ConcordiumPairingExpiredError,
-  ConcordiumSessionExpiredError,
-  LockedDeviceError,
-} from "@ledgerhq/errors";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { Account } from "@ledgerhq/types-live";
 import { log } from "@ledgerhq/logs";
 import { Subscription } from "rxjs";
@@ -90,11 +85,11 @@ export function useOnboarding(
             message: error instanceof Error ? error.message : String(error),
           });
           unsubscribe();
-          if (error instanceof LockedDeviceError) {
+          if (error?.name === "LockedDeviceError") {
             setCreateStatus(CreateStatus.DEVICE_LOCKED);
           } else if (
-            error instanceof ConcordiumSessionExpiredError ||
-            error instanceof ConcordiumPairingExpiredError
+            error?.name === "ConcordiumSessionExpiredError" ||
+            error?.name === "ConcordiumPairingExpiredError"
           ) {
             onSessionExpired();
           } else {

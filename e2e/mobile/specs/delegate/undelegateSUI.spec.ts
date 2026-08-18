@@ -4,6 +4,6 @@ import { runSuiUndelegateTest } from "./delegate";
 const delegation = new Delegate(Account.SUI_1, "1", "Ledger by P2P.ORG");
 runSuiUndelegateTest(
   delegation,
-  ["B2CQA-387-2"],
+  ["B2CQA-387"],
   ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5", `@sui`, `@family-sui`],
 );

@@ -1,5 +1,5 @@
 import { Account, AccountLike } from "@ledgerhq/types-live";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { isTokenAccount } from "../account";
 import { loadPlatformAdapterForFamily } from "../coin-modules/registry";
 import type { Transaction } from "../coin-modules/transaction-types";
@@ -13,10 +13,13 @@ import {
   PlatformTokenStandard,
   PlatformTransaction,
 } from "./types";
-import { WalletState, accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
+import {
+  accountNameWithDefaultSelector,
+  type AccountNamesState,
+} from "@domain/entity-account-name";
 
 export function accountToPlatformAccount(
-  walletState: WalletState,
+  accountNames: AccountNamesState,
   account: AccountLike,
   parentAccount?: Account,
 ): PlatformAccount {
@@ -25,7 +28,7 @@ export function accountToPlatformAccount(
       throw new Error("No 'parentAccount' account provided for token account");
     }
 
-    const parentName = accountNameWithDefaultSelector(walletState, parentAccount);
+    const parentName = accountNameWithDefaultSelector(accountNames, parentAccount);
 
     return {
       id: account.id,
@@ -39,7 +42,7 @@ export function accountToPlatformAccount(
     };
   }
 
-  const name = accountNameWithDefaultSelector(walletState, account);
+  const name = accountNameWithDefaultSelector(accountNames, account);
 
   return {
     id: account.id,

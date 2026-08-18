@@ -1,10 +1,12 @@
 import { BottomSheetModalProvider } from "@ledgerhq/lumen-ui-rnative";
 import { contactsInitialState } from "@domain/entity-contact";
+import { payCardBalanceInitialState } from "@features/flow-pay-card-balance/state";
+import { payCardFeatureTourInitialState } from "@features/flow-pay-card-feature-tour/state";
 import { initialIdentitiesState } from "@domain/entity-client-identity";
 import { INITIAL_STATE as TRUSTCHAIN_INITIAL_STATE } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { initialState as POST_ONBOARDING_INITIAL_STATE } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { CountervaluesBridge, CountervaluesProvider } from "@ledgerhq/live-countervalues-react";
-import { initialState as WALLET_INITIAL_STATE } from "@ledgerhq/live-wallet/store";
+import { INITIAL_STATE as WALLET_INITIAL_STATE } from "~/reducers/wallet";
 import { NavigationContainer, type InitialState } from "@react-navigation/native";
 import { configureStore } from "@reduxjs/toolkit";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -14,7 +16,7 @@ import {
   renderHook as rntlRenderHook,
   userEvent,
 } from "@testing-library/react-native";
-import QueuedDrawersContextProvider from "LLM/components/QueuedDrawer/QueuedDrawersContextProvider";
+import QueuedBottomSheetsProvider from "LLM/components/QueuedDrawer/QueuedBottomSheetsProvider";
 import React, { useMemo } from "react";
 import { I18nextProvider } from "react-i18next";
 import { Provider } from "react-redux";
@@ -52,9 +54,8 @@ import { INITIAL_STATE as DEEPLINK_INSTALL_APP_INITIAL_STATE } from "~/reducers/
 import { INITIAL_STATE as RECOVER_STATE_INITIAL_STATE } from "~/reducers/recoverState";
 import { FEATURE_FLAGS_INITIAL_STATE, FEATURE_FLAGS_DEFAULTS } from "@shared/feature-flags";
 import type { FeatureId, Features, PartialFeatures, Feature } from "@shared/feature-flags";
-import { getEnv } from "@ledgerhq/live-env";
-import { marketSentimentApiExtra } from "@domain/api-market-sentiment";
-import { altcoinsSentimentApiExtra } from "@domain/api-altcoins-sentiment";
+import { getEnv } from "@shared/env";
+import { coinMarketCapApiExtra, cvsApiExtra } from "@shared/api-services";
 import StyleProvider from "~/StyleProvider";
 import CustomLiveAppProvider from "./CustomLiveAppProvider";
 import { llmRtkApiInitialStates, applyLlmRTKApiMiddlewares } from "~/context/rtkQueryApi";
@@ -84,6 +85,8 @@ const INITIAL_STATE: State = {
   postOnboardingHubDrawer: POST_ONBOARDING_HUB_DRAWER_INITIAL_STATE,
   protect: PROTECT_INITIAL_STATE,
   ratings: RATINGS_INITIAL_STATE,
+  payCardBalance: payCardBalanceInitialState,
+  payCardFeatureTour: payCardFeatureTourInitialState,
   settings: SETTINGS_INITIAL_STATE,
   toasts: TOASTS_INITIAL_STATE,
   trustchain: TRUSTCHAIN_INITIAL_STATE,
@@ -142,8 +145,8 @@ function createStore({ overrideInitialState }: { overrideInitialState: (state: S
           immutableCheck: false,
           thunk: {
             extraArgument: {
-              ...marketSentimentApiExtra({ coinMarketCapApiUrl: getEnv("CMC_API_URL") }),
-              ...altcoinsSentimentApiExtra({ coinMarketCapApiUrl: getEnv("CMC_API_URL") }),
+              ...cvsApiExtra({ countervaluesServiceUrl: getEnv("LEDGER_COUNTERVALUES_API") }),
+              ...coinMarketCapApiExtra({ coinMarketCapApiUrl: getEnv("CMC_API_URL") }),
             },
           },
         }),
@@ -295,9 +298,9 @@ function Providers({
       // For default rendering, add new providers here
       <I18nextProvider i18n={i18n}>
         <BottomSheetModalProvider>
-          <QueuedDrawersContextProvider>
+          <QueuedBottomSheetsProvider>
             <AnalyticsContextProvider>{content}</AnalyticsContextProvider>
-          </QueuedDrawersContextProvider>
+          </QueuedBottomSheetsProvider>
         </BottomSheetModalProvider>
       </I18nextProvider>
     );

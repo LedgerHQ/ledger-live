@@ -4,6 +4,7 @@
 import yoctoSpinner from "yocto-spinner";
 import type { Spinner } from "yocto-spinner";
 import { colors, writeStdout as bunliWriteStdout } from "@bunli/utils";
+import { detectAgent } from "./agent-detection";
 export { colors };
 
 type Writer = (chunk: string) => void;
@@ -41,16 +42,7 @@ export function writeStderr(message: string): void {
 let activeSpinner: Spinner | null = null;
 
 export function isAgentEnvironment(): boolean {
-  return Boolean(
-    process.env.CLAUDECODE ||
-    process.env.CLAUDE_CODE ||
-    process.env.CURSOR_AGENT ||
-    process.env.CODEX_ENABLED ||
-    process.env.GEMINI_CLI ||
-    process.env.OPENCODE ||
-    process.env.AMP_CURRENT_THREAD_ID ||
-    process.env.AGENT === "amp",
-  );
+  return detectAgent().detected;
 }
 
 /**

@@ -1,6 +1,6 @@
 import SuiUpstream from "@mysten/ledgerjs-hw-app-sui";
 import { DeviceModelId } from "@ledgerhq/devices";
-import { UpdateYourApp } from "@ledgerhq/errors";
+import { UpdateYourApp } from "./errors";
 import semver from "semver";
 
 import type { Resolution, SignTransactionResult } from "@mysten/ledgerjs-hw-app-sui";

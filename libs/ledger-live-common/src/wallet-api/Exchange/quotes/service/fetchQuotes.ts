@@ -1,95 +1,91 @@
-import axios from "axios";
+import type { SerializedError } from "@reduxjs/toolkit";
+import type { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 
-import { getSwapAPIBaseURL } from "../../../../exchange/swap";
+import { SwapQuotesRequestFailed } from "../../../../errors";
+import { swapQuotesApi } from "../state-manager/api";
+import { getSwapQuotesDispatch } from "../state-manager/store";
 
 import type { GetQuotesArgs } from "../types";
 import type { ResolvedQuotesInput } from "../resolveQuotesInput";
-import type { FetchQuotesResult, RawQuote, RawQuoteError } from "./types";
+import type { FetchQuotesResult } from "./types";
 
-type FetchQuotesArgs = Omit<GetQuotesArgs, "data"> & {
+// `signal` omitted: nothing supplies one. If an in-process caller ever needs
+// cancellation, abort the `initiate()` promise below rather than forwarding it.
+type FetchQuotesArgs = Omit<GetQuotesArgs, "data" | "signal"> & {
   data: ResolvedQuotesInput;
 };
+
+// A factory, not a constant: callers forward `providerErrors` into their own
+// response objects, so each call needs its own arrays.
+const emptyResult = (): FetchQuotesResult => ({ rawQuotes: [], providerErrors: [] });
+
+/**
+ * `undefined` when no response arrived. `PARSING_ERROR` still carries a status
+ * in `originalStatus` — the aggregator answered, the body just was not JSON.
+ */
+function getHttpStatus(error: FetchBaseQueryError | SerializedError): number | undefined {
+  if (!("status" in error)) return undefined;
+  if (typeof error.status === "number") return error.status;
+  if (error.status === "PARSING_ERROR") return error.originalStatus;
+  return undefined;
+}
+
+// `cause` is non-enumerable and does not survive `serializeError` at the RPC
+// boundary, so the detail has to go in the message.
+function describeError(error: FetchBaseQueryError | SerializedError): string {
+  if (!("status" in error)) return error.message ?? error.name ?? "unknown error";
+  return "error" in error && error.error ? `${error.status}: ${error.error}` : String(error.status);
+}
 
 /**
  * Fetch the raw list of quotes from the aggregator API for a single
  * `custom.exchange.getQuotes` request.
  *
- * @param args - Wire-level `getQuotes` arguments (providers, quotes
- *   input, optional headers, abort signal).
- * @param counterValueCurrency - Fiat ticker (e.g. `"USD"`) the
- *   aggregator should use for quote countervalues. Sourced from the
- *   wallet's counter-value setting at the handler factory call site.
- * @returns The raw aggregator payload split into successful quotes
- *   (`rawQuotes`) and per-provider rejection rows (`providerErrors`).
- *   Rejection rows carry an aggregator `code` (e.g. `amount_off_limits`)
- *   plus the provider's reason; consumers digest them into globals via
- *   `computeQuotesErrors`. Non-OK HTTP responses become an empty result
- *   so the caller can return the same `noQuotes` global as the legacy UI.
+ * Runs the {@link swapQuotesApi} endpoint imperatively against the dispatch
+ * registered by the host app via `setSwapQuotesStore`.
+ *
+ * @param counterValueCurrency - Fiat ticker (e.g. `"USD"`) for quote
+ *   countervalues, from the wallet's counter-value setting.
+ * @returns Successful quotes and per-provider rejection rows. A non-OK HTTP
+ *   response yields an empty result; only transport failures reject.
  */
 export async function fetchQuotes(
   args: FetchQuotesArgs,
   counterValueCurrency: string,
 ): Promise<FetchQuotesResult> {
-  const { providers, data: quotesInput, headers: customHeaders, signal } = args;
-  const baseURL = getSwapAPIBaseURL();
+  const { providers, data: quotesInput, headers: customHeaders } = args;
+  const dispatch = getSwapQuotesDispatch();
 
-  const searchParams = new URLSearchParams();
-  const requiredParams: Record<string, string> = {
-    amountFrom: quotesInput.amount,
-    displayLanguage: "en",
-    lang: "en",
-    theme: "dark",
-    "providers-whitelist": providers.join(","),
-    fiatForCounterValue: counterValueCurrency,
-    currencyTicker: counterValueCurrency,
-    networkFees: "0",
-    uniswapOrderType: quotesInput.uniswapOrderType ?? "classic",
-    from: quotesInput.sendCurrencyId,
-    to: quotesInput.receiveCurrencyId,
-    fromAccountId: quotesInput.sendAccountId,
-    addressFrom: quotesInput.sendAddress,
-    addressTo: quotesInput.receiveAddress,
-  };
-  for (const [key, value] of Object.entries(requiredParams)) {
-    searchParams.set(key, value);
-  }
-
-  if (quotesInput.networkFeesCurrencyId) {
-    searchParams.set("networkFeesCurrency", quotesInput.networkFeesCurrencyId);
-  }
-
-  if (quotesInput.slippage != null) {
-    searchParams.set("slippage", quotesInput.slippage.toString());
-  }
-
-  const url = `${baseURL}/quote`;
-
-  const requestHeaders: Record<string, string> = {
-    Accept: "application/json",
-    ...(customHeaders ? Object.fromEntries(customHeaders) : {}),
-  };
+  const promise = dispatch(
+    swapQuotesApi.endpoints.fetchQuotes.initiate(
+      {
+        providers,
+        quotesInput,
+        counterValueCurrency,
+        customHeaders: customHeaders ? Object.fromEntries(customHeaders) : undefined,
+      },
+      // Do not pass `subscribe: false`: without a subscriber,
+      // `keepUnusedDataFor: 0` can evict the entry before this promise resolves
+      // and the result reads back empty.
+      { forceRefetch: true },
+    ),
+  );
 
   try {
-    const response = await axios.get(url, {
-      params: searchParams,
-      headers: requestHeaders,
-      signal,
-    });
-    const data: Array<RawQuote | RawQuoteError> = response.data ?? [];
+    const result = await promise;
 
-    const rawQuotes = data.filter((q): q is RawQuote => !("code" in q));
-    const providerErrors = data.filter((q): q is RawQuoteError => "code" in q);
-
-    return { rawQuotes, providerErrors };
-  } catch (error) {
-    if (axios.isCancel(error)) {
-      throw error;
+    if (result.error) {
+      if (getHttpStatus(result.error) === undefined) {
+        throw new SwapQuotesRequestFailed(
+          `swap /quote request failed: ${describeError(result.error)}`,
+          result.error,
+        );
+      }
+      return emptyResult();
     }
 
-    if (axios.isAxiosError(error) && error.response) {
-      return { rawQuotes: [], providerErrors: [] };
-    }
-
-    throw error;
+    return result.data ?? emptyResult();
+  } finally {
+    promise.unsubscribe();
   }
 }

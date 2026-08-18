@@ -1,13 +1,12 @@
 import type { Device } from "@ledgerhq/types-devices";
 import { ScreenName } from "~/const";
 import { FilterByDeviceModelId } from "../../BleDevicePairingFlow/BleDevicesScanning";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { LargeMoverLandingPageParams } from "./LandingPagesNavigator";
 
 export type SettingsNavigatorStackParamList = {
   [ScreenName.SettingsScreen]: undefined;
   [ScreenName.CountervalueSettings]: undefined;
-  [ScreenName.RegionSettings]: undefined;
   [ScreenName.GeneralSettings]: undefined;
   [ScreenName.AnalyticsPreferencesSettings]: { initialTogglesOff?: boolean } | undefined;
   [ScreenName.AccountsSettings]: undefined;
@@ -30,6 +29,7 @@ export type SettingsNavigatorStackParamList = {
   [ScreenName.CustomCALRefInput]: undefined;
   [ScreenName.DebugSettings]: undefined;
   [ScreenName.DebugAnalyticsConsentQA]: undefined;
+  [ScreenName.DebugNotificationsPromptQA]: undefined;
   [ScreenName.DebugFeatureFlags]: undefined;
   [ScreenName.DebugLargeScreenUpsell]: undefined;
   [ScreenName.DebugInformation]: undefined;
@@ -70,8 +70,6 @@ export type SettingsNavigatorStackParamList = {
   [ScreenName.DebugHttpTransport]: undefined;
   [ScreenName.DebugLogs]: undefined;
   [ScreenName.DebugLottie]: undefined;
-  [ScreenName.DebugLumen]: undefined;
-  [ScreenName.DebugLumenVisualization]: undefined;
   [ScreenName.DebugWallet40]: undefined;
   [ScreenName.DebugContacts]: undefined;
   [ScreenName.DebugDevTools]: undefined;

@@ -4,8 +4,8 @@ import { getBridgeApi } from "../bridge";
 import { transactionToIntent } from "../utils";
 import BigNumber from "bignumber.js";
 import { GenericTransaction } from "../types";
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
+import { TokenCurrency } from "@domain/entity-currency-token";
 import { decodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 
 jest.mock("../api", () => ({
@@ -44,8 +44,10 @@ describe("genericPrepareTransaction", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    setupMockCryptoAssetsStore({
+    setCryptoAssetsStore({
       findTokenById: () => Promise.resolve(undefined),
+      findTokenByAddressInCurrency: async () => undefined,
+      getTokensSyncHash: async () => "",
     });
     (transactionToIntent as jest.Mock).mockReturnValue({ mock: "intent" });
     (getBridgeApi as jest.Mock).mockResolvedValue({
@@ -68,6 +70,7 @@ describe("genericPrepareTransaction", () => {
       account,
       expect.objectContaining(baseTransaction),
       undefined,
+      expect.any(Function), // craftTransactionData closure (framework v6)
       undefined,
     );
   });
@@ -213,6 +216,63 @@ describe("genericPrepareTransaction", () => {
     },
   );
 
+  it("clears orphaned EIP-1559 fee fields when estimation returns null", async () => {
+    (getCoinModuleApi as jest.Mock).mockReturnValue({
+      estimateFees: jest.fn().mockResolvedValue({
+        value: new BigNumber(491),
+        parameters: {
+          type: 0,
+          gasPrice: 20_000_000_000n,
+          maxFeePerGas: null,
+          maxPriorityFeePerGas: null,
+        },
+      }),
+    });
+
+    const prepareTransaction = genericPrepareTransaction("testnet", "local");
+    const result = await prepareTransaction(account, {
+      ...baseTransaction,
+      type: 2,
+      maxFeePerGas: new BigNumber(0),
+      maxPriorityFeePerGas: new BigNumber(0),
+      customFees: undefined,
+    } as GenericTransaction);
+
+    expect(result).toEqual(
+      expect.objectContaining({
+        type: 0,
+        gasPrice: new BigNumber(20_000_000_000),
+        maxFeePerGas: null,
+        maxPriorityFeePerGas: null,
+      }),
+    );
+  });
+
+  it("does not clear fee fields when estimation omits them", async () => {
+    (getCoinModuleApi as jest.Mock).mockReturnValue({
+      estimateFees: jest.fn().mockResolvedValue({
+        value: new BigNumber(491),
+        parameters: { gasLimit: 21000n },
+      }),
+    });
+
+    const prepareTransaction = genericPrepareTransaction("testnet", "local");
+    const result = await prepareTransaction(account, {
+      ...baseTransaction,
+      maxFeePerGas: new BigNumber(24),
+      maxPriorityFeePerGas: new BigNumber(3),
+      customFees: undefined,
+    } as GenericTransaction);
+
+    expect(result).toEqual(
+      expect.objectContaining({
+        maxFeePerGas: new BigNumber(24),
+        maxPriorityFeePerGas: new BigNumber(3),
+        gasLimit: new BigNumber(21000),
+      }),
+    );
+  });
+
   it("does not propagate the custom gas limit", async () => {
     (getCoinModuleApi as jest.Mock).mockReturnValue({
       estimateFees: jest.fn().mockResolvedValue({
@@ -236,6 +296,119 @@ describe("genericPrepareTransaction", () => {
         customGasLimit: new BigNumber(22000),
       }),
     );
+  });
+
+  it("carries fee parameters the framework does not model onto feeParameters", async () => {
+    (getCoinModuleApi as jest.Mock).mockReturnValue({
+      estimateFees: jest.fn().mockResolvedValue({
+        value: 700n,
+        parameters: { gasLimit: 21000n, energyRequired: "1200", bandwidthRequired: "268" },
+      }),
+    });
+
+    const prepareTransaction = genericPrepareTransaction("testnet", "local");
+    const result = await prepareTransaction(account, { ...baseTransaction });
+
+    // The whole bag rides through, including the keys `propagateField` recognises — the framework
+    // does not curate what a family's fee descriptor is allowed to read. `bigint` values are
+    // normalised to decimal strings so the bag stays JSON-safe (see the serialization test below).
+    expect((result as any).feeParameters).toEqual({
+      gasLimit: "21000",
+      energyRequired: "1200",
+      bandwidthRequired: "268",
+    });
+  });
+
+  it("keeps the prepared transaction JSON-serializable when the estimation returns bigint fees", async () => {
+    // The regression that crashed EVM swaps (LIVE-35482): `estimation.parameters` holds native
+    // `bigint`, and storing it raw on `feeParameters` made `JSON.stringify(transaction)` throw
+    // "Do not know how to serialize a BigInt" the moment the swap flow serialised the transaction.
+    (getCoinModuleApi as jest.Mock).mockReturnValue({
+      estimateFees: jest.fn().mockResolvedValue({
+        value: 700n,
+        parameters: {
+          gasLimit: 21000n,
+          maxFeePerGas: 30_000_000_000n,
+          gasOptions: { fast: { maxFeePerGas: 30n, maxPriorityFeePerGas: 5n } },
+        },
+      }),
+    });
+
+    const prepareTransaction = genericPrepareTransaction("testnet", "local");
+    const result = await prepareTransaction(account, { ...baseTransaction });
+
+    expect(() => JSON.stringify(result)).not.toThrow();
+    expect((result as any).feeParameters).toEqual({
+      gasLimit: "21000",
+      maxFeePerGas: "30000000000",
+      gasOptions: { fast: { maxFeePerGas: "30", maxPriorityFeePerGas: "5" } },
+    });
+  });
+
+  it("still hits the early return when a bigint estimation stringifies to the stored feeParameters", async () => {
+    // The identity check compares a previously-stored (already string) `feeParameters` against a
+    // fresh estimation whose values are `bigint`. Normalising the fresh bag to strings first keeps
+    // the two comparable, so an unchanged breakdown does not churn referential equality.
+    (getCoinModuleApi as jest.Mock).mockReturnValue({
+      estimateFees: jest.fn().mockResolvedValue({
+        value: BigInt(baseTransaction.fees.toFixed()),
+        parameters: { gasLimit: 21000n },
+      }),
+    });
+
+    const original = { ...baseTransaction, feeParameters: { gasLimit: "21000" } } as any;
+    const prepareTransaction = genericPrepareTransaction("testnet", "local");
+
+    expect(await prepareTransaction(account, original)).toBe(original);
+  });
+
+  it("refreshes feeParameters when the fee value is unchanged but the breakdown is not", async () => {
+    // `fees`/`amount`/asset all match here, so this isolates the `feeParameters` term of the
+    // early-return identity check: the total can hold while the breakdown behind it moves.
+    (getCoinModuleApi as jest.Mock).mockReturnValue({
+      estimateFees: jest.fn().mockResolvedValue({
+        value: BigInt(baseTransaction.fees.toFixed()),
+        parameters: { energyRequired: "2400" },
+      }),
+    });
+
+    const prepareTransaction = genericPrepareTransaction("testnet", "local");
+    const result = await prepareTransaction(account, {
+      ...baseTransaction,
+      feeParameters: { energyRequired: "1200" },
+    } as any);
+
+    expect((result as any).feeParameters).toEqual({ energyRequired: "2400" });
+  });
+
+  it("returns the original transaction when the breakdown is unchanged too", async () => {
+    (getCoinModuleApi as jest.Mock).mockReturnValue({
+      estimateFees: jest.fn().mockResolvedValue({
+        value: BigInt(baseTransaction.fees.toFixed()),
+        parameters: { energyRequired: "1200" },
+      }),
+    });
+
+    const original = { ...baseTransaction, feeParameters: { energyRequired: "1200" } } as any;
+    const prepareTransaction = genericPrepareTransaction("testnet", "local");
+
+    // Identity, not equality: the early return exists so an unchanged estimation does not churn
+    // referential equality for consumers that memoise on it.
+    expect(await prepareTransaction(account, original)).toBe(original);
+  });
+
+  it("clears stale feeParameters when a re-estimation returns none", async () => {
+    (getCoinModuleApi as jest.Mock).mockReturnValue({
+      estimateFees: jest.fn().mockResolvedValue({ value: 900n }),
+    });
+
+    const prepareTransaction = genericPrepareTransaction("testnet", "local");
+    const result = await prepareTransaction(account, {
+      ...baseTransaction,
+      feeParameters: { energyRequired: "1200" },
+    } as any);
+
+    expect((result as any).feeParameters).toBeUndefined();
   });
 
   it("uses customFees.parameters.fees without calling estimateFees", async () => {
@@ -396,7 +569,11 @@ describe("genericPrepareTransaction", () => {
       } as GenericTransaction,
     );
 
-    expect(estimateFees).toHaveBeenCalledWith(expect.objectContaining({ amount: 100n }), {});
+    expect(estimateFees).toHaveBeenCalledWith(
+      expect.anything(), // context (framework v6)
+      expect.objectContaining({ amount: 100n }),
+      { customFeesParameters: {} },
+    );
     expect((result as any).amount.toString()).toBe("100");
   });
 
@@ -435,9 +612,11 @@ describe("genericPrepareTransaction", () => {
   });
 
   it("fills 'assetOwner' and 'assetReference' from 'subAccountId' for retro compatibility", async () => {
-    setupMockCryptoAssetsStore({
+    setCryptoAssetsStore({
       findTokenById: tokenId =>
         Promise.resolve(tokenId === "usdc" ? ({ id: tokenId } as TokenCurrency) : undefined),
+      findTokenByAddressInCurrency: async () => undefined,
+      getTokensSyncHash: async () => "",
     });
     (getCoinModuleApi as jest.Mock).mockReturnValue({
       estimateFees: () => Promise.resolve({ value: 0n }),
@@ -475,6 +654,7 @@ describe("genericPrepareTransaction", () => {
         assetReference: "usdc",
       },
       undefined,
+      expect.any(Function), // craftTransactionData closure (framework v6)
       undefined,
     );
   });

@@ -1,5 +1,5 @@
 import { BigNumber } from "bignumber.js";
-import { scanOperations } from "../scanOperations";
+import { scanOperations } from "../history/scanOperations";
 
 // Module-level mock for getTransactions
 const mockGetTransactions = jest.fn();

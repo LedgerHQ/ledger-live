@@ -67,7 +67,7 @@ function StepRewards({ account, parentAccount, transaction, status, error }: Rea
         <ValidatorsSelect
           disabled
           account={account}
-          selectedValidatorNodeId={enrichedDelegation.validator.nodeId}
+          selectedValidatorId={enrichedDelegation.validator.id}
         />
       </Box>
       {feeError && (

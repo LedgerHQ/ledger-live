@@ -5,6 +5,8 @@ module.exports = {
     "!src/**/*.test.ts",
     "!src/**/*.spec.ts",
     "!src/test/**/*.ts",
+    // Vendored generated candid factories — excluded from coverage.
+    "!src/network/idl/**",
   ],
   transform: {
     "^.+\\.(ts|tsx)$": [

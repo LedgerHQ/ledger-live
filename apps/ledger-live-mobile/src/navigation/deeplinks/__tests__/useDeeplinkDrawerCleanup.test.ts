@@ -2,11 +2,12 @@ import { renderHook, act } from "@testing-library/react-native";
 import { AppState, AppStateStatus } from "react-native";
 import { useDeeplinkDrawerCleanup } from "../useDeeplinkDrawerCleanup";
 
-const mockCloseAllDrawers = jest.fn();
+const mockCloseAllBottomSheets = jest.fn();
 
-jest.mock("LLM/components/QueuedDrawer/QueuedDrawersContext", () => ({
-  useQueuedDrawerContext: () => ({
-    closeAllDrawers: mockCloseAllDrawers,
+jest.mock("@shared/ui-queued-bottom-sheet", () => ({
+  ...jest.requireActual("@shared/ui-queued-bottom-sheet"),
+  useQueuedBottomSheetContext: () => ({
+    closeAllBottomSheets: mockCloseAllBottomSheets,
   }),
 }));
 
@@ -47,7 +48,7 @@ describe("useDeeplinkDrawerCleanup", () => {
       result.current();
     });
 
-    expect(mockCloseAllDrawers).toHaveBeenCalledTimes(1);
+    expect(mockCloseAllBottomSheets).toHaveBeenCalledTimes(1);
   });
 
   it("should not close drawers when deeplink received without coming from background", () => {
@@ -57,7 +58,7 @@ describe("useDeeplinkDrawerCleanup", () => {
       result.current();
     });
 
-    expect(mockCloseAllDrawers).not.toHaveBeenCalled();
+    expect(mockCloseAllBottomSheets).not.toHaveBeenCalled();
   });
 
   it("should reset background flag after returning to foreground", () => {
@@ -79,6 +80,6 @@ describe("useDeeplinkDrawerCleanup", () => {
       result.current();
     });
 
-    expect(mockCloseAllDrawers).not.toHaveBeenCalled();
+    expect(mockCloseAllBottomSheets).not.toHaveBeenCalled();
   });
 });

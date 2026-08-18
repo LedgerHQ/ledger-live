@@ -4,12 +4,12 @@ import type {
   TransactionRaw,
 } from "@ledgerhq/coin-bitcoin/types";
 import { isOldestBitcoinPendingOperation } from "@ledgerhq/ledger-wallet-framework/operation";
-import { TransactionHasBeenValidatedError } from "@ledgerhq/errors";
+import { TransactionHasBeenValidatedError } from "@ledgerhq/live-common/errors";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { fromTransactionRaw } from "@ledgerhq/live-common/transaction/index";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { Flex } from "@ledgerhq/native-ui";
 import { urls } from "~/utils/urls";
 import React, { memo, useCallback, useEffect, useState } from "react";

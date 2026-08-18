@@ -1,5 +1,8 @@
 # `@features/platform-currencies`
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 App-facing currency **runtime glue**. Mirrors `@features/platform-feature-flags`:
 this package owns hooks + the crypto-assets store builder; currency **state lives in
 the `@domain/entity-currency-*` packages** (no slices here).
@@ -27,4 +30,4 @@ the `@domain/entity-currency-*` packages** (no slices here).
   not maintain its own list: `useSupportedCurrencies` takes the registry-backed list as
   input and applies feature-flag gating via `@features/platform-feature-flags`.
 - **Errors** — the store maps RTK-Query errors to a local error taxonomy (`src/errors.ts`)
-  with the same stable `name`s as the legacy `@ledgerhq/errors` classes.
+  of native classes with stable `name`s.

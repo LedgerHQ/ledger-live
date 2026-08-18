@@ -31,7 +31,6 @@ import { ExchangeType } from "@ledgerhq/live-common/wallet-api/Exchange/server";
 import { getIncompatibleCurrencyKeys } from "@ledgerhq/live-common/exchange/swap/index";
 import { Exchange, isExchangeSwap } from "@ledgerhq/live-common/exchange/types";
 import { HardwareUpdate, renderLoading } from "./DeviceAction/rendering";
-import { createCustomErrorClass } from "@ledgerhq/errors";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { HOOKS_TRACKING_LOCATIONS } from "../analytics/hooks/variables";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
@@ -66,7 +65,9 @@ export function isStartExchangeData(data: unknown): data is StartExchangeData {
   return "exchangeType" in data;
 }
 
-const DrawerClosedError = createCustomErrorClass("DrawerClosedError");
+class DrawerClosedError extends Error {
+  override name = "DrawerClosedError";
+}
 
 export const LiveAppDrawer = () => {
   const [dismissDisclaimerChecked, setDismissDisclaimerChecked] = useState<boolean>(false);
@@ -288,8 +289,14 @@ export const LiveAppDrawer = () => {
             message: "User closed the drawer",
           });
         }
+        // A completed exchange tears down the swap <webview> that had focus before the
+        // drawer opened, so restoring focus to it on close crashes (focus-trap calls
+        // WebViewElement.focus() on a detached guest). Only restore focus when the drawer
+        // is dismissed before completing, where the webview is still alive. Set the flag
+        // before dispatching the close so SideDrawer never reads a stale value on the close
+        // render (mirrors onCloseExchangeComplete's ordering).
+        setShouldRestoreDrawerFocusOnClose(!exchangeCompleted);
         dispatch(closePlatformAppDrawer());
-        setShouldRestoreDrawerFocusOnClose(true);
         // Reset state for next time
         setExchangeCompleted(false);
       }}

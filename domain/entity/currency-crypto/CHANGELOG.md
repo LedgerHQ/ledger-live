@@ -1,5 +1,97 @@
 # @domain/entity-currency-crypto
 
+## 0.10.0
+
+### Minor Changes
+
+- [#20582](https://github.com/LedgerHQ/ledger-live/pull/20582) [`cc8b5b9`](https://github.com/LedgerHQ/ledger-live/commit/cc8b5b9af4a2ec488b6912d3fcb08bcc8f4b72c3) Thanks [@ysitbon](https://github.com/ysitbon)! - Move the currency id schemas to the packages that own them.
+
+  `CryptoCurrencyIdSchema`, `TokenCurrencyIdSchema` and `FiatCurrencyIdSchema` (and their inferred
+  types) now live in `@domain/entity-currency-crypto`, `@domain/entity-currency-token` and
+  `@domain/entity-currency-fiat` respectively, instead of `@shared/schema-primitives`. A primitives
+  package has no business knowing about crypto, tokens or fiat.
+
+  The crypto and token packages used to re-export these symbols from primitives, which made them
+  proxies: two import paths for the same thing, and no obvious original provider. Consumers already
+  importing from `@domain/entity-currency-*` are unaffected, since the symbols genuinely moved there.
+  Anything importing them from `@shared/schema-primitives` must now import the owning domain package.
+
+## 0.10.0-next.0
+
+### Minor Changes
+
+- [#20582](https://github.com/LedgerHQ/ledger-live/pull/20582) [`cc8b5b9`](https://github.com/LedgerHQ/ledger-live/commit/cc8b5b9af4a2ec488b6912d3fcb08bcc8f4b72c3) Thanks [@ysitbon](https://github.com/ysitbon)! - Move the currency id schemas to the packages that own them.
+
+  `CryptoCurrencyIdSchema`, `TokenCurrencyIdSchema` and `FiatCurrencyIdSchema` (and their inferred
+  types) now live in `@domain/entity-currency-crypto`, `@domain/entity-currency-token` and
+  `@domain/entity-currency-fiat` respectively, instead of `@shared/schema-primitives`. A primitives
+  package has no business knowing about crypto, tokens or fiat.
+
+  The crypto and token packages used to re-export these symbols from primitives, which made them
+  proxies: two import paths for the same thing, and no obvious original provider. Consumers already
+  importing from `@domain/entity-currency-*` are unaffected, since the symbols genuinely moved there.
+  Anything importing them from `@shared/schema-primitives` must now import the owning domain package.
+
+## 0.9.0
+
+### Minor Changes
+
+- [#20339](https://github.com/LedgerHQ/ledger-live/pull/20339) [`6a531c5`](https://github.com/LedgerHQ/ledger-live/commit/6a531c54ccd1c65df122286de6f136f9d73b9002) Thanks [@qperrot](https://github.com/qperrot)! - Remove Scroll Sepolia testnet support as it is no longer maintained
+
+## 0.9.0-next.0
+
+### Minor Changes
+
+- [#20339](https://github.com/LedgerHQ/ledger-live/pull/20339) [`6a531c5`](https://github.com/LedgerHQ/ledger-live/commit/6a531c54ccd1c65df122286de6f136f9d73b9002) Thanks [@qperrot](https://github.com/qperrot)! - Remove Scroll Sepolia testnet support as it is no longer maintained
+
+## 0.8.0
+
+### Minor Changes
+
+- [#20048](https://github.com/LedgerHQ/ledger-live/pull/20048) [`4148019`](https://github.com/LedgerHQ/ledger-live/commit/414801922232b6d9514270e8876e783c11555c2c) Thanks [@ysitbon](https://github.com/ysitbon)! - Re-export CryptoCurrencyId / CryptoCurrencyIdSchema from @domain/entity-currency-crypto and TokenCurrencyId / TokenCurrencyIdSchema from @domain/entity-currency-token
+
+## 0.8.0-next.0
+
+### Minor Changes
+
+- [#20048](https://github.com/LedgerHQ/ledger-live/pull/20048) [`4148019`](https://github.com/LedgerHQ/ledger-live/commit/414801922232b6d9514270e8876e783c11555c2c) Thanks [@ysitbon](https://github.com/ysitbon)! - Re-export CryptoCurrencyId / CryptoCurrencyIdSchema from @domain/entity-currency-crypto and TokenCurrencyId / TokenCurrencyIdSchema from @domain/entity-currency-token
+
+## 0.7.0
+
+### Minor Changes
+
+- [#19707](https://github.com/LedgerHQ/ledger-live/pull/19707) [`ea28df4`](https://github.com/LedgerHQ/ledger-live/commit/ea28df4a67e1c1f64ab0de5fddf7fc016edffa8c) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Hide Send and Receive for HyperCore accounts on desktop: HyperCore has no on-chain send on Ledger Wallet and a plain receive is misleading (deposits go through bridging). Both actions are now hidden across the account page, the account context menu and the empty-account state. Also drop the HyperCore per-transaction explorer view: the perps proxy exposes no HyperCore tx hash (deposits settle on Arbitrum, withdrawals expose no link), so the `tx` explorer URL was always broken — only the address explorer view is kept. Finally, the currency is renamed from "Hyperliquid (HyperCore)" to "Hyperliquid".
+
+- [#19702](https://github.com/LedgerHQ/ledger-live/pull/19702) [`6935fe0`](https://github.com/LedgerHQ/ledger-live/commit/6935fe04a6304e046fd217350399446194e96d47) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Add HyperCore support by plugging `@ledgerhq/coin-hypercore` into the generic coin framework: register the `hypercore` native currency (USDC, magnitude 6), route the family through the generic bridge, reuse the EVM signer for address derivation (HyperCore shares the Ethereum address), and add the `currencyHypercore` feature flag. HyperCore accounts can be discovered and serve their balance and operations from the coin module. In the history, HyperCore operations are labelled "Deposit"/"Withdraw" instead of "Received"/"Sent" (deposits/withdrawals go through bridging, not a plain transfer).
+
+- [#19734](https://github.com/LedgerHQ/ledger-live/pull/19734) [`bb2d2d2`](https://github.com/LedgerHQ/ledger-live/commit/bb2d2d250a1d5b8cde43ba963795d28b10b48be6) Thanks [@ishaba](https://github.com/ishaba)! - remove umee chain related code
+
+## 0.7.0-next.0
+
+### Minor Changes
+
+- [#19707](https://github.com/LedgerHQ/ledger-live/pull/19707) [`ea28df4`](https://github.com/LedgerHQ/ledger-live/commit/ea28df4a67e1c1f64ab0de5fddf7fc016edffa8c) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Hide Send and Receive for HyperCore accounts on desktop: HyperCore has no on-chain send on Ledger Wallet and a plain receive is misleading (deposits go through bridging). Both actions are now hidden across the account page, the account context menu and the empty-account state. Also drop the HyperCore per-transaction explorer view: the perps proxy exposes no HyperCore tx hash (deposits settle on Arbitrum, withdrawals expose no link), so the `tx` explorer URL was always broken — only the address explorer view is kept. Finally, the currency is renamed from "Hyperliquid (HyperCore)" to "Hyperliquid".
+
+- [#19702](https://github.com/LedgerHQ/ledger-live/pull/19702) [`6935fe0`](https://github.com/LedgerHQ/ledger-live/commit/6935fe04a6304e046fd217350399446194e96d47) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Add HyperCore support by plugging `@ledgerhq/coin-hypercore` into the generic coin framework: register the `hypercore` native currency (USDC, magnitude 6), route the family through the generic bridge, reuse the EVM signer for address derivation (HyperCore shares the Ethereum address), and add the `currencyHypercore` feature flag. HyperCore accounts can be discovered and serve their balance and operations from the coin module. In the history, HyperCore operations are labelled "Deposit"/"Withdraw" instead of "Received"/"Sent" (deposits/withdrawals go through bridging, not a plain transfer).
+
+- [#19734](https://github.com/LedgerHQ/ledger-live/pull/19734) [`bb2d2d2`](https://github.com/LedgerHQ/ledger-live/commit/bb2d2d250a1d5b8cde43ba963795d28b10b48be6) Thanks [@ishaba](https://github.com/ishaba)! - remove umee chain related code
+
+## 0.6.0
+
+### Minor Changes
+
+- [#19403](https://github.com/LedgerHQ/ledger-live/pull/19403) [`47b8889`](https://github.com/LedgerHQ/ledger-live/commit/47b8889b362204d565b0ad06c8862cdb9bf048b7) Thanks [@ysitbon](https://github.com/ysitbon)! - Add list and search accessors to `@domain/entity-currency-crypto`: `listCryptoCurrencies`, `findCryptoCurrency`, `findCryptoCurrencyByScheme`, `findCryptoCurrencyByTicker`, and `findCryptoCurrencyByKeyword`. These match the legacy `@ledgerhq/cryptoassets` accessor semantics (including the keyword-tiebreak ticker disambiguation) and are built once at module load over the static `CRYPTO_CURRENCIES_REGISTRY`.
+
+- [#19425](https://github.com/LedgerHQ/ledger-live/pull/19425) [`35f0138`](https://github.com/LedgerHQ/ledger-live/commit/35f0138542fbd98f664b24ee786fc662d7223e10) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(xion): rebrand Xion to Verona (display name/ticker XION -> VERONA, main unit code XION -> VERONA, base denom uxion unchanged) and backport the coin-cosmos default LCD to verona-api.polkachu.com
+
+## 0.6.0-next.0
+
+### Minor Changes
+
+- [#19403](https://github.com/LedgerHQ/ledger-live/pull/19403) [`47b8889`](https://github.com/LedgerHQ/ledger-live/commit/47b8889b362204d565b0ad06c8862cdb9bf048b7) Thanks [@ysitbon](https://github.com/ysitbon)! - Add list and search accessors to `@domain/entity-currency-crypto`: `listCryptoCurrencies`, `findCryptoCurrency`, `findCryptoCurrencyByScheme`, `findCryptoCurrencyByTicker`, and `findCryptoCurrencyByKeyword`. These match the legacy `@ledgerhq/cryptoassets` accessor semantics (including the keyword-tiebreak ticker disambiguation) and are built once at module load over the static `CRYPTO_CURRENCIES_REGISTRY`.
+
+- [#19425](https://github.com/LedgerHQ/ledger-live/pull/19425) [`35f0138`](https://github.com/LedgerHQ/ledger-live/commit/35f0138542fbd98f664b24ee786fc662d7223e10) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(xion): rebrand Xion to Verona (display name/ticker XION -> VERONA, main unit code XION -> VERONA, base denom uxion unchanged) and backport the coin-cosmos default LCD to verona-api.polkachu.com
+
 ## 0.5.0
 
 ### Minor Changes

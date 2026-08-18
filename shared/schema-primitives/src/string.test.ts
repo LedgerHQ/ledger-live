@@ -1,31 +1,11 @@
 import { describe, expect, it } from "@jest/globals";
 import {
   BigNumberStrSchema,
-  CurrencyIdSchema,
   DateTimeIsoSchema,
   HttpUrlSchema,
   NonEmptyStringSchema,
   SemVerSchema,
-  TokenIdSchema,
 } from "./string";
-
-describe("CurrencyIdSchema", () => {
-  it("accepts a non-empty string", () => {
-    expect(CurrencyIdSchema.parse("bitcoin")).toBe("bitcoin");
-  });
-  it("rejects an empty string", () => {
-    expect(() => CurrencyIdSchema.parse("")).toThrow();
-  });
-});
-
-describe("TokenIdSchema", () => {
-  it("accepts a non-empty string", () => {
-    expect(TokenIdSchema.parse("ethereum/erc20/usd-tether")).toBe("ethereum/erc20/usd-tether");
-  });
-  it("rejects an empty string", () => {
-    expect(() => TokenIdSchema.parse("")).toThrow();
-  });
-});
 
 describe("BigNumberStrSchema", () => {
   it("accepts a decimal string", () => {

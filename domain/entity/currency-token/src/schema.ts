@@ -1,6 +1,9 @@
 import { z } from "zod";
-import { TokenIdSchema, CurrencyIdSchema } from "@shared/schema-primitives";
+import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
 import { UnitSchema } from "@domain/entity-currency-unit";
+
+/** Opaque identifier for a token (e.g. `"ethereum/erc20/usd-tether"`). Non-empty string. */
+export const TokenCurrencyIdSchema = z.string().min(1).brand<"TokenCurrencyId">();
 
 /**
  * Canonical Zod-first schema for a token currency entity.
@@ -11,12 +14,12 @@ export const TokenCurrencySchema = z.object({
   /** Discriminant for the currency union — always `"TokenCurrency"`. */
   type: z.literal("TokenCurrency"),
   /** Unique opaque token id (e.g. `"ethereum/erc20/usd-tether"`). */
-  id: TokenIdSchema,
+  id: TokenCurrencyIdSchema,
   /**
    * Id of the parent crypto currency (e.g. `"ethereum"` for ERC-20 tokens).
    * FK reference — resolved at display time via the crypto-currency registry.
    */
-  parentCurrencyId: CurrencyIdSchema,
+  parentCurrencyId: CryptoCurrencyIdSchema,
   /** On-chain contract address (e.g. `"0xdAC17F958D2ee523a2206206994597C13D831ec7"`). */
   contractAddress: z.string(),
   /** Token standard (e.g. `"erc20"`, `"bep20"`, `"trc10"`). */
@@ -36,7 +39,11 @@ export const TokenCurrencySchema = z.object({
   disableCountervalue: z.boolean().optional(),
   /** Ledger's cryptographic signature for the token listing. */
   ledgerSignature: z.string().optional(),
+  /** Token-family-specific identifier (e.g. FA2 token-id for Tezos, ESDT ticker for MultiversX). */
+  tokenIdentifier: z.string().optional(),
 });
 
+/** A token currency id, inferred from {@link TokenCurrencyIdSchema}. */
+export type TokenCurrencyId = z.infer<typeof TokenCurrencyIdSchema>;
 /** A token currency entity, inferred from {@link TokenCurrencySchema}. */
 export type TokenCurrency = z.infer<typeof TokenCurrencySchema>;

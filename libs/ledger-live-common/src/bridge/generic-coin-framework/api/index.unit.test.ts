@@ -9,11 +9,11 @@ import * as evmModule from "@ledgerhq/coin-evm/api/index";
 import * as cardanoModule from "@ledgerhq/coin-cardano/api/index";
 import * as config from "../../../config";
 import * as networkApi from "./network/network-coin-service";
-import * as cryptoAssets from "@ledgerhq/cryptoassets/currencies";
+import * as cryptoAssets from "@domain/entity-currency-crypto";
 
 const mockApiInstance = { mock: "api" };
 
-jest.mock("@ledgerhq/cryptoassets/currencies", () => ({
+jest.mock("@domain/entity-currency-crypto", () => ({
   findCryptoCurrencyById: jest.fn(),
 }));
 
@@ -89,23 +89,25 @@ describe("getCoinModuleApi", () => {
     jest.spyOn(networkApi, "getNetworkCoinModuleApi").mockReturnValue(mockApiInstance as any);
   });
 
+  // Config-first (framework v6): the local adapter calls createApi() with no config; families that
+  // need the currency id (evm, cardano) forward it, the rest take no arguments.
   const testCases = [
-    { network: "xrp", module: xrpModule, label: "XRP", params: [{ config: true }] },
-    { network: "stellar", module: stellarModule, label: "Stellar", params: [{ config: true }] },
-    { network: "tron", module: tronModule, label: "Tron", params: [{ config: true }] },
-    { network: "canton", module: cantonModule, label: "Canton", params: [{ config: true }] },
+    { network: "xrp", module: xrpModule, label: "XRP", params: [] as unknown[] },
+    { network: "stellar", module: stellarModule, label: "Stellar", params: [] as unknown[] },
+    { network: "tron", module: tronModule, label: "Tron", params: [] as unknown[] },
+    { network: "canton", module: cantonModule, label: "Canton", params: [] as unknown[] },
     {
       network: "ethereum",
       module: evmModule,
       label: "Ethereum",
-      params: [{ config: true }, "ethereum"],
+      params: ["ethereum"] as unknown[],
     },
-    { network: "sonic", module: evmModule, label: "Sonic", params: [{ config: true }, "sonic"] },
+    { network: "sonic", module: evmModule, label: "Sonic", params: ["sonic"] as unknown[] },
     {
       network: "cardano",
       module: cardanoModule,
       label: "Cardano",
-      params: [{ config: true }, "cardano"],
+      params: ["cardano"] as unknown[],
     },
   ];
 

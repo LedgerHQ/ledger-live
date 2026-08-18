@@ -1,10 +1,11 @@
 import React from "react";
-import { Observable } from "rxjs";
-import { DEFAULT_ZCASH_PRIVATE_INFO } from "@ledgerhq/coin-bitcoin/chain-adapters/zcash/constants";
-import { render, screen, waitFor, withFlagOverrides } from "tests/testSetup";
+import BigNumber from "bignumber.js";
+import { Observable, Subscriber } from "rxjs";
+import { DEFAULT_ZCASH_PRIVATE_INFO } from "@ledgerhq/coin-zcash/constants";
+import { act, render, screen, waitFor, withFlagOverrides } from "tests/testSetup";
 import AccountBalanceSummaryFooter from "../AccountBalanceSummaryFooter";
 import { createFixtureAccount } from "@ledgerhq/coin-bitcoin/fixtures/common.fixtures";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { SYNC_TYPE_SHIELDED } from "@ledgerhq/types-live";
@@ -22,6 +23,18 @@ const mockedGetAccountBridge = jest.mocked(getAccountBridge);
 const mockedSyncStateUpdater = jest.mocked(syncStateUpdater);
 
 const origToLocaleString = global.Date.prototype.toLocaleString;
+
+const PRIVATE_BALANCE_WARNING = "Private balance excludes Sapling and Orchard shielded funds";
+
+const makeUtxo = (value: number) => ({
+  hash: "",
+  outputIndex: 0,
+  blockHeight: 1,
+  address: "",
+  value: new BigNumber(value),
+  rbf: false,
+  isChange: false,
+});
 
 describe("Bitcoin Account Balance Summary Footer", () => {
   const account = createFixtureAccount();
@@ -53,6 +66,29 @@ describe("Bitcoin Account Balance Summary Footer", () => {
       expect(screen.getByText("Transparent balance")).toBeInTheDocument();
       expect(screen.getByText("Private balance")).toBeInTheDocument();
       expect(screen.getByTestId("show-private-balance-button")).toBeInTheDocument();
+      expect(screen.getByText(PRIVATE_BALANCE_WARNING)).toBeVisible();
+    });
+  });
+
+  it("should not render the private balance warning when zcashShielded is disabled", async () => {
+    mockedUseAccountUnit.mockReturnValue({
+      code: "ZEC",
+      name: "Zcash",
+      magnitude: 8,
+    });
+
+    render(
+      <AccountBalanceSummaryFooter
+        account={{ ...account, currency: { id: "zcash" } as CryptoCurrency }}
+      />,
+      {
+        initialState: withFlagOverrides({ zcashShielded: { enabled: false } }),
+      },
+    );
+
+    await waitFor(() => {
+      expect(screen.queryByText(PRIVATE_BALANCE_WARNING)).not.toBeInTheDocument();
+      expect(screen.queryByText("Private balance")).not.toBeInTheDocument();
     });
   });
 
@@ -195,6 +231,7 @@ describe("Bitcoin Account Balance Summary Footer", () => {
       expect(screen.queryByText("Transparent balance")).not.toBeInTheDocument();
       expect(screen.queryByText("Private balance")).not.toBeInTheDocument();
       expect(screen.queryByTestId("show-private-balance-button")).not.toBeInTheDocument();
+      expect(screen.queryByText(PRIVATE_BALANCE_WARNING)).not.toBeInTheDocument();
     });
   });
 
@@ -206,11 +243,15 @@ describe("Bitcoin Account Balance Summary Footer", () => {
     });
 
     const updater = jest.fn();
+    // Keep the sync observable open so the subscription stays registered until we
+    // explicitly complete it. This lets us assert the subscription is stored
+    // before the hook's `complete()` handler removes it.
+    let syncSubscriber: Subscriber<(account: unknown) => unknown> | undefined;
     const syncMock = jest.fn(
       () =>
         new Observable<(account: unknown) => unknown>(subscriber => {
+          syncSubscriber = subscriber;
           subscriber.next(updater);
-          subscriber.complete();
         }),
     );
     mockedGetAccountBridge.mockReturnValue({
@@ -225,6 +266,7 @@ describe("Bitcoin Account Balance Summary Footer", () => {
           currency: { id: "zcash" } as CryptoCurrency,
           privateInfo: {
             ...DEFAULT_ZCASH_PRIVATE_INFO,
+            ufvk: "test-ufvk",
             syncState: "ready",
           },
         }}
@@ -238,19 +280,27 @@ describe("Bitcoin Account Balance Summary Footer", () => {
     expect(mockedGetAccountBridge).toHaveBeenCalledWith(
       expect.objectContaining({ id: account.id }),
     );
+    await waitFor(() => {
+      expect(syncMock).toHaveBeenCalledWith(expect.objectContaining({ id: account.id }), {
+        paginationConfig: {},
+        syncType: SYNC_TYPE_SHIELDED,
+      });
+    });
     expect(store.getState().shieldedSyncSubscriptions).toEqual([
       {
         accountId: account.id,
         subscription: expect.objectContaining({ unsubscribe: expect.any(Function) }),
       },
     ]);
+
+    // Completing the sync should log and drop the stored subscription.
+    act(() => {
+      syncSubscriber?.complete();
+    });
     await waitFor(() => {
-      expect(syncMock).toHaveBeenCalledWith(expect.objectContaining({ id: account.id }), {
-        paginationConfig: {},
-        syncType: SYNC_TYPE_SHIELDED,
-      });
       expect(logSpy).toHaveBeenCalledWith(`Zcash shielded sync completed on account ${account.id}`);
     });
+    expect(store.getState().shieldedSyncSubscriptions).toEqual([]);
   });
 
   it("should stop shielded sync and remove subscription when clicking stop sync button", async () => {
@@ -283,5 +333,81 @@ describe("Bitcoin Account Balance Summary Footer", () => {
 
     expect(unsubscribe).toHaveBeenCalledTimes(1);
     expect(store.getState().shieldedSyncSubscriptions).toEqual([]);
+  });
+
+  it("shows only the ironwoodBalance as the private balance, excluding the deprecated Orchard/Sapling pools", async () => {
+    mockedUseAccountUnit.mockReturnValue({
+      code: "ZEC",
+      name: "Zcash",
+      magnitude: 8,
+    });
+
+    render(
+      <AccountBalanceSummaryFooter
+        account={{
+          ...account,
+          currency: { id: "zcash" } as CryptoCurrency,
+          // transparent = own UTXOs (0.1 ZEC); balance = transparent + ironwood
+          // total (0.1 + 0.5 ZEC).
+          balance: new BigNumber(60_000_000),
+          bitcoinResources: { utxos: [makeUtxo(10_000_000)] },
+          privateInfo: {
+            ...DEFAULT_ZCASH_PRIVATE_INFO,
+            orchardBalance: new BigNumber(30_000_000),
+            saplingBalance: new BigNumber(20_000_000),
+            ironwoodBalance: new BigNumber(50_000_000),
+          },
+        }}
+      />,
+      {
+        initialState: withFlagOverrides({ zcashShielded: { enabled: true } }),
+      },
+    );
+
+    await waitFor(() => {
+      // Private = ironwood (0.5 ZEC); transparent = own UTXOs (0.1 ZEC);
+      // available = balance (0.6 ZEC). The residual Orchard/Sapling notes are
+      // deliberately not reflected anywhere.
+      expect(screen.getByText("0.5 ZEC")).toBeInTheDocument();
+      expect(screen.getByText("0.1 ZEC")).toBeInTheDocument();
+      expect(screen.getByText("0.6 ZEC")).toBeInTheDocument();
+    });
+  });
+
+  it("sources the transparent balance from its own UTXOs, not by subtracting the private balance from account.balance", async () => {
+    mockedUseAccountUnit.mockReturnValue({
+      code: "ZEC",
+      name: "Zcash",
+      magnitude: 8,
+    });
+
+    render(
+      <AccountBalanceSummaryFooter
+        account={{
+          ...account,
+          currency: { id: "zcash" } as CryptoCurrency,
+          // Stale provenance: `account.balance` (0.9 ZEC) was last written by a
+          // different flag state than the current privateInfo. Deriving
+          // transparent as balance − ironwood would yield a wrong 0.4 ZEC;
+          // sourcing it from the UTXOs keeps it correct at 0.1 ZEC.
+          balance: new BigNumber(90_000_000),
+          bitcoinResources: { utxos: [makeUtxo(10_000_000)] },
+          privateInfo: {
+            ...DEFAULT_ZCASH_PRIVATE_INFO,
+            ironwoodBalance: new BigNumber(50_000_000),
+          },
+        }}
+      />,
+      {
+        initialState: withFlagOverrides({ zcashShielded: { enabled: true } }),
+      },
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText("0.1 ZEC")).toBeInTheDocument(); // transparent, from UTXOs
+      expect(screen.getByText("0.5 ZEC")).toBeInTheDocument(); // private, ironwood
+      expect(screen.getByText("0.9 ZEC")).toBeInTheDocument(); // available, balance as-is
+      expect(screen.queryByText("0.4 ZEC")).not.toBeInTheDocument(); // never the subtraction result
+    });
   });
 });

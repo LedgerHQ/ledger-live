@@ -1,15 +1,12 @@
-import {
-  AmountRequired,
-  RecipientRequired,
-  ReplacementTransactionUnderpriced,
-} from "@ledgerhq/errors";
+import { AmountRequired, RecipientRequired } from "@ledgerhq/ledger-wallet-framework/errors";
+import { ReplacementTransactionUnderpriced } from "../../../errors";
 import BigNumber from "bignumber.js";
 import { NotEnoughNftOwned, NotOwnedNft } from "@ledgerhq/coin-evm/errors";
 import {
   EvmTransactionEIP1559,
   EvmTransactionLegacy,
   TransactionStatus,
-} from "@ledgerhq/coin-evm/types/index";
+} from "@ledgerhq/live-common/families/evm/types";
 import { getMinEip1559Fees, getMinLegacyFees } from "./getMinEditTransactionFees";
 import { validateEditTransaction, getEditTransactionStatus } from "./getTransactionStatus";
 

@@ -1,4 +1,4 @@
-import type { CryptoOrTokenCurrency, Currency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency, Currency } from "@domain/entity-currency";
 import {
   groupAccountsByAsset,
   type GroupedAccount,

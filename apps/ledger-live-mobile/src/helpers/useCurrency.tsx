@@ -1,6 +1,6 @@
 import { useRoute } from "@react-navigation/native";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import { useCurrencyById } from "@ledgerhq/cryptoassets/hooks";
+import { useCurrencyById } from "@features/platform-currencies";
 
 type NavigationProps = StackNavigatorProps<{
   [key: string]: { currencyId: string };

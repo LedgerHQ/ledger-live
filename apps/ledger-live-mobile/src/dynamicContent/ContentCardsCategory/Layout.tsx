@@ -72,11 +72,12 @@ const contentCardsTypes: {
 type LayoutProps = {
   category: CategoryContentCard;
   cards: BrazeContentCard[];
+  leadingSlide?: React.ReactNode;
 };
 
 type LayoutCardItemProps = ContentCardProps & { widthFactor?: number };
 
-const Layout = ({ category, cards }: LayoutProps) => {
+const Layout = ({ category, cards, leadingSlide }: LayoutProps) => {
   const { logClickCard, dismissCard, trackContentCardEvent } = useDynamicContent();
   const isTopWallet = category.location === ContentCardLocation.TopWallet;
   const { shouldDisplayBrazePlacement } = useWalletFeaturesConfig("mobile");
@@ -138,6 +139,7 @@ const Layout = ({ category, cards }: LayoutProps) => {
     .filter(card => card);
 
   const cardsSorted = (cardsMapped as AnyContentCard[]).sort(compareCards);
+  const positionOffset = leadingSlide ? 1 : 0;
 
   const items = cardsSorted.map((card, index) =>
     contentCardItem(contentCardComponent, {
@@ -150,32 +152,48 @@ const Layout = ({ category, cards }: LayoutProps) => {
 
       metadata: {
         id: card.id,
-        displayedPosition: index,
+        displayedPosition: index + positionOffset,
 
         actions: {
-          onClick: card.link ? () => onCardClick(card, index) : undefined,
-          onDismiss: category.isDismissable ? () => onCardDismiss(card, index) : undefined,
+          onClick: card.link ? () => onCardClick(card, index + positionOffset) : undefined,
+          onDismiss: category.isDismissable
+            ? () => onCardDismiss(card, index + positionOffset)
+            : undefined,
         },
       },
     } as LayoutCardItemProps),
   );
 
+  const renderCarousel = (carouselItems: typeof items) => {
+    const widthFactorSource = cardsSorted[0];
+    const showLumenDots =
+      (isContentBannerVariant || Boolean(leadingSlide)) &&
+      carouselItems.length + (leadingSlide ? 1 : 0) > 1;
+    return (
+      <Carousel
+        items={carouselItems}
+        leadingSlide={leadingSlide}
+        showLumenPageIndicator={showLumenDots}
+        disableVerticalStretch={isTopWallet}
+        styles={{
+          widthFactor: widthFactorSource?.carouselWidthFactor || WidthFactor.Full,
+          pagination: isTopWallet ? false : category.hasPagination,
+          gap: widthFactorSource?.gridWidthFactor === WidthFactor.Full ? 6 : 8,
+        }}
+      />
+    );
+  };
+
+  // Upsell + Braze share one carousel; keep `unique` semantics (one Braze card only).
+  if (leadingSlide) {
+    const carouselItems =
+      category.cardsLayout === ContentCardsLayout.unique ? items.slice(0, 1) : items;
+    return renderCarousel(carouselItems);
+  }
+
   switch (category.cardsLayout) {
     case ContentCardsLayout.carousel: {
-      const showLumenDots = isContentBannerVariant && cardsSorted.length > 1;
-      const carouselEl = (
-        <Carousel
-          items={items}
-          showLumenPageIndicator={showLumenDots}
-          disableVerticalStretch={isTopWallet}
-          styles={{
-            widthFactor: cardsSorted[0].carouselWidthFactor || WidthFactor.Full,
-            pagination: isTopWallet ? false : category.hasPagination,
-            gap: cardsSorted[0].gridWidthFactor === WidthFactor.Full ? 6 : 8,
-          }}
-        />
-      );
-      return carouselEl;
+      return renderCarousel(items);
     }
 
     case ContentCardsLayout.grid:

@@ -15,6 +15,7 @@ Pay special attention to:
 - `.agents/skills/testing/SKILL.md` — Jest mock patterns for test files (avoids flaky tests and mock conflicts)
 - `.agents/skills/coin-modules/SKILL.md` — Module layout, Coin Module API path, and import rules for `libs/coin-modules/`
 - `.agents/skills/client-ids/SKILL.md` — Privacy rules for sensitive identifiers (DeviceId, UserId, DatadogId)
+- `.agents/skills/detect-data-leaks/SKILL.md` — Data leak detection: third-party sinks, risky patterns, and scoring
 - `.agents/skills/typescript/SKILL.md` — Canonical TypeScript review guidance; use for typing, error-handling, and general TS code quality rules
 - `.agents/skills/react-general/SKILL.md` — Canonical React review guidance; use for component patterns, hooks, rendering, and React architecture rules
 - `.agents/skills/coin-families-contract/SKILL.md` — Coin-families contract: no coin-specific branches (`if (family === "evm")` etc.) in generic UI; extend the families contract and implement in `families/<family>/` instead
@@ -48,7 +49,9 @@ By default, review unstaged changes from `git diff`. The user may specify differ
 - Lumen UI compliance: verify new UI in `src/mvvm/` uses design-system components
 - **Coin-families contract:** In generic code (outside `families/<family>/`), flag new `if (family === "…")` or coin-specific hooks; suggest extending the families contract and implementing in the family folder instead.
 - **Cross-team files:** When a PR touches a file owned by multiple teams, suggest the team-split convention: split into `[foo]/index.ts` and `[foo]/team-[team]/*.ts`; one file or small set per team; index re-exports all. CODEOWNERS defines the allowed `team-*` slugs.
-- **Dead-code tooling — explicit exports + knip (new packages):** For a **new** package, flag either (a) a `.unimportedrc.json` or a script running the bare `unimported` binary (`"unimported": "unimported"`), or (b) a `./*` wildcard in `package.json#exports`. New packages must enumerate explicit, minimal `exports` (no `./*`, so knip can detect unused files) and use `knip` via a root `knip.json` `workspaces` entry. The repo is migrating dead-code detection off `unimported` (see `.agents/skills/knip-migration/SKILL.md`).
+- **Dead-code tooling — explicit exports + knip (new packages):** For a **new** package, flag either (a) a `.unimportedrc.json` or a script running the bare `unimported` binary (`"unimported": "unimported"`), or (b) a `./*` wildcard in `package.json#exports`. New packages must enumerate explicit, minimal `exports` (no `./*`, so knip can detect unused files) and run `knip`. Also flag (c) a new `knip.json` `workspaces` entry that defines an explicit `entry` list — knip derives entry files from `package.json`, so registering a package there is the exception, not the rule. The repo is migrating dead-code detection off `unimported` (see `.agents/skills/knip-migration/SKILL.md`).
+- **Updating `minimumReleaseAgeExclude` is forbidden.** If there are changes to `pnpm-workspace.yaml`, check that `minimumReleaseAgeExclude` has not been edited. Only `@ledgerhq/*` is permitted; JFrog enforces the same gate in CI so bypassing it locally will still fail.
+- **New `.png` images**: Flag any newly added `.png` (or other raster) image file in the diff and ask the author to convert it to `.webp` instead — webp is smaller and reduces app size, and is already the convention for new image assets elsewhere in the repo (e.g. mobile). This is a strong default recommendation, not an absolute block: a justified exception (e.g. a firmware/device-image asset that must stay `.png`, as noted in `apps/ledger-live-desktop/CHANGELOG.md` for the Custom Lock Screen) is fine if the author calls it out in the PR description.
 
 ## Confidence Scoring
 

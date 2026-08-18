@@ -2,20 +2,24 @@ import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/inde
 import { BigNumber } from "bignumber.js";
 import suiAPI from "../network";
 import { DEFAULT_COIN_TYPE } from "../network/sdk";
+import type { SuiCoinConfig } from "../config";
 
-export async function estimateFees({
-  recipient,
-  amount,
-  sender,
-  asset,
-  type,
-  currencyId,
-  ...extra
-}: TransactionIntent & {
-  useAllAmount?: boolean;
-  stakedSuiId?: string;
-  currencyId?: string;
-}): Promise<{ fees: bigint; gasBudget: bigint }> {
+export async function estimateFees(
+  config: SuiCoinConfig,
+  {
+    recipient,
+    amount,
+    sender,
+    asset,
+    type,
+    currencyId: _currencyId,
+    ...extra
+  }: TransactionIntent & {
+    useAllAmount?: boolean;
+    stakedSuiId?: string;
+    currencyId?: string;
+  },
+): Promise<{ fees: bigint; gasBudget: bigint }> {
   let coinType = DEFAULT_COIN_TYPE;
   if (asset.type === "token" && asset.assetReference) {
     coinType = asset.assetReference;
@@ -37,18 +41,14 @@ export async function estimateFees({
   // `paymentInfo` dry-runs the tx and returns both the accurate gas spent (`fees`) and the gas
   // budget the network reserves (`gasBudget`, ≥ fees). Callers display/optimistic-credit `fees` but
   // validate available balance against `gasBudget`.
-  const { fees, gasBudget } = await suiAPI.paymentInfo(
-    sender,
-    {
-      mode,
-      family: "sui",
-      recipient,
-      amount: BigNumber(amount.toString()),
-      errors: {},
-      coinType,
-      ...extra,
-    },
-    currencyId,
-  );
+  const { fees, gasBudget } = await suiAPI.paymentInfo(config, sender, {
+    mode,
+    family: "sui",
+    recipient,
+    amount: BigNumber(amount.toString()),
+    errors: {},
+    coinType,
+    ...extra,
+  });
   return { fees: BigInt(fees), gasBudget: BigInt(gasBudget) };
 }

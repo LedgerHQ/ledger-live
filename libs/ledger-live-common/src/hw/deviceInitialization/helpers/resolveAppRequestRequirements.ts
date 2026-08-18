@@ -117,7 +117,6 @@ export function toEnsureAppReadyInput(
     appName: requirements.appName,
     dependencies: requirements.dependencies ?? [],
     requireLatestFirmware: requirements.requireLatestFirmware ?? false,
-    allowPartialDependencies: requirements.allowPartialDependencies,
     requiresDerivation: requirements.requiresDerivation,
   };
 }

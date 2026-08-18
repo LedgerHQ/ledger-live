@@ -1,21 +1,31 @@
 import React from "react";
-import { Spinner } from "@ledgerhq/lumen-ui-react";
-import { ConnectDeviceUIStateTypes, type ConnectDeviceUIState } from "@ledgerhq/live-dmk-desktop";
+import {
+  ConnectDeviceUIStateTypes,
+  type ConnectDeviceUIState,
+  webHidTransportIdentifier,
+} from "@ledgerhq/live-dmk-desktop";
 import { useTranslation } from "react-i18next";
+import { LoadingContent } from "../../components/DeviceGenericStates/LoadingContent";
+import { TrackDIEScreen } from "../../components/TrackDIEScreen";
+import { PAGE_CONNECT_DEVICE } from "../../utils/trackDeviceIntent";
 
 type ConnectingStateProps = {
   state: Extract<ConnectDeviceUIState, { type: ConnectDeviceUIStateTypes.Connecting }>;
 };
 
-export function ConnectingState(_props: Readonly<ConnectingStateProps>): React.ReactNode {
+export function ConnectingState({ state }: Readonly<ConnectingStateProps>): React.ReactNode {
   const { t } = useTranslation();
+  const transport = state.device.transport === webHidTransportIdentifier ? "usb" : "ble";
 
   return (
-    <div className="flex w-full flex-col items-center gap-16 px-16 py-32">
-      <Spinner size={32} />
-      <h3 className="heading-4-semi-bold text-center text-base">
-        {t("deviceIntentExecutor.connectDevice.states.connecting.title")}
-      </h3>
-    </div>
+    <>
+      <TrackDIEScreen
+        category={PAGE_CONNECT_DEVICE.Connecting}
+        modelId={state.device.deviceModelId}
+        transport={transport}
+        refreshSource
+      />
+      <LoadingContent title={t("deviceIntentExecutor.connectDevice.states.connecting.title")} />
+    </>
   );
 }

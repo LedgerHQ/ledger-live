@@ -8,6 +8,7 @@ import { render, screen } from "@tests/test-renderer";
 import { QuickAmountSelector } from "../QuickAmountSelector";
 import { ALEO_ACCOUNT_1 } from "../../__mocks__/account.mock";
 import { urls } from "~/utils/urls";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 
 const openURLSpy = jest.spyOn(Linking, "openURL").mockResolvedValue(undefined);
 
@@ -21,8 +22,10 @@ jest.mock("LLM/hooks/useLocalizedUrls", () => ({
 
 jest.mock("~/components/CurrencyUnitValue", () => ({
   __esModule: true,
-  default: ({ value }: { value: BigNumber }) => <Text>{value.toString()}</Text>,
+  default: jest.fn(),
 }));
+
+const mockCurrencyUnitValue = jest.mocked(CurrencyUnitValue);
 
 const mockUseKeyboardVisible = jest.fn(() => ({ isKeyboardVisible: false, keyboardHeight: 0 }));
 jest.mock("~/logic/keyboardVisible", () => ({
@@ -81,6 +84,9 @@ describe("QuickAmountSelector", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockUseKeyboardVisible.mockReturnValue({ isKeyboardVisible: false, keyboardHeight: 0 });
+    mockCurrencyUnitValue.mockImplementation(({ value }: { value?: BigNumber | number | null }) => (
+      <Text>{value?.toString()}</Text>
+    ));
   });
 
   afterAll(() => {
@@ -217,6 +223,17 @@ describe("QuickAmountSelector", () => {
       const updater = mockUpdateTransaction.mock.calls[0][0];
       const result = updater(transaction);
       expect(result.useAllAmount).toBe(true);
+    });
+
+    it("shows full amount instead of rounding it down", () => {
+      mockCurrencyUnitValue.mockImplementation(
+        jest.requireActual("~/components/CurrencyUnitValue").default,
+      );
+
+      renderSelector(account, transaction, new BigNumber("1000001"));
+
+      expect(screen.getByText("1.000001 ALEO")).toBeOnTheScreen();
+      expect(screen.queryByText("1 ALEO")).not.toBeOnTheScreen();
     });
   });
 });

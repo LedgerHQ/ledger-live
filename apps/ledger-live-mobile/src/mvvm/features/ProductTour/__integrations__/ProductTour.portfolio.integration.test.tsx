@@ -1,26 +1,25 @@
 import React from "react";
 import { View } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { render, screen, withFlagOverrides } from "@tests/test-renderer";
+import { act, render, screen, waitFor, withFlagOverrides } from "@tests/test-renderer";
 import type { State } from "~/reducers/types";
+import { handleProductTourDeeplink } from "~/navigation/deeplinks/handleProductTourDeeplink";
 import { ProductTourPortfolioMount } from "../index";
 
 const Stack = createNativeStackNavigator();
 
-const withOnboarding = (completed: boolean) => (state: State) => ({
-  ...state,
-  settings: { ...state.settings, hasCompletedOnboarding: completed },
-});
-
 const eligiblePortfolioState = withFlagOverrides(
   { lwmProductTour: { enabled: true } },
-  withOnboarding(true),
+  (state: State) => ({
+    ...state,
+    settings: {
+      ...state.settings,
+      hasCompletedOnboarding: true,
+      productTourCompleted: false,
+    },
+  }),
 );
 
-/**
- * Portfolio-shaped screen: same mount point as real Portfolio (ProductTourPortfolioMount)
- * without pulling the full Portfolio tree.
- */
 function PortfolioScreenWithProductTour() {
   return (
     <View style={{ flex: 1 }} testID="product-tour-integration-portfolio">
@@ -38,12 +37,78 @@ function IntegrationNavigator() {
 }
 
 describe("ProductTour on Portfolio (integration)", () => {
-  it("should mount the Product Tour subtree when eligible inside a native stack screen", async () => {
+  it("should not auto-open the drawer when eligible on Portfolio mount", async () => {
     render(<IntegrationNavigator />, {
       overrideInitialState: eligiblePortfolioState,
     });
 
-    expect(await screen.findByTestId("product-tour-integration-portfolio")).toBeVisible();
-    expect(screen.getByTestId("product-tour-portfolio-mount")).toBeVisible();
+    expect(await screen.findByTestId("product-tour-portfolio-mount")).toBeVisible();
+    expect(screen.queryByTestId("product-tour-slides-container")).toBeNull();
   });
+
+  it("should open when ledgerlive://product-tour is handled while eligible", async () => {
+    const { store } = render(<IntegrationNavigator />, {
+      overrideInitialState: eligiblePortfolioState,
+    });
+
+    expect(await screen.findByTestId("product-tour-portfolio-mount")).toBeVisible();
+
+    await act(async () => {
+      handleProductTourDeeplink({
+        isLwmProductTourEnabled: true,
+        hasCompletedOnboarding: true,
+        dispatch: store.dispatch,
+        config: { screens: {} } as Parameters<typeof handleProductTourDeeplink>[0]["config"],
+      });
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId("product-tour-slides-container")).toBeVisible();
+    });
+  });
+
+  it.each([
+    {
+      name: "lwmProductTour is disabled",
+      flagEnabled: false,
+      productTourCompleted: false,
+      isLwmProductTourEnabled: false,
+    },
+    {
+      name: "the tour is completed",
+      flagEnabled: true,
+      productTourCompleted: true,
+      isLwmProductTourEnabled: true,
+    },
+  ])(
+    "should not open when ledgerlive://product-tour is handled and $name",
+    async ({ flagEnabled, productTourCompleted, isLwmProductTourEnabled }) => {
+      const { store } = render(<IntegrationNavigator />, {
+        overrideInitialState: withFlagOverrides(
+          { lwmProductTour: { enabled: flagEnabled } },
+          (state: State) => ({
+            ...state,
+            settings: {
+              ...state.settings,
+              hasCompletedOnboarding: true,
+              productTourCompleted,
+            },
+          }),
+        ),
+      });
+
+      expect(screen.queryByTestId("product-tour-portfolio-mount")).toBeNull();
+
+      await act(async () => {
+        handleProductTourDeeplink({
+          isLwmProductTourEnabled,
+          hasCompletedOnboarding: true,
+          dispatch: store.dispatch,
+          config: { screens: {} } as Parameters<typeof handleProductTourDeeplink>[0]["config"],
+        });
+      });
+
+      expect(screen.queryByTestId("product-tour-slides-container")).toBeNull();
+    },
+  );
 });

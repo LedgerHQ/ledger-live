@@ -1,9 +1,8 @@
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { ApyType } from "../../dada-client/types/trend";
+import { CryptoOrTokenCurrency } from "@domain/entity-currency";
+import type { Apy } from "@domain/entity-interest-rate";
 
-type InterestRate = { value: number; type: ApyType };
 type InterestRateResult = {
-  interestRate: InterestRate | undefined;
+  interestRate: Apy | undefined;
   interestRatePercentageRounded: number;
 };
 
@@ -14,7 +13,7 @@ const roundPercentage = (value: number, decimals = 2): number => {
 
 export function getInterestRateForAsset(
   asset: CryptoOrTokenCurrency,
-  interestRates: Record<string, InterestRate | undefined>,
+  interestRates: Record<string, Apy | undefined>,
   networks: CryptoOrTokenCurrency[] = [],
 ): InterestRateResult {
   const currencyId =

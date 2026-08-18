@@ -1,8 +1,10 @@
 import { log } from "@ledgerhq/logs";
 import { BigNumber } from "bignumber.js";
-import { getGasPrice, getProtocolConfig, getValidators } from "./api/node";
-import { NearProtocolConfigNotLoaded } from "./errors";
+import { VALIDATORS_COUNT } from "./constants";
+import { getGasPrice, getValidators } from "./network/node";
+import { getActionCosts } from "./network/protocolConfig";
 import { getCurrentNearPreloadData, setNearPreloadData } from "./preload-data";
+import { getCoinConfig } from "./config";
 import type { NearPreloadedData } from "./types";
 
 export { getCurrentNearPreloadData };
@@ -43,6 +45,12 @@ function fromHydratePreloadData(data: any): NearPreloadedData {
     if (data.receiptCreationExecution) {
       hydratedData.receiptCreationExecution = new BigNumber(data.receiptCreationExecution);
     }
+    if (data.minGasPurchasePrice) {
+      hydratedData.minGasPurchasePrice = new BigNumber(data.minGasPurchasePrice);
+    }
+    if (data.accountCreationCharge) {
+      hydratedData.accountCreationCharge = new BigNumber(data.accountCreationCharge);
+    }
     if (Array.isArray(data.validators) && data.validators.length) {
       hydratedData.validators = data.validators;
     }
@@ -58,45 +66,24 @@ export const getPreloadStrategy = () => ({
 export const preload = async (): Promise<NearPreloadedData> => {
   log("near/preload", "preloading near data...");
 
-  const [protocolConfig, rawValidators, gasPrice] = await Promise.all([
-    getProtocolConfig(),
-    getValidators({ per_page: 200, page: 1 }), // get first 200 validators
-    getGasPrice(),
+  // `force` so a preload always refreshes the protocol config, as it did before the derivation
+  // moved behind a cache; it also refills that cache for callers outside a bridge sync.
+  const config = getCoinConfig();
+  const [actionCosts, rawValidators, gasPrice] = await Promise.all([
+    getActionCosts.force(config),
+    getValidators({ total: VALIDATORS_COUNT, config }),
+    getGasPrice(config),
   ]);
 
-  const validators = await Promise.all(
-    rawValidators.map(async ({ account_id: validatorAddress, stake, commission }) => {
-      return {
-        validatorAddress,
-        tokens: stake,
-        commission,
-      };
-    }),
-  );
-
-  if (!protocolConfig) {
-    throw new NearProtocolConfigNotLoaded();
-  }
-
-  const { storage_amount_per_byte, transaction_costs } = protocolConfig.runtime_config;
-
-  const { action_creation_config, action_receipt_creation_config } = transaction_costs;
+  const validators = rawValidators.map(({ account_id: validatorAddress, stake, commission }) => ({
+    validatorAddress,
+    tokens: stake,
+    commission,
+  }));
 
   return {
-    storageCost: new BigNumber(storage_amount_per_byte),
+    ...actionCosts,
     gasPrice: new BigNumber(gasPrice),
-    createAccountCostSend: new BigNumber(action_creation_config.create_account_cost.send_not_sir),
-    createAccountCostExecution: new BigNumber(action_creation_config.create_account_cost.execution),
-    transferCostSend: new BigNumber(action_creation_config.transfer_cost.send_not_sir),
-    transferCostExecution: new BigNumber(action_creation_config.transfer_cost.execution),
-    addKeyCostSend: new BigNumber(
-      action_creation_config.add_key_cost.full_access_cost.send_not_sir,
-    ),
-    addKeyCostExecution: new BigNumber(
-      action_creation_config.add_key_cost.full_access_cost.execution,
-    ),
-    receiptCreationSend: new BigNumber(action_receipt_creation_config.send_not_sir),
-    receiptCreationExecution: new BigNumber(action_receipt_creation_config.execution),
     validators,
   };
 };

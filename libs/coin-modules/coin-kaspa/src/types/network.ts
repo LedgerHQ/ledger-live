@@ -16,6 +16,82 @@ export type ApiResponseBlockDagInfo = {
   virtualDaaScore: string;
 };
 
+type ApiResponseBlockParent = {
+  parentHashes: string[];
+};
+
+export type ApiResponseBlockHeader = {
+  version: number;
+  hashMerkleRoot: string;
+  acceptedIdMerkleRoot: string;
+  utxoCommitment: string;
+  timestamp: string; // unix time in milliseconds, as a string
+  bits: number;
+  nonce: string;
+  daaScore: string;
+  blueWork: string;
+  parents: ApiResponseBlockParent[];
+  blueScore: string;
+  pruningPoint: string;
+};
+
+export type ApiResponseBlockVerboseData = {
+  hash: string;
+  difficulty: number;
+  selectedParentHash: string;
+  transactionIds: string[];
+  blueScore: string;
+  childrenHashes: string[] | null;
+  mergeSetBluesHashes: string[];
+  mergeSetRedsHashes: string[];
+  isChainBlock: boolean;
+};
+
+// A transaction as returned inside a block by `/blocks-from-bluescore?includeTransactions=true`.
+// UTXO caveat: outputs carry a resolved `scriptPublicKeyAddress` + `amount`, but inputs only
+// reference a previous outpoint (no address/amount) — sender debits and fees are NOT derivable
+// from this endpoint without resolving each previous outpoint separately.
+export type ApiResponseBlockTxInput = {
+  previousOutpoint: { transactionId: string; index: number } | null;
+  signatureScript: string | null;
+  sigOpCount: number | null;
+};
+
+export type ApiResponseBlockTxOutput = {
+  amount: number | null;
+  scriptPublicKey: { scriptPublicKey: string | null; version: number | null } | null;
+  verboseData: { scriptPublicKeyType: string | null; scriptPublicKeyAddress: string | null } | null;
+};
+
+export type ApiResponseBlockTransaction = {
+  inputs: ApiResponseBlockTxInput[] | null;
+  outputs: ApiResponseBlockTxOutput[] | null;
+  subnetworkId: string | null;
+  mass: number | null;
+  version: number | null;
+  verboseData: {
+    transactionId: string;
+    hash: string | null;
+    computeMass: number | null;
+    blockHash: string | null;
+    blockTime: number | null;
+  };
+};
+
+// One element of the `/blocks-from-bluescore` response array. A single blue score can map to
+// several blocks (BlockDAG) — exactly one has `verboseData.isChainBlock === true`.
+export type ApiResponseBlockInfo = {
+  header: ApiResponseBlockHeader;
+  // Empty unless the request sets includeTransactions=true.
+  transactions: ApiResponseBlockTransaction[];
+  verboseData: ApiResponseBlockVerboseData;
+  extra?: {
+    color: string | null;
+    minerAddress: string | null;
+    minerInfo: string | null;
+  };
+};
+
 export type ApiResponseAddressActive = {
   address: string;
   active: boolean;
@@ -48,6 +124,7 @@ type Outpoint = {
 };
 
 type ScriptPublicKey = {
+  version: number;
   scriptPublicKey: string;
 };
 

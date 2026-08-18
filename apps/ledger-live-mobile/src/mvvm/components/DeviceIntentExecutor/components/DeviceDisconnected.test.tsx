@@ -6,7 +6,7 @@ import {
 } from "@ledgerhq/device-management-kit";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { TrackScreen, track } from "~/analytics";
-import { SourceFlowProvider } from "../utils/SourceFlowContext";
+import { DeviceIntentTrackingProvider } from "../utils/DeviceIntentTrackingContext";
 import { PAGE_DEVICE_ACTION } from "../utils/trackDeviceIntent";
 import { DeviceDisconnected } from "./DeviceDisconnected";
 
@@ -33,9 +33,9 @@ const device = {
 
 function renderState(props: Partial<React.ComponentProps<typeof DeviceDisconnected>> = {}) {
   return render(
-    <SourceFlowProvider value="my_ledger">
+    <DeviceIntentTrackingProvider value={{ sourceFlow: "my_ledger" }}>
       <DeviceDisconnected device={device} onRetry={jest.fn()} onClose={jest.fn()} {...props} />
-    </SourceFlowProvider>,
+    </DeviceIntentTrackingProvider>,
   );
 }
 
@@ -48,11 +48,9 @@ describe("DeviceDisconnected", () => {
     renderState();
 
     expect(screen.getByTestId("device-intent-executor-device-disconnected")).toBeVisible();
-    expect(screen.getByText("Device disconnected")).toBeVisible();
+    expect(screen.getByText("Ledger Device disconnected")).toBeVisible();
     expect(
-      screen.getByText(
-        "Your Ledger is no longer connected. Make sure it's powered on and within Bluetooth range or plugged in.",
-      ),
+      screen.getByText("Make sure it's powered on and within Bluetooth range or plugged in."),
     ).toBeVisible();
     expect(screen.getByText("Retry")).toBeVisible();
     expect(screen.getByText("Close")).toBeVisible();

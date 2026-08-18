@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { cryptocurrenciesById } from "@ledgerhq/cryptoassets";
+import { CRYPTO_CURRENCIES_REGISTRY as cryptocurrenciesById } from "@domain/entity-currency-crypto";
 import type { Account } from "@ledgerhq/types-live";
 import {
   type CalculateCountervalue,

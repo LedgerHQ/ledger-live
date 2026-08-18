@@ -1,9 +1,23 @@
-import { createCustomErrorClass } from "@ledgerhq/errors";
+export class AlgorandASANotOptInInRecipient extends Error {
+  override name = "AlgorandASANotOptInInRecipient";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "AlgorandASANotOptInInRecipient");
+    if (fields) Object.assign(this, fields);
+  }
+}
 
-export const AlgorandASANotOptInInRecipient = createCustomErrorClass(
-  "AlgorandASANotOptInInRecipient",
-);
+export class AlgorandMemoExceededSizeError extends Error {
+  override name = "AlgorandMemoExceededSizeError";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "AlgorandMemoExceededSizeError");
+    if (fields) Object.assign(this, fields);
+  }
+}
 
-export const AlgorandMemoExceededSizeError = createCustomErrorClass(
-  "AlgorandMemoExceededSizeError",
-);
+export class ClaimRewardsFeesWarning extends Error {
+  override name = "ClaimRewardsFeesWarning";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "ClaimRewardsFeesWarning");
+    if (fields) Object.assign(this, fields);
+  }
+}

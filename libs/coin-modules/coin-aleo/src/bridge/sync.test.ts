@@ -5,13 +5,15 @@ import { log } from "@ledgerhq/logs";
 import { SyncConfig, DerivationMode } from "@ledgerhq/types-live";
 import { firstValueFrom, toArray, type Observable } from "rxjs";
 import { SYNC_TYPE_TRANSPARENT, SYNC_TYPE_SHIELDED } from "@ledgerhq/types-live";
-import { getBalance, lastBlock, listOperations } from "../logic";
+import { getPublicBalance } from "../logic/getPublicBalance";
+import { lastBlock } from "../logic";
+import { listOperations } from "./listOperations";
 import {
   getMockedCurrency,
   getMockedTokenCurrency,
   MOCK_TOKEN_PROGRAM_ID,
 } from "../__tests__/fixtures/currency.fixture";
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { EXPLORER_TRANSFER_TYPES, TOKEN_RECORD_NAME } from "../constants";
 import { sdkClient } from "../network/sdk";
 import {
@@ -26,7 +28,7 @@ import { getMockedOperation } from "../__tests__/fixtures/operation.fixture";
 import { getMockedRecord, MOCK_ALEO_ADDRESS } from "../__tests__/fixtures/api.fixture";
 import coinConfig from "../config";
 import { accessProvableApi, fetchAllOwnedRecords, patchPublicOperations } from "../network/utils";
-import { listPrivateOperations } from "../logic/listPrivateOperations";
+import { listPrivateOperations } from "./listPrivateOperations";
 import { getPrivateBalance } from "../logic/getPrivateBalance";
 import {
   performPublicSync,
@@ -43,10 +45,17 @@ jest.mock("@ledgerhq/ledger-wallet-framework/account", () => ({
   getSyncHash: jest.fn(),
 }));
 jest.mock("../logic");
-jest.mock("../network/utils");
+jest.mock("../network/utils", () => ({
+  ...jest.requireActual("../network/utils"),
+  accessProvableApi: jest.fn(),
+  fetchAllOwnedRecords: jest.fn(),
+  patchPublicOperations: jest.fn(),
+}));
+jest.mock("./listOperations");
 jest.mock("../network/api");
-jest.mock("../logic/listPrivateOperations");
+jest.mock("./listPrivateOperations");
 jest.mock("../logic/getPrivateBalance");
+jest.mock("../logic/getPublicBalance");
 jest.mock("../network/sdk");
 
 jest.mock("@ledgerhq/logs", () => ({
@@ -54,7 +63,7 @@ jest.mock("@ledgerhq/logs", () => ({
 }));
 
 const mockGetSyncHash = jest.mocked(getSyncHash);
-const mockGetBalance = jest.mocked(getBalance);
+const mockGetPublicBalance = jest.mocked(getPublicBalance);
 const mockLastBlock = jest.mocked(lastBlock);
 const mockListOperations = jest.mocked(listOperations);
 const mockAccessProvableApi = jest.mocked(accessProvableApi);
@@ -104,7 +113,7 @@ describe("sync.ts", () => {
     mockGetSyncHash.mockResolvedValue(mockSyncHash);
     coinConfig.setCoinConfig(() => mockConfig);
 
-    mockGetBalance.mockResolvedValue([
+    mockGetPublicBalance.mockResolvedValue([
       {
         asset: { type: "native" as const },
         value: BigInt(mockAccount.balance.toString()),
@@ -186,7 +195,7 @@ describe("sync.ts", () => {
     });
 
     it("should handle empty balance array", async () => {
-      mockGetBalance.mockResolvedValue([]);
+      mockGetPublicBalance.mockResolvedValue([]);
 
       const result = await performPublicSync(
         {
@@ -206,7 +215,7 @@ describe("sync.ts", () => {
 
     it("should update balance when it changes", async () => {
       const mockUpdatedBalance = 10;
-      mockGetBalance.mockResolvedValue([
+      mockGetPublicBalance.mockResolvedValue([
         {
           asset: { type: "native" as const },
           value: BigInt(mockUpdatedBalance),
@@ -249,10 +258,9 @@ describe("sync.ts", () => {
       expect(mockListOperations).toHaveBeenCalledTimes(1);
       expect(mockListOperations).toHaveBeenCalledWith({
         config: mockConfig,
-        currency: mockCurrency,
+        currencyId: mockCurrency.id,
         address: mockAccount.freshAddress,
         ledgerAccountId: expect.any(String),
-        mode: "bridge",
         options: {
           minHeight: 0,
           order: "asc",
@@ -290,10 +298,9 @@ describe("sync.ts", () => {
       expect(mockListOperations).toHaveBeenCalledTimes(1);
       expect(mockListOperations).toHaveBeenCalledWith({
         config: mockConfig,
-        currency: mockCurrency,
+        currencyId: mockCurrency.id,
         address: mockAccount.freshAddress,
         ledgerAccountId: mockInitialAccount.id,
-        mode: "bridge",
         options: {
           minHeight: 0,
           order: "asc",
@@ -330,7 +337,7 @@ describe("sync.ts", () => {
         operations: [oldOperation],
       };
 
-      mockGetBalance.mockResolvedValue([
+      mockGetPublicBalance.mockResolvedValue([
         {
           asset: { type: "native" as const },
           value: BigInt(1000),
@@ -364,7 +371,7 @@ describe("sync.ts", () => {
     });
 
     it("should propagate errors", async () => {
-      mockGetBalance.mockRejectedValue(new Error("Network timeout"));
+      mockGetPublicBalance.mockRejectedValue(new Error("Network timeout"));
 
       await expect(
         performPublicSync(
@@ -799,7 +806,7 @@ describe("sync.ts", () => {
 
       expect(mockAccessProvableApi).toHaveBeenCalledTimes(1);
       expect(mockAccessProvableApi).toHaveBeenCalledWith({
-        currency: mockCurrency,
+        config: mockConfig,
         viewKey: "AViewKey123",
         provableApi: accountWithProvableApi.aleoResources?.provableApi,
       });
@@ -994,18 +1001,18 @@ describe("sync.ts", () => {
 
       expect(mockFetchAllOwnedRecords).toHaveBeenCalledTimes(2);
       expect(mockFetchAllOwnedRecords).toHaveBeenCalledWith({
-        currency: mockCurrency,
+        config: mockConfig,
         uuid: configuredProvableApi.uuid,
         start: 0,
       });
       expect(mockFetchAllOwnedRecords).toHaveBeenCalledWith({
-        currency: mockCurrency,
+        config: mockConfig,
         uuid: configuredProvableApi.uuid,
         unspent: true,
       });
       expect(mockListPrivateOperations).toHaveBeenCalledTimes(1);
       expect(mockListPrivateOperations).toHaveBeenCalledWith({
-        currency: mockCurrency,
+        config: mockConfig,
         viewKey: "AViewKey123",
         address: mockAccount.freshAddress,
         ledgerAccountId: expect.any(String),
@@ -1013,7 +1020,7 @@ describe("sync.ts", () => {
       });
       expect(mockGetPrivateBalance).toHaveBeenCalledTimes(1);
       expect(mockGetPrivateBalance).toHaveBeenCalledWith({
-        currency: mockCurrency,
+        config: mockConfig,
         viewKey: "AViewKey123",
         privateRecords: mockUnspentRecords,
         oldUnspentRecords: [],
@@ -1257,7 +1264,6 @@ describe("sync.ts", () => {
       const accountWithOps = { ...mockInitialAccount, operations: [oldPublicOp] };
 
       mockListOperations.mockResolvedValueOnce({
-        // @ts-expect-error - bridge operation type is expected in this test
         operations: [newPublicOp],
         tokenOperations: [],
         calTokens: new Map(),
@@ -1347,7 +1353,7 @@ describe("sync.ts", () => {
 
       expect(mockPatchPublicOperations).toHaveBeenCalledTimes(1);
       expect(mockPatchPublicOperations).toHaveBeenCalledWith({
-        currency: mockCurrency,
+        config: mockConfig,
         publicOperations: expect.any(Array),
         privateRecords: [privateRecord],
         address: mockAccount.freshAddress,
@@ -1408,7 +1414,7 @@ describe("sync.ts", () => {
 
       expect(mockGetPrivateBalance).toHaveBeenCalledTimes(1);
       expect(mockGetPrivateBalance).toHaveBeenCalledWith({
-        currency: mockCurrency,
+        config: mockConfig,
         viewKey: "AViewKey123",
         privateRecords: [unspentRecord],
         oldUnspentRecords: [],
@@ -1434,13 +1440,15 @@ describe("sync.ts", () => {
 
     beforeEach(() => {
       coinConfig.setCoinConfig(() => mockConfigWithTokens);
-      setupMockCryptoAssetsStore({
+      setCryptoAssetsStore({
+        findTokenById: async () => undefined,
         findTokenByAddressInCurrency: jest.fn().mockImplementation(async (programName: string) => {
           if (programName === MOCK_TOKEN_PROGRAM_ID) {
             return mockTokenCurrency;
           }
           return undefined;
         }),
+        getTokensSyncHash: async () => "",
       });
       mockDecryptRecord.mockResolvedValue({
         owner: "owner.private",
@@ -1679,7 +1687,7 @@ describe("sync.ts", () => {
     });
 
     it("createPublicSyncObservable errors when performPublicSync throws", async () => {
-      mockGetBalance.mockRejectedValue(new Error("rpc down"));
+      mockGetPublicBalance.mockRejectedValue(new Error("rpc down"));
       const shape$ = createPublicSyncObservable(baseInfo, mockSyncConfig);
       await expect(firstValueFrom(shape$)).rejects.toThrow("rpc down");
     });
@@ -1921,7 +1929,7 @@ describe("sync.ts", () => {
     });
 
     it("makeGetAccountShape errors the outer observable when public sync throws", async () => {
-      mockGetBalance.mockRejectedValue(new Error("Network failure"));
+      mockGetPublicBalance.mockRejectedValue(new Error("Network failure"));
 
       const shape$ = makeGetAccountShape()(baseInfo, { paginationConfig: {} });
 

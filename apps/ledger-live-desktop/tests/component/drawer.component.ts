@@ -11,6 +11,9 @@ export class Drawer extends Component {
   readonly selectAssetTitle = this.page.getByText("Select asset").first();
   readonly selectNetworkTitle = this.page.getByText("Select network").first();
   readonly selectAccountTitle = this.page.getByText("Select account").first();
+  private accountSelectionScreen = this.modularDialog.getByTestId(
+    "modular-dialog-screen-ACCOUNT_SELECTION",
+  );
   readonly assetSearchInput = this.page.getByTestId("modular-asset-dialog-search-input");
   readonly backButton = this.page.getByRole("button", {
     name: /^(Back|Go back)$/i,
@@ -97,6 +100,11 @@ export class Drawer extends Component {
 
   back() {
     return this.backButton.click();
+  }
+
+  @step("Wait for account selection to disappear")
+  async waitForAccountTitleToDisappear() {
+    await this.accountSelectionScreen.waitFor({ state: "hidden" });
   }
 
   private async isNetworkStep() {

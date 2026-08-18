@@ -6,8 +6,9 @@ import { BigNumber } from "bignumber.js";
 import { OperationType } from "@ledgerhq/types-live";
 import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
-import { useSolanaPreloadData } from "@ledgerhq/live-common/families/solana/react";
+import { CryptoCurrency } from "@domain/entity-currency-crypto";
+import { Unit } from "@domain/entity-currency-unit";
+import { useValidators } from "@ledgerhq/live-common/families/solana/react";
 import { SolanaAccount, SolanaOperation } from "@ledgerhq/live-common/families/solana/types";
 import Section from "~/screens/OperationDetails/Section";
 import { discreetModeSelector } from "~/reducers/settings";
@@ -69,8 +70,8 @@ const DelegateExtraFields = ({ account, voteAddress, amount }: DelegateExtraFiel
   const { t } = useTranslation();
   const unit = useAccountUnit(account);
   const formatAmount = useFormatAmount();
-  const preloadData = useSolanaPreloadData(account.currency);
-  const validator = preloadData?.validators.find(v => v.voteAccount === voteAddress);
+  const validators = useValidators(account.currency);
+  const validator = validators.find(v => v.voteAccount === voteAddress);
   const nameOrAddress = validator ? validator.name : voteAddress;
 
   return (

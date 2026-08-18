@@ -1,11 +1,8 @@
-import React, { useCallback, useRef } from "react";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import {
-  AssetItem,
-  AssetType,
-  MarketPriceIndicator,
-  MarketPercentIndicator,
-} from "@ledgerhq/native-ui/pre-ldls/index";
+import React, { useCallback, useMemo, useRef } from "react";
+import { CryptoOrTokenCurrency } from "@domain/entity-currency";
+import { AssetRow, AssetRowData } from "./components/AssetRow";
+import { MarketPriceIndicator } from "../../components/MarketPriceIndicator";
+import { MarketPercentIndicator } from "../../components/MarketPercentIndicator";
 import { ApyIndicator } from "../../components/ApyIndicator";
 import SearchInputContainer from "./components/SearchInputContainer";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
@@ -16,7 +13,7 @@ import {
   EVENTS_NAME,
   MODULAR_DRAWER_PAGE_NAME,
 } from "../../analytics";
-import { FlatList, StyleSheet } from "react-native";
+import { FlatList } from "react-native";
 import {
   BottomSheetVirtualizedList,
   BottomSheetHeader,
@@ -35,6 +32,10 @@ import { modularDrawerFlowSelector, modularDrawerSourceSelector } from "~/reduce
 import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
 import { groupCurrenciesByAsset } from "@ledgerhq/live-common/modularDrawer/utils/groupCurrenciesByAsset";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
+import {
+  getPerpsUiUseCase,
+  PERPS_UI_USE_CASE,
+} from "@ledgerhq/live-common/wallet-api/ModularDrawer/uiUseCase";
 
 export type AssetSelectionStepProps = {
   isOpen: boolean;
@@ -46,7 +47,8 @@ export type AssetSelectionStepProps = {
   refetch?: () => void;
   loadNext?: () => void;
   assetsSorted?: AssetData[];
-  useLumenBottomSheet?: boolean;
+  uiUseCase?: string;
+  selectableNetworkIds?: readonly string[];
 };
 
 const SAFE_MARGIN_BOTTOM = 48;
@@ -61,26 +63,41 @@ const AssetSelection = ({
   refetch,
   loadNext,
   assetsSorted,
-  useLumenBottomSheet = false,
+  uiUseCase,
+  selectableNetworkIds,
 }: Readonly<AssetSelectionStepProps>) => {
   const { t } = useTranslation();
   const { isInternetReachable } = useNetInfo();
+
+  const isPerpsFund = getPerpsUiUseCase(uiUseCase) === PERPS_UI_USE_CASE.fund;
+
+  const headerTitle = isPerpsFund
+    ? t("modularDrawer.selectDepositCurrencyTitle")
+    : t("modularDrawer.selectAsset");
+
+  const headerDescription = isPerpsFund
+    ? t("modularDrawer.selectDepositCurrencyDescription")
+    : undefined;
 
   const flow = useSelector(modularDrawerFlowSelector);
   const source = useSelector(modularDrawerSourceSelector);
 
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
-  const { collapse, snapToIndex } = useBottomSheet();
+  const { collapse, expand } = useBottomSheet();
   const listRef = useRef<FlatList>(null);
 
   const expandToFullHeight = () => {
     if (formattedAssets.length > 0) {
-      snapToIndex(1);
+      expand();
       listRef.current?.scrollToIndex({ index: 0 });
     }
   };
 
   const assetsMap = groupCurrenciesByAsset(assetsSorted || []);
+  const selectableNetworkIdSet = useMemo(
+    () => (selectableNetworkIds === undefined ? undefined : new Set(selectableNetworkIds)),
+    [selectableNetworkIds],
+  );
 
   const formattedAssets = useAssetConfiguration(availableAssets ?? [], {
     ApyIndicator,
@@ -90,10 +107,20 @@ const AssetSelection = ({
     balanceItem,
     assetsMap,
     ...assetsConfiguration,
+  }).map(asset => {
+    if (selectableNetworkIdSet === undefined) return asset;
+
+    const isSelectable = assetsMap.get(asset.id)?.currencies.some(network => {
+      const networkId = network.type === "CryptoCurrency" ? network.id : network.parentCurrencyId;
+      return selectableNetworkIdSet.has(networkId);
+    });
+
+    return { ...asset, disabled: !isSelectable };
   });
 
   const handleAssetClick = useCallback(
-    (asset: AssetType) => {
+    (asset: AssetRowData) => {
+      if (asset.disabled) return;
       const originalAsset = availableAssets.find(a => a.id === asset.id);
       if (originalAsset) {
         collapse();
@@ -125,7 +152,7 @@ const AssetSelection = ({
   );
 
   const renderItem = useCallback(
-    ({ item }: { item: AssetType }) => <AssetItem {...item} onClick={handleAssetClick} />,
+    ({ item }: { item: AssetRowData }) => <AssetRow {...item} onClick={handleAssetClick} />,
     [handleAssetClick],
   );
 
@@ -146,18 +173,16 @@ const AssetSelection = ({
         ref={listRef}
         scrollToOverflowEnabled
         data={formattedAssets}
-        keyExtractor={(item: AssetType) => item.id}
-        getItemCount={(items: AssetType[]) => items.length}
-        getItem={(items: AssetType[], index: number) => items[index]}
+        keyExtractor={(item: AssetRowData) => item.id}
+        getItemCount={(items: AssetRowData[]) => items.length}
+        getItem={(items: AssetRowData[], index: number) => items[index]}
         renderItem={renderItem}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
         keyboardDismissMode="on-drag"
         ListEmptyComponent={<AssetsEmptyList />}
-        style={useLumenBottomSheet ? undefined : LEGACY_LIST_STYLE}
         contentContainerStyle={{
           paddingBottom: SAFE_MARGIN_BOTTOM,
-          ...(useLumenBottomSheet ? {} : { marginTop: 16 }),
         }}
         onEndReached={loadNext}
         onEndReachedThreshold={0.5}
@@ -178,35 +203,22 @@ const AssetSelection = ({
           formatAssetConfig
         />
       )}
-      {useLumenBottomSheet ? (
-        <>
-          <BottomSheetHeader
-            spacing
-            title={t("modularDrawer.selectAsset")}
-            testID="modular-drawer-Asset-title"
-            density="expanded"
-          />
-          <SearchInputContainer
-            source={source}
-            flow={flow}
-            onPressIn={expandToFullHeight}
-            withHorizontalPadding
-          />
-        </>
-      ) : (
-        <SearchInputContainer source={source} flow={flow} onPressIn={expandToFullHeight} />
-      )}
+      <BottomSheetHeader
+        spacing
+        title={headerTitle}
+        description={headerDescription}
+        testID="modular-drawer-Asset-title"
+        density="expanded"
+      />
+      <SearchInputContainer
+        source={source}
+        flow={flow}
+        onPressIn={expandToFullHeight}
+        withHorizontalPadding
+      />
       {renderContent()}
     </>
   );
 };
-
-/**
- * Temporary: cancels QueuedDrawerGorhom's paddingHorizontal: 16 so list items
- * align with the header. Will be removed when Gorhom fallback is deleted.
- */
-const LEGACY_LIST_STYLE = StyleSheet.create({
-  list: { marginHorizontal: -16 },
-}).list;
 
 export default withDiscreetMode(React.memo(AssetSelection));

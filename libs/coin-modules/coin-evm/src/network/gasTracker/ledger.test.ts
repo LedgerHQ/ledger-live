@@ -1,9 +1,8 @@
 import { AssertionError } from "assert";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network/network";
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
-import { getCoinConfig } from "../../config";
+import { EvmConfigInfo } from "../../config";
 import { LedgerGasTrackerUsedIncorrectly, NoGasTrackerFound } from "../../errors";
 import { GasOptions } from "../../types";
 import { getGasOptions } from "./ledger";
@@ -11,37 +10,14 @@ import { getGasOptions } from "./ledger";
 jest.mock("@ledgerhq/live-network/network");
 const mockedNetwork = jest.mocked(network);
 
-const fakeCurrency: Partial<CryptoCurrency> = {
-  id: "ethereum",
-  ethereumLikeInfo: {
-    chainId: 1,
-  },
-  units: [{ code: "ETH", name: "ETH", magnitude: 18 }],
-};
+const ledgerGasTrackerConfig = {
+  node: { type: "ledger", explorerId: "eth" },
+  gasTracker: { type: "ledger", explorerId: "eth" },
+} as unknown as EvmConfigInfo;
 
 const TEST_EIP1559_BASE_FEE_MULTIPLIER = 2;
 
-jest.mock("../../config");
-const mockGetConfig = jest.mocked(getCoinConfig);
-
 describe("EVM Family", () => {
-  beforeEach(() => {
-    mockGetConfig.mockImplementation((): any => {
-      return {
-        info: {
-          node: {
-            type: "ledger",
-            explorerId: "eth",
-          },
-          gasTracker: {
-            type: "ledger",
-            explorerId: "eth",
-          },
-        },
-      };
-    });
-  });
-
   describe("network/gasTracker/index.ts", () => {
     const originalEIP1559_BASE_FEE_MULTIPLIER: number = getEnv("EIP1559_BASE_FEE_MULTIPLIER");
 
@@ -71,7 +47,8 @@ describe("EVM Family", () => {
       describe("EIP-1559 gas options", () => {
         it("should return EIP-1559 gas options", async () => {
           const gasOptions: GasOptions = await getGasOptions({
-            currency: fakeCurrency as CryptoCurrency,
+            currencyId: "ethereum",
+            config: ledgerGasTrackerConfig,
             options: {
               useEIP1559: true,
             },
@@ -120,7 +97,8 @@ describe("EVM Family", () => {
           mockedNetwork.mockReturnValueOnce(gastrackerBarometerMock);
 
           const gasOptions: GasOptions = await getGasOptions({
-            currency: fakeCurrency as CryptoCurrency,
+            currencyId: "ethereum",
+            config: ledgerGasTrackerConfig,
             options: {
               useEIP1559: true,
             },
@@ -154,7 +132,8 @@ describe("EVM Family", () => {
           mockedNetwork.mockReturnValueOnce(gastrackerBarometerMock);
 
           const gasOptions: GasOptions = await getGasOptions({
-            currency: fakeCurrency as CryptoCurrency,
+            currencyId: "ethereum",
+            config: ledgerGasTrackerConfig,
             options: {
               useEIP1559: true,
             },
@@ -175,19 +154,9 @@ describe("EVM Family", () => {
         });
 
         it("should use overrideGasTracker", async () => {
-          mockGetConfig.mockImplementationOnce((): any => {
-            return {
-              info: {
-                gasTracker: {
-                  type: "other",
-                  explorerId: "anything",
-                },
-              },
-            };
-          });
-
           await getGasOptions({
-            currency: fakeCurrency as CryptoCurrency,
+            currencyId: "ethereum",
+            config: { gasTracker: { type: "other", explorerId: "anything" } } as any,
             options: {
               useEIP1559: true,
               overrideGasTracker: { type: "ledger", explorerId: "eth_sepolia" },
@@ -204,7 +173,8 @@ describe("EVM Family", () => {
       describe("legacy gas options", () => {
         it("should return legacy gas options", async () => {
           const gasOptions: GasOptions = await getGasOptions({
-            currency: fakeCurrency as CryptoCurrency,
+            currencyId: "ethereum",
+            config: ledgerGasTrackerConfig,
             options: {
               useEIP1559: false,
             },
@@ -234,24 +204,12 @@ describe("EVM Family", () => {
           expect(gasOptions).toEqual(expectedGasOptions);
         });
 
-        it("should return legacy gas options when EIP-1559 not supported by currency", async () => {
-          mockGetConfig.mockImplementationOnce((): any => {
-            return {
-              info: {
-                gasTracker: {
-                  type: "ledger",
-                  explorerId: "etc",
-                },
-              },
-            };
-          });
-
+        it("should return legacy gas options when EIP-1559 not supported by gas tracker", async () => {
           const gasOptions: GasOptions = await getGasOptions({
-            currency: {
-              ethereumLikeInfo: {},
-            },
+            currencyId: "ethereum_classic",
+            config: { gasTracker: { type: "ledger", explorerId: "etc" } } as any,
             options: { useEIP1559: true },
-          } as any);
+          });
 
           const expectedGasOptions: GasOptions = {
             slow: {
@@ -294,7 +252,8 @@ describe("EVM Family", () => {
           mockedNetwork.mockReturnValueOnce(gastrackerBarometerMock);
 
           const gasOptions: GasOptions = await getGasOptions({
-            currency: fakeCurrency as CryptoCurrency,
+            currencyId: "ethereum",
+            config: ledgerGasTrackerConfig,
             options: {
               useEIP1559: false,
             },
@@ -308,19 +267,9 @@ describe("EVM Family", () => {
         });
 
         it("should use overrideGasTracker", async () => {
-          mockGetConfig.mockImplementationOnce((): any => {
-            return {
-              info: {
-                gasTracker: {
-                  type: "other",
-                  explorerId: "anything",
-                },
-              },
-            };
-          });
-
           await getGasOptions({
-            currency: fakeCurrency as CryptoCurrency,
+            currencyId: "ethereum",
+            config: { gasTracker: { type: "other", explorerId: "anything" } } as any,
             options: {
               useEIP1559: false,
               overrideGasTracker: { type: "ledger", explorerId: "eth_sepolia" },
@@ -335,21 +284,11 @@ describe("EVM Family", () => {
       });
 
       it("should throw if the gas tracker type isn't ledger", async () => {
-        mockGetConfig.mockImplementationOnce((): any => {
-          return {
-            info: {
-              gasTracker: {
-                type: "wrong",
-                explorerId: "anything",
-              },
-            },
-          };
-        });
-
         try {
           await getGasOptions({
-            currency: { ethereumLikeInfo: {} },
-          } as any);
+            currencyId: "ethereum",
+            config: { gasTracker: { type: "wrong", explorerId: "anything" } } as any,
+          });
           fail("Promise should have been rejected");
         } catch (e) {
           if (e instanceof AssertionError) {
@@ -360,23 +299,11 @@ describe("EVM Family", () => {
       });
 
       it("should throw if the gas tracker explorerId doesn't exist", async () => {
-        mockGetConfig.mockImplementationOnce((): any => {
-          return {
-            info: {
-              gasTracker: {
-                type: "ledger",
-                explorerId: "anything",
-              },
-            },
-          };
-        });
-
         try {
           await getGasOptions({
-            currency: {
-              ethereumLikeInfo: {},
-            },
-          } as any);
+            currencyId: "ethereum",
+            config: { gasTracker: { type: "ledger", explorerId: "anything" } } as any,
+          });
           fail("Promise should have been rejected");
         } catch (e) {
           if (e instanceof AssertionError) {

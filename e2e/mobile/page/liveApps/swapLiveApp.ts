@@ -17,6 +17,8 @@ const escapeRegExp = (value: string): string => value.replace(/[.*+?^${}()|[\]\\
 const quoteNetValue = (quote: { rate: number; fees: number }) => quote.rate - quote.fees;
 
 export default class SwapLiveAppPage {
+  private static readonly PROVIDER_NAME_PREFIX = "lumen-quote-card-provider-name-";
+
   fromSelector = "from-account-coin-selector";
   fromAmount = "from-account";
   fromAmountInput = "from-account-amount-input";
@@ -26,7 +28,6 @@ export default class SwapLiveAppPage {
   quotesButtonDisabled = "mobile-get-quotes-button-disabled";
   numberOfQuotes = "number-of-quotes";
   quotesCountDown = "quotes-countdown";
-  quoteCardProviderNameSelector = "[data-testid^='compact-quote-card-provider-']";
   executeSwapButton = "execute-button";
   executeSwapButtonStepApproval = "execute-swap-button-step-approval";
   deviceActionErrorDescriptionId = "error-description-deviceAction";
@@ -35,7 +36,9 @@ export default class SwapLiveAppPage {
   quotesContainerErrorIcon = "quotes-container-error-icon";
   insufficientFundsBuyButton = "insufficient-funds-buy-button";
   fromAccountAccountNameTag = "from-account-account-name-tag";
+  fromAccountBalance = "from-account-balance";
   toAccountAccountNameTag = "to-account-account-name-tag";
+  fromAccountAmountInactive = "from-account-amount-inactive";
   incompatibilityBannerPartnerId = "incompatibility-banner-partner";
   swapMainContainerCssSelector = "main";
   swapMainContainerWebElement = getWebElementByCssSelector(this.swapMainContainerCssSelector);
@@ -46,16 +49,18 @@ export default class SwapLiveAppPage {
   revokeApprovalButton = "revoke-approval-button";
   giveApprovalButton = "give-approval-button";
   signPermitButton = "sign-permit-button";
-  specificQuoteCardProviderName = (provider: string) =>
-    `compact-quote-card-provider-name-${provider}`;
   baseProviderCssSelector = (provider: string) =>
     `[data-testid^="quote-container-${SwapProvider.getNameByUiName(provider)}"]`;
   providerExecuteButtonCss = (provider: string) =>
     `${this.baseProviderCssSelector(provider)} [data-testid="${this.executeSwapButton}"]`;
   providerQuoteContainerSelector = (provider: string) =>
-    `${this.baseProviderCssSelector(provider)}[data-testid$="-fixed"], ${this.baseProviderCssSelector(provider)}[data-testid$="-float"]`;
+    `${this.baseProviderCssSelector(
+      provider,
+    )}[data-testid$="-fixed"], ${this.baseProviderCssSelector(provider)}[data-testid$="-float"]`;
   incompatibilityBannerPartnerSelector = (provider: string) =>
-    `${this.baseProviderCssSelector(provider)} [data-testid="${this.incompatibilityBannerPartnerId}"]`;
+    `${this.baseProviderCssSelector(provider)} [data-testid="${
+      this.incompatibilityBannerPartnerId
+    }"]`;
 
   @Step("Expect swap live app page")
   async expectSwapLiveApp() {
@@ -138,12 +143,9 @@ export default class SwapLiveAppPage {
     for (const providerName of providersList) {
       const provider = SwapProvider.getByUiName(providerName);
       if (provider && !provider.kyc && !provider.app) {
-        await waitWebElementByTestId(this.specificQuoteCardProviderName(provider.name));
-        const selectedProvider = getWebElementsByIdAndText(
-          this.specificQuoteCardProviderName(provider.name),
-          provider.uiName,
-        );
-        await tapWebElementByElement(selectedProvider);
+        const providerTestId = `${SwapLiveAppPage.PROVIDER_NAME_PREFIX}${provider.name}`;
+        await waitWebElementByTestId(providerTestId);
+        await tapWebElementByTestId(providerTestId);
 
         return provider;
       }
@@ -212,13 +214,18 @@ export default class SwapLiveAppPage {
       const numberOfQuotesText = await getWebElementText(this.numberOfQuotes);
       const providerList = await getWebElementsText(
         this.swapMainContainerWebElement,
-        this.quoteCardProviderNameSelector,
+        `[data-testid^='${SwapLiveAppPage.PROVIDER_NAME_PREFIX}']`,
       );
 
-      if (!numberOfQuotesText.match(new RegExp(`^${providerList.length} quotes? found$`))) {
+      // "N quotes found" is translated per language, so only the leading count is checked.
+      const displayedCount = Number.parseInt(numberOfQuotesText, 10);
+      if (Number.isNaN(displayedCount) || displayedCount !== providerList.length) {
         throw new Error(
           `Quote count mismatch: UI shows "${numberOfQuotesText}" but found ${providerList.length} cards`,
         );
+      }
+      if (providerList.length === 0) {
+        throw new Error("No quote providers were returned");
       }
 
       return providerList;
@@ -235,17 +242,27 @@ export default class SwapLiveAppPage {
   async checkFirstQuoteContainerInfos(providerList: string[]) {
     const provider: string = SwapProvider.getNameByUiName(providerList[0]);
     const baseProviderLocator = `quote-container-${provider}`;
-    await waitWebElementByTestId(baseProviderLocator, { testIdSuffix: "-amount-label" });
-    await tapWebElementByTestId(baseProviderLocator, { testIdSuffix: "-amount-label" });
+    await waitWebElementByTestId(baseProviderLocator, {
+      testIdSuffix: "-amount-label",
+    });
+    await tapWebElementByTestId(baseProviderLocator, {
+      testIdSuffix: "-amount-label",
+    });
 
     await detoxExpect(
-      getWebElementByTestId(baseProviderLocator, { testIdSuffix: "-amount-label" }),
+      getWebElementByTestId(baseProviderLocator, {
+        testIdSuffix: "-amount-label",
+      }),
     ).toExist();
     await detoxExpect(
-      getWebElementByTestId(baseProviderLocator, { testIdSuffix: "-fiatAmount-label" }),
+      getWebElementByTestId(baseProviderLocator, {
+        testIdSuffix: "-fiatAmount-label",
+      }),
     ).toExist();
     await detoxExpect(
-      getWebElementByTestId(baseProviderLocator, { testIdSuffix: "-networkFees-heading" }),
+      getWebElementByTestId(baseProviderLocator, {
+        testIdSuffix: "-networkFees-heading",
+      }),
     ).toExist();
 
     const extraFeesContainer = getWebElementByTestId(baseProviderLocator, {
@@ -253,7 +270,9 @@ export default class SwapLiveAppPage {
     });
     await detoxExpect(extraFeesContainer).toExist();
     await detoxExpect(
-      getWebElementByTestId(baseProviderLocator, { testIdSuffix: "-rate-infoIcon" }),
+      getWebElementByTestId(baseProviderLocator, {
+        testIdSuffix: "-rate-infoIcon",
+      }),
     ).toExist();
 
     if (
@@ -263,31 +282,30 @@ export default class SwapLiveAppPage {
       provider === SwapProvider.LIFI.name
     ) {
       await detoxExpect(
-        getWebElementByTestId(baseProviderLocator, { testIdSuffix: "-slippage-infoIcon" }),
+        getWebElementByTestId(baseProviderLocator, {
+          testIdSuffix: "-slippage-infoIcon",
+        }),
       ).toExist();
     }
-    await this.checkExchangeButtonHasProviderName(providerList[0]);
+    await this.checkQuoteCardCta(providerList[0]);
   }
 
-  @Step("Check exchange button has provider name: $0")
-  async checkExchangeButtonHasProviderName(
-    provider: string,
-    allowApprovalCta = false,
-  ): Promise<string> {
+  // approvalRequired must reflect real allowance state — see isTokenApprovalExpected
+  // in swapUtils.ts, rather than guessing it here.
+  @Step("Check exchange CTA text: $0")
+  async checkQuoteCardCta(provider: string, approvalRequired = false): Promise<void> {
+    if (!SwapProvider.getNameByUiName(provider)) {
+      throw new Error(`Unknown provider UI name: "${provider}"`);
+    }
     const selector = this.providerExecuteButtonCss(provider);
     const button = getWebElementByCssSelector(selector);
     await waitWebElement(button);
     const actualButtonText =
       (await getWebElementsText(this.swapMainContainerWebElement, selector))[0] ?? "";
-    const ctaVerbs = allowApprovalCta ? "Swap|Continue|Approve spending" : "Swap|Continue";
-    jestExpect(actualButtonText).toMatch(
-      new RegExp(`^(${ctaVerbs}) with ${escapeRegExp(provider)}$`, "i"),
-    );
-    return actualButtonText;
-  }
 
-  isApprovalRequired(buttonText: string, provider: string): boolean {
-    return new RegExp(`^Approve spending with ${escapeRegExp(provider)}$`, "i").test(buttonText);
+    // CTA is a fixed "Review"/"Continue" — never interpolates the provider name.
+    const expected = approvalRequired ? /^Continue$/i : /^Review$/i;
+    jestExpect(actualButtonText).toMatch(expected);
   }
 
   @Step('Check "Best Offer" corresponds to the best quote')
@@ -372,9 +390,9 @@ export default class SwapLiveAppPage {
   }
 
   @Step("Click on swap max")
-  async clickSwapMax() {
+  async clickSwapMax(pattern: RegExp = floatNumberRegex, timeout?: number) {
     await tapWebElementByTestId(this.swapMaxToggle);
-    await waitForWebElementToMatchRegex(app.swapLiveApp.toAmountInput, floatNumberRegex);
+    await waitForWebElementToMatchRegex(app.swapLiveApp.toAmountInput, pattern, timeout);
   }
 
   @Step("Retrieve send currency amount value")
@@ -385,6 +403,31 @@ export default class SwapLiveAppPage {
   @Step("Retrieve receive currency amount value")
   async getAmountToReceive() {
     return await getWebElementText(this.toAmountInput);
+  }
+
+  @Step("Retrieve send currency countervalue text")
+  async getSendCountervalueText() {
+    return await getWebElementText(this.fromAccountAmountInactive);
+  }
+
+  @Step("Get quote card raw amount texts for $0")
+  async getQuoteCardRawText(provider: string) {
+    const baseProviderLocator = `quote-container-${SwapProvider.getNameByUiName(provider)}`;
+    const amount =
+      (
+        await getWebElementsText(
+          this.swapMainContainerWebElement,
+          `[data-testid^="${baseProviderLocator}"][data-testid$="-amount-label"]`,
+        )
+      )[0] ?? "";
+    const fiatAmount =
+      (
+        await getWebElementsText(
+          this.swapMainContainerWebElement,
+          `[data-testid^="${baseProviderLocator}"][data-testid$="-fiatAmount-label"]`,
+        )
+      )[0] ?? "";
+    return { amount, fiatAmount };
   }
 
   @Step("Tap on Switch currencies button")
@@ -406,13 +449,21 @@ export default class SwapLiveAppPage {
     jestExpect(fromAccount).toContain(expectedAssetText);
   }
 
+  @Step("Check from-account balance is masked in discreet mode for $0")
+  async checkFromAccountBalanceIsDiscreet(ticker: string) {
+    await waitWebElementByTestId(this.fromAccountBalance);
+    const text = await getWebElementText(this.fromAccountBalance);
+    jestExpect(text).toMatch(new RegExp(String.raw`\*\*\*\s+${escapeRegExp(ticker)}`, "i"));
+  }
+
   @Step("Check currency to swap from matches account $0")
   async checkAssetFromMatchesAccount(account: Account) {
     const selectedAccountText: string = await getWebElementText(this.fromSelector);
+    const expectedAccountName = account.parentAccount?.accountName ?? account.accountName;
     jestExpect(selectedAccountText).toContain(account.currency.ticker);
     await waitWebElementByTestId(this.fromAccountAccountNameTag);
     const accountNameText: string = await getWebElementText(this.fromAccountAccountNameTag);
-    jestExpect(accountNameText).toContain(account.accountName);
+    jestExpect(accountNameText).toContain(expectedAccountName);
   }
 
   @Step("Check currency to swap to is $0 with amount $1")
@@ -448,6 +499,14 @@ export default class SwapLiveAppPage {
     jestExpect(selectedAccountNameTag).toContain(expectedAccountName);
   }
 
+  @Step("Clear swap account selection from localStorage")
+  async clearSwapState() {
+    await this.swapMainContainerWebElement.runScript(() => {
+      localStorage.removeItem("from-account");
+      localStorage.removeItem("to-account");
+    });
+  }
+
   @Step("Check Ledger Nano S not supported banner for $0")
   async checkLnsNotSupportedBanner(provider: string) {
     await retryUntilTimeout(async () => {
@@ -466,7 +525,10 @@ export default class SwapLiveAppPage {
       throw new Error(`Provider "${provider}" not found in the list`);
     }
     const providerName = SwapProvider.getNameByUiName(provider);
-    const providerTestId = this.specificQuoteCardProviderName(providerName);
+    if (!providerName) {
+      throw new Error(`Unknown provider UI name: "${provider}"`);
+    }
+    const providerTestId = `${SwapLiveAppPage.PROVIDER_NAME_PREFIX}${providerName}`;
     await waitWebElementByTestId(providerTestId);
     await tapWebElementByTestId(providerTestId);
   }
@@ -475,14 +537,8 @@ export default class SwapLiveAppPage {
   async goToProviderLiveApp(provider: string) {
     const button = getWebElementByCssSelector(this.providerExecuteButtonCss(provider));
     await detoxExpect(button).toExist();
-    const actualButtonText = await app.swapLiveApp.checkExchangeButtonHasProviderName(provider);
+    await app.swapLiveApp.checkQuoteCardCta(provider);
     await app.swapLiveApp.tapExecuteSwap(provider);
-    if (provider === "1inch" && actualButtonText.includes("Swap with")) {
-      await app.swapLiveApp.tapExecuteSwapOnStepApproval();
-      const summaryContinueButton = app.send.summaryContinueButton();
-      await waitForElement(summaryContinueButton);
-      await tapByElement(summaryContinueButton);
-    }
   }
 
   @Step("Verify live app title contains $0")
@@ -517,7 +573,9 @@ export default class SwapLiveAppPage {
 
   @Step("Tap Give Authorization button")
   async tapGiveAuthorizationButton() {
-    await waitWebElementByTestId(this.signPermitButton, { timeout: APPROVAL_PROCESSING_TIMEOUT });
+    await waitWebElementByTestId(this.signPermitButton, {
+      timeout: APPROVAL_PROCESSING_TIMEOUT,
+    });
     await waitForWebElementToBeEnabled(this.signPermitButton);
     await tapWebElementByTestId(this.signPermitButton);
   }

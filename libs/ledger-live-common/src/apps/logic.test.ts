@@ -18,7 +18,7 @@ import {
   mockExecWithInstalledContext,
 } from "./mock";
 // import { prettyActionPlan, prettyInstalled } from "./formatting";
-import { setEnv } from "@ledgerhq/live-env";
+import { setEnv } from "@shared/env";
 import { Action } from "./types";
 import { firstValueFrom } from "rxjs";
 import { DeviceModelId } from "@ledgerhq/devices";

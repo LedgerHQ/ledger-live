@@ -1,10 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { createQRCodeHostInstance } from "@ledgerhq/ledger-key-ring-protocol/qrcode/index";
-import {
-  InvalidDigitsError,
-  NoTrustchainInitialized,
-  QRCodeWSClosed,
-} from "@ledgerhq/ledger-key-ring-protocol/errors";
+import { NoTrustchainInitialized } from "@ledgerhq/ledger-key-ring-protocol/errors";
 import { MemberCredentials } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { useSelector, useDispatch } from "~/context/hooks";
 import {
@@ -92,14 +88,14 @@ export function useQRCodeHost({ currentOption }: Props) {
 
     // Don't use retry here because it always uses a delay despite setting it to 0
     onError: e => {
-      if (e instanceof QRCodeWSClosed) {
+      if (e?.name === "QRCodeWSClosed") {
         const { time } = e as unknown as { time: number };
         if (time >= MIN_TIME_TO_REFRESH) startQRCodeProcessing();
       }
-      if (e instanceof InvalidDigitsError) {
+      if (e?.name === "InvalidDigitsError") {
         setCurrentStep(Steps.SyncError);
       }
-      if (e instanceof NoTrustchainInitialized) {
+      if (e?.name === "NoTrustchainInitialized") {
         setCurrentStep(Steps.UnbackedError);
       }
     },

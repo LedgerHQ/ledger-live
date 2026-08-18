@@ -81,9 +81,9 @@ export abstract class WebViewAppPage extends AppPage {
   }
 
   @step("Verify element is visible in WebView")
-  protected async verifyElementIsVisible(testId: string) {
+  protected async verifyElementIsVisible(testId: string, timeout?: number) {
     const webview = await this.getWebView();
-    await expect(webview.getByTestId(testId)).toBeVisible();
+    await expect(webview.getByTestId(testId)).toBeVisible(timeout ? { timeout } : undefined);
   }
 
   @step("Verify element is not visible in WebView")
@@ -147,6 +147,13 @@ export abstract class WebViewAppPage extends AppPage {
   protected async getWebViewElementByTestId(testId: string) {
     const webview = await this.getWebView();
     return webview.getByTestId(testId);
+  }
+
+  @step("Get texts by CSS selector: $0")
+  protected async getTextsByCssSelector(cssSelector: string): Promise<string[]> {
+    const webview = await this.getWebView();
+    await expect(webview.locator(cssSelector).first()).toBeVisible();
+    return webview.locator(cssSelector).allTextContents();
   }
 
   @step("Expect text to be visible in WebView")

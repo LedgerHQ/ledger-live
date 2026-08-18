@@ -5,9 +5,9 @@ import type {
   MemoNotSupported,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/index";
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
 import { Transaction, TransactionLike } from "ethers";
+import { EvmConfigInfo, type EvmContext } from "../config";
 import { getAdditionalLayer2Fees } from "../logic";
 import { getGasTracker } from "../network/gasTracker";
 import { getNodeApi } from "../network/node";
@@ -17,8 +17,11 @@ import { STAKING_CONTRACTS } from "../staking";
 import { getTransactionType, prepareUnsignedTxParams } from "./common";
 import { getNextSequence } from "./getNextSequence";
 
+const SEND_MAX_L1_FEE_BUFFER = new BigNumber(2);
+
 async function computeAdditionalFees(
-  currency: CryptoCurrency,
+  config: EvmConfigInfo,
+  currencyId: string,
   unsignedTransaction: TransactionLike,
 ): Promise<BigNumber | undefined> {
   // Fake signature is added to get the best approximation possible for the gas on L1
@@ -32,7 +35,11 @@ async function computeAdditionalFees(
   };
 
   try {
-    return await getAdditionalLayer2Fees(currency, Transaction.from(transaction).serialized);
+    return await getAdditionalLayer2Fees(
+      config,
+      currencyId,
+      Transaction.from(transaction).serialized,
+    );
   } catch {
     return new BigNumber(0);
   }
@@ -106,13 +113,16 @@ function extractGasOptions(
 }
 
 export async function estimateFees(
-  currency: CryptoCurrency,
+  context: EvmContext,
+  currencyId: string,
   transactionIntent: TransactionIntent<MemoNotSupported, BufferTxData>,
   customFeesParameters?: FeeEstimation["parameters"],
 ): Promise<FeeEstimation> {
   if (!isEthAddress(transactionIntent.recipient)) {
     return { value: 0n };
   }
+
+  const config = await context.config(currencyId);
 
   // Skip fee estimation for redelegate without a destination validator — the
   // validateStaking step in validateIntent will surface RedelegateDstValAddressRequired.
@@ -127,14 +137,14 @@ export async function estimateFees(
   // Determine the transaction type synchronously so fee-data and gas-estimation
   // requests can be fired in parallel without waiting on each other.
   const txType = getTransactionType(transactionIntent.type);
-  const chainId = currency.ethereumLikeInfo?.chainId ?? 0;
+  const chainId = config.chainId;
 
   // Some apps, including Magic Eden, set the nonce to -1 instead of simply not
   // providing it. In case of a missing or negative nonce, it must be re-fetched.
   const noncePromise: Promise<bigint> =
     typeof transactionIntent.sequence === "bigint" && transactionIntent.sequence >= 0n
       ? Promise.resolve(transactionIntent.sequence)
-      : getNextSequence(currency, transactionIntent.sender);
+      : getNextSequence(context, currencyId, transactionIntent.sender);
 
   const feeDataPromise = (async (): Promise<{
     finalFeeData: FeeData;
@@ -152,9 +162,10 @@ export async function estimateFees(
       return { finalFeeData: customGasOptions[feesStrategy], finalGasOptions: customGasOptions };
     }
 
-    const gasTracker = getGasTracker(currency);
+    const gasTracker = getGasTracker(config);
     const remoteGasOptions = await gasTracker?.getGasOptions({
-      currency,
+      currencyId,
+      config,
       options: { useEIP1559: txType === TransactionTypes.eip1559 },
     });
 
@@ -162,8 +173,8 @@ export async function estimateFees(
       return { finalFeeData: remoteGasOptions[feesStrategy], finalGasOptions: remoteGasOptions };
     }
 
-    const node = getNodeApi(currency);
-    const feeData = await node.getFeeData(currency, {
+    const node = getNodeApi(config, currencyId);
+    const feeData = await node.getFeeData(config, currencyId, {
       type: txType,
       feesStrategy,
     });
@@ -175,20 +186,33 @@ export async function estimateFees(
   // all independent network calls and sequencing them triples the latency.
   const [{ to, data, value, gasLimit }, nonce, { finalFeeData, finalGasOptions }] =
     await Promise.all([
-      prepareUnsignedTxParams(currency, transactionIntent, customFeesParameters),
+      prepareUnsignedTxParams(config, currencyId, transactionIntent, customFeesParameters),
       noncePromise,
       feeDataPromise,
     ]);
 
-  // Recompute the transaction type from the fee data, since
-  // the one in input may not be supported by the Blockchain.
+  // Prevent BigNumber(0) placeholders from being interpreted as EIP-1559 fees
   const finalType =
-    finalFeeData.maxFeePerGas && finalFeeData.maxPriorityFeePerGas
+    BigNumber.isBigNumber(finalFeeData.maxFeePerGas) &&
+    finalFeeData.maxFeePerGas.gt(0) &&
+    BigNumber.isBigNumber(finalFeeData.maxPriorityFeePerGas)
       ? TransactionTypes.eip1559
       : TransactionTypes.legacy;
 
+  // Drop fee fields that don't belong to the resolved type so orphans
+  // (e.g. maxFeePerGas: 0 from createTransaction) are not re-propagated.
+  const typedFeeData: FeeData =
+    finalType === TransactionTypes.eip1559
+      ? { ...finalFeeData, gasPrice: null }
+      : {
+          ...finalFeeData,
+          maxFeePerGas: null,
+          maxPriorityFeePerGas: null,
+          nextBaseFee: null,
+        };
+
   const gasPrice =
-    finalType === TransactionTypes.legacy ? finalFeeData.gasPrice : finalFeeData.maxFeePerGas;
+    finalType === TransactionTypes.legacy ? typedFeeData.gasPrice : typedFeeData.maxFeePerGas;
   const fee = gasPrice?.multipliedBy(gasLimit) || new BigNumber(0);
 
   const unsignedTransaction: TransactionLike = {
@@ -200,10 +224,14 @@ export async function estimateFees(
     value,
     chainId,
   };
-  const additionalFees = await computeAdditionalFees(currency, unsignedTransaction);
+  const rawAdditionalFees = await computeAdditionalFees(config, currencyId, unsignedTransaction);
+  const additionalFees =
+    transactionIntent.useAllAmount && rawAdditionalFees
+      ? rawAdditionalFees.multipliedBy(SEND_MAX_L1_FEE_BUFFER).integerValue(BigNumber.ROUND_CEIL)
+      : rawAdditionalFees;
 
   // delegate send-max: expose reserve/scale so the bridge can compute the amount (it has the balance)
-  const stakingConfig = STAKING_CONTRACTS[currency.id];
+  const stakingConfig = STAKING_CONTRACTS[currencyId];
   const delegateMaxParams =
     transactionIntent.useAllAmount &&
     isStakingIntent(transactionIntent) &&
@@ -217,7 +245,7 @@ export async function estimateFees(
   return {
     value: BigInt(fee.toString()),
     parameters: {
-      ...toApiFeeData(finalFeeData),
+      ...toApiFeeData(typedFeeData),
       type: finalType,
       additionalFees: additionalFees && BigInt(additionalFees.toFixed()),
       gasLimit: BigInt(gasLimit.toFixed()),

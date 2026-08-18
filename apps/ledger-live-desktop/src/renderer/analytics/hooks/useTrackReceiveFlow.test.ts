@@ -3,12 +3,12 @@ import { useTrackReceiveFlow, UseTrackReceiveFlow } from "./useTrackReceiveFlow"
 import { track } from "../segment";
 import { CONNECTION_TYPES, HOOKS_TRACKING_LOCATIONS } from "./variables";
 import {
-  UserRefusedOnDevice,
-  UserRefusedAddress,
   LockedDeviceError,
   CantOpenDevice,
   TransportRaceCondition,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/hw-transport/errors";
+import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
+import { UserRefusedAddress } from "@ledgerhq/live-common/errors";
 
 jest.mock("../segment", () => ({
   track: jest.fn(),

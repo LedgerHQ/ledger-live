@@ -12,20 +12,28 @@ import getApi, {
   LKRPChallengeSchema,
   type WeakChallengeSignature,
 } from "./api";
-import type { MemberCredentials } from "./types";
+import type { MemberCredentials, Trustchain } from "./types";
 import { convertLiveCredentialsToKeyPair, credentialForPubKey, liveAuthentication } from "./utils";
+
+export interface LkrpIdentityProviderStore {
+  trustchain: Pick<Trustchain, "rootId"> | null;
+  memberCredentials: MemberCredentials | null;
+}
 
 export class LkrpIdentityProvider implements IdentityProvider {
   readonly brokerId = "lkrp";
-  private keypair?: MemberCredentials;
-  private trustchainId?: string;
+
+  constructor(private readonly loadTrustchainStore: LoadTrustchainStore) {}
 
   async authenticate(request: IdPAuthParams): Promise<KeycloakToken> {
     const challenge = LkrpIdentityProvider.checkChallenge(request.challenge);
+    const trustchainStore = await this.loadTrustchainStore();
     const host = challenge.json.host;
     const api = getApi(`https://${host}`);
 
-    const authorizationCode = await api.oidcPostChallengeResponse(this.signChallenge(challenge));
+    const authorizationCode = await api.oidcPostChallengeResponse(
+      await this.signChallenge(challenge, trustchainStore),
+    );
 
     const idPToken = await api.oidcExchangeAuthCode(
       authorizationCode,
@@ -37,33 +45,28 @@ export class LkrpIdentityProvider implements IdentityProvider {
     return api.oidcExchangeToken(idPToken, request.clientId);
   }
 
-  setKeypair(keypair?: MemberCredentials | undefined): void {
-    this.keypair = keypair ?? undefined;
-  }
-
-  setTrustchainId(trustchainId: string | undefined): void {
-    this.trustchainId = trustchainId ?? undefined;
-  }
-
-  private signChallenge(challenge: LKRPChallenge): {
+  private async signChallenge(
+    challenge: LKRPChallenge,
+    trustchainStore: LkrpIdentityProviderStore | undefined,
+  ): Promise<{
     challenge: ChallengeJson;
     signature: WeakChallengeSignature;
-  } {
-    if (!this.keypair) {
+  }> {
+    if (!trustchainStore?.memberCredentials) {
       throw new WalletAuthNoCredentialsError(this.brokerId);
     }
 
     const data = crypto.from_hex(challenge.tlv);
     const [parsed] = Challenge.fromBytes(data);
     const hash = crypto.hash(parsed.getUnsignedTLV());
-    const keypair = convertLiveCredentialsToKeyPair(this.keypair);
+    const keypair = convertLiveCredentialsToKeyPair(trustchainStore.memberCredentials);
     return {
       challenge: challenge.json,
       signature: {
-        credential: credentialForPubKey(this.keypair.pubkey),
+        credential: credentialForPubKey(trustchainStore.memberCredentials.pubkey),
         signature: crypto.to_hex(crypto.sign(hash, keypair)),
-        attestation: this.trustchainId
-          ? crypto.to_hex(liveAuthentication(this.trustchainId))
+        attestation: trustchainStore.trustchain?.rootId
+          ? crypto.to_hex(liveAuthentication(trustchainStore.trustchain.rootId))
           : undefined,
       },
     };
@@ -77,3 +80,8 @@ export class LkrpIdentityProvider implements IdentityProvider {
     }
   }
 }
+
+type LoadTrustchainStore = () =>
+  | Promise<LkrpIdentityProviderStore | undefined>
+  | LkrpIdentityProviderStore
+  | undefined;

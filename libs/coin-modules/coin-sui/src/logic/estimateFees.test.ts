@@ -1,6 +1,9 @@
 import { BigNumber } from "bignumber.js";
 import suiAPI from "../network";
+import type { SuiCoinConfig } from "../config";
 import { estimateFees } from "./estimateFees";
+
+const config = {} as SuiCoinConfig;
 
 // Mock the suiAPI module
 jest.mock("../network", () => ({
@@ -33,9 +36,10 @@ describe("estimateFees", () => {
       asset: { type: "native" as const },
     };
 
-    const result = await estimateFees(transactionIntent);
+    const result = await estimateFees(config, transactionIntent);
 
     expect(suiAPI.paymentInfo).toHaveBeenCalledWith(
+      config,
       transactionIntent.sender,
       expect.objectContaining({
         recipient: transactionIntent.recipient,
@@ -45,7 +49,6 @@ describe("estimateFees", () => {
         family: "sui",
         mode: "send",
       }),
-      undefined,
     );
     expect(result).toEqual({ fees: BigInt(mockFees), gasBudget: BigInt(mockGasBudget) });
   });
@@ -67,9 +70,10 @@ describe("estimateFees", () => {
       asset: { type: "native" as const },
     };
 
-    const result = await estimateFees(transactionIntent);
+    const result = await estimateFees(config, transactionIntent);
 
     expect(suiAPI.paymentInfo).toHaveBeenCalledWith(
+      config,
       transactionIntent.sender,
       expect.objectContaining({
         recipient: transactionIntent.recipient,
@@ -79,7 +83,6 @@ describe("estimateFees", () => {
         family: "sui",
         mode: "send",
       }),
-      undefined,
     );
     expect(result).toEqual({ fees: BigInt(mockFees), gasBudget: BigInt(mockGasBudget) });
   });

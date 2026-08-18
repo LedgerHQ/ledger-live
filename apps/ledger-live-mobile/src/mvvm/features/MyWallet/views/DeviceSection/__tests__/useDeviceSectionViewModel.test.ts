@@ -1,6 +1,6 @@
 import { Linking } from "react-native";
 import { DeviceModelId } from "@ledgerhq/devices";
-import { BluetoothRequired } from "@ledgerhq/errors";
+import { BluetoothRequired } from "@ledgerhq/hw-transport/errors";
 import { disconnect } from "@ledgerhq/live-common/hw/index";
 import { findMatchingNewDevice } from "@ledgerhq/live-dmk-mobile";
 import { act, renderHook } from "@tests/test-renderer";

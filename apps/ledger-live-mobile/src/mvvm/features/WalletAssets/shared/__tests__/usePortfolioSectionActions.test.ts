@@ -5,19 +5,16 @@ import {
   mockEthCryptoCurrency,
 } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 import { NavigatorName, ScreenName } from "~/const";
+import { track } from "~/analytics";
 import { Asset } from "~/types/asset";
 import { usePortfolioSectionActions } from "../usePortfolioSectionActions";
 
 const mockNavigate = jest.fn();
-const mockTrack = jest.fn();
+const mockedTrack = jest.mocked(track);
 
 jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual("@react-navigation/native"),
   useNavigation: () => ({ navigate: mockNavigate }),
-}));
-
-jest.mock("~/analytics", () => ({
-  useAnalytics: () => ({ track: mockTrack }),
 }));
 
 const btcAsset: Asset = {
@@ -43,7 +40,7 @@ describe("usePortfolioSectionActions", () => {
     it("navigates to AssetDetail when aggregatedAssets is enabled", () => {
       const { result } = renderHook(() => usePortfolioSectionActions(false, "crypto"), {
         overrideInitialState: withFlagOverrides({
-          lwmWallet40: { enabled: true, params: { aggregatedAssets: true } },
+          lwmWallet40: { params: { aggregatedAssets: true } },
         }),
       });
 
@@ -81,7 +78,7 @@ describe("usePortfolioSectionActions", () => {
     it("navigates to MarketDetail for placeholder assets when aggregatedAssets is disabled", () => {
       const { result } = renderHook(() => usePortfolioSectionActions(false, "crypto"), {
         overrideInitialState: withFlagOverrides({
-          lwmWallet40: { enabled: true, params: { aggregatedAssets: false } },
+          lwmWallet40: { params: { aggregatedAssets: false } },
         }),
       });
 
@@ -97,7 +94,7 @@ describe("usePortfolioSectionActions", () => {
     it("navigates to Accounts > Asset for non-placeholder assets when aggregatedAssets is disabled", () => {
       const { result } = renderHook(() => usePortfolioSectionActions(false, "crypto"), {
         overrideInitialState: withFlagOverrides({
-          lwmWallet40: { enabled: true, params: { aggregatedAssets: false } },
+          lwmWallet40: { params: { aggregatedAssets: false } },
         }),
       });
 
@@ -114,7 +111,7 @@ describe("usePortfolioSectionActions", () => {
     it("fires asset_clicked analytics with asset name and page", () => {
       const { result } = renderHook(() => usePortfolioSectionActions(false, "crypto"), {
         overrideInitialState: withFlagOverrides({
-          lwmWallet40: { enabled: true, params: { aggregatedAssets: true } },
+          lwmWallet40: { params: { aggregatedAssets: true } },
         }),
       });
 
@@ -122,7 +119,7 @@ describe("usePortfolioSectionActions", () => {
         result.current.onItemPress(btcAsset);
       });
 
-      expect(mockTrack).toHaveBeenCalledWith("asset_clicked", {
+      expect(mockedTrack).toHaveBeenCalledWith("asset_clicked", {
         asset: mockBtcCryptoCurrency.name,
         page: "Wallet",
       });
@@ -133,7 +130,7 @@ describe("usePortfolioSectionActions", () => {
     it("navigates to Crypto screen when assetSection is enabled and not readOnly", () => {
       const { result } = renderHook(() => usePortfolioSectionActions(false, "crypto"), {
         overrideInitialState: withFlagOverrides({
-          lwmWallet40: { enabled: true, params: { assetSection: true } },
+          lwmWallet40: { params: { assetSection: true } },
         }),
       });
 
@@ -150,7 +147,7 @@ describe("usePortfolioSectionActions", () => {
     it("navigates to Assets screen when assetSection is disabled", () => {
       const { result } = renderHook(() => usePortfolioSectionActions(false, "crypto"), {
         overrideInitialState: withFlagOverrides({
-          lwmWallet40: { enabled: true, params: { assetSection: false } },
+          lwmWallet40: { params: { assetSection: false } },
         }),
       });
 
@@ -166,7 +163,7 @@ describe("usePortfolioSectionActions", () => {
     it("navigates to Assets screen when isReadOnly is true regardless of assetSection", () => {
       const { result } = renderHook(() => usePortfolioSectionActions(true, "crypto"), {
         overrideInitialState: withFlagOverrides({
-          lwmWallet40: { enabled: true, params: { assetSection: true } },
+          lwmWallet40: { params: { assetSection: true } },
         }),
       });
 
@@ -186,7 +183,7 @@ describe("usePortfolioSectionActions", () => {
         result.current.onPressShowAll();
       });
 
-      expect(mockTrack).toHaveBeenCalledWith("button_clicked", {
+      expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
         button: "asset_list",
         type: "stable",
         page: "Wallet",
@@ -200,7 +197,7 @@ describe("usePortfolioSectionActions", () => {
         result.current.onPressShowAll();
       });
 
-      expect(mockTrack).toHaveBeenCalledWith("button_clicked", {
+      expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
         button: "asset_list",
         type: "crypto",
         page: "Wallet",

@@ -42,16 +42,16 @@ describe("useRightPanelViewModel", () => {
   });
 
   describe("initialSwapState", () => {
-    it("is undefined on asset route when distribution has no matching currency", () => {
+    it("does not seed swap state when no account exists for the asset", () => {
       const { result } = renderHook(() =>
         useRightPanelViewModel({ pathname: "/asset/bitcoin", routeAssetId: "bitcoin" }),
       );
 
       expect(result.current.initialSwapState).toBeUndefined();
-      expect(result.current.webviewKey).toBe("none::none");
+      expect(result.current.webviewKey).toBe("bitcoin::none");
     });
 
-    it("builds swap state without account when distribution matches but no account exists", () => {
+    it("remounts the webview without swap state when distribution matches but no account exists", () => {
       const distributionItem = buildDistributionItem({ currency: btc, accounts: [] });
 
       useDistribution.mockReturnValue({
@@ -63,11 +63,7 @@ describe("useRightPanelViewModel", () => {
         useRightPanelViewModel({ pathname: "/asset/bitcoin", routeAssetId: "bitcoin" }),
       );
 
-      expect(result.current.initialSwapState).toEqual({
-        defaultAmountFrom: "0",
-        from: "/asset/bitcoin",
-        defaultCurrency: { toCurrencyId: "bitcoin" },
-      });
+      expect(result.current.initialSwapState).toBeUndefined();
       expect(result.current.webviewKey).toBe("bitcoin::none");
     });
 

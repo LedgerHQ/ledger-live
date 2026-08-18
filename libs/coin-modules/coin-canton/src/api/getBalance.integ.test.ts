@@ -1,17 +1,20 @@
 import { CoinModuleApi } from "@ledgerhq/coin-module-framework/api/types";
-import { createMockCoinConfigValue } from "../test/fixtures";
+import { CantonCoinConfig } from "../config";
+import { createMockContext } from "../test/fixtures";
 import { createApi } from ".";
 
-let api: CoinModuleApi;
+const context = createMockContext();
+let api: CoinModuleApi<CantonCoinConfig>;
 
 describe.skip("devnet", () => {
   beforeAll(() => {
-    api = createApi(createMockCoinConfigValue());
+    api = createApi();
   });
 
   describe("getBalance", () => {
     it("should return user balance", async () => {
       const balance = await api.getBalance(
+        context,
         "alice::1220f6efa949a0dcaab8bb1a066cf0ecbca370375e90552edd6d33c14be01082b000",
       );
       expect(balance.length).toBeGreaterThanOrEqual(0);

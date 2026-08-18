@@ -1,4 +1,4 @@
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
 import { belongsToSameNetwork } from "@ledgerhq/live-common/modularDrawer/utils/index";
 

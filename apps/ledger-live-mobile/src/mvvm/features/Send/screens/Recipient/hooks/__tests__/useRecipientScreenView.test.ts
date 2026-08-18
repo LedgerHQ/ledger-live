@@ -4,19 +4,34 @@ import { useAddressValidation } from "../useAddressValidation";
 import { useClipboardRecipient } from "../useClipboardRecipient";
 import { useSendFlowData } from "../../../../context/SendFlowContext";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import { InvalidAddress, InvalidAddressBecauseDestinationIsAlsoSource } from "@ledgerhq/errors";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
+import { useContactsFeature } from "@features/flow-contacts";
+import { useContacts } from "@features/platform-contacts";
+import {
+  InvalidAddress,
+  InvalidAddressBecauseDestinationIsAlsoSource,
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import { createMockAccount } from "./accounts";
+import { mockContact, mockContactAddress } from "@domain/entity-contact/schema.mock";
+import { createMockAccount, createMockCurrency } from "./accounts";
 
 jest.mock("../useAddressValidation");
 jest.mock("../useClipboardRecipient");
 jest.mock("../../../../context/SendFlowContext");
 jest.mock("@ledgerhq/live-common/account/index");
+jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features");
+jest.mock("@features/platform-contacts");
+jest.mock("@features/flow-contacts", () => ({
+  useContactsFeature: jest.fn(),
+}));
 
 const mockedUseAddressValidation = jest.mocked(useAddressValidation);
 const mockedUseClipboardRecipient = jest.mocked(useClipboardRecipient);
 const mockedUseSendFlowData = jest.mocked(useSendFlowData);
 const mockedGetMainAccount = jest.mocked(getMainAccount);
+const mockedSendFeatures = jest.mocked(sendFeatures);
+const mockedUseContacts = jest.mocked(useContacts);
+const mockedUseContactsFeature = jest.mocked(useContactsFeature);
 
 const mockAccount = createMockAccount({ id: "account_1" });
 
@@ -31,6 +46,7 @@ const idleResult = {
   error: null,
   bridgeErrors: {},
   bridgeWarnings: {},
+  hasBridgeValidationResult: false,
   matchedAccounts: [],
   resolvedAddress: undefined,
   ensName: undefined,
@@ -40,6 +56,7 @@ const idleResult = {
   accountBalanceFormatted: undefined,
   isFirstInteraction: false,
   matchedRecentAddress: undefined,
+  matchedContact: undefined,
 };
 
 describe("useRecipientScreenView", () => {
@@ -61,6 +78,13 @@ describe("useRecipientScreenView", () => {
       isLoading: false,
       validateAddress: jest.fn(),
     });
+    mockedSendFeatures.hasAddressBook.mockReturnValue(false);
+    mockedUseContacts.mockReturnValue([]);
+    mockedUseContactsFeature.mockReturnValue({
+      isEnabled: false,
+      showNewBadge: false,
+      eligibleAddressFamilies: ["evm"],
+    });
   });
 
   it("shows initial state when no search value", () => {
@@ -74,7 +98,100 @@ describe("useRecipientScreenView", () => {
     );
 
     expect(result.current.showInitialState).toBe(true);
+    expect(result.current.showEmptyContactsState).toBe(false);
     expect(result.current.showSearchResults).toBe(false);
+  });
+
+  it("shows empty contacts state when address book is enabled and no contact matches the network", () => {
+    mockedSendFeatures.hasAddressBook.mockReturnValue(true);
+    mockedUseContactsFeature.mockReturnValue({
+      isEnabled: true,
+      showNewBadge: false,
+      eligibleAddressFamilies: ["evm"],
+    });
+    mockedUseContacts.mockReturnValue([
+      mockContact({
+        id: "contact-sol",
+        name: "Alice",
+        addresses: [
+          mockContactAddress({
+            id: "address-sol",
+            currencyId: "solana",
+            label: "Solana",
+            address: "SolanaAddress123",
+          }),
+        ],
+      }),
+    ]);
+
+    const { result } = renderHook(() =>
+      useRecipientScreenView({
+        account: mockAccount,
+        currency: createMockCurrency({ id: "ethereum" }),
+        onAddressSelected: jest.fn(),
+        recipientSupportsDomain: true,
+      }),
+    );
+
+    expect(result.current.showInitialState).toBe(true);
+    expect(result.current.showEmptyContactsState).toBe(true);
+  });
+
+  it("does not show empty contacts state when address book is not supported", () => {
+    mockedSendFeatures.hasAddressBook.mockReturnValue(false);
+    mockedUseContactsFeature.mockReturnValue({
+      isEnabled: true,
+      showNewBadge: false,
+      eligibleAddressFamilies: ["evm"],
+    });
+
+    const { result } = renderHook(() =>
+      useRecipientScreenView({
+        account: createMockAccount({
+          currency: createMockCurrency({ id: "tron", family: "tron" }),
+        }),
+        currency: createMockCurrency({ id: "tron", family: "tron" }),
+        onAddressSelected: jest.fn(),
+        recipientSupportsDomain: true,
+      }),
+    );
+
+    expect(result.current.showEmptyContactsState).toBe(false);
+  });
+
+  it("does not show empty contacts state when a contact matches the network", () => {
+    mockedSendFeatures.hasAddressBook.mockReturnValue(true);
+    mockedUseContactsFeature.mockReturnValue({
+      isEnabled: true,
+      showNewBadge: false,
+      eligibleAddressFamilies: ["evm"],
+    });
+    mockedUseContacts.mockReturnValue([
+      mockContact({
+        id: "contact-eth",
+        name: "Alice",
+        addresses: [
+          mockContactAddress({
+            id: "address-eth",
+            currencyId: "ethereum",
+            label: "Ethereum",
+            address: "0x1234567890123456789012345678901234567890",
+          }),
+        ],
+      }),
+    ]);
+
+    const { result } = renderHook(() =>
+      useRecipientScreenView({
+        account: mockAccount,
+        currency: createMockCurrency({ id: "ethereum" }),
+        onAddressSelected: jest.fn(),
+        recipientSupportsDomain: true,
+      }),
+    );
+
+    expect(result.current.showInitialState).toBe(true);
+    expect(result.current.showEmptyContactsState).toBe(false);
   });
 
   it("shows search results when search value is provided", () => {
@@ -195,7 +312,7 @@ describe("useRecipientScreenView", () => {
     });
 
     mockedUseAddressValidation.mockReturnValue({
-      result: { ...idleResult, status: "valid" },
+      result: { ...idleResult, status: "valid", hasBridgeValidationResult: true },
       isLoading: false,
       validateAddress: jest.fn(),
     });
@@ -210,6 +327,7 @@ describe("useRecipientScreenView", () => {
     );
 
     expect(result.current.showMatchedAddress).toBe(true);
+    expect(result.current.isAddressValid).toBe(true);
   });
 
   it("identifies self-transfer error correctly", () => {

@@ -6,7 +6,7 @@ import { AppManifest, DAppTrackingData, DiscoverDB, WalletAPITransaction } from 
 import { getMainAccount, getParentAccount } from "../account";
 import { TrackingAPI } from "./tracking";
 import { getAccountBridge } from "../bridge";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import network from "@ledgerhq/live-network/network";
 import { getWalletAPITransactionSignFlowInfos } from "./converters";
 import { prepareMessageToSign } from "../hw/signMessage/index";
@@ -17,8 +17,8 @@ import { SmartWebsocket } from "./SmartWebsocket";
 import { stripHexPrefix } from "./helpers";
 import { getTxType } from "./utils/txTrackingHelper";
 import { isLedgerButtonReferrer, reportLedgerButtonBroadcast } from "./utils/ledgerButtonTracking";
-import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/transaction";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import type { Transaction as EvmTransaction } from "../families/evm/types";
+import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { withLiveAppContext } from "./blindSigningContext";
 
 type MessageId = number | string | null;

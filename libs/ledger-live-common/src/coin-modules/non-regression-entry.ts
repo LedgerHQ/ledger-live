@@ -6,7 +6,7 @@
  * against an explicit allowlist of known eager imports. As files are migrated, that
  * allowlist should shrink — a regression re-adds an entry.
  */
-export { getValidateAddress } from "../bridge/generic-coin-framework/validateAddress";
+export { genericValidateAddress } from "../bridge/generic-coin-framework/validateAddress";
 export { getCurrencyBridge, getAccountBridge } from "../bridge/impl";
 export { sync as mockSync } from "../bridge/mockHelpers";
 export { genAccount } from "../mock/account";

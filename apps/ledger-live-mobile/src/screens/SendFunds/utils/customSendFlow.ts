@@ -69,6 +69,8 @@ export type CustomSendFlow = {
   AfterAmountInput?: ComponentType<AfterAmountInputProps>;
   /** Suppresses the generic Amount + Fees "Total" row on the Summary screen (e.g. when the family renders its own inside SendRowsFee). */
   hideSummaryTotalSection?: boolean;
+  /** Forces full, unrounded precision on amounts in the send flow instead of the default significant-digits rounding (e.g. the "total available" balance on the Amount screen). */
+  showAllDigits?: boolean;
   /** Imperative navigation from within the SendFunds navigator after account selection. */
   navigateToInitialScreen?: (params: InitialScreenNavParams) => void;
   /** Imperative navigation from within the SendFunds navigator after recipient selection. */

@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { ScrollView, StyleSheet } from "react-native";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { BackHandler, ScrollView, StyleSheet } from "react-native";
+import { useFocusEffect, useNavigation, useRoute } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import SafeAreaView from "~/components/SafeAreaView";
 import { Box, Spinner, Text } from "@ledgerhq/lumen-ui-rnative";
@@ -13,7 +13,7 @@ import {
   useAleoViewKeyApproval,
   buildAccountsWithViewKeys,
 } from "@ledgerhq/live-common/families/aleo/react";
-import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
+import { addAccountsAction } from "@ledgerhq/live-common/account/addAccounts";
 import { ScreenName } from "~/const";
 import Animation from "~/components/Animation";
 import Button from "~/components/wrappedUi/Button";
@@ -75,8 +75,9 @@ export default function ViewKeyApproveScreen() {
   // transport subscription off selectedAccounts by reference, not content — recomputing it
   // mid-approval would tear down the subscription without restarting it.
   const [accountsToAdd] = useState(() => {
-    const existingAddresses = new Set(existingAccounts.map(a => a.freshAddress));
-    return allAccountsToAdd.filter(a => !existingAddresses.has(a.freshAddress));
+    const accountKey = (a: Account) => `${a.currency.id}:${a.freshAddress}`;
+    const existingKeys = new Set(existingAccounts.map(accountKey));
+    return allAccountsToAdd.filter(a => !existingKeys.has(accountKey(a)));
   });
 
   const hasAccountsToAdd = accountsToAdd.length > 0;
@@ -95,6 +96,13 @@ export default function ViewKeyApproveScreen() {
       onCloseNavigation?.();
     }
   }, [hasAccountsToAdd, onCloseNavigation]);
+
+  useFocusEffect(
+    useCallback(() => {
+      const subscription = BackHandler.addEventListener("hardwareBackPress", () => true);
+      return () => subscription.remove();
+    }, []),
+  );
 
   const quitConfirmation = useQuitConfirmation({
     onCloseNavigation,

@@ -1,7 +1,7 @@
 import { of, throwError } from "rxjs";
-import { ManagerAppDepInstallRequired, ManagerAppDepUninstallRequired } from "@ledgerhq/errors";
+import { ManagerAppDepInstallRequired, ManagerAppDepUninstallRequired } from "../errors";
 import { getDependencies, getDependents, whitelistDependencies } from "./polyfill";
-import { findCryptoCurrency } from "../currencies";
+import { findCryptoCurrency } from "@domain/entity-currency-crypto";
 import type { ListAppsResult, AppOp, Exec, InstalledItem } from "./types";
 import { getBTCValues } from "@ledgerhq/live-countervalues/mock";
 import { DeviceModelId, identifyTargetId } from "@ledgerhq/devices";

@@ -2,7 +2,7 @@ import {
   RecipientRequired,
   InvalidAddressBecauseDestinationIsAlsoSource,
   AmountRequired,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import { AccountRaw, CurrenciesData, DatasetTest } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { fromTransactionRaw } from "../bridge/transaction";

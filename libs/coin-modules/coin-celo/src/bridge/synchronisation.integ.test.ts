@@ -1,7 +1,7 @@
-import { setCoinConfig, EvmCoinConfig } from "@ledgerhq/coin-evm/config";
+import type { EvmCoinConfig } from "@ledgerhq/coin-evm/config";
+import { setCoinConfig } from "../config";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
-import { setCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
-import type { CryptoAssetsStore } from "@ledgerhq/types-live";
+import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import BigNumber from "bignumber.js";
 import { getAccountShape } from "./synchronisation";
 
@@ -24,7 +24,7 @@ describe("Integration — getAccountShape with real implementations", () => {
       findTokenById: async () => undefined,
       findTokenByAddressInCurrency: async () => undefined,
       getTokensSyncHash: async () => "0",
-    } as CryptoAssetsStore);
+    });
 
     setCoinConfig(
       () =>

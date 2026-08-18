@@ -1,5 +1,6 @@
 import React from "react";
-import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
+import type { Currency } from "@domain/entity-currency";
+import type { Unit } from "@domain/entity-currency-unit";
 import { isFinalizablePosition, useBaker } from "@ledgerhq/live-common/families/tezos/react";
 import type { StakingPosition } from "@ledgerhq/live-common/families/tezos/types";
 import { useTranslation } from "~/context/Locale";

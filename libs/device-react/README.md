@@ -1,5 +1,8 @@
 # device-react
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 `@ledgerhq/device-react` is a thin React layer on top of `@ledgerhq/device-core`, exposing React hooks for device-related operations in Ledger Live. It handles the async lifecycle of device queries (mounting/unmounting, state updates) so UI components don't have to.
 
 ## What it does

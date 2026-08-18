@@ -1,4 +1,4 @@
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { useCallback, useEffect, useState, useMemo } from "react";
 import { fetchAndMergeProviderData, getDefaultSwapProviderKeys } from "../../../providers/swap";
 import { useFeature } from "@features/platform-feature-flags";

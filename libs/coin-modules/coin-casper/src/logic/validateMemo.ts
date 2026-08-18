@@ -1,6 +1,5 @@
 import BigNumber from "bignumber.js";
-
-export const CASPER_MAX_TRANSFER_ID = "18446744073709551615";
+import { CASPER_MAX_TRANSFER_ID } from "../constants";
 
 /**
  * Casper memo is a transfer id. We keep the same function signature across chain to make the code

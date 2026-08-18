@@ -1,4 +1,4 @@
-import { NetworkError } from "@ledgerhq/errors";
+import { NetworkError } from "../../errors";
 import { getEnv } from "@ledgerhq/live-env";
 import {
   TOKEN_2022_PROGRAM_ID,
@@ -127,11 +127,7 @@ const remapErrors = (e: unknown) => {
     throw e;
   }
 
-  throw new NetworkError(
-    e instanceof Error ? e.message : "Unknown Solana error",
-    {},
-    e instanceof Error ? { cause: e } : undefined,
-  );
+  throw new NetworkError(e instanceof Error ? e.message : "Unknown Solana error");
 };
 
 const remapErrorsWithRetry = <P extends Promise<T>, T>(callback: () => P, times = 3) => {
@@ -293,7 +289,7 @@ export function getChainAPI(
         } catch (error: unknown) {
           if (error instanceof SendTransactionError) {
             const logs = await error.getLogs(connection);
-            throw new NetworkError(error.message, { logs }, { cause: error });
+            throw new NetworkError(error.message, { logs });
           }
 
           throw error;

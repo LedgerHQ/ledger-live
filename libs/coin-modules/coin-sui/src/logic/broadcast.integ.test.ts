@@ -47,7 +47,11 @@ describe("Broadcast", () => {
     const unsignedB64 = Buffer.from(unsigned).toString("base64");
 
     await expect(
-      broadcast({ transactionBlock: unsignedB64, signature, options: executeOptions }, "sui"),
+      broadcast(coinConfig.getCoinConfig(), {
+        transactionBlock: unsignedB64,
+        signature,
+        options: executeOptions,
+      }),
     ).rejects.toThrow(/Transaction was not signed by the correct sender/);
   });
 });

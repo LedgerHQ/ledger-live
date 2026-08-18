@@ -33,9 +33,11 @@ export const EligibleAddressFamiliesSection = ({
 
   return (
     <div
-      className={`flex flex-col gap-4 rounded-md bg-surface p-10 transition-opacity ${isEnabled ? "opacity-100" : "opacity-50"}`}
+      className={`flex flex-col gap-4 rounded-md bg-surface p-10 transition-opacity ${
+        isEnabled ? "opacity-100" : "opacity-50"
+      }`}
     >
-      <div className="flex flex-col gap-2">
+      <div className="flex items-center justify-between gap-2">
         <span className="body-3">
           {t("settings.developer.contactsDevTool.eligibleAddressFamilies")}
         </span>
@@ -46,7 +48,7 @@ export const EligibleAddressFamiliesSection = ({
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-2">
+      <div className="flex items-center justify-between gap-2">
         {ELIGIBLE_ADDRESS_FAMILIES_PRESETS.map(preset => (
           <Button
             key={preset.id}

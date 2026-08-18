@@ -4,15 +4,17 @@ import { EventLog, TransferLog } from "../types";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { getFees } from "../network/getFees";
 import { ABIEvent, Hex, VIP180_ABI } from "@vechain/sdk-core";
+import type { VechainCurrencyConfig } from "../config";
 
 export const mapVetTransfersToOperations = async (
+  config: VechainCurrencyConfig,
   txs: TransferLog[],
   accountId: string,
   addr: string,
 ): Promise<Operation[]> => {
   return Promise.all(
     txs.map(async tx => {
-      const fees = await getFees(tx.meta.txID);
+      const fees = await getFees(config, tx.meta.txID);
       return {
         id: encodeOperationId(
           accountId,
@@ -36,6 +38,7 @@ export const mapVetTransfersToOperations = async (
 };
 
 export const mapTokenTransfersToOperations = async (
+  config: VechainCurrencyConfig,
   events: EventLog[],
   accountId: string,
   addr: string,
@@ -57,7 +60,7 @@ export const mapTokenTransfersToOperations = async (
       const to = decoded.args.to;
       const value = decoded.args.value;
       const type = to.toLowerCase() === addr.toLowerCase() ? "IN" : "OUT";
-      const fees = await getFees(event.meta.txID);
+      const fees = await getFees(config, event.meta.txID);
       return {
         id: encodeOperationId(accountId, event.meta.txID, type),
         hash: event.meta.txID,

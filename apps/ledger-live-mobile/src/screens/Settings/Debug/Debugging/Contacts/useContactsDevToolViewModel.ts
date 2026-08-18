@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from "react";
-import { useDispatch } from "react-redux";
+import { setContacts } from "@domain/entity-contact";
 import { useFeature } from "@features/platform-feature-flags";
 import {
   resolveContactsFeatureParams,
@@ -7,11 +7,18 @@ import {
   type ContactsFeatureValuePatch,
 } from "@features/flow-contacts";
 import { setOverride } from "@shared/feature-flags";
+import { setHasDismissedContactsFeatureIntroduction } from "~/actions/settings";
+import { useDispatch, useSelector } from "~/context/hooks";
+import { hasDismissedContactsFeatureIntroductionSelector } from "~/reducers/settings";
 import { CONTACTS_FLAG } from "./constants";
+import { createContactsDebugSamples } from "./mockContacts";
 
 export function useContactsDevToolViewModel() {
   const dispatch = useDispatch();
   const featureFlag = useFeature(CONTACTS_FLAG);
+  const hasDismissedFeatureIntroduction = useSelector(
+    hasDismissedContactsFeatureIntroductionSelector,
+  );
   const isEnabled = featureFlag?.enabled === true;
   const params = useMemo(
     () => resolveContactsFeatureParams(featureFlag?.params),
@@ -49,14 +56,30 @@ export function useContactsDevToolViewModel() {
     dispatch(setOverride({ key: CONTACTS_FLAG, value: undefined }));
   }, [dispatch]);
 
+  const handleLoadSamples = useCallback(() => {
+    dispatch(setContacts(createContactsDebugSamples()));
+  }, [dispatch]);
+
+  const handleClearContacts = useCallback(() => {
+    dispatch(setContacts([]));
+  }, [dispatch]);
+
+  const handleToggleFeatureIntroductionDismissed = useCallback(() => {
+    dispatch(setHasDismissedContactsFeatureIntroduction(!hasDismissedFeatureIntroduction));
+  }, [dispatch, hasDismissedFeatureIntroduction]);
+
   return {
     featureFlag,
     isEnabled,
     newBadge: params.newBadge,
     eligibleAddressFamilies: params.eligibleAddressFamilies,
+    hasDismissedFeatureIntroduction,
     handleToggleEnabled,
     handleToggleNewBadge,
+    handleToggleFeatureIntroductionDismissed,
     handleSetEligibleAddressFamilies,
     handleRestoreDefaults,
+    handleLoadSamples,
+    handleClearContacts,
   };
 }

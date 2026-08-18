@@ -1,16 +1,13 @@
-import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
 import { log } from "@ledgerhq/logs";
-import { LedgerAPI4xx } from "@ledgerhq/errors";
+import { promiseAllBatched } from "@ledgerhq/coin-module-framework/promises";
 import { AleoApiConfigurationResetError } from "../errors";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import {
-  AMOUNT_ARG_INDEX,
   DEFAULT_RECORDS_PAGE_SIZE,
+  DEFAULT_TOKENS_PAGE_SIZE,
   EXPLORER_TRANSFER_TYPES,
   PROGRAM_ID,
-  RECIPIENT_ARG_INDEX,
-  TOKEN_RECORD_NAME,
 } from "../constants";
 import { sdkClient } from "../network/sdk";
 import type {
@@ -20,15 +17,66 @@ import type {
   AleoPrivateRecord,
   AleoOperation,
   AleoTransition,
+  AleoCoinConfig,
+  AleoRecordScannerStatusResponse,
+  AleoDecryptedRecordResponse,
+  AleoTokenDetails,
 } from "../types";
 import {
-  isAleoAddressPlaintext,
-  isAleoAmountPlaintext,
-  normalizeAleoPlaintext,
+  findTransferArguments,
+  isParsableTransferFunction,
   parseAmount,
   parseMicrocredits,
 } from "../logic/utils";
+import { register } from "../logic/register";
 import { apiClient } from "./api";
+
+export async function decryptRecordAmount(
+  config: AleoCoinConfig,
+  viewKey: string,
+  record: AleoPrivateRecord,
+): Promise<{ amount: BigNumber; details: AleoDecryptedRecordResponse }> {
+  const details = await sdkClient.decryptRecord({
+    config,
+    viewKey,
+    ciphertext: record.record_ciphertext,
+  });
+  const raw = details.data?.amount ?? details.data?.balance ?? details.data?.microcredits;
+
+  return {
+    amount: parseAmount(raw ?? null),
+    details,
+  };
+}
+
+/**
+ * Sums the decrypted amount of every unspent record.
+ *
+ * @param maxBlockHeight - Excludes records scanned past this height. Omit to sum all records.
+ */
+export async function sumUnspentRecords({
+  config,
+  viewKey,
+  records,
+  maxBlockHeight,
+}: {
+  config: AleoCoinConfig;
+  viewKey: string;
+  records: AleoPrivateRecord[];
+  maxBlockHeight?: number;
+}): Promise<BigNumber> {
+  const filteredRecords = records.filter(record => {
+    if (typeof maxBlockHeight !== "number") return true;
+    return record.block_height <= maxBlockHeight;
+  });
+
+  const amounts = await promiseAllBatched(4, filteredRecords, async record => {
+    const decryptedRecord = await decryptRecordAmount(config, viewKey, record);
+    return decryptedRecord.amount;
+  });
+
+  return amounts.reduce((sum, amount) => sum.plus(amount), new BigNumber(0));
+}
 
 function limitTransactions(
   transactions: AleoPublicTransaction[],
@@ -49,7 +97,7 @@ function hasReachedMinHeight(
 }
 
 export async function fetchAccountTransactionsFromHeight({
-  currency,
+  config,
   address,
   fetchAllPages,
   minBlockHeight,
@@ -57,7 +105,7 @@ export async function fetchAccountTransactionsFromHeight({
   limit = 50,
   order = "asc",
 }: {
-  currency: CryptoCurrency;
+  config: AleoCoinConfig;
   address: string;
   fetchAllPages: boolean;
   minBlockHeight: number;
@@ -74,7 +122,7 @@ export async function fetchAccountTransactionsFromHeight({
 
   while (hasMorePages) {
     const page = await apiClient.getAccountPublicTransactions({
-      currency,
+      config,
       address,
       limit,
       order,
@@ -140,7 +188,7 @@ export async function fetchAccountTransactionsFromHeight({
 /**
  * Fetches all pages of owned records from the scanner
  *
- * @param params.currency - The cryptocurrency being accessed
+ * @param params.config - The Aleo coin config
  * @param params.uuid - The scanner UUID for the account
  * @param params.unspent - When true, fetch only unspent records
  * @param params.start - Optional block height to start scanning from
@@ -148,7 +196,7 @@ export async function fetchAccountTransactionsFromHeight({
  * @returns A flat array of all matching records across all pages
  */
 export async function fetchAllOwnedRecords({
-  currency,
+  config,
   uuid,
   unspent,
   start,
@@ -162,7 +210,7 @@ export async function fetchAllOwnedRecords({
     EXPLORER_TRANSFER_TYPES.FEE_PRIVATE,
   ],
 }: {
-  currency: CryptoCurrency;
+  config: AleoCoinConfig;
   uuid: string;
   unspent?: boolean;
   start?: number;
@@ -178,7 +226,7 @@ export async function fetchAllOwnedRecords({
   while (hasMore) {
     signal?.throwIfAborted();
     const records = await apiClient.getAccountOwnedRecords({
-      currency,
+      config,
       uuid,
       ...(typeof unspent === "boolean" && { unspent }),
       ...(typeof start === "number" && { start }),
@@ -197,6 +245,55 @@ export async function fetchAllOwnedRecords({
 }
 
 /**
+ * Fetches the full token registry (ARC-20, ARC-21 and ARC-22 alike).
+ *
+ * The `/tokens` endpoint has no program-name filter, so identifying whether a given
+ * program is a known token requires the full registry rather than a per-program lookup.
+ */
+export async function fetchAllTokens({
+  config,
+  resultsPerPage = DEFAULT_TOKENS_PAGE_SIZE,
+}: {
+  config: AleoCoinConfig;
+  resultsPerPage?: number;
+}): Promise<AleoTokenDetails[]> {
+  const tokens: AleoTokenDetails[] = [];
+  let offset = 0;
+  let hasNext = true;
+
+  while (hasNext) {
+    const { data, pagination } = await apiClient.getTokens({
+      config,
+      options: {
+        limit: resultsPerPage,
+        offset,
+      },
+    });
+
+    tokens.push(...data);
+    hasNext = pagination.has_next;
+    offset += resultsPerPage;
+  }
+
+  return tokens;
+}
+
+export async function getRecordScannerStatusOrThrow(
+  config: AleoCoinConfig,
+  uuid: string,
+): Promise<AleoRecordScannerStatusResponse> {
+  try {
+    return await apiClient.getRecordScannerStatus(config, uuid);
+  } catch (error) {
+    const err = error as { name?: string; status?: number } | null | undefined;
+    if (err?.name === "LedgerAPI4xx" && err?.status === 422) {
+      throw new AleoApiConfigurationResetError();
+    }
+    throw error;
+  }
+}
+
+/**
  * Manages access to the Provable API by handling authentication and account registration.
  *
  * This function ensures valid API credentials are available and up-to-date. It handles:
@@ -204,7 +301,7 @@ export async function fetchAllOwnedRecords({
  * - Account registration for scanning records if UUID is not set
  * - Retrieval of current scanner status
  *
- * @param currency - The cryptocurrency being accessed
+ * @param config - The Aleo coin config
  * @param viewKey - The view key for the account
  * @param provableApi - Existing Provable API credentials and state, or null for initial setup
  *
@@ -215,11 +312,11 @@ export async function fetchAllOwnedRecords({
  */
 
 export async function accessProvableApi({
-  currency,
+  config,
   viewKey,
   provableApi,
 }: {
-  currency: CryptoCurrency;
+  config: AleoCoinConfig;
   viewKey: string;
   provableApi: ProvableApi | null;
 }): Promise<ProvableApi> {
@@ -229,32 +326,11 @@ export async function accessProvableApi({
   let status;
 
   if (!uuid) {
-    const { public_key, key_id } = await apiClient.getScannerPublicKey(currency);
-
-    const { encrypted: encryptedData } = await sdkClient.encryptRegistrationPayload({
-      currency,
-      publicKey: public_key,
-      viewKey,
-      start: 0,
-    });
-
-    const { uuid: accountUuid } = await apiClient.registerForScanningAccountRecordsEncrypted({
-      currency,
-      encryptedData,
-      keyId: key_id,
-    });
-
-    uuid = accountUuid;
+    const { provableId } = await register(config, viewKey);
+    uuid = provableId;
   }
 
-  try {
-    status = await apiClient.getRecordScannerStatus(currency, uuid);
-  } catch (error) {
-    if (error instanceof LedgerAPI4xx && error.status === 422) {
-      throw new AleoApiConfigurationResetError();
-    }
-    throw error;
-  }
+  status = await getRecordScannerStatusOrThrow(config, uuid);
 
   if (status) {
     synced = status.synced;
@@ -268,7 +344,6 @@ export async function accessProvableApi({
 }
 
 type EnrichedRecordData = Pick<EnrichedPrivateRecord, "sender" | "recipient" | "value">;
-type AleoTransitionInputWithValue = AleoTransition["inputs"][number] & { value: string };
 
 // PUBLIC_TO_PRIVATE where sender is this address is already captured as a public OUT op.
 function shouldSkipPublicToPrivateRecord(rawRecord: AleoPrivateRecord, address: string): boolean {
@@ -296,133 +371,145 @@ function getRecordTransition(
   return recordTransition;
 }
 
-function hasValueField(
-  input: AleoTransition["inputs"][number] | null,
-): input is AleoTransitionInputWithValue {
-  return Boolean(input && "value" in input);
+function getInputValue(input: AleoTransition["inputs"][number]): string | null {
+  return "value" in input && input.value ? input.value : null;
 }
 
-function getTransferArguments(
-  isTokenRecord: boolean,
-  recordTransition: AleoTransition,
-  transactionId: string,
-): {
-  recipientArgument: AleoTransitionInputWithValue;
-  amountArgument: AleoTransitionInputWithValue;
-  recipientOutputIndex: number;
-  amountOutputIndex: number;
-} | null {
-  const recipientOutputIndex = isTokenRecord ? RECIPIENT_ARG_INDEX - 1 : RECIPIENT_ARG_INDEX;
-  const amountOutputIndex = isTokenRecord ? AMOUNT_ARG_INDEX - 1 : AMOUNT_ARG_INDEX;
-
-  if (recordTransition.inputs.length <= amountOutputIndex) {
-    log(
-      "aleo/sync",
-      `enrichPrivateRecord: transition has only ${recordTransition.inputs.length} inputs, expected at least ${amountOutputIndex + 1} for tx ${transactionId}`,
-    );
+/**
+ * Reads a transfer transition's recipient and amount, decrypting its private arguments only when
+ * the public ones are not enough.
+ *
+ * Returns null silently for non-transfer functions such as join/split.
+ */
+async function resolveTransferArguments({
+  config,
+  transition,
+  transactionId,
+  viewKey,
+}: {
+  config: AleoCoinConfig;
+  transition: AleoTransition;
+  transactionId: string;
+  viewKey: string;
+}): Promise<{ recipient: string; amount: string } | null> {
+  if (!isParsableTransferFunction(transition.function)) {
     return null;
   }
 
-  // Recipient and amount are contract function arguments, so their inputs must have a `value` field.
-  // Other input (missing `value` field) would indicate unexpected API data.
-  // In that case we skip processing rather than crash.
-  const recipientInput = recordTransition.inputs[recipientOutputIndex] ?? null;
-  const amountInput = recordTransition.inputs[amountOutputIndex] ?? null;
+  const inputValues = transition.inputs.map(input =>
+    input.type === "private" ? null : getInputValue(input),
+  );
+  const publicArguments = findTransferArguments(inputValues);
 
-  if (!hasValueField(recipientInput) || !hasValueField(amountInput)) {
-    log("aleo/sync", `enrichPrivateRecord: invalid transition arguments for tx ${transactionId}`);
-    return null;
+  if (publicArguments) {
+    return publicArguments;
   }
 
-  return {
-    recipientArgument: recipientInput,
-    amountArgument: amountInput,
-    recipientOutputIndex,
-    amountOutputIndex,
-  };
+  const decryptionErrors: unknown[] = [];
+
+  const plaintexts = await Promise.all(
+    transition.inputs.map((input, index) => {
+      const value = getInputValue(input);
+      if (!value) return null;
+      if (input.type !== "private") return value;
+
+      // The owning record's program/function cannot decrypt a batching wrapper's inputs.
+      return sdkClient
+        .decryptCiphertext({
+          config,
+          ciphertext: value,
+          tpk: transition.tpk,
+          viewKey,
+          programId: transition.program,
+          functionName: transition.function,
+          outputIndex: index,
+        })
+        .then(
+          result => result.plaintext,
+          (error: unknown) => {
+            decryptionErrors.push(error);
+            return null;
+          },
+        );
+    }),
+  );
+
+  const transferArguments = findTransferArguments(plaintexts);
+
+  if (transferArguments) {
+    return transferArguments;
+  }
+
+  // Arguments we never needed (trailing merkle proofs) may fail to decrypt; a failure only matters
+  // when it leaves the transfer unreadable, where reporting a zero amount would be worse.
+  if (decryptionErrors.length > 0) {
+    throw decryptionErrors[0];
+  }
+
+  log(
+    "aleo/sync",
+    `resolveTransferArguments: no recipient/amount arguments found in ${transition.program}/${transition.function} for tx ${transactionId}`,
+  );
+
+  return null;
 }
 
 async function enrichOutgoingRecord({
-  currency,
+  config,
   rawRecord,
   recordTransition,
   transactionId,
   viewKey,
   address,
 }: {
-  currency: CryptoCurrency;
+  config: AleoCoinConfig;
   rawRecord: AleoPrivateRecord;
   recordTransition: AleoTransition;
   transactionId: string;
   viewKey: string;
   address: string;
 }): Promise<EnrichedRecordData | null> {
-  const isTokenRecord = rawRecord.record_name.toLowerCase() === TOKEN_RECORD_NAME.toLowerCase();
-  const transferArguments = getTransferArguments(isTokenRecord, recordTransition, transactionId);
+  const transferArguments = await resolveTransferArguments({
+    config,
+    transition: recordTransition,
+    transactionId,
+    viewKey,
+  });
+
   if (!transferArguments) {
     return null;
   }
 
-  const { recipientArgument, amountArgument, recipientOutputIndex, amountOutputIndex } =
-    transferArguments;
-
-  if (rawRecord.function_name === EXPLORER_TRANSFER_TYPES.PRIVATE_TO_PUBLIC) {
-    // The recipient and amount stay public for private-to-public transfers,
-    // so we can build the outgoing operation directly from the transition inputs.
-    if (recipientArgument.value === address) {
-      return null;
-    }
-
-    return {
-      sender: address,
-      recipient: recipientArgument.value,
-      value: new BigNumber(parseMicrocredits(amountArgument.value)),
-    };
+  // A private-to-public transfer to our own public balance is already the public side of this op.
+  if (
+    rawRecord.function_name === EXPLORER_TRANSFER_TYPES.PRIVATE_TO_PUBLIC &&
+    transferArguments.recipient === address
+  ) {
+    return null;
   }
-
-  const [recipientData, amountData] = await Promise.all([
-    sdkClient.decryptCiphertext({
-      currency,
-      ciphertext: recipientArgument.value,
-      tpk: recordTransition.tpk,
-      viewKey,
-      programId: rawRecord.program_name,
-      functionName: rawRecord.function_name,
-      outputIndex: recipientOutputIndex,
-    }),
-    sdkClient.decryptCiphertext({
-      currency,
-      ciphertext: amountArgument.value,
-      tpk: recordTransition.tpk,
-      viewKey,
-      programId: rawRecord.program_name,
-      functionName: rawRecord.function_name,
-      outputIndex: amountOutputIndex,
-    }),
-  ]);
 
   return {
     sender: address,
-    recipient: recipientData.plaintext,
-    value: new BigNumber(parseMicrocredits(amountData.plaintext)),
+    recipient: transferArguments.recipient,
+    value: new BigNumber(parseMicrocredits(transferArguments.amount)),
   };
 }
 
 async function enrichIncomingRecord({
-  currency,
+  config,
   rawRecord,
   transactionId,
   viewKey,
   address,
 }: {
-  currency: CryptoCurrency;
+  config: AleoCoinConfig;
   rawRecord: AleoPrivateRecord;
   transactionId: string;
   viewKey: string;
   address: string;
 }): Promise<EnrichedRecordData | null> {
   const outputRecord = await sdkClient.decryptRecord({
-    currency,
+    config,
     ciphertext: rawRecord.record_ciphertext,
     viewKey,
   });
@@ -444,12 +531,12 @@ async function enrichIncomingRecord({
 }
 
 export async function enrichPrivateRecord({
-  currency,
+  config,
   rawRecord,
   address,
   viewKey,
 }: {
-  currency: CryptoCurrency;
+  config: AleoCoinConfig;
   rawRecord: AleoPrivateRecord;
   address: string;
   viewKey: string;
@@ -464,7 +551,7 @@ export async function enrichPrivateRecord({
     return null;
   }
 
-  const details = await apiClient.getTransactionById(currency, transactionId);
+  const details = await apiClient.getTransactionById(config, transactionId);
 
   if (shouldSkipPublicToPrivateRecord(rawRecord, address)) {
     return null;
@@ -478,7 +565,7 @@ export async function enrichPrivateRecord({
   const enrichedRecordData =
     rawRecord.sender === address
       ? await enrichOutgoingRecord({
-          currency,
+          config,
           rawRecord,
           recordTransition,
           transactionId,
@@ -486,7 +573,7 @@ export async function enrichPrivateRecord({
           address,
         })
       : await enrichIncomingRecord({
-          currency,
+          config,
           rawRecord,
           transactionId,
           viewKey,
@@ -498,6 +585,31 @@ export async function enrichPrivateRecord({
   }
 
   return { rawRecord, details, ...enrichedRecordData };
+}
+
+export async function enrichPrivateRecords({
+  config,
+  viewKey,
+  address,
+  records,
+  onProgress,
+  signal,
+}: {
+  config: AleoCoinConfig;
+  viewKey: string;
+  address: string;
+  records: AleoPrivateRecord[];
+  onProgress?: (completed: number, total: number) => void;
+  signal?: AbortSignal;
+}): Promise<(EnrichedPrivateRecord | null)[]> {
+  let completed = 0;
+
+  return promiseAllBatched(2, records, async rawRecord => {
+    signal?.throwIfAborted();
+    const result = await enrichPrivateRecord({ config, rawRecord, address, viewKey });
+    onProgress?.(++completed, records.length);
+    return result;
+  });
 }
 
 function splitPublicAndSemiPublicOperations(
@@ -529,14 +641,14 @@ function splitPublicAndSemiPublicOperations(
  * @returns Array of patched operations including additional operations for semi transparent transfers
  */
 export const patchPublicOperations = async ({
-  currency,
+  config,
   publicOperations,
   privateRecords,
   address,
   ledgerAccountId,
   viewKey,
 }: {
-  currency: CryptoCurrency;
+  config: AleoCoinConfig;
   publicOperations: AleoOperation[];
   privateRecords: AleoPrivateRecord[];
   address: string;
@@ -610,34 +722,26 @@ export const patchPublicOperations = async ({
     // - semi-transparent transfer from another account to another account
     // - semi-transparent transfer from our own account to another account
     else {
-      const txDetails = await apiClient.getTransactionById(currency, operation.hash);
+      const txDetails = await apiClient.getTransactionById(config, operation.hash);
       const recordTransition = txDetails.execution.transitions[0] ?? null;
-      const recipientInput = recordTransition?.inputs[0] ?? {};
-      const recipientArgument = "value" in recipientInput ? recipientInput : null;
 
       // if this is public to private, our account is sender, so it's possible to decrypt the recipient address
-      // arguments of transfer_public_to_private function are (address_ciphertext, amount)
-      if (
-        recipientArgument &&
-        operation.extra.functionId === EXPLORER_TRANSFER_TYPES.PUBLIC_TO_PRIVATE
-      ) {
-        const shouldMarkAsPatched = latestPrivateRecordBlockHeight >= txDetails.block_height;
-        const programId =
-          operation.extra.programId ?? recordTransition.program ?? PROGRAM_ID.CREDITS;
+      const transferArguments =
+        recordTransition && operation.extra.functionId === EXPLORER_TRANSFER_TYPES.PUBLIC_TO_PRIVATE
+          ? await resolveTransferArguments({
+              config,
+              transition: recordTransition,
+              transactionId: operation.hash,
+              viewKey,
+            })
+          : null;
 
-        const recipientData = await sdkClient.decryptCiphertext({
-          currency,
-          ciphertext: recipientArgument.value,
-          tpk: recordTransition.tpk,
-          viewKey,
-          programId,
-          functionName: EXPLORER_TRANSFER_TYPES.PUBLIC_TO_PRIVATE,
-          outputIndex: 0,
-        });
+      if (transferArguments) {
+        const shouldMarkAsPatched = latestPrivateRecordBlockHeight >= txDetails.block_height;
 
         patchedOperations.push({
           ...operation,
-          recipients: [recipientData.plaintext],
+          recipients: [transferArguments.recipient],
           extra: {
             ...operation.extra,
             // record scanner may be delayed, so we can consider the operation as patched only when
@@ -667,15 +771,16 @@ export const patchPublicOperations = async ({
  * callers should fall back to 0 for amount and omit the recipient.
  */
 export async function getTokenOutDetails({
-  currency,
+  config,
   record,
   viewKey,
 }: {
-  currency: CryptoCurrency;
+  config: AleoCoinConfig;
   record: AleoPrivateRecord;
   viewKey: string;
 }): Promise<{ amount: BigNumber | null; recipient: string | null; fee: BigNumber }> {
-  const txDetails = await apiClient.getTransactionById(currency, record.transaction_id.trim());
+  const transactionId = record.transaction_id.trim();
+  const txDetails = await apiClient.getTransactionById(config, transactionId);
   const fee = new BigNumber(txDetails.fee_value);
   const transition = txDetails.execution?.transitions[record.transition_index];
 
@@ -686,68 +791,20 @@ export async function getTokenOutDetails({
       fee,
     };
 
-  // token programs have different argument indices
-  const recipientOutputIndex = RECIPIENT_ARG_INDEX - 1;
-  const amountOutputIndex = AMOUNT_ARG_INDEX - 1;
+  const transferArguments = await resolveTransferArguments({
+    config,
+    transition,
+    transactionId,
+    viewKey,
+  });
 
-  const plaintexts = transition.inputs.flatMap(inp =>
-    inp.type === "public" ? [normalizeAleoPlaintext(inp.value)] : [],
-  );
-  const recipient = plaintexts.find(isAleoAddressPlaintext) ?? null;
-
-  // For private_to_public the amount argument is already in plaintext at AMOUNT_ARG_INDEX.
-  if (record.function_name === EXPLORER_TRANSFER_TYPES.PRIVATE_TO_PUBLIC) {
-    // Amount is already in plaintext — scan inputs by pattern instead of assuming a
-    // fixed argument index (token programs may differ from credits.aleo).
-    const amountStr = plaintexts.find(isAleoAmountPlaintext) ?? null;
-    return { amount: amountStr ? parseAmount(amountStr) : null, recipient, fee };
+  if (!transferArguments) {
+    return { amount: null, recipient: null, fee };
   }
-
-  // Fully private transfer: decrypt recipient and amount arguments using the token program's
-  // argument indices (recipientOutputIndex/amountOutputIndex already account for layout differences).
-  if (transition.inputs.length <= amountOutputIndex) {
-    return { amount: null, recipient, fee };
-  }
-
-  const decryptTransitionArgument = async (argumentIndex: number): Promise<string | null> => {
-    const input = transition.inputs[argumentIndex];
-    if (!input || !("value" in input) || !input.value) return null;
-
-    try {
-      const dec = await sdkClient.decryptCiphertext({
-        currency,
-        ciphertext: input.value,
-        tpk: transition.tpk,
-        viewKey,
-        programId: record.program_name,
-        functionName: record.function_name,
-        outputIndex: argumentIndex,
-      });
-      return dec.plaintext;
-    } catch {
-      return null;
-    }
-  };
-
-  const [recipientPlaintext, amountPlaintext] = await Promise.all([
-    decryptTransitionArgument(recipientOutputIndex),
-    decryptTransitionArgument(amountOutputIndex),
-  ]);
-
-  const resolvedRecipient =
-    recipient ??
-    (recipientPlaintext && isAleoAddressPlaintext(recipientPlaintext)
-      ? normalizeAleoPlaintext(recipientPlaintext)
-      : null);
-
-  const amount =
-    amountPlaintext && isAleoAmountPlaintext(amountPlaintext)
-      ? normalizeAleoPlaintext(amountPlaintext)
-      : null;
 
   return {
-    amount: amount ? parseAmount(amount) : null,
-    recipient: resolvedRecipient,
+    amount: parseAmount(transferArguments.amount),
+    recipient: transferArguments.recipient,
     fee,
   };
 }

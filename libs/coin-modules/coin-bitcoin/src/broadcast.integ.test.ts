@@ -1,8 +1,9 @@
 import * as bitcoin from "bitcoinjs-lib";
 import { secp256k1 } from "@noble/curves/secp256k1";
 import { broadcast } from "./broadcast";
-import Xpub from "./wallet-btc/xpub";
-import BitcoinLikeExplorer from "./wallet-btc/explorer";
+import Xpub from "@ledgerhq/wallet-btc/xpub";
+import BitcoinLikeExplorer from "@ledgerhq/wallet-btc/explorer/index";
+import { walletBtcCurrencyById } from "./walletBtcCurrency";
 
 function buildSignedTxHex(): { txHex: string; address: string } {
   const privateKey = secp256k1.utils.randomSecretKey();
@@ -34,10 +35,7 @@ describe("Broadcast", () => {
     const { txHex, address } = buildSignedTxHex();
 
     const explorer = new BitcoinLikeExplorer({
-      cryptoCurrency: {
-        id: "bitcoin",
-        explorerId: "btc",
-      },
+      cryptoCurrency: walletBtcCurrencyById("bitcoin"),
     } as any);
 
     const xpub = new Xpub({ explorer } as any);
@@ -61,10 +59,7 @@ describe("Broadcast", () => {
     const { txHex, address } = buildSignedTxHex();
 
     const explorer = new BitcoinLikeExplorer({
-      cryptoCurrency: {
-        id: "bitcoin",
-        explorerId: "btc",
-      },
+      cryptoCurrency: walletBtcCurrencyById("bitcoin"),
     } as any);
 
     const xpub = new Xpub({ explorer } as any);
@@ -99,10 +94,7 @@ describe("Broadcast", () => {
     const { txHex, address } = buildSignedTxHex();
 
     const explorer = new BitcoinLikeExplorer({
-      cryptoCurrency: {
-        id: "bitcoin",
-        explorerId: "btc",
-      },
+      cryptoCurrency: walletBtcCurrencyById("bitcoin"),
     } as any);
 
     const xpub = new Xpub({ explorer } as any);

@@ -153,7 +153,7 @@ function SendSummary({ navigation, route }: Props) {
 
     if (
       senderError?.name === recipientError?.name &&
-      senderError instanceof AddressesSanctionedError
+      senderError?.name === "AddressesSanctionedError"
     ) {
       return new AddressesSanctionedError("AddressesSanctionedError", {
         addresses: [
@@ -229,7 +229,7 @@ function SendSummary({ navigation, route }: Props) {
       ]}
     >
       <TrackScreen category="SendFunds" name="Summary" currencyName={currencyOrToken?.name} />
-      <NavigationScrollView style={styles.body}>
+      <NavigationScrollView style={styles.body} contentContainerStyle={styles.bodyContent}>
         {transaction.useAllAmount && hasNonEmptySubAccounts ? (
           <View style={styles.infoBox}>
             <Alert type="primary">
@@ -406,8 +406,11 @@ const styles = StyleSheet.create({
   body: {
     flex: 1,
     paddingHorizontal: 16,
-    paddingVertical: 16,
+    paddingTop: 16,
     backgroundColor: "transparent",
+  },
+  bodyContent: {
+    paddingBottom: 24,
   },
   footer: {
     flexDirection: "column",

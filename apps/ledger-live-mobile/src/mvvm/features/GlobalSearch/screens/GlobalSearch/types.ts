@@ -1,4 +1,4 @@
-import type { StockSuggestion } from "@ledgerhq/live-common/dada-client/utils/assetDiscovery";
+import type { StockSuggestion } from "@features/platform-aggregated-assets";
 import type { MarketAssetDisplayData } from "LLM/components/AssetListItem";
 
 export type GlobalSearchDefaultSections = {

@@ -10,6 +10,7 @@ import { multiversxConfig } from "../families/multiversx/config";
 import { evmConfig } from "../families/evm/config";
 import { fileCoinConfig } from "../families/filecoin/config";
 import { hederaConfig } from "../families/hedera/config";
+import { hypercoreConfig } from "../families/hypercore/config";
 import { internetComputerConfig } from "../families/internet_computer/config";
 import { kaspaConfig } from "../families/kaspa/config";
 import { nearConfig } from "../families/near/config";
@@ -28,6 +29,7 @@ import { suiConfig } from "../families/sui/config";
 import { cantonConfig } from "../families/canton/config";
 import { aleoConfig } from "../families/aleo/config";
 import { concordiumConfig } from "../families/concordium/config";
+import { a4Config } from "../bridge/generic-coin-framework/a4/config";
 
 const countervaluesConfig: ConfigSchema = {
   config_countervalues_refreshRate: {
@@ -57,6 +59,7 @@ export const liveConfig: ConfigSchema = {
   ...evmConfig,
   ...fileCoinConfig,
   ...hederaConfig,
+  ...hypercoreConfig,
   ...internetComputerConfig,
   ...kaspaConfig,
   ...nearConfig,
@@ -75,4 +78,5 @@ export const liveConfig: ConfigSchema = {
   ...cantonConfig,
   ...aleoConfig,
   ...concordiumConfig,
+  ...a4Config,
 };

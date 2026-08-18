@@ -3,7 +3,8 @@ import { renderHook } from "@testing-library/react-native";
 import { BigNumber } from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import { DustLimit, FeeTooHigh } from "@ledgerhq/errors";
+import { FeeTooHigh } from "@ledgerhq/ledger-wallet-framework/errors";
+import { DustLimit } from "@ledgerhq/coin-bitcoin/errors";
 import { useAmountScreenViewModel } from "../useAmountScreenViewModel";
 
 jest.mock("~/context/Locale", () => ({
@@ -26,13 +27,10 @@ jest.mock("../../../../hooks/useNetworkFees", () => ({
   useNetworkFees: jest.fn(() => ({
     label: "Network fees",
     value: "0.25 EUR",
-    showNetworkFees: true,
-    showFeePresets: false,
+    strategyLabel: "Medium",
     selectedFeeStrategy: null,
-    onSelectFeeStrategy: jest.fn(),
-    feePresetLabelsOptions: [],
-    fiatByPreset: {},
-    legendByPreset: {},
+    displayOptions: [],
+    canOpenSelector: false,
   })),
 }));
 

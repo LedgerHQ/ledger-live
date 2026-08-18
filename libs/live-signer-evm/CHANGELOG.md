@@ -1,5 +1,97 @@
 # @ledgerhq/live-signer-evm
 
+## 0.22.2
+
+### Patch Changes
+
+- Updated dependencies [[`aee0e64`](https://github.com/LedgerHQ/ledger-live/commit/aee0e64b491aafc1ca8fea16b1ef124cb183770b), [`8a3a0bb`](https://github.com/LedgerHQ/ledger-live/commit/8a3a0bbd8361706daac364d4c89894f56431fc57), [`53c3431`](https://github.com/LedgerHQ/ledger-live/commit/53c3431e01b3139ef689cb589bab0adee4ed6152)]:
+  - @ledgerhq/ledger-wallet-framework@2.8.0
+  - @ledgerhq/live-dmk-shared@0.30.0
+  - @ledgerhq/hw-app-eth@7.8.14
+
+## 0.22.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`aee0e64`](https://github.com/LedgerHQ/ledger-live/commit/aee0e64b491aafc1ca8fea16b1ef124cb183770b), [`8a3a0bb`](https://github.com/LedgerHQ/ledger-live/commit/8a3a0bbd8361706daac364d4c89894f56431fc57), [`53c3431`](https://github.com/LedgerHQ/ledger-live/commit/53c3431e01b3139ef689cb589bab0adee4ed6152)]:
+  - @ledgerhq/ledger-wallet-framework@2.8.0-next.0
+  - @ledgerhq/live-dmk-shared@0.30.0-next.0
+  - @ledgerhq/hw-app-eth@7.8.14-next.0
+
+## 0.22.1
+
+### Patch Changes
+
+- Updated dependencies [[`53c3431`](https://github.com/LedgerHQ/ledger-live/commit/53c3431e01b3139ef689cb589bab0adee4ed6152), [`635fa12`](https://github.com/LedgerHQ/ledger-live/commit/635fa12d47f5a98858326f4dd68962dffe82eda9)]:
+  - @ledgerhq/ledger-wallet-framework@2.7.0
+  - @ledgerhq/hw-app-eth@7.8.13
+
+## 0.22.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`53c3431`](https://github.com/LedgerHQ/ledger-live/commit/53c3431e01b3139ef689cb589bab0adee4ed6152), [`635fa12`](https://github.com/LedgerHQ/ledger-live/commit/635fa12d47f5a98858326f4dd68962dffe82eda9)]:
+  - @ledgerhq/ledger-wallet-framework@2.7.0-next.0
+  - @ledgerhq/hw-app-eth@7.8.13-next.0
+
+## 0.22.0
+
+### Minor Changes
+
+- [#19860](https://github.com/LedgerHQ/ledger-live/pull/19860) [`d08f2bc`](https://github.com/LedgerHQ/ledger-live/commit/d08f2bccae5f94a339206ec703c8d16139f6cbc9) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Wire CAL_SERVICE_URL into DMK ContextModule for the EVM signer
+
+### Patch Changes
+
+- Updated dependencies [[`1070564`](https://github.com/LedgerHQ/ledger-live/commit/107056410174d3da2d45c468232a8d742aea021f), [`c475d28`](https://github.com/LedgerHQ/ledger-live/commit/c475d288b4978aa3011c9e76f3e9a1e2f9733010)]:
+  - @ledgerhq/errors@7.0.0
+  - @ledgerhq/live-env@3.0.0
+  - @ledgerhq/hw-app-eth@7.8.12
+  - @ledgerhq/live-dmk-shared@0.29.1
+
+## 0.22.0-next.0
+
+### Minor Changes
+
+- [#19860](https://github.com/LedgerHQ/ledger-live/pull/19860) [`d08f2bc`](https://github.com/LedgerHQ/ledger-live/commit/d08f2bccae5f94a339206ec703c8d16139f6cbc9) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Wire CAL_SERVICE_URL into DMK ContextModule for the EVM signer
+
+### Patch Changes
+
+- Updated dependencies [[`1070564`](https://github.com/LedgerHQ/ledger-live/commit/107056410174d3da2d45c468232a8d742aea021f), [`c475d28`](https://github.com/LedgerHQ/ledger-live/commit/c475d288b4978aa3011c9e76f3e9a1e2f9733010)]:
+  - @ledgerhq/errors@7.0.0-next.0
+  - @ledgerhq/live-env@3.0.0-next.0
+  - @ledgerhq/hw-app-eth@7.8.12-next.0
+  - @ledgerhq/live-dmk-shared@0.29.1-next.0
+
+## 0.21.2
+
+### Patch Changes
+
+- Updated dependencies [[`2388d41`](https://github.com/LedgerHQ/ledger-live/commit/2388d4171bd2e5caa2009e8eadcd06548d2209ef), [`762b5eb`](https://github.com/LedgerHQ/ledger-live/commit/762b5ebf332566879a10ab1f16ef85a3da360fe7)]:
+  - @ledgerhq/live-dmk-shared@0.29.0
+  - @ledgerhq/hw-app-eth@7.8.11
+
+## 0.21.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`2388d41`](https://github.com/LedgerHQ/ledger-live/commit/2388d4171bd2e5caa2009e8eadcd06548d2209ef), [`762b5eb`](https://github.com/LedgerHQ/ledger-live/commit/762b5ebf332566879a10ab1f16ef85a3da360fe7)]:
+  - @ledgerhq/live-dmk-shared@0.29.0-next.0
+  - @ledgerhq/hw-app-eth@7.8.11-next.0
+
+## 0.21.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-app-eth@7.8.10
+
+## 0.21.1-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-app-eth@7.8.10-next.0
+
 ## 0.21.0
 
 ### Minor Changes

@@ -1,16 +1,17 @@
 import { genAccount } from "@ledgerhq/live-common/mock/account";
 import { genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { listSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { getCryptoCurrencyById, CryptoCurrency } from "@domain/entity-currency-crypto";
+import { TokenCurrency } from "@domain/entity-currency-token";
+import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { initAccounts } from "~/renderer/actions/accounts";
 import {
   initialState as liveWalletInitialState,
   accountUserDataExportSelector,
-} from "@ledgerhq/live-wallet/store";
+} from "~/renderer/reducers/wallet";
+import type { AppDispatch } from "~/state-manager/configureStore";
 import { getKey } from "~/renderer/storage";
 import { Account, AccountUserData } from "@ledgerhq/types-live";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { v4 as uuidv4 } from "uuid";
 import sample from "lodash/sample";
 import BigNumber from "bignumber.js";
@@ -53,8 +54,7 @@ export const injectMockAccounts = async (
   const store = window.ledger.store;
 
   const newAccountData = accountData?.concat(accounts);
-  const e = initAccounts(newAccountData || []);
-  store.dispatch(e);
+  (store.dispatch as AppDispatch)(initAccounts(newAccountData || []));
 };
 
 export const generateRandomAccounts = (count: number): [Account, AccountUserData][] => {

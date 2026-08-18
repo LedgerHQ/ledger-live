@@ -6,6 +6,7 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import { BlockingStateType } from "@ledgerhq/live-dmk-shared";
 import { TrackScreen, track } from "~/analytics";
 import { DeviceDeprecatedBlockingState } from "./DeviceDeprecatedBlockingState";
+import { DeviceIntentTrackingProvider } from "../../utils/DeviceIntentTrackingContext";
 import { PAGE_CONNECT_APP } from "../../utils/trackDeviceIntent";
 import type { InitializerDevice } from "../types";
 
@@ -33,20 +34,21 @@ const supportEndDate = new Date("2026-01-01T00:00:00Z");
 
 function renderState() {
   return render(
-    <DeviceDeprecatedBlockingState
-      state={{
-        type: BlockingStateType.DeviceDeprecatedBlocking,
-        decision: {
-          status: "block",
-          currencyName: "Bitcoin",
-          deviceModelId: DeviceModelId.nanoS,
-          supportEndDate,
-        },
-      }}
-      device={device}
-      sourceFlow="my_ledger"
-      onCancel={jest.fn()}
-    />,
+    <DeviceIntentTrackingProvider value={{ sourceFlow: "my_ledger" }}>
+      <DeviceDeprecatedBlockingState
+        state={{
+          type: BlockingStateType.DeviceDeprecatedBlocking,
+          decision: {
+            status: "block",
+            currencyName: "Bitcoin",
+            deviceModelId: DeviceModelId.nanoS,
+            supportEndDate,
+          },
+        }}
+        device={device}
+        onCancel={jest.fn()}
+      />
+    </DeviceIntentTrackingProvider>,
   );
 }
 

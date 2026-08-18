@@ -1,4 +1,4 @@
-import BitcoinLikeStorage from "./wallet-btc/storage";
+import BitcoinLikeStorage from "@ledgerhq/wallet-btc/storage/index";
 
 describe("testing transaction data load and export", () => {
   it("testing transaction data load and export", async () => {

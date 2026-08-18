@@ -1,1 +1,1 @@
-module.exports = require("@features/platform-jest-config").createFlowJestConfig();
+module.exports = require("@support/jest-features-flow").createFlowJestConfig();

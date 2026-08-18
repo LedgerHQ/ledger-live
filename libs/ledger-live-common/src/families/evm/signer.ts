@@ -8,7 +8,7 @@ import {
   type EvmSigner,
 } from "@ledgerhq/live-signer-evm";
 import Transport from "@ledgerhq/hw-transport";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { ResolutionConfig, LoadConfig } from "@ledgerhq/hw-app-eth/services/types";
 import { Signature } from "ethers";
 import type { DomainServiceResolution } from "@ledgerhq/types-live";

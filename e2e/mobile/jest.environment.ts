@@ -1,3 +1,4 @@
+import "@shared/env";
 import {
   cleanupAllSpeculos,
   attachSpeculinhoLogsToAllure,
@@ -184,6 +185,7 @@ export default class TestEnvironment extends DetoxEnvironment {
       getLabelOfElement: NativeElementHelpers.getLabelOfElement,
       IsIdPresent: NativeElementHelpers.isIdPresent,
       IsIdVisible: NativeElementHelpers.isIdVisible,
+      revealForTap: NativeElementHelpers.revealForTap,
       scrollByPixels: NativeElementHelpers.scrollByPixels,
       scrollToId: NativeElementHelpers.scrollToId,
       scrollToText: NativeElementHelpers.scrollToText,

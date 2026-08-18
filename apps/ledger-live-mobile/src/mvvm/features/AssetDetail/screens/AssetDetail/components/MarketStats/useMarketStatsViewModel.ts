@@ -28,7 +28,7 @@ export function useMarketStatsViewModel({
 }: Params) {
   const { t } = useTranslation();
   const { locale } = useLocale();
-  const { marketCurrency, counterCurrency, isLoading, isError } = useAssetMarketData({
+  const { marketCurrency, counterValueUnit, isLoading, isError } = useAssetMarketData({
     marketApiId,
     knownLedgerIds,
     knownMarketId,
@@ -47,7 +47,7 @@ export function useMarketStatsViewModel({
         value:
           marketcap !== undefined && marketcap !== null
             ? counterValueFormatter({
-                currency: counterCurrency,
+                unit: counterValueUnit,
                 value: marketcap,
                 shorten: true,
                 locale,
@@ -100,7 +100,7 @@ export function useMarketStatsViewModel({
         label: t("assetDetail.marketStats.tradingVolume"),
         value: totalVolume
           ? counterValueFormatter({
-              currency: counterCurrency,
+              unit: counterValueUnit,
               value: totalVolume,
               shorten: true,
               locale,
@@ -113,7 +113,7 @@ export function useMarketStatsViewModel({
         },
       },
     ];
-  }, [marketCurrency, counterCurrency, locale, t, currency?.ticker]);
+  }, [marketCurrency, counterValueUnit, locale, t, currency?.ticker]);
 
   const onTooltipOpen = useCallback(
     (statName: string, open: boolean) => {

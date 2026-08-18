@@ -1,15 +1,20 @@
 import type { MemoNotSupported, Operation } from "@ledgerhq/coin-module-framework/api/types";
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
-import { EvmCoinConfig, setCoinConfig } from "../config";
+import { EvmConfigInfo, type EvmContext } from "../config";
+import { createMockEvmContext } from "../fixtures/context.fixtures";
 import etherscanExplorer from "../network/explorer/etherscan";
 import ledgerExplorer from "../network/explorer/ledger";
 import { ExplorerApi } from "../network/explorer/types";
 import { listOperations } from "./listOperations";
 
 describe("listOperations", () => {
-  const currency = {} as CryptoCurrency;
+  const currency = "";
   const address = "address";
+
+  // The logic layer resolves config from the threaded context, so tests carry their explorer
+  // config on the context instead of seeding the module-level singleton.
+  const ctxWithExplorer = (explorer: unknown): EvmContext =>
+    createMockEvmContext({ explorer } as unknown as Partial<EvmConfigInfo>);
 
   afterEach(() => {
     jest.clearAllMocks();
@@ -272,12 +277,15 @@ describe("listOperations", () => {
     ],
     ["a ledger explorer", { type: "ledger" }, ledgerExplorer],
   ])("lists latest operations using %s", async (_, config, explorer) => {
-    setCoinConfig(() => ({ info: { explorer: config } }) as unknown as EvmCoinConfig);
+    const testContext = ctxWithExplorer(config);
     const getOperationsSpy = buildOperationsSpy(explorer);
     const minHeight = 5;
 
     // here order is "asc" but that's just the sort order, not how the explorer is queried
-    const result = await listOperations(currency, address, { minHeight, order: "asc" });
+    const result = await listOperations(testContext, currency, address, {
+      minHeight,
+      order: "asc",
+    });
 
     const undefinedPagingToken = undefined;
     const undefinedLimit = undefined;
@@ -521,6 +529,7 @@ describe("listOperations", () => {
       },
       calls: [
         [
+          expect.anything(),
           currency,
           address,
           minHeight,
@@ -535,7 +544,7 @@ describe("listOperations", () => {
   });
 
   it("filters out operations where the requested address is not involved (case insensitive)", async () => {
-    setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
+    const testContext = ctxWithExplorer({ type: "ledger" });
     const address = "address";
     // Explorer returns: one native op for "address", and one internal op (same tx) where
     // senders/recipients and parent senders/recipients do NOT include "address"
@@ -600,7 +609,7 @@ describe("listOperations", () => {
     });
 
     expect(
-      await listOperations({} as CryptoCurrency, address.toLowerCase(), {
+      await listOperations(testContext, "", address.toLowerCase(), {
         minHeight: 1,
         order: "asc",
       }),
@@ -633,7 +642,7 @@ describe("listOperations", () => {
   });
 
   it("should use token transfer value for ERC20 operations, not parent native value", async () => {
-    setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
+    const testContext = ctxWithExplorer({ type: "ledger" });
 
     const txHash = "0x4235dc16c74aecb248ad1005f3a0c82582a25afe797e62ecc8f4eed86ca628a1";
     const txFee = 21000000000000n;
@@ -696,7 +705,10 @@ describe("listOperations", () => {
     });
 
     expect(
-      await listOperations({} as CryptoCurrency, "address1", { minHeight: 1, order: "asc" }),
+      await listOperations(testContext, "", "address1", {
+        minHeight: 1,
+        order: "asc",
+      }),
     ).toEqual({
       items: [
         {
@@ -734,7 +746,7 @@ describe("listOperations", () => {
   });
 
   it("leaves feesPayer undefined when token op has no parent coin op (no reference operation)", async () => {
-    setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
+    const testContext = ctxWithExplorer({ type: "ledger" });
 
     const recipient = "0xrecipient";
     const sender = "0xsender";
@@ -788,7 +800,7 @@ describe("listOperations", () => {
       nextPagingToken: "",
     });
 
-    const { items } = await listOperations({} as CryptoCurrency, recipient, {
+    const { items } = await listOperations(testContext, "", recipient, {
       minHeight: 1,
       order: "asc",
     });
@@ -802,7 +814,7 @@ describe("listOperations", () => {
    * @see https://ledgerhq.atlassian.net/browse/BACK-10954
    */
   it("uses parent coin operation fee for token ops when explorer fee on token row differs", async () => {
-    setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
+    const testContext = ctxWithExplorer({ type: "ledger" });
 
     const address = "0x63f5c1b5a54a2423a0284b55ad6e48485e048e6a";
     const txHash = "0xdd046a625b9b4b1ec9c9eaabfa61869f74d9d744433dae3c7686432301713bb3";
@@ -865,7 +877,7 @@ describe("listOperations", () => {
       nextPagingToken: "",
     });
 
-    const { items } = await listOperations({} as CryptoCurrency, address, {
+    const { items } = await listOperations(testContext, "", address, {
       minHeight: 0,
       order: "asc",
     });
@@ -877,8 +889,60 @@ describe("listOperations", () => {
     expect(sameTxFees).toEqual([parentFee, parentFee]);
   });
 
+  it("inherits the parent nonce on token ops, whose fees-only native op is dropped", async () => {
+    // LIVE-35844: the Ledger explorer only reports the nonce on the native op
+    const testContext = ctxWithExplorer({ type: "ledger" });
+
+    const address = "0xb69b37a4fb4a18b3258f974ff6e9f529ad2647b1";
+    const txHash = "0xf034ecf17ad61bc29bab12fc303296428d6c7c8a285bd92b2e30a92b1dd5f3bc";
+    const block = { height: 25745506, hash: "0xblock", time: new Date("2026-08-13T10:29:00.000Z") };
+    const tx = { hash: txHash, block, fees: 41826029222736n, date: block.time, failed: false };
+
+    jest.spyOn(ledgerExplorer, "getOperations").mockResolvedValue({
+      lastCoinOperations: [
+        {
+          id: "coin-fees",
+          type: "FEES",
+          senders: [address],
+          recipients: ["0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"],
+          value: 0n,
+          asset: { type: "native" as const },
+          tx: { ...tx, feesPayer: address },
+          details: { sequence: 316 },
+        },
+      ],
+      lastTokenOperations: [
+        {
+          id: "token-out",
+          type: "OUT",
+          senders: [address],
+          recipients: [address],
+          value: 0n,
+          asset: {
+            type: "erc20" as const,
+            assetReference: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+            assetOwner: address,
+          },
+          tx,
+          details: { ledgerOpType: "OUT", assetAmount: "0" },
+        },
+      ],
+      lastNftOperations: [],
+      lastInternalOperations: [],
+      nextPagingToken: "",
+    });
+
+    const { items } = await listOperations(testContext, "", address, {
+      minHeight: 0,
+      order: "asc",
+    });
+
+    // a cancel is a self transfer of 0, so the explorer reports both sides
+    expect(items.map(op => op.details?.sequence)).toEqual([316, 316]);
+  });
+
   it("should emit both native and token operations when tx has native value > 0 and token transfers", async () => {
-    setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
+    const testContext = ctxWithExplorer({ type: "ledger" });
 
     jest.spyOn(ledgerExplorer, "getOperations").mockResolvedValue({
       lastCoinOperations: [
@@ -934,7 +998,10 @@ describe("listOperations", () => {
     });
 
     expect(
-      await listOperations({} as CryptoCurrency, "address1", { minHeight: 1, order: "asc" }),
+      await listOperations(testContext, "", "address1", {
+        minHeight: 1,
+        order: "asc",
+      }),
     ).toEqual({
       items: [
         {
@@ -1021,14 +1088,9 @@ describe("listOperations", () => {
   it.each(paginationBehaviors)(
     "etherscan explorer sort parameter is respected %s",
     async ({ limit, order, expectedExplorerOrder, expectedResultOrder }) => {
-      setCoinConfig(
-        () =>
-          ({
-            info: { explorer: { type: "etherscan" } },
-          }) as unknown as EvmCoinConfig,
-      );
+      const testContext = ctxWithExplorer({ type: "etherscan" });
       const getOperationsSpy = buildOperationsSpy(etherscanExplorer.explorerApi);
-      const { items: result } = await listOperations(currency, address, {
+      const { items: result } = await listOperations(testContext, currency, address, {
         minHeight: 0,
         ...(limit !== undefined ? { limit } : {}),
         ...(order !== undefined ? { order } : {}),
@@ -1036,9 +1098,9 @@ describe("listOperations", () => {
       expect(result.length).toBeGreaterThan(1);
 
       // check how the explorer is called
-      const actualExplorerLimit = getOperationsSpy.mock.calls[0][5];
+      const actualExplorerLimit = getOperationsSpy.mock.calls[0][6];
       expect(actualExplorerLimit).toBe(limit);
-      const actualExplorerOrder = getOperationsSpy.mock.calls[0][6];
+      const actualExplorerOrder = getOperationsSpy.mock.calls[0][7];
       expect(actualExplorerOrder).toBe(expectedExplorerOrder);
 
       // check the result order
@@ -1098,7 +1160,7 @@ describe("listOperations", () => {
       details: { internal: true, sequence: BigNumber(1) },
     };
 
-    setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
+    const testContext = ctxWithExplorer({ type: "ledger" });
     jest.spyOn(ledgerExplorer, "getOperations").mockResolvedValue({
       lastCoinOperations: [ambiguousParentSenders],
       lastTokenOperations: [relatedTokenOp],
@@ -1107,7 +1169,7 @@ describe("listOperations", () => {
       nextPagingToken: "",
     });
 
-    const { items: result } = await listOperations({} as CryptoCurrency, address, {
+    const { items: result } = await listOperations(testContext, "", address, {
       minHeight: 1,
       order: "asc",
     });
@@ -1121,7 +1183,7 @@ describe("listOperations", () => {
   it("preserves semantic operation types (DELEGATE, NFT_*, etc.) instead of mapping to IN/OUT", async () => {
     const address = "0xdelegator";
     const stakingContract = "0xstaking";
-    setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
+    const testContext = ctxWithExplorer({ type: "ledger" });
     jest.spyOn(ledgerExplorer, "getOperations").mockResolvedValue({
       lastCoinOperations: [
         {
@@ -1148,7 +1210,7 @@ describe("listOperations", () => {
       nextPagingToken: "",
     });
 
-    const { items } = await listOperations({} as CryptoCurrency, address, {
+    const { items } = await listOperations(testContext, "", address, {
       minHeight: 0,
       order: "asc",
     });
@@ -1161,7 +1223,7 @@ describe("listOperations", () => {
   it("preserves REWARD type for outbound claim-reward tx (not downgraded to OUT/FEES)", async () => {
     const address = "0xdelegator";
     const distributionPrecompile = "0x0000000000000000000000000000000000001007";
-    setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
+    const testContext = ctxWithExplorer({ type: "ledger" });
     jest.spyOn(ledgerExplorer, "getOperations").mockResolvedValue({
       lastCoinOperations: [
         {
@@ -1188,7 +1250,7 @@ describe("listOperations", () => {
       nextPagingToken: "",
     });
 
-    const { items } = await listOperations({} as CryptoCurrency, address, {
+    const { items } = await listOperations(testContext, "", address, {
       minHeight: 0,
       order: "asc",
     });
@@ -1197,7 +1259,7 @@ describe("listOperations", () => {
   });
 
   it("copies smart contract fields from explorer extra into operation details", async () => {
-    setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
+    const testContext = ctxWithExplorer({ type: "ledger" });
     const contractAddr = "0x1111111111111111111111111111111111111111";
     const payload = "0xabcd";
     jest.spyOn(ledgerExplorer, "getOperations").mockResolvedValue({
@@ -1231,7 +1293,7 @@ describe("listOperations", () => {
       nextPagingToken: "",
     });
 
-    const { items } = await listOperations({} as CryptoCurrency, "address", {
+    const { items } = await listOperations(testContext, "", "address", {
       minHeight: 1,
       order: "asc",
     });
@@ -1302,7 +1364,7 @@ describe("listOperations", () => {
       };
       return jest
         .spyOn(ledgerExplorer, "getOperations")
-        .mockImplementation(async (_currency, queriedAddress) => {
+        .mockImplementation(async (_currency, _config, queriedAddress) => {
           const coinOps: Array<Operation<MemoNotSupported>> = (
             response.lastCoinOperations ?? []
           ).map((op, i) => ({
@@ -1379,7 +1441,7 @@ describe("listOperations", () => {
     }
 
     it("Case 1: simple native transfer between EOAs", async () => {
-      setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
+      const testContext = ctxWithExplorer({ type: "ledger" });
       mockGetOperations({
         lastCoinOperations: [
           {
@@ -1392,11 +1454,11 @@ describe("listOperations", () => {
         ],
       });
 
-      const address1Result = await listOperations({} as CryptoCurrency, "address1", {
+      const address1Result = await listOperations(testContext, "", "address1", {
         minHeight: 0,
         order: "asc",
       });
-      const address2Result = await listOperations({} as CryptoCurrency, "address2", {
+      const address2Result = await listOperations(testContext, "", "address2", {
         minHeight: 0,
         order: "asc",
       });
@@ -1425,7 +1487,7 @@ describe("listOperations", () => {
     });
 
     it("Case 2: native self send from EOA", async () => {
-      setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
+      const testContext = ctxWithExplorer({ type: "ledger" });
       mockGetOperations({
         lastCoinOperations: [
           {
@@ -1438,7 +1500,7 @@ describe("listOperations", () => {
         ],
       });
 
-      const result = await listOperations({} as CryptoCurrency, "address1", {
+      const result = await listOperations(testContext, "", "address1", {
         minHeight: 0,
         order: "asc",
       });
@@ -1464,7 +1526,7 @@ describe("listOperations", () => {
     });
 
     it("Case 2: when explorer returns IN+OUT for self-send, still 2 ops", async () => {
-      setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
+      const testContext = ctxWithExplorer({ type: "ledger" });
       mockGetOperations(
         {
           lastCoinOperations: [
@@ -1475,7 +1537,7 @@ describe("listOperations", () => {
         "0xselfsend",
       );
 
-      const result = await listOperations({} as CryptoCurrency, "address1", {
+      const result = await listOperations(testContext, "", "address1", {
         minHeight: 0,
         order: "asc",
       });
@@ -1496,7 +1558,7 @@ describe("listOperations", () => {
     });
 
     it("Case 3: simple ERC20 transfer between EOAs", async () => {
-      setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
+      const testContext = ctxWithExplorer({ type: "ledger" });
       const sharedTxHash = "0xcase3";
       mockGetOperations(
         {
@@ -1523,11 +1585,11 @@ describe("listOperations", () => {
         sharedTxHash,
       );
 
-      const address1Result = await listOperations({} as CryptoCurrency, "address1", {
+      const address1Result = await listOperations(testContext, "", "address1", {
         minHeight: 0,
         order: "asc",
       });
-      const address2Result = await listOperations({} as CryptoCurrency, "address2", {
+      const address2Result = await listOperations(testContext, "", "address2", {
         minHeight: 0,
         order: "asc",
       });
@@ -1556,7 +1618,7 @@ describe("listOperations", () => {
     });
 
     it("Case 4: ERC20 self send from EOA", async () => {
-      setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
+      const testContext = ctxWithExplorer({ type: "ledger" });
       mockGetOperations(
         {
           lastCoinOperations: [
@@ -1582,7 +1644,7 @@ describe("listOperations", () => {
         "0xcase4",
       );
 
-      const result = await listOperations({} as CryptoCurrency, "address1", {
+      const result = await listOperations(testContext, "", "address1", {
         minHeight: 0,
         order: "asc",
       });
@@ -1608,7 +1670,7 @@ describe("listOperations", () => {
     });
 
     it("Case 5: ETH transfer from smart contract", async () => {
-      setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
+      const testContext = ctxWithExplorer({ type: "ledger" });
       const sharedTxHash = "0xcase5";
       mockGetOperations(
         {
@@ -1634,11 +1696,11 @@ describe("listOperations", () => {
         sharedTxHash,
       );
 
-      const address1Result = await listOperations({} as CryptoCurrency, "address1", {
+      const address1Result = await listOperations(testContext, "", "address1", {
         minHeight: 0,
         order: "asc",
       });
-      const address2Result = await listOperations({} as CryptoCurrency, "address2", {
+      const address2Result = await listOperations(testContext, "", "address2", {
         minHeight: 0,
         order: "asc",
       });
@@ -1667,7 +1729,7 @@ describe("listOperations", () => {
     });
 
     it("Case 6: ERC20 transfer from smart contract", async () => {
-      setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
+      const testContext = ctxWithExplorer({ type: "ledger" });
       const sharedTxHash = "0xcase6";
       mockGetOperations(
         {
@@ -1694,15 +1756,15 @@ describe("listOperations", () => {
         sharedTxHash,
       );
 
-      const address1Result = await listOperations({} as CryptoCurrency, "address1", {
+      const address1Result = await listOperations(testContext, "", "address1", {
         minHeight: 0,
         order: "asc",
       });
-      const address2Result = await listOperations({} as CryptoCurrency, "address2", {
+      const address2Result = await listOperations(testContext, "", "address2", {
         minHeight: 0,
         order: "asc",
       });
-      const address3Result = await listOperations({} as CryptoCurrency, "address3", {
+      const address3Result = await listOperations(testContext, "", "address3", {
         minHeight: 0,
         order: "asc",
       });
@@ -1742,7 +1804,7 @@ describe("listOperations", () => {
     });
 
     it("Case 7: ETH transfer to smart contract", async () => {
-      setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
+      const testContext = ctxWithExplorer({ type: "ledger" });
       mockGetOperations({
         lastCoinOperations: [
           {
@@ -1755,7 +1817,7 @@ describe("listOperations", () => {
         ],
       });
 
-      const result = await listOperations({} as CryptoCurrency, "address1", {
+      const result = await listOperations(testContext, "", "address1", {
         minHeight: 0,
         order: "asc",
       });
@@ -1773,7 +1835,7 @@ describe("listOperations", () => {
     });
 
     it("Case 8: ERC20 transfer to smart contract", async () => {
-      setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
+      const testContext = ctxWithExplorer({ type: "ledger" });
       mockGetOperations(
         {
           lastCoinOperations: [
@@ -1799,7 +1861,7 @@ describe("listOperations", () => {
         "0xcase8",
       );
 
-      const result = await listOperations({} as CryptoCurrency, "address1", {
+      const result = await listOperations(testContext, "", "address1", {
         minHeight: 0,
         order: "asc",
       });
@@ -1817,7 +1879,7 @@ describe("listOperations", () => {
     });
 
     it("Case 9: ETH transfer through smart contract", async () => {
-      setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
+      const testContext = ctxWithExplorer({ type: "ledger" });
       const sharedTxHash = "0xcase9";
       mockGetOperations(
         {
@@ -1843,11 +1905,11 @@ describe("listOperations", () => {
         sharedTxHash,
       );
 
-      const address1Result = await listOperations({} as CryptoCurrency, "address1", {
+      const address1Result = await listOperations(testContext, "", "address1", {
         minHeight: 0,
         order: "asc",
       });
-      const address2Result = await listOperations({} as CryptoCurrency, "address2", {
+      const address2Result = await listOperations(testContext, "", "address2", {
         minHeight: 0,
         order: "asc",
       });
@@ -1876,7 +1938,7 @@ describe("listOperations", () => {
     });
 
     it("Case 10: mixed assets smart contract interaction", async () => {
-      setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
+      const testContext = ctxWithExplorer({ type: "ledger" });
       const sharedTxHash = "0xcase10";
       mockGetOperations(
         {
@@ -1903,11 +1965,11 @@ describe("listOperations", () => {
         sharedTxHash,
       );
 
-      const address1Result = await listOperations({} as CryptoCurrency, "address1", {
+      const address1Result = await listOperations(testContext, "", "address1", {
         minHeight: 0,
         order: "asc",
       });
-      const address2Result = await listOperations({} as CryptoCurrency, "address2", {
+      const address2Result = await listOperations(testContext, "", "address2", {
         minHeight: 0,
         order: "asc",
       });
@@ -1946,7 +2008,7 @@ describe("listOperations", () => {
     });
 
     it("Case 11: Spoofed token transfer through smart contract", async () => {
-      setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
+      const testContext = ctxWithExplorer({ type: "ledger" });
       const sharedTxHash = "0xcase11";
       mockGetOperations(
         {
@@ -1973,15 +2035,15 @@ describe("listOperations", () => {
         sharedTxHash,
       );
 
-      const address1Result = await listOperations({} as CryptoCurrency, "address1", {
+      const address1Result = await listOperations(testContext, "", "address1", {
         minHeight: 0,
         order: "asc",
       });
-      const address2Result = await listOperations({} as CryptoCurrency, "address2", {
+      const address2Result = await listOperations(testContext, "", "address2", {
         minHeight: 0,
         order: "asc",
       });
-      const address3Result = await listOperations({} as CryptoCurrency, "address3", {
+      const address3Result = await listOperations(testContext, "", "address3", {
         minHeight: 0,
         order: "asc",
       });
@@ -2025,7 +2087,7 @@ describe("listOperations", () => {
     });
 
     it("Case: root trace internal tx is deduplicated against parent coin op (Blockscout bug)", async () => {
-      setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
+      const testContext = ctxWithExplorer({ type: "ledger" });
       const sharedTxHash = "0xRootTraceBug";
       // Blockscout returns the top-level call as an internal tx with from=EOA.
       // Regular tx: user → router, value=6 (in txlist)
@@ -2055,7 +2117,7 @@ describe("listOperations", () => {
         sharedTxHash,
       );
 
-      const result = await listOperations({} as CryptoCurrency, "address1", {
+      const result = await listOperations(testContext, "", "address1", {
         minHeight: 0,
         order: "asc",
       });
@@ -2075,7 +2137,7 @@ describe("listOperations", () => {
     });
 
     it("Case: root trace dedup is sender-based, filters even when internal value differs", async () => {
-      setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
+      const testContext = ctxWithExplorer({ type: "ledger" });
       const sharedTxHash = "0xRootTraceDiffValue";
       // Variant where the internal root trace has a different value than the coin op.
       // The filter is purely sender-based (not value-based), so it still deduplicates.
@@ -2103,7 +2165,7 @@ describe("listOperations", () => {
         sharedTxHash,
       );
 
-      const result = await listOperations({} as CryptoCurrency, "address1", {
+      const result = await listOperations(testContext, "", "address1", {
         minHeight: 0,
         order: "asc",
       });
@@ -2120,7 +2182,7 @@ describe("listOperations", () => {
     });
 
     it("Case: incoming root trace internal tx is deduplicated against parent operation", async () => {
-      setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
+      const testContext = ctxWithExplorer({ type: "ledger" });
       const sharedTxHash = "0xIncomingRootTrace";
       mockGetOperations(
         {
@@ -2134,7 +2196,7 @@ describe("listOperations", () => {
         sharedTxHash,
       );
 
-      const result = await listOperations({} as CryptoCurrency, "user", {
+      const result = await listOperations(testContext, "", "user", {
         minHeight: 0,
         order: "asc",
       });
@@ -2152,7 +2214,7 @@ describe("listOperations", () => {
     });
 
     it("Case: incoming internal tx with different value is NOT filtered", async () => {
-      setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
+      const testContext = ctxWithExplorer({ type: "ledger" });
       const sharedTxHash = "0xIncomingDiffValue";
       mockGetOperations(
         {
@@ -2166,7 +2228,7 @@ describe("listOperations", () => {
         sharedTxHash,
       );
 
-      const result = await listOperations({} as CryptoCurrency, "user", {
+      const result = await listOperations(testContext, "", "user", {
         minHeight: 0,
         order: "asc",
       });
@@ -2186,7 +2248,7 @@ describe("listOperations", () => {
     });
 
     it("Case: incoming internal tx with same value but different sender is NOT filtered", async () => {
-      setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
+      const testContext = ctxWithExplorer({ type: "ledger" });
       const sharedTxHash = "0xIncomingSameValueDiffSender";
       mockGetOperations(
         {
@@ -2200,7 +2262,7 @@ describe("listOperations", () => {
         sharedTxHash,
       );
 
-      const result = await listOperations({} as CryptoCurrency, "user", {
+      const result = await listOperations(testContext, "", "user", {
         minHeight: 0,
         order: "asc",
       });
@@ -2220,7 +2282,7 @@ describe("listOperations", () => {
     });
 
     it("Case: legitimate internal tx is NOT filtered when parent sender differs (smart contract wallet)", async () => {
-      setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
+      const testContext = ctxWithExplorer({ type: "ledger" });
       const sharedTxHash = "0xSCWCase";
       // A relayer sends a tx to the wallet (coin op), then the wallet makes a sub-call (internal tx).
       // The internal tx sender (wallet) matches the queried address, but the parent sender (relayer) differs.
@@ -2248,7 +2310,7 @@ describe("listOperations", () => {
         sharedTxHash,
       );
 
-      const result = await listOperations({} as CryptoCurrency, "address1", {
+      const result = await listOperations(testContext, "", "address1", {
         minHeight: 0,
         order: "asc",
       });
@@ -2265,7 +2327,7 @@ describe("listOperations", () => {
     });
 
     it("Case 12: Smart contract token minting", async () => {
-      setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
+      const testContext = ctxWithExplorer({ type: "ledger" });
       const sharedTxHash = "0xcase12";
       const zeroAddress = "0x0000000000000000000000000000000000000000";
       mockGetOperations(
@@ -2293,7 +2355,7 @@ describe("listOperations", () => {
         sharedTxHash,
       );
 
-      const result = await listOperations({} as CryptoCurrency, "address1", {
+      const result = await listOperations(testContext, "", "address1", {
         minHeight: 0,
         order: "asc",
       });

@@ -1,5 +1,8 @@
 # live-countervalues
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 `@ledgerhq/live-countervalues` manages fiat (and cross-crypto) exchange rate fetching, caching, and portfolio valuation for Ledger Live. It fetches rates from Ledger's countervalues API and exposes pure functions to convert crypto amounts to fiat at any point in time.
 
 ## What it does

@@ -1,4 +1,4 @@
-import { NotEnoughBalance, NotEnoughBalanceFees } from "@ledgerhq/errors";
+import { NotEnoughBalance, NotEnoughBalanceFees } from "@ledgerhq/ledger-wallet-framework/errors";
 import BigNumber from "bignumber.js";
 import { DEFAULT_COIN_TYPE } from "../network/sdk";
 import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";

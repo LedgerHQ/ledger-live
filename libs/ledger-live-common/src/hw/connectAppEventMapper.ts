@@ -22,19 +22,20 @@ import type {
   ConnectAppDAIntermediateValue,
 } from "@ledgerhq/live-dmk-shared";
 import { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
+import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import {
   UserRefusedAllowManager,
-  UserRefusedOnDevice,
   LatestFirmwareVersionRequired,
   UnsupportedFeatureError,
-} from "@ledgerhq/errors";
+  DeviceNotOnboarded,
+  NoSuchAppOnProvider,
+} from "../errors";
 import { DeviceId } from "@domain/entity-client-identity";
 
 import type { SkippedAppOp } from "../apps/types";
 import { SkipReason } from "../apps/types";
 import { parseDeviceInfo } from "../deviceSDK/tasks/getDeviceInfo";
 import { ConnectAppEvent } from "./connectApp";
-import { NoSuchAppOnProvider } from "../errors";
 
 export class ConnectAppEventMapper {
   private openAppRequested: boolean = false;
@@ -297,6 +298,8 @@ export class ConnectAppEventMapper {
           deviceVersion: deviceState.firmwareVersion?.os,
         }),
       );
+    } else if ("_tag" in error && error._tag === "DeviceNotOnboardedError") {
+      this.eventSubject.error(new DeviceNotOnboarded());
     } else if ("_tag" in error && error._tag === "DeviceLockedError") {
       this.eventSubject.next({ type: "lockedDevice" });
       this.eventSubject.complete();

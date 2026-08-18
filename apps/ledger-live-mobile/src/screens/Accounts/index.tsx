@@ -3,7 +3,7 @@ import { FlatList, FlatListProps, ListRenderItemInfo } from "react-native";
 import { useSelector } from "~/context/hooks";
 import { useFocusEffect } from "@react-navigation/native";
 import { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
-import { findCryptoCurrencyByKeyword } from "@ledgerhq/live-common/currencies/index";
+import { findCryptoCurrencyByKeyword } from "@domain/entity-currency-crypto";
 import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import { RefreshMedium } from "@ledgerhq/native-ui/assets/icons";
 import SafeAreaView from "~/components/SafeAreaView";
@@ -126,7 +126,7 @@ function Accounts({ navigation, route }: NavigationProps) {
           </Flex>
         ) : (
           <List
-            testID={`accounts-list-${flattenedAccounts.length}`}
+            testID="accounts-list"
             data={flattenedAccounts}
             renderItem={renderItem}
             keyExtractor={(i: AccountLike) => i.id}

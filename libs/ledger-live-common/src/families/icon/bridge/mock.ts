@@ -1,5 +1,10 @@
 import { BigNumber } from "bignumber.js";
-import { NotEnoughBalance, RecipientRequired, InvalidAddress, FeeTooHigh } from "@ledgerhq/errors";
+import {
+  NotEnoughBalance,
+  RecipientRequired,
+  InvalidAddress,
+  FeeTooHigh,
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import type { Transaction } from "../types";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import { ICON_DUMMY_ADDRESS } from "@ledgerhq/coin-icon/constants";

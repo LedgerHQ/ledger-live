@@ -37,9 +37,14 @@ const testPathIgnorePatterns = [
 
 const moduleNameMapper = {
   ".*\\.lottie$": "<rootDir>/fileMock.js",
+  "^@ledgerhq/ledger-key-ring-protocol/__mocks__/(.*)$":
+    "<rootDir>/../../libs/ledger-key-ring-protocol/src/__mocks__/$1",
   ...pathsToModuleNameMapper(compilerOptions.paths),
   "~/(.*)": "<rootDir>/src/$1",
-  "^@ledgerhq/(lumen-ui-react|lumen-design-core)$": "<rootDir>/node_modules/@ledgerhq/$1",
+  "^@ledgerhq/lumen-ui-react$": "<rootDir>/node_modules/@ledgerhq/lumen-ui-react",
+  "^@ledgerhq/lumen-ui-react/symbols$":
+    "<rootDir>/node_modules/@ledgerhq/lumen-ui-react/dist/lib/Components/symbols/index.js",
+  "^@ledgerhq/lumen-design-core$": "<rootDir>/node_modules/@ledgerhq/lumen-design-core",
   "\\.(jpg|ico|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga|lottie)$":
     "<rootDir>/fileMock.js",
   "@lottiefiles/dotlottie-react": "<rootDir>/tests/mocks/dotlottie-react.tsx",
@@ -67,11 +72,16 @@ const commonConfig = {
   testEnvironment: "jsdom",
   clearMocks: true,
   restoreMocks: true,
+  /**
+   * jest's 5s default is not enough for the suites that mount a whole screen: on CI (one worker per
+   * core) `Default.test.tsx` has been measured at 9.9s and 11.0s and failed the run. This bounds how
+   * long a hung test can stall the job, so keep it well under the job's `timeout-minutes`.
+   */
+  testTimeout: 30_000,
   globals: {
     __DEV__: false,
     __APP_VERSION__: "2.0.0",
     __GIT_REVISION__: "xxx",
-    __SENTRY_URL__: null,
     __DATADOG_APPLICATION_ID__: null,
     __DATADOG_CLIENT_TOKEN__: null,
     __DATADOG_SITE__: null,
@@ -81,8 +91,11 @@ const commonConfig = {
   },
   moduleNameMapper,
   testPathIgnorePatterns,
+
+  moduleFileExtensions: ["web.tsx", "web.ts", "tsx", "ts", "js", "jsx", "json", "node"],
   setupFiles: ["jest-canvas-mock", "./jest.polyfills.js"],
   setupFilesAfterEnv: ["<rootDir>/tests/jestSetup.js"],
+  moduleFileExtensions: ["web.tsx", "web.ts", "tsx", "ts", "js", "jsx", "json", "node"],
   extensionsToTreatAsEsm: [".ts", ".tsx", ".jsx"],
   transform: {
     "^.+\\.m?(t|j)sx?$": [

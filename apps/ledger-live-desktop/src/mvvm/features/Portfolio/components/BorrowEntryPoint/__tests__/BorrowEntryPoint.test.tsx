@@ -36,7 +36,7 @@ describe("BorrowEntryPoint", () => {
   it("should call the view model handleClick when the CTA is clicked", async () => {
     const { user } = render(<BorrowEntryPoint />);
 
-    await user.click(screen.getByText(t("portfolio.borrowEntry.cta")));
+    await user.click(screen.getByTestId("portfolio-borrow-entry-point-cta"));
 
     expect(handleClick).toHaveBeenCalledTimes(1);
   });

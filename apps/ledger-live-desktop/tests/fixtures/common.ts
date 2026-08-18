@@ -1,3 +1,4 @@
+import "@shared/env";
 import { test as base, Page, ElectronApplication } from "@playwright/test";
 import fsPromises from "fs/promises";
 import merge from "lodash/merge";
@@ -24,6 +25,7 @@ type TestFixtures = {
   featureFlags: OptionalFeatureMap;
   simulateCamera: string;
   app: Application;
+  mockRoutes: ((page: Page) => Promise<void>)[];
 };
 
 const IS_DEBUG_MODE = !!process.env.PWDEBUG;
@@ -37,6 +39,11 @@ export const test = base.extend<TestFixtures>({
   settings: {},
   featureFlags: undefined,
   simulateCamera: undefined,
+  /**
+   * Route mocks installed as soon as the window exists. A `beforeEach` is too late for
+   * whatever the app requests while booting, notably the initial account sync.
+   */
+  mockRoutes: [],
 
   app: async ({ page }, use) => {
     const app = new Application(page);
@@ -123,11 +130,16 @@ export const test = base.extend<TestFixtures>({
     // close app
     await electronApp.close();
   },
-  page: async ({ electronApp }, use, testInfo) => {
+  page: async ({ electronApp, mockRoutes }, use, testInfo) => {
     // app is ready
     const page = await electronApp.firstWindow();
     // we need to give enough time for the playwright app to start. when the CI is slow, 30s was apprently not enough.
     page.setDefaultTimeout(120000);
+
+    // Before the app boots below and starts syncing on its own.
+    for (const mockRoute of mockRoutes) {
+      await mockRoute(page);
+    }
 
     if (process.env.PLAYWRIGHT_CPU_THROTTLING_RATE) {
       const client = await page.context().newCDPSession(page);

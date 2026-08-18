@@ -28,8 +28,7 @@
       "apps/ledger-live-desktop/src/renderer/components/ExportLogsButton.tsx",
       "apps/ledger-live-desktop/src/mvvm/hooks/useExportLogs.ts",
       "apps/ledger-live-mobile/src/screens/Settings/Debug/Information/EquipmentIdRow.tsx",
-      "apps/ledger-live-mobile/src/screens/RatingsModal/index.tsx",
-      "apps/ledger-live-mobile/src/screens/NpsRatingsModal/index.tsx"
+      "apps/ledger-live-mobile/src/screens/RatingsModal/index.tsx"
     ],
     "exportUserIdForChainwatch": [
       "apps/ledger-live-mobile/src/components/TransactionsAlerts.tsx",

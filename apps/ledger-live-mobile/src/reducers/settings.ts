@@ -1,12 +1,19 @@
 import { handleActions, ReducerMap } from "redux-actions";
 import type { Action } from "redux-actions";
-import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import { getFiatCurrencyByTicker, findFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
-import { getEnv } from "@ledgerhq/live-env";
+import type { Currency } from "@domain/entity-currency";
+import { type CryptoCurrency, findCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import type { Unit } from "@domain/entity-currency-unit";
+import {
+  getFiatCurrencyByTicker,
+  findFiatCurrencyByTicker,
+  OFAC_FIAT_TICKERS,
+  selectSupportedFiats,
+} from "@domain/entity-currency-fiat";
+import { buildSupportedCounterValues } from "~/logic/buildSupportedCounterValues";
+import { getEnv } from "@shared/env";
 import { createSelector } from "~/context/selectors";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import type { AccountLike } from "@ledgerhq/types-live";
-import type { CryptoCurrency, Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { CurrencySettings, SettingsState, State, Theme } from "./types";
 import { currencySettingsDefaults } from "../helpers/CurrencySettingsDefaults";
@@ -28,7 +35,6 @@ import type {
   SettingsSetHasOrderedNanoPayload,
   SettingsSetLanguagePayload,
   SettingsSetLastConnectedDevicePayload,
-  SettingsSetLocalePayload,
   SettingsSetLastSeenCustomImagePayload,
   SettingsSetNotificationsPayload,
   SettingsSetOrderAccountsPayload,
@@ -56,8 +62,6 @@ import type {
   SettingsSetOnboardingTypePayload,
   SettingsSetKnownDeviceModelIdsPayload,
   SettingsSetClosedWithdrawBannerPayload,
-  SettingsSetUserNps,
-  SettingsSetSupportedCounterValues,
   SettingsSetHasSeenAnalyticsOptInPrompt,
   SettingsSetDebugOsUpdateBannerMode,
   SettingsSetDismissedContentCardsPayload,
@@ -73,6 +77,7 @@ import type {
   SettingsIsOnboardingFlowReceiveSuccessPayload,
   SettingsIsPostOnboardingFlowPayload,
   SettingsSetHasSeenWalletV4TourPayload,
+  SettingsSetHasDismissedContactsFeatureIntroductionPayload,
   SettingsSetDoNotAskAgainSkipMemoPayload,
   SettingsSetProductTourCompletedPayload,
   SettingsSetHasSeenQ2WalletV4TourPayload,
@@ -82,12 +87,14 @@ import type {
 } from "../actions/types";
 import { SettingsActionTypes } from "../actions/types";
 import {
-  needsConsentRenewal,
+  getAnalyticsConsentDecision,
   resolveAnalyticsOptInParams,
-} from "@ledgerhq/live-common/analyticsConsent/index";
+} from "@features/flow-analytics-consent";
+
+const DEFAULT_COUNTERVALUE_TICKER = "USD";
 
 export const INITIAL_STATE: SettingsState = {
-  counterValue: "USD",
+  counterValue: DEFAULT_COUNTERVALUE_TICKER,
   counterValueExchange: null,
   privacy: null,
   reportErrorsEnabled: true,
@@ -160,8 +167,6 @@ export const INITIAL_STATE: SettingsState = {
   depositFlow: {
     hasClosedWithdrawBanner: false,
   },
-  userNps: null,
-  supportedCounterValues: [],
   hasSeenAnalyticsOptInPrompt: false,
   debugOsUpdateBannerMode: "off",
   dismissedContentCards: {},
@@ -174,6 +179,7 @@ export const INITIAL_STATE: SettingsState = {
   isPostOnboardingFlow: false,
   generalTermsVersionAccepted: undefined,
   hasSeenWalletV4Tour: false,
+  hasDismissedContactsFeatureIntroduction: false,
   productTourCompleted: false,
   hasSeenQ2WalletV4Tour: false,
   doNotAskAgainSkipMemo: false,
@@ -447,7 +453,9 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
 
   [SettingsActionTypes.SETTINGS_SET_DISMISSED_DYNAMIC_CARDS]: (state, action) => ({
     ...state,
-    dismissedDynamicCards: (action as Action<SettingsSetDismissedDynamicCardsPayload>).payload,
+    dismissedDynamicCards: Array.from(
+      new Set((action as Action<SettingsSetDismissedDynamicCardsPayload>).payload),
+    ),
   }),
 
   [SettingsActionTypes.SETTINGS_SET_DISCREET_MODE]: (state, action) => ({
@@ -459,11 +467,6 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     ...state,
     language: (action as Action<SettingsSetLanguagePayload>).payload,
     languageIsSetByUser: true,
-  }),
-
-  [SettingsActionTypes.SETTINGS_SET_LOCALE]: (state, action) => ({
-    ...state,
-    locale: (action as Action<SettingsSetLocalePayload>).payload,
   }),
 
   [SettingsActionTypes.LAST_SEEN_DEVICE_INFO]: (state, action) => {
@@ -582,14 +585,6 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     ...state,
     generalTermsVersionAccepted: (action as Action<SettingsSetGeneralTermsVersionAccepted>).payload,
   }),
-  [SettingsActionTypes.SET_USER_NPS]: (state, action) => ({
-    ...state,
-    userNps: (action as Action<SettingsSetUserNps>).payload,
-  }),
-  [SettingsActionTypes.SET_SUPPORTED_COUNTER_VALUES]: (state, action) => ({
-    ...state,
-    supportedCounterValues: (action as Action<SettingsSetSupportedCounterValues>).payload,
-  }),
   [SettingsActionTypes.SET_HAS_SEEN_ANALYTICS_OPT_IN_PROMPT]: (state, action) => ({
     ...state,
     hasSeenAnalyticsOptInPrompt: (action as Action<SettingsSetHasSeenAnalyticsOptInPrompt>).payload,
@@ -672,6 +667,13 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     hasSeenWalletV4Tour: (action as Action<SettingsSetHasSeenWalletV4TourPayload>).payload,
   }),
 
+  [SettingsActionTypes.SET_HAS_DISMISSED_CONTACTS_FEATURE_INTRODUCTION]: (state, action) => ({
+    ...state,
+    hasDismissedContactsFeatureIntroduction: (
+      action as Action<SettingsSetHasDismissedContactsFeatureIntroductionPayload>
+    ).payload,
+  }),
+
   [SettingsActionTypes.SET_DO_NOT_ASK_AGAIN_SKIP_MEMO]: (state, action) => ({
     ...state,
     doNotAskAgainSkipMemo: (action as Action<SettingsSetDoNotAskAgainSkipMemoPayload>).payload,
@@ -717,10 +719,15 @@ export const migrateLegacyStarredMarketCoins = (starredMarketCoins: readonly str
     new Set(starredMarketCoins.map(id => (id === LEGACY_DAI_V2_FAVORITE_ID ? DAI_MARKET_ID : id))),
   );
 
-const counterValueCurrencyLocalSelector = (state: SettingsState): Currency =>
-  findFiatCurrencyByTicker(state.counterValue) ||
-  findCryptoCurrencyById(state.counterValue) ||
-  getFiatCurrencyByTicker("USD");
+const counterValueCurrencyLocalSelector = (state: SettingsState): Currency => {
+  if (OFAC_FIAT_TICKERS.has(state.counterValue))
+    return getFiatCurrencyByTicker(DEFAULT_COUNTERVALUE_TICKER);
+  return (
+    findFiatCurrencyByTicker(state.counterValue) ||
+    findCryptoCurrencyById(state.counterValue) ||
+    getFiatCurrencyByTicker(DEFAULT_COUNTERVALUE_TICKER)
+  );
+};
 
 export const counterValueCurrencySelector = createSelector(
   settingsStoreSelector,
@@ -792,14 +799,11 @@ export const trackingEnabledSelector = (state: State) => {
   const analyticsOptIn = state.featureFlags?.resolved?.analyticsOptIn;
   const analyticsOptInEnabled = analyticsOptIn?.enabled ?? false;
   if (analyticsOptInEnabled) {
-    const { consentDate } = settings.analyticsConsentInfo;
-
-    if (consentDate == null) {
-      return false;
-    }
-
-    const { consentValidityDays } = resolveAnalyticsOptInParams(analyticsOptIn);
-    if (needsConsentRenewal(consentDate, consentValidityDays)) {
+    const decision = getAnalyticsConsentDecision(
+      settings.analyticsConsentInfo,
+      resolveAnalyticsOptInParams(analyticsOptIn),
+    );
+    if (decision.kind === "renewal") {
       return false;
     }
   }
@@ -944,9 +948,10 @@ export const hasBeenRedirectedToPostOnboardingSelector = (state: State) =>
   state.settings.hasBeenRedirectedToPostOnboarding;
 export const generalTermsVersionAcceptedSelector = (state: State) =>
   state.settings.generalTermsVersionAccepted;
-export const userNpsSelector = (state: State) => state.settings.userNps;
-export const supportedCounterValuesSelector = (state: State) =>
-  state.settings.supportedCounterValues;
+export const supportedCounterValuesSelector = createSelector(
+  selectSupportedFiats,
+  buildSupportedCounterValues,
+);
 export const hasSeenAnalyticsOptInPromptSelector = (state: State) =>
   state.settings.hasSeenAnalyticsOptInPrompt;
 export const debugOsUpdateBannerModeSelector = (state: State) =>
@@ -961,6 +966,9 @@ export const mevProtectionSelector = (state: State) => state.settings.mevProtect
 export const selectedTabPortfolioAssetsSelector = (state: State) =>
   state.settings.selectedTabPortfolioAssets;
 export const hasSeenWalletV4TourSelector = (state: State) => state.settings.hasSeenWalletV4Tour;
+
+export const hasDismissedContactsFeatureIntroductionSelector = (state: State) =>
+  state.settings.hasDismissedContactsFeatureIntroduction;
 
 export const doNotAskAgainSkipMemoSelector = (state: State) => state.settings.doNotAskAgainSkipMemo;
 export const productTourCompletedSelector = (state: State) => state.settings.productTourCompleted;

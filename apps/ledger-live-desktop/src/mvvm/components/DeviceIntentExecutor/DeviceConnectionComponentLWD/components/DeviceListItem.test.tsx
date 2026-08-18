@@ -4,7 +4,11 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import { screen } from "@testing-library/react";
 import { render } from "tests/testSetup";
 
-import { makeDisplayedDevice, makeKnownDevice } from "../testUtils";
+import {
+  DeviceIntentTrackingTestWrapper,
+  makeDisplayedDevice,
+  makeKnownDevice,
+} from "../testUtils";
 import { DeviceListItem } from "./DeviceListItem";
 
 describe("DeviceListItem", () => {
@@ -16,7 +20,7 @@ describe("DeviceListItem", () => {
     });
 
     // WHEN
-    render(<DeviceListItem device={device} />);
+    render(<DeviceListItem device={device} />, { wrapper: DeviceIntentTrackingTestWrapper });
 
     // THEN
     expect(screen.getByText("Available Ledger")).toBeVisible();
@@ -31,7 +35,7 @@ describe("DeviceListItem", () => {
     });
 
     // WHEN
-    render(<DeviceListItem device={device} />);
+    render(<DeviceListItem device={device} />, { wrapper: DeviceIntentTrackingTestWrapper });
 
     // THEN
     expect(screen.getByText("Unavailable Ledger")).toBeVisible();
@@ -45,7 +49,7 @@ describe("DeviceListItem", () => {
     });
 
     // WHEN
-    render(<DeviceListItem device={device} />);
+    render(<DeviceListItem device={device} />, { wrapper: DeviceIntentTrackingTestWrapper });
 
     // THEN
     expect(
@@ -63,7 +67,9 @@ describe("DeviceListItem", () => {
       }),
       onSelect,
     });
-    const { user } = render(<DeviceListItem device={device} />);
+    const { user } = render(<DeviceListItem device={device} />, {
+      wrapper: DeviceIntentTrackingTestWrapper,
+    });
 
     // WHEN
     await user.click(screen.getByText("Ledger Stax"));

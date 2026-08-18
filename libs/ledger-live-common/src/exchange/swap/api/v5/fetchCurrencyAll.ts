@@ -1,13 +1,12 @@
 import network from "@ledgerhq/live-network";
 import { DEFAULT_SWAP_TIMEOUT_MS } from "../../const/timeout";
 import axios from "axios";
-import { LedgerAPI4xx } from "@ledgerhq/errors";
 import { fetchCurrencyAllMock } from "./__mocks__/fetchCurrencyAll.mocks";
 import { ResponseData as ResponseDataTo } from "./fetchCurrencyTo";
 import { ResponseData as ResponseDataFrom } from "./fetchCurrencyFrom";
 import { flattenV5CurrenciesAll } from "../../utils/flattenV5CurrenciesAll";
 import { getSwapAPIBaseURL, getSwapUserIP } from "../..";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 
 type Props = {
   baseUrl?: string;
@@ -47,7 +46,7 @@ export async function fetchCurrencyAll({
         // TODO: LIVE-8901 (handle request timeout)
       }
     }
-    if (e instanceof LedgerAPI4xx) {
+    if ((e as { name?: string })?.name === "LedgerAPI4xx") {
       // TODO: LIVE-8901 (handle 4xx)
     }
     throw e;

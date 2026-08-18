@@ -19,7 +19,7 @@ import { getAccountBridge } from "../bridge/index";
 import { Transaction } from "../coin-modules/transaction-types";
 import { prepareMessageToSign } from "../hw/signMessage/index";
 import { Exchange } from "../exchange/types";
-import { WalletState } from "@ledgerhq/live-wallet/store";
+import { type AccountNamesState } from "@domain/entity-account-name";
 
 export function translateContent(content: string | TranslatableString, locale = "en"): string {
   if (!content || typeof content === "string") return content;
@@ -39,7 +39,7 @@ function getParentAccount(account: AccountLike, fromAccounts: AccountLike[]): Ac
 }
 
 export function receiveOnAccountLogic(
-  walletState: WalletState,
+  accountNames: AccountNamesState,
   { manifest, accounts, tracking }: WebPlatformContext,
   accountId: string,
   uiNavigation: (
@@ -58,7 +58,7 @@ export function receiveOnAccountLogic(
   }
 
   const parentAccount = getParentAccount(account, accounts);
-  const accountAddress = accountToPlatformAccount(walletState, account, parentAccount).address;
+  const accountAddress = accountToPlatformAccount(accountNames, account, parentAccount).address;
 
   return uiNavigation(account, parentAccount, accountAddress);
 }

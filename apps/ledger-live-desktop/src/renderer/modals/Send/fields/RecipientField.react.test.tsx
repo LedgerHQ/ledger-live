@@ -6,17 +6,13 @@ import BigNumber from "bignumber.js";
 import { render, screen, waitFor, withFlagOverrides } from "tests/testSetup";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { Account } from "@ledgerhq/types-live";
-import { InvalidAddress } from "@ledgerhq/errors";
+import { InvalidAddress } from "@ledgerhq/ledger-wallet-framework/errors";
 import { DomainServiceProvider } from "@ledgerhq/domain-service/hooks/index";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { getAccountBridgeByFamily } from "@ledgerhq/live-common/bridge/impl";
+import { createFixtureAccount } from "@ledgerhq/coin-bitcoin/fixtures/common.fixtures";
 import RecipientField from "./RecipientField";
 import { importLLDCoinFamily } from "~/renderer/families";
-
-// Temp mock to prevent error on sentry init
-jest.mock("../../../../sentry/install", () => ({
-  init: () => null,
-}));
 
 nock.disableNetConnect();
 
@@ -83,6 +79,23 @@ const polygonMockAccount: Account = {
   subAccounts: [],
 };
 
+const bitcoinMockAccount = {
+  ...createFixtureAccount(),
+  // decodeAccountId requires >= 5 ":"-separated parts; the fixture's id isn't one.
+  id: "js:2:bitcoin:1fMK6i7CMDES1GNGDEMX5ddDaxbkjWPw1M:",
+} as unknown as Account;
+
+const bitcoinMockTransaction: Transaction = {
+  amount: new BigNumber(0),
+  recipient: "",
+  useAllAmount: false,
+  family: "bitcoin",
+  utxoStrategy: { strategy: 0, excludeUTXOs: [] },
+  rbf: false,
+  feePerByte: null,
+  networkInfo: null,
+} as unknown as Transaction;
+
 const baseMockTransaction: Transaction = {
   amount: new BigNumber(0),
   recipient: "",
@@ -140,11 +153,34 @@ const setup = (
   );
 };
 
+// Renders with a caller-supplied transaction, unmerged with baseMockTransaction --
+// needed for families (e.g. bitcoin) whose transaction shape isn't the evm one.
+const setupWithTransaction = (
+  transaction: Transaction,
+  mockStatus: Partial<TransactionStatus> | null = {},
+  account = ethMockAccount,
+) => {
+  return render(
+    <DomainServiceProvider>
+      <RecipientField
+        account={account}
+        transaction={transaction}
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        t={mockTFunction as unknown as TFunction}
+        onChangeTransaction={mockedOnChangeTransaction}
+        status={{ ...baseMockStatus, ...mockStatus }}
+      />
+    </DomainServiceProvider>,
+  );
+};
+
 describe("RecipientField", () => {
   beforeAll(async () => {
     await getAccountBridgeByFamily("evm");
     // Preload so useLLDCoinFamily resolves synchronously on first render instead of suspending.
     await importLLDCoinFamily("evm");
+    await getAccountBridgeByFamily("bitcoin");
+    await importLLDCoinFamily("bitcoin");
   });
 
   beforeEach(() => {
@@ -361,6 +397,119 @@ describe("RecipientField", () => {
           }),
         );
       });
+    });
+  });
+
+  // recipientIsReadOnly is set by coin-zcash today; every other currency never
+  // sets it, so the sync effect it drives must stay inert for them.
+  describe("recipientIsReadOnly regression guards", () => {
+    it("leaves typing unaffected when recipientIsReadOnly is false", async () => {
+      const { user } = setup({ recipientIsReadOnly: false });
+      const input = screen.getByRole("textbox");
+
+      await user.type(input, "mockrecipient");
+
+      expect(input).toHaveValue("mockrecipient");
+      expect(mockedOnChangeTransaction).toHaveLastReturnedWith({
+        ...baseMockTransaction,
+        recipient: "mockrecipient",
+      });
+    });
+
+    it("leaves typing unaffected when recipientIsReadOnly is undefined", async () => {
+      const { user } = setup({}, {}, polygonMockAccount);
+      const input = screen.getByRole("textbox");
+
+      await user.type(input, "mockrecipient");
+
+      expect(input).toHaveValue("mockrecipient");
+    });
+
+    it("still lowercases a mixed-case bc1 segwit address for a bitcoin account", async () => {
+      const { user } = setupWithTransaction(bitcoinMockTransaction, {}, bitcoinMockAccount);
+      const input = screen.getByRole("textbox");
+
+      await user.type(input, "BC1QTEST");
+
+      await waitFor(() =>
+        expect(mockedOnChangeTransaction).toHaveLastReturnedWith({
+          ...bitcoinMockTransaction,
+          recipient: "bc1qtest",
+        }),
+      );
+    });
+  });
+
+  describe("recipientIsReadOnly: externally-driven recipient stays visible in the input", () => {
+    const unifiedAddress =
+      "u1u2h4ce7e2cn3z4nzur95muq2dl4da9x8h8kdp2l80gm9nl9raj8zzpx79ycjnfvar4v5exea5pqr5y9qsnlp0cdunwf9yjjx5c4q7ar9";
+
+    it("displays the address the transaction carries when the field is locked", () => {
+      setup(
+        { recipientIsReadOnly: true },
+        { recipient: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045" },
+      );
+
+      const input = screen.getByTestId("send-recipient-input") as HTMLInputElement;
+      expect(input).toHaveValue("0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045");
+      expect(input.readOnly).toBe(true);
+      expect(screen.queryByTestId("open-camera-qrcode-scanner")).not.toBeInTheDocument();
+    });
+
+    it("displays a ~106-char unified address in full, untruncated", () => {
+      expect(unifiedAddress).toHaveLength(106);
+
+      setup({ recipientIsReadOnly: true }, { recipient: unifiedAddress });
+
+      expect(screen.getByTestId("send-recipient-input")).toHaveValue(unifiedAddress);
+    });
+
+    it("updates the displayed value on rerender with a different external recipient, still read-only", () => {
+      const { rerender } = setup(
+        { recipientIsReadOnly: true },
+        { recipient: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045" },
+      );
+      expect(screen.getByTestId("send-recipient-input")).toHaveValue(
+        "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
+      );
+
+      rerender(
+        <DomainServiceProvider>
+          <RecipientField
+            account={ethMockAccount}
+            transaction={{ ...baseMockTransaction, recipient: unifiedAddress }}
+            t={mockTFunction as unknown as TFunction}
+            onChangeTransaction={mockedOnChangeTransaction}
+            status={{ ...baseMockStatus, recipientIsReadOnly: true }}
+          />
+        </DomainServiceProvider>,
+      );
+
+      expect(screen.getByTestId("send-recipient-input")).toHaveValue(unifiedAddress);
+    });
+
+    it("clears the input on the read-only -> editable transition, leaving no stale address", () => {
+      const { rerender } = setup(
+        { recipientIsReadOnly: true },
+        { recipient: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045" },
+      );
+      expect(screen.getByTestId("send-recipient-input")).toHaveValue(
+        "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
+      );
+
+      rerender(
+        <DomainServiceProvider>
+          <RecipientField
+            account={ethMockAccount}
+            transaction={{ ...baseMockTransaction, recipient: "" }}
+            t={mockTFunction as unknown as TFunction}
+            onChangeTransaction={mockedOnChangeTransaction}
+            status={{ ...baseMockStatus, recipientIsReadOnly: false }}
+          />
+        </DomainServiceProvider>,
+      );
+
+      expect(screen.getByTestId("send-recipient-input")).toHaveValue("");
     });
   });
 });

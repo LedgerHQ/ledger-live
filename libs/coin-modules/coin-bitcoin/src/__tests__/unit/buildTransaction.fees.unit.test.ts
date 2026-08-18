@@ -5,12 +5,16 @@ import { bitcoinPickingStrategy } from "../../types";
 const estimateAccountMaxSpendable = jest.fn().mockResolvedValue(new BigNumber(123456));
 const buildAccountTx = jest.fn().mockResolvedValue({ fee: 999, inputs: [], outputs: [] });
 
+jest.mock("../../buildAndSign", () => ({
+  buildAccountTx: (...args: any[]) => buildAccountTx(...args),
+}));
+
 // swap-able explorer for each test
 let currentExplorer: any = {
   getNetwork: jest.fn().mockResolvedValue({ relay_fee: "0.00001000" }), // 1 sat/vB
 };
 
-jest.mock("../../wallet-btc", () => {
+jest.mock("@ledgerhq/wallet-btc/index", () => {
   class DummyStrategy {
     constructor(..._args: any[]) {}
   }
@@ -18,20 +22,22 @@ jest.mock("../../wallet-btc", () => {
     __esModule: true,
     default: {
       estimateAccountMaxSpendable: (...args: any[]) => estimateAccountMaxSpendable(...args),
-      buildAccountTx: (...args: any[]) => buildAccountTx(...args),
     },
-    getWalletAccount: jest.fn((_account: any) => ({
-      xpub: { explorer: currentExplorer, crypto: {} },
-      derivationMode: "native_segwit",
-      params: {
-        currency: "bitcoin",
-      },
-    })),
     CoinSelect: DummyStrategy,
     DeepFirst: DummyStrategy,
     Merge: DummyStrategy,
   };
 });
+
+jest.mock("../../getWalletAccount", () => ({
+  getWalletAccount: jest.fn((_account: any) => ({
+    xpub: { explorer: currentExplorer, crypto: {} },
+    derivationMode: "native_segwit",
+    params: {
+      currency: "bitcoin",
+    },
+  })),
+}));
 
 import { buildTransaction } from "../../buildTransaction";
 

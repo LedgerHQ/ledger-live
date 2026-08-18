@@ -1,6 +1,7 @@
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
+import { TokenCurrencyIdSchema } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
 import { getMockedAccount, getMockedTokenAccount } from "../test/fixtures/account.fixture";
 import {
@@ -13,6 +14,7 @@ import type { HederaOperationExtra } from "../types";
 import {
   applyPendingExtras,
   buildCalTokenMap,
+  getSubAccounts,
   mergeSubAccounts,
   patchOperationWithExtra,
   prepareOperations,
@@ -25,10 +27,12 @@ describe("bridge utils", () => {
     const tokenCurrencyFromCAL = getTokenCurrencyFromCALByType("hts");
 
     beforeAll(() => {
-      setupMockCryptoAssetsStore({
+      setCryptoAssetsStore({
+        findTokenById: async () => undefined,
         findTokenByAddressInCurrency: jest
           .fn()
           .mockImplementation(async () => tokenCurrencyFromCAL),
+        getTokensSyncHash: async () => "",
       });
     });
 
@@ -42,8 +46,7 @@ describe("bridge utils", () => {
 
       const result = await prepareOperations([mockedCoinOperation], [mockedTokenOperation]);
 
-      expect(result).toHaveLength(1);
-      expect(result[0].subOperations).toEqual([mockedTokenOperation]);
+      expect(result).toEqual([expect.objectContaining({ subOperations: [mockedTokenOperation] })]);
     });
 
     it("creates NONE coin operation as parent if no coin op with matching hash exists", async () => {
@@ -65,8 +68,12 @@ describe("bridge utils", () => {
 
   describe("mergeSubAccounts", () => {
     it("returns newSubAccounts if no initial account exists", () => {
-      const mockedTokenCurrency1 = getMockedHTSTokenCurrency({ id: "token1" });
-      const mockedTokenCurrency2 = getMockedHTSTokenCurrency({ id: "token2" });
+      const mockedTokenCurrency1 = getMockedHTSTokenCurrency({
+        id: TokenCurrencyIdSchema.parse("token1"),
+      });
+      const mockedTokenCurrency2 = getMockedHTSTokenCurrency({
+        id: TokenCurrencyIdSchema.parse("token2"),
+      });
       const mockedTokenAccount1 = getMockedTokenAccount(mockedTokenCurrency1, { id: "ta1" });
       const mockedTokenAccount2 = getMockedTokenAccount(mockedTokenCurrency2, { id: "ta2" });
       const initialAccount = undefined;
@@ -110,8 +117,10 @@ describe("bridge utils", () => {
     });
 
     it("adds new sub accounts that are not present in initial account", () => {
-      const existingToken = getMockedHTSTokenCurrency({ id: "token1" });
-      const newToken = getMockedHTSTokenCurrency({ id: "token2" });
+      const existingToken = getMockedHTSTokenCurrency({
+        id: TokenCurrencyIdSchema.parse("token1"),
+      });
+      const newToken = getMockedHTSTokenCurrency({ id: TokenCurrencyIdSchema.parse("token2") });
       const existingTokenAccount = getMockedTokenAccount(existingToken, { id: "ta1" });
       const newTokenAccount = getMockedTokenAccount(newToken, { id: "ta2" });
       const mockedAccount = getMockedAccount({ subAccounts: [existingTokenAccount] });
@@ -132,11 +141,14 @@ describe("bridge utils", () => {
 
       const result = applyPendingExtras([mockedOperation1], [mockedPendingOperation1]);
 
-      expect(result).toHaveLength(1);
-      expect(result[0].extra).toEqual({
-        ...mockedOperation1.extra,
-        ...mockedPendingOperation1.extra,
-      });
+      expect(result).toEqual([
+        expect.objectContaining({
+          extra: {
+            ...mockedOperation1.extra,
+            ...mockedPendingOperation1.extra,
+          },
+        }),
+      ]);
     });
 
     it("returns original operation if no matching pending is found", () => {
@@ -147,8 +159,7 @@ describe("bridge utils", () => {
       const mockedPendingOperation = getMockedOperation({ hash: "op1", extra: pendingExtra });
 
       const result = applyPendingExtras([mockedOperation], [mockedPendingOperation]);
-      expect(result).toHaveLength(1);
-      expect(result[0].extra).toEqual(mockedOperation.extra);
+      expect(result).toEqual([expect.objectContaining({ extra: mockedOperation.extra })]);
     });
   });
 
@@ -171,12 +182,14 @@ describe("bridge utils", () => {
         balance: 500,
       });
 
-      setupMockCryptoAssetsStore({
+      setCryptoAssetsStore({
+        findTokenById: async () => undefined,
         findTokenByAddressInCurrency: jest.fn().mockImplementation(async (address: string) => {
           if (address === erc20Token.contractAddress) return erc20Token;
           if (address === htsToken.contractAddress) return htsToken;
           return undefined;
         }),
+        getTokensSyncHash: async () => "",
       });
 
       const result = await buildCalTokenMap({
@@ -197,7 +210,11 @@ describe("bridge utils", () => {
       const mockToken = getMockedERC20TokenCurrency({ contractAddress: "0xABC" });
       const findMock = jest.fn().mockResolvedValue(mockToken);
 
-      setupMockCryptoAssetsStore({ findTokenByAddressInCurrency: findMock });
+      setCryptoAssetsStore({
+        findTokenById: async () => undefined,
+        findTokenByAddressInCurrency: findMock,
+        getTokensSyncHash: async () => "",
+      });
 
       await buildCalTokenMap({
         erc20Tokens: [
@@ -359,8 +376,122 @@ describe("bridge utils", () => {
       const patched = patchOperationWithExtra(mockedOperation, extra);
 
       expect(patched.extra).toEqual(extra);
-      expect(patched.subOperations).toHaveLength(1);
-      expect(patched.subOperations?.[0].extra).toEqual(extra);
+      expect(patched.subOperations).toEqual([expect.objectContaining({ extra })]);
     });
+
+    it("adds extra to nested nft operations", () => {
+      const nftOp = getMockedOperation({ hash: "nft1", extra: {} });
+      const mockedOperation = getMockedOperation({
+        hash: "parent",
+        extra: {},
+        nftOperations: [nftOp],
+      });
+      const extra: HederaOperationExtra = { consensusTimestamp: "99999" };
+
+      const patched = patchOperationWithExtra(mockedOperation, extra);
+
+      expect(patched.nftOperations).toEqual([expect.objectContaining({ extra })]);
+    });
+
+    it("handles operations with no subOperations or nftOperations gracefully", () => {
+      const mockedOperation = getMockedOperation({ hash: "bare", extra: {} });
+      const extra: HederaOperationExtra = { transactionId: "tx-123" };
+
+      const patched = patchOperationWithExtra(mockedOperation, extra);
+
+      expect(patched.extra).toEqual(extra);
+      expect(patched.subOperations).toEqual([]);
+      expect(patched.nftOperations).toEqual([]);
+    });
+  });
+});
+
+describe("getSubAccounts", () => {
+  const ledgerAccountId = "js:2:hedera:0.0.12345:hederaBip44";
+
+  it("returns an empty array when all inputs are empty", async () => {
+    const result = await getSubAccounts({
+      ledgerAccountId,
+      latestTokenOperations: [],
+      mirrorTokens: [],
+      erc20Tokens: [],
+      calTokenByAddress: new Map(),
+    });
+
+    expect(result).toEqual([]);
+  });
+
+  it("skips mirror tokens whose token_id is not in calTokenByAddress", async () => {
+    const mirrorToken = getMockedMirrorToken({ token_id: "0.0.9999", balance: 100 });
+
+    const result = await getSubAccounts({
+      ledgerAccountId,
+      latestTokenOperations: [],
+      mirrorTokens: [mirrorToken],
+      erc20Tokens: [],
+      calTokenByAddress: new Map(),
+    });
+
+    expect(result).toEqual([]);
+  });
+
+  it("skips ERC20 tokens with zero balance and no operations", async () => {
+    const erc20Token = getMockedERC20TokenCurrency({ contractAddress: "0xdeadbeef" });
+    const calTokenByAddress = new Map([[erc20Token.contractAddress, erc20Token]]);
+
+    const result = await getSubAccounts({
+      ledgerAccountId,
+      latestTokenOperations: [],
+      mirrorTokens: [],
+      erc20Tokens: [{ contractAddress: erc20Token.contractAddress, balance: new BigNumber(0) }],
+      calTokenByAddress,
+    });
+
+    expect(result).toEqual([]);
+  });
+
+  it("creates a sub account for an HTS mirror token with a positive balance", async () => {
+    const htsToken = getMockedHTSTokenCurrency({ contractAddress: "0.0.1001" });
+    const mirrorToken = getMockedMirrorToken({ token_id: "0.0.1001", balance: 500 });
+    const calTokenByAddress = new Map([[htsToken.contractAddress, htsToken]]);
+
+    const result = await getSubAccounts({
+      ledgerAccountId,
+      latestTokenOperations: [],
+      mirrorTokens: [mirrorToken],
+      erc20Tokens: [],
+      calTokenByAddress,
+    });
+
+    expect(result).toMatchObject([
+      {
+        type: "TokenAccount",
+        token: htsToken,
+        balance: new BigNumber(500),
+        spendableBalance: new BigNumber(500),
+        operations: [],
+      },
+    ]);
+  });
+
+  it("creates a sub account for an ERC20 token with a positive balance", async () => {
+    const erc20Token = getMockedERC20TokenCurrency({ contractAddress: "0xaabbcc" });
+    const calTokenByAddress = new Map([[erc20Token.contractAddress, erc20Token]]);
+
+    const result = await getSubAccounts({
+      ledgerAccountId,
+      latestTokenOperations: [],
+      mirrorTokens: [],
+      erc20Tokens: [{ contractAddress: erc20Token.contractAddress, balance: new BigNumber(250) }],
+      calTokenByAddress,
+    });
+
+    expect(result).toMatchObject([
+      {
+        type: "TokenAccount",
+        token: erc20Token,
+        balance: new BigNumber(250),
+      },
+    ]);
   });
 });

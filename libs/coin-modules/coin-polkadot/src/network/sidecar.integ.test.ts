@@ -95,7 +95,7 @@ describe("sidecar integration test", () => {
 
       describe("getAccount", () => {
         it(`works with ${currencyId}`, async () => {
-          const result = await getAccount(testAddress, currency);
+          const result = await getAccount(config, testAddress, currency);
 
           expect(result).toMatchObject({
             balance: expect.any(BigNumber),
@@ -113,7 +113,7 @@ describe("sidecar integration test", () => {
 
       describe("getStakingInfo", () => {
         it(`works with ${currencyId}`, async () => {
-          const result = await getStakingInfo(testAddress, currency);
+          const result = await getStakingInfo(config, testAddress, currency);
 
           expect(result).toMatchObject({
             unlockedBalance: expect.any(BigNumber),
@@ -125,7 +125,7 @@ describe("sidecar integration test", () => {
 
       describe("getStakingProgress", () => {
         it(`works with ${currencyId}`, async () => {
-          const result = await getStakingProgress(currency);
+          const result = await getStakingProgress(config, currency);
 
           expect(result).toMatchObject({
             activeEra: expect.any(Number),
@@ -138,7 +138,7 @@ describe("sidecar integration test", () => {
 
       describe("getBalances", () => {
         it(`works with ${currencyId}`, async () => {
-          const result = await getBalances(testAddress, currency);
+          const result = await getBalances(config, testAddress, currency);
 
           expect(result).toMatchObject({
             balance: expect.any(BigNumber),
@@ -152,7 +152,7 @@ describe("sidecar integration test", () => {
 
       describe("getMinimumBondBalance", () => {
         it(`works with ${currencyId}`, async () => {
-          const result = await getMinimumBondBalance(currency);
+          const result = await getMinimumBondBalance(config, currency);
 
           expect(result).toBeInstanceOf(BigNumber);
           expect(result.isGreaterThanOrEqualTo(0)).toBe(true);
@@ -161,7 +161,7 @@ describe("sidecar integration test", () => {
 
       describe("isElectionClosed", () => {
         it(`works with ${currencyId}`, async () => {
-          const result = await isElectionClosed(currency);
+          const result = await isElectionClosed(config, currency);
 
           expect(typeof result).toBe("boolean");
         });
@@ -169,7 +169,7 @@ describe("sidecar integration test", () => {
 
       describe("isNewAccount", () => {
         it(`works with ${currencyId}`, async () => {
-          const result = await isNewAccount(testAddress, currency);
+          const result = await isNewAccount(config, testAddress, currency);
 
           expect(typeof result).toBe("boolean");
         });
@@ -177,7 +177,7 @@ describe("sidecar integration test", () => {
 
       describe("isControllerAddress", () => {
         it(`works with ${currencyId}`, async () => {
-          const result = await isControllerAddress(testAddress, currency);
+          const result = await isControllerAddress(config, testAddress, currency);
 
           expect(typeof result).toBe("boolean");
         });
@@ -185,7 +185,7 @@ describe("sidecar integration test", () => {
 
       describe("getTransactionParams", () => {
         it(`works with ${currencyId}`, async () => {
-          const result = await getTransactionParams(currency);
+          const result = await getTransactionParams(config, currency);
 
           expect(result).toMatchObject({
             blockHash: expect.any(String),
@@ -201,7 +201,7 @@ describe("sidecar integration test", () => {
 
       describe("getRegistry", () => {
         it(`works with ${currencyId}`, async () => {
-          const result = await getRegistry(currency);
+          const result = await getRegistry(config, currency);
 
           expect(result).toMatchObject({
             registry: expect.any(Object),
@@ -212,7 +212,7 @@ describe("sidecar integration test", () => {
 
       describe("getLastBlock", () => {
         it(`works with ${currencyId}`, async () => {
-          const result = await getLastBlock(currency);
+          const result = await getLastBlock(config, currency);
 
           expect(result).toMatchObject({
             hash: expect.any(String),
@@ -224,7 +224,7 @@ describe("sidecar integration test", () => {
 
       describe("fetchChainSpec", () => {
         it(`works with ${currencyId}`, async () => {
-          const result = await fetchChainSpec(currency);
+          const result = await fetchChainSpec(config, currency);
 
           expect(result).toMatchObject({
             properties: expect.any(Object),

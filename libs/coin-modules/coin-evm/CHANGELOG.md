@@ -1,5 +1,309 @@
 # @ledgerhq/coin-evm
 
+## 4.10.0
+
+### Minor Changes
+
+- [#20278](https://github.com/LedgerHQ/ledger-live/pull/20278) [`3d24a89`](https://github.com/LedgerHQ/ledger-live/commit/3d24a898d59de55364ec29de29eaecb7ca14425d) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Drop the `@ledgerhq/errors` dependency, completing the errors sunset (LIVE-32915).
+
+  The `@ledgerhq/errors` package is removed from the monorepo: no workspace source imported it anymore, every error class it held now lives in the package that owns it (`@ledgerhq/ledger-wallet-framework/errors` for the ones shared across coin modules). `createCustomErrorClass` and the `serializeError` / `deserializeError` stack are gone with it — define errors as native classes and branch on `error.name`.
+
+  `@ledgerhq/errors@6.37.0` stays on npm for external consumers, but is no longer published from this repo.
+
+- [#20280](https://github.com/LedgerHQ/ledger-live/pull/20280) [`9fcbe39`](https://github.com/LedgerHQ/ledger-live/commit/9fcbe39689ff122568ffb031a30dc3805ebb6add) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Stop depending on `@ledgerhq/errors` (LIVE-32915).
+
+  No workspace package declares it anymore, and none may again: `enforce-boundaries` now fails CI on any manifest that does. The classes it held live in the package that owns them, with `@ledgerhq/ledger-wallet-framework/errors` as the shared home below the coin layer.
+
+  The package itself stays in the repo so it keeps being published for external consumers, and is bridged to the external coin packages that still peer-depend on it via `pnpm.packageExtensions` using `workspace:*` (which reuses the single in-repo copy, so the dependency graph keeps exactly the physical copies it had before). [LedgerHQ/coin-modules#752](https://github.com/LedgerHQ/coin-modules/pull/752) removes that peerDependency upstream; once it is released the bridge can be dropped, but the package still needs publishing.
+
+- [#20625](https://github.com/LedgerHQ/ledger-live/pull/20625) [`fd3e81e`](https://github.com/LedgerHQ/ledger-live/commit/fd3e81e80eb5400e739e40e3ed360f40139d2aa4) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Make the EIP-7623 calldata floor remotely configurable through the new `calldataFloorGasPerToken` and `calldataFloorZeroByteTokens` coin config fields. Both default to the current EIP-7623 values, so behaviour is unchanged unless they are set; EIP-7976 can then be activated per chain without a release.
+
+- [#20627](https://github.com/LedgerHQ/ledger-live/pull/20627) [`7af726b`](https://github.com/LedgerHQ/ledger-live/commit/7af726b50eb7c8a2712bf734aac5618be61911ef) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Explain the higher network fees when sending to an address that does not exist yet. EIP-8037 charges account creation substantially more gas, and nothing in the send flow told the user why the fee jumped. The gas we send is unchanged: `eth_estimateGas` remains the only source.
+
+- [#20620](https://github.com/LedgerHQ/ledger-live/pull/20620) [`e5ec77b`](https://github.com/LedgerHQ/ledger-live/commit/e5ec77bf92a89c5f9a36a2e5901729e20682ead0) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Skip logs emitted by SYSTEM_ADDRESS when parsing ERC20 transfers from receipts. EIP-7708 (Glamsterdam) makes every native transfer emit a log identical to an ERC20 `Transfer`, which would otherwise be reported as a transfer of a non-existent token.
+
+- [#20356](https://github.com/LedgerHQ/ledger-live/pull/20356) [`2ec3de4`](https://github.com/LedgerHQ/ledger-live/commit/2ec3de4f864bc7bccf02f42b04356bb563f9ed91) Thanks [@qperrot](https://github.com/qperrot)! - Fix EVM send-max on L2s (Scroll, Blast, Base) failing at broadcast with `InsufficientFunds`
+
+  The send-max amount is `balance - fees`, but the L2 → L1 data fee (`additionalFees`) was reserved with no headroom, unlike L2 execution gas which already carries ~2x headroom via `maxFeePerGas`. Because the L1 data fee tracks the volatile Ethereum L1 base fee, any upward drift between fee estimation and broadcast (device signing takes seconds) made the transaction overspend and the node rejected it.
+
+  - Reserve a 2x headroom on the L1 data fee for send-max only (normal sends keep an exact fee display).
+  - Query the OP-stack L1 gas oracle for Blast and Base on the Ledger node — they were falling through to a `0` L1 fee and being under-reserved.
+  - Point the external RPC node at the canonical OP-stack `GasPriceOracle` predeploy (`0x420000000000000000000000000000000000000F`) so the L1-fee lookup succeeds on all OP-stack chains.
+
+- [#20447](https://github.com/LedgerHQ/ledger-live/pull/20447) [`9e1412e`](https://github.com/LedgerHQ/ledger-live/commit/9e1412e08ccccd4af4a7078a797332ea92f86c63) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - chore(coin-modules): provide validator id
+
+- [#20431](https://github.com/LedgerHQ/ledger-live/pull/20431) [`0e439a0`](https://github.com/LedgerHQ/ledger-live/commit/0e439a0b73f1ad49aab32e98dfaf4fbd1d0ded04) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(coin-evm): migrate EVM staking types from `@ledgerhq/types-live` to `@ledgerhq/coin-module-framework`; move staking helpers (mapDelegations, serialization) to ledger-live-common evm family
+
+### Patch Changes
+
+- Updated dependencies [[`aee0e64`](https://github.com/LedgerHQ/ledger-live/commit/aee0e64b491aafc1ca8fea16b1ef124cb183770b), [`53c3431`](https://github.com/LedgerHQ/ledger-live/commit/53c3431e01b3139ef689cb589bab0adee4ed6152)]:
+  - @ledgerhq/ledger-wallet-framework@2.8.0
+  - @ledgerhq/evm-tools@1.13.2
+
+## 4.10.0-next.0
+
+### Minor Changes
+
+- [#20278](https://github.com/LedgerHQ/ledger-live/pull/20278) [`3d24a89`](https://github.com/LedgerHQ/ledger-live/commit/3d24a898d59de55364ec29de29eaecb7ca14425d) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Drop the `@ledgerhq/errors` dependency, completing the errors sunset (LIVE-32915).
+
+  The `@ledgerhq/errors` package is removed from the monorepo: no workspace source imported it anymore, every error class it held now lives in the package that owns it (`@ledgerhq/ledger-wallet-framework/errors` for the ones shared across coin modules). `createCustomErrorClass` and the `serializeError` / `deserializeError` stack are gone with it — define errors as native classes and branch on `error.name`.
+
+  `@ledgerhq/errors@6.37.0` stays on npm for external consumers, but is no longer published from this repo.
+
+- [#20280](https://github.com/LedgerHQ/ledger-live/pull/20280) [`9fcbe39`](https://github.com/LedgerHQ/ledger-live/commit/9fcbe39689ff122568ffb031a30dc3805ebb6add) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Stop depending on `@ledgerhq/errors` (LIVE-32915).
+
+  No workspace package declares it anymore, and none may again: `enforce-boundaries` now fails CI on any manifest that does. The classes it held live in the package that owns them, with `@ledgerhq/ledger-wallet-framework/errors` as the shared home below the coin layer.
+
+  The package itself stays in the repo so it keeps being published for external consumers, and is bridged to the external coin packages that still peer-depend on it via `pnpm.packageExtensions` using `workspace:*` (which reuses the single in-repo copy, so the dependency graph keeps exactly the physical copies it had before). [LedgerHQ/coin-modules#752](https://github.com/LedgerHQ/coin-modules/pull/752) removes that peerDependency upstream; once it is released the bridge can be dropped, but the package still needs publishing.
+
+- [#20625](https://github.com/LedgerHQ/ledger-live/pull/20625) [`fd3e81e`](https://github.com/LedgerHQ/ledger-live/commit/fd3e81e80eb5400e739e40e3ed360f40139d2aa4) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Make the EIP-7623 calldata floor remotely configurable through the new `calldataFloorGasPerToken` and `calldataFloorZeroByteTokens` coin config fields. Both default to the current EIP-7623 values, so behaviour is unchanged unless they are set; EIP-7976 can then be activated per chain without a release.
+
+- [#20627](https://github.com/LedgerHQ/ledger-live/pull/20627) [`7af726b`](https://github.com/LedgerHQ/ledger-live/commit/7af726b50eb7c8a2712bf734aac5618be61911ef) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Explain the higher network fees when sending to an address that does not exist yet. EIP-8037 charges account creation substantially more gas, and nothing in the send flow told the user why the fee jumped. The gas we send is unchanged: `eth_estimateGas` remains the only source.
+
+- [#20620](https://github.com/LedgerHQ/ledger-live/pull/20620) [`e5ec77b`](https://github.com/LedgerHQ/ledger-live/commit/e5ec77bf92a89c5f9a36a2e5901729e20682ead0) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Skip logs emitted by SYSTEM_ADDRESS when parsing ERC20 transfers from receipts. EIP-7708 (Glamsterdam) makes every native transfer emit a log identical to an ERC20 `Transfer`, which would otherwise be reported as a transfer of a non-existent token.
+
+- [#20356](https://github.com/LedgerHQ/ledger-live/pull/20356) [`2ec3de4`](https://github.com/LedgerHQ/ledger-live/commit/2ec3de4f864bc7bccf02f42b04356bb563f9ed91) Thanks [@qperrot](https://github.com/qperrot)! - Fix EVM send-max on L2s (Scroll, Blast, Base) failing at broadcast with `InsufficientFunds`
+
+  The send-max amount is `balance - fees`, but the L2 → L1 data fee (`additionalFees`) was reserved with no headroom, unlike L2 execution gas which already carries ~2x headroom via `maxFeePerGas`. Because the L1 data fee tracks the volatile Ethereum L1 base fee, any upward drift between fee estimation and broadcast (device signing takes seconds) made the transaction overspend and the node rejected it.
+
+  - Reserve a 2x headroom on the L1 data fee for send-max only (normal sends keep an exact fee display).
+  - Query the OP-stack L1 gas oracle for Blast and Base on the Ledger node — they were falling through to a `0` L1 fee and being under-reserved.
+  - Point the external RPC node at the canonical OP-stack `GasPriceOracle` predeploy (`0x420000000000000000000000000000000000000F`) so the L1-fee lookup succeeds on all OP-stack chains.
+
+- [#20447](https://github.com/LedgerHQ/ledger-live/pull/20447) [`9e1412e`](https://github.com/LedgerHQ/ledger-live/commit/9e1412e08ccccd4af4a7078a797332ea92f86c63) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - chore(coin-modules): provide validator id
+
+- [#20431](https://github.com/LedgerHQ/ledger-live/pull/20431) [`0e439a0`](https://github.com/LedgerHQ/ledger-live/commit/0e439a0b73f1ad49aab32e98dfaf4fbd1d0ded04) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(coin-evm): migrate EVM staking types from `@ledgerhq/types-live` to `@ledgerhq/coin-module-framework`; move staking helpers (mapDelegations, serialization) to ledger-live-common evm family
+
+### Patch Changes
+
+- Updated dependencies [[`aee0e64`](https://github.com/LedgerHQ/ledger-live/commit/aee0e64b491aafc1ca8fea16b1ef124cb183770b), [`53c3431`](https://github.com/LedgerHQ/ledger-live/commit/53c3431e01b3139ef689cb589bab0adee4ed6152)]:
+  - @ledgerhq/ledger-wallet-framework@2.8.0-next.0
+  - @ledgerhq/evm-tools@1.13.2
+
+## 4.9.0
+
+### Minor Changes
+
+- [#20280](https://github.com/LedgerHQ/ledger-live/pull/20280) [`9fcbe39`](https://github.com/LedgerHQ/ledger-live/commit/9fcbe39689ff122568ffb031a30dc3805ebb6add) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Stop depending on `@ledgerhq/errors` (LIVE-32915).
+
+  No workspace package declares it anymore, and none may again: `enforce-boundaries` now fails CI on any manifest that does. The classes it held live in the package that owns them, with `@ledgerhq/ledger-wallet-framework/errors` as the shared home below the coin layer.
+
+  The package itself stays in the repo so it keeps being published for external consumers, and is bridged to the external coin packages that still peer-depend on it via `pnpm.packageExtensions` using `workspace:*` (which reuses the single in-repo copy, so the dependency graph keeps exactly the physical copies it had before). [LedgerHQ/coin-modules#752](https://github.com/LedgerHQ/coin-modules/pull/752) removes that peerDependency upstream; once it is released the bridge can be dropped, but the package still needs publishing.
+
+- [#20339](https://github.com/LedgerHQ/ledger-live/pull/20339) [`6a531c5`](https://github.com/LedgerHQ/ledger-live/commit/6a531c54ccd1c65df122286de6f136f9d73b9002) Thanks [@qperrot](https://github.com/qperrot)! - Remove Scroll Sepolia testnet support as it is no longer maintained
+
+### Patch Changes
+
+- Updated dependencies [[`53c3431`](https://github.com/LedgerHQ/ledger-live/commit/53c3431e01b3139ef689cb589bab0adee4ed6152), [`635fa12`](https://github.com/LedgerHQ/ledger-live/commit/635fa12d47f5a98858326f4dd68962dffe82eda9)]:
+  - @ledgerhq/ledger-wallet-framework@2.7.0
+  - @ledgerhq/evm-tools@1.13.2
+
+## 4.9.0-next.0
+
+### Minor Changes
+
+- [#20280](https://github.com/LedgerHQ/ledger-live/pull/20280) [`9fcbe39`](https://github.com/LedgerHQ/ledger-live/commit/9fcbe39689ff122568ffb031a30dc3805ebb6add) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Stop depending on `@ledgerhq/errors` (LIVE-32915).
+
+  No workspace package declares it anymore, and none may again: `enforce-boundaries` now fails CI on any manifest that does. The classes it held live in the package that owns them, with `@ledgerhq/ledger-wallet-framework/errors` as the shared home below the coin layer.
+
+  The package itself stays in the repo so it keeps being published for external consumers, and is bridged to the external coin packages that still peer-depend on it via `pnpm.packageExtensions` using `workspace:*` (which reuses the single in-repo copy, so the dependency graph keeps exactly the physical copies it had before). [LedgerHQ/coin-modules#752](https://github.com/LedgerHQ/coin-modules/pull/752) removes that peerDependency upstream; once it is released the bridge can be dropped, but the package still needs publishing.
+
+- [#20339](https://github.com/LedgerHQ/ledger-live/pull/20339) [`6a531c5`](https://github.com/LedgerHQ/ledger-live/commit/6a531c54ccd1c65df122286de6f136f9d73b9002) Thanks [@qperrot](https://github.com/qperrot)! - Remove Scroll Sepolia testnet support as it is no longer maintained
+
+### Patch Changes
+
+- Updated dependencies [[`53c3431`](https://github.com/LedgerHQ/ledger-live/commit/53c3431e01b3139ef689cb589bab0adee4ed6152), [`635fa12`](https://github.com/LedgerHQ/ledger-live/commit/635fa12d47f5a98858326f4dd68962dffe82eda9)]:
+  - @ledgerhq/ledger-wallet-framework@2.7.0-next.0
+  - @ledgerhq/evm-tools@1.13.2
+
+## 4.8.0
+
+### Minor Changes
+
+- [#19980](https://github.com/LedgerHQ/ledger-live/pull/19980) [`ba69273`](https://github.com/LedgerHQ/ledger-live/commit/ba692732b521c42f934acf540641ecbfdb837004) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Convert error classes from createCustomErrorClass factory to native extends Error (LIVE-32915 tier 1a)
+
+- [#19982](https://github.com/LedgerHQ/ledger-live/pull/19982) [`f5e4e87`](https://github.com/LedgerHQ/ledger-live/commit/f5e4e87a114ca8336f310a4b5e39bff650fc0750) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Display estimated pending rewards for 0G delegations; gate claim-rewards UI to chains that support it.
+
+- [#20139](https://github.com/LedgerHQ/ledger-live/pull/20139) [`cee41c4`](https://github.com/LedgerHQ/ledger-live/commit/cee41c4e7a7c7e042d4df39d5a34591d72d723d0) Thanks [@dilaouid](https://github.com/dilaouid)! - fix(evm): keep legacy custom fees on non-EIP-1559 chains like Ethereum Classic
+
+- [#19879](https://github.com/LedgerHQ/ledger-live/pull/19879) [`4ce5257`](https://github.com/LedgerHQ/ledger-live/commit/4ce52570577d471d4af0609058ac6b9b03ad1949) Thanks [@adussarps](https://github.com/adussarps)! - Support the read-only smart-contract `call` (ADR-044) on EVM Ledger nodes, in addition to external RPC nodes. Ledger nodes serve it through the explorer `contract/read` endpoint (the same one already used for allowances and L1 fee oracles), so `call` no longer throws "call is not supported" on Ledger-node chains.
+
+### Patch Changes
+
+- Updated dependencies [[`1070564`](https://github.com/LedgerHQ/ledger-live/commit/107056410174d3da2d45c468232a8d742aea021f), [`2e1aecc`](https://github.com/LedgerHQ/ledger-live/commit/2e1aeccf6c91761c5d09c91e4be10dcc8c22eb7b), [`1af9ec9`](https://github.com/LedgerHQ/ledger-live/commit/1af9ec984928e0bf5fd23ce12edcc6131b0302a0), [`c475d28`](https://github.com/LedgerHQ/ledger-live/commit/c475d288b4978aa3011c9e76f3e9a1e2f9733010), [`dbf8acf`](https://github.com/LedgerHQ/ledger-live/commit/dbf8acf27c9405548e7eb559d163a8e0883a20aa)]:
+  - @ledgerhq/errors@7.0.0
+  - @ledgerhq/ledger-wallet-framework@2.6.0
+  - @ledgerhq/live-network@3.0.0
+  - @ledgerhq/live-env@3.0.0
+  - @ledgerhq/evm-tools@1.13.2
+
+## 4.8.0-next.0
+
+### Minor Changes
+
+- [#19980](https://github.com/LedgerHQ/ledger-live/pull/19980) [`ba69273`](https://github.com/LedgerHQ/ledger-live/commit/ba692732b521c42f934acf540641ecbfdb837004) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Convert error classes from createCustomErrorClass factory to native extends Error (LIVE-32915 tier 1a)
+
+- [#19982](https://github.com/LedgerHQ/ledger-live/pull/19982) [`f5e4e87`](https://github.com/LedgerHQ/ledger-live/commit/f5e4e87a114ca8336f310a4b5e39bff650fc0750) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Display estimated pending rewards for 0G delegations; gate claim-rewards UI to chains that support it.
+
+- [#20139](https://github.com/LedgerHQ/ledger-live/pull/20139) [`cee41c4`](https://github.com/LedgerHQ/ledger-live/commit/cee41c4e7a7c7e042d4df39d5a34591d72d723d0) Thanks [@dilaouid](https://github.com/dilaouid)! - fix(evm): keep legacy custom fees on non-EIP-1559 chains like Ethereum Classic
+
+- [#19879](https://github.com/LedgerHQ/ledger-live/pull/19879) [`4ce5257`](https://github.com/LedgerHQ/ledger-live/commit/4ce52570577d471d4af0609058ac6b9b03ad1949) Thanks [@adussarps](https://github.com/adussarps)! - Support the read-only smart-contract `call` (ADR-044) on EVM Ledger nodes, in addition to external RPC nodes. Ledger nodes serve it through the explorer `contract/read` endpoint (the same one already used for allowances and L1 fee oracles), so `call` no longer throws "call is not supported" on Ledger-node chains.
+
+### Patch Changes
+
+- Updated dependencies [[`1070564`](https://github.com/LedgerHQ/ledger-live/commit/107056410174d3da2d45c468232a8d742aea021f), [`2e1aecc`](https://github.com/LedgerHQ/ledger-live/commit/2e1aeccf6c91761c5d09c91e4be10dcc8c22eb7b), [`1af9ec9`](https://github.com/LedgerHQ/ledger-live/commit/1af9ec984928e0bf5fd23ce12edcc6131b0302a0), [`c475d28`](https://github.com/LedgerHQ/ledger-live/commit/c475d288b4978aa3011c9e76f3e9a1e2f9733010), [`dbf8acf`](https://github.com/LedgerHQ/ledger-live/commit/dbf8acf27c9405548e7eb559d163a8e0883a20aa)]:
+  - @ledgerhq/errors@7.0.0-next.0
+  - @ledgerhq/ledger-wallet-framework@2.6.0-next.0
+  - @ledgerhq/live-network@3.0.0-next.0
+  - @ledgerhq/live-env@3.0.0-next.0
+  - @ledgerhq/evm-tools@1.13.2-next.0
+
+## 4.7.0
+
+### Minor Changes
+
+- [#19914](https://github.com/LedgerHQ/ledger-live/pull/19914) [`a306abb`](https://github.com/LedgerHQ/ledger-live/commit/a306abbb605751b5b8741d8d7d69d2bf7f78a49b) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(coin-evm): add `delegationMaxAmountReserve` on 0g / Monad / Somnia
+
+- [#19540](https://github.com/LedgerHQ/ledger-live/pull/19540) [`a128521`](https://github.com/LedgerHQ/ledger-live/commit/a1285211f0482229e5011505fb9e8c9d473cb86a) Thanks [@adussarps](https://github.com/adussarps)! - Expose the read-only smart-contract call API on EVM external RPC nodes and explicitly reject it on unsupported coin modules.
+
+- [#19738](https://github.com/LedgerHQ/ledger-live/pull/19738) [`22d4a88`](https://github.com/LedgerHQ/ledger-live/commit/22d4a888228b7e5409593a2d6af072b4ab07bb07) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(coin-evm): store delegation shares
+
+- [#19717](https://github.com/LedgerHQ/ledger-live/pull/19717) [`105ef90`](https://github.com/LedgerHQ/ledger-live/commit/105ef905bdb80022997d86729ccddbc220841bae) Thanks [@qperrot](https://github.com/qperrot)! - Fix: staking gas-estimation retry for Somnia-style chains (calldata + value rebuilt together, prepared intent reused) + tests.
+
+- [#19739](https://github.com/LedgerHQ/ledger-live/pull/19739) [`a4b09cf`](https://github.com/LedgerHQ/ledger-live/commit/a4b09cf063a0042a4ba31c350327e8d0ac9aa90c) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(coin-evm): add per-chain `canUndelegate`
+
+- [#19876](https://github.com/LedgerHQ/ledger-live/pull/19876) [`669a6d4`](https://github.com/LedgerHQ/ledger-live/commit/669a6d42b2178451e27383c746e3f8fd3d34caef) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Wire 0G undelegate: on-chain shares fetch (getDelegation/convertToShares) + withdrawal fee (withdrawalFeeInGwei) via prepareZeroGravityIntent.
+
+- [#19884](https://github.com/LedgerHQ/ledger-live/pull/19884) [`f9f5db4`](https://github.com/LedgerHQ/ledger-live/commit/f9f5db46534f5294fdbb3fe12a971ed4f11e6c2d) Thanks [@qperrot](https://github.com/qperrot)! - Add data-driven delegation-visibility-delay notice on the EVM staking delegate amount step (Somnia: 5 minutes)
+
+- [#19644](https://github.com/LedgerHQ/ledger-live/pull/19644) [`01a7113`](https://github.com/LedgerHQ/ledger-live/commit/01a71130ab7219637d23222de544e97e668bba47) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - feat(somnia): implement validators fetching and adapter
+
+- [#19918](https://github.com/LedgerHQ/ledger-live/pull/19918) [`b4ecf97`](https://github.com/LedgerHQ/ledger-live/commit/b4ecf97c0d16a686078c995f7218a256916a9e39) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - EVM staking: 0G unbonding table (skip completed entries), rewards column visibility per chain
+
+- [#19910](https://github.com/LedgerHQ/ledger-live/pull/19910) [`b38b0b1`](https://github.com/LedgerHQ/ledger-live/commit/b38b0b13e8e5c01800bf1234c7ee0f454b04f5cc) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(coin-evm): add optional staking gas multiplier, and flatten `prepareUnsignedTxParams` for readability
+
+- [#19801](https://github.com/LedgerHQ/ledger-live/pull/19801) [`132a4f9`](https://github.com/LedgerHQ/ledger-live/commit/132a4f90adc816f69dfbde1b28e120ad501004c5) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Add a mandatory `resolveOperationAmount` to `StakingContractConfig`, following the same config-driven pattern as `resolveValidatorAddress`. Each chain owns its amount derivation; 0G calls `convertToTokens(shares)` on the validator contract so the undelegate drawer shows the real OG token amount instead of the raw vault-share value.
+
+### Patch Changes
+
+- Updated dependencies [[`e7caf31`](https://github.com/LedgerHQ/ledger-live/commit/e7caf310efbbf82aa777a7e86ceafe60f11e7193), [`4d99006`](https://github.com/LedgerHQ/ledger-live/commit/4d99006589b6855d1a06a8aa1ece23c3f6f3ddf7)]:
+  - @ledgerhq/live-network@2.7.0
+  - @ledgerhq/ledger-wallet-framework@2.5.0
+  - @ledgerhq/evm-tools@1.13.1
+
+## 4.7.0-next.0
+
+### Minor Changes
+
+- [#19914](https://github.com/LedgerHQ/ledger-live/pull/19914) [`a306abb`](https://github.com/LedgerHQ/ledger-live/commit/a306abbb605751b5b8741d8d7d69d2bf7f78a49b) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(coin-evm): add `delegationMaxAmountReserve` on 0g / Monad / Somnia
+
+- [#19540](https://github.com/LedgerHQ/ledger-live/pull/19540) [`a128521`](https://github.com/LedgerHQ/ledger-live/commit/a1285211f0482229e5011505fb9e8c9d473cb86a) Thanks [@adussarps](https://github.com/adussarps)! - Expose the read-only smart-contract call API on EVM external RPC nodes and explicitly reject it on unsupported coin modules.
+
+- [#19738](https://github.com/LedgerHQ/ledger-live/pull/19738) [`22d4a88`](https://github.com/LedgerHQ/ledger-live/commit/22d4a888228b7e5409593a2d6af072b4ab07bb07) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(coin-evm): store delegation shares
+
+- [#19717](https://github.com/LedgerHQ/ledger-live/pull/19717) [`105ef90`](https://github.com/LedgerHQ/ledger-live/commit/105ef905bdb80022997d86729ccddbc220841bae) Thanks [@qperrot](https://github.com/qperrot)! - Fix: staking gas-estimation retry for Somnia-style chains (calldata + value rebuilt together, prepared intent reused) + tests.
+
+- [#19739](https://github.com/LedgerHQ/ledger-live/pull/19739) [`a4b09cf`](https://github.com/LedgerHQ/ledger-live/commit/a4b09cf063a0042a4ba31c350327e8d0ac9aa90c) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(coin-evm): add per-chain `canUndelegate`
+
+- [#19876](https://github.com/LedgerHQ/ledger-live/pull/19876) [`669a6d4`](https://github.com/LedgerHQ/ledger-live/commit/669a6d42b2178451e27383c746e3f8fd3d34caef) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Wire 0G undelegate: on-chain shares fetch (getDelegation/convertToShares) + withdrawal fee (withdrawalFeeInGwei) via prepareZeroGravityIntent.
+
+- [#19884](https://github.com/LedgerHQ/ledger-live/pull/19884) [`f9f5db4`](https://github.com/LedgerHQ/ledger-live/commit/f9f5db46534f5294fdbb3fe12a971ed4f11e6c2d) Thanks [@qperrot](https://github.com/qperrot)! - Add data-driven delegation-visibility-delay notice on the EVM staking delegate amount step (Somnia: 5 minutes)
+
+- [#19644](https://github.com/LedgerHQ/ledger-live/pull/19644) [`01a7113`](https://github.com/LedgerHQ/ledger-live/commit/01a71130ab7219637d23222de544e97e668bba47) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - feat(somnia): implement validators fetching and adapter
+
+- [#19918](https://github.com/LedgerHQ/ledger-live/pull/19918) [`b4ecf97`](https://github.com/LedgerHQ/ledger-live/commit/b4ecf97c0d16a686078c995f7218a256916a9e39) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - EVM staking: 0G unbonding table (skip completed entries), rewards column visibility per chain
+
+- [#19910](https://github.com/LedgerHQ/ledger-live/pull/19910) [`b38b0b1`](https://github.com/LedgerHQ/ledger-live/commit/b38b0b13e8e5c01800bf1234c7ee0f454b04f5cc) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(coin-evm): add optional staking gas multiplier, and flatten `prepareUnsignedTxParams` for readability
+
+- [#19801](https://github.com/LedgerHQ/ledger-live/pull/19801) [`132a4f9`](https://github.com/LedgerHQ/ledger-live/commit/132a4f90adc816f69dfbde1b28e120ad501004c5) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Add a mandatory `resolveOperationAmount` to `StakingContractConfig`, following the same config-driven pattern as `resolveValidatorAddress`. Each chain owns its amount derivation; 0G calls `convertToTokens(shares)` on the validator contract so the undelegate drawer shows the real OG token amount instead of the raw vault-share value.
+
+### Patch Changes
+
+- Updated dependencies [[`e7caf31`](https://github.com/LedgerHQ/ledger-live/commit/e7caf310efbbf82aa777a7e86ceafe60f11e7193), [`4d99006`](https://github.com/LedgerHQ/ledger-live/commit/4d99006589b6855d1a06a8aa1ece23c3f6f3ddf7)]:
+  - @ledgerhq/live-network@2.7.0-next.0
+  - @ledgerhq/ledger-wallet-framework@2.5.0-next.0
+  - @ledgerhq/evm-tools@1.13.1
+
+## 4.6.0
+
+### Minor Changes
+
+- [#19683](https://github.com/LedgerHQ/ledger-live/pull/19683) [`4b73f23`](https://github.com/LedgerHQ/ledger-live/commit/4b73f23260ecc28574f46a7fd0f5cd7627d6d13f) Thanks [@ysitbon](https://github.com/ysitbon)! - Consume currency accessors and currency types from `@ledgerhq/ledger-wallet-framework` instead of `@ledgerhq/cryptoassets`/`@ledgerhq/types-cryptoassets`. Value accessors now resolve through the framework's injected `CurrenciesResolver`; `CryptoCurrency`/`TokenCurrency`/`Unit`/`ExplorerView` types are imported from the framework.
+
+- [#19453](https://github.com/LedgerHQ/ledger-live/pull/19453) [`e478b6e`](https://github.com/LedgerHQ/ledger-live/commit/e478b6ee02a1ef105f07b2ba0d1f04292855bc91) Thanks [@jprudent](https://github.com/jprudent)! - Add configurable getBlock internal-tx source list with runtime validation, split node trace RPC methods, and behaviour-preserving default fallback semantics
+
+- [#19621](https://github.com/LedgerHQ/ledger-live/pull/19621) [`bc0573e`](https://github.com/LedgerHQ/ledger-live/commit/bc0573e3bf73e47ad4f8a58e228a3e11e0866e6e) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Fix EVM staking operation history showing the user's own address instead of the staking contract as recipient
+
+- [#19273](https://github.com/LedgerHQ/ledger-live/pull/19273) [`fad98a1`](https://github.com/LedgerHQ/ledger-live/commit/fad98a1d33675605d646959a1b1a2b648b2f59f2) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Adapters and network explorers now return `Operation<MemoNotSupported>` from `@ledgerhq/coin-module-framework` instead of `Operation` from `@ledgerhq/types-live`, removing the restricted dependency from `adapters/`, `network/`, and `logic/`.
+
+- [#19694](https://github.com/LedgerHQ/ledger-live/pull/19694) [`2b4a016`](https://github.com/LedgerHQ/ledger-live/commit/2b4a016a8c2f2a635c50928bb2f78b63d96ff67f) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(coin-evm): lowercase validator explorer URL
+
+- [#19620](https://github.com/LedgerHQ/ledger-live/pull/19620) [`d3862bb`](https://github.com/LedgerHQ/ledger-live/commit/d3862bb82e8084b624f65ef6d22d3eb151e0f18f) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - feat(evm): register somnia contract
+
+- [#19243](https://github.com/LedgerHQ/ledger-live/pull/19243) [`07c4724`](https://github.com/LedgerHQ/ledger-live/commit/07c47249db7aa923af0a29a6dc8fb0c0264a08c7) Thanks [@jprudent](https://github.com/jprudent)! - Add configurable getBlock internal-tx source list with compile-time-safe builder, split node trace RPC methods, and behaviour-preserving default fallback semantics
+
+- [#19450](https://github.com/LedgerHQ/ledger-live/pull/19450) [`682c34b`](https://github.com/LedgerHQ/ledger-live/commit/682c34b48b800e4963a06e2731ff16d116af42f9) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Wire 0G (zero_gravity) delegate: add protocol encoder, stake fetcher (getDelegation + convertToTokens), and STAKING_CONFIG entry. Fix Blockscout adapter to derive methodId from input calldata when the API field is absent, so staking ops keep their DELEGATE type after confirmation.
+
+- [#19401](https://github.com/LedgerHQ/ledger-live/pull/19401) [`083452c`](https://github.com/LedgerHQ/ledger-live/commit/083452c72359a52c363e7de95e53b98f0c6ed906) Thanks [@YazhuEth](https://github.com/YazhuEth)! - coin-evm now reads `feesStrategy` and `sponsored` from the `customFees` fee-estimation parameters instead of the transaction intent. The generic-coin-framework bridge and the EVM swap job fold these fields into `customFees.parameters` accordingly, aligning with the coin-module framework where both are deprecated on `TransactionIntent`.
+
+- [#19035](https://github.com/LedgerHQ/ledger-live/pull/19035) [`07bfc2c`](https://github.com/LedgerHQ/ledger-live/commit/07bfc2cbcf3c63b55224dec2aef1818d22c2315c) Thanks [@YazhuEth](https://github.com/YazhuEth)! - generic coin-framework bridge: compute the send-max (`useAllAmount`) amount once in `prepareTransaction` and reuse it in `signOperation`, instead of recomputing it via `validateIntent` in `prepareTransaction`, `signOperation` and `estimateMaxSpendable`. The amount is `parameters.amount` when the coin exposes it (Tezos), the token sub-account balance for token sends, otherwise `spendableBalance - max(reserve, fees)` (coin-evm now exposes `reserve`/`amountScale` for delegate). Pending operations are subtracted so the amount stays consistent with `getTransactionStatus` (LIVE-22227, LIVE-22228, LIVE-22229).
+
+- [#19465](https://github.com/LedgerHQ/ledger-live/pull/19465) [`50660af`](https://github.com/LedgerHQ/ledger-live/commit/50660af751c2306802f1fefb2499cbf353f79cc4) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Replace `typeof d[0]` type-sniffing in `resolveStakingValidator` with a per-chain `resolveValidatorAddress` on `StakingContractConfig`. Fixes 0G operation drawer pointing to delegator address instead of validator.
+
+- [#19283](https://github.com/LedgerHQ/ledger-live/pull/19283) [`a952f84`](https://github.com/LedgerHQ/ledger-live/commit/a952f84063e5f791b9c757827570d59d048c43bf) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(coin-evm): clear remaining crypto assets store mentions
+
+- [#19680](https://github.com/LedgerHQ/ledger-live/pull/19680) [`ff9d1d2`](https://github.com/LedgerHQ/ledger-live/commit/ff9d1d29fbc3d6a4d75e3ca145e3a9df0dda50c5) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(coin-evm): drop incoming root-trace duplicates in `listOperations`
+
+- [#19409](https://github.com/LedgerHQ/ledger-live/pull/19409) [`ddc6499`](https://github.com/LedgerHQ/ledger-live/commit/ddc6499ebc483a853d82ca3c00d0927169c8e0ed) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Pass `to` into staking selector cache to support factory-per-validator chains
+
+### Patch Changes
+
+- Updated dependencies [[`8f30c75`](https://github.com/LedgerHQ/ledger-live/commit/8f30c75ecb553a720722f1e039b4aec53fce2a87), [`0f85077`](https://github.com/LedgerHQ/ledger-live/commit/0f850774ae3b46fd4a06c0da5762d3d4211b26af), [`a15b864`](https://github.com/LedgerHQ/ledger-live/commit/a15b864576d901f15d480070b475314c3b23c1dd), [`fc44f1e`](https://github.com/LedgerHQ/ledger-live/commit/fc44f1e6ddcca939c117e0cb8bc49c404163b003), [`6ef44af`](https://github.com/LedgerHQ/ledger-live/commit/6ef44afa6807ace32b3f6620173868f2ef20e158), [`6ef44af`](https://github.com/LedgerHQ/ledger-live/commit/6ef44afa6807ace32b3f6620173868f2ef20e158)]:
+  - @ledgerhq/ledger-wallet-framework@2.4.0
+  - @ledgerhq/live-env@2.42.0
+  - @ledgerhq/evm-tools@1.13.1
+  - @ledgerhq/live-network@2.6.8
+
+## 4.6.0-next.0
+
+### Minor Changes
+
+- [#19683](https://github.com/LedgerHQ/ledger-live/pull/19683) [`4b73f23`](https://github.com/LedgerHQ/ledger-live/commit/4b73f23260ecc28574f46a7fd0f5cd7627d6d13f) Thanks [@ysitbon](https://github.com/ysitbon)! - Consume currency accessors and currency types from `@ledgerhq/ledger-wallet-framework` instead of `@ledgerhq/cryptoassets`/`@ledgerhq/types-cryptoassets`. Value accessors now resolve through the framework's injected `CurrenciesResolver`; `CryptoCurrency`/`TokenCurrency`/`Unit`/`ExplorerView` types are imported from the framework.
+
+- [#19453](https://github.com/LedgerHQ/ledger-live/pull/19453) [`e478b6e`](https://github.com/LedgerHQ/ledger-live/commit/e478b6ee02a1ef105f07b2ba0d1f04292855bc91) Thanks [@jprudent](https://github.com/jprudent)! - Add configurable getBlock internal-tx source list with runtime validation, split node trace RPC methods, and behaviour-preserving default fallback semantics
+
+- [#19621](https://github.com/LedgerHQ/ledger-live/pull/19621) [`bc0573e`](https://github.com/LedgerHQ/ledger-live/commit/bc0573e3bf73e47ad4f8a58e228a3e11e0866e6e) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Fix EVM staking operation history showing the user's own address instead of the staking contract as recipient
+
+- [#19273](https://github.com/LedgerHQ/ledger-live/pull/19273) [`fad98a1`](https://github.com/LedgerHQ/ledger-live/commit/fad98a1d33675605d646959a1b1a2b648b2f59f2) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Adapters and network explorers now return `Operation<MemoNotSupported>` from `@ledgerhq/coin-module-framework` instead of `Operation` from `@ledgerhq/types-live`, removing the restricted dependency from `adapters/`, `network/`, and `logic/`.
+
+- [#19694](https://github.com/LedgerHQ/ledger-live/pull/19694) [`2b4a016`](https://github.com/LedgerHQ/ledger-live/commit/2b4a016a8c2f2a635c50928bb2f78b63d96ff67f) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(coin-evm): lowercase validator explorer URL
+
+- [#19620](https://github.com/LedgerHQ/ledger-live/pull/19620) [`d3862bb`](https://github.com/LedgerHQ/ledger-live/commit/d3862bb82e8084b624f65ef6d22d3eb151e0f18f) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - feat(evm): register somnia contract
+
+- [#19243](https://github.com/LedgerHQ/ledger-live/pull/19243) [`07c4724`](https://github.com/LedgerHQ/ledger-live/commit/07c47249db7aa923af0a29a6dc8fb0c0264a08c7) Thanks [@jprudent](https://github.com/jprudent)! - Add configurable getBlock internal-tx source list with compile-time-safe builder, split node trace RPC methods, and behaviour-preserving default fallback semantics
+
+- [#19450](https://github.com/LedgerHQ/ledger-live/pull/19450) [`682c34b`](https://github.com/LedgerHQ/ledger-live/commit/682c34b48b800e4963a06e2731ff16d116af42f9) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Wire 0G (zero_gravity) delegate: add protocol encoder, stake fetcher (getDelegation + convertToTokens), and STAKING_CONFIG entry. Fix Blockscout adapter to derive methodId from input calldata when the API field is absent, so staking ops keep their DELEGATE type after confirmation.
+
+- [#19401](https://github.com/LedgerHQ/ledger-live/pull/19401) [`083452c`](https://github.com/LedgerHQ/ledger-live/commit/083452c72359a52c363e7de95e53b98f0c6ed906) Thanks [@YazhuEth](https://github.com/YazhuEth)! - coin-evm now reads `feesStrategy` and `sponsored` from the `customFees` fee-estimation parameters instead of the transaction intent. The generic-coin-framework bridge and the EVM swap job fold these fields into `customFees.parameters` accordingly, aligning with the coin-module framework where both are deprecated on `TransactionIntent`.
+
+- [#19035](https://github.com/LedgerHQ/ledger-live/pull/19035) [`07bfc2c`](https://github.com/LedgerHQ/ledger-live/commit/07bfc2cbcf3c63b55224dec2aef1818d22c2315c) Thanks [@YazhuEth](https://github.com/YazhuEth)! - generic coin-framework bridge: compute the send-max (`useAllAmount`) amount once in `prepareTransaction` and reuse it in `signOperation`, instead of recomputing it via `validateIntent` in `prepareTransaction`, `signOperation` and `estimateMaxSpendable`. The amount is `parameters.amount` when the coin exposes it (Tezos), the token sub-account balance for token sends, otherwise `spendableBalance - max(reserve, fees)` (coin-evm now exposes `reserve`/`amountScale` for delegate). Pending operations are subtracted so the amount stays consistent with `getTransactionStatus` (LIVE-22227, LIVE-22228, LIVE-22229).
+
+- [#19465](https://github.com/LedgerHQ/ledger-live/pull/19465) [`50660af`](https://github.com/LedgerHQ/ledger-live/commit/50660af751c2306802f1fefb2499cbf353f79cc4) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Replace `typeof d[0]` type-sniffing in `resolveStakingValidator` with a per-chain `resolveValidatorAddress` on `StakingContractConfig`. Fixes 0G operation drawer pointing to delegator address instead of validator.
+
+- [#19283](https://github.com/LedgerHQ/ledger-live/pull/19283) [`a952f84`](https://github.com/LedgerHQ/ledger-live/commit/a952f84063e5f791b9c757827570d59d048c43bf) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(coin-evm): clear remaining crypto assets store mentions
+
+- [#19680](https://github.com/LedgerHQ/ledger-live/pull/19680) [`ff9d1d2`](https://github.com/LedgerHQ/ledger-live/commit/ff9d1d29fbc3d6a4d75e3ca145e3a9df0dda50c5) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(coin-evm): drop incoming root-trace duplicates in `listOperations`
+
+- [#19409](https://github.com/LedgerHQ/ledger-live/pull/19409) [`ddc6499`](https://github.com/LedgerHQ/ledger-live/commit/ddc6499ebc483a853d82ca3c00d0927169c8e0ed) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Pass `to` into staking selector cache to support factory-per-validator chains
+
+### Patch Changes
+
+- Updated dependencies [[`8f30c75`](https://github.com/LedgerHQ/ledger-live/commit/8f30c75ecb553a720722f1e039b4aec53fce2a87), [`0f85077`](https://github.com/LedgerHQ/ledger-live/commit/0f850774ae3b46fd4a06c0da5762d3d4211b26af), [`a15b864`](https://github.com/LedgerHQ/ledger-live/commit/a15b864576d901f15d480070b475314c3b23c1dd), [`fc44f1e`](https://github.com/LedgerHQ/ledger-live/commit/fc44f1e6ddcca939c117e0cb8bc49c404163b003), [`6ef44af`](https://github.com/LedgerHQ/ledger-live/commit/6ef44afa6807ace32b3f6620173868f2ef20e158), [`6ef44af`](https://github.com/LedgerHQ/ledger-live/commit/6ef44afa6807ace32b3f6620173868f2ef20e158)]:
+  - @ledgerhq/ledger-wallet-framework@2.4.0-next.0
+  - @ledgerhq/live-env@2.42.0-next.0
+  - @ledgerhq/evm-tools@1.13.1-next.0
+  - @ledgerhq/live-network@2.6.8-next.0
+
 ## 4.5.0
 
 ### Minor Changes

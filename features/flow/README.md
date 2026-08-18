@@ -21,7 +21,8 @@ User-facing feature packages shared across desktop and mobile apps. Each subdire
 - Package name: `@features/flow-<name>`
 - Directory name: `features/flow/<name>/`
 - `package.json` must have `"private": true`
-- May depend on `type:feature-platform`, `scope:domain`, and `scope:shared`
+- May depend on sibling flows (`type:feature-flow`), `type:feature-platform`, `scope:domain`, and `scope:shared`
+- A flow may orchestrate sub-flows: depending on another `@features/flow-*` package is allowed, so a parent flow can compose smaller ones
 - Nx tag inferred automatically: `type:feature-flow`
 - Platform-specific files use `.web.tsx` / `.native.tsx` suffixes; shared logic uses `.ts` / `.tsx`
 - Barrel export via `src/index.ts`

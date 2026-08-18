@@ -6,7 +6,7 @@ import {
 } from "@ledgerhq/device-management-kit";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { TrackScreen, track } from "~/analytics";
-import { SourceFlowProvider } from "../utils/SourceFlowContext";
+import { DeviceIntentTrackingProvider } from "../utils/DeviceIntentTrackingContext";
 import { PAGE_DEVICE_ACTION } from "../utils/trackDeviceIntent";
 import { IntentError } from "./IntentError";
 
@@ -33,7 +33,7 @@ const device = {
 
 function renderState(props: Partial<React.ComponentProps<typeof IntentError>> = {}) {
   return render(
-    <SourceFlowProvider value="my_ledger">
+    <DeviceIntentTrackingProvider value={{ sourceFlow: "my_ledger" }}>
       <IntentError
         device={device}
         error={new Error("job failed")}
@@ -41,7 +41,7 @@ function renderState(props: Partial<React.ComponentProps<typeof IntentError>> = 
         onClose={jest.fn()}
         {...props}
       />
-    </SourceFlowProvider>,
+    </DeviceIntentTrackingProvider>,
   );
 }
 
@@ -70,9 +70,7 @@ describe("IntentError", () => {
     expect(screen.getByTestId("device-intent-executor-intent-error")).toBeVisible();
     expect(screen.getByText("Unknown error")).toBeVisible();
     expect(
-      screen.getByText(
-        "An error occurred. Please try again or contact Ledger support if the issue persists.",
-      ),
+      screen.getByText("Try again or contact Ledger support if the issue continues."),
     ).toBeVisible();
   });
 

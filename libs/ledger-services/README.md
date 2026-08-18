@@ -1,5 +1,8 @@
 # ledger-services
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 This workspace groups typed HTTP client libraries for Ledger's backend services. Each sub-package wraps a specific Ledger API, providing strongly-typed request/response models and integration-tested clients.
 
 ## Packages

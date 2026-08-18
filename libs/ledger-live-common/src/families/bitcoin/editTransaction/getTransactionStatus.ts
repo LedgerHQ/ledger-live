@@ -1,4 +1,5 @@
-import { AmountRequired, ReplacementTransactionUnderpriced } from "@ledgerhq/errors";
+import { AmountRequired } from "@ledgerhq/ledger-wallet-framework/errors";
+import { ReplacementTransactionUnderpriced } from "../../../errors";
 import type { TransactionStatusCommon } from "@ledgerhq/types-live";
 import type { BigNumber } from "bignumber.js";
 import { getMinFees } from "./getMinEditTransactionFees";

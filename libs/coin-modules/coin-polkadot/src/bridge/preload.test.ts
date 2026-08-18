@@ -1,8 +1,11 @@
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import coinConfig, { type PolkadotCoinConfig } from "../config";
 import { SidecarValidatorsParamAddresses, SidecarValidatorsParamStatus } from "../network/types";
 import { createFixtureAccount } from "../types/bridge.fixture";
 import { preload } from "./preload";
+
+coinConfig.setCoinConfig(() => ({}) as unknown as PolkadotCoinConfig);
 
 const account = createFixtureAccount();
 
@@ -13,10 +16,12 @@ const getValidatorsMock = jest.fn();
 
 jest.mock("../network", () => {
   return {
-    getRegistry: (currency: CryptoCurrency | undefined) => getRegistryMock(currency),
-    getMinimumBondBalance: (currency: CryptoCurrency | undefined) =>
+    getRegistry: (_config: unknown, currency: CryptoCurrency | undefined) =>
+      getRegistryMock(currency),
+    getMinimumBondBalance: (_config: unknown, currency: CryptoCurrency | undefined) =>
       getMinimumBondBalanceMock(currency),
-    getStakingProgress: (currency: CryptoCurrency | undefined) => getStakingProgressMock(currency),
+    getStakingProgress: (_config: unknown, currency: CryptoCurrency | undefined) =>
+      getStakingProgressMock(currency),
     getValidators: (
       stashes: SidecarValidatorsParamStatus | SidecarValidatorsParamAddresses = "elected",
       currency?: CryptoCurrency,

@@ -1,18 +1,31 @@
-import { configureStore, Middleware, ThunkDispatch } from "@reduxjs/toolkit";
+import { configureStore, type Middleware, type ThunkDispatch } from "@reduxjs/toolkit";
 import { UnknownAction } from "redux";
-import { getEnv } from "@ledgerhq/live-env";
-import { calApiExtra } from "@domain/api-currency-token";
-import { cvsApiExtra } from "@domain/api-currency-fiat";
-import { marketSentimentApiExtra } from "@domain/api-market-sentiment";
-import { altcoinsSentimentApiExtra } from "@domain/api-altcoins-sentiment";
-import { payCardApiExtra } from "@domain/api-pay-card";
+import { AuthSDK } from "@ledgerhq/ledger-auth";
+import { getEnv } from "@shared/env";
+import { authApiExtra, authEnvironmentSelector } from "@shared/auth";
+import { LkrpIdentityProvider } from "@ledgerhq/ledger-key-ring-protocol";
+import type { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
+import {
+  calApiExtra,
+  cardApiExtra,
+  coinMarketCapApiExtra,
+  cvsApiExtra,
+  pushDevicesApiExtra,
+  swapApiExtra,
+} from "@shared/api-services";
+import { getCardSessionToken, refreshCardSession } from "@features/platform-card";
 import logger from "~/renderer/middlewares/logger";
 import reducers, { State } from "~/renderer/reducers";
 import { applyLldRTKApiMiddlewares } from "~/renderer/reducers/rtkQueryApi";
-import { createIdentitiesSyncMiddleware, pushDevicesApiExtra } from "@domain/api-push-devices";
+import { createIdentitiesSyncMiddleware } from "@domain/api-push-devices";
 import { canPushDeviceIdsSelector, languageSelector } from "~/renderer/reducers/settings";
-import { createFeatureFlagsMiddleware, type PartialFeatures } from "@shared/feature-flags";
+import {
+  createFeatureFlagsMiddleware,
+  selectFeature,
+  type PartialFeatures,
+} from "@shared/feature-flags";
 import { fetchRemoteFlags as defaultFetchRemoteFlags } from "~/firebase/remoteConfig";
+import { sleepingListener } from "./sleepingListener";
 type Props = {
   state?: State;
   dbMiddleware?: Middleware;
@@ -47,19 +60,42 @@ const customCreateStore = ({
               ...cvsApiExtra({
                 countervaluesServiceUrl: getEnv("LEDGER_COUNTERVALUES_API"),
               }),
-              ...marketSentimentApiExtra({
+              ...coinMarketCapApiExtra({
                 coinMarketCapApiUrl: getEnv("CMC_API_URL"),
               }),
-              ...altcoinsSentimentApiExtra({
-                coinMarketCapApiUrl: getEnv("CMC_API_URL"),
+              ...cardApiExtra({
+                cardApiBaseUrl: getEnv("CARD_API_URL"),
+                cardBaanxClientKey: getEnv("CARD_BAANX_CLIENT_KEY"),
+                getCardSessionToken,
+                refreshCardSession,
               }),
               ...pushDevicesApiExtra({
                 pushDevicesServiceUrl: getEnv("PUSH_DEVICES_SERVICE_URL"),
                 ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
               }),
-              ...payCardApiExtra({
-                // LIVE-33829: force mocks until Pay Card API base URL is wired.
-                payCardApiMocksEnabled: true,
+              ...swapApiExtra({
+                swapApiBaseUrl: getEnv("SWAP_API_BASE"),
+                ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
+              }),
+              ...authApiExtra({
+                isFeatureEnabled: (): boolean =>
+                  selectFeature(store.getState(), "lwdAuth").enabled ?? false,
+                authProvider: new AuthSDK(
+                  {
+                    clientId: getEnv("LEDGER_AUTH_CLIENT_ID"),
+                    keycloakBaseUrl(): string | null {
+                      const environment = authEnvironmentSelector(store.getState());
+                      return environment && getEnv(`LEDGER_AUTH_KEYCLOAK_BASE_URL_${environment}`);
+                    },
+                    keycloakRealm: getEnv("LEDGER_AUTH_KEYCLOAK_REALM"),
+                    disablePkce: true,
+                  },
+                  {
+                    provider: new LkrpIdentityProvider(
+                      (): TrustchainStore => store.getState().trustchain,
+                    ),
+                  },
+                ),
               }),
             },
           },
@@ -71,7 +107,7 @@ const customCreateStore = ({
         .concat(
           createIdentitiesSyncMiddleware({
             pushDevicesServiceUrl: getEnv("PUSH_DEVICES_SERVICE_URL").trim(),
-            getIdentitiesState: (state: State) => state.identities,
+            getIdentitiesState: ({ identities }: State) => identities,
             getAnalyticsConsent: canPushDeviceIdsSelector,
           }),
         )
@@ -85,9 +121,11 @@ const customCreateStore = ({
             fetchRemoteFlags: fetchRemoteFlags ?? undefined,
             getAppLanguage: languageSelector,
           }),
-        ),
+        )
+        .concat(sleepingListener.middleware),
     devTools: __DEV__,
   });
+
   return store;
 };
 

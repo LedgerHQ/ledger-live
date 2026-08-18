@@ -56,7 +56,8 @@ describe("fromTrongridTxInfoToOperation", () => {
       value: BigInt(5000),
       senders: ["from"],
       recipients: ["to"],
-      asset: { type: "trc20", assetReference: "boo" },
+      asset: { type: "trc20", assetReference: "boo", assetOwner: "from" },
+      details: { ledgerOpType: "OUT" },
     });
   });
 

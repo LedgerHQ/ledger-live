@@ -5,7 +5,8 @@ import React from "react";
 import { render, screen, waitFor } from "tests/testSetup";
 import { fireEvent } from "@testing-library/react";
 import BlacklistedTokens from "./BlacklistedTokens";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
+import { TokenCurrency, TokenCurrencyIdSchema } from "@domain/entity-currency-token";
 
 const mockSync = jest.fn();
 const mockFindTokenById = jest.fn();
@@ -14,19 +15,19 @@ jest.mock("@ledgerhq/live-common/bridge/react/index", () => ({
   useBridgeSync: () => mockSync,
 }));
 
-jest.mock("@ledgerhq/cryptoassets/state", () => ({
+jest.mock("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore", () => ({
   getCryptoAssetsStore: () => ({
     findTokenById: mockFindTokenById,
   }),
 }));
 
 const mockUsdtToken: TokenCurrency = {
-  id: "ethereum/erc20/usdt",
+  id: TokenCurrencyIdSchema.parse("ethereum/erc20/usdt"),
   type: "TokenCurrency",
   name: "Tether USD",
   ticker: "USDT",
   contractAddress: "0xdac17f958d2ee523a2206206994597c13d831ec7",
-  parentCurrencyId: "ethereum",
+  parentCurrencyId: CryptoCurrencyIdSchema.parse("ethereum"),
   tokenType: "erc20",
   units: [
     {
@@ -38,12 +39,12 @@ const mockUsdtToken: TokenCurrency = {
 };
 
 const mockUsdcToken: TokenCurrency = {
-  id: "ethereum/erc20/usdc",
+  id: TokenCurrencyIdSchema.parse("ethereum/erc20/usdc"),
   type: "TokenCurrency",
   name: "USD Coin",
   ticker: "USDC",
   contractAddress: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
-  parentCurrencyId: "ethereum",
+  parentCurrencyId: CryptoCurrencyIdSchema.parse("ethereum"),
   tokenType: "erc20",
   units: [
     {
@@ -66,7 +67,7 @@ describe("BlacklistedTokens", () => {
 
     expect(screen.getByText("Hidden tokens")).toBeInTheDocument();
     expect(
-      screen.getByText(/You can hide tokens by going to the parent account then right-clicking/i),
+      screen.getByText(/You can hide an asset from its detail page using the options menu/i),
     ).toBeInTheDocument();
     // When there are no blacklisted tokens, the count should not be displayed
     expect(screen.queryByText(/\d+ token/)).not.toBeInTheDocument();
@@ -152,13 +153,61 @@ describe("BlacklistedTokens", () => {
     expect(mockFindTokenById).toHaveBeenCalledWith("ethereum/erc20/usdt");
   });
 
-  it("handles async loading errors gracefully", async () => {
-    mockFindTokenById.mockRejectedValue(new Error("Token not found"));
+  it("renders a native coin row resolved from the registry without a CAL lookup", async () => {
+    render(<BlacklistedTokens />, {
+      initialState: { settings: { blacklistedTokenIds: ["bitcoin"] } },
+    });
+
+    // Native coins are resolved from the crypto registry, not via CAL
+    expect(mockFindTokenById).not.toHaveBeenCalled();
+
+    await waitFor(() => {
+      expect(screen.getByText("1 token")).toBeInTheDocument();
+    });
+
+    // Toggle visibility to reveal the Bitcoin row
+    fireEvent.click(screen.getByText("1 token"));
+
+    await waitFor(() => {
+      expect(screen.getAllByText("Bitcoin").length).toBeGreaterThan(0);
+    });
+  });
+
+  it("isolates a failing token lookup without discarding the rest of the list", async () => {
+    mockFindTokenById.mockImplementation(async (tokenId: string) => {
+      if (tokenId === "ethereum/erc20/invalid") throw new Error("Token not found");
+      return mockUsdtToken;
+    });
+
+    render(<BlacklistedTokens />, {
+      initialState: {
+        settings: { blacklistedTokenIds: ["ethereum/erc20/invalid", "ethereum/erc20/usdt"] },
+      },
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText("2 tokens")).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByText("2 tokens"));
+
+    // The failing id is dropped, the resolvable token still renders
+    await waitFor(() => {
+      expect(screen.getByText("Tether USD")).toBeInTheDocument();
+    });
+  });
+
+  it("logs a warning and renders no rows when loading rejects", async () => {
+    // A synchronous throw from the store escapes the helper's per-id `.catch`,
+    // so the whole load rejects and the component falls back to an empty list.
+    mockFindTokenById.mockImplementation(() => {
+      throw new Error("Store unavailable");
+    });
 
     const consoleWarnSpy = jest.spyOn(console, "warn").mockImplementation(() => {});
 
     render(<BlacklistedTokens />, {
-      initialState: { settings: { blacklistedTokenIds: ["ethereum/erc20/invalid"] } },
+      initialState: { settings: { blacklistedTokenIds: ["ethereum/erc20/usdt"] } },
     });
 
     await waitFor(() => {
@@ -167,6 +216,9 @@ describe("BlacklistedTokens", () => {
         expect.any(Error),
       );
     });
+
+    fireEvent.click(screen.getByText("1 token"));
+    expect(screen.queryByText("Tether USD")).not.toBeInTheDocument();
 
     consoleWarnSpy.mockRestore();
   });

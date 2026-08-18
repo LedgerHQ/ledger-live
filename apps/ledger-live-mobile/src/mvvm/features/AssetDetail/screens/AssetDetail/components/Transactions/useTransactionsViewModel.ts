@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
-import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { Account, AccountLike, DistributionItem, Operation } from "@ledgerhq/types-live";
 import { flattenAccounts } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";

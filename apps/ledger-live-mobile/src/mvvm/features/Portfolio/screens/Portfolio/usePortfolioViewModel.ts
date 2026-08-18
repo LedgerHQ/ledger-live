@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { shallowEqual } from "react-redux";
 import { useSelector } from "~/context/hooks";
 import { useFocusEffect, useIsFocused } from "@react-navigation/native";
-import useEnv from "@ledgerhq/live-common/hooks/useEnv";
+import useEnv from "@features/platform-env";
 import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useSharedValue } from "react-native-reanimated";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
@@ -19,7 +19,7 @@ import {
 } from "~/reducers/accounts";
 import useDynamicContent from "~/dynamicContent/useDynamicContent";
 import usePortfolioAnalyticsOptInPrompt from "~/hooks/analyticsOptInPrompt/usePortfolioAnalyticsOptInPrompt";
-import { useLNSUpsellBannerState } from "LLM/features/LNSUpsell";
+import { useLNUpsellBannerState } from "LLM/features/LNUpsell";
 import { useAutoRedirectToPostOnboarding } from "~/hooks/useAutoRedirectToPostOnboarding";
 import { usePostOnboardingCompletionTracking } from "~/logic/postOnboarding/usePostOnboardingCompletionTracking";
 import { useWallet40Theme } from "LLM/hooks/useWallet40Theme";
@@ -38,7 +38,7 @@ interface UsePortfolioViewModelResult {
   shouldDisplayAssetSection: boolean;
   shouldDisplayOperationsList: boolean;
   showAssets: boolean;
-  isLNSUpsellBannerShown: boolean;
+  isLNUpsellBannerShown: boolean;
   isAddModalOpened: boolean;
   backgroundColor: string;
   isSyncError: boolean;
@@ -136,7 +136,7 @@ const usePortfolioViewModel = (navigation: {
     [animatedHeight, isFocused],
   );
 
-  const isLNSUpsellBannerShown = useLNSUpsellBannerState("wallet").isShown;
+  const isLNUpsellBannerShown = useLNUpsellBannerState("wallet").isShown;
 
   const { syncPhase } = usePortfolioBalance();
   const isSyncError = syncPhase === "failed";
@@ -152,7 +152,7 @@ const usePortfolioViewModel = (navigation: {
     shouldDisplayAssetSection,
     shouldDisplayOperationsList,
     showAssets,
-    isLNSUpsellBannerShown,
+    isLNUpsellBannerShown,
     isAddModalOpened,
     backgroundColor,
     isSyncError,

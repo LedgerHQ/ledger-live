@@ -1,5 +1,5 @@
 import { formatSwapTransactionStatusCreatedAt } from "@ledgerhq/live-common/exchange/swapTransactionStatus/index";
-import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { useTranslation } from "~/context/Locale";
 
 type UseTransactionHeaderViewModelProps = Readonly<{

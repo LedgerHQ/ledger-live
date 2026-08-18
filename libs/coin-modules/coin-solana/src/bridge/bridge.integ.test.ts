@@ -1,8 +1,15 @@
 import { Keypair, Connection, SystemProgram, Transaction, clusterApiUrl } from "@solana/web3.js";
 import { makeBridges } from "./bridge";
 import { getChainAPI } from "../network";
+import coinConfig from "../config";
 
 describe("Broadcast", () => {
+  const mockSolanaConfig = {
+    endpoint: clusterApiUrl("mainnet-beta"),
+  };
+  beforeAll(() => {
+    coinConfig.setCoinConfig(() => mockSolanaConfig as any);
+  });
   it("throws on insufficient funds", async () => {
     const connection = new Connection(clusterApiUrl("mainnet-beta"));
     const broadcast = makeBridges({ getAPI: getChainAPI } as any).accountBridge.broadcast;

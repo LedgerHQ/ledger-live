@@ -6,7 +6,6 @@ import {
   TrustchainSDK,
 } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { setTrustchain, resetTrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
-import { TrustchainEjected, TrustchainNotAllowed } from "@ledgerhq/ledger-key-ring-protocol/errors";
 import { log } from "@ledgerhq/logs";
 import { AnalyticsEvents } from "LLM/features/WalletSync/Analytics/enums";
 import { track } from "~/analytics";
@@ -24,7 +23,8 @@ export function useOnTrustchainRefreshNeeded(
         const newTrustchain = await trustchainSdk.restoreTrustchain(trustchain, memberCredentials);
         dispatch(setTrustchain(newTrustchain));
       } catch (e) {
-        if (e instanceof TrustchainEjected || e instanceof TrustchainNotAllowed) {
+        const eName = (e as { name?: string })?.name;
+        if (eName === "TrustchainEjected" || eName === "TrustchainNotAllowed") {
           dispatch(resetTrustchainStore());
           track(AnalyticsEvents.LedgerSyncDeactivated);
         }

@@ -1,4 +1,4 @@
-import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { flattenAccounts, getAccountCurrency } from "../account/index";
 

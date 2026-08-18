@@ -1,2 +1,2 @@
 // Encapsulate for LLD & LLM
-export * from "@ledgerhq/coin-casper/consts";
+export * from "@ledgerhq/coin-casper/constants";

@@ -9,7 +9,7 @@ import {
   type ConnectDeviceUIState,
 } from "@ledgerhq/live-dmk-mobile";
 import { getDeviceAnimation } from "~/helpers/getDeviceAnimation";
-import { SourceFlowProvider } from "../utils/SourceFlowContext";
+import { DeviceIntentTrackingProvider } from "../utils/DeviceIntentTrackingContext";
 import { DeviceConnectionComponentLWMView } from "./DeviceConnectionComponentLWMView";
 import type { DeviceConnectionComponentLWMViewModel } from "./useDeviceConnectionComponentLWMViewModel";
 
@@ -35,14 +35,14 @@ function renderView(
   callbacks: Partial<Omit<DeviceConnectionComponentLWMViewModel, "state">> = {},
 ) {
   return render(
-    <SourceFlowProvider value="my_ledger">
+    <DeviceIntentTrackingProvider value={{ sourceFlow: "my_ledger" }}>
       <DeviceConnectionComponentLWMView
         state={state}
         platform={callbacks.platform ?? "android"}
         onConnectLedgerDevice={callbacks.onConnectLedgerDevice ?? jest.fn()}
         onBuyLedgerDevice={callbacks.onBuyLedgerDevice ?? jest.fn()}
       />
-    </SourceFlowProvider>,
+    </DeviceIntentTrackingProvider>,
   );
 }
 
@@ -67,7 +67,7 @@ describe("DeviceConnectionComponentLWMView", () => {
     );
 
     await user.press(screen.getByText("Connect Ledger device"));
-    await user.press(screen.getByText("I don't have a Ledger device"));
+    await user.press(screen.getByText("I don’t have a Ledger device"));
 
     expect(screen.getByText("Ledger device required")).toBeVisible();
     expect(onConnectLedgerDevice).toHaveBeenCalledTimes(1);
@@ -106,13 +106,13 @@ describe("DeviceConnectionComponentLWMView", () => {
       ignore: jest.fn(),
     });
 
-    expect(screen.getByText("Something went wrong")).toBeVisible();
+    expect(screen.getByText("Bluetooth scanning unsuccessful")).toBeVisible();
   });
 
   it("should render the connecting state", () => {
     renderView({ type: ConnectDeviceUIStateTypes.Connecting, device: makeKnownDevice() });
 
-    expect(screen.getByText("Loading")).toBeVisible();
+    expect(screen.getByText("Connecting to your Ledger device")).toBeVisible();
   });
 
   it("should render the connection error state", () => {

@@ -22,7 +22,11 @@ type CraftedPayload = {
   };
 };
 
-export function combine(tx: string, signature: string, _pubkey?: string): string {
+export function combine(tx: string, signature: string[], _pubkey?: string): string {
+  if (signature.length !== 1) {
+    throw new Error(`Filecoin combine expects exactly one signature, got ${signature.length}`);
+  }
+
   const parsed: CraftedPayload = JSON.parse(tx);
   const { message } = parsed;
 
@@ -41,7 +45,7 @@ export function combine(tx: string, signature: string, _pubkey?: string): string
     },
     signature: {
       type: 1,
-      data: signature,
+      data: signature[0],
     },
   };
 

@@ -7,7 +7,7 @@ import {
   FeeNotLoaded,
   FeeTooHigh,
   InvalidAddress,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import { findSubAccountById } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { AccountBridge } from "@ledgerhq/types-live";
 import { isValidSuiAddress } from "@mysten/sui/utils";

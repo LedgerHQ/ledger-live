@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect, useMemo, useRef } from "react";
 import { BigNumber } from "bignumber.js";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import type { Currency, CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency, Currency } from "@domain/entity-currency";
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
 import {
   getAccountCurrency,
@@ -21,6 +21,7 @@ import {
   isValidNumberForInput,
   computeSuggestedRange,
   computeMinValue,
+  normalizeDecimalSeparator,
 } from "../utils/customFeeUtils";
 import { resolveFeeDisplayContext } from "../../utils/networkFeesDisplay";
 
@@ -86,7 +87,10 @@ export type UseCustomFeesViewModelCoreParams = Readonly<{
   discreet: boolean;
   counterValueCurrency: Currency;
   /** Reactive countervalue calculator (e.g. from useCalculateCountervalueCallback). */
-  calculateCountervalue: (from: Currency, value: BigNumber) => BigNumber | null | undefined;
+  calculateCountervalue: (
+    from: CryptoOrTokenCurrency,
+    value: BigNumber,
+  ) => BigNumber | null | undefined;
   labels: CustomFeesViewModelLabels;
 }>;
 
@@ -208,6 +212,14 @@ export function useCustomFeesViewModelCore({
   const selectedInputValueTransform = selectedAsset?.customFeeInputValueTransform ?? null;
   const selectedInputValueTransformId = selectedInputValueTransform ? selectedAssetId : null;
   const feeCurrencyAccountId = sendFeatures.getFeeCurrencyAccountId(accountCurrency, transaction);
+  const feePayerAccount = useMemo<AccountLike | null>(
+    () =>
+      feeCurrencyAccountId
+        ? (mainAccount.subAccounts?.find(subAccount => subAccount.id === feeCurrencyAccountId) ??
+          null)
+        : mainAccount,
+    [feeCurrencyAccountId, mainAccount],
+  );
   const { displayCurrency } = useMemo(
     () =>
       resolveFeeDisplayContext({
@@ -265,7 +277,8 @@ export function useCustomFeesViewModelCore({
   );
 
   const onInputChange = useCallback((key: string, value: string) => {
-    setValues(prev => ({ ...prev, [key]: value }));
+    const normalized = normalizeDecimalSeparator(value);
+    setValues(prev => ({ ...prev, [key]: normalized }));
     setTouched(prev => ({ ...prev, [key]: true }));
   }, []);
 
@@ -331,6 +344,7 @@ export function useCustomFeesViewModelCore({
     insufficientBalanceTargetInputKey,
   } = useCustomFeeValidation({
     account,
+    feePayerAccount,
     transaction,
     status,
     activeInputs,

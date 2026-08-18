@@ -1,5 +1,8 @@
 # `@ledgerhq/icons-ui`
 
+> [!WARNING]
+> **Status: DEPRECATED** — Deprecated. Icons are now provided by `@ledgerhq/lumen-ui-react` and `@ledgerhq/lumen-ui-rnative`.
+
 [![npm](https://img.shields.io/npm/v/@ledgerhq/icons-ui)](https://www.npmjs.com/package/@ledgerhq/icons-ui)
 
 ### A collection of Ledger-flavoured icons

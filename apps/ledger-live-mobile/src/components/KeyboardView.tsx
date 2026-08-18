@@ -11,6 +11,7 @@ import { HeaderHeightContext } from "@react-navigation/elements";
 import { HEIGHT as ExperimentalHeaderHeight } from "~/screens/Settings/Experimental/ExperimentalHeader";
 import { useExperimental } from "../experimental";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { shouldUseKeyboardAvoidance } from "~/logic/keyboardVisible";
 
 type Props = {
   style?: KeyboardAvoidingViewProps["style"];
@@ -29,14 +30,14 @@ const KeyboardView = React.memo<Props>(
     const isExperimental = useExperimental();
     const headerHeight = React.useContext(HeaderHeightContext) ?? 0;
     const [isKeyboardVisible, setIsKeyboardVisible] = React.useState(false);
-    const isAndroid35 = Platform.OS === "android" && Platform.Version >= 35;
+    const isKeyboardAvoidanceEnabled = shouldUseKeyboardAvoidance(Platform.OS, Platform.Version);
     const experimentalHeaderHeight = isExperimental || Config.DETOX ? ExperimentalHeaderHeight : 0;
     const insets = useSafeAreaInsets();
 
     const behaviorParam = behavior ?? "height";
     const behaviorProp: KeyboardAvoidingViewProps["behavior"] = Platform.select({
       ios: behaviorParam,
-      android: isAndroid35 ? behaviorParam : undefined,
+      android: isKeyboardAvoidanceEnabled ? behaviorParam : undefined,
     });
 
     useEffect(() => {

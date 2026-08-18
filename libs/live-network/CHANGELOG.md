@@ -1,5 +1,43 @@
 # @ledgerhq/live-network
 
+## 3.0.0
+
+### Major Changes
+
+- [#19977](https://github.com/LedgerHQ/ledger-live/pull/19977) [`1af9ec9`](https://github.com/LedgerHQ/ledger-live/commit/1af9ec984928e0bf5fd23ce12edcc6131b0302a0) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Define `LedgerAPI4xx`, `LedgerAPI5xx`, and `NetworkDown` as native error classes in `@ledgerhq/live-network` instead of importing them from `@ledgerhq/errors`. All three are now exported from the package's public index for downstream migrations.
+
+## 3.0.0-next.0
+
+### Major Changes
+
+- [#19977](https://github.com/LedgerHQ/ledger-live/pull/19977) [`1af9ec9`](https://github.com/LedgerHQ/ledger-live/commit/1af9ec984928e0bf5fd23ce12edcc6131b0302a0) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Define `LedgerAPI4xx`, `LedgerAPI5xx`, and `NetworkDown` as native error classes in `@ledgerhq/live-network` instead of importing them from `@ledgerhq/errors`. All three are now exported from the package's public index for downstream migrations.
+
+## 2.7.0
+
+### Minor Changes
+
+- [#19870](https://github.com/LedgerHQ/ledger-live/pull/19870) [`e7caf31`](https://github.com/LedgerHQ/ledger-live/commit/e7caf310efbbf82aa777a7e86ceafe60f11e7193) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Decouple from `@ledgerhq/live-env` via local state singleton. Network configuration (timeouts, log flags, client version) is now managed via `setNetworkState()` and defaults to the previous env var values. Consumers in the monorepo call `bridgeEnvToNetworkState()` from `@ledgerhq/live-common/network/setup` at boot. External consumers get sensible defaults with no setup required.
+
+## 2.7.0-next.0
+
+### Minor Changes
+
+- [#19870](https://github.com/LedgerHQ/ledger-live/pull/19870) [`e7caf31`](https://github.com/LedgerHQ/ledger-live/commit/e7caf310efbbf82aa777a7e86ceafe60f11e7193) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Decouple from `@ledgerhq/live-env` via local state singleton. Network configuration (timeouts, log flags, client version) is now managed via `setNetworkState()` and defaults to the previous env var values. Consumers in the monorepo call `bridgeEnvToNetworkState()` from `@ledgerhq/live-common/network/setup` at boot. External consumers get sensible defaults with no setup required.
+
+## 2.6.8
+
+### Patch Changes
+
+- Updated dependencies [[`a15b864`](https://github.com/LedgerHQ/ledger-live/commit/a15b864576d901f15d480070b475314c3b23c1dd), [`fc44f1e`](https://github.com/LedgerHQ/ledger-live/commit/fc44f1e6ddcca939c117e0cb8bc49c404163b003)]:
+  - @ledgerhq/live-env@2.42.0
+
+## 2.6.8-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`a15b864`](https://github.com/LedgerHQ/ledger-live/commit/a15b864576d901f15d480070b475314c3b23c1dd), [`fc44f1e`](https://github.com/LedgerHQ/ledger-live/commit/fc44f1e6ddcca939c117e0cb8bc49c404163b003)]:
+  - @ledgerhq/live-env@2.42.0-next.0
+
 ## 2.6.7
 
 ### Patch Changes

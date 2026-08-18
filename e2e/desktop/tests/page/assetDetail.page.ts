@@ -1,35 +1,59 @@
-import { expect } from "@playwright/test";
+import { expect, Locator, Page } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "./abstractClasses";
+import { SwapContainer } from "tests/component/swap/swap-container";
 
 export class AssetDetailPage extends AppPage {
-  private readonly header = this.page.getByTestId("asset-detail-header");
-  private readonly marketPrice = this.page.getByTestId("asset-detail-market-price");
-  private readonly marketPriceFiatVariation = this.page.getByTestId(
-    "asset-detail-market-price-fiat-variation",
-  );
-  private readonly totalBalance = this.page.getByTestId("asset-detail-total-balance");
-  private readonly addressList = this.page.getByTestId("asset-detail-address-list");
-  private readonly addressRows = this.page.locator(`[data-testid^="asset-detail-address-row-"]`);
-  private readonly addressRowBalances = this.page.locator(
-    `[data-testid^="asset-detail-address-balance-"]`,
-  );
-  private readonly addAddressAction = this.page.getByTestId("asset-detail-add-address");
-  private readonly transactionsSection = this.page.getByTestId("asset-detail-transactions-section");
-  private readonly transactionRows = this.page.locator(`[data-testid^="history-operation-row-"]`);
-  private readonly pnlCards = this.page.locator(`[data-testid^="asset-detail-pnl-card-"]`);
-  private readonly interactivePnlCard = this.page.getByTestId(
-    "asset-detail-pnl-card-unrealisedReturn",
-  );
-  private readonly pnlDetailDialog = this.page.getByTestId("pnl-detail-dialog");
-  private readonly optionsTrigger = this.page.getByTestId("asset-detail-header-options-trigger");
-  private readonly addFavoriteMenuItem = this.page.getByTestId("asset-detail-add-favorite");
-  private readonly removeFavoriteMenuItem = this.page.getByTestId("asset-detail-remove-favorite");
+  private readonly assetId: string;
+  private readonly assetDetailRoot: Locator;
+  readonly swapContainer: SwapContainer;
+
+  private readonly header: Locator;
+  private readonly marketPrice: Locator;
+  private readonly marketPriceFiatVariation: Locator;
+  private readonly totalBalance: Locator;
+  private readonly addressList: Locator;
+  private readonly addressRows: Locator;
+  private readonly addressRowBalances: Locator;
+  private readonly addAddressAction: Locator;
+  private readonly transactionsSection: Locator;
+  private readonly transactionRows: Locator;
+  private readonly pnlCards: Locator;
+  private readonly interactivePnlCard: Locator;
+  private readonly optionsTrigger: Locator;
   // The staking section renders either the "earn banner" (not yet staked) or the "earn deposit"
   // card (already staked); both open the same stake flow.
-  private readonly earnEntry = this.page
-    .getByTestId("asset-detail-earn-banner")
-    .or(this.page.getByTestId("asset-detail-earn-deposit"));
+  private readonly earnEntry: Locator;
+
+  // Rendered in a portal (Lumen Dialog / Menu), so kept page-wide rather than scoped to the root.
+  private readonly pnlDetailDialog = this.page.getByTestId("pnl-detail-dialog");
+  private readonly addFavoriteMenuItem = this.page.getByTestId("asset-detail-add-favorite");
+  private readonly removeFavoriteMenuItem = this.page.getByTestId("asset-detail-remove-favorite");
+
+  constructor(page: Page, assetId: string) {
+    super(page);
+    this.assetId = assetId;
+    this.assetDetailRoot = this.pageView(`asset/${this.assetId}`);
+    this.swapContainer = new SwapContainer(this.assetDetailRoot, "embedded");
+
+    const root = this.assetDetailRoot;
+    this.header = root.getByTestId("asset-detail-header");
+    this.marketPrice = root.getByTestId("asset-detail-market-price");
+    this.marketPriceFiatVariation = root.getByTestId("asset-detail-market-price-fiat-variation");
+    this.totalBalance = root.getByTestId("asset-detail-total-balance");
+    this.addressList = root.getByTestId("asset-detail-address-list");
+    this.addressRows = root.locator(`[data-testid^="asset-detail-address-row-"]`);
+    this.addressRowBalances = root.locator(`[data-testid^="asset-detail-address-balance-"]`);
+    this.addAddressAction = root.getByTestId("asset-detail-add-address");
+    this.transactionsSection = root.getByTestId("asset-detail-transactions-section");
+    this.transactionRows = root.locator(`[data-testid^="history-operation-row-"]`);
+    this.pnlCards = root.locator(`[data-testid^="asset-detail-pnl-card-"]`);
+    this.interactivePnlCard = root.getByTestId("asset-detail-pnl-card-unrealisedReturn");
+    this.optionsTrigger = root.getByTestId("asset-detail-header-options-trigger");
+    this.earnEntry = root
+      .getByTestId("asset-detail-earn-banner")
+      .or(root.getByTestId("asset-detail-earn-deposit"));
+  }
 
   @step("Wait for asset detail page to load")
   async expectLoaded() {

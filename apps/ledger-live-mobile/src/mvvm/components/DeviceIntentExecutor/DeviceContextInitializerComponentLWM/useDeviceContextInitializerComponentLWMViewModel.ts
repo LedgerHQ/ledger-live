@@ -1,5 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import type { DeviceConnectionResult, DeviceExtractedContext } from "@ledgerhq/device-intent";
+import type {
+  DeviceConnectionResult,
+  DeviceExtractedContext,
+} from "@features/platform-device-intent";
 import {
   ensureAppReadyUseCase,
   type EnsureAppReadyUseCaseDependencies,
@@ -17,7 +20,6 @@ import { settingsStoreSelector } from "~/reducers/settings";
 import type { InitializationInput } from "../types";
 import { buildInitializerDevice } from "./utils/buildInitializerDevice";
 import type { InitializerDevice } from "./types";
-import { useSourceFlow, type SourceFlow } from "../utils/SourceFlowContext";
 
 type UseDeviceContextInitializerComponentLWMViewModelParams = {
   connectionResult: DeviceConnectionResult;
@@ -29,7 +31,6 @@ type UseDeviceContextInitializerComponentLWMViewModelParams = {
 type UseDeviceContextInitializerComponentLWMViewModelResult = {
   state: EnsureAppReadyState;
   device: InitializerDevice;
-  sourceFlow: SourceFlow;
 };
 
 const LOADING_STATE: EnsureAppReadyState = { type: LoadingStateType.Loading };
@@ -41,7 +42,6 @@ export function useDeviceContextInitializerComponentLWMViewModel({
   dependencies,
 }: UseDeviceContextInitializerComponentLWMViewModelParams): UseDeviceContextInitializerComponentLWMViewModelResult {
   const dispatch = useDispatch();
-  const sourceFlow = useSourceFlow();
   const deprecationDismissedCurrencyNames =
     useSelector(settingsStoreSelector).deprecationDoNotRemind;
   const [state, setState] = useState<EnsureAppReadyState>(LOADING_STATE);
@@ -54,12 +54,12 @@ export function useDeviceContextInitializerComponentLWMViewModel({
       onDeviceIdObserved: deviceId => {
         dispatch(identitiesSlice.actions.addDeviceId(deviceId));
       },
-      onLastSeenDeviceInfoObserved: ({ modelId, deviceInfo }) => {
+      onLastSeenDeviceInfoObserved: ({ modelId, deviceInfo, apps }) => {
         dispatch(
           setLastSeenDeviceInfo({
             modelId,
             deviceInfo,
-            apps: [],
+            apps,
           }),
         );
       },
@@ -106,5 +106,5 @@ export function useDeviceContextInitializerComponentLWMViewModel({
     sideEffects,
   ]);
 
-  return { state, device, sourceFlow };
+  return { state, device };
 }

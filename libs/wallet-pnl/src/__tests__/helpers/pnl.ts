@@ -1,5 +1,5 @@
 import type { AccountLike } from "@ledgerhq/types-live";
-import type { Currency } from "@ledgerhq/types-cryptoassets";
+import type { Currency } from "@domain/entity-currency";
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 import { computeAssetPnL } from "../../assetPnL";
 import type { AssetPnL, ComputePnLOptions } from "../../types";

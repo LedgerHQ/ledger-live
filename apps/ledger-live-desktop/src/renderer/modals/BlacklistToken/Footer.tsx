@@ -4,7 +4,7 @@ import { Trans } from "react-i18next";
 import Box from "~/renderer/components/Box";
 import { useDispatch } from "LLD/hooks/redux";
 import { blacklistToken } from "~/renderer/actions/settings";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { TokenCurrency } from "@domain/entity-currency-token";
 
 const Footer = ({ onClose, token }: { onClose?: () => void; token: TokenCurrency }) => {
   const dispatch = useDispatch();

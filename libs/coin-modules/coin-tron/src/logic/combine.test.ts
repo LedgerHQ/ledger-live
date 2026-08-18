@@ -21,7 +21,7 @@ describe("combine", () => {
     const signature = "0B7E480C202D77F02E84C4E86A4CEF2D44623E670F455558C6FA8F09F5715E66";
 
     // WHEN
-    const result = combine(rawTx, signature);
+    const result = combine(rawTx, [signature]);
 
     // THEN
     const txLength = parseInt(result.slice(0, 4), 16);

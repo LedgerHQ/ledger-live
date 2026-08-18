@@ -16,7 +16,6 @@ type AmountFooterProps = Readonly<{
   reviewLoading: boolean;
   onReview: () => void;
   onGetFunds: () => void;
-  onSelectCustomFees: () => void;
 }>;
 
 export function CoinControlFooter({
@@ -28,7 +27,6 @@ export function CoinControlFooter({
   reviewLoading,
   onReview,
   onGetFunds,
-  onSelectCustomFees,
 }: AmountFooterProps) {
   const { state } = useSendFlowData();
   const { account } = state.account;
@@ -48,20 +46,10 @@ export function CoinControlFooter({
         display={{
           label: networkFees.feesRowLabel,
           value: networkFees.feesRowValue,
+          secondaryValue: networkFees.feesRowSecondaryValue,
           strategyLabel: networkFees.feesRowStrategyLabel,
         }}
-        selection={{
-          selectedStrategy: networkFees.selectedFeeStrategy,
-          onSelectStrategy: networkFees.onSelectFeeStrategy,
-        }}
-        presets={{
-          options: networkFees.feePresetOptions,
-          fiatByPreset: networkFees.fiatByPreset,
-          legendByPreset: networkFees.legendByPreset,
-        }}
-        actions={{
-          onSelectCustomFees: onSelectCustomFees,
-        }}
+        feeSelector={networkFees.feeSelector}
       />
       <Button
         appearance="base"

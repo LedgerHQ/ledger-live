@@ -1,4 +1,5 @@
 import React from "react";
+import { Keyboard, Pressable } from "react-native";
 import { Box, Button, Text, TextInput } from "@ledgerhq/lumen-ui-rnative";
 import type {
   CustomFeeInputState,
@@ -66,7 +67,7 @@ export function CustomFeesScreenView({
 }: CustomFeesScreenViewProps) {
   return (
     <SendFlowLayout>
-      <Box lx={{ flex: 1 }}>
+      <Pressable style={{ flex: 1 }} onPress={Keyboard.dismiss} accessible={false}>
         <Box lx={{ gap: "s24" }}>
           {hasCustomAssets && assetOptions.length > 0 && (
             <FeeAssetSelector
@@ -109,7 +110,7 @@ export function CustomFeesScreenView({
         <Button appearance="base" size="lg" onPress={onConfirm} disabled={isConfirmDisabled}>
           {confirmLabel}
         </Button>
-      </Box>
+      </Pressable>
     </SendFlowLayout>
   );
 }

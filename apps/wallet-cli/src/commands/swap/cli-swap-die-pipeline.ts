@@ -1,7 +1,10 @@
 import { Subscription, type Observable } from "rxjs";
 import { createActor } from "xstate";
 import type { ConnectedDevice, DeviceManagementKit } from "@ledgerhq/device-management-kit";
-import type { DeviceConnectionResult, DeviceExtractedContext } from "@ledgerhq/device-intent";
+import type {
+  DeviceConnectionResult,
+  DeviceExtractedContext,
+} from "@features/platform-device-intent";
 import {
   createSwapFlowMachine,
   planSwapFlow,
@@ -82,7 +85,6 @@ export type CliSwapDieResult = {
 function buildDeviceConnectionResult(
   dmk: DeviceManagementKit,
   sessionId: string,
-  compatDeviceModelId: DeviceModelId,
 ): DeviceConnectionResult {
   const connectedDevice: ConnectedDevice = dmk.getConnectedDevice({ sessionId });
   return {
@@ -90,7 +92,6 @@ function buildDeviceConnectionResult(
     sessionId,
     connectedDevice,
     compatDeviceId: WALLET_CLI_DMK_DEVICE_ID,
-    compatDeviceModelId,
     compatDeviceName: connectedDevice.name,
     compatDeviceWired: connectedDevice.type === "USB",
   };
@@ -272,7 +273,6 @@ export async function runCliSwapDie(input: CliSwapDieInput): Promise<CliSwapDieR
       const deviceConnectionResult = buildDeviceConnectionResult(
         transport.dmk,
         transport.sessionId,
-        deviceModelId,
       );
 
       let currentApp = ETHEREUM_APP_NAME;

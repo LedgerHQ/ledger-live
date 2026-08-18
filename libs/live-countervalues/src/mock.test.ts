@@ -4,7 +4,7 @@ import CountervaluesAPI from "./api";
 import { setEnv } from "@ledgerhq/live-env";
 import { getFiatCurrencyByTicker, getCryptoCurrencyById } from "./tests/currencies";
 import { formatCounterValueDay, formatCounterValueHour, parseFormattedDate } from "./helpers";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 
 // Setup mock store with DAI token for tests

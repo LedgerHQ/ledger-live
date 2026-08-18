@@ -4,7 +4,7 @@ import { Account } from "@ledgerhq/types-live";
 import { encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { resetIndexer, indexBlocks, initMswHandlers, setBlock } from "../indexer";
-import { getCoinConfig, setCoinConfig } from "@ledgerhq/coin-evm/config";
+import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
 import { makeAccount } from "../fixtures";
 import { VITALIK, callMyDealer, expectAddressInList, getBridges, sonic } from "../helpers";
 import { killAnvil, spawnAnvil } from "../anvil";
@@ -81,45 +81,31 @@ export const scenarioSonic: Scenario<GenericTransaction, Account> = {
     const signer = await buildSigner();
     await spawnAnvil("https://sonic-rpc.publicnode.com", signer.exportMnemonic());
 
-    setCoinConfig(() => ({
-      info: {
-        status: {
-          type: "active",
-        },
-        node: {
-          type: "external",
-          uri: "http://127.0.0.1:8545",
-        },
-        explorer: {
-          type: "etherscan",
-          noCache: true,
-          uri: "https://proxyetherscan.api.live.ledger.com/v2/api/146",
-        },
-        showNfts: true,
+    const info: EvmConfigInfo = {
+      status: {
+        type: "active",
       },
-    }));
+      chainId: 146,
+      name: "Sonic",
+      node: {
+        type: "external",
+        uri: "http://127.0.0.1:8545",
+      },
+      explorer: {
+        type: "etherscan",
+        noCache: true,
+        uri: "https://proxyetherscan.api.live.ledger.com/v2/api/146",
+      },
+      showNfts: true,
+    };
     LiveConfig.setConfig({
       config_currency_sonic: {
         type: "object",
-        default: {
-          status: {
-            type: "active",
-          },
-          node: {
-            type: "external",
-            uri: "http://127.0.0.1:8545",
-          },
-          explorer: {
-            type: "etherscan",
-            noCache: true,
-            uri: "https://proxyetherscan.api.live.ledger.com/v2/api/146",
-          },
-          showNfts: true,
-        },
+        default: info,
       },
     });
 
-    initMswHandlers(getCoinConfig(sonic.id).info);
+    initMswHandlers(info);
 
     const { currencyBridge, accountBridge, getAddress } = await getBridges(signer);
     const { address } = await getAddress("", {

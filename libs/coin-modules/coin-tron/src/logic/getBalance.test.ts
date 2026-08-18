@@ -1,11 +1,12 @@
+import type { TronCoinConfig } from "../config";
 import BigNumber from "bignumber.js";
-import { fetchTronAccount } from "../network";
+import { fetchTronAccountOrFail } from "../network";
 import type { AccountTronAPI } from "../network/types";
 import { computeBalance, computeBalanceBridge, getBalance } from "./getBalance";
 import { getTronResources } from "./utils";
 
 jest.mock("../network", () => ({
-  fetchTronAccount: jest.fn(),
+  fetchTronAccountOrFail: jest.fn(),
 }));
 
 jest.mock("./utils", () => {
@@ -16,7 +17,9 @@ jest.mock("./utils", () => {
   };
 });
 
-const mockedFetchTronAccount = fetchTronAccount as jest.MockedFunction<typeof fetchTronAccount>;
+const mockedFetchTronAccountOrFail = fetchTronAccountOrFail as jest.MockedFunction<
+  typeof fetchTronAccountOrFail
+>;
 const mockedGetTronResources = getTronResources as jest.MockedFunction<typeof getTronResources>;
 
 const address = "41ae18eb0a9e067f8884058470ed187f44135d816d";
@@ -26,6 +29,11 @@ const baseAccount: AccountTronAPI = {
   balance: 1781772,
   trc20: [],
 };
+
+const mockConfig = {
+  status: { type: "active" },
+  explorer: { url: "https://api.trongrid.io" },
+} as TronCoinConfig;
 
 describe("computeBalance", () => {
   it("returns only the balance when no resources are frozen", () => {
@@ -177,20 +185,20 @@ describe("computeBalanceBridge", () => {
 
 describe("getBalance", () => {
   beforeEach(() => {
-    mockedFetchTronAccount.mockReset();
+    mockedFetchTronAccountOrFail.mockReset();
   });
 
   it("returns a zeroed native balance when the account is inactive", async () => {
-    mockedFetchTronAccount.mockResolvedValueOnce([]);
+    mockedFetchTronAccountOrFail.mockResolvedValueOnce([]);
 
-    const balance = await getBalance(address);
+    const balance = await getBalance(mockConfig, address);
 
     expect(balance).toEqual([{ asset: { type: "native" }, value: 0n }]);
-    expect(mockedFetchTronAccount).toHaveBeenCalledWith(address);
+    expect(mockedFetchTronAccountOrFail).toHaveBeenCalledWith(mockConfig, address);
   });
 
   it("returns native + trc10 + trc20 balances", async () => {
-    mockedFetchTronAccount.mockResolvedValueOnce([
+    mockedFetchTronAccountOrFail.mockResolvedValueOnce([
       {
         ...baseAccount,
         balance: 27_781_772,
@@ -205,28 +213,48 @@ describe("getBalance", () => {
       },
     ]);
 
-    const balance = await getBalance(address);
+    const balance = await getBalance(mockConfig, address);
 
     expect(balance).toEqual([
       { asset: { type: "native" }, value: 27_781_772n },
-      { asset: { type: "trc10", assetReference: "1002000" }, value: 26_888_000n },
-      { asset: { type: "trc10", assetReference: "1004031" }, value: 9_856_699n },
       {
-        asset: { type: "trc20", assetReference: "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7" },
+        asset: { type: "trc10", assetReference: "1002000", assetOwner: address },
+        value: 26_888_000n,
+      },
+      {
+        asset: { type: "trc10", assetReference: "1004031", assetOwner: address },
+        value: 9_856_699n,
+      },
+      {
+        asset: {
+          type: "trc20",
+          assetReference: "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
+          assetOwner: address,
+        },
         value: 46_825_830n,
       },
       {
-        asset: { type: "trc20", assetReference: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t" },
+        asset: {
+          type: "trc20",
+          assetReference: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+          assetOwner: address,
+        },
         value: 376n,
       },
     ]);
   });
 
   it("returns only the native balance when there is no assetV2 nor trc20", async () => {
-    mockedFetchTronAccount.mockResolvedValueOnce([baseAccount]);
+    mockedFetchTronAccountOrFail.mockResolvedValueOnce([baseAccount]);
 
-    const balance = await getBalance(address);
+    const balance = await getBalance(mockConfig, address);
 
     expect(balance).toEqual([{ asset: { type: "native" }, value: 1_781_772n }]);
+  });
+
+  it("propagates upstream API errors", async () => {
+    mockedFetchTronAccountOrFail.mockRejectedValueOnce(new Error("upstream API error"));
+
+    await expect(getBalance(mockConfig, address)).rejects.toThrow("upstream API error");
   });
 });

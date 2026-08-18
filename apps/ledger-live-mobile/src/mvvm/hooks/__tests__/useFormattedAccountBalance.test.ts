@@ -8,8 +8,9 @@ import { discreetModeSelector } from "~/reducers/settings";
 import type { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { getCryptoCurrencyById, formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 
 jest.mock("~/context/hooks");
 jest.mock("@ledgerhq/live-common/currencies/index");

@@ -3,7 +3,7 @@ import { Alert } from "react-native";
 import Clipboard from "@react-native-clipboard/clipboard";
 import { GenericAwarenessModalLayout } from "@ledgerhq/live-common/genericAwarenessModal";
 import { Box, Button as LumenButton } from "@ledgerhq/lumen-ui-rnative";
-import useEnv from "@ledgerhq/live-common/hooks/useEnv";
+import useEnv from "@features/platform-env";
 
 import { useToastsActions } from "~/actions/toast";
 import {
@@ -662,7 +662,7 @@ export default function DebugContentCards() {
       ];
     }
     const presetByPlacement: Partial<Record<QaConsolePlacement, BuilderPreset>> = {
-      [ContentCardLocation.TopWallet]: "topWalletHero",
+      [ContentCardLocation.TopWallet]: "topWalletHardwareCarousel",
       [ContentCardLocation.Wallet]: "walletCarousel",
       [ContentCardLocation.Asset]: "asset",
       [ContentCardLocation.MyLedger]: "myLedger",

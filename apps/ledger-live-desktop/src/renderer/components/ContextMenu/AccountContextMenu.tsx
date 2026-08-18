@@ -3,6 +3,10 @@ import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useLocation, useNavigate } from "react-router";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/helpers";
+import {
+  isReceiveDisabledForFamily,
+  isSendDisabledForFamily,
+} from "@ledgerhq/live-common/account/index";
 import { openModal } from "~/renderer/actions/modals";
 import IconReceive from "~/renderer/icons/Receive";
 import IconSend from "~/renderer/icons/Send";
@@ -59,8 +63,10 @@ export default function AccountContextMenu({
   const menuItems = useMemo(() => {
     const currency = getAccountCurrency(account);
     const mainAccount = getMainAccount(account, parentAccount);
-    const items: ContextMenuItemType[] = [
-      {
+    const family = mainAccount.currency.family;
+    const items: ContextMenuItemType[] = [];
+    if (!isSendDisabledForFamily(family)) {
+      items.push({
         label: "accounts.contextMenu.send",
         Icon: IconSend,
         callback: () =>
@@ -68,8 +74,10 @@ export default function AccountContextMenu({
             account,
             parentAccount: parentAccount ?? undefined,
           }),
-      },
-      {
+      });
+    }
+    if (!isReceiveDisabledForFamily(family)) {
+      items.push({
         label: "accounts.contextMenu.receive",
         Icon: IconReceive,
         callback: () =>
@@ -80,8 +88,8 @@ export default function AccountContextMenu({
               sourcePage: RECEIVE_SOURCE_PAGE.ACCOUNT_PAGE,
             }),
           ),
-      },
-    ];
+      });
+    }
     const availableOnBuy = isCurrencySupported("BUY", currency);
     if (availableOnBuy) {
       items.push({

@@ -19,6 +19,15 @@ export class Currency {
     return this.ticker;
   }
 
+  /**
+   * Label used in the `[…]` prefix of e2e test names. Defaults to the ticker; tokens and
+   * the currencies that share a ticker with another one carry their network so the name
+   * stays unique across LWD and LWM. See CURRENCY_TEST_LABELS.
+   */
+  get testLabel(): string {
+    return CURRENCY_TEST_LABELS.get(this) ?? this.ticker;
+  }
+
   static readonly CELO = new Currency("Celo", "CELO", "celo", AppInfos.CELO, [Network.CELO]);
 
   static readonly INJ = new Currency("Injective", "INJ", "injective", AppInfos.INJECTIVE, [
@@ -206,6 +215,15 @@ export class Currency {
 
   static readonly BASE = new Currency("Base", "ETH", "base", AppInfos.BASE, [Network.BASE]);
 
+  static readonly BASE_AERODROME = new Currency(
+    "Aerodrome",
+    "AERO",
+    "base/erc20/aerodrome",
+    AppInfos.BASE,
+    [Network.BASE],
+    "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3",
+  );
+
   static readonly VET = new Currency("Vechain", "VET", "vechain", AppInfos.VECHAIN, [
     Network.VECHAIN,
   ]);
@@ -243,3 +261,22 @@ export class Currency {
     Network.SEI,
   ]);
 }
+
+const CURRENCY_TEST_LABELS = new Map<Currency, string>([
+  [Currency.sepETH, "ETH (Sepolia)"],
+  [Currency.BASE, "ETH (Base)"],
+  [Currency.ETH_USDT, "USDT (Ethereum)"],
+  [Currency.ETH_USDC, "USDC (Ethereum)"],
+  [Currency.ETH_LIDO, "STETH (Ethereum)"],
+  [Currency.XLM_USDC, "USDC (Stellar)"],
+  [Currency.ALGO_USDT, "USDT (Algorand)"],
+  [Currency.TRX_USDT, "USDT (Tron)"],
+  [Currency.TRX_BTT, "BTT (Tron)"],
+  [Currency.BSC_BUSD, "BUSD (BNB Chain)"],
+  [Currency.POL_DAI, "DAI (Polygon)"],
+  [Currency.POL_UNI, "UNI (Polygon)"],
+  [Currency.SOL_GIGA, "GIGA (Solana)"],
+  [Currency.SOL_WIF, "WIF (Solana)"],
+  [Currency.SUI_USDC, "USDC (Sui)"],
+  [Currency.BASE_AERODROME, "AERO (Base)"],
+]);

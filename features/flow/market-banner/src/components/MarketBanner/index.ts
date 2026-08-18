@@ -1,2 +1,2 @@
 // Desktop (Web) - resolved by Rspack
-export { MarketBanner } from "./MarketBanner.web";
+export * from "./MarketBanner.web";

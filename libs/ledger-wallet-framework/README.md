@@ -1,5 +1,8 @@
 # ledger-wallet-framework
 
+> [!CAUTION]
+> **Status: UNSTABLE** — Actively consolidating shared logic migrated out of `@ledgerhq/live-common`; API is in flux.
+
 `@ledgerhq/ledger-wallet-framework` is the core wallet logic framework that consolidates shared infrastructure for coin implementations in Ledger Live. It was introduced to centralize concerns that previously lived in `ledger-live-common` or were duplicated across coin modules, extending and wrapping `@ledgerhq/coin-module-framework`.
 
 ## What it does

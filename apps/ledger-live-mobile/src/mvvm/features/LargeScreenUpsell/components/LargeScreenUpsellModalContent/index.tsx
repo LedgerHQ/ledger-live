@@ -5,17 +5,26 @@ import { useThemedAwarenessModalImage } from "LLM/features/GenericAwarenessModal
 import type { FeatureIntroViewModel } from "LLM/components/FeatureIntroLayout/types";
 
 const CONTENT_MAX_WIDTH = "s400";
-const HERO_HEIGHT = "s288";
+const HERO_MAX_WIDTH = 343;
 const HERO_ASPECT_RATIO = 343 / 473;
 const TITLE_NUMBER_OF_LINES = 2;
 const SUBTITLE_NUMBER_OF_LINES = 3;
+const HERO_CONTAINER_STYLE = {
+  maxWidth: HERO_MAX_WIDTH,
+  aspectRatio: HERO_ASPECT_RATIO,
+  overflow: "hidden",
+} as const;
 const HERO_IMAGE_STYLE = { flex: 1, width: "100%" } as const;
 
 type LargeScreenUpsellModalContentProps = Readonly<{
   viewModel: FeatureIntroViewModel;
+  heroHeight: number;
 }>;
 
-export function LargeScreenUpsellModalContent({ viewModel }: LargeScreenUpsellModalContentProps) {
+export function LargeScreenUpsellModalContent({
+  viewModel,
+  heroHeight,
+}: LargeScreenUpsellModalContentProps) {
   const { content, onPrimaryPress } = viewModel;
   const { imageUrlLight, imageUrlDark, title, subtitle, primaryButtonLabel, primaryButtonLink } =
     content;
@@ -47,11 +56,9 @@ export function LargeScreenUpsellModalContent({ viewModel }: LargeScreenUpsellMo
       <Box lx={{ width: "full", maxWidth: CONTENT_MAX_WIDTH }}>
         {showImage ? (
           <Box
-            lx={{
-              alignSelf: "center",
-              aspectRatio: HERO_ASPECT_RATIO,
-              height: HERO_HEIGHT,
-            }}
+            lx={{ alignSelf: "center" }}
+            style={[HERO_CONTAINER_STYLE, { height: heroHeight }]}
+            testID="large-screen-upsell-modal-hero-container"
           >
             <Image
               source={{ uri: imageUrl }}

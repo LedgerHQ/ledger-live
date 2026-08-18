@@ -4,7 +4,6 @@ import { useIsFocused, useNavigation, useRoute } from "@react-navigation/native"
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { RouteProp } from "@react-navigation/native";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { BluetoothRequired } from "@ledgerhq/errors";
 import { Result } from "@ledgerhq/live-common/hw/actions/manager";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
@@ -86,7 +85,7 @@ function MyLedgerSectionContent({ onPairingStateChanged }: MyLedgerSectionProps)
   };
 
   const onError = (error: Error) => {
-    if (error instanceof BluetoothRequired) {
+    if (error?.name === "BluetoothRequired") {
       setDevice(undefined);
     }
   };

@@ -34,7 +34,6 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
 import { getUpdateAccountWithUpdaterParams } from "@ledgerhq/live-common/exchange/swap/getUpdateAccountWithUpdaterParams";
-import { createCustomErrorClass } from "@ledgerhq/errors";
 import { useOpenStakeDrawer } from "LLM/features/Stake";
 import { useStakingDrawer } from "~/components/Stake/useStakingDrawer";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
@@ -56,7 +55,9 @@ import { ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
 import { useWalletFeaturesConfig, useFeatureFlags } from "@features/platform-feature-flags";
 import type { Feature, FeatureId } from "@shared/feature-flags";
 
-const DrawerClosedError = createCustomErrorClass("DrawerClosedError");
+class DrawerClosedError extends Error {
+  override name = "DrawerClosedError";
+}
 const drawerClosedError = new DrawerClosedError("User closed the drawer");
 const unknownSwapError = new Error("Unknown swap error");
 

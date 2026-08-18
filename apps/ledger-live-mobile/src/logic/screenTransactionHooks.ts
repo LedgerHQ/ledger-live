@@ -4,7 +4,7 @@ import { concatMap, filter } from "rxjs/operators";
 import { useState, useCallback, useEffect, useRef } from "react";
 import { InteractionManager, Platform } from "react-native";
 import { log } from "@ledgerhq/logs";
-import { useRoute, useNavigation } from "@react-navigation/native";
+import { useRoute, useNavigation, type RouteProp } from "@react-navigation/native";
 import type {
   Account,
   AccountLike,
@@ -13,26 +13,22 @@ import type {
   BroadcastConfig,
 } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import { UserRefusedOnDevice } from "@ledgerhq/errors";
+import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import {
   addPendingOperation,
   formatOperation,
   formatAccount,
 } from "@ledgerhq/live-common/account/index";
-import {
-  createTransactionBroadcastError,
-  TransactionBroadcastError,
-} from "@ledgerhq/live-common/errors/transactionBroadcastErrors";
+import { createTransactionBroadcastError } from "@ledgerhq/live-common/errors/transactionBroadcastErrors";
 import { formatTransaction } from "@ledgerhq/live-common/transaction/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { execAndWaitAtLeast } from "@ledgerhq/live-common/promise";
 import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";
 import { broadcastLogger } from "~/datadog";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { useSelector, useDispatch } from "~/context/hooks";
-import { TransactionRefusedOnDevice } from "@ledgerhq/live-common/errors";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { updateAccountWithUpdater } from "../actions/accounts";
 import logger from "../logger";
@@ -121,8 +117,10 @@ const completeSignedTxBroadcast = ({
   });
 };
 
+type TransactionParamList = Record<string, { transaction?: Transaction } | undefined>;
+
 export const useTransactionChangeFromNavigation = (setTransaction: (_: Transaction) => void) => {
-  const route = useRoute<Route>();
+  const route = useRoute<RouteProp<TransactionParamList>>();
   const navigationTransaction = route.params?.transaction;
   // Start at `undefined` so the first time `navigationTransaction` is set we
   // dispatch — including the case where the screen mounts (or remounts via
@@ -368,16 +366,12 @@ export function useSignedTxHandler({
           dispatch,
         });
       } catch (error) {
-        if (
-          !(error instanceof UserRefusedOnDevice || error instanceof TransactionRefusedOnDevice)
-        ) {
+        const eName = (error as { name?: string })?.name;
+        if (!(eName === "UserRefusedOnDevice" || eName === "TransactionRefusedOnDevice")) {
           logger.critical(error as Error);
         }
 
-        if (
-          error instanceof TransactionBroadcastError &&
-          route.name === ScreenName.SendConnectDevice
-        ) {
+        if (eName === "TransactionBroadcastError" && route.name === ScreenName.SendConnectDevice) {
           return (navigation as NativeStackNavigationProp<{ [key: string]: object }>).replace(
             ScreenName.SendBroadcastError,
             { ...route.params, error },

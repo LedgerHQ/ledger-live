@@ -17,7 +17,9 @@ type Params = {
  * cannot reintroduce the wrong query.
  */
 export function useAssetMarketData({ marketApiId, knownLedgerIds, knownMarketId }: Params) {
-  const counterCurrency = useSelector(counterValueCurrencySelector).ticker.toLowerCase();
+  const counterValueCurrency = useSelector(counterValueCurrencySelector);
+  const counterCurrency = counterValueCurrency.ticker.toLowerCase();
+  const counterValueUnit = counterValueCurrency.units[0];
 
   const { marketCurrencyData, marketId, ledgerIds, isLoading, isError } = useSharedAssetMarketData({
     marketApiId,
@@ -32,6 +34,7 @@ export function useAssetMarketData({ marketApiId, knownLedgerIds, knownMarketId 
     marketCurrency: marketCurrencyData,
     marketId,
     counterCurrency,
+    counterValueUnit,
     ledgerIds,
     isLoading,
     isError,

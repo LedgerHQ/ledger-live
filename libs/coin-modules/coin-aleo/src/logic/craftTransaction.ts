@@ -4,36 +4,37 @@ import type {
   MemoNotSupported,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/types";
-import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { sdkClient } from "../network/sdk";
-import type { AleoTransactionIntentData, FeeConfiguration } from "../types";
+import type { AleoCoinConfig, AleoTransactionIntentData, FeeConfiguration } from "../types";
 import { mapTransactionIntentToSdkIntent, toHex } from "./utils";
 
 export async function craftTransaction({
-  currency,
+  config,
   txIntent,
   feeConfiguration,
   viewKey,
-  tvks,
 }: {
-  currency: CryptoCurrency;
+  config: AleoCoinConfig;
   txIntent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData>;
   feeConfiguration: FeeConfiguration | null;
   viewKey?: string;
-  tvks?: string[];
 }): Promise<CraftedTransaction> {
+  const tvks = "data" in txIntent && "records" in txIntent.data ? txIntent.data.tvks : undefined;
   const intent = mapTransactionIntentToSdkIntent(txIntent);
 
   if ("records" in intent && intent.records.length > 1) {
-    invariant(tvks, "aleo: tvks are required for transactions with nested calls");
+    invariant(
+      tvks && tvks.length > 0,
+      "aleo: tvks are required for transactions with nested calls",
+    );
   }
 
   const response = await sdkClient.createRequestFromIntent({
-    currency,
+    config,
     intent,
     feeConfiguration,
     ...(viewKey !== undefined && { viewKey }),
-    ...(tvks !== undefined && { tvks }),
+    ...(tvks && tvks.length > 0 && { tvks }),
   });
 
   const transaction = toHex(response);

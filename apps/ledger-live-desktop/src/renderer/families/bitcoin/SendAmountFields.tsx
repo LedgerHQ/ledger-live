@@ -36,13 +36,21 @@ const Fields: Props = ({
   const bridge = useAccountBridge<Transaction>(account);
   const { t } = useTranslation();
   const [coinControlOpened, setCoinControlOpened] = useState(false);
-  const [isAdvanceMode, setAdvanceMode] = useState(
+  // Zcash prices fees with ZIP-317 (deterministic, action-based): there is no
+  // sat/vByte fee market, so the whole fee selector — the strategy list AND the
+  // advanced/custom controls — is removed. The ZIP-317 fee is applied
+  // automatically (see getAccountNetworkInfo).
+  const hideFeeSelection = account.currency.id === "zcash";
+  const [advanceMode, setAdvanceMode] = useState(
     !transaction.feesStrategy || transaction.feesStrategy === "custom",
   );
+  const isAdvanceMode = advanceMode;
   const strategies = useFeesStrategy(account, transaction);
   const onCoinControlOpen = useCallback(() => setCoinControlOpened(true), []);
   const onCoinControlClose = useCallback(() => setCoinControlOpened(false), []);
-  const { item } = useBitcoinPickingStrategy(transaction.utxoStrategy.strategy);
+  // Hooks run before the `hideFeeSelection` return below, so this is reached even
+  // for zcash, whose coin-zcash transaction carries no utxo strategy.
+  const { item } = useBitcoinPickingStrategy(transaction.utxoStrategy?.strategy);
   const canNext = account.bitcoinResources?.utxos?.length;
 
   const onFeeStrategyClick = useCallback(
@@ -83,6 +91,8 @@ const Fields: Props = ({
     },
     [onChange, trackProperties],
   );
+  if (hideFeeSelection) return null;
+
   return (
     <>
       <SendFeeMode isAdvanceMode={isAdvanceMode} setAdvanceMode={setAdvanceModeAndTrack} />

@@ -1,7 +1,8 @@
 import type { AssetInfo } from "@ledgerhq/coin-module-framework/api/types";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 
 export async function getTokenFromAsset(
   currency: CryptoCurrency,
@@ -21,11 +22,11 @@ export async function getTokenFromAsset(
   return result;
 }
 
-export function getAssetFromToken(token: TokenCurrency): AssetInfo {
+export function getAssetFromToken(token: TokenCurrency): AssetInfo | undefined {
+  if (!token.tokenIdentifier) return undefined;
   return {
     type: token.tokenType,
-    // TODO: replace with token.tokenIdentifier when available on TokenCurrency
-    assetReference: token.contractAddress,
+    assetReference: token.tokenIdentifier,
     assetOwner: token.contractAddress,
     name: token.name,
     unit: token.units[0],

@@ -1,0 +1,99 @@
+# @shared/cloud-sync
+
+## 0.1.0
+
+### Minor Changes
+
+- [#20423](https://github.com/LedgerHQ/ledger-live/pull/20423) [`c4a8141`](https://github.com/LedgerHQ/ledger-live/commit/c4a8141369e63e875fb5bfc9aef3f53362150338) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Fix Ledger Sync surfacing a 401 instead of refreshing the expired JWT
+
+  `@shared/cloud-sync` threw a bare `Error` carrying only `HTTP <status> on <method> <url>`, dropping
+  both the HTTP status and the backend's response body. The trustchain JWT recovery in
+  `genericWithJWT` could not classify it, so an expired token was rethrown instead of being refreshed
+  and retried: the 401 reached the UI, and on mobile it fed the wallet-sync error into the account
+  sync indicator ("Some account data couldn't load").
+
+  `CloudSyncHttpError` now carries `status`, `url`, `method` and the backend's verbatim message, and
+  `auth.ts` classifies 4xx from the numeric `status` rather than from the `LedgerAPI4xx` class name,
+  so recovery no longer depends on which transport made the call. The error contract expected by the
+  trustchain layer is documented in `auth.ts`; a transport whose errors are not `Error`-shaped must
+  remap to it at its boundary.
+
+- [#20595](https://github.com/LedgerHQ/ledger-live/pull/20595) [`43bf6d8`](https://github.com/LedgerHQ/ledger-live/commit/43bf6d8f6600f70b7c2a85615660e7e150e798bf) Thanks [@ysitbon](https://github.com/ysitbon)! - Make every new-architecture barrel a pure regrouping point, and enforce it.
+
+  An `index.*` under `shared/`, `domain/` or `features/` may now contain only `export * from "./x"`
+  lines, plus an optional default re-export. Having to sort in the export
+  (`export { a, b } from "./x"`) proved the target file mixed public and private code; an `index.*`
+  holding actual code proved it more loudly. A new nx plugin infers a `lint:structure` target on each
+  of the 49 packages and fails on both, along with two related rules: a barrel may not re-export a
+  private `internals` location, and it may not re-export another workspace package.
+
+  That last rule removes the proxies. A package that re-exported a neighbour gave the same symbol two
+  import paths and hid who actually provided it. Consumers now import the original provider and
+  declare the dependency, which is why the two apps gain `@features/flow-contacts-add-contact` and the
+  desktop app gains `@features/platform-contacts`.
+
+  Renamed or relocated, with the import specifier unchanged for consumers in every case except where
+  noted:
+
+  - `@domain/entity-account-name` no longer exports the `setAccountNames` alias; use
+    `bulkSetAccountNames`, the name the slice actually defines.
+  - `@shared/cloud-sync` exports `getCloudSyncApi` as a named export from its api module instead of
+    re-exporting a default under a different name.
+
+  Five packages are left untouched behind temporary exclusions, each recording how to remove it:
+
+  - `@shared/env`, the facade over the legacy `@ledgerhq/live-env`, which carries the wrapping in its
+    barrel.
+  - the `@ledgerhq/engagement` and `@ledgerhq/ptx` packages (`flow-analytics-consent`,
+    `flow-large-screen-upsell`, `flow-lazy-onboarding-banner`, `flow-pay-card-auth`), so each owning
+    team lands the change on its own schedule. Conformant barrels were prepared and verified for them
+    before being reverted, so the work is deferred rather than open.
+
+## 0.1.0-next.0
+
+### Minor Changes
+
+- [#20423](https://github.com/LedgerHQ/ledger-live/pull/20423) [`c4a8141`](https://github.com/LedgerHQ/ledger-live/commit/c4a8141369e63e875fb5bfc9aef3f53362150338) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Fix Ledger Sync surfacing a 401 instead of refreshing the expired JWT
+
+  `@shared/cloud-sync` threw a bare `Error` carrying only `HTTP <status> on <method> <url>`, dropping
+  both the HTTP status and the backend's response body. The trustchain JWT recovery in
+  `genericWithJWT` could not classify it, so an expired token was rethrown instead of being refreshed
+  and retried: the 401 reached the UI, and on mobile it fed the wallet-sync error into the account
+  sync indicator ("Some account data couldn't load").
+
+  `CloudSyncHttpError` now carries `status`, `url`, `method` and the backend's verbatim message, and
+  `auth.ts` classifies 4xx from the numeric `status` rather than from the `LedgerAPI4xx` class name,
+  so recovery no longer depends on which transport made the call. The error contract expected by the
+  trustchain layer is documented in `auth.ts`; a transport whose errors are not `Error`-shaped must
+  remap to it at its boundary.
+
+- [#20595](https://github.com/LedgerHQ/ledger-live/pull/20595) [`43bf6d8`](https://github.com/LedgerHQ/ledger-live/commit/43bf6d8f6600f70b7c2a85615660e7e150e798bf) Thanks [@ysitbon](https://github.com/ysitbon)! - Make every new-architecture barrel a pure regrouping point, and enforce it.
+
+  An `index.*` under `shared/`, `domain/` or `features/` may now contain only `export * from "./x"`
+  lines, plus an optional default re-export. Having to sort in the export
+  (`export { a, b } from "./x"`) proved the target file mixed public and private code; an `index.*`
+  holding actual code proved it more loudly. A new nx plugin infers a `lint:structure` target on each
+  of the 49 packages and fails on both, along with two related rules: a barrel may not re-export a
+  private `internals` location, and it may not re-export another workspace package.
+
+  That last rule removes the proxies. A package that re-exported a neighbour gave the same symbol two
+  import paths and hid who actually provided it. Consumers now import the original provider and
+  declare the dependency, which is why the two apps gain `@features/flow-contacts-add-contact` and the
+  desktop app gains `@features/platform-contacts`.
+
+  Renamed or relocated, with the import specifier unchanged for consumers in every case except where
+  noted:
+
+  - `@domain/entity-account-name` no longer exports the `setAccountNames` alias; use
+    `bulkSetAccountNames`, the name the slice actually defines.
+  - `@shared/cloud-sync` exports `getCloudSyncApi` as a named export from its api module instead of
+    re-exporting a default under a different name.
+
+  Five packages are left untouched behind temporary exclusions, each recording how to remove it:
+
+  - `@shared/env`, the facade over the legacy `@ledgerhq/live-env`, which carries the wrapping in its
+    barrel.
+  - the `@ledgerhq/engagement` and `@ledgerhq/ptx` packages (`flow-analytics-consent`,
+    `flow-large-screen-upsell`, `flow-lazy-onboarding-banner`, `flow-pay-card-auth`), so each owning
+    team lands the change on its own schedule. Conformant barrels were prepared and verified for them
+    before being reverted, so the work is deferred rather than open.

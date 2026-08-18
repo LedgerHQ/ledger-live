@@ -20,8 +20,7 @@ import type {
   Validator,
   BalanceOptions,
 } from "@ledgerhq/coin-module-framework/api/index";
-import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
-import { EvmCoinConfig, setCoinConfig, type EvmConfig } from "../config";
+import { type EvmConfigInfo, type EvmContext } from "../config";
 import { craftTransactionData } from "../logic/craftTransactionData";
 import {
   broadcast,
@@ -45,40 +44,45 @@ import { isHexString } from "../utils";
 // NOTE Celo still relies on the EVM coin config and injects its own
 // while creating an unused instance of API
 // TODO Change to Record<string, EvmConfig> once Celo bridge is removed
-const configs: Record<string, EvmConfig | (() => EvmCoinConfig)> = {};
 
 // The framework contract passes opaque params (object or array); EVM only accepts the object
-// form { to, data, block? }, and parseCallParams rejects arrays defensively at runtime.
-type EvmCoinModuleApi = CoinModuleApi<MemoNotSupported, BufferTxData> & {
-  call: (params: CallParams) => Promise<string>;
-};
-
+// form { to, data, block? }, and parseCallParams rejects arrays defensively at runtime. `call`
+// returns a hex string, which satisfies the framework's `CallResult` (unknown).
 export function createApi(
-  config: EvmConfig | (() => EvmCoinConfig),
   currencyId: string,
-): EvmCoinModuleApi {
-  configs[currencyId] = config;
-  setCoinConfig(id => {
-    const evmConfig = configs[id];
-    return typeof evmConfig === "function"
-      ? evmConfig()
-      : { info: { ...evmConfig, status: { type: "active" } } };
-  });
-  const currency = getCryptoCurrencyById(currencyId);
-
+): CoinModuleApi<EvmConfigInfo, MemoNotSupported, BufferTxData> {
+  // The {@link EvmContext} is threaded to every public API method (ADR-019) and forwarded to the
+  // low layers, which resolve config through `context.config(currencyId)` — no module-level
+  // singleton read.
   return {
-    broadcast: (tx: string, broadcastConfig?: BroadcastConfig): Promise<string> =>
-      broadcast(currency, { signature: tx, broadcastConfig }),
-    call: async (params: CallParams): Promise<string> => {
+    broadcast: (
+      context: EvmContext,
+      tx: string,
+      options?: { broadcastConfig?: BroadcastConfig },
+    ): Promise<string> =>
+      broadcast(context, currencyId, { signature: tx, broadcastConfig: options?.broadcastConfig }),
+    call: async (context: EvmContext, params: CallParams): Promise<string> => {
+      const config = await context.config(currencyId);
       const callParams = parseCallParams(params);
-      return getNodeApi(currency).call(currency, callParams);
+      return getNodeApi(config, currencyId).call(currencyId, callParams);
     },
-    combine,
+    combine: (
+      _context: EvmContext,
+      tx: string,
+      signature: string[],
+      _options?: { pubkey?: string },
+    ) => combine(tx, signature),
     craftTransaction: (
+      context: EvmContext,
       transactionIntent: TransactionIntent<MemoNotSupported, BufferTxData>,
-      customFees?: FeeEstimation,
-    ): Promise<CraftedTransaction> => craftTransaction(currency, { transactionIntent, customFees }),
+      options?: { customFees?: FeeEstimation },
+    ): Promise<CraftedTransaction> =>
+      craftTransaction(context, currencyId, {
+        transactionIntent,
+        customFees: options?.customFees,
+      }),
     craftRawTransaction: (
+      _context: EvmContext,
       _transaction: string,
       _sender: string,
       _publicKey: string,
@@ -87,34 +91,64 @@ export function createApi(
       throw new Error("craftRawTransaction is not supported");
     },
     estimateFees: (
+      context: EvmContext,
       transactionIntent: TransactionIntent<MemoNotSupported, BufferTxData>,
-      customFeesParameters?: FeeEstimation["parameters"],
-    ): Promise<FeeEstimation> => estimateFees(currency, transactionIntent, customFeesParameters),
-    getBalance: (address: string, options?: BalanceOptions): Promise<Balance[]> =>
-      getBalance(currency, address, options),
-    lastBlock: (): Promise<BlockInfo> => lastBlock(currency),
+      options?: {
+        customFeesParameters?: FeeEstimation["parameters"];
+      },
+    ): Promise<FeeEstimation> =>
+      estimateFees(context, currencyId, transactionIntent, options?.customFeesParameters),
+    getBalance: (
+      context: EvmContext,
+      address: string,
+      options?: BalanceOptions,
+    ): Promise<Balance[]> => getBalance(context, currencyId, address, options),
+    lastBlock: (context: EvmContext): Promise<BlockInfo> => lastBlock(context, currencyId),
     listOperations: (
+      context: EvmContext,
       address: string,
       options: ListOperationsOptions,
-    ): Promise<Page<Operation<MemoNotSupported>>> => listOperations(currency, address, options),
-    getBlock: (height: number): Promise<Block> => getBlock(currency, height),
-    getBlockInfo: (height: number): Promise<BlockInfo> => getBlockInfo(currency, height),
-    getStakes(_address: string): Promise<Page<Stake>> {
+    ): Promise<Page<Operation<MemoNotSupported>>> =>
+      listOperations(context, currencyId, address, options),
+    getBlock: (context: EvmContext, height: number): Promise<Block> =>
+      getBlock(context, currencyId, height),
+    getBlockInfo: (context: EvmContext, height: number): Promise<BlockInfo> =>
+      getBlockInfo(context, currencyId, height),
+    async register() {
+      throw new Error("register is not supported");
+    },
+    getStakes(_context: EvmContext, _address: string): Promise<Page<Stake>> {
       throw new Error("getStakes is not supported");
     },
-    getRewards(_address: string, _cursor?: Cursor): Promise<Page<Reward>> {
+    getRewards(
+      _context: EvmContext,
+      _address: string,
+      _options?: { cursor?: Cursor },
+    ): Promise<Page<Reward>> {
       throw new Error("getRewards is not supported");
     },
-    getValidators: (cursor?: Cursor): Promise<Page<Validator>> =>
-      getValidatorsPage(currency.id, cursor),
-    getNextSequence: (address: string): Promise<bigint> => getNextSequence(currency, address),
-    validateAddress,
+    getValidators: async (
+      context: EvmContext,
+      options?: { cursor?: Cursor },
+    ): Promise<Page<Validator>> => {
+      const config = await context.config(currencyId);
+      return getValidatorsPage(config, currencyId, options?.cursor);
+    },
+    getNextSequence: (context: EvmContext, address: string): Promise<bigint> =>
+      getNextSequence(context, currencyId, address),
+    validateAddress: (_context: EvmContext, address, parameters) =>
+      validateAddress(address, parameters),
     validateIntent: (
+      context: EvmContext,
       intent: TransactionIntent<MemoNotSupported, BufferTxData>,
       balances: Balance[],
-      customFees?: FeeEstimation,
-    ): Promise<TransactionValidation> => validateIntent(currency, intent, balances, customFees),
-    craftTransactionData,
+      options?: { customFees?: FeeEstimation },
+    ): Promise<TransactionValidation> =>
+      validateIntent(context, currencyId, intent, balances, options?.customFees),
+    craftTransactionData: (
+      _context: EvmContext,
+      intent: TransactionIntent<MemoNotSupported, BufferTxData>,
+    ) => craftTransactionData(intent),
   };
 }
 

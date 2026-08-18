@@ -1,6 +1,16 @@
 import React from "react";
+import { DeviceModelId } from "@ledgerhq/types-devices";
+import {
+  LARGE_SCREEN_UPSELL_BACKUPS_UTM_CONTENT,
+  LARGE_SCREEN_UPSELL_UTM_CAMPAIGN,
+  LARGE_SCREEN_UPSELL_UTM_MEDIUM,
+  LARGE_SCREEN_UPSELL_UTM_SOURCE_BY_PLATFORM,
+  type NanoDeviceModelId,
+} from "@features/flow-large-screen-upsell";
 import { render, screen, waitFor, withFlagOverrides } from "tests/testSetup";
 import { useAccountPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
+import { DeviceModelInfo } from "@ledgerhq/types-live";
+import { addNewDeviceModel, setLastSeenDeviceInfo } from "~/renderer/actions/settings";
 import { setRecoverState } from "~/renderer/reducers/recoverState";
 import { LedgerRecoverSubscriptionStateEnum } from "~/types/recoverSubscriptionState";
 import { isModalOpened } from "~/renderer/reducers/modals";
@@ -10,6 +20,7 @@ import { ContextMenu } from "LLD/features/MyWallet/components/ContextMenu";
 import { RECOVER_NOTIFICATION_DOT_TEST_ID } from "LLD/features/BackupHub/components/ShieldCheckNotificationIcon";
 import {
   BACKUP_HUB_RECOVER_DEEPLINK_QUERY,
+  BACKUP_HUB_TRACKING_BUTTON,
   BACKUP_HUB_TRACKING_PAGE_NAME,
   RECOVER_DEEPLINK_BASE,
 } from "LLD/features/BackupHub/constants";
@@ -50,8 +61,38 @@ const backupHubState = withFlagOverrides({
   lwdBackupHub: { enabled: true },
 });
 
+const NANO_UPSELL_DEVICE_MODEL = {
+  [DeviceModelId.nanoS]: "lns",
+  [DeviceModelId.nanoSP]: "lnsp",
+  [DeviceModelId.nanoX]: "lnx",
+} as const satisfies Record<NanoDeviceModelId, string>;
+
 const openHub = async (options?: Parameters<typeof render>[1]) => {
   const utils = render(<ContextMenu />, { initialState: backupHubState, ...options });
+
+  await utils.user.click(screen.getByRole("button", { name: "My Wallet" }));
+  await utils.user.click(await screen.findByTestId("my-wallet-action-recover"));
+  await screen.findByTestId("backup-hub");
+
+  return utils;
+};
+
+const openHubWithDevices = async (
+  devicesModelList: DeviceModelId[],
+  lastSeenModelId?: DeviceModelId,
+) => {
+  const utils = render(<ContextMenu />, { initialState: backupHubState });
+  for (const deviceModelId of devicesModelList) {
+    utils.store.dispatch(addNewDeviceModel({ deviceModelId }));
+  }
+  if (lastSeenModelId) {
+    utils.store.dispatch(
+      setLastSeenDeviceInfo({
+        lastSeenDevice: { modelId: lastSeenModelId } as DeviceModelInfo,
+        latestFirmware: null,
+      }),
+    );
+  }
 
   await utils.user.click(screen.getByRole("button", { name: "My Wallet" }));
   await utils.user.click(await screen.findByTestId("my-wallet-action-recover"));
@@ -197,6 +238,81 @@ describe("BackupHub", () => {
     expect(calledWith).toContain("utm_source=Ledger_Wallet");
     expect(calledWith).toContain("utm_campaign=26-06-AlwaysOn-ALL-Awareness-LLD");
   });
+
+  it.each([DeviceModelId.nanoS, DeviceModelId.nanoSP, DeviceModelId.nanoX])(
+    "shows the Recovery Key warning copy for %s",
+    async deviceModelId => {
+      await openHubWithDevices([deviceModelId]);
+
+      expect(screen.getByText("Not compatible with your device")).toBeVisible();
+      expect(screen.queryByText("A PIN-protected smart card.")).not.toBeInTheDocument();
+    },
+  );
+
+  it("keeps the Recovery Key row unchanged when a large-screen device is known", async () => {
+    await openHubWithDevices([DeviceModelId.nanoS, DeviceModelId.stax]);
+
+    expect(screen.getByText("A PIN-protected smart card.")).toBeVisible();
+    expect(screen.queryByText("Not compatible with your device")).not.toBeInTheDocument();
+  });
+
+  it("uses the last-seen nano for Recovery Key upsell analytics when several nanos are known", async () => {
+    const { user } = await openHubWithDevices(
+      [DeviceModelId.nanoS, DeviceModelId.nanoX],
+      DeviceModelId.nanoX,
+    );
+
+    await user.click(screen.getByTestId("backup-hub-physical-row-recovery-key"));
+
+    expect(track).toHaveBeenCalledWith(
+      "button_clicked",
+      expect.objectContaining({
+        button: BACKUP_HUB_TRACKING_BUTTON.recoveryKey,
+        deviceModel: NANO_UPSELL_DEVICE_MODEL[DeviceModelId.nanoX],
+      }),
+    );
+  });
+
+  it.each([DeviceModelId.nanoS, DeviceModelId.nanoSP, DeviceModelId.nanoX] as const)(
+    "opens the upsell LP with backups UTM when Recovery Key is clicked on %s",
+    async deviceModelId => {
+      const { user } = await openHubWithDevices([deviceModelId]);
+
+      await user.click(screen.getByTestId("backup-hub-physical-row-recovery-key"));
+
+      expect(mockOpenURL).toHaveBeenCalledTimes(1);
+      const openedUrl = new URL(String(mockOpenURL.mock.calls[0][0]));
+      expect(openedUrl.origin + openedUrl.pathname).toBe(
+        "https://shop.ledger.com/pages/ledger-nano-upgrade-program",
+      );
+      expect(openedUrl.searchParams.get("utm_source")).toBe(
+        LARGE_SCREEN_UPSELL_UTM_SOURCE_BY_PLATFORM.desktop,
+      );
+      expect(openedUrl.searchParams.get("utm_medium")).toBe(LARGE_SCREEN_UPSELL_UTM_MEDIUM);
+      expect(openedUrl.searchParams.get("utm_campaign")).toBe(LARGE_SCREEN_UPSELL_UTM_CAMPAIGN);
+      expect(openedUrl.searchParams.get("utm_content")).toBe(
+        LARGE_SCREEN_UPSELL_BACKUPS_UTM_CONTENT,
+      );
+      const upsellAnalyticsProps = {
+        deviceModel: NANO_UPSELL_DEVICE_MODEL[deviceModelId],
+        personalRecoOptIn: false,
+        offerType: "none",
+        platform: "lwd",
+      };
+      expect(track).toHaveBeenCalledWith("button_clicked", {
+        button: BACKUP_HUB_TRACKING_BUTTON.recoveryKey,
+        page: BACKUP_HUB_TRACKING_PAGE_NAME,
+        ...upsellAnalyticsProps,
+      });
+      expect(track).toHaveBeenCalledWith("deeplink_clicked", {
+        page: BACKUP_HUB_TRACKING_PAGE_NAME,
+        deeplinkSource: LARGE_SCREEN_UPSELL_UTM_SOURCE_BY_PLATFORM.desktop,
+        deeplinkMedium: LARGE_SCREEN_UPSELL_UTM_MEDIUM,
+        deeplinkCampaign: LARGE_SCREEN_UPSELL_UTM_CAMPAIGN,
+        ...upsellAnalyticsProps,
+      });
+    },
+  );
 
   it("returns to the menu when pressing back", async () => {
     const { user } = await openHub();

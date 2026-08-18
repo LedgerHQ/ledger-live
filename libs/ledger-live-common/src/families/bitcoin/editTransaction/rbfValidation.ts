@@ -1,7 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
 import type { Transaction as BtcTransaction } from "@ledgerhq/coin-bitcoin/types";
-import { getWalletAccount } from "@ledgerhq/coin-bitcoin/wallet-btc/getWalletAccount";
+import { getWalletAccount } from "@ledgerhq/coin-bitcoin/getWalletAccount";
 import { getOriginalTxFeeContext } from "@ledgerhq/coin-bitcoin/rbfFees";
 
 const ZERO = new BigNumber(0);

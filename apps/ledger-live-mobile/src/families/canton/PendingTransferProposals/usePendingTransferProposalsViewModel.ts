@@ -1,5 +1,4 @@
 import { isCantonAccount } from "@ledgerhq/coin-canton";
-import { TopologyChangeError } from "@ledgerhq/coin-canton/types/errors";
 import type { Sync } from "@ledgerhq/live-common/bridge/react/types";
 import { useFeature } from "@features/platform-feature-flags";
 import {
@@ -10,7 +9,7 @@ import type {
   TransferInstructionParams,
   TransferInstructionType,
 } from "@ledgerhq/live-common/families/canton/react";
-import type { Unit } from "@ledgerhq/types-cryptoassets";
+import type { Unit } from "@domain/entity-currency-unit";
 import { Account } from "@ledgerhq/types-live";
 import { useFocusEffect } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -190,7 +189,7 @@ export function usePendingTransferProposalsViewModel({
           reason: "canton-pending-transaction-action",
         });
       } catch (error) {
-        if (error instanceof TopologyChangeError) {
+        if ((error as { name?: string })?.name === "TopologyChangeError") {
           setModal(prev => ({ ...prev, isOpen: false }));
           redirectToReonboarding(action, contractId);
           return;

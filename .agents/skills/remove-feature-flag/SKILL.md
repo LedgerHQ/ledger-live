@@ -113,7 +113,7 @@ opening, and the generated (not posted) Slack message. Pass it the resolved
 behavior, Firebase key, Jira result, validation evidence, affected flows, and
 the manual Firebase cleanup note.
 
-For `no pr`, follow `git-workflow`, create a local commit after validation, and
+For `no pr`, follow `git-conventions`, create a local commit after validation, and
 do not push. Preserve that commit on the removal branch before restoring the
 initial workspace.
 

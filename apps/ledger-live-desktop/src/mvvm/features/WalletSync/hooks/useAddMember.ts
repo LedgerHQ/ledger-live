@@ -9,10 +9,6 @@ import { Flow, Step, walletSyncOnboardingNewDeviceSelector } from "~/renderer/re
 import { useTrustchainSdk } from "./useTrustchainSdk";
 import { TrustchainResult, TrustchainResultType } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { useCallback, useEffect, useRef, useState } from "react";
-import {
-  TrustchainAlreadyInitialized,
-  TrustchainAlreadyInitializedWithOtherSeed,
-} from "@ledgerhq/ledger-key-ring-protocol/errors";
 import { track } from "~/renderer/analytics/segment";
 import { AnalyticsPage } from "./useLedgerSyncAnalytics";
 import { saveSettings, setLastOnboardedDevice } from "~/renderer/actions/settings";
@@ -104,9 +100,10 @@ export function useAddMember({
 
         transitionToNextScreen(trustchainResult);
       } catch (error) {
-        if (error instanceof TrustchainAlreadyInitialized) {
+        const eName = (error as { name?: string })?.name;
+        if (eName === "TrustchainAlreadyInitialized") {
           dispatch(setFlow({ flow: Flow.Synchronize, step: Step.AlreadySecuredSameSeed }));
-        } else if (error instanceof TrustchainAlreadyInitializedWithOtherSeed) {
+        } else if (eName === "TrustchainAlreadyInitializedWithOtherSeed") {
           dispatch(setFlow({ flow: Flow.Synchronize, step: Step.AlreadySecuredOtherSeed }));
         } else {
           setError(error as Error);

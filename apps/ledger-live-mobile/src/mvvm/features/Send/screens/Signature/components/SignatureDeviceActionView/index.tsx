@@ -3,9 +3,9 @@ import { View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { BottomSheetView } from "@ledgerhq/lumen-ui-rnative";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
-import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
+import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import SelectDevice2, { type SetHeaderOptionsRequest } from "~/components/SelectDevice2";
-import { useAnalytics } from "~/analytics";
+import { track, usePageNameFromRoute } from "~/analytics";
 import { getSendFlowTrackingProperties } from "@ledgerhq/ledger-wallet-framework/tracking/send";
 import { SigningBody } from "./components/SigningBody";
 
@@ -41,24 +41,26 @@ export function SignatureDeviceActionView({
   onUserCancel,
 }: SignatureDeviceActionViewProps) {
   const { bottom: bottomInset } = useSafeAreaInsets();
-  const { track } = useAnalytics();
 
   const trackingProperties = useMemo(
     () => getSendFlowTrackingProperties(account, parentAccount ?? undefined),
     [account, parentAccount],
   );
 
+  const page = usePageNameFromRoute();
+
   useEffect(() => {
     track("send_modal", {
       ...trackingProperties,
       name: "step review device",
+      page,
       flow: "send",
     });
-  }, [track, trackingProperties]);
+  }, [page, trackingProperties]);
 
   return (
     <View style={{ flex: 1 }} testID="send-signature-step">
-      <QueuedDrawerBottomSheet
+      <QueuedBottomSheet
         isRequestingToBeOpened
         onClose={onUserCancel}
         preventBackdropClick={!!selectedDevice}
@@ -84,7 +86,7 @@ export function SignatureDeviceActionView({
           )}
           {selectedDevice ? <SyncSkipUnderPriority priority={100} /> : null}
         </BottomSheetView>
-      </QueuedDrawerBottomSheet>
+      </QueuedBottomSheet>
     </View>
   );
 }

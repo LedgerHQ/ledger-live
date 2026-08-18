@@ -5,7 +5,6 @@ import type { Action, Device } from "@ledgerhq/live-common/hw/actions/types";
 import { SkipReason } from "@ledgerhq/live-common/apps/types";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { useTranslation } from "react-i18next";
-import { UserRefusedAllowManager } from "@ledgerhq/errors";
 import AppInstallItem, { ItemState } from "./AppInstallItem";
 import AllowManagerModal from "./AllowManagerModal";
 import useConnectAppAction from "~/renderer/hooks/useConnectAppAction";
@@ -59,7 +58,7 @@ const InstallSetOfApps = ({
   } = status;
 
   useEffect(() => {
-    if (error instanceof UserRefusedAllowManager) {
+    if (error?.name === "UserRefusedAllowManager") {
       onCancel();
     } else if (onError && error) {
       onError(error);

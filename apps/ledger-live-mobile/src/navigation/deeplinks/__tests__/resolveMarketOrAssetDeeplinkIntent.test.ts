@@ -49,10 +49,10 @@ describe("resolveMarketOrAssetDeeplinkIntent", () => {
       ).toEqual({ type: "market-banner" });
     });
 
-    it("falls back to portfolio for a token on legacy asset", () => {
+    it("falls back to the market banner for a token on legacy asset", () => {
       expect(
         resolveMarketOrAssetDeeplinkIntent({ ...off, hostname: "asset", pathname: tokenPath }),
-      ).toEqual({ type: "portfolio" });
+      ).toEqual({ type: "market-banner" });
     });
   });
 
@@ -90,10 +90,10 @@ describe("resolveMarketOrAssetDeeplinkIntent", () => {
       ).toEqual({ type: "market-banner", category: undefined });
     });
 
-    it("routes a non-empty asset path to portfolio", () => {
+    it("routes an unknown crypto asset id to the market banner", () => {
       expect(
         resolveMarketOrAssetDeeplinkIntent({ ...base, hostname: "asset", pathname: "/not-a-coin" }),
-      ).toEqual({ type: "portfolio" });
+      ).toEqual({ type: "market-banner" });
     });
 
     it("routes an empty asset path to portfolio when Wallet 4.0 is on", () => {

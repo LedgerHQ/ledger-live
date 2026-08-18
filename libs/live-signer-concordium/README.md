@@ -6,4 +6,7 @@
 
 ## @ledgerhq/live-signer-concordium
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 Ledger Hardware Wallet Concordium JavaScript bindings via DMK.

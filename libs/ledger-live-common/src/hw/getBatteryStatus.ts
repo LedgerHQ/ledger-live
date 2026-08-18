@@ -1,9 +1,21 @@
 import Transport from "@ledgerhq/hw-transport";
-import { BatteryStatusFlags, ChargingModes } from "@ledgerhq/types-devices";
-import { TransportStatusError, StatusCodes } from "@ledgerhq/errors";
+import { TransportStatusError, StatusCodes } from "@ledgerhq/hw-transport/errors";
 import { LocalTracer } from "@ledgerhq/logs";
 
 import { LOG_TYPE } from ".";
+
+export enum ChargingModes {
+  NONE = 0x00,
+  USB = 0x01,
+  QI = 0x02,
+}
+
+export interface BatteryStatusFlags {
+  charging: ChargingModes;
+  issueCharging: boolean;
+  issueTemperature: boolean;
+  issueBattery: boolean;
+}
 
 export enum BatteryStatusTypes {
   BATTERY_PERCENTAGE = 0x00,

@@ -7,7 +7,7 @@ import type {
 import { DeviceModelId } from "@ledgerhq/device-management-kit";
 import { DmkCompatTransport } from "@ledgerhq/live-dmk-shared";
 import type { ConnectAppDAInput } from "@ledgerhq/live-dmk-shared";
-import { getCryptoCurrencyById } from "../../../../currencies";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import getAddress from "../../../../hw/getAddress";
 import type { EnsureAppReadyInput } from "../types";
 
@@ -102,7 +102,8 @@ export function buildConnectAppDeviceActionInput(params: {
       appNameToDependency(appName, getMinVersion),
     ),
     requireLatestFirmware: ensureAppReadyInput.requireLatestFirmware,
-    allowMissingApplication: ensureAppReadyInput.allowPartialDependencies,
+    allowMissingApplication: false,
+    allowNonOnboardedDevice: false,
     unlockTimeout,
     requiredDerivation: createRequiredDerivation({
       dmk,

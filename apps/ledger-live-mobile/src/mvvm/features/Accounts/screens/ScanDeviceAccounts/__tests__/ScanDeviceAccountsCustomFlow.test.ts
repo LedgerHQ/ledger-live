@@ -1,8 +1,8 @@
 import BigNumber from "bignumber.js";
 import { of, EMPTY } from "rxjs";
 import type { Account } from "@ledgerhq/types-live";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-import { sameAccountIdentity } from "@ledgerhq/live-wallet/addAccounts";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { sameAccountIdentity } from "@ledgerhq/live-common/account/addAccounts";
 import { renderHook, waitFor } from "@tests/test-renderer";
 import { act } from "@testing-library/react-native";
 import { setupScanDeviceTests } from "./shared";

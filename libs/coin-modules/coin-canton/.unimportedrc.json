@@ -19,10 +19,10 @@
     "jest-util",
     "jest-get-type",
     "jest-matcher-utils",
-    "jest-message-util",
-    "@ledgerhq/types-cryptoassets"
+    "jest-message-util"
   ],
   "ignoreUnimported": [
+    "src/errors.ts",
     "src/network/gateway.ts",
     "src/network/mock-network.ts",
     "src/network/types.ts",

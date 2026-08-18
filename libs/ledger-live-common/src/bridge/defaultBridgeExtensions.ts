@@ -60,4 +60,5 @@ export const defaultBridgeExtensions: Required<AccountBridgeExtensions> = {
   isTransactionConfirmed: async () => {
     throw new Error("isTransactionConfirmed is not supported for this currency");
   },
+  getWalletApiSpendableBalance: account => account.spendableBalance,
 };

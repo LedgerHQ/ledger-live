@@ -5,6 +5,7 @@ import { Box, Button, Switch, Text } from "@ledgerhq/lumen-ui-rnative";
 import { useTranslation } from "~/context/Locale";
 import { useDispatch, useSelector } from "~/context/hooks";
 import {
+  analyticsConsentInfoSelector,
   analyticsEnabledSelector,
   personalizedRecommendationsEnabledSelector,
 } from "~/reducers/settings";
@@ -16,8 +17,7 @@ import {
 } from "~/actions/settings";
 import { ScreenName } from "~/const";
 import { TrackScreen, track, updateIdentify } from "~/analytics";
-import { useFeature } from "@features/platform-feature-flags";
-import { resolveAnalyticsOptInParams } from "@ledgerhq/live-common/analyticsConsent/index";
+import { useAnalyticsConsentDecision } from "@features/flow-analytics-consent";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import { urls } from "~/utils/urls";
 import { ConsentFooter } from "LLM/features/AnalyticsConsentDrawer/components/ConsentFooter";
@@ -35,8 +35,10 @@ export default function AnalyticsPreferencesSettings({ navigation, route }: Prop
   const { bottom: bottomInset } = useSafeAreaInsets();
   const privacyPolicyUrl = useLocalizedUrl(urls.privacyPolicy.en);
   const footerBottomPadding = bottomInset + 16;
-  const analyticsOptInFeature = useFeature("analyticsOptIn");
-  const { policyVersion } = resolveAnalyticsOptInParams(analyticsOptInFeature);
+  const consentInfo = useSelector(analyticsConsentInfoSelector);
+  const { currentPolicyVersion } = useAnalyticsConsentDecision(consentInfo);
+  // An invalid remote version must not erase the version the user already acknowledged.
+  const policyVersion = currentPolicyVersion?.normalized ?? consentInfo.privacyPolicyVersion;
 
   const initialTogglesOff = route.params?.initialTogglesOff === true;
   const analyticsFromStore = useSelector(analyticsEnabledSelector);

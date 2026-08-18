@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/ledger-key-ring-protocol",
-  "version": "0.16.0",
+  "version": "0.19.0",
   "private": true,
   "description": "Ledger Key Ring Protocol layer",
   "keywords": [
@@ -57,14 +57,12 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "@ledgerhq/errors": "workspace:*",
     "@ledgerhq/hw-transport": "workspace:*",
     "@ledgerhq/hw-transport-mocker": "workspace:*",
     "@ledgerhq/hw-ledger-key-ring-protocol": "workspace:*",
     "@ledgerhq/ledger-auth": "workspace:*",
-    "@ledgerhq/live-env": "workspace:*",
     "@ledgerhq/live-network": "workspace:*",
-    "@ledgerhq/logs": "workspace:*",
+    "@ledgerhq/logs": "catalog:",
     "@ledgerhq/speculos-transport": "workspace:*",
     "@ledgerhq/types-devices": "workspace:^",
     "base64-js": "1",
@@ -74,6 +72,8 @@
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@reduxjs/toolkit": "catalog:",
+    "@shared/env": "workspace:*",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "bip39": "^3.0.4",

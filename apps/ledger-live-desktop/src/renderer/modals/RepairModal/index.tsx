@@ -2,7 +2,6 @@ import React, { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { repairChoices } from "@ledgerhq/live-common/hw/firmwareUpdate-repair";
-import { MCUNotGenuineToDashboard } from "@ledgerhq/errors";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { track } from "~/renderer/analytics/segment";
 import Button from "~/renderer/components/Button";
@@ -169,7 +168,7 @@ const RepairModal = ({
 
   const onClose = !cancellable && isLoading ? undefined : onReject;
   const disableRepair =
-    isLoading || !selectedOption || !!(error && error instanceof MCUNotGenuineToDashboard);
+    isLoading || !selectedOption || !!(error && error?.name === "MCUNotGenuineToDashboard");
 
   return (
     <Modal

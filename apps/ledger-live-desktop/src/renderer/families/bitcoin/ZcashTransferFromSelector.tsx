@@ -1,18 +1,24 @@
 import React, { useEffect } from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
-import BigNumber from "bignumber.js";
 import { useFeature } from "@features/platform-feature-flags";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import type { Account } from "@ledgerhq/types-live";
 import type { Transaction, ZcashAccount } from "@ledgerhq/live-common/families/bitcoin/types";
-import type { ZcashTransaction } from "@ledgerhq/coin-bitcoin/chain-adapters/zcash/types";
+import type { Transaction as ZcashTransaction } from "@ledgerhq/coin-zcash/types";
+import { getTransparentBalance } from "@ledgerhq/coin-zcash/logic/account/balance";
+import {
+  getSpendableIronwoodBalance,
+  hasMaturingIronwoodNotes,
+} from "@ledgerhq/coin-zcash/logic/account/spendability";
+import { getReservedNullifiers } from "@ledgerhq/coin-zcash/bridge/note-reservation";
 import { useSelector } from "LLD/hooks/redux";
 import { localeSelector } from "~/renderer/reducers/settings";
 import Box from "~/renderer/components/Box/Box";
 import Text from "~/renderer/components/Text";
 import Label from "~/renderer/components/Label";
+import Alert from "~/renderer/components/Alert";
 import Discreet, { useDiscreetMode } from "~/renderer/components/Discreet";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
@@ -82,26 +88,34 @@ const ZcashTransferFromSelector = ({ account, transaction, onChange }: Props) =>
   const locale = useSelector(localeSelector);
   const unit = useAccountUnit(account);
 
-  const tx = transaction as ZcashTransaction;
+  const tx = transaction as unknown as ZcashTransaction;
 
   useEffect(() => {
     if (!active) return;
     if (tx.sender !== undefined) return;
-    onChange(bridge.updateTransaction(tx, { sender: "public" }) as Transaction);
+    onChange(bridge.updateTransaction(tx, { sender: "public" }) as unknown as Transaction);
   }, [active, tx.sender, bridge, onChange, tx]);
 
   if (!active) return null;
 
-  const sender: Sender = tx.sender ?? "public";
+  const sender: Sender = tx.sender === "private" ? "private" : "public";
 
-  const privateInfo = (account as ZcashAccount).privateInfo;
+  const zcashAccount = account as ZcashAccount;
+  const privateInfo = zcashAccount.privateInfo;
   const fvkAvailable = Boolean(privateInfo?.ufvk);
-  const orchardBalance = privateInfo?.orchardBalance ?? BigNumber(0);
-  const saplingBalance = privateInfo?.saplingBalance ?? BigNumber(0);
-
-  const totalBalance = account.balance ?? BigNumber(0);
-  const privateBalance = orchardBalance.plus(saplingBalance);
-  const transparentBalance = totalBalance.minus(privateBalance);
+  // Unlike AccountBalanceSummaryFooter's total, this figure is what the send
+  // flow can actually select from: mature, unreserved Ironwood notes.
+  // transparent = own UTXOs (not balance − private, which diverges across
+  // flag/module provenance).
+  const privateBalance = getSpendableIronwoodBalance(
+    zcashAccount,
+    getReservedNullifiers(zcashAccount),
+  );
+  const transparentBalance = getTransparentBalance(zcashAccount.bitcoinResources?.utxos);
+  // Only warn while a freshly shielded or changed note may still be maturing
+  // (until its transaction has enough confirmations); once everything is
+  // spendable the private balance no longer trails the total.
+  const showSpendableWarning = sender === "private" && hasMaturingIronwoodNotes(zcashAccount);
 
   const formatConfig = { showCode: true, discreet, locale };
   const transparentLabel = formatCurrencyUnit(unit, transparentBalance, formatConfig);
@@ -109,7 +123,7 @@ const ZcashTransferFromSelector = ({ account, transaction, onChange }: Props) =>
 
   const select = (next: Sender) => {
     if (next === sender) return;
-    onChange(bridge.updateTransaction(tx, { sender: next }) as Transaction);
+    onChange(bridge.updateTransaction(tx, { sender: next }) as unknown as Transaction);
   };
 
   return (
@@ -162,6 +176,11 @@ const ZcashTransferFromSelector = ({ account, transaction, onChange }: Props) =>
           ) : null}
         </Card>
       </Box>
+      {showSpendableWarning ? (
+        <Alert type="warning" mt={3} data-testid="zcash-private-spendable-warning">
+          <Trans i18nKey="zcash.shielded.send.transferFrom.spendableWarning" />
+        </Alert>
+      ) : null}
     </Box>
   );
 };

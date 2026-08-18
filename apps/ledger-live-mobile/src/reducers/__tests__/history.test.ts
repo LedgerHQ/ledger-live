@@ -1,7 +1,7 @@
 import { FEATURE_FLAGS_INITIAL_STATE } from "@shared/feature-flags";
 import BigNumber from "bignumber.js";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 import type { Account, AccountLike, Operation, TokenAccount } from "@ledgerhq/types-live";
 import historyReducer, {

@@ -1,8 +1,6 @@
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
-import { log } from "@ledgerhq/logs";
 import { findCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type {
   Account,
   AccountLike,
@@ -21,8 +19,6 @@ import {
   encodeTokenAccountId,
 } from "@ledgerhq/ledger-wallet-framework/account/accountId";
 import { decodeOperationId, encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
-import { promiseAllBatched } from "@ledgerhq/live-promise";
 import aleoConfig from "../config";
 import {
   BALANCED_PRIVATE_RECORDS_PER_TRANSACTION,
@@ -30,14 +26,14 @@ import {
   FAST_PRIVATE_RECORDS_PER_TRANSACTION,
   MAX_PRIVATE_RECORDS_PER_TRANSACTION,
   MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION,
+  PRIVATE_TRANSFER_FUNCTIONS,
   PROGRAM_ID,
   SINGLE_CALL_SIGNING_TIME,
+  TOKEN_RECORD_NAME,
   TRANSACTION_TYPE,
 } from "../constants";
 import type {
-  AleoOperation,
   AleoTransactionType,
-  EnrichedPrivateRecord,
   OperationDetailsExtraField,
   Transaction,
   TransactionType,
@@ -52,10 +48,15 @@ import type {
   TransactionPublic,
   TransactionPrivate,
   AleoCoinConfig,
+  AleoPrivateRecord,
+  FeeConfiguration,
   AleoUnspentRecord,
   AleoTransactionIntent,
   SigningStrategy,
   StrategyConfig,
+  AleoContext,
+  AleoTokenDetails,
+  AleoTokenType,
 } from "../types";
 
 const MICROCREDITS_REGEX = /^(\d+)u\d+$/;
@@ -80,13 +81,30 @@ export function parseAmount(raw: string | null): BigNumber {
   return new BigNumber(matchAleoPlaintextAmount(raw) ?? 0);
 }
 
-export function getNetworkConfig(currency: CryptoCurrency) {
-  const config = aleoConfig.getCoinConfig(currency.id);
+export function isTokenRecord(record: AleoPrivateRecord): boolean {
+  return (
+    record.record_name.toLowerCase() === TOKEN_RECORD_NAME.toLowerCase() &&
+    record.program_name !== PROGRAM_ID.CREDITS
+  );
+}
+
+export function classifyAleoTokenType(token: AleoTokenDetails): AleoTokenType {
+  if (token.token_standard?.toLowerCase() === "arc-20") return "arc20";
+  if (token.program_name === PROGRAM_ID.TOKEN_REGISTRY) return "arc21";
+  if (token.program_name.includes("stablecoin")) return "arc22";
+  return "unknown";
+}
+
+export function resolvePrivacyContext(context: AleoContext): {
+  provableId: string;
+  viewKey: string;
+} {
+  invariant(typeof context.provableId === "string", "aleo: provableId is missing");
+  invariant(typeof context.viewKey === "string", "aleo: viewKey is missing");
 
   return {
-    nodeUrl: config.apiUrls.node,
-    sdkUrl: config.apiUrls.sdk,
-    networkType: config.networkType,
+    provableId: context.provableId,
+    viewKey: context.viewKey,
   };
 }
 
@@ -166,7 +184,11 @@ export const determineTransactionType = (
   return "public";
 };
 
-function parseTransactionFields(rawTx: AleoPublicTransaction, address: string) {
+export function resolveTransactionAmount(rawTx: AleoPublicTransaction): BigNumber {
+  return new BigNumber(rawTx.amount_u128 ?? rawTx.amount);
+}
+
+export function parseTransactionFields(rawTx: AleoPublicTransaction, address: string) {
   const date = new Date(Number(rawTx.block_timestamp) * 1000);
   const hasFailed = rawTx.transaction_status !== "Accepted";
   let type: OperationType = "NONE";
@@ -195,7 +217,7 @@ export const toCoinFrameworkOperation = (
     type,
     recipients: [rawTx.recipient_address],
     senders: [rawTx.sender_address],
-    value: BigInt(rawTx.amount.toFixed(0)),
+    value: BigInt(resolveTransactionAmount(rawTx).toFixed(0)),
     asset: { type: "native" },
     details: {
       functionId: rawTx.function_id,
@@ -216,73 +238,6 @@ export const toCoinFrameworkOperation = (
   };
 };
 
-export const toBridgeOperation = (
-  ledgerAccountId: string,
-  rawTx: AleoPublicTransaction,
-  address: string,
-  isTokenTx?: boolean,
-): AleoOperation => {
-  const value = new BigNumber(rawTx.amount);
-  const { type, fee, blockHash, transactionType, date, hasFailed } = parseTransactionFields(
-    rawTx,
-    address,
-  );
-
-  if (value.isNaN() || value.lte(0)) {
-    log("aleo/toBridgeOperation", `Invalid raw transaction details for ${address}`, rawTx);
-  }
-
-  return {
-    id: encodeOperationId(ledgerAccountId, rawTx.transaction_id, type),
-    recipients: [rawTx.recipient_address],
-    senders: [rawTx.sender_address],
-    value,
-    type,
-    hasFailed,
-    hash: rawTx.transaction_id,
-    fee: new BigNumber(fee),
-    blockHeight: rawTx.block_number,
-    blockHash,
-    accountId: ledgerAccountId,
-    date,
-    extra: {
-      functionId: rawTx.function_id,
-      transactionType,
-      ...(isTokenTx && { programId: rawTx.program_id }),
-    },
-  };
-};
-
-export const toPrivateBridgeOperation = (
-  ledgerAccountId: string,
-  enrichedRecord: EnrichedPrivateRecord,
-  address: string,
-): AleoOperation => {
-  const transactionId = enrichedRecord.rawRecord.transaction_id.trim();
-  const blockHeight = enrichedRecord.rawRecord.block_height;
-  const timestamp = new Date(Number(enrichedRecord.rawRecord.block_timestamp) * 1000);
-  const type: OperationType = enrichedRecord.recipient === address ? "IN" : "OUT";
-
-  return {
-    id: encodeOperationId(ledgerAccountId, transactionId, type),
-    senders: [enrichedRecord.sender],
-    recipients: [enrichedRecord.recipient],
-    value: enrichedRecord.value,
-    type,
-    hasFailed: false,
-    hash: transactionId,
-    fee: new BigNumber(enrichedRecord.details.fee_value),
-    blockHeight,
-    blockHash: enrichedRecord.details.block_hash,
-    accountId: ledgerAccountId,
-    date: timestamp,
-    extra: {
-      functionId: enrichedRecord.rawRecord.function_name,
-      transactionType: "private",
-    },
-  };
-};
-
 export function resolveConfig(configOrCurrencyId: AleoCoinConfig | string): AleoCoinConfig {
   if (typeof configOrCurrencyId === "string") {
     const config = aleoConfig.getCoinConfig(configOrCurrencyId);
@@ -298,6 +253,22 @@ export function getTransactionType(intent: TransactionIntent): TransactionType {
   invariant(transactionType, `aleo: unsupported transaction intent type: ${intent.type}`);
 
   return transactionType;
+}
+
+export function buildFeeConfigurationForRootIntent({
+  isPrivate,
+  maxBaseFee,
+  maxPriorityFee,
+}: {
+  isPrivate: boolean;
+  maxBaseFee: bigint;
+  maxPriorityFee: bigint;
+}): FeeConfiguration {
+  return {
+    function_name: isPrivate ? "fee_private" : "fee_public",
+    max_base_fee: maxBaseFee.toString(),
+    max_priority_fee: maxPriorityFee.toString(),
+  };
 }
 
 export function getAleoSubAccount(
@@ -825,6 +796,7 @@ function resolveDecryptedAmountRecordsFromCommitments({
 function buildTransactionIntentBase(
   account: AleoAccount,
   transaction: Transaction,
+  tokenAccount: AleoTokenAccount | undefined,
 ): Pick<
   AleoTransactionIntent,
   "intentType" | "amount" | "asset" | "recipient" | "sender" | "type" | "useAllAmount"
@@ -832,7 +804,14 @@ function buildTransactionIntentBase(
   return {
     intentType: "transaction",
     amount: BigInt(transaction.amount.toString()),
-    asset: { type: "native" },
+    asset: tokenAccount
+      ? {
+          type: tokenAccount.token.tokenType,
+          assetReference: tokenAccount.token.contractAddress,
+          name: tokenAccount.token.name,
+          unit: tokenAccount.token.units[0],
+        }
+      : { type: "native" },
     recipient: transaction.recipient,
     sender: account.freshAddress,
     type: transaction.mode,
@@ -840,24 +819,19 @@ function buildTransactionIntentBase(
   };
 }
 
-function getRequiredTokenProgramId(
-  account: AleoAccount,
-  subAccountId: string | null | undefined,
-): string {
-  const tokenAccount = getAleoSubAccount(account, subAccountId);
-  invariant(tokenAccount, `aleo: token account is missing (${subAccountId})`);
-
-  return tokenAccount.token.contractAddress;
-}
-
 export function createTransactionIntent({
   account,
   transaction,
+  tvks = [],
 }: {
   account: AleoAccount;
   transaction: Transaction;
+  tvks?: string[];
 }): AleoTransactionIntent {
-  const base = buildTransactionIntentBase(account, transaction);
+  const tokenAccount = isTokenTransaction(transaction)
+    ? getAleoSubAccount(account, transaction.subAccountId)
+    : undefined;
+  const base = buildTransactionIntentBase(account, transaction, tokenAccount);
 
   switch (transaction.mode) {
     case TRANSACTION_TYPE.TRANSFER_PUBLIC:
@@ -876,22 +850,24 @@ export function createTransactionIntent({
             maxRecords: MAX_PRIVATE_RECORDS_PER_TRANSACTION,
             findRecord: commitment => getRecordByCommitment({ account, commitment }),
           }),
+          tvks,
         },
       };
 
     case TRANSACTION_TYPE.TRANSFER_TOKEN_PUBLIC:
     case TRANSACTION_TYPE.CONVERT_TOKEN_PUBLIC_TO_PRIVATE:
+      invariant(tokenAccount, `aleo: token account is missing (${transaction.subAccountId})`);
+
       return {
         ...base,
         data: {
           type: transaction.mode,
-          programId: getRequiredTokenProgramId(account, transaction.subAccountId),
+          programId: tokenAccount.token.contractAddress,
         },
       };
 
     case TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE:
     case TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC: {
-      const tokenAccount = getAleoSubAccount(account, transaction.subAccountId);
       invariant(tokenAccount, `aleo: token account is missing (${transaction.subAccountId})`);
 
       return {
@@ -905,6 +881,7 @@ export function createTransactionIntent({
             maxRecords: MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION,
             findRecord: commitment => getRecordByCommitment({ account, commitment, tokenAccount }),
           }),
+          tvks,
         },
       };
     }
@@ -1143,31 +1120,6 @@ export const getEstimatedSigningTime = (
   return `~${minutes} ${minuteShort}`;
 };
 
-/** CAL lookup by Aleo program name (contract address). Missing programs are omitted. */
-export async function getCalTokens({
-  currencyId,
-  programNames,
-}: {
-  currencyId: string;
-  programNames: string[];
-}): Promise<Map<string, TokenCurrency>> {
-  const calTokens = new Map<string, TokenCurrency>();
-  const uniqueProgramNames = [...new Set(programNames)];
-
-  await promiseAllBatched(4, uniqueProgramNames, async programName => {
-    const token = await getCryptoAssetsStore().findTokenByAddressInCurrency(
-      programName,
-      currencyId,
-    );
-
-    if (token) {
-      calTokens.set(programName, token);
-    }
-  });
-
-  return calTokens;
-}
-
 /** Narrows any cross-family transaction shape down to Aleo's own `Transaction` type. */
 export function isAleoTransaction(tx: { family: string }): tx is Transaction {
   return tx.family === "aleo";
@@ -1179,4 +1131,54 @@ export function isAleoAddressPlaintext(v: string): boolean {
 
 export function isAleoAmountPlaintext(v: string): boolean {
   return /^\d+u\d+$/.test(normalizeAleoPlaintext(v));
+}
+
+/**
+ * Whether a transition's (recipient, amount) arguments can be located by scanning for the first
+ * address-shaped argument. Ledger's batching wrappers suffix the function with the record count
+ * (transfer_private_4) but keep the wrapped function's argument order.
+ *
+ * Excludes transfer_from_*, whose first address argument is the sender, not the recipient.
+ */
+export function isParsableTransferFunction(functionName: string): boolean {
+  return PRIVATE_TRANSFER_FUNCTIONS.has(functionName.replace(/_\d+$/, ""));
+}
+
+/**
+ * Takes a transfer transition's arguments in order (null where undecryptable or not a value) and
+ * returns the first address-shaped one plus the first amount-shaped one after it.
+ *
+ * No fixed offset works — all three argument layouts are deployed:
+ *   credits.aleo, ARC-20   (record, recipient, amount)
+ *   ARC-21, ARC-22         (recipient, amount, record, …)
+ *   token_registry.aleo    (token_id, recipient, amount, flag) for transfer_public_to_private
+ */
+export function findTransferArguments(plaintexts: (string | null)[]): {
+  recipient: string;
+  amount: string;
+} | null {
+  let recipient: string | null = null;
+
+  for (const plaintext of plaintexts) {
+    if (!plaintext) {
+      continue;
+    }
+
+    if (!recipient) {
+      if (isAleoAddressPlaintext(plaintext)) {
+        recipient = normalizeAleoPlaintext(plaintext);
+      }
+
+      continue;
+    }
+
+    if (isAleoAmountPlaintext(plaintext)) {
+      return {
+        recipient,
+        amount: normalizeAleoPlaintext(plaintext),
+      };
+    }
+  }
+
+  return null;
 }

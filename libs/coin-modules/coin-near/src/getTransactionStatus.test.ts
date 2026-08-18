@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { mockServer, NEAR_BASE_URL_MOCKED } from "./api/node.mock";
+import { mockServer, NEAR_BASE_URL_MOCKED } from "./network/node.mock";
 import { setCoinConfig } from "./config";
 import getTransactionStatus from "./getTransactionStatus";
 import { NearAccount, Transaction } from "./types";

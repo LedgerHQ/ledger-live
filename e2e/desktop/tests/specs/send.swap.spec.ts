@@ -172,7 +172,7 @@ const swaps = [
 ];
 
 for (const { fromAccount, toAccount, xrayTicket, tag } of swaps) {
-  test.describe("Swap - Accepted (without tx broadcast)", () => {
+  test.describe("Swap - accepted", () => {
     setupEnv(true);
 
     const accPair: string[] = [fromAccount, toAccount].map(acc =>
@@ -208,7 +208,7 @@ for (const { fromAccount, toAccount, xrayTicket, tag } of swaps) {
     });
 
     test(
-      `Swap ${fromAccount.currency.name} to ${toAccount.currency.name}`,
+      `[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap`,
       {
         tag: tag,
         annotation: {
@@ -226,6 +226,8 @@ for (const { fromAccount, toAccount, xrayTicket, tag } of swaps) {
         const provider = await app.swap.selectExchangeWithoutKyc(swap);
         swap.setProvider(provider);
         await ensureTokenApproval(fromAccount, provider, minAmount);
+        // Approval was ensured above (a no-op for native assets), so the CTA reads "Review".
+        await app.swap.checkQuoteCardCta(provider.uiName);
 
         if (provider.app) {
           if (provider.app !== exchangeApp) {
@@ -242,6 +244,9 @@ for (const { fromAccount, toAccount, xrayTicket, tag } of swaps) {
           await app.swapDrawer.verifyExchangeCompletedTextContent(
             swap.accountToCredit.currency.name,
           );
+          await app.swapDrawer.closeDrawer();
+          await app.swapDrawer.waitForDrawerToBeHidden();
+          await app.swap.expectSelectedAssetDisplayed(fromAccount.currency.ticker);
         }
       },
     );

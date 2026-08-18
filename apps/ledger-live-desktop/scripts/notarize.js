@@ -46,6 +46,10 @@ async function notarizeApp(context) {
   const keyPath = join(keyDir, `AuthKey_${APPLECONNECT_API_KEY_ID}.p8`);
   writeFileSync(keyPath, Buffer.from(APPLECONNECT_API_KEY_CONTENT, "base64"));
 
+  // Transient notarytool failures: retry with exponential backoff (30s -> 60s -> 120s).
+  const MAX_RETRIES = 3;
+  const RETRY_BASE_DELAY_MS = 30_000;
+
   async function attemptNotarize(retries, path) {
     try {
       await notarize({
@@ -57,8 +61,10 @@ async function notarizeApp(context) {
       });
     } catch (e) {
       if (retries > 0) {
-        console.warn("RETRYING: ATTEMPTS LEFT " + retries);
+        const delayMs = RETRY_BASE_DELAY_MS * 2 ** (MAX_RETRIES - retries);
+        console.warn(`RETRYING: ATTEMPTS LEFT ${retries} (waiting ${delayMs / 1000}s)`);
         console.error(e?.message);
+        await new Promise(resolve => setTimeout(resolve, delayMs));
         await attemptNotarize(retries - 1, path);
       } else {
         throw e;
@@ -71,7 +77,7 @@ async function notarizeApp(context) {
   const path = `${appOutDir}/${appName}.app`;
 
   try {
-    await attemptNotarize(3, path);
+    await attemptNotarize(MAX_RETRIES, path);
   } catch (error) {
     if (error.message?.includes("Failed to staple")) {
       console.warn("LAST TRY: STAPLING MANUALLY");
