@@ -291,6 +291,27 @@ describe("useDeviceConnectionComponentLWDViewModel", () => {
     expect(mockUnsubscribe).toHaveBeenCalledTimes(1);
   });
 
+  it("GIVEN a connection flow WHEN known devices change THEN it keeps the existing subscription", () => {
+    // GIVEN
+    const { store } = renderViewModel();
+
+    // WHEN
+    act(() => {
+      store.dispatch({
+        type: "ADD_DEVICE",
+        payload: {
+          deviceId: "",
+          modelId: DeviceModelId.nanoX,
+          wired: true,
+        },
+      });
+    });
+
+    // THEN
+    expect(mockedConnectDevice).toHaveBeenCalledTimes(1);
+    expect(mockUnsubscribe).not.toHaveBeenCalled();
+  });
+
   it("GIVEN connect device reports a connection WHEN handling the result THEN it updates desktop device state and notifies the executor", () => {
     // GIVEN
     const onConnected = jest.fn();

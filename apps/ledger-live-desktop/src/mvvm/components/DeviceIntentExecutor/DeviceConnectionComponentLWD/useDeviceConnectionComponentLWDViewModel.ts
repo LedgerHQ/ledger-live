@@ -41,6 +41,9 @@ export function useDeviceConnectionComponentLWDViewModel({
   const dispatch = useDispatch();
   const dmk = useDeviceManagementKit();
   const knownDevices = useSelector(knownDevicesSelector);
+  // Plugging in a device updates knownDevices while connecting. Keep the initial value so that
+  // the update cannot restart dmk.connect and race the active WebHID connection.
+  const knownDevicesRef = useRef(knownDevices);
   const { handleConnect, handleBuyDevice } = useLazyOnboardingActions();
   const { sourceFlow, analyticsProperties } = useDeviceIntentTracking();
   const [state, setState] = useState<ConnectDeviceUIState>({
@@ -100,7 +103,7 @@ export function useDeviceConnectionComponentLWDViewModel({
     }
 
     const subscription = connectDevice({
-      knownDevices,
+      knownDevices: knownDevicesRef.current,
       acceptedDeviceModelIds: deviceConnectionParams.acceptedDeviceModelIds.map(
         deviceModelId => dmkToLedgerDeviceIdMap[deviceModelId],
       ),
@@ -115,7 +118,7 @@ export function useDeviceConnectionComponentLWDViewModel({
     return () => {
       subscription.unsubscribe();
     };
-  }, [deviceConnectionParams.acceptedDeviceModelIds, dmk, knownDevices, wrappedOnConnected]);
+  }, [deviceConnectionParams.acceptedDeviceModelIds, dmk, wrappedOnConnected]);
 
   return {
     state,
