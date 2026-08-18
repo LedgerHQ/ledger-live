@@ -131,7 +131,6 @@ export const useModularDrawerController = () => {
       }
     } finally {
       dispatch(closeModularDrawer());
-      resetAll();
     }
   }, [
     callbackId,
@@ -140,7 +139,6 @@ export const useModularDrawerController = () => {
     dispatch,
     executeCurrencyCallback,
     executeCancelCallback,
-    resetAll,
   ]);
 
   const handleAccountSelected = useCallback(
