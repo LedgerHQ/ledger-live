@@ -127,6 +127,38 @@ describe("cardBaseQuery", () => {
     expect(fetchSpy).toHaveBeenCalledTimes(1);
     expect(result.error).toMatchObject({ status: 401 });
   });
+
+  it("reports a structured error and sends nothing when the token read rejects", async () => {
+    fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({}));
+
+    const { api, store } = probeStore(
+      cardApiExtra(
+        buildExtra({
+          getCardSessionToken: async () => {
+            throw new Error("keychain unavailable");
+          },
+        }),
+      ),
+    );
+    const result = await store.dispatch(api.endpoints.probe.initiate());
+
+    expect(fetchSpy).not.toHaveBeenCalled();
+    expect(result.error).toEqual({ status: "CUSTOM_ERROR", error: "keychain unavailable" });
+  });
+
+  it("returns the 401 when the refresh rejects", async () => {
+    fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({}, 401));
+    const refreshCardSession = jest.fn(async () => {
+      throw new Error("keychain unavailable");
+    });
+
+    const { api, store } = probeStore(cardApiExtra(buildExtra({ refreshCardSession })));
+    const result = await store.dispatch(api.endpoints.probe.initiate());
+
+    expect(refreshCardSession).toHaveBeenCalledTimes(1);
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
+    expect(result.error).toMatchObject({ status: 401 });
+  });
 });
 
 function jsonResponse(body: unknown, status = 200): Response {

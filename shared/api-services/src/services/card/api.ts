@@ -20,6 +20,21 @@ export function getCardExtra(api: { extra: unknown }): CardApiExtra {
 
 const UNAUTHORIZED_STATUS = 401;
 
+/**
+ * `BaseQueryFn` promises a result, and RTK Query has no branch for a rejection: it logs the error,
+ * throws it again, and stores a `SerializedError` that carries no `status`. Every caller that reads
+ * `error.status` then reads `undefined`. The app owns both session ports, so this file cannot
+ * promise they resolve. It gives a rejection the shape the signature declares.
+ */
+function sessionError(error: unknown): { error: FetchBaseQueryError } {
+  return {
+    error: {
+      status: "CUSTOM_ERROR",
+      error: error instanceof Error ? error.message : String(error),
+    },
+  };
+}
+
 const cardBaseQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> = async (
   args,
   api,
@@ -40,7 +55,16 @@ const cardBaseQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryErro
       },
     })(args, api, extraOptions);
 
-  const result = await runWithToken(await extra.getCardSessionToken());
+  let token: string | null | undefined;
+  try {
+    token = await extra.getCardSessionToken();
+  } catch (error) {
+    // A request without the token answers 401. The refresh below cannot help, and that answer would
+    // hide the read failure. Report the failure instead.
+    return sessionError(error);
+  }
+
+  const result = await runWithToken(token);
 
   const isUnauthorized =
     !!result.error &&
@@ -51,7 +75,14 @@ const cardBaseQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryErro
     return result;
   }
 
-  const refreshedToken = await extra.refreshCardSession();
+  let refreshedToken: string | null | undefined;
+  try {
+    refreshedToken = await extra.refreshCardSession();
+  } catch {
+    // The 401 tells the caller more than a failed refresh does.
+    return result;
+  }
+
   if (!refreshedToken) {
     return result;
   }
