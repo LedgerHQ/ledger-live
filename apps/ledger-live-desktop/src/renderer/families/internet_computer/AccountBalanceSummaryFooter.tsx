@@ -2,6 +2,7 @@ import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import {
   useTotalMaturity,
   useTotalStaked,
+  useTotalStakedMaturity,
 } from "@ledgerhq/live-common/families/internet_computer/react";
 import type { ICPAccount } from "@ledgerhq/live-common/families/internet_computer/types";
 import type { TokenAccount } from "@ledgerhq/types-live";
@@ -60,7 +61,12 @@ const Footer = ({ account }: { account: ICPAccount }) => {
   const locale = useSelector(localeSelector);
   const unit = useAccountUnit(account);
   const totalStaked = useTotalStaked(account);
-  const totalMaturity = useTotalMaturity(account);
+  const liquidMaturity = useTotalMaturity(account);
+  const stakedMaturity = useTotalStakedMaturity(account);
+
+  // Both halves, as the tooltip promises. Staked maturity appears nowhere else — neuronStake excludes
+  // it — so summing only the liquid half leaves it invisible.
+  const totalMaturity = liquidMaturity.plus(stakedMaturity);
 
   if (totalStaked.isZero() && totalMaturity.isZero()) return null;
 
