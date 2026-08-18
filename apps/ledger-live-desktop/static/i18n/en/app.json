@@ -8186,6 +8186,46 @@
     },
     "UtxoLimitReachedError": {
       "title": "Amount too large for UTXO constraints."
+    },
+    "ICPDissolveDelayLTMin": {
+      "title": "Dissolve delay too short",
+      "description": "The Internet Computer requires a dissolve delay of at least {{minDays}} days."
+    },
+    "ICPDissolveDelayGTMax": {
+      "title": "Dissolve delay too long",
+      "description": "The Internet Computer caps a neuron's dissolve delay at {{maxDays}} days."
+    },
+    "ICPDissolveDelayLTCurrent": {
+      "title": "Dissolve delay cannot be shortened",
+      "description": "A neuron's dissolve delay can only be increased. To shorten it, start dissolving the neuron instead."
+    },
+    "ICPNeuronNotFound": {
+      "title": "Neuron not found",
+      "description": "This neuron is missing from your last synced snapshot. Sync your neurons and try again."
+    },
+    "ICPInvalidHotKey": {
+      "title": "Invalid principal",
+      "description": "A hot key must be a valid Internet Computer principal."
+    },
+    "ICPHotKeyAlreadyExists": {
+      "title": "Hot key already added",
+      "description": "This principal is already a hot key on this neuron."
+    },
+    "ICPSplitNotAllowed": {
+      "title": "Amount outside the range this neuron can split",
+      "description": "Both the original neuron and the new one must keep at least 1 ICP staked, plus the network fee on the amount moved."
+    },
+    "ICPStakeMemoNotRecoverable": {
+      "title": "Cannot top up this neuron",
+      "description": "Topping up a neuron needs the memo from the transaction that created it, and it is not in this account's history. Top it up from the account that created the neuron."
+    },
+    "ICPCallUnconfirmed": {
+      "title": "Outcome unknown",
+      "description": "The Internet Computer accepted the request but returned no result, so it may or may not have taken effect. Sync your neurons to check before trying again."
+    },
+    "ICPInvalidPercentage": {
+      "title": "Percentage out of range",
+      "description": "Enter a whole number between 1 and 100."
     }
   },
   "cryptoOrg": {
