@@ -149,7 +149,7 @@ module.exports = {
     "^@ledgerhq/lumen-ui-rnative$":
       "<rootDir>/node_modules/@ledgerhq/lumen-ui-rnative/src/index.ts",
     "^@ledgerhq/lumen-ui-rnative/symbols$":
-      "<rootDir>/node_modules/@ledgerhq/lumen-ui-rnative/src/lib/Symbols/index.ts",
+      "<rootDir>/node_modules/@ledgerhq/lumen-ui-rnative/src/lib/Components/symbols/index.ts",
     "^@ledgerhq/lumen-ui-rnative/styles$":
       "<rootDir>/node_modules/@ledgerhq/lumen-ui-rnative/src/styles/index.ts",
     "^@ledgerhq/lumen-design-core$": "<rootDir>/node_modules/@ledgerhq/lumen-design-core",
