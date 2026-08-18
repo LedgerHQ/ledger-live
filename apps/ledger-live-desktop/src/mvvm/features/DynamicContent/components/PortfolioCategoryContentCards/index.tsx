@@ -13,6 +13,10 @@ function PortfolioCategoryContentCards({ leadingSlide }: PortfolioCategoryConten
   const { categories, categoryLeadingSlide, portfolioLeadingSlide } =
     usePortfolioCategoryContentCardsViewModel({ leadingSlide });
 
+  if (categories.length === 0) {
+    return <PortfolioContentCards leadingSlide={portfolioLeadingSlide} />;
+  }
+
   return (
     <div className="flex flex-col gap-16">
       <ContentCardsLocation
