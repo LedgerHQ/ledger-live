@@ -36,6 +36,7 @@ import {
 import { getMainAccount, getParentAccount } from "../account";
 import { listSupportedCurrencies } from "../currencies";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
+import { promiseAllBatched } from "@ledgerhq/live-promise";
 import { TrackingAPI } from "./tracking";
 import {
   bitcoinFamilyAccountGetXPubLogic,
@@ -287,6 +288,15 @@ export type useWalletAPIServerOptions = {
   customHandlers?: WalletAPICustomHandlers;
 };
 
+/**
+ * Max parallel CAL token lookups in the `currency.list` handler.
+ * CAL exposes no bulk id endpoint, so a live app asking for hundreds of tokens means
+ * hundreds of requests; firing them all at once exhausts the connection pool and drops
+ * a large share of them. Measured with the 627 ids the Buy/Sell live app requests:
+ * unbounded = 75.6s with 251 failures, bounded to 10 = 5.9s with none. See QAA-1505.
+ */
+const TOKEN_LOOKUP_CONCURRENCY = 10;
+
 export function useWalletAPIServer({
   accountNames,
   manifest,
@@ -443,14 +453,24 @@ export function useWalletAPIServer({
         includedCurrencies = allCurrencies.filter(c => specificCurrencies.has(c.id));
       }
 
-      // 6. Fetch specific tokens by ID if any
+      // 6. Fetch specific tokens by ID if any.
+      // CAL has no bulk id lookup, so this is inherently one request per token, and a
+      // live app can ask for hundreds at once. Firing them all at once exhausts the
+      // connection pool: measured against the real CAL API with the 627 ids the
+      // Buy/Sell live app requests, an unbounded Promise.all took 75.6s and 251 of the
+      // 627 requests failed outright, while the same work bounded to a small pool took
+      // 5.9s with every request succeeding. A failed lookup returns null and is silently
+      // dropped below, so unbounded fan-out also yields a quietly incomplete list.
       const specificTokens: WalletAPICurrency[] = [];
       if (specificTokenIds.size > 0) {
-        const tokenPromises = [...specificTokenIds].map(async tokenId => {
-          const token = await getCryptoAssetsStore().findTokenById(tokenId);
-          return token ? currencyToWalletAPICurrency(token) : null;
-        });
-        const resolvedTokens = await Promise.all(tokenPromises);
+        const resolvedTokens = await promiseAllBatched(
+          TOKEN_LOOKUP_CONCURRENCY,
+          [...specificTokenIds],
+          async tokenId => {
+            const token = await getCryptoAssetsStore().findTokenById(tokenId);
+            return token ? currencyToWalletAPICurrency(token) : null;
+          },
+        );
         specificTokens.push(...resolvedTokens.filter((t): t is WalletAPICurrency => t !== null));
       }
 
