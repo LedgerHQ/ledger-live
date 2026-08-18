@@ -7,7 +7,13 @@ import {
   type ContactAddressLabel,
   type ContactId,
 } from "@domain/entity-contact";
-import type { ContactsAddressValidationPort, ContactsAddressValidationResult } from "./model/ports";
+import type { ContactsAddressValidationPort } from "./model/ports";
+import {
+  createValidatingAddressEntryState,
+  EMPTY_ADDRESS_ENTRY_STATE,
+  requestAddressValidation,
+  resolveAddressEntryState,
+} from "./model/addressEntryState";
 import { wait } from "../../utils/wait";
 import type {
   AddAddressContact,
@@ -22,13 +28,6 @@ import type {
 const CLOSED_ADD_ADDRESS_FLOW_STATE = {
   status: "closed",
 } as const satisfies AddAddressFlowState;
-
-const EMPTY_ADD_ADDRESS_ENTRY_STATE = {
-  status: "empty",
-  value: "",
-  resolvedAddress: null,
-  inputMethod: null,
-} as const satisfies AddAddressEntryState;
 
 const UNAVAILABLE_ADDRESS_VALIDATION: ContactsAddressValidationPort = {
   validateAddress: async () => ({ status: "unavailable" }),
@@ -73,68 +72,6 @@ function createAddressLabelState(
 
 function limitAddressLabelLength(value: string): string {
   return value.slice(0, CONTACT_ADDRESS_LABEL_MAX_LENGTH);
-}
-
-function resolveAddressEntryState(
-  value: string,
-  inputMethod: AddAddressInputSource,
-  result: ContactsAddressValidationResult,
-): AddAddressEntryState {
-  switch (result.status) {
-    case "valid":
-      return {
-        status: "valid",
-        value,
-        resolvedAddress: result.resolvedAddress,
-        inputMethod: result.isDomain ? "ens" : inputMethod,
-      };
-    case "invalid_format":
-    case "domain_not_found":
-    case "sanctioned":
-      return {
-        status: "invalid",
-        value,
-        resolvedAddress: null,
-        inputMethod:
-          result.status === "domain_not_found" ||
-          ((result.status === "invalid_format" || result.status === "sanctioned") &&
-            result.isDomain)
-            ? "ens"
-            : inputMethod,
-        error: result.status,
-      };
-    case "unavailable":
-      return {
-        status: "unavailable",
-        value,
-        resolvedAddress: null,
-        inputMethod,
-      };
-  }
-}
-
-function createValidatingAddressEntryState(
-  value: string,
-  inputMethod: AddAddressInputSource,
-): AddAddressEntryState {
-  return {
-    status: "validating",
-    value,
-    resolvedAddress: null,
-    inputMethod,
-  };
-}
-
-async function requestAddressValidation(
-  addressValidation: ContactsAddressValidationPort,
-  currencyId: ContactAddress["currencyId"],
-  address: string,
-): Promise<ContactsAddressValidationResult> {
-  try {
-    return await addressValidation.validateAddress({ currencyId, address });
-  } catch {
-    return { status: "unavailable" };
-  }
 }
 
 function applyAddressEntryState(
@@ -189,7 +126,7 @@ export function useAddAddressFlowViewModel({
           selectedContactId,
           existingAddressLabels: currentState.existingAddressLabels,
           selectedCurrencyId: selection.currencyId,
-          addressEntry: EMPTY_ADD_ADDRESS_ENTRY_STATE,
+          addressEntry: EMPTY_ADDRESS_ENTRY_STATE,
           addressLabel: createAddressLabelState(
             limitAddressLabelLength(selection.assetDisplayName),
             currentState.existingAddressLabels,
@@ -212,7 +149,7 @@ export function useAddAddressFlowViewModel({
 
       if (normalizedAddress.length === 0) {
         setState(currentState =>
-          applyAddressEntryState(currentState, selectedCurrencyId, EMPTY_ADD_ADDRESS_ENTRY_STATE),
+          applyAddressEntryState(currentState, selectedCurrencyId, EMPTY_ADDRESS_ENTRY_STATE),
         );
         return;
       }
