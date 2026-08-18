@@ -26,17 +26,24 @@ Every accessor is async, because the native store only reads asynchronously.
 
 | Platform | Store |
 | --- | --- |
-| Native | `expo-secure-store` — iOS keychain, Android keystore, `AFTER_FIRST_UNLOCK` |
+| Native | `react-native-keychain` — iOS keychain (`AFTER_FIRST_UNLOCK`), Android keystore (`AES_GCM_NO_AUTH`) |
 | Web and desktop | renderer memory, for the life of the process |
 
 Electron exposes no OS secret store in this repo, so a desktop restart asks for a new login. That is
 the answer, not a shim: a Bearer credential must not join the persisted `payCard` slice (which stores
 only `hasSeenFeatureTour` / `balanceFilter`).
 
-The session occupies **three keys**, not one. `expo-secure-store` warns above 2048 bytes per value and
-says it may throw in a later SDK, and two JWTs in one JSON blob can pass that limit. Each token
-therefore gets its own key, with the two lifetimes in a third. It also makes the hot path cheap: the
-base query reads one small key per request.
+The session occupies **three keys**, not one, because of the hot path: the base query reads the
+access token before every Card request, and a single JSON blob would make it parse two JWTs the
+request never needs. Each token therefore gets its own key, with the two lifetimes in a third.
+
+Each key is a keychain `service` of its own — the only per-entry namespace the library offers. The
+app password (see `AuthPass`) uses the default bundle-ID slot, so the two never collide. A wipe built
+on `getAllGenericPasswordServices()` would take the session with it.
+
+`AFTER_FIRST_UNLOCK` and `AES_GCM_NO_AUTH` state the same rule on each platform: no prompt, and a
+value a background launch can read, but nothing before the first unlock after boot. The library
+answers a refused write with `false` instead of a rejection, so the store raises it into one.
 
 The access token is the only key the request path reads, so it is written **last** and removed
 **first**. It therefore exists only while the whole session does. A write that fails at any point removes

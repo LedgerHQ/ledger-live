@@ -1,9 +1,9 @@
 /**
  * One Card session, spread over three keys.
  *
- * `expo-secure-store` warns above 2048 bytes per value and says it may throw in a later SDK. Two
- * JWTs in one JSON blob can pass that limit, so each token gets its own key. The access token is
- * alone in its key for a second reason: every Card request reads it, and nothing else.
+ * Every Card request reads the access token, and nothing else. Its own key keeps that path to one
+ * small value, instead of a JSON blob that carries two JWTs the request never needs. The refresh
+ * token then keeps its own key too, and the two lifetimes share a third.
  */
 export const CARD_SESSION_KEYS = {
   accessToken: "payCard.session.accessToken",

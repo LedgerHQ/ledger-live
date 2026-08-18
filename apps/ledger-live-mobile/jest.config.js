@@ -174,8 +174,6 @@ module.exports = {
     // expo-keep-awake resolves to its ESM TS source under the react-native
     // export condition, which Jest can't parse; redirect to a stub.
     "^expo-keep-awake$": "<rootDir>/__mocks__/expo-keep-awake.ts",
-    // Same story for expo-secure-store: ESM TS source plus a native EventEmitter.
-    "^expo-secure-store$": "<rootDir>/__mocks__/expo-secure-store.ts",
     // Redirect to mock for pre-compiled dependencies (like @ledgerhq/native-ui)
     "^react-native-worklets$": "<rootDir>/__mocks__/react-native-worklets.js",
     // Global mock for .lottie (dotLottie) files

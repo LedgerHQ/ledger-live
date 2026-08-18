@@ -83,7 +83,6 @@ catalog:
   expo-keep-awake: 15.0.8
   expo-modules-autolinking: 3.0.24
   expo-modules-core: 3.0.29
-  expo-secure-store: 15.0.8
   "@jest/reporters": 30.2.0
   "@reduxjs/toolkit": 2.11.2
   "@rsbuild/core": 2.0.9
@@ -177,6 +176,7 @@ catalog:
   react-dom: 19.1.4
   react-i18next: 16.5.0
   react-native-config: 1.5.3
+  react-native-keychain: 10.0.0
   react-native-reanimated: 4.3.0
   react-native-worklets: 0.8.1
   react-native-safe-area-context: 5.6.1

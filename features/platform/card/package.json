@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@domain/api-card-management": "workspace:*",
-    "expo-secure-store": "catalog:"
+    "react-native-keychain": "catalog:"
   },
   "devDependencies": {
     "@jest/globals": "catalog:",
