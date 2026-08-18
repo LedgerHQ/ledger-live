@@ -148,6 +148,7 @@ async function onMessage(event: WebSocketMessageEvent) {
         const payload = JSON.stringify({
           appLogs: logReport.getLogs(),
           appNetworkLogs: appNetworkLogStore.getNetworkLogs(),
+          appNetworkSummary: appNetworkLogStore.getSummary(),
           webviewNetworkLogs: webviewLogStore.getNetworkLogs(),
           webviewConsoleLogs: webviewLogStore.getConsoleLogs(),
           webviewLoadErrors: webviewLogStore.getLoadErrors(),
