@@ -28,6 +28,7 @@ import {
   parseAmount,
   parseMicrocredits,
 } from "../logic/utils";
+import { register } from "../logic/register";
 import { apiClient } from "./api";
 
 export async function decryptRecordAmount(
@@ -325,22 +326,8 @@ export async function accessProvableApi({
   let status;
 
   if (!uuid) {
-    const { public_key, key_id } = await apiClient.getScannerPublicKey(config);
-
-    const { encrypted: encryptedData } = await sdkClient.encryptRegistrationPayload({
-      config,
-      publicKey: public_key,
-      viewKey,
-      start: 0,
-    });
-
-    const { uuid: accountUuid } = await apiClient.registerForScanningAccountRecordsEncrypted({
-      config,
-      encryptedData,
-      keyId: key_id,
-    });
-
-    uuid = accountUuid;
+    const { provableId } = await register(config, viewKey);
+    uuid = provableId;
   }
 
   status = await getRecordScannerStatusOrThrow(config, uuid);

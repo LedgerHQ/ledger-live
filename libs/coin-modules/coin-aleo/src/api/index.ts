@@ -27,23 +27,26 @@ import {
   getBalance,
   lastBlock,
   listOperations,
+  register,
   validateAddress,
 } from "../logic";
 import { buildFeeConfigurationForRootIntent, getTransactionType } from "../logic/utils";
-import type { AleoContext, AleoCoinConfig, AleoTransactionIntentData } from "../types";
+import type {
+  AleoContext,
+  AleoCoinConfig,
+  AleoRegistration,
+  AleoTransactionIntentData,
+} from "../types";
+
+type AleoCoinModuleApi = CoinModuleApi<AleoCoinConfig, MemoNotSupported, AleoTransactionIntentData>;
 
 // currencyId is captured here (it can't live on the Context). The logic functions are shared with
 // the classic bridge (config-based), so each method resolves config via context.config() and passes
 // it down — no context-first wrappers.
-export function createApi(
-  currencyId: string,
-): CoinModuleApi<AleoCoinConfig, MemoNotSupported, AleoTransactionIntentData> {
+export function createApi(currencyId: string): AleoCoinModuleApi {
   return {
     async call() {
       throw new Error("call is not supported");
-    },
-    async register() {
-      throw new Error("register is not supported");
     },
     broadcast: (_context: AleoContext, _signature: string): Promise<string> => {
       throw new Error("broadcast is not supported");
@@ -191,5 +194,15 @@ export function createApi(
     validateAddress: (_context: AleoContext, address, parameters) =>
       validateAddress(address, parameters),
     craftTransactionData: (_context, intent) => craftTransactionData(intent),
+    // `address` is unused: enrollment is keyed by the view key, not the address.
+    register: async (context: AleoContext, _address: string): Promise<AleoRegistration> => {
+      const viewKey = context.viewKey;
+      invariant(
+        typeof viewKey === "string" && viewKey.length > 0,
+        "aleo/register: a view key is required on the context to register with the Provable scanner",
+      );
+      const config = await context.config();
+      return register(config, viewKey);
+    },
   };
 }

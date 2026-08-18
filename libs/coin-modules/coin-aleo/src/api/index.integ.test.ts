@@ -303,4 +303,20 @@ describe("createApi", () => {
       expect(balance).toEqual([{ value: 0n, asset: { type: "native" } }]);
     });
   });
+
+  describe("register", () => {
+    it("reads the view key off the context and enrolls it into the testnet scanner", async () => {
+      const contextWithViewKey: AleoContext = { ...context, viewKey: testnetViewKey };
+
+      const result = await api.register(contextWithViewKey, testnetAddress);
+
+      invariant(result.type === "aleo", "guard: expected an aleo registration handle");
+      expect(typeof result.provableId).toBe("string");
+      expect(result.provableId.length).toBeGreaterThan(0);
+    });
+
+    it("rejects before any network call when the context carries no view key", async () => {
+      await expect(api.register(context, testnetAddress)).rejects.toThrow(/view key is required/);
+    });
+  });
 });
