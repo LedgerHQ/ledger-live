@@ -102,4 +102,12 @@ describe("usePayTabDepositOptions", () => {
     expect(mockOpenAssetFlow).toHaveBeenCalledWith(undefined, STABLECOIN_IDS);
     expect(mockNavigate).not.toHaveBeenCalled();
   });
+
+  it("skips receive options when opening receive from Pay", () => {
+    render();
+
+    expect(mockedUseOpenAssetFlow).toHaveBeenCalledWith(expect.anything(), "Pay", "MODAL_RECEIVE", {
+      shouldUseReceiveOptions: false,
+    });
+  });
 });
