@@ -10068,6 +10068,7 @@
       "dissolveDelay": "Dissolve delay",
       "state": "State",
       "action": "Action",
+      "none": "None",
       "disburse": "Disburse",
       "startDissolving": "Start dissolving",
       "stopDissolving": "Stop dissolving",
