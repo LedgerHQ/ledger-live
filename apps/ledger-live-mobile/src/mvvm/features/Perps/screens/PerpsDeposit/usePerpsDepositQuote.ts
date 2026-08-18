@@ -24,7 +24,7 @@ export type PerpsDepositQuoteState = {
 const IDLE: PerpsDepositQuoteState = { quote: undefined, isLoading: false };
 
 /**
- * Debounced quote for the funding pair. 
+ * Debounced quote for the funding pair.
  */
 export function usePerpsDepositQuote({
   depositAccount,
