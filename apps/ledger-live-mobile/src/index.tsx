@@ -94,7 +94,10 @@ import { datadogIdSelector, isDummyDatadogId } from "@domain/entity-client-ident
 import { FIRST_PARTY_MAIN_HOST_DOMAIN } from "./utils/constants";
 import { ConfigureDBSaveEffects } from "./components/DBSave";
 import HookDevTools from "./devTools/useDevTools";
-import { setSolanaLdmkEnabled } from "@ledgerhq/live-common/families/solana/setup";
+import {
+  setSolanaLdmkEnabled,
+  setSolanaTxcEnabled,
+} from "@ledgerhq/live-common/families/solana/setup";
 import { setCosmosLdmkEnabled } from "@ledgerhq/live-common/families/cosmos/setup";
 import { setSuiGraphqlEnabled } from "@ledgerhq/live-common/families/sui/setup";
 import useCheckAccountWithFunds from "./logic/postOnboarding/useCheckAccountWithFunds";
@@ -141,6 +144,7 @@ function App() {
   const automaticBugReportingEnabled = useSelector(reportErrorsEnabledSelector);
   const datadogId = useSelector(datadogIdSelector);
   const ldmkSolanaSignerFeatureFlag = useFeature("ldmkSolanaSigner");
+  const ldmkSolanaSignerIsTxcActiveFeatureFlag = useFeature("ldmkSolanaSignerIsTxcActive");
   const ldmkCosmosSignerFeatureFlag = useFeature("ldmkCosmosSigner");
   const suiGraphqlTransportFeatureFlag = useFeature("suiGraphqlTransport");
   const datadogAutoInstrumentation: AutoInstrumentationConfiguration = useMemo(
@@ -166,6 +170,12 @@ function App() {
       setSolanaLdmkEnabled(ldmkSolanaSignerFeatureFlag?.enabled);
     }
   }, [ldmkSolanaSignerFeatureFlag]);
+
+  useEffect(() => {
+    if (typeof ldmkSolanaSignerIsTxcActiveFeatureFlag?.enabled === "boolean") {
+      setSolanaTxcEnabled(ldmkSolanaSignerIsTxcActiveFeatureFlag?.enabled);
+    }
+  }, [ldmkSolanaSignerIsTxcActiveFeatureFlag]);
 
   useEffect(() => {
     if (typeof ldmkCosmosSignerFeatureFlag?.enabled === "boolean") {

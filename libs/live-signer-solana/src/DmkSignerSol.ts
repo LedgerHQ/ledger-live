@@ -15,6 +15,7 @@ import {
   SignerSolana,
   TransactionResolutionContext,
   SignMessageVersion,
+  type SolanaSignerFeaturesNames,
 } from "@ledgerhq/device-signer-kit-solana";
 import { DeviceActionStatus, DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import { ContextModuleBuilder, ContextModuleChainID } from "@ledgerhq/context-module";
@@ -44,8 +45,13 @@ export class DmkSignerSol implements SolanaSigner {
   /**
    * @param dmk - instance of Device Management Kit
    * @param sessionId - active session ID of the connected device
+   * @param disabledFeatures - map of signer features to disable (e.g. { transactionChecks: true })
    */
-  constructor(dmk: DeviceManagementKit, sessionId: string) {
+  constructor(
+    dmk: DeviceManagementKit,
+    sessionId: string,
+    disabledFeatures: Partial<Record<SolanaSignerFeaturesNames, boolean>> = {},
+  ) {
     const originToken = "1e55ba3959f4543af24809d9066a2120bd2ac9246e626e26a1ff77eb109ca0e5"; // gitleaks:allow
     const calUrl = getEnv("CAL_SERVICE_URL");
     const calMode = calUrl.includes("ledger-test") || calUrl.includes(".stg.") ? "test" : "prod";
@@ -54,10 +60,14 @@ export class DmkSignerSol implements SolanaSigner {
       .setChain(ContextModuleChainID.Solana)
       .setCalConfig({ url: `${calUrl}/v1`, mode: calMode, branch: "main" })
       .build();
+    const disabledFeaturesArray = (
+      Object.keys(disabledFeatures) as SolanaSignerFeaturesNames[]
+    ).filter(f => disabledFeatures[f]);
     this.dmkSigner = new SignerSolanaBuilder({
       dmk,
       sessionId,
       originToken,
+      disabledFeatures: disabledFeaturesArray,
     })
       .withContextModule(contextModule)
       .build();
