@@ -10,7 +10,7 @@ import type {
   OverrideFeatureFlagPayload,
   ServerData,
 } from "../../../apps/ledger-live-mobile/src/e2e/bridge/types";
-import type { OptionalFeatureMap, FeatureId } from "@shared/feature-flags";
+import type { OptionalFeatureMap, FeatureId, PartialFeatures } from "@shared/feature-flags";
 import { FeatureIdSchema } from "@shared/feature-flags";
 import { log as detoxLog } from "detox";
 import { getSpeculosModel } from "@ledgerhq/live-e2e-shared/speculosAppVersion";
@@ -118,6 +118,12 @@ export async function loadConfig(fileName: string, agreed: true = true): Promise
     postMessage({ type: "importAccounts", id: uniqueId(), payload: data.accounts });
   }
 
+  // Written by LedgerSyncCliHelper.saveTrustchainToUserdata, so the app boots already a member
+  // of the trustchain the CLI created and skips the in-app activation flow.
+  if (data.trustchain) {
+    postMessage({ type: "importTrustchain", id: uniqueId(), payload: data.trustchain });
+  }
+
   if (data.featureFlags?.overrides) {
     await setFeatureFlags(data.featureFlags.overrides);
   }
@@ -134,6 +140,16 @@ export async function setFeatureFlags(flags: OptionalFeatureMap) {
 
 export async function setFeatureFlag(flag: OverrideFeatureFlagPayload) {
   postMessage({ type: "overrideFeatureFlag", id: uniqueId(), payload: flag });
+}
+
+/**
+ * Replaces the whole override map instead of adding to it, so the flags a test relaunches into are
+ * exactly these. Overrides are persisted, and a simulator keeps the previous run's set, so adding
+ * to it leaves the boot state dependent on whatever ran before.
+ */
+export async function setAllFeatureFlags(flags: PartialFeatures) {
+  postMessage({ type: "overrideFeatureFlags", id: uniqueId(), payload: flags });
+  await getFlags();
 }
 
 async function navigate(name: string) {

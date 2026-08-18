@@ -153,14 +153,33 @@ export class LedgerSyncCliHelper {
     return LedgerSyncCliHelper.pushLedgerSyncData();
   }
 
+  /**
+   * Empty credentials reach the signer as a zero-length key and surface as noble's
+   * `invalid private key: expected ui8a of size 32, got object`, which says nothing about the
+   * real cause. Fail on the actual problem instead: the trustchain was never initialized.
+   */
+  private static assertInitialized(operation: string) {
+    const { pubKey, privateKey } = LedgerSyncCliHelper.ledgerKeyRingProtocolArgs;
+    const { rootId } = LedgerSyncCliHelper.ledgerSyncPushDataArgs;
+    invariant(
+      pubKey && privateKey && rootId,
+      `Ledger Sync: cannot ${operation} before the trustchain is initialized ` +
+        `(pubKey: ${pubKey.length} chars, privateKey: ${privateKey.length} chars, rootId: "${rootId}")`,
+    );
+  }
+
   static async pullLedgerSyncData() {
+    LedgerSyncCliHelper.assertInitialized("pull");
+    // Keyring args last: the pull args carry their own copy of the credentials, and only the
+    // keyring ones are guaranteed to have been refreshed by initializeLedgerKeyRingProtocol.
     return ledgerSync({
-      ...LedgerSyncCliHelper.ledgerKeyRingProtocolArgs,
       ...LedgerSyncCliHelper.ledgerSyncPullDataArgs,
+      ...LedgerSyncCliHelper.ledgerKeyRingProtocolArgs,
     });
   }
 
   static async pushLedgerSyncData() {
+    LedgerSyncCliHelper.assertInitialized("push");
     return ledgerSync({
       ...LedgerSyncCliHelper.ledgerKeyRingProtocolArgs,
       ...LedgerSyncCliHelper.ledgerSyncPushDataArgs,

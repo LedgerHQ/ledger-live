@@ -9,6 +9,9 @@ import { checkForErrorModals } from "../../helpers/errorHelpers";
 // consume the whole budget in a single attempt.
 const CONTINUE_DISMISS_TIMEOUT = 5_000;
 
+// Long enough to outlast the drawer animation, short enough to not stall the variant that skips it.
+const IMPORT_PROMPT_TIMEOUT = 5_000;
+
 export default class AddAccountDrawer extends CommonPage {
   baseLink = "add-account";
   deselectAllButtonId = "add-accounts-deselect-all";
@@ -29,6 +32,17 @@ export default class AddAccountDrawer extends CommonPage {
   async importWithYourLedger() {
     await waitForElementById(this.modalButtonId);
     await tapById(this.modalButtonId);
+  }
+
+  /**
+   * The aggregated-assets portfolio opens the asset selector straight from its add-account CTA,
+   * with no intermediate modal to import from, so the step only exists in the other variant.
+   */
+  @Step("Click on 'Import with your Ledger' button if asked")
+  async importWithYourLedgerIfAsked() {
+    if (await IsIdVisible(this.modalButtonId, IMPORT_PROMPT_TIMEOUT)) {
+      await tapById(this.modalButtonId);
+    }
   }
 
   @Step("Wait for accounts discovery")
