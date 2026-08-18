@@ -64,6 +64,28 @@ describe("ContactsAddAddressName", () => {
     expect(onContinue).toHaveBeenCalledTimes(1);
   });
 
+  it("should keep the continuation above the keyboard inset", () => {
+    render(
+      <ContactsAddAddressName
+        addressLabel={{
+          status: "valid",
+          value: "Ethereum",
+          label: ContactAddressLabelSchema.parse("Ethereum"),
+          validationError: null,
+        }}
+        labels={labels}
+        bottomOffset={320}
+        onChangeText={jest.fn()}
+        onContinue={jest.fn()}
+      />,
+    );
+
+    expect(screen.getByTestId("contacts-add-address-name-screen")).toHaveStyle({
+      bottom: 0,
+      paddingBottom: 352,
+    });
+  });
+
   it.each([
     {
       name: "invalid characters",

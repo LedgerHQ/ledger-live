@@ -74,7 +74,7 @@ describe("ContactsAddAddressEntry", () => {
     expect(onChangeText).toHaveBeenCalledWith("0", "manual");
   });
 
-  it("should keep the confirmation above the keyboard offset", () => {
+  it("should keep the confirmation above the keyboard inset", () => {
     renderEntry(
       {
         status: "empty",
@@ -86,8 +86,8 @@ describe("ContactsAddAddressEntry", () => {
     );
 
     expect(screen.getByTestId("contacts-add-address-entry-screen")).toHaveStyle({
-      bottom: 320,
-      paddingBottom: 32,
+      bottom: 0,
+      paddingBottom: 352,
     });
   });
 
