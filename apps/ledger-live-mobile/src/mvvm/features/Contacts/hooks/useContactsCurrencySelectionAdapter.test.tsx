@@ -123,8 +123,10 @@ describe("useContactsCurrencySelectionAdapter", () => {
 
     expect(result.current.flowProps).toMatchObject({
       areCurrenciesFiltered: undefined,
+      assetsConfiguration: { leftElement: "undefined", rightElement: "undefined" },
       currencies: [mockEthCryptoCurrency.id, mockBtcCryptoCurrency.id],
       isOpen: true,
+      networksConfiguration: { leftElement: "undefined", rightElement: "undefined" },
       onAccountSelected: handleAccountSelected,
       onClose: closeDrawer,
       onCurrencySelected: handleCurrencySelected,

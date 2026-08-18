@@ -48,12 +48,10 @@ export function useContactsCurrencySelectionAdapter({
   const closeDrawerRef = useRef<() => void>(() => undefined);
   const {
     areCurrenciesFiltered,
-    assetsConfiguration,
     closeDrawer,
     handleAccountSelected,
     handleCurrencySelected,
     isOpen: isModularDrawerOpen,
-    networksConfiguration,
     openDrawer,
     preselectedCurrencies,
     selectableNetworkIds,
@@ -111,10 +109,9 @@ export function useContactsCurrencySelectionAdapter({
   const flowProps = useMemo<Omit<ModularDrawerFlowProps, "children">>(
     () => ({
       areCurrenciesFiltered,
-      assetsConfiguration,
+      ...CONTACTS_CURRENCY_SELECTION_CONFIGURATION,
       currencies: preselectedCurrencies,
       isOpen: isModularDrawerOpen,
-      networksConfiguration,
       onAccountSelected: handleAccountSelected,
       onClose: closeDrawer,
       onCurrencySelected: handleCurrencySelected,
@@ -124,12 +121,10 @@ export function useContactsCurrencySelectionAdapter({
     }),
     [
       areCurrenciesFiltered,
-      assetsConfiguration,
       closeDrawer,
       handleAccountSelected,
       handleCurrencySelected,
       isModularDrawerOpen,
-      networksConfiguration,
       preselectedCurrencies,
       selectableNetworkIds,
       uiUseCase,
