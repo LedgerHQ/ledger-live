@@ -188,6 +188,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
       }
 
       backfillOnboardingDate(store);
+      logStartupEvent("Init onboarding backfilled");
 
       if (largeScreenUpsellModalState) {
         store.dispatch(restoreLargeScreenUpsellModalState(largeScreenUpsellModalState));
@@ -210,11 +211,15 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         store.dispatch(restorePayCardBalanceFilter(payCardState));
       }
 
+      logStartupEvent("Init market+card restored");
+
       store.dispatch(importTrustchainStoreState(trustchainStore));
+      logStartupEvent("Init trustchain restored");
 
       if (walletStore) {
         importWalletState(walletStore)(store.dispatch);
       }
+      logStartupEvent("Init wallet restored");
 
       if (protect) {
         store.dispatch(updateProtectData(protect.data));
@@ -229,9 +234,11 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         store.dispatch(initHistory(historyState));
       }
 
+      logStartupEvent("Init misc restored");
+
       // Initialize identities (single source of truth): migrate from legacy "user" if present, then persist under "identities" only
       await initIdentities(store, persistedIdentities ?? null, legacyUser ?? null);
-      logStartupEvent("Init identities done");
+      logStartupEvent("Init identities restored");
 
       if (persistedFeatureFlags) {
         store.dispatch(setAllOverrides(persistedFeatureFlags.overrides));
