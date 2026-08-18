@@ -127,6 +127,7 @@ export function formatWebviewConsoleLogs(entries: WebviewConsoleEntry[]): string
 type ParsedLogsPayload = {
   appLogs?: unknown;
   appNetworkLogs?: unknown[];
+  appNetworkSummary?: { total: number; peakInFlight: number; byHost: Record<string, number> };
   webviewNetworkLogs?: unknown[];
   webviewConsoleLogs?: WebviewConsoleEntry[];
   webviewLoadErrors?: unknown[];
@@ -164,6 +165,17 @@ export async function attachFailureLogsToAllure(logsPayload: string): Promise<vo
       "application/json",
     );
     parsed.appNetworkLogs = undefined;
+  }
+
+  // Peak concurrency answers "was the fan-out bounded?" in one number, without having to
+  // read several hundred individual entries.
+  if (parsed.appNetworkSummary) {
+    await allure.attachment(
+      "Ledger Wallet Network Summary",
+      JSON.stringify(parsed.appNetworkSummary, null, 2),
+      "application/json",
+    );
+    parsed.appNetworkSummary = undefined;
   }
 
   if (parsed.webviewConsoleLogs?.length) {
