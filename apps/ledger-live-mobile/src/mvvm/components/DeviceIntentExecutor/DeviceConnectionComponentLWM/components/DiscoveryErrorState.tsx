@@ -133,7 +133,7 @@ export function DiscoveryErrorState({
     [DiscoveryErrorTypes.BluetoothPermissionUnauthorizedManualSettings]: {
       preset: "info",
       title: `${discoveryErrorTranslationBaseKey}.bluetoothPermissionUnauthorizedManualSettings.title`,
-      description: `${discoveryErrorTranslationBaseKey}.bluetoothPermissionUnauthorizedManualSettings.description`,
+      description: `${discoveryErrorTranslationBaseKey}.bluetoothPermissionUnauthorizedManualSettings.description.platform.${platform}`,
       primaryCta: retryCta(
         `${discoveryErrorTranslationBaseKey}.bluetoothPermissionUnauthorizedManualSettings.cta.platform.${platform}.retry`,
         CONNECT_DEVICE_BUTTON.OpenSettings,

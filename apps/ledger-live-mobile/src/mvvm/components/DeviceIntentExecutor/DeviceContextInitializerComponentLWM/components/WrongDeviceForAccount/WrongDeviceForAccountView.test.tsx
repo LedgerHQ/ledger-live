@@ -19,10 +19,12 @@ describe("WrongDeviceForAccountView", () => {
   it("should render the wrong device copy and action buttons", () => {
     renderView();
 
-    expect(screen.getByText("Wrong Secret Recovery Phrase")).toBeVisible();
+    expect(
+      screen.getByText("Use the Ledger device you originally set up this account with"),
+    ).toBeVisible();
     expect(
       screen.getByText(
-        "This Ledger isn’t set up with the recovery phrase linked to the selected account. Check that you're using the correct device.",
+        "This Ledger isn't set up with the Secret Recovery Phrase linked to the selected crypto account.",
       ),
     ).toBeVisible();
     expect(screen.getByText("Close")).toBeVisible();

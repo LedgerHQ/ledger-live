@@ -14,7 +14,7 @@ describe("NoKnownDeviceState", () => {
 
     // THEN
     expect(screen.getByText("Ledger device required")).toBeVisible();
-    expect(screen.getByText("To continue, set up or connect your signer.")).toBeVisible();
+    expect(screen.getByText("To continue, set up or connect your Ledger device.")).toBeVisible();
   });
 
   it("GIVEN there is no known device WHEN clicking the connect CTA THEN it calls the connect callback", async () => {
@@ -47,7 +47,7 @@ describe("NoKnownDeviceState", () => {
     );
 
     // WHEN
-    await user.click(screen.getByRole("button", { name: "I don't have a Ledger device" }));
+    await user.click(screen.getByRole("button", { name: "I don’t have a Ledger device" }));
 
     // THEN
     expect(onBuyLedgerDevice).toHaveBeenCalledTimes(1);

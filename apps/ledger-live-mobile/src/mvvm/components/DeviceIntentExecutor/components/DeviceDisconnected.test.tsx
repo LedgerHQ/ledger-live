@@ -48,11 +48,9 @@ describe("DeviceDisconnected", () => {
     renderState();
 
     expect(screen.getByTestId("device-intent-executor-device-disconnected")).toBeVisible();
-    expect(screen.getByText("Device disconnected")).toBeVisible();
+    expect(screen.getByText("Ledger Device disconnected")).toBeVisible();
     expect(
-      screen.getByText(
-        "Your Ledger is no longer connected. Make sure it's powered on and within Bluetooth range or plugged in.",
-      ),
+      screen.getByText("Make sure it's powered on and within Bluetooth range or plugged in."),
     ).toBeVisible();
     expect(screen.getByText("Retry")).toBeVisible();
     expect(screen.getByText("Close")).toBeVisible();

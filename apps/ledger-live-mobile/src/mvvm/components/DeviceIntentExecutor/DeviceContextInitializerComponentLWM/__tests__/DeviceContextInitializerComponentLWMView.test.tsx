@@ -44,7 +44,7 @@ describe("DeviceContextInitializerComponentLWMView", () => {
       appNames: ["Ethereum"],
     });
 
-    expect(screen.getByText("Not enough device memory")).toBeVisible();
+    expect(screen.getByText("Uninstall some apps to free up Ledger device memory")).toBeVisible();
     expect(screen.getByText("Go to My Ledger")).toBeVisible();
   });
 

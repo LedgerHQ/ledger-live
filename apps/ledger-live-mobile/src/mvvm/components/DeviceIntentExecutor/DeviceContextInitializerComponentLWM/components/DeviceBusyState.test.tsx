@@ -55,8 +55,10 @@ describe("DeviceBusyState", () => {
   it("GIVEN the device busy state WHEN rendering THEN it renders the title, description and action buttons", () => {
     renderState();
 
-    expect(screen.getByText("Action pending on your Ledger device")).toBeVisible();
-    expect(screen.getByText("Complete it and then select Retry.")).toBeVisible();
+    expect(screen.getByText("Action needed on your Ledger device")).toBeVisible();
+    expect(
+      screen.getByText("Finish the action on your device, then select “Retry” below."),
+    ).toBeVisible();
     expect(screen.getByText("Retry")).toBeVisible();
     expect(screen.getByText("Cancel operation")).toBeVisible();
   });
