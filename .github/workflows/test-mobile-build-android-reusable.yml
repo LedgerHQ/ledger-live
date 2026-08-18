@@ -117,7 +117,7 @@ jobs:
           persist-credentials: false
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/test-quarantine-enhancements
         id: setup-caches
         with:
           use-mise: true
@@ -131,7 +131,7 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
 
       - name: JFrog npm auth
-        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@support/test-quarantine-enhancements
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
@@ -159,7 +159,7 @@ jobs:
           pnpm i --filter="live-mobile..." --filter="@ledgerhq/dummy-*-app..." --filter="ledger-live" --filter="live-cli*..." --unsafe-perm
 
       - name: Build Android app for Detox test run
-        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@support/test-quarantine-enhancements
         env:
           PRODUCTION: ${{ inputs.production_firebase }}
           SKIP_JS_BUNDLING: true
@@ -168,7 +168,7 @@ jobs:
           disable_cache: ${{ inputs.disable-nx-cache || false }}
 
       - name: Upload Detox Native Build
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@support/test-quarantine-enhancements
         with:
           path: |
             ${{ github.workspace }}/${{ env.ANDROID_APK_PATH }}
@@ -206,7 +206,7 @@ jobs:
 
       - name: setup caches
         id: setup-caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/test-quarantine-enhancements
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
@@ -220,7 +220,7 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
 
       - name: JFrog npm auth
-        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@support/test-quarantine-enhancements
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
@@ -234,7 +234,7 @@ jobs:
           new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="@ledgerhq/dummy-*-app..." --filter="ledger-live" --unsafe-perm
 
       - name: Build JS bundle and minify for size analysis
-        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@support/test-quarantine-enhancements
         with:
           command: pnpm exec nx run live-mobile:e2e:ci -- -p android --bundle --bundle-size
           disable_cache: ${{ inputs.disable-nx-cache || false }}
@@ -246,7 +246,7 @@ jobs:
           echo size=`ls -l apps/ledger-live-mobile/main.jsbundle.minified | cut -d " " -f5` >> $GITHUB_OUTPUT
 
       - name: Upload Detox JS Build
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@support/test-quarantine-enhancements
         with:
           path: ${{ github.workspace }}/${{ env.ANDROID_JSBUNDLE_PATH }}
           key: ${{ inputs.android-js-cache-key }}

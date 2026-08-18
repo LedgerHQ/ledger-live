@@ -89,7 +89,7 @@ jobs:
 
       - name: Get affected packages and paths
         id: nx-affected
-        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-affected-packages@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-affected-packages@support/test-quarantine-enhancements
         with:
           base: ${{ steps.clean-refs.outputs.base_ref }}
           head: HEAD

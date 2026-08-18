@@ -29,7 +29,7 @@ jobs:
     permissions:
       pull-requests: read
     steps:
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/live-common-affected@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/live-common-affected@support/test-quarantine-enhancements
         id: affected
       - name: Force affected on schedule
         id: set-affected
@@ -60,7 +60,7 @@ jobs:
           ref: ${{ inputs.ref || github.sha }}
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/test-quarantine-enhancements
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}

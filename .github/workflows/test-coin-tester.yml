@@ -31,7 +31,7 @@ jobs:
       pull-requests: read
     steps:
       - name: Run live-common-affected
-        uses: LedgerHQ/ledger-live/tools/actions/composites/live-common-affected@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/live-common-affected@support/test-quarantine-enhancements
         id: affected
 
       - name: Build matrix from affected paths or manual input
@@ -108,7 +108,7 @@ jobs:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/test-quarantine-enhancements
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
@@ -132,14 +132,14 @@ jobs:
           password: ${{ steps.jfrog-login.outputs.oidc-token }}
 
       - name: JFrog npm auth
-        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@support/test-quarantine-enhancements
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
       - name: Setup environment
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-coin-tester-env@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-coin-tester-env@support/test-quarantine-enhancements
 
       - name: Run Coin Tester
-        uses: LedgerHQ/ledger-live/tools/actions/composites/run-coin-tester@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/run-coin-tester@support/test-quarantine-enhancements
         with:
           chain: ${{ matrix.chain }}
