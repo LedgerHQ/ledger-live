@@ -51,6 +51,7 @@ export function useContactsCurrencySelectionAdapter({
     networksConfiguration,
     openDrawer,
     preselectedCurrencies,
+    selectableNetworkIds,
     uiUseCase,
     useCase,
   } = useModularDrawerController();
@@ -91,13 +92,12 @@ export function useContactsCurrencySelectionAdapter({
 
     selectionStartedRef.current = true;
     openDrawer({
-      currencies: [...networkIds],
-      areCurrenciesFiltered: true,
       completionMode: "currency",
       enableAccountSelection: false,
       flow: FLOW,
       presentation: "embedded",
       source: ScreenName.MyWalletContactDetail,
+      selectableNetworkIds: [...networkIds],
       onCurrencySelected: completeSelection,
     });
   }, [completeSelection, isOpen, networkIds, openDrawer]);
@@ -114,6 +114,7 @@ export function useContactsCurrencySelectionAdapter({
       onCurrencySelected: handleCurrencySelected,
       uiUseCase,
       useCase,
+      selectableNetworkIds,
     }),
     [
       areCurrenciesFiltered,
@@ -124,6 +125,7 @@ export function useContactsCurrencySelectionAdapter({
       isModularDrawerOpen,
       networksConfiguration,
       preselectedCurrencies,
+      selectableNetworkIds,
       uiUseCase,
       useCase,
     ],

@@ -24,6 +24,7 @@ export interface ModularDrawerState {
   useCase?: string;
   uiUseCase?: string;
   areCurrenciesFiltered?: boolean;
+  selectableNetworkIds?: string[];
   searchValue: string;
   step: ModularDrawerStep;
 }
@@ -48,6 +49,7 @@ export const INITIAL_STATE: ModularDrawerState = {
   useCase: undefined,
   uiUseCase: undefined,
   areCurrenciesFiltered: undefined,
+  selectableNetworkIds: undefined,
   searchValue: "",
   step: ModularDrawerStep.Asset,
 };
@@ -88,6 +90,7 @@ const modularDrawerSlice = createSlice({
         useCase,
         uiUseCase,
         areCurrenciesFiltered,
+        selectableNetworkIds,
         step,
       } = action.payload;
       const isEmbeddedCurrency = completionMode === "currency" && presentation === "embedded";
@@ -124,6 +127,9 @@ const modularDrawerSlice = createSlice({
       if (areCurrenciesFiltered !== undefined) {
         state.areCurrenciesFiltered = areCurrenciesFiltered;
       }
+      if (selectableNetworkIds !== undefined) {
+        state.selectableNetworkIds = selectableNetworkIds;
+      }
       if (isEmbeddedCurrency) {
         state.step = ModularDrawerStep.Asset;
       } else if (step !== undefined) {
@@ -144,6 +150,7 @@ const modularDrawerSlice = createSlice({
       state.useCase = undefined;
       state.uiUseCase = undefined;
       state.areCurrenciesFiltered = undefined;
+      state.selectableNetworkIds = undefined;
       state.searchValue = "";
       state.step = ModularDrawerStep.Asset;
     },

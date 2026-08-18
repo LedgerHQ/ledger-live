@@ -53,6 +53,8 @@ export type ModularDrawerFlowProps = Readonly<{
   uiUseCase?: string;
   /** Whether the currencies are filtered */
   areCurrenciesFiltered?: boolean;
+  /** Network IDs that remain selectable while all MAD rows stay visible. */
+  selectableNetworkIds?: readonly string[];
 
   /** Renders the Modular Drawer flow inside a presentation shell */
   children: (props: ModularDrawerFlowRenderProps) => React.ReactNode;
@@ -69,6 +71,7 @@ export function ModularDrawerFlow({
   useCase,
   uiUseCase,
   areCurrenciesFiltered,
+  selectableNetworkIds,
   children,
 }: ModularDrawerFlowProps): React.JSX.Element {
   const {
@@ -110,6 +113,7 @@ export function ModularDrawerFlow({
     hasSearchedValue: searchValue.length > 0,
     onAccountSelected,
     onCurrencySelected,
+    selectableNetworkIds,
   });
 
   const content = (
@@ -125,11 +129,13 @@ export function ModularDrawerFlow({
         loadNext,
         assetsSorted,
         uiUseCase,
+        selectableNetworkIds,
       }}
       networksViewModel={{
         onNetworkSelected: handleNetwork,
         availableNetworks,
         networksConfiguration: networkConfigurationSanitized,
+        selectableNetworkIds,
       }}
       accountsViewModel={{
         onAddNewAccount,

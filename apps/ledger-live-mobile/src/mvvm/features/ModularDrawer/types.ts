@@ -24,6 +24,7 @@ export type DrawerBaseParams = {
   flow?: string;
   source?: string;
   areCurrenciesFiltered?: boolean;
+  selectableNetworkIds?: string[];
   useCase?: string;
   uiUseCase?: string;
 };
