@@ -22,6 +22,10 @@ a component that renders its children. Native `Banner` and `Button` expose their
 description, actions, and labels, while web tooltip primitives and `InteractiveIcon` retain their
 accessible test shape.
 
+The Web `Avatar` boundary renders `fallbackText` and exposes fallback color and size through
+`data-*` attributes for consumer tests. It deliberately does not reproduce Lumen's color-selection
+rules.
+
 As a result:
 
 - Adding a new Lumen component or symbol to a screen needs **no** test-config change.
