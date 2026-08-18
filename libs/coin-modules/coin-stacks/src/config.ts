@@ -1,6 +1,7 @@
-import { CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
+import { CurrencyConfig, CoinConfig, type Context } from "@ledgerhq/coin-module-framework/config";
+import { MissingCoinConfig } from "@ledgerhq/coin-module-framework/errors";
 
-export type StacksCoinConfig = () => CurrencyConfig & {
+export type StacksCurrencyConfig = CurrencyConfig & {
   config_currency_stacks: {
     type: "object";
     default: {
@@ -11,16 +12,21 @@ export type StacksCoinConfig = () => CurrencyConfig & {
   };
 };
 
-let coinConfig: StacksCoinConfig | undefined;
+export type StacksCoinConfig = () => StacksCurrencyConfig;
 
-export const setCoinConfig = (config: StacksCoinConfig): void => {
+/** The {@link Context} threaded through the coin-stacks API layer (ADR-019). */
+export type StacksContext = Context<StacksCurrencyConfig>;
+
+let coinConfig: CoinConfig<StacksCurrencyConfig> | undefined;
+
+export function setCoinConfig(config: CoinConfig<StacksCurrencyConfig>): void {
   coinConfig = config;
-};
+}
 
-export const getCoinConfig = (): ReturnType<StacksCoinConfig> => {
-  if (!coinConfig?.()) {
-    throw new Error("Stacks module config not set");
+export function getCoinConfig(): StacksCurrencyConfig {
+  if (!coinConfig) {
+    throw new MissingCoinConfig();
   }
 
   return coinConfig();
-};
+}

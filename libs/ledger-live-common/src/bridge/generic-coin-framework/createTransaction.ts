@@ -107,6 +107,19 @@ export function createTransaction(account: Account | TokenAccount): GenericTrans
         memoValue: null,
         networkInfo: null,
       };
+    case "stacks":
+      // Unlike near/vechain/cardano above, leaving nonce unset lets craftTransaction/estimateFees
+      // fetch the real sequential nonce instead of defaulting to 0.
+      return {
+        family: currency.family,
+        amount: new BigNumber(0),
+        recipient: "",
+        fees: null,
+        useAllAmount: false,
+        mode: "send",
+        assetReference: "",
+        assetOwner: "",
+      };
     default:
       throw new Error(`Unsupported currency family: ${currency.family}`);
   }

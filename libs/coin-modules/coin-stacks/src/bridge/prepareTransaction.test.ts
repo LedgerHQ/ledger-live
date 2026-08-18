@@ -1,27 +1,33 @@
 import { updateTransaction } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { Account } from "@ledgerhq/types-live";
-import { estimateTransaction, estimateTransactionByteLength } from "@stacks/transactions";
+import {
+  estimateTransactionByteLength,
+  fetchFeeEstimateTransaction,
+  serializePayload,
+} from "@stacks/transactions";
 import BigNumber from "bignumber.js";
+import { getStacksBaseUrl } from "../network/api";
 import { Transaction } from "../types";
 import { prepareTransaction } from "./prepareTransaction";
-import { validateAddress } from "./utils/addresses";
+import { validateAddress } from "../common-logic";
 import { findNextNonce, getAddress } from "./utils/misc";
 import { getSubAccount } from "./utils/token";
 import { createTransaction } from "./utils/transactions";
 
 jest.mock("@ledgerhq/ledger-wallet-framework/bridge/jsHelpers");
 jest.mock("@stacks/transactions");
-jest.mock("./utils/addresses");
+jest.mock("../common-logic");
 jest.mock("./utils/misc");
 jest.mock("./utils/token");
 jest.mock("./utils/transactions");
+jest.mock("../network/api", () => ({ getStacksBaseUrl: jest.fn() }));
 
 describe("prepareTransaction", () => {
   let validateAddressSpy: jest.SpyInstance;
   let getAddressSpy: jest.SpyInstance;
   let findNextNonceSpy: jest.SpyInstance;
   let createTransactionSpy: jest.SpyInstance;
-  let estimateTransactionSpy: jest.SpyInstance;
+  let fetchFeeEstimateTransactionSpy: jest.SpyInstance;
   let getSubAccountSpy: jest.SpyInstance;
   let updateTransactionSpy: jest.SpyInstance;
 
@@ -54,18 +60,23 @@ describe("prepareTransaction", () => {
     getAddressSpy = jest.spyOn({ getAddress }, "getAddress");
     findNextNonceSpy = jest.spyOn({ findNextNonce }, "findNextNonce");
     createTransactionSpy = jest.spyOn({ createTransaction }, "createTransaction");
-    estimateTransactionSpy = jest.spyOn({ estimateTransaction }, "estimateTransaction");
+    fetchFeeEstimateTransactionSpy = jest.spyOn(
+      { fetchFeeEstimateTransaction },
+      "fetchFeeEstimateTransaction",
+    );
     getSubAccountSpy = jest.spyOn({ getSubAccount }, "getSubAccount");
     updateTransactionSpy = jest.spyOn({ updateTransaction }, "updateTransaction");
 
     getAddressSpy.mockReturnValue({ address: "ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM" });
     validateAddressSpy.mockReturnValue({ isValid: true });
     createTransactionSpy.mockResolvedValue(mockTx);
-    estimateTransactionSpy.mockResolvedValue([{ fee: 2000 }]);
+    fetchFeeEstimateTransactionSpy.mockResolvedValue([{ fee: 2000 }]);
     findNextNonceSpy.mockResolvedValue(5);
     getSubAccountSpy.mockReturnValue(null);
     updateTransactionSpy.mockImplementation((tx, patch) => ({ ...tx, ...patch }));
     (estimateTransactionByteLength as jest.Mock).mockReturnValue(200);
+    (serializePayload as jest.Mock).mockReturnValue("0x00");
+    (getStacksBaseUrl as jest.Mock).mockReturnValue("https://stacks.test.invalid");
   });
 
   it("should update fee field with estimated fee", async () => {

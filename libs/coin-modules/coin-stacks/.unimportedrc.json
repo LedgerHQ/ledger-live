@@ -26,7 +26,8 @@
     "src/errors.ts",
     "src/network/index.ts",
     "src/signer/signMessage.ts",
-    "src/supportedFeatures.ts"
+    "src/supportedFeatures.ts",
+    "src/test/msw-setup.ts"
   ],
   "ignoreUnused": [
     "ripple-address-codec",

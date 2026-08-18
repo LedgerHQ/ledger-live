@@ -1,4 +1,4 @@
-import { STACKS_MAX_MEMO_SIZE, validateMemo } from "./validateMemo";
+import { STACKS_MAX_MEMO_SIZE, validateMemo } from "../validateMemo";
 
 describe("validateMemo", () => {
   it("should return false when memo exceed maximum allowed size", () => {

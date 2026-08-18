@@ -343,6 +343,10 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadTransaction: () => import("@ledgerhq/coin-stacks/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
       import("@ledgerhq/coin-stacks/deviceTransactionConfig").then(m => m.default),
+    loadLocalApi: () =>
+      import("../families/stacks/coinModuleApi").then(m => m.createLocalStacksApi),
+    loadBridgeApi: () => import("../families/stacks/bridge/api").then(m => m.default),
+    loadSigner: () => import("../families/stacks/signer").then(m => m.default),
   },
   {
     family: "stellar",
