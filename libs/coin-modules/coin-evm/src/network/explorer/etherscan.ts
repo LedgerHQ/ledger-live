@@ -520,11 +520,21 @@ export const getInternalOperations = async (
   }
 
   // Some explorers (e.g. Monad Testnet) return null instead of [] for empty results.
-  const ops = await fetchWithRetries<EtherscanInternalTransaction[] | null>({
-    method: "GET",
-    url: `${explorer.uri}?module=account&action=txlistinternal&address=${params.address}`,
-    params: paginationParams(params),
-  }).then(ops => (ops ?? []).map(fixTxHash));
+  // Some proxies (e.g. Cronos) do not expose txlistinternal and return a 4xx — treat as empty.
+  let rawOps: EtherscanInternalTransaction[] | null = null;
+  try {
+    rawOps = await fetchWithRetries<EtherscanInternalTransaction[] | null>({
+      method: "GET",
+      url: `${explorer.uri}?module=account&action=txlistinternal&address=${params.address}`,
+      params: paginationParams(params),
+    });
+  } catch (e) {
+    if ((e as { name?: string })?.name === "LedgerAPI4xx") {
+      return EMPTY_RESULT;
+    }
+    throw e;
+  }
+  const ops = (rawOps ?? []).map(fixTxHash);
 
   // Why this thing ?
   // Multiple internal transactions can be executed from

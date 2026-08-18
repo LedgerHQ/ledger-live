@@ -12,7 +12,7 @@ describe("EVM Cronos Network (blockscout explorer)", () => {
     },
     explorer: {
       type: "blockscout",
-      uri: "https://cronos.org/explorer/api",
+      uri: "https://proxycronosexplorer.api.live.ledger.com/explorer/api",
     },
   };
   beforeAll(() => {
