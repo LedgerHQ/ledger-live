@@ -1,5 +1,8 @@
 import { Step } from "jest-allure2-reporter/api";
-import { removeSpeculosAndDeregisterKnownSpeculos } from "../utils/speculosUtils";
+import {
+  removeSpeculosAndDeregisterKnownSpeculos,
+  getActiveSpeculosAddress,
+} from "../utils/speculosUtils";
 import { Account, getParentAccountName } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { isIos, openDeeplink } from "../helpers/commonHelpers";
 import { device } from "detox";
@@ -148,7 +151,7 @@ export default class CommonPage {
 
   @Step("Select a known device")
   async selectKnownDevice(index = 0) {
-    const speculosAddress = process.env.DEVICE_PROXY_URL;
+    const speculosAddress = process.env.DEVICE_PROXY_URL ?? getActiveSpeculosAddress();
     const elementId = speculosAddress
       ? this.deviceItem(`speculos|${speculosAddress}`)
       : this.deviceItemRegex;

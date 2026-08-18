@@ -1,10 +1,12 @@
 import axios from "axios";
 import { JsonRpcProvider, Signature, Transaction, isError } from "ethers";
 import { filter, firstValueFrom } from "rxjs";
-import { getEnv } from "@shared/env";
+import { getEnv, setEnv } from "@shared/env";
 import { DeviceManagementKitTransportSpeculos } from "@ledgerhq/live-dmk-speculos";
 import { DmkSignerEth } from "@ledgerhq/live-signer-evm";
 import type { EvmSignature } from "@ledgerhq/live-signer-evm";
+import { approveToken } from "../families/evm";
+import { isTouchDevice } from "../speculosAppVersion";
 import type { EvmSignablePayload } from "./types";
 
 export type SpeculosDmkTransport = Awaited<
@@ -23,16 +25,25 @@ const CONFIRM = /sign transaction|accept and send|hold to sign/i;
 const READY = /is ready/i;
 
 /**
- * Actively approves the transaction on Speculos: waits for the review to
- * appear, presses right until the "Sign transaction" screen, then presses
- * both. This is the button-device flow (default nanoSP); set
+ * Actively approves the transaction on Speculos while DMK signing is pending.
+ * Touch devices (Flex/Stax/Nano Gen5) use hold-to-sign; button devices walk the
+ * review carousel to "Sign transaction" then press both. Set
  * `BORROW_MANUAL_APPROVE=1` to approve by hand via VNC instead.
  *
- * We drive the Speculos REST API directly (rather than the automation rule)
- * because a blind rule can walk past "Sign transaction" onto "Reject".
+ * Button devices drive the Speculos REST API directly (rather than the
+ * automation rule) because a blind rule can walk past "Sign transaction" onto
+ * "Reject".
  */
 async function approveOnDevice(apiPort: number): Promise<void> {
   if (process.env.BORROW_MANUAL_APPROVE) return;
+
+  if (isTouchDevice()) {
+    process.env.SPECULOS_API_PORT = String(apiPort);
+    setEnv("SPECULOS_API_PORT", apiPort);
+    await approveToken();
+    return;
+  }
+
   const base = `http://localhost:${apiPort}`;
   const screen = async (): Promise<string> => {
     const { data } = await axios.get(`${base}/events?currentscreenonly=true`);

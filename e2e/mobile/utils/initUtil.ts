@@ -10,6 +10,7 @@ import {
   launchSpeculos,
   registerKnownSpeculos,
   registerSpeculos,
+  releaseSpeculosDmkSessions,
   removeSpeculosAndDeregisterKnownSpeculos,
 } from "./speculosUtils";
 import { waitForSpeculosReady } from "@ledgerhq/live-e2e-shared/speculosCI";
@@ -43,6 +44,8 @@ export type InitOptions = {
   testedCurrencies?: string[];
   featureFlags?: OptionalFeatureMap;
   speculosForSetupOnly?: boolean;
+  /** Recycle Speculos after cliCommandsOnApp when CLI runs on the same app as speculosApp (Borrow on-chain). */
+  recycleSpeculosAfterCliOnApp?: boolean;
 };
 
 type Entry = {
@@ -109,7 +112,7 @@ async function launchSpeculosDevices(toStart: SpeculosAppType[]): Promise<Record
     );
     throw new Error(
       `Failed to launch ${failures.length}/${toStart.length} Speculos device(s): ${failures
-        .map(sanitizeError)
+        .map(error => sanitizeError(error))
         .join("; ")}`,
     );
   }
@@ -126,18 +129,19 @@ async function executeCliCommandsOnApp(
   entryMap: Record<string, Entry>,
   userdataPath: string,
   mainApp?: SpeculosAppType,
+  recycleSpeculosAfterCliOnApp = false,
 ): Promise<void> {
   for (const { app, cmds } of commandsByApp) {
-    const entry = entryMap[app.name];
-    if (!entry) {
-      throw new Error(`No entry found for app: ${app.name}`);
-    }
-
     const maxRetries = 3;
     let attempt = 0;
     let lastError: unknown;
 
     while (attempt < maxRetries) {
+      const entry = entryMap[app.name];
+      if (!entry) {
+        throw new Error(`No entry found for app: ${app.name}`);
+      }
+
       checkTestFailed();
       attempt++;
 
@@ -186,8 +190,23 @@ async function executeCliCommandsOnApp(
       );
     }
 
-    if (mainApp?.name !== app.name) {
-      await deleteSpeculos(entry.deviceId);
+    if (recycleSpeculosAfterCliOnApp && mainApp?.name === app.name) {
+      // Desktop parity: liveData runs on a temporary Speculos, then a fresh instance is used for signing.
+      log.info(`[${app.name}] Recycling Speculos after CLI (desktop cleanSpeculos parity)`);
+      await releaseSpeculosDmkSessions();
+      const reusePort = entryMap[app.name].speculosPort;
+      await removeSpeculosAndDeregisterKnownSpeculos(entryMap[app.name].deviceId);
+      const device = await launchSpeculos(app.name, reusePort);
+      entryMap[app.name] = {
+        name: app.name,
+        speculosPort: device.port,
+        deviceId: device.id,
+      };
+    } else if (mainApp?.name !== app.name) {
+      const currentEntry = entryMap[app.name];
+      if (currentEntry) {
+        await deleteSpeculos(currentEntry.deviceId);
+      }
     }
   }
 }
@@ -315,6 +334,7 @@ export class InitializationManager {
       cliCommandsOnApp = [],
       featureFlags = {},
       speculosForSetupOnly,
+      recycleSpeculosAfterCliOnApp = false,
     } = options;
 
     await InitializationManager.setFeatureFlags(featureFlags);
@@ -355,7 +375,16 @@ export class InitializationManager {
     const speculosDevices = await launchSpeculosDevices(appsToLaunch);
 
     // Execute app-specific commands with retry logic
-    await executeCliCommandsOnApp(commandsByApp, speculosDevices, userdataPath, speculosApp);
+    await executeCliCommandsOnApp(
+      commandsByApp,
+      speculosDevices,
+      userdataPath,
+      speculosApp,
+      recycleSpeculosAfterCliOnApp,
+    );
+
+    // liveData opens a DMK session in the Jest runner; release it before the app connects.
+    await releaseSpeculosDmkSessions();
 
     // Setup main Speculos app if specified
     if (speculosApp) {
@@ -368,6 +397,8 @@ export class InitializationManager {
 
     // Execute global commands with internal full-run retry and Speculos re-initialization
     await executeCliCommands(cliCommands, userdataPath, speculosApp, speculosDevices);
+
+    await releaseSpeculosDmkSessions();
 
     await InitializationManager.finalizeSetup(userdataSpeculos);
   }
