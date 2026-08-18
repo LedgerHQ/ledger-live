@@ -122,14 +122,17 @@ export const useModularDrawerController = () => {
   );
 
   const closeDrawer = useCallback(() => {
-    if (completionMode === "currency" && callbackId) {
-      executeCurrencyCallback(callbackId, null);
+    try {
+      if (completionMode === "currency" && callbackId) {
+        executeCurrencyCallback(callbackId, null);
+      }
+      if (cancelCallbackId) {
+        executeCancelCallback(cancelCallbackId);
+      }
+    } finally {
+      dispatch(closeModularDrawer());
+      resetAll();
     }
-    if (cancelCallbackId) {
-      executeCancelCallback(cancelCallbackId);
-    }
-    dispatch(closeModularDrawer());
-    resetAll();
   }, [
     callbackId,
     cancelCallbackId,
