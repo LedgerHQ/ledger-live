@@ -1,2 +1,2 @@
 export * from "./Track";
-export * from "./TrackPage";
+export * from "./TrackPage.web";

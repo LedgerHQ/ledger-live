@@ -1,4 +1,7 @@
-import { currentRouteNameRef, previousRouteNameRef } from "./internals/screenRefs";
+import {
+  currentRouteNameRef,
+  previousRouteNameRef,
+} from "./internals/screenRefs";
 import {
   setAnalytics,
   setEnricher,
@@ -7,24 +10,35 @@ import {
   setStore,
   setTrackingSelector,
 } from "./registry";
-import { closeAndFlush, flush, screen, track, trackPage } from "./tracking";
+import {
+  closeAndFlush,
+  flush,
+  trackScreen,
+  track,
+  trackPage,
+} from "./tracking";
 import { trackSubject } from "./trackSubject";
-import type { AnalyticsTransport, DeliveryStatus, LoggableEvent, Props } from "./types";
+import type {
+  AnalyticsTransport,
+  DeliveryStatus,
+  LoggableEvent,
+  Props,
+} from "./types";
 
 const events: LoggableEvent[] = [];
-trackSubject.subscribe(event => events.push(event));
+trackSubject.subscribe((event) => events.push(event));
 
 const state = { settings: { shareAnalytics: true } };
 
 const createTransport = (
-  track: AnalyticsTransport["track"] = jest.fn(),
+  track: AnalyticsTransport["track"] = jest.fn()
 ): jest.Mocked<AnalyticsTransport> =>
   ({
     track: jest.fn(track),
     log: jest.fn(),
     flush: jest.fn(async () => {}),
     closeAndFlush: jest.fn(async () => {}),
-  }) as unknown as jest.Mocked<AnalyticsTransport>;
+  } as unknown as jest.Mocked<AnalyticsTransport>);
 
 const register = (transport = createTransport()) => {
   setAnalytics(transport);
@@ -53,7 +67,10 @@ describe("consent", () => {
 
     track("CLI Event", { foo: "bar" });
 
-    expect(transport.track).toHaveBeenCalledWith("CLI Event", { page: undefined, foo: "bar" });
+    expect(transport.track).toHaveBeenCalledWith("CLI Event", {
+      page: undefined,
+      foo: "bar",
+    });
   });
 
   it("reports skipped_no_store and sends nothing when a selector is registered without a store", () => {
@@ -127,7 +144,9 @@ describe("consent", () => {
 
     track("Analytics Consent", null, true);
 
-    expect(transport.track).toHaveBeenCalledWith("Analytics Consent", { page: undefined });
+    expect(transport.track).toHaveBeenCalledWith("Analytics Consent", {
+      page: undefined,
+    });
   });
 });
 
@@ -165,7 +184,9 @@ describe("enrichment", () => {
     const transport = register();
     setEnricher(() => Promise.reject(new Error("permission read failed")));
 
-    await expect(track("Unenrichable", { foo: "bar" })).resolves.toBeUndefined();
+    await expect(
+      track("Unenrichable", { foo: "bar" })
+    ).resolves.toBeUndefined();
 
     expect(transport.track).not.toHaveBeenCalled();
     expect(events).toEqual([
@@ -234,7 +255,9 @@ describe("property filter", () => {
 
     track("Filtered");
 
-    expect(transport.track).toHaveBeenCalledWith("Filtered", { page: "scrubbed" });
+    expect(transport.track).toHaveBeenCalledWith("Filtered", {
+      page: "scrubbed",
+    });
   });
 
   it("scrubs the ref-derived source of a page event", () => {
@@ -244,7 +267,9 @@ describe("property filter", () => {
 
     trackPage("Portfolio", undefined, undefined, true, true);
 
-    expect(transport.track).toHaveBeenCalledWith("Page Portfolio", { source: "scrubbed" });
+    expect(transport.track).toHaveBeenCalledWith("Page Portfolio", {
+      source: "scrubbed",
+    });
   });
 
   it("does not let the filter override the extra properties", () => {
@@ -255,7 +280,9 @@ describe("property filter", () => {
 
     track("Filtered");
 
-    expect(transport.track).toHaveBeenCalledWith("Filtered", { page: "from-enricher" });
+    expect(transport.track).toHaveBeenCalledWith("Filtered", {
+      page: "from-enricher",
+    });
   });
 });
 
@@ -265,10 +292,13 @@ describe("trackPage", () => {
 
     trackPage("Analytics Consent", "Optional", { flow: "test-flow" });
 
-    expect(transport.track).toHaveBeenCalledWith("Page Analytics Consent Optional", {
-      source: undefined,
-      flow: "test-flow",
-    });
+    expect(transport.track).toHaveBeenCalledWith(
+      "Page Analytics Consent Optional",
+      {
+        source: undefined,
+        flow: "test-flow",
+      }
+    );
   });
 
   it("omits the name from the event when it is not given", () => {
@@ -276,7 +306,9 @@ describe("trackPage", () => {
 
     trackPage("Portfolio");
 
-    expect(transport.track).toHaveBeenCalledWith("Page Portfolio", { source: undefined });
+    expect(transport.track).toHaveBeenCalledWith("Page Portfolio", {
+      source: undefined,
+    });
   });
 
   it("reports the previous page as the source of the next one", () => {
@@ -285,7 +317,9 @@ describe("trackPage", () => {
     trackPage("Portfolio", undefined, undefined, true, true);
     trackPage("Market", undefined, undefined, true, true);
 
-    expect(transport.track).toHaveBeenLastCalledWith("Page Market", { source: "Portfolio" });
+    expect(transport.track).toHaveBeenLastCalledWith("Page Market", {
+      source: "Portfolio",
+    });
     expect(currentRouteNameRef.current).toBe("Market");
   });
 
@@ -314,7 +348,7 @@ describe("screen", () => {
   it("sends a track event named after the category and name", () => {
     const transport = register();
 
-    screen("Asset", "Bitcoin", { ticker: "BTC" });
+    trackScreen("Asset", "Bitcoin", { ticker: "BTC" });
 
     expect(transport.track).toHaveBeenCalledWith("Page Asset Bitcoin", {
       source: undefined,
@@ -325,16 +359,18 @@ describe("screen", () => {
   it("tolerates a missing category", () => {
     const transport = register();
 
-    screen(undefined, "Bitcoin");
+    trackScreen(undefined, "Bitcoin");
 
-    expect(transport.track).toHaveBeenCalledWith("Page Bitcoin", { source: undefined });
+    expect(transport.track).toHaveBeenCalledWith("Page Bitcoin", {
+      source: undefined,
+    });
   });
 
   it("suppresses a repeat of the same screen event when avoiding duplicates", () => {
     const transport = register();
 
-    screen("Portfolio", "Duplicated", undefined, true, true, true);
-    screen("Portfolio", "Duplicated", undefined, true, true, true);
+    trackScreen("Portfolio", "Duplicated", undefined, true, true, true);
+    trackScreen("Portfolio", "Duplicated", undefined, true, true, true);
 
     expect(transport.track).toHaveBeenCalledTimes(1);
   });
@@ -343,7 +379,7 @@ describe("screen", () => {
     const transport = register();
     setTrackingSelector(() => false);
 
-    screen("Portfolio", "Blocked");
+    trackScreen("Portfolio", "Blocked");
 
     expect(transport.track).not.toHaveBeenCalled();
     expect(events).toEqual([]);
@@ -352,8 +388,8 @@ describe("screen", () => {
   it("emits a repeat of the same screen event when not avoiding duplicates", () => {
     const transport = register();
 
-    screen("Portfolio", "Repeated", undefined, true, true, false);
-    screen("Portfolio", "Repeated", undefined, true, true, false);
+    trackScreen("Portfolio", "Repeated", undefined, true, true, false);
+    trackScreen("Portfolio", "Repeated", undefined, true, true, false);
 
     expect(transport.track).toHaveBeenCalledTimes(2);
   });
@@ -397,7 +433,7 @@ describe("delivery status", () => {
     register(
       createTransport(() => {
         throw new Error("segment is down");
-      }),
+      })
     );
 
     expect(() => track("Throwing")).not.toThrow();
@@ -405,7 +441,9 @@ describe("delivery status", () => {
   });
 
   it("reports failed without rejecting when the transport rejects", async () => {
-    register(createTransport(async () => Promise.reject(new Error("segment is down"))));
+    register(
+      createTransport(async () => Promise.reject(new Error("segment is down")))
+    );
 
     await expect(track("Rejecting")).resolves.toBeUndefined();
     expect(events[0].deliveryStatus).toBe("failed");
@@ -422,7 +460,7 @@ describe("delivery status", () => {
         eventName: "Both Payloads",
         eventProperties: { page: undefined, foo: "bar", appVersion: "1.2.3" },
         eventPropertiesWithoutExtra: { page: undefined, foo: "bar" },
-      }),
+      })
     );
   });
 });
@@ -433,7 +471,10 @@ describe("transport logging", () => {
 
     track("Logged", { foo: "bar" });
 
-    expect(transport.log).toHaveBeenCalledWith("track", "Logged", { page: undefined, foo: "bar" });
+    expect(transport.log).toHaveBeenCalledWith("track", "Logged", {
+      page: undefined,
+      foo: "bar",
+    });
   });
 
   it("logs a page event with the page kind", () => {
@@ -441,7 +482,9 @@ describe("transport logging", () => {
 
     trackPage("Portfolio");
 
-    expect(transport.log).toHaveBeenCalledWith("page", "Page Portfolio", { source: undefined });
+    expect(transport.log).toHaveBeenCalledWith("page", "Page Portfolio", {
+      source: undefined,
+    });
   });
 });
 

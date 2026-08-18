@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useIsFocused } from "@react-navigation/native";
-import { screen } from "@shared/analytics";
+import { trackScreen } from "@shared/analytics";
 
 export type TrackScreenProps = {
   category?: string;
@@ -33,7 +33,7 @@ export function TrackScreen({
     if (wasFocusedRef.current === isFocused) return;
     wasFocusedRef.current = isFocused;
     if (isFocused) {
-      screen(category, name, properties, true, refreshSource, avoidDuplicates, mandatory);
+      trackScreen(category, name, properties, true, refreshSource, avoidDuplicates, mandatory);
     }
   }, [category, name, properties, isFocused, refreshSource, avoidDuplicates, mandatory]);
 

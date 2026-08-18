@@ -1,8 +1,10 @@
-import React from "react";
 import { cleanup, render } from "@testing-library/react";
 import { setAnalytics, setStore, setTrackingSelector } from "@shared/analytics";
-import { currentRouteNameRef, previousRouteNameRef } from "@shared/analytics/screenRefs";
-import { TrackPage } from "./TrackPage";
+import {
+  currentRouteNameRef,
+  previousRouteNameRef,
+} from "@shared/analytics/screenRefs";
+import { TrackPage } from "./TrackPage.web";
 
 const track = jest.fn();
 
@@ -19,7 +21,13 @@ afterEach(cleanup);
 
 describe("TrackPage", () => {
   it("sends a page event named after the category and name on mount", () => {
-    render(<TrackPage category="Analytics Consent" name="Optional" flow="test-flow" />);
+    render(
+      <TrackPage
+        category="Analytics Consent"
+        name="Optional"
+        flow="test-flow"
+      />
+    );
 
     expect(track).toHaveBeenCalledTimes(1);
     expect(track).toHaveBeenCalledWith("Page Analytics Consent Optional", {
@@ -34,7 +42,9 @@ describe("TrackPage", () => {
     render(<TrackPage category="Market" />);
 
     expect(currentRouteNameRef.current).toBe("Market");
-    expect(track).toHaveBeenLastCalledWith("Page Market", { source: "Portfolio" });
+    expect(track).toHaveBeenLastCalledWith("Page Market", {
+      source: "Portfolio",
+    });
   });
 
   it("leaves the current page untouched when it does not refresh the source", () => {
@@ -57,11 +67,16 @@ describe("TrackPage", () => {
     rerender(<TrackPage category="Portfolio" balance={2} />);
 
     expect(track).toHaveBeenCalledTimes(1);
-    expect(track).toHaveBeenCalledWith("Page Portfolio", { source: undefined, balance: 1 });
+    expect(track).toHaveBeenCalledWith("Page Portfolio", {
+      source: undefined,
+      balance: 1,
+    });
   });
 
   it("sends nothing more when re-rendered with a new but equal object property", () => {
-    const { rerender } = render(<TrackPage category="Portfolio" meta={{ tab: "assets" }} />);
+    const { rerender } = render(
+      <TrackPage category="Portfolio" meta={{ tab: "assets" }} />
+    );
     rerender(<TrackPage category="Portfolio" meta={{ tab: "assets" }} />);
 
     expect(track).toHaveBeenCalledTimes(1);
@@ -80,7 +95,9 @@ describe("TrackPage", () => {
   it("sends a mandatory page event even when consent is refused", () => {
     setTrackingSelector(() => false);
 
-    render(<TrackPage category="Analytics Consent" name="Mandatory" mandatory />);
+    render(
+      <TrackPage category="Analytics Consent" name="Mandatory" mandatory />
+    );
 
     expect(track).toHaveBeenCalledWith("Page Analytics Consent Mandatory", {
       source: undefined,

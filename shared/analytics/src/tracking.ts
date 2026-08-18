@@ -1,6 +1,9 @@
 import { getIsTracking } from "./consent";
 import { emit, isThenable } from "./internals/emit";
-import { currentRouteNameRef, previousRouteNameRef } from "./internals/screenRefs";
+import {
+  currentRouteNameRef,
+  previousRouteNameRef,
+} from "./internals/screenRefs";
 import {
   applyPropertyFilter,
   getAnalytics,
@@ -8,7 +11,12 @@ import {
   resolveExtraProperties,
 } from "./registry";
 import { trackSubject } from "./trackSubject";
-import type { LoggableEventProperties, Props, TrackingResult, TrackingRouteRef } from "./types";
+import type {
+  LoggableEventProperties,
+  Props,
+  TrackingResult,
+  TrackingRouteRef,
+} from "./types";
 
 const lastScreenEventName: TrackingRouteRef = { current: undefined };
 
@@ -19,7 +27,7 @@ const lastScreenEventName: TrackingRouteRef = { current: undefined };
 function reportBlocked(
   result: TrackingResult,
   eventName: string,
-  eventProperties: LoggableEventProperties | undefined,
+  eventProperties: LoggableEventProperties | undefined
 ): void {
   if (result.enabled || result.reason !== "store not initialised") return;
   trackSubject.next({
@@ -44,7 +52,7 @@ function send(
   eventName: string,
   base: Props,
   state: unknown,
-  mandatory?: boolean | null,
+  mandatory?: boolean | null
 ): void | Promise<void> {
   const dispatch = (extras: Props | undefined) =>
     emit({
@@ -71,20 +79,25 @@ function send(
 export function track(
   event: string,
   properties?: Error | Props | null,
-  mandatory?: boolean | null,
+  mandatory?: boolean | null
 ): void | Promise<void> {
   const state = getAnalyticsState();
   const isTracking = getIsTracking(state, mandatory);
+
   if (!isTracking.enabled) {
     reportBlocked(
       isTracking,
       event,
-      properties instanceof Error ? undefined : (properties ?? undefined),
+      properties instanceof Error ? undefined : properties ?? undefined
     );
     return;
   }
 
-  const base = applyPropertyFilter({ page: currentRouteNameRef.current, ...properties });
+  const base = applyPropertyFilter({
+    page: currentRouteNameRef.current,
+    ...properties,
+  });
+
   return send("track", event, base, state, mandatory);
 }
 
@@ -115,15 +128,14 @@ export function trackPage(
    */
   refreshSource?: boolean,
   /** Send the event even when standard analytics tracking is disabled. */
-  mandatory?: boolean,
+  mandatory?: boolean
 ): void | Promise<void> {
-  const fullScreenName = category + (name ? ` ${name}` : "");
-  const eventName = `Page ${fullScreenName}`;
+  const { eventName, screenName: screenName } = getScreenName(category, name);
 
   if (updateRoutes) {
     previousRouteNameRef.current = currentRouteNameRef.current;
     if (refreshSource) {
-      currentRouteNameRef.current = fullScreenName;
+      currentRouteNameRef.current = screenName;
     }
   }
 
@@ -141,12 +153,28 @@ export function trackPage(
   return send("page", eventName, base, state, mandatory);
 }
 
+function getScreenName(
+  category?: string,
+  name?: string | null
+): {
+  eventName: string;
+  screenName: string;
+} {
+  const screenName =
+    category && name ? `${category} ${name}` : category || name || "";
+
+  return {
+    eventName: `Page ${screenName}`,
+    screenName: screenName,
+  };
+}
+
 /**
  * Track an event named `Page ${category}${name ? " " + name : ""}`, where both parts are optional.
  *
  * Same route-name logic as {@link trackPage}, plus de-duplication against the last screen event.
  */
-export function screen(
+export function trackScreen(
   category?: string,
   name?: string | null,
   properties?: Props | null,
@@ -157,17 +185,17 @@ export function screen(
    * `<TrackScreen>` gets remounted.
    */
   avoidDuplicates?: boolean,
-  mandatory?: boolean,
+  mandatory?: boolean
 ): void | Promise<void> {
-  const fullScreenName = (category || "") + (category && name ? " " : "") + (name || "");
-  const eventName = `Page ${fullScreenName}`;
+  const { eventName, screenName: screenName } = getScreenName(category, name);
+
   if (avoidDuplicates && eventName === lastScreenEventName.current) return;
   lastScreenEventName.current = eventName;
 
   if (updateRoutes) {
     previousRouteNameRef.current = currentRouteNameRef.current;
     if (refreshSource) {
-      currentRouteNameRef.current = fullScreenName;
+      currentRouteNameRef.current = screenName;
     }
   }
 
@@ -178,7 +206,10 @@ export function screen(
     return;
   }
 
-  const base = applyPropertyFilter({ source: previousRouteNameRef.current, ...properties });
+  const base = applyPropertyFilter({
+    source: previousRouteNameRef.current ?? undefined,
+    ...properties,
+  });
   return send("page", eventName, base, state, mandatory);
 }
 
