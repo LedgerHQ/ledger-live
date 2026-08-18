@@ -102,6 +102,7 @@ describe("usePayTabDepositOptions", () => {
     expect(useOpenReceiveDrawer).toHaveBeenCalledWith({
       currencyIds: STABLECOIN_IDS,
       sourceScreenName: "Pay",
+      fromMenu: true,
     });
   });
 
