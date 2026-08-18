@@ -27,13 +27,25 @@
     "coverage": "jest --coverage",
     "unimported": "pnpm knip --directory ../../.. -W features/flow/pay-card-request"
   },
+  "dependencies": {
+    "@shared/ui-queued-bottom-sheet": "workspace:*"
+  },
   "devDependencies": {
+    "@features/platform-style": "workspace:*",
+    "@ledgerhq/lumen-design-core": "catalog:",
+    "@ledgerhq/lumen-ui-react": "catalog:",
+    "@ledgerhq/lumen-ui-rnative": "catalog:",
     "@support/jest-features-flow": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
+    "@testing-library/dom": "catalog:",
     "@testing-library/jest-dom": "catalog:",
+    "@testing-library/react": "catalog:",
+    "@testing-library/react-native": "catalog:",
+    "@testing-library/user-event": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
+    "@types/react": "catalog:",
     "@typescript-eslint/parser": "catalog:",
     "eslint": "8.57.0",
     "eslint-plugin-better-tailwindcss": "catalog:",
@@ -41,6 +53,10 @@
     "jest-environment-jsdom": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "react-native": "catalog:",
+    "react-test-renderer": "catalog:",
     "tailwindcss": "catalog:",
     "typescript": "catalog:"
   },
@@ -49,5 +65,26 @@
     "@oxlint/binding-darwin-x64": "1.51.0",
     "@oxlint/binding-linux-x64-gnu": "1.51.0",
     "@oxlint/binding-win32-x64-msvc": "1.51.0"
+  },
+  "peerDependencies": {
+    "@ledgerhq/lumen-design-core": "catalog:",
+    "@ledgerhq/lumen-ui-react": "catalog:",
+    "@ledgerhq/lumen-ui-rnative": "catalog:",
+    "react": "catalog:",
+    "react-native": "catalog:"
+  },
+  "peerDependenciesMeta": {
+    "react-native": {
+      "optional": true
+    },
+    "@ledgerhq/lumen-ui-react": {
+      "optional": true
+    },
+    "@ledgerhq/lumen-ui-rnative": {
+      "optional": true
+    },
+    "@ledgerhq/lumen-design-core": {
+      "optional": true
+    }
   }
 }
