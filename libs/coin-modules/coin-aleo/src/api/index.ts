@@ -21,6 +21,8 @@ import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craf
 import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
 import { FEE_INTENT_TYPES } from "../constants";
 import {
+  broadcast,
+  combine,
   craftTransaction,
   estimateFees,
   getAccountInfo,
@@ -40,6 +42,14 @@ import type {
 
 type AleoCoinModuleApi = CoinModuleApi<AleoCoinConfig, MemoNotSupported, AleoTransactionIntentData>;
 
+function requireViewKey(context: AleoContext, action: string): string {
+  const { viewKey } = context;
+  if (typeof viewKey !== "string" || viewKey.length === 0) {
+    throw new Error(`aleo: a view key is required to ${action}`);
+  }
+  return viewKey;
+}
+
 // currencyId is captured here (it can't live on the Context). The logic functions are shared with
 // the classic bridge (config-based), so each method resolves config via context.config() and passes
 // it down — no context-first wrappers.
@@ -48,16 +58,21 @@ export function createApi(currencyId: string): AleoCoinModuleApi {
     async call() {
       throw new Error("call is not supported");
     },
-    broadcast: (_context: AleoContext, _signature: string): Promise<string> => {
-      throw new Error("broadcast is not supported");
+    broadcast: async (context: AleoContext, signedTransaction: string): Promise<string> => {
+      const config = await context.config();
+      return broadcast({
+        configOrCurrencyId: config,
+        signedTx: signedTransaction,
+      });
     },
-    combine: (
-      _context: AleoContext,
-      _transaction: string,
-      _signature: string[],
-      _options?: { pubkey?: string },
-    ): string => {
-      throw new Error("combine is not supported");
+    combine: async (
+      context: AleoContext,
+      transaction: string,
+      signatures: string[],
+    ): Promise<string> => {
+      const config = await context.config();
+      const viewKey = requireViewKey(context, "combine a transaction");
+      return combine({ config, transaction, signatures, viewKey });
     },
     craftTransaction: async (
       context: AleoContext,
@@ -76,7 +91,7 @@ export function createApi(currencyId: string): AleoCoinModuleApi {
         invariant(!options?.customFees, "aleo: customFees is not supported for fee intents");
 
         if (isPrivateFeeIntent) {
-          invariant(context.viewKey, "aleo: viewKey is missing");
+          requireViewKey(context, "craft a private fee transaction");
         }
 
         // txIntent.amount -> base fee
@@ -91,7 +106,7 @@ export function createApi(currencyId: string): AleoCoinModuleApi {
       }
 
       if (isPrivateIntent) {
-        invariant(context.viewKey, "aleo: viewKey is missing");
+        requireViewKey(context, "craft a private transaction");
       }
 
       const maxBaseFee = options?.customFees
@@ -196,11 +211,7 @@ export function createApi(currencyId: string): AleoCoinModuleApi {
     craftTransactionData: (_context, intent) => craftTransactionData(intent),
     // `address` is unused: enrollment is keyed by the view key, not the address.
     register: async (context: AleoContext, _address: string): Promise<AleoRegistration> => {
-      const viewKey = context.viewKey;
-      invariant(
-        typeof viewKey === "string" && viewKey.length > 0,
-        "aleo/register: a view key is required on the context to register with the Provable scanner",
-      );
+      const viewKey = requireViewKey(context, "register with the Provable scanner");
       const config = await context.config();
       return register(config, viewKey);
     },

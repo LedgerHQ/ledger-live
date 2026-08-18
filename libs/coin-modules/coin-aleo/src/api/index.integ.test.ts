@@ -82,6 +82,23 @@ describe("createApi", () => {
     });
   });
 
+  describe("combine", () => {
+    it("rejects an invalid signature with an HTTP error from the backend", async () => {
+      const contextWithViewKey: AleoContext = { ...context, viewKey: testnetViewKey };
+      const crafted = await api.craftTransaction(context, mockTxIntentTransferPublic);
+
+      await expect(
+        api.combine(contextWithViewKey, crafted.transaction, ["sign1invalidsignatureplaceholder"]),
+      ).rejects.toMatchObject({ status: expect.any(Number) });
+    });
+
+    it("rejects before any network call when the context carries no view key", async () => {
+      await expect(api.combine(context, "crafted-tx", ["root-sig"])).rejects.toThrow(
+        /view key is required/,
+      );
+    });
+  });
+
   describe("estimateFees", () => {
     it("returns fee for coin transfer transaction", async () => {
       const fees = await api.estimateFees(context, {
