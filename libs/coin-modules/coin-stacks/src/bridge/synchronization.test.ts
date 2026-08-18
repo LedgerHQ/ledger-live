@@ -694,6 +694,21 @@ describe("getAccountShape", () => {
 
     setEnv("API_STACKS_NETWORK", "");
   });
+
+  it("uses the account's own address directly when reconciliatePublicKey falls back to it, instead of hex-decoding it as a public key", async () => {
+    const knownAddress = "SP26AZ1JSFZQ82VH5W2NJSB2QW15EW5YKT6WMD69J";
+    const infoWithNoLivePublicKey = {
+      currency: { id: "stacks" },
+      rest: {},
+      initialAccount: { id: `js:2:stacks:${knownAddress}:` },
+      derivationMode: "",
+    } as Parameters<typeof getAccountShape>[0];
+
+    const result = await getAccountShape(infoWithNoLivePublicKey, { paginationConfig: {} });
+
+    expect(getAddressFromPublicKey).not.toHaveBeenCalled();
+    expect(result.freshAddress).toBe(knownAddress);
+  });
 });
 
 describe("createTokenAccount", () => {

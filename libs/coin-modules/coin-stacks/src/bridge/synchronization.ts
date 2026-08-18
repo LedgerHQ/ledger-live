@@ -10,7 +10,7 @@ import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { getAddressFromPublicKey } from "@stacks/transactions";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
-import { getConfiguredStacksNetwork } from "../common-logic";
+import { getConfiguredStacksNetwork, validateAddress } from "../common-logic";
 import { TransactionResponse } from "../network";
 import {
   fetchAllTokenBalances,
@@ -180,13 +180,23 @@ export const getAccountShape: GetAccountShape = async info => {
     derivationMode,
   });
 
+  // `pubKey` is not always a real public key: `reconciliatePublicKey`'s fallback (no live
+  // `rest.publicKey`, e.g. a background resync) returns whatever was already encoded as
+  // `xpubOrAddress` in the account's own id -- which, for an account whose id was ever minted
+  // under that same fallback, is the account's c32 address, not a hex key. `getAddressFromPublicKey`
+  // assumes a hex string and hexToBytes()-decodes it unconditionally, so feeding it a c32 address
+  // throws ("Invalid byte sequence") and fails the whole sync. Detect and pass an already-valid
+  // address straight through instead of trying to re-derive it.
+  //
   // Additive only: the legacy bridge has only ever registered the mainnet "stacks" currency, so
   // this always defaulted to Mainnet with no way to override it. `API_STACKS_NETWORK` lets a
   // devnet/testnet consumer (e.g. the coin-tester) derive the correctly-versioned address instead
   // of a mainnet one that was never funded on that chain. v7's `getAddressFromPublicKey` takes the
   // network name directly (no more `TransactionVersion` enum), so this env var's value passes
   // straight through.
-  const address = getAddressFromPublicKey(pubKey, getConfiguredStacksNetwork());
+  const address = validateAddress(pubKey).isValid
+    ? pubKey
+    : getAddressFromPublicKey(pubKey, getConfiguredStacksNetwork());
 
   // Make API calls in parallel for better performance
   const [blockHeight, balanceResp, txsResult, tokenBalances, mempoolTxs] = await Promise.all([
