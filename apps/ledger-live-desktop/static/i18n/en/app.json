@@ -8668,6 +8668,11 @@
       "title": "More security. More control",
       "description": "Learn more about security features.",
       "cta": "Learn more"
+    },
+    "profile": {
+      "title": "Upgrade your Device",
+      "description": "Bigger screen, better security. Enjoy {{discount}}%.",
+      "cta": "Explore"
     }
   },
   "largeScreenUpsellModal": {
