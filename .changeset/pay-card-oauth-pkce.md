@@ -40,5 +40,5 @@ sent from the apps.
 
 The challenge is spent on the initiation, and nothing keeps the attempt afterwards. Completing the
 callback — holding the `state` and the verifier, verifying the `state`, exchanging the code for
-tokens and storing them in `react-native-keychain` — is the remainder of LIVE-34738 and is not part of
+tokens and storing them in `expo-secure-store` — is the remainder of LIVE-34738 and is not part of
 this change.
