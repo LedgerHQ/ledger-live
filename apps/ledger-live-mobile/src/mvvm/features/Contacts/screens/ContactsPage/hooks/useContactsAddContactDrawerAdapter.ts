@@ -8,18 +8,19 @@ import {
 } from "@domain/entity-contact";
 import {
   type ContactCreationPort,
-  type ContactsAddContactDrawerLabels,
   type ContactsAddContactDrawerProps,
-  useAddContactDrawerViewModel,
-} from "@features/flow-contacts-add-contact";
+  useAddContactAppAdapter,
+} from "@features/flow-contacts";
 import { useDispatch } from "~/context/hooks";
 import { useTranslation } from "~/context/Locale";
+import { useContactsAnalytics } from "../../../analytics/useContactsAnalytics";
 
 export function useContactsAddContactDrawerAdapter(
   onSaveSuccess: () => void,
 ): ContactsAddContactDrawerProps {
   const dispatch = useDispatch();
   const { t } = useTranslation();
+  const analytics = useContactsAnalytics();
   const contactCreation = useMemo<ContactCreationPort>(
     () => ({
       createContact: async ({ name }) => {
@@ -37,11 +38,7 @@ export function useContactsAddContactDrawerAdapter(
     }),
     [dispatch],
   );
-  const drawerViewModel = useAddContactDrawerViewModel({
-    contactCreation,
-    onSaveSuccess,
-  });
-  const labels = useMemo<ContactsAddContactDrawerLabels>(
+  const labels = useMemo(
     () => ({
       title: t("contacts.addContact"),
       namePlaceholder: t("contacts.addContactDrawer.namePlaceholder"),
@@ -55,8 +52,10 @@ export function useContactsAddContactDrawerAdapter(
     [t],
   );
 
-  return {
-    ...drawerViewModel,
+  return useAddContactAppAdapter({
+    analytics,
+    contactCreation,
+    onSaveSuccess,
     labels,
-  };
+  });
 }
