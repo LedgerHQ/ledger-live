@@ -161,6 +161,34 @@ describe("getTransactionStatus", () => {
       expect(status.errors.transaction).toBeInstanceOf(ICPDissolveDelayGTMax);
     });
 
+    // Every surface that reports a bound does it in whole days, so the error carries the day count
+    // alongside the seconds. The minimum rounds up and the maximum down, so both stay acceptable to
+    // the canister — the two-year maximum is 730.5 days, which has to report as 730, not 731.
+    it.each([
+      ["1.5", { minSeconds: NNS_MINIMUM_DISSOLVE_DELAY, minDays: 7 }],
+      [
+        String(NNS_MAXIMUM_DISSOLVE_DELAY + 1),
+        { maxSeconds: NNS_MAXIMUM_DISSOLVE_DELAY, maxDays: 730 },
+      ],
+    ])(
+      "reports the offended bound in days as well as seconds (%s)",
+      async (dissolveDelay, bound) => {
+        const status = await getTransactionStatus(
+          accountWith(neuron()),
+          tx({ type: "set_dissolve_delay", neuronId: "7", dissolveDelay }),
+        );
+        expect(status.errors.transaction).toMatchObject(bound);
+      },
+    );
+
+    it("quotes a one-day minimum when an increase adds nothing", async () => {
+      const status = await getTransactionStatus(
+        accountWith(neuron()),
+        tx({ type: "increase_dissolve_delay", neuronId: "7", additionalDissolveDelay: "0" }),
+      );
+      expect(status.errors.transaction).toMatchObject({ minSeconds: 1, minDays: 1 });
+    });
+
     it("rejects a dissolve delay below the neuron's current delay", async () => {
       const status = await getTransactionStatus(
         accountWith(

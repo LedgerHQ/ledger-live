@@ -19,7 +19,9 @@ jest.mock("@ledgerhq/live-common/families/internet_computer/react", () => ({
 import StepAddHotKey from "../ManageNeuronFlowModal/steps/StepAddHotKey";
 import StepFollowTopic from "../ManageNeuronFlowModal/steps/StepFollowTopic";
 import StepSelectFollowees from "../ManageNeuronFlowModal/steps/StepSelectFollowees";
-import StepSetDissolveDelay from "../ManageNeuronFlowModal/steps/StepSetDissolveDelay";
+import StepSetDissolveDelay, {
+  StepSetDissolveDelayFooter,
+} from "../ManageNeuronFlowModal/steps/StepSetDissolveDelay";
 import StepSplitNeuron from "../ManageNeuronFlowModal/steps/StepSplitNeuron";
 import StepStakeMaturity, {
   StepStakeMaturityFooter,
@@ -101,6 +103,28 @@ describe("StepSetDissolveDelay", () => {
     render(<StepSetDissolveDelay {...props} />);
 
     expect(screen.getByText(/the neuron cannot vote and earns no rewards/)).toBeInTheDocument();
+  });
+
+  // Entry is in whole days, so "0" is what a zero-day entry stores — a non-empty string the old
+  // presence check waved through, leaving the bridge to reject it with an unreadable range error.
+  it.each([
+    ["set_dissolve_delay", { dissolveDelay: "0" }],
+    ["increase_dissolve_delay", { additionalDissolveDelay: "0" }],
+  ])("keeps continue disabled for a zero-day %s", (type, fields) => {
+    const props = stepProps({ transaction: { type, ...fields } });
+    render(<StepSetDissolveDelayFooter {...props} />);
+
+    expect(screen.getByTestId("icp-continue-button")).toBeDisabled();
+  });
+
+  it.each([
+    ["set_dissolve_delay", { dissolveDelay: String(NNS_MINIMUM_DISSOLVE_DELAY_TO_VOTE) }],
+    ["increase_dissolve_delay", { additionalDissolveDelay: String(SECONDS_IN_DAY) }],
+  ])("allows continue for a positive %s", (type, fields) => {
+    const props = stepProps({ transaction: { type, ...fields } });
+    render(<StepSetDissolveDelayFooter {...props} />);
+
+    expect(screen.getByTestId("icp-continue-button")).toBeEnabled();
   });
 
   it("does not warn at exactly the voting threshold", () => {
