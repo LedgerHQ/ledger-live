@@ -15,21 +15,21 @@ import {
   initializeEmptyTrustchain,
   pushAccountsToTrustchain,
 } from "@ledgerhq/live-e2e-shared/ledgerSync/setup";
-import { getEnv, setEnv } from "@shared/env";
 import { deviceTagsWithoutLNS } from "tests/utils/tagsUtils";
 
-// TODO: Unskip every suite below once LIVE-35808 is fixed — staging cloud-sync cannot verify the
-// JWT that staging trustchain issues, so every cloud-sync call fails with 400 on the
-// Authorization header.
 const APP_INSTANCE_NAME = "LWD";
 
 function setupSeed() {
-  const prevSeed = getEnv("SEED");
+  // Restore through process.env, not setEnv: startSpeculos reads process.env.SEED directly, so a
+  // setEnv restore leaves the generated seed in place for whatever runs next in this worker.
+  let previousSeed: string | undefined;
   test.beforeAll(async () => {
+    previousSeed = process.env.SEED;
     process.env.SEED = generateLedgerSyncSeed();
   });
   test.afterAll(async () => {
-    setEnv("SEED", prevSeed);
+    if (previousSeed === undefined) delete process.env.SEED;
+    else process.env.SEED = previousSeed;
   });
 }
 
@@ -64,6 +64,9 @@ function preSeededTrustchain(seedCommands: CliCommand[] = []) {
   };
 }
 
+// TODO: Unskip every suite in this file once LIVE-35808 is fixed — staging cloud-sync cannot
+// verify the JWT that staging trustchain issues, so every cloud-sync call fails with 400 on the
+// Authorization header.
 test.describe.skip("Ledger Sync - add account", () => {
   setupSeed();
   destroyTrustchainAfterAll();
