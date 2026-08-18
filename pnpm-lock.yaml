@@ -15,6 +15,9 @@ catalogs:
     '@jest/reporters':
       specifier: 30.2.0
       version: 30.2.0
+    '@jest/test-result':
+      specifier: 30.2.0
+      version: 30.2.0
     '@ledgerhq/coin-hypercore':
       specifier: 2.0.0
       version: 2.0.0
@@ -6960,6 +6963,9 @@ importers:
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../../disable-network-setup
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../tools/test-quarantine
       '@ledgerhq/wallet-framework-test-setup':
         specifier: workspace:^
         version: link:../../wallet-framework-test-setup
@@ -16007,6 +16013,24 @@ importers:
       prettier:
         specifier: 2.8.8
         version: 2.8.8
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
+  tools/test-quarantine:
+    devDependencies:
+      '@jest/reporters':
+        specifier: 'catalog:'
+        version: 30.2.0
+      '@jest/test-result':
+        specifier: 'catalog:'
+        version: 30.2.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
+      jest-cli:
+        specifier: 30.2.0
+        version: 30.2.0(@types/node@24.12.0)
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
