@@ -10,6 +10,11 @@ import {
 
 const FLOW = "contacts_add_address";
 
+const CONTACTS_CURRENCY_SELECTION_CONFIGURATION = {
+  assetsConfiguration: { leftElement: "undefined", rightElement: "undefined" },
+  networksConfiguration: { leftElement: "undefined", rightElement: "undefined" },
+} as const;
+
 type UseContactsCurrencySelectionAdapterOptions = Readonly<{
   isOpen: boolean;
   networkIds: readonly string[];
@@ -92,6 +97,7 @@ export function useContactsCurrencySelectionAdapter({
 
     selectionStartedRef.current = true;
     openDrawer({
+      ...CONTACTS_CURRENCY_SELECTION_CONFIGURATION,
       completionMode: "currency",
       enableAccountSelection: false,
       flow: FLOW,

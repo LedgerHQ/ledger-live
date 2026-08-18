@@ -59,9 +59,11 @@ describe("useContactsCurrencySelectionAdapter", () => {
     );
 
     expect(openDrawer).toHaveBeenCalledWith({
+      assetsConfiguration: { leftElement: "undefined", rightElement: "undefined" },
       completionMode: "currency",
       enableAccountSelection: false,
       flow: "contacts_add_address",
+      networksConfiguration: { leftElement: "undefined", rightElement: "undefined" },
       presentation: "embedded",
       source: ScreenName.MyWalletContactDetail,
       selectableNetworkIds: networkIds,
