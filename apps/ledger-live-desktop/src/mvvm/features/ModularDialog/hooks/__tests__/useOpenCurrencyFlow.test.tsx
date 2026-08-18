@@ -40,6 +40,20 @@ describe("useOpenCurrencyFlow", () => {
     expect(store.getState().modularDialog.dialogParams).toBeNull();
   });
 
+  it("should forward the dialog configuration", () => {
+    const { result, store } = renderHook(() => useOpenCurrencyFlow());
+    const dialogConfiguration = {
+      assets: { leftElement: "undefined" as const, rightElement: "undefined" as const },
+      networks: { leftElement: "undefined" as const, rightElement: "undefined" as const },
+    };
+
+    void result.current.openCurrencyFlow([ethereum.id], { dialogConfiguration });
+
+    expect(store.getState().modularDialog.dialogParams?.dialogConfiguration).toEqual(
+      dialogConfiguration,
+    );
+  });
+
   it("should cancel an embedded selection and reset the dialog", async () => {
     const { result, store } = renderHook(() => useOpenCurrencyFlow());
     const selection = result.current.openCurrencyFlow([ethereum.id], {

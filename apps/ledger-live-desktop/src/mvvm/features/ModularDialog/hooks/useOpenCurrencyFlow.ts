@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef } from "react";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { useDispatch, useStore } from "LLD/hooks/redux";
 import {
   closeDialog,
@@ -19,6 +20,7 @@ type PendingCurrencySelection = Readonly<{
 export type OpenCurrencyFlow = (
   selectableNetworkIds: readonly CryptoCurrency["id"][],
   options?: Readonly<{
+    dialogConfiguration?: EnhancedModularDrawerConfiguration;
     presentation?: ModularDialogPresentation;
   }>,
 ) => Promise<CryptoOrTokenCurrency | null>;
@@ -65,6 +67,7 @@ export function useOpenCurrencyFlow(): Readonly<{
 
         dispatch(
           openDialog({
+            dialogConfiguration: options?.dialogConfiguration,
             selectableNetworkIds: [...selectableNetworkIds],
             presentation: options?.presentation,
             onAssetSelected,

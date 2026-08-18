@@ -10,6 +10,11 @@ import {
 
 const FLOW = "contacts_add_address";
 
+const CONTACTS_CURRENCY_SELECTION_CONFIGURATION = {
+  assetsConfiguration: { leftElement: "undefined", rightElement: "undefined" },
+  networksConfiguration: { leftElement: "undefined", rightElement: "undefined" },
+} as const;
+
 type UseContactsCurrencySelectionAdapterOptions = Readonly<{
   isOpen: boolean;
   networkIds: readonly string[];
@@ -43,15 +48,12 @@ export function useContactsCurrencySelectionAdapter({
   const closeDrawerRef = useRef<() => void>(() => undefined);
   const {
     areCurrenciesFiltered,
-    assetsConfiguration,
     closeDrawer,
     handleAccountSelected,
     handleCurrencySelected,
     isOpen: isModularDrawerOpen,
-    networksConfiguration,
     openDrawer,
     preselectedCurrencies,
-    selectableNetworkIds,
     uiUseCase,
     useCase,
   } = useModularDrawerController();
@@ -92,6 +94,7 @@ export function useContactsCurrencySelectionAdapter({
 
     selectionStartedRef.current = true;
     openDrawer({
+      ...CONTACTS_CURRENCY_SELECTION_CONFIGURATION,
       completionMode: "currency",
       enableAccountSelection: false,
       flow: FLOW,
@@ -105,27 +108,24 @@ export function useContactsCurrencySelectionAdapter({
   const flowProps = useMemo<Omit<ModularDrawerFlowProps, "children">>(
     () => ({
       areCurrenciesFiltered,
-      assetsConfiguration,
+      ...CONTACTS_CURRENCY_SELECTION_CONFIGURATION,
       currencies: preselectedCurrencies,
       isOpen: isModularDrawerOpen,
-      networksConfiguration,
       onAccountSelected: handleAccountSelected,
       onClose: closeDrawer,
       onCurrencySelected: handleCurrencySelected,
       uiUseCase,
       useCase,
-      selectableNetworkIds,
+      selectableNetworkIds: networkIds,
     }),
     [
       areCurrenciesFiltered,
-      assetsConfiguration,
       closeDrawer,
       handleAccountSelected,
       handleCurrencySelected,
       isModularDrawerOpen,
-      networksConfiguration,
+      networkIds,
       preselectedCurrencies,
-      selectableNetworkIds,
       uiUseCase,
       useCase,
     ],

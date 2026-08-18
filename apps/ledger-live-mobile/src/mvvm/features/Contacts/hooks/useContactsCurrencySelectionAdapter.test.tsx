@@ -59,9 +59,11 @@ describe("useContactsCurrencySelectionAdapter", () => {
     );
 
     expect(openDrawer).toHaveBeenCalledWith({
+      assetsConfiguration: { leftElement: "undefined", rightElement: "undefined" },
       completionMode: "currency",
       enableAccountSelection: false,
       flow: "contacts_add_address",
+      networksConfiguration: { leftElement: "undefined", rightElement: "undefined" },
       presentation: "embedded",
       source: ScreenName.MyWalletContactDetail,
       selectableNetworkIds: networkIds,
@@ -121,12 +123,14 @@ describe("useContactsCurrencySelectionAdapter", () => {
 
     expect(result.current.flowProps).toMatchObject({
       areCurrenciesFiltered: undefined,
+      assetsConfiguration: { leftElement: "undefined", rightElement: "undefined" },
       currencies: [mockEthCryptoCurrency.id, mockBtcCryptoCurrency.id],
       isOpen: true,
+      networksConfiguration: { leftElement: "undefined", rightElement: "undefined" },
       onAccountSelected: handleAccountSelected,
       onClose: closeDrawer,
       onCurrencySelected: handleCurrencySelected,
-      selectableNetworkIds: undefined,
+      selectableNetworkIds: [mockEthCryptoCurrency.id],
     });
   });
 
