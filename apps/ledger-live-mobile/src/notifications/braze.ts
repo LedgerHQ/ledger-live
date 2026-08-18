@@ -26,7 +26,19 @@ export const start = (
   Braze.changeUser(isTrackedUser ? userId.exportUserIdForBraze() : generateAnonymousId());
 };
 
-export const updateUserPreferences = (notificationsPreferences: NotificationsSettings) => {
+export type UpdateUserPreferencesOptions = {
+  brazeOptOutIdentityCleanup?: boolean;
+};
+
+export const updateUserPreferences = (
+  notificationsPreferences: NotificationsSettings,
+  isTrackedUser: boolean,
+  { brazeOptOutIdentityCleanup = false }: UpdateUserPreferencesOptions = {},
+) => {
+  // Legacy (flag off): still write prefs for opted-out users (anonymous Braze profile).
+  // Flag on: never write Braze custom attributes without tracking consent.
+  if (brazeOptOutIdentityCleanup && !isTrackedUser) return;
+
   const notificationsOptedIn = {
     optInAnnouncements: notificationsPreferences.announcementsCategory,
     optInLargeMovers: notificationsPreferences.largeMoverCategory,
