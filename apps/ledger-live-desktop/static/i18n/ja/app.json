@@ -868,6 +868,43 @@
     "unlockLiquidity": "実生活で暗号資産を送付",
     "exploreCryptoCardsDescription": "お客様にぴったりの暗号資産カードを見つけましょう"
   },
+  "payTab": {
+    "featureTour": {
+      "title": "支払いと受け取り",
+      "description": "ステーブルコインは、暗号資産と実生活での決済のギャップを埋めます",
+      "cta": "了解",
+      "rows": {
+        "global": {
+          "title": "世界中での支払いと受け取り",
+          "description": "低いネットワーク手数料の恩恵を受ける"
+        },
+        "volatility": {
+          "title": "最小限のボラティリティ",
+          "description": "ステーブルコインは法定通貨に基づいています"
+        },
+        "card": {
+          "title": "カードでの決済で1％のキャッシュバックを獲得",
+          "description": "USDC、USDT、BTC、ETHなどで支払う"
+        }
+      }
+    },
+    "balance": {
+      "emptyTitle": "支払いと受け取り",
+      "emptyDescription": "まずはウォレットにステーブルコインを入金することから始めましょう",
+      "filter": {
+        "allStablecoins": "すべてのステーブルコイン",
+        "dialogTitle": "残高を絞り込む",
+        "dialogDescription": "ステーブルコインを使用して、低い手数料と最小限のボラティリティで世界中での支払いができます。",
+        "dialogBanner": "ホームでその他の資産をすべて管理",
+        "confirm": "確認"
+      }
+    },
+    "actions": {
+      "deposit": "ステーブルコインを追加",
+      "request": "リクエスト",
+      "pay": "新しいお支払い"
+    }
+  },
   "lend": {
     "title": "暗号資産をレンディング",
     "tabs": {
@@ -2476,7 +2513,9 @@
     "addressMatched": "アドレスが一致",
     "addressNotFound": "住所が見つかりません",
     "alreadyUsed": "使用ずみ・{{date}}",
+    "addressBookUnsupported": "{{family}}にはまだ対応していません",
     "recentSendWillAppear": "最近の送付がこちらに表示されます",
+    "contactsWillAppear": "連絡先がここに表示されます。",
     "securityInfo": {
       "title": "安全に送付するには？",
       "items": {
@@ -2494,6 +2533,10 @@
         "description": "最近の履歴では、すでに特定のアドレスに送付したかどうかを即座に確認できます。これにより、コピー/貼り付けのエラーやハッキングを防ぐことができます。履歴には、Ledger Walletを使用して暗号資産を送付した直近の12件のアドレスが含まれています。",
         "cta": "了解"
       }
+    },
+    "addContact": {
+      "newContact": "新しい連絡先を追加",
+      "existingContact": "既存の連絡先に追加"
     },
     "relativeDate": {
       "justNow": "たった今",
@@ -7001,6 +7044,9 @@
       "title": "資金が不足しています。",
       "description": "アカウントに十分な資金があることを確認してください。"
     },
+    "NotEnoughTransferAmount": {
+      "title": "ニューロンにステーキングするには、最低1 ICPが必要です。"
+    },
     "UnstakeNotEnoughStakedBalanceLeft": {
       "title": "{{maxAmount}}を超えるステーキングを解除すると、合計{{totalAmount}}がステーキング解除されます。",
       "description": "{{maxAmount}}を超えるステーキングを解除すると、合計{{totalAmount}}がステーキング解除されます。"
@@ -7434,6 +7480,9 @@
     },
     "FeeTooHigh": {
       "title": "ネットワーク手数料が10%を超えています。"
+    },
+    "RecipientIsNewAccount": {
+      "title": "このアドレスは一度も資金を受け取ったことがないため、有効化にはより高いネットワーク手数料がかかります。"
     },
     "DustLimit": {
       "title": "金額がダスト制限を下回っています"
@@ -8588,23 +8637,14 @@
   },
   "lnsUpsell": {
     "opted_in": {
-      "title": "メモリ不足による制限",
-      "description": "お持ちのLedger Nano Sを最新のLedger（Ledger Flexなど）にアップグレードしましょう！より多くのメモリ、最新のセキュリティ強化、複数の新機能をお楽しみいただけます。今なら、<0>{{discount}}%OFF</0>。",
+      "title": "詳細を表示。より安全に署名。",
+      "description": "アップグレードで{{discount}}%OFF。",
       "cta": "Ledgerをアップグレード"
     },
     "opted_out": {
-      "description": "Ledger Nano Sの限られたメモリでは、複数の最新機能、ブロックチェーンの変更、セキュリティ強化も制限されます。ぜひ、新しいLedgerデバイスへのアップグレードをご検討ください。",
-      "cta": "詳細はこちら"
-    }
-  },
-  "lnsUpsellMediaBanner": {
-    "opted_in": {
-      "title": "詳細を表示。より安全に署名",
-      "description": "アップグレードして20％オフ。"
-    },
-    "opted_out": {
       "title": "さらなるセキュリティ。より確実なコントロール",
-      "description": "セキュリティ機能についての詳細をご確認ください。"
+      "description": "セキュリティ機能についての詳細をご確認ください。",
+      "cta": "詳細はこちら"
     }
   },
   "largeScreenUpsellModal": {
@@ -8897,7 +8937,9 @@
       "transparentBalance": "トランスペアレント残高",
       "transparentBalanceTooltip": "一般に公開されている残高",
       "privateBalance": "プライベート残高",
-      "privateBalanceTooltip": "一般には非公開の残高"
+      "privateBalanceTooltip": "一般には非公開の残高",
+      "privateBalanceWarning": "プライベート残高には、SaplingおよびOrchardのシールドされた資金は含まれません。",
+      "privateBalanceMaturing": "{{spendable}}利用可能 · {{maturing}}使用中"
     },
     "shielded": {
       "send": {
@@ -8917,7 +8959,8 @@
             "title": "プライベート残高",
             "subtitle": "シールド",
             "unavailable": "プライベート残高は利用できません"
-          }
+          },
+          "spendableWarning": "利用可能残高は、総残高を下回る場合があります。最近シールドされた資金は、使用可能になるまでに承認と完全なスキャニング（～15分）が必要です。"
         },
         "memo": {
           "label": "メモ (任意)",
@@ -8937,6 +8980,12 @@
             "message": "残高が最新でない可能性があります",
             "cta": "残高を同期"
           }
+        },
+        "selfTransfer": {
+          "toPrivate": "プライベート残高への自己送金",
+          "toPublic": "パブリック残高への自己送金",
+          "unavailable": "プライベートアドレスはまだ利用できません。これを有効にするには、閲覧キーをエクスポートしてください。",
+          "privacyWarning": "これにより、シールドされた資金が、誰でも閲覧可能なアカウントのパブリックアドレスに紐付けられます。外部のプライベートアドレスに送信することで、これらは紐付けられないままになります。"
         }
       },
       "state": {
@@ -9392,10 +9441,10 @@
       "cancel": "キャンセル"
     },
     "editSignerMismatch": {
-      "title": "Use the same Ledger device you used to add this contact",
-      "description": "The connected device isn't a match.",
-      "connectDifferentDevice": "Connect a different device",
-      "cancel": "Cancel"
+      "title": "連絡先の追加で使用したものと同じLedgerデバイスを使用してください",
+      "description": "接続されたデバイスが一致しません。",
+      "connectDifferentDevice": "別のデバイスを接続してください",
+      "cancel": "キャンセル"
     },
     "ledgerSyncIntroduction": {
       "description": "連絡先はLedgerによってエンドツーエンドで暗号化され、デバイス間で同期されます。これをロック解除できるのはあなただけです。",
@@ -9677,5 +9726,30 @@
       }
     },
     "disclaimer": "このデータは情報提供のみを目的としており、財務上のアドバイスではありません。税務目的には使用できません。"
+  },
+  "internetComputer": {
+    "memoField": {
+      "increaseStake": "このトランザクションにより、既存ニューロンのステーキングが増加します。上記の数量フィールドにステーキングする希望数量を入力してください。",
+      "createNeuron": "このトランザクションにより、ステーキングされたICPを保持するニューロンが作成されます。上記の数量フィールドに、ステーキングしたいICPの数量を入力してください。",
+      "tooltip": "Internet Computerは、これを使用してトランザクションを識別し、ICPをニューロンにステーキングします。"
+    },
+    "stakeBanner": {
+      "stakeICP": {
+        "title": "ICPをステーキング",
+        "description": "ICPをステーキングし、そのガバナンスに参加することで報酬を獲得します。",
+        "cta": "ICPをステーキング"
+      }
+    },
+    "headerManageActions": {
+      "manageNeurons": {
+        "title": "ニューロンを管理する"
+      }
+    },
+    "summaryFooter": {
+      "stakedBalance": "ステーキング済み残高",
+      "stakedBalanceTooltip": "現在ニューロンにステーキングされているICPトークンの合計量。ステーキングされたICPは投票報酬を獲得し、ガバナンスに使用できます。",
+      "totalMaturity": "満期の報酬合計",
+      "totalMaturityTooltip": "ステーキングで得られた報酬の合計（ステーキングおよび流動性ステーキングの満期分を含む）。これらの報酬は、再ステーキングすることも、流動的なICPとして受け取ることもできます。"
+    }
   }
 }
