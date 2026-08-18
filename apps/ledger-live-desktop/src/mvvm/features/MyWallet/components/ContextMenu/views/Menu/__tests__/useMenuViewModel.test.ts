@@ -37,7 +37,6 @@ describe("useMenuViewModel", () => {
     });
     mockUseRecoverEntry.mockReturnValue({
       recoverFeature: null,
-      recoverHomePath: undefined,
       hasClickedRecover: false,
       markRecoverSeen: mockMarkRecoverSeen,
       openRecover: mockOpenRecover,

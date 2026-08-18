@@ -210,6 +210,23 @@ describe("useSideBarViewModel", () => {
   });
 
   describe("handleClickRecover", () => {
+    it("should open modal and track when enabled without openRecoverFromSidebar", () => {
+      const trackSpy = jest.spyOn(segment, "track");
+      const { result } = renderViewModel(
+        withFeatureFlags({ protectServicesDesktop: { enabled: true } }),
+      );
+
+      act(() => result.current.handleClickRecover());
+
+      expect(mockNavigate).not.toHaveBeenCalled();
+      expect(trackSpy).toHaveBeenCalledWith("menuentry_clicked", {
+        entry: "recover",
+        page: "/",
+        flagged: false,
+      });
+      trackSpy.mockRestore();
+    });
+
     it("should track menuentry_clicked for recover when feature is not enabled", () => {
       const trackSpy = jest.spyOn(segment, "track");
       const { result } = renderViewModel();

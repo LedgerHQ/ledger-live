@@ -69,5 +69,5 @@ export function useRecoverEntry() {
     dispatch,
   ]);
 
-  return { recoverFeature, recoverHomePath, hasClickedRecover, markRecoverSeen, openRecover };
+  return { recoverFeature, hasClickedRecover, markRecoverSeen, openRecover };
 }
