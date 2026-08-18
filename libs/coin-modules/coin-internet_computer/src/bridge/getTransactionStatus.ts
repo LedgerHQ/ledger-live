@@ -18,6 +18,7 @@ import {
   MIN_NEURON_STAKE,
   NNS_MAXIMUM_DISSOLVE_DELAY,
   NNS_MINIMUM_DISSOLVE_DELAY,
+  SECONDS_IN_DAY,
 } from "../consts";
 import {
   ICPCreateNeuronWarning,
@@ -83,6 +84,15 @@ const validateRecipient = (
   return undefined;
 };
 
+// The bounds are protocol seconds, but every surface that reports them talks in whole days, so each
+// error carries both. A minimum rounds up and a maximum rounds down, keeping the quoted day count
+// one the canister would actually accept.
+const belowMin = (minSeconds: number) =>
+  new ICPDissolveDelayLTMin("", { minSeconds, minDays: Math.ceil(minSeconds / SECONDS_IN_DAY) });
+
+const aboveMax = (maxSeconds: number) =>
+  new ICPDissolveDelayGTMax("", { maxSeconds, maxDays: Math.floor(maxSeconds / SECONDS_IN_DAY) });
+
 // New dissolve delay must be >= the current one and within the network bounds (Mission 70).
 const validateSetDissolveDelay = (
   neuron: ICPNeuron | undefined,
@@ -91,15 +101,15 @@ const validateSetDissolveDelay = (
   if (!neuron) return new ICPNeuronNotFound();
   const seconds = Number(dissolveDelay);
   if (!Number.isInteger(seconds) || seconds < 0) {
-    return new ICPDissolveDelayLTMin("", { minSeconds: NNS_MINIMUM_DISSOLVE_DELAY });
+    return belowMin(NNS_MINIMUM_DISSOLVE_DELAY);
   }
   const requested = BigInt(seconds);
   if (requested < getNeuronDissolveDurationSeconds(neuron)) return new ICPDissolveDelayLTCurrent();
   if (requested < BigInt(NNS_MINIMUM_DISSOLVE_DELAY)) {
-    return new ICPDissolveDelayLTMin("", { minSeconds: NNS_MINIMUM_DISSOLVE_DELAY });
+    return belowMin(NNS_MINIMUM_DISSOLVE_DELAY);
   }
   if (requested > BigInt(NNS_MAXIMUM_DISSOLVE_DELAY)) {
-    return new ICPDissolveDelayGTMax("", { maxSeconds: NNS_MAXIMUM_DISSOLVE_DELAY });
+    return aboveMax(NNS_MAXIMUM_DISSOLVE_DELAY);
   }
   return undefined;
 };
@@ -110,13 +120,14 @@ const validateIncreaseDissolveDelay = (
 ): Error | undefined => {
   if (!neuron) return new ICPNeuronNotFound();
   const value = Number(additional);
-  if (!Number.isInteger(value) || value <= 0)
-    return new ICPDissolveDelayLTMin("", { minSeconds: 1 });
+  // Any positive amount is accepted here, but the entry is in whole days, so the day count the copy
+  // quotes is 1 while the seconds bound stays truthful.
+  if (!Number.isInteger(value) || value <= 0) return belowMin(1);
   if (
     getNeuronDissolveDurationSeconds(neuron) + BigInt(value) >
     BigInt(NNS_MAXIMUM_DISSOLVE_DELAY)
   ) {
-    return new ICPDissolveDelayGTMax("", { maxSeconds: NNS_MAXIMUM_DISSOLVE_DELAY });
+    return aboveMax(NNS_MAXIMUM_DISSOLVE_DELAY);
   }
   return undefined;
 };

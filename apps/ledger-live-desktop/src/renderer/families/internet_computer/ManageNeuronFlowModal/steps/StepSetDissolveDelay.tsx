@@ -16,6 +16,8 @@ import type { StepProps } from "../../neuronFlow/types";
 
 const MAX_DAYS = Math.floor(NNS_MAXIMUM_DISSOLVE_DELAY / SECONDS_IN_DAY);
 
+const isPositive = (seconds: string): boolean => /^\d+$/.test(seconds) && BigInt(seconds) > 0n;
+
 /**
  * Dissolve delay is entered in days, the unit the NNS bounds are quoted in. A dissolved neuron sets
  * its delay outright; a locked one may only add to it, so the same screen drives two transaction
@@ -103,11 +105,16 @@ const StepSetDissolveDelay = ({
   );
 };
 
-export const StepSetDissolveDelayFooter = (props: StepProps) => (
-  <SubmitFooter
-    {...props}
-    canContinue={!!props.transaction?.dissolveDelay || !!props.transaction?.additionalDissolveDelay}
-  />
-);
+// Gated on a positive delay rather than on presence: "0" is a non-empty string, so a zero-day entry
+// used to reach the bridge and come back as a range error nobody can read.
+export const StepSetDissolveDelayFooter = (props: StepProps) => {
+  const { transaction } = props;
+  const entered =
+    transaction?.type === "increase_dissolve_delay"
+      ? transaction.additionalDissolveDelay
+      : transaction?.dissolveDelay;
+
+  return <SubmitFooter {...props} canContinue={isPositive(entered ?? "")} />;
+};
 
 export default StepSetDissolveDelay;
