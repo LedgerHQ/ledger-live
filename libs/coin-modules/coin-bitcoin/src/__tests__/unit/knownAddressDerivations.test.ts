@@ -81,10 +81,19 @@ function makeWalletAccount(receiveStored: StoredAddresses, changeStored: StoredA
 
 // ---- Tests -----------------------------------------------------------------
 
+// FLAKE-SIM: test-quarantine pipeline validation — REMOVE BEFORE MERGE.
+// Fails attempt 1 and passes attempt 2 so the flake reporter observes a
+// fail->pass transition. CI-only, matching `jest.retryTimes` in jest.setup.js.
+let flakeSimAttempts = 0;
+
 describe("buildKnownAddressDerivationsMap", () => {
   const ACCOUNT_PATH = "m/84'/0'/0'";
 
   it("includes all stored receive and change addresses", async () => {
+    // FLAKE-SIM — REMOVE BEFORE MERGE.
+    if (process.env.CI && flakeSimAttempts++ === 0) {
+      throw new Error("FLAKE-SIM: forced failure on attempt 1 (coin-bitcoin jest)");
+    }
     const receiveStored = [makeAddr(0, 0), makeAddr(0, 1), makeAddr(0, 2)];
     const changeStored = [makeAddr(1, 0), makeAddr(1, 1)];
     const walletAccount = makeWalletAccount(receiveStored, changeStored);

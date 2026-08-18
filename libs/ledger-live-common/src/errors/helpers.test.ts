@@ -44,8 +44,17 @@ class ExampleError extends Error {
   }
 }
 
+// FLAKE-SIM: test-quarantine pipeline validation — REMOVE BEFORE MERGE.
+// Fails attempt 1 and passes attempt 2 so the flake reporter observes a
+// fail->pass transition. CI-only, matching `jest.retryTimes` in setup-registry.ts.
+let flakeSimAttempts = 0;
+
 describe("extractErrorContext", () => {
   it("should not include any filtered properties: defaults, null, undefined and Circular reference", () => {
+    // FLAKE-SIM — REMOVE BEFORE MERGE.
+    if (process.env.CI && flakeSimAttempts++ === 0) {
+      throw new Error("FLAKE-SIM: forced failure on attempt 1 (ledger-live-common jest)");
+    }
     const defaultMessage = "Example circular error, should not be used for production";
 
     const error = new CircularError(defaultMessage);
