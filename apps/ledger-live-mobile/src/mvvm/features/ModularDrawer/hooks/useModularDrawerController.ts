@@ -145,12 +145,16 @@ export const useModularDrawerController = () => {
       if (cancelCallbackId) {
         unregisterCancelCallback(cancelCallbackId);
       }
-      if (callbackId) {
-        executeCallback(callbackId, account, parentAccount);
+      try {
+        if (callbackId) {
+          executeCallback(callbackId, account, parentAccount);
+        }
+      } finally {
+        dispatch(closeModularDrawer());
+        resetAll();
       }
-      dispatch(closeModularDrawer());
     },
-    [callbackId, cancelCallbackId, dispatch, executeCallback, unregisterCancelCallback],
+    [callbackId, cancelCallbackId, dispatch, executeCallback, unregisterCancelCallback, resetAll],
   );
 
   const handleCurrencySelected = useCallback(
@@ -158,12 +162,16 @@ export const useModularDrawerController = () => {
       if (cancelCallbackId) {
         unregisterCancelCallback(cancelCallbackId);
       }
-      if (callbackId) {
-        executeCurrencyCallback(callbackId, currency);
+      try {
+        if (callbackId) {
+          executeCurrencyCallback(callbackId, currency);
+        }
+      } finally {
+        dispatch(closeModularDrawer());
+        resetAll();
       }
-      dispatch(closeModularDrawer());
     },
-    [callbackId, cancelCallbackId, dispatch, executeCurrencyCallback, unregisterCancelCallback],
+    [callbackId, cancelCallbackId, dispatch, executeCurrencyCallback, unregisterCancelCallback, resetAll],
   );
 
   return {
