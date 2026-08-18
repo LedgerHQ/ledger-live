@@ -10,7 +10,7 @@ import {
 import {
   ledgerKeyRingProtocol,
   ledgerSync,
-  resolveApplicationPath,
+  restoreTrustchain,
 } from "@ledgerhq/live-e2e-shared/ledgerSync/cli";
 import {
   runCliGetAddress,
@@ -26,7 +26,7 @@ import {
 export const CLI = {
   ledgerKeyRingProtocol,
   ledgerSync,
-  resolveApplicationPath,
+  restoreTrustchain,
   liveData: function (opts: LiveDataOpts) {
     return runCliLiveData(opts);
   },

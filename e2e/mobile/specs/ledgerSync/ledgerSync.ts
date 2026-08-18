@@ -1,10 +1,6 @@
-import { allure } from "jest-allure2-reporter/api";
-import { device } from "detox";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
-import { launchApp } from "../../helpers/commonHelpers";
 import { setTeamOwner } from "../../helpers/allure/allure-helper";
-import { setAllFeatureFlags } from "../../bridge/server";
 import { ledgerSyncEnvironment } from "@ledgerhq/live-e2e-shared/ledgerSync/environment";
 import type { LedgerSyncCliCommand } from "@ledgerhq/live-e2e-shared/ledgerSync/setup";
 import { ethAccount, secondEthAccount } from "@ledgerhq/live-e2e-shared/ledgerSync/testData";
@@ -26,12 +22,28 @@ const ledgerSyncFeatureFlags = {
 };
 
 /**
+ * The app builds its trustchain SDK on first render and keeps it in a module singleton, so the
+ * environment it boots with is the only one it will ever use — an override sent to a running app
+ * moves the flag but not the SDK. Pointing the CLI elsewhere would leave the two on different
+ * backends and surface as an empty trustchain rather than an error, so refuse it up front.
+ */
+function assertSupportedEnvironment() {
+  if (ledgerSyncEnvironment !== "STAGING") {
+    throw new Error(
+      `Ledger Sync: mobile can only run against STAGING, got ${ledgerSyncEnvironment}. ` +
+        "The app pins its trustchain SDK at boot, so LEDGER_SYNC_ENVIRONMENT cannot move it.",
+    );
+  }
+}
+
+/**
  * A seed per run, so every suite builds its trustchain from scratch instead of clearing whatever
  * the previous run left on the backend, and so no test ever derives accounts from the shared seed.
  */
 function setupSeed() {
   let previousSeed: string | undefined;
   beforeAll(() => {
+    assertSupportedEnvironment();
     previousSeed = app.ledgerSync.useGeneratedSeed();
   });
   afterAll(() => {
@@ -51,32 +63,8 @@ function cleanupAfterAll() {
   });
 }
 
-/** DBSave throttles the feature flag write; terminating sooner loses the override. */
-const FLAG_PERSIST_DELAY = 1_000;
-
-/**
- * The app builds its trustchain SDK on first render and keeps it in a module singleton, so the
- * environment carried by `llmWalletSync` only takes effect when the flag is already in place at
- * boot. Overrides survive a relaunch, so persisting then relaunching is what makes the app follow
- * `LEDGER_SYNC_ENVIRONMENT`; without it the app stays on the flag default while the CLI does not,
- * and the two talk to different backends.
- *
- * Only this flag is persisted. The rest arrive from `app.init` after boot, which is the order every
- * other suite gets on a fresh CI device — booting with the whole set changes which portfolio
- * variant renders, and with it the add-account entry point.
- */
-async function relaunchOnLedgerSyncEnvironment() {
-  await setAllFeatureFlags(ledgerSyncFeatureFlags);
-  await new Promise(resolve => setTimeout(resolve, FLAG_PERSIST_DELAY));
-  await device.terminateApp();
-  // Relaunching moves the bridge to a new port, which Android only reaches once reversed.
-  const port = await launchApp({ newInstance: true });
-  await device.reverseTcpPort(port);
-}
-
 /** Boots the app already a member of a freshly created trustchain, skipping the activation UI. */
 async function initPreSeeded(seedCommands: LedgerSyncCliCommand[] = []) {
-  await relaunchOnLedgerSyncEnvironment();
   await app.init({
     speculosApp: AppInfos.LS,
     featureFlags: ledgerSyncFeatureFlags,
@@ -96,22 +84,13 @@ async function openLedgerSyncSettings() {
   await app.settingsGeneral.navigateToLedgerSync();
 }
 
-// TODO: Rename every ledgerSync*.skip.spec.ts back to *.spec.ts once LIVE-35808 is fixed —
-// staging cloud-sync cannot verify the JWT that staging trustchain issues, so every cloud-sync
-// call fails with 400 on the Authorization header.
-function linkBlockingBug() {
-  allure.issue("LIVE-35808");
-}
-
 export function runLedgerSyncAddAccountTest(tmsLinks: string[], tags: string[]) {
-  linkBlockingBug();
   setTeamOwner(Team.WALLET_XP);
   describe("Ledger Sync - add account", () => {
     setupSeed();
     cleanupAfterAll();
 
     beforeAll(async () => {
-      await relaunchOnLedgerSyncEnvironment();
       // The CLI needs the LedgerSync app to create the trustchain and the phone needs Ethereum to
       // add the account: mobile launches both in parallel rather than relaunching one device.
       await app.init({
@@ -145,7 +124,6 @@ export function runLedgerSyncAddAccountTest(tmsLinks: string[], tags: string[]) 
 }
 
 export function runLedgerSyncRenameAccountTest(tmsLinks: string[], tags: string[]) {
-  linkBlockingBug();
   setTeamOwner(Team.WALLET_XP);
   describe("Ledger Sync - rename account", () => {
     setupSeed();
@@ -177,7 +155,6 @@ export function runLedgerSyncRenameAccountTest(tmsLinks: string[], tags: string[
 }
 
 export function runLedgerSyncDeleteAccountTest(tmsLinks: string[], tags: string[]) {
-  linkBlockingBug();
   setTeamOwner(Team.WALLET_XP);
   describe("Ledger Sync - delete account", () => {
     setupSeed();
@@ -211,7 +188,6 @@ export function runLedgerSyncDeleteAccountTest(tmsLinks: string[], tags: string[
 }
 
 export function runLedgerSyncDeleteInstanceTest(tmsLinks: string[], tags: string[]) {
-  linkBlockingBug();
   setTeamOwner(Team.WALLET_XP);
   describe("Ledger Sync - delete instance", () => {
     setupSeed();
@@ -239,7 +215,6 @@ export function runLedgerSyncDeleteInstanceTest(tmsLinks: string[], tags: string
 }
 
 export function runLedgerSyncDeleteBackupTest(tmsLinks: string[], tags: string[]) {
-  linkBlockingBug();
   setTeamOwner(Team.WALLET_XP);
   describe("Ledger Sync - delete backup", () => {
     setupSeed();
