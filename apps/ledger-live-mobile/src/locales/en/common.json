@@ -5258,7 +5258,7 @@
             },
             "locationPermissionDeniedManualSettings": {
               "title": "Enable Location in Settings",
-              "description": "Android requires this to scan for nearby Bluetooth devices. Go to Settings → Apps → Ledger Wallet → Permissions → Location. Set to \"Allow\", then select the button below.",
+              "description": "Android requires this to scan for nearby Bluetooth devices. Go to Settings → Apps → Ledger Wallet → Permissions → Location. Set to \"Allow\", then select the button below. Ledger does not access or store your location.",
               "cta": {
                 "retry": "I enabled it, try again",
                 "ignore": "Continue with USB instead"
@@ -5282,7 +5282,7 @@
             },
             "locationServicePermissionMissing": {
               "title": "Location permission couldn't be confirmed",
-              "description": "Select “Try again”, this often resolves it. If not, check Settings → Apps → Ledger Wallet → Permissions → Location.",
+              "description": "Android requires this to scan for nearby Bluetooth devices. Select “Try again”, this often resolves it. If not, check Settings → Apps → Ledger Wallet → Permissions → Location. Ledger does not access or store your location.",
               "cta": {
                 "retry": "Try again",
                 "ignore": "Continue with USB instead"
