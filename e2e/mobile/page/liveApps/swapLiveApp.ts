@@ -5,6 +5,7 @@ import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { retryUntilTimeout } from "../../utils/retry";
 import { floatNumberRegex } from "@ledgerhq/live-e2e-shared/data/regexes";
 import {
+  COUNTDOWN_STABLE_TIMEOUT,
   PROVIDER_LIST_SETTLE_TIMEOUT,
   QUOTES_FETCH_TIMEOUT,
   UI_RENDER_TIMEOUT,
@@ -13,6 +14,9 @@ import {
 // Uniswap's Permit2 "Approve token access" step can take 1-5 min to confirm on-chain
 // before the sign-permit button (Step 2) appears (the app shows a "1-5 mins" estimate).
 const APPROVAL_PROCESSING_TIMEOUT = 300_000;
+
+// Polls at 500ms against a 1s tick, so 6 identical reads is ~3s of no movement.
+const COUNTDOWN_FROZEN_POLLS = 6;
 
 // Provider UI names (e.g. "Swaps.xyz", "LI.FI") can contain regex metacharacters. Escape them
 // before embedding in a RegExp so they match literally instead of altering the pattern.
@@ -165,9 +169,12 @@ export default class SwapLiveAppPage {
     throw new Error("No single-app exchange providers found");
   }
 
-  // Bound by the 20s refresh cycle, not by quote fetch time.
+  // Spans more than one 20s refresh cycle, so a single slow refresh is survivable.
   @Step("Wait for quotes countdown to be stable")
-  async waitForQuotesStable(timeout: number = 20000) {
+  async waitForQuotesStable(timeout: number = COUNTDOWN_STABLE_TIMEOUT) {
+    let previousSeconds = -1;
+    let unchangedPolls = 0;
+
     await retryUntilTimeout(async () => {
       const countdownText = await getWebElementText(this.quotesCountDown);
       const currentSeconds = Number.parseInt(countdownText.replaceAll(/\D/g, ""), 10);
@@ -176,10 +183,18 @@ export default class SwapLiveAppPage {
         throw new TypeError(`Could not parse countdown value: ${countdownText}`);
       }
 
-      if (currentSeconds < 2 || currentSeconds > 19) {
-        const errorMsg = `Countdown is ${currentSeconds}s, waiting for value between 2-19s`;
-        console.log(errorMsg);
-        throw new Error(errorMsg);
+      // A live countdown ticks. A frozen one means the refetch behind it never landed,
+      // so waiting cannot help - report that instead of blaming the phase.
+      unchangedPolls = currentSeconds === previousSeconds ? unchangedPolls + 1 : 0;
+      previousSeconds = currentSeconds;
+      if (unchangedPolls >= COUNTDOWN_FROZEN_POLLS) {
+        throw new Error(
+          `Quote countdown frozen at ${currentSeconds}s - the quote auto-refresh has stalled`,
+        );
+      }
+
+      if (currentSeconds < 2) {
+        throw new Error(`Countdown is ${currentSeconds}s, too close to a refresh`);
       }
 
       return currentSeconds;
@@ -258,9 +273,6 @@ export default class SwapLiveAppPage {
       PROVIDER_LIST_SETTLE_TIMEOUT,
       1000,
     );
-
-    // Last, so the caller gets the refresh window instead of the settle loop spending it.
-    await this.waitForQuotesStable();
 
     return providerList;
   }
