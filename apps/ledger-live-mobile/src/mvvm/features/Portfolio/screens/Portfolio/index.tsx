@@ -28,6 +28,7 @@ import MarketBanner from "LLM/features/MarketBanner";
 import { GenericAwarenessModalDrawer } from "LLM/features/GenericAwarenessModal/screens/GenericAwarenessModalDrawer";
 import { RecoverIntroPortfolioMount } from "LLM/features/BackupHub";
 import { LargeScreenUpsellModalPortfolioMount } from "LLM/features/LargeScreenUpsell";
+import { LazyOnboardingTourPortfolioMount } from "LLM/features/LazyOnboardingBanner";
 
 import {
   PortfolioAssetsSection,
@@ -209,6 +210,7 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
       <GenericAwarenessModalDrawer />
       <RecoverIntroPortfolioMount />
       <LargeScreenUpsellModalPortfolioMount />
+      <LazyOnboardingTourPortfolioMount />
     </>
   );
 };

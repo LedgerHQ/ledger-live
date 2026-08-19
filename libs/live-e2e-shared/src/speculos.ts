@@ -566,7 +566,11 @@ export function drainSpeculosScreenshots(port: number): Buffer[] {
   return screenshots;
 }
 
-export async function waitFor(text: string, maxAttempts = 60): Promise<string> {
+export async function waitFor(
+  text: string,
+  maxAttempts = 60,
+  { matchFullEvents = false }: { matchFullEvents?: boolean } = {},
+): Promise<string> {
   const port = getEnv("SPECULOS_API_PORT");
   let texts = "";
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
@@ -577,6 +581,20 @@ export async function waitFor(text: string, maxAttempts = 60): Promise<string> {
     }
 
     await sleep(SCREEN_POLL_INTERVAL_MS);
+  }
+
+  if (matchFullEvents) {
+    try {
+      const allEvents = (await fetchAllEvents(port)).join(" ");
+      const shot = await takeScreenshot(port);
+      console.warn(
+        `[waitFor] "${text}" not matched after ${maxAttempts} polls on port ${port}. ` +
+          `currentscreenonly=true => "${texts}" | currentscreenonly=false => "${allEvents}" | ` +
+          `screenshot(${port}) => ${shot ? `${shot.length} bytes` : "unreachable"}`,
+      );
+    } catch (err) {
+      console.warn(`[waitFor] failed to dump diagnostics on port ${port}: ${sanitizeError(err)}`);
+    }
   }
 
   throw new Error(
@@ -593,10 +611,13 @@ function isExchangeAppReadyStall(screenText: string): boolean {
   return screenText.toLowerCase().includes(DeviceLabels.EXCHANGE_APP_IS_READY.toLowerCase());
 }
 
-export async function waitForReviewTransaction(maxAttempts = 60): Promise<void> {
+export async function waitForReviewTransaction(
+  maxAttempts = 60,
+  { matchFullEvents = false }: { matchFullEvents?: boolean } = {},
+): Promise<void> {
   if (!isTouchDevice()) {
     try {
-      await waitFor(DeviceLabels.REVIEW_TRANSACTION, maxAttempts);
+      await waitFor(DeviceLabels.REVIEW_TRANSACTION, maxAttempts, { matchFullEvents });
     } catch (error) {
       if (error instanceof Error && isExchangeAppReadyStall(error.message)) {
         error.message += SWAP_INIT_STALL_HINT;

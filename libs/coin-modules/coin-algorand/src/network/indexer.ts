@@ -1,6 +1,6 @@
 import network from "@ledgerhq/live-network";
 import { BigNumber } from "bignumber.js";
-import coinConfig from "../config";
+import type { AlgorandCoinConfig } from "../config";
 import type {
   AlgoAssetTransferInfo,
   AlgoPaymentInfo,
@@ -12,8 +12,6 @@ import type {
 
 const LIMIT = 100;
 
-const getIndexerUrl = (): string => coinConfig.getCoinConfig().indexer;
-
 export type GetTransactionsOptions = {
   minRound?: number | undefined;
   limit?: number | undefined;
@@ -21,11 +19,12 @@ export type GetTransactionsOptions = {
 };
 
 export const getAccountTransactions = async (
+  config: AlgorandCoinConfig,
   address: string,
   options?: GetTransactionsOptions,
 ): Promise<{ transactions: AlgoTransaction[]; nextToken?: string }> => {
   const limit = options?.limit ?? LIMIT;
-  const url = `${getIndexerUrl()}/accounts/${address}/transactions?limit=${limit}`;
+  const url = `${config.indexer}/accounts/${address}/transactions?limit=${limit}`;
 
   let nextUrl: string = url;
   if (options?.minRound) {
@@ -46,6 +45,7 @@ export const getAccountTransactions = async (
 };
 
 export const getAllAccountTransactions = async (
+  config: AlgorandCoinConfig,
   address: string,
   startAt?: number,
 ): Promise<AlgoTransaction[]> => {
@@ -53,7 +53,7 @@ export const getAllAccountTransactions = async (
   const mergedTxs: AlgoTransaction[] = [];
 
   do {
-    const result = await getAccountTransactions(address, {
+    const result = await getAccountTransactions(config, address, {
       minRound: startAt,
       nextToken,
     });

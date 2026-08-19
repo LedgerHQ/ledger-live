@@ -1,13 +1,13 @@
 import BigNumber from "bignumber.js";
+import { log } from "@ledgerhq/logs";
 import { LedgerAPI4xx, LedgerAPI5xx } from "@ledgerhq/live-network/errors";
 import { AleoApiConfigurationResetError } from "../errors";
 import {
   EXPLORER_TRANSFER_TYPES,
   DEFAULT_RECORDS_PAGE_SIZE,
+  DEFAULT_TOKENS_PAGE_SIZE,
   PROGRAM_ID,
   TOKEN_RECORD_NAME,
-  RECIPIENT_ARG_INDEX,
-  AMOUNT_ARG_INDEX,
 } from "../constants";
 import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
 import { sdkClient } from "../network/sdk";
@@ -16,20 +16,30 @@ import {
   getMockedRecord,
   getMockedPublicTransaction,
   getMockedTransactionDetails,
+  getMockedDecryptedRecord,
+  getMockedTokenDetails,
+  getMockedGetTokensResponse,
 } from "../__tests__/fixtures/api.fixture";
 import { getMockedOperation } from "../__tests__/fixtures/operation.fixture";
-import { accessProvableApi } from "./utils";
 import { apiClient } from "./api";
 import {
   fetchAccountTransactionsFromHeight,
   fetchAllOwnedRecords,
+  fetchAllTokens,
   enrichPrivateRecord,
   patchPublicOperations,
   getTokenOutDetails,
+  getRecordScannerStatusOrThrow,
+  accessProvableApi,
+  decryptRecordAmount,
+  sumUnspentRecords,
 } from "./utils";
 
 jest.mock("./api");
 jest.mock("./sdk");
+jest.mock("@ledgerhq/logs", () => ({
+  log: jest.fn(),
+}));
 jest.mock("../logic/utils", () => ({
   ...jest.requireActual("../logic/utils"),
   generateUniqueUsername: jest.fn(),
@@ -395,6 +405,91 @@ describe("network/utils", () => {
     });
   });
 
+  describe("decryptRecordAmount", () => {
+    const mockViewKey = "AViewKey1abc";
+
+    it("should decrypt the record and parse the amount", async () => {
+      const record = getMockedRecord({ record_ciphertext: "ciphertext123" });
+      const details = getMockedDecryptedRecord({ data: { amount: "500000u64.private" } });
+      mockDecryptRecord.mockResolvedValueOnce(details);
+
+      const result = await decryptRecordAmount(mockConfig, mockViewKey, record);
+
+      expect(mockDecryptRecord).toHaveBeenCalledWith({
+        config: mockConfig,
+        viewKey: mockViewKey,
+        ciphertext: "ciphertext123",
+      });
+      expect(result.amount).toEqual(new BigNumber(500000));
+      expect(result.details).toEqual(details);
+    });
+
+    it.each([
+      ["balance", { balance: "200000u64.private" }],
+      ["microcredits", { microcredits: "100000u64.private" }],
+    ])("should fall back to %s when amount is missing", async (_label, data) => {
+      mockDecryptRecord.mockResolvedValueOnce(getMockedDecryptedRecord({ data }));
+
+      const result = await decryptRecordAmount(mockConfig, mockViewKey, getMockedRecord());
+
+      expect(result.amount).toEqual(new BigNumber(Object.values(data)[0].replace(/u64.*/, "")));
+    });
+
+    it("should return zero when no known amount field is present", async () => {
+      mockDecryptRecord.mockResolvedValueOnce(getMockedDecryptedRecord({ data: {} }));
+
+      const result = await decryptRecordAmount(mockConfig, mockViewKey, getMockedRecord());
+
+      expect(result.amount).toEqual(new BigNumber(0));
+    });
+  });
+
+  describe("getRecordScannerStatusOrThrow", () => {
+    const mockUUID = "uuid-abc-def";
+
+    beforeEach(() => {
+      jest.clearAllMocks();
+    });
+
+    it("should return the scanner status", async () => {
+      const status = {
+        synced: true,
+        percentage: 100,
+        sync_start_height: 0,
+        synced_up_to: 20985061,
+      };
+      mockGetRecordScannerStatus.mockResolvedValue(status);
+
+      const result = await getRecordScannerStatusOrThrow(mockConfig, mockUUID);
+
+      expect(mockGetRecordScannerStatus).toHaveBeenCalledTimes(1);
+      expect(mockGetRecordScannerStatus).toHaveBeenCalledWith(mockConfig, mockUUID);
+      expect(result).toEqual(status);
+    });
+
+    it("should throw AleoApiConfigurationResetError on a 422 error", async () => {
+      const error422 = new LedgerAPI4xx("Unprocessable Entity", {
+        status: 422,
+        url: undefined,
+        method: "POST",
+      });
+      mockGetRecordScannerStatus.mockRejectedValue(error422);
+
+      await expect(getRecordScannerStatusOrThrow(mockConfig, mockUUID)).rejects.toThrow(
+        AleoApiConfigurationResetError,
+      );
+    });
+
+    it("should rethrow a non-422 error unchanged", async () => {
+      const networkError = new LedgerAPI5xx("Internal Server Error");
+      mockGetRecordScannerStatus.mockRejectedValue(networkError);
+
+      await expect(getRecordScannerStatusOrThrow(mockConfig, mockUUID)).rejects.toThrow(
+        LedgerAPI5xx,
+      );
+    });
+  });
+
   describe("accessProvableApi", () => {
     const mockViewKey = "AViewKey1mockviewkey";
     const mockUUID = "uuid-abc-def";
@@ -415,7 +510,12 @@ describe("network/utils", () => {
         };
 
         mockRegisterForScanningAccountRecords.mockResolvedValue({ uuid: mockUUID });
-        mockGetRecordScannerStatus.mockResolvedValue({ synced: false, percentage: 5 });
+        mockGetRecordScannerStatus.mockResolvedValue({
+          synced: false,
+          percentage: 5,
+          sync_start_height: 0,
+          synced_up_to: 0,
+        });
 
         const result = await accessProvableApi({
           config: mockConfig,
@@ -447,7 +547,12 @@ describe("network/utils", () => {
           scannerStatus: { synced: false, percentage: 50 },
         };
 
-        mockGetRecordScannerStatus.mockResolvedValue({ synced: false, percentage: 60 });
+        mockGetRecordScannerStatus.mockResolvedValue({
+          synced: false,
+          percentage: 60,
+          sync_start_height: 0,
+          synced_up_to: 0,
+        });
 
         const result = await accessProvableApi({
           config: mockConfig,
@@ -467,7 +572,12 @@ describe("network/utils", () => {
           scannerStatus: { synced: false, percentage: 50 },
         };
 
-        mockGetRecordScannerStatus.mockResolvedValue({ synced: true, percentage: 100 });
+        mockGetRecordScannerStatus.mockResolvedValue({
+          synced: true,
+          percentage: 100,
+          sync_start_height: 0,
+          synced_up_to: 20985061,
+        });
 
         const result = await accessProvableApi({
           config: mockConfig,
@@ -539,7 +649,12 @@ describe("network/utils", () => {
 
       it("should initialize scanner status with defaults when provableApi is null", async () => {
         mockRegisterForScanningAccountRecords.mockResolvedValue({ uuid: mockUUID });
-        mockGetRecordScannerStatus.mockResolvedValue({ synced: false, percentage: 0 });
+        mockGetRecordScannerStatus.mockResolvedValue({
+          synced: false,
+          percentage: 0,
+          sync_start_height: 0,
+          synced_up_to: 0,
+        });
 
         const result = await accessProvableApi({
           config: mockConfig,
@@ -637,45 +752,7 @@ describe("network/utils", () => {
       expect(mockDecryptRecord).not.toHaveBeenCalled();
     });
 
-    it("should return null when sender is this address and transition has fewer inputs than expected", async () => {
-      const rawRecord = getMockedRecord({
-        function_name: EXPLORER_TRANSFER_TYPES.PRIVATE_TO_PUBLIC,
-        sender: mockEnrichAddress,
-        transition_index: 0,
-      });
-      mockGetTransactionById.mockResolvedValueOnce(
-        getMockedTransactionDetails(rawRecord.transaction_id, {
-          execution: {
-            transitions: [
-              {
-                id: "au1",
-                scm: "s",
-                tcm: "t",
-                tpk: "tpk1",
-                inputs: [{ id: "in0", type: "public", value: "only_one_input" }], // only 1 input, needs 3 (indices 0, 1, 2)
-                outputs: [],
-                program: "credits.aleo",
-                function: "transfer_private_to_public",
-              },
-            ],
-          },
-        }),
-      );
-
-      const result = await enrichPrivateRecord({
-        config: mockConfig,
-        rawRecord,
-        address: mockEnrichAddress,
-        viewKey: mockViewKey,
-      });
-
-      expect(result).toBeNull();
-      expect(mockGetTransactionById).toHaveBeenCalledTimes(1);
-      expect(mockDecryptCiphertext).not.toHaveBeenCalled();
-      expect(mockDecryptRecord).not.toHaveBeenCalled();
-    });
-
-    it("should return null when sender is this address and transition inputs at recipient/amount indices have no value field (record type)", async () => {
+    it("should return null when no amount-shaped argument follows the recipient", async () => {
       const rawRecord = getMockedRecord({
         function_name: EXPLORER_TRANSFER_TYPES.PRIVATE,
         sender: mockEnrichAddress,
@@ -691,9 +768,9 @@ describe("network/utils", () => {
                 tcm: "t",
                 tpk: "tpk1",
                 inputs: [
-                  { id: "in0", type: "record", tag: "record_tag_0" }, // index 0
-                  { id: "in1", type: "record", tag: "record_tag_1" }, // RECIPIENT_ARG_INDEX = 1, no value field
-                  { id: "in2", type: "private", value: "ciphertext_amount" }, // AMOUNT_ARG_INDEX = 2
+                  { id: "in0", type: "record", tag: "record_tag_0" },
+                  { id: "in1", type: "private", value: "ciphertext_recipient" },
+                  { id: "in2", type: "record", tag: "record_tag_2" },
                 ],
                 outputs: [],
                 program: "credits.aleo",
@@ -703,6 +780,7 @@ describe("network/utils", () => {
           },
         }),
       );
+      mockDecryptCiphertext.mockResolvedValueOnce({ plaintext: "aleo1recipientnoamount" });
 
       const result = await enrichPrivateRecord({
         config: mockConfig,
@@ -713,8 +791,13 @@ describe("network/utils", () => {
 
       expect(result).toBeNull();
       expect(mockGetTransactionById).toHaveBeenCalledTimes(1);
-      expect(mockDecryptCiphertext).not.toHaveBeenCalled();
+      expect(mockDecryptCiphertext).toHaveBeenCalledTimes(1);
       expect(mockDecryptRecord).not.toHaveBeenCalled();
+      expect(log).toHaveBeenCalledTimes(1);
+      expect(log).toHaveBeenCalledWith(
+        "aleo/sync",
+        `resolveTransferArguments: no recipient/amount arguments found in credits.aleo/transfer_private for tx ${rawRecord.transaction_id}`,
+      );
     });
 
     it("should return null when PRIVATE_TO_PUBLIC and recipient is own address", async () => {
@@ -733,9 +816,9 @@ describe("network/utils", () => {
                 tcm: "t",
                 tpk: "tpk1",
                 inputs: [
-                  { id: "in0", type: "public", value: "record_cipher" },
-                  { id: "in1", type: "public", value: mockEnrichAddress }, // RECIPIENT_ARG_INDEX = 1, self
-                  { id: "in2", type: "public", value: "500000u64" }, // AMOUNT_ARG_INDEX = 2
+                  { id: "in0", type: "record", tag: "record_tag_0" }, // leading spent record
+                  { id: "in1", type: "public", value: mockEnrichAddress }, // recipient, self
+                  { id: "in2", type: "public", value: "500000u64" }, // amount
                 ],
                 outputs: [],
                 program: "credits.aleo",
@@ -775,9 +858,9 @@ describe("network/utils", () => {
               tcm: "t",
               tpk: "tpk1",
               inputs: [
-                { id: "in0", type: "public", value: "record_cipher" },
-                { id: "in1", type: "public", value: recipientAddress }, // RECIPIENT_ARG_INDEX = 1
-                { id: "in2", type: "public", value: "500000u64" }, // AMOUNT_ARG_INDEX = 2
+                { id: "in0", type: "record", tag: "record_tag_0" }, // leading spent record
+                { id: "in1", type: "public", value: recipientAddress }, // recipient
+                { id: "in2", type: "public", value: "500000u64" }, // amount
               ],
               outputs: [],
               program: "credits.aleo",
@@ -823,9 +906,9 @@ describe("network/utils", () => {
               tcm: "t",
               tpk: "tpk_private",
               inputs: [
-                { id: "in0", type: "private", value: "ciphertext_record" },
-                { id: "in1", type: "private", value: "ciphertext_recipient" }, // RECIPIENT_ARG_INDEX = 1
-                { id: "in2", type: "private", value: "ciphertext_amount" }, // AMOUNT_ARG_INDEX = 2
+                { id: "in0", type: "record", tag: "record_tag_0" }, // leading spent record
+                { id: "in1", type: "private", value: "ciphertext_recipient" }, // recipient index = 1
+                { id: "in2", type: "private", value: "ciphertext_amount" }, // amount index = 2
               ],
               outputs: [],
               program: "credits.aleo",
@@ -860,7 +943,7 @@ describe("network/utils", () => {
         viewKey: mockViewKey,
         programId: rawRecord.program_name,
         functionName: rawRecord.function_name,
-        outputIndex: RECIPIENT_ARG_INDEX,
+        outputIndex: 1,
       });
       expect(mockDecryptCiphertext).toHaveBeenCalledWith({
         config: mockConfig,
@@ -869,7 +952,7 @@ describe("network/utils", () => {
         viewKey: mockViewKey,
         programId: rawRecord.program_name,
         functionName: rawRecord.function_name,
-        outputIndex: AMOUNT_ARG_INDEX,
+        outputIndex: 2,
       });
     });
 
@@ -1059,55 +1142,13 @@ describe("network/utils", () => {
       expect(mockDecryptCiphertext).not.toHaveBeenCalled();
     });
 
-    it("should use token input layout (index 0 = recipient, 1 = amount) for outgoing PRIVATE_TO_PUBLIC token record", async () => {
-      const recipientAddress = "aleo1tokenrecipient123";
+    it("should decrypt with the batcher transition's program/function, not the owned record's", async () => {
+      const recipientAddress = "aleo1batcherrecipient789";
       const rawRecord = getMockedRecord({
-        function_name: EXPLORER_TRANSFER_TYPES.PRIVATE_TO_PUBLIC,
-        sender: mockEnrichAddress,
-        record_name: TOKEN_RECORD_NAME,
-        transition_index: 0,
-      });
-      mockGetTransactionById.mockResolvedValueOnce(
-        getMockedTransactionDetails(rawRecord.transaction_id, {
-          execution: {
-            transitions: [
-              {
-                id: "au1",
-                scm: "s",
-                tcm: "t",
-                tpk: "tpk1",
-                inputs: [
-                  { id: "in0", type: "public", value: recipientAddress }, // index 0 = recipient for token
-                  { id: "in1", type: "public", value: "500000u64" }, // index 1 = amount for token
-                ],
-                outputs: [],
-                program: "token_program.aleo",
-                function: "transfer_private_to_public",
-              },
-            ],
-          },
-        }),
-      );
-
-      const result = await enrichPrivateRecord({
-        config: mockConfig,
-        rawRecord,
-        address: mockEnrichAddress,
-        viewKey: mockViewKey,
-      });
-
-      expect(result).not.toBeNull();
-      expect(result?.recipient).toBe(recipientAddress);
-      expect(result?.value).toEqual(new BigNumber(500000));
-      expect(mockDecryptCiphertext).not.toHaveBeenCalled();
-    });
-
-    it("should decrypt ciphertexts from token input indices (0 and 1) for outgoing PRIVATE token record", async () => {
-      const recipientAddress = "aleo1tokenrecipient456";
-      const rawRecord = getMockedRecord({
+        // the record belongs to the inner token program, the transition to Ledger's batching wrapper
         function_name: EXPLORER_TRANSFER_TYPES.PRIVATE,
         sender: mockEnrichAddress,
-        program_name: "token_program.aleo",
+        program_name: "usdcx_stablecoin.aleo",
         record_name: TOKEN_RECORD_NAME,
         transition_index: 0,
       });
@@ -1118,14 +1159,17 @@ describe("network/utils", () => {
               id: "au1",
               scm: "s",
               tcm: "t",
-              tpk: "tpk_token",
+              tpk: "tpk_batcher",
               inputs: [
-                { id: "in0", type: "private", value: "ciphertext_recipient" }, // index 0 = recipient for token
-                { id: "in1", type: "private", value: "ciphertext_amount" }, // index 1 = amount for token
+                { id: "in0", type: "external_record" }, // consumed record #1, no tag
+                { id: "in1", type: "external_record" }, // consumed record #2, no tag
+                { id: "in2", type: "private", value: "ciphertext_recipient" }, // recipient index = 2
+                { id: "in3", type: "private", value: "ciphertext_amount" }, // amount index = 3
+                { id: "in4", type: "private", value: "ciphertext_exclusion_proof" },
               ],
               outputs: [],
-              program: "token_program.aleo",
-              function: "transfer_private",
+              program: "ldg_usdcx_p_28.aleo",
+              function: "transfer_private_2",
             },
           ],
         },
@@ -1133,7 +1177,8 @@ describe("network/utils", () => {
       mockGetTransactionById.mockResolvedValueOnce(mockDetails);
       mockDecryptCiphertext
         .mockResolvedValueOnce({ plaintext: recipientAddress })
-        .mockResolvedValueOnce({ plaintext: "800000u64" });
+        .mockResolvedValueOnce({ plaintext: "250000u64" })
+        .mockResolvedValueOnce({ plaintext: "exclusion_proof_plaintext" });
 
       const result = await enrichPrivateRecord({
         config: mockConfig,
@@ -1142,34 +1187,73 @@ describe("network/utils", () => {
         viewKey: mockViewKey,
       });
 
-      expect(result).not.toBeNull();
       expect(result?.recipient).toBe(recipientAddress);
-      expect(result?.value).toEqual(new BigNumber(800000));
-      expect(mockDecryptCiphertext).toHaveBeenCalledTimes(2);
+      expect(result?.value).toEqual(new BigNumber(250000));
       expect(mockDecryptCiphertext).toHaveBeenCalledWith({
         config: mockConfig,
         ciphertext: "ciphertext_recipient",
-        tpk: "tpk_token",
+        tpk: "tpk_batcher",
         viewKey: mockViewKey,
-        programId: "token_program.aleo",
-        functionName: EXPLORER_TRANSFER_TYPES.PRIVATE,
-        outputIndex: RECIPIENT_ARG_INDEX - 1,
+        programId: "ldg_usdcx_p_28.aleo",
+        functionName: "transfer_private_2",
+        outputIndex: 2,
       });
-      expect(mockDecryptCiphertext).toHaveBeenCalledWith({
-        config: mockConfig,
-        ciphertext: "ciphertext_amount",
-        tpk: "tpk_token",
-        viewKey: mockViewKey,
-        programId: "token_program.aleo",
-        functionName: EXPLORER_TRANSFER_TYPES.PRIVATE,
-        outputIndex: AMOUNT_ARG_INDEX - 1,
-      });
+      expect(mockDecryptCiphertext).toHaveBeenCalledWith(
+        expect.objectContaining({ ciphertext: "ciphertext_amount", outputIndex: 3 }),
+      );
     });
 
-    it("should return null when token record has no value field at input index 0", async () => {
+    it.each(["join", "split"])(
+      "should return null for a record-management transition (%s) without decrypting or logging",
+      async functionName => {
+        const rawRecord = getMockedRecord({
+          function_name: functionName,
+          sender: mockEnrichAddress,
+          program_name: "usdcx_stablecoin.aleo",
+          record_name: TOKEN_RECORD_NAME,
+          transition_index: 0,
+        });
+        mockGetTransactionById.mockResolvedValueOnce(
+          getMockedTransactionDetails(rawRecord.transaction_id, {
+            execution: {
+              transitions: [
+                {
+                  id: "au1",
+                  scm: "s",
+                  tcm: "t",
+                  tpk: "tpk1",
+                  inputs: [
+                    { id: "in0", type: "record", tag: "record_tag_0" },
+                    { id: "in1", type: "private", value: "ciphertext_split_amount" },
+                  ],
+                  outputs: [],
+                  program: "usdcx_stablecoin.aleo",
+                  function: functionName,
+                },
+              ],
+            },
+          }),
+        );
+
+        const result = await enrichPrivateRecord({
+          config: mockConfig,
+          rawRecord,
+          address: mockEnrichAddress,
+          viewKey: mockViewKey,
+        });
+
+        expect(result).toBeNull();
+        expect(mockDecryptCiphertext).not.toHaveBeenCalled();
+        expect(log).not.toHaveBeenCalled();
+      },
+    );
+
+    it("should decrypt private-argument transfer_private_to_public (ARC-20 private flavour)", async () => {
+      const recipientAddress = "aleo1arc20privflavour99";
       const rawRecord = getMockedRecord({
-        function_name: EXPLORER_TRANSFER_TYPES.PRIVATE,
+        function_name: EXPLORER_TRANSFER_TYPES.PRIVATE_TO_PUBLIC,
         sender: mockEnrichAddress,
+        program_name: "btcx_8e1ed4.aleo",
         record_name: TOKEN_RECORD_NAME,
         transition_index: 0,
       });
@@ -1181,19 +1265,23 @@ describe("network/utils", () => {
                 id: "au1",
                 scm: "s",
                 tcm: "t",
-                tpk: "tpk1",
+                tpk: "tpk_arc20_priv",
                 inputs: [
-                  { id: "in0", type: "record", tag: "record_tag_0" }, // index 0 = no value field (recipient for token)
-                  { id: "in1", type: "private", value: "ciphertext_amount" }, // index 1 = amount for token
+                  { id: "in0", type: "record", tag: "record_tag_0" },
+                  { id: "in1", type: "private", value: "ciphertext_recipient" },
+                  { id: "in2", type: "private", value: "ciphertext_amount" },
                 ],
                 outputs: [],
-                program: "token_program.aleo",
-                function: "transfer_private",
+                program: "btcx_8e1ed4.aleo",
+                function: "transfer_private_to_public",
               },
             ],
           },
         }),
       );
+      mockDecryptCiphertext
+        .mockResolvedValueOnce({ plaintext: recipientAddress })
+        .mockResolvedValueOnce({ plaintext: "25000u128" });
 
       const result = await enrichPrivateRecord({
         config: mockConfig,
@@ -1202,8 +1290,8 @@ describe("network/utils", () => {
         viewKey: mockViewKey,
       });
 
-      expect(result).toBeNull();
-      expect(mockDecryptCiphertext).not.toHaveBeenCalled();
+      expect(result?.recipient).toBe(recipientAddress);
+      expect(result?.value).toEqual(new BigNumber(25000));
     });
   });
 
@@ -1373,7 +1461,10 @@ describe("network/utils", () => {
               scm: "s",
               tcm: "t",
               tpk: "tpk_fee",
-              inputs: [{ id: "in0", type: "public", value: "cipher_recipient" }],
+              inputs: [
+                { id: "in0", type: "private", value: "cipher_recipient" },
+                { id: "in1", type: "public", value: "40000u64" },
+              ],
               outputs: [],
               program: "credits.aleo",
               function: "transfer_public_to_private",
@@ -1419,7 +1510,10 @@ describe("network/utils", () => {
               scm: "s",
               tcm: "t",
               tpk: "tpk1",
-              inputs: [{ id: "in0", type: "public", value: "cipher_addr" }],
+              inputs: [
+                { id: "in0", type: "private", value: "cipher_addr" },
+                { id: "in1", type: "public", value: "40000u64" },
+              ],
               outputs: [],
               program: "credits.aleo",
               function: "transfer_public_to_private",
@@ -1477,7 +1571,10 @@ describe("network/utils", () => {
               scm: "s",
               tcm: "t",
               tpk: "tpk1",
-              inputs: [{ id: "in0", type: "public", value: "cipher_addr" }],
+              inputs: [
+                { id: "in0", type: "private", value: "cipher_addr" },
+                { id: "in1", type: "public", value: "40000u64" },
+              ],
               outputs: [],
               program: "credits.aleo",
               function: "transfer_public_to_private",
@@ -1635,7 +1732,10 @@ describe("network/utils", () => {
               scm: "s",
               tcm: "t",
               tpk: "tpk1",
-              inputs: [{ id: "in0", type: "public", value: "cipher_addr" }],
+              inputs: [
+                { id: "in0", type: "private", value: "cipher_addr" },
+                { id: "in1", type: "public", value: "40000u64" },
+              ],
               outputs: [],
               program: "credits.aleo",
               function: "transfer_public_to_private",
@@ -1969,6 +2069,177 @@ describe("network/utils", () => {
     });
   });
 
+  describe("fetchAllTokens", () => {
+    const mockGetTokens = jest.mocked(apiClient.getTokens);
+
+    beforeEach(() => {
+      jest.clearAllMocks();
+    });
+
+    it("should return every token when they fit in a single page", async () => {
+      const tokenA = getMockedTokenDetails({ program_name: "token_a.aleo" });
+      const tokenB = getMockedTokenDetails({ program_name: "token_b.aleo" });
+      mockGetTokens.mockResolvedValueOnce(
+        getMockedGetTokensResponse({
+          data: [tokenA, tokenB],
+          pagination: {
+            limit: 100,
+            offset: 0,
+            total_count: 2,
+            has_next: false,
+            has_previous: false,
+          },
+        }),
+      );
+
+      const result = await fetchAllTokens({ config: mockConfig });
+
+      expect(mockGetTokens).toHaveBeenCalledTimes(1);
+      expect(mockGetTokens).toHaveBeenCalledWith({
+        config: mockConfig,
+        options: { limit: DEFAULT_TOKENS_PAGE_SIZE, offset: 0 },
+      });
+      expect(result).toEqual([tokenA, tokenB]);
+    });
+
+    it("should paginate using offset until has_next is false", async () => {
+      const pageSize = 2;
+      const tokenA = getMockedTokenDetails({ program_name: "token_a.aleo" });
+      const tokenB = getMockedTokenDetails({ program_name: "token_b.aleo" });
+      const tokenC = getMockedTokenDetails({ program_name: "token_c.aleo" });
+      mockGetTokens
+        .mockResolvedValueOnce(
+          getMockedGetTokensResponse({
+            data: [tokenA, tokenB],
+            pagination: {
+              limit: pageSize,
+              offset: 0,
+              total_count: 3,
+              has_next: true,
+              has_previous: false,
+            },
+          }),
+        )
+        .mockResolvedValueOnce(
+          getMockedGetTokensResponse({
+            data: [tokenC],
+            pagination: {
+              limit: pageSize,
+              offset: pageSize,
+              total_count: 3,
+              has_next: false,
+              has_previous: true,
+            },
+          }),
+        );
+
+      const result = await fetchAllTokens({ config: mockConfig, resultsPerPage: pageSize });
+
+      expect(mockGetTokens).toHaveBeenCalledTimes(2);
+      expect(mockGetTokens).toHaveBeenNthCalledWith(1, {
+        config: mockConfig,
+        options: { limit: pageSize, offset: 0 },
+      });
+      expect(mockGetTokens).toHaveBeenNthCalledWith(2, {
+        config: mockConfig,
+        options: { limit: pageSize, offset: pageSize },
+      });
+      expect(result).toEqual([tokenA, tokenB, tokenC]);
+    });
+
+    it("should return an empty array when the registry has no tokens", async () => {
+      mockGetTokens.mockResolvedValueOnce(getMockedGetTokensResponse({ data: [] }));
+
+      const result = await fetchAllTokens({ config: mockConfig });
+
+      expect(result).toEqual([]);
+    });
+
+    it("should propagate errors thrown by the underlying API call", async () => {
+      mockGetTokens.mockRejectedValueOnce(new Error("Tokens endpoint unavailable"));
+
+      await expect(fetchAllTokens({ config: mockConfig })).rejects.toThrow(
+        "Tokens endpoint unavailable",
+      );
+    });
+  });
+
+  describe("sumUnspentRecords", () => {
+    const mockViewKey = "AViewKey1sumtest";
+
+    it("returns zero without calling decryptRecord when there are no records", async () => {
+      const result = await sumUnspentRecords({
+        config: mockConfig,
+        viewKey: mockViewKey,
+        records: [],
+      });
+
+      expect(result.toFixed(0)).toBe("0");
+      expect(mockDecryptRecord).not.toHaveBeenCalled();
+    });
+
+    it("sums the decrypted amount of every unspent record", async () => {
+      const records = [
+        getMockedRecord({ commitment: "a", record_ciphertext: "cipher-a" }),
+        getMockedRecord({ commitment: "b", record_ciphertext: "cipher-b" }),
+      ];
+      mockDecryptRecord
+        .mockResolvedValueOnce(
+          getMockedDecryptedRecord({ data: { microcredits: "100u64.private" } }),
+        )
+        .mockResolvedValueOnce(
+          getMockedDecryptedRecord({ data: { microcredits: "250u64.private" } }),
+        );
+
+      const result = await sumUnspentRecords({
+        config: mockConfig,
+        viewKey: mockViewKey,
+        records,
+      });
+
+      expect(result.toFixed(0)).toBe("350");
+    });
+
+    it("excludes records scanned past maxBlockHeight", async () => {
+      const records = [
+        getMockedRecord({ commitment: "eligible", block_height: 100 }),
+        getMockedRecord({ commitment: "over-height", block_height: 101 }),
+      ];
+      mockDecryptRecord.mockResolvedValue(
+        getMockedDecryptedRecord({ data: { microcredits: "100u64.private" } }),
+      );
+
+      const result = await sumUnspentRecords({
+        config: mockConfig,
+        viewKey: mockViewKey,
+        records,
+        maxBlockHeight: 100,
+      });
+
+      expect(result.toFixed(0)).toBe("100");
+      expect(mockDecryptRecord).toHaveBeenCalledTimes(1);
+    });
+
+    it("sums every record when maxBlockHeight is omitted", async () => {
+      const records = [
+        getMockedRecord({ commitment: "a", block_height: 100 }),
+        getMockedRecord({ commitment: "b", block_height: 1_000_000 }),
+      ];
+      mockDecryptRecord.mockResolvedValue(
+        getMockedDecryptedRecord({ data: { microcredits: "50u64.private" } }),
+      );
+
+      const result = await sumUnspentRecords({
+        config: mockConfig,
+        viewKey: mockViewKey,
+        records,
+      });
+
+      expect(result.toFixed(0)).toBe("100");
+      expect(mockDecryptRecord).toHaveBeenCalledTimes(2);
+    });
+  });
+
   describe("getTokenOutDetails", () => {
     const mockViewKey = "AViewKey1testviewkey";
 
@@ -2018,9 +2289,10 @@ describe("network/utils", () => {
                 tcm: "t",
                 tpk: "tpk1",
                 inputs: [
-                  { id: "in0", type: "public", value: "record_cipher" },
+                  { id: "in0", type: "public", value: recipientAddress },
                   { id: "in1", type: "public", value: "750000u128.public" },
-                  { id: "in2", type: "public", value: recipientAddress },
+                  { id: "in2", type: "record", tag: "record_tag_2" },
+                  { id: "in3", type: "private", value: "ciphertext_merkle_proof" },
                 ],
                 outputs: [],
                 program: "token_program.aleo",
@@ -2045,73 +2317,7 @@ describe("network/utils", () => {
       expect(mockDecryptCiphertext).not.toHaveBeenCalled();
     });
 
-    it("should decrypt recipient and amount for fully private transfers", async () => {
-      const recipientAddress = "aleo1privaterecipient789";
-      const record = getMockedRecord({
-        function_name: EXPLORER_TRANSFER_TYPES.PRIVATE,
-        transaction_id: "tx_private",
-        transition_index: 0,
-        program_name: "token_program.aleo",
-      });
-      mockGetTransactionById.mockResolvedValueOnce(
-        getMockedTransactionDetails(record.transaction_id, {
-          fee_value: 9000,
-          execution: {
-            transitions: [
-              {
-                id: "au1",
-                scm: "s",
-                tcm: "t",
-                tpk: "tpk_private",
-                inputs: [
-                  { id: "in1", type: "private", value: "ciphertext_recipient" },
-                  { id: "in2", type: "private", value: "ciphertext_amount" },
-                ],
-                outputs: [],
-                program: record.program_name,
-                function: "transfer_private",
-              },
-            ],
-          },
-        }),
-      );
-      mockDecryptCiphertext
-        .mockResolvedValueOnce({ plaintext: recipientAddress })
-        .mockResolvedValueOnce({ plaintext: "300000u64" });
-
-      const result = await getTokenOutDetails({
-        config: mockConfig,
-        record,
-        viewKey: mockViewKey,
-      });
-
-      expect(result).toEqual({
-        amount: new BigNumber(300000),
-        recipient: recipientAddress,
-        fee: new BigNumber(9000),
-      });
-      expect(mockDecryptCiphertext).toHaveBeenCalledTimes(2);
-      expect(mockDecryptCiphertext).toHaveBeenCalledWith({
-        config: mockConfig,
-        ciphertext: "ciphertext_recipient",
-        tpk: "tpk_private",
-        viewKey: mockViewKey,
-        programId: record.program_name,
-        functionName: EXPLORER_TRANSFER_TYPES.PRIVATE,
-        outputIndex: RECIPIENT_ARG_INDEX - 1,
-      });
-      expect(mockDecryptCiphertext).toHaveBeenCalledWith({
-        config: mockConfig,
-        ciphertext: "ciphertext_amount",
-        tpk: "tpk_private",
-        viewKey: mockViewKey,
-        programId: record.program_name,
-        functionName: EXPLORER_TRANSFER_TYPES.PRIVATE,
-        outputIndex: AMOUNT_ARG_INDEX - 1,
-      });
-    });
-
-    it("should return null amount when private transfer has too few inputs", async () => {
+    it("should return null fields when no amount-shaped argument follows the recipient", async () => {
       const recipientAddress = "aleo1plaintextrecipient";
       const record = getMockedRecord({
         function_name: EXPLORER_TRANSFER_TYPES.PRIVATE,
@@ -2146,13 +2352,109 @@ describe("network/utils", () => {
 
       expect(result).toEqual({
         amount: null,
-        recipient: recipientAddress,
+        recipient: null,
         fee: new BigNumber(1000),
       });
       expect(mockDecryptCiphertext).not.toHaveBeenCalled();
     });
 
-    it("should return null fields when decryption fails", async () => {
+    it("should decrypt private arguments and return the sent amount, recipient and fee", async () => {
+      const recipientAddress = "aleo1privaterecipient789";
+      const record = getMockedRecord({
+        function_name: EXPLORER_TRANSFER_TYPES.PRIVATE,
+        transaction_id: "tx_private",
+        transition_index: 0,
+        program_name: "arc20_token.aleo",
+      });
+      mockGetTransactionById.mockResolvedValueOnce(
+        getMockedTransactionDetails(record.transaction_id, {
+          fee_value: 9000,
+          execution: {
+            transitions: [
+              {
+                id: "au1",
+                scm: "s",
+                tcm: "t",
+                tpk: "tpk_private",
+                inputs: [
+                  { id: "in0", type: "record", tag: "record_tag_0" },
+                  { id: "in1", type: "private", value: "ciphertext_recipient" },
+                  { id: "in2", type: "private", value: "ciphertext_amount" },
+                ],
+                outputs: [],
+                program: record.program_name,
+                function: EXPLORER_TRANSFER_TYPES.PRIVATE,
+              },
+            ],
+          },
+        }),
+      );
+      mockDecryptCiphertext
+        .mockResolvedValueOnce({ plaintext: recipientAddress })
+        .mockResolvedValueOnce({ plaintext: "300000u128" });
+
+      const result = await getTokenOutDetails({
+        config: mockConfig,
+        record,
+        viewKey: mockViewKey,
+      });
+
+      expect(result).toEqual({
+        amount: new BigNumber(300000),
+        recipient: recipientAddress,
+        fee: new BigNumber(9000),
+      });
+    });
+
+    it("should tolerate a decryption failure on an argument it did not need", async () => {
+      const recipientAddress = "aleo1proofrecipient";
+      const record = getMockedRecord({
+        function_name: EXPLORER_TRANSFER_TYPES.PRIVATE,
+        transaction_id: "tx_trailing_proof",
+        transition_index: 0,
+      });
+      mockGetTransactionById.mockResolvedValueOnce(
+        getMockedTransactionDetails("tx_trailing_proof", {
+          fee_value: 3000,
+          execution: {
+            transitions: [
+              {
+                id: "au1",
+                scm: "s",
+                tcm: "t",
+                tpk: "tpk1",
+                inputs: [
+                  { id: "in0", type: "private", value: "cipher_recipient" },
+                  { id: "in1", type: "private", value: "cipher_amount" },
+                  { id: "in2", type: "private", value: "cipher_merkle_proof" },
+                ],
+                outputs: [],
+                program: "usdcx_stablecoin.aleo",
+                function: EXPLORER_TRANSFER_TYPES.PRIVATE,
+              },
+            ],
+          },
+        }),
+      );
+      mockDecryptCiphertext
+        .mockResolvedValueOnce({ plaintext: recipientAddress })
+        .mockResolvedValueOnce({ plaintext: "4200u64" })
+        .mockRejectedValueOnce(new Error("decrypt failed"));
+
+      const result = await getTokenOutDetails({
+        config: mockConfig,
+        record,
+        viewKey: mockViewKey,
+      });
+
+      expect(result).toEqual({
+        amount: new BigNumber(4200),
+        recipient: recipientAddress,
+        fee: new BigNumber(3000),
+      });
+    });
+
+    it("should propagate a decryption failure instead of reporting a zero-amount transfer", async () => {
       const record = getMockedRecord({
         function_name: EXPLORER_TRANSFER_TYPES.PRIVATE,
         transaction_id: "tx_decrypt_fail",
@@ -2169,7 +2471,7 @@ describe("network/utils", () => {
                 tcm: "t",
                 tpk: "tpk1",
                 inputs: [
-                  { id: "in0", type: "private", value: "cipher_record" },
+                  { id: "in0", type: "record", tag: "record_tag_0" },
                   { id: "in1", type: "private", value: "cipher_recipient" },
                   { id: "in2", type: "private", value: "cipher_amount" },
                 ],
@@ -2183,17 +2485,9 @@ describe("network/utils", () => {
       );
       mockDecryptCiphertext.mockRejectedValue(new Error("decrypt failed"));
 
-      const result = await getTokenOutDetails({
-        config: mockConfig,
-        record,
-        viewKey: mockViewKey,
-      });
-
-      expect(result).toEqual({
-        amount: null,
-        recipient: null,
-        fee: new BigNumber(2000),
-      });
+      await expect(
+        getTokenOutDetails({ config: mockConfig, record, viewKey: mockViewKey }),
+      ).rejects.toThrow("decrypt failed");
     });
 
     it("should trim transaction_id whitespace before fetching details", async () => {

@@ -1,14 +1,15 @@
 import { Cursor, Page, Stake, Reward } from "@ledgerhq/coin-module-framework/api/types";
 import * as sdk from "../network";
 import { toStakes } from "../network/sdk";
+import type { SuiCoinConfig } from "../config";
 
 export const getStakes = (
+  config: SuiCoinConfig,
   address: string,
   _cursor?: Cursor,
-  currencyId?: string,
 ): Promise<Page<Stake>> => {
   return sdk
-    .getDelegatedStakes(address, currencyId)
+    .getDelegatedStakes(config, address)
     .then(delegations => ({ items: delegations.flatMap(d => toStakes(address, d)) }));
 };
 

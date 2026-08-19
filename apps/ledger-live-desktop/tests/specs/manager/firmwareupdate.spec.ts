@@ -1,5 +1,4 @@
 import test from "../../fixtures/common";
-import { expect } from "@playwright/test";
 import { ManagerPage } from "../../page/manager.page";
 import { FirmwareUpdate } from "../../page/drawer/firmwareUpdate.drawer";
 import { DeviceAction } from "../../models/DeviceAction";
@@ -49,9 +48,14 @@ test("Firmware Update @smoke", async ({ page }) => {
     // await expect.soft(firmwareUpdateModal.container).toHaveScreenshot("flash-mcu-done.png");
   });
 
-  await test.step("Modal is closed", async () => {
-    // TODO rewrite this to fit a drawer model, not a modal one.
-    await firmwareUpdateDrawer.drawerClose.click();
-    await expect.soft(page).toHaveScreenshot("modal-closed.png");
+  await test.step("Drawer is closed", async () => {
+    // Previously asserted with a full-page toHaveScreenshot("modal-closed.png"). That snapshot
+    // predates a fix (LIVE-33298) that wires up `setFirmwareUpdateCompleted`, which now correctly
+    // triggers a Manager reset on close, replacing the old (buggy) stale-dashboard render with the
+    // Disconnected/reconnect spinner screen. A pixel-diff assertion here would be testing an
+    // ever-changing async spinner state, not "the modal is closed" — a state-based wait for the
+    // drawer to disappear is the meaningful and stable assertion for this step.
+    await firmwareUpdateDrawer.finishButton.click();
+    await firmwareUpdateDrawer.waitForDrawerToDisappear();
   });
 });

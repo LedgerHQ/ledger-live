@@ -4,7 +4,6 @@
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { ABTestingVariants } from "./ABTesting";
 import { ChainwatchNetwork } from "./chainwatch";
-import { LldNanoSUpsellBannersConfig } from "./lnsUpsell";
 import { WalletSyncEnvironment, WalletSyncWatchConfig } from "./walletSync";
 
 /**
@@ -253,7 +252,6 @@ export type Features = CurrencyFeatures & {
   lwdLedgerSyncOptimisation: DefaultFeature;
   lwdProductTour: DefaultFeature;
   lwdBackupHub: DefaultFeature;
-  lldNanoSUpsellBanners: Feature_LldNanoSUpsellBanners;
   llmThai: DefaultFeature;
   lldThai: DefaultFeature;
   llmMmkvMigration: Feature_LlmMmkvMigration;
@@ -265,6 +263,7 @@ export type Features = CurrencyFeatures & {
   llmModularDrawer: Feature_ModularDrawer;
   llNftEntryPoint: Feature_LlNftEntryPoint;
   ldmkSolanaSigner: DefaultFeature;
+  ldmkSolanaSignerIsTxcActive: DefaultFeature;
   ldmkCosmosSigner: DefaultFeature;
   suiGraphqlTransport: DefaultFeature;
   ldmkConnectApp: DefaultFeature;
@@ -838,12 +837,6 @@ export type Feature_PtxSwapExodusProvider = DefaultFeature;
 /** @deprecated Moved to `@shared/feature-flags`. Use `Features["ptxSwapDetailedView"]` from `@shared/feature-flags` instead. */
 export type Feature_PtxSwapDetailedView = Feature<{
   variant: ABTestingVariants;
-}>;
-
-/** @deprecated Moved to `@shared/feature-flags`. Use `Features["lldNanoSUpsellBanners"]` from `@shared/feature-flags` instead. */
-export type Feature_LldNanoSUpsellBanners = Feature<{
-  opted_in: LldNanoSUpsellBannersConfig;
-  opted_out: LldNanoSUpsellBannersConfig & { portfolio: boolean };
 }>;
 
 /** @deprecated Moved to `@shared/feature-flags`. Use `Features["llmTransferButtonCopyVariant"]` from `@shared/feature-flags` instead. */

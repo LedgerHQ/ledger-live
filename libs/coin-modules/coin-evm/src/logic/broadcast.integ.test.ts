@@ -1,7 +1,6 @@
 import { Wallet } from "ethers";
 import broadcast from "./broadcast";
-import { setCoinConfig } from "../config";
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import { createContext, setCoinConfig } from "../config";
 
 describe("Broadcast", () => {
   beforeAll(() => {
@@ -49,7 +48,7 @@ describe("Broadcast", () => {
     };
     const signature = await wallet.signTransaction(tx);
 
-    await expect(broadcast({ id: network } as CryptoCurrency, { signature })).rejects.toThrow(
+    await expect(broadcast(createContext(), network, { signature })).rejects.toThrow(
       /insufficient funds for gas \* price \+ value|InsufficientFunds/,
     );
   });

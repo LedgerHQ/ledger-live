@@ -1,4 +1,5 @@
 import type { AssetInfo, Balance } from "@ledgerhq/coin-module-framework/api/index";
+import type { NearContext } from "../config";
 import { getAccount } from "../network";
 import { toStakes } from "./getStakes";
 
@@ -17,8 +18,9 @@ export const NATIVE_ASSET: AssetInfo = { type: "native" };
  * reproduces the account bridge's spendable balance, which floors at zero. This mirrors
  * coin-tezos, which likewise reports the total as `value` and the frozen part as `locked`.
  */
-export async function getBalance(address: string): Promise<Balance[]> {
-  const { balance, nearResources } = await getAccount(address);
+export async function getBalance(context: NearContext, address: string): Promise<Balance[]> {
+  const config = await context.config();
+  const { balance, nearResources } = await getAccount(config, address);
 
   const nonSpendable = nearResources.stakedBalance
     .plus(nearResources.availableBalance)

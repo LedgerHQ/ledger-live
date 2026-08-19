@@ -1,5 +1,5 @@
 import React from "react";
-import { createClosedContactsFeatureIntroduction } from "@features/flow-contacts";
+import { createClosedContactsFeatureIntroduction } from "@features/flow-contacts-introduction";
 import { render, screen } from "@tests/test-renderer";
 import { ContactsPageContent } from ".";
 import type { ContactsPageContentProps } from "../../types";
@@ -48,9 +48,8 @@ function createViewModel({
           description: "Your address book for crypto.",
           highlights: [],
           primaryActionLabel: "Try contacts",
-          secondaryActionLabel: "Maybe later",
           onComplete: jest.fn(),
-          onDefer: jest.fn(),
+          onClose: jest.fn(),
         }
       : createClosedContactsFeatureIntroduction(),
     ledgerSyncIntroduction: {

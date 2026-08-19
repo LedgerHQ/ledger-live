@@ -16,6 +16,18 @@ import { CardLogin } from "@features/flow-pay-card-auth";
 The host app provides `openHostedLogin` so platform-specific navigation remains at the app
 composition root.
 
+Auth-only runtime state (`hasCard`) lives in this flow's `payCardAuth` slice, exposed through
+`@features/flow-pay-card-auth/state`. Other Pay Card UI state is owned by the flow it belongs to:
+the balance filter by `@features/flow-pay-card-balance` and the feature-tour flag by
+`@features/flow-pay-card-feature-tour`.
+
+## Card API
+
+This flow owns no API code. The Card endpoints, their wire schemas and the generated hooks live in
+[`@domain/api-card-management`](../../../domain/api/card-management/README.md), which injects them
+into the shared `cardApi` service. `useCardLoginViewModel` imports
+`useInitiateAuthorizeMutation` from there directly — that import is what triggers the injection.
+
 ## Platform resolution
 
 Platform files live side by side (`.web` / `.native`). Imports omit the suffix; TypeScript
@@ -60,9 +72,12 @@ pay-card-auth/
     ├── hooks/                              # Flow-local hooks
     ├── router/                             # Flow-local routing
     ├── state/
-    │   ├── schema.ts                       # State models used only by this flow
-    │   ├── slice.ts                        # Redux slice used only by this flow
-    │   └── api.ts                          # Flow-local RTK Query API
+    │   ├── __tests__/
+    │   │   └── slice.native.test.ts        # Auth slice and selector tests
+    │   ├── selectors.ts                    # Auth selectors
+    │   ├── slice.ts                        # Auth-only runtime state (`hasCard`)
+    │   ├── store.ts                        # Public state subpath
+    │   └── types.ts                        # Auth Redux state type
     ├── utils/                              # Flow-local helpers
     ├── index.native.ts                     # Native public API
     └── index.ts                            # Default/web public API

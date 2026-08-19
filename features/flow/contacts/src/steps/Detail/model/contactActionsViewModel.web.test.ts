@@ -7,7 +7,23 @@ import {
   createOpenContactDeleteLifecycle,
   createSuccessContactDeleteLifecycle,
   isSignerRequiredForContactEdit,
+  resolveContactEditSignerValidationLookup,
 } from "./contactActionsViewModel";
+
+describe("resolveContactEditSignerValidationLookup", () => {
+  it("returns undefined when the contact has no addresses", () => {
+    expect(resolveContactEditSignerValidationLookup(mockContact())).toBeUndefined();
+  });
+
+  it("returns the first address lookup when the contact has addresses", () => {
+    const contact = mockContactWithAddress();
+
+    expect(resolveContactEditSignerValidationLookup(contact)).toEqual({
+      contactId: contact.id,
+      addressId: contact.addresses[0]!.id,
+    });
+  });
+});
 
 describe("createContactDetailEditIntent", () => {
   it("exposes an edit-contact intent with a direct requirement when the contact has no addresses", () => {
@@ -20,6 +36,7 @@ describe("createContactDetailEditIntent", () => {
         type: "direct",
         reason: "contact-has-no-address",
       },
+      signerValidationLookup: undefined,
     });
   });
 
@@ -32,6 +49,10 @@ describe("createContactDetailEditIntent", () => {
       editRequirement: {
         type: "confirmation-required",
         reason: "contact-has-address",
+      },
+      signerValidationLookup: {
+        contactId: contact.id,
+        addressId: contact.addresses[0]!.id,
       },
     });
   });

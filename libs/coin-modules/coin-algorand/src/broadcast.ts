@@ -1,5 +1,6 @@
 import { patchOperationWithHash } from "@ledgerhq/ledger-wallet-framework/operation";
 import type { AccountBridge } from "@ledgerhq/types-live";
+import { getCoinConfig } from "./config";
 import { broadcastTransaction } from "./network";
 import { Transaction } from "./types";
 
@@ -9,6 +10,6 @@ import { Transaction } from "./types";
  */
 export const broadcast: AccountBridge<Transaction>["broadcast"] = async ({ signedOperation }) => {
   const { signature, operation } = signedOperation;
-  const hash = await broadcastTransaction(Buffer.from(signature, "hex"));
+  const hash = await broadcastTransaction(getCoinConfig(), Buffer.from(signature, "hex"));
   return patchOperationWithHash(operation, hash);
 };

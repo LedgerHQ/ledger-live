@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export type AuthConfig = {
   clientId: string;
-  keycloakBaseUrl: string;
+  keycloakBaseUrl: string | (() => string | null);
   keycloakRealm: string;
   disablePkce?: boolean;
 };

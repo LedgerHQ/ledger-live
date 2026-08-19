@@ -35,8 +35,25 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 
 const COMPLETE_EXCHANGE_LOG = "SWAP-CompleteExchange";
 const LIFI_GAS_LIMIT_BUFFER_MULTIPLIER = 1.3;
+const HYPEREVM_GAS_LIMIT_CAP = new BigNumber(2_900_000);
 
 const ARC_CURRENCY_IDS = new Set(["arc", "arc_testnet"]);
+
+export function getBufferedDexGasLimit({
+  gasLimit,
+  fromCurrencyId,
+}: {
+  gasLimit: BigNumber;
+  fromCurrencyId: string;
+}): BigNumber {
+  const bufferedGasLimit = gasLimit
+    .times(LIFI_GAS_LIMIT_BUFFER_MULTIPLIER)
+    .integerValue(BigNumber.ROUND_UP);
+
+  return fromCurrencyId === "hyperevm"
+    ? BigNumber.minimum(bufferedGasLimit, HYPEREVM_GAS_LIMIT_CAP)
+    : bufferedGasLimit;
+}
 
 export function shouldForceZeroAmountForDexSwap({
   isDex,
@@ -199,9 +216,10 @@ const completeExchange = (
           transaction.gasLimit &&
           BigNumber.isBigNumber(transaction.gasLimit)
         ) {
-          const gasLimit = transaction.gasLimit
-            .times(LIFI_GAS_LIMIT_BUFFER_MULTIPLIER)
-            .integerValue(BigNumber.ROUND_UP);
+          const gasLimit = getBufferedDexGasLimit({
+            gasLimit: transaction.gasLimit,
+            fromCurrencyId: mainRefundCurrency.id,
+          });
           const transactionFixed = {
             ...transaction,
             fees: undefined, // to be recalculated

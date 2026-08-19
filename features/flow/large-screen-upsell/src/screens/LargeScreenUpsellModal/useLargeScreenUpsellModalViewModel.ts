@@ -1,8 +1,14 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useFeature } from "@features/platform-feature-flags";
 import { LARGE_SCREEN_UPSELL_IMAGES } from "../../assets";
-import { markDismissed, recordUpsellModalDisplay, resetUpsellModalRetries } from "../../state";
+import {
+  lastSeenUpsellModalSelector,
+  markDismissed,
+  recordUpsellModalDisplay,
+  resetUpsellModalRetries,
+  rollbackUpsellModalDisplay,
+} from "../../state";
 import {
   useLargeScreenUpsellDecision,
   type UseLargeScreenUpsellDecisionInput,
@@ -27,6 +33,11 @@ export type UseLargeScreenUpsellModalViewModelInput = UseLargeScreenUpsellDecisi
   t: BuildLargeScreenUpsellContentInput["t"];
   openUrl: (url: string) => void;
   analytics?: LargeScreenUpsellModalAnalyticsPorts;
+  /**
+   * When false, close without counting a retry (e.g. another app-start modal has preference).
+   * The host still marks the session blocked so the upsell does not reopen later.
+   */
+  isAllowedToDisplay?: boolean;
 };
 
 export function useLargeScreenUpsellModalViewModel({
@@ -40,8 +51,10 @@ export function useLargeScreenUpsellModalViewModel({
   t,
   openUrl,
   analytics,
+  isAllowedToDisplay = true,
 }: UseLargeScreenUpsellModalViewModelInput): LargeScreenUpsellModalViewModel {
   const dispatch = useDispatch();
+  const lastSeenAt = useSelector(lastSeenUpsellModalSelector);
   const feature = useFeature("largeScreenUpsell");
   const decision = useLargeScreenUpsellDecision({
     seenNanoModelIds,
@@ -53,6 +66,7 @@ export function useLargeScreenUpsellModalViewModel({
   const [isOpen, setIsOpen] = useState(false);
   const hasOpenedRef = useRef(false);
   const hasHandledCurrentModalInteractionRef = useRef(false);
+  const lastSeenAtBeforeOpenRef = useRef<number | null>(null);
 
   const params = feature?.params;
   const content = useMemo(() => {
@@ -77,16 +91,30 @@ export function useLargeScreenUpsellModalViewModel({
   const viewedDeviceModelId = decision.shouldShow ? decision.deviceModelId : undefined;
 
   useEffect(() => {
+    if (!isAllowedToDisplay) {
+      if (!hasOpenedRef.current || hasHandledCurrentModalInteractionRef.current) {
+        return;
+      }
+
+      // Competing modal preempted a visible upsell — do not consume an impression.
+      hasOpenedRef.current = false;
+      hasHandledCurrentModalInteractionRef.current = false;
+      setIsOpen(false);
+      dispatch(rollbackUpsellModalDisplay({ previousLastSeenAt: lastSeenAtBeforeOpenRef.current }));
+      return;
+    }
+
     if (viewedDeviceModelId === undefined || !hasContent || hasOpenedRef.current) {
       return;
     }
 
     hasOpenedRef.current = true;
     hasHandledCurrentModalInteractionRef.current = false;
+    lastSeenAtBeforeOpenRef.current = lastSeenAt;
     analytics?.onModalViewed({ deviceModelId: viewedDeviceModelId });
     setIsOpen(true);
     dispatch(recordUpsellModalDisplay());
-  }, [viewedDeviceModelId, dispatch, hasContent, analytics]);
+  }, [isAllowedToDisplay, viewedDeviceModelId, dispatch, hasContent, analytics, lastSeenAt]);
 
   const onDismiss = useCallback(
     (method: LargeScreenUpsellDismissMethod) => {

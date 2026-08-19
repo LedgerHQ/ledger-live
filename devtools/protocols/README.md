@@ -2,7 +2,11 @@
 
 Message contracts and `TransportProtocol` implementations for DevTools host ⇄ tool communication.
 
-Each protocol defines a `MessageMap`, a `createXxxProtocol` factory, and any helpers the app needs to wire its end. Import from the named export of the protocol you want — no barrel index.
+Each protocol lives in its own folder under `src/` and exposes a single `index.ts`. Import from the named sub-path — no barrel index.
+
+## Adding a protocol
+
+Create `src/<protocol-name>/index.ts`. The wildcard export map picks it up automatically — no `package.json` change needed. Tests go in the same folder as `index.test.ts`.
 
 ## copy-store
 
@@ -63,3 +67,17 @@ const transport = createTransport<CopyStoreMessages>(
 | `tool` | Requests a snapshot; hydrates whenever it arrives |
 
 Running both roles covers either join order — the protocol is symmetric once connected.
+
+## retrieve-connected-devices
+
+```ts
+import { createRetrieveConnectedDevicesProtocol } from "@devtools/protocols/retrieve-connected-devices";
+```
+
+Keeps a tool's device list in sync with the relay. The relay pushes the full list whenever membership changes — the tool replaces its local state wholesale.
+
+```ts
+const protocol = createRetrieveConnectedDevicesProtocol({
+  setDevices: devices => { /* replace local device list with the incoming snapshot */ },
+});
+```

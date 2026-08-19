@@ -1,5 +1,4 @@
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
-import { getCoinConfig } from "../../config";
+import { EvmConfigInfo } from "../../config";
 import { UnknownNode } from "../../errors";
 import { createLedgerNodeApi } from "./ledger";
 import { createNodeApi } from "./rpc";
@@ -18,19 +17,18 @@ function cacheKey(currencyId: string, node: { type: string; [key: string]: unkno
   return `${currencyId}:${JSON.stringify(node)}`;
 }
 
-export const getNodeApi = (currency: CryptoCurrency): NodeApi => {
-  const config = getCoinConfig(currency.id).info;
+export const getNodeApi = (config: EvmConfigInfo, currencyId: string): NodeApi => {
   const node = config?.node;
   const type = node?.type;
 
   if (type !== "ledger" && type !== "external") {
-    throw new UnknownNode(`Unknown node "${type}" for currency: ${currency.id}`);
+    throw new UnknownNode(`Unknown node "${type}" for currency: ${currencyId}`);
   }
 
-  const key = cacheKey(currency.id, node);
+  const key = cacheKey(currencyId, node);
   let api = nodeApiCache.get(key);
   if (api === undefined) {
-    api = type === "ledger" ? createLedgerNodeApi(node) : createNodeApi(node);
+    api = type === "ledger" ? createLedgerNodeApi(node) : createNodeApi(config, node);
     nodeApiCache.set(key, api);
   }
   return api;

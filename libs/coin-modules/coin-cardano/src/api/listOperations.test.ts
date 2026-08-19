@@ -4,8 +4,9 @@ import type {
   Operation,
   Page,
 } from "@ledgerhq/coin-module-framework/api/types";
+import type { Context } from "@ledgerhq/coin-module-framework/config";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
-import type { CardanoConfig } from "../config";
+import type { CardanoCoinConfig, CardanoConfig } from "../config";
 import { listOperations } from "../logic/listOperations";
 import { createApi } from ".";
 
@@ -17,6 +18,10 @@ const mockListOperations = jest.mocked(listOperations);
 
 const config: CardanoConfig = { maxFeesWarning: 0, maxFeesError: 0 };
 const currency = getCryptoCurrencyById("cardano");
+const mockCtx: Context<CardanoCoinConfig> = {
+  config: async () => ({ ...config, status: { type: "active" } }),
+  logger: () => {},
+};
 
 const options: ListOperationsOptions = { minHeight: 10, order: "desc" };
 
@@ -46,8 +51,8 @@ describe("api.listOperations", () => {
     const page: Page<Operation<MemoNotSupported>> = { items: [], next: undefined };
     mockListOperations.mockResolvedValue(page);
 
-    const api = createApi(config, "cardano");
-    const result = await api.listOperations("addr1_me", options);
+    const api = createApi("cardano");
+    const result = await api.listOperations(mockCtx, "addr1_me", options);
 
     expect(mockListOperations).toHaveBeenCalledTimes(1);
     expect(mockListOperations).toHaveBeenCalledWith(currency, "addr1_me", options);
@@ -58,8 +63,8 @@ describe("api.listOperations", () => {
     const page: Page<Operation<MemoNotSupported>> = { items: [operation], next: "2" };
     mockListOperations.mockResolvedValue(page);
 
-    const api = createApi(config, "cardano");
-    const result = await api.listOperations("addr1_me", options);
+    const api = createApi("cardano");
+    const result = await api.listOperations(mockCtx, "addr1_me", options);
 
     expect(result).toEqual({ items: [operation], next: "2" });
   });
@@ -67,8 +72,8 @@ describe("api.listOperations", () => {
   it("propagates errors thrown by the logic layer", async () => {
     mockListOperations.mockRejectedValue(new Error("network down"));
 
-    const api = createApi(config, "cardano");
+    const api = createApi("cardano");
 
-    await expect(api.listOperations("addr1_me", options)).rejects.toThrow("network down");
+    await expect(api.listOperations(mockCtx, "addr1_me", options)).rejects.toThrow("network down");
   });
 });

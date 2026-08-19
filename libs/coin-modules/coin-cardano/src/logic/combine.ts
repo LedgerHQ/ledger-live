@@ -61,16 +61,19 @@ function decodeTransaction(tx: string): Transaction {
  * @param tx unsigned transaction as returned by craftTransaction — hex CBOR of
  *   [body, witness_set, is_valid, auxiliary_data]. As crafted the witness set is empty; any
  *   witnesses already present are preserved (combining onto a partially-signed tx).
- * @param signature hex ed25519 signature (64 bytes) from the device.
+ * @param signature hex ed25519 signatures (64 bytes) from the device; Cardano expects exactly one.
  * @param pubkey hex ed25519 public key (32 bytes); required to build the vkey witness.
  * @returns the signed transaction as hex CBOR.
  */
-export function combine(tx: string, signature: string, pubkey?: string): string {
+export function combine(tx: string, signature: string[], pubkey?: string): string {
+  if (signature.length !== 1) {
+    throw new Error(`Cardano combine expects exactly one signature, got ${signature.length}`);
+  }
   if (!pubkey) {
     throw new Error("cardano: combine requires the signing public key");
   }
 
-  const signatureBuffer = decodeFixedHex(signature, "signature", ED25519_SIGNATURE_LENGTH);
+  const signatureBuffer = decodeFixedHex(signature[0], "signature", ED25519_SIGNATURE_LENGTH);
   const publicKeyBuffer = decodeFixedHex(pubkey, "public key", ED25519_PUBLIC_KEY_LENGTH);
 
   const transaction = decodeTransaction(tx);

@@ -1,4 +1,4 @@
-import { retry } from "@ledgerhq/live-promise";
+import { retry } from "@ledgerhq/coin-module-framework/promises";
 import { ApiResponseTransaction } from "../types";
 import { API_BASE } from "./config";
 

@@ -2,6 +2,7 @@ import React from "react";
 import type { Card as BrazeCard } from "@braze/web-sdk";
 import { fireEvent, render, screen, waitFor } from "tests/testSetup";
 import type { State } from "~/renderer/reducers";
+import { INITIAL_STATE as DYNAMIC_CONTENT_INITIAL_STATE } from "~/renderer/reducers/dynamicContent";
 import { track, trackPage } from "~/renderer/analytics/segment";
 import { closeGenericAwarenessModalDialog } from "LLD/features/GenericAwarenessModal/genericAwarenessModalDialog";
 import GenericAwarenessModalView from "../GenericAwarenessModalView";
@@ -75,13 +76,10 @@ describe("GenericAwarenessModalView", () => {
     renderOpenAwarenessModalView(carouselCampaignCard, {
       initialState: createGenericAwarenessModalTestState({
         dynamicContent: {
+          ...DYNAMIC_CONTENT_INITIAL_STATE,
           desktopCards: [
             { id: CAROUSEL_CAMPAIGN_ID, title: "Carousel card" } as unknown as BrazeCard,
           ],
-          portfolioCards: [],
-          bottomPortfolioCards: [],
-          actionCards: [],
-          notificationsCards: [],
         },
         settings: {
           shareAnalytics: true,

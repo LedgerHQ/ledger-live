@@ -1,18 +1,16 @@
 import type { RawOperation } from "../../types";
-import { setupTestnetCoinConfig } from "../../test/fixtures";
+import { createFixtureConfig } from "../../test/fixtures";
 import { listOperations } from "./listOperations";
 
 describe("listOperations", () => {
+  const config = createFixtureConfig();
   const ADDRESS_WITH_BALANCE = "3U6m951FWryY56SKFFHgMLGVHtJtk4VaxN7V2F9hjkR7Sg1FUx";
   const ADDRESS_PRISTINE = "4ox4d7b4S9Mi3qA696v3yYjBQB4f6GDEVATrH9oFnoHUd5zLgh";
-
-  beforeAll(() => {
-    setupTestnetCoinConfig();
-  });
 
   describe("Account with no transactions", () => {
     it("should return empty array for pristine account", async () => {
       const { items: operations, next: cursor } = await listOperations(
+        config,
         ADDRESS_PRISTINE,
         { minHeight: 0 },
         "concordium_testnet",
@@ -30,6 +28,7 @@ describe("listOperations", () => {
 
     beforeAll(async () => {
       const page = await listOperations(
+        config,
         ADDRESS_WITH_BALANCE,
         { minHeight: 0 },
         "concordium_testnet",
@@ -101,6 +100,7 @@ describe("listOperations", () => {
 
     beforeAll(async () => {
       const page = await listOperations(
+        config,
         ADDRESS_WITH_BALANCE,
         { minHeight: 0 },
         "concordium_testnet",

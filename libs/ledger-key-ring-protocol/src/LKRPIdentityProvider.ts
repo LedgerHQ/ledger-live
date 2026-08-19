@@ -6,7 +6,6 @@ import {
   type IdPAuthParams,
   type KeycloakToken,
 } from "@ledgerhq/ledger-auth";
-import type { TypedStartListening } from "@reduxjs/toolkit";
 import getApi, {
   type Challenge as ChallengeJson,
   type LKRPChallenge,
@@ -15,43 +14,25 @@ import getApi, {
 } from "./api";
 import type { MemberCredentials, Trustchain } from "./types";
 import { convertLiveCredentialsToKeyPair, credentialForPubKey, liveAuthentication } from "./utils";
-import { trustchainStoreActionTypePrefix, type TrustchainStore } from "./store";
 
-interface PartialTrustchainStore {
+export interface LkrpIdentityProviderStore {
   trustchain: Pick<Trustchain, "rootId"> | null;
   memberCredentials: MemberCredentials | null;
 }
 
-interface StateWithTrustchain {
-  trustchain: TrustchainStore;
-}
-
-export interface LkrpIdentityProviderOptions<State extends StateWithTrustchain> {
-  startListening?: TypedStartListening<State>;
-}
-
-export class LkrpIdentityProvider<
-  State extends StateWithTrustchain = StateWithTrustchain,
-> implements IdentityProvider {
+export class LkrpIdentityProvider implements IdentityProvider {
   readonly brokerId = "lkrp";
-  private trustchainStore: PartialTrustchainStore | undefined;
 
-  constructor({ startListening }: LkrpIdentityProviderOptions<State> = {}) {
-    startListening?.({
-      predicate: action => action.type.startsWith(trustchainStoreActionTypePrefix),
-      effect: (_action, listenerApi) => {
-        this.setTrustchainStore(listenerApi.getState().trustchain);
-      },
-    });
-  }
+  constructor(private readonly loadTrustchainStore: LoadTrustchainStore) {}
 
   async authenticate(request: IdPAuthParams): Promise<KeycloakToken> {
     const challenge = LkrpIdentityProvider.checkChallenge(request.challenge);
+    const trustchainStore = await this.loadTrustchainStore();
     const host = challenge.json.host;
     const api = getApi(`https://${host}`);
 
     const authorizationCode = await api.oidcPostChallengeResponse(
-      await this.signChallenge(challenge),
+      await this.signChallenge(challenge, trustchainStore),
     );
 
     const idPToken = await api.oidcExchangeAuthCode(
@@ -64,29 +45,28 @@ export class LkrpIdentityProvider<
     return api.oidcExchangeToken(idPToken, request.clientId);
   }
 
-  setTrustchainStore(store: PartialTrustchainStore | undefined): void {
-    this.trustchainStore = store;
-  }
-
-  private async signChallenge(challenge: LKRPChallenge): Promise<{
+  private async signChallenge(
+    challenge: LKRPChallenge,
+    trustchainStore: LkrpIdentityProviderStore | undefined,
+  ): Promise<{
     challenge: ChallengeJson;
     signature: WeakChallengeSignature;
   }> {
-    if (!this.trustchainStore?.memberCredentials) {
+    if (!trustchainStore?.memberCredentials) {
       throw new WalletAuthNoCredentialsError(this.brokerId);
     }
 
     const data = crypto.from_hex(challenge.tlv);
     const [parsed] = Challenge.fromBytes(data);
     const hash = crypto.hash(parsed.getUnsignedTLV());
-    const keypair = convertLiveCredentialsToKeyPair(this.trustchainStore.memberCredentials);
+    const keypair = convertLiveCredentialsToKeyPair(trustchainStore.memberCredentials);
     return {
       challenge: challenge.json,
       signature: {
-        credential: credentialForPubKey(this.trustchainStore.memberCredentials.pubkey),
+        credential: credentialForPubKey(trustchainStore.memberCredentials.pubkey),
         signature: crypto.to_hex(crypto.sign(hash, keypair)),
-        attestation: this.trustchainStore.trustchain?.rootId
-          ? crypto.to_hex(liveAuthentication(this.trustchainStore.trustchain.rootId))
+        attestation: trustchainStore.trustchain?.rootId
+          ? crypto.to_hex(liveAuthentication(trustchainStore.trustchain.rootId))
           : undefined,
       },
     };
@@ -100,3 +80,8 @@ export class LkrpIdentityProvider<
     }
   }
 }
+
+type LoadTrustchainStore = () =>
+  | Promise<LkrpIdentityProviderStore | undefined>
+  | LkrpIdentityProviderStore
+  | undefined;

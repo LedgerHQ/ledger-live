@@ -35,6 +35,13 @@ describe("ContactSchema", () => {
     expect(contact.isMe).toBe(false);
   });
 
+  it("rejects a contact address collection without group credentials", () => {
+    const contact = mockContactWithAddress();
+    const { deviceCredentials: _deviceCredentials, ...unsignedContact } = contact;
+
+    expect(ContactSchema.safeParse(unsignedContact).success).toBe(false);
+  });
+
   it("rejects a contact without a name", () => {
     expect(() => ContactSchema.parse(mockContact({ name: "   " }))).toThrow();
   });
@@ -60,6 +67,12 @@ describe("ContactAddressSchema", () => {
 
     expect(ContactAddressSchema.parse(address)).toEqual(address);
     expect(address.currencyId).toBe("ethereum");
+  });
+
+  it("rejects an address without its Device Intent context", () => {
+    const { device: _device, ...unsignedAddress } = mockContactAddress();
+
+    expect(ContactAddressSchema.safeParse(unsignedAddress).success).toBe(false);
   });
 
   it("keeps address format generic for the selected currency", () => {

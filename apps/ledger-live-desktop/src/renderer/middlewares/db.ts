@@ -32,7 +32,8 @@ import {
 } from "@features/flow-large-screen-upsell";
 import { knownDevicesStoreSelector } from "../reducers/knownDevices";
 import { exportIdentitiesForPersistence } from "@domain/entity-client-identity";
-import { payCardPersistedSelector } from "@domain/entity-pay-card";
+import { payCardBalancePersistedSelector } from "@features/flow-pay-card-balance/state";
+import { payCardFeatureTourPersistedSelector } from "@features/flow-pay-card-feature-tour/state";
 import { accountsPersistedStateChanged } from "@ledgerhq/live-common/account/index";
 
 let DB_MIDDLEWARE_ENABLED = true;
@@ -91,7 +92,9 @@ const DBMiddleware: Middleware<object, State> = store => next => action => {
   if (action.type.startsWith(trustchainStoreActionTypePrefix)) {
     const res = next(action);
     const state = store.getState();
-    setKey("app", "trustchain", trustchainStoreSelector(state));
+    if (!state.application.isLocked) {
+      setKey("app", "trustchain", trustchainStoreSelector(state));
+    }
     return res;
   }
 
@@ -131,10 +134,14 @@ const DBMiddleware: Middleware<object, State> = store => next => action => {
     return res;
   }
 
-  if (action.type.startsWith("payCard/")) {
+  if (action.type.startsWith("payCardBalance/") || action.type.startsWith("payCardFeatureTour/")) {
     const res = next(action);
     const state = store.getState();
-    setKey("app", "payCard", payCardPersistedSelector(state));
+    // Both pay card flow slices persist into a single blob under one storage key.
+    setKey("app", "payCard", {
+      ...payCardFeatureTourPersistedSelector(state),
+      ...payCardBalancePersistedSelector(state),
+    });
     return res;
   }
 

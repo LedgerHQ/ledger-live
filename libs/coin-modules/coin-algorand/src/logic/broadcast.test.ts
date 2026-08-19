@@ -1,5 +1,6 @@
 import * as network from "../network";
 import { broadcast } from "./broadcast";
+import { mockAlgorandContext, mockAlgorandConfig } from "../test/context";
 
 jest.mock("../network");
 
@@ -17,21 +18,24 @@ describe("broadcast", () => {
     const expectedTxId = "TX_HASH_123";
     mockBroadcastTransaction.mockResolvedValue(expectedTxId);
 
-    const result = await broadcast(signedTx);
+    const result = await broadcast(mockAlgorandContext, signedTx);
 
     expect(result).toBe(expectedTxId);
     expect(mockBroadcastTransaction).toHaveBeenCalledTimes(1);
-    expect(mockBroadcastTransaction).toHaveBeenCalledWith(Buffer.from(signedTx, "hex"));
+    expect(mockBroadcastTransaction).toHaveBeenCalledWith(
+      mockAlgorandConfig,
+      Buffer.from(signedTx, "hex"),
+    );
   });
 
   it("should convert hex string to buffer before broadcasting", async () => {
     const signedTx = "48656c6c6f"; // "Hello" in hex
     mockBroadcastTransaction.mockResolvedValue("TX_ID");
 
-    await broadcast(signedTx);
+    await broadcast(mockAlgorandContext, signedTx);
 
     const expectedBuffer = Buffer.from(signedTx, "hex");
-    expect(mockBroadcastTransaction).toHaveBeenCalledWith(expectedBuffer);
+    expect(mockBroadcastTransaction).toHaveBeenCalledWith(mockAlgorandConfig, expectedBuffer);
   });
 
   it("should propagate network errors", async () => {
@@ -39,6 +43,6 @@ describe("broadcast", () => {
     const networkError = new Error("Network error");
     mockBroadcastTransaction.mockRejectedValue(networkError);
 
-    await expect(broadcast(signedTx)).rejects.toThrow("Network error");
+    await expect(broadcast(mockAlgorandContext, signedTx)).rejects.toThrow("Network error");
   });
 });

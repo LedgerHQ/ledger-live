@@ -1,5 +1,6 @@
 import buildCoinConfig, {
   type CoinConfig,
+  type Context,
   type CurrencyConfig,
 } from "@ledgerhq/coin-module-framework/config";
 
@@ -21,6 +22,9 @@ export type PolkadotConfig = {
 };
 
 export type PolkadotCoinConfig = CurrencyConfig & PolkadotConfig;
+
+/** The {@link Context} threaded through the coin-polkadot Alpaca api layer (ADR-019). */
+export type PolkadotContext = Context<PolkadotCoinConfig>;
 
 const coinConfig: {
   setCoinConfig: (config: CoinConfig<PolkadotCoinConfig>) => void;

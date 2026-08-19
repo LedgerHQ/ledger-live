@@ -8,7 +8,7 @@ function isTouchscreenDeviceModelId(
   return TOUCHSCREEN_DEVICE_MODEL_IDS.has(deviceModelId as TouchscreenDeviceModelId);
 }
 
-function toNanoDeviceModelId(deviceModelId: string): NanoDeviceModelId | null {
+export function toNanoDeviceModelId(deviceModelId: string): NanoDeviceModelId | null {
   switch (deviceModelId) {
     case "nanoS":
     case "nanoSP":

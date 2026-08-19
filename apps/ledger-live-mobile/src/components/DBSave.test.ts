@@ -1,5 +1,4 @@
-import { featureFlagsLense } from "./DBSave";
-import { payCardPersistedSelector } from "@domain/entity-pay-card";
+import { featureFlagsLense, payCardPersistedSelector } from "./DBSave";
 import type { State } from "~/reducers/types";
 
 describe("featureFlagsLense", () => {
@@ -21,14 +20,10 @@ describe("featureFlagsLense", () => {
 });
 
 describe("payCardPersistedSelector (mobile persistence lens)", () => {
-  it("projects only { hasSeenFeatureTour, balanceFilter } — never the transient isOpen/params", () => {
+  it("composes { hasSeenFeatureTour, balanceFilter } from both pay card flow slices", () => {
     const state = {
-      payCard: {
-        isOpen: true,
-        params: { platform: "cl-card", name: "CL Card" },
-        hasSeenFeatureTour: true,
-        balanceFilter: "ethereum/erc20/usd__coin",
-      },
+      payCardFeatureTour: { hasSeenFeatureTour: true },
+      payCardBalance: { balanceFilter: "ethereum/erc20/usd__coin" },
     } as unknown as State;
 
     const projected = payCardPersistedSelector(state);
@@ -37,23 +32,5 @@ describe("payCardPersistedSelector (mobile persistence lens)", () => {
       hasSeenFeatureTour: true,
       balanceFilter: "ethereum/erc20/usd__coin",
     });
-    expect(projected).not.toHaveProperty("isOpen");
-    expect(projected).not.toHaveProperty("params");
-  });
-
-  it("does not change when only transient fields change", () => {
-    const base = {
-      payCard: { isOpen: false, params: null, hasSeenFeatureTour: false, balanceFilter: "all" },
-    } as unknown as State;
-    const opened = {
-      payCard: {
-        isOpen: true,
-        params: { platform: "cl-card", name: "CL Card" },
-        hasSeenFeatureTour: false,
-        balanceFilter: "all",
-      },
-    } as unknown as State;
-
-    expect(payCardPersistedSelector(base)).toEqual(payCardPersistedSelector(opened));
   });
 });

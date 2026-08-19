@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import coinConfig, { type TronCoinConfig } from "../config";
 import { accountNamesCache, getTronAccountNetwork } from "../network";
 import { NetworkInfo, Transaction, TronAccount } from "../types";
 import { prepareTransaction } from "./prepareTransaction";
@@ -7,6 +8,14 @@ jest.mock("../network", () => ({
   getTronAccountNetwork: jest.fn(),
   accountNamesCache: jest.fn(),
 }));
+
+coinConfig.setCoinConfig(
+  () =>
+    ({
+      status: { type: "active" },
+      explorer: { url: "https://tron.coin.ledger.com" },
+    }) as TronCoinConfig,
+);
 
 const mockGetTronAccountNetwork = jest.mocked(getTronAccountNetwork);
 const mockAccountNamesCache = jest.mocked(accountNamesCache);
@@ -62,7 +71,7 @@ describe("prepareTransaction", () => {
     const result = await prepareTransaction(account, transaction);
 
     expect(mockGetTronAccountNetwork).toHaveBeenCalledTimes(1);
-    expect(mockGetTronAccountNetwork).toHaveBeenCalledWith("TAddr123");
+    expect(mockGetTronAccountNetwork).toHaveBeenCalledWith(expect.anything(), "TAddr123");
     expect(result).not.toBe(transaction);
     expect(result.networkInfo).toEqual(baseNetworkInfo);
   });
@@ -78,7 +87,7 @@ describe("prepareTransaction", () => {
 
     const result = await prepareTransaction(account, transaction);
 
-    expect(mockAccountNamesCache).toHaveBeenCalledWith(voteAddress);
+    expect(mockAccountNamesCache).toHaveBeenCalledWith(expect.anything(), voteAddress);
     expect(result.votes).toEqual([{ address: voteAddress, voteCount: 100, name: "SR name" }]);
   });
 
@@ -91,13 +100,15 @@ describe("prepareTransaction", () => {
         { address: "TB", voteCount: 2, name: undefined },
       ],
     });
-    mockAccountNamesCache.mockImplementation(async addr => (addr === "TA" ? "Name A" : "Name B"));
+    mockAccountNamesCache.mockImplementation(async (_config, addr) =>
+      addr === "TA" ? "Name A" : "Name B",
+    );
 
     await prepareTransaction(account, transaction);
 
     expect(mockAccountNamesCache).toHaveBeenCalledTimes(2);
-    expect(mockAccountNamesCache).toHaveBeenCalledWith("TA");
-    expect(mockAccountNamesCache).toHaveBeenCalledWith("TB");
+    expect(mockAccountNamesCache).toHaveBeenCalledWith(expect.anything(), "TA");
+    expect(mockAccountNamesCache).toHaveBeenCalledWith(expect.anything(), "TB");
   });
 
   it("should not call accountNamesCache when there are no votes", async () => {

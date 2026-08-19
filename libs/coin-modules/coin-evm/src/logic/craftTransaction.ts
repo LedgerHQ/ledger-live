@@ -6,15 +6,17 @@ import {
   MemoNotSupported,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/types";
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { Transaction, TransactionLike } from "ethers";
+import { GasEstimationError } from "../errors";
+import type { EvmContext } from "../config";
 import { getNodeApi } from "../network/node";
 import { TransactionTypes } from "../types";
 import { prepareUnsignedTxParams } from "./common";
 import { getNextSequence } from "./getNextSequence";
 
 export async function craftTransaction(
-  currency: CryptoCurrency,
+  context: EvmContext,
+  currencyId: string,
   {
     transactionIntent,
     customFees,
@@ -23,20 +25,27 @@ export async function craftTransaction(
     customFees?: FeeEstimation | undefined;
   },
 ): Promise<CraftedTransaction> {
+  const config = await context.config(currencyId);
   const { type, to, data, value, gasLimit } = await prepareUnsignedTxParams(
-    currency,
+    config,
+    currencyId,
     transactionIntent,
     customFees?.parameters,
   );
 
-  // Some apps including, including Magic Eden, set the nonce to -1
+  // Never send a failed estimation to the device: the node rejects it as "intrinsic gas too low".
+  if (gasLimit.lte(0)) {
+    throw new GasEstimationError();
+  }
+
+  // Some apps, including Magic Eden, set the nonce to -1
   // instead of simply not providing it.
-  // In case of missing or nagative nonce, it must be re-computed.
+  // In case of missing or negative nonce, it must be re-computed.
   const nonce =
     typeof transactionIntent.sequence === "bigint" && transactionIntent.sequence >= 0n
       ? transactionIntent.sequence
-      : await getNextSequence(currency, transactionIntent.sender);
-  const chainId = currency.ethereumLikeInfo?.chainId ?? 0;
+      : await getNextSequence(context, currencyId, transactionIntent.sender);
+  const chainId = config.chainId;
 
   const unsignedTransaction: TransactionLike = {
     type,
@@ -66,8 +75,8 @@ export async function craftTransaction(
   }
 
   if (!hasFeeData) {
-    const node = getNodeApi(currency);
-    const feeData = await node.getFeeData(currency, {
+    const node = getNodeApi(config, currencyId);
+    const feeData = await node.getFeeData(config, currencyId, {
       type,
       feesStrategy: customFees?.parameters?.feesStrategy as FeesStrategy | undefined,
     });

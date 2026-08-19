@@ -1,5 +1,8 @@
 import { getLastBlock } from "../network/sdk";
+import type { SuiCoinConfig } from "../config";
 import { lastBlock } from "./lastBlock";
+
+const config = {} as SuiCoinConfig;
 
 jest.mock("../network/sdk");
 
@@ -18,7 +21,7 @@ describe("lastBlock", () => {
   });
 
   it("should return block info with correct height and hash", async () => {
-    const block = await lastBlock();
+    const block = await lastBlock(config);
 
     expect(block).toEqual({
       hash: mockHash,

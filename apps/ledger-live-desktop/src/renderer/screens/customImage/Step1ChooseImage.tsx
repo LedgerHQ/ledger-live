@@ -6,8 +6,8 @@ import { StepProps } from "./types";
 import StepContainer from "./StepContainer";
 import { Flex, IconsLegacy, InfiniteLoader, Link, Text } from "@ledgerhq/react-ui";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import { analyticsPageNames, analyticsFlowName } from "./shared";
-import { useTrack } from "~/renderer/analytics/segment";
+import { analyticsPageNames, analyticsFlowName, analyticsDrawerName } from "./shared";
+import { track } from "~/renderer/analytics/segment";
 import STAX_CLS_PREVIEW from "~/renderer/animations/customLockScreen/stax.json";
 import FLEX_CLS_PREVIEW from "~/renderer/animations/customLockScreen/flex.json";
 import APEX_CLS_PREVIEW from "~/renderer/animations/customLockScreen/apex.json";
@@ -35,7 +35,6 @@ const StepChooseImage: React.FC<Props> = props => {
     onClickRemoveCustomImage,
   } = props;
   const { t } = useTranslation();
-  const track = useTrack();
 
   const animationSource = useMemo(() => {
     switch (deviceModelId) {
@@ -89,6 +88,7 @@ const StepChooseImage: React.FC<Props> = props => {
             onError={onError}
             onClick={() =>
               track("button_clicked2", {
+                drawer: analyticsDrawerName,
                 button: "Choose from my picture gallery",
               })
             }

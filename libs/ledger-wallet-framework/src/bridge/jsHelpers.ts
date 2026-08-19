@@ -122,7 +122,17 @@ function normalizeToObservable<T>(value: Promise<T> | Observable<T>): Observable
 // compare that two dates are roughly the same date in order to update the case it would have drastically changed
 const sameDate = (a: Date, b: Date) => Math.abs(a.getTime() - b.getTime()) < 1000 * 60 * 30;
 
+// a later sync can report a sequence number the stored operation is missing, but a fetch that
+// reports none must never erase one: `mergeOps` replaces `stored` by `fetched` when they differ
+const sameSequenceNumber = (stored: Operation, fetched: Operation) => {
+  const next = fetched.transactionSequenceNumber;
+  if (next === undefined) return true;
+  const current = stored.transactionSequenceNumber;
+  return current !== undefined && current.isEqualTo(next);
+};
+
 // an operation is relatively immutable, however we saw that sometimes it can temporarily change due to reorg,..
+// NOTE not symmetrical: `a` is the stored operation, `b` the freshly fetched one
 export const sameOp = (a: Operation, b: Operation): boolean =>
   a === b ||
   (a.id === b.id && // hash, accountId, type are in id
@@ -131,6 +141,7 @@ export const sameOp = (a: Operation, b: Operation): boolean =>
     a.nftOperations?.length === b.nftOperations?.length &&
     sameDate(a.date, b.date) &&
     a.blockHeight === b.blockHeight &&
+    sameSequenceNumber(a, b) &&
     isEqual(a.senders, b.senders) &&
     isEqual(a.recipients, b.recipients));
 
@@ -547,6 +558,10 @@ export const makeScanAccounts =
 
             const seedIdentifier = result.publicKey;
             let emptyCount = 0;
+            // We only ever propose ONE new (empty) account: the first empty index
+            // available. Intermediate empty accounts sitting inside a gap before a
+            // later used account must not be offered as creatable.
+            let firstEmptyAccountEmitted = false;
             const mandatoryEmptyAccountSkip = getMandatoryEmptyAccountSkip(derivationMode);
             const derivationScheme = getDerivationScheme({
               derivationMode,
@@ -598,20 +613,33 @@ export const makeScanAccounts =
               if (account) {
                 const showNewAccount = shouldShowNewAccount(currency, derivationMode);
 
-                if (account.used || showNewAccount) {
-                  log(
-                    "debug",
-                    `Emit 'discovered' event for a new account found. AccountUsed: ${account.used} - showNewAccount: ${showNewAccount}`,
-                  );
+                if (account.used) {
+                  log("debug", `Emit 'discovered' event for a used account. Index: ${index}`);
                   outerObs.next({
                     type: "discovered",
                     account,
                   });
-                }
+                  // A used account closes the current run of empty accounts: the
+                  // gap limit counts *consecutive* empty accounts, so reset here.
+                  // This lets discovery cross empty gaps between used accounts as
+                  // long as no gap is longer than `mandatoryEmptyAccountSkip`.
+                  emptyCount = 0;
+                } else {
+                  // Offer only the first empty account (lowest index) as creatable.
+                  if (!firstEmptyAccountEmitted && showNewAccount) {
+                    log(
+                      "debug",
+                      `Emit 'discovered' event for the first empty account. Index: ${index}`,
+                    );
+                    outerObs.next({
+                      type: "discovered",
+                      account,
+                    });
+                    firstEmptyAccountEmitted = true;
+                  }
 
-                if (!account.used) {
                   if (emptyCount >= mandatoryEmptyAccountSkip) {
-                    break; // stop scanning indices for this derivation mode only
+                    break; // reached the gap limit of consecutive empty accounts
                   }
                   emptyCount++;
                 }

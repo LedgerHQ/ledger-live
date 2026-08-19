@@ -2,6 +2,7 @@ import { datadogLogs } from "@datadog/browser-logs";
 import type { LogEvent } from "@ledgerhq/live-common/hooks/useBroadcast";
 import { getOperatingSystemSupportStatus } from "~/support/os";
 import { buildBeforeSend, getDatadogBuildConfig, type ShouldSendCallback } from "./config";
+import { extractErrorContext } from "@ledgerhq/live-common/errors/helpers";
 
 let initialized = false;
 
@@ -61,6 +62,11 @@ export function broadcastLogger(event: LogEvent): void {
     datadogLogs.logger.info("broadcast_success", { event });
   } else {
     const { error, ...rest } = event;
-    datadogLogs.logger.error("broadcast_failure", { event: rest }, error);
+    const errorContext = extractErrorContext(error);
+    datadogLogs.logger.error(
+      "broadcast_failure",
+      { event: rest, errorContext: errorContext },
+      error,
+    );
   }
 }

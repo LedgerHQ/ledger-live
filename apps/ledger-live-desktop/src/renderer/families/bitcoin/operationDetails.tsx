@@ -27,10 +27,12 @@ class AddressCell extends PureComponent<AddressCellProps<Operation>> {
     switch (operation.type) {
       case "SHIELDED_TX_SAPLING_IN":
       case "SHIELDED_TX_ORCHARD_IN":
+      case "SHIELDED_TX_IRONWOOD_IN":
         value = operation.senders[0];
         break;
       case "SHIELDED_TX_SAPLING_OUT":
       case "SHIELDED_TX_ORCHARD_OUT":
+      case "SHIELDED_TX_IRONWOOD_OUT":
         value = operation.recipients[0];
         break;
     }
@@ -59,6 +61,9 @@ const getI18nKey = (type: string) => {
     case "SHIELDED_TX_ORCHARD_IN":
     case "SHIELDED_TX_ORCHARD_OUT":
       return "zcash.operationDetails.shieldedOrchardTx";
+    case "SHIELDED_TX_IRONWOOD_IN":
+    case "SHIELDED_TX_IRONWOOD_OUT":
+      return "zcash.operationDetails.shieldedIronwoodTx";
     default:
       return null;
   }
@@ -105,6 +110,8 @@ export default {
     SHIELDED_TX_SAPLING_OUT: AddressCell,
     SHIELDED_TX_ORCHARD_IN: AddressCell,
     SHIELDED_TX_ORCHARD_OUT: AddressCell,
+    SHIELDED_TX_IRONWOOD_IN: AddressCell,
+    SHIELDED_TX_IRONWOOD_OUT: AddressCell,
   },
   OperationDetailsExtra,
   splitAddress: {
@@ -112,5 +119,7 @@ export default {
     SHIELDED_TX_SAPLING_OUT: SplitAddressComponent,
     SHIELDED_TX_ORCHARD_IN: SplitAddressComponent,
     SHIELDED_TX_ORCHARD_OUT: SplitAddressComponent,
+    SHIELDED_TX_IRONWOOD_IN: SplitAddressComponent,
+    SHIELDED_TX_IRONWOOD_OUT: SplitAddressComponent,
   },
 };

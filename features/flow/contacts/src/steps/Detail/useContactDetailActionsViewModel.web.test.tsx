@@ -8,6 +8,7 @@ import {
   mockContactWithAddress,
   mockMeContact,
 } from "@domain/entity-contact/schema.mock";
+import { createMockContactSignerValidationPort } from "../../platform/contactSignerValidationPort";
 import type { ContactDetailActionsPorts } from "./model/ports";
 import { useContactDetailActionsViewModel } from "./useContactDetailActionsViewModel";
 
@@ -21,6 +22,7 @@ function createPorts(
     deletion: {
       deleteContact: jest.fn().mockResolvedValue(undefined),
     },
+    signerValidation: createMockContactSignerValidationPort(),
     ...overrides,
   };
 }
@@ -52,6 +54,7 @@ describe("useContactDetailActionsViewModel", () => {
         type: "direct",
         reason: "contact-has-no-address",
       },
+      signerValidationLookup: undefined,
     });
     expect(result.current.isSignerRequiredForEdit).toBe(false);
   });
@@ -70,6 +73,10 @@ describe("useContactDetailActionsViewModel", () => {
       editRequirement: {
         type: "confirmation-required",
         reason: "contact-has-address",
+      },
+      signerValidationLookup: {
+        contactId: contact.id,
+        addressId: contact.addresses[0]!.id,
       },
     });
     expect(result.current.isSignerRequiredForEdit).toBe(true);

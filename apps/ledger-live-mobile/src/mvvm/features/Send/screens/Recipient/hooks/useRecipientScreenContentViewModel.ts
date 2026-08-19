@@ -5,7 +5,7 @@ import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { useCallback, useEffect, useMemo } from "react";
 import type { KeyboardAvoidingViewProps } from "react-native";
 import { Platform } from "react-native";
-import { useAnalytics } from "~/analytics";
+import { track } from "~/analytics";
 import { getSendFlowTrackingProperties } from "@ledgerhq/ledger-wallet-framework/tracking/send";
 import { shouldUseKeyboardAvoidance } from "~/logic/keyboardVisible";
 import { useMemoViewModel } from "../../../components/Memo/hooks/useMemoViewModel";
@@ -40,7 +40,6 @@ export function useRecipientScreenContentViewModel({
     recipientSupportsDomain,
   });
   const { uiConfig } = useSendFlowData();
-  const { track } = useAnalytics();
   const trackingProperties = useMemo(
     () => ({
       ...getSendFlowTrackingProperties(account, parentAccount),
@@ -57,7 +56,7 @@ export function useRecipientScreenContentViewModel({
       page: "step memo",
     });
     onMemoProceed();
-  }, [track, onMemoProceed, trackingProperties]);
+  }, [onMemoProceed, trackingProperties]);
 
   const resolvedAddress = recipient.result.resolvedAddress ?? recipient.searchValue;
   const showMemo = uiConfig.hasMemo && recipient.isAddressValid;
@@ -78,14 +77,14 @@ export function useRecipientScreenContentViewModel({
       track("button_clicked", trackingProperties);
       handleAddressSelect(address, ensName);
     },
-    [track, trackingProperties, handleAddressSelect],
+    [trackingProperties, handleAddressSelect],
   );
 
   useEffect(() => {
     if (showMemo) {
       track("send_modal", { ...trackingProperties, name: "step memo" });
     }
-  }, [showMemo, track, trackingProperties]);
+  }, [showMemo, trackingProperties]);
 
   useEffect(() => {
     if (uiConfig.hasMemo && memo.hasFilledMemo && !memo.memoError) {
@@ -95,7 +94,7 @@ export function useRecipientScreenContentViewModel({
         name: "step memo",
       });
     }
-  }, [track, trackingProperties, uiConfig.hasMemo, memo.hasFilledMemo, memo.memoError]);
+  }, [trackingProperties, uiConfig.hasMemo, memo.hasFilledMemo, memo.memoError]);
 
   const shouldShowErrorBanner =
     !recipient.isLoading &&

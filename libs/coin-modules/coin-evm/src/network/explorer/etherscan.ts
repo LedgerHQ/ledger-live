@@ -1,9 +1,8 @@
 import { isNFTActive } from "@ledgerhq/ledger-wallet-framework/nft/support";
 import type { MemoNotSupported, Operation } from "@ledgerhq/coin-module-framework/api/types";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
-import { delay } from "@ledgerhq/live-promise";
+import { delay } from "@ledgerhq/coin-module-framework/promises";
 import { log } from "@ledgerhq/logs";
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import axios, { AxiosRequestConfig } from "axios";
 import {
   etherscanOperationToOperations,
@@ -14,7 +13,7 @@ import {
   deserializePagingToken,
   serializePagingToken,
 } from "../../adapters";
-import { getCoinConfig } from "../../config";
+import { EvmConfigInfo } from "../../config";
 import {
   EtherscanAPIError,
   EtherscanLikeExplorerUsedIncorrectly,
@@ -35,8 +34,7 @@ import { ExplorerApi, isEtherscanLikeExplorerConfig } from "./types";
 export const ETHERSCAN_TIMEOUT = 5000; // 5 seconds between 2 calls
 export const DEFAULT_RETRIES_API = 8;
 
-function getConfiguredMaxLimit(currency: CryptoCurrency): number | undefined {
-  const config = getCoinConfig(currency.id).info;
+function getConfiguredMaxLimit(config: EvmConfigInfo): number | undefined {
   const { explorer } = config || {};
   if (!isEtherscanLikeExplorerConfig(explorer)) return undefined;
   const cap = explorer.maxLimit;
@@ -49,7 +47,8 @@ function getConfiguredMaxLimit(currency: CryptoCurrency): number | undefined {
  * Common parameters for fetching operations from an endpoint
  */
 export type FetchOperationsParams = {
-  currency: CryptoCurrency;
+  currencyId: string;
+  config: EvmConfigInfo;
   address: string;
   // Inclusive lower bound of the block range. fromBlock <= toBlock whatever the sort order is.
   fromBlock: number;
@@ -262,7 +261,7 @@ function computeEffectiveBoundBlock(
  * Get all the "normal" transactions (no tokens / NFTs)
  */
 export const getCoinOperations = async (params: FetchOperationsParams): Promise<EndpointResult> => {
-  const config = getCoinConfig(params.currency.id).info;
+  const { config } = params;
   const { explorer } = config || /* istanbul ignore next */ {};
   if (!isEtherscanLikeExplorerConfig(explorer)) {
     throw new EtherscanLikeExplorerUsedIncorrectly();
@@ -280,21 +279,22 @@ export const getCoinOperations = async (params: FetchOperationsParams): Promise<
   });
 
   const operations = ops.flatMap(tx =>
-    etherscanOperationToOperations(params.address, params.currency.id, tx),
+    etherscanOperationToOperations(params.address, params.currencyId, tx),
   );
 
   // Recover REWARD op amounts (claim/compound) from receipt logs — these txs send 0 native
   // value, so the amount would otherwise show as 0 in history and operation details.
-  const node = getCoinConfig(params.currency.id).info.node;
+  const node = params.config.node;
   if (
     operations.some(op => op.type === "REWARD" && op.value === 0n) &&
     isExternalNodeConfig(node)
   ) {
     try {
       await withApi(
-        params.currency,
+        params.config,
+        params.currencyId,
         api =>
-          enrichRewardOperationsValue(params.currency.id, operations, hash =>
+          enrichRewardOperationsValue(params.currencyId, operations, hash =>
             api.getTransactionReceipt(hash),
           ),
         node,
@@ -320,7 +320,7 @@ export const getCoinOperations = async (params: FetchOperationsParams): Promise<
 export const getTokenOperations = async (
   params: FetchOperationsParams,
 ): Promise<EndpointResult> => {
-  const config = getCoinConfig(params.currency.id).info;
+  const { config } = params;
   const { explorer } = config || /* istanbul ignore next */ {};
   if (!isEtherscanLikeExplorerConfig(explorer)) {
     throw new EtherscanLikeExplorerUsedIncorrectly();
@@ -374,7 +374,7 @@ export const getTokenOperations = async (
 export const getERC721Operations = async (
   params: FetchOperationsParams,
 ): Promise<EndpointResult> => {
-  const config = getCoinConfig(params.currency.id).info;
+  const { config } = params;
   const { explorer } = config || /* istanbul ignore next */ {};
   if (!isEtherscanLikeExplorerConfig(explorer)) {
     throw new EtherscanLikeExplorerUsedIncorrectly();
@@ -423,7 +423,7 @@ export const getERC721Operations = async (
 export const getERC1155Operations = async (
   params: FetchOperationsParams,
 ): Promise<EndpointResult> => {
-  const config = getCoinConfig(params.currency.id).info;
+  const { config } = params;
   const { explorer } = config || /* istanbul ignore next */ {};
   if (!isEtherscanLikeExplorerConfig(explorer)) {
     throw new EtherscanLikeExplorerUsedIncorrectly();
@@ -470,7 +470,7 @@ export const getERC1155Operations = async (
  * Get all NFT related operations (ERC721 + ERC1155)
  */
 export const getNftOperations = async (params: FetchOperationsParams): Promise<EndpointResult> => {
-  const config = getCoinConfig(params.currency.id).info;
+  const { config } = params;
   if (!config.showNfts) {
     return EMPTY_RESULT;
   }
@@ -508,7 +508,7 @@ const fixTxHash = (op: EtherscanInternalTransaction): EtherscanInternalTransacti
 export const getInternalOperations = async (
   params: FetchOperationsParams,
 ): Promise<EndpointResult> => {
-  const config = getCoinConfig(params.currency.id).info;
+  const { config } = params;
   const { explorer } = config || /* istanbul ignore next */ {};
   if (!isEtherscanLikeExplorerConfig(explorer)) {
     throw new EtherscanLikeExplorerUsedIncorrectly();
@@ -555,10 +555,9 @@ export const getInternalOperations = async (
  * Returns empty array for non-etherscan/non-blockscout explorers (ledger, none, etc.).
  */
 export async function getInternalTransactionsByBlock(
-  currency: CryptoCurrency,
+  config: EvmConfigInfo,
   blockHeight: number,
 ): Promise<EtherscanInternalTransaction[]> {
-  const config = getCoinConfig(currency.id).info;
   const { explorer } = config || {};
 
   if (!isEtherscanLikeExplorerConfig(explorer)) {
@@ -715,7 +714,8 @@ export async function exhaustEndpoint(
  */
 export const getOperations = makeLRUCache<
   [
-    currency: CryptoCurrency,
+    config: EvmConfigInfo,
+    currencyId: string,
     address: string,
     fromBlock: number,
     toBlock?: number,
@@ -731,9 +731,9 @@ export const getOperations = makeLRUCache<
     nextPagingToken: string;
   }
 >(
-  async (currency, address, fromBlock, toBlock, pagingToken, limit, order = "desc") => {
+  async (config, currencyId, address, fromBlock, toBlock, pagingToken, limit, order = "desc") => {
     try {
-      const configuredMaxLimit = getConfiguredMaxLimit(currency);
+      const configuredMaxLimit = getConfiguredMaxLimit(config);
       const effectiveLimit =
         limit !== undefined && configuredMaxLimit !== undefined
           ? Math.min(limit, configuredMaxLimit)
@@ -745,7 +745,8 @@ export const getOperations = makeLRUCache<
       const cmp = createBlockComparator(order);
 
       const baseParams: FetchOperationsParams = {
-        currency,
+        currencyId,
+        config,
         address,
         fromBlock,
         ...(toBlock !== undefined && { toBlock }),
@@ -802,7 +803,7 @@ export const getOperations = makeLRUCache<
       const nfts = await callEndpoint(
         getNftOperations,
         tokens.effectiveBoundBlock,
-        !isNFTActive(currency) || pagingState?.nftIsDone,
+        !isNFTActive(currencyId) || pagingState?.nftIsDone,
       );
 
       const effectiveBoundBlock = nfts.effectiveBoundBlock;
@@ -848,9 +849,9 @@ export const getOperations = makeLRUCache<
             ? `${err.name} - ${err.message}`
             : JSON.stringify(err);
       throw new InvalidExplorerResponse(
-        `${currency.name} - ${message}`,
+        `${config.name} - ${message}`,
         {
-          currencyName: currency.name,
+          currencyName: config.name,
         },
         {
           cause: err,
@@ -858,8 +859,8 @@ export const getOperations = makeLRUCache<
       );
     }
   },
-  (currency, address, fromBlock, toBlock, pagingToken, limit, order) =>
-    `${currency.id}:${address}:${fromBlock}:${toBlock ?? ""}:${pagingToken ?? ""}:${limit ?? ""}:${order ?? "desc"}`,
+  (_config, currencyId, address, fromBlock, toBlock, pagingToken, limit, order) =>
+    `${currencyId}:${address}:${fromBlock}:${toBlock ?? ""}:${pagingToken ?? ""}:${limit ?? ""}:${order ?? "desc"}`,
   { ttl: ETHERSCAN_TIMEOUT },
 );
 

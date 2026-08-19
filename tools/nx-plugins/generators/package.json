@@ -1,0 +1,18 @@
+{
+  "name": "@ledgerhq/generators",
+  "version": "0.1.0",
+  "private": true,
+  "main": "./generators.json",
+  "generators": "./generators.json",
+  "scripts": {
+    "test": "jest"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "@types/jest": "catalog:",
+    "@nx/devkit": "22.5.1",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "jest": "catalog:"
+  }
+}

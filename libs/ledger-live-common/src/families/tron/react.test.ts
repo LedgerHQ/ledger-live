@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import "../../__tests__/test-helpers/dom-polyfill";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { renderHook, act } from "@testing-library/react";
 import {
   useTronSuperRepresentatives,
@@ -63,6 +64,11 @@ let mockAccountNoVote: Awaited<ReturnType<typeof createMockAccountNoVote>>;
 let mockAccountV2: Awaited<ReturnType<typeof createMockAccountV2>>;
 
 beforeAll(async () => {
+  // useTronSuperRepresentatives resolves config via getCurrencyConfiguration (LiveConfig); the
+  // network call is mocked, so a minimal entry is enough to avoid "Config not set".
+  LiveConfig.setConfig({
+    config_currency_tron: { type: "object", default: {} },
+  } as never);
   mockAccount = await createMockAccount();
   mockAccountNoReward = await createMockAccountNoReward();
   mockAccountNoVote = await createMockAccountNoVote();

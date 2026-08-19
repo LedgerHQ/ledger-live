@@ -1,11 +1,12 @@
 import { BigNumber } from "bignumber.js";
 import { computeFees } from "./logic/fees";
 import { getGasPrice } from "./network/node";
+import { getCoinConfig } from "./config";
 import { getCurrentNearPreloadData } from "./preload-data";
 import { Transaction } from "./types";
 
 const getEstimatedFees = async (transaction: Transaction): Promise<BigNumber> => {
-  const rawGasPrice = await getGasPrice();
+  const rawGasPrice = await getGasPrice(getCoinConfig());
   const gasPrice = new BigNumber(rawGasPrice);
 
   return computeFees({

@@ -1,5 +1,8 @@
 import * as network from "../network";
+import type { SuiCoinConfig } from "../config";
 import { getValidators } from "./getValidators";
+
+const config = {} as SuiCoinConfig;
 
 type NetworkValidator = {
   suiAddress: string;
@@ -51,7 +54,7 @@ describe("logic/getValidators", () => {
       networkValidators as unknown as ReturnType<typeof network.getValidators>,
     );
 
-    const page = await getValidators();
+    const page = await getValidators(config);
 
     expect(page.next).toBeUndefined();
     expect(page.items).toHaveLength(2);
@@ -87,7 +90,7 @@ describe("logic/getValidators", () => {
       [] as unknown as ReturnType<typeof network.getValidators>,
     );
 
-    const page = await getValidators();
+    const page = await getValidators(config);
     expect(page.items).toEqual([]);
     expect(page.next).toBeUndefined();
   });

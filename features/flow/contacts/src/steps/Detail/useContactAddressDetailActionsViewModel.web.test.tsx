@@ -87,7 +87,7 @@ describe("useContactAddressDetailActionsViewModel", () => {
     expect(result.current.editIntent).toBeUndefined();
   });
 
-  it("exposes a delete intent with a signer-required requirement for the selected address", () => {
+  it("exposes a delete intent for the selected address", () => {
     const contact = mockContactWithAddress();
     const address = contact.addresses[0]!;
     const Wrapper = makeWrapper([mockMeContact(), contact]);
@@ -100,12 +100,7 @@ describe("useContactAddressDetailActionsViewModel", () => {
       type: "delete-address",
       contactId: contact.id,
       addressId: address.id,
-      deleteRequirement: {
-        type: "confirmation-required",
-        reason: "contact-has-address",
-      },
     });
-    expect(result.current.isSignerRequiredForDelete).toBe(true);
   });
 
   it("opens, cancels, and confirms delete through the mocked lifecycle", async () => {

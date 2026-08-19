@@ -1,4 +1,5 @@
 import type { BlockInfo } from "@ledgerhq/coin-module-framework/api/index";
+import type { VechainContext } from "../../config";
 import { getBlock as getBlockFromNetwork } from "../../network";
 import type { ApiResponseBlock } from "../../types";
 
@@ -13,8 +14,9 @@ export function toBlockInfo(block: ApiResponseBlock): BlockInfo {
 }
 
 /** Block metadata (height/hash/time) at a given block height, via Thor `GET /blocks/{height}`. */
-export async function getBlockInfo(height: number): Promise<BlockInfo> {
-  const block = await getBlockFromNetwork(height);
+export async function getBlockInfo(context: VechainContext, height: number): Promise<BlockInfo> {
+  const config = await context.config();
+  const block = await getBlockFromNetwork(config, height, false);
 
   if (!block) {
     throw new Error(`vechain: no block at height ${height}`);

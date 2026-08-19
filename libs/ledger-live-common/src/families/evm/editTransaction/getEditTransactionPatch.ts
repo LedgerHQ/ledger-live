@@ -2,14 +2,11 @@ import type { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import { getGasTracker } from "@ledgerhq/coin-evm/network/gasTracker/index";
-import type {
-  EditType,
-  EvmTransactionEIP1559,
-  EvmTransactionLegacy,
-  GasOptions,
-  Transaction,
-} from "@ledgerhq/coin-evm/types/index";
+import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
+import type { EvmTransactionEIP1559, EvmTransactionLegacy, Transaction } from "../types";
+import type { EditType, GasOptions } from "@ledgerhq/coin-evm/types/index";
 import { getMinEip1559Fees, getMinLegacyFees } from "./getMinEditTransactionFees";
+import { getCurrencyConfiguration } from "../../../config";
 
 /**
  * Can't easily and properly use generics with Partial to avoid type casting
@@ -234,7 +231,8 @@ export const getEditTransactionPatch = async ({
   account: Account;
 }): Promise<Partial<Transaction>> => {
   const { currency } = account;
-  const gasTracker = getGasTracker(currency);
+  const config = getCurrencyConfiguration<EvmConfigInfo>(account.currency.id);
+  const gasTracker = getGasTracker(config);
 
   if (!gasTracker) {
     throw new Error(`No gas tracker found for currency ${currency.id}`);
@@ -243,7 +241,8 @@ export const getEditTransactionPatch = async ({
   const shouldUseEip1559 = transaction.type === 2;
 
   const gasOptions = await gasTracker.getGasOptions({
-    currency,
+    currencyId: currency.id,
+    config,
     options: { useEIP1559: shouldUseEip1559 },
   });
 

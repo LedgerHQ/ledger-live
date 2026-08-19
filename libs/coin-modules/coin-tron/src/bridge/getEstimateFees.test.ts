@@ -14,6 +14,13 @@ import getEstimatedFees, {
   type FeeResourceBreakdown,
 } from "./getEstimateFees";
 import { extractBandwidthInfo } from "./utils";
+import coinConfig, { type TronCoinConfig } from "../config";
+
+const mockCoinConfig = {
+  status: { type: "active" },
+  explorer: { url: "https://api.trongrid.io" },
+} as TronCoinConfig;
+coinConfig.setCoinConfig(() => mockCoinConfig);
 
 // Mock typed functions
 const mockGetAccount = jest.mocked(getAccount);
@@ -278,7 +285,10 @@ describe("getEstimatedFees", () => {
 
       await getFeeResourceBreakdown(mockAccount, maxTx, tokenWithBalance);
 
-      expect(mockEstimateEnergy).toHaveBeenCalledWith(expect.objectContaining({ amount: 500n }));
+      expect(mockEstimateEnergy).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.objectContaining({ amount: 500n }),
+      );
     });
 
     it("non-send mode with a TRC20 sub-account does not run the energy simulation", async () => {
@@ -435,7 +445,10 @@ describe("getEstimatedFees", () => {
       await expect(
         getFeeResourceBreakdown(mockAccount, unpreparedTransaction, mockTokenAccount),
       ).resolves.not.toThrow();
-      expect(mockGetTronAccountNetwork).toHaveBeenCalledWith(mockAccount.freshAddress);
+      expect(mockGetTronAccountNetwork).toHaveBeenCalledWith(
+        mockCoinConfig,
+        mockAccount.freshAddress,
+      );
     });
 
     it("network-info fetch failure does not throw", async () => {

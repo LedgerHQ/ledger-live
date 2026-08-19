@@ -5,7 +5,7 @@ import { Flex } from "@ledgerhq/native-ui";
 import { ParamListBase, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React, { useCallback } from "react";
-import { useAnalytics } from "~/analytics";
+import { track, usePageNameFromRoute } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
 import { EvmStakingDrawerProvider } from "./EvmStakingDrawerProvider";
 import { ListProvider } from "./types";
@@ -26,7 +26,7 @@ export function EvmStakingDrawerBody({
   const navigation =
     useNavigation<NativeStackNavigationProp<ParamListBase, string, NavigatorName>>();
 
-  const { track, page } = useAnalytics();
+  const page = usePageNameFromRoute();
 
   const onProviderPress = useCallback(
     ({ manifest, provider }: { manifest: LiveAppManifest; provider: ListProvider }) => {
@@ -62,7 +62,7 @@ export function EvmStakingDrawerBody({
         });
       }
     },
-    [walletApiAccountId, track, page, onClose, navigation, accountId],
+    [walletApiAccountId, page, onClose, navigation, accountId],
   );
 
   return (

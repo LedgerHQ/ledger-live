@@ -20,7 +20,7 @@ describe("combine", () => {
     const txBase64 = makeSerializedTx();
     const signature = Buffer.alloc(64, 2).toString("hex");
 
-    const result = combine(txBase64, signature);
+    const result = combine(txBase64, [signature]);
 
     const deserialized = VersionedTransaction.deserialize(Buffer.from(result, "base64"));
     expect(deserialized.signatures).toHaveLength(1);
@@ -41,21 +41,21 @@ describe("combine", () => {
       return tx;
     });
 
-    expect(() => combine(txBase64, signature)).toThrow("Transaction has no account keys");
+    expect(() => combine(txBase64, [signature])).toThrow("Transaction has no account keys");
   });
 
   it("should throw for signature with wrong length", () => {
     const txBase64 = makeSerializedTx();
     const shortSignature = Buffer.alloc(32, 1).toString("hex");
 
-    expect(() => combine(txBase64, shortSignature)).toThrow("Invalid signature length");
+    expect(() => combine(txBase64, [shortSignature])).toThrow("Invalid signature length");
   });
 
   it("should produce a valid re-serializable transaction", () => {
     const txBase64 = makeSerializedTx();
     const signature = Buffer.alloc(64, 0xab).toString("hex");
 
-    const result = combine(txBase64, signature);
+    const result = combine(txBase64, [signature]);
 
     const roundTrip = VersionedTransaction.deserialize(Buffer.from(result, "base64"));
     expect(roundTrip.signatures).toHaveLength(1);

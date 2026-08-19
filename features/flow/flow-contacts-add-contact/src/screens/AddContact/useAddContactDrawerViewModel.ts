@@ -17,8 +17,12 @@ export function useAddContactDrawerViewModel({
     setDraftName("");
   }, [setDraftName]);
   const onDraftNameChange = useCallback(
-    (name: string) => setDraftName(name.slice(0, CONTACT_NAME_MAX_LENGTH)),
-    [setDraftName],
+    (name: string) => {
+      if (!isSaving) {
+        setDraftName(name.slice(0, CONTACT_NAME_MAX_LENGTH));
+      }
+    },
+    [isSaving, setDraftName],
   );
   const onConfirm = useCallback(async () => {
     if (!isSaveEnabled || isSaving) {
@@ -44,7 +48,7 @@ export function useAddContactDrawerViewModel({
     isSaving,
     draftName,
     avatarInitial,
-    invalidNameError,
+    invalidNameError: isSaving ? null : invalidNameError,
     onOpen,
     onClose,
     onDraftNameChange,

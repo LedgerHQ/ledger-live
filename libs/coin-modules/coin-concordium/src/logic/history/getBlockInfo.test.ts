@@ -1,4 +1,5 @@
 import { getBlockInfo } from "./getBlockInfo";
+import { createFixtureConfig } from "../../test/fixtures";
 
 jest.mock("../../network/proxyClient", () => ({
   getBlocksAtHeight: jest.fn(),
@@ -7,6 +8,8 @@ jest.mock("../../network/proxyClient", () => ({
 
 const { getBlocksAtHeight: getBlocksAtHeightMock, getBlockInfoByHash: getBlockInfoByHashMock } =
   jest.requireMock("../../network/proxyClient");
+
+const config = createFixtureConfig();
 
 describe("getBlockInfo", () => {
   beforeEach(() => {
@@ -31,13 +34,13 @@ describe("getBlockInfo", () => {
       });
 
     // WHEN
-    const result = await getBlockInfo(2000, "concordium_testnet");
+    const result = await getBlockInfo(config, 2000, "concordium_testnet");
 
     // THEN
     expect(getBlocksAtHeightMock).toHaveBeenCalledTimes(1);
-    expect(getBlocksAtHeightMock).toHaveBeenCalledWith("concordium_testnet", 2000);
-    expect(getBlockInfoByHashMock).toHaveBeenCalledWith("concordium_testnet", "abc123");
-    expect(getBlockInfoByHashMock).toHaveBeenCalledWith("concordium_testnet", "parent123");
+    expect(getBlocksAtHeightMock).toHaveBeenCalledWith(config, "concordium_testnet", 2000);
+    expect(getBlockInfoByHashMock).toHaveBeenCalledWith(config, "concordium_testnet", "abc123");
+    expect(getBlockInfoByHashMock).toHaveBeenCalledWith(config, "concordium_testnet", "parent123");
     expect(result).toEqual({
       height: 2000,
       hash: "abc123",
@@ -57,7 +60,7 @@ describe("getBlockInfo", () => {
     });
 
     // WHEN
-    const result = await getBlockInfo(0, "concordium_testnet");
+    const result = await getBlockInfo(config, 0, "concordium_testnet");
 
     // THEN
     expect(getBlockInfoByHashMock).toHaveBeenCalledTimes(1);
@@ -69,7 +72,7 @@ describe("getBlockInfo", () => {
     getBlocksAtHeightMock.mockResolvedValue([]);
 
     // WHEN / THEN
-    await expect(getBlockInfo(9999, "concordium_testnet")).rejects.toThrow(
+    await expect(getBlockInfo(config, 9999, "concordium_testnet")).rejects.toThrow(
       "No blocks found at height 9999",
     );
   });

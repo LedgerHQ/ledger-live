@@ -2,7 +2,6 @@ import { BigNumber } from "bignumber.js";
 import { ethers } from "ethers";
 import type { StakingContractConfig, StakingOperation } from "../types/staking";
 import { USEI_TO_EVM_SCALE } from "../utils";
-import { getCoinConfig } from "../config";
 import { withApi } from "../network/node/rpc.common";
 import { isExternalNodeConfig } from "../network/node/types";
 import { getValidatorAddressById } from "./validators/monadResolver";
@@ -88,10 +87,10 @@ export const STAKING_CONTRACTS: Record<string, StakingContractConfig> = {
     // Reserve 0.1 SEI (≈ 830k gas at 120 gwei) so that fee spikes between
     // prepareTransaction and broadcast do not cause the staking precompile to revert.
     delegationMaxAmountReserve: 10n ** 17n, // 0.1 SEI in wei (10^17)
-    resolveValidatorAddress: async d => {
+    resolveValidatorAddress: async (_config, d) => {
       return typeof d[0] === "string" ? d[0] : null;
     },
-    resolveOperationAmount: async (decoded, operationType) => {
+    resolveOperationAmount: async (_config, decoded, operationType) => {
       switch (operationType) {
         case "undelegate": {
           const raw = decoded[1];
@@ -116,10 +115,10 @@ export const STAKING_CONTRACTS: Record<string, StakingContractConfig> = {
       getStakedBalance: "getAccountTotalLockedGold",
       getUnstakedBalance: "getTotalPendingWithdrawals",
     },
-    resolveValidatorAddress: async d => {
+    resolveValidatorAddress: async (_config, d) => {
       return typeof d[0] === "string" ? d[0] : null;
     },
-    resolveOperationAmount: async (decoded, operationType) => {
+    resolveOperationAmount: async (_config, decoded, operationType) => {
       switch (operationType) {
         case "undelegate": {
           const raw = decoded[1];
@@ -183,12 +182,12 @@ export const STAKING_CONTRACTS: Record<string, StakingContractConfig> = {
     // Including the delegation-queue delay (1–2 epochs), the maximum wait is ~3 epochs ≈ 17 h.
     // Source: https://docs.monad.xyz/monad-arch/consensus/staking (WITHDRAWAL_DELAY constant)
     unbondingPeriodDays: 0.75,
-    resolveValidatorAddress: d => {
+    resolveValidatorAddress: (config, d, _contractAddress) => {
       return typeof d[0] === "bigint"
-        ? getValidatorAddressById("monad", d[0])
+        ? getValidatorAddressById(config, "monad", d[0])
         : Promise.resolve(null);
     },
-    resolveOperationAmount: async (decoded, operationType) => {
+    resolveOperationAmount: async (_config, decoded, operationType) => {
       switch (operationType) {
         case "undelegate": {
           const raw = decoded[1];
@@ -229,19 +228,20 @@ export const STAKING_CONTRACTS: Record<string, StakingContractConfig> = {
     explorerConfig: {
       validatorUrl: "https://explorer.0g.ai/mainnet/validators/$address/delegators",
     },
-    resolveValidatorAddress: async (_, contractAddress) => {
+    resolveValidatorAddress: async (_config, _, contractAddress) => {
       return contractAddress ? ethers.getAddress(contractAddress) : null;
     },
-    resolveOperationAmount: async (decoded, operationType, currency, contractAddress) => {
+    resolveOperationAmount: async (config, decoded, operationType, currencyId, contractAddress) => {
       switch (operationType) {
         case "undelegate": {
           const shares = decoded[1];
           if (typeof shares !== "bigint") return null;
-          const node = getCoinConfig(currency.id).info.node;
+          const node = config.node;
           if (!isExternalNodeConfig(node)) return null;
           try {
             return await withApi(
-              currency,
+              config,
+              currencyId,
               async provider => {
                 const iface = new ethers.Interface([
                   "function convertToTokens(uint256 shares) view returns (uint256)",
@@ -290,10 +290,10 @@ export const STAKING_CONTRACTS: Record<string, StakingContractConfig> = {
     delegationMaxAmountReserve: 10n ** 17n,
     // Somnia dashboard indexes delegations off-chain; new delegations can take up to 5 minutes to appear on the delegation board.
     delegationVisibilityDelayMinutes: 5,
-    resolveValidatorAddress: async parameters => {
+    resolveValidatorAddress: async (_config, parameters) => {
       return typeof parameters[0] === "string" ? parameters[0] : null;
     },
-    resolveOperationAmount: async (decoded, operationType) => {
+    resolveOperationAmount: async (_config, decoded, operationType) => {
       switch (operationType) {
         case "undelegate": {
           const raw = decoded[1];

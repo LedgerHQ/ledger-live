@@ -130,7 +130,6 @@ jest.mock("src/renderer/analytics/segment", () => ({
   start: jest.fn(),
   track: jest.fn(),
   trackPage: jest.fn(),
-  useTrack: jest.fn(),
   updateIdentify: jest.fn().mockResolvedValue(undefined),
 }));
 

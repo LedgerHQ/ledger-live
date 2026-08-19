@@ -5,6 +5,7 @@ export const SEND_FLOW_STEP_ORDER: readonly SendFlowStep[] = [
   SEND_FLOW_STEP.RECIPIENT,
   SEND_FLOW_STEP.AMOUNT,
   SEND_FLOW_STEP.RECENT_HISTORY,
+  SEND_FLOW_STEP.ADD_CONTACT,
   SEND_FLOW_STEP.CUSTOM_FEES,
   SEND_FLOW_STEP.COIN_CONTROL,
   SEND_FLOW_STEP.SIGNATURE,
@@ -20,6 +21,14 @@ export const SEND_STEP_CONFIGS: Record<SendFlowStep, SendStepConfig> = {
   },
   [SEND_FLOW_STEP.RECENT_HISTORY]: {
     id: SEND_FLOW_STEP.RECENT_HISTORY,
+    canGoBack: true,
+    floating: true,
+    showTitle: false,
+    showAvailable: false,
+    height: "fit",
+  },
+  [SEND_FLOW_STEP.ADD_CONTACT]: {
+    id: SEND_FLOW_STEP.ADD_CONTACT,
     canGoBack: true,
     floating: true,
     showTitle: false,

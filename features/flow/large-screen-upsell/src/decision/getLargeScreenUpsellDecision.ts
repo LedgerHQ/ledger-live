@@ -1,37 +1,10 @@
 import { isCooldownElapsed } from "../internal/isCooldownElapsed";
-import { resolveOnboardingDateForUpsell } from "../internal/legacyOnboardingDate";
+import { getLargeScreenUpsellEligibility } from "./getLargeScreenUpsellEligibility";
 import type {
   LargeScreenUpsellContext,
   LargeScreenUpsellDecision,
   LargeScreenUpsellUserState,
-  NanoDeviceModelId,
 } from "../types";
-
-// Canonical order (same as mobile) so longest-cooldown ties are order-independent.
-const NANO_DEVICE_MODEL_IDS = [
-  "nanoS",
-  "nanoSP",
-  "nanoX",
-] as const satisfies readonly NanoDeviceModelId[];
-
-function selectDeviceModelWithLongestCooldown(
-  deviceModelIds: NanoDeviceModelId[],
-  cooldownDays: LargeScreenUpsellContext["cooldownDays"],
-): { deviceModelId: NanoDeviceModelId; days: number } {
-  const resolveDays = (deviceModelId: NanoDeviceModelId) =>
-    cooldownDays[deviceModelId] ?? cooldownDays.default;
-
-  const seenIds = new Set(deviceModelIds);
-  const orderedDeviceModelIds = NANO_DEVICE_MODEL_IDS.filter(deviceModelId =>
-    seenIds.has(deviceModelId),
-  );
-
-  const deviceModelId = orderedDeviceModelIds.reduce((longestId, candidateId) =>
-    resolveDays(candidateId) > resolveDays(longestId) ? candidateId : longestId,
-  );
-
-  return { deviceModelId, days: resolveDays(deviceModelId) };
-}
 
 export function getLargeScreenUpsellDecision(
   {
@@ -58,40 +31,21 @@ export function getLargeScreenUpsellDecision(
     return { shouldShow: false, reason: "modal_disabled" };
   }
 
-  if (hasSeenTouchscreenDevice) {
-    return { shouldShow: false, reason: "touchscreen_seen" };
-  }
-
-  if (seenNanoModelIds.length === 0) {
-    return { shouldShow: false, reason: "no_nano" };
-  }
-
-  const enabledSeenNanoModelIds = seenNanoModelIds.filter(
-    deviceModelId => audienceModels[deviceModelId],
+  const eligibility = getLargeScreenUpsellEligibility(
+    { seenNanoModelIds, hasSeenTouchscreenDevice, onboardingDate },
+    { audienceModels, cooldownDays, now },
   );
 
-  if (enabledSeenNanoModelIds.length === 0) {
-    return { shouldShow: false, reason: "model_disabled" };
-  }
+  if (!eligibility.isEligible) {
+    if (eligibility.reason === "cooldown") {
+      return { shouldShow: false, reason: "cooldown", deviceModelId: eligibility.deviceModelId };
+    }
 
-  const { deviceModelId, days: resolvedCooldownDays } = selectDeviceModelWithLongestCooldown(
-    enabledSeenNanoModelIds,
-    cooldownDays,
-  );
-  const onboardingDateForEligibility = resolveOnboardingDateForUpsell(onboardingDate);
-
-  if (
-    !isCooldownElapsed({
-      elapsedSinceDate: onboardingDateForEligibility,
-      minimumDays: resolvedCooldownDays,
-      now,
-    })
-  ) {
-    return { shouldShow: false, reason: "cooldown", deviceModelId };
+    return { shouldShow: false, reason: eligibility.reason };
   }
 
   if (
-    frequency.retries >= killThreshold &&
+    frequency.retriesModal >= killThreshold &&
     frequency.lastSeenAt !== null &&
     !isCooldownElapsed({
       elapsedSinceDate: new Date(frequency.lastSeenAt),
@@ -99,8 +53,8 @@ export function getLargeScreenUpsellDecision(
       now,
     })
   ) {
-    return { shouldShow: false, reason: "throttled", deviceModelId };
+    return { shouldShow: false, reason: "throttled", deviceModelId: eligibility.deviceModelId };
   }
 
-  return { shouldShow: true, deviceModelId };
+  return { shouldShow: true, deviceModelId: eligibility.deviceModelId };
 }

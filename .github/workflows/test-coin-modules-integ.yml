@@ -26,26 +26,11 @@ jobs:
       paths: ${{ steps.affected.outputs.paths }}
       coins: ${{ steps.affected.outputs.coins }}
     runs-on: ubuntu-22.04
+    permissions:
+      pull-requests: read
     steps:
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
-        with:
-          ref: develop
-          fetch-depth: 0
-      - name: checkout branch (PR)
-        if: ${{ github.event_name == 'pull_request' }}
-        env:
-          GH_TOKEN: ${{ github.token }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-        run: |
-          gh pr checkout "$PR_NUMBER"
-      - name: checkout branch (not PR)
-        if: ${{ github.event_name != 'pull_request' }}
-        run: |
-          git checkout $GITHUB_SHA
-      - uses: LedgerHQ/ledger-live/tools/actions/live-common-affected@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/live-common-affected@develop
         id: affected
-        with:
-          ref: ${{ github.event_name == 'pull_request' && format('origin/{0}', github.event.pull_request.base.ref) || 'HEAD^' }}
       - name: Force affected on schedule
         id: set-affected
         run: |

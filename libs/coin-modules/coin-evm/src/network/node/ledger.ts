@@ -2,7 +2,6 @@ import { getEnv } from "@ledgerhq/live-env";
 import { makeBatcher } from "@ledgerhq/live-network/batcher/index";
 import { Batcher } from "@ledgerhq/live-network/batcher/types";
 import { log } from "@ledgerhq/logs";
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import axios, { AxiosRequestConfig } from "axios";
 import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
@@ -42,7 +41,7 @@ function makeFetchWithRetries(config: LedgerNodeConfig): LedgerFetch {
   };
 }
 
-function make<F extends (currency: CryptoCurrency, ...args: any[]) => any>(
+function make<F extends (currencyId: string, ...args: any[]) => any>(
   f: (fetch: LedgerFetch, config: LedgerNodeConfig, ...args: Parameters<F>) => ReturnType<F>,
   config: LedgerNodeConfig,
   fetch: LedgerFetch,
@@ -53,7 +52,7 @@ function make<F extends (currency: CryptoCurrency, ...args: any[]) => any>(
 async function getTransaction(
   fetch: LedgerFetch,
   config: LedgerNodeConfig,
-  _currency: CryptoCurrency,
+  _currencyId: string,
   hash: string,
 ): Promise<TransactionInfo> {
   const ledgerTransaction = await fetch<LedgerExplorerOperation>({
@@ -88,7 +87,7 @@ function makeGetTokenBalance(
   config: LedgerNodeConfig,
   fetch: LedgerFetch,
   tokenBalancesBatchersMap: Map<
-    CryptoCurrency,
+    string,
     Batcher<
       {
         address: string;
@@ -98,12 +97,12 @@ function makeGetTokenBalance(
     >
   >,
 ): NodeApi["getTokenBalance"] {
-  return async (currency, address, contractAddress) => {
-    if (!tokenBalancesBatchersMap.has(currency)) {
-      const batcher = makeBatcher(makeGetBatchTokenBalances(config, fetch), { currency });
-      tokenBalancesBatchersMap.set(currency, batcher);
+  return async (currencyId, address, contractAddress) => {
+    if (!tokenBalancesBatchersMap.has(currencyId)) {
+      const batcher = makeBatcher(makeGetBatchTokenBalances(config, fetch), {});
+      tokenBalancesBatchersMap.set(currencyId, batcher);
     }
-    const requestBatcher = tokenBalancesBatchersMap.get(currency)!;
+    const requestBatcher = tokenBalancesBatchersMap.get(currencyId)!;
     return requestBatcher({ address, contract: contractAddress });
   };
 }
@@ -111,7 +110,7 @@ function makeGetTokenBalance(
 async function getCoinBalance(
   fetch: LedgerFetch,
   config: LedgerNodeConfig,
-  _currency: CryptoCurrency,
+  _currencyId: string,
   address: string,
 ): Promise<BigNumber> {
   const { balance } = await fetch<{ address: string; balance: string }>({
@@ -126,7 +125,7 @@ function makeGetBatchTokenBalances(
   fetch: LedgerFetch,
 ): (
   input: { address: string; contract: string }[],
-  params: { currency: CryptoCurrency },
+  _params: Record<string, never>,
 ) => Promise<BigNumber[]> {
   return async (input, _params) => {
     const balances = await fetch<
@@ -147,7 +146,7 @@ function makeGetBatchTokenBalances(
 async function getTransactionCount(
   fetch: LedgerFetch,
   config: LedgerNodeConfig,
-  _currency: CryptoCurrency,
+  _currencyId: string,
   address: string,
 ): Promise<number> {
   const { nonce } = await fetch<{ address: string; nonce: number }>({
@@ -161,7 +160,7 @@ function makeGetGasEstimation(
   config: LedgerNodeConfig,
   fetch: LedgerFetch,
 ): NodeApi["getGasEstimation"] {
-  return async (account, transaction) => {
+  return async (_currencyId, address, transaction) => {
     const { recipient: to, amount: value, data } = transaction;
     try {
       const { estimated_gas_limit: gasEstimation } = await fetch<{
@@ -172,7 +171,7 @@ function makeGetGasEstimation(
         timeout: LEDGER_TIMEOUT,
         url: `${getEnv("EXPLORER")}/blockchain/v4/${config.explorerId}/tx/estimate-gas-limit`,
         data: {
-          from: account.freshAddress,
+          from: address,
           to,
           value: "0x" + (padHexString(value.toString(16)) || "00"),
           data: data ? `0x${padHexString(data.toString("hex"))}` : "0x",
@@ -189,16 +188,13 @@ function makeGetGasEstimation(
 async function getFeeData(
   _fetch: LedgerFetch,
   config: LedgerNodeConfig,
-  currency: CryptoCurrency,
-  transaction: Parameters<NodeApi["getFeeData"]>[1],
+  evmConfig: Parameters<NodeApi["getFeeData"]>[0],
+  currencyId: Parameters<NodeApi["getFeeData"]>[1],
+  transaction: Parameters<NodeApi["getFeeData"]>[2],
 ): Promise<Awaited<ReturnType<NodeApi["getFeeData"]>>> {
   const options = await getGasOptions({
-    currency: {
-      ...currency,
-      ethereumLikeInfo: {
-        ...currency.ethereumLikeInfo!,
-      },
-    },
+    currencyId,
+    config: evmConfig,
     options: {
       useEIP1559: getEnv("EVM_FORCE_LEGACY_TRANSACTIONS") ? false : transaction.type === 2,
       overrideGasTracker: { type: "ledger", explorerId: config.explorerId },
@@ -210,7 +206,7 @@ async function getFeeData(
 async function broadcastTransaction(
   fetch: LedgerFetch,
   config: LedgerNodeConfig,
-  _currency: CryptoCurrency,
+  _currencyId: string,
   signedTxHex: string,
   broadcastConfig?: Parameters<NodeApi["broadcastTransaction"]>[2],
 ): Promise<string> {
@@ -236,7 +232,7 @@ async function broadcastTransaction(
 async function getBlockByHeight(
   fetch: LedgerFetch,
   config: LedgerNodeConfig,
-  _currency: CryptoCurrency,
+  _currencyId: string,
   blockHeight: number | BlockFinalizationTag = "latest",
   _prefetchTxs = false,
 ): Promise<BlockByHeightResult> {
@@ -277,12 +273,12 @@ async function getBlockByHeight(
 async function getOptimismAdditionalFees(
   fetch: LedgerFetch,
   config: LedgerNodeConfig,
-  currency: CryptoCurrency,
+  currencyId: string,
   transaction: string,
 ): Promise<BigNumber> {
   if (
     !["optimism", "optimism_sepolia", "blast", "blast_sepolia", "base", "base_sepolia"].includes(
-      currency.id,
+      currencyId,
     )
   ) {
     return new BigNumber(0);
@@ -327,7 +323,7 @@ type ContractReadResult = {
 async function call(
   fetch: LedgerFetch,
   config: LedgerNodeConfig,
-  _currency: CryptoCurrency,
+  _currencyId: string,
   params: EvmCallParams,
 ): Promise<string> {
   // `contract/read` accepts a decimal block height or a tag ("latest"/"earliest"/"pending"); it
@@ -363,7 +359,7 @@ function makeGetTokenAllowance(
   fetch: LedgerFetch,
 ): NodeApi["getTokenAllowance"] {
   const iface = new ethers.Interface(ERC20Abi as ethers.InterfaceAbi);
-  return async (_currency, ownerAddress, contractAddress, spenderAddress) => {
+  return async (_currencyId, ownerAddress, contractAddress, spenderAddress) => {
     const data = iface.encodeFunctionData("allowance", [
       ethers.getAddress(ownerAddress),
       ethers.getAddress(spenderAddress),
@@ -385,10 +381,10 @@ function makeGetTokenAllowance(
 async function getScrollAdditionalFees(
   fetch: LedgerFetch,
   config: LedgerNodeConfig,
-  currency: CryptoCurrency,
+  currencyId: string,
   transaction: string,
 ): Promise<BigNumber> {
-  if (currency.id !== "scroll") {
+  if (currencyId !== "scroll") {
     return new BigNumber(0);
   }
   if (!transaction) {
@@ -417,7 +413,7 @@ async function getScrollAdditionalFees(
 export function createLedgerNodeApi(config: LedgerNodeConfig): NodeApi {
   const fetch = makeFetchWithRetries(config);
   const tokenBalancesBatchersMap = new Map<
-    CryptoCurrency,
+    string,
     Batcher<{ address: string; contract: string }, BigNumber>
   >();
   return {
@@ -429,7 +425,10 @@ export function createLedgerNodeApi(config: LedgerNodeConfig): NodeApi {
     getTransactionCount: make(getTransactionCount, config, fetch),
     getTransaction: make(getTransaction, config, fetch),
     getGasEstimation: makeGetGasEstimation(config, fetch),
-    getFeeData: make(getFeeData, config, fetch),
+    // getFeeData takes `config` (EvmConfigInfo) first, not `currency`, so it doesn't fit the
+    // currency-first `make` type bound; bind it directly (same fetch/config passthrough as `make`).
+    getFeeData: ((...args: Parameters<NodeApi["getFeeData"]>) =>
+      getFeeData(fetch, config, ...args)) as NodeApi["getFeeData"],
     broadcastTransaction: make(broadcastTransaction, config, fetch),
     getOptimismAdditionalFees: make(getOptimismAdditionalFees, config, fetch),
     getScrollAdditionalFees: make(getScrollAdditionalFees, config, fetch),

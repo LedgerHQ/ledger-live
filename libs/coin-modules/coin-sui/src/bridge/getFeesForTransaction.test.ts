@@ -1,12 +1,13 @@
 import { BigNumber } from "bignumber.js";
 import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
+import coinConfig from "../config";
 import getEstimatedFees from "./getFeesForTransaction";
 
 const estimateFees = jest.fn();
 
 jest.mock("../logic", () => {
   return {
-    estimateFees: (arg: any) => estimateFees(arg),
+    estimateFees: (config: any, arg: any) => estimateFees(config, arg),
   };
 });
 
@@ -15,6 +16,7 @@ describe("getEstimatedFees", () => {
 
   beforeEach(() => {
     estimateFees.mockClear();
+    coinConfig.setCoinConfig(() => ({}) as never);
   });
 
   it("returns fees estimation by sui sdk", async () => {
@@ -54,7 +56,7 @@ describe("getEstimatedFees", () => {
 
     // THEN
     expect(estimateFees).toHaveBeenCalledTimes(1);
-    expect(estimateFees.mock.lastCall[0]).toMatchObject({
+    expect(estimateFees.mock.lastCall[1]).toMatchObject({
       type: "undelegate",
       intentType: "staking",
       stakedSuiId,
@@ -72,7 +74,7 @@ describe("getEstimatedFees", () => {
     await getEstimatedFees({ account, transaction: sendTransaction });
 
     // THEN
-    const args = estimateFees.mock.lastCall[0];
+    const args = estimateFees.mock.lastCall[1];
     expect("stakedSuiId" in args).toBe(false);
   });
 });

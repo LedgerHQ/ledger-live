@@ -2,11 +2,10 @@ import { ethers, type JsonRpcProvider } from "ethers";
 import network from "@ledgerhq/live-network";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import { log } from "@ledgerhq/logs";
-import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import type { Page } from "@ledgerhq/coin-module-framework/api/index";
 import type { AssetInfo, Stake, Validator } from "@ledgerhq/coin-module-framework/api/types";
-import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
-import { getCoinConfig } from "../../config";
+import type { EvmConfigInfo } from "../../config";
+import { evmUnit } from "../../logic/evmUnit";
 import { withApi } from "../../network/node/rpc.common";
 import { isExternalNodeConfig } from "../../network/node/types";
 import type { StakingContractConfig } from "../../types/staking";
@@ -57,26 +56,26 @@ function isDelegationInfoRaw(value: unknown): value is DelegationInfoRaw {
 }
 
 type ResolvedContext = {
-  currency: CryptoCurrency;
   abi: ethers.InterfaceAbi;
   node: { type: "external"; uri: string; retries?: number };
   contractAddress: string;
 };
 
-const resolveContext = (currencyId: string): ResolvedContext | undefined => {
+const resolveContext = (
+  evmConfig: EvmConfigInfo,
+  currencyId: string,
+): ResolvedContext | undefined => {
   const config = STAKING_CONTRACTS[currencyId];
   if (!config) return undefined;
 
   const abi = getStakingABI(currencyId);
   if (!abi) return undefined;
 
-  const node = getCoinConfig(currencyId).info.node;
+  const node = evmConfig.node;
   if (!isExternalNodeConfig(node)) return undefined;
 
   try {
-    const currency = getCryptoCurrencyById(currencyId);
     return {
-      currency,
       abi: abi as ethers.InterfaceAbi,
       node,
       contractAddress: config.contractAddress(),
@@ -181,13 +180,17 @@ const fetchValidatorDetails = async (
   return items;
 };
 
-const fetchValidators = async (currencyId: string): Promise<Page<Validator>> => {
-  const ctx = resolveContext(currencyId);
+const fetchValidators = async (
+  evmConfig: EvmConfigInfo,
+  currencyId: string,
+): Promise<Page<Validator>> => {
+  const ctx = resolveContext(evmConfig, currencyId);
   if (!ctx) return { items: [], next: undefined };
 
   try {
     return await withApi(
-      ctx.currency,
+      evmConfig,
+      currencyId,
       async provider => {
         const iface = new ethers.Interface(ctx.abi);
         const data = iface.encodeFunctionData("getCommitteeValidators", []);
@@ -278,16 +281,18 @@ const toStake = (
 };
 
 export const fetchSomniaStakes = async (
+  evmConfig: EvmConfigInfo,
   address: string,
   _config: StakingContractConfig,
-  currency: CryptoCurrency,
+  currencyId: string,
 ): Promise<Stake[]> => {
-  const ctx = resolveContext(currency.id);
+  const ctx = resolveContext(evmConfig, currencyId);
   if (!ctx) return [];
 
   try {
     return await withApi(
-      ctx.currency,
+      evmConfig,
+      currencyId,
       async provider => {
         const iface = new ethers.Interface(ctx.abi);
 
@@ -304,12 +309,12 @@ export const fetchSomniaStakes = async (
 
         // Display-name overlay, keyed by lowercased operator address. Best-effort: on failure
         // the delegation still shows, falling back to the raw address as its name.
-        const names = await validatorNamesCache(currency.id).catch(() => ({}) as ValidatorNamesMap);
+        const names = await validatorNamesCache(currencyId).catch(() => ({}) as ValidatorNamesMap);
 
         const asset: AssetInfo = {
           type: "native",
-          name: ctx.currency.name,
-          unit: ctx.currency.units[0],
+          name: evmConfig.name,
+          unit: evmUnit[currencyId],
         };
         const stakes: Stake[] = [];
 
@@ -362,7 +367,7 @@ export const fetchSomniaStakes = async (
     );
   } catch (error) {
     log("coin-evm/staking", "fetchSomniaStakes: delegations fetch failed", {
-      currencyId: currency.id,
+      currencyId,
       error: error instanceof Error ? error.message : String(error),
     });
     return [];

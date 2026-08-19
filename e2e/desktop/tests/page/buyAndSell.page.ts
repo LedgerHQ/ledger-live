@@ -42,6 +42,8 @@ export class BuyAndSellPage extends WebViewAppPage {
   private fiatDrawerInput = "fiat-drawer-search-input";
   private saveRegionFiatOptionsSelector = "save-region-and-fiat-options";
   private showMoreQuotes = "SHOW MORE QUOTES";
+  private amountInputError = "amount-input-section-error";
+  private maxAmountButton = "max";
   private providerTitleCssSelector =
     "[data-testid^='provider_title_'][data-testid$='_title_container']";
 
@@ -72,7 +74,7 @@ export class BuyAndSellPage extends WebViewAppPage {
 
   @step("Expect Buy / Sell screen to be visible")
   async verifyBuySellScreenIsVisible() {
-    await this.verifyElementIsVisible(this.navigationTabs);
+    await this.waitForWebviewReady(this.navigationTabs);
   }
 
   @step("Expect $0 tab to be selected")
@@ -98,7 +100,7 @@ export class BuyAndSellPage extends WebViewAppPage {
 
   @step("Choose crypto asset if not selected")
   async chooseAssetIfNotSelected(account: AccountType) {
-    await this.waitForCryptoSelectorReady();
+    await this.waitForWebviewReady(this.cryptoCurrencySelector);
     if (await this.isCorrectAssetAlreadySelected(account)) return;
     await this.clickElement(this.cryptoCurrencySelector);
     await this.selectAssetInDrawer(account);
@@ -106,28 +108,41 @@ export class BuyAndSellPage extends WebViewAppPage {
 
   /**
    * Workaround: PTX Buy/Sell web app can remain stuck loading; reload the webview and retry.
-   * Mirrors the recovery used in borrow.page.ts.
+   * Mirrors the recovery used in borrow.page.ts. Used to guard every entry point that lands
+   * on the Buy/Sell webview, not just the crypto selector step.
    */
   @step("Wait for the Buy/Sell web app to finish loading")
-  private async waitForCryptoSelectorReady() {
+  private async waitForWebviewReady(testId: string) {
     const readyTimeout = 30_000;
     const maxReloads = 2;
-    const webview = await this.getWebView();
-    const selector = webview.getByTestId(this.cryptoCurrencySelector);
 
     for (let attempt = 0; ; attempt++) {
+      // Re-fetch the webview on every attempt: it can be torn down and recreated
+      // while we wait, and reloading a stale handle throws
+      // "Target page, context or browser has been closed".
+      const webview = await this.getWebView();
+      const selector = webview.getByTestId(testId);
       try {
         await expect(selector).toBeVisible({ timeout: readyTimeout });
         return;
       } catch (error) {
         if (attempt >= maxReloads) {
           throw new Error(
-            `Buy/Sell web app did not render the crypto selector "${this.cryptoCurrencySelector}" ` +
-              `after ${maxReloads + 1} attempts — webview stuck loading.`,
+            `Buy/Sell web app did not render "${testId}" after ${maxReloads + 1} attempts — ` +
+              `webview stuck loading.`,
             { cause: error },
           );
         }
-        await webview.reload({ timeout: readyTimeout, waitUntil: "domcontentloaded" });
+        // The webview can also be torn down/recreated during the toBeVisible() wait above,
+        // so re-fetch it again right before reloading, and tolerate a reload failure caused
+        // by that same race — the next iteration re-fetches and re-checks instead of
+        // aborting the whole retry loop.
+        try {
+          const freshWebview = await this.getWebView();
+          await freshWebview.reload({ timeout: readyTimeout, waitUntil: "domcontentloaded" });
+        } catch {
+          // Ignore: target likely closed mid-wait; next attempt re-resolves the webview.
+        }
       }
     }
   }
@@ -222,8 +237,9 @@ export class BuyAndSellPage extends WebViewAppPage {
     await this.verifyElementText(this.infoBox, "Sell securely with Ledger");
   }
 
+  // Falls back to the max sellable balance if the requested amount exceeds it.
   @step("Enter amount to pay $0")
-  async setAmountToPay(amount: string, operation: string) {
+  async setAmountToPay(amount: string, operation: string): Promise<string> {
     await this.setValue(this.amountInputSection, amount);
 
     await this.verifyElementText(
@@ -231,8 +247,30 @@ export class BuyAndSellPage extends WebViewAppPage {
       operation === OperationType.Buy ? "Select quote to continue" : "Set an amount to get quotes",
     );
     await this.verifyElementIsNotEnabled(this.formCta);
+
+    let balanceTooLow = false;
+    if (operation === OperationType.Sell) {
+      try {
+        await this.verifyElementIsVisible(this.amountInputError, 2000);
+        balanceTooLow = true;
+      } catch {
+        // No error shown — balance covers the requested amount.
+      }
+    }
+    if (balanceTooLow) {
+      await this.clickElement(this.maxAmountButton);
+    }
+
     await this.verifyElementIsVisible(this.paymentSelector);
+    const finalAmount = await (
+      await this.getWebViewElementByTestId(this.amountInputSection)
+    ).inputValue();
+    // Max must have lowered the amount; guards against a click that silently did nothing.
+    if (balanceTooLow) {
+      expect(Number(finalAmount)).toBeLessThan(Number(amount));
+    }
     await this.verifyElementIsVisible(this.providersList);
+    return finalAmount;
   }
 
   @step("Select provider quote")

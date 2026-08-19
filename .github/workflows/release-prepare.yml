@@ -107,7 +107,11 @@ jobs:
     with:
       ref: main
       caller: release-prepare
-    secrets: inherit
+    secrets:
+      GH_BOT_APP_ID: ${{ secrets.GH_BOT_APP_ID }}
+      GH_BOT_PRIVATE_KEY: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+      NPMJS_TOKEN: ${{ secrets.NPMJS_TOKEN }}
+      SLACK_BOT_USER_OAUTH_ACCESS_TOKEN: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
 
   release-fail:
     name: "Prepare Release > Failure Reporting"

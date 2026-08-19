@@ -15,7 +15,7 @@ describe("combine", () => {
   it("attaches the device signature to the matching input and returns the signed tx JSON", () => {
     const signature = "b".repeat(128);
 
-    const signed = combine(unsignedTx(), JSON.stringify([signature]));
+    const signed = combine(unsignedTx(), [signature]);
     const parsed = JSON.parse(signed);
 
     expect(parsed.transaction.inputs).toHaveLength(1);
@@ -31,7 +31,7 @@ describe("combine", () => {
       ],
     });
 
-    const signed = combine(tx, JSON.stringify(["c".repeat(128)]));
+    const signed = combine(tx, ["c".repeat(128)]);
     const parsed = JSON.parse(signed);
 
     expect(parsed.transaction.outputs).toEqual([
@@ -54,7 +54,7 @@ describe("combine", () => {
       ],
     });
 
-    expect(() => combine(tx, JSON.stringify(["only-one-signature"]))).toThrow(
+    expect(() => combine(tx, ["only-one-signature"])).toThrow(
       "kaspa: combine expected 2 signature(s), got 1",
     );
   });

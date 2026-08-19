@@ -21,13 +21,20 @@ export function getTransparentBalance(
 }
 
 /**
- * Private (shielded) balance = the Ironwood pool only.
+ * Private (shielded) balance = the whole Ironwood pool, mature and immature
+ * notes alike.
  *
  * Ironwood is the only shielded pool that can be spent from the send flow; the
  * Orchard and Sapling pools are deprecated and their send flows are gone. They
- * are deliberately excluded so this value matches the spendable "Private
- * balance" shown in the send modal (see ZcashTransferFromSelector) instead of
- * exceeding it by any residual Orchard/Sapling notes.
+ * are deliberately excluded so this value stays close to the account's
+ * spendable Private funds, without exceeding them by any residual
+ * Orchard/Sapling notes.
+ *
+ * This is the account's **total** private balance, not what the send modal
+ * offers as spendable -- a note fresh enough to still be maturing counts here
+ * but is excluded from selection (see `getSpendableIronwoodBalance` in
+ * `logic/account/spendability`), which is the figure the send flow shows as
+ * spendable.
  *
  * Operations are not restricted the same way: they carry the real amount moved
  * in every pool (see `convertShieldedTransactionsToOperations`), so for an

@@ -4,7 +4,7 @@ import type {
   Operation,
   ListOperationsOptions,
 } from "@ledgerhq/coin-module-framework/api/types";
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import type { EvmContext } from "../config";
 import { getExplorerApi } from "../network/explorer";
 
 // the sort parameter has a double meaning:
@@ -39,11 +39,13 @@ function typeFromAddressPerspective(
 }
 
 export async function listOperations(
-  currency: CryptoCurrency,
+  context: EvmContext,
+  currencyId: string,
   address: string,
   options: ListOperationsOptions,
 ): Promise<Page<Operation<MemoNotSupported>>> {
-  const explorerApi = getExplorerApi(currency);
+  const config = await context.config(currencyId);
+  const explorerApi = getExplorerApi(config, currencyId);
   const explorerOrder = options.limit === undefined ? "desc" : (options.order ?? "desc");
   const {
     lastCoinOperations,
@@ -52,7 +54,8 @@ export async function listOperations(
     lastInternalOperations,
     nextPagingToken,
   } = await explorerApi.getOperations(
-    currency,
+    config,
+    currencyId,
     address,
     options.minHeight,
     undefined,
@@ -122,6 +125,7 @@ export async function listOperations(
       },
       details: {
         ...(op.details ?? {}),
+        sequence: op.details?.sequence ?? parent.details?.sequence,
         parentSenders: parent.senders,
         parentRecipients: parent.recipients,
         ...parentContractDetails,

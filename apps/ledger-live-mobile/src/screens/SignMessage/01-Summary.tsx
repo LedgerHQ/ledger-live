@@ -1,4 +1,4 @@
-import { getMessageProperties } from "@ledgerhq/coin-evm/logic";
+import { getMessageProperties } from "@ledgerhq/live-common/families/evm/utils";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import type { MessageProperties } from "@ledgerhq/types-live";
 import invariant from "invariant";

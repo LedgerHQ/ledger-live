@@ -8,10 +8,16 @@ export type ContactDetailAddressRowIntent = Readonly<{
   addressId: ContactAddressId;
 }>;
 
+export type ContactDetailEditSignerValidationLookup = Readonly<{
+  contactId: ContactId;
+  addressId: ContactAddressId;
+}>;
+
 export type ContactDetailEditIntent = Readonly<{
   type: "edit-contact";
   contactId: ContactId;
   editRequirement: ContactEditRequirement;
+  signerValidationLookup?: ContactDetailEditSignerValidationLookup;
 }>;
 
 export type ContactDetailLedgerWalletAccountsIntent = Readonly<{
@@ -135,7 +141,6 @@ export type ContactAddressDetailDeleteIntent = Readonly<{
   type: "delete-address";
   contactId: ContactId;
   addressId: ContactAddressId;
-  deleteRequirement: ContactEditRequirement;
 }>;
 
 export type ContactAddressDeleteLifecycle =
@@ -150,5 +155,4 @@ export type ContactAddressDetailActionsViewModel = Readonly<{
   deleteIntent: ContactAddressDetailDeleteIntent;
   deleteLifecycle: ContactAddressDeleteLifecycle;
   isSignerRequiredForEdit: boolean;
-  isSignerRequiredForDelete: boolean;
 }>;

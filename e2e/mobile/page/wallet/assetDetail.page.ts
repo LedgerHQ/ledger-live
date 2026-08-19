@@ -1,7 +1,6 @@
 import { Step } from "jest-allure2-reporter/api";
 import { delay, normalizeText, parseTickerAmount } from "../../helpers/commonHelpers";
 import {
-  DEFAULT_TIMEOUT,
   QUICK_VISIBILITY_PROBE_TIMEOUT,
   VISIBILITY_PROBE_TIMEOUT,
 } from "../../helpers/elementHelpers";
@@ -78,10 +77,8 @@ export default class AssetDetailPage {
   private async scrollToAddressItem(accountId: string) {
     await this.scrollToAddressesSection();
     const scrollViewId = await this.getScrollViewId();
-    await scrollToId(this.addressItemNameId(accountId), scrollViewId, 700, "down");
-    await waitForElementById(this.addressItemNameId(accountId), DEFAULT_TIMEOUT, {
-      checkVisibility: false,
-    });
+    await scrollToId(this.addressItemNameId(accountId), scrollViewId);
+    await detoxExpect(getElementById(this.addressItemNameId(accountId))).toBeVisible();
   }
 
   private async openCoinOptions() {
@@ -102,7 +99,7 @@ export default class AssetDetailPage {
   @Step("Expect Asset Detail page for ticker")
   async expectAssetDetailPageForTicker(ticker: string) {
     const scrollViewId = await this.getScrollViewId();
-    await scrollToId(this.marketPriceId, scrollViewId, 1200, "up");
+    await scrollToId(this.marketPriceId, scrollViewId, undefined, "up");
     await waitForElementById(this.marketPriceId);
     await waitForElementById(this.coinOptionsTrailingId);
     await detoxExpect(getElementById(this.coinCapsuleIconId(ticker))).toBeVisible();
@@ -132,7 +129,7 @@ export default class AssetDetailPage {
   @Step("Expect Asset Detail market data")
   async expectMarketDataVisible() {
     const scrollViewId = await this.getScrollViewId();
-    await scrollToId(this.marketPriceId, scrollViewId, 1200, "up");
+    await scrollToId(this.marketPriceId, scrollViewId, undefined, "up");
     await waitForElementById(this.marketPriceId);
     await detoxExpect(getElementById(this.marketPriceId)).toBeVisible();
     await detoxExpect(getElementById(this.marketVariationId)).toBeVisible();
@@ -234,10 +231,7 @@ export default class AssetDetailPage {
   async openFirstTransaction(ticker: string) {
     await this.scrollToTransactions();
     const scrollViewId = await this.getScrollViewId();
-    await scrollToId(this.operationsListItemId, scrollViewId, 300, "down");
-    // Extra "slack" scroll so the first operation is centered and not stuck behind the
-    // sticky Buy/Swap footer, which would otherwise intercept the tap on Android.
-    await scrollByPixels(scrollViewId, 200, "down");
+    await revealForTap(this.operationsListItemId, { container: scrollViewId });
     await detoxExpect(this.operationByTicker(ticker).atIndex(0)).toBeVisible();
     await this.tapTransactionUntilOperationDetailsOpen();
   }

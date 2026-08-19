@@ -1,3 +1,4 @@
+import { mockNearContext } from "../../test/context";
 import { BigNumber } from "bignumber.js";
 import { getStakingPositions } from "../../network";
 import type { NearStakingPosition } from "../../network/sdk.types";
@@ -97,9 +98,9 @@ describe("getStakes", () => {
       stakingPositions: [position({ staked: ABOVE_THRESHOLD })],
     });
 
-    const page = await getStakes(ADDRESS);
+    const page = await getStakes(mockNearContext, ADDRESS);
 
-    expect(getStakingPositions).toHaveBeenCalledWith(ADDRESS);
+    expect(getStakingPositions).toHaveBeenCalledWith(expect.anything(), ADDRESS);
     expect(page.items).toHaveLength(1);
     expect(page.next).toBeUndefined();
   });
@@ -107,6 +108,9 @@ describe("getStakes", () => {
   it("returns an empty page for an account with no delegations", async () => {
     (getStakingPositions as jest.Mock).mockResolvedValue({ stakingPositions: [] });
 
-    await expect(getStakes(ADDRESS)).resolves.toEqual({ items: [], next: undefined });
+    await expect(getStakes(mockNearContext, ADDRESS)).resolves.toEqual({
+      items: [],
+      next: undefined,
+    });
   });
 });

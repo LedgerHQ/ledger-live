@@ -217,8 +217,8 @@ for (const sellAsset of sellAssets) {
         await app.buyAndSell.changeRegionAndCurrency(fiat);
         await app.buyAndSell.verifyFiatAssetSelector(fiat.currencyTicker);
         const amount = await getMinimumSellAmount(crypto.currency.id);
-        const buySell = { ...sellAsset.buySell, amount };
-        await app.buyAndSell.setAmountToPay(amount, operation);
+        const actualAmount = await app.buyAndSell.setAmountToPay(amount, operation);
+        const buySell = { ...sellAsset.buySell, amount: actualAmount };
         const provider = await app.buyAndSell.selectRotatingProvider(operation);
         await app.buyAndSell.selectQuote();
         await app.buyAndSell.verifyProviderUrl(provider, buySell, userdataDestinationPath);

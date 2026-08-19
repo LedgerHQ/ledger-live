@@ -355,21 +355,6 @@ describe("Contacts integration", () => {
     expect(screen.getByTestId("contacts-list")).toBeVisible();
   });
 
-  it("should defer the feature introduction on Maybe later without persisting dismissal", async () => {
-    mockNavigate.mockClear();
-
-    const { user, store } = renderContactsScreen({
-      settings: { hasDismissedContactsFeatureIntroduction: false },
-    });
-
-    expect(screen.getByTestId("contacts-feature-introduction-dialog")).toBeVisible();
-
-    await user.click(screen.getByTestId("contacts-feature-introduction-secondary"));
-
-    expect(mockNavigate).toHaveBeenCalledWith(-1);
-    expect(store.getState().settings.hasDismissedContactsFeatureIntroduction).toBe(false);
-  });
-
   it("should render populated Me detail on load when populated contacts are persisted", () => {
     renderContactsScreen(populatedContactsPageState);
 
@@ -917,7 +902,7 @@ describe("Contacts integration", () => {
     expect(screen.queryByTestId("contacts-address-detail-dialog")).not.toBeInTheDocument();
   });
 
-  it("should open the signer dialog before deleting an address", async () => {
+  it("should open the delete dialog without requiring a device connection", async () => {
     const { user } = renderContactsScreen(populatedContactsPageState);
 
     await user.click(screen.getByTestId("contacts-saved-row-contact-ben"));
@@ -925,15 +910,8 @@ describe("Contacts integration", () => {
     await user.click(screen.getByTestId("contacts-address-detail-delete"));
 
     expect(screen.queryByTestId("contacts-address-detail-dialog")).not.toBeInTheDocument();
-    expect(screen.getByTestId("contacts-edit-signer-dialog")).toBeVisible();
-    expect(screen.queryByTestId("contacts-delete-address-dialog")).not.toBeInTheDocument();
-
-    await user.click(screen.getByTestId("contacts-edit-signer-confirm"));
-
-    await waitFor(() => {
-      expect(screen.queryByTestId("contacts-edit-signer-dialog")).not.toBeInTheDocument();
-      expect(screen.getByTestId("contacts-delete-address-dialog")).toBeVisible();
-    });
+    expect(screen.getByTestId("contacts-delete-address-dialog")).toBeVisible();
+    expect(screen.queryByTestId("contacts-edit-signer-dialog")).not.toBeInTheDocument();
   });
 
   it("should delete an address and close the address detail dialog", async () => {
@@ -942,11 +920,8 @@ describe("Contacts integration", () => {
     await user.click(screen.getByTestId("contacts-saved-row-contact-ben"));
     await user.click(screen.getByTestId("contacts-detail-address-row-address-ethereum"));
     await user.click(screen.getByTestId("contacts-address-detail-delete"));
-    await user.click(screen.getByTestId("contacts-edit-signer-confirm"));
 
-    await waitFor(() => {
-      expect(screen.getByTestId("contacts-delete-address-dialog")).toBeVisible();
-    });
+    expect(screen.getByTestId("contacts-delete-address-dialog")).toBeVisible();
 
     await user.click(screen.getByTestId("contacts-delete-address-confirm"));
 

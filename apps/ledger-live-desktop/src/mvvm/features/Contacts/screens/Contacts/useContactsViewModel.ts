@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState, type ChangeEvent } from "react";
+import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 import { urls } from "~/config/urls";
@@ -14,25 +15,35 @@ import {
   type ContactId,
 } from "@domain/entity-contact";
 import {
-  CONTACTS_FEATURE_INTRODUCTION_HIGHLIGHTS,
   createContactsListViewModel,
   createContactsSearchViewModel,
-  resolveContactsLedgerSyncIntroductionOpen,
   useAddAddressCurrencySelectionViewModel,
   useAddAddressFlowViewModel,
-  useContactsFeatureIntroductionState,
   useContactsMeContact,
   type AddAddressContact,
   type AddAddressFlowState,
   type ContactsAddAddressEntryLabels,
   type ContactsAddAddressNameLabels,
   type ContactAddressDetailDialogProps,
-  type ContactsLedgerSyncStatus,
   type ContactsListViewLabels,
   type ContactsViewProps,
+  CONTACTS_EVENT_SOURCE,
+  CONTACTS_FLOW,
+  CONTACTS_PAGE_PROPERTY,
+  CONTACTS_TRACK_EVENTS,
+  CONTACTS_TRACKING_BUTTON,
+  useContactsListPageAnalytics,
+  trackContactsLedgerSyncDismiss,
 } from "@features/flow-contacts";
-import { useContacts } from "@features/platform-contacts";
+import {
+  CONTACTS_FEATURE_INTRODUCTION_HIGHLIGHTS,
+  resolveContactsLedgerSyncIntroductionOpen,
+  useContactsFeatureIntroductionState,
+  type ContactsLedgerSyncStatus,
+} from "@features/flow-contacts-introduction";
+import { createMockContactDeviceIntentsPort, useContacts } from "@features/platform-contacts";
 import { MY_WALLET_AVATAR_USER_URL } from "LLD/features/MyWallet/components/UserAvatar/constants";
+import { useContactsAnalytics, resolveContactsCurrencyAnalytics } from "../../analytics";
 import { useContactsFeatureIntroductionPreference } from "../../hooks/useContactsFeatureIntroductionPreference";
 import { useContactsCurrencySelectionAdapter } from "../../hooks/useContactsCurrencySelectionAdapter";
 import { useContactsAddressValidationAdapter } from "../../hooks/useContactsAddressValidationAdapter";
@@ -59,6 +70,7 @@ export function useContactsViewModel(): ContactsPageViewModel {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const analytics = useContactsAnalytics();
   const helpCenterUrl = useLocalizedUrl(urls.helpModal.helpCenter);
   const handleSanctionedAddressLearnMore = useCallback(() => {
     openURL(helpCenterUrl);
@@ -66,6 +78,7 @@ export function useContactsViewModel(): ContactsPageViewModel {
   const [searchQuery, setSearchQuery] = useState("");
   const meContact = useContactsMeContact();
   const contacts = useContacts();
+  const deviceIntents = useMemo(() => createMockContactDeviceIntentsPort(), []);
   const currencySelection = useContactsCurrencySelectionAdapter();
   const { cancelCurrencySelection } = currencySelection;
   const addressValidation = useContactsAddressValidationAdapter();
@@ -86,21 +99,69 @@ export function useContactsViewModel(): ContactsPageViewModel {
     completeMockConfirmation,
     close: closeAddAddress,
   } = useAddAddressFlowViewModel({ addressValidation });
-  const saveAddressFromReview = useCallback(() => {
+  const saveAddressFromReview = useCallback(async () => {
     if (addAddressFlowState.status !== "reviewingAddress") {
       return;
     }
+
+    const { network, asset } = await resolveContactsCurrencyAnalytics(
+      addAddressFlowState.selectedCurrencyId,
+      {
+        findTokenById: currencyId => getCryptoAssetsStore().findTokenById(currencyId),
+      },
+    );
+    const inputMethod = addAddressFlowState.addressEntry.inputMethod ?? "manual";
+
+    analytics.trackEvent(CONTACTS_TRACK_EVENTS.BUTTON_CLICKED, {
+      source: CONTACTS_EVENT_SOURCE.ADD_ADDRESS,
+      button: CONTACTS_TRACKING_BUTTON.saveAddress,
+      page: CONTACTS_PAGE_PROPERTY.CONTACT_DETAIL,
+      network,
+      asset,
+      inputMethod,
+      flow: CONTACTS_FLOW.CONTACTS,
+    });
+
+    const selectedContact = contacts.find(
+      contact => contact.id === addAddressFlowState.selectedContactId,
+    );
+    if (selectedContact === undefined) {
+      return;
+    }
+    const signedAddress = await deviceIntents.registerExternalAddress({
+      contact: selectedContact,
+      currencyId: addAddressFlowState.selectedCurrencyId,
+      label: addAddressFlowState.addressLabel.label,
+      address: addAddressFlowState.addressEntry.resolvedAddress,
+    });
 
     const address = contactAddress({
       id: `address-${uuid()}`,
       currencyId: addAddressFlowState.selectedCurrencyId,
       label: addAddressFlowState.addressLabel.label,
       address: addAddressFlowState.addressEntry.resolvedAddress,
+      device: signedAddress.addressDeviceContext,
     });
 
-    dispatch(addAddress({ contactId: addAddressFlowState.selectedContactId, address }));
+    dispatch(
+      addAddress({
+        contactId: addAddressFlowState.selectedContactId,
+        address,
+        deviceCredentials: signedAddress.deviceCredentials,
+      }),
+    );
+
+    analytics.trackEvent(CONTACTS_TRACK_EVENTS.ADDRESS_ADDED, {
+      source: CONTACTS_EVENT_SOURCE.ADD_ADDRESS,
+      network,
+      asset,
+      inputMethod,
+      isEns: inputMethod === "ens",
+      flow: CONTACTS_FLOW.CONTACTS,
+    });
+
     continueFromReview();
-  }, [addAddressFlowState, continueFromReview, dispatch]);
+  }, [addAddressFlowState, analytics, contacts, continueFromReview, deviceIntents, dispatch]);
   const selectCurrencyForContact = useCallback(
     (contactId: ContactId) => {
       void selectCurrency()
@@ -275,10 +336,10 @@ export function useContactsViewModel(): ContactsPageViewModel {
     setSearchQuery(event.target.value);
   }, []);
   const onClearSearch = useCallback(() => setSearchQuery(""), []);
-  const onDismissLedgerSyncIntroduction = useCallback(
-    () => setIsLedgerSyncIntroductionDismissed(true),
-    [],
-  );
+  const onDismissLedgerSyncIntroduction = useCallback(() => {
+    trackContactsLedgerSyncDismiss(analytics);
+    setIsLedgerSyncIntroductionDismissed(true);
+  }, [analytics]);
 
   useEffect(() => {
     if (ledgerSyncStatus !== "inactive") {
@@ -294,9 +355,17 @@ export function useContactsViewModel(): ContactsPageViewModel {
   const onCompleteFeatureIntroduction = useCallback(() => {
     featureIntroductionState.dismiss();
   }, [featureIntroductionState]);
-  const onDeferFeatureIntroduction = useCallback(() => {
+  const onCloseFeatureIntroduction = useCallback(() => {
     navigate(-1);
   }, [navigate]);
+  const searchHasResults = !("status" in viewModel && viewModel.status === "no-results");
+
+  useContactsListPageAnalytics({
+    analytics,
+    searchQuery,
+    searchHasResults,
+    isLedgerSyncIntroductionOpen,
+  });
 
   return {
     addAddressFlowState,
@@ -320,9 +389,8 @@ export function useContactsViewModel(): ContactsPageViewModel {
       description: t("contacts.featureIntroduction.description"),
       highlights: featureIntroductionHighlights,
       primaryActionLabel: t("contacts.featureIntroduction.primaryAction"),
-      secondaryActionLabel: t("contacts.featureIntroduction.secondaryAction"),
       onComplete: onCompleteFeatureIntroduction,
-      onDefer: onDeferFeatureIntroduction,
+      onClose: onCloseFeatureIntroduction,
     },
     ledgerSyncIntroduction: {
       isOpen: isLedgerSyncIntroductionOpen,

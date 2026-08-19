@@ -1,6 +1,6 @@
 {
   "name": "@features/platform-contacts",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "description": "Contacts domain selectors for flow packages",
   "main": "src/index.ts",
@@ -18,19 +18,22 @@
   "scripts": {
     "format": "oxfmt src",
     "format:check": "oxfmt src --check",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
     "unimported": "pnpm knip --directory ../../.. -W features/platform/contacts"
   },
   "dependencies": {
-    "@domain/entity-contact": "workspace:*"
+    "@domain/entity-contact": "workspace:*",
+    "@domain/entity-currency-crypto": "workspace:*",
+    "@domain/entity-currency-token": "workspace:*"
   },
   "peerDependencies": {
     "react": ">=19.0.0",
     "react-redux": ">=9.0.0",
     "react-native": ">=0.70.0",
+    "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:"
   },
   "peerDependenciesMeta": {
@@ -39,19 +42,31 @@
     },
     "@ledgerhq/lumen-ui-rnative": {
       "optional": true
+    },
+    "@ledgerhq/lumen-ui-react": {
+      "optional": true
     }
   },
   "devDependencies": {
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
+    "@types/react": "catalog:",
+    "@testing-library/dom": "catalog:",
     "@testing-library/react-native": "catalog:",
+    "@testing-library/react": "catalog:",
+    "@testing-library/jest-dom": "catalog:",
     "jest": "catalog:",
+    "jest-environment-jsdom": "catalog:",
     "oxfmt": "catalog:",
     "react": "catalog:",
+    "react-dom": "catalog:",
     "react-redux": "catalog:",
     "react-native": "catalog:",
+    "react-test-renderer": "catalog:",
+    "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
+    "@support/jest-features-flow": "workspace:*",
     "typescript": "catalog:"
   }
 }

@@ -30,20 +30,15 @@ jobs:
     with:
       ref: ${{ github.event.pull_request.head.ref }}
       repository: ${{ github.event.pull_request.head.repo.full_name }}
-    secrets: inherit
 
   test-desktop-external:
     name: "Test Desktop (External)"
-    permissions:
-      id-token: write
-      contents: read
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') && github.event.pull_request.head.repo.fork }}
     uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-external-reusable.yml@develop
     with:
       ref: ${{ github.event.pull_request.head.ref }}
       repository: ${{ github.event.pull_request.head.repo.full_name }}
-    secrets: inherit
 
   build-mobile-external:
     name: "Build Mobile (External)"
@@ -53,7 +48,6 @@ jobs:
     with:
       ref: ${{ github.event.pull_request.head.ref }}
       repository: ${{ github.event.pull_request.head.repo.full_name }}
-    secrets: inherit
 
   # Final Check required
   # @todo: Change OK step

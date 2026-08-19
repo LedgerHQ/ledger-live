@@ -32,13 +32,12 @@ type LargeMoverLandingPageProps = StackNavigatorProps<
 >;
 
 export const LargeMoverLandingPage = ({ route }: LargeMoverLandingPageProps) => {
-  const { currencyIds, initialRange = "day", ledgerIds } = route.params;
+  const { ledgerIds, initialRange = "day" } = route.params;
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
 
   const [range, setRange] = useState<KeysPriceChange>(rangeMap[initialRange]);
 
   const { currencies, currenciesIds, chartIds, loading, isError } = useLargeMover({
-    currencyIds,
     ledgerIds,
   });
 
@@ -141,12 +140,7 @@ export const LargeMoverLandingPage = ({ route }: LargeMoverLandingPageProps) => 
     <>
       {showOverlay && !isLoading && <OverlayTutorial />}
       <SafeAreaView style={{ flex: 1, backgroundColor: colors.neutral.c00, paddingTop: 40 }}>
-        <TrackScreen
-          name={PAGE_NAME}
-          initialRange={initialRange}
-          currencyIds={currencyIds}
-          ledgerIds={ledgerIds}
-        />
+        <TrackScreen name={PAGE_NAME} initialRange={initialRange} ledgerIds={ledgerIds} />
         <StickyHeader />
         <Flex paddingTop={25}>
           {isLoading ? (

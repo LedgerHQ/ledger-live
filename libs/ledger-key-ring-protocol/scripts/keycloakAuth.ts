@@ -26,13 +26,7 @@ main()
   });
 
 async function main(): Promise<void> {
-  const provider = new LkrpIdentityProvider();
-
   const credentials = await readMemberCredentials();
-  provider.setTrustchainStore({
-    trustchain: credentials.trustchainId ? { rootId: credentials.trustchainId } : null,
-    memberCredentials: credentials,
-  });
 
   console.log("[CHECK] keycloak base url:", KEYCLOAK_BASE_URL);
   console.log("[CHECK] keycloak realm:", KEYCLOAK_REALM);
@@ -45,7 +39,10 @@ async function main(): Promise<void> {
       keycloakRealm: KEYCLOAK_REALM,
     },
     {
-      provider,
+      provider: new LkrpIdentityProvider(() => ({
+        trustchain: credentials.trustchainId ? { rootId: credentials.trustchainId } : null,
+        memberCredentials: credentials,
+      })),
       fetch: makeFetchCookie(fetch),
     },
   ).withToken({

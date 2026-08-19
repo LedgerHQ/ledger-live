@@ -1,10 +1,11 @@
 import network from "@ledgerhq/live-network";
-import { getNodeUrl } from "../config";
+import { getNodeUrl, type VechainCurrencyConfig } from "../config";
 import type { ApiResponseBlock } from "../types";
 
 // Thor GET /blocks/{revision}. `expanded` returns full clause/output detail (getBlock) vs. tx
 // hashes only (getBlockInfo/lastBlock).
 export const getBlock = async (
+  config: VechainCurrencyConfig,
   revision: number,
   expanded = false,
 ): Promise<ApiResponseBlock | null> => {
@@ -16,7 +17,7 @@ export const getBlock = async (
 
   const { data } = await network<ApiResponseBlock | null>({
     method: "GET",
-    url: `${getNodeUrl()}/blocks/${revision}?${query}`,
+    url: `${getNodeUrl(config)}/blocks/${revision}?${query}`,
   });
 
   return data;

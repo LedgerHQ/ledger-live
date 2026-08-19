@@ -1,10 +1,26 @@
-import { element, by, waitFor } from "detox";
+import { element, by, waitFor, log } from "detox";
 import { Direction, NativeElement, NativeMatcher } from "detox/detox";
+import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
 import { delay, isAndroid } from "./commonHelpers";
 
 const MAX_ATTEMPTS_PER_DIRECTION = 10;
 const SCROLL_STALL_THRESHOLD = 7;
 const ANDROID_SCROLL_DELAY = 500;
+
+// A swipe is the inverse gesture of the scroll it produces: revealing content below is
+// scroll "down" but swipe "up".
+const swipeDirectionFor = (direction: Direction): Direction => {
+  switch (direction) {
+    case "up":
+      return "down";
+    case "right":
+      return "left";
+    case "left":
+      return "right";
+    default:
+      return "up";
+  }
+};
 
 export class PageScroller {
   async performScroll(
@@ -13,9 +29,8 @@ export class PageScroller {
     pixels = 300,
     initialDirection: Direction = "down",
     timeout = ANDROID_SCROLL_DELAY,
-    visibilityPercentage?: number,
   ): Promise<void> {
-    if (await this.isVisible(matcher, timeout, visibilityPercentage)) {
+    if (await this.isVisible(matcher, timeout)) {
       return;
     }
 
@@ -29,7 +44,7 @@ export class PageScroller {
     for (let attempt = 0; attempt < MAX_ATTEMPTS_PER_DIRECTION * 2; attempt++) {
       await this.scrollOnce(scrollContainer, direction, pixels);
 
-      if (await this.isVisible(matcher, timeout, visibilityPercentage)) {
+      if (await this.isVisible(matcher, timeout)) {
         await this.waitForScrollToSettle();
         return;
       }
@@ -63,15 +78,9 @@ export class PageScroller {
     await this.waitForScrollToSettle();
   }
 
-  private async isVisible(
-    matcher: NativeMatcher,
-    timeout: number,
-    visibilityPercentage?: number,
-  ): Promise<boolean> {
+  private async isVisible(matcher: NativeMatcher, timeout: number): Promise<boolean> {
     try {
-      await waitFor(element(matcher).atIndex(0))
-        .toBeVisible(visibilityPercentage)
-        .withTimeout(timeout);
+      await waitFor(element(matcher).atIndex(0)).toBeVisible().withTimeout(timeout);
       return true;
     } catch {
       return false;
@@ -99,10 +108,9 @@ export class PageScroller {
     pixels: number,
   ): Promise<void> {
     const isHorizontal = direction === "left" || direction === "right";
-    const useSwipeForAndroidHorizontal = isAndroid() && isHorizontal;
+    const swipeDirection = swipeDirectionFor(direction);
 
-    if (useSwipeForAndroidHorizontal) {
-      const swipeDirection = direction === "right" ? "left" : "right";
+    if (isAndroid() && isHorizontal) {
       return await scrollContainer.swipe(swipeDirection, "fast", 0.85);
     }
 
@@ -117,19 +125,15 @@ export class PageScroller {
         case "left":
           return await scrollContainer.scroll(pixels, "left", NaN, 0.5);
         case "bottom":
-          return await scrollContainer.swipe("up", "fast");
+          return await scrollContainer.swipe(swipeDirection, "fast");
         default:
           throw new Error(`Unsupported scroll direction: ${direction}`);
       }
-    } catch {
-      const fallbackDirection = isHorizontal
-        ? direction === "right"
-          ? "left"
-          : "right"
-        : direction === "down"
-          ? "up"
-          : "down";
-      return await scrollContainer.swipe(fallbackDirection, "slow");
+    } catch (error) {
+      log.warn(
+        `scroll ${direction} failed, falling back to swipe ${swipeDirection}: ${sanitizeError(error)}`,
+      );
+      return await scrollContainer.swipe(swipeDirection, "slow");
     }
   }
 

@@ -7,12 +7,14 @@ import {
   canWithdraw,
   isSeiAccountUnassociated,
 } from "./logic";
+import type { EvmConfigInfo } from "../config";
 
-jest.mock("../config");
 jest.mock("../network/node/types");
 
-const mockGetCoinConfig = jest.mocked(require("../config").getCoinConfig);
 const mockIsExternalNodeConfig = jest.mocked(require("../network/node/types").isExternalNodeConfig);
+
+const mockNode = { type: "external", uri: "https://sei-evm.coin.ledger.com" };
+const mockConfig = { node: mockNode } as unknown as EvmConfigInfo;
 
 function makeStake(delegate: string, overrides: Partial<Stake> = {}): Stake {
   return {
@@ -139,8 +141,6 @@ describe("evm staking logic", () => {
         .spyOn(ethers, "Contract" as any)
         .mockImplementation(() => ({ getSeiAddr: mockGetSeiAddr }));
 
-      const mockNode = { type: "external", uri: "https://sei-evm.coin.ledger.com" };
-      mockGetCoinConfig.mockReturnValue({ info: { node: mockNode } });
       mockIsExternalNodeConfig.mockImplementation((node: unknown) => node === mockNode);
     });
 
@@ -150,25 +150,33 @@ describe("evm staking logic", () => {
     });
 
     it("returns false for a non-sei_evm currency without querying the chain", async () => {
-      await expect(isSeiAccountUnassociated("ethereum", SEI_ADDRESS)).resolves.toBe(false);
+      await expect(isSeiAccountUnassociated(mockConfig, "ethereum", SEI_ADDRESS)).resolves.toBe(
+        false,
+      );
       expect(mockGetSeiAddr).not.toHaveBeenCalled();
     });
 
     it("returns false when the currency has no external RPC node configured", async () => {
       mockIsExternalNodeConfig.mockReturnValue(false);
-      await expect(isSeiAccountUnassociated("sei_evm", SEI_ADDRESS)).resolves.toBe(false);
+      await expect(isSeiAccountUnassociated(mockConfig, "sei_evm", SEI_ADDRESS)).resolves.toBe(
+        false,
+      );
       expect(mockGetSeiAddr).not.toHaveBeenCalled();
     });
 
     it("returns true for sei_evm when the precompile resolves an empty string (unassociated)", async () => {
       mockGetSeiAddr.mockResolvedValue("");
-      await expect(isSeiAccountUnassociated("sei_evm", SEI_ADDRESS)).resolves.toBe(true);
+      await expect(isSeiAccountUnassociated(mockConfig, "sei_evm", SEI_ADDRESS)).resolves.toBe(
+        true,
+      );
       expect(mockGetSeiAddr).toHaveBeenCalledWith(SEI_ADDRESS);
     });
 
     it("returns false for sei_evm when the precompile resolves a linked Cosmos address", async () => {
       mockGetSeiAddr.mockResolvedValue("sei1associatedcosmosaddress");
-      await expect(isSeiAccountUnassociated("sei_evm", SEI_ADDRESS)).resolves.toBe(false);
+      await expect(isSeiAccountUnassociated(mockConfig, "sei_evm", SEI_ADDRESS)).resolves.toBe(
+        false,
+      );
     });
 
     it("returns true when the precompile reverts (unassociated address)", async () => {
@@ -179,24 +187,29 @@ describe("evm staking logic", () => {
         revert: null,
       });
       mockGetSeiAddr.mockRejectedValue(revert);
-      await expect(isSeiAccountUnassociated("sei_evm", SEI_ADDRESS)).resolves.toBe(true);
+      await expect(isSeiAccountUnassociated(mockConfig, "sei_evm", SEI_ADDRESS)).resolves.toBe(
+        true,
+      );
     });
 
     it("returns true when the precompile call fails for any other reason", async () => {
       mockGetSeiAddr.mockRejectedValue(new Error("network error"));
-      await expect(isSeiAccountUnassociated("sei_evm", SEI_ADDRESS)).resolves.toBe(true);
+      await expect(isSeiAccountUnassociated(mockConfig, "sei_evm", SEI_ADDRESS)).resolves.toBe(
+        true,
+      );
     });
 
     it("returns true when the precompile returns an unexpected non-string result", async () => {
       mockGetSeiAddr.mockResolvedValue(undefined);
-      await expect(isSeiAccountUnassociated("sei_evm", SEI_ADDRESS)).resolves.toBe(true);
+      await expect(isSeiAccountUnassociated(mockConfig, "sei_evm", SEI_ADDRESS)).resolves.toBe(
+        true,
+      );
     });
 
-    it("returns false when the EVM module config is not set (getCoinConfig throws)", async () => {
-      mockGetCoinConfig.mockImplementation(() => {
-        throw new Error("EVM module config not set");
-      });
-      await expect(isSeiAccountUnassociated("sei_evm", SEI_ADDRESS)).resolves.toBe(false);
+    it("returns false when the config carries no external RPC node", async () => {
+      await expect(isSeiAccountUnassociated(mockConfig, "sei_evm", SEI_ADDRESS)).resolves.toBe(
+        false,
+      );
     });
   });
 });

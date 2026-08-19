@@ -75,6 +75,7 @@ devtools/transport/                                      @ledgerhq/platform
 devtools/protocols/                                      @ledgerhq/platform
 devtools/wire/                                           @ledgerhq/platform
 devtools/relay/                                          @ledgerhq/platform
+tools/nx-plugins/generators/                             @ledgerhq/platform
 
 # Platform — support
 support/jest-devtools/                                   @ledgerhq/platform
@@ -117,12 +118,23 @@ apps/ledger-live-mobile/src/screens/Portfolio/           @ledgerhq/wallet-xp
 
 # Wallet — Contacts
 domain/entity/contact/                                   @ledgerhq/wallet-xp
+features/platform/contacts/                               @ledgerhq/wallet-xp
 features/flow/contacts/                                  @ledgerhq/wallet-xp
+features/flow/flow-contacts-add-address/                  @ledgerhq/wallet-xp
+features/flow/flow-contacts-add-contact/                  @ledgerhq/wallet-xp
+features/flow/flow-contacts-introduction/                @ledgerhq/wallet-xp
+features/flow/flow-contacts-list/                         @ledgerhq/wallet-xp
+
+# Wallet — Pay Card
+features/flow/pay-card-balance/                          @ledgerhq/wallet-xp
+features/flow/pay-card-deposit/                          @ledgerhq/wallet-xp
+features/flow/pay-card-feature-tour/                     @ledgerhq/wallet-xp
+features/platform/card/                                  @ledgerhq/wallet-xp
+domain/api/card-management/                              @ledgerhq/wallet-xp
+/shared/api-services/src/services/card/                  @ledgerhq/wallet-xp
 
 # Wallet — shared UI
 /shared/ui-queued-bottom-sheet/                          @ledgerhq/wallet-xp
-# Wallet — Pay
-features/flow/pay-card-feature-tour/                     @ledgerhq/wallet-xp
 
 # Platform — desktop mvvm overrides (override WXP mvvm catch-all)
 apps/ledger-live-desktop/src/mvvm/features/AppBlockers/  @ledgerhq/platform
@@ -175,7 +187,8 @@ apps/ledger-live-mobile/src/screens/SignTransaction/                @ledgerhq/co
 
 ### ... cryptoassets ongoing rework => the lib now belongs to @ledgerhq/wallet-xp (with currencies owned by @ledgerhq/coin-integration) ... ###
 domain/entity/currency-crypto/src/currencies/            @ledgerhq/coin-integration
-libs/types-live/src/lnsUpsell.ts       @ledgerhq/engagement
+domain/entity/currency-token/src/                        @ledgerhq/coin-integration
+domain/api/currency-token/src/                           @ledgerhq/coin-integration
 libs/types-live/src/postOnboarding.ts  @ledgerhq/engagement
 features/flow/large-screen-upsell/                       @ledgerhq/engagement
 domain/entity/analytics-consent/                         @ledgerhq/engagement
@@ -373,6 +386,7 @@ libs/ledger-live-common/src/device/                                @ledgerhq/liv
 libs/ledger-live-common/src/deviceSDK/                             @ledgerhq/live-devices
 libs/device-core/                                                  @ledgerhq/live-devices
 libs/device-intent/                                                @ledgerhq/live-devices
+features/platform/device-intent/                                   @ledgerhq/live-devices
 libs/device-react/                                                 @ledgerhq/live-devices
 libs/live-dmk/                                                     @ledgerhq/live-devices
 libs/speculos-transport/                                           @ledgerhq/live-devices @ledgerhq/qaa

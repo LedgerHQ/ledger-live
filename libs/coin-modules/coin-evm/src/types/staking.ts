@@ -1,6 +1,6 @@
 import type { BigNumber } from "bignumber.js";
 import type { Stake } from "@ledgerhq/coin-module-framework/api/types";
-import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import type { EvmConfigInfo } from "../config";
 
 export type EvmStakingOperationType =
   | "DELEGATE"
@@ -168,14 +168,16 @@ export type StakingContractConfig = {
   delegationMaxAmountReserve?: bigint;
   /** Extract the validator address from the decoded calldata args and the called contract address (operation recipient). */
   resolveValidatorAddress: (
+    config: EvmConfigInfo,
     decoded: readonly unknown[],
     contractAddress: string | undefined,
   ) => Promise<string | null>;
   /** Derive the display amount from the decoded calldata args. Return `null` when the amount is not representable from calldata alone (e.g. msg.value-based delegates, vault-share undelegates). */
   resolveOperationAmount: (
+    config: EvmConfigInfo,
     decoded: readonly unknown[],
     operationType: "delegate" | "undelegate" | "withdraw",
-    currency: CryptoCurrency,
+    currencyId: string,
     contractAddress: string,
   ) => Promise<BigNumber | null>;
   /** Chain-specific guard called after cross-cutting checks. Returns true when the delegation can be undelegated. */
@@ -191,7 +193,6 @@ export type StakingContractConfig = {
 };
 
 export type StakeCreate = {
-  currency: CryptoCurrency;
   address: string;
   currencyId: string;
   validatorAddress: string;
@@ -216,9 +217,10 @@ export type SeiDelegation = {
 };
 
 export type StakingFetcher = (
+  evmConfig: EvmConfigInfo,
   address: string,
   config: StakingContractConfig,
-  currency: CryptoCurrency,
+  currencyId: string,
 ) => Promise<Stake[]>;
 
 /**

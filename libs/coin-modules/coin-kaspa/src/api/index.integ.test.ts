@@ -2,8 +2,7 @@ import type { CoinModuleApi } from "@ledgerhq/coin-module-framework/api/types";
 import type { KaspaCoinConfig } from "../config";
 import { publicKeyToAddress } from "../logic/kaspaAddresses";
 import { createApi } from "./index";
-
-const config: KaspaCoinConfig = { status: { type: "active" } };
+import { createMockKaspaContext } from "../test/context";
 
 // A freshly-derived address (see logic/getBalance.integ.test.ts) has no on-chain UTXOs, which
 // keeps the craftTransaction assertion below deterministic without a funded fixture.
@@ -23,22 +22,23 @@ const INTENT = {
 };
 
 describe("createApi (integration)", () => {
-  let api: CoinModuleApi;
+  let api: CoinModuleApi<KaspaCoinConfig>;
+  const context = createMockKaspaContext();
 
   beforeAll(() => {
-    api = createApi(config, "kaspa");
+    api = createApi();
   });
 
   // These methods throw synchronously (they never return a promise), so they are asserted with a
   // synchronous `expect(() => …).toThrow`, not `.rejects` (mirrors coin-filecoin's api integ test).
   it("getNextSequence throws (not applicable to a UTXO chain)", () => {
-    expect(() => api.getNextSequence(PRISTINE_SENDER)).toThrow(
+    expect(() => api.getNextSequence(context, PRISTINE_SENDER)).toThrow(
       "getNextSequence is not applicable for Kaspa",
     );
   });
 
   it("validateAddress throws (not supported)", () => {
-    expect(() => api.validateAddress(PRISTINE_SENDER, {})).toThrow(
+    expect(() => api.validateAddress(context, PRISTINE_SENDER, {})).toThrow(
       "validateAddress is not supported",
     );
   });
@@ -49,7 +49,7 @@ describe("createApi (integration)", () => {
     const MINTED_BLOCK = 480818084;
 
     it("getBlockInfo fetches the block at a known blue score", async () => {
-      const info = await api.getBlockInfo(MINTED_BLOCK);
+      const info = await api.getBlockInfo(context, MINTED_BLOCK);
 
       expect(info.height).toBe(MINTED_BLOCK);
       expect(info.hash).toHaveLength(64); // Kaspa block hash = 64 hex chars
@@ -58,7 +58,7 @@ describe("createApi (integration)", () => {
     });
 
     it("getBlock fetches the full block (metadata + transactions) at a known blue score", async () => {
-      const block = await api.getBlock(MINTED_BLOCK);
+      const block = await api.getBlock(context, MINTED_BLOCK);
 
       expect(block.info.height).toBe(MINTED_BLOCK);
       expect(block.info.hash).toHaveLength(64);
@@ -71,7 +71,7 @@ describe("createApi (integration)", () => {
   // (funded, never spent), same fixture as the craft → combine round trip below.
   describe("account & fee methods (real network)", () => {
     it("getBalance returns the native KAS balance for a funded account", async () => {
-      const balances = await api.getBalance(FUNDED_SENDER);
+      const balances = await api.getBalance(context, FUNDED_SENDER);
 
       expect(balances).toHaveLength(1);
       expect(balances[0].value).toBeGreaterThan(0n);
@@ -79,7 +79,7 @@ describe("createApi (integration)", () => {
     });
 
     it("lastBlock returns the latest confirmed block", async () => {
-      const info = await api.lastBlock();
+      const info = await api.lastBlock(context);
 
       expect(info.height).toBeGreaterThan(0);
       expect(typeof info.hash).toBe("string");
@@ -87,7 +87,7 @@ describe("createApi (integration)", () => {
     });
 
     it("estimateFees returns a positive mass-based fee for a valid send", async () => {
-      const fees = await api.estimateFees({
+      const fees = await api.estimateFees(context, {
         intentType: "transaction",
         type: "send",
         sender: FUNDED_SENDER,
@@ -100,7 +100,7 @@ describe("createApi (integration)", () => {
     });
 
     it("listOperations returns the funded account's operation history", async () => {
-      const page = await api.listOperations(FUNDED_SENDER, { minHeight: 0 });
+      const page = await api.listOperations(context, FUNDED_SENDER, { minHeight: 0 });
 
       expect(Array.isArray(page.items)).toBe(true);
       expect(page.items.length).toBeGreaterThan(0);
@@ -112,25 +112,25 @@ describe("createApi (integration)", () => {
   });
 
   it("getStakes throws (not supported)", () => {
-    expect(() => api.getStakes(PRISTINE_SENDER)).toThrow("getStakes is not supported");
+    expect(() => api.getStakes(context, PRISTINE_SENDER)).toThrow("getStakes is not supported");
   });
 
   it("getRewards throws (not supported)", () => {
-    expect(() => api.getRewards(PRISTINE_SENDER)).toThrow("getRewards is not supported");
+    expect(() => api.getRewards(context, PRISTINE_SENDER)).toThrow("getRewards is not supported");
   });
 
   it("getValidators throws (not supported)", () => {
-    expect(() => api.getValidators()).toThrow("getValidators is not supported");
+    expect(() => api.getValidators(context)).toThrow("getValidators is not supported");
   });
 
   it("craftRawTransaction throws (not supported)", () => {
-    expect(() => api.craftRawTransaction("raw", PRISTINE_SENDER, "pubkey", 0n)).toThrow(
+    expect(() => api.craftRawTransaction(context, "raw", PRISTINE_SENDER, "pubkey", 0n)).toThrow(
       "craftRawTransaction is not supported",
     );
   });
 
   it("craftTransaction fails clearly for a sender with no spendable UTXOs", async () => {
-    await expect(api.craftTransaction(INTENT)).rejects.toThrow("no spendable UTXOs");
+    await expect(api.craftTransaction(context, INTENT)).rejects.toThrow("no spendable UTXOs");
   });
 
   describe("craft -> combine round trip with a funded sender", () => {
@@ -140,7 +140,7 @@ describe("createApi (integration)", () => {
     // private key (mirrors coin-filecoin's api/index.integ.test.ts mock-signature round trip).
     // A cryptographically valid signature + broadcast acceptance is out of scope for CI.
     it("produces a valid signed Kaspa transaction shape", async () => {
-      const crafted = await api.craftTransaction({
+      const crafted = await api.craftTransaction(context, {
         intentType: "transaction",
         type: "send",
         sender: FUNDED_SENDER,
@@ -150,8 +150,8 @@ describe("createApi (integration)", () => {
       });
 
       const unsigned = JSON.parse(crafted.transaction);
-      const mockSignatures = JSON.stringify(unsigned.inputs.map(() => "b".repeat(128)));
-      const signed = await api.combine(crafted.transaction, mockSignatures);
+      const mockSignatures: string[] = unsigned.inputs.map(() => "b".repeat(128));
+      const signed = await api.combine(context, crafted.transaction, mockSignatures);
 
       const parsed = JSON.parse(signed);
       expect(parsed.transaction.inputs).toHaveLength(unsigned.inputs.length);

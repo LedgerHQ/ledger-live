@@ -1,6 +1,6 @@
 {
   "name": "@features/flow-contacts",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "private": true,
   "description": "Shared Contacts flow package",
   "main": "src/index.ts",
@@ -29,6 +29,7 @@
     "@domain/entity-currency-crypto": "workspace:*",
     "@domain/entity-currency-token": "workspace:*",
     "@features/flow-contacts-add-contact": "workspace:^",
+    "@features/flow-contacts-introduction": "workspace:^",
     "@features/flow-contacts-list": "workspace:^",
     "@features/platform-contacts": "workspace:^",
     "@ledgerhq/crypto-icons": "catalog:",

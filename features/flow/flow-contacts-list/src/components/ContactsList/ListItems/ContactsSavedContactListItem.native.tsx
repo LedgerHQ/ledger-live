@@ -28,7 +28,7 @@ export function ContactsSavedContactListItem({
       lx={{ marginHorizontal: "-s8" }}
     >
       <ListItemLeading>
-        <ContactAvatar contactId={contact.contactId} name={contact.name} />
+        <ContactAvatar contactId={contact.contactId} name={contact.name} size="md" />
         <ListItemContent>
           <ListItemTitle>{contact.name}</ListItemTitle>
           <ListItemDescription>{addressCountLabel}</ListItemDescription>

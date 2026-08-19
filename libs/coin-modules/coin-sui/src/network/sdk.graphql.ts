@@ -1,5 +1,5 @@
 import { log } from "@ledgerhq/logs";
-import { promiseAllBatched } from "@ledgerhq/live-promise";
+import { promiseAllBatched } from "@ledgerhq/coin-module-framework/promises";
 import type {
   CoinBalance,
   Checkpoint,
@@ -8,7 +8,7 @@ import type {
 } from "@mysten/sui/jsonRpc";
 import { normalizeSuiAddress, toBase64 } from "@mysten/sui/utils";
 import { createSuiGraphQLClient, type SuiGraphQLClient } from "./graphql/client";
-import coinConfig from "../config";
+import { type SuiCoinConfig } from "../config";
 import type { SuiValidator } from "../types";
 import { fetcher } from "./fetcher";
 import {
@@ -169,10 +169,10 @@ export const graphqlFetcher = (url: Inputs[0], options: Inputs[1]): Promise<Resp
 };
 
 export async function withGraphQLApi<T>(
+  config: SuiCoinConfig,
   execute: AsyncGraphQLApiFunction<T>,
-  currencyId?: string,
 ): Promise<T> {
-  const url = coinConfig.getCoinConfig(currencyId).node.graphqlUrl;
+  const url = config.node.graphqlUrl;
   const api = createSuiGraphQLClient({ url, fetch: graphqlFetcher });
   return execute(api);
 }
@@ -180,7 +180,10 @@ export async function withGraphQLApi<T>(
 /** Centralised so every caller exits with the same narrowed `stateJson` and the drift guard can't be skipped. */
 function unwrapAndValidateSystemState(
   systemRes: Parameters<typeof unwrapGraphQL<SuiSystemStateResult>>[1],
-): { epoch: NonNullable<SuiSystemStateResult["epoch"]>; stateJson: SuiSystemStateInnerJson } {
+): {
+  epoch: NonNullable<SuiSystemStateResult["epoch"]>;
+  stateJson: SuiSystemStateInnerJson;
+} {
   const data = unwrapGraphQL("SystemState", systemRes);
   const epoch = data.epoch;
   if (!epoch?.systemState?.json) {
@@ -349,7 +352,10 @@ async function fetchActivationRates(
     firstError,
   } = await fetchExchangeRatesBatched(
     api,
-    plans.wantedEntries.map(({ table, epoch }) => ({ exchangeRatesId: table, epoch })),
+    plans.wantedEntries.map(({ table, epoch }) => ({
+      exchangeRatesId: table,
+      epoch,
+    })),
     RATE_BATCH_CHUNK_SIZE,
   );
   const rates = new Map<string, ExchangeRate | null>();
@@ -394,7 +400,11 @@ async function fetchExchangeRatesBatched(
   api: SuiGraphQLClient,
   plans: ReadonlyArray<{ exchangeRatesId: string; epoch: number | string }>,
   chunkSize: number,
-): Promise<{ rates: Array<ExchangeRate | null>; chunksFailed: number; firstError?: string }> {
+): Promise<{
+  rates: Array<ExchangeRate | null>;
+  chunksFailed: number;
+  firstError?: string;
+}> {
   if (plans.length === 0) return { rates: [], chunksFailed: 0 };
   const safeChunk = Math.max(1, Math.floor(chunkSize));
   const chunks: Array<typeof plans> = [];
@@ -404,7 +414,10 @@ async function fetchExchangeRatesBatched(
   // INVARIANT: each chunk's result length matches its input length — null-pad on failure preserves 1:1.
   const settled = await promiseAllBatched(RATE_CHUNK_CONCURRENCY, chunks, async chunk => {
     try {
-      return { ok: true as const, value: await fetchRateChunk(api, chunk, safeChunk) };
+      return {
+        ok: true as const,
+        value: await fetchRateChunk(api, chunk, safeChunk),
+      };
     } catch (err) {
       return {
         ok: false as const,
@@ -641,11 +654,17 @@ export const getValidatorsGraphQL = async (api: SuiGraphQLClient): Promise<SuiVa
   const plans = planValidatorApyLookups(poolRefs, poolToValidator, currentEpoch);
   const { rates, chunksFailed, firstError } = await fetchExchangeRatesBatched(
     api,
-    plans.map(p => ({ exchangeRatesId: p.exchangeRatesId, epoch: p.pastEpoch })),
+    plans.map(p => ({
+      exchangeRatesId: p.exchangeRatesId,
+      epoch: p.pastEpoch,
+    })),
     RATE_BATCH_CHUNK_SIZE,
   );
   const apyByAddress = applyValidatorApy(plans, rates, currentEpoch, chunksFailed, firstError);
-  return activeValidators.map(v => ({ ...v, apy: apyByAddress.get(v.suiAddress) ?? 0 }));
+  return activeValidators.map(v => ({
+    ...v,
+    apy: apyByAddress.get(v.suiAddress) ?? 0,
+  }));
 };
 
 // ============================================================================
@@ -665,7 +684,10 @@ export const getTransactionsByAddressGraphQL = async (
   pageSize: number,
   cursor: string | null = null,
   filter?: { beforeCheckpoint?: number; afterCheckpoint?: number },
-): Promise<{ items: SuiTransactionBlockResponse[]; startCursor: string | null }> => {
+): Promise<{
+  items: SuiTransactionBlockResponse[];
+  startCursor: string | null;
+}> => {
   const ownerAddr = normalizeSuiAddress(address);
   const accumulated: SuiTransactionBlockResponse[] = [];
   let nextBefore: string | null = cursor;
@@ -687,7 +709,9 @@ export const getTransactionsByAddressGraphQL = async (
         ...(filter?.beforeCheckpoint !== undefined && {
           beforeCheckpoint: filter.beforeCheckpoint,
         }),
-        ...(filter?.afterCheckpoint !== undefined && { afterCheckpoint: filter.afterCheckpoint }),
+        ...(filter?.afterCheckpoint !== undefined && {
+          afterCheckpoint: filter.afterCheckpoint,
+        }),
       },
     });
     const conn = unwrapGraphQL("TransactionsByAffectedAddress", res).transactions;
@@ -776,8 +800,12 @@ export const getTransactionsWithCheckpointDigestsGraphQL = async (
       last: pageSize,
       before: null,
       eventsFirst: EVENTS_PAGE_SIZE,
-      ...(filter?.beforeCheckpoint !== undefined && { beforeCheckpoint: filter.beforeCheckpoint }),
-      ...(filter?.afterCheckpoint !== undefined && { afterCheckpoint: filter.afterCheckpoint }),
+      ...(filter?.beforeCheckpoint !== undefined && {
+        beforeCheckpoint: filter.beforeCheckpoint,
+      }),
+      ...(filter?.afterCheckpoint !== undefined && {
+        afterCheckpoint: filter.afterCheckpoint,
+      }),
     },
   });
   const conn = unwrapGraphQL("TransactionsByAffectedAddress", res).transactions;
@@ -868,7 +896,9 @@ export const getBlockGraphQL = async (
     // Fail loudly rather than silently truncating: the caller (`getBlock`) contract is "all txs in the block".
     if (page === MAX_PAGES - 1) {
       throw new Error(
-        `getBlockGraphQL: checkpoint ${sequenceNumber} has more than ${MAX_PAGES * BLOCK_TXS_PAGE_SIZE} transactions — pagination cap hit.`,
+        `getBlockGraphQL: checkpoint ${sequenceNumber} has more than ${
+          MAX_PAGES * BLOCK_TXS_PAGE_SIZE
+        } transactions — pagination cap hit.`,
       );
     }
   }
@@ -897,7 +927,9 @@ export const simulateTransactionGraphQL = async (
 }> => {
   const res = await api.query({
     query: SIMULATE_TRANSACTION,
-    variables: { transaction: { bcs: { value: bcsToBase64(transactionBlock) } } },
+    variables: {
+      transaction: { bcs: { value: bcsToBase64(transactionBlock) } },
+    },
   });
   const sim = unwrapGraphQL("SimulateTransaction", res).simulateTransaction;
   const gas = sim.effects?.gasEffects?.gasSummary;
@@ -919,10 +951,17 @@ export const executeTransactionGraphQL = async (
   api: SuiGraphQLClient,
   transactionBlock: Uint8Array | string,
   signatures: string[],
-): Promise<{ digest: string; status: "SUCCESS" | "FAILURE" | null; error?: string }> => {
+): Promise<{
+  digest: string;
+  status: "SUCCESS" | "FAILURE" | null;
+  error?: string;
+}> => {
   const res = await api.query({
     query: EXECUTE_TRANSACTION,
-    variables: { transactionDataBcs: bcsToBase64(transactionBlock), signatures },
+    variables: {
+      transactionDataBcs: bcsToBase64(transactionBlock),
+      signatures,
+    },
   });
   const eff = unwrapGraphQL("ExecuteTransaction", res).executeTransaction.effects;
   const status = (eff?.status ?? null) as "SUCCESS" | "FAILURE" | null;

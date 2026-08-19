@@ -2,11 +2,10 @@ import { ethers } from "ethers";
 import network from "@ledgerhq/live-network";
 import { log } from "@ledgerhq/logs";
 import { BigNumber } from "bignumber.js";
-import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { RedelegationStrategy } from "../types/staking";
 import { STAKING_CONTRACTS } from "./contracts";
 import { getStakingABI } from "./abis";
-import { getCoinConfig } from "../config";
+import type { EvmConfigInfo } from "../config";
 import { withApi } from "../network/node/rpc.common";
 import { isExternalNodeConfig } from "../network/node/types";
 
@@ -163,6 +162,7 @@ async function fetchCosmosRestRedelegations(
  * `STAKING_CONTRACTS` in `contracts.ts`.
  */
 export async function fetchRedelegations(
+  evmConfig: EvmConfigInfo,
   currencyId: string,
   evmAddress: string,
 ): Promise<EvmRedelegation[]> {
@@ -173,7 +173,7 @@ export async function fetchRedelegations(
   switch (strategy.type) {
     case "cosmos-rest": {
       if (!config.apiConfig?.baseUrl) return [];
-      const node = getCoinConfig(currencyId).info.node;
+      const node = evmConfig.node;
       const evmRpcUrl = isExternalNodeConfig(node) ? node.uri : undefined;
       return fetchCosmosRestRedelegations(
         config.apiConfig.baseUrl,
@@ -202,14 +202,16 @@ function isRecord(value: unknown): value is Record<string, unknown> {
  * configured as "external", the transaction is not found, or the call fails.
  */
 async function fetchTxDataFromRpc(
-  currency: CryptoCurrency,
+  config: EvmConfigInfo,
+  currencyId: string,
   txHash: string,
 ): Promise<string | undefined> {
   try {
-    const node = getCoinConfig(currency.id).info.node;
+    const node = config.node;
     if (!isExternalNodeConfig(node)) return undefined;
     const data = await withApi(
-      currency,
+      config,
+      currencyId,
       async api => {
         const tx = await api.getTransaction(txHash);
         return tx?.data ?? null;
@@ -219,7 +221,7 @@ async function fetchTxDataFromRpc(
     return data && data !== "0x" ? data : undefined;
   } catch (e) {
     log("coin-evm/staking", "fetchTxDataFromRpc: getTransaction failed", {
-      currencyId: currency.id,
+      currencyId,
       txHash,
       error: e instanceof Error ? e.message : String(e),
     });
@@ -237,7 +239,8 @@ async function fetchTxDataFromRpc(
  * Returns `null` when the payload cannot be obtained or decoded.
  */
 export async function resolveRedelegationValidators(
-  currency: CryptoCurrency,
+  evmConfig: EvmConfigInfo,
+  currencyId: string,
   operation: OperationLike,
 ): Promise<{
   srcValidatorAddress: string;
@@ -247,13 +250,15 @@ export async function resolveRedelegationValidators(
   const extra = isRecord(operation.extra) ? operation.extra : undefined;
   const cached = extra?.contractPayload;
   const payload =
-    typeof cached === "string" ? cached : await fetchTxDataFromRpc(currency, operation.hash);
+    typeof cached === "string"
+      ? cached
+      : await fetchTxDataFromRpc(evmConfig, currencyId, operation.hash);
 
   if (!payload) return null;
 
-  const config = STAKING_CONTRACTS[currency.id];
+  const config = STAKING_CONTRACTS[currencyId];
   const functionName = config?.functions.redelegate;
-  const abi = getStakingABI(currency.id);
+  const abi = getStakingABI(currencyId);
   if (!abi || !functionName) return null;
   try {
     const iface = new ethers.Interface(abi);
@@ -285,30 +290,43 @@ export async function resolveRedelegationValidators(
  * Returns `null` when the payload cannot be obtained or decoded.
  */
 export async function resolveStakingValidator(
-  currency: CryptoCurrency,
+  evmConfig: EvmConfigInfo,
+  currencyId: string,
   operation: OperationLike,
   operationType: "delegate" | "undelegate" | "withdraw",
 ): Promise<{ validatorAddress: string; amount: BigNumber | null } | null> {
   const extra = isRecord(operation.extra) ? operation.extra : undefined;
   const cached = extra?.contractPayload;
   const payload =
-    typeof cached === "string" ? cached : await fetchTxDataFromRpc(currency, operation.hash);
+    typeof cached === "string"
+      ? cached
+      : await fetchTxDataFromRpc(evmConfig, currencyId, operation.hash);
 
   if (!payload) return null;
 
-  const config = STAKING_CONTRACTS[currency.id];
+  const config = STAKING_CONTRACTS[currencyId];
   const functionName = config?.functions[operationType];
-  const abi = getStakingABI(currency.id);
+  const abi = getStakingABI(currencyId);
   if (!abi || !functionName) return null;
   try {
     const iface = new ethers.Interface(abi);
     const d = iface.decodeFunctionData(functionName, payload);
 
-    const validatorAddress = await config.resolveValidatorAddress(d, operation.recipients[0]);
+    const validatorAddress = await config.resolveValidatorAddress(
+      evmConfig,
+      d,
+      operation.recipients[0],
+    );
     if (!validatorAddress) return null;
 
     const contractAddress = operation.recipients[0] ?? validatorAddress;
-    const amount = await config.resolveOperationAmount(d, operationType, currency, contractAddress);
+    const amount = await config.resolveOperationAmount(
+      evmConfig,
+      d,
+      operationType,
+      currencyId,
+      contractAddress,
+    );
     return { validatorAddress, amount };
   } catch {
     return null;
@@ -316,10 +334,10 @@ export async function resolveStakingValidator(
 }
 
 export async function buildRedelegationsFromOps(
-  currency: CryptoCurrency,
+  evmConfig: EvmConfigInfo,
+  currencyId: string,
   operations: OperationLike[],
 ): Promise<EvmRedelegation[]> {
-  const currencyId = currency.id;
   const config = STAKING_CONTRACTS[currencyId];
   if (!config?.functions.redelegate) return [];
 
@@ -344,7 +362,9 @@ export async function buildRedelegationsFromOps(
       const extra = isRecord(op.extra) ? op.extra : undefined;
       const cached = extra?.contractPayload;
       const payload =
-        typeof cached === "string" ? cached : await fetchTxDataFromRpc(currency, op.hash);
+        typeof cached === "string"
+          ? cached
+          : await fetchTxDataFromRpc(evmConfig, currencyId, op.hash);
       if (!payload) return null;
       try {
         const d = iface.decodeFunctionData(functionName, payload);

@@ -1,5 +1,6 @@
+import type { Context } from "@ledgerhq/coin-module-framework/config";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
-import { type CardanoConfig } from "../config";
+import { type CardanoCoinConfig, type CardanoConfig } from "../config";
 import { getStakes } from "../logic/getStakes";
 import { createApi } from ".";
 
@@ -11,6 +12,10 @@ const mockGetStakes = jest.mocked(getStakes);
 
 const config: CardanoConfig = { maxFeesWarning: 0, maxFeesError: 0 };
 const currency = getCryptoCurrencyById("cardano");
+const mockCtx: Context<CardanoCoinConfig> = {
+  config: async () => ({ ...config, status: { type: "active" } }),
+  logger: () => {},
+};
 
 describe("api.getStakes", () => {
   beforeEach(() => {
@@ -20,9 +25,9 @@ describe("api.getStakes", () => {
   it("delegates to the getStakes logic with the resolved currency, address and cursor", async () => {
     const page = { items: [] };
     mockGetStakes.mockResolvedValue(page);
-    const api = createApi(config, "cardano");
+    const api = createApi("cardano");
 
-    const result = await api.getStakes("addr", "cursor");
+    const result = await api.getStakes(mockCtx, "addr", { cursor: "cursor" });
 
     expect(mockGetStakes).toHaveBeenCalledTimes(1);
     expect(mockGetStakes).toHaveBeenCalledWith(currency, "addr", "cursor");
@@ -31,8 +36,8 @@ describe("api.getStakes", () => {
 
   it("propagates errors thrown by the getStakes logic", async () => {
     mockGetStakes.mockRejectedValue(new Error("delegation fetch failed"));
-    const api = createApi(config, "cardano");
+    const api = createApi("cardano");
 
-    await expect(api.getStakes("addr")).rejects.toThrow("delegation fetch failed");
+    await expect(api.getStakes(mockCtx, "addr")).rejects.toThrow("delegation fetch failed");
   });
 });

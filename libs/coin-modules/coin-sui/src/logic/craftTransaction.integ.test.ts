@@ -35,7 +35,7 @@ describe.skip("craftTransaction", () => {
       asset: { type: "native" },
     };
 
-    const result = await craftTransaction(transactionIntent);
+    const result = await craftTransaction(coinConfig.getCoinConfig(), transactionIntent);
 
     expect(result).toEqual({ unsigned: expect.any(Uint8Array) });
 
@@ -61,7 +61,7 @@ describe.skip("craftTransaction", () => {
       },
     };
 
-    const result = await craftTransaction(transactionIntent);
+    const result = await craftTransaction(coinConfig.getCoinConfig(), transactionIntent);
 
     expect(result).toEqual({ unsigned: expect.any(Uint8Array) });
 
@@ -79,7 +79,7 @@ describe.skip("craftTransaction", () => {
       asset: { type: "native" },
     };
 
-    const result = await craftTransaction(transactionIntent, true);
+    const result = await craftTransaction(coinConfig.getCoinConfig(), transactionIntent, true);
 
     expect(result).toEqual({
       unsigned: expect.any(Uint8Array),
@@ -109,7 +109,7 @@ describe.skip("craftTransaction", () => {
       },
     };
 
-    const result = await craftTransaction(transactionIntent, true);
+    const result = await craftTransaction(coinConfig.getCoinConfig(), transactionIntent, true);
 
     expect(result).toEqual({
       unsigned: expect.any(Uint8Array),

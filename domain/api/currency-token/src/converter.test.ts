@@ -32,6 +32,20 @@ describe("convertApiToken", () => {
     });
   });
 
+  describe("tokenIdentifier handling", () => {
+    it("includes tokenIdentifier when present", () => {
+      const result = convertApiToken(buildApiTokenData({ tokenIdentifier: "USDC-c76f1f" }));
+
+      expect(result?.tokenIdentifier).toBe("USDC-c76f1f");
+    });
+
+    it("omits tokenIdentifier when absent", () => {
+      const result = convertApiToken(buildApiTokenData());
+
+      expect(result?.tokenIdentifier).toBeUndefined();
+    });
+  });
+
   describe("ledgerSignature handling", () => {
     it("should include ledgerSignature when provided", () => {
       const result = convertApiToken(buildApiTokenData({ ledgerSignature: "3045022100..." }));

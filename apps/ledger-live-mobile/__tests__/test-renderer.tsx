@@ -1,5 +1,7 @@
 import { BottomSheetModalProvider } from "@ledgerhq/lumen-ui-rnative";
 import { contactsInitialState } from "@domain/entity-contact";
+import { payCardBalanceInitialState } from "@features/flow-pay-card-balance/state";
+import { payCardFeatureTourInitialState } from "@features/flow-pay-card-feature-tour/state";
 import { initialIdentitiesState } from "@domain/entity-client-identity";
 import { INITIAL_STATE as TRUSTCHAIN_INITIAL_STATE } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { initialState as POST_ONBOARDING_INITIAL_STATE } from "@ledgerhq/live-common/postOnboarding/reducer";
@@ -83,6 +85,8 @@ const INITIAL_STATE: State = {
   postOnboardingHubDrawer: POST_ONBOARDING_HUB_DRAWER_INITIAL_STATE,
   protect: PROTECT_INITIAL_STATE,
   ratings: RATINGS_INITIAL_STATE,
+  payCardBalance: payCardBalanceInitialState,
+  payCardFeatureTour: payCardFeatureTourInitialState,
   settings: SETTINGS_INITIAL_STATE,
   toasts: TOASTS_INITIAL_STATE,
   trustchain: TRUSTCHAIN_INITIAL_STATE,

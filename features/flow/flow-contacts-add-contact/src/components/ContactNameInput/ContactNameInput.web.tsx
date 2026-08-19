@@ -6,6 +6,7 @@ type ContactNameInputProps = Readonly<{
   value: string;
   placeholder: string;
   errorMessage?: string;
+  isEditable?: boolean;
   onChange: (value: string) => void;
 }>;
 
@@ -13,6 +14,7 @@ export function ContactNameInput({
   value,
   placeholder,
   errorMessage,
+  isEditable = true,
   onChange,
 }: ContactNameInputProps): React.ReactNode {
   return (
@@ -25,6 +27,7 @@ export function ContactNameInput({
       maxCount={CONTACT_NAME_MAX_LENGTH}
       helperText={errorMessage}
       status={errorMessage ? "error" : undefined}
+      readOnly={!isEditable}
       className="mt-2"
     />
   );

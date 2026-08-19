@@ -2,6 +2,7 @@ import { BigNumber } from "bignumber.js";
 import * as network from "../network";
 import { AlgoTransactionType } from "../network";
 import { listOperations } from "./listOperations";
+import { mockAlgorandContext, mockAlgorandConfig } from "../test/context";
 
 jest.mock("../network");
 
@@ -19,7 +20,7 @@ describe("listOperations", () => {
   it("should return empty array when no transactions", async () => {
     mockGetAccountTransactions.mockResolvedValue({ transactions: [], nextToken: undefined });
 
-    const { items, next } = await listOperations(address, { order: "desc" });
+    const { items, next } = await listOperations(mockAlgorandContext, address, { order: "desc" });
 
     expect(items).toEqual([]);
     expect(next).toBe("");
@@ -46,7 +47,7 @@ describe("listOperations", () => {
 
     mockGetAccountTransactions.mockResolvedValue({ transactions: [tx], nextToken: undefined });
 
-    const { items } = await listOperations(address, { order: "desc" });
+    const { items } = await listOperations(mockAlgorandContext, address, { order: "desc" });
 
     expect(items).toHaveLength(1);
     expect(items[0].type).toBe("OUT");
@@ -77,7 +78,7 @@ describe("listOperations", () => {
 
     mockGetAccountTransactions.mockResolvedValue({ transactions: [tx], nextToken: undefined });
 
-    const { items } = await listOperations(address, { order: "desc" });
+    const { items } = await listOperations(mockAlgorandContext, address, { order: "desc" });
 
     expect(items[0].type).toBe("IN");
     expect(items[0].value).toBe(500000n);
@@ -108,7 +109,7 @@ describe("listOperations", () => {
 
     mockGetAccountTransactions.mockResolvedValue({ transactions: [tx], nextToken: undefined });
 
-    const { items } = await listOperations(address, { order: "desc" });
+    const { items } = await listOperations(mockAlgorandContext, address, { order: "desc" });
 
     expect(items[0].type).toBe("OUT");
     expect(items[0].value).toBe(100n);
@@ -137,7 +138,7 @@ describe("listOperations", () => {
 
     mockGetAccountTransactions.mockResolvedValue({ transactions: [tx], nextToken: undefined });
 
-    const { items } = await listOperations(address, { order: "desc" });
+    const { items } = await listOperations(mockAlgorandContext, address, { order: "desc" });
 
     expect(items[0].type).toBe("OPT_IN");
   });
@@ -164,7 +165,7 @@ describe("listOperations", () => {
 
     mockGetAccountTransactions.mockResolvedValue({ transactions: [tx], nextToken: undefined });
 
-    const { items } = await listOperations(address, { order: "desc" });
+    const { items } = await listOperations(mockAlgorandContext, address, { order: "desc" });
 
     expect(items[0].type).toBe("OPT_OUT");
   });
@@ -190,7 +191,7 @@ describe("listOperations", () => {
 
     mockGetAccountTransactions.mockResolvedValue({ transactions: [tx], nextToken: undefined });
 
-    const { items } = await listOperations(address, { order: "desc" });
+    const { items } = await listOperations(mockAlgorandContext, address, { order: "desc" });
 
     expect(items[0].details).toEqual({
       memo: {
@@ -222,7 +223,7 @@ describe("listOperations", () => {
 
     mockGetAccountTransactions.mockResolvedValue({ transactions: [tx], nextToken: undefined });
 
-    const { items } = await listOperations(address, { order: "desc" });
+    const { items } = await listOperations(mockAlgorandContext, address, { order: "desc" });
 
     expect(items[0].details).toEqual({ rewards: 800n });
   });
@@ -284,7 +285,7 @@ describe("listOperations", () => {
 
     mockGetAccountTransactions.mockResolvedValue({ transactions: txs, nextToken: "NEXT_TOKEN" });
 
-    const { items, next } = await listOperations(address, { order: "desc" });
+    const { items, next } = await listOperations(mockAlgorandContext, address, { order: "desc" });
 
     expect(items[0].tx.block.height).toBe(3000);
     expect(items[1].tx.block.height).toBe(2000);
@@ -332,7 +333,7 @@ describe("listOperations", () => {
 
     mockGetAccountTransactions.mockResolvedValue({ transactions: txs, nextToken: undefined });
 
-    const { items } = await listOperations(address, { order: "asc" });
+    const { items } = await listOperations(mockAlgorandContext, address, { order: "asc" });
 
     expect(items[0].tx.block.height).toBe(1000);
     expect(items[1].tx.block.height).toBe(3000);
@@ -373,7 +374,7 @@ describe("listOperations", () => {
 
     mockGetAccountTransactions.mockResolvedValue({ transactions: txs, nextToken: undefined });
 
-    const { items } = await listOperations(address, { order: "desc" });
+    const { items } = await listOperations(mockAlgorandContext, address, { order: "desc" });
 
     expect(items).toHaveLength(1);
     expect(items[0].id).toBe("TX_PAY");
@@ -382,14 +383,14 @@ describe("listOperations", () => {
   it("should forward pagination options to getAccountTransactions", async () => {
     mockGetAccountTransactions.mockResolvedValue({ transactions: [], nextToken: undefined });
 
-    await listOperations(address, {
+    await listOperations(mockAlgorandContext, address, {
       order: "asc",
       minHeight: 5000,
       limit: 50,
       cursor: "PAGE_TOKEN",
     });
 
-    expect(mockGetAccountTransactions).toHaveBeenCalledWith(address, {
+    expect(mockGetAccountTransactions).toHaveBeenCalledWith(mockAlgorandConfig, address, {
       minRound: 5000,
       limit: 50,
       nextToken: "PAGE_TOKEN",
@@ -420,7 +421,7 @@ describe("listOperations", () => {
       nextToken: "CURSOR_ABC",
     });
 
-    const { items, next } = await listOperations(address, { order: "asc" });
+    const { items, next } = await listOperations(mockAlgorandContext, address, { order: "asc" });
 
     expect(items).toHaveLength(1);
     expect(next).toBe("CURSOR_ABC");
@@ -429,6 +430,8 @@ describe("listOperations", () => {
   it("should propagate network errors", async () => {
     mockGetAccountTransactions.mockRejectedValue(new Error("Network error"));
 
-    await expect(listOperations(address, { order: "desc" })).rejects.toThrow("Network error");
+    await expect(listOperations(mockAlgorandContext, address, { order: "desc" })).rejects.toThrow(
+      "Network error",
+    );
   });
 });

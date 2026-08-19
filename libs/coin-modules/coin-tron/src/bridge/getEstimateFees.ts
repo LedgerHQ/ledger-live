@@ -3,6 +3,7 @@ import { parseCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies";
 import { log } from "@ledgerhq/logs";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
+import coinConfig from "../config";
 import { estimateFees, getAccount } from "../logic";
 import { ACTIVATION_FEES, STANDARD_FEES_NATIVE, STANDARD_FEES_TRC_20 } from "../logic/constants";
 import { getEnergyProvider } from "../logic/energyProviders";
@@ -67,7 +68,9 @@ export const getFeeResourceBreakdown = async (
 
   let networkInfo: NetworkInfo;
   try {
-    networkInfo = transaction.networkInfo ?? (await getTronAccountNetwork(account.freshAddress));
+    const config = coinConfig.getCoinConfig();
+    networkInfo =
+      transaction.networkInfo ?? (await getTronAccountNetwork(config, account.freshAddress));
   } catch (err) {
     log("tron/getFeeResourceBreakdown", "failed to fetch network info", { err });
     const zero = new BigNumber(0);
@@ -131,7 +134,7 @@ export const getFeeResourceBreakdown = async (
     // Full simulated energy, NOT scaled by consume_user_resource_percent: mainnet USDT transfers
     // charge the caller 100% of energy_used (origin_energy_usage = 0), so scaling would under-report
     // and risk a surprise TRX burn.
-    const energyUsed = await estimateEnergy(transactionIntent);
+    const energyUsed = await estimateEnergy(coinConfig.getCoinConfig(), transactionIntent);
     const energyRequired = new BigNumber(energyUsed).integerValue(BigNumber.ROUND_CEIL);
 
     return {
@@ -178,7 +181,8 @@ export const computeSponsoredEnergyEstimate = async (
   if (breakdown.energyRequired.lte(0)) return null;
 
   try {
-    const params: ChainParameters = await getChainParameters();
+    const config = coinConfig.getCoinConfig();
+    const params: ChainParameters = await getChainParameters(config);
     const avoidedEnergyFees = breakdown.energyRequired
       .multipliedBy(params.energyFee)
       .integerValue(BigNumber.ROUND_CEIL);
@@ -266,7 +270,8 @@ const computeActiveRecipientTrc20Fee = async (
       return new BigNumber(0);
     }
 
-    const params: ChainParameters = await getChainParameters();
+    const config = coinConfig.getCoinConfig();
+    const params: ChainParameters = await getChainParameters(config);
     return computeBandwidthFee(
       resourceBreakdown.bandwidthRequired.toNumber(),
       resourceBreakdown.networkInfo,
@@ -293,7 +298,8 @@ const getFeesFromAccountActivation = async (
   tokenAccount?: TokenAccount | null,
   breakdown?: FeeResourceBreakdown,
 ): Promise<BigNumber> => {
-  const recipientAccounts = await getAccount(transaction.recipient);
+  const config = coinConfig.getCoinConfig();
+  const recipientAccounts = await getAccount(config, transaction.recipient);
   const recipientAccount: AccountTronAPI | undefined = recipientAccounts[0];
   const { gainedUsed, gainedLimit } = extractBandwidthInfo(transaction.networkInfo);
   const available = gainedLimit.minus(gainedUsed);
@@ -327,7 +333,7 @@ const getFeesFromAccountActivation = async (
 
     // if we have a token account but the recipient is either not active or the account does not have a trc20 balance for the given token.
     if (tokenAccount && tokenAccount.token.tokenType === "trc20") {
-      const estimatedFees = await estimateFees(transactionIntent);
+      const estimatedFees = await estimateFees(coinConfig.getCoinConfig(), transactionIntent);
       return new BigNumber(estimatedFees.toString());
     }
   }

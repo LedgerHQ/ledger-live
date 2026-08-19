@@ -1,10 +1,15 @@
 import BigNumber from "bignumber.js";
 import { genericGetTransactionStatus } from "../getTransactionStatus";
 import { getCoinModuleApi } from "../api";
+import { getBridgeApi } from "../bridge";
 import * as utils from "../utils";
 
 jest.mock("../api", () => ({
   getCoinModuleApi: jest.fn(),
+}));
+
+jest.mock("../bridge", () => ({
+  getBridgeApi: jest.fn(),
 }));
 
 jest.mock("../utils", () => ({
@@ -13,6 +18,7 @@ jest.mock("../utils", () => ({
 }));
 
 const mockExtractBalances = utils.extractBalances as jest.Mock;
+const mockGetBridgeApi = getBridgeApi as jest.Mock;
 
 describe("genericGetTransactionStatus", () => {
   const account = {
@@ -33,12 +39,16 @@ describe("genericGetTransactionStatus", () => {
   };
 
   const validateIntent = jest.fn();
+  // The framework threads a context and calls `craftTransactionData(context, intent)`; mirror the
+  // default impl (`{ type: "none" }`).
+  const craftTransactionData = () => ({ type: "none" });
 
   beforeEach(() => {
     jest.clearAllMocks();
     validateIntent.mockResolvedValue(validateIntentResult);
     mockExtractBalances.mockReturnValue({});
-    (getCoinModuleApi as jest.Mock).mockReturnValue({ validateIntent });
+    (getCoinModuleApi as jest.Mock).mockReturnValue({ validateIntent, craftTransactionData });
+    mockGetBridgeApi.mockResolvedValue({});
   });
 
   it.each([
@@ -82,11 +92,63 @@ describe("genericGetTransactionStatus", () => {
     } as any);
 
     expect(validateIntent).toHaveBeenCalledWith(
+      expect.anything(), // context (framework v6)
       expect.objectContaining({
         memo: { type: "map", memos: new Map([["destinationTag", "1234"]]) },
       }),
       expect.anything(),
       expect.anything(),
     );
+  });
+
+  it("carries familySpecificData through the draft transaction to the family's buildIntentData", async () => {
+    const familySpecificData = { chosenOption: "OPTION_A", chosenList: [], chosenCount: 3 };
+    const buildIntentData = jest.fn().mockReturnValue({ type: "none" });
+    mockGetBridgeApi.mockResolvedValue({ buildIntentData });
+    const getStatus = genericGetTransactionStatus("mainnet", "evm");
+
+    await getStatus(account, {
+      amount: new BigNumber(100),
+      useAllAmount: false,
+      recipient: "0xRecipient",
+      family: "evm",
+      familySpecificData,
+    } as any);
+
+    expect(buildIntentData).toHaveBeenCalledWith(expect.objectContaining({ familySpecificData }));
+  });
+
+  it("builds the intent data from the real transaction, not the draft", async () => {
+    const buildIntentData = jest.fn().mockReturnValue({ type: "none" });
+    mockGetBridgeApi.mockResolvedValue({ buildIntentData });
+    const getStatus = genericGetTransactionStatus("mainnet", "evm");
+
+    const transaction = {
+      amount: new BigNumber(100),
+      useAllAmount: false,
+      recipient: "0xRecipient",
+      family: "evm",
+      withdrawId: "unbonding-7",
+      nonce: new BigNumber(4),
+      sponsored: true,
+    } as any;
+    await getStatus(account, transaction);
+
+    expect(buildIntentData).toHaveBeenCalledWith(transaction);
+  });
+
+  it("leaves the intent's data to the coin module when the family declares no buildIntentData", async () => {
+    const craftTransactionData = jest.fn().mockReturnValue({ type: "none" });
+    (getCoinModuleApi as jest.Mock).mockReturnValue({ validateIntent, craftTransactionData });
+    const getStatus = genericGetTransactionStatus("mainnet", "evm");
+
+    await getStatus(account, {
+      amount: new BigNumber(100),
+      useAllAmount: false,
+      recipient: "0xRecipient",
+      family: "evm",
+    } as any);
+
+    expect(craftTransactionData).toHaveBeenCalled();
   });
 });

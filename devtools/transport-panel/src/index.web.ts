@@ -1,2 +1,2 @@
-export { TransportPanel } from "./TransportPanel.web";
+export { TransportPanel } from "./TransportPanel";
 export type { TransportPanelProps } from "./types";

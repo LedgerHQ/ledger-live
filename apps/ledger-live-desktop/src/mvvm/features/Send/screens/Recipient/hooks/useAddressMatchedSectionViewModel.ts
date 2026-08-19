@@ -13,6 +13,7 @@ type UseAddressMatchedSectionViewModelProps = Readonly<{
   searchResult: AddressSearchResult;
   searchValue: string;
   onSelect: (address: string, ensName?: string) => void;
+  onAddContact: () => void;
   isSanctioned?: boolean;
   isAddressComplete?: boolean;
   hasBridgeError?: boolean;
@@ -38,11 +39,13 @@ type RecipientCardSuggestion = Readonly<{
   description?: string;
   contact?: MatchedContact;
   isReady: boolean;
+  showActions: boolean;
   hasAddressBook: boolean;
   addressBookUnsupportedLabel: string;
   addContactLabel: string;
   sendLabel: string;
   onSend: () => void;
+  onAddContact: () => void;
 }>;
 
 export type AddressMatchedSectionViewModel = Readonly<{
@@ -57,6 +60,7 @@ export function useAddressMatchedSectionViewModel({
   searchResult,
   searchValue,
   onSelect,
+  onAddContact,
   isSanctioned = false,
   isAddressComplete = false,
   hasBridgeError = false,
@@ -69,6 +73,34 @@ export function useAddressMatchedSectionViewModel({
   const isFirstInteractionBannerEnabled =
     useFeature("newSendFlowFirstInteractionBanner")?.enabled ?? false;
   const addressMatchedLabel = t("newSendFlow.addressMatched");
+  const recipientAddress = searchResult.resolvedAddress ?? searchValue;
+  const shouldShowErrorRecipientCard =
+    isContactsFeatureEnabled && isAddressComplete && (hasBridgeError || isSanctioned);
+
+  if (shouldShowErrorRecipientCard) {
+    return {
+      isVisible: true,
+      showHeader: false,
+      addressMatchedLabel,
+      suggestion: {
+        kind: "recipient-card",
+        recipient: recipientAddress,
+        contact: undefined,
+        isReady: false,
+        showActions: false,
+        hasAddressBook,
+        addressBookUnsupportedLabel: t("newSendFlow.addressBookUnsupported", {
+          family: addressBookFamilyName,
+        }),
+        addContactLabel: t("contacts.addContact"),
+        sendLabel: t("contacts.addressDetail.send"),
+        onSend: () => onSelect(recipientAddress, searchResult.ensName),
+        onAddContact,
+      },
+      showFirstInteractionWarning: false,
+    };
+  }
+
   const presentation = getRecipientMatchPresentation({
     searchResult,
     searchValue,
@@ -123,6 +155,7 @@ export function useAddressMatchedSectionViewModel({
             : getAlreadyUsedDescription(presentation.matchedRecentAddress?.lastUsedAt),
           contact: presentation.matchedContact,
           isReady: presentation.isReady,
+          showActions: !hasBridgeError,
           hasAddressBook,
           addressBookUnsupportedLabel: t("newSendFlow.addressBookUnsupported", {
             family: addressBookFamilyName,
@@ -130,6 +163,7 @@ export function useAddressMatchedSectionViewModel({
           addContactLabel: t("contacts.addContact"),
           sendLabel: t("contacts.addressDetail.send"),
           onSend: () => onSelect(presentation.recipientAddress, presentation.ensName),
+          onAddContact,
         },
         showFirstInteractionWarning,
       };

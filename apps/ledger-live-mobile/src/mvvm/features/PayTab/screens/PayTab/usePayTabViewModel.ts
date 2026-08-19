@@ -1,14 +1,81 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { Linking } from "react-native";
+import { useTranslation } from "~/context/Locale";
 import type { OpenHostedLogin } from "@features/flow-pay-card-auth";
+import type { FeatureTourProps } from "@features/flow-pay-card-feature-tour";
+import type { BalanceLabels } from "@features/flow-pay-card-balance";
 import { useNavigationBarHeights } from "LLM/hooks/useNavigationBarHeights";
+import { usePayCardBalance } from "LLM/features/PayTab/hooks/usePayCardBalance";
+import { usePayTabActionTiles } from "LLM/features/PayTab/hooks/usePayTabActionTiles";
+import { usePayTabDepositOptions } from "LLM/features/PayTab/hooks/usePayTabDepositOptions";
+import { usePayStablecoins } from "LLM/features/PayTab/hooks/usePayStablecoins";
+import { track } from "~/analytics";
 
 export function usePayTabViewModel() {
   const { top } = useNavigationBarHeights();
+  const { t } = useTranslation();
+
+  const balance = usePayCardBalance();
+  const { defaultStablecoins } = usePayStablecoins();
+  const deposit = usePayTabDepositOptions(
+    balance.onTrackEvent,
+    defaultStablecoins.map(stablecoin => stablecoin.id),
+  );
+  const actionTiles = usePayTabActionTiles(balance.onTrackEvent, deposit.open);
+
+  const balanceLabels: BalanceLabels = useMemo(
+    () => ({
+      emptyTitle: t("payTab.balance.emptyTitle"),
+      emptyDescription: t("payTab.balance.emptyDescription"),
+      allStablecoins: t("payTab.balance.filter.allStablecoins"),
+      filterDialogTitle: t("payTab.balance.filter.dialogTitle"),
+      filterDialogDescription: t("payTab.balance.filter.dialogDescription"),
+      filterDialogBanner: t("payTab.balance.filter.dialogBanner"),
+      confirm: t("payTab.balance.filter.confirm"),
+    }),
+    [t],
+  );
+
   const openHostedLogin: OpenHostedLogin = useCallback(
     (loginUrl: string) => Linking.openURL(loginUrl),
     [],
   );
 
-  return { top, openHostedLogin };
+  const featureTour: FeatureTourProps = useMemo(
+    () => ({
+      title: t("payTab.featureTour.title"),
+      description: t("payTab.featureTour.description"),
+      ctaLabel: t("payTab.featureTour.cta"),
+      rows: [
+        {
+          icon: "Globe",
+          title: t("payTab.featureTour.rows.global.title"),
+          description: t("payTab.featureTour.rows.global.description"),
+        },
+        {
+          icon: "Chart5",
+          title: t("payTab.featureTour.rows.volatility.title"),
+          description: t("payTab.featureTour.rows.volatility.description"),
+        },
+        {
+          icon: "CreditCard",
+          title: t("payTab.featureTour.rows.card.title"),
+          description: t("payTab.featureTour.rows.card.description"),
+        },
+      ],
+      onTrackScreen: (page: string) => track(page),
+      onTrackEvent: (event: string, params: Record<string, unknown>) => track(event, params),
+    }),
+    [t],
+  );
+
+  return {
+    top,
+    openHostedLogin,
+    featureTour,
+    balance,
+    balanceLabels,
+    actionTiles,
+    depositOptions: deposit.depositOptions,
+  };
 }

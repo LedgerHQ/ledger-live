@@ -1,4 +1,3 @@
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import coinConfig from "../config";
 import { createRegistryAndExtrinsics } from "../network/common";
 import {
@@ -25,8 +24,7 @@ const mockTransactionParams = jest.fn().mockResolvedValue(fixtureTransactionPara
 
 jest.mock("../network/sidecar", () => ({
   getRegistry: () => mockRegistry(),
-  paymentInfo: (signedTx: string, currency: CryptoCurrency | undefined) =>
-    mockPaymentInfo(signedTx, currency),
+  paymentInfo: (...args: unknown[]) => mockPaymentInfo(...args),
   getTransactionParams: () => mockTransactionParams(),
 }));
 
@@ -57,17 +55,18 @@ describe("estimatedFees", () => {
   it("calls loadPolkadotCrypto (WASM check)", async () => {
     // Given
     const account = createFixtureAccount();
+    const config = coinConfig.getCoinConfig("polkadot");
     const mockLoadPolkadotCrypto = jest.mocked(loadPolkadotCrypto);
-    const tx = await craftEstimationTransaction(account.freshAddress, BigInt(1000));
+    const tx = await craftEstimationTransaction(config, account.freshAddress, BigInt(1000));
 
     // When
-    await estimateFees(tx);
+    await estimateFees(config, tx);
 
     // Then
     // Test to comply with existing code. Should be 1 time only.
     expect(mockLoadPolkadotCrypto).toHaveBeenCalledTimes(2);
     expect(mockPaymentInfo).toHaveBeenCalledTimes(1);
-    expect(mockPaymentInfo.mock.lastCall[1]).toEqual(undefined);
+    expect(mockPaymentInfo.mock.lastCall[2]).toEqual(undefined);
   });
 
   it("returns estimation from Polkadot explorer", async () => {
@@ -79,10 +78,11 @@ describe("estimatedFees", () => {
       class: "WHATEVER",
       partialFee,
     });
-    const tx = await craftEstimationTransaction(account.freshAddress, BigInt(10000));
+    const config = coinConfig.getCoinConfig("polkadot");
+    const tx = await craftEstimationTransaction(config, account.freshAddress, BigInt(10000));
 
     // When
-    const result = await estimateFees(tx);
+    const result = await estimateFees(config, tx);
 
     // Then
     expect(mockPaymentInfo).toHaveBeenCalledTimes(1);
@@ -91,6 +91,6 @@ describe("estimatedFees", () => {
     expect(result).toEqual(BigInt(partialFee));
 
     expect(mockPaymentInfo).toHaveBeenCalledTimes(1);
-    expect(mockPaymentInfo.mock.lastCall[1]).toEqual(undefined);
+    expect(mockPaymentInfo.mock.lastCall[2]).toEqual(undefined);
   });
 });

@@ -19,6 +19,7 @@ export * from "./lwdDustFiltering";
 export * from "./lwdWallet40";
 export * from "./lwmContacts";
 export * from "./lwmDustFiltering";
+export * from "./lwmPasswordRevamp";
 export * from "./lwmWallet40";
 export * from "./lwmQuickActionsCtasVariant";
 export * from "./llmTransferButtonCopyVariant";

@@ -27,10 +27,15 @@ export type ContactDeletionPort = Readonly<{
   deleteContact(contactId: ContactId): Promise<void>;
 }>;
 
-export type ContactDetailActionsPorts = Readonly<{
+export type ContactDetailActionsDataPorts = Readonly<{
   edit: ContactEditPort;
   deletion: ContactDeletionPort;
 }>;
+
+export type ContactDetailActionsPorts = ContactDetailActionsDataPorts &
+  Readonly<{
+    signerValidation: ContactSignerValidationPort;
+  }>;
 
 export type ContactAddressDeletionInput = Readonly<{
   contactId: ContactId;

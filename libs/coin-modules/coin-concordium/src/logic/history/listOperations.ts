@@ -1,7 +1,12 @@
 import type { ListOperationsOptions } from "@ledgerhq/coin-module-framework/api/index";
 import { log } from "@ledgerhq/logs";
 import { getTransactions } from "../../network/proxyClient";
-import type { RawOperation, TransactionQueryParams, WalletProxyTransaction } from "../../types";
+import type {
+  ConcordiumCoinConfig,
+  RawOperation,
+  TransactionQueryParams,
+  WalletProxyTransaction,
+} from "../../types";
 import { decodeMemo } from "./memo";
 
 const DEFAULT_PAGE_SIZE = 100;
@@ -68,6 +73,7 @@ export function parseTransaction(tx: WalletProxyTransaction, address: string): R
  * Returns list of raw operations associated to an account.
  */
 export async function listOperations(
+  config: ConcordiumCoinConfig,
   address: string,
   options: ListOperationsOptions,
   currencyId: string,
@@ -88,7 +94,7 @@ export async function listOperations(
   }
 
   try {
-    const response = await getTransactions(currencyId, address, params);
+    const response = await getTransactions(config, currencyId, address, params);
 
     if (!("transactions" in response) || !Array.isArray(response.transactions)) {
       return { items: [], next: undefined };

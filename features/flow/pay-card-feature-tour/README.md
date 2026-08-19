@@ -31,7 +31,7 @@ const content: FeatureTourContent = {
       description: t("payCardFeatureTour.rows.global.description"),
     },
     {
-      icon: "Chart2",
+      icon: "Chart5",
       title: t("payCardFeatureTour.rows.volatility.title"),
       description: t("payCardFeatureTour.rows.volatility.description"),
     },
@@ -54,10 +54,12 @@ The `icon` field is a Lumen symbol name resolved per platform, so the app picks 
 while the copy stays translatable. Translation keys and the app-side wiring live in the host
 app (tracked separately in the mount ticket), keeping this package free of hardcoded strings.
 
-Visibility is derived from the shared `@domain/entity-pay-card` slice
-(`hasSeenFeatureTour`). Dismissing the tour (Got it, close button, or backdrop) dispatches
-`markPayCardFeatureTourSeen` once. Analytics are injected via the optional `onTrackScreen` /
-`onTrackEvent` props so the flow stays decoupled from any app analytics package.
+Visibility is derived from this flow's `payCardFeatureTour` slice (`hasSeenFeatureTour`),
+exposed through `@features/flow-pay-card-feature-tour/state`. Store, persistence and test
+setup should import that entry so they do not load the tour UI. Dismissing the tour (Got it, close
+button, or backdrop) dispatches `markPayCardFeatureTourSeen` once. Analytics are injected via the
+optional `onTrackScreen` / `onTrackEvent` props so the flow stays decoupled from any app analytics
+package.
 
 ## Platform resolution
 
@@ -85,6 +87,7 @@ pay-card-feature-tour/
 └── src/
     ├── index.ts                              # Public API (default)
     ├── index.native.ts                       # Public API (react-native condition)
+    ├── state/                                # UI-free Redux slice (`./state` export)
     └── components/
         └── FeatureTour/
             ├── __tests__/
@@ -102,5 +105,5 @@ pay-card-feature-tour/
 ```
 
 The view shows a hero image, title, subtitle, and three Lumen `ListItem` feature rows
-(Globe / Chart2 / CreditCard) inside a queued bottom sheet (mobile) or dialog (desktop),
+(Globe / Chart5 / CreditCard) inside a queued bottom sheet (mobile) or dialog (desktop),
 with a single "Got it" CTA to dismiss.

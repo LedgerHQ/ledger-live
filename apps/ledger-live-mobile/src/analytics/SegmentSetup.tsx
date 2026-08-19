@@ -3,7 +3,6 @@ import { liveBlindSigningReporter } from "@ledgerhq/live-dmk-shared";
 import { useStore } from "~/context/hooks";
 import { trackingEnabledSelector } from "~/reducers/settings";
 import { start } from "./segment";
-import useFlushInBackground from "./useFlushInBackground";
 
 const SegmentSetup = (): null => {
   const store = useStore();
@@ -16,8 +15,6 @@ const SegmentSetup = (): null => {
   useEffect(() => {
     liveBlindSigningReporter.setConsentSource(() => trackingEnabledSelector(store.getState()));
   }, [store]);
-
-  useFlushInBackground();
 
   return null;
 };

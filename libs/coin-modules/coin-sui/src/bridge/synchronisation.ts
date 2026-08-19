@@ -9,11 +9,12 @@ import {
   mergeOps,
   type GetAccountShape,
 } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
-import { promiseAllBatched } from "@ledgerhq/live-promise";
+import { promiseAllBatched } from "@ledgerhq/coin-module-framework/promises";
 import { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { type Operation } from "@ledgerhq/types-live";
 import type { SyncConfig, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
+import suiConfig from "../config";
 import { BLOCK_HEIGHT } from "../constants";
 import { getAccountBalances, getOperations, getDelegatedStakes } from "../network";
 import { DEFAULT_COIN_TYPE } from "../network/sdk";
@@ -31,10 +32,11 @@ export const getAccountShape: GetAccountShape<SuiAccount> = async (info, syncCon
     derivationMode,
   });
 
-  const stakes = await getDelegatedStakes(address, currency.id);
+  const config = suiConfig.getCoinConfig(currency.id);
+  const stakes = await getDelegatedStakes(config, address);
 
   let syncHash = initialAccount?.syncHash ?? latestHash(oldOperations);
-  const newOperations = await getOperations(accountId, address, syncHash, undefined, currency.id);
+  const newOperations = await getOperations(config, accountId, address, syncHash, undefined);
   const operations = mergeOps(oldOperations, newOperations);
   syncHash = latestHash(operations);
 
@@ -42,7 +44,7 @@ export const getAccountShape: GetAccountShape<SuiAccount> = async (info, syncCon
     ({ extra }) => (extra as SuiOperationExtra).coinType === DEFAULT_COIN_TYPE,
   );
 
-  const accountBalances = await getAccountBalances(address, currency.id);
+  const accountBalances = await getAccountBalances(config, address);
   const suiBalance = accountBalances.find(({ coinType }) => coinType === DEFAULT_COIN_TYPE);
   const balance = suiBalance?.balance ?? BigNumber(0);
   // SIP-58 address-balance portion of the native SUI balance — kept so the bridge can validate

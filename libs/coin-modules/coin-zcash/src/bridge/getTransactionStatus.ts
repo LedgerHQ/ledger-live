@@ -9,6 +9,8 @@ import {
   isTransparentInputTransfer,
   resolveTransparentUtxos,
 } from "./statusHelpers";
+import { getReservedNullifiers } from "./note-reservation";
+import { getSpendableIronwoodBalance } from "../logic/account/spendability";
 
 /**
  * Transaction status for a transparent-input (Public→*) send: the recipient
@@ -40,7 +42,14 @@ function getTransparentInputStatus(
     errors.amount = new NotEnoughBalance();
   }
 
-  return { errors, warnings, estimatedFees: fee, amount: tx.amount, totalSpent };
+  return {
+    errors,
+    warnings,
+    estimatedFees: fee,
+    amount: tx.amount,
+    totalSpent,
+    recipientIsReadOnly: tx.selfTransfer === true,
+  };
 }
 
 export const getTransactionStatus: AccountBridge<
@@ -64,11 +73,14 @@ export const getTransactionStatus: AccountBridge<
       estimatedFees: new BigNumber(0),
       amount: transaction.amount,
       totalSpent: transaction.amount,
+      recipientIsReadOnly: transaction.selfTransfer === true,
     };
   }
 
-  // Shielded sends spend the Ironwood pool, so validate the amount against it.
-  const poolBalance = privateInfo.ironwoodBalance ?? new BigNumber(0);
+  // Shielded sends spend the Ironwood pool, so validate the amount against the
+  // mature, unreserved figure -- the same one selection draws from, so the
+  // status can never accept an amount selection cannot cover.
+  const poolBalance = getSpendableIronwoodBalance(account, getReservedNullifiers(account));
   const fee = transaction.zcashFee ?? new BigNumber(ZIP317_MINIMUM_FEE);
   const totalSpent = transaction.amount.plus(fee);
 
@@ -78,5 +90,12 @@ export const getTransactionStatus: AccountBridge<
   const amountError = computeAmountError(transaction, totalSpent, poolBalance);
   if (amountError) errors.amount = amountError;
 
-  return { errors, warnings, estimatedFees: fee, amount: transaction.amount, totalSpent };
+  return {
+    errors,
+    warnings,
+    estimatedFees: fee,
+    amount: transaction.amount,
+    totalSpent,
+    recipientIsReadOnly: transaction.selfTransfer === true,
+  };
 };

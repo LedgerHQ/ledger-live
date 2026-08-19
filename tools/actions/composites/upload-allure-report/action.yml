@@ -28,22 +28,20 @@ runs:
   using: composite
 
   steps:
-    - id: branch-name
-      uses: tj-actions/branch-names@6c999acf206f5561e19f46301bb310e9e70d8815 # v6
     - name: Set report path
       id: report-path
       shell: bash
       run: |
-        REPO_NAME=$(echo "${{ github.repository }}" | cut -d'/' -f2)
-        BRANCH="${{ steps.branch-name.outputs.current_branch }}"
+        REPO_NAME="${GITHUB_REPOSITORY#*/}"
         SUFFIX="${INPUTS_REPORT_PATH_SUFFIX:-$INPUTS_PLATFORM}"
-        if [ "${{ github.repository }}" != "LedgerHQ/ledger-live" ]; then
+        if [ "$GITHUB_REPOSITORY" != "LedgerHQ/ledger-live" ]; then
           PATH_VALUE="${REPO_NAME}-${BRANCH}-${SUFFIX}"
         else
           PATH_VALUE="${BRANCH}-${SUFFIX}"
         fi
         echo "path=${PATH_VALUE}" >> "$GITHUB_OUTPUT"
       env:
+        BRANCH: ${{ github.head_ref || github.ref_name }}
         INPUTS_REPORT_PATH_SUFFIX: ${{ inputs.report_path_suffix }}
         INPUTS_PLATFORM: ${{ inputs.platform }}
     - name: Compress PNG files

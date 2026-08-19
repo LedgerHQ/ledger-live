@@ -351,27 +351,26 @@ function processCoinTransfers({
   return coinOperations;
 }
 
-async function processTransactionItem({
-  mergedTx,
-  address,
-  evmAddress,
-  config,
-  currencyId,
-  ledgerAccountId,
-  mirrorTokens,
-  useEncodedHash,
-  useSyntheticBlocks,
-}: {
-  mergedTx: MergedTransaction;
-  address: string;
-  evmAddress: string;
-  config?: HederaCoinConfig;
-  currencyId: string;
-  ledgerAccountId: string;
-  mirrorTokens: HederaMirrorToken[];
-  useEncodedHash: boolean;
-  useSyntheticBlocks: boolean;
-}): Promise<{
+async function processTransactionItem(
+  config: HederaCoinConfig,
+  {
+    mergedTx,
+    address,
+    evmAddress,
+    ledgerAccountId,
+    mirrorTokens,
+    useEncodedHash,
+    useSyntheticBlocks,
+  }: {
+    mergedTx: MergedTransaction;
+    address: string;
+    evmAddress: string;
+    ledgerAccountId: string;
+    mirrorTokens: HederaMirrorToken[];
+    useEncodedHash: boolean;
+    useSyntheticBlocks: boolean;
+  },
+): Promise<{
   newCoinOperations: Operation<HederaOperationExtra>[];
   newTokenOperations: Operation<HederaOperationExtra>[];
 }> {
@@ -393,7 +392,7 @@ async function processTransactionItem({
   const stakingAnalysis =
     mirrorTx.name === HEDERA_TRANSACTION_NAMES.UpdateAccount
       ? await analyzeStakingOperation({
-          configOrCurrencyId: config ?? currencyId,
+          configOrCurrencyId: config,
           address,
           mirrorTx,
         })
@@ -437,36 +436,37 @@ async function processTransactionItem({
   return { newCoinOperations, newTokenOperations };
 }
 
-export async function listOperationsV2({
-  config,
-  currencyId,
-  address,
-  evmAddress,
-  mirrorTokens,
-  tokenEvmAddresses,
-  cursor,
-  limit = 100,
-  order = "desc",
-  fetchAllPages,
-  skipFeesForTokenOperations,
-  useEncodedHash,
-  useSyntheticBlocks,
-}: {
-  config?: HederaCoinConfig;
-  currencyId: string;
-  address: string;
-  evmAddress: string;
-  mirrorTokens: HederaMirrorToken[];
-  tokenEvmAddresses: string[];
-  cursor?: string;
-  limit?: number;
-  order?: "asc" | "desc";
-  // options for compatibility with old bridge
-  fetchAllPages: boolean;
-  skipFeesForTokenOperations: boolean;
-  useEncodedHash: boolean;
-  useSyntheticBlocks: boolean;
-}): Promise<{
+export async function listOperationsV2(
+  config: HederaCoinConfig,
+  {
+    currencyId,
+    address,
+    evmAddress,
+    mirrorTokens,
+    tokenEvmAddresses,
+    cursor,
+    limit = 100,
+    order = "desc",
+    fetchAllPages,
+    skipFeesForTokenOperations,
+    useEncodedHash,
+    useSyntheticBlocks,
+  }: {
+    currencyId: string;
+    address: string;
+    evmAddress: string;
+    mirrorTokens: HederaMirrorToken[];
+    tokenEvmAddresses: string[];
+    cursor?: string;
+    limit?: number;
+    order?: "asc" | "desc";
+    // options for compatibility with old bridge
+    fetchAllPages: boolean;
+    skipFeesForTokenOperations: boolean;
+    useEncodedHash: boolean;
+    useSyntheticBlocks: boolean;
+  },
+): Promise<{
   coinOperations: Operation<HederaOperationExtra>[];
   tokenOperations: Operation<HederaOperationExtra>[];
   nextCursor: string | null;
@@ -486,7 +486,7 @@ export async function listOperationsV2({
   const [mirrorTransactions, enrichedERC20Transfers, latestHgraphIndexedTimestampNs] =
     await Promise.all([
       apiClient.getAccountTransactions({
-        configOrCurrencyId: config ?? currencyId,
+        configOrCurrencyId: config,
         address,
         order,
         limit,
@@ -495,7 +495,7 @@ export async function listOperationsV2({
       }),
       hgraphClient
         .getERC20Transfers({
-          configOrCurrencyId: config ?? currencyId,
+          configOrCurrencyId: config,
           address,
           order,
           limit,
@@ -504,9 +504,9 @@ export async function listOperationsV2({
           ...(cursor && { timestamp: cursor }),
         })
         .then(erc20Transfers =>
-          enrichERC20Transfers({ configOrCurrencyId: config ?? currencyId, erc20Transfers }),
+          enrichERC20Transfers({ configOrCurrencyId: config, erc20Transfers }),
         ),
-      hgraphClient.getLatestIndexedConsensusTimestamp({ configOrCurrencyId: config ?? currencyId }),
+      hgraphClient.getLatestIndexedConsensusTimestamp({ configOrCurrencyId: config }),
     ]);
 
   // merge transactions, ensuring no duplicates, correct ordering and pagination handling
@@ -520,16 +520,14 @@ export async function listOperationsV2({
   });
 
   for (const mergedTx of mergeResult.merged) {
-    const result = await processTransactionItem({
+    const result = await processTransactionItem(config, {
       mergedTx,
       address,
       evmAddress,
-      currencyId,
       ledgerAccountId,
       mirrorTokens,
       useEncodedHash,
       useSyntheticBlocks,
-      ...(config && { config }),
     });
 
     coinOperations.push(...result.newCoinOperations);

@@ -1,12 +1,22 @@
 import { Step } from "jest-allure2-reporter/api";
+import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 
 export default class NewSendFlowPage {
+  @Step("Navigate to token send screen")
+  async navigateToTokenSendScreen(parentAccountName: string, tokenAccount: Account) {
+    await app.account.openViaDeeplink();
+    await app.account.goToAccountByName(parentAccountName);
+    await app.account.navigateToTokenInAccount(tokenAccount);
+    await app.account.tapSend();
+  }
+
   recipientInputId = "recipient-input";
   skipMemoLinkId = "new-send-flow-skip-memo-link";
   skipMemoConfirmId = "new-send-flow-skip-memo-confirm";
   addressConfirmId = "new-send-flow-address-confirm";
   memoInputId = "send-memo-input";
   memoTypeSelectId = "send-memo-type-select";
+  amountModeToggleId = "amount-mode-toggle";
   amountContinueEnabledButtonId = "enabled-amount-continue-button";
   signaturePromptId = "send-signature-prompt";
   successViewTransactionId = "send-confirmation-success-view-transaction";
@@ -67,6 +77,9 @@ export default class NewSendFlowPage {
 
   @Step("Fill crypto amount: $0")
   async setAmountNewFlow(amount: string) {
+    // The amount step opens in fiat mode, so an untoggled "0.01" is $0.01, not 0.01 crypto —
+    // the Speculos assertions compare against the crypto amount.
+    await tapById(this.amountModeToggleId);
     for (const char of amount) {
       const keyId = char === "." ? "keyboard-key-decimal" : `keyboard-key-${char}`;
       await tapById(keyId);

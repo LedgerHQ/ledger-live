@@ -28,14 +28,9 @@ jest.mock("~/logic/getWindowDimensions", () => () => ({ height: 1000 }));
 
 jest.mock("../../hooks/useLargeMover", () => ({
   useLargeMover: () => ({
-    currencies: [
-      {
-        id: mockCurrencyData.id,
-        data: mockCurrencyData,
-        isLoading: false,
-        isError: false,
-      },
-    ],
+    currencies: { cryptoOrTokenCurrencies: {} },
+    currenciesIds: ["bitcoin", "ethereum"],
+    chartIds: ["bitcoin", "ethereum"],
     loading: false,
     isError: false,
   }),
@@ -71,7 +66,7 @@ const mockRoute = {
   key: "LargeMoverRouteKey",
   name: ScreenName.LargeMoverLandingPage,
   params: {
-    currencyIds: "BTC,ETH",
+    ledgerIds: "bitcoin,ethereum",
     initialRange: InitialRange.Day,
   },
 } as RouteProp<LandingPagesNavigatorParamList, ScreenName.LargeMoverLandingPage>;

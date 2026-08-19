@@ -117,7 +117,7 @@ export class BuySellProvider extends BaseProvider {
   static readonly COINBASE = new BuySellProvider("coinbase", "Coinbase", true);
   static readonly COINIFY = new BuySellProvider("coinify-buy", "Coinify", true);
   static readonly RAMP_NETWORK = new BuySellProvider("ramp", "Ramp Network", true);
-  static readonly BTC_DIRECT = new BuySellProvider("btc_direct", "BTC Direct", true);
+  static readonly BTC_DIRECT = new BuySellProvider("btcdirect", "BTC Direct", true);
   static readonly SARDINE = new BuySellProvider("sardine", "Sardine", true);
   static readonly SIMPLEX = new BuySellProvider("simplex", "Simplex", true);
   static readonly BANXA = new BuySellProvider("banxa", "Banxa", true);

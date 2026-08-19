@@ -14,9 +14,10 @@
     "src/helpers/handleTransactionStatus.ts",
     "src/helpers/hasMinimumDelegableBalance.ts",
     "src/helpers/randomizeProviders.ts",
-    "src/transaction.ts",
+    "src/supportedFeatures.ts",
     "src/test/bridge.dataset.ts",
-    "src/supportedFeatures.ts"
+    "src/test/context.ts",
+    "src/transaction.ts"
   ],
   "ignoreUnused": [
     "@ledgerhq/devices",

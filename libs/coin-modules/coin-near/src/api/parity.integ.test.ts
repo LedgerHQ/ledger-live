@@ -7,6 +7,7 @@ import { getActionCosts } from "../network/protocolConfig";
 import { preload } from "../preload";
 import { setNearPreloadData } from "../preload-data";
 import type { Transaction } from "../types";
+import { createMockNearContext } from "../test/context";
 import { createApi } from "./index";
 
 /**
@@ -53,9 +54,11 @@ const bridgeTransaction = (mode: string, recipient: string): Transaction =>
   }) as Transaction;
 
 describe("CoinModuleApi vs account bridge (integration)", () => {
-  const api = createApi(config, "near");
+  const api = createApi();
+  const context = createMockNearContext(config());
 
   beforeAll(async () => {
+    // The classic bridge path (preload, fees) resolves config through the getCoinConfig singleton.
     setCoinConfig(config);
     // The bridge path only has costs once preloaded; the api path must not need this.
     setNearPreloadData(await preload());
@@ -64,15 +67,15 @@ describe("CoinModuleApi vs account bridge (integration)", () => {
   beforeEach(() => getActionCosts.reset());
 
   it("reports the same spendable balance", async () => {
-    const [native] = await api.getBalance(ACCOUNT);
-    const { spendableBalance } = await getAccount(ACCOUNT);
+    const [native] = await api.getBalance(context, ACCOUNT);
+    const { spendableBalance } = await getAccount(config(), ACCOUNT);
 
     expect(native.value - (native.locked ?? 0n)).toBe(BigInt(spendableBalance.toFixed(0)));
   }, 120_000);
 
   it("reports the same total as the native balance, staking buckets included", async () => {
-    const [native] = await api.getBalance(ACCOUNT);
-    const { balance, nearResources } = await getAccount(ACCOUNT);
+    const [native] = await api.getBalance(context, ACCOUNT);
+    const { balance, nearResources } = await getAccount(config(), ACCOUNT);
 
     const frozen = nearResources.stakedBalance
       .plus(nearResources.availableBalance)
@@ -89,7 +92,7 @@ describe("CoinModuleApi vs account bridge (integration)", () => {
   ])(
     "prices a transfer to %s identically",
     async (_label, recipient) => {
-      const fromApi = await api.estimateFees(sendIntent(recipient));
+      const fromApi = await api.estimateFees(context, sendIntent(recipient));
       const fromBridge = await getEstimatedFees(bridgeTransaction("send", recipient));
 
       expect(fromApi.value).toBe(BigInt(fromBridge.toFixed(0)));
@@ -109,7 +112,7 @@ describe("CoinModuleApi vs account bridge (integration)", () => {
         valAddress: POOL,
       };
 
-      const fromApi = await api.estimateFees(stakingIntent as never);
+      const fromApi = await api.estimateFees(context, stakingIntent as never);
       const fromBridge = await getEstimatedFees(bridgeTransaction(mode, POOL));
 
       expect(fromApi.value).toBe(BigInt(fromBridge.toFixed(0)));
@@ -128,12 +131,12 @@ describe("CoinModuleApi vs account bridge (integration)", () => {
       useAllAmount: true,
     };
 
-    const fromApi = await api.estimateFees(intent as never);
+    const fromApi = await api.estimateFees(context, intent as never);
     const fromBridge = await getEstimatedFees({
       ...bridgeTransaction("withdraw", POOL),
       useAllAmount: true,
     } as Transaction);
-    const partial = await api.estimateFees({ ...intent, useAllAmount: false } as never);
+    const partial = await api.estimateFees(context, { ...intent, useAllAmount: false } as never);
 
     expect(fromApi.value).toBe(BigInt(fromBridge.toFixed(0)));
     expect(fromApi.value).toBeGreaterThan(partial.value);
@@ -157,7 +160,7 @@ describe("CoinModuleApi vs account bridge (integration)", () => {
       validators: [],
     });
 
-    const fromApi = await api.estimateFees(sendIntent(NAMED_RECIPIENT));
+    const fromApi = await api.estimateFees(context, sendIntent(NAMED_RECIPIENT));
     const fromBridge = await getEstimatedFees(bridgeTransaction("send", NAMED_RECIPIENT));
 
     expect(fromApi.value).toBeGreaterThan(0n);
@@ -165,7 +168,7 @@ describe("CoinModuleApi vs account bridge (integration)", () => {
 
     // storageUsageBalance (part of `locked`) must also come from getActionCosts(), not the
     // zeroed preload cache — otherwise it would silently diverge from the bridge's reserve.
-    const [native] = await api.getBalance(ACCOUNT);
+    const [native] = await api.getBalance(context, ACCOUNT);
     expect(native.locked).toBeGreaterThan(0n);
 
     setNearPreloadData(await preload());

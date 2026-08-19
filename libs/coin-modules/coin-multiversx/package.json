@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-multiversx",
-  "version": "0.24.0",
+  "version": "1.0.0",
   "description": "Ledger MultiversX Coin integration",
   "keywords": [
     "Ledger",
@@ -54,7 +54,6 @@
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
-    "@ledgerhq/live-promise": "workspace:^",
     "@ledgerhq/logs": "catalog:",
     "@ledgerhq/types-live": "workspace:^",
     "@multiversx/sdk-core": "^13.7.0",

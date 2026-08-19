@@ -1,5 +1,6 @@
 import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { AlgorandSigner } from "../signer";
+import type { AlgorandCoinConfig } from "../config";
 import { buildCurrencyBridge, buildAccountBridge, createBridges } from "./js";
 
 // Mock all dependencies
@@ -67,6 +68,11 @@ jest.mock("../validateAddress", () => ({
 
 describe("bridge/js", () => {
   const mockSignerContext = {} as SignerContext<AlgorandSigner>;
+  const mockCoinConfig = (): AlgorandCoinConfig => ({
+    status: { type: "active" },
+    node: "",
+    indexer: "",
+  });
 
   describe("buildCurrencyBridge", () => {
     it("should build a currency bridge with required methods", () => {
@@ -123,20 +129,20 @@ describe("bridge/js", () => {
 
   describe("createBridges", () => {
     it("should return both currency and account bridges", () => {
-      const bridges = createBridges(mockSignerContext);
+      const bridges = createBridges(mockSignerContext, mockCoinConfig);
 
       expect(bridges).toHaveProperty("currencyBridge");
       expect(bridges).toHaveProperty("accountBridge");
     });
 
     it("should return valid currency bridge", () => {
-      const { currencyBridge } = createBridges(mockSignerContext);
+      const { currencyBridge } = createBridges(mockSignerContext, mockCoinConfig);
 
       expect(currencyBridge).toHaveProperty("scanAccounts");
     });
 
     it("should return valid account bridge", () => {
-      const { accountBridge } = createBridges(mockSignerContext);
+      const { accountBridge } = createBridges(mockSignerContext, mockCoinConfig);
 
       expect(accountBridge).toHaveProperty("createTransaction");
       expect(accountBridge).toHaveProperty("broadcast");

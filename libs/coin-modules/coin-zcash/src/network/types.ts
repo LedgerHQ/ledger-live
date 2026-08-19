@@ -267,12 +267,16 @@ export type FinalizeTransactionArgs = {
   pczt: string;
   /** One 128-hex-char RedPallas spendAuthSig per real Orchard spend, in PCZT-action order. */
   orchardSignatures: string[];
-  /** One DER-hex secp256k1 signature per transparent input (empty for pure Orchard). */
+  /** One DER-hex secp256k1 signature per transparent input (empty for pure Orchard/Ironwood). */
   transparentSignatures: string[];
+  /** One 128-hex-char RedPallas spendAuthSig per real Ironwood spend, in PCZT-action order.
+   *  Absent or empty for V5 (Orchard-only) transactions. */
+  ironwoodSignatures?: string[];
 };
 
 export type FinalizeTransactionResult = {
-  /** Hex-encoded signed V5 transaction bytes (ready for broadcast). */
+  /** Hex-encoded signed transaction bytes, ready for broadcast. V5 for an
+   *  Orchard/transparent send, V6 for an Ironwood (NU6.3) one. */
   txHex: string;
   /** 64-char hex txid, big-endian display order (matches ShieldedTransaction.txid). */
   txid: string;

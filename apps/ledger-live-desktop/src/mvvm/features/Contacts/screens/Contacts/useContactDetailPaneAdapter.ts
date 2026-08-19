@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 import type { ContactId } from "@domain/entity-contact";
@@ -14,8 +14,13 @@ import {
   type ContactDetailLabels,
   type ContactDetailViewProps,
   type ContactsViewProps,
+  CONTACTS_EVENT_SOURCE,
+  CONTACTS_PAGE_EVENTS,
+  trackContactsAddAddressClick,
+  trackContactsListContactOpen,
 } from "@features/flow-contacts";
 import { MY_WALLET_AVATAR_USER_URL } from "LLD/features/MyWallet/components/UserAvatar/constants";
+import { useContactsAnalytics } from "../../analytics";
 import { useContactsAddressCurrencyAdapter } from "../../hooks/useContactsAddressCurrencyAdapter";
 import { useContactAddressDetailActionsAdapter } from "./useContactAddressDetailActionsAdapter";
 import { useContactDetailEditDeleteAdapter } from "./useContactDetailEditDeleteAdapter";
@@ -32,8 +37,11 @@ export function useContactDetailPaneAdapter(
 }> {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const analytics = useContactsAnalytics();
   const meContact = useContactsMeContact();
   const currencyPort = useContactsAddressCurrencyAdapter();
+  const trackedContactDetailId = useRef<ContactId | undefined>(undefined);
+  const trackedAddressDetailId = useRef<string | undefined>(undefined);
   const [detailContactId, setDetailContactId] = useState<ContactId | undefined>(meContact.id);
   const onDeleteSuccess = useCallback(() => {
     setDetailContactId(meContact.id);
@@ -48,10 +56,12 @@ export function useContactDetailPaneAdapter(
     onClose: onCloseAddressDetail,
     clearSelection,
   } = useContactAddressDetailDialog(populatedContactDetail);
+  const addressDetailAsset = selection?.network.networkTicker;
   const addressDetailActionsDialogs = useContactAddressDetailActionsAdapter(
     detailContactId,
     selection?.row?.addressId,
     onCloseAddressDetail,
+    addressDetailAsset,
   );
   const labels = useMemo<ContactDetailLabels>(
     () => ({
@@ -88,10 +98,18 @@ export function useContactDetailPaneAdapter(
   }, [navigate]);
   const openContact = useCallback(
     (contactId: ContactId) => {
+      trackContactsListContactOpen(analytics, contactId, meContact.id);
       setDetailContactId(contactId);
       clearSelection();
     },
-    [clearSelection],
+    [analytics, clearSelection, meContact.id],
+  );
+  const handleAddAddress = useCallback(
+    (contact: AddAddressContact) => {
+      trackContactsAddAddressClick(analytics, contact.id, meContact.id);
+      onAddAddress(contact);
+    },
+    [analytics, meContact.id, onAddAddress],
   );
   const detail = useMemo<ContactDetailViewProps | undefined>(() => {
     const contact = populatedContactDetail?.contact ?? emptyContact;
@@ -104,7 +122,7 @@ export function useContactDetailPaneAdapter(
       labels,
       meAvatarSrc: MY_WALLET_AVATAR_USER_URL,
       contact,
-      onAddAddress: () => onAddAddress(contact),
+      onAddAddress: () => handleAddAddress(contact),
       ledgerWalletAccountsIntent: detailSharedState?.ledgerWalletAccountsIntent,
       onLedgerWalletAccountsPress,
       ...(populatedContactDetail
@@ -119,10 +137,10 @@ export function useContactDetailPaneAdapter(
     detailSharedState?.ledgerWalletAccountsIntent,
     emptyContact,
     editDeleteDialogs.detailActions,
+    handleAddAddress,
     labels,
-    onAddAddress,
-    onAddressRowPress,
     onLedgerWalletAccountsPress,
+    onAddressRowPress,
     populatedContactDetail,
   ]);
   const addressDetailDialog = useMemo<ContactAddressDetailDialogProps>(() => {
@@ -155,6 +173,44 @@ export function useContactDetailPaneAdapter(
     selection?.network,
     selection?.row,
   ]);
+
+  useEffect(() => {
+    if (detailContactId === undefined) {
+      return;
+    }
+
+    if (trackedContactDetailId.current === detailContactId) {
+      return;
+    }
+
+    trackedContactDetailId.current = detailContactId;
+    analytics.trackPage(CONTACTS_PAGE_EVENTS.CONTACT_DETAIL, {
+      source: CONTACTS_EVENT_SOURCE.CONTACT_DETAIL,
+      isSelf: detailContactId === meContact.id,
+    });
+  }, [analytics, detailContactId, meContact.id]);
+
+  useEffect(() => {
+    const addressKey =
+      isOpen && selection ? `${selection.row.addressId}:${selection.network.networkId}` : undefined;
+
+    if (addressKey === undefined || trackedAddressDetailId.current === addressKey) {
+      return;
+    }
+
+    trackedAddressDetailId.current = addressKey;
+    analytics.trackPage(CONTACTS_PAGE_EVENTS.ADDRESS_DETAIL, {
+      source: CONTACTS_EVENT_SOURCE.ADDRESS_DETAIL,
+      network: selection!.network.networkName,
+      asset: selection!.network.networkTicker,
+    });
+  }, [analytics, isOpen, selection]);
+
+  useEffect(() => {
+    if (!isOpen) {
+      trackedAddressDetailId.current = undefined;
+    }
+  }, [isOpen]);
 
   return {
     detail,

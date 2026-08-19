@@ -1,9 +1,11 @@
 # @features/platform-contacts
 
 > [!CAUTION]
+>
 > **Status: UNSTABLE** — In active development as part of the DDD migration.
 
-Contacts domain selectors, display helpers, and React hooks shared by flow packages.
+Contacts domain selectors, display helpers, React hooks, Device Intent ports, and shared
+analytics building blocks used by flow packages.
 
 ## Exports
 
@@ -12,3 +14,11 @@ Contacts domain selectors, display helpers, and React hooks shared by flow packa
 - `useContactsMeContact()`: selects the self Contact from the Redux store.
 - `identityFormatMeDisplayName()` and `resolveMeContactDisplayName()`: resolve the shared display
   name rules used by Contacts List and Detail.
+- `ContactAvatar`: renders the Me profile image when `isMe` is set, otherwise a deterministic
+  color and Unicode initial. The root entry resolves the Web implementation; the `native` entry
+  resolves the React Native implementation.
+- `ContactDeviceIntentsPort`: defines the typed boundary for Contacts device interactions.
+- `createMockContactDeviceIntentsPort()`: returns temporary typed device results for Contacts flows.
+- Contacts analytics building blocks: `ContactsGlobalProperties`,
+  `buildContactsGlobalProperties()`, and `resolveContactsCurrencyAnalytics()` for shared global
+  event properties and currency resolution.

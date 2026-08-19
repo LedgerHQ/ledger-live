@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-ton",
-  "version": "0.36.0",
+  "version": "0.37.0",
   "description": "Ton Coin integration",
   "keywords": [
     "Ledger",
@@ -84,6 +84,7 @@
     "lint:fix": "oxfmt src && oxlint src --fix --quiet",
     "test": "jest",
     "test-integ": "jest --config=jest.integ.config.js --passWithNoTests",
+    "typecheck": "tsc --noEmit --customConditions node",
     "unimported": "unimported",
     "format": "oxfmt src",
     "format:check": "oxfmt src --check"

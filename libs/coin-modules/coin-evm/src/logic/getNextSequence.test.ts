@@ -1,5 +1,5 @@
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
-import { EvmCoinConfig, getCoinConfig, setCoinConfig } from "../config";
+import type { EvmConfigInfo } from "../config";
+import { createMockEvmContext } from "../fixtures/context.fixtures";
 import { getNodeApi } from "../network/node";
 import { mockNodeApi } from "../network/node/node.fixtures";
 import { getNextSequence } from "./getNextSequence";
@@ -17,9 +17,8 @@ describe("getNextSequence", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockGetNodeApi.mockImplementation((currency: CryptoCurrency) => {
-      const config = getCoinConfig(currency.id);
-      return config?.info?.node?.type === "ledger" ? ledgerMocks : externalMocks;
+    mockGetNodeApi.mockImplementation((config: EvmConfigInfo, _currencyId: string) => {
+      return config?.node?.type === "ledger" ? ledgerMocks : externalMocks;
     });
   });
 
@@ -27,9 +26,9 @@ describe("getNextSequence", () => {
     ["an external node", "external", externalMocks],
     ["a ledger node", "ledger", ledgerMocks],
   ])("returns next sequence for an address using %s", async (_, type, nodeApiMock) => {
-    setCoinConfig(() => ({ info: { node: { type } } }) as unknown as EvmCoinConfig);
+    const context = createMockEvmContext({ node: { type } } as Partial<EvmConfigInfo>);
     nodeApiMock.getTransactionCount.mockResolvedValue(42);
 
-    expect(await getNextSequence({} as CryptoCurrency, "")).toEqual(42n);
+    expect(await getNextSequence(context, "", "")).toEqual(42n);
   });
 });

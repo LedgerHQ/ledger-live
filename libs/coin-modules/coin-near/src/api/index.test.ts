@@ -9,6 +9,7 @@ import { broadcast } from "../logic/broadcast";
 import { craftTransaction } from "../logic/craftTransaction";
 import { estimateFees } from "../logic/estimateFees";
 import { validateIntent } from "../logic/validateIntent";
+import { createMockNearContext } from "../test/context";
 import { createApi } from "./index";
 
 jest.mock("../logic/getBalance", () => ({ getBalance: jest.fn() }));
@@ -33,7 +34,8 @@ const config = () => ({
 });
 
 describe("createApi", () => {
-  const api = createApi(config, "near");
+  const api = createApi();
+  const context = createMockNearContext();
 
   it("exposes every CoinModuleApi method", () => {
     const methods = [
@@ -68,76 +70,80 @@ describe("createApi", () => {
     beforeEach(() => jest.clearAllMocks());
 
     it("forwards the read methods", async () => {
-      await api.lastBlock();
+      await api.lastBlock(context);
       expect(lastBlock).toHaveBeenCalled();
 
-      await api.getBlockInfo(42);
-      expect(getBlockInfo).toHaveBeenCalledWith(42);
+      await api.getBlockInfo(context, 42);
+      expect(getBlockInfo).toHaveBeenCalledWith(context, 42);
 
-      await api.listOperations("sender.near", { minHeight: 7 });
-      expect(listOperations).toHaveBeenCalledWith("sender.near", { minHeight: 7 });
+      await api.listOperations(context, "sender.near", { minHeight: 7 });
+      expect(listOperations).toHaveBeenCalledWith(context, "sender.near", { minHeight: 7 });
 
-      await api.getStakes("sender.near", "cursor");
-      expect(getStakes).toHaveBeenCalledWith("sender.near", "cursor");
+      await api.getStakes(context, "sender.near", { cursor: "cursor" });
+      expect(getStakes).toHaveBeenCalledWith(context, "sender.near", "cursor");
 
-      await api.getValidators("cursor");
-      expect(getValidators).toHaveBeenCalledWith("cursor");
+      await api.getValidators(context, { cursor: "cursor" });
+      expect(getValidators).toHaveBeenCalledWith(context, "cursor");
     });
 
     it("forwards getBalance and rejects unsupported balance options", async () => {
       (getBalance as jest.Mock).mockResolvedValue([]);
 
-      await api.getBalance("sender.near");
-      expect(getBalance).toHaveBeenCalledWith("sender.near");
+      await api.getBalance(context, "sender.near");
+      expect(getBalance).toHaveBeenCalledWith(context, "sender.near");
 
       await expect(
-        api.getBalance("sender.near", { includeAssets: async () => true }),
+        api.getBalance(context, "sender.near", { includeAssets: async () => true }),
       ).rejects.toThrow("getBalance does not support the options parameter");
     });
 
     it("forwards the transaction lifecycle methods", async () => {
       const fees = { value: 1n };
 
-      await api.craftTransaction(intent, fees);
-      expect(craftTransaction).toHaveBeenCalledWith(intent, fees);
+      await api.craftTransaction(context, intent, { customFees: fees });
+      expect(craftTransaction).toHaveBeenCalledWith(context, intent, fees);
 
-      await api.estimateFees(intent, { gasPrice: "1" });
-      expect(estimateFees).toHaveBeenCalledWith(intent, { gasPrice: "1" });
+      await api.estimateFees(context, intent, { customFeesParameters: { gasPrice: "1" } });
+      expect(estimateFees).toHaveBeenCalledWith(context, intent, { gasPrice: "1" });
 
-      await api.broadcast("signed-tx");
-      expect(broadcast).toHaveBeenCalledWith("signed-tx", undefined);
+      await api.broadcast(context, "signed-tx");
+      expect(broadcast).toHaveBeenCalledWith(context, "signed-tx", undefined);
 
-      await api.validateIntent(intent, [], fees);
-      expect(validateIntent).toHaveBeenCalledWith(intent, [], fees);
+      await api.validateIntent(context, intent, [], { customFees: fees });
+      expect(validateIntent).toHaveBeenCalledWith(context, intent, [], fees);
     });
   });
 
   it("validates an address format on the spot", async () => {
-    await expect(api.validateAddress("recipient.near", {})).resolves.toBe(true);
-    await expect(api.validateAddress("NOT VALID", {})).resolves.toBe(false);
+    await expect(api.validateAddress(context, "recipient.near", {})).resolves.toBe(true);
+    await expect(api.validateAddress(context, "NOT VALID", {})).resolves.toBe(false);
   });
 
   it("does not support reading a block's transactions", () => {
-    expect(() => api.getBlock(1)).toThrow("getBlock is not supported");
+    expect(() => api.getBlock(context, 1)).toThrow("getBlock is not supported");
   });
 
   it("does not support rewards, which a staking pool compounds into the staked balance", () => {
-    expect(() => api.getRewards("sender.near")).toThrow("getRewards is not supported");
+    expect(() => api.getRewards(context, "sender.near")).toThrow("getRewards is not supported");
   });
 
   it("explains why an account-level nonce is not available", () => {
-    expect(() => api.getNextSequence("sender.near")).toThrow(
+    expect(() => api.getNextSequence(context, "sender.near")).toThrow(
       "the nonce belongs to an access key, not to an account",
     );
   });
 
   it("does not support crafting from a raw transaction", () => {
-    expect(() => api.craftRawTransaction("", "", "", 0n)).toThrow(
+    expect(() => api.craftRawTransaction(context, "", "", "", 0n)).toThrow(
       "craftRawTransaction is not supported",
     );
   });
 
   it("does not support contract calls", async () => {
-    await expect(api.call({})).rejects.toThrow("call is not supported");
+    await expect(api.call(context, {})).rejects.toThrow("call is not supported");
+  });
+
+  it("does not support account registration", async () => {
+    await expect(api.register(context, "sender.near")).rejects.toThrow("register is not supported");
   });
 });

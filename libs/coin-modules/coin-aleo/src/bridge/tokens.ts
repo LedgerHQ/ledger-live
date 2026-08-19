@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { log } from "@ledgerhq/logs";
-import { promiseAllBatched } from "@ledgerhq/live-promise";
+import { promiseAllBatched } from "@ledgerhq/coin-module-framework/promises";
 import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { Account, OperationType, TokenAccount } from "@ledgerhq/types-live";
 import { encodeTokenAccountId, emptyHistoryCache } from "@ledgerhq/ledger-wallet-framework/account";
@@ -13,14 +13,12 @@ import {
 } from "../constants";
 import { parseAmount } from "../logic/utils";
 import { apiClient } from "../network/api";
-import { sdkClient } from "../network/sdk";
-import { getTokenOutDetails } from "../network/utils";
+import { decryptRecordAmount, getTokenOutDetails } from "../network/utils";
 import type {
   AleoOperation,
   AleoTokenAccount,
   AleoPrivateRecord,
   AleoPrivateTokenBalance,
-  AleoDecryptedRecordResponse,
   AleoCoinConfig,
 } from "../types";
 
@@ -712,11 +710,6 @@ export async function buildSubAccountsFromPrivateRecords({
   const existingSubAccountIds = new Set(baseSubAccounts.map(sa => sa.id));
   const balanceEntriesById = new Map<string, AleoPrivateTokenBalance>();
 
-  const extractAmount = (decrypted: AleoDecryptedRecordResponse): BigNumber => {
-    const raw = decrypted.data?.amount ?? decrypted.data?.balance ?? decrypted.data?.microcredits;
-    return parseAmount(raw ?? null);
-  };
-
   // ── Phase 1: private balances from unspent records ───────────────────────────
 
   if (unspentPrivateRecords.length > 0) {
@@ -724,21 +717,15 @@ export async function buildSubAccountsFromPrivateRecords({
       const tokenCurrency = calTokens.get(record.program_name);
       if (!tokenCurrency) return;
 
-      const decrypted = await sdkClient.decryptRecord({
-        config,
-        ciphertext: record.record_ciphertext,
-        viewKey,
-      });
-
-      const amount = extractAmount(decrypted);
+      const decryptedRecord = await decryptRecordAmount(config, viewKey, record);
 
       const id = encodeTokenAccountId(ledgerAccountId, tokenCurrency);
       const entry = getOrCreateBalanceEntry(balanceEntriesById, id, tokenCurrency.contractAddress);
-      entry.balance = entry.balance.plus(amount);
+      entry.balance = entry.balance.plus(decryptedRecord.amount);
       entry.unspentRecords.push({
         ...record,
-        microcredits: amount.toString(),
-        decryptedData: decrypted,
+        microcredits: decryptedRecord.amount.toString(),
+        decryptedData: decryptedRecord.details,
       });
     });
   }
@@ -793,12 +780,8 @@ export async function buildSubAccountsFromPrivateRecords({
       fee = outDetails.fee;
     } else {
       // IN (or Private self-transfer): the record itself contains the correct received amount.
-      const decrypted = await sdkClient.decryptRecord({
-        config,
-        ciphertext: record.record_ciphertext,
-        viewKey,
-      });
-      amount = extractAmount(decrypted);
+      const decryptedRecord = await decryptRecordAmount(config, viewKey, record);
+      amount = decryptedRecord.amount;
     }
 
     const tokenAccountId = encodeTokenAccountId(ledgerAccountId, tokenCurrency);

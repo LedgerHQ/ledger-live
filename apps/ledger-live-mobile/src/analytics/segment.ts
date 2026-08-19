@@ -14,7 +14,7 @@ import {
   useRoute,
 } from "@react-navigation/native";
 import snakeCase from "lodash/snakeCase";
-import React, { type RefObject, useCallback } from "react";
+import React, { type RefObject } from "react";
 import { idsToLanguage } from "@ledgerhq/types-live";
 import type { FeatureId, Features } from "@shared/feature-flags";
 
@@ -70,6 +70,9 @@ import { getWallet40Attributes } from "@ledgerhq/live-common/analytics/featureFl
 import { getRemoteABTestingAttributes } from "@ledgerhq/live-common/analytics/remoteABTesting/remoteABTestingAnalytics";
 import { AuthorizationStatus, type FirebaseMessagingTypes } from "@react-native-firebase/messaging";
 import { getNotificationPermissionStatus } from "~/logic/getNotificationPermissionStatus";
+import { isDatadogEnabled } from "~/datadog";
+import { DdLogs } from "@datadog/mobile-react-native";
+import { shouldIncludeSegmentIdentity } from "./segmentIdentity";
 
 const sessionId = uuid();
 const appVersion = `${VersionNumber.appVersion || ""} (${VersionNumber.buildVersion || ""})`;
@@ -86,6 +89,14 @@ let osPermissionRefreshPromise: Promise<
   FirebaseMessagingTypes.AuthorizationStatus | undefined
 > | null = null;
 let appStateSubscription: NativeEventSubscription | undefined;
+let hasWarnedNoSegmentClient = false;
+
+const warnOnceNoSegmentClient = (eventName: string, kind: "track" | "screen") => {
+  if (!isDatadogEnabled) return;
+  if (hasWarnedNoSegmentClient) return;
+  hasWarnedNoSegmentClient = true;
+  DdLogs.warn("analytics_event_skipped_no_client", { kind, eventName });
+};
 
 const refreshOsPermissionStatus = (): Promise<
   FirebaseMessagingTypes.AuthorizationStatus | undefined
@@ -218,7 +229,9 @@ const getMEVAttributes = (state: State) => {
 const getMandatoryProperties = (store: AppStore) => {
   const state: State = store.getState();
   const userId = userIdSelector(state);
-  const userIdStr = isDummyUserId(userId) ? undefined : userId.exportUserIdForAnalytics();
+  const includeIdentity = shouldIncludeSegmentIdentity(state);
+  const userIdStr =
+    includeIdentity && !isDummyUserId(userId) ? userId.exportUserIdForAnalytics() : undefined;
   const analyticsEnabled = analyticsEnabledSelector(state);
   const personalizedRecommendationsEnabled = personalizedRecommendationsEnabledSelector(state);
   const hasSeenAnalyticsOptInPrompt = hasSeenAnalyticsOptInPromptSelector(state);
@@ -229,8 +242,7 @@ const getMandatoryProperties = (store: AppStore) => {
   const notificationsOptInAttributes = getNotificationsOptInAttributes();
 
   return {
-    userId: userIdStr,
-    braze_external_id: userIdStr, // Needed for braze with this exact name
+    ...(userIdStr ? { userId: userIdStr, braze_external_id: userIdStr } : {}),
     devModeEnabled,
     optInAnalytics: analyticsEnabled,
     optInPersonalRecommendations: personalizedRecommendationsEnabled,
@@ -289,6 +301,19 @@ const getProductTourAttributes = () => {
   const flag = analyticsFeatureFlagMethod("lwmProductTour");
   return {
     lwmProductTour: !!flag?.enabled,
+  };
+};
+
+const getLazyOnboardingBannerAttributes = () => {
+  if (!analyticsFeatureFlagMethod) {
+    return { lazyOnboardingBanner: false, lazyOnboardingBannerMode: null };
+  }
+  const flag = analyticsFeatureFlagMethod("lazyOnboardingBanner");
+  const enabled = !!flag?.enabled;
+  return {
+    lazyOnboardingBanner: enabled,
+    // Only expose mode for the enabled cohort — defaults still exist when the flag is off.
+    lazyOnboardingBannerMode: enabled ? (flag?.params?.mode ?? null) : null,
   };
 };
 
@@ -440,6 +465,7 @@ const extraProperties = async (store: AppStore) => {
 
   const backupHubAttributes = getBackupHubAttributes();
   const productTourAttributes = getProductTourAttributes();
+  const lazyOnboardingBannerAttributes = getLazyOnboardingBannerAttributes();
   const payTabAttributes = getPayTabAttributes();
 
   return {
@@ -478,6 +504,7 @@ const extraProperties = async (store: AppStore) => {
     ...mevProtectionAttributes,
     ...backupHubAttributes,
     ...productTourAttributes,
+    ...lazyOnboardingBannerAttributes,
     migrationToMMKV,
     tokenWithFunds,
     isLDMKTransportEnabled: ldmkTransport?.enabled,
@@ -507,21 +534,17 @@ export const start = async (store: AppStore): Promise<SegmentClient | undefined>
   refreshOsPermissionStatus();
   appStateSubscription?.remove();
   appStateSubscription = AppState.addEventListener("change", nextAppState => {
-    if (nextAppState === "active") refreshOsPermissionStatus();
+    if (nextAppState === "active") {
+      refreshOsPermissionStatus();
+    } else if (nextAppState === "background" || nextAppState === "inactive") {
+      void flush().catch(error => {
+        if (ANALYTICS_LOGS) console.warn("Failed to flush analytics in background:", error);
+      });
+    }
   });
 
-  const initialUrl = await Linking.getInitialURL();
-  const isDeeplinkSession = !!initialUrl;
-
-  if (ANALYTICS_LOGS) {
-    const state = store.getState();
-    const userId = userIdSelector(state);
-    if (!isDummyUserId(userId)) {
-      console.log("analytics:identify", userId.exportUserIdForAnalytics());
-    }
-  }
-
-  console.log("START ANALYTICS", ANALYTICS_LOGS);
+  // Created before any await so events tracked during startup are queued by the SDK
+  // instead of dropped for lack of a client.
   if (token) {
     segmentClient = createClient({
       writeKey: token,
@@ -534,17 +557,36 @@ export const start = async (store: AppStore): Promise<SegmentClient | undefined>
     // This allows us to debounce identify events for Braze and save data points
     segmentClient.add({ plugin: new BrazePlugin() });
 
+    wrapSegmentClientFlush(segmentClient);
+
     await updateIdentify();
   }
+
+  console.log("START ANALYTICS", ANALYTICS_LOGS);
+  const initialUrl = await Linking.getInitialURL();
+  const isDeeplinkSession = !!initialUrl;
+
+  if (ANALYTICS_LOGS) {
+    const state = store.getState();
+    const userId = userIdSelector(state);
+    if (!isDummyUserId(userId)) {
+      console.log("analytics:identify", userId.exportUserIdForAnalytics());
+    }
+  }
+
   await track("Start", { isDeeplinkSession });
 
   return segmentClient;
 };
 
 export const updateIdentify = async (additionalProperties?: UserTraits, mandatory?: boolean) => {
-  const state = storeInstance?.getState();
+  if (!storeInstance) {
+    return;
+  }
+
+  const state = storeInstance.getState();
   const isTracking = getIsTracking(state, mandatory);
-  if (!storeInstance || !isTracking.enabled) {
+  if (!isTracking.enabled) {
     return;
   }
 
@@ -556,17 +598,93 @@ export const updateIdentify = async (additionalProperties?: UserTraits, mandator
     : baseProperties;
   if (ANALYTICS_LOGS) console.log("analytics:identify", allProperties);
   if (!token) return;
-  await segmentClient?.identify(userExtraProperties.userId, allProperties);
+  const segmentUserId = shouldIncludeSegmentIdentity(state)
+    ? userExtraProperties.userId
+    : undefined;
+  await segmentClient?.identify(segmentUserId, allProperties);
 };
 
 type Properties = Error | Record<string, unknown> | null;
+export type AnalyticsDeliveryStatus =
+  | "enqueued"
+  | "failed"
+  | "skipped_no_client"
+  | "skipped_no_store"
+  | "skipped_no_token"
+  | "flushed";
 export type LoggableEvent = {
   eventName: string;
   eventProperties?: Properties;
   eventPropertiesWithoutExtra?: Properties;
   date: Date;
+  deliveryStatus?: AnalyticsDeliveryStatus;
 };
 export const trackSubject = new ReplaySubject<LoggableEvent>(30);
+
+const enqueueAndLog = async (
+  eventName: string,
+  eventProperties: Record<string, unknown>,
+  eventPropertiesWithoutExtra: Properties,
+  kind: "track" | "screen",
+) => {
+  if (!token) {
+    trackSubject.next({
+      eventName,
+      eventProperties,
+      eventPropertiesWithoutExtra,
+      date: new Date(),
+      deliveryStatus: "skipped_no_token",
+    });
+    return;
+  }
+
+  if (!segmentClient) {
+    warnOnceNoSegmentClient(eventName, kind);
+    trackSubject.next({
+      eventName,
+      eventProperties,
+      eventPropertiesWithoutExtra,
+      date: new Date(),
+      deliveryStatus: "skipped_no_client",
+    });
+    return;
+  }
+
+  try {
+    await segmentClient.track(eventName, eventProperties as Parameters<SegmentClient["track"]>[1]);
+    trackSubject.next({
+      eventName,
+      eventProperties,
+      eventPropertiesWithoutExtra,
+      date: new Date(),
+      deliveryStatus: "enqueued",
+    });
+  } catch {
+    trackSubject.next({
+      eventName,
+      eventProperties,
+      eventPropertiesWithoutExtra,
+      date: new Date(),
+      deliveryStatus: "failed",
+    });
+  }
+};
+
+const wrapSegmentClientFlush = (client: SegmentClient) => {
+  const originalFlush = client.flush.bind(client);
+  client.flush = async () => {
+    const pendingEvents = await client.pendingEvents().catch(() => 0);
+    await originalFlush();
+    if (pendingEvents === 0) return;
+
+    trackSubject.next({
+      eventName: "[Flush]",
+      eventProperties: { pendingEvents },
+      date: new Date(),
+      deliveryStatus: "flushed",
+    });
+  };
+};
 
 type EventType = (string & {}) | "button_clicked" | "error_message";
 
@@ -596,6 +714,15 @@ export const track = async (
   const isTracking = getIsTracking(state, mandatory);
   if (!isTracking.enabled) {
     if (ANALYTICS_LOGS) console.log("analytics:track: not tracking because: ", isTracking.reason);
+    if (isTracking.reason === "store not initialised") {
+      trackSubject.next({
+        eventName: event,
+        eventProperties:
+          eventProperties instanceof Error ? undefined : (eventProperties ?? undefined),
+        date: new Date(),
+        deliveryStatus: "skipped_no_store",
+      });
+    }
     return;
   }
 
@@ -612,17 +739,8 @@ export const track = async (
     ...(mandatory ? mandatoryProperties : userExtraProperties),
   };
   if (ANALYTICS_LOGS) console.log("analytics:track", event, allProperties);
-  trackSubject.next({
-    eventName: event,
-    eventProperties: allProperties,
-    eventPropertiesWithoutExtra: propertiesWithoutExtra,
-    date: new Date(),
-  });
-  if (!token) return;
-  segmentClient?.track(
-    event,
-    allProperties as Parameters<NonNullable<typeof segmentClient>["track"]>[1],
-  );
+
+  await enqueueAndLog(event, allProperties, propertiesWithoutExtra, "track");
 };
 export const getPageNameFromRoute = (route: RouteProp<ParamListBase>) => {
   const routeName = getFocusedRouteNameFromRoute(route) || NavigatorName.Portfolio;
@@ -640,28 +758,14 @@ export const trackWithRoute = (
   track(event, newProperties, mandatory);
 };
 
-export const flush = async () => segmentClient?.flush();
-
-export const useTrack = () => {
-  const route = useRoute();
-  const track = useCallback(
-    (event: EventType, properties?: Record<string, unknown> | null, mandatory?: boolean | null) =>
-      trackWithRoute(event, route, properties, mandatory),
-    [route],
-  );
-  return track;
+export const flush = async () => {
+  if (!segmentClient) return;
+  await segmentClient.flush();
 };
+
 export const usePageNameFromRoute = () => {
   const route = useRoute();
   return getPageNameFromRoute(route);
-};
-export const useAnalytics = () => {
-  const track = useTrack();
-  const page = usePageNameFromRoute();
-  return {
-    track,
-    page,
-  };
 };
 
 const lastScreenEventName: RefObject<string | null | undefined> = React.createRef();
@@ -728,6 +832,14 @@ export const screen = async (
   const isTracking = getIsTracking(state, mandatory);
   if (!isTracking.enabled) {
     if (ANALYTICS_LOGS) console.log("analytics:screen: not tracking because: ", isTracking.reason);
+    if (isTracking.reason === "store not initialised") {
+      trackSubject.next({
+        eventName,
+        eventProperties: properties ?? undefined,
+        date: new Date(),
+        deliveryStatus: "skipped_no_store",
+      });
+    }
     return;
   }
 
@@ -741,15 +853,6 @@ export const screen = async (
     ...(mandatory ? mandatoryProperties : userExtraProperties),
   };
   if (ANALYTICS_LOGS) console.log("analytics:screen", category, name, allProperties);
-  trackSubject.next({
-    eventName,
-    eventProperties: allProperties,
-    eventPropertiesWithoutExtra,
-    date: new Date(),
-  });
-  if (!token) return;
-  segmentClient?.track(
-    eventName,
-    allProperties as Parameters<NonNullable<typeof segmentClient>["track"]>[1],
-  );
+
+  await enqueueAndLog(eventName, allProperties, eventPropertiesWithoutExtra, "screen");
 };

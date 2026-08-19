@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-concordium",
-  "version": "0.20.0",
+  "version": "1.0.0",
   "description": "Concordium coin integration",
   "keywords": [
     "Ledger",
@@ -185,7 +185,6 @@
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
-    "@ledgerhq/live-promise": "workspace:^",
     "@ledgerhq/logs": "catalog:",
     "@ledgerhq/types-live": "workspace:^",
     "@walletconnect/sign-client": "2.23.4",

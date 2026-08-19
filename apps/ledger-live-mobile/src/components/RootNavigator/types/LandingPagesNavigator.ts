@@ -10,9 +10,8 @@ export enum InitialRange {
 }
 
 export type LargeMoverLandingPageParams = {
-  currencyIds: string;
+  ledgerIds: string;
   initialRange?: InitialRange;
-  ledgerIds?: string;
 };
 
 export type LandingPagesNavigatorParamList = {

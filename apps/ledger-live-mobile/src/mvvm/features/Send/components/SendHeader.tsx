@@ -18,7 +18,7 @@ import { useTranslation } from "~/context/Locale";
 import { AddressDisclaimer } from "./AddressDisclaimer";
 import { useSendHeaderViewModel } from "../hooks/useSendHeaderViewModel";
 import { useSendFlowData } from "../context/SendFlowContext";
-import { useAnalytics } from "~/analytics";
+import { track, usePageNameFromRoute } from "~/analytics";
 import { getSendFlowTrackingProperties } from "@ledgerhq/ledger-wallet-framework/tracking/send";
 
 type SendHeaderProps = Readonly<{
@@ -56,10 +56,11 @@ export function SendHeader({ headerRight }: SendHeaderProps) {
   const { state } = useSendFlowData();
   const { account, parentAccount } = state.account;
 
-  const { track } = useAnalytics();
   const trackingProperties = useMemo(() => {
     return getSendFlowTrackingProperties(account ?? null, parentAccount);
   }, [account, parentAccount]);
+
+  const page = usePageNameFromRoute();
 
   useEffect(() => {
     if (!viewModel.isRecipientStep) {
@@ -69,9 +70,10 @@ export function SendHeader({ headerRight }: SendHeaderProps) {
     track("send_modal", {
       ...trackingProperties,
       name: "step recipient",
+      page,
       flow: "send",
     });
-  }, [track, trackingProperties, viewModel.isRecipientStep]);
+  }, [page, trackingProperties, viewModel.isRecipientStep]);
 
   return (
     <>

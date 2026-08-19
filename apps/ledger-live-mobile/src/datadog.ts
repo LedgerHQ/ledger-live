@@ -9,6 +9,7 @@ import { EXCLUDED_ERROR_DESCRIPTION, EXCLUDED_LOGS_ERROR_NAME } from "./utils/co
 import { buildFeatureFlagTags } from "./utils/datadogUtils";
 import { ActionEventMapper } from "@datadog/mobile-react-native/lib/typescript/rum/eventMappers/actionEventMapper";
 import { LogEventMapper } from "@datadog/mobile-react-native/lib/typescript/logs/types";
+import { extractErrorContext } from "@ledgerhq/live-common/errors/helpers";
 
 const clientTokenVar = Config.DATADOG_CLIENT_TOKEN_VAR;
 const applicationIdVar = Config.DATADOG_APPLICATION_ID_VAR;
@@ -141,13 +142,12 @@ export function broadcastLogger(event: LogEvent): void {
     DdLogs.info("broadcast_success", { event });
   } else {
     const { error, ...rest } = event;
+    const errorContext = extractErrorContext(error);
     DdLogs.error("broadcast_failure", error.name, error.message, error.stack ?? "", {
       event: {
         ...rest,
       },
-      // Datadog does not provide a function parameter for error,
-      // So we put it in the context
-      error,
+      errorContext: errorContext,
     });
   }
 }

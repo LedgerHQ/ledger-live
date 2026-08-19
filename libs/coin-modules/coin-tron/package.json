@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tron",
-  "version": "6.10.0",
+  "version": "7.0.0",
   "description": "Ledger Tron Coin integration",
   "keywords": [
     "Ledger",
@@ -105,7 +105,6 @@
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
-    "@ledgerhq/live-promise": "workspace:^",
     "@ledgerhq/logs": "catalog:",
     "@ledgerhq/types-live": "workspace:^",
     "bignumber.js": "^9.1.2",

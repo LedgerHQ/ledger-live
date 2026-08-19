@@ -9,6 +9,7 @@ import {
 import { getAccountCurrency, getFeesUnit } from "@ledgerhq/ledger-wallet-framework/account";
 import BigNumber from "bignumber.js";
 import sumBy from "lodash/sumBy";
+import coinConfig from "../config";
 import { ONE_TRX } from "../logic/constants";
 import { validateAddress } from "../logic/validateAddress";
 import {
@@ -51,6 +52,7 @@ const getTransactionStatus = async (
   acc: TronAccount,
   transaction: Transaction,
 ): Promise<TransactionStatus> => {
+  const config = coinConfig.getCoinConfig();
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
   const { family, mode, recipient, resource, votes, useAllAmount = false } = transaction;
@@ -59,8 +61,10 @@ const getTransactionStatus = async (
     : acc.subAccounts && acc.subAccounts.find(ta => ta.id === transaction.subAccountId);
   const account = tokenAccount || acc;
   const isContractInteraction =
-    (await fetchTronContract(tokenAccount ? tokenAccount.token.contractAddress : recipient)) !==
-    undefined;
+    (await fetchTronContract(
+      config,
+      tokenAccount ? tokenAccount.token.contractAddress : recipient,
+    )) !== undefined;
 
   if (mode === "send" && !recipient) {
     errors.recipient = new RecipientRequired();
@@ -79,7 +83,7 @@ const getTransactionStatus = async (
       account.type === "TokenAccount" &&
       account.token.tokenType === "trc20" &&
       !isContractInteraction && // send trc20 to a smart contract is allowed
-      (await fetchTronAccount(recipient)).length === 0
+      (await fetchTronAccount(config, recipient)).length === 0
     ) {
       // send trc20 to a new account is forbidden by us (because it will not activate the account)
       errors.recipient = new TronSendTrc20ToNewAccountForbidden();
@@ -149,7 +153,7 @@ const getTransactionStatus = async (
   }
 
   if (mode === "unDelegateResource" && resource && acc.tronResources) {
-    const delegatedResourceAmount = await getDelegatedResource(acc, transaction, resource);
+    const delegatedResourceAmount = await getDelegatedResource(config, acc, transaction, resource);
     if (delegatedResourceAmount.lt(transaction.amount)) {
       errors.resource = new TronInvalidUnDelegateResourceAmount();
     }
@@ -159,7 +163,7 @@ const getTransactionStatus = async (
     if (votes.length === 0) {
       errors.vote = new TronVoteRequired();
     } else {
-      const superRepresentatives = await getTronSuperRepresentatives();
+      const superRepresentatives = await getTronSuperRepresentatives(config);
       const isValidVoteCounts = votes.every(v => v.voteCount > 0);
       const isValidAddresses = votes.every(v =>
         superRepresentatives.some(s => s.address === v.address),

@@ -775,7 +775,7 @@ export enum NavigatorName {
   // Tab
   Main = "Main",
   CardTab = "CardTab",
-  PayTab = "PayTab",
+  PayTab = "PayTabNavigator",
   // Root
   RootNavigator = "RootNavigator",
   Discover = "Discover",

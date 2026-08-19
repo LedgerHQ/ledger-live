@@ -1,23 +1,18 @@
 import { AssertionError, fail } from "assert";
-import { getCoinConfig } from "../../config";
 import { UnknownNode } from "../../errors";
 import { getNodeApi } from "./index";
-
-jest.mock("../../config");
-const mockGetConfig = jest.mocked(getCoinConfig);
 
 describe("EVM Family", () => {
   describe("network/node/index.ts", () => {
     describe("getNodeApi", () => {
       it("should throw when requesting a non existing node type", async () => {
-        mockGetConfig.mockImplementation((): any => {
-          return { info: { node: { type: "anything", uri: "notworking" } } };
-        });
-
         try {
-          getNodeApi({
-            id: "not-existing",
-          } as any);
+          getNodeApi(
+            {
+              node: { type: "anything", uri: "notworking" },
+            } as any,
+            { id: "not-existing" } as any,
+          );
           fail("Promise should have been rejected");
         } catch (e) {
           if (e instanceof AssertionError) {
@@ -28,13 +23,12 @@ describe("EVM Family", () => {
       });
 
       it("should return the rpc api", async () => {
-        mockGetConfig.mockImplementationOnce((): any => {
-          return { info: { node: { type: "external", uri: "working" } } };
-        });
-
-        const node = getNodeApi({
-          id: "external",
-        } as any);
+        const node = getNodeApi(
+          {
+            node: { type: "external", uri: "working" },
+          } as any,
+          { id: "external" } as any,
+        );
 
         expect(node).toEqual(
           expect.objectContaining({
@@ -52,13 +46,12 @@ describe("EVM Family", () => {
       });
 
       it("should return the ledger api", () => {
-        mockGetConfig.mockImplementationOnce((): any => {
-          return { info: { node: { type: "ledger", explorerId: "eth" } } };
-        });
-
-        const node = getNodeApi({
-          id: "ledger-supported",
-        } as any);
+        const node = getNodeApi(
+          {
+            node: { type: "ledger", explorerId: "eth" },
+          } as any,
+          { id: "ledger-supported" } as any,
+        );
 
         expect(node).toEqual(
           expect.objectContaining({

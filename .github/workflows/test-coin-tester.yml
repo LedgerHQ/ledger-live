@@ -19,7 +19,7 @@ permissions:
   contents: read
 
 env:
-  COIN_TESTER_CURRENCIES: "evm polkadot solana bitcoin tezos tron xrp stellar multiversx cosmos cardano vechain near"
+  COIN_TESTER_CURRENCIES: "evm polkadot solana bitcoin tezos tron xrp stellar multiversx cosmos cardano casper vechain near"
 
 jobs:
   is-affected:
@@ -27,29 +27,12 @@ jobs:
     outputs:
       is-affected: ${{ steps.detect.outputs.is-affected }}
       matrix: ${{ steps.detect.outputs.matrix }}
+    permissions:
+      pull-requests: read
     steps:
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
-        with:
-          ref: develop
-          fetch-depth: 0
-
-      - name: Checkout PR
-        if: ${{ github.event_name == 'pull_request' }}
-        env:
-          GH_TOKEN: ${{ github.token }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-        run: |
-          gh pr checkout "$PR_NUMBER"
-
-      - name: Checkout push/ref
-        if: ${{ github.event_name != 'pull_request' }}
-        run: git checkout $GITHUB_SHA
-
       - name: Run live-common-affected
-        uses: LedgerHQ/ledger-live/tools/actions/live-common-affected@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/live-common-affected@develop
         id: affected
-        with:
-          ref: ${{ github.event_name == 'pull_request' && format('origin/{0}', github.event.pull_request.base.ref) || 'HEAD^' }}
 
       - name: Build matrix from affected paths or manual input
         id: detect

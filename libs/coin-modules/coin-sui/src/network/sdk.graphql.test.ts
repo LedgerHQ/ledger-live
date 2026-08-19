@@ -1,5 +1,12 @@
 import { createSuiGraphQLClient } from "./graphql/client";
 import coinConfig from "../config";
+import type { SuiCoinConfig } from "../config";
+
+const config = {
+  node: { url: "https://mockapi.sui.io", graphqlUrl: "https://mockapi.sui.io/graphql" },
+  status: { type: "active" },
+  features: { graphql: true },
+} as unknown as SuiCoinConfig;
 import { mist } from "../constants";
 import {
   APY_LOOKBACK_EPOCHS,
@@ -102,7 +109,7 @@ describe("getAllBalancesCached on GraphQL transport", () => {
     const owner = addr("11");
 
     // WHEN
-    const result = await getAllBalancesCached(owner, "sui-graphql-balance-1");
+    const result = await getAllBalancesCached(config, owner);
 
     // THEN — cache stores only the narrow DispatchedCoinBalance shape; the
     // GraphQL transport's neutral fillers for JSON-RPC-only fields are stripped.
@@ -137,7 +144,7 @@ describe("getAllBalancesCached on GraphQL transport", () => {
     const owner = addr("22");
 
     // WHEN
-    const result = await getAllBalancesCached(owner, "sui-graphql-balance-pagination");
+    const result = await getAllBalancesCached(config, owner);
 
     // THEN
     expect(result).toHaveLength(2);
@@ -168,7 +175,7 @@ describe("getAllBalancesCached on GraphQL transport", () => {
       mockNext({ query });
 
       // WHEN
-      const result = await getAllBalancesCached(owner, "sui-graphql-balance-cursor-expiry");
+      const result = await getAllBalancesCached(config, owner);
 
       // THEN
       // Pre-retry balance is discarded; only post-retry survives.
@@ -211,7 +218,7 @@ describe("getLastBlock on GraphQL transport", () => {
     mockNext({ query });
 
     // WHEN
-    const result = await getLastBlock("sui-graphql-last-block");
+    const result = await getLastBlock(config);
 
     // THEN
     expect(result).toEqual({
@@ -245,7 +252,7 @@ describe("getCheckpoint on GraphQL transport", () => {
     mockNext({ query });
 
     // WHEN
-    const result = await getCheckpoint("99", "sui-graphql-checkpoint-1");
+    const result = await getCheckpoint(config, "99");
 
     // THEN
     expect(result.digest).toBe("DigestForSeq99");
@@ -258,7 +265,7 @@ describe("getCheckpoint on GraphQL transport", () => {
   it("should reject digest input with a clear error", async () => {
     // 32-byte digest, base58-ish — anything non-numeric.
     const digest = "DhKLpX5kwuKuyRa71RGqpX5EY2M8Efw535ZVXYXsRiDt";
-    await expect(getCheckpoint(digest, "sui-graphql-checkpoint-2")).rejects.toThrow(
+    await expect(getCheckpoint(config, digest)).rejects.toThrow(
       /digest-based lookups are not supported on the GraphQL transport/i,
     );
     // Guard runs before withGraphQLApi — no client should be constructed.
@@ -269,7 +276,7 @@ describe("getCheckpoint on GraphQL transport", () => {
     // 16-digit number > 2^53-1: routing it through `Number(id)` silently rounds
     // and would query the wrong checkpoint. UInt53 schema rejects unsafe values.
     const unsafe = "9999999999999999";
-    await expect(getCheckpoint(unsafe, "sui-graphql-checkpoint-unsafe")).rejects.toThrow(
+    await expect(getCheckpoint(config, unsafe)).rejects.toThrow(
       /digest-based lookups are not supported on the GraphQL transport/i,
     );
     expect(factoryMock).not.toHaveBeenCalled();
@@ -281,7 +288,7 @@ describe("getCheckpoint on GraphQL transport", () => {
     });
     mockNext({ query });
 
-    await expect(getCheckpoint("9999999", "sui-graphql-checkpoint-3")).rejects.toThrow(
+    await expect(getCheckpoint(config, "9999999")).rejects.toThrow(
       /Checkpoint out of available range/,
     );
   });
@@ -332,7 +339,7 @@ describe("getDelegatedStakes on GraphQL transport", () => {
     mockNext({ query });
 
     // WHEN
-    const result = await getDelegatedStakes(owner, "sui-graphql-stakes-1");
+    const result = await getDelegatedStakes(config, owner);
 
     // THEN
     expect(result).toHaveLength(2);
@@ -373,7 +380,7 @@ describe("getDelegatedStakes on GraphQL transport", () => {
     mockNext({ query });
 
     // WHEN
-    const result = await getDelegatedStakes(owner, "sui-graphql-stakes-pagination");
+    const result = await getDelegatedStakes(config, owner);
 
     // THEN
     expect(result).toHaveLength(1);
@@ -406,7 +413,7 @@ describe("getDelegatedStakes on GraphQL transport", () => {
     mockNext({ query });
 
     // WHEN
-    const result = await getDelegatedStakes(owner, "sui-graphql-stakes-orphan");
+    const result = await getDelegatedStakes(config, owner);
 
     // THEN
     expect(result).toHaveLength(1);
@@ -433,7 +440,7 @@ describe("getDelegatedStakes on GraphQL transport", () => {
     mockNext({ query });
 
     // WHEN
-    await getDelegatedStakes("0x42", "sui-graphql-stakes-norm");
+    await getDelegatedStakes(config, "0x42");
 
     // THEN
     const expected = "0x" + "0".repeat(62) + "42";
@@ -477,7 +484,7 @@ describe("getDelegatedStakes on GraphQL transport", () => {
       mockNext({ query });
 
       // WHEN
-      const result = await getDelegatedStakes(owner, "sui-graphql-stakes-reward");
+      const result = await getDelegatedStakes(config, owner);
 
       // THEN
       expect(result).toHaveLength(1);
@@ -528,7 +535,7 @@ describe("getDelegatedStakes on GraphQL transport", () => {
       mockNext({ query });
 
       // WHEN
-      await getDelegatedStakes(owner, "sui-graphql-stakes-dedup");
+      await getDelegatedStakes(config, owner);
 
       // THEN
       const vars = singleRateVars(query);
@@ -549,7 +556,7 @@ describe("getDelegatedStakes on GraphQL transport", () => {
       mockNext({ query });
 
       // WHEN
-      const result = await getDelegatedStakes(owner, "sui-graphql-stakes-pending-only");
+      const result = await getDelegatedStakes(config, owner);
 
       // THEN
       expect(result[0].stakes[0].status).toBe("Pending");
@@ -585,7 +592,7 @@ describe("getDelegatedStakes on GraphQL transport", () => {
       mockNext({ query });
 
       // WHEN
-      const result = await getDelegatedStakes(owner, "sui-graphql-stakes-cursor-expiry");
+      const result = await getDelegatedStakes(config, owner);
 
       // THEN
       // Pre-retry items must be discarded — only post-retry stakes survive.
@@ -620,9 +627,7 @@ describe("getDelegatedStakes on GraphQL transport", () => {
       mockNext({ query });
 
       // WHEN / THEN
-      await expect(
-        getDelegatedStakes(owner, "sui-graphql-stakes-cursor-expiry-double"),
-      ).rejects.toThrow(/outside available range/);
+      await expect(getDelegatedStakes(config, owner)).rejects.toThrow(/outside available range/);
     });
   });
 });
@@ -636,9 +641,7 @@ describe("getValidators on GraphQL transport", () => {
     mockNext({ query });
 
     // WHEN / THEN
-    await expect(getValidators("sui-graphql-validators-state-error")).rejects.toThrow(
-      /system state unavailable; epoch boundary/,
-    );
+    await expect(getValidators(config)).rejects.toThrow(/system state unavailable; epoch boundary/);
     expect(query).toHaveBeenCalledTimes(1);
     expect(singleRateCalls(query)).toHaveLength(0);
     expect(batchExchangeRateCalls(query)).toHaveLength(0);
@@ -660,7 +663,7 @@ describe("getValidators on GraphQL transport", () => {
     mockNext({ query });
 
     // WHEN
-    const result = await getValidators("sui-graphql-validators-1");
+    const result = await getValidators(config);
 
     // THEN
     expect(result).toHaveLength(2);
@@ -695,7 +698,7 @@ describe("getValidators on GraphQL transport", () => {
       mockNext({ query });
 
       // WHEN
-      const result = await getValidators("sui-graphql-validators-apy");
+      const result = await getValidators(config);
 
       // THEN
       expect(result).toHaveLength(1);
@@ -730,7 +733,7 @@ describe("getValidators on GraphQL transport", () => {
       mockNext({ query });
 
       // WHEN
-      await getValidators("sui-graphql-validators-batch");
+      await getValidators(config);
 
       // THEN
       // 1 system-state + 3 parallel single-query rate fetches (N<RATE_BATCH_CHUNK_SIZE).
@@ -762,7 +765,7 @@ describe("getValidators on GraphQL transport", () => {
       mockNext({ query });
 
       // WHEN
-      const result = await getValidators("sui-graphql-validators-chunked");
+      const result = await getValidators(config);
 
       // THEN
       expect(result).toHaveLength(N);
@@ -789,7 +792,7 @@ describe("getValidators on GraphQL transport", () => {
       mockNext({ query });
 
       // WHEN
-      await getValidators("sui-graphql-validators-young-pool");
+      await getValidators(config);
 
       // THEN
       expect(singleRateVars(query)).toEqual([{ table: "0xratesY", literal: "95u64" }]);
@@ -801,7 +804,7 @@ describe("getValidators on GraphQL transport", () => {
       mockNext({ query });
 
       // WHEN
-      const result = await getValidators("sui-graphql-validators-empty");
+      const result = await getValidators(config);
 
       // THEN
       expect(result).toEqual([]);
@@ -830,7 +833,7 @@ describe("getValidators on GraphQL transport", () => {
       mockNext({ query });
 
       // WHEN
-      const result = await getValidators("sui-graphql-validators-all-null-batch");
+      const result = await getValidators(config);
 
       // THEN
       expect(result).toHaveLength(3);
@@ -857,10 +860,10 @@ describe("executeTransactionBlock on GraphQL transport (mock)", () => {
     mockNext({ query });
 
     // WHEN
-    const result = await executeTransactionBlock(
-      { transactionBlock: txBytes, signature: signatures } as never,
-      "sui-graphql-execute-tx",
-    );
+    const result = await executeTransactionBlock(config, {
+      transactionBlock: txBytes,
+      signature: signatures,
+    } as never);
 
     // THEN
     expect(query).toHaveBeenCalledTimes(1);
@@ -879,10 +882,10 @@ describe("executeTransactionBlock on GraphQL transport (mock)", () => {
     mockNext({ query });
 
     // WHEN
-    await executeTransactionBlock(
-      { transactionBlock: new Uint8Array([0]), signature: "single-sig" } as never,
-      "sui-graphql-execute-tx-single",
-    );
+    await executeTransactionBlock(config, {
+      transactionBlock: new Uint8Array([0]),
+      signature: "single-sig",
+    } as never);
 
     // THEN
     expect(query.mock.calls[0][0].variables.signatures).toEqual(["single-sig"]);
@@ -896,10 +899,10 @@ describe("executeTransactionBlock on GraphQL transport (mock)", () => {
     mockNext({ query });
 
     // WHEN
-    const result = await executeTransactionBlock(
-      { transactionBlock: new Uint8Array([0]), signature: "sig" } as never,
-      "sui-graphql-execute-tx-missing-effects",
-    );
+    const result = await executeTransactionBlock(config, {
+      transactionBlock: new Uint8Array([0]),
+      signature: "sig",
+    } as never);
 
     // THEN — surfaced as failure with the same diagnostic string the JSON-RPC branch uses.
     expect(result.effects.status.status).toBe("failure");
@@ -1021,7 +1024,7 @@ describe("getOperations on GraphQL transport", () => {
     });
     mockNext({ query });
 
-    const ops = await getOperations("acc-1", ADDR, undefined, undefined, "sui-gql-getops");
+    const ops = await getOperations(config, "acc-1", ADDR, undefined, undefined);
 
     expect(query).toHaveBeenCalledTimes(1);
     expect(Array.isArray(ops)).toBe(true);
@@ -1051,7 +1054,7 @@ describe("getOperations on GraphQL transport", () => {
     });
     mockNext({ query });
 
-    const ops = await getOperations("acc-1", ADDR, undefined, undefined, "sui-gql-getops");
+    const ops = await getOperations(config, "acc-1", ADDR, undefined, undefined);
     const hashes = ops.map(o => o.hash);
     expect(hashes).toContain("0xfinalized");
     expect(hashes).not.toContain("0xlagged");
@@ -1080,7 +1083,7 @@ describe("getOperations on GraphQL transport", () => {
     });
     mockNext({ query });
 
-    const ops = await getOperations("acc-1", ADDR, undefined, undefined, "sui-gql-getops");
+    const ops = await getOperations(config, "acc-1", ADDR, undefined, undefined);
     expect(ops.find(o => o.hash === "0xfail")?.hasFailed).toBe(true);
   });
 });
@@ -1161,7 +1164,7 @@ describe("getStakingExtraByDigest on GraphQL transport", () => {
       ),
     );
     mockNext({ query });
-    const out = await getStakingExtraByDigest("0xdigest", "DELEGATE", "sui-gql-stake");
+    const out = await getStakingExtraByDigest(config, "0xdigest", "DELEGATE");
     expect(out).toEqual({ validatorAddress: "0xval1", stakedAmount: "1000000000" });
   });
 
@@ -1173,7 +1176,7 @@ describe("getStakingExtraByDigest on GraphQL transport", () => {
       }),
     );
     mockNext({ query });
-    const out = await getStakingExtraByDigest("0xdigest", "UNDELEGATE", "sui-gql-unstake");
+    const out = await getStakingExtraByDigest(config, "0xdigest", "UNDELEGATE");
     expect(out).toEqual({ validatorAddress: "0xval2", stakedAmount: "500000000" });
   });
 
@@ -1182,14 +1185,14 @@ describe("getStakingExtraByDigest on GraphQL transport", () => {
       .fn()
       .mockResolvedValueOnce({ data: { transaction: { effects: { events: { nodes: [] } } } } });
     mockNext({ query });
-    const out = await getStakingExtraByDigest("0xmissing", "DELEGATE", "sui-gql-stake-miss");
+    const out = await getStakingExtraByDigest(config, "0xmissing", "DELEGATE");
     expect(out).toBeNull();
   });
 
   it("short-circuits to null without a network call for non-staking op types", async () => {
     const query = jest.fn();
     mockNext({ query });
-    const out = await getStakingExtraByDigest("0xdigest", "OUT", "sui-gql-noop");
+    const out = await getStakingExtraByDigest(config, "0xdigest", "OUT");
     expect(out).toBeNull();
     expect(query).not.toHaveBeenCalled();
   });

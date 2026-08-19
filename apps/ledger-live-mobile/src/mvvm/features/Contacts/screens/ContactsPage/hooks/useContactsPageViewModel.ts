@@ -1,12 +1,14 @@
 import {
-  CONTACTS_FEATURE_INTRODUCTION_HIGHLIGHTS,
-  type ContactsLedgerSyncStatus,
   type ContactsListViewLabels,
   type ContactsViewNativeProps,
-  resolveContactsLedgerSyncIntroductionOpen,
-  useContactsFeatureIntroductionState,
   useContactsSearchViewModel,
 } from "@features/flow-contacts";
+import {
+  CONTACTS_FEATURE_INTRODUCTION_HIGHLIGHTS,
+  type ContactsLedgerSyncStatus,
+  resolveContactsLedgerSyncIntroductionOpen,
+  useContactsFeatureIntroductionState,
+} from "@features/flow-contacts-introduction";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -67,7 +69,7 @@ export function useContactsPageViewModel(): ContactsPageViewModel {
   const onCompleteFeatureIntroduction = useCallback(() => {
     featureIntroductionState.dismiss();
   }, [featureIntroductionState]);
-  const onDeferFeatureIntroduction = useCallback(() => {
+  const onCloseFeatureIntroduction = useCallback(() => {
     navigation.goBack();
   }, [navigation]);
 
@@ -97,9 +99,8 @@ export function useContactsPageViewModel(): ContactsPageViewModel {
       description: t("contacts.featureIntroduction.description"),
       highlights: featureIntroductionHighlights,
       primaryActionLabel: t("contacts.featureIntroduction.primaryAction"),
-      secondaryActionLabel: t("contacts.featureIntroduction.secondaryAction"),
       onComplete: onCompleteFeatureIntroduction,
-      onDefer: onDeferFeatureIntroduction,
+      onClose: onCloseFeatureIntroduction,
     },
     ledgerSyncIntroduction: {
       isOpen: isLedgerSyncIntroductionOpen,

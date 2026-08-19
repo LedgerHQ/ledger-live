@@ -1,5 +1,6 @@
 import buildCoinConfig, {
   type CoinConfig,
+  type Context,
   type CurrencyConfig,
 } from "@ledgerhq/coin-module-framework/config";
 import { ConfigInfo } from "@ledgerhq/live-config/LiveConfig";
@@ -193,6 +194,13 @@ export const cosmosConfig: CosmosConfig = {
 };
 
 export type CosmosCoinConfig = CurrencyConfig & CosmosConfig;
+
+/**
+ * The {@link Context} threaded through the coin-cosmos low layers (ADR-019). The concrete
+ * Cosmos-family chain is selected via the free-form `currencyId` carried on the context.
+ */
+export type CosmosContext = Context<CosmosCoinConfig>;
+
 const coinConfig: {
   setCoinConfig: (config: CoinConfig<CosmosCoinConfig>) => void;
   getCoinConfig: (currencyId?: string) => CosmosCoinConfig;

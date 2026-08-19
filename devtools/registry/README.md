@@ -51,15 +51,22 @@ Metadata is grouped by team so ownership is visible in the file tree. Each tool 
 
 ## Adding a tool
 
-See [`../addTool.md`](../addTool.md).
+Run the generator — it handles all wiring automatically:
 
-In short:
+```sh
+pnpm --filter @devtools/registry add-tool
+```
 
-1. Create a metadata file under `src/metadata/<team>/<tool>.ts`.
-2. Add the entry to the `tools` map in `src/index.ts`.
-3. Add the matching branch to the `DevToolConfig` union.
+The generator will rewrite the following files on every run — **do not edit them manually**:
 
-The branch in `DevToolConfig` is what gives hosts type-checked configs — TypeScript narrows by `id` so each entry's `config` field is typed against the right props.
+- `src/registry.ts` — `tools` map, `DevToolConfig` union, all imports; fully rebuilt from the metadata folder
+- `src/metadata/<team>/index.ts` — all team barrel files; wiped and regenerated
+- `src/metadata/index.ts` — top-level metadata barrel; wiped and regenerated
+- `package.json` — `dependencies` block; orphaned tool entries are removed, new ones are added
+
+It also creates one file you are expected to fill in:
+
+- `src/metadata/<team>/<tool>.ts` — the `ToolMetadata` constant and optional props type re-export for the new tool
 
 ## Runtime validation
 

@@ -3,6 +3,7 @@ import { BigNumber } from "bignumber.js";
 import * as network from "../network";
 import type { AlgorandMemo } from "../types";
 import { validateIntent } from "./validateIntent";
+import { mockAlgorandContext } from "../test/context";
 
 jest.mock("../network");
 jest.mock("algosdk", () => ({
@@ -42,7 +43,7 @@ describe("validateIntent", () => {
         useAllAmount: false,
       };
 
-      const result = await validateIntent(intent, defaultBalances);
+      const result = await validateIntent(mockAlgorandContext, intent, defaultBalances);
 
       expect(result.errors.recipient).not.toBeUndefined();
       expect(result.errors.recipient?.message).toBe("RecipientRequired");
@@ -57,7 +58,7 @@ describe("validateIntent", () => {
         useAllAmount: false,
       };
 
-      const result = await validateIntent(intent, defaultBalances);
+      const result = await validateIntent(mockAlgorandContext, intent, defaultBalances);
 
       expect(result.errors.recipient).not.toBeUndefined();
       expect(result.errors.recipient?.message).toBe("InvalidAddressBecauseDestinationIsAlsoSource");
@@ -74,7 +75,7 @@ describe("validateIntent", () => {
         useAllAmount: false,
       };
 
-      const result = await validateIntent(intent, defaultBalances);
+      const result = await validateIntent(mockAlgorandContext, intent, defaultBalances);
 
       expect(result.errors.amount).not.toBeUndefined();
       expect(result.errors.amount?.message).toBe("AmountRequired");
@@ -89,7 +90,9 @@ describe("validateIntent", () => {
         useAllAmount: false,
       };
 
-      const result = await validateIntent(intent, defaultBalances, { value: 1000n });
+      const result = await validateIntent(mockAlgorandContext, intent, defaultBalances, {
+        value: 1000n,
+      });
 
       expect(result.errors.amount).not.toBeUndefined();
       expect(result.errors.amount?.message).toBe("NotEnoughBalance");
@@ -104,7 +107,9 @@ describe("validateIntent", () => {
         useAllAmount: true,
       };
 
-      const result = await validateIntent(intent, defaultBalances, { value: 1000n });
+      const result = await validateIntent(mockAlgorandContext, intent, defaultBalances, {
+        value: 1000n,
+      });
 
       // 10 ALGO - 0.1 ALGO locked - 0.001 ALGO fees = 9.899 ALGO
       expect(result.amount).toBe(9899000n);
@@ -121,7 +126,7 @@ describe("validateIntent", () => {
         useAllAmount: false,
       };
 
-      const result = await validateIntent(intent, defaultBalances);
+      const result = await validateIntent(mockAlgorandContext, intent, defaultBalances);
 
       expect(result.errors.amount).not.toBeUndefined();
       expect(result.errors.amount?.message).toBe("NotEnoughBalance");
@@ -150,7 +155,9 @@ describe("validateIntent", () => {
         useAllAmount: false,
       };
 
-      const result = await validateIntent(intent, balancesWithToken, { value: 1000n });
+      const result = await validateIntent(mockAlgorandContext, intent, balancesWithToken, {
+        value: 1000n,
+      });
 
       expect(result.errors.amount).toBeUndefined();
       expect(result.errors.recipient).toBeUndefined();
@@ -179,7 +186,9 @@ describe("validateIntent", () => {
         useAllAmount: false,
       };
 
-      const result = await validateIntent(intent, balancesWithToken, { value: 1000n });
+      const result = await validateIntent(mockAlgorandContext, intent, balancesWithToken, {
+        value: 1000n,
+      });
 
       expect(result.errors.amount).not.toBeUndefined();
       expect(result.errors.amount?.message).toBe("NotEnoughBalance");
@@ -208,7 +217,9 @@ describe("validateIntent", () => {
         useAllAmount: false,
       };
 
-      const result = await validateIntent(intent, balancesWithToken, { value: 1000n });
+      const result = await validateIntent(mockAlgorandContext, intent, balancesWithToken, {
+        value: 1000n,
+      });
 
       expect(result.errors.recipient).not.toBeUndefined();
       expect(result.errors.recipient?.message).toBe("AlgorandASANotOptInInRecipient");
@@ -237,7 +248,9 @@ describe("validateIntent", () => {
         useAllAmount: false,
       };
 
-      const result = await validateIntent(intent, balancesWithToken, { value: 1000n });
+      const result = await validateIntent(mockAlgorandContext, intent, balancesWithToken, {
+        value: 1000n,
+      });
 
       expect(result.errors.recipient).not.toBeUndefined();
       expect(result.errors.recipient?.message).toBe("AlgorandASANotOptInInRecipient");
@@ -262,7 +275,9 @@ describe("validateIntent", () => {
         useAllAmount: false,
       };
 
-      const result = await validateIntent(intent, balancesWithToken, { value: 1000n });
+      const result = await validateIntent(mockAlgorandContext, intent, balancesWithToken, {
+        value: 1000n,
+      });
 
       expect(result.errors.recipient).not.toBeUndefined();
       expect(result.errors.recipient?.message).toBe("AlgorandASANotOptInInRecipient");
@@ -285,7 +300,9 @@ describe("validateIntent", () => {
         useAllAmount: false,
       };
 
-      const result = await validateIntent(intent, defaultBalances, { value: 1000n });
+      const result = await validateIntent(mockAlgorandContext, intent, defaultBalances, {
+        value: 1000n,
+      });
 
       expect(result.errors.amount).not.toBeUndefined();
       expect(result.errors.amount?.message).toBe("NotEnoughBalanceBecauseDestinationNotCreated");
@@ -303,7 +320,7 @@ describe("validateIntent", () => {
         memo: { type: "string", kind: "note", value: "a".repeat(2000) },
       };
 
-      const result = await validateIntent(intent, defaultBalances);
+      const result = await validateIntent(mockAlgorandContext, intent, defaultBalances);
 
       expect(result.errors.transaction).not.toBeUndefined();
       expect(result.errors.transaction?.message).toBe("AlgorandMemoExceededSizeError");
@@ -320,7 +337,9 @@ describe("validateIntent", () => {
         useAllAmount: false,
       };
 
-      const result = await validateIntent(intent, defaultBalances, { value: 1000n });
+      const result = await validateIntent(mockAlgorandContext, intent, defaultBalances, {
+        value: 1000n,
+      });
 
       expect(result.totalSpent).toBe(1001000n); // amount + fees
       expect(result.amount).toBe(1000000n);
@@ -344,7 +363,9 @@ describe("validateIntent", () => {
         useAllAmount: false,
       };
 
-      const result = await validateIntent(intent, balancesWithToken, { value: 1000n });
+      const result = await validateIntent(mockAlgorandContext, intent, balancesWithToken, {
+        value: 1000n,
+      });
 
       expect(result.totalSpent).toBe(500n); // Only token amount, fees are in ALGO
     });

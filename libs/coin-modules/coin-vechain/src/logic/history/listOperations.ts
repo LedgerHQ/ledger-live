@@ -7,6 +7,7 @@ import type {
 } from "@ledgerhq/coin-module-framework/api/index";
 import type { Operation as LegacyOperation } from "@ledgerhq/types-live";
 import { VTHO_ADDRESS } from "@vechain/sdk-core";
+import type { VechainContext } from "../../config";
 import { getLastBlockHeight, getOperations, getTokenOperations } from "../../network";
 import { NATIVE_ASSET, vthoAsset } from "../account/getBalance";
 
@@ -37,19 +38,21 @@ function parseCursor(options: ListOperationsOptions): number {
 
 // Merged VET + VTHO operations; `next` is one block past the current head for incremental resume.
 export async function listOperations(
+  context: VechainContext,
   address: string,
   options: ListOperationsOptions,
 ): Promise<Page<Operation<MemoNotSupported>>> {
+  const config = await context.config();
   const startAt = parseCursor(options);
-  const stopAt = await getLastBlockHeight();
+  const stopAt = await getLastBlockHeight(config);
 
   if (startAt > stopAt) {
     return { items: [], next: String(startAt) };
   }
 
   const [vetOps, vthoOps] = await Promise.all([
-    getOperations(address, address, startAt, stopAt),
-    getTokenOperations(address, address, VTHO_ADDRESS, startAt, stopAt),
+    getOperations(config, address, address, startAt, stopAt),
+    getTokenOperations(config, address, address, VTHO_ADDRESS, startAt, stopAt),
   ]);
 
   const items = [

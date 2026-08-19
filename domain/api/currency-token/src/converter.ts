@@ -34,6 +34,7 @@ export function convertApiToken(apiToken: ApiTokenData): TokenCurrency | undefin
     ticker,
     units,
     delisted = false,
+    tokenIdentifier,
     ledgerSignature,
   } = apiToken;
 
@@ -60,6 +61,7 @@ export function convertApiToken(apiToken: ApiTokenData): TokenCurrency | undefin
       magnitude: unit.magnitude,
     })),
     ...(ledgerSignature ? { ledgerSignature } : {}),
+    ...(tokenIdentifier ? { tokenIdentifier } : {}),
   };
 
   return tokenCurrency;

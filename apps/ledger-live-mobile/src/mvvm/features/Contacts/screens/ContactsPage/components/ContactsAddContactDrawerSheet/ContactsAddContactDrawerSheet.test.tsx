@@ -112,6 +112,12 @@ describe("ContactsAddContactDrawerSheet", () => {
     expect(screen.getByRole("button", { name: "Confirm name" })).toBeDisabled();
   });
 
+  it("should make the name input non-editable while saving", () => {
+    render(<ContactsAddContactDrawerSheet {...createViewModel({ isSaving: true })} />);
+
+    expect(screen.getByTestId("contacts-add-contact-name-input")).toHaveProp("editable", false);
+  });
+
   it("should expose the edited name, enable confirmation, and close the drawer", async () => {
     const onClose = jest.fn();
     const onDraftNameChange = jest.fn();

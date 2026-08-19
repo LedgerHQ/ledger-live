@@ -7,6 +7,10 @@ import {
   InvalidContactAddressLabelError,
   InvalidContactNameError,
 } from "./errors";
+import {
+  DeviceContactGroupCredentialsSchema,
+  ExternalAddressDeviceContextSchema,
+} from "./device/types";
 
 export const ContactIdSchema = NonEmptyStringSchema;
 export const ContactAddressIdSchema = NonEmptyStringSchema;
@@ -56,11 +60,32 @@ export const ContactAddressSchema = z.object({
   currencyId: ContactCurrencyIdSchema,
   label: ContactAddressLabelSchema,
   address: ContactAddressValueSchema,
+  device: ExternalAddressDeviceContextSchema,
 });
 
-export const ContactSchema = z.object({
+const ContactBaseSchema = z.object({
   id: ContactIdSchema,
-  isMe: z.boolean(),
   name: ContactNameSchema,
   addresses: z.array(ContactAddressSchema),
+  deviceCredentials: DeviceContactGroupCredentialsSchema.optional(),
 });
+
+export const MeContactSchema = ContactBaseSchema.extend({
+  isMe: z.literal(true),
+});
+
+export const ContactGroupSchema = ContactBaseSchema.extend({
+  isMe: z.literal(false),
+});
+
+export const ContactSchema = z
+  .discriminatedUnion("isMe", [MeContactSchema, ContactGroupSchema])
+  .superRefine((contact, context) => {
+    if (contact.addresses.length > 0 && contact.deviceCredentials === undefined) {
+      context.addIssue({
+        code: "custom",
+        message: "Contact addresses require device credentials",
+        path: ["deviceCredentials"],
+      });
+    }
+  });

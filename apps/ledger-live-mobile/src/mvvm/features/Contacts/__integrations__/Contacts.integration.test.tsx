@@ -722,6 +722,29 @@ describe("Contacts integration", () => {
     });
   });
 
+  it("should keep the currency selector usable when searching for a network", async () => {
+    const { user } = render(<ContactDetailAddressEntryTestApp />, {
+      navigationInitialState: contactDetailNavigationState,
+      overrideInitialState: withContactsPageReadyState({
+        lwmContacts: {
+          enabled: true,
+          params: { newBadge: false, eligibleAddressFamilies: ["evm"] },
+        },
+      }),
+    });
+
+    await user.press(screen.getByTestId("contacts-detail-add-address"));
+
+    const searchInput = await screen.findByTestId("modular-drawer-search-input");
+    await user.press(searchInput);
+    await user.type(searchInput, "ethereum");
+
+    await waitFor(() => {
+      expect(screen.getByTestId("modular-drawer-search-input")).toBeVisible();
+      expect(screen.getByText(/ethereum/i)).toBeVisible();
+    });
+  });
+
   it("should return to currency selection without removing the contact detail route", async () => {
     const { user } = render(<ContactDetailAddressEntryTestApp />, {
       navigationInitialState: contactDetailNavigationState,
@@ -849,7 +872,7 @@ describe("Contacts integration", () => {
     });
   });
 
-  it("should open the signer sheet before deleting an address", async () => {
+  it("should open the delete sheet without requiring a device connection", async () => {
     const { user } = render(<MyWalletNavigator />, {
       overrideInitialState: withContactsPageReadyState(
         { lwmContacts: { enabled: true, params: { newBadge: false } } },
@@ -862,17 +885,9 @@ describe("Contacts integration", () => {
     await user.press(await screen.findByTestId("contacts-detail-address-row-address-ethereum"));
     await user.press(await screen.findByTestId("contacts-address-detail-delete"));
 
-    expect(await screen.findByTestId("contacts-edit-signer-confirm")).toBeVisible();
-    expect(screen.getByText("Confirm on your device")).toBeVisible();
-    expect(screen.queryByTestId("contacts-delete-address-confirm")).toBeNull();
-
-    await user.press(screen.getByTestId("contacts-edit-signer-confirm"));
-
-    await waitFor(() => {
-      expect(screen.queryByTestId("contacts-edit-signer-confirm")).toBeNull();
-      expect(screen.getByTestId("contacts-delete-address-confirm")).toBeVisible();
-      expect(screen.getByText("Delete address?")).toBeVisible();
-    });
+    expect(await screen.findByTestId("contacts-delete-address-confirm")).toBeVisible();
+    expect(screen.getByText("Delete address?")).toBeVisible();
+    expect(screen.queryByTestId("contacts-edit-signer-confirm")).toBeNull();
   });
 
   it("should delete an address and close the address detail sheet", async () => {
@@ -887,11 +902,8 @@ describe("Contacts integration", () => {
     await user.press(await screen.findByTestId("contacts-saved-contact-contact-ben"));
     await user.press(await screen.findByTestId("contacts-detail-address-row-address-ethereum"));
     await user.press(await screen.findByTestId("contacts-address-detail-delete"));
-    await user.press(await screen.findByTestId("contacts-edit-signer-confirm"));
 
-    await waitFor(() => {
-      expect(screen.getByTestId("contacts-delete-address-confirm")).toBeVisible();
-    });
+    expect(await screen.findByTestId("contacts-delete-address-confirm")).toBeVisible();
 
     await user.press(screen.getByTestId("contacts-delete-address-confirm"));
 
@@ -1000,6 +1012,36 @@ describe("Contacts integration", () => {
     await waitFor(() => {
       expect(screen.queryByTestId("contacts-rename-contact-confirm")).toBeNull();
       expect(screen.getByText("Alice")).toBeVisible();
+    });
+  });
+
+  it("should reopen the delete contact confirmation after canceling it", async () => {
+    const contacts = [mockMeContact(), mockContact({ id: "contact-ada", name: "Ada" })];
+    const { user } = render(<MyWalletNavigator />, {
+      overrideInitialState: withContactsPageReadyState(
+        { lwmContacts: { enabled: true, params: { newBadge: false } } },
+        state => ({ ...state, contacts: { contacts } }),
+      ),
+    });
+
+    await user.press(screen.getByTestId("my-wallet-contacts-button"));
+    await user.press(await screen.findByTestId("contacts-saved-contact-contact-ada"));
+    await user.press(await screen.findByTestId("contacts-detail-actions-trigger"));
+    await user.press(await screen.findByTestId("contacts-detail-delete-action"));
+
+    expect(await screen.findByTestId("contacts-delete-contact-confirm")).toBeVisible();
+
+    await user.press(screen.getByText("Cancel"));
+
+    await waitFor(() => {
+      expect(screen.queryByTestId("contacts-delete-contact-confirm")).toBeNull();
+    });
+
+    await user.press(await screen.findByTestId("contacts-detail-actions-trigger"));
+    await user.press(await screen.findByTestId("contacts-detail-delete-action"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("contacts-delete-contact-confirm")).toBeVisible();
     });
   });
 

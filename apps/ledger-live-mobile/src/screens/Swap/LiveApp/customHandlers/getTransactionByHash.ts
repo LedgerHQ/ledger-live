@@ -2,6 +2,8 @@ import { getMainAccount, getParentAccount } from "@ledgerhq/live-common/account/
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
 import { AccountLike } from "@ledgerhq/types-live";
 import { getNodeApi } from "@ledgerhq/coin-evm/network/node/index";
+import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
+import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
 
 export function getTransactionByHash(accounts: AccountLike[]) {
   return async ({
@@ -37,10 +39,13 @@ export function getTransactionByHash(accounts: AccountLike[]) {
     const fromParentAccount = getParentAccount(fromAccount, accounts);
     const mainAccount = getMainAccount(fromAccount, fromParentAccount);
 
-    const nodeAPI = getNodeApi(mainAccount.currency);
+    const nodeAPI = getNodeApi(
+      getCurrencyConfiguration<EvmConfigInfo>(mainAccount.currency.id),
+      mainAccount.currency.id,
+    );
 
     try {
-      const tx = await nodeAPI.getTransaction(mainAccount.currency, params.transactionHash);
+      const tx = await nodeAPI.getTransaction(mainAccount.currency.id, params.transactionHash);
       return Promise.resolve(tx);
     } catch {
       // not a real error, the node just didn't find the transaction yet

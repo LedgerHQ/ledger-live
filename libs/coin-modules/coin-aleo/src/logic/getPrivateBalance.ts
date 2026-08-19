@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { promiseAllBatched } from "@ledgerhq/live-promise";
+import { promiseAllBatched } from "@ledgerhq/coin-module-framework/promises";
 import { PROGRAM_ID } from "../constants";
 import { sdkClient } from "../network/sdk";
 import type { AleoCoinConfig, AleoPrivateRecord, AleoUnspentRecord } from "../types";

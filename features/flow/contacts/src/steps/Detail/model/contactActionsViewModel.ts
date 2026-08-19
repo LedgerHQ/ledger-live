@@ -4,13 +4,34 @@ import type {
   ContactDeleteLifecycle,
   ContactDetailDeleteIntent,
   ContactDetailEditIntent,
+  ContactDetailEditSignerValidationLookup,
 } from "../types";
 
+export function resolveContactEditSignerValidationLookup(
+  contact: Contact,
+): ContactDetailEditSignerValidationLookup | undefined {
+  const firstAddress = contact.addresses[0];
+
+  if (firstAddress === undefined) {
+    return undefined;
+  }
+
+  return {
+    contactId: contact.id,
+    addressId: firstAddress.id,
+  };
+}
+
 export function createContactDetailEditIntent(contact: Contact): ContactDetailEditIntent {
+  const editRequirement = resolveContactEditRequirement(contact);
+
   return {
     type: "edit-contact",
     contactId: contact.id,
-    editRequirement: resolveContactEditRequirement(contact),
+    editRequirement,
+    signerValidationLookup: isSignerConfirmationRequired(editRequirement)
+      ? resolveContactEditSignerValidationLookup(contact)
+      : undefined,
   };
 }
 

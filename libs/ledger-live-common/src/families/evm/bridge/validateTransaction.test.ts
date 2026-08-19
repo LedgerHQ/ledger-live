@@ -1,4 +1,5 @@
 import { CryptoCurrency } from "@domain/entity-currency-crypto";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { ethers } from "ethers";
 import { getNodeApi } from "@ledgerhq/coin-evm/network/node/index";
 import { getNextSequence } from "@ledgerhq/coin-evm/logic/index";
@@ -28,6 +29,14 @@ describe("validateTransaction", () => {
   const mockCurrency = { id: "ethereum" } as CryptoCurrency;
   const signature = "0xsignedtx";
   const getTransaction = jest.fn();
+
+  beforeAll(() => {
+    // validateTransaction resolves config via getCurrencyConfiguration (LiveConfig); getNodeApi is
+    // mocked, so a minimal entry is enough to avoid "Config not set".
+    LiveConfig.setConfig({
+      config_currency_ethereum: { type: "object", default: {} },
+    } as never);
+  });
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -80,7 +89,7 @@ describe("validateTransaction", () => {
     const result = await validateTransaction(mockCurrency, { signature });
 
     expect(result.error?.name).toBe("InvalidTransactionError");
-    expect(mockGetNextSequence).toHaveBeenCalledWith(mockCurrency, "0xfrom");
+    expect(mockGetNextSequence).toHaveBeenCalledWith(expect.anything(), mockCurrency.id, "0xfrom");
   });
 
   it("returns no error when transaction can be broadcasted", async () => {

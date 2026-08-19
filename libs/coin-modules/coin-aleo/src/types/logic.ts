@@ -34,10 +34,21 @@ export type EnrichedPrivateRecord = {
 
 export interface ProvableApi {
   uuid?: string;
-  scannerStatus?: AleoRecordScannerStatusResponse;
+  // Bridge persists only the sync flags; the height fields are read live via getAccountInfo.
+  scannerStatus?: Pick<AleoRecordScannerStatusResponse, "synced" | "percentage">;
 }
 
+export type AleoAccountInfo = {
+  type: "aleo";
+  synced: boolean;
+  percentage: number;
+  startHeight: number;
+  scannedHeight: number;
+};
+
 export type RecordPickingStrategy = "manual" | "auto";
+
+export type AleoTokenType = "arc20" | "arc21" | "arc22" | "unknown";
 
 export type TransactionType = (typeof TRANSACTION_TYPE)[keyof typeof TRANSACTION_TYPE];
 
@@ -46,20 +57,24 @@ export type AleoTransactionIntentData =
   | {
       type: typeof TRANSACTION_TYPE.TRANSFER_PRIVATE;
       records: AleoDecryptedRecordResponse[];
+      tvks: string[];
     }
   | {
       type: typeof TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC;
       records: AleoDecryptedRecordResponse[];
+      tvks: string[];
     }
   | {
       type: typeof TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE;
       programId: string;
       records: AleoDecryptedRecordResponse[];
+      tvks: string[];
     }
   | {
       type: typeof TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC;
       programId: string;
       records: AleoDecryptedRecordResponse[];
+      tvks: string[];
     }
   | {
       type: "fee_public";

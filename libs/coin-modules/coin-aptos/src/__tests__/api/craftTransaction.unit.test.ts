@@ -3,6 +3,7 @@ import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/type
 import { createApi } from "../../api";
 import { APTOS_ASSET_ID } from "../../constants";
 import { AptosAPI } from "../../network";
+import { createMockAptosContext } from "../../test/context";
 
 jest.mock("../../network");
 let mockedAptosApi: jest.Mocked<any>;
@@ -40,9 +41,8 @@ describe("craftTransaction", () => {
       getBalances: mockGetBalances,
     }));
 
-    const api = createApi({
-      aptosSettings: {},
-    });
+    const api = createApi();
+    const context = createMockAptosContext();
 
     const txArg: TransactionIntent = {
       intentType: "transaction",
@@ -54,7 +54,7 @@ describe("craftTransaction", () => {
       asset: { type: "coin", assetReference: "0x42::token::Token" },
     };
 
-    const { transaction: tx } = await api.craftTransaction(txArg);
+    const { transaction: tx } = await api.craftTransaction(context, txArg);
 
     expect(tx).not.toEqual("");
     expect(Hex.isValid(tx).valid).toBe(true);
@@ -82,9 +82,8 @@ describe("craftTransaction", () => {
       getBalances: mockGetBalances,
     }));
 
-    const api = createApi({
-      aptosSettings: {},
-    });
+    const api = createApi();
+    const context = createMockAptosContext();
 
     const txArg: TransactionIntent = {
       intentType: "transaction",
@@ -96,7 +95,7 @@ describe("craftTransaction", () => {
       asset: { type: "coin", assetReference: "0x42::token::Token" },
     };
 
-    const { transaction: tx } = await api.craftTransaction(txArg);
+    const { transaction: tx } = await api.craftTransaction(context, txArg);
 
     expect(tx).not.toEqual("");
     expect(Hex.isValid(tx).valid).toBe(true);
@@ -124,9 +123,8 @@ describe("craftTransaction", () => {
       getBalances: mockGetBalances,
     }));
 
-    const api = createApi({
-      aptosSettings: {},
-    });
+    const api = createApi();
+    const context = createMockAptosContext();
 
     const txArg: TransactionIntent = {
       intentType: "transaction",
@@ -138,7 +136,7 @@ describe("craftTransaction", () => {
       asset: { type: "asset", assetReference: "0x42::token::Token" },
     };
 
-    expect(async () => await api.craftTransaction(txArg)).rejects.toThrow(
+    expect(async () => await api.craftTransaction(context, txArg)).rejects.toThrow(
       "Token type asset not supported",
     );
 

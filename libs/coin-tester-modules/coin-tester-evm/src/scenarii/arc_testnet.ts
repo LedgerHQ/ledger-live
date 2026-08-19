@@ -3,7 +3,7 @@ import { ethers } from "ethers";
 import { Account } from "@ledgerhq/types-live";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { resetIndexer, setBlock, indexBlocks, initMswHandlers } from "../indexer";
-import { EvmConfigInfo, getCoinConfig, setCoinConfig } from "@ledgerhq/coin-evm/config";
+import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
 import { makeAccount } from "../fixtures";
 import { arcTestnet, expectAddressInList, getBridges, VITALIK } from "../helpers";
 import { killAnvil, spawnAnvil } from "../anvil";
@@ -56,17 +56,18 @@ export const scenarioArcTestnetNative: Scenario<GenericTransaction, Account> = {
 
     const info: EvmConfigInfo = {
       status: { type: "active" },
+      chainId: 5042002,
+      name: "Arc Testnet",
       node: { type: "external", uri: "http://127.0.0.1:8545" },
       explorer: { type: "blockscout", noCache: true, uri: ARC_TESTNET_EXPLORER },
       showNfts: false,
       nativeContracts: [ARC_USDC_NATIVE_CONTRACT],
-    } as EvmConfigInfo;
+    };
 
-    setCoinConfig(() => ({ info }));
     LiveConfig.setConfig({
       config_currency_arc_testnet: { type: "object", default: info },
     });
-    initMswHandlers(getCoinConfig(arcTestnet.id).info);
+    initMswHandlers(info);
 
     const { currencyBridge, accountBridge, getAddress } = await getBridges(signer);
     const { address } = await getAddress("", {

@@ -81,9 +81,9 @@ export abstract class WebViewAppPage extends AppPage {
   }
 
   @step("Verify element is visible in WebView")
-  protected async verifyElementIsVisible(testId: string) {
+  protected async verifyElementIsVisible(testId: string, timeout?: number) {
     const webview = await this.getWebView();
-    await expect(webview.getByTestId(testId)).toBeVisible();
+    await expect(webview.getByTestId(testId)).toBeVisible(timeout ? { timeout } : undefined);
   }
 
   @step("Verify element is not visible in WebView")

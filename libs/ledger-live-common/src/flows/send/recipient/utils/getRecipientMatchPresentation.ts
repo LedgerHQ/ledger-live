@@ -109,7 +109,6 @@ export function getRecipientMatchPresentation({
   const shouldRenderRecipientCard =
     isContactsFeatureEnabled &&
     !isSanctioned &&
-    !hasBridgeError &&
     (hasMatchedContact ||
       hasENS ||
       hasExactMatchedAccount ||

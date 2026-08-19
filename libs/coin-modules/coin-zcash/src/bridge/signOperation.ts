@@ -9,7 +9,11 @@ import type {
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import type { Transaction, ZcashAccount, BtcInputRef, ZcashOperationExtra } from "../types/bridge";
 import type { SignerContext } from "../types/signer";
-import { ZcashSignerNotSupported, ZcashSigningCancelled } from "../types/errors";
+import {
+  ZcashNotesNotYetSpendable,
+  ZcashSignerNotSupported,
+  ZcashSigningCancelled,
+} from "../types/errors";
 import { assertCanSend } from "../logic/engineClient";
 import { craftIronwoodTransaction, craftTransaction } from "../logic/transaction/craftTransaction";
 import { combine } from "../logic/transaction/combine";
@@ -32,6 +36,19 @@ const IRONWOOD_BUNDLE_TRANSFER_TYPES = new Set<Transaction["transferType"]>([
 ]);
 
 /**
+ * The builder's stable marker for a note whose leaf position is at or past the
+ * number of leaves the Ironwood tree held at its anchor -- the position-range
+ * rejection the maturity filter is meant to make unreachable (see
+ * `types/errors.ts`'s `ZcashNotesNotYetSpendable`). Matched on the message
+ * because the IPC wrapper carries the Rust error through verbatim, with no
+ * structured code.
+ */
+function isNotePositionPastAnchor(error: unknown): boolean {
+  const message = error instanceof Error ? error.message : String(error);
+  return message.includes("compute_ironwood_witnesses") && message.includes("anchor_total_leaves");
+}
+
+/**
  * The only bespoke residue of this bridge (kaspa-style): builds the PCZT
  * (`logic.craftTransaction` / `craftIronwoodTransaction`), signs it via the
  * device (`signerContext(...).signPcztTransaction`), and finalizes it
@@ -39,12 +56,19 @@ const IRONWOOD_BUNDLE_TRANSFER_TYPES = new Set<Transaction["transferType"]>([
  * transparent t→t -- goes through this single PCZT path; there is no legacy
  * PSBT fallback in coin-zcash.
  *
- * `logic.combine` still finalizes through the V5 path: @ledgerhq/zcash-utils
- * exposes no V6 counterpart, so a V6 PCZT (any shielded or shielding flow) gets
- * as far as device signing.
- *
  * Every shielded send spends the Ironwood pool, so z→z and z→t both build as V6
  * PCZTs (Ironwood spends). The deprecated Sapling/Orchard send flows are gone.
+ *
+ * V5 and V6 share this path up to and including finalization: `logic.combine`
+ * finalizes either (@ledgerhq/zcash-utils >= 2.0.0 injects Ironwood spend-auth
+ * signatures and extracts a V6 transaction), and the device-signing step is
+ * identical -- only which bundle carries the spends differs.
+ *
+ * Broadcast is the exception, and it is the current end of the V6 road: the
+ * pinned zcash-utils (2.1.0) still derives the txid through a V5-only guard, so
+ * it rejects a V6 transaction after the user has already signed. Every shielded
+ * send therefore builds, signs and finalizes but cannot be broadcast until a
+ * zcash-utils release carries that fix.
  */
 export const buildSignOperation =
   (signerContext: SignerContext): AccountBridge<Transaction, ZcashAccount>["signOperation"] =>
@@ -83,9 +107,16 @@ export const buildSignOperation =
           transparentInputs,
           outputs: mapOutputs(transaction),
         };
-        const buildResult = IRONWOOD_BUNDLE_TRANSFER_TYPES.has(transaction.transferType)
-          ? await craftIronwoodTransaction(plan)
+
+        const useIronwood = IRONWOOD_BUNDLE_TRANSFER_TYPES.has(transaction.transferType);
+        const buildResult = useIronwood
+          ? await craftIronwoodTransaction(plan).catch(err => {
+              if (isNotePositionPastAnchor(err)) throw new ZcashNotesNotYetSpendable();
+              throw err;
+            })
           : await craftTransaction(plan);
+
+        const { pcztTransaction } = buildResult;
 
         if (bailIfCancelled()) return;
 
@@ -96,7 +127,7 @@ export const buildSignOperation =
               "Zcash signing requires a signer exposing signPcztTransaction",
             );
           }
-          return signer.signPcztTransaction(buildResult.pcztTransaction);
+          return signer.signPcztTransaction(pcztTransaction);
         });
 
         subscriber.next({ type: "device-signature-granted" });
@@ -108,11 +139,15 @@ export const buildSignOperation =
         const transparentSignatures = sigResult.transparentInputSigs.map(sig =>
           Buffer.from(sig).toString("hex"),
         );
+        const ironwoodSignatures = sigResult.ironwood.map(a =>
+          Buffer.from(a.spendAuthSig).toString("hex"),
+        );
 
         const finalizeResult = await combine({
           pczt: buildResult.pcztHex,
           orchardSignatures,
           transparentSignatures,
+          ...(ironwoodSignatures.length > 0 ? { ironwoodSignatures } : {}),
         });
 
         if (bailIfCancelled()) return;

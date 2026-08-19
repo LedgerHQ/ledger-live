@@ -1,6 +1,7 @@
 import type { Action as SignerAction } from "@ledgerhq/live-signer-hyperliquid";
 
-type Address = `0x${string}`;
+type HexString = `0x${string}`;
+type Address = HexString;
 
 export type ActionWithNonce = {
   action: Action;
@@ -47,7 +48,7 @@ export type Action =
   | {
       type: "approveBuilderFee";
       hyperliquidChain: "Mainnet" | "Testnet";
-      signatureChainId: string; // chainId in hex format. Ex: 0xa4b1 for Arbitrum
+      signatureChainId: HexString;
       maxFeeRate: string;
       builder: Address;
     }
@@ -56,6 +57,13 @@ export type Action =
       asset: number; // index of coin
       isBuy: boolean; // cross-leverage
       ntli: number;
+    }
+  | {
+      type: "userSetAbstraction";
+      hyperliquidChain: "Mainnet" | "Testnet";
+      signatureChainId: HexString;
+      user: Address;
+      abstraction: "disabled" | "unifiedAccount" | "portfolioMargin";
     };
 export function convertAction(action: ActionWithNonce): SignerAction {
   return {

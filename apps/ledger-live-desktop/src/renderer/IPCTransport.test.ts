@@ -1,5 +1,5 @@
 import { ipcRenderer } from "electron";
-import { DeviceModelId } from "@ledgerhq/types-devices";
+import { DeviceModelId } from "@ledgerhq/devices";
 import IPCTransport from "./IPCTransport";
 
 jest.mock("electron", () => ({
@@ -21,9 +21,14 @@ jest.mock("@ledgerhq/logs", () => {
   };
 });
 
-jest.mock("@ledgerhq/devices", () => ({
-  getDeviceModel: jest.fn(() => ({ id: DeviceModelId.nanoS })),
-}));
+jest.mock("@ledgerhq/devices", () => {
+  const actual = jest.requireActual("@ledgerhq/devices");
+
+  return {
+    ...actual,
+    getDeviceModel: jest.fn(() => ({ id: actual.DeviceModelId.nanoS })),
+  };
+});
 
 const mockInvoke = jest.mocked(ipcRenderer.invoke);
 

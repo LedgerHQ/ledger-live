@@ -1,7 +1,3 @@
-import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
-import * as EVM_TOOLS from "@ledgerhq/evm-tools/message/EIP712/index";
-import BigNumber from "bignumber.js";
-
 jest.mock("./network/node/index", () => ({
   ...jest.requireActual("./network/node/index"),
   getNodeApi: jest.fn((...args: unknown[]) =>
@@ -10,10 +6,9 @@ jest.mock("./network/node/index", () => ({
 }));
 
 import { getCoinConfig } from "./config";
-import { getAdditionalLayer2Fees, getMessageProperties } from "./logic";
+import { getAdditionalLayer2Fees } from "./logic";
 import { getNodeApi } from "./network/node/index";
-import { Transaction as EvmTransaction } from "./types";
-import { getEstimatedFees, getGasLimit, padHexString, safeEncodeEIP55 } from "./utils";
+import { padHexString, safeEncodeEIP55 } from "./utils";
 
 const mockGetNodeApi = jest.mocked(getNodeApi);
 const mockGetOptimismAdditionalFees = jest.fn();
@@ -89,108 +84,7 @@ mockGetConfig.mockImplementation((currencyId: string): any => {
 
 describe("EVM Family", () => {
   describe("logic.ts", () => {
-    describe("getGasLimit", () => {
-      it("should return the gasLimit when no customGasLimit provided", () => {
-        const tx: Partial<EvmTransaction> = {
-          gasLimit: new BigNumber(100),
-          customGasLimit: undefined as any,
-        };
-
-        expect(getGasLimit(tx as any)).toEqual(new BigNumber(100));
-      });
-
-      it("should return the customGasLimit when provided", () => {
-        const tx: Partial<EvmTransaction> = {
-          gasLimit: new BigNumber(100),
-          customGasLimit: new BigNumber(200),
-        };
-
-        expect(getGasLimit(tx as any)).toEqual(new BigNumber(200));
-      });
-    });
-
-    describe("getEstimatedFees", () => {
-      describe("without customGasLimit", () => {
-        it("should return the right fee estimation for a legacy tx", () => {
-          const tx = {
-            type: 0,
-            gasLimit: new BigNumber(3),
-            gasPrice: new BigNumber(23),
-            maxFeePerGas: new BigNumber(100),
-            maxPriorityFeePerGas: new BigNumber(40),
-          };
-
-          expect(getEstimatedFees(tx as any)).toEqual(new BigNumber(69));
-        });
-
-        it("should return the right fee estimation for a 1559 tx", () => {
-          const tx = {
-            type: 2,
-            gasLimit: new BigNumber(42),
-            gasPrice: new BigNumber(23),
-            maxFeePerGas: new BigNumber(10),
-            maxPriorityFeePerGas: new BigNumber(40),
-          };
-
-          expect(getEstimatedFees(tx as any)).toEqual(new BigNumber(420));
-        });
-      });
-
-      describe("with customGasLimit", () => {
-        it("should return the right fee estimation for a legacy tx", () => {
-          const tx = {
-            type: 0,
-            gasLimit: new BigNumber(4),
-            customGasLimit: new BigNumber(3),
-            gasPrice: new BigNumber(23),
-            maxFeePerGas: new BigNumber(100),
-            maxPriorityFeePerGas: new BigNumber(40),
-          };
-
-          expect(getEstimatedFees(tx as any)).toEqual(new BigNumber(69));
-        });
-
-        it("should return the right fee estimation for a 1559 tx", () => {
-          const tx = {
-            type: 2,
-            gasLimit: new BigNumber(43),
-            customGasLimit: new BigNumber(42),
-            gasPrice: new BigNumber(23),
-            maxFeePerGas: new BigNumber(10),
-            maxPriorityFeePerGas: new BigNumber(40),
-          };
-
-          expect(getEstimatedFees(tx as any)).toEqual(new BigNumber(420));
-        });
-      });
-
-      it("should fallback with tx without type", () => {
-        const tx = {};
-        expect(getEstimatedFees(tx as any)).toEqual(new BigNumber(0));
-      });
-
-      it("should fallback with badly formatted legacy tx", () => {
-        const tx = {
-          type: 0,
-        };
-
-        expect(getEstimatedFees(tx as any)).toEqual(new BigNumber(0));
-      });
-
-      it("should fallback with badly formatted 1559 tx", () => {
-        const tx = {
-          type: 2,
-        };
-
-        expect(getEstimatedFees(tx as any)).toEqual(new BigNumber(0));
-      });
-    });
-
     describe("getAdditionalLayer2Fees", () => {
-      const optimism = getCryptoCurrencyById("optimism");
-      const scroll = getCryptoCurrencyById("scroll");
-      const ethereum = getCryptoCurrencyById("ethereum");
-
       beforeEach(() => {
         jest.clearAllMocks();
         mockGetNodeApi.mockImplementation(
@@ -206,9 +100,9 @@ describe("EVM Family", () => {
         mockGetOptimismAdditionalFees.mockClear();
         mockGetScrollAdditionalFees.mockClear();
 
-        await getAdditionalLayer2Fees(optimism, {} as any);
+        await getAdditionalLayer2Fees({} as any, "optimism", {} as any);
         expect(mockGetOptimismAdditionalFees).toHaveBeenCalled();
-        await getAdditionalLayer2Fees(scroll, {} as any);
+        await getAdditionalLayer2Fees({} as any, "scroll", {} as any);
         expect(mockGetScrollAdditionalFees).toHaveBeenCalled();
       });
 
@@ -216,7 +110,7 @@ describe("EVM Family", () => {
         mockGetOptimismAdditionalFees.mockClear();
         mockGetScrollAdditionalFees.mockClear();
 
-        await getAdditionalLayer2Fees(ethereum, {} as any);
+        await getAdditionalLayer2Fees({} as any, "ethereum", {} as any);
         expect(mockGetOptimismAdditionalFees).not.toHaveBeenCalled();
         expect(mockGetScrollAdditionalFees).not.toHaveBeenCalled();
       });
@@ -258,30 +152,6 @@ describe("EVM Family", () => {
         const address = "0x00000";
         const encodedAddress = safeEncodeEIP55(address);
         expect(encodedAddress).toBe(address);
-      });
-    });
-
-    describe("getMessageProperties", () => {
-      it("should return null if the message isn't an EIP712", async () => {
-        expect(await getMessageProperties({ standard: "EIP191", message: "doot-doot" })).toBe(null);
-      });
-
-      it("should return the fields displayed on the nano", async () => {
-        jest.spyOn(EVM_TOOLS, "getEIP712FieldsDisplayedOnNano").mockResolvedValueOnce([
-          {
-            label: "key",
-            value: "value",
-          },
-        ]);
-
-        expect(
-          await getMessageProperties({
-            standard: "EIP712",
-            message: {} as any,
-            domainHash: "0xabc",
-            hashStruct: "0xdef",
-          }),
-        ).toEqual([{ label: "key", value: "value" }]);
       });
     });
   });

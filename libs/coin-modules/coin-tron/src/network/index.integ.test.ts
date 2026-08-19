@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import coinConfig from "../config";
+import { type TronCoinConfig } from "../config";
 import {
   craftStandardTransaction,
   defaultFetchParams,
@@ -14,22 +14,16 @@ import { abiEncodeTrc20Transfer } from "./utils";
 
 const USDT_CONTRACT = "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t";
 
+const mockConfig = {
+  status: { type: "active" },
+  explorer: { url: "https://tron.coin.ledger.com" },
+} as TronCoinConfig;
+
 /**
  * Tests used to help to develop and debug. Can't be reliable for the CI.
  */
 describe("TronGrid", () => {
   const address = "TY2ksFgpvb82TgGPwUSa7iseqPW5weYQyh";
-
-  beforeAll(() => {
-    coinConfig.setCoinConfig(() => ({
-      status: {
-        type: "active",
-      },
-      explorer: {
-        url: "https://tron.coin.ledger.com",
-      },
-    }));
-  });
 
   describe("fetchTronAccountTxs", () => {
     it(
@@ -37,6 +31,7 @@ describe("TronGrid", () => {
       async () => {
         // WHEN
         const results = await fetchTronAccountTxs(
+          mockConfig,
           address,
           txs => txs.length < 100,
           defaultFetchParams,
@@ -51,7 +46,7 @@ describe("TronGrid", () => {
 
   describe("fetchTronAccount", () => {
     it("retrieves exactly one element", async () => {
-      const result = await fetchTronAccount(address);
+      const result = await fetchTronAccount(mockConfig, address);
 
       expect(result).toHaveLength(1);
       expect(result[0]).toHaveProperty("balance");
@@ -62,6 +57,7 @@ describe("TronGrid", () => {
     it("handles errors correctly", async () => {
       await expect(
         craftStandardTransaction(
+          mockConfig,
           "wrong token address",
           "wrong recipient address",
           "wrong sender address",
@@ -76,7 +72,7 @@ describe("TronGrid", () => {
 
   describe("getTronAccountNetwork", () => {
     it("works", async () => {
-      const result = await getTronAccountNetwork(address);
+      const result = await getTronAccountNetwork(mockConfig, address);
 
       expect(result.family).toEqual("tron");
       for (const p of [
@@ -98,7 +94,7 @@ describe("TronGrid", () => {
     });
 
     it("returns the four parameters used by fee estimation with mainnet values", async () => {
-      const params = await getChainParameters();
+      const params = await getChainParameters(mockConfig);
 
       expect(params.transactionFee).toBe(1000);
       expect(params.createAccountFee).toBe(100_000);
@@ -111,7 +107,7 @@ describe("TronGrid", () => {
 
   describe("triggerConstantContract", () => {
     it("returns energy_used within the documented USDT transfer range", async () => {
-      const response = await triggerConstantContract({
+      const response = await triggerConstantContract(mockConfig, {
         ownerAddress: decode58Check(address),
         contractAddress: decode58Check(USDT_CONTRACT),
         functionSelector: "transfer(address,uint256)",

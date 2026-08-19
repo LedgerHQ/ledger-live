@@ -1,5 +1,5 @@
 import { makeAccount } from "../fixtures";
-import { getCoinConfig, setCoinConfig } from "@ledgerhq/coin-evm/config";
+import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
 import { encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
@@ -86,41 +86,29 @@ export const scenarioCore: Scenario<GenericTransaction, Account> = {
 
     const provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545");
 
-    setCoinConfig(() => ({
-      info: {
-        status: {
-          type: "active",
-        },
-        node: {
-          type: "external",
-          uri: "http://127.0.0.1:8545",
-        },
-        explorer: {
-          type: "none",
-        },
-        showNfts: true,
+    const info: EvmConfigInfo = {
+      status: {
+        type: "active",
       },
-    }));
+      chainId: 1116,
+      name: "Core",
+      node: {
+        type: "external",
+        uri: "http://127.0.0.1:8545",
+      },
+      explorer: {
+        type: "none",
+      },
+      showNfts: true,
+    };
     LiveConfig.setConfig({
       config_currency_core: {
         type: "object",
-        default: {
-          status: {
-            type: "active",
-          },
-          node: {
-            type: "external",
-            uri: "http://127.0.0.1:8545",
-          },
-          explorer: {
-            type: "none",
-          },
-          showNfts: false,
-        },
+        default: info,
       },
     });
 
-    initMswHandlers(getCoinConfig(core.id).info);
+    initMswHandlers(info);
 
     const { currencyBridge, accountBridge, getAddress } = await getBridges(signer);
     const { address } = await getAddress("", {

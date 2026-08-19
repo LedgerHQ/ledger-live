@@ -43,3 +43,18 @@ export class ZcashUtxoNotInAccount extends Error {
     }
   }
 }
+
+/**
+ * Raised when the builder rejects a selected note because its leaf position is
+ * at or past the number of leaves the Ironwood tree held at its anchor -- the
+ * note exists on-chain but is not yet inside the tree the transaction is built
+ * against. The maturity filter (`logic/account/spendability`) makes this
+ * unreachable in the normal case; this is the safety net for a backend drift
+ * between the zaino instance the scan used and the one the builder queries.
+ */
+export class ZcashNotesNotYetSpendable extends Error {
+  constructor(message = "These funds are not spendable yet, try again in a few minutes") {
+    super(message);
+    this.name = "ZcashNotesNotYetSpendable";
+  }
+}

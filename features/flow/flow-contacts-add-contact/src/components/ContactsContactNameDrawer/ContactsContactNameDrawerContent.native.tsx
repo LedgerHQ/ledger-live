@@ -25,6 +25,7 @@ export type ContactsContactNameDrawerContentProps = Readonly<{
   invalidNameError: ContactNameValidationErrorName | null;
   bottomInset?: number;
   keyboardInset?: number;
+  isEditable?: boolean;
   labels: ContactsContactNameDrawerLabels;
   confirmLabel: string;
   confirmTestID?: string;
@@ -40,6 +41,7 @@ export function ContactsContactNameDrawerContent({
   invalidNameError,
   bottomInset = 0,
   keyboardInset = 0,
+  isEditable = true,
   labels,
   confirmLabel,
   confirmTestID,
@@ -54,7 +56,7 @@ export function ContactsContactNameDrawerContent({
       {isOpen ? (
         <Box lx={{ gap: "s24" }}>
           <BottomSheetHeader />
-          <Box lx={{ gap: "s16", paddingHorizontal: "s16" }}>
+          <Box lx={{ gap: "s16" }}>
             <Text typography="heading3SemiBold" lx={{ color: "base" }}>
               {labels.title}
             </Text>
@@ -62,6 +64,7 @@ export function ContactsContactNameDrawerContent({
               value={draftName}
               placeholder={labels.namePlaceholder}
               errorMessage={nameValidationError}
+              isEditable={isEditable}
               onChangeText={onDraftNameChange}
             />
             <Banner appearance="info" description={labels.namingDisclaimer} />

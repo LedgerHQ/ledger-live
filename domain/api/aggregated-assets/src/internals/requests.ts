@@ -1,52 +1,50 @@
 import { getEnv } from "@shared/env";
+import type {
+  FetchArgs,
+  FetchBaseQueryError,
+  FetchBaseQueryMeta,
+  QueryReturnValue,
+} from "@reduxjs/toolkit/query";
 import type { RawApiResponse } from "../schema";
 import type { AssetsData, GetAssetsDataParams } from "../types";
 import { convertApiAssets } from "../transforms";
 import { buildAssetsQueryParams } from "../requests";
-import { assertDadaApiUrl } from "./utils";
+import { assertDadaApiHost } from "./utils";
+
+type DadaQueryResult = QueryReturnValue<unknown, FetchBaseQueryError, FetchBaseQueryMeta>;
+
+/**
+ * The bound base query RTK hands to `queryFn` as its fourth argument: same fetch, headers and
+ * abort signal as a declarative `query`. `PromiseLike` matches RTK's own `MaybePromise`.
+ */
+export type DadaBaseQuery = (
+  arg: string | FetchArgs,
+) => DadaQueryResult | PromiseLike<DadaQueryResult>;
 
 /**
  * Picks prod or staging per request.
  *
- * Exists only because the shared DADA base query is configured with `baseUrl: ""`, so every
- * endpoint has to resolve its own absolute url. LIVE-35301 moves url ownership to
- * `@shared/api-services` via `extraArgument`, which removes the need for this.
+ * Per-request rather than store config because `isStaging` is derived from the modular-drawer
+ * feature flag at each call site, so both environments are reachable in one session.
  */
 export function resolveBaseUrl(queryArg: { isStaging?: boolean }): string {
-  return queryArg.isStaging ? getEnv("DADA_API_STAGING") : getEnv("DADA_API_PROD");
+  const baseUrl = queryArg.isStaging ? getEnv("DADA_API_STAGING") : getEnv("DADA_API_PROD");
+  assertDadaApiHost(baseUrl);
+  return baseUrl;
 }
 
-/**
- * One page for one chunk of currency ids. Used by the chunked lookup endpoint.
- *
- * Hand-rolls `fetch` instead of going through the base query, which is why `assertDadaApiUrl` is
- * needed and why RTK's `AbortSignal` never reaches the request. `queryFn` receives `baseQuery` as
- * its fourth argument, so the fan-out could use it — see LIVE-35301.
- */
+/** One page for one chunk of currency ids, through the base query so aborts and errors behave. */
 export async function fetchAssetsPage(
-  baseUrl: string,
+  baseQuery: DadaBaseQuery,
   queryArg: GetAssetsDataParams,
 ): Promise<AssetsData> {
-  const params = buildAssetsQueryParams(queryArg);
-  const url = new URL(`${baseUrl}/assets`);
-  for (const [key, value] of Object.entries(params)) {
-    if (value !== undefined) {
-      url.searchParams.set(key, Array.isArray(value) ? value.join(",") : String(value));
-    }
-  }
+  const result = await baseQuery({
+    url: `${resolveBaseUrl(queryArg)}/assets`,
+    params: buildAssetsQueryParams(queryArg),
+  });
 
-  assertDadaApiUrl(url);
-  const response = await fetch(url.toString());
+  if (result.error) throw result.error;
 
-  if (!response.ok) {
-    throw new Error(`DADA fetch failed: ${response.status} ${response.statusText}`);
-  }
-
-  const raw: RawApiResponse = await response.json();
-  const enrichedCryptoOrTokenCurrencies = convertApiAssets(raw.cryptoOrTokenCurrencies);
-
-  return {
-    ...raw,
-    cryptoOrTokenCurrencies: enrichedCryptoOrTokenCurrencies,
-  };
+  const raw = result.data as RawApiResponse;
+  return { ...raw, cryptoOrTokenCurrencies: convertApiAssets(raw.cryptoOrTokenCurrencies) };
 }

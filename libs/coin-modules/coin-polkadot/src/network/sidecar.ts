@@ -6,7 +6,7 @@ import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { TypeRegistry } from "@polkadot/types";
 import { Extrinsics } from "@polkadot/types/metadata/decorate/types";
 import { BigNumber } from "bignumber.js";
-import coinConfig from "../config";
+import { type PolkadotCoinConfig } from "../config";
 import type {
   PolkadotValidator,
   PolkadotStakingProgress,
@@ -37,8 +37,11 @@ import type {
  *
  * @returns {string}
  */
-const getSidecarUrl = (route: string, currency?: CryptoCurrency): string => {
-  const config = coinConfig.getCoinConfig(currency?.id);
+const getSidecarUrl = (
+  config: PolkadotCoinConfig,
+  route: string,
+  currency?: CryptoCurrency,
+): string => {
   let sidecarUrl = config.sidecar.url;
 
   if (
@@ -57,8 +60,8 @@ const getSidecarUrl = (route: string, currency?: CryptoCurrency): string => {
   return `${sidecarUrl}${route || ""}`;
 };
 
-const getElectionOptimisticThreshold = (currency?: CryptoCurrency): number => {
-  return coinConfig.getCoinConfig(currency?.id).staking?.electionStatusThreshold || 25;
+const getElectionOptimisticThreshold = (config: PolkadotCoinConfig): number => {
+  return config.staking?.electionStatusThreshold || 25;
 };
 
 const VALIDATOR_COMISSION_RATIO = 1000000000;
@@ -80,12 +83,14 @@ type SidecarPalletConstsResponse = {
 };
 
 async function fetchPalletConsts(
+  config: PolkadotCoinConfig,
   palletId: string,
   currency?: CryptoCurrency,
 ): Promise<Map<string, number>> {
   const result = new Map<string, number>();
   try {
     const { data } = await callSidecar<SidecarPalletConstsResponse>(
+      config,
       `/pallets/${palletId}/consts`,
       currency,
     );
@@ -102,8 +107,11 @@ async function fetchPalletConsts(
 }
 
 const getChainConstants = makeLRUCache(
-  async (currency: CryptoCurrency | undefined): Promise<ChainConstants> => {
-    const stakingConsts = await fetchPalletConsts("staking", currency);
+  async (
+    config: PolkadotCoinConfig,
+    currency: CryptoCurrency | undefined,
+  ): Promise<ChainConstants> => {
+    const stakingConsts = await fetchPalletConsts(config, "staking", currency);
     return {
       expectedBlockTime: DEFAULT_CONSTANTS.expectedBlockTime,
       epochDuration: DEFAULT_CONSTANTS.epochDuration,
@@ -114,24 +122,25 @@ const getChainConstants = makeLRUCache(
       bondingDuration: stakingConsts.get("BondingDuration") ?? DEFAULT_CONSTANTS.bondingDuration,
     };
   },
-  currency => currency?.id || "polkadot",
+  (_config, currency) => currency?.id || "polkadot",
   hours(1, 1),
 );
 
 // blocks = 2 minutes 30
 
 async function callSidecar<T>(
+  config: PolkadotCoinConfig,
   route: string,
   currency?: CryptoCurrency,
   method: "GET" | "POST" = "GET",
   data?: unknown,
 ) {
-  const credentials = coinConfig.getCoinConfig(currency?.id).sidecar.credentials;
+  const credentials = config.sidecar.credentials;
   const headers = credentials ? { Authorization: "Basic " + credentials } : {};
   return network<T>({
     headers,
     method,
-    url: getSidecarUrl(route, currency),
+    url: getSidecarUrl(config, route, currency),
     data,
   });
 }
@@ -145,10 +154,12 @@ async function callSidecar<T>(
  * @returns {SidecarAccountBalanceInfo}
  */
 const fetchBalanceInfo = async (
+  config: PolkadotCoinConfig,
   addr: string,
   currency?: CryptoCurrency,
 ): Promise<SidecarAccountBalanceInfo> => {
   const { data } = await callSidecar<SidecarAccountBalanceInfo>(
+    config,
     `/accounts/${addr}/balance-info`,
     currency,
   );
@@ -163,12 +174,16 @@ const fetchBalanceInfo = async (
  *
  * @returns {string}
  */
-const fetchStashAddr = async (addr: string, currency?: CryptoCurrency): Promise<string | null> => {
+const fetchStashAddr = async (
+  config: PolkadotCoinConfig,
+  addr: string,
+  currency?: CryptoCurrency,
+): Promise<string | null> => {
   const {
     data,
   }: {
     data: SidecarPalletStorageItem;
-  } = await callSidecar(`/pallets/staking/storage/ledger?keys[]=${addr}`, currency);
+  } = await callSidecar(config, `/pallets/staking/storage/ledger?keys[]=${addr}`, currency);
   return data.value?.stash ?? null;
 };
 
@@ -181,6 +196,7 @@ const fetchStashAddr = async (addr: string, currency?: CryptoCurrency): Promise<
  * @returns {string}
  */
 const fetchControllerAddr = async (
+  config: PolkadotCoinConfig,
   addr: string,
   currency?: CryptoCurrency,
 ): Promise<string | null> => {
@@ -188,7 +204,7 @@ const fetchControllerAddr = async (
     data,
   }: {
     data: SidecarPalletStorageItem;
-  } = await callSidecar(`/pallets/staking/storage/bonded?keys[]=${addr}`, currency);
+  } = await callSidecar(config, `/pallets/staking/storage/bonded?keys[]=${addr}`, currency);
   return data.value ?? null;
 };
 
@@ -214,12 +230,15 @@ const fetchStakingInfo = async (
  *
  * @returns {SidecarPalletStorageItem}
  */
-const fetchActiveEra = async (currency?: CryptoCurrency): Promise<SidecarPalletStorageItem> => {
+const fetchActiveEra = async (
+  config: PolkadotCoinConfig,
+  currency?: CryptoCurrency,
+): Promise<SidecarPalletStorageItem> => {
   const {
     data,
   }: {
     data: SidecarPalletStorageItem;
-  } = await callSidecar("/pallets/staking/storage/activeEra", currency);
+  } = await callSidecar(config, "/pallets/staking/storage/activeEra", currency);
   return data;
 };
 
@@ -231,8 +250,12 @@ const fetchActiveEra = async (currency?: CryptoCurrency): Promise<SidecarPalletS
  *
  * @returns {string}
  */
-export const getMinimumBondBalance = async (currency?: CryptoCurrency): Promise<BigNumber> => {
+export const getMinimumBondBalance = async (
+  config: PolkadotCoinConfig,
+  currency?: CryptoCurrency,
+): Promise<BigNumber> => {
   const { data }: { data: SidecarPalletStorageItem } = await callSidecar(
+    config,
     `/pallets/staking/storage/minNominatorBond`,
     currency,
   );
@@ -267,13 +290,14 @@ const fetchValidators = async (
  * @returns {SidecarPalletStakingProgress}
  */
 const fetchStakingProgress = async (
+  config: PolkadotCoinConfig,
   currency?: CryptoCurrency,
 ): Promise<SidecarPalletStakingProgress> => {
   const {
     data,
   }: {
     data: SidecarPalletStakingProgress;
-  } = await callSidecar("/pallets/staking/progress", currency);
+  } = await callSidecar(config, "/pallets/staking/progress", currency);
   return data;
 };
 
@@ -285,6 +309,7 @@ const fetchStakingProgress = async (
  * @returns {SidecarTransactionMaterial}
  */
 const fetchTransactionMaterial = async (
+  config: PolkadotCoinConfig,
   // By default we don't want any metadata.
   currency?: CryptoCurrency,
   withMetadata = false,
@@ -294,7 +319,7 @@ const fetchTransactionMaterial = async (
     data,
   }: {
     data: SidecarTransactionMaterial;
-  } = await callSidecar(`/transaction/material${params}`, currency);
+  } = await callSidecar(config, `/transaction/material${params}`, currency);
   return data;
 };
 
@@ -305,12 +330,12 @@ const fetchTransactionMaterial = async (
  *
  * @returns {SidecarRuntimeSpec}
  */
-export const fetchChainSpec = async (currency?: CryptoCurrency) => {
+export const fetchChainSpec = async (config: PolkadotCoinConfig, currency?: CryptoCurrency) => {
   const {
     data,
   }: {
     data: SidecarRuntimeSpec;
-  } = await callSidecar("/runtime/spec", currency);
+  } = await callSidecar(config, "/runtime/spec", currency);
   return data;
 };
 
@@ -322,10 +347,13 @@ export const fetchChainSpec = async (currency?: CryptoCurrency) => {
  *
  * @returns {boolean}
  */
-export const isElectionClosed = async (currency: CryptoCurrency): Promise<boolean> => {
+export const isElectionClosed = async (
+  config: PolkadotCoinConfig,
+  currency: CryptoCurrency,
+): Promise<boolean> => {
   if (UNSUPPORTED_STAKING_NETWORKS.includes(currency.id)) return true;
 
-  const progress = await fetchStakingProgress(currency);
+  const progress = await fetchStakingProgress(config, currency);
   return !progress.electionStatus?.status?.Open;
 };
 
@@ -337,8 +365,12 @@ export const isElectionClosed = async (currency: CryptoCurrency): Promise<boolea
  *
  * @returns {boolean}
  */
-export const isNewAccount = async (addr: string, currency?: CryptoCurrency): Promise<boolean> => {
-  const { nonce, free } = await fetchBalanceInfo(addr, currency);
+export const isNewAccount = async (
+  config: PolkadotCoinConfig,
+  addr: string,
+  currency?: CryptoCurrency,
+): Promise<boolean> => {
+  const { nonce, free } = await fetchBalanceInfo(config, addr, currency);
   return new BigNumber(0).isEqualTo(nonce) && new BigNumber(0).isEqualTo(free);
 };
 
@@ -351,10 +383,11 @@ export const isNewAccount = async (addr: string, currency?: CryptoCurrency): Pro
  * @returns {boolean}
  */
 export const isControllerAddress = async (
+  config: PolkadotCoinConfig,
   addr: string,
   currency?: CryptoCurrency,
 ): Promise<boolean> => {
-  const stash = await fetchStashAddr(addr, currency);
+  const stash = await fetchStashAddr(config, addr, currency);
   return !!stash;
 };
 
@@ -381,9 +414,13 @@ export const verifyValidatorAddresses = async (
  * @async
  * @param {*} addr
  */
-export const getAccount = async (addr: string, currency: CryptoCurrency) => {
-  const balances = await getBalances(addr, currency);
-  const stakingInfo = await getStakingInfo(addr, currency);
+export const getAccount = async (
+  config: PolkadotCoinConfig,
+  addr: string,
+  currency: CryptoCurrency,
+) => {
+  const balances = await getBalances(config, addr, currency);
+  const stakingInfo = await getStakingInfo(config, addr, currency);
   const nominations = await getNominations(addr);
 
   const account = { ...balances, ...stakingInfo, nominations };
@@ -400,8 +437,12 @@ export const getAccount = async (addr: string, currency: CryptoCurrency) => {
  * @async
  * @param {*} addr - the account address
  */
-export const getBalances = async (addr: string, currency?: CryptoCurrency) => {
-  const balanceInfo = await fetchBalanceInfo(addr, currency);
+export const getBalances = async (
+  config: PolkadotCoinConfig,
+  addr: string,
+  currency?: CryptoCurrency,
+) => {
+  const balanceInfo = await fetchBalanceInfo(config, addr, currency);
 
   return {
     blockHeight: Number(balanceInfo.at.height),
@@ -418,10 +459,14 @@ export const getBalances = async (addr: string, currency?: CryptoCurrency) => {
  * @async
  * @param {*} addr
  */
-export const getStakingInfo = async (addr: string, currency: CryptoCurrency) => {
+export const getStakingInfo = async (
+  config: PolkadotCoinConfig,
+  addr: string,
+  currency: CryptoCurrency,
+) => {
   const [stash, controller] = await Promise.all([
-    fetchStashAddr(addr, currency),
-    fetchControllerAddr(addr, currency),
+    fetchStashAddr(config, addr, currency),
+    fetchControllerAddr(config, addr, currency),
   ]);
   // If account is not a stash, no need to fetch staking-info (it would return an error)
   if (!controller || UNSUPPORTED_STAKING_NETWORKS.includes(currency.id)) {
@@ -436,8 +481,8 @@ export const getStakingInfo = async (addr: string, currency: CryptoCurrency) => 
 
   const [stakingInfo, activeEra, chainConsts] = await Promise.all([
     fetchStakingInfo(addr, currency),
-    fetchActiveEra(currency),
-    getChainConstants(currency),
+    fetchActiveEra(config, currency),
+    getChainConstants(config, currency),
   ]);
 
   const activeEraIndex = Number(activeEra.value?.index || 0);
@@ -509,8 +554,11 @@ const getNominations = async (addr: string): Promise<PolkadotNomination[]> => {
  *
  * @async
  */
-export const getTransactionParams = async (currency?: CryptoCurrency) => {
-  const material = await fetchTransactionMaterial(currency);
+export const getTransactionParams = async (
+  config: PolkadotCoinConfig,
+  currency?: CryptoCurrency,
+) => {
+  const material = await fetchTransactionMaterial(config, currency, false);
   return {
     blockHash: material.at.hash,
     blockNumber: material.at.height,
@@ -539,15 +587,17 @@ type SubmitExtrinsicDryRunResponse = {
  * We run a dry run of the extrinsic to check if the transaction is valid and eventually get a precise error or what is wrong with transaction
  */
 export const submitExtrinsicDryRun = async (
+  config: PolkadotCoinConfig,
   extrinsic: string,
   currency?: CryptoCurrency,
 ): Promise<SubmitExtrinsicDryRunResponse> => {
-  const { registry } = await getRegistry(currency);
+  const { registry } = await getRegistry(config, currency);
   const decoded = registry.createType("Extrinsic", extrinsic);
   const callHex = decoded.method.toHex();
   const senderAddress = decoded.signer.toString();
 
   const { data } = await callSidecar<SubmitExtrinsicDryRunResponse>(
+    config,
     "/transaction/dry-run",
     currency,
     "POST",
@@ -576,6 +626,7 @@ export const submitExtrinsicDryRun = async (
  * @returns {string>} - the broadcasted transaction's hah
  */
 export const submitExtrinsic = async (
+  config: PolkadotCoinConfig,
   extrinsic: string,
   currency?: CryptoCurrency,
 ): Promise<string> => {
@@ -583,7 +634,7 @@ export const submitExtrinsic = async (
     data,
   }: {
     data: SidecarTransactionBroadcast;
-  } = await callSidecar("/transaction", currency, "POST", {
+  } = await callSidecar(config, "/transaction", currency, "POST", {
     tx: extrinsic,
   });
 
@@ -600,6 +651,7 @@ export const submitExtrinsic = async (
  * @returns {SidecarPaymentInfo}
  */
 export const paymentInfo = async (
+  config: PolkadotCoinConfig,
   extrinsic: string,
   currency?: CryptoCurrency,
 ): Promise<SidecarPaymentInfo> => {
@@ -607,7 +659,7 @@ export const paymentInfo = async (
     data,
   }: {
     data: SidecarPaymentInfo;
-  } = await callSidecar("/transaction/fee-estimate", currency, "POST", {
+  } = await callSidecar(config, "/transaction/fee-estimate", currency, "POST", {
     tx: extrinsic,
   });
   return data;
@@ -656,6 +708,7 @@ export const getValidators = async (
  * @returns {PolkadotStakingProgress}
  */
 export const getStakingProgress = async (
+  config: PolkadotCoinConfig,
   currency: CryptoCurrency,
 ): Promise<PolkadotStakingProgress> => {
   if (UNSUPPORTED_STAKING_NETWORKS.includes(currency.id)) {
@@ -668,8 +721,8 @@ export const getStakingProgress = async (
   }
 
   const [progress, chainConsts] = await Promise.all([
-    fetchStakingProgress(currency),
-    getChainConstants(currency),
+    fetchStakingProgress(config, currency),
+    getChainConstants(config, currency),
   ]);
 
   const activeEra = Number(progress.activeEra);
@@ -684,7 +737,7 @@ export const getStakingProgress = async (
     activeEra &&
     currentBlock &&
     toggleEstimate &&
-    currentBlock >= toggleEstimate - getElectionOptimisticThreshold(currency)
+    currentBlock >= toggleEstimate - getElectionOptimisticThreshold(config)
       ? false
       : electionClosed;
   return {
@@ -703,24 +756,27 @@ export const getStakingProgress = async (
  * @returns {Object} - { registry, extrinsics }
  */
 export const getRegistry = async (
+  config: PolkadotCoinConfig,
   currency?: CryptoCurrency,
 ): Promise<{
   registry: TypeRegistry;
   extrinsics: Extrinsics;
 }> => {
   const [material, spec] = await Promise.all([
-    getTransactionMaterialWithMetadata(currency),
-    fetchChainSpec(currency),
+    getTransactionMaterialWithMetadata(config, currency),
+    fetchChainSpec(config, currency),
   ]);
   return createRegistryAndExtrinsics(material, spec);
 };
 export const getMetadata = async (
+  config: PolkadotCoinConfig,
   callData: string,
   includedInExtrinsic: string,
   includedInSignedData: string,
   currency?: CryptoCurrency,
 ): Promise<{ metadataBlob: string; metadataHash: string }> => {
   const { data } = await callSidecar<{ metadataBlob: string; metadataHash: string }>(
+    config,
     "/transaction/metadata-blob",
     currency,
     "POST",
@@ -738,9 +794,10 @@ export const getMetadata = async (
  * Get lastest block info
  */
 export const getLastBlock = async (
+  config: PolkadotCoinConfig,
   currency?: CryptoCurrency,
 ): Promise<{ hash: string; height: number; time: Date }> => {
-  const { data } = await callSidecar<BlockInfo>("/blocks/head", currency);
+  const { data } = await callSidecar<BlockInfo>(config, "/blocks/head", currency);
   return { hash: data.hash, height: parseInt(data.number), time: new Date() };
 };
 
@@ -756,8 +813,13 @@ export const getLastBlock = async (
  * @returns {Promise<Object>} consts
  */
 export const getTransactionMaterialWithMetadata = makeLRUCache(
-  async (currency?: CryptoCurrency): Promise<SidecarTransactionMaterial> =>
-    fetchTransactionMaterial(currency, true),
-  currency => (currency ? currency.id : "polkadot"),
+  async (
+    config: PolkadotCoinConfig,
+    currency?: CryptoCurrency,
+  ): Promise<SidecarTransactionMaterial> => fetchTransactionMaterial(config, currency, true),
+  // `config` is deterministic per currency, so it isn't part of the cache key — but it must be in
+  // the key extractor's parameter list so `makeLRUCache` infers the full `(config, currency?)`
+  // argument tuple; otherwise the cached wrapper is typed to accept only `config`.
+  (_config, currency) => (currency ? currency.id : "polkadot"),
   hours(1),
 );

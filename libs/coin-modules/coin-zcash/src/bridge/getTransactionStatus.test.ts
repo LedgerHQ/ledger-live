@@ -9,11 +9,16 @@ import {
 import { ZIP317_MINIMUM_FEE } from "../logic/coin-selection";
 import type { BitcoinOutput, Transaction, ZcashAccount, ZcashTransferType } from "../types/bridge";
 import type { SpendableNote } from "../network/types";
+import { ZCASH_SHIELDED_SPENDABILITY_DELAY_BLOCKS } from "../constants";
 
 const T_ADDRESS = "t1b1Rbw2shhJkP6MCnCyxCPuyFedHrwKty8";
 const U_ADDRESS =
   "u1u2h4ce7e2cn3z4nzur95muq2dl4da9x8h8kdp2l80gm9nl9raj8zzpx79ycjnfvar4v5exea5pqr5y9qsnlp0cdunwf9yjjx5c4q7ar9";
 const ZS_ADDRESS = "zs1z7rejlpsa98s2rrrfkwmaxu53e4ue0ulcrw0h4x5g8jl04tak0d3mm47vdtahatqrlkngh9slya";
+
+const REFERENCE_HEIGHT = 3_450_000;
+const MATURE_BLOCK = REFERENCE_HEIGHT - ZCASH_SHIELDED_SPENDABILITY_DELAY_BLOCKS;
+const FRESH_BLOCK = REFERENCE_HEIGHT - 3; // still maturing
 
 const note = (amount: number, index = 1): SpendableNote =>
   ({
@@ -26,6 +31,20 @@ const note = (amount: number, index = 1): SpendableNote =>
     recipient: "22".repeat(43),
     isSpent: false,
   }) as unknown as SpendableNote;
+
+/** A raw pool note, as scanned into `ShieldedTransaction.decryptedData.ironwood_outputs`. */
+const poolNote = (amount: number, index: number) => ({
+  amount: new BigNumber(amount),
+  transfer_type: "incoming",
+  memo: "",
+  nullifier: index.toString(16).padStart(2, "0").repeat(32),
+  rho: "ee".repeat(32),
+  rseed: "ff".repeat(32),
+  cmx: "11".repeat(32),
+  position: String(index),
+  recipient: "22".repeat(43),
+  isSpent: false,
+});
 
 const utxo = (value: number, outputIndex = 0): BitcoinOutput => ({
   hash: "aa".repeat(32),
@@ -40,14 +59,58 @@ const utxo = (value: number, outputIndex = 0): BitcoinOutput => ({
 function account({
   utxos = [100_000, 25_000],
   orchardBalance = 50_000,
-  ironwoodBalance = 50_000,
+  ironwoodNotes = [50_000],
+  freshIronwoodNotes = [],
   synced = true,
+  lastProcessedBlock = REFERENCE_HEIGHT,
 }: {
   utxos?: number[];
   orchardBalance?: number;
-  ironwoodBalance?: number;
+  /** Mature Ironwood notes -- scanned deep enough below `lastProcessedBlock`. */
+  ironwoodNotes?: number[];
+  /** Ironwood notes scanned only a few blocks ago -- still maturing. */
+  freshIronwoodNotes?: number[];
   synced?: boolean;
+  lastProcessedBlock?: number | null;
 } = {}): ZcashAccount {
+  const ironwoodBalance = [...ironwoodNotes, ...freshIronwoodNotes].reduce((s, v) => s + v, 0);
+  const transactions = [
+    ...(ironwoodNotes.length
+      ? [
+          {
+            id: "mature-tx",
+            hex: "00",
+            blockHeight: MATURE_BLOCK,
+            blockHash: "cc".repeat(32),
+            timestamp: 1_700_000_000,
+            fee: new BigNumber(0),
+            decryptedData: {
+              orchard_outputs: [],
+              sapling_outputs: [],
+              ironwood_outputs: ironwoodNotes.map((amount, i) => poolNote(amount, i)),
+            },
+          },
+        ]
+      : []),
+    ...(freshIronwoodNotes.length
+      ? [
+          {
+            id: "fresh-tx",
+            hex: "00",
+            blockHeight: FRESH_BLOCK,
+            blockHash: "dd".repeat(32),
+            timestamp: 1_700_000_100,
+            fee: new BigNumber(0),
+            decryptedData: {
+              orchard_outputs: [],
+              sapling_outputs: [],
+              ironwood_outputs: freshIronwoodNotes.map((amount, i) => poolNote(amount, i + 100)),
+            },
+          },
+        ]
+      : []),
+  ];
+
   return {
     type: "Account",
     id: "js:2:zcash:xpub6D:",
@@ -58,6 +121,8 @@ function account({
           orchardBalance: new BigNumber(orchardBalance),
           ironwoodBalance: new BigNumber(ironwoodBalance),
           saplingBalance: new BigNumber(0),
+          lastProcessedBlock,
+          transactions,
         }
       : undefined,
   } as unknown as ZcashAccount;
@@ -223,6 +288,7 @@ describe("getTransactionStatus, transparent-input flows", () => {
       estimatedFees: new BigNumber(15_000),
       amount: new BigNumber(30_000),
       totalSpent: new BigNumber(45_000),
+      recipientIsReadOnly: false,
     });
   });
 
@@ -326,6 +392,7 @@ describe("getTransactionStatus, note-spending flows", () => {
       estimatedFees: new BigNumber(0),
       amount: new BigNumber(10_000),
       totalSpent: new BigNumber(10_000),
+      recipientIsReadOnly: false,
     });
   });
 
@@ -346,6 +413,7 @@ describe("getTransactionStatus, note-spending flows", () => {
       estimatedFees: new BigNumber(15_000),
       amount: new BigNumber(10_000),
       totalSpent: new BigNumber(25_000),
+      recipientIsReadOnly: false,
     });
   });
 
@@ -357,7 +425,7 @@ describe("getTransactionStatus, note-spending flows", () => {
   ] as [ZcashTransferType, string][])(
     "bounds %s by the ironwood balance",
     async (transferType, recipient) => {
-      const acc = account({ orchardBalance: 10_000_000, ironwoodBalance: 20_000 });
+      const acc = account({ orchardBalance: 10_000_000, ironwoodNotes: [20_000] });
       const tx = transaction({
         transferType,
         recipient,
@@ -379,6 +447,36 @@ describe("getTransactionStatus, note-spending flows", () => {
       expect((await getTransactionStatus(acc, withinPool)).errors).toEqual({});
     },
   );
+
+  // The amount validated must be the same figure selection draws from, or the
+  // status can green-light a send the builder cannot satisfy.
+  it("rejects an amount the raw pool covers but the mature figure does not", async () => {
+    const acc = account({ ironwoodNotes: [10_000], freshIronwoodNotes: [40_000] });
+    const tx = transaction({
+      transferType: "shielded",
+      recipient: U_ADDRESS,
+      amount: new BigNumber(30_000),
+      selectedNotes: [note(30_000)],
+      zcashFee: new BigNumber(10_000),
+    });
+
+    expect((await getTransactionStatus(acc, tx)).errors.amount).toEqual(
+      new Error("Insufficient shielded balance"),
+    );
+  });
+
+  it("accepts an amount within the mature figure", async () => {
+    const acc = account({ ironwoodNotes: [10_000], freshIronwoodNotes: [40_000] });
+    const tx = transaction({
+      transferType: "shielded",
+      recipient: U_ADDRESS,
+      amount: new BigNumber(5_000),
+      selectedNotes: [note(10_000)],
+      zcashFee: new BigNumber(5_000),
+    });
+
+    expect((await getTransactionStatus(acc, tx)).errors).toEqual({});
+  });
 
   it("refuses a shielded send that selected no note, however full the pool", async () => {
     const status = await getTransactionStatus(
@@ -402,5 +500,63 @@ describe("getTransactionStatus, note-spending flows", () => {
     expect(errorNames(status.errors)).toEqual({
       recipient: "ZcashSaplingRecipientNotSupported",
     });
+  });
+});
+
+describe("getTransactionStatus, recipientIsReadOnly", () => {
+  it.each([
+    ["transparent-input", transaction({ selfTransfer: true }), account()],
+    [
+      "shielded",
+      transaction({ transferType: "shielded", recipient: U_ADDRESS, selfTransfer: true }),
+      account(),
+    ],
+    [
+      "no-privateInfo",
+      transaction({ transferType: "shielded", recipient: U_ADDRESS, selfTransfer: true }),
+      account({ synced: false }),
+    ],
+  ] as [string, Transaction, ZcashAccount][])(
+    "is true on the %s return point when selfTransfer is true",
+    async (_label, tx, acc) => {
+      expect((await getTransactionStatus(acc, tx)).recipientIsReadOnly).toBe(true);
+    },
+  );
+
+  it.each([
+    ["transparent-input", transaction(), account()],
+    ["transparent-input, explicit false", transaction({ selfTransfer: false }), account()],
+    [
+      "shielded",
+      transaction({
+        transferType: "shielded",
+        recipient: U_ADDRESS,
+        selectedNotes: [note(40_000)],
+      }),
+      account(),
+    ],
+    [
+      "no-privateInfo",
+      transaction({ transferType: "shielded", recipient: U_ADDRESS }),
+      account({ synced: false }),
+    ],
+  ] as [string, Transaction, ZcashAccount][])(
+    "is false on the %s return point when selfTransfer is absent or false",
+    async (_label, tx, acc) => {
+      expect((await getTransactionStatus(acc, tx)).recipientIsReadOnly).toBe(false);
+    },
+  );
+
+  it("adds no error and removes none: selfTransfer gates exactly as a manually typed address", async () => {
+    const withFlag = transaction({ selfTransfer: true, amount: new BigNumber(30_000) });
+    const withoutFlag = transaction({ amount: new BigNumber(30_000) });
+
+    const [statusWithFlag, statusWithoutFlag] = await Promise.all([
+      getTransactionStatus(account(), withFlag),
+      getTransactionStatus(account(), withoutFlag),
+    ]);
+
+    expect(errorNames(statusWithFlag.errors)).toEqual(errorNames(statusWithoutFlag.errors));
+    expect(Object.keys(statusWithFlag.warnings)).toEqual(Object.keys(statusWithoutFlag.warnings));
   });
 });

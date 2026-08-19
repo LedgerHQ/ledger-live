@@ -1,10 +1,12 @@
 export * from "./state";
 export * from "./types";
 export * from "./decision/getLargeScreenUpsellDecision";
+export * from "./decision/getLargeScreenUpsellEligibility";
 export * from "./hooks/useLargeScreenUpsellDecision";
 export * from "./utils/upsellCta";
 export * from "./utils/upsellContent";
 export * from "./utils/mapDevicesModelListToUpsellInputs";
+export * from "./utils/getNanoOnlyDeviceModel";
 export { LARGE_SCREEN_UPSELL_IMAGES } from "./assets";
 export { LargeScreenUpsellModal } from "./screens/LargeScreenUpsellModal";
 export { LargeScreenUpsellModalView } from "./screens/LargeScreenUpsellModal/LargeScreenUpsellModalView.web";

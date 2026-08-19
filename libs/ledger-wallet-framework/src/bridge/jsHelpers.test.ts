@@ -14,9 +14,11 @@ import {
   bip32asBuffer,
   makeScanAccounts,
   makeSync,
+  mergeOps,
   updateTransaction,
 } from "./jsHelpers";
 import { createEmptyHistoryCache } from "../account/balanceHistoryCache";
+import { getEnv, setEnv } from "@ledgerhq/live-env";
 
 describe("updateTransaction", () => {
   it("should not update the transaction object", () => {
@@ -876,6 +878,66 @@ describe("makeScanAccounts", () => {
     expect(ethMMAccount!.account!.used).toBe(true);
   });
 
+  it("crosses an empty gap to reach a later used account and offers only the first empty account", async () => {
+    // Bitcoin segwit modes use KEYCHAIN_OBSERVABLE_RANGE as their account gap
+    // limit (see getMandatoryEmptyAccountSkip). Set it to 5 so discovery tolerates
+    // up to 5 consecutive empty accounts.
+    const previousRange = getEnv("KEYCHAIN_OBSERVABLE_RANGE");
+    setEnv("KEYCHAIN_OBSERVABLE_RANGE", 5);
+    try {
+      const currency = getCryptoCurrencyById("bitcoin") as unknown as CryptoCurrency;
+      const getAddressFn = (_deviceId: string, opts: { path: string }) =>
+        Promise.resolve({
+          address: `bc1${opts.path}`,
+          path: opts.path,
+          publicKey: `pk-${opts.path}`,
+        });
+      // Within native_segwit: indices 0,1 used, 2..4 empty, 5 used again, then empty.
+      const usedIndexes = new Set([0, 1, 5]);
+      const scanAccounts = makeScanAccounts({
+        getAccountShape: info => {
+          const used =
+            info.derivationMode === "native_segwit" ? usedIndexes.has(Number(info.index)) : false;
+          return Promise.resolve({
+            id: `${info.derivationMode || "legacy"}-${info.index}`,
+            used,
+            balanceHistoryCache: createEmptyHistoryCache(),
+          });
+        },
+        getAddressFn,
+      });
+      const events: Array<{ type: string; account?: Account }> = [];
+      await new Promise<void>((resolve, reject) => {
+        scanAccounts({
+          currency,
+          deviceId: "deviceId",
+          syncConfig: { paginationConfig: {} },
+        }).subscribe({
+          next: e => events.push(e),
+          complete: () => resolve(),
+          error: reject,
+        });
+      });
+      const discovered = events
+        .filter(e => e.type === "discovered")
+        .map(e => e.account!)
+        .filter(a => a.id.startsWith("native_segwit-"));
+      // All used accounts are discovered, including the one past the empty gap (index 5).
+      expect(
+        discovered
+          .filter(a => a.used)
+          .map(a => a.id)
+          .sort(),
+      ).toEqual(["native_segwit-0", "native_segwit-1", "native_segwit-5"]);
+      // Only ONE empty account is offered as creatable, and it is the first empty index (2).
+      const empty = discovered.filter(a => !a.used);
+      expect(empty).toHaveLength(1);
+      expect(empty[0].id).toBe("native_segwit-2");
+    } finally {
+      setEnv("KEYCHAIN_OBSERVABLE_RANGE", previousRange);
+    }
+  });
+
   it("does not call complete when subscription is unsubscribed before scan finishes", async () => {
     const addressResolver = {
       address: "address",
@@ -908,6 +970,40 @@ describe("makeScanAccounts", () => {
     });
     await new Promise(r => setImmediate(r));
     expect(completeSpy).not.toHaveBeenCalled();
+  });
+});
+
+describe("mergeOps", () => {
+  const op = (transactionSequenceNumber?: BigNumber) =>
+    ({
+      id: "op-1",
+      hash: "0xhash",
+      type: "FEES",
+      value: new BigNumber(1),
+      fee: new BigNumber(1),
+      blockHeight: 42,
+      date: new Date("2026-08-13T09:34:00Z"),
+      senders: ["0xfrom"],
+      recipients: ["0xto"],
+      transactionSequenceNumber,
+    }) as Operation;
+
+  it("backfills an operation stored without a sequence number", () => {
+    const [merged] = mergeOps([op(undefined)], [op(new BigNumber(313))]);
+
+    expect(merged.transactionSequenceNumber).toEqual(new BigNumber(313));
+  });
+
+  it("does not erase a stored sequence number with a fetch that reports none", () => {
+    const existing = [op(new BigNumber(313))];
+
+    expect(mergeOps(existing, [op(undefined)])).toBe(existing);
+  });
+
+  it("keeps the stored operation when the sequence number is unchanged", () => {
+    const existing = [op(new BigNumber(313))];
+
+    expect(mergeOps(existing, [op(new BigNumber(313))])).toBe(existing);
   });
 });
 

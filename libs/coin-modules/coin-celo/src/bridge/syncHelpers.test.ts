@@ -7,11 +7,11 @@ import {
   type CryptoCurrencyId,
 } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
-import { getCoinConfig } from "@ledgerhq/coin-evm/config";
+import { getCoinConfig } from "../config";
 import { makeAccount, makeOperation, makeTokenAccount } from "./syncHelpers.fixtures";
 import { createSwapHistoryMap, getSyncHash, mergeSubAccounts } from "./syncHelpers";
 
-jest.mock("@ledgerhq/coin-evm/config");
+jest.mock("../config");
 const mockGetConfig = jest.mocked(getCoinConfig);
 
 jest.mock("@ledgerhq/ledger-wallet-framework/account/sync");

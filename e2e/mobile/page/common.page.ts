@@ -83,17 +83,15 @@ export default class CommonPage {
   }
 
   @Step("Go to the account")
-  async goToAccount(accountId: string, currencyId?: string) {
+  async goToAccount(accountId: string, currencyId: string) {
     if (await isAggregatedAssetsEnabled()) {
       if (await IsIdVisible(this.accountGraphId(accountId))) {
         return; // already on the account page (e.g. navigated via CryptoAddressesScreen)
       }
-      if (currencyId) {
-        await openDeeplink(`asset/${currencyId}`);
-        await waitForElementById(`asset-detail-scroll-view-${currencyId}`);
-      }
+      const scrollViewId = `asset-detail-scroll-view-${currencyId}`;
+      await openDeeplink(`asset/${currencyId}`);
+      await waitForElementById(scrollViewId);
       const itemId = `asset-detail-address-item-${accountId}`;
-      const scrollViewId = currencyId ? `asset-detail-scroll-view-${currencyId}` : undefined;
       await scrollToId(itemId, scrollViewId);
       await tapByElement(getElementById(itemId));
     } else {

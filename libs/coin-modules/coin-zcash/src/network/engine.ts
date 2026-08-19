@@ -48,6 +48,38 @@ type NativeTx = NonNullable<Awaited<ReturnType<NativeStream["next"]>>>;
  */
 type NativePcztTransaction = ReturnType<NativeModule["parsePczt"]>;
 
+type NativeOrchardAction = NonNullable<NativePcztTransaction["orchardBundle"]>["actions"][number];
+
+/**
+ * The Ironwood section of a parsed PCZT, as the native addon returns it.
+ *
+ * Declared here rather than read off `NativePcztTransaction` because
+ * `@ledgerhq/zcash-utils` only started returning `ironwoodBundle` from
+ * `parsePczt()` in the release that added Ironwood support to its parser; the
+ * catalog pin in `pnpm-workspace.yaml` may still predate it. Structurally it is
+ * an Orchard bundle whose actions each carry the extra PCZT v2
+ * `notePlaintextVersion` byte -- see `PcztIronwoodBundle` in
+ * `@ledgerhq/device-signer-kit-zcash`, which this is normalised into.
+ */
+type NativeIronwoodBundle = {
+  actions: (NativeOrchardAction & { notePlaintextVersion: number })[];
+  flags: number;
+  valueBalance: string;
+  anchor: Uint8Array;
+};
+
+/**
+ * Reads the Ironwood section off a `parsePczt()` result.
+ *
+ * Returns `undefined` both when the transaction genuinely has no Ironwood
+ * actions and when the native addon predates Ironwood parsing;
+ * `buildIronwoodTransactionJob` distinguishes the two, since only the latter is
+ * a misconfiguration.
+ */
+function nativeIronwoodBundle(raw: NativePcztTransaction): NativeIronwoodBundle | undefined {
+  return (raw as { ironwoodBundle?: NativeIronwoodBundle | null }).ironwoodBundle ?? undefined;
+}
+
 /** PCZT methods that must be present on the native addon at runtime. */
 const PCZT_METHODS = [
   "parsePczt",
@@ -164,7 +196,26 @@ function adaptPcztForSigner(raw: NativePcztTransaction): PcztTransaction {
           })),
         }
       : null,
+    // V6 only. The signer rejects a V5 transaction that carries an Ironwood
+    // bundle just as firmly as a V6 one that does not, so an absent section
+    // must map to `null` rather than be omitted or defaulted.
+    ironwoodBundle: adaptIronwoodBundle(nativeIronwoodBundle(raw)),
   };
+}
+
+/** Normalises the Ironwood bundle exactly as `adaptPcztForSigner` does the Orchard one. */
+function adaptIronwoodBundle(raw: NativeIronwoodBundle | undefined) {
+  return raw
+    ? {
+        ...raw,
+        valueBalance: BigInt(raw.valueBalance),
+        actions: raw.actions.map(action => ({
+          ...action,
+          spendValue: BigInt(action.spendValue),
+          value: BigInt(action.value),
+        })),
+      }
+    : null;
 }
 
 /**
@@ -194,19 +245,37 @@ export async function buildTransactionJob(
  * Builds a PCZT for an Ironwood send, then immediately parses it back into the
  * structured `PcztTransaction` the device signer expects.
  *
- * Note: `finalizeIronwoodTransaction` is not yet in the shipped NAPI — finalization
- * for Ironwood PCZTs is pending a future NAPI update. This job covers the build
- * path only.
+ * Finalization is not a separate Ironwood entry point: `finalizeTransaction`
+ * handles both pools once given `ironwoodSignatures` (@ledgerhq/zcash-utils
+ * >= 2.0.0), so this job covers the build path and `finalizeTransactionJob`
+ * covers the rest.
  */
 export async function buildIronwoodTransactionJob(
   args: Omit<BuildIronwoodTransactionArgs, "requestId">,
 ): Promise<BuildIronwoodTransactionResult> {
   const native = await getPcztModule();
+
   const built = await native.buildIronwoodTransaction(args);
+
   const rawPczt = native.parsePczt(built.pcztHex); // synchronous NAPI call — no await
+  const pcztTransaction = adaptPcztForSigner(rawPczt);
+
+  // The builder just produced Ironwood actions, so the parse must hand them
+  // back. If it does not, the native addon predates Ironwood parsing: the
+  // signer would reject the V6 transaction for a null Ironwood bundle, and the
+  // error it raises names neither this module nor the version mismatch. Fail
+  // here instead, where the cause is known.
+  if (built.nActionsIronwood > 0 && pcztTransaction.ironwoodBundle === null) {
+    throw new Error(
+      `parsePczt dropped the Ironwood bundle of a V6 PCZT with ${built.nActionsIronwood} ` +
+        "action(s): @ledgerhq/zcash-utils is too old to parse the Ironwood pool. " +
+        "Bump the @ledgerhq/zcash-utils catalog entry in pnpm-workspace.yaml.",
+    );
+  }
+
   return {
     pcztHex: built.pcztHex,
-    pcztTransaction: adaptPcztForSigner(rawPczt),
+    pcztTransaction,
     feeZat: built.feeZat,
     anchorHeight: built.anchorHeight,
     nActionsIronwood: built.nActionsIronwood,
@@ -216,18 +285,20 @@ export async function buildIronwoodTransactionJob(
 }
 
 /**
- * Injects device signatures into the PCZT and extracts the final signed V5
- * transaction. CPU-bound; dispatched to spawn_blocking in the Rust layer.
+ * Injects device signatures into the PCZT and extracts the final signed
+ * transaction — V5 for an Orchard/transparent send, V6 for an Ironwood
+ * (NU6.3) one. CPU-bound; dispatched to spawn_blocking in the Rust layer.
  */
 export async function finalizeTransactionJob(
   args: Omit<FinalizeTransactionArgs, "requestId">,
 ): Promise<FinalizeTransactionResult> {
   const native = await getPcztModule();
+
   return native.finalizeTransaction(args);
 }
 
 /**
- * Broadcasts a signed V5 transaction to the Zaino gRPC endpoint.
+ * Broadcasts a signed transaction (V5 or V6) to the Zaino gRPC endpoint.
  * Returns the txid (64-char hex, big-endian display order).
  */
 export async function broadcastTransactionJob(grpcUrl: string, txHex: string): Promise<string> {
@@ -256,6 +327,40 @@ export async function transactionDetailsJob(
   const native = await getNativeModule();
   const results = await native.transactionDetails(grpcUrl, requests, network, ufvk);
   return results.map(({ txid, fee, payees }) => ({ txid, fee: fee ?? null, payees }));
+}
+
+/**
+ * Adds the nullifiers of incoming/internal notes to `target` so a later chunk
+ * can detect them as spent. Outgoing notes are skipped -- their nullifiers
+ * belong to the counterparty, not to us.
+ */
+function collectSpendableNullifiers(
+  notes: NativeTx["orchardNotes"] | undefined,
+  target: Set<string>,
+): void {
+  for (const note of notes ?? []) {
+    if (note.nullifier && note.transferType !== "outgoing") {
+      target.add(note.nullifier);
+    }
+  }
+}
+
+/**
+ * Maps a chunk's native transactions into `allTransactions` and grows
+ * `accumulatedNullifiers` with the Orchard/Ironwood notes discovered in them.
+ */
+function accumulateChunkTransactions(
+  transactions: NativeTx[],
+  allTransactions: ShieldedTransactionRaw[],
+  accumulatedNullifiers: Set<string>,
+): void {
+  for (const tx of transactions) {
+    allTransactions.push(mapNativeTx(tx));
+    // Collect nullifiers from incoming/internal notes discovered in this chunk
+    // so the next chunk can detect them as spent.
+    collectSpendableNullifiers(tx.orchardNotes, accumulatedNullifiers);
+    collectSpendableNullifiers(tx.ironwoodNotes, accumulatedNullifiers);
+  }
 }
 
 /**
@@ -349,21 +454,7 @@ export async function startSyncJob(
     }
 
     processedBlocks += blocksScanned;
-    for (const tx of transactions) {
-      allTransactions.push(mapNativeTx(tx));
-      // Collect nullifiers from incoming/internal Orchard and Ironwood notes
-      // discovered in this chunk so the next chunk can detect them as spent.
-      for (const note of tx.orchardNotes ?? []) {
-        if (note.nullifier && note.transferType !== "outgoing") {
-          accumulatedNullifiers.add(note.nullifier);
-        }
-      }
-      for (const note of tx.ironwoodNotes ?? []) {
-        if (note.nullifier && note.transferType !== "outgoing") {
-          accumulatedNullifiers.add(note.nullifier);
-        }
-      }
-    }
+    accumulateChunkTransactions(transactions, allTransactions, accumulatedNullifiers);
     allSpentKnownNullifiers.push(...spentKnownNullifiers);
 
     log(ZCASH_LOG_TYPE, "chunk done", {
@@ -384,8 +475,8 @@ export async function startSyncJob(
           txid: tx.txid,
           blockHeight: tx.blockHeight,
           fee: tx.fee,
-          orchardNotesCount: tx.orchardNotes?.length ?? 0,
-          saplingNotesCount: tx.saplingNotes?.length ?? 0,
+          orchardNotesCount: tx.orchardNotes.length,
+          saplingNotesCount: tx.saplingNotes.length,
           ironwoodNotesCount: tx.ironwoodNotes?.length ?? 0,
         })),
       );

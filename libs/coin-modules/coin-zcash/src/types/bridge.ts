@@ -115,6 +115,12 @@ export type Transaction = TransactionCommon & {
   sender?: "public" | "private";
   /** Recipient privacy class derived from the address. */
   recipientType?: "public" | "private";
+  /**
+   * User asked to send to their own address in the opposite pool. Set by the
+   * send flow; it drives the recipient auto-fill and locks the recipient field.
+   * Never inferred from the recipient value.
+   */
+  selfTransfer?: boolean;
   /** Optional 512-byte memo field for shielded outputs. */
   memo?: string;
   // Coin selection results (populated by prepareTransaction)
@@ -134,6 +140,7 @@ export type TransactionRaw = TransactionCommonRaw & {
   transferType: ZcashTransferType;
   sender?: "public" | "private";
   recipientType?: "public" | "private";
+  selfTransfer?: boolean;
   memo?: string;
   zcashFee?: string;
   changeAmount?: string;

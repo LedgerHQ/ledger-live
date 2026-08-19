@@ -29,10 +29,10 @@
     "src/logic/index.ts",
     "src/logic/lastBlock.ts",
     "src/logic/listOperations.ts",
-    "src/logic/validateAddress.ts",
     "src/logic/validateIntent.ts",
     "src/supportedFeatures.ts",
-    "src/test/bridge.dataset.ts"
+    "src/test/bridge.dataset.ts",
+    "src/test/context.ts"
   ],
   "ignoreUnused": [
     "@ledgerhq/live-env"

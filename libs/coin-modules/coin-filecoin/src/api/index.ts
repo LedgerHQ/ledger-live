@@ -1,18 +1,26 @@
 import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
 import type {
+  AddressValidationCurrencyParameters,
+  Balance,
   BalanceOptions,
   Block,
   BlockInfo,
+  BroadcastConfig,
   CoinModuleApi,
   CraftedTransaction,
   Cursor,
+  FeeEstimation,
+  ListOperationsOptions,
+  Operation,
   Page,
   Reward,
   Stake,
+  TransactionIntent,
+  TransactionValidation,
   Validator,
 } from "@ledgerhq/coin-module-framework/api/index";
 import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
-import coinConfig, { type FilecoinCoinConfig } from "../config";
+import { type FilecoinCoinConfig, type FilecoinContext } from "../config";
 import { getBalance } from "../logic/account/getBalance";
 import { getNextSequence } from "../logic/account/getNextSequence";
 import { lastBlock } from "../logic/history/lastBlock";
@@ -24,28 +32,75 @@ import { estimateFees } from "../logic/transaction/estimateFees";
 import { validateAddress } from "../logic/validateAddress";
 import { validateIntent } from "../logic/validateIntent";
 
-export function createApi(config: FilecoinCoinConfig): CoinModuleApi {
-  coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" as const } }));
-
+export function createApi(): CoinModuleApi<FilecoinCoinConfig> {
   return {
-    broadcast,
-    async call() {
+    broadcast: (
+      _context: FilecoinContext,
+      tx: string,
+      options?: { broadcastConfig?: BroadcastConfig },
+    ): Promise<string> => broadcast(tx, options?.broadcastConfig),
+
+    async call(_context: FilecoinContext) {
       throw new Error("call is not supported");
     },
-    combine,
-    craftTransaction,
-    estimateFees,
-    lastBlock,
-    listOperations,
-    validateIntent,
-    getNextSequence,
-    validateAddress,
-    craftTransactionData,
+    async register() {
+      throw new Error("register is not supported");
+    },
 
-    getBalance: (address: string, options?: BalanceOptions) =>
-      rejectBalanceOptions(() => getBalance(address), options),
+    combine: (
+      _context: FilecoinContext,
+      tx: string,
+      signature: string[],
+      options?: { pubkey?: string },
+    ): string => combine(tx, signature, options?.pubkey),
+
+    craftTransaction: (
+      _context: FilecoinContext,
+      intent: TransactionIntent,
+      options?: { customFees?: FeeEstimation },
+    ): Promise<CraftedTransaction> => craftTransaction(intent, options?.customFees),
+
+    estimateFees: (
+      _context: FilecoinContext,
+      intent: TransactionIntent,
+      options?: { customFeesParameters?: FeeEstimation["parameters"] },
+    ): Promise<FeeEstimation> => estimateFees(intent, options?.customFeesParameters),
+
+    lastBlock: (_context: FilecoinContext) => lastBlock(),
+
+    listOperations: (
+      _context: FilecoinContext,
+      address: string,
+      options: ListOperationsOptions,
+    ): Promise<Page<Operation>> => listOperations(address, options),
+
+    validateIntent: (
+      _context: FilecoinContext,
+      intent: TransactionIntent,
+      balances: Balance[],
+      options?: { customFees?: FeeEstimation },
+    ): Promise<TransactionValidation> => validateIntent(intent, balances, options?.customFees),
+
+    getNextSequence: (_context: FilecoinContext, address: string): Promise<bigint> =>
+      getNextSequence(address),
+
+    validateAddress: (
+      _context: FilecoinContext,
+      address: string,
+      parameters: Partial<AddressValidationCurrencyParameters>,
+    ): Promise<boolean> => validateAddress(address, parameters),
+
+    craftTransactionData: (_context: FilecoinContext, intent: TransactionIntent) =>
+      craftTransactionData(intent),
+
+    getBalance: (
+      _context: FilecoinContext,
+      address: string,
+      options?: BalanceOptions,
+    ): Promise<Balance[]> => rejectBalanceOptions(() => getBalance(address), options),
 
     craftRawTransaction: (
+      _context: FilecoinContext,
       _transaction: string,
       _sender: string,
       _publicKey: string,
@@ -54,23 +109,34 @@ export function createApi(config: FilecoinCoinConfig): CoinModuleApi {
       throw new Error("craftRawTransaction is not supported");
     },
 
-    getBlock(_height: number): Promise<Block> {
+    getBlock(_context: FilecoinContext, _height: number): Promise<Block> {
       throw new Error("getBlock is not supported");
     },
 
-    getBlockInfo(_height: number): Promise<BlockInfo> {
+    getBlockInfo(_context: FilecoinContext, _height: number): Promise<BlockInfo> {
       throw new Error("getBlockInfo is not supported");
     },
 
-    getStakes(_address: string, _cursor?: Cursor): Promise<Page<Stake>> {
+    getStakes(
+      _context: FilecoinContext,
+      _address: string,
+      _options?: { cursor?: Cursor },
+    ): Promise<Page<Stake>> {
       throw new Error("getStakes is not supported");
     },
 
-    getRewards(_address: string, _cursor?: Cursor): Promise<Page<Reward>> {
+    getRewards(
+      _context: FilecoinContext,
+      _address: string,
+      _options?: { cursor?: Cursor },
+    ): Promise<Page<Reward>> {
       throw new Error("getRewards is not supported");
     },
 
-    getValidators(_cursor?: Cursor): Promise<Page<Validator>> {
+    getValidators(
+      _context: FilecoinContext,
+      _options?: { cursor?: Cursor },
+    ): Promise<Page<Validator>> {
       throw new Error("getValidators is not supported");
     },
   };

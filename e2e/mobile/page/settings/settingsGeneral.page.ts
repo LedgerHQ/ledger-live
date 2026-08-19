@@ -12,6 +12,7 @@ export default class SettingsGeneralPage {
   countervalueSettingsRowId = "countervalue-settings-row";
   countervalueTickerSettingsRowId = "countervalue-ticker-settings-row";
   counterValueSettingsFlatListId = "counter-value-settings-flat-list";
+  languageScrollViewId = "scrollView-language-change";
   compactSettingsRowId = (currencyTicker: string) => `compact-settings-row-${currencyTicker}`;
 
   @Step("Toggle password")
@@ -42,7 +43,7 @@ export default class SettingsGeneralPage {
 
   @Step("Select language")
   async selectLanguage(lang: string) {
-    await scrollToText(lang);
+    await scrollToText(lang, this.languageScrollViewId);
     await tapByText(lang);
   }
 
@@ -76,11 +77,7 @@ export default class SettingsGeneralPage {
   @Step("Change counter value to $0")
   async changeCounterValue(currency: string) {
     await this.clickOnCountervalueSettingsRow();
-    await scrollToId(
-      this.compactSettingsRowId(currency),
-      this.counterValueSettingsFlatListId,
-      2000,
-    );
+    await scrollToId(this.compactSettingsRowId(currency), this.counterValueSettingsFlatListId);
     await tapById(this.compactSettingsRowId(currency));
   }
 

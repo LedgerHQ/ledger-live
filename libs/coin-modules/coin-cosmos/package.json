@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-cosmos",
-  "version": "0.43.0",
+  "version": "1.0.0",
   "description": "Ledger Cosmos Coin integration",
   "keywords": [
     "Ledger",
@@ -93,6 +93,7 @@
     "test": "jest",
     "test-integ": "jest --config=jest.integ.config.js",
     "test-integ:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand --config=jest.integ.config.js",
+    "typecheck": "tsc --noEmit --customConditions node",
     "unimported": "unimported",
     "format": "oxfmt src",
     "format:check": "oxfmt src --check"

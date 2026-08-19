@@ -1,6 +1,7 @@
 import { concat, defer, from, of, type Observable } from "rxjs";
 import { catchError, switchMap } from "rxjs/operators";
 import { craftTransaction } from "@ledgerhq/coin-evm/logic/craftTransaction";
+import { createContext } from "@ledgerhq/coin-evm/config";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { DeviceConnectionResult, Job } from "@ledgerhq/device-intent";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
@@ -23,7 +24,7 @@ async function buildUnsignedApprovalTxHex(
   const calldataHex = approvalTransaction.calldata.replace(/^0x/, "");
   const data = calldataHex.length > 0 ? Buffer.from(calldataHex, "hex") : Buffer.alloc(0);
 
-  const { transaction } = await craftTransaction(currency, {
+  const { transaction } = await craftTransaction(createContext(), currency.id, {
     // The intent shape comes from `@ledgerhq/coin-module-framework`; use
     // the craftTransaction parameter type rather than adding a direct dep.
     transactionIntent: {
@@ -38,7 +39,7 @@ async function buildUnsignedApprovalTxHex(
       amount: BigInt(approvalTransaction.value || "0"),
       asset: { type: "native" },
       data: { type: "buffer", value: data },
-    } satisfies Parameters<typeof craftTransaction>[1]["transactionIntent"],
+    } satisfies Parameters<typeof craftTransaction>[2]["transactionIntent"],
     customFees: {
       value: 0n,
       parameters: {

@@ -5,11 +5,10 @@ import type {
   BlockTransaction,
   TransferBlockOperation,
 } from "@ledgerhq/coin-module-framework/api/index";
-import { promiseAllBatched } from "@ledgerhq/live-promise";
+import { promiseAllBatched } from "@ledgerhq/coin-module-framework/promises";
 import { log } from "@ledgerhq/logs";
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { rpcTransactionToBlockOperations } from "../adapters/blockOperations";
-import { DEFAULT_INTERNAL_TX_SOURCES, getCoinConfig } from "../config";
+import { DEFAULT_INTERNAL_TX_SOURCES, type EvmContext } from "../config";
 import { UnsupportedRpcMethodError } from "../errors";
 import { getNodeApi } from "../network/node";
 import { BlockReceiptInfo, PrefetchedBlockTransaction } from "../network/node/types";
@@ -17,19 +16,28 @@ import { createInternalTransactionsFetcher } from "./internalTransactionsFetcher
 import { dropRootTraceDuplicates } from "./rootTraceDedup";
 import { buildSmartContractDetails, safeEncodeEIP55 } from "../utils";
 
-export async function getBlock(currency: CryptoCurrency, height: number): Promise<Block> {
+export async function getBlock(
+  context: EvmContext,
+  currencyId: string,
+  height: number,
+): Promise<Block> {
   // Note: to use RPC calls efficiently, the strategy here is:
   //  - fetch the block + transactions in one call (using prefetchTxs=true)
   //  - fetch transaction receipts in one call using eth_getBlockReceipts
   //  - if the RPC does not support prefetchTxs or eth_getBlockReceipts, fall back to fetching the transaction+receipts
   //    one by one
   //  - in parallel, fetch internal transactions from explorer (etherscan/blockscout) and merge into block transactions
-  const nodeApi = getNodeApi(currency);
-  const config = getCoinConfig(currency.id).info;
+  const config = await context.config(currencyId);
+  const nodeApi = getNodeApi(config, currencyId);
   const internalTxSources = config.getBlockInternalTxsSources ?? DEFAULT_INTERNAL_TX_SOURCES;
-  const fetchInternalTxs = createInternalTransactionsFetcher(nodeApi, currency, internalTxSources);
+  const fetchInternalTxs = createInternalTransactionsFetcher(
+    config,
+    nodeApi,
+    currencyId,
+    internalTxSources,
+  );
   const [result, internalTxs] = await Promise.all([
-    nodeApi.getBlockByHeight(currency, height, true),
+    nodeApi.getBlockByHeight(currencyId, height, true),
     fetchInternalTxs(height),
   ]);
 
@@ -47,7 +55,7 @@ export async function getBlock(currency: CryptoCurrency, height: number): Promis
   }
 
   const transactions = await getTransactionsFromNode(
-    currency,
+    currencyId,
     result.transactionHashes || result.transactions?.map(tx => tx.hash) || [],
     nodeApi,
     result.height,
@@ -99,7 +107,7 @@ function mergeInternalTransactions(
 }
 
 async function getTransactionsFromNode(
-  currency: CryptoCurrency,
+  currencyId: string,
   transactionHashes: string[],
   nodeApi: ReturnType<typeof getNodeApi>,
   blockHeight: number,
@@ -108,7 +116,7 @@ async function getTransactionsFromNode(
   if (transactionHashes.length === 0) return [];
 
   const bulkTransactions = await getTransactionsFromPrefetchedData(
-    currency,
+    currencyId,
     blockHeight,
     prefetchedTransactions,
     nodeApi,
@@ -126,14 +134,14 @@ async function getTransactionsFromNode(
   const transactionResults = await promiseAllBatched(
     MAX_CONCURRENCY,
     transactionHashes,
-    (txHash: string) => getTransactionFromHash(currency, txHash, nodeApi),
+    (txHash: string) => getTransactionFromHash(currencyId, txHash, nodeApi),
   );
 
   return transactionResults.filter((tx): tx is BlockTransaction => tx !== null);
 }
 
 async function getTransactionsFromPrefetchedData(
-  currency: CryptoCurrency,
+  currencyId: string,
   blockHeight: number,
   prefetchedTransactions: PrefetchedBlockTransaction[] | undefined,
   nodeApi: ReturnType<typeof getNodeApi>,
@@ -142,7 +150,7 @@ async function getTransactionsFromPrefetchedData(
     return null;
 
   try {
-    const receipts = await nodeApi.getBlockReceipts(currency, blockHeight);
+    const receipts = await nodeApi.getBlockReceipts(currencyId, blockHeight);
     const receiptsByHash = new Map(receipts.map(receipt => [receipt.hash, receipt]));
 
     const transactions: BlockTransaction[] = [];
@@ -152,7 +160,7 @@ async function getTransactionsFromPrefetchedData(
       const blockTx = prefetchedTransactionToBlockTransaction(tx, receipt);
       transactions.push({
         ...blockTx,
-        operations: applyChainSpecificCorrections(currency, blockTx.operations, receipt.type),
+        operations: applyChainSpecificCorrections(currencyId, blockTx.operations, receipt.type),
       });
     }
 
@@ -162,7 +170,7 @@ async function getTransactionsFromPrefetchedData(
       throw error;
 
     log("warn", "EVM getBlock fallback: eth_getBlockReceipts unsupported", {
-      currencyId: currency.id,
+      currencyId,
       blockHeight,
       error: error.rawError,
     });
@@ -201,17 +209,17 @@ function prefetchedTransactionToBlockTransaction(
 }
 
 async function getTransactionFromHash(
-  currency: CryptoCurrency,
+  currencyId: string,
   txHash: string,
   nodeApi: ReturnType<typeof getNodeApi>,
 ): Promise<BlockTransaction | null> {
-  const txInfo = await nodeApi.getTransaction(currency, txHash);
+  const txInfo = await nodeApi.getTransaction(currencyId, txHash);
 
   const failed = txInfo.status === 0;
   const fees = BigInt(txInfo.gasUsed) * BigInt(txInfo.gasPrice);
 
   const rawOperations = rpcTransactionToBlockOperations(txInfo);
-  const operations = applyChainSpecificCorrections(currency, rawOperations, txInfo.type);
+  const operations = applyChainSpecificCorrections(currencyId, rawOperations, txInfo.type);
 
   const details = buildSmartContractDetails(txInfo.to, txInfo.input, txInfo.contractAddress);
 
@@ -228,11 +236,11 @@ async function getTransactionFromHash(
 const ZKSYNC_MINT_PEER = safeEncodeEIP55("0x0000000000000000000000000000000000000000");
 
 function applyChainSpecificCorrections(
-  currency: CryptoCurrency,
+  currencyId: string,
   operations: BlockOperation[],
   receiptType: number | undefined,
 ): BlockOperation[] {
-  switch (currency.id) {
+  switch (currencyId) {
     case "zksync":
       return rewriteZkSyncL1ToL2DepositOps(operations, receiptType);
     default:

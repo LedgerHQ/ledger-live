@@ -1,4 +1,4 @@
-import { Transaction } from "@ledgerhq/coin-evm/types/index";
+import type { Transaction } from "./types";
 import { EthereumTransaction as WalletAPIEthereumTransaction } from "@ledgerhq/wallet-api-core";
 import {
   AreFeesProvided,

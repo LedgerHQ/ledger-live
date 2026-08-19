@@ -1,28 +1,44 @@
-import type {
-  BalanceOptions,
-  MemoNotSupported,
-  TransactionIntent,
-} from "@ledgerhq/coin-module-framework/api/types";
+import type { BalanceOptions } from "@ledgerhq/coin-module-framework/api/types";
 import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
 import { getMockedCoinFrameworkOperation } from "../__tests__/fixtures/operation.fixture";
-import coinConfig from "../config";
-import { craftTransaction, estimateFees, getBalance, lastBlock, listOperations } from "../logic";
-import { getTransactionType } from "../logic/utils";
-import type { AleoTransactionIntentData } from "../types";
+import {
+  createMockTransactionIntent,
+  mockTxIntentFeePrivate,
+  mockTxIntentFeePublic,
+  mockTxIntentTransferPrivate,
+  mockTxIntentTransferPublic,
+} from "../__tests__/fixtures/transaction.fixture";
+import {
+  craftTransaction,
+  estimateFees,
+  getAccountInfo,
+  getBalance,
+  lastBlock,
+  listOperations,
+} from "../logic";
+import { buildFeeConfigurationForRootIntent, getTransactionType } from "../logic/utils";
+import type { AleoContext } from "../types";
 import { createApi } from "./index";
 
 jest.mock("../logic");
 jest.mock("../logic/utils");
 
 describe("createApi", () => {
+  const api = createApi("aleo");
   const mockConfig = getMockedConfig("testnet");
+  const context: AleoContext = {
+    config: async () => mockConfig,
+    logger: () => {},
+  };
   const mockOperation = getMockedCoinFrameworkOperation();
   const mockedCraftTransaction = jest.mocked(craftTransaction);
   const mockedEstimateFees = jest.mocked(estimateFees);
+  const mockedGetAccountInfo = jest.mocked(getAccountInfo);
   const mockedGetBalance = jest.mocked(getBalance);
   const mockedLastBlock = jest.mocked(lastBlock);
   const mockedListOperations = jest.mocked(listOperations);
   const mockedGetTransactionType = jest.mocked(getTransactionType);
+  const mockedBuildFeeConfigurationForRootIntent = jest.mocked(buildFeeConfigurationForRootIntent);
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -38,33 +54,14 @@ describe("createApi", () => {
       nextCursor: "next-cursor",
     });
     mockedGetTransactionType.mockReturnValue("transfer_public");
-  });
-
-  const createMockTransactionIntent = (): TransactionIntent<
-    MemoNotSupported,
-    AleoTransactionIntentData
-  > => ({
-    intentType: "transaction",
-    asset: { type: "native" },
-    type: "fee_public",
-    amount: BigInt(1000),
-    sender: "aleo1sender1234567890123456789012345678901234567",
-    recipient: "aleo1recipient123456789012345678901234567890",
-    data: { type: "fee_public", priorityFee: 1040n, executionId: "ex1test" },
-  });
-
-  it("should set the coin config value", () => {
-    const mockSetCoinConfig = jest.spyOn(coinConfig, "setCoinConfig");
-    createApi(mockConfig, "aleo");
-    const config = coinConfig.getCoinConfig();
-
-    expect(mockSetCoinConfig).toHaveBeenCalled();
-    expect(config).toMatchObject({ status: { type: "active" } });
+    mockedBuildFeeConfigurationForRootIntent.mockReturnValue({
+      function_name: "fee_public",
+      max_base_fee: "1234",
+      max_priority_fee: "0",
+    });
   });
 
   it("should return an API object with coin module api methods", () => {
-    const api = createApi(mockConfig, "aleo");
-
     expect(api.broadcast).toBeInstanceOf(Function);
     expect(api.combine).toBeInstanceOf(Function);
     expect(api.craftTransaction).toBeInstanceOf(Function);
@@ -75,50 +72,239 @@ describe("createApi", () => {
     expect(api.lastBlock).toBeInstanceOf(Function);
     expect(api.listOperations).toBeInstanceOf(Function);
     expect(api.craftTransactionData).toBeInstanceOf(Function);
+    expect(api.getAccountInfo).toBeInstanceOf(Function);
+  });
+
+  describe("getAccountInfo", () => {
+    const accountInfo = {
+      type: "aleo" as const,
+      synced: true,
+      percentage: 100,
+      startHeight: 0,
+      scannedHeight: 20985061,
+    };
+
+    it("reads the provableId off the context and returns the scan status", async () => {
+      mockedGetAccountInfo.mockResolvedValue(accountInfo);
+      const enrolledContext: AleoContext = { ...context, provableId: "scan-uuid-123" };
+
+      const result = await api.getAccountInfo!(enrolledContext, "aleo1test");
+
+      expect(mockedGetAccountInfo).toHaveBeenCalledTimes(1);
+      expect(mockedGetAccountInfo).toHaveBeenCalledWith(mockConfig, "scan-uuid-123");
+      expect(result).toEqual(accountInfo);
+    });
+
+    it("returns { type: 'none' } and makes no scanner call when no provableId is on the context", async () => {
+      const result = await api.getAccountInfo!(context, "aleo1test");
+
+      expect(result).toEqual({ type: "none" });
+      expect(mockedGetAccountInfo).not.toHaveBeenCalled();
+    });
+
+    it("returns { type: 'none' } when provableId is present but empty", async () => {
+      const emptyContext: AleoContext = { ...context, provableId: "" };
+
+      const result = await api.getAccountInfo!(emptyContext, "aleo1test");
+
+      expect(result).toEqual({ type: "none" });
+      expect(mockedGetAccountInfo).not.toHaveBeenCalled();
+    });
   });
 
   describe("broadcast", () => {
     it("should throw unsupported error", () => {
-      const api = createApi(mockConfig, "aleo");
-
-      expect(() => api.broadcast("test-signature")).toThrow("broadcast is not supported");
+      expect(() => api.broadcast(context, "test-signature")).toThrow("broadcast is not supported");
     });
   });
 
   describe("combine", () => {
     it("should throw unsupported error", () => {
-      const api = createApi(mockConfig, "aleo");
-
-      expect(() => api.combine("transaction", "signature", "publicKey")).toThrow(
-        "combine is not supported",
-      );
+      expect(() =>
+        api.combine(context, "transaction", ["signature"], { pubkey: "publicKey" }),
+      ).toThrow("combine is not supported");
     });
   });
 
   describe("craftTransaction", () => {
-    it("should throw unsupported error", async () => {
-      const api = createApi(mockConfig, "aleo");
+    it("throws for an intent with useAllAmount set, before resolving config or crafting", async () => {
+      await expect(
+        api.craftTransaction(context, { ...mockTxIntentTransferPublic, useAllAmount: true }),
+      ).rejects.toThrow("useAllAmount is not supported");
 
-      // @ts-expect-error - it should throw no matter what the input is
-      await expect(api.craftTransaction({})).rejects.toThrow("craftTransaction is not supported");
+      expect(mockedCraftTransaction).not.toHaveBeenCalled();
+      expect(mockedBuildFeeConfigurationForRootIntent).not.toHaveBeenCalled();
     });
+
+    it("omits viewKey from the craft call when a fee intent's context.viewKey is null", async () => {
+      const nullViewKeyContext = {
+        ...context,
+        config: async () => ({ ...mockConfig, isFeeSponsored: false }),
+        viewKey: null,
+      } as unknown as AleoContext;
+
+      await api.craftTransaction(nullViewKeyContext, mockTxIntentFeePublic);
+
+      expect(mockedCraftTransaction).toHaveBeenCalledWith({
+        config: { ...mockConfig, isFeeSponsored: false },
+        txIntent: mockTxIntentFeePublic,
+        feeConfiguration: null,
+      });
+    });
+
+    it("delegates a public root intent to logic/craftTransaction with a built FeeConfiguration", async () => {
+      const result = await api.craftTransaction(context, mockTxIntentTransferPublic);
+
+      expect(mockedGetTransactionType).toHaveBeenCalledWith(mockTxIntentTransferPublic);
+      expect(mockedEstimateFees).toHaveBeenCalledWith({
+        configOrCurrencyId: mockConfig,
+        transactionType: "transfer_public",
+      });
+      expect(mockedBuildFeeConfigurationForRootIntent).toHaveBeenCalledWith({
+        isPrivate: false,
+        maxBaseFee: BigInt(1234),
+        maxPriorityFee: 0n,
+      });
+      expect(mockedCraftTransaction).toHaveBeenCalledWith({
+        config: mockConfig,
+        txIntent: mockTxIntentTransferPublic,
+        feeConfiguration: {
+          function_name: "fee_public",
+          max_base_fee: "1234",
+          max_priority_fee: "0",
+        },
+      });
+      expect(result).toEqual({ transaction: "crafted_tx" });
+    });
+
+    it("uses options.customFees for max_base_fee instead of calling estimateFees", async () => {
+      await api.craftTransaction(context, mockTxIntentTransferPublic, {
+        customFees: { value: 9999n },
+      });
+
+      expect(mockedEstimateFees).not.toHaveBeenCalled();
+      expect(mockedBuildFeeConfigurationForRootIntent).toHaveBeenCalledWith({
+        isPrivate: false,
+        maxBaseFee: 9999n,
+        maxPriorityFee: 0n,
+      });
+    });
+
+    it.each([
+      ["fee_public", mockTxIntentFeePublic, undefined],
+      ["fee_private", mockTxIntentFeePrivate, "mock-view-key"],
+    ])(
+      "delegates a %s intent to logic/craftTransaction with feeConfiguration: null, without building one or fetching records",
+      async (_label, feeIntent, viewKey) => {
+        const sponsorshipDisabledContext: AleoContext = {
+          ...context,
+          config: async () => ({ ...mockConfig, isFeeSponsored: false }),
+          ...(viewKey !== undefined && { viewKey }),
+        };
+
+        const result = await api.craftTransaction(sponsorshipDisabledContext, feeIntent);
+
+        expect(mockedCraftTransaction).toHaveBeenCalledWith({
+          config: { ...mockConfig, isFeeSponsored: false },
+          txIntent: feeIntent,
+          feeConfiguration: null,
+          ...(viewKey !== undefined && { viewKey }),
+        });
+        expect(mockedBuildFeeConfigurationForRootIntent).not.toHaveBeenCalled();
+        expect(mockedEstimateFees).not.toHaveBeenCalled();
+        expect(mockedGetBalance).not.toHaveBeenCalled();
+        expect(result).toEqual({ transaction: "crafted_tx" });
+      },
+    );
+
+    it.each([
+      ["fee_public", mockTxIntentFeePublic],
+      ["fee_private", mockTxIntentFeePrivate],
+    ])(
+      "throws for a %s intent when fees are sponsored, before any craft",
+      async (_label, feeIntent) => {
+        await expect(api.craftTransaction(context, feeIntent)).rejects.toThrow(
+          "fee craft is not needed when fees are sponsored",
+        );
+
+        expect(mockedCraftTransaction).not.toHaveBeenCalled();
+        expect(mockedBuildFeeConfigurationForRootIntent).not.toHaveBeenCalled();
+      },
+    );
+
+    it.each([
+      ["fee_public", mockTxIntentFeePublic],
+      ["fee_private", mockTxIntentFeePrivate],
+    ])("throws for a %s intent when customFees is passed", async (_label, feeIntent) => {
+      const sponsorshipDisabledContext: AleoContext = {
+        ...context,
+        config: async () => ({ ...mockConfig, isFeeSponsored: false }),
+      };
+
+      await expect(
+        api.craftTransaction(sponsorshipDisabledContext, feeIntent, {
+          customFees: { value: 9999n },
+        }),
+      ).rejects.toThrow("customFees is not supported for fee intents");
+
+      expect(mockedCraftTransaction).not.toHaveBeenCalled();
+    });
+
+    it.each([
+      ["undefined", undefined],
+      ["null", null],
+      ["empty string", ""],
+    ])(
+      "throws AleoIncompletePrivacyContextError for a private root intent when viewKey is %s",
+      async (_label, viewKey) => {
+        const privateContext = {
+          ...context,
+          ...(viewKey !== undefined && { viewKey }),
+        } as AleoContext;
+
+        await expect(
+          api.craftTransaction(privateContext, mockTxIntentTransferPrivate),
+        ).rejects.toThrow("aleo: viewKey is missing");
+
+        expect(mockedCraftTransaction).not.toHaveBeenCalled();
+        expect(mockedBuildFeeConfigurationForRootIntent).not.toHaveBeenCalled();
+      },
+    );
+
+    it.each([
+      ["undefined", undefined],
+      ["null", null],
+      ["empty string", ""],
+    ])(
+      "throws AleoIncompletePrivacyContextError for a fee_private intent when viewKey is %s",
+      async (_label, viewKey) => {
+        const privateFeeContext = {
+          ...context,
+          config: async () => ({ ...mockConfig, isFeeSponsored: false }),
+          ...(viewKey !== undefined && { viewKey }),
+        } as AleoContext;
+
+        await expect(
+          api.craftTransaction(privateFeeContext, mockTxIntentFeePrivate),
+        ).rejects.toThrow("aleo: viewKey is missing");
+
+        expect(mockedCraftTransaction).not.toHaveBeenCalled();
+      },
+    );
   });
 
   describe("craftRawTransaction", () => {
     it("should throw unsupported error", () => {
-      const api = createApi(mockConfig, "aleo");
-
       expect(() =>
-        api.craftRawTransaction("transaction", "sender", "publicKey", BigInt(1)),
+        api.craftRawTransaction(context, "transaction", "sender", "publicKey", BigInt(1)),
       ).toThrow("craftRawTransaction is not supported");
     });
   });
 
   describe("estimateFees", () => {
     it("should call estimateFees and return fee estimation", async () => {
-      const api = createApi(mockConfig, "aleo");
       const txIntent = createMockTransactionIntent();
-      const result = await api.estimateFees(txIntent);
+      const result = await api.estimateFees(context, txIntent);
 
       expect(mockedGetTransactionType).toHaveBeenCalledTimes(1);
       expect(mockedGetTransactionType).toHaveBeenCalledWith(txIntent);
@@ -133,8 +319,7 @@ describe("createApi", () => {
 
   describe("getBalance", () => {
     it("should call getBalance and return balances", async () => {
-      const api = createApi(mockConfig, "aleo");
-      const result = await api.getBalance("aleo1test");
+      const result = await api.getBalance(context, "aleo1test");
 
       expect(mockedGetBalance).toHaveBeenCalledTimes(1);
       expect(mockedGetBalance).toHaveBeenCalledWith(expect.any(Object), "aleo1test");
@@ -142,8 +327,9 @@ describe("createApi", () => {
     });
 
     it("should throw an exception when options is provided", async () => {
-      const api = createApi(mockConfig, "aleo");
-      await expect(api.getBalance("", {} as unknown as BalanceOptions)).rejects.toMatchObject({
+      await expect(
+        api.getBalance(context, "", {} as unknown as BalanceOptions),
+      ).rejects.toMatchObject({
         name: "InvalidParameterError",
       });
     });
@@ -151,33 +337,25 @@ describe("createApi", () => {
 
   describe("getBlock", () => {
     it("should throw unsupported error", () => {
-      const api = createApi(mockConfig, "aleo");
-
-      expect(() => api.getBlock(123)).toThrow("getBlock is not supported");
+      expect(() => api.getBlock(context, 123)).toThrow("getBlock is not supported");
     });
   });
 
   describe("getBlockInfo", () => {
     it("should throw unsupported error", () => {
-      const api = createApi(mockConfig, "aleo");
-
-      expect(() => api.getBlockInfo(123)).toThrow("getBlockInfo is not supported");
+      expect(() => api.getBlockInfo(context, 123)).toThrow("getBlockInfo is not supported");
     });
   });
 
   describe("getRewards", () => {
     it("should throw unsupported error", () => {
-      const api = createApi(mockConfig, "aleo");
-
-      expect(() => api.getRewards("aleo1test")).toThrow("getRewards is not supported");
+      expect(() => api.getRewards(context, "aleo1test")).toThrow("getRewards is not supported");
     });
   });
 
   describe("getNextSequence", () => {
     it("should throw unsupported error", async () => {
-      const api = createApi(mockConfig, "aleo");
-
-      await expect(api.getNextSequence("aleo1test")).rejects.toThrow(
+      expect(() => api.getNextSequence(context, "aleo1test")).toThrow(
         "getNextSequence is not supported",
       );
     });
@@ -185,24 +363,19 @@ describe("createApi", () => {
 
   describe("getStakes", () => {
     it("should throw unsupported error", () => {
-      const api = createApi(mockConfig, "aleo");
-
-      expect(() => api.getStakes("aleo1test")).toThrow("getStakes is not supported");
+      expect(() => api.getStakes(context, "aleo1test")).toThrow("getStakes is not supported");
     });
   });
 
   describe("getValidators", () => {
     it("should throw unsupported error", () => {
-      const api = createApi(mockConfig, "aleo");
-
-      expect(() => api.getValidators()).toThrow("getValidators is not supported");
+      expect(() => api.getValidators(context)).toThrow("getValidators is not supported");
     });
   });
 
   describe("lastBlock", () => {
     it("should call lastBlock and return block info", async () => {
-      const api = createApi(mockConfig, "aleo");
-      const result = await api.lastBlock();
+      const result = await api.lastBlock(context);
 
       expect(mockedLastBlock).toHaveBeenCalledTimes(1);
       expect(mockedLastBlock).toHaveBeenCalledWith(expect.any(Object));
@@ -212,13 +385,12 @@ describe("createApi", () => {
 
   describe("listOperations", () => {
     it("should call listOperations and return operations with proper structure", async () => {
-      const api = createApi(mockConfig, "aleo");
       const options = { minHeight: 10, limit: 5 };
-      const result = await api.listOperations("aleo1test", options);
+      const result = await api.listOperations(context, "aleo1test", options);
 
       expect(mockedListOperations).toHaveBeenCalledTimes(1);
       expect(mockedListOperations).toHaveBeenCalledWith({
-        config: { ...mockConfig, status: { type: "active" } },
+        config: mockConfig,
         currencyId: "aleo",
         address: "aleo1test",
         options,
@@ -228,14 +400,13 @@ describe("createApi", () => {
     });
 
     it("should return undefined next when listOperations has no next cursor", async () => {
-      const api = createApi(mockConfig, "aleo");
       mockedListOperations.mockResolvedValueOnce({
         operations: [mockOperation],
         tokenOperations: [],
         calTokens: new Map(),
         nextCursor: null,
       });
-      const result = await api.listOperations("aleo1test", { minHeight: 1 });
+      const result = await api.listOperations(context, "aleo1test", { minHeight: 1 });
 
       expect(result).toEqual({ items: [mockOperation], next: undefined });
     });
@@ -243,12 +414,19 @@ describe("createApi", () => {
 
   describe("validateIntent", () => {
     it("should throw unsupported error", async () => {
-      const api = createApi(mockConfig, "aleo");
       const txIntent = createMockTransactionIntent();
 
-      await expect(api.validateIntent(txIntent, [])).rejects.toThrow(
+      expect(() => api.validateIntent(context, txIntent, [])).toThrow(
         "validateIntent is not supported",
       );
+    });
+  });
+
+  describe("register", () => {
+    it("should throw unsupported error", async () => {
+      const api = createApi("aleo");
+
+      await expect(api.register(context, "aleo1test")).rejects.toThrow("register is not supported");
     });
   });
 });

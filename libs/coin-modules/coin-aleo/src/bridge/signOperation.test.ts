@@ -504,7 +504,11 @@ describe("buildSignOperation", () => {
 
     expect(mockedCraftTransaction).toHaveBeenCalledWith(
       expect.objectContaining({
-        tvks: ["aa", "aa", "aa"],
+        txIntent: expect.objectContaining({
+          data: expect.objectContaining({
+            tvks: ["aa", "aa", "aa"],
+          }),
+        }),
       }),
     );
   });
@@ -528,8 +532,10 @@ describe("buildSignOperation", () => {
 
     expect(mockSigner.getTvk).not.toHaveBeenCalled();
     expect(mockedCraftTransaction).toHaveBeenCalledWith(
-      expect.not.objectContaining({
-        tvks: expect.anything(),
+      expect.objectContaining({
+        txIntent: expect.objectContaining({
+          data: expect.objectContaining({ tvks: [] }),
+        }),
       }),
     );
   });

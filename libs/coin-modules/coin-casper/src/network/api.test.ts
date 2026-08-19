@@ -3,7 +3,6 @@ import network from "@ledgerhq/live-network";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import { AccountIdentifier, HttpHandler, PublicKey, RpcClient, Transaction } from "casper-js-sdk";
-import { getCoinConfig } from "../config";
 import { NodeErrorCodeAccountNotFound, NodeErrorCodeQueryFailed } from "../constants";
 import { TEST_ADDRESSES } from "../__tests__/fixtures";
 import { ITxnHistoryData, RpcError, IndexerResponseRoot } from "../types/network";
@@ -33,10 +32,6 @@ jest.mock("@ledgerhq/logs", () => ({
 jest.mock("@ledgerhq/live-network", () => ({
   __esModule: true,
   default: jest.fn(),
-}));
-
-jest.mock("../config", () => ({
-  getCoinConfig: jest.fn(),
 }));
 
 // Type definitions for mocked objects
@@ -82,6 +77,13 @@ type CasperCoinConfig = {
     API_CASPER_INDEXER: string;
   };
 } & CurrencyConfig;
+
+const MOCK_CONFIG = {
+  infra: {
+    API_CASPER_NODE_ENDPOINT: MOCK_NODE_URL,
+    API_CASPER_INDEXER: MOCK_INDEXER_URL,
+  },
+} as CasperCoinConfig;
 
 // Helper functions for creating mocks
 const createMockRpcClient = (methodOverrides: Partial<Record<keyof RpcClient, jest.Mock>>) => {
@@ -130,30 +132,20 @@ jest.mock("casper-js-sdk", () => {
 describe("Casper API Unit Tests", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-
-    // Setup config mock
-    jest.mocked(getCoinConfig).mockReturnValue({
-      infra: {
-        API_CASPER_NODE_ENDPOINT: MOCK_NODE_URL,
-        API_CASPER_INDEXER: MOCK_INDEXER_URL,
-      },
-    } as CasperCoinConfig);
   });
 
   describe("getCasperNodeRpcClient", () => {
     it("should create RPC client with correct URL", () => {
-      getCasperNodeRpcClient();
+      getCasperNodeRpcClient(MOCK_CONFIG);
 
       expect(HttpHandler).toHaveBeenCalledWith(MOCK_NODE_URL);
       expect(RpcClient).toHaveBeenCalled();
     });
 
     it("should throw error if API base URL is not available", () => {
-      jest.mocked(getCoinConfig).mockReturnValueOnce({
-        infra: {},
-      } as CasperCoinConfig);
-
-      expect(() => getCasperNodeRpcClient()).toThrow("API base URL not available");
+      expect(() => getCasperNodeRpcClient({ infra: {} } as CasperCoinConfig)).toThrow(
+        "API base URL not available",
+      );
     });
   });
 
@@ -181,7 +173,7 @@ describe("Casper API Unit Tests", () => {
         getAccountInfo: mockGetAccountInfo,
       });
 
-      const result = await fetchAccountStateInfo(MOCK_PUBLIC_KEY);
+      const result = await fetchAccountStateInfo(MOCK_CONFIG, MOCK_PUBLIC_KEY);
 
       expect(PublicKey.fromHex).toHaveBeenCalledWith(MOCK_PUBLIC_KEY);
       expect(AccountIdentifier).toHaveBeenCalledWith(undefined, mockPublicKeyInstance);
@@ -201,7 +193,7 @@ describe("Casper API Unit Tests", () => {
         getAccountInfo: jest.fn().mockRejectedValue(mockError),
       });
 
-      const result = await fetchAccountStateInfo(MOCK_PUBLIC_KEY);
+      const result = await fetchAccountStateInfo(MOCK_CONFIG, MOCK_PUBLIC_KEY);
 
       expect(result).toEqual({
         purseUref: undefined,
@@ -217,7 +209,7 @@ describe("Casper API Unit Tests", () => {
         getAccountInfo: jest.fn().mockRejectedValue(mockError),
       });
 
-      const result = await fetchAccountStateInfo(MOCK_PUBLIC_KEY);
+      const result = await fetchAccountStateInfo(MOCK_CONFIG, MOCK_PUBLIC_KEY);
 
       expect(result).toEqual({
         purseUref: undefined,
@@ -232,7 +224,9 @@ describe("Casper API Unit Tests", () => {
         getAccountInfo: jest.fn().mockRejectedValue(mockError),
       });
 
-      await expect(fetchAccountStateInfo(MOCK_PUBLIC_KEY)).rejects.toThrow("General error");
+      await expect(fetchAccountStateInfo(MOCK_CONFIG, MOCK_PUBLIC_KEY)).rejects.toThrow(
+        "General error",
+      );
     });
   });
 
@@ -256,7 +250,7 @@ describe("Casper API Unit Tests", () => {
         getBalanceByStateRootHash: mockGetBalanceByStateRootHash,
       });
 
-      const result = await fetchBalance(MOCK_PURSE_UREF);
+      const result = await fetchBalance(MOCK_CONFIG, MOCK_PURSE_UREF);
 
       expect(mockMethods.getStateRootHashLatest).toHaveBeenCalled();
       expect(mockMethods.getBalanceByStateRootHash).toHaveBeenCalledWith(
@@ -273,7 +267,9 @@ describe("Casper API Unit Tests", () => {
         getStateRootHashLatest: jest.fn().mockRejectedValue(mockError),
       });
 
-      await expect(fetchBalance(MOCK_PURSE_UREF)).rejects.toThrow("Failed to fetch balance");
+      await expect(fetchBalance(MOCK_CONFIG, MOCK_PURSE_UREF)).rejects.toThrow(
+        "Failed to fetch balance",
+      );
       expect(log).toHaveBeenCalledWith("error", "Failed to fetch balance", mockError);
     });
   });
@@ -292,7 +288,7 @@ describe("Casper API Unit Tests", () => {
         } as MockedBlock),
       });
 
-      const result = await fetchLastBlock();
+      const result = await fetchLastBlock(MOCK_CONFIG);
 
       expect(result).toEqual({
         height: 12345,
@@ -308,7 +304,7 @@ describe("Casper API Unit Tests", () => {
         getLatestBlock: jest.fn().mockRejectedValue(mockError),
       });
 
-      await expect(fetchLastBlock()).rejects.toThrow("Failed to fetch last block");
+      await expect(fetchLastBlock(MOCK_CONFIG)).rejects.toThrow("Failed to fetch last block");
       expect(log).toHaveBeenCalledWith("error", "Failed to fetch last block", mockError);
     });
   });
@@ -323,7 +319,7 @@ describe("Casper API Unit Tests", () => {
         }),
       });
 
-      await expect(fetchChainspecToml()).resolves.toBe(toml);
+      await expect(fetchChainspecToml(MOCK_CONFIG)).resolves.toBe(toml);
     });
 
     it("should throw when the response carries no chainspec bytes", async () => {
@@ -331,7 +327,9 @@ describe("Casper API Unit Tests", () => {
         getChainspec: jest.fn().mockResolvedValue({ chainspecBytes: {} }),
       });
 
-      await expect(fetchChainspecToml()).rejects.toThrow("Chainspec bytes missing from response");
+      await expect(fetchChainspecToml(MOCK_CONFIG)).rejects.toThrow(
+        "Chainspec bytes missing from response",
+      );
       expect(log).toHaveBeenCalledWith("error", "Failed to fetch chainspec", expect.any(Error));
     });
 
@@ -342,7 +340,7 @@ describe("Casper API Unit Tests", () => {
         getChainspec: jest.fn().mockRejectedValue(mockError),
       });
 
-      await expect(fetchChainspecToml()).rejects.toThrow("node unreachable");
+      await expect(fetchChainspecToml(MOCK_CONFIG)).rejects.toThrow("node unreachable");
       expect(log).toHaveBeenCalledWith("error", "Failed to fetch chainspec", mockError);
     });
   });
@@ -384,7 +382,7 @@ describe("Casper API Unit Tests", () => {
     it("should fetch transactions successfully (single page)", async () => {
       jest.mocked(network).mockResolvedValueOnce(createNetworkMock(mockTxData));
 
-      const result = await fetchTxs(MOCK_PUBLIC_KEY);
+      const result = await fetchTxs(MOCK_CONFIG, MOCK_PUBLIC_KEY);
 
       expect(network).toHaveBeenCalledWith(getExpectedNetworkCall(1));
       expect(result).toEqual(mockTxData);
@@ -398,7 +396,7 @@ describe("Casper API Unit Tests", () => {
       const secondPageTx = createMockTxData("deploy-hash-2");
       jest.mocked(network).mockResolvedValueOnce(createNetworkMock([secondPageTx], 2, 2));
 
-      const result = await fetchTxs(MOCK_PUBLIC_KEY);
+      const result = await fetchTxs(MOCK_CONFIG, MOCK_PUBLIC_KEY);
 
       expect(network).toHaveBeenCalledTimes(2);
       expect(network).toHaveBeenNthCalledWith(1, getExpectedNetworkCall(1));
@@ -410,7 +408,9 @@ describe("Casper API Unit Tests", () => {
       const mockError = new Error("Failed to fetch transactions");
       jest.mocked(network).mockRejectedValueOnce(mockError);
 
-      await expect(fetchTxs(MOCK_PUBLIC_KEY)).rejects.toThrow("Failed to fetch transactions");
+      await expect(fetchTxs(MOCK_CONFIG, MOCK_PUBLIC_KEY)).rejects.toThrow(
+        "Failed to fetch transactions",
+      );
       expect(log).toHaveBeenCalledWith("error", "Casper indexer error: ", mockError);
     });
   });
@@ -426,7 +426,7 @@ describe("Casper API Unit Tests", () => {
         } as MockedTransactionHash),
       });
 
-      const result = await broadcastTx(mockTransaction);
+      const result = await broadcastTx(MOCK_CONFIG, mockTransaction);
 
       expect(result).toBe(mockTxHash);
     });
@@ -439,7 +439,9 @@ describe("Casper API Unit Tests", () => {
         putTransaction: jest.fn().mockRejectedValue(mockError),
       });
 
-      await expect(broadcastTx(mockTransaction)).rejects.toThrow("Failed to broadcast transaction");
+      await expect(broadcastTx(MOCK_CONFIG, mockTransaction)).rejects.toThrow(
+        "Failed to broadcast transaction",
+      );
       expect(log).toHaveBeenCalledWith("error", "Failed to broadcast transaction", mockError);
     });
   });

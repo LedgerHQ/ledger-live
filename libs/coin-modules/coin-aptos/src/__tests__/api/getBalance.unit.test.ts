@@ -1,16 +1,11 @@
 import { createApi } from "../../api";
-import type { AptosConfig } from "../../config";
 import { APTOS_ASSET_ID, TOKEN_TYPE } from "../../constants";
 import { AptosAPI } from "../../network";
+import { createMockAptosContext } from "../../test/context";
 
 jest.mock("@aptos-labs/ts-sdk");
 let mockedAptosApi: jest.Mocked<any>;
 jest.mock("../../network");
-jest.mock("../../config", () => ({
-  setCoinConfig: jest.fn(),
-}));
-
-const mockAptosConfig: AptosConfig = {} as AptosConfig;
 
 describe("getBalance", () => {
   beforeEach(() => {
@@ -26,10 +21,11 @@ describe("getBalance", () => {
       getBalances: jest.fn().mockResolvedValue([{ contractAddress: APTOS_ASSET_ID, amount: 10n }]),
     }));
 
-    const api = createApi(mockAptosConfig);
+    const api = createApi();
+    const context = createMockAptosContext();
     const accountAddress = "0x4be47904b31063d60ac0dfde06e5dc203e647edbe853bae0e666ae5a763c3906";
 
-    expect(await api.getBalance(accountAddress)).toStrictEqual([
+    expect(await api.getBalance(context, accountAddress)).toStrictEqual([
       { value: 10n, asset: { type: "native" } },
     ]);
   });
@@ -41,8 +37,9 @@ describe("getBalance", () => {
 
     const accountAddress = "0xno_contract_and_no_data";
 
-    const api = createApi(mockAptosConfig);
-    expect(await api.getBalance(accountAddress)).toStrictEqual([
+    const api = createApi();
+    const context = createMockAptosContext();
+    expect(await api.getBalance(context, accountAddress)).toStrictEqual([
       {
         asset: {
           type: "native",
@@ -57,10 +54,11 @@ describe("getBalance", () => {
       getBalances: jest.fn().mockResolvedValue([{ contractAddress: APTOS_ASSET_ID, amount: 15n }]),
     }));
 
-    const api = createApi(mockAptosConfig);
+    const api = createApi();
+    const context = createMockAptosContext();
     const accountAddress = "0x4be47904b31063d60ac0dfde06e5dc203e647edbe853bae0e666ae5a763c3906";
 
-    expect(await api.getBalance(accountAddress)).toStrictEqual([
+    expect(await api.getBalance(context, accountAddress)).toStrictEqual([
       { value: 15n, asset: { type: "native" } },
     ]);
   });
@@ -71,10 +69,11 @@ describe("getBalance", () => {
       getBalances: jest.fn().mockResolvedValue([{ contractAddress: TOKEN_ASSET_ID, amount: 25n }]),
     }));
 
-    const api = createApi(mockAptosConfig);
+    const api = createApi();
+    const context = createMockAptosContext();
     const accountAddress = "0x4be47904b31063d60ac0dfde06e5dc203e647edbe853bae0e666ae5a763c3906";
 
-    expect(await api.getBalance(accountAddress)).toStrictEqual([
+    expect(await api.getBalance(context, accountAddress)).toStrictEqual([
       {
         value: 25n,
         asset: { type: TOKEN_TYPE.COIN, assetReference: TOKEN_ASSET_ID },
@@ -88,10 +87,11 @@ describe("getBalance", () => {
       getBalances: jest.fn().mockResolvedValue([{ contractAddress: TOKEN_ASSET_ID, amount: 25n }]),
     }));
 
-    const api = createApi(mockAptosConfig);
+    const api = createApi();
+    const context = createMockAptosContext();
     const accountAddress = "0x4be47904b31063d60ac0dfde06e5dc203e647edbe853bae0e666ae5a763c3906";
 
-    expect(await api.getBalance(accountAddress)).toStrictEqual([
+    expect(await api.getBalance(context, accountAddress)).toStrictEqual([
       {
         value: 25n,
         asset: {

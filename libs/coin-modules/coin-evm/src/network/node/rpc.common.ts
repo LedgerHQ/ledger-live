@@ -2,17 +2,14 @@
 import { getEnv } from "@ledgerhq/live-env";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import { log } from "@ledgerhq/logs";
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
-import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { ethers, FetchRequest, JsonRpcProvider } from "ethers";
 import ERC20Abi from "../../abis/erc20.abi.json";
 import OptimismGasPriceOracleAbi from "../../abis/optimismGasPriceOracle.abi.json";
 import ScrollGasPriceOracleAbi from "../../abis/scrollGasPriceOracle.abi.json";
-import type { BlockFinalizationTag, ExternalNodeConfig } from "../../config";
-import { getCoinConfig } from "../../config";
+import type { BlockFinalizationTag, EvmConfigInfo, ExternalNodeConfig } from "../../config";
 import { GasEstimationError, InsufficientFunds, UnsupportedRpcMethodError } from "../../errors";
-import { FeeHistory, FeeData, Transaction as EvmTransaction } from "../../types";
+import { FeeHistory, FeeData } from "../../types";
 import { isSmartContractInput, safeEncodeEIP55, normalizeAddress } from "../../utils";
 import { withRetries } from "../withRetries";
 import { gethCallTracerToTraceBlockItems } from "./gethCallTracerToTraceBlockItems";
@@ -200,16 +197,17 @@ export function destroyAllRpcProviders(): void {
  * @see https://github.com/ethers-io/ethers.js/issues/901
  */
 export async function withApi<T>(
-  currency: CryptoCurrency,
+  config: EvmConfigInfo,
+  currencyId: string,
   execute: (api: JsonRpcProvider) => Promise<T>,
   nodeConfig: ExternalNodeConfig,
 ): Promise<T> {
   const retries = nodeConfig.retries ?? DEFAULT_RETRIES_RPC_METHODS;
   return withRetries(
     async () => {
-      const key = providerCacheKey(currency.id, nodeConfig.uri);
+      const key = providerCacheKey(currencyId, nodeConfig.uri);
       if (!PROVIDERS_BY_RPC[key]) {
-        const chainId = currency.ethereumLikeInfo?.chainId;
+        const chainId = config.chainId;
         const fetchReq = new FetchRequest(nodeConfig.uri);
         // Disable ethers' built-in HTTP-level retries: withRetries handles all retry logic.
         fetchReq.setThrottleParams({ maxAttempts: 1 });
@@ -225,7 +223,7 @@ export async function withApi<T>(
 
 async function getTransaction(
   api: JsonRpcProvider,
-  _currency: CryptoCurrency,
+  _currencyId: string,
   txHash: string,
 ): Promise<TransactionInfo> {
   const [tx, receipt] = await Promise.all([
@@ -259,7 +257,7 @@ async function getTransaction(
 
 async function getCoinBalance(
   api: JsonRpcProvider,
-  _currency: CryptoCurrency,
+  _currencyId: string,
   address: string,
 ): Promise<BigNumber> {
   const balance = await api.getBalance(normalizeAddress(address));
@@ -268,7 +266,7 @@ async function getCoinBalance(
 
 async function call(
   api: JsonRpcProvider,
-  _currency: CryptoCurrency,
+  _currencyId: string,
   params: EvmCallParams,
 ): Promise<string> {
   const block = typeof params.block === "number" ? ethers.toQuantity(params.block) : params.block;
@@ -283,7 +281,7 @@ async function call(
 
 async function getTokenBalance(
   api: JsonRpcProvider,
-  _currency: CryptoCurrency,
+  _currencyId: string,
   address: string,
   contractAddress: string,
 ): Promise<BigNumber> {
@@ -294,7 +292,7 @@ async function getTokenBalance(
 
 async function getTokenAllowance(
   api: JsonRpcProvider,
-  _currency: CryptoCurrency,
+  _currencyId: string,
   ownerAddress: string,
   contractAddress: string,
   spenderAddress: string,
@@ -309,7 +307,7 @@ async function getTokenAllowance(
 
 async function getTransactionCount(
   api: JsonRpcProvider,
-  _currency: CryptoCurrency,
+  _currencyId: string,
   address: string,
 ): Promise<number> {
   return api.getTransactionCount(normalizeAddress(address), "pending");
@@ -317,9 +315,8 @@ async function getTransactionCount(
 
 async function getGasEstimation(
   api: JsonRpcProvider,
-  _currency: CryptoCurrency,
-  account: Pick<Account, "freshAddress">,
-  transaction: Pick<EvmTransaction, "amount" | "data" | "recipient">,
+  address: string,
+  transaction: { amount: BigNumber; data?: Buffer | null | undefined; recipient: string },
 ): Promise<BigNumber> {
   const to = transaction.recipient ? normalizeAddress(transaction.recipient) : undefined;
   const value = BigInt(transaction.amount.toFixed(0));
@@ -327,7 +324,7 @@ async function getGasEstimation(
   try {
     const gasEstimation = await api.estimateGas({
       ...(to ? { to } : /* istanbul ignore next: no problem not having a to */ {}),
-      from: normalizeAddress(account.freshAddress), // Necessary as no signature to infer the sender
+      from: normalizeAddress(address), // Necessary as no signature to infer the sender
       value,
       data,
     });
@@ -339,31 +336,29 @@ async function getGasEstimation(
   }
 }
 
-function makeGetGasEstimation(nodeConfig: ExternalNodeConfig): NodeApi["getGasEstimation"] {
-  return (account, transaction) =>
-    withApi(
-      account.currency,
-      api => getGasEstimation(api, account.currency, account, transaction),
-      {
-        ...nodeConfig,
-        retries: 0,
-      },
-    );
+function makeGetGasEstimation(
+  evmConfig: EvmConfigInfo,
+  nodeConfig: ExternalNodeConfig,
+): NodeApi["getGasEstimation"] {
+  return (currencyId, address, transaction) =>
+    withApi(evmConfig, currencyId, api => getGasEstimation(api, address, transaction), {
+      ...nodeConfig,
+      retries: 0,
+    });
 }
 
 async function getFeeData(
   api: JsonRpcProvider,
-  currency: CryptoCurrency,
-  transaction: Pick<EvmTransaction, "type" | "feesStrategy">,
+  config: EvmConfigInfo,
+  currencyId: string,
+  transaction: { type?: number | undefined; feesStrategy?: string | null | undefined },
 ): Promise<FeeData> {
   const block = await api.getBlock("latest");
   const currencySupports1559 = getEnv("EVM_FORCE_LEGACY_TRANSACTIONS")
     ? false
     : transaction.type === 2 && Boolean(block?.baseFeePerGas);
 
-  const { minGasPrice, feeHistoryBlockCount, feeHistoryRewardPercentile } = getCoinConfig(
-    currency.id,
-  ).info;
+  const { minGasPrice, feeHistoryBlockCount, feeHistoryRewardPercentile } = config;
   const minGasPriceFloor = minGasPrice ? new BigNumber(minGasPrice) : null;
   const feeHistoryBlocks = feeHistoryBlockCount ?? 5;
   const feeHistoryPercentile = feeHistoryRewardPercentile ?? 50;
@@ -399,7 +394,7 @@ async function getFeeData(
       // As a safety measure, if maxPriorityFeePerGas is zero
       // we enforce a 1 Gwei value
       let maxPriorityFeePerGas = maxPriorityFeeAverage.isZero()
-        ? getMaxPriorityFeePerGas(currency)
+        ? getMaxPriorityFeePerGas(currencyId)
         : maxPriorityFeeAverage;
 
       // Apply the per-chain config floor on top, for networks (typically sparse testnets)
@@ -441,7 +436,7 @@ async function getFeeData(
 
 async function broadcastTransaction(
   api: JsonRpcProvider,
-  _currency: CryptoCurrency,
+  _currencyId: string,
   signedTxHex: string,
 ): Promise<string> {
   try {
@@ -458,7 +453,7 @@ async function broadcastTransaction(
 
 async function getBlockByHeight(
   api: JsonRpcProvider,
-  _currency: CryptoCurrency,
+  _currencyId: string,
   blockHeight: number | BlockFinalizationTag,
   prefetchTxs?: boolean,
 ): Promise<BlockByHeightResult> {
@@ -654,7 +649,7 @@ async function getBlockByHeightFromRawRpc(
 
 async function getBlockReceipts(
   api: JsonRpcProvider,
-  _currency: CryptoCurrency,
+  _currencyId: string,
   blockHeight: number | "latest",
 ): Promise<BlockReceiptInfo[]> {
   const blockTag = blockHeight === "latest" ? "latest" : ethers.toQuantity(blockHeight);
@@ -701,7 +696,7 @@ async function getBlockReceipts(
 
 async function traceBlockGeth(
   api: JsonRpcProvider,
-  _currency: CryptoCurrency,
+  _currencyId: string,
   blockHeight: number,
 ): Promise<TraceBlockItem[]> {
   const rpcBlockTag = ethers.toQuantity(blockHeight); // convert to hex string
@@ -725,7 +720,7 @@ async function traceBlockGeth(
 
 async function traceBlockErigon(
   api: JsonRpcProvider,
-  _currency: CryptoCurrency,
+  _currencyId: string,
   blockHeight: number | "latest",
 ): Promise<TraceBlockItem[]> {
   const blockTag = blockHeight === "latest" ? "latest" : ethers.toQuantity(blockHeight);
@@ -807,12 +802,12 @@ function isTransactionReceipt(value: unknown): value is TransactionReceipt {
 
 async function getOptimismAdditionalFees(
   api: JsonRpcProvider,
-  currency: CryptoCurrency,
+  currencyId: string,
   transaction: string,
 ): Promise<BigNumber> {
   if (
     !["optimism", "optimism_sepolia", "base", "base_sepolia", "blast", "blast_sepolia"].includes(
-      currency.id,
+      currencyId,
     )
   ) {
     return new BigNumber(0);
@@ -835,10 +830,10 @@ async function getOptimismAdditionalFees(
 
 async function getScrollAdditionalFees(
   api: JsonRpcProvider,
-  currency: CryptoCurrency,
+  currencyId: string,
   transaction: string,
 ): Promise<BigNumber> {
-  if (currency.id !== "scroll") {
+  if (currencyId !== "scroll") {
     return new BigNumber(0);
   }
 
@@ -858,8 +853,8 @@ async function getScrollAdditionalFees(
 }
 
 /* Get default maxPriorityFeePerGas by chain */
-const getMaxPriorityFeePerGas = (currency: CryptoCurrency): BigNumber => {
-  switch (currency.id) {
+const getMaxPriorityFeePerGas = (currencyId: string): BigNumber => {
+  switch (currencyId) {
     case "zero_gravity":
       return new BigNumber(2e9); // 2 Gwei
     default:
@@ -868,44 +863,50 @@ const getMaxPriorityFeePerGas = (currency: CryptoCurrency): BigNumber => {
 };
 
 function cacheKeyOptimismL1Fees(
-  currency: CryptoCurrency,
+  currencyId: string,
   transaction: Parameters<NodeApi["getOptimismAdditionalFees"]>[1],
 ): string {
-  return "getOptimismL1BaseFee_" + currency.id + "_" + transaction;
+  return "getOptimismL1BaseFee_" + currencyId + "_" + transaction;
 }
 
-function make<F extends (currency: CryptoCurrency, ...args: any[]) => any>(
+function make<F extends (currencyId: string, ...args: any[]) => any>(
   f: (api: JsonRpcProvider, ...args: Parameters<F>) => ReturnType<F>,
+  evmConfig: EvmConfigInfo,
   nodeConfig: ExternalNodeConfig,
   configOverride: Partial<ExternalNodeConfig> = {},
 ): F {
   const mergedConfig = { ...nodeConfig, ...configOverride };
   return ((...args: Parameters<F>) => {
-    const [currency] = args;
-    return withApi(currency, api => f(api, ...args), mergedConfig);
+    const [currencyId] = args;
+    return withApi(evmConfig, currencyId, api => f(api, ...args), mergedConfig);
   }) as F;
 }
 
-export function createNodeApi(config: ExternalNodeConfig): NodeApi {
+export function createNodeApi(evmConfig: EvmConfigInfo, nodeConfig: ExternalNodeConfig): NodeApi {
   return {
-    call: make(call, config),
-    getBlockByHeight: make(getBlockByHeight, config),
-    getCoinBalance: make(getCoinBalance, config),
-    getTokenBalance: make(getTokenBalance, config),
-    getTokenAllowance: make(getTokenAllowance, config),
-    getTransactionCount: make(getTransactionCount, config),
-    getTransaction: make(getTransaction, config),
-    getBlockReceipts: make(getBlockReceipts, config),
-    traceBlockErigon: make(traceBlockErigon, config),
-    traceBlockGeth: make(traceBlockGeth, config),
-    getGasEstimation: makeGetGasEstimation(config),
-    getFeeData: make(getFeeData, config),
-    broadcastTransaction: make(broadcastTransaction, config, { retries: 0 }),
+    call: make(call, evmConfig, nodeConfig),
+    getBlockByHeight: make(getBlockByHeight, evmConfig, nodeConfig),
+    getCoinBalance: make(getCoinBalance, evmConfig, nodeConfig),
+    getTokenBalance: make(getTokenBalance, evmConfig, nodeConfig),
+    getTokenAllowance: make(getTokenAllowance, evmConfig, nodeConfig),
+    getTransactionCount: make(getTransactionCount, evmConfig, nodeConfig),
+    getTransaction: make(getTransaction, evmConfig, nodeConfig),
+    getBlockReceipts: make(getBlockReceipts, evmConfig, nodeConfig),
+    traceBlockErigon: make(traceBlockErigon, evmConfig, nodeConfig),
+    traceBlockGeth: make(traceBlockGeth, evmConfig, nodeConfig),
+    getGasEstimation: makeGetGasEstimation(evmConfig, nodeConfig),
+    // getFeeData takes `config` first (not `currencyId`), so it can't use the currencyId-first
+    // `make` wrapper; bind it explicitly and pull `currencyId` from the second argument for `withApi`.
+    getFeeData: ((...args: Parameters<NodeApi["getFeeData"]>) => {
+      const [, currencyId] = args;
+      return withApi(evmConfig, currencyId, api => getFeeData(api, ...args), nodeConfig);
+    }) as NodeApi["getFeeData"],
+    broadcastTransaction: make(broadcastTransaction, evmConfig, nodeConfig, { retries: 0 }),
     getOptimismAdditionalFees: makeLRUCache(
-      make(getOptimismAdditionalFees, config),
+      make(getOptimismAdditionalFees, evmConfig, nodeConfig),
       cacheKeyOptimismL1Fees,
       { ttl: 15 * 1000 }, // prevent rate limit by caching for at least 15s
     ),
-    getScrollAdditionalFees: make(getScrollAdditionalFees, config),
+    getScrollAdditionalFees: make(getScrollAdditionalFees, evmConfig, nodeConfig),
   };
 }

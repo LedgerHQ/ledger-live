@@ -1,4 +1,3 @@
-import { submitTransaction } from "../../network";
 import { broadcast } from "./broadcast";
 
 const mockSubmitTransaction = jest.fn();

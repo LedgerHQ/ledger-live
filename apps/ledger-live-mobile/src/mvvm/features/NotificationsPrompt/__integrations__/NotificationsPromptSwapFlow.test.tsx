@@ -28,7 +28,6 @@ jest.mock("~/analytics", () => {
 
   return {
     track,
-    useTrack: () => track,
     TrackScreen: () => null,
     updateIdentify: jest.fn(),
   };
@@ -218,7 +217,7 @@ describe("NotificationsPrompt swap flow", () => {
         "attempt_to_trigger_push_notification_drawer_after_action",
       );
 
-      await user.press(screen.getByText(/go to history/i));
+      await user.press(screen.getByText(/see details/i));
       await waitFor(() => {
         expect(screen.getByText(/your previous swaps will appear here/i)).toBeVisible();
       });

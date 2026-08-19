@@ -5,9 +5,20 @@ import {
   getCryptoAssetsStore,
   setCryptoAssetsStore,
 } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
-import { setCoinConfig } from "@ledgerhq/coin-evm/config";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
-import evmBridge, { computeIntentType, getAssetFromToken, getTokenFromAsset } from "./api";
+import { isSeiAccountUnassociated } from "@ledgerhq/coin-evm/staking/index";
+import evmBridge, {
+  computeIntentType,
+  getAccountReadiness,
+  getAssetFromToken,
+  getTokenFromAsset,
+} from "./api";
+
+jest.mock("@ledgerhq/coin-evm/staking/index", () => ({
+  ...jest.requireActual("@ledgerhq/coin-evm/staking/index"),
+  isSeiAccountUnassociated: jest.fn(),
+}));
 
 describe("evm bridge", () => {
   const ethereum = getCryptoCurrencyById("ethereum");
@@ -16,9 +27,6 @@ describe("evm bridge", () => {
   const seiEvm = getCryptoCurrencyById("sei_evm");
 
   beforeAll(() => {
-    setCoinConfig(() => ({
-      info: { explorer: { type: "ledger" } } as never,
-    }));
     const mockStore: Parameters<typeof setCryptoAssetsStore>[0] = {
       findTokenById: async () => undefined,
       findTokenByAddressInCurrency: async (address: string, currencyId: string) => {
@@ -283,11 +291,45 @@ describe("evm bridge", () => {
     });
 
     it("exposes refreshOperations only for explorer-less chains", () => {
-      setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } as never }));
+      // The bridge gates refreshOperations on `getCurrencyConfiguration` (the live-common
+      // LiveConfig source), read at bridge-assembly time — not on coin-evm's setCoinConfig.
+      LiveConfig.setConfig({
+        config_currency_ethereum: { type: "object", default: { explorer: { type: "ledger" } } },
+      } as never);
       expect(evmBridge(ethereum)).not.toHaveProperty("refreshOperations");
 
-      setCoinConfig(() => ({ info: { explorer: { type: "none" } } as never }));
+      LiveConfig.setConfig({
+        config_currency_ethereum: { type: "object", default: { explorer: { type: "none" } } },
+      } as never);
       expect(evmBridge(ethereum).refreshOperations).toEqual(expect.any(Function));
+    });
+
+    it("exposes getAccountReadiness only for sei_evm", () => {
+      expect(evmBridge(ethereum)).not.toHaveProperty("getAccountReadiness");
+      expect(evmBridge(seiEvm).getAccountReadiness).toEqual(expect.any(Function));
+    });
+  });
+
+  describe("getAccountReadiness", () => {
+    const address = "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3";
+
+    beforeEach(() => {
+      LiveConfig.setConfig({
+        config_currency_sei_evm: { type: "object", default: {} },
+      } as never);
+    });
+
+    it("is ready when the sei account is associated", async () => {
+      jest.mocked(isSeiAccountUnassociated).mockResolvedValueOnce(false);
+      await expect(getAccountReadiness(seiEvm, address)).resolves.toEqual({ ready: true });
+    });
+
+    it("is not ready with reason 'activationRequired' when the sei account is unassociated", async () => {
+      jest.mocked(isSeiAccountUnassociated).mockResolvedValueOnce(true);
+      await expect(getAccountReadiness(seiEvm, address)).resolves.toEqual({
+        ready: false,
+        reason: "activationRequired",
+      });
     });
   });
 });

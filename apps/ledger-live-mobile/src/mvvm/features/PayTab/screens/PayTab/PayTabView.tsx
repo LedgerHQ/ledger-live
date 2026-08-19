@@ -1,16 +1,46 @@
 import React from "react";
 import { CardLogin, type OpenHostedLogin } from "@features/flow-pay-card-auth";
+import { FeatureTour, type FeatureTourProps } from "@features/flow-pay-card-feature-tour";
+import {
+  Balance,
+  type ActionTilesProps,
+  type BalanceData,
+  type BalanceLabels,
+} from "@features/flow-pay-card-balance";
+import { DepositOptions, type DepositOptionsProps } from "@features/flow-pay-card-deposit";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
+import { TrackScreen } from "~/analytics";
 
 type PayTabViewProps = {
   readonly top: number;
   readonly openHostedLogin: OpenHostedLogin;
+  readonly featureTour: FeatureTourProps;
+  readonly balance: BalanceData;
+  readonly balanceLabels: BalanceLabels;
+  readonly actionTiles: ActionTilesProps;
+  readonly depositOptions: DepositOptionsProps;
 };
 
-export function PayTabView({ top, openHostedLogin }: PayTabViewProps) {
+export function PayTabView({
+  top,
+  openHostedLogin,
+  featureTour,
+  balance,
+  balanceLabels,
+  actionTiles,
+  depositOptions,
+}: PayTabViewProps) {
   return (
-    <Box style={{ flex: 1, paddingTop: top }} testID="paytab-screen">
+    <Box
+      lx={{ flex: 1, backgroundColor: "canvas" }}
+      style={{ paddingTop: top }}
+      testID="paytab-screen"
+    >
+      <TrackScreen category="Pay" balance_filter={balance.filter} />
+      <Balance {...balance} labels={balanceLabels} actionTiles={actionTiles} />
+      <DepositOptions {...depositOptions} />
       <CardLogin openHostedLogin={openHostedLogin} />
+      <FeatureTour {...featureTour} />
     </Box>
   );
 }

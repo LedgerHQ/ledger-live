@@ -10,6 +10,7 @@ import {
   getMockedAuthorization,
   getMockedFeeAuthorization,
   getMockedDelegatedProvingResponse,
+  getMockedGetTokensResponse,
 } from "../__tests__/fixtures/api.fixture";
 import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
 import { apiClient } from "./api";
@@ -364,6 +365,60 @@ describe("apiClient", () => {
     });
   });
 
+  describe("getTokens", () => {
+    it("should fetch the token registry with no params by default", async () => {
+      const mockResponse = getMockedGetTokensResponse();
+      jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
+
+      const result = await apiClient.getTokens({ config: mockConfig });
+
+      expect(network).toHaveBeenCalledTimes(1);
+      expect(network).toHaveBeenCalledWith({
+        method: "GET",
+        url: `${mockConfig.apiUrls.node}/v2/${mockConfig.networkType}/tokens?`,
+      });
+      expect(result).toEqual(mockResponse);
+    });
+
+    it("should forward limit and offset as query params", async () => {
+      const mockResponse = getMockedGetTokensResponse();
+      jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
+
+      await apiClient.getTokens({
+        config: mockConfig,
+        options: { limit: 100, offset: 200 },
+      });
+
+      expect(network).toHaveBeenCalledTimes(1);
+      expect(network).toHaveBeenCalledWith({
+        method: "GET",
+        url: `${mockConfig.apiUrls.node}/v2/${mockConfig.networkType}/tokens?limit=100&offset=200`,
+      });
+    });
+
+    it("should forward verified and symbol as query params", async () => {
+      const mockResponse = getMockedGetTokensResponse();
+      jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
+
+      await apiClient.getTokens({
+        config: mockConfig,
+        options: { verified: true, symbol: "usdc" },
+      });
+
+      expect(network).toHaveBeenCalledTimes(1);
+      expect(network).toHaveBeenCalledWith({
+        method: "GET",
+        url: `${mockConfig.apiUrls.node}/v2/${mockConfig.networkType}/tokens?symbol=usdc&verified=true`,
+      });
+    });
+
+    it("should throw an error when network request fails", async () => {
+      jest.mocked(network).mockRejectedValue(new Error("Network error"));
+
+      await expect(apiClient.getTokens({ config: mockConfig })).rejects.toThrow("Network error");
+    });
+  });
+
   describe("getScannerPublicKey", () => {
     it("should fetch the scanner public key successfully", async () => {
       const mockResponse = {
@@ -461,7 +516,12 @@ describe("apiClient", () => {
     const mockUuid = "scan-uuid-789";
 
     it("should fetch the record scanner status successfully", async () => {
-      const mockResponse = { synced: true, percentage: 100 };
+      const mockResponse = {
+        synced: true,
+        percentage: 100,
+        sync_start_height: 0,
+        synced_up_to: 20985061,
+      };
       jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
       const result = await apiClient.getRecordScannerStatus(mockConfig, mockUuid);
@@ -477,7 +537,12 @@ describe("apiClient", () => {
     });
 
     it("should return partial sync status", async () => {
-      const mockResponse = { synced: false, percentage: 42 };
+      const mockResponse = {
+        synced: false,
+        percentage: 42,
+        sync_start_height: 100,
+        synced_up_to: 5000,
+      };
       jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
       const result = await apiClient.getRecordScannerStatus(mockConfig, mockUuid);
@@ -486,10 +551,25 @@ describe("apiClient", () => {
       expect(result.percentage).toBe(42);
     });
 
+    it("should return a status with a null synced_up_to", async () => {
+      const mockResponse = {
+        synced: false,
+        percentage: 0,
+        sync_start_height: 100,
+        synced_up_to: null,
+      };
+      jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
+
+      const result = await apiClient.getRecordScannerStatus(mockConfig, mockUuid);
+
+      expect(result).toEqual(mockResponse);
+    });
+
     it("should use the correct network type in the URL", async () => {
-      jest
-        .mocked(network)
-        .mockResolvedValue({ data: { synced: true, percentage: 100 }, status: 200 });
+      jest.mocked(network).mockResolvedValue({
+        data: { synced: true, percentage: 100, sync_start_height: 0, synced_up_to: 20985061 },
+        status: 200,
+      });
 
       await apiClient.getRecordScannerStatus(testnetConfig, mockUuid);
 

@@ -4,8 +4,7 @@ import type {
   MemoNotSupported,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/index";
-import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
-import { getCoinConfig } from "../config";
+import type { EvmConfigInfo } from "../config";
 import { withApi } from "../network/node/rpc.common";
 import { isExternalNodeConfig } from "../network/node/types";
 import { isStakingIntent } from "../utils";
@@ -35,15 +34,24 @@ function isWithdrawalFeeInGweiResult(value: unknown): value is WithdrawalFeeInGw
  * looked up at submission time (e.g. an on-chain "free slot" id). Returns the
  * intent unchanged when no enrichment is needed.
  */
-type IntentPreparer = (currency: CryptoCurrency, intent: StakingIntent) => Promise<StakingIntent>;
+type IntentPreparer = (
+  config: EvmConfigInfo,
+  currencyId: string,
+  intent: StakingIntent,
+) => Promise<StakingIntent>;
 
-const prepareMonadIntent: IntentPreparer = async (_currency, intent) => {
+const prepareMonadIntent: IntentPreparer = async (config, _currencyId, intent) => {
   if (!isStakingIntent(intent)) return intent;
   if (intent.mode !== "undelegate" || intent.withdrawId !== undefined || !intent.valId) {
     return intent;
   }
 
-  const withdrawId = await findFirstFreeWithdrawId("monad", BigInt(intent.valId), intent.sender);
+  const withdrawId = await findFirstFreeWithdrawId(
+    config,
+    "monad",
+    BigInt(intent.valId),
+    intent.sender,
+  );
   if (withdrawId === null) {
     throw new Error(
       "No free Monad withdraw slot: all slots (0–255) are in use for this validator. " +
@@ -57,17 +65,17 @@ const prepareMonadIntent: IntentPreparer = async (_currency, intent) => {
   return enriched;
 };
 
-const prepareZeroGravityIntent: IntentPreparer = async (currency, intent) => {
+const prepareZeroGravityIntent: IntentPreparer = async (config, currencyId, intent) => {
   if (!isStakingIntent(intent)) return intent;
   if (intent.mode !== "undelegate" || intent.shares !== undefined || !intent.valAddress) {
     return intent;
   }
   if (!intent.useAllAmount && intent.amount <= 0n) return intent;
 
-  const abi = getStakingABI(currency.id);
+  const abi = getStakingABI(currencyId);
   if (!abi) return intent;
 
-  const node = getCoinConfig(currency.id).info.node;
+  const node = config.node;
   if (!isExternalNodeConfig(node)) return intent;
 
   const iface = new ethers.Interface(abi as ethers.InterfaceAbi);
@@ -75,7 +83,8 @@ const prepareZeroGravityIntent: IntentPreparer = async (currency, intent) => {
   const delegator = intent.sender;
 
   const { shares, txValue } = await withApi(
-    currency,
+    config,
+    currencyId,
     async provider => {
       const rawDelegation = await provider.call({
         to: valAddress,
@@ -139,9 +148,10 @@ const STAKING_INTENT_PREPARERS: Record<string, IntentPreparer> = {
  * preparer.
  */
 export const prepareStakingIntent = async (
-  currency: CryptoCurrency,
+  config: EvmConfigInfo,
+  currencyId: string,
   intent: StakingIntent,
 ): Promise<StakingIntent> => {
-  const prepare = STAKING_INTENT_PREPARERS[currency.id];
-  return prepare ? prepare(currency, intent) : intent;
+  const prepare = STAKING_INTENT_PREPARERS[currencyId];
+  return prepare ? prepare(config, currencyId, intent) : intent;
 };

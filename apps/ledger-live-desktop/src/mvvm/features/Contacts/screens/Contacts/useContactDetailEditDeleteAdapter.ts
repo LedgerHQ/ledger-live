@@ -1,18 +1,19 @@
-import {
-  ContactIdSchema,
-  DUPLICATE_CONTACT_NAME_ERROR_NAME,
-  INVALID_CONTACT_NAME_ERROR_NAME,
-  type ContactId,
-} from "@domain/entity-contact";
+import { ContactIdSchema, type ContactId } from "@domain/entity-contact";
 import {
   type ContactsDeleteContactDialogProps,
   type ContactsEditSignerDialogProps,
+  type ContactsEditSignerMismatchDialogProps,
   type ContactsRenameContactDialogProps,
   type ContactDetailActionsLabels,
+  createContactDetailEditDeleteUiState,
+  resolveContactDetailEditDeleteLabels,
+  useContactDetailEditDeleteAnalytics,
   useContactDetailEditDeleteFlowBindings,
   useContactsEditDeletePorts,
 } from "@features/flow-contacts";
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import { useContactsAnalytics } from "../../analytics";
 
 export type ContactDetailEditDeleteDialogProps = Readonly<{
   detailActions?: Readonly<{
@@ -24,6 +25,7 @@ export type ContactDetailEditDeleteDialogProps = Readonly<{
   renameDialog: ContactsRenameContactDialogProps;
   deleteDialog: ContactsDeleteContactDialogProps;
   signerDialog: ContactsEditSignerDialogProps;
+  signerMismatchDialog: ContactsEditSignerMismatchDialogProps;
 }>;
 
 export function useContactDetailEditDeleteAdapter(
@@ -31,6 +33,7 @@ export function useContactDetailEditDeleteAdapter(
   onDeleteSuccess: () => void,
 ): ContactDetailEditDeleteDialogProps {
   const { t } = useTranslation();
+  const analytics = useContactsAnalytics();
   const ports = useContactsEditDeletePorts();
   const resolvedContactId = contactId ?? ContactIdSchema.parse("contact-me");
   const { flow, renameViewModel } = useContactDetailEditDeleteFlowBindings({
@@ -38,59 +41,29 @@ export function useContactDetailEditDeleteAdapter(
     ports,
     onDeleteSuccess,
   });
-  const actionLabels: ContactDetailActionsLabels = {
-    editContact: t("contacts.detailActions.editContact"),
-    deleteContact: t("contacts.detailActions.deleteContact"),
-  };
-  const renameLabels = {
-    title: t("contacts.editContact.title"),
-    namePlaceholder: t("contacts.editContact.namePlaceholder"),
-    namingDisclaimer: t("contacts.editContact.namingDisclaimer"),
-    applyChanges: t("contacts.editContact.applyChanges"),
-    confirmName: t("contacts.editContact.confirmName"),
-    nameValidationErrors: {
-      [INVALID_CONTACT_NAME_ERROR_NAME]: t("contacts.editContact.invalidNameError"),
-      [DUPLICATE_CONTACT_NAME_ERROR_NAME]: t("contacts.addContactDrawer.duplicateNameError"),
-    },
-  };
-  const deleteLabels = {
-    title: t("contacts.deleteContact.title"),
-    description: t("contacts.deleteContact.description"),
-    confirm: t("contacts.deleteContact.confirm"),
-    cancel: t("contacts.deleteContact.cancel"),
-  };
-  const signerLabels = {
-    title: t("contacts.editSigner.title"),
-    description: t("contacts.editSigner.description"),
-    confirm: t("contacts.editSigner.confirm"),
-    cancel: t("contacts.editSigner.cancel"),
-  };
+  const labels = useMemo(() => resolveContactDetailEditDeleteLabels({ t }), [t]);
+  const uiState = useMemo(
+    () => createContactDetailEditDeleteUiState(flow, renameViewModel, labels),
+    [flow, labels, renameViewModel],
+  );
+  const { onEdit, onDelete } = useContactDetailEditDeleteAnalytics(
+    analytics,
+    flow,
+    uiState.signerMismatch.isOpen,
+  );
 
   return {
     detailActions: contactId
       ? {
           canDelete: flow.canDelete,
-          labels: actionLabels,
-          onEdit: flow.onEditPress,
-          onDelete: flow.onDeletePress,
+          labels: labels.actions,
+          onEdit,
+          onDelete,
         }
       : undefined,
-    renameDialog: {
-      ...renameViewModel,
-      labels: renameLabels,
-    },
-    deleteDialog: {
-      isOpen: flow.deleteLifecycle.status === "open",
-      isDeleting: flow.isDeleting,
-      labels: deleteLabels,
-      onConfirm: flow.confirmDelete,
-      onCancel: flow.cancelDelete,
-    },
-    signerDialog: {
-      isOpen: flow.editUiState === "signer-open",
-      labels: signerLabels,
-      onConfirm: flow.onSignerConfirm,
-      onCancel: flow.onSignerCancel,
-    },
+    renameDialog: uiState.rename,
+    deleteDialog: uiState.delete,
+    signerDialog: uiState.signer,
+    signerMismatchDialog: uiState.signerMismatch,
   };
 }

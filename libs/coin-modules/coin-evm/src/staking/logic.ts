@@ -2,7 +2,7 @@ import { ethers } from "ethers";
 import type { Stake } from "@ledgerhq/coin-module-framework/api/types";
 import { getStakingABI } from "./abis";
 import { STAKING_CONTRACTS } from "./contracts";
-import { getCoinConfig } from "../config";
+import type { EvmConfigInfo } from "../config";
 import { isExternalNodeConfig } from "../network/node/types";
 import { getCosmosAddr } from "./redelegations";
 
@@ -81,6 +81,7 @@ export function parseAmountStringToNumber(amountString: string, unitCode: string
  * precompile / RPC node is configured.
  */
 export async function isSeiAccountUnassociated(
+  config: EvmConfigInfo,
   currencyId: string,
   freshAddress: string,
 ): Promise<boolean> {
@@ -93,7 +94,7 @@ export async function isSeiAccountUnassociated(
   // determine the status, so we don't surface a warning.
   let uri: string;
   try {
-    const node = getCoinConfig(currencyId).info.node;
+    const node = config.node;
     if (!isExternalNodeConfig(node)) return false;
     uri = node.uri;
   } catch {

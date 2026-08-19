@@ -13,6 +13,7 @@ import { Account } from "@ledgerhq/types-live";
 import { isAccountEmpty } from "./helpers";
 import { VTHO_ADDRESS } from "@vechain/sdk-core";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
+import { getCoinConfig } from "../config";
 
 export const getAccountShape: GetAccountShape<Account> = async info => {
   const { initialAccount, currency, derivationMode } = info;
@@ -29,20 +30,23 @@ export const getAccountShape: GetAccountShape<Account> = async info => {
     derivationMode,
   });
 
+  const config = getCoinConfig();
+
   // get the current account balance state depending your api implementation
-  const { balance, energy } = await getAccount(address);
+  const { balance, energy } = await getAccount(config, address);
 
   // get the current block height
-  const blockHeight = await getLastBlockHeight();
+  const blockHeight = await getLastBlockHeight(config);
 
   // Merge new operations with the previously synced ones
-  const newOperations = await getOperations(accountId, address, startAt, blockHeight);
+  const newOperations = await getOperations(config, accountId, address, startAt, blockHeight);
 
   //Get last token operations
   const vthoToken = await getCryptoAssetsStore().findTokenById("vechain/vip180/vtho");
   if (!vthoToken) throw new Error("VTHO token not found");
   const vthoAccountId = encodeTokenAccountId(accountId, vthoToken);
   const vthoOperations = await getTokenOperations(
+    config,
     vthoAccountId,
     address,
     VTHO_ADDRESS,

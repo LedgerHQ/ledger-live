@@ -8,11 +8,14 @@ import { CosmosCraftedTransaction } from "./craftTransaction";
  * @param signature the 64-byte fixed-length (r‖s) secp256k1 signature, hex-encoded
  * @param pubkey    the signer's compressed secp256k1 public key, base64-encoded
  */
-export function combine(tx: string, signature: string, pubkey?: string): string {
+export function combine(tx: string, signature: string[], pubkey?: string): string {
+  if (signature.length !== 1) {
+    throw new Error(`Cosmos combine expects exactly one signature, got ${signature.length}`);
+  }
   if (!pubkey) {
     throw new Error("combine requires the signer public key");
   }
-  if (!/^[0-9a-fA-F]{128}$/.test(signature)) {
+  if (!/^[0-9a-fA-F]{128}$/.test(signature[0])) {
     throw new Error("combine expects a 64-byte (r‖s) hex signature");
   }
 
@@ -31,7 +34,7 @@ export function combine(tx: string, signature: string, pubkey?: string): string 
     feeAmount: payload.feeAmount,
     gasLimit: payload.gasLimit,
     sequence: payload.sequence,
-    signature: Uint8Array.from(Buffer.from(signature, "hex")),
+    signature: Uint8Array.from(Buffer.from(signature[0], "hex")),
   });
 
   return Buffer.from(txBytes).toString("hex");

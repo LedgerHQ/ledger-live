@@ -1,6 +1,7 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { Flex } from "@ledgerhq/react-ui";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Flex, Popin } from "@ledgerhq/react-ui";
 import manager from "@ledgerhq/live-common/manager/index";
+import type { InstalledItem } from "@ledgerhq/live-common/apps/types";
 import { useGenuineCheck } from "@ledgerhq/live-common/hw/hooks/useGenuineCheck";
 import { shouldForceFirmwareUpdate } from "@ledgerhq/live-common/device/use-cases/shouldForceFirmwareUpdate";
 import { useGetLatestAvailableFirmware } from "@ledgerhq/live-common/deviceSDK/hooks/useGetLatestAvailableFirmware";
@@ -27,6 +28,17 @@ import { NetworkDown } from "@ledgerhq/live-common/errors";
 import { NetworkStatus, useNetworkStatus } from "~/renderer/hooks/useNetworkStatus";
 import { urls } from "~/config/urls";
 import { normalizeGenuineCheckError } from "./normalizeGenuineCheckError";
+import { useConnectManagerAction } from "~/renderer/hooks/useConnectAppAction";
+import { useDispatch } from "LLD/hooks/redux";
+import { setLastSeenDeviceInfo } from "~/renderer/actions/settings";
+import { getFirmwareUpdateAppsToReinstall } from "./getFirmwareUpdateAppsToReinstall";
+import {
+  resolveFirmwareUpdateCloseAction,
+  resolveInstalledAppsForFirmwareUpdate,
+  resolveListedAppsListingEffect,
+} from "./firmwareUpdateAppsRestore";
+import useTheme from "~/renderer/hooks/useTheme";
+import { renderAllowManager } from "../../../DeviceAction/rendering";
 
 export type Props = {
   onComplete: () => void;
@@ -46,6 +58,7 @@ export type Props = {
   fwUpdateInterrupted: FinalFirmware | null;
   setFwUpdateInterrupted: (finalFirmware: FinalFirmware) => void;
   isDeviceConnected: boolean;
+  onFirmwareUpdateClose: (appsToRestore: readonly string[]) => void;
 };
 
 const commonDrawerProps = {
@@ -69,9 +82,15 @@ const EarlySecurityChecks = ({
   setFwUpdateInterrupted,
   fwUpdateInterrupted,
   isDeviceConnected,
+  onFirmwareUpdateClose,
 }: Props) => {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
   const whySecurityChecksUrl = useLocalizedUrl(urls.genuineCheck);
+  const installedAppsRef = useRef<readonly InstalledItem[]>([]);
+  const firmwareUpdateCompletedRef = useRef(false);
+  const withAppsToReinstallRef = useRef(false);
+  const themeType = useTheme().theme;
 
   const optimisticGenuineCheck = !isInitialRunOfSecurityChecks;
   const [genuineCheckStatus, setGenuineCheckStatus] = useState<SoftwareCheckStatus>(
@@ -119,6 +138,20 @@ const EarlySecurityChecks = ({
   });
 
   const [completionLoading, setCompletionLoading] = useState(false);
+  const [shouldListInstalledApps, setShouldListInstalledApps] = useState(false);
+  const managerAction = useConnectManagerAction();
+  const listInstalledAppsRequest = useMemo(
+    () => (shouldListInstalledApps ? {} : { cancelExecution: true }),
+    [shouldListInstalledApps],
+  );
+  const listAppsState = managerAction.useHook(device, listInstalledAppsRequest);
+  const { result: listedAppsResult, isLoading: isListingInstalledApps } = listAppsState;
+  const isAllowManagerOpen =
+    shouldListInstalledApps &&
+    listAppsState.allowManagerRequested &&
+    !listAppsState.allowManagerGranted &&
+    !listedAppsResult;
+
   const handleCompletion = () => {
     setCompletionLoading(true);
     onComplete();
@@ -128,65 +161,136 @@ const EarlySecurityChecks = ({
     setDrawer();
   }, []);
 
-  const startFirmwareUpdate = useCallback(() => {
-    if (!deviceInfo || !latestFirmware) return;
-    const modal = deviceInfo.isOSU ? "install" : "disclaimer";
-    const stepId = initialStepId({ device, deviceInfo });
+  const setFirmwareUpdateCompleted = useCallback((completed: boolean) => {
+    firmwareUpdateCompletedRef.current = completed;
+  }, []);
 
-    setDrawer(
-      UpdateFirmwareModal,
-      {
-        withAppsToReinstall: false,
-        withResetStep: manager.firmwareUpdateNeedsLegacyBlueResetInstructions(
-          deviceInfo,
-          device.modelId,
-        ),
-        onDrawerClose: () => {
-          closeFwUpdateDrawer();
-          setFwUpdateInterrupted(latestFirmware?.final);
-          restartChecksAfterUpdate();
-        },
-        onRequestClose: () => {
-          closeFwUpdateDrawer();
-          setFwUpdateInterrupted(latestFirmware?.final);
-          restartChecksAfterUpdate();
-        },
-        status: modal,
-        stepId,
-        firmware: latestFirmware,
+  const openFirmwareUpdateDrawer = useCallback(
+    (installed: readonly InstalledItem[]) => {
+      if (!deviceInfo || !latestFirmware) return;
+
+      installedAppsRef.current = installed;
+      firmwareUpdateCompletedRef.current = false;
+      const modal = deviceInfo.isOSU ? "install" : "disclaimer";
+      const stepId = initialStepId({ device, deviceInfo });
+      const withAppsToReinstall = getFirmwareUpdateAppsToReinstall(
+        installed,
         deviceInfo,
-        device,
-        deviceModelId: deviceModelId,
-        setFirmwareUpdateCompleted: () => null,
+        device.modelId,
+      );
+      withAppsToReinstallRef.current = withAppsToReinstall;
 
-        finalStepSuccessDescription: t(
-          "syncOnboarding.manual.softwareCheckContent.firmwareUpdate.finalStepSuccessDescription",
-        ),
-        finalStepSuccessButtonLabel: t(
-          "syncOnboarding.manual.softwareCheckContent.firmwareUpdate.finalStepSuccessButtonLabel",
-        ),
-        finalStepSuccessButtonOnClick: () => {
-          closeFwUpdateDrawer();
-          restartChecksAfterUpdate();
+      dispatch(
+        setLastSeenDeviceInfo({
+          lastSeenDevice: {
+            modelId: device.modelId,
+            deviceInfo,
+            apps: installed.map(({ name, version }) => ({ name, version })),
+          },
+          latestFirmware,
+        }),
+      );
+
+      const handleSuccessfulFirmwareUpdateClose = () => {
+        closeFwUpdateDrawer();
+        setFwUpdateInterrupted(latestFirmware.final);
+
+        const closeAction = resolveFirmwareUpdateCloseAction(
+          firmwareUpdateCompletedRef.current,
+          withAppsToReinstallRef.current,
+          installedAppsRef.current,
+        );
+        if (closeAction.type === "restoreApps") {
+          onFirmwareUpdateClose(closeAction.apps);
+          return;
+        }
+
+        restartChecksAfterUpdate();
+      };
+
+      setDrawer(
+        UpdateFirmwareModal,
+        {
+          withAppsToReinstall,
+          withResetStep: manager.firmwareUpdateNeedsLegacyBlueResetInstructions(
+            deviceInfo,
+            device.modelId,
+          ),
+          onDrawerClose: handleSuccessfulFirmwareUpdateClose,
+          onRequestClose: () => {
+            closeFwUpdateDrawer();
+            setFwUpdateInterrupted(latestFirmware.final);
+            restartChecksAfterUpdate();
+          },
+          status: modal,
+          stepId,
+          firmware: latestFirmware,
+          deviceInfo,
+          device,
+          deviceModelId: deviceModelId,
+          installed,
+          setFirmwareUpdateCompleted,
+          finalStepSuccessDescription: t(
+            "syncOnboarding.manual.softwareCheckContent.firmwareUpdate.finalStepSuccessDescription",
+          ),
+          finalStepSuccessButtonLabel: t(
+            "syncOnboarding.manual.softwareCheckContent.firmwareUpdate.finalStepSuccessButtonLabel",
+          ),
+          finalStepSuccessButtonOnClick: handleSuccessfulFirmwareUpdateClose,
         },
-      },
-      {
-        preventBackdropClick: true,
-        forceDisableFocusTrap: true,
-        withPaddingTop: false,
-        onRequestClose: undefined,
-      },
+        {
+          preventBackdropClick: true,
+          forceDisableFocusTrap: true,
+          withPaddingTop: false,
+          onRequestClose: undefined,
+        },
+      );
+    },
+    [
+      closeFwUpdateDrawer,
+      device,
+      deviceInfo,
+      deviceModelId,
+      dispatch,
+      latestFirmware,
+      onFirmwareUpdateClose,
+      restartChecksAfterUpdate,
+      setFirmwareUpdateCompleted,
+      setFwUpdateInterrupted,
+      t,
+    ],
+  );
+
+  const startFirmwareUpdate = useCallback(() => {
+    const installedAppsResolution = resolveInstalledAppsForFirmwareUpdate(
+      installedAppsRef.current,
+      listedAppsResult?.installed,
+      deviceInfo,
     );
-  }, [
-    closeFwUpdateDrawer,
-    device,
-    deviceInfo,
-    deviceModelId,
-    latestFirmware,
-    restartChecksAfterUpdate,
-    setFwUpdateInterrupted,
-    t,
-  ]);
+    if (installedAppsResolution.type === "ready") {
+      openFirmwareUpdateDrawer(installedAppsResolution.installed);
+      return;
+    }
+
+    setShouldListInstalledApps(true);
+  }, [deviceInfo, listedAppsResult?.installed, openFirmwareUpdateDrawer]);
+
+  useEffect(() => {
+    const listingEffect = resolveListedAppsListingEffect(
+      shouldListInstalledApps,
+      listAppsState.error,
+      installedAppsRef.current,
+      listedAppsResult?.installed,
+    );
+
+    if (listingEffect.type === "noop") return;
+
+    setShouldListInstalledApps(false);
+    if (listingEffect.type === "openWithListed") {
+      installedAppsRef.current = listingEffect.installed;
+    }
+    openFirmwareUpdateDrawer(listingEffect.installed);
+  }, [listAppsState.error, listedAppsResult, openFirmwareUpdateDrawer, shouldListInstalledApps]);
 
   useEffect(() => {
     if (devicePermissionState === "refused") {
@@ -358,6 +462,9 @@ const EarlySecurityChecks = ({
 
   return (
     <Flex flex={1} flexDirection="column" alignItems="center" marginTop="64px">
+      <Popin isOpen={isAllowManagerOpen}>
+        {renderAllowManager({ modelId: deviceModelId, type: themeType })}
+      </Popin>
       {isInitialRunOfSecurityChecks && (
         <TrackPage category="Genuine check and OS update check start" />
       )}
@@ -407,6 +514,11 @@ const EarlySecurityChecks = ({
           track("button_clicked2", { button: "View update" });
           startFirmwareUpdate();
         }}
+        isPreparingFirmwareUpdate={
+          shouldListInstalledApps &&
+          isListingInstalledApps &&
+          firmwareUpdateStatus === SoftwareCheckStatus.updateAvailable
+        }
         onClickSkipUpdate={() => {
           track("button_clicked2", { button: "Skip update" });
           handleCompletion();

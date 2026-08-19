@@ -50,6 +50,27 @@ const info: Record<string, { accounts: Partial<Record<AccountType, AccountInfo>>
         pristine: { address: "0x6895Df5ed013c85B3D9D2446c227C9AfC3813551" },
       },
     },
+    arbitrum: {
+      accounts: {
+        big: { address: "0x131F001aF400D5f212e1894846469FBa70f8bCc9" },
+        average: { address: "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3" },
+        pristine: { address: "0x3C5E7b2a9f6D1C4b8d0e2a7f3c9a1b5e6d7F8a9B" },
+      },
+    },
+    cronos: {
+      accounts: {
+        big: { address: "0x19c028D6852752cb99E3679B48d9fdaFf891549C" },
+        average: { address: "0x4C0b3B02f1295863923a7F5994Fcf4368b1D4692" },
+        pristine: { address: "0x9A2b4C7dE3f1A6b9c0D2e4F7a8B1c3D5e6F7a8b9" },
+      },
+    },
+    polygon: {
+      accounts: {
+        big: { address: "0x4c569c1e541A19132AC893748E0ad54C7c989FF4" },
+        average: { address: "0x5a1a51C428F506bAE8b97DD030db482a84c4fCD8" },
+        pristine: { address: "0x4fB2c1A9d7E3b6c5D8A1E2f3b4C9d0E1F2a3B4c5" },
+      },
+    },
     base: {
       accounts: {
         big: { address: "0xf047b952225bf90cf65b1c0915a8b42c3556bacd" },
