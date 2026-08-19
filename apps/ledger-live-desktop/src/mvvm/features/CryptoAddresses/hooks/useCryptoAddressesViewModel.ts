@@ -15,6 +15,8 @@ import { useCryptoAccountRows } from "../components/Table/hooks/useCryptoAccount
 import { track } from "~/renderer/analytics/segment";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { getDefaultAccountName } from "@domain/entity-account-name";
+import { usePopNavigationBack } from "LLD/utils/usePopNavigationBack";
+import { parseCryptoAddressesBackPath } from "../utils/cryptoAddressesLocationState";
 
 export default function useCryptoAddressesViewModel(): CryptoAddressesViewModel {
   const { t } = useTranslation();
@@ -22,6 +24,7 @@ export default function useCryptoAddressesViewModel(): CryptoAddressesViewModel 
   const { shouldDisplayAssetSection } = useWalletFeaturesConfig("desktop");
   const [searchValue, setSearchValue] = useState("");
   const { rows, lookupParentAccount } = useCryptoAccountRows(searchValue);
+  const { showBackButton, navigateBack } = usePopNavigationBack(parseCryptoAddressesBackPath);
 
   const handleSearchChange = useCallback((value: string) => {
     track("search_query", { query: value, page: CRYPTO_TRACKING_PAGE_NAME });
@@ -69,6 +72,8 @@ export default function useCryptoAddressesViewModel(): CryptoAddressesViewModel 
   );
 
   return {
+    showBackButton,
+    navigateBack,
     searchValue,
     setSearchValue: handleSearchChange,
     emptyTableMessage,
