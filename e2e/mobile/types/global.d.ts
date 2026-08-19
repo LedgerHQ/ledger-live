@@ -90,6 +90,7 @@ declare global {
   var waitForElementByText: typeof NativeElementHelpers.waitForElementByText;
   var waitForElementNotVisible: typeof NativeElementHelpers.waitForElementNotVisible;
 
+  var countWebElements: typeof WebElementHelpers.countWebElements;
   var expectWebElementNotVisible: typeof WebElementHelpers.expectWebElementNotVisible;
   var getCurrentWebviewUrl: typeof WebElementHelpers.getCurrentWebviewUrl;
   var getValueByWebTestId: typeof WebElementHelpers.getValueByWebTestId;

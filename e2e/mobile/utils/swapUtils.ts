@@ -5,6 +5,7 @@ import { floatNumberRegex } from "@ledgerhq/live-e2e-shared/data/regexes";
 import { getEnv } from "@shared/env";
 import BigNumber from "bignumber.js";
 import { deleteSpeculos, launchSpeculos, registerSpeculos } from "./speculosUtils";
+import { QUOTES_FETCH_TIMEOUT } from "../page/liveApps/swapLiveApp";
 
 /**
  * Mirrors swap-live-app's remote-config decimal cap (currently defaults to 8, see
@@ -57,7 +58,12 @@ export async function performSwapUntilQuoteSelectionStep(
   await selectCurrency(accountToCredit, false, selectSpecificToAccount);
   await app.swapLiveApp.inputAmount(amount);
   if (continueToQuotes) {
-    await waitForWebElementToMatchRegex(app.swapLiveApp.toAmountInput, floatNumberRegex, 20000);
+    // Also comes from the quote API.
+    await waitForWebElementToMatchRegex(
+      app.swapLiveApp.toAmountInput,
+      floatNumberRegex,
+      QUOTES_FETCH_TIMEOUT,
+    );
     await app.swapLiveApp.tapGetQuotesButton();
     await app.swapLiveApp.waitForQuotes();
   }

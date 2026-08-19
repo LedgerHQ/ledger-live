@@ -9,6 +9,9 @@ import { floatNumberRegex } from "@ledgerhq/live-e2e-shared/data/regexes";
 // before the sign-permit button (Step 2) appears (the app shows a "1-5 mins" estimate).
 const APPROVAL_PROCESSING_TIMEOUT = 300_000;
 
+// Quotes resolve in under 10s; fail fast instead of inheriting the 60s default.
+export const QUOTES_FETCH_TIMEOUT = 15_000;
+
 // Provider UI names (e.g. "Swaps.xyz", "LI.FI") can contain regex metacharacters. Escape them
 // before embedding in a RegExp so they match literally instead of altering the pattern.
 const escapeRegExp = (value: string): string => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -18,6 +21,7 @@ const quoteNetValue = (quote: { rate: number; fees: number }) => quote.rate - qu
 
 export default class SwapLiveAppPage {
   private static readonly PROVIDER_NAME_PREFIX = "lumen-quote-card-provider-name-";
+  private static readonly PROVIDER_NAME_CSS = `[data-testid^='${SwapLiveAppPage.PROVIDER_NAME_PREFIX}']`;
 
   fromSelector = "from-account-coin-selector";
   fromAmount = "from-account";
@@ -26,7 +30,8 @@ export default class SwapLiveAppPage {
   toAmountInput = "to-account-amount-input";
   getQuotesButton = "mobile-get-quotes-button";
   quotesButtonDisabled = "mobile-get-quotes-button-disabled";
-  numberOfQuotes = "number-of-quotes";
+  // Mounts only once a quote exists. Replaces the removed "number-of-quotes" banner.
+  bestValueInfoIcon = "best-value-info-icon";
   quotesCountDown = "quotes-countdown";
   executeSwapButton = "execute-button";
   executeSwapButtonStepApproval = "execute-swap-button-step-approval";
@@ -125,13 +130,18 @@ export default class SwapLiveAppPage {
 
   @Step("Wait for quotes")
   async waitForQuotes() {
-    await waitWebElementByTestId(this.numberOfQuotes);
+    // The card is the real wait; the icon lands in the same render.
+    await waitWebElementByTestId(SwapLiveAppPage.PROVIDER_NAME_PREFIX, {
+      timeout: QUOTES_FETCH_TIMEOUT,
+    });
+    await waitWebElementByTestId(this.bestValueInfoIcon, { timeout: 5000 });
     await this.waitForQuotesStable();
   }
 
   @Step("verify quotes are displayed")
   async checkQuotes() {
-    await detoxExpect(getWebElementByTestId(this.numberOfQuotes)).toExist();
+    await waitWebElementByTestId(this.bestValueInfoIcon, { timeout: QUOTES_FETCH_TIMEOUT });
+    await detoxExpect(getWebElementByTestId(this.bestValueInfoIcon)).toExist();
   }
 
   @Step("Select available provider")
@@ -153,6 +163,7 @@ export default class SwapLiveAppPage {
     throw new Error("No single-app exchange providers found");
   }
 
+  // Bound by the 20s refresh cycle, not by quote fetch time.
   @Step("Wait for quotes countdown to be stable")
   async waitForQuotesStable(timeout: number = 20000) {
     await retryUntilTimeout(async () => {
@@ -205,31 +216,52 @@ export default class SwapLiveAppPage {
     );
   }
 
+  // Settled means the DOM matches the quotes held so far; a slow provider may still be missing.
   @Step("Get provider list")
   async getProviderList() {
-    await detoxExpect(getWebElementByTestId(this.numberOfQuotes)).toExist();
+    await detoxExpect(getWebElementByTestId(this.bestValueInfoIcon)).toExist();
     await detoxExpect(getWebElementByTestId(this.quotesCountDown)).toExist();
 
-    return await retryUntilTimeout(async () => {
-      const numberOfQuotesText = await getWebElementText(this.numberOfQuotes);
-      const providerList = await getWebElementsText(
-        this.swapMainContainerWebElement,
-        `[data-testid^='${SwapLiveAppPage.PROVIDER_NAME_PREFIX}']`,
-      );
+    // Outside the callback: retryUntilTimeout re-invokes the same fn.
+    let previousCount = -1;
 
-      // "N quotes found" is translated per language, so only the leading count is checked.
-      const displayedCount = Number.parseInt(numberOfQuotesText, 10);
-      if (Number.isNaN(displayedCount) || displayedCount !== providerList.length) {
-        throw new Error(
-          `Quote count mismatch: UI shows "${numberOfQuotesText}" but found ${providerList.length} cards`,
+    const providerList = await retryUntilTimeout(
+      async () => {
+        const names = await getWebElementsText(
+          this.swapMainContainerWebElement,
+          SwapLiveAppPage.PROVIDER_NAME_CSS,
         );
-      }
-      if (providerList.length === 0) {
-        throw new Error("No quote providers were returned");
-      }
+        const renderedCards = await countWebElements(
+          this.swapMainContainerWebElement,
+          SwapLiveAppPage.PROVIDER_NAME_CSS,
+        );
 
-      return providerList;
-    }, 30000);
+        if (renderedCards === 0) {
+          throw new Error("No quote providers were returned");
+        }
+        // A shortfall means a card whose display name has not resolved yet.
+        if (names.length !== renderedCards) {
+          throw new Error(
+            `${renderedCards - names.length} of ${renderedCards} quote card(s) still have an empty provider name`,
+          );
+        }
+        if (names.length !== previousCount) {
+          previousCount = names.length;
+          throw new Error(
+            `Quote list still growing (${names.length} cards); waiting for it to settle`,
+          );
+        }
+
+        return names;
+      },
+      QUOTES_FETCH_TIMEOUT,
+      1000,
+    );
+
+    // Last, so the caller gets the refresh window instead of the settle loop spending it.
+    await this.waitForQuotesStable();
+
+    return providerList;
   }
 
   @Step("Check error message: $0")
