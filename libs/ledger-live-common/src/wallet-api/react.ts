@@ -291,26 +291,28 @@ export type useWalletAPIServerOptions = {
 /**
  * Max parallel CAL token lookups in the `currency.list` handler.
  *
- * CAL exposes no bulk id endpoint — verified: `?id=a,b,c` returns an empty array with
- * no error and `?id=a&id=b` is rejected 400 — so a live app asking for hundreds of
+ * CAL exposes no bulk id endpoint - verified: `?id=a,b,c` returns an empty array with
+ * no error and `?id=a&id=b` is rejected 400 - so a live app asking for hundreds of
  * tokens means hundreds of requests. The Buy screen currently asks for 736 of them.
  *
- * The bound exists for correctness: unbounded, the connection pool is exhausted and a
- * large share of the lookups fail. A failed lookup returns null and is dropped silently
+ * The bound exists for correctness. Unbounded, the connection pool is exhausted and a
+ * large share of the lookups fail; a failed lookup returns null and is dropped silently
  * below, so unbounded fan-out yields a quietly incomplete currency list. Measured with
  * the real ids against the real CAL API: unbounded = 75.6s with 251 of 627 failing;
  * bounded = none failing.
  *
- * The value is set by latency, not by the pool. On an Android emulator each lookup
- * costs ~747ms (host network: ~90ms), so wall time is requests x latency / concurrency
- * and the bound is what decides whether the Buy screen renders before the caller gives
- * up: at 10 it measured 67.5s on-device, past the 60s the E2E waits. 25 keeps it near
- * ~22s while staying a small, well-behaved pool.
+ * It is NOT a way to make the call fast, and raising it makes things worse. Measured
+ * on an Android emulator with the same 624 lookups:
  *
- * Note the transport may impose its own per-host cap below this number, in which case
- * raising it further buys nothing. See QAA-1497.
+ *   bound 10 -> 67.5s, mean 747ms per request,  9.24 req/s
+ *   bound 25 -> 88.8s, mean 2369ms per request, 7.03 req/s
+ *
+ * The pipe is throughput-limited, not latency-limited: the extra concurrency bought
+ * nothing but queueing and cost 24% of the throughput. Whatever the ceiling is, more
+ * parallelism does not raise it. The only lever that moves this number is asking for
+ * fewer tokens - see QAA-1497.
  */
-export const TOKEN_LOOKUP_CONCURRENCY = 25;
+export const TOKEN_LOOKUP_CONCURRENCY = 10;
 
 export function useWalletAPIServer({
   accountNames,
