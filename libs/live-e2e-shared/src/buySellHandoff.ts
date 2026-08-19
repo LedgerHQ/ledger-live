@@ -42,55 +42,11 @@ const providerUrlConfigs: Record<
 
 const alphanumeric = (value: string) => value.toLowerCase().replace(/[^a-z0-9]/g, "");
 
-/**
- * Pulls the partner URL out of a handoff URL's `goToURL` param.
- *
- * Reads the param via `URLSearchParams` (which decodes exactly once) rather than a
- * regex, and tolerates a double-encoded value, which is otherwise indistinguishable
- * from a single-encoded one until you try to parse it. Throws with the raw handoff
- * URL attached, because a bare "Invalid URL" from `new URL()` says nothing about what
- * the app actually handed over.
- */
+/** Pulls the partner URL out of a handoff URL's `goToURL` param. */
 export function extractGoToUrl(rawHandoffUrl: string): string {
-  const fail = (why: string): never => {
-    throw new Error(`${why}\nHandoff URL was: ${rawHandoffUrl}`);
-  };
-
-  let handoff: URL;
-  try {
-    handoff = new URL(rawHandoffUrl);
-  } catch {
-    return fail("Handoff URL is not a valid URL");
-  }
-
-  // Param lookup is case-insensitive: the app has used both `goToURL` and `gotourl`.
-  const key = Array.from(handoff.searchParams.keys()).find(k => k.toLowerCase() === "gotourl");
-  if (!key) return fail("Missing 'goToURL' param in handoff URL");
-
-  const value = handoff.searchParams.get(key) ?? "";
-  if (!value) return fail("Empty 'goToURL' param in handoff URL");
-
-  if (isAbsoluteUrl(value)) return value;
-
-  // Double-encoded (`https%3A%2F%2F...` survives the first decode) - decode once more.
-  let decoded: string;
-  try {
-    decoded = decodeURIComponent(value);
-  } catch {
-    return fail(`'goToURL' is not a valid URL and cannot be decoded: ${value}`);
-  }
-  if (isAbsoluteUrl(decoded)) return decoded;
-
-  return fail(`'goToURL' is not an absolute URL: ${value}`);
-}
-
-function isAbsoluteUrl(value: string): boolean {
-  try {
-    const url = new URL(value);
-    return url.protocol === "http:" || url.protocol === "https:";
-  } catch {
-    return false;
-  }
+  const match = rawHandoffUrl.match(/gotourl=([^&]+)/i);
+  if (!match) throw new Error(`Missing 'goToURL' param in handoff URL:\n${rawHandoffUrl}`);
+  return decodeURIComponent(match[1]);
 }
 
 /** True when the partner URL identifies `provider` (punctuation-insensitive, alias-aware). */
