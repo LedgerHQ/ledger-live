@@ -11,12 +11,13 @@ import {
 import BigNumber from "bignumber.js";
 import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
 import getTransactionStatus from "./getTransactionStatus";
-import { ONE_SUI } from "../constants";
+import { mist, ONE_SUI } from "../constants";
 import {
   OneSuiMinForStake,
   OneSuiMinForUnstake,
   OneSuiMinForUnstakeToBeLeft,
   SuiStakeNotFound,
+  SuiUnstakeExceedsStake,
 } from "../errors";
 
 const account = createFixtureAccount();
@@ -221,8 +222,8 @@ describe("getTransactionStatus", () => {
       expect(result.errors.amount).toBeUndefined();
     });
 
-    // The QA case: 0.25 SUI out of a 1 SUI position. Both `split` asserts fail, and the remainder
-    // one is the more specific message.
+    // 0.25 SUI out of a 1 SUI position: both `split` asserts fail, and the remainder one is the
+    // more specific message.
     it("rejects an unstake that would leave less than 1 SUI in the position", async () => {
       const transaction = createFixtureTransaction({
         mode: "undelegate",
@@ -243,6 +244,59 @@ describe("getTransactionStatus", () => {
       const result = await getTransactionStatus(accountWithStake(String(3 * ONE_SUI)), transaction);
 
       expect(result.errors.amount).toEqual(new OneSuiMinForUnstake());
+    });
+
+    // `split` aborts `EInsufficientSuiTokenBalance` (3) on an overdraw, and the remainder rule
+    // below says nothing about one.
+    it("rejects an unstake larger than the position's principal", async () => {
+      const transaction = createFixtureTransaction({
+        mode: "undelegate",
+        stakedSuiId: STAKED_SUI_ID,
+        amount: BigNumber(mist(100000)),
+      });
+      const result = await getTransactionStatus(accountWithStake(mist(1.50657)), transaction);
+
+      expect(result.errors.amount).toEqual(new SuiUnstakeExceedsStake());
+    });
+
+    // Both halves must reach 1 SUI, so a position under 2 SUI cannot be split at all: an amount
+    // above the minimum is still rejected, and a full withdrawal is the only legal move.
+    it("rejects a partial unstake above 1 SUI that leaves an unstakeable remainder", async () => {
+      const transaction = createFixtureTransaction({
+        mode: "undelegate",
+        stakedSuiId: STAKED_SUI_ID,
+        amount: BigNumber(mist(1.12993137)),
+      });
+      const result = await getTransactionStatus(accountWithStake(mist(1.50657)), transaction);
+
+      expect(result.errors.amount).toEqual(new OneSuiMinForUnstakeToBeLeft());
+    });
+
+    // Mobile sets `useAllAmount` only on Continue (`02-SelectAmount.tsx`), so the exact max typed
+    // into the field reaches this status with the flag still false and must not trip the
+    // remainder rule.
+    it("accepts the exact principal before the flow marks it a full withdrawal", async () => {
+      const transaction = createFixtureTransaction({
+        mode: "undelegate",
+        stakedSuiId: STAKED_SUI_ID,
+        amount: BigNumber(mist(1.50657)),
+        useAllAmount: false,
+      });
+      const result = await getTransactionStatus(accountWithStake(mist(1.50657)), transaction);
+
+      expect(result.errors.amount).toBeUndefined();
+    });
+
+    it("accepts the same position withdrawn in full", async () => {
+      const transaction = createFixtureTransaction({
+        mode: "undelegate",
+        stakedSuiId: STAKED_SUI_ID,
+        amount: BigNumber(mist(1.50657)),
+        useAllAmount: true,
+      });
+      const result = await getTransactionStatus(accountWithStake(mist(1.50657)), transaction);
+
+      expect(result.errors.amount).toBeUndefined();
     });
 
     it("accepts a partial unstake leaving at least 1 SUI on both sides", async () => {
