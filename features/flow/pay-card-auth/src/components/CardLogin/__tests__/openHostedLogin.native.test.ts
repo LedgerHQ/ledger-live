@@ -34,8 +34,10 @@ describe("openHostedLoginInSecureBrowser", () => {
     });
   });
 
-  // The whole non-success half of `WebBrowserAuthSessionResult`. `opened` is the Android answer, and
-  // there the deep link carries the redirect instead.
+  // The whole non-success half of `WebBrowserAuthSessionResult`. `openAuthSessionAsync` never answers
+  // `opened`: Android races the deep link against a browser wait, and the Android polyfill turns that
+  // internal `opened` into the wait itself, then answers `dismiss`. The type still permits the value,
+  // because `WebBrowserResult` also serves `openBrowserAsync`, so the mapping covers it.
   it.each(["cancel", "dismiss", "opened", "locked"] as const)(
     "should report a dismissal when the session ends with %s",
     async type => {
