@@ -520,25 +520,20 @@ export const getInternalOperations = async (
   }
 
   // Some explorers (e.g. Monad Testnet) return null instead of [] for empty results.
-  // Some proxies (e.g. Cronos) do not expose txlistinternal and return a 4xx — treat as empty.
-  let rawOps: EtherscanInternalTransaction[] | null = null;
-  try {
-    rawOps = await fetchWithRetries<EtherscanInternalTransaction[] | null>({
-      method: "GET",
-      url: `${explorer.uri}?module=account&action=txlistinternal&address=${params.address}`,
-      params: paginationParams(params),
-    });
-  } catch (e) {
-    // Some blockscout proxies (e.g. Cronos) do not expose txlistinternal.
-    // HTTP 404/405 unambiguously mean "route not supported here"; re-throw
-    // everything else (auth failures, rate-limits, bad params, …).
-    const err = e as { name?: string; status?: number };
-    if (err?.name === "LedgerAPI4xx" && [404, 405].includes(err.status ?? 0)) {
-      return EMPTY_RESULT;
-    }
-    throw e;
-  }
-  const ops = (rawOps ?? []).map(fixTxHash);
+  // Cronos proxies enforce a ~10 000-block range limit on txlistinternal
+  // but special-case startblock=0 (no lower bound). Any positive startblock combined with
+  // the current tip exceeds the limit.
+  const { toBlock: _toBlock, ...paramsWithoutToBlock } = params;
+  const queryParams =
+    explorer.type === "cronos"
+      ? paginationParams({ ...paramsWithoutToBlock, fromBlock: 0 })
+      : paginationParams(params);
+
+  const ops = await fetchWithRetries<EtherscanInternalTransaction[] | null>({
+    method: "GET",
+    url: `${explorer.uri}?module=account&action=txlistinternal&address=${params.address}`,
+    params: queryParams,
+  }).then(ops => (ops ?? []).map(fixTxHash));
 
   // Why this thing ?
   // Multiple internal transactions can be executed from

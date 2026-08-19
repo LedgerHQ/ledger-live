@@ -33,7 +33,7 @@ export type EvmConfig = {
       };
   explorer:
     | {
-        type: "etherscan" | "blockscout" | "teloscan" | "klaytnfinder" | "corescan";
+        type: "etherscan" | "blockscout" | "teloscan" | "klaytnfinder" | "corescan" | "cronos";
         noCache?: boolean | undefined;
         /**
          * Optional cap applied to the requested operation `limit` before the internal `limit + 1` probe.
