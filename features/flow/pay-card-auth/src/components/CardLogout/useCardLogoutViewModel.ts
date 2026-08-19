@@ -79,9 +79,10 @@ export function useCardLogoutViewModel(): CardLogoutViewModel {
 
   const onLogoutPress = useCallback(() => {
     setIsLoading(true);
-    // Nothing lowers the flag again: `runLogout` always ends the session, so this component leaves the
-    // screen either way, and a state write after that would land on nothing.
-    void runLogout(ports);
+    // Lowered again when the logout settles. The caller renders this component at all times and only
+    // its answer turns null, so the component never unmounts and nothing else clears the flag. Left
+    // raised, the next login would show a button stuck loading. `runLogout` never rejects.
+    void runLogout(ports).finally(() => setIsLoading(false));
   }, [ports]);
 
   return mapUserToViewModel(isSignedIn, user, isLoading, onLogoutPress);
