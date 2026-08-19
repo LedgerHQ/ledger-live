@@ -244,7 +244,12 @@ env:
   AVD_CORES: 2
   AVD_RAM_SIZE: 3072
   AVD_HEAP_SIZE: 1024
-  AVD_OPTIONS: -no-window -gpu swiftshader_indirect -accel on -no-audio -no-boot-anim -camera-back none -camera-front none -no-metrics
+  # EXPERIMENT (QAA-1497): -gpu guest. Disabling Vulkan alone took real device deaths
+  # from 6 to 1 across three shards, so the crash is in the graphics path - but one
+  # SIGSEGV survived, and under swiftshader_indirect the GL renderer is still host-side
+  # SwiftShader living inside the qemu process. -gpu guest moves rendering into the
+  # guest entirely, so no host graphics code runs in the process that is segfaulting.
+  AVD_OPTIONS: -no-window -gpu guest -accel on -no-audio -no-boot-anim -camera-back none -camera-front none -no-metrics
   MOBILE_ARTIFACTS_ROOT: e2e/mobile/artifacts
   E2E_TEST_RESULTS_PREFIX_IOS: e2e-test-results-ios
   E2E_TEST_RESULTS_PREFIX_ANDROID: e2e-test-results-android
