@@ -1,13 +1,27 @@
 import type { InstalledItem } from "@ledgerhq/live-common/apps/types";
+import type { DeviceInfo } from "@ledgerhq/types-live";
 
 export type InstalledAppsResolution =
   | { type: "ready"; installed: readonly InstalledItem[] }
   | { type: "needsListing" };
 
+type FirmwareUpdateListingDeviceInfo = Pick<DeviceInfo, "onboarded" | "isRecoveryMode">;
+
+function canListInstalledAppsForFirmwareUpdate(
+  deviceInfo?: FirmwareUpdateListingDeviceInfo | null,
+): boolean {
+  if (!deviceInfo) return true;
+  return Boolean(deviceInfo.onboarded || deviceInfo.isRecoveryMode);
+}
+
 export function resolveInstalledAppsForFirmwareUpdate(
   cachedInstalled: readonly InstalledItem[],
   listedInstalled: readonly InstalledItem[] | undefined,
+  deviceInfo?: FirmwareUpdateListingDeviceInfo | null,
 ): InstalledAppsResolution {
+  if (!canListInstalledAppsForFirmwareUpdate(deviceInfo)) {
+    return { type: "ready", installed: [] };
+  }
   if (cachedInstalled.length > 0) {
     return { type: "ready", installed: cachedInstalled };
   }
