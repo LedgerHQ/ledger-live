@@ -8,6 +8,7 @@ export * from "./utils/upsellContent";
 export * from "./utils/mapDevicesModelListToUpsellInputs";
 export * from "./utils/getNanoOnlyDeviceModel";
 export * from "./utils/isNanoSOnlyWallet";
+export * from "./utils/isLargeScreenUpsellBannerEnabled";
 export { LARGE_SCREEN_UPSELL_IMAGES } from "./assets";
 export { LargeScreenUpsellModal } from "./screens/LargeScreenUpsellModal";
 export { LargeScreenUpsellModalView } from "./screens/LargeScreenUpsellModal/LargeScreenUpsellModalView.web";

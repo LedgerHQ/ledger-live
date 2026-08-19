@@ -1,6 +1,7 @@
 import React from "react";
 import { Route, Routes } from "react-router";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import { FEATURE_FLAGS_DEFAULTS } from "@shared/feature-flags";
 import { render, screen, waitFor, withFlagOverrides } from "tests/testSetup";
 import { isModalOpened } from "~/renderer/reducers/modals";
 import { track } from "~/renderer/analytics/segment";
@@ -13,6 +14,8 @@ import {
   RECOVER_TRIGGER_DISMISS_BUTTON,
   RECOVER_TRIGGER_PAGE_NAME,
 } from "../analytics";
+
+const defaultParams = FEATURE_FLAGS_DEFAULTS.largeScreenUpsell.params;
 
 // `~/renderer/linking` `openURL`: Learn more opens the shop URL.
 // Tests assert the argument. No browser.
@@ -33,12 +36,16 @@ function renderRecoverLns({
   openRecoverFromSidebar = true,
   recoverEnabled = true,
   backupHub = false,
+  upsellEnabled = true,
+  recoverPageBlockNanoSOnly = true,
   initialRoute,
 }: {
   devicesModelList: DeviceModelId[];
   openRecoverFromSidebar?: boolean;
   recoverEnabled?: boolean;
   backupHub?: boolean;
+  upsellEnabled?: boolean;
+  recoverPageBlockNanoSOnly?: boolean;
   initialRoute?: string;
 }) {
   function RecoverLnsApp() {
@@ -69,6 +76,10 @@ function renderRecoverLns({
     );
   }
 
+  if (!defaultParams) {
+    throw new Error("Expected large-screen upsell default params");
+  }
+
   return render(<RecoverLnsApp />, {
     ...(initialRoute ? { initialRoute } : {}),
     initialState: {
@@ -79,6 +90,16 @@ function renderRecoverLns({
             protectId: "protect-id",
             openRecoverFromSidebar,
             account: { homeURI: "ledgerlive://recover/protect-id" },
+          },
+        },
+        largeScreenUpsell: {
+          enabled: upsellEnabled,
+          params: {
+            ...defaultParams,
+            banners: {
+              ...defaultParams.banners,
+              "recover-page-block-nano-s-only": recoverPageBlockNanoSOnly,
+            },
           },
         },
         ...(backupHub ? { lwdBackupHub: { enabled: true } } : {}),
@@ -196,6 +217,42 @@ describe("Recover LNS block", () => {
 
     expect(screen.getByText("recover player")).toBeVisible();
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+  });
+
+  it("should mount Recover when recover-page-block-nano-s-only is off", () => {
+    renderRecoverLns({
+      devicesModelList: [DeviceModelId.nanoS],
+      recoverPageBlockNanoSOnly: false,
+      initialRoute: "/recover/protect-id",
+    });
+
+    expect(screen.getByText("recover player")).toBeVisible();
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+  });
+
+  it("should mount Recover when the large-screen upsell campaign is off", () => {
+    renderRecoverLns({
+      devicesModelList: [DeviceModelId.nanoS],
+      upsellEnabled: false,
+      initialRoute: "/recover/protect-id",
+    });
+
+    expect(screen.getByText("recover player")).toBeVisible();
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+  });
+
+  it("should mount Recover when recover-page-block-nano-s-only is off and the Live App path is off", async () => {
+    const { user, store } = renderRecoverLns({
+      devicesModelList: [DeviceModelId.nanoS],
+      recoverPageBlockNanoSOnly: false,
+      openRecoverFromSidebar: false,
+    });
+
+    await user.click(screen.getByRole("button", { name: "Open Recover" }));
+
+    await waitFor(() => expect(screen.getByText("recover player")).toBeVisible());
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(isModalOpened(store.getState(), "MODAL_PROTECT_DISCOVER")).toBe(false);
   });
 
   it("should send a nanoS-only wallet to the Recover route instead of Protect Discover", async () => {

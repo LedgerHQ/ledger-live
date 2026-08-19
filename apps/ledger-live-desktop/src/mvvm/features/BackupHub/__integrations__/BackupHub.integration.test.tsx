@@ -1,5 +1,6 @@
 import React from "react";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import { FEATURE_FLAGS_DEFAULTS } from "@shared/feature-flags";
 import {
   LARGE_SCREEN_UPSELL_BACKUPS_UTM_CONTENT,
   LARGE_SCREEN_UPSELL_UTM_CAMPAIGN,
@@ -59,6 +60,7 @@ const backupHubState = withFlagOverrides({
     params: { protectId: PROTECT_ID, openRecoverFromSidebar: true },
   },
   lwdBackupHub: { enabled: true },
+  largeScreenUpsell: { enabled: true },
 });
 
 const NANO_UPSELL_DEVICE_MODEL = {
@@ -254,6 +256,62 @@ describe("BackupHub", () => {
 
   it("keeps the Recovery Key row unchanged when a large-screen device is known", async () => {
     await openHubWithDevices([DeviceModelId.nanoS, DeviceModelId.stax]);
+
+    expect(screen.getByText("A PIN-protected smart card.")).toBeVisible();
+    expect(screen.queryByText("Not compatible with your device")).not.toBeInTheDocument();
+  });
+
+  it("keeps the Recovery Key row unchanged when backup-hub-recovery-key-text-warning is off", async () => {
+    const defaultParams = FEATURE_FLAGS_DEFAULTS.largeScreenUpsell.params;
+    if (!defaultParams) {
+      throw new Error("Expected large-screen upsell default params");
+    }
+
+    const utils = render(<ContextMenu />, {
+      initialState: withFlagOverrides({
+        protectServicesDesktop: {
+          enabled: true,
+          params: { protectId: PROTECT_ID, openRecoverFromSidebar: true },
+        },
+        lwdBackupHub: { enabled: true },
+        largeScreenUpsell: {
+          enabled: true,
+          params: {
+            ...defaultParams,
+            banners: {
+              ...defaultParams.banners,
+              "backup-hub-recovery-key-text-warning": false,
+            },
+          },
+        },
+      }),
+    });
+    utils.store.dispatch(addNewDeviceModel({ deviceModelId: DeviceModelId.nanoS }));
+
+    await utils.user.click(screen.getByRole("button", { name: "My Wallet" }));
+    await utils.user.click(await screen.findByTestId("my-wallet-action-recover"));
+    await screen.findByTestId("backup-hub");
+
+    expect(screen.getByText("A PIN-protected smart card.")).toBeVisible();
+    expect(screen.queryByText("Not compatible with your device")).not.toBeInTheDocument();
+  });
+
+  it("keeps the Recovery Key row unchanged when the large-screen upsell campaign is off", async () => {
+    const utils = render(<ContextMenu />, {
+      initialState: withFlagOverrides({
+        protectServicesDesktop: {
+          enabled: true,
+          params: { protectId: PROTECT_ID, openRecoverFromSidebar: true },
+        },
+        lwdBackupHub: { enabled: true },
+        largeScreenUpsell: { enabled: false },
+      }),
+    });
+    utils.store.dispatch(addNewDeviceModel({ deviceModelId: DeviceModelId.nanoS }));
+
+    await utils.user.click(screen.getByRole("button", { name: "My Wallet" }));
+    await utils.user.click(await screen.findByTestId("my-wallet-action-recover"));
+    await screen.findByTestId("backup-hub");
 
     expect(screen.getByText("A PIN-protected smart card.")).toBeVisible();
     expect(screen.queryByText("Not compatible with your device")).not.toBeInTheDocument();
