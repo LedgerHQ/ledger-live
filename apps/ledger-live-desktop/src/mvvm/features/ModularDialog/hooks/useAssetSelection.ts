@@ -2,6 +2,8 @@ import { useMemo } from "react";
 import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { useAcceptedCurrency } from "@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency";
 import type { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
+import { useSelector } from "LLD/hooks/redux";
+import { modularDialogFlowSelector } from "~/renderer/reducers/modularDialog";
 
 function getNetworkId(currency: CryptoOrTokenCurrency): string {
   return currency.type === "CryptoCurrency" ? currency.id : currency.parentCurrencyId;
@@ -12,10 +14,11 @@ export function useAssetSelection(
   assetsSorted: AssetData[] | undefined = [],
   selectableNetworkIds: readonly string[] | undefined = undefined,
 ) {
-  const isAcceptedCurrency = useAcceptedCurrency();
+  const flow = useSelector(modularDialogFlowSelector);
+  const isAcceptedCurrency = useAcceptedCurrency({ flow });
 
   const assetsToDisplay = useMemo(
-    () => sortedCryptoCurrencies.filter(isAcceptedCurrency),
+    () => sortedCryptoCurrencies.filter(currency => isAcceptedCurrency(currency)),
     [sortedCryptoCurrencies, isAcceptedCurrency],
   );
   const disabledAssetIds = useMemo(() => {

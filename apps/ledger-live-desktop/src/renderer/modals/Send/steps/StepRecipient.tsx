@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { useAccountBridgeOrNull } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { Trans } from "react-i18next";
-import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { getMainAccount, isSendDisabledForFamily } from "@ledgerhq/live-common/account/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
@@ -254,7 +254,7 @@ export const DefaultStepRecipient = ({
   const accountFilter = useMemo(
     () => (acc: Account) => {
       const family = acc.currency.family;
-      return !isEnabledForFamily(family, acc.currency.id);
+      return !isSendDisabledForFamily(family) && !isEnabledForFamily(family, acc.currency.id);
     },
     [isEnabledForFamily],
   );
