@@ -1,0 +1,457 @@
+/**
+ * Transport-neutral staking maths and Move-JSON shapes.
+ *
+ * Lifted out of `graphql/utils.ts` so the gRPC arm can reuse the audited reward/APY logic without
+ * importing from `graphql/` — which disappears when GraphQL is retired. Everything here operates on
+ * the Move JSON of `SuiSystemStateInner` / `StakedSui`, which every transport can produce, so no
+ * transport *client* is reachable from this module.
+ *
+ * `DelegatedStake` / `StakeObject` are type-only imports from `@mysten/sui/jsonRpc`: they name the
+ * legacy staking shapes our public API returns on every transport. Retiring JSON-RPC re-homes those
+ * two type names; nothing here changes.
+ */
+import { log } from "@ledgerhq/logs";
+import type { DelegatedStake, StakeObject } from "@mysten/sui/jsonRpc";
+import type { SuiValidatorSummary } from "../types";
+
+/**
+ * Transport that produced the data, used only to build telemetry keys.
+ *
+ * Keys stay per transport (`sui-graphql:…` / `sui-grpc:…`) rather than one key with a tag: the
+ * GraphQL keys ship today, so collapsing them would silently rename a live key.
+ */
+export type TelemetryTransport = "graphql" | "grpc";
+
+const telemetryKey = (transport: TelemetryTransport, event: string): string =>
+  `sui-${transport}:${event}`;
+
+/** Epochs of exchange-rate history used to derive validator APY. */
+export const APY_LOOKBACK_EPOCHS = 30;
+
+/** Subset of `0x3::staking_pool::StakedSui` Move struct fields we read. */
+export type StakedSuiJson = {
+  id: string;
+  pool_id: string;
+  stake_activation_epoch: string | number;
+  principal: string | number;
+};
+
+type ValidatorMetadataJson = {
+  sui_address: string;
+  name: string;
+  description: string;
+  image_url: string;
+  project_url: string;
+};
+
+type StakingPoolJson = {
+  id: string;
+  activation_epoch: string | number | null;
+  sui_balance: string | number;
+  pool_token_balance: string | number;
+  exchange_rates: { id: string };
+};
+
+type ValidatorJson = {
+  metadata: ValidatorMetadataJson;
+  staking_pool: StakingPoolJson;
+  commission_rate: string | number;
+};
+
+/** Narrowed to fields the mapper + drift guards + `poolRefsFromSystemState` actually read. */
+export type SuiSystemStateInnerJson = {
+  epoch: string | number;
+  validators: { active_validators: ValidatorJson[] };
+};
+
+// ----- Runtime guards -----------------------------------------------------
+
+function ensureObject(x: unknown, name: string): Record<string, unknown> {
+  if (typeof x !== "object" || x === null) {
+    throw new Error(`${name} is not an object — the node's Move JSON may have drifted.`);
+  }
+  return x as Record<string, unknown>;
+}
+
+/**
+ * Drift guard at the Move-JSON boundary — checks the top-level
+ * shape and the `active_validators` array we iterate. Throws with a
+ * descriptive error rather than letting `undefined` propagate into the
+ * field mappers. Deep validation isn't worthwhile: per-field mappers
+ * will fail loudly on missing nested fields anyway.
+ */
+export function assertSystemStateJson(x: unknown): asserts x is SuiSystemStateInnerJson {
+  const root = ensureObject(x, "SuiSystemState payload");
+  const validators = ensureObject(root.validators, "SuiSystemState.validators");
+  if (!Array.isArray(validators.active_validators)) {
+    throw new TypeError(
+      "SuiSystemState.validators.active_validators is not an array — the node's Move JSON may have drifted.",
+    );
+  }
+}
+
+/**
+ * Move u64 wire form (number or base-10 integer string); rejects anything BigInt() can't parse.
+ *
+ * Integers above `Number.MAX_SAFE_INTEGER` pass deliberately. Sui renders Move u64 as a string
+ * because the range exceeds a double (see `grpc/struct.ts`), so the number branch sees only small
+ * values like epochs. Were an unsafe integer to arrive, `JSON.parse` has already rounded it — no
+ * check here recovers the digit, and rejecting would drop the entry (a stake vanishing from the
+ * list, or an APY reading 0) to avoid a ~1e-16 error: 1 mist in 9M SUI.
+ */
+export function isU64Numeric(v: unknown): boolean {
+  if (typeof v === "number") return Number.isInteger(v) && v >= 0;
+  if (typeof v === "string") return /^\d+$/.test(v);
+  return false;
+}
+
+/**
+ * Predicate (not throw) so the caller can skip a malformed entry without tanking the whole stake
+ * list. Each transport arm counts the skips and logs them at its own boundary.
+ */
+export function isStakedSuiJson(x: unknown): x is StakedSuiJson {
+  if (typeof x !== "object" || x === null) return false;
+  const obj = x as Record<string, unknown>;
+  return (
+    typeof obj.id === "string" &&
+    typeof obj.pool_id === "string" &&
+    isU64Numeric(obj.principal) &&
+    isU64Numeric(obj.stake_activation_epoch)
+  );
+}
+
+// ----- Helpers ------------------------------------------------------------
+
+/** Stringify a Move u64 wire value; nullish → `""`. */
+const str = (v: string | number | null | undefined): string => {
+  if (v === null || v === undefined) return "";
+  return typeof v === "number" ? String(v) : v;
+};
+
+function validatorJsonToSummary(v: ValidatorJson): SuiValidatorSummary {
+  const m = v.metadata;
+  return {
+    suiAddress: m.sui_address,
+    name: m.name,
+    description: m.description,
+    imageUrl: m.image_url,
+    projectUrl: m.project_url,
+    stakingPoolId: v.staking_pool.id,
+    stakingPoolSuiBalance: str(v.staking_pool.sui_balance),
+    commissionRate: str(v.commission_rate),
+  };
+}
+
+/** Active-validators array + pool_id → validator_address map for stake grouping. */
+export function fromSystemStateJson(state: SuiSystemStateInnerJson): {
+  activeValidators: SuiValidatorSummary[];
+  poolToValidator: Map<string, string>;
+} {
+  const activeValidators = state.validators.active_validators.map(validatorJsonToSummary);
+  const poolToValidator = new Map<string, string>();
+  for (const v of state.validators.active_validators) {
+    poolToValidator.set(v.staking_pool.id, v.metadata.sui_address);
+  }
+  return { activeValidators, poolToValidator };
+}
+
+// ----- StakedSui[] → DelegatedStake[] -------------------------------------
+
+/** Sentinel for stakes whose `pool_id` isn't in the active set; exported for caller equality checks. */
+export const UNKNOWN_VALIDATOR = "<unknown>";
+
+/**
+ * Group StakedSui JSON objects into `DelegatedStake[]` — one entry per
+ * (validator, pool). `rewards` is optional: Active stakes whose entry
+ * is missing fall back to `"0"`, so a partial exchange-rate failure
+ * degrades gracefully.
+ */
+export function groupStakedSuiByPool(
+  items: StakedSuiJson[],
+  epoch: string | number,
+  pools: Map<string, string>,
+  transport: TelemetryTransport,
+  rewards?: Map<string, bigint>,
+): DelegatedStake[] {
+  const currentEpoch = BigInt(epoch);
+  const byPool = new Map<string, DelegatedStake>();
+  // One warn per orphan pool per call: a removed-mid-epoch pool can shadow
+  // hundreds of stakes; deduping keeps the log line useful for triage.
+  const warnedOrphans = new Set<string>();
+
+  for (const item of items) {
+    const stakeActiveEpoch = BigInt(item.stake_activation_epoch);
+    // JSON-RPC convention: requestEpoch = activeEpoch − 1.
+    const base = {
+      stakedSuiId: item.id,
+      stakeRequestEpoch: (stakeActiveEpoch - 1n).toString(),
+      stakeActiveEpoch: str(item.stake_activation_epoch),
+      principal: str(item.principal),
+    };
+    const reward = rewards?.get(item.id);
+    const stake: StakeObject =
+      stakeActiveEpoch > currentEpoch
+        ? { ...base, status: "Pending" }
+        : {
+            ...base,
+            status: "Active",
+            estimatedReward: reward?.toString() ?? "0",
+          };
+
+    let group = byPool.get(item.pool_id);
+    if (!group) {
+      const validatorAddress = pools.get(item.pool_id);
+      if (validatorAddress === undefined && !warnedOrphans.has(item.pool_id)) {
+        warnedOrphans.add(item.pool_id);
+        log("warn", telemetryKey(transport, "orphan-pool"), {
+          poolId: item.pool_id,
+          firstStakeId: item.id,
+        });
+      }
+      group = {
+        validatorAddress: validatorAddress ?? UNKNOWN_VALIDATOR,
+        stakingPool: item.pool_id,
+        stakes: [],
+      };
+      byPool.set(item.pool_id, group);
+    }
+    group.stakes.push(stake);
+  }
+
+  return Array.from(byPool.values());
+}
+
+// ----- Pool exchange-rate math --------------------------------------------
+
+export type ExchangeRate = {
+  sui_amount: string | number;
+  pool_token_amount: string | number;
+};
+
+/**
+ * Unrealised reward for an Active stake (pool-token model):
+ *   tokens = principal × pt_a / sui_a
+ *   value  = tokens × sui_c / pt_c
+ *   reward = max(0, value − principal)
+ * Clamp at 0 absorbs integer-division rounding for very-recent stakes.
+ */
+export function computeEstimatedReward(
+  principal: string | number | bigint,
+  activationRate: ExchangeRate,
+  currentRate: ExchangeRate,
+): bigint {
+  const p = typeof principal === "bigint" ? principal : BigInt(principal);
+  const sui_a = BigInt(activationRate.sui_amount);
+  const pt_a = BigInt(activationRate.pool_token_amount);
+  const sui_c = BigInt(currentRate.sui_amount);
+  const pt_c = BigInt(currentRate.pool_token_amount);
+  if (sui_a === 0n || pt_c === 0n) return 0n;
+  const tokens = (p * pt_a) / sui_a;
+  const currentValue = (tokens * sui_c) / pt_c;
+  return currentValue > p ? currentValue - p : 0n;
+}
+
+/**
+ * APY mirroring Mysten's `getValidatorsApy`:
+ *   APY = (cur_ratio / past_ratio) ^ (epochsPerYear / epochsBetween) − 1
+ * SUI epochs ~24h → `epochsPerYear ≈ 365`. Returns 0 for degenerate inputs (zero division,
+ * non-positive growth window). Precision is safe for the SUI rate range; see inline note below.
+ */
+export function computeApy(
+  currentRate: ExchangeRate,
+  pastRate: ExchangeRate,
+  epochsBetween: number,
+  epochsPerYear = 365,
+): number {
+  if (epochsBetween <= 0) return 0;
+  const past_sui = BigInt(pastRate.sui_amount);
+  const past_pt = BigInt(pastRate.pool_token_amount);
+  const cur_sui = BigInt(currentRate.sui_amount);
+  const cur_pt = BigInt(currentRate.pool_token_amount);
+  if (past_sui === 0n || past_pt === 0n || cur_pt === 0n) return 0;
+  // Bigint division throughout, with `RATIO_SCALE=10^9` retained on the
+  // ratio numerator so the bigint→Number step lands at ~10^9 (well under
+  // 2^53) instead of ~10^18 where pool-token magnitudes lose precision.
+  const SCALE = 10n ** 18n;
+  const pastRatioScaled = (past_sui * SCALE) / past_pt;
+  const curRatioScaled = (cur_sui * SCALE) / cur_pt;
+  if (pastRatioScaled === 0n) return 0;
+  const RATIO_SCALE = 10n ** 9n;
+  const ratioScaled = (curRatioScaled * RATIO_SCALE) / pastRatioScaled;
+  const ratio = Number(ratioScaled) / Number(RATIO_SCALE);
+  if (!Number.isFinite(ratio) || ratio <= 0) return 0;
+  const perEpoch = Math.pow(ratio, 1 / epochsBetween);
+  const apy = Math.pow(perEpoch, epochsPerYear) - 1;
+  return Number.isFinite(apy) ? Math.max(apy, 0) : 0;
+}
+
+// ----- Pool current-rate map for stake reward + APY -----------------------
+
+/**
+ * Pool data for client-side APY + reward: the rates-table id, the
+ * current rate (read inline from system state), and the pool's
+ * activation epoch (fallback past epoch for young pools).
+ */
+export type PoolRefs = {
+  exchangeRatesId: string;
+  currentRate: ExchangeRate;
+  activationEpoch: number;
+};
+
+/**
+ * `pool_id → PoolRefs` from system-state. The current rate is
+ * `staking_pool.{sui_balance, pool_token_balance}` — already in the
+ * payload, no extra query.
+ */
+export function poolRefsFromSystemState(state: SuiSystemStateInnerJson): Map<string, PoolRefs> {
+  const out = new Map<string, PoolRefs>();
+  for (const v of state.validators.active_validators) {
+    const p = v.staking_pool;
+    out.set(p.id, {
+      exchangeRatesId: p.exchange_rates.id,
+      currentRate: {
+        sui_amount: p.sui_balance,
+        pool_token_amount: p.pool_token_balance,
+      },
+      activationEpoch: Number(p.activation_epoch ?? 0),
+    });
+  }
+  return out;
+}
+
+// ----- Pipeline helpers (shared by every transport arm) --------------------
+
+export type RatePlan = {
+  stakedSuiId: string;
+  principal: string | number;
+  poolId: string;
+  activationEpoch: string | number;
+};
+
+export type StakeRatePlans = {
+  activeStakes: RatePlan[];
+  /** Deduped (table, epoch) lookups; index aligns with the rate-fetch output. */
+  wantedEntries: Array<{ key: string; table: string; epoch: string | number }>;
+};
+
+/** Composite key for the activation-epoch rate cache. */
+const rateKey = (table: string, epoch: string | number): string => `${table}@${epoch}`;
+
+/**
+ * Derive (a) the per-stake activation-rate plan and (b) deduped
+ * (table, epoch) lookups. Orphan pools (not in the active set) are
+ * excluded — their rewards stay `"0"`.
+ */
+export function planActivationRateLookups(
+  items: ReadonlyArray<StakedSuiJson>,
+  currentEpoch: bigint,
+  poolRefs: Map<string, PoolRefs>,
+): StakeRatePlans {
+  const activeStakes: RatePlan[] = items
+    .filter(it => BigInt(it.stake_activation_epoch) <= currentEpoch)
+    .map(it => ({
+      stakedSuiId: it.id,
+      principal: it.principal,
+      poolId: it.pool_id,
+      activationEpoch: it.stake_activation_epoch,
+    }));
+  const wanted = new Map<string, { key: string; table: string; epoch: string | number }>();
+  for (const plan of activeStakes) {
+    const refs = poolRefs.get(plan.poolId);
+    if (!refs) continue;
+    const key = rateKey(refs.exchangeRatesId, plan.activationEpoch);
+    if (!wanted.has(key)) {
+      wanted.set(key, { key, table: refs.exchangeRatesId, epoch: plan.activationEpoch });
+    }
+  }
+  return { activeStakes, wantedEntries: Array.from(wanted.values()) };
+}
+
+/** Apply the pool-token model to each Active stake; orphans skip silently. */
+export function computeStakeRewards(
+  activeStakes: ReadonlyArray<RatePlan>,
+  poolRefs: Map<string, PoolRefs>,
+  rates: Map<string, ExchangeRate | null>,
+): Map<string, bigint> {
+  const rewards = new Map<string, bigint>();
+  for (const plan of activeStakes) {
+    const refs = poolRefs.get(plan.poolId);
+    if (!refs) continue;
+    const activationRate = rates.get(rateKey(refs.exchangeRatesId, plan.activationEpoch));
+    if (!activationRate) continue;
+    rewards.set(
+      plan.stakedSuiId,
+      computeEstimatedReward(plan.principal, activationRate, refs.currentRate),
+    );
+  }
+  return rewards;
+}
+
+// ----- Validator APY planning (shared by every transport arm) --------------
+
+export type ApyPlan = {
+  suiAddress: string;
+  exchangeRatesId: string;
+  currentRate: ExchangeRate;
+  pastEpoch: number;
+};
+
+/** One historical-rate plan per active validator with a known pool; orphans are skipped. */
+export function planValidatorApyLookups(
+  poolRefs: Map<string, PoolRefs>,
+  poolToValidator: Map<string, string>,
+  currentEpoch: number,
+): ApyPlan[] {
+  const plans: ApyPlan[] = [];
+  for (const [stakingPoolId, refs] of poolRefs) {
+    const suiAddress = poolToValidator.get(stakingPoolId);
+    if (!suiAddress) continue;
+    // 30-epoch lookback; clamp to activation epoch for young pools.
+    const desired = currentEpoch - APY_LOOKBACK_EPOCHS;
+    const pastEpoch = Math.max(desired, refs.activationEpoch);
+    plans.push({
+      suiAddress,
+      exchangeRatesId: refs.exchangeRatesId,
+      currentRate: refs.currentRate,
+      pastEpoch,
+    });
+  }
+  return plans;
+}
+
+/**
+ * Missing/failed rates degrade to apy=0; aggregate degradation surfaces via telemetry.
+ *
+ * On gRPC this is the only place degradation is reported, so the key has to name the backend that
+ * degraded — the comparison the transport rollout exists to make. See {@link TelemetryTransport}.
+ */
+export function applyValidatorApy(
+  plans: ReadonlyArray<ApyPlan>,
+  rates: ReadonlyArray<ExchangeRate | null>,
+  currentEpoch: number,
+  chunksFailed: number,
+  transport: TelemetryTransport,
+  firstError?: string,
+): Map<string, number> {
+  const apyByAddress = new Map<string, number>();
+  let rateMissing = 0;
+  plans.forEach((p, idx) => {
+    const rate = rates[idx];
+    if (rate === null || rate === undefined) {
+      rateMissing++;
+      return; // degrade to 0
+    }
+    const epochsBetween = currentEpoch - p.pastEpoch;
+    apyByAddress.set(p.suiAddress, computeApy(p.currentRate, rate, epochsBetween));
+  });
+  if (rateMissing > 0 || chunksFailed > 0) {
+    log("warn", telemetryKey(transport, "rate-fetch-degraded"), {
+      source: "validator-apy",
+      missing: rateMissing,
+      chunksFailed,
+      total: plans.length,
+      ...(firstError !== undefined && { firstError }),
+    });
+  }
+  return apyByAddress;
+}

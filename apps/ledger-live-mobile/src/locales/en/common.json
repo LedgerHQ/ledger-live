@@ -754,6 +754,9 @@
     "OneSuiMinForUnstakeToBeLeft": {
       "title": "At least 1 SUI should be left in stake"
     },
+    "SuiStakeNotFound": {
+      "title": "Stake details unavailable. Please resynchronise your account and try again"
+    },
     "PasswordIncorrect": {
       "title": "Incorrect password",
       "description": "Please try again."

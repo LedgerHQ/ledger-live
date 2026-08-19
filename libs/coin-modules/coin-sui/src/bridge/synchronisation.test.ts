@@ -45,8 +45,9 @@ describe("getAccountShape", () => {
       node: {
         url: getJsonRpcFullnodeUrl("mainnet"),
         graphqlUrl: "https://graphql.mainnet.sui.io/graphql",
+        grpcUrl: getJsonRpcFullnodeUrl("mainnet"),
       },
-      features: { graphql: false },
+      features: { transport: "json" },
     }));
   });
 
@@ -263,6 +264,113 @@ describe("getAccountShape", () => {
     const ids = (shape.operations ?? []).map(op => op.id);
     expect(ids).toContain("sui:short-form-sui");
     expect(ids).not.toContain("sui:long-form-sui");
+  });
+
+  // `clearAccount` empties `operations` but keeps `syncHash`, so resuming from it would leave a
+  // cleared account holding only what arrived after that point — the full history has to be re-read.
+  it("drops the resume point when the account has no operations", async () => {
+    // GIVEN
+    const initialAccount = createFixtureAccount({ operations: [], syncHash: "0xstale-cursor" });
+    mockGetAccountBalances.mockResolvedValue([createAccountBalance()]);
+    mockGetOperations.mockResolvedValue([]);
+    mockGetStakesRaw.mockResolvedValue([]);
+
+    // WHEN
+    await getAccountShape(
+      {
+        index: 0,
+        derivationPath: "44'/784'/0'/0'/0'",
+        currency: getCryptoCurrencyById("sui"),
+        address: "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0",
+        initialAccount,
+        derivationMode: "sui",
+      },
+      { blacklistedTokenIds: [], paginationConfig: {} },
+    );
+
+    // THEN
+    expect(mockGetOperations).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.any(String),
+      expect.any(String),
+      null,
+    );
+  });
+
+  // A token-only account has an empty `operations` with its history in the subaccounts, so treating
+  // that as "nothing stored" would re-read the whole history on every sync, forever.
+  it("resumes from the stored syncHash when only a token subaccount holds operations", async () => {
+    // GIVEN
+    const initialAccount = createFixtureAccount({
+      operations: [],
+      syncHash: "0xtoken-cursor",
+      subAccounts: [
+        {
+          type: "TokenAccount",
+          id: "js:2:sui:0x1:sui+token",
+          operations: [createFixtureOperation({ id: "sui:token-op" })],
+          token: { ticker: "USDC", id: "sui/token", contractAddress: "0x9::usdc::USDC" },
+        },
+      ],
+    });
+    mockGetAccountBalances.mockResolvedValue([createAccountBalance()]);
+    mockGetOperations.mockResolvedValue([]);
+    mockGetStakesRaw.mockResolvedValue([]);
+
+    // WHEN
+    await getAccountShape(
+      {
+        index: 0,
+        derivationPath: "44'/784'/0'/0'/0'",
+        currency: getCryptoCurrencyById("sui"),
+        address: "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0",
+        initialAccount,
+        derivationMode: "sui",
+      },
+      { blacklistedTokenIds: [], paginationConfig: {} },
+    );
+
+    // THEN
+    expect(mockGetOperations).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.any(String),
+      expect.any(String),
+      "0xtoken-cursor",
+    );
+  });
+
+  it("resumes from the stored syncHash when the account has operations", async () => {
+    // GIVEN
+    const initialAccount = createFixtureAccount({
+      operations: [
+        createFixtureOperation({ id: "sui:kept", extra: { coinType: DEFAULT_COIN_TYPE } }),
+      ],
+      syncHash: "0xresume-here",
+    });
+    mockGetAccountBalances.mockResolvedValue([createAccountBalance()]);
+    mockGetOperations.mockResolvedValue([]);
+    mockGetStakesRaw.mockResolvedValue([]);
+
+    // WHEN
+    await getAccountShape(
+      {
+        index: 0,
+        derivationPath: "44'/784'/0'/0'/0'",
+        currency: getCryptoCurrencyById("sui"),
+        address: "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0",
+        initialAccount,
+        derivationMode: "sui",
+      },
+      { blacklistedTokenIds: [], paginationConfig: {} },
+    );
+
+    // THEN
+    expect(mockGetOperations).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.any(String),
+      expect.any(String),
+      "0xresume-here",
+    );
   });
 
   it("handles multiple token balances and creates subAccounts", async () => {

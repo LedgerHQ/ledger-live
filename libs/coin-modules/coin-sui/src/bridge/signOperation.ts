@@ -6,11 +6,36 @@ import type { ClientWithCoreApi } from "@mysten/sui/client";
 import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
 import suiConfig from "../config";
-import { withApi } from "../network/sdk";
+import { withCoreApi } from "../network/sdk";
 import type { SuiAccount, SuiSigner, Transaction } from "../types";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import { buildTransaction } from "./buildTransaction";
 import { calculateAmount } from "./utils";
+
+type BuiltTransaction = Awaited<ReturnType<typeof buildTransaction>>;
+
+/**
+ * Signs on device against the flag-selected transport, which `LedgerSigner` needs a client for.
+ *
+ * Kept at module scope rather than inlined in the observable: nested inside the subscriber, `main`,
+ * and the signer context, the client callback sat six functions deep.
+ */
+const signWithDevice = (
+  account: SuiAccount,
+  suiSigner: SuiSigner,
+  { unsigned, objects, resolution }: BuiltTransaction,
+) =>
+  withCoreApi(
+    suiConfig.getCoinConfig(account.currency.id),
+    async (suiClient: ClientWithCoreApi) => {
+      const ledgerSigner = await LedgerSigner.fromDerivationPath(
+        account.freshAddressPath,
+        suiSigner as unknown as Parameters<typeof LedgerSigner.fromDerivationPath>[1],
+        suiClient,
+      );
+      return ledgerSigner.signTransaction(unsigned, objects, resolution);
+    },
+  );
 
 /**
  * Sign Transaction with Ledger hardware
@@ -38,7 +63,7 @@ export const buildSignOperation = (
           }),
         };
 
-        const { unsigned, objects, resolution } = await buildTransaction(
+        const built = await buildTransaction(
           account,
           transactionToSign,
           true,
@@ -46,18 +71,8 @@ export const buildSignOperation = (
           certificateSignatureKind,
         );
 
-        const signed = await signerContext(deviceId, async suiSigner =>
-          withApi(
-            suiConfig.getCoinConfig(account.currency.id),
-            async (suiClient: ClientWithCoreApi) => {
-              const ledgerSigner = await LedgerSigner.fromDerivationPath(
-                account.freshAddressPath,
-                suiSigner as unknown as Parameters<typeof LedgerSigner.fromDerivationPath>[1],
-                suiClient,
-              );
-              return ledgerSigner.signTransaction(unsigned, objects, resolution);
-            },
-          ),
+        const signed = await signerContext(deviceId, suiSigner =>
+          signWithDevice(account, suiSigner, built),
         );
 
         subscriber.next({
@@ -76,7 +91,7 @@ export const buildSignOperation = (
             operation,
             signature: signed.signature,
             rawData: {
-              unsigned,
+              unsigned: built.unsigned,
             },
           },
         });

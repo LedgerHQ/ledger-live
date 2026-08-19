@@ -1,26 +1,25 @@
 import { createSuiGraphQLClient } from "./graphql/client";
-import coinConfig from "../config";
 import type { SuiCoinConfig } from "../config";
 
 const config = {
-  node: { url: "https://mockapi.sui.io", graphqlUrl: "https://mockapi.sui.io/graphql" },
+  node: {
+    url: "https://mockapi.sui.io",
+    graphqlUrl: "https://mockapi.sui.io/graphql",
+    grpcUrl: "https://mockapi.sui.io",
+  },
   status: { type: "active" },
-  features: { graphql: true },
+  features: { transport: "graphql" },
 } as unknown as SuiCoinConfig;
 import { mist } from "../constants";
-import {
-  APY_LOOKBACK_EPOCHS,
-  GRAPHQL_MAINNET_URL,
-  RATE_BATCH_CHUNK_SIZE,
-  STAKES_PAGE_SIZE,
-} from "./graphql/constants";
-import { UNKNOWN_VALIDATOR } from "./graphql/utils";
+import { RATE_BATCH_CHUNK_SIZE, STAKES_PAGE_SIZE } from "./graphql/constants";
+import { UNKNOWN_VALIDATOR, APY_LOOKBACK_EPOCHS } from "./staking";
 import {
   executeTransactionBlock,
   getAllBalancesCached,
   getCheckpoint,
   getLastBlock,
   getDelegatedStakes,
+  getListOperations,
   getOperations,
   getStakingExtraByDigest,
   getValidators,
@@ -86,12 +85,6 @@ const mockNext = bindMockNextGraphQLClient(factoryMock);
 beforeEach(() => {
   factoryMock.mockReset();
   unexpectedJsonRpc.mockClear();
-  // Default-on: every test in this suite needs the GraphQL branch.
-  coinConfig.setCoinConfig(() => ({
-    node: { url: "https://mockapi.sui.io", graphqlUrl: GRAPHQL_MAINNET_URL },
-    status: { type: "active" },
-    features: { graphql: true },
-  }));
 });
 
 describe("getAllBalancesCached on GraphQL transport", () => {
@@ -199,22 +192,12 @@ describe("getLastBlock on GraphQL transport", () => {
   it("should resolve digest and timestamp from the latest checkpoint", async () => {
     // GIVEN
     const isoTimestamp = "2026-04-01T12:34:56.789Z";
-    const query = jest
-      .fn()
-      // 1. LATEST_CHECKPOINT_SEQUENCE — server returns UInt53 as a number
-      .mockResolvedValueOnce({
-        data: { checkpoint: { sequenceNumber: 12345 } },
-      })
-      // 2. CHECKPOINT_BY_SEQUENCE
-      .mockResolvedValueOnce({
-        data: {
-          checkpoint: {
-            digest: "AbCdEfDigestZ",
-            sequenceNumber: 12345,
-            timestamp: isoTimestamp,
-          },
-        },
-      });
+    // LATEST_CHECKPOINT_SEQUENCE carries all three fields; the server returns UInt53 as a number.
+    const query = jest.fn().mockResolvedValueOnce({
+      data: {
+        checkpoint: { digest: "AbCdEfDigestZ", sequenceNumber: 12345, timestamp: isoTimestamp },
+      },
+    });
     mockNext({ query });
 
     // WHEN
@@ -228,10 +211,9 @@ describe("getLastBlock on GraphQL transport", () => {
       sequenceNumber: "12345",
       timestampMs: String(new Date(isoTimestamp).getTime()),
     });
-    expect(query).toHaveBeenCalledTimes(2);
-    // CHECKPOINT_BY_SEQUENCE variable must be a number — the server
-    // rejects quoted-string UInt53 inputs in production.
-    expect(query.mock.calls[1][0].variables).toEqual({ sequenceNumber: 12345 });
+    // One round trip: a second query racing the tip is what produced intermittent
+    // "CheckpointBySequence failed: not found" against live mainnet.
+    expect(query).toHaveBeenCalledTimes(1);
   });
 });
 
@@ -844,7 +826,7 @@ describe("getValidators on GraphQL transport", () => {
 
 // Unit-only by design: live broadcast has irreversible chain effects, so the
 // mutation handler is exercised via mocks here. The integ suite never invokes
-// `executeTransactionBlock` with `features.graphql=true` against mainnet.
+// `executeTransactionBlock` with `features.transport="graphql"` against mainnet.
 describe("executeTransactionBlock on GraphQL transport (mock)", () => {
   it("should encode the BCS bytes as Base64 and forward the signatures verbatim", async () => {
     // GIVEN
@@ -1030,6 +1012,92 @@ describe("getOperations on GraphQL transport", () => {
     expect(Array.isArray(ops)).toBe(true);
   });
 
+  // The bridge sync path never revisits what it skipped — it always resumes from the newest stored
+  // digest — so stopping after one page would cap an account at its newest 50 operations for good.
+  it("walks past the first page until the connection is exhausted", async () => {
+    const ADDR = addr("11");
+    const node = (digest: string, sequenceNumber: number) => ({
+      digest,
+      effects: {
+        status: "SUCCESS",
+        checkpoint: { sequenceNumber, digest: `0xcp${sequenceNumber}` },
+        timestamp: "2026-05-12T00:00:00.000Z",
+      },
+      transactionJson: { sender: ADDR, gasData: { owner: ADDR } },
+    });
+    const query = jest
+      .fn()
+      .mockResolvedValueOnce({
+        data: {
+          transactions: {
+            nodes: [node("0xtx50", 50)],
+            pageInfo: { hasPreviousPage: true, startCursor: "cursor-page-2" },
+          },
+        },
+      })
+      .mockResolvedValueOnce({
+        data: {
+          transactions: {
+            nodes: [node("0xtx1", 1)],
+            pageInfo: { hasPreviousPage: false, startCursor: null },
+          },
+        },
+      });
+    mockNext({ query });
+
+    const ops = await getOperations(config, "acc-1", ADDR, undefined, undefined);
+
+    expect(query).toHaveBeenCalledTimes(2);
+    expect(query.mock.calls[1][0].variables.before).toBe("cursor-page-2");
+    expect(ops.map(o => o.hash)).toEqual(["0xtx50", "0xtx1"]);
+  });
+
+  // Incremental sync resumes from the digest of the newest stored operation. That transaction's
+  // checkpoint may hold siblings the previous sync never reached, so the bound has to keep it in
+  // range; `mergeOps` dedupes whatever comes back twice.
+  it("keeps the cursor's own checkpoint in range on an incremental sync", async () => {
+    const ADDR = addr("11");
+    const query = jest
+      .fn()
+      // 1. digest → checkpoint lookup for the incoming cursor
+      .mockResolvedValueOnce({
+        data: { transaction: { effects: { checkpoint: { sequenceNumber: 42 } } } },
+      })
+      // 2. the history page itself
+      .mockResolvedValueOnce({
+        data: {
+          transactions: { nodes: [], pageInfo: { hasPreviousPage: false, startCursor: null } },
+        },
+      });
+    mockNext({ query });
+
+    await getOperations(config, "acc-1", ADDR, "0xcursorDigest", undefined);
+
+    // `afterCheckpoint` is exclusive, so 41 is what keeps checkpoint 42 in range.
+    expect(query.mock.calls[1][0].variables.afterCheckpoint).toBe(41);
+  });
+
+  // Clamping to 0 would send `afterCheckpoint: 0`, which — being exclusive — excludes checkpoint 0
+  // and loses exactly what the inclusive bound exists to keep.
+  it("sends no lower bound when the cursor sits in checkpoint zero", async () => {
+    const ADDR = addr("11");
+    const query = jest
+      .fn()
+      .mockResolvedValueOnce({
+        data: { transaction: { effects: { checkpoint: { sequenceNumber: 0 } } } },
+      })
+      .mockResolvedValueOnce({
+        data: {
+          transactions: { nodes: [], pageInfo: { hasPreviousPage: false, startCursor: null } },
+        },
+      });
+    mockNext({ query });
+
+    await getOperations(config, "acc-1", ADDR, "0xgenesisDigest", undefined);
+
+    expect(query.mock.calls[1][0].variables.afterCheckpoint).toBeUndefined();
+  });
+
   it("drops not-yet-finalized (indexing-lagged) nodes instead of mapping Failed/1970 ops", async () => {
     const ADDR = addr("11");
     const query = jest.fn().mockResolvedValueOnce({
@@ -1130,15 +1198,215 @@ describe("getTransactionsWithCheckpointDigestsGraphQL", () => {
               transactionJson: { sender: addr("11") },
             },
           ],
+          pageInfo: { hasPreviousPage: true, hasNextPage: false },
         },
       },
     });
 
     const out = await getTransactionsWithCheckpointDigestsGraphQL(fakeApi(query), addr("11"), 50);
 
-    expect(out).toHaveLength(1);
-    expect(out[0].tx.digest).toBe("0xfinal");
-    expect(out[0].checkpointDigest).toBe("0xcpDigest");
+    expect(out.pairs).toHaveLength(1);
+    expect(out.pairs[0].tx.digest).toBe("0xfinal");
+    expect(out.pairs[0].checkpointDigest).toBe("0xcpDigest");
+    // Surfaced rather than discarded: the caller gates `next` on it.
+    expect(out.hasPreviousPage).toBe(true);
+  });
+
+  it("reports no further pages when the connection says so", async () => {
+    const query = jest.fn().mockResolvedValueOnce({
+      data: {
+        transactions: { nodes: [], pageInfo: { hasPreviousPage: false, hasNextPage: false } },
+      },
+    });
+
+    const out = await getTransactionsWithCheckpointDigestsGraphQL(fakeApi(query), addr("11"), 50);
+
+    expect(out.pairs).toHaveLength(0);
+    expect(out.hasPreviousPage).toBe(false);
+  });
+});
+
+// Same invariant as the gRPC arm, documented on `dropOperationsBeforeCursor`: a page boundary can
+// fall inside a checkpoint, so the server filter must keep that checkpoint in range.
+describe("getListOperations cursor bounds on the GraphQL transport", () => {
+  const TS_ISO = "2026-05-19T00:00:00.000Z";
+  const TS = Date.parse(TS_ISO);
+
+  const node = (digest: string, sequenceNumber: number, timestamp: string = TS_ISO) => ({
+    digest,
+    effects: {
+      status: "SUCCESS",
+      timestamp,
+      checkpoint: { sequenceNumber, digest: `cp-${sequenceNumber}` },
+    },
+    transactionJson: { sender: addr("11") },
+  });
+
+  /**
+   * First query resolves the cursor digest to a checkpoint; the rest serve pages in order.
+   * `hasPreviousPage` defaults to true so a page can be short without ending the walk — the arm must
+   * take that from the server, not from how many items survived the cursor drop.
+   */
+  const stub = (
+    cursorCheckpoint: number | null,
+    pages: unknown[][],
+    hasPreviousPage: boolean = true,
+    hasNextPage: boolean = false,
+  ) => {
+    const filters: ({ beforeCheckpoint?: number; afterCheckpoint?: number } | undefined)[] = [];
+    const windows: { first: number | null; last: number | null }[] = [];
+    let page = 0;
+    const query = jest.fn(({ variables }: { variables?: Record<string, unknown> }) => {
+      if (variables && "digest" in variables) {
+        return Promise.resolve({
+          data: {
+            transaction:
+              cursorCheckpoint === null
+                ? null
+                : { effects: { checkpoint: { sequenceNumber: cursorCheckpoint } } },
+          },
+        });
+      }
+      filters.push({
+        ...(variables?.beforeCheckpoint !== undefined && {
+          beforeCheckpoint: variables.beforeCheckpoint as number,
+        }),
+        ...(variables?.afterCheckpoint !== undefined && {
+          afterCheckpoint: variables.afterCheckpoint as number,
+        }),
+      });
+      windows.push({
+        first: variables?.first as number | null,
+        last: variables?.last as number | null,
+      });
+      const nodes = pages[Math.min(page++, pages.length - 1)];
+      return Promise.resolve({
+        data: { transactions: { nodes, pageInfo: { hasPreviousPage, hasNextPage } } },
+      });
+    });
+    mockNext({ query });
+    return { filters, windows };
+  };
+
+  it("keeps the cursor's own checkpoint in range when descending", async () => {
+    const { filters } = stub(12, [[node("tx-a", 12), node("tx-m", 12)]]);
+
+    const page = await getListOperations(config, addr("11"), "desc", undefined, `${TS}:tx-m`);
+
+    // `beforeCheckpoint` is the exclusive upper bound, so 13 keeps checkpoint 12 in range.
+    expect(filters[0]?.beforeCheckpoint).toBe(13);
+    expect(page.items.map(op => op.tx.hash)).toEqual(["tx-a"]);
+  });
+
+  it("keeps the cursor's own checkpoint in range when ascending", async () => {
+    const { filters } = stub(12, [[node("tx-a", 12), node("tx-m", 12)]]);
+
+    const page = await getListOperations(config, addr("11"), "asc", undefined, `${TS}:tx-a`);
+
+    expect(filters[0]?.afterCheckpoint).toBe(11);
+    expect(page.items.map(op => op.tx.hash)).toEqual(["tx-m"]);
+  });
+
+  it("steps past the cursor's checkpoint when a full page of it is already seen", async () => {
+    const stalled = Array.from({ length: 50 }, (_, i) =>
+      node(`tx-${String(i + 1).padStart(3, "0")}`, 12),
+    );
+    const { filters } = stub(12, [stalled, [node("tx-older", 11, "2026-05-18T00:00:00.000Z")]]);
+
+    const page = await getListOperations(config, addr("11"), "desc", undefined, `${TS}:tx-000`);
+
+    expect(filters).toHaveLength(2);
+    expect(filters[0]?.beforeCheckpoint).toBe(13);
+    expect(filters[1]?.beforeCheckpoint).toBe(12);
+    expect(page.items.map(op => op.tx.hash)).toEqual(["tx-older"]);
+  });
+
+  // Guards the consequence documented on `dropOperationsBeforeCursor`: a cursor-fed page cannot reach
+  // the page size, so a count-based `next` gate would end the walk at page two.
+  it("keeps paginating when the cursor's own checkpoint fills the page", async () => {
+    const TS_OLDER = "2026-05-18T00:00:00.000Z";
+    const full = [
+      node("tx-cursor", 12),
+      ...Array.from({ length: 49 }, (_, i) =>
+        node(`tx-${String(i).padStart(3, "0")}`, 11, TS_OLDER),
+      ),
+    ];
+    const { filters } = stub(12, [full]);
+
+    const page = await getListOperations(config, addr("11"), "desc", undefined, `${TS}:tx-cursor`);
+
+    expect(filters[0]?.beforeCheckpoint).toBe(13);
+    expect(page.items).toHaveLength(49);
+    // Equal timestamps sort by digest descending, so the oldest delivered item is `tx-000`.
+    expect(page.next).toBe(`${Date.parse(TS_OLDER)}:tx-000`);
+  });
+
+  // The window must match the direction of travel — see `TRANSACTIONS_BY_AFFECTED_ADDRESS`. Using
+  // `last:` for an ascending walk returns the newest page and skips everything older.
+  it("requests the oldest slice when walking ascending", async () => {
+    const { windows, filters } = stub(12, [[node("tx-a", 12)]]);
+
+    await getListOperations(config, addr("11"), "asc", undefined, `${TS}:tx-cursor`);
+
+    expect(windows[0]).toEqual({ first: 50, last: null });
+    expect(filters[0]?.afterCheckpoint).toBe(11);
+  });
+
+  it("requests the newest slice when walking descending", async () => {
+    const { windows } = stub(12, [[node("tx-a", 12)]]);
+
+    await getListOperations(config, addr("11"), "desc", undefined, `${TS}:tx-cursor`);
+
+    expect(windows[0]).toEqual({ first: null, last: 50 });
+  });
+
+  // Ascending reads "more to come" from `hasNextPage`, the mirror of `hasPreviousPage` for descending.
+  it("keeps paginating ascending while newer transactions remain", async () => {
+    const TS_NEWER = "2026-05-20T00:00:00.000Z";
+    const full = Array.from({ length: 50 }, (_, i) =>
+      node(`tx-${String(i).padStart(3, "0")}`, 13, TS_NEWER),
+    );
+    stub(12, [full], true, true);
+
+    const page = await getListOperations(config, addr("11"), "asc", undefined, `${TS}:tx-cursor`);
+
+    expect(page.items).toHaveLength(50);
+    expect(page.next).toEqual(expect.any(String));
+  });
+
+  it("stops ascending when no newer transactions remain", async () => {
+    const TS_NEWER = "2026-05-20T00:00:00.000Z";
+    const full = Array.from({ length: 50 }, (_, i) =>
+      node(`tx-${String(i).padStart(3, "0")}`, 13, TS_NEWER),
+    );
+    stub(12, [full], true, false);
+
+    const page = await getListOperations(config, addr("11"), "asc", undefined, `${TS}:tx-cursor`);
+
+    expect(page.items).toHaveLength(50);
+    expect(page.next).toBeUndefined();
+  });
+
+  // Same clamp trap on the paging path: ascending from genesis must drop the bound, not send
+  // `afterCheckpoint: 0`, which would exclude checkpoint 0.
+  it("sends no lower bound when paging ascending from checkpoint zero", async () => {
+    const { filters } = stub(0, [[node("tx-a", 0)]]);
+
+    await getListOperations(config, addr("11"), "asc", undefined, `${TS}:tx-cursor`);
+
+    expect(filters[0]?.afterCheckpoint).toBeUndefined();
+  });
+
+  // The complement: the server's answer decides, so a full page with `hasPreviousPage: false` ends
+  // the walk. Counting items would have kept it going.
+  it("stops when the server reports no further pages", async () => {
+    const full = Array.from({ length: 50 }, (_, i) => node(`tx-${String(i).padStart(3, "0")}`, 11));
+    stub(12, [full], false);
+
+    const page = await getListOperations(config, addr("11"), "desc", undefined, `${TS}:tx-cursor`);
+
+    expect(page.items).toHaveLength(50);
+    expect(page.next).toBeUndefined();
   });
 });
 
@@ -1338,19 +1606,36 @@ describe("getBlockInfoFieldsGraphQL", () => {
     expect(out).toBeNull();
   });
 
-  it("falls back to '0' timestamp when the schema returns null", async () => {
+  // `digest` and `timestamp` are nullable in the schema. Coercing them would report a block with an
+  // empty hash or a 1970 timestamp, which sync stores as if it were real; JSON-RPC cannot produce
+  // either, so the GraphQL arm fails instead.
+  it.each([
+    ["digest", { digest: null, timestamp: "2026-01-01T00:00:00Z" }, /has no digest/],
+    ["timestamp", { digest: "d", timestamp: null }, /has no timestamp/],
+    ["parseable timestamp", { digest: "d", timestamp: "not-a-date" }, /unparseable timestamp/],
+  ])("throws when the checkpoint has no %s", async (_label, fields, expected) => {
+    const query = jest.fn().mockResolvedValueOnce({
+      data: { checkpoint: { sequenceNumber: 1, previousCheckpointDigest: null, ...fields } },
+    });
+
+    await expect(getBlockInfoFieldsGraphQL(fakeApi(query), 1)).rejects.toThrow(expected);
+  });
+
+  it("returns the metadata when every nullable field is populated", async () => {
     const query = jest.fn().mockResolvedValueOnce({
       data: {
         checkpoint: {
           digest: "d",
           sequenceNumber: 1,
-          timestamp: null,
+          timestamp: "2026-01-01T00:00:00Z",
           previousCheckpointDigest: null,
         },
       },
     });
+
     const out = await getBlockInfoFieldsGraphQL(fakeApi(query), 1);
-    expect(out?.timestampMs).toBe("0");
+
+    expect(out?.timestampMs).toBe(String(Date.parse("2026-01-01T00:00:00Z")));
     expect(out?.previousDigest).toBeNull();
   });
 });
@@ -1433,7 +1718,7 @@ describe("getBlockGraphQL", () => {
           checkpoint: {
             digest: "0xdgst",
             sequenceNumber: 100,
-            timestamp: null,
+            timestamp: "2026-01-01T00:00:00Z",
             previousCheckpointDigest: null,
             transactions: {
               nodes: [txNode("0xt1"), txNode("0xt2")],
@@ -1474,7 +1759,7 @@ describe("getBlockGraphQL", () => {
         checkpoint: {
           digest: "d",
           sequenceNumber: 1,
-          timestamp: null,
+          timestamp: "2026-01-01T00:00:00Z",
           previousCheckpointDigest: null,
           transactions: {
             nodes: [txNode("0xt1")],
@@ -1495,7 +1780,7 @@ describe("getBlockGraphQL", () => {
         checkpoint: {
           digest: "0xdgst",
           sequenceNumber: 1,
-          timestamp: null,
+          timestamp: "2026-01-01T00:00:00Z",
           previousCheckpointDigest: null,
           transactions: {
             nodes: [txNode("0xt")],

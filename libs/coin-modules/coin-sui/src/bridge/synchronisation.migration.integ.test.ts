@@ -1,20 +1,23 @@
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
-import { getJsonRpcFullnodeUrl, type StakeObject } from "@mysten/sui/jsonRpc";
+import { getEnv } from "@ledgerhq/live-env";
+import type { StakeObject } from "@mysten/sui/jsonRpc";
 import coinConfig from "../config";
+import type { SuiTransport } from "../config";
 import { FIGMENT_SUI_VALIDATOR_ADDRESS } from "../constants";
-import { GRAPHQL_MAINNET_URL } from "../network/graphql/constants";
 import { getAccountShape } from "./synchronisation";
 
-const JSON_RPC_URL = getJsonRpcFullnodeUrl("mainnet");
-
 /** Bridge dispatch is keyed on `currency.id` (always "sui"), so we re-bind the config between runs. */
-function configureTransport(useGraphQL: boolean) {
+function configureTransport(transport: SuiTransport) {
   coinConfig.setCoinConfig(() => ({
     status: { type: "active" },
-    // Both URLs always present; the feature flag selects which dispatcher branch runs.
-    node: { url: JSON_RPC_URL, graphqlUrl: GRAPHQL_MAINNET_URL },
-    features: { graphql: useGraphQL },
+    // Every URL always present; the feature flag selects which dispatcher branch runs.
+    node: {
+      url: getEnv("API_SUI_NODE_PROXY"),
+      graphqlUrl: getEnv("API_SUI_GRAPHQL_PROXY"),
+      grpcUrl: getEnv("API_SUI_GRPC_PROXY"),
+    },
+    features: { transport },
   }));
 }
 
@@ -37,19 +40,16 @@ const SHAPE_INFO = {
 
 const SYNC_CONFIG = { blacklistedTokenIds: [], paginationConfig: {} };
 
-// SKIP — Sui JSON-RPC public-endpoint shutdown. The JSON-RPC reference leg of this parity
-// suite hits the public mainnet fullnode (fullnode.mainnet.sui.io), retired by the Sui
-// Foundation (mainnet wk of 2026-07-20) as JSON-RPC is deprecated for gRPC/GraphQL, so
-// cross-transport parity can no longer run. Re-enable once a GraphQL-only live baseline
-// replaces the JSON-RPC reference.
-describe.skip("getAccountShape: JSON-RPC vs GraphQL parity (live mainnet)", () => {
-  // Two back-to-back syncs (JSON-RPC + GraphQL) on a high-traffic validator
-  // address; ~70s under normal mainnet latency. Bumped above the 60s default.
+// gRPC is the reference leg. It replaced JSON-RPC here after the Sui Foundation retired the public
+// mainnet fullnode (wk of 2026-07-20), which left this suite skipped with no runnable baseline.
+describe("getAccountShape: gRPC vs GraphQL parity (live mainnet)", () => {
+  // Two back-to-back live syncs on a high-traffic validator address: ~70s locally, but slower CI
+  // runners exceeded the 90s default in `jest.integ.config.js`.
   test("balance, spendable and suiResources.stakes match across transports", async () => {
-    configureTransport(false);
+    configureTransport("grpc");
     const rpc = await getAccountShape(SHAPE_INFO, SYNC_CONFIG);
 
-    configureTransport(true);
+    configureTransport("graphql");
     const gql = await getAccountShape(SHAPE_INFO, SYNC_CONFIG);
 
     expect(gql.balance!.toFixed()).toBe(rpc.balance!.toFixed());
@@ -80,11 +80,11 @@ describe.skip("getAccountShape: JSON-RPC vs GraphQL parity (live mainnet)", () =
 
     expect(gql.subAccounts).toEqual(rpc.subAccounts);
 
-    // GraphQL fetches a single newest page (50 ops) while JSON-RPC accumulates up to 300 from
-    // FromAddress + ToAddress separately. On a high-traffic validator address the counts will
-    // differ; assert the GraphQL page is non-empty and a subset of recent activity exists in
-    // both. Tighten once GraphQL pagination accumulates further.
+    // Both arms walk up to `TRANSACTIONS_LIMIT`, but the counts are not required to match: gRPC
+    // classifies transaction kinds correctly and so drops SIP-58 settlement transactions that the
+    // GraphQL arm keeps. Only non-emptiness is asserted; per-operation identity is covered by
+    // `network/sdk.grpc.parity.integ.test.ts`.
     expect(gql.operationsCount ?? 0).toBeGreaterThan(0);
-    expect(rpc.operationsCount ?? 0).toBeGreaterThanOrEqual(gql.operationsCount ?? 0);
-  }, 90_000);
+    expect(rpc.operationsCount ?? 0).toBeGreaterThan(0);
+  }, 240_000);
 });

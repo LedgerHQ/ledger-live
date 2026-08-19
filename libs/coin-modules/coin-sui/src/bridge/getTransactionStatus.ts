@@ -18,6 +18,7 @@ import {
   OneSuiMinForUnstake,
   OneSuiMinForUnstakeToBeLeft,
   SomeSuiForUnstake,
+  SuiStakeNotFound,
 } from "../errors";
 import type { SuiAccount, Transaction, TransactionStatus } from "../types";
 import { ensureAddressFormat } from "../utils";
@@ -75,14 +76,25 @@ export const getTransactionStatus: AccountBridge<
   if (transaction.mode === "undelegate") {
     const stakes = account.suiResources?.stakes?.flatMap(({ stakes }) => stakes) ?? [];
     const stake = stakes.find(s => s.stakedSuiId === transaction.stakedSuiId);
+
+    // `staking_pool::split` asserts BOTH the withdrawn amount and the remainder reach 1 SUI, so a
+    // partial unstake below it aborts on chain (`EStakedSuiBelowThreshold`); a full withdrawal takes
+    // the no-split path and is exempt. The amount side needs no account data, hence it runs first.
+    if (!transaction.useAllAmount && amount.lt(ONE_SUI)) {
+      errors.amount = new OneSuiMinForUnstake();
+    }
+
     if (stake) {
-      if (!transaction.useAllAmount && amount.lt(ONE_SUI)) {
-        errors.amount = new OneSuiMinForUnstake();
-      }
-      const stakeLeft = BigNumber(stake?.principal).minus(amount);
+      const stakeLeft = BigNumber(stake.principal).minus(amount);
       if (!transaction.useAllAmount && stakeLeft.lt(ONE_SUI) && stakeLeft.gt(0)) {
         errors.amount = new OneSuiMinForUnstakeToBeLeft();
       }
+    } else if (!transaction.useAllAmount && !errors.amount) {
+      // Fail closed on a split that cannot be verified: without the principal the remainder is
+      // unknowable, so a legal-looking amount may still abort on chain. A stale, degraded, or cleared
+      // sync is enough to lose the position. This is the last local guard — no transport rejects the
+      // build now, and `signOperation` reads `transaction.fees`, never this status.
+      errors.amount = new SuiStakeNotFound();
     }
   } else {
     if (!transaction.recipient) {

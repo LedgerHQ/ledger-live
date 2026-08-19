@@ -99,7 +99,7 @@ import {
   setSolanaTxcEnabled,
 } from "@ledgerhq/live-common/families/solana/setup";
 import { setCosmosLdmkEnabled } from "@ledgerhq/live-common/families/cosmos/setup";
-import { setSuiGraphqlEnabled } from "@ledgerhq/live-common/families/sui/setup";
+import { resolveSuiTransport, setSuiTransport } from "@ledgerhq/live-common/families/sui/setup";
 import useCheckAccountWithFunds from "./logic/postOnboarding/useCheckAccountWithFunds";
 import { useAutoFinishPostOnboarding } from "LLM/features/PostOnboarding/hooks/useAutoFinishPostOnboarding";
 logStartupEvent("After js imports");
@@ -146,7 +146,7 @@ function App() {
   const ldmkSolanaSignerFeatureFlag = useFeature("ldmkSolanaSigner");
   const ldmkSolanaSignerIsTxcActiveFeatureFlag = useFeature("ldmkSolanaSignerIsTxcActive");
   const ldmkCosmosSignerFeatureFlag = useFeature("ldmkCosmosSigner");
-  const suiGraphqlTransportFeatureFlag = useFeature("suiGraphqlTransport");
+  const suiTransportFeatureFlag = useFeature("suiTransport");
   const datadogAutoInstrumentation: AutoInstrumentationConfiguration = useMemo(
     () => ({
       trackErrors: datadogFF?.params?.trackErrors ?? false,
@@ -184,8 +184,8 @@ function App() {
   }, [ldmkCosmosSignerFeatureFlag]);
 
   useEffect(() => {
-    setSuiGraphqlEnabled(suiGraphqlTransportFeatureFlag?.enabled === true);
-  }, [suiGraphqlTransportFeatureFlag]);
+    setSuiTransport(resolveSuiTransport(suiTransportFeatureFlag));
+  }, [suiTransportFeatureFlag]);
 
   useEffect(() => {
     if (providerNumber) {

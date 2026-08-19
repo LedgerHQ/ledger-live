@@ -1,0 +1,1535 @@
+{
+  "programmable": {
+    "signatures": [],
+    "balanceChanges": [
+      {
+        "address": "0x0feb54a725aa357ff2f5bc6bb023c05b310285bd861275a30521f339a434ebb3",
+        "coinType": "0x0000000000000000000000000000000000000000000000000000000000000002::sui::SUI",
+        "amount": "-32784"
+      }
+    ],
+    "digest": "GYcdZWiSrpcgcY8k4ZyJSycW1ew9yqMfQt4bazHJcLjr",
+    "transaction": {
+      "bcs": {
+        "name": "TransactionData",
+        "value": {
+          "__bytes": "AAAEAQHTNeiqGdbcBCc9d+NkyTa61p20kFpKs7JzPWRN0rMeCkvP+BMAAAAAAQEB9RQqr6JIZhB99ii/ktA1jH2mrMRsLxCVFpD9K4Vw8RdHrckrAAAAAAEAEQFIeHIAAAAAAIDRFj2WAACAAQEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABgEAAAAAAAAAAAIA9IIixOBX+kaLrxNr/44SUEIJ1DhQxXePdhWSkqlvYh4PYmFsYW5jZV9tYW5hZ2VyF2dlbmVyYXRlX3Byb29mX2FzX293bmVyAAEBAAAA9IIixOBX+kaLrxNr/44SUEIJ1DhQxXePdhWSkqlvYh4EcG9vbBJjYW5jZWxfbGl2ZV9vcmRlcnMCBwBB+fk0TKwJRFTNV04zPE/bEy17zJN5vNSqtIWypjlCBHdidGMEV0JUQwAH26NGcuMMsGWx+T46tVMYdo/W/vZsFZQsn3y4RuL5AOcEdXNkYwRVU0RDAAUBAQABAAACAAABAgABAwAP61SnJao1f/L1vGuwI8BbMQKFvYYSdaMFIfM5pDTrswF3vWo2v8GlRQ1agHQMjQIWYxNO9BNDBPaBYwBdX7i0jNvbVzkAAAAAIM0y7ysNGqHg2Uj6ouIfRN/snk6raLheCdkc3+ItfAHxD+tUpyWqNX/y9bxrsCPAWzEChb2GEnWjBSHzOaQ067P1AQAAAAAAAADh9QUAAAAAAA=="
+        }
+      },
+      "digest": "GYcdZWiSrpcgcY8k4ZyJSycW1ew9yqMfQt4bazHJcLjr",
+      "version": 1,
+      "kind": {
+        "data": {
+          "oneofKind": "programmableTransaction",
+          "programmableTransaction": {
+            "inputs": [
+              {
+                "kind": 3,
+                "objectId": "0xd335e8aa19d6dc04273d77e364c936bad69db4905a4ab3b2733d644dd2b31e0a",
+                "version": {
+                  "__bigint": "335073099"
+                },
+                "mutable": true,
+                "mutability": 2
+              },
+              {
+                "kind": 3,
+                "objectId": "0xf5142aafa24866107df628bf92d0358c7da6acc46c2f10951690fd2b8570f117",
+                "version": {
+                  "__bigint": "734637383"
+                },
+                "mutable": true,
+                "mutability": 2
+              },
+              {
+                "kind": 1,
+                "pure": {
+                  "__bytes": "AUh4cgAAAAAAgNEWPZYAAIA="
+                }
+              },
+              {
+                "kind": 3,
+                "objectId": "0x0000000000000000000000000000000000000000000000000000000000000006",
+                "version": {
+                  "__bigint": "1"
+                },
+                "mutable": false,
+                "mutability": 1
+              }
+            ],
+            "commands": [
+              {
+                "command": {
+                  "oneofKind": "moveCall",
+                  "moveCall": {
+                    "typeArguments": [],
+                    "arguments": [
+                      {
+                        "kind": 2,
+                        "input": 0
+                      }
+                    ],
+                    "package": "0xf48222c4e057fa468baf136bff8e12504209d43850c5778f76159292a96f621e",
+                    "module": "balance_manager",
+                    "function": "generate_proof_as_owner"
+                  }
+                }
+              },
+              {
+                "command": {
+                  "oneofKind": "moveCall",
+                  "moveCall": {
+                    "typeArguments": [
+                      "0x0041f9f9344cac094454cd574e333c4fdb132d7bcc9379bcd4aab485b2a63942::wbtc::WBTC",
+                      "0xdba34672e30cb065b1f93e3ab55318768fd6fef66c15942c9f7cb846e2f900e7::usdc::USDC"
+                    ],
+                    "arguments": [
+                      {
+                        "kind": 2,
+                        "input": 1
+                      },
+                      {
+                        "kind": 2,
+                        "input": 0
+                      },
+                      {
+                        "kind": 3,
+                        "result": 0
+                      },
+                      {
+                        "kind": 2,
+                        "input": 2
+                      },
+                      {
+                        "kind": 2,
+                        "input": 3
+                      }
+                    ],
+                    "package": "0xf48222c4e057fa468baf136bff8e12504209d43850c5778f76159292a96f621e",
+                    "module": "pool",
+                    "function": "cancel_live_orders"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "kind": 1
+      },
+      "sender": "0x0feb54a725aa357ff2f5bc6bb023c05b310285bd861275a30521f339a434ebb3",
+      "gasPayment": {
+        "objects": [
+          {
+            "objectId": "0x77bd6a36bfc1a5450d5a80740c8d021663134ef4134304f68163005d5fb8b48c",
+            "version": {
+              "__bigint": "962059227"
+            },
+            "digest": "Ep1dDzJjMmV9X1aQNTA8YNLZ178CHoH3XA9A782SpTqa"
+          }
+        ],
+        "owner": "0x0feb54a725aa357ff2f5bc6bb023c05b310285bd861275a30521f339a434ebb3",
+        "price": {
+          "__bigint": "501"
+        },
+        "budget": {
+          "__bigint": "100000000"
+        }
+      },
+      "expiration": {
+        "kind": 1
+      }
+    },
+    "effects": {
+      "dependencies": [
+        "23V5DqMaD7UwDawXmn4ChkV4u6U1yrhL55hNBrtyes4o",
+        "3Ebr2a3ELELjEEnLjnT3rWeCKwEAt2zjcfgoMXMWM7JS",
+        "7DkJSrf5sPWGxqHbH2X1wXwFcftRm6myhJJnuTJbaMYr",
+        "7sU7BxxWzL4MRVv78amJRD6Zmu1B2cDFoDGL92zmUKt9",
+        "DXyM3UxGMxtEyx9LZZA9ESqujEWDEKzdUEyKFyRJqk2S",
+        "EjMtDAK3mZMofFbVfc5JAWPNMtByxxH3nDW5Jmz5TteA",
+        "FLLngZYNYLH86WphfVpdGyRNzMyEF1X5Tf8E1PCXabxU"
+      ],
+      "changedObjects": [
+        {
+          "objectId": "0x106db4598076bf9d3ed832e267c0bf8208d23a49c9d9ac6d58c0d3549cbdf7e8",
+          "inputState": 2,
+          "inputVersion": {
+            "__bigint": "962059515"
+          },
+          "inputDigest": "7Nyb27RokRLg23LN8sGKb2MEa5MSsbMRbSSozCQsmXft",
+          "inputOwner": {
+            "kind": 2,
+            "address": "0x6e96e5f8e13e2ce3927eb729444ae4b06ef60fbc04e2c64c0188a5c098bdac3b"
+          },
+          "outputState": 2,
+          "outputVersion": {
+            "__bigint": "962059526"
+          },
+          "outputDigest": "3MqCnPXv4N4HnvjuoaftpHhjFb77XenbNVFF9y5L5qQm",
+          "outputOwner": {
+            "kind": 2,
+            "address": "0x6e96e5f8e13e2ce3927eb729444ae4b06ef60fbc04e2c64c0188a5c098bdac3b"
+          },
+          "idOperation": 1,
+          "objectType": "0x0000000000000000000000000000000000000000000000000000000000000002::dynamic_field::Field<0x0000000000000000000000000000000000000000000000000000000000000002::object::ID,0x2c8d603bc51326b8c13cef9dd07031a408a48dddb541963357661df5d3204809::account::Account>"
+        },
+        {
+          "objectId": "0x28229133b4a3cbc2b757872f254c4d21c92c891a4f95701ba81973acb8478a6d",
+          "inputState": 2,
+          "inputVersion": {
+            "__bigint": "962059516"
+          },
+          "inputDigest": "DCDn5ssmHMP2eBfoDTZmQDFMMdaZuviDHZHZ2TG8NtXM",
+          "inputOwner": {
+            "kind": 2,
+            "address": "0x8e7dc70d13d1f61608c914ac34603023ba601e85bd2c51e739b11575c0fbcac7"
+          },
+          "outputState": 2,
+          "outputVersion": {
+            "__bigint": "962059526"
+          },
+          "outputDigest": "FSPe9CxwAjoPsejMwnsCXW5ksENkiKg8xJeNAoHiWo9X",
+          "outputOwner": {
+            "kind": 2,
+            "address": "0x8e7dc70d13d1f61608c914ac34603023ba601e85bd2c51e739b11575c0fbcac7"
+          },
+          "idOperation": 1,
+          "objectType": "0x0000000000000000000000000000000000000000000000000000000000000002::dynamic_field::Field<u64,0x2c8d603bc51326b8c13cef9dd07031a408a48dddb541963357661df5d3204809::pool::PoolInner<0x0041f9f9344cac094454cd574e333c4fdb132d7bcc9379bcd4aab485b2a63942::wbtc::WBTC,0xdba34672e30cb065b1f93e3ab55318768fd6fef66c15942c9f7cb846e2f900e7::usdc::USDC>>"
+        },
+        {
+          "objectId": "0x77bd6a36bfc1a5450d5a80740c8d021663134ef4134304f68163005d5fb8b48c",
+          "inputState": 2,
+          "inputVersion": {
+            "__bigint": "962059227"
+          },
+          "inputDigest": "Ep1dDzJjMmV9X1aQNTA8YNLZ178CHoH3XA9A782SpTqa",
+          "inputOwner": {
+            "kind": 1,
+            "address": "0x0feb54a725aa357ff2f5bc6bb023c05b310285bd861275a30521f339a434ebb3"
+          },
+          "outputState": 2,
+          "outputVersion": {
+            "__bigint": "962059526"
+          },
+          "outputDigest": "4ueSehpo8JoQCoSBbZw8nPe5NkUCnnkdZzAyDeWk6w39",
+          "outputOwner": {
+            "kind": 1,
+            "address": "0x0feb54a725aa357ff2f5bc6bb023c05b310285bd861275a30521f339a434ebb3"
+          },
+          "idOperation": 1,
+          "objectType": "0x0000000000000000000000000000000000000000000000000000000000000002::coin::Coin<0x0000000000000000000000000000000000000000000000000000000000000002::sui::SUI>"
+        },
+        {
+          "objectId": "0x8976f37cdad76505b068b08fc543959b9d530399be63c6433c3fad6c07cf90ba",
+          "inputState": 2,
+          "inputVersion": {
+            "__bigint": "962059515"
+          },
+          "inputDigest": "31cEVxmW276y5D3F8Lqtf3For4fziPJbuLvGmZwTvLqV",
+          "inputOwner": {
+            "kind": 2,
+            "address": "0x8c6d087264488a2900d9bab11459e73734471c4d5352c301a40db12ce4de5c85"
+          },
+          "outputState": 2,
+          "outputVersion": {
+            "__bigint": "962059526"
+          },
+          "outputDigest": "4K74qjD7Hstjm9ZRTjYd7qpZ9nyTSthV3NwN2qf2Tcpm",
+          "outputOwner": {
+            "kind": 2,
+            "address": "0x8c6d087264488a2900d9bab11459e73734471c4d5352c301a40db12ce4de5c85"
+          },
+          "idOperation": 1,
+          "objectType": "0x0000000000000000000000000000000000000000000000000000000000000002::dynamic_field::Field<0x2c8d603bc51326b8c13cef9dd07031a408a48dddb541963357661df5d3204809::balance_manager::BalanceKey<0x0041f9f9344cac094454cd574e333c4fdb132d7bcc9379bcd4aab485b2a63942::wbtc::WBTC>,0x0000000000000000000000000000000000000000000000000000000000000002::balance::Balance<0x0041f9f9344cac094454cd574e333c4fdb132d7bcc9379bcd4aab485b2a63942::wbtc::WBTC>>"
+        },
+        {
+          "objectId": "0xaccb109d5ba68583752ab2e5835159f5d3df08ed7269c9e958cdf54551f71c55",
+          "inputState": 2,
+          "inputVersion": {
+            "__bigint": "962059515"
+          },
+          "inputDigest": "BGpQF7g9DBV3tG8sdEnYvggmuVFA4SjmcixVSsnabKwA",
+          "inputOwner": {
+            "kind": 2,
+            "address": "0x95a4bb68ef2d81d67ccfb48123b8a1beab98bb930454c8797281cb4f5c41ea7b"
+          },
+          "outputState": 2,
+          "outputVersion": {
+            "__bigint": "962059526"
+          },
+          "outputDigest": "HxS8GYTnfXoJBhWKPkSRyVMXREJd4UKsofiysyBUFLRq",
+          "outputOwner": {
+            "kind": 2,
+            "address": "0x95a4bb68ef2d81d67ccfb48123b8a1beab98bb930454c8797281cb4f5c41ea7b"
+          },
+          "idOperation": 1,
+          "objectType": "0x0000000000000000000000000000000000000000000000000000000000000002::dynamic_field::Field<u64,0x2c8d603bc51326b8c13cef9dd07031a408a48dddb541963357661df5d3204809::big_vector::Slice<0x2c8d603bc51326b8c13cef9dd07031a408a48dddb541963357661df5d3204809::order::Order>>"
+        },
+        {
+          "objectId": "0xd335e8aa19d6dc04273d77e364c936bad69db4905a4ab3b2733d644dd2b31e0a",
+          "inputState": 2,
+          "inputVersion": {
+            "__bigint": "962059525"
+          },
+          "inputDigest": "9kCmC26cG2r97MqLNPWcs4Z7Fo6hqvbaVf9gG9hTZonA",
+          "inputOwner": {
+            "kind": 3,
+            "version": {
+              "__bigint": "335073099"
+            }
+          },
+          "outputState": 2,
+          "outputVersion": {
+            "__bigint": "962059526"
+          },
+          "outputDigest": "34UujvwikRJWYAs8yYpok9UJWoxFHdarT3XmSVA3HBuv",
+          "outputOwner": {
+            "kind": 3,
+            "version": {
+              "__bigint": "335073099"
+            }
+          },
+          "idOperation": 1,
+          "objectType": "0x2c8d603bc51326b8c13cef9dd07031a408a48dddb541963357661df5d3204809::balance_manager::BalanceManager"
+        },
+        {
+          "objectId": "0xf5142aafa24866107df628bf92d0358c7da6acc46c2f10951690fd2b8570f117",
+          "inputState": 2,
+          "inputVersion": {
+            "__bigint": "962059516"
+          },
+          "inputDigest": "B1nguJVPKqTZhh8xiLykBTaNePSGHtedmJWVWfW9dXQN",
+          "inputOwner": {
+            "kind": 3,
+            "version": {
+              "__bigint": "734637383"
+            }
+          },
+          "outputState": 2,
+          "outputVersion": {
+            "__bigint": "962059526"
+          },
+          "outputDigest": "KewJtXff9QeNqnMEHYnjgB1nzAUrSJdFhLDDNH8Fp9G",
+          "outputOwner": {
+            "kind": 3,
+            "version": {
+              "__bigint": "734637383"
+            }
+          },
+          "idOperation": 1,
+          "objectType": "0x2c8d603bc51326b8c13cef9dd07031a408a48dddb541963357661df5d3204809::pool::Pool<0x0041f9f9344cac094454cd574e333c4fdb132d7bcc9379bcd4aab485b2a63942::wbtc::WBTC,0xdba34672e30cb065b1f93e3ab55318768fd6fef66c15942c9f7cb846e2f900e7::usdc::USDC>"
+        }
+      ],
+      "unchangedConsensusObjects": [
+        {
+          "kind": 1,
+          "objectId": "0x0000000000000000000000000000000000000000000000000000000000000006",
+          "version": {
+            "__bigint": "912768105"
+          },
+          "digest": "72E6W92ZhEqaLEAcoUe8T6KybrWsNayod9tW23hZadq",
+          "objectType": "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock"
+        }
+      ],
+      "unchangedLoadedRuntimeObjects": [
+        {
+          "objectId": "0xb9c2238b1beddddbc06b1ecb407b79bb7cb4f7a5f0857f8200c7da4b8f2d2960",
+          "version": {
+            "__bigint": "961628735"
+          }
+        }
+      ],
+      "bcs": {
+        "name": "TransactionEffects",
+        "value": {
+          "__bytes": "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"
+        }
+      },
+      "digest": "DV9n2jhKfcgewMaFPxDVM9AycLkdrMSVa7BjRNoCeJKy",
+      "version": 2,
+      "status": {
+        "success": true
+      },
+      "epoch": {
+        "__bigint": "1215"
+      },
+      "gasUsed": {
+        "computationCost": {
+          "__bigint": "611220"
+        },
+        "storageCost": {
+          "__bigint": "40720800"
+        },
+        "storageRebate": {
+          "__bigint": "41299236"
+        },
+        "nonRefundableStorageFee": {
+          "__bigint": "417164"
+        }
+      },
+      "transactionDigest": "GYcdZWiSrpcgcY8k4ZyJSycW1ew9yqMfQt4bazHJcLjr",
+      "gasObject": {
+        "objectId": "0x77bd6a36bfc1a5450d5a80740c8d021663134ef4134304f68163005d5fb8b48c",
+        "inputState": 2,
+        "inputVersion": {
+          "__bigint": "962059227"
+        },
+        "inputDigest": "Ep1dDzJjMmV9X1aQNTA8YNLZ178CHoH3XA9A782SpTqa",
+        "inputOwner": {
+          "kind": 1,
+          "address": "0x0feb54a725aa357ff2f5bc6bb023c05b310285bd861275a30521f339a434ebb3"
+        },
+        "outputState": 2,
+        "outputVersion": {
+          "__bigint": "962059526"
+        },
+        "outputDigest": "4ueSehpo8JoQCoSBbZw8nPe5NkUCnnkdZzAyDeWk6w39",
+        "outputOwner": {
+          "kind": 1,
+          "address": "0x0feb54a725aa357ff2f5bc6bb023c05b310285bd861275a30521f339a434ebb3"
+        },
+        "idOperation": 1
+      },
+      "eventsDigest": "Fsq3BYmceDHCQezLHqPJRTBXx2X9bqJERorb2yi8gJHf",
+      "lamportVersion": {
+        "__bigint": "962059526"
+      }
+    },
+    "events": {
+      "events": [
+        {
+          "packageId": "0xf48222c4e057fa468baf136bff8e12504209d43850c5778f76159292a96f621e",
+          "module": "pool",
+          "sender": "0x0feb54a725aa357ff2f5bc6bb023c05b310285bd861275a30521f339a434ebb3",
+          "eventType": "0x2c8d603bc51326b8c13cef9dd07031a408a48dddb541963357661df5d3204809::order::OrderCanceled",
+          "contents": {
+            "name": "0x2c8d603bc51326b8c13cef9dd07031a408a48dddb541963357661df5d3204809::order::OrderCanceled",
+            "value": {
+              "__bytes": "0zXoqhnW3AQnPXfjZMk2utadtJBaSrOycz1kTdKzHgr1FCqvokhmEH32KL+S0DWMfaasxGwvEJUWkP0rhXDxF0h4cgAAAAAAgNEWPZYAAIAy3+EJtcZt0w/rVKclqjV/8vW8a7AjwFsxAoW9hhJ1owUh8zmkNOuzgNEWPZYAAAAAWE8bAQAAAABYTxsBAAAAAPkQYeyfAQAA"
+            }
+          },
+          "json": {
+            "kind": {
+              "oneofKind": "structValue",
+              "structValue": {
+                "fields": {
+                  "balance_manager_id": {
+                    "kind": {
+                      "oneofKind": "stringValue",
+                      "stringValue": "0xd335e8aa19d6dc04273d77e364c936bad69db4905a4ab3b2733d644dd2b31e0a"
+                    }
+                  },
+                  "base_asset_quantity_canceled": {
+                    "kind": {
+                      "oneofKind": "stringValue",
+                      "stringValue": "18567000"
+                    }
+                  },
+                  "client_order_id": {
+                    "kind": {
+                      "oneofKind": "stringValue",
+                      "stringValue": "15235051595321433906"
+                    }
+                  },
+                  "is_bid": {
+                    "kind": {
+                      "oneofKind": "boolValue",
+                      "boolValue": false
+                    }
+                  },
+                  "order_id": {
+                    "kind": {
+                      "oneofKind": "stringValue",
+                      "stringValue": "170141195363599780174249674972211607624"
+                    }
+                  },
+                  "original_quantity": {
+                    "kind": {
+                      "oneofKind": "stringValue",
+                      "stringValue": "18567000"
+                    }
+                  },
+                  "pool_id": {
+                    "kind": {
+                      "oneofKind": "stringValue",
+                      "stringValue": "0xf5142aafa24866107df628bf92d0358c7da6acc46c2f10951690fd2b8570f117"
+                    }
+                  },
+                  "price": {
+                    "kind": {
+                      "oneofKind": "stringValue",
+                      "stringValue": "645270000000"
+                    }
+                  },
+                  "timestamp": {
+                    "kind": {
+                      "oneofKind": "stringValue",
+                      "stringValue": "1786377212153"
+                    }
+                  },
+                  "trader": {
+                    "kind": {
+                      "oneofKind": "stringValue",
+                      "stringValue": "0x0feb54a725aa357ff2f5bc6bb023c05b310285bd861275a30521f339a434ebb3"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "bcs": {
+        "name": "TransactionEvents",
+        "value": {
+          "__bytes": "AfSCIsTgV/pGi68Ta/+OElBCCdQ4UMV3j3YVkpKpb2IeBHBvb2wP61SnJao1f/L1vGuwI8BbMQKFvYYSdaMFIfM5pDTrsyyNYDvFEya4wTzvndBwMaQIpI3dtUGWM1dmHfXTIEgJBW9yZGVyDU9yZGVyQ2FuY2VsZWQAmQHTNeiqGdbcBCc9d+NkyTa61p20kFpKs7JzPWRN0rMeCvUUKq+iSGYQffYov5LQNYx9pqzEbC8QlRaQ/SuFcPEXSHhyAAAAAACA0RY9lgAAgDLf4Qm1xm3TD+tUpyWqNX/y9bxrsCPAWzEChb2GEnWjBSHzOaQ067OA0RY9lgAAAABYTxsBAAAAAFhPGwEAAAAA+RBh7J8BAAA="
+        }
+      },
+      "digest": "Fsq3BYmceDHCQezLHqPJRTBXx2X9bqJERorb2yi8gJHf"
+    },
+    "checkpoint": {
+      "__bigint": "309107352"
+    },
+    "timestamp": {
+      "seconds": {
+        "__bigint": "1786377212"
+      },
+      "nanos": 153000000
+    }
+  },
+  "system": {
+    "signatures": [
+      {
+        "signature": {
+          "oneofKind": "simple",
+          "simple": {
+            "scheme": 0,
+            "signature": {
+              "__bytes": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=="
+            },
+            "publicKey": {
+              "__bytes": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+            }
+          }
+        },
+        "bcs": {
+          "name": "UserSignatureBytes",
+          "value": {
+            "__bytes": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=="
+          }
+        },
+        "scheme": 0
+      }
+    ],
+    "balanceChanges": [],
+    "digest": "HiWy6xnAoDrHJhavKCpHrZ7wVxRPMBeQ4PnmBaE7Agp4",
+    "transaction": {
+      "bcs": {
+        "name": "TransactionData",
+        "value": {
+          "__bytes": "AAm/BAAAAAAAAOZNDAAAAAAAAI8IYeyfAQAAIIwBd3cRLlfro+/MWLmGn3CpSSuk2QLBO3XZmcfPerzdAQAgmgyMXcnBaX1B6ySFZyTkqbsYMS+KFnZPHgddZargaAkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAA=="
+        }
+      },
+      "digest": "HiWy6xnAoDrHJhavKCpHrZ7wVxRPMBeQ4PnmBaE7Agp4",
+      "version": 1,
+      "kind": {
+        "data": {
+          "oneofKind": "consensusCommitPrologue",
+          "consensusCommitPrologue": {
+            "epoch": {
+              "__bigint": "1215"
+            },
+            "round": {
+              "__bigint": "806374"
+            },
+            "commitTimestamp": {
+              "seconds": {
+                "__bigint": "1786377209"
+              },
+              "nanos": 999000000
+            },
+            "consensusCommitDigest": "ARXNjrfE4MhaKGW2mmmhn1dy8y7Y6kcyvm1hQXz9VfXz",
+            "consensusDeterminedVersionAssignments": {
+              "canceledTransactions": [],
+              "version": 2
+            },
+            "additionalStateDigest": "BNLtEDsSyr9s1svMcRSLV7BHWf9V1k7LyGVQSYVKVdWg"
+          }
+        },
+        "kind": 10
+      },
+      "sender": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "gasPayment": {
+        "objects": [
+          {
+            "objectId": "0x0000000000000000000000000000000000000000000000000000000000000000",
+            "version": {
+              "__bigint": "0"
+            },
+            "digest": "11111111111111111111111111111111"
+          }
+        ],
+        "owner": "0x0000000000000000000000000000000000000000000000000000000000000000",
+        "price": {
+          "__bigint": "1"
+        },
+        "budget": {
+          "__bigint": "0"
+        }
+      },
+      "expiration": {
+        "kind": 1
+      }
+    },
+    "effects": {
+      "dependencies": [
+        "6DrgpjvQGPCZMQCSmhox1aSXmUHyrWhcqVTGHYeFq8da"
+      ],
+      "changedObjects": [
+        {
+          "objectId": "0x0000000000000000000000000000000000000000000000000000000000000006",
+          "inputState": 2,
+          "inputVersion": {
+            "__bigint": "912768074"
+          },
+          "inputDigest": "qjdqd3oBpWnhw3SwhgRqkYFY4dw9py3o7r2htPnNzNg",
+          "inputOwner": {
+            "kind": 3,
+            "version": {
+              "__bigint": "1"
+            }
+          },
+          "outputState": 2,
+          "outputVersion": {
+            "__bigint": "912768075"
+          },
+          "outputDigest": "2utQS2Jgj6yWWaqr1xr9Bw7VfrNJPDBrDKPW6mXV6B9K",
+          "outputOwner": {
+            "kind": 3,
+            "version": {
+              "__bigint": "1"
+            }
+          },
+          "idOperation": 1
+        }
+      ],
+      "unchangedConsensusObjects": [],
+      "unchangedLoadedRuntimeObjects": [],
+      "bcs": {
+        "name": "TransactionEffects",
+        "value": {
+          "__bytes": "AQC/BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIPhdsChdYyHKrSxTtvWCHVtBvNOu8euLPmK9NRimj/NNAAABIE2Vlc1UBEyy8FSH1jW3OI6uFKNdrHp+c8EFKC08kf+FS7xnNgAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAYBSrxnNgAAAAAgDHwWJ9reZsrPes4iDHL1JYMxUlSyQmPeNgjLAd08pIUCAQAAAAAAAAABIBxoAv0jixmz8WHiUBjF0NkExlV+rbCUF8bFbyCYhfcSAgEAAAAAAAAAAAAA"
+        }
+      },
+      "digest": "CUdNMdP1dpY1WWvB78YuYwrN8E7mowrvw7nNk872QLtT",
+      "version": 2,
+      "status": {
+        "success": true
+      },
+      "epoch": {
+        "__bigint": "1215"
+      },
+      "gasUsed": {
+        "computationCost": {
+          "__bigint": "0"
+        },
+        "storageCost": {
+          "__bigint": "0"
+        },
+        "storageRebate": {
+          "__bigint": "0"
+        },
+        "nonRefundableStorageFee": {
+          "__bigint": "0"
+        }
+      },
+      "transactionDigest": "HiWy6xnAoDrHJhavKCpHrZ7wVxRPMBeQ4PnmBaE7Agp4",
+      "lamportVersion": {
+        "__bigint": "912768075"
+      }
+    },
+    "checkpoint": {
+      "__bigint": "309107343"
+    },
+    "timestamp": {
+      "seconds": {
+        "__bigint": "1786377210"
+      },
+      "nanos": 146000000
+    }
+  },
+  "systemKind": "consensusCommitPrologue",
+  "transfer": {
+    "signatures": [],
+    "balanceChanges": [
+      {
+        "address": "0x6cae00a08b04f6a4ca7157628ccf60f40078616deab20d2b626bd1de7c8a16c9",
+        "coinType": "0x0000000000000000000000000000000000000000000000000000000000000002::sui::SUI",
+        "amount": "-4349304"
+      },
+      {
+        "address": "0x6cae00a08b04f6a4ca7157628ccf60f40078616deab20d2b626bd1de7c8a16c9",
+        "coinType": "0xdba34672e30cb065b1f93e3ab55318768fd6fef66c15942c9f7cb846e2f900e7::usdc::USDC",
+        "amount": "-68315346"
+      },
+      {
+        "address": "0x6cae00a08b04f6a4ca7157628ccf60f40078616deab20d2b626bd1de7c8a16c9",
+        "coinType": "0xdeeb7a4662eec9f2f3def03fb937a663dddaa2e215b8078a284d026b7946c270::deep::DEEP",
+        "amount": "-21377773992"
+      }
+    ],
+    "digest": "CkUN1gw3aZu6gge8QERL3bU8WvaUmUzGtDQFtFWJXzMQ",
+    "transaction": {
+      "bcs": {
+        "name": "TransactionData",
+        "value": {
+          "__bytes": "AAARAQED2yUbpQmo1dh3e2M4g2CCM12T7svdCaEeGQoc/1HDUlGmOhgAAAAAAAEB1eOjxzlnAtjzWKY++SHMfBlR9Sxt/CBRzIdyz3y5kAyvgCAgAAAAAAEABKdc//8ABKhc//8BAM/PYUUsAU3CwPPKkzVZBs1BqT4eHe7SARQlK2S3yFKnxOpYOQAAAAAgNiFntBbDq4ftMVShoxdAFLJd1avTlHAtkdS4/YlmP08BANtAtQDfdxJmL2S4lp36iowgnTUej6YFbExOJwq99z6UI+tYOQAAAAAgz7+VfIOZ7aIM8W6nkpbUZ2dTA49u7kEZagUG9aYlQqABAOyztDelALdGCnuqrrdSw0Ax6UXNS6Yoqnj7YlTQ3pMCI+tYOQAAAAAgW8r4aZFzDXM18tsDP3CxvvZSoFJZCJ/P4GIwoOQHytcACKjxNvoEAAAAAQDFkYQWeH3mSG71mOymgorAV4JRKLEfsIv8A/bYvuaEO8TqWDkAAAAAIESgEw86N/BmBYBLQLaqBbdvZ9X+mNLxKghLLUysYJ6oAAhk1RwEAAAAAAEBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAYBAAAAAAAAAAAACKjxNvoEAAAAAAio8Tb6BAAAAAAIZNUcBAAAAAAAAQEAIGyuAKCLBPakynFXYozPYPQAeGFt6rINK2Jr0d58ihbJACBsrgCgiwT2pMpxV2KMz2D0AHhhbeqyDStia9HefIoWyQcA0HUzjRBUgvFSfL/TY9ZBNVjxhN7DbZE4pwJh6H9IbpwEcG9vbA1vcGVuX3Bvc2l0aW9uAgfe63pGYu7J8vPe8D+5N6Zj3dqi4hW4B4ooTQJreUbCcARkZWVwBERFRVAAB9ujRnLjDLBlsfk+OrVTGHaP1v72bBWULJ98uEbi+QDnBHVzZGMEVVNEQwAEAQAAAQEAAQIAAQMAAwEEAAIBBQABBgACAQQAAQEHAAIBCAABAQkAANB1M40QVILxUny/02PWQTVY8YTew22ROKcCYeh/SG6cB2dhdGV3YXkjcHJvdmlkZV9saXF1aWRpdHlfd2l0aF9maXhlZF9hbW91bnQCB97rekZi7sny897wP7k3pmPd2qLiFbgHiihNAmt5RsJwBGRlZXAEREVFUAAH26NGcuMMsGWx+T46tVMYdo/W/vZsFZQsn3y4RuL5AOcEdXNkYwRVU0RDAAoBCgABAAABAQADAAAAAAICAAIDAAELAAEMAAENAAEOAAECAQQAAQgAAQ8AAQEDAAAAAAEQAGyuAKCLBPakynFXYozPYPQAeGFt6rINK2Jr0d58ihbJAVozhAH8J8Oonfyc9I/aQYzR9FYZwS30ZnmYx+j+MMwLI+tYOQAAAAAgbrxgjSj/CroCSNFtGxxZRQ5MDngga8aqJLBwd3nIQdtsrgCgiwT2pMpxV2KMz2D0AHhhbeqyDStia9HefIoWyWQAAAAAAAAA+MxSAAAAAAAA"
+        }
+      },
+      "digest": "CkUN1gw3aZu6gge8QERL3bU8WvaUmUzGtDQFtFWJXzMQ",
+      "version": 1,
+      "kind": {
+        "data": {
+          "oneofKind": "programmableTransaction",
+          "programmableTransaction": {
+            "inputs": [
+              {
+                "kind": 3,
+                "objectId": "0x03db251ba509a8d5d8777b6338836082335d93eecbdd09a11e190a1cff51c352",
+                "version": {
+                  "__bigint": "406496849"
+                },
+                "mutable": false,
+                "mutability": 1
+              },
+              {
+                "kind": 3,
+                "objectId": "0xd5e3a3c7396702d8f358a63ef921cc7c1951f52c6dfc2051cc8772cf7cb9900c",
+                "version": {
+                  "__bigint": "539001007"
+                },
+                "mutable": true,
+                "mutability": 2
+              },
+              {
+                "kind": 1,
+                "pure": {
+                  "__bytes": "p1z//w=="
+                }
+              },
+              {
+                "kind": 1,
+                "pure": {
+                  "__bytes": "qFz//w=="
+                }
+              },
+              {
+                "kind": 2,
+                "objectId": "0xcfcf61452c014dc2c0f3ca93355906cd41a93e1e1deed20114252b64b7c852a7",
+                "version": {
+                  "__bigint": "962128580"
+                },
+                "digest": "4eJZSXPooeqbYbqXtrXjZqQ7dik4rAe8prGSFZftE2dC"
+              },
+              {
+                "kind": 2,
+                "objectId": "0xdb40b500df7712662f64b8969dfa8a8c209d351e8fa6056c4c4e270abdf73e94",
+                "version": {
+                  "__bigint": "962128675"
+                },
+                "digest": "EyxqDHDriJ7f9cR19RWzxmZRnEPpob1T2u8xDyvgCPhq"
+              },
+              {
+                "kind": 2,
+                "objectId": "0xecb3b437a500b7460a7baaaeb752c34031e945cd4ba628aa78fb6254d0de9302",
+                "version": {
+                  "__bigint": "962128675"
+                },
+                "digest": "7BKcJ34RQPddb5TqHTRyshU14tqFMtHpaaxFAEZC3bL2"
+              },
+              {
+                "kind": 1,
+                "pure": {
+                  "__bytes": "qPE2+gQAAAA="
+                }
+              },
+              {
+                "kind": 2,
+                "objectId": "0xc5918416787de6486ef598eca6828ac057825128b11fb08bfc03f6d8bee6843b",
+                "version": {
+                  "__bigint": "962128580"
+                },
+                "digest": "5ctJ4NBT4uXSkMbYS4Fr1Crkme3xPCUxhJ3a9yBxeCMV"
+              },
+              {
+                "kind": 1,
+                "pure": {
+                  "__bytes": "ZNUcBAAAAAA="
+                }
+              },
+              {
+                "kind": 3,
+                "objectId": "0x0000000000000000000000000000000000000000000000000000000000000006",
+                "version": {
+                  "__bigint": "1"
+                },
+                "mutable": false,
+                "mutability": 1
+              },
+              {
+                "kind": 1,
+                "pure": {
+                  "__bytes": "qPE2+gQAAAA="
+                }
+              },
+              {
+                "kind": 1,
+                "pure": {
+                  "__bytes": "qPE2+gQAAAA="
+                }
+              },
+              {
+                "kind": 1,
+                "pure": {
+                  "__bytes": "ZNUcBAAAAAA="
+                }
+              },
+              {
+                "kind": 1,
+                "pure": {
+                  "__bytes": "AQ=="
+                }
+              },
+              {
+                "kind": 1,
+                "pure": {
+                  "__bytes": "bK4AoIsE9qTKcVdijM9g9AB4YW3qsg0rYmvR3nyKFsk="
+                }
+              },
+              {
+                "kind": 1,
+                "pure": {
+                  "__bytes": "bK4AoIsE9qTKcVdijM9g9AB4YW3qsg0rYmvR3nyKFsk="
+                }
+              }
+            ],
+            "commands": [
+              {
+                "command": {
+                  "oneofKind": "moveCall",
+                  "moveCall": {
+                    "typeArguments": [
+                      "0xdeeb7a4662eec9f2f3def03fb937a663dddaa2e215b8078a284d026b7946c270::deep::DEEP",
+                      "0xdba34672e30cb065b1f93e3ab55318768fd6fef66c15942c9f7cb846e2f900e7::usdc::USDC"
+                    ],
+                    "arguments": [
+                      {
+                        "kind": 2,
+                        "input": 0
+                      },
+                      {
+                        "kind": 2,
+                        "input": 1
+                      },
+                      {
+                        "kind": 2,
+                        "input": 2
+                      },
+                      {
+                        "kind": 2,
+                        "input": 3
+                      }
+                    ],
+                    "package": "0xd075338d105482f1527cbfd363d6413558f184dec36d9138a70261e87f486e9c",
+                    "module": "pool",
+                    "function": "open_position"
+                  }
+                }
+              },
+              {
+                "command": {
+                  "oneofKind": "mergeCoins",
+                  "mergeCoins": {
+                    "coinsToMerge": [
+                      {
+                        "kind": 2,
+                        "input": 5
+                      },
+                      {
+                        "kind": 2,
+                        "input": 6
+                      }
+                    ],
+                    "coin": {
+                      "kind": 2,
+                      "input": 4
+                    }
+                  }
+                }
+              },
+              {
+                "command": {
+                  "oneofKind": "splitCoins",
+                  "splitCoins": {
+                    "amounts": [
+                      {
+                        "kind": 2,
+                        "input": 7
+                      }
+                    ],
+                    "coin": {
+                      "kind": 2,
+                      "input": 4
+                    }
+                  }
+                }
+              },
+              {
+                "command": {
+                  "oneofKind": "splitCoins",
+                  "splitCoins": {
+                    "amounts": [
+                      {
+                        "kind": 2,
+                        "input": 9
+                      }
+                    ],
+                    "coin": {
+                      "kind": 2,
+                      "input": 8
+                    }
+                  }
+                }
+              },
+              {
+                "command": {
+                  "oneofKind": "moveCall",
+                  "moveCall": {
+                    "typeArguments": [
+                      "0xdeeb7a4662eec9f2f3def03fb937a663dddaa2e215b8078a284d026b7946c270::deep::DEEP",
+                      "0xdba34672e30cb065b1f93e3ab55318768fd6fef66c15942c9f7cb846e2f900e7::usdc::USDC"
+                    ],
+                    "arguments": [
+                      {
+                        "kind": 2,
+                        "input": 10
+                      },
+                      {
+                        "kind": 2,
+                        "input": 0
+                      },
+                      {
+                        "kind": 2,
+                        "input": 1
+                      },
+                      {
+                        "kind": 3,
+                        "result": 0,
+                        "subresult": 0
+                      },
+                      {
+                        "kind": 3,
+                        "result": 2
+                      },
+                      {
+                        "kind": 3,
+                        "result": 3
+                      },
+                      {
+                        "kind": 2,
+                        "input": 11
+                      },
+                      {
+                        "kind": 2,
+                        "input": 12
+                      },
+                      {
+                        "kind": 2,
+                        "input": 13
+                      },
+                      {
+                        "kind": 2,
+                        "input": 14
+                      }
+                    ],
+                    "package": "0xd075338d105482f1527cbfd363d6413558f184dec36d9138a70261e87f486e9c",
+                    "module": "gateway",
+                    "function": "provide_liquidity_with_fixed_amount"
+                  }
+                }
+              },
+              {
+                "command": {
+                  "oneofKind": "transferObjects",
+                  "transferObjects": {
+                    "objects": [
+                      {
+                        "kind": 2,
+                        "input": 4
+                      },
+                      {
+                        "kind": 2,
+                        "input": 8
+                      }
+                    ],
+                    "address": {
+                      "kind": 2,
+                      "input": 15
+                    }
+                  }
+                }
+              },
+              {
+                "command": {
+                  "oneofKind": "transferObjects",
+                  "transferObjects": {
+                    "objects": [
+                      {
+                        "kind": 3,
+                        "result": 0,
+                        "subresult": 0
+                      }
+                    ],
+                    "address": {
+                      "kind": 2,
+                      "input": 16
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "kind": 1
+      },
+      "sender": "0x6cae00a08b04f6a4ca7157628ccf60f40078616deab20d2b626bd1de7c8a16c9",
+      "gasPayment": {
+        "objects": [
+          {
+            "objectId": "0x5a338401fc27c3a89dfc9cf48fda418cd1f45619c12df4667998c7e8fe30cc0b",
+            "version": {
+              "__bigint": "962128675"
+            },
+            "digest": "8TGT1ddtJybT99xD4ckM2EvwJCj4nTjmDaKz8iUqXYKU"
+          }
+        ],
+        "owner": "0x6cae00a08b04f6a4ca7157628ccf60f40078616deab20d2b626bd1de7c8a16c9",
+        "price": {
+          "__bigint": "100"
+        },
+        "budget": {
+          "__bigint": "5426424"
+        }
+      },
+      "expiration": {
+        "kind": 1
+      }
+    },
+    "effects": {
+      "dependencies": [
+        "7DkJSrf5sPWGxqHbH2X1wXwFcftRm6myhJJnuTJbaMYr",
+        "AsY9kNb6XKxh8QS2okYZqPSS72SQQbJsmSscu5AAbQYd",
+        "BU6uBYruon7MqPYaPziG4D27oeZsmqSyxqF4eSSvfKgo",
+        "CAwsr4cSai2uE3RsakQnUjjkRGJPaaje23TkwNGuquiq",
+        "CShZDVqJQrXm4SYiCgDe49kKnFzadwhFV5viqHLgRfaX",
+        "EPApj8SPGaSQ6b5uxH6WH8XWdJcG3PkPgrg8MRLPNmZm",
+        "FqScLi4x7Bs1s2hbZ1yfkVXjh5xxCqhJ5EurSmwjE2sp",
+        "G77TSTeskPdDK6tZsYbttYgUA1KihJ9Wc6oJJyiaBGJz"
+      ],
+      "changedObjects": [
+        {
+          "objectId": "0x3ca33ba52c11d95a8fe9526660a7233eed892b45d9cb4dc7fddeaa63433361dd",
+          "inputState": 1,
+          "outputState": 2,
+          "outputVersion": {
+            "__bigint": "962128677"
+          },
+          "outputDigest": "AKQQgLdPEh8qWQvTSDYwWdydZbfhSP9grUj1PcCarHa7",
+          "outputOwner": {
+            "kind": 1,
+            "address": "0x6cae00a08b04f6a4ca7157628ccf60f40078616deab20d2b626bd1de7c8a16c9"
+          },
+          "idOperation": 2
+        },
+        {
+          "objectId": "0x5a338401fc27c3a89dfc9cf48fda418cd1f45619c12df4667998c7e8fe30cc0b",
+          "inputState": 2,
+          "inputVersion": {
+            "__bigint": "962128675"
+          },
+          "inputDigest": "8TGT1ddtJybT99xD4ckM2EvwJCj4nTjmDaKz8iUqXYKU",
+          "inputOwner": {
+            "kind": 1,
+            "address": "0x6cae00a08b04f6a4ca7157628ccf60f40078616deab20d2b626bd1de7c8a16c9"
+          },
+          "outputState": 2,
+          "outputVersion": {
+            "__bigint": "962128677"
+          },
+          "outputDigest": "33VUdpxjiqkL92GAizWqL1AZHV3u69ykKHhoAKpnHeJm",
+          "outputOwner": {
+            "kind": 1,
+            "address": "0x6cae00a08b04f6a4ca7157628ccf60f40078616deab20d2b626bd1de7c8a16c9"
+          },
+          "idOperation": 1
+        },
+        {
+          "objectId": "0x65b43115aac8f5983123dbb26270fe162c83439c27b84b26f04ba5e9ae3dd694",
+          "inputState": 2,
+          "inputVersion": {
+            "__bigint": "962128676"
+          },
+          "inputDigest": "GFQJ4uM9yPKhzcsxHCQe1CFLJm2HFZzji1MxXcXMCEP2",
+          "inputOwner": {
+            "kind": 2,
+            "address": "0xbeb72ae831b38f358997432a58955fb93cef07e6a9d7694c3bedb2d7a81cd8d7"
+          },
+          "outputState": 2,
+          "outputVersion": {
+            "__bigint": "962128677"
+          },
+          "outputDigest": "BZuAhzjmx6ZsNDWhL5cy7TcJACDA8p7zzfYhD1ybQBiA",
+          "outputOwner": {
+            "kind": 2,
+            "address": "0xbeb72ae831b38f358997432a58955fb93cef07e6a9d7694c3bedb2d7a81cd8d7"
+          },
+          "idOperation": 1
+        },
+        {
+          "objectId": "0x9b05612c5c553cd1970f5b21d06324f1902a3492ada4083432cb597c8c873626",
+          "inputState": 1,
+          "outputState": 2,
+          "outputVersion": {
+            "__bigint": "962128677"
+          },
+          "outputDigest": "GPhasequfo75jCk34XRgUSDBbzwFp1m13tNuokm14Udw",
+          "outputOwner": {
+            "kind": 1,
+            "address": "0x6cae00a08b04f6a4ca7157628ccf60f40078616deab20d2b626bd1de7c8a16c9"
+          },
+          "idOperation": 2
+        },
+        {
+          "objectId": "0xc5918416787de6486ef598eca6828ac057825128b11fb08bfc03f6d8bee6843b",
+          "inputState": 2,
+          "inputVersion": {
+            "__bigint": "962128580"
+          },
+          "inputDigest": "5ctJ4NBT4uXSkMbYS4Fr1Crkme3xPCUxhJ3a9yBxeCMV",
+          "inputOwner": {
+            "kind": 1,
+            "address": "0x6cae00a08b04f6a4ca7157628ccf60f40078616deab20d2b626bd1de7c8a16c9"
+          },
+          "outputState": 2,
+          "outputVersion": {
+            "__bigint": "962128677"
+          },
+          "outputDigest": "DoNjXy3txQJY2iMCxVNZtBZJUAYG8MJyV5hg4Xiha3CW",
+          "outputOwner": {
+            "kind": 1,
+            "address": "0x6cae00a08b04f6a4ca7157628ccf60f40078616deab20d2b626bd1de7c8a16c9"
+          },
+          "idOperation": 1
+        },
+        {
+          "objectId": "0xcfcf61452c014dc2c0f3ca93355906cd41a93e1e1deed20114252b64b7c852a7",
+          "inputState": 2,
+          "inputVersion": {
+            "__bigint": "962128580"
+          },
+          "inputDigest": "4eJZSXPooeqbYbqXtrXjZqQ7dik4rAe8prGSFZftE2dC",
+          "inputOwner": {
+            "kind": 1,
+            "address": "0x6cae00a08b04f6a4ca7157628ccf60f40078616deab20d2b626bd1de7c8a16c9"
+          },
+          "outputState": 2,
+          "outputVersion": {
+            "__bigint": "962128677"
+          },
+          "outputDigest": "38HdcE8xdmt8d7ewFv6yvLZFHfVe21LXuhwojMK7X5yM",
+          "outputOwner": {
+            "kind": 1,
+            "address": "0x6cae00a08b04f6a4ca7157628ccf60f40078616deab20d2b626bd1de7c8a16c9"
+          },
+          "idOperation": 1
+        },
+        {
+          "objectId": "0xd5e3a3c7396702d8f358a63ef921cc7c1951f52c6dfc2051cc8772cf7cb9900c",
+          "inputState": 2,
+          "inputVersion": {
+            "__bigint": "962128676"
+          },
+          "inputDigest": "2SLRT9598C5R8SbCQDHzohqoNf5k5Ks5hACHtUVMXzrz",
+          "inputOwner": {
+            "kind": 3,
+            "version": {
+              "__bigint": "539001007"
+            }
+          },
+          "outputState": 2,
+          "outputVersion": {
+            "__bigint": "962128677"
+          },
+          "outputDigest": "FuVFh9HGgGjjBHVAKPi2Z8X88NKmp11nb73VwzEeULue",
+          "outputOwner": {
+            "kind": 3,
+            "version": {
+              "__bigint": "539001007"
+            }
+          },
+          "idOperation": 1
+        },
+        {
+          "objectId": "0xdb40b500df7712662f64b8969dfa8a8c209d351e8fa6056c4c4e270abdf73e94",
+          "inputState": 2,
+          "inputVersion": {
+            "__bigint": "962128675"
+          },
+          "inputDigest": "EyxqDHDriJ7f9cR19RWzxmZRnEPpob1T2u8xDyvgCPhq",
+          "inputOwner": {
+            "kind": 1,
+            "address": "0x6cae00a08b04f6a4ca7157628ccf60f40078616deab20d2b626bd1de7c8a16c9"
+          },
+          "outputState": 1,
+          "idOperation": 3
+        },
+        {
+          "objectId": "0xdb4906de0f87d176d34376dbf8ec183f5edf0909582df5e81b8f208352143df6",
+          "inputState": 2,
+          "inputVersion": {
+            "__bigint": "962128676"
+          },
+          "inputDigest": "ej5HYakB8rLAh3qZLpodatUK34DtkkNeyUifE7DVH3F",
+          "inputOwner": {
+            "kind": 2,
+            "address": "0xbeb72ae831b38f358997432a58955fb93cef07e6a9d7694c3bedb2d7a81cd8d7"
+          },
+          "outputState": 2,
+          "outputVersion": {
+            "__bigint": "962128677"
+          },
+          "outputDigest": "7hJg3zJ4dBf67MuxF1RqqeJipikXspDqDrDyKcrBo3nb",
+          "outputOwner": {
+            "kind": 2,
+            "address": "0xbeb72ae831b38f358997432a58955fb93cef07e6a9d7694c3bedb2d7a81cd8d7"
+          },
+          "idOperation": 1
+        },
+        {
+          "objectId": "0xecb3b437a500b7460a7baaaeb752c34031e945cd4ba628aa78fb6254d0de9302",
+          "inputState": 2,
+          "inputVersion": {
+            "__bigint": "962128675"
+          },
+          "inputDigest": "7BKcJ34RQPddb5TqHTRyshU14tqFMtHpaaxFAEZC3bL2",
+          "inputOwner": {
+            "kind": 1,
+            "address": "0x6cae00a08b04f6a4ca7157628ccf60f40078616deab20d2b626bd1de7c8a16c9"
+          },
+          "outputState": 1,
+          "idOperation": 3
+        }
+      ],
+      "unchangedConsensusObjects": [
+        {
+          "kind": 1,
+          "objectId": "0x03db251ba509a8d5d8777b6338836082335d93eecbdd09a11e190a1cff51c352",
+          "version": {
+            "__bigint": "962128675"
+          },
+          "digest": "9YT42L4ocf9ce3fZLPBaFWTzij8fit3CRjVjmyQwBVJK"
+        },
+        {
+          "kind": 1,
+          "objectId": "0x0000000000000000000000000000000000000000000000000000000000000006",
+          "version": {
+            "__bigint": "912890102"
+          },
+          "digest": "2bAWmQGm8ZYVRayxGZKCe1SgFvstPdbWDPCUZfjxYZSx"
+        },
+        {
+          "kind": 5,
+          "objectId": "0x0000000000000000000000000000000000000000000000000000000000000403"
+        }
+      ],
+      "unchangedLoadedRuntimeObjects": [
+        {
+          "objectId": "0x184a292d5cf792044af5e26f001e4c879ec64b7a3457a8bc90a0cd77e8839284",
+          "version": {
+            "__bigint": "313334037"
+          }
+        }
+      ],
+      "bcs": {
+        "name": "TransactionEffects",
+        "value": {
+          "__bytes": "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"
+        }
+      },
+      "digest": "D7TAxPZj82CvS5bfizi5DWENNLBaqxveWHt1uHRLEFt3",
+      "version": 2,
+      "status": {
+        "success": true
+      },
+      "epoch": {
+        "__bigint": "1215"
+      },
+      "gasUsed": {
+        "computationCost": {
+          "__bigint": "131000"
+        },
+        "storageCost": {
+          "__bigint": "23810800"
+        },
+        "storageRebate": {
+          "__bigint": "19592496"
+        },
+        "nonRefundableStorageFee": {
+          "__bigint": "197904"
+        }
+      },
+      "transactionDigest": "CkUN1gw3aZu6gge8QERL3bU8WvaUmUzGtDQFtFWJXzMQ",
+      "gasObject": {
+        "objectId": "0x5a338401fc27c3a89dfc9cf48fda418cd1f45619c12df4667998c7e8fe30cc0b",
+        "inputState": 2,
+        "inputVersion": {
+          "__bigint": "962128675"
+        },
+        "inputDigest": "8TGT1ddtJybT99xD4ckM2EvwJCj4nTjmDaKz8iUqXYKU",
+        "inputOwner": {
+          "kind": 1,
+          "address": "0x6cae00a08b04f6a4ca7157628ccf60f40078616deab20d2b626bd1de7c8a16c9"
+        },
+        "outputState": 2,
+        "outputVersion": {
+          "__bigint": "962128677"
+        },
+        "outputDigest": "33VUdpxjiqkL92GAizWqL1AZHV3u69ykKHhoAKpnHeJm",
+        "outputOwner": {
+          "kind": 1,
+          "address": "0x6cae00a08b04f6a4ca7157628ccf60f40078616deab20d2b626bd1de7c8a16c9"
+        },
+        "idOperation": 1
+      },
+      "eventsDigest": "3w1J2AWJs7835sp24Fpn6j8U92iCaiNJtPF1aoqrkrnJ",
+      "lamportVersion": {
+        "__bigint": "962128677"
+      }
+    },
+    "events": {
+      "events": [
+        {
+          "packageId": "0xd075338d105482f1527cbfd363d6413558f184dec36d9138a70261e87f486e9c",
+          "module": "pool",
+          "sender": "0x6cae00a08b04f6a4ca7157628ccf60f40078616deab20d2b626bd1de7c8a16c9",
+          "eventType": "0x3492c874c1e3b3e2984e8c41b589e642d4d0a5d6459e5a9cfc2d52fd7c89c267::events::PositionOpened",
+          "contents": {
+            "name": "0x3492c874c1e3b3e2984e8c41b589e642d4d0a5d6459e5a9cfc2d52fd7c89c267::events::PositionOpened",
+            "value": {
+              "__bytes": "1eOjxzlnAtjzWKY++SHMfBlR9Sxt/CBRzIdyz3y5kAybBWEsXFU80ZcPWyHQYyTxkCo0kq2kCDQyy1l8jIc2Jqdc//+oXP//"
+            }
+          },
+          "json": {
+            "kind": {
+              "oneofKind": "structValue",
+              "structValue": {
+                "fields": {
+                  "pool_id": {
+                    "kind": {
+                      "oneofKind": "stringValue",
+                      "stringValue": "0xd5e3a3c7396702d8f358a63ef921cc7c1951f52c6dfc2051cc8772cf7cb9900c"
+                    }
+                  },
+                  "position_id": {
+                    "kind": {
+                      "oneofKind": "stringValue",
+                      "stringValue": "0x9b05612c5c553cd1970f5b21d06324f1902a3492ada4083432cb597c8c873626"
+                    }
+                  },
+                  "tick_lower": {
+                    "kind": {
+                      "oneofKind": "structValue",
+                      "structValue": {
+                        "fields": {
+                          "bits": {
+                            "kind": {
+                              "oneofKind": "numberValue",
+                              "numberValue": 4294925479
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "tick_upper": {
+                    "kind": {
+                      "oneofKind": "structValue",
+                      "structValue": {
+                        "fields": {
+                          "bits": {
+                            "kind": {
+                              "oneofKind": "numberValue",
+                              "numberValue": 4294925480
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "packageId": "0xd075338d105482f1527cbfd363d6413558f184dec36d9138a70261e87f486e9c",
+          "module": "gateway",
+          "sender": "0x6cae00a08b04f6a4ca7157628ccf60f40078616deab20d2b626bd1de7c8a16c9",
+          "eventType": "0x3492c874c1e3b3e2984e8c41b589e642d4d0a5d6459e5a9cfc2d52fd7c89c267::events::LiquidityProvided",
+          "contents": {
+            "name": "0x3492c874c1e3b3e2984e8c41b589e642d4d0a5d6459e5a9cfc2d52fd7c89c267::events::LiquidityProvided",
+            "value": {
+              "__bytes": "1eOjxzlnAtjzWKY++SHMfBlR9Sxt/CBRzIdyz3y5kAybBWEsXFU80ZcPWyHQYyTxkCo0kq2kCDQyy1l8jIc2JqjxNvoEAAAA0mgSBAAAAAAzzdZOugkAAFd2LLQAAAAAPvp2mh46AAAAAAAAAAAAAP2Mww8P9QAAAAAAAAAAAAA7hzqqLS8BAAAAAAAAAAAAHaVYoF/9ox8AAAAAAAAAAKdc//+nXP//qFz//59/gAAAAAAAAAAAAAAAAAA="
+            }
+          },
+          "json": {
+            "kind": {
+              "oneofKind": "structValue",
+              "structValue": {
+                "fields": {
+                  "after_liquidity": {
+                    "kind": {
+                      "oneofKind": "stringValue",
+                      "stringValue": "333348152706875"
+                    }
+                  },
+                  "before_liquidity": {
+                    "kind": {
+                      "oneofKind": "stringValue",
+                      "stringValue": "269445037788413"
+                    }
+                  },
+                  "coin_a_amount": {
+                    "kind": {
+                      "oneofKind": "stringValue",
+                      "stringValue": "21377773992"
+                    }
+                  },
+                  "coin_b_amount": {
+                    "kind": {
+                      "oneofKind": "stringValue",
+                      "stringValue": "68315346"
+                    }
+                  },
+                  "current_sqrt_price": {
+                    "kind": {
+                      "oneofKind": "stringValue",
+                      "stringValue": "2279944423533487389"
+                    }
+                  },
+                  "current_tick_index": {
+                    "kind": {
+                      "oneofKind": "structValue",
+                      "structValue": {
+                        "fields": {
+                          "bits": {
+                            "kind": {
+                              "oneofKind": "numberValue",
+                              "numberValue": 4294925479
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "liquidity": {
+                    "kind": {
+                      "oneofKind": "stringValue",
+                      "stringValue": "63903114918462"
+                    }
+                  },
+                  "lower_tick": {
+                    "kind": {
+                      "oneofKind": "structValue",
+                      "structValue": {
+                        "fields": {
+                          "bits": {
+                            "kind": {
+                              "oneofKind": "numberValue",
+                              "numberValue": 4294925479
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "pool_coin_a_amount": {
+                    "kind": {
+                      "oneofKind": "stringValue",
+                      "stringValue": "10695791267123"
+                    }
+                  },
+                  "pool_coin_b_amount": {
+                    "kind": {
+                      "oneofKind": "stringValue",
+                      "stringValue": "3022812759"
+                    }
+                  },
+                  "pool_id": {
+                    "kind": {
+                      "oneofKind": "stringValue",
+                      "stringValue": "0xd5e3a3c7396702d8f358a63ef921cc7c1951f52c6dfc2051cc8772cf7cb9900c"
+                    }
+                  },
+                  "position_id": {
+                    "kind": {
+                      "oneofKind": "stringValue",
+                      "stringValue": "0x9b05612c5c553cd1970f5b21d06324f1902a3492ada4083432cb597c8c873626"
+                    }
+                  },
+                  "sequence_number": {
+                    "kind": {
+                      "oneofKind": "stringValue",
+                      "stringValue": "8421279"
+                    }
+                  },
+                  "upper_tick": {
+                    "kind": {
+                      "oneofKind": "structValue",
+                      "structValue": {
+                        "fields": {
+                          "bits": {
+                            "kind": {
+                              "oneofKind": "numberValue",
+                              "numberValue": 4294925480
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "bcs": {
+        "name": "TransactionEvents",
+        "value": {
+          "__bytes": "AtB1M40QVILxUny/02PWQTVY8YTew22ROKcCYeh/SG6cBHBvb2xsrgCgiwT2pMpxV2KMz2D0AHhhbeqyDStia9HefIoWyTSSyHTB47PimE6MQbWJ5kLU0KXWRZ5anPwtUv18icJnBmV2ZW50cw5Qb3NpdGlvbk9wZW5lZABI1eOjxzlnAtjzWKY++SHMfBlR9Sxt/CBRzIdyz3y5kAybBWEsXFU80ZcPWyHQYyTxkCo0kq2kCDQyy1l8jIc2Jqdc//+oXP//0HUzjRBUgvFSfL/TY9ZBNVjxhN7DbZE4pwJh6H9IbpwHZ2F0ZXdheWyuAKCLBPakynFXYozPYPQAeGFt6rINK2Jr0d58ihbJNJLIdMHjs+KYToxBtYnmQtTQpdZFnlqc/C1S/XyJwmcGZXZlbnRzEUxpcXVpZGl0eVByb3ZpZGVkALwB1eOjxzlnAtjzWKY++SHMfBlR9Sxt/CBRzIdyz3y5kAybBWEsXFU80ZcPWyHQYyTxkCo0kq2kCDQyy1l8jIc2JqjxNvoEAAAA0mgSBAAAAAAzzdZOugkAAFd2LLQAAAAAPvp2mh46AAAAAAAAAAAAAP2Mww8P9QAAAAAAAAAAAAA7hzqqLS8BAAAAAAAAAAAAHaVYoF/9ox8AAAAAAAAAAKdc//+nXP//qFz//59/gAAAAAAAAAAAAAAAAAA="
+        }
+      },
+      "digest": "3w1J2AWJs7835sp24Fpn6j8U92iCaiNJtPF1aoqrkrnJ"
+    },
+    "checkpoint": {
+      "__bigint": "309148143"
+    },
+    "timestamp": {
+      "seconds": {
+        "__bigint": "1786386202"
+      },
+      "nanos": 348000000
+    }
+  }
+}
