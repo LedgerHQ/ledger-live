@@ -514,25 +514,16 @@ export const getInternalOperations = async (
     throw new EtherscanLikeExplorerUsedIncorrectly();
   }
 
-  // Corescan has no support to get internal operations by address
-  if (explorer.type === "corescan") {
+  // Corescan and Cronos have no reliable support for txlistinternal
+  if (explorer.type === "corescan" || explorer.type === "cronos") {
     return EMPTY_RESULT;
   }
 
   // Some explorers (e.g. Monad Testnet) return null instead of [] for empty results.
-  // Cronos proxies enforce a ~10 000-block range limit on txlistinternal
-  // but special-case startblock=0 (no lower bound). Any positive startblock combined with
-  // the current tip exceeds the limit.
-  const { toBlock: _toBlock, ...paramsWithoutToBlock } = params;
-  const queryParams =
-    explorer.type === "cronos"
-      ? paginationParams({ ...paramsWithoutToBlock, fromBlock: 0 })
-      : paginationParams(params);
-
   const ops = await fetchWithRetries<EtherscanInternalTransaction[] | null>({
     method: "GET",
     url: `${explorer.uri}?module=account&action=txlistinternal&address=${params.address}`,
-    params: queryParams,
+    params: paginationParams(params),
   }).then(ops => (ops ?? []).map(fixTxHash));
 
   // Why this thing ?
