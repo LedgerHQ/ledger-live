@@ -1,2 +1,3 @@
 export * from "./index";
-export { ContactsListView } from "./ContactsListView.web";
+export * from "./ContactsListView.web";
+export * from "./ContactsCompactList.web";
