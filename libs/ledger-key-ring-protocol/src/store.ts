@@ -4,7 +4,7 @@
  * It essentially is the client's credentials that are only stored on the
  * client side and the trustchain returned by the backend.
  */
-import { MemberCredentialsSchema, type MemberCredentials, type Trustchain } from "./types";
+import { type MemberCredentials, type Trustchain } from "./types";
 import { initMemberCredentials } from "./utils";
 
 export type TrustchainStore = {
@@ -69,11 +69,9 @@ export const trustchainHandlers: TrustchainHandlers = {
 
 export const importTrustchainStoreState = (persistedState?: TrustchainStore) => ({
   type: `${trustchainStoreActionTypePrefix}IMPORT_STATE`,
-  payload: {
-    trustchain: MemberCredentialsSchema.safeParse(persistedState?.memberCredentials).success
-      ? persistedState
-      : { ...INITIAL_STATE, memberCredentials: initMemberCredentials() },
-  },
+  // No crypto here: dispatched before first render, and both validating and regenerating
+  // credentials run secp256k1 (~250ms on Hermes for the process's first curve op). See #19634.
+  payload: { trustchain: persistedState ?? INITIAL_STATE },
 });
 
 export const resetTrustchainStore = () => ({
