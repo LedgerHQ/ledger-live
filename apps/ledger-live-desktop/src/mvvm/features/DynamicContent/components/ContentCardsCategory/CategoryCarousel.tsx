@@ -85,8 +85,8 @@ function CategoryCarousel({ slides, leadingSlide }: CategoryCarouselProps) {
 
   return (
     <div className="group relative" data-testid="category-carousel">
-      {canScrollPrev && <ScrollEdge direction="left" onClick={scrollPrev} hideGradient />}
-      {canScrollNext && <ScrollEdge direction="right" onClick={scrollNext} hideGradient />}
+      {canScrollPrev && <ScrollEdge direction="left" onClick={scrollPrev} />}
+      {canScrollNext && <ScrollEdge direction="right" onClick={scrollNext} />}
       <div ref={emblaRef} className="overflow-hidden">
         <div className="flex items-start" style={{ gap: HARDWARE_CAROUSEL_ITEM_GAP_PX }}>
           {slideEntries.map(entry => (

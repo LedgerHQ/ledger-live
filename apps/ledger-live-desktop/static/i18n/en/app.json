@@ -8808,7 +8808,8 @@
     "title": "Home",
     "today": "Today",
     "carousel": {
-      "title": "For you"
+      "title": "For you",
+      "closeAll": "Close all"
     },
     "addAccountCta": "Add crypto account",
     "noBalanceTitle": "Start by funding your wallet",

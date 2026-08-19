@@ -29,6 +29,7 @@ function ContentCardsCategory({
     leadingSlide: leading,
     slides,
     isDismissable,
+    closeAllCardIds,
     onHeaderCtaPress,
     onCardClick,
     onCardDismiss,
@@ -55,7 +56,13 @@ function ContentCardsCategory({
   return (
     <LogContentCardWrapper id={category.id} location={category.location}>
       <div className="flex w-full flex-col" data-testid="content-cards-category">
-        <Header title={title} cta={cta} centered={centered} onCtaPress={onHeaderCtaPress} />
+        <Header
+          title={title}
+          cta={cta}
+          centered={centered}
+          closeAllCardIds={closeAllCardIds}
+          onCtaPress={onHeaderCtaPress}
+        />
         <Layout
           category={category}
           slides={slides}
