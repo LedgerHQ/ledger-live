@@ -5,7 +5,7 @@ import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { promiseAllBatched } from "@ledgerhq/coin-module-framework/promises";
 import type { OperationType } from "@ledgerhq/types-live";
-import { parseTransactionFields, resolveTransactionAmount } from "../logic/utils";
+import { parseTransactionFields, resolveTransactionAmount, toBlockDate } from "../logic/utils";
 import type { AleoOperation, AleoPublicTransaction, EnrichedPrivateRecord } from "../types";
 
 export const toBridgeOperation = (
@@ -56,7 +56,7 @@ export const toPrivateBridgeOperation = (
 ): AleoOperation => {
   const transactionId = enrichedRecord.rawRecord.transaction_id.trim();
   const blockHeight = enrichedRecord.rawRecord.block_height;
-  const timestamp = new Date(Number(enrichedRecord.rawRecord.block_timestamp) * 1000);
+  const timestamp = toBlockDate(enrichedRecord.rawRecord.block_timestamp);
   const type: OperationType = enrichedRecord.recipient === address ? "IN" : "OUT";
 
   return {

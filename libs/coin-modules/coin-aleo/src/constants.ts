@@ -60,6 +60,10 @@ export const DEFAULT_RECORDS_PAGE_SIZE = 1000;
 // Pagination parameter for GET /tokens calls when fetching the full token registry.
 export const DEFAULT_TOKENS_PAGE_SIZE = 1000;
 
+// Hard cap of the explorer's public transitions endpoint — above it, 400 "Limit must be between 1
+// and 50". Counts transitions, not transactions: one transaction can span several rows.
+export const MAX_TRANSITIONS_PER_PAGE = 50;
+
 /**
  * Progress phase boundaries for private sync.
  *
