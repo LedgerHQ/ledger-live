@@ -29,7 +29,7 @@ jest.mock("@ledgerhq/live-common/flows/send/amount/SendAmountDisplayModeContext"
 jest.mock("../useAvailableBalance");
 jest.mock("../useCurrentSendFlowStep");
 jest.mock("~/context/hooks");
-jest.mock("@features/flow-contacts", () => ({
+jest.mock("@features/platform-contacts", () => ({
   useContactsFeature: jest.fn(() => ({ isEnabled: false })),
 }));
 
