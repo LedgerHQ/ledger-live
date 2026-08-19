@@ -244,15 +244,10 @@ export default class BuySellPage {
     await this.chooseAssetIfNotSelected(buySell.crypto);
     await this.tapSellPercentageButton("75%");
     await this.chooseCountryIfNotSelected(buySell.fiat);
-    // The flow sells a percentage of the balance, so the amount handed to the partner
-    // is whatever the UI resolved it to - not the caller's `buySell.amount`, which the
-    // sell flow never types. Read it back so the handoff is checked against the amount
-    // the user actually selected.
-    const selectedAmount = normalizeText(await getValueByWebTestId(this.amountInputSectionId()));
     await this.tapSeeQuotes();
     await this.selectPaymentMethod(paymentMethod);
     await this.selectProvider(provider.name);
     await this.tapBuySellWithCta(provider.uiName, buySell.operation);
-    await this.verifyProviderHandoff(provider, { ...buySell, amount: selectedAmount });
+    await this.verifyProviderHandoff(provider, buySell);
   }
 }
