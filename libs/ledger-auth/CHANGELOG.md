@@ -1,5 +1,12 @@
 # @ledgerhq/ledger-auth
 
+## 0.4.0
+
+### Minor Changes
+
+- [#20689](https://github.com/LedgerHQ/ledger-live/pull/20689) [`696f871`](https://github.com/LedgerHQ/ledger-live/commit/696f871fc89aedd6a2a50fe3f0dd442bbd7ebf07) Thanks [@thesan](https://github.com/thesan)! - Load LKRP identity credentials on demand, allow AuthSDK to resolve the Keycloak URL lazily, and
+  simplify auth feature gating around an app-owned provider
+
 ## 0.4.0-next.0
 
 ### Minor Changes

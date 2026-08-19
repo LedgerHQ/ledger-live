@@ -1,5 +1,16 @@
 # @domain/entity-contact
 
+## 0.7.0
+
+### Minor Changes
+
+- [#20570](https://github.com/LedgerHQ/ledger-live/pull/20570) [`8605089`](https://github.com/LedgerHQ/ledger-live/commit/8605089242fd91da0ee4c6a7e8ea2f5a9f58962a) Thanks [@deepyjr](https://github.com/deepyjr)! - Add typed Device Intent data and a Cloud Sync document for Contacts.
+
+### Patch Changes
+
+- Updated dependencies [[`79882e2`](https://github.com/LedgerHQ/ledger-live/commit/79882e26a14f246f1cc969937e011b16e701b8f2)]:
+  - @domain/entity-currency-token@0.5.0
+
 ## 0.7.0-next.0
 
 ### Minor Changes

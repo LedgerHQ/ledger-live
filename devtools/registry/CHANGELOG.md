@@ -1,5 +1,17 @@
 # @devtools/registry
 
+## 0.3.0
+
+### Minor Changes
+
+- [#20634](https://github.com/LedgerHQ/ledger-live/pull/20634) [`dd0e578`](https://github.com/LedgerHQ/ledger-live/commit/dd0e578b82b8fc94fa8690cd8111f5826254b197) Thanks [@Sebastien-Dav1d](https://github.com/Sebastien-Dav1d)! - Extract tool registry map and types into registry.ts; rename metadata/team-platform to metadata/platform
+
+### Patch Changes
+
+- Updated dependencies [[`2edf614`](https://github.com/LedgerHQ/ledger-live/commit/2edf614eed7608714821ee54574d8c4d2b6f7d98), [`e54d98b`](https://github.com/LedgerHQ/ledger-live/commit/e54d98b123ad8814be57c2f0e0f26689902ab4fd)]:
+  - @devtools/pay-card@0.3.0
+  - @devtools/feature-flags@0.7.1
+
 ## 0.3.0-next.1
 
 ### Patch Changes

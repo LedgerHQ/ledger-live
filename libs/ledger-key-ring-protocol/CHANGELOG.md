@@ -1,5 +1,19 @@
 # @ledgerhq/live-wallet
 
+## 0.20.0
+
+### Minor Changes
+
+- [#20689](https://github.com/LedgerHQ/ledger-live/pull/20689) [`696f871`](https://github.com/LedgerHQ/ledger-live/commit/696f871fc89aedd6a2a50fe3f0dd442bbd7ebf07) Thanks [@thesan](https://github.com/thesan)! - Load LKRP identity credentials on demand, allow AuthSDK to resolve the Keycloak URL lazily, and
+  simplify auth feature gating around an app-owned provider
+
+### Patch Changes
+
+- Updated dependencies [[`696f871`](https://github.com/LedgerHQ/ledger-live/commit/696f871fc89aedd6a2a50fe3f0dd442bbd7ebf07), [`a7b0bae`](https://github.com/LedgerHQ/ledger-live/commit/a7b0baeaa4e7b2fb180e7ab28ce92a6287b46a68)]:
+  - @ledgerhq/ledger-auth@0.4.0
+  - @ledgerhq/types-devices@7.0.0
+  - @ledgerhq/speculos-transport@0.10.11
+
 ## 0.20.0-next.0
 
 ### Minor Changes

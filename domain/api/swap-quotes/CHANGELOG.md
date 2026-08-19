@@ -1,5 +1,13 @@
 # @domain/api-swap-quotes
 
+## 0.2.1
+
+### Patch Changes
+
+- Updated dependencies [[`696f871`](https://github.com/LedgerHQ/ledger-live/commit/696f871fc89aedd6a2a50fe3f0dd442bbd7ebf07), [`e07e0ba`](https://github.com/LedgerHQ/ledger-live/commit/e07e0baca2e4edfe90163367047459257034f7cc)]:
+  - @shared/auth@0.5.0
+  - @shared/api-services@0.4.0
+
 ## 0.2.1-next.0
 
 ### Patch Changes

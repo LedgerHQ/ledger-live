@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-canton",
-  "version": "1.0.0-next.1",
+  "version": "1.0.0",
   "description": "Canton coin integration",
   "keywords": [
     "Ledger",

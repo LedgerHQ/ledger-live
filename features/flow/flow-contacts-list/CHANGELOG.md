@@ -1,5 +1,17 @@
 # @features/flow-contacts-list
 
+## 0.3.0
+
+### Minor Changes
+
+- [#20734](https://github.com/LedgerHQ/ledger-live/pull/20734) [`0dc2509`](https://github.com/LedgerHQ/ledger-live/commit/0dc2509c9646374755fce5aebc3d07bba17a8feb) Thanks [@deepyjr](https://github.com/deepyjr)! - Align contact avatar initials and sizes across Web and Native, including 48px contact icons in the Mobile list.
+
+### Patch Changes
+
+- Updated dependencies [[`0dc2509`](https://github.com/LedgerHQ/ledger-live/commit/0dc2509c9646374755fce5aebc3d07bba17a8feb), [`8605089`](https://github.com/LedgerHQ/ledger-live/commit/8605089242fd91da0ee4c6a7e8ea2f5a9f58962a), [`f2f3ec9`](https://github.com/LedgerHQ/ledger-live/commit/f2f3ec9ef1f2869c44190e2f6aa16dc362f2891f), [`526ca7b`](https://github.com/LedgerHQ/ledger-live/commit/526ca7be272a78b5cbd48481b6c5120989c0731b), [`f040998`](https://github.com/LedgerHQ/ledger-live/commit/f04099812f60fc328ee101b5f4f0457b1d1c4bfa)]:
+  - @features/platform-contacts@0.3.0
+  - @domain/entity-contact@0.7.0
+
 ## 0.3.0-next.0
 
 ### Minor Changes

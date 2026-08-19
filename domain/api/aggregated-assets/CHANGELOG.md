@@ -1,5 +1,24 @@
 # @domain/api-aggregated-assets
 
+## 0.4.0
+
+### Minor Changes
+
+- [#20678](https://github.com/LedgerHQ/ledger-live/pull/20678) [`14cf5b8`](https://github.com/LedgerHQ/ledger-live/commit/14cf5b8fad43788bdd7c682f53ab9d4fe03f9a8f) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Split the DADA api into per-use-case endpoint modules and route every request through RTK's injected base query, so aborts, shared headers and HTTP error statuses are preserved
+
+- [#20667](https://github.com/LedgerHQ/ledger-live/pull/20667) [`e72d6ff`](https://github.com/LedgerHQ/ledger-live/commit/e72d6ffbd8b1a1ac79d272e1823ecfdfd06ed0ee) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Delete the dada-client shim tree; the DADA code now lives only in its DDD packages
+
+- [#20708](https://github.com/LedgerHQ/ledger-live/pull/20708) [`5a96e09`](https://github.com/LedgerHQ/ledger-live/commit/5a96e096169e44731117becf9c204666c4509364) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Stop the DADA category pagination walk when the server repeats a cursor, so a proxy echoing `x-ledger-next` can no longer leave the Stocks or Stablecoins query loading forever
+
+### Patch Changes
+
+- Updated dependencies [[`e07e0ba`](https://github.com/LedgerHQ/ledger-live/commit/e07e0baca2e4edfe90163367047459257034f7cc), [`7c8d5df`](https://github.com/LedgerHQ/ledger-live/commit/7c8d5dfa862a2e9c3a35251b5d06a3cd4f905d2a), [`840de0d`](https://github.com/LedgerHQ/ledger-live/commit/840de0d43c75962ab91f0f1dc232dbcef10356a3), [`3c36af2`](https://github.com/LedgerHQ/ledger-live/commit/3c36af2185860d32bfaad670df7c49a3458e44c3), [`79882e2`](https://github.com/LedgerHQ/ledger-live/commit/79882e26a14f246f1cc969937e011b16e701b8f2)]:
+  - @shared/api-services@0.4.0
+  - @shared/env@0.3.0
+  - @domain/entity-currency-token@0.5.0
+  - @domain/api-currency-token@0.5.0
+  - @domain/entity-currency@0.4.1
+
 ## 0.4.0-next.0
 
 ### Minor Changes

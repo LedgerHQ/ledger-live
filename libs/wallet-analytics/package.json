@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/wallet-analytics",
-  "version": "0.3.4-next.1",
+  "version": "0.3.4",
   "private": true,
   "description": "Shared Analytics chart utilities for Ledger Wallet",
   "keywords": [

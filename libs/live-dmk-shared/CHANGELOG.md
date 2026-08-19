@@ -1,5 +1,16 @@
 # @ledgerhq/live-dmk
 
+## 0.31.0
+
+### Minor Changes
+
+- [#20616](https://github.com/LedgerHQ/ledger-live/pull/20616) [`1a2df41`](https://github.com/LedgerHQ/ledger-live/commit/1a2df41eed302864ec2e0b58dc9eef75e8b90eec) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Export shared Device Intent Executor header override helpers.
+
+### Patch Changes
+
+- Updated dependencies [[`a7b0bae`](https://github.com/LedgerHQ/ledger-live/commit/a7b0baeaa4e7b2fb180e7ab28ce92a6287b46a68)]:
+  - @ledgerhq/types-devices@7.0.0
+
 ## 0.31.0-next.0
 
 ### Minor Changes
