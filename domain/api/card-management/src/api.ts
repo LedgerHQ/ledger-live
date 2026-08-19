@@ -3,6 +3,7 @@ import { CARD_MANAGEMENT_TAGS } from "./constants";
 import {
   PayCardAuthorizeInitiateResponseSchema,
   PayCardLogoutResponseSchema,
+  PayCardOrderResponseSchema,
   PayCardSessionResponseSchema,
   PayCardSessionSchema,
   PayCardUserResponseSchema,
@@ -13,6 +14,7 @@ import type {
   PayCardAuthorizeInitiate,
   PayCardAuthorizeInitiateRequest,
   PayCardLogoutResult,
+  PayCardOrderResult,
   PayCardRefreshSessionRequest,
   PayCardSession,
   PayCardUser,
@@ -88,6 +90,19 @@ export const cardManagementApi = cardApi
         }),
         responseSchema: PayCardUserResponseSchema,
       }),
+
+      /**
+       * Takes no argument from the caller: the body is fixed to `{ type: "VIRTUAL" }`, because
+       * virtual is the only type the provider issues today.
+       */
+      orderCard: build.mutation<PayCardOrderResult, void>({
+        query: () => ({
+          url: "/v1/card/order",
+          method: "POST",
+          body: { type: "VIRTUAL" },
+        }),
+        responseSchema: PayCardOrderResponseSchema,
+      }),
     }),
   });
 
@@ -99,4 +114,5 @@ export const {
   useRefreshSessionMutation,
   useLogoutMutation,
   useGetUserQuery,
+  useOrderCardMutation,
 } = cardManagementApi;

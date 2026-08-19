@@ -23,6 +23,7 @@ shape and the reasons.
 | `refreshSession` | POST | `/v1/auth/oauth/token` | Same endpoint, `refresh_token` grant |
 | `logout` | POST | `/v1/auth/logout` | End the session |
 | `getUser` | GET | `/v1/user` | Read the account id and verification state |
+| `orderCard` | POST | `/v1/card/order` | Order a virtual card |
 
 `cardManagementApi` **is** `cardApi` after injection: importing this package is a module-level side
 effect that adds its endpoints to the shared service. The app registers `cardApi` (not this package)

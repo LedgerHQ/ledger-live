@@ -38,3 +38,11 @@ export const PayCardUserResponseSchema = z.object({
   id: z.string().uuid(),
   verificationState: z.enum(["UNVERIFIED", "PENDING", "VERIFIED", "REJECTED"]),
 });
+
+/**
+ * `POST /v1/card/order` answers with nothing but this flag. The card itself only becomes observable
+ * through the card status endpoint.
+ */
+export const PayCardOrderResponseSchema = z.object({
+  success: z.boolean(),
+});

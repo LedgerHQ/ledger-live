@@ -1,6 +1,7 @@
 import {
   PayCardAuthorizeInitiateResponseSchema,
   PayCardLogoutResponseSchema,
+  PayCardOrderResponseSchema,
   PayCardSessionResponseSchema,
   PayCardUserResponseSchema,
 } from "./schema";
@@ -86,5 +87,21 @@ describe("PayCardUserResponseSchema", () => {
         verificationState: "SOMETHING_ELSE",
       }),
     ).toThrow();
+  });
+});
+
+describe("PayCardOrderResponseSchema", () => {
+  it("keeps the success flag and drops everything else the order answers with", () => {
+    expect(
+      PayCardOrderResponseSchema.parse({
+        success: true,
+        cardId: "card-1",
+        pan: "pan-must-not-reach-the-cache",
+      }),
+    ).toEqual({ success: true });
+  });
+
+  it("rejects a success flag that is not a boolean", () => {
+    expect(() => PayCardOrderResponseSchema.parse({ success: "yes" })).toThrow();
   });
 });
