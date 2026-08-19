@@ -46,8 +46,6 @@ export function PayTabView({
       <TrackScreen category="Pay" balance_filter={balance.filter} />
       <Balance {...balance} labels={balanceLabels} actionTiles={actionTiles} />
       <DepositOptions {...depositOptions} />
-      {/* Each one decides whether it belongs on screen: the login while nobody is signed in, and the
-          logout once somebody is. */}
       <CardLogin oauthConfig={oauthConfig} callback={callback} />
       <CardLogout />
       <FeatureTour {...featureTour} />
