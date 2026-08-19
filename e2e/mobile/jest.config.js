@@ -74,7 +74,10 @@ const ESM_PACKAGES = ["ky", "@polkadot", "@ledgerhq", "@shared", "@features", "@
 const config = {
   rootDir: ".",
   modulePaths: [compilerOptions.baseUrl ?? "."],
-  maxWorkers: process.env.CI ? 3 : 1,
+  // Overridable so the worker count can be lowered for a run without editing this file.
+  // Three workers alongside three 2-vCPU emulators put the 8-vCPU runner at load 15-29,
+  // and qemu is crashing under that — see QAA-1497. Default is unchanged.
+  maxWorkers: process.env.CI ? Number(process.env.E2E_MAX_WORKERS || 3) : 1,
   transform: {
     "^.+\\.(t|j)sx?$": [
       "@swc/jest",

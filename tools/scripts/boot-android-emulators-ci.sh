@@ -12,7 +12,16 @@
 
 set -uo pipefail
 
-readonly _EXPECTED_EMULATOR_COUNT=3
+# Derived from EMULATOR_SERIALS rather than fixed at 3, so the emulator count can be
+# lowered for a run without editing this script. Three 2-vCPU emulators plus three Jest
+# workers put the 8-vCPU runner at load 15-29, and qemu is crashing under that; being
+# able to A/B the density is the point. Defaults are unchanged. See QAA-1497.
+IFS=' ' read -r -a SERIALS <<<"${EMULATOR_SERIALS:-emulator-5554 emulator-5556 emulator-5558}"
+readonly _EXPECTED_EMULATOR_COUNT="${#SERIALS[@]}"
+if [[ "$_EXPECTED_EMULATOR_COUNT" -lt 1 ]]; then
+  echo "ERROR: EMULATOR_SERIALS must name at least one serial"
+  exit 1
+fi
 
 log() {
   echo "[$(date +%H:%M:%S)] $*"
@@ -40,13 +49,11 @@ disable_ui_animations() {
 : "${AVD_NAME:?AVD_NAME is required}"
 : "${ANDROID_HOME:?ANDROID_HOME is required}"
 
-IFS=' ' read -r -a SERIALS <<<"${EMULATOR_SERIALS:-emulator-5554 emulator-5556 emulator-5558}"
-if [[ "${#SERIALS[@]}" -ne "$_EXPECTED_EMULATOR_COUNT" ]]; then
-  log "ERROR: expected $_EXPECTED_EMULATOR_COUNT serials in EMULATOR_SERIALS, got ${#SERIALS[@]}"
-  exit 1
-fi
-
-AVD_NAMES=("$AVD_NAME" "${AVD_NAME}_2" "${AVD_NAME}_3")
+# One AVD per requested serial: "$AVD_NAME", then "${AVD_NAME}_2", "${AVD_NAME}_3", …
+AVD_NAMES=("$AVD_NAME")
+for ((n = 2; n <= _EXPECTED_EMULATOR_COUNT; n++)); do
+  AVD_NAMES+=("${AVD_NAME}_${n}")
+done
 
 log "🛫 Starting emulators..."
 i=1

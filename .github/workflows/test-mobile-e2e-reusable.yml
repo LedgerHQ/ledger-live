@@ -812,6 +812,13 @@ jobs:
       LANGUAGE: en_US.UTF-8
       LC_ALL: en_US.UTF-8
       SPECULOS_DEVICE: ${{ needs.determine-builds.outputs.android_device }}
+      # EXPERIMENT (QAA-1497, throwaway branch): two emulators and two Jest workers
+      # instead of three and three. qemu is crashing - every thread of a "wedged"
+      # emulator is in do_exit with one in vfs_coredump - and the only host signal that
+      # is anywhere near a limit is load average 15-29 on 8 vCPUs. This halves the
+      # density to test whether the crash follows CPU contention.
+      EMULATOR_SERIALS: "emulator-5554 emulator-5556"
+      E2E_MAX_WORKERS: "2"
     outputs:
       status: ${{ steps.run-android.outcome }}
       artifact: ${{ steps.test-artifacts.outputs.artifact-id }}
