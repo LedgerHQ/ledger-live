@@ -22,6 +22,7 @@ import {
   combine,
   craftTransaction,
   estimateFees,
+  estimateTronifyFees,
   getAccountInfo,
   getBalance,
   getBlock,
@@ -37,6 +38,8 @@ import { defaultFetchParams, getBlock as getBlockNetwork } from "../network";
 import type { TronMemo, TronTxData } from "../types";
 
 const MAX_TRONGRID_LIMIT = 200;
+
+export const TRONIFY_FEE_OPTION_ID = "tronify" as const;
 
 export function createApi(): CoinModuleApi<TronCoinConfig, TronMemo, TronTxData> {
   return {
@@ -65,8 +68,11 @@ export function createApi(): CoinModuleApi<TronCoinConfig, TronMemo, TronTxData>
     ): Promise<CraftedTransaction> => {
       throw new Error("craftRawTransaction is not supported");
     },
-    estimateFees: async (context, transactionIntent) => {
+    estimateFees: async (context, transactionIntent, options) => {
       const config = await context.config();
+      if (options?.feeOption?.feeOptionId === TRONIFY_FEE_OPTION_ID) {
+        return estimateTronifyFees(config, transactionIntent);
+      }
       return estimateFees(config, transactionIntent);
     },
     getAccountInfo: async (context, address): Promise<AccountInfo> => {

@@ -19,9 +19,11 @@ import {
   estimateEnergy,
   estimatedTxSize,
   estimateFees,
+  estimateTronifyFees,
   type TronResourceBreakdown,
 } from "./estimateFees";
 import { getBalance } from "./getBalance";
+import { getEnergyRentQuote } from "./energyRent";
 
 jest.mock("../network", () => ({
   fetchTronAccount: jest.fn(),
@@ -31,12 +33,15 @@ jest.mock("../network", () => ({
 }));
 
 jest.mock("./getBalance", () => ({ getBalance: jest.fn() }));
+jest.mock("./energyRent", () => ({ getEnergyRentQuote: jest.fn() }));
 
 const mockGetBalance = jest.mocked(getBalance);
+
 const mockGetTronAccountNetwork = jest.mocked(getTronAccountNetwork);
 const mockFetchTronAccount = jest.mocked(fetchTronAccount);
 const mockGetChainParameters = jest.mocked(getChainParameters);
 const mockTriggerConstantContract = jest.mocked(triggerConstantContract);
+const mockGetEnergyRentQuote = jest.mocked(getEnergyRentQuote);
 
 const TRC20_CONTRACT = "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t";
 
@@ -552,3 +557,158 @@ describe("estimateFees", () => {
 function breakdownOf(estimation: { parameters?: Record<string, unknown> }): TronResourceBreakdown {
   return estimation.parameters as TronResourceBreakdown;
 }
+
+// Expected standard burn for sendTrc20 with no free resources:
+//   bandwidth: 350 * transactionFee(1000) = 350_000
+//   energy:    31_895 * energyFee(210)    = 6_697_950
+//   activation: 0 (TRC-20 send)
+//   total: 7_047_950n
+const STANDARD_BURN = 7_047_950n;
+const ENERGY_USED = 31_895;
+const TRX_QUOTE_AMT = "3.5"; // → 3_500_000 SUN
+const TRONIFY_VALUE = 3_500_000n;
+
+const trxQuote = {
+  energy: BigInt(ENERGY_USED),
+  durationSeconds: 600,
+  payCoinCode: "TRX",
+  payCoinAmt: TRX_QUOTE_AMT,
+  fees: { energy: "2.727", trx: "0.773", bandwidth: "0", activateAccount: "0" },
+};
+
+describe("estimateTronifyFees", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    // no free bandwidth or energy → full standard burn applies
+    mockGetTronAccountNetwork.mockResolvedValue(buildNetworkInfo());
+    mockGetChainParameters.mockResolvedValue(chainParams);
+    mockTriggerConstantContract.mockResolvedValue({ energy_used: ENERGY_USED });
+    mockGetEnergyRentQuote.mockResolvedValue(trxQuote);
+  });
+
+  it("returns value, originalValue and savings for a TRX-denominated quote", async () => {
+    const result = await estimateTronifyFees(mockConfig, sendTrc20);
+
+    expect(result).toEqual({
+      value: TRONIFY_VALUE,
+      originalValue: STANDARD_BURN,
+      savings: STANDARD_BURN - TRONIFY_VALUE,
+    });
+  });
+
+  it("passes the raw estimateEnergy result as the energy pledge (no client-side minimum)", async () => {
+    mockTriggerConstantContract.mockResolvedValue({ energy_used: 5_000 });
+
+    await estimateTronifyFees(mockConfig, sendTrc20);
+
+    expect(mockGetEnergyRentQuote).toHaveBeenCalledWith(
+      expect.objectContaining({ energy: 5_000n }),
+    );
+  });
+
+  it("delegates energy to the sender address, not the recipient", async () => {
+    await estimateTronifyFees(mockConfig, sendTrc20);
+
+    expect(mockGetEnergyRentQuote).toHaveBeenCalledWith(
+      expect.objectContaining({
+        payerAddress: SENDER,
+        receiverAddress: SENDER,
+      }),
+    );
+  });
+
+  it("quotes with the 10-min fastTrade duration and 0.8 TRX bandwidth top-up", async () => {
+    await estimateTronifyFees(mockConfig, sendTrc20);
+
+    expect(mockGetEnergyRentQuote).toHaveBeenCalledWith(
+      expect.objectContaining({ durationSeconds: 600, extraTrx: 0.8 }),
+    );
+  });
+
+  it("computes savings correctly as originalValue - value", async () => {
+    const result = await estimateTronifyFees(mockConfig, sendTrc20);
+
+    expect(result.originalValue).toBeDefined();
+    expect(result.savings).toBe(result.originalValue! - result.value);
+  });
+
+  it("throws for a native TRX send — Tronify only covers TRC-20", async () => {
+    await expect(estimateTronifyFees(mockConfig, sendNative)).rejects.toThrow(
+      /only available for TRC-20/,
+    );
+    expect(mockGetEnergyRentQuote).not.toHaveBeenCalled();
+  });
+
+  it("throws for a TRC-10 send — Tronify only covers TRC-20", async () => {
+    await expect(estimateTronifyFees(mockConfig, sendTrc10)).rejects.toThrow(
+      /only available for TRC-20/,
+    );
+    expect(mockGetEnergyRentQuote).not.toHaveBeenCalled();
+  });
+
+  it("throws when Tronify returns a USDT-denominated quote (Flow 2 not yet supported)", async () => {
+    mockGetEnergyRentQuote.mockResolvedValue({ ...trxQuote, payCoinCode: "USDT" });
+
+    await expect(estimateTronifyFees(mockConfig, sendTrc20)).rejects.toThrow(
+      /unsupported payCoinCode/,
+    );
+  });
+
+  it("propagates TronifyApiError from getEnergyRentQuote — no silent fallback", async () => {
+    const apiError = Object.assign(new Error("quota exceeded"), {
+      name: "TronifyApiError",
+      resCode: 429,
+    });
+    mockGetEnergyRentQuote.mockRejectedValue(apiError);
+
+    await expect(estimateTronifyFees(mockConfig, sendTrc20)).rejects.toMatchObject({
+      name: "TronifyApiError",
+      resCode: 429,
+    });
+  });
+
+  it("propagates an estimateEnergy failure — no silent fallback", async () => {
+    mockTriggerConstantContract.mockRejectedValue(new Error("node unreachable"));
+
+    await expect(estimateTronifyFees(mockConfig, sendTrc20)).rejects.toThrow("node unreachable");
+    expect(mockGetEnergyRentQuote).not.toHaveBeenCalled();
+  });
+
+  it("propagates a getChainParameters failure — no silent fallback to pessimistic originalValue", async () => {
+    mockGetChainParameters.mockRejectedValue(new Error("chain params unavailable"));
+
+    await expect(estimateTronifyFees(mockConfig, sendTrc20)).rejects.toThrow(
+      "chain params unavailable",
+    );
+  });
+
+  it("clamps savings to 0n when Tronify quote exceeds the standard burn", async () => {
+    // 10 TRX (10_000_000 SUN) > STANDARD_BURN (7_047_950n)
+    mockGetEnergyRentQuote.mockResolvedValue({ ...trxQuote, payCoinAmt: "10" });
+
+    const result = await estimateTronifyFees(mockConfig, sendTrc20);
+
+    expect(result.savings).toBe(0n);
+    expect(result.value).toBe(10_000_000n);
+    expect(result.originalValue).toBe(STANDARD_BURN);
+  });
+
+  it("propagates the Tronify API response when energyNeeded is 0 — no client-side guard", async () => {
+    // energyNeeded=0 is unusual for a TRC-20 transfer but estimateEnergy does not throw on it.
+    // We let getEnergyRentQuote receive 0n and propagate whatever the API returns (error or quote).
+    mockTriggerConstantContract.mockResolvedValue({ energy_used: 0 });
+
+    // Default mock returns a valid quote even for energy=0 — behaviour is well-defined.
+    const result = await estimateTronifyFees(mockConfig, sendTrc20);
+
+    expect(mockGetEnergyRentQuote).toHaveBeenCalledWith(expect.objectContaining({ energy: 0n }));
+    expect(result.value).toBeDefined();
+  });
+
+  it("standard estimateFees path is unchanged when feeOptionId is not tronify", async () => {
+    const result = await estimateFees(mockConfig, sendTrc20);
+
+    expect(result.value).toBe(STANDARD_BURN);
+    expect(mockGetEnergyRentQuote).not.toHaveBeenCalled();
+  });
+});
