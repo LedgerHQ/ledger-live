@@ -1,0 +1,46 @@
+{
+  "name": "@ledgerhq/baanx-test-client",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Test-only Baanx authentication: logs a sandbox test user in (TOTP challenge included) and returns a cached access token for E2E suites, API tests and CI",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LedgerHQ/ledger-live.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledger-live/issues"
+  },
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/baanx-test-client",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "license": "Apache-2.0",
+  "scripts": {
+    "token": "tsx src/cli.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test-integ": "jest --config=jest.integ.config.js --passWithNoTests",
+    "coverage": "jest --coverage",
+    "lint": "oxlint -c ../oxc-live-libs/.oxlintrc.json ./src",
+    "lint:fix": "pnpm lint --fix",
+    "unimported": "pnpm knip --directory ../.. -W libs/baanx-test-client"
+  },
+  "dependencies": {
+    "otpauth": "catalog:"
+  },
+  "devDependencies": {
+    "@jest/globals": "catalog:",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "@types/jest": "catalog:",
+    "@types/node": "catalog:",
+    "jest": "catalog:",
+    "tsx": "catalog:",
+    "typescript": "catalog:"
+  }
+}
