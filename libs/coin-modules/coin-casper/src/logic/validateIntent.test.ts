@@ -4,6 +4,7 @@ import type {
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/index";
 import {
+  AmountRequired,
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
@@ -149,6 +150,12 @@ describe("validateIntent", () => {
 
     expect(result.amount).toBe(balance - FEES);
     expect(result.errors).toEqual({});
+  });
+
+  it.each([0n, -1n, -VALID_AMOUNT])("reports AmountRequired for an amount of %s", amount => {
+    const { errors } = validate(sendCase({ amount }));
+
+    expect(errors.amount).toBeInstanceOf(AmountRequired);
   });
 
   it("reports InvalidMinimumAmount for an amount below the minimum", () => {
