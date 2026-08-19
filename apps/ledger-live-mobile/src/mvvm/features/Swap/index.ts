@@ -12,6 +12,7 @@ import { shallowAccountsSelector, flattenAccountsSelector } from "~/reducers/acc
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { useModularDrawerController } from "../ModularDrawer";
 import { navigateToSwapTab } from "~/screens/Swap/navigation/navigateToSwapTab";
+import { getAccountsForCurrencies, resolveCurrencyIds } from "../Exchange";
 
 type UseOpenSwapProps = {
   currency?: CryptoOrTokenCurrency;
@@ -24,37 +25,6 @@ type UseOpenSwapProps = {
   defaultAccount?: AccountLike;
   defaultParentAccount?: Account;
 };
-
-type AccountWithParent = {
-  account: AccountLike;
-  parentAccount?: Account;
-};
-
-function resolveCurrencyIds(currency?: CryptoOrTokenCurrency, currencyIds?: string[]): string[] {
-  if (currencyIds?.length) {
-    return [...new Set(currencyIds.filter(Boolean))];
-  }
-  return currency ? [currency.id] : [];
-}
-
-function getAccountsForCurrencies(
-  flattenedAccounts: AccountLike[],
-  shallowAccounts: Account[],
-  currencyIds: string[],
-): AccountWithParent[] {
-  const ids = new Set(currencyIds);
-  return flattenedAccounts
-    .filter(account => {
-      const currencyId = account.type === "TokenAccount" ? account.token.id : account.currency.id;
-      return ids.has(currencyId) && !isAccountEmpty(account);
-    })
-    .map(account => {
-      const parentId = isTokenAccount(account) ? account.parentId : undefined;
-      const parent = parentId ? shallowAccounts.find(a => a.id === parentId) : undefined;
-      const parentAccount = parent && isAccount(parent) ? parent : undefined;
-      return { account, parentAccount };
-    });
-}
 
 export function useOpenSwap({
   currency,

@@ -4,12 +4,13 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useSelector } from "~/context/hooks";
 import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { AccountLike, Account } from "@ledgerhq/types-live";
-import { isAccount, isAccountEmpty } from "@ledgerhq/ledger-wallet-framework/account/helpers";
+import { isAccountEmpty } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { getAccountCurrency, isTokenAccount } from "@ledgerhq/live-common/account/index";
 import { shallowAccountsSelector, flattenAccountsSelector } from "~/reducers/accounts";
 import { NavigatorName, ScreenName } from "~/const";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { useModularDrawerController } from "../ModularDrawer";
+import { getAccountsForCurrencies, resolveCurrencyIds } from "../Exchange";
 
 const ASSET_DETAIL_SOURCE_SCREEN_NAME = "Asset Detail";
 
@@ -22,37 +23,6 @@ type UseOpenBuySellProps = {
   currencyIds?: string[];
   sourceScreenName: string;
 };
-
-type AccountWithParent = {
-  account: AccountLike;
-  parentAccount?: Account;
-};
-
-function resolveCurrencyIds(currency?: CryptoOrTokenCurrency, currencyIds?: string[]): string[] {
-  if (currencyIds?.length) {
-    return [...new Set(currencyIds.filter(Boolean))];
-  }
-  return currency ? [currency.id] : [];
-}
-
-function getAccountsForCurrencies(
-  flattenedAccounts: AccountLike[],
-  shallowAccounts: Account[],
-  currencyIds: string[],
-): AccountWithParent[] {
-  const ids = new Set(currencyIds);
-  return flattenedAccounts
-    .filter(account => {
-      const currencyId = account.type === "TokenAccount" ? account.token.id : account.currency.id;
-      return ids.has(currencyId) && !isAccountEmpty(account);
-    })
-    .map(account => {
-      const parentId = isTokenAccount(account) ? account.parentId : undefined;
-      const parent = parentId ? shallowAccounts.find(a => a.id === parentId) : undefined;
-      const parentAccount = parent && isAccount(parent) ? parent : undefined;
-      return { account, parentAccount };
-    });
-}
 
 export function useOpenBuySell({ currency, currencyIds, sourceScreenName }: UseOpenBuySellProps) {
   const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
