@@ -115,3 +115,5 @@ A GitHub workflow may automatically prepend a prefix based on PR labels, (possib
 Because of the potentially of a 7 chracter prefix the max length for a title has to be 65 characters (keeping to the max 72 character total).
 
 When creating a merge commit for a pull request, use a valid pull request title as the merge commit title.
+
+For PRs targeting `develop`, the PR title is linted automatically in CI (via Danger, applying the same rules as `commitlint`). A PR title that fails this check cannot be merged, so fix the title and let the check re-run.
