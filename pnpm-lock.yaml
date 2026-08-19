@@ -315,6 +315,9 @@ catalogs:
     '@types/node':
       specifier: 24.12.0
       version: 24.12.0
+    '@types/qrcode':
+      specifier: 1.5.5
+      version: 1.5.5
     '@types/react':
       specifier: 19.0.14
       version: 19.0.14
@@ -450,6 +453,9 @@ catalogs:
     playwright:
       specifier: 1.60.0
       version: 1.60.0
+    qrcode:
+      specifier: 1.5.4
+      version: 1.5.4
     react-i18next:
       specifier: 16.5.0
       version: 16.5.0
@@ -1041,7 +1047,7 @@ importers:
         version: 1.7.1(rxjs@7.8.2)
       '@ledgerhq/device-signer-kit-ethereum':
         specifier: 'catalog:'
-        version: 1.16.0(@ledgerhq/context-module@2.4.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
+        version: 1.16.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../../libs/ledgerjs/packages/devices
@@ -4968,9 +4974,9 @@ importers:
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
         version: 2.0.4(@ledgerhq/lumen-design-core@0.1.25)(@ledgerhq/lumen-ui-react@0.1.53(c0fa371748f3a8167126d062fad1e65f))(@ledgerhq/lumen-ui-rnative@0.1.57(b8eb227f9f56c22fd0008f35856289e2))(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
-      '@shared/qr-code':
+      '@shared/ui-qr-code':
         specifier: workspace:*
-        version: link:../../../shared/qr-code
+        version: link:../../../shared/ui-qr-code
     devDependencies:
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
@@ -15729,48 +15735,6 @@ importers:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
 
-  shared/qr-code:
-    devDependencies:
-      '@ledgerhq/lumen-ui-rnative':
-        specifier: 'catalog:'
-        version: 0.1.57(@ledgerhq/lumen-design-core@0.1.25)(@types/react@19.0.14)(react-native-svg@15.15.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
-      '@swc/core':
-        specifier: 'catalog:'
-        version: 1.15.11
-      '@swc/jest':
-        specifier: 'catalog:'
-        version: 0.2.39(@swc/core@1.15.11)
-      '@testing-library/react-native':
-        specifier: 'catalog:'
-        version: 13.3.3(patch_hash=4f93e75372e62b6dc0f0b2635b62a322b37a3727637bd94a38df1ed8648e2e76)(jest@30.2.0)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react-test-renderer@19.1.4(react@19.1.4))(react@19.1.4)
-      '@types/jest':
-        specifier: 'catalog:'
-        version: 30.0.0
-      '@types/react':
-        specifier: 'catalog:'
-        version: 19.0.14
-      jest:
-        specifier: 'catalog:'
-        version: 30.2.0
-      react:
-        specifier: 19.1.4
-        version: 19.1.4
-      react-native:
-        specifier: 'catalog:'
-        version: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4)
-      react-native-qrcode-svg:
-        specifier: 6.1.1
-        version: 6.1.1(react-native-svg@15.15.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
-      react-native-svg:
-        specifier: 'catalog:'
-        version: 15.15.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
-      react-test-renderer:
-        specifier: 'catalog:'
-        version: 19.1.4(react@19.1.4)
-      typescript:
-        specifier: 'catalog:'
-        version: '@typescript/typescript6@6.0.2'
-
   shared/schema-primitives:
     dependencies:
       zod:
@@ -15792,6 +15756,73 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.2.0
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
+  shared/ui-qr-code:
+    dependencies:
+      qrcode:
+        specifier: 'catalog:'
+        version: 1.5.4
+    devDependencies:
+      '@ledgerhq/lumen-ui-rnative':
+        specifier: 'catalog:'
+        version: 0.1.57(@ledgerhq/lumen-design-core@0.1.25)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react-native-svg@15.15.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@testing-library/dom':
+        specifier: 'catalog:'
+        version: 10.4.1
+      '@testing-library/jest-dom':
+        specifier: 'catalog:'
+        version: 6.9.1
+      '@testing-library/react':
+        specifier: 'catalog:'
+        version: 16.3.1(@testing-library/dom@10.4.1)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+      '@testing-library/react-native':
+        specifier: 'catalog:'
+        version: 13.3.3(patch_hash=4f93e75372e62b6dc0f0b2635b62a322b37a3727637bd94a38df1ed8648e2e76)(jest@30.2.0(@types/node@24.12.0))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react-test-renderer@19.1.4(react@19.1.4))(react@19.1.4)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
+      '@types/qrcode':
+        specifier: 'catalog:'
+        version: 1.5.5
+      '@types/react':
+        specifier: 'catalog:'
+        version: 19.0.14
+      jest:
+        specifier: 'catalog:'
+        version: 30.2.0(@types/node@24.12.0)
+      jest-environment-jsdom:
+        specifier: 'catalog:'
+        version: 30.2.0
+      react:
+        specifier: 19.1.4
+        version: 19.1.4
+      react-dom:
+        specifier: 19.1.4
+        version: 19.1.4(react@19.1.4)
+      react-native:
+        specifier: 'catalog:'
+        version: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4)
+      react-native-qrcode-svg:
+        specifier: 6.1.1
+        version: 6.1.1(react-native-svg@15.15.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+      react-native-svg:
+        specifier: 'catalog:'
+        version: 15.15.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+      react-test-renderer:
+        specifier: 'catalog:'
+        version: 19.1.4(react@19.1.4)
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -24942,7 +24973,7 @@ packages:
       metro-react-native-babel-preset: '*'
       react: 19.1.4
       react-dom: 19.1.4
-      webpack: '*'
+      webpack: ^5.89.0
     peerDependenciesMeta:
       '@react-native/babel-preset':
         optional: true
@@ -27252,7 +27283,7 @@ packages:
     resolution: {integrity: sha512-/FQM1EDkTsf63Ub2C6O7GuYFDsSXUwsaZDurV0np41ocwq0jthUAYCmhBX9f+KwlaCgIuWyr/4WlUQUBfKfZog==}
     engines: {node: '>=6'}
     peerDependencies:
-      rxjs: ^5.5.10
+      rxjs: '*'
       zenObservable: '*'
     peerDependenciesMeta:
       rxjs:
@@ -36498,7 +36529,6 @@ packages:
     engines: {node: '>=0.6.0', teleport: '>=0.2.0'}
     deprecated: |-
       You or someone you depend on is using Q, the JavaScript Promise library that gave JavaScript developers strong feelings about promises. They can almost certainly migrate to the native JavaScript promise now. Thank you literally everyone for joining me in this bet against the odds. Be excellent to each other.
-
       (For a CapTP with native promises, see @endo/eventual-send and @endo/captp)
 
   qrcode-terminal@0.11.0:
@@ -39785,14 +39815,6 @@ packages:
       typescript:
         optional: true
 
-  valibot@1.4.1:
-    resolution: {integrity: sha512-klCmFTz2jeDluy9RwX+F884TCiogtdBJ/YaxSx1EOBYXa3NXNWj8kR1jjN8rzluwojJVWWaHJ4r1U5LfICnM3g==}
-    peerDependencies:
-      typescript: '>=5'
-    peerDependenciesMeta:
-      typescript:
-        optional: true
-
   valibot@1.4.2:
     resolution: {integrity: sha512-gjdCvJ6d3RyHAneqxMYMW9QMCwYMb3jpOO0IyHZV1bnRHFBHrX3VkIILt5XYR0WhwHiH7Mty8ovuPZ/O3gamrg==}
     peerDependencies:
@@ -40517,6 +40539,8 @@ snapshots:
     optionalDependencies:
       graphql: 16.13.2
 
+  '@0no-co/graphql.web@1.3.3': {}
+
   '@0no-co/graphql.web@1.3.3(graphql@16.14.2)':
     optionalDependencies:
       graphql: 16.14.2
@@ -40567,9 +40591,9 @@ snapshots:
 
   '@alloc/quick-lru@5.2.0': {}
 
-  '@apollo/cache-control-types@1.0.3(graphql@16.13.2)':
+  '@apollo/cache-control-types@1.0.3(graphql@16.14.2)':
     dependencies:
-      graphql: 16.13.2
+      graphql: 16.14.2
 
   '@apollo/client@3.12.6(graphql@16.10.0)(react@19.1.4)':
     dependencies:
@@ -40608,34 +40632,34 @@ snapshots:
       '@types/long': 4.0.2
       long: 4.0.0
 
-  '@apollo/server-gateway-interface@1.1.1(graphql@16.13.2)':
+  '@apollo/server-gateway-interface@1.1.1(graphql@16.14.2)':
     dependencies:
       '@apollo/usage-reporting-protobuf': 4.1.1
       '@apollo/utils.fetcher': 2.0.1
       '@apollo/utils.keyvaluecache': 2.1.1
       '@apollo/utils.logger': 2.0.1
-      graphql: 16.13.2
+      graphql: 16.14.2
 
-  '@apollo/server@4.12.2(graphql@16.13.2)':
+  '@apollo/server@4.12.2(graphql@16.14.2)':
     dependencies:
-      '@apollo/cache-control-types': 1.0.3(graphql@16.13.2)
-      '@apollo/server-gateway-interface': 1.1.1(graphql@16.13.2)
+      '@apollo/cache-control-types': 1.0.3(graphql@16.14.2)
+      '@apollo/server-gateway-interface': 1.1.1(graphql@16.14.2)
       '@apollo/usage-reporting-protobuf': 4.1.1
       '@apollo/utils.createhash': 2.0.2
       '@apollo/utils.fetcher': 2.0.1
       '@apollo/utils.isnodelike': 2.0.1
       '@apollo/utils.keyvaluecache': 2.1.1
       '@apollo/utils.logger': 2.0.1
-      '@apollo/utils.usagereporting': 2.1.0(graphql@16.13.2)
+      '@apollo/utils.usagereporting': 2.1.0(graphql@16.14.2)
       '@apollo/utils.withrequired': 2.0.1
-      '@graphql-tools/schema': 9.0.19(graphql@16.13.2)
+      '@graphql-tools/schema': 9.0.19(graphql@16.14.2)
       '@types/express': 4.17.21
       '@types/express-serve-static-core': 4.17.43
       '@types/node-fetch': 2.6.11
       async-retry: 1.3.1
       cors: 2.8.5
       express: 4.22.0
-      graphql: 16.13.2
+      graphql: 16.14.2
       loglevel: 1.9.2
       lru-cache: 7.18.3
       negotiator: 0.6.4
@@ -40656,9 +40680,9 @@ snapshots:
       '@apollo/utils.isnodelike': 2.0.1
       sha.js: 2.4.12
 
-  '@apollo/utils.dropunuseddefinitions@2.0.1(graphql@16.13.2)':
+  '@apollo/utils.dropunuseddefinitions@2.0.1(graphql@16.14.2)':
     dependencies:
-      graphql: 16.13.2
+      graphql: 16.14.2
 
   '@apollo/utils.fetcher@2.0.1': {}
 
@@ -40671,32 +40695,32 @@ snapshots:
 
   '@apollo/utils.logger@2.0.1': {}
 
-  '@apollo/utils.printwithreducedwhitespace@2.0.1(graphql@16.13.2)':
+  '@apollo/utils.printwithreducedwhitespace@2.0.1(graphql@16.14.2)':
     dependencies:
-      graphql: 16.13.2
+      graphql: 16.14.2
 
-  '@apollo/utils.removealiases@2.0.1(graphql@16.13.2)':
+  '@apollo/utils.removealiases@2.0.1(graphql@16.14.2)':
     dependencies:
-      graphql: 16.13.2
+      graphql: 16.14.2
 
-  '@apollo/utils.sortast@2.0.1(graphql@16.13.2)':
+  '@apollo/utils.sortast@2.0.1(graphql@16.14.2)':
     dependencies:
-      graphql: 16.13.2
+      graphql: 16.14.2
       lodash.sortby: 4.7.0
 
-  '@apollo/utils.stripsensitiveliterals@2.0.1(graphql@16.13.2)':
+  '@apollo/utils.stripsensitiveliterals@2.0.1(graphql@16.14.2)':
     dependencies:
-      graphql: 16.13.2
+      graphql: 16.14.2
 
-  '@apollo/utils.usagereporting@2.1.0(graphql@16.13.2)':
+  '@apollo/utils.usagereporting@2.1.0(graphql@16.14.2)':
     dependencies:
       '@apollo/usage-reporting-protobuf': 4.1.1
-      '@apollo/utils.dropunuseddefinitions': 2.0.1(graphql@16.13.2)
-      '@apollo/utils.printwithreducedwhitespace': 2.0.1(graphql@16.13.2)
-      '@apollo/utils.removealiases': 2.0.1(graphql@16.13.2)
-      '@apollo/utils.sortast': 2.0.1(graphql@16.13.2)
-      '@apollo/utils.stripsensitiveliterals': 2.0.1(graphql@16.13.2)
-      graphql: 16.13.2
+      '@apollo/utils.dropunuseddefinitions': 2.0.1(graphql@16.14.2)
+      '@apollo/utils.printwithreducedwhitespace': 2.0.1(graphql@16.14.2)
+      '@apollo/utils.removealiases': 2.0.1(graphql@16.14.2)
+      '@apollo/utils.sortast': 2.0.1(graphql@16.14.2)
+      '@apollo/utils.stripsensitiveliterals': 2.0.1(graphql@16.14.2)
+      graphql: 16.14.2
 
   '@apollo/utils.withrequired@2.0.1': {}
 
@@ -40724,9 +40748,9 @@ snapshots:
     transitivePeerDependencies:
       - got
 
-  '@as-integrations/express5@1.1.2(@apollo/server@4.12.2(graphql@16.13.2))(express@5.2.1)':
+  '@as-integrations/express5@1.1.2(@apollo/server@4.12.2(graphql@16.14.2))(express@5.2.1)':
     dependencies:
-      '@apollo/server': 4.12.2(graphql@16.13.2)
+      '@apollo/server': 4.12.2(graphql@16.14.2)
       express: 5.2.1
 
   '@asamuzakjp/css-color@2.8.3':
@@ -45902,7 +45926,7 @@ snapshots:
 
   '@expo/cli@54.0.23(146060c05482d2cfb5962bbc96863253)':
     dependencies:
-      '@0no-co/graphql.web': 1.0.11
+      '@0no-co/graphql.web': 1.3.3
       '@expo/code-signing-certificates': 0.0.6
       '@expo/config': 12.0.13
       '@expo/config-plugins': 54.0.4
@@ -45980,7 +46004,7 @@ snapshots:
 
   '@expo/cli@54.0.23(@typescript/typescript6@6.0.2)(expo-constants@18.0.13)(expo-modules-core@3.0.29)(expo@54.0.33(@babel/core@7.28.5)(@typescript/typescript6@6.0.2)(expo-modules-core@3.0.29)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@19.1.4))(react@19.1.4)':
     dependencies:
-      '@0no-co/graphql.web': 1.0.11
+      '@0no-co/graphql.web': 1.3.3
       '@expo/code-signing-certificates': 0.0.6
       '@expo/config': 12.0.13
       '@expo/config-plugins': 54.0.4
@@ -47535,33 +47559,29 @@ snapshots:
       graphql: 16.14.2
       typescript: '@typescript/typescript6@6.0.2'
 
-  '@graphql-tools/merge@8.4.2(graphql@16.13.2)':
+  '@graphql-tools/merge@8.4.2(graphql@16.14.2)':
     dependencies:
-      '@graphql-tools/utils': 9.2.1(graphql@16.13.2)
-      graphql: 16.13.2
+      '@graphql-tools/utils': 9.2.1(graphql@16.14.2)
+      graphql: 16.14.2
       tslib: 2.6.2
 
-  '@graphql-tools/schema@9.0.19(graphql@16.13.2)':
+  '@graphql-tools/schema@9.0.19(graphql@16.14.2)':
     dependencies:
-      '@graphql-tools/merge': 8.4.2(graphql@16.13.2)
-      '@graphql-tools/utils': 9.2.1(graphql@16.13.2)
-      graphql: 16.13.2
+      '@graphql-tools/merge': 8.4.2(graphql@16.14.2)
+      '@graphql-tools/utils': 9.2.1(graphql@16.14.2)
+      graphql: 16.14.2
       tslib: 2.6.2
       value-or-promise: 1.0.12
 
-  '@graphql-tools/utils@9.2.1(graphql@16.13.2)':
+  '@graphql-tools/utils@9.2.1(graphql@16.14.2)':
     dependencies:
-      '@graphql-typed-document-node/core': 3.2.0(graphql@16.13.2)
-      graphql: 16.13.2
+      '@graphql-typed-document-node/core': 3.2.0(graphql@16.14.2)
+      graphql: 16.14.2
       tslib: 2.6.2
 
   '@graphql-typed-document-node/core@3.2.0(graphql@16.10.0)':
     dependencies:
       graphql: 16.10.0
-
-  '@graphql-typed-document-node/core@3.2.0(graphql@16.13.2)':
-    dependencies:
-      graphql: 16.13.2
 
   '@graphql-typed-document-node/core@3.2.0(graphql@16.14.2)':
     dependencies:
@@ -48937,6 +48957,20 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
+  '@ledgerhq/device-signer-kit-ethereum@1.16.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))':
+    dependencies:
+      '@ledgerhq/device-management-kit': 1.7.1(rxjs@7.8.2)
+      '@ledgerhq/signer-utils': 1.3.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
+      ethers: 6.15.0
+      inversify: 7.5.1(reflect-metadata@0.2.2)
+      purify-ts: 2.1.0
+      reflect-metadata: 0.2.2
+      semver: 7.7.2
+      xstate: 5.19.2
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+
   '@ledgerhq/device-signer-kit-hyperliquid@0.0.0-hyperliquid-unified-20260728150448(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))':
     dependencies:
       '@ledgerhq/context-module': 2.4.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
@@ -49307,6 +49341,19 @@ snapshots:
       react-i18next: 14.1.3(i18next@23.10.1)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
       react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4)
       react-native-safe-area-context: 5.6.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+    transitivePeerDependencies:
+      - react-dom
+
+  '@ledgerhq/lumen-ui-rnative@0.1.57(@ledgerhq/lumen-design-core@0.1.25)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react-native-svg@15.15.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)':
+    dependencies:
+      '@ledgerhq/lumen-design-core': 0.1.25
+      '@ledgerhq/lumen-utils-shared': 0.1.10(react@19.1.4)
+      '@types/react': 19.0.14
+      i18next: 23.10.1
+      react: 19.1.4
+      react-i18next: 14.1.3(i18next@23.10.1)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+      react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4)
+      react-native-svg: 15.15.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
     transitivePeerDependencies:
       - react-dom
 
@@ -52557,8 +52604,8 @@ snapshots:
 
   '@redux-devtools/cli@4.0.4(@types/react@19.0.14)(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))':
     dependencies:
-      '@apollo/server': 4.12.2(graphql@16.13.2)
-      '@as-integrations/express5': 1.1.2(@apollo/server@4.12.2(graphql@16.13.2))(express@5.2.1)
+      '@apollo/server': 4.12.2(graphql@16.14.2)
+      '@as-integrations/express5': 1.1.2(@apollo/server@4.12.2(graphql@16.14.2))(express@5.2.1)
       '@emotion/react': 11.14.0(@types/react@19.0.14)(react@19.1.4)
       '@emotion/styled': 11.14.1(@emotion/react@11.14.0(@types/react@19.0.14)(react@19.1.4))(@types/react@19.0.14)(react@19.1.4)
       '@redux-devtools/app': 7.0.0(@emotion/react@11.14.0(@types/react@19.0.14)(react@19.1.4))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.0.14)(react@19.1.4))(@types/react@19.0.14)(react@19.1.4))(@reduxjs/toolkit@2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4))(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
@@ -52570,7 +52617,7 @@ snapshots:
       electron: 31.7.7
       express: 5.2.1
       get-port: 7.1.0
-      graphql: 16.13.2
+      graphql: 16.14.2
       knex: 3.1.0(sqlite3@5.1.7)
       lodash-es: 4.17.21
       minimist: 1.2.8
@@ -55683,7 +55730,7 @@ snapshots:
       setimmediate: 1.0.5
       storybook: 10.4.1(@testing-library/dom@10.4.1)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       tmcp: 1.19.4(@typescript/typescript6@6.0.2)
-      valibot: 1.4.1(@typescript/typescript6@6.0.2)
+      valibot: 1.4.2(@typescript/typescript6@6.0.2)
       ws: 8.21.0
     optionalDependencies:
       react-native-reanimated: 4.3.0(react-native-worklets@0.8.1(patch_hash=8e8345e8a8ac8f4108e6743d9899f8d9f1e5b8af1901df406704331269df6e25)(@babel/core@7.28.5)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@19.1.4))(react@19.1.4)
@@ -56348,9 +56395,9 @@ snapshots:
   '@tmcp/adapter-valibot@0.1.6(@typescript/typescript6@6.0.2)(tmcp@1.19.4(@typescript/typescript6@6.0.2))':
     dependencies:
       '@standard-schema/spec': 1.1.0
-      '@valibot/to-json-schema': 1.5.0(valibot@1.4.1(@typescript/typescript6@6.0.2))
+      '@valibot/to-json-schema': 1.5.0(valibot@1.4.2(@typescript/typescript6@6.0.2))
       tmcp: 1.19.4(@typescript/typescript6@6.0.2)
-      valibot: 1.4.1(@typescript/typescript6@6.0.2)
+      valibot: 1.4.2(@typescript/typescript6@6.0.2)
     transitivePeerDependencies:
       - typescript
 
@@ -57371,9 +57418,9 @@ snapshots:
     transitivePeerDependencies:
       - graphql
 
-  '@valibot/to-json-schema@1.5.0(valibot@1.4.1(@typescript/typescript6@6.0.2))':
+  '@valibot/to-json-schema@1.5.0(valibot@1.4.2(@typescript/typescript6@6.0.2))':
     dependencies:
-      valibot: 1.4.1(@typescript/typescript6@6.0.2)
+      valibot: 1.4.2(@typescript/typescript6@6.0.2)
 
   '@vechain/sdk-core@2.0.0(@typescript/typescript6@6.0.2)':
     dependencies:
@@ -62495,7 +62542,7 @@ snapshots:
   eslint-plugin-better-tailwindcss@4.0.0-beta.3(@typescript/typescript6@6.0.2)(eslint@8.57.0)(tailwindcss@4.1.18):
     dependencies:
       '@eslint/css-tree': 3.6.9
-      '@valibot/to-json-schema': 1.5.0(valibot@1.4.1(@typescript/typescript6@6.0.2))
+      '@valibot/to-json-schema': 1.5.0(valibot@1.4.2(@typescript/typescript6@6.0.2))
       enhanced-resolve: 5.18.4
       eslint: 8.57.0
       jiti: 2.6.1
@@ -62503,7 +62550,7 @@ snapshots:
       tailwind-csstree: 0.1.4
       tailwindcss: 4.1.18
       tsconfig-paths-webpack-plugin: 4.2.0
-      valibot: 1.4.1(@typescript/typescript6@6.0.2)
+      valibot: 1.4.2(@typescript/typescript6@6.0.2)
     transitivePeerDependencies:
       - typescript
 
@@ -68964,7 +69011,7 @@ snapshots:
       '@open-draft/until': 2.1.0
       '@types/cookie': 0.6.0
       '@types/statuses': 2.0.5
-      graphql: 16.13.2
+      graphql: 16.14.2
       headers-polyfill: 4.0.3
       is-node-process: 1.2.0
       outvariant: 1.4.3
@@ -74364,7 +74411,7 @@ snapshots:
       json-rpc-2.0: 1.7.1
       sqids: 0.3.0
       uri-template-matcher: 1.1.2
-      valibot: 1.4.1(@typescript/typescript6@6.0.2)
+      valibot: 1.4.2(@typescript/typescript6@6.0.2)
     transitivePeerDependencies:
       - typescript
 
@@ -75271,10 +75318,6 @@ snapshots:
       convert-source-map: 2.0.0
 
   valibot@1.2.0(@typescript/typescript6@6.0.2):
-    optionalDependencies:
-      typescript: '@typescript/typescript6@6.0.2'
-
-  valibot@1.4.1(@typescript/typescript6@6.0.2):
     optionalDependencies:
       typescript: '@typescript/typescript6@6.0.2'
 

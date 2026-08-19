@@ -54,7 +54,7 @@ icons, the visible actions and the side-effect callbacks; the component stays i1
 navigation-agnostic.
 
 > Web only for now — the native screen is delivered with the LWM wiring (LIVE-35188), and the
-> branded QR is added via `@shared/qr-code` (LIVE-36118).
+> branded QR is added via `@shared/ui-qr-code` (LIVE-36118).
 
 ```tsx
 import { RequestReceive } from "@features/flow-pay-card-request";

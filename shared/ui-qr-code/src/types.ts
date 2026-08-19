@@ -1,6 +1,6 @@
 import type React from "react";
 
-export type AddressQrCodeProps = Readonly<{
+export type QrCodeProps = Readonly<{
   value: string;
   size?: number;
   centerContent?: React.ReactNode;

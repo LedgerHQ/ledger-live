@@ -1,7 +1,7 @@
 import React from "react";
 import { render } from "@testing-library/react-native";
 import { Text } from "react-native";
-import { AddressQrCode } from "./AddressQrCode.native";
+import { QrCode } from "./QrCode.native";
 
 jest.mock("react-native-qrcode-svg", () => {
   const React = require("react");
@@ -12,18 +12,16 @@ jest.mock("react-native-qrcode-svg", () => {
   };
 });
 
-describe("AddressQrCode", () => {
+describe("QrCode", () => {
   it("should render the encoded address value", () => {
-    const { getByTestId } = render(<AddressQrCode value="0xabc123" testID="address-qr-code" />);
+    const { getByTestId } = render(<QrCode value="0xabc123" testID="address-qr-code" />);
 
     expect(getByTestId("address-qr-code")).toBeTruthy();
     expect(getByTestId("mock-qr-code-value")).toHaveTextContent("0xabc123");
   });
 
   it("should render optional center content", () => {
-    const { getByText } = render(
-      <AddressQrCode value="0xabc123" centerContent={<Text>icon</Text>} />,
-    );
+    const { getByText } = render(<QrCode value="0xabc123" centerContent={<Text>icon</Text>} />);
 
     expect(getByText("icon")).toBeTruthy();
   });
