@@ -1,6 +1,5 @@
 import * as braze from "@braze/web-sdk";
 import { ClassicCard } from "@braze/web-sdk";
-import { generateAnonymousId } from "@ledgerhq/live-common/braze/anonymousUsers";
 import { parseOrder, sanitizeExtras } from "@ledgerhq/live-common/braze/contentCardExtras";
 import { appendDeeplinkLocationIfDefined } from "@ledgerhq/live-common/deeplinks/index";
 import { getEnv } from "@shared/env";
@@ -11,7 +10,10 @@ import { ALWAYS_ON_CATEGORY_ID } from "LLD/features/DynamicContent/utils/constan
 import { userIdSelector } from "@domain/entity-client-identity";
 import { useFeature } from "@features/platform-feature-flags";
 import { getBrazeConfig } from "~/braze-setup";
-import { resolveDesktopBrazeUserId, shouldPersistAnonymousBrazeId } from "../braze/brazeIdentity";
+import {
+  resolveDesktopBrazeUserId,
+  ensureLegacyAnonymousBrazeIdStored,
+} from "../braze/brazeIdentity";
 import {
   ActionContentCard,
   CategoryContentCard,
@@ -39,7 +41,6 @@ import {
 import {
   clearDismissedContentCards,
   purgeExpiredAnonymousUserNotifications,
-  setAnonymousBrazeId,
 } from "../actions/settings";
 import {
   anonymousBrazeIdSelector,
@@ -182,12 +183,13 @@ export function useBraze() {
     const brazeConfig = getBrazeConfig();
     const isPlaywright = !!getEnv("PLAYWRIGHT_RUN");
 
-    if (
-      shouldPersistAnonymousBrazeId(brazeOptOutIdentityCleanupEnabled) &&
-      !anonymousBrazeId.current
-    ) {
-      anonymousBrazeId.current = generateAnonymousId();
-      dispatch(setAnonymousBrazeId(anonymousBrazeId.current));
+    const legacyAnonymousBrazeIdPersistence = ensureLegacyAnonymousBrazeIdStored(
+      anonymousBrazeId.current,
+      brazeOptOutIdentityCleanupEnabled,
+    );
+    if (legacyAnonymousBrazeIdPersistence) {
+      anonymousBrazeId.current = legacyAnonymousBrazeIdPersistence.anonymousBrazeId;
+      dispatch(legacyAnonymousBrazeIdPersistence.action);
     }
 
     const isInitialized = braze.initialize(brazeConfig.apiKey, {
