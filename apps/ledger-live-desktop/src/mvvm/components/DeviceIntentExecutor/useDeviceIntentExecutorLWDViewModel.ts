@@ -12,6 +12,7 @@ import {
   useDeviceIntentExecutorHeaderOverrideRequests,
 } from "@ledgerhq/live-dmk-shared";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
+import { useDeviceBlocked } from "~/renderer/components/DeviceAction/DeviceBlocker";
 import type { InitializerConfig } from "./DeviceContextInitializerComponentLWD";
 import type { InitializationInput } from "./types";
 import {
@@ -33,6 +34,8 @@ type Props<JobState, Input, ExtraProps> = DeviceIntentExecutorProps<
   analyticsProperties?: DeviceIntentTrackingProperties;
 };
 
+type PreventableEvent = Pick<Event, "preventDefault">;
+
 export type DeviceIntentExecutorLWDViewModel<JobState, Input, ExtraProps> = {
   wrappedProps: Props<JobState, Input, ExtraProps>;
   hasHeaderOverride: boolean;
@@ -43,17 +46,17 @@ export type DeviceIntentExecutorLWDViewModel<JobState, Input, ExtraProps> = {
    * Wired to `DialogHeader.onClose` so tracking reflects real user intent, unlike
    * `onOpenChange` which can fire for any closing reason.
    */
-  onHeaderClosePressed: () => void;
+  onHeaderClosePressed: (() => void) | undefined;
   /**
    * Tracks the "Close" `button_clicked` event when the dialog overlay is pressed.
    * Wired to `DialogContent.onPointerDownOutside`.
    */
-  onOverlayDismiss: () => void;
+  onOverlayDismiss: (event: PreventableEvent) => void;
   /**
    * Tracks the "Close" `button_clicked` event when Escape is pressed.
    * Wired to `DialogContent.onEscapeKeyDown`.
    */
-  onEscapeKeyDown: () => void;
+  onEscapeKeyDown: (event: PreventableEvent) => void;
 };
 
 type ConnectionTrackingInfo = {
@@ -85,6 +88,7 @@ export function useDeviceIntentExecutorLWDViewModel<JobState, Input, ExtraProps>
   const initializationCompletedRef = useRef(false);
   const cancelTrackedRef = useRef(false);
   const { hasHeaderOverride, headerContextValue } = useDeviceIntentExecutorHeaderOverrideRequests();
+  const isDeviceBlocked = useDeviceBlocked();
 
   useEffect(() => {
     if (!enabled) {
@@ -134,11 +138,33 @@ export function useDeviceIntentExecutorLWDViewModel<JobState, Input, ExtraProps>
 
   const onOpenChange = useCallback(
     (open: boolean) => {
-      if (!open) {
+      if (!open && !isDeviceBlocked) {
         wrappedOnUserCancel();
       }
     },
-    [wrappedOnUserCancel],
+    [isDeviceBlocked, wrappedOnUserCancel],
+  );
+
+  const onOverlayDismiss = useCallback(
+    (event: PreventableEvent) => {
+      if (isDeviceBlocked) {
+        event.preventDefault();
+        return;
+      }
+      trackClose();
+    },
+    [isDeviceBlocked, trackClose],
+  );
+
+  const onEscapeKeyDown = useCallback(
+    (event: PreventableEvent) => {
+      if (isDeviceBlocked) {
+        event.preventDefault();
+        return;
+      }
+      trackClose();
+    },
+    [isDeviceBlocked, trackClose],
   );
 
   return {
@@ -150,8 +176,8 @@ export function useDeviceIntentExecutorLWDViewModel<JobState, Input, ExtraProps>
       onUserCancel: wrappedOnUserCancel,
     },
     onOpenChange,
-    onHeaderClosePressed: trackClose,
-    onOverlayDismiss: trackClose,
-    onEscapeKeyDown: trackClose,
+    onHeaderClosePressed: isDeviceBlocked ? undefined : trackClose,
+    onOverlayDismiss,
+    onEscapeKeyDown,
   };
 }

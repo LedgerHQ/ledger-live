@@ -16,6 +16,7 @@ import { TrackDIEScreen } from "../../components/TrackDIEScreen";
 import { PAGE_CONNECT_APP } from "../../utils/trackDeviceIntent";
 import { DeviceContextInitializerComponentLWDView } from "../DeviceContextInitializerComponentLWDView";
 import { initializerDevice } from "../testUtils";
+import { DeviceBlocker } from "~/renderer/components/DeviceAction/DeviceBlocker";
 
 jest.mock("~/renderer/components/DeviceAction/animations", () => ({
   getDeviceAnimation: jest.fn(() => undefined),
@@ -41,7 +42,12 @@ jest.mock("../../components/TrackDIEScreen", () => ({
   TrackDIEScreen: jest.fn(() => null),
 }));
 
+jest.mock("~/renderer/components/DeviceAction/DeviceBlocker", () => ({
+  DeviceBlocker: jest.fn(() => null),
+}));
+
 const mockedTrackDIEScreen = jest.mocked(TrackDIEScreen);
+const mockedDeviceBlocker = jest.mocked(DeviceBlocker);
 
 const pageByStateType: Record<EnsureAppReadyState["type"], string | undefined> = {
   [LoadingStateType.Loading]: PAGE_CONNECT_APP.Loading,
@@ -89,6 +95,18 @@ describe("DeviceContextInitializerComponentLWDView", () => {
 
     // THEN
     expect(screen.getByText("Loading")).toBeVisible();
+  });
+
+  it.each([
+    LoadingStateType.Loading,
+    LoadingStateType.InstallingApp,
+    DeviceInteractionRequiredType.UnlockDevice,
+    DeviceInteractionRequiredType.AllowSecureConnection,
+    DeviceInteractionRequiredType.ConfirmOpenApp,
+  ])("GIVEN the %s state WHEN rendering THEN it blocks dialog dismissal", type => {
+    renderView({ type } as EnsureAppReadyState);
+
+    expect(mockedDeviceBlocker).toHaveBeenCalledTimes(1);
   });
 
   it.each([

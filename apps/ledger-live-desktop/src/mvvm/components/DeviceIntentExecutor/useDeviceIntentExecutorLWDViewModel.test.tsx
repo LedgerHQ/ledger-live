@@ -9,6 +9,7 @@ import { ledgerToDmkDeviceIdMap } from "@ledgerhq/live-dmk-shared";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { track } from "~/renderer/analytics/segment";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
+import { useDeviceBlocked } from "~/renderer/components/DeviceAction/DeviceBlocker";
 import type { InitializerConfig } from "./DeviceContextInitializerComponentLWD";
 import type { InitializationInput } from "./types";
 import { PAGE_DEVICE_ACTION } from "./utils/trackDeviceIntent";
@@ -18,7 +19,12 @@ jest.mock("~/renderer/analytics/segment", () => ({
   track: jest.fn(),
 }));
 
+jest.mock("~/renderer/components/DeviceAction/DeviceBlocker", () => ({
+  useDeviceBlocked: jest.fn(),
+}));
+
 const mockedTrack = jest.mocked(track);
+const mockedUseDeviceBlocked = jest.mocked(useDeviceBlocked);
 
 const layerABaseProperties = {
   deviceUxV2: true,
@@ -89,9 +95,48 @@ describe("useDeviceIntentExecutorLWDViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     currentRouteNameRef.current = "Connect Device - Connecting";
+    mockedUseDeviceBlocked.mockReturnValue(false);
   });
 
   describe("GIVEN the ViewModel mounts", () => {
+    describe("GIVEN a device action is blocked", () => {
+      beforeEach(() => {
+        mockedUseDeviceBlocked.mockReturnValue(true);
+      });
+
+      it("WHEN the dialog requests to close THEN it does not cancel the flow", () => {
+        const { result, props } = renderViewModel();
+
+        result.current.onOpenChange(false);
+
+        expect(props.onUserCancel).not.toHaveBeenCalled();
+      });
+
+      it("WHEN the overlay is pressed THEN it prevents dismissal", () => {
+        const { result } = renderViewModel();
+        const preventDefault = jest.fn();
+
+        result.current.onOverlayDismiss({ preventDefault });
+
+        expect(preventDefault).toHaveBeenCalledTimes(1);
+      });
+
+      it("WHEN Escape is pressed THEN it prevents dismissal", () => {
+        const { result } = renderViewModel();
+        const preventDefault = jest.fn();
+
+        result.current.onEscapeKeyDown({ preventDefault });
+
+        expect(preventDefault).toHaveBeenCalledTimes(1);
+      });
+
+      it("THEN it does not provide a header close handler", () => {
+        const { result } = renderViewModel();
+
+        expect(result.current.onHeaderClosePressed).toBeUndefined();
+      });
+    });
+
     it("WHEN the hook renders again THEN it fires deviceflow_started exactly once with the sourceFlow", () => {
       const { rerender } = renderViewModel();
       rerender(undefined);
@@ -288,7 +333,7 @@ describe("useDeviceIntentExecutorLWDViewModel", () => {
       mockedTrack.mockClear();
 
       act(() => {
-        result.current.onHeaderClosePressed();
+        result.current.onHeaderClosePressed?.();
       });
 
       expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
@@ -303,7 +348,7 @@ describe("useDeviceIntentExecutorLWDViewModel", () => {
       mockedTrack.mockClear();
 
       act(() => {
-        result.current.onOverlayDismiss();
+        result.current.onOverlayDismiss({ preventDefault: jest.fn() });
       });
 
       expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
@@ -318,7 +363,7 @@ describe("useDeviceIntentExecutorLWDViewModel", () => {
       mockedTrack.mockClear();
 
       act(() => {
-        result.current.onEscapeKeyDown();
+        result.current.onEscapeKeyDown({ preventDefault: jest.fn() });
       });
 
       expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
@@ -432,7 +477,7 @@ describe("useDeviceIntentExecutorLWDViewModel", () => {
       mockedTrack.mockClear();
 
       act(() => {
-        result.current.onHeaderClosePressed();
+        result.current.onHeaderClosePressed?.();
       });
 
       expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
