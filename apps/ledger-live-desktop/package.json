@@ -122,6 +122,7 @@
     "@ledgerhq/coin-filecoin": "workspace:^",
     "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/coin-zcash": "workspace:^",
+    "@ledgerhq/context-module": "catalog:",
     "@ledgerhq/crypto-icons": "catalog:",
     "@ledgerhq/device-management-kit": "catalog:",
     "@ledgerhq/device-signer-kit-ethereum": "catalog:",
