@@ -2,6 +2,7 @@ import React from "react";
 import { CardLogin, type CardLoginOauthConfig } from "@features/flow-pay-card-auth";
 import { Balance } from "@features/flow-pay-card-balance";
 import { DepositOptions } from "@features/flow-pay-card-deposit";
+import { RequestReceive } from "@features/flow-pay-card-request";
 import { getEnv } from "@shared/env";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import PayTabHeader from "./components/PayTabHeader";
@@ -10,6 +11,7 @@ import { FeatureTour } from "@features/flow-pay-card-feature-tour";
 import { usePayTabFeatureTour } from "./hooks/usePayTabFeatureTour";
 import { usePayTabActionTiles } from "./hooks/usePayTabActionTiles";
 import { usePayTabDepositOptions } from "./hooks/usePayTabDepositOptions";
+import { usePayTabRequestReceive } from "./hooks/usePayTabRequestReceive";
 import { usePayStablecoins } from "./hooks/usePayStablecoins";
 
 // Baanx uses the same value for the client key header and the OAuth `client_id`.
@@ -26,7 +28,8 @@ const PayTab = () => {
     balance.onTrackEvent,
     defaultStablecoins.map(stablecoin => stablecoin.id),
   );
-  const actionTiles = usePayTabActionTiles(balance.onTrackEvent, deposit.open);
+  const request = usePayTabRequestReceive(balance.onTrackEvent);
+  const actionTiles = usePayTabActionTiles(balance.onTrackEvent, deposit.open, request.open);
 
   return (
     <div className="flex flex-col gap-24">
@@ -34,6 +37,7 @@ const PayTab = () => {
       <PayTabHeader />
       <Balance {...balance} actionTiles={actionTiles} />
       <DepositOptions {...deposit.depositOptions} />
+      <RequestReceive {...request.requestReceive} />
       <CardLogin oauthConfig={oauthConfig} />
       <FeatureTour {...featureTour} />
     </div>

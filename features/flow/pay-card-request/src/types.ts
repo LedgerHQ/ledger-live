@@ -102,3 +102,49 @@ export type RequestReceiveViewModel = Readonly<{
   onSave: () => void;
   onVerify: () => void;
 }>;
+
+export type RequestReceiveActionId = "share" | "copy" | "save" | "verify";
+
+/**
+ * User-facing copy injected by the host app. Copy stays i18n-agnostic; `copied` is the transient
+ * label shown right after the address is copied.
+ */
+export type RequestReceiveActionLabels = Readonly<{
+  share: string;
+  copy: string;
+  copied: string;
+  save: string;
+  verify: string;
+}>;
+
+export type RequestReceiveLabels = Readonly<{
+  title: string;
+  networkLabel: string;
+  actions: RequestReceiveActionLabels;
+}>;
+
+/** Props for the branded `CryptoIcon` shown for the asset and (optionally) the network row. */
+export type RequestReceiveIconProps = Readonly<{
+  ledgerId: string;
+  ticker: string;
+  network?: string;
+}>;
+
+/** Presentation inputs shared by the container props and the view props. */
+type RequestReceiveShell = Readonly<{
+  isOpen: boolean;
+  labels: RequestReceiveLabels;
+  assetIcon: RequestReceiveIconProps;
+  networkIcon?: RequestReceiveIconProps;
+  /** Actions rendered, in order. Desktop uses `["save", "copy", "verify"]`. */
+  visibleActions: readonly RequestReceiveActionId[];
+  onClose: () => void;
+}>;
+
+export type RequestReceiveProps = RequestReceiveViewModelParams & RequestReceiveShell;
+
+export type RequestReceiveViewProps = RequestReceiveShell &
+  Pick<
+    RequestReceiveViewModel,
+    "address" | "addressParts" | "onShare" | "onCopy" | "onSave" | "onVerify"
+  >;

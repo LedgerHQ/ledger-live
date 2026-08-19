@@ -926,6 +926,17 @@
           "description": "Buy stablecoins with credit card."
         }
       }
+    },
+    "request": {
+      "title": "Request {{asset}}",
+      "networkLabel": "{{network}} network",
+      "actions": {
+        "share": "Share",
+        "copy": "Copy",
+        "copied": "Copied",
+        "save": "Save",
+        "verify": "Verify"
+      }
     }
   },
   "lend": {
