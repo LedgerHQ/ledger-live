@@ -812,13 +812,10 @@ jobs:
       LANGUAGE: en_US.UTF-8
       LC_ALL: en_US.UTF-8
       SPECULOS_DEVICE: ${{ needs.determine-builds.outputs.android_device }}
-      # EXPERIMENT (QAA-1497, throwaway branch): two emulators and two Jest workers
-      # instead of three and three. qemu is crashing - every thread of a "wedged"
-      # emulator is in do_exit with one in vfs_coredump - and the only host signal that
-      # is anywhere near a limit is load average 15-29 on 8 vCPUs. This halves the
-      # density to test whether the crash follows CPU contention.
-      EMULATOR_SERIALS: "emulator-5554 emulator-5556"
-      E2E_MAX_WORKERS: "2"
+      # Density override reverted: halving to two emulators and two workers did NOT stop
+      # the crash (3 real deaths across 3 shards, load still peaking 19-25), so CPU
+      # contention is at most a contributing factor. Full density restored so this
+      # branch reproduces the crash reliably while the backtrace is collected.
     outputs:
       status: ${{ steps.run-android.outcome }}
       artifact: ${{ steps.test-artifacts.outputs.artifact-id }}
@@ -1085,6 +1082,50 @@ jobs:
           else
             echo "✅ No emulator disappeared during this shard." >> "$GITHUB_STEP_SUMMARY"
           fi
+
+      # qemu is segfaulting: coredumpctl records SIGSEGV against
+      # qemu-system-x86_64-headless for every emulator that disappears, with a ~1 GB
+      # core on disk. core_pattern pipes to systemd-coredump, which is why none of this
+      # ever reached dmesg. The backtrace is the one artefact that names the faulting
+      # code, and it has to be taken after the run because the dump takes minutes to
+      # finish writing. See QAA-1497.
+      - name: Extract emulator crash backtraces
+        if: always()
+        continue-on-error: true
+        timeout-minutes: 10
+        shell: bash
+        run: |
+          OUT="${{ env.MOBILE_ARTIFACTS_ROOT }}/crash-backtraces"
+          mkdir -p "$OUT"
+          command -v coredumpctl >/dev/null || { echo "coredumpctl unavailable"; exit 0; }
+
+          coredumpctl list --no-pager >"${OUT}/coredumpctl-list.txt" 2>&1 || true
+          PIDS="$(coredumpctl list --no-pager 2>/dev/null | awk '/qemu-system/ {print $2}' | tail -6)"
+          [ -z "$PIDS" ] && { echo "No qemu core dumps recorded."; exit 0; }
+
+          for pid in $PIDS; do
+            echo "::group::backtrace for qemu pid ${pid}"
+            # `info` already prints a stack trace when symbols resolve, and is far
+            # cheaper than loading a 1 GB core into gdb.
+            coredumpctl info "$pid" >"${OUT}/core-${pid}-info.txt" 2>&1 || true
+            if ! grep -qiE '^ *#0|Stack trace' "${OUT}/core-${pid}-info.txt"; then
+              command -v gdb >/dev/null &&
+                timeout 240 coredumpctl debug "$pid" \
+                  --debugger=gdb \
+                  --debugger-arguments="-batch -ex 'thread apply all bt' -ex quit" \
+                  >"${OUT}/core-${pid}-gdb.txt" 2>&1 || true
+            fi
+            sed -n '1,80p' "${OUT}/core-${pid}-info.txt" 2>/dev/null || true
+            echo "::endgroup::"
+          done
+
+          {
+            echo "### 💥 qemu crash backtraces"
+            echo "Signal and faulting frame per core, if symbols resolved:"
+            echo '```'
+            grep -hE 'Signal:|Command Line:|^ *#[0-9]' "${OUT}"/core-*-info.txt 2>/dev/null | head -40
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Stop resource usage sampler
         if: always()
