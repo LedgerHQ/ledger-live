@@ -19,6 +19,10 @@ jest.mock("../adapters/verifierStore", () => ({
   writePasswordVerifier: jest.fn(async () => undefined),
 }));
 
+jest.mock("../adapters/installMarker", () => ({
+  writeInstallMarker: jest.fn(async () => undefined),
+}));
+
 const { writePasswordVerifier } = jest.requireMock("../adapters/verifierStore");
 
 const PASSWORD = "longenough";

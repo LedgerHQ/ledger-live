@@ -47,6 +47,12 @@ export async function armBiometricPrompt(): Promise<boolean> {
   return stored !== false;
 }
 
+// The protection state is not persisted, so without reading this back the app forgets biometrics
+// on every restart.
+export async function hasArmedBiometricPrompt(): Promise<boolean> {
+  return Keychain.hasGenericPassword({ service: PROMPT_SERVICE });
+}
+
 export async function disarmBiometricPrompt(): Promise<void> {
   await Keychain.resetGenericPassword({ service: PROMPT_SERVICE });
 }

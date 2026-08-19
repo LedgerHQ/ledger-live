@@ -9,6 +9,7 @@ import {
   derivePasswordDigest,
   serialiseDerivation,
 } from "../adapters/passwordDigest";
+import { writeInstallMarker } from "../adapters/installMarker";
 import { writePasswordVerifier } from "../adapters/verifierStore";
 
 export type PasswordSetup = Readonly<{
@@ -30,6 +31,8 @@ export function usePasswordSetup(): PasswordSetup {
         });
 
         await writePasswordVerifier(verifier);
+        // Marks the protection as belonging to this install, so a reinstall does not inherit it.
+        await writeInstallMarker();
         dispatch(setHasPassword(true));
         dispatch(setNeedsLongerPassword(false));
       }),

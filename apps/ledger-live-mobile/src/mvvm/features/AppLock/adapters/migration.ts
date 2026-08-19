@@ -7,6 +7,7 @@ import {
   derivePasswordDigest,
   serialiseDerivation,
 } from "./passwordDigest";
+import { writeInstallMarker } from "./installMarker";
 import { clearLegacyPassword, readLegacyPassword } from "./legacyPassword";
 import { checkPasswordInline } from "./passwordVerification";
 import { hasPasswordVerifier, writePasswordVerifier } from "./verifierStore";
@@ -41,6 +42,8 @@ export function migrateLegacyPassword(): Promise<MigrationResult> {
     }
 
     await clearLegacyPassword();
+    // Marks the protection as belonging to this install, so a reinstall does not inherit it.
+    await writeInstallMarker();
 
     return { status: "migrated", needsLongerPassword } as const;
   });

@@ -6,6 +6,7 @@ import {
   disarmBiometricPrompt,
   promptBiometrics,
 } from "../adapters/biometrics";
+import { writeInstallMarker } from "../adapters/installMarker";
 
 export type BiometricsSetup = Readonly<{
   enable: (reason: string) => Promise<boolean>;
@@ -26,6 +27,8 @@ export function useBiometricsSetup(): BiometricsSetup {
         return false;
       }
 
+      // Marks the protection as belonging to this install, so a reinstall does not inherit it.
+      await writeInstallMarker();
       dispatch(setBiometricsEnabled(true));
       return true;
     },
