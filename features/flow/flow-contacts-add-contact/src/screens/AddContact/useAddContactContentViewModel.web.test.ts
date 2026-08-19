@@ -3,38 +3,31 @@ import { contact, INVALID_CONTACT_NAME_ERROR_NAME } from "@domain/entity-contact
 import { mockContact, mockMeContact } from "@domain/entity-contact/schema.mock";
 import { useContacts } from "@features/platform-contacts";
 import type { ContactCreationPort } from "./model/ports";
-import { useAddContactDrawerViewModel } from "./useAddContactDrawerViewModel";
+import { useAddContactContentViewModel } from "./useAddContactContentViewModel";
 
 jest.mock("@features/platform-contacts", () => ({
-  ...jest.requireActual("@features/platform-contacts"),
+  getContactInitial: (name: string) => name.slice(0, 1),
   useContacts: jest.fn(),
 }));
 
 const mockedUseContacts = jest.mocked(useContacts);
 
-describe("useAddContactDrawerViewModel", () => {
+describe("useAddContactContentViewModel", () => {
   beforeEach(() => {
     mockedUseContacts.mockReturnValue([]);
   });
 
-  it("should save through the injected port, reset the draft, and close", async () => {
+  it("should save through the injected port and return the created contact to the consumer", async () => {
+    const createdContact = contact({ id: "contact-ada", isMe: false, name: "Ada", addresses: [] });
     const onSaveSuccess = jest.fn();
     const contactCreation: ContactCreationPort = {
-      createContact: jest.fn(async ({ name }) =>
-        contact({
-          id: "contact-ada",
-          isMe: false,
-          name,
-          addresses: [],
-        }),
-      ),
+      createContact: jest.fn(async () => createdContact),
     };
     const { result } = renderHook(() =>
-      useAddContactDrawerViewModel({ contactCreation, onSaveSuccess }),
+      useAddContactContentViewModel({ contactCreation, onSaveSuccess }),
     );
 
     act(() => {
-      result.current.onOpen();
       result.current.onDraftNameChange("Ada@1");
     });
 
@@ -47,52 +40,29 @@ describe("useAddContactDrawerViewModel", () => {
       result.current.onDraftNameChange("Ada");
     });
 
-    expect(result.current.avatarInitial).toBe("A");
-
     await act(async () => {
-      await result.current.onConfirm();
+      await expect(result.current.onConfirm()).resolves.toBe(createdContact);
     });
 
     expect(contactCreation.createContact).toHaveBeenCalledWith({ name: "Ada" });
-    expect(onSaveSuccess).toHaveBeenCalledTimes(1);
-    expect(result.current).toMatchObject({
-      isOpen: false,
-      draftName: "",
-      isConfirmEnabled: false,
-      invalidNameError: null,
-    });
+    expect(onSaveSuccess).toHaveBeenCalledWith(createdContact);
+    expect(result.current.draftName).toBe("Ada");
   });
 
-  it("should limit the saved contact name to 32 characters", async () => {
-    const onSaveSuccess = jest.fn();
-    const contactCreation: ContactCreationPort = {
-      createContact: jest.fn(async ({ name }) =>
-        contact({
-          id: "contact-long-name",
-          isMe: false,
-          name,
-          addresses: [],
-        }),
-      ),
-    };
+  it("should reset the draft when the consumer cancels the container", () => {
     const { result } = renderHook(() =>
-      useAddContactDrawerViewModel({ contactCreation, onSaveSuccess }),
+      useAddContactContentViewModel({
+        contactCreation: { createContact: jest.fn() },
+        onSaveSuccess: jest.fn(),
+      }),
     );
-    const name = "a".repeat(33);
 
     act(() => {
-      result.current.onOpen();
-      result.current.onDraftNameChange(name);
+      result.current.onDraftNameChange("Ada");
+      result.current.reset();
     });
 
-    expect(result.current.draftName).toBe("a".repeat(32));
-
-    await act(async () => {
-      await result.current.onConfirm();
-    });
-
-    expect(contactCreation.createContact).toHaveBeenCalledWith({ name: "a".repeat(32) });
-    expect(onSaveSuccess).toHaveBeenCalledTimes(1);
+    expect(result.current.draftName).toBe("");
   });
 
   it("should not expose a duplicate error while saving a newly created contact", async () => {
@@ -110,11 +80,10 @@ describe("useAddContactDrawerViewModel", () => {
     };
     mockedUseContacts.mockImplementation(() => contacts);
     const { result, rerender } = renderHook(() =>
-      useAddContactDrawerViewModel({ contactCreation, onSaveSuccess: jest.fn() }),
+      useAddContactContentViewModel({ contactCreation, onSaveSuccess: jest.fn() }),
     );
 
     act(() => {
-      result.current.onOpen();
       result.current.onDraftNameChange("Ada");
     });
 
@@ -139,6 +108,6 @@ describe("useAddContactDrawerViewModel", () => {
       await creation;
     });
 
-    expect(result.current.isOpen).toBe(false);
+    expect(result.current.isSaving).toBe(false);
   });
 });

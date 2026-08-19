@@ -1,10 +1,11 @@
 import {
   type ContactCreationPort,
-  type ContactsAddContactDrawerLabels,
-  type AddContactDrawerViewModel,
-  useAddContactDrawerViewModel,
+  type ContactsAddContactContentLabels,
+  type AddContactContentViewModel,
+  useAddContactContentViewModel,
 } from "@features/flow-contacts-add-contact";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import type { Contact } from "@domain/entity-contact";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   CONTACTS_EVENT_SOURCE,
   CONTACTS_FLOW,
@@ -18,15 +19,16 @@ import type { ContactsAnalyticsHelper } from "../analytics/createContactsAnalyti
 export type UseAddContactAppAdapterOptions = Readonly<{
   analytics: ContactsAnalyticsHelper;
   contactCreation: ContactCreationPort;
-  onSaveSuccess: () => void;
-  labels: ContactsAddContactDrawerLabels;
+  onSaveSuccess: (contact: Contact) => void;
+  labels: ContactsAddContactContentLabels;
 }>;
 
-export type AddContactAppAdapterResult = AddContactDrawerViewModel &
+export type AddContactAppAdapterResult = AddContactContentViewModel &
   Readonly<{
-    labels: ContactsAddContactDrawerLabels;
+    isOpen: boolean;
+    labels: ContactsAddContactContentLabels;
     onOpen: () => void;
-    onConfirm: () => Promise<void>;
+    onClose: () => void;
   }>;
 
 export function useAddContactAppAdapter({
@@ -36,19 +38,27 @@ export function useAddContactAppAdapter({
   labels,
 }: UseAddContactAppAdapterOptions): AddContactAppAdapterResult {
   const hasTrackedInvalidNameError = useRef(false);
-  const handleSaveSuccess = useCallback(() => {
-    analytics.trackEvent(CONTACTS_TRACK_EVENTS.CONTACT_ADDED, {
-      source: CONTACTS_EVENT_SOURCE.ADD_CONTACT,
-      hasCustomPicture: false,
-      flow: CONTACTS_FLOW.CONTACTS,
-      page: CONTACTS_PAGE_PROPERTY.ADD_CONTACT,
-    });
-    onSaveSuccess();
-  }, [analytics, onSaveSuccess]);
-  const drawerViewModel = useAddContactDrawerViewModel({
+  const [isOpen, setIsOpen] = useState(false);
+  const handleSaveSuccess = useCallback(
+    (contact: Contact) => {
+      analytics.trackEvent(CONTACTS_TRACK_EVENTS.CONTACT_ADDED, {
+        source: CONTACTS_EVENT_SOURCE.ADD_CONTACT,
+        hasCustomPicture: false,
+        flow: CONTACTS_FLOW.CONTACTS,
+        page: CONTACTS_PAGE_PROPERTY.ADD_CONTACT,
+      });
+      onSaveSuccess(contact);
+    },
+    [analytics, onSaveSuccess],
+  );
+  const contentViewModel = useAddContactContentViewModel({
     contactCreation,
     onSaveSuccess: handleSaveSuccess,
   });
+  const onClose = useCallback(() => {
+    setIsOpen(false);
+    contentViewModel.reset();
+  }, [contentViewModel]);
   const onOpen = useCallback(() => {
     analytics.trackEvent(CONTACTS_TRACK_EVENTS.BUTTON_CLICKED, {
       source: CONTACTS_EVENT_SOURCE.LIST,
@@ -59,11 +69,11 @@ export function useAddContactAppAdapter({
       source: CONTACTS_EVENT_SOURCE.ADD_CONTACT,
       flow: CONTACTS_FLOW.CONTACTS,
     });
-    drawerViewModel.onOpen();
-  }, [analytics, drawerViewModel]);
+    setIsOpen(true);
+  }, [analytics]);
   const onConfirm = useCallback(async () => {
-    if (drawerViewModel.invalidNameError) {
-      return;
+    if (contentViewModel.invalidNameError) {
+      return undefined;
     }
 
     analytics.trackEvent(CONTACTS_TRACK_EVENTS.BUTTON_CLICKED, {
@@ -73,14 +83,15 @@ export function useAddContactAppAdapter({
       hasPicture: false,
       flow: CONTACTS_FLOW.CONTACTS,
     });
-    await drawerViewModel.onConfirm();
-  }, [analytics, drawerViewModel]);
+    const createdContact = await contentViewModel.onConfirm();
+    if (createdContact !== undefined) {
+      onClose();
+    }
+    return createdContact;
+  }, [analytics, contentViewModel, onClose]);
   const isNameErrorDisplayed = useMemo(
-    () =>
-      drawerViewModel.isOpen &&
-      !drawerViewModel.isSaving &&
-      drawerViewModel.invalidNameError !== null,
-    [drawerViewModel.invalidNameError, drawerViewModel.isOpen, drawerViewModel.isSaving],
+    () => isOpen && !contentViewModel.isSaving && contentViewModel.invalidNameError !== null,
+    [contentViewModel.invalidNameError, contentViewModel.isSaving, isOpen],
   );
 
   useEffect(() => {
@@ -100,9 +111,11 @@ export function useAddContactAppAdapter({
   }, [analytics, isNameErrorDisplayed]);
 
   return {
-    ...drawerViewModel,
+    ...contentViewModel,
+    isOpen,
     labels,
     onOpen,
+    onClose,
     onConfirm,
   };
 }

@@ -5,7 +5,7 @@ import { TrackScreen } from "~/analytics";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { ProfileSection } from "./views/ProfileSection";
 import { QuickActionsRow } from "./views/QuickActionsRow";
-import { ContactsButton } from "LLM/features/Contacts";
+import { ContactsButton } from "LLM/features/Contacts/components/ContactsButton";
 import { DeviceSection } from "./views/DeviceSection";
 import { MyLedgerSection } from "./views/MyLedgerSection";
 

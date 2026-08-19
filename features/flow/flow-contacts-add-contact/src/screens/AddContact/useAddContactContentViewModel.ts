@@ -1,21 +1,16 @@
 import { useCallback, useState } from "react";
 import { CONTACT_NAME_MAX_LENGTH } from "../../components/ContactNameInput/constants";
 import { useAddContactViewModel } from "./useAddContactViewModel";
-import type { AddContactDrawerViewModel, UseAddContactDrawerViewModelOptions } from "./types";
+import type { AddContactContentViewModel, UseAddContactContentViewModelOptions } from "./types";
 
-export function useAddContactDrawerViewModel({
+export function useAddContactContentViewModel({
   contactCreation,
   onSaveSuccess,
-}: UseAddContactDrawerViewModelOptions): AddContactDrawerViewModel {
-  const [isOpen, setIsOpen] = useState(false);
+}: UseAddContactContentViewModelOptions): AddContactContentViewModel {
   const [isSaving, setIsSaving] = useState(false);
   const { avatarInitial, draftName, invalidNameError, isSaveEnabled, save, setDraftName } =
     useAddContactViewModel(contactCreation);
-  const onOpen = useCallback(() => setIsOpen(true), []);
-  const onClose = useCallback(() => {
-    setIsOpen(false);
-    setDraftName("");
-  }, [setDraftName]);
+  const reset = useCallback(() => setDraftName(""), [setDraftName]);
   const onDraftNameChange = useCallback(
     (name: string) => {
       if (!isSaving) {
@@ -26,32 +21,30 @@ export function useAddContactDrawerViewModel({
   );
   const onConfirm = useCallback(async () => {
     if (!isSaveEnabled || isSaving) {
-      return;
+      return undefined;
     }
 
     setIsSaving(true);
 
     try {
-      await save();
-      onSaveSuccess();
-      onClose();
+      const createdContact = await save();
+      onSaveSuccess(createdContact);
+      return createdContact;
     } catch {
-      return;
+      return undefined;
     } finally {
       setIsSaving(false);
     }
-  }, [isSaveEnabled, isSaving, onClose, onSaveSuccess, save]);
+  }, [isSaveEnabled, isSaving, onSaveSuccess, save]);
 
   return {
-    isOpen,
     isConfirmEnabled: isSaveEnabled && !isSaving,
     isSaving,
     draftName,
     avatarInitial,
     invalidNameError: isSaving ? null : invalidNameError,
-    onOpen,
-    onClose,
     onDraftNameChange,
     onConfirm,
+    reset,
   };
 }

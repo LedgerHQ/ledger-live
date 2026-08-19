@@ -10,8 +10,8 @@ import {
 } from "LLM/components/Navigation";
 import { MyWalletScreen } from "./index";
 import { MyWalletHelpScreen } from "./screens/Help";
-import { ContactsScreen } from "LLM/features/Contacts";
 import { ContactDetailScreen } from "LLM/features/Contacts/screens/ContactDetail";
+import { ContactsScreen } from "LLM/features/Contacts/screens/ContactsPage";
 import { MyWalletNavigatorStackParamList } from "./types";
 import { MyWalletHeaderTrailing } from "./views/Header";
 
