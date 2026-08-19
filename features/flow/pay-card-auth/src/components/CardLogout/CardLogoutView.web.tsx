@@ -1,8 +1,8 @@
 import React from "react";
 import { Button } from "@ledgerhq/lumen-ui-react";
-import type { CardUserViewProps } from "./types";
+import type { CardLogoutViewProps } from "./types";
 
-export function CardUserView({
+export function CardLogoutView({
   title,
   idLabel,
   userId,
@@ -11,7 +11,7 @@ export function CardUserView({
   logoutLabel,
   isLoading,
   onLogoutPress,
-}: CardUserViewProps) {
+}: CardLogoutViewProps) {
   return (
     <div className="flex flex-row items-center gap-16">
       <div className="flex min-w-0 flex-1 flex-col gap-4">

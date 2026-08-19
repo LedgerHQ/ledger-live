@@ -1,9 +1,9 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import { StyleProvider } from "@features/platform-style";
-import { CardUserView } from "../CardUserView.web";
+import { CardLogoutView } from "../CardLogoutView.web";
 
-const defaultProps: React.ComponentProps<typeof CardUserView> = {
+const defaultProps: React.ComponentProps<typeof CardLogoutView> = {
   title: "Card",
   idLabel: "Account",
   userId: "3f2504e0-4f89-11d3-9a0c-0305e82c3301",
@@ -14,17 +14,17 @@ const defaultProps: React.ComponentProps<typeof CardUserView> = {
   onLogoutPress: jest.fn(),
 };
 
-function renderCardUserView(props: Partial<React.ComponentProps<typeof CardUserView>> = {}) {
+function renderCardLogoutView(props: Partial<React.ComponentProps<typeof CardLogoutView>> = {}) {
   return render(
     <StyleProvider colorScheme="dark">
-      <CardUserView {...defaultProps} {...props} />
+      <CardLogoutView {...defaultProps} {...props} />
     </StyleProvider>,
   );
 }
 
-describe("CardUserView (Web)", () => {
+describe("CardLogoutView (Web)", () => {
   it("should render the card holder and the logout action", () => {
-    renderCardUserView();
+    renderCardLogoutView();
 
     expect(screen.getByText("Account: 3f2504e0-4f89-11d3-9a0c-0305e82c3301")).toBeVisible();
     expect(screen.getByText("Verification: Verified")).toBeVisible();
@@ -33,7 +33,7 @@ describe("CardUserView (Web)", () => {
 
   it("should call the logout handler when the action is pressed", () => {
     const onLogoutPress = jest.fn();
-    renderCardUserView({ onLogoutPress });
+    renderCardLogoutView({ onLogoutPress });
 
     screen.getByRole("button", { name: "Log out" }).click();
 

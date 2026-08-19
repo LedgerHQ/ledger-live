@@ -5,7 +5,6 @@ import {
   getUser,
   hydrate,
   initiateAuthorize,
-  logout,
   openHostedLogin,
   persistSession,
   prepareAttempt,
@@ -31,7 +30,6 @@ export const cardLoginMachine = setup({
     exchangeAuthorizationCode,
     persistSession,
     getUser,
-    logout,
     clearAttempt,
   },
   guards: {
@@ -42,6 +40,12 @@ export const cardLoginMachine = setup({
     forgetAttempt,
     clearErrorKind,
     failPkce,
+    /**
+     * `CardLogout` is a separate component with no machine, so it cannot read this snapshot. These two
+     * publish the answer it needs through a port, on entry, which keeps the flag and the state in step.
+     */
+    publishSignedIn: ({ context }) => context.ports.setSignedIn(true),
+    publishSignedOut: ({ context }) => context.ports.setSignedIn(false),
   },
 }).createMachine({
   id: "cardLogin",
@@ -94,7 +98,7 @@ export const cardLoginMachine = setup({
     },
 
     idle: {
-      entry: ["forgetAttempt", "clearErrorKind"],
+      entry: ["forgetAttempt", "clearErrorKind", "publishSignedOut"],
       on: { LOGIN: { target: "preparingAttempt" } },
     },
 
@@ -252,7 +256,7 @@ export const cardLoginMachine = setup({
     },
 
     error: {
-      entry: "forgetAttempt",
+      entry: ["forgetAttempt", "publishSignedOut"],
       on: {
         LOGIN: { target: "preparingAttempt" },
         RETRY: { target: "preparingAttempt" },
@@ -260,18 +264,10 @@ export const cardLoginMachine = setup({
     },
 
     ready: {
-      on: { LOGOUT: { target: "loggingOut" } },
-    },
-
-    loggingOut: {
-      invoke: {
-        src: "logout",
-        input: ({ context }) => ({ ports: context.ports }),
-        // Both ways lead back to the login screen. A logout the user asked for always happens here,
-        // even when the provider or the store refused to take part.
-        onDone: { target: "idle" },
-        onError: { target: "idle" },
-      },
+      entry: "publishSignedIn",
+      // `CardLogout` ended the session, and it owns that whole journey. Nothing is left to undo here,
+      // so this only puts the login back on offer.
+      on: { SESSION_ENDED: { target: "idle" } },
     },
   },
 });

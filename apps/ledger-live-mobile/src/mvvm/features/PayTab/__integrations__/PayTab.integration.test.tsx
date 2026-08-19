@@ -30,6 +30,7 @@ jest.mock("@features/flow-pay-card-auth", () => {
   const { View } = require("react-native");
   return {
     CardLogin: () => ReactModule.createElement(View, { testID: "card-login" }),
+    CardLogout: () => ReactModule.createElement(View, { testID: "card-logout" }),
   };
 });
 

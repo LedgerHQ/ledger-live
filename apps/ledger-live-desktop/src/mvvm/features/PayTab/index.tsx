@@ -1,5 +1,5 @@
 import React from "react";
-import { CardLogin, type CardLoginOauthConfig } from "@features/flow-pay-card-auth";
+import { CardLogin, CardLogout, type CardLoginOauthConfig } from "@features/flow-pay-card-auth";
 import { Balance } from "@features/flow-pay-card-balance";
 import { DepositOptions } from "@features/flow-pay-card-deposit";
 import { RequestReceive, VerifyAddress } from "@features/flow-pay-card-request";
@@ -37,7 +37,10 @@ const PayTab = () => {
       <DepositOptions {...deposit.depositOptions} />
       <RequestReceive {...request.requestReceive} />
       <VerifyAddress {...verify.verifyAddress} />
+      {/* Each one decides whether it belongs on screen: the login while nobody is signed in, and
+          the logout once somebody is. */}
       <CardLogin oauthConfig={oauthConfig} />
+      <CardLogout />
       <FeatureTour {...featureTour} />
     </div>
   );

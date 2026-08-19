@@ -1,8 +1,8 @@
 import React from "react";
 import { Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
-import type { CardUserViewProps } from "./types";
+import type { CardLogoutViewProps } from "./types";
 
-export function CardUserView({
+export function CardLogoutView({
   title,
   idLabel,
   userId,
@@ -11,7 +11,7 @@ export function CardUserView({
   logoutLabel,
   isLoading,
   onLogoutPress,
-}: CardUserViewProps) {
+}: CardLogoutViewProps) {
   return (
     <Box
       lx={{

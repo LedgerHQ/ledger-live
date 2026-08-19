@@ -23,24 +23,8 @@ export type CardLoginViewProps = {
   readonly onLoginPress: () => void;
 };
 
-/** What the signed-in card holder sees. The user schema is narrow on purpose, so this is too. */
-export type CardUserViewProps = {
-  readonly title: string;
-  readonly idLabel: string;
-  readonly userId: string;
-  readonly verificationLabel: string;
-  readonly verificationValue: string;
-  readonly logoutLabel: string;
-  /** True while the logout runs. The action is not pressable then. */
-  readonly isLoading: boolean;
-  readonly onLogoutPress: () => void;
-};
-
 /**
- * Exactly one half is ever filled. `login` while there is a login to offer or to finish, `user` once
- * the card holder is signed in, and neither while the flow has nothing to say.
+ * `null` once the card holder is signed in, because the login has nothing left to offer then.
+ * `CardLogout` takes over at that point, and it reads the same flag to know it.
  */
-export type CardLoginViewModel = {
-  readonly login: CardLoginViewProps | null;
-  readonly user: CardUserViewProps | null;
-};
+export type CardLoginViewModel = CardLoginViewProps | null;

@@ -1,8 +1,8 @@
 import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react-native";
-import { CardUserView } from "../CardUserView.native";
+import { CardLogoutView } from "../CardLogoutView.native";
 
-const defaultProps: React.ComponentProps<typeof CardUserView> = {
+const defaultProps: React.ComponentProps<typeof CardLogoutView> = {
   title: "Card",
   idLabel: "Account",
   userId: "3f2504e0-4f89-11d3-9a0c-0305e82c3301",
@@ -13,17 +13,17 @@ const defaultProps: React.ComponentProps<typeof CardUserView> = {
   onLogoutPress: jest.fn(),
 };
 
-function renderCardUserView(props: Partial<React.ComponentProps<typeof CardUserView>> = {}) {
-  return render(<CardUserView {...defaultProps} {...props} />);
+function renderCardLogoutView(props: Partial<React.ComponentProps<typeof CardLogoutView>> = {}) {
+  return render(<CardLogoutView {...defaultProps} {...props} />);
 }
 
-describe("CardUserView (Native)", () => {
+describe("CardLogoutView (Native)", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   it("should render the card holder and the logout action", () => {
-    renderCardUserView();
+    renderCardLogoutView();
 
     expect(screen.getByText("Card")).toBeTruthy();
     expect(screen.getByText(/3f2504e0-4f89-11d3-9a0c-0305e82c3301/)).toBeTruthy();
@@ -33,7 +33,7 @@ describe("CardUserView (Native)", () => {
 
   it("should call the logout handler when the action is pressed", () => {
     const onLogoutPress = jest.fn();
-    renderCardUserView({ onLogoutPress });
+    renderCardLogoutView({ onLogoutPress });
 
     fireEvent.press(screen.getByLabelText("Log out"));
 

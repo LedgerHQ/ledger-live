@@ -79,11 +79,26 @@ export type CardLoginPorts = Readonly<{
   exchangeAuthorizationCode: (request: PayCardAuthorizationCodeRequest) => Promise<PayCardSession>;
   /** Fills the RTK Query cache, so every other screen sees the user too. */
   getUser: () => Promise<PayCardUser>;
+  /**
+   * Publishes "the card holder is signed in" for the components the machine does not render.
+   * `CardLogout` reads that flag to decide whether it belongs on screen.
+   */
+  setSignedIn: (isSignedIn: boolean) => void;
+  openHostedLogin: OpenHostedLogin;
+}>;
+
+/**
+ * What the logout needs from the outside world. It is a separate list, because `CardLogout` is a
+ * separate component with no machine: it ends one session and says so, and it never logs anybody in.
+ */
+export type CardLogoutPorts = Readonly<{
   /** Ends the session at the provider before the local session is cleared. */
   logout: () => Promise<void>;
-  /** Removes the cached Card user after logout. */
+  clearSession: () => Promise<void>;
+  clearAttempt: () => Promise<void>;
+  /** Removes the cached Card user, so no other screen shows whoever just left. */
   forgetUser: () => void;
-  openHostedLogin: OpenHostedLogin;
+  setSignedIn: (isSignedIn: boolean) => void;
 }>;
 
 /* --- The machine's own shapes ---------------------------------------------------------------- */
@@ -126,11 +141,17 @@ export type CardLoginContext = {
 export type CardLoginEvent =
   | { type: "LOGIN" }
   | { type: "RETRY" }
-  | { type: "LOGOUT" }
+  /** A session that ended somewhere else, which is `CardLogout` today. */
+  | { type: "SESSION_ENDED" }
   | { type: "CALLBACK_RECEIVED"; code: string; state: string };
 
 /* --- Redux ----------------------------------------------------------------------------------- */
 
 export type PayCardAuthState = Readonly<{
   hasCard: boolean;
+  /**
+   * True while a Card session is live. The login machine owns the value, and every component outside
+   * it reads this flag instead, because two machines would each hydrate and neither would agree.
+   */
+  isSignedIn: boolean;
 }>;

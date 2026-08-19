@@ -34,8 +34,7 @@ function stubPorts(overrides: Partial<Ports> = {}): Ports {
     initiateAuthorize: jest.fn(async () => ({ url: "https://card.test/login" })),
     exchangeAuthorizationCode: jest.fn(async () => session),
     getUser: jest.fn(async () => user),
-    logout: jest.fn(async () => undefined),
-    forgetUser: jest.fn(),
+    setSignedIn: jest.fn(),
     openHostedLogin: jest.fn(async () => ({
       type: "success",
       url: "ledgerlive://paytab?code=auth-code&state=state-value",
@@ -334,7 +333,7 @@ describe("cardLoginMachine failures", () => {
   });
 });
 
-describe("cardLoginMachine logout", () => {
+describe("cardLoginMachine signed-in flag", () => {
   async function signedIn(overrides: Partial<Ports> = {}) {
     const ports = stubPorts({ hasSession: jest.fn(async () => true), ...overrides });
     const actor = start(ports);
@@ -342,56 +341,49 @@ describe("cardLoginMachine logout", () => {
     return { ports, actor };
   }
 
-  it("tells the provider before it clears the session", async () => {
-    const order: string[] = [];
-    const { ports, actor } = await signedIn({
-      logout: jest.fn(async () => {
-        order.push("logout");
-      }),
-      clearSession: jest.fn(async () => {
-        order.push("clearSession");
-      }),
-    });
+  it("publishes the signed-in flag when it reaches ready", async () => {
+    const { ports } = await signedIn();
 
-    actor.send({ type: "LOGOUT" });
-
-    await settledAt(actor, "idle");
-    // The provider call carries the Bearer, so it cannot run after the session is gone.
-    expect(order).toEqual(["logout", "clearSession"]);
-    expect(ports.clearAttempt).toHaveBeenCalled();
-    expect(ports.forgetUser).toHaveBeenCalledTimes(1);
+    // `CardLogout` has no machine of its own, so this flag is the only thing that puts it on screen.
+    expect(ports.setSignedIn).toHaveBeenLastCalledWith(true);
   });
 
-  it("logs the user out on this device even when the provider cannot be reached", async () => {
-    const { ports, actor } = await signedIn({
-      logout: jest.fn(async () => Promise.reject(new Error("offline"))),
-    });
-
-    actor.send({ type: "LOGOUT" });
+  it("publishes the signed-out flag when it settles in idle", async () => {
+    const ports = stubPorts();
+    const actor = start(ports);
 
     await settledAt(actor, "idle");
-    expect(ports.clearSession).toHaveBeenCalledTimes(1);
-    expect(ports.forgetUser).toHaveBeenCalledTimes(1);
+
+    expect(ports.setSignedIn).toHaveBeenLastCalledWith(false);
   });
 
-  it("finishes the local cleanup even when the session store refuses to forget", async () => {
-    const { ports, actor } = await signedIn({
-      clearSession: jest.fn(async () => Promise.reject(new Error("keychain locked"))),
+  it("publishes the signed-out flag when it settles in error", async () => {
+    const ports = stubPorts({
+      createAttempt: jest.fn(async () => Promise.reject(new Error("no csprng"))),
     });
-
-    actor.send({ type: "LOGOUT" });
-
+    const actor = start(ports);
     await settledAt(actor, "idle");
-    expect(actor.getSnapshot().context.errorKind).toBeNull();
-    // A user left in the Card cache would keep every other screen showing whoever just logged out.
-    expect(ports.clearAttempt).toHaveBeenCalled();
-    expect(ports.forgetUser).toHaveBeenCalledTimes(1);
+
+    actor.send({ type: "LOGIN" });
+
+    await settledAt(actor, "error");
+    expect(ports.setSignedIn).toHaveBeenLastCalledWith(false);
   });
 
-  it("offers a new login after the logout", async () => {
+  it("puts the login back on offer when a session ends elsewhere", async () => {
+    // `CardLogout` owns that journey and has already ended the session, so nothing is undone here.
     const { ports, actor } = await signedIn();
-    actor.send({ type: "LOGOUT" });
-    await settledAt(actor, "idle");
+
+    actor.send({ type: "SESSION_ENDED" });
+
+    expect(actor.getSnapshot().value).toBe("idle");
+    expect(ports.clearSession).not.toHaveBeenCalled();
+    expect(ports.setSignedIn).toHaveBeenLastCalledWith(false);
+  });
+
+  it("offers a new login after a session ended elsewhere", async () => {
+    const { ports, actor } = await signedIn();
+    actor.send({ type: "SESSION_ENDED" });
 
     actor.send({ type: "LOGIN" });
 
@@ -399,14 +391,13 @@ describe("cardLoginMachine logout", () => {
     expect(ports.createAttempt).toHaveBeenCalledTimes(1);
   });
 
-  it("ignores a logout that arrives before the user is signed in", async () => {
+  it("ignores a session end that arrives before anybody is signed in", async () => {
     const ports = stubPorts();
     const actor = start(ports);
     await settledAt(actor, "idle");
 
-    actor.send({ type: "LOGOUT" });
+    actor.send({ type: "SESSION_ENDED" });
 
     expect(actor.getSnapshot().value).toBe("idle");
-    expect(ports.logout).not.toHaveBeenCalled();
   });
 });
