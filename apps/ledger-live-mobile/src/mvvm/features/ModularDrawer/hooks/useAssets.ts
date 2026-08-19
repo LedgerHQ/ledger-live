@@ -6,6 +6,8 @@ import VersionNumber from "react-native-version-number";
 import { useFeature } from "@features/platform-feature-flags";
 import { buildAssetsSorted } from "@ledgerhq/live-common/modularDrawer/utils/buildAssetsSorted";
 import { useAcceptedCurrency } from "@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency";
+import { useSelector } from "~/context/hooks";
+import { modularDrawerFlowSelector } from "~/reducers/modularDrawer";
 import useEnv from "@features/platform-env";
 
 interface AssetsProps {
@@ -23,7 +25,8 @@ export function useAssets({
   useCase,
   areCurrenciesFiltered,
 }: AssetsProps) {
-  const isAcceptedCurrency = useAcceptedCurrency();
+  const flow = useSelector(modularDrawerFlowSelector);
+  const isAcceptedCurrency = useAcceptedCurrency({ flow });
   const modularDrawerFeature = useFeature("llmModularDrawer");
   const devMode = useEnv("MANAGER_DEV_MODE");
   const resolvedNetworkIds = networkIds?.length ? networkIds : undefined;

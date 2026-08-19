@@ -99,12 +99,17 @@ export function BackupHubScreenView({
               </SubheaderRow>
             </Subheader>
             <Box lx={{ backgroundColor: "surface", borderRadius: "lg", overflow: "hidden" }}>
-              {physicalRows.map(({ id, image, onPress }) => (
+              {physicalRows.map(({ id, image, isWarning, onPress }) => (
                 <PhysicalBackupRow
                   key={id}
                   image={image}
                   title={t(PHYSICAL_ROW_I18N[id].titleKey)}
-                  description={t(PHYSICAL_ROW_I18N[id].descriptionKey)}
+                  description={t(
+                    isWarning
+                      ? "myWallet.backupHub.recoveryKey.incompatible"
+                      : PHYSICAL_ROW_I18N[id].descriptionKey,
+                  )}
+                  isWarning={isWarning}
                   onPress={onPress}
                   testID={`backup-hub-physical-row-${id}`}
                 />

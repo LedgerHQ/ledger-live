@@ -20,12 +20,6 @@ export const ACCOUNT_EMPTY = "0xdead00000000000000000000000000000000000000000000
  */
 export const MAX_CURSOR_RETRIES = 1;
 
-/**
- * APY lookback in epochs. SUI epochs ~24 h → 30 ≈ 30 days, matching
- * Mysten's `getValidatorsApy`. Diverging would drift APY between transports.
- */
-export const APY_LOOKBACK_EPOCHS = 30;
-
 /** Page size for `STAKED_SUI_OBJECTS_BY_OWNER` — matches server default. */
 export const STAKES_PAGE_SIZE = 50;
 

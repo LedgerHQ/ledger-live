@@ -7,6 +7,7 @@ import { CryptoCurrency, getCryptoCurrencyById } from "@domain/entity-currency-c
 import { TokenCurrency } from "@domain/entity-currency-token";
 import { useCurrenciesUnderFeatureFlag } from "../useCurrenciesUnderFeatureFlag";
 import { isCurrencySupported } from "../../../coin-modules/registry";
+import { ModularDrawerLocation } from "../../enums";
 
 // Mock dependencies
 jest.mock("../useCurrenciesUnderFeatureFlag");
@@ -160,6 +161,54 @@ describe("useAcceptedCurrency", () => {
     } as any);
     rerender();
     expect(result.current(mockCryptoCurrency)).toBe(false);
+  });
+
+  describe("transfer flows", () => {
+    const hypercore = {
+      ...mockCryptoCurrency,
+      id: "hypercore",
+      family: "hypercore",
+    } as CryptoCurrency;
+    const hypercoreToken = {
+      ...mockTokenCurrency,
+      parentCurrencyId: "hypercore",
+    } as TokenCurrency;
+
+    beforeEach(() => {
+      mockUseCurrenciesUnderFeatureFlag.mockReturnValue({
+        deactivatedCurrencyIds: new Set<string>(),
+        featureFlaggedCurrencies: {},
+      } as any);
+      mockIsCurrencySupported.mockReturnValue(true);
+    });
+
+    it("should reject a family that cannot send, in the send flow (hypercore)", () => {
+      const { result } = renderHook(() => useAcceptedCurrency({ flow: "send" }));
+
+      expect(result.current(hypercore)).toBe(false);
+    });
+
+    it("should reject a token whose parent family cannot send", () => {
+      const { result } = renderHook(() => useAcceptedCurrency({ flow: "send" }));
+
+      expect(result.current(hypercoreToken)).toBe(false);
+    });
+
+    it("should reject a family that cannot receive, in the receive flow", () => {
+      const { result } = renderHook(() =>
+        useAcceptedCurrency({ flow: ModularDrawerLocation.RECEIVE_FLOW }),
+      );
+
+      expect(result.current(hypercore)).toBe(false);
+    });
+
+    it("should accept that same family outside of a transfer flow", () => {
+      const { result } = renderHook(() =>
+        useAcceptedCurrency({ flow: ModularDrawerLocation.ADD_ACCOUNT }),
+      );
+
+      expect(result.current(hypercore)).toBe(true);
+    });
   });
 
   it("should handle multiple currencies in deactivated set", () => {

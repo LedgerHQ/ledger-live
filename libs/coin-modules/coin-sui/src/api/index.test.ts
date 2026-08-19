@@ -15,9 +15,13 @@ jest.mock("../config", () => ({
 }));
 
 const mockConfig: SuiCoinConfig = {
-  node: { url: "http://localhost:1234", graphqlUrl: "http://localhost:1234/graphql" },
+  node: {
+    url: "http://localhost:1234",
+    graphqlUrl: "http://localhost:1234/graphql",
+    grpcUrl: "http://localhost:1234",
+  },
   status: { type: "active" },
-  features: { graphql: false },
+  features: { transport: "json" },
 };
 
 const context: SuiContext = {

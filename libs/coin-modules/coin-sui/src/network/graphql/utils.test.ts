@@ -1,6 +1,7 @@
 /**
- * Unit tests for `./utils.ts` — predicates, mappers, and pool exchange-rate math.
- * Pins formulas against JSON-RPC parity and guards against Mysten schema drift.
+ * Unit tests for `./utils.ts` — GraphQL predicates and mappers — plus the transport-neutral staking
+ * maths now in `../staking.ts`, whose tests still live here after the extraction. Pins the reward
+ * and APY formulas and guards against Mysten schema drift.
  */
 import { ONE_SUI } from "../../constants";
 import { RATE_BATCH_CHUNK_SIZE } from "./constants";
@@ -13,29 +14,31 @@ import {
   SUI_SYSTEM_STATE,
 } from "./queries";
 import {
+  extractFailureError,
+  parseExchangeRateNode,
+  projectOpenMoveBody,
+  projectOpenMoveSignature,
+  shortenCoinType,
+  validateStakedSuiNodes,
+  type ExchangeRateAddrNode,
+  type StakeNode,
+} from "./utils";
+import {
   assertSystemStateJson,
   computeApy,
   computeEstimatedReward,
   computeStakeRewards,
-  extractFailureError,
   fromSystemStateJson,
   groupStakedSuiByPool,
   isStakedSuiJson,
-  parseExchangeRateNode,
   planActivationRateLookups,
   poolRefsFromSystemState,
-  projectOpenMoveBody,
-  projectOpenMoveSignature,
-  shortenCoinType,
   UNKNOWN_VALIDATOR,
-  validateStakedSuiNodes,
   type ExchangeRate,
-  type ExchangeRateAddrNode,
   type PoolRefs,
   type RatePlan,
   type StakedSuiJson,
-  type StakeNode,
-} from "./utils";
+} from "../staking";
 import { makeSystemStateJson } from "./fixtures";
 
 // ----- shortenCoinType ----------------------------------------------------
@@ -123,6 +126,13 @@ describe("isStakedSuiJson", () => {
   it("should accept zero (degenerate but valid u64)", () => {
     expect(isStakedSuiJson({ ...validNode, principal: 0 })).toBe(true);
     expect(isStakedSuiJson({ ...validNode, principal: "0" })).toBe(true);
+  });
+
+  // Width alone is not grounds for rejection — see `isU64Numeric` for why. Both forms must pass, or
+  // a whale-sized stake disappears from the list.
+  it("should accept u64 values wider than MAX_SAFE_INTEGER", () => {
+    expect(isStakedSuiJson({ ...validNode, principal: "18446744073709551615" })).toBe(true);
+    expect(isStakedSuiJson({ ...validNode, principal: 2 ** 53 })).toBe(true);
   });
 });
 
@@ -254,7 +264,7 @@ describe("groupStakedSuiByPool", () => {
 
   it("should return empty array for empty input", () => {
     // GIVEN / WHEN
-    const result = groupStakedSuiByPool([], 100, new Map());
+    const result = groupStakedSuiByPool([], 100, new Map(), "graphql");
 
     // THEN
     expect(result).toEqual([]);
@@ -273,7 +283,7 @@ describe("groupStakedSuiByPool", () => {
     ];
 
     // WHEN
-    const result = groupStakedSuiByPool(items, 100, pools);
+    const result = groupStakedSuiByPool(items, 100, pools, "graphql");
 
     // THEN
     expect(result).toHaveLength(2);
@@ -287,7 +297,7 @@ describe("groupStakedSuiByPool", () => {
 
   it("should fall back to UNKNOWN_VALIDATOR for pools missing from the map (orphan pool)", () => {
     // GIVEN / WHEN
-    const result = groupStakedSuiByPool([stake("0xs1", "0xorphan", 50)], 100, new Map());
+    const result = groupStakedSuiByPool([stake("0xs1", "0xorphan", 50)], 100, new Map(), "graphql");
 
     // THEN
     expect(result[0].validatorAddress).toBe(UNKNOWN_VALIDATOR);
@@ -299,7 +309,7 @@ describe("groupStakedSuiByPool", () => {
     const pools = new Map([["0xp", "0xv"]]);
 
     // WHEN
-    const result = groupStakedSuiByPool(items, 100, pools);
+    const result = groupStakedSuiByPool(items, 100, pools, "graphql");
 
     // THEN
     const stakes = result[0].stakes;
@@ -311,7 +321,12 @@ describe("groupStakedSuiByPool", () => {
 
   it("should treat activation_epoch === currentEpoch as Active (boundary)", () => {
     // GIVEN / WHEN
-    const result = groupStakedSuiByPool([stake("0xs", "0xp", 100)], 100, new Map([["0xp", "0xv"]]));
+    const result = groupStakedSuiByPool(
+      [stake("0xs", "0xp", 100)],
+      100,
+      new Map([["0xp", "0xv"]]),
+      "graphql",
+    );
 
     // THEN
     expect(result[0].stakes[0].status).toBe("Active");
@@ -319,7 +334,12 @@ describe("groupStakedSuiByPool", () => {
 
   it("should derive stakeRequestEpoch as activation - 1 (JSON-RPC convention)", () => {
     // GIVEN / WHEN
-    const result = groupStakedSuiByPool([stake("0xs", "0xp", 50)], 100, new Map([["0xp", "0xv"]]));
+    const result = groupStakedSuiByPool(
+      [stake("0xs", "0xp", 50)],
+      100,
+      new Map([["0xp", "0xv"]]),
+      "graphql",
+    );
 
     // THEN
     expect(result[0].stakes[0].stakeRequestEpoch).toBe("49");
@@ -332,7 +352,7 @@ describe("groupStakedSuiByPool", () => {
     const items = [stake("0xWithReward", "0xp", 50), stake("0xNoReward", "0xp", 50)];
 
     // WHEN
-    const result = groupStakedSuiByPool(items, 100, new Map([["0xp", "0xv"]]), rewards);
+    const result = groupStakedSuiByPool(items, 100, new Map([["0xp", "0xv"]]), "graphql", rewards);
 
     // THEN
     const stakes = result[0].stakes;
@@ -351,6 +371,7 @@ describe("groupStakedSuiByPool", () => {
       [stake("0xpending", "0xp", 200)],
       100,
       new Map([["0xp", "0xv"]]),
+      "graphql",
     );
 
     // THEN

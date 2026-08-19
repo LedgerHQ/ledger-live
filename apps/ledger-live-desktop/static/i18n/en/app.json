@@ -7915,6 +7915,9 @@
     "OneSuiMinForUnstakeToBeLeft": {
       "title": "At least 1 SUI should be left in stake"
     },
+    "SuiStakeNotFound": {
+      "title": "Stake details unavailable. Please resynchronise your account and try again"
+    },
     "SomeSuiForUnstake": {
       "title": "Please ensure you reserve at least 0.1 SUI in your wallet to cover future network fees and undelegate your stake"
     },
@@ -8988,7 +8991,7 @@
       "privateBalance": "Private balance",
       "privateBalanceTooltip": "Balance that is hidden from the public",
       "privateBalanceWarning": "Private balance excludes Sapling and Orchard shielded funds",
-      "privateBalanceMaturing": "{{spendable}} spendable · {{maturing}} maturing"
+      "privateBalanceMaturing": "Private balance: {{spendable}} spendable · {{maturing}} maturing"
     },
     "shielded": {
       "send": {

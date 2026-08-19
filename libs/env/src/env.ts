@@ -130,6 +130,8 @@ export interface EnvTypes {
   API_SUI_NODE_PROXY: string;
   API_SUI_GRAPHQL_PROXY: string;
   API_SUI_TESTNET_GRAPHQL_PROXY: string;
+  API_SUI_GRPC_PROXY: string;
+  API_SUI_TESTNET_GRPC_PROXY: string;
   SUI_ENABLE_TOKENS: boolean;
   CANTON_API_KEY: string;
   CANTON_NODE_ID_OVERRIDE: string;
@@ -215,12 +217,12 @@ export type EnvName = keyof EnvTypes;
 export type EnvValue<K extends EnvName = EnvName> = EnvTypes[K];
 
 export const intParser = (v: any): number | undefined => {
-  const n = parseInt(v, 10);
+  const n = Number.parseInt(v, 10);
   if (!Number.isNaN(n)) return n;
 };
 
 export const floatParser = (v: any): number | undefined => {
-  const n = parseFloat(v);
+  const n = Number.parseFloat(v);
   if (!Number.isNaN(n)) return n;
 };
 

@@ -954,6 +954,10 @@ describe("Contacts integration", () => {
     await waitFor(() => {
       expect(screen.queryByTestId("contacts-edit-signer-confirm")).toBeNull();
       expect(screen.getByTestId("contacts-rename-address-confirm")).toBeVisible();
+      expect(screen.getByTestId("contacts-edit-address-input")).toHaveProp(
+        "value",
+        "0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034",
+      );
     });
   });
 
@@ -979,6 +983,48 @@ describe("Contacts integration", () => {
       expect(screen.queryByTestId("contacts-rename-address-confirm")).toBeNull();
       expect(screen.queryByTestId("contacts-address-detail-dialog")).toBeNull();
       expect(screen.getByText("Exchange wallet")).toBeVisible();
+    });
+  });
+
+  it("should prefill the saved address and update the address value", async () => {
+    const newAddress = "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd";
+    const { user } = render(<MyWalletNavigator />, {
+      overrideInitialState: withContactsPageReadyState(
+        { lwmContacts: { enabled: true, params: { newBadge: false } } },
+        state => ({ ...state, contacts: { contacts: mockPopulatedContacts() } }),
+      ),
+    });
+
+    await user.press(screen.getByTestId("my-wallet-contacts-button"));
+    await user.press(await screen.findByTestId("contacts-saved-contact-contact-ben"));
+    await user.press(await screen.findByTestId("contacts-detail-address-row-address-ethereum"));
+    await user.press(await screen.findByText("Edit"));
+    await user.press(await screen.findByTestId("contacts-edit-signer-confirm"));
+
+    const addressInput = await screen.findByTestId("contacts-edit-address-input");
+    expect(addressInput).toHaveProp("value", "0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034");
+
+    await user.clear(addressInput);
+    await user.type(addressInput, newAddress);
+
+    await waitFor(() => {
+      expect(screen.getByTestId("contacts-rename-address-confirm")).toBeEnabled();
+    });
+
+    await user.press(screen.getByTestId("contacts-rename-address-confirm"));
+
+    await waitFor(() => {
+      expect(screen.queryByTestId("contacts-rename-address-confirm")).toBeNull();
+      expect(screen.queryByTestId("contacts-address-detail-dialog")).toBeNull();
+    });
+
+    await user.press(await screen.findByTestId("contacts-detail-address-row-address-ethereum"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("contacts-address-detail-dialog")).toBeVisible();
+      expect(screen.getByTestId("contacts-address-detail-full-address")).toHaveTextContent(
+        newAddress,
+      );
     });
   });
 
