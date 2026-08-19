@@ -47,6 +47,29 @@ mkdir -p "$RING_DIR" 2>/dev/null || true
 readonly RING_DIR
 readonly RING_DEPTH=6
 
+# Per-process detail that says *what a process is waiting on*, which is the whole
+# question for a wedge. wchan is the kernel function each thread is blocked in; a
+# healthy qemu shows a spread of poll/futex waits, while a wedged one collapses onto
+# one. The fd and socket counts test the other hypothesis directly: the Buy screen
+# fires several hundred concurrent requests through the emulator's user-mode network
+# stack, so if the wedge is socket exhaustion it has to show up here first.
+proc_detail() {
+  local pid="$1"
+  echo "   pid ${pid}"
+  awk '/^(Threads|voluntary_ctxt_switches|nonvoluntary_ctxt_switches|VmRSS|SigQ):/{print "     "$0}' \
+    "/proc/${pid}/status" 2>/dev/null || true
+  local fds
+  fds="$(find "/proc/${pid}/fd" -mindepth 1 2>/dev/null | wc -l)"
+  local socks
+  socks="$(find "/proc/${pid}/fd" -mindepth 1 -lname 'socket:*' 2>/dev/null | wc -l)"
+  echo "     fds: ${fds:-?}  sockets: ${socks:-?}"
+  echo "     threads blocked in (wchan x count):"
+  # shellcheck disable=SC2016
+  for t in "/proc/${pid}/task"/*; do
+    cat "${t}/wchan" 2>/dev/null && echo
+  done | sort | uniq -c | sort -rn | head -8 | sed 's/^/       /'
+}
+
 snapshot() {
   local slot="$1"
   {
@@ -55,8 +78,20 @@ snapshot() {
     local pids
     pids="$(pgrep -d, qemu-system 2>/dev/null || true)"
     [ -n "$pids" ] && ps -o pid,rss,pcpu,stat,etime,comm -p "$pids" 2>/dev/null || echo "(no qemu process)"
+    echo "-- per-process detail"
+    if [ -n "$pids" ]; then
+      for p in ${pids//,/ }; do proc_detail "$p"; done
+      local nspid
+      nspid="$(pgrep -x netsimd 2>/dev/null | head -1)"
+      [ -n "${nspid:-}" ] && { echo "   -- netsimd (shared by all emulators)"; proc_detail "$nspid"; }
+    fi
     echo "-- memory"
     free -m 2>/dev/null || true
+    echo "-- load"
+    cat /proc/loadavg 2>/dev/null || true
+    echo "-- sockets (host-wide)"
+    ss -s 2>/dev/null | head -6 || true
+    grep -E '^(TCP|sockets):' /proc/net/sockstat 2>/dev/null || true
     echo "-- adb"
     adb devices 2>&1 || true
   } >"${RING_DIR}/snap_${slot}.txt" 2>/dev/null || true
@@ -96,17 +131,38 @@ check_wedges() {
       stamp="$(date -u +%Y%m%dT%H%M%SZ)"
       log "⚠️  qemu pid ${pid} looks WEDGED at ${stamp} (rss ${rss} kB unchanged for $((WEDGE_POLLS * INTERVAL))s, state ${stat})"
       echo "${stamp} pid=${pid} rss=${rss} state=${stat} frozen_for=$((WEDGE_POLLS * INTERVAL))s" >>"$WEDGE_LOG"
+      # Capture here, not only at the death. This is the first moment we know something
+      # is wrong and the process still exists - by the time it leaves the table there is
+      # nothing left to inspect.
+      capture_diagnostics "wedge-pid${pid}" "$stamp"
     fi
   done < <(ps -o pid=,rss=,stat= -p "$pids" 2>/dev/null || true)
 }
 
 # One line per poll: cheap, and makes a slow squeeze (e.g. Hyper-V dynamic memory
-# reclaiming from the VM) visible as a trend rather than a single reading.
+# reclaiming from the VM) visible as a trend rather than a single reading. The socket
+# and fd columns are here rather than only in the ring buffer because exhaustion is a
+# ramp, not an event - it has to be readable across the whole run to be recognisable.
+#
+# Columns: ts, mem_total, mem_used, mem_free, mem_avail (MB), qemu_count,
+#          load1, tcp_inuse, tcp_tw (TIME_WAIT), qemu_fds_total, qemu_socks_total
 trend() {
-  local mem qemu
+  local mem qemu load tcp_inuse tcp_tw fds socks pids
   mem="$(free -m 2>/dev/null | awk '/^Mem:/{print $2"\t"$3"\t"$4"\t"$7}')"
   qemu="$(pgrep -c qemu-system 2>/dev/null || echo 0)"
-  printf '%s\t%s\t%s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "${mem:-?}" "$qemu" >>"$TREND_LOG" 2>/dev/null || true
+  load="$(awk '{print $1}' /proc/loadavg 2>/dev/null)"
+  tcp_inuse="$(awk '/^TCP:/{print $3}' /proc/net/sockstat 2>/dev/null)"
+  tcp_tw="$(awk '/^TCP:/{print $7}' /proc/net/sockstat 2>/dev/null)"
+  fds=0
+  socks=0
+  pids="$(pgrep qemu-system 2>/dev/null || true)"
+  for p in $pids; do
+    fds=$((fds + $(find "/proc/${p}/fd" -mindepth 1 2>/dev/null | wc -l)))
+    socks=$((socks + $(find "/proc/${p}/fd" -mindepth 1 -lname 'socket:*' 2>/dev/null | wc -l)))
+  done
+  printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n' \
+    "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "${mem:-?}" "$qemu" \
+    "${load:-?}" "${tcp_inuse:-?}" "${tcp_tw:-?}" "$fds" "$socks" >>"$TREND_LOG" 2>/dev/null || true
 }
 
 capture_diagnostics() {
