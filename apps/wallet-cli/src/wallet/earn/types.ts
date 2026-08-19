@@ -1,3 +1,5 @@
+import type { BigNumberStr } from "@shared/schema-primitives";
+
 /**
  * Shared, serializable result/row shapes for the `earn` command surface.
  *
@@ -59,7 +61,7 @@ export type EarnYieldRow = {
 };
 
 /**
- * One on-chain Solana stake account, derived from the synced account's `solanaResources.stakes`.
+ * One on-chain Solana stake account, derived from the synced account's `stakingResources`.
  * `stakeAccount` is the value `earn withdraw --stake-account` expects.
  */
 export type EarnSolanaStake = {
@@ -69,10 +71,10 @@ export type EarnSolanaStake = {
   validator?: string;
   /** Activation state: undelegate is allowed while "active"; withdraw once "inactive". */
   state: "active" | "inactive" | "activating" | "deactivating";
-  /** Total lamports held by the stake account. */
-  stakeBalance: number;
-  /** Lamports currently withdrawable back to the main account. */
-  withdrawable: number;
+  /** Total lamports held by the stake account, as an integer decimal string. */
+  stakeBalance: BigNumberStr;
+  /** Lamports currently withdrawable back to the main account, as an integer decimal string. */
+  withdrawable: BigNumberStr;
 };
 
 /**

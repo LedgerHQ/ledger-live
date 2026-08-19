@@ -13,6 +13,7 @@ import { getAccountBannerState as getSolanaBannerState } from "@ledgerhq/live-co
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { openModal } from "~/renderer/actions/modals";
 import { useDispatch } from "LLD/hooks/redux";
+import { listSolanaStakingPositions } from "@ledgerhq/live-common/families/solana/logic";
 import { SolanaAccount } from "@ledgerhq/live-common/families/solana/types";
 
 const StakeBanner: React.FC<{ account: SolanaAccount }> = ({ account }) => {
@@ -21,7 +22,7 @@ const StakeBanner: React.FC<{ account: SolanaAccount }> = ({ account }) => {
   const stakeAccountBanner = useFeature("stakeAccountBanner");
   const stakesWithMeta = useSolanaStakesWithMeta(
     account.currency,
-    account?.solanaResources?.stakes,
+    listSolanaStakingPositions(account.stakingResources),
   );
   const stakeAccountBannerParams: StakeAccountBannerParams | null =
     stakeAccountBanner?.params ?? null;
@@ -34,7 +35,7 @@ const StakeBanner: React.FC<{ account: SolanaAccount }> = ({ account }) => {
   if (!redelegate && !stakeAccountBannerParams?.solana?.delegate) return null;
 
   const commission = ledgerValidator?.commission ? ledgerValidator?.commission : 1;
-  const stakeWithMeta = stakesWithMeta?.find(s => s.stake?.stakeAccAddr === stakeAccAddr);
+  const stakeWithMeta = stakesWithMeta?.find(s => s.stake?.positionId === stakeAccAddr);
   const title = redelegate
     ? t("account.banner.redelegation.solana.title")
     : t("account.banner.delegation.title");

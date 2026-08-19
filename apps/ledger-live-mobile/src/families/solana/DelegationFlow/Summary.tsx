@@ -65,11 +65,11 @@ export default function DelegationSummary({ navigation, route }: Props) {
 
     const { stake } = delegationAction.stakeWithMeta;
 
-    if (stake.delegation === undefined) {
+    if (!stake.validatorAddress) {
       return undefined;
     }
 
-    return validators.find(v => v.voteAccount === stake.delegation?.voteAccAddr);
+    return validators.find(v => v.voteAccount === stake.validatorAddress);
   }, [validators, validator, delegationAction]);
 
   const { transaction, setTransaction, status, bridgePending, bridgeError } = useBridgeTransaction(
@@ -265,12 +265,14 @@ function txAmount(delegationAction: DelegationAction & { kind: "change" }) {
   const { stake } = delegationAction.stakeWithMeta;
   switch (delegationAction.stakeAction) {
     case "activate":
-      return stake.withdrawable - stake.rentExemptReserve;
+      return (stake.withdrawableAmount ?? new BigNumber(0))
+        .minus(stake.lockedReserve ?? 0)
+        .toNumber();
     case "deactivate":
     case "reactivate":
-      return stake.delegation?.stake ?? 0;
+      return stake.amount.toNumber();
     case "withdraw":
-      return stake.withdrawable;
+      return stake.withdrawableAmount?.toNumber() ?? 0;
     default:
       return assertUnreachable(delegationAction.stakeAction);
   }
@@ -378,9 +380,9 @@ function txModelByDelegationAction(
     stakeWithMeta: { stake },
   } = delegationAction;
 
-  invariant(stake.delegation, "stake delegation must be defined");
+  invariant(stake.validatorAddress, "stake delegation must be defined");
 
-  const { stakeAccAddr, delegation } = stake;
+  const stakeAccAddr = stake.positionId ?? "";
 
   switch (stakeAction) {
     case "activate":
@@ -389,7 +391,7 @@ function txModelByDelegationAction(
         kind: "stake.delegate",
         uiState: {
           stakeAccAddr,
-          voteAccAddr: chosenValidator?.voteAccount ?? delegation?.voteAccAddr ?? "-",
+          voteAccAddr: chosenValidator?.voteAccount ?? stake.validatorAddress ?? "-",
         },
       };
     case "deactivate":

@@ -5,8 +5,9 @@ import "../../__tests__/test-helpers/dom-polyfill";
 import { renderHook, waitFor } from "@testing-library/react";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { ValidatorsAppValidator } from "@ledgerhq/coin-solana/network/validator-app/index";
-import type { SolanaStake } from "@ledgerhq/coin-solana/types";
+import type { SolanaStakingPosition } from "@ledgerhq/coin-solana/types";
 import { getSolanaValidators } from "@ledgerhq/coin-solana/validators";
+import BigNumber from "bignumber.js";
 import * as hooks from "./react";
 
 jest.mock("@ledgerhq/coin-solana/validators", () => ({
@@ -76,10 +77,13 @@ describe("solana/react", () => {
   });
 
   describe("useSolanaStakesWithMeta", () => {
-    const stake = {
-      stakeAccAddr: "stake-account",
-      delegation: { voteAccAddr: "ledger-vote-account" },
-    } as SolanaStake;
+    const stake: SolanaStakingPosition = {
+      positionId: "stake-account",
+      validatorAddress: "ledger-vote-account",
+      amount: new BigNumber(0),
+      pendingRewards: new BigNumber(0),
+      status: "bonded",
+    };
 
     it("attaches the validator metadata to each stake", async () => {
       const currency = nextCurrency();
@@ -103,7 +107,7 @@ describe("solana/react", () => {
     });
 
     it("leaves the metadata empty for an unknown validator", async () => {
-      const unknown = { ...stake, delegation: { voteAccAddr: "unknown" } } as SolanaStake;
+      const unknown: SolanaStakingPosition = { ...stake, validatorAddress: "unknown" };
 
       const currency = nextCurrency();
 

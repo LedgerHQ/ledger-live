@@ -8,7 +8,7 @@ import {
   Transaction,
 } from "@ledgerhq/live-common/families/solana/types";
 import { Operation, Account } from "@ledgerhq/types-live";
-import invariant from "invariant";
+import { assertStakingResources } from "../shared/assertStakingResources";
 import React, { useCallback, useState } from "react";
 import { Trans, withTranslation } from "react-i18next";
 import { TFunction } from "i18next";
@@ -88,12 +88,12 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
     bridgePending,
   } = useBridgeTransaction(bridge, () => {
     const { account, stakeWithMeta } = params;
-    invariant(account && account.solanaResources, "solana: account and solana resources required");
+    assertStakingResources(account);
     const transaction = bridge.updateTransaction(bridge.createTransaction(account), {
       model: {
         kind: "stake.undelegate",
         uiState: {
-          stakeAccAddr: stakeWithMeta.stake.stakeAccAddr,
+          stakeAccAddr: stakeWithMeta.stake.positionId ?? "",
         },
       },
     });

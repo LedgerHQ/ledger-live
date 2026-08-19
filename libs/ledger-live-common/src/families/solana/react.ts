@@ -1,7 +1,7 @@
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { useEffect, useMemo, useState } from "react";
 import { getSolanaValidators } from "@ledgerhq/coin-solana/validators";
-import type { SolanaStake, SolanaStakeWithMeta } from "@ledgerhq/coin-solana/types";
+import type { SolanaStakeWithMeta, SolanaStakingPosition } from "@ledgerhq/coin-solana/types";
 import type { ValidatorsAppValidator } from "@ledgerhq/coin-solana/network/validator-app/index";
 
 // keeps the last fetched validators so remounting a screen does not flash an empty list
@@ -62,7 +62,7 @@ export function useValidators(currency: CryptoCurrency, search?: string): Valida
 
 export function useSolanaStakesWithMeta(
   currency: CryptoCurrency,
-  stakes: SolanaStake[],
+  stakes: SolanaStakingPosition[],
 ): SolanaStakeWithMeta[] {
   const validators = useSolanaValidators(currency);
 
@@ -70,7 +70,7 @@ export function useSolanaStakesWithMeta(
     const validatorByVoteAccAddr = new Map(validators.map(v => [v.voteAccount, v]));
 
     return stakes.map(stake => {
-      const voteAccAddr = stake.delegation?.voteAccAddr;
+      const voteAccAddr = stake.validatorAddress || undefined;
       const validator =
         voteAccAddr === undefined ? undefined : validatorByVoteAccAddr.get(voteAccAddr);
 
