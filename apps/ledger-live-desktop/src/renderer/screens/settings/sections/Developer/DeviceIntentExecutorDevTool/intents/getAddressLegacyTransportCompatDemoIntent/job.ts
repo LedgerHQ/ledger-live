@@ -6,25 +6,25 @@ import { DmkCompatTransport } from "@ledgerhq/live-dmk-shared";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { Job } from "@features/platform-device-intent";
 import type {
-  GetAddressLegacyWithDeviceDemoIntentInput,
-  GetAddressLegacyWithDeviceDemoIntentJobState,
+  GetAddressLegacyTransportCompatDemoIntentInput,
+  GetAddressLegacyTransportCompatDemoIntentJobState,
 } from "./types";
 
 const TERMINAL_DELAY_MS = 3000;
 
-export const getAddressLegacyWithDeviceDemoIntentJob: Job<
-  GetAddressLegacyWithDeviceDemoIntentJobState,
-  GetAddressLegacyWithDeviceDemoIntentInput
+export const getAddressLegacyTransportCompatDemoIntentJob: Job<
+  GetAddressLegacyTransportCompatDemoIntentJobState,
+  GetAddressLegacyTransportCompatDemoIntentInput
 > = ({ deviceConnectionResult, input }) =>
   concat(
-    of<GetAddressLegacyWithDeviceDemoIntentJobState>({ type: "deriving" }),
+    of<GetAddressLegacyTransportCompatDemoIntentJobState>({ type: "deriving" }),
     defer(() => {
       const transport = new DmkCompatTransport(
         deviceConnectionResult.dmk,
         deviceConnectionResult.sessionId,
       );
       return concat(
-        of<GetAddressLegacyWithDeviceDemoIntentJobState>({ type: "gotTransport" }),
+        of<GetAddressLegacyTransportCompatDemoIntentJobState>({ type: "gotTransport" }),
         from(
           getAddress(transport, {
             currency: getCryptoCurrencyById(input.currencyId),
@@ -35,7 +35,7 @@ export const getAddressLegacyWithDeviceDemoIntentJob: Job<
       );
     }).pipe(
       catchError(err =>
-        of<GetAddressLegacyWithDeviceDemoIntentJobState>({ type: "failed", error: err }),
+        of<GetAddressLegacyTransportCompatDemoIntentJobState>({ type: "failed", error: err }),
       ),
     ),
     timer(TERMINAL_DELAY_MS).pipe(ignoreElements()),

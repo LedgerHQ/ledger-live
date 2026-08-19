@@ -17,7 +17,7 @@ export function UninstallAppDemoIntentComponentLWD({
         <DialogHeader
           density="compact"
           title={`Uninstall ${extraProps.appName} intent`}
-          className="!mb-0"
+          className="!mb-0 !px-0"
         />
       </OverrideDeviceIntentExecutorHeader>
       <div className="flex w-full flex-col items-center gap-16 px-16 py-24 text-center">

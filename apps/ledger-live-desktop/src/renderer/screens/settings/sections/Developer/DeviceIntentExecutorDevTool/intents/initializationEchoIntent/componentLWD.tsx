@@ -13,7 +13,7 @@ export function InitializationEchoIntentComponentLWD({
   return (
     <>
       <OverrideDeviceIntentExecutorHeader>
-        <DialogHeader density="compact" title="Initialization Echo" className="!mb-0" />
+        <DialogHeader density="compact" title="Initialization Echo" className="!mb-0 !px-0" />
       </OverrideDeviceIntentExecutorHeader>
       <div className="flex w-full flex-col gap-16 px-16 py-24">
         {jobState?.type === "contextReceived" ? (

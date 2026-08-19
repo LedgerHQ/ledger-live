@@ -1,12 +1,12 @@
 import type { Intent } from "@features/platform-device-intent";
 import type { InitializationInput } from "LLD/components/DeviceIntentExecutor";
 import type {
-  GetAddressLegacyWithDeviceDemoIntent,
-  GetAddressLegacyWithDeviceDemoIntentExtraProps,
-  GetAddressLegacyWithDeviceDemoIntentInput,
-  GetAddressLegacyWithDeviceDemoIntentJobState,
-  GetAddressLegacyWithDeviceDemoIntentPlatformDefinition,
-} from "./getAddressLegacyWithDeviceDemoIntent/types";
+  GetAddressLegacyTransportCompatDemoIntent,
+  GetAddressLegacyTransportCompatDemoIntentExtraProps,
+  GetAddressLegacyTransportCompatDemoIntentInput,
+  GetAddressLegacyTransportCompatDemoIntentJobState,
+  GetAddressLegacyTransportCompatDemoIntentPlatformDefinition,
+} from "./getAddressLegacyTransportCompatDemoIntent/types";
 import type {
   GetEthAddressDMKSignerDemoIntent,
   GetEthAddressDMKSignerDemoIntentExtraProps,
@@ -31,19 +31,19 @@ import type {
 
 export type AnyDemoJobState =
   | TimerDemoIntentJobState
-  | GetAddressLegacyWithDeviceDemoIntentJobState
+  | GetAddressLegacyTransportCompatDemoIntentJobState
   | GetEthAddressDMKSignerDemoIntentJobState
   | UninstallAppDemoIntentJobState;
 
 export type AnyDemoInput =
   | TimerDemoIntentInput
-  | GetAddressLegacyWithDeviceDemoIntentInput
+  | GetAddressLegacyTransportCompatDemoIntentInput
   | GetEthAddressDMKSignerDemoIntentInput
   | UninstallAppDemoIntentInput;
 
 export type AnyDemoExtraProps =
   | TimerDemoIntentExtraProps
-  | GetAddressLegacyWithDeviceDemoIntentExtraProps
+  | GetAddressLegacyTransportCompatDemoIntentExtraProps
   | GetEthAddressDMKSignerDemoIntentExtraProps
   | UninstallAppDemoIntentExtraProps;
 
@@ -51,7 +51,7 @@ export type AnyDemoIntent = Intent<AnyDemoJobState, AnyDemoInput, AnyDemoExtraPr
 
 export type DemoIntentDefinitions = {
   timer: TimerDemoIntentPlatformDefinition;
-  getAddressLegacyWithDevice: GetAddressLegacyWithDeviceDemoIntentPlatformDefinition;
+  getAddressLegacyTransportCompat: GetAddressLegacyTransportCompatDemoIntentPlatformDefinition;
   getEthAddressDMKSigner: GetEthAddressDMKSignerDemoIntentPlatformDefinition;
   uninstallApp: UninstallAppDemoIntentPlatformDefinition;
 };
@@ -67,14 +67,14 @@ export type DemoPhase =
   | { phase: "idle" }
   | PhaseOf<"timer", TimerDemoIntent, TimerDemoIntentExtraProps>
   | PhaseOf<
-      "legacy-get-address-eth",
-      GetAddressLegacyWithDeviceDemoIntent,
-      GetAddressLegacyWithDeviceDemoIntentExtraProps
+      "legacy-transport-compat-get-address-eth",
+      GetAddressLegacyTransportCompatDemoIntent,
+      GetAddressLegacyTransportCompatDemoIntentExtraProps
     >
   | PhaseOf<
-      "legacy-get-address-btc",
-      GetAddressLegacyWithDeviceDemoIntent,
-      GetAddressLegacyWithDeviceDemoIntentExtraProps
+      "legacy-transport-compat-get-address-btc",
+      GetAddressLegacyTransportCompatDemoIntent,
+      GetAddressLegacyTransportCompatDemoIntentExtraProps
     >
   | PhaseOf<
       "dmk-get-address",

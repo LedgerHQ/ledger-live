@@ -107,9 +107,9 @@ function OrchestrationMode() {
       <section className="flex w-full flex-col gap-16 rounded-lg bg-surface p-16">
         <h2 className="body-2-semi-bold text-base">Orchestration mode</h2>
         <p className="body-2 text-muted">
-          Mirrors the mobile chained-intent playground: timer, ETH/BTC address steps, DMK signer
-          step, then ETH/BTC uninstall steps. Each phase runs the same hardware-backed job as
-          mobile.
+          Runs a sequence of hardware-backed intents: a timer, Ethereum and Bitcoin address
+          derivation through the legacy transport compatibility layer, Ethereum address derivation
+          through the DMK signer, then Ethereum and Bitcoin app uninstallation.
         </p>
 
         <StateCard>
@@ -230,8 +230,8 @@ function InitializationMode() {
       <section className="flex w-full flex-col gap-16 rounded-lg bg-surface p-16">
         <h2 className="body-2-semi-bold text-base">Initialization mode</h2>
         <p className="body-2 text-muted">
-          Mirrors the mobile initialization playground with the same scenario inputs. The current
-          LWD initializer runs these params and displays the extracted context.
+          Runs the selected initialization scenario and displays the device context passed to the
+          intent job.
         </p>
 
         <StateCard>

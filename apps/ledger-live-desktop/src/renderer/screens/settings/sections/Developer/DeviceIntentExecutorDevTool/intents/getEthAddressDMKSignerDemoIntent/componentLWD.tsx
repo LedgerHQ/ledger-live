@@ -16,7 +16,7 @@ export function GetEthAddressDMKSignerDemoIntentComponentLWD({
   return (
     <>
       <OverrideDeviceIntentExecutorHeader>
-        <DialogHeader density="compact" title="DMK signer address intent" className="!mb-0" />
+        <DialogHeader density="compact" title="DMK signer address intent" className="!mb-0 !px-0" />
       </OverrideDeviceIntentExecutorHeader>
       <div className="flex w-full flex-col gap-16 px-16 py-24">
         {jobState?.type === "deriving" ? (

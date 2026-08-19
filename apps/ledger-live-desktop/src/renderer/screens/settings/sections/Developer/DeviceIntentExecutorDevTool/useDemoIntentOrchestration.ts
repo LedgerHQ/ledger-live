@@ -38,9 +38,9 @@ const BITCOIN_INITIALIZATION_INPUT: InitializationInput = {
 type ActivePhase = Exclude<DemoPhase["phase"], "idle" | "completed">;
 
 const NEXT_PHASE: Record<ActivePhase, DemoPhase["phase"]> = {
-  timer: "legacy-get-address-eth",
-  "legacy-get-address-eth": "legacy-get-address-btc",
-  "legacy-get-address-btc": "dmk-get-address",
+  timer: "legacy-transport-compat-get-address-eth",
+  "legacy-transport-compat-get-address-eth": "legacy-transport-compat-get-address-btc",
+  "legacy-transport-compat-get-address-btc": "dmk-get-address",
   "dmk-get-address": "uninstall-eth",
   "uninstall-eth": "uninstall-btc",
   "uninstall-btc": "completed",
@@ -64,10 +64,10 @@ function buildPhase(
         deviceInitializationInput: BOLOS_INITIALIZATION_INPUT,
       };
 
-    case "legacy-get-address-eth":
+    case "legacy-transport-compat-get-address-eth":
       return {
-        phase: "legacy-get-address-eth",
-        intent: createIntent(defs.getAddressLegacyWithDevice, {
+        phase: "legacy-transport-compat-get-address-eth",
+        intent: createIntent(defs.getAddressLegacyTransportCompat, {
           currencyId: "ethereum",
           path: "44'/60'/0'/0/0",
           derivationMode: "",
@@ -76,10 +76,10 @@ function buildPhase(
         deviceInitializationInput: ETHEREUM_INITIALIZATION_INPUT,
       };
 
-    case "legacy-get-address-btc":
+    case "legacy-transport-compat-get-address-btc":
       return {
-        phase: "legacy-get-address-btc",
-        intent: createIntent(defs.getAddressLegacyWithDevice, {
+        phase: "legacy-transport-compat-get-address-btc",
+        intent: createIntent(defs.getAddressLegacyTransportCompat, {
           currencyId: "bitcoin",
           path: "84'/0'/0'/0/0",
           derivationMode: "native_segwit",
