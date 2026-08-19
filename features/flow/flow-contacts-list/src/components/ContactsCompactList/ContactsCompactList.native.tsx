@@ -5,13 +5,13 @@ import {
   ListItemDescription,
   ListItemLeading,
   ListItemTitle,
-} from "@ledgerhq/lumen-ui-react";
-import { ContactAvatar } from "@features/platform-contacts";
-import type { ContactsCompactListProps } from "./types";
+} from "@ledgerhq/lumen-ui-rnative";
+import { ContactAvatar } from "@features/platform-contacts/native";
+import type { ContactsCompactListProps } from "../../types";
 import {
   getCompactContactAddressDescription,
   getDisplayedCompactContacts,
-} from "./ContactsCompactList.utils";
+} from "./utils/ContactsCompactList.utils";
 
 export function ContactsCompactList({
   contacts,
@@ -22,15 +22,17 @@ export function ContactsCompactList({
   const displayedContacts = getDisplayedCompactContacts(contacts, maxContacts);
 
   return (
-    <div className="flex flex-col" data-testid="contacts-compact-list">
+    <>
       {displayedContacts.map(contact => (
         <ListItem
           key={contact.id}
-          onClick={() => onContactSelect(contact)}
-          data-testid={`contacts-compact-row-${contact.id}`}
+          testID={`contacts-compact-row-${contact.id}`}
+          onPress={() => onContactSelect(contact)}
+          density="expanded"
+          lx={{ marginHorizontal: "-s8" }}
         >
           <ListItemLeading>
-            <ContactAvatar contactId={contact.id} name={contact.name} size="md" ariaHidden />
+            <ContactAvatar contactId={contact.id} name={contact.name} size="md" />
             <ListItemContent>
               <ListItemTitle>{contact.name}</ListItemTitle>
               <ListItemDescription>
@@ -40,6 +42,6 @@ export function ContactsCompactList({
           </ListItemLeading>
         </ListItem>
       ))}
-    </div>
+    </>
   );
 }

@@ -7,7 +7,7 @@ import {
   mockContactWithMultipleAddresses,
 } from "@domain/entity-contact/schema.mock";
 import type { Contact } from "@domain/entity-contact";
-import { ContactsCompactList } from "./index.native";
+import { ContactsCompactList } from "../../index.native";
 
 const labels = {
   emptyAddress: "No saved addresses",
@@ -43,6 +43,9 @@ describe("ContactsCompactList", () => {
     expect(screen.getByText("Many")).toBeVisible();
     expect(screen.getByText("2 saved addresses")).toBeVisible();
     expect(screen.getByTestId("contacts-avatar-contact-zero").props.size).toBe("md");
+    expect(screen.getByTestId("contacts-compact-row-contact-zero").props.lx).toEqual({
+      marginHorizontal: "-s8",
+    });
     expect(screen.getAllByTestId(/^contacts-compact-row-/).map(row => row.props.testID)).toEqual([
       "contacts-compact-row-contact-zero",
       "contacts-compact-row-contact-one",

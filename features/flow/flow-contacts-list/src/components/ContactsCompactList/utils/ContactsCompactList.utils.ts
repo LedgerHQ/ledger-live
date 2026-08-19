@@ -1,5 +1,5 @@
 import type { Contact } from "@domain/entity-contact";
-import type { ContactsCompactListProps } from "./types";
+import type { ContactsCompactListProps } from "../../../types";
 
 export function getCompactContactAddressDescription(
   contact: Contact,
