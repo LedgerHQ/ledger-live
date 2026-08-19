@@ -419,9 +419,12 @@ export const WebElementHelpers = {
     return index > 0 ? base.atIndex(index) : base;
   },
 
+  // includeEmpty keeps text-less nodes in the result, so a caller can tell a missing
+  // element apart from one that rendered without text.
   async getWebElementsText(
     containerWebElement: WebElement,
     childrenCssSelector: string,
+    options: { includeEmpty?: boolean } = {},
   ): Promise<string[]> {
     const raw = await containerWebElement.runScript(
       (el: HTMLElement, sel: string) =>
@@ -433,26 +436,7 @@ export const WebElementHelpers = {
       [childrenCssSelector],
     );
     const texts: string[] = JSON.parse(raw);
-    return texts.filter(Boolean);
-  },
-
-  // Counts empty-text nodes too, which getWebElementsText drops.
-  async countWebElements(
-    containerWebElement: WebElement,
-    childrenCssSelector: string,
-  ): Promise<number> {
-    // Typed as number, but runScript marshalling can hand back a string, "" or null.
-    const raw: unknown = await containerWebElement.runScript(
-      (el: HTMLElement, sel: string) => el.querySelectorAll(sel).length,
-      [childrenCssSelector],
-    );
-    const count = raw === null || raw === undefined || raw === "" ? NaN : Number(raw);
-    if (!Number.isFinite(count)) {
-      throw new TypeError(
-        `Could not read element count for "${childrenCssSelector}": got ${String(raw)}`,
-      );
-    }
-    return count;
+    return options.includeEmpty ? texts : texts.filter(Boolean);
   },
 
   getWebElementByXpath(xpath: string, index = 0): WebElement {

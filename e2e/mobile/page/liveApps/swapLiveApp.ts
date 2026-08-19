@@ -4,13 +4,15 @@ import { getMinimumSwapAmount } from "@ledgerhq/live-e2e-shared/swap";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { retryUntilTimeout } from "../../utils/retry";
 import { floatNumberRegex } from "@ledgerhq/live-e2e-shared/data/regexes";
+import {
+  PROVIDER_LIST_SETTLE_TIMEOUT,
+  QUOTES_FETCH_TIMEOUT,
+  UI_RENDER_TIMEOUT,
+} from "../../constants/timeouts";
 
 // Uniswap's Permit2 "Approve token access" step can take 1-5 min to confirm on-chain
 // before the sign-permit button (Step 2) appears (the app shows a "1-5 mins" estimate).
 const APPROVAL_PROCESSING_TIMEOUT = 300_000;
-
-// Quotes resolve in under 10s; fail fast instead of inheriting the 60s default.
-export const QUOTES_FETCH_TIMEOUT = 15_000;
 
 // Provider UI names (e.g. "Swaps.xyz", "LI.FI") can contain regex metacharacters. Escape them
 // before embedding in a RegExp so they match literally instead of altering the pattern.
@@ -134,7 +136,7 @@ export default class SwapLiveAppPage {
     await waitWebElementByTestId(SwapLiveAppPage.PROVIDER_NAME_PREFIX, {
       timeout: QUOTES_FETCH_TIMEOUT,
     });
-    await waitWebElementByTestId(this.bestValueInfoIcon, { timeout: 5000 });
+    await waitWebElementByTestId(this.bestValueInfoIcon, { timeout: UI_RENDER_TIMEOUT });
     await this.waitForQuotesStable();
   }
 
@@ -227,22 +229,21 @@ export default class SwapLiveAppPage {
 
     const providerList = await retryUntilTimeout(
       async () => {
-        const names = await getWebElementsText(
+        // One query, so the count and the names describe the same instant.
+        const renderedCards = await getWebElementsText(
           this.swapMainContainerWebElement,
           SwapLiveAppPage.PROVIDER_NAME_CSS,
+          { includeEmpty: true },
         );
-        const renderedCards = await countWebElements(
-          this.swapMainContainerWebElement,
-          SwapLiveAppPage.PROVIDER_NAME_CSS,
-        );
+        const names = renderedCards.filter(Boolean);
 
-        if (renderedCards === 0) {
+        if (renderedCards.length === 0) {
           throw new Error("No quote providers were returned");
         }
         // A shortfall means a card whose display name has not resolved yet.
-        if (names.length !== renderedCards) {
+        if (names.length !== renderedCards.length) {
           throw new Error(
-            `${renderedCards - names.length} of ${renderedCards} quote card(s) still have an empty provider name`,
+            `${renderedCards.length - names.length} of ${renderedCards.length} quote card(s) still have an empty provider name`,
           );
         }
         if (names.length !== previousCount) {
@@ -254,7 +255,7 @@ export default class SwapLiveAppPage {
 
         return names;
       },
-      QUOTES_FETCH_TIMEOUT,
+      PROVIDER_LIST_SETTLE_TIMEOUT,
       1000,
     );
 
@@ -386,12 +387,13 @@ export default class SwapLiveAppPage {
       throw new Error(`No parsable quote found for provider ${provider}`);
     }
 
-    const parseAmount = (amount: string) => Number.parseFloat(amount.replace(/,/g, ""));
+    const parseAmount = (amount: string) => Number.parseFloat(amount.replaceAll(",", ""));
 
     return {
       provider,
       fees: parseAmount(feesMatch[1]),
-      rate: parseAmount(usdAmounts[usdAmounts.length - 1]),
+      // Non-null: the guard above rejects an empty usdAmounts.
+      rate: parseAmount(usdAmounts.at(-1)!),
     };
   }
 

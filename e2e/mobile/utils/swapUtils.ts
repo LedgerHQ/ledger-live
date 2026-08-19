@@ -5,7 +5,7 @@ import { floatNumberRegex } from "@ledgerhq/live-e2e-shared/data/regexes";
 import { getEnv } from "@shared/env";
 import BigNumber from "bignumber.js";
 import { deleteSpeculos, launchSpeculos, registerSpeculos } from "./speculosUtils";
-import { QUOTES_FETCH_TIMEOUT } from "../page/liveApps/swapLiveApp";
+import { QUOTES_FETCH_TIMEOUT } from "../constants/timeouts";
 
 /**
  * Mirrors swap-live-app's remote-config decimal cap (currently defaults to 8, see
