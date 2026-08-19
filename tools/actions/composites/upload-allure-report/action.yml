@@ -44,7 +44,25 @@ runs:
         BRANCH: ${{ github.head_ref || github.ref_name }}
         INPUTS_REPORT_PATH_SUFFIX: ${{ inputs.report_path_suffix }}
         INPUTS_PLATFORM: ${{ inputs.platform }}
+    - name: Count PNG files
+      id: pngs
+      shell: bash
+      run: |
+        if [ -d "$INPUTS_PATH" ]; then
+          COUNT=$(find "$INPUTS_PATH" -type f -name '*.png' 2>/dev/null | wc -l | tr -d ' ')
+        else
+          COUNT=0
+        fi
+        echo "count=${COUNT}" >> "$GITHUB_OUTPUT"
+      env:
+        INPUTS_PATH: ${{ inputs.path }}
+    - name: Install pngquant
+      if: runner.os == 'Linux' && steps.pngs.outputs.count != '0'
+      uses: LedgerHQ/ledger-live/tools/actions/composites/apt-install@develop
+      with:
+        packages: pngquant
     - name: Compress PNG files
+      if: steps.pngs.outputs.count != '0'
       shell: bash
       run: ${{ github.action_path }}/compress-pngs.sh "${INPUTS_PATH}"
       env:
