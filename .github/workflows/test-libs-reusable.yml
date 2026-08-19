@@ -2,6 +2,13 @@ name: "[Libraries] - Test - Called"
 
 on:
   workflow_call:
+    inputs:
+      skip-unit-tests:
+        description: "Skip the unit test job. Set at the merge gate, where no product code executes."
+        type: boolean
+        required: false
+        default: false
+
     outputs:
       coverage_generated:
         value: ${{ jobs.test-libraries.outputs.coverage_generated }}
@@ -43,6 +50,7 @@ permissions:
 jobs:
   test-libraries:
     name: "Libraries Test"
+    if: ${{ !inputs.skip-unit-tests }}
     permissions:
       id-token: write
       contents: read

@@ -1,0 +1,275 @@
+name: "[All Platforms] - Merge Queue Gate"
+
+# Tier 2 of the PR staleness ADR. The gate answers one question: does the merged base still
+# lint, format, typecheck and compile? Nothing here executes product code, so no test flake can
+# re-queue a group, and every failure reproduces locally on the first attempt. Unit tests, e2e,
+# mock, builds and Sonar still run on every PR in build-and-test-pr.yml.
+
+on:
+  merge_group:
+    types: [checks_requested]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  determine-affected:
+    name: "Affected"
+    uses: LedgerHQ/ledger-live/.github/workflows/nx-affected-reusable.yml@develop
+    with:
+      head_branch: ${{ github.event.merge_group.head_ref }}
+      base_branch: ${{ github.event.merge_group.base_ref }}
+
+  build-desktop:
+    name: "Build Desktop (Linux)"
+    permissions:
+      id-token: write
+      contents: read
+    needs: determine-affected
+    if: ${{ contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') }}
+    uses: LedgerHQ/ledger-live/.github/workflows/build-desktop-reusable.yml@develop
+    secrets:
+      AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+      AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+      AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
+      AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+      GH_BOT_CLIENT_ID: ${{ secrets.GH_BOT_CLIENT_ID }}
+      GH_BOT_PRIVATE_KEY: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+      NX_KEY: ${{ secrets.NX_KEY }}
+    with:
+      linux-only: true
+      skip-artifact-upload: true
+
+  codecheck-desktop:
+    name: "Codecheck Desktop"
+    permissions:
+      id-token: write
+      contents: read
+    needs: determine-affected
+    if: ${{ contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') }}
+    uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-codechecks-reusable.yml@develop
+    secrets:
+      AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+      AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+      AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
+      AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+      NX_KEY: ${{ secrets.NX_KEY }}
+      SLACK_LIVE_CI_BOT_TOKEN: ${{ secrets.SLACK_LIVE_CI_BOT_TOKEN }}
+    with:
+      skip-unit-tests: true
+
+  test-mobile:
+    name: "Codecheck Mobile"
+    permissions:
+      id-token: write
+      contents: read
+    needs: determine-affected
+    if: ${{ contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile') }}
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-reusable.yml@develop
+    secrets:
+      AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+      AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+      AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
+      AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+      NX_KEY: ${{ secrets.NX_KEY }}
+    with:
+      skip-unit-tests: true
+
+  test-libraries:
+    name: "Codecheck Libraries"
+    permissions:
+      id-token: write
+      contents: read
+    needs: determine-affected
+    if: ${{ contains(needs.determine-affected.outputs.paths, 'libs') }}
+    uses: LedgerHQ/ledger-live/.github/workflows/test-libs-reusable.yml@develop
+    secrets:
+      AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+      AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+      AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
+      AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+      NX_KEY: ${{ secrets.NX_KEY }}
+    with:
+      skip-unit-tests: true
+
+  test-features:
+    name: "Codecheck Features"
+    permissions:
+      id-token: write
+      contents: read
+    needs: determine-affected
+    if: ${{ contains(needs.determine-affected.outputs.paths, 'features') }}
+    uses: LedgerHQ/ledger-live/.github/workflows/test-features-reusable.yml@develop
+    secrets:
+      AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+      AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+      AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
+      AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+      NX_KEY: ${{ secrets.NX_KEY }}
+    with:
+      skip-coverage: true
+
+  test-shared:
+    name: "Codecheck Shared"
+    permissions:
+      id-token: write
+      contents: read
+    needs: determine-affected
+    if: ${{ contains(needs.determine-affected.outputs.paths, 'shared') }}
+    uses: LedgerHQ/ledger-live/.github/workflows/test-shared-reusable.yml@develop
+    secrets:
+      AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+      AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+      AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
+      AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+      NX_KEY: ${{ secrets.NX_KEY }}
+    with:
+      skip-coverage: true
+
+  test-domain:
+    name: "Codecheck Domain"
+    permissions:
+      id-token: write
+      contents: read
+    needs: determine-affected
+    if: ${{ contains(needs.determine-affected.outputs.paths, 'domain') }}
+    uses: LedgerHQ/ledger-live/.github/workflows/test-domain-reusable.yml@develop
+    secrets:
+      AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+      AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+      AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
+      AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+      NX_KEY: ${{ secrets.NX_KEY }}
+    with:
+      skip-coverage: true
+
+  test-devtools:
+    name: "Codecheck DevTools"
+    permissions:
+      id-token: write
+      contents: read
+    needs: determine-affected
+    if: ${{ contains(needs.determine-affected.outputs.paths, 'devtools') }}
+    uses: LedgerHQ/ledger-live/.github/workflows/test-devtools-reusable.yml@develop
+    secrets:
+      AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+      AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+      AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
+      AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+      NX_KEY: ${{ secrets.NX_KEY }}
+    with:
+      skip-coverage: true
+
+  test-support:
+    name: "Codecheck Support"
+    permissions:
+      id-token: write
+      contents: read
+    needs: determine-affected
+    if: ${{ contains(needs.determine-affected.outputs.paths, 'support') }}
+    uses: LedgerHQ/ledger-live/.github/workflows/test-support-reusable.yml@develop
+    secrets:
+      AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+      AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+      AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
+      AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+      NX_KEY: ${{ secrets.NX_KEY }}
+    with:
+      skip-coverage: true
+
+  enforce-boundaries:
+    name: "Enforce Module Boundaries"
+    permissions:
+      id-token: write
+      contents: read
+    needs: determine-affected
+    if: ${{ contains(needs.determine-affected.outputs.paths, 'domain') || contains(needs.determine-affected.outputs.paths, 'shared') || contains(needs.determine-affected.outputs.paths, 'features') }}
+    uses: LedgerHQ/ledger-live/.github/workflows/test-boundaries-reusable.yml@develop
+    secrets:
+      AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+      AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+      AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
+      AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+      NX_KEY: ${{ secrets.NX_KEY }}
+
+  test-additional:
+    name: "Additional Checks"
+    permissions:
+      contents: read
+    uses: LedgerHQ/ledger-live/.github/workflows/test-additional.yml@develop
+    with:
+      skip-ci-sast: true
+
+  test-mobile-e2e-lint:
+    name: "Mobile E2E Lint & Typecheck"
+    permissions:
+      id-token: write
+      contents: read
+    needs: determine-affected
+    if: ${{ contains(needs.determine-affected.outputs.paths, 'e2e/mobile') || contains(needs.determine-affected.outputs.paths, 'apps/ledger-live-mobile') }}
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-e2e-lint-reusable.yml@develop
+    secrets:
+      AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+      AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+      AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
+      AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+      NX_KEY: ${{ secrets.NX_KEY }}
+
+  test-desktop-e2e-lint:
+    name: "Desktop E2E Lint & Typecheck"
+    permissions:
+      id-token: write
+      contents: read
+    needs: determine-affected
+    if: ${{ contains(needs.determine-affected.outputs.paths, 'e2e/desktop') }}
+    uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-e2e-lint-reusable.yml@develop
+    secrets:
+      AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+      AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+      AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
+      AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+      NX_KEY: ${{ secrets.NX_KEY }}
+
+  # Final Check required
+  ok:
+    name: "OK"
+    needs:
+      - determine-affected
+      - build-desktop
+      - codecheck-desktop
+      - test-mobile
+      - test-libraries
+      - test-features
+      - test-shared
+      - test-domain
+      - test-devtools
+      - test-support
+      - enforce-boundaries
+      - test-additional
+      - test-mobile-e2e-lint
+      - test-desktop-e2e-lint
+    runs-on: ubuntu-22.04
+    # always(), never !cancelled(): a required check that reports nothing holds the merge group
+    # open until check_response_timeout_minutes and then fails it. Reporting a failure is cheaper
+    # than reporting nothing.
+    if: always()
+    steps:
+      - name: Check result
+        if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
+        run: exit 1

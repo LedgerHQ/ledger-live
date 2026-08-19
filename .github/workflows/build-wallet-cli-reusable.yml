@@ -67,7 +67,7 @@ jobs:
         run: pnpm i --filter "@ledgerhq/wallet-cli..." --filter "ledger-live"
 
       - name: format check wallet-cli
-        if: github.base_ref == 'develop' || github.ref == 'refs/heads/develop' || github.event_name == 'workflow_dispatch'
+        if: github.base_ref == 'develop' || github.ref == 'refs/heads/develop' || github.event_name == 'merge_group' || github.event_name == 'workflow_dispatch'
         run: pnpm exec nx run @ledgerhq/wallet-cli:format:check
 
       - name: Build, lint, typecheck and test wallet-cli
