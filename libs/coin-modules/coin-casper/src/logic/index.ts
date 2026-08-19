@@ -6,4 +6,5 @@ export * from "./getBalance";
 export * from "./listOperations";
 export * from "./utils";
 export * from "./validateAddress";
+export * from "./validateIntent";
 export * from "./validateMemo";
