@@ -117,6 +117,10 @@ export const mapAsCategoryContentCard = (card: ClassicCard): CategoryContentCard
       ? LocationContentCard.Portfolio
       : // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         (card.extras?.location as LocationContentCard);
+  const isAlwaysOnHardwareCarousel =
+    card.extras?.id === ALWAYS_ON_CATEGORY_ID &&
+    card.extras?.cardsLayout === ContentCardsLayout.carousel &&
+    card.extras?.cardsType === ContentCardsType.smallSquare;
 
   return {
     id: String(card.id),
@@ -134,7 +138,7 @@ export const mapAsCategoryContentCard = (card: ClassicCard): CategoryContentCard
     description: card.extras?.description,
     link: appendDeeplinkLocationIfDefined(card.extras?.link, location),
     cta: card.extras?.cta,
-    isDismissable: card.extras?.isDismissable === "true",
+    isDismissable: card.extras?.isDismissable === "true" || isAlwaysOnHardwareCarousel,
     hasPagination: card.extras?.hasPagination === "true",
     centeredText: card.extras?.centeredText === "true",
     extras: card.extras,

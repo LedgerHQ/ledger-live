@@ -1,20 +1,30 @@
 import React from "react";
 
-import { Link, Subheader, SubheaderRow, SubheaderTitle } from "@ledgerhq/lumen-ui-react";
+import { Link } from "@ledgerhq/lumen-ui-react";
+import HardwareCarouselCloseAllLink from "../../hardwareCarousel/components/HardwareCarouselCloseAllLink";
 
 type HeaderProps = Readonly<{
   title?: string;
   cta?: string;
   centered?: boolean;
+  closeAllCardIds?: readonly string[];
   onCtaPress?: () => void;
 }>;
 
 export default Header;
 
-function Header({ title, cta, centered = false, onCtaPress }: HeaderProps) {
-  const showHeaderCta = Boolean(onCtaPress && cta && !centered);
+function Header({
+  title,
+  cta,
+  centered = false,
+  closeAllCardIds,
+  onCtaPress,
+}: HeaderProps) {
+  const showCloseAll = Boolean(closeAllCardIds?.length);
+  const showHeaderCta = Boolean(onCtaPress && cta && !centered && !showCloseAll);
+  const hasTitleRow = Boolean(title || showHeaderCta || showCloseAll);
 
-  if (!title && !showHeaderCta) {
+  if (!hasTitleRow) {
     return null;
   }
 
@@ -24,14 +34,13 @@ function Header({ title, cta, centered = false, onCtaPress }: HeaderProps) {
       data-testid="content-cards-category-header"
     >
       {title ? (
-        <Subheader className="min-w-0 flex-1">
-          <SubheaderRow className={centered ? "justify-center" : undefined}>
-            <SubheaderTitle>{title}</SubheaderTitle>
-          </SubheaderRow>
-        </Subheader>
+        <span className="min-w-0 shrink truncate heading-4-semi-bold text-base">{title}</span>
+      ) : null}
+      {showCloseAll && closeAllCardIds ? (
+        <HardwareCarouselCloseAllLink cardIds={closeAllCardIds} />
       ) : null}
       {showHeaderCta ? (
-        <Link onClick={onCtaPress} size="sm">
+        <Link appearance="accent" className="shrink-0" onClick={onCtaPress} size="sm" underline={false}>
           {cta}
         </Link>
       ) : null}

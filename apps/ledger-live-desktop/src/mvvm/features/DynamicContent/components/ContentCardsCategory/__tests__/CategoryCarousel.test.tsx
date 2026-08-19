@@ -102,6 +102,15 @@ describe("CategoryCarousel", () => {
     expect(screen.queryByTestId("scroll-arrow-right")).not.toBeInTheDocument();
   });
 
+  it("renders a fade gradient on the scroll edge when more content is available", () => {
+    fakeEmblaApi.canScrollPrevValue = false;
+    fakeEmblaApi.canScrollNextValue = true;
+
+    const { container } = render(<CategoryCarousel slides={[slide("a"), slide("b"), slide("c")]} />);
+
+    expect(container.querySelector(".bg-gradient-to-l")).toBeInTheDocument();
+  });
+
   it("calls scrollPrev/scrollNext when the arrows are clicked", async () => {
     fakeEmblaApi.canScrollPrevValue = true;
     fakeEmblaApi.canScrollNextValue = true;
