@@ -84,7 +84,7 @@ if (dataIsEncrypted) return;
 
 ## ☝️ When comments are necessary
 
-Comments are only for vital information that can't go anywhere else. **Always always prefer not adding comments.** If a comment is the only way, follow these guidelines:
+Comments are only for vital information that can't go anywhere else. **Always prefer not adding comments.** If a comment is the only way, follow these guidelines:
 
 - **Be concise**: Use as few words as possible to convey the necessary information.
 - **Use JSDocs**: Only when describing a shared function.
