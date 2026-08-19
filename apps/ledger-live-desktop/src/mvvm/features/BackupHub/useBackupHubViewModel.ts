@@ -7,6 +7,7 @@ import {
   LARGE_SCREEN_UPSELL_UTM_SOURCE_BY_PLATFORM,
   buildLargeScreenUpsellCtaLink,
   getNanoOnlyDeviceModel,
+  isLargeScreenUpsellBannerEnabled,
 } from "@features/flow-large-screen-upsell";
 import { useSelector } from "LLD/hooks/redux";
 import { toLargeScreenUpsellDeviceModelAnalyticsValue } from "LLD/features/LargeScreenUpsell/analytics";
@@ -67,7 +68,12 @@ export function useBackupHubViewModel({ onBack, onClose }: BackupHubParams): Bac
   const personalRecoOptIn = useSelector(sharePersonalizedRecommendationsSelector);
   const largeScreenUpsell = useFeature("largeScreenUpsell");
 
-  const incompatibleModel = getNanoOnlyDeviceModel(devicesModelList, lastSeenDevice?.modelId);
+  const incompatibleModel = isLargeScreenUpsellBannerEnabled(
+    largeScreenUpsell,
+    "backup-hub-recovery-key-text-warning",
+  )
+    ? getNanoOnlyDeviceModel(devicesModelList, lastSeenDevice?.modelId)
+    : undefined;
 
   const upsellLink = useMemo(() => {
     const variant = personalRecoOptIn ? "opted_in" : "opted_out";

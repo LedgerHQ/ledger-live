@@ -33,6 +33,8 @@ const DEFAULT_BANNERS = {
   accounts: true,
   homepage: true,
   profile: true,
+  "recover-page-block-nano-s-only": true,
+  "backup-hub-recovery-key-text-warning": true,
 } as const;
 
 const bannersSchema = z
@@ -42,6 +44,8 @@ const bannersSchema = z
     accounts: z.boolean().default(true),
     homepage: z.boolean().default(true),
     profile: z.boolean().default(true),
+    "recover-page-block-nano-s-only": z.boolean().default(true),
+    "backup-hub-recovery-key-text-warning": z.boolean().default(true),
   })
   .default(DEFAULT_BANNERS);
 

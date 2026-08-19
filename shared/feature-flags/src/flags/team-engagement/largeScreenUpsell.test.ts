@@ -10,6 +10,8 @@ describe("largeScreenUpsell", () => {
       accounts: true,
       homepage: true,
       profile: true,
+      "recover-page-block-nano-s-only": true,
+      "backup-hub-recovery-key-text-warning": true,
     });
   });
 
@@ -34,6 +36,8 @@ describe("largeScreenUpsell", () => {
       accounts: true,
       homepage: false,
       profile: true,
+      "recover-page-block-nano-s-only": true,
+      "backup-hub-recovery-key-text-warning": true,
     });
   });
 
@@ -53,6 +57,8 @@ describe("largeScreenUpsell", () => {
       accounts: true,
       homepage: true,
       profile: true,
+      "recover-page-block-nano-s-only": true,
+      "backup-hub-recovery-key-text-warning": true,
     });
   });
 
