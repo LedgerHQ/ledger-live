@@ -1,5 +1,5 @@
 import React, { memo, type ReactNode } from "react";
-import PortfolioContentCards from "LLD/features/DynamicContent/components/PortfolioContentCards";
+import PortfolioCategoryContentCards from "LLD/features/DynamicContent/components/PortfolioCategoryContentCards";
 import FinishOnboardingWidget from "LLD/features/FinishOnboarding/FinishOnboardingWidget";
 import RecoverWidgetView from "LLD/features/FinishOnboarding/RecoverWidget/RecoverWidgetView";
 import { usePortfolioAddRecoverPostOnboardingAction } from "LLD/features/FinishOnboarding/RecoverWidget/usePortfolioAddRecoverPostOnboardingAction";
@@ -12,6 +12,26 @@ import PostOnboardingHubBanner from "~/renderer/components/PostOnboardingHub/Pos
 import RecoverBanner from "~/renderer/components/RecoverBanner/RecoverBanner";
 import ActionContentCards from "~/renderer/screens/dashboard/ActionContentCards";
 import { useBannersVisibility } from "../hooks/useBannersVisibility";
+
+type PortfolioBannerStackProps = Readonly<{
+  topContent?: ReactNode;
+  lnsUpsellBanner?: ReactNode;
+  categoryLeadingSlide?: ReactNode;
+}>;
+
+function PortfolioBannerStack({
+  topContent,
+  lnsUpsellBanner,
+  categoryLeadingSlide,
+}: PortfolioBannerStackProps) {
+  return (
+    <div className="flex w-full flex-col gap-16">
+      {topContent}
+      {lnsUpsellBanner}
+      <PortfolioCategoryContentCards leadingSlide={categoryLeadingSlide} />
+    </div>
+  );
+}
 
 /**
  * Wallet40 row: Finish/Recover widgets take priority over Braze cards.
@@ -34,42 +54,31 @@ const PortfolioBannerWallet40 = memo(function PortfolioBannerWallet40({
     onOpenRecover,
   } = recoverWidget;
 
-  if (isFinishOnboardingWidgetVisible || shouldDisplayRecoverWidget) {
-    return (
-      <div className="flex w-full gap-12">
-        {isFinishOnboardingWidgetVisible && <FinishOnboardingWidget />}
-        {shouldDisplayRecoverWidget && (
-          <RecoverWidgetView
-            shouldDisplay
-            titleKey={titleKey}
-            descriptionKey={descriptionKey}
-            onOpenRecover={onOpenRecover}
-          />
-        )}
-      </div>
-    );
+  const hasPriorityWidgets = isFinishOnboardingWidgetVisible || shouldDisplayRecoverWidget;
+
+  if (!hasPriorityWidgets) {
+    return <PortfolioCategoryContentCards leadingSlide={lnsUpsellLeadingSlide} />;
   }
-  return <PortfolioContentCards leadingSlide={lnsUpsellLeadingSlide} />;
+
+  return (
+    <PortfolioBannerStack
+      topContent={
+        <div className="flex w-full gap-12">
+          {isFinishOnboardingWidgetVisible && <FinishOnboardingWidget />}
+          {shouldDisplayRecoverWidget && (
+            <RecoverWidgetView
+              shouldDisplay
+              titleKey={titleKey}
+              descriptionKey={descriptionKey}
+              onOpenRecover={onOpenRecover}
+            />
+          )}
+        </div>
+      }
+    />
+  );
 });
 
-/**
- * Renders the portfolio banner block above the portfolio carousel / market banner.
- *
- * **Wallet40** (`shouldDisplayFinishOnboardingWidget`):
- * - Finish onboarding and/or Recover widgets when either applies (LNS upsell still exclusive over them).
- * - Otherwise `PortfolioContentCards`, with LNS upsell as leading carousel slide when eligible.
- *
- * **Legacy** (Wallet40 off):
- * - Post-onboarding hub: `PostOnboardingHubBanner` is rendered directly when the wallet entry point
- *   is visible.
- * - Otherwise `RecoverBanner` wraps action cards, or `PortfolioContentCards` (LNS as leading slide).
- *
- * The Recover post-onboarding action-append runs here via `usePortfolioAddRecoverPostOnboardingAction`,
- * which is decoupled from the Recover widget render path so the hub still receives Recover when
- * the LNS upsell is rendered instead of the finish/recover row.
- *
- * Used in PortfolioView (above MarketBanner) and in BannerSection (legacy dashboard).
- */
 export const PortfolioBannerContent = memo(function PortfolioBannerContent() {
   const {
     isPostOnboardingBannerVisible,
@@ -81,7 +90,6 @@ export const PortfolioBannerContent = memo(function PortfolioBannerContent() {
 
   usePortfolioAddRecoverPostOnboardingAction();
 
-  // Lifted so Wallet40 is not mounted when LNS is exclusive over Finish/Recover.
   const recoverWidget = useRecoverWidgetViewModel();
 
   const lnsUpsellLeadingSlide = isLNSUpsellBannerVisible ? (
@@ -93,7 +101,7 @@ export const PortfolioBannerContent = memo(function PortfolioBannerContent() {
       isLNSUpsellBannerVisible &&
       (isFinishOnboardingWidgetVisible || recoverWidget.shouldDisplay)
     ) {
-      return <>{lnsUpsellLeadingSlide}</>;
+      return <PortfolioBannerStack lnsUpsellBanner={lnsUpsellLeadingSlide} />;
     }
     return (
       <PortfolioBannerWallet40
@@ -108,13 +116,17 @@ export const PortfolioBannerContent = memo(function PortfolioBannerContent() {
     return <PostOnboardingHubBanner />;
   }
 
-  let recoverBannerChildren: ReactNode = (
-    <PortfolioContentCards leadingSlide={lnsUpsellLeadingSlide} />
-  );
-
   if (isActionCardsVisible) {
-    recoverBannerChildren = <ActionContentCards />;
+    return (
+      <RecoverBanner>
+        <PortfolioBannerStack topContent={<ActionContentCards />} />
+      </RecoverBanner>
+    );
   }
 
-  return <RecoverBanner>{recoverBannerChildren}</RecoverBanner>;
+  return (
+    <RecoverBanner>
+      <PortfolioCategoryContentCards leadingSlide={lnsUpsellLeadingSlide} />
+    </RecoverBanner>
+  );
 });

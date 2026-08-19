@@ -12,9 +12,7 @@ describe("UnknownErrorState", () => {
     // THEN
     expect(screen.getByText("Unknown error")).toBeVisible();
     expect(
-      screen.getByText(
-        "An error occurred. Please try again or contact Ledger support if the issue persists.",
-      ),
+      screen.getByText("Try again or contact Ledger support if the issue continues."),
     ).toBeVisible();
   });
 });

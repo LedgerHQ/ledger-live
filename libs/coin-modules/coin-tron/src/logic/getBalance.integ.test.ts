@@ -4,7 +4,7 @@ import { getBalance } from "./getBalance";
 
 const mockConfig = {
   status: { type: "active" },
-  explorer: { url: "https://api.trongrid.io" },
+  explorer: { url: "https://tron.coin.ledger.com" },
 } as TronCoinConfig;
 
 describe("getBalance", () => {
@@ -30,9 +30,15 @@ describe("getBalance", () => {
     balances.forEach(balance => expect(balance.value).toBeGreaterThanOrEqual(0));
   });
 
-  it("returns 0 when address is not found", async () => {
-    const result = await getBalance(mockConfig, "TPqmGMoidNTbMZ8ApgcbPMf7JDyiHi1sv0");
+  it("returns 0 when account is not activated", async () => {
+    const result = await getBalance(mockConfig, "TXFeV31qgUQYMLog3axKJeEBbXpQFtHsXD");
 
     expect(result).toEqual([{ value: BigInt(0), asset: { type: "native" } }]);
+  });
+
+  it("propagates upstream API errors for an invalid address", async () => {
+    await expect(getBalance(mockConfig, "TPqmGMoidNTbMZ8ApgcbPMf7JDyiHi1sv0")).rejects.toThrow(
+      /valid account address/i,
+    );
   });
 });

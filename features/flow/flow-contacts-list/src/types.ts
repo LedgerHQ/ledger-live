@@ -1,5 +1,5 @@
 import type { ChangeEvent, ReactNode } from "react";
-import type { ContactId } from "@domain/entity-contact";
+import type { Contact, ContactId } from "@domain/entity-contact";
 
 export type ContactsListItem = Readonly<{
   contactId: ContactId;
@@ -54,6 +54,18 @@ export type ContactsListViewLabels = Readonly<{
   ledgerSyncCheckingAccessibilityLabel?: string;
   formatAddressCount: (count: number) => string;
   formatMeDisplayName?: (name: string) => string;
+}>;
+
+export type ContactsCompactListLabels = Readonly<{
+  emptyAddress: string;
+  formatAddressCount: (count: number) => string;
+}>;
+
+export type ContactsCompactListProps = Readonly<{
+  contacts: readonly Contact[];
+  labels: ContactsCompactListLabels;
+  maxContacts?: number;
+  onContactSelect: (contact: Contact) => void;
 }>;
 
 export type ContactsPageSharedProps = Readonly<{

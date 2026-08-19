@@ -33,6 +33,7 @@ export type EditExternalAddressScopeIntentInput = Readonly<{
   contact: Contact;
   address: ContactAddress;
   label: ContactAddressLabel;
+  updatedAddress: ContactAddressValue;
 }>;
 
 export type ContactDeviceIntentsPort = Readonly<{

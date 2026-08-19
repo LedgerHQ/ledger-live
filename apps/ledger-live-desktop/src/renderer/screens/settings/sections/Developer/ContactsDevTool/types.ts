@@ -1,4 +1,4 @@
-import type { ContactsFeatureParams, ContactsFeatureValue } from "@features/flow-contacts";
+import type { ContactsFeatureParams, ContactsFeatureValue } from "@features/platform-contacts";
 
 export interface ContactsDevToolContentProps {
   readonly expanded: boolean;

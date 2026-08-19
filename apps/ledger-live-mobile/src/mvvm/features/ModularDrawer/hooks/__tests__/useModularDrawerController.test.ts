@@ -132,13 +132,18 @@ describe("useModularDrawerController", () => {
           presentation: "embedded",
           enableAccountSelection: true,
           onCurrencySelected: jest.fn(),
+          selectableNetworkIds: [mockEthCryptoCurrency.id],
         });
       });
 
       expect(store.getState().modularDrawer.presentation).toBe("embedded");
       expect(store.getState().modularDrawer.enableAccountSelection).toBe(false);
       expect(store.getState().modularDrawer.step).toBe(ModularDrawerStep.Asset);
+      expect(store.getState().modularDrawer.selectableNetworkIds).toEqual([
+        mockEthCryptoCurrency.id,
+      ]);
       expect(result.current.presentation).toBe("embedded");
+      expect(result.current.selectableNetworkIds).toEqual([mockEthCryptoCurrency.id]);
     });
 
     it("should restore drawer presentation when embedded selection is replaced", () => {
@@ -178,6 +183,7 @@ describe("useModularDrawerController", () => {
         callbackId: undefined,
         completionMode: undefined,
         presentation: "drawer",
+        selectableNetworkIds: undefined,
         step: "Asset",
       });
     });

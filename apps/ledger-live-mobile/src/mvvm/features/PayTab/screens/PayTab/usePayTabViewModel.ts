@@ -1,7 +1,7 @@
-import { useCallback, useMemo } from "react";
-import { Linking } from "react-native";
+import { useMemo } from "react";
+import { getEnv } from "@shared/env";
 import { useTranslation } from "~/context/Locale";
-import type { OpenHostedLogin } from "@features/flow-pay-card-auth";
+import type { CardLoginOauthConfig } from "@features/flow-pay-card-auth";
 import type { FeatureTourProps } from "@features/flow-pay-card-feature-tour";
 import type { BalanceLabels } from "@features/flow-pay-card-balance";
 import { useNavigationBarHeights } from "LLM/hooks/useNavigationBarHeights";
@@ -36,8 +36,12 @@ export function usePayTabViewModel() {
     [t],
   );
 
-  const openHostedLogin: OpenHostedLogin = useCallback(
-    (loginUrl: string) => Linking.openURL(loginUrl),
+  // Baanx uses the same value for the client key header and the OAuth `client_id`.
+  const oauthConfig: CardLoginOauthConfig = useMemo(
+    () => ({
+      clientId: getEnv("CARD_BAANX_CLIENT_KEY"),
+      redirectUri: getEnv("CARD_OAUTH_REDIRECT_URI"),
+    }),
     [],
   );
 
@@ -71,7 +75,7 @@ export function usePayTabViewModel() {
 
   return {
     top,
-    openHostedLogin,
+    oauthConfig,
     featureTour,
     balance,
     balanceLabels,

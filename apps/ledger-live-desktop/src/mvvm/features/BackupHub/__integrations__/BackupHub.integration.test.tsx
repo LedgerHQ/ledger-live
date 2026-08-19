@@ -207,7 +207,10 @@ describe("BackupHub", () => {
 
     await user.click(screen.getByTestId("backup-hub-recover-row"));
 
-    expect(mockNavigate).toHaveBeenCalledWith(RECOVER_HOME_PATH);
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith(RECOVER_HOME_PATH, {
+      state: { from: expect.objectContaining({ pathname: "/" }) },
+    });
     await waitFor(() => expect(screen.queryByTestId("backup-hub")).not.toBeInTheDocument());
   });
 

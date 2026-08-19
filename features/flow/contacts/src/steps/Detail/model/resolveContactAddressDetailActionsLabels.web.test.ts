@@ -17,6 +17,9 @@ describe("resolveContactAddressDetailActionsLabels", () => {
       [DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME]: "contacts.addAddressName.duplicateLabel",
       [CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME]: "contacts.addAddressName.tooLongLabel",
     });
+    expect(labels.rename.addressValidation.addressPlaceholder).toBe(
+      "contacts.addAddressEntry.addressPlaceholder",
+    );
     expect(labels.signer.title).toBe("contacts.editSigner.title");
     expect(labels.signerMismatch.title).toBe("contacts.editSignerMismatch.title");
   });

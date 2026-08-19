@@ -1,36 +1,37 @@
-import type { Card as BrazeCard } from "@braze/web-sdk";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
-import { ALWAYS_ON_CATEGORY_ID } from "LLD/features/DynamicContent/utils/constants";
 import {
   setPortfolioCards,
   setBottomPortfolioCards,
   setActionCards,
   setNotificationsCards,
   setLocalCategoryCards,
+  addLocalContentCards,
 } from "~/renderer/actions/dynamicContent";
 import {
   portfolioContentCardSelector,
   bottomPortfolioContentCardSelector,
   actionContentCardSelector,
   notificationsContentCardSelector,
-  localCategoriesContentCardSelector,
-  localCategoryChildCardsSelector,
 } from "~/renderer/reducers/dynamicContent";
 import {
   PortfolioContentCard,
   ActionContentCard,
   NotificationContentCard,
-  CategoryContentCard,
-  ContentCardsLayout,
-  ContentCardsType,
   LocationContentCard,
 } from "~/types/dynamicContent";
+import {
+  buildDefaultHardwareCarouselValues,
+  buildHardwareCarouselDebugCards,
+  DEBUG_CARD_PREFIX,
+  HARDWARE_CAROUSEL_SAMPLE_PRODUCTS,
+  type HardwareCarouselBuilderValues,
+} from "../hardwareCarouselDebug";
 
 const generateNewPortfolioContentCard = (
   title: string,
   description: string,
   image: string,
-  location: LocationContentCard.Portfolio | LocationContentCard.BottomPortfolio,
+  location: PortfolioContentCard["location"],
   order?: number,
   url?: string,
   cta?: string,
@@ -105,62 +106,6 @@ const generateNewNotificationCard = (
   isMock: true,
 });
 
-const DEFAULT_CATEGORY_CHILD_COUNT = 3;
-
-const generateNewCategoryCard = (
-  categoryId: string,
-  title: string,
-  description: string,
-  cta: string,
-  order?: number,
-): CategoryContentCard => ({
-  id: `local-category-${categoryId}`,
-  categoryId,
-  title,
-  description,
-  cta,
-  location: LocationContentCard.Portfolio,
-  cardsLayout: ContentCardsLayout.carousel,
-  cardsType: ContentCardsType.smallSquare,
-  type: ContentCardsType.category,
-  created: new Date(),
-  order,
-  isMock: true,
-  isDismissable: true,
-  hasPagination: true,
-});
-
-const generateNewCategoryChildCards = (
-  categoryId: string,
-  title: string,
-  description: string,
-  image: string,
-  cta: string,
-  path: string,
-  count: number,
-): BrazeCard[] =>
-  Array.from({ length: count }, (_, index) => {
-    const childIndex = index + 1;
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    return {
-      id: `local-category-child-${categoryId}-${childIndex}`,
-      updated: new Date(),
-      viewed: false,
-      extras: {
-        platform: "desktop",
-        type: ContentCardsType.smallSquare,
-        categoryId,
-        title: `${title} ${childIndex}`,
-        description,
-        media: image,
-        mediaType: "image",
-        cta,
-        link: path,
-        order: String(childIndex),
-      },
-    } as unknown as BrazeCard;
-  });
-
 export const useGenerateLocalBraze = () => {
   const dispatch = useDispatch();
 
@@ -168,8 +113,6 @@ export const useGenerateLocalBraze = () => {
   const bottomPortfolioCards = useSelector(bottomPortfolioContentCardSelector);
   const actionCards = useSelector(actionContentCardSelector);
   const notificationCards = useSelector(notificationsContentCardSelector);
-  const localCategoriesCards = useSelector(localCategoriesContentCardSelector);
-  const localCategoryChildCards = useSelector(localCategoryChildCardsSelector);
 
   const addLocalPortfolioCard = (
     title: string,
@@ -269,35 +212,29 @@ export const useGenerateLocalBraze = () => {
     dispatch(setNotificationsCards([...notificationCards, newCard]));
   };
 
-  const addLocalCategoryCard = (
-    title: string,
-    description: string,
-    image: string,
-    cta: string,
-    path: string,
-    order?: number,
-  ) => {
-    // The first category impersonates the real always-on campaign; the next ones need
-    // their own id, otherwise the dedupe would drop them and nothing would show up.
-    const categoryId =
-      localCategoriesCards.length === 0 ? ALWAYS_ON_CATEGORY_ID : `local-${Date.now()}`;
+  const addLocalHardwareCarouselCard = (values: HardwareCarouselBuilderValues) => {
+    const cardId = `${DEBUG_CARD_PREFIX}-top-wallet-hardware-${Date.now()}`;
+    const { category, card } = buildHardwareCarouselDebugCards(values, cardId);
+    dispatch(addLocalContentCards({ category, cards: [card] }));
+  };
 
-    const category = generateNewCategoryCard(categoryId, title, description, cta, order);
-    const childCards = generateNewCategoryChildCards(
-      categoryId,
-      title,
-      description,
-      image,
-      cta,
-      path,
-      DEFAULT_CATEGORY_CHILD_COUNT,
-    );
-    dispatch(
-      setLocalCategoryCards({
-        categories: [...localCategoriesCards, category],
-        childCards: [...localCategoryChildCards, ...childCards],
-      }),
-    );
+  const seedHardwareCarouselSample = () => {
+    const baseTimestamp = Date.now();
+    const categoryTitle = "Touchscreen offers";
+    HARDWARE_CAROUSEL_SAMPLE_PRODUCTS.forEach((sample, index) => {
+      const values: HardwareCarouselBuilderValues = {
+        ...buildDefaultHardwareCarouselValues(),
+        categoryTitle,
+        productTitle: sample.productTitle,
+        subDescription: sample.subDescription,
+        tag: sample.tag,
+        mediaUrl: sample.mediaUrl,
+        order: String(index),
+      };
+      const cardId = `${DEBUG_CARD_PREFIX}-top-wallet-hardware-${baseTimestamp}-${index}`;
+      const { category, card } = buildHardwareCarouselDebugCards(values, cardId);
+      dispatch(addLocalContentCards({ category, cards: [card] }));
+    });
   };
 
   const dismissLocalCards = () => {
@@ -313,7 +250,8 @@ export const useGenerateLocalBraze = () => {
     addLocalBottomPortfolioCard,
     addLocalActionCard,
     addLocalNotificationCard,
-    addLocalCategoryCard,
+    addLocalHardwareCarouselCard,
+    seedHardwareCarouselSample,
     dismissLocalCards,
   };
 };

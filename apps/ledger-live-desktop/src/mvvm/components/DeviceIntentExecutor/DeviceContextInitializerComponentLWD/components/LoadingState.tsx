@@ -5,6 +5,7 @@ import { TrackDIEScreen } from "../../components/TrackDIEScreen";
 import { PAGE_CONNECT_APP } from "../../utils/trackDeviceIntent";
 import type { InitializerDevice } from "../types";
 import { LoadingContent } from "../../components/DeviceGenericStates/LoadingContent";
+import { DeviceBlocker } from "~/renderer/components/DeviceAction/DeviceBlocker";
 
 type LoadingStateProps = Readonly<{
   device: InitializerDevice;
@@ -23,6 +24,7 @@ export function LoadingState({ device }: LoadingStateProps) {
 
   return (
     <>
+      <DeviceBlocker />
       <OverrideDeviceIntentExecutorHeader>
         <div className="h-48" aria-hidden />
       </OverrideDeviceIntentExecutorHeader>

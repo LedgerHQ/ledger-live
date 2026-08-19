@@ -265,7 +265,6 @@ export type Features = CurrencyFeatures & {
   ldmkSolanaSigner: DefaultFeature;
   ldmkSolanaSignerIsTxcActive: DefaultFeature;
   ldmkCosmosSigner: DefaultFeature;
-  suiGraphqlTransport: DefaultFeature;
   ldmkConnectApp: DefaultFeature;
   lldNetworkBasedAddAccount: DefaultFeature;
   llmDatadog: {

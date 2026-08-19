@@ -42,7 +42,7 @@ describe("ConnectingState", () => {
       </DeviceIntentTrackingProvider>,
     );
 
-    expect(screen.getByText("Loading")).toBeVisible();
+    expect(screen.getByText("Connecting to your Ledger device")).toBeVisible();
   });
 
   it("GIVEN a device is connecting WHEN rendering THEN it tracks the Device UX V2 page event", () => {

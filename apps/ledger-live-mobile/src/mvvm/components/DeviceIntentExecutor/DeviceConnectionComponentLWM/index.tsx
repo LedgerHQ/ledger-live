@@ -1,5 +1,5 @@
 import React from "react";
-import type { DeviceConnectionComponent } from "@ledgerhq/device-intent";
+import type { DeviceConnectionComponent } from "@features/platform-device-intent";
 import { DeviceConnectionComponentLWMView } from "./DeviceConnectionComponentLWMView";
 import { useDeviceConnectionComponentLWMViewModel } from "./useDeviceConnectionComponentLWMViewModel";
 

@@ -34,6 +34,8 @@ export const cardManagementApi = cardApi
             state,
             code_challenge: codeChallenge,
             code_challenge_method: "S256",
+            // Without this the endpoint answers 302 to the hosted UI; `api` returns it as JSON.
+            mode: "api",
           },
         }),
         responseSchema: PayCardAuthorizeInitiateResponseSchema,
@@ -46,6 +48,7 @@ export const cardManagementApi = cardApi
           body: {
             grant_type: "authorization_code",
             code,
+            // The provider compares it with the one the authorization carried.
             redirect_uri: redirectUri,
             code_verifier: codeVerifier,
           },

@@ -16,6 +16,7 @@ import { TrackDIEScreen } from "../../components/TrackDIEScreen";
 import { PAGE_CONNECT_APP } from "../../utils/trackDeviceIntent";
 import { DeviceContextInitializerComponentLWDView } from "../DeviceContextInitializerComponentLWDView";
 import { initializerDevice } from "../testUtils";
+import { DeviceBlocker } from "~/renderer/components/DeviceAction/DeviceBlocker";
 
 jest.mock("~/renderer/components/DeviceAction/animations", () => ({
   getDeviceAnimation: jest.fn(() => undefined),
@@ -41,7 +42,12 @@ jest.mock("../../components/TrackDIEScreen", () => ({
   TrackDIEScreen: jest.fn(() => null),
 }));
 
+jest.mock("~/renderer/components/DeviceAction/DeviceBlocker", () => ({
+  DeviceBlocker: jest.fn(() => null),
+}));
+
 const mockedTrackDIEScreen = jest.mocked(TrackDIEScreen);
+const mockedDeviceBlocker = jest.mocked(DeviceBlocker);
 
 const pageByStateType: Record<EnsureAppReadyState["type"], string | undefined> = {
   [LoadingStateType.Loading]: PAGE_CONNECT_APP.Loading,
@@ -89,6 +95,18 @@ describe("DeviceContextInitializerComponentLWDView", () => {
 
     // THEN
     expect(screen.getByText("Loading")).toBeVisible();
+  });
+
+  it.each([
+    LoadingStateType.Loading,
+    LoadingStateType.InstallingApp,
+    DeviceInteractionRequiredType.UnlockDevice,
+    DeviceInteractionRequiredType.AllowSecureConnection,
+    DeviceInteractionRequiredType.ConfirmOpenApp,
+  ])("GIVEN the %s state WHEN rendering THEN it blocks dialog dismissal", type => {
+    renderView({ type } as EnsureAppReadyState);
+
+    expect(mockedDeviceBlocker).toHaveBeenCalledTimes(1);
   });
 
   it.each([
@@ -144,7 +162,7 @@ describe("DeviceContextInitializerComponentLWDView", () => {
     {
       label: "retryable device busy",
       state: { type: RetryableStateType.DeviceBusy, retry: jest.fn() },
-      getElement: () => screen.getByText("Action pending on your Ledger device"),
+      getElement: () => screen.getByText("Action needed on your Ledger device"),
     },
     {
       label: "unsupported firmware version",
@@ -187,12 +205,13 @@ describe("DeviceContextInitializerComponentLWDView", () => {
         type: BlockingStateType.WrongDeviceForAccount,
         accountName: "Ethereum 1",
       },
-      getElement: () => screen.getByText("Wrong Secret Recovery Phrase"),
+      getElement: () =>
+        screen.getByText("Use the Ledger device you originally set up this account with"),
     },
     {
       label: "device not onboarded",
       state: { type: BlockingStateType.DeviceNotOnboarded },
-      getElement: () => screen.getByText("Your Ledger is not ready to use yet"),
+      getElement: () => screen.getByText("Your Ledger device needs to be set up"),
     },
     {
       label: "final error",
@@ -230,7 +249,7 @@ describe("DeviceContextInitializerComponentLWDView", () => {
     });
 
     // THEN
-    expect(screen.getByText("Not enough device memory")).toBeVisible();
+    expect(screen.getByText("Uninstall some apps to free up Ledger device memory")).toBeVisible();
     expect(screen.getByText("Apps to manage: Ethereum, Bitcoin")).toBeVisible();
     expect(screen.getByRole("button", { name: "Go to My Ledger" })).toBeVisible();
     expect(mockedTrackDIEScreen).toHaveBeenCalledWith(

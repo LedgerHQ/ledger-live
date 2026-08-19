@@ -155,6 +155,29 @@ NativeModules.ReduceTransparencyModule = {
   getReduceTransparencyEnabled: () => Promise.resolve(false),
 };
 
+// react-native-keychain reads this module when it loads, and every call goes straight to it. The app
+// password needs it (see AuthPass), and so does the Pay Card session, which any suite that builds
+// the real store pulls in through cardApiExtra. One entry per service, in memory, is a device with
+// an empty keychain.
+const keychainEntries = new Map();
+
+NativeModules.RNKeychainManager = {
+  setGenericPasswordForOptions: async ({ service = "default" } = {}, username, password) => {
+    keychainEntries.set(service, { username, password });
+    return { service, storage: "KeystoreAESGCM_NoAuth" };
+  },
+  getGenericPasswordForOptions: async ({ service = "default" } = {}) => {
+    const entry = keychainEntries.get(service);
+    return entry ? { ...entry, service, storage: "KeystoreAESGCM_NoAuth" } : false;
+  },
+  hasGenericPasswordForOptions: async ({ service = "default" } = {}) =>
+    keychainEntries.has(service),
+  resetGenericPasswordForOptions: async ({ service = "default" } = {}) =>
+    keychainEntries.delete(service),
+  getAllGenericPasswordServices: async () => [...keychainEntries.keys()],
+  getSupportedBiometryType: async () => null,
+};
+
 jest.mock("react-native-share", () => ({
   default: jest.fn(),
 }));

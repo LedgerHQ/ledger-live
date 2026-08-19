@@ -2,7 +2,7 @@ import { Observable, of, concat } from "rxjs";
 import { catchError } from "rxjs/operators";
 import { getNodeApi } from "@ledgerhq/coin-evm/network/node/index";
 import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
-import type { Job } from "@ledgerhq/device-intent";
+import type { Job } from "@features/platform-device-intent";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getCurrencyConfiguration } from "../../../../config";
 import type { BroadcastEvmIntentInput, BroadcastEvmJobState } from "./types";

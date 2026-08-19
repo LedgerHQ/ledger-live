@@ -16,7 +16,7 @@ import {
 } from "../__tests__/fixtures/api.fixture";
 import { getPristineAccount } from "../__tests__/helpers/account";
 import { AleoApiConfigurationResetError } from "../errors";
-import { toBridgeOperation } from "../logic/utils";
+import { toBridgeOperation } from "../bridge/utils";
 import type { AleoPrivateRecord, AleoPublicTransaction } from "../types";
 import {
   accessProvableApi,

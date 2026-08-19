@@ -17,6 +17,7 @@ export type AssetRowData = {
   ticker: string;
   leftElement?: React.ReactNode;
   rightElement?: React.ReactNode;
+  disabled?: boolean;
 };
 
 type Props = AssetRowData & {
@@ -25,9 +26,18 @@ type Props = AssetRowData & {
 
 const NEGATIVE_MARGIN_OFFSET: LumenViewStyle = { marginHorizontal: "-s8" };
 
-export const AssetRow = ({ id, name, ticker, leftElement, rightElement, onClick }: Props) => (
+export const AssetRow = ({
+  id,
+  name,
+  ticker,
+  leftElement,
+  rightElement,
+  onClick,
+  disabled,
+}: Props) => (
   <ListItem
-    onPress={() => onClick({ id, name, ticker })}
+    disabled={disabled}
+    onPress={() => onClick({ id, name, ticker, disabled })}
     testID={`asset-item-${ticker}`}
     lx={NEGATIVE_MARGIN_OFFSET}
   >

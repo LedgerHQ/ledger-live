@@ -35,7 +35,7 @@ export const SEND_STEP_CONFIGS: Record<SendFlowStep, SendStepConfig> = {
       title: "",
     },
   },
-  // Desktop only for now (absent from SEND_FLOW_STEP_ORDER). Kept to satisfy the
+  // Not registered yet (absent from SEND_FLOW_STEP_ORDER). Kept to satisfy the
   // Record<SendFlowStep, SendStepConfig> contract.
   [SEND_FLOW_STEP.ADD_CONTACT]: {
     id: SEND_FLOW_STEP.ADD_CONTACT,

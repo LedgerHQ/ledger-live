@@ -1,10 +1,10 @@
 import { act, renderHook, waitFor } from "@tests/test-renderer";
-import { createIntent } from "@ledgerhq/device-intent";
+import { createIntent } from "@features/platform-device-intent";
 import { buildDeviceInitializationInput } from "LLM/components/DeviceIntentExecutor";
 import { useMessageSignatureDrawerViewModel } from "./useMessageSignatureDrawerViewModel";
 import type { WalletApiDeviceIntentSignMessageRequest } from "./types";
 
-jest.mock("@ledgerhq/device-intent", () => ({
+jest.mock("@features/platform-device-intent", () => ({
   createIntent: jest.fn(() => ({ uuid: "intent-1" })),
 }));
 

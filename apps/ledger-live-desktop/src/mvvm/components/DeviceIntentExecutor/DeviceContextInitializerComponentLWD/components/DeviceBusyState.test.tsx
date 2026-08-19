@@ -34,7 +34,7 @@ describe("DeviceBusyState", () => {
     renderState();
 
     // THEN
-    expect(screen.getByText("Action pending on your Ledger device")).toBeVisible();
+    expect(screen.getByText("Action needed on your Ledger device")).toBeVisible();
   });
 
   it("GIVEN the device busy state WHEN clicking Retry THEN it calls retry", async () => {

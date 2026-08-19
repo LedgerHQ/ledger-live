@@ -9,7 +9,9 @@ import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { ALWAYS_ON_CATEGORY_ID } from "LLD/features/DynamicContent/utils/constants";
 
 import { userIdSelector } from "@domain/entity-client-identity";
+import { useFeature } from "@features/platform-feature-flags";
 import { getBrazeConfig } from "~/braze-setup";
+import { resolveDesktopBrazeUserId, shouldPersistAnonymousBrazeId } from "../braze/brazeIdentity";
 import {
   ActionContentCard,
   CategoryContentCard,
@@ -162,8 +164,10 @@ export function useBraze() {
   const devMode = useSelector(developerModeSelector);
   const contentCardsDismissed = useSelector(dismissedContentCardsSelector);
   const isTrackedUser = useSelector(trackingEnabledSelector);
+  const brazeOptOutIdentityCleanup = useFeature("brazeOptOutIdentityCleanup");
   const anonymousBrazeId = useRef(useSelector(anonymousBrazeIdSelector));
   const userId = useSelector(userIdSelector);
+  const brazeOptOutIdentityCleanupEnabled = brazeOptOutIdentityCleanup?.enabled ?? false;
 
   // Read through a ref so that dismissing a card does not re-run the whole Braze
   // init, which would open a new session and stack another card subscription.
@@ -174,7 +178,10 @@ export function useBraze() {
     const brazeConfig = getBrazeConfig();
     const isPlaywright = !!getEnv("PLAYWRIGHT_RUN");
 
-    if (!anonymousBrazeId.current) {
+    if (
+      shouldPersistAnonymousBrazeId(brazeOptOutIdentityCleanupEnabled) &&
+      !anonymousBrazeId.current
+    ) {
       anonymousBrazeId.current = generateAnonymousId();
       dispatch(setAnonymousBrazeId(anonymousBrazeId.current));
     }
@@ -197,7 +204,15 @@ export function useBraze() {
       return;
     }
 
-    braze.changeUser(isTrackedUser ? userId.exportUserIdForBraze() : anonymousBrazeId.current);
+    const changeUserId = resolveDesktopBrazeUserId({
+      isTrackedUser,
+      userId,
+      anonymousBrazeId: anonymousBrazeId.current,
+      brazeOptOutIdentityCleanup: brazeOptOutIdentityCleanupEnabled,
+    });
+    if (changeUserId) {
+      braze.changeUser(changeUserId);
+    }
 
     braze.requestContentCardsRefresh();
 
@@ -267,7 +282,14 @@ export function useBraze() {
     braze.openSession();
 
     return subscriptionId;
-  }, [dispatch, devMode, isTrackedUser, anonymousBrazeId, userId]);
+  }, [
+    dispatch,
+    devMode,
+    isTrackedUser,
+    brazeOptOutIdentityCleanupEnabled,
+    anonymousBrazeId,
+    userId,
+  ]);
 
   useEffect(() => {
     let subscriptionId: string | undefined;

@@ -31,12 +31,6 @@ export function RetryableDeviceLocked({
           values={{ productName }}
         />
       }
-      description={
-        <Trans
-          i18nKey="deviceIntentExecutor.genericStates.retryableDeviceLocked.description"
-          values={{ productName }}
-        />
-      }
       primaryCta={{
         label: <Trans i18nKey="common.retry" />,
         onPress: onRetry,

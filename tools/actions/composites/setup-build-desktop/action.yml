@@ -17,10 +17,9 @@ runs:
   steps:
     - name: Install system dependencies (Linux)
       if: runner.os == 'Linux'
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y build-essential pkg-config
-      shell: bash
+      uses: LedgerHQ/ledger-live/tools/actions/composites/apt-install@develop
+      with:
+        packages: build-essential pkg-config
     - name: install dependencies
       env:
         LC_ALL: en_US.UTF-8

@@ -12,6 +12,7 @@ state (schema, slice, selectors).
 - `getLargeScreenUpsellDecision` / `useLargeScreenUpsellDecision` — audience + cooldown + frequency
 - `mapDevicesModelListToUpsellInputs` — `DeviceModelId[]` → decision inputs
 - `buildLargeScreenUpsellCtaLink` / `buildLargeScreenUpsellContent` — pure helpers
+- `LARGE_SCREEN_UPSELL_UTM` — campaign / medium / source / content values for CTA links
 - `LargeScreenUpsellModal` — Lumen Dialog (web) with mobile-matched copy/assets
 - `LARGE_SCREEN_UPSELL_IMAGES` — light/dark hero webps
 - `LargeScreenUpsellModalAnalyticsPorts` — optional viewed / CTA / dismiss callbacks for app-owned Segment

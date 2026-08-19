@@ -5,8 +5,7 @@ import { useClipboardRecipient } from "../useClipboardRecipient";
 import { useSendFlowData } from "../../../../context/SendFlowContext";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
-import { useContactsFeature } from "@features/flow-contacts";
-import { useContacts } from "@features/platform-contacts";
+import { useContacts, useContactsFeature } from "@features/platform-contacts";
 import {
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
@@ -21,9 +20,6 @@ jest.mock("../../../../context/SendFlowContext");
 jest.mock("@ledgerhq/live-common/account/index");
 jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features");
 jest.mock("@features/platform-contacts");
-jest.mock("@features/flow-contacts", () => ({
-  useContactsFeature: jest.fn(),
-}));
 
 const mockedUseAddressValidation = jest.mocked(useAddressValidation);
 const mockedUseClipboardRecipient = jest.mocked(useClipboardRecipient);

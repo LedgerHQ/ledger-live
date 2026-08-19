@@ -473,8 +473,9 @@ beforeAll(() => {
     node: {
       url: "https://mockapi.sui.io",
       graphqlUrl: "https://mockapi.sui.io/graphql",
+      grpcUrl: "https://mockapi.sui.io",
     },
-    features: { graphql: false },
+    features: { transport: "json" },
   }));
 });
 
@@ -1635,7 +1636,7 @@ describe("Staking Operations", () => {
 });
 
 describe("getStakingExtraByDigest on JSON-RPC transport", () => {
-  // `features.graphql: false` (beforeAll) routes withTransport to the jsonRpc branch, where
+  // `features.transport: "json"` (beforeAll) routes withTransport to the jsonRpc branch, where
   // `withApi`'s client is the shared mock — so `mockApi.getTransactionBlock` drives it.
   it("reads validator_address + amount from StakingRequestEvent (DELEGATE)", async () => {
     mockApi.getTransactionBlock.mockResolvedValueOnce({
@@ -3683,7 +3684,7 @@ describe("getCoinsForAmount", () => {
 
       expect(result).toHaveLength(1);
       expect(result[0].balance).toBe("1000");
-      expect(result.every(coin => parseInt(coin.balance) > 0)).toBe(true);
+      expect(result.every(coin => Number.parseInt(coin.balance, 10) > 0)).toBe(true);
     });
 
     test("sorts and optimizes coin selection", async () => {
@@ -3705,7 +3706,7 @@ describe("getCoinsForAmount", () => {
       expect(result).toHaveLength(2);
       expect(result[0].balance).toBe("800");
       expect(result[1].balance).toBe("400");
-      expect(result.every(coin => parseInt(coin.balance) > 0)).toBe(true);
+      expect(result.every(coin => Number.parseInt(coin.balance, 10) > 0)).toBe(true);
     });
 
     test("handles all zero balance coins", async () => {
@@ -3838,7 +3839,9 @@ describe("getCoinsForAmount – SIP-58 fake coins", () => {
     const result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 4000n);
 
     expect(result).toHaveLength(2);
-    expect(parseInt(result[0].balance) + parseInt(result[1].balance)).toBeGreaterThanOrEqual(4000);
+    expect(
+      Number.parseInt(result[0].balance, 10) + Number.parseInt(result[1].balance, 10),
+    ).toBeGreaterThanOrEqual(4000);
   });
 
   test("handles account with address balance only (no real coin objects)", async () => {

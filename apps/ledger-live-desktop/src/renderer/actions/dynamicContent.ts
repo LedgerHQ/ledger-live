@@ -43,3 +43,11 @@ export const setLocalCategoryCards = (payload: {
   type: "DYNAMIC_CONTENT_SET_LOCAL_CATEGORY_CARDS",
   payload,
 });
+
+export const addLocalContentCards = (payload: {
+  category: CategoryContentCard;
+  cards: BrazeCard[];
+}) => ({
+  type: "DYNAMIC_CONTENT_ADD_LOCAL_CONTENT_CARDS",
+  payload,
+});

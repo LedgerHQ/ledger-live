@@ -49,9 +49,9 @@ jobs:
           gh-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Install system dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libudev-dev build-essential
+        uses: LedgerHQ/ledger-live/tools/actions/composites/apt-install@develop
+        with:
+          packages: libudev-dev build-essential
 
       - name: Install dependencies
         run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --unsafe-perm

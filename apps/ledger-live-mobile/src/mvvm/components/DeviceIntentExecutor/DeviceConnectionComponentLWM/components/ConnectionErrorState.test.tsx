@@ -65,7 +65,8 @@ const errorCases = [
   {
     type: BaseConnectionErrorTypes.Unknown,
     title: "Pairing unsuccessful",
-    description: "Please try again or read our Bluetooth troubleshooting article below.",
+    description:
+      "Please try again or read our Bluetooth troubleshooting article below for more guidance.",
     cta: "Try again",
   },
 ] as const;

@@ -1,4 +1,5 @@
-import type { DeviceConnectionResult } from "@ledgerhq/device-intent";
+import type { DeviceConnectionResult } from "@features/platform-device-intent";
+import { ledgerToDmkDeviceIdMap } from "@ledgerhq/live-dmk-shared";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { buildInitializerDevice } from "./buildInitializerDevice";
 
@@ -7,12 +8,14 @@ describe("buildInitializerDevice", () => {
     // GIVEN
     const connectionResult = {
       compatDeviceId: "device-id",
-      compatDeviceModelId: DeviceModelId.nanoX,
       compatDeviceName: "Olivier's Ledger",
       compatDeviceWired: true,
+      connectedDevice: {
+        modelId: ledgerToDmkDeviceIdMap[DeviceModelId.nanoX],
+      } as DeviceConnectionResult["connectedDevice"],
     } satisfies Pick<
       DeviceConnectionResult,
-      "compatDeviceId" | "compatDeviceModelId" | "compatDeviceName" | "compatDeviceWired"
+      "compatDeviceId" | "compatDeviceName" | "compatDeviceWired" | "connectedDevice"
     >;
 
     // WHEN
@@ -32,12 +35,14 @@ describe("buildInitializerDevice", () => {
     // GIVEN
     const connectionResult = {
       compatDeviceId: "device-id",
-      compatDeviceModelId: DeviceModelId.nanoX,
       compatDeviceName: "",
       compatDeviceWired: false,
+      connectedDevice: {
+        modelId: ledgerToDmkDeviceIdMap[DeviceModelId.nanoX],
+      } as DeviceConnectionResult["connectedDevice"],
     } satisfies Pick<
       DeviceConnectionResult,
-      "compatDeviceId" | "compatDeviceModelId" | "compatDeviceName" | "compatDeviceWired"
+      "compatDeviceId" | "compatDeviceName" | "compatDeviceWired" | "connectedDevice"
     >;
 
     // WHEN

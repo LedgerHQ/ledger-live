@@ -1,7 +1,12 @@
 import { Account } from "@ledgerhq/types-live";
-import { estimateTransaction, estimateTransactionByteLength } from "@stacks/transactions";
+import {
+  estimateTransactionByteLength,
+  fetchFeeEstimateTransaction,
+  serializePayload,
+} from "@stacks/transactions";
 import BigNumber from "bignumber.js";
 import { STACKS_DUMMY_ADDRESS } from "../constants";
+import { getStacksBaseUrl } from "../network/api";
 import { Transaction } from "../types";
 import { createTransaction } from "./createTransaction";
 import { estimateMaxSpendable } from "./estimateMaxSpendable";
@@ -14,13 +19,14 @@ jest.mock("./createTransaction");
 jest.mock("./utils/account");
 jest.mock("./utils/misc");
 jest.mock("./utils/transactions");
+jest.mock("../network/api", () => ({ getStacksBaseUrl: jest.fn() }));
 
 describe("estimateMaxSpendable", () => {
   let getAccountInfoSpy: jest.SpyInstance;
   let getAddressSpy: jest.SpyInstance;
   let createTransactionSpy: jest.SpyInstance;
   let createStacksTransactionSpy: jest.SpyInstance;
-  let estimateTransactionSpy: jest.SpyInstance;
+  let fetchFeeEstimateTransactionSpy: jest.SpyInstance;
 
   const mockMainAccount = {
     id: "mock-account-id",
@@ -72,7 +78,10 @@ describe("estimateMaxSpendable", () => {
     getAddressSpy = jest.spyOn({ getAddress }, "getAddress");
     createTransactionSpy = jest.spyOn({ createTransaction }, "createTransaction");
     createStacksTransactionSpy = jest.spyOn({ createStacksTransaction }, "createStacksTransaction");
-    estimateTransactionSpy = jest.spyOn({ estimateTransaction }, "estimateTransaction");
+    fetchFeeEstimateTransactionSpy = jest.spyOn(
+      { fetchFeeEstimateTransaction },
+      "fetchFeeEstimateTransaction",
+    );
 
     getAccountInfoSpy.mockReturnValue({
       mainAccount: mockMainAccount,
@@ -82,8 +91,10 @@ describe("estimateMaxSpendable", () => {
     getAddressSpy.mockReturnValue({ address: "ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM" });
     createTransactionSpy.mockReturnValue(mockCreatedTransaction);
     createStacksTransactionSpy.mockResolvedValue(mockStacksTx);
-    estimateTransactionSpy.mockResolvedValue([{ fee: 1000 }]);
+    fetchFeeEstimateTransactionSpy.mockResolvedValue([{ fee: 1000 }]);
     (estimateTransactionByteLength as jest.Mock).mockReturnValue(200);
+    (serializePayload as jest.Mock).mockReturnValue("0x00");
+    (getStacksBaseUrl as jest.Mock).mockReturnValue("https://stacks.test.invalid");
   });
 
   it("should return token spendable balance for token transactions", async () => {
@@ -126,10 +137,8 @@ describe("estimateMaxSpendable", () => {
       transaction: mockTransaction,
     });
 
-    expect(estimateTransactionSpy).toHaveBeenCalledWith(
-      mockStacksTx.payload,
-      200,
-      expect.any(Object),
+    expect(fetchFeeEstimateTransactionSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ estimatedLength: 200 }),
     );
   });
 
@@ -144,7 +153,7 @@ describe("estimateMaxSpendable", () => {
 
   it("should return 0 if fee exceeds balance", async () => {
     mockMainAccount.spendableBalance = new BigNumber(500);
-    estimateTransactionSpy.mockResolvedValue([{ fee: 1000 }]);
+    fetchFeeEstimateTransactionSpy.mockResolvedValue([{ fee: 1000 }]);
 
     const result = await estimateMaxSpendable({
       account: mockMainAccount,

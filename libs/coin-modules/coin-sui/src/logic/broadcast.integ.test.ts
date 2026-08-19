@@ -19,8 +19,9 @@ describe("Broadcast", () => {
       node: {
         url: "https://sui.coin.ledger.com",
         graphqlUrl: "https://graphql.mainnet.sui.io/graphql",
+        grpcUrl: "https://sui.coin.ledger.com",
       },
-      features: { graphql: false },
+      features: { transport: "json" },
     }));
   });
 

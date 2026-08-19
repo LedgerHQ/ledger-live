@@ -1,12 +1,12 @@
 import { act, renderHook, waitFor } from "@tests/test-renderer";
 import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import type { SignedOperation } from "@ledgerhq/types-live";
-import { createIntent } from "@ledgerhq/device-intent";
+import { createIntent } from "@features/platform-device-intent";
 import { buildDeviceInitializationInput } from "LLM/components/DeviceIntentExecutor";
 import { useTransactionSignatureDrawerViewModel } from "./useTransactionSignatureDrawerViewModel";
 import type { WalletApiDeviceIntentSignRequest } from "./types";
 
-jest.mock("@ledgerhq/device-intent", () => ({
+jest.mock("@features/platform-device-intent", () => ({
   createIntent: jest.fn(() => ({ uuid: "intent-1" })),
 }));
 

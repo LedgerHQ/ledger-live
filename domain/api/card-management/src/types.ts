@@ -20,6 +20,7 @@ export type PayCardUser = z.infer<typeof PayCardUserResponseSchema>;
 
 export type PayCardAuthorizeInitiateRequest = {
   readonly clientId: string;
+  /** Whitelisted with the provider. The token exchange has to send the same value. */
   readonly redirectUri: string;
   /** CSRF token echoed back on the redirect. The backend requires at least 8 characters. */
   readonly state: string;

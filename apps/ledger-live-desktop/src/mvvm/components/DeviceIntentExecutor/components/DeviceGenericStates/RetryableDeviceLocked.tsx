@@ -23,9 +23,6 @@ export function RetryableDeviceLocked({
       preset="info"
       size="hug"
       title={t("deviceIntentExecutor.genericStates.retryableDeviceLocked.title", { productName })}
-      description={t("deviceIntentExecutor.genericStates.retryableDeviceLocked.description", {
-        productName,
-      })}
       primaryCta={{
         label: t("common.retry"),
         onPress: onRetry,

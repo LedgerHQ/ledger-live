@@ -34,7 +34,6 @@ export const ToolMetadataSchema = z.object({
   category: z.enum(Category),
   owner: z.string().optional(),
   desc: z.string().optional(),
-  icon: z.string().optional(),
   platform: z.enum(["web", "native"]).optional(),
 });
 

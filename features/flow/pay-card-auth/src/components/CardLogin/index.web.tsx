@@ -1,10 +1,16 @@
 import React from "react";
 import { CardLoginView } from "./CardLoginView";
-import type { CardLoginProps } from "./types";
 import { useCardLoginViewModel } from "./useCardLoginViewModel";
+import { openHostedLoginInBrowser } from "./openHostedLogin.web";
+import type { CardLoginProps } from "./types";
 
-export function CardLogin(props: CardLoginProps) {
-  return <CardLoginView {...useCardLoginViewModel(props)} />;
+export function CardLogin({ oauthConfig }: CardLoginProps) {
+  return (
+    <CardLoginView
+      {...useCardLoginViewModel({
+        openHostedLogin: openHostedLoginInBrowser,
+        oauthConfig,
+      })}
+    />
+  );
 }
-
-export type { CardLoginProps, OpenHostedLogin } from "./types";

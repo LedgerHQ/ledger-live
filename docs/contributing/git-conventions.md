@@ -2,7 +2,7 @@
 
 This is the canonical guidance for Git conventions in this repo.
 
-Our Git history should always surface the **type**, **scope** and description of changes, 
+Our Git history should always surface the **type**, **scope** and description of changes,
 and when possible, link to a Jira ticket.
 
 ## Summary
@@ -110,7 +110,8 @@ e.g. `feat(ui): add dark mode toggle (LIVE-1234)`
 
 Pull request titles use the same structure as commit messages, with the option of a Jira ticket at the end.
 
-A GitHub workflow may automatically prepend a platform prefix based on PR labels, e.g. "LWD" or "LWM". 
-Leave that prefix in place if automation adds it.
+A GitHub workflow may automatically prepend a prefix based on PR labels (possible values `[LWD] `, `[LWM] ` or `[LWDM] `). Leave that prefix in place if automation adds it.
 
-When creating a merge commit for a pull request, use a valid pull request title as the merge commit title.
+The max length of the PR title is 72 characters. With the potential of a 7-character prefix, write titles that are 65 characters or less.
+
+When creating a merge commit, use a valid pull request title because it is used for the merge commit message.

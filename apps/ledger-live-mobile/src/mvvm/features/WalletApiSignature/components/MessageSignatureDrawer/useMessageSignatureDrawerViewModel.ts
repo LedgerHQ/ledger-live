@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import invariant from "invariant";
-import { createIntent } from "@ledgerhq/device-intent";
+import { createIntent } from "@features/platform-device-intent";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { FlowName } from "@ledgerhq/live-common/device-action/utils";
 import { dependenciesToAppRequests } from "@ledgerhq/live-common/hw/actions/app";

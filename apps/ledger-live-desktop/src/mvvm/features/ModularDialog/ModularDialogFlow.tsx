@@ -99,7 +99,9 @@ export function ModularDialogFlow({
     refetch,
     loadingStatus,
     assetsToDisplay,
+    disabledAssetIds,
     networksToDisplay,
+    selectableNetworkIds,
     selectedAsset,
     selectedNetwork,
     handleAssetSelected,
@@ -132,6 +134,7 @@ export function ModularDialogFlow({
             errorInfo={errorInfo}
             refetch={refetch}
             assetsSorted={assetsSorted}
+            disabledAssetIds={disabledAssetIds}
           />
         );
       case MODULAR_DIALOG_STEP.NETWORK_SELECTION:
@@ -141,6 +144,7 @@ export function ModularDialogFlow({
             networksConfiguration={networkConfiguration}
             onNetworkSelected={handleNetworkSelected}
             selectedAssetId={selectedAsset?.id}
+            selectableNetworkIds={selectableNetworkIds}
           />
         );
       case MODULAR_DIALOG_STEP.ACCOUNT_SELECTION:

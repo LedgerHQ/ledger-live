@@ -1,7 +1,10 @@
 import React from "react";
-import { Avatar, type AvatarProps as LumenAvatarProps } from "@ledgerhq/lumen-ui-react";
+import {
+  Avatar,
+  resolveAvatarColor,
+  type AvatarProps as LumenAvatarProps,
+} from "@ledgerhq/lumen-ui-react";
 import type { ContactId } from "@domain/entity-contact";
-import { getContactAvatarColorClass } from "../../utils/getContactAvatarColorClass";
 import { getContactAvatarInitials } from "../../utils/getContactAvatarInitials";
 
 export type ContactAvatarProps = Readonly<{
@@ -14,15 +17,6 @@ export type ContactAvatarProps = Readonly<{
   size?: LumenAvatarProps["size"];
   testId?: string;
 }>;
-
-const avatarSizeClasses: Record<NonNullable<LumenAvatarProps["size"]>, string> = {
-  xs: "body-4-semi-bold size-24",
-  sm: "body-1-semi-bold size-40",
-  md: "heading-5-semi-bold size-48",
-  lg: "heading-4-semi-bold size-56",
-  xl: "heading-2-semi-bold size-72",
-  "2xl": "heading-1-semi-bold size-128",
-};
 
 export function ContactAvatar({
   contactId,
@@ -45,19 +39,30 @@ export function ContactAvatar({
     accessibilityProps = { "aria-hidden": true };
   } else if (resolvedAriaLabel) {
     accessibilityProps = { role: "img", "aria-label": resolvedAriaLabel };
+  } else {
+    accessibilityProps = { role: undefined, "aria-label": undefined };
   }
 
   if (isMe) {
-    return <Avatar size={size} src={src} data-testid={resolvedTestId} {...accessibilityProps} />;
+    return (
+      <Avatar
+        size={size}
+        src={src}
+        alt={resolvedAriaLabel}
+        data-testid={resolvedTestId}
+        {...accessibilityProps}
+      />
+    );
   }
 
   return (
-    <div
-      className={`flex shrink-0 items-center justify-center rounded-full ${avatarSizeClasses[size]} ${getContactAvatarColorClass(contactId)}`}
+    <Avatar
+      size={size}
+      alt={resolvedAriaLabel}
+      fallbackText={getContactAvatarInitials(name)}
+      fallbackColor={resolveAvatarColor(contactId)}
       data-testid={resolvedTestId}
       {...accessibilityProps}
-    >
-      {getContactAvatarInitials(name)}
-    </div>
+    />
   );
 }

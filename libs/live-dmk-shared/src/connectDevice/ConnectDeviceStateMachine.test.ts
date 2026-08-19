@@ -477,7 +477,6 @@ describe("ConnectDeviceStateMachine", () => {
         sessionId: "session-id",
         connectedDevice,
         compatDeviceId: connectedDevice.id,
-        compatDeviceModelId: dmkToLedgerDeviceIdMap[connectedDevice.modelId],
         compatDeviceName: connectedDevice.name,
         compatDeviceWired: false,
       });

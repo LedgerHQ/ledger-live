@@ -261,5 +261,7 @@ describe("ContactsPage", () => {
     expect(screen.getByTestId("contacts-search-no-results")).toBeVisible();
     expect(screen.getByText("No contact found")).toBeVisible();
     expect(contactsList).not.toHaveTextContent("Ben");
+    expect(screen.queryByTestId("contacts-add-contact")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("contacts-add-contact-header")).not.toBeInTheDocument();
   });
 });

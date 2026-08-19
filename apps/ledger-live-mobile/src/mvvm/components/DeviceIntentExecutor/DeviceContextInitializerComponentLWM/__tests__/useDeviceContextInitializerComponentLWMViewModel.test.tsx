@@ -1,7 +1,7 @@
 import React from "react";
 import { Observable, Subject } from "rxjs";
 import { act, renderHook } from "@tests/test-renderer";
-import type { DeviceConnectionResult } from "@ledgerhq/device-intent";
+import type { DeviceConnectionResult } from "@features/platform-device-intent";
 import { DeviceId } from "@domain/entity-client-identity";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { DeviceInfo } from "@ledgerhq/types-live";
@@ -9,6 +9,7 @@ import {
   DeviceInteractionRequiredType,
   FinalStateType,
   LoadingStateType,
+  ledgerToDmkDeviceIdMap,
   type EnsureAppReadyState,
 } from "@ledgerhq/live-dmk-shared";
 import { ensureAppReadyUseCase } from "@ledgerhq/live-common/device/use-cases/ensureAppReady/ensureAppReadyUseCase";
@@ -27,9 +28,11 @@ const connectionResult = {
   dmk: { name: "dmk" },
   sessionId: "session-1",
   compatDeviceId: "device-id",
-  compatDeviceModelId: DeviceModelId.nanoX,
   compatDeviceName: "Ledger Nano X",
   compatDeviceWired: false,
+  connectedDevice: {
+    modelId: ledgerToDmkDeviceIdMap[DeviceModelId.nanoX],
+  },
 } as unknown as DeviceConnectionResult;
 
 const deviceInitializationInput: InitializationInput = {

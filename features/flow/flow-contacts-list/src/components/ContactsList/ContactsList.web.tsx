@@ -36,6 +36,7 @@ export function ContactsList({
     ? viewModel.sections
     : [];
   const showNoResults = isContactsSearchNoResultsViewModel(viewModel);
+  const showAddContact = !showNoResults;
   const me = "me" in viewModel ? viewModel.me : undefined;
 
   let savedContactsContent: React.ReactNode = null;
@@ -94,7 +95,9 @@ export function ContactsList({
       >
         <div className="flex flex-col gap-16">
           {savedContactsContent}
-          <ContactsAddContactListItem label={labels.addContact} onAddContact={onAddContact} />
+          {showAddContact ? (
+            <ContactsAddContactListItem label={labels.addContact} onAddContact={onAddContact} />
+          ) : null}
         </div>
       </div>
     </div>

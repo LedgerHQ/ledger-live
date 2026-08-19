@@ -24,8 +24,6 @@ export default async function getEstimatedFees({
 }): Promise<{ fees: BigNumber; gasBudget: BigNumber }> {
   const t = {
     ...transaction,
-    recipient: SUI_DUMMY_ADDRESS,
-    // Always use a fake recipient to estimate fees
     amount: calculateAmount({
       account,
       transaction: {
@@ -54,9 +52,17 @@ export default async function getEstimatedFees({
       break;
   }
 
+  // Estimation can run before a recipient exists, so a placeholder keeps the simulation valid.
+  // `delegate` is the exception: its recipient IS the validator, and the network rejects a stake to
+  // a non-validator.
+  const recipient =
+    transaction.mode === "delegate" && transaction.recipient
+      ? transaction.recipient
+      : SUI_DUMMY_ADDRESS;
+
   const { fees, gasBudget } = await estimateFees(suiConfig.getCoinConfig(account.currency.id), {
     intentType,
-    recipient: SUI_DUMMY_ADDRESS,
+    recipient,
     sender: account.freshAddress,
     amount: BigInt(t.amount.toString()),
     type: transactionType,
