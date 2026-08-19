@@ -215,7 +215,9 @@
       "SHIELDED_TX_SAPLING_IN": "ได้รับแล้ว",
       "SHIELDED_TX_SAPLING_OUT": "ส่งแล้ว",
       "SHIELDED_TX_ORCHARD_IN": "ได้รับแล้ว",
-      "SHIELDED_TX_ORCHARD_OUT": "ส่งแล้ว"
+      "SHIELDED_TX_ORCHARD_OUT": "ส่งแล้ว",
+      "SHIELDED_TX_IRONWOOD_IN": "ได้รับแล้ว",
+      "SHIELDED_TX_IRONWOOD_OUT": "ส่งแล้ว"
     },
     "edit": {
       "title": "Speed Up หรือ ยกเลิก",
@@ -867,6 +869,75 @@
     "iAlreadyHaveACard": "ฉันมีบัตรอยู่แล้ว",
     "unlockLiquidity": "ใช้จ่ายคริปโตได้ในชีวิตจริง",
     "exploreCryptoCardsDescription": "ดูบัตรคริปโตของเราแล้วเลือกใบที่เหมาะกับคุณที่สุด"
+  },
+  "payTab": {
+    "featureTour": {
+      "title": "ใช้จ่ายและรับเงิน",
+      "description": "สเตเบิลคอยน์ช่วยลดช่องว่างระหว่างคริปโตกับการใช้จ่ายจริงในชีวิตประจำวัน",
+      "cta": "เข้าใจแล้ว",
+      "rows": {
+        "global": {
+          "title": "ใช้จ่ายและรับเงินได้ทั่วโลก",
+          "description": "พร้อมรับประโยชน์จากค่าธรรมเนียมเครือข่ายที่ต่ำ"
+        },
+        "volatility": {
+          "title": "ความผันผวนต่ำ",
+          "description": "เพราะมูลค่าของสเตเบิลคอยน์อิงตามเงินสกุลทั่วไป"
+        },
+        "card": {
+          "title": "ใช้จ่ายผ่านบัตรและรับเครดิตเงินคืน 1%",
+          "description": "จ่ายได้ด้วย USDC, USDT, BTC, ETH และอื่น ๆ"
+        }
+      }
+    },
+    "balance": {
+      "emptyTitle": "ใช้จ่ายและรับเงิน",
+      "emptyDescription": "เริ่มต้นด้วยการฝากสเตเบิลคอยน์ไปยังวอลเล็ตของคุณ",
+      "filter": {
+        "allStablecoins": "สเตเบิลคอยน์ทั้งหมด",
+        "dialogTitle": "กรองยอดคงเหลือในบัญชี",
+        "dialogDescription": "ใช้สเตเบิลคอยน์เพื่อชำระเงินทั่วโลกด้วยค่าธรรมเนียมต่ำและความผันผวนน้อย",
+        "dialogBanner": "จัดการสินทรัพย์ทั้งหมดในหน้าหลักของคุณ",
+        "confirm": "ยืนยัน"
+      }
+    },
+    "actions": {
+      "deposit": "เพิ่มสเตเบิลคอยน์",
+      "request": "คำขอให้ชำระเงิน",
+      "pay": "รายการชำระเงินใหม่"
+    },
+    "deposit": {
+      "title": "เพิ่มสเตเบิลคอยน์",
+      "options": {
+        "bankTransfer": {
+          "title": "การโอนเงินผ่านธนาคาร",
+          "description": "โอน USD หรือ EUR เพื่อรับสเตเบิลคอยน์"
+        },
+        "swap": {
+          "title": "สวอปจากคริปโต",
+          "description": "สวอปคริปโตของคุณเป็นสเตเบิลคอยน์"
+        },
+        "receive": {
+          "title": "ที่อยู่คริปโต",
+          "description": "รับสเตเบิลคอยน์จากวอลเล็ตอื่น"
+        },
+        "buy": {
+          "title": "ซื้อ",
+          "description": "ซื้อสเตเบิลคอยน์ด้วยบัตรเครดิต"
+        }
+      }
+    },
+    "request": {
+      "title": "Request {{asset}}",
+      "networkLabel": "{{network}} network",
+      "actions": {
+        "share": "Share",
+        "copy": "Copy",
+        "copied": "Copied",
+        "save": "Save",
+        "verify": "Verify"
+      }
+    }
   },
   "lend": {
     "title": "ให้ยืมคริปโต",
@@ -2476,7 +2547,9 @@
     "addressMatched": "ที่อยู่ถูกต้องและตรงกัน",
     "addressNotFound": "ไม่พบที่อยู่",
     "alreadyUsed": "{{date}} ถูกใช้งานแล้ว",
+    "addressBookUnsupported": "ขณะนี้ยังไม่รองรับ {{family}}",
     "recentSendWillAppear": "การส่งล่าสุดของคุณจะแสดงที่นี่",
+    "contactsWillAppear": "รายชื่อจะปรากฏขึ้นที่นี่",
     "securityInfo": {
       "title": "ส่งสินทรัพย์อย่างไรให้ปลอดภัย?",
       "items": {
@@ -2494,6 +2567,10 @@
         "description": "คุณสามารถดูจากประวัติธุรกรรมได้ว่าว่ามีการส่งไปยังที่อยู่นั้นแล้วหรือยัง งช่วยป้องกันความผิดพลาดจากการคัดลอก/วางและการแฮ็ก ประวัติธุรกรรมของคุณประกอบด้วยที่อยู่ 12 อันล่าสุดที่คุณส่งคริปโตไปโดยใช้แอป Ledger Wallet",
         "cta": "เข้าใจแล้ว"
       }
+    },
+    "addContact": {
+      "newContact": "เพิ่มรายชื่อใหม่",
+      "existingContact": "เพิ่มไปยังรายชื่อที่มีอยู่"
     },
     "relativeDate": {
       "justNow": "เมื่อสักครู่",
@@ -7001,6 +7078,9 @@
       "title": "ขออภัย เงินทุนไม่พอ",
       "description": "โปรดตรวจสอบให้แน่ใจว่าบัญชีมีเงินทุนเพียงพอ"
     },
+    "NotEnoughTransferAmount": {
+      "title": "ต้องมีอย่างน้อย 1 ICP เพื่อสเตคเป็น Neuron ได้"
+    },
     "UnstakeNotEnoughStakedBalanceLeft": {
       "title": "หากคุณ Unstake เกิน {{maxAmount}} จำนวนที่คุณสเตคทั้งหมด {{totalAmount}} จะถูก Unstake",
       "description": "หากคุณ Unstake เกิน {{maxAmount}} จำนวนที่คุณสเตคทั้งหมด {{totalAmount}} จะถูก Unstake"
@@ -7434,6 +7514,9 @@
     },
     "FeeTooHigh": {
       "title": "ค่าธรรมเนียมเครือข่ายสูงกว่า 10% ของจำนวน"
+    },
+    "RecipientIsNewAccount": {
+      "title": "ที่อยู่คริปโตนี้ยังไม่เคยได้รับเงิน การเปิดใช้งานจึงมีค่าธรรมเนียมเครือข่ายสูงกว่าปกติ"
     },
     "DustLimit": {
       "title": "จำนวนต่ำกว่าลิมิตของ Dust"
@@ -8588,28 +8671,24 @@
   },
   "lnsUpsell": {
     "opted_in": {
-      "title": "อย่าให้หน่วยความจำที่จำกัด จำกัดประสบการณ์ของคุณไปด้วย",
-      "description": "อัปเกรด Ledger Nano S ของคุณเป็น Ledger รุ่นใหม่กว่า — เช่น Ledger Flex — เพื่อเพิ่มหน่วยความจำ, มาตรฐานความปลอดภัยที่อัปเดตล่าสุด, ฟีเจอร์ใหม่ พร้อม <0>ส่วนลดพิเศษ {{discount}}%</>",
+      "title": "ดูเพิ่มเติม ลงนามได้ปลอดภัยยิ่งขึ้น",
+      "description": "อัปเกรดพร้อมรับส่วนลด {{discount}}%",
       "cta": "อัปเกรด My Ledger"
     },
     "opted_out": {
-      "description": "หน่วยความจำที่จำกัดของ Ledger Nano S ของคุณจะยับยั้งการเข้าถึงฟีเจอร์ล่าสุด การเปลี่ยนแปลงบล็อกเชน และการเพิ่มความปลอดภัยให้กับคุณ เพื่อการใช้งานระยะยาว ควรอัปเกรดเป็นอุปกรณ์ Ledger รุ่นใหม่กว่า",
+      "title": "ความปลอดภัยที่มากขึ้น ควบคุมได้มากขึ้น",
+      "description": "เรียนรู้เพิ่มเติมเกี่ยวกับฟีเจอร์ความปลอดภัย",
       "cta": "เรียนรู้เพิ่มเติม"
-    }
-  },
-  "lnsUpsellMediaBanner": {
-    "opted_in": {
-      "title": "ดูเพิ่มเติม ลงนามได้ปลอดภัยยิ่งขึ้น",
-      "description": "อัปเกรดและรับส่วนลด 20%"
     },
-    "opted_out": {
-      "title": "ปลอดภัยมากขึ้น จัดการได้มากขึ้น",
-      "description": "เรียนรู้เพิ่มเติมเกี่ยวกับฟีเจอร์ความปลอดภัย"
+    "profile": {
+      "title": "อัปเกรดอุปกรณ์ของคุณ",
+      "description": "หน้าจอใหญ่ขึ้น ความปลอดภัยมากขึ้น พร้อมส่วนลด {{discount}}%",
+      "cta": "สำรวจ"
     }
   },
   "largeScreenUpsellModal": {
     "optedIn": {
-      "title": "ดูเพิ่มเติม ใช้งานคล่องตัวขึ้น รับส่วนลดถึง {{discount}}%",
+      "title": "เห็นชัดขึ้นใช้งานง่ายขึ้น พร้อมส่วนลด {{discount}}%",
       "subtitle": "เพลิดเพลินกับหน้าจอที่ใหญ่ขึ้น, การตรวจสอบธุรกรรมที่ฉลาดขึ้น, การปกป้องที่ดียิ่งขึ้น และรับส่วนลดเพิ่ม {{discount}}%",
       "cta": "ดูอุปกรณ์ลงนามหน้าจอที่ใช้งานง่าย"
     },
@@ -8617,6 +8696,12 @@
       "title": "ตรวจพบสแกมก่อนลงนาม",
       "subtitle": "เรียนรู้เพิ่มเติมเกี่ยวกับฟีเจอร์ความปลอดภัยขั้นสูงที่ช่วยตรวจจับภัยคุกคามแบบเรียลไทม์",
       "cta": "เรียนรู้เพิ่มเติม"
+    },
+    "recoverTrigger": {
+      "title": "Want peace-of-mind recovery?",
+      "subtitle": "While your Nano S is perfectly secure, it isn't compatible with Ledger Recover. Upgrade to a newer model to unlock secure, ID-based wallet backup.",
+      "cta": "Learn more",
+      "dismiss": "Not now"
     }
   },
   "modularAssetDrawer": {
@@ -8684,6 +8769,10 @@
     "selectAsset": "เลือกสินทรัพย์",
     "selectNetwork": "เลือกเครือข่าย",
     "selectAccount": "เลือกบัญชี",
+    "selectAccountPerpsTitle": "เลือกบัญชี Hyperliquid",
+    "selectAccountPerpsDescription": "หากต้องการเติมเงินทุนสำหรับสัญญาซื้อขายคริปโตล่วงหน้าแบบไม่มีวันหมดอายุ (Perps) คุณต้องมีบัญชี Hyperliquid เพิ่มบัญชีเพื่อดำเนินการต่อ",
+    "selectDepositCurrencyTitle": "เลือกสินทรัพย์ที่จะฝาก",
+    "selectDepositCurrencyDescription": "สามารถใช้สินทรัพย์ใดรับรองก็ได้ ระบบจะสวอปให้โดยอัตโนมัติหากจำเป็น",
     "accountCount_one": "{{count}} บัญชี",
     "accountCount_other": "บัญชี {{count}}",
     "accountsAdded": {
@@ -8716,7 +8805,8 @@
     "title": "หน้าหลัก",
     "today": "วันนี้",
     "carousel": {
-      "title": "สำหรับคุณ"
+      "title": "สำหรับคุณ",
+      "closeAll": "ปิดทั้งหมด"
     },
     "addAccountCta": "เพิ่มบัญชีคริปโต",
     "noBalanceTitle": "เริ่มต้นด้วยการเติมเงินเข้าวอลเล็ตของคุณ",
@@ -8897,7 +8987,9 @@
       "transparentBalance": "ยอดคงเหลือในบัญชีที่โปร่งใส",
       "transparentBalanceTooltip": "ยอดคงเหลือในบัญชีที่เปิดเผยต่อสาธารณะ",
       "privateBalance": "ยอดคงเหลือในบัญชีส่วนบุคคล",
-      "privateBalanceTooltip": "ยอดคงเหลือในบัญชีที่ไม่เปิดเผยต่อสาธารณะ"
+      "privateBalanceTooltip": "ยอดคงเหลือในบัญชีที่ไม่เปิดเผยต่อสาธารณะ",
+      "privateBalanceWarning": "ยอดคงเหลือส่วนตัวไม่รวมเงินทุนที่ได้รับการปกป้องโดย Sapling และ Orchard",
+      "privateBalanceMaturing": "ใช้จ่ายได้ {{spendable}} · อยู่ระหว่างรอครบกำหนด {{maturing}}"
     },
     "shielded": {
       "send": {
@@ -8917,7 +9009,8 @@
             "title": "Private Balance",
             "subtitle": "แบบส่วนตัว (Shielded)",
             "unavailable": "ยอดคงเหลือในบัญชีส่วนตัว (Private Balance) ไม่พร้อมใช้งาน"
-          }
+          },
+          "spendableWarning": "ยอดคงเหลือในบัญชีที่ใช้จ่ายได้อาจต่ำกว่ายอดคงเหลือในบัญชีทั้งหมด เงินที่เพิ่งได้รับการปกป้องจำเป็นต้องได้รับการยืนยันและการสแกนให้ครบถ้วน (~15 นาที) จึงจะสามารถนำไปใช้จ่ายได้"
         },
         "memo": {
           "label": "Memo (ไม่บังคับ)",
@@ -8937,6 +9030,12 @@
             "message": "ยอดคงเหลือในบัญชีอาจยังไม่อัปเดต",
             "cta": "ซิงค์ยอดคงเหลือในบัญชี"
           }
+        },
+        "selfTransfer": {
+          "toPrivate": "โอนด้วยตัวเองไปยังยอดคงเหลือส่วนตัว",
+          "toPublic": "โอนด้วยตัวเองไปยังยอดคงเหลือสาธารณะ",
+          "unavailable": "ที่อยู่คริปโตส่วนตัวของคุณยังไม่พร้อมใช้งาน ส่งออก View Key ของคุณเพื่อเปิดใช้งาน",
+          "privacyWarning": "การส่งธุรกรรมนี้จะเชื่อมโยงเงินทุนที่ได้รับการปกป้องของคุณเข้ากับ Public Address ของบัญชีคุณ ซึ่งทุกคนสามารถมองเห็นได้ การส่งไปยังที่อยู่คริปโตภายนอกที่เป็นส่วนตัวจะช่วยป้องกันไม่ให้มีการเชื่อมโยงกับบัญชีสาธารณะของคุณ"
         }
       },
       "state": {
@@ -8950,6 +9049,13 @@
       "datepicker": {
         "label": "ระดับบล็อก (Birthday Height)",
         "tooltip": "ระดับบล็อกคือจุดบนบล็อกเชนที่วอลเล็ตเริ่มสแกนเพื่อค้นหาเงินทุนของคุณ"
+      },
+      "receive": {
+        "verifyAddresses": "ตรวจสอบที่อยู่คริปโตทั้งแบบสาธารณะและแบบส่วนตัวบน Ledger ของคุณ",
+        "privateFor": "ที่อยู่คริปโตแบบส่วนตัวสำหรับ <0>{{name}}</0>",
+        "noUfvk": {
+          "description": "เปิดใช้งานบัญชีส่วนตัวของคุณเพื่อส่งคริปโตไปยังที่อยู่ส่วนตัว"
+        }
       },
       "flows": {
         "export": {
@@ -8994,7 +9100,8 @@
       "txType": "ประเภทธุรกรรม",
       "transparentTx": "แบบ Transparent",
       "shieldedSaplingTx": "🛡 แบบส่วนตัว (พูล Sapling)",
-      "shieldedOrchardTx": "🛡 แบบส่วนตัว (พูล Orchard)"
+      "shieldedOrchardTx": "🛡 แบบส่วนตัว (พูล Orchard)",
+      "shieldedIronwoodTx": "🛡 แบบส่วนตัว (Ironwood)"
     }
   },
   "aleo": {
@@ -9270,7 +9377,8 @@
       },
       "recoveryKey": {
         "title": "Ledger Recovery Key",
-        "description": "สมาร์ตการ์ดที่ปกป้องด้วย PIN"
+        "description": "สมาร์ตการ์ดที่ปกป้องด้วย PIN",
+        "incompatible": "ไม่สามารถใช้ร่วมกับอุปกรณ์ของคุณได้"
       },
       "secretRecoveryPhrase": {
         "title": "โลหะสำหรับจัดเก็บวลีกู้คืน 24 คำ",
@@ -9392,10 +9500,10 @@
       "cancel": "ยกเลิก"
     },
     "editSignerMismatch": {
-      "title": "Use the same Ledger device you used to add this contact",
-      "description": "The connected device isn't a match.",
-      "connectDifferentDevice": "Connect a different device",
-      "cancel": "Cancel"
+      "title": "ใช้อุปกรณ์ Ledger เดียวกันที่คุณใช้เพิ่มรายชื่อนี้",
+      "description": "อุปกรณ์ที่เชื่อมต่อไม่ตรงกัน",
+      "connectDifferentDevice": "เชื่อมต่อกับอุปกรณ์อื่น",
+      "cancel": "ยกเลิก"
     },
     "ledgerSyncIntroduction": {
       "description": "รายชื่อติดต่อของคุณได้รับการเข้ารหัสแบบต้นทางถึงปลายทาง (End-to-End Encrypted) ด้วย Ledger ของคุณ และซิงค์กับอุปกรณ์ต่าง ๆ ของคุณ โดยมีเพียงคุณเท่านั้นที่สามารถปลดล็อกได้",
@@ -9405,7 +9513,6 @@
       "title": "ขอแนะนำรายชื่อ",
       "description": "สมุดที่อยู่คริปโตของคุณ บันทึกวอลเล็ตที่คุณส่งไปหาทั้งหมดไว้ในที่เดียว",
       "primaryAction": "ลองใช้รายชื่อ",
-      "secondaryAction": "ไว้ทีหลัง",
       "highlights": {
         "saveAddresses": {
           "title": "บันทึกที่อยู่คริปโตเพียงครั้งเดียว",
@@ -9489,8 +9596,7 @@
   "deviceIntentExecutor": {
     "genericStates": {
       "retryableDeviceLocked": {
-        "title": "อุปกรณ์อยู่ในสถานะล็อก",
-        "description": "ปลดล็อกอุปกรณ์ของคุณเพื่อดำเนินการต่อ"
+        "title": "Unlock your Ledger device and then select Retry below"
       },
       "unlockDevice": {
         "title": "ปลดล็อก {{productName}} ของคุณ"
@@ -9502,16 +9608,16 @@
     },
     "errors": {
       "connectionError": {
-        "title": "ตัดการเชื่อมต่ออุปกรณ์แล้ว",
-        "description": "Ledger ของคุณถูกตัดการเชื่อมต่อแล้ว กรุณาตรวจสอบให้แน่ใจว่าคุณได้เปิดเครื่องและทำการเสียบสายต่อเรียบร้อยแล้ว"
+        "title": "Ledger Device disconnected",
+        "description": "กรุณาตรวจสอบให้แน่ใจว่าคุณได้เปิดเครื่องและทำการเสียบสายต่อเรียบร้อยแล้ว"
       },
       "intentError": {
         "title": "เกิดข้อผิดพลาดที่ไม่ทราบสาเหตุ",
-        "description": "เกิดข้อผิดพลาด โปรดลองอีกครั้ง หรือติดต่อ Ledger Support หากยังคงพบปัญหาอยู่"
+        "description": "Try again or contact Ledger support if the issue continues."
       },
       "invalidOperation": {
-        "title": "สถานะไม่ถูกต้อง",
-        "description": "เกิดข้อผิดพลาด โปรดลองอีกครั้ง หรือติดต่อ Ledger Support หากยังคงพบปัญหาอยู่"
+        "title": "An error occurred",
+        "description": "Try again or contact Ledger Support if the issue continues."
       }
     },
     "initialization": {
@@ -9527,43 +9633,43 @@
       },
       "retryable": {
         "userRefused": {
-          "title": "การดำเนินการถูกปฏิเสธบนอุปกรณ์"
+          "title": "Operation rejected on Ledger device"
         },
         "deviceBusy": {
-          "title": "มีการดำเนินการรออยู่บนอุปกรณ์ Ledger ของคุณ",
-          "description": "โปรดดำเนินการให้เสร็จสิ้น จากนั้นเลือก Retry (ลองอีกครั้ง)"
+          "title": "Action needed on your Ledger device",
+          "description": "Finish the action on your device, then select “Retry” below."
         }
       },
       "blocking": {
         "deviceNotOnboarded": {
-          "title": "Ledger ของคุณยังไม่พร้อมใช้งาน",
-          "description": "คุณต้องทำการตั้งค่า {{productName}} ของคุณก่อน เราจะแนะนำคุณตลอดกระบวนการติดตั้งอุปกรณ์"
+          "title": "Your Ledger device needs to be set up",
+          "description": "Set it up to continue."
         },
         "unsupportedFirmwareVersion": {
           "title": "จำเป็นต้องมีการอัปเดต Ledger OS ก่อน"
         },
         "unsupportedApplication": {
           "title": "ฟีเจอร์ที่ไม่รองรับ",
-          "description": "แอปที่ต้องใช้สำหรับการดำเนินการนี้ไม่พร้อมใช้งานบนอุปกรณ์ Ledger ของคุณ โปรดติดต่อ Ledger Support เพื่อขอรับรายละเอียด"
+          "description": "The app needed for this action is not supported by your Ledger device. Please contact Ledger Support for details."
         },
         "unsupportedFeature": {
           "title": "ฟีเจอร์ที่ไม่รองรับ",
-          "description": "แอปที่ต้องใช้สำหรับการดำเนินการนี้ไม่พร้อมใช้งานบนอุปกรณ์ Ledger ของคุณ โปรดติดต่อ Ledger Support เพื่อขอรับรายละเอียด"
+          "description": "The app needed for this action is not supported by your Ledger device. Please contact Ledger Support for details."
         },
         "wrongDeviceForAccount": {
-          "title": "Secret Recovery Phrase ไม่ถูกต้อง",
-          "description": "อุปกรณ์ Ledger นี้ไม่ได้ถูกตั้งค่าด้วยวลีกู้คืนที่เชื่อมกับบัญชีที่เลือกไว้ โปรดตรวจสอบว่าคุณกำลังใช้อุปกรณ์ถูกเครื่อง"
+          "title": "Use the Ledger device you originally set up this account with",
+          "description": "This Ledger isn't set up with the Secret Recovery Phrase linked to the selected crypto account."
         },
         "deviceOutOfStorageSpace": {
-          "title": "หน่วยความจำของอุปกรณ์ไม่เพียงพอ",
-          "description": "อุปกรณ์ของคุณมีหน่วยความจำไม่เพียงพอ โปรดถอนการติดตั้งแอปและลองอีกครั้ง",
+          "title": "Uninstall some apps to free up Ledger device memory",
+          "description": "Your device doesn't have enough memory.",
           "apps": "แอปที่ต้องจัดการ: {{appNames}}"
         }
       },
       "cta": {
         "openMyLedger": "เปิด My Ledger",
         "goToMyLedger": "ไปที่ My Ledger",
-        "setupDevice": "ติดตั้งอุปกรณ์",
+        "setupDevice": "Set up Ledger device",
         "updateLedgerOs": "อัปเดต Ledger OS",
         "cancelOperation": "ยกเลิกการดำเนินการ",
         "contactLedgerSupport": "ติดต่อ Ledger Support"
@@ -9580,7 +9686,7 @@
           "title": "กำลังโหลด"
         },
         "connecting": {
-          "title": "กำลังโหลด"
+          "title": "Connecting to your Ledger device"
         },
         "connectionError": {
           "errors": {
@@ -9612,9 +9718,9 @@
         },
         "noKnownDevice": {
           "title": "ต้องใช้อุปกรณ์ Ledger",
-          "description": "หากต้องการดำเนินการต่อ ให้ทำการติดตั้งหรือเชื่อมต่อกับอุปกรณ์ลงนาม Ledger ของคุณ",
+          "description": "To continue, set up or connect your Ledger device.",
           "connectLedgerDevice": "เชื่อมต่อกับอุปกรณ์ Ledger",
-          "noLedgerDevice": "ฉันไม่มีอุปกรณ์ Ledger"
+          "noLedgerDevice": "I don’t have a Ledger device"
         },
         "waitingForSelectedDevice": {
           "title": "เปิดและปลดล็อก {{productName}} ของคุณ"
@@ -9677,5 +9783,30 @@
       }
     },
     "disclaimer": "ข้อมูลนี้มีไว้เพื่อวัตถุประสงค์ในการให้ข้อมูลเท่านั้น และไม่ใช่คำแนะนำทางการเงิน ไม่สามารถใช้เพื่อวัตถุประสงค์ทางภาษีได้"
+  },
+  "internetComputer": {
+    "memoField": {
+      "increaseStake": "ธุรกรรมนี้จะเพิ่มสเตคของ Neuron ที่มีอยู่ ให้ป้อนจำนวนที่ต้องการจะสเตค (Stake) ในช่องจำนวนข้างต้น",
+      "createNeuron": "ธุรกรรมนี้จะสร้าง Neuron ที่มี ICP สเตคอยู่ ดังนั้นให้ป้อนจำนวนสินทรัพย์ที่จะสเตคในช่องจำนวนข้างต้น",
+      "tooltip": "Internet Computer (ICP) ใช้สิ่งนี้ในการตรวจสอบธุรกรรมการสร้าง Neuron"
+    },
+    "stakeBanner": {
+      "stakeICP": {
+        "title": "สเตค ICP",
+        "description": "สเตค (Stake) และรับ Reward ด้วยการเข้าร่วมในการกำกับดูแลที่มี",
+        "cta": "สเตค ICP"
+      }
+    },
+    "headerManageActions": {
+      "manageNeurons": {
+        "title": "จัดการ Neuron"
+      }
+    },
+    "summaryFooter": {
+      "stakedBalance": "จำนวนที่สเตคแล้ว",
+      "stakedBalanceTooltip": "จำนวนโทเคน ICP ทั้งหมดที่สเตคไว้ใน Neuron ในปัจจุบัน ICP ที่สเตคแล้วจะได้รับ Reward จากการโหวต และสามารถใช้สำหรับการกำกับดูแลได้",
+      "totalMaturity": "Reward ทั้งหมดที่ได้รับ",
+      "totalMaturityTooltip": "Reward ที่สะสมทั้งหมดจากสเตคกิ้ง ซึ่งรวมทั้งผลตอบแทนจากการสเตค และผลตอบแทนจาก Liquid Maturity สามารถสเตค Reward เหล่านี้อีกครั้ง หรือจะเคลมเป็น Liquid ICP ก็ได้"
+    }
   }
 }
