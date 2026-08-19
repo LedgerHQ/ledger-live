@@ -215,7 +215,9 @@
       "SHIELDED_TX_SAPLING_IN": "Reçu",
       "SHIELDED_TX_SAPLING_OUT": "Envoyé",
       "SHIELDED_TX_ORCHARD_IN": "Reçu",
-      "SHIELDED_TX_ORCHARD_OUT": "Envoyé"
+      "SHIELDED_TX_ORCHARD_OUT": "Envoyé",
+      "SHIELDED_TX_IRONWOOD_IN": "Reçu",
+      "SHIELDED_TX_IRONWOOD_OUT": "Envoyé"
     },
     "edit": {
       "title": "Accélérer ou annuler",
@@ -867,6 +869,75 @@
     "iAlreadyHaveACard": "J’ai une carte",
     "unlockLiquidity": "Utilisez vos cryptos au quotidien",
     "exploreCryptoCardsDescription": "Découvrez les cartes crypto et trouvez celle qui est faite pour vous."
+  },
+  "payTab": {
+    "featureTour": {
+      "title": "Payez et faites-vous payer",
+      "description": "Les stablecoins intègrent vos cryptos directement dans vos dépenses de tous les jours.",
+      "cta": "Compris",
+      "rows": {
+        "global": {
+          "title": "Paiements dans le monde entier",
+          "description": "Profitez de faibles frais de réseau."
+        },
+        "volatility": {
+          "title": "Volatilité minimale",
+          "description": "Les stablecoins sont basés sur les monnaies fiduciaires."
+        },
+        "card": {
+          "title": "Cashback à 1% sur les dépenses par carte",
+          "description": "Payez avec vos USDC, USDT, BTC, ETH et plus."
+        }
+      }
+    },
+    "balance": {
+      "emptyTitle": "Payez et faites-vous payer",
+      "emptyDescription": "Commencez par déposer des stablecoins sur votre wallet.",
+      "filter": {
+        "allStablecoins": "Tous les stablecoins",
+        "dialogTitle": "Filtrer le solde",
+        "dialogDescription": "Payez partout dans le monde avec vos stablecoins : profitez de faibles frais et d’une volatilité minime.",
+        "dialogBanner": "Gérez tous vos autres actifs sur votre page Accueil",
+        "confirm": "Confirmer"
+      }
+    },
+    "actions": {
+      "deposit": "Ajouter un stablecoin",
+      "request": "Demander",
+      "pay": "Nouveau paiement"
+    },
+    "deposit": {
+      "title": "Ajouter des stablecoins",
+      "options": {
+        "bankTransfer": {
+          "title": "Virement bancaire",
+          "description": "Transférez des EUR ou des USD pour recevoir des stablecoins."
+        },
+        "swap": {
+          "title": "Échange crypto",
+          "description": "Échangez vos cryptos contre des stablecoins."
+        },
+        "receive": {
+          "title": "Adresse crypto",
+          "description": "Recevez des stablecoins depuis un autre wallet."
+        },
+        "buy": {
+          "title": "Achat",
+          "description": "Achetez des stablecoins avec une carte bancaire."
+        }
+      }
+    },
+    "request": {
+      "title": "Demander des {{asset}}",
+      "networkLabel": "Réseau {{network}}",
+      "actions": {
+        "share": "Partager",
+        "copy": "Copier",
+        "copied": "Copié",
+        "save": "Enregistrer",
+        "verify": "Vérifier"
+      }
+    }
   },
   "lend": {
     "title": "Prêter",
@@ -2476,7 +2547,9 @@
     "addressMatched": "Adresse correspondante",
     "addressNotFound": "Adresse introuvable",
     "alreadyUsed": "Déjà utilisée · {{date}}",
+    "addressBookUnsupported": "{{family}} n’est pas encore pris en charge",
     "recentSendWillAppear": "Vos dernières transactions émises apparaîtront ici.",
+    "contactsWillAppear": "Vos contacts apparaîtront ici.",
     "securityInfo": {
       "title": "Comment envoyer en toute sécurité ?",
       "items": {
@@ -2494,6 +2567,10 @@
         "description": "Votre historique vous permet de voir instantanément si vous avez déjà envoyé des cryptos à une adresse spécifique. Cela pourrait permettre d’éviter d’éventuelles erreurs de copier/coller ou les piratages. Votre historique contient les 12 dernières adresses auxquelles vous avez envoyé des cryptos via Ledger Wallet.",
         "cta": "Compris"
       }
+    },
+    "addContact": {
+      "newContact": "Ajouter un nouveau contact",
+      "existingContact": "Ajouter à un contact"
     },
     "relativeDate": {
       "justNow": "À l’instant",
@@ -7001,6 +7078,9 @@
       "title": "Solde insuffisant",
       "description": "Vérifiez que ce compte a un solde suffisant."
     },
+    "NotEnoughTransferAmount": {
+      "title": "Un minimum de 1 ICP est requis pour staker dans un neurone."
+    },
     "UnstakeNotEnoughStakedBalanceLeft": {
       "title": "Déstaker plus de {{maxAmount}} entraîne un déstaking intégral ({{totalAmount}})",
       "description": "Si vous déstakez plus de {{maxAmount}}, le montant total que vous avez mis en staking ({{totalAmount}}) sera déstaké."
@@ -7435,6 +7515,9 @@
     "FeeTooHigh": {
       "title": "Les frais de réseau représentent plus de 10% du montant"
     },
+    "RecipientIsNewAccount": {
+      "title": "Cette adresse n’a jamais reçu d’actifs : son activation entraîne des frais de réseau plus élevés"
+    },
     "DustLimit": {
       "title": "Montant inférieur à la limite de poussière (dust limit)"
     },
@@ -7831,6 +7914,9 @@
     },
     "OneSuiMinForUnstakeToBeLeft": {
       "title": "Vous devez conserver au moins 1 SUI en staking"
+    },
+    "SuiStakeNotFound": {
+      "title": "Détails du staking indisponibles. Veuillez resynchroniser votre compte et réessayer"
     },
     "SomeSuiForUnstake": {
       "title": "Conservez au minimum 0,1 SUI dans votre wallet pour couvrir les frais de réseau futurs et arrêter la délégation de vos actifs"
@@ -8588,23 +8674,19 @@
   },
   "lnsUpsell": {
     "opted_in": {
-      "title": "Mémoire limitée, expérience limitée",
-      "description": "Passez du Ledger Nano S à un modèle plus récent, tel que le Ledger Flex. À la clé : plus de mémoire, les dernières améliorations de sécurité, de nouvelles fonctionnalités et <0>-{{discount}}% en exclusivité</0>.",
+      "title": "Voyez plus grand",
+      "description": "Passez au niveau supérieur avec -{{discount}}%.",
       "cta": "Choisir mon Ledger"
     },
     "opted_out": {
-      "description": "Avec sa mémoire limitée, votre Ledger Nano S vous prive des dernières fonctionnalités, innovations blockchain et améliorations de sécurité. Pour en bénéficier, choisissez un appareil Ledger plus récent.",
-      "cta": "En savoir plus"
-    }
-  },
-  "lnsUpsellMediaBanner": {
-    "opted_in": {
-      "title": "Voyez plus grand",
-      "description": "Passez au niveau supérieur avec -20%."
-    },
-    "opted_out": {
       "title": "Sécurité et contrôle renforcés",
-      "description": "Fonctionnalités de sécurité à découvrir."
+      "description": "Fonctionnalités de sécurité à découvrir.",
+      "cta": "En savoir plus"
+    },
+    "profile": {
+      "title": "Passez à un modèle supérieur",
+      "description": "Écran plus grand, sécurité boostée. Profitez de -{{discount}}%.",
+      "cta": "Explorer"
     }
   },
   "largeScreenUpsellModal": {
@@ -8617,6 +8699,12 @@
       "title": "Détection des escroqueries",
       "subtitle": "Ces fonctionnalités de sécurité avancées permettent de détecter les menaces en temps réel.",
       "cta": "En savoir plus"
+    },
+    "recoverTrigger": {
+      "title": "Vous souhaitez gagner en sérénité ?",
+      "subtitle": "Votre Ledger Nano S est sécurisé, mais il n’est pas compatible avec Ledger Recover. Choisissez un modèle plus récent pour profiter d’une sauvegarde sécurisée par votre identité.",
+      "cta": "En savoir plus",
+      "dismiss": "Plus tard"
     }
   },
   "modularAssetDrawer": {
@@ -8684,6 +8772,10 @@
     "selectAsset": "Sélectionner un actif",
     "selectNetwork": "Sélectionner un réseau",
     "selectAccount": "Sélectionner un compte",
+    "selectAccountPerpsTitle": "Sélectionner un compte Hyperliquid",
+    "selectAccountPerpsDescription": "Pour accéder aux marchés perpétuels, vous avez besoin d’un compte Hyperliquid. Ajoutez-en un pour continuer.",
+    "selectDepositCurrencyTitle": "Sélectionner l’actif à placer",
+    "selectDepositCurrencyDescription": "Choisissez l’actif pris en charge de votre choix. Un échange automatique s’exécute si nécessaire.",
     "accountCount_one": "{{count}} compte",
     "accountCount_other": "{{count}} comptes",
     "accountsAdded": {
@@ -8716,7 +8808,8 @@
     "title": "Accueil",
     "today": "Aujourd’hui",
     "carousel": {
-      "title": "Pour vous"
+      "title": "Pour vous",
+      "closeAll": "Fermer tout"
     },
     "addAccountCta": "Ajouter un compte crypto",
     "noBalanceTitle": "Commencez par déposer des actifs",
@@ -8897,7 +8990,9 @@
       "transparentBalance": "Solde transparent",
       "transparentBalanceTooltip": "Le solde qui est visible publiquement.",
       "privateBalance": "Solde privé",
-      "privateBalanceTooltip": "Le solde qui est masqué."
+      "privateBalanceTooltip": "Le solde qui est masqué.",
+      "privateBalanceWarning": "Le solde privé exclut les actifs masqués sur Sapling et Orchard",
+      "privateBalanceMaturing": "Solde privé : {{spendable}} disponibles · {{maturing}} en cours de maturation"
     },
     "shielded": {
       "send": {
@@ -8917,7 +9012,8 @@
             "title": "Solde privé",
             "subtitle": "Protégé",
             "unavailable": "Solde privé indisponible"
-          }
+          },
+          "spendableWarning": "Le solde disponible peut être inférieur au solde total. Plusieurs confirmations et un scan complet (~15 minutes) sont requises avant de pouvoir utiliser des actifs récemment shielded."
         },
         "memo": {
           "label": "Mémo (facultatif)",
@@ -8937,6 +9033,12 @@
             "message": "Le solde peut ne pas être à jour",
             "cta": "Synchroniser"
           }
+        },
+        "selfTransfer": {
+          "toPrivate": "Transfert interne vers le solde privé",
+          "toPublic": "Transfert interne vers le solde public",
+          "unavailable": "Votre adresse privée n’est pas encore disponible. Exportez votre clé de consultation pour l’activer.",
+          "privacyWarning": "Vos actifs shielded seront alors associés à l’adresse publique de votre compte, visible de tous. Un envoi vers une adresse privée externe les maintient dissociés."
         }
       },
       "state": {
@@ -8950,6 +9052,13 @@
       "datepicker": {
         "label": "Bloc de création",
         "tooltip": "La création (Birthday Height) correspond au bloc à partir duquel votre wallet commence à analyser la blockchain pour détecter vos actifs."
+      },
+      "receive": {
+        "verifyAddresses": "Vérifiez vos adresses transparentes et privées sur votre appareil Ledger",
+        "privateFor": "Adresse privée pour <0>{{name}}</0>",
+        "noUfvk": {
+          "description": "Activez votre solde privé pour recevoir sur une adresse privée."
+        }
       },
       "flows": {
         "export": {
@@ -8994,7 +9103,8 @@
       "txType": "Type de transaction",
       "transparentTx": "Transparent",
       "shieldedSaplingTx": "🛡 Privé (Sapling)",
-      "shieldedOrchardTx": "🛡 Privé (Orchard)"
+      "shieldedOrchardTx": "🛡 Privé (Orchard)",
+      "shieldedIronwoodTx": "🛡 Privé (Ironwood)"
     }
   },
   "aleo": {
@@ -9270,7 +9380,8 @@
       },
       "recoveryKey": {
         "title": "Ledger Recovery Key",
-        "description": "Carte à puce protégée par code PIN"
+        "description": "Carte à puce protégée par code PIN",
+        "incompatible": "Non compatible avec votre appareil"
       },
       "secretRecoveryPhrase": {
         "title": "Sauvegardes en métal",
@@ -9405,7 +9516,6 @@
       "title": "Découvrez les contacts",
       "description": "Votre répertoire crypto : enregistrez les wallets vers lesquels vous transférez des actifs, en un seul endroit.",
       "primaryAction": "Explorer",
-      "secondaryAction": "Plus tard",
       "highlights": {
         "saveAddresses": {
           "title": "Enregistrez vos adresses",
@@ -9489,8 +9599,7 @@
   "deviceIntentExecutor": {
     "genericStates": {
       "retryableDeviceLocked": {
-        "title": "Appareil verrouillé",
-        "description": "Veuillez déverrouiller votre appareil pour continuer."
+        "title": "Déverrouillez votre appareil Ledger, puis sélectionnez Réessayer ci-dessous"
       },
       "unlockDevice": {
         "title": "Déverrouillez votre {{productName}}"
@@ -9502,16 +9611,16 @@
     },
     "errors": {
       "connectionError": {
-        "title": "Appareil déconnecté",
-        "description": "Votre appareil Ledger n’est plus connecté. Assurez-vous qu’il est allumé et branché."
+        "title": "Appareil Ledger déconnecté",
+        "description": "Assurez-vous qu’il est allumé et branché."
       },
       "intentError": {
         "title": "Erreur inconnue",
-        "description": "Une erreur est survenue. Veuillez réessayer. Si le problème persiste, contactez l’Assistance Ledger."
+        "description": "Réessayez ou contactez l’Assistance Ledger si le problème persiste."
       },
       "invalidOperation": {
-        "title": "État invalide",
-        "description": "Une erreur est survenue. Veuillez réessayer. Si le problème persiste, contactez l’Assistance Ledger."
+        "title": "Une erreur est survenue",
+        "description": "Réessayez ou contactez l’Assistance Ledger si le problème persiste."
       }
     },
     "initialization": {
@@ -9527,43 +9636,43 @@
       },
       "retryable": {
         "userRefused": {
-          "title": "Action rejetée sur l’appareil"
+          "title": "Opération rejetée sur votre appareil Ledger"
         },
         "deviceBusy": {
-          "title": "Action en attente sur votre appareil Ledger",
-          "description": "Terminez-la et sélectionnez Réessayer."
+          "title": "Action requise sur votre appareil Ledger",
+          "description": "Veuillez terminer l’action sur votre appareil, puis sélectionner Réessayer ci-dessous."
         }
       },
       "blocking": {
         "deviceNotOnboarded": {
-          "title": "Votre Ledger n’est pas encore prêt à être utilisé.",
-          "description": "Vous devez d’abord configurer votre {{productName}}. Nous vous guiderons à chaque étape."
+          "title": "Votre appareil Ledger doit être configuré",
+          "description": "Configurez-le pour continuer."
         },
         "unsupportedFirmwareVersion": {
           "title": "Mise à jour de Ledger OS requise"
         },
         "unsupportedApplication": {
           "title": "Fonctionnalité non prise en charge",
-          "description": "L’app requise pour cette opération n’est actuellement pas disponible pour votre appareil Ledger. Veuillez contacter l’Assistance Ledger pour en savoir plus."
+          "description": "L’app requise pour cette action n’est pas prise en charge par votre appareil Ledger. Veuillez contacter l’Assistance Ledger pour en savoir plus."
         },
         "unsupportedFeature": {
           "title": "Fonctionnalité non prise en charge",
-          "description": "L’app requise pour cette opération n’est actuellement pas disponible pour votre appareil Ledger. Veuillez contacter l’Assistance Ledger pour en savoir plus."
+          "description": "L’app requise pour cette action n’est pas prise en charge par votre appareil Ledger. Veuillez contacter l’Assistance Ledger pour en savoir plus."
         },
         "wrongDeviceForAccount": {
-          "title": "Mauvaise phrase de récupération",
-          "description": "Cet appareil Ledger n’est pas configuré avec la phrase de récupération associée au compte sélectionné. Vérifiez que vous utilisez le bon appareil."
+          "title": "Utilisez l’appareil Ledger avec lequel vous avez initialement configuré ce compte",
+          "description": "Cet appareil Ledger n’est pas configuré avec la phrase de récupération secrète associée au compte crypto sélectionné."
         },
         "deviceOutOfStorageSpace": {
-          "title": "Mémoire de l’appareil insuffisante",
-          "description": "La mémoire de votre appareil est insuffisante. Veuillez désinstaller des apps, puis réessayer.",
+          "title": "Désinstallez des apps pour libérer de la mémoire sur votre appareil Ledger",
+          "description": "La mémoire de votre appareil est insuffisante.",
           "apps": "Apps : {{appNames}}"
         }
       },
       "cta": {
         "openMyLedger": "Ouvrir My Ledger",
         "goToMyLedger": "Accéder à My Ledger",
-        "setupDevice": "Configurer un appareil",
+        "setupDevice": "Configurer mon appareil",
         "updateLedgerOs": "Mettre à jour Ledger OS",
         "cancelOperation": "Annuler",
         "contactLedgerSupport": "Contacter l’Assistance Ledger"
@@ -9580,7 +9689,7 @@
           "title": "Chargement"
         },
         "connecting": {
-          "title": "Chargement"
+          "title": "Connexion à votre appareil Ledger"
         },
         "connectionError": {
           "errors": {
@@ -9612,7 +9721,7 @@
         },
         "noKnownDevice": {
           "title": "Appareil Ledger requis",
-          "description": "Pour continuer, configurez ou connectez votre appareil.",
+          "description": "Pour continuer, configurez ou connectez votre appareil Ledger.",
           "connectLedgerDevice": "Connecter un appareil Ledger",
           "noLedgerDevice": "Je n’ai pas d’appareil Ledger"
         },
@@ -9677,5 +9786,30 @@
       }
     },
     "disclaimer": "Ces données sont fournies à titre indicatif uniquement et ne constituent pas un conseil financier. Ne pas utiliser à des fins fiscales."
+  },
+  "internetComputer": {
+    "memoField": {
+      "increaseStake": "Cette transaction va augmenter le montant en staking d’un neurone existant. Saisissez le montant à staker dans le champ ci-dessus.",
+      "createNeuron": "Cette transaction va créer un neurone avec les ICP stakés. Saisissez le montant à staker dans le champ ci-dessus.",
+      "tooltip": "Internet Computer l’utilise pour identifier la transaction de staking d’ICP dans le neurone."
+    },
+    "stakeBanner": {
+      "stakeICP": {
+        "title": "Stakez vos ICP",
+        "description": "Stakez des ICP et recevez des récompenses en participant à la gouvernance du réseau.",
+        "cta": "Staker mes ICP"
+      }
+    },
+    "headerManageActions": {
+      "manageNeurons": {
+        "title": "Gérez vos neurones"
+      }
+    },
+    "summaryFooter": {
+      "stakedBalance": "Solde de staking",
+      "stakedBalanceTooltip": "Montant total des tokens ICP actuellement stakés dans des neurones. Les ICP mis en staking génèrent des récompenses de vote et permettent de participer à la gouvernance du réseau.",
+      "totalMaturity": "Maturité totale",
+      "totalMaturityTooltip": "Le total des récompenses générées par le staking, incluant à la fois les récompenses (\"maturity\") stakées et liquides. Vous pouvez soit restaker ces récompenses, soit les récupérer sous forme d’ICP liquides."
+    }
   }
 }
