@@ -8,5 +8,5 @@ export function isLargeScreenUpsellBannerEnabled(
   feature: Features["largeScreenUpsell"] | null | undefined,
   placement: LargeScreenUpsellBannerPlacement,
 ): boolean {
-  return Boolean(feature?.enabled && feature?.params?.banners?.[placement]);
+  return Boolean(feature?.enabled && (feature.params?.banners?.[placement] ?? true));
 }
