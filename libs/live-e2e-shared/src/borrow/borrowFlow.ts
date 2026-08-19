@@ -249,10 +249,11 @@ export async function runBorrow(options: BorrowFlowOptions): Promise<string | vo
       device = await startSpeculos(`borrow-${options.flow}`, spec);
       if (!device) throw new Error("Speculos not started");
       apiPort = device.port;
-      setEnv("SPECULOS_API_PORT", device.port);
-      process.env.SPECULOS_API_PORT = String(device.port);
     }
     if (apiPort === undefined) throw new Error("Speculos API port unavailable");
+    // The shared device helpers resolve the device from this env, not from a parameter.
+    setEnv("SPECULOS_API_PORT", apiPort);
+    process.env.SPECULOS_API_PORT = String(apiPort);
 
     const transport = await DeviceManagementKitTransportSpeculos.open({ apiPort: String(apiPort) });
     const executor = new EvmSpeculosExecutor(transport, {

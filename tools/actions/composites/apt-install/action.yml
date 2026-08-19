@@ -1,0 +1,31 @@
+name: "Install apt packages"
+description: "Install Debian/Ubuntu packages, skipping the network entirely when they are already present, with mirror rotation and bounded waits when they are not"
+inputs:
+  packages:
+    description: "Space-separated list of apt packages to install"
+    required: true
+  mirrors:
+    description: "Comma-separated Ubuntu mirror base URLs to rotate through on retry, in order. Overrides the defaults."
+    required: false
+    default: ""
+  max_attempts:
+    description: "Maximum number of attempts. Attempt 1 uses the runner's own apt configuration; later attempts rotate through the mirror list."
+    required: false
+    default: "4"
+  timeout:
+    description: "Per-command timeout in seconds for apt-get update and apt-get install (0 disables)"
+    required: false
+    default: "60"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install apt packages
+      if: runner.os == 'Linux'
+      shell: bash
+      run: ${{ github.action_path }}/apt-install.sh
+      env:
+        INPUTS_PACKAGES: ${{ inputs.packages }}
+        INPUTS_MIRRORS: ${{ inputs.mirrors }}
+        INPUTS_MAX_ATTEMPTS: ${{ inputs.max_attempts }}
+        INPUTS_TIMEOUT: ${{ inputs.timeout }}

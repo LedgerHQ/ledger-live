@@ -17,8 +17,9 @@ describe.skip("getBalance", () => {
       node: {
         url: getJsonRpcFullnodeUrl("testnet"),
         graphqlUrl: "https://graphql.testnet.sui.io/graphql",
+        grpcUrl: getJsonRpcFullnodeUrl("testnet"),
       },
-      features: { graphql: false },
+      features: { transport: "json" },
     }));
   });
 

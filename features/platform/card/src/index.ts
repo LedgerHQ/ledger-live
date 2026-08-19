@@ -1,1 +1,1 @@
-export * from "./session/cardSession";
+export * from "./session/cardSession.web";

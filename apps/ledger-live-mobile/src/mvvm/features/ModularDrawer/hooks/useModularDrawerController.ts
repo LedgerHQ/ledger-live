@@ -38,6 +38,7 @@ export const useModularDrawerController = () => {
     useCase,
     uiUseCase,
     areCurrenciesFiltered,
+    selectableNetworkIds,
   } = useSelector(
     (state: State) => ({
       isOpen: state.modularDrawer.isOpen,
@@ -51,6 +52,7 @@ export const useModularDrawerController = () => {
       useCase: state.modularDrawer.useCase,
       uiUseCase: state.modularDrawer.uiUseCase,
       areCurrenciesFiltered: state.modularDrawer.areCurrenciesFiltered,
+      selectableNetworkIds: state.modularDrawer.selectableNetworkIds,
     }),
     shallowEqual,
   );
@@ -144,6 +146,7 @@ export const useModularDrawerController = () => {
     useCase,
     uiUseCase,
     areCurrenciesFiltered,
+    selectableNetworkIds,
     openDrawer,
     closeDrawer,
     handleAccountSelected,

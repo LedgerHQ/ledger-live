@@ -41,3 +41,27 @@ export class SomeSuiForUnstake extends Error {
     if (fields) Object.assign(this, fields);
   }
 }
+
+/*
+ * The staking position a partial unstake refers to is absent from the account's synced stakes, so
+ * its principal — and therefore the legality of the split — cannot be established locally.
+ */
+export class SuiStakeNotFound extends Error {
+  override name = "SuiStakeNotFound";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "SuiStakeNotFound");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+/*
+ * A partial unstake asks for more than the staking position holds. `staking_pool::split` asserts
+ * `split_amount <= principal` (`EInsufficientSuiTokenBalance`), so the chain aborts the withdrawal.
+ */
+export class SuiUnstakeExceedsStake extends Error {
+  override name = "SuiUnstakeExceedsStake";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "SuiUnstakeExceedsStake");
+    if (fields) Object.assign(this, fields);
+  }
+}

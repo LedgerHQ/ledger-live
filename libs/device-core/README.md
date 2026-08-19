@@ -25,4 +25,5 @@
 
 ## Usage context
 
-Used by `apps/ledger-live-desktop` and `apps/ledger-live-mobile`, and by `@ledgerhq/device-intent` for higher-level device interaction flows. Also consumed by `@ledgerhq/live-common` for device-dependent operations.
+Used by `apps/ledger-live-desktop`, `apps/ledger-live-mobile`, and
+`@ledgerhq/live-common` for device-dependent operations.

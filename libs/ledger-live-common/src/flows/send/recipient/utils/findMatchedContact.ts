@@ -2,7 +2,7 @@ import type { MatchedContact } from "../types";
 import { addressesMatch } from "./addressesMatch";
 import { resolveRecipientNetworkId } from "./resolveRecipientNetworkId";
 
-type Contact = Readonly<{
+export type Contact = Readonly<{
   id: string;
   isMe: boolean;
   name: string;

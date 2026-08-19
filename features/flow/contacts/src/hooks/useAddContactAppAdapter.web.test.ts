@@ -97,7 +97,7 @@ describe("useAddContactAppAdapter", () => {
 
     act(() => {
       result.current.onOpen();
-      result.current.onDraftNameChange("Ada1");
+      result.current.onDraftNameChange("Ada@1");
     });
 
     await act(async () => {
@@ -146,7 +146,7 @@ describe("useAddContactAppAdapter", () => {
 
     act(() => {
       result.current.onOpen();
-      result.current.onDraftNameChange("Ada1");
+      result.current.onDraftNameChange("Ada@1");
     });
 
     expect(analytics.trackEvent).toHaveBeenCalledWith(CONTACTS_TRACK_EVENTS.ERROR_DISPLAYED, {
@@ -156,7 +156,7 @@ describe("useAddContactAppAdapter", () => {
     });
 
     act(() => {
-      result.current.onDraftNameChange("Ada1!");
+      result.current.onDraftNameChange("Ada@1!");
     });
 
     expect(analytics.trackEvent).toHaveBeenCalledTimes(2);
@@ -167,7 +167,7 @@ describe("useAddContactAppAdapter", () => {
 
     act(() => {
       result.current.onOpen();
-      result.current.onDraftNameChange("Ada1");
+      result.current.onDraftNameChange("Ada@1");
     });
 
     act(() => {
@@ -175,7 +175,7 @@ describe("useAddContactAppAdapter", () => {
     });
 
     act(() => {
-      result.current.onDraftNameChange("Ada1");
+      result.current.onDraftNameChange("Ada@1");
     });
 
     expect(analytics.trackEvent).toHaveBeenCalledTimes(3);

@@ -1,8 +1,6 @@
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
-import { log } from "@ledgerhq/logs";
 import { findCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
-import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type {
   Account,
   AccountLike,
@@ -21,8 +19,6 @@ import {
   encodeTokenAccountId,
 } from "@ledgerhq/ledger-wallet-framework/account/accountId";
 import { decodeOperationId, encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
-import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
-import { promiseAllBatched } from "@ledgerhq/coin-module-framework/promises";
 import aleoConfig from "../config";
 import {
   BALANCED_PRIVATE_RECORDS_PER_TRANSACTION,
@@ -37,9 +33,7 @@ import {
   TRANSACTION_TYPE,
 } from "../constants";
 import type {
-  AleoOperation,
   AleoTransactionType,
-  EnrichedPrivateRecord,
   OperationDetailsExtraField,
   Transaction,
   TransactionType,
@@ -190,11 +184,11 @@ export const determineTransactionType = (
   return "public";
 };
 
-function resolveTransactionAmount(rawTx: AleoPublicTransaction): BigNumber {
+export function resolveTransactionAmount(rawTx: AleoPublicTransaction): BigNumber {
   return new BigNumber(rawTx.amount_u128 ?? rawTx.amount);
 }
 
-function parseTransactionFields(rawTx: AleoPublicTransaction, address: string) {
+export function parseTransactionFields(rawTx: AleoPublicTransaction, address: string) {
   const date = new Date(Number(rawTx.block_timestamp) * 1000);
   const hasFailed = rawTx.transaction_status !== "Accepted";
   let type: OperationType = "NONE";
@@ -240,77 +234,6 @@ export const toCoinFrameworkOperation = (
         time: date,
       },
       failed: hasFailed ?? false,
-    },
-  };
-};
-
-export const toBridgeOperation = (
-  ledgerAccountId: string,
-  rawTx: AleoPublicTransaction,
-  address: string,
-  isTokenTx?: boolean,
-): AleoOperation => {
-  const value = resolveTransactionAmount(rawTx);
-  const { type, fee, blockHash, transactionType, date, hasFailed } = parseTransactionFields(
-    rawTx,
-    address,
-  );
-
-  if (value.isNaN() || value.isNegative()) {
-    log("aleo/toBridgeOperation", `Invalid raw transaction details for ${address}`, rawTx);
-  }
-
-  if (value.isZero() && rawTx.function_id.includes("transfer")) {
-    log("aleo/toBridgeOperation", `Zero value transaction for ${address}`, rawTx);
-  }
-
-  return {
-    id: encodeOperationId(ledgerAccountId, rawTx.transaction_id, type),
-    recipients: [rawTx.recipient_address],
-    senders: [rawTx.sender_address],
-    value,
-    type,
-    hasFailed,
-    hash: rawTx.transaction_id,
-    fee: new BigNumber(fee),
-    blockHeight: rawTx.block_number,
-    blockHash,
-    accountId: ledgerAccountId,
-    date,
-    extra: {
-      functionId: rawTx.function_id,
-      transactionType,
-      ...(isTokenTx && { programId: rawTx.program_id }),
-    },
-  };
-};
-
-export const toPrivateBridgeOperation = (
-  ledgerAccountId: string,
-  enrichedRecord: EnrichedPrivateRecord,
-  address: string,
-): AleoOperation => {
-  const transactionId = enrichedRecord.rawRecord.transaction_id.trim();
-  const blockHeight = enrichedRecord.rawRecord.block_height;
-  const timestamp = new Date(Number(enrichedRecord.rawRecord.block_timestamp) * 1000);
-  const type: OperationType = enrichedRecord.recipient === address ? "IN" : "OUT";
-
-  return {
-    id: encodeOperationId(ledgerAccountId, transactionId, type),
-    senders: [enrichedRecord.sender],
-    recipients: [enrichedRecord.recipient],
-    value: enrichedRecord.value,
-    type,
-    hasFailed: false,
-    hash: transactionId,
-    fee: new BigNumber(enrichedRecord.details.fee_value),
-    blockHeight,
-    blockHash: enrichedRecord.details.block_hash,
-    accountId: ledgerAccountId,
-    date: timestamp,
-    extra: {
-      functionId: enrichedRecord.rawRecord.function_name,
-      transactionType: "private",
     },
   };
 };
@@ -1196,31 +1119,6 @@ export const getEstimatedSigningTime = (
   const minutes = flooredSeconds / 60;
   return `~${minutes} ${minuteShort}`;
 };
-
-/** CAL lookup by Aleo program name (contract address). Missing programs are omitted. */
-export async function getCalTokens({
-  currencyId,
-  programNames,
-}: {
-  currencyId: string;
-  programNames: string[];
-}): Promise<Map<string, TokenCurrency>> {
-  const calTokens = new Map<string, TokenCurrency>();
-  const uniqueProgramNames = [...new Set(programNames)];
-
-  await promiseAllBatched(4, uniqueProgramNames, async programName => {
-    const token = await getCryptoAssetsStore().findTokenByAddressInCurrency(
-      programName,
-      currencyId,
-    );
-
-    if (token) {
-      calTokens.set(programName, token);
-    }
-  });
-
-  return calTokens;
-}
 
 /** Narrows any cross-family transaction shape down to Aleo's own `Transaction` type. */
 export function isAleoTransaction(tx: { family: string }): tx is Transaction {

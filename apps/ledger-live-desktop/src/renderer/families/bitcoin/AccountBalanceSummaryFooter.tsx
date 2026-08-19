@@ -61,18 +61,17 @@ const WarningWrapper = styled(Box).attrs(() => ({
   mt: 3,
 }))``;
 
-const WarningText = styled(Text).attrs(() => ({
-  fontSize: 3,
-  ff: "Inter|Medium",
-  color: "warning.c70",
-  ml: 2,
-}))``;
-
 const BalanceDetail = styled(Box).attrs(() => ({
   flex: "0 0 auto",
   alignItems: "start",
   paddingRight: 50,
 }))``;
+
+const TooltipWrapper = styled(Box)`
+  display: flex;
+  flex-direction: column;
+  gap: ${p => p.theme.space[1]}px;
+`;
 
 export const TitleWrapper = styled(Box).attrs(() => ({
   horizontal: true,
@@ -97,11 +96,11 @@ const AmountValue = styled(Text).attrs(() => ({
   ${p => p.paddingRight && `padding-right: ${p.paddingRight}px`};
 `;
 
-const MaturingAmount = styled(Text).attrs(() => ({
-  fontSize: 2,
-  ff: "Inter|Regular",
-  color: "neutral.c70",
-  mt: 1,
+const WarningBannerText = styled(Text).attrs(() => ({
+  fontSize: 3,
+  ff: "Inter|Medium",
+  color: "warning.c70",
+  ml: 2,
 }))``;
 
 const ActionButton = ({
@@ -369,7 +368,18 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
           </AmountValue>
         </BalanceDetail>
         <BalanceDetail>
-          <ToolTip content={<Trans i18nKey="zcash.account.privateBalanceTooltip" />}>
+          <ToolTip
+            content={
+              <TooltipWrapper>
+                <div>
+                  <Trans i18nKey="zcash.account.privateBalanceTooltip" />
+                </div>
+                <div>
+                  <Trans i18nKey="zcash.account.privateBalanceWarning" />
+                </div>
+              </TooltipWrapper>
+            }
+          >
             <TitleWrapper>
               <Title>
                 <Trans i18nKey="zcash.account.privateBalance" />
@@ -380,16 +390,6 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
           <AmountValue>
             <Discreet>{privateBalanceLabel}</Discreet>
           </AmountValue>
-          {hasMaturingFunds ? (
-            <MaturingAmount data-testid="zcash-private-maturing-amount">
-              <Discreet>
-                <Trans
-                  i18nKey="zcash.account.privateBalanceMaturing"
-                  values={{ spendable: spendableBalanceLabel, maturing: maturingAmountLabel }}
-                />
-              </Discreet>
-            </MaturingAmount>
-          ) : null}
         </BalanceDetail>
         <BalanceDetail>
           <div
@@ -408,12 +408,20 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
         </BalanceDetail>
       </Wrapper>
       <Separator />
-      <WarningWrapper>
-        <TriangleWarning size={16} />
-        <WarningText>
-          <Trans i18nKey="zcash.account.privateBalanceWarning" />
-        </WarningText>
-      </WarningWrapper>
+
+      {hasMaturingFunds ? (
+        <WarningWrapper>
+          <TriangleWarning size={16} />
+          <WarningBannerText data-testid="zcash-private-maturing-amount">
+            <Discreet>
+              <Trans
+                i18nKey="zcash.account.privateBalanceMaturing"
+                values={{ spendable: spendableBalanceLabel, maturing: maturingAmountLabel }}
+              />
+            </Discreet>
+          </WarningBannerText>
+        </WarningWrapper>
+      ) : null}
     </Container>
   );
 };

@@ -44,6 +44,7 @@ module.exports = {
         "src/mvvm/components/DeviceIntentExecutor/DeviceContextInitializerComponentLWM/DeviceContextInitializerComponentLWMView.tsx",
         "**/*Mock*",
         "__tests__/**/*",
+        "src/**/__integrations__/**/*",
         "e2e/**/*",
       ],
       rules: { "i18next/no-literal-string": "off" },

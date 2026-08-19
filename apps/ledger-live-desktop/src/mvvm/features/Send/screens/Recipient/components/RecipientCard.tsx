@@ -1,3 +1,5 @@
+import { ContactIdSchema } from "@domain/entity-contact";
+import { ContactAvatar } from "@features/platform-contacts/web";
 import type { MatchedContact } from "@ledgerhq/live-common/flows/send/recipient/types";
 import {
   Button,
@@ -28,16 +30,6 @@ type RecipientCardProps = Readonly<{
   onSend: () => void;
   onAddContact: () => void;
 }>;
-
-function getContactInitials(name: string): string {
-  return name
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map(part => part[0])
-    .join("")
-    .toUpperCase();
-}
 
 export function RecipientCard({
   recipient,
@@ -70,12 +62,13 @@ export function RecipientCard({
       <CardHeader className={showActions ? undefined : "pb-16"}>
         <CardLeading>
           {contact ? (
-            <div
-              className="body-1-semi-bold flex size-48 shrink-0 items-center justify-center rounded-full bg-accent text-on-accent"
-              aria-hidden
-            >
-              {getContactInitials(contact.contactName)}
-            </div>
+            <ContactAvatar
+              contactId={ContactIdSchema.parse(contact.contactId)}
+              name={contact.contactName}
+              size="md"
+              ariaHidden
+              testId="send-recipient-card-avatar"
+            />
           ) : (
             <Spot appearance="icon" icon={Wallet} />
           )}

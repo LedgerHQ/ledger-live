@@ -1,4 +1,7 @@
-import type { DeviceConnectionParams, DeviceConnectionResult } from "@ledgerhq/device-intent";
+import type {
+  DeviceConnectionParams,
+  DeviceConnectionResult,
+} from "@features/platform-device-intent";
 import {
   connectDevice,
   ConnectDeviceUIStateTypes,
@@ -138,7 +141,6 @@ function makeConnectionResult(
   return {
     compatDeviceId: "device-id",
     compatDeviceName: "Ledger Nano X",
-    compatDeviceModelId: DeviceModelId.nanoX,
     compatDeviceWired: true,
     dmk: mockDmk,
     sessionId: "session-id",
@@ -183,7 +185,7 @@ describe("useDeviceConnectionComponentLWDViewModel", () => {
 
   it("GIVEN accepted device model ids WHEN rendering the view model THEN it passes them to connect device", () => {
     // GIVEN
-    const acceptedDeviceModelIds = [DeviceModelId.stax];
+    const acceptedDeviceModelIds = [ledgerToDmkDeviceIdMap[DeviceModelId.stax]];
 
     // WHEN
     renderViewModel({
@@ -193,7 +195,7 @@ describe("useDeviceConnectionComponentLWDViewModel", () => {
     // THEN
     expect(mockedConnectDevice).toHaveBeenCalledWith(
       expect.objectContaining({
-        acceptedDeviceModelIds,
+        acceptedDeviceModelIds: [DeviceModelId.stax],
       }),
     );
   });
@@ -287,6 +289,27 @@ describe("useDeviceConnectionComponentLWDViewModel", () => {
 
     // THEN
     expect(mockUnsubscribe).toHaveBeenCalledTimes(1);
+  });
+
+  it("GIVEN a connection flow WHEN known devices change THEN it keeps the existing subscription", () => {
+    // GIVEN
+    const { store } = renderViewModel();
+
+    // WHEN
+    act(() => {
+      store.dispatch({
+        type: "ADD_DEVICE",
+        payload: {
+          deviceId: "",
+          modelId: DeviceModelId.nanoX,
+          wired: true,
+        },
+      });
+    });
+
+    // THEN
+    expect(mockedConnectDevice).toHaveBeenCalledTimes(1);
+    expect(mockUnsubscribe).not.toHaveBeenCalled();
   });
 
   it("GIVEN connect device reports a connection WHEN handling the result THEN it updates desktop device state and notifies the executor", () => {

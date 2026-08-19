@@ -5,7 +5,7 @@ import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAs
 import { isAddressSanctioned } from "@ledgerhq/ledger-wallet-framework/sanction/index";
 import { getAccountBridgeByFamily } from "@ledgerhq/live-common/bridge/index";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
-import { createContactsAddressValidationDependencies } from "@features/flow-contacts";
+import { createContactsAddressValidationDependencies } from "@features/flow-contacts-add-address";
 
 export const contactsAddressValidationDependencies = createContactsAddressValidationDependencies({
   findTokenById: currencyId => getCryptoAssetsStore().findTokenById(currencyId),

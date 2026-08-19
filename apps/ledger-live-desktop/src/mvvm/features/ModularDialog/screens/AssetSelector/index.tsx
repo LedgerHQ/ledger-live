@@ -22,6 +22,7 @@ export type AssetSelectorProps = {
   errorInfo?: ErrorInfo;
   refetch?: () => void;
   assetsSorted?: AssetData[];
+  disabledAssetIds?: ReadonlySet<string>;
 };
 
 const AssetSelector = ({
@@ -34,6 +35,7 @@ const AssetSelector = ({
   errorInfo,
   refetch,
   assetsSorted,
+  disabledAssetIds,
 }: Readonly<AssetSelectorProps>) => {
   const searchedValue = useSelector(modularDialogSearchedSelector);
 
@@ -74,6 +76,7 @@ const AssetSelector = ({
           onScrolledToTop={() => setShouldScrollToTop(false)}
           loadNext={loadNext}
           assetsSorted={assetsSorted}
+          disabledAssetIds={disabledAssetIds}
         />
       )}
     </>

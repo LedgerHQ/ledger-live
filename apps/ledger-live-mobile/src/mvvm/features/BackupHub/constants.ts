@@ -2,6 +2,9 @@ import type { BackupBucket } from "./types";
 
 export const BACKUP_HUB_TRACKING_PAGE_NAME = "Backup hub";
 
+export const BACKUP_HUB_UPSELL_FALLBACK_LINK =
+  "https://shop.ledger.com/pages/ledger-nano-upgrade-program";
+
 export const BACKUP_HUB_TRACKING_BUTTON = {
   recover: "Ledger Recover",
   recoveryKey: "Ledger Recovery Key",

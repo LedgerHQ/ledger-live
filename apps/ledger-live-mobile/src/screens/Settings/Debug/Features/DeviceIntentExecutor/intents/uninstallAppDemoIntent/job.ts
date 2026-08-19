@@ -10,7 +10,7 @@ import {
   takeWhile,
 } from "rxjs/operators";
 import { DeviceActionStatus, UninstallAppDeviceAction } from "@ledgerhq/device-management-kit";
-import type { DeviceConnectionResult, Job } from "@ledgerhq/device-intent";
+import type { DeviceConnectionResult, Job } from "@features/platform-device-intent";
 import type { UninstallAppDemoIntentInput, UninstallAppDemoIntentJobState } from "./types";
 
 const TERMINAL_DELAY_MS = 3000;

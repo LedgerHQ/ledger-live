@@ -70,9 +70,7 @@ describe("IntentError", () => {
     expect(screen.getByTestId("device-intent-executor-intent-error")).toBeVisible();
     expect(screen.getByText("Unknown error")).toBeVisible();
     expect(
-      screen.getByText(
-        "An error occurred. Please try again or contact Ledger support if the issue persists.",
-      ),
+      screen.getByText("Try again or contact Ledger support if the issue continues."),
     ).toBeVisible();
   });
 

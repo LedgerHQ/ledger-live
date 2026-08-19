@@ -7,6 +7,7 @@ const noop = () => {};
 export function usePayTabActionTiles(
   onTrackEvent: ActionTilesProps["onTrackEvent"],
   onDeposit: () => void,
+  onRequest: () => void,
 ): ActionTilesProps {
   const { t } = useTranslation();
 
@@ -22,7 +23,7 @@ export function usePayTabActionTiles(
         {
           id: "request",
           label: t("payTab.actions.request"),
-          onPress: noop,
+          onPress: onRequest,
           appearance: "transparent",
         },
         { id: "pay", label: t("payTab.actions.pay"), onPress: noop, appearance: "transparent" },
@@ -30,6 +31,6 @@ export function usePayTabActionTiles(
       page: "Pay",
       onTrackEvent,
     }),
-    [t, onTrackEvent, onDeposit],
+    [t, onTrackEvent, onDeposit, onRequest],
   );
 }

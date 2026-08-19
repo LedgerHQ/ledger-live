@@ -1,7 +1,7 @@
 import { Balance } from "@ledgerhq/coin-module-framework/api/index";
 import BigNumber from "bignumber.js";
 import type { TronCoinConfig } from "../config";
-import { fetchTronAccount } from "../network";
+import { fetchTronAccountOrFail } from "../network";
 import type { AccountTronAPI } from "../network/types";
 import { getTronResources } from "./utils";
 
@@ -9,7 +9,7 @@ const bigIntOrZero = (val: number | BigNumber | undefined | null): bigint =>
   BigInt(val?.toString() ?? 0);
 
 export async function getBalance(config: TronCoinConfig, address: string): Promise<Balance[]> {
-  const accounts = await fetchTronAccount(config, address);
+  const accounts = await fetchTronAccountOrFail(config, address);
 
   // if account is not activated, an empty balance is returned
   if (accounts.length === 0) return [{ value: BigInt(0), asset: { type: "native" } }];

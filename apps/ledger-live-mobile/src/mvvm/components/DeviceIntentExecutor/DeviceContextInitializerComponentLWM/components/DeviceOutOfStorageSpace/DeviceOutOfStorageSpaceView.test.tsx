@@ -15,12 +15,8 @@ describe("DeviceOutOfStorageSpaceView", () => {
   it("should render the out of storage copy and primary cta", () => {
     renderView();
 
-    expect(screen.getByText("Not enough device memory")).toBeVisible();
-    expect(
-      screen.getByText(
-        "Your device doesn’t have enough memory. Please uninstall apps and try again.",
-      ),
-    ).toBeVisible();
+    expect(screen.getByText("Uninstall some apps to free up Ledger device memory")).toBeVisible();
+    expect(screen.getByText("Your device doesn’t have enough memory.")).toBeVisible();
     expect(screen.getByText("Go to My Ledger")).toBeVisible();
   });
 

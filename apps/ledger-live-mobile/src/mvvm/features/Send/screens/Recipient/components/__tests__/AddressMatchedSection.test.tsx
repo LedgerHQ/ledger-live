@@ -1,7 +1,8 @@
 import type { AddressSearchResult } from "@ledgerhq/live-common/flows/send/recipient/types";
 import React from "react";
-import { render, screen } from "@testing-library/react-native";
+import { fireEvent, render, screen } from "@testing-library/react-native";
 import { AddressMatchedSection } from "../AddressMatchedSection";
+import { useAddressMatchedSectionViewModel } from "../../hooks/useAddressMatchedSectionViewModel";
 
 jest.mock("@features/platform-feature-flags", () => ({
   useFeature: () => ({ enabled: false }),
@@ -18,9 +19,18 @@ jest.mock("~/context/hooks", () => ({
   useSelector: () => "en",
 }));
 
+jest.mock("@features/platform-contacts/native", () => ({
+  ContactAvatar: ({ name, testID }: { name: string; testID?: string }) => {
+    const RN = jest.requireActual<typeof import("react-native")>("react-native");
+    return <RN.Text testID={testID}>{name}</RN.Text>;
+  },
+}));
+
 jest.mock("@ledgerhq/lumen-ui-rnative", () => {
   const RN = jest.requireActual<typeof import("react-native")>("react-native");
-  const Container = ({ children }: { children: React.ReactNode }) => <RN.View>{children}</RN.View>;
+  const Container = ({ children, testID }: { children?: React.ReactNode; testID?: string }) => (
+    <RN.View testID={testID}>{children}</RN.View>
+  );
   const Label = ({ children }: { children: React.ReactNode }) => <RN.Text>{children}</RN.Text>;
 
   return {
@@ -29,11 +39,27 @@ jest.mock("@ledgerhq/lumen-ui-rnative", () => {
     BottomSheetHeader: () => null,
     BottomSheetView: Container,
     Box: Container,
-    Button: ({ children, onPress }: { children: React.ReactNode; onPress: () => void }) => (
-      <RN.Pressable onPress={onPress}>
+    Button: ({
+      children,
+      onPress,
+      testID,
+      disabled,
+    }: {
+      children: React.ReactNode;
+      onPress?: () => void;
+      testID?: string;
+      disabled?: boolean;
+    }) => (
+      <RN.Pressable onPress={onPress} testID={testID} disabled={disabled}>
         <RN.Text>{children}</RN.Text>
       </RN.Pressable>
     ),
+    Card: Container,
+    CardContent: Container,
+    CardContentDescription: Label,
+    CardContentTitle: Label,
+    CardHeader: Container,
+    CardLeading: Container,
     ListItem: ({
       children,
       onPress,
@@ -87,17 +113,75 @@ const searchResult: AddressSearchResult = {
   hasBridgeValidationResult: true,
 };
 
+function AddressMatchedSectionContainer({
+  result,
+  isContactsFeatureEnabled = false,
+  onSelect = jest.fn(),
+}: Readonly<{
+  result: AddressSearchResult;
+  isContactsFeatureEnabled?: boolean;
+  onSelect?: (address: string, ensName?: string) => void;
+}>) {
+  const viewModel = useAddressMatchedSectionViewModel({
+    searchResult: result,
+    searchValue: address,
+    onSelect,
+    isAddressComplete: true,
+    isContactsFeatureEnabled,
+  });
+
+  return <AddressMatchedSection viewModel={viewModel} />;
+}
+
 describe("AddressMatchedSection", () => {
   it("shows a valid unmatched address selected by the shared presentation", () => {
+    render(<AddressMatchedSectionContainer result={searchResult} />);
+
+    expect(screen.getByTestId("new-send-flow-address-confirm")).toBeVisible();
+  });
+
+  it("shows the recipient card with contact avatar when contacts are enabled", () => {
+    const onSelect = jest.fn();
     render(
-      <AddressMatchedSection
-        searchResult={searchResult}
-        searchValue={address}
-        onSelect={jest.fn()}
-        isAddressComplete
+      <AddressMatchedSectionContainer
+        result={{
+          ...searchResult,
+          status: "ens_resolved",
+          resolvedAddress: address,
+          ensName: "vitalik.eth",
+          matchedContact: {
+            contactId: "contact-remi",
+            contactName: "Remi",
+            addressId: "address-remi-ethereum",
+            addressLabel: "Ethereum Network",
+            address,
+          },
+        }}
+        isContactsFeatureEnabled
+        onSelect={onSelect}
       />,
     );
 
-    expect(screen.getByTestId("new-send-flow-address-confirm")).toBeVisible();
+    expect(screen.getByTestId("send-recipient-card")).toBeVisible();
+    expect(screen.getByTestId("send-recipient-card-avatar")).toHaveTextContent("Remi");
+
+    fireEvent.press(screen.getByTestId("send-recipient-card-send"));
+    expect(onSelect).toHaveBeenCalledWith(address, "vitalik.eth");
+  });
+
+  it("keeps add contact enabled as a no-op on the recipient card", () => {
+    render(
+      <AddressMatchedSectionContainer
+        result={{
+          ...searchResult,
+          status: "valid",
+          resolvedAddress: address,
+        }}
+        isContactsFeatureEnabled
+      />,
+    );
+
+    expect(screen.getByTestId("send-recipient-card-add-contact")).toBeEnabled();
+    expect(screen.getByTestId("send-recipient-card-send")).toBeEnabled();
   });
 });

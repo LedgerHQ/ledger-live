@@ -131,10 +131,6 @@ features/flow/pay-card-deposit/                          @ledgerhq/wallet-xp
 features/flow/pay-card-feature-tour/                     @ledgerhq/wallet-xp
 features/flow/pay-card-request/                          @ledgerhq/wallet-xp
 
-features/platform/card/                                  @ledgerhq/wallet-xp
-domain/api/card-management/                              @ledgerhq/wallet-xp
-/shared/api-services/src/services/card/                  @ledgerhq/wallet-xp
-
 # Wallet — shared UI
 /shared/ui-queued-bottom-sheet/                          @ledgerhq/wallet-xp
 

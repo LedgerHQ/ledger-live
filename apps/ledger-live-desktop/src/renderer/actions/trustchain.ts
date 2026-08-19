@@ -5,5 +5,7 @@ import { ThunkResult } from "./types";
 export const fetchTrustchain =
   (): ThunkResult<Promise<void>> => async (dispatch, _getState, _extra) => {
     const data = await getKey("app", "trustchain");
+    const dataIsEncrypted = typeof data === "string";
+    if (dataIsEncrypted) return;
     dispatch(importTrustchainStoreState(data));
   };

@@ -13,7 +13,7 @@ export async function getBlockInfo(config: SuiCoinConfig, height: number): Promi
 }
 
 /**
- * Get a checkpoint (a.k.a, a block) metadata only.
+ * Get a checkpoint (a.k.a, a block) metadata plus its transactions.
  *
  * @param height the checkpoint sequence number
  * @see {@link getBlockInfo}

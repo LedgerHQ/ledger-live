@@ -11,9 +11,9 @@ const labels: ContactDetailLabels = {
   addAddress: "Add address",
   addYourAddress: "Add your address",
   emptyMeTitle: "Save your own addresses",
-  emptyContactTitle: () => "No address yet",
+  emptyContactTitle: name => `No saved addresses for ${name}`,
   emptyMeDescription: "Save external addresses for Me.",
-  emptyContactDescription: name => `Save wallet address to send to ${name}`,
+  emptyContactDescription: () => "Save their wallet addresses to send to them by name next time",
   ledgerWalletAddresses: "Ledger Wallet addresses",
   myAddresses: "My addresses",
   formatAddressCount: count => `${count} address`,
@@ -60,8 +60,10 @@ describe("ContactDetailPage", () => {
     expect(screen.getByText("Benoit")).toBeVisible();
     expect(screen.getByTestId("contacts-detail-add-address")).toHaveTextContent("Add address");
     expect(screen.queryByTestId("contacts-detail-ledger-wallet-addresses")).toBeNull();
-    expect(screen.getByText("No address yet")).toBeVisible();
-    expect(screen.getByText("Save wallet address to send to Benoit")).toBeVisible();
+    expect(screen.getByText("No saved addresses for Benoit")).toBeVisible();
+    expect(
+      screen.getByText("Save their wallet addresses to send to them by name next time"),
+    ).toBeVisible();
   });
 
   it("should keep the shared detail defaults without Mobile-specific props", () => {

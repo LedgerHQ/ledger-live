@@ -6,7 +6,7 @@ import {
   resolveAddAddressWebFlowStep,
   shouldUseAddAddressFlowBackNavigation,
   type AddAddressWebFlowStep,
-} from "@features/flow-contacts";
+} from "@features/flow-contacts-add-address";
 import type { ContactsAddAddressFlowDialogProps } from "./types";
 
 export function ContactsAddAddressFlowDialog({

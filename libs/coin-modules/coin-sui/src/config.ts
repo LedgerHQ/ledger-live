@@ -2,16 +2,20 @@ import { type Context, type CurrencyConfig } from "@ledgerhq/coin-module-framewo
 import buildCoinConfig from "@ledgerhq/coin-module-framework/config";
 
 /**
- * Per-currency feature flags scoped to coin-sui. Populated at app startup by
- * the LLC `setup.ts` closure from the central `suiGraphqlTransport` feature
- * flag — not from LiveConfig. `graphql=true` routes every `withTransport`
- * dispatcher in `network/sdk.ts` (reads + writes — balances, stakes, last
- * block, checkpoint, operations, validators, transaction construction, fee
- * dry-run, broadcast) through GraphQL via `node.graphqlUrl`. Callers bound
- * directly to `withApi` (none in the current hot path) always use `node.url`.
+ * Network transport coin-sui talks to the chain with.
+ *
+ * `json` is deprecated upstream — the Sui Foundation decommissions JSON-RPC on 2026-09-30.
+ */
+export type SuiTransport = "json" | "grpc" | "graphql";
+
+/**
+ * Per-currency feature flags scoped to coin-sui. Populated at app startup by the LLC
+ * `setup.ts` closure from the central `suiTransport` feature flag — not from LiveConfig.
+ * `transport` selects which endpoint below every `withTransport` dispatcher in
+ * `network/sdk.ts` uses; see `getTransport` there for the routing rules and exceptions.
  */
 export type SuiFeatureFlags = {
-  graphql: boolean;
+  transport: SuiTransport;
 };
 
 export type SuiConfig = {
@@ -20,6 +24,8 @@ export type SuiConfig = {
     url: string;
     /** GraphQL endpoint URL — used by `withGraphQLApi` */
     graphqlUrl: string;
+    /** gRPC-web base URL (no path) — used by `withGrpcApi` */
+    grpcUrl: string;
   };
   features: SuiFeatureFlags;
 };

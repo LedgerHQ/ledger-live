@@ -8,9 +8,7 @@ describe("UnknownErrorState", () => {
 
     expect(screen.getByText("Unknown error")).toBeVisible();
     expect(
-      screen.getByText(
-        "An error occurred. Please try again or contact Ledger support if the issue persists.",
-      ),
+      screen.getByText("Try again or contact Ledger support if the issue continues."),
     ).toBeVisible();
     expect(screen.getByTestId("device-intent-executor-connect-device-unknown-error")).toBeVisible();
   });

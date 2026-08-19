@@ -38,6 +38,16 @@ export function resolveContactAddressDetailActionsLabels({
         [DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME]: t("contacts.addAddressName.duplicateLabel"),
         [CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME]: t(addressLabelTooLongKey),
       },
+      addressValidation: {
+        addressPlaceholder: t("contacts.addAddressEntry.addressPlaceholder"),
+        validatingAddress: t("contacts.addAddressEntry.validatingAddress"),
+        validAddress: t("contacts.addAddressEntry.validAddress"),
+        invalidAddress: t("contacts.addAddressEntry.invalidAddress"),
+        domainNotFound: t("contacts.addAddressEntry.domainNotFound"),
+        sanctionedAddress: t("contacts.addAddressEntry.sanctionedAddress"),
+        validationUnavailable: t("contacts.addAddressEntry.validationUnavailable"),
+        ensDisclaimer: t("contacts.addAddressEntry.ensDisclaimer"),
+      },
     },
     ...resolveContactEditSignerActionLabels(t),
   };

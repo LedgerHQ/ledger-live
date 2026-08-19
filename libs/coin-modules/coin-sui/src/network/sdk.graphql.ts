@@ -33,27 +33,29 @@ import {
   mapEventNodeContents,
 } from "./graphql/transactions";
 import {
-  assertSystemStateJson,
-  computeApy,
-  computeStakeRewards,
   extractFailureError,
-  fromSystemStateJson,
-  groupStakedSuiByPool,
   parseExchangeRateNode,
-  planActivationRateLookups,
-  poolRefsFromSystemState,
   shortenCoinType,
   unwrapGraphQL,
   validateStakedSuiNodes,
-  type PoolRefs,
   type StakeNode,
+} from "./graphql/utils";
+import {
+  assertSystemStateJson,
+  applyValidatorApy,
+  planValidatorApyLookups,
+  computeStakeRewards,
+  fromSystemStateJson,
+  groupStakedSuiByPool,
+  planActivationRateLookups,
+  poolRefsFromSystemState,
+  type PoolRefs,
   type StakeRatePlans,
   type SuiSystemStateInnerJson,
   type ExchangeRate,
-} from "./graphql/utils";
+} from "./staking";
 import type { VariablesOf } from "./graphql/tada";
 import {
-  APY_LOOKBACK_EPOCHS,
   BLOCK_TXS_PAGE_SIZE,
   EVENTS_PAGE_SIZE,
   MAX_CURSOR_RETRIES,
@@ -529,7 +531,34 @@ export const getDelegatedStakesGraphQL = async (
   const plans = planActivationRateLookups(items, sys.currentEpoch, sys.poolRefs);
   const rates = await fetchActivationRates(api, plans, malformed);
   const rewards = computeStakeRewards(plans.activeStakes, sys.poolRefs, rates);
-  return groupStakedSuiByPool(items, sys.epochId, sys.poolToValidator, rewards);
+  return groupStakedSuiByPool(items, sys.epochId, sys.poolToValidator, "graphql", rewards);
+};
+
+/**
+ * Checkpoint metadata with the schema's nullable fields resolved, or a throw.
+ *
+ * `Checkpoint.digest` is `String` and `timestamp` is `DateTime` — both nullable — so coercing them
+ * would hand sync an empty block hash or a 1970 timestamp: a silently invalid "block" that JSON-RPC
+ * can never produce. Failing here keeps the transports at parity and makes the fault retryable.
+ *
+ * `sequenceNumber` is `UInt53!`, and `previousCheckpointDigest` is legitimately null at genesis, so
+ * neither is checked.
+ */
+const checkpointMetadata = (
+  cp: { digest?: string | null; sequenceNumber: unknown; timestamp?: string | null },
+  context: string,
+): { digest: string; sequenceNumber: string; timestampMs: string } => {
+  const seq = String(cp.sequenceNumber);
+  if (!cp.digest) throw new Error(`${context}: checkpoint ${seq} has no digest`);
+  if (!cp.timestamp) throw new Error(`${context}: checkpoint ${seq} has no timestamp`);
+  // RFC3339 → epoch-ms string (JSON-RPC convention).
+  const timestampMs = new Date(cp.timestamp).getTime();
+  if (!Number.isFinite(timestampMs)) {
+    throw new TypeError(
+      `${context}: checkpoint ${seq} has an unparseable timestamp (${cp.timestamp})`,
+    );
+  }
+  return { digest: cp.digest, sequenceNumber: seq, timestampMs: String(timestampMs) };
 };
 
 /** GraphQL's `Query.checkpoint(sequenceNumber:)` only accepts UInt53; digests must route to JSON-RPC. */
@@ -555,92 +584,26 @@ export const getCheckpointGraphQL = async (
   if (!cp) {
     throw new Error(`GraphQL CheckpointBySequence failed: not found (id=${id})`);
   }
-  // RFC3339 → epoch-ms string (JSON-RPC convention).
-  const timestampMs = cp.timestamp ? String(new Date(cp.timestamp).getTime()) : "0";
-  return {
-    digest: cp.digest ?? "",
-    sequenceNumber: String(cp.sequenceNumber),
-    timestampMs,
-  };
+  return checkpointMetadata(cp, "GraphQL CheckpointBySequence");
 };
 
-/** Latest checkpoint via `LATEST_CHECKPOINT_SEQUENCE` + `getCheckpointGraphQL`. */
+/** Latest checkpoint in one round trip: `LATEST_CHECKPOINT_SEQUENCE` selects the fields directly. */
 export const getLastBlockGraphQL = async (
   api: SuiGraphQLClient,
 ): Promise<Pick<Checkpoint, "digest" | "sequenceNumber" | "timestampMs">> => {
   const res = await api.query({
     query: LATEST_CHECKPOINT_SEQUENCE,
   });
-  const seq = unwrapGraphQL("LatestCheckpointSequence", res).checkpoint?.sequenceNumber;
-  if (seq === null || seq === undefined) {
+  const cp = unwrapGraphQL("LatestCheckpointSequence", res).checkpoint;
+  if (cp?.sequenceNumber === null || cp?.sequenceNumber === undefined) {
     throw new Error("GraphQL LatestCheckpointSequence failed: no checkpoint");
   }
-  return getCheckpointGraphQL(api, seq);
+  return checkpointMetadata(cp, "GraphQL LatestCheckpointSequence");
 };
-
-type ApyPlan = {
-  suiAddress: string;
-  exchangeRatesId: string;
-  currentRate: ExchangeRate;
-  pastEpoch: number;
-};
-
-/** One historical-rate plan per active validator with a known pool; orphans are skipped. */
-function planValidatorApyLookups(
-  poolRefs: Map<string, PoolRefs>,
-  poolToValidator: Map<string, string>,
-  currentEpoch: number,
-): ApyPlan[] {
-  const plans: ApyPlan[] = [];
-  for (const [stakingPoolId, refs] of poolRefs) {
-    const suiAddress = poolToValidator.get(stakingPoolId);
-    if (!suiAddress) continue;
-    // 30-epoch lookback; clamp to activation epoch for young pools.
-    const desired = currentEpoch - APY_LOOKBACK_EPOCHS;
-    const pastEpoch = Math.max(desired, refs.activationEpoch);
-    plans.push({
-      suiAddress,
-      exchangeRatesId: refs.exchangeRatesId,
-      currentRate: refs.currentRate,
-      pastEpoch,
-    });
-  }
-  return plans;
-}
-
-/** Missing/failed rates degrade to apy=0; aggregate degradation surfaces via telemetry. */
-function applyValidatorApy(
-  plans: ReadonlyArray<ApyPlan>,
-  rates: ReadonlyArray<ExchangeRate | null>,
-  currentEpoch: number,
-  chunksFailed: number,
-  firstError?: string,
-): Map<string, number> {
-  const apyByAddress = new Map<string, number>();
-  let rateMissing = 0;
-  plans.forEach((p, idx) => {
-    const rate = rates[idx];
-    if (rate === null || rate === undefined) {
-      rateMissing++;
-      return; // degrade to 0
-    }
-    const epochsBetween = currentEpoch - p.pastEpoch;
-    apyByAddress.set(p.suiAddress, computeApy(p.currentRate, rate, epochsBetween));
-  });
-  if (rateMissing > 0 || chunksFailed > 0) {
-    log("warn", "sui-graphql:rate-fetch-degraded", {
-      source: "validator-apy",
-      missing: rateMissing,
-      chunksFailed,
-      total: plans.length,
-      ...(firstError !== undefined && { firstError }),
-    });
-  }
-  return apyByAddress;
-}
 
 /**
- * Active validator set with client-side APY over {@link APY_LOOKBACK_EPOCHS} (Mysten's formula).
+ * Active validator set with client-side APY over `staking.ts`'s `APY_LOOKBACK_EPOCHS` epochs
+ * (Mysten's formula).
  * Young pools clamp the past epoch to activation; per-rate nulls degrade to apy=0.
  */
 export const getValidatorsGraphQL = async (api: SuiGraphQLClient): Promise<SuiValidator[]> => {
@@ -660,7 +623,14 @@ export const getValidatorsGraphQL = async (api: SuiGraphQLClient): Promise<SuiVa
     })),
     RATE_BATCH_CHUNK_SIZE,
   );
-  const apyByAddress = applyValidatorApy(plans, rates, currentEpoch, chunksFailed, firstError);
+  const apyByAddress = applyValidatorApy(
+    plans,
+    rates,
+    currentEpoch,
+    chunksFailed,
+    "graphql",
+    firstError,
+  );
   return activeValidators.map(v => ({
     ...v,
     apy: apyByAddress.get(v.suiAddress) ?? 0,
@@ -671,11 +641,36 @@ export const getValidatorsGraphQL = async (api: SuiGraphQLClient): Promise<SuiVa
 // Transaction history (`getOperations` path)
 // ============================================================================
 
+type ConnectionPageInfo = {
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+  startCursor: string | null;
+  endCursor: string | null;
+};
+
+/** Connection arguments for the direction travelled. */
+const pageWindow = (ascending: boolean, pageSize: number, cursor: string | null) =>
+  ascending ? { first: pageSize, after: cursor } : { last: pageSize, before: cursor };
+
+/** Continuation state for the direction travelled. */
+const pageStep = (ascending: boolean, pageInfo: ConnectionPageInfo) =>
+  ascending
+    ? { hasMore: pageInfo.hasNextPage, nextCursor: pageInfo.endCursor }
+    : { hasMore: pageInfo.hasPreviousPage, nextCursor: pageInfo.startCursor };
+
 /**
- * Paginated transaction history via the `affectedAddress` filter — covers
- * sender, sponsor, and recipient in one query. Backward pagination
- * (`last`/`before`) yields newest-first order. `beforeCheckpoint`/
- * `afterCheckpoint` translate alpaca-style cursors to a server-side filter.
+ * Paginated transaction history via the `affectedAddress` filter — covers sender, sponsor, and
+ * recipient in one query. `beforeCheckpoint`/`afterCheckpoint` translate alpaca-style cursors to a
+ * server-side filter.
+ *
+ * `order` decides which end of the range `limit` cuts off. `desc` reads backwards (`last`/`before`)
+ * from the newest, which a first sync wants. `asc` reads forwards (`first`/`after`) from
+ * `afterCheckpoint`, which a resumed sync needs: the caller stores the newest operation it received
+ * as the next resume point, so a descending walk stopping at `limit` strands everything between the
+ * old cursor and the oldest transaction it reached, and the next sync starts above the gap.
+ *
+ * Returns the continuation cursor for the direction travelled, or `null` once the connection is
+ * exhausted.
  */
 export const getTransactionsByAddressGraphQL = async (
   api: SuiGraphQLClient,
@@ -684,27 +679,28 @@ export const getTransactionsByAddressGraphQL = async (
   pageSize: number,
   cursor: string | null = null,
   filter?: { beforeCheckpoint?: number; afterCheckpoint?: number },
+  order: "asc" | "desc" = "desc",
 ): Promise<{
   items: SuiTransactionBlockResponse[];
   startCursor: string | null;
 }> => {
   const ownerAddr = normalizeSuiAddress(address);
+  const ascending = order === "asc";
   const accumulated: SuiTransactionBlockResponse[] = [];
-  let nextBefore: string | null = cursor;
+  let pageCursor: string | null = cursor;
   let pages = 0;
 
   while (accumulated.length < limit) {
     if (pages >= MAX_PAGES) {
       throw new Error(
-        `getTransactionsByAddressGraphQL: exceeded ${MAX_PAGES} pages — server hasPreviousPage may be misreporting.`,
+        `getTransactionsByAddressGraphQL: exceeded ${MAX_PAGES} pages — server pageInfo may be misreporting.`,
       );
     }
     const res = await api.query({
       query: TRANSACTIONS_BY_AFFECTED_ADDRESS,
       variables: {
         address: ownerAddr,
-        last: pageSize,
-        before: nextBefore,
+        ...pageWindow(ascending, pageSize, pageCursor),
         eventsFirst: EVENTS_PAGE_SIZE,
         ...(filter?.beforeCheckpoint !== undefined && {
           beforeCheckpoint: filter.beforeCheckpoint,
@@ -716,27 +712,29 @@ export const getTransactionsByAddressGraphQL = async (
     });
     const conn = unwrapGraphQL("TransactionsByAffectedAddress", res).transactions;
     if (!conn) break;
-    // `last/before` returns ascending-within-page; reverse so the accumulated array stays
-    // newest-first across pages, matching the JSON-RPC contract. Skip not-yet-finalized nodes
-    // (indexing lag right after broadcast) — mapping them yields bogus Failed/1970 ops; they
-    // reappear, complete, on a later sync. Then cap the accumulator at `limit`.
+    // A page arrives oldest-first either way, so a descending walk reverses it to keep the
+    // accumulated array newest-first across pages, matching the JSON-RPC contract; an ascending walk
+    // keeps it as delivered. Skip not-yet-finalized nodes (indexing lag right after broadcast) —
+    // mapping them yields bogus Failed/1970 ops; they reappear, complete, on a later sync. Then cap
+    // the accumulator at `limit`.
+    const nodes = conn.nodes ?? [];
     accumulated.push(
-      ...(conn.nodes ?? [])
-        .slice()
-        .reverse()
+      ...(ascending ? nodes.slice() : nodes.slice().reverse())
         .filter(isFinalizedTxNode)
         .map(graphqlTxToJsonRpcResponse),
     );
     if (accumulated.length > limit) accumulated.length = limit;
-    if (!conn.pageInfo.hasPreviousPage || !conn.pageInfo.startCursor) {
-      nextBefore = null;
+
+    const { hasMore, nextCursor } = pageStep(ascending, conn.pageInfo);
+    if (!hasMore || !nextCursor) {
+      pageCursor = null;
       break;
     }
-    nextBefore = conn.pageInfo.startCursor;
+    pageCursor = nextCursor;
     pages++;
   }
 
-  return { items: accumulated, startCursor: nextBefore };
+  return { items: accumulated, startCursor: pageCursor };
 };
 
 /**
@@ -791,14 +789,30 @@ export const getTransactionsWithCheckpointDigestsGraphQL = async (
   address: string,
   pageSize: number,
   filter?: { beforeCheckpoint?: number; afterCheckpoint?: number },
-): Promise<{ tx: SuiTransactionBlockResponse; checkpointDigest: string | undefined }[]> => {
+  /**
+   * Direction of travel, which picks the pagination window (see
+   * `TRANSACTIONS_BY_AFFECTED_ADDRESS`). Passing the wrong one does not reorder a page — it returns
+   * the wrong page entirely.
+   */
+  order: "asc" | "desc" = "desc",
+): Promise<{
+  pairs: { tx: SuiTransactionBlockResponse; checkpointDigest: string | undefined }[];
+  /** Older transactions exist beyond this page — the "more to come" signal for a `desc` walk. */
+  hasPreviousPage: boolean;
+  /** Newer transactions exist beyond this page — the same signal for an `asc` walk. */
+  hasNextPage: boolean;
+}> => {
   const ownerAddr = normalizeSuiAddress(address);
+  // Only one pair may be non-null; the other is sent as null.
+  const window =
+    order === "desc"
+      ? { last: pageSize, before: null, first: null, after: null }
+      : { first: pageSize, after: null, last: null, before: null };
   const res = await api.query({
     query: TRANSACTIONS_BY_AFFECTED_ADDRESS,
     variables: {
       address: ownerAddr,
-      last: pageSize,
-      before: null,
+      ...window,
       eventsFirst: EVENTS_PAGE_SIZE,
       ...(filter?.beforeCheckpoint !== undefined && {
         beforeCheckpoint: filter.beforeCheckpoint,
@@ -809,12 +823,21 @@ export const getTransactionsWithCheckpointDigestsGraphQL = async (
     },
   });
   const conn = unwrapGraphQL("TransactionsByAffectedAddress", res).transactions;
-  const nodes = (conn?.nodes ?? []).slice().reverse(); // newest-first across the page
-  // Skip not-yet-finalized nodes (indexing lag) — they'd map to bogus Failed/1970 ops.
-  return nodes.filter(isFinalizedTxNode).map(node => ({
-    tx: graphqlTxToJsonRpcResponse(node),
-    checkpointDigest: node.effects?.checkpoint?.digest ?? undefined,
-  }));
+  // Nodes arrive in connection (ascending) order either way, and callers re-sort, so this only keeps
+  // the returned page self-consistent with the requested direction.
+  const inConnectionOrder = conn?.nodes ?? [];
+  const nodes = order === "desc" ? inConnectionOrder.slice().reverse() : inConnectionOrder;
+  return {
+    // Skip not-yet-finalized nodes (indexing lag) — they'd map to bogus Failed/1970 ops.
+    pairs: nodes.filter(isFinalizedTxNode).map(node => ({
+      tx: graphqlTxToJsonRpcResponse(node),
+      checkpointDigest: node.effects?.checkpoint?.digest ?? undefined,
+    })),
+    // Surfaced so the caller can ask the server whether more history exists rather than inferring it
+    // from how many nodes survived filtering here and cursor-dropping downstream.
+    hasPreviousPage: conn?.pageInfo?.hasPreviousPage ?? false,
+    hasNextPage: conn?.pageInfo?.hasNextPage ?? false,
+  };
 };
 
 /**
@@ -837,9 +860,7 @@ export const getBlockInfoFieldsGraphQL = async (
   const cp = unwrapGraphQL("CheckpointBySequence", res).checkpoint;
   if (!cp) return null;
   return {
-    digest: cp.digest ?? "",
-    sequenceNumber: String(cp.sequenceNumber),
-    timestampMs: cp.timestamp ? String(new Date(cp.timestamp).getTime()) : "0",
+    ...checkpointMetadata(cp, "GraphQL CheckpointBySequence"),
     previousDigest: cp.previousCheckpointDigest ?? null,
   };
 };
@@ -884,9 +905,7 @@ export const getBlockGraphQL = async (
     const cp = unwrapGraphQL("BlockBySequence", res).checkpoint;
     if (!cp) return null;
     info ??= {
-      digest: cp.digest ?? "",
-      sequenceNumber: String(cp.sequenceNumber),
-      timestampMs: cp.timestamp ? String(new Date(cp.timestamp).getTime()) : "0",
+      ...checkpointMetadata(cp, "GraphQL BlockBySequence"),
       previousDigest: cp.previousCheckpointDigest ?? null,
     };
     transactions.push(...(cp.transactions?.nodes ?? []).map(graphqlTxToJsonRpcResponse));

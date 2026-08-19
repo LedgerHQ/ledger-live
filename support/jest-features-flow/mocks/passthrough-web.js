@@ -5,6 +5,16 @@ function resolveAvatarColor(identifier) {
   return `avatar-color:${identifier}`;
 }
 
+// Render the header's close button so tests can query getByRole("button", { name: /close/i }).
+function DialogHeader({ title, onClose }) {
+  return React.createElement(
+    "div",
+    undefined,
+    title === undefined ? null : React.createElement("h2", undefined, title),
+    React.createElement("button", { type: "button", "aria-label": "Close", onClick: onClose }),
+  );
+}
+
 function Avatar(avatarProps) {
   const { alt, fallbackColor, fallbackText, size = "md", ...props } = avatarProps;
   const hasAriaLabel = Object.hasOwn(avatarProps, "aria-label");
@@ -75,6 +85,7 @@ module.exports = new Proxy(
   {
     __esModule: true,
     Avatar,
+    DialogHeader,
     InteractiveIcon,
     resolveAvatarColor,
     Tooltip,

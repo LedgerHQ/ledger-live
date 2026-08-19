@@ -7,6 +7,7 @@ import {
   mockArbitrumCryptoCurrency,
   mockBaseCryptoCurrency,
   mockCurrencyIds,
+  usdcToken,
 } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 import { NavigationProp } from "@react-navigation/native";
 import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
@@ -55,6 +56,14 @@ const mockNavigate = jest.fn();
 const mockNavigation: Partial<NavigationProp<Record<string, never>>> = {
   navigate: mockNavigate,
 };
+
+const withCurrencyCompletionMode = (state: State): State => ({
+  ...state,
+  modularDrawer: {
+    ...state.modularDrawer,
+    completionMode: "currency",
+  },
+});
 
 jest.mock("@react-navigation/native", () => ({
   useNavigation: () => mockNavigation,
@@ -239,13 +248,7 @@ describe("useModularDrawerState", () => {
           onCurrencySelected,
         }),
       {
-        overrideInitialState: (state: State) => ({
-          ...state,
-          modularDrawer: {
-            ...state.modularDrawer,
-            completionMode: "currency",
-          },
-        }),
+        overrideInitialState: withCurrencyCompletionMode,
       },
     );
 
@@ -267,13 +270,7 @@ describe("useModularDrawerState", () => {
           onCurrencySelected,
         }),
       {
-        overrideInitialState: (state: State) => ({
-          ...state,
-          modularDrawer: {
-            ...state.modularDrawer,
-            completionMode: "currency",
-          },
-        }),
+        overrideInitialState: withCurrencyCompletionMode,
       },
     );
 
@@ -282,6 +279,81 @@ describe("useModularDrawerState", () => {
 
     expect(onCurrencySelected).toHaveBeenCalledWith(mockArbitrumCryptoCurrency);
     expect(mockNavigate).not.toHaveBeenCalled();
+  });
+
+  it("should not select assets or networks outside the selectable network IDs", () => {
+    const onCurrencySelected = jest.fn();
+    const { result } = renderHook(
+      () =>
+        useModularDrawerState({
+          currencyIds: [],
+          assetsSorted,
+          onAccountSelected: mockOnAccountSelected,
+          onCurrencySelected,
+          selectableNetworkIds: [mockEthCryptoCurrency.id],
+        }),
+      {
+        overrideInitialState: withCurrencyCompletionMode,
+      },
+    );
+
+    act(() => result.current.handleAsset(mockBtcCryptoCurrency));
+    expect(onCurrencySelected).not.toHaveBeenCalled();
+
+    act(() => result.current.handleAsset(mockEthCryptoCurrency));
+    act(() => result.current.handleNetwork(mockArbitrumCryptoCurrency));
+
+    expect(onCurrencySelected).not.toHaveBeenCalled();
+  });
+
+  it("should allow a token when its parent network is selectable", () => {
+    const onCurrencySelected = jest.fn();
+    const tokenAsset: AssetData[] = [
+      {
+        ...assetsSorted[0],
+        networks: [mockEthCryptoCurrency, usdcToken],
+      },
+    ];
+    const { result } = renderHook(
+      () =>
+        useModularDrawerState({
+          currencyIds: [],
+          assetsSorted: tokenAsset,
+          onAccountSelected: mockOnAccountSelected,
+          onCurrencySelected,
+          selectableNetworkIds: [mockEthCryptoCurrency.id],
+        }),
+      {
+        overrideInitialState: withCurrencyCompletionMode,
+      },
+    );
+
+    act(() => result.current.handleAsset(mockEthCryptoCurrency));
+    act(() => result.current.handleNetwork(usdcToken));
+
+    expect(onCurrencySelected).toHaveBeenCalledWith(mockEthCryptoCurrency);
+  });
+
+  it("should reject every asset when selectable network IDs are empty", () => {
+    const onCurrencySelected = jest.fn();
+    const { result } = renderHook(
+      () =>
+        useModularDrawerState({
+          currencyIds: [],
+          assetsSorted,
+          onAccountSelected: mockOnAccountSelected,
+          onCurrencySelected,
+          selectableNetworkIds: [],
+        }),
+      {
+        overrideInitialState: withCurrencyCompletionMode,
+      },
+    );
+
+    act(() => result.current.handleAsset(mockEthCryptoCurrency));
+
+    expect(result.current.availableNetworks).toEqual([]);
+    expect(onCurrencySelected).not.toHaveBeenCalled();
   });
 
   it("should handle multiple currencies", () => {

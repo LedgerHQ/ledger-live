@@ -2,7 +2,7 @@ import type {
   AddAddressCurrencySelection,
   AddAddressFlowState,
   AddAddressInputSource,
-} from "@features/flow-contacts";
+} from "@features/flow-contacts-add-address";
 
 export type ContactsAddAddressFlowDrawerProps = Readonly<{
   state: AddAddressFlowState;

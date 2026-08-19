@@ -1,6 +1,9 @@
 import { firstValueFrom, lastValueFrom, Subject, toArray } from "rxjs";
 import { DeviceActionStatus, UserInteractionRequired } from "@ledgerhq/device-management-kit";
-import type { DeviceConnectionResult, DeviceExtractedContext } from "@ledgerhq/device-intent";
+import type {
+  DeviceConnectionResult,
+  DeviceExtractedContext,
+} from "@features/platform-device-intent";
 import type { Account } from "@ledgerhq/types-live";
 
 // `@ledgerhq/device-signer-kit-ethereum` lazily loads

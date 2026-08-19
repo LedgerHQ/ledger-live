@@ -514,8 +514,8 @@ export const getInternalOperations = async (
     throw new EtherscanLikeExplorerUsedIncorrectly();
   }
 
-  // Corescan has no support to get internal operations by address
-  if (explorer.type === "corescan") {
+  // Corescan and Cronos have no reliable support for txlistinternal
+  if (explorer.type === "corescan" || explorer.type === "cronos") {
     return EMPTY_RESULT;
   }
 

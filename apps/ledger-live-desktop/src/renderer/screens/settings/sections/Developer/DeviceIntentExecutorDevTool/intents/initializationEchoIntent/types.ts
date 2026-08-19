@@ -2,7 +2,7 @@ import type {
   DeviceExtractedContext,
   IntentDefinition,
   IntentPlatformDefinition,
-} from "@ledgerhq/device-intent";
+} from "@features/platform-device-intent";
 
 export type InitializationEchoIntentJobState = {
   type: "contextReceived";

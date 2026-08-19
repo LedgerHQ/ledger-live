@@ -10,7 +10,7 @@ describe("useRenameAddressDialogViewModel", () => {
 
   function createEditPort(overrides: Partial<ContactAddressEditPort> = {}): ContactAddressEditPort {
     return {
-      renameAddressLabel: jest.fn().mockResolvedValue(
+      updateAddress: jest.fn().mockResolvedValue(
         contactAddress({
           ...address,
           label: "Main ETH",
@@ -29,6 +29,8 @@ describe("useRenameAddressDialogViewModel", () => {
           contactId: contact.id,
           addressId: address.id,
           currentLabel: address.label,
+          currentAddress: address.address,
+          currencyId: address.currencyId,
           existingLabels: [],
           editPort: createEditPort(),
           isRequestedOpen,
@@ -45,12 +47,13 @@ describe("useRenameAddressDialogViewModel", () => {
 
     rerender({ isRequestedOpen: true });
     expect(result.current.draftLabel).toBe(address.label);
+    expect(result.current.addressEntry.value).toBe(address.address);
   });
 
   it("should save, notify success, and close when confirm succeeds", async () => {
     const onCloseRequest = jest.fn();
     const onSaveSuccess = jest.fn();
-    const renameAddressLabel = jest.fn().mockResolvedValue(
+    const updateAddress = jest.fn().mockResolvedValue(
       contactAddress({
         ...address,
         label: "Main ETH",
@@ -61,8 +64,10 @@ describe("useRenameAddressDialogViewModel", () => {
         contactId: contact.id,
         addressId: address.id,
         currentLabel: address.label,
+        currentAddress: address.address,
+        currencyId: address.currencyId,
         existingLabels: [],
-        editPort: createEditPort({ renameAddressLabel }),
+        editPort: createEditPort({ updateAddress }),
         isRequestedOpen: true,
         onCloseRequest,
         onSaveSuccess,
@@ -77,13 +82,54 @@ describe("useRenameAddressDialogViewModel", () => {
       await result.current.onConfirm();
     });
 
-    expect(renameAddressLabel).toHaveBeenCalledWith({
+    expect(updateAddress).toHaveBeenCalledWith({
       contactId: contact.id,
       addressId: address.id,
       label: "Main ETH",
+      address: address.address,
     });
-    expect(onSaveSuccess).toHaveBeenCalledTimes(1);
+    expect(onSaveSuccess).toHaveBeenCalledWith({
+      currencyId: address.currencyId,
+      inputMethod: null,
+      labelChanged: true,
+      addressChanged: false,
+    });
     expect(onCloseRequest).toHaveBeenCalledTimes(1);
     expect(result.current.isSaving).toBe(false);
+  });
+
+  it("should still notify save success when currencyId is missing", async () => {
+    const onCloseRequest = jest.fn();
+    const onSaveSuccess = jest.fn();
+    const { result } = renderHook(() =>
+      useRenameAddressDialogViewModel({
+        contactId: contact.id,
+        addressId: address.id,
+        currentLabel: address.label,
+        currentAddress: address.address,
+        currencyId: undefined,
+        existingLabels: [],
+        editPort: createEditPort(),
+        isRequestedOpen: true,
+        onCloseRequest,
+        onSaveSuccess,
+      }),
+    );
+
+    act(() => {
+      result.current.onDraftLabelChange("Main ETH");
+    });
+
+    await act(async () => {
+      await result.current.onConfirm();
+    });
+
+    expect(onSaveSuccess).toHaveBeenCalledWith({
+      currencyId: undefined,
+      inputMethod: null,
+      labelChanged: true,
+      addressChanged: false,
+    });
+    expect(onCloseRequest).toHaveBeenCalledTimes(1);
   });
 });

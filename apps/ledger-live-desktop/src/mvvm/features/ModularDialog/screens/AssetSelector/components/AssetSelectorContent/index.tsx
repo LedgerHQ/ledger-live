@@ -27,6 +27,7 @@ export type AssetSelectorContentProps = {
   onScrolledToTop?: () => void;
   loadNext?: () => void;
   assetsSorted?: AssetData[];
+  disabledAssetIds?: ReadonlySet<string>;
 };
 
 const CURRENT_PAGE = "Modular Asset Selection";
@@ -41,6 +42,7 @@ export const AssetSelectorContent = ({
   onScrolledToTop,
   loadNext,
   assetsSorted,
+  disabledAssetIds,
 }: AssetSelectorContentProps) => {
   const assetsMap = groupCurrenciesByAsset(assetsSorted || []);
 
@@ -61,11 +63,12 @@ export const AssetSelectorContent = ({
 
       return {
         ...asset,
+        disabled: disabledAssetIds?.has(asset.id),
         numberOfNetworks: assetWithNetworks?.networks?.length,
         assetId: assetWithNetworks?.asset.metaCurrencyId,
       };
     });
-  }, [assetsTransformed, assetsSorted]);
+  }, [assetsTransformed, assetsSorted, disabledAssetIds]);
 
   const isLoading = [LoadingStatus.Pending, LoadingStatus.Idle].includes(providersLoadingStatus);
   const shouldDisplayEmptyState =
@@ -74,6 +77,7 @@ export const AssetSelectorContent = ({
 
   const onClick = useCallback(
     (asset: AssetType) => {
+      if (asset.disabled) return;
       const selectedAsset = assetsToDisplay.find(({ id }) => id === asset.id);
       if (!selectedAsset) return;
 

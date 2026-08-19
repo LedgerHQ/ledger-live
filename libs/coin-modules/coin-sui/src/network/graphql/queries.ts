@@ -78,11 +78,17 @@ export const BLOCK_BY_SEQUENCE = graphql(`
 
 export type BlockBySequenceResult = ResultOf<typeof BLOCK_BY_SEQUENCE>;
 
-/** Latest checkpoint's sequence number (`sui_getLatestCheckpointSequenceNumber` equivalent). */
+/**
+ * Latest checkpoint with the fields `getLastBlock` returns. Selecting them here rather than
+ * re-fetching by sequence avoids racing the indexer: between two queries the tip can advance past
+ * what the checkpoint index has, and `checkpoint(sequenceNumber:)` then answers null.
+ */
 export const LATEST_CHECKPOINT_SEQUENCE = graphql(`
   query LatestCheckpointSequence {
     checkpoint {
+      digest
       sequenceNumber
+      timestamp
     }
   }
 `);
@@ -256,13 +262,20 @@ export type StakingEventsByDigestResult = ResultOf<typeof STAKING_EVENTS_BY_DIGE
 
 /**
  * Paginated transaction history for an address. `affectedAddress` matches sender, sponsor, OR
- * recipient — collapsing the JSON-RPC IN+OUT merge into a single query. Backward pagination
- * (`last`/`before`) yields newest-first order; `beforeCheckpoint`/`afterCheckpoint` pin the
- * page boundary for `getListOperations`'s cursor translation.
+ * recipient — collapsing the JSON-RPC IN+OUT merge into a single query.
+ *
+ * Both directions are declared because the window the server picks has to match the direction of
+ * travel: `last`/`before` selects the newest slice of the filtered range (descending walks), while
+ * `first`/`after` selects the oldest (ascending walks). Sending `last` for an ascending walk returns
+ * the newest slice and silently skips everything older. Exactly one pair may be non-null per request —
+ * a Relay connection rejects `first` and `last` together. `beforeCheckpoint`/`afterCheckpoint` pin the
+ * page boundary for the cursor translation in `getListOperations`.
  */
 export const TRANSACTIONS_BY_AFFECTED_ADDRESS = graphql(`
   query TransactionsByAffectedAddress(
     $address: SuiAddress!
+    $first: Int
+    $after: String
     $last: Int
     $before: String
     $beforeCheckpoint: UInt53
@@ -275,12 +288,16 @@ export const TRANSACTIONS_BY_AFFECTED_ADDRESS = graphql(`
         beforeCheckpoint: $beforeCheckpoint
         afterCheckpoint: $afterCheckpoint
       }
+      first: $first
+      after: $after
       last: $last
       before: $before
     ) {
       pageInfo {
         hasPreviousPage
+        hasNextPage
         startCursor
+        endCursor
       }
       nodes {
         digest

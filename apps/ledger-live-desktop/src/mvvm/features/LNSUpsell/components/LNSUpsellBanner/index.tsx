@@ -11,6 +11,8 @@ import type { LNSBannerModel } from "./types";
 
 type Props = FlexBoxProps & { location: LNSBannerLocation };
 
+const FULL_WIDTH_BANNER_LOCATIONS = new Set<LNSBannerLocation>(["notification_center"]);
+
 export function LNSUpsellBanner({ location, ...boxProps }: Props) {
   return <View {...useLNSUpsellBannerModel(location)} {...boxProps} />;
 }
@@ -30,11 +32,11 @@ function View({
   if (variant.type === "none") return null;
 
   if (shouldUseLumenMediaBanner) {
-    const isNotificationCenter = location === "notification_center";
+    const isFullWidth = FULL_WIDTH_BANNER_LOCATIONS.has(location);
     return (
       <Flex
-        width={isNotificationCenter ? "100%" : "50%"}
-        maxWidth={isNotificationCenter ? "100%" : "50%"}
+        width={isFullWidth ? "100%" : "50%"}
+        maxWidth={isFullWidth ? "100%" : "50%"}
         minWidth={0}
         alignSelf="flex-start"
         {...boxProps}

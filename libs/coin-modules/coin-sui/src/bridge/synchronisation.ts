@@ -35,8 +35,20 @@ export const getAccountShape: GetAccountShape<SuiAccount> = async (info, syncCon
   const config = suiConfig.getCoinConfig(currency.id);
   const stakes = await getDelegatedStakes(config, address);
 
-  let syncHash = initialAccount?.syncHash ?? latestHash(oldOperations);
-  const newOperations = await getOperations(config, accountId, address, syncHash, undefined);
+  // `syncHash` holds the resume digest of the newest stored operation, from which `getOperations`
+  // reads forward. An account holding no operations at all has nothing to resume from — a first
+  // sync, or a cleared cache, since `clearAccount` empties `operations` but keeps `syncHash`.
+  // Resuming there would leave the account with only what arrived after the cursor.
+  //
+  // Token operations count: `getOperationCoinType` files a transaction under the token it moves and
+  // this account keeps only native-SUI operations, so a token-only account has an empty `operations`
+  // while its history lives in the subaccounts. Reading the parent list alone would drop the cursor
+  // on every sync.
+  const hasStoredHistory =
+    oldOperations.length > 0 ||
+    (initialAccount?.subAccounts ?? []).some(sub => sub.operations.length > 0);
+  let syncHash = hasStoredHistory ? (initialAccount?.syncHash ?? latestHash(oldOperations)) : null;
+  const newOperations = await getOperations(config, accountId, address, syncHash);
   const operations = mergeOps(oldOperations, newOperations);
   syncHash = latestHash(operations);
 

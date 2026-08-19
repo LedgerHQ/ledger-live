@@ -19,6 +19,14 @@ jest.mock("@ledgerhq/live-common/bridge/index", () => ({
 jest.mock("../ZCashExportKeyFlowModal/sync", () => ({
   syncStateUpdater: jest.fn(() => ({ type: "test/syncStateUpdater" })),
 }));
+jest.mock("@ledgerhq/coin-zcash/logic/account/spendability", () => ({
+  hasMaturingIronwoodNotes: jest.fn(() => false),
+  getSpendableIronwoodBalance: jest.fn(() => new BigNumber(0)),
+  getMaturingIronwoodBalance: jest.fn(() => new BigNumber(0)),
+}));
+jest.mock("@ledgerhq/coin-zcash/bridge/note-reservation", () => ({
+  getReservedNullifiers: jest.fn(() => []),
+}));
 const mockedGetAccountBridge = jest.mocked(getAccountBridge);
 const mockedSyncStateUpdater = jest.mocked(syncStateUpdater);
 
@@ -66,7 +74,9 @@ describe("Bitcoin Account Balance Summary Footer", () => {
       expect(screen.getByText("Transparent balance")).toBeInTheDocument();
       expect(screen.getByText("Private balance")).toBeInTheDocument();
       expect(screen.getByTestId("show-private-balance-button")).toBeInTheDocument();
-      expect(screen.getByText(PRIVATE_BALANCE_WARNING)).toBeVisible();
+      // Warning is now in the ℹ tooltip, not the banner. The banner only renders
+      // when maturing funds are present; a fresh account has none.
+      expect(screen.queryByTestId("zcash-private-maturing-amount")).not.toBeInTheDocument();
     });
   });
 

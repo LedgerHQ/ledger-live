@@ -330,6 +330,7 @@ export const clearDismissedContentCards = (payload: { now: Date }) => ({
   payload,
 });
 
+/** @deprecated Only used for legacy anonymous Braze identity when brazeOptOutIdentityCleanup is off. */
 export const setAnonymousBrazeId = (payload: string) => ({
   type: "SET_ANONYMOUS_BRAZE_ID",
   payload,

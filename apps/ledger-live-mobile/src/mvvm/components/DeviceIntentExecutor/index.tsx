@@ -1,12 +1,9 @@
 import {
-  DeviceIntentExecutor,
   type DeviceIntentExecutorProps,
   type ExecutorPlatformConfiguration,
-} from "@ledgerhq/device-intent";
-import {
-  DeviceIntentExecutorHeaderContext,
-  OverrideDeviceIntentExecutorHeader,
-} from "@ledgerhq/live-dmk-shared";
+} from "@features/platform-device-intent";
+import { DeviceIntentExecutor } from "@features/platform-device-intent/react";
+import { DeviceIntentExecutorHeaderContext } from "@ledgerhq/live-dmk-shared";
 import { BottomSheetHeader, BottomSheetScrollView } from "@ledgerhq/lumen-ui-rnative";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import React from "react";
@@ -66,7 +63,7 @@ const platformConfig: ExecutorPlatformConfiguration<InitializationInput, Initial
 const emptyAnalyticsProperties: DeviceIntentTrackingProperties = {};
 
 /**
- * LWM wrapper around `@ledgerhq/device-intent`'s `DeviceIntentExecutor`.
+ * LWM wrapper around `@features/platform-device-intent`'s `DeviceIntentExecutor`.
  */
 export function DeviceIntentExecutorLWM<JobState, Input, ExtraProps>(
   props: Props<JobState, Input, ExtraProps>,

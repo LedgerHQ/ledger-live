@@ -1,6 +1,5 @@
 import { useCallback, useMemo } from "react";
-import { useContactsFeature } from "@features/flow-contacts";
-import { useContacts } from "@features/platform-contacts";
+import { useContacts, useContactsFeature } from "@features/platform-contacts";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { useRecipientSearchState } from "@ledgerhq/live-common/flows/send/recipient/hooks/useRecipientSearchState";

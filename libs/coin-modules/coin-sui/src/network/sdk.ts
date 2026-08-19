@@ -40,7 +40,7 @@ import { makeSuiClientFromGraphQL } from "./graphql/sui-client-adapter";
 import { SUI_SYSTEM_STATE_OBJECT_ID } from "@mysten/sui/utils";
 import { BigNumber } from "bignumber.js";
 import uniqBy from "lodash/unionBy";
-import { type SuiCoinConfig } from "../config";
+import { type SuiCoinConfig, type SuiTransport } from "../config";
 import { BLOCK_HEIGHT, ONE_SUI } from "../constants";
 import type {
   CoreTransaction,
@@ -70,18 +70,44 @@ import {
   simulateTransactionGraphQL,
   withGraphQLApi,
 } from "./sdk.graphql";
+import {
+  type AsyncGrpcApiFunction,
+  getAllBalancesGrpc,
+  getBlockGrpc,
+  getCheckpointGrpc,
+  executeTransactionGrpc,
+  getDelegatedStakesGrpc,
+  fetchCheckpointDigestsGrpc,
+  grpcPageMayHaveMore,
+  listHistoryByAddressGrpc,
+  listTransactionsByAddressGrpc,
+  resolveCheckpointForDigestGrpc,
+  simulateTransactionGrpc,
+  getLastBlockGrpc,
+  getStakingEventsByDigestGrpc,
+  getValidatorsGrpc,
+  withGrpcApi,
+  withoutBuildSimulation,
+} from "./sdk.grpc";
 
 type AsyncApiFunction<T> = (api: SuiJsonRpcClient) => Promise<T>;
 
 /**
- * Single source of truth consulted by every `withTransport` dispatcher. When
- * `true`, read paths (balances, stakes, last block, checkpoint, operations,
- * validators) and write paths (transaction construction, fee dry-run,
- * broadcast) route through GraphQL via `node.graphqlUrl`. Callers bound
- * directly to `withApi` (none in the current hot path) always use `node.url`.
+ * Single source of truth consulted by every `withTransport` dispatcher. Selects which
+ * endpoint the read paths (balances, stakes, last block, checkpoint, operations,
+ * validators) and write paths (transaction construction, fee dry-run, broadcast) use.
+ *
+ * Defaults to `json` when unset so a missing config can never silently change transport.
+ * The one caller that steps outside the dispatcher is the digest-id lookup in
+ * `getBlockInfo`/`getBlock`, and only on GraphQL, whose `checkpoint(...)` takes sequence numbers
+ * alone. Device signing goes through {@link withCoreApi}, so it follows the flag like everything else.
  */
+export function getTransport(config: SuiCoinConfig): SuiTransport {
+  return config.features?.transport ?? "json";
+}
+
 export function isGraphQLEnabled(config: SuiCoinConfig): boolean {
-  return config.features?.graphql === true;
+  return getTransport(config) === "graphql";
 }
 
 export const TRANSACTIONS_LIMIT_PER_QUERY = 50;
@@ -121,21 +147,43 @@ export async function withApi<T>(config: SuiCoinConfig, execute: AsyncApiFunctio
   return execute(api);
 }
 
-/** Dispatcher gated on `features.graphql` */
 export function withTransport<T>(
   config: SuiCoinConfig,
   impls: {
     jsonRpc: AsyncApiFunction<T>;
     graphql: AsyncGraphQLApiFunction<T>;
+    grpc: AsyncGrpcApiFunction<T>;
   },
 ): Promise<T> {
-  return isGraphQLEnabled(config)
-    ? withGraphQLApi(config, impls.graphql)
-    : withApi(config, impls.jsonRpc);
+  switch (getTransport(config)) {
+    case "grpc":
+      return withGrpcApi(config, impls.grpc);
+    case "graphql":
+      return withGraphQLApi(config, impls.graphql);
+    default:
+      return withApi(config, impls.jsonRpc);
+  }
 }
 
 /**
- * Subset both transports populate. Narrows the dispatcher's surface so the
+ * Dispatches to the selected transport and hands the callback a `ClientWithCoreApi` — the SDK's
+ * transport-agnostic client surface. JSON-RPC and gRPC clients implement it directly; GraphQL goes
+ * through the adapter. For callers that need a client rather than a wire protocol, this keeps them
+ * free of any single transport so each one can be retired independently.
+ */
+export function withCoreApi<T>(
+  config: SuiCoinConfig,
+  execute: (client: ClientWithCoreApi) => Promise<T>,
+): Promise<T> {
+  return withTransport(config, {
+    jsonRpc: execute,
+    graphql: api => execute(makeSuiClientFromGraphQL(api)),
+    grpc: execute,
+  });
+}
+
+/**
+ * Subset every transport populates. Narrows the dispatcher's surface so the
  * GraphQL path's neutral fillers for JSON-RPC-only fields (`coinObjectCount`,
  * `lockedBalance`) can't leak to a future caller via the cached value.
  */
@@ -161,21 +209,22 @@ const toDispatchedCoinBalance = (b: CoinBalance): DispatchedCoinBalance => ({
  */
 export const getAllBalancesCached = makeLRUCache(
   async (config: SuiCoinConfig, owner: string): Promise<DispatchedCoinBalance[]> => {
-    // Pick<> is compile-time only — explicitly project both transports' results
+    // Pick<> is compile-time only — explicitly project every transport's result
     // so the cache never stores transport-specific fields (`coinObjectCount`,
     // `lockedBalance` from JSON-RPC; GraphQL's neutral fillers for the same).
     const balances = await withTransport(config, {
       jsonRpc: api => api.getAllBalances({ owner }),
       graphql: api => getAllBalancesCachedGraphQL(api, owner),
+      grpc: api => getAllBalancesGrpc(api, owner),
     });
     return balances.map(toDispatchedCoinBalance);
   },
   // Key includes the transport so flipping the flag mid-rollout doesn't
-  // cross-pollinate cached entries between JSON-RPC and GraphQL. The network is
-  // derived from the node URL so cached entries stay scoped per environment.
-  // Inputs are colon-free (owner = `0x` + hex; network is a fixed enum).
+  // cross-pollinate cached entries between transports. The network is derived from the node URL
+  // so cached entries stay scoped per environment.
+  // Inputs are colon-free (owner = `0x` + hex; network and transport are fixed enums).
   (config: SuiCoinConfig, owner: string) =>
-    `${inferNetworkFromUrl(config.node.url)}:${isGraphQLEnabled(config) ? "g" : "j"}:${owner}`,
+    `${inferNetworkFromUrl(config.node.url)}:${getTransport(config)}:${owner}`,
   minutes(1),
 );
 
@@ -234,6 +283,17 @@ export function isSettlementTransaction(tx: SuiTransactionBlockResponse): boolea
       toShortStructTag(input.objectId) === ACCUMULATOR_ROOT_OBJECT_ID,
   );
 }
+
+/**
+ * gRPC counterpart of the GraphQL arm's `isFinalizedTxNode`.
+ *
+ * `ListTransactions` is meant to return executed transactions only, but the mapper leaves
+ * `timestampMs` unset when the proto omits it, and such a record becomes an operation dated 1970 —
+ * sorted to the bottom of the account's history and unusable as a pagination cursor, which reads as
+ * the end of history. The GraphQL arm drops the equivalent records rather than mapping them.
+ */
+const isFinalizedGrpcTx = (tx: SuiTransactionBlockResponse): boolean =>
+  tx.timestampMs !== null && tx.timestampMs !== undefined;
 
 /**
  * Accumulator events report `ty` as `0x2::balance::Balance<INNER>`, while
@@ -460,7 +520,7 @@ function stakingExtraFromEvents(
     | undefined;
   const validatorAddress = parsed?.validator_address;
   const rawAmount = isUnstake ? parsed?.principal_amount : parsed?.amount;
-  // Sui serializes u64 as a string on both transports; String()-coerce defensively.
+  // Sui serializes u64 as a string on every transport; String()-coerce defensively.
   const stakedAmount = String(rawAmount ?? "");
   if (!validatorAddress || !stakedAmount) return null;
   return { validatorAddress, stakedAmount };
@@ -469,10 +529,11 @@ function stakingExtraFromEvents(
 /**
  * Extract `{ validatorAddress, stakedAmount }` from a staking/unstaking transaction's events for
  * the **bridge** operation (`transactionToOperation`). The event is authoritative and present at
- * sync on both transports (`showEvents: true` on JSON-RPC; the `events` selection in
- * `TRANSACTIONS_BY_AFFECTED_ADDRESS` on GraphQL) — which is what lets the bridge fill `op.extra`
- * and drop the per-drawer re-fetch. Distinct from `getStakingEventDetails` (coin-framework path,
- * different shape). Module-internal; returns `null` when not staking or the fields are absent.
+ * sync on every transport (`showEvents: true` on JSON-RPC; the `events` selection in
+ * `TRANSACTIONS_BY_AFFECTED_ADDRESS` on GraphQL; the `events` read-mask path on gRPC) — which is
+ * what lets the bridge fill `op.extra` and drop the per-drawer re-fetch. Distinct from
+ * `getStakingEventDetails` (coin-framework path, different shape). Module-internal; returns `null`
+ * when not staking or the fields are absent.
  */
 function getStakingExtra(response: SuiTransactionBlockResponse): SuiStakingExtra | null {
   const tx = response.transaction?.data?.transaction;
@@ -508,6 +569,10 @@ export const getStakingExtraByDigest = (
       const events = await getStakingEventsByDigestGraphQL(api, digest);
       return stakingExtraFromEvents(events, type);
     },
+    grpc: async api => {
+      const events = await getStakingEventsByDigestGrpc(api, digest);
+      return stakingExtraFromEvents(events, type);
+    },
   });
 };
 
@@ -526,9 +591,9 @@ export const getFeesPayer = (transaction: SuiTransactionBlockResponse): string |
   transaction.transaction?.data?.gasData?.owner || undefined;
 
 /**
- * `DelegatedStake[]` regardless of transport. GraphQL reconstructs from
- * `StakedSui` objects + system-state (one extra dynamicField per Active
- * stake, deduped); rate failures degrade `estimatedReward` to `"0"`.
+ * `DelegatedStake[]` regardless of transport. Only JSON-RPC has a native `getStakes`; GraphQL and
+ * gRPC both reconstruct from `StakedSui` objects + system-state (one extra rate lookup per Active
+ * stake's pool, deduped), and rate failures degrade `estimatedReward` to `"0"`.
  */
 export const getDelegatedStakes = (
   config: SuiCoinConfig,
@@ -537,6 +602,7 @@ export const getDelegatedStakes = (
   withTransport(config, {
     jsonRpc: api => api.getStakes({ owner }),
     graphql: api => getDelegatedStakesGraphQL(api, owner),
+    grpc: api => getDelegatedStakesGrpc(api, owner),
   });
 
 /**
@@ -686,7 +752,7 @@ export function transactionToCoinFrameworkOperation(
   const coinType = getOperationCoinType(transaction);
   const hash = transaction.digest;
 
-  const blockHeight = Number.parseInt(transaction.checkpoint || "0");
+  const blockHeight = Number.parseInt(transaction.checkpoint || "0", 10);
   const blockHash =
     checkpointHash || (blockHeight > 0 ? `synthetic-${transaction.checkpoint}` : "");
 
@@ -736,7 +802,7 @@ export function toBlockInfo(
   const info: BlockInfo = {
     height: Number(checkpoint.sequenceNumber),
     hash: checkpoint.digest,
-    time: new Date(parseInt(checkpoint.timestampMs)),
+    time: new Date(Number.parseInt(checkpoint.timestampMs, 10)),
   };
 
   if (typeof checkpoint.previousDigest === "string") {
@@ -868,13 +934,21 @@ export const getLastBlock = (
       return { digest, sequenceNumber, timestampMs };
     },
     graphql: getLastBlockGraphQL,
+    grpc: async api => {
+      const { digest, sequenceNumber, timestampMs } = await getLastBlockGrpc(api);
+      return { digest, sequenceNumber, timestampMs };
+    },
   });
 
 /**
  * Paginated transaction history. JSON-RPC: two parallel `queryTransactionBlocks`
  * calls (FromAddress + ToAddress) merged + deduped by `filterOperations`.
  * GraphQL: a single `transactions(filter: { affectedAddress })` query covers
- * sender/sponsor/recipient in one round-trip (no IN+OUT merge needed).
+ * sender/sponsor/recipient in one round-trip (no IN+OUT merge needed). gRPC:
+ * `ListTransactions` streams on the affected-address filter, same single-pass shape.
+ *
+ * All three arms accumulate up to `TRANSACTIONS_LIMIT` operations, walking pages of
+ * `TRANSACTIONS_LIMIT_PER_QUERY`.
  */
 export const getOperations = async (
   config: SuiCoinConfig,
@@ -919,27 +993,64 @@ export const getOperations = async (
       // The bridge passes `cursor = latestHash(operations) = transaction.digest` (see
       // `bridge/synchronisation.ts` + `transactionToOperation`), which is a Sui digest
       // — NOT an opaque GraphQL connection cursor. Translate it to a server-side
-      // `afterCheckpoint` filter so incremental sync returns only newer ops; the
-      // cursor checkpoint's own ops were ingested on the previous sync.
+      // `afterCheckpoint` filter so incremental sync returns only newer ops.
+      //
+      // The bound keeps the cursor's own checkpoint in range: it can hold several of this address's
+      // transactions and the previous sync may have stopped partway through them, so excluding it
+      // would strand the rest. Re-delivered operations are harmless — `mergeOps` dedupes by id and
+      // documents that it expects overlap with what the account already has.
       const cursorDigest = typeof cursor === "string" ? cursor : null;
       let filter: { afterCheckpoint?: number } | undefined;
       if (cursorDigest) {
         const seq = await resolveCheckpointSequenceForDigestGraphQL(api, cursorDigest);
-        if (seq !== null) filter = { afterCheckpoint: seq };
+        // `afterCheckpoint` is exclusive, so keeping checkpoint `seq` in range means bounding at
+        // `seq - 1`. At genesis there is nothing below to exclude, and `afterCheckpoint: 0` would
+        // exclude checkpoint 0 itself — so the bound is dropped instead.
+        if (seq !== null && seq > 0) filter = { afterCheckpoint: seq - 1 };
       }
-      // Single-page fetch: server caps `last` at 50; per-page payload (events +
-      // balanceChangesJson per tx) is heavy enough that multi-page accumulation
-      // can outrun the bridge's sync window on high-traffic addresses.
+      // The server caps `last` at 50, so pages of that size accumulate up to `TRANSACTIONS_LIMIT` —
+      // the depth the JSON-RPC arm reaches through `loadOperations`. A single page would cap the
+      // account at its newest 50 operations permanently: this path runs once per sync and always
+      // resumes from the newest stored digest, so what it skips is never requested again.
+      // Ascending only once the cursor gave a real lower bound. Without one — a first sync, or a
+      // digest this index no longer holds — ascending would read the oldest slice of all history and
+      // never reach the recent operations.
       const { items } = await getTransactionsByAddressGraphQL(
         api,
         addr,
-        TRANSACTIONS_LIMIT_PER_QUERY,
+        TRANSACTIONS_LIMIT,
         TRANSACTIONS_LIMIT_PER_QUERY,
         null,
         filter,
+        filter?.afterCheckpoint === undefined ? "desc" : "asc",
       );
       return items
         .filter(tx => !isSettlementTransaction(tx))
+        .sort(compareOperations("desc"))
+        .map(transaction => transactionToOperation(accountId, addr, transaction));
+    },
+    grpc: async api => {
+      // Same digest-cursor translation as the GraphQL arm, and the same inclusive bound:
+      // `startCheckpoint` is inclusive, so passing the cursor's checkpoint keeps its unsynced
+      // siblings in range. `mergeOps` dedupes the ones already stored.
+      const cursorDigest = typeof cursor === "string" ? cursor : null;
+      let startCheckpoint: number | undefined;
+      if (cursorDigest) {
+        const seq = await resolveCheckpointForDigestGrpc(api, cursorDigest);
+        if (seq !== null) startCheckpoint = seq;
+      }
+      // Same depth as the GraphQL arm above, and the same direction rule as the JSON-RPC arm:
+      // descending for a first sync, ascending from a cursor — see {@link listHistoryByAddressGrpc}.
+      const transactions = await listHistoryByAddressGrpc(api, {
+        address: addr,
+        limit: TRANSACTIONS_LIMIT,
+        pageSize: TRANSACTIONS_LIMIT_PER_QUERY,
+        order: startCheckpoint === undefined ? "desc" : "asc",
+        ...(startCheckpoint !== undefined && { startCheckpoint }),
+      });
+      return transactions
+        .filter(tx => isFinalizedGrpcTx(tx) && !isSettlementTransaction(tx))
+        .sort(compareOperations("desc"))
         .map(transaction => transactionToOperation(accountId, addr, transaction));
     },
   });
@@ -1033,6 +1144,23 @@ function isStrictlyAfterCursor(
   );
 }
 
+/**
+ * Removes operations the previous page already delivered. Both history arms rely on this, and it is
+ * why their server-side checkpoint bounds must *include* the cursor's own checkpoint:
+ *
+ * A checkpoint can hold several transactions for one address, and they share its `timestampMs`, so
+ * the cursor comparison falls through to the digest tie-break. A page boundary can therefore land
+ * inside a checkpoint. Excluding that checkpoint from the next query drops its remainder for good —
+ * this filter can only remove what the server returned, never recover what it withheld.
+ *
+ * The cost of including it is a page of already-seen items. That is fine except when one checkpoint
+ * holds a full page of the address's transactions, where nothing survives the filter and pagination
+ * would end early; each arm then steps its bound past that checkpoint once.
+ *
+ * It also follows that a page's surviving count says nothing about whether history remains: the
+ * resume point is re-fetched and dropped every time, so a cursor-fed page never reaches the page size
+ * even mid-history. Each arm therefore takes "is there more?" from the server.
+ */
 function dropOperationsBeforeCursor(params: {
   operations: SuiTransactionBlockResponse[];
   order: "asc" | "desc";
@@ -1144,39 +1272,163 @@ export const getListOperations = async (
           parsedCursor.digest,
         );
       }
-      // `desc` order paginates backwards in time → server filter excludes
-      // anything at-or-after the cursor; `asc` does the opposite.
-      let filter: { beforeCheckpoint?: number; afterCheckpoint?: number } | undefined;
-      if (cursorCheckpoint !== null) {
-        filter =
-          order === "desc"
-            ? { beforeCheckpoint: cursorCheckpoint }
-            : { afterCheckpoint: cursorCheckpoint };
-      }
-      const pairs = await getTransactionsWithCheckpointDigestsGraphQL(
-        api,
-        addr,
-        TRANSACTIONS_LIMIT_PER_QUERY,
-        filter,
+      // The bound includes the cursor's own checkpoint — see {@link dropOperationsBeforeCursor}. The
+      // ±1 achieves that whether the server treats these filters as strict or inclusive; either way
+      // the extra checkpoint's items sit on the wrong side of the cursor and the drop below clears
+      // them.
+      const boundsFrom = (
+        seq: number,
+        includeCursorCheckpoint: boolean,
+      ): { beforeCheckpoint?: number; afterCheckpoint?: number } => {
+        if (order === "desc") {
+          return { beforeCheckpoint: includeCursorCheckpoint ? seq + 1 : seq };
+        }
+        if (!includeCursorCheckpoint) return { afterCheckpoint: seq };
+        // `afterCheckpoint: 0` would exclude checkpoint 0 itself, so genesis drops the bound.
+        return seq === 0 ? {} : { afterCheckpoint: seq - 1 };
+      };
+
+      const fetchPage = async (
+        filter: { beforeCheckpoint?: number; afterCheckpoint?: number } | undefined,
+      ) => {
+        const { pairs, hasPreviousPage, hasNextPage } =
+          await getTransactionsWithCheckpointDigestsGraphQL(
+            api,
+            addr,
+            TRANSACTIONS_LIMIT_PER_QUERY,
+            filter,
+            order,
+          );
+        const sortedPairs = pairs.slice().sort((a, b) => compareOperations(order)(a.tx, b.tx));
+        const sorted = sortedPairs.filter(({ tx }) => !isSettlementTransaction(tx));
+        return {
+          received: pairs.length,
+          // The connection walks backwards, so "more to come" is `hasPreviousPage` going desc and
+          // `hasNextPage` going asc.
+          serverHasMore: order === "desc" ? hasPreviousPage : hasNextPage,
+          // Resume point when nothing survives the client-side filters — see the `next` gate below.
+          boundary: sortedPairs.at(-1)?.tx,
+          sorted,
+          afterCursor: dropOperationsBeforeCursor({
+            operations: sorted.map(p => p.tx),
+            order,
+            cursor: parsedCursor,
+          }),
+        };
+      };
+
+      let page = await fetchPage(
+        cursorCheckpoint === null ? undefined : boundsFrom(cursorCheckpoint, true),
       );
-      const filtered = pairs.filter(({ tx }) => !isSettlementTransaction(tx));
-      const sorted = filtered.slice().sort((a, b) => compareOperations(order)(a.tx, b.tx));
-      // Server filter already excluded items strictly past the cursor;
-      // the additional client-side drop guards against same-checkpoint ties.
-      const afterCursor = dropOperationsBeforeCursor({
-        operations: sorted.map(p => p.tx),
-        order,
-        cursor: parsedCursor,
-      });
+      // Same stall guard as the gRPC arm.
+      if (
+        cursorCheckpoint !== null &&
+        page.afterCursor.length === 0 &&
+        page.received >= TRANSACTIONS_LIMIT_PER_QUERY
+      ) {
+        page = await fetchPage(boundsFrom(cursorCheckpoint, false));
+      }
+      const afterCursor = page.afterCursor;
       const digestToHash = new Map(
-        sorted.map(({ tx, checkpointDigest }) => [tx.digest, checkpointDigest]),
+        page.sorted.map(({ tx, checkpointDigest }) => [tx.digest, checkpointDigest]),
       );
       const items = afterCursor.map(t =>
         transactionToCoinFrameworkOperation(addr, t, digestToHash.get(t.digest)),
       );
-      const last = afterCursor.at(-1);
+      // Same boundary fallback as the gRPC arm.
+      const last = afterCursor.at(-1) ?? page.boundary;
+      // The connection answers "is there more?" directly — see {@link dropOperationsBeforeCursor}
+      // for why the surviving count cannot.
       const next =
-        afterCursor.length >= TRANSACTIONS_LIMIT_PER_QUERY && last?.timestampMs
+        page.serverHasMore && last?.timestampMs
+          ? serializeListOperationsCursor({
+              digest: last.digest,
+              timestamp: Number(last.timestampMs),
+            })
+          : undefined;
+      return { items, next };
+    });
+  }
+
+  if (getTransport(config) === "grpc") {
+    return withGrpcApi(config, async api => {
+      // The alpaca cursor is `timestamp:digest`; translate its digest to a checkpoint bound in the
+      // direction of travel, including the cursor's own checkpoint — see
+      // {@link dropOperationsBeforeCursor}. `startCheckpoint` is inclusive, `endCheckpoint` exclusive.
+      const cursorCheckpoint = parsedCursor
+        ? await resolveCheckpointForDigestGrpc(api, parsedCursor.digest)
+        : null;
+      const boundsFrom = (seq: number, includeCursorCheckpoint: boolean) =>
+        order === "desc"
+          ? { endCheckpoint: includeCursorCheckpoint ? seq + 1 : seq }
+          : { startCheckpoint: includeCursorCheckpoint ? seq : seq + 1 };
+
+      const fetchPage = async (bounds: { startCheckpoint?: number; endCheckpoint?: number }) => {
+        const { transactions, endReason } = await listTransactionsByAddressGrpc(api, {
+          address: addr,
+          limit: TRANSACTIONS_LIMIT_PER_QUERY,
+          order,
+          ...bounds,
+        });
+        const finalized = transactions.filter(isFinalizedGrpcTx).sort(compareOperations(order));
+        const sorted = finalized.filter(tx => !isSettlementTransaction(tx));
+        return {
+          received: transactions.length,
+          serverHasMore: grpcPageMayHaveMore(
+            endReason,
+            transactions.length,
+            TRANSACTIONS_LIMIT_PER_QUERY,
+          ),
+          // Furthest point the server actually reached, before settlement filtering and
+          // cursor-dropping. It is the resume point when nothing survives those, so a page made
+          // entirely of settlement transactions still advances the walk — see the `next` gate below.
+          boundary: finalized.at(-1),
+          afterCursor: dropOperationsBeforeCursor({
+            operations: sorted,
+            order,
+            cursor: parsedCursor,
+          }),
+        };
+      };
+
+      let page = await fetchPage(
+        cursorCheckpoint === null ? {} : boundsFrom(cursorCheckpoint, true),
+      );
+      // Stall guard: only reachable at ≥ TRANSACTIONS_LIMIT_PER_QUERY transactions for this address
+      // in one checkpoint, and it trades that checkpoint's unseen remainder for pagination that keeps
+      // moving. See {@link dropOperationsBeforeCursor}.
+      if (
+        cursorCheckpoint !== null &&
+        page.afterCursor.length === 0 &&
+        page.received >= TRANSACTIONS_LIMIT_PER_QUERY
+      ) {
+        page = await fetchPage(boundsFrom(cursorCheckpoint, false));
+      }
+      const afterCursor = page.afterCursor;
+      // One extra streamed call buys the real `blockHash` the other transports report; anything
+      // unresolved keeps the mapper's `synthetic-<sequence>` fallback.
+      const checkpointDigests = await fetchCheckpointDigestsGrpc(api, {
+        address: addr,
+        sequences: afterCursor
+          .map(tx => Number(tx.checkpoint))
+          .filter(seq => Number.isFinite(seq) && seq > 0),
+        limit: TRANSACTIONS_LIMIT_PER_QUERY,
+      });
+      const items = afterCursor.map(tx =>
+        transactionToCoinFrameworkOperation(
+          addr,
+          tx,
+          tx.checkpoint ? checkpointDigests.get(tx.checkpoint) : undefined,
+        ),
+      );
+      // Only a page that returned nothing at all leaves no resume point: the opaque watermark that
+      // would cover it does not fit this cursor format.
+      const last = afterCursor.at(-1) ?? page.boundary;
+      // The stream's own stop reason answers "is there more?" — see {@link grpcPageMayHaveMore}. The
+      // surviving count cannot: settlement filtering and cursor-dropping both shrink a page that had
+      // more behind it, and a filtered scan can stop on its server-side budget short of the limit.
+      const next =
+        page.serverHasMore && last?.timestampMs
           ? serializeListOperationsCursor({
               digest: last.digest,
               timestamp: Number(last.timestampMs),
@@ -1271,9 +1523,10 @@ export const getListOperations = async (
 };
 
 /**
- * Subset of `Checkpoint` populated by both transports. Narrowed at the
+ * Subset of `Checkpoint` populated by every transport. Narrowed at the
  * public surface so flipping the flag can't silently null out a wider
- * field — callers needing more should route through {@link withApi}.
+ * field — a caller needing more adds the field to every arm of
+ * {@link withTransport}, never reaches for one transport's client.
  */
 export type MinimalCheckpoint = Pick<Checkpoint, "digest" | "sequenceNumber" | "timestampMs">;
 
@@ -1311,6 +1564,12 @@ export const getCheckpoint = async (
       };
     },
     graphql: api => getCheckpointGraphQL(api, id),
+    // Project down explicitly: `getCheckpointGrpc` also carries `previousDigest` for
+    // `toBlockInfo`, and `MinimalCheckpoint` is a narrowed contract the other arms honour.
+    grpc: async api => {
+      const { digest, sequenceNumber, timestampMs } = await getCheckpointGrpc(api, id);
+      return { digest, sequenceNumber, timestampMs };
+    },
   });
 };
 
@@ -1320,9 +1579,11 @@ export const getBlockInfo = async (config: SuiCoinConfig, id: string): Promise<B
     const checkpoint = await api.getCheckpoint({ id });
     return toBlockInfo(checkpoint);
   };
-  // GraphQL `checkpoint(...)` only accepts UInt53 sequence numbers; digest
-  // lookups fall back to JSON-RPC even when the GraphQL flag is on.
-  if (!isSequenceNumber(id)) return withApi(config, fromJsonRpc);
+  // GraphQL `checkpoint(...)` only accepts UInt53 sequence numbers, so digest lookups fall
+  // back to JSON-RPC there. gRPC's `GetCheckpoint` takes either, so it needs no fallback.
+  if (!isSequenceNumber(id) && getTransport(config) === "graphql") {
+    return withApi(config, fromJsonRpc);
+  }
   return withTransport(config, {
     jsonRpc: fromJsonRpc,
     graphql: async api => {
@@ -1330,6 +1591,7 @@ export const getBlockInfo = async (config: SuiCoinConfig, id: string): Promise<B
       if (!cp) throw new Error(`GraphQL Checkpoint not found: ${id}`);
       return toBlockInfo(cp);
     },
+    grpc: async api => toBlockInfo(await getCheckpointGrpc(api, id)),
   });
 };
 
@@ -1346,14 +1608,25 @@ export const getBlock = async (config: SuiCoinConfig, id: string): Promise<Block
       transactions: rawTxs.filter(tx => !isSettlementTransaction(tx)).map(toBlockTransaction),
     };
   };
-  // GraphQL `checkpoint(...)` only accepts UInt53 sequence numbers; digest
-  // lookups fall back to JSON-RPC even when the GraphQL flag is on.
-  if (!isSequenceNumber(id)) return withApi(config, fromJsonRpc);
+  // GraphQL `checkpoint(...)` only accepts UInt53 sequence numbers, so digest lookups fall
+  // back to JSON-RPC there. gRPC's `GetCheckpoint` takes either, so it needs no fallback.
+  if (!isSequenceNumber(id) && getTransport(config) === "graphql") {
+    return withApi(config, fromJsonRpc);
+  }
   return withTransport(config, {
     jsonRpc: fromJsonRpc,
     graphql: async api => {
       const block = await getBlockGraphQL(api, Number(id));
       if (!block) throw new Error(`GraphQL Block not found: ${id}`);
+      return {
+        info: toBlockInfo(block.info),
+        transactions: block.transactions
+          .filter(tx => !isSettlementTransaction(tx))
+          .map(toBlockTransaction),
+      };
+    },
+    grpc: async api => {
+      const block = await getBlockGrpc(api, id);
       return {
         info: toBlockInfo(block.info),
         transactions: block.transactions
@@ -1536,8 +1809,8 @@ const createTransactionFromMode = (
 /**
  * Shared post-processing for the three transaction builders: build BCS via
  * `Transaction.build({ client })` and optionally collect input-object BCS for
- * clear-signing. Both transports flow through this — the JSON-RPC branch
- * passes a `SuiJsonRpcClient`, the GraphQL branch passes the synthetic
+ * clear-signing. Every transport flows through this — JSON-RPC passes a
+ * `SuiJsonRpcClient`, gRPC a `SuiGrpcClient`, and GraphQL the synthetic
  * `ClientWithCoreApi` from `makeSuiClientFromGraphQL`.
  */
 async function finalizeBuild(
@@ -1601,6 +1874,8 @@ const createTransactionForDelegate = (
     jsonRpc: api => buildDelegateBody(address, transaction, withObjects, api),
     graphql: api =>
       buildDelegateBody(address, transaction, withObjects, makeSuiClientFromGraphQL(api)),
+    // Already a `ClientWithCoreApi`, so no adapter — only its throwing resolve plugin comes off.
+    grpc: api => buildDelegateBody(address, transaction, withObjects, withoutBuildSimulation(api)),
   });
 
 const buildUndelegateBody = async (
@@ -1649,6 +1924,9 @@ const createTransactionForUndelegate = (
     jsonRpc: api => buildUndelegateBody(address, transaction, withObjects, api),
     graphql: api =>
       buildUndelegateBody(address, transaction, withObjects, makeSuiClientFromGraphQL(api)),
+    // Already a `ClientWithCoreApi`, so no adapter — only its throwing resolve plugin comes off.
+    grpc: api =>
+      buildUndelegateBody(address, transaction, withObjects, withoutBuildSimulation(api)),
   });
 
 /**
@@ -1727,6 +2005,8 @@ const createTransactionForOthers = (
     jsonRpc: api => buildOthersBody(address, transaction, withObjects, api),
     graphql: api =>
       buildOthersBody(address, transaction, withObjects, makeSuiClientFromGraphQL(api)),
+    // Already a `ClientWithCoreApi`, so no adapter — only its throwing resolve plugin comes off.
+    grpc: api => buildOthersBody(address, transaction, withObjects, withoutBuildSimulation(api)),
   });
 
 /**
@@ -1743,13 +2023,7 @@ export const paymentInfo = async (
   sender: string,
   fakeTransaction: TransactionType,
 ) => {
-  const { unsigned: txb } = await createTransaction(
-    config,
-    sender,
-    fakeTransaction,
-    false,
-    undefined,
-  );
+  const { unsigned: txb } = await createTransaction(config, sender, fakeTransaction, false);
   return withTransport(config, {
     jsonRpc: async api => {
       try {
@@ -1769,6 +2043,16 @@ export const paymentInfo = async (
     graphql: async api => {
       try {
         const sim = await simulateTransactionGraphQL(api, txb);
+        const fees =
+          BigInt(sim.computationCost) + BigInt(sim.storageCost) - BigInt(sim.storageRebate);
+        return { gasBudget: sim.gasBudget, totalGasUsed: fees, fees };
+      } catch (error) {
+        throw mapDryRunError(error);
+      }
+    },
+    grpc: async api => {
+      try {
+        const sim = await simulateTransactionGrpc(api, txb);
         const fees =
           BigInt(sim.computationCost) + BigInt(sim.storageCost) - BigInt(sim.storageRebate);
         return { gasBudget: sim.gasBudget, totalGasUsed: fees, fees };
@@ -1825,6 +2109,14 @@ export const executeTransactionBlock = async (
       }
       const status = r.status === "SUCCESS" ? "success" : "failure";
       return toExecuteResult(r.digest, status, status === "failure" ? r.error : undefined);
+    },
+    grpc: async api => {
+      const signatures = Array.isArray(params.signature) ? params.signature : [params.signature];
+      const r = await executeTransactionGrpc(api, params.transactionBlock, signatures);
+      if (!r.status) {
+        return toExecuteResult(r.digest, "failure", "missing effects in broadcast response");
+      }
+      return toExecuteResult(r.digest, r.status, r.error);
     },
   });
 
@@ -1979,7 +2271,9 @@ export const toStakeAmounts = (stake: StakeObject): { deposited: bigint; rewarde
 
 /**
  * Active validator set with APY. JSON-RPC: two parallel calls merged by
- * `suiAddress`. GraphQL: see {@link getValidatorsGraphQL}.
+ * `suiAddress`. GraphQL and gRPC have no server-side APY, so both derive it
+ * client-side from pool exchange rates — see {@link getValidatorsGraphQL} and
+ * {@link getValidatorsGrpc}.
  */
 export const getValidators = (config: SuiCoinConfig): Promise<SuiValidator[]> =>
   withTransport(config, {
@@ -1998,4 +2292,5 @@ export const getValidators = (config: SuiCoinConfig): Promise<SuiValidator[]> =>
       }));
     },
     graphql: getValidatorsGraphQL,
+    grpc: getValidatorsGrpc,
   });

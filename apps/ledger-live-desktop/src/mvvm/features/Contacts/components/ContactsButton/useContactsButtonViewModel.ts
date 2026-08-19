@@ -6,8 +6,8 @@ import {
   CONTACTS_PAGE_PROPERTY,
   CONTACTS_TRACK_EVENTS,
   CONTACTS_TRACKING_BUTTON,
-  useContactsFeature,
 } from "@features/flow-contacts";
+import { useContactsFeature } from "@features/platform-contacts";
 import { useContextMenuClose } from "LLD/features/MyWallet/components/ContextMenuContext";
 import { useContactsAnalytics } from "../../analytics";
 

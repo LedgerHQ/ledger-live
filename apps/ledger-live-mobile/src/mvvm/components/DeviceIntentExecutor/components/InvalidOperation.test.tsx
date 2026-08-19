@@ -34,11 +34,9 @@ describe("InvalidOperation", () => {
     renderState();
 
     expect(screen.getByTestId("device-intent-executor-invalid-operation")).toBeVisible();
-    expect(screen.getByText("Invalid state")).toBeVisible();
+    expect(screen.getByText("An error occurred")).toBeVisible();
     expect(
-      screen.getByText(
-        "An error occurred. Please try again or contact Ledger support if the issue persists.",
-      ),
+      screen.getByText("Try again or contact Ledger Support if the issue continues."),
     ).toBeVisible();
     expect(screen.getByText("Close")).toBeVisible();
   });

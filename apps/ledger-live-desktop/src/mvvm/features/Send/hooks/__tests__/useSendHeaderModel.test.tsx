@@ -18,6 +18,10 @@ jest.mock("~/renderer/analytics/segment", () => ({
   track: jest.fn(),
   trackPage: jest.fn(),
 }));
+jest.mock("LLD/hooks/redux");
+jest.mock("@features/platform-contacts", () => ({
+  useContactsFeature: jest.fn(() => ({ isEnabled: false })),
+}));
 jest.mock("@ledgerhq/live-common/currencies/index", () => ({
   ...jest.requireActual("@ledgerhq/live-common/currencies/index"),
   decodeURIScheme: jest.fn(),
@@ -29,6 +33,8 @@ import { useMaybeAccountName } from "~/renderer/reducers/wallet";
 import { track } from "~/renderer/analytics/segment";
 import { decodeURIScheme } from "@ledgerhq/live-common/currencies/index";
 import { RecipientScannerProvider } from "../../context/RecipientScannerContext";
+import { useSelector } from "LLD/hooks/redux";
+import { useContactsFeature } from "@features/platform-contacts";
 
 type VM = ReturnType<typeof useSendHeaderModel>;
 let container: HTMLElement;
@@ -159,6 +165,61 @@ describe("useSendHeaderModel", () => {
 
       expect(latestVM?.title).toBe("Send ETH");
       expect(latestVM?.descriptionText).toBe("$5,969.83");
+    });
+  });
+
+  describe("recipient address input value on amount step", () => {
+    const ADDRESS = "0x1234567890abcdef1234567890abcdef12345678";
+    const CONTACT = {
+      id: "contact-benoit",
+      isMe: false,
+      name: "Benoit Jean",
+      addresses: [{ id: "address-1", currencyId: "ethereum", label: "Eth main", address: ADDRESS }],
+    };
+
+    const renderOnAmountStep = () => {
+      mockNavigation();
+      mockActions();
+      mockData({
+        account: { currency: { ticker: "ETH", id: "ethereum" }, account: {} },
+        recipient: { address: ADDRESS },
+        transaction: { status: {} },
+      });
+
+      renderHook();
+    };
+
+    it("shows the contact name when the recipient is a contact", () => {
+      (useContactsFeature as jest.Mock).mockReturnValue({ isEnabled: true });
+      jest.mocked(useSelector).mockReturnValue([CONTACT] as never);
+
+      renderOnAmountStep();
+
+      expect(latestVM?.recipientContact).toEqual({
+        id: "contact-benoit",
+        name: "Benoit Jean",
+      });
+      expect(latestVM?.addressInputValue).toBe("Benoit Jean");
+    });
+
+    it("shows the formatted address when the recipient is not a contact", () => {
+      (useContactsFeature as jest.Mock).mockReturnValue({ isEnabled: true });
+      jest.mocked(useSelector).mockReturnValue([] as never);
+
+      renderOnAmountStep();
+
+      expect(latestVM?.recipientContact).toBeUndefined();
+      expect(latestVM?.addressInputValue).toBe("0x123456...12345678");
+    });
+
+    it("shows the formatted address when the contacts feature is disabled", () => {
+      (useContactsFeature as jest.Mock).mockReturnValue({ isEnabled: false });
+      jest.mocked(useSelector).mockReturnValue([CONTACT] as never);
+
+      renderOnAmountStep();
+
+      expect(latestVM?.recipientContact).toBeUndefined();
+      expect(latestVM?.addressInputValue).toBe("0x123456...12345678");
     });
   });
 

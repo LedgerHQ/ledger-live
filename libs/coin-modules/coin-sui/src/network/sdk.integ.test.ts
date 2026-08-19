@@ -32,8 +32,9 @@ describe("SUI SDK Integration tests", () => {
       node: {
         url: getEnv("API_SUI_NODE_PROXY"),
         graphqlUrl: getEnv("API_SUI_GRAPHQL_PROXY"),
+        grpcUrl: getEnv("API_SUI_GRPC_PROXY"),
       },
-      features: { graphql: false },
+      features: { transport: "json" },
     }));
   });
 
@@ -572,8 +573,9 @@ describe("SUI SDK Integration tests", () => {
         node: {
           url: getJsonRpcFullnodeUrl("testnet"),
           graphqlUrl: "https://graphql.testnet.sui.io/graphql",
+          grpcUrl: getJsonRpcFullnodeUrl("testnet"),
         },
-        features: { graphql: false },
+        features: { transport: "json" },
       }));
     });
 
@@ -583,8 +585,9 @@ describe("SUI SDK Integration tests", () => {
         node: {
           url: getEnv("API_SUI_NODE_PROXY"),
           graphqlUrl: getEnv("API_SUI_GRAPHQL_PROXY"),
+          grpcUrl: getEnv("API_SUI_GRPC_PROXY"),
         },
-        features: { graphql: false },
+        features: { transport: "json" },
       }));
     });
 
@@ -604,8 +607,9 @@ describe("SUI SDK Integration tests", () => {
           node: {
             url: getJsonRpcFullnodeUrl("mainnet"),
             graphqlUrl: "https://sui.coin.ledger.com/graphql",
+            grpcUrl: getJsonRpcFullnodeUrl("mainnet"),
           },
-          features: { graphql: false },
+          features: { transport: "json" },
         }));
       });
 
@@ -697,8 +701,9 @@ describe("SUI SDK Integration tests", () => {
           node: {
             url: getJsonRpcFullnodeUrl("testnet"),
             graphqlUrl: "https://graphql.testnet.sui.io/graphql",
+            grpcUrl: getJsonRpcFullnodeUrl("testnet"),
           },
-          features: { graphql: false },
+          features: { transport: "json" },
         }));
       });
 

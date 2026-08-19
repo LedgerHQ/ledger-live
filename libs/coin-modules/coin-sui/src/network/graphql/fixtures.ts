@@ -1,4 +1,4 @@
-import type { SuiSystemStateInnerJson } from "./utils";
+import type { SuiSystemStateInnerJson } from "../staking";
 
 /** Per-validator overrides; only the fields any current test actually exercises are tunable. */
 export type FakeValidator = {

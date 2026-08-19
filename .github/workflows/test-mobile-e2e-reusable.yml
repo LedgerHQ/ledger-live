@@ -857,12 +857,14 @@ jobs:
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
 
-      - name: Install scrcpy 3.x and dependencies
+      - name: Install scrcpy dependencies
+        uses: LedgerHQ/ledger-live/tools/actions/composites/apt-install@develop
+        with:
+          packages: ffmpeg xvfb libsdl2-2.0-0 libusb-1.0-0
+
+      - name: Install scrcpy 3.x
         timeout-minutes: 10
         run: |
-          sudo apt-get update
-          sudo apt-get install -y ffmpeg xvfb libsdl2-2.0-0 libusb-1.0-0
-
           # Download scrcpy 3.3.4 from GitHub releases (apt/snap versions are obsolete)
           # See: https://github.com/Genymobile/scrcpy/blob/master/doc/linux.md
           SCRCPY_VERSION="3.3.4"

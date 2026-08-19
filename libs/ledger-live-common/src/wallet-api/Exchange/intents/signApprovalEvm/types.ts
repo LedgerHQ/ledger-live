@@ -1,4 +1,4 @@
-import type { IntentDefinition } from "@ledgerhq/device-intent";
+import type { IntentDefinition } from "@features/platform-device-intent";
 import type { Account } from "@ledgerhq/types-live";
 import type { QuoteApprovalTransaction } from "../../quotes/types";
 

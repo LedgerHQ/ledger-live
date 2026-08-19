@@ -6,6 +6,7 @@ import { ContactsListPane } from "./ContactsListPane.web";
 type ContactsPageLayoutProps = Readonly<{
   title: string;
   addContactLabel: string;
+  showAddContact: boolean;
   onAddContact: () => void;
   list: ReactNode;
   detail?: ReactNode;
@@ -14,13 +15,19 @@ type ContactsPageLayoutProps = Readonly<{
 export function ContactsPageLayout({
   title,
   addContactLabel,
+  showAddContact,
   onAddContact,
   list,
   detail,
 }: ContactsPageLayoutProps): React.ReactNode {
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-32" data-testid="contacts-page-layout">
-      <ContactsHeader title={title} addContactLabel={addContactLabel} onAddContact={onAddContact} />
+      <ContactsHeader
+        title={title}
+        addContactLabel={addContactLabel}
+        showAddContact={showAddContact}
+        onAddContact={onAddContact}
+      />
       <div className="flex min-h-0 flex-1 gap-16">
         <ContactsListPane>{list}</ContactsListPane>
         <ContactsDetailPane>{detail}</ContactsDetailPane>

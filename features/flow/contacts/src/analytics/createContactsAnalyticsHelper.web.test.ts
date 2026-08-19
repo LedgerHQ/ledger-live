@@ -199,6 +199,44 @@ describe("Contacts analytics payload shapes", () => {
       },
     };
 
+    const addressEdited: ContactsTrackEventPayload<typeof CONTACTS_TRACK_EVENTS.ADDRESS_EDITED> = {
+      name: CONTACTS_TRACK_EVENTS.ADDRESS_EDITED,
+      properties: {
+        ...globalProperties,
+        source: CONTACTS_EVENT_SOURCE.EDIT_ADDRESS,
+        network: "ethereum",
+        asset: "ETH",
+        inputMethod: "manual",
+        isEns: false,
+        flow: CONTACTS_FLOW.CONTACTS,
+      },
+    };
+
+    const editAddressPage: ContactsPageEventPayload<typeof CONTACTS_PAGE_EVENTS.EDIT_ADDRESS> = {
+      page: CONTACTS_PAGE_EVENTS.EDIT_ADDRESS,
+      properties: {
+        ...globalProperties,
+        source: CONTACTS_EVENT_SOURCE.EDIT_ADDRESS,
+        network: "ethereum",
+        asset: "ETH",
+      },
+    };
+
+    const applyChangesClick: ContactsTrackEventPayload<
+      typeof CONTACTS_TRACK_EVENTS.BUTTON_CLICKED
+    > = {
+      name: CONTACTS_TRACK_EVENTS.BUTTON_CLICKED,
+      properties: {
+        ...globalProperties,
+        source: CONTACTS_EVENT_SOURCE.EDIT_ADDRESS,
+        button: CONTACTS_TRACKING_BUTTON.applyChanges,
+        page: CONTACTS_PAGE_PROPERTY.EDIT_ADDRESS,
+        network: "ethereum",
+        asset: "ETH",
+        flow: CONTACTS_FLOW.CONTACTS,
+      },
+    };
+
     const payloads = [
       entryClick,
       searchQuery,
@@ -207,6 +245,9 @@ describe("Contacts analytics payload shapes", () => {
       addContactError,
       contactDetailPage,
       addressAdded,
+      addressEdited,
+      editAddressPage,
+      applyChangesClick,
       quickAction,
     ];
 

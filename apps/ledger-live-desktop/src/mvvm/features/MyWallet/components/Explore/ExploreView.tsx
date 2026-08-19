@@ -10,7 +10,7 @@ import { ExternalLink } from "@ledgerhq/lumen-ui-react/symbols";
 import Image from "~/renderer/components/Image";
 import ExploreImage from "./explore.webp";
 
-export type ExploreViewProps = {
+type ExploreViewProps = {
   title: string;
   onClick: () => void;
 };

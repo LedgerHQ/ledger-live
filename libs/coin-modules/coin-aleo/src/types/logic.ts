@@ -12,6 +12,8 @@ import type {
 } from "./api";
 import type { AleoDecryptedRecordResponse } from "./sdk";
 
+export type AleoRegistration = { type: "aleo"; provableId: string };
+
 export interface AleoUnspentRecord extends AleoPrivateRecord {
   microcredits: string;
   decryptedData: AleoDecryptedRecordResponse;

@@ -3,7 +3,11 @@ import { Trans } from "react-i18next";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { TokenCurrency } from "@domain/entity-currency-token";
-import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
+import {
+  canReceive,
+  getAccountCurrency,
+  getMainAccount,
+} from "@ledgerhq/live-common/account/index";
 import { useTokensData } from "@features/platform-currencies";
 import { supportLinkByTokenType } from "~/config/urls";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -19,6 +23,10 @@ import { useLLDCoinFamily } from "~/renderer/families";
 import { StepProps } from "../Body";
 
 type OnChangeAccount = (account?: AccountLike | null, tokenAccount?: Account | null) => void;
+
+// Some families expose no receive on Ledger Wallet (e.g. HyperCore).
+const canCreditAccount = (account: Account) => canReceive(account, null);
+
 const AccountSelection = ({
   onChangeAccount,
   account,
@@ -30,7 +38,13 @@ const AccountSelection = ({
     <Label>
       <Trans i18nKey="receive.steps.chooseAccount.label" />
     </Label>
-    <SelectAccount autoFocus withSubAccounts onChange={onChangeAccount} value={account} />
+    <SelectAccount
+      autoFocus
+      withSubAccounts
+      onChange={onChangeAccount}
+      value={account}
+      filter={canCreditAccount}
+    />
   </>
 );
 const TokenParentSelection = ({
