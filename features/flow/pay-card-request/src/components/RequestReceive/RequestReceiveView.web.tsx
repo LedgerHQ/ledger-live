@@ -12,6 +12,7 @@ export function RequestReceiveView({
   networkIcon,
   visibleActions,
   addressParts,
+  qrPayload,
   onClose,
   onShare,
   onCopy,
@@ -29,16 +30,17 @@ export function RequestReceiveView({
   }
 
   return (
-    <Dialog open onOpenChange={handleOpenChange}>
-      <DialogContent>
+    <Dialog open onOpenChange={handleOpenChange} height="fit">
+      <DialogContent className="max-h-[90vh]">
         <DialogHeader onClose={onClose} />
-        <DialogBody className="flex flex-col gap-32" data-testid="pay-card-request-receive">
+        <DialogBody className="flex flex-col gap-12" data-testid="pay-card-request-receive">
           <RequestReceiveSummary
             title={labels.title}
             networkLabel={labels.networkLabel}
             assetIcon={assetIcon}
             networkIcon={networkIcon}
             addressParts={addressParts}
+            qrPayload={qrPayload}
           />
           <RequestReceiveActions
             labels={labels.actions}

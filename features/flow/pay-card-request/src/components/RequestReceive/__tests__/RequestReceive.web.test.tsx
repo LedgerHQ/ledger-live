@@ -6,6 +6,15 @@ import { RequestReceiveView } from "../RequestReceiveView.web";
 import { createRequestReceiveProps, REQUEST_RECEIVE_ADDRESS } from "./fixtures";
 import type { RequestReceiveProps } from "../../../types";
 
+// The QR renderer draws on a real canvas, which is not meaningful under jsdom; it is unit-tested in
+// @shared/ui-qr-code. Stub it here so this suite focuses on the RequestReceive composition.
+jest.mock("@shared/ui-qr-code", () => ({
+  QrCode: ({ value, testID }: { value: string; testID?: string }) => {
+    const React = require("react");
+    return React.createElement("div", { "data-testid": testID }, value);
+  },
+}));
+
 function renderRequestReceive(overrides: Partial<RequestReceiveProps> = {}) {
   const props = createRequestReceiveProps(overrides);
   return { props, ...render(<RequestReceive {...props} />) };
@@ -30,6 +39,14 @@ describe("RequestReceive (Web)", () => {
     expect(screen.getByText("Request USD Coin")).toBeVisible();
     expect(screen.getByText("Base network")).toBeVisible();
     expect(screen.getByTestId("pay-card-request-receive-address")).toHaveTextContent(
+      REQUEST_RECEIVE_ADDRESS,
+    );
+  });
+
+  it("renders the QR code for the address", () => {
+    renderRequestReceive();
+
+    expect(screen.getByTestId("pay-card-request-receive-qr-code")).toHaveTextContent(
       REQUEST_RECEIVE_ADDRESS,
     );
   });

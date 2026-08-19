@@ -52,7 +52,11 @@ export function usePayTabRequestReceive(
       network: STUB_NETWORK,
       page: REQUEST_PAGE,
       labels,
-      assetIcon: { ledgerId: "usd_coin", ticker: STUB_ASSET.ticker, network: "base" },
+      assetIcon: {
+        ledgerId: "ethereum/erc20/usd__coin",
+        ticker: STUB_ASSET.ticker,
+        network: "base",
+      },
       networkIcon: { ledgerId: "base", ticker: "ETH" },
       visibleActions: ["save", "copy", "verify"],
       onShare: noop,
