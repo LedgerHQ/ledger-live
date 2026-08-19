@@ -16,16 +16,22 @@ jest.mock("react-native-keychain", () => ({
 
 const attempt = { state: "state-value", codeVerifier: "verifier-value" };
 
-const storedEntry = {
-  username: "payCard",
-  password: JSON.stringify(attempt),
+/** What a write answers: `Result`, which names the key and the storage. Never the secret back. */
+const writeResult = {
   service: "payCard.pkce.attempt",
   storage: STORAGE_TYPE.AES_GCM_NO_AUTH,
 };
 
+/** What a read answers: `UserCredentials`, which is a `Result` plus the pair. */
+const storedEntry = {
+  ...writeResult,
+  username: "payCard",
+  password: JSON.stringify(attempt),
+};
+
 describe("attemptStore (native)", () => {
   beforeEach(() => {
-    jest.mocked(setGenericPassword).mockResolvedValue(storedEntry);
+    jest.mocked(setGenericPassword).mockResolvedValue(writeResult);
     jest.mocked(resetGenericPassword).mockResolvedValue(true);
   });
 
