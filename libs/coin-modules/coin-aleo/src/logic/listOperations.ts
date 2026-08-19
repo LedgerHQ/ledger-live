@@ -95,7 +95,9 @@ function dedupeByTransaction(transitions: AleoPublicTransaction[]): AleoPublicTr
 }
 
 function compareHash(a: string, b: string): number {
-  return a < b ? -1 : a > b ? 1 : 0;
+  if (a < b) return -1;
+  if (a > b) return 1;
+  return 0;
 }
 
 // A self-transfer owns both the output record and the change record, but produces one operation.

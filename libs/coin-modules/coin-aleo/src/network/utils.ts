@@ -156,7 +156,7 @@ export async function fetchTransitionPage({
     } else {
       currentCursor = toExactCursor(lastRow);
 
-      const openBlock = transitions.at(-1)?.block_number;
+      const openBlock = lastRow.block_number;
       closedRows = transitions.filter(tx => tx.block_number !== openBlock);
     }
   }
@@ -472,14 +472,14 @@ export async function resolveTransferArguments({
   const decryptionErrors: unknown[] = [];
 
   const plaintexts = await Promise.all(
-    transition.inputs.map((input, index) => {
+    transition.inputs.map(async (input, index) => {
       const value = getInputValue(input);
       if (!value) return null;
       if (input.type !== "private") return value;
 
-      // The owning record's program/function cannot decrypt a batching wrapper's inputs.
-      return sdkClient
-        .decryptCiphertext({
+      try {
+        // The owning record's program/function cannot decrypt a batching wrapper's inputs.
+        const { plaintext } = await sdkClient.decryptCiphertext({
           config,
           ciphertext: value,
           tpk: transition.tpk,
@@ -487,14 +487,12 @@ export async function resolveTransferArguments({
           programId: transition.program,
           functionName: transition.function,
           outputIndex: index,
-        })
-        .then(
-          result => result.plaintext,
-          (error: unknown) => {
-            decryptionErrors.push(error);
-            return null;
-          },
-        );
+        });
+        return plaintext;
+      } catch (error) {
+        decryptionErrors.push(error);
+        return null;
+      }
     }),
   );
 
