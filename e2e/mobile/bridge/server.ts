@@ -172,10 +172,6 @@ export async function getEnvs() {
 }
 
 /** Last Buy/Sell handoff URL (`goToManifest` + `goToURL`) seen by the app, or "" if none yet. */
-export async function getPtxHandoff() {
-  return fetchData({ type: "getPtxHandoff", id: uniqueId() });
-}
-
 async function fetchData(message: MessageData, timeout = RESPONSE_TIMEOUT): Promise<string> {
   return new Promise<string>(resolve => {
     postMessage(message);
@@ -230,9 +226,6 @@ function onMessage(messageStr: string) {
       break;
     case "appLogs":
       resolvePending("getLogs", msg.payload);
-      break;
-    case "ptxHandoff":
-      resolvePending("getPtxHandoff", msg.payload);
       break;
     case "appFlags":
       resolvePending("getFlags", msg.payload);

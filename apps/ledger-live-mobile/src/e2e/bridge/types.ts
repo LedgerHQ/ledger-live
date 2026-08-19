@@ -45,10 +45,6 @@ export type ServerData =
       type: "appEnvs";
       payload: string;
     }
-  | {
-      type: "ptxHandoff";
-      payload: string;
-    }
   | { type: "ACK"; id: string }
   | { type: "swapSetupDone" }
   | { type: "swapLiveAppReady" }
@@ -69,7 +65,6 @@ export type MessageData =
   | { type: "getLogs"; id: string }
   | { type: "getFlags"; id: string }
   | { type: "getEnvs"; id: string }
-  | { type: "getPtxHandoff"; id: string }
   | { type: "navigate"; id: string; payload: string }
   | { type: "importSettings"; id: string; payload: Partial<SettingsState> }
   | {
