@@ -508,6 +508,7 @@ describe("Contacts integration", () => {
       );
       expect(screen.queryByTestId("contacts-me-item")).toBeNull();
       expect(screen.queryByTestId("contacts-add-contact-row")).toBeNull();
+      expect(screen.queryByTestId("contacts-add-contact-header")).toBeNull();
     });
 
     await user.clear(input);
@@ -515,6 +516,7 @@ describe("Contacts integration", () => {
     await waitFor(() => {
       expect(screen.queryByTestId("contacts-search-no-results")).toBeNull();
       expect(screen.getByTestId("contacts-add-contact-row")).toBeVisible();
+      expect(screen.getByTestId("contacts-add-contact-header")).toBeVisible();
     });
 
     await user.type(input, "Me");

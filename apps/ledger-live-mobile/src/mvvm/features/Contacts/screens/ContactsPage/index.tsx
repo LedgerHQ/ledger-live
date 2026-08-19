@@ -1,7 +1,7 @@
 import React, { useCallback, useLayoutEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { useContactsFeature } from "@features/flow-contacts";
+import { isContactsSearchNoResultsViewModel, useContactsFeature } from "@features/flow-contacts";
 import { ContactsPageContent } from "./components/ContactsPageContent";
 import { useContactsAddContactDrawerAdapter } from "./hooks/useContactsAddContactDrawerAdapter";
 import { useContactsPageNavigationViewModel } from "./hooks/useContactsPageNavigationViewModel";
@@ -31,7 +31,11 @@ function ContactsScreenContent() {
     addContactDrawer,
   };
 
-  useContactsPageNavigationViewModel(pageViewModel.labels.addContact, addContactDrawer.onOpen);
+  useContactsPageNavigationViewModel(
+    pageViewModel.labels.addContact,
+    !isContactsSearchNoResultsViewModel(pageViewModel.viewModel),
+    addContactDrawer.onOpen,
+  );
 
   return <ContactsPageContent {...viewModel} />;
 }

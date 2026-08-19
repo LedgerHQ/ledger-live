@@ -99,7 +99,7 @@ describe("ContactsAddContactDrawerSheet", () => {
   it("should render the shared validation error and disable confirmation", () => {
     render(
       <ContactsAddContactDrawerSheet
-        {...createViewModel({ draftName: "Ada1", invalidNameError: "InvalidContactNameError" })}
+        {...createViewModel({ draftName: "Ada@1", invalidNameError: "InvalidContactNameError" })}
       />,
     );
 

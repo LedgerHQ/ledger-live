@@ -48,7 +48,7 @@ describe("useAddContactViewModel", () => {
     const { result } = renderHook(() => useAddContactViewModel(contactCreation));
 
     act(() => {
-      result.current.setDraftName("Olive2");
+      result.current.setDraftName("Olive@2");
     });
 
     expect(result.current.invalidNameError).toBe(INVALID_CONTACT_NAME_ERROR_NAME);
@@ -104,7 +104,7 @@ describe("useAddContactViewModel", () => {
     const { result } = renderHook(() => useAddContactViewModel(contactCreation));
 
     act(() => {
-      result.current.setDraftName("Olive2");
+      result.current.setDraftName("Olive@2");
     });
 
     await expect(

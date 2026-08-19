@@ -284,21 +284,15 @@ describe("Contacts integration", () => {
 
     const input = screen.getByTestId("contacts-add-contact-name-input");
 
-    await user.type(input, "Ada1");
+    await user.type(input, "Coinbase 1");
 
-    expect(screen.getByText("Special characters are not allowed.")).toBeVisible();
-    expect(screen.getByTestId("contacts-add-contact-save")).toBeDisabled();
-
-    fireEvent.change(input, { target: { value: "Ada" } });
-
-    expect(screen.queryByText("Special characters are not allowed.")).not.toBeInTheDocument();
     expect(screen.getByTestId("contacts-add-contact-save")).toBeEnabled();
 
     await user.click(screen.getByTestId("contacts-add-contact-save"));
 
     await waitFor(() => {
       expect(screen.queryByTestId("contacts-add-contact-dialog")).not.toBeInTheDocument();
-      expect(screen.getByText("Ada")).toBeVisible();
+      expect(screen.getByText("Coinbase 1")).toBeVisible();
     });
   });
 
@@ -339,6 +333,8 @@ describe("Contacts integration", () => {
     expect(screen.getByTestId("contacts-search-no-results")).toBeVisible();
     expect(screen.getByText("No contact found")).toBeVisible();
     expect(screen.queryByTestId("contacts-saved-row-contact-ben")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("contacts-add-contact")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("contacts-add-contact-header")).not.toBeInTheDocument();
   });
 
   it("should show the one-time feature introduction on first visit and complete it from Try contacts", async () => {

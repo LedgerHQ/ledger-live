@@ -23,7 +23,7 @@ describe("useContactsAddContactDrawerAdapter", () => {
 
     act(() => {
       result.current.onOpen();
-      result.current.onDraftNameChange("Ada1");
+      result.current.onDraftNameChange("Ada@1");
     });
 
     expect(result.current.isOpen).toBe(true);

@@ -35,7 +35,7 @@ describe("useAddContactDrawerViewModel", () => {
 
     act(() => {
       result.current.onOpen();
-      result.current.onDraftNameChange("Ada1");
+      result.current.onDraftNameChange("Ada@1");
     });
 
     expect(result.current).toMatchObject({
@@ -129,7 +129,7 @@ describe("useAddContactDrawerViewModel", () => {
     });
 
     act(() => {
-      result.current.onDraftNameChange("Ada1");
+      result.current.onDraftNameChange("Ada@1");
     });
 
     expect(result.current.draftName).toBe("Ada");

@@ -45,22 +45,16 @@ describe("Contacts add contact drawer integration", () => {
     await user.press(screen.getByTestId("contacts-add-contact-row"));
     const input = screen.getByTestId("contacts-add-contact-name-input");
 
-    await user.type(input, "Ada1");
-
-    expect(screen.getByText("Special characters are not allowed.")).toBeVisible();
-    expect(screen.getByRole("button", { name: "Confirm name" })).toBeDisabled();
-
-    fireEvent.changeText(input, "Ada");
+    await user.type(input, "Coinbase 1");
 
     await waitFor(() => {
-      expect(screen.queryByText("Special characters are not allowed.")).toBeNull();
       expect(screen.getByRole("button", { name: "Confirm name" })).toBeEnabled();
     });
 
     await user.press(screen.getByRole("button", { name: "Confirm name" }));
 
     await waitFor(() => {
-      expect(screen.getByText("Ada")).toBeVisible();
+      expect(screen.getByText("Coinbase 1")).toBeVisible();
       expect(screen.queryByTestId("contacts-add-contact-row")).toBeNull();
       expect(screen.queryByTestId("contacts-add-contact-name-input")).toBeNull();
     });
@@ -116,7 +110,13 @@ describe("Contacts add contact drawer integration", () => {
 
     await waitFor(() => {
       expect(screen.getByTestId("contacts-search-no-results")).toBeVisible();
-      expect(screen.getByTestId("contacts-add-contact-header")).toBeEnabled();
+      expect(screen.queryByTestId("contacts-add-contact-header")).toBeNull();
+    });
+
+    await user.clear(screen.getByTestId("contacts-search-input"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("contacts-add-contact-header")).toBeVisible();
     });
 
     await user.press(screen.getByTestId("contacts-add-contact-header"));
