@@ -2,6 +2,7 @@ import {
   PayCardLogoutResponseSchema,
   PayCardOrderResponseSchema,
   PayCardSessionResponseSchema,
+  PayCardStatusResponseSchema,
   PayCardUserResponseSchema,
 } from "./schema";
 
@@ -72,5 +73,40 @@ describe("PayCardOrderResponseSchema", () => {
 
   it("rejects a success flag that is not a boolean", () => {
     expect(() => PayCardOrderResponseSchema.parse({ success: "yes" })).toThrow();
+  });
+});
+
+describe("PayCardStatusResponseSchema", () => {
+  const cardStatus = {
+    id: "card-1",
+    holderName: "Ada Lovelace",
+    expiryDate: "2029/08",
+    panLast4: "1234",
+    status: "ACTIVE",
+    type: "VIRTUAL",
+    orderedAt: "2026-08-19T10:00:00.000Z",
+  };
+
+  it("drops the card secrets the endpoint must never be trusted to withhold", () => {
+    expect(
+      PayCardStatusResponseSchema.parse({
+        ...cardStatus,
+        pan: "4111111111111111",
+        cvv: "123",
+        pin: "0000",
+      }),
+    ).toEqual(cardStatus);
+  });
+
+  it("rejects a status the wire contract does not name", () => {
+    expect(() =>
+      PayCardStatusResponseSchema.parse({ ...cardStatus, status: "SOMETHING_ELSE" }),
+    ).toThrow();
+  });
+
+  it("rejects a card type the wire contract does not name", () => {
+    expect(() =>
+      PayCardStatusResponseSchema.parse({ ...cardStatus, type: "SOMETHING_ELSE" }),
+    ).toThrow();
   });
 });
