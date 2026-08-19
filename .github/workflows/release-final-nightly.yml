@@ -43,10 +43,10 @@ jobs:
         shell: bash
 
       - name: Setup git user
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@support/test-quarantine-enhancements
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/test-quarantine-enhancements
         id: setup-caches
         with:
           use-mise: true
@@ -58,7 +58,7 @@ jobs:
           ruby-version: 3.3.0
 
       - name: JFrog npm auth
-        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@support/test-quarantine-enhancements
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
@@ -73,7 +73,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: pnpm changeset version --snapshot nightly
 
-      - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@support/test-quarantine-enhancements
         id: post-wallet-cli-version
         with:
           path: ${{ github.workspace }}/apps/wallet-cli
@@ -82,7 +82,7 @@ jobs:
 
       - name: JFrog npm auth (publish registry)
         if: ${{ vars.ARTIFACTORY_PUBLISH_URL != '' }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@support/test-quarantine-enhancements
         with:
           registry: ${{ vars.ARTIFACTORY_PUBLISH_URL }}
 
@@ -106,18 +106,18 @@ jobs:
 
       #NPM publishing - end removal
 
-      - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@support/test-quarantine-enhancements
         id: post-desktop-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-desktop
 
-      - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@support/test-quarantine-enhancements
         id: post-mobile-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
 
       - name: tag nightly ref
-        uses: LedgerHQ/ledger-live/tools/actions/composites/create-or-update-tag@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/create-or-update-tag@support/test-quarantine-enhancements
         with:
           ref: ${{ steps.get-sha.outputs.sha }}
           tagName: nightly

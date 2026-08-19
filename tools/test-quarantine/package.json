@@ -1,0 +1,28 @@
+{
+  "name": "@ledgerhq/test-quarantine",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Unified declarative test-quarantine wrapper for Jest, Detox and Playwright.",
+  "type": "module",
+  "bin": {
+    "test-quarantine": "./bin/test-quarantine.mjs"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./reporters/detox-flake-reporter": "./src/reporters/detox-flake-reporter.ts"
+  },
+  "scripts": {
+    "test": "node --test \"test/**/*.test.ts\"",
+    "typecheck": "tsc --noEmit",
+    "lint": "oxlint ./",
+    "lint:fix": "oxlint ./ --fix --quiet"
+  },
+  "dependencies": {
+    "yaml": "2.9.0",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "typescript": "catalog:"
+  }
+}

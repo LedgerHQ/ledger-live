@@ -19,6 +19,10 @@ on:
         required: true
       NX_KEY:
         required: true
+      FLAKE_API_KEY_CI:
+        required: false
+      FLAKE_API_HOST:
+        required: false
   workflow_dispatch:
     inputs:
       ref:
@@ -57,7 +61,7 @@ jobs:
           ref: ${{ inputs.ref || github.sha }}
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/test-quarantine-enhancements
         id: setup-caches
         with:
           use-mise: true
@@ -103,6 +107,8 @@ jobs:
       FORCE_COLOR: 3
       CI_OS: ledger-live-linux-16CPU-64RAM
       JEST_MAX_WORKERS: "95%"
+      FLAKE_API_KEY: ${{ secrets.FLAKE_API_KEY_CI }}
+      FLAKE_API_HOST: ${{ secrets.FLAKE_API_HOST }}
     runs-on: [ledger-live-linux-16CPU-64RAM]
     outputs:
       coverage_generated: ${{ contains(steps.generate_coverage.outcome, 'success') }}
@@ -112,7 +118,7 @@ jobs:
           ref: ${{ inputs.ref || github.sha }}
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/test-quarantine-enhancements
         id: setup-caches
         with:
           use-mise: true
@@ -125,7 +131,7 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
 
       - name: JFrog npm auth
-        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@support/test-quarantine-enhancements
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
 

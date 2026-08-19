@@ -1,6 +1,12 @@
 import { setEnv } from "@shared/env";
 import { getOperatingSystemSupportStatus, supportStatusForOS } from "./os";
 
+// FLAKE-SIM: test-quarantine pipeline validation — REMOVE BEFORE MERGE.
+// Fails attempt 1 and passes attempt 2 so the flake reporter observes a
+// fail->pass transition. CI-only, matching `jest.retryTimes` in jestSetup.js:
+// without retries a forced failure would just be a hard failure.
+let flakeSimAttempts = 0;
+
 describe("supportStatusForOS", () => {
   test("a regular Mac version passes", () => {
     expect(supportStatusForOS("Darwin", "18.7.0")).toMatchObject({ supported: true }); // macos 10.14.7
@@ -8,6 +14,10 @@ describe("supportStatusForOS", () => {
   });
 
   test("a regular Linux version passes", () => {
+    // FLAKE-SIM — REMOVE BEFORE MERGE.
+    if (process.env.CI && flakeSimAttempts++ === 0) {
+      throw new Error("FLAKE-SIM: forced failure on attempt 1 (ledger-live-desktop jest)");
+    }
     expect(supportStatusForOS("Linux", "5.19.1-3-MANJARO")).toMatchObject({ supported: true });
   });
 

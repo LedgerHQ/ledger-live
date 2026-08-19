@@ -5,7 +5,14 @@ import { Layout } from "../../component/layout.component";
 
 test.use({ userdata: "skip-onboarding" });
 
-test("Settings", async ({ page }) => {
+test("Settings", async ({ page }, testInfo) => {
+  // FLAKE-SIM: test-quarantine pipeline validation — REMOVE BEFORE MERGE.
+  // Playwright exposes the attempt directly, so no counter is needed: retry 0 is
+  // the first run. CI-only, matching `retries: process.env.CI ? 1 : 0`.
+  if (process.env.CI && testInfo.retry === 0) {
+    throw new Error("FLAKE-SIM: forced failure on attempt 1 (desktop playwright)");
+  }
+
   const settingsPage = new SettingsPage(page);
   const layout = new Layout(page);
 

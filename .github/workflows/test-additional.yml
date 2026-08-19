@@ -27,14 +27,14 @@ jobs:
           ref: ${{ inputs.ref || github.sha }}
 
       - name: Install pnpm
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/test-quarantine-enhancements
         id: setup-caches
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Validate Changesets
-        uses: LedgerHQ/ledger-live/tools/actions/composites/validate-changesets@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/validate-changesets@support/test-quarantine-enhancements
 
   changes:
     name: Detect Workflow File Changes

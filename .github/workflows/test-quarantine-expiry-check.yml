@@ -1,0 +1,61 @@
+name: "[Quarantine] Expiry Check - Scheduled"
+run-name: Weekly Test Quarantine Expiry Check
+
+permissions:
+  contents: read
+
+on:
+  schedule:
+    # Weekly, Monday 07:00 UTC (PRD §9 — expiry is a scheduled check, NOT a per-PR gate).
+    - cron: "0 7 * * 1"
+  workflow_dispatch:
+
+jobs:
+  expiry-check:
+    name: "Expiry Check"
+    runs-on: ubuntu-22.04
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
+      FORCE_COLOR: 3
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+
+      - name: Setup the caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/test-quarantine-enhancements
+        with:
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
+
+      # Only the tool itself is needed (yaml + zod).
+      - name: Install dependencies
+        run: pnpm i --filter="@ledgerhq/test-quarantine..." --no-frozen-lockfile --unsafe-perm
+
+      # Fails (exit non-zero) and prints offending entries + owners when any
+      # entry is past its expiry (PRD §9). Expired entries already stop applying
+      # (the test runs again); this job nudges owners to remove/renew them.
+      - name: Check for expired quarantine entries
+        run: pnpm run quarantine:expiry-check
+
+  expiry-notify:
+    name: "Notify owners of expired entries"
+    needs: expiry-check
+    if: failure() && github.event_name != 'workflow_dispatch'
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Post to wallet-ci slack channel
+        uses: slackapi/slack-github-action@dcb1066f776dd043e64d0e8ba94ca15cc7e1875d # v4.0.0
+        with:
+          token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
+          method: chat.postMessage
+          payload: |
+            channel: C08JQKWS9KK
+            text: "[Test Quarantine] Expired entries"
+            blocks:
+              - type: "section"
+                text:
+                  type: "mrkdwn"
+                  text: "⏰ *Test quarantine entries have expired* — owners, please remove or renew them."
+              - type: "section"
+                text:
+                  type: "mrkdwn"
+                  text: ":github: <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow run (lists expired entries + owners)>"

@@ -13,6 +13,7 @@
 .github/workflows/test-mobile-e2e-reusable.yml          @ledgerhq/wallet-ci  @ledgerhq/qaa
 .github/workflows/test-design-system-reusable.yml       @ledgerhq/wallet-ci  @ledgerhq/wallet-xp
 tools                                                   @ledgerhq/wallet-ci
+quarantine/**                                           @ledgerhq/wallet-ci
 apps/ledger-live-mobile/fastlane/Fastfile               @ledgerhq/wallet-ci
 
 # Platform & Wallet XP teams catchall

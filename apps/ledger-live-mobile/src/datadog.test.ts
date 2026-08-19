@@ -11,10 +11,19 @@ jest.mock("@datadog/mobile-react-navigation", () => ({}));
 jest.mock("./const", () => ({ ScreenName: {} }));
 jest.mock("./utils/datadogUtils", () => ({ buildFeatureFlagTags: jest.fn(() => ({})) }));
 
+// FLAKE-SIM: test-quarantine pipeline validation — REMOVE BEFORE MERGE.
+// Fails attempt 1 and passes attempt 2 so the flake reporter observes a
+// fail->pass transition. CI-only, matching `jest.retryTimes` in jest-setup.js.
+let flakeSimAttempts = 0;
+
 describe("customErrorEventMapper", () => {
   const mapError = customErrorEventMapper(false);
 
   it("drops Braze content cards sync failures", () => {
+    // FLAKE-SIM — REMOVE BEFORE MERGE.
+    if (process.env.CI && flakeSimAttempts++ === 0) {
+      throw new Error("FLAKE-SIM: forced failure on attempt 1 (ledger-live-mobile jest)");
+    }
     expect(
       mapError({
         message: "BrazeKit.ContentCards.Error.syncFailure",

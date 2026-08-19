@@ -27,15 +27,15 @@ jobs:
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
       - name: Setup the toolchain
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/test-quarantine-enhancements
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
       - name: JFrog npm auth
-        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@support/test-quarantine-enhancements
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/monitor@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/monitor@support/test-quarantine-enhancements
         id: monitoring
         timeout-minutes: 120
         with:
