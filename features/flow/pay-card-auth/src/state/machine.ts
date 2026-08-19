@@ -10,7 +10,9 @@ import {
   prepareAttempt,
   validateCallback,
 } from "./actors";
+import { clearErrorKind, failPkce, forgetAttempt } from "./actions";
 import { isUnauthorizedError } from "./errors";
+import { hasErrorKind, shouldResumeAuthenticated } from "./guards";
 import type { CardLoginContext, CardLoginEvent, CardLoginMachineInput } from "./types";
 
 export const cardLoginMachine = setup({
@@ -31,20 +33,13 @@ export const cardLoginMachine = setup({
     clearAttempt,
   },
   guards: {
-    hasErrorKind: ({ context }) => context.errorKind !== null,
-    shouldResumeAuthenticated: ({ context }) => context.resumeAuthenticated,
+    hasErrorKind,
+    shouldResumeAuthenticated,
   },
   actions: {
-    /** Everything an ended attempt leaves behind, except the error to show for it. */
-    forgetAttempt: assign({
-      callback: null,
-      initiation: null,
-      loginUrl: null,
-      session: null,
-      clearSession: false,
-      resumeAuthenticated: false,
-    }),
-    clearErrorKind: assign({ errorKind: null }),
+    forgetAttempt,
+    clearErrorKind,
+    failPkce,
   },
 }).createMachine({
   id: "cardLogin",
@@ -111,7 +106,7 @@ export const cardLoginMachine = setup({
           actions: assign({ initiation: ({ event }) => event.output }),
         },
         // Nothing reached the store, so there is nothing to wipe.
-        onError: { target: "error", actions: assign({ errorKind: "pkce_failed" }) },
+        onError: { target: "error", actions: "failPkce" },
       },
     },
 
