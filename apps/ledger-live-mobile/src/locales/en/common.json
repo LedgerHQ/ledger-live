@@ -10345,6 +10345,14 @@
       "duplicateLabel": "This address name is already used for this contact.",
       "labelTooLong": "This address name is too long."
     },
+    "addAddressReview": {
+      "title": "Review address",
+      "addressLabel": "Address",
+      "currencyLabel": "Currency",
+      "networkLabel": "Network",
+      "nameLabel": "Address name",
+      "continue": "Confirm address"
+    },
     "addressCount_zero": "0 address",
     "addressCount_one": "{{count}} address",
     "addressCount_other": "{{count}} addresses",

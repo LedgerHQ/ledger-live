@@ -12,6 +12,8 @@ Shared Add address flow for Desktop and Mobile.
 - Dedicated prefilled-address review UI for Web and React Native.
 - Web dialog content and React Native bottom-sheet content.
 - Public ports and helpers used by application-owned currency selection and validation adapters.
+- Shared prefill-session orchestration (`usePrefillAddAddressFlow` and
+  `useOpenPrefillAddAddressFlow`) so Desktop and Mobile only own translations and chrome.
 
 ## Structure
 
@@ -22,6 +24,8 @@ Shared Add address flow for Desktop and Mobile.
 - `state/` owns the Add address session, label validation, and currency-selection orchestration.
   Shared Contacts address-entry validation state and input behavior are consumed from
   `@features/platform-contacts`.
+- `usePrefillAddAddressFlow` owns opening, saving, and settling a prefilled session. Apps mount a
+  thin root that renders dialog or drawer chrome from that controller.
 
 ## Public API
 
