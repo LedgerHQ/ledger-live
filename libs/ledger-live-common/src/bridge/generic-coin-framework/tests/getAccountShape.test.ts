@@ -239,21 +239,24 @@ describe("genericGetAccountShape", () => {
       ]);
     });
 
-    it("does not inject a vanished-token entry when the fresh response has no tokens at all", async () => {
+    it("still injects a vanished-token entry when the fresh response has no tokens at all (the account's only token got fully swept)", async () => {
       getBalanceMock.mockResolvedValue([{ asset: { type: "native" }, value: 100n, locked: 0n }]);
+      const vanishedAsset = {
+        type: "token",
+        assetReference: "0xvanished",
+        assetOwner: "addr1",
+        name: "Vanished",
+      };
       getBridgeApiMock.mockImplementationOnce(() => ({
         ...defaultBridgeApi(),
-        getAssetFromToken: () => ({
-          type: "token",
-          assetReference: "0xvanished",
-          assetOwner: "addr1",
-          name: "Vanished",
-        }),
+        getAssetFromToken: () => vanishedAsset,
       }));
 
       await callWithSubAccountToken();
 
-      expect(buildSubAccountsMock.mock.calls[0][0].allTokenAssetsBalances).toEqual([]);
+      expect(buildSubAccountsMock.mock.calls[0][0].allTokenAssetsBalances).toEqual([
+        { asset: vanishedAsset, value: 0n },
+      ]);
     });
 
     it("does not fail the whole sync when getAssetFromToken throws for a sub-account", async () => {
