@@ -40,6 +40,19 @@ describe("shouldShowHardwareCarouselCloseAll", () => {
     ).toBe(false);
   });
 
+  it("returns false for non-alwayson category ids", () => {
+    expect(
+      shouldShowHardwareCarouselCloseAll({
+        ...baseCategory,
+        categoryId: "other-category",
+        location: LocationContentCard.Portfolio,
+        cardsLayout: ContentCardsLayout.carousel,
+        cardsType: ContentCardsType.smallSquare,
+        isDismissable: true,
+      }),
+    ).toBe(false);
+  });
+
   it("returns false for unique layout or non-portfolio placements", () => {
     expect(
       shouldShowHardwareCarouselCloseAll({
