@@ -5,11 +5,6 @@ import {
 import { retry } from "@ledgerhq/live-common/promise";
 import { registerTransportModule } from "@ledgerhq/live-common/hw/index";
 import {
-  ledgerKeyRingProtocol,
-  ledgerSync,
-  restoreTrustchain,
-} from "@ledgerhq/live-e2e-shared/ledgerSync/cli";
-import {
   runCliGetAddress,
   runCliGetTokenAllowance,
   runCliLiveData,
@@ -21,9 +16,6 @@ import {
 } from "@ledgerhq/live-e2e-shared/runCli";
 
 export const CLI = {
-  ledgerKeyRingProtocol,
-  ledgerSync,
-  restoreTrustchain,
   liveData: function (opts: LiveDataOpts) {
     return runCliLiveData(opts);
   },
