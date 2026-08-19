@@ -51,13 +51,13 @@ describe("ContactSchema", () => {
     expect(ContactNameSchema.parse("Jean-Luc O'Connor")).toBe("Jean-Luc O'Connor");
     expect(ContactNameSchema.parse("Coinbase 1")).toBe("Coinbase 1");
     expect(ContactNameSchema.parse("Web3")).toBe("Web3");
-    expect(ContactNameSchema.parse("1Password")).toBe("1Password");
     expect(ContactNameSchema.parse("Алексей")).toBe("Алексей");
     expect(ContactNameSchema.parse("مريم")).toBe("مريم");
   });
 
   it("rejects unsupported contact name characters", () => {
     expect(() => ContactNameSchema.parse("\u0301")).toThrow();
+    expect(() => ContactNameSchema.parse("1Password")).toThrow();
     expect(() => ContactNameSchema.parse("@Olive")).toThrow();
     expect(() => ContactNameSchema.parse("Olive@2")).toThrow();
     expect(() => ContactNameSchema.parse("Olive 💎")).toThrow();
