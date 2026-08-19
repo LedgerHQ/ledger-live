@@ -186,9 +186,9 @@ describe("usePerpsDepositViewModel", () => {
     expect(mockOpenPerpsReview).toHaveBeenCalledWith({
       receiverAccount,
       depositAccount: fundingAccount,
-      amountSent: { value: "0.000000000000002", currencyId: "ethereum" },
+      amountSent: "0.000000000000002",
       // The received side is whatever the provider quoted, not a local conversion.
-      amountTo: { value: "42", currencyId: "ethereum" },
+      amountTo: "42",
       draft: { depositAccount: fundingAccount, depositAmount: 20 },
     });
     expect(onClose).toHaveBeenCalled();

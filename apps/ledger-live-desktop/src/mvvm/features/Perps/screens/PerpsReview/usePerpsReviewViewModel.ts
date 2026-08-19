@@ -1,10 +1,11 @@
 import { useCallback, useMemo } from "react";
 import type { PerpsDepositReviewParams } from "@ledgerhq/live-common/wallet-api/Perps/server";
+import { formatCurrencyUnit, parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useSelector } from "LLD/hooks/redux";
 import { accountNameWithDefaultSelector, walletSelector } from "~/renderer/reducers/wallet";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { openPerpsDeposit } from "../PerpsDeposit/PerpsDepositDialog";
 import type { PerpsDepositDraft } from "../PerpsDeposit/usePerpsDepositViewModel";
-import { formatDepositAmount } from "./utils/formatDepositAmount";
 export type PerpsReviewData = PerpsDepositReviewParams & {
   draft?: PerpsDepositDraft;
 };
@@ -28,15 +29,23 @@ export function usePerpsReviewViewModel(
   onClose: () => void,
 ): PerpsReviewViewModel {
   const walletState = useSelector(walletSelector);
+  const sentUnit = useAccountUnit(data.depositAccount);
+  const receivedUnit = useAccountUnit(data.receiverAccount);
 
   const formattedAmountSent = useMemo(
-    () => formatDepositAmount(data.amountSent, data.depositAccount),
-    [data.amountSent, data.depositAccount],
+    () =>
+      formatCurrencyUnit(sentUnit, parseCurrencyUnit(sentUnit, data.amountSent), {
+        showCode: true,
+      }),
+    [data.amountSent, sentUnit],
   );
 
   const formattedAmountReceived = useMemo(
-    () => formatDepositAmount(data.amountTo, data.receiverAccount),
-    [data.amountTo, data.receiverAccount],
+    () =>
+      formatCurrencyUnit(receivedUnit, parseCurrencyUnit(receivedUnit, data.amountTo), {
+        showCode: true,
+      }),
+    [data.amountTo, receivedUnit],
   );
 
   const receiverAccountLabel = useMemo(

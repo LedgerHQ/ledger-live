@@ -212,21 +212,15 @@ export function usePerpsDepositViewModel({ route }: NavigationProps): PerpsDepos
   }, [openDrawer]);
 
   const reviewParams = useMemo<PerpsReviewParams | null>(() => {
-    if (!depositAccount || !depositCurrency || !sentAmount) return null;
+    if (!depositAccount || !depositCurrency || !sentAmount || !quote) return null;
 
     return {
       depositAccount,
       receiverAccount,
-      amountSent: {
-        value: sentAmount,
-        currencyId: depositCurrency.id,
-      },
-      amountTo: quote && {
-        value: quote.amountTo.toFixed(),
-        currencyId: receiverCurrency.id,
-      },
+      amountSent: sentAmount,
+      amountTo: quote.amountTo.toFixed(),
     };
-  }, [depositAccount, depositCurrency, quote, receiverAccount, receiverCurrency, sentAmount]);
+  }, [depositAccount, depositCurrency, quote, receiverAccount, sentAmount]);
 
   const handleReview = useCallback(() => {
     if (!canReview) return;

@@ -206,8 +206,8 @@ describe("usePerpsDepositViewModel", () => {
     expect(result.current.reviewParams).toEqual({
       depositAccount: fundingAccount,
       receiverAccount,
-      amountSent: { value: "0.000000000000002", currencyId: "ethereum" },
-      amountTo: { value: "42", currencyId: "ethereum" },
+      amountSent: "0.000000000000002",
+      amountTo: "42",
     });
   });
 

@@ -206,19 +206,13 @@ export function usePerpsDepositViewModel(
   }, [openAssetAndAccountPromise]);
 
   const handleReview = useCallback(() => {
-    if (!canReview || !depositAccount || !depositCurrency) return;
+    if (!canReview || !depositAccount || !depositCurrency || !quote) return;
 
     openPerpsReview({
       receiverAccount,
       depositAccount,
-      amountSent: {
-        value: sentAmount,
-        currencyId: depositCurrency.id,
-      },
-      amountTo: quote && {
-        value: quote.amountTo.toFixed(),
-        currencyId: receiverCurrency.id,
-      },
+      amountSent: sentAmount,
+      amountTo: quote.amountTo.toFixed(),
       draft: { depositAccount, depositAmount },
     });
     onClose();
@@ -230,7 +224,6 @@ export function usePerpsDepositViewModel(
     onClose,
     quote,
     receiverAccount,
-    receiverCurrency,
     sentAmount,
   ]);
 

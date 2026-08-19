@@ -21,7 +21,8 @@ function createProps(overrides?: Partial<PerpsReviewProps>): PerpsReviewProps {
   return {
     depositAccount,
     receiverAccount,
-    amountSent: { value: "0.02", currencyId: "ethereum" },
+    amountSent: "0.02",
+    amountTo: "0.019",
     isOpen: true,
     onClose: jest.fn(),
     ...overrides,
@@ -38,19 +39,15 @@ describe("usePerpsReviewViewModel", () => {
     expect(result.current.swapDetails[0].value).toMatch(/^0\.02[\s\u00A0]ETH$/);
   });
 
-  it("shows no received amount rather than echoing the sent one when unquoted", async () => {
+  it("formats the received amount in the receiving currency", async () => {
     const { result } = renderHook(() => usePerpsReviewViewModel(createProps()));
 
-    await waitFor(() => expect(result.current.swapDetails[0].value).not.toBe(""));
-    expect(result.current.swapDetails[1].value).toBe("");
+    await waitFor(() => expect(result.current.swapDetails[1].value).not.toBe(""));
+    expect(result.current.swapDetails[1].value).toMatch(/^0\.019[\s\u00A0]ETH$/);
   });
 
   it("shows the received amount and the receiver account in the deposit details", async () => {
-    const { result } = renderHook(() =>
-      usePerpsReviewViewModel(
-        createProps({ amountTo: { value: "0.019", currencyId: "ethereum" } }),
-      ),
-    );
+    const { result } = renderHook(() => usePerpsReviewViewModel(createProps()));
 
     await waitFor(() => expect(result.current.depositDetails[0].value).not.toBe(""));
     expect(result.current.depositDetails[0].value).toMatch(/^0\.019[\s\u00A0]ETH$/);

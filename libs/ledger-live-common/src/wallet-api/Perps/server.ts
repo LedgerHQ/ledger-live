@@ -18,11 +18,6 @@ type AppOption = {
   skipAppInstallIfNotFound: boolean;
 };
 
-export type PerpsDepositAmount = {
-  value: string;
-  currencyId: string;
-};
-
 export type PerpsDepositParams = {
   receiverAccountId: string;
 };
@@ -35,8 +30,8 @@ export type PerpsDepositUiParams = {
 
 export type PerpsDepositReviewParams = PerpsDepositUiParams & {
   depositAccount: AccountLike;
-  amountSent: PerpsDepositAmount;
-  amountTo?: PerpsDepositAmount;
+  amountSent: string;
+  amountTo: string;
   quoteId?: string;
 };
 
