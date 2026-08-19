@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 4.17.0-next.3
+
+### Minor Changes
+
+- [#20929](https://github.com/LedgerHQ/ledger-live/pull/20929) [`dcb3340`](https://github.com/LedgerHQ/ledger-live/commit/dcb33402b48a86d2e014a3223177812a9510a885) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Skip installed-app listing before the ESC firmware update drawer on unseeded devices (LIVE-36215)
+
 ## 4.17.0-next.2
 
 ### Minor Changes

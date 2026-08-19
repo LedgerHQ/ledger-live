@@ -280,6 +280,7 @@
     "five-bears-exercise",
     "fix-contacts-address-name-focus",
     "fix-contacts-name-truncation",
+    "fix-esc-unseeded-firmware-drawer",
     "fix-evm-dapp-selector-tx-type",
     "fix-mobile-contacts-reopen-address-edit",
     "fix-mobile-contacts-reopen-delete-modal",
