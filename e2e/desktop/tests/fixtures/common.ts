@@ -1,5 +1,5 @@
 import { test as base, Page, ElectronApplication, ChromiumBrowserContext } from "@playwright/test";
-import { execFileSync } from "child_process";
+import { execFileSync } from "node:child_process";
 import { mkdir, readFile, writeFile } from "fs/promises";
 import merge from "lodash/merge";
 import * as path from "path";
@@ -28,7 +28,9 @@ import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { unregisterAllTransportModules } from "@ledgerhq/live-common/hw/index";
 import { getMergedFeatureFlags } from "tests/utils/featureFlagUtils";
 
-type CliCommand = ((userdataPath?: string) => Observable<unknown> | Promise<unknown> | string) & {
+export type CliCommand = ((
+  userdataPath?: string,
+) => Observable<unknown> | Promise<unknown> | string) & {
   canUseGeneratedUserdata?: () => boolean;
 };
 

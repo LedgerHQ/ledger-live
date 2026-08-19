@@ -1,5 +1,4 @@
 import { device } from "detox";
-import { allure } from "jest-allure2-reporter/api";
 import { describeIfNotNanoS } from "../../helpers/commonHelpers";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "../../helpers/allure/allure-helper";
@@ -7,9 +6,6 @@ import { setTeamOwner } from "../../helpers/allure/allure-helper";
 const tmsLinks = ["B2CQA-2292", "B2CQA-2293", "B2CQA-2296"];
 const tags = ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5"];
 
-// TODO: Rename back to ledgerSync.spec.ts once LIVE-35808 is fixed — staging cloud-sync cannot
-// verify the JWT that staging trustchain issues, so every cloud-sync call fails with 400.
-allure.issue("LIVE-35808");
 setTeamOwner(Team.WALLET_XP);
 describeIfNotNanoS("Ledger Sync", () => {
   beforeAll(async () => {
