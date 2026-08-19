@@ -13,6 +13,7 @@
     },
     "./native": "./src/index.native.ts",
     "./web": "./src/web.ts",
+    "./device/intents": "./src/device/intents/index.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,
@@ -30,7 +31,9 @@
     "@domain/entity-currency-crypto": "workspace:*",
     "@domain/entity-currency-token": "workspace:*",
     "@features/platform-feature-flags": "workspace:^",
-    "@shared/feature-flags": "workspace:^"
+    "@shared/feature-flags": "workspace:^",
+    "@features/platform-device-intent": "workspace:*",
+    "rxjs": "catalog:"
   },
   "peerDependencies": {
     "react": ">=19.0.0",

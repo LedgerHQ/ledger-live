@@ -311,9 +311,11 @@ implementation guide for adding a new intent.
    Keep reusable contracts and execution logic in a shared package, then bind
    them to platform-specific renderers in LWM and LWD. This keeps orchestration
    hooks testable because they can depend on typed contracts and injected
-   platform definitions rather than concrete app implementations.
+   platform definitions rather than concrete app implementations. An intent
+   owned by a `features/` package keeps everything in one directory instead.
    Read more:
    [Recommended file organization](#recommended-file-organization),
+   [Intents living in the DDD structure](#intents-living-in-the-ddd-structure),
    [`IntentDefinition`](#1-intentdefinition----shared-cross-platform-logic),
    [`IntentPlatformDefinition`](#2-intentplatformdefinition----platform-specific-ui).
 
@@ -880,6 +882,37 @@ If an intent is not shared yet, it is fine to keep the same five-file structure
 inside a single platform package or app first, then move `types.ts`, `job.ts`,
 and `intentDefinition.ts` into a shared lib later without changing the platform
 file naming.
+
+#### Intents living in the DDD structure
+
+An intent owned by a `features/` package does not need the app/lib split at all.
+Contract, job, platform definition and both renderers live in one directory,
+because platform extension resolution picks the right component per app:
+
+```text
+features/platform/contacts/src/device/intents/registerExternalAddressIntent/
+├── types.ts
+├── job.ts
+├── intentDefinition.ts
+├── component.web.tsx
+└── component.native.tsx
+```
+
+`intentDefinition.ts` imports `./component` with no suffix. Rspack resolves
+`.web` for LWD, Metro resolves `.native` for LWM, and Jest mirrors both. So a
+single `IntentPlatformDefinition` covers both platforms: no base-versus-platform
+definition split, and no `.native` twin of the barrel exporting it.
+
+This is the recommended layout for intents whose job relies purely on the Device
+Management Kit and the signer kits. See
+[`@features/platform-contacts`](../contacts/README.md) for a live example.
+
+Keep the app/lib split instead when:
+
+- **the intent depends on `@ledgerhq/live-common`** or another legacy library a
+  `features/` package must not import;
+- **the intent's UI leans heavily on components that still live in the app** and
+  are too costly to migrate.
 
 ### Structuring intents (single vs. multiple)
 

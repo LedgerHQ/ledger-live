@@ -6331,12 +6331,18 @@ importers:
       '@domain/entity-currency-token':
         specifier: workspace:*
         version: link:../../../domain/entity/currency-token
+      '@features/platform-device-intent':
+        specifier: workspace:*
+        version: link:../device-intent
       '@features/platform-feature-flags':
         specifier: workspace:^
         version: link:../feature-flags
       '@shared/feature-flags':
         specifier: workspace:^
         version: link:../../../shared/feature-flags
+      rxjs:
+        specifier: 'catalog:'
+        version: 7.8.2
     devDependencies:
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
