@@ -4,7 +4,7 @@ import { StyleSheet, Linking, View } from "react-native";
 import { useTranslation } from "~/context/Locale";
 import type { Account } from "@ledgerhq/types-live";
 import type { PolkadotValidator, Transaction } from "@ledgerhq/live-common/families/polkadot/types";
-import { usePolkadotPreloadData } from "@ledgerhq/live-common/families/polkadot/react";
+import { usePolkadotValidators } from "@ledgerhq/live-common/families/polkadot/react";
 import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
 import { useTheme } from "@react-navigation/native";
 import LText from "~/components/LText";
@@ -24,7 +24,7 @@ type FieldProps = {
 };
 
 function PolkadotValidatorsField({ account, transaction, field }: FieldProps) {
-  const { validators: polkadotValidators } = usePolkadotPreloadData();
+  const polkadotValidators = usePolkadotValidators(account.currency);
   const validators = transaction.validators;
   const mappedValidators = useMemo(
     () =>

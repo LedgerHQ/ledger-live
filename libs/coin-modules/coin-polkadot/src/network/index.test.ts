@@ -65,6 +65,50 @@ describe("getMinimumBondBalance", () => {
   });
 });
 
+describe("getStakingProgress", () => {
+  afterEach(() => {
+    mockedSidecar.getStakingProgress.mockClear();
+  });
+
+  it("is called once due to cache", async () => {
+    const progress = {
+      activeEra: 1,
+      electionClosed: true,
+      maxNominatorRewardedPerValidator: 512,
+      bondingDuration: 28,
+    };
+    mockedSidecar.getStakingProgress.mockResolvedValueOnce(progress);
+    let result = await network.getStakingProgress(config, currency);
+    expect(result).toEqual(progress);
+    expect(mockedSidecar.getStakingProgress).toHaveBeenCalledTimes(1);
+
+    // Second call for the same currency is served from cache
+    mockedSidecar.getStakingProgress.mockResolvedValueOnce({ ...progress, activeEra: 2 });
+    result = await network.getStakingProgress(config, currency);
+    expect(result.activeEra).toEqual(1);
+    expect(mockedSidecar.getStakingProgress).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("getValidators", () => {
+  afterEach(() => {
+    mockedSidecar.getValidators.mockClear();
+  });
+
+  it("caches per (status, currency) key", async () => {
+    mockedSidecar.getValidators.mockResolvedValue([]);
+
+    await network.getValidators("all", currency);
+    await network.getValidators("all", currency);
+    // Same status + currency → cached, sidecar hit only once
+    expect(mockedSidecar.getValidators).toHaveBeenCalledTimes(1);
+
+    // Different status → different cache key → new sidecar call
+    await network.getValidators("elected", currency);
+    expect(mockedSidecar.getValidators).toHaveBeenCalledTimes(2);
+  });
+});
+
 describe("isNewAccount", () => {
   afterEach(() => {
     mockedSidecar.isNewAccount.mockClear();

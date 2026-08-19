@@ -16,6 +16,7 @@ import { isValidAddress } from "../common";
 import coinConfig from "../config";
 import { loadPolkadotCrypto } from "../logic/polkadot-crypto";
 import polkadotAPI from "../network";
+import { DEFAULT_STAKING_PROGRESS } from "../network/sidecar";
 import type { PolkadotAccount, Transaction, TransactionStatus } from "../types";
 import {
   PolkadotUnauthorizedOperation,
@@ -29,7 +30,6 @@ import {
   PolkadotMaxUnbonding,
   PolkadotValidatorsRequired,
 } from "../types";
-import { getCurrentPolkadotPreloadData } from "./state";
 import {
   EXISTENTIAL_DEPOSIT,
   FEES_SAFETY_BUFFER,
@@ -134,9 +134,6 @@ export const getTransactionStatus: AccountBridge<
   const warnings: {
     amount?: Error;
   } = {};
-  const preloaded = getCurrentPolkadotPreloadData();
-  const { staking, validators } = preloaded;
-  const minimumBondBalance = new BigNumber(preloaded.minimumBondBalance);
   const currency: CryptoCurrency = getCryptoCurrencyById(account.currency.id);
   const config = coinConfig.getCoinConfig(account.currency.id);
 
@@ -144,10 +141,14 @@ export const getTransactionStatus: AccountBridge<
     return await getSendTransactionStatus(account, transaction);
   }
 
-  if (
-    (staking && !staking.electionClosed) || // Preloaded
-    (!staking && !(await polkadotAPI.isElectionClosed(config, currency))) // Fallback
-  ) {
+  const [staking, minimumBondBalance] = await Promise.all([
+    // Fall back to a safe default (election closed) when staking info is
+    // unavailable (e.g. on networks without staking such as AssetHub).
+    polkadotAPI.getStakingProgress(config, currency).catch(() => DEFAULT_STAKING_PROGRESS),
+    polkadotAPI.getMinimumBondBalance(config, currency).catch(() => new BigNumber(0)),
+  ]);
+
+  if (!staking.electionClosed) {
     errors.staking = new PolkadotElectionClosed();
   }
 
@@ -246,30 +247,18 @@ export const getTransactionStatus: AccountBridge<
       } else if (!transaction.validators || transaction.validators?.length === 0) {
         errors.staking = new PolkadotValidatorsRequired();
       } else {
-        if (validators && validators.length) {
-          // Validate directly with preloaded data
-          const notValidators = transaction.validators?.filter(
-            address => !validators.find(v => v.address === address),
-          );
+        // Validate the targeted addresses directly via the (lightweight) API
+        // instead of fetching the full validator set on demand.
+        const notValidators = await polkadotAPI.verifyValidatorAddresses(
+          transaction.validators || [],
+          currency,
+        );
 
-          if (notValidators && notValidators.length) {
-            errors.staking = new PolkadotNotValidator(undefined, {
-              validators: notValidators,
-            });
-          }
-        } else {
-          // Fallback with api call
-          const notValidators = await polkadotAPI.verifyValidatorAddresses(
-            transaction.validators || [],
-            currency,
-          );
-
-          if (notValidators.length) {
-            errors.staking = new PolkadotNotValidator(undefined, {
-              validators: notValidators,
-            });
-            break;
-          }
+        if (notValidators.length) {
+          errors.staking = new PolkadotNotValidator(undefined, {
+            validators: notValidators,
+          });
+          break;
         }
       }
 

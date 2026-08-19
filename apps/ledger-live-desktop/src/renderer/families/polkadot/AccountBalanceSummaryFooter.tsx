@@ -1,10 +1,9 @@
-import { BigNumber } from "bignumber.js";
 import React from "react";
 import styled from "styled-components";
 import { useSelector } from "LLD/hooks/redux";
 import { Trans } from "react-i18next";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { usePolkadotPreloadData } from "@ledgerhq/live-common/families/polkadot/react";
+import { usePolkadotMinimumBondBalance } from "@ledgerhq/live-common/families/polkadot/react";
 import { hasMinimumBondBalance } from "@ledgerhq/live-common/families/polkadot/logic";
 import { localeSelector } from "~/renderer/reducers/settings";
 import Discreet, { useDiscreetMode } from "~/renderer/components/Discreet";
@@ -65,7 +64,9 @@ type Props = {
 const AccountBalanceSummaryFooter = ({ account }: Props) => {
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
-  const preloaded = usePolkadotPreloadData();
+  const minimumBondBalance = usePolkadotMinimumBondBalance(
+    account.type === "Account" ? account.currency : undefined,
+  );
   const unit = useAccountUnit(account);
   if (account.type !== "Account") return null;
   const { spendableBalance: _spendableBalance, polkadotResources } = account;
@@ -74,8 +75,7 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
     unlockingBalance: _unlockingBalance,
     unlockedBalance: _unlockedBalance,
   } = polkadotResources;
-  const minimumBondBalance = BigNumber(preloaded.minimumBondBalance);
-  const hasMinBondBalance = hasMinimumBondBalance(account);
+  const hasMinBondBalance = hasMinimumBondBalance(account, minimumBondBalance);
 
   const formatConfig = {
     disableRounding: true,

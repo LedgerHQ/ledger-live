@@ -6,7 +6,7 @@ import { BigNumber } from "bignumber.js";
 
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
-import { usePolkadotPreloadData } from "@ledgerhq/live-common/families/polkadot/react";
+import { usePolkadotValidators } from "@ledgerhq/live-common/families/polkadot/react";
 import { Operation, OperationType } from "@ledgerhq/types-live";
 import { Currency } from "@domain/entity-currency";
 import { Unit } from "@domain/entity-currency-unit";
@@ -158,7 +158,7 @@ export const OperationDetailsRewardFrom = ({
 }: OperationDetailsRewardFromProps) => {
   const { t } = useTranslation();
 
-  const { validators: polkadotValidators } = usePolkadotPreloadData();
+  const polkadotValidators = usePolkadotValidators(account.currency);
 
   const validator = useMemo(
     () => polkadotValidators.find(v => v.address === validatorStash),
@@ -209,7 +209,7 @@ export function OperationDetailsValidators({
   account,
 }: OperationDetailsValidatorsProps) {
   const { t } = useTranslation();
-  const { validators: polkadotValidators } = usePolkadotPreloadData();
+  const polkadotValidators = usePolkadotValidators(account.currency);
 
   const mappedValidators = useMemo(
     () =>

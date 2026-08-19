@@ -122,13 +122,13 @@ const ValidatorField = ({
     showCode: true,
     discreet: false,
   };
-  const preloaded = usePolkadotPreloadData();
+  const preloaded = usePolkadotPreloadData(account.currency);
   const { staking, validators: polkadotValidators } = preloaded;
   const maxNominatorRewardedPerValidator = staking?.maxNominatorRewardedPerValidator ?? 0;
 
   const SR = useSortedValidators(search, polkadotValidators, nominations);
-  const hasMinBondBalance = hasMinimumBondBalance(account);
   const minimumBondBalance = BigNumber(preloaded.minimumBondBalance);
+  const hasMinBondBalance = hasMinimumBondBalance(account, minimumBondBalance);
   const minimumBondBalanceStr = formatCurrencyUnit(unit, minimumBondBalance, formatConfig);
 
   // Addresses that are no longer validators
