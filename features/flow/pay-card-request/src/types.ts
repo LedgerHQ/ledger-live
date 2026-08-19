@@ -76,9 +76,11 @@ export type RequestReceiveAsset = Readonly<{
 }>;
 
 export type RequestActionCallbacks = Readonly<{
-  onShare: (address: string) => void;
+  /** Optional: mobile-only tile. Desktop does not surface Share. */
+  onShare?: (address: string) => void;
   onCopy: (address: string) => void;
-  onSave: (address: string) => void;
+  /** Optional: desktop-only tile. Mobile does not surface Save. */
+  onSave?: (address: string) => void;
   onVerify: (address: string) => void;
 }>;
 

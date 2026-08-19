@@ -2,7 +2,7 @@ import React from "react";
 import { CardLogin, type CardLoginOauthConfig } from "@features/flow-pay-card-auth";
 import { Balance } from "@features/flow-pay-card-balance";
 import { DepositOptions } from "@features/flow-pay-card-deposit";
-import { RequestReceive } from "@features/flow-pay-card-request";
+import { RequestReceive, VerifyAddress } from "@features/flow-pay-card-request";
 import { getEnv } from "@shared/env";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import PayTabHeader from "./components/PayTabHeader";
@@ -12,6 +12,7 @@ import { usePayTabFeatureTour } from "./hooks/usePayTabFeatureTour";
 import { usePayTabActionTiles } from "./hooks/usePayTabActionTiles";
 import { usePayTabDepositOptions } from "./hooks/usePayTabDepositOptions";
 import { usePayTabRequestReceive } from "./hooks/usePayTabRequestReceive";
+import { usePayTabVerifyAddress } from "./hooks/usePayTabVerifyAddress";
 
 // Baanx uses the same value for the client key header and the OAuth `client_id`.
 const oauthConfig: CardLoginOauthConfig = {
@@ -23,16 +24,19 @@ const PayTab = () => {
   const balance = usePayCardBalance();
   const featureTour = usePayTabFeatureTour();
   const deposit = usePayTabDepositOptions(balance.onTrackEvent);
-  const request = usePayTabRequestReceive(balance.onTrackEvent);
+  const verify = usePayTabVerifyAddress(balance.onTrackEvent);
+  const request = usePayTabRequestReceive(balance.onTrackEvent, verify.openIntro);
   const actionTiles = usePayTabActionTiles(balance.onTrackEvent, deposit.open, request.open);
 
   return (
     <div className="flex flex-col gap-24">
       <TrackPage category="Pay" balance_filter={balance.filter} />
+      {verify.phase === "intro" && <TrackPage category="Request Address Verification" />}
       <PayTabHeader />
       <Balance {...balance} actionTiles={actionTiles} />
       <DepositOptions {...deposit.depositOptions} />
       <RequestReceive {...request.requestReceive} />
+      <VerifyAddress {...verify.verifyAddress} />
       <CardLogin oauthConfig={oauthConfig} />
       <FeatureTour {...featureTour} />
     </div>

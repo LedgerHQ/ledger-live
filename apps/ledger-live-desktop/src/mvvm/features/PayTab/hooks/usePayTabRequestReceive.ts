@@ -23,6 +23,7 @@ export type UsePayTabRequestReceive = Readonly<{
 
 export function usePayTabRequestReceive(
   onTrackEvent: PayCardTrackEvent | undefined,
+  onVerify: (address: string) => void,
 ): UsePayTabRequestReceive {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
@@ -43,15 +44,20 @@ export function usePayTabRequestReceive(
   const onClose = useCallback(() => setIsOpen(false), []);
 
   const onCopy = useCallback((address: string) => copyToClipboard(address), [copyToClipboard]);
-  // Verify (device) lands with LIVE-36132.
-  const noop = useCallback(() => {}, []);
+
+  const handleVerify = useCallback(
+    (address: string) => {
+      onClose();
+      onVerify(address);
+    },
+    [onVerify, onClose],
+  );
 
   const data = useMemo(
     () => (selection ? deriveRequestReceiveData(selection.account, selection.parentAccount) : null),
     [selection],
   );
 
-  // Save captures the on-screen request card (QR + address) to a PNG via the native save dialog.
   const saveCard = useSaveRequestReceiveCard(data?.asset.ticker ?? "");
 
   const labels = useMemo(
@@ -80,14 +86,13 @@ export function usePayTabRequestReceive(
       assetIcon: data?.assetIcon ?? { ledgerId: "", ticker: "" },
       networkIcon: data?.networkIcon,
       visibleActions: ["save", "copy", "verify"],
-      onShare: noop,
       onCopy,
       onSave: saveCard,
-      onVerify: noop,
+      onVerify: handleVerify,
       onClose,
       onTrackEvent,
     }),
-    [isOpen, data, labels, noop, onCopy, saveCard, onClose, onTrackEvent],
+    [isOpen, data, labels, onCopy, saveCard, handleVerify, onClose, onTrackEvent],
   );
 
   return { open, requestReceive };
