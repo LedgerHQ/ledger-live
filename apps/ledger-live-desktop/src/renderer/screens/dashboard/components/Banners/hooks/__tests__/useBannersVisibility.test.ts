@@ -7,6 +7,7 @@ import { BTC_ACCOUNT } from "LLD/features/__mocks__/accounts.mock";
 import useActionCards from "~/renderer/hooks/useActionCards";
 import { useBannersVisibility } from "../useBannersVisibility";
 import { ActionContentCard, LocationContentCard } from "~/types/dynamicContent";
+import { INITIAL_STATE as DYNAMIC_CONTENT_INITIAL_STATE } from "~/renderer/reducers/dynamicContent";
 
 jest.mock(
   "@ledgerhq/live-common/postOnboarding/hooks/usePostOnboardingEntryPointVisibleOnWallet",
@@ -57,6 +58,7 @@ const defaultInitialState = {
     showClearCacheBanner: false,
   },
   dynamicContent: {
+    ...DYNAMIC_CONTENT_INITIAL_STATE,
     portfolioCards: [],
     bottomPortfolioCards: [],
   },
@@ -88,6 +90,7 @@ describe("useBannersVisibility", () => {
     expect(result.current.shouldDisplayFinishOnboardingWidget).toBe(true);
     expect(result.current.isActionCardsVisible).toBe(false);
     expect(result.current.isLNSUpsellBannerVisible).toBe(false);
+    expect(result.current.isPortfolioCategoryContentCardsVisible).toBe(false);
     expect(result.current.isPortfolioContentCardsVisible).toBe(false);
     expect(result.current.hasAnyContentBannerVisible).toBe(false);
   });
