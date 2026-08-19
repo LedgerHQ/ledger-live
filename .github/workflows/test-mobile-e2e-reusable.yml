@@ -1047,11 +1047,22 @@ jobs:
           # Everything after this point is teardown; a serial going away now is expected.
           touch "${{ env.MOBILE_ARTIFACTS_ROOT }}/.watchdog-stop"
 
-      - name: Report emulator deaths
+      - name: Report emulator wedges and deaths
         if: always()
         continue-on-error: true
         shell: bash
         run: |
+          WEDGES="${{ env.MOBILE_ARTIFACTS_ROOT }}/emulator-wedges.log"
+          if [ -s "$WEDGES" ]; then
+            {
+              echo "### ⚠️ An emulator wedged during this shard"
+              echo "Frozen RSS + idle process state: the device was lost before any test noticed."
+              echo '```'
+              cat "$WEDGES"
+              echo '```'
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
+
           DEATHS="${{ env.MOBILE_ARTIFACTS_ROOT }}/emulator-deaths.log"
           if [ -s "$DEATHS" ]; then
             {

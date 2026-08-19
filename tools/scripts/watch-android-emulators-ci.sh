@@ -29,6 +29,7 @@ set -uo pipefail
 
 readonly ARTIFACTS_DIR="${ARTIFACTS_DIR:-e2e/mobile/artifacts}"
 readonly DEATH_LOG="${ARTIFACTS_DIR}/emulator-deaths.log"
+readonly WEDGE_LOG="${ARTIFACTS_DIR}/emulator-wedges.log"
 readonly DIAG_DIR="${ARTIFACTS_DIR}/host-diagnostics"
 readonly TREND_LOG="${DIAG_DIR}/host-trend.tsv"
 readonly INTERVAL="${WATCH_INTERVAL:-5}"
@@ -59,6 +60,44 @@ snapshot() {
     echo "-- adb"
     adb devices 2>&1 || true
   } >"${RING_DIR}/snap_${slot}.txt" 2>/dev/null || true
+}
+
+# A dying emulator is not killed out of a running state: it wedges first. Across every
+# death captured so far the qemu process stops logging, its RSS freezes to the byte, and
+# ps reports it I (idle/uninterruptible) rather than S, for minutes before it leaves the
+# process table. That is a detectable precursor, and it is worth surfacing while the
+# shard still has time to react instead of discovering the loss one 60s timeout at a
+# time. See QAA-1497.
+readonly WEDGE_POLLS=4 # consecutive polls with a byte-identical RSS before we call it
+declare -A rss_prev=() rss_same=() wedge_reported=()
+
+check_wedges() {
+  local pids
+  pids="$(pgrep -d, qemu-system 2>/dev/null || true)"
+  [ -z "$pids" ] && return 0
+
+  local pid rss stat
+  while read -r pid rss stat; do
+    [ -z "${pid:-}" ] && continue
+    if [ "${rss_prev[$pid]:-}" = "$rss" ]; then
+      rss_same[$pid]=$(( ${rss_same[$pid]:-0} + 1 ))
+    else
+      rss_same[$pid]=0
+    fi
+    rss_prev[$pid]="$rss"
+
+    # Frozen memory alone is not enough - an idle emulator can hold steady. The state
+    # flip is what separates a wedged process from a quiet one: every healthy sibling
+    # stays S while the one that is about to disappear reads I.
+    if [ "${rss_same[$pid]:-0}" -ge "$WEDGE_POLLS" ] && [[ "$stat" == I* ]] &&
+      [ -z "${wedge_reported[$pid]:-}" ]; then
+      wedge_reported[$pid]=1
+      local stamp
+      stamp="$(date -u +%Y%m%dT%H%M%SZ)"
+      log "⚠️  qemu pid ${pid} looks WEDGED at ${stamp} (rss ${rss} kB unchanged for $((WEDGE_POLLS * INTERVAL))s, state ${stat})"
+      echo "${stamp} pid=${pid} rss=${rss} state=${stat} frozen_for=$((WEDGE_POLLS * INTERVAL))s" >>"$WEDGE_LOG"
+    fi
+  done < <(ps -o pid=,rss=,stat= -p "$pids" 2>/dev/null || true)
 }
 
 # One line per poll: cheap, and makes a slow squeeze (e.g. Hyper-V dynamic memory
@@ -118,6 +157,7 @@ while true; do
 
   trend
   snapshot "$((slot % RING_DEPTH))"
+  check_wedges
   slot=$((slot + 1))
 
   online="$(adb devices 2>/dev/null || true)"
