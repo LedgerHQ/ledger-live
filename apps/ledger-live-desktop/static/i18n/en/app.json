@@ -7913,10 +7913,13 @@
       "title": "Minimum amount is 1 SUI"
     },
     "OneSuiMinForUnstakeToBeLeft": {
-      "title": "At least 1 SUI should be left in stake"
+      "title": "Unstake the full amount, or leave at least 1 SUI staked"
     },
     "SuiStakeNotFound": {
       "title": "Stake details unavailable. Please resynchronise your account and try again"
+    },
+    "SuiUnstakeExceedsStake": {
+      "title": "Amount exceeds the selected stake"
     },
     "SomeSuiForUnstake": {
       "title": "Please ensure you reserve at least 0.1 SUI in your wallet to cover future network fees and undelegate your stake"

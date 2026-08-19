@@ -53,3 +53,15 @@ export class SuiStakeNotFound extends Error {
     if (fields) Object.assign(this, fields);
   }
 }
+
+/*
+ * A partial unstake asks for more than the staking position holds. `staking_pool::split` asserts
+ * `split_amount <= principal` (`EInsufficientSuiTokenBalance`), so the chain aborts the withdrawal.
+ */
+export class SuiUnstakeExceedsStake extends Error {
+  override name = "SuiUnstakeExceedsStake";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "SuiUnstakeExceedsStake");
+    if (fields) Object.assign(this, fields);
+  }
+}

@@ -752,10 +752,13 @@
       "title": "Minimum amount is 1 SUI"
     },
     "OneSuiMinForUnstakeToBeLeft": {
-      "title": "At least 1 SUI should be left in stake"
+      "title": "Unstake the full amount, or leave at least 1 SUI staked"
     },
     "SuiStakeNotFound": {
       "title": "Stake details unavailable. Please resynchronise your account and try again"
+    },
+    "SuiUnstakeExceedsStake": {
+      "title": "Amount exceeds the selected stake"
     },
     "PasswordIncorrect": {
       "title": "Incorrect password",

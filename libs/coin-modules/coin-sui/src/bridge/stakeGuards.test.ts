@@ -1,6 +1,11 @@
 import BigNumber from "bignumber.js";
 import { FIGMENT_SUI_VALIDATOR_ADDRESS, ONE_SUI } from "../constants";
-import { OneSuiMinForStake, OneSuiMinForUnstakeToBeLeft, SuiStakeNotFound } from "../errors";
+import {
+  OneSuiMinForStake,
+  OneSuiMinForUnstakeToBeLeft,
+  SuiStakeNotFound,
+  SuiUnstakeExceedsStake,
+} from "../errors";
 import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
 import getTransactionStatus from "./getTransactionStatus";
 import prepareTransaction from "./prepareTransaction";
@@ -48,7 +53,7 @@ describe("stake guards survive a tolerated simulation failure", () => {
     expect(status.errors.amount).toEqual(new OneSuiMinForStake());
   });
 
-  it("reports the remainder error for the unstake case QA hit", async () => {
+  it("reports the remainder error for a partial unstake leaving under 1 SUI", async () => {
     const account = accountWithStake(String(ONE_SUI));
     const transaction = createFixtureTransaction({
       mode: "undelegate",
@@ -60,6 +65,20 @@ describe("stake guards survive a tolerated simulation failure", () => {
     const status = await getTransactionStatus(account, prepared);
 
     expect(status.errors.amount).toEqual(new OneSuiMinForUnstakeToBeLeft());
+  });
+
+  it("reports the overdraw error for an unstake above the position's principal", async () => {
+    const account = accountWithStake(String(2 * ONE_SUI));
+    const transaction = createFixtureTransaction({
+      mode: "undelegate",
+      stakedSuiId: STAKED_SUI_ID,
+      amount: BigNumber(100000 * ONE_SUI),
+    });
+
+    const prepared = await prepareTransaction(account, transaction);
+    const status = await getTransactionStatus(account, prepared);
+
+    expect(status.errors.amount).toEqual(new SuiUnstakeExceedsStake());
   });
 
   it("blocks an unverifiable split when the position is absent from the synced stakes", async () => {
