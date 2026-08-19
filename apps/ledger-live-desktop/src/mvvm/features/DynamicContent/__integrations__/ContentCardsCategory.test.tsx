@@ -88,10 +88,12 @@ const CHILD_CARDS = [
   childCard("child-nano", "Ledger Flex™", "3", "$249", "$50 off"),
 ];
 
+const FIXED_CONSENT_DATE = "2026-01-01T00:00:00.000Z";
+
 const trackedUserSettings = {
   shareAnalytics: true,
   sharePersonalizedRecommandations: true,
-  lastAnalyticsConsentDate: new Date().toISOString(),
+  lastAnalyticsConsentDate: FIXED_CONSENT_DATE,
   privacyPolicyVersion: 1,
 };
 
@@ -120,7 +122,7 @@ describe("ContentCardsLocation", () => {
         settings: {
           shareAnalytics: true,
           sharePersonalizedRecommandations: true,
-          lastAnalyticsConsentDate: new Date().toISOString(),
+          lastAnalyticsConsentDate: FIXED_CONSENT_DATE,
           privacyPolicyVersion: 1,
         },
       },
@@ -150,7 +152,7 @@ describe("ContentCardsLocation", () => {
           settings: {
             shareAnalytics: true,
             sharePersonalizedRecommandations: true,
-            lastAnalyticsConsentDate: new Date().toISOString(),
+            lastAnalyticsConsentDate: FIXED_CONSENT_DATE,
             privacyPolicyVersion: 1,
           },
         },
@@ -195,7 +197,7 @@ describe("ContentCardsLocation", () => {
         settings: {
           shareAnalytics: true,
           sharePersonalizedRecommandations: true,
-          lastAnalyticsConsentDate: new Date().toISOString(),
+          lastAnalyticsConsentDate: FIXED_CONSENT_DATE,
           privacyPolicyVersion: 1,
         },
       },
@@ -253,9 +255,6 @@ describe("ContentCardsLocation", () => {
         platform: "lld",
       }),
     );
-    expect(track).not.toHaveBeenCalledWith(
-      ContentCardEvent.Dismissed,
-      expect.anything(),
-    );
+    expect(track).not.toHaveBeenCalledWith(ContentCardEvent.Dismissed, expect.anything());
   });
 });

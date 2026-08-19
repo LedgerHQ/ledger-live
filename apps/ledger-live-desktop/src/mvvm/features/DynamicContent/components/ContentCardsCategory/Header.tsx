@@ -13,13 +13,7 @@ type HeaderProps = Readonly<{
 
 export default Header;
 
-function Header({
-  title,
-  cta,
-  centered = false,
-  closeAllCardIds,
-  onCtaPress,
-}: HeaderProps) {
+function Header({ title, cta, centered = false, closeAllCardIds, onCtaPress }: HeaderProps) {
   const showCloseAll = Boolean(closeAllCardIds?.length);
   const showHeaderCta = Boolean(onCtaPress && cta && !centered && !showCloseAll);
   const hasTitleRow = Boolean(title || showHeaderCta || showCloseAll);
@@ -34,13 +28,19 @@ function Header({
       data-testid="content-cards-category-header"
     >
       {title ? (
-        <span className="min-w-0 shrink truncate heading-4-semi-bold text-base">{title}</span>
+        <h2 className="m-0 min-w-0 shrink truncate heading-4-semi-bold text-base">{title}</h2>
       ) : null}
       {showCloseAll && closeAllCardIds ? (
         <HardwareCarouselCloseAllLink cardIds={closeAllCardIds} />
       ) : null}
       {showHeaderCta ? (
-        <Link appearance="accent" className="shrink-0" onClick={onCtaPress} size="sm" underline={false}>
+        <Link
+          appearance="accent"
+          className="shrink-0"
+          onClick={onCtaPress}
+          size="sm"
+          underline={false}
+        >
           {cta}
         </Link>
       ) : null}
