@@ -20,6 +20,10 @@ import type {
   InitializationEchoIntentInput,
   InitializationEchoIntentJobState,
 } from "../../intents/initializationEchoIntent/types";
+import { DEMO_INTENT_DEFS } from "../../intents/registry";
+import { useDemoIntentOrchestration } from "../../useDemoIntentOrchestration";
+
+type PlaygroundMode = "orchestration" | "initialization";
 
 type InitializationExecutorProps = DeviceIntentExecutorProps<
   InitializationEchoIntentJobState,
@@ -39,6 +43,7 @@ const initializationIntent = createIntent(initializationEchoIntentLWDDefinition,
 
 export default function DeviceIntentExecutorDevScreen() {
   const navigate = useNavigate();
+  const [mode, setMode] = useState<PlaygroundMode>("orchestration");
 
   return (
     <div
@@ -64,14 +69,91 @@ export default function DeviceIntentExecutorDevScreen() {
 
       <main className="mx-auto flex w-full max-w-4xl flex-col gap-16 px-4">
         <p className="body-2 text-muted">
-          Exercises the desktop Device Intent Executor dialog. Use the dialog&apos;s placeholder
-          buttons to simulate connection and initialization while the real LWD platform components
-          are still being implemented.
+          Exercises the desktop Device Intent Executor dialog with real device connection,
+          initialization, and intent jobs.
         </p>
 
-        <InitializationMode />
+        <section className="flex w-full flex-col gap-16 rounded-lg bg-surface p-16">
+          <SettingSection title="Mode">
+            <ChoiceButton
+              label="Orchestration"
+              selected={mode === "orchestration"}
+              onPress={() => setMode("orchestration")}
+            />
+            <ChoiceButton
+              label="Initialization"
+              selected={mode === "initialization"}
+              onPress={() => setMode("initialization")}
+            />
+          </SettingSection>
+        </section>
+
+        {mode === "orchestration" ? <OrchestrationMode /> : <InitializationMode />}
       </main>
     </div>
+  );
+}
+
+function OrchestrationMode() {
+  const [tickCount, setTickCount] = useState(5);
+  const orchestration = useDemoIntentOrchestration({
+    tickCount,
+    intentDefs: DEMO_INTENT_DEFS,
+  });
+  const { enabled, toggleEnabled } = orchestration;
+
+  return (
+    <>
+      <section className="flex w-full flex-col gap-16 rounded-lg bg-surface p-16">
+        <h2 className="body-2-semi-bold text-base">Orchestration mode</h2>
+        <p className="body-2 text-muted">
+          Mirrors the mobile chained-intent playground: timer, ETH/BTC address steps, DMK signer
+          step, then ETH/BTC uninstall steps. Each phase runs the same hardware-backed job as
+          mobile.
+        </p>
+
+        <StateCard>
+          <StateRow label="Phase" value={orchestration.demoPhase.phase} />
+          <StateRow label="Executor" value={orchestration.executorState?.type ?? "-"} />
+          <StateRow
+            label="Job state"
+            value={
+              orchestration.latestJobState ? JSON.stringify(orchestration.latestJobState) : "-"
+            }
+          />
+          <StateRow label="Job completed" value={orchestration.jobCompleted ? "YES" : "no"} />
+          <StateRow label="Job error" value={formatError(orchestration.jobError)} />
+        </StateCard>
+
+        <SettingSection title="Timer tick count">
+          <Button
+            size="sm"
+            appearance="gray"
+            onClick={() => setTickCount(prev => Math.max(1, prev - 1))}
+            disabled={enabled}
+          >
+            -
+          </Button>
+          <span className="body-2-semi-bold flex items-center text-base">{tickCount}</span>
+          <Button
+            size="sm"
+            appearance="gray"
+            onClick={() => setTickCount(prev => prev + 1)}
+            disabled={enabled}
+          >
+            +
+          </Button>
+        </SettingSection>
+
+        <Button appearance={enabled ? "red" : "base"} size="lg" onClick={toggleEnabled}>
+          {enabled ? "Stop orchestration" : "Start orchestration"}
+        </Button>
+      </section>
+
+      {orchestration.enabled ? (
+        <DeviceIntentExecutorLWD sourceFlow="debug" {...orchestration.executorProps} />
+      ) : null}
+    </>
   );
 }
 
@@ -149,8 +231,7 @@ function InitializationMode() {
         <h2 className="body-2-semi-bold text-base">Initialization mode</h2>
         <p className="body-2 text-muted">
           Mirrors the mobile initialization playground with the same scenario inputs. The current
-          LWD initializer placeholder displays these params and lets you simulate the extracted
-          context.
+          LWD initializer runs these params and displays the extracted context.
         </p>
 
         <StateCard>
