@@ -1,7 +1,7 @@
 import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account";
 import type { CommonDeviceTransactionField } from "@ledgerhq/ledger-wallet-framework/transaction/common";
 import type { AccountLike, Account } from "@ledgerhq/types-live";
-import type { Transaction, TransactionStatus } from "../types";
+import type { Transaction, TransactionStatus } from "./types";
 
 export type ExtraDeviceTransactionField =
   | {
@@ -17,7 +17,7 @@ export type ExtraDeviceTransactionField =
 type DeviceTransactionField = CommonDeviceTransactionField | ExtraDeviceTransactionField;
 
 async function getDeviceTransactionConfig({
-  transaction: { votes, resource, mode, recipient },
+  transaction: { familySpecificData, mode, recipient },
   account,
   parentAccount,
   status: { amount },
@@ -29,6 +29,7 @@ async function getDeviceTransactionConfig({
 }): Promise<Array<DeviceTransactionField>> {
   const mainAccount = getMainAccount(account, parentAccount);
   const fields: Array<DeviceTransactionField> = [];
+  const { resource, votes } = familySpecificData ?? {};
 
   if (resource) {
     fields.push({
@@ -39,7 +40,6 @@ async function getDeviceTransactionConfig({
   }
 
   if (votes && votes.length > 0) {
-    // NB in future if we unify UI with other coin, we could converge to a "votes" top level
     fields.push({
       type: "tron.votes",
       label: "Votes",

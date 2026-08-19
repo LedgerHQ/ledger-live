@@ -33,7 +33,7 @@ describe("getBalance", () => {
   it("returns 0 when account is not activated", async () => {
     const result = await getBalance(mockConfig, "TXFeV31qgUQYMLog3axKJeEBbXpQFtHsXD");
 
-    expect(result).toEqual([{ value: BigInt(0), asset: { type: "native" } }]);
+    expect(result).toEqual([{ value: 0n, locked: 0n, asset: { type: "native" } }]);
   });
 
   it("propagates upstream API errors for an invalid address", async () => {

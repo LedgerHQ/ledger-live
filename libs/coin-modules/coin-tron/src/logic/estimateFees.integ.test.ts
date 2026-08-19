@@ -3,7 +3,10 @@ import { TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
 import { randomBytes } from "crypto";
 import { getChainParameters, getTronAccountNetwork } from "../network";
 import { encode58Check } from "../network/format";
+import type { TronMemo, TronTxData } from "../types";
 import { estimateFees } from "./estimateFees";
+
+type TronIntent = TransactionIntent<TronMemo, TronTxData>;
 
 const USDT_CONTRACT = "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t";
 // SR account — staked TRX for both resources absorbs all per-tx fees.
@@ -15,13 +18,14 @@ const BTT_ASSET = "1002000";
 // Collision with an existing on-chain account is ~2^-160.
 const freshAddress = (): string => encode58Check("41" + randomBytes(20).toString("hex"));
 
-const sendIntent = (overrides: Partial<TransactionIntent>): TransactionIntent => ({
+const sendIntent = (overrides: Partial<TronIntent> = {}): TronIntent => ({
   intentType: "transaction",
   type: "send",
   sender: SUPER_REPRESENTATIVE,
   recipient: ACTIVE_RECIPIENT,
   amount: BigInt(1),
   asset: { type: "native" },
+  data: { type: "tron" },
   ...overrides,
 });
 
@@ -52,7 +56,7 @@ describe("estimateFees [integ]", () => {
       it("to an active recipient costs 0", async () => {
         const fee = await estimateFees(mockConfig, sendIntent({ recipient: ACTIVE_RECIPIENT }));
 
-        expect(fee).toBe(0n);
+        expect(fee.value).toBe(0n);
       });
 
       it("to a fresh recipient costs exactly createAccountFee + createNewAccountFeeInSystemContract", async () => {
@@ -61,7 +65,7 @@ describe("estimateFees [integ]", () => {
           getChainParameters(mockConfig),
         ]);
 
-        expect(fee).toBe(
+        expect(fee.value).toBe(
           BigInt(params.createAccountFee + params.createNewAccountFeeInSystemContract),
         );
       });
@@ -74,7 +78,7 @@ describe("estimateFees [integ]", () => {
           sendIntent({ asset: { type: "trc10", assetReference: BTT_ASSET } }),
         );
 
-        expect(fee).toBe(0n);
+        expect(fee.value).toBe(0n);
       });
     });
 
@@ -85,7 +89,7 @@ describe("estimateFees [integ]", () => {
           sendIntent({ asset: { type: "trc20", assetReference: USDT_CONTRACT } }),
         );
 
-        expect(fee).toBe(0n);
+        expect(fee.value).toBe(0n);
       });
 
       it("to a fresh recipient costs 0 — no native activation fee for contracts", async () => {
@@ -97,7 +101,7 @@ describe("estimateFees [integ]", () => {
           }),
         );
 
-        expect(fee).toBe(0n);
+        expect(fee.value).toBe(0n);
       });
     });
 
@@ -111,7 +115,7 @@ describe("estimateFees [integ]", () => {
         estimateFees(mockConfig, intent),
       ]);
 
-      expect(first).toBe(second);
+      expect(first.value).toBe(second.value);
     });
   });
 });

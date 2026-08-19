@@ -39,14 +39,52 @@ export function fromTrongridTxInfoToOperation(
     operation.details = { ledgerOpType: type };
   }
 
+  // `familyExtra` is the framework's family-agnostic passthrough onto `Operation.extra`: the staking
+  // amounts and votes the Tron operation-details screens render (frozenAmount, unfreezeAmount, votes,
+  // unDelegatedAmount, receiverAddress). Without it synced staking history shows 0.
+  if (trongridTxInfo.extra) {
+    operation.details = { ...operation.details, familyExtra: trongridTxInfo.extra };
+  }
+
   return operation;
 }
 
+/**
+ * The contract type is what distinguishes a staking operation from a transfer; the sender/recipient
+ * heuristic alone types every one of them as a plain send, which would cost synced history its
+ * Freeze / Unfreeze / Vote / Reward labels.
+ */
 function inferOperationType(trongridTxInfo: TrongridTxInfo, userAddress: string): string {
+  switch (trongridTxInfo.type) {
+    case "VoteWitnessContract":
+      return "VOTE";
+    case "WithdrawBalanceContract":
+      return "REWARD";
+    case "FreezeBalanceContract":
+    case "FreezeBalanceV2Contract":
+      return "FREEZE";
+    case "UnfreezeBalanceV2Contract":
+      return "UNFREEZE";
+    case "UnfreezeBalanceContract":
+      return "LEGACY_UNFREEZE";
+    case "WithdrawExpireUnfreezeContract":
+      return "WITHDRAW_EXPIRE_UNFREEZE";
+    case "UnDelegateResourceContract":
+      return "UNDELEGATE_RESOURCE";
+    case "ContractApproval":
+      return "APPROVE";
+    case "ExchangeTransactionContract":
+      return "OUT";
+    default:
+      return inferTransferDirection(trongridTxInfo, userAddress);
+  }
+}
+
+function inferTransferDirection(trongridTxInfo: TrongridTxInfo, userAddress: string): string {
   switch (true) {
-    case trongridTxInfo.from === userAddress &&
-      trongridTxInfo.to &&
-      trongridTxInfo.to !== userAddress:
+    // Sending to yourself is legal on Tron and is typed `OUT` — the account is the sender, and
+    // `UNKNOWN` would render the row without a direction.
+    case trongridTxInfo.from === userAddress && trongridTxInfo.to !== undefined:
       return "OUT";
     case trongridTxInfo.to === userAddress && trongridTxInfo.from !== userAddress:
       return "IN";

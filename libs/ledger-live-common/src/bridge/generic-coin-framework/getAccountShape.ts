@@ -12,6 +12,7 @@ import { resolveA4ChainConfig } from "./a4/config";
 import { getCoinModuleApi } from "./api";
 import { buildContext } from "./api/context";
 import { getBridgeApi } from "./bridge";
+import { getAccountRawAssignHooks } from "./accountRawAssign";
 import { adaptCoreOperationToLiveOperation, cleanedOperation, extractBalance } from "./utils";
 import { inferSubOperations } from "@ledgerhq/ledger-wallet-framework/serialization";
 import { buildSubAccounts, mergeSubAccounts } from "./buildSubAccounts";
@@ -187,11 +188,15 @@ function syntheticParentForTokenOnlyTx(
   subOperations: OperationCommon[],
   internalOperations: OperationCommon[],
 ): OperationCommon {
-  // Parent operation is of type FEES if account has paid fees for the transaction, NONE otherwise.
+  // Parent op is FEES only when the account actually paid a fee; NONE otherwise. A zero fee (e.g. a
+  // token send whose energy/bandwidth is fully covered) is not a FEES row — it stays hidden as NONE
+  // rather than surfacing an empty "0 fee" parent. An undefined fee is treated as paid, preserving the
+  // prior behaviour for ops synced without a fee value.
   const feePayer = getFeePayer(referenceOp);
   const isFeePayer = feePayer !== undefined && isSameAddress(address, feePayer);
-  const parentType = isFeePayer ? "FEES" : "NONE";
-  const parentValue = isFeePayer ? referenceOp.fee : new BigNumber(0);
+  const paysFee = isFeePayer && !referenceOp.fee?.isZero();
+  const parentType = paysFee ? "FEES" : "NONE";
+  const parentValue = paysFee ? referenceOp.fee : new BigNumber(0);
   // In the case of smart contract interaction, the contract must be the recipient of the parent operation => this
   // is why we need to extract this information from the operation details.
   const contract = getTokenContract(referenceOp);
@@ -524,9 +529,15 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       cursor: paginationCursor,
       order: "desc",
     });
+    // Same hooks the persist/restore path uses, so the family bag on a freshly-synced operation ends
+    // up in the shape a restored one has — the family's `fromOperationExtraRaw` is the single
+    // definition of it. Loaded per sync rather than per operation; the registry caches the import.
+    const { fromOperationExtraRaw: reviveFamilyExtra } = await getAccountRawAssignHooks(network);
     const newOps = newCoreOps
       .filter(op => !isNftCoreOp(op) && (!isIncomingCoreOp(op) || !op.tx.failed))
-      .map(op => adaptCoreOperationToLiveOperation(accountId, op)) as OperationCommon[];
+      .map(op =>
+        adaptCoreOperationToLiveOperation(accountId, op, reviveFamilyExtra),
+      ) as OperationCommon[];
 
     const newAssetOperations = newOps.filter(
       operation =>

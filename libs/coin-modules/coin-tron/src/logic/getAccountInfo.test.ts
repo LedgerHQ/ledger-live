@@ -23,7 +23,7 @@ const buildNetworkInfo = (overrides: Partial<NetworkInfo> = {}): NetworkInfo => 
 
 const mockConfig = {
   status: { type: "active" },
-  explorer: { url: "https://api.trongrid.io" },
+  explorer: { url: "https://tron.coin.ledger.com" },
 } as TronCoinConfig;
 
 describe("getAccountInfo", () => {

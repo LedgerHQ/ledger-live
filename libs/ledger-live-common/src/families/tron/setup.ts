@@ -1,32 +1,12 @@
 // Goal of this file is to inject all necessary device/signer dependency to coin-modules
-import { createBridges } from "@ledgerhq/coin-tron/bridge";
-import { TronCoinConfig } from "@ledgerhq/coin-tron/config";
 import tronResolver from "@ledgerhq/coin-tron/signer";
-import type { Transaction, TronAccount, TronSigner } from "@ledgerhq/coin-tron/types/index";
-import Trx from "@ledgerhq/hw-app-trx";
-import Transport from "@ledgerhq/hw-transport";
-import type { Bridge } from "@ledgerhq/types-live";
-import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/setup";
-import { getCurrencyConfiguration } from "../../config";
-import { Resolver } from "../../hw/getAddress/types";
+import { type Resolver } from "../../hw/getAddress/types";
+import { createResolver } from "../../bridge/setup";
+import { createSigner } from "./signer";
 
-const createSigner: CreateSigner<TronSigner> = (transport: Transport) => {
-  const trx = new Trx(transport);
-
-  return {
-    getAddress: (path: string, boolDisplay?: boolean) => trx.getAddress(path, boolDisplay),
-    sign: (path: string, rawTxHex: string, tokenSignatures: string[]) =>
-      trx.signTransaction(path, rawTxHex, tokenSignatures),
-  };
-};
-
-const getCurrencyConfig = (): TronCoinConfig => getCurrencyConfiguration<TronCoinConfig>("tron");
-
-const bridge: Bridge<Transaction, TronAccount> = createBridges(
-  executeWithSigner(createSigner),
-  getCurrencyConfig,
-);
-
+// No `bridge` export: Tron runs on the generic coin framework, which builds the account bridge from
+// the Coin Module API (`coinModuleApi.ts`) plus the family hooks registered in
+// `coin-modules/loaders.ts`. Only address resolution still needs a family-specific entry point.
 const resolver: Resolver = createResolver(createSigner, tronResolver);
 
-export { bridge, resolver };
+export { resolver };

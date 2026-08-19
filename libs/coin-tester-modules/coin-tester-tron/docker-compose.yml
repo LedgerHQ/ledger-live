@@ -3,13 +3,21 @@ services:
     image: tronbox/tre:1.0.3@sha256:96ba5f8ae616dc1b3939043d25f2734e63cc4de1085f967d34c5205777c1141b
     container_name: coin-tester-tron
     healthcheck:
+      # Probes `wallet/getblock`, the endpoint tronweb's `getCurrentRefBlockParams` reads when it
+      # builds a transaction, and requires a block *number* rather than just a blockID: protobuf omits
+      # a zero field, so the genesis block answers with a blockID and no `raw_data.number`. Grepping
+      # blockID alone therefore goes healthy during the window before the first block is produced, and
+      # the fixture that opens the scenario crashes on `number.toString()` of undefined.
       test:
         [
           "CMD-SHELL",
-          "curl -sf http://127.0.0.1:9090/wallet/getnowblock | grep -q blockID",
+          "curl -sf -X POST -H 'Content-Type: application/json' -d '{\"detail\":false}' http://127.0.0.1:9090/wallet/getblock | grep -q '\"number\"'",
         ]
       interval: 5s
       timeout: 10s
-      retries: 30
+      # The image is amd64-only, so on an arm64 host the node boots under emulation: ~20s idle, but
+      # observed past 150s while the machine was busy building. Budget 5 minutes so a loaded CI or dev
+      # machine reports a real failure rather than a slow start.
+      retries: 60
     ports:
       - "9090:9090"

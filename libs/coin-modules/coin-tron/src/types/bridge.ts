@@ -5,10 +5,6 @@ import {
   OperationExtra,
   OperationExtraRaw,
   OperationRaw,
-  TransactionCommon,
-  TransactionCommonRaw,
-  TransactionStatusCommon,
-  TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 
@@ -32,44 +28,11 @@ export type NetworkInfo = {
   energyUsed: BigNumber;
   energyLimit: BigNumber;
 };
-export type NetworkInfoRaw = {
-  family: "tron";
-  freeNetUsed: string;
-  freeNetLimit: string;
-  netUsed: string;
-  netLimit: string;
-  energyUsed: string;
-  energyLimit: string;
-};
-// Gas-sponsoring (Tronify) context — marks a send as sponsored (LIVE-32775). Absent = standard
-// crafting. All-string, so it round-trips without a separate Raw variant.
-export type EnergyProviderInfo = {
-  providerId: string;
-  orderId: string;
-};
-// A disclosable energy-rental provider (LIVE-32776). Resolved from EnergyProviderInfo.providerId via
-// the coin-tron energy-provider registry so the front end can name the third party.
+// A disclosable energy-rental provider (LIVE-32776), named by the `logic/energyProviders` registry
+// so the front end can attribute a rental to the third party that served it.
 export type EnergyProvider = {
   id: string;
   name: string;
-};
-export type Transaction = TransactionCommon & {
-  family: "tron";
-  mode: TronOperationMode;
-  resource: TronResource | null | undefined;
-  networkInfo: NetworkInfo | null | undefined;
-  duration: number | null | undefined;
-  votes: Vote[];
-  energyProviderInfo?: EnergyProviderInfo | null;
-};
-export type TransactionRaw = TransactionCommonRaw & {
-  mode: TronOperationMode;
-  family: "tron";
-  resource: TronResource | null | undefined;
-  networkInfo: NetworkInfoRaw | null | undefined;
-  duration: number | null | undefined;
-  votes: Vote[];
-  energyProviderInfo?: EnergyProviderInfo | null;
 };
 export type TrongridTxType =
   | "TransferContract"
@@ -114,13 +77,6 @@ export type TrongridExtraTxInfo = OperationExtra & {
   unDelegatedAmount?: BigNumber;
   receiverAddress?: string;
 };
-export function isTrongridExtraTxInfo(op: OperationExtra): op is TrongridExtraTxInfo {
-  return (
-    op !== null &&
-    typeof op === "object" &&
-    ("frozenAmount" in op || "unfreezeAmount" in op || "votes" in op)
-  );
-}
 export type TrongridExtraTxInfoRaw = OperationExtraRaw & {
   frozenAmount?: string;
   unfreezeAmount?: string;
@@ -128,13 +84,6 @@ export type TrongridExtraTxInfoRaw = OperationExtraRaw & {
   unDelegatedAmount?: string;
   receiverAddress?: string;
 };
-export function isTrongridExtraTxInfoRaw(op: OperationExtraRaw): op is TrongridExtraTxInfoRaw {
-  return (
-    op !== null &&
-    typeof op === "object" &&
-    ("frozenAmount" in op || "unfreezeAmount" in op || "votes" in op)
-  );
-}
 
 /** Payload types to send to trongrid */
 export type SendTransactionData = {
@@ -312,26 +261,3 @@ export function isTronAccount(account: Account): account is TronAccount {
 }
 export type TronAccount = Account & { tronResources: TronResources };
 export type TronAccountRaw = AccountRaw & { tronResources: TronResourcesRaw };
-// Informational savings estimate for a sponsored (Tronify) send (LIVE-32776). Native TRX (SUN); the
-// front end converts to fiat and renders "Saved $X.XX with <provider>". Present only when the send
-// is sponsored and the avoided cost could be estimated — purely informational, it does not change
-// estimatedFees (that re-pricing is LIVE-32892).
-export type SponsoredEnergyEstimate = {
-  provider: EnergyProvider;
-  // What a non-sponsored USDT send would burn on energy, in SUN (native TRX's base unit) — the full
-  // energy cost energyRequired × energyFee. The front end converts SUN to fiat for display.
-  avoidedEnergyFees: BigNumber;
-};
-// Additive resource-breakdown fields for the send-flow UI. Sufficiency is: energyRequired <=
-// energyAvailable && bandwidthRequired <= bandwidthAvailable. On a failed energy estimate,
-// energyRequired is a safe insufficient sentinel. Not mirrored to TransactionStatusRaw.
-export type TransactionStatus = TransactionStatusCommon & {
-  energyRequired: BigNumber;
-  energyAvailable: BigNumber;
-  bandwidthRequired: BigNumber;
-  bandwidthAvailable: BigNumber;
-  // A SponsoredEnergyEstimate for sponsored sends; null for standard crafting. getTransactionStatus
-  // always sets the field (never omits it), so consumers can read it without a presence check.
-  sponsoredEnergy?: SponsoredEnergyEstimate | null;
-};
-export type TransactionStatusRaw = TransactionStatusCommonRaw;

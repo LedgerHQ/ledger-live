@@ -74,6 +74,52 @@ function jsonSafeReplacer(this: Record<string, unknown>, key: string, value: unk
   return value;
 }
 
+const BUY_DEEPLINK = "ledgerlive://buy";
+
+/**
+ * Names the account being funded on a `ledgerlive://buy` deeplink a coin module put on an error.
+ *
+ * The PTX buy flow reads `?account=<Ledger Live account id>` to pre-select the account that ran out
+ * of gas (`screens/exchange/index.tsx` looks it up by `id`); without it the user lands on a generic
+ * buy screen. Composed here rather than in the coin module because that id is a wallet-side concept —
+ * a coin module is handed an address and an xpub, and giving it one would put a Ledger Live identifier
+ * into a contract meant to hold none. `useSwapTransaction.ts` builds its own link at this same layer.
+ *
+ * Left alone when the link already names an account, so a family that has the id by another route
+ * keeps its own answer.
+ */
+export function addAccountToBuyLinks(
+  errors: Record<string, Error>,
+  accountId: string,
+): Record<string, Error> {
+  for (const error of Object.values(errors)) {
+    const holder = error as { links?: unknown };
+    if (!Array.isArray(holder.links)) continue;
+
+    const links = holder.links.map(link =>
+      typeof link === "string" ? withBuyAccount(link, accountId) : link,
+    );
+    // Assigned only when something changed, and as a new array either way: a coin module is free to
+    // hand back a module-level constant, which must not be rewritten under it.
+    if (links.some((link, index) => link !== holder.links![index])) holder.links = links;
+  }
+
+  return errors;
+}
+
+function withBuyAccount(link: string, accountId: string): string {
+  const queryStart = link.indexOf("?");
+  const base = queryStart === -1 ? link : link.slice(0, queryStart);
+  // Exact host match, so a hypothetical `ledgerlive://buyback` is not treated as the buy flow.
+  if (base !== BUY_DEEPLINK && !base.startsWith(`${BUY_DEEPLINK}/`)) return link;
+
+  const params = new URLSearchParams(queryStart === -1 ? "" : link.slice(queryStart + 1));
+  if (params.has("account")) return link;
+
+  params.set("account", accountId);
+  return `${base}?${params.toString()}`;
+}
+
 /**
  * Normalises a fee-estimation parameter bag into a JSON-safe record for `GenericTransaction.feeParameters`.
  * `bigint`/`BigNumber` values become decimal strings; everything else is carried through. The bag
@@ -452,6 +498,55 @@ export function readFamilyExtra(details: CoreOperation["details"]): JsonSafeReco
   return raw ? (toJsonSafe(raw) as JsonSafeRecord) : undefined;
 }
 
+/** The `extra` keys `adaptCoreOperationToLiveOperation` writes. */
+type FrameworkOperationExtra = {
+  assetReference?: string;
+  assetOwner?: string;
+  assetAmount?: string | undefined;
+  assetSenders?: string[];
+  assetRecipients?: string[];
+  parentSenders?: string[];
+  parentRecipients?: string[];
+  ledgerOpType?: string | undefined;
+  memo?: string | undefined;
+  internal?: boolean;
+  feePayer?: string;
+  stake?: { address: string; amount: BigNumber };
+};
+
+/**
+ * Every key of the above, plus `pagingToken` — read as the next sync's cursor in `getAccountShape` but
+ * never written here. The family bag lands flat beside these, so a collision is dropped rather than
+ * merged: each framework key is written *conditionally*, so a surviving family key would supply the
+ * framework's own answer on an operation where the framework wrote none.
+ *
+ * `satisfies Record<…, true>` keeps this list honest: adding a field to `FrameworkOperationExtra`
+ * without reserving it here fails to compile.
+ */
+const FRAMEWORK_RESERVED_EXTRA_KEYS: ReadonlySet<string> = new Set(
+  Object.keys({
+    assetReference: true,
+    assetOwner: true,
+    assetAmount: true,
+    assetSenders: true,
+    assetRecipients: true,
+    parentSenders: true,
+    parentRecipients: true,
+    ledgerOpType: true,
+    memo: true,
+    internal: true,
+    feePayer: true,
+    stake: true,
+    pagingToken: true,
+  } satisfies Record<keyof FrameworkOperationExtra | "pagingToken", true>),
+);
+
+function stripFrameworkReservedKeys(bag: Record<string, unknown>): Record<string, unknown> {
+  return Object.fromEntries(
+    Object.entries(bag).filter(([key]) => !FRAMEWORK_RESERVED_EXTRA_KEYS.has(key)),
+  );
+}
+
 /**
  * Every framework-owned `extra` key is a JSON-safe string, string array or boolean except
  * `stake.amount`, a `BigNumber`. These two return **only** that converted key, never the whole bag:
@@ -496,24 +591,24 @@ export function mergeExtra(
   return { ...base, ...family, ...frameworkOwned };
 }
 
-export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOperation): Operation {
-  const opType = op.type as OperationType;
+function assignAssetExtra(op: CoreOperation, extra: FrameworkOperationExtra): void {
+  if (op.asset?.type === "native") return;
+  extra.assetReference =
+    "assetReference" in (op.asset ?? {}) ? (op.asset as any).assetReference : "";
+  extra.assetOwner = "assetOwner" in (op.asset ?? {}) ? (op.asset as any).assetOwner : "";
+}
 
-  const extra: {
-    assetReference?: string;
-    assetOwner?: string;
-    assetAmount?: string | undefined;
-    assetSenders?: string[];
-    assetRecipients?: string[];
-    parentSenders?: string[];
-    parentRecipients?: string[];
-    ledgerOpType?: string | undefined;
-    memo?: string | undefined;
-    internal?: boolean;
-    feePayer?: string;
-    stake?: { address: string; amount: BigNumber };
-    familyExtra?: JsonSafeRecord;
-  } = {};
+function buildStakeExtra(stake: unknown): FrameworkOperationExtra["stake"] | undefined {
+  if (!stake || typeof stake !== "object") return undefined;
+  const s = stake as { address?: string; amount?: bigint };
+  return {
+    address: s.address ?? "",
+    amount: new BigNumber(typeof s.amount === "bigint" ? s.amount.toString() : "0"),
+  };
+}
+
+function buildOperationExtra(op: CoreOperation): FrameworkOperationExtra {
+  const extra: FrameworkOperationExtra = {};
 
   if (op.details?.ledgerOpType !== undefined) {
     extra.ledgerOpType = op.details.ledgerOpType as string;
@@ -539,11 +634,8 @@ export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOpe
     extra.parentRecipients = op.details?.parentRecipients;
   }
 
-  if (op.asset?.type !== "native") {
-    extra.assetReference =
-      "assetReference" in (op.asset ?? {}) ? (op.asset as any).assetReference : "";
-    extra.assetOwner = "assetOwner" in (op.asset ?? {}) ? (op.asset as any).assetOwner : "";
-  }
+  assignAssetExtra(op, extra);
+
   if (op.details?.memo) {
     extra.memo = op.details.memo as string;
   }
@@ -556,37 +648,52 @@ export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOpe
     extra.feePayer = op.tx.feesPayer;
   }
 
-  // Nested under one key the family owns rather than flattened beside the framework's. Every key
-  // above is written *conditionally*, and `pagingToken` is read but never written here, so a
-  // flattened bag would supply the framework's own answer on any operation where the framework
-  // wrote neither: a `familyExtra.internal` reroutes a plain transfer into the internal-operations
-  // bucket, a `familyExtra.pagingToken` becomes the next sync's cursor.
-  const familyExtra = readFamilyExtra(op.details);
-  if (familyExtra) {
-    extra.familyExtra = familyExtra;
+  const stake = buildStakeExtra(op.details?.stake);
+  if (stake) {
+    extra.stake = stake;
   }
 
-  if (op.details?.stake && typeof op.details.stake === "object") {
-    const s = op.details.stake as { address?: string; amount?: bigint };
-    extra.stake = {
-      address: s.address ?? "",
-      amount: new BigNumber(typeof s.amount === "bigint" ? s.amount.toString() : "0"),
-    };
-  }
+  return extra;
+}
 
-  const bnFees = new BigNumber(op.tx.fees.toString());
-  const hasFailed = op.tx.failed;
-
-  let value: BigNumber;
-  if (hasFailed) {
-    value = bnFees;
-  } else if (
+function computeOperationValue(
+  op: CoreOperation,
+  opType: OperationType,
+  bnFees: BigNumber,
+  hasFailed: boolean,
+): BigNumber {
+  if (hasFailed) return bnFees;
+  if (
     op.asset.type === "native" &&
     ["OUT", "FEES", "DELEGATE", "UNDELEGATE", "REDELEGATE"].includes(opType)
   ) {
-    value = new BigNumber(op.value.toString()).plus(bnFees);
-  } else {
-    value = new BigNumber(op.value.toString());
+    return new BigNumber(op.value.toString()).plus(bnFees);
+  }
+  return new BigNumber(op.value.toString());
+}
+
+export function adaptCoreOperationToLiveOperation(
+  accountId: string,
+  op: CoreOperation,
+  reviveFamilyExtra?: (extraRaw: OperationExtraRaw) => OperationExtra,
+): Operation {
+  const opType = op.type as OperationType;
+  const extra = buildOperationExtra(op);
+
+  const bnFees = new BigNumber(op.tx.fees.toString());
+  const hasFailed = op.tx.failed;
+  const value = computeOperationValue(op, opType, bnFees, hasFailed);
+
+  // Landed flat beside the framework's own keys and revived through the family's
+  // `fromOperationExtraRaw` — the same pair `accountRawAssign.ts` composes — so a family reads one
+  // shape whether an operation arrived from a fresh sync or from storage. The reserved-key strip runs
+  // *after* the reviver, and the framework's keys are spread last, so the bag can only fill what the
+  // framework left unwritten.
+  const familyExtra = readFamilyExtra(op.details);
+  let revivedFamilyExtra: Record<string, unknown> | undefined;
+  if (familyExtra) {
+    const revived = reviveFamilyExtra ? reviveFamilyExtra(familyExtra) : familyExtra;
+    revivedFamilyExtra = stripFrameworkReservedKeys(asRecord(revived) ?? familyExtra);
   }
 
   const res = {
@@ -604,7 +711,7 @@ export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOpe
     transactionSequenceNumber:
       op.details?.sequence != null ? new BigNumber(op.details.sequence.toString()) : undefined,
     hasFailed,
-    extra,
+    extra: revivedFamilyExtra ? { ...revivedFamilyExtra, ...extra } : extra,
   };
 
   return res;
@@ -899,7 +1006,8 @@ export const buildOptimisticOperation = (
   describeOptimisticOperation?: BridgeApi["describeOptimisticOperation"],
 ): Operation => {
   const { mode } = transaction;
-  const described = mode !== undefined ? describeOptimisticOperation?.(mode, account) : undefined;
+  const described =
+    mode !== undefined ? describeOptimisticOperation?.(mode, account, transaction) : undefined;
   const type: OperationType = described?.type ?? defaultOperationType(mode);
   // toFixed, not toString: BigNumber goes exponential above 1e21, which BigInt can't parse.
   const fees = transaction.fees ? BigInt(transaction.fees.toFixed()) : 0n;
@@ -935,6 +1043,10 @@ export const buildOptimisticOperation = (
         : {}),
     }),
     extra: {
+      // Reserved keys stripped and the framework's own spread last — the same contract
+      // `adaptCoreOperationToLiveOperation` applies to a family bag arriving from a sync. `blockTime`
+      // and `index` are this path's alone, which is why they are not in the reserved set.
+      ...(described?.extra ? stripFrameworkReservedKeys(described.extra) : {}),
       ledgerOpType: type,
       blockTime: new Date(),
       index: "0",

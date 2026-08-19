@@ -33,6 +33,7 @@ import {
 } from "~/components/RootNavigator/types/helpers";
 import { UnfreezeNavigatorParamList } from "~/components/RootNavigator/types/UnfreezeNavigator";
 import { getUnfreezeData } from "@ledgerhq/live-common/families/tron/react";
+import { mergeTronFamilySpecificData } from "~/families/tron/familySpecificData";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
@@ -69,7 +70,9 @@ function UnfreezeAmountInner({ account }: InnerProps) {
       const t = bridge.createTransaction(account);
       const transaction = bridge.updateTransaction(t, {
         mode: "unfreeze",
-        resource: canUnfreezeBandwidth ? "BANDWIDTH" : "ENERGY",
+        familySpecificData: mergeTronFamilySpecificData(t, {
+          resource: canUnfreezeBandwidth ? "BANDWIDTH" : "ENERGY",
+        }),
       });
       return {
         account,
@@ -77,10 +80,8 @@ function UnfreezeAmountInner({ account }: InnerProps) {
       };
     },
   );
-  const resource =
-    transaction && (transaction as TronTransaction).resource
-      ? (transaction as TronTransaction).resource
-      : "";
+  const tronTransaction = transaction as TronTransaction | undefined;
+  const resource = tronTransaction?.familySpecificData?.resource ?? undefined;
   const onContinue = useCallback(() => {
     navigation.navigate(ScreenName.UnfreezeSelectDevice, {
       accountId: account.id,
@@ -102,14 +103,14 @@ function UnfreezeAmountInner({ account }: InnerProps) {
   }, [bridge, setTransaction, transaction]);
   const onChangeResource = useCallback(
     (resource: TronResource) => {
-      if (!transaction) return;
+      if (!tronTransaction) return;
       setTransaction(
-        bridge.updateTransaction(transaction, {
-          resource,
+        bridge.updateTransaction(tronTransaction, {
+          familySpecificData: mergeTronFamilySpecificData(tronTransaction, { resource }),
         }),
       );
     },
-    [bridge, transaction, setTransaction],
+    [bridge, tronTransaction, setTransaction],
   );
   const error = useMemo(() => {
     const e = Object.values(status.errors)[0];
