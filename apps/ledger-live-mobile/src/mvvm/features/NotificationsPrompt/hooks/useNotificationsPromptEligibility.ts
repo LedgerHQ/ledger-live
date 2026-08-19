@@ -18,7 +18,7 @@ type UseNotificationsPromptParams = {
   pushNotificationsDataOfUser: DataOfUser | null | undefined;
 };
 
-export const useNotificationsPrompt = ({
+export const useNotificationsPromptEligibility = ({
   permissionStatus,
   areNotificationsAllowed,
   transactionsAlertsCategory,

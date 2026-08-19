@@ -16,7 +16,7 @@ import WithdrawConnectDevice from "~/screens/ConnectDevice";
 import WithdrawValidationError from "./03-ValidationError";
 import WithdrawValidationSuccess from "./03-ValidationSuccess";
 import type { EvmWithdrawFlowParamList } from "./types";
-import { useNotificationsContext } from "LLM/features/NotificationsPrompt";
+import { useNotificationsPrompt } from "LLM/features/NotificationsPrompt";
 
 const totalSteps = "3";
 
@@ -44,7 +44,7 @@ function ConnectDeviceHeader() {
 
 function WithdrawFlow() {
   const { colors } = useTheme();
-  const { notifyFlowCompleted } = useNotificationsContext();
+  const { notifyFlowCompleted } = useNotificationsPrompt();
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
   return (
     <Stack.Navigator

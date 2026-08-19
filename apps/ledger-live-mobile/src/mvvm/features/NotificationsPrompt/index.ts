@@ -1,9 +1,9 @@
 export { useNotifications } from "./hooks/useNotifications";
 export { NotificationsPromptWrapper } from "./new/NotificationsPromptWrapper";
 export { NotificationsPromptProvider } from "./new/NotificationsPromptProvider";
-export { useNotificationsContext } from "./new/NotificationsPromptProvider";
+export { useNotificationsPrompt } from "./new/NotificationsPromptProvider";
 export { useNotificationsData } from "./hooks/useNotificationsData";
-export { useNotificationsPrompt } from "./hooks/useNotificationsPrompt";
+export { useNotificationsPromptEligibility } from "./hooks/useNotificationsPromptEligibility";
 export { useNotificationsDrawer } from "./hooks/useNotificationsDrawer";
 export {
   INACTIVITY_DRAWER_DELAY_MS,

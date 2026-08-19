@@ -10,7 +10,7 @@ import { PendingOperation } from "../PendingOperation";
 const mockNotifyFlowCompleted = jest.fn();
 
 jest.mock("LLM/features/NotificationsPrompt", () => ({
-  useNotificationsContext: () => ({
+  useNotificationsPrompt: () => ({
     notifyFlowCompleted: mockNotifyFlowCompleted,
   }),
 }));

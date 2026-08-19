@@ -27,7 +27,7 @@ import {
   useDeeplinkCustomHandlers,
   useLiveAppModalCustomHandlers,
 } from "./CustomHandlers";
-import { useNotificationsContext } from "LLM/features/NotificationsPrompt";
+import { useNotificationsPrompt } from "LLM/features/NotificationsPrompt";
 
 type Props = {
   manifest: LiveAppManifest;
@@ -39,7 +39,7 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
   const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
   const [isInfoPanelOpened, setIsInfoPanelOpened] = useState(false);
   const hasBroadcastedWalletApiTransactionRef = useRef(false);
-  const { notifyFlowCompleted } = useNotificationsContext();
+  const { notifyFlowCompleted } = useNotificationsPrompt();
 
   const navigation =
     useNavigation<RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>>();
