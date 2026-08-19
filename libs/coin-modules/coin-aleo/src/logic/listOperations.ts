@@ -204,9 +204,11 @@ async function resolveThirdPartyShieldRecipients({
 
   const recipients = new Map<string, string>();
 
-  await promiseAllBatched(4, unresolved, async ({ transaction_id: transactionId }) => {
+  await promiseAllBatched(4, unresolved, async tx => {
+    const transactionId = tx.transaction_id;
     const { execution } = await apiClient.getTransactionById(config, transactionId);
-    const transition = execution?.transitions[0];
+    const transition =
+      execution?.transitions.find(ts => ts.id === tx.transition_id) ?? execution?.transitions[0];
     if (!transition) return;
 
     const transferArguments = await resolveTransferArguments({
