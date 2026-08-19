@@ -290,12 +290,27 @@ export type useWalletAPIServerOptions = {
 
 /**
  * Max parallel CAL token lookups in the `currency.list` handler.
- * CAL exposes no bulk id endpoint, so a live app asking for hundreds of tokens means
- * hundreds of requests; firing them all at once exhausts the connection pool and drops
- * a large share of them. Measured with the 627 ids the Buy/Sell live app requests:
- * unbounded = 75.6s with 251 failures, bounded to 10 = 5.9s with none. See QAA-1505.
+ *
+ * CAL exposes no bulk id endpoint — verified: `?id=a,b,c` returns an empty array with
+ * no error and `?id=a&id=b` is rejected 400 — so a live app asking for hundreds of
+ * tokens means hundreds of requests. The Buy screen currently asks for 736 of them.
+ *
+ * The bound exists for correctness: unbounded, the connection pool is exhausted and a
+ * large share of the lookups fail. A failed lookup returns null and is dropped silently
+ * below, so unbounded fan-out yields a quietly incomplete currency list. Measured with
+ * the real ids against the real CAL API: unbounded = 75.6s with 251 of 627 failing;
+ * bounded = none failing.
+ *
+ * The value is set by latency, not by the pool. On an Android emulator each lookup
+ * costs ~747ms (host network: ~90ms), so wall time is requests x latency / concurrency
+ * and the bound is what decides whether the Buy screen renders before the caller gives
+ * up: at 10 it measured 67.5s on-device, past the 60s the E2E waits. 25 keeps it near
+ * ~22s while staying a small, well-behaved pool.
+ *
+ * Note the transport may impose its own per-host cap below this number, in which case
+ * raising it further buys nothing. See QAA-1497.
  */
-const TOKEN_LOOKUP_CONCURRENCY = 10;
+export const TOKEN_LOOKUP_CONCURRENCY = 25;
 
 export function useWalletAPIServer({
   accountNames,
@@ -454,13 +469,8 @@ export function useWalletAPIServer({
       }
 
       // 6. Fetch specific tokens by ID if any.
-      // CAL has no bulk id lookup, so this is inherently one request per token, and a
-      // live app can ask for hundreds at once. Firing them all at once exhausts the
-      // connection pool: measured against the real CAL API with the 627 ids the
-      // Buy/Sell live app requests, an unbounded Promise.all took 75.6s and 251 of the
-      // 627 requests failed outright, while the same work bounded to a small pool took
-      // 5.9s with every request succeeding. A failed lookup returns null and is silently
-      // dropped below, so unbounded fan-out also yields a quietly incomplete list.
+      // One request per token — CAL has no bulk id lookup — and the Buy screen asks for
+      // 736. See TOKEN_LOOKUP_CONCURRENCY for why this is bounded and why at that value.
       const specificTokens: WalletAPICurrency[] = [];
       if (specificTokenIds.size > 0) {
         const resolvedTokens = await promiseAllBatched(

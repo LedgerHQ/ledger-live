@@ -82,7 +82,7 @@ jest.mock("../currencies", () => ({
 }));
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const { useWalletAPIServer } = require("./react");
+const { useWalletAPIServer, TOKEN_LOOKUP_CONCURRENCY } = require("./react");
 
 function getRegisteredHandler<Name extends keyof WalletHandlers>(name: Name): WalletHandlers[Name] {
   const calls = mockSetHandler.mock.calls.filter(([handlerName]) => handlerName === name);
@@ -320,15 +320,18 @@ describe("currency.list handler — token lookup concurrency", () => {
   });
 
   /**
-   * Regression for QAA-1505. The handler used to resolve every requested token id in a
-   * single unbounded `Promise.all`. Measured against the real CAL API with the 627 ids
-   * the Buy/Sell live app asks for, that took 75.6s and 251 of the requests failed
-   * outright; bounding the pool took 5.9s with none failing. A failed lookup resolves to
-   * null and is silently dropped, so the unbounded version also returned an incomplete
-   * list. This pins the bound so a future refactor cannot quietly restore the fan-out.
+   * Regression for QAA-1497. The handler used to resolve every requested token id in a
+   * single unbounded `Promise.all`. Measured against the real CAL API with the ids the
+   * Buy screen asks for, that took 75.6s and 251 of the requests failed outright;
+   * bounding the pool took 5.9s with none failing. A failed lookup resolves to null and
+   * is silently dropped, so the unbounded version also returned an incomplete list.
+   * This pins the bound so a future refactor cannot quietly restore the fan-out.
    */
   it("never has more than TOKEN_LOOKUP_CONCURRENCY lookups in flight", async () => {
-    const tokenIds = Array.from({ length: 120 }, (_, i) => `ethereum/erc20/token_${i}`);
+    const tokenIds = Array.from(
+      { length: TOKEN_LOOKUP_CONCURRENCY * 8 },
+      (_, i) => `ethereum/erc20/token_${i}`,
+    );
     let inFlight = 0;
     let peakInFlight = 0;
 
@@ -346,7 +349,7 @@ describe("currency.list handler — token lookup concurrency", () => {
 
     expect(findTokenById).toHaveBeenCalledTimes(tokenIds.length);
     expect(peakInFlight).toBeGreaterThan(1);
-    expect(peakInFlight).toBeLessThanOrEqual(10);
+    expect(peakInFlight).toBeLessThanOrEqual(TOKEN_LOOKUP_CONCURRENCY);
   });
 });
 
