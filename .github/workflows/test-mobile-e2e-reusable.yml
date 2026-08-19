@@ -1100,8 +1100,19 @@ jobs:
           command -v coredumpctl >/dev/null || { echo "coredumpctl unavailable"; exit 0; }
 
           coredumpctl list --no-pager >"${OUT}/coredumpctl-list.txt" 2>&1 || true
-          PIDS="$(coredumpctl list --no-pager 2>/dev/null | awk '/qemu-system/ {print $2}' | tail -6)"
-          [ -z "$PIDS" ] && { echo "No qemu core dumps recorded."; exit 0; }
+          # The TIME column spans four fields ("Wed 2026-08-19 15:01:53 UTC"), so the PID
+          # is not $2. Anchor on the signal name instead of a fixed column, and take only
+          # the rows whose core is still present - a "missing" one has nothing to read.
+          PIDS="$(awk '/qemu-system/ && /present/ {
+                         for (i = 1; i <= NF; i++) if ($i ~ /^SIG/) { print $(i-3); break }
+                       }' "${OUT}/coredumpctl-list.txt" | tail -4)"
+          if [ -z "$PIDS" ]; then
+            echo "No qemu core dumps with a present COREFILE; falling back to newest by name."
+            coredumpctl info qemu-system-x86_64-headless >"${OUT}/core-newest-info.txt" 2>&1 || true
+            sed -n '1,80p' "${OUT}/core-newest-info.txt" 2>/dev/null || true
+            exit 0
+          fi
+          echo "qemu cores to inspect: $PIDS"
 
           for pid in $PIDS; do
             echo "::group::backtrace for qemu pid ${pid}"
