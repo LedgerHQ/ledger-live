@@ -1,5 +1,5 @@
 import React from "react";
-import { render } from "tests/testSetup";
+import { act, render } from "tests/testSetup";
 import { createFixtureAccount } from "@ledgerhq/coin-bitcoin/fixtures/common.fixtures";
 import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { Account, Operation } from "@ledgerhq/types-live";
@@ -36,6 +36,11 @@ const operation = { id: "op1", hash: "hash1" } as unknown as Operation;
 describe("ZcashPostBroadcastSync", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
   });
 
   it("starts a shielded sync for a shielded transfer on a zcash account", () => {
@@ -47,6 +52,51 @@ describe("ZcashPostBroadcastSync", () => {
       />,
     );
 
+    expect(mockStartShieldedSync).toHaveBeenCalledTimes(1);
+  });
+
+  const RETRY_COUNT = 8;
+  const RETRY_INTERVAL_MS = 90_000;
+
+  it("retries the shielded sync over a window, spaced apart, since a freshly-broadcast tx isn't mined yet", () => {
+    render(
+      <ZcashPostBroadcastSync
+        account={buildAccount()}
+        transaction={buildTransaction("shielded")}
+        operation={operation}
+      />,
+    );
+
+    expect(mockStartShieldedSync).toHaveBeenCalledTimes(1);
+
+    for (let attempt = 2; attempt <= RETRY_COUNT; attempt++) {
+      act(() => {
+        jest.advanceTimersByTime(RETRY_INTERVAL_MS);
+      });
+      expect(mockStartShieldedSync).toHaveBeenCalledTimes(attempt);
+    }
+
+    act(() => {
+      jest.advanceTimersByTime(RETRY_INTERVAL_MS);
+    });
+    expect(mockStartShieldedSync).toHaveBeenCalledTimes(RETRY_COUNT);
+  });
+
+  it("stops retrying once unmounted", () => {
+    const { unmount } = render(
+      <ZcashPostBroadcastSync
+        account={buildAccount()}
+        transaction={buildTransaction("shielded")}
+        operation={operation}
+      />,
+    );
+
+    expect(mockStartShieldedSync).toHaveBeenCalledTimes(1);
+    unmount();
+
+    act(() => {
+      jest.advanceTimersByTime(RETRY_COUNT * RETRY_INTERVAL_MS);
+    });
     expect(mockStartShieldedSync).toHaveBeenCalledTimes(1);
   });
 
