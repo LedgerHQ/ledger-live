@@ -1,7 +1,9 @@
 import React, { useCallback, useLayoutEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { isContactsSearchNoResultsViewModel, useContactsFeature } from "@features/flow-contacts";
+import { isContactsSearchNoResultsViewModel } from "@features/flow-contacts";
+import { useContactsFeature } from "@features/platform-contacts";
+import { TrackScreen } from "~/analytics";
 import { ContactsPageContent } from "./components/ContactsPageContent";
 import { useContactsAddContactDrawerAdapter } from "./hooks/useContactsAddContactDrawerAdapter";
 import { useContactsPageNavigationViewModel } from "./hooks/useContactsPageNavigationViewModel";
@@ -47,5 +49,10 @@ export function ContactsScreen() {
     return <ContactsScreenRedirect />;
   }
 
-  return <ContactsScreenContent />;
+  return (
+    <>
+      <TrackScreen category="Contacts" />
+      <ContactsScreenContent />
+    </>
+  );
 }

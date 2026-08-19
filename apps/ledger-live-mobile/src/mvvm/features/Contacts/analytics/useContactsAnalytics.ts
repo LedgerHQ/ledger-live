@@ -2,9 +2,12 @@ import { useMemo } from "react";
 import {
   createContactsAnalyticsHelper,
   type ContactsAnalyticsHelper,
-  useContactsFeature,
 } from "@features/flow-contacts";
-import { buildContactsGlobalProperties, useContacts } from "@features/platform-contacts";
+import {
+  buildContactsGlobalProperties,
+  useContacts,
+  useContactsFeature,
+} from "@features/platform-contacts";
 import { createContactsAnalyticsAdapter } from "./createContactsAnalyticsAdapter";
 
 export function useContactsAnalytics(): ContactsAnalyticsHelper {

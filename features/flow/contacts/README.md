@@ -8,8 +8,6 @@ Shared Contacts flow package for Desktop and Mobile.
 
 ## Scope
 
-- Feature-flag configuration (`useContactsFeature`, resolvers)
-- `useContacts` and `useContactsMeContact` hooks (`@domain/entity-contact`)
 - Empty contact detail selection and presentation
 - Populated contact detail view model (address rows, count, and open-detail intents)
 - Contact detail edit/delete scenario state (edit intent, delete intent, and delete lifecycle)
@@ -17,9 +15,6 @@ Shared Contacts flow package for Desktop and Mobile.
 - Contact address detail quick-action scenario state (send, edit, and delete intents with delete lifecycle)
 - Contacts orchestration through `ContactsView`, which composes List, Detail, and Introduction
   journeys
-- Add Address session, address-entry validation state, and address-label state
-- Add Address network eligibility and final currency selection state (MAD integration uses an
-  injected selection port)
 - Shared UI components (`.web.tsx` / `.native.tsx`)
 - Contact detail composition; Platform Contacts owns the reusable Contact avatar, including the
   app-owned "Me" profile image
@@ -30,33 +25,9 @@ Shared Contacts flow package for Desktop and Mobile.
 App layers own routing, screen composition, i18n, and analytics adapters (`track` /
 `trackPage`). Flow-specific tracking contracts and helpers live in this package; shared global
 analytics properties come from `@features/platform-contacts`.
-
-For Add Address, the Flow resolves ordered production network IDs from
-`eligibleAddressFamilies` and sends only those IDs to MAD. The consuming adapter filters MAD content
-by native network ID or token parent network ID. The Flow stores the final crypto-or-token
-`currencyId` and uses its display name as the default address label after asset and optional network
-selection. MAD is not opened when no production network matches the feature-flag families.
-
-After a successful selection, the session retains the selected contact and final currency
-identifiers and moves to `enteringAddress`. It also retains the selected contact's existing address
-labels so the naming step can reject a duplicate for that contact. Labels are compared after
-trimming, Unicode normalization, and case folding, while the user's casing is preserved for the
-saved value. Native address-label input is limited to 32 characters. An empty label has no validation error but cannot continue. The `AddAddress` step owns
-its injected validation port, currency and token resolution, domain orchestration, input methods,
-asynchronous validation state, resolved-address storage, and stale-result protection. Consuming
-apps adapt coin bridges, domain services, token stores, and other app-owned or platform-specific
-integrations.
-
-The native Add Address views render the shared address-entry and address-name states plus temporary
-Validation and Success steps as composable Lumen bottom-sheet content. The Flow owns their order,
-back transitions, resolved-address session and valid-only confirmation. Mobile owns the single
-queued bottom-sheet container, currency-selection adapter, translations, keyboard behavior, scanner
-routing and safe-area inset. Native paste events are classified without reading the clipboard
-proactively, while manual validation can be debounced without delaying paste or QR validation.
-
 ## Public API
 
-Consume the complete Contacts page from `@features/flow-contacts`. Both Desktop and Mobile use
+Consume the complete Contacts aggregate from `@features/flow-contacts`. Both Desktop and Mobile use
 the root `ContactsView` export; the package resolves its Web or React Native implementation.
 Folders under `src/` are internal implementation details and are not exported as package subpaths.
 
@@ -68,10 +39,14 @@ also needs Contacts Detail or introductions.
 journeys. Applications that mount their hooks, helpers, or native content directly import that leaf
 instead of this orchestrator.
 
-Each user-facing screen owned by this package lives under `src/steps/` and follows the MVVM split used by the app
-features (View + ViewModel + types + colocated components). Web and React Native export their
-respective `ContactsView` and `ContactDetailView` implementations through the root entry point.
-The native entry also exports `ContactsAddContactHeaderButton` via the List leaf flow.
+`@features/flow-contacts-add-address` owns the Add address journey. Applications import this leaf
+directly when they mount its dialog or drawer content. Contacts feature configuration and eligible
+network resolution are provided by `@features/platform-contacts`.
+
+Each user-facing screen owned by this package lives under `src/steps/` and follows the MVVM split
+used by the app features (View + ViewModel + types + colocated components). Web and React Native
+export their respective `ContactsView` and `ContactDetailView` implementations through the root
+entry point. The native entry also exports `ContactsAddContactHeaderButton` via the List leaf flow.
 
 ## Testing
 
@@ -93,9 +68,6 @@ src/
 ├── ContactsView.web/.native.tsx         # orchestrates List with parent-owned journeys
 ├── ContactsView.types.ts
 ├── steps/
-│   ├── AddAddress/                      # Shared address-entry flow and native step content
-│   │   ├── model/                       # Network resolver, MAD port and address validation
-│   │   └── ContactsAddAddressEntry.native.tsx / ContactsAddAddressPlaceholderView.native.tsx / useAddAddressFlowViewModel.ts / types.ts / index.ts
 │   └── Detail/                          # Contact detail (web + native)
 │       ├── ContactDetailView.web/.native.tsx / useEmptyContactDetail.ts / usePopulatedContactDetail.ts / useContactAddressDetail.ts / useContactAddressDetailActionsViewModel.ts / types.ts
 │       ├── model/                       # empty + populated + address detail + quick-action builders
@@ -107,7 +79,6 @@ src/
 ├── utils/                               # Contacts flow-only utilities
 ├── analytics/                           # Typed tracking contract + helper
 ├── jest.native.ts                       # Mobile Jest entry (re-exports ./index.native)
-├── featureFlags.ts
 ├── index.ts                             # Web public API
 └── index.native.ts                      # React Native public API
 ```
@@ -118,5 +89,6 @@ public API as a compatibility façade while the remaining Contacts journeys are 
 `@features/flow-contacts-introduction` owns both introduction journeys and is composed by
 `ContactsView` on Web.
 
-`@features/platform-contacts` owns `ContactAvatar`: flows and applications can consume it directly
-for a Me profile image or a saved-contact avatar with deterministic color and Unicode initial.
+`@features/platform-contacts` owns `ContactAvatar`: flows and applications can consume it from its
+`web` or `native` entry for a Me profile image or a saved-contact avatar with deterministic color
+and Unicode initial.

@@ -12,7 +12,7 @@ import { useAvailableBalance } from "../useAvailableBalance";
 import { useCurrentSendFlowStep } from "../useCurrentSendFlowStep";
 import { useSendHeaderViewModel } from "../useSendHeaderViewModel";
 import { useSelector } from "~/context/hooks";
-import { useContactsFeature } from "@features/flow-contacts";
+import { useContactsFeature } from "@features/platform-contacts";
 
 jest.mock("@react-navigation/native", () => ({
   useNavigation: jest.fn(),
@@ -29,7 +29,7 @@ jest.mock("@ledgerhq/live-common/flows/send/amount/SendAmountDisplayModeContext"
 jest.mock("../useAvailableBalance");
 jest.mock("../useCurrentSendFlowStep");
 jest.mock("~/context/hooks");
-jest.mock("@features/flow-contacts", () => ({
+jest.mock("@features/platform-contacts", () => ({
   useContactsFeature: jest.fn(() => ({ isEnabled: false })),
 }));
 

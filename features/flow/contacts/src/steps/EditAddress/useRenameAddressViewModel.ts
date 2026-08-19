@@ -5,7 +5,7 @@ import type {
   ContactId,
 } from "@domain/entity-contact";
 import { useCallback, useMemo } from "react";
-import type { AddAddressEntryState } from "../AddAddress/types";
+import type { ContactsAddressEntryState } from "@features/platform-contacts";
 import type { ContactAddressEditPort } from "../Detail/model/ports";
 import { createRenameAddressController } from "./model/controller";
 import type { RenameAddressViewModel } from "./types";
@@ -21,7 +21,7 @@ export function useRenameAddressViewModel(
   currentLabel: string,
   currentAddress: ContactAddress["address"] | undefined,
   draftLabel: string,
-  addressEntry: AddAddressEntryState,
+  addressEntry: ContactsAddressEntryState,
   existingLabels: readonly ContactAddressLabel[],
   editPort: ContactAddressEditPort,
 ): UseRenameAddressViewModelResult {

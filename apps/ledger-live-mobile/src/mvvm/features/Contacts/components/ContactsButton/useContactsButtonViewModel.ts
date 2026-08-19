@@ -8,8 +8,8 @@ import {
   CONTACTS_PAGE_PROPERTY,
   CONTACTS_TRACK_EVENTS,
   CONTACTS_TRACKING_BUTTON,
-  useContactsFeature,
 } from "@features/flow-contacts";
+import { useContactsFeature } from "@features/platform-contacts";
 import { useContactsAnalytics } from "../../analytics/useContactsAnalytics";
 
 export type ContactsButtonViewModel = {

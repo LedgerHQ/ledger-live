@@ -1,7 +1,7 @@
 import { act, renderHook } from "@testing-library/react";
 import { ContactAddressValueSchema } from "@domain/entity-contact";
 import { mockContactAddress } from "@domain/entity-contact/schema.mock";
-import type { ContactsAddressValidationPort } from "../AddAddress/model/addressValidation/types";
+import type { ContactsAddressValidationPort } from "@features/platform-contacts";
 import { useEditAddressAddressEntry } from "./useEditAddressAddressEntry";
 
 describe("useEditAddressAddressEntry", () => {

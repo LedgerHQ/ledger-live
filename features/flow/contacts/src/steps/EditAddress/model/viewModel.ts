@@ -1,13 +1,13 @@
 import { getContactAddressLabelValidationError } from "@domain/entity-contact";
 import type { ContactAddress, ContactAddressLabel } from "@domain/entity-contact";
-import type { AddAddressEntryState } from "../../AddAddress/types";
+import type { ContactsAddressEntryState } from "@features/platform-contacts";
 import type { RenameAddressViewModel } from "../types";
 
 export function createRenameAddressViewModel(
   draftLabel: string,
   currentLabel: string,
   currentAddress: ContactAddress["address"] | undefined,
-  addressEntry: AddAddressEntryState,
+  addressEntry: ContactsAddressEntryState,
   existingLabels: readonly ContactAddressLabel[],
 ): RenameAddressViewModel {
   const trimmedDraftLabel = draftLabel.trim();

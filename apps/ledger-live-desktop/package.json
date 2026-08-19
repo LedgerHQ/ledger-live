@@ -91,6 +91,7 @@
     "@electron/fuses": "2.0.0",
     "@features/flow-analytics-consent": "workspace:*",
     "@features/flow-contacts": "workspace:^",
+    "@features/flow-contacts-add-address": "workspace:^",
     "@features/flow-contacts-add-contact": "workspace:^",
     "@features/flow-contacts-introduction": "workspace:^",
     "@features/flow-fear-and-greed": "workspace:^",
