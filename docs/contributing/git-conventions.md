@@ -110,8 +110,8 @@ e.g. `feat(ui): add dark mode toggle (LIVE-1234)`
 
 Pull request titles use the same structure as commit messages, with the option of a Jira ticket at the end.
 
-A GitHub workflow may automatically prepend a prefix based on PR labels, (possible values `[LWD] `, `[LWM] ` or `[LWDM] `). Leave that prefix in place if automation adds it.
+A GitHub workflow may automatically prepend a prefix based on PR labels (possible values `[LWD] `, `[LWM] ` or `[LWDM] `). Leave that prefix in place if automation adds it.
 
-The max length of the PR title is 72 characters, with the potential of a 7 character prefix, write titles that are 65 characters or less.
+The max length of the PR title is 72 characters. With the potential of a 7-character prefix, write titles that are 65 characters or less.
 
-Notes: Pull request title are used for merge commit messages.
+When creating a merge commit, use a valid pull request title because it is used for the merge commit message.
