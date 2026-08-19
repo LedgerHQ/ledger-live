@@ -1,0 +1,45 @@
+name: "[Quarantine] Registry Lint & Bypass Guard - Called"
+
+on:
+  workflow_call:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  test-quarantine-lint:
+    name: "Quarantine Registry Lint & Bypass Guard"
+    runs-on: ubuntu-22.04
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
+      FORCE_COLOR: 3
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - name: Setup the caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        id: setup-caches
+        with:
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
+          cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+          cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+          nx-key: ${{ secrets.NX_KEY }}
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+
+      # Only the tool itself is needed (yaml + zod). The bypass guard scans
+      # package.json files on disk (no install of the scanned packages required).
+      - name: Install dependencies
+        run: pnpm i --filter="@ledgerhq/test-quarantine..." --frozen-lockfile --unsafe-perm
+
+      # validate: schema, dates, unique title-level titles (PRD §9, hard-fail).
+      # bypass-guard: every jest-invoking allowlisted script routes through the
+      # wrapper, modulo the documented debug/oxfmt/detox exceptions and the pilot
+      # migration allowlist (quarantine/.bypass-allow) (PRD §8.1).
+      - name: Validate registry and guard against wrapper bypass
+        run: pnpm run quarantine:lint
