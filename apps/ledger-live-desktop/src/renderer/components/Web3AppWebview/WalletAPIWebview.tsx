@@ -42,7 +42,11 @@ import { setOriginFlow } from "~/renderer/analytics/originFlow";
 
 const wallet = { name: "ledger-live-desktop", version: __APP_VERSION__ };
 
-function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
+function useUiHook(
+  manifest: AppManifest,
+  tracking: TrackingAPI,
+  restoreWebviewFocus: () => void,
+): UiHook {
   const { pushToast } = useToasts();
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -86,8 +90,14 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
           areCurrenciesFiltered,
           useCase,
           uiUseCase,
-          onSuccess,
-          onCancel,
+          onSuccess: (account, parentAccount) => {
+            onSuccess(account, parentAccount);
+            restoreWebviewFocus();
+          },
+          onCancel: () => {
+            onCancel();
+            restoreWebviewFocus();
+          },
         });
       },
       "account.receive": ({
@@ -272,6 +282,7 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
       openAssetAndAccount,
       manifest,
       pushToast,
+      restoreWebviewFocus,
       t,
       tracking,
     ],
@@ -303,7 +314,10 @@ function useWebView(
   const accounts = useSelector(flattenAccountsSelector);
   const mevProtected = useSelector(mevProtectionSelector);
 
-  const uiHook = useUiHook(manifest, tracking);
+  const restoreWebviewFocus = useCallback(() => {
+    requestAnimationFrame(() => webviewRef.current?.focus());
+  }, [webviewRef]);
+  const uiHook = useUiHook(manifest, tracking, restoreWebviewFocus);
   const shareAnalytics = useSelector(shareAnalyticsSelector);
   const userId = useGetUserId();
   const config = useConfig({

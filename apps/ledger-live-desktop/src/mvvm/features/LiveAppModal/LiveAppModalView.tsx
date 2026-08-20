@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useRef } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogBody } from "@ledgerhq/lumen-ui-react";
 import { Web3AppWebview } from "~/renderer/components/Web3AppWebview";
 import { NetworkErrorScreen } from "~/renderer/components/Web3AppWebview/NetworkError";
@@ -61,16 +61,34 @@ const EarnLiveAppModalContent = ({
 };
 
 const LiveAppModalView = ({ isOpen, params, onOpenChange, onClose }: LiveAppModalViewProps) => {
-  if (!isOpen || !params) return null;
+  const previouslyFocusedElementRef = useRef<HTMLElement | null>(null);
+
+  const handleOpenAutoFocus = useCallback(() => {
+    const activeElement = document.activeElement;
+    previouslyFocusedElementRef.current =
+      activeElement instanceof HTMLElement ? activeElement : null;
+  }, []);
+
+  const handleCloseAutoFocus = useCallback((event: Event) => {
+    event.preventDefault();
+    requestAnimationFrame(() => {
+      const previouslyFocusedElement = previouslyFocusedElementRef.current;
+      if (previouslyFocusedElement?.isConnected) {
+        previouslyFocusedElement.focus();
+      }
+    });
+  }, []);
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange} height="fixed">
-      <DialogContent>
-        {params.useCase === "earn" ? (
-          <EarnLiveAppModalContent params={params} onClose={onClose} />
-        ) : (
-          <LiveAppModalContent params={params} onClose={onClose} extraInputs={null} />
-        )}
+      <DialogContent onOpenAutoFocus={handleOpenAutoFocus} onCloseAutoFocus={handleCloseAutoFocus}>
+        {params ? (
+          params.useCase === "earn" ? (
+            <EarnLiveAppModalContent params={params} onClose={onClose} />
+          ) : (
+            <LiveAppModalContent params={params} onClose={onClose} extraInputs={null} />
+          )
+        ) : null}
       </DialogContent>
     </Dialog>
   );
