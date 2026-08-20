@@ -244,7 +244,10 @@ env:
   AVD_CORES: 2
   AVD_RAM_SIZE: 3072
   AVD_HEAP_SIZE: 1024
-  AVD_OPTIONS: -no-window -gpu swiftshader_indirect -accel on -no-audio -no-boot-anim -camera-back none -camera-front none -no-metrics
+  # -feature -Vulkan: the emulator's software Vulkan segfaults under load, taking the
+  # device down mid-run. Measured 1.99 -> 0.34 deaths per emulator-hour over five runs.
+  # See: https://ledgerhq.atlassian.net/browse/QAA-1497
+  AVD_OPTIONS: -no-window -gpu swiftshader_indirect -feature -Vulkan -accel on -no-audio -no-boot-anim -camera-back none -camera-front none -no-metrics
   MOBILE_ARTIFACTS_ROOT: e2e/mobile/artifacts
   E2E_TEST_RESULTS_PREFIX_IOS: e2e-test-results-ios
   E2E_TEST_RESULTS_PREFIX_ANDROID: e2e-test-results-android
@@ -1078,6 +1081,62 @@ jobs:
           else
             echo "✅ No emulator disappeared during this shard." >> "$GITHUB_STEP_SUMMARY"
           fi
+
+      # Backtraces for the qemu SIGSEGVs; must run after the tests because the ~1 GB
+      # dump is still being written when the device drops off adb.
+      # See: https://ledgerhq.atlassian.net/browse/QAA-1497
+      - name: Extract emulator crash backtraces
+        if: always()
+        continue-on-error: true
+        timeout-minutes: 10
+        shell: bash
+        run: |
+          OUT="${{ env.MOBILE_ARTIFACTS_ROOT }}/crash-backtraces"
+          mkdir -p "$OUT"
+          command -v coredumpctl >/dev/null || { echo "coredumpctl unavailable"; exit 0; }
+
+          coredumpctl list --no-pager >"${OUT}/coredumpctl-list.txt" 2>&1 || true
+          # The TIME column spans four fields ("Wed 2026-08-19 15:01:53 UTC"), so the PID
+          # is not $2. Anchor on the signal name instead of a fixed column, and take only
+          # the rows whose core is still present - a "missing" one has nothing to read.
+          PIDS="$(awk '/qemu-system/ && /present/ {
+                         for (i = 1; i <= NF; i++) if ($i ~ /^SIG/) { print $(i-3); break }
+                       }' "${OUT}/coredumpctl-list.txt" | tail -4)"
+          if [ -z "$PIDS" ]; then
+            echo "No qemu core dumps with a present COREFILE; falling back to newest by name."
+            coredumpctl info qemu-system-x86_64-headless >"${OUT}/core-newest-info.txt" 2>&1 || true
+            sed -n '1,80p' "${OUT}/core-newest-info.txt" 2>/dev/null || true
+            exit 0
+          fi
+          echo "qemu cores to inspect: $PIDS"
+
+          for pid in $PIDS; do
+            echo "::group::backtrace for qemu pid ${pid}"
+            # `info` already prints a stack trace when symbols resolve, and is far
+            # cheaper than loading a 1 GB core into gdb.
+            coredumpctl info "$pid" >"${OUT}/core-${pid}-info.txt" 2>&1 || true
+            # coredumpctl's own trace resolves to "n/a (n/a + 0x0)": the emulator ships
+            # stripped .so files with no build-id, so it cannot even map the fault
+            # address to a module. gdb loads the core against the real objects and will
+            # at least name the library and offset, which is what identifies the path.
+            if command -v gdb >/dev/null; then
+              timeout 300 coredumpctl debug "$pid" \
+                --debugger=gdb \
+                --debugger-arguments="-batch -ex 'bt' -ex 'info sharedlibrary' -ex quit" \
+                >"${OUT}/core-${pid}-gdb.txt" 2>&1 || true
+              sed -n '1,40p' "${OUT}/core-${pid}-gdb.txt" 2>/dev/null || true
+            fi
+            sed -n '1,80p' "${OUT}/core-${pid}-info.txt" 2>/dev/null || true
+            echo "::endgroup::"
+          done
+
+          {
+            echo "### 💥 qemu crash backtraces"
+            echo "Signal and faulting frame per core, if symbols resolved:"
+            echo '```'
+            grep -hE 'Signal:|Command Line:|^ *#[0-9]' "${OUT}"/core-*-info.txt 2>/dev/null | head -40
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Stop resource usage sampler
         if: always()
