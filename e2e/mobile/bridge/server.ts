@@ -171,6 +171,11 @@ export async function getEnvs() {
   return fetchData({ type: "getEnvs", id: uniqueId() });
 }
 
+/** Last Buy/Sell handoff URL (`goToManifest` + `goToURL`) seen by the app, or "" if none yet. */
+export async function getPtxHandoff() {
+  return fetchData({ type: "getPtxHandoff", id: uniqueId() });
+}
+
 async function fetchData(message: MessageData, timeout = RESPONSE_TIMEOUT): Promise<string> {
   return new Promise<string>(resolve => {
     postMessage(message);
@@ -203,6 +208,14 @@ export async function removeKnownSpeculos(address: string) {
   postMessage({ type: "removeKnownSpeculos", id: uniqueId(), payload: address });
 }
 
+/** Resolve the `fetchData` promise waiting on `key`, if any. Each response type does this. */
+function resolvePending(key: string, payload: string) {
+  const pending = global.pendingCallbacks?.get(key);
+  if (!pending) return;
+  global.pendingCallbacks.delete(key);
+  pending.callback(payload);
+}
+
 function onMessage(messageStr: string) {
   const msg: ServerData = JSON.parse(messageStr);
   log(`Message received ${msg.type}`);
@@ -215,54 +228,27 @@ function onMessage(messageStr: string) {
     case "walletAPIResponse":
       webSocket.e2eBridgeServer.next(msg);
       break;
-    case "appLogs": {
-      const pending = global.pendingCallbacks?.get("getLogs");
-      if (pending) {
-        global.pendingCallbacks.delete("getLogs");
-        pending.callback(msg.payload);
-      }
+    case "appLogs":
+      resolvePending("getLogs", msg.payload);
       break;
-    }
-    case "appFlags": {
-      const pending = global.pendingCallbacks?.get("getFlags");
-      if (pending) {
-        global.pendingCallbacks.delete("getFlags");
-        pending.callback(msg.payload);
-      }
+    case "ptxHandoff":
+      resolvePending("getPtxHandoff", msg.payload);
       break;
-    }
-    case "appEnvs": {
-      const pending = global.pendingCallbacks?.get("getEnvs");
-      if (pending) {
-        global.pendingCallbacks.delete("getEnvs");
-        pending.callback(msg.payload);
-      }
+    case "appFlags":
+      resolvePending("getFlags", msg.payload);
       break;
-    }
-    case "swapSetupDone": {
-      const pending = global.pendingCallbacks?.get("swapSetup");
-      if (pending) {
-        global.pendingCallbacks.delete("swapSetup");
-        pending.callback("swapSetup done");
-      }
+    case "appEnvs":
+      resolvePending("getEnvs", msg.payload);
       break;
-    }
-    case "swapLiveAppReady": {
-      const pending = global.pendingCallbacks?.get("waitSwapReady");
-      if (pending) {
-        global.pendingCallbacks.delete("waitSwapReady");
-        pending.callback("Swap Live App is ready");
-      }
+    case "swapSetupDone":
+      resolvePending("swapSetup", "swapSetup done");
       break;
-    }
-    case "earnLiveAppReady": {
-      const pending = global.pendingCallbacks?.get("waitEarnReady");
-      if (pending) {
-        global.pendingCallbacks.delete("waitEarnReady");
-        pending.callback("Earn Live App is ready");
-      }
+    case "swapLiveAppReady":
+      resolvePending("waitSwapReady", "Swap Live App is ready");
       break;
-    }
+    case "earnLiveAppReady":
+      resolvePending("waitEarnReady", "Earn Live App is ready");
+      break;
     case "appFile":
       try {
         const { fileName, fileContent }: { fileName: string; fileContent: string } = JSON.parse(

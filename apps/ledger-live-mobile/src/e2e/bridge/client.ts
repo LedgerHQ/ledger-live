@@ -23,6 +23,7 @@ import {
 import { LaunchArguments } from "react-native-launch-arguments";
 import logReport from "~/log-report";
 import { webviewLogStore } from "~/e2e/webviewLogStore";
+import { ptxHandoffStore } from "~/e2e/ptxHandoffStore";
 import { MessageData, ServerData, mockDeviceEventSubject } from "./types";
 import { getAllEnvs, setEnv } from "@shared/env";
 import Config from "react-native-config";
@@ -155,6 +156,13 @@ async function onMessage(event: WebSocketMessageEvent) {
         postMessage({
           type: "appLogs",
           payload,
+        });
+        break;
+      }
+      case "getPtxHandoff": {
+        postMessage({
+          type: "ptxHandoff",
+          payload: ptxHandoffStore.take() ?? "",
         });
         break;
       }
