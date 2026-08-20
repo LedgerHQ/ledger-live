@@ -181,7 +181,7 @@ describe("useSwapWebviewProps", () => {
     expect(result.current.inputs.isModularDrawer).toBe("true");
   });
 
-  it("should set llmWalletApiDeviceIntentSign to 'true' when the swap manifest is allowlisted", () => {
+  it("should pass device-intent sign variant, enabled, and active when the swap manifest is allowlisted", () => {
     const { result } = renderHook(
       () =>
         useSwapWebviewProps({
@@ -193,16 +193,18 @@ describe("useSwapWebviewProps", () => {
         overrideInitialState: withFlagOverrides({
           llmWalletApiDeviceIntentSign: {
             enabled: true,
-            params: { enabledManifestIds: [STUB_MANIFEST.id] },
+            params: { variantId: "variant_a", enabledManifestIds: [STUB_MANIFEST.id] },
           },
         }),
       },
     );
 
-    expect(result.current.inputs.llmWalletApiDeviceIntentSign).toBe("true");
+    expect(result.current.inputs.llmWalletApiDeviceIntentSign).toBe("variant_a");
+    expect(result.current.inputs.llmWalletApiDeviceIntentSignEnabled).toBe("true");
+    expect(result.current.inputs.llmWalletApiDeviceIntentSignActive).toBe("true");
   });
 
-  it("should set llmWalletApiDeviceIntentSign to 'false' when the swap manifest is not allowlisted", () => {
+  it("should keep the variant when the swap manifest is not allowlisted", () => {
     const { result } = renderHook(
       () =>
         useSwapWebviewProps({
@@ -214,16 +216,18 @@ describe("useSwapWebviewProps", () => {
         overrideInitialState: withFlagOverrides({
           llmWalletApiDeviceIntentSign: {
             enabled: true,
-            params: { enabledManifestIds: ["some-other-app"] },
+            params: { variantId: "variant_a", enabledManifestIds: ["some-other-app"] },
           },
         }),
       },
     );
 
-    expect(result.current.inputs.llmWalletApiDeviceIntentSign).toBe("false");
+    expect(result.current.inputs.llmWalletApiDeviceIntentSign).toBe("variant_a");
+    expect(result.current.inputs.llmWalletApiDeviceIntentSignEnabled).toBe("true");
+    expect(result.current.inputs.llmWalletApiDeviceIntentSignActive).toBe("false");
   });
 
-  it("should set llmWalletApiDeviceIntentSign to 'false' when the flag is disabled", () => {
+  it("should pass the variant when the flag is disabled", () => {
     const { result } = renderHook(
       () =>
         useSwapWebviewProps({
@@ -235,12 +239,14 @@ describe("useSwapWebviewProps", () => {
         overrideInitialState: withFlagOverrides({
           llmWalletApiDeviceIntentSign: {
             enabled: false,
-            params: { enabledManifestIds: [STUB_MANIFEST.id] },
+            params: { variantId: "control", enabledManifestIds: [STUB_MANIFEST.id] },
           },
         }),
       },
     );
 
-    expect(result.current.inputs.llmWalletApiDeviceIntentSign).toBe("false");
+    expect(result.current.inputs.llmWalletApiDeviceIntentSign).toBe("control");
+    expect(result.current.inputs.llmWalletApiDeviceIntentSignEnabled).toBe("false");
+    expect(result.current.inputs.llmWalletApiDeviceIntentSignActive).toBe("false");
   });
 });

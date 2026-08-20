@@ -4,4 +4,4 @@
 "@shared/feature-flags": patch
 ---
 
-Forward the resolved `llmWalletApiDeviceIntentSign` value to the swap live app as a webview input on mobile, so the live app can adapt to the device-intent signing flow. The value is resolved per manifest through the new shared `useDeviceIntentSignEnabled` hook, which also replaces the duplicated flag/allowlist logic in the Wallet API UI hook. Report the flag's enabled state and `variantId` on Mixpanel events via `getRemoteABTestingAttributes`.
+Forward the `llmWalletApiDeviceIntentSign` assignment to the swap live app on mobile (`variantId`, flag `enabled`, and whether DIE signing is active for the current manifest). Resolve that per manifest through `useDeviceIntentSignAssignment`, which also backs the Wallet API UI hook. Report `enabled` and `variantId` on Mixpanel via `getRemoteABTestingAttributes`.
