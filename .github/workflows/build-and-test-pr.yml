@@ -1,7 +1,5 @@
 name: "[All Platforms] - Build and Test - PR"
 on:
-  merge_group:
-    types: [checks_requested]
   pull_request: ~
 
 concurrency:
@@ -46,8 +44,8 @@ jobs:
     if: ${{!github.event.pull_request.head.repo.fork && needs.pre_job.outputs.should_skip != 'true'}}
     uses: LedgerHQ/ledger-live/.github/workflows/nx-affected-reusable.yml@develop
     with:
-      head_branch: ${{ github.event.pull_request.head.ref || github.event.merge_group.head_ref }}
-      base_branch: ${{ github.event.pull_request.base.ref || github.event.merge_group.base_ref }}
+      head_branch: ${{ github.event.pull_request.head.ref }}
+      base_branch: ${{ github.event.pull_request.base.ref }}
 
   # LLD
   build-desktop:

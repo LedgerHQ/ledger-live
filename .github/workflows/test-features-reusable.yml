@@ -2,6 +2,13 @@ name: "[Features] - Test - Called"
 
 on:
   workflow_call:
+    inputs:
+      skip-coverage:
+        description: "Skip coverage and run codechecks only. Set at the merge gate, where no product code executes."
+        type: boolean
+        required: false
+        default: false
+
     outputs:
       coverage_generated:
         value: ${{ jobs.test-features.outputs.coverage_generated }}
@@ -47,3 +54,4 @@ jobs:
       scope: features
       timeout-minutes: 20
       ref: ${{ inputs.ref || github.sha }}
+      skip-coverage: ${{ inputs.skip-coverage || false }}

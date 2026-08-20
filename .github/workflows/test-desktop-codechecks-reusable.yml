@@ -2,6 +2,13 @@ name: "[Desktop] - Lint & Unit Tests - Called"
 
 on:
   workflow_call:
+    inputs:
+      skip-unit-tests:
+        description: "Skip the unit test job. Set at the merge gate, where no product code executes."
+        type: boolean
+        required: false
+        default: false
+
     outputs:
       coverage_generated:
         value: ${{ jobs.unit-tests.outputs.coverage_generated }}
@@ -85,7 +92,7 @@ jobs:
           skip_builds: true
 
       - name: format check
-        if: github.base_ref == 'develop' || github.ref == 'refs/heads/develop' || github.event_name == 'workflow_dispatch'
+        if: github.base_ref == 'develop' || github.ref == 'refs/heads/develop' || github.event_name == 'merge_group' || github.event_name == 'workflow_dispatch'
         run: pnpm desktop format:check
 
       - name: lint
@@ -102,6 +109,7 @@ jobs:
 
   unit-tests:
     name: "Desktop Unit Tests"
+    if: ${{ !inputs.skip-unit-tests }}
     permissions:
       id-token: write
       contents: read
