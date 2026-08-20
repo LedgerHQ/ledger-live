@@ -930,6 +930,7 @@
     "request": {
       "title": "Request {{asset}}",
       "networkLabel": "{{network}} network",
+      "saveDialogTitle": "Save request card",
       "actions": {
         "share": "Share",
         "copy": "Copy",

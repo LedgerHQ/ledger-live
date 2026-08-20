@@ -6,6 +6,7 @@ import type { PayCardTrackEvent, RequestReceiveProps } from "@features/flow-pay-
 import { useCopyToClipboard } from "../../../hooks/useCopyToClipboard";
 import { useOpenAssetAndAccount } from "../../ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
 import { deriveRequestReceiveData } from "./deriveRequestReceiveData";
+import { useSaveRequestReceiveCard } from "./useSaveRequestReceiveCard";
 
 const REQUEST_PAGE = "Pay";
 
@@ -42,13 +43,16 @@ export function usePayTabRequestReceive(
   const onClose = useCallback(() => setIsOpen(false), []);
 
   const onCopy = useCallback((address: string) => copyToClipboard(address), [copyToClipboard]);
-  // Save (card image) and Verify (device) land with LIVE-36121 / LIVE-36132.
+  // Verify (device) lands with LIVE-36132.
   const noop = useCallback(() => {}, []);
 
   const data = useMemo(
     () => (selection ? deriveRequestReceiveData(selection.account, selection.parentAccount) : null),
     [selection],
   );
+
+  // Save captures the on-screen request card (QR + address) to a PNG via the native save dialog.
+  const saveCard = useSaveRequestReceiveCard(data?.asset.ticker ?? "");
 
   const labels = useMemo(
     () => ({
@@ -78,12 +82,12 @@ export function usePayTabRequestReceive(
       visibleActions: ["save", "copy", "verify"],
       onShare: noop,
       onCopy,
-      onSave: noop,
+      onSave: saveCard,
       onVerify: noop,
       onClose,
       onTrackEvent,
     }),
-    [isOpen, data, labels, noop, onCopy, onClose, onTrackEvent],
+    [isOpen, data, labels, noop, onCopy, saveCard, onClose, onTrackEvent],
   );
 
   return { open, requestReceive };
