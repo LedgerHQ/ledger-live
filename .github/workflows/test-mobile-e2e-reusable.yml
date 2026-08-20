@@ -1119,12 +1119,16 @@ jobs:
             # `info` already prints a stack trace when symbols resolve, and is far
             # cheaper than loading a 1 GB core into gdb.
             coredumpctl info "$pid" >"${OUT}/core-${pid}-info.txt" 2>&1 || true
-            if ! grep -qiE '^ *#0|Stack trace' "${OUT}/core-${pid}-info.txt"; then
-              command -v gdb >/dev/null &&
-                timeout 240 coredumpctl debug "$pid" \
-                  --debugger=gdb \
-                  --debugger-arguments="-batch -ex 'thread apply all bt' -ex quit" \
-                  >"${OUT}/core-${pid}-gdb.txt" 2>&1 || true
+            # coredumpctl's own trace resolves to "n/a (n/a + 0x0)": the emulator ships
+            # stripped .so files with no build-id, so it cannot even map the fault
+            # address to a module. gdb loads the core against the real objects and will
+            # at least name the library and offset, which is what identifies the path.
+            if command -v gdb >/dev/null; then
+              timeout 300 coredumpctl debug "$pid" \
+                --debugger=gdb \
+                --debugger-arguments="-batch -ex 'bt' -ex 'info sharedlibrary' -ex quit" \
+                >"${OUT}/core-${pid}-gdb.txt" 2>&1 || true
+              sed -n '1,40p' "${OUT}/core-${pid}-gdb.txt" 2>/dev/null || true
             fi
             sed -n '1,80p' "${OUT}/core-${pid}-info.txt" 2>/dev/null || true
             echo "::endgroup::"
