@@ -40,15 +40,23 @@ function stubPorts(overrides: Partial<Ports> = {}): Ports {
     setSignedIn: jest.fn(),
     openHostedLogin: jest.fn(async () => ({
       type: "success",
-      url: "https://go.ledger.com/ledger/card-baanx?code=auth-code&app_id=app-value",
+      url: "ledgerlive://paytab?code=auth-code&app_id=app-value",
     })),
     ...overrides,
   };
 }
 
-function start(ports: Ports, initialCallback: PayCardAuthCallback | null = null) {
+function start(
+  ports: Ports,
+  initialCallback: PayCardAuthCallback | null = null,
+  config: CardLoginOauthConfig = oauthConfig,
+) {
   const actor = createActor(cardLoginMachine, {
-    input: { ports: ports as unknown as CardLoginPorts, oauthConfig, callback: initialCallback },
+    input: {
+      ports: ports as unknown as CardLoginPorts,
+      oauthConfig: config,
+      callback: initialCallback,
+    },
   });
   actor.start();
   return actor;
@@ -163,6 +171,21 @@ describe("cardLoginMachine login", () => {
     expect(ports.persistSession).toHaveBeenCalledWith(session);
     // The attempt is wiped once the session is on disk.
     expect(ports.clearAttempt).toHaveBeenCalled();
+  });
+
+  it("reports a failure when the provider's API URL cannot build a URL", async () => {
+    const ports = stubPorts();
+    const actor = start(ports, null, { ...oauthConfig, apiUrl: "" });
+    await settledAt(actor, "idle");
+
+    actor.send({ type: "LOGIN" });
+
+    // The URL is built in the actor, so a bad `apiUrl` reports a failure instead of stopping the
+    // machine. The attempt reached the store before that, so it is wiped again.
+    await settledAt(actor, "error");
+    expect(actor.getSnapshot().context.errorKind).toBe("pkce_failed");
+    expect(ports.clearAttempt).toHaveBeenCalled();
+    expect(ports.openHostedLogin).not.toHaveBeenCalled();
   });
 
   it("accepts the deep link when it arrives before the browser answers", async () => {

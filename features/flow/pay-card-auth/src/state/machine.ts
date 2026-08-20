@@ -10,7 +10,6 @@ import {
   validateCallback,
 } from "./actors";
 import { clearErrorKind, failPkce, forgetAttempt } from "./actions";
-import { buildAuthorizeUrl } from "./buildAuthorizeUrl";
 import { isUnauthorizedError } from "./errors";
 import { hasErrorKind, shouldResumeAuthenticated } from "./guards";
 import type { CardLoginContext, CardLoginEvent, CardLoginMachineInput } from "./types";
@@ -104,18 +103,16 @@ export const cardLoginMachine = setup({
       entry: ["forgetAttempt", "clearErrorKind"],
       invoke: {
         src: "prepareAttempt",
-        input: ({ context }) => ({ ports: context.ports }),
+        input: ({ context }) => ({ ports: context.ports, oauthConfig: context.oauthConfig }),
         onDone: {
-          // The provider hosts the authorize page, so the URL is built here and nothing is asked of
-          // the backend first. One step fewer, and one fewer way for a login to fail.
+          // The provider hosts the authorize page, so the actor builds the URL and nothing is asked
+          // of the backend first. One step fewer, and one fewer way for a login to fail.
           target: "awaitingHostedLogin",
-          actions: assign({
-            loginUrl: ({ context, event }) =>
-              buildAuthorizeUrl(context.oauthConfig, event.output.codeChallenge),
-          }),
+          actions: assign({ loginUrl: ({ event }) => event.output.loginUrl }),
         },
-        // Nothing reached the store, so there is nothing to wipe.
-        onError: { target: "error", actions: "failPkce" },
+        // The attempt may already be stored, because the URL is built after the write. `clearingAttempt`
+        // wipes it and then reads the error kind, which sends this to `error`.
+        onError: { target: "clearingAttempt", actions: "failPkce" },
       },
     },
 

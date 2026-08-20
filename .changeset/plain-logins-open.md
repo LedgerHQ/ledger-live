@@ -24,3 +24,8 @@ code against this attempt's challenge, so no other attempt can exchange it. The 
 sends the same `redirect_uri`, and both token grants move to `/v1/auth/oauth2/token`.
 
 `oauthConfig` gains `apiUrl`, which is the host the authorize page lives on.
+
+`prepareAttempt` builds the authorize URL, rather than the transition that follows it. The URL builder
+throws on a misconfigured `apiUrl`, and a throw inside an action stops the machine instead of reaching
+a transition. From the actor it lands on `onError`, which wipes the stored attempt and reports a
+failure the user can retry.

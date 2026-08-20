@@ -1,9 +1,10 @@
 import type { PayCardSession } from "@domain/api-card-management";
 import { fromPromise } from "xstate";
+import { buildAuthorizeUrl } from "./buildAuthorizeUrl";
 import { parseCallbackUrl } from "./callbackUrl";
 import { MissingLoginStateError } from "./errors";
 import type { PayCardLoginErrorKind } from "./errors";
-import type { CardLoginPorts, PayCardAuthCallback } from "./types";
+import type { CardLoginOauthConfig, CardLoginPorts, PayCardAuthCallback } from "./types";
 
 /**
  * Every asynchronous step of the login, as an invoked actor. Each one takes what it needs as input and
@@ -21,13 +22,23 @@ export const hydrate = fromPromise(async ({ input }: { input: { ports: CardLogin
   return { hasAttempt: attempt !== null, hasSession };
 });
 
+/**
+ * Mints the attempt, stores it, and builds the URL that opens it. The URL is built here and not in an
+ * `assign`, because `buildAuthorizeUrl` throws on a misconfigured `apiUrl`, and a throw inside an
+ * action stops the machine instead of reaching a transition. As a rejection it lands on `onError`, and
+ * the login reports a failure it can retry.
+ */
 export const prepareAttempt = fromPromise(
-  async ({ input }: { input: { ports: CardLoginPorts } }): Promise<{ codeChallenge: string }> => {
+  async ({
+    input,
+  }: {
+    input: { ports: CardLoginPorts; oauthConfig: CardLoginOauthConfig };
+  }): Promise<{ loginUrl: string }> => {
     const { codeVerifier, codeChallenge } = await input.ports.createAttempt();
     await input.ports.saveAttempt({ codeVerifier });
 
-    // Only the challenge travels on. The verifier stays in the store until the token exchange.
-    return { codeChallenge };
+    // Only the challenge leaves the device. The verifier stays in the store until the token exchange.
+    return { loginUrl: buildAuthorizeUrl(input.oauthConfig, codeChallenge) };
   },
 );
 
@@ -51,7 +62,11 @@ export const openHostedLogin = fromPromise(
   },
 );
 
-/** Compares the redirect against the attempt on disk. `kind` is null when they agree. */
+/**
+ * Checks that a redirect and the attempt behind it are both there. Nothing is compared: the OAuth
+ * `state` is gone, so there are no two values to hold against each other. `kind` is null when both
+ * are present.
+ */
 export const validateCallback = fromPromise(
   async ({
     input,
