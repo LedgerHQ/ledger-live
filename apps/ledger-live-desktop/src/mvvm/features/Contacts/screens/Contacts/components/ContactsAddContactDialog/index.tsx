@@ -3,17 +3,15 @@ import { Dialog, DialogBody, DialogContent, DialogHeader } from "@ledgerhq/lumen
 import type { AddContactAppAdapterResult } from "@features/flow-contacts";
 import { ContactsAddContactContent } from "@features/flow-contacts-add-contact";
 
-const NAMING_DISCLAIMER_ID = "contacts-add-contact-naming-disclaimer";
-
 export function ContactsAddContactDialog({
   isOpen,
   onClose,
+  onOpen: _onOpen,
   ...contentProps
 }: AddContactAppAdapterResult): React.ReactNode {
   return (
     <Dialog open={isOpen} onOpenChange={open => !open && onClose()}>
       <DialogContent
-        aria-describedby={NAMING_DISCLAIMER_ID}
         className="w-[400px] bg-canvas-sheet pb-24"
         data-testid="contacts-add-contact-dialog"
       >

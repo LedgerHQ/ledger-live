@@ -10,6 +10,7 @@ import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 export function ContactsAddContactDrawerSheet({
   isOpen,
   onClose,
+  onOpen: _onOpen,
   ...contentProps
 }: AddContactAppAdapterResult): React.JSX.Element {
   const { bottom: bottomInset } = useSafeAreaInsets();

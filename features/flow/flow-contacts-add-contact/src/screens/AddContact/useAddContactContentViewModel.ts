@@ -28,7 +28,11 @@ export function useAddContactContentViewModel({
 
     try {
       const createdContact = await save();
-      onSaveSuccess(createdContact);
+      try {
+        onSaveSuccess(createdContact);
+      } catch {
+        return createdContact;
+      }
       return createdContact;
     } catch {
       return undefined;

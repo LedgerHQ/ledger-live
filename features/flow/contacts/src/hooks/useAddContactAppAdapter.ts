@@ -55,10 +55,11 @@ export function useAddContactAppAdapter({
     contactCreation,
     onSaveSuccess: handleSaveSuccess,
   });
+  const { reset, invalidNameError, onConfirm: confirmContact } = contentViewModel;
   const onClose = useCallback(() => {
     setIsOpen(false);
-    contentViewModel.reset();
-  }, [contentViewModel]);
+    reset();
+  }, [reset]);
   const onOpen = useCallback(() => {
     analytics.trackEvent(CONTACTS_TRACK_EVENTS.BUTTON_CLICKED, {
       source: CONTACTS_EVENT_SOURCE.LIST,
@@ -72,7 +73,7 @@ export function useAddContactAppAdapter({
     setIsOpen(true);
   }, [analytics]);
   const onConfirm = useCallback(async () => {
-    if (contentViewModel.invalidNameError) {
+    if (invalidNameError) {
       return undefined;
     }
 
@@ -83,12 +84,12 @@ export function useAddContactAppAdapter({
       hasPicture: false,
       flow: CONTACTS_FLOW.CONTACTS,
     });
-    const createdContact = await contentViewModel.onConfirm();
+    const createdContact = await confirmContact();
     if (createdContact !== undefined) {
       onClose();
     }
     return createdContact;
-  }, [analytics, contentViewModel, onClose]);
+  }, [analytics, confirmContact, invalidNameError, onClose]);
   const isNameErrorDisplayed = useMemo(
     () => isOpen && !contentViewModel.isSaving && contentViewModel.invalidNameError !== null,
     [contentViewModel.invalidNameError, contentViewModel.isSaving, isOpen],

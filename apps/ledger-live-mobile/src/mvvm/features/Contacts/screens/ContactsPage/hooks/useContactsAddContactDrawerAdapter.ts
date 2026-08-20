@@ -3,6 +3,7 @@ import { v4 as uuid } from "uuid";
 import {
   addContact,
   contact,
+  type Contact,
   DUPLICATE_CONTACT_NAME_ERROR_NAME,
   INVALID_CONTACT_NAME_ERROR_NAME,
 } from "@domain/entity-contact";
@@ -13,7 +14,7 @@ import { useTranslation } from "~/context/Locale";
 import { useContactsAnalytics } from "../../../analytics/useContactsAnalytics";
 
 export function useContactsAddContactDrawerAdapter(
-  onSaveSuccess: () => void,
+  onSaveSuccess: (contact: Contact) => void,
 ): AddContactAppAdapterResult {
   const dispatch = useDispatch();
   const { t } = useTranslation();

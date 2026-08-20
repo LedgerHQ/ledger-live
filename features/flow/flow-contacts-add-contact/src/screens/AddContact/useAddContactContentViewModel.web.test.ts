@@ -2,6 +2,7 @@ import { act, renderHook } from "@testing-library/react";
 import { contact, INVALID_CONTACT_NAME_ERROR_NAME } from "@domain/entity-contact";
 import { mockContact, mockMeContact } from "@domain/entity-contact/schema.mock";
 import { useContacts } from "@features/platform-contacts";
+import { CONTACT_NAME_MAX_LENGTH } from "../../components/ContactNameInput/constants";
 import type { ContactCreationPort } from "./model/ports";
 import { useAddContactContentViewModel } from "./useAddContactContentViewModel";
 
@@ -63,6 +64,52 @@ describe("useAddContactContentViewModel", () => {
     });
 
     expect(result.current.draftName).toBe("");
+  });
+
+  it("should limit the saved contact name to the maximum length", async () => {
+    const createdContact = contact({ id: "contact-ada", isMe: false, name: "Ada", addresses: [] });
+    const contactCreation: ContactCreationPort = {
+      createContact: jest.fn(async () => createdContact),
+    };
+    const { result } = renderHook(() =>
+      useAddContactContentViewModel({ contactCreation, onSaveSuccess: jest.fn() }),
+    );
+    const name = "a".repeat(CONTACT_NAME_MAX_LENGTH + 1);
+
+    act(() => {
+      result.current.onDraftNameChange(name);
+    });
+
+    await act(async () => {
+      await result.current.onConfirm();
+    });
+
+    expect(contactCreation.createContact).toHaveBeenCalledWith({
+      name: "a".repeat(CONTACT_NAME_MAX_LENGTH),
+    });
+  });
+
+  it("should return the created contact when the success callback throws", async () => {
+    const createdContact = contact({ id: "contact-ada", isMe: false, name: "Ada", addresses: [] });
+    const contactCreation: ContactCreationPort = {
+      createContact: jest.fn(async () => createdContact),
+    };
+    const { result } = renderHook(() =>
+      useAddContactContentViewModel({
+        contactCreation,
+        onSaveSuccess: () => {
+          throw new Error("consumer error");
+        },
+      }),
+    );
+
+    act(() => {
+      result.current.onDraftNameChange("Ada");
+    });
+
+    await act(async () => {
+      await expect(result.current.onConfirm()).resolves.toBe(createdContact);
+    });
   });
 
   it("should not expose a duplicate error while saving a newly created contact", async () => {

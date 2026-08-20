@@ -46,6 +46,21 @@ describe("ContactsAddContactContent", () => {
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 
+  it("should generate distinct naming disclaimer ids for each embedded form", () => {
+    render(
+      <>
+        <ContactsAddContactContent {...createProps()} />
+        <ContactsAddContactContent {...createProps()} />
+      </>,
+    );
+
+    const disclaimerIds = screen
+      .getAllByText(/For privacy, avoid full names and surnames/)
+      .map(disclaimer => disclaimer.parentElement?.id);
+
+    expect(new Set(disclaimerIds).size).toBe(2);
+  });
+
   it("should render the shared validation error and disable confirmation", () => {
     render(
       <ContactsAddContactContent
