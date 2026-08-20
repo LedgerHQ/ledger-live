@@ -162,6 +162,26 @@ describe("neuronPotentialVotingPower", () => {
     ).toBe(0n);
   });
 
+  // The canister's stake_e8s subtracts neuron_fees_e8s before applying the bonuses, so a neuron
+  // penalised for a rejected proposal votes on less than its cached stake. Omitting the subtraction
+  // overstated its power by the fee times the full bonus.
+  it("subtracts the rejection fees a neuron has accrued (0.8 ICP → 3 ICP of power)", () => {
+    expect(
+      neuronPotentialVotingPower(baseNeuron({ neuronFeesE8s: BigInt(0.2 * E8S_PER_ICP) })),
+    ).toBe(BigInt(3 * E8S_PER_ICP));
+  });
+
+  it("counts staked maturity toward the base, net of those fees (1.4 ICP → 5.25 ICP of power)", () => {
+    expect(
+      neuronPotentialVotingPower(
+        baseNeuron({
+          neuronFeesE8s: BigInt(0.1 * E8S_PER_ICP),
+          stakedMaturityE8sEquivalent: BigInt(0.5 * E8S_PER_ICP),
+        }),
+      ),
+    ).toBe(BigInt(5.25 * E8S_PER_ICP));
+  });
+
   it("keeps bigint precision for a whale neuron with a fractional bonus (stake above 2^53 e8s)", () => {
     // 1e9 ICP, far above Number's 2^53 exact-integer limit. baseNeuron has max dissolve (3x) and a
     // full 4y age (1.25x) → 3.75x, exercising a fractional multiplier at scale.

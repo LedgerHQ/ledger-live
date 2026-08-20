@@ -183,7 +183,7 @@ export const neuronPotentialVotingPower = (neuron: ICPNeuron): bigint => {
   if (neuron.dissolveDelaySeconds < BigInt(NNS_MINIMUM_DISSOLVE_DELAY_TO_VOTE)) return 0n;
   // The rewards-only "8-year gang" bonus is intentionally omitted: it depends on a snapshotted base
   // the wallet does not carry and does not affect potential voting power for post-migration neurons.
-  const stakeE8s = neuron.cachedNeuronStakeE8s + neuron.stakedMaturityE8sEquivalent;
+  const stakeE8s = neuronVotingStake(neuron);
   // Quantize the (fractional) bonus to a scaled integer so the e8s stake stays bigint — avoids the
   // Number() precision loss above 2^53 that would skew high-balance neurons.
   const scaledBonus = BigInt(
@@ -326,11 +326,19 @@ export const secondsToDuration = (totalSeconds: bigint | number): DurationParts 
 
 // ---- stake / split / maturity -------------------------------------------------------------------
 
-/** Effective stake: cached stake minus accrued fees. */
+/** Effective stake: cached stake minus accrued fees. The canister's `minted_stake_e8s`. */
 export const neuronStake = (neuron: ICPNeuron): bigint => {
   const stake = neuron.cachedNeuronStakeE8s - neuron.neuronFeesE8s;
   return stake > 0n ? stake : 0n;
 };
+
+/**
+ * The stake voting power is computed from: the effective stake plus staked maturity. Mirrors the
+ * canister's `Neuron::stake_e8s` (`rs/nns/governance/src/neuron/mod.rs`), which subtracts the
+ * rejection fees before adding staked maturity — omitting them overstates a penalised neuron's power.
+ */
+export const neuronVotingStake = (neuron: ICPNeuron): bigint =>
+  neuronStake(neuron) + neuron.stakedMaturityE8sEquivalent;
 
 /** A split must leave at least the minimum stake on both resulting neurons, plus the fee. */
 export const minNeuronSplittable = (feeE8s: bigint): bigint =>
