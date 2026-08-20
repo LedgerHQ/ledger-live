@@ -332,8 +332,11 @@ export const createBitcoinAccount = (overrides?: Partial<Account>): Account => {
   };
 };
 
-export const renderSendFlow = (account: Account) =>
-  render(<SendWorkflow isOpen onClose={jest.fn()} params={{ account }} />, {
+export const renderSendFlow = (
+  account: Account,
+  params: Omit<NonNullable<React.ComponentProps<typeof SendWorkflow>["params"]>, "account"> = {},
+) =>
+  render(<SendWorkflow isOpen onClose={jest.fn()} params={{ account, ...params }} />, {
     initialState: {
       accounts: [account],
       settings: {

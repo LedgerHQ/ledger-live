@@ -34,6 +34,26 @@ describe("Send Flow Integration", () => {
   });
 
   describe("Recipient step", () => {
+    it("should start on amount when opened from a contact", async () => {
+      renderSendFlow(ethereumAccount, {
+        recipient: VALID_EVM_RECIPIENT,
+        skipRecipientStep: true,
+      });
+
+      expect(await screen.findByTestId("send-amount-step")).toBeVisible();
+      expect(screen.getByTestId("send-amount-input")).toBeVisible();
+    });
+
+    it("should keep the recipient step when a direct recipient is empty", async () => {
+      renderSendFlow(ethereumAccount, {
+        recipient: "   ",
+        skipRecipientStep: true,
+      });
+
+      expect(await screen.findByTestId("send-recipient-input")).toBeVisible();
+      expect(screen.queryByTestId("send-amount-step")).not.toBeInTheDocument();
+    });
+
     it("should show the collapsable security card collapsed by default and expand on click", async () => {
       const { user } = renderSendFlow(ethereumAccount);
 

@@ -51,6 +51,7 @@ describe("useOpenSendFlow", () => {
     const account = genAccount("send-account-selection-categories", {
       currency: getCryptoCurrencyById("ethereum"),
     });
+
     const { result, store } = renderHook(() => useOpenSendFlow(), {
       initialState: {
         ...withFlagOverrides({
@@ -79,5 +80,38 @@ describe("useOpenSendFlow", () => {
 
     expect(store.getState().sendFlow.isOpen).toBe(true);
     expect(store.getState().sendFlow.data?.params).not.toHaveProperty("categories");
+  });
+
+  it("preserves the direct-recipient intent after account selection", () => {
+    const account = genAccount("send-contact-account-selection", {
+      currency: getCryptoCurrencyById("bitcoin"),
+    });
+    const recipient = "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh";
+    const { result, store } = renderHook(() => useOpenSendFlow(), {
+      initialState: {
+        ...withFlagOverrides({
+          newSendFlow: {
+            enabled: true,
+            params: { families: ["bitcoin"], excludedCurrencyIds: [] },
+          },
+        }),
+        accounts: [account],
+      },
+    });
+
+    result.current({
+      currencyIds: ["bitcoin"],
+      recipient,
+      skipRecipientStep: true,
+    });
+    store.getState().modularDialog.dialogParams?.onAccountSelected?.(account);
+
+    expect(store.getState().sendFlow.data?.params).toEqual(
+      expect.objectContaining({
+        account,
+        recipient,
+        skipRecipientStep: true,
+      }),
+    );
   });
 });
