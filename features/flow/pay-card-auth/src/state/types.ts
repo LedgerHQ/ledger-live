@@ -141,7 +141,6 @@ export type CardLoginContext = {
 export type CardLoginEvent =
   | { type: "LOGIN" }
   | { type: "RETRY" }
-  /** A session that ended somewhere else, which is `CardLogout` today. */
   | { type: "SESSION_ENDED" }
   | { type: "CALLBACK_RECEIVED"; code: string; state: string };
 
