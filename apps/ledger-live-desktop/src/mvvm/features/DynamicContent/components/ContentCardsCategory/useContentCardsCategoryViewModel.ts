@@ -13,6 +13,7 @@ import { openURL } from "~/renderer/linking";
 import type { CategoryContentCard } from "~/types/dynamicContent";
 import { LocationContentCard } from "~/types/dynamicContent";
 import { useDynamicContent } from "../../hooks/useDynamicContent";
+import { shouldShowHardwareCarouselCloseAll } from "../../hardwareCarousel/shouldShowHardwareCarouselCloseAll";
 import { getRenderableSmallSquareSlides } from "../../utils/getRenderableSmallSquareSlides";
 import type { SmallSquareContentCard } from "../../utils/mapSmallSquareContentCard";
 
@@ -47,6 +48,7 @@ export type UseContentCardsCategoryViewModelResult = Readonly<{
   leadingSlide?: React.ReactNode;
   slides: MappedCategorySlide[];
   isDismissable: boolean;
+  closeAllCardIds?: readonly string[];
   onHeaderCtaPress?: () => void;
   onCardClick: (card: SmallSquareContentCard, displayedPosition: number) => void;
   onCardDismiss: (card: SmallSquareContentCard, displayedPosition: number) => void;
@@ -72,6 +74,14 @@ export function useContentCardsCategoryViewModel({
       displayedPosition: index + positionOffset,
     }));
   }, [category, categoryContentCards, positionOffset]);
+
+  const closeAllCardIds = useMemo(() => {
+    if (!shouldShowHardwareCarouselCloseAll(category)) {
+      return undefined;
+    }
+
+    return categoryContentCards.map(card => String(card.id));
+  }, [category, categoryContentCards]);
 
   const trackCategoryEvent = useCallback(
     (
@@ -133,6 +143,7 @@ export function useContentCardsCategoryViewModel({
     leadingSlide,
     slides,
     isDismissable: Boolean(category.isDismissable),
+    closeAllCardIds,
     onHeaderCtaPress: showHeaderCta ? onHeaderCtaPress : undefined,
     onCardClick,
     onCardDismiss,

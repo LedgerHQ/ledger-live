@@ -171,4 +171,26 @@ describe("useContentCardsCategoryViewModel", () => {
       }),
     );
   });
+
+  it("exposes closeAllCardIds for dismissable portfolio hardware carousel categories", () => {
+    const { result } = renderHook(() =>
+      useContentCardsCategoryViewModel({
+        category: CATEGORY,
+        categoryContentCards: [childCard("child-1", "1"), childCard("child-2", "2")],
+      }),
+    );
+
+    expect(result.current.closeAllCardIds).toEqual(["child-1", "child-2"]);
+  });
+
+  it("does not expose closeAllCardIds for non-dismissable categories", () => {
+    const { result } = renderHook(() =>
+      useContentCardsCategoryViewModel({
+        category: { ...CATEGORY, isDismissable: false },
+        categoryContentCards: [childCard("child-1", "1")],
+      }),
+    );
+
+    expect(result.current.closeAllCardIds).toBeUndefined();
+  });
 });

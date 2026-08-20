@@ -2,6 +2,7 @@ import React from "react";
 
 import type { Card as BrazeCard } from "@braze/web-sdk";
 import { logCardDismissal, logContentCardClick, ClassicCard } from "@braze/web-sdk";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 import { fireEvent, render, screen } from "tests/testSetup";
 import { track } from "~/renderer/analytics/segment";
 import { ContentCardEvent } from "@ledgerhq/live-common/braze/contentCardExtras";
@@ -87,6 +88,24 @@ const CHILD_CARDS = [
   childCard("child-nano", "Ledger Flex™", "3", "$249", "$50 off"),
 ];
 
+const FIXED_CONSENT_DATE = "2026-01-01T00:00:00.000Z";
+
+const trackedUserSettings = {
+  shareAnalytics: true,
+  sharePersonalizedRecommandations: true,
+  lastAnalyticsConsentDate: FIXED_CONSENT_DATE,
+  privacyPolicyVersion: 1,
+};
+
+const hardwareCarouselState = {
+  dynamicContent: {
+    ...DYNAMIC_CONTENT_INITIAL_STATE,
+    localCategoriesCards: [CATEGORY],
+    localCategoryChildCards: CHILD_CARDS,
+  },
+  settings: trackedUserSettings,
+};
+
 beforeEach(() => {
   jest.clearAllMocks();
 });
@@ -103,7 +122,7 @@ describe("ContentCardsLocation", () => {
         settings: {
           shareAnalytics: true,
           sharePersonalizedRecommandations: true,
-          lastAnalyticsConsentDate: new Date().toISOString(),
+          lastAnalyticsConsentDate: FIXED_CONSENT_DATE,
           privacyPolicyVersion: 1,
         },
       },
@@ -133,7 +152,7 @@ describe("ContentCardsLocation", () => {
           settings: {
             shareAnalytics: true,
             sharePersonalizedRecommandations: true,
-            lastAnalyticsConsentDate: new Date().toISOString(),
+            lastAnalyticsConsentDate: FIXED_CONSENT_DATE,
             privacyPolicyVersion: 1,
           },
         },
@@ -178,7 +197,7 @@ describe("ContentCardsLocation", () => {
         settings: {
           shareAnalytics: true,
           sharePersonalizedRecommandations: true,
-          lastAnalyticsConsentDate: new Date().toISOString(),
+          lastAnalyticsConsentDate: FIXED_CONSENT_DATE,
           privacyPolicyVersion: 1,
         },
       },
@@ -194,5 +213,48 @@ describe("ContentCardsLocation", () => {
       }),
     );
     expect(logContentCardClick).toHaveBeenCalled();
+  });
+
+  test("renders the close all link for dismissable hardware carousel categories", async () => {
+    render(<ContentCardsLocation locationId={LocationContentCard.Portfolio} />, {
+      initialState: hardwareCarouselState,
+    });
+
+    await screen.findByText("Discover our devices");
+    expect(screen.getByTestId("hardware-carousel-close-all")).toBeVisible();
+    expect(screen.getByText("Close all")).toBeVisible();
+  });
+
+  test("dismisses all child cards when close all is clicked", async () => {
+    const { user, store } = render(
+      <ContentCardsLocation locationId={LocationContentCard.Portfolio} />,
+      {
+        initialState: {
+          ...hardwareCarouselState,
+          settings: {
+            ...trackedUserSettings,
+            devicesModelList: [DeviceModelId.nanoX],
+          },
+        },
+      },
+    );
+
+    await screen.findByText("Nano Pod");
+    await user.click(screen.getByTestId("hardware-carousel-close-all"));
+
+    expect(store.getState().dynamicContent.localCategoryChildCards).toHaveLength(0);
+    expect(screen.queryByTestId("content-cards-category")).not.toBeInTheDocument();
+    expect(track).toHaveBeenCalledWith(
+      "button_clicked",
+      expect.objectContaining({
+        button: "close all",
+        page: "hardware carousel",
+        deviceModel: "lnx",
+        personalRecoOptIn: true,
+        offerType: "discount",
+        platform: "lld",
+      }),
+    );
+    expect(track).not.toHaveBeenCalledWith(ContentCardEvent.Dismissed, expect.anything());
   });
 });

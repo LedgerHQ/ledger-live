@@ -94,6 +94,29 @@ describe("mapAsCategoryContentCard", () => {
     });
   });
 
+  it("should default isDismissable for alwayson hardware carousel categories", () => {
+    const card = aBrazeCard({
+      type: "category",
+      id: "alwayson",
+      cardsLayout: "carousel",
+      cardsType: "small_square",
+    });
+
+    expect(mapAsCategoryContentCard(card).isDismissable).toBe(true);
+  });
+
+  it("should not default isDismissable for non-alwayson categories", () => {
+    const card = aBrazeCard({
+      type: "category",
+      id: "promo",
+      location: "portfolio",
+      cardsLayout: "carousel",
+      cardsType: "small_square",
+    });
+
+    expect(mapAsCategoryContentCard(card).isDismissable).toBe(false);
+  });
+
   it("should append the resolved location to the deeplink", () => {
     const card = aBrazeCard({
       type: "category",

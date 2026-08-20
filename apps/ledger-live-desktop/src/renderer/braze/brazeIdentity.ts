@@ -28,3 +28,23 @@ export function resolveDesktopBrazeUserId({
 export function shouldPersistAnonymousBrazeId(brazeOptOutIdentityCleanup: boolean): boolean {
   return !brazeOptOutIdentityCleanup;
 }
+
+export type LegacyAnonymousBrazeIdPersistenceAction = {
+  type: "SET_ANONYMOUS_BRAZE_ID";
+  payload: string;
+};
+
+export function ensureLegacyAnonymousBrazeIdStored(
+  anonymousBrazeId: string | null,
+  brazeOptOutIdentityCleanup: boolean,
+): { anonymousBrazeId: string; action: LegacyAnonymousBrazeIdPersistenceAction } | null {
+  if (!shouldPersistAnonymousBrazeId(brazeOptOutIdentityCleanup) || anonymousBrazeId) {
+    return null;
+  }
+
+  const id = generateAnonymousId();
+  return {
+    anonymousBrazeId: id,
+    action: { type: "SET_ANONYMOUS_BRAZE_ID", payload: id },
+  };
+}
