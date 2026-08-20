@@ -1,9 +1,9 @@
 import React from "react";
-import { fireEvent, render, screen } from "@testing-library/react-native";
+import { render, screen, userEvent } from "@testing-library/react-native";
 import { ContactsButton } from "./ContactsButton.native";
 
 describe("ContactsButton", () => {
-  it("should render the Contacts card and invoke its action", () => {
+  it("should render the Contacts card and invoke its action", async () => {
     const onPress = jest.fn();
 
     render(
@@ -18,7 +18,7 @@ describe("ContactsButton", () => {
     expect(screen.getByText("Contacts")).toBeVisible();
     expect(screen.getByText("Save and manage external wallet addresses.")).toBeVisible();
 
-    fireEvent.press(screen.getByTestId("my-wallet-contacts-button"));
+    await userEvent.press(screen.getByTestId("my-wallet-contacts-button"));
 
     expect(onPress).toHaveBeenCalledTimes(1);
   });

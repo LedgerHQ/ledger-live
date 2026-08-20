@@ -26,7 +26,7 @@ export function ContactsButton({
   onClick,
 }: Readonly<ContactsButtonProps>) {
   return (
-    <Card onClick={onClick} data-testid="my-wallet-contacts-button">
+    <Card type="interactive" onClick={onClick} data-testid="my-wallet-contacts-button">
       <CardHeader>
         <CardLeading>
           <Spot icon={Contact} appearance="icon" />
