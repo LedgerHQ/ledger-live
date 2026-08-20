@@ -1,5 +1,5 @@
 import { ContactIdSchema } from "@domain/entity-contact";
-import { ContactAvatar } from "@features/platform-contacts/native";
+import { ContactAvatar } from "@features/platform-contacts";
 import type { MatchedContact } from "@ledgerhq/live-common/flows/send/recipient/types";
 import {
   Box,
@@ -45,7 +45,7 @@ export function RecipientCard({
               contactId={ContactIdSchema.parse(contact.contactId)}
               name={contact.contactName}
               size="md"
-              testID="send-recipient-card-avatar"
+              testId="send-recipient-card-avatar"
             />
           ) : (
             <Spot appearance="icon" icon={Wallet} />
