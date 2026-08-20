@@ -8,7 +8,7 @@ export default {
   workspaces: {
     ...rootConfig.workspaces,
     "features/platform/contacts": {
-      entry: ["src/index.native.ts"],
+      entry: ["src/index.native.ts", "src/device/intents/index.ts"],
       project: ["src/**/*", "!src/**/*.web.*", "!src/index.ts", "!src/web.ts"],
     },
   },

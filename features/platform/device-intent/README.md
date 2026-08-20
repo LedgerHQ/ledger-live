@@ -907,6 +907,13 @@ This is the recommended layout for intents whose job relies purely on the Device
 Management Kit and the signer kits. See
 [`@features/platform-contacts`](../contacts/README.md) for a live example.
 
+The suffix-less import needs the package's dead-code check to run once per
+platform, otherwise knip flags every `component.web.tsx` and
+`component.native.tsx` as unused. Give the package a `knip.web.config.mjs` and a
+`knip.native.config.mjs` that narrow `project` to one platform, and run knip
+twice with the matching `--tsConfig`, the same way
+[`@features/platform-contacts`](../contacts/package.json) does.
+
 Keep the app/lib split instead when:
 
 - **the intent depends on `@ledgerhq/live-common`** or another legacy library a
