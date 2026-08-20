@@ -180,4 +180,67 @@ describe("useSwapWebviewProps", () => {
 
     expect(result.current.inputs.isModularDrawer).toBe("true");
   });
+
+  it("should set llmWalletApiDeviceIntentSign to 'true' when the swap manifest is allowlisted", () => {
+    const { result } = renderHook(
+      () =>
+        useSwapWebviewProps({
+          manifest: STUB_MANIFEST,
+          params: null,
+          resetWebview: mockResetWebview,
+        }),
+      {
+        overrideInitialState: withFlagOverrides({
+          llmWalletApiDeviceIntentSign: {
+            enabled: true,
+            params: { enabledManifestIds: [STUB_MANIFEST.id] },
+          },
+        }),
+      },
+    );
+
+    expect(result.current.inputs.llmWalletApiDeviceIntentSign).toBe("true");
+  });
+
+  it("should set llmWalletApiDeviceIntentSign to 'false' when the swap manifest is not allowlisted", () => {
+    const { result } = renderHook(
+      () =>
+        useSwapWebviewProps({
+          manifest: STUB_MANIFEST,
+          params: null,
+          resetWebview: mockResetWebview,
+        }),
+      {
+        overrideInitialState: withFlagOverrides({
+          llmWalletApiDeviceIntentSign: {
+            enabled: true,
+            params: { enabledManifestIds: ["some-other-app"] },
+          },
+        }),
+      },
+    );
+
+    expect(result.current.inputs.llmWalletApiDeviceIntentSign).toBe("false");
+  });
+
+  it("should set llmWalletApiDeviceIntentSign to 'false' when the flag is disabled", () => {
+    const { result } = renderHook(
+      () =>
+        useSwapWebviewProps({
+          manifest: STUB_MANIFEST,
+          params: null,
+          resetWebview: mockResetWebview,
+        }),
+      {
+        overrideInitialState: withFlagOverrides({
+          llmWalletApiDeviceIntentSign: {
+            enabled: false,
+            params: { enabledManifestIds: [STUB_MANIFEST.id] },
+          },
+        }),
+      },
+    );
+
+    expect(result.current.inputs.llmWalletApiDeviceIntentSign).toBe("false");
+  });
 });

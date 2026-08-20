@@ -52,9 +52,9 @@ import { Linking } from "react-native";
 import { useCacheBustedLiveAppsDB } from "~/screens/Platform/v2/hooks";
 import { useModularDrawerController } from "LLM/features/ModularDrawer";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import { useFeature } from "@features/platform-feature-flags";
 import type { WalletApiDeviceIntentSignRequest } from "LLM/features/WalletApiSignature/components/TransactionSignatureDrawer";
 import type { WalletApiDeviceIntentSignMessageRequest } from "LLM/features/WalletApiSignature/components/MessageSignatureDrawer";
+import { useDeviceIntentSignEnabled } from "LLM/features/WalletApiSignature/hooks/useDeviceIntentSignEnabled";
 import { AccountPublicKeyUnavailable } from "@ledgerhq/live-common/errors";
 export function useWebView(
   {
@@ -535,15 +535,7 @@ export function useUiHook({
   const [device, setDevice] = useState<Device>();
   const { createDrawerConfiguration } = useDrawerConfiguration();
   const { openDrawer: openModularDrawer } = useModularDrawerController();
-  const deviceIntentSignFlag = useFeature("llmWalletApiDeviceIntentSign");
-  const enabledManifestIds = useMemo(
-    () => new Set(deviceIntentSignFlag?.params?.enabledManifestIds ?? []),
-    [deviceIntentSignFlag?.params?.enabledManifestIds],
-  );
-  // The device-intent sign flow is opt-in per live-app: only enabled when the flag is on
-  // and the current manifest id is in the configured allowlist.
-  const deviceIntentSignEnabled =
-    (deviceIntentSignFlag?.enabled ?? false) && enabledManifestIds.has(manifest.id);
+  const deviceIntentSignEnabled = useDeviceIntentSignEnabled(manifest.id);
 
   const source =
     currentRouteNameRef.current === "Platform Catalog"

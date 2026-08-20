@@ -18,6 +18,8 @@ describe("getRemoteABTestingAttributes", () => {
     expect(getRemoteABTestingAttributes(method)).toEqual({
       llmTransferButtonCopyVariantEnabled: false,
       llmTransferButtonCopyVariant: "control",
+      llmWalletApiDeviceIntentSignEnabled: false,
+      llmWalletApiDeviceIntentSign: "control",
     });
   });
 
@@ -26,6 +28,8 @@ describe("getRemoteABTestingAttributes", () => {
     expect(getRemoteABTestingAttributes(method)).toEqual({
       llmTransferButtonCopyVariantEnabled: true,
       llmTransferButtonCopyVariant: "variant_a",
+      llmWalletApiDeviceIntentSignEnabled: true,
+      llmWalletApiDeviceIntentSign: "variant_a",
     });
   });
 
@@ -34,6 +38,8 @@ describe("getRemoteABTestingAttributes", () => {
     expect(getRemoteABTestingAttributes(method)).toEqual({
       llmTransferButtonCopyVariantEnabled: true,
       llmTransferButtonCopyVariant: undefined,
+      llmWalletApiDeviceIntentSignEnabled: true,
+      llmWalletApiDeviceIntentSign: undefined,
     });
   });
 
@@ -42,6 +48,8 @@ describe("getRemoteABTestingAttributes", () => {
     expect(getRemoteABTestingAttributes(method)).toEqual({
       llmTransferButtonCopyVariantEnabled: false,
       llmTransferButtonCopyVariant: undefined,
+      llmWalletApiDeviceIntentSignEnabled: false,
+      llmWalletApiDeviceIntentSign: undefined,
     });
   });
 });

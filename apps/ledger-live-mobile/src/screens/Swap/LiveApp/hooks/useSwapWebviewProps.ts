@@ -18,6 +18,7 @@ import {
   lastSeenDeviceSelector,
 } from "~/reducers/settings";
 import { flattenAccountsSelector } from "~/reducers/accounts";
+import { useDeviceIntentSignEnabled } from "LLM/features/WalletApiSignature/hooks/useDeviceIntentSignEnabled";
 import { useSwapCustomHandlers } from "../customHandlers";
 import { useDeeplinkCustomHandlers } from "~/components/WebPlatformPlayer/CustomHandlers";
 import { currentRouteNameRef } from "~/analytics/screenRefs";
@@ -60,6 +61,8 @@ export function useSwapWebviewProps({ manifest, params, resetWebview }: UseSwapW
 
   const isLlmModularDrawer = llmModularDrawerFF?.enabled && llmModularDrawerFF?.params?.live_app;
 
+  const isDeviceIntentSignEnabled = useDeviceIntentSignEnabled(manifest.id);
+
   const insets = useAdjustedSafeAreaInsets();
 
   // Capture the initial source to prevent webview refreshes.
@@ -83,6 +86,7 @@ export function useSwapWebviewProps({ manifest, params, resetWebview }: UseSwapW
       shareAnalytics,
       hasSeenAnalyticsOptInPrompt,
       isModularDrawer: isLlmModularDrawer ? "true" : "false",
+      llmWalletApiDeviceIntentSign: isDeviceIntentSignEnabled ? "true" : "false",
       discreetMode: discreetMode ? "true" : "false",
       lwm40enabled: "true",
       safeAreaTop: insets.top.toString(),
@@ -104,6 +108,7 @@ export function useSwapWebviewProps({ manifest, params, resetWebview }: UseSwapW
       shareAnalytics,
       hasSeenAnalyticsOptInPrompt,
       isLlmModularDrawer,
+      isDeviceIntentSignEnabled,
       discreetMode,
       insets.top,
       insets.bottom,
