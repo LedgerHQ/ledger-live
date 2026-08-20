@@ -105,6 +105,7 @@ export * from "./lldTezosStaking";
 export * from "./lldWebviewManifestDomainCheck";
 export * from "./lwdDeeplinkOpenHardening";
 export * from "./lwmDeeplinkOpenHardening";
+export * from "./llmIcpStaking";
 export * from "./llmMemoTag";
 export * from "./llmTezosStaking";
 export * from "./llmWebviewManifestDomainCheck";

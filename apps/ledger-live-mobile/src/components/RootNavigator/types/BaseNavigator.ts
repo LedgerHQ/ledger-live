@@ -54,6 +54,8 @@ import type { StellarAddAssetFlowParamList } from "../../../families/stellar/Add
 import type { TezosDelegationFlowParamList } from "../../../families/tezos/DelegationFlow/types";
 import type { TezosStakeFlowParamList } from "../../../families/tezos/StakeFlow/types";
 import type { TezosUnstakeFlowParamList } from "../../../families/tezos/UnstakeFlow/types";
+import type { InternetComputerStakingFlowParamList } from "../../../families/internet_computer/StakingFlow/types";
+import type { InternetComputerNeuronManageFlowParamList } from "../../../families/internet_computer/NeuronManageFlow/types";
 import type { TronVoteFlowParamList } from "../../../families/tron/VoteFlow/types";
 import type { HederaAssociateTokenFlowParamList } from "../../../families/hedera/AssociateTokenFlow/types";
 import type { CantonOnboardAccountParamList } from "../../../families/canton/Onboard/types";
@@ -318,6 +320,10 @@ export type BaseNavigatorStackParamList = {
   [NavigatorName.TezosDelegationFlow]: NavigatorScreenParams<TezosDelegationFlowParamList>;
   [NavigatorName.TezosStakeFlow]: NavigatorScreenParams<TezosStakeFlowParamList>;
   [NavigatorName.TezosUnstakeFlow]: NavigatorScreenParams<TezosUnstakeFlowParamList>;
+
+  // Internet Computer
+  [NavigatorName.InternetComputerStakingFlow]: NavigatorScreenParams<InternetComputerStakingFlowParamList>;
+  [NavigatorName.InternetComputerNeuronManageFlow]: NavigatorScreenParams<InternetComputerNeuronManageFlowParamList>;
 
   // Tron
   [NavigatorName.TronVoteFlow]: NavigatorScreenParams<TronVoteFlowParamList>;
