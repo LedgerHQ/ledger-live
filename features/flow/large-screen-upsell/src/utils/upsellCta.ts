@@ -10,6 +10,7 @@ export const LARGE_SCREEN_UPSELL_UTM = {
     backups_cta: "backups_cta",
     profile_cta: "profile_cta",
     recover_trigger: "recover_trigger",
+    hardware_carousel: "hardware_carousel",
   },
 } as const;
 

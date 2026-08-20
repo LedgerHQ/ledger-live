@@ -229,6 +229,7 @@ export const useGenerateLocalBraze = () => {
         subDescription: sample.subDescription,
         tag: sample.tag,
         mediaUrl: sample.mediaUrl,
+        link: sample.link,
         order: String(index),
       };
       const cardId = `${DEBUG_CARD_PREFIX}-top-wallet-hardware-${baseTimestamp}-${index}`;
