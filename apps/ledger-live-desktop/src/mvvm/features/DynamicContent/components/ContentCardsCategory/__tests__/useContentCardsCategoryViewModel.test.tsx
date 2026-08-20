@@ -165,6 +165,19 @@ describe("useContentCardsCategoryViewModel", () => {
     expect(mockNavigate).not.toHaveBeenCalled();
   });
 
+  it("does not append hardware carousel UTMs for other category cards", () => {
+    const { result } = renderHook(() =>
+      useContentCardsCategoryViewModel({
+        category: { ...CATEGORY, categoryId: "promo", isDismissable: false },
+        categoryContentCards: [childCard("child-1", "1", "https://shop.ledger.com/products")],
+      }),
+    );
+
+    result.current.onCardClick(result.current.slides[0]!.card, 0);
+
+    expect(openURL).toHaveBeenCalledWith("https://shop.ledger.com/products");
+  });
+
   it("opens ledgerlive deeplinks without appending UTMs", () => {
     const { result } = renderHook(() =>
       useContentCardsCategoryViewModel({

@@ -147,9 +147,14 @@ export function useContentCardsCategoryViewModel({
       }
       trackCategoryEvent(ContentCardEvent.Clicked, card, displayedPosition);
       logClickCard(card.id);
-      openContentCardLink(resolveHardwareCarouselCardLink(card.link), navigate);
+      openContentCardLink(
+        shouldShowHardwareCarouselCloseAll(category)
+          ? resolveHardwareCarouselCardLink(card.link)
+          : card.link,
+        navigate,
+      );
     },
-    [logClickCard, navigate, trackCategoryEvent],
+    [category, logClickCard, navigate, trackCategoryEvent],
   );
 
   const onCardDismiss = useCallback(
