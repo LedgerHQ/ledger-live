@@ -164,6 +164,7 @@ export const getMergedFeatureFlags = ({
 
   const defaultFlags: OptionalFeatureMap = {
     // explicit defaults
+    largeScreenUpsell: { enabled: false },
     lldModularDrawer: {
       enabled: true,
       params: {
