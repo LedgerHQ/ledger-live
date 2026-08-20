@@ -30,7 +30,7 @@ const subAccounts: Array<{
 }> = [
   {
     account: TokenAccount.ETH_USDT_1,
-    xrayTicket1: "B2CQA-2577, B2CQA-1079",
+    xrayTicket1: "B2CQA-2577",
     xrayTicket2: "B2CQA-2583",
   },
   {
@@ -244,12 +244,12 @@ const transactionE2E: Array<{
       undefined,
       "noTag",
     ),
-    xrayTicket: "B2CQA-3055, B2CQA-3057",
+    xrayTicket: "B2CQA-3055",
     extraTags: ["@solana", "@family-solana"],
   },
   {
     tx: new Transaction(TokenAccount.ETH_USDT_1, TokenAccount.ETH_USDT_3, "1", Fee.MEDIUM),
-    xrayTicket: "B2CQA-2703, B2CQA-475, B2CQA-3901",
+    xrayTicket: "B2CQA-2703",
     checkInputValidity: true,
     extraTags: ["@ethereum", "@family-evm"],
   },

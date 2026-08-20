@@ -47,7 +47,7 @@ const nativeSendTransactions: NewSendFlowEntry[] = [
       "0.00001",
       Fee.MEDIUM,
     ),
-    xrayTicket: "B2CQA-3925, B2CQA-2724",
+    xrayTicket: "B2CQA-3925",
   },
   {
     transaction: new Transaction(Account.KASPA_1, Account.KASPA_2, "0.2"),

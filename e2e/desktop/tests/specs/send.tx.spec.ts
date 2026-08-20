@@ -101,7 +101,7 @@ const transactionAddressValid = [
     transaction: new Transaction(Account.ETH_1, Account.ETH_2, "0.00001", Fee.MEDIUM),
     expectedWarningMessage: null,
     testName: "existing account",
-    xrayTicket: "B2CQA-2715, B2CQA-2716",
+    xrayTicket: "B2CQA-2715",
   },
   {
     transaction: new Transaction(Account.ETH_1, Account.ETH_2_LOWER_CASE, "0.0001", Fee.MEDIUM),
