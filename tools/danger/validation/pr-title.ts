@@ -35,10 +35,14 @@ async function validatePrTitle() {
 function isMergeConflictsPR(title: string): boolean {
   const RELEASE_CONFLICTS_TITLE = ":rotating_light: Release merge conflicts";
   const HOTFIX_CONFLICTS_TITLE = ":rotating_light: Hotfix merge conflicts";
+  const HOTFIX_RELEASE_CONFLICTS_TITLE = ":rotating_light: Hotfix Release merge conflicts";
+
+  const normalizedTitle = title.trimEnd();
 
   return (
-    title.trimEnd().endsWith(RELEASE_CONFLICTS_TITLE) ||
-    title.trimEnd().endsWith(HOTFIX_CONFLICTS_TITLE)
+    normalizedTitle.endsWith(RELEASE_CONFLICTS_TITLE) ||
+    normalizedTitle.endsWith(HOTFIX_CONFLICTS_TITLE) ||
+    normalizedTitle.endsWith(HOTFIX_RELEASE_CONFLICTS_TITLE)
   );
 }
 
