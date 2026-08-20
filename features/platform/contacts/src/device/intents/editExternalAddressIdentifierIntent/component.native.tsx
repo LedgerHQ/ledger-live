@@ -7,7 +7,7 @@ type EditExternalAddressIdentifierComponentProps = Readonly<{
   onClose: () => void;
 }>;
 
-// WIP
+// Temporary minimal renderer until the production Contacts UI lands.
 export function EditExternalAddressIdentifierComponent({
   jobState,
 }: EditExternalAddressIdentifierComponentProps) {

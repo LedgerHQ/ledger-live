@@ -6,7 +6,7 @@ import type {
   EditExternalAddressScopeJobState,
 } from "./types";
 
-// WIP
+// Temporary deterministic stub until the ContactsManager integration lands.
 export const editExternalAddressScopeIntentJob: Job<
   EditExternalAddressScopeJobState,
   EditExternalAddressScopeIntentInput

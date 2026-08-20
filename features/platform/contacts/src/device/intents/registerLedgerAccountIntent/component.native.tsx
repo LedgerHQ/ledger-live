@@ -7,7 +7,7 @@ type RegisterLedgerAccountComponentProps = Readonly<{
   onClose: () => void;
 }>;
 
-// WIP
+// Temporary minimal renderer until the production Contacts UI lands.
 export function RegisterLedgerAccountComponent({ jobState }: RegisterLedgerAccountComponentProps) {
   const message =
     jobState === undefined

@@ -7,7 +7,7 @@ type RenameContactComponentProps = Readonly<{
   onClose: () => void;
 }>;
 
-// WIP
+// Temporary minimal renderer until the production Contacts UI lands.
 export function RenameContactComponent({ jobState }: RenameContactComponentProps) {
   const message =
     jobState === undefined

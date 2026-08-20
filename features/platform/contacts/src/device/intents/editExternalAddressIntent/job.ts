@@ -27,38 +27,23 @@ function editResult(
   };
 }
 
-// WIP
+// Temporary deterministic stub until the ContactsManager integration lands.
 export const editExternalAddressIntentJob: Job<
   EditExternalAddressJobState,
   EditExternalAddressIntentInput
 > = ({ input }) => {
-  const editsIdentifier = input.previousAddress !== input.newAddress;
-  const editsScope = input.previousScope !== input.newScope;
   const identifierResult = editResult(input, "identifier", input.previousScope, input.newAddress);
   const scopeResult = editResult(input, "scope", input.newScope, input.newAddress);
 
-  if (editsIdentifier && editsScope) {
-    return concat(
-      of({ type: "pending" } as const),
-      of({ type: "awaiting-device-confirmation" as const, step: "identifier" as const }),
-      of({ type: "partial-result" as const, result: identifierResult }),
-      of({ type: "awaiting-device-confirmation" as const, step: "scope" as const }),
-      of({
-        type: "completed" as const,
-        appliedSteps: ["identifier", "scope"] as const,
-        result: scopeResult,
-      } as const),
-    );
-  }
-
-  const appliedStep = editsIdentifier ? "identifier" : "scope";
-  const result = editsIdentifier
-    ? identifierResult
-    : editResult(input, "scope", input.newScope, input.previousAddress);
-
   return concat(
     of({ type: "pending" } as const),
-    of({ type: "awaiting-device-confirmation" as const, step: appliedStep } as const),
-    of({ type: "completed" as const, appliedSteps: [appliedStep], result } as const),
+    of({ type: "awaiting-device-confirmation" as const, step: "identifier" as const }),
+    of({ type: "partial-result" as const, result: identifierResult }),
+    of({ type: "awaiting-device-confirmation" as const, step: "scope" as const }),
+    of({
+      type: "completed" as const,
+      appliedSteps: ["identifier", "scope"] as const,
+      result: scopeResult,
+    } as const),
   );
 };

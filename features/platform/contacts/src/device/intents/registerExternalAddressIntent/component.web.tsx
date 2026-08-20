@@ -6,7 +6,7 @@ type RegisterExternalAddressComponentProps = Readonly<{
   onClose: () => void;
 }>;
 
-// WIP
+// Temporary minimal renderer until the production Contacts UI lands.
 export function RegisterExternalAddressComponent({
   jobState,
 }: RegisterExternalAddressComponentProps) {

@@ -6,7 +6,7 @@ type RenameContactComponentProps = Readonly<{
   onClose: () => void;
 }>;
 
-// WIP
+// Temporary minimal renderer until the production Contacts UI lands.
 export function RenameContactComponent({ jobState }: RenameContactComponentProps) {
   return (
     <div className="flex w-full flex-col gap-8 p-16">

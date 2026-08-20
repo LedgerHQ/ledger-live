@@ -3,7 +3,7 @@ import { concat, of } from "rxjs";
 import { stubProof } from "../stubProof";
 import type { RegisterLedgerAccountIntentInput, RegisterLedgerAccountJobState } from "./types";
 
-// WIP
+// Temporary deterministic stub until the ContactsManager integration lands.
 export const registerLedgerAccountIntentJob: Job<
   RegisterLedgerAccountJobState,
   RegisterLedgerAccountIntentInput

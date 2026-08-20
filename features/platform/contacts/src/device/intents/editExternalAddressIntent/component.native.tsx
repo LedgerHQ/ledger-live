@@ -7,7 +7,7 @@ type EditExternalAddressComponentProps = Readonly<{
   onClose: () => void;
 }>;
 
-// WIP
+// Temporary minimal renderer until the production Contacts UI lands.
 export function EditExternalAddressComponent({ jobState }: EditExternalAddressComponentProps) {
   const message =
     jobState === undefined

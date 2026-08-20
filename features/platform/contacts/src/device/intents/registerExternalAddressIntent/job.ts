@@ -3,7 +3,7 @@ import { concat, of } from "rxjs";
 import { stubProof } from "../stubProof";
 import type { RegisterExternalAddressIntentInput, RegisterExternalAddressJobState } from "./types";
 
-// WIP
+// Temporary deterministic stub until the ContactsManager integration lands.
 export const registerExternalAddressIntentJob: Job<
   RegisterExternalAddressJobState,
   RegisterExternalAddressIntentInput

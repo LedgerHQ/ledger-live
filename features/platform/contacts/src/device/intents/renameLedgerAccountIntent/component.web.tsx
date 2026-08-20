@@ -6,7 +6,7 @@ type RenameLedgerAccountComponentProps = Readonly<{
   onClose: () => void;
 }>;
 
-// WIP
+// Temporary minimal renderer until the production Contacts UI lands.
 export function RenameLedgerAccountComponent({ jobState }: RenameLedgerAccountComponentProps) {
   return (
     <div className="flex w-full flex-col gap-8 p-16">
