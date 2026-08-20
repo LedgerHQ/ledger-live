@@ -93,7 +93,7 @@ on:
         type: boolean
         default: false
       emulator_diagnostics:
-        description: "Capture host diagnostics and crash backtraces when an emulator dies (QAA-1497)"
+        description: "Capture host diagnostics and crash backtraces when an emulator dies"
         required: false
         type: boolean
         default: false
