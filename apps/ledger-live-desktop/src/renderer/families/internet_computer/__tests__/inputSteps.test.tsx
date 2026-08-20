@@ -125,7 +125,7 @@ describe("StepSetDissolveDelay", () => {
     render(<StepSetDissolveDelay {...props} />);
 
     expect(
-      screen.getByText(new RegExp(`add up to ${REMAINING_DAYS} more days`)),
+      screen.getByText(`add up to ${REMAINING_DAYS} more days`, { exact: false }),
     ).toBeInTheDocument();
   });
 
