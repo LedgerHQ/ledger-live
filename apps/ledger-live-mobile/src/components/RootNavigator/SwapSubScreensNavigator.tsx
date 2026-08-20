@@ -10,7 +10,7 @@ import { OperationDetails, PendingOperation, SwapLoading } from "~/screens/Swap/
 import SwapCustomError from "~/screens/Swap/SubScreens/SwapCustomError";
 import { SwapSubScreensNavigatorParamList } from "./types/SwapSubScreensNavigator";
 import { navigateBackToSwapTab } from "~/screens/Swap/navigation/navigateBackToSwapTab";
-import { useNotificationsContext } from "LLM/features/NotificationsPrompt";
+import { useNotificationsPrompt } from "LLM/features/NotificationsPrompt";
 
 const Stack = createNativeStackNavigator<SwapSubScreensNavigatorParamList>();
 
@@ -51,7 +51,7 @@ function getSwapHistoryScreenOptions({ headerTitle }: { headerTitle: string }) {
 export default function SwapSubScreensNavigator() {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const { notifyFlowCompleted } = useNotificationsContext();
+  const { notifyFlowCompleted } = useNotificationsPrompt();
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
 
   return (

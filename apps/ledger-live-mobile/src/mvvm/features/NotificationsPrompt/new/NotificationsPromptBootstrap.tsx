@@ -5,12 +5,12 @@ import { useNotificationsPermission } from "LLM/hooks/useNotificationsPermission
 import {
   getPushNotificationsDataOfUserFromStorage,
   type InitPushNotificationsDataResult,
-  useNotificationsContext,
+  useNotificationsPrompt,
   useNotificationsData,
 } from "LLM/features/NotificationsPrompt";
 
 export function NotificationsPromptBootstrap() {
-  const { tryTriggerPushNotificationDrawerAfterInactivity } = useNotificationsContext();
+  const { tryTriggerPushNotificationDrawerAfterInactivity } = useNotificationsPrompt();
   const { setPermissionStatus } = useNotificationsPermission();
   const {
     notifications,
