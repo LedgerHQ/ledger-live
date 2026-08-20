@@ -3,7 +3,8 @@ import { View, StyleSheet } from "react-native";
 import { Trans } from "~/context/Locale";
 import invariant from "invariant";
 import { useTheme } from "@react-navigation/native";
-import { usePolkadotPreloadData } from "@ledgerhq/live-common/families/polkadot/react";
+import { usePolkadotValidators } from "@ledgerhq/live-common/families/polkadot/react";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { TrackScreen, track } from "~/analytics";
 import { ScreenName } from "~/const";
 import PreventNativeBack from "~/components/PreventNativeBack";
@@ -23,15 +24,15 @@ type Props = BaseComposite<
 
 export default function ValidationSuccess({ navigation, route }: Props) {
   const { colors } = useTheme();
-  const { account } = useAccountScreen(route);
+  const { account, parentAccount } = useAccountScreen(route);
   invariant(account, "account is required");
+  const mainAccount = getMainAccount(account, parentAccount);
   const onClose = useCallback(() => {
     navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
   }, [navigation]);
 
   const transaction = route.params.transaction;
-  const preloaded = usePolkadotPreloadData();
-  const { validators: allValidators } = preloaded;
+  const allValidators = usePolkadotValidators(mainAccount.currency);
   const validators = useMemo(() => {
     return allValidators
       .filter(val => transaction?.validators?.includes(val.address))

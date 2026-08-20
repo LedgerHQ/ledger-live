@@ -76,10 +76,10 @@
       "require": "./lib/logic/index.js",
       "default": "./lib-es/logic/index.js"
     },
-    "./preload": {
-      "@ledgerhq/source": "./src/bridge/preload.ts",
-      "require": "./lib/bridge/preload.js",
-      "default": "./lib-es/bridge/preload.js"
+    "./network": {
+      "@ledgerhq/source": "./src/network/index.ts",
+      "require": "./lib/network/index.js",
+      "default": "./lib-es/network/index.js"
     },
     "./serialization": {
       "@ledgerhq/source": "./src/bridge/serialization.ts",

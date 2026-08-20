@@ -65,7 +65,7 @@ export default function Nominations(props: Props) {
 
   const navigation = useNavigation();
 
-  const { staking, validators } = usePolkadotPreloadData();
+  const { staking, validators, minimumBondBalance } = usePolkadotPreloadData(mainAccount.currency);
 
   const { polkadotResources } = mainAccount;
 
@@ -235,7 +235,7 @@ export default function Nominations(props: Props) {
   const hasPendingBondOperation = hasPendingOperationType(account, "BOND");
   const hasPendingWithdrawUnbondedOperation = hasPendingOperationType(account, "WITHDRAW_UNBONDED");
 
-  const nominateEnabled = !electionOpen && canNominate(account);
+  const nominateEnabled = !electionOpen && canNominate(account, minimumBondBalance);
   const rebondEnabled = !electionOpen && !!hasUnlockings;
   const withdrawEnabled =
     !electionOpen && hasUnlockedBalance && !hasPendingWithdrawUnbondedOperation;

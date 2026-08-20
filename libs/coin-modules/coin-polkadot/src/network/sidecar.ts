@@ -67,6 +67,14 @@ const getElectionOptimisticThreshold = (config: PolkadotCoinConfig): number => {
 const VALIDATOR_COMISSION_RATIO = 1000000000;
 const UNSUPPORTED_STAKING_NETWORKS = ["polkadot", "westend"];
 
+/** Safe default used when staking progress can't be fetched (unsupported network or error). */
+export const DEFAULT_STAKING_PROGRESS: PolkadotStakingProgress = {
+  electionClosed: true,
+  activeEra: 0,
+  maxNominatorRewardedPerValidator: 128,
+  bondingDuration: 28,
+};
+
 // Fallback values used when Sidecar const endpoints are unreachable.
 const DEFAULT_CONSTANTS = {
   expectedBlockTime: 6000, // ms
@@ -712,12 +720,7 @@ export const getStakingProgress = async (
   currency: CryptoCurrency,
 ): Promise<PolkadotStakingProgress> => {
   if (UNSUPPORTED_STAKING_NETWORKS.includes(currency.id)) {
-    return {
-      electionClosed: true,
-      activeEra: 0,
-      maxNominatorRewardedPerValidator: 128,
-      bondingDuration: 28,
-    };
+    return DEFAULT_STAKING_PROGRESS;
   }
 
   const [progress, chainConsts] = await Promise.all([

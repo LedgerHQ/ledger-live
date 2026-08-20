@@ -18,7 +18,6 @@ import { estimateMaxSpendable } from "./estimateMaxSpendable";
 import { getSerializedAddressParameters } from "./exchange";
 import formatters from "./formatters";
 import { getTransactionStatus } from "./getTransactionStatus";
-import { getPreloadStrategy, hydrate, preload } from "./preload";
 import { prepareTransaction } from "./prepareTransaction";
 import {
   assignFromAccountRaw,
@@ -38,9 +37,6 @@ function buildCurrencyBridge(signerContext: SignerContext<PolkadotSigner>): Curr
   });
 
   return {
-    getPreloadStrategy,
-    preload,
-    hydrate,
     scanAccounts,
   };
 }
