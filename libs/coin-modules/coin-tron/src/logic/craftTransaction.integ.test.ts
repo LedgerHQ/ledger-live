@@ -1,5 +1,4 @@
 import type { TronCoinConfig } from "../config";
-import { SendTransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
 import { DEFAULT_TRC20_FEES_LIMIT } from "../network";
 import { decode58Check } from "../network/format";
 import { craftTransaction } from "./craftTransaction";
@@ -27,6 +26,7 @@ describe("Testing craftTransaction function", () => {
       sender,
       recipient,
       amount,
+      data: { type: "tron" },
     });
 
     const decodeResult = await decodeTransaction(result);
@@ -69,6 +69,7 @@ describe("Testing craftTransaction function", () => {
       sender,
       recipient,
       amount,
+      data: { type: "tron" },
     });
 
     const decodeResult = await decodeTransaction(result);
@@ -109,6 +110,7 @@ describe("Testing craftTransaction function", () => {
       sender,
       recipient,
       amount,
+      data: { type: "tron" },
     });
 
     const decodeResult = await decodeTransaction(result);
@@ -121,7 +123,7 @@ describe("Testing craftTransaction function", () => {
     );
   });
 
-  it("should use zero custom fees when user provides 0 for a TRC20 transaction", async () => {
+  it("should raise a 0 fee estimate to the fee-limit ceiling for a TRC20 transaction", async () => {
     const amount = BigInt(20);
     const sender = "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9";
     const recipient = "TPswDDCAWhJAZGdHPidFg5nEf8TkNToDX1";
@@ -138,6 +140,7 @@ describe("Testing craftTransaction function", () => {
         sender,
         recipient,
         amount,
+        data: { type: "tron" },
       },
       { value: 0n },
     );
@@ -162,12 +165,10 @@ describe("Testing craftTransaction function", () => {
         }),
       }),
     );
-    // Protobuf omits default-valued fields: fee_limit 0 is not present on the wire,
-    // unlike DEFAULT_TRC20_FEES_LIMIT which decodeTransaction surfaces explicitly.
-    expect(decodeResult.raw_data.fee_limit).toBeUndefined();
+    expect(decodeResult.raw_data.fee_limit).toBe(DEFAULT_TRC20_FEES_LIMIT);
   });
 
-  it("should use custom user fees when user provides it for a TRC20 transaction", async () => {
+  it("should raise a fee estimate below the ceiling for a TRC20 transaction", async () => {
     const amount = BigInt(20);
     const sender = "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9";
     const recipient = "TPswDDCAWhJAZGdHPidFg5nEf8TkNToDX1";
@@ -185,6 +186,7 @@ describe("Testing craftTransaction function", () => {
         sender,
         recipient,
         amount,
+        data: { type: "tron" },
       },
       { value: customFees },
     );
@@ -193,7 +195,7 @@ describe("Testing craftTransaction function", () => {
     expect(decodeResult).toEqual(
       expect.objectContaining({
         raw_data: expect.objectContaining({
-          fee_limit: Number(customFees),
+          fee_limit: DEFAULT_TRC20_FEES_LIMIT,
         }),
       }),
     );
@@ -212,6 +214,7 @@ describe("Testing craftTransaction function", () => {
       sender,
       recipient,
       amount,
+      data: { type: "tron" },
     });
 
     const decodeResult = await decodeTransaction(result);
@@ -250,6 +253,7 @@ describe("Testing craftTransaction function", () => {
       sender,
       recipient,
       amount,
+      data: { type: "tron" },
       memo: {
         type: "string",
         kind: "memo",
@@ -284,6 +288,7 @@ describe("Testing craftTransaction function", () => {
         sender,
         recipient,
         amount,
+        data: { type: "tron" },
         memo: {
           type: "string",
           kind: "memo",
@@ -308,6 +313,7 @@ describe("Testing craftTransaction function", () => {
       sender,
       recipient,
       amount,
+      data: { type: "tron" },
     });
 
     const after = Date.now();
@@ -342,7 +348,8 @@ describe("Testing craftTransaction function", () => {
       recipient,
       amount,
       expiration,
-    } as SendTransactionIntent);
+      data: { type: "tron" },
+    });
 
     const after = Date.now();
 

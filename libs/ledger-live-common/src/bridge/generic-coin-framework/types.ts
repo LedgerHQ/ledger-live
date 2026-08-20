@@ -205,6 +205,11 @@ export type AccountRawAssignHooks = {
    * the family's own keys is safe regardless: `accountRawAssign.ts` converts the framework-owned keys
    * itself and spreads this result over them, so a family cannot drop `ledgerOpType` or `stake`.
    *
+   * `fromOperationExtraRaw` has a second caller: on a fresh sync `getAccountShape.ts` hands it
+   * `details.familyExtra` alone — the family's own bag, with none of the framework's keys beside it.
+   * It has to accept either input, which spreading the rest through rather than rebuilding a fixed
+   * shape already achieves.
+   *
    * The cost of that is no key can be dropped: the untouched input is the merge's base layer, so a
    * key these hooks omit is persisted verbatim rather than filtered out. A legacy bridge's hooks of
    * the same name replace instead of merge, so an allowlist ported from one (`coin-sui`'s

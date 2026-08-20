@@ -7,6 +7,7 @@ import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-commo
 import {
   formatVotes,
   useTronSuperRepresentatives,
+  useVoteNames,
 } from "@ledgerhq/live-common/families/tron/react";
 import type { TronOperation, Vote } from "@ledgerhq/live-common/families/tron/types";
 import type { Account, Operation } from "@ledgerhq/types-live";
@@ -112,7 +113,9 @@ function OperationDetailsVotes({ votes, account }: OperationsDetailsVotesProps) 
   const { t } = useTranslation();
   const sp = useTronSuperRepresentatives();
   const { locale } = useSettings();
-  const formattedVotes = formatVotes(votes, sp);
+  // A just-submitted vote reaches the operation without a name; a synced one is returned untouched.
+  const namedVotes = useVoteNames(votes);
+  const formattedVotes = formatVotes(namedVotes, sp);
   const redirectAddressCreator = useCallback(
     (address: string) => () => {
       const url = getAddressExplorer(getDefaultExplorerView(account.currency), address);

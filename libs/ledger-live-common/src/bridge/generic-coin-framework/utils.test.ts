@@ -540,6 +540,41 @@ describe("coin-framework utils", () => {
       expect((operation.extra as Record<string, unknown>).ledgerOpType).toBe("FREEZE");
     });
 
+    it("carries the family's own extra keys but never a framework-owned one", () => {
+      const describeOptimisticOperation = jest.fn().mockReturnValue({
+        type: "FREEZE" as const,
+        value: new BigNumber(0),
+        extra: {
+          frozenAmount: new BigNumber(5),
+          ledgerOpType: "HIJACKED",
+          index: "9",
+          internal: true,
+        },
+      });
+      const operation = buildOptimisticOperation(
+        {
+          id: "parent-account-id",
+          freshAddress: "account-address",
+        } as Account,
+        {
+          family: "familyx",
+          amount: new BigNumber(100),
+          recipient: "TRecipient",
+          mode: "stake",
+        } as GenericTransaction,
+        3n,
+        describeOptimisticOperation,
+      );
+
+      const extra = operation.extra as Record<string, unknown>;
+      expect(extra.frozenAmount).toEqual(new BigNumber(5));
+      expect(extra.ledgerOpType).toBe("FREEZE");
+      expect(extra.index).toBe("0");
+      // Stripped rather than overwritten, so the pending row's shape matches the synced operation's,
+      // which `adaptCoreOperationToLiveOperation` strips the same way.
+      expect("internal" in extra).toBe(false);
+    });
+
     it("keeps generic behaviour when the family does not own the mode", () => {
       const describeOptimisticOperation = jest.fn().mockReturnValue(undefined);
       const operation = buildOptimisticOperation(
@@ -1575,24 +1610,41 @@ describe("coin-framework utils", () => {
       details: { ledgerOpType: "FREEZE", familyExtra: { frozenAmount: "42", votes: [] } },
     };
 
-    it("forwards the family's own extras bag onto the operation", () => {
+    it("lands the family's own extras bag flat beside the framework's keys", () => {
       const operation = adaptCoreOperationToLiveOperation("accountId", coreOperation);
 
-      expect((operation.extra as Record<string, unknown>).familyExtra).toEqual({
+      expect(operation.extra).toEqual({
+        ledgerOpType: "FREEZE",
         frozenAmount: "42",
         votes: [],
       });
     });
 
-    it("never lets the family shadow a framework-owned extra", () => {
-      // Including `pagingToken`, which the framework only reads and never writes here.
-      const operation = adaptCoreOperationToLiveOperation("accountId", {
-        ...coreOperation,
-        details: {
-          ledgerOpType: "FREEZE",
-          familyExtra: { ledgerOpType: "HIJACKED", internal: true, pagingToken: "hijacked" },
-        },
+    it("revives the bag through the family's `fromOperationExtraRaw` when one is given", () => {
+      const operation = adaptCoreOperationToLiveOperation("accountId", coreOperation, extraRaw => {
+        const { frozenAmount, ...rest } = extraRaw as { frozenAmount: string };
+        return { ...rest, frozenAmount: new BigNumber(frozenAmount) };
       });
+
+      expect((operation.extra as Record<string, unknown>).frozenAmount).toStrictEqual(
+        new BigNumber(42),
+      );
+    });
+
+    it("never lets the family shadow a framework-owned extra", () => {
+      // Including `pagingToken`, which the framework only reads and never writes here. The reviver
+      // spreads its input, so this also pins the strip as running after it.
+      const operation = adaptCoreOperationToLiveOperation(
+        "accountId",
+        {
+          ...coreOperation,
+          details: {
+            ledgerOpType: "FREEZE",
+            familyExtra: { ledgerOpType: "HIJACKED", internal: true, pagingToken: "hijacked" },
+          },
+        },
+        extraRaw => ({ ...(extraRaw as Record<string, unknown>) }),
+      );
       const extra = operation.extra as Record<string, unknown>;
 
       expect(extra.ledgerOpType).toBe("FREEZE");
@@ -1600,13 +1652,13 @@ describe("coin-framework utils", () => {
       expect(extra.pagingToken).toBeUndefined();
     });
 
-    it("omits familyExtra entirely when the coin module sends none", () => {
+    it("leaves the framework's own keys alone when the coin module sends no family bag", () => {
       const operation = adaptCoreOperationToLiveOperation("accountId", {
         ...coreOperation,
         details: { ledgerOpType: "FREEZE" },
       });
 
-      expect((operation.extra as Record<string, unknown>).familyExtra).toBeUndefined();
+      expect(operation.extra).toEqual({ ledgerOpType: "FREEZE" });
     });
 
     it("normalises bigint/BigNumber inside familyExtra so the persisted operation stays JSON-safe", () => {
@@ -1624,7 +1676,8 @@ describe("coin-framework utils", () => {
       } as CoreOperation);
 
       expect(() => JSON.stringify(operation)).not.toThrow();
-      expect((operation.extra as Record<string, unknown>).familyExtra).toEqual({
+      expect(operation.extra).toEqual({
+        ledgerOpType: "FREEZE",
         frozenAmount: "42",
         reward: "1000",
         huge: "1000000000000000000000",
@@ -1650,13 +1703,48 @@ describe("coin-framework utils", () => {
         },
       } as CoreOperation);
 
-      expect((operation.extra as Record<string, unknown>).familyExtra).toEqual({
+      expect(operation.extra).toEqual({
+        ledgerOpType: "FREEZE",
         claimedAt: "2026-01-01T00:00:00.000Z",
         keep: "x",
         ok: true,
         bad: null,
         seq: [1, null, null, "x"],
       });
+    });
+
+    it("maps each optional operation detail onto its framework extra key", () => {
+      const operation = adaptCoreOperationToLiveOperation("accountId", {
+        ...coreOperation,
+        tx: { ...coreOperation.tx, feesPayer: "TFeePayer" },
+        details: {
+          ledgerOpType: "FREEZE",
+          assetAmount: "500",
+          assetSenders: ["TAssetSender"],
+          assetRecipients: ["TAssetRecipient"],
+          parentSenders: ["TParentSender"],
+          parentRecipients: ["TParentRecipient"],
+          memo: "a memo",
+          internal: true,
+          stake: { address: "TValidator", amount: 2_500n },
+        },
+      } as CoreOperation);
+
+      expect(operation.extra).toEqual({
+        ledgerOpType: "FREEZE",
+        assetAmount: "500",
+        assetSenders: ["TAssetSender"],
+        assetRecipients: ["TAssetRecipient"],
+        parentSenders: ["TParentSender"],
+        parentRecipients: ["TParentRecipient"],
+        memo: "a memo",
+        internal: true,
+        feePayer: "TFeePayer",
+        stake: { address: "TValidator", amount: new BigNumber(2_500) },
+      });
+      // parentSenders/parentRecipients also stand in for the operation's own senders/recipients.
+      expect(operation.senders).toEqual(["TParentSender"]);
+      expect(operation.recipients).toEqual(["TParentRecipient"]);
     });
   });
 

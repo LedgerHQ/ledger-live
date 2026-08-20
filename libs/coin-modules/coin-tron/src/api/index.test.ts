@@ -5,6 +5,7 @@ import {
 } from "@ledgerhq/coin-module-framework/api/types";
 import { createApi } from ".";
 import { TronCoinConfig, TronContext } from "../config";
+import type { TronMemo, TronTxData } from "../types";
 import {
   broadcast,
   combine,
@@ -48,7 +49,7 @@ describe("createApi", () => {
   });
 
   it("should resolve the coin config from the context and thread it down", async () => {
-    const api: CoinModuleApi<TronCoinConfig> = createApi();
+    const api: CoinModuleApi<TronCoinConfig, TronMemo, TronTxData> = createApi();
     await api.getBalance(context, "address");
 
     expect(context.config).toHaveBeenCalled();
@@ -56,8 +57,8 @@ describe("createApi", () => {
   });
 
   it("should pass parameters correctly", async () => {
-    const api: CoinModuleApi<TronCoinConfig> = createApi();
-    const intent: TransactionIntent = {
+    const api: CoinModuleApi<TronCoinConfig, TronMemo, TronTxData> = createApi();
+    const intent: TransactionIntent<TronMemo, TronTxData> = {
       intentType: "transaction",
       type: "send",
       sender: "sender",
@@ -67,6 +68,7 @@ describe("createApi", () => {
         type: "trc10",
         assetReference: "1002000",
       },
+      data: { type: "tron" },
     };
     // Simulate calling all methods
     await api.broadcast(context, "transaction");
@@ -96,7 +98,7 @@ describe("createApi", () => {
   });
 
   it("should throw when limit > 200", async () => {
-    const api: CoinModuleApi<TronCoinConfig> = createApi();
+    const api: CoinModuleApi<TronCoinConfig, TronMemo, TronTxData> = createApi();
     await expect(
       api.listOperations(context, "address", { minHeight: 0, limit: 201 }),
     ).rejects.toThrow("limit must be <= 200 for Tron (TronGrid API restriction)");
@@ -104,7 +106,7 @@ describe("createApi", () => {
   });
 
   it("should not throw when limit is exactly 200", async () => {
-    const api: CoinModuleApi<TronCoinConfig> = createApi();
+    const api: CoinModuleApi<TronCoinConfig, TronMemo, TronTxData> = createApi();
     await expect(
       api.listOperations(context, "address", { minHeight: 0, limit: 200 }),
     ).resolves.toEqual({

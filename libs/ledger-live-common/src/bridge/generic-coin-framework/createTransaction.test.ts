@@ -34,6 +34,7 @@ describe("createTransaction", () => {
       fees: null,
       useAllAmount: false,
       mode: "send",
+      familySpecificData: { resource: null, duration: 3, votes: [] },
     });
   });
 

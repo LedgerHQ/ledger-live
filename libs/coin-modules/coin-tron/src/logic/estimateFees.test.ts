@@ -7,8 +7,11 @@ import {
   getTronAccountNetwork,
   triggerConstantContract,
 } from "../network";
+import { decode58Check } from "../network/format";
 import type { AccountTronAPI, ChainParameters } from "../network/types";
+import { abiEncodeTrc20Transfer } from "../network/utils";
 import type { NetworkInfo } from "../types";
+import type { TronMemo, TronTxData } from "../types";
 import { ACTIVATION_FEES, STANDARD_FEES_NATIVE, STANDARD_FEES_TRC_20 } from "./constants";
 import {
   computeBandwidthFee,
@@ -16,7 +19,9 @@ import {
   estimateEnergy,
   estimatedTxSize,
   estimateFees,
+  type TronResourceBreakdown,
 } from "./estimateFees";
+import { getBalance } from "./getBalance";
 
 jest.mock("../network", () => ({
   fetchTronAccount: jest.fn(),
@@ -25,6 +30,9 @@ jest.mock("../network", () => ({
   triggerConstantContract: jest.fn(),
 }));
 
+jest.mock("./getBalance", () => ({ getBalance: jest.fn() }));
+
+const mockGetBalance = jest.mocked(getBalance);
 const mockGetTronAccountNetwork = jest.mocked(getTronAccountNetwork);
 const mockFetchTronAccount = jest.mocked(fetchTronAccount);
 const mockGetChainParameters = jest.mocked(getChainParameters);
@@ -59,37 +67,57 @@ const inactiveRecipient: AccountTronAPI[] = [];
 const SENDER = "TF17BgPaZYbz8oxbjhriubPDsA7ArKoLX3";
 const RECIPIENT = "TJRabPrwbZy45sbavfcjinPJC18kjpRTv8";
 
-const sendNative: TransactionIntent = {
+const sendNative: TransactionIntent<TronMemo, TronTxData> = {
   intentType: "transaction",
   type: "send",
   sender: SENDER,
   recipient: RECIPIENT,
   amount: BigInt(1000),
   asset: { type: "native" },
+  data: { type: "tron" },
 };
 
-const sendTrc10: TransactionIntent = {
+const sendTrc10: TransactionIntent<TronMemo, TronTxData> = {
   intentType: "transaction",
   type: "send",
   sender: SENDER,
   recipient: RECIPIENT,
   amount: BigInt(1000),
   asset: { type: "trc10", assetReference: "1002000" },
+  data: { type: "tron" },
 };
 
-const sendTrc20: TransactionIntent = {
+const sendTrc20: TransactionIntent<TronMemo, TronTxData> = {
   intentType: "transaction",
   type: "send",
   sender: SENDER,
   recipient: RECIPIENT,
   amount: BigInt(1000),
   asset: { type: "trc20", assetReference: TRC20_CONTRACT },
+  data: { type: "tron" },
 };
 
 const mockConfig = {
   status: { type: "active" },
-  explorer: { url: "https://api.trongrid.io" },
+  explorer: { url: "https://tron.coin.ledger.com" },
 } as TronCoinConfig;
+
+const voteIntent = (voteCount: number): TransactionIntent<TronMemo, TronTxData> => ({
+  intentType: "transaction",
+  type: "vote",
+  sender: SENDER,
+  recipient: "",
+  amount: 0n,
+  asset: { type: "native" },
+  data: {
+    type: "tron",
+    votes: Array.from({ length: voteCount }, (_, i) => ({
+      name: `sr-${i}`,
+      address: SENDER,
+      voteCount: 1,
+    })),
+  },
+});
 
 describe("estimateFees", () => {
   beforeEach(() => {
@@ -107,16 +135,27 @@ describe("estimateFees", () => {
 
       const result = await estimateFees(mockConfig, sendNative);
 
-      expect(result).toBe(0n);
+      expect(result.value).toBe(0n);
     });
 
-    it("charges (size - available) * transactionFee when bandwidth is insufficient", async () => {
+    it("charges size * transactionFee when no bandwidth pool covers the transaction", async () => {
       mockGetTronAccountNetwork.mockResolvedValue(buildNetworkInfo());
       mockFetchTronAccount.mockResolvedValue(activeRecipient);
 
       const result = await estimateFees(mockConfig, sendNative);
 
-      expect(result).toBe(BigInt(270 * chainParams.transactionFee));
+      expect(result.value).toBe(BigInt(270 * chainParams.transactionFee));
+    });
+
+    it("charges the whole size, not the shortfall, when a pool only partly covers it", async () => {
+      mockGetTronAccountNetwork.mockResolvedValue(
+        buildNetworkInfo({ freeNetLimit: new BigNumber(200) }),
+      );
+      mockFetchTronAccount.mockResolvedValue(activeRecipient);
+
+      const result = await estimateFees(mockConfig, sendNative);
+
+      expect(result.value).toBe(BigInt(270 * chainParams.transactionFee));
     });
 
     it("adds activation fee when recipient is inactive", async () => {
@@ -127,7 +166,7 @@ describe("estimateFees", () => {
 
       const result = await estimateFees(mockConfig, sendNative);
 
-      expect(result).toBe(
+      expect(result.value).toBe(
         BigInt(chainParams.createAccountFee + chainParams.createNewAccountFeeInSystemContract),
       );
     });
@@ -142,16 +181,16 @@ describe("estimateFees", () => {
 
       const result = await estimateFees(mockConfig, sendTrc10);
 
-      expect(result).toBe(0n);
+      expect(result.value).toBe(0n);
     });
 
-    it("charges (size - available) * transactionFee when bandwidth is insufficient", async () => {
+    it("charges size * transactionFee when no bandwidth pool covers the transaction", async () => {
       mockGetTronAccountNetwork.mockResolvedValue(buildNetworkInfo());
       mockFetchTronAccount.mockResolvedValue(activeRecipient);
 
       const result = await estimateFees(mockConfig, sendTrc10);
 
-      expect(result).toBe(BigInt(285 * chainParams.transactionFee));
+      expect(result.value).toBe(BigInt(285 * chainParams.transactionFee));
     });
 
     it("does NOT add native activation fee when recipient is inactive", async () => {
@@ -162,7 +201,7 @@ describe("estimateFees", () => {
 
       const result = await estimateFees(mockConfig, sendTrc10);
 
-      expect(result).toBe(0n);
+      expect(result.value).toBe(0n);
     });
 
     it("does not invoke triggerConstantContract (non-contract asset)", async () => {
@@ -190,7 +229,7 @@ describe("estimateFees", () => {
 
       const result = await estimateFees(mockConfig, sendTrc20);
 
-      expect(result).toBe(0n);
+      expect(result.value).toBe(0n);
     });
 
     it("charges energy fee when sender has no energy", async () => {
@@ -202,7 +241,7 @@ describe("estimateFees", () => {
 
       const result = await estimateFees(mockConfig, sendTrc20);
 
-      expect(result).toBe(BigInt(31_895 * chainParams.energyFee));
+      expect(result.value).toBe(BigInt(31_895 * chainParams.energyFee));
     });
 
     it("partially covers energy when sender has some", async () => {
@@ -217,7 +256,7 @@ describe("estimateFees", () => {
 
       const result = await estimateFees(mockConfig, sendTrc20);
 
-      expect(result).toBe(BigInt((31_895 - 20_000) * chainParams.energyFee));
+      expect(result.value).toBe(BigInt((31_895 - 20_000) * chainParams.energyFee));
     });
 
     it("does NOT add native activation fee when recipient is inactive (contract storage handled via energy)", async () => {
@@ -232,7 +271,7 @@ describe("estimateFees", () => {
 
       const result = await estimateFees(mockConfig, sendTrc20);
 
-      expect(result).toBe(0n);
+      expect(result.value).toBe(0n);
     });
 
     it("falls back when the simulation reverts", async () => {
@@ -250,7 +289,7 @@ describe("estimateFees", () => {
 
       const result = await estimateFees(mockConfig, sendTrc20);
 
-      expect(result).toBe(BigInt(STANDARD_FEES_TRC_20.toString()));
+      expect(result.value).toBe(BigInt(STANDARD_FEES_TRC_20.toString()));
     });
   });
 
@@ -269,6 +308,15 @@ describe("estimateFees", () => {
 
     it("throws for an unsupported intent type", () => {
       expect(() => estimatedTxSize({ ...sendNative, type: "unsupported" as never })).toThrow();
+    });
+
+    it("grows the vote size by one protobuf entry per vote", () => {
+      expect(estimatedTxSize(voteIntent(1))).toBe(290 + 19);
+      expect(estimatedTxSize(voteIntent(3))).toBe(290 + 3 * 19);
+    });
+
+    it("uses the base vote size when no votes are attached yet", () => {
+      expect(estimatedTxSize(voteIntent(0))).toBe(290);
     });
   });
 
@@ -303,6 +351,36 @@ describe("estimateFees", () => {
 
       await expect(estimateEnergy(mockConfig, sendTrc20)).rejects.toThrow(/no energy_used/);
     });
+
+    it("skips the simulation for a staking mode that still carries a trc20 asset", async () => {
+      // The UI can reach a staking flow from a token sub-account, leaving the asset on the intent.
+      const result = await estimateEnergy(mockConfig, { ...sendTrc20, type: "freeze" });
+
+      expect(result).toBe(0);
+      expect(mockTriggerConstantContract).not.toHaveBeenCalled();
+    });
+
+    it("skips the simulation for a zero-amount non-max trc20 send", async () => {
+      const result = await estimateEnergy(mockConfig, { ...sendTrc20, amount: 0n });
+
+      expect(result).toBe(0);
+      expect(mockTriggerConstantContract).not.toHaveBeenCalled();
+    });
+
+    it("simulates a send-max transfer with the token balance, not 0", async () => {
+      mockGetBalance.mockResolvedValue([
+        { value: 250n, asset: { type: "native" } },
+        { value: 4_200n, asset: { type: "trc20", assetReference: TRC20_CONTRACT } },
+      ]);
+      mockTriggerConstantContract.mockResolvedValue({ energy_used: 31_895 });
+
+      await estimateEnergy(mockConfig, { ...sendTrc20, amount: 0n, useAllAmount: true });
+
+      const { parameter } = mockTriggerConstantContract.mock.calls[0][1];
+      expect(parameter).toBe(
+        abiEncodeTrc20Transfer(decode58Check(RECIPIENT), new BigNumber(4_200)),
+      );
+    });
   });
 
   describe("computeBandwidthFee (exported helper)", () => {
@@ -312,12 +390,32 @@ describe("estimateFees", () => {
       expect(computeBandwidthFee(270, networkInfo, chainParams)).toEqual(new BigNumber(0));
     });
 
-    it("charges (size - available) * transactionFee when bandwidth is insufficient", () => {
+    it("charges size * transactionFee when neither pool has any bandwidth", () => {
       const networkInfo = buildNetworkInfo();
 
       expect(computeBandwidthFee(270, networkInfo, chainParams)).toEqual(
         new BigNumber(270 * chainParams.transactionFee),
       );
+    });
+
+    it("charges the whole size when a pool covers only part of it (all-or-nothing per pool)", () => {
+      const networkInfo = buildNetworkInfo({
+        freeNetLimit: new BigNumber(150),
+        netLimit: new BigNumber(100),
+      });
+
+      expect(computeBandwidthFee(270, networkInfo, chainParams)).toEqual(
+        new BigNumber(270 * chainParams.transactionFee),
+      );
+    });
+
+    it("returns 0 when a single pool covers the size on its own", () => {
+      const networkInfo = buildNetworkInfo({
+        freeNetLimit: new BigNumber(150),
+        netLimit: new BigNumber(300),
+      });
+
+      expect(computeBandwidthFee(270, networkInfo, chainParams)).toEqual(new BigNumber(0));
     });
 
     it("does not overcharge when used > limit (available clamped to 0)", () => {
@@ -326,13 +424,12 @@ describe("estimateFees", () => {
         freeNetUsed: new BigNumber(500),
       });
 
-      // available = -500 → clamped 0 → missing = size (270), not size + 500.
       expect(computeBandwidthFee(270, networkInfo, chainParams)).toEqual(
         new BigNumber(270 * chainParams.transactionFee),
       );
     });
 
-    it("clamps each bucket independently — a negative free bucket does not reduce staked", () => {
+    it("clamps each pool independently — a negative free pool does not reduce staked", () => {
       const networkInfo = buildNetworkInfo({
         freeNetLimit: new BigNumber(0),
         freeNetUsed: new BigNumber(500), // free = -500 → 0
@@ -340,8 +437,6 @@ describe("estimateFees", () => {
         netUsed: new BigNumber(0), // staked = 1000
       });
 
-      // 800 fits within the 1000 staked bucket → 0 fee. (Clamping the *sum* would report 500
-      // available and wrongly charge for a 300 shortfall.)
       expect(computeBandwidthFee(800, networkInfo, chainParams)).toEqual(new BigNumber(0));
     });
   });
@@ -380,7 +475,7 @@ describe("estimateFees", () => {
 
       const result = await estimateFees(mockConfig, sendNative);
 
-      expect(result).toBe(BigInt(ACTIVATION_FEES.plus(STANDARD_FEES_NATIVE).toString()));
+      expect(result.value).toBe(BigInt(ACTIVATION_FEES.plus(STANDARD_FEES_NATIVE).toString()));
     });
 
     it("returns STANDARD_FEES_TRC_20 when network fails for TRC20 send", async () => {
@@ -388,7 +483,72 @@ describe("estimateFees", () => {
 
       const result = await estimateFees(mockConfig, sendTrc20);
 
-      expect(result).toBe(BigInt(STANDARD_FEES_TRC_20.toString()));
+      expect(result.value).toBe(BigInt(STANDARD_FEES_TRC_20.toString()));
+    });
+
+    it("reports a non-zero requirement against an unknown pool so the tooltip cannot claim coverage", async () => {
+      mockGetTronAccountNetwork.mockRejectedValue(new Error("network down"));
+
+      const result = await estimateFees(mockConfig, sendTrc20);
+
+      expect(breakdownOf(result)).toEqual({
+        energyRequired: "1",
+        energyAvailable: "0",
+        bandwidthRequired: "350",
+        bandwidthAvailable: "0",
+        energyEstimated: false,
+      });
+    });
+  });
+
+  describe("resource breakdown (FeeEstimation.parameters)", () => {
+    it("reports what the transfer needs and what the account has", async () => {
+      mockGetTronAccountNetwork.mockResolvedValue(
+        buildNetworkInfo({
+          freeNetLimit: new BigNumber(5000),
+          freeNetUsed: new BigNumber(1000),
+          netLimit: new BigNumber(600),
+          energyLimit: new BigNumber(100_000),
+          energyUsed: new BigNumber(40_000),
+        }),
+      );
+      mockFetchTronAccount.mockResolvedValue(activeRecipientWithToken);
+      mockTriggerConstantContract.mockResolvedValue({ energy_used: 31_895 });
+
+      const result = await estimateFees(mockConfig, sendTrc20);
+
+      expect(breakdownOf(result)).toEqual({
+        energyRequired: "31895",
+        energyAvailable: "60000",
+        bandwidthRequired: "350",
+        // (5000 - 1000) free + 600 staked
+        bandwidthAvailable: "4600",
+        energyEstimated: true,
+      });
+    });
+
+    it("marks the energy as unestimated and insufficient when the simulation reverts", async () => {
+      mockGetTronAccountNetwork.mockResolvedValue(
+        buildNetworkInfo({
+          freeNetLimit: new BigNumber(5000),
+          energyLimit: new BigNumber(100_000),
+        }),
+      );
+      mockFetchTronAccount.mockResolvedValue(activeRecipientWithToken);
+      mockTriggerConstantContract.mockResolvedValue({
+        result: { result: false, code: "REVERT", message: "insufficient balance" },
+      });
+
+      const result = await estimateFees(mockConfig, sendTrc20);
+
+      const breakdown = breakdownOf(result);
+      expect(breakdown.energyEstimated).toBe(false);
+      // One more than available, so every consumer reads "insufficient" rather than "covered".
+      expect(BigInt(breakdown.energyRequired)).toBeGreaterThan(BigInt(breakdown.energyAvailable));
     });
   });
 });
+
+function breakdownOf(estimation: { parameters?: Record<string, unknown> }): TronResourceBreakdown {
+  return estimation.parameters as TronResourceBreakdown;
+}

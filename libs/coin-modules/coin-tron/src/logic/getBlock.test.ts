@@ -17,7 +17,7 @@ const mockGetTransactionInfoByBlockNum = getTransactionInfoByBlockNum as jest.Mo
 
 const mockConfig = {
   status: { type: "active" },
-  explorer: { url: "https://api.trongrid.io" },
+  explorer: { url: "https://tron.coin.ledger.com" },
 } as TronCoinConfig;
 
 describe("getBlockInfo", () => {

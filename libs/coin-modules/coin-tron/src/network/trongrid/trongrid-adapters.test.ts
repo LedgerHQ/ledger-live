@@ -108,11 +108,23 @@ describe("fromTrongridTxInfoToOperation", () => {
     expect(result.asset).toEqual({ type: "native" });
   });
 
-  it("should return UNKNOWN operation in default case", () => {
+  it("should type a self-send as OUT", () => {
     const txInfo = {
       ...mockTrongridTxInfo,
       from: mockUserAddress,
       to: mockUserAddress,
+    };
+
+    const result = fromTrongridTxInfoToOperation(txInfo, mockBlock, mockUserAddress);
+
+    expect(result.type).toBe("OUT");
+  });
+
+  it("should return UNKNOWN operation in default case", () => {
+    const txInfo = {
+      ...mockTrongridTxInfo,
+      from: "TOtherSender",
+      to: undefined,
     };
 
     const result = fromTrongridTxInfoToOperation(txInfo, mockBlock, mockUserAddress);

@@ -4,7 +4,12 @@ import BigNumber from "bignumber.js";
 import { getCoinModuleApi } from "./api";
 import { buildContext } from "./api/context";
 import { getBridgeApi } from "./bridge";
-import { bigNumberToBigIntDeep, extractBalances, transactionToIntent } from "./utils";
+import {
+  addAccountToBuyLinks,
+  bigNumberToBigIntDeep,
+  extractBalances,
+  transactionToIntent,
+} from "./utils";
 import type { GenericTransaction } from "./types";
 
 // => coin-framework validateIntent
@@ -63,6 +68,15 @@ export function genericGetTransactionStatus(
     const customFees = bigNumberToBigIntDeep({
       value: transaction.fees ?? new BigNumber(0),
       parameters: {
+        // The telemetry the last estimation returned, so a family that needs its own fee breakdown
+        // here can read the one `prepareTransaction` just computed instead of estimating a second
+        // time. `prepareTransaction` assigns the bag wholesale and clears it when a custom fee skips
+        // estimation, so what arrives always belongs to the fee being validated.
+        //
+        // Spread first, and every field below is written unconditionally, so the framework's own
+        // value wins any collision — including when it is `undefined`, which `bigNumberToBigIntDeep`
+        // then drops, leaving the key absent exactly as it was before this bag was merged in.
+        ...transaction.feeParameters,
         feesStrategy: transaction.feesStrategy ?? undefined,
         sponsored: transaction.sponsored,
         gasLimit: transaction.gasLimit,
@@ -83,7 +97,7 @@ export function genericGetTransactionStatus(
       );
 
     return {
-      errors,
+      errors: addAccountToBuyLinks(errors, account.id),
       warnings,
       totalFees: typeof totalFees === "bigint" ? new BigNumber(totalFees.toString()) : undefined,
       estimatedFees:

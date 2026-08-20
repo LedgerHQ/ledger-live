@@ -150,5 +150,11 @@ export type CoinModuleLoader<
   loadBridgeExtensions?: () => Promise<AccountBridgeExtensions<T>>;
   loadBridgeApi?: () => Promise<BridgeApi | ((currency: CryptoCurrency) => BridgeApi)>;
   loadAccountRawAssign?: () => Promise<AccountRawAssignHooks>;
-  loadLocalApi?: () => Promise<(currencyId: string) => CoinModuleApi<any> & BridgeApi>;
+  /**
+   * Both generics are `any`: the registry is heterogeneous and cannot name one memo / `TxData`
+   * instantiation for every family. Pinning `TxDataType` (its default is `TxDataNotSupported`) would
+   * make a module that declares its own — coin-tron's `TronTxData`, say — unassignable, because the
+   * API's methods take the intent as a parameter and so are contravariant in it.
+   */
+  loadLocalApi?: () => Promise<(currencyId: string) => CoinModuleApi<any, any> & BridgeApi>;
 };

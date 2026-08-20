@@ -10,15 +10,13 @@ import {
   Operation,
   Page,
   Reward,
-  Stake,
+  TransactionIntent,
   TransactionValidation,
-  Validator,
   BalanceOptions,
   Block,
   AddressValidationCurrencyParameters,
 } from "@ledgerhq/coin-module-framework/api/index";
-import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
-import { type TronContext } from "../config";
+import type { TronContext, TronCoinConfig } from "../config";
 import {
   broadcast,
   combine,
@@ -28,18 +26,19 @@ import {
   getBalance,
   getBlock,
   getBlockInfo,
+  getStakes,
+  getValidators,
   lastBlock,
   listOperations as listOperationsLogic,
   validateAddress,
+  validateIntent,
 } from "../logic";
-import { validateIntent } from "../logic/validateIntent";
 import { defaultFetchParams, getBlock as getBlockNetwork } from "../network";
-import type { TronMemo } from "../types";
-import type { TronCoinConfig } from "../config";
+import type { TronMemo, TronTxData } from "../types";
 
 const MAX_TRONGRID_LIMIT = 200;
 
-export function createApi(): CoinModuleApi<TronCoinConfig, TronMemo> {
+export function createApi(): CoinModuleApi<TronCoinConfig, TronMemo, TronTxData> {
   return {
     broadcast: async (context, tx) => {
       const config = await context.config();
@@ -68,8 +67,7 @@ export function createApi(): CoinModuleApi<TronCoinConfig, TronMemo> {
     },
     estimateFees: async (context, transactionIntent) => {
       const config = await context.config();
-      const fees = await estimateFees(config, transactionIntent);
-      return { value: fees };
+      return estimateFees(config, transactionIntent);
     },
     getAccountInfo: async (context, address): Promise<AccountInfo> => {
       const config = await context.config();
@@ -92,13 +90,14 @@ export function createApi(): CoinModuleApi<TronCoinConfig, TronMemo> {
       const config = await context.config();
       return getBlockInfo(config, height);
     },
-    getStakes(
-      _context: TronContext,
-      _address: string,
-      _options?: { cursor?: Cursor },
-    ): Promise<Page<Stake>> {
-      throw new Error("getStakes is not supported");
+    getStakes: async (context, address, options) => {
+      const config = await context.config();
+      return getStakes(config, address, options?.cursor);
     },
+    // Unsupported chain-wide, as it is for cosmos, cardano and tezos: `Reward` describes a distribution
+    // event with a `receivedAt` date, and Trongrid exposes only the *pending* accrued total
+    // (`tronResources.unwithdrawnReward`), which `getStakes` reports as `amountRewarded` instead.
+    // Withdrawals appear in `listOperations`.
     getRewards(
       _context: TronContext,
       _address: string,
@@ -106,8 +105,9 @@ export function createApi(): CoinModuleApi<TronCoinConfig, TronMemo> {
     ): Promise<Page<Reward>> {
       throw new Error("getRewards is not supported");
     },
-    getValidators(_context: TronContext, _options?: { cursor?: Cursor }): Promise<Page<Validator>> {
-      throw new Error("getValidators is not supported");
+    getValidators: async (context, options) => {
+      const config = await context.config();
+      return getValidators(config, options?.cursor);
     },
     validateIntent: async (
       context,
@@ -128,6 +128,17 @@ export function createApi(): CoinModuleApi<TronCoinConfig, TronMemo> {
     ): Promise<boolean> => validateAddress(address, parameters),
     craftTransactionData: (_context, intent) => craftTransactionData(intent),
   };
+}
+
+/**
+ * Per ADR-047 the Tron-specific transaction fields live in {@link TronTxData} on the intent, so by
+ * the time an intent reaches this API the payload is already built — by
+ * `BridgeApi.buildIntentData`, which is the only layer that knows the wallet's Tron transaction
+ * shape. This member exists to satisfy `CoinModuleApi` and to keep a caller that builds an intent
+ * by hand (the coin-tester, a script) from losing data it already supplied.
+ */
+function craftTransactionData(intent: TransactionIntent<TronMemo, TronTxData>): TronTxData {
+  return intent.data ?? { type: "tron" };
 }
 
 async function listOperations(

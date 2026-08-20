@@ -6,6 +6,7 @@ import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import {
   formatVotes,
   useTronSuperRepresentatives,
+  useVoteNames,
 } from "@ledgerhq/live-common/families/tron/react";
 import { useTheme } from "@react-navigation/native";
 import { DataRow, HeaderRow, ValidatorField } from "~/components/ValidateOnDeviceDataRow";
@@ -43,7 +44,7 @@ const Warning = ({ transaction }: { transaction: Transaction }) => {
             <Trans
               i18nKey={`ValidateOnDevice.infoWording.${transaction.mode}`}
               values={{
-                resource: (transaction.resource || "").toLowerCase(),
+                resource: (transaction.familySpecificData?.resource || "").toLowerCase(),
               }}
             />
           </LText>
@@ -57,7 +58,7 @@ const Warning = ({ transaction }: { transaction: Transaction }) => {
 
 const TronResourceField = ({ transaction }: { transaction: Transaction }) => {
   invariant(transaction.family === "tron", "tron transaction");
-  const { resource } = transaction;
+  const resource = transaction.familySpecificData?.resource;
   return (
     resource && (
       <DataRow label="Resource">
@@ -73,9 +74,12 @@ function TronVotesField({ transaction }: { transaction: Transaction }) {
   invariant(transaction.family === "tron", "tron transaction");
   const { t } = useTranslation();
   const { locale } = useSettings();
-  const { votes } = transaction;
+  const votes = transaction.familySpecificData?.votes;
   const sp = useTronSuperRepresentatives();
-  const formattedVotes = votes && votes.length > 0 ? formatVotes(votes, sp) : null;
+  // A just-cast StakeKit vote reaches the confirm screen without a name; a synced one is returned
+  // untouched. Mirrors `operationDetails.tsx:OperationDetailsVotes` so both screens name the same vote.
+  const namedVotes = useVoteNames(votes);
+  const formattedVotes = namedVotes && namedVotes.length > 0 ? formatVotes(namedVotes, sp) : null;
   return formattedVotes ? (
     <>
       <HeaderRow label={t("ValidateOnDevice.name")} value={t("ValidateOnDevice.votes")} />

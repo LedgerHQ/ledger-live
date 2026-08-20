@@ -18,6 +18,7 @@ import { Trans } from "react-i18next";
 import Box from "~/renderer/components/Box/Box";
 import {
   useTronSuperRepresentatives,
+  useVoteNames,
   formatVotes,
 } from "@ledgerhq/live-common/families/tron/react";
 import Text from "~/renderer/components/Text";
@@ -53,7 +54,9 @@ export const OperationDetailsVotes = ({
   isTransactionField,
 }: OperationsDetailsVotesProps) => {
   const sp = useTronSuperRepresentatives();
-  const formattedVotes = formatVotes(votes, sp);
+  // A just-submitted vote reaches the operation without a name; a synced one is returned untouched.
+  const namedVotes = useVoteNames(votes);
+  const formattedVotes = formatVotes(namedVotes, sp);
   const redirectAddress = useCallback(
     (address: string) => {
       const url = getAddressExplorer(getDefaultExplorerView(account.currency), address);
@@ -117,7 +120,7 @@ const OperationDetailsExtra = ({
 
   const unfreezeAmount = operation.extra?.unfreezeAmount
     ? (operation.extra.unfreezeAmount as BigNumber)
-    : new BigNumber(10);
+    : new BigNumber(0);
 
   const unDelegatedAmount = operation.extra?.unDelegatedAmount
     ? (operation.extra.unDelegatedAmount as BigNumber)

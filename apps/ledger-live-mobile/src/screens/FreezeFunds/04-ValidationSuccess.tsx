@@ -32,7 +32,7 @@ export default function ValidationSuccess({ navigation, route }: NavigatorProps)
   const time = useTimer(60);
   const isLoading = useTronPowerLoading(account);
   const transaction = route.params.transaction;
-  const resource = (transaction as Transaction)?.resource || "";
+  const resource = (transaction as Transaction)?.familySpecificData?.resource ?? undefined;
   const accountId = account.id;
   const lastVotedDate = useMemo(() => getLastVotedDate(account), [account]);
   const onClose = useCallback(() => {
@@ -68,7 +68,7 @@ export default function ValidationSuccess({ navigation, route }: NavigatorProps)
           <Trans
             i18nKey="freeze.validation.info"
             values={{
-              resource: resource.toLowerCase(),
+              resource: resource?.toLowerCase() ?? "",
             }}
           />
         }
