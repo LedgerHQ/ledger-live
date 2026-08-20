@@ -203,6 +203,12 @@ export function RemoteLiveAppProvider({
     let failedAttempts = 0;
 
     const run = async () => {
+      // The periodic interval and a pending retry both call this. Without dropping the
+      // pending one first, an interval tick that lands mid-backoff leaves the old timer
+      // scheduled and starts a second retry chain alongside it.
+      clearTimeout(retryTimeout);
+      retryTimeout = undefined;
+
       const succeeded = await fetchManifests();
       if (cancelled) return;
       if (succeeded) {
