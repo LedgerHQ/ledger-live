@@ -1,6 +1,8 @@
 import { z } from "zod";
 import {
   PayCardErrorResponseSchema,
+  PayCardInternalWalletSchema,
+  PayCardLinkedWalletSchema,
   PayCardLogoutResponseSchema,
   PayCardOrderResponseSchema,
   PayCardSessionResponseSchema,
@@ -32,3 +34,7 @@ export type PayCardAuthorizationCodeRequest = {
 export type PayCardRefreshSessionRequest = {
   readonly refreshToken: string;
 };
+
+export type PayCardInternalWallet = z.infer<typeof PayCardInternalWalletSchema>;
+
+export type PayCardLinkedWallet = z.infer<typeof PayCardLinkedWalletSchema>;

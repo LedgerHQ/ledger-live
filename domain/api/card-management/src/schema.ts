@@ -30,11 +30,6 @@ export const PayCardUserResponseSchema = z.object({
   verificationState: z.enum(["UNVERIFIED", "PENDING", "VERIFIED", "REJECTED"]),
 });
 
-/**
- * Not wired to an endpoint's `rawErrorResponseSchema`: a body that failed to validate would replace
- * the `FetchBaseQueryError` with a schema error, and `isUnauthorizedError` reads `status === 401`
- * off that error to end a session.
- */
 export const PayCardErrorResponseSchema = z.object({
   message: z.string(),
 });
@@ -57,3 +52,23 @@ export const PayCardStatusResponseSchema = z.object({
   type: z.enum(["VIRTUAL", "PHYSICAL", "METAL"]),
   orderedAt: z.string().min(1),
 });
+
+export const PayCardInternalWalletSchema = z.object({
+  id: z.string().min(1),
+  balance: z.string().min(1),
+  currency: z.string().min(1),
+  address: z.string().min(1),
+  addressMemo: z.string().min(1).nullable(),
+});
+
+export const PayCardInternalWalletsResponseSchema = z.array(PayCardInternalWalletSchema);
+
+export const PayCardLinkedWalletSchema = z.object({
+  id: z.string().min(1),
+  address: z.string().min(1),
+  currency: z.string().min(1),
+  network: z.string().min(1),
+  priority: z.number().finite(),
+});
+
+export const PayCardLinkedWalletsResponseSchema = z.array(PayCardLinkedWalletSchema);
