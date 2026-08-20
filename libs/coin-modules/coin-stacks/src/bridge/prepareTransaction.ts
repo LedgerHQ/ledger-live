@@ -1,4 +1,5 @@
 import { updateTransaction } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import { getEnv } from "@ledgerhq/live-env";
 import { AccountBridge } from "@ledgerhq/types-live";
 import {
   AddressVersion,
@@ -40,15 +41,23 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
 
     const senderAddress = c32address(addressVersion, tx.auth.spendingCondition!.signer);
 
-    // [low, medium, high] tuple; index 0 matches this call's pre-existing "low" behavior.
-    const [fee] = await fetchFeeEstimateTransaction({
-      payload: serializePayload(tx.payload),
-      estimatedLength: estimateTransactionByteLength(tx),
-      network,
-      client: { baseUrl: getStacksBaseUrl() },
-    });
+    // Explicit opt-in only (coin-tester devnet, whose fee estimator has no historical data yet
+    // for this payload shape): `transaction.fee` alone can't gate this, since `onStatus` feeds
+    // this function's own `patch.fee` back as the next call's `transaction.fee` -- keying off its
+    // mere presence would freeze the fee at the first estimate for every real user.
+    if (getEnv("API_STACKS_SKIP_FEE_ESTIMATE") && transaction.fee && transaction.fee.gt(0)) {
+      patch.fee = transaction.fee;
+    } else {
+      // [low, medium, high] tuple; index 0 matches this call's pre-existing "low" behavior.
+      const [fee] = await fetchFeeEstimateTransaction({
+        payload: serializePayload(tx.payload),
+        estimatedLength: estimateTransactionByteLength(tx),
+        network,
+        client: { baseUrl: getStacksBaseUrl() },
+      });
 
-    patch.fee = new BigNumber(fee.fee);
+      patch.fee = new BigNumber(fee.fee);
+    }
     patch.nonce = await findNextNonce(senderAddress, pendingOperations);
 
     // For token transfers and useAllAmount

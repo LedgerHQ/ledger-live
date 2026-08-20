@@ -94,11 +94,20 @@ export async function buildSubAccounts({
           parentAccountId: accountId,
           assetBalance: balance,
           token,
-          operations: operations.filter(
-            op =>
-              op.extra.assetReference === balance.asset?.["assetReference"] &&
-              op.extra.assetOwner === balance.asset?.["assetOwner"], // NOTE: we could narrow type
-          ),
+          // assetReference compared case-insensitively: a chain's own listOperations output and
+          // its balance/getAssetFromToken derivation aren't guaranteed to agree on reference casing
+          // (observed on Stacks -- one path lowercases a composite contract-address string, the
+          // other returns it verbatim), so an exact-string match here would silently drop an
+          // operation from its subAccount.
+          operations: operations.filter(op => {
+            const assetReference = balance.asset?.["assetReference"];
+            return (
+              (typeof op.extra.assetReference === "string" && typeof assetReference === "string"
+                ? op.extra.assetReference.toLowerCase() === assetReference.toLowerCase()
+                : op.extra.assetReference === assetReference) &&
+              op.extra.assetOwner === balance.asset?.["assetOwner"] // NOTE: we could narrow type
+            );
+          }),
         }),
       );
     }

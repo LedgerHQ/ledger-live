@@ -1,0 +1,107 @@
+# Schema (and the well-known devnet account mnemonics/keys/addresses below) verified against
+# `clarinet new`'s own generated `settings/Devnet.toml`
+# (`clarinet-cli/src/generate/project.rs` in https://github.com/stx-labs/clarinet), not
+# hand-authored from memory. These accounts are Clarinet's own public, deterministic devnet
+# fixtures — not a secret specific to this package.
+[network]
+name = "devnet"
+deployment_fee_rate = 10
+
+# Doubles as the scenario's funder: `contracts/sip-010-test-token.clar` mints its whole test-token
+# supply to the deployer at deploy time, so reusing this account as the sender avoids a separate
+# on-chain token-funding transaction. `src/signer.ts`/`src/fixtures.ts` hold the matching secret
+# key directly, no mnemonic derivation needed at test time.
+[accounts.deployer]
+mnemonic = "twice kind fence tip hidden tilt action fragile skin nothing glory cousin green tomorrow spring wrist shed math olympic multiply hip blue scout claw"
+balance = 100_000_000_000_000
+sbtc_balance = 1_000_000_000
+# secret_key: 753b7cc01a1a2e86221266a154af739463fce51219d97e4f856cd7200c3bd2a601
+# stx_address: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
+
+# Unused by the scenario itself — kept only because Clarinet's bundled devnet snapshot is keyed to
+# these exact wallet_1/wallet_2/wallet_3 accounts + the `[[devnet.pox_stacking_orders]]` below (see
+# that section for why removing them is not safe).
+[accounts.wallet_1]
+mnemonic = "sell invite acquire kitten bamboo drastic jelly vivid peace spawn twice guilt pave pen trash pretty park cube fragile unaware remain midnight betray rebuild"
+balance = 100_000_000_000_000
+sbtc_balance = 1_000_000_000
+# secret_key: 7287ba251d44a4d3fd9276c88ce34c5c52a038955511cccaf77e61068649c17801
+# stx_address: ST1SJ3DTE5DN7X54YDH5D64R3BCB6A2AG2ZQ8YPD5
+
+# Recipient for the scenario's send transactions.
+[accounts.wallet_2]
+mnemonic = "hold excess usual excess ring elephant install account glad dry fragile donkey gaze humble truck breeze nation gasp vacuum limb head keep delay hospital"
+balance = 100_000_000_000_000
+sbtc_balance = 1_000_000_000
+# secret_key: 530d9f61984c888536871c6573073bdfc0058896dc1adfe9a6a10dfacadc209101
+# stx_address: ST2CY5V39NHDPWSXMW9QDT3HC3GD6Q6XX4CFRK9AG
+
+# Unused by the scenario — see the `wallet_1` comment above.
+[accounts.wallet_3]
+mnemonic = "cycle puppy glare enroll cost improve round trend wrist mushroom scorpion tower claim oppose clever elephant dinosaur eight problem before frozen dune wagon high"
+balance = 100_000_000_000_000
+sbtc_balance = 1_000_000_000
+# secret_key: d655b2523bcd65e34889725c73064feb17ceb796831c0e111ba1a552b0f31b3901
+# stx_address: ST2JHG361ZXG51QTKY2NQCVBPPRRE2KZB1HR05NNC
+
+[devnet]
+disable_stacks_explorer = true
+disable_bitcoin_explorer = true
+disable_stacks_api = false
+disable_postgres = false
+# Left at Clarinet's own default (matches `@stacks/network`'s StacksDevnet/StacksMocknet default
+# URL, http://localhost:3999 — see `src/devnet.ts`).
+# stacks_api_port = 3999
+# Not actually consumed by Clarinet's own scheduler on this branch anymore -- see
+# `scripts/bitcoin-miner.js`'s `BLOCK_TIME_MS` (kept equal to this value for anyone reading this
+# file) for why and what drives mining instead, including why it's slower than the 3s this was
+# originally set to (a middle ground vs. docs.stacks.co's "High resource usage" 60s suggestion).
+bitcoin_controller_block_time = 10_000
+# Default 5432 collides with other local Postgres instances/containers on dev machines.
+postgres_port = 27432
+
+# Explicit (not left as the implicit `DEFAULT_EPOCH_4_0 = 162` from `network_manifest.rs`):
+# `stx-labs/clarinet` PR #2428 ("pox-5 devnet capabilities") only generates the pox-5-specific
+# stacks-node config (`pox_5_sbtc_contract`/`pox_5_bond_admin`) "when epoch 4.0 is configured" --
+# an *explicit* Devnet.toml value, not merely reaching that burn height under the implicit default.
+# Without this, the staking scenario's devnet never transitions `.pox` off the pox-4-style interface
+# no matter how many blocks pass (verified empirically: still pox-4-style at burn height 194, well
+# past 162). This intentionally makes Devnet.toml differ from the bundled snapshot's `epoch_*`
+# fields -- see the `pox_stacking_orders` comment below for why that's now handled instead of
+# avoided.
+epoch_4_0 = 162
+
+# Clarinet ships a pre-baked chain-state snapshot for faster devnet boot, keyed to this exact set
+# of stacking orders (verified against `DevnetDiffConfig`'s `default_significant_fields` in the
+# `clarinet` source — `epoch_*`/`stacks_signers_keys`/`pox_stacking_orders` are the only fields it
+# compares). Any Devnet.toml that omits or changes them is treated as "incompatible with the
+# snapshot" and — regardless of `--from-genesis`, verified empirically: the confirmation fires
+# unconditionally before that flag is even consulted — drops into an interactive
+# "Do you want to continue? (y/N)" prompt on stdin. The explicit `epoch_4_0` above now deliberately
+# triggers that mismatch (pox-5 staking needs it), so `src/devnet.ts`'s `spawnDevnet` pre-answers
+# "y" on a piped stdin instead of the previous "keep everything identical so it never fires"
+# approach. These three stacking orders stay verbatim regardless -- removing them would be a
+# second, unrelated source of mismatch on top of the intentional `epoch_4_0` one.
+[[devnet.pox_stacking_orders]]
+start_at_cycle = 1
+duration = 10
+auto_extend = true
+wallet = "wallet_1"
+slots = 2
+btc_address = "mr1iPkD9N3RJZZxXRk7xF9d36gffa6exNC"
+
+[[devnet.pox_stacking_orders]]
+start_at_cycle = 1
+duration = 10
+auto_extend = true
+wallet = "wallet_2"
+slots = 2
+btc_address = "muYdXKmX9bByAueDe6KFfHd5Ff1gdN9ErG"
+
+[[devnet.pox_stacking_orders]]
+start_at_cycle = 1
+duration = 10
+auto_extend = true
+wallet = "wallet_3"
+slots = 2
+btc_address = "mvZtbibDAAA3WLpY7zXXFqRa3T4XSknBX7"

@@ -140,6 +140,140 @@ describe("genericGetAccountShape", () => {
     });
   });
 
+  describe("vanished tokens", () => {
+    const network = "mainnet";
+    const currency = { id: "tezos", name: "Tezos" };
+    const heldAsset = {
+      type: "token",
+      assetReference: "0xheld",
+      assetOwner: "addr1",
+      name: "Held",
+    };
+
+    beforeEach(() => {
+      getSyncHashMock.mockReturnValue("sync-hash");
+      extractBalanceMock.mockReturnValue({ value: 0n, locked: 0n });
+      listOperationsMock.mockResolvedValue({ items: [], next: undefined });
+      buildSubAccountsMock.mockReturnValue([]);
+      lastBlockMock.mockResolvedValue({ height: 0 });
+      mergeOpsMock.mockImplementation((_old: any[], newOps: any[]) => newOps ?? []);
+      cleanedOperationMock.mockImplementation((op: any) => op);
+      inferSubOperationsMock.mockReturnValue([]);
+      getBalanceMock.mockResolvedValue([
+        { asset: { type: "native" }, value: 100n, locked: 0n },
+        { asset: heldAsset, value: 500n },
+      ]);
+    });
+
+    function callWithSubAccountToken(): Promise<unknown> {
+      const getShape = genericGetAccountShape(network, currency.id);
+      return getShape(
+        {
+          address: "addr1",
+          initialAccount: { subAccounts: [{ token: { id: "tok1" } }], pendingOperations: [] },
+          currency,
+          derivationMode: "",
+        } as any,
+        { paginationConfig: {} as any },
+      );
+    }
+
+    it("contributes nothing when the bridge has no getAssetFromToken hook", async () => {
+      await callWithSubAccountToken();
+
+      expect(buildSubAccountsMock.mock.calls[0][0].allTokenAssetsBalances).toEqual([
+        { asset: heldAsset, value: 500n },
+      ]);
+    });
+
+    it("includes a zero-value entry for a token that vanished from the fresh balance response", async () => {
+      const vanishedAsset = {
+        type: "token",
+        assetReference: "0xvanished",
+        assetOwner: "addr1",
+        name: "Vanished",
+      };
+      getBridgeApiMock.mockImplementationOnce(() => ({
+        ...defaultBridgeApi(),
+        getAssetFromToken: () => vanishedAsset,
+      }));
+
+      await callWithSubAccountToken();
+
+      expect(buildSubAccountsMock.mock.calls[0][0].allTokenAssetsBalances).toEqual([
+        { asset: heldAsset, value: 500n },
+        { asset: vanishedAsset, value: 0n },
+      ]);
+    });
+
+    it("does not duplicate a still-held token, matching assetReference case-insensitively", async () => {
+      getBridgeApiMock.mockImplementationOnce(() => ({
+        ...defaultBridgeApi(),
+        getAssetFromToken: () => ({ ...heldAsset, assetReference: "0xHELD" }),
+      }));
+
+      await callWithSubAccountToken();
+
+      expect(buildSubAccountsMock.mock.calls[0][0].allTokenAssetsBalances).toEqual([
+        { asset: heldAsset, value: 500n },
+      ]);
+    });
+
+    it.each([
+      ["getAssetFromToken returns undefined", undefined],
+      ["the returned asset is native-shaped (no assetReference key)", { type: "native" }],
+      [
+        "the returned asset has an empty assetReference",
+        { type: "token", assetReference: "", assetOwner: "addr1", name: "Empty" },
+      ],
+    ])("skips a subAccount token when %s", async (_label, returnedAsset) => {
+      getBridgeApiMock.mockImplementationOnce(() => ({
+        ...defaultBridgeApi(),
+        getAssetFromToken: () => returnedAsset,
+      }));
+
+      await callWithSubAccountToken();
+
+      expect(buildSubAccountsMock.mock.calls[0][0].allTokenAssetsBalances).toEqual([
+        { asset: heldAsset, value: 500n },
+      ]);
+    });
+
+    it("still injects a vanished-token entry when the fresh response has no tokens at all (the account's only token got fully swept)", async () => {
+      getBalanceMock.mockResolvedValue([{ asset: { type: "native" }, value: 100n, locked: 0n }]);
+      const vanishedAsset = {
+        type: "token",
+        assetReference: "0xvanished",
+        assetOwner: "addr1",
+        name: "Vanished",
+      };
+      getBridgeApiMock.mockImplementationOnce(() => ({
+        ...defaultBridgeApi(),
+        getAssetFromToken: () => vanishedAsset,
+      }));
+
+      await callWithSubAccountToken();
+
+      expect(buildSubAccountsMock.mock.calls[0][0].allTokenAssetsBalances).toEqual([
+        { asset: vanishedAsset, value: 0n },
+      ]);
+    });
+
+    it("does not fail the whole sync when getAssetFromToken throws for a sub-account", async () => {
+      getBridgeApiMock.mockImplementationOnce(() => ({
+        ...defaultBridgeApi(),
+        getAssetFromToken: () => {
+          throw new Error("boom");
+        },
+      }));
+
+      await expect(callWithSubAccountToken()).resolves.toBeDefined();
+      expect(buildSubAccountsMock.mock.calls[0][0].allTokenAssetsBalances).toEqual([
+        { asset: heldAsset, value: 500n },
+      ]);
+    });
+  });
+
   describe.each(chains)("$currency.id", ({ currency, network }) => {
     test.each([
       [

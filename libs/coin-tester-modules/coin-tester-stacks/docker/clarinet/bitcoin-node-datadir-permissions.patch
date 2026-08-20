@@ -1,0 +1,27 @@
+diff --git a/components/stacks-network/src/orchestrator.rs b/components/stacks-network/src/orchestrator.rs
+index d30af803..b145f744 100644
+--- a/components/stacks-network/src/orchestrator.rs
++++ b/components/stacks-network/src/orchestrator.rs
+@@ -636,8 +636,21 @@ impl DevnetOrchestrator {
+         bitcoind_data_path.push("data");
+         bitcoind_data_path.push(format!("{boot_index}"));
+         bitcoind_data_path.push("bitcoin");
+-        fs::create_dir_all(bitcoind_data_path)
++        fs::create_dir_all(&bitcoind_data_path)
+             .map_err(|e| format!("unable to create bitcoin directory: {e:?}"))?;
++        // This directory is bind-mounted into the bitcoin-node container at `BITCOIND_DATA_DIR`
++        // (see `binds` below) -- on a real Linux Docker host it's owned by whichever user runs
++        // `clarinet` itself, not by the container's own `user: "1000"`. Without this, bitcoind
++        // fails on boot trying to create a subdirectory under its datadir: `filesystem error:
++        // cannot create directories: Permission denied [.../regtest/wallets]`. Never reproduces
++        // locally: Docker Desktop for Mac's bind-mount layer doesn't enforce the same
++        // host/container UID match a real Linux Docker host does.
++        #[cfg(unix)]
++        {
++            use std::os::unix::fs::PermissionsExt;
++            fs::set_permissions(&bitcoind_data_path, fs::Permissions::from_mode(0o777))
++                .map_err(|e| format!("unable to set bitcoin directory permissions: {e:?}"))?;
++        }
+ 
+         let exposed_ports = HashMap::from([
+             (

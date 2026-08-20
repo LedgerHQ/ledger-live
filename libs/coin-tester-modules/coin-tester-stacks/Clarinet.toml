@@ -1,0 +1,42 @@
+# Schema verified against `clarinet new`'s own generated manifest
+# (`clarinet-cli/src/generate/project.rs` in https://github.com/stx-labs/clarinet), not
+# hand-authored from memory.
+[project]
+name = "coin-tester-stacks"
+description = "Local Clarinet devnet fixtures for the Ledger Live Stacks coin tester"
+authors = []
+telemetry = false
+cache_dir = "./.cache"
+
+[contracts.sip-010-test-token]
+path = "contracts/sip-010-test-token.clar"
+# "latest" resolved to epoch 4.0/batch 1 in the generated deployment plan — later than the devnet
+# reliably reaches within the scenario's short run. This contract needs no recent Clarity feature,
+# so pin it to the same epoch the bundled sbtc-registry/sbtc-token requirements already deploy at
+# (batch 0, reached within the first ~40 blocks), verified against `deployments/default.devnet-plan.yaml`.
+epoch = "3.0"
+
+[contracts.signer-manager-stub]
+path = "contracts/signer-manager-stub.clar"
+# Must be epoch 4.0, unlike `sip-010-test-token` above: pox-5 (the trait this contract implements)
+# is a separate, literally-named contract (`...pox-5`, NOT an alias `.pox` ever resolves to) that
+# only exists on-chain once the chain crosses epoch 4.0 (`DEFAULT_EPOCH_4_0 = 162`,
+# `clarinet-files/src/network_manifest.rs`, this pinned commit) -- confirmed on mainnet too, via
+# `/v2/pox`: pox-5 is real and active there (cycle 141), so this isn't a design mismatch, just a
+# devnet-epoch-height one. Deploying at epoch 3.0 (this project's other batch) failed for exactly
+# that reason, empirically: `impl-trait` on a not-yet-deployed `pox-5.signer-manager-trait`.
+epoch = "4.0"
+# Explicit, not left to whatever epoch 4.0 defaults to through the deployment-plan's own epoch
+# string parsing: Clarinet's own devnet-automation reference contracts (`pox5-signer-N`, deployed
+# directly by the orchestrator, bypassing this TOML path entirely) come back as
+# `"clarity_version": "Clarity6"` on a live devnet -- this contract's `as-contract?`/`current-contract`
+# (the required idiom for computing "this contract's own principal" as a value, since epoch 4.0)
+# only exists at that Clarity version, and omitting this field led to a real `err deploy
+# ...signer-manager-stub [(err none)]` on a devnet run, empirically.
+clarity_version = 6
+
+# No `[repl.analysis]`/`check_checker`: that optional, experimental static pass flagged
+# `as-contract` (the pre-Clarity6 idiom, superseded above) as an "unresolved function" -- turned
+# out to be an accurate signal of the real clarity_version problem, not a pure false positive, but
+# removing it isn't needed for correctness once `clarity_version` is set explicitly, and
+# `sip-010-test-token` never hit this pass's checks anyway.

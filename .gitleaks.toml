@@ -9,6 +9,20 @@ description = "Detected a BIP39 mnemonic seed phrase."
 regex = '''(?i)\b(?:seed|dev[_\s]?seed|mnemonic|pass[_\s]?phrase|recovery[_\s]?phrase)\s*[:=\s]\s*(?:[\x60'"]\s*)?((?:[a-zA-Z]{3,8}\s+){10,23}[a-zA-Z]{3,8})(?:\s*[\x60'"]|\s*[,;]|\b)'''
 keywords = ["seed", "mnemonic", "pass", "recovery", "phrase"]
 
+    [[rules.allowlists]]
+    condition = "AND"
+    description = "Ignore Clarinet's own public, deterministic devnet mnemonics (wallet_1/2/3, deployer) -- matched by exact phrase, not by path, so a real mnemonic added anywhere else in this file would still be caught."
+    regexTarget = "match"
+    regexes = [
+        '''twice kind fence tip hidden tilt action fragile skin nothing glory cousin green tomorrow spring wrist shed math olympic multiply hip blue scout claw''',
+        '''sell invite acquire kitten bamboo drastic jelly vivid peace spawn twice guilt pave pen trash pretty park cube fragile unaware remain midnight betray rebuild''',
+        '''hold excess usual excess ring elephant install account glad dry fragile donkey gaze humble truck breeze nation gasp vacuum limb head keep delay hospital''',
+        '''cycle puppy glare enroll cost improve round trend wrist mushroom scorpion tower claim oppose clever elephant dinosaur eight problem before frozen dune wagon high''',
+    ]
+    paths = [
+        '''libs/coin-tester-modules/coin-tester-stacks/settings/Devnet\.toml''',
+    ]
+
 [[rules]]
 id = "seed-array"
 description = "Detected a BIP39 mnemonic seed phrase in array format."
@@ -29,6 +43,21 @@ id = "generic-api-key"
         '''e2e/.+/userdata/.+\.json''',
         '''e2e/desktop/tests/.+/.+\.spec\.ts''',
         '''libs/.+/.+\.test\.ts\.snap''',
+    ]
+
+    [[rules.allowlists]]
+    condition = "AND"
+    description = "Ignore Clarinet's own public, deterministic devnet private keys (Devnet.toml comments and the matching hex private keys in fixtures.ts) -- matched by exact value, not by path, so a real key added anywhere else in these files would still be caught."
+    regexTarget = "match"
+    regexes = [
+        '''753b7cc01a1a2e86221266a154af739463fce51219d97e4f856cd7200c3bd2a601''',
+        '''7287ba251d44a4d3fd9276c88ce34c5c52a038955511cccaf77e61068649c17801''',
+        '''530d9f61984c888536871c6573073bdfc0058896dc1adfe9a6a10dfacadc209101''',
+        '''d655b2523bcd65e34889725c73064feb17ceb796831c0e111ba1a552b0f31b3901''',
+    ]
+    paths = [
+        '''libs/coin-tester-modules/coin-tester-stacks/settings/Devnet\.toml''',
+        '''libs/coin-tester-modules/coin-tester-stacks/src/fixtures\.ts''',
     ]
 
 [[rules]]

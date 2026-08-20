@@ -16,7 +16,6 @@ import { estimateFees } from "../estimateFees";
 jest.mock("../getNextSequence");
 jest.mock("../buildUnsignedTx", () => ({
   buildUnsignedTx: jest.fn(),
-  NETWORK: "mainnet",
 }));
 jest.mock("@stacks/transactions", () => ({
   estimateTransactionByteLength: jest.fn(),

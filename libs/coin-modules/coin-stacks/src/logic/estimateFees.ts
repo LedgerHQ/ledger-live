@@ -8,10 +8,11 @@ import {
   fetchFeeEstimateTransaction,
   serializePayload,
 } from "@stacks/transactions";
+import { getConfiguredStacksNetwork } from "../common-logic";
 import { getStacksBaseUrl } from "../network/api";
 import type { StacksTxData } from "../types";
 import { getNextSequence } from "./getNextSequence";
-import { buildUnsignedTx, NETWORK } from "./buildUnsignedTx";
+import { buildUnsignedTx } from "./buildUnsignedTx";
 
 /** Dynamic, byte-length-based fee (not flat), same underlying mechanism as before the SDK bump --
  * only the SDK call shape changed (`fetchFeeEstimateTransaction`'s 3-tier result). Index 0/low,
@@ -27,7 +28,7 @@ export async function estimateFees(
   const [lowFee] = await fetchFeeEstimateTransaction({
     payload: serializePayload(tx.payload),
     estimatedLength: estimateTransactionByteLength(tx),
-    network: NETWORK,
+    network: getConfiguredStacksNetwork(),
     client: { baseUrl: getStacksBaseUrl() },
   });
 

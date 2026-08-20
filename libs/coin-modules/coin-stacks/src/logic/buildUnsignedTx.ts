@@ -14,11 +14,11 @@ import {
   StacksTransactionWire,
   uintCV,
 } from "@stacks/transactions";
-import type { StacksNetworkName } from "@stacks/network";
 import BigNumber from "bignumber.js";
 import {
   createStxTransferTransaction,
   createTokenTransferTransaction,
+  getConfiguredStacksNetwork,
   validateAddress,
 } from "../common-logic";
 import { STACKS_DUMMY_ADDRESS } from "../constants";
@@ -33,11 +33,6 @@ import { getStakes } from "./getStakes";
 function resolveRecipient(recipient: string): string {
   return validateAddress(recipient).isValid ? recipient : STACKS_DUMMY_ADDRESS;
 }
-
-/** Alpaca (CoinModuleApi) is currently wired mainnet-only for Stacks: the framework selects a
- * network by `currencyId`/coin config, not per transaction-intent, unlike the legacy bridge's
- * per-account `network` field. Testnet stays reachable through the legacy bridge only. */
-export const NETWORK: StacksNetworkName = "mainnet";
 
 function parseSip010AssetReference(assetReference: string): {
   contractAddress: string;
@@ -76,14 +71,30 @@ async function resolveAmount(
     return new BigNumber(intent.amount.toString());
   }
 
+  // The framework (generic-coin-framework/prepareTransaction.ts) already resolves a token sweep's
+  // amount from the synced subAccount's own spendableBalance before this ever runs, and trusting
+  // it -- rather than re-deriving from a fresh `getBalance()` RPC call below, a different
+  // consistency snapshot that can momentarily disagree with the already-synced account -- avoids a
+  // sweep silently leaving a non-zero residual. Only a genuinely unresolved intent (amount still the
+  // raw 0 placeholder, e.g. a non-framework CoinModuleApi caller) falls through to derive it here.
+  const preResolved = new BigNumber(intent.amount.toString());
+  if (preResolved.gt(0)) {
+    return preResolved;
+  }
+
   const balances = await getBalance(intent.sender);
   const isToken = intent.asset.type !== "native";
   const assetReference = "assetReference" in intent.asset ? intent.asset.assetReference : undefined;
+  // Case-insensitive: `getBalance`'s SIP-010 entries are always lowercased (`fetchAllTokenBalances`'s
+  // own normalization, network/api.ts), but `assetReference` here comes from `getAssetFromToken`
+  // (families/stacks/bridge/api.ts), which passes `token.contractAddress` through verbatim -- and a
+  // Stacks address's canonical form is uppercase, so a case-sensitive match would silently miss every
+  // real token here, always resolving to a 0 spendable balance for a max-amount sweep.
   const balance = balances.find(b =>
     isToken
       ? b.asset.type !== "native" &&
         "assetReference" in b.asset &&
-        b.asset.assetReference === assetReference
+        b.asset.assetReference?.toLowerCase() === assetReference?.toLowerCase()
       : b.asset.type === "native",
   );
   const spendable = (balance?.value ?? 0n) - (balance?.locked ?? 0n) - (isToken ? 0n : fee);
@@ -98,6 +109,7 @@ async function buildTransfer(
   if (!intent.senderPublicKey) {
     throw new Error("stacks: senderPublicKey is required to craft a transaction");
   }
+  const network = getConfiguredStacksNetwork();
   const feeAmount = new BigNumber(fee.toString());
   const nonceAmount = new BigNumber(nonce.toString());
   const amount = await resolveAmount(intent, fee);
@@ -112,7 +124,7 @@ async function buildTransfer(
       amount,
       resolveRecipient(intent.recipient),
       AnchorMode.Any,
-      NETWORK,
+      network,
       intent.senderPublicKey,
       {
         fee: feeAmount,
@@ -135,7 +147,7 @@ async function buildTransfer(
     senderAddress: intent.sender,
     recipientAddress: resolveRecipient(intent.recipient),
     anchorMode: AnchorMode.Any,
-    network: NETWORK,
+    network,
     publicKey: intent.senderPublicKey,
     fee: feeAmount,
     nonce: nonceAmount,
@@ -150,6 +162,7 @@ async function buildStaking(
   if (!intent.senderPublicKey) {
     throw new Error("stacks: senderPublicKey is required to craft a transaction");
   }
+  const network = getConfiguredStacksNetwork();
 
   const poxInfo = await fetchPoxInfo();
   const { address: poxAddress, name: poxName } = parseContractPrincipal(
@@ -178,7 +191,7 @@ async function buildStaking(
         uintCV(startBurnHt),
         signerCalldata ? someCV(bufferCV(Buffer.from(signerCalldata, "hex"))) : noneCV(),
       ],
-      network: NETWORK,
+      network,
       publicKey: intent.senderPublicKey,
       fee: fee.toString(),
       nonce: nonce.toString(),
@@ -204,7 +217,7 @@ async function buildStaking(
       contractName: poxName,
       functionName: "unstake",
       functionArgs: [contractPrincipalCV(signerAddress, signerName)],
-      network: NETWORK,
+      network,
       publicKey: intent.senderPublicKey,
       fee: fee.toString(),
       nonce: nonce.toString(),

@@ -34,7 +34,12 @@ function toOperation(params: {
     recipients: params.recipients,
     value: params.value,
     asset: params.asset,
-    details: params.memo ? { memo: params.memo } : undefined,
+    // `ledgerOpType` is required by `generic-coin-framework/buildSubAccounts.ts`, which rebuilds
+    // each token sub-account operation's own `type` from this field instead of the top-level one
+    // above (`op.extra?.ledgerOpType`, generic-coin-framework/utils.ts) -- without it every SIP-010
+    // sub-account operation's type is silently `undefined`. Same convention as coin-vechain/
+    // coin-multiversx's own `listOperations.ts`.
+    details: { ledgerOpType: params.type, ...(params.memo ? { memo: params.memo } : {}) },
     tx: {
       hash: params.hash,
       block: { height: params.blockHeight, hash: params.blockHash, time: params.date },
