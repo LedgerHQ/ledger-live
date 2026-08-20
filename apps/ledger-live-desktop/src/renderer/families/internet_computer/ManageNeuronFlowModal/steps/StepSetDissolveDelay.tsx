@@ -44,11 +44,8 @@ const StepSetDissolveDelay = ({
   // An increase is bounded by the room left under the maximum, not by the maximum itself: the bridge
   // rejects `current + additional > max`, so clamping to MAX_DAYS would still let the entry overshoot.
   const remainingSeconds = BigInt(NNS_MAXIMUM_DISSOLVE_DELAY) - currentSeconds;
-  const allowedDays = isIncrease
-    ? remainingSeconds > 0n
-      ? remainingSeconds / BigInt(SECONDS_IN_DAY)
-      : 0n
-    : BigInt(MAX_DAYS);
+  const remainingDays = remainingSeconds > 0n ? remainingSeconds / BigInt(SECONDS_IN_DAY) : 0n;
+  const allowedDays = isIncrease ? remainingDays : BigInt(MAX_DAYS);
 
   const onChange = useCallback(
     (nextDays: string) => {
