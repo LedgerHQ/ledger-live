@@ -586,7 +586,7 @@ describe("estimateTronifyFees", () => {
     mockGetEnergyRentQuote.mockResolvedValue(trxQuote);
   });
 
-  it("returns value, originalValue and savings for a TRX-denominated quote", async () => {
+  it("should return value, originalValue and savings when the quote is TRX-denominated", async () => {
     const result = await estimateTronifyFees(mockConfig, sendTrc20);
 
     expect(result).toEqual({
@@ -596,7 +596,7 @@ describe("estimateTronifyFees", () => {
     });
   });
 
-  it("passes the raw estimateEnergy result as the energy pledge (no client-side minimum)", async () => {
+  it("should pass the raw estimateEnergy result as the energy pledge without a client-side minimum", async () => {
     mockTriggerConstantContract.mockResolvedValue({ energy_used: 5_000 });
 
     await estimateTronifyFees(mockConfig, sendTrc20);
@@ -606,7 +606,7 @@ describe("estimateTronifyFees", () => {
     );
   });
 
-  it("delegates energy to the sender address, not the recipient", async () => {
+  it("should delegate energy to the sender address, not the recipient", async () => {
     await estimateTronifyFees(mockConfig, sendTrc20);
 
     expect(mockGetEnergyRentQuote).toHaveBeenCalledWith(
@@ -617,7 +617,7 @@ describe("estimateTronifyFees", () => {
     );
   });
 
-  it("quotes with the 10-min fastTrade duration and 0.8 TRX bandwidth top-up", async () => {
+  it("should quote with the 10-min fastTrade duration and 0.8 TRX bandwidth top-up", async () => {
     await estimateTronifyFees(mockConfig, sendTrc20);
 
     expect(mockGetEnergyRentQuote).toHaveBeenCalledWith(
@@ -625,28 +625,29 @@ describe("estimateTronifyFees", () => {
     );
   });
 
-  it("computes savings correctly as originalValue - value", async () => {
+  it("should compute savings as originalValue - value", async () => {
     const result = await estimateTronifyFees(mockConfig, sendTrc20);
 
     expect(result.originalValue).toBeDefined();
-    expect(result.savings).toBe(result.originalValue! - result.value);
+    const originalValue = result.originalValue as bigint;
+    expect(result.savings).toBe(originalValue - result.value);
   });
 
-  it("throws for a native TRX send — Tronify only covers TRC-20", async () => {
+  it("should throw when the intent is a native TRX send", async () => {
     await expect(estimateTronifyFees(mockConfig, sendNative)).rejects.toThrow(
       /only available for TRC-20/,
     );
     expect(mockGetEnergyRentQuote).not.toHaveBeenCalled();
   });
 
-  it("throws for a TRC-10 send — Tronify only covers TRC-20", async () => {
+  it("should throw when the intent is a TRC-10 send", async () => {
     await expect(estimateTronifyFees(mockConfig, sendTrc10)).rejects.toThrow(
       /only available for TRC-20/,
     );
     expect(mockGetEnergyRentQuote).not.toHaveBeenCalled();
   });
 
-  it("throws when Tronify returns a USDT-denominated quote (Flow 2 not yet supported)", async () => {
+  it("should throw when Tronify returns a USDT-denominated quote", async () => {
     mockGetEnergyRentQuote.mockResolvedValue({ ...trxQuote, payCoinCode: "USDT" });
 
     await expect(estimateTronifyFees(mockConfig, sendTrc20)).rejects.toThrow(
@@ -654,7 +655,7 @@ describe("estimateTronifyFees", () => {
     );
   });
 
-  it("propagates TronifyApiError from getEnergyRentQuote — no silent fallback", async () => {
+  it("should propagate TronifyApiError from getEnergyRentQuote without silent fallback", async () => {
     const apiError = Object.assign(new Error("quota exceeded"), {
       name: "TronifyApiError",
       resCode: 429,
@@ -667,14 +668,14 @@ describe("estimateTronifyFees", () => {
     });
   });
 
-  it("propagates an estimateEnergy failure — no silent fallback", async () => {
+  it("should propagate an estimateEnergy failure without silent fallback", async () => {
     mockTriggerConstantContract.mockRejectedValue(new Error("node unreachable"));
 
     await expect(estimateTronifyFees(mockConfig, sendTrc20)).rejects.toThrow("node unreachable");
     expect(mockGetEnergyRentQuote).not.toHaveBeenCalled();
   });
 
-  it("propagates a getChainParameters failure — no silent fallback to pessimistic originalValue", async () => {
+  it("should propagate a getChainParameters failure without silent fallback to pessimistic originalValue", async () => {
     mockGetChainParameters.mockRejectedValue(new Error("chain params unavailable"));
 
     await expect(estimateTronifyFees(mockConfig, sendTrc20)).rejects.toThrow(
@@ -682,7 +683,7 @@ describe("estimateTronifyFees", () => {
     );
   });
 
-  it("clamps savings to 0n when Tronify quote exceeds the standard burn", async () => {
+  it("should clamp savings to 0n when the Tronify quote exceeds the standard burn", async () => {
     // 10 TRX (10_000_000 SUN) > STANDARD_BURN (7_047_950n)
     mockGetEnergyRentQuote.mockResolvedValue({ ...trxQuote, payCoinAmt: "10" });
 
@@ -693,19 +694,27 @@ describe("estimateTronifyFees", () => {
     expect(result.originalValue).toBe(STANDARD_BURN);
   });
 
-  it("propagates the Tronify API response when energyNeeded is 0 — no client-side guard", async () => {
-    // energyNeeded=0 is unusual for a TRC-20 transfer but estimateEnergy does not throw on it.
-    // We let getEnergyRentQuote receive 0n and propagate whatever the API returns (error or quote).
+  it("should propagate the Tronify API response when simulation returns energyNeeded=0", async () => {
+    // triggerConstantContract returns 0 — estimateEnergy reports 0, simulation did run.
     mockTriggerConstantContract.mockResolvedValue({ energy_used: 0 });
 
-    // Default mock returns a valid quote even for energy=0 — behaviour is well-defined.
     const result = await estimateTronifyFees(mockConfig, sendTrc20);
 
     expect(mockGetEnergyRentQuote).toHaveBeenCalledWith(expect.objectContaining({ energy: 0n }));
     expect(result.value).toBeDefined();
   });
 
-  it("standard estimateFees path is unchanged when feeOptionId is not tronify", async () => {
+  it("should pass energyNeeded=0 to getEnergyRentQuote when the amount-guard short-circuits the simulation", async () => {
+    // amount === 0n && !useAllAmount → estimateEnergy returns 0 without calling triggerConstantContract
+    const zeroAmountIntent = { ...sendTrc20, amount: 0n };
+
+    await estimateTronifyFees(mockConfig, zeroAmountIntent);
+
+    expect(mockTriggerConstantContract).not.toHaveBeenCalled();
+    expect(mockGetEnergyRentQuote).toHaveBeenCalledWith(expect.objectContaining({ energy: 0n }));
+  });
+
+  it("should use the standard estimateFees path when feeOptionId is not tronify", async () => {
     const result = await estimateFees(mockConfig, sendTrc20);
 
     expect(result.value).toBe(STANDARD_BURN);

@@ -292,9 +292,9 @@ const withBreakdown = (value: bigint, breakdown: TronResourceBreakdown): FeeEsti
   parameters: { ...breakdown },
 });
 
-// 10-min fastTrade window; aligns with SPONSORED_RENTAL_DURATION_SECONDS in bridge/getEstimateFees.ts
+// 10-min fastTrade window matching the UI's fee-quote TTL
 const TRONIFY_RENTAL_DURATION_SECONDS = 600;
-// Bandwidth top-up Tronify bundles; aligns with SPONSORED_RENTAL_EXTRA_TRX in bridge/getEstimateFees.ts
+// Bandwidth top-up Tronify bundles with each rental to cover the transaction's bandwidth cost
 const TRONIFY_RENTAL_EXTRA_TRX = 0.8;
 
 /**
@@ -318,7 +318,8 @@ export async function estimateTronifyFees(
   const energyNeeded = await estimateEnergy(config, intent);
 
   // computeFeesRaw does not catch — any chain-params failure propagates here (no silent fallback
-  // on originalValue, per ADR-050 Option 3). Run in parallel with the Tronify quote.
+  // on originalValue, per ADR-050 Option 3). Both calls are independent once energyNeeded is
+  // known, so they run in parallel to keep pricing latency minimal.
   // getEnergyRentQuote resolves its provider through the coinConfig singleton (not `config`); this
   // is the shared design of the energyRent module — the provider is selected via remote coin-config.
   const [originalValue, quote] = await Promise.all([

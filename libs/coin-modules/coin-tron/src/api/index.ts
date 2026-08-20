@@ -68,6 +68,8 @@ export function createApi(): CoinModuleApi<TronCoinConfig, TronMemo, TronTxData>
     ): Promise<CraftedTransaction> => {
       throw new Error("craftRawTransaction is not supported");
     },
+    // listFeeOptions is deferred to LIVE-34996 — the bridge layer currently handles fee-option
+    // discovery; the generic fee-picker will advertise "tronify" once that ticket lands.
     estimateFees: async (context, transactionIntent, options) => {
       const config = await context.config();
       if (options?.feeOption?.feeOptionId === TRONIFY_FEE_OPTION_ID) {
