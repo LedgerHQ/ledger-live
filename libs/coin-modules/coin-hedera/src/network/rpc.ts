@@ -1,7 +1,7 @@
 import type { Transaction as HederaTransaction, TransactionResponse } from "@hashgraph/sdk";
 import { Client } from "@hashgraph/sdk";
-import type { HederaCoinConfig } from "../config";
 import { resolveConfig } from "../logic/utils";
+import type { HederaCoinConfig } from "../types";
 
 async function broadcastTransaction({
   configOrCurrencyId,

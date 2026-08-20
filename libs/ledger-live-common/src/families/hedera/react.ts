@@ -58,6 +58,7 @@ export function useHederaEnrichedDelegation(
       activeStake: validator?.activeStake ?? new BigNumber(0),
       activeStakePercentage: validator?.activeStakePercentage ?? new BigNumber(0),
       overstaked: validator?.overstaked ?? false,
+      isLedgerNode: validator?.isLedgerNode ?? false,
     },
   };
 }

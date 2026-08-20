@@ -1,3 +1,4 @@
+export * from "./config";
 export * from "./coinframework";
 export * from "./bridge";
 export * from "./logic";

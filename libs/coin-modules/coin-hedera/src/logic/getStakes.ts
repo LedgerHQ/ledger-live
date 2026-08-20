@@ -1,6 +1,6 @@
 import type { Page, Stake } from "@ledgerhq/coin-module-framework/api/types";
-import type { HederaCoinConfig } from "../config";
 import { apiClient } from "../network/api";
+import type { HederaCoinConfig } from "../types";
 
 /**
  * Fetch stakes for a given Hedera account.

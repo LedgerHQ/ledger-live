@@ -1,6 +1,6 @@
 import type { Page, Reward } from "@ledgerhq/coin-module-framework/api/types";
-import type { HederaCoinConfig } from "../config";
 import { apiClient } from "../network/api";
+import type { HederaCoinConfig } from "../types";
 
 /**
  * Fetch staking rewards for a given Hedera account.

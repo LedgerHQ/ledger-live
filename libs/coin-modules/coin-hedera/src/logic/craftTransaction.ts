@@ -11,7 +11,6 @@ import {
 import type { FeeEstimation, TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
-import type { HederaCoinConfig } from "../config";
 import {
   DEFAULT_GAS_LIMIT,
   HEDERA_TRANSACTION_MODES,
@@ -19,7 +18,7 @@ import {
 } from "../constants";
 import { rpcClient } from "../network/rpc";
 import { createTransactionId, toEVMAddress } from "../network/utils";
-import type { HederaMemo, HederaTxData } from "../types";
+import type { HederaMemo, HederaTxData, HederaCoinConfig } from "../types";
 import { hasSpecificIntentData, resolveConfig, serializeTransaction } from "./utils";
 
 interface BuilderOperator {
