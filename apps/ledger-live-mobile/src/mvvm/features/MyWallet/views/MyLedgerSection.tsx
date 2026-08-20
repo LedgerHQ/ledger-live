@@ -17,6 +17,7 @@ import { useAutoRedirectToPostOnboarding } from "~/hooks/useAutoRedirectToPostOn
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 import { urls } from "~/utils/urls";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
+import { LNUpsellBanner } from "LLM/features/LNUpsell";
 import type { LumenNativeStackNavigationOptions } from "LLM/components/Navigation";
 import type { MyWalletNavigatorStackParamList } from "../types";
 import { ExploreDevicesItem } from "./DeviceSection/components/ExploreDevicesItem";
@@ -133,6 +134,9 @@ function MyLedgerSectionContent({ onPairingStateChanged }: MyLedgerSectionProps)
           requestToSetHeaderOptions={requestToSetHeaderOptions}
           withMyLedgerTracking
         >
+          <Box lx={{ paddingHorizontal: "s16", paddingTop: "s16" }}>
+            <LNUpsellBanner location="profile" />
+          </Box>
           {/* TODO(wallet40-myWallet): enable ExploreDevicesItem when ready */}
           {!shouldDisplayMyWallet && <ExploreDevicesItem onPress={onExploreDevices} />}
         </SelectDevice2>
