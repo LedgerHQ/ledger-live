@@ -6954,6 +6954,77 @@ importers:
         specifier: 1.51.0
         version: 1.51.0
 
+  features/flow/pay-card-wallets:
+    dependencies:
+      '@domain/api-card-management':
+        specifier: workspace:^
+        version: link:../../../domain/api/card-management
+    devDependencies:
+      '@support/jest-features-flow':
+        specifier: workspace:*
+        version: link:../../../support/jest-features-flow
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@testing-library/dom':
+        specifier: 'catalog:'
+        version: 10.4.1
+      '@testing-library/jest-dom':
+        specifier: 'catalog:'
+        version: 6.9.1
+      '@testing-library/react':
+        specifier: 'catalog:'
+        version: 16.3.1(@testing-library/dom@10.4.1)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
+      '@types/react':
+        specifier: 'catalog:'
+        version: 19.0.14
+      jest:
+        specifier: 'catalog:'
+        version: 30.5.0(@types/node@24.12.0)
+      jest-environment-jsdom:
+        specifier: 'catalog:'
+        version: 30.5.0
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.64.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.79.0
+      react:
+        specifier: 19.1.4
+        version: 19.1.4
+      react-dom:
+        specifier: 19.1.4
+        version: 19.1.4(react@19.1.4)
+      react-redux:
+        specifier: 'catalog:'
+        version: 9.2.0(@types/react@19.0.14)(react@19.1.4)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+    optionalDependencies:
+      '@oxlint/binding-darwin-arm64':
+        specifier: 1.51.0
+        version: 1.51.0
+      '@oxlint/binding-darwin-x64':
+        specifier: 1.51.0
+        version: 1.51.0
+      '@oxlint/binding-linux-x64-gnu':
+        specifier: 1.51.0
+        version: 1.51.0
+      '@oxlint/binding-win32-x64-msvc':
+        specifier: 1.51.0
+        version: 1.51.0
+
   features/flow/pay-contact:
     dependencies:
       '@domain/entity-contact':
@@ -28864,7 +28935,7 @@ packages:
     resolution: {integrity: sha512-/FQM1EDkTsf63Ub2C6O7GuYFDsSXUwsaZDurV0np41ocwq0jthUAYCmhBX9f+KwlaCgIuWyr/4WlUQUBfKfZog==}
     engines: {node: '>=6'}
     peerDependencies:
-      rxjs: ^5.5.10
+      rxjs: '*'
       zenObservable: '*'
     peerDependenciesMeta:
       rxjs:
@@ -31775,8 +31846,8 @@ packages:
   es-module-lexer@1.7.0:
     resolution: {integrity: sha512-jEQoCwk8hyb2AZziIOLhDqpm5+2ww5uIE6lkO/6jcOCusfk6LhMHpXXfBLXTZ7Ydyt0j4VoUQv6uGNYbdW+kBA==}
 
-  es-module-lexer@2.3.2:
-    resolution: {integrity: sha512-poHGpORABojJJucnV9KbOavETW8lBVnphkW77ER5/BQ5Fz7oXSoCNek7IH3vR5nRjdsEz926ibFYX8KtLQmdyw==}
+  es-module-lexer@2.1.0:
+    resolution: {integrity: sha512-n27zTYMjYu1aj4MjCWzSP7G9r75utsaoc8m61weK+W8JMBGGQybd43GstCXZ3WNmSFtGT9wi59qQTW6mhTR5LQ==}
 
   es-object-atoms@1.1.1:
     resolution: {integrity: sha512-FGgH2h8zKNim9ljj7dankFPcICIK9Cp5bm+c2gQSYePhpaG5+esrLODihIorn+Pe6FGJzWhXQotPv73jTaldXA==}
@@ -37046,6 +37117,10 @@ packages:
   picomatch@3.0.1:
     resolution: {integrity: sha512-I3EurrIQMlRc9IaAZnqRR044Phh2DXY+55o7uJ0V+hYZAcQYSuFWsc9q5PvyDHUSCe1Qxn/iBz+78s86zWnGag==}
     engines: {node: '>=10'}
+
+  picomatch@4.0.4:
+    resolution: {integrity: sha512-QP88BAKvMam/3NxH6vj2o21R6MjxZUAd6nlwAS/pnGvN9IVLocLHxGYIzFhg6fUQ+5th6P4dv4eW9jX3DSIj7A==}
+    engines: {node: '>=12'}
 
   picomatch@4.0.5:
     resolution: {integrity: sha512-RvwwcruNjI1ncT5xRakeyS9Lf8lcItv34KD+aif+VH9kduAyfYBipGh12274xtenIPZ119/R9BdTBa8gAwSh0A==}
@@ -46360,12 +46435,12 @@ snapshots:
     dependencies:
       '@emnapi/wasi-threads': 1.2.2
       tslib: 2.6.2
+    optional: true
 
   '@emnapi/core@1.11.3':
     dependencies:
       '@emnapi/wasi-threads': 1.2.3
       tslib: 2.6.2
-    optional: true
 
   '@emnapi/core@1.9.2':
     dependencies:
@@ -46381,11 +46456,11 @@ snapshots:
   '@emnapi/runtime@1.11.2':
     dependencies:
       tslib: 2.6.2
+    optional: true
 
   '@emnapi/runtime@1.11.3':
     dependencies:
       tslib: 2.6.2
-    optional: true
 
   '@emnapi/runtime@1.9.2':
     dependencies:
@@ -46400,11 +46475,11 @@ snapshots:
   '@emnapi/wasi-threads@1.2.2':
     dependencies:
       tslib: 2.6.2
+    optional: true
 
   '@emnapi/wasi-threads@1.2.3':
     dependencies:
       tslib: 2.6.2
-    optional: true
 
   '@emotion/babel-plugin@11.13.5':
     dependencies:
@@ -50313,14 +50388,14 @@ snapshots:
 
   '@napi-rs/wasm-runtime@0.2.12':
     dependencies:
-      '@emnapi/core': 1.11.2
-      '@emnapi/runtime': 1.11.2
+      '@emnapi/core': 1.11.3
+      '@emnapi/runtime': 1.11.3
       '@tybys/wasm-util': 0.10.3
 
   '@napi-rs/wasm-runtime@0.2.4':
     dependencies:
-      '@emnapi/core': 1.11.2
-      '@emnapi/runtime': 1.11.2
+      '@emnapi/core': 1.11.3
+      '@emnapi/runtime': 1.11.3
       '@tybys/wasm-util': 0.9.0
 
   '@napi-rs/wasm-runtime@1.1.6(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3)':
@@ -51162,7 +51237,7 @@ snapshots:
       detect-libc: 2.1.2
       is-glob: 4.0.3
       node-addon-api: 7.1.1
-      picomatch: 4.0.5
+      picomatch: 4.0.4
     optionalDependencies:
       '@parcel/watcher-android-arm64': 2.6.0
       '@parcel/watcher-darwin-arm64': 2.6.0
@@ -62360,7 +62435,7 @@ snapshots:
 
   es-module-lexer@1.7.0: {}
 
-  es-module-lexer@2.3.2: {}
+  es-module-lexer@2.1.0: {}
 
   es-object-atoms@1.1.1:
     dependencies:
@@ -63186,6 +63261,10 @@ snapshots:
   fd-slicer@1.1.0:
     dependencies:
       pend: 1.2.0
+
+  fdir@6.5.0(picomatch@4.0.4):
+    optionalDependencies:
+      picomatch: 4.0.4
 
   fdir@6.5.0(picomatch@4.0.5):
     optionalDependencies:
@@ -65673,12 +65752,12 @@ snapshots:
       '@types/node': 24.12.0
       anymatch: 3.1.3
       fb-watchman: 2.0.2
-      fdir: 6.5.0(picomatch@4.0.5)
+      fdir: 6.5.0(picomatch@4.0.4)
       graceful-fs: 4.2.11
       jest-regex-util: 30.5.0
       jest-util: 30.5.0
       jest-worker: 30.5.0
-      picomatch: 4.0.5
+      picomatch: 4.0.4
 
   jest-leak-detector@30.5.0:
     dependencies:
@@ -65700,7 +65779,7 @@ snapshots:
       chalk: 4.1.2
       graceful-fs: 4.2.11
       jest-util: 30.5.0
-      picomatch: 4.0.5
+      picomatch: 4.0.4
       pretty-format: 30.5.0
       slash: 3.0.0
       stack-utils: 2.0.6
@@ -65824,7 +65903,7 @@ snapshots:
       chalk: 4.1.2
       cjs-module-lexer: 2.2.0
       collect-v8-coverage: 1.0.2
-      es-module-lexer: 2.3.2
+      es-module-lexer: 2.1.0
       glob: 13.0.6
       graceful-fs: 4.2.11
       jest-haste-map: 30.5.0
@@ -65877,7 +65956,7 @@ snapshots:
       chalk: 4.1.2
       ci-info: 4.3.1
       graceful-fs: 4.2.11
-      picomatch: 4.0.5
+      picomatch: 4.0.4
 
   jest-validate@29.7.0:
     dependencies:
@@ -69635,6 +69714,8 @@ snapshots:
   picomatch@2.3.1: {}
 
   picomatch@3.0.1: {}
+
+  picomatch@4.0.4: {}
 
   picomatch@4.0.5: {}
 
@@ -73731,8 +73812,8 @@ snapshots:
 
   tinyglobby@0.2.17:
     dependencies:
-      fdir: 6.5.0(picomatch@4.0.5)
-      picomatch: 4.0.5
+      fdir: 6.5.0(picomatch@4.0.4)
+      picomatch: 4.0.4
 
   tinygradient@1.1.5:
     dependencies:
