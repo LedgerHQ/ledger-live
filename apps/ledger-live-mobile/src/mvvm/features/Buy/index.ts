@@ -4,7 +4,6 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useSelector } from "~/context/hooks";
 import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { AccountLike, Account } from "@ledgerhq/types-live";
-import { isAccountEmpty } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { getAccountCurrency, isTokenAccount } from "@ledgerhq/live-common/account/index";
 import { shallowAccountsSelector, flattenAccountsSelector } from "~/reducers/accounts";
 import { NavigatorName, ScreenName } from "~/const";
