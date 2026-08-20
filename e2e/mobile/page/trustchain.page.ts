@@ -9,6 +9,8 @@ import {
 const DEFAULT_TIMEOUT = 60_000;
 const POLL_INTERVAL = 2_000;
 
+const byName = (a: string, b: string) => a.localeCompare(b);
+
 /**
  * Assertions on what a Ledger Sync trustchain holds, read through the CLI rather than the UI.
  * Every method pulls a fresh copy, so callers never juggle pulled payloads themselves.
@@ -44,9 +46,9 @@ export default class TrustchainPage {
 
   @Step("Expect trustchain to hold exactly the accounts $0")
   async expectAccountIds(accountIds: string[], timeout = DEFAULT_TIMEOUT) {
-    const expected = accountIds.toSorted();
+    const expected = accountIds.toSorted(byName);
     const actual = await this.waitUntil(
-      async () => (await this.getAccounts()).map(account => account.id).toSorted(),
+      async () => (await this.getAccounts()).map(account => account.id ?? "").toSorted(byName),
       ids => JSON.stringify(ids) === JSON.stringify(expected),
       timeout,
     );
