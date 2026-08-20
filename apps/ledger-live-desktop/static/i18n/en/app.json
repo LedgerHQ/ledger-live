@@ -10183,7 +10183,8 @@
           "noDissolveDelay": "No dissolve delay",
           "setDissolveDelay": "Set dissolve delay",
           "increaseDissolveDelay": "Increase dissolve delay",
-          "expiresIn": "Voting power decays in {{duration}}",
+          "decayStartsIn": "Voting power starts decaying in {{duration}}",
+          "decaying": "Voting power is decaying — reaches zero in {{duration}}",
           "expired": "Voting power lost — following has been cleared",
           "confirmFollowing": "Confirm following",
           "confirmFollowingTooltip": "Confirm your following at least every six months, or your neuron gradually loses its voting power."
@@ -10192,6 +10193,8 @@
           "title": "Maturity",
           "tooltip": "Maturity is the reward a neuron accrues. Stake it back into the neuron, or spawn it into a new one.",
           "available": "Available maturity",
+          "staked": "Staked maturity",
+          "stakedTooltip": "Maturity already staked into the neuron. It counts toward voting power and can no longer be spawned into a new neuron.",
           "stake": "Stake maturity",
           "spawn": "Spawn neuron",
           "autoStake": "Automatic maturity staking",
@@ -10222,7 +10225,7 @@
       "setDissolveDelay": {
         "title": "Dissolve delay",
         "setDescription": "Choose how long the neuron takes to dissolve. Between {{min}} and {{max}} days.",
-        "increaseDescription": "Add to the neuron's dissolve delay. The total cannot exceed {{max}} days, and it can never be lowered.",
+        "increaseDescription": "Add to the neuron's dissolve delay. You can add up to {{remaining}} more days, for a total of {{max}}, and it can never be lowered.",
         "days": "Days",
         "resulting": "New dissolve delay: {{duration}}",
         "belowVotingThreshold": "Below {{days}} days the neuron cannot vote and earns no rewards."

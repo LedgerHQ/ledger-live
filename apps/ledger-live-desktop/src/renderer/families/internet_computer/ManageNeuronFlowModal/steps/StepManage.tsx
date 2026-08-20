@@ -1,4 +1,9 @@
-import { ICP_FEES, KNOWN_TOPICS } from "@ledgerhq/live-common/families/internet_computer/consts";
+import {
+  ICP_FEES,
+  KNOWN_TOPICS,
+  NNS_CLEAR_FOLLOWING_AFTER_SECONDS,
+  NNS_MAXIMUM_DISSOLVE_DELAY,
+} from "@ledgerhq/live-common/families/internet_computer/consts";
 import {
   ageMultiplier,
   dissolveDelayMultiplier,
@@ -76,6 +81,23 @@ const StepManage = ({
   const controlledActions = (available: boolean, action: () => void, label: string) =>
     isControlled && available ? [{ label, onClick: action }] : [];
 
+  // Full power for six months, then a month of linear decay, then power and following are both gone.
+  // getSecondsTillVotingPowerExpires counts to that last moment, so a remainder inside the
+  // clear-following window means decay has already begun.
+  const votingPowerCountdown = (remaining: number) => {
+    if (remaining <= 0) {
+      return t("internetComputer.manageNeuronFlow.manage.votingPower.expired");
+    }
+    if (remaining <= NNS_CLEAR_FOLLOWING_AFTER_SECONDS) {
+      return t("internetComputer.manageNeuronFlow.manage.votingPower.decaying", {
+        duration: formatDuration(remaining),
+      });
+    }
+    return t("internetComputer.manageNeuronFlow.manage.votingPower.decayStartsIn", {
+      duration: formatDuration(remaining - NNS_CLEAR_FOLLOWING_AFTER_SECONDS),
+    });
+  };
+
   return (
     <Box flow={2} px={4}>
       <TrackPage
@@ -117,18 +139,24 @@ const StepManage = ({
           )
         }
       >
+        {/* This row and the next are the base the bonuses below multiply. The row used to show the
+            cached stake, which is neither the neuron's own figure above (fees are deducted from it)
+            nor the base voting power is computed from (staked maturity is added to it). */}
         <NeuronDetailRow
           label={t("internetComputer.manageNeuronFlow.manage.votingPower.staked")}
           value={
             <FormattedVal
-              val={toBigNumber(neuron.cachedNeuronStakeE8s)}
+              val={toBigNumber(neuronStake(neuron))}
               unit={unit}
               showCode
               disableRounding
             />
           }
           actions={
-            isControlled
+            // A top-up is a ledger transfer with no minimum, so the only bound is covering the fee.
+            // Without spendable ICP every amount comes back as NotEnoughBalance, which makes the
+            // whole flow a dead end rather than a correctable mistake.
+            isControlled && account.spendableBalance.gt(ICP_FEES)
               ? [
                   {
                     label: t("internetComputer.manageNeuronFlow.manage.votingPower.increaseStake"),
@@ -137,6 +165,18 @@ const StepManage = ({
                   },
                 ]
               : []
+          }
+        />
+        <NeuronDetailRow
+          label={t("internetComputer.manageNeuronFlow.manage.maturity.staked")}
+          tooltip={t("internetComputer.manageNeuronFlow.manage.maturity.stakedTooltip")}
+          value={
+            <FormattedVal
+              val={toBigNumber(neuron.stakedMaturityE8sEquivalent)}
+              unit={unit}
+              showCode
+              disableRounding
+            />
           }
         />
         {/* State owns the lifecycle actions. It used to share a row with the age bonus, which read
@@ -182,7 +222,9 @@ const StepManage = ({
               : t("internetComputer.manageNeuronFlow.manage.votingPower.noDissolveDelay")
           }
           actions={controlledActions(
-            true,
+            // At the maximum there is no legal entry left: the bridge rejects any addition that
+            // would overshoot, so offering the flow only leads to an unavoidable error.
+            dissolveDelay < BigInt(NNS_MAXIMUM_DISSOLVE_DELAY),
             actions.onClickSetDissolveDelay,
             // Must agree with the transaction type useNeuronActions picks: only a dissolved neuron
             // sets its delay outright, every other state can only add to it.
@@ -195,13 +237,7 @@ const StepManage = ({
         />
         {secondsTillExpiry === undefined ? null : (
           <NeuronDetailRow
-            label={
-              secondsTillExpiry > 0
-                ? t("internetComputer.manageNeuronFlow.manage.votingPower.expiresIn", {
-                    duration: formatDuration(secondsTillExpiry),
-                  })
-                : t("internetComputer.manageNeuronFlow.manage.votingPower.expired")
-            }
+            label={votingPowerCountdown(secondsTillExpiry)}
             tooltip={t(
               "internetComputer.manageNeuronFlow.manage.votingPower.confirmFollowingTooltip",
             )}
@@ -240,6 +276,19 @@ const StepManage = ({
               t("internetComputer.manageNeuronFlow.manage.maturity.spawn"),
             ),
           ]}
+        />
+        {/* Rendered even at zero: the section total is the two maturities added together, so hiding
+            a component leaves a heading nobody can reconcile against its rows. */}
+        <NeuronDetailRow
+          label={t("internetComputer.manageNeuronFlow.manage.maturity.staked")}
+          tooltip={t("internetComputer.manageNeuronFlow.manage.maturity.stakedTooltip")}
+          value={
+            <FormattedVal
+              val={toBigNumber(neuron.stakedMaturityE8sEquivalent)}
+              unit={unit}
+              disableRounding
+            />
+          }
         />
         <NeuronDetailRow
           label={t("internetComputer.manageNeuronFlow.manage.maturity.autoStake")}
