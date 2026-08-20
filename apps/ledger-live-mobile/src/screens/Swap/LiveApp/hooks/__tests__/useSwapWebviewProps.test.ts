@@ -181,7 +181,7 @@ describe("useSwapWebviewProps", () => {
     expect(result.current.inputs.isModularDrawer).toBe("true");
   });
 
-  it("should pass device-intent sign variant, enabled, and active when the swap manifest is allowlisted", () => {
+  it("should pass device-intent sign variant and enabled state to the live app", () => {
     const { result } = renderHook(
       () =>
         useSwapWebviewProps({
@@ -199,32 +199,8 @@ describe("useSwapWebviewProps", () => {
       },
     );
 
-    expect(result.current.inputs.llmWalletApiDeviceIntentSign).toBe("variant_a");
+    expect(result.current.inputs.llmWalletApiDeviceIntentSignVariant).toBe("variant_a");
     expect(result.current.inputs.llmWalletApiDeviceIntentSignEnabled).toBe("true");
-    expect(result.current.inputs.llmWalletApiDeviceIntentSignActive).toBe("true");
-  });
-
-  it("should keep the variant when the swap manifest is not allowlisted", () => {
-    const { result } = renderHook(
-      () =>
-        useSwapWebviewProps({
-          manifest: STUB_MANIFEST,
-          params: null,
-          resetWebview: mockResetWebview,
-        }),
-      {
-        overrideInitialState: withFlagOverrides({
-          llmWalletApiDeviceIntentSign: {
-            enabled: true,
-            params: { variantId: "variant_a", enabledManifestIds: ["some-other-app"] },
-          },
-        }),
-      },
-    );
-
-    expect(result.current.inputs.llmWalletApiDeviceIntentSign).toBe("variant_a");
-    expect(result.current.inputs.llmWalletApiDeviceIntentSignEnabled).toBe("true");
-    expect(result.current.inputs.llmWalletApiDeviceIntentSignActive).toBe("false");
   });
 
   it("should pass the variant when the flag is disabled", () => {
@@ -245,8 +221,7 @@ describe("useSwapWebviewProps", () => {
       },
     );
 
-    expect(result.current.inputs.llmWalletApiDeviceIntentSign).toBe("control");
+    expect(result.current.inputs.llmWalletApiDeviceIntentSignVariant).toBe("control");
     expect(result.current.inputs.llmWalletApiDeviceIntentSignEnabled).toBe("false");
-    expect(result.current.inputs.llmWalletApiDeviceIntentSignActive).toBe("false");
   });
 });

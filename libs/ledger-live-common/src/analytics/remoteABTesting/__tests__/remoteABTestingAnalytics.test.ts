@@ -19,7 +19,7 @@ describe("getRemoteABTestingAttributes", () => {
       llmTransferButtonCopyVariantEnabled: false,
       llmTransferButtonCopyVariant: "control",
       llmWalletApiDeviceIntentSignEnabled: false,
-      llmWalletApiDeviceIntentSign: "control",
+      llmWalletApiDeviceIntentSignVariant: "control",
     });
   });
 
@@ -29,7 +29,7 @@ describe("getRemoteABTestingAttributes", () => {
       llmTransferButtonCopyVariantEnabled: true,
       llmTransferButtonCopyVariant: "variant_a",
       llmWalletApiDeviceIntentSignEnabled: true,
-      llmWalletApiDeviceIntentSign: "variant_a",
+      llmWalletApiDeviceIntentSignVariant: "variant_a",
     });
   });
 
@@ -39,7 +39,7 @@ describe("getRemoteABTestingAttributes", () => {
       llmTransferButtonCopyVariantEnabled: true,
       llmTransferButtonCopyVariant: undefined,
       llmWalletApiDeviceIntentSignEnabled: true,
-      llmWalletApiDeviceIntentSign: undefined,
+      llmWalletApiDeviceIntentSignVariant: undefined,
     });
   });
 
@@ -49,7 +49,7 @@ describe("getRemoteABTestingAttributes", () => {
       llmTransferButtonCopyVariantEnabled: false,
       llmTransferButtonCopyVariant: undefined,
       llmWalletApiDeviceIntentSignEnabled: false,
-      llmWalletApiDeviceIntentSign: undefined,
+      llmWalletApiDeviceIntentSignVariant: undefined,
     });
   });
 });

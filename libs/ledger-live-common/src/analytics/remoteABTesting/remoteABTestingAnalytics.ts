@@ -15,6 +15,6 @@ export const getRemoteABTestingAttributes = (
     llmTransferButtonCopyVariantEnabled,
     llmTransferButtonCopyVariant: transferFlag?.params?.variantId,
     llmWalletApiDeviceIntentSignEnabled,
-    llmWalletApiDeviceIntentSign: deviceIntentSignFlag?.params?.variantId,
+    llmWalletApiDeviceIntentSignVariant: deviceIntentSignFlag?.params?.variantId,
   };
 };
