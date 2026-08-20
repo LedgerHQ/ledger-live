@@ -29,10 +29,31 @@ export const HARDWARE_CAROUSEL_LOCAL_IMAGE_URLS = [
 
 export const HARDWARE_CAROUSEL_PRODUCTS = ["Ledger Stax", "Nano Pod", "Ledger Flex"] as const;
 
+export const HARDWARE_CAROUSEL_DEFAULT_LINK =
+  "https://shop.ledger.com/pages/hardware-wallets-comparison";
+
 export const HARDWARE_CAROUSEL_SAMPLE_PRODUCTS = [
-  { productTitle: "Nano Pod", subDescription: "$50", tag: "30% off", mediaUrl: apexImage },
-  { productTitle: "Nano Case", subDescription: "$89", tag: "", mediaUrl: blueImage },
-  { productTitle: "Ledger Flex™", subDescription: "", tag: "$50 off", mediaUrl: flexImage },
+  {
+    productTitle: "Nano Pod",
+    subDescription: "$50",
+    tag: "30% off",
+    mediaUrl: apexImage,
+    link: HARDWARE_CAROUSEL_DEFAULT_LINK,
+  },
+  {
+    productTitle: "Nano Case",
+    subDescription: "$89",
+    tag: "",
+    mediaUrl: blueImage,
+    link: HARDWARE_CAROUSEL_DEFAULT_LINK,
+  },
+  {
+    productTitle: "Ledger Flex™",
+    subDescription: "",
+    tag: "$50 off",
+    mediaUrl: flexImage,
+    link: HARDWARE_CAROUSEL_DEFAULT_LINK,
+  },
 ] as const;
 
 const HARDWARE_CAROUSEL_PRODUCT_IMAGES: Record<
@@ -84,7 +105,7 @@ export function buildDefaultHardwareCarouselValues(): HardwareCarouselBuilderVal
     subDescription: "",
     tag: "30% off",
     mediaUrl: getHardwareCarouselProductImage(HARDWARE_CAROUSEL_PRODUCTS[0]) ?? staxImage,
-    link: "",
+    link: HARDWARE_CAROUSEL_DEFAULT_LINK,
     order: "0",
   };
 }

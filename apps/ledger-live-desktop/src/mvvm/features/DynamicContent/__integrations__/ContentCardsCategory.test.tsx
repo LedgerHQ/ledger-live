@@ -3,9 +3,11 @@ import React from "react";
 import type { Card as BrazeCard } from "@braze/web-sdk";
 import { logCardDismissal, logContentCardClick, ClassicCard } from "@braze/web-sdk";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import { LARGE_SCREEN_UPSELL_UTM } from "@features/flow-large-screen-upsell";
 import { fireEvent, render, screen } from "tests/testSetup";
 import { track } from "~/renderer/analytics/segment";
 import { ContentCardEvent } from "@ledgerhq/live-common/braze/contentCardExtras";
+import { openURL } from "~/renderer/linking";
 import {
   CategoryContentCard,
   ContentCardsLayout,
@@ -210,9 +212,22 @@ describe("ContentCardsLocation", () => {
       expect.objectContaining({
         campaign: "child-flex",
         contentcard: "Nano Case",
+        location: LocationContentCard.Portfolio,
       }),
     );
     expect(logContentCardClick).toHaveBeenCalled();
+    expect(openURL).toHaveBeenCalledTimes(1);
+
+    const openedUrl = new URL(jest.mocked(openURL).mock.calls[0]![0] as string);
+    expect(openedUrl.origin + openedUrl.pathname).toBe("https://shop.ledger.com/products");
+    expect(openedUrl.searchParams.get("utm_source")).toBe(
+      LARGE_SCREEN_UPSELL_UTM.sourceByPlatform.desktop,
+    );
+    expect(openedUrl.searchParams.get("utm_medium")).toBe(LARGE_SCREEN_UPSELL_UTM.medium);
+    expect(openedUrl.searchParams.get("utm_campaign")).toBe(LARGE_SCREEN_UPSELL_UTM.campaign);
+    expect(openedUrl.searchParams.get("utm_content")).toBe(
+      LARGE_SCREEN_UPSELL_UTM.content.hardware_carousel,
+    );
   });
 
   test("renders the close all link for dismissable hardware carousel categories", async () => {

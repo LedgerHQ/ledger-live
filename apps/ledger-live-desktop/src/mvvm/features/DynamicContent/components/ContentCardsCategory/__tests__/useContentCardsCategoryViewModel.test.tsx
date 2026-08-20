@@ -127,11 +127,55 @@ describe("useContentCardsCategoryViewModel", () => {
       expect.objectContaining({
         campaign: "child-1",
         contentcard: "Card child-1",
+        location: LocationContentCard.Portfolio,
       }),
     );
     expect(logClickCard).toHaveBeenCalledWith("child-1");
     expect(mockNavigate).toHaveBeenCalledWith("/market", { state: { source: "banner" } });
     expect(openURL).not.toHaveBeenCalled();
+  });
+
+  it("opens external shop links with hardware carousel UTMs", () => {
+    const { result } = renderHook(() =>
+      useContentCardsCategoryViewModel({
+        category: CATEGORY,
+        categoryContentCards: [childCard("child-1", "1", "https://shop.ledger.com/products")],
+      }),
+    );
+
+    result.current.onCardClick(result.current.slides[0]!.card, 0);
+
+    expect(trackContentCardEvent).toHaveBeenCalledWith(
+      ContentCardEvent.Clicked,
+      expect.objectContaining({
+        campaign: "child-1",
+        contentcard: "Card child-1",
+        location: LocationContentCard.Portfolio,
+      }),
+    );
+    expect(logClickCard).toHaveBeenCalledWith("child-1");
+    expect(openURL).toHaveBeenCalledTimes(1);
+
+    const openedUrl = new URL(jest.mocked(openURL).mock.calls[0]![0] as string);
+    expect(openedUrl.origin + openedUrl.pathname).toBe("https://shop.ledger.com/products");
+    expect(openedUrl.searchParams.get("utm_source")).toBe("ledger_wallet_desktop");
+    expect(openedUrl.searchParams.get("utm_medium")).toBe("ledger_live");
+    expect(openedUrl.searchParams.get("utm_campaign")).toBe("nano_upgrade_program");
+    expect(openedUrl.searchParams.get("utm_content")).toBe("hardware_carousel");
+    expect(mockNavigate).not.toHaveBeenCalled();
+  });
+
+  it("opens ledgerlive deeplinks without appending UTMs", () => {
+    const { result } = renderHook(() =>
+      useContentCardsCategoryViewModel({
+        category: CATEGORY,
+        categoryContentCards: [childCard("child-1", "1", "ledgerlive://market")],
+      }),
+    );
+
+    result.current.onCardClick(result.current.slides[0]!.card, 0);
+
+    expect(openURL).toHaveBeenCalledWith("ledgerlive://market?deeplinkLocation=portfolio");
   });
 
   it("routes the header CTA through the same deeplink handler", () => {

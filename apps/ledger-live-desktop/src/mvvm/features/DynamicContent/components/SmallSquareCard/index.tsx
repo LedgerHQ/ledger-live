@@ -62,10 +62,13 @@ type CardContainerProps = Readonly<{
   ariaLabel?: string;
 }>;
 
+const INTERACTIVE_CLASSES =
+  "cursor-pointer group-hover/card:bg-surface-hover active:bg-surface-pressed focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus";
+
 function CardContainer({ children, isMediaOnly, onClick, ariaLabel }: CardContainerProps) {
-  const className = `flex w-full flex-col overflow-hidden rounded-lg border-0 bg-surface p-0 ${
+  const className = `flex w-full flex-col overflow-hidden rounded-lg border-0 bg-surface p-0 transition-colors ${
     isMediaOnly ? "items-center justify-center" : ""
-  } ${onClick ? "cursor-pointer" : "cursor-default"}`;
+  } ${onClick ? INTERACTIVE_CLASSES : "cursor-default"}`;
   const style = { height: CARD_HEIGHT_PX };
 
   if (onClick) {
@@ -176,7 +179,7 @@ function SmallSquareCard({
     : undefined;
 
   return (
-    <div className="relative w-full min-w-0">
+    <div className="group/card relative w-full min-w-0">
       <CardOverlay tag={tag} isDismissable={isDismissable} onDismiss={onDismiss} />
       <CardContainer isMediaOnly={isMediaOnly} onClick={onClick} ariaLabel={clickableCardLabel}>
         <CardMedia title={title} media={media} mediaType={mediaType} filledMedia={filledMedia} />

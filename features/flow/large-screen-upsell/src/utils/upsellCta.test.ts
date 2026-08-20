@@ -102,6 +102,24 @@ describe("buildLargeScreenUpsellCtaLink", () => {
     expect(url.searchParams.get("utm_content")).toBe(LARGE_SCREEN_UPSELL_UTM.content.profile_cta);
   });
 
+  it("should set hardware_carousel utm_content", () => {
+    const result = buildLargeScreenUpsellCtaLink(
+      "https://example.com/offer",
+      "desktop",
+      LARGE_SCREEN_UPSELL_UTM.content.hardware_carousel,
+    );
+    const url = new URL(result);
+
+    expect(url.searchParams.get("utm_source")).toBe(
+      LARGE_SCREEN_UPSELL_UTM.sourceByPlatform.desktop,
+    );
+    expect(url.searchParams.get("utm_medium")).toBe(LARGE_SCREEN_UPSELL_UTM.medium);
+    expect(url.searchParams.get("utm_campaign")).toBe(LARGE_SCREEN_UPSELL_UTM.campaign);
+    expect(url.searchParams.get("utm_content")).toBe(
+      LARGE_SCREEN_UPSELL_UTM.content.hardware_carousel,
+    );
+  });
+
   it("should preserve existing query params while setting UTM values", () => {
     const result = buildLargeScreenUpsellCtaLink(
       "https://example.com/offer?foo=bar",
