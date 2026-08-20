@@ -13,6 +13,13 @@ export type CraftPlan = Omit<
 > & { seedFingerprint?: string };
 
 /**
+ * An Ironwood transaction always carries a shielded bundle, so unlike
+ * `CraftPlan` -- whose transparent-only case identifies the account by its
+ * transparent pubkey alone -- its plan always carries the UFVK.
+ */
+export type IronwoodCraftPlan = CraftPlan & { ufvk: string };
+
+/**
  * Resolves the engine client and completes the craft plan into native build
  * arguments. Both builders take the same argument shape, so the two entry
  * points below differ only in which one they call.
@@ -74,7 +81,7 @@ export async function craftTransaction(plan: CraftPlan): Promise<BuildTransactio
  * Ironwood commitment tree), so Orchard notes must not be routed here.
  */
 export async function craftIronwoodTransaction(
-  plan: CraftPlan,
+  plan: IronwoodCraftPlan,
 ): Promise<BuildIronwoodTransactionResult> {
   const { client, args } = await resolveCraft(plan);
 
@@ -82,5 +89,7 @@ export async function craftIronwoodTransaction(
     throw new Error("Zcash V6 (Ironwood) transactions are not supported in this environment");
   }
 
-  return client.buildIronwoodTransaction(args);
+  // Restating `ufvk` carries the plan's guarantee that it is present into the
+  // V6 argument type, which requires it.
+  return client.buildIronwoodTransaction({ ...args, ufvk: plan.ufvk });
 }

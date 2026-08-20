@@ -21,7 +21,7 @@ import {
 import type { SpendableNote } from "../network/types";
 import type { SignerContext } from "../types/signer";
 import type { Transaction, ZcashAccount } from "../types/bridge";
-import { ZcashNotesNotYetSpendable } from "../types/errors";
+import { ZcashNotesNotYetSpendable, ZcashShieldedKeyMissing } from "../types/errors";
 
 jest.mock("../logic/transaction/craftTransaction");
 jest.mock("../logic/transaction/combine");
@@ -45,6 +45,14 @@ const MOCK_PCZT_HEX = "pczt" + "00".repeat(30);
 // the device and the finalizer.
 const MOCK_PCZT_V2_HEX = "pczt" + "02".repeat(30);
 const MOCK_UFVK = "uview1testkey";
+
+// BIP-32 test vector 1 (m/0H) — a real serialized xpub, so the account key
+// material extracted from it is checkable against the published vector rather
+// than against our own encoder. See `signer/xpub.test.ts`.
+const ACCOUNT_XPUB =
+  "xpub68Gmy5EdvgibQVfPdqkBBCHxA5htiqg55crXYuXoQRKfDBFA1WEjWgP6LHhwBZeNK1VTsfTFUHCdrfp1bgwQ9xv5ski8PX9rL2dZXvgGDnw";
+const ACCOUNT_CHAIN_CODE_HEX = "47fdacbd0f1097043b78c63c20c34ef4ed9a111d980047ad16282c7ae6236141";
+const ACCOUNT_PUBKEY_HEX = "035a784662a4a20a65bf6aab9ae98a6c068a81c52e4b032c0fb5400c706cfccc56";
 
 const defaultBuildResult = {
   pcztHex: MOCK_PCZT_HEX,
@@ -111,6 +119,7 @@ function makeAccount(overrides: Partial<ZcashAccount> = {}): ZcashAccount {
   return {
     id: "zcash:v2:account:test",
     seedIdentifier: "seed1",
+    xpub: ACCOUNT_XPUB,
     derivationMode: "",
     index: 0,
     freshAddress: "t1abc",
@@ -332,15 +341,92 @@ describe("bridge/signOperation", () => {
     expect(mockCraftIronwoodTransaction).not.toHaveBeenCalled();
   });
 
-  it("errors when the account has no UFVK yet (not synced)", async () => {
-    const account = makeAccount();
-    delete (account as { privateInfo?: unknown }).privateInfo;
-    const tx = makeTx("shielded");
+  // A UFVK only reaches the wallet through the export flow, which the user has
+  // to confirm on the device. So it is present for a shielded-enabled account
+  // and absent for one that only ever held public funds -- and a t→t send, which
+  // reads no shielded key material, must work in both cases.
+  describe("an account whose UFVK has not been exported", () => {
+    function accountWithoutUfvk(): ZcashAccount {
+      const account = makeAccount();
+      delete (account as { privateInfo?: unknown }).privateInfo;
+      return account;
+    }
+
+    it.each(["shielded", "shielded-to-transparent", "transparent-to-shielded"] as const)(
+      "refuses a %s send, which cannot be built without the shielded keys",
+      async transferType => {
+        const signOp = buildSignOperation(makeSignerContext());
+
+        await expect(
+          lastValueFrom(
+            signOp({
+              account: accountWithoutUfvk(),
+              deviceId: "device-1",
+              transaction: makeTx(transferType),
+            } as never),
+          ),
+        ).rejects.toThrow(ZcashShieldedKeyMissing);
+        expect(mockCraftIronwoodTransaction).not.toHaveBeenCalled();
+      },
+    );
+
+    it("signs a transparent send from the account xpub alone (LIVE-36260)", async () => {
+      const signOp = buildSignOperation(makeSignerContext());
+
+      const events = await collectEvents(signOp, {
+        account: accountWithoutUfvk(),
+        deviceId: "device-1",
+        transaction: makeTx("transparent"),
+      } as never);
+
+      expect(events.map(e => e.type)).toEqual([
+        "device-signature-requested",
+        "device-signature-granted",
+        "signed",
+      ]);
+      // The transparent account pubkey stands in for the UFVK: same account, and
+      // the only key material a transparent build reads.
+      expect(mockCraftTransaction).toHaveBeenCalledWith(
+        expect.objectContaining({
+          transparentAccountPubkey: ACCOUNT_CHAIN_CODE_HEX + ACCOUNT_PUBKEY_HEX,
+        }),
+      );
+      expect(mockCraftTransaction).toHaveBeenCalledWith(
+        expect.not.objectContaining({ ufvk: expect.anything() }),
+      );
+    });
+
+    it("reports a missing xpub rather than building from no key at all", async () => {
+      const account = accountWithoutUfvk();
+      delete (account as { xpub?: unknown }).xpub;
+      const signOp = buildSignOperation(makeSignerContext());
+
+      await expect(
+        lastValueFrom(
+          signOp({
+            account,
+            deviceId: "device-1",
+            transaction: makeTx("transparent"),
+          } as never),
+        ),
+      ).rejects.toThrow("Missing xpub");
+      expect(mockCraftTransaction).not.toHaveBeenCalled();
+    });
+  });
+
+  it("prefers the UFVK for a transparent send when the account has one", async () => {
     const signOp = buildSignOperation(makeSignerContext());
 
-    await expect(
-      lastValueFrom(signOp({ account, deviceId: "device-1", transaction: tx } as never)),
-    ).rejects.toThrow("Missing UFVK");
+    await collectEvents(signOp, {
+      account: makeAccount(),
+      deviceId: "device-1",
+      transaction: makeTx("transparent"),
+    } as never);
+
+    expect(mockCraftTransaction).toHaveBeenCalledWith(expect.objectContaining({ ufvk: MOCK_UFVK }));
+    expect(mockCraftTransaction).toHaveBeenCalledWith(
+      expect.not.objectContaining({ transparentAccountPubkey: expect.anything() }),
+    );
   });
 
   it("errors when selectedNotes/zcashFee were not resolved by prepareTransaction", async () => {

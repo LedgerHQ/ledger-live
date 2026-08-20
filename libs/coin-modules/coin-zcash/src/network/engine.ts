@@ -228,7 +228,14 @@ export async function buildTransactionJob(
   args: Omit<BuildTransactionArgs, "requestId">,
 ): Promise<BuildTransactionResult> {
   const native = await getPcztModule();
-  const built = await native.buildTransaction(args);
+  // `transparentAccountPubkey`, and with it an optional `ufvk` (a transparent
+  // send needs no viewing key), landed in @ledgerhq/zcash-utils 2.2.0; the
+  // catalog pin in `pnpm-workspace.yaml` may still predate it, and its older
+  // signature declares `ufvk` required. Same provenance gap as
+  // `nativeIronwoodBundle` above.
+  const built = await native.buildTransaction(
+    args as Parameters<NativeModule["buildTransaction"]>[0],
+  );
   const rawPczt = native.parsePczt(built.pcztHex);
   return {
     pcztHex: built.pcztHex,

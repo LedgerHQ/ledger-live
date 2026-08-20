@@ -219,7 +219,22 @@ export const ZCASH_SHIELDED_TX_TYPES = [
 export type BuildTransactionArgs = {
   requestId: string;
   grpcUrl: string;
-  ufvk: string;
+  /**
+   * Unified full viewing key of the account. Required by every flow carrying a
+   * shielded bundle; absent for a transparent send, which reads no shielded key
+   * material and identifies its account with `transparentAccountPubkey`
+   * instead -- exactly so that spending public funds never needs the UFVK
+   * export flow (a device confirmation) to have been run.
+   */
+  ufvk?: string;
+  /**
+   * 130-char hex (65 bytes: 32-byte chain code + 33-byte compressed pubkey) of
+   * the account-level transparent pubkey at `m/44'/133'/account'` -- the payload
+   * of the account xpub (see `signer/xpub.ts`). The builder derives the internal
+   * change address from it and verifies each transparent input's signing path
+   * against it.
+   */
+  transparentAccountPubkey?: string;
   network?: string;
   seedFingerprint: string;
   accountIndex: number;
