@@ -13,7 +13,7 @@
 #     kill was ever logged
 #   - the qemu process is simply absent from the process table
 # The gap that remained: we only ever saw the host AFTER the death. Hence the rolling
-# pre-death snapshots below, which are the point of this script.
+# the death log and core-dump capture below, which are the point of this script.
 #
 # Required environment:
 #   ARTIFACTS_DIR     — directory collected by the upload-artifact step
@@ -40,69 +40,11 @@ mkdir -p "$ARTIFACTS_DIR" "$DIAG_DIR" 2>/dev/null || true
 
 log() { echo "[watchdog $(date -u +%H:%M:%S)] $*"; }
 
-# Rolling snapshots of the host, kept so a death can be read in context. Without these we
-# only ever see the aftermath, by which point the process is already gone.
-RING_DIR="$(mktemp -d 2>/dev/null || echo "${DIAG_DIR}/.ring")"
-mkdir -p "$RING_DIR" 2>/dev/null || true
-readonly RING_DIR
-readonly RING_DEPTH=6
-
-# Per-process detail that says *what a process is waiting on*, which is the whole
-# question for a wedge. wchan is the kernel function each thread is blocked in; a
-# healthy qemu shows a spread of poll/futex waits, while a wedged one collapses onto
-# one. The fd and socket counts test the other hypothesis directly: the Buy screen
-# fires several hundred concurrent requests through the emulator's user-mode network
-# stack, so if the wedge is socket exhaustion it has to show up here first.
-proc_detail() {
-  local pid="$1"
-  echo "   pid ${pid}"
-  awk '/^(Threads|voluntary_ctxt_switches|nonvoluntary_ctxt_switches|VmRSS|SigQ):/{print "     "$0}' \
-    "/proc/${pid}/status" 2>/dev/null || true
-  local fds
-  fds="$(find "/proc/${pid}/fd" -mindepth 1 2>/dev/null | wc -l)"
-  local socks
-  socks="$(find "/proc/${pid}/fd" -mindepth 1 -lname 'socket:*' 2>/dev/null | wc -l)"
-  echo "     fds: ${fds:-?}  sockets: ${socks:-?}"
-  echo "     threads blocked in (wchan x count):"
-  # shellcheck disable=SC2016
-  for t in "/proc/${pid}/task"/*; do
-    cat "${t}/wchan" 2>/dev/null && echo
-  done | sort | uniq -c | sort -rn | head -8 | sed 's/^/       /'
-}
-
-snapshot() {
-  local slot="$1"
-  {
-    echo "== $(date -u +%Y-%m-%dT%H:%M:%SZ)"
-    echo "-- qemu processes"
-    local pids
-    pids="$(pgrep -d, qemu-system 2>/dev/null || true)"
-    [ -n "$pids" ] && ps -o pid,rss,pcpu,stat,etime,comm -p "$pids" 2>/dev/null || echo "(no qemu process)"
-    echo "-- per-process detail"
-    if [ -n "$pids" ]; then
-      for p in ${pids//,/ }; do proc_detail "$p"; done
-      local nspid
-      nspid="$(pgrep -x netsimd 2>/dev/null | head -1)"
-      [ -n "${nspid:-}" ] && { echo "   -- netsimd (shared by all emulators)"; proc_detail "$nspid"; }
-    fi
-    echo "-- memory"
-    free -m 2>/dev/null || true
-    echo "-- load"
-    cat /proc/loadavg 2>/dev/null || true
-    echo "-- sockets (host-wide)"
-    ss -s 2>/dev/null | head -6 || true
-    grep -E '^(TCP|sockets):' /proc/net/sockstat 2>/dev/null || true
-    echo "-- adb"
-    adb devices 2>&1 || true
-  } >"${RING_DIR}/snap_${slot}.txt" 2>/dev/null || true
-}
-
-# A dying emulator is not killed out of a running state: it wedges first. Across every
-# death captured so far the qemu process stops logging, its RSS freezes to the byte, and
-# ps reports it I (idle/uninterruptible) rather than S, for minutes before it leaves the
-# process table. That is a detectable precursor, and it is worth surfacing while the
-# shard still has time to react instead of discovering the loss one 60s timeout at a
-# time. See QAA-1497.
+# qemu segfaults, and the kernel then spends 2-4 minutes writing a ~1 GB core dump
+# before the process leaves the table. During that window RSS is frozen to the byte and
+# ps reports I rather than S, so the loss is detectable minutes before adb notices.
+# Surfacing it early beats discovering it one 60s timeout at a time.
+# See: https://ledgerhq.atlassian.net/browse/QAA-1497
 readonly WEDGE_POLLS=4 # consecutive polls with a byte-identical RSS before we call it
 declare -A rss_prev=() rss_same=() wedge_reported=()
 
@@ -172,7 +114,6 @@ capture_diagnostics() {
   mkdir -p "$out" 2>/dev/null || true
 
   # The seconds BEFORE the death — the whole reason this script keeps a ring buffer.
-  cp -a "${RING_DIR}"/snap_*.txt "${out}/" 2>/dev/null || true
 
   # Kernel view. dmesg on this runner has only ever contained boot messages, so try
   # journalctl too before concluding "the kernel logged nothing".
@@ -225,15 +166,12 @@ capture_diagnostics() {
 log "watching ${SERIALS[*]} every ${INTERVAL}s (stop file: ${STOP_FILE})"
 declare -A alive=()      # serial has been seen up at least once
 declare -A reported=()
-slot=0
 
 while true; do
   [ -f "$STOP_FILE" ] && { log "stop file present — exiting"; break; }
 
   trend
-  snapshot "$((slot % RING_DEPTH))"
   check_wedges
-  slot=$((slot + 1))
 
   online="$(adb devices 2>/dev/null || true)"
   for serial in "${SERIALS[@]}"; do

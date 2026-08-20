@@ -26,9 +26,10 @@ export interface AppNetworkSummary {
   byHost: Record<string, number>;
 }
 
-// A single `currency.list` can issue ~630 CAL lookups, which would evict everything
-// else from a 500-entry buffer and hide the very thing we are trying to see.
-const MAX_NETWORK_LOGS = 3000;
+// A single `currency.list` can issue several hundred CAL lookups, which would evict
+// everything else from a smaller buffer. `getSummary()` carries the totals regardless,
+// so this only needs to be large enough to keep the surrounding traffic readable.
+const MAX_NETWORK_LOGS = 1500;
 
 const networkLogs: AppNetworkLog[] = [];
 let inFlight = 0;
