@@ -10,13 +10,7 @@ import {
   prepareAttempt,
   validateCallback,
 } from "./actors";
-import {
-  clearErrorKind,
-  failPkce,
-  forgetAttempt,
-  publishSignedIn,
-  publishSignedOut,
-} from "./actions";
+import { clearErrorKind, failPkce, forgetAttempt } from "./actions";
 import { isUnauthorizedError } from "./errors";
 import { hasErrorKind, shouldResumeAuthenticated } from "./guards";
 import type { CardLoginContext, CardLoginEvent, CardLoginMachineInput } from "./types";
@@ -46,8 +40,12 @@ export const cardLoginMachine = setup({
     forgetAttempt,
     clearErrorKind,
     failPkce,
-    publishSignedIn,
-    publishSignedOut,
+    /**
+     * `CardLogout` is a separate component with no machine, so it cannot read this snapshot. These two
+     * publish the answer it needs through a port, on entry, which keeps the flag and the state in step.
+     */
+    publishSignedIn: ({ context }) => context.ports.setSignedIn(true),
+    publishSignedOut: ({ context }) => context.ports.setSignedIn(false),
   },
 }).createMachine({
   id: "cardLogin",
