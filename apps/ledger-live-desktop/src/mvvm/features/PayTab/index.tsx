@@ -12,7 +12,6 @@ import { usePayTabFeatureTour } from "./hooks/usePayTabFeatureTour";
 import { usePayTabActionTiles } from "./hooks/usePayTabActionTiles";
 import { usePayTabDepositOptions } from "./hooks/usePayTabDepositOptions";
 import { usePayTabRequestReceive } from "./hooks/usePayTabRequestReceive";
-import { usePayStablecoins } from "./hooks/usePayStablecoins";
 
 // Baanx uses the same value for the client key header and the OAuth `client_id`.
 const oauthConfig: CardLoginOauthConfig = {
@@ -23,11 +22,7 @@ const oauthConfig: CardLoginOauthConfig = {
 const PayTab = () => {
   const balance = usePayCardBalance();
   const featureTour = usePayTabFeatureTour();
-  const { defaultStablecoins } = usePayStablecoins();
-  const deposit = usePayTabDepositOptions(
-    balance.onTrackEvent,
-    defaultStablecoins.map(stablecoin => stablecoin.id),
-  );
+  const deposit = usePayTabDepositOptions(balance.onTrackEvent);
   const request = usePayTabRequestReceive(balance.onTrackEvent);
   const actionTiles = usePayTabActionTiles(balance.onTrackEvent, deposit.open, request.open);
 
