@@ -2,7 +2,6 @@ import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/type
 import { findCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
-import type { HederaCoinConfig } from "../config";
 import {
   BASE_USD_FEE_BY_OPERATION_TYPE,
   DEFAULT_GAS_LIMIT,
@@ -14,7 +13,7 @@ import {
 } from "../constants";
 import { apiClient } from "../network/api";
 import { getCurrencyToUSDRate, toEVMAddress } from "../network/utils";
-import type { EstimateFeesParams, EstimateFeesResult } from "../types";
+import type { EstimateFeesParams, EstimateFeesResult, HederaCoinConfig } from "../types";
 
 const estimateContractCallFees = async ({
   configOrCurrencyId,

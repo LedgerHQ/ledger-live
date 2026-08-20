@@ -1,10 +1,11 @@
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
-import { setEnv } from "@ledgerhq/live-env";
 import BigNumber from "bignumber.js";
-import { getPreloadStrategy, hydrate, preload } from "./preload";
+import hederaCoinConfig from "./config";
 import { filterValidatorBySearchTerm, getDefaultValidator } from "./logic/utils";
 import { apiClient } from "./network/api";
+import { getPreloadStrategy, hydrate, preload } from "./preload";
 import { setHederaPreloadData } from "./preload-data";
+import { getMockedConfig } from "./test/fixtures/config.fixture";
 import type { HederaPreloadData } from "./types";
 
 jest.mock("./preload-data", () => ({
@@ -23,6 +24,10 @@ describe("getPreloadStrategy", () => {
 describe("preload", () => {
   const currency = getCryptoCurrencyById("hedera");
   const mockGetNodes = jest.mocked(apiClient.getNodes);
+
+  beforeAll(() => {
+    hederaCoinConfig.setCoinConfig(() => getMockedConfig());
+  });
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -122,12 +127,12 @@ describe("preload", () => {
 describe("hydrate", () => {
   const currency = getCryptoCurrencyById("hedera");
 
-  beforeEach(() => {
-    jest.clearAllMocks();
+  beforeAll(() => {
+    hederaCoinConfig.setCoinConfig(() => getMockedConfig({ ledgerNodeId: 0 }));
   });
 
-  afterEach(() => {
-    setEnv("HEDERA_STAKING_LEDGER_NODE_ID", -1);
+  beforeEach(() => {
+    jest.clearAllMocks();
   });
 
   test.each([undefined, null, {}, []])(
@@ -179,6 +184,7 @@ describe("hydrate", () => {
             activeStake: new BigNumber(5),
             activeStakePercentage: new BigNumber(50),
             overstaked: false,
+            isLedgerNode: false,
           },
         ],
       },
@@ -219,6 +225,7 @@ describe("hydrate", () => {
             activeStake: new BigNumber(5),
             activeStakePercentage: new BigNumber(50),
             overstaked: false,
+            isLedgerNode: true,
           },
         ],
       },
@@ -227,7 +234,6 @@ describe("hydrate", () => {
   });
 
   it("should let a migrated legacy validator be selected and searched", () => {
-    setEnv("HEDERA_STAKING_LEDGER_NODE_ID", 0);
     hydrate(
       {
         validators: [

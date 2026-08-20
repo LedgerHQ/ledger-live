@@ -2,11 +2,11 @@ import network from "@ledgerhq/live-network";
 import type { LiveNetworkResponse } from "@ledgerhq/live-network/network";
 import BigNumber from "bignumber.js";
 import { encodeFunctionData, erc20Abi } from "viem";
-import { type HederaCoinConfig } from "../config";
 import { HEDERA_TRANSACTION_NAMES } from "../constants";
 import { HederaAddAccountError } from "../errors";
 import { resolveConfig } from "../logic/utils";
 import type {
+  HederaCoinConfig,
   HederaMirrorAccountTokensResponse,
   HederaMirrorBlocksResponse,
   HederaMirrorTransactionsResponse,

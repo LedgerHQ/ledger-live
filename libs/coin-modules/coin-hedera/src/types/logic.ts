@@ -1,8 +1,8 @@
 import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
 import type { OperationType } from "@ledgerhq/types-live";
 import type BigNumber from "bignumber.js";
-import type { HederaCoinConfig } from "../config";
 import type { HEDERA_OPERATION_TYPES } from "../constants";
+import type { HederaCoinConfig } from "./config";
 import type { ERC20TokenTransfer } from "./hgraph";
 import type { HederaMirrorContractCallResult, HederaMirrorTransaction } from "./mirror";
 

@@ -6,11 +6,6 @@ const teamLedgerPartnerBlockydevs = {
     parser: stringParser,
     desc: "dead address that receives 1 tinybar from tx that is made to trigger rewards claiming",
   },
-  HEDERA_STAKING_REWARD_ACCOUNT_ID: {
-    def: "0.0.800",
-    parser: stringParser,
-    desc: "hedera staking reward account id",
-  },
   HEDERA_STAKING_LEDGER_NODE_ID: {
     def: -1,
     parser: intParser,
