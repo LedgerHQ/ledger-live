@@ -37,6 +37,16 @@ let peakInFlight = 0;
 let total = 0;
 const byHost: Record<string, number> = {};
 
+/**
+ * Drop the query string, the fragment and any `user:pass@` userinfo before a URL is
+ * recorded. Those are the only parts of a URL that can carry a credential, and these
+ * logs end up in a CI artifact. The path is kept: it is what makes a fan-out readable,
+ * and the only identifiers in it are e2e fixture addresses.
+ */
+function sanitizeUrl(url: string): string {
+  return url.split(/[?#]/)[0].replace(/^([a-z][a-z0-9+.-]*:\/\/)[^/@]*@/i, "$1");
+}
+
 function hostOf(url: string): string {
   const match = /^[a-z]+:\/\/([^/?#]+)/i.exec(url);
   return match ? match[1] : "(relative)";
@@ -94,7 +104,7 @@ function toNetworkLog(
   return {
     timestamp: new Date().toISOString(),
     method: (config?.method ?? "").toUpperCase(),
-    url: `${config?.baseURL ?? ""}${config?.url ?? ""}`.split(/[?#]/)[0],
+    url: sanitizeUrl(`${config?.baseURL ?? ""}${config?.url ?? ""}`),
     status,
     duration: Date.now() - startTime,
     failureText,
@@ -111,7 +121,7 @@ export function initAppNetworkLogging(): void {
   initialized = true;
 
   axios.interceptors.request.use(function (config) {
-    const url = `${config.baseURL ?? ""}${config.url ?? ""}`;
+    const url = sanitizeUrl(`${config.baseURL ?? ""}${config.url ?? ""}`);
     (config as WithMetadata).metadata = { startTime: Date.now(), inFlight: requestStarted(url) };
     return config;
   });
@@ -162,8 +172,9 @@ function patchFetch(): void {
   if (typeof original !== "function") return;
 
   globalThis.fetch = async function patchedFetch(input: RequestInfo | URL, init?: RequestInit) {
-    const url =
-      typeof input === "string" ? input : input instanceof URL ? input.toString() : input.url;
+    const url = sanitizeUrl(
+      typeof input === "string" ? input : input instanceof URL ? input.toString() : input.url,
+    );
     const method = (init?.method ??
       (typeof input === "object" && "method" in input ? input.method : "GET")) as string;
     const startTime = Date.now();
@@ -174,7 +185,7 @@ function patchFetch(): void {
       appNetworkLogStore.addNetworkLog({
         timestamp: new Date().toISOString(),
         method: method.toUpperCase(),
-        url: url.split(/[?#]/)[0],
+        url,
         status: response.status,
         duration: Date.now() - startTime,
         transport: "fetch",
@@ -185,7 +196,7 @@ function patchFetch(): void {
       appNetworkLogStore.addNetworkLog({
         timestamp: new Date().toISOString(),
         method: method.toUpperCase(),
-        url: url.split(/[?#]/)[0],
+        url,
         duration: Date.now() - startTime,
         failureText: error instanceof Error ? error.message : String(error),
         transport: "fetch",

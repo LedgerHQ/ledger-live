@@ -150,8 +150,15 @@ capture_diagnostics() {
 
   # The emulator's own crash database. A qemu that crashes records itself here, so an
   # empty entry is positive evidence of an EXTERNAL kill rather than a self-crash.
-  cp -a /tmp/android-runner/emu-crash-*.db "${out}/" 2>/dev/null || true
+  #
+  # Metadata only - never the reports themselves. A crashpad `.dmp` is a partial memory
+  # image of the emulator process, and everything written here lands in a build artifact
+  # that anyone can download from this public repository. The question above is settled by
+  # a listing (is there an entry, and when), so there is nothing to gain from the payload.
   ls -laR /tmp/android-runner >"${out}/android-runner-ls.txt" 2>/dev/null || true
+  find /tmp/android-runner -maxdepth 3 -name '*.dmp' \
+    -printf '%p\t%s bytes\t%TY-%Tm-%Td %TH:%TM\n' 2>/dev/null | head -40 \
+    >"${out}/emu-crash-reports.txt" || true
 
   ps -eo pid,ppid,rss,pcpu,stat,etime,comm --sort=-rss 2>/dev/null | head -40 >"${out}/ps.txt" || true
   free -m 2>/dev/null >"${out}/free.txt" || true
