@@ -1,12 +1,16 @@
 import {
   ICP_FEES,
   MIN_NEURON_STAKE,
+  NNS_MAXIMUM_DISSOLVE_DELAY,
   NNS_START_REDUCING_VOTING_POWER_AFTER_SECONDS,
+  SECONDS_IN_DAY,
+  SECONDS_IN_MONTH,
 } from "@ledgerhq/live-common/families/internet_computer/consts";
 import { NeuronState } from "@ledgerhq/live-common/families/internet_computer/types";
+import BigNumber from "bignumber.js";
 import React from "react";
 import { render, screen } from "tests/testSetup";
-import { makeHealthyNeuron, makeStepProps } from "./testUtils";
+import { makeHealthyNeuron, makeICPAccount, makeStepProps } from "./testUtils";
 
 const CONTROLLER = "test-principal";
 
@@ -31,8 +35,17 @@ import StepManage from "../ManageNeuronFlowModal/steps/StepManage";
 const controlled = (overrides = {}) =>
   makeHealthyNeuron({ id: 7n, controller: CONTROLLER, ...overrides });
 
-const renderManage = (neuron = controlled()) => {
-  const props = makeStepProps({ neurons: [neuron], selectedNeuronId: "7" });
+// Funded by default: the top-up action is hidden when the balance cannot cover the transfer fee, so a
+// zero-balance fixture would leave the tests around it passing without rendering the action at all.
+const renderManage = (
+  neuron = controlled(),
+  spendableBalance = new BigNumber(MIN_NEURON_STAKE),
+) => {
+  const props = makeStepProps({
+    account: makeICPAccount({ spendableBalance }),
+    neurons: [neuron],
+    selectedNeuronId: "7",
+  });
   return { props, ...render(<StepManage {...props} />) };
 };
 
@@ -155,6 +168,30 @@ describe("StepManage", () => {
     );
   });
 
+  // The bridge rejects any addition that overshoots the two-year cap, so a neuron already there has
+  // no legal entry left and the step can only end in an error the user cannot correct.
+  it("stops offering more dissolve delay once the neuron sits at the two-year maximum", () => {
+    renderManage(
+      controlled({
+        dissolveState: { DissolveDelaySeconds: BigInt(NNS_MAXIMUM_DISSOLVE_DELAY) },
+      }),
+    );
+
+    expect(screen.queryByText("Increase dissolve delay")).not.toBeInTheDocument();
+  });
+
+  it("still offers more dissolve delay a day short of the maximum", () => {
+    renderManage(
+      controlled({
+        dissolveState: {
+          DissolveDelaySeconds: BigInt(NNS_MAXIMUM_DISSOLVE_DELAY - SECONDS_IN_DAY),
+        },
+      }),
+    );
+
+    expect(screen.getByText("Increase dissolve delay")).toBeInTheDocument();
+  });
+
   it("offers a split only once the neuron can leave the minimum stake on both halves", () => {
     const splittable = BigInt(2 * MIN_NEURON_STAKE + ICP_FEES);
     renderManage(controlled({ cachedNeuronStakeE8s: splittable }));
@@ -182,6 +219,26 @@ describe("StepManage", () => {
     expect(screen.getByText(/Voting power lost/)).toBeInTheDocument();
   });
 
+  // getSecondsTillVotingPowerExpires counts to the moment power reaches zero, a month after decay
+  // begins. Quoting that remainder as the decay countdown overstated the deadline by a whole month.
+  it("counts down to the start of decay, not to zero, while power is still full", () => {
+    const refreshed = Math.floor(Date.now() / 1000) - 2 * SECONDS_IN_MONTH - 15 * SECONDS_IN_DAY;
+    renderManage(controlled({ votingPowerRefreshedTimestampSeconds: BigInt(refreshed) }));
+
+    expect(
+      screen.getByText("Voting power starts decaying in 3 months, 15 days"),
+    ).toBeInTheDocument();
+  });
+
+  it("switches to counting down to zero the moment the decay window opens", () => {
+    const windowOpens =
+      Math.floor(Date.now() / 1000) - NNS_START_REDUCING_VOTING_POWER_AFTER_SECONDS;
+    renderManage(controlled({ votingPowerRefreshedTimestampSeconds: BigInt(windowOpens) }));
+
+    expect(screen.getByText(/Voting power is decaying/)).toBeInTheDocument();
+    expect(screen.queryByText(/starts decaying/)).not.toBeInTheDocument();
+  });
+
   // increase_stake debits the ledger canister, so it leaves this modal for the regular send flow.
   it("hands a top-up to the send flow and arranges the return trip", async () => {
     const { props, user } = renderManage();
@@ -195,6 +252,14 @@ describe("StepManage", () => {
     // The neuron list closes so the send modal can take over, and is reopened on success.
     const opened = props.openModal as jest.Mock;
     expect(opened).not.toHaveBeenCalled();
+  });
+
+  // A top-up has no minimum, so the only bound is covering the fee. Below that every amount comes
+  // back as NotEnoughBalance and the send flow is a dead end rather than a correctable mistake.
+  it("hides the top-up action when the balance cannot cover the transfer fee", () => {
+    renderManage(controlled(), new BigNumber(ICP_FEES));
+
+    expect(screen.queryByTestId("icp-increase-stake-button")).not.toBeInTheDocument();
   });
 
   it("routes to the split step, seeding a split_neuron transaction", async () => {
@@ -242,5 +307,46 @@ describe("StepManage", () => {
       expect.anything(),
       expect.objectContaining({ type: "auto_stake_maturity", autoStakeMaturity: true }),
     );
+  });
+
+  // The section total is the two maturities added together, but only the available one had a row, so
+  // the heading quoted a figure none of its rows accounted for.
+  it("breaks the maturity total into the available and staked amounts it is made of", () => {
+    renderManage(
+      controlled({
+        maturityE8sEquivalent: BigInt(1.5 * MIN_NEURON_STAKE),
+        stakedMaturityE8sEquivalent: BigInt(2.5 * MIN_NEURON_STAKE),
+      }),
+    );
+
+    expect(screen.getByText("Available maturity")).toBeInTheDocument();
+    expect(screen.getByText("1.5")).toBeInTheDocument();
+    expect(screen.getByText("2.5")).toBeInTheDocument();
+    expect(screen.getByText("4")).toBeInTheDocument();
+  });
+
+  // Staked maturity belongs to two totals — the maturity the neuron holds, and the base its voting
+  // power is computed from — so it earns a row under each.
+  it("shows staked maturity under both the maturity total and the voting-power base", () => {
+    renderManage(controlled({ stakedMaturityE8sEquivalent: BigInt(MIN_NEURON_STAKE) }));
+
+    expect(screen.getAllByText("Staked maturity")).toHaveLength(2);
+  });
+
+  // The bonuses multiply (cached stake - fees) + staked maturity. The row showed the raw cached
+  // stake, so it matched neither the neuron's own figure nor the base the bonuses were applied to.
+  it("quotes the stake net of fees beside the staked maturity the bonuses multiply", () => {
+    renderManage(
+      controlled({
+        cachedNeuronStakeE8s: BigInt(10 * MIN_NEURON_STAKE),
+        neuronFeesE8s: BigInt(0.5 * MIN_NEURON_STAKE),
+        stakedMaturityE8sEquivalent: BigInt(2 * MIN_NEURON_STAKE),
+      }),
+    );
+
+    // Once for the neuron's own total, once for the voting-power row that now agrees with it.
+    expect(screen.getAllByText("9.5 ICP")).toHaveLength(2);
+    expect(screen.getByText("2 ICP")).toBeInTheDocument();
+    expect(screen.queryByText("10 ICP")).not.toBeInTheDocument();
   });
 });
