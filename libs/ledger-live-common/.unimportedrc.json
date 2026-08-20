@@ -744,6 +744,8 @@
     "src/families/cardano/coinModuleApi.ts",
     "src/families/cardano/config.ts",
     "src/families/casper/config.ts",
+    "src/families/casper/deviceSigner.ts",
+    "src/families/casper/signer.ts",
     "src/families/celo/bridge/api.ts",
     "src/families/celo/coinModuleApi.ts",
     "src/families/celo/config.ts",

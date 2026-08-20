@@ -97,7 +97,7 @@ export function buildCasperSigner(pemByPath: Record<string, string>): CasperSign
     errorMessage: "",
     returnCode: APDU_SUCCESS,
     publicKey: Buffer.from(keyFor(path).publicKey.bytes()).subarray(1),
-    Address: Buffer.alloc(0),
+    Address: "",
   });
 
   return {
