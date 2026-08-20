@@ -92,6 +92,11 @@ on:
         required: false
         type: boolean
         default: false
+      emulator_diagnostics:
+        description: "Capture host diagnostics and crash backtraces when an emulator dies (QAA-1497)"
+        required: false
+        type: boolean
+        default: false
       feature_flags:
         description: "Choose a feature flag set for the run"
         required: false
@@ -967,6 +972,10 @@ jobs:
         run: |
           export ARTIFACTS_DIR="${{ env.MOBILE_ARTIFACTS_ROOT }}"
           export WATCH_STOP_FILE="${{ env.MOBILE_ARTIFACTS_ROOT }}/.watchdog-stop"
+          # Detecting the loss is always on: it is one adb call per poll and it stops a
+          # dead device masquerading as four unrelated assertion timeouts. The host
+          # forensics behind it are opt-in, because their questions are answered.
+          export WATCH_DIAGNOSTICS="${{ inputs.emulator_diagnostics && '1' || '' }}"
           rm -f "$WATCH_STOP_FILE"
           nohup bash tools/scripts/watch-android-emulators-ci.sh \
             >> "${{ env.MOBILE_ARTIFACTS_ROOT }}/emulator-watchdog.log" 2>&1 &
@@ -1083,7 +1092,7 @@ jobs:
       # dump is still being written when the device drops off adb.
       # See: https://ledgerhq.atlassian.net/browse/QAA-1497
       - name: Extract emulator crash backtraces
-        if: always()
+        if: always() && inputs.emulator_diagnostics
         continue-on-error: true
         timeout-minutes: 10
         shell: bash

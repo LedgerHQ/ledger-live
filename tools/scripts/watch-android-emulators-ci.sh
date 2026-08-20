@@ -1,27 +1,28 @@
 #!/usr/bin/env bash
-# Watches the Android emulators during a mobile E2E shard, records the moment one
-# disappears, and captures the host-side evidence our artifacts cannot otherwise show.
+# Watches the Android emulators during a mobile E2E shard and records the moment one
+# disappears, so a lost device stops masquerading as four unrelated assertion timeouts.
 #
-# Why this exists (QAA-1497): since 2026-08-14 an emulator terminates silently partway
-# through a shard. Detox then fails every later spec with a misleading assertion error,
-# so the real cause never reaches the report.
+# Two tiers:
+#   always on   - poll adb, log the loss, annotate the job summary. One adb call per
+#                 poll, no artifacts written unless something actually dies.
+#   opt-in      - host forensics on a death: dmesg, the emulator crash database, memory,
+#                 cgroup limits and coredumpctl state, plus a per-poll host trend and a
+#                 warning when a device looks like it is going. Enabled with
+#                 WATCH_DIAGNOSTICS=1 (the emulator_diagnostics workflow input).
 #
-# What the first run of this script established, and what shaped it:
-#   - at the moment of death the host had 17 GB free of 32 GB — OOM is ruled out with
-#     direct host evidence, not inference
-#   - the kernel ring buffer contains nothing after boot, so no OOM-killer, segfault or
-#     kill was ever logged
-#   - the qemu process is simply absent from the process table
-# The gap that remained: we only ever saw the host AFTER the death. Hence the rolling
-# the death log and core-dump capture below, which are the point of this script.
+# The forensics are opt-in because their question is answered: qemu takes SIGSEGV and
+# the kernel then spends 2-4 minutes writing a ~1 GB core, which is why dmesg is always
+# empty - core_pattern pipes to systemd-coredump. Turn them on when investigating a
+# recurrence. See: https://ledgerhq.atlassian.net/browse/QAA-1509
 #
 # Required environment:
-#   ARTIFACTS_DIR     — directory collected by the upload-artifact step
+#   ARTIFACTS_DIR     - directory collected by the upload-artifact step
 #
 # Optional environment:
-#   EMULATOR_SERIALS  — space-separated adb serials (default: emulator-5554 5556 5558)
-#   WATCH_INTERVAL    — seconds between polls (default: 5)
-#   WATCH_STOP_FILE   — watcher exits once this file exists (workflow writes it after Detox)
+#   EMULATOR_SERIALS  - space-separated adb serials (default: emulator-5554 5556 5558)
+#   WATCH_INTERVAL    - seconds between polls (default: 5)
+#   WATCH_STOP_FILE   - watcher exits once this file exists (workflow writes it after Detox)
+#   WATCH_DIAGNOSTICS - any non-empty value enables the opt-in tier
 #
 # Requires: adb on PATH. Never exits non-zero: this must not be able to fail a shard.
 
@@ -34,9 +35,12 @@ readonly DIAG_DIR="${ARTIFACTS_DIR}/host-diagnostics"
 readonly TREND_LOG="${DIAG_DIR}/host-trend.tsv"
 readonly INTERVAL="${WATCH_INTERVAL:-5}"
 readonly STOP_FILE="${WATCH_STOP_FILE:-${ARTIFACTS_DIR}/.watchdog-stop}"
+readonly DIAGNOSTICS="${WATCH_DIAGNOSTICS:-}"
 read -r -a SERIALS <<<"${EMULATOR_SERIALS:-emulator-5554 emulator-5556 emulator-5558}"
 
-mkdir -p "$ARTIFACTS_DIR" "$DIAG_DIR" 2>/dev/null || true
+mkdir -p "$ARTIFACTS_DIR" 2>/dev/null || true
+[ -n "$DIAGNOSTICS" ] && mkdir -p "$DIAG_DIR" 2>/dev/null
+true
 
 log() { echo "[watchdog $(date -u +%H:%M:%S)] $*"; }
 
@@ -163,15 +167,17 @@ capture_diagnostics() {
   log "diagnostics for $serial written to ${out}"
 }
 
-log "watching ${SERIALS[*]} every ${INTERVAL}s (stop file: ${STOP_FILE})"
+diag_label="off"
+[ -n "$DIAGNOSTICS" ] && diag_label="on"
+log "watching ${SERIALS[*]} every ${INTERVAL}s (diagnostics: ${diag_label})"
 declare -A alive=()      # serial has been seen up at least once
 declare -A reported=()
 
 while true; do
   [ -f "$STOP_FILE" ] && { log "stop file present — exiting"; break; }
 
-  trend
-  check_wedges
+  [ -n "$DIAGNOSTICS" ] && trend
+  [ -n "$DIAGNOSTICS" ] && check_wedges
 
   online="$(adb devices 2>/dev/null || true)"
   for serial in "${SERIALS[@]}"; do
@@ -185,7 +191,7 @@ while true; do
       stamp="$(date -u +%Y%m%dT%H%M%SZ)"
       log "❌ $serial is GONE at ${stamp}"
       echo "${stamp} ${serial} disappeared from adb devices" >>"$DEATH_LOG"
-      capture_diagnostics "$serial" "$stamp"
+      [ -n "$DIAGNOSTICS" ] && capture_diagnostics "$serial" "$stamp"
     fi
   done
   sleep "$INTERVAL"
