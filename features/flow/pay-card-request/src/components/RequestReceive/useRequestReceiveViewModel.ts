@@ -6,12 +6,12 @@ import type {
 } from "../../types";
 import { splitAddress } from "../../utils/splitAddress";
 
-// Analytics button names per the Pay Tracking Plan (wording still to confirm with product).
+// Analytics button names per the Pay Tracking Plan.
 const TRACK_BUTTON: Readonly<Record<RequestReceiveActionId, string>> = {
   share: "share",
   copy: "copy address",
   save: "save",
-  verify: "verify on device",
+  verify: "verify",
 };
 
 export function useRequestReceiveViewModel({
@@ -28,7 +28,10 @@ export function useRequestReceiveViewModel({
   const addressParts = useMemo(() => splitAddress(address), [address]);
 
   const runAction = useCallback(
-    (id: RequestReceiveActionId, callback: (address: string) => void) => {
+    (id: RequestReceiveActionId, callback?: (address: string) => void) => {
+      if (!callback) {
+        return;
+      }
       onTrackEvent?.("button_clicked", {
         button: TRACK_BUTTON[id],
         buttonLocation: "request",

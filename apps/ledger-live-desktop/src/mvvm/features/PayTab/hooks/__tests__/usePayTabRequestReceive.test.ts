@@ -36,9 +36,11 @@ beforeEach(() => {
   mockedDerive.mockReturnValue(DERIVED);
 });
 
+const noop = () => {};
+
 describe("usePayTabRequestReceive", () => {
   it("should start closed with empty display data", () => {
-    const { result } = renderHook(() => usePayTabRequestReceive(undefined));
+    const { result } = renderHook(() => usePayTabRequestReceive(undefined, noop));
 
     expect(result.current.requestReceive.isOpen).toBe(false);
     expect(result.current.requestReceive.address).toBe("");
@@ -47,7 +49,7 @@ describe("usePayTabRequestReceive", () => {
   });
 
   it("should open MAD filtered to the stablecoin category", () => {
-    const { result } = renderHook(() => usePayTabRequestReceive(undefined));
+    const { result } = renderHook(() => usePayTabRequestReceive(undefined, noop));
 
     act(() => result.current.open());
 
@@ -62,7 +64,7 @@ describe("usePayTabRequestReceive", () => {
     const account = { type: "TokenAccount" } as unknown as AccountLike;
     const parentAccount = { type: "Account" } as unknown as Account;
 
-    const { result } = renderHook(() => usePayTabRequestReceive(undefined));
+    const { result } = renderHook(() => usePayTabRequestReceive(undefined, noop));
 
     act(() => result.current.open());
     const { onSuccess } = openAssetAndAccount.mock.calls[0][0];
@@ -80,7 +82,7 @@ describe("usePayTabRequestReceive", () => {
 
   it("should close the dialog through onClose", () => {
     const account = { type: "Account" } as unknown as AccountLike;
-    const { result } = renderHook(() => usePayTabRequestReceive(undefined));
+    const { result } = renderHook(() => usePayTabRequestReceive(undefined, noop));
 
     act(() => result.current.open());
     act(() => openAssetAndAccount.mock.calls[0][0].onSuccess(account, undefined));
@@ -88,5 +90,20 @@ describe("usePayTabRequestReceive", () => {
 
     act(() => result.current.requestReceive.onClose());
     expect(result.current.requestReceive.isOpen).toBe(false);
+  });
+
+  it("should close the receive dialog and hand off to the injected verify callback", () => {
+    const account = { type: "Account" } as unknown as AccountLike;
+    const onVerify = jest.fn();
+    const { result } = renderHook(() => usePayTabRequestReceive(undefined, onVerify));
+
+    act(() => result.current.open());
+    act(() => openAssetAndAccount.mock.calls[0][0].onSuccess(account, undefined));
+    expect(result.current.requestReceive.isOpen).toBe(true);
+
+    act(() => result.current.requestReceive.onVerify(DERIVED.address));
+
+    expect(result.current.requestReceive.isOpen).toBe(false);
+    expect(onVerify).toHaveBeenCalledWith(DERIVED.address);
   });
 });

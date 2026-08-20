@@ -937,6 +937,16 @@
         "copied": "Copied",
         "save": "Save",
         "verify": "Verify"
+      },
+      "verifyAddress": {
+        "introTitle": "Verify your address",
+        "introDescription": "To protect against address replacement attacks, verify your address on your Ledger device's Secure Screen.",
+        "verifyCta": "Verify address",
+        "successTitle": "Address displayed on the device's Secure Screen",
+        "nextStepsLabel": "Next steps",
+        "nextStepShare": "Share your address via your desired app",
+        "nextStepMatch": "Ensure the shared address matches the one on your Ledger Device.",
+        "gotItCta": "Got it"
       }
     }
   },
