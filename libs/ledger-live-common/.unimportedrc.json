@@ -390,6 +390,7 @@
     "src/api/ofacGeoBlockApi.ts",
     "src/braze/anonymousUsers.ts",
     "src/braze/contentCardExtras.ts",
+    "src/braze/identityLifecycle.ts",
     "src/bridge/descriptor/registry.ts",
     "src/bridge/descriptor/send/features.ts",
     "src/bridge/descriptor/send/memo.ts",
