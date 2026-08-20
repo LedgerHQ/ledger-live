@@ -131,6 +131,10 @@ features/flow/pay-card-deposit/                          @ledgerhq/wallet-xp
 features/flow/pay-card-feature-tour/                     @ledgerhq/wallet-xp
 features/flow/pay-card-request/                          @ledgerhq/wallet-xp
 
+# Wallet — App lock
+features/platform/app-lock/                              @ledgerhq/wallet-xp
+/shared/password-verifier/                               @ledgerhq/wallet-xp
+
 # Wallet — shared UI
 /shared/ui-queued-bottom-sheet/                          @ledgerhq/wallet-xp
 

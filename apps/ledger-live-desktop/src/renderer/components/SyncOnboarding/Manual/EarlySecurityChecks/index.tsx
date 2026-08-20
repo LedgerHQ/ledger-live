@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Flex, Popin } from "@ledgerhq/react-ui";
 import manager from "@ledgerhq/live-common/manager/index";
 import type { InstalledItem } from "@ledgerhq/live-common/apps/types";
@@ -140,10 +140,11 @@ const EarlySecurityChecks = ({
   const [completionLoading, setCompletionLoading] = useState(false);
   const [shouldListInstalledApps, setShouldListInstalledApps] = useState(false);
   const managerAction = useConnectManagerAction();
-  const listAppsState = managerAction.useHook(
-    device,
-    shouldListInstalledApps ? {} : { cancelExecution: true },
+  const listInstalledAppsRequest = useMemo(
+    () => (shouldListInstalledApps ? {} : { cancelExecution: true }),
+    [shouldListInstalledApps],
   );
+  const listAppsState = managerAction.useHook(device, listInstalledAppsRequest);
   const { result: listedAppsResult, isLoading: isListingInstalledApps } = listAppsState;
   const isAllowManagerOpen =
     shouldListInstalledApps &&
@@ -264,6 +265,7 @@ const EarlySecurityChecks = ({
     const installedAppsResolution = resolveInstalledAppsForFirmwareUpdate(
       installedAppsRef.current,
       listedAppsResult?.installed,
+      deviceInfo,
     );
     if (installedAppsResolution.type === "ready") {
       openFirmwareUpdateDrawer(installedAppsResolution.installed);
@@ -271,7 +273,7 @@ const EarlySecurityChecks = ({
     }
 
     setShouldListInstalledApps(true);
-  }, [listedAppsResult?.installed, openFirmwareUpdateDrawer]);
+  }, [deviceInfo, listedAppsResult?.installed, openFirmwareUpdateDrawer]);
 
   useEffect(() => {
     const listingEffect = resolveListedAppsListingEffect(

@@ -35,6 +35,33 @@ describe("resolveInstalledAppsForFirmwareUpdate", () => {
       type: "needsListing",
     });
   });
+
+  it("returns empty apps without listing when the device is not onboarded", () => {
+    expect(
+      resolveInstalledAppsForFirmwareUpdate([], undefined, {
+        onboarded: false,
+        isRecoveryMode: false,
+      }),
+    ).toEqual({ type: "ready", installed: [] });
+  });
+
+  it("returns needsListing when the device is onboarded", () => {
+    expect(
+      resolveInstalledAppsForFirmwareUpdate([], undefined, {
+        onboarded: true,
+        isRecoveryMode: false,
+      }),
+    ).toEqual({ type: "needsListing" });
+  });
+
+  it("returns needsListing when the device is in recovery mode", () => {
+    expect(
+      resolveInstalledAppsForFirmwareUpdate([], undefined, {
+        onboarded: false,
+        isRecoveryMode: true,
+      }),
+    ).toEqual({ type: "needsListing" });
+  });
 });
 
 describe("resolveListedAppsListingEffect", () => {

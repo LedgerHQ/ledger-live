@@ -12,11 +12,13 @@ export function MenuView() {
   return (
     <div className="flex flex-col gap-24">
       <TopBar />
-      <ActionsList onRecoverClick={onRecoverClick} />
       <div className="flex flex-col gap-12">
-        <ContactsButton />
-        <MyLedger />
-        <Explore />
+        <ActionsList onRecoverClick={onRecoverClick} />
+        <div className="flex flex-col gap-12">
+          <ContactsButton />
+          <MyLedger />
+          <Explore />
+        </div>
       </div>
     </div>
   );
