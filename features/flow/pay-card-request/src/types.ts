@@ -146,5 +146,5 @@ export type RequestReceiveProps = RequestReceiveViewModelParams & RequestReceive
 export type RequestReceiveViewProps = RequestReceiveShell &
   Pick<
     RequestReceiveViewModel,
-    "address" | "addressParts" | "onShare" | "onCopy" | "onSave" | "onVerify"
+    "address" | "addressParts" | "qrPayload" | "onShare" | "onCopy" | "onSave" | "onVerify"
   >;

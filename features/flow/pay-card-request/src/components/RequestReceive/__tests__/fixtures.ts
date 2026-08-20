@@ -46,6 +46,7 @@ export function createRequestReceiveViewProps(
   return {
     ...shell,
     addressParts: splitAddress(REQUEST_RECEIVE_ADDRESS),
+    qrPayload: REQUEST_RECEIVE_ADDRESS,
     onShare: jest.fn(),
     onCopy: jest.fn(),
     onSave: jest.fn(),
