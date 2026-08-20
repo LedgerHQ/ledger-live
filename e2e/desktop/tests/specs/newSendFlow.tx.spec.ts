@@ -33,7 +33,6 @@ const nativeSendTransactions: NewSendFlowEntry[] = [
   {
     transaction: new Transaction(Account.XLM_1, Account.XLM_2, "0.0001"),
     xrayTicket: "B2CQA-2813",
-    bugTicket: "LIVE-29554",
   },
   {
     transaction: new Transaction(Account.XRP_1, Account.XRP_2, "0.0001"),
@@ -143,7 +142,6 @@ const memoSendTransactions: NewSendFlowEntry[] = [
   {
     transaction: new Transaction(Account.XLM_1, Account.XLM_2, "0.0001", undefined, "memoText"),
     xrayTicket: "B2CQA-6038",
-    bugTicket: "LIVE-29554",
   },
   {
     transaction: new Transaction(Account.ATOM_1, Account.ATOM_2, "0.00001", undefined, "memo123"),

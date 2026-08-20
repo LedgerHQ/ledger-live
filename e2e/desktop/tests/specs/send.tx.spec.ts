@@ -211,7 +211,6 @@ const transactionE2E = [
   {
     transaction: new Transaction(Account.XLM_1, Account.XLM_2, "0.0001", undefined, "noTag"),
     xrayTicket: "B2CQA-2813",
-    bugTickets: ["LIVE-24214", "LIVE-29554"],
   },
   {
     transaction: new Transaction(Account.ATOM_1, Account.ATOM_2, "0.00001", undefined, "noTag"),
