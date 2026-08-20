@@ -7,6 +7,7 @@ export * from "./utils/resolveMeContactDisplayName";
 export * from "./contactDeviceIntentsPort";
 export * from "./featureFlags";
 export * from "./utils/resolveEligibleAddressCurrencyIds";
+export * from "./components/ContactAvatar";
 export * from "./addressEntry/types";
 export * from "./addressEntry/validation";
 export * from "./addressEntry/state";

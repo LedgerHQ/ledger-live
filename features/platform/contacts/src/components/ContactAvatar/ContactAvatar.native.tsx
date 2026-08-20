@@ -13,7 +13,7 @@ export type ContactAvatarProps = Readonly<{
   isMe?: boolean;
   src?: string;
   size?: LumenAvatarProps["size"];
-  testID?: string;
+  testId?: string;
 }>;
 
 export function ContactAvatar({
@@ -22,9 +22,9 @@ export function ContactAvatar({
   isMe = false,
   src,
   size = "sm",
-  testID,
+  testId,
 }: ContactAvatarProps): React.JSX.Element {
-  const resolvedTestID = testID ?? `contacts-avatar-${contactId}`;
+  const resolvedTestID = testId ?? `contacts-avatar-${contactId}`;
 
   if (isMe) {
     return (

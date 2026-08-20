@@ -1,7 +1,7 @@
 import React from "react";
 import { Text, View } from "react-native";
 import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
-import { ContactAvatar } from "@features/platform-contacts/native";
+import { ContactAvatar } from "@features/platform-contacts";
 import type { RecipientHeaderContact } from "@ledgerhq/live-common/flows/send/recipient/utils/getRecipientHeaderPresentation";
 import type { ContactId } from "@domain/entity-contact";
 
@@ -45,7 +45,7 @@ export function RecipientContactRow({ contact, label, value }: RecipientContactR
         contactId={contact.id as ContactId}
         name={contact.name}
         size="xs"
-        testID="recipient-contact-avatar"
+        testId="recipient-contact-avatar"
       />
       <Text style={styles.name} numberOfLines={1}>
         {value}

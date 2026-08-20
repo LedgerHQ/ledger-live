@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import { ContactIdSchema } from "@domain/entity-contact";
-import { ContactAvatar } from "./ContactAvatar";
+import { ContactAvatar } from ".";
 
 describe("ContactAvatar", () => {
   it("should bind a contact initial and Lumen pastel color for the default list size", () => {

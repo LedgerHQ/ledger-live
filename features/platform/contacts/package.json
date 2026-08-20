@@ -23,7 +23,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W features/platform/contacts"
+    "unimported": "pnpm knip --directory ../../.. -c features/platform/contacts/knip.web.config.mjs -W features/platform/contacts --tsConfig tsconfig.web.json --isolate-workspaces && pnpm knip --directory ../../.. -c features/platform/contacts/knip.native.config.mjs -W features/platform/contacts --tsConfig tsconfig.native.json --isolate-workspaces"
   },
   "dependencies": {
     "@domain/entity-contact": "workspace:*",

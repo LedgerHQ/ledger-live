@@ -11,6 +11,10 @@ import {
 import { AddressMatchedSection } from "../AddressMatchedSection";
 import { useAddressMatchedSectionViewModel } from "../../hooks/useAddressMatchedSectionViewModel";
 
+jest.mock("@features/platform-contacts", () => ({
+  ContactAvatar: ({ testId }: { testId?: string }) => <span data-testid={testId} />,
+}));
+
 const FIXED_NOW = new Date("2026-07-31T10:00:00.000Z");
 const address = "0x95f98055ag77xe7csuz15e36";
 const formattedAddress = "0x95f980...suz15e36";

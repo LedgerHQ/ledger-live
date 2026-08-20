@@ -19,10 +19,10 @@ jest.mock("~/context/hooks", () => ({
   useSelector: () => "en",
 }));
 
-jest.mock("@features/platform-contacts/native", () => ({
-  ContactAvatar: ({ name, testID }: { name: string; testID?: string }) => {
+jest.mock("@features/platform-contacts", () => ({
+  ContactAvatar: ({ name, testId }: { name: string; testId?: string }) => {
     const RN = jest.requireActual<typeof import("react-native")>("react-native");
-    return <RN.Text testID={testID}>{name}</RN.Text>;
+    return <RN.Text testID={testId}>{name}</RN.Text>;
   },
 }));
 

@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen } from "@testing-library/react-native";
 import { ContactIdSchema } from "@domain/entity-contact";
-import { ContactAvatar } from "./ContactAvatar";
+import { ContactAvatar } from ".";
 
 jest.mock("@ledgerhq/lumen-ui-rnative", () => ({
   Avatar: ({ testID, ...props }: { testID?: string }) => {
@@ -34,7 +34,7 @@ describe("ContactAvatar", () => {
         contactId={contactId}
         name="Benoit Jean"
         size="xl"
-        testID="contacts-detail-avatar"
+        testId="contacts-detail-avatar"
       />,
     );
 
@@ -65,7 +65,7 @@ describe("ContactAvatar", () => {
         isMe
         src="https://example.com/me.png"
         size="xl"
-        testID="contacts-detail-me-avatar"
+        testId="contacts-detail-me-avatar"
       />,
     );
 
