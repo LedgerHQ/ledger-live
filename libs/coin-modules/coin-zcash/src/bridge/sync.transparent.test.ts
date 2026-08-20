@@ -131,6 +131,7 @@ const privateInfo = (overrides: Record<string, unknown> = {}) =>
     lastSyncTimestamp: null,
     lastProcessedBlock: null,
     transactions: [],
+    lastSyncError: null,
     ...overrides,
   }) as ZcashAccount["privateInfo"];
 

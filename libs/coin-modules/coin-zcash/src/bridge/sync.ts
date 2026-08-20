@@ -750,6 +750,9 @@ function reduceUnchangedShieldedChunk(
         transactions: updatedTransactions,
         orchardBalance,
         ironwoodBalance,
+        // This chunk succeeded, so any error a previous tick left behind no
+        // longer describes the current state.
+        lastSyncError: null,
       },
     },
   };
@@ -821,6 +824,9 @@ export function reduceShieldedSyncResult(
     lastSyncTimestamp: Date.now(),
     lastProcessedBlock,
     transactions: allShieldedTx,
+    // This chunk succeeded, so any error a previous tick left behind no
+    // longer describes the current state.
+    lastSyncError: null,
   };
 
   const balance = computeZcashBalance(transparentBalance, {
@@ -942,6 +948,10 @@ export function buildExtraSyncObservable(
         privateInfo: {
           ...(zcashInitialAccount?.privateInfo ?? DEFAULT_ZCASH_PRIVATE_INFO),
           syncState: "stopped",
+          // Distinguishes this from a user-requested stop, which leaves this
+          // null -- otherwise the two are the same syncState and the UI can't
+          // tell "you clicked stop" from "this failed silently in the background".
+          lastSyncError: String(error),
         },
       });
     }),

@@ -9027,6 +9027,10 @@
             "message": "Private balance is not synchronized",
             "cta": "Resume sync"
           },
+          "failed": {
+            "message": "Private balance sync failed",
+            "cta": "Resume sync"
+          },
           "running": {
             "message": "Private balance is synchronizing ({{progress}}%)",
             "timeRemaining": "Estimated time remaining: {{hours}}:{{minutes}}"
@@ -9049,7 +9053,8 @@
         "stopSync": "Stop sync",
         "upToDate": "Up to date",
         "lastSync": "Last sync: {{date}}",
-        "estimatedTimeRemaining": "Estimated time remaining: {{hours}}:{{minutes}}"
+        "estimatedTimeRemaining": "Estimated time remaining: {{hours}}:{{minutes}}",
+        "syncFailed": "Private balance sync failed"
       },
       "datepicker": {
         "label": "Birthday height",

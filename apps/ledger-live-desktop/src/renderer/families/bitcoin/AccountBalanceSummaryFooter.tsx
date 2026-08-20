@@ -422,6 +422,15 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
           </WarningBannerText>
         </WarningWrapper>
       ) : null}
+
+      {syncState === "stopped" && privateInfo?.lastSyncError ? (
+        <WarningWrapper>
+          <TriangleWarning size={16} />
+          <WarningBannerText data-testid="zcash-sync-failed-warning">
+            <Trans i18nKey="zcash.shielded.state.syncFailed" />
+          </WarningBannerText>
+        </WarningWrapper>
+      ) : null}
     </Container>
   );
 };

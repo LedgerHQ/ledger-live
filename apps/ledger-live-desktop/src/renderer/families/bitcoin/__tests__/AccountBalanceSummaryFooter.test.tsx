@@ -131,6 +131,67 @@ describe("Bitcoin Account Balance Summary Footer", () => {
     });
   });
 
+  it("should render a distinguishable warning when stopped carries a recorded sync error", async () => {
+    mockedUseAccountUnit.mockReturnValue({
+      code: "ZEC",
+      name: "Zcash",
+      magnitude: 8,
+    });
+
+    render(
+      <AccountBalanceSummaryFooter
+        account={{
+          ...account,
+          currency: { id: "zcash" } as CryptoCurrency,
+          privateInfo: {
+            ...DEFAULT_ZCASH_PRIVATE_INFO,
+            syncState: "stopped",
+            lastSyncError: "shielded sync failed/timed out: Error: timeout",
+          },
+        }}
+      />,
+      {
+        initialState: withFlagOverrides({ zcashShielded: { enabled: true } }),
+      },
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId("zcash-sync-failed-warning")).toBeInTheDocument();
+      // Still the same CTA as a plain stop -- only the warning distinguishes it.
+      expect(screen.getByTestId("start-sync-button")).toBeInTheDocument();
+    });
+  });
+
+  it("should not render the sync-failed warning for a plain manual stop", async () => {
+    mockedUseAccountUnit.mockReturnValue({
+      code: "ZEC",
+      name: "Zcash",
+      magnitude: 8,
+    });
+
+    render(
+      <AccountBalanceSummaryFooter
+        account={{
+          ...account,
+          currency: { id: "zcash" } as CryptoCurrency,
+          privateInfo: {
+            ...DEFAULT_ZCASH_PRIVATE_INFO,
+            syncState: "stopped",
+            lastSyncError: null,
+          },
+        }}
+      />,
+      {
+        initialState: withFlagOverrides({ zcashShielded: { enabled: true } }),
+      },
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId("start-sync-button")).toBeInTheDocument();
+    });
+    expect(screen.queryByTestId("zcash-sync-failed-warning")).not.toBeInTheDocument();
+  });
+
   it("should render the last sync date when the sync state is complete", async () => {
     mockedUseAccountUnit.mockReturnValue({
       code: "ZEC",

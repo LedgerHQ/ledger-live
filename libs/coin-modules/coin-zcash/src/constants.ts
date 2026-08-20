@@ -95,6 +95,7 @@ export const DEFAULT_ZCASH_PRIVATE_INFO: ZcashPrivateInfo = {
   lastSyncTimestamp: null,
   lastProcessedBlock: null,
   transactions: [],
+  lastSyncError: null,
 };
 
 /** Estimation recipient used by estimateMaxSpendable/fee-estimation flows. */

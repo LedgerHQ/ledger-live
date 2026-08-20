@@ -128,6 +128,18 @@ export type ZcashPrivateInfo = {
   lastSyncTimestamp: number | null;
   lastProcessedBlock: number | null;
   transactions: ShieldedTransaction[];
+  /**
+   * Set when the shielded leg degraded to `syncState: "stopped"` because it
+   * failed or timed out, rather than because the user asked it to stop — the
+   * two are otherwise indistinguishable in `syncState` alone. Cleared on the
+   * next attempt (successful or not) and on every successful chunk.
+   *
+   * Optional, not just nullable: coin-bitcoin's Zcash chain-adapter (the
+   * flag-off path, `chain-adapters/zcash/types.ts`) shares this shape but
+   * never runs the automatic shielded-sync retry this field describes, and
+   * shared LWD UI reads both through `SpendabilityAccount`.
+   */
+  lastSyncError?: string | null;
 };
 
 export type ZcashPrivateInfoRaw = {
@@ -143,6 +155,7 @@ export type ZcashPrivateInfoRaw = {
   lastSyncTimestamp: number | null;
   lastProcessedBlock: number | null;
   transactions: ShieldedTransactionRaw[];
+  lastSyncError?: string | null;
 };
 
 export type ShieldedTransactionRaw = {
