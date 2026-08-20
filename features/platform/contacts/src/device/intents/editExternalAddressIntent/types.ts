@@ -26,7 +26,6 @@ export type EditExternalAddressIntentInput = Readonly<{
 }>;
 
 export type EditExternalAddressResult = Readonly<{
-  appliedStep: EditExternalAddressStep;
   contactName: string;
   scope: string;
   address: ContactIdentifier;
@@ -49,6 +48,7 @@ export type EditExternalAddressJobState =
   | {
       readonly type: "failed";
       readonly failedStep?: EditExternalAddressStep;
+      readonly partialResult?: EditExternalAddressResult;
       readonly error: Error;
     };
 

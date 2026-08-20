@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 import type { ContactId } from "@domain/entity-contact";
-import { useContactsMeContact } from "@features/platform-contacts";
+import { useContactsMeContact, type ContactDeviceIntentsPort } from "@features/platform-contacts";
 import {
   useContactDetailSharedState,
   useEmptyContactDetail,
@@ -28,6 +28,7 @@ import { CRYPTO_ADDRESSES_BACK_PATH_STATE_KEY } from "LLD/features/CryptoAddress
 
 export function useContactDetailPaneAdapter(
   onAddAddress: (contact: AddAddressContact) => void,
+  deviceIntents: ContactDeviceIntentsPort,
 ): Readonly<{
   detail: ContactDetailViewProps | undefined;
   addressDetailDialog: ContactAddressDetailDialogProps;
@@ -46,7 +47,11 @@ export function useContactDetailPaneAdapter(
   const onDeleteSuccess = useCallback(() => {
     setDetailContactId(meContact.id);
   }, [meContact.id]);
-  const editDeleteDialogs = useContactDetailEditDeleteAdapter(detailContactId, onDeleteSuccess);
+  const editDeleteDialogs = useContactDetailEditDeleteAdapter(
+    detailContactId,
+    onDeleteSuccess,
+    deviceIntents,
+  );
   const emptyContact = useEmptyContactDetail(detailContactId);
   const populatedContactDetail = usePopulatedContactDetail(detailContactId);
   const {
@@ -62,6 +67,7 @@ export function useContactDetailPaneAdapter(
     detailContactId,
     selection?.row?.addressId,
     onCloseAddressDetail,
+    deviceIntents,
     addressDetailAsset,
     addressDetailNetwork,
   );

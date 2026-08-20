@@ -10,12 +10,11 @@ import type {
 
 function editResult(
   input: EditExternalAddressIntentInput,
-  appliedStep: EditExternalAddressStep,
+  proofStep: EditExternalAddressStep,
   scope: string,
   address: string,
 ): EditExternalAddressResult {
   return {
-    appliedStep,
     contactName: input.contactName,
     scope,
     address,
@@ -23,7 +22,7 @@ function editResult(
     chainId: input.chainId,
     groupHandle: input.groupHandle,
     hmacProof: input.hmacProof,
-    hmacRest: stubProof(`${appliedStep}-proof`),
+    hmacRest: stubProof(`${proofStep}-proof`),
   };
 }
 

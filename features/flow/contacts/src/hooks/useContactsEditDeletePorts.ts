@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import type { ContactDeviceIntentsPort } from "@features/platform-contacts";
 import { createContactDetailActionsPorts } from "../steps/Detail/createContactDetailActionsPorts";
 import type { ContactDetailActionsPorts } from "../steps/Detail/model/ports";
 import {
@@ -8,6 +9,7 @@ import {
 import { useContactsReduxContext } from "./useContactsReduxContext";
 
 export function useContactsEditDeletePorts(
+  deviceIntents: ContactDeviceIntentsPort,
   signerValidation?: ContactSignerValidationPort,
 ): ContactDetailActionsPorts {
   const { dispatch, getState } = useContactsReduxContext();
@@ -18,9 +20,9 @@ export function useContactsEditDeletePorts(
 
   return useMemo(
     () => ({
-      ...createContactDetailActionsPorts({ dispatch, getState }),
+      ...createContactDetailActionsPorts({ dispatch, getState, deviceIntents }),
       signerValidation: resolvedSignerValidation,
     }),
-    [dispatch, getState, resolvedSignerValidation],
+    [deviceIntents, dispatch, getState, resolvedSignerValidation],
   );
 }

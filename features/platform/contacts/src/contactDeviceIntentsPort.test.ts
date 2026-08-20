@@ -48,7 +48,7 @@ describe("createMockContactDeviceIntentsPort", () => {
       port.renameExternalContact({ contact, name: ContactNameSchema.parse("Raphael") }),
     ).resolves.toMatchObject({ hmacProof: "mock-external-contact-name-proof-after-rename" });
     await expect(
-      port.editExternalAddressScope({
+      port.editExternalAddress({
         contact,
         address,
         label: ContactAddressLabelSchema.parse("Treasury"),

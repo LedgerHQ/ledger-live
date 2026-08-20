@@ -17,6 +17,8 @@ import {
   ContactsAddAddressFlowDialog,
   type ContactsAddAddressFlowDialogProps,
 } from "./components/ContactsAddAddressFlowDialog";
+import type { ContactsDeviceIntentExecutorProps } from "@features/platform-contacts/device";
+import { DeviceIntentExecutorLWD } from "LLD/components/DeviceIntentExecutor";
 import type { ContactAddressDetailActionsDialogProps } from "./useContactAddressDetailActionsAdapter";
 import type { ContactDetailEditDeleteDialogProps } from "./useContactDetailEditDeleteAdapter";
 
@@ -27,6 +29,7 @@ export type ContactsViewProps = ContactsFlowViewProps &
     addressDetailDialog: ContactAddressDetailDialogProps;
     editDeleteDialogs: ContactDetailEditDeleteDialogProps;
     addressDetailActionsDialogs: ContactAddressDetailActionsDialogProps;
+    dieProps: ContactsDeviceIntentExecutorProps | undefined;
   }>;
 
 export function ContactsView({
@@ -35,6 +38,7 @@ export function ContactsView({
   addressDetailDialog,
   editDeleteDialogs,
   addressDetailActionsDialogs,
+  dieProps,
   ...pageProps
 }: Readonly<ContactsViewProps>) {
   return (
@@ -51,6 +55,9 @@ export function ContactsView({
       <ContactsRenameAddressDialog {...addressDetailActionsDialogs.renameDialog} />
       <ContactsEditSignerDialog {...addressDetailActionsDialogs.signerDialog} />
       <ContactsEditSignerMismatchDialog {...addressDetailActionsDialogs.signerMismatchDialog} />
+      {dieProps === undefined ? null : (
+        <DeviceIntentExecutorLWD sourceFlow="contacts" {...dieProps} />
+      )}
     </>
   );
 }

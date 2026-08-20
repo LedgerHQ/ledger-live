@@ -7,7 +7,7 @@ import {
   updateAddress as updateAddressAction,
 } from "@domain/entity-contact";
 import {
-  createMockContactDeviceIntentsPort,
+  EditExternalAddressError,
   type ContactDeviceIntentsPort,
 } from "@features/platform-contacts";
 import type { ContactAddressDetailActionsDataPorts } from "./model/ports";
@@ -15,13 +15,13 @@ import type { ContactAddressDetailActionsDataPorts } from "./model/ports";
 type ContactAddressDetailActionsPortsDeps = Readonly<{
   dispatch: (action: { type: string }) => void;
   getState: () => Parameters<typeof selectContactAddressById>[0];
-  deviceIntents?: ContactDeviceIntentsPort;
+  deviceIntents: ContactDeviceIntentsPort;
 }>;
 
 export function createContactAddressDetailActionsPorts({
   dispatch,
   getState,
-  deviceIntents = createMockContactDeviceIntentsPort(),
+  deviceIntents,
 }: ContactAddressDetailActionsPortsDeps): ContactAddressDetailActionsDataPorts {
   return {
     edit: {
@@ -36,12 +36,29 @@ export function createContactAddressDetailActionsPorts({
           throw new ContactError(`Contact not found: ${contactId}`);
         }
         const parsedLabel = parseContactAddressLabel(label);
-        const device = await deviceIntents.editExternalAddressScope({
-          contact: currentContact,
-          address: currentAddress,
-          label: parsedLabel,
-          updatedAddress: address,
-        });
+        let device;
+        try {
+          device = await deviceIntents.editExternalAddress({
+            contact: currentContact,
+            address: currentAddress,
+            label: parsedLabel,
+            updatedAddress: address,
+          });
+        } catch (error) {
+          if (error instanceof EditExternalAddressError && error.partialResult !== undefined) {
+            dispatch(
+              updateAddressAction({
+                contactId,
+                address: {
+                  ...currentAddress,
+                  address,
+                  device: error.partialResult,
+                },
+              }),
+            );
+          }
+          throw error;
+        }
 
         dispatch(
           updateAddressAction({

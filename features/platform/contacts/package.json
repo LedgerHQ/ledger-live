@@ -13,6 +13,7 @@
     },
     "./native": "./src/index.native.ts",
     "./web": "./src/web.ts",
+    "./device": "./src/device/index.ts",
     "./device/intents": "./src/device/intents/index.ts",
     "./package.json": "./package.json"
   },

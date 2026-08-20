@@ -1,0 +1,44 @@
+import type { ContactAddress } from "@domain/entity-contact";
+import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import type { ContactsDeviceInitializationInput } from "./types";
+
+const SUPPORTED_MANAGER_APP_NAME = "Ethereum";
+
+export class UnsupportedContactDeviceCurrencyError extends Error {
+  override name = "UnsupportedContactDeviceCurrencyError" as const;
+
+  constructor(currencyId: ContactAddress["currencyId"]) {
+    super(`Currency "${currencyId}" is not supported by Contacts device intents`);
+  }
+}
+
+export type ContactDeviceContext = Readonly<{
+  blockchainFamily: string;
+  chainId: string | number;
+  initializationInput: ContactsDeviceInitializationInput;
+}>;
+
+export function resolveContactDeviceContext(
+  currencyId: ContactAddress["currencyId"],
+): ContactDeviceContext {
+  const currency =
+    findCryptoCurrencyById(currencyId) ?? findCryptoCurrencyById(currencyId.split("/")[0]);
+
+  if (
+    currency === undefined ||
+    currency.managerAppName !== SUPPORTED_MANAGER_APP_NAME ||
+    currency.ethereumLikeInfo?.chainId === undefined
+  ) {
+    throw new UnsupportedContactDeviceCurrencyError(currencyId);
+  }
+
+  return {
+    blockchainFamily: currency.family,
+    chainId: currency.ethereumLikeInfo.chainId,
+    initializationInput: {
+      appName: currency.managerAppName,
+      dependencies: [],
+      requireLatestFirmware: false,
+    },
+  };
+}

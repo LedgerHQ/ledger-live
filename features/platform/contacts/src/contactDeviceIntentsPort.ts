@@ -12,40 +12,75 @@ import {
   mockExternalAddressDeviceContext,
 } from "@domain/entity-contact/schema.mock";
 
-export type RegisterExternalAddressIntentInput = Readonly<{
+export type RegisterExternalAddressInput = Readonly<{
   contact: Pick<Contact, "id" | "name" | "deviceCredentials">;
   currencyId: ContactAddress["currencyId"];
   label: ContactAddressLabel;
   address: ContactAddressValue;
 }>;
 
-export type RegisterExternalAddressIntentResult = Readonly<{
+export type RegisterExternalAddressResult = Readonly<{
   deviceCredentials: NonNullable<Contact["deviceCredentials"]>;
   addressDeviceContext: ContactAddress["device"];
 }>;
 
-export type RenameExternalContactIntentInput = Readonly<{
+export type RenameExternalContactInput = Readonly<{
   contact: Contact;
   name: ContactName;
 }>;
 
-export type EditExternalAddressScopeIntentInput = Readonly<{
+export type RenameExternalContactResult = NonNullable<Contact["deviceCredentials"]>;
+
+export type EditExternalAddressInput = Readonly<{
   contact: Contact;
   address: ContactAddress;
   label: ContactAddressLabel;
   updatedAddress: ContactAddressValue;
 }>;
 
+export type EditExternalAddressResult = ContactAddress["device"];
+
+export class ContactDeviceIntentBusyError extends Error {
+  override name = "ContactDeviceIntentBusyError" as const;
+
+  constructor() {
+    super("A Contacts device intent is already running");
+  }
+}
+
+export class ContactDeviceIntentCancelledError extends Error {
+  override name = "ContactDeviceIntentCancelledError" as const;
+
+  constructor() {
+    super("The Contacts device intent was cancelled");
+  }
+}
+
+export class ContactDeviceIntentMissingResultError extends Error {
+  override name = "ContactDeviceIntentMissingResultError" as const;
+
+  constructor() {
+    super("The Contacts device intent completed without a result");
+  }
+}
+
+export class EditExternalAddressError extends Error {
+  override name = "EditExternalAddressError" as const;
+
+  constructor(
+    readonly partialResult: EditExternalAddressResult | undefined,
+    options: ErrorOptions,
+  ) {
+    super("The external address could not be fully updated", options);
+  }
+}
+
 export type ContactDeviceIntentsPort = Readonly<{
   registerExternalAddress(
-    input: RegisterExternalAddressIntentInput,
-  ): Promise<RegisterExternalAddressIntentResult>;
-  renameExternalContact(
-    input: RenameExternalContactIntentInput,
-  ): Promise<NonNullable<Contact["deviceCredentials"]>>;
-  editExternalAddressScope(
-    input: EditExternalAddressScopeIntentInput,
-  ): Promise<ContactAddress["device"]>;
+    input: RegisterExternalAddressInput,
+  ): Promise<RegisterExternalAddressResult>;
+  renameExternalContact(input: RenameExternalContactInput): Promise<RenameExternalContactResult>;
+  editExternalAddress(input: EditExternalAddressInput): Promise<EditExternalAddressResult>;
 }>;
 
 export function createMockContactDeviceIntentsPort(): ContactDeviceIntentsPort {
@@ -63,7 +98,7 @@ export function createMockContactDeviceIntentsPort(): ContactDeviceIntentsPort {
           "mock-external-contact-name-proof-after-rename",
         ),
       }),
-    editExternalAddressScope: async input =>
+    editExternalAddress: async input =>
       mockExternalAddressDeviceContext({
         ...input.address.device,
         hmacRest: ExternalAddressProofSchema.parse("mock-external-address-proof-after-scope-edit"),

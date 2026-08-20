@@ -46,11 +46,8 @@ import {
   resolveContactsLedgerSyncIntroductionOpen,
   useContactsFeatureIntroductionState,
 } from "@features/flow-contacts-introduction";
-import {
-  createMockContactDeviceIntentsPort,
-  useContacts,
-  useContactsMeContact,
-} from "@features/platform-contacts";
+import { useContacts, useContactsMeContact } from "@features/platform-contacts";
+import { useContactsIntentsOrchestrator } from "@features/platform-contacts/device";
 import { MY_WALLET_AVATAR_USER_URL } from "LLD/features/MyWallet/components/UserAvatar/constants";
 import { useContactsAnalytics, resolveContactsCurrencyAnalytics } from "../../analytics";
 import { useContactsFeatureIntroductionPreference } from "../../hooks/useContactsFeatureIntroductionPreference";
@@ -88,7 +85,7 @@ export function useContactsViewModel(): ContactsPageViewModel {
   const [searchQuery, setSearchQuery] = useState("");
   const meContact = useContactsMeContact();
   const contacts = useContacts();
-  const deviceIntents = useMemo(() => createMockContactDeviceIntentsPort(), []);
+  const { deviceIntents, dieProps } = useContactsIntentsOrchestrator();
   const currencySelection = useContactsCurrencySelectionAdapter();
   const { cancelCurrencySelection } = currencySelection;
   const addressValidation = useContactsAddressValidationAdapter();
@@ -229,7 +226,7 @@ export function useContactsViewModel(): ContactsPageViewModel {
     goBackAddAddress();
     selectCurrencyForContact(selectedContactId);
   }, [addAddressFlowState, goBackAddAddress, selectCurrencyForContact]);
-  const addAddressEntryLabels = useMemo<AddAddressEntryLabels>(
+  const addAddressEntryLabels = useMemo<ContactsAddAddressEntryLabels>(
     () => ({
       title: t("contacts.addAddressEntry.title"),
       addressPlaceholder: t("contacts.addAddressEntry.addressPlaceholder"),
@@ -329,7 +326,9 @@ export function useContactsViewModel(): ContactsPageViewModel {
     addressDetailActionsDialogs,
     onOpenMe,
     onOpenContact,
-  } = useContactDetailPaneAdapter(onAddAddress);
+  } = useContactDetailPaneAdapter(onAddAddress, deviceIntents);
+  const [isLedgerSyncIntroductionDismissed, setIsLedgerSyncIntroductionDismissed] = useState(false);
+  const [ledgerSyncStatus] = useState<ContactsLedgerSyncStatus>("ready");
   const preference = useContactsFeatureIntroductionPreference();
   const featureIntroductionState = useContactsFeatureIntroductionState({
     isContactsEntryAvailable: true,
@@ -438,6 +437,7 @@ export function useContactsViewModel(): ContactsPageViewModel {
     onOpenContact,
     detail,
     ledgerSyncStatus,
+    dieProps,
     featureIntroduction: {
       isOpen: featureIntroductionState.isRequested,
       title: t("contacts.featureIntroduction.title"),
