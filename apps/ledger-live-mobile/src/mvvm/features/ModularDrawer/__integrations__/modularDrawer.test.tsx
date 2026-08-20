@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import {
   render,
   waitFor,
@@ -15,6 +15,8 @@ import {
   mockedAccounts,
   ARB_ACCOUNT,
 } from "./shared";
+import { ModularDrawer, useModularDrawerController } from "..";
+import { Button } from "@ledgerhq/native-ui";
 import { State } from "~/reducers/types";
 import { INITIAL_STATE } from "~/reducers/settings";
 
@@ -294,6 +296,62 @@ describe.each(DRAWER_VARIANTS)(
     });
   },
 );
+
+describe("ModularDrawer — onCancel callback", () => {
+  const mockOnCancel = jest.fn();
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    jest.mocked(mockUseAcceptedCurrency).mockReturnValue(() => true);
+  });
+
+  const CancelCallbackTestComponent = ({ onCancel }: { onCancel: () => void }) => {
+    const { openDrawer, closeDrawer, isOpen } = useModularDrawerController();
+
+    const handleOpen = useCallback(() => {
+      openDrawer({ flow: "test", source: "test", onCancel });
+    }, [openDrawer, onCancel]);
+
+    return (
+      <>
+        <Button onPress={handleOpen}>Open Drawer</Button>
+        <Button onPress={closeDrawer}>Close Drawer</Button>
+        <ModularDrawer isOpen={isOpen} onClose={closeDrawer} onAccountSelected={jest.fn()} />
+      </>
+    );
+  };
+
+  it("should invoke onCancel when the drawer is closed without selecting an account", async () => {
+    const { getByText, user } = render(<CancelCallbackTestComponent onCancel={mockOnCancel} />, {
+      overrideInitialState: (state: State) =>
+        withFlagOverrides({ ...mockedFF })(withReadOnlyDisabled(state)),
+    });
+
+    await user.press(getByText("Open Drawer"));
+    act(() => {
+      jest.advanceTimersByTime(500);
+    });
+
+    await user.press(getByText("Close Drawer"));
+    act(() => {
+      jest.advanceTimersByTime(500);
+    });
+
+    expect(mockOnCancel).toHaveBeenCalledTimes(1);
+  });
+
+  it("should not invoke onCancel when the drawer is not closed", async () => {
+    const { getByText, user } = render(<CancelCallbackTestComponent onCancel={mockOnCancel} />, {
+      overrideInitialState: (state: State) =>
+        withFlagOverrides({ ...mockedFF })(withReadOnlyDisabled(state)),
+    });
+
+    await user.press(getByText("Open Drawer"));
+    act(() => jest.advanceTimersByTime(500));
+
+    expect(mockOnCancel).not.toHaveBeenCalled();
+  });
+});
 
 describe("ModularDrawer — Lumen BottomSheet specific", () => {
   const lumenOverride = {

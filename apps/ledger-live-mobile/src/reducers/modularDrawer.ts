@@ -14,6 +14,7 @@ export interface ModularDrawerState {
   isOpen: boolean;
   preselectedCurrencies: string[];
   callbackId?: string;
+  cancelCallbackId?: string;
   enableAccountSelection?: boolean;
   completionMode?: ModularDrawerCompletionMode;
   presentation: ModularDrawerPresentation;
@@ -33,6 +34,7 @@ export const INITIAL_STATE: ModularDrawerState = {
   isOpen: false,
   preselectedCurrencies: [],
   callbackId: undefined,
+  cancelCallbackId: undefined,
   enableAccountSelection: false,
   completionMode: undefined,
   presentation: "drawer",
@@ -80,6 +82,7 @@ const modularDrawerSlice = createSlice({
       const {
         currencies,
         callbackId,
+        cancelCallbackId,
         enableAccountSelection,
         completionMode,
         presentation,
@@ -99,6 +102,7 @@ const modularDrawerSlice = createSlice({
         state.preselectedCurrencies = currencies;
       }
       state.callbackId = callbackId;
+      state.cancelCallbackId = cancelCallbackId;
       state.completionMode = completionMode;
       state.presentation = completionMode === "currency" ? (presentation ?? "drawer") : "drawer";
       if (isEmbeddedCurrency) {
@@ -140,6 +144,7 @@ const modularDrawerSlice = createSlice({
       state.isOpen = false;
       state.preselectedCurrencies = [];
       state.callbackId = undefined;
+      state.cancelCallbackId = undefined;
       state.enableAccountSelection = false;
       state.completionMode = undefined;
       state.presentation = "drawer";

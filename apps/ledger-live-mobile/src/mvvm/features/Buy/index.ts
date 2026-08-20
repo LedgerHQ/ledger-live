@@ -68,6 +68,7 @@ export function useOpenBuySell({ currency, sourceScreenName }: UseOpenBuySellPro
           ...(sourceScreenName === ASSET_DETAIL_SOURCE_SCREEN_NAME && {
             returnToPreviousScreenOnClose: true,
           }),
+          ...(!account && { goBackOnAccountRequestCancel: true }),
         },
       });
     },
