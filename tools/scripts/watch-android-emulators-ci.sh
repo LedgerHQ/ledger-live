@@ -177,25 +177,6 @@ capture_diagnostics() {
   # Kernel view. dmesg on this runner has only ever contained boot messages, so try
   # journalctl too before concluding "the kernel logged nothing".
   { dmesg -T 2>/dev/null || sudo -n dmesg -T 2>/dev/null; } | tail -400 >"${out}/dmesg.txt" 2>/dev/null || true
-
-  # qemu is not hanging, it is dying: every thread of a "wedged" emulator sits in
-  # do_exit with one in vfs_coredump, i.e. the kernel is writing a core file and the
-  # minutes before the process vanishes are that write. The dump is therefore the one
-  # artefact that can name the crash, so record where it goes and what was collected.
-  {
-    echo "-- core_pattern"
-    cat /proc/sys/kernel/core_pattern 2>/dev/null || true
-    echo "-- core_uses_pid / core limit"
-    cat /proc/sys/kernel/core_uses_pid 2>/dev/null || true
-    ulimit -c 2>/dev/null || true
-    echo "-- systemd-coredump"
-    coredumpctl list --no-pager 2>/dev/null | tail -20 || echo "(coredumpctl unavailable)"
-    echo "-- core files on disk"
-    find /var/lib/systemd/coredump /var/crash /tmp /cores -maxdepth 2 -name 'core*' \
-      -newermt '-30 minutes' -printf '%p\t%s bytes\t%TY-%Tm-%Td %TH:%TM\n' 2>/dev/null | head -20 || true
-    echo "-- apport"
-    find /var/crash -maxdepth 1 -name '*.crash' -newermt '-30 minutes' 2>/dev/null | head -10 || true
-  } >"${out}/coredump.txt" 2>/dev/null || true
   { journalctl -k --since "-10 min" --no-pager 2>/dev/null || sudo -n journalctl -k --since "-10 min" --no-pager 2>/dev/null; } \
     >"${out}/journal-kernel.txt" 2>/dev/null || true
 
