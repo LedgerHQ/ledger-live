@@ -104,6 +104,37 @@ describe("useZcashShieldedSync", () => {
     expect(store.getState().shieldedSyncSubscriptions).toEqual([existingSubscription]);
   });
 
+  it("is a no-op when the account's own syncState is already running, even with no tracked subscription", () => {
+    const account = buildAccount({ syncState: "running" });
+
+    const { result, store } = renderHook(() => useZcashShieldedSync(account), {
+      initialState: { shieldedSyncSubscriptions: [] },
+    });
+
+    act(() => {
+      result.current.startShieldedSync();
+    });
+
+    expect(mockedGetAccountBridge).not.toHaveBeenCalled();
+    expect(mockedSyncStateUpdater).not.toHaveBeenCalled();
+    expect(store.getState().shieldedSyncSubscriptions).toEqual([]);
+  });
+
+  it("does not report a stopped state when there is no tracked subscription to actually stop", () => {
+    const account = buildAccount({ syncState: "running" });
+
+    const { result, store } = renderHook(() => useZcashShieldedSync(account), {
+      initialState: { shieldedSyncSubscriptions: [] },
+    });
+
+    act(() => {
+      result.current.stopShieldedSync();
+    });
+
+    expect(mockedSyncStateUpdater).not.toHaveBeenCalled();
+    expect(store.getState().shieldedSyncSubscriptions).toEqual([]);
+  });
+
   it("stops a shielded sync and clears its tracked subscription regardless of the re-entrancy guard", () => {
     const account = buildAccount({ syncState: "running" });
     const unsubscribe = jest.fn();

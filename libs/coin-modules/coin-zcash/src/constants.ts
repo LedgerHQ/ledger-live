@@ -64,6 +64,10 @@ export const ZCASH_ACTIVATION_DATE_STRING = "2022-05-31";
 // the note's transaction has this many blocks mined on top of it, the spendable
 // balance can trail the total.
 export const ZCASH_SHIELDED_SPENDABILITY_DELAY_BLOCKS = 12;
+/** @deprecated kept for backward compatibility */
+export const ZCASH_OUTDATED_SYNC_INTERVAL_MINUTES = 2;
+/** @deprecated kept for backward compatibility */
+export const ZCASH_CHECK_OUTDATED_SYNC_INTERVAL = 5_000;
 // Bounds how long the automatic (wallet-sync-driven) shielded leg may run before
 // it is treated as hung and degraded to a "stopped" state for this tick. RxJS's
 // `timeout()` on a plain number resets on every emission from the underlying

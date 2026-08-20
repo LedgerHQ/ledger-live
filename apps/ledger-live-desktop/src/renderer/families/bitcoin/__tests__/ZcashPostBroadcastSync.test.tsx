@@ -82,7 +82,7 @@ describe("ZcashPostBroadcastSync", () => {
     expect(mockStartShieldedSync).toHaveBeenCalledTimes(RETRY_COUNT);
   });
 
-  it("stops retrying once unmounted", () => {
+  it("keeps retrying after unmount, since closing the Send modal should not cut off the retry window", () => {
     const { unmount } = render(
       <ZcashPostBroadcastSync
         account={buildAccount()}
@@ -97,7 +97,7 @@ describe("ZcashPostBroadcastSync", () => {
     act(() => {
       jest.advanceTimersByTime(RETRY_COUNT * RETRY_INTERVAL_MS);
     });
-    expect(mockStartShieldedSync).toHaveBeenCalledTimes(1);
+    expect(mockStartShieldedSync).toHaveBeenCalledTimes(RETRY_COUNT);
   });
 
   it("does not start a shielded sync for a fully transparent transfer", () => {

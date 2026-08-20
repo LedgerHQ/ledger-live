@@ -40,11 +40,8 @@ export function useZcashShieldedSync(account: ZcashAccount) {
     // nothing to start. Bail out before flipping the UI into "running".
     if (!account.privateInfo?.ufvk) return;
 
-    // A sync is already in flight for this account: let it run to completion
-    // rather than cancelling and restarting it (a manual sync must not be
-    // spammable, and this hook now also fires from the Amount-step mount and
-    // the post-broadcast effect, not only the manual CTA).
     if (shieldedSubscriptions.some(s => s.accountId === account.id)) return;
+    if (account.privateInfo?.syncState === "running") return;
 
     saveSyncState({ syncState: "running", progress: 0 });
 
@@ -82,10 +79,11 @@ export function useZcashShieldedSync(account: ZcashAccount) {
 
   const stopShieldedSync = useCallback(() => {
     if (account.type !== "Account" || (account.currency.id as Currency) !== "zcash") return;
+    if (!shieldedSubscriptions.some(s => s.accountId === account.id)) return;
 
     clearExistingSubscription();
     saveSyncState({ syncState: "stopped", progress: 0 });
-  }, [account, saveSyncState, clearExistingSubscription]);
+  }, [account, shieldedSubscriptions, saveSyncState, clearExistingSubscription]);
 
   return { saveSyncState, startShieldedSync, stopShieldedSync };
 }
