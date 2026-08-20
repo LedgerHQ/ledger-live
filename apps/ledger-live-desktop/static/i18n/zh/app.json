@@ -215,7 +215,9 @@
       "SHIELDED_TX_SAPLING_IN": "已接收",
       "SHIELDED_TX_SAPLING_OUT": "已发送",
       "SHIELDED_TX_ORCHARD_IN": "已接收",
-      "SHIELDED_TX_ORCHARD_OUT": "已发送"
+      "SHIELDED_TX_ORCHARD_OUT": "已发送",
+      "SHIELDED_TX_IRONWOOD_IN": "已接收",
+      "SHIELDED_TX_IRONWOOD_OUT": "已发送"
     },
     "edit": {
       "title": "加速或取消",
@@ -867,6 +869,75 @@
     "iAlreadyHaveACard": "我有一张卡",
     "unlockLiquidity": "在现实生活中使用加密货币",
     "exploreCryptoCardsDescription": "探索我们的加密货币卡，找到最适合您的那一款"
+  },
+  "payTab": {
+    "featureTour": {
+      "title": "支付与收款",
+      "description": "稳定币弥合了加密货币与现实生活支出之间的差距",
+      "cta": "知道了",
+      "rows": {
+        "global": {
+          "title": "全球支付与收款",
+          "description": "享低网络费用"
+        },
+        "volatility": {
+          "title": "极低的波动性",
+          "description": "稳定币基于法币"
+        },
+        "card": {
+          "title": "用卡消费即可获得 1% 返现",
+          "description": "使用 USDC、USDT、BTC、ETH 及更多币种进行支付"
+        }
+      }
+    },
+    "balance": {
+      "emptyTitle": "支付与收款",
+      "emptyDescription": "首先将稳定币存入您的钱包",
+      "filter": {
+        "allStablecoins": "所有稳定币",
+        "dialogTitle": "筛选余额",
+        "dialogDescription": "使用稳定币在全球范围内支付，费用低，波动性极小。",
+        "dialogBanner": "在您的首页管理所有其他资产",
+        "confirm": "确认"
+      }
+    },
+    "actions": {
+      "deposit": "添加稳定币",
+      "request": "请求",
+      "pay": "新付款"
+    },
+    "deposit": {
+      "title": "添加稳定币",
+      "options": {
+        "bankTransfer": {
+          "title": "银行转账",
+          "description": "转账美元或欧元以接收稳定币。"
+        },
+        "swap": {
+          "title": "从加密货币互换",
+          "description": "将您的加密货币互换为稳定币。"
+        },
+        "receive": {
+          "title": "加密货币地址",
+          "description": "从另一个钱包接收稳定币。"
+        },
+        "buy": {
+          "title": "买入",
+          "description": "使用信用卡买入稳定币。"
+        }
+      }
+    },
+    "request": {
+      "title": "请求 {{asset}}",
+      "networkLabel": "{{network}} 网络",
+      "actions": {
+        "share": "分享",
+        "copy": "复制",
+        "copied": "已复制",
+        "save": "保存",
+        "verify": "验证"
+      }
+    }
   },
   "lend": {
     "title": "借出加密货币",
@@ -2476,7 +2547,9 @@
     "addressMatched": "已匹配地址",
     "addressNotFound": "未找到地址",
     "alreadyUsed": "已使用 · {{date}}",
+    "addressBookUnsupported": "暂不支持 {{family}}",
     "recentSendWillAppear": "您最近的发送会显示在此处",
+    "contactsWillAppear": "联系人将在此处显示",
     "securityInfo": {
       "title": "如何安全发送？",
       "items": {
@@ -2494,6 +2567,10 @@
         "description": "最近记录允许您即时查看自己是否已向特定地址发送过。这可以防止潜在的复制/粘贴错误或黑客攻击。您的历史记录中包含您最近 12 个使用 Ledger Wallet 发送加密货币的地址。",
         "cta": "知道了"
       }
+    },
+    "addContact": {
+      "newContact": "添加新联系人",
+      "existingContact": "添加到现有联系人"
     },
     "relativeDate": {
       "justNow": "刚刚",
@@ -7001,6 +7078,9 @@
       "title": "抱歉，资金不足",
       "description": "请确保该账户资金充足。"
     },
+    "NotEnoughTransferAmount": {
+      "title": "向神经元质押最少需要 1 ICP。"
+    },
     "UnstakeNotEnoughStakedBalanceLeft": {
       "title": "如果您解除质押的数额超过 {{maxAmount}}，您 {{totalAmount}} 的质押总额将会全部解除质押",
       "description": "如果您解除质押的数额超过 {{maxAmount}}，您 {{totalAmount}} 的质押总额将会全部解除质押"
@@ -7435,6 +7515,9 @@
     "FeeTooHigh": {
       "title": "网络费用超过数额的10%"
     },
+    "RecipientIsNewAccount": {
+      "title": "该地址从未接收过资金，激活该地址需要支付更高的网络费用"
+    },
     "DustLimit": {
       "title": "金额低于小额资产下限"
     },
@@ -7831,6 +7914,9 @@
     },
     "OneSuiMinForUnstakeToBeLeft": {
       "title": "应保留至少 1 SUI 的质押余额"
+    },
+    "SuiStakeNotFound": {
+      "title": "质押详情不可用。请重新同步您的账户并重试"
     },
     "SomeSuiForUnstake": {
       "title": "请确保您的钱包中至少保留 0.1 SUI，用于支付未来的网络费用和解除委托质押所需费用"
@@ -8588,23 +8674,19 @@
   },
   "lnsUpsell": {
     "opted_in": {
-      "title": "内存有限，体验受限",
-      "description": "将您的 Ledger Nano S 升级到 Ledger Flex 等新款 Ledger 设备，即可享受<0>省 {{discount}}% 专属折扣</>，解锁更多内存、全新功能和最新增强安全保护。",
+      "title": "查看更多。更安全地签署",
+      "description": "升级即享 {{discount}}% 折扣。",
       "cta": "升级 Ledger 设备"
     },
     "opted_out": {
-      "description": "Ledger Nano S 内存有限，影响您访问最新功能、区块链变更和增强安全保护。为保证长期使用体验，请升级到新款 Ledger 设备。",
-      "cta": "了解更多"
-    }
-  },
-  "lnsUpsellMediaBanner": {
-    "opted_in": {
-      "title": "查看更多。更安全地签署",
-      "description": "升级立享八折优惠。"
-    },
-    "opted_out": {
       "title": "更加安全。更强掌控",
-      "description": "详细了解安全功能。"
+      "description": "详细了解安全功能。",
+      "cta": "了解更多"
+    },
+    "profile": {
+      "title": "升级您的设备",
+      "description": "屏幕更大，安全性更高。享 {{discount}}% 折扣。",
+      "cta": "探索"
     }
   },
   "largeScreenUpsellModal": {
@@ -8617,6 +8699,12 @@
       "title": "签署之前，识破骗局",
       "subtitle": "详细了解支持实时威胁检测的高级安全功能。",
       "cta": "了解更多"
+    },
+    "recoverTrigger": {
+      "title": "想要安心无忧的恢复服务吗？",
+      "subtitle": "虽然您的 Nano S 非常安全，但该设备与 Ledger Recover 不兼容。升级至较新机型，解锁安全且基于身份的钱包备份。",
+      "cta": "了解更多",
+      "dismiss": "以后再说"
     }
   },
   "modularAssetDrawer": {
@@ -8684,6 +8772,10 @@
     "selectAsset": "选择资产",
     "selectNetwork": "选择网络",
     "selectAccount": "选择账户",
+    "selectAccountPerpsTitle": "选择 Hyperliquid 账户",
+    "selectAccountPerpsDescription": "若要为您的永续合约 (Perps) 提供资金，您需要一个 Hyperliquid 账户。添加一个账户以继续。",
+    "selectDepositCurrencyTitle": "选择要存入的资产",
+    "selectDepositCurrencyDescription": "任何支持的资产均可。必要时，该资产将自动互换。",
     "accountCount_one": "{{count}} 个账户",
     "accountCount_other": "{{count}} 个账户",
     "accountsAdded": {
@@ -8897,7 +8989,9 @@
       "transparentBalance": "公开余额",
       "transparentBalanceTooltip": "公开可见的余额",
       "privateBalance": "私密余额",
-      "privateBalanceTooltip": "对外隐藏的余额"
+      "privateBalanceTooltip": "对外隐藏的余额",
+      "privateBalanceWarning": "私密余额不包括 Sapling 和 Orchard 屏蔽资金",
+      "privateBalanceMaturing": "{{spendable}} 可支出 · {{maturing}} 成熟中"
     },
     "shielded": {
       "send": {
@@ -8917,7 +9011,8 @@
             "title": "私密余额",
             "subtitle": "已屏蔽",
             "unavailable": "私密余额不可用"
-          }
+          },
+          "spendableWarning": "可用余额可能低于总余额。最近转入屏蔽池的资金需经过区块确认和完整扫描（约 15 分钟）后方可使用。"
         },
         "memo": {
           "label": "Memo（可选）",
@@ -8937,6 +9032,12 @@
             "message": "余额可能稍微有些滞后",
             "cta": "同步余额"
           }
+        },
+        "selfTransfer": {
+          "toPrivate": "自转账至私密余额",
+          "toPublic": "自转账至公开余额",
+          "unavailable": "您的私密地址目前不可用。导出您的查看密钥以启用此功能。",
+          "privacyWarning": "此操作会将您的屏蔽资金与您账户的公开地址相关联，任何人均可查看该公开地址。发送至外部私密地址可使其保持未关联状态。"
         }
       },
       "state": {
@@ -8950,6 +9051,13 @@
       "datepicker": {
         "label": "起始高度",
         "tooltip": "起始高度是指您的钱包在区块链上开始扫描您资金的点位。"
+      },
+      "receive": {
+        "verifyAddresses": "在您的 Ledger 上验证您的透明和私密地址。",
+        "privateFor": "<0>{{name}}</0> 的私密地址",
+        "noUfvk": {
+          "description": "启用您的私密余额以接收至私密地址。"
+        }
       },
       "flows": {
         "export": {
@@ -8994,7 +9102,8 @@
       "txType": "交易类型",
       "transparentTx": "透明",
       "shieldedSaplingTx": "🛡 私密 (Sapling) ",
-      "shieldedOrchardTx": "🛡 私密 (Orchard) "
+      "shieldedOrchardTx": "🛡 私密 (Orchard) ",
+      "shieldedIronwoodTx": "🛡 私密 (Ironwood) "
     }
   },
   "aleo": {
@@ -9270,7 +9379,8 @@
       },
       "recoveryKey": {
         "title": "Ledger Recovery Key 恢复钥匙",
-        "description": "一张受 PIN 识别码保护的智能卡。"
+        "description": "一张受 PIN 识别码保护的智能卡。",
+        "incompatible": "与您的设备不兼容"
       },
       "secretRecoveryPhrase": {
         "title": "24 个助记词金属存储",
@@ -9344,7 +9454,7 @@
         "meTitle": "您还没有已保存的地址",
         "contactTitle": "{{name}} 还没有已保存的地址",
         "meDescription": "保存您的钱包地址，下次即可按名称接收加密货币。",
-        "contactDescription": "保存对方的钱包地址，下次即可按名称向其发送。"
+        "contactDescription": "保存对方的钱包地址，下次即可按名称向其发送"
       }
     },
     "addressDetail": {
@@ -9392,10 +9502,10 @@
       "cancel": "取消"
     },
     "editSignerMismatch": {
-      "title": "Use the same Ledger device you used to add this contact",
-      "description": "The connected device isn't a match.",
-      "connectDifferentDevice": "Connect a different device",
-      "cancel": "Cancel"
+      "title": "需使用添加此联系人时的同一 Ledger 设备",
+      "description": "已连接的设备不一致。",
+      "connectDifferentDevice": "连接其他设备",
+      "cancel": "取消"
     },
     "ledgerSyncIntroduction": {
       "description": "您的联系人信息通过您的 Ledger 进行端到端加密，并在您的设备之间进行同步，只有您自己可以解锁。",
@@ -9405,7 +9515,6 @@
       "title": "认识「联系人」功能",
       "description": "您的加密货币地址簿——将常用的转账钱包地址集中保存在一处。",
       "primaryAction": "试用联系人",
-      "secondaryAction": "以后再说",
       "highlights": {
         "saveAddresses": {
           "title": "地址只需保存一次",
@@ -9489,8 +9598,7 @@
   "deviceIntentExecutor": {
     "genericStates": {
       "retryableDeviceLocked": {
-        "title": "设备已锁定",
-        "description": "解锁您的设备以继续。"
+        "title": "解锁您的 Ledger 设备，然后选择下方的“重试”"
       },
       "unlockDevice": {
         "title": "解锁您的 {{productName}}"
@@ -9502,16 +9610,16 @@
     },
     "errors": {
       "connectionError": {
-        "title": "设备已断开",
-        "description": "您的 Ledger 设备已断开连接。请确保设备已开机，并已通过数据线连接。"
+        "title": "Ledger 设备已断开",
+        "description": "请确保设备已开机，并已通过数据线连接。"
       },
       "intentError": {
         "title": "未知错误",
-        "description": "发生了错误。请重试，如果问题仍然存在，请联系 Ledger 客服。"
+        "description": "请重试，如果问题仍然存在，请联系 Ledger 客服。"
       },
       "invalidOperation": {
-        "title": "无效状态",
-        "description": "发生了错误。请重试，如果问题仍然存在，请联系 Ledger 客服。"
+        "title": "发生了错误",
+        "description": "请重试，如果问题仍然存在，请联系 Ledger 客服。"
       }
     },
     "initialization": {
@@ -9527,43 +9635,43 @@
       },
       "retryable": {
         "userRefused": {
-          "title": "设备拒绝了操作"
+          "title": "Ledger 设备拒绝了操作"
         },
         "deviceBusy": {
-          "title": "您的 Ledger 设备上有待处理的操作",
-          "description": "完成此操作，然后选择重试。"
+          "title": "请在您的 Ledger 设备上完成操作",
+          "description": "在您的设备上完成该操作，然后选择下面的“重试”。"
         }
       },
       "blocking": {
         "deviceNotOnboarded": {
-          "title": "您的 Ledger 设备尚未准备就绪",
-          "description": "您需要先设置 {{productName}}。我们将引导您完成设备设置流程"
+          "title": "您的 Ledger 设备需要进行设置",
+          "description": "请进行设置以继续。"
         },
         "unsupportedFirmwareVersion": {
           "title": "Ledger OS 需要更新"
         },
         "unsupportedApplication": {
           "title": "功能不受支持",
-          "description": "您的 Ledger 设备上目前没有执行此操作所需的应用程序。要了解详情，请联系 Ledger 客服。"
+          "description": "您的 Ledger 设备不支持此操作所需的应用程序。要了解详情，请联系 Ledger 客服。"
         },
         "unsupportedFeature": {
           "title": "功能不受支持",
-          "description": "您的 Ledger 设备上目前没有执行此操作所需的应用程序。要了解详情，请联系 Ledger 客服。"
+          "description": "您的 Ledger 设备不支持此操作所需的应用程序。要了解详情，请联系 Ledger 客服。"
         },
         "wrongDeviceForAccount": {
-          "title": "秘密恢复短语错误",
-          "description": "此 Ledger 设备未设置与所选账户关联的恢复短语。检查您是否使用了正确的设备。"
+          "title": "Use the Ledger device you originally set up this account with",
+          "description": "This Ledger isn't set up with the Secret Recovery Phrase linked to the selected crypto account."
         },
         "deviceOutOfStorageSpace": {
-          "title": "设备内存不足",
-          "description": "您的设备内存不足。请卸载应用程序并重试。",
+          "title": "Uninstall some apps to free up Ledger device memory",
+          "description": "Your device doesn't have enough memory.",
           "apps": "要管理的应用程序：{{appNames}}"
         }
       },
       "cta": {
         "openMyLedger": "打开“我的 Ledger”",
         "goToMyLedger": "前往 My Ledger（我的 Ledger）",
-        "setupDevice": "设置设备",
+        "setupDevice": "Set up Ledger device",
         "updateLedgerOs": "更新 Ledger OS",
         "cancelOperation": "取消操作",
         "contactLedgerSupport": "联系 Ledger 客服"
@@ -9580,7 +9688,7 @@
           "title": "Loading（加载中）"
         },
         "connecting": {
-          "title": "Loading（加载中）"
+          "title": "Connecting to your Ledger device"
         },
         "connectionError": {
           "errors": {
@@ -9612,9 +9720,9 @@
         },
         "noKnownDevice": {
           "title": "需要 Ledger 设备",
-          "description": "要继续，请设置或连接您的签署设备。",
+          "description": "To continue, set up or connect your Ledger device.",
           "connectLedgerDevice": "连接 Ledger 设备",
-          "noLedgerDevice": "我没有 Ledger 设备"
+          "noLedgerDevice": "I don’t have a Ledger device"
         },
         "waitingForSelectedDevice": {
           "title": "将您的 {{productName}} 开机并解锁"
@@ -9677,5 +9785,42 @@
       }
     },
     "disclaimer": "此数据仅供参考，不构成任何投资建议。不可用于税务目的。"
+  },
+  "internetComputer": {
+    "memoField": {
+      "increaseStake": "此交易将增加一个现有神经元的质押量，请在上面的数额字段中输入想要质押的数额。",
+      "createNeuron": "此交易将创建一个质押了 ICP 的神经元，请在上面的数额字段中输入想要质押的数额。",
+      "tooltip": "Internet Computer 用此来识别交易，将 ICP 质押到神经元。"
+    },
+    "stakeBanner": {
+      "stakeICP": {
+        "title": "质押 ICP",
+        "description": "质押 ICP 并通过参与其治理获得奖励。",
+        "cta": "质押 ICP"
+      }
+    },
+    "headerManageActions": {
+      "manageNeurons": {
+        "title": "管理神经元"
+      }
+    },
+    "summaryFooter": {
+      "stakedBalance": "已质押余额",
+      "stakedBalanceTooltip": "当前在神经元中质押的 ICP 代币总额。质押的 ICP 可获得投票奖励，且可用于治理。",
+      "totalMaturity": "总成熟度",
+      "totalMaturityTooltip": "累积的总质押奖励，包括已质押成熟度和流动成熟度。这些奖励可以再质押或以流动 ICP 的形式领取。"
+    }
+  },
+  "perpsDeposit": {
+    "title": "存款",
+    "inputDepositAmount": "存入 ~{{value}}{{currencyTicker}}",
+    "inputSubText": "通过 SwapKit 互换并存入",
+    "selectCurrencyTitle": "使用 {{currencyTicker}} 存入",
+    "selectCurrencyAccount": "{{accountName}} · <balance>{{counterValue}}</balance>",
+    "selectCurrencyDescription": "无账户",
+    "review": "审核",
+    "formErrors": {
+      "amountExceedsBalance": "余额不足"
+    }
   }
 }
