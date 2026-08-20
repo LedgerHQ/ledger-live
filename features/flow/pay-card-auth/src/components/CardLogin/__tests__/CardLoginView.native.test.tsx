@@ -6,6 +6,7 @@ const defaultProps: React.ComponentProps<typeof CardLoginView> = {
   title: "Ledger Card",
   description: "Log in to manage your Ledger Card",
   loginLabel: "Login",
+  isHidden: false,
   isLoading: false,
   errorMessage: null,
   onLoginPress: jest.fn(),
@@ -41,5 +42,12 @@ describe("CardLoginView (Native)", () => {
     renderCardLoginView({ errorMessage: "Unable to start login. Please try again." });
 
     expect(screen.getByText("Unable to start login. Please try again.")).toBeTruthy();
+  });
+
+  it("should render nothing once the user is signed in", () => {
+    renderCardLoginView({ isHidden: true });
+
+    expect(screen.queryByLabelText("Login")).toBeNull();
+    expect(screen.queryByText("Ledger Card")).toBeNull();
   });
 });

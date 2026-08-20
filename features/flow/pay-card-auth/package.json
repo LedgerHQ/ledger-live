@@ -30,9 +30,13 @@
   },
   "dependencies": {
     "@domain/api-card-management": "workspace:^",
+    "@features/platform-card": "workspace:*",
     "@reduxjs/toolkit": "catalog:",
+    "@xstate/react": "catalog:",
     "expo-crypto": "catalog:",
-    "expo-web-browser": "15.0.10"
+    "expo-web-browser": "15.0.10",
+    "react-native-keychain": "catalog:",
+    "xstate": "catalog:"
   },
   "devDependencies": {
     "@support/jest-features-flow": "workspace:*",

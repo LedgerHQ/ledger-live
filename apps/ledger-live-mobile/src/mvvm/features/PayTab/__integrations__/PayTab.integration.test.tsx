@@ -37,9 +37,12 @@ jest.mock("LLM/features/PayTab/hooks/usePayStablecoins", () => ({
   usePayStablecoins: () => mockUsePayStablecoins(),
 }));
 
+// PayTabScreen sits inside the Pay tab navigator in the app; these tests render it on its own, so
+// the route that carries the OAuth redirect has to come from here.
 jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual("@react-navigation/native"),
   useNavigation: () => ({ navigate: mockNavigate }),
+  useRoute: () => ({ params: undefined }),
 }));
 
 jest.mock("LLM/features/Receive", () => ({

@@ -5647,15 +5647,27 @@ importers:
       '@domain/api-card-management':
         specifier: workspace:^
         version: link:../../../domain/api/card-management
+      '@features/platform-card':
+        specifier: workspace:*
+        version: link:../../platform/card
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+      '@xstate/react':
+        specifier: 'catalog:'
+        version: 5.0.2(@types/react@19.0.14)(react@19.1.4)(xstate@5.19.2)
       expo-crypto:
         specifier: 'catalog:'
         version: 15.0.8(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
       expo-web-browser:
         specifier: 15.0.10
         version: 15.0.10(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+      react-native-keychain:
+        specifier: 'catalog:'
+        version: 10.0.0
+      xstate:
+        specifier: 'catalog:'
+        version: 5.19.2
     devDependencies:
       '@features/platform-style':
         specifier: workspace:*
