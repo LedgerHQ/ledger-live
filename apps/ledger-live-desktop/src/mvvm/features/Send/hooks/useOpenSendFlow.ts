@@ -28,6 +28,7 @@ type WorkflowParams = {
   parentAccount?: Account;
   currencyIds?: readonly string[];
   recipient?: string;
+  skipRecipientStep?: boolean;
   amount?: string | BigNumber;
   memo?: string;
   fromMAD?: boolean;

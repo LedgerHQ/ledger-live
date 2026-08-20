@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
-import { renderHook } from "@testing-library/react";
+import { renderHook, waitFor } from "@testing-library/react";
 import type { SendFlowOperationActions, SendFlowTransactionActions } from "../../types";
 import { useSendFlowBusinessLogic } from "../useSendFlowBusinessLogic";
 
@@ -57,5 +57,38 @@ describe("useSendFlowBusinessLogic", () => {
     expect(result.current.recipientSearch.value).toBe(recipient);
     expect(result.current.state.recipient).toBeNull();
     expect(transactionActions.setRecipient).not.toHaveBeenCalled();
+  });
+
+  it("should accept a direct recipient when instructed to skip recipient selection", async () => {
+    const recipient = "0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034";
+    let hasTransaction = false;
+    const useTransactionHookWithTransaction = () => ({
+      state: {
+        transaction: hasTransaction ? ({} as never) : null,
+        status: {} as never,
+        bridgeError: null,
+        bridgePending: false,
+      },
+      actions: transactionActions,
+    });
+    const { result, rerender } = renderHook(() =>
+      useSendFlowBusinessLogic({
+        initParams: { recipient, skipRecipientStep: true },
+        useTransactionHook: useTransactionHookWithTransaction,
+        useOperationHook,
+      }),
+    );
+
+    expect(result.current.state.recipient).toBeNull();
+    expect(transactionActions.setRecipient).not.toHaveBeenCalled();
+
+    hasTransaction = true;
+    rerender();
+
+    await waitFor(() => {
+      expect(result.current.state.recipient).toEqual({ address: recipient });
+    });
+    expect(result.current.isRecipientAddressComplete).toBe(true);
+    expect(transactionActions.setRecipient).toHaveBeenCalledWith({ address: recipient });
   });
 });

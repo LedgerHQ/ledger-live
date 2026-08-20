@@ -93,6 +93,7 @@ export type SendFlowInitParams = Readonly<{
   account?: AccountLike;
   parentAccount?: Account;
   recipient?: string;
+  skipRecipientStep?: boolean;
   amount?: string;
   memo?: string;
   fromMAD?: boolean;

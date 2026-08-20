@@ -16,12 +16,14 @@ import { useNewSendFlowFeature } from "./useNewSendFlowFeature";
 type OpenSendFlowOverride = Readonly<{
   currencyIds?: string[];
   recipient?: string;
+  skipRecipientStep?: boolean;
 }>;
 
 type UseOpenSendFlowProps = Readonly<{
   currency?: CryptoOrTokenCurrency;
   currencyIds?: string[];
   recipient?: string;
+  skipRecipientStep?: boolean;
   sourceScreenName: string;
 }>;
 
@@ -29,6 +31,7 @@ export function useOpenSendFlow({
   currency,
   currencyIds,
   recipient,
+  skipRecipientStep,
   sourceScreenName,
 }: UseOpenSendFlowProps) {
   const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
@@ -37,7 +40,12 @@ export function useOpenSendFlow({
     useNewSendFlowFeature();
 
   const navigateToLegacyRecipient = useCallback(
-    async (account: AccountLike, parentAccount?: Account, prefilledRecipient?: string) => {
+    async (
+      account: AccountLike,
+      parentAccount?: Account,
+      prefilledRecipient?: string,
+      skipRecipientStep?: boolean,
+    ) => {
       const params: SendFundsNavigatorStackParamList[typeof ScreenName.SendSelectRecipient] = {
         accountId: account.id,
         parentId: account.type === "TokenAccount" ? account.parentId : undefined,
@@ -66,6 +74,18 @@ export function useOpenSendFlow({
         }
       }
 
+      if (skipRecipientStep && params.transaction) {
+        navigation.navigate(NavigatorName.SendFunds, {
+          screen: ScreenName.SendAmountCoin,
+          params: {
+            accountId: account.id,
+            parentId: account.type === "TokenAccount" ? account.parentId : undefined,
+            transaction: params.transaction,
+          },
+        });
+        return;
+      }
+
       navigation.navigate(NavigatorName.SendFunds, {
         screen: ScreenName.SendSelectRecipient,
         params,
@@ -75,9 +95,19 @@ export function useOpenSendFlow({
   );
 
   const navigateAfterAccountSelection = useCallback(
-    (account: AccountLike, parentAccount?: Account, prefilledRecipient?: string) => {
+    (
+      account: AccountLike,
+      parentAccount?: Account,
+      prefilledRecipient?: string,
+      skipRecipientStep?: boolean,
+    ) => {
       if (account.type === "TokenAccount" && !parentAccount) {
-        void navigateToLegacyRecipient(account, parentAccount, prefilledRecipient);
+        void navigateToLegacyRecipient(
+          account,
+          parentAccount,
+          prefilledRecipient,
+          skipRecipientStep,
+        );
         return;
       }
 
@@ -92,6 +122,7 @@ export function useOpenSendFlow({
             parentAccount: mainAccount === account ? undefined : mainAccount,
             fromMAD: true,
             recipient: prefilledRecipient,
+            skipRecipientStep,
           },
         });
         return;
@@ -101,6 +132,8 @@ export function useOpenSendFlow({
         ? getCustomSendFlow(family)?.buildSendEntrypoint?.({
             account,
             parentAccount: mainAccount === account ? undefined : mainAccount,
+            recipient: prefilledRecipient,
+            skipRecipientStep,
           })
         : undefined;
 
@@ -112,7 +145,7 @@ export function useOpenSendFlow({
         return;
       }
 
-      void navigateToLegacyRecipient(account, parentAccount, prefilledRecipient);
+      void navigateToLegacyRecipient(account, parentAccount, prefilledRecipient, skipRecipientStep);
     },
     [
       getCurrencyIdFromAccount,
@@ -127,6 +160,7 @@ export function useOpenSendFlow({
     (override?: OpenSendFlowOverride) => {
       const resolvedCurrencyIds = override?.currencyIds ?? currencyIds;
       const resolvedRecipient = override?.recipient ?? recipient;
+      const resolvedSkipRecipientStep = override?.skipRecipientStep ?? skipRecipientStep;
       const hasCurrencyIds = Boolean(resolvedCurrencyIds?.length);
       openDrawer({
         currencies: hasCurrencyIds ? resolvedCurrencyIds : currency ? [currency.id] : [],
@@ -135,10 +169,23 @@ export function useOpenSendFlow({
         areCurrenciesFiltered: hasCurrencyIds || Boolean(currency),
         enableAccountSelection: true,
         onAccountSelected: (account, parentAccount) =>
-          navigateAfterAccountSelection(account, parentAccount, resolvedRecipient),
+          navigateAfterAccountSelection(
+            account,
+            parentAccount,
+            resolvedRecipient,
+            resolvedSkipRecipientStep,
+          ),
       });
     },
-    [currency, currencyIds, navigateAfterAccountSelection, openDrawer, recipient, sourceScreenName],
+    [
+      currency,
+      currencyIds,
+      navigateAfterAccountSelection,
+      openDrawer,
+      recipient,
+      skipRecipientStep,
+      sourceScreenName,
+    ],
   );
 
   return { handleOpenSendFlow };

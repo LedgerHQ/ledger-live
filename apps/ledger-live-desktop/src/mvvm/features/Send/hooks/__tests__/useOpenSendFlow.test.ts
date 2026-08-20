@@ -45,4 +45,37 @@ describe("useOpenSendFlow", () => {
       }),
     );
   });
+
+  it("preserves the direct-recipient intent after account selection", () => {
+    const account = genAccount("send-contact-account-selection", {
+      currency: getCryptoCurrencyById("bitcoin"),
+    });
+    const recipient = "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh";
+    const { result, store } = renderHook(() => useOpenSendFlow(), {
+      initialState: {
+        ...withFlagOverrides({
+          newSendFlow: {
+            enabled: true,
+            params: { families: ["bitcoin"], excludedCurrencyIds: [] },
+          },
+        }),
+        accounts: [account],
+      },
+    });
+
+    result.current({
+      currencyIds: ["bitcoin"],
+      recipient,
+      skipRecipientStep: true,
+    });
+    store.getState().modularDialog.dialogParams?.onAccountSelected?.(account);
+
+    expect(store.getState().sendFlow.data?.params).toEqual(
+      expect.objectContaining({
+        account,
+        recipient,
+        skipRecipientStep: true,
+      }),
+    );
+  });
 });

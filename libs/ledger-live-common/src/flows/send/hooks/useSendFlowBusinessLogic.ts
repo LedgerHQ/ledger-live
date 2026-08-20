@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { FLOW_STATUS, type FlowStatus } from "../../wizard/types";
 import { useSendFlowAccount } from "./useSendFlowAccount";
@@ -73,6 +73,7 @@ export function useSendFlowBusinessLogic({
   );
   const [isRecipientAddressComplete, setIsRecipientAddressComplete] = useState(false);
   const [recipient, setRecipient] = useState<RecipientData | null>(null);
+  const hasInitializedDirectRecipient = useRef(false);
 
   const accountHook = useSendFlowAccount({
     initialAccount: initParams?.account,
@@ -109,6 +110,27 @@ export function useSendFlowBusinessLogic({
     },
     [transactionHook.actions],
   );
+
+  useEffect(() => {
+    const directRecipient = initParams?.skipRecipientStep ? initParams.recipient : undefined;
+
+    if (
+      directRecipient === undefined ||
+      hasInitializedDirectRecipient.current ||
+      transactionHook.state.transaction === null
+    ) {
+      return;
+    }
+
+    hasInitializedDirectRecipient.current = true;
+    setIsRecipientAddressComplete(true);
+    handleRecipientSet({ address: directRecipient });
+  }, [
+    handleRecipientSet,
+    initParams?.recipient,
+    initParams?.skipRecipientStep,
+    transactionHook.state.transaction,
+  ]);
 
   const recipientSearch = useMemo(
     () => ({

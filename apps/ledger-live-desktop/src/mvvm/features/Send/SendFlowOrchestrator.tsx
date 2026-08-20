@@ -27,9 +27,12 @@ export function SendFlowOrchestrator({
   const flowConfig = useMemo(
     () => ({
       ...SEND_FLOW_CONFIG,
-      initialStep: SEND_FLOW_STEP.RECIPIENT,
+      initialStep:
+        initParams?.skipRecipientStep && initParams.recipient !== undefined
+          ? SEND_FLOW_STEP.AMOUNT
+          : SEND_FLOW_STEP.RECIPIENT,
     }),
-    [],
+    [initParams?.recipient, initParams?.skipRecipientStep],
   );
 
   return (

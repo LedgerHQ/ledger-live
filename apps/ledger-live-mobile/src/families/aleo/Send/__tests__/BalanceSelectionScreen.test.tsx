@@ -64,15 +64,19 @@ function makeRoute({
   isSelfTransfer,
   account,
   parentAccount,
+  recipient,
+  skipRecipientStep,
 }: {
   isSelfTransfer: boolean;
   account: AccountLike;
   parentAccount?: Account;
+  recipient?: string;
+  skipRecipientStep?: boolean;
 }) {
   return {
     key: "aleo-balance-selection",
     name: "AleoSendBalanceSelection" as const,
-    params: { account, parentAccount, isSelfTransfer },
+    params: { account, parentAccount, isSelfTransfer, recipient, skipRecipientStep },
   };
 }
 
@@ -80,6 +84,13 @@ describe("BalanceSelectionScreen", () => {
   const mockNavigation = makeNavigation();
   const sendRoute = makeRoute({ account: ALEO_ACCOUNT_1, isSelfTransfer: false });
   const selfTransferRoute = makeRoute({ account: ALEO_ACCOUNT_1, isSelfTransfer: true });
+  const directContactRecipient = "aleo1contactrecipient";
+  const directContactRoute = makeRoute({
+    account: ALEO_ACCOUNT_1,
+    isSelfTransfer: false,
+    recipient: directContactRecipient,
+    skipRecipientStep: true,
+  });
   const tokenSendRoute = makeRoute({
     account: ALEO_TOKEN_ACCOUNT_1,
     parentAccount: ALEO_ACCOUNT_1,
@@ -128,6 +139,43 @@ describe("BalanceSelectionScreen", () => {
         expect.objectContaining({
           accountId: ALEO_ACCOUNT_1.id,
           transaction: expect.objectContaining({ mode: "transfer_private", recipient: "" }),
+        }),
+      );
+    });
+
+    it("navigates to SendAmountCoin with the saved recipient", async () => {
+      mockUseRoute.mockReturnValue(directContactRoute as never);
+      const { user } = render(<BalanceSelectionScreen />);
+
+      await user.press(screen.getByText("Send publicly"));
+
+      expect(mockNavigation.navigate).toHaveBeenCalledWith(
+        ScreenName.SendAmountCoin,
+        expect.objectContaining({
+          accountId: ALEO_ACCOUNT_1.id,
+          transaction: expect.objectContaining({
+            mode: "transfer_public",
+            recipient: directContactRecipient,
+          }),
+        }),
+      );
+    });
+
+    it("keeps the private balance sync before opening amount for a saved recipient", async () => {
+      mockUseRoute.mockReturnValue(directContactRoute as never);
+      const { user } = render(<BalanceSelectionScreen />);
+
+      await user.press(screen.getByText("Private"));
+      await user.press(screen.getByText("Send privately"));
+
+      expect(mockNavigation.navigate).toHaveBeenCalledWith(
+        ScreenName.AleoMandatoryPrivateSync,
+        expect.objectContaining({
+          account: ALEO_ACCOUNT_1,
+          transaction: expect.objectContaining({
+            mode: "transfer_private",
+            recipient: directContactRecipient,
+          }),
         }),
       );
     });
