@@ -18,4 +18,13 @@ export interface TestOutcome {
   status: TestStatus;
   /** Failure text for this attempt. Only meaningful when `status` is "failed". */
   errorMessage?: string;
+  /**
+   * Runner-specific discriminator for tests that share a file and title but are
+   * genuinely separate runs of it — a Playwright project, for instance.
+   *
+   * It groups attempts and is never reported: two projects running the same spec
+   * are two tests that can flake independently, but the reported title should
+   * stay the test's own title.
+   */
+  variant?: string;
 }

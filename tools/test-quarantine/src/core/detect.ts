@@ -29,11 +29,15 @@ export function canContributeToFlake(outcome: TestOutcome): boolean {
 }
 
 /**
- * Grouping key for one test. JSON encoding keeps the two fields unambiguous
- * without inventing a separator that a path or title might itself contain.
+ * Grouping key for one test. JSON encoding keeps the fields unambiguous without
+ * inventing a separator that a path or title might itself contain.
+ *
+ * `variant` keeps independent runs of the same spec apart — without it, two
+ * Playwright projects running one spec merge into a single group and only one of
+ * their flakes is ever reported.
  */
-function testKey(file: string, title: string): string {
-  return JSON.stringify([file, title]);
+function testKey(outcome: TestOutcome): string {
+  return JSON.stringify([outcome.file, outcome.title, outcome.variant ?? ""]);
 }
 
 /**
@@ -46,7 +50,7 @@ export function detectFlakes(outcomes: TestOutcome[]): Flake[] {
   const attemptsByTest = new Map<string, TestOutcome[]>();
   for (const outcome of outcomes) {
     if (!canContributeToFlake(outcome)) continue;
-    const key = testKey(outcome.file, outcome.title);
+    const key = testKey(outcome);
     const attempts = attemptsByTest.get(key);
     if (attempts) attempts.push(outcome);
     else attemptsByTest.set(key, [outcome]);

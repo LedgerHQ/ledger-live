@@ -1,6 +1,7 @@
 # @ledgerhq/test-quarantine
 
-Flake reporting for the repo's test suites. Test quarantine follows in a later phase.
+Flake reporting for the repo's jest and Playwright suites. Detox and test quarantine
+follow in later phases.
 
 A **flake** is a test that failed an attempt and passed a later one within the same run.
 This package spots those and reports them to the wallet-flake-reporting ingest API, so
@@ -23,6 +24,7 @@ core/       runner-agnostic; no runner imports
   ci          CI detection and the run URL
 
 jest/       the jest reporter
+playwright/ the Playwright reporter
 ```
 
 Only `core/redact.ts` uses regular expressions, because redaction is inherently pattern
@@ -81,6 +83,34 @@ evidence, so a hard failure in one case is never reported as a flake because a s
 passed. The cost is that if one such case genuinely flakes, the failure text may be
 attributed to a sibling. Interpolate the parameters into `each` titles
 (`test.each([...])("rejects %s", …)`) and the ambiguity disappears.
+
+## Enabling it for a Playwright project
+
+Add the reporter to the config's `reporter` list and declare the dependency, as above:
+
+```ts
+reporter: [
+  ["line"],
+  ["@ledgerhq/test-quarantine/playwright"],
+],
+```
+
+Retries are what make it produce anything — with no second attempt a flake cannot be
+distinguished from a failure:
+
+```ts
+retries: process.env.CI ? 1 : 0,
+failOnFlakyTests: false,
+```
+
+Turning `retries` on is what changes behaviour; `false` is already Playwright's default, so
+the line is an explicit anchor rather than the operative change — set it to `true` to keep
+flakes failing the build, but deleting it restores nothing. The default is what we want once
+flakes are recorded: a test that passes on retry stops blocking the merge and is reported
+instead. Note a `--fail-on-flaky-tests` CLI flag overrides the config either way.
+
+A test that fails **every** attempt still fails the build, and local runs stay strict at
+zero retries so a failure surfaces immediately.
 
 ## Configuration
 
