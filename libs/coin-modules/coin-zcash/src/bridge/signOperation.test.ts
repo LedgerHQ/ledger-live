@@ -345,13 +345,28 @@ describe("bridge/signOperation", () => {
   // to confirm on the device. So it is present for a shielded-enabled account
   // and absent for one that only ever held public funds -- and a t→t send, which
   // reads no shielded key material, must work in both cases.
-  describe("an account whose UFVK has not been exported", () => {
-    function accountWithoutUfvk(): ZcashAccount {
-      const account = makeAccount();
-      delete (account as { privateInfo?: unknown }).privateInfo;
-      return account;
-    }
-
+  // An account represents "no UFVK" in more than one way: no privateInfo at all,
+  // or a privateInfo whose ufvk is null or an empty string -- which is why the
+  // shielded scan gates on its length as well (`sync.ts`'s `ufvkIsPresent`).
+  // Every one of them must behave identically here.
+  describe.each([
+    [
+      "no privateInfo",
+      () => {
+        const account = makeAccount();
+        delete (account as { privateInfo?: unknown }).privateInfo;
+        return account;
+      },
+    ],
+    [
+      "a null ufvk",
+      () => makeAccount({ privateInfo: { ...makeAccount().privateInfo, ufvk: null } } as never),
+    ],
+    [
+      "an empty ufvk",
+      () => makeAccount({ privateInfo: { ...makeAccount().privateInfo, ufvk: "" } } as never),
+    ],
+  ] as const)("an account with %s", (_label, accountWithoutUfvk) => {
     it.each(["shielded", "shielded-to-transparent", "transparent-to-shielded"] as const)(
       "refuses a %s send, which cannot be built without the shielded keys",
       async transferType => {

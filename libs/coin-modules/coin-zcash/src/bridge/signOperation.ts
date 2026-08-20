@@ -73,7 +73,8 @@ function resolveAccountKey(
   account: ZcashAccount,
   ufvk: string | undefined,
 ): { ufvk: string } | { transparentAccountPubkey: string } {
-  if (ufvk !== undefined) return { ufvk };
+  // Truthiness, like `requireUfvk`: an empty viewing key is no key.
+  if (ufvk) return { ufvk };
   // Every synced account is built from its xpub, so this is an invariant
   // violation rather than a state the user can reach or resolve.
   if (!account.xpub) throw new Error("Missing xpub -- cannot derive the account's transparent key");
@@ -122,7 +123,13 @@ export const buildSignOperation =
         // that genuinely read shielded key material may depend on it: a
         // transparent send identifies its account by the xpub instead, and stays
         // available to an account that holds nothing but public funds.
-        const ufvk = account.privateInfo?.ufvk ?? undefined;
+        //
+        // An account can carry an empty string rather than null, which is why the
+        // shielded scan gates on its length too (`sync.ts`'s `ufvkIsPresent`).
+        // Normalising here keeps the two readers below agreeing on what
+        // "present" means: without it a transparent send would forward `ufvk: ""`
+        // to the builder and fail decoding a viewing key it never needed.
+        const ufvk = account.privateInfo?.ufvk || undefined;
         if (!transaction.selectedNotes)
           throw new Error("Missing selectedNotes -- run prepareTransaction first");
         if (transaction.zcashFee === undefined)
