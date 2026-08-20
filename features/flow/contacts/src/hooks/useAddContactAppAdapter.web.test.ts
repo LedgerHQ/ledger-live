@@ -18,7 +18,7 @@ import type { ContactsAnalyticsHelper } from "../analytics/createContactsAnalyti
 import { useAddContactAppAdapter } from "./useAddContactAppAdapter";
 
 jest.mock("@features/platform-contacts", () => ({
-  ...jest.requireActual("@features/platform-contacts"),
+  getContactInitial: (name: string) => name.slice(0, 1),
   useContacts: jest.fn(),
 }));
 
@@ -137,8 +137,22 @@ describe("useAddContactAppAdapter", () => {
       flow: CONTACTS_FLOW.CONTACTS,
       page: CONTACTS_PAGE_PROPERTY.ADD_CONTACT,
     });
-    expect(onSaveSuccess).toHaveBeenCalledTimes(1);
+    expect(onSaveSuccess).toHaveBeenCalledWith(
+      expect.objectContaining({ id: "contact-ada", name: "Ada" }),
+    );
     expect(result.current.isOpen).toBe(false);
+  });
+
+  it("should reset the draft when the consumer closes the container", () => {
+    const { result } = renderAdapter();
+
+    act(() => {
+      result.current.onOpen();
+      result.current.onDraftNameChange("Ada");
+      result.current.onClose();
+    });
+
+    expect(result.current).toMatchObject({ isOpen: false, draftName: "" });
   });
 
   it("should track invalid name errors once while the error is visible", () => {

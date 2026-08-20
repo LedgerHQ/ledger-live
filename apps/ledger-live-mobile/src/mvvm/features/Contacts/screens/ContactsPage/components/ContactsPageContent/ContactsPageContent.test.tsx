@@ -85,6 +85,7 @@ function createViewModel({
       onClose: jest.fn(),
       onDraftNameChange: jest.fn(),
       onConfirm: jest.fn(),
+      reset: jest.fn(),
     },
   };
 }

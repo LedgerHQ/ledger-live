@@ -1,14 +1,12 @@
 import {
   addContact,
   contact,
+  type Contact,
   DUPLICATE_CONTACT_NAME_ERROR_NAME,
   INVALID_CONTACT_NAME_ERROR_NAME,
 } from "@domain/entity-contact";
-import {
-  type ContactCreationPort,
-  type ContactsAddContactDialogProps,
-  useAddContactAppAdapter,
-} from "@features/flow-contacts";
+import { type AddContactAppAdapterResult, useAddContactAppAdapter } from "@features/flow-contacts";
+import type { ContactCreationPort } from "@features/flow-contacts-add-contact";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { v4 as uuid } from "uuid";
@@ -16,8 +14,8 @@ import { useDispatch } from "LLD/hooks/redux";
 import { useContactsAnalytics } from "../../analytics";
 
 export function useAddContactDialogAdapter(
-  onSaveSuccess: () => void,
-): ContactsAddContactDialogProps {
+  onSaveSuccess: (contact: Contact) => void,
+): AddContactAppAdapterResult {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const analytics = useContactsAnalytics();
