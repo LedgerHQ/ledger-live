@@ -247,6 +247,20 @@ jobs:
       AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
       NX_KEY: ${{ secrets.NX_KEY }}
 
+  # Stubs for required checks whose real workflow only runs on pull_request.
+  check-sync: # mirrors test-workflows-sync.yml
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Report not applicable
+        run: echo "Workflow files in a merge group are already merged with develop - nothing to check."
+
+  danger:
+    name: "Validate PR conventions"
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Report not applicable
+        run: echo "PR conventions are validated on the pull request, before it can be queued."
+
   # Final Check required
   ok:
     name: "OK"
