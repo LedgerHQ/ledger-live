@@ -1,5 +1,6 @@
 ---
 "@features/flow-pay-card-auth": minor
+"@shared/env": patch
 "live-mobile": minor
 "ledger-live-desktop": minor
 ---
@@ -20,3 +21,6 @@ They agree through one Redux flag, `payCardAuth.isSignedIn`, because two login m
 hydrate the session and neither would agree with the other. The machine writes the flag on entering
 `ready`, `idle` and `error`. `CardLogout` writes it once a logout is through, and the machine takes a
 `SESSION_ENDED` event to put the login back on offer.
+
+`CARD_OAUTH_REDIRECT_URI` now defaults to `https://go.ledger.com/ledger/card-baanx`. The provider
+whitelists an HTTPS address, and it must match on the token exchange too.
