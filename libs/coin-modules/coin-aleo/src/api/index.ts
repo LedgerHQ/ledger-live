@@ -31,13 +31,18 @@ import {
   register,
   validateAddress,
 } from "../logic";
-import { buildFeeConfigurationForRootIntent, getTransactionType } from "../logic/utils";
+import {
+  buildFeeConfigurationForRootIntent,
+  getTransactionType,
+  resolvePrivacyContext,
+} from "../logic/utils";
 import type {
   AleoContext,
   AleoCoinConfig,
   AleoRegistration,
   AleoTransactionIntentData,
 } from "../types";
+import { listOperations } from "../logic/listOperations";
 
 type AleoCoinModuleApi = CoinModuleApi<AleoCoinConfig, MemoNotSupported, AleoTransactionIntentData>;
 
@@ -50,9 +55,9 @@ function requireViewKey(context: AleoContext, action: string): string {
 }
 
 // currencyId is captured here (it can't live on the Context). The logic functions are shared with
-// the classic bridge (config-based), so each method resolves config via context.config() and passes
-// it down — no context-first wrappers.
-export function createApi(_currencyId: string): AleoCoinModuleApi {
+// the classic bridge (config-based), so each method resolves the config itself and passes it down —
+// no context-first wrappers.
+export function createApi(currencyId: string): AleoCoinModuleApi {
   return {
     async call() {
       throw new Error("call is not supported");
@@ -168,8 +173,16 @@ export function createApi(_currencyId: string): AleoCoinModuleApi {
       const config = await context.config();
       return lastBlock(config);
     },
-    listOperations: (_context, _address, _options) => {
-      throw new Error("listOperations is not supported");
+    listOperations: async (context: AleoContext, address, options) => {
+      if (options.order && options.order !== "desc") {
+        throw new Error(`aleo: listOperations does not support order "${options.order}"`);
+      }
+
+      const { provableId, viewKey } = resolvePrivacyContext(context);
+
+      const config = await context.config(currencyId);
+
+      return listOperations({ config, address, options, provableId, viewKey });
     },
     getBlock(_context, _height): Promise<Block> {
       throw new Error("getBlock is not supported");

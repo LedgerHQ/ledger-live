@@ -17,12 +17,18 @@ import {
   lastBlock,
   register,
 } from "../logic";
-import { buildFeeConfigurationForRootIntent, getTransactionType } from "../logic/utils";
+import {
+  buildFeeConfigurationForRootIntent,
+  getTransactionType,
+  resolvePrivacyContext,
+} from "../logic/utils";
 import type { AleoContext } from "../types";
 import { createApi } from "./index";
+import { listOperations } from "../logic/listOperations";
 
 jest.mock("../logic");
 jest.mock("../logic/utils");
+jest.mock("../logic/listOperations");
 
 describe("createApi", () => {
   const api = createApi("aleo");
@@ -36,11 +42,13 @@ describe("createApi", () => {
   const mockedCraftTransaction = jest.mocked(craftTransaction);
   const mockedEstimateFees = jest.mocked(estimateFees);
   const mockedGetAccountInfo = jest.mocked(getAccountInfo);
+  const mockedListOperations = jest.mocked(listOperations);
   const mockedGetBalance = jest.mocked(getBalance);
   const mockedLastBlock = jest.mocked(lastBlock);
   const mockedRegister = jest.mocked(register);
   const mockedGetTransactionType = jest.mocked(getTransactionType);
   const mockedBuildFeeConfigurationForRootIntent = jest.mocked(buildFeeConfigurationForRootIntent);
+  const mockedResolvePrivacyContext = jest.mocked(resolvePrivacyContext);
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -58,6 +66,10 @@ describe("createApi", () => {
       max_priority_fee: "0",
     });
     mockedRegister.mockResolvedValue({ type: "aleo", provableId: "scan-uuid-123" });
+    mockedResolvePrivacyContext.mockReturnValue({
+      provableId: "uuid1field",
+      viewKey: "AViewKey1test",
+    });
   });
 
   it("should return an API object with coin module api methods", () => {
@@ -401,12 +413,48 @@ describe("createApi", () => {
   });
 
   describe("listOperations", () => {
-    it("should throw unsupported error", () => {
-      const api = createApi("aleo");
+    it("should reject an order other than desc", async () => {
+      await expect(
+        api.listOperations(context, "aleo1test", { minHeight: 0, order: "asc" }),
+      ).rejects.toThrow('aleo: listOperations does not support order "asc"');
+      expect(mockedListOperations).not.toHaveBeenCalled();
+    });
 
-      expect(() => api.listOperations(context, "aleo1test", { minHeight: 0 })).toThrow(
-        "listOperations is not supported",
+    it("should reject without touching the logic layer when the context carries no private pair", async () => {
+      const api = createApi("aleo");
+      mockedResolvePrivacyContext.mockImplementation(() => {
+        throw new Error("aleo: provableId is missing");
+      });
+
+      await expect(api.listOperations(context, "aleo1test", { minHeight: 0 })).rejects.toThrow(
+        "aleo: provableId is missing",
       );
+      expect(mockedListOperations).not.toHaveBeenCalled();
+    });
+
+    it("should delegate to the logic layer with the context private pair", async () => {
+      const api = createApi("aleo");
+      const page = { items: [], next: undefined };
+      mockedListOperations.mockResolvedValue(page);
+
+      const result = await api.listOperations(
+        { ...context, provableId: "uuid1field", viewKey: "AViewKey1test" },
+        "aleo1test",
+        { minHeight: 0 },
+      );
+
+      expect(mockedResolvePrivacyContext).toHaveBeenCalledWith(
+        expect.objectContaining({ provableId: "uuid1field", viewKey: "AViewKey1test" }),
+      );
+      expect(mockedListOperations).toHaveBeenCalledTimes(1);
+      expect(mockedListOperations).toHaveBeenCalledWith({
+        config: mockConfig,
+        address: "aleo1test",
+        options: { minHeight: 0 },
+        provableId: "uuid1field",
+        viewKey: "AViewKey1test",
+      });
+      expect(result).toBe(page);
     });
   });
 

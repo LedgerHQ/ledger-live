@@ -186,7 +186,7 @@ describe("apiClient", () => {
     });
 
     it("should fetch transactions with cursor for pagination", async () => {
-      const cursor = "123456";
+      const cursor = { blockNumber: 123456 };
       const mockResponse = getMockedAccountPublicTransactions(MOCK_ALEO_ADDRESS, {
         transactions: [],
         prev_cursor: {
@@ -210,7 +210,7 @@ describe("apiClient", () => {
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "GET",
-        url: `${mockConfig.apiUrls.node}/v2/${mockConfig.networkType}/transactions/address/${MOCK_ALEO_ADDRESS}?metadata=true&limit=50&sort=asc&direction=next&token_info=true&cursor_block_number=${cursor}`,
+        url: `${mockConfig.apiUrls.node}/v2/${mockConfig.networkType}/transactions/address/${MOCK_ALEO_ADDRESS}?metadata=true&limit=50&sort=asc&direction=next&token_info=true&cursor_block_number=${cursor.blockNumber}`,
       });
     });
 
@@ -235,7 +235,7 @@ describe("apiClient", () => {
     });
 
     it("should fetch transactions with all custom parameters", async () => {
-      const cursor = "999999";
+      const cursor = { blockNumber: 999999, transitionId: "au1resume" };
       const mockResponse = getMockedAccountPublicTransactions(MOCK_ALEO_ADDRESS, {
         transactions: [
           {
@@ -269,7 +269,7 @@ describe("apiClient", () => {
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "GET",
-        url: `${mockConfig.apiUrls.node}/v2/${mockConfig.networkType}/transactions/address/${MOCK_ALEO_ADDRESS}?metadata=true&limit=20&sort=desc&direction=prev&token_info=true&cursor_block_number=${cursor}`,
+        url: `${mockConfig.apiUrls.node}/v2/${mockConfig.networkType}/transactions/address/${MOCK_ALEO_ADDRESS}?metadata=true&limit=20&sort=desc&direction=prev&token_info=true&cursor_block_number=${cursor.blockNumber}&cursor_transition_id=${cursor.transitionId}`,
       });
       expect(result).toEqual(mockResponse);
     });
@@ -673,6 +673,25 @@ describe("apiClient", () => {
       expect(network).toHaveBeenCalledWith(
         expect.objectContaining({
           data: { filter: { start: mockStart }, uuid: mockUuid },
+        }),
+      );
+    });
+
+    it("should include `filter.end` in the request body when end is provided", async () => {
+      const mockStart = 14192648;
+      jest.mocked(network).mockResolvedValue({ data: [testnetPrivateRecord], status: 200 });
+
+      await apiClient.getAccountOwnedRecords({
+        config: mockConfig,
+        uuid: mockUuid,
+        start: mockStart,
+        end: mockStart + 100,
+      });
+
+      expect(network).toHaveBeenCalledTimes(1);
+      expect(network).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: { filter: { start: mockStart, end: mockStart + 100 }, uuid: mockUuid },
         }),
       );
     });
