@@ -1,5 +1,5 @@
 import { BigNumber } from "bignumber.js";
-import { firstValueFrom, lastValueFrom, Observable, of, throwError, toArray } from "rxjs";
+import { firstValueFrom, lastValueFrom, Observable, of, Subject, throwError, toArray } from "rxjs";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { SYNC_TYPE_SHIELDED, SYNC_TYPE_TRANSPARENT } from "@ledgerhq/types-live";
 import type { SyncConfig } from "@ledgerhq/types-live";
@@ -16,6 +16,7 @@ import { clearTransactionDetailsCache } from "./transaction-details";
 import { ZCASH_AUTO_SYNC_TIMEOUT_MS } from "../constants";
 import type { ZcashAccount } from "../types/bridge";
 import type { SignerContext } from "../types/signer";
+import type { ShieldedSyncResult, ShieldedTransaction } from "../network/types";
 
 const generateAccount = jest.fn((..._args: unknown[]): unknown => undefined);
 const syncAccount = jest.fn(async (..._args: unknown[]) => undefined);
@@ -99,6 +100,22 @@ const outgoingTx = (): TX =>
       output({ address: CHANGE, output_hash: "ee".repeat(32), output_index: 1, value: "20000" }),
     ],
   }) as unknown as TX;
+
+const incomingShieldedTx = (id: string): ShieldedTransaction =>
+  ({
+    id,
+    hex: "00",
+    blockHeight: 100,
+    blockHash: "shielded-hash",
+    timestamp: 1_700_000_000,
+    fee: new BigNumber(0),
+    decryptedData: {
+      orchard_outputs: [
+        { amount: new BigNumber(5_000), memo: "", transfer_type: "incoming", isSpent: false },
+      ],
+      sapling_outputs: [],
+    },
+  }) as unknown as ShieldedTransaction;
 
 const privateInfo = (overrides: Record<string, unknown> = {}) =>
   ({
@@ -650,6 +667,151 @@ describe("buildSyncObservables", () => {
     expect(transparent).toMatchObject({ balance: new BigNumber(70_000) });
     expect(shielded.privateInfo).toMatchObject({ syncState: "stopped" });
   });
+
+  // Both legs anchor to the same pre-tick snapshot and each re-emits it merged with
+  // only its own new finds, so a stale copy of the other leg's domain rides along in
+  // every emission. Left unreconciled, whichever leg emits last would wholesale-wipe
+  // the other's same-tick progress once it reaches `shouldMergeOps: false` (bridge/index.ts).
+  it("keeps a transparent operation found this tick even when a later, stale-anchored shielded emission arrives", async () => {
+    getAccountTransactions.mockResolvedValue({ txs: [incomingTx()] });
+    getAccountUnspentUtxos.mockResolvedValue([output()]);
+
+    const shieldedChunk = new Subject<ShieldedSyncResult>();
+    getZCashClient.mockResolvedValue({
+      syncShielded: () => shieldedChunk,
+      findBlockHeight: jest.fn(),
+    });
+
+    const eligible = info({
+      initialAccount: {
+        id: "js:2:zcash:xpub6DZ:",
+        operations: [],
+        bitcoinResources: { utxos: [], walletAccount: walletAccount() },
+        privateInfo: privateInfo({ lastProcessedBlock: 1 }),
+      },
+    });
+
+    const { syncs } = buildSyncObservables(
+      eligible,
+      { syncType: SYNC_TYPE_TRANSPARENT | SYNC_TYPE_SHIELDED } as SyncConfig,
+      signerContext,
+    );
+    const [transparentSync, shieldedSync] = syncs;
+
+    const transparentShape = await firstValueFrom(transparentSync);
+    expect(transparentShape.operations?.some(op => op.hash === "tx-in")).toBe(true);
+
+    // The shielded leg's own emission is still anchored to the pre-tick (empty)
+    // snapshot: it knows nothing about the transparent op just found above.
+    const shieldedShapePromise = firstValueFrom(shieldedSync);
+    await Promise.resolve();
+    await Promise.resolve();
+    shieldedChunk.next({
+      transactions: [],
+      processedBlocks: 1,
+      remainingBlocks: 0,
+      lastProcessedBlock: 1,
+    });
+    const shieldedShape = await shieldedShapePromise;
+
+    expect(shieldedShape.operations?.some(op => op.hash === "tx-in")).toBe(true);
+  });
+
+  it("keeps a shielded operation found this tick even when a later, stale-anchored transparent emission arrives", async () => {
+    // `performTransparentSync` only reaches `getAccountUnspentUtxos` after several
+    // earlier awaits, so `resolveUtxos` isn't the real resolver until this fires --
+    // resolving it any earlier would resolve a promise nothing awaits on.
+    // Assigned inside the mock below before `utxosRequested` resolves; the
+    // assertion is needed since TS can't trace that through the mock closure.
+    let resolveUtxos!: (utxos: WalletOutput[]) => void;
+    const utxosRequested = new Promise<void>(utxosRequestedResolve => {
+      getAccountUnspentUtxos.mockImplementation(
+        () =>
+          new Promise<WalletOutput[]>(resolve => {
+            resolveUtxos = resolve;
+            utxosRequestedResolve();
+          }),
+      );
+    });
+    getZCashClient.mockResolvedValue({
+      syncShielded: () =>
+        of({
+          transactions: [incomingShieldedTx("tx-shielded-in")],
+          processedBlocks: 1,
+          remainingBlocks: 0,
+          lastProcessedBlock: 1,
+        }),
+      findBlockHeight: jest.fn(),
+    });
+
+    const eligible = info({
+      initialAccount: {
+        id: "js:2:zcash:xpub6DZ:",
+        operations: [],
+        bitcoinResources: { utxos: [], walletAccount: walletAccount() },
+        privateInfo: privateInfo({ lastProcessedBlock: 1 }),
+      },
+    });
+
+    const { syncs } = buildSyncObservables(
+      eligible,
+      { syncType: SYNC_TYPE_TRANSPARENT | SYNC_TYPE_SHIELDED } as SyncConfig,
+      signerContext,
+    );
+    const [transparentSync, shieldedSync] = syncs;
+
+    const shieldedShape = await firstValueFrom(shieldedSync);
+    expect(shieldedShape.operations?.some(op => op.hash === "tx-shielded-in")).toBe(true);
+
+    // The transparent leg's single emission is still anchored to the pre-tick
+    // (empty) snapshot: it knows nothing about the shielded op just found above.
+    const transparentShapePromise = firstValueFrom(transparentSync);
+    await utxosRequested;
+    resolveUtxos([output()]);
+    const transparentShape = await transparentShapePromise;
+
+    expect(transparentShape.operations?.some(op => op.hash === "tx-shielded-in")).toBe(true);
+  });
+
+  it("does not duplicate a pre-existing operation that both legs still carry forward from the pre-tick snapshot", async () => {
+    // `removeReplaced` (wallet-btc/operations) drops any *unconfirmed* operation older
+    // than 2h regardless of RBF status, so this needs a `blockHeight` to survive as the
+    // ordinary confirmed, long-since-synced operation it's meant to represent.
+    const preExisting = {
+      id: "op1",
+      hash: "tx-old",
+      type: "IN",
+      blockHeight: 100,
+      date: new Date("2026-01-01T00:00:00.000Z"),
+    };
+    getZCashClient.mockResolvedValue({
+      syncShielded: () =>
+        of({ transactions: [], processedBlocks: 1, remainingBlocks: 0, lastProcessedBlock: 1 }),
+      findBlockHeight: jest.fn(),
+    });
+
+    const eligible = info({
+      initialAccount: {
+        id: "js:2:zcash:xpub6DZ:",
+        operations: [preExisting],
+        bitcoinResources: { utxos: [], walletAccount: walletAccount() },
+        privateInfo: privateInfo({ lastProcessedBlock: 1 }),
+      },
+    });
+
+    const { syncs } = buildSyncObservables(
+      eligible,
+      { syncType: SYNC_TYPE_TRANSPARENT | SYNC_TYPE_SHIELDED } as SyncConfig,
+      signerContext,
+    );
+
+    const [transparentShape, shieldedShape] = await Promise.all(
+      syncs.map(sync => firstValueFrom(sync)),
+    );
+
+    expect(transparentShape.operations?.filter(op => op.hash === "tx-old")).toHaveLength(1);
+    expect(shieldedShape.operations?.filter(op => op.hash === "tx-old")).toHaveLength(1);
+  });
 });
 
 describe("makeGetAccountShape", () => {
@@ -707,5 +869,58 @@ describe("makeGetAccountShape", () => {
 
     expect(shapes.some(shape => shape.privateInfo?.syncState === "stopped")).toBe(true);
     expect(shapes.some(shape => shape.balance?.eq(new BigNumber(70_000)))).toBe(true);
+  });
+
+  it("does not lose a transparent operation to a later shielded emission through the real merged pipeline", async () => {
+    getAccountTransactions.mockResolvedValue({ txs: [incomingTx()] });
+    getAccountUnspentUtxos.mockResolvedValue([output()]);
+
+    const shieldedChunk = new Subject<ShieldedSyncResult>();
+    getZCashClient.mockResolvedValue({
+      syncShielded: () => shieldedChunk,
+      findBlockHeight: jest.fn(),
+    });
+
+    const eligible = info({
+      initialAccount: {
+        id: "js:2:zcash:xpub6DZ:",
+        operations: [],
+        bitcoinResources: { utxos: [], walletAccount: walletAccount() },
+        privateInfo: privateInfo({ lastProcessedBlock: 1 }),
+      },
+    });
+
+    const shapes: Partial<ZcashAccount>[] = [];
+    let shieldedTriggered = false;
+    const done = new Promise<void>(resolve => {
+      makeGetAccountShape(signerContext)(eligible, {
+        syncType: SYNC_TYPE_TRANSPARENT | SYNC_TYPE_SHIELDED,
+      } as SyncConfig).subscribe({
+        next: shape => {
+          shapes.push(shape);
+          // The transparent leg's emission is the first (and, here, only) one
+          // that reports a balance; once it has landed, let the shielded leg
+          // emit too, still anchored to the pre-tick (empty) snapshot it
+          // started from. `reduceUnchangedShieldedChunk` also sets `balance`,
+          // so this must fire at most once or it re-enters on the shielded
+          // leg's own emission.
+          if (!shieldedTriggered && shape.balance !== undefined) {
+            shieldedTriggered = true;
+            shieldedChunk.next({
+              transactions: [],
+              processedBlocks: 1,
+              remainingBlocks: 0,
+              lastProcessedBlock: 1,
+            });
+            shieldedChunk.complete();
+          }
+        },
+        complete: resolve,
+      });
+    });
+    await done;
+
+    expect(shapes).toHaveLength(2);
+    expect(shapes[1].operations?.some(op => op.hash === "tx-in")).toBe(true);
   });
 });

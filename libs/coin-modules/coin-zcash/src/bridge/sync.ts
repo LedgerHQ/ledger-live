@@ -33,6 +33,7 @@ import {
 import type { BitcoinOutput, BtcOperation, ZcashAccount } from "../types/bridge";
 import type { SignerContext } from "../types/signer";
 import type { ShieldedSyncResult, ShieldedTransaction, ZcashPrivateInfo } from "../network/types";
+import { ZCASH_SHIELDED_TX_TYPES } from "../network/types";
 import { toWalletBtcCurrency } from "../walletBtcCurrency";
 import { computeZcashBalance, getTransparentBalance } from "../logic/account/balance";
 import { explorerFee, spentOutpoints, txDate } from "../logic/history/transparentTx";
@@ -952,6 +953,37 @@ export function buildExtraSyncObservable(
 // coin-zcash owns both halves itself (no coin-bitcoin fallback): every sync
 // always runs the transparent leg, and adds the shielded leg when eligible.
 
+const isShieldedOperation = (op: BtcOperation): boolean =>
+  (ZCASH_SHIELDED_TX_TYPES as readonly string[]).includes(op.type);
+
+/**
+ * Both legs anchor to the same pre-tick `initialAccount.operations` snapshot and each
+ * re-emits it merged with only its own new finds (see `performTransparentSync` and
+ * `reduceShieldedSyncResult`), so every emission from either leg carries a mix of fresh
+ * data for its own domain plus a stale, frozen-at-tick-start copy of the other's. This
+ * is where they're combined, tracking each leg's latest domain separately so a stale
+ * copy from one leg's emission can never wholesale-replace the other leg's same-tick
+ * progress once it reaches `makeSync`'s `shouldMergeOps: false` merge (bridge/index.ts).
+ */
+function reconcileLegOperations(
+  latest: { transparent: BtcOperation[]; shielded: BtcOperation[] },
+  leg: "transparent" | "shielded",
+  result: Partial<ZcashAccount>,
+): Partial<ZcashAccount> {
+  if (!result.operations) return result;
+
+  latest[leg] = (result.operations as BtcOperation[]).filter(op =>
+    leg === "shielded" ? isShieldedOperation(op) : !isShieldedOperation(op),
+  );
+
+  return {
+    ...result,
+    operations: [...latest.transparent, ...latest.shielded].sort(
+      (a, b) => b.date.valueOf() - a.date.valueOf(),
+    ) as BtcOperation[],
+  };
+}
+
 export function buildSyncObservables(
   info: AccountShapeInfo<ZcashAccount>,
   syncConfig: SyncConfig,
@@ -960,12 +992,24 @@ export function buildSyncObservables(
   const syncType = syncConfig.syncType ?? SYNC_TYPE_TRANSPARENT;
   const syncs: Observable<Partial<ZcashAccount>>[] = [];
 
+  const initialOps = (info.initialAccount?.operations || []) as BtcOperation[];
+  const latest = {
+    transparent: initialOps.filter(op => !isShieldedOperation(op)),
+    shielded: initialOps.filter(isShieldedOperation),
+  };
+
   if (syncType & SYNC_TYPE_TRANSPARENT) {
-    syncs.push(createTransparentSyncObservable(info, signerContext));
+    syncs.push(
+      createTransparentSyncObservable(info, signerContext).pipe(
+        map(result => reconcileLegOperations(latest, "transparent", result)),
+      ),
+    );
   }
 
   const extraSync = buildExtraSyncObservable(info, syncConfig);
-  if (extraSync) syncs.push(extraSync);
+  if (extraSync) {
+    syncs.push(extraSync.pipe(map(result => reconcileLegOperations(latest, "shielded", result))));
+  }
 
   return { syncs, syncType };
 }
