@@ -50,6 +50,7 @@ export default class PortfolioPage {
   portfolioBalanceAmount = "portfolio-balance-amount";
   portfolioBalanceAnalyticsPill = "portfolio-balance-analytics-pill";
   portfolioBalanceDelta = "portfolio-balance-delta";
+  borrowEntryPointId = "portfolio-borrow-entry-point";
   transferBottomSheetReceiveButton = "transfer-action-receive";
   transferBottomSheetSendButton = "transfer-action-send";
   transferBottomSheetBankTransferButton = "transfer-action-bank-transfer";
@@ -626,5 +627,17 @@ export default class PortfolioPage {
   @Step("Check full stocks list page is visible")
   async checkStocksListPageVisible() {
     await this.checkListPageVisible(this.stocksListId);
+  }
+
+  @Step("Expect borrow entry point to be visible")
+  async expectBorrowEntryPointVisible() {
+    await scrollToId(this.borrowEntryPointId, this.accountsListView, 700, "down");
+    await detoxExpect(getElementById(this.borrowEntryPointId)).toBeVisible();
+  }
+
+  /** The card and its CTA share one onPress, so tap the card that was scrolled into view. */
+  @Step("Click borrow entry point")
+  async clickBorrowEntryPoint() {
+    await tapById(this.borrowEntryPointId);
   }
 }
