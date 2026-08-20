@@ -735,6 +735,16 @@ describe("CosmosApi", () => {
       const result = await cosmosApi["fetchTransactions"](params);
       expect(result).toEqual(expectedTxs);
     });
+    it("normalizes a null tx_responses to an empty array", async () => {
+      // An empty history comes back as `tx_responses: null`; unguarded, `concat(null)` would
+      // push a literal null into the tx list.
+      // @ts-expect-error method is mocked
+      network.mockResolvedValue({ data: { tx_responses: null, pagination: null, total: "0" } });
+
+      const result = await cosmosApi["fetchTransactions"](new URLSearchParams());
+
+      expect(result).toEqual({ txs: [], total: 0 });
+    });
   });
 
   describe("broadcastTransaction", () => {
