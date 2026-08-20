@@ -1,4 +1,4 @@
-import { Observable } from "rxjs";
+import { Observable, type Subscription } from "rxjs";
 import { DEFAULT_ZCASH_PRIVATE_INFO } from "@ledgerhq/coin-zcash/constants";
 import { createFixtureAccount } from "@ledgerhq/coin-bitcoin/fixtures/common.fixtures";
 import { CryptoCurrency } from "@domain/entity-currency-crypto";
@@ -6,6 +6,8 @@ import type { ZcashAccount } from "@ledgerhq/live-common/families/bitcoin/types"
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { SYNC_TYPE_SHIELDED } from "@ledgerhq/types-live";
 import { act, renderHook, waitFor } from "tests/testSetup";
+import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
+import { upsertShieldedSubscription } from "~/renderer/reducers/shieldedSyncSubscriptions";
 import { syncStateUpdater } from "../ZCashExportKeyFlowModal/sync";
 import { useZcashShieldedSync } from "../useZcashShieldedSync";
 
@@ -70,7 +72,7 @@ describe("useZcashShieldedSync", () => {
     });
     expect(mockedSyncStateUpdater).toHaveBeenCalledWith(
       expect.objectContaining({ id: account.id }),
-      { syncState: "running", progress: 0 },
+      { syncState: "running", progress: 0, lastSyncError: null },
     );
     expect(store.getState().shieldedSyncSubscriptions).toEqual([
       {
@@ -133,6 +135,61 @@ describe("useZcashShieldedSync", () => {
 
     expect(mockedSyncStateUpdater).not.toHaveBeenCalled();
     expect(store.getState().shieldedSyncSubscriptions).toEqual([]);
+  });
+
+  // A retry loop (see ZcashPostBroadcastSync) can call `startShieldedSync` long
+  // after this hook's owning component unmounted, so nothing re-renders it and
+  // refreshes a `useSelector`/prop-derived snapshot. These two tests drive the
+  // store directly, without ever re-rendering the hook, to prove the guards
+  // still see that update -- the exact interaction the other tests' mocked
+  // `useZcashShieldedSync` (in ZcashPostBroadcastSync.test.tsx) can't exercise.
+  it("does not start a duplicate sync when the account started running via a store update the hook was never re-rendered for", () => {
+    const account = buildAccount();
+
+    const { result, store } = renderHook(() => useZcashShieldedSync(account), {
+      initialState: { accounts: [account], shieldedSyncSubscriptions: [] },
+    });
+
+    store.dispatch(
+      updateAccountWithUpdater(account.id, existing => {
+        const zcashExisting = existing as ZcashAccount;
+        return {
+          ...zcashExisting,
+          privateInfo: { ...zcashExisting.privateInfo, syncState: "running" },
+        };
+      }),
+    );
+
+    act(() => {
+      result.current.startShieldedSync();
+    });
+
+    expect(mockedGetAccountBridge).not.toHaveBeenCalled();
+    expect(mockedSyncStateUpdater).not.toHaveBeenCalled();
+  });
+
+  it("does not start a duplicate sync when a subscription was tracked via a store update the hook was never re-rendered for", () => {
+    const account = buildAccount();
+    const unsubscribe = jest.fn();
+
+    const { result, store } = renderHook(() => useZcashShieldedSync(account), {
+      initialState: { accounts: [account], shieldedSyncSubscriptions: [] },
+    });
+
+    store.dispatch(
+      upsertShieldedSubscription({
+        accountId: account.id,
+        subscription: { unsubscribe } as unknown as Subscription,
+      }),
+    );
+
+    act(() => {
+      result.current.startShieldedSync();
+    });
+
+    expect(mockedGetAccountBridge).not.toHaveBeenCalled();
+    expect(mockedSyncStateUpdater).not.toHaveBeenCalled();
+    expect(unsubscribe).not.toHaveBeenCalled();
   });
 
   it("stops a shielded sync and clears its tracked subscription regardless of the re-entrancy guard", () => {
