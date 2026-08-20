@@ -1,11 +1,7 @@
 import type { TFunction } from "i18next";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import type {
-  HederaAccount,
-  Transaction,
-  TransactionStatus,
-} from "@ledgerhq/live-common/families/hedera/types";
-import type { Operation } from "@ledgerhq/types-live";
+import type { HederaAccount, HederaGenericTransaction } from "@ledgerhq/live-common/families/hedera/types";
+import type { Operation, TransactionStatusCommon } from "@ledgerhq/types-live";
 import type { Step } from "~/renderer/components/Stepper";
 import type { OpenModal } from "~/renderer/actions/modals";
 
@@ -23,10 +19,10 @@ export type StepProps = {
   optimisticOperation: Operation;
   error: Error;
   signed: boolean;
-  transaction: Transaction | undefined | null;
-  status: TransactionStatus;
-  onChangeTransaction: (a: Transaction) => void;
-  onUpdateTransaction: (a: (a: Transaction) => Transaction) => void;
+  transaction: HederaGenericTransaction | undefined | null;
+  status: TransactionStatusCommon;
+  onChangeTransaction: (a: HederaGenericTransaction) => void;
+  onUpdateTransaction: (a: (a: HederaGenericTransaction) => HederaGenericTransaction) => void;
   onTransactionError: (a: Error) => void;
   onOperationBroadcasted: (a: Operation) => void;
   setSigned: (a: boolean) => void;

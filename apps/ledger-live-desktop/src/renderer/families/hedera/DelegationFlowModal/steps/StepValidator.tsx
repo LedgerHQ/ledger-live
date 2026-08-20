@@ -2,9 +2,7 @@ import invariant from "invariant";
 import React from "react";
 import { Trans } from "react-i18next";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
-import { HEDERA_TRANSACTION_MODES } from "@ledgerhq/live-common/families/hedera/constants";
-import { HederaValidator, Transaction } from "@ledgerhq/live-common/families/hedera/types";
-import { isStakingTransaction } from "@ledgerhq/live-common/families/hedera/utils";
+import { HederaValidator, type HederaGenericTransaction } from "@ledgerhq/live-common/families/hedera/types";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
@@ -20,18 +18,14 @@ export default function StepValidator({
   error,
 }: Readonly<StepProps>) {
   invariant(account && transaction, "hedera: account and transaction required");
-  invariant(isStakingTransaction(transaction), "hedera: staking tx expected");
-  const stakingNodeId = transaction.properties?.stakingNodeId;
-  const selectedValidatorId = typeof stakingNodeId === "number" ? String(stakingNodeId) : null;
-  const bridge = useAccountBridge<Transaction>(account, parentAccount);
+  const selectedValidatorId = transaction.valId ?? null;
+  const bridge = useAccountBridge<HederaGenericTransaction>(account, parentAccount);
 
   const updateValidator = (validator: HederaValidator) => {
     onUpdateTransaction(() => {
       return bridge.updateTransaction(transaction, {
-        mode: HEDERA_TRANSACTION_MODES.Delegate,
-        properties: {
-          stakingNodeId: Number(validator.id),
-        },
+        mode: "delegate",
+        valId: validator.id,
       });
     });
   };
@@ -66,14 +60,14 @@ export function StepValidatorFooter({
   transaction,
 }: Readonly<StepProps>) {
   invariant(account && transaction, "hedera: account and transaction required");
-  invariant(isStakingTransaction(transaction), "hedera: staking tx expected");
 
   const { errors } = status;
   const canNext =
     !bridgePending &&
     !errors.validators &&
     transaction &&
-    typeof transaction.properties?.stakingNodeId === "number";
+    typeof transaction.valId === "string" &&
+    transaction.valId !== "";
 
   return (
     <Box horizontal>

@@ -196,6 +196,8 @@ export function Row({
     [onManageAction],
   );
 
+  console.log(enrichedDelegation);
+
   return (
     <Wrapper>
       {isValidatorRemoved ? (

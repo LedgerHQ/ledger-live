@@ -4,9 +4,8 @@ import invariant from "invariant";
 import { StyleSheet, View } from "react-native";
 import SafeAreaView from "~/components/SafeAreaView";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import type { AccountBridge } from "@ledgerhq/types-live";
 import { HEDERA_TRANSACTION_MODES } from "@ledgerhq/live-common/families/hedera/constants";
-import type { Transaction } from "@ledgerhq/live-common/families/hedera/types";
+import type { HederaGenericTransaction } from "@ledgerhq/live-common/families/hedera/types";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { TrackScreen } from "~/analytics";
@@ -34,12 +33,12 @@ function ClaimRewardsClaim({ navigation, route }: Props) {
 
   const { selectedDelegation } = route.params;
   const unit = useAccountUnit(account);
-  const bridge: AccountBridge<Transaction> = useAccountBridge(account);
+  const bridge = useAccountBridge<HederaGenericTransaction>(account);
   const { transaction, status, bridgePending, bridgeError } = useBridgeTransaction(bridge, () => {
     const t = bridge.createTransaction(account);
 
     const transaction = bridge.updateTransaction(t, {
-      mode: HEDERA_TRANSACTION_MODES.ClaimRewards,
+      mode: "claimReward",
     });
 
     return {
@@ -50,7 +49,6 @@ function ClaimRewardsClaim({ navigation, route }: Props) {
   });
 
   invariant(transaction, "transaction must be defined");
-  invariant(transaction.family === "hedera", "transaction hedera");
 
   const onContinue = useCallback(async () => {
     navigation.navigate(ScreenName.HederaClaimRewardsSelectDevice, {

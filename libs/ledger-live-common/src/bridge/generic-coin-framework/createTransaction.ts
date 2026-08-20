@@ -81,11 +81,13 @@ export function createTransaction(account: Account | TokenAccount): GenericTrans
     case "near":
     case "vechain":
     case "cardano":
+    case "hedera":
       // None has an account sequence: Cardano is UTXO, VeChain's nonce is a random uniqueness
-      // field, and a NEAR nonce belongs to an access key rather than the account. getNextSequence
-      // throws in all three modules, and utils.ts maps nonce → intent.sequence, which lets
-      // signOperation skip that call. The value is inert for crafting — each module builds its
-      // own — so the default tx is signable without callers having to set it.
+      // field, a NEAR nonce belongs to an access key rather than the account, and Hedera has
+      // neither — replay protection comes from the transaction id and its validity window.
+      // getNextSequence throws in all four modules, and utils.ts maps nonce → intent.sequence,
+      // which lets signOperation skip that call. The value is inert for crafting — each module
+      // builds its own — so the default tx is signable without callers having to set it.
       return {
         family: currency.family,
         amount: new BigNumber(0),

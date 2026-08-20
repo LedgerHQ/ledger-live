@@ -4,7 +4,6 @@ import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import { HEDERA_TRANSACTION_MODES } from "@ledgerhq/live-common/families/hedera/constants";
-import { isStakingTransaction } from "@ledgerhq/live-common/families/hedera/utils";
 import { track } from "~/renderer/analytics/segment";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { multiline } from "~/renderer/styles/helpers";
@@ -26,14 +25,14 @@ function StepConfirmation({
   transaction,
   source,
 }: Readonly<StepProps>) {
-  invariant(isStakingTransaction(transaction), "hedera: staking tx expected");
-  const selectedValidatorNodeId = transaction.properties?.stakingNodeId ?? null;
+  invariant(transaction, "hedera: transaction required");
+  const selectedValidatorNodeId = transaction.valId ?? null;
 
   useEffect(() => {
-    if (optimisticOperation && typeof selectedValidatorNodeId === "number") {
+    if (optimisticOperation && typeof selectedValidatorNodeId === "string") {
       track("staking_completed", {
         currency: "HBAR",
-        validator: selectedValidatorNodeId,
+        validator: Number(selectedValidatorNodeId),
         source,
         delegation: HEDERA_TRANSACTION_MODES.Delegate,
         flow: "stake",

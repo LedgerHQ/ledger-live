@@ -1,3 +1,4 @@
+import type { HederaGenericTransaction } from "../families/hedera/types";
 import type {
   Transaction as aleoTransaction,
   TransactionRaw as aleoTransactionRaw,
@@ -174,6 +175,13 @@ import type {
 } from "../families/xrp/types";
 
 export type Transaction =
+  // Hedera's own `hederaTransaction` (below) is still the legacy `properties.stakingNodeId` shape —
+  // its send flow hasn't migrated off it yet — but the staking flows (LIVE-36151) build and read the
+  // real generic-framework transaction, literal-branded `family: "hedera"` so it narrows correctly
+  // alongside every other member here (a bare `GenericTransaction`, with `family: string`, was tried
+  // first and rejected: its non-literal `family` defeats `switch(transaction.family)` narrowing for
+  // *every* other family in this union, not just Hedera).
+  | HederaGenericTransaction
   | aleoTransaction
   | algorandTransaction
   | aptosTransaction

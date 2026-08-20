@@ -21,6 +21,7 @@ import {
 import {
   combine,
   craftTransaction,
+  getAccountInfo,
   getBalance,
   getBlockInfo,
   getBlockV2,
@@ -31,6 +32,7 @@ import {
   broadcast as logicBroadcast,
   estimateFees as logicEstimateFees,
   listOperationsV2 as logicListOperationsV2,
+  validateIntent,
 } from "../logic";
 import {
   extractInitiator,
@@ -66,8 +68,11 @@ export function createApi(
       throw new Error("register is not supported");
     },
     combine: (_context, tx, signature, options) => combine(tx, signature, options?.pubkey),
+    // `useAllAmount` needs no branch here: `genericPrepareTransaction` (ledger-live-common) already
+    // resolves it to a concrete `txIntent.amount` — the account's spendable balance minus the same
+    // safety-multiplied fee estimate (`estimateFees.ts`'s `ESTIMATED_FEE_SAFETY_RATE`) this function
+    // reserves via `customFees` — before this ever runs. Crafting reads `txIntent.amount` either way.
     craftTransaction: async (context: HederaContext, txIntent, options) => {
-      invariant(!txIntent.useAllAmount, "useAllAmount is not supported");
       const coinConfig = await context.config();
       const { serializedTx } = await craftTransaction({
         configOrCurrencyId: coinConfig,
@@ -105,6 +110,14 @@ export function createApi(
         value: BigInt(estimatedFee.tinybars.toString()),
       };
     },
+    getAccountInfo: async (context: HederaContext, address: string) => {
+      const coinConfig = await context.config();
+      return getAccountInfo(coinConfig, address);
+    },
+    // Deliberately still rejecting, not an oversight: `BalanceOptions.includeAssets` would need
+    // `getBalance` to filter its own token fetch, and nothing supplies it today —
+    // `families/hedera/bridge/api.ts`'s `BridgeApi.balanceOptions` (the field the framework reads to
+    // pass options here) is left unset. Revisit only once something actually sets it.
     getBalance: (context: HederaContext, address: string, options?: BalanceOptions) =>
       rejectBalanceOptions(async () => {
         const coinConfig = await context.config();
@@ -119,13 +132,16 @@ export function createApi(
       const coinConfig = await context.config();
       return lastBlockV2({ configOrCurrencyId: coinConfig });
     },
+    // `minHeight` is not a paging cursor here: Hedera has no chain of blocks, so every synced
+    // operation carries the same synthetic HARDCODED_BLOCK_HEIGHT. The framework nonetheless
+    // computes it as `lastKnownHeight + 1` on every sync after the first and passes it along —
+    // accept any value and keep paging on `cursor` (a consensus timestamp), which is what actually
+    // continues the mirror-node query.
     listOperations: async (
       context: HederaContext,
       address: string,
-      { cursor, limit, order, minHeight }: ListOperationsOptions,
+      { cursor, limit, order }: ListOperationsOptions,
     ) => {
-      invariant(minHeight === 0, "minHeight is not supported");
-
       const coinConfig = await context.config();
       const evmAddress = await toEVMAddress({
         configOrCurrencyId: coinConfig,
@@ -244,12 +260,19 @@ export function createApi(
       return getRewards({ configOrCurrencyId: coinConfig, address, cursor: options?.cursor });
     },
     validateIntent: async (
-      _context: HederaContext,
-      _transactionIntent,
-      _balances,
-      _options,
+      context: HederaContext,
+      transactionIntent,
+      balances,
+      options,
     ): Promise<TransactionValidation> => {
-      throw new Error("validateIntent is not supported");
+      const coinConfig = await context.config();
+      return validateIntent(
+        currencyId,
+        coinConfig,
+        transactionIntent,
+        balances,
+        options?.customFees,
+      );
     },
     getNextSequence: async (_context: HederaContext, _address): Promise<bigint> => {
       throw new Error("getNextSequence is not supported");

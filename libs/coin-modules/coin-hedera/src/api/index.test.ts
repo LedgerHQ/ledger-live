@@ -35,6 +35,7 @@ const mockGetValidators = jest.mocked(logic.getValidators);
 const mockGetStakes = jest.mocked(logic.getStakes);
 const mockGetRewards = jest.mocked(logic.getRewards);
 const mockListOperationsV2 = jest.mocked(logic.listOperationsV2);
+const mockValidateIntent = jest.mocked(logic.validateIntent);
 
 describe("createApi", () => {
   let api: ReturnType<typeof createApi>;
@@ -103,13 +104,20 @@ describe("createApi", () => {
       expect(result).toEqual({ transaction: "serialized" });
     });
 
-    it("should throw when craftTransaction is called with useAllAmount", async () => {
-      // @ts-expect-error - testing unsupported useAllAmount
-      const txIntent: TransactionIntent<HederaMemo> = { useAllAmount: true };
+    it("should craft a transaction when useAllAmount is set — the amount is already resolved upstream", async () => {
+      // @ts-expect-error - partial mock
+      mockCraftTransaction.mockResolvedValue({ serializedTx: "serialized" });
+      // @ts-expect-error - partial intent
+      const txIntent: TransactionIntent<HederaMemo> = {
+        useAllAmount: true,
+        recipient: "0.0.1234",
+        amount: 900n,
+      };
 
-      await expect(api.craftTransaction(mockContext, txIntent)).rejects.toThrow(
-        "useAllAmount is not supported",
-      );
+      const result = await api.craftTransaction(mockContext, txIntent);
+
+      expect(mockCraftTransaction).toHaveBeenCalledTimes(1);
+      expect(result).toEqual({ transaction: "serialized" });
     });
   });
 
@@ -321,10 +329,45 @@ describe("createApi", () => {
       mockGetERC20BalancesForAccountV2.mockResolvedValue([]);
     });
 
-    it("should throw when minHeight is not 0", async () => {
+    it("should not throw for a second sync's minHeight (lastKnownHeight + 1) — there is no chain of blocks to reject against", async () => {
+      mockListOperationsV2.mockResolvedValue({
+        coinOperations: [mockOperation],
+        tokenOperations: [],
+        nextCursor: null,
+      });
+
       await expect(
-        api.listOperations(mockContext, mockAddress, { ...mockOptions, minHeight: 5 }),
-      ).rejects.toThrow("minHeight is not supported");
+        api.listOperations(mockContext, mockAddress, {
+          ...mockOptions,
+          minHeight: HARDCODED_BLOCK_HEIGHT + 1,
+        }),
+      ).resolves.toBeDefined();
+    });
+
+    it("drives two syncs back to back (minHeight 0, then a stored account's lastKnownHeight + 1) without throwing, returning each page's operations untouched", async () => {
+      mockListOperationsV2.mockResolvedValueOnce({
+        coinOperations: [mockOperationOlder],
+        tokenOperations: [],
+        nextCursor: "1000.0",
+      });
+      mockListOperationsV2.mockResolvedValueOnce({
+        coinOperations: [mockOperationNewer],
+        tokenOperations: [],
+        nextCursor: "2000.0",
+      });
+
+      const firstSync = await api.listOperations(mockContext, mockAddress, mockOptions);
+      const secondSync = await api.listOperations(mockContext, mockAddress, {
+        ...mockOptions,
+        minHeight: HARDCODED_BLOCK_HEIGHT + 1,
+        cursor: firstSync.next ?? undefined,
+      });
+
+      expect(firstSync.items.map(op => op.id)).toEqual(["older"]);
+      expect(secondSync.items.map(op => op.id)).toEqual(["newer"]);
+      // The two pages carry disjoint operations — nothing duplicated, nothing dropped once the
+      // framework merges them (`mergeOps`, keyed by operation id).
+      expect(new Set([...firstSync.items, ...secondSync.items].map(op => op.id)).size).toBe(2);
     });
 
     it("should return mapped coin-framework operations with correct shape", async () => {
@@ -522,11 +565,34 @@ describe("createApi", () => {
   });
 
   describe("validateIntent", () => {
-    it("should throw when called", async () => {
-      // @ts-expect-error - testing unsupported method
-      await expect(api.validateIntent(mockContext, {}, [], undefined)).rejects.toThrow(
-        "validateIntent is not supported",
+    it("should call validateIntent from logic with the currency id, config and given arguments", async () => {
+      const intent = { type: "send" } as TransactionIntent<HederaMemo>;
+      const balances = [{ value: 1n, asset: { type: "native" as const } }];
+      const options = { customFees: { value: 10n } };
+      mockValidateIntent.mockResolvedValue({
+        errors: {},
+        warnings: {},
+        estimatedFees: 10n,
+        amount: 1n,
+        totalSpent: 11n,
+      });
+
+      const result = await api.validateIntent(mockContext, intent, balances, options);
+
+      expect(mockValidateIntent).toHaveBeenCalledWith(
+        mockCurrency.id,
+        await mockContext.config(),
+        intent,
+        balances,
+        options.customFees,
       );
+      expect(result).toEqual({
+        errors: {},
+        warnings: {},
+        estimatedFees: 10n,
+        amount: 1n,
+        totalSpent: 11n,
+      });
     });
   });
 

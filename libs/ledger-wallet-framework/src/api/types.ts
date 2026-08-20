@@ -13,6 +13,7 @@ import type {
   StakingResources,
 } from "@ledgerhq/types-live";
 import type BigNumber from "bignumber.js";
+import type { IterateResultBuilder } from "../bridge/jsHelpers";
 
 export type OptimisticOperationDescriptor = {
   /** The operation type this mode produces. Absent defers to the generic mode mapping. */
@@ -37,6 +38,13 @@ export type ChainSpecificRules = {
 
 export type BridgeApi = {
   getChainSpecificRules?: ChainSpecificRules;
+  /**
+   * Overrides the derivation-path walk during account discovery (`makeScanAccounts`), for chains
+   * whose accounts are looked up by public key rather than derived — e.g. Hedera, where the account
+   * id comes from a mirror-node lookup on the root public key, not from the path itself. Absent
+   * keeps the default walk.
+   */
+  buildIterateResult?: IterateResultBuilder;
   getTokenFromAsset?: (asset: AssetInfo) => Promise<TokenCurrency | undefined>;
   getAssetFromToken?: (token: TokenCurrency, owner: string) => AssetInfo | undefined;
   computeIntentType?: (transaction: Record<string, unknown>) => string;

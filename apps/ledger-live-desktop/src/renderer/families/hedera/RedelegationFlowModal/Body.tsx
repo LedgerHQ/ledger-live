@@ -10,11 +10,7 @@ import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransact
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import type { Account, Operation } from "@ledgerhq/types-live";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
-import { HEDERA_TRANSACTION_MODES } from "@ledgerhq/live-common/families/hedera/constants";
-import type {
-  HederaAccount,
-  Transaction as HederaTransaction,
-} from "@ledgerhq/live-common/families/hedera/types";
+import type { HederaAccount, HederaGenericTransaction } from "@ledgerhq/live-common/families/hedera/types";
 import type { Device } from "@ledgerhq/types-devices";
 import Track from "~/renderer/analytics/Track";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
@@ -86,16 +82,13 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
   const [transactionError, setTransactionError] = useState<Error | null>(null);
   const [signed, setSigned] = useState(false);
   const dispatch = useDispatch();
-  const bridge = useAccountBridge<HederaTransaction>(account);
+  const bridge = useAccountBridge<HederaGenericTransaction>(account);
   const { transaction, setTransaction, updateTransaction, status, bridgeError, bridgePending } =
     useBridgeTransaction(bridge, () => {
       const t = bridge.createTransaction(account);
 
       const transaction = bridge.updateTransaction(t, {
-        mode: HEDERA_TRANSACTION_MODES.Redelegate,
-        properties: {
-          stakingNodeId: null,
-        },
+        mode: "redelegate",
       });
 
       return {

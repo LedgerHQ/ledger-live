@@ -5,11 +5,10 @@ import { Trans } from "~/context/Locale";
 import SafeAreaView from "~/components/SafeAreaView";
 import { useTheme } from "@react-navigation/native";
 import { Text } from "@ledgerhq/native-ui";
-import type { AccountBridge } from "@ledgerhq/types-live";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { HEDERA_TRANSACTION_MODES } from "@ledgerhq/live-common/families/hedera/constants";
-import type { Transaction } from "@ledgerhq/live-common/families/hedera/types";
+import type { HederaGenericTransaction } from "@ledgerhq/live-common/families/hedera/types";
 import { TrackScreen } from "~/analytics";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import Button from "~/components/Button";
@@ -36,15 +35,13 @@ function RedelegationAmount({ navigation, route }: Props) {
   invariant(account.type === "Account", "account type must be Account");
 
   const unit = useAccountUnit(account);
-  const bridge: AccountBridge<Transaction> = useAccountBridge(account);
+  const bridge = useAccountBridge<HederaGenericTransaction>(account);
   const { transaction, status, bridgePending, bridgeError } = useBridgeTransaction(bridge, () => {
     const t = bridge.createTransaction(account);
 
     const transaction = bridge.updateTransaction(t, {
-      mode: HEDERA_TRANSACTION_MODES.Redelegate,
-      properties: {
-        stakingNodeId: Number(route.params.selectedValidator.id),
-      } as const,
+      mode: "redelegate",
+      valId: route.params.selectedValidator.id,
     });
 
     return {
@@ -55,7 +52,6 @@ function RedelegationAmount({ navigation, route }: Props) {
   });
 
   invariant(transaction, "transaction must be defined");
-  invariant(transaction.family === "hedera", "transaction hedera");
 
   const onContinue = useCallback(async () => {
     navigation.navigate(ScreenName.HederaRedelegationSelectDevice, {

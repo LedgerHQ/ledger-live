@@ -75,6 +75,8 @@ export default function ValidatorsSelect({
     return null;
   };
 
+  console.log("options", options);
+
   return (
     <>
       <Select

@@ -1,3 +1,4 @@
+import type { HederaGenericTransaction } from "../families/hedera/types";
 import type {
   Transaction as aleoTransaction,
   TransactionRaw as aleoTransactionRaw,
@@ -174,6 +175,8 @@ import type {
 } from "../families/xrp/types";
 
 export type Transaction =
+  // See the identical comment in `coin-modules/transaction-types.ts` — this file mirrors it.
+  | HederaGenericTransaction
   | aleoTransaction
   | algorandTransaction
   | aptosTransaction

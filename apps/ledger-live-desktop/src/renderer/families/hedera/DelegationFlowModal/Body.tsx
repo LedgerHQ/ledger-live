@@ -8,8 +8,7 @@ import { createStructuredSelector } from "reselect";
 import type { Account, Operation } from "@ledgerhq/types-live";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import { useHederaValidators } from "@ledgerhq/live-common/families/hedera/react";
-import { HEDERA_TRANSACTION_MODES } from "@ledgerhq/live-common/families/hedera/constants";
-import type { HederaAccount, Transaction } from "@ledgerhq/live-common/families/hedera/types";
+import type { HederaAccount, HederaGenericTransaction } from "@ledgerhq/live-common/families/hedera/types";
 import { getDefaultValidator } from "@ledgerhq/live-common/families/hedera/utils";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
@@ -93,17 +92,15 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
   const [signed, setSigned] = useState(false);
   const dispatch = useDispatch();
   const validators = useHederaValidators(account.currency);
-  const bridge = useAccountBridge<Transaction>(account);
+  const bridge = useAccountBridge<HederaGenericTransaction>(account);
   const { transaction, setTransaction, updateTransaction, status, bridgeError, bridgePending } =
     useBridgeTransaction(bridge, () => {
       const t = bridge.createTransaction(account);
       const defaultValidator = getDefaultValidator(validators);
 
       const transaction = bridge.updateTransaction(t, {
-        mode: HEDERA_TRANSACTION_MODES.Delegate,
-        properties: {
-          stakingNodeId: defaultValidator ? Number(defaultValidator.id) : null,
-        },
+        mode: "delegate",
+        valId: defaultValidator?.id,
       });
 
       return {
