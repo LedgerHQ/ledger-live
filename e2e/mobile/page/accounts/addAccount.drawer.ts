@@ -114,7 +114,7 @@ export default class AddAccountDrawer extends CommonPage {
     // and disable Confirm. Only the multi-account case needs deselecting and then picking one.
     if (accountCount > 1) {
       await tapById(this.deselectAllButtonId);
-      await tapById(this.accountItemRegExp(), 0);
+      await tapById(this.accountItemRegExp(), index);
     }
     const accountId = await this.expectAccountDiscovery(currencyName, currencyId, index);
     await this.finishAccountsDiscovery();
