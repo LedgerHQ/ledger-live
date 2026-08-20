@@ -36,6 +36,11 @@ const teamWalletXp = {
     parser: stringParser,
     desc: "Baanx public client key sent as x-client-key on every Card API request (tenant routing)",
   },
+  CARD_OAUTH_DEEP_LINK: {
+    def: "ledgerlive://paytab",
+    parser: stringParser,
+    desc: "App deep link the Card OAuth redirect lands on; the browser session ends on this URL",
+  },
   CARD_OAUTH_REDIRECT_URI: {
     def: "https://go.ledger.com/ledger/card-baanx",
     parser: stringParser,

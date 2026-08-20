@@ -24,10 +24,11 @@ session and neither would agree with the other. The login machine writes the fla
 `idle` and `error`. `CardLogout` writes it once a logout is through, and the login machine takes a
 `SESSION_ENDED` event to put the login back on offer.
 
-`oauthConfig` carries the OAuth client id and redirect URI: both are the app's to know, and the
-provider matches the redirect URI verbatim. That same value goes to the authorization initiation, to
-the secure browser — which needs it to know which callback ends the session — and to the token
-exchange.
+`oauthConfig` carries the OAuth client id, the redirect URI and the app's deep link. All three are
+the app's to know. The redirect URI goes to the authorization initiation and to the token exchange,
+and the provider matches it verbatim; it has to be an `https` URL, because the provider whitelists no
+other scheme. The deep link goes to the secure browser, which needs a custom scheme to know which
+callback ends the session. The provider redirects to the deep link, and that is what joins the two.
 
 `callback` carries the OAuth redirect, when the app already has one. The app's router owns the deep
 link, so it hands over the `code` and `state` it parsed. On mobile that is

@@ -2,9 +2,12 @@ import { createActor, waitFor, type Actor } from "xstate";
 import { cardLoginMachine } from "../machine";
 import type { CardLoginOauthConfig, CardLoginPorts, PayCardAuthCallback } from "../types";
 
+// Two different values on purpose: the provider gets the `https` redirect, and the browser session
+// ends on the app's deep link. A test that spelled them the same could not catch a swap.
 const oauthConfig: CardLoginOauthConfig = {
   clientId: "client-key",
-  redirectUri: "ledgerlive://paytab",
+  redirectUri: "https://go.test/ledger/card",
+  deepLink: "ledgerlive://paytab",
 };
 
 const attempt = { state: "state-value", codeVerifier: "verifier-value" };
@@ -104,7 +107,7 @@ describe("cardLoginMachine cold start", () => {
     await settledAt(actor, "ready");
     expect(ports.exchangeAuthorizationCode).toHaveBeenCalledWith({
       code: "auth-code",
-      redirectUri: "ledgerlive://paytab",
+      redirectUri: "https://go.test/ledger/card",
       codeVerifier: "verifier-value",
     });
     expect(ports.openHostedLogin).not.toHaveBeenCalled();
@@ -143,7 +146,7 @@ describe("cardLoginMachine login", () => {
     expect(ports.saveAttempt).toHaveBeenCalledWith(attempt);
     expect(ports.initiateAuthorize).toHaveBeenCalledWith({
       clientId: "client-key",
-      redirectUri: "ledgerlive://paytab",
+      redirectUri: "https://go.test/ledger/card",
       state: "state-value",
       codeChallenge: "challenge-value",
     });

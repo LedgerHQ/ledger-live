@@ -67,13 +67,13 @@ export const openHostedLogin = fromPromise(
   async ({
     input,
   }: {
-    input: { ports: CardLoginPorts; loginUrl: string | null; redirectUri: string };
+    input: { ports: CardLoginPorts; loginUrl: string | null; deepLink: string };
   }) => {
     if (!input.loginUrl) {
       throw new MissingLoginStateError("URL");
     }
 
-    const result = await input.ports.openHostedLogin(input.loginUrl, input.redirectUri);
+    const result = await input.ports.openHostedLogin(input.loginUrl, input.deepLink);
 
     return { callback: result.type === "success" ? parseCallbackUrl(result.url) : null };
   },

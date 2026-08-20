@@ -43,7 +43,18 @@ export type PayCardAuthCallback = Readonly<{
  */
 export type CardLoginOauthConfig = Readonly<{
   clientId: string;
+  /**
+   * Sent to the provider on authorize, and repeated on the token exchange. The provider whitelists
+   * an `https` URL only, so this one cannot be the app's own link. It redirects to `deepLink`.
+   */
   redirectUri: string;
+  /**
+   * The app's own link, which the redirect above lands on. The browser session ends on this URL, and
+   * only a custom scheme can end it: `ASWebAuthenticationSession` takes the scheme of this value as
+   * its `callbackURLScheme`, and the Android polyfill matches the incoming link against the whole of
+   * it. An `https` value would match neither.
+   */
+  deepLink: string;
 }>;
 
 /* --- What the machine needs from the outside world ------------------------------------------- */
@@ -56,7 +67,7 @@ export type HostedLoginResult =
   | Readonly<{ type: "success"; url: string }>
   | Readonly<{ type: "dismissed" }>;
 
-export type OpenHostedLogin = (loginUrl: string, redirectUri: string) => Promise<HostedLoginResult>;
+export type OpenHostedLogin = (loginUrl: string, deepLink: string) => Promise<HostedLoginResult>;
 
 /**
  * Everything the login machine needs from the outside world. The machine itself holds no React, no

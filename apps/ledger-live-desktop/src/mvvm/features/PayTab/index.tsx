@@ -18,6 +18,7 @@ import { usePayTabVerifyAddress } from "./hooks/usePayTabVerifyAddress";
 const oauthConfig: CardLoginOauthConfig = {
   clientId: getEnv("CARD_BAANX_CLIENT_KEY"),
   redirectUri: getEnv("CARD_OAUTH_REDIRECT_URI"),
+  deepLink: getEnv("CARD_OAUTH_DEEP_LINK"),
 };
 
 const PayTab = () => {

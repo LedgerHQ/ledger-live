@@ -142,7 +142,7 @@ export const cardLoginMachine = setup({
         input: ({ context }) => ({
           ports: context.ports,
           loginUrl: context.loginUrl,
-          redirectUri: context.oauthConfig.redirectUri,
+          deepLink: context.oauthConfig.deepLink,
         }),
         onDone: [
           {

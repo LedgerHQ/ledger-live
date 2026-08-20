@@ -24,3 +24,9 @@ hydrate the session and neither would agree with the other. The machine writes t
 
 `CARD_OAUTH_REDIRECT_URI` now defaults to `https://go.ledger.com/ledger/card-baanx`. The provider
 whitelists an HTTPS address, and it must match on the token exchange too.
+
+`CARD_OAUTH_DEEP_LINK` is new, and it holds the app's own link, `ledgerlive://paytab`. The redirect
+above lands on it, and the secure browser session ends on it. One value cannot serve both: the
+provider accepts no custom scheme, and the session ends on nothing else. `ASWebAuthenticationSession`
+takes the scheme of this value as its `callbackURLScheme`, and the Android polyfill matches the
+incoming link against the whole of it.
