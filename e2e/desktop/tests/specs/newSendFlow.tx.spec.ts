@@ -81,7 +81,6 @@ const nativeSendTransactions: NewSendFlowEntry[] = [
   {
     transaction: new Transaction(Account.POL_1, Account.POL_2, "0.001", Fee.SLOW),
     xrayTicket: "B2CQA-2807",
-    bugTicket: "LIVE-28070",
   },
   {
     transaction: new Transaction(Account.DOT_1, Account.DOT_2, "0.0001"),
