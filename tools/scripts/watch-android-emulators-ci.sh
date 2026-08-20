@@ -19,7 +19,8 @@
 #   ARTIFACTS_DIR     - directory collected by the upload-artifact step
 #
 # Optional environment:
-#   EMULATOR_SERIALS  - space-separated adb serials (default: emulator-5554 5556 5558)
+#   EMULATOR_SERIALS  - space-separated adb serials
+#                       (default: "emulator-5554 emulator-5556 emulator-5558")
 #   WATCH_INTERVAL    - seconds between polls (default: 5)
 #   WATCH_STOP_FILE   - watcher exits once this file exists (workflow writes it after Detox)
 #   WATCH_DIAGNOSTICS - any non-empty value enables the opt-in tier
@@ -94,7 +95,10 @@ check_wedges() {
 #          load1, tcp_inuse, tcp_tw (TIME_WAIT), qemu_fds_total, qemu_socks_total
 trend() {
   local mem qemu load tcp_inuse tcp_tw fds socks pids
+  # Emit all four memory columns or four placeholders - never one "?" standing in for
+  # the group, which would shift every later column and silently corrupt the TSV.
   mem="$(free -m 2>/dev/null | awk '/^Mem:/{print $2"\t"$3"\t"$4"\t"$7}')"
+  [ -z "$mem" ] && mem="$(printf '?\t?\t?\t?')"
   qemu="$(pgrep -c qemu-system 2>/dev/null || echo 0)"
   load="$(awk '{print $1}' /proc/loadavg 2>/dev/null)"
   tcp_inuse="$(awk '/^TCP:/{print $3}' /proc/net/sockstat 2>/dev/null)"
@@ -107,7 +111,7 @@ trend() {
     socks=$((socks + $(find "/proc/${p}/fd" -mindepth 1 -lname 'socket:*' 2>/dev/null | wc -l)))
   done
   printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n' \
-    "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "${mem:-?}" "$qemu" \
+    "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$mem" "$qemu" \
     "${load:-?}" "${tcp_inuse:-?}" "${tcp_tw:-?}" "$fds" "$socks" >>"$TREND_LOG" 2>/dev/null || true
 }
 
