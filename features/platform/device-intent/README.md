@@ -1174,9 +1174,9 @@ The executor reports progress and lifecycle changes through callback props:
 | Callback                            | Fires when                                                                                                                                                |
 | ----------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `onExecutorStateChanged(state)`     | The executor transitions between lifecycle phases (`connectingDevice`, `initializingDeviceContext`, `executingIntent`, `idle`, and their error variants). |
-| `onIntentJobStateChanged(jobState)` | The running job's observable emits a new `JobState` value.                                                                                                |
-| `onIntentJobComplete()`             | The job observable completes (no more emissions). The executor transitions to `idle`.                                                                     |
-| `onIntentJobError(error)`           | The job observable errors. The executor transitions to `executingIntentError`.                                                                            |
+| `onIntentJobStateChanged(jobState)` | Optional. The running job's observable emits a new `JobState` value.                                                                                      |
+| `onIntentJobComplete()`             | Optional. The job observable completes (no more emissions). The executor transitions to `idle`.                                                           |
+| `onIntentJobError(error)`           | Optional. The job observable errors. The executor transitions to `executingIntentError`.                                                                  |
 
 All callbacks use refs internally, so the executor always calls the **latest**
 version of each callback without needing to be recreated when the callback
