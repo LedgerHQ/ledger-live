@@ -41,6 +41,15 @@ const StepSetDissolveDelay = ({
   const enteredSeconds = value ? BigInt(value) : 0n;
   const days = value ? String(enteredSeconds / BigInt(SECONDS_IN_DAY)) : "";
 
+  // An increase is bounded by the room left under the maximum, not by the maximum itself: the bridge
+  // rejects `current + additional > max`, so clamping to MAX_DAYS would still let the entry overshoot.
+  const remainingSeconds = BigInt(NNS_MAXIMUM_DISSOLVE_DELAY) - currentSeconds;
+  const allowedDays = isIncrease
+    ? remainingSeconds > 0n
+      ? remainingSeconds / BigInt(SECONDS_IN_DAY)
+      : 0n
+    : BigInt(MAX_DAYS);
+
   const onChange = useCallback(
     (nextDays: string) => {
       const digits = nextDays.replace(/\D/g, "");
@@ -48,14 +57,14 @@ const StepSetDissolveDelay = ({
       // throws inside BigInt() while the resulting delay renders. Clamping holds the input to the
       // bound the description already advertises, rather than leaving it to submit-time validation.
       const entered = digits ? BigInt(digits) : 0n;
-      const clamped = entered > BigInt(MAX_DAYS) ? BigInt(MAX_DAYS) : entered;
+      const clamped = entered > allowedDays ? allowedDays : entered;
       const seconds = digits ? String(clamped * BigInt(SECONDS_IN_DAY)) : "";
       onUpdateTransaction(tx => ({
         ...tx,
         ...(isIncrease ? { additionalDissolveDelay: seconds } : { dissolveDelay: seconds }),
       }));
     },
-    [isIncrease, onUpdateTransaction],
+    [allowedDays, isIncrease, onUpdateTransaction],
   );
 
   if (!neuron) return null;
@@ -74,6 +83,7 @@ const StepSetDissolveDelay = ({
           values={{
             min: Math.ceil(NNS_MINIMUM_DISSOLVE_DELAY / SECONDS_IN_DAY),
             max: MAX_DAYS,
+            remaining: String(allowedDays),
           }}
         />
       </Text>
@@ -84,7 +94,7 @@ const StepSetDissolveDelay = ({
         <Input
           value={days}
           onChange={onChange}
-          placeholder={String(MAX_DAYS)}
+          placeholder={String(allowedDays)}
           data-testid="icp-dissolve-delay-input"
         />
       </Box>

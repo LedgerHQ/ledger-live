@@ -70,6 +70,11 @@ describe("StepSetDissolveDelay", () => {
     Math.floor(NNS_MAXIMUM_DISSOLVE_DELAY / SECONDS_IN_DAY) * SECONDS_IN_DAY,
   );
 
+  // NEURON is already locked for the 14-day voting minimum, so an increase may only add the rest.
+  const REMAINING_DAYS = Math.floor(
+    (NNS_MAXIMUM_DISSOLVE_DELAY - NNS_MINIMUM_DISSOLVE_DELAY_TO_VOTE) / SECONDS_IN_DAY,
+  );
+
   it("clamps an entry above the maximum to the maximum", () => {
     const props = stepProps({ transaction: { type: "set_dissolve_delay", dissolveDelay: "" } });
     render(<StepSetDissolveDelay {...props} />);
@@ -94,6 +99,55 @@ describe("StepSetDissolveDelay", () => {
 
     const patched = applyUpdate(props.onUpdateTransaction as jest.Mock, {});
     expect(patched.dissolveDelay).toBe(MAX_ENTERABLE_SECONDS);
+  });
+
+  // The bridge rejects `current + additional > max`, so the room left under the cap is the real
+  // bound. Clamping an increase to the absolute maximum still let the total overshoot it.
+  it("clamps an increase to the room left under the maximum, not to the maximum itself", () => {
+    const props = stepProps({
+      transaction: { type: "increase_dissolve_delay", additionalDissolveDelay: "" },
+    });
+    render(<StepSetDissolveDelay {...props} />);
+
+    fireEvent.change(screen.getByTestId("icp-dissolve-delay-input"), {
+      target: { value: "99999" },
+    });
+
+    const patched = applyUpdate(props.onUpdateTransaction as jest.Mock, {});
+    expect(patched.additionalDissolveDelay).toBe(String(REMAINING_DAYS * SECONDS_IN_DAY));
+    expect(patched.additionalDissolveDelay).not.toBe(MAX_ENTERABLE_SECONDS);
+  });
+
+  it("quotes the days still available to add rather than the absolute cap", () => {
+    const props = stepProps({
+      transaction: { type: "increase_dissolve_delay", additionalDissolveDelay: "" },
+    });
+    render(<StepSetDissolveDelay {...props} />);
+
+    expect(
+      screen.getByText(new RegExp(`add up to ${REMAINING_DAYS} more days`)),
+    ).toBeInTheDocument();
+  });
+
+  // Reachable only if the neuron reaches the cap while the step is open — StepManage stops offering
+  // the action — but the entry has to collapse to a value the footer refuses rather than submit.
+  it("leaves nothing to enter for a neuron already at the maximum", () => {
+    const props = makeStepProps({
+      neurons: [
+        makeHealthyNeuron({
+          id: 5n,
+          dissolveState: { DissolveDelaySeconds: BigInt(NNS_MAXIMUM_DISSOLVE_DELAY) },
+        }),
+      ],
+      selectedNeuronId: "5",
+      transaction: { type: "increase_dissolve_delay", additionalDissolveDelay: "" },
+    });
+    render(<StepSetDissolveDelay {...props} />);
+
+    fireEvent.change(screen.getByTestId("icp-dissolve-delay-input"), { target: { value: "5" } });
+
+    const patched = applyUpdate(props.onUpdateTransaction as jest.Mock, {});
+    expect(patched.additionalDissolveDelay).toBe("0");
   });
 
   it("warns when the resulting delay would be too short to vote", () => {
