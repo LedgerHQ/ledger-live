@@ -7,6 +7,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./jest": "./src/jest/flake-reporter.ts",
+    "./jest-retries": "./jest-retries.cjs",
     "./playwright": "./src/playwright/flake-reporter.ts"
   },
   "scripts": {

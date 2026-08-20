@@ -35,14 +35,15 @@
   "devDependencies": {
     "@ledgerhq/hw-transport-mocker": "workspace:^",
     "@ledgerhq/live-dmk-speculos": "workspace:^",
+    "@ledgerhq/test-quarantine": "workspace:*",
     "@noble/curves": "1.9.7",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "bip32-path": "^0.4.2",
     "documentation": "14.0.2",
     "jest": "catalog:",
-    "@swc/jest": "catalog:",
-    "@swc/core": "catalog:",
     "ts-node": "^10.4.0"
   },
   "scripts": {
