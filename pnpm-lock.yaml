@@ -6803,6 +6803,9 @@ importers:
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
         version: 1.7.1(rxjs@7.8.2)
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -10945,6 +10948,9 @@ importers:
         specifier: 'catalog:'
         version: 7.7.3
     devDependencies:
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../support/test-quarantine
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -10988,6 +10994,9 @@ importers:
         specifier: workspace:^
         version: link:../device-core
     devDependencies:
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../support/test-quarantine
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -11331,6 +11340,9 @@ importers:
         specifier: 'catalog:'
         version: 8.18.3
     devDependencies:
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../support/test-quarantine
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -13884,6 +13896,9 @@ importers:
         specifier: workspace:*
         version: link:../../shared/env
     devDependencies:
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../support/test-quarantine
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -13957,6 +13972,9 @@ importers:
       '@ledgerhq/device-transport-kit-react-native-hid':
         specifier: 'catalog:'
         version: 1.0.4(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(react@19.1.4))(rxjs@7.8.2)
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../support/test-quarantine
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -14036,6 +14054,9 @@ importers:
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
         version: 1.7.1(rxjs@7.8.2)
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../support/test-quarantine
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -14097,6 +14118,9 @@ importers:
         specifier: workspace:*
         version: link:../../shared/env
     devDependencies:
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../support/test-quarantine
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -14366,6 +14390,9 @@ importers:
         specifier: 'catalog:'
         version: 7.8.2
     devDependencies:
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../support/test-quarantine
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../types-live
@@ -14415,6 +14442,9 @@ importers:
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../disable-network-setup
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../support/test-quarantine
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../types-live
@@ -14458,6 +14488,9 @@ importers:
         specifier: workspace:*
         version: link:../ledgerjs/packages/hw-transport
     devDependencies:
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../support/test-quarantine
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../types-live
@@ -14507,6 +14540,9 @@ importers:
         specifier: 'catalog:'
         version: 7.8.2
     devDependencies:
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../support/test-quarantine
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -14556,6 +14592,9 @@ importers:
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../disable-network-setup
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../support/test-quarantine
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../types-live
@@ -14614,6 +14653,9 @@ importers:
         specifier: 'catalog:'
         version: 7.8.2
     devDependencies:
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../support/test-quarantine
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../types-live
@@ -14663,6 +14705,9 @@ importers:
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../disable-network-setup
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../support/test-quarantine
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -14788,6 +14833,9 @@ importers:
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../disable-network-setup
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../support/test-quarantine
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../types-live
@@ -14831,6 +14879,9 @@ importers:
         specifier: 'catalog:'
         version: 7.8.2
     devDependencies:
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../support/test-quarantine
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../types-live
@@ -15046,6 +15097,9 @@ importers:
 
   libs/types-devices:
     devDependencies:
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../support/test-quarantine
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11

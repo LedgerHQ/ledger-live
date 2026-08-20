@@ -32,6 +32,7 @@
   },
   "devDependencies": {
     "@ledgerhq/device-management-kit": "catalog:",
+    "@ledgerhq/test-quarantine": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",
