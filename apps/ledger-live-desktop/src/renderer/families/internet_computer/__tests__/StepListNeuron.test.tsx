@@ -42,6 +42,18 @@ describe("StepListNeuron", () => {
     expect(screen.getAllByText("Locked")).toHaveLength(2);
   });
 
+  // The cell showed the raw cached stake, so a penalised neuron was listed with more stake than the
+  // manage screen and the account footer credit it with.
+  it("lists the stake net of the fees the neuron has accrued", () => {
+    const neurons = [
+      makeNeuron({ id: 11n, cachedNeuronStakeE8s: 300_000_000n, neuronFeesE8s: 50_000_000n }),
+    ];
+    render(<StepListNeuron {...makeStepProps({ neurons })} />);
+
+    expect(screen.getByText("2.5 ICP")).toBeInTheDocument();
+    expect(screen.queryByText("3 ICP")).not.toBeInTheDocument();
+  });
+
   it("formats a dissolve delay and falls back to a dash when there is none", () => {
     const neurons = [
       makeNeuron({ id: 11n, dissolveState: { DissolveDelaySeconds: BigInt(SECONDS_IN_DAY * 3) } }),

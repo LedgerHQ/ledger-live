@@ -1,6 +1,9 @@
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
-import { getNeuronDissolveDurationSeconds } from "@ledgerhq/live-common/families/internet_computer/neuron";
+import {
+  getNeuronDissolveDurationSeconds,
+  neuronStake,
+} from "@ledgerhq/live-common/families/internet_computer/neuron";
 import { getNeuronState } from "@ledgerhq/live-common/families/internet_computer/react";
 import type {
   ICPNeuron,
@@ -64,7 +67,7 @@ const StepListNeuron = ({
         case "stake":
           return (
             <FormattedVal
-              val={toBigNumber(neuron.cachedNeuronStakeE8s)}
+              val={toBigNumber(neuronStake(neuron))}
               unit={unit}
               showCode
               fontSize={3}
