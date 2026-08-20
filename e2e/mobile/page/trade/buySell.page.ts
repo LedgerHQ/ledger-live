@@ -239,15 +239,20 @@ export default class BuySellPage {
   }
 
   @Step("Handle sell flow")
-  async handleSellFlow(buySell: BuySell, paymentMethod: string, provider: BuySellProvider) {
+  /**
+   * The amount is deliberately not a parameter: this flow taps the 75% button, so the
+   * figure handed to the partner is whatever the UI resolved. Passing one in would only
+   * invite a caller to believe it was typed.
+   */
+  async handleSellFlow(
+    buySell: Omit<BuySell, "amount">,
+    paymentMethod: string,
+    provider: BuySellProvider,
+  ) {
     await this.expectSellScreenToBeVisible();
     await this.chooseAssetIfNotSelected(buySell.crypto);
     await this.tapSellPercentageButton("75%");
     await this.chooseCountryIfNotSelected(buySell.fiat);
-    // The flow sells a percentage of the balance, so the amount handed to the partner
-    // is whatever the UI resolved it to - not the caller's `buySell.amount`, which the
-    // sell flow never types. Read it back so the handoff is checked against the amount
-    // the user actually selected.
     const selectedAmount = normalizeText(await getValueByWebTestId(this.amountInputSectionId()));
     await this.tapSeeQuotes();
     await this.selectPaymentMethod(paymentMethod);
