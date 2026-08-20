@@ -18,6 +18,7 @@ import { VerifyAddressExecutorLWD } from "./verifyAddressIntent/VerifyAddressExe
 
 // Baanx uses the same value for the client key header and the OAuth `client_id`.
 const oauthConfig: CardLoginOauthConfig = {
+  apiUrl: getEnv("CARD_API_URL"),
   clientId: getEnv("CARD_BAANX_CLIENT_KEY"),
   // No `deepLink`: the user's own browser opens the page, and it reports nothing back (LIVE-34740).
   redirectUri: getEnv("CARD_OAUTH_REDIRECT_URI"),

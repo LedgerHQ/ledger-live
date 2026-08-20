@@ -41,6 +41,7 @@ export function usePayTabViewModel() {
   // Baanx uses the same value for the client key header and the OAuth `client_id`.
   const oauthConfig: CardLoginOauthConfig = useMemo(
     () => ({
+      apiUrl: getEnv("CARD_API_URL"),
       clientId: getEnv("CARD_BAANX_CLIENT_KEY"),
       redirectUri: getEnv("CARD_OAUTH_REDIRECT_URI"),
       deepLink: PAY_TAB_DEEP_LINK,
@@ -48,10 +49,11 @@ export function usePayTabViewModel() {
     [],
   );
 
-  // The OAuth redirect, when the deep link brought one. Both halves must be there to mean anything.
+  // The OAuth redirect, when the deep link brought one. The code is the whole of it: PKCE ties it to
+  // the verifier on disk, so nothing else has to be echoed back.
   const callback: PayCardAuthCallback | null = useMemo(
-    () => (params?.code && params?.state ? { code: params.code, state: params.state } : null),
-    [params?.code, params?.state],
+    () => (params?.code ? { code: params.code } : null),
+    [params?.code],
   );
 
   const featureTour: FeatureTourProps = useMemo(

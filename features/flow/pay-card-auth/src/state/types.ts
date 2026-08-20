@@ -1,7 +1,5 @@
 import type {
   PayCardAuthorizationCodeRequest,
-  PayCardAuthorizeInitiate,
-  PayCardAuthorizeInitiateRequest,
   PayCardSession,
   PayCardUser,
 } from "@domain/api-card-management";
@@ -10,38 +8,37 @@ import type { PayCardLoginErrorKind } from "./errors";
 /* --- The login attempt, and what the provider sends back ------------------------------------- */
 
 /**
- * One login attempt: the `state` the callback must echo back, the PKCE verifier the token exchange
- * must present, and the challenge derived from that verifier for the authorize initiation.
+ * One login attempt: the PKCE verifier the token exchange must present, and the challenge derived
+ * from that verifier for the authorize URL.
  */
 export type PayCardAuthorizeAttempt = Readonly<{
-  state: string;
   codeVerifier: string;
   codeChallenge: string;
 }>;
 
 /**
- * What survives the hosted login: the `state` to compare and the verifier to present. The challenge
- * is spent on the initiation, so it is not kept.
+ * What survives the hosted login. The challenge is spent on the authorize URL, so only the verifier
+ * is kept, and the token exchange presents it.
  */
 export type PayCardStoredAttempt = Readonly<{
-  state: string;
   codeVerifier: string;
 }>;
 
 /**
- * What the provider sends back on the redirect: the authorization code to exchange, and the `state`
- * that proves the redirect answers our own attempt.
+ * What the provider sends back on the redirect. PKCE binds the code to the verifier on disk, so the
+ * code alone identifies the attempt and no CSRF value is echoed.
  */
 export type PayCardAuthCallback = Readonly<{
   code: string;
-  state: string;
 }>;
 
 /**
- * Per-app OAuth client configuration. The values are the app's to know: the client id comes from its
- * environment, and the redirect URI is the one it has whitelisted with the provider.
+ * Per-app OAuth client configuration. The values are the app's to know: the API host and the client
+ * id come from its environment, and the redirect URI is the one it has whitelisted with the provider.
  */
 export type CardLoginOauthConfig = Readonly<{
+  /** Base of the Card API, which also hosts the authorize page the browser opens. */
+  apiUrl: string;
   clientId: string;
   /**
    * Sent to the provider on authorize, and repeated on the token exchange. The provider whitelists
@@ -80,7 +77,7 @@ export type OpenHostedLogin = (loginUrl: string, deepLink?: string) => Promise<H
  * platform-card session store.
  */
 export type CardLoginPorts = Readonly<{
-  /** Mints a fresh CSRF state and PKCE pair. */
+  /** Mints a fresh PKCE pair. */
   createAttempt: () => Promise<PayCardAuthorizeAttempt>;
   saveAttempt: (attempt: PayCardStoredAttempt) => Promise<void>;
   loadAttempt: () => Promise<PayCardStoredAttempt | null>;
@@ -89,9 +86,6 @@ export type CardLoginPorts = Readonly<{
   hasSession: () => Promise<boolean>;
   persistSession: (session: PayCardSession) => Promise<void>;
   clearSession: () => Promise<void>;
-  initiateAuthorize: (
-    request: PayCardAuthorizeInitiateRequest,
-  ) => Promise<PayCardAuthorizeInitiate>;
   exchangeAuthorizationCode: (request: PayCardAuthorizationCodeRequest) => Promise<PayCardSession>;
   /** Fills the RTK Query cache, so every other screen sees the user too. */
   getUser: () => Promise<PayCardUser>;
@@ -127,12 +121,6 @@ export type CardLoginMachineInput = Readonly<{
   callback?: PayCardAuthCallback | null;
 }>;
 
-/** The public halves of one attempt: the CSRF state, and the PKCE challenge derived from the verifier. */
-export type CardLoginInitiation = Readonly<{
-  state: string;
-  codeChallenge: string;
-}>;
-
 /**
  * The machine's working memory. No secret is kept here as a source of truth: the PKCE verifier lives
  * in the flow's store and the session lives in platform-card. `session` holds the freshly exchanged
@@ -143,7 +131,6 @@ export type CardLoginContext = {
   ports: CardLoginPorts;
   oauthConfig: CardLoginOauthConfig;
   callback: PayCardAuthCallback | null;
-  initiation: CardLoginInitiation | null;
   loginUrl: string | null;
   session: PayCardSession | null;
   errorKind: PayCardLoginErrorKind | null;
@@ -158,7 +145,7 @@ export type CardLoginEvent =
   | { type: "LOGIN" }
   | { type: "RETRY" }
   | { type: "SESSION_ENDED" }
-  | { type: "CALLBACK_RECEIVED"; code: string; state: string };
+  | { type: "CALLBACK_RECEIVED"; code: string };
 
 /* --- Redux ----------------------------------------------------------------------------------- */
 

@@ -5,13 +5,14 @@ import type { CardLoginOauthConfig, CardLoginPorts, PayCardAuthCallback } from "
 // Two different values on purpose: the provider gets the `https` redirect, and the browser session
 // ends on the app's deep link. A test that spelled them the same could not catch a swap.
 const oauthConfig: CardLoginOauthConfig = {
+  apiUrl: "https://card.test",
   clientId: "client-key",
   redirectUri: "https://go.test/ledger/card",
   deepLink: "ledgerlive://paytab",
 };
 
-const attempt = { state: "state-value", codeVerifier: "verifier-value" };
-const callback: PayCardAuthCallback = { code: "auth-code", state: "state-value" };
+const attempt = { codeVerifier: "verifier-value" };
+const callback: PayCardAuthCallback = { code: "auth-code" };
 
 const session = {
   accessToken: "at_token",
@@ -34,13 +35,12 @@ function stubPorts(overrides: Partial<Ports> = {}): Ports {
     hasSession: jest.fn(async () => false),
     persistSession: jest.fn(async () => undefined),
     clearSession: jest.fn(async () => undefined),
-    initiateAuthorize: jest.fn(async () => ({ url: "https://card.test/login" })),
     exchangeAuthorizationCode: jest.fn(async () => session),
     getUser: jest.fn(async () => user),
     setSignedIn: jest.fn(),
     openHostedLogin: jest.fn(async () => ({
       type: "success",
-      url: "ledgerlive://paytab?code=auth-code&state=state-value",
+      url: "https://go.ledger.com/ledger/card-baanx?code=auth-code&app_id=app-value",
     })),
     ...overrides,
   };
@@ -144,16 +144,22 @@ describe("cardLoginMachine login", () => {
 
     await settledAt(actor, "ready");
     expect(ports.saveAttempt).toHaveBeenCalledWith(attempt);
-    expect(ports.initiateAuthorize).toHaveBeenCalledWith({
-      clientId: "client-key",
-      redirectUri: "https://go.test/ledger/card",
-      state: "state-value",
-      codeChallenge: "challenge-value",
+
+    // The authorize page is opened straight away, with the challenge in the query and no call first.
+    const [loginUrl, deepLink] = ports.openHostedLogin.mock.calls[0];
+    const { origin, pathname, searchParams } = new URL(loginUrl);
+    expect(origin + pathname).toBe("https://card.test/v1/auth/oauth2/authorize");
+    expect(Object.fromEntries(searchParams)).toEqual({
+      client_id: "client-key",
+      response_type: "code",
+      scope: "openid profile email platform:full offline_access",
+      redirect_uri: "https://go.test/ledger/card",
+      code_challenge: "challenge-value",
+      code_challenge_method: "S256",
+      prompt: "consent",
     });
-    expect(ports.openHostedLogin).toHaveBeenCalledWith(
-      "https://card.test/login",
-      "ledgerlive://paytab",
-    );
+    // The provider gets the redirect URI; the browser session ends on the deep link.
+    expect(deepLink).toBe("ledgerlive://paytab");
     expect(ports.persistSession).toHaveBeenCalledWith(session);
     // The attempt is wiped once the session is on disk.
     expect(ports.clearAttempt).toHaveBeenCalled();
@@ -182,7 +188,7 @@ describe("cardLoginMachine login", () => {
     actor.send({ type: "LOGIN" });
     await settledAt(actor, "ready");
 
-    actor.send({ type: "CALLBACK_RECEIVED", code: "another-code", state: "state-value" });
+    actor.send({ type: "CALLBACK_RECEIVED", code: "another-code" });
 
     expect(actor.getSnapshot().value).toBe("ready");
     expect(ports.exchangeAuthorizationCode).toHaveBeenCalledTimes(1);
@@ -240,10 +246,6 @@ describe("cardLoginMachine failures", () => {
   it.each([
     ["pkce_failed", { saveAttempt: jest.fn(async () => Promise.reject(new Error("no store"))) }],
     [
-      "initiate_failed",
-      { initiateAuthorize: jest.fn(async () => Promise.reject(new Error("500"))) },
-    ],
-    [
       "browser_open_failed",
       { openHostedLogin: jest.fn(async () => Promise.reject(new Error("x"))) },
     ],
@@ -281,15 +283,15 @@ describe("cardLoginMachine failures", () => {
     expect(ports.persistSession).toHaveBeenCalledWith(session);
   });
 
-  it("reports a redirect whose state does not match the attempt", async () => {
-    const ports = stubPorts({
-      loadAttempt: jest.fn(async () => ({ ...attempt, state: "another-state" })),
-    });
+  it("reports a redirect whose attempt is gone before the exchange", async () => {
+    // Nothing is compared on this device any more. The verifier has to be there, and PKCE makes the
+    // provider refuse a code that was not issued against this attempt's challenge.
+    const ports = stubPorts({ loadAttempt: jest.fn(async () => null) });
 
     const actor = start(ports, callback);
 
     await settledAt(actor, "error");
-    expect(actor.getSnapshot().context.errorKind).toBe("state_mismatch");
+    expect(actor.getSnapshot().context.errorKind).toBe("missing_attempt");
     expect(ports.exchangeAuthorizationCode).not.toHaveBeenCalled();
   });
 

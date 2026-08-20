@@ -1,15 +1,5 @@
 import { z } from "zod";
 
-/**
- * `mode=api` also answers with a `token`, the JWT of the programmatic flow — `POST /v1/auth/login`
- * then `POST /v1/auth/oauth/authorize`. The hosted UI needs none of it, so zod drops it here rather
- * than parking a short-lived credential in the cache.
- */
-export const PayCardAuthorizeInitiateResponseSchema = z.object({
-  /** Handed straight to a browser, so no other scheme is accepted. */
-  url: z.string().url().startsWith("https://"),
-});
-
 /** Both grants — `authorization_code` and `refresh_token` — answer with this shape. */
 export const PayCardSessionResponseSchema = z.object({
   access_token: z.string().min(1),

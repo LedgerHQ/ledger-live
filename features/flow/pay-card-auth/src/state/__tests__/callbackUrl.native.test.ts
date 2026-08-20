@@ -1,32 +1,33 @@
 import { parseCallbackUrl } from "../callbackUrl";
 
+const REDIRECT = "https://go.ledger.com/ledger/card-baanx";
+
 describe("parseCallbackUrl", () => {
-  it("reads the code and the state from the redirect", () => {
-    expect(parseCallbackUrl("ledgerlive://paytab?code=auth-code&state=state-value")).toEqual({
+  it("reads the code from the redirect", () => {
+    expect(parseCallbackUrl(`${REDIRECT}?code=auth-code&app_id=app-value`)).toEqual({
       code: "auth-code",
-      state: "state-value",
     });
   });
 
-  it("keeps a percent-encoded value intact", () => {
-    expect(parseCallbackUrl("ledgerlive://paytab?code=a%2Bb&state=c%2Fd")).toEqual({
-      code: "a+b",
-      state: "c/d",
+  it("keeps a percent-encoded code intact", () => {
+    expect(parseCallbackUrl(`${REDIRECT}?code=a%2Bb`)).toEqual({ code: "a+b" });
+  });
+
+  it("ignores the parameters the provider adds beside it", () => {
+    expect(parseCallbackUrl(`${REDIRECT}?app_id=app-value&code=auth-code&scope=card`)).toEqual({
+      code: "auth-code",
     });
   });
 
-  it("ignores the parameters the provider adds beside them", () => {
-    expect(
-      parseCallbackUrl("ledgerlive://paytab?state=state-value&code=auth-code&scope=card"),
-    ).toEqual({ code: "auth-code", state: "state-value" });
+  it("still reads a custom scheme, which is not a hierarchical URL", () => {
+    expect(parseCallbackUrl("ledgerlive://paytab?code=auth-code")).toEqual({ code: "auth-code" });
   });
 
   it.each([
-    ["there is no query", "ledgerlive://paytab"],
-    ["the query is empty", "ledgerlive://paytab?"],
-    ["the code is missing", "ledgerlive://paytab?state=state-value"],
-    ["the state is missing", "ledgerlive://paytab?code=auth-code"],
-    ["the provider reported an error", "ledgerlive://paytab?error=access_denied"],
+    ["there is no query", REDIRECT],
+    ["the query is empty", `${REDIRECT}?`],
+    ["the code is missing", `${REDIRECT}?app_id=app-value`],
+    ["the provider reported an error", `${REDIRECT}?error=access_denied`],
   ])("reads no callback when %s", (_case, url) => {
     expect(parseCallbackUrl(url)).toBeNull();
   });

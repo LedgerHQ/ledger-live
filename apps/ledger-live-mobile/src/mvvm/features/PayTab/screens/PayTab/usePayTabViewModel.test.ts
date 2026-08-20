@@ -70,6 +70,7 @@ describe("usePayTabViewModel", () => {
     // The provider matches the redirect URI verbatim on the token exchange. The deep link is the app's
     // own, and it comes from the module that also spells the Pay tab route.
     expect(result.current.oauthConfig).toEqual({
+      apiUrl: getEnv("CARD_API_URL"),
       clientId: getEnv("CARD_BAANX_CLIENT_KEY"),
       redirectUri: getEnv("CARD_OAUTH_REDIRECT_URI"),
       deepLink: PAY_TAB_DEEP_LINK,
@@ -77,18 +78,17 @@ describe("usePayTabViewModel", () => {
   });
 
   it("should hand the login flow the redirect the deep link carried", () => {
-    // react-navigation parses `ledgerlive://paytab?code=…&state=…` into the route params.
-    routeParams = { code: "auth-code", state: "state-value" };
+    // react-navigation parses `ledgerlive://paytab?code=…` into the route params.
+    routeParams = { code: "auth-code" };
 
     const { result } = renderHook(() => usePayTabViewModel());
 
-    expect(result.current.callback).toEqual({ code: "auth-code", state: "state-value" });
+    expect(result.current.callback).toEqual({ code: "auth-code" });
   });
 
   it.each([
     ["there are no params", undefined],
-    ["the code is missing", { state: "state-value" }],
-    ["the state is missing", { code: "auth-code" }],
+    ["the code is missing", {}],
   ])("should report no redirect when %s", (_case, params) => {
     routeParams = params;
 

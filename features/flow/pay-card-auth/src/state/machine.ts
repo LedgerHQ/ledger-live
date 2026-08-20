@@ -4,13 +4,13 @@ import {
   exchangeAuthorizationCode,
   getUser,
   hydrate,
-  initiateAuthorize,
   openHostedLogin,
   persistSession,
   prepareAttempt,
   validateCallback,
 } from "./actors";
 import { clearErrorKind, failPkce, forgetAttempt } from "./actions";
+import { buildAuthorizeUrl } from "./buildAuthorizeUrl";
 import { isUnauthorizedError } from "./errors";
 import { hasErrorKind, shouldResumeAuthenticated } from "./guards";
 import type { CardLoginContext, CardLoginEvent, CardLoginMachineInput } from "./types";
@@ -24,7 +24,6 @@ export const cardLoginMachine = setup({
   actors: {
     hydrate,
     prepareAttempt,
-    initiateAuthorize,
     openHostedLogin,
     validateCallback,
     exchangeAuthorizationCode,
@@ -53,7 +52,6 @@ export const cardLoginMachine = setup({
     ports: input.ports,
     oauthConfig: input.oauthConfig,
     callback: input.callback ?? null,
-    initiation: null,
     loginUrl: null,
     session: null,
     errorKind: null,
@@ -91,7 +89,7 @@ export const cardLoginMachine = setup({
         // arrives one render after mount can never overtake the disk read.
         CALLBACK_RECEIVED: {
           actions: assign({
-            callback: ({ event }) => ({ code: event.code, state: event.state }),
+            callback: ({ event }) => ({ code: event.code }),
           }),
         },
       },
@@ -108,30 +106,16 @@ export const cardLoginMachine = setup({
         src: "prepareAttempt",
         input: ({ context }) => ({ ports: context.ports }),
         onDone: {
-          target: "initiatingAuthorize",
-          actions: assign({ initiation: ({ event }) => event.output }),
+          // The provider hosts the authorize page, so the URL is built here and nothing is asked of
+          // the backend first. One step fewer, and one fewer way for a login to fail.
+          target: "awaitingHostedLogin",
+          actions: assign({
+            loginUrl: ({ context, event }) =>
+              buildAuthorizeUrl(context.oauthConfig, event.output.codeChallenge),
+          }),
         },
         // Nothing reached the store, so there is nothing to wipe.
         onError: { target: "error", actions: "failPkce" },
-      },
-    },
-
-    initiatingAuthorize: {
-      invoke: {
-        src: "initiateAuthorize",
-        input: ({ context }) => ({
-          ports: context.ports,
-          oauthConfig: context.oauthConfig,
-          initiation: context.initiation,
-        }),
-        onDone: {
-          target: "awaitingHostedLogin",
-          actions: assign({ loginUrl: ({ event }) => event.output.url }),
-        },
-        onError: {
-          target: "clearingAttempt",
-          actions: assign({ errorKind: "initiate_failed" }),
-        },
       },
     },
 
@@ -163,7 +147,7 @@ export const cardLoginMachine = setup({
         CALLBACK_RECEIVED: {
           target: "validatingCallback",
           actions: assign({
-            callback: ({ event }) => ({ code: event.code, state: event.state }),
+            callback: ({ event }) => ({ code: event.code }),
           }),
         },
       },

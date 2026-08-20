@@ -1,38 +1,9 @@
 import {
-  PayCardAuthorizeInitiateResponseSchema,
   PayCardLogoutResponseSchema,
   PayCardOrderResponseSchema,
   PayCardSessionResponseSchema,
   PayCardUserResponseSchema,
 } from "./schema";
-
-describe("PayCardAuthorizeInitiateResponseSchema", () => {
-  it("keeps the hosted login URL, and drops the programmatic-flow token", () => {
-    expect(
-      PayCardAuthorizeInitiateResponseSchema.parse({
-        token: "jwt",
-        url: "https://card.test/login",
-      }),
-    ).toEqual({ url: "https://card.test/login" });
-  });
-
-  it("rejects a malformed login URL", () => {
-    expect(() =>
-      PayCardAuthorizeInitiateResponseSchema.parse({ token: "jwt", url: "not-a-url" }),
-    ).toThrow();
-  });
-
-  it.each(["http://card.test/login", "javascript:alert('login')", "ledgerlive://paytab"])(
-    "rejects %s as a login URL",
-    url => {
-      expect(() => PayCardAuthorizeInitiateResponseSchema.parse({ token: "jwt", url })).toThrow();
-    },
-  );
-
-  it("rejects a payload missing the login URL", () => {
-    expect(() => PayCardAuthorizeInitiateResponseSchema.parse({ token: "jwt" })).toThrow();
-  });
-});
 
 describe("PayCardSessionResponseSchema", () => {
   it("accepts a token payload", () => {
