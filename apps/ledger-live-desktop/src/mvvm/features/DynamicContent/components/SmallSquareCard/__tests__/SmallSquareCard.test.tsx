@@ -47,4 +47,18 @@ describe("SmallSquareCard", () => {
 
     expect(screen.queryByRole("button")).not.toBeInTheDocument();
   });
+
+  it("should highlight the card on hover only when it is clickable", () => {
+    const { rerender } = render(<SmallSquareCard title="Ledger Stax" onClick={jest.fn()} />);
+
+    expect(screen.getByTestId("small-square-card")).toHaveClass(
+      "group-hover/card:bg-surface-hover",
+    );
+
+    rerender(<SmallSquareCard title="Ledger Stax" />);
+
+    expect(screen.getByTestId("small-square-card")).not.toHaveClass(
+      "group-hover/card:bg-surface-hover",
+    );
+  });
 });
