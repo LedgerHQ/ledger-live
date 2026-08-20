@@ -32,7 +32,7 @@
     "@features/flow-contacts-list": "workspace:^",
     "@features/platform-contacts": "workspace:^",
     "@ledgerhq/crypto-icons": "catalog:",
-    "@shared/qr-code": "workspace:*"
+    "@shared/ui-qr-code": "workspace:*"
   },
   "peerDependencies": {
     "react": ">=19.0.0",
