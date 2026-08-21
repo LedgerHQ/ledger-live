@@ -1,7 +1,6 @@
 import React from "react";
 import {
   BottomSheetHeader,
-  BottomSheetScrollView,
   BottomSheetView,
   Box,
   Button,
@@ -9,6 +8,8 @@ import {
   Text,
 } from "@ledgerhq/lumen-ui-rnative";
 import { CheckmarkCircleFill } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
+import { Platform } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type {
   Account,
@@ -49,61 +50,73 @@ export function PostOnboardingHubDrawerView({
   const { t } = useTranslation();
   const { bottom: bottomInset } = useSafeAreaInsets();
   const { currentStep, totalSteps, stepperLabel } = stepperDisplay;
+  const bottomSafeArea = Platform.OS === "ios" ? bottomInset : 0;
+  const styles = useStyleSheet(
+    theme => ({
+      content: {
+        paddingBottom: bottomSafeArea + theme.spacings.s24,
+      },
+      safeRow: {
+        height: theme.spacings.s56,
+      },
+    }),
+    [bottomSafeArea],
+  );
 
   return (
-    <BottomSheetView testID="post-onboarding-hub-container">
-      <BottomSheetScrollView>
-        <BottomSheetHeader />
-        <Box
-          lx={{
-            alignSelf: "flex-start",
-            marginBottom: "s16",
-            paddingVertical: "s12",
-          }}
-        >
-          <Box lx={{ alignSelf: "flex-start" }} style={{ transform: [{ scale: 1.12 }] }}>
-            <Stepper currentStep={currentStep} totalSteps={totalSteps} label={stepperLabel} />
-          </Box>
+    <BottomSheetView testID="post-onboarding-hub-container" style={styles.content}>
+      <BottomSheetHeader />
+      <Box
+        lx={{
+          alignSelf: "flex-start",
+          marginBottom: "s16",
+          paddingVertical: "s12",
+        }}
+      >
+        <Box lx={{ alignSelf: "flex-start" }} style={{ transform: [{ scale: 1.12 }] }}>
+          <Stepper currentStep={currentStep} totalSteps={totalSteps} label={stepperLabel} />
         </Box>
-        <Text typography="heading3SemiBold" lx={{ color: "base", marginBottom: "s24" }}>
-          {t(
-            areAllPostOnboardingActionsCompleted
-              ? "postOnboarding.drawer.titleCompleted"
-              : "postOnboarding.drawer.title",
-          )}
-        </Text>
+      </Box>
+      <Text typography="heading3SemiBold" lx={{ color: "base", marginBottom: "s24" }}>
+        {t(
+          areAllPostOnboardingActionsCompleted
+            ? "postOnboarding.drawer.titleCompleted"
+            : "postOnboarding.drawer.title",
+        )}
+      </Text>
 
-        <HubStepRow
-          leadingIcon={<CheckmarkCircleFill size={24} color="success" />}
-          title={t("postOnboarding.drawer.actions.deviceOnboarded.title")}
-          description={t("postOnboarding.drawer.actionCompletedLabel")}
+      <HubStepRow
+        leadingIcon={<CheckmarkCircleFill size={24} color="success" />}
+        title={t("postOnboarding.drawer.actions.deviceOnboarded.title")}
+        description={t("postOnboarding.drawer.actionCompletedLabel")}
+      />
+
+      {actionsState.map(action => (
+        <HubActionItem
+          key={action.id}
+          {...action}
+          deviceModelId={deviceModelId}
+          productName={productName}
+          openActivationDrawer={openActivationDrawer}
+          isLedgerSyncActive={isLedgerSyncActive}
+          accounts={accounts}
+          closeHubDrawer={closeHubDrawer}
+          completionStatus={{
+            isCompleted: stepperDisplay.actionCompletionById[action.id] ?? false,
+            isLoading: stepperDisplay.loading,
+          }}
         />
-
-        {actionsState.map(action => (
-          <HubActionItem
-            key={action.id}
-            {...action}
-            deviceModelId={deviceModelId}
-            productName={productName}
-            openActivationDrawer={openActivationDrawer}
-            isLedgerSyncActive={isLedgerSyncActive}
-            accounts={accounts}
-            closeHubDrawer={closeHubDrawer}
-            completionStatus={{
-              isCompleted: stepperDisplay.actionCompletionById[action.id] ?? false,
-              isLoading: stepperDisplay.loading,
-            }}
-          />
-        ))}
-      </BottomSheetScrollView>
+      ))}
 
       {areAllPostOnboardingActionsCompleted ? (
-        <Box lx={{ marginTop: "s24" }} style={{ marginBottom: bottomInset }}>
+        <Box lx={{ marginTop: "s24" }}>
           <Button appearance="base" size="lg" isFull onPress={onRequestExit}>
             {t("postOnboarding.drawer.primaryLabel")}
           </Button>
         </Box>
-      ) : null}
+      ) : (
+        <Box testID="post-onboarding-hub-safe-row" style={styles.safeRow} />
+      )}
     </BottomSheetView>
   );
 }

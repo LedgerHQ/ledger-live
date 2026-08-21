@@ -38,7 +38,6 @@ export function PostOnboardingHubDrawerWrapper() {
         isRequestingToBeOpened={canOpenPostOnboardingHubDrawer}
         onClose={closePostOnboardingHubDrawer}
         enableDynamicSizing
-        // iOS: allow the sheet to grow with content; uncapped on Android to avoid excess empty space.
         maxDynamicContentSize={Platform.OS === "ios" ? "fullWithOffset" : undefined}
       >
         {deviceModelId ? (
