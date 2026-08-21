@@ -64,4 +64,36 @@ describe("hedera transaction serialization", () => {
     expect(revived.assetOwner).toBeUndefined();
     expect(revived.fees).toBeNull();
   });
+
+  it("survives a round trip for a send with a memo — dropped before this round", () => {
+    const transaction: GenericTransaction = {
+      family: "hedera",
+      mode: "send",
+      amount: new BigNumber(1),
+      recipient: "0.0.7654321",
+      memoType: "string",
+      memoValue: "ref-42",
+    };
+
+    const raw = toTransactionRaw(transaction);
+    expect(raw).toMatchObject({ memoType: "string", memoValue: "ref-42" });
+
+    const revived = fromTransactionRaw(raw);
+    expect(revived.memoType).toBe("string");
+    expect(revived.memoValue).toBe("ref-42");
+  });
+
+  it("round-trips a transaction with no memo set (memoType/memoValue stay unset, not coerced)", () => {
+    const transaction: GenericTransaction = {
+      family: "hedera",
+      mode: "send",
+      amount: new BigNumber(1),
+      recipient: "0.0.7654321",
+    };
+
+    const revived = fromTransactionRaw(toTransactionRaw(transaction));
+
+    expect(revived.memoType).toBeUndefined();
+    expect(revived.memoValue).toBeUndefined();
+  });
 });

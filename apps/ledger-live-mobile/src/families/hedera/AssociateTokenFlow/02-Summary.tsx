@@ -2,8 +2,7 @@ import React, { useCallback } from "react";
 import { Trans } from "~/context/Locale";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
-import { HEDERA_TRANSACTION_MODES } from "@ledgerhq/live-common/families/hedera/constants";
-import { Transaction } from "@ledgerhq/live-common/families/hedera/types";
+import type { HederaGenericTransaction } from "@ledgerhq/live-common/families/hedera/types";
 import { View, StyleSheet } from "react-native";
 import SafeAreaView from "~/components/SafeAreaView";
 import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
@@ -35,18 +34,15 @@ export default function Summary({ navigation, route }: Props) {
 
   invariant(account, "hedera: account is required");
   const mainAccount = getMainAccount(account, parentAccount);
-  const bridge = useAccountBridge<Transaction>(account, parentAccount);
+  const bridge = useAccountBridge<HederaGenericTransaction>(account, parentAccount);
 
   const { transaction, status, bridgeError, bridgePending } = useBridgeTransaction(bridge, () => {
     const transaction = bridge.createTransaction(account);
     const updatedTransaction = bridge.updateTransaction(transaction, {
-      mode: HEDERA_TRANSACTION_MODES.TokenAssociate,
+      mode: "tokenAssociate",
       assetReference: token.contractAddress,
       assetOwner: mainAccount.freshAddress,
-      properties: {
-        token,
-      },
-    } satisfies Partial<Transaction>);
+    } satisfies Partial<HederaGenericTransaction>);
 
     return {
       account,

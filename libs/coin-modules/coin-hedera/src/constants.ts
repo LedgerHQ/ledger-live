@@ -91,6 +91,10 @@ export const BASE_USD_FEE_BY_OPERATION_TYPE = {
 
 export const MAP_STAKING_MODE_TO_MEMO: Record<string, string> = {
   [HEDERA_TRANSACTION_MODES.ClaimRewards]: "Collect Staking Rewards",
+  // The generic bridge's `computeIntentType` never translates claim rewards, so `craftTransaction`
+  // sees the camelCase generic mode string, not the legacy hyphenated one above — both keyed here so
+  // either caller finds it.
+  claimReward: "Collect Staking Rewards",
   [HEDERA_TRANSACTION_MODES.Delegate]: "Stake",
   [HEDERA_TRANSACTION_MODES.Undelegate]: "Unstake",
   [HEDERA_TRANSACTION_MODES.Redelegate]: "Restake",

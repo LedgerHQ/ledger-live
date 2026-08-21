@@ -870,6 +870,8 @@ function defaultOperationType(mode: GenericTransaction["mode"]): OperationType {
   switch (mode) {
     case "changeTrust":
       return "OPT_IN";
+    case "tokenAssociate":
+      return "ASSOCIATE_TOKEN";
     case "delegate":
       return "DELEGATE";
     case "redelegate":

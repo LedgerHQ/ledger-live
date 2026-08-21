@@ -1,7 +1,7 @@
 import { log } from "@ledgerhq/logs";
 import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
-import { extractCompanyFromNodeDescription, getChecksum, sortValidators } from "./logic/utils";
+import { mapMirrorNodesToValidators } from "./logic/utils";
 import { apiClient } from "./network/api";
 import { setHederaPreloadData } from "./preload-data";
 import type { HederaPreloadData, HederaValidator, HederaValidatorRaw } from "./types";
@@ -14,30 +14,8 @@ export async function preload(currency: CryptoCurrency): Promise<HederaPreloadDa
   log("hedera/preload", "preloading hedera data...");
   const result = await apiClient.getNodes({ configOrCurrencyId: currency.id, fetchAllPages: true });
 
-  const validators: HederaValidator[] = result.nodes.map(mirrorNode => {
-    const minStake = new BigNumber(mirrorNode.min_stake);
-    const maxStake = new BigNumber(mirrorNode.max_stake);
-    const activeStake = new BigNumber(mirrorNode.stake_rewarded);
-    const activeStakePercentage = maxStake.gt(0)
-      ? activeStake.dividedBy(maxStake).multipliedBy(100).dp(0, BigNumber.ROUND_CEIL)
-      : new BigNumber(0);
-
-    return {
-      id: mirrorNode.node_id.toString(),
-      address: mirrorNode.node_account_id,
-      addressChecksum: getChecksum(mirrorNode.node_account_id),
-      name: extractCompanyFromNodeDescription(mirrorNode.description),
-      minStake,
-      maxStake,
-      activeStake,
-      activeStakePercentage,
-      overstaked: activeStake.gte(maxStake),
-    };
-  });
-
-  const sortedValidators = sortValidators(validators);
   const data: HederaPreloadData = {
-    validators: sortedValidators,
+    validators: mapMirrorNodesToValidators(result.nodes),
   };
 
   setHederaPreloadData(data, currency);

@@ -173,6 +173,12 @@ export type HederaOperationExtra = {
   targetStakingNodeId?: number | null;
   previousStakingNodeId?: number | null;
   stakedAmount?: BigNumber;
+  // Written only by the generic bridge (`api/index.ts`) — see `getTransactionExplorer`.
+  familyExtra?: {
+    pagingToken?: string;
+    consensusTimestamp?: string;
+    transactionId?: string;
+  };
 };
 
 export type HederaValidator = {

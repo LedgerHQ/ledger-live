@@ -78,16 +78,20 @@ export function getAssetFromToken(token: TokenCurrency, owner: string): AssetInf
 // custom hook replaces that default entirely, so passing every generic mode through unchanged covers
 // four of the six without relying on the default's incidental allowance of two of them.
 //
-// `changeTrust` is the one mode this hook does translate (LIVE-36150): coin-hedera's own crafting
-// and fee-routing logic (`logic/craftTransaction.ts`, `logic/utils.ts`'s `mapIntentToSDKOperation`)
-// were written against the legacy `HEDERA_TRANSACTION_MODES.TokenAssociate` ("token-associate")
-// string and dispatch on exact equality — passing `"changeTrust"` through unchanged would silently
-// miss every one of those checks and fall through to a plain coin-transfer builder instead of an
-// association. Mapping here, at the one hook the framework calls before any of that code sees the
-// intent, means none of coin-hedera's internal dispatch has to learn a second vocabulary.
+// `tokenAssociate` is the one mode this hook does translate (LIVE-36150): coin-hedera's own crafting
+// and fee-routing logic (`logic/craftTransaction.ts`, `logic/utils.ts`'s `mapIntentToSDKOperation`,
+// `logic/validateIntent.ts`) were written against the legacy `HEDERA_TRANSACTION_MODES.TokenAssociate`
+// ("token-associate") string and dispatch on exact equality — passing `"tokenAssociate"` through
+// unchanged would silently miss every one of those checks and fall through to a plain coin-transfer
+// builder instead of an association. Mapping here, at the one hook the framework calls before any of
+// that code sees the intent, means none of coin-hedera's internal dispatch has to learn a second
+// vocabulary. Association gets its own mode rather than reusing Stellar's `changeTrust`: the framework
+// maps `changeTrust` to the `OPT_IN` operation type, but coin-hedera types a synced association
+// `ASSOCIATE_TOKEN` — `tokenAssociate` carries its own `ASSOCIATE_TOKEN` default
+// (`generic-coin-framework/utils.ts`'s `defaultOperationType`) so the two ends agree from the start.
 export function computeIntentType(transaction: Record<string, unknown>): string {
   const mode = transaction.mode as string | undefined;
-  if (mode === "changeTrust") return HEDERA_TRANSACTION_MODES.TokenAssociate;
+  if (mode === "tokenAssociate") return HEDERA_TRANSACTION_MODES.TokenAssociate;
   return mode ?? "send";
 }
 
@@ -98,20 +102,45 @@ export function computeIntentType(transaction: Record<string, unknown>): string 
 // transaction would sign and broadcast looking correct while silently changing nothing (LIVE-36151).
 // `claimReward` needs no entry: `logic/craftTransaction.ts` treats it as a plain coin transfer and
 // never reads `intent.data` on that path.
+//
+// The erc20 case (LIVE-36276 item 4) needs no mode check the way staking does: `transaction.gasLimit`
+// is only ever populated by `genericPrepareTransaction`'s `propagateField`, itself only fed by
+// `api/index.ts`'s `estimateFees` for a ContractCall operation, so its mere presence already implies
+// an ERC20 send. `craftTransaction.ts`'s erc20 branch is the only place that reads this data's
+// `gasLimit` (gated on `asset.type === "erc20"` there), so returning it for a send this turns out not
+// to be ERC20 is inert, not wrong.
 export function buildIntentData(transaction: Record<string, unknown>): HederaTxData {
   const mode = transaction.mode as string | undefined;
-  if (mode !== "delegate" && mode !== "redelegate" && mode !== "undelegate") {
-    return { type: "none" };
+  if (mode === "delegate" || mode === "redelegate" || mode === "undelegate") {
+    const valId = transaction.valId as string | undefined;
+    const stakingNodeId = typeof valId === "string" && valId !== "" ? Number(valId) : null;
+    return { type: "staking", stakingNodeId };
   }
-  const valId = transaction.valId as string | undefined;
-  const stakingNodeId = typeof valId === "string" && valId !== "" ? Number(valId) : null;
-  return { type: "staking", stakingNodeId };
+  const gasLimit = transaction.gasLimit;
+  if (mode === "send" && gasLimit instanceof BigNumber) {
+    return { type: "erc20", gasLimit: BigInt(gasLimit.toFixed(0)) };
+  }
+  return { type: "none" };
 }
 
 // Reward operations are synthesized by the mirror node rather than fetched as a transfer, so the
 // optimistic row's value defaults to the transaction amount (0 for a claim, which carries none) —
 // pin it to the pending rewards balance already known from the last sync so it matches what the
 // following sync produces.
+// Hedera's `getAddress` resolver has no derivable address to return — it sends the public key
+// through as `address` (see `families/hedera/signer.ts`'s `hederaGetAddress` and coin-hedera's
+// legacy `signer/getAddress.ts`, both documented there). The generic `receive()` default compares
+// `result.address` against the account's real (mirror-node-looked-up) address, which can never
+// match, so every receive would fail with `WrongDeviceForAccount`. Compare public keys instead —
+// `seedIdentifier` is set to the public key for Hedera accounts (`bridge/synchronisation.ts`'s
+// scan), mirroring the legacy bridge's own `bridge/receive.ts` check exactly.
+export function matchesReceiveAddress(
+  result: { publicKey: string },
+  account: Pick<Account, "seedIdentifier">,
+): boolean {
+  return result.publicKey === account.seedIdentifier;
+}
+
 export function describeOptimisticOperation(
   mode: string,
   account: Account,
@@ -125,6 +154,7 @@ export default function hederaBridge(currency: CryptoCurrency): BridgeApi {
     getTokenFromAsset: (asset: AssetInfo) => getTokenFromAsset(currency, asset),
     getAssetFromToken: (token: TokenCurrency, owner: string) => getAssetFromToken(token, owner),
     describeOptimisticOperation,
+    matchesReceiveAddress,
     buildIterateResult,
     buildAccountShape,
     computeIntentType,

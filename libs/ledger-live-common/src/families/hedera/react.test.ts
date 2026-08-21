@@ -3,134 +3,113 @@
  */
 import "../../__tests__/test-helpers/dom-polyfill";
 import BigNumber from "bignumber.js";
-import invariant from "invariant";
-import { getCurrentHederaPreloadData } from "@ledgerhq/coin-hedera/preload-data";
+
+// useHederaAllValidators resolves config via getCurrencyConfiguration("hedera") before delegating
+// to the (mocked) apiClient; stub it so the hook doesn't hit an unseeded LiveConfig (mirrors
+// families/tezos/react.test.ts's identical stub for useBaker).
+jest.mock("../../config", () => ({
+  ...jest.requireActual("../../config"),
+  getCurrencyConfiguration: jest.fn(() => ({ status: { type: "active" } })),
+}));
+
 import { apiClient } from "@ledgerhq/coin-hedera/network/api";
-import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
-import { renderHook } from "@testing-library/react";
-import { makeBridgeCacheSystem } from "../../bridge/cache";
-import { liveConfig } from "../../config/sharedConfig";
+import { mapMirrorNodesToValidators } from "@ledgerhq/coin-hedera/logic/utils";
+import type { HederaMirrorNode } from "@ledgerhq/coin-hedera/types";
+import { renderHook, waitFor } from "@testing-library/react";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import * as hooks from "./react";
 import type { HederaAccount, HederaDelegation } from "./types";
 
-const localCache: Record<string, unknown> = {};
-const cache = makeBridgeCacheSystem({
-  saveData(c, d) {
-    localCache[c.id] = d;
-    return Promise.resolve();
+const mockNodes: HederaMirrorNode[] = [
+  {
+    description: "Hosted by LG | Seoul, South Korea",
+    node_id: 0,
+    node_account_id: "0.0.3",
+    stake: 45000000000000000,
+    stake_rewarded: 86596417100000000,
+    min_stake: 0,
+    max_stake: 45000000000000000,
+    reward_rate_start: 3500,
   },
-  getData(c) {
-    return Promise.resolve(localCache[c.id]);
+  {
+    description: "Hosted by Swirlds | Iowa, USA",
+    node_id: 1,
+    node_account_id: "0.0.4",
+    stake: 45000000000000000,
+    stake_rewarded: 88990261300000000,
+    min_stake: 0,
+    max_stake: 45000000000000000,
+    reward_rate_start: 4000,
   },
-});
+  {
+    description: "Hosted for Wipro | Amsterdam, Netherlands",
+    node_id: 3,
+    node_account_id: "0.0.6",
+    stake: 45000000000000000,
+    stake_rewarded: 21477855400000000,
+    min_stake: 0,
+    max_stake: 45000000000000000,
+    reward_rate_start: 5000,
+  },
+];
+
+// GAP H: these hooks used to read a `CurrencyBridge.preload`-populated singleton that the generic
+// bridge never fills. They now fetch nodes directly (mirroring `useEvmStakingValidators`), so the
+// expected shape here is derived the same way the hook derives it — via the same mapper — rather than
+// read back from a global.
+const expectedValidators = mapMirrorNodesToValidators(mockNodes);
 
 describe("hedera/react", () => {
   const currency = getCryptoCurrencyById("hedera");
 
-  beforeAll(() => {
-    LiveConfig.setConfig(liveConfig);
-    jest.spyOn(apiClient, "getNodes").mockResolvedValue({
-      nodes: [
-        {
-          description: "Hosted by LG | Seoul, South Korea",
-          node_id: 0,
-          node_account_id: "0.0.3",
-          stake: 45000000000000000,
-          stake_rewarded: 86596417100000000,
-          min_stake: 0,
-          max_stake: 45000000000000000,
-          reward_rate_start: 3500,
-        },
-        {
-          description: "Hosted by Swirlds | Iowa, USA",
-          node_id: 1,
-          node_account_id: "0.0.4",
-          stake: 45000000000000000,
-          stake_rewarded: 88990261300000000,
-          min_stake: 0,
-          max_stake: 45000000000000000,
-          reward_rate_start: 4000,
-        },
-        {
-          description: "Hosted for Wipro | Amsterdam, Netherlands",
-          node_id: 3,
-          node_account_id: "0.0.6",
-          stake: 45000000000000000,
-          stake_rewarded: 21477855400000000,
-          min_stake: 0,
-          max_stake: 45000000000000000,
-          reward_rate_start: 5000,
-        },
-      ],
-      nextCursor: null,
-    });
+  beforeEach(() => {
+    jest.spyOn(apiClient, "getNodes").mockResolvedValue({ nodes: mockNodes, nextCursor: null });
   });
 
-  describe("useHederaPreloadData", () => {
-    beforeEach(async () => {
-      const { prepare } = setup();
-      await prepare();
-    });
-
-    it("should return preloaded data", async () => {
-      const { result } = renderHook(() => hooks.useHederaPreloadData(currency));
-      const data = getCurrentHederaPreloadData(currency);
-
-      expect(result.current).toStrictEqual(data);
-    });
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
   describe("useHederaValidators", () => {
-    beforeEach(async () => {
-      const { prepare } = setup();
-      await prepare();
-    });
-
-    it("should return all validators when no search query", () => {
+    it("should return all validators when no search query", async () => {
       const { result } = renderHook(() => hooks.useHederaValidators(currency));
-      const data = getCurrentHederaPreloadData(currency);
 
-      expect(result.current).toEqual(data.validators);
+      await waitFor(() => expect(result.current).toEqual(expectedValidators));
     });
 
-    it("should return all validators when search query is empty string", () => {
+    it("should return all validators when search query is empty string", async () => {
       const { result } = renderHook(() => hooks.useHederaValidators(currency, ""));
-      const data = getCurrentHederaPreloadData(currency);
 
-      expect(result.current).toEqual(data.validators);
+      await waitFor(() => expect(result.current).toEqual(expectedValidators));
     });
 
-    it("should filter validators by name", () => {
+    it("should filter validators by name", async () => {
       const { result } = renderHook(() => hooks.useHederaValidators(currency, "Swirlds"));
 
-      expect(result.current.length).toBeGreaterThan(0);
+      await waitFor(() => expect(result.current.length).toBeGreaterThan(0));
       result.current.forEach(validator => {
         expect(validator.name.toLowerCase()).toContain("swirlds");
       });
     });
 
-    it("should filter validators by node ID", () => {
-      const data = getCurrentHederaPreloadData(currency);
-      const firstValidator = data.validators[0];
+    it("should filter validators by node ID", async () => {
+      const [firstValidator] = expectedValidators;
 
-      if (firstValidator) {
-        const { result } = renderHook(() => hooks.useHederaValidators(currency, firstValidator.id));
+      const { result } = renderHook(() => hooks.useHederaValidators(currency, firstValidator.id));
 
-        expect(result.current.length).toBeGreaterThan(0);
-        expect(result.current.some(v => v.id === firstValidator.id)).toBe(true);
-      }
+      await waitFor(() => expect(result.current.length).toBeGreaterThan(0));
+      expect(result.current.some(v => v.id === firstValidator.id)).toBe(true);
     });
 
-    it("should return empty array when no validators match search", () => {
+    it("should return empty array when no validators match search", async () => {
       const { result } = renderHook(() =>
         hooks.useHederaValidators(currency, "nonexistingvalidator"),
       );
 
-      expect(result.current).toEqual([]);
+      await waitFor(() => expect(result.current).toEqual([]));
     });
 
-    it("should be case insensitive when filtering", () => {
+    it("should be case insensitive when filtering", async () => {
       const { result: upperResult } = renderHook(() =>
         hooks.useHederaValidators(currency, "SWIRLDS"),
       );
@@ -138,6 +117,7 @@ describe("hedera/react", () => {
         hooks.useHederaValidators(currency, "swirlds"),
       );
 
+      await waitFor(() => expect(upperResult.current.length).toBeGreaterThan(0));
       expect(upperResult.current.length).toEqual(lowerResult.current.length);
     });
   });
@@ -154,15 +134,8 @@ describe("hedera/react", () => {
       },
     } as unknown as HederaAccount;
 
-    beforeEach(async () => {
-      const { prepare } = setup();
-      await prepare();
-    });
-
-    it("should enrich delegation with validator data", () => {
-      const data = getCurrentHederaPreloadData(currency);
-      const validator = data.validators[0];
-      invariant(validator, "No validators available for test");
+    it("should enrich delegation with validator data", async () => {
+      const [validator] = expectedValidators;
 
       const delegation: HederaDelegation = {
         nodeId: Number(validator.id),
@@ -174,26 +147,28 @@ describe("hedera/react", () => {
         hooks.useHederaEnrichedDelegation(mockAccount, delegation),
       );
 
-      expect(result.current).toEqual({
-        nodeId: delegation.nodeId,
-        delegated: delegation.delegated,
-        pendingReward: delegation.pendingReward,
-        status: "overstaked",
-        validator: {
-          name: validator.name,
-          address: validator.address,
-          addressChecksum: validator.addressChecksum,
-          id: validator.id,
-          minStake: validator.minStake,
-          maxStake: validator.maxStake,
-          activeStake: validator.activeStake,
-          activeStakePercentage: validator.activeStakePercentage,
-          overstaked: validator.overstaked,
-        },
-      });
+      await waitFor(() =>
+        expect(result.current).toEqual({
+          nodeId: delegation.nodeId,
+          delegated: delegation.delegated,
+          pendingReward: delegation.pendingReward,
+          status: "overstaked",
+          validator: {
+            name: validator.name,
+            address: validator.address,
+            addressChecksum: validator.addressChecksum,
+            id: validator.id,
+            minStake: validator.minStake,
+            maxStake: validator.maxStake,
+            activeStake: validator.activeStake,
+            activeStakePercentage: validator.activeStakePercentage,
+            overstaked: validator.overstaked,
+          },
+        }),
+      );
     });
 
-    it("should handle delegation with non-existent validator", () => {
+    it("should handle delegation with non-existent validator", async () => {
       const delegation: HederaDelegation = {
         nodeId: 999999,
         delegated: new BigNumber(100000),
@@ -204,29 +179,29 @@ describe("hedera/react", () => {
         hooks.useHederaEnrichedDelegation(mockAccount, delegation),
       );
 
-      expect(result.current).toEqual({
-        nodeId: delegation.nodeId,
-        delegated: delegation.delegated,
-        pendingReward: delegation.pendingReward,
-        status: "inactive",
-        validator: {
-          name: "",
-          address: "",
-          addressChecksum: null,
-          id: String(delegation.nodeId),
-          minStake: new BigNumber(0),
-          maxStake: new BigNumber(0),
-          activeStake: new BigNumber(0),
-          activeStakePercentage: new BigNumber(0),
-          overstaked: false,
-        },
-      });
+      await waitFor(() =>
+        expect(result.current).toEqual({
+          nodeId: delegation.nodeId,
+          delegated: delegation.delegated,
+          pendingReward: delegation.pendingReward,
+          status: "inactive",
+          validator: {
+            name: "",
+            address: "",
+            addressChecksum: null,
+            id: String(delegation.nodeId),
+            minStake: new BigNumber(0),
+            maxStake: new BigNumber(0),
+            activeStake: new BigNumber(0),
+            activeStakePercentage: new BigNumber(0),
+            overstaked: false,
+          },
+        }),
+      );
     });
 
-    it("should handle delegation with zero staked amount", () => {
-      const data = getCurrentHederaPreloadData(currency);
-      const validator = data.validators[0];
-      invariant(validator, "No validators available for test");
+    it("should handle delegation with zero staked amount", async () => {
+      const [validator] = expectedValidators;
 
       const delegation: HederaDelegation = {
         nodeId: Number(validator.id),
@@ -238,14 +213,12 @@ describe("hedera/react", () => {
         hooks.useHederaEnrichedDelegation(mockAccount, delegation),
       );
 
+      await waitFor(() => expect(result.current.validator.id).toEqual(validator.id));
       expect(result.current.delegated).toEqual(new BigNumber(0));
-      expect(result.current.validator.id).toEqual(validator.id);
     });
 
-    it("should handle delegation with pending rewards", () => {
-      const data = getCurrentHederaPreloadData(currency);
-      const validator = data.validators[0];
-      invariant(validator, "No validators available for test");
+    it("should handle delegation with pending rewards", async () => {
+      const [validator] = expectedValidators;
 
       const delegation: HederaDelegation = {
         nodeId: Number(validator.id),
@@ -257,17 +230,7 @@ describe("hedera/react", () => {
         hooks.useHederaEnrichedDelegation(mockAccount, delegation),
       );
 
-      expect(result.current.pendingReward).toEqual(new BigNumber(1500));
+      await waitFor(() => expect(result.current.pendingReward).toEqual(new BigNumber(1500)));
     });
   });
 });
-
-function setup(): {
-  prepare: () => Promise<unknown>;
-} {
-  const currency = getCryptoCurrencyById("hedera");
-
-  return {
-    prepare: async () => cache.prepareCurrency(currency),
-  };
-}

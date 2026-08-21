@@ -116,8 +116,12 @@ describe("hedera bridge", () => {
       },
     );
 
-    it("translates changeTrust to the legacy token-associate string craftTransaction/mapIntentToSDKOperation dispatch on", () => {
-      expect(computeIntentType({ mode: "changeTrust" })).toBe("token-associate");
+    it("translates tokenAssociate to the legacy token-associate string craftTransaction/mapIntentToSDKOperation dispatch on", () => {
+      expect(computeIntentType({ mode: "tokenAssociate" })).toBe("token-associate");
+    });
+
+    it("does not translate changeTrust — it stays Stellar's own mode, not association's", () => {
+      expect(computeIntentType({ mode: "changeTrust" })).toBe("changeTrust");
     });
   });
 
@@ -149,12 +153,26 @@ describe("hedera bridge", () => {
       });
     });
 
-    it.each(["send", "changeTrust", "claimReward"])(
+    it.each(["send", "tokenAssociate", "claimReward"])(
       "returns type none for non-staking mode %s",
       mode => {
         expect(buildIntentData({ mode })).toEqual({ type: "none" });
       },
     );
+
+    // LIVE-36276 item 4: without this, `logic/craftTransaction.ts`'s erc20 branch never sees
+    // `txIntent.data.gasLimit` and always falls back to `DEFAULT_GAS_LIMIT` regardless of what fee
+    // estimation actually computed. 123456 is deliberately not that default (100_000).
+    it("maps a send transaction's gasLimit to a bigint erc20 intent data", () => {
+      expect(buildIntentData({ mode: "send", gasLimit: new BigNumber(123456) })).toEqual({
+        type: "erc20",
+        gasLimit: 123456n,
+      });
+    });
+
+    it("returns type none for a send transaction with no gasLimit (native/HTS sends)", () => {
+      expect(buildIntentData({ mode: "send" })).toEqual({ type: "none" });
+    });
   });
 
   describe("buildAccountShape", () => {

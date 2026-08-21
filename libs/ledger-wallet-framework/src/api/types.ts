@@ -14,6 +14,7 @@ import type {
 } from "@ledgerhq/types-live";
 import type BigNumber from "bignumber.js";
 import type { IterateResultBuilder } from "../bridge/jsHelpers";
+import type { GetAddressResult } from "../derivation";
 
 export type OptimisticOperationDescriptor = {
   /** The operation type this mode produces. Absent defers to the generic mode mapping. */
@@ -45,6 +46,18 @@ export type BridgeApi = {
    * keeps the default walk.
    */
   buildIterateResult?: IterateResultBuilder;
+  /**
+   * Overrides the "right device" check `receive()` runs after fetching the address, for chains
+   * whose device-returned `address` isn't the account's real address — e.g. Hedera, where the
+   * device only ever returns the raw public key (the account id comes from a mirror-node lookup,
+   * never re-derivable from the key alone; the same gap `buildIterateResult` handles during
+   * discovery). Given the device's raw result and the account, return whether they're the same
+   * device. Absent keeps the default `result.address !== account.freshAddress` check.
+   */
+  matchesReceiveAddress?: (
+    result: GetAddressResult,
+    account: Account,
+  ) => boolean | Promise<boolean>;
   getTokenFromAsset?: (asset: AssetInfo) => Promise<TokenCurrency | undefined>;
   getAssetFromToken?: (token: TokenCurrency, owner: string) => AssetInfo | undefined;
   computeIntentType?: (transaction: Record<string, unknown>) => string;

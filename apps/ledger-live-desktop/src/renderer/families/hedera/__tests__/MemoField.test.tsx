@@ -63,11 +63,15 @@ describe("MemoField", () => {
       expect(screen.getByRole("textbox")).toBeVisible();
     });
 
+    // Pre-round-17 this read/wrote the legacy `.memo` field, which the generic transaction the send
+    // flow actually carries at runtime doesn't have — the memo silently never reached
+    // `transactionToIntent` (which reads `memoType`/`memoValue`). Updated, not deleted, per the
+    // "pinned pre-migration behaviour" exception: these two cases now pin the fixed field names.
     it("displays the current memo value", () => {
       render(
         <MemoField
           account={HEDERA_ACCOUNT_1}
-          transaction={makeHederaTransaction({ memo: "prefilled memo" })}
+          transaction={makeHederaTransaction({ memoType: "string", memoValue: "prefilled memo" })}
           onChange={jest.fn()}
           status={makeStatus()}
         />,
@@ -82,7 +86,7 @@ describe("MemoField", () => {
       render(
         <MemoField
           account={HEDERA_ACCOUNT_1}
-          transaction={makeHederaTransaction({ memo: "" })}
+          transaction={makeHederaTransaction({ memoType: "string", memoValue: "" })}
           onChange={handleChange}
           status={makeStatus()}
         />,
@@ -92,7 +96,9 @@ describe("MemoField", () => {
       fireEvent.change(screen.getByRole("textbox"), { target: { value: "payment ref" } });
 
       expect(handleChange).toHaveBeenCalledTimes(1);
-      expect(handleChange).toHaveBeenCalledWith(expect.objectContaining({ memo: "payment ref" }));
+      expect(handleChange).toHaveBeenCalledWith(
+        expect.objectContaining({ memoType: "string", memoValue: "payment ref" }),
+      );
     });
 
     it("shows an inline error when status.errors.transaction is set", () => {

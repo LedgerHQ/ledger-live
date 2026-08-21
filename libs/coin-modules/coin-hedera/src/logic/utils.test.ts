@@ -36,6 +36,7 @@ import { getMockedValidator } from "../test/fixtures/validator.fixture";
 import type {
   HederaAccount,
   HederaMemo,
+  HederaMirrorNode,
   HederaPreloadData,
   HederaTxData,
   HederaValidator,
@@ -63,6 +64,7 @@ import {
   getBlockHash,
   isStakingTransaction,
   extractCompanyFromNodeDescription,
+  mapMirrorNodesToValidators,
   sortValidators,
   getValidatorFromAccount,
   getDefaultValidator,
@@ -260,6 +262,22 @@ describe("logic utils", () => {
       expect(mapIntentToSDKOperation(txIntent)).toBe(HEDERA_OPERATION_TYPES.CryptoUpdate);
     });
 
+    // GAP I (LIVE-36276 item 4): without this, claim rewards priced on the cheap CryptoTransfer
+    // schedule instead of matching validateIntent's own CryptoUpdate estimate for the same intent.
+    it("should return CryptoUpdate for the legacy ClaimRewards intent type", () => {
+      const txIntent = {
+        type: HEDERA_TRANSACTION_MODES.ClaimRewards,
+      } as TransactionIntent;
+
+      expect(mapIntentToSDKOperation(txIntent)).toBe(HEDERA_OPERATION_TYPES.CryptoUpdate);
+    });
+
+    it("should return CryptoUpdate for the generic claimReward intent type", () => {
+      const txIntent = { type: "claimReward" } as TransactionIntent;
+
+      expect(mapIntentToSDKOperation(txIntent)).toBe(HEDERA_OPERATION_TYPES.CryptoUpdate);
+    });
+
     it("should return CryptoTransfer for Send intent with native asset", () => {
       const txIntent = {
         type: HEDERA_TRANSACTION_MODES.Send,
@@ -269,10 +287,14 @@ describe("logic utils", () => {
       expect(mapIntentToSDKOperation(txIntent)).toBe(HEDERA_OPERATION_TYPES.CryptoTransfer);
     });
 
+    // Was asserted against `HEDERA_TRANSACTION_MODES.ClaimRewards` — that pinned GAP I (LIVE-36276
+    // item 4): claim rewards priced on the cheap CryptoTransfer schedule instead of CryptoUpdate,
+    // disagreeing with `validateIntent`'s own estimate for the same intent. Claim rewards now has its
+    // own assertions above; this one keeps proving the true default for a genuinely unrecognized type.
     it("should return CryptoTransfer for other intent types", () => {
       const txIntent = {
-        type: HEDERA_TRANSACTION_MODES.ClaimRewards,
-      } as TransactionIntent;
+        type: "unknown-intent-type",
+      } as unknown as TransactionIntent;
 
       expect(mapIntentToSDKOperation(txIntent)).toBe(HEDERA_OPERATION_TYPES.CryptoTransfer);
     });
@@ -386,6 +408,17 @@ describe("logic utils", () => {
 
       const newUrl = getTransactionExplorer(explorerView, mockedOperation);
       expect(newUrl).toBe("https://hashscan.io/mainnet/transaction/0.0.1234567-123-123");
+    });
+
+    it("reads consensus timestamp nested under familyExtra (generic bridge shape)", async () => {
+      const explorerView = getCryptoCurrencyById("hedera").explorerViews[0];
+
+      const mockedOperation = getMockedOperation({
+        extra: { familyExtra: { consensusTimestamp: "1.2.3.4" } },
+      });
+
+      const newUrl = getTransactionExplorer(explorerView, mockedOperation);
+      expect(newUrl).toBe("https://hashscan.io/mainnet/transaction/1.2.3.4");
     });
   });
 
@@ -738,6 +771,53 @@ describe("logic utils", () => {
       expect(sorted[0].id).toBe("2");
       expect(sorted[1].id).toBe("1");
       expect(sorted[2].id).toBe("3");
+    });
+  });
+
+  describe("mapMirrorNodesToValidators", () => {
+    const baseNode: HederaMirrorNode = {
+      node_id: 0,
+      node_account_id: "0.0.3",
+      description: "Hedera | 0 | Hosted by Hedera",
+      min_stake: 1000,
+      max_stake: 100000,
+      stake: 50000,
+      stake_rewarded: 30000,
+      reward_rate_start: 0,
+    };
+
+    it("maps mirror node fields and sorts the result", () => {
+      const [validator] = mapMirrorNodesToValidators([baseNode]);
+
+      expect(validator).toMatchObject({
+        id: "0",
+        address: "0.0.3",
+        name: "Hedera",
+        minStake: new BigNumber(1000),
+        maxStake: new BigNumber(100000),
+        activeStake: new BigNumber(30000),
+        overstaked: false,
+      });
+    });
+
+    it("sets activeStakePercentage to 0 when maxStake is 0", () => {
+      const [validator] = mapMirrorNodesToValidators([
+        { ...baseNode, min_stake: 0, max_stake: 0, stake_rewarded: 0 },
+      ]);
+
+      expect(validator.activeStakePercentage).toEqual(new BigNumber(0));
+    });
+
+    it("marks a validator overstaked when activeStake >= maxStake", () => {
+      const [validator] = mapMirrorNodesToValidators([
+        { ...baseNode, max_stake: 1000, stake_rewarded: 2000 },
+      ]);
+
+      expect(validator.overstaked).toBe(true);
+    });
+
+    it("returns an empty array for an empty node list", () => {
+      expect(mapMirrorNodesToValidators([])).toEqual([]);
     });
   });
 

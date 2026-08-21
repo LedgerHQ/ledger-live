@@ -182,6 +182,51 @@ describe("apiClient", () => {
       expect(result.nextCursor).toBe("3");
       expect(mockedNetwork).toHaveBeenCalledTimes(3);
     });
+
+    it("uses 'lt' (older page) when fetchAllPages is not set and order is desc", async () => {
+      mockedNetwork.mockResolvedValueOnce(getMockResponse({ transactions: [], links: { next: null } }));
+
+      await apiClient.getAccountTransactions({
+        configOrCurrencyId: mockConfig,
+        address: "0.0.1234",
+        pagingToken: "1000.000000000",
+        fetchAllPages: false,
+        order: "desc",
+      });
+
+      const requestUrl = mockedNetwork.mock.calls[0][0].url;
+      expect(requestUrl).toContain("timestamp=lt%3A1000.000000000");
+    });
+
+    it("uses 'gt' (newer than cursor) when fetchAllPages is not set and order is asc", async () => {
+      mockedNetwork.mockResolvedValueOnce(getMockResponse({ transactions: [], links: { next: null } }));
+
+      await apiClient.getAccountTransactions({
+        configOrCurrencyId: mockConfig,
+        address: "0.0.1234",
+        pagingToken: "1000.000000000",
+        fetchAllPages: false,
+        order: "asc",
+      });
+
+      const requestUrl = mockedNetwork.mock.calls[0][0].url;
+      expect(requestUrl).toContain("timestamp=gt%3A1000.000000000");
+    });
+
+    it("adds a 'gte' minTimestamp floor independent of pagingToken's own direction", async () => {
+      mockedNetwork.mockResolvedValueOnce(getMockResponse({ transactions: [], links: { next: null } }));
+
+      await apiClient.getAccountTransactions({
+        configOrCurrencyId: mockConfig,
+        address: "0.0.1234",
+        pagingToken: null,
+        fetchAllPages: false,
+        minTimestamp: "1787236926.768102104",
+      });
+
+      const requestUrl = mockedNetwork.mock.calls[0][0].url;
+      expect(requestUrl).toContain("timestamp=gte%3A1787236926.768102104");
+    });
   });
 
   describe("getAccount", () => {

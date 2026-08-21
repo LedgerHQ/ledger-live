@@ -86,7 +86,7 @@ describe("hedera on the generic coin framework (the flip)", () => {
   );
 
   it(
-    "routes a changeTrust (association) transaction to the legacy token-associate intent type — " +
+    "routes a tokenAssociate transaction to the legacy token-associate intent type — " +
       "without this, craftTransaction/mapIntentToSDKOperation's exact-string dispatch would silently " +
       "fall through to a plain coin transfer instead of an association",
     async () => {
@@ -99,7 +99,7 @@ describe("hedera on the generic coin framework (the flip)", () => {
       } as unknown as Account;
       const transaction: GenericTransaction = {
         family: "hedera",
-        mode: "changeTrust",
+        mode: "tokenAssociate",
         amount: new BigNumber(0),
         recipient: "",
         assetReference: "0.0.999999",
@@ -143,6 +143,41 @@ describe("hedera on the generic coin framework (the flip)", () => {
       );
 
       expect(intent.data).toEqual({ type: "staking", stakingNodeId: 3 });
+    },
+  );
+
+  it(
+    "carries a send transaction's gasLimit into intent.data.gasLimit — without hedera's " +
+      "buildIntentData, craftTransaction's erc20 branch never sees the real fee estimate and always " +
+      "falls back to DEFAULT_GAS_LIMIT (LIVE-36276 item 4)",
+    async () => {
+      const currency = getCryptoCurrencyById("hedera");
+      const account = {
+        freshAddress: "0.0.1111111",
+        xpub: "",
+        currency,
+        subAccounts: [],
+      } as unknown as Account;
+      const transaction: GenericTransaction = {
+        family: "hedera",
+        mode: "send",
+        amount: new BigNumber(1000),
+        recipient: "0.0.2222222",
+        // Deliberately not DEFAULT_GAS_LIMIT (100_000) — proves the real estimate reaches the intent,
+        // not just that crafting doesn't throw.
+        gasLimit: new BigNumber(123456),
+      };
+      const bridgeApi = await getBridgeApi(currency, "hedera");
+
+      const intent = transactionToIntent(
+        account,
+        transaction,
+        bridgeApi.computeIntentType,
+        undefined,
+        bridgeApi.buildIntentData,
+      );
+
+      expect(intent.data).toEqual({ type: "erc20", gasLimit: 123456n });
     },
   );
 });

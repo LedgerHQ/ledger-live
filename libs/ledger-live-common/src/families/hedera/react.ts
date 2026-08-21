@@ -1,32 +1,77 @@
+import { useEffect, useMemo, useState } from "react";
 import BigNumber from "bignumber.js";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
-import { useMemo } from "react";
+import { apiClient } from "@ledgerhq/coin-hedera/network/api";
+import type { HederaCoinConfig } from "@ledgerhq/coin-hedera/config";
+import { getCurrencyConfiguration } from "../../config";
 import {
-  getCurrentHederaPreloadData,
-  getHederaPreloadData,
-} from "@ledgerhq/coin-hedera/preload-data";
-import { getDelegationStatus, filterValidatorBySearchTerm } from "./utils";
-import { useObservable } from "../../observable";
+  getDelegationStatus,
+  filterValidatorBySearchTerm,
+  mapMirrorNodesToValidators,
+} from "./utils";
 import type {
   HederaAccount,
-  HederaPreloadData,
   HederaValidator,
   HederaDelegation,
   HederaEnrichedDelegation,
 } from "./types";
 
-export function useHederaPreloadData(
-  currency: CryptoCurrency,
-): HederaPreloadData | undefined | null {
-  return useObservable(getHederaPreloadData(currency), getCurrentHederaPreloadData(currency));
+// GAP H: the legacy `CurrencyBridge.preload`/`getCurrentHederaPreloadData` singleton this used to
+// read is never populated on the generic path — no generic-framework family implements `preload`,
+// and the type itself is `@deprecated` in favour of loading data lazily in the UI that needs it.
+// `useEvmStakingValidators` (`families/evm/staking/react.ts`) and `useBakers`
+// (`families/tezos/react.ts`) are the established precedent: a plain per-render fetch, no singleton.
+type ValidatorsFetchState = {
+  validators: HederaValidator[];
+  loading: boolean;
+  error: Error | null;
+};
+
+function useHederaAllValidators(currency: CryptoCurrency): ValidatorsFetchState {
+  const [state, setState] = useState<ValidatorsFetchState>({
+    validators: [],
+    loading: true,
+    error: null,
+  });
+
+  useEffect(() => {
+    let cancelled = false;
+    setState({ validators: [], loading: true, error: null });
+
+    apiClient
+      .getNodes({
+        configOrCurrencyId: getCurrencyConfiguration<HederaCoinConfig>(currency.id),
+        fetchAllPages: true,
+      })
+      .then(result => {
+        if (cancelled) return;
+        setState({
+          validators: mapMirrorNodesToValidators(result.nodes),
+          loading: false,
+          error: null,
+        });
+      })
+      .catch((error: unknown) => {
+        if (cancelled) return;
+        setState(s => ({
+          ...s,
+          loading: false,
+          error: error instanceof Error ? error : new Error(String(error)),
+        }));
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [currency.id]);
+
+  return state;
 }
 
 export function useHederaValidators(currency: CryptoCurrency, search?: string): HederaValidator[] {
-  const data = useHederaPreloadData(currency);
+  const { validators } = useHederaAllValidators(currency);
 
   return useMemo(() => {
-    const validators = data?.validators ?? [];
-
     if (validators.length === 0 || !search || search === "") {
       return validators;
     }
@@ -34,7 +79,7 @@ export function useHederaValidators(currency: CryptoCurrency, search?: string): 
     return validators.filter(validator => {
       return filterValidatorBySearchTerm(validator, search);
     });
-  }, [data, search]);
+  }, [validators, search]);
 }
 
 export function useHederaEnrichedDelegation(

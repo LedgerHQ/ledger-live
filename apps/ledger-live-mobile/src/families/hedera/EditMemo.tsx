@@ -4,7 +4,10 @@ import SafeAreaView from "~/components/SafeAreaView";
 import { useTranslation } from "~/context/Locale";
 import i18next from "i18next";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
-import type { Transaction as HederaTransaction } from "@ledgerhq/live-common/families/hedera/types";
+import type {
+  HederaGenericTransaction,
+  Transaction as HederaTransaction,
+} from "@ledgerhq/live-common/families/hedera/types";
 import { useTheme } from "@react-navigation/native";
 import KeyboardView from "~/components/KeyboardView";
 import Button from "~/components/Button";
@@ -21,7 +24,12 @@ type NavigationProps = BaseComposite<
 function HederaEditMemo({ navigation, route }: NavigationProps) {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const [memo, setMemo] = useState(route.params.transaction.memo);
+  // `route.params.transaction`'s declared type is the legacy `Transaction` (`memo: string`), but the
+  // generic bridge (LIVE-36154) actually carries `memoType`/`memoValue` at runtime — cast at this one
+  // boundary rather than re-typing the whole send flow.
+  const [memo, setMemo] = useState(
+    (route.params.transaction as unknown as HederaGenericTransaction).memoValue ?? undefined,
+  );
   const account = route.params.account;
   const bridge = useAccountBridge<HederaTransaction>(account);
   const onValidateText = useCallback(() => {
@@ -29,8 +37,9 @@ function HederaEditMemo({ navigation, route }: NavigationProps) {
     popToScreen(navigation, ScreenName.SendSummary, {
       accountId: account.id,
       transaction: bridge.updateTransaction(transaction, {
-        memo,
-      }),
+        memoType: "string",
+        memoValue: memo,
+      } as Partial<HederaTransaction>),
     });
   }, [navigation, route.params, account, bridge, memo]);
   return (

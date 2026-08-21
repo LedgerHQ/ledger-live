@@ -512,7 +512,14 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
         ? op
         : { ...op, accountId, id: encodeOperationId(accountId, op.hash, op.type) },
     );
-    const cursor = oldOps[0]?.extra?.pagingToken || "";
+    // A family nests its cursor under `familyExtra` (`utils.ts`'s `readFamilyExtra`) rather than a
+    // flat `extra.pagingToken` — the fallback exists only for parity with the (currently unused) flat
+    // read this line always did; no shipped family exercises it.
+    const familyExtra = oldOps[0]?.extra?.familyExtra as Record<string, unknown> | undefined;
+    const cursor =
+      (typeof familyExtra?.pagingToken === "string" ? familyExtra.pagingToken : undefined) ||
+      oldOps[0]?.extra?.pagingToken ||
+      "";
     const syncHash = await getSyncHash(currency.id, syncConfig.blacklistedTokenIds);
     const syncFromScratch = !initialAccount?.blockHeight || initialAccount?.syncHash !== syncHash;
     // Calculate minHeight for pagination

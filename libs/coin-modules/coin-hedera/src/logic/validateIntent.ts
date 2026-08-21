@@ -11,19 +11,31 @@ import {
   NotEnoughBalance,
   RecipientRequired,
 } from "@ledgerhq/ledger-wallet-framework/errors";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
+import { getEnv } from "@ledgerhq/live-env";
 import BigNumber from "bignumber.js";
 import type { HederaCoinConfig } from "../config";
-import { HEDERA_OPERATION_TYPES, HEDERA_TRANSACTION_MODES } from "../constants";
+import { HEDERA_OPERATION_TYPES, HEDERA_TRANSACTION_MODES, TINYBAR_SCALE } from "../constants";
 import {
+  HederaInsufficientFundsForAssociation,
   HederaInvalidStakingNodeIdError,
+  HederaMemoExceededSizeError,
   HederaNoStakingRewardsError,
+  HederaRecipientEvmAddressVerificationRequired,
+  HederaRecipientTokenAssociationRequired,
+  HederaRecipientTokenAssociationUnverified,
   HederaRedundantStakingNodeIdError,
 } from "../errors";
 import type { HederaMemo } from "../types";
 import { estimateFees } from "./estimateFees";
 import { getAccountInfo, type HederaAccountInfo } from "./getAccountInfo";
+import { validateMemo } from "./validateMemo";
 import { apiClient } from "../network/api";
-import { safeParseAccountId } from "../network/utils";
+import {
+  checkAccountTokenAssociationStatus,
+  getCurrencyToUSDRate,
+  safeParseAccountId,
+} from "../network/utils";
 
 /**
  * `TransactionIntent`'s declared type has no room for `mode`/`valId` — those are additions the
@@ -74,6 +86,15 @@ async function validateRecipient(
   return undefined;
 }
 
+// `intent.memo` is typed as `HederaMemo` (`StringMemo`, always has `.value`), but a transaction with
+// no memo carries `{type: "NO_MEMO"}` at runtime — `.value` reads as `undefined` there, and
+// `validateMemo(undefined)` already treats that as valid.
+function checkMemoSize(intent: HederaTransactionIntent, errors: Record<string, Error>): void {
+  if (!validateMemo(intent.memo.value)) {
+    errors.transaction = new HederaMemoExceededSizeError();
+  }
+}
+
 async function estimateStandardFees(
   currencyId: string,
   customFees: FeeEstimation | undefined,
@@ -112,6 +133,8 @@ async function validateNativeSend(
 
   const recipientError = await validateRecipient(config, intent.sender, intent.recipient);
   if (recipientError) errors.recipient = recipientError;
+
+  checkMemoSize(intent, errors);
 
   return { errors, warnings, estimatedFees, amount, totalSpent };
 }
@@ -159,27 +182,75 @@ async function validateTokenTransfer(
   const recipientError = await validateRecipient(config, intent.sender, intent.recipient);
   if (recipientError) errors.recipient = recipientError;
 
+  if (!recipientError) {
+    if (asset.type === "hts") {
+      // `checkAccountTokenAssociationStatus` only reads these three fields off a `TokenCurrency` —
+      // built here from the intent's own asset rather than a CAL lookup, which `validateIntent` has
+      // no access to.
+      try {
+        const isAssociated = await checkAccountTokenAssociationStatus(intent.recipient, {
+          tokenType: "hts",
+          parentCurrencyId: getCryptoCurrencyById(currencyId).id,
+          contractAddress: asset.assetReference,
+        });
+        if (!isAssociated) {
+          warnings.missingAssociation = new HederaRecipientTokenAssociationRequired();
+        }
+      } catch {
+        warnings.unverifiedAssociation = new HederaRecipientTokenAssociationUnverified();
+      }
+    } else {
+      // Unconditional, matching the legacy bridge: an ERC20 transfer resolves its recipient to an
+      // EVM address via the mirror node (`toEVMAddress`) with no on-chain confirmation step, so this
+      // warns on every ERC20 send rather than only some.
+      warnings.unverifiedEvmAddress = new HederaRecipientEvmAddressVerificationRequired();
+    }
+  }
+
+  checkMemoSize(intent, errors);
+
   return { errors, warnings, estimatedFees, amount, totalSpent };
 }
 
 // `families/hedera/bridge/api.ts`'s `computeIntentType` (LIVE-36150) translates the generic
-// `"changeTrust"` mode to this legacy `HEDERA_TRANSACTION_MODES.TokenAssociate` string before this
+// `"tokenAssociate"` mode to this legacy `HEDERA_TRANSACTION_MODES.TokenAssociate` string before this
 // ever runs — the same translation `craftTransaction`/`mapIntentToSDKOperation` rely on, so
 // `intent.type` here always matches theirs.
 //
-// `insufficientAssociateBalance` (the USD-value funding floor `handleTokenAssociateTransaction`
-// checks) is deliberately not ported: LIVE-36147's required bar is the four staking keys plus
-// amount/balance, and this is a policy check, not a correctness one — genuinely nothing else to add.
+// `insufficientAssociateBalance`, LIVE-36276 item 2: the legacy `handleTokenAssociateTransaction`
+// only raises it when `isTokenAssociationRequired(account, token)` — a check reading the full
+// `Account` (`subAccounts`, `hederaResources.isAutoTokenAssociationEnabled`) to skip the funding
+// floor when the token is already associated. `validateIntent` never receives an `Account`, only
+// `currencyId`/`Balance[]`, so that guard can't be reproduced here. Applying the floor
+// unconditionally for every association intent is a deliberate simplification: a tokenAssociate
+// transaction is, by construction, the user choosing to associate, so the only false positive is
+// re-triggering an already-redundant association — a path this UI doesn't expose. `currencyId` is
+// resolved back to a `CryptoCurrency` via `getCryptoCurrencyById` for the rate lookup — no CAL access
+// needed, unlike the family-layer's own token lookups.
 async function validateChangeTrust(
   currencyId: string,
+  balances: Balance[],
   customFees: FeeEstimation | undefined,
 ): Promise<TransactionValidation> {
-  const estimatedFees = await estimateStandardFees(
-    currencyId,
-    customFees,
-    HEDERA_OPERATION_TYPES.TokenAssociate,
+  const errors: Record<string, Error> = {};
+  const [estimatedFees, usdRate] = await Promise.all([
+    estimateStandardFees(currencyId, customFees, HEDERA_OPERATION_TYPES.TokenAssociate),
+    getCurrencyToUSDRate(getCryptoCurrencyById(currencyId)),
+  ]);
+
+  const hbarBalance = new BigNumber(nativeAvailable(balances).toString()).dividedBy(
+    10 ** TINYBAR_SCALE,
   );
-  return { errors: {}, warnings: {}, estimatedFees, amount: 0n, totalSpent: estimatedFees };
+  const currentWorthInUSD = usdRate ? hbarBalance.multipliedBy(usdRate) : new BigNumber(0);
+  const requiredWorthInUSD = getEnv("HEDERA_TOKEN_ASSOCIATION_MIN_USD");
+
+  if (currentWorthInUSD.isLessThan(requiredWorthInUSD)) {
+    errors.insufficientAssociateBalance = new HederaInsufficientFundsForAssociation("", {
+      requiredWorthInUSD,
+    });
+  }
+
+  return { errors, warnings: {}, estimatedFees, amount: 0n, totalSpent: estimatedFees };
 }
 
 async function isKnownValidatorId(config: HederaCoinConfig, valId: string): Promise<boolean> {
@@ -232,7 +303,9 @@ async function validateStaking(
     // dropped: there is nothing to read it from.
   }
 
-  const totalSpent = estimatedFees; // staking never moves a user-chosen amount
+  // `craftTransaction` sends 1 tinybar to the staking reward account to trigger a claim — include it
+  // so the balance check reflects what actually leaves the account, not just the fee.
+  const totalSpent = intent.type === "claimReward" ? estimatedFees + 1n : estimatedFees;
   if (nativeAvailable(balances) < totalSpent) {
     errors.fee = new NotEnoughBalance();
   }
@@ -248,7 +321,7 @@ export async function validateIntent(
   customFees?: FeeEstimation,
 ): Promise<TransactionValidation> {
   if (intent.type === HEDERA_TRANSACTION_MODES.TokenAssociate) {
-    return validateChangeTrust(currencyId, customFees);
+    return validateChangeTrust(currencyId, balances, customFees);
   }
   if (STAKING_TYPES.has(intent.type)) {
     return validateStaking(currencyId, config, intent, balances, customFees);

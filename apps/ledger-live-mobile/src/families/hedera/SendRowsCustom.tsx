@@ -4,7 +4,10 @@ import { useTranslation } from "~/context/Locale";
 import { useNavigation, useRoute, useTheme } from "@react-navigation/native";
 import type { Account } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
-import type { Transaction as HederaTransaction } from "@ledgerhq/live-common/families/hedera/types";
+import type {
+  HederaGenericTransaction,
+  Transaction as HederaTransaction,
+} from "@ledgerhq/live-common/families/hedera/types";
 import LText from "~/components/LText";
 import { ScreenName } from "~/const";
 import SummaryRow from "~/screens/SendFunds/SummaryRow";
@@ -26,6 +29,9 @@ type Props = {
 export default function HederaSendRowsCustom(props: Props) {
   const { account } = props;
   const transaction = props.transaction as HederaTransaction;
+  // `.memo` doesn't exist on the generic transaction this actually is at runtime (LIVE-36154) — read
+  // `memoValue` instead, at this one display boundary.
+  const memoValue = (transaction as unknown as HederaGenericTransaction).memoValue;
   const { colors } = useTheme();
   const { t } = useTranslation();
   const navigation = useNavigation<Navigation["navigation"]>();
@@ -42,7 +48,7 @@ export default function HederaSendRowsCustom(props: Props) {
   return (
     <View>
       <SummaryRow title={t("send.summary.memo.title")} onPress={editMemo}>
-        {transaction.memo ? (
+        {memoValue ? (
           <LText
             semiBold
             style={styles.tagText}
@@ -50,7 +56,7 @@ export default function HederaSendRowsCustom(props: Props) {
             numberOfLines={1}
             testID="summary-memo-tag"
           >
-            {transaction.memo}
+            {memoValue}
           </LText>
         ) : (
           <LText

@@ -37,6 +37,7 @@ import {
 import {
   extractInitiator,
   getBlockHash,
+  getDateRangeFromBlockHeight,
   getOperationValue,
   mapIntentToSDKOperation,
 } from "../logic/utils";
@@ -106,8 +107,16 @@ export function createApi(
 
       const estimatedFee = await logicEstimateFees(estimateFeesParams);
 
+      // `estimatedFee.gas` (ERC20/ContractCall only) has no field of its own on `FeeEstimation` —
+      // `parameters` is how the generic bridge's `genericPrepareTransaction` carries a coin module's
+      // fee telemetry back onto `GenericTransaction.gasLimit` (`prepareTransaction.ts`'s
+      // `propagateField`), which `families/hedera/bridge/api.ts`'s `buildIntentData` then reads to
+      // give `craftTransaction`'s erc20 branch the real gas limit instead of `DEFAULT_GAS_LIMIT`.
       return {
         value: BigInt(estimatedFee.tinybars.toString()),
+        ...(estimatedFee.gas && {
+          parameters: { gasLimit: BigInt(estimatedFee.gas.toString()) },
+        }),
       };
     },
     getAccountInfo: async (context: HederaContext, address: string) => {
@@ -132,15 +141,10 @@ export function createApi(
       const coinConfig = await context.config();
       return lastBlockV2({ configOrCurrencyId: coinConfig });
     },
-    // `minHeight` is not a paging cursor here: Hedera has no chain of blocks, so every synced
-    // operation carries the same synthetic HARDCODED_BLOCK_HEIGHT. The framework nonetheless
-    // computes it as `lastKnownHeight + 1` on every sync after the first and passes it along —
-    // accept any value and keep paging on `cursor` (a consensus timestamp), which is what actually
-    // continues the mirror-node query.
     listOperations: async (
       context: HederaContext,
       address: string,
-      { cursor, limit, order }: ListOperationsOptions,
+      { cursor, limit, order, minHeight }: ListOperationsOptions,
     ) => {
       const coinConfig = await context.config();
       const evmAddress = await toEVMAddress({
@@ -153,14 +157,33 @@ export function createApi(
         getERC20BalancesForAccountV2({ configOrCurrencyId: coinConfig, address }),
       ]);
 
+      // The framework's real mechanism for "what's new since last sync" is `minHeight` (its own
+      // contract: "must honor minHeight or throw a 'not supported' error" — silently ignoring it, as
+      // this used to, is non-compliant). It maps onto Hedera's synthetic block scheme
+      // (`useSyntheticBlocks: true` below) via `getDateRangeFromBlockHeight`, the inverse of
+      // `getSyntheticBlock`, giving the start of the 10-second (`SYNTHETIC_BLOCK_WINDOW_SECONDS`)
+      // window right after the last known operation's block.
+      //
+      // `cursor` — `oldOps[0]`'s own pagingToken, the *exact* nanosecond-precision consensus
+      // timestamp of that same last known operation — is strictly earlier than that window start, so
+      // using it instead loses nothing `minHeight` would have caught (it's a superset, at worst
+      // re-fetching the already-known operation itself, deduped by `mergeOps`). Prefer it when
+      // available; fall back to `minHeight`'s coarser floor only when it isn't, so the contract is
+      // never silently dropped.
+      const minTimestamp =
+        typeof cursor === "string"
+          ? cursor
+          : minHeight > 0
+            ? (getDateRangeFromBlockHeight(minHeight).start.getTime() / 1000).toString()
+            : undefined;
       const latestAccountOperations = await logicListOperationsV2(coinConfig, {
         currencyId,
         address,
         evmAddress,
         mirrorTokens,
-        ...(typeof cursor === "string" && { cursor }),
         ...(typeof limit === "number" && { limit }),
         ...(typeof order === "string" && { order }),
+        ...(minTimestamp && { minTimestamp }),
         tokenEvmAddresses: erc20TokenBalances.map(t => t.contractAddress.toLowerCase()),
         fetchAllPages: false,
         skipFeesForTokenOperations: true,
@@ -212,6 +235,21 @@ export function createApi(
             ? liveOp.hash.replace(STAKING_REWARD_HASH_SUFFIX, "")
             : liveOp.hash;
 
+        // `pagingToken` never reaches the legacy bridge's own `Operation.extra` (that path builds its
+        // cursor from the operation's `date`, not this field — confirmed by grep, `synchronisation.ts`
+        // never reads `extra.pagingToken`), so nesting it here doesn't touch legacy behaviour. It has
+        // to be nested, not left flat: `generic-coin-framework/utils.ts`'s
+        // `adaptCoreOperationToLiveOperation` only promotes a curated allowlist of flat `details` keys
+        // plus a nested `familyExtra` bag (`readFamilyExtra`) onto `Operation.extra` — a flat
+        // `pagingToken` was neither, so `getAccountShape.ts`'s cursor read was always `undefined` and
+        // every sync re-fetched page one (GAP G, LIVE-36148).
+        //
+        // `consensusTimestamp`/`transactionId` hit the exact same allowlist gap: `getTransactionExplorer`
+        // (`logic/utils.ts`) reads them to build the hashscan.io link, and the generic path was
+        // silently dropping both, so every operation's "view in explorer" fell back to `$hash` → "0".
+        // `getTransactionExplorer` checks this nested spot before the flat legacy one.
+        const { pagingToken, consensusTimestamp, transactionId, ...restExtra } = liveOp.extra;
+
         return {
           id: liveOp.id,
           type: liveOp.type,
@@ -220,11 +258,14 @@ export function createApi(
           value: getOperationValue({ asset, operation: liveOp }),
           asset,
           details: {
-            ...liveOp.extra,
+            ...restExtra,
             ledgerOpType: liveOp.type,
             ...(asset.type !== "native" && { assetAmount: liveOp.value.toFixed(0) }),
             ...(liveOp.extra.stakedAmount && {
               stakedAmount: BigInt(liveOp.extra.stakedAmount.toFixed(0)),
+            }),
+            ...((pagingToken || consensusTimestamp || transactionId) && {
+              familyExtra: { pagingToken, consensusTimestamp, transactionId },
             }),
           },
           tx: {

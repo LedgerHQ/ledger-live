@@ -32,6 +32,7 @@ import type {
   HederaMirrorTransaction,
   HederaOperationExtra,
   HederaTxData,
+  HederaMirrorNode,
   HederaValidator,
   MergedTransaction,
   OperationDetailsExtraField,
@@ -152,7 +153,12 @@ export const mapIntentToSDKOperation = (txIntent: TransactionIntent) => {
   if (
     txIntent.type === HEDERA_TRANSACTION_MODES.Delegate ||
     txIntent.type === HEDERA_TRANSACTION_MODES.Undelegate ||
-    txIntent.type === HEDERA_TRANSACTION_MODES.Redelegate
+    txIntent.type === HEDERA_TRANSACTION_MODES.Redelegate ||
+    // The generic bridge's `computeIntentType` never translates "claimReward" (unlike
+    // tokenAssociate → token-associate), so `txIntent.type` here can be either string depending on
+    // which bridge produced the transaction — same dual check as `craftTransaction`'s catch-all.
+    txIntent.type === HEDERA_TRANSACTION_MODES.ClaimRewards ||
+    txIntent.type === "claimReward"
   ) {
     return HEDERA_OPERATION_TYPES.CryptoUpdate;
   }
@@ -184,10 +190,18 @@ export const getTransactionExplorer = (
   operation: LiveOperation,
 ): string | undefined => {
   const extra = isValidExtra(operation.extra) ? operation.extra : null;
+  // The generic bridge nests these under `familyExtra` (`api/index.ts`) — the framework's
+  // `adaptCoreOperationToLiveOperation` drops any flat key it doesn't already know about. The legacy
+  // bridge never goes through that promotion step, so its `extra` keeps them flat. Check both.
+  const familyExtra = isValidExtra(extra?.familyExtra) ? extra.familyExtra : null;
 
   return explorerView?.tx?.replace(
     "$hash",
-    extra?.consensusTimestamp ?? extra?.transactionId ?? "0",
+    familyExtra?.consensusTimestamp ??
+      familyExtra?.transactionId ??
+      extra?.consensusTimestamp ??
+      extra?.transactionId ??
+      "0",
   );
 };
 
@@ -360,6 +374,34 @@ export const extractCompanyFromNodeDescription = (description: string): string =
     .replace(/hosted by/i, "")
     .replace(/hosted for/i, "")
     .trim();
+};
+
+// Shared by the legacy bridge's `preload.ts` and the generic path's `families/hedera/react.ts` hook
+// — both need the exact same mirror-node-to-validator mapping (stake percentage rounding included),
+// just triggered from a different place (currency-level preload vs. a per-render fetch).
+export const mapMirrorNodesToValidators = (nodes: HederaMirrorNode[]): HederaValidator[] => {
+  const validators: HederaValidator[] = nodes.map(mirrorNode => {
+    const minStake = new BigNumber(mirrorNode.min_stake);
+    const maxStake = new BigNumber(mirrorNode.max_stake);
+    const activeStake = new BigNumber(mirrorNode.stake_rewarded);
+    const activeStakePercentage = maxStake.gt(0)
+      ? activeStake.dividedBy(maxStake).multipliedBy(100).dp(0, BigNumber.ROUND_CEIL)
+      : new BigNumber(0);
+
+    return {
+      id: mirrorNode.node_id.toString(),
+      address: mirrorNode.node_account_id,
+      addressChecksum: getChecksum(mirrorNode.node_account_id),
+      name: extractCompanyFromNodeDescription(mirrorNode.description),
+      minStake,
+      maxStake,
+      activeStake,
+      activeStakePercentage,
+      overstaked: activeStake.gte(maxStake),
+    };
+  });
+
+  return sortValidators(validators);
 };
 
 export const sortValidators = (validators: HederaValidator[]): HederaValidator[] => {

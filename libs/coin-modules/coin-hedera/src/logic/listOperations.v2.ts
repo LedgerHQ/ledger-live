@@ -4,9 +4,11 @@ import type { Operation, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import type { HederaCoinConfig } from "../config";
 import {
+  FINALITY_MS,
   HARDCODED_BLOCK_HEIGHT,
   HEDERA_TRANSACTION_NAMES,
   MAP_TX_NAME_TO_CUSTOM_OPERATION_TYPE,
+  SYNTHETIC_BLOCK_WINDOW_SECONDS,
 } from "../constants";
 import { apiClient } from "../network/api";
 import { hgraphClient } from "../network/hgraph";
@@ -40,7 +42,18 @@ function getCommonMirrorOperationData(
     : rawTx.transaction_hash;
   const fee = new BigNumber(rawTx.charged_tx_fee);
   const hasFailed = rawTx.result !== "SUCCESS";
-  const syntheticBlock = getSyntheticBlock(rawTx.consensus_timestamp);
+  // `lastBlockV2` (logic/lastBlock.v2.ts) reports the account's block height from a timestamp
+  // buffered by the same margin, so it never races ahead of mirror/hgraph indexing. An operation's
+  // own consensus timestamp has no such buffer applied elsewhere, so without matching it here,
+  // `isConfirmedOperation` would compare an unbuffered operation height against a buffered account
+  // height and read every fresh operation as "not confirmed" for one buffer window after sync, even
+  // though Hedera transactions are already final by the time the mirror node returns them.
+  const confirmableTimestamp = (
+    Number(rawTx.consensus_timestamp) -
+    FINALITY_MS / 1000 -
+    SYNTHETIC_BLOCK_WINDOW_SECONDS
+  ).toString();
+  const syntheticBlock = getSyntheticBlock(confirmableTimestamp);
   const memo = getMemoFromBase64(rawTx.memo_base64);
   const feesPayer = extractFeesPayer(rawTx);
   const extra: HederaOperationExtra = {
@@ -451,6 +464,7 @@ export async function listOperationsV2(
     skipFeesForTokenOperations,
     useEncodedHash,
     useSyntheticBlocks,
+    minTimestamp,
   }: {
     currencyId: string;
     address: string;
@@ -465,6 +479,8 @@ export async function listOperationsV2(
     skipFeesForTokenOperations: boolean;
     useEncodedHash: boolean;
     useSyntheticBlocks: boolean;
+    // See `network/api.ts`'s `getAccountTransactions` — forwarded to both mirror and hgraph sources.
+    minTimestamp?: string;
   },
 ): Promise<{
   coinOperations: Operation<HederaOperationExtra>[];
@@ -492,6 +508,7 @@ export async function listOperationsV2(
         limit,
         fetchAllPages,
         pagingToken: cursor ?? null,
+        ...(minTimestamp && { minTimestamp }),
       }),
       hgraphClient
         .getERC20Transfers({
@@ -502,6 +519,7 @@ export async function listOperationsV2(
           fetchAllPages,
           tokenEvmAddresses,
           ...(cursor && { timestamp: cursor }),
+          ...(minTimestamp && { minTimestamp }),
         })
         .then(erc20Transfers =>
           enrichERC20Transfers({ configOrCurrencyId: config, erc20Transfers }),

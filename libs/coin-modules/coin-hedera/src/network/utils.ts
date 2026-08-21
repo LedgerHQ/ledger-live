@@ -223,8 +223,16 @@ export const getCurrencyToUSDRate = makeLRUCache(
   seconds(3),
 );
 
+// `validateIntent.ts` (the generic path) only has a `TransactionIntent`'s `AssetInfo` — no full
+// `TokenCurrency`, and no CAL access from inside coin-hedera to build one. Narrowed to the three
+// fields this function actually reads, so both callers can pass what they already have.
+type AssociationCheckToken = Pick<
+  TokenCurrency,
+  "tokenType" | "parentCurrencyId" | "contractAddress"
+>;
+
 export const checkAccountTokenAssociationStatus = makeLRUCache(
-  async (address: string, token: TokenCurrency) => {
+  async (address: string, token: AssociationCheckToken) => {
     if (token.tokenType !== "hts") {
       return true;
     }

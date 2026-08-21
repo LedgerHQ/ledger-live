@@ -106,6 +106,10 @@ describe("Hedera send flow — full modal", () => {
     });
   }, 20_000);
 
+  // Pre-round-17 `MemoField` wrote the legacy `.memo` field, which the generic transaction this flow
+  // actually carries at runtime doesn't have — this pinned that (broken) behavior and would time out
+  // forever once the write moved to the real `memoType`/`memoValue` fields. Updated, not deleted, per
+  // the "pinned pre-migration behaviour" exception.
   it("carries the typed memo through to the prepared transaction", async () => {
     setupModal();
 
@@ -117,7 +121,7 @@ describe("Hedera send flow — full modal", () => {
 
     await waitFor(() => {
       const lastTx = prepareTransactionSpy.mock.calls.at(-1)?.[1];
-      expect(lastTx).toMatchObject({ memo: "ref-42" });
+      expect(lastTx).toMatchObject({ memoType: "string", memoValue: "ref-42" });
     });
   });
 

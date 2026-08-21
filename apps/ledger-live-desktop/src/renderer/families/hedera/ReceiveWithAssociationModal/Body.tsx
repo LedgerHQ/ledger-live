@@ -8,8 +8,7 @@ import invariant from "invariant";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
-import { HEDERA_TRANSACTION_MODES } from "@ledgerhq/live-common/families/hedera/constants";
-import type { Transaction } from "@ledgerhq/live-common/families/hedera/types";
+import type { HederaGenericTransaction } from "@ledgerhq/live-common/families/hedera/types";
 import { isTokenAssociationRequired } from "@ledgerhq/live-common/families/hedera/utils";
 import type { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@domain/entity-currency-token";
@@ -145,7 +144,7 @@ const Body = ({
   const currencyName = currency ? currency.name : undefined;
   const mainAccount = getMainAccount(account, parentAccount);
 
-  const bridgeInstance = useAccountBridge<Transaction>(account, parentAccount);
+  const bridgeInstance = useAccountBridge<HederaGenericTransaction>(account, parentAccount);
   const {
     transaction,
     status,
@@ -166,18 +165,15 @@ const Body = ({
   });
 
   const getTransactionProperties = useCallback(
-    (token: TokenCurrency | undefined | null): Partial<Transaction> => {
+    (token: TokenCurrency | undefined | null): Partial<HederaGenericTransaction> => {
       if (!token) {
         return {};
       }
 
       return {
-        mode: HEDERA_TRANSACTION_MODES.TokenAssociate,
+        mode: "tokenAssociate",
         assetReference: token.contractAddress,
         assetOwner: mainAccount.freshAddress,
-        properties: {
-          token,
-        },
       };
     },
     [mainAccount],
@@ -189,7 +185,9 @@ const Body = ({
       setParentAccount(parentAccount);
 
       updateTransactionAccount(account, parentAccount);
-      updateTransaction(prev => ({ ...prev, ...getTransactionProperties(token) }) as Transaction);
+      updateTransaction(
+        prev => ({ ...prev, ...getTransactionProperties(token) }) as HederaGenericTransaction,
+      );
     },
     [
       token,
@@ -205,7 +203,9 @@ const Body = ({
     (token?: TokenCurrency | null) => {
       setToken(token ?? null);
 
-      updateTransaction(prev => ({ ...prev, ...getTransactionProperties(token) }) as Transaction);
+      updateTransaction(
+        prev => ({ ...prev, ...getTransactionProperties(token) }) as HederaGenericTransaction,
+      );
     },
     [getTransactionProperties, updateTransaction],
   );

@@ -8,6 +8,7 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import getAddressWrapper from "@ledgerhq/ledger-wallet-framework/bridge/getAddressWrapper";
 import { getSigner } from "./signer";
+import { getBridgeApi } from "./bridge";
 import { genericPrepareTransaction } from "./prepareTransaction";
 import { genericGetTransactionStatus } from "./getTransactionStatus";
 import { genericEstimateMaxSpendable } from "./estimateMaxSpendable";
@@ -30,7 +31,12 @@ export async function getCoinFrameworkAccountBridge(
     await getAccountRawAssignHooks(network);
   return {
     sync: makeSync({ getAccountShape: genericGetAccountShape(network, kind), postSync }),
-    receive: makeAccountBridgeReceive(getAddressWrapper(signer.getAddress)),
+    receive: makeAccountBridgeReceive(getAddressWrapper(signer.getAddress), {
+      matchesReceiveAddress: async (result, account) => {
+        const bridgeApi = await getBridgeApi(account.currency, network);
+        return bridgeApi.matchesReceiveAddress?.(result, account);
+      },
+    }),
     createTransaction: createTransaction,
     updateTransaction: updateTransaction<GenericTransaction>,
     prepareTransaction: genericPrepareTransaction(network, kind),

@@ -8,11 +8,17 @@ import {
 import BigNumber from "bignumber.js";
 import type { HederaCoinConfig } from "../config";
 import {
+  HederaInsufficientFundsForAssociation,
   HederaInvalidStakingNodeIdError,
+  HederaMemoExceededSizeError,
   HederaNoStakingRewardsError,
+  HederaRecipientEvmAddressVerificationRequired,
+  HederaRecipientTokenAssociationRequired,
+  HederaRecipientTokenAssociationUnverified,
   HederaRedundantStakingNodeIdError,
 } from "../errors";
 import type { HederaMemo } from "../types";
+import { sendRecipientCanNext } from "./utils";
 import { validateIntent } from "./validateIntent";
 
 const mockEstimateFees = jest.fn();
@@ -31,8 +37,13 @@ jest.mock("../network/api", () => ({
 }));
 
 const mockSafeParseAccountId = jest.fn();
+const mockGetCurrencyToUSDRate = jest.fn();
+const mockCheckAccountTokenAssociationStatus = jest.fn();
 jest.mock("../network/utils", () => ({
   safeParseAccountId: (...args: unknown[]) => mockSafeParseAccountId(...args),
+  getCurrencyToUSDRate: (...args: unknown[]) => mockGetCurrencyToUSDRate(...args),
+  checkAccountTokenAssociationStatus: (...args: unknown[]) =>
+    mockCheckAccountTokenAssociationStatus(...args),
 }));
 
 const CURRENCY_ID = "hedera";
@@ -61,6 +72,10 @@ const htsBalance = (value: bigint): Balance => ({
   value,
   asset: { type: "hts", assetReference: "0.0.999999" },
 });
+const erc20Balance = (value: bigint): Balance => ({
+  value,
+  asset: { type: "erc20", assetReference: "0x39ceba2b467fa987546000eb5d1373acf1f3a2e1" },
+});
 
 beforeEach(() => {
   jest.clearAllMocks();
@@ -79,6 +94,8 @@ beforeEach(() => {
     nodes: [{ node_id: 1 }, { node_id: 2 }],
     nextCursor: null,
   });
+  mockGetCurrencyToUSDRate.mockResolvedValue(new BigNumber(1));
+  mockCheckAccountTokenAssociationStatus.mockResolvedValue(true);
 });
 
 describe("validateIntent — native send", () => {
@@ -127,6 +144,28 @@ describe("validateIntent — native send", () => {
 
     expect(result.errors.recipient).toBeInstanceOf(InvalidAddressBecauseDestinationIsAlsoSource);
   });
+
+  it("rejects a memo over HEDERA_MAX_MEMO_SIZE", async () => {
+    const result = await validateIntent(
+      CURRENCY_ID,
+      mockConfig,
+      makeIntent({ memo: { type: "string", kind: "text", value: "x".repeat(101) } }),
+      [nativeBalance(1000n)],
+    );
+
+    expect(result.errors.transaction).toBeInstanceOf(HederaMemoExceededSizeError);
+  });
+
+  it("accepts a memo within HEDERA_MAX_MEMO_SIZE", async () => {
+    const result = await validateIntent(
+      CURRENCY_ID,
+      mockConfig,
+      makeIntent({ memo: { type: "string", kind: "text", value: "x".repeat(100) } }),
+      [nativeBalance(1000n)],
+    );
+
+    expect(result.errors.transaction).toBeUndefined();
+  });
 });
 
 describe("validateIntent — HTS token transfer", () => {
@@ -170,22 +209,143 @@ describe("validateIntent — HTS token transfer", () => {
 
     expect(result.errors.amount).toBeInstanceOf(NotEnoughBalance);
   });
+
+  it("warns missingAssociation when the recipient has not associated the token", async () => {
+    mockCheckAccountTokenAssociationStatus.mockResolvedValue(false);
+
+    const result = await validateIntent(
+      CURRENCY_ID,
+      mockConfig,
+      makeIntent({ asset: tokenAsset, amount: 50n }),
+      [nativeBalance(1000n), htsBalance(100n)],
+    );
+
+    expect(result.warnings.missingAssociation).toBeInstanceOf(
+      HederaRecipientTokenAssociationRequired,
+    );
+    // The whole point of the key: it exists to gate the send flow's Continue button
+    // (`StepRecipient.tsx`/`02-SelectRecipient.tsx`). `sendRecipientCanNext` takes the framework's
+    // BigNumber-based `TransactionStatusCommon` (what the generic bridge adapts `validateIntent`'s
+    // bigint-based result into before the UI sees it) — only `warnings` matters here.
+    expect(
+      sendRecipientCanNext({
+        warnings: result.warnings,
+        errors: {},
+        estimatedFees: new BigNumber(0),
+        amount: new BigNumber(0),
+        totalSpent: new BigNumber(0),
+      }),
+    ).toBe(false);
+  });
+
+  it("warns unverifiedAssociation when the association check itself fails", async () => {
+    mockCheckAccountTokenAssociationStatus.mockRejectedValue(new Error("mirror node down"));
+
+    const result = await validateIntent(
+      CURRENCY_ID,
+      mockConfig,
+      makeIntent({ asset: tokenAsset, amount: 50n }),
+      [nativeBalance(1000n), htsBalance(100n)],
+    );
+
+    expect(result.warnings.unverifiedAssociation).toBeInstanceOf(
+      HederaRecipientTokenAssociationUnverified,
+    );
+  });
+
+  it("does not check association status when the recipient is invalid", async () => {
+    const result = await validateIntent(
+      CURRENCY_ID,
+      mockConfig,
+      makeIntent({ asset: tokenAsset, amount: 50n, recipient: SENDER }),
+      [nativeBalance(1000n), htsBalance(100n)],
+    );
+
+    expect(result.errors.recipient).toBeInstanceOf(InvalidAddressBecauseDestinationIsAlsoSource);
+    expect(mockCheckAccountTokenAssociationStatus).not.toHaveBeenCalled();
+  });
+
+  it("rejects a memo over HEDERA_MAX_MEMO_SIZE on a token transfer too", async () => {
+    const result = await validateIntent(
+      CURRENCY_ID,
+      mockConfig,
+      makeIntent({
+        asset: tokenAsset,
+        amount: 50n,
+        memo: { type: "string", kind: "text", value: "x".repeat(101) },
+      }),
+      [nativeBalance(1000n), htsBalance(100n)],
+    );
+
+    expect(result.errors.transaction).toBeInstanceOf(HederaMemoExceededSizeError);
+  });
 });
 
-describe("validateIntent — changeTrust (association)", () => {
-  // `computeIntentType` (families/hedera/bridge/api.ts) translates the generic "changeTrust" mode to
-  // this legacy string before validateIntent ever runs — see it exercised end-to-end in
+describe("validateIntent — ERC20 token transfer", () => {
+  const erc20Asset = {
+    type: "erc20" as const,
+    assetReference: "0x39ceba2b467fa987546000eb5d1373acf1f3a2e1",
+    name: "T",
+    unit: { name: "T", code: "T", magnitude: 0 },
+  };
+
+  it("always warns unverifiedEvmAddress, regardless of association status", async () => {
+    const result = await validateIntent(
+      CURRENCY_ID,
+      mockConfig,
+      makeIntent({ asset: erc20Asset, amount: 50n }),
+      [nativeBalance(1000n), erc20Balance(100n)],
+    );
+
+    expect(result.warnings.unverifiedEvmAddress).toBeInstanceOf(
+      HederaRecipientEvmAddressVerificationRequired,
+    );
+    expect(mockCheckAccountTokenAssociationStatus).not.toHaveBeenCalled();
+  });
+});
+
+describe("validateIntent — tokenAssociate (association)", () => {
+  // `computeIntentType` (families/hedera/bridge/api.ts) translates the generic "tokenAssociate" mode
+  // to this legacy string before validateIntent ever runs — see it exercised end-to-end in
   // ledger-live-common's families/hedera/genericFlip.test.ts.
-  it("estimates the association fee without erroring", async () => {
+  it("estimates the association fee without erroring, given enough HBAR to be worth $1", async () => {
     const result = await validateIntent(
       CURRENCY_ID,
       mockConfig,
       makeIntent({ type: "token-associate" }),
-      [nativeBalance(1000n)],
+      [nativeBalance(10_000_000n)], // 0.1 HBAR, $1/HBAR mock rate — above the $0.05 default floor
     );
 
     expect(result.errors).toEqual({});
     expect(result.amount).toBe(0n);
+  });
+
+  it("reports insufficientAssociateBalance when the account is under the USD funding floor", async () => {
+    const result = await validateIntent(
+      CURRENCY_ID,
+      mockConfig,
+      makeIntent({ type: "token-associate" }),
+      [nativeBalance(1000n)], // 0.00001 HBAR, well under the $0.05 default floor at $1/HBAR
+    );
+
+    expect(result.errors.insufficientAssociateBalance).toBeInstanceOf(
+      HederaInsufficientFundsForAssociation,
+    );
+  });
+
+  it("treats a failed USD rate lookup as $0, so the floor still applies", async () => {
+    mockGetCurrencyToUSDRate.mockResolvedValue(null);
+
+    const result = await validateIntent(
+      CURRENCY_ID,
+      mockConfig,
+      makeIntent({ type: "token-associate" }),
+      [nativeBalance(10_000_000_000n)], // 100 HBAR — would clear the floor at any real rate
+    );
+
+    expect(result.errors.insufficientAssociateBalance).toBeInstanceOf(
+      HederaInsufficientFundsForAssociation,
+    );
   });
 });
 

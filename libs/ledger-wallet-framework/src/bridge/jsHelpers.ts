@@ -663,8 +663,15 @@ export function makeAccountBridgeReceive<A extends Account = Account>(
   getAddressFn: GetAddressFn,
   {
     injectGetAddressParams,
+    matchesReceiveAddress,
   }: {
     injectGetAddressParams?: (account: A) => any;
+    // `undefined` means "no family override, use the default equality check" — distinct from a
+    // resolved `false`, so a family with no override never triggers the address substitution below.
+    matchesReceiveAddress?: (
+      result: GetAddressResult,
+      account: A,
+    ) => boolean | undefined | Promise<boolean | undefined>;
   } = {},
 ) {
   return (
@@ -688,14 +695,20 @@ export function makeAccountBridgeReceive<A extends Account = Account>(
       ...(injectGetAddressParams && injectGetAddressParams(account)),
     };
     return from(
-      getAddressFn(deviceId, arg).then(r => {
+      getAddressFn(deviceId, arg).then(async r => {
         const accountAddress = account.freshAddress;
+        const overrideResult = matchesReceiveAddress
+          ? await matchesReceiveAddress(r, account)
+          : undefined;
+        const matches = overrideResult ?? r.address === accountAddress;
 
-        if (verify && r.address !== accountAddress) {
+        if (verify && !matches) {
           throw new WrongDeviceForAccount();
         }
 
-        return r;
+        // An override firing means `r.address` isn't the account's real address (e.g. Hedera's is
+        // a mirror-node lookup, not derivable from the device response) — substitute the known one.
+        return overrideResult !== undefined ? { ...r, address: accountAddress } : r;
       }),
     );
   };

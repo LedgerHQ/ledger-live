@@ -62,6 +62,7 @@ export type GasOptionsRaw = {
 export const GENERIC_TRANSACTION_MODE = [
   "send",
   "changeTrust",
+  "tokenAssociate",
   "send-legacy",
   "send-eip1559",
   "delegate",

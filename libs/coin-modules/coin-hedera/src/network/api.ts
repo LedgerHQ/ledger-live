@@ -109,6 +109,7 @@ async function getAccountTransactions({
   limit = 100,
   order = "desc",
   fetchAllPages,
+  minTimestamp,
 }: {
   configOrCurrencyId: HederaCoinConfig | string;
   address: string;
@@ -116,6 +117,13 @@ async function getAccountTransactions({
   limit?: number | undefined;
   order?: "asc" | "desc" | undefined;
   fetchAllPages: boolean;
+  // Independent of `pagingToken`/`getPaginationDirection` (that pair is "next page of an
+  // already-displayed list", what `getRewards.ts`'s "load more" pagination needs). This is a plain
+  // floor — "operations at or after this consensus timestamp" — for the generic bridge's incremental
+  // sync (`api/index.ts`'s `listOperations`), which needs "what's new since my last known operation",
+  // not another page of history. Kept as a separate param rather than reusing `pagingToken` so the two
+  // callers' semantics can't be conflated again.
+  minTimestamp?: string;
 }): Promise<{ transactions: HederaMirrorTransaction[]; nextCursor: string | null }> {
   const config = resolveConfig(configOrCurrencyId);
   const transactions: HederaMirrorTransaction[] = [];
@@ -127,6 +135,9 @@ async function getAccountTransactions({
 
   if (pagingToken) {
     params.append("timestamp", `${getPaginationDirection(fetchAllPages, order)}:${pagingToken}`);
+  }
+  if (minTimestamp) {
+    params.append("timestamp", `gte:${minTimestamp}`);
   }
 
   let nextCursor: string | null = null;

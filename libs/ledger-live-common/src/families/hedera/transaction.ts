@@ -39,6 +39,8 @@ export function fromTransactionRaw(tr: GenericTransactionRaw): GenericTransactio
     assetReference: tr.assetReference ?? undefined,
     assetOwner: tr.assetOwner ?? undefined,
     valId: tr.valId,
+    memoType: tr.memoType ?? undefined,
+    memoValue: tr.memoValue ?? undefined,
   };
 }
 
@@ -52,6 +54,8 @@ export function toTransactionRaw(t: GenericTransaction): GenericTransactionRaw {
     assetReference: t.assetReference ?? null,
     assetOwner: t.assetOwner ?? null,
     valId: t.valId,
+    memoType: t.memoType ?? null,
+    memoValue: t.memoValue ?? null,
   };
 }
 

@@ -850,6 +850,51 @@ describe("genericGetAccountShape", () => {
       expect(attachedInternalOp?.type).toBe("IN");
       expect((attachedInternalOp as any)?.extra?.internal).toBe(true);
     });
+
+    // GAP G (LIVE-36148): a flat `extra.pagingToken` is covered above via a hand-built `oldOp`, but
+    // that shape is never what a real sync produces — `adaptCoreOperationToLiveOperation` only
+    // promotes a curated key list plus a nested `familyExtra` bag, never a flat `pagingToken`. This
+    // proves sync N's cursor, nested the way a real family (e.g. hedera) emits it, actually reaches
+    // sync N+1's `listOperations` call — not just that the merged operation list looks right, which
+    // stays green with no cursor at all (`mergeOps` dedupes either way). Placed last in this describe
+    // block deliberately: several sibling tests above rely on mock state left by the one before them
+    // rather than setting every mock themselves, so a new test wedged in the middle shifts that chain.
+    test("reads the cursor from a familyExtra-nested pagingToken, the shape a real sync produces", async () => {
+      const oldOp = {
+        hash: "h1",
+        blockHeight: 10,
+        type: "OUT",
+        extra: { familyExtra: { pagingToken: "fpt1" } },
+      };
+      const initialAccount = {
+        operations: [oldOp],
+        pendingOperations: [],
+        blockHeight: 10,
+        syncHash: "sync-hash",
+      };
+
+      getSyncHashMock.mockReturnValue("sync-hash");
+      extractBalanceMock.mockReturnValue({ value: 0n, locked: 0n });
+      getBalanceMock.mockResolvedValue([{ asset: { type: "native" }, value: 0n, locked: 0n }]);
+      listOperationsMock.mockResolvedValue({ items: [], next: undefined });
+      buildSubAccountsMock.mockReturnValue([]);
+      lastBlockMock.mockResolvedValue({ height: 0 });
+      mergeOpsMock.mockImplementation((_old: any[], newOps: any[]) => newOps ?? []);
+      cleanedOperationMock.mockImplementation((op: any) => op);
+      inferSubOperationsMock.mockReturnValue([]);
+
+      const getShape = genericGetAccountShape(network, currency.id);
+      await getShape(
+        { address: `${currency.id}_addr1`, initialAccount, currency, derivationMode: "" } as any,
+        { paginationConfig: {} as any },
+      );
+
+      expect(listOperationsMock).toHaveBeenCalledWith(
+        expect.anything(),
+        `${currency.id}_addr1`,
+        expect.objectContaining({ cursor: "fpt1" }),
+      );
+    });
   });
 
   describe("chain-specific account shape contribution", () => {

@@ -9,12 +9,14 @@ import {
   TransferTransaction,
 } from "@hashgraph/sdk";
 import type { FeeEstimation, TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
+import { getEnv } from "@ledgerhq/live-env";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import type { HederaCoinConfig } from "../config";
 import {
   DEFAULT_GAS_LIMIT,
   HEDERA_TRANSACTION_MODES,
+  MAP_STAKING_MODE_TO_MEMO,
   TRANSACTION_VALID_DURATION_SECONDS,
 } from "../constants";
 import { rpcClient } from "../network/rpc";
@@ -232,6 +234,11 @@ export async function craftTransaction({
   const maxFee = customFees ? new BigNumber(customFees.value.toString()) : undefined;
   const config = resolveConfig(configOrCurrencyId);
   const transactionId = await createTransactionId(account.accountId, config);
+  // `txIntent.memo` is typed as `HederaMemo` (`StringMemo`, always has `.value`), but a transaction
+  // with no memo actually carries `{type: "NO_MEMO"}` at runtime — `.value` reads as `undefined`
+  // there. Normalized once here so every builder below gets a real string, not `undefined`, into an
+  // SDK call typed to take one.
+  const memoValue = txIntent.memo.value ?? "";
 
   let tx;
 
@@ -246,7 +253,7 @@ export async function craftTransaction({
         type: txIntent.type,
         transactionId,
         tokenId: txIntent.asset.assetReference,
-        memo: txIntent.memo.value,
+        memo: memoValue,
         maxFee,
       },
     });
@@ -264,7 +271,7 @@ export async function craftTransaction({
         tokenAddress: txIntent.asset.assetReference,
         amount,
         recipient: txIntent.recipient,
-        memo: txIntent.memo.value,
+        memo: memoValue,
         maxFee,
       },
     });
@@ -284,7 +291,7 @@ export async function craftTransaction({
         tokenAddress: txIntent.asset.assetReference,
         amount,
         recipient: txIntent.recipient,
-        memo: txIntent.memo.value,
+        memo: memoValue,
         maxFee,
         gasLimit,
       },
@@ -300,15 +307,35 @@ export async function craftTransaction({
       transaction: {
         type: txIntent.type,
         transactionId,
-        memo: txIntent.memo.value,
+        // Staking memos are chain-semantics defaults, not user input — the UI never offers a memo
+        // field for these modes, matching the legacy bridge's `prepareTransaction.ts`.
+        memo: MAP_STAKING_MODE_TO_MEMO[txIntent.type] ?? memoValue,
         maxFee,
         stakingNodeId,
       },
     });
   }
-  // HEDERA_TRANSACTION_MODES.ClaimRewards is just a coin transfer that triggers staking rewards claim
+  // HEDERA_TRANSACTION_MODES.ClaimRewards is just a coin transfer that triggers staking rewards
+  // claim — the generic bridge's `computeIntentType` never translates it, so `txIntent.type` here is
+  // the generic camelCase "claimReward", not the legacy "claim-rewards" string.
   else {
-    const amount = new BigNumber(txIntent.amount.toString());
+    const isClaimRewards =
+      txIntent.type === HEDERA_TRANSACTION_MODES.ClaimRewards || txIntent.type === "claimReward";
+
+    // Claiming rewards has no user-chosen recipient or amount: sending 1 tinybar to the network's
+    // staking reward account is what actually triggers the payout. The legacy bridge injected this in
+    // `bridge/prepareTransaction.ts`; the generic path has no prepare-time hook for Hedera to do the
+    // same, so it happens here instead, in the one place that builds the plain-transfer transaction
+    // either a real send or a claim reaches.
+    const recipient = isClaimRewards
+      ? getEnv("HEDERA_CLAIM_REWARDS_RECIPIENT_ACCOUNT_ID")
+      : txIntent.recipient;
+    const amount = isClaimRewards ? new BigNumber(1) : new BigNumber(txIntent.amount.toString());
+    // Same chain-semantics-default reasoning as the staking branch above: claim rewards has no
+    // memo input in the UI, unlike a real send, whose typed memo passes through unchanged.
+    const memo = isClaimRewards
+      ? (MAP_STAKING_MODE_TO_MEMO[txIntent.type] ?? memoValue)
+      : memoValue;
 
     tx = await buildUnsignedCoinTransaction({
       config,
@@ -317,8 +344,8 @@ export async function craftTransaction({
         type: HEDERA_TRANSACTION_MODES.Send,
         transactionId,
         amount,
-        recipient: txIntent.recipient,
-        memo: txIntent.memo.value,
+        recipient,
+        memo,
         maxFee,
       },
     });

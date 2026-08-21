@@ -25,6 +25,12 @@ jest.mock("../network/utils", () => ({
   ...jest.requireActual("../network/utils"),
   toEVMAddress: jest.fn(),
 }));
+jest.mock("@ledgerhq/live-env", () => ({
+  getEnv: jest.fn((key: string) => {
+    if (key === "HEDERA_CLAIM_REWARDS_RECIPIENT_ACCOUNT_ID") return "0.0.98";
+    return "";
+  }),
+}));
 
 const mockToEVMAddress = jest.mocked(toEVMAddress);
 const mockSerializeTransaction = jest.mocked(serializeTransaction);
@@ -425,6 +431,35 @@ describe("craftTransaction", () => {
 
     expect(result.tx).toBeInstanceOf(sdk.AccountUpdateTransaction);
     expect(serializeTransaction).toHaveBeenCalled();
+  });
+
+  it("should craft a claim-rewards transaction as a 1-tinybar transfer to the reward account", async () => {
+    // The generic bridge never translates "claimReward" (unlike changeTrust → token-associate), so
+    // this is the real string craftTransaction's catch-all branch sees in production.
+    const txIntent = {
+      intentType: "transaction",
+      type: "claimReward",
+      amount: BigInt(0),
+      recipient: "",
+      sender: "0.0.54321",
+      asset: { type: "native" },
+      memo: {
+        kind: "text",
+        type: "string",
+        value: "Collect Staking Rewards",
+      },
+    } satisfies TransactionIntent<HederaMemo, HederaTxData>;
+
+    const result = await craftTransaction({ configOrCurrencyId: mockConfig, txIntent });
+
+    expect(result.tx).toBeInstanceOf(sdk.TransferTransaction);
+    invariant(result.tx instanceof sdk.TransferTransaction, "TransferTransaction type guard");
+
+    const senderTransfer = result.tx.hbarTransfers?.get(txIntent.sender);
+    const recipientTransfer = result.tx.hbarTransfers?.get("0.0.98");
+
+    expect(senderTransfer).toEqual(sdk.Hbar.fromTinybars(-1));
+    expect(recipientTransfer).toEqual(sdk.Hbar.fromTinybars(1));
   });
 
   it("should use DEFAULT_GAS_LIMIT when ERC20 txIntent has no data field", async () => {
