@@ -45,7 +45,7 @@ jobs:
           from_level: patch
           to_level: minor
       - name: Install dependencies
-        run: pnpm install -D --ignore-scripts
+        run: pnpm install --frozen-lockfile -D --ignore-scripts
       - name: enter prerelease mode
         run: pnpm changeset pre enter next
       - name: Prune changelogs

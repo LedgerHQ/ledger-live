@@ -89,7 +89,7 @@ jobs:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
       - name: install dependencies
-        run: pnpm i -F "ledger-live" -F "{libs/**}..." -F "@ledgerhq/live-cli..." -F "@ledgerhq/wallet-cli..." -F "@ledgerhq/wallet-cli-*"
+        run: pnpm i --frozen-lockfile -F "ledger-live" -F "{libs/**}..." -F "@ledgerhq/live-cli..." -F "@ledgerhq/wallet-cli..." -F "@ledgerhq/wallet-cli-*"
 
       - name: build libs
         run: pnpm exec nx run-many -t build --projects=tag:scope:libs,@ledgerhq/live-e2e-shared

@@ -87,7 +87,7 @@ jobs:
       - name: Install dependencies
         env:
           SCOPE: ${{ inputs.scope }}
-        run: pnpm i --filter="{./$SCOPE/**}..."
+        run: pnpm i --frozen-lockfile --filter="{./$SCOPE/**}..."
         shell: bash
 
       - name: Run extra targets

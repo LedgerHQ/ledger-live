@@ -146,7 +146,7 @@ jobs:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
       - name: Install dependencies
-        run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live"
+        run: pnpm i --frozen-lockfile --filter="ledger-live-desktop..." --filter="ledger-live"
 
       - name: Build dependencies
         run: pnpm exec nx run ledger-live-desktop:build-lib-deps
