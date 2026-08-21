@@ -54,6 +54,13 @@ describe("DepositOptionsView (Native)", () => {
     expect(screen.getByTestId("pay-card-deposit-option-swap")).toBeVisible();
   });
 
+  it("reserves the bottom safe area so the last option stays visible", () => {
+    render(<DepositOptionsView {...defaultProps} bottomInset={48} />);
+
+    const content = screen.getByTestId("pay-card-deposit-sheet-content");
+    expect(content.props.style.paddingBottom).toBeGreaterThanOrEqual(48);
+  });
+
   it("emits the pressed option id", async () => {
     const user = userEvent.setup();
     const onSelectOption = jest.fn();
