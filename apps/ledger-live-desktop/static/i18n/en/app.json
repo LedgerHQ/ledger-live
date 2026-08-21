@@ -9866,6 +9866,7 @@
     "swapDetailTitle": "Swap details",
     "amountSendLabel": "Amount send",
     "amountReceiveLabel": "Amount receive",
+    "approximateValue": "~{{value}}",
     "depositDetailTitle": "Deposit details",
     "depositAmountLabel": "Deposit amount",
     "depositReceiveLabel": "Receiver account",
