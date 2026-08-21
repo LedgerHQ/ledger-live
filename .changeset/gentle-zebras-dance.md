@@ -1,6 +1,6 @@
 ---
-"@ledgerhq/coin-zcash": patch
-"ledger-live-desktop": patch
+"@ledgerhq/coin-zcash": minor
+"ledger-live-desktop": minor
 ---
 
 Default the Zcash shielded-balance birthday to Ironwood (NU6.3) mainnet activation
