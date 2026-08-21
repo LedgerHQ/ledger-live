@@ -1,6 +1,7 @@
 import { useCallback } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { AssetCategory } from "@domain/api-aggregated-assets";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   useDepositOptionsAdapter,
   type DepositOptionId,
@@ -26,6 +27,7 @@ export function usePayTabDepositOptions(
 ): UsePayTabDepositOptions {
   const { t } = useTranslation();
   const navigation = useNavigation();
+  const { bottom: bottomInset } = useSafeAreaInsets();
 
   const { handleOpenReceiveDrawer } = useOpenReceiveDrawer({
     categories: DEPOSIT_CATEGORIES,
@@ -80,5 +82,12 @@ export function usePayTabDepositOptions(
     },
   };
 
-  return useDepositOptionsAdapter({ labels, page: DEPOSIT_PAGE, onSelect, onTrackEvent });
+  const { open, depositOptions } = useDepositOptionsAdapter({
+    labels,
+    page: DEPOSIT_PAGE,
+    onSelect,
+    onTrackEvent,
+  });
+
+  return { open, depositOptions: { ...depositOptions, bottomInset } };
 }
