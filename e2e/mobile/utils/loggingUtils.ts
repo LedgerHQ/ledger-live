@@ -45,10 +45,7 @@ export function getCapturedStderr(): string {
  * uses that snapshot so it appears in the Test body; otherwise uses live capture.
  */
 export async function attachTestExecutionConsoleToAllure(): Promise<void> {
-  const stderrText =
-    globalThis.speculosFailureStderr !== undefined
-      ? globalThis.speculosFailureStderr
-      : getCapturedStderr();
+  const stderrText = globalThis.speculosFailureStderr ?? getCapturedStderr();
   if (globalThis.speculosFailureStderr !== undefined) {
     globalThis.speculosFailureStderr = undefined;
   }
@@ -111,7 +108,7 @@ export function formatWebviewConsoleLogs(entries: WebviewConsoleEntry[]): string
   for (const e of entries) {
     const ts = (e.timestamp ?? "").slice(0, TS_WIDTH).padEnd(TS_WIDTH);
     const level = (e.level ?? "log").toUpperCase().padEnd(LEVEL_WIDTH);
-    const raw = (e.text ?? "").replace(/\n/g, " ");
+    const raw = (e.text ?? "").replaceAll("\n", " ");
     const cleaned = stripConsoleFormatting(raw);
     const { summary, body } = splitSummaryAndJson(cleaned);
     const summaryLine = summary.length > 120 ? summary.slice(0, 120) + "…" : summary;
