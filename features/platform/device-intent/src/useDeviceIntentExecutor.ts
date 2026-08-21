@@ -122,15 +122,15 @@ export function useDeviceIntentExecutor<JobState, Input, ExtraProps, InitInput>(
         },
         onIntentJobStateChanged: (intent, jobState) => {
           setLatestJobState(jobState);
-          onIntentJobStateChangedRef.current(jobState);
+          onIntentJobStateChangedRef.current?.(jobState);
           lastIntentSnapshotRef.current = {
             intentComponent: intent.component,
             jobState,
             intentComponentExtraProps: intentComponentExtraPropsRef.current,
           };
         },
-        onIntentJobComplete: () => onIntentJobCompleteRef.current(),
-        onIntentJobError: (_intent, error) => onIntentJobErrorRef.current(error),
+        onIntentJobComplete: () => onIntentJobCompleteRef.current?.(),
+        onIntentJobError: (_intent, error) => onIntentJobErrorRef.current?.(error),
       },
     });
   }, [StateMachineClass]);

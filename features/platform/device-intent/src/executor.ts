@@ -154,12 +154,12 @@ export interface DeviceIntentExecutorProps<JobState, Input, ExtraProps, InitInpu
   intent: Intent<JobState, Input, ExtraProps>;
   /** Extra props forwarded directly to the intent's UI component. */
   intentComponentExtraProps: ExtraProps;
-  /** Called whenever the running job emits a new state. */
-  onIntentJobStateChanged: (jobState: JobState) => void;
-  /** On intent job complete */
-  onIntentJobComplete: () => void;
-  /** On intent job error */
-  onIntentJobError: (error: unknown) => void;
+  /** Optional. Called whenever the running job emits a new state. */
+  onIntentJobStateChanged?: (jobState: JobState) => void;
+  /** Optional. Called when the job observable completes. */
+  onIntentJobComplete?: () => void;
+  /** Optional. Called when the job observable errors. */
+  onIntentJobError?: (error: unknown) => void;
   /** When `false` the executor is hidden and inactive; setting to `false` terminates any running job. */
   enabled: boolean;
   /** Called when the user performs an action that cancels the current execution
