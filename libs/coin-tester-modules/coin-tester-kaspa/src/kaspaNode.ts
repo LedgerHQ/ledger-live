@@ -48,28 +48,6 @@ export async function mineBlocks(
   if (!res.ok) {
     throw new Error(`mineBlocks failed (${res.status}): ${await res.text()}`);
   }
-  // Diagnostic: kaspad can silently reject a submitted block (stale template race — see
-  // miner.js) without the HTTP call itself failing, so "requested count" and "actually
-  // accepted" can diverge. Logged unconditionally to investigate a CI-only maturity failure
-  // (LIVE-34179) that hasn't reproduced locally, including under artificial CPU/memory limits.
-  const body = (await res.json()) as {
-    mined: number;
-    accepted: number;
-    rejected: number;
-    rejectionSamples: string[];
-  };
-  console.log(
-    `mineBlocks(count=${count}, payAddress=${payAddress ?? "<default>"}) -> accepted=${body.accepted} rejected=${body.rejected}` +
-      (body.rejectionSamples.length ? ` samples=${JSON.stringify(body.rejectionSamples)}` : ""),
-  );
-}
-
-// Diagnostic: real current chain height/DAA score from the REST server, to check whether
-// mineBlocks() requests actually advanced the chain as far as expected.
-export async function getVirtualDaaScore(): Promise<string> {
-  const res = await fetch(`${REST_BASE}/info/blockdag`);
-  const data = (await res.json()) as { virtualDaaScore: string };
-  return data.virtualDaaScore;
 }
 
 export async function killKaspaNode(): Promise<void> {
