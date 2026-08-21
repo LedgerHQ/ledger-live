@@ -117,6 +117,11 @@ export class SettingsPage extends AppPage {
     await this.hideEmptyTokenAccountsToggle.click();
   }
 
+  @step("Click 'Sync' to open Ledger Sync activation drawer")
+  async clickSyncLedgerSync() {
+    await this.syncWalletSyncButton.click();
+  }
+
   @step("Open Ledger Sync Manager")
   async openManageLedgerSync() {
     await this.manageWalletSyncButton.click();

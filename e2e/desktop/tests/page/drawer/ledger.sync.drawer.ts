@@ -14,9 +14,24 @@ export class LedgerSyncDrawer extends Drawer {
   private displayInstances = this.page.getByTestId("walletSync-manage-instances-label");
   private readonly cliMember = this.page.getByTestId("walletSync-manage-instance-CLI");
   private readonly removeCLI = this.cliMember.getByText("Remove");
+  private readonly activateTitle = this.page.getByTestId("walletsync-activate-title");
+  private readonly turnOnLedgerSyncButton = this.page.getByTestId("walletsync-activate-cta");
+  private readonly alreadySyncButton = this.page.getByTestId("walletsync-activate-already-sync");
 
   async waitForDeleteSyncButton() {
     await this.deleteSyncButton.waitFor({ state: "visible" });
+  }
+
+  @step("Expect activation screen to be visible")
+  async expectActivationScreenVisible() {
+    await expect(this.activateTitle).toBeVisible();
+    await expect(this.turnOnLedgerSyncButton).toBeVisible();
+    await expect(this.alreadySyncButton).toBeVisible();
+  }
+
+  @step("Click 'Turn on Ledger Sync'")
+  async clickTurnOnLedgerSync() {
+    await this.turnOnLedgerSyncButton.click();
   }
 
   @step("Check if Ledger Sync management drawer is visible")

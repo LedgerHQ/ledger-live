@@ -318,3 +318,27 @@ test.describe("Ledger Sync - entry point in settings", () => {
     },
   );
 });
+
+test.describe("Ledger Sync - activation flow no backup activated", () => {
+  test.use(unactivatedFeatureFlags());
+
+  test(
+    "[WXP][Ledger Sync] Activation Flow - No Backup Activated",
+    {
+      tag: [...deviceTagsWithoutLNS(), "@wallet-xp"],
+      annotation: {
+        type: "TMS",
+        description: "B2CQA-2293",
+      },
+    },
+    async ({ app }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
+      await app.mainNavigation.openSettings();
+      await app.settings.expectLedgerSyncSettingsRow();
+      await app.settings.expectLedgerSyncSettingsEntryPoint();
+      await app.settings.clickSyncLedgerSync();
+      await app.ledgerSync.expectActivationScreenVisible();
+    },
+  );
+});
