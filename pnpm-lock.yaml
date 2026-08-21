@@ -1785,6 +1785,9 @@ importers:
       '@features/flow-pay-card-feature-tour':
         specifier: workspace:^
         version: link:../../features/flow/pay-card-feature-tour
+      '@features/flow-pay-card-request':
+        specifier: workspace:^
+        version: link:../../features/flow/pay-card-request
       '@features/platform-aggregated-assets':
         specifier: workspace:*
         version: link:../../features/platform/aggregated-assets

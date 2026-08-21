@@ -11,6 +11,7 @@ import { useNavigationBarHeights } from "LLM/hooks/useNavigationBarHeights";
 import { usePayCardBalance } from "LLM/features/PayTab/hooks/usePayCardBalance";
 import { usePayTabActionTiles } from "LLM/features/PayTab/hooks/usePayTabActionTiles";
 import { usePayTabDepositOptions } from "LLM/features/PayTab/hooks/usePayTabDepositOptions";
+import { usePayTabRequestReceive } from "LLM/features/PayTab/hooks/usePayTabRequestReceive";
 import { track } from "~/analytics";
 import { PAY_TAB_DEEP_LINK } from "~/navigation/deeplinks/payTabDeepLink";
 
@@ -21,7 +22,8 @@ export function usePayTabViewModel() {
 
   const balance = usePayCardBalance();
   const deposit = usePayTabDepositOptions(balance.onTrackEvent);
-  const actionTiles = usePayTabActionTiles(balance.onTrackEvent, deposit.open);
+  const request = usePayTabRequestReceive(balance.onTrackEvent);
+  const actionTiles = usePayTabActionTiles(balance.onTrackEvent, deposit.open, request.open);
 
   const balanceLabels: BalanceLabels = useMemo(
     () => ({
@@ -89,5 +91,6 @@ export function usePayTabViewModel() {
     balanceLabels,
     actionTiles,
     depositOptions: deposit.depositOptions,
+    requestReceive: request.requestReceive,
   };
 }
