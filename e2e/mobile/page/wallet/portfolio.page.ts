@@ -631,13 +631,18 @@ export default class PortfolioPage {
 
   @Step("Expect borrow entry point to be visible")
   async expectBorrowEntryPointVisible() {
-    await scrollToId(this.borrowEntryPointId, this.accountsListView, 700, "down");
-    await detoxExpect(getElementById(this.borrowEntryPointId)).toBeVisible();
+    await scrollToId(this.borrowEntryPointId, this.accountsListView);
+    await waitForElementById(this.borrowEntryPointId);
   }
 
-  /** The card and its CTA share one onPress, so tap the card that was scrolled into view. */
+  /**
+   * The card and its CTA share one onPress, so tap the card rather than the nested button.
+   * The card enters from the bottom, so it parks against the tab bar until revealForTap
+   * continues past it.
+   */
   @Step("Click borrow entry point")
   async clickBorrowEntryPoint() {
+    await revealForTap(this.borrowEntryPointId, { container: this.accountsListView });
     await tapById(this.borrowEntryPointId);
   }
 }
