@@ -69,7 +69,7 @@ jobs:
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
       - name: Install dependencies
-        run: pnpm i --filter="./libs/ui/**"
+        run: pnpm i --frozen-lockfile --filter="./libs/ui/**"
       - name: Run unit tests
         run: pnpm --filter="./libs/ui/**" test:jest:coverage
       - name: Upload unit test coverage (react)
