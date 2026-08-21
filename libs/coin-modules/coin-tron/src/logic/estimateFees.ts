@@ -212,16 +212,23 @@ const fallbackFee = (intent: TronIntent): bigint => {
 const isTrc20Send = (intent: TronIntent): boolean =>
   intent.type === "send" && intent.asset.type === "trc20";
 
-// Internal: compute fee from a pre-fetched energyNeeded. Does NOT catch — callers decide
-// whether to fall back. Allows callers that already have energyNeeded to avoid re-fetching it.
-async function computeFeesRaw(
+// Fetches the three network inputs shared by estimateFees and computeFeesRaw — extracted to avoid
+// duplicating the Promise.all in both callers.
+async function fetchTronFeeInputs(
   config: TronCoinConfig,
   transactionIntent: TronIntent,
-  energyNeeded: number,
-): Promise<bigint> {
+): Promise<{
+  networkInfo: NetworkInfo;
+  recipientAccount: AccountTronAPI | undefined;
+  chainParams: ChainParameters;
+}> {
   const [networkInfo, recipientAccount, chainParams] = await Promise.all([
     getTronAccountNetwork(config, transactionIntent.sender),
-    // Only native sends need the recipient account for the activation-fee branch.
+    // Only native sends need the recipient account for the activation-fee branch, and only once a
+    // recipient exists: `prepareTransaction` estimates on every transaction change, so an empty
+    // recipient would send `/v1/accounts/` with no address, and `fetchTronAccount` propagates that
+    // failure into the outer catch — quoting the pessimistic flat fee before the user has typed
+    // anything.
     transactionIntent.type === "send" &&
     transactionIntent.asset.type === "native" &&
     transactionIntent.recipient
@@ -229,12 +236,30 @@ async function computeFeesRaw(
       : Promise.resolve<AccountTronAPI | undefined>(undefined),
     getChainParameters(config),
   ]);
+  return { networkInfo, recipientAccount, chainParams };
+}
+
+// Internal: compute fee from a pre-fetched energyNeeded. Does NOT catch — callers decide
+// whether to fall back. Returns networkInfo alongside the fee so callers can build a
+// TronResourceBreakdown without a second network round-trip.
+async function computeFeesRaw(
+  config: TronCoinConfig,
+  transactionIntent: TronIntent,
+  energyNeeded: number,
+): Promise<{ value: bigint; networkInfo: NetworkInfo }> {
+  const { networkInfo, recipientAccount, chainParams } = await fetchTronFeeInputs(
+    config,
+    transactionIntent,
+  );
 
   const total = computeBandwidthFee(estimatedTxSize(transactionIntent), networkInfo, chainParams)
     .plus(computeEnergyFee(energyNeeded, networkInfo, chainParams))
     .plus(computeActivationFee(transactionIntent, recipientAccount, chainParams));
 
-  return BigInt(total.integerValue(BigNumber.ROUND_CEIL).toFixed());
+  return {
+    value: BigInt(total.integerValue(BigNumber.ROUND_CEIL).toFixed()),
+    networkInfo,
+  };
 }
 
 export async function estimateFees(
@@ -246,20 +271,10 @@ export async function estimateFees(
   const size = estimatedTxSize(transactionIntent);
 
   try {
-    const [networkInfo, recipientAccount, chainParams] = await Promise.all([
-      getTronAccountNetwork(config, transactionIntent.sender),
-      // Only native sends need the recipient account for the activation-fee branch, and only once a
-      // recipient exists: `prepareTransaction` estimates on every transaction change, so an empty
-      // recipient would send `/v1/accounts/` with no address, and `fetchTronAccount` propagates that
-      // failure into the outer catch — quoting the pessimistic flat fee before the user has typed
-      // anything.
-      transactionIntent.type === "send" &&
-      transactionIntent.asset.type === "native" &&
-      transactionIntent.recipient
-        ? fetchTronAccount(config, transactionIntent.recipient).then(accounts => accounts[0])
-        : Promise.resolve<AccountTronAPI | undefined>(undefined),
-      getChainParameters(config),
-    ]);
+    const { networkInfo, recipientAccount, chainParams } = await fetchTronFeeInputs(
+      config,
+      transactionIntent,
+    );
 
     const energyPool = energyAvailable(networkInfo);
     let energyRequired: BigNumber;
@@ -324,7 +339,7 @@ const withBreakdown = (value: bigint, breakdown: TronResourceBreakdown): FeeEsti
 
 // 10-min fastTrade window matching the UI's fee-quote TTL
 const TRONIFY_RENTAL_DURATION_SECONDS = 600;
-// Bandwidth top-up Tronify bundles with each rental to cover the transaction's bandwidth cost
+// Bandwidth top-up Tronify bundles with each rental to cover the transaction's bandwidth cost — 0.8 TRX (not SUN)
 const TRONIFY_RENTAL_EXTRA_TRX = 0.8;
 
 /**
@@ -352,7 +367,8 @@ export async function estimateTronifyFees(
   // known, so they run in parallel to keep pricing latency minimal.
   // getEnergyRentQuote resolves its provider through the coinConfig singleton (not `config`); this
   // is the shared design of the energyRent module — the provider is selected via remote coin-config.
-  const [originalValue, quote] = await Promise.all([
+  // TODO(LIVE-34996): align energyRent config threading with the injected `config` pattern.
+  const [{ value: originalValue, networkInfo }, quote] = await Promise.all([
     computeFeesRaw(config, intent, energyNeeded),
     getEnergyRentQuote({
       payerAddress: intent.sender,
@@ -378,10 +394,22 @@ export async function estimateTronifyFees(
       .toFixed(),
   );
 
+  // Populate a breakdown so validateIntent/resolveFeeContext doesn't fire an extra estimateFees
+  // RPC on every keystroke for the Tronify path (resolveFeeContext gates re-estimation on whether
+  // customFees?.parameters carries a valid TronResourceBreakdown).
+  const breakdown: TronResourceBreakdown = {
+    energyRequired: String(energyNeeded),
+    energyAvailable: energyAvailable(networkInfo).toFixed(),
+    bandwidthRequired: String(estimatedTxSize(intent)),
+    bandwidthAvailable: bandwidthAvailable(networkInfo).toFixed(),
+    energyEstimated: true,
+  };
+
   return {
     value,
     originalValue,
     // Clamp to 0n: Tronify may be more expensive than burning during low-energy-price periods.
     savings: originalValue > value ? originalValue - value : 0n,
+    parameters: { ...breakdown },
   };
 }
