@@ -9458,6 +9458,10 @@
     },
     "addAddressReview": {
       "title": "Review address",
+      "addressLabel": "Address",
+      "currencyLabel": "Currency",
+      "networkLabel": "Network",
+      "nameLabel": "Address name",
       "continue": "Confirm address",
       "successTitle": "Address saved",
       "close": "Close"

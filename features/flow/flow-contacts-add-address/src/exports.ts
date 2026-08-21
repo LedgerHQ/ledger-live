@@ -1,4 +1,6 @@
 export * from "./prefillAddAddress";
+export * from "./useOpenPrefillAddAddressFlow";
+export * from "./usePrefillAddAddressFlow";
 export * from "./state/addressValidation/dependencies";
 export * from "./state/addressValidation/service";
 export * from "./state/ports";

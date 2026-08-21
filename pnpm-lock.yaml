@@ -5186,6 +5186,9 @@ importers:
       '@features/platform-contacts':
         specifier: workspace:^
         version: link:../../platform/contacts
+      uuid:
+        specifier: ^9.0.0
+        version: 9.0.1
     devDependencies:
       '@features/platform-feature-flags':
         specifier: workspace:^
@@ -5232,6 +5235,9 @@ importers:
       '@types/react':
         specifier: 'catalog:'
         version: 19.0.14
+      '@types/uuid':
+        specifier: ^9.0.0
+        version: 9.0.8
       jest:
         specifier: 'catalog:'
         version: 30.2.0
