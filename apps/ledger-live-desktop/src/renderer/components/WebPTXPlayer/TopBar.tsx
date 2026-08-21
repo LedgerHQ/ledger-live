@@ -242,10 +242,13 @@ export const TopBar = ({
 
         if (goToURL) {
           localStorage.setItem("manifest-id", manifestId);
-          localStorage.setItem("flow-name", url.searchParams.get("flowName") || "buy");
+          const flowName = url.searchParams.get("flowName");
+          if (flowName) {
+            localStorage.setItem("flow-name", flowName);
+          }
           localStorage.setItem(
             "last-screen",
-            url.searchParams.get("lastScreen") || url.searchParams.get("flowName") || "",
+            url.searchParams.get("lastScreen") || flowName || "",
           );
 
           navigate(`${basePath}/${manifestId}?goToURL=${goToURL}`);

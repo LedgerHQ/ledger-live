@@ -149,4 +149,41 @@ describe("TopBar", () => {
 
     expect(mockNavigate).toHaveBeenCalledWith("/card/cl-card?goToURL=https://example.com");
   });
+
+  it("stores flowName in localStorage when flowName is present in goToManifest URL", () => {
+    const setItemSpy = jest.spyOn(Storage.prototype, "setItem");
+    (useSelector as unknown as jest.Mock).mockReturnValue(false);
+
+    const urlWithFlowName =
+      "http://localhost:3000?goToManifest=provider-id&goToURL=https%3A%2F%2Fprovider.com&flowName=sell";
+
+    render(
+      <MemoryRouter initialEntries={["/"]}>
+        <TopBar {...defaultProps} webviewState={{ ...mockWebviewState, url: urlWithFlowName }} />
+      </MemoryRouter>,
+    );
+
+    expect(setItemSpy).toHaveBeenCalledWith("flow-name", "sell");
+    setItemSpy.mockRestore();
+  });
+
+  it("does not write flow-name to localStorage when flowName is absent from goToManifest URL", () => {
+    const setItemSpy = jest.spyOn(Storage.prototype, "setItem");
+    (useSelector as unknown as jest.Mock).mockReturnValue(false);
+
+    const urlWithoutFlowName =
+      "http://localhost:3000?goToManifest=provider-id&goToURL=https%3A%2F%2Fprovider.com";
+
+    render(
+      <MemoryRouter initialEntries={["/"]}>
+        <TopBar
+          {...defaultProps}
+          webviewState={{ ...mockWebviewState, url: urlWithoutFlowName }}
+        />
+      </MemoryRouter>,
+    );
+
+    expect(setItemSpy).not.toHaveBeenCalledWith("flow-name", expect.anything());
+    setItemSpy.mockRestore();
+  });
 });
