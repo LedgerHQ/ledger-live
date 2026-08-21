@@ -8,12 +8,29 @@ import { verifyTransactionSignature as mockVerifyTransactionSignature } from "@m
 import { BigNumber } from "bignumber.js";
 import { take } from "rxjs/operators";
 import coinConfig from "../config";
+import { SuiAddressBalanceAppUpdateRequired } from "../errors";
 import type { SuiAccount, SuiSigner, Transaction, SuiSignedOperation } from "../types";
 import { ensureAddressFormat as mockEnsureAddressFormat } from "../utils";
 import { buildOptimisticOperation as mockBuildOptimisticOperation } from "./buildOptimisticOperation";
 import { buildTransaction as mockBuildTransaction } from "./buildTransaction";
 import buildSignOperation from "./signOperation";
 import { calculateAmount as mockCalculateAmount } from "./utils";
+
+// Real `tx.build()` bytes (no intent prefix). Address-balance send: `coin::redeem_funds`
+// (a FundsWithdrawal input) + transferObjects — the shape older Sui apps reject with 0x8.
+const ADDRESS_BALANCE_TX_B64 =
+  "AAACACBvsh/urQJ9pIcyla/1sTzYY/hdvovvz57de8dlGOzHiAIAAMqaOwAAAAAABwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACA3N1aQNTVUkAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIEY29pbgxyZWRlZW1fZnVuZHMBBwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACA3N1aQNTVUkAAQEBAAEBAwAAAAABAADXgJJ9qOf/ltsDmfFnOLvOll7vkz1IfwRlxTK9Hu2w0wDXgJJ9qOf/ltsDmfFnOLvOll7vkz1IfwRlxTK9Hu2w0+gDAAAAAAAAAOH1BQAAAAAA";
+// Classic coin-object send: splitCoins(tx.gas) + transferObjects — no FundsWithdrawal input.
+const COIN_OBJECT_TX_B64 =
+  "AAACAAgAypo7AAAAAAAgb7If7q0CfaSHMpWv9bE82GP4Xb6L78+e3XvHZRjsx4gCAgABAQAAAQEDAAAAAAEBANeAkn2o5/+W2wOZ8Wc4u86WXu+TPUh/BGXFMr0e7bDTARERERERERERERERERERERERERERERERERERERERERERCgAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADXgJJ9qOf/ltsDmfFnOLvOll7vkz1IfwRlxTK9Hu2w0+gDAAAAAAAAAOH1BQAAAAAA";
+
+/** Mimics the transport's TransportStatusError for SW 0x0008 (UNKNOWN_ERROR (0x8)). */
+function makeUnknownDeviceError(): Error {
+  return Object.assign(new Error("Ledger device: UNKNOWN_ERROR (0x8)"), {
+    name: "TransportStatusError",
+    statusCode: 0x0008,
+  });
+}
 
 // Mock dependencies
 jest.mock("../config", () => ({
@@ -355,6 +372,72 @@ describe("buildSignOperation", () => {
       signOperation({ account: mockAccount, deviceId, transaction: mockTransaction }).subscribe({
         error: error => {
           expect(error).toBe(calculateError);
+          done();
+        },
+      });
+    });
+  });
+
+  describe("SIP-58 address-balance error mapping", () => {
+    it("maps UNKNOWN_ERROR (0x8) on an address-balance send to SuiAddressBalanceAppUpdateRequired", done => {
+      (mockBuildTransaction as unknown as jest.Mock).mockResolvedValue({
+        unsigned: Buffer.from(ADDRESS_BALANCE_TX_B64, "base64"),
+      });
+      mockLedgerSigner.signTransaction.mockRejectedValue(makeUnknownDeviceError());
+
+      signOperation({ account: mockAccount, deviceId, transaction: mockTransaction }).subscribe({
+        error: error => {
+          expect(error).toBeInstanceOf(SuiAddressBalanceAppUpdateRequired);
+          done();
+        },
+      });
+    });
+
+    it("propagates UNKNOWN_ERROR (0x8) unchanged for a classic coin-object send", done => {
+      const unknownError = makeUnknownDeviceError();
+      (mockBuildTransaction as unknown as jest.Mock).mockResolvedValue({
+        unsigned: Buffer.from(COIN_OBJECT_TX_B64, "base64"),
+      });
+      mockLedgerSigner.signTransaction.mockRejectedValue(unknownError);
+
+      signOperation({ account: mockAccount, deviceId, transaction: mockTransaction }).subscribe({
+        error: error => {
+          expect(error).toBe(unknownError);
+          done();
+        },
+      });
+    });
+
+    it("propagates non-0x8 device errors unchanged even on an address-balance send", done => {
+      const otherError = Object.assign(new Error("Ledger device: DENIED_BY_USER (0x6985)"), {
+        name: "TransportStatusError",
+        statusCode: 0x6985,
+      });
+      (mockBuildTransaction as unknown as jest.Mock).mockResolvedValue({
+        unsigned: Buffer.from(ADDRESS_BALANCE_TX_B64, "base64"),
+      });
+      mockLedgerSigner.signTransaction.mockRejectedValue(otherError);
+
+      signOperation({ account: mockAccount, deviceId, transaction: mockTransaction }).subscribe({
+        error: error => {
+          expect(error).toBe(otherError);
+          done();
+        },
+      });
+    });
+
+    it("propagates the original 0x8 device error when the unsigned tx bytes can't be parsed", done => {
+      const unknownError = makeUnknownDeviceError();
+      // Not valid BCS transaction bytes: the address-balance probe can't parse them, so it can't
+      // confirm the spend and the original device error must propagate rather than a parse error.
+      (mockBuildTransaction as unknown as jest.Mock).mockResolvedValue({
+        unsigned: new Uint8Array([1, 2, 3, 4, 5]),
+      });
+      mockLedgerSigner.signTransaction.mockRejectedValue(unknownError);
+
+      signOperation({ account: mockAccount, deviceId, transaction: mockTransaction }).subscribe({
+        error: error => {
+          expect(error).toBe(unknownError);
           done();
         },
       });
