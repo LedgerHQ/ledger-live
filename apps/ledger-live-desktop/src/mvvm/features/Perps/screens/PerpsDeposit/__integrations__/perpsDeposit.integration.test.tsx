@@ -5,6 +5,7 @@ import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import type { Account } from "@ledgerhq/types-live";
 import { act, render, screen } from "tests/testSetup";
 import PerpsDepositRoot, { openPerpsDeposit } from "../PerpsDepositDialog";
+import PerpsReviewRoot from "../../PerpsReview/PerpsReviewDialog";
 
 const mockOpenAssetAndAccount = jest.fn();
 jest.mock("LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer", () => ({
@@ -171,5 +172,28 @@ describe("PerpsDeposit integration", () => {
 
     expect(screen.getByTestId("perps-deposit-amount-input")).toHaveValue("20");
     expect(screen.getByTestId("perps-deposit-review-cta")).not.toBeDisabled();
+  });
+
+  it("should hand over to the review dialog when the form is submitted", async () => {
+    const { user } = render(
+      <>
+        <PerpsDepositRoot />
+        <PerpsReviewRoot />
+      </>,
+    );
+
+    act(() =>
+      openPerpsDeposit({
+        receiverAccount,
+        draft: { depositAccount: fundingAccount, depositAmount: 20 },
+      }),
+    );
+
+    await user.click(screen.getByTestId("perps-deposit-review-cta"));
+
+    // The deposit form gives way to the review, which knows what is being sent.
+    expect(await screen.findByTestId("perps-deposit-cta")).toBeVisible();
+    expect(screen.getByTestId("perps-deposit-amount-sent")).toBeVisible();
+    expect(screen.queryByTestId("perps-deposit-amount-input")).not.toBeInTheDocument();
   });
 });

@@ -12,13 +12,24 @@ jest.mock("LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer", () 
   }),
 }));
 
-// Countervalues are priced 1:1 with the account balance so the form ceiling is
-// predictable: a balance of 10_000 (2 decimals for USD) means a $100 maximum.
+const mockOpenPerpsReview = jest.fn();
+jest.mock("../../PerpsReview/PerpsReviewDialog", () => ({
+  openPerpsReview: (data: unknown) => mockOpenPerpsReview(data),
+}));
+
+// Countervalues are priced 1:1 in both directions, so the form ceiling is predictable:
+// a balance of 10_000 (2 decimals for USD) means a $100 maximum.
 const mockCalculateCountervalue = jest.fn((_currency: unknown, value: BigNumber) => value);
 jest.mock("@ledgerhq/live-countervalues-react", () => ({
   ...jest.requireActual("@ledgerhq/live-countervalues-react"),
   useCalculateCountervalueCallback: () => (currency: unknown, value: BigNumber) =>
     mockCalculateCountervalue(currency, value),
+  useCountervaluesState: () => ({}),
+}));
+
+jest.mock("@ledgerhq/live-countervalues/logic", () => ({
+  ...jest.requireActual("@ledgerhq/live-countervalues/logic"),
+  calculate: (_state: unknown, { value }: { value: number }) => value,
 }));
 
 // Prices the typed amount back into the funding currency, in its smallest unit.
@@ -278,13 +289,31 @@ describe("usePerpsDepositViewModel", () => {
     });
   });
 
-  it("closes the dialog when the form is ready to review", () => {
+  it("hands the review the amount converted into the funding currency", () => {
     const { result, onClose } = renderViewModel({
       draft: { depositAccount: fundingAccount, depositAmount: 20 },
     });
 
     act(() => result.current.handleReview());
 
+    expect(mockOpenPerpsReview).toHaveBeenCalledWith({
+      receiverAccount,
+      depositAccount: fundingAccount,
+      amountSent: "0.000000000000002",
+      // The received side is whatever the provider quoted, not a local conversion.
+      amountTo: "42",
+      draft: { depositAccount: fundingAccount, depositAmount: 20 },
+    });
     expect(onClose).toHaveBeenCalled();
+  });
+
+  it("does not open the review while the form is incomplete", () => {
+    const { result, onClose } = renderViewModel();
+
+    act(() => result.current.changeDepositAmount("20"));
+    act(() => result.current.handleReview());
+
+    expect(mockOpenPerpsReview).not.toHaveBeenCalled();
+    expect(onClose).not.toHaveBeenCalled();
   });
 });
