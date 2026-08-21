@@ -9814,6 +9814,19 @@
       "cta": "Try again"
     }
   },
+  "perpsDeposit": {
+    "title": "Deposit",
+    "inputDepositAmount": "Deposit ~{{value}}{{currencyTicker}}",
+    "inputSubText": "Swap and deposit via SwapKit",
+    "selectCurrencyTitle": "Deposit with {{currencyTicker}}",
+    "selectCurrencyAccount": "{{accountName}} · {{counterValue}}",
+    "selectCurrencyDescription": "No account",
+    "review": "Review",
+    "keypadDelete": "Delete last digit",
+    "formErrors": {
+      "amountExceedsBalance": "Insufficient balance"
+    }
+  },
   "swapErrors": {
     "incorrectCommandData": {
       "title": "Incorrect command data",
