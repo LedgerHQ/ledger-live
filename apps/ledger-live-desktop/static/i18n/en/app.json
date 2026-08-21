@@ -9859,5 +9859,17 @@
       "totalMaturity": "Total Maturity",
       "totalMaturityTooltip": "The total accumulated rewards from staking, including both staked and liquid maturity. These rewards can be either staked again or claimed as liquid ICP."
     }
+  },
+  "perpsDeposit": {
+    "title": "Deposit",
+    "inputDepositAmount": "Deposit ~{{value}}{{currencyTicker}}",
+    "inputSubText": "Swap and deposit via SwapKit",
+    "selectCurrencyTitle": "Deposit with {{currencyTicker}}",
+    "selectCurrencyAccount": "{{accountName}} · <balance>{{counterValue}}</balance>",
+    "selectCurrencyDescription": "No account",
+    "review": "Review",
+    "formErrors": {
+      "amountExceedsBalance": "Insufficient balance"
+    }
   }
 }
