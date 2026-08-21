@@ -6578,7 +6578,7 @@
           },
           "dualValidator": {
             "title": "Dual-validator security",
-            "body": "Transactions require co-signing from both Ledger and Klin. Neither can act on your behalf alone."
+            "body": "Transactions require co-signing from both Ledger and Kiln. Neither can act on your behalf alone."
           },
           "tokenLiability": {
             "title": "Standard token liability ⚠️",
