@@ -275,3 +275,46 @@ test.describe("Ledger Sync - delete backup", () => {
     },
   );
 });
+
+function unactivatedFeatureFlags() {
+  return {
+    teamOwner: Team.WALLET_XP,
+    userdata: "skip-onboarding",
+    featureFlags: {
+      lldWalletSync: {
+        enabled: true,
+        params: {
+          environment: ledgerSyncEnvironment,
+          watchConfig: {
+            pollingInterval: 2_000,
+            initialTimeout: 500,
+          },
+          learnMoreLink: "",
+        },
+      },
+      lldLedgerSyncEntryPoints: { enabled: true },
+    },
+  };
+}
+
+test.describe("Ledger Sync - entry point in settings", () => {
+  test.use(unactivatedFeatureFlags());
+
+  test(
+    "[WXP][Ledger Sync] A wallet sync entry point should exist in the settings",
+    {
+      tag: [...deviceTagsWithoutLNS(), "@wallet-xp"],
+      annotation: {
+        type: "TMS",
+        description: "B2CQA-2292",
+      },
+    },
+    async ({ app }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
+      await app.mainNavigation.openSettings();
+      await app.settings.expectLedgerSyncSettingsRow();
+      await app.settings.expectLedgerSyncSettingsEntryPoint();
+    },
+  );
+});

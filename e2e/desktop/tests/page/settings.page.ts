@@ -14,6 +14,7 @@ export class SettingsPage extends AppPage {
 
   private syncWalletSyncButton = this.page.getByTestId("button-sync-walletSync");
   private manageWalletSyncButton = this.page.getByTestId("button-manage-walletSync");
+  private walletSyncRow = this.page.getByTestId("setting-walletSync");
   private clearCacheButton = this.page.getByRole("button", { name: "Clear" });
   private confirmButton = this.page.getByRole("button", { name: "Confirm" });
   private accountsTab = this.page.getByTestId("settings-accounts-tab");
@@ -124,6 +125,11 @@ export class SettingsPage extends AppPage {
   @step("Expect Ledger Sync settings entry point to be visible")
   async expectLedgerSyncSettingsEntryPoint() {
     await expect(this.manageWalletSyncButton.or(this.syncWalletSyncButton)).toBeVisible();
+  }
+
+  @step("Expect Ledger Sync settings row to be visible")
+  async expectLedgerSyncSettingsRow() {
+    await expect(this.walletSyncRow).toBeVisible();
   }
 
   @step("Clear cache")
