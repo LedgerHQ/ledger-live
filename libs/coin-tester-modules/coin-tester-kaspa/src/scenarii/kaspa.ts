@@ -11,7 +11,7 @@ import {
   makeGenericAdapterAccount,
   initMSW,
 } from "../fixtures";
-import { mineBlocks, waitForBalance, getBalance } from "../kaspaNode";
+import { mineBlocks, waitForBalance, getBalance, getVirtualDaaScore } from "../kaspaNode";
 import { getBridges } from "../helpers";
 import {
   buildSigners,
@@ -78,7 +78,13 @@ export const scenarioKaspa: Scenario<GenericTransaction, Account> = {
     const currentBalance = await getBalance(testAddress);
     if (currentBalance < BigInt(9_000 * ONE_KAS)) {
       await mineBlocks(SETUP_BLOCKS, SETUP_MINE_INTERVAL_MS);
+      console.log(
+        `[diag] daaScore after ${SETUP_BLOCKS} setup blocks: ${await getVirtualDaaScore()}`,
+      );
       await mineBlocks(MATURITY_GAP_BLOCKS, SETUP_MINE_INTERVAL_MS, maturityGapSink);
+      console.log(
+        `[diag] daaScore after ${MATURITY_GAP_BLOCKS} maturity-gap blocks: ${await getVirtualDaaScore()}`,
+      );
     }
 
     // Wait for the balance to confirm the indexer processed enough blocks.

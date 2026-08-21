@@ -30,6 +30,9 @@ async function connectWithRetry(client, maxAttempts = 60) {
   }
 }
 
+// Returns whether kaspad actually accepted the block, plus the rejection reason if not —
+// diagnostic visibility into how often the "stale template race" swallow below actually fires,
+// since a rejected block is otherwise indistinguishable from an accepted one to the caller.
 async function mineOneBlock(client, payAddress) {
   const { block } = await client.getBlockTemplate({
     payAddress: payAddress || MINING_ADDRESS,
@@ -49,14 +52,15 @@ async function mineOneBlock(client, payAddress) {
       try {
         await client.submitBlock({ block, allowNonDaaBlocks: false });
         console.log(`Block mined  nonce=${nonce}`);
+        return { accepted: true };
       } catch (e) {
         // Stale template race — not a fatal error
         const msg = String(e.message || e);
         if (!msg.includes("BlockAlreadyExists") && !msg.includes("OrphanBlock")) {
           console.warn(`submitBlock: ${msg}`);
         }
+        return { accepted: false, reason: msg };
       }
-      return;
     }
     nonce++;
     // Yield to the event loop periodically so the /health endpoint stays responsive even
@@ -104,15 +108,26 @@ async function main() {
           ? Math.min(Math.max(intervalMs, 0), 60_000)
           : 0;
         busy = true;
+        // Diagnostic counters — surfaced in the response so the caller (kaspaNode.ts) can log
+        // how many of the requested blocks kaspad actually accepted vs silently rejected.
+        let accepted = 0;
+        let rejected = 0;
+        const rejectionSamples = [];
         try {
           for (let i = 0; i < count; i++) {
-            await mineOneBlock(client, payAddress);
+            const result = await mineOneBlock(client, payAddress);
+            if (result.accepted) {
+              accepted++;
+            } else {
+              rejected++;
+              if (rejectionSamples.length < 3) rejectionSamples.push(result.reason);
+            }
             if (boundedIntervalMs > 0) {
               await new Promise(r => setTimeout(r, boundedIntervalMs));
             }
           }
           res.writeHead(200, { "Content-Type": "application/json" });
-          res.end(JSON.stringify({ mined: count }));
+          res.end(JSON.stringify({ mined: count, accepted, rejected, rejectionSamples }));
         } catch (e) {
           console.error(`Mining error: ${e.message || e}`);
           res.writeHead(500, { "Content-Type": "application/json" });
