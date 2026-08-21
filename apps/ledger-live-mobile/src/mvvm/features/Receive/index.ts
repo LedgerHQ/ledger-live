@@ -1,6 +1,7 @@
 import { useCallback } from "react";
 import { useModularDrawerController } from "../ModularDrawer";
 import { CryptoOrTokenCurrency } from "@domain/entity-currency";
+import type { AssetCategory } from "@domain/api-aggregated-assets";
 import { NavigatorName, ScreenName } from "~/const";
 import { useNavigation } from "@react-navigation/native";
 import { AccountLike, Account } from "@ledgerhq/types-live";
@@ -19,6 +20,12 @@ type Props = {
    * of a multi-network asset (e.g. USDC on Ethereum + Polygon + Base).
    */
   currencyIds?: string[];
+  /**
+   * DADA asset categories to filter the drawer server-side (e.g. Stablecoins).
+   * Unlike `currencyIds`, the full category catalog stays browsable instead of
+   * pre-selecting a fixed set of ledger ids.
+   */
+  categories?: AssetCategory[];
   sourceScreenName: string;
   navigationOverride?: RootNavigation;
   hideBackButton?: boolean;
@@ -27,6 +34,7 @@ type Props = {
 export function useOpenReceiveDrawer({
   currency,
   currencyIds,
+  categories,
   sourceScreenName,
   navigationOverride,
   hideBackButton,
@@ -90,6 +98,7 @@ export function useOpenReceiveDrawer({
         const currencies = hasCurrencyIds ? currencyIds : currency ? [currency.id] : [];
         return openDrawer({
           currencies,
+          categories,
           flow: "receive_flow",
           source: sourceScreenName,
           areCurrenciesFiltered: hasCurrencyIds || !!currency,
@@ -101,6 +110,7 @@ export function useOpenReceiveDrawer({
     [
       currency,
       currencyIds,
+      categories,
       openDrawer,
       sourceScreenName,
       openReceiveConfirmation,

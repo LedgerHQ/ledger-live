@@ -43,15 +43,6 @@ const mockDepositOptions = {
   onSelect: jest.fn(),
 };
 
-jest.mock("LLM/features/PayTab/hooks/usePayStablecoins", () => ({
-  usePayStablecoins: () => ({
-    stablecoins: [],
-    defaultStablecoins: [{ id: "ethereum/erc20/usd__coin" }],
-    isLoading: false,
-    isError: false,
-  }),
-}));
-
 jest.mock("LLM/features/PayTab/hooks/usePayTabDepositOptions", () => ({
   usePayTabDepositOptions: () => ({
     open: mockDepositOpen,
