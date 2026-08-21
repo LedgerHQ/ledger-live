@@ -946,7 +946,17 @@
         "nextStepsLabel": "Next steps",
         "nextStepShare": "Share your address via your desired app",
         "nextStepMatch": "Ensure the shared address matches the one on your Ledger Device.",
-        "gotItCta": "Got it"
+        "gotItCta": "Got it",
+        "device": {
+          "cancelledTitle": "Address verification cancelled",
+          "cancelledDescription": "You declined the address on your device. You can display it again to verify it.",
+          "mismatchTitle": "Addresses don't match",
+          "mismatchDescription": "The address shown on your device is different from the requested one. Do not share this address.",
+          "unsupportedTitle": "Verification not available",
+          "unsupportedDescription": "This device app can't display the address for on-device verification.",
+          "retryCta": "Show address again",
+          "closeCta": "Close"
+        }
       }
     }
   },
