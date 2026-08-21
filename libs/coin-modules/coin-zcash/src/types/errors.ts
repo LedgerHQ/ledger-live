@@ -16,6 +16,22 @@ export class ZcashSignerNotSupported extends Error {
   }
 }
 
+/**
+ * Raised when a send that spends or creates shielded value is attempted on an
+ * account whose UFVK has not been exported from the device yet. The shielded
+ * pools are unreadable without it, so no such transaction can be built. A
+ * transparent send is unaffected -- it needs no viewing key (see
+ * `bridge/signOperation`'s `resolveAccountKey`).
+ */
+export class ZcashShieldedKeyMissing extends Error {
+  constructor(
+    message = "Activate your private balance first: this transfer needs the viewing key from your device",
+  ) {
+    super(message);
+    this.name = "ZcashShieldedKeyMissing";
+  }
+}
+
 /** Typed cancellation marker for the shielded (PCZT) signOperation flow. */
 export class ZcashSigningCancelled extends Error {
   constructor(message = "Zcash signing was cancelled") {

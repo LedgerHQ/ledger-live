@@ -112,8 +112,8 @@ catalogs:
       specifier: 2.3.3
       version: 2.3.3
     '@ledgerhq/zcash-utils':
-      specifier: 2.1.1
-      version: 2.1.1
+      specifier: 2.2.0
+      version: 2.2.0
     '@playwright/test':
       specifier: 1.60.0
       version: 1.60.0
@@ -1143,7 +1143,7 @@ importers:
         version: link:../../libs/wallet-pnl
       '@ledgerhq/zcash-utils':
         specifier: 'catalog:'
-        version: 2.1.1
+        version: 2.2.0
       '@lottiefiles/dotlottie-react':
         specifier: 0.17.13
         version: 0.17.13(react@19.1.4)
@@ -9337,7 +9337,7 @@ importers:
         version: link:../../wallet-btc
       '@ledgerhq/zcash-utils':
         specifier: 'catalog:'
-        version: 2.1.1
+        version: 2.2.0
       '@noble/hashes':
         specifier: 1.8.0
         version: 1.8.0
@@ -21023,8 +21023,8 @@ packages:
   '@ledgerhq/wallet-api-simulator@2.3.3':
     resolution: {integrity: sha512-gtSepkiGXvwIyvMC0DhNNYfZKt2BXFZ7IeFIY7h3Edz9ya5LxaRWWe3Zczo5Ex2CHgH2ALfXew+tZOod9Hd6Rg==}
 
-  '@ledgerhq/zcash-utils@2.1.1':
-    resolution: {integrity: sha512-ImaCqeOjngqFRsuBoSQ7iiTX9TUqvdpXdzvLoKQF2fI3J91nUUMU4TTMxC1hHvjzSnme4tlVJD6ZIiM2bavrDg==}
+  '@ledgerhq/zcash-utils@2.2.0':
+    resolution: {integrity: sha512-8ghTxspNrXUWaJBnoW/NuWF4sDlzH7E8/lg7iZc1BQ0RGZMEh3XiM0yF9mz5oB7Hqudb9UQNEg7Xu3q32J4YGQ==}
 
   '@leichtgewicht/ip-codec@2.0.5':
     resolution: {integrity: sha512-Vo+PSpZG2/fmgmiNzYK9qWRh8h/CHrwD0mo1h1DzL4yzHNSfWYujGTYsWGreD000gcgmZ7K4Ys6Tx9TxtsKdDw==}
@@ -27450,7 +27450,7 @@ packages:
     resolution: {integrity: sha512-/FQM1EDkTsf63Ub2C6O7GuYFDsSXUwsaZDurV0np41ocwq0jthUAYCmhBX9f+KwlaCgIuWyr/4WlUQUBfKfZog==}
     engines: {node: '>=6'}
     peerDependencies:
-      rxjs: ^5.5.10
+      rxjs: '*'
       zenObservable: '*'
     peerDependenciesMeta:
       rxjs:
@@ -49685,7 +49685,7 @@ snapshots:
       - encoding
       - utf-8-validate
 
-  '@ledgerhq/zcash-utils@2.1.1': {}
+  '@ledgerhq/zcash-utils@2.2.0': {}
 
   '@leichtgewicht/ip-codec@2.0.5': {}
 

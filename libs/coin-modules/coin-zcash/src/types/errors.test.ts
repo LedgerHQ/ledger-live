@@ -1,6 +1,7 @@
 import {
   ZcashNotesNotYetSpendable,
   ZcashSaplingRecipientNotSupported,
+  ZcashShieldedKeyMissing,
   ZcashSignerNotSupported,
   ZcashSigningCancelled,
   ZcashUtxoNotInAccount,
@@ -14,6 +15,10 @@ describe("zcash errors", () => {
     [ZcashSignerNotSupported, "Signer does not support Zcash PCZT signing"],
     [ZcashSigningCancelled, "Zcash signing was cancelled"],
     [ZcashNotesNotYetSpendable, "These funds are not spendable yet, try again in a few minutes"],
+    [
+      ZcashShieldedKeyMissing,
+      "Activate your private balance first: this transfer needs the viewing key from your device",
+    ],
   ])("names %p and gives it a readable default message", (Err, message) => {
     const error = new Err();
 

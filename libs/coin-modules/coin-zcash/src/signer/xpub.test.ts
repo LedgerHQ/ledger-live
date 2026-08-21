@@ -1,5 +1,6 @@
 import { secp256k1 } from "@noble/curves/secp256k1";
-import { composeXpub } from "./xpub";
+import { sha256 } from "@noble/hashes/sha2";
+import { accountPubkeyFromXpub, composeXpub } from "./xpub";
 
 // ─── Reference test vector ──────────────────────────────────────────────
 //
@@ -150,7 +151,62 @@ describe("composeXpub", () => {
   });
 });
 
+describe("accountPubkeyFromXpub", () => {
+  it("extracts the chain code and compressed pubkey the BIP-32 vector declares", () => {
+    // These 65 bytes are what a ZIP-316 UFVK carries as its transparent item,
+    // and all the PCZT builder needs to build a transparent send.
+    expect(accountPubkeyFromXpub(EXPECTED_M_0H_XPUB)).toBe(
+      ACCOUNT_CHAIN_CODE_HEX + ACCOUNT_PUBKEY_HEX,
+    );
+  });
+
+  it("is the exact inverse of composeXpub, which produces the account xpub", () => {
+    const xpub = composeXpub({
+      xpubVersion: XPUB_MAINNET_VERSION,
+      depth: 3,
+      childNumber: HARDENED_BIT + 2, // m/44'/133'/2'
+      parentPublicKeyHex: MASTER_PUBKEY_HEX,
+      accountPublicKeyHex: ACCOUNT_PUBKEY_HEX,
+      accountChainCodeHex: ACCOUNT_CHAIN_CODE_HEX,
+    });
+
+    expect(accountPubkeyFromXpub(xpub)).toBe(ACCOUNT_CHAIN_CODE_HEX + ACCOUNT_PUBKEY_HEX);
+  });
+
+  it("rejects a truncated key rather than returning short key material", () => {
+    expect(() =>
+      accountPubkeyFromXpub(base58Encode(base58Decode(EXPECTED_M_0H_XPUB).subarray(0, 70))),
+    ).toThrow(/expected 82 bytes, got 70/);
+  });
+
+  it("rejects a corrupted xpub instead of deriving from altered key material", () => {
+    const corrupted = base58Decode(EXPECTED_M_0H_XPUB);
+    corrupted[50] ^= 0xff; // flip a pubkey byte, leaving the checksum stale
+    expect(() => accountPubkeyFromXpub(base58Encode(corrupted))).toThrow(/checksum mismatch/);
+  });
+
+  it("rejects an uncompressed public key, which is not what a UFVK item carries", () => {
+    const tampered = base58Decode(EXPECTED_M_0H_XPUB);
+    tampered[45] = 0x04;
+    expect(() => accountPubkeyFromXpub(base58Encode(withChecksum(tampered)))).toThrow(
+      /expected a compressed public key.*got 0x04/,
+    );
+  });
+});
+
 // ─── Helpers ────────────────────────────────────────────────────────────
+
+/** Recompute the trailing base58check checksum over a mutated payload. */
+function withChecksum(bytes: Buffer): Buffer {
+  const checksum = Buffer.from(sha256(sha256(bytes.subarray(0, 78)))).subarray(0, 4);
+  return Buffer.concat([bytes.subarray(0, 78), checksum]);
+}
+
+function base58Encode(input: Buffer): string {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const bs58 = require("bs58");
+  return bs58.encode(input);
+}
 
 function base58Decode(input: string): Buffer {
   // Avoid importing bs58 in tests so the assertions stay independent of the
