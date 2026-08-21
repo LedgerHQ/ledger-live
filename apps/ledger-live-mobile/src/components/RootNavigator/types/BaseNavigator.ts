@@ -11,7 +11,10 @@ import type { NavigatorScreenParams } from "@react-navigation/native";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { AppResult } from "@ledgerhq/live-common/hw/actions/app";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import type { PerpsSignResult } from "@ledgerhq/live-common/wallet-api/Perps/server";
+import type {
+  PerpsDepositUiParams,
+  PerpsSignResult,
+} from "@ledgerhq/live-common/wallet-api/Perps/server";
 import type { SendFlowInitParams } from "@ledgerhq/live-common/flows/send/types";
 import type { DecodedURISchemePayment } from "@ledgerhq/live-common/flows/send/utils/uriScheme";
 import type { AssetDetailNavigatorParamsList } from "LLM/features/AssetDetail/types";
@@ -362,6 +365,7 @@ export type BaseNavigatorStackParamList = {
     onError: (error: Error) => void;
     onCancel: () => void;
   };
+  [ScreenName.PerpsDeposit]: PerpsDepositUiParams;
   [ScreenName.DeeplinkInstallAppDeviceSelection]: {
     appKey: string;
   };
