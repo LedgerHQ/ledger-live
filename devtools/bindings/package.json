@@ -16,7 +16,8 @@
     "format:check": "oxfmt src --check",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage"
+    "coverage": "jest --coverage",
+    "lint": "oxlint src"
   },
   "dependencies": {
     "@devtools/registry": "workspace:*",

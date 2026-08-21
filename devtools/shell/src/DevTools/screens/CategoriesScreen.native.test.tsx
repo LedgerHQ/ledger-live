@@ -1,4 +1,4 @@
-import { renderScreen, screen, userEvent } from "jest/screens.native";
+import { renderScreen, screen, userEvent } from "jest/screens";
 import { Category } from "@devtools/registry";
 import { makeTool } from "jest/fixtures";
 import { CategoriesScreen } from "./CategoriesScreen";
