@@ -52,11 +52,15 @@ jest.mock("../Body", () => {
   return function MockBody({
     onUfvkChanged,
     handleBirthdayChange,
+    handleSyncFromZero,
     handleEnableShieldedBalance,
+    invalidBirthday,
   }: {
     onUfvkChanged: (ufvk: string) => void;
     handleBirthdayChange: (birthday: string) => void;
+    handleSyncFromZero: () => void;
     handleEnableShieldedBalance: (nextSyncState: "ready" | "running") => void;
+    invalidBirthday: boolean;
   }) {
     return (
       <div>
@@ -66,6 +70,14 @@ jest.mock("../Body", () => {
         <button type="button" onClick={() => handleBirthdayChange("2025-01-01")}>
           set birthday
         </button>
+        <input
+          data-testid="birthday-input"
+          onChange={event => handleBirthdayChange(event.target.value)}
+        />
+        <button type="button" onClick={handleSyncFromZero}>
+          sync from zero
+        </button>
+        <span data-testid="invalid-birthday">{String(invalidBirthday)}</span>
         <button type="button" onClick={() => handleEnableShieldedBalance("ready")}>
           Close
         </button>
@@ -439,5 +451,93 @@ describe("ZCash Export UFVK Flow - Persistence integration", () => {
       );
     });
     expect(mockDispatch).toHaveBeenCalledWith({ type: "TEST_SYNC_STATE_ACTION" });
+  });
+
+  describe("birthday validation", () => {
+    const today = new Date().toISOString().split("T")[0];
+    const tomorrow = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split("T")[0];
+
+    it("rejects a birthday before Ironwood activation", async () => {
+      render(<ExportKeyModal account={account} />);
+
+      fireEvent.change(screen.getByTestId("birthday-input"), {
+        target: { value: "2026-07-27" },
+      });
+
+      await waitFor(() => {
+        expect(screen.getByTestId("invalid-birthday")).toHaveTextContent("true");
+      });
+    });
+
+    it("accepts a birthday exactly at Ironwood activation", async () => {
+      render(<ExportKeyModal account={account} />);
+
+      fireEvent.change(screen.getByTestId("birthday-input"), {
+        target: { value: "2026-07-28" },
+      });
+
+      await waitFor(() => {
+        expect(screen.getByTestId("invalid-birthday")).toHaveTextContent("false");
+      });
+    });
+
+    it("rejects a future birthday", async () => {
+      render(<ExportKeyModal account={account} />);
+
+      fireEvent.change(screen.getByTestId("birthday-input"), {
+        target: { value: tomorrow },
+      });
+
+      await waitFor(() => {
+        expect(screen.getByTestId("invalid-birthday")).toHaveTextContent("true");
+      });
+    });
+
+    it("accepts a birthday equal to today", async () => {
+      render(<ExportKeyModal account={account} />);
+
+      fireEvent.change(screen.getByTestId("birthday-input"), {
+        target: { value: today },
+      });
+
+      await waitFor(() => {
+        expect(screen.getByTestId("invalid-birthday")).toHaveTextContent("false");
+      });
+    });
+
+    it("rejects a malformed birthday", async () => {
+      render(<ExportKeyModal account={account} />);
+
+      fireEvent.change(screen.getByTestId("birthday-input"), {
+        target: { value: "not-a-date" },
+      });
+
+      await waitFor(() => {
+        expect(screen.getByTestId("invalid-birthday")).toHaveTextContent("true");
+      });
+    });
+
+    it("syncFromZero sets the Ironwood activation date", async () => {
+      mockSyncStateUpdater.mockReturnValue({ type: "TEST_SYNC_STATE_ACTION" });
+      render(<ExportKeyModal account={account} />);
+
+      await userEvent.click(screen.getByRole("button", { name: /set ufvk/i }));
+      await userEvent.click(screen.getByRole("button", { name: /sync from zero/i }));
+
+      await waitFor(() => {
+        expect(screen.getByTestId("invalid-birthday")).toHaveTextContent("false");
+      });
+
+      await userEvent.click(screen.getByRole("button", { name: /close/i }));
+
+      await waitFor(() => {
+        expect(mockSyncStateUpdater).toHaveBeenCalledWith(
+          account,
+          expect.objectContaining({
+            birthday: "2026-07-28",
+          }),
+        );
+      });
+    });
   });
 });

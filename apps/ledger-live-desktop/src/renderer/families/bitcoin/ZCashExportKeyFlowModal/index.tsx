@@ -34,14 +34,21 @@ const ExportKeyModal = ({ account }: { account: ZcashAccount }) => {
     );
   };
 
-  const handleBirthdayChange = useCallback((value: string) => {
-    setBirthday(value);
-    if (isNaN(new Date(value).getDate()) || new Date(value) < ZCASH_ACTIVATION_DATE) {
-      setInvalidBirthday(true);
-      return;
-    }
-    setInvalidBirthday(false);
-  }, []);
+  const handleBirthdayChange = useCallback(
+    (value: string) => {
+      setBirthday(value);
+      if (
+        isNaN(new Date(value).getDate()) ||
+        new Date(value) < ZCASH_ACTIVATION_DATE ||
+        value > today
+      ) {
+        setInvalidBirthday(true);
+        return;
+      }
+      setInvalidBirthday(false);
+    },
+    [today],
+  );
 
   const handleSyncFromZero = useCallback(() => {
     if (!syncFromZero) {
