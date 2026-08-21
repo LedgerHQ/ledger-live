@@ -1,7 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import { InvalidAddress, RecipientRequired } from "@ledgerhq/ledger-wallet-framework/errors";
 import type { BitcoinOutput, ZcashAccount, Transaction } from "../types/bridge";
-import { ZcashSaplingRecipientNotSupported } from "../types/errors";
+import { ZcashSaplingRecipientNotSupported, ZcashShieldedKeyMissing } from "../types/errors";
 import { classifyZcashRecipient } from "../logic/address";
 
 // Transfer types that actually spend transparent UTXOs as inputs. A pure
@@ -29,16 +29,37 @@ export function resolveTransparentUtxos(account: ZcashAccount, tx: Transaction):
   return tx.selectedUtxos ?? account.bitcoinResources?.utxos ?? [];
 }
 
+/**
+ * Whether the account can take part in the shielded pools at all, which is what
+ * having exported the UFVK from the device amounts to. An empty string counts as
+ * absent, as everywhere else (see `bridge/signOperation`, `sync.ts`).
+ */
+export const hasShieldedKey = (account: ZcashAccount): boolean =>
+  Boolean(account.privateInfo?.ufvk);
+
+/**
+ * `shieldedKeyAvailable` gates the shielded recipient classes. Paying an Orchard
+ * receiver builds a transaction with a shielded bundle, which the builder can
+ * only assemble from the account's UFVK -- so without one the address is not a
+ * recipient this account can pay, and saying so here keeps the send flow from
+ * accepting it and failing at the device step instead.
+ */
 export const computeRecipientError = (
   recipient: string,
   currencyName: string,
+  shieldedKeyAvailable: boolean,
 ): Error | undefined => {
   if (!recipient) return new RecipientRequired("");
   const cls = classifyZcashRecipient(recipient);
-  if (!("error" in cls)) return undefined;
-  return cls.error === "sapling-unsupported"
-    ? new ZcashSaplingRecipientNotSupported()
-    : new InvalidAddress("", { currencyName });
+  if ("error" in cls) {
+    return cls.error === "sapling-unsupported"
+      ? new ZcashSaplingRecipientNotSupported()
+      : new InvalidAddress("", { currencyName });
+  }
+  if (cls.recipientType === "private" && !shieldedKeyAvailable) {
+    return new ZcashShieldedKeyMissing();
+  }
+  return undefined;
 };
 
 export const computeAmountError = (
