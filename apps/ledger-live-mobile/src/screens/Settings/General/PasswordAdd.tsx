@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { useTranslation } from "~/context/Locale";
-import { PasswordAddFlowParamList } from "~/components/RootNavigator/types/PasswordAddFlowNavigator";
+import { LegacyPasswordAddFlowParamList } from "~/components/RootNavigator/types/PasswordAddFlowNavigator";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
 import PasswordForm from "./PasswordForm";
 import { Keyboard } from "react-native";
 
-type Props = StackNavigatorProps<PasswordAddFlowParamList, ScreenName.PasswordAdd>;
+type Props = StackNavigatorProps<LegacyPasswordAddFlowParamList, ScreenName.PasswordAdd>;
 
 const PasswordAdd = ({ navigation }: Props) => {
   const { t } = useTranslation();

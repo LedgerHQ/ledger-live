@@ -1520,6 +1520,25 @@
     "disclaimer": "All account data will be removed from your phone.",
     "action": "Sign me out"
   },
+  "appLock": {
+    "field": {
+      "label": "Enter password",
+      "reveal": "Show password",
+      "hide": "Hide password",
+      "minLength": "Must be at least 6 characters"
+    },
+    "setupPassword": {
+      "title": "Enter password",
+      "description": "You'll need this password each time you open the app. If you lose it, reinstall the app and restore your wallet.",
+      "cta": "Continue"
+    },
+    "confirmPassword": {
+      "title": "Confirm password",
+      "description": "You'll need this password each time you open the app. If you lose it, reinstall the app and restore your wallet.",
+      "mismatch": "Passwords don't match",
+      "cta": "Confirm"
+    }
+  },
   "auth": {
     "failed": {
       "biometrics": {
