@@ -454,8 +454,13 @@ describe("ZCash Export UFVK Flow - Persistence integration", () => {
   });
 
   describe("birthday validation", () => {
-    const today = new Date().toISOString().split("T")[0];
-    const tomorrow = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split("T")[0];
+    // Local date parts, matching the component's own "today" (see index.tsx) -- not
+    // toISOString(), which would desync from the assertions on machines/CI runners
+    // whose timezone isn't UTC.
+    const toLocalDateString = (date: Date) =>
+      `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+    const today = toLocalDateString(new Date());
+    const tomorrow = toLocalDateString(new Date(Date.now() + 24 * 60 * 60 * 1000));
 
     it("rejects a birthday before Ironwood activation", async () => {
       render(<ExportKeyModal account={account} />);

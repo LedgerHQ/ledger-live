@@ -19,7 +19,11 @@ const ExportKeyModal = ({ account }: { account: ZcashAccount }) => {
   const [shieldedAddress, setShieldedAddress] = useState<string | null>(null);
   const [ufvkExportError, setUfvkExportError] = useState<Error | undefined | null>(null);
 
-  const today = new Date().toISOString().split("T")[0];
+  // The DatePicker's native <input type="date"> shows the user's local calendar day, so
+  // "today" must be computed from local date parts -- toISOString() gives the UTC day,
+  // which would wrongly reject the user's own local "today" for positive UTC-offset zones.
+  const now = new Date();
+  const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
   const [birthday, setBirthday] = useState(today);
   const [invalidBirthday, setInvalidBirthday] = useState(false);
   const [syncFromZero, setSyncFromZero] = useState(false);
