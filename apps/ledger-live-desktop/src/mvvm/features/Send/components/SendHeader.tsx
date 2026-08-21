@@ -57,6 +57,7 @@ export function SendHeader() {
     handleScanPicked,
     isScannerOpen,
     recipientContact,
+    recipientPlaceholder,
     showBackButton,
     showMemoControls,
     showRecipientInput,
@@ -111,11 +112,7 @@ export function SendHeader() {
           onChange={e => handleRecipientInputChange(e.target.value)}
           onClear={recipientSearch.clear}
           onQrCodeClick={handleQrCodeClick}
-          placeholder={
-            uiConfig.recipientSupportsDomain
-              ? t("newSendFlow.placeholder")
-              : t("newSendFlow.placeholderNoENS")
-          }
+          placeholder={recipientPlaceholder}
         />
         {isScannerOpen && <RecipientQrScanner onPick={handleScanPicked} />}
         {showMemoControls && currencyId ? (
@@ -162,8 +159,8 @@ export function SendHeader() {
     isAmountStep,
     addressInputValue,
     recipientContact,
+    recipientPlaceholder,
     recipientSearch,
-    uiConfig.recipientSupportsDomain,
     uiConfig.memoMaxLength,
     uiConfig.memoType,
     uiConfig.memoMaxValue,

@@ -4548,6 +4548,8 @@
       },
       "placeholder": "Enter address or ENS",
       "placeholderNoENS": "Enter address",
+      "placeholderWithContacts": "Enter address, ENS or contact",
+      "placeholderNoEnsWithContacts": "Enter address or contact",
       "pasteFromClipboard": {
         "title": "Paste from clipboard",
         "cta": "Paste"

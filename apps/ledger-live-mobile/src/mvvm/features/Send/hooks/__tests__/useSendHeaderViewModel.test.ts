@@ -13,6 +13,7 @@ import { useCurrentSendFlowStep } from "../useCurrentSendFlowStep";
 import { useSendHeaderViewModel } from "../useSendHeaderViewModel";
 import { useSelector } from "~/context/hooks";
 import { useContactsFeature } from "@features/platform-contacts";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 
 jest.mock("@react-navigation/native", () => ({
   useNavigation: jest.fn(),
@@ -31,6 +32,9 @@ jest.mock("../useCurrentSendFlowStep");
 jest.mock("~/context/hooks");
 jest.mock("@features/platform-contacts", () => ({
   useContactsFeature: jest.fn(() => ({ isEnabled: false })),
+}));
+jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => ({
+  sendFeatures: { hasAddressBook: jest.fn(() => false) },
 }));
 
 const mockedUseNavigation = jest.mocked(useNavigation);
@@ -255,6 +259,86 @@ describe("useSendHeaderViewModel", () => {
       }),
     );
     expect(mockGoBack).not.toHaveBeenCalled();
+  });
+
+  describe("recipient input placeholder", () => {
+    const mockRecipientStep = ({
+      supportsDomain,
+      hasAddressBook,
+      isContactsFeatureEnabled,
+    }: {
+      supportsDomain: boolean;
+      hasAddressBook: boolean;
+      isContactsFeatureEnabled: boolean;
+    }) => {
+      jest.mocked(sendFeatures.hasAddressBook).mockReturnValue(hasAddressBook);
+      jest
+        .mocked(useContactsFeature)
+        .mockReturnValue({ isEnabled: isContactsFeatureEnabled } as never);
+      mockedUseSendFlowData.mockReturnValue({
+        uiConfig: { recipientSupportsDomain: supportsDomain },
+        recipientSearch: mockRecipientSearch,
+        state: {
+          account: {
+            account: mockAccount,
+            parentAccount: null,
+            currency: { ...mockAccount.currency, id: "ethereum" },
+          },
+          transaction: { transaction: null, status: {} },
+          recipient: null,
+        },
+      } as never);
+    };
+
+    it("mentions contacts and ENS when the network supports both", () => {
+      mockRecipientStep({
+        supportsDomain: true,
+        hasAddressBook: true,
+        isContactsFeatureEnabled: true,
+      });
+
+      const { result } = renderHook(() => useSendHeaderViewModel());
+
+      expect(result.current.recipientPlaceholder).toBe("send.newSendFlow.placeholderWithContacts");
+    });
+
+    it("mentions contacts only when the network has no ENS support", () => {
+      mockRecipientStep({
+        supportsDomain: false,
+        hasAddressBook: true,
+        isContactsFeatureEnabled: true,
+      });
+
+      const { result } = renderHook(() => useSendHeaderViewModel());
+
+      expect(result.current.recipientPlaceholder).toBe(
+        "send.newSendFlow.placeholderNoEnsWithContacts",
+      );
+    });
+
+    it("keeps the default placeholder when the network has no address book", () => {
+      mockRecipientStep({
+        supportsDomain: true,
+        hasAddressBook: false,
+        isContactsFeatureEnabled: true,
+      });
+
+      const { result } = renderHook(() => useSendHeaderViewModel());
+
+      expect(result.current.recipientPlaceholder).toBe("send.newSendFlow.placeholder");
+    });
+
+    it("keeps the default placeholder when the contacts feature is disabled", () => {
+      mockRecipientStep({
+        supportsDomain: false,
+        hasAddressBook: true,
+        isContactsFeatureEnabled: false,
+      });
+
+      const { result } = renderHook(() => useSendHeaderViewModel());
+
+      expect(result.current.recipientPlaceholder).toBe("send.newSendFlow.placeholderNoENS");
+    });
   });
 
   describe("recipient display on the amount step", () => {

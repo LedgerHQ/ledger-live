@@ -1,4 +1,5 @@
 import { SendFlowStep, SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { decodeURIScheme } from "@ledgerhq/live-common/currencies/index";
 import { t } from "i18next";
 import { useMemo, useCallback, useRef } from "react";
@@ -36,6 +37,7 @@ type UseSendHeaderModelResult = Readonly<{
   handleScanPicked: (code: string) => void;
   isScannerOpen: boolean;
   recipientContact: RecipientHeaderContact | undefined;
+  recipientPlaceholder: string;
   showBackButton: boolean;
   showRecipientInput: boolean;
   showMemoControls: boolean;
@@ -43,6 +45,18 @@ type UseSendHeaderModelResult = Readonly<{
   transactionErrorName: string | undefined;
   transactionError: Error | undefined;
 }>;
+
+function getRecipientPlaceholderKey({
+  supportsDomain,
+  canSearchContacts,
+}: Readonly<{ supportsDomain: boolean; canSearchContacts: boolean }>): string {
+  if (canSearchContacts) {
+    return supportsDomain
+      ? "newSendFlow.placeholderWithContacts"
+      : "newSendFlow.placeholderNoEnsWithContacts";
+  }
+  return supportsDomain ? "newSendFlow.placeholder" : "newSendFlow.placeholderNoENS";
+}
 
 export function useSendHeaderModel({
   availableText,
@@ -201,6 +215,15 @@ export function useSendHeaderModel({
   const transactionError = state.transaction.status?.errors?.transaction;
   const transactionErrorName = transactionError?.name;
 
+  const canSearchContacts =
+    isContactsFeatureEnabled && sendFeatures.hasAddressBook(state.account.currency ?? undefined);
+  const recipientPlaceholder = t(
+    getRecipientPlaceholderKey({
+      supportsDomain: uiConfig.recipientSupportsDomain,
+      canSearchContacts,
+    }),
+  );
+
   return {
     addressInputValue,
     descriptionText,
@@ -211,6 +234,7 @@ export function useSendHeaderModel({
     handleScanPicked,
     isScannerOpen: showScanner,
     recipientContact: recipientHeader.contact,
+    recipientPlaceholder,
     showBackButton,
     showMemoControls,
     showRecipientInput,
