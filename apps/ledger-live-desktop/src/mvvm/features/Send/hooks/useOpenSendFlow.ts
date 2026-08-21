@@ -1,6 +1,7 @@
 import { useCallback } from "react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { Account, AccountLike } from "@ledgerhq/types-live";
+import type { AssetCategory } from "@domain/api-aggregated-assets";
 import { openModal } from "~/renderer/actions/modals";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import BigNumber from "bignumber.js";
@@ -27,6 +28,7 @@ type WorkflowParams = {
   account?: AccountLike;
   parentAccount?: Account;
   currencyIds?: readonly string[];
+  categories?: readonly AssetCategory[];
   recipient?: string;
   amount?: string | BigNumber;
   memo?: string;
@@ -46,7 +48,7 @@ export function useOpenSendFlow() {
       setOriginFlow(HOOKS_TRACKING_LOCATIONS.sendModal);
 
       const openSendFlowImpl = (nextParams?: WorkflowParams) => {
-        const { currencyIds, ...flowParams } = nextParams ?? {};
+        const { currencyIds, categories, ...flowParams } = nextParams ?? {};
 
         if (!flowParams.account) {
           // When there are no accounts, the old modal requires an account and would throw.
@@ -59,6 +61,7 @@ export function useOpenSendFlow() {
             dispatch(
               openDialog({
                 currencies: currencyIds ? [...currencyIds] : [],
+                categories,
                 areCurrenciesFiltered: Boolean(currencyIds?.length),
                 dialogConfiguration: SEND_ACCOUNT_SELECTION_DRAWER_CONFIGURATION,
                 onAccountSelected: (account: AccountLike, parentAccount?: Account) => {

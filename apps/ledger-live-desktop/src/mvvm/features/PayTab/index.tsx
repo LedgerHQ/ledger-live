@@ -12,6 +12,7 @@ import { usePayTabFeatureTour } from "./hooks/usePayTabFeatureTour";
 import { usePayTabActionTiles } from "./hooks/usePayTabActionTiles";
 import { usePayTabDepositOptions } from "./hooks/usePayTabDepositOptions";
 import { usePayTabRequestReceive } from "./hooks/usePayTabRequestReceive";
+import { usePayTabNewPayment } from "./hooks/usePayTabNewPayment";
 import { usePayTabVerifyAddress } from "./hooks/usePayTabVerifyAddress";
 import { VerifyAddressExecutorLWD } from "./verifyAddressIntent/VerifyAddressExecutorLWD";
 
@@ -28,7 +29,13 @@ const PayTab = () => {
   const deposit = usePayTabDepositOptions(balance.onTrackEvent);
   const verify = usePayTabVerifyAddress(balance.onTrackEvent);
   const request = usePayTabRequestReceive(balance.onTrackEvent, verify.openIntro);
-  const actionTiles = usePayTabActionTiles(balance.onTrackEvent, deposit.open, request.open);
+  const newPayment = usePayTabNewPayment();
+  const actionTiles = usePayTabActionTiles(
+    balance.onTrackEvent,
+    deposit.open,
+    request.open,
+    newPayment.open,
+  );
 
   return (
     <div className="flex flex-col gap-24">
