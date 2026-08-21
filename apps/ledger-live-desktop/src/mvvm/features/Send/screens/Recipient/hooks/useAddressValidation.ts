@@ -75,6 +75,7 @@ type UseAddressValidationProps = Readonly<{
   transaction?: Transaction | null;
   currentAccountId?: string;
   recipientSupportsDomain?: boolean;
+  canSearchContactsByName?: boolean;
 }>;
 
 type UseAddressValidationResult = {
@@ -91,6 +92,7 @@ export function useAddressValidation({
   transaction,
   currentAccountId,
   recipientSupportsDomain = false,
+  canSearchContactsByName = false,
 }: UseAddressValidationProps): UseAddressValidationResult {
   const [validationState, setValidationState] = useState<{
     status: AddressValidationStatus;
@@ -119,16 +121,33 @@ export function useAddressValidation({
     return null;
   }, [domainServiceResponse, recipientSupportsDomain]);
 
-  // Use resolved address for bridge validation (ENS resolved address or original searchValue)
-  const addressForBridgeValidation = useMemo(() => {
-    return ensResolution?.address ?? searchValue;
-  }, [ensResolution?.address, searchValue]);
-
   const mainAccount = useMemo(
     () => (account ? getMainAccount(account, parentAccount) : null),
     [account, parentAccount],
   );
   const sanctionCurrency = currency.type === "TokenCurrency" ? mainAccount?.currency : currency;
+
+  const matchedContact = useMemo(() => {
+    if (!searchValue || !sanctionCurrency) {
+      return undefined;
+    }
+
+    return findMatchedContact(contacts, searchValue, currency.id, ensResolution?.address, {
+      matchName: canSearchContactsByName && !domainIsLoading,
+    });
+  }, [
+    canSearchContactsByName,
+    contacts,
+    currency.id,
+    domainIsLoading,
+    ensResolution?.address,
+    sanctionCurrency,
+    searchValue,
+  ]);
+
+  const addressForBridgeValidation = useMemo(() => {
+    return matchedContact?.address ?? ensResolution?.address ?? searchValue;
+  }, [ensResolution?.address, matchedContact?.address, searchValue]);
   const validationKey = `${sanctionCurrency?.id ?? ""}:${addressForBridgeValidation}`;
 
   // Bridge validation for recipient/sender errors and warnings
@@ -140,7 +159,7 @@ export function useAddressValidation({
     enabled: Boolean(
       addressForBridgeValidation &&
       account &&
-      (!recipientSupportsDomain || ensResolution || !domainIsLoading),
+      (matchedContact || !recipientSupportsDomain || ensResolution || !domainIsLoading),
     ),
   });
 
@@ -224,14 +243,6 @@ export function useAddressValidation({
 
   const matchedLedgerAccount = currentAccountMatch ?? matchedLedgerAccounts[0];
 
-  const matchedContact = useMemo(() => {
-    if (!canMatchValidatedRecipient || !sanctionCurrency) {
-      return undefined;
-    }
-
-    return findMatchedContact(contacts, searchValue, sanctionCurrency.id, ensResolution?.address);
-  }, [canMatchValidatedRecipient, sanctionCurrency, contacts, searchValue, ensResolution?.address]);
-
   const { formattedBalance, formattedCounterValue } =
     useFormattedAccountBalance(matchedLedgerAccount);
   const accountName = useMaybeAccountName(matchedLedgerAccount);
@@ -245,7 +256,7 @@ export function useAddressValidation({
     setValidationState({ status: "loading", error: null, isSanctioned: false });
 
     try {
-      const addressToCheck = ensResolution?.address ?? searchValue;
+      const addressToCheck = matchedContact?.address ?? ensResolution?.address ?? searchValue;
 
       if (sanctionCurrency) {
         const sanctioned = await isAddressSanctioned(sanctionCurrency, addressToCheck);
@@ -280,7 +291,7 @@ export function useAddressValidation({
         isSanctioned: false,
       });
     }
-  }, [searchValue, ensResolution, sanctionCurrency]);
+  }, [searchValue, matchedContact?.address, ensResolution, sanctionCurrency]);
 
   // Revalidate when the effective address changes, including after ENS resolution.
   if (validationKey !== lastValidationKeyRef.current) {
@@ -342,7 +353,8 @@ export function useAddressValidation({
     return {
       status: validationState.status,
       error: validationState.error,
-      resolvedAddress: matchedLedgerAccount?.freshAddress ?? ensResolution?.address,
+      resolvedAddress:
+        matchedLedgerAccount?.freshAddress ?? matchedContact?.address ?? ensResolution?.address,
       ensName: ensResolution?.domain,
       isLedgerAccount: allMatchedAccounts.length > 0,
       accountName,
@@ -381,7 +393,7 @@ export function useAddressValidation({
     result,
     isLoading:
       validationState.status === "loading" ||
-      domainIsLoading ||
+      (domainIsLoading && !matchedContact) ||
       (bridgeValidation.isLoading && bridgeValidation.status === null),
     validateAddress,
   };

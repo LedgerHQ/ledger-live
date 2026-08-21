@@ -16,15 +16,21 @@ type ContactAddress = Readonly<{
   address: string;
 }>;
 
+type FindMatchedContactOptions = Readonly<{
+  matchName?: boolean;
+}>;
+
 export function findMatchedContact(
   contacts: readonly Contact[],
   recipient: string,
   currencyId: string,
   resolvedRecipient?: string,
+  options?: FindMatchedContactOptions,
 ): MatchedContact | undefined {
   const recipientAddress = resolvedRecipient ?? recipient;
   const recipientNetworkId = resolveRecipientNetworkId(currencyId);
-  if (!recipientAddress.trim()) {
+  const normalizedRecipient = recipient.trim().toLowerCase();
+  if (!normalizedRecipient) {
     return undefined;
   }
 
@@ -50,6 +56,38 @@ export function findMatchedContact(
           address: address.address,
         };
       }
+    }
+  }
+
+  if (!options?.matchName || resolvedRecipient) {
+    return undefined;
+  }
+
+  for (const contact of sortedContacts) {
+    if (
+      contact.name.trim().toLowerCase() !== normalizedRecipient ||
+      !Array.isArray(contact.addresses)
+    ) {
+      continue;
+    }
+
+    const exactCurrencyAddress = contact.addresses.find(
+      address => address.currencyId === currencyId,
+    );
+    const networkAddresses = contact.addresses.filter(
+      address => resolveRecipientNetworkId(address.currencyId) === recipientNetworkId,
+    );
+    const address =
+      exactCurrencyAddress ?? (networkAddresses.length === 1 ? networkAddresses[0] : undefined);
+
+    if (address) {
+      return {
+        contactId: contact.id,
+        contactName: contact.name,
+        addressId: address.id,
+        addressLabel: address.label,
+        address: address.address,
+      };
     }
   }
 

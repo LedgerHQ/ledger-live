@@ -253,10 +253,14 @@ describe("useAddressValidation", () => {
         currency: createMockCurrency({ id: "ethereum", name: "Ethereum", ticker: "ETH" }),
         account: mockEthereumAccount,
         recipientSupportsDomain: true,
+        canSearchContactsByName: true,
       }),
     );
 
     expect(result.current.isLoading).toBe(true);
+    expect(mockedFindMatchedContact).toHaveBeenCalledWith([], "test.eth", "ethereum", undefined, {
+      matchName: false,
+    });
   });
 
   it("matches user accounts by address", () => {
@@ -347,6 +351,40 @@ describe("useAddressValidation", () => {
       [remiContact],
       "vitalik.eth",
       "ethereum",
+      contactAddress,
+      { matchName: false },
+    );
+  });
+
+  it("validates a contact name using the contact address", async () => {
+    const contactAddress = "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045";
+    mockedFindMatchedContact.mockReturnValue({
+      contactId: "contact-benoit",
+      contactName: "Benoit",
+      addressId: "address-benoit-ethereum",
+      addressLabel: "Ethereum Network",
+      address: contactAddress,
+    });
+
+    const { result } = renderHook(() =>
+      useAddressValidation({
+        searchValue: "Benoit",
+        currency: mockEthereumAccount.currency,
+        account: mockEthereumAccount,
+        recipientSupportsDomain: true,
+        canSearchContactsByName: true,
+      }),
+    );
+
+    await waitFor(() => {
+      expect(result.current.result.status).toBe("valid");
+    });
+    expect(result.current.result.resolvedAddress).toBe(contactAddress);
+    expect(mockedUseBridgeRecipientValidation).toHaveBeenCalledWith(
+      expect.objectContaining({ recipient: contactAddress }),
+    );
+    expect(mockedIsAddressSanctioned).toHaveBeenCalledWith(
+      mockEthereumAccount.currency,
       contactAddress,
     );
   });

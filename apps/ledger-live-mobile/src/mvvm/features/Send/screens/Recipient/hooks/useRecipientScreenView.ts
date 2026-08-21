@@ -44,6 +44,7 @@ export function useRecipientScreenView({
     transaction,
     currentAccountId: mainAccount.id,
     recipientSupportsDomain,
+    canSearchContactsByName: isContactsFeatureEnabled && hasAddressBook,
   });
 
   const hasSearchValue = recipientSearch.value.length > 0;
