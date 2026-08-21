@@ -552,6 +552,13 @@ describe("estimateFees", () => {
       expect(BigInt(breakdown.energyRequired)).toBeGreaterThan(BigInt(breakdown.energyAvailable));
     });
   });
+
+  it("should not call getEnergyRentQuote when invoked directly (no feeOption routing)", async () => {
+    const result = await estimateFees(mockConfig, sendTrc20);
+
+    expect(result.value).toBe(STANDARD_BURN);
+    expect(mockGetEnergyRentQuote).not.toHaveBeenCalled();
+  });
 });
 
 function breakdownOf(estimation: { parameters?: Record<string, unknown> }): TronResourceBreakdown {
@@ -586,13 +593,15 @@ describe("estimateTronifyFees", () => {
     mockGetEnergyRentQuote.mockResolvedValue(trxQuote);
   });
 
-  it("should return value, originalValue and savings when the quote is TRX-denominated", async () => {
+  it("should return value, originalValue, savings and a resource breakdown when the quote is TRX-denominated", async () => {
     const result = await estimateTronifyFees(mockConfig, sendTrc20);
 
-    expect(result).toEqual({
-      value: TRONIFY_VALUE,
-      originalValue: STANDARD_BURN,
-      savings: STANDARD_BURN - TRONIFY_VALUE,
+    expect(result.value).toBe(TRONIFY_VALUE);
+    expect(result.originalValue).toBe(STANDARD_BURN);
+    expect(result.savings).toBe(STANDARD_BURN - TRONIFY_VALUE);
+    expect(result.parameters).toMatchObject({
+      energyRequired: String(ENERGY_USED),
+      energyEstimated: true,
     });
   });
 
@@ -712,12 +721,5 @@ describe("estimateTronifyFees", () => {
 
     expect(mockTriggerConstantContract).not.toHaveBeenCalled();
     expect(mockGetEnergyRentQuote).toHaveBeenCalledWith(expect.objectContaining({ energy: 0n }));
-  });
-
-  it("should use the standard estimateFees path when feeOptionId is not tronify", async () => {
-    const result = await estimateFees(mockConfig, sendTrc20);
-
-    expect(result.value).toBe(STANDARD_BURN);
-    expect(mockGetEnergyRentQuote).not.toHaveBeenCalled();
   });
 });

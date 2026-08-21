@@ -127,6 +127,13 @@ describe("createApi", () => {
   });
 
   describe("estimateFees routing", () => {
+    const mockFeeEstimation = { value: 1_000_000n };
+
+    beforeEach(() => {
+      mockEstimateFees.mockResolvedValue(mockFeeEstimation);
+      mockEstimateTronifyFees.mockResolvedValue(mockFeeEstimation);
+    });
+
     const trc20Intent: TransactionIntent<TronMemo, TronTxData> = {
       intentType: "transaction",
       type: "send",
