@@ -2,6 +2,8 @@
 // docs/new-library.md's `src/errors.ts` guidance. Errors that already exist for
 // every coin come from @ledgerhq/ledger-wallet-framework/errors instead.
 
+import { TRANSPARENT_OUTPUT_DUST_THRESHOLD } from "../logic/coin-selection";
+
 export class ZcashSaplingRecipientNotSupported extends Error {
   constructor(message = "Sapling recipients are not supported") {
     super(message);
@@ -57,6 +59,19 @@ export class ZcashUtxoNotInAccount extends Error {
       this.txid = extra.txid;
       this.vout = extra.vout;
     }
+  }
+}
+
+/** Raised when a transparent output's amount is below the network's
+ * minimum non-dust value -- signing would succeed but broadcast would fail. */
+export class ZcashAmountBelowDustThreshold extends Error {
+  minimumZatoshis = TRANSPARENT_OUTPUT_DUST_THRESHOLD;
+
+  constructor(
+    message = `Amount is too small to be broadcast (minimum ${TRANSPARENT_OUTPUT_DUST_THRESHOLD} zatoshis)`,
+  ) {
+    super(message);
+    this.name = "ZcashAmountBelowDustThreshold";
   }
 }
 

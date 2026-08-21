@@ -7295,6 +7295,9 @@
     "ZcashSaplingRecipientNotSupported": {
       "title": "Sending to Sapling addresses is not supported"
     },
+    "ZcashAmountBelowDustThreshold": {
+      "title": "Amount is too small to be broadcast (minimum {{minimumZatoshis}} zatoshis)"
+    },
     "InvalidNonce": {
       "title": "Nonce is required"
     },
