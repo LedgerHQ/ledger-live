@@ -2,6 +2,7 @@ import React, { useMemo, useCallback } from "react";
 import type { StepRegistry } from "@ledgerhq/live-common/flows/wizard/types";
 import {
   SEND_FLOW_STEP,
+  canSkipRecipientStep,
   type SendFlowStep,
   type SendFlowInitParams,
 } from "@ledgerhq/live-common/flows/send/types";
@@ -66,9 +67,11 @@ export function SendFlowOrchestrator({
   const configuredFlowConfig = useMemo(
     () => ({
       ...flowConfig,
-      initialStep: SEND_FLOW_STEP.RECIPIENT,
+      initialStep: canSkipRecipientStep(initParams, businessContext.uiConfig)
+        ? SEND_FLOW_STEP.AMOUNT
+        : SEND_FLOW_STEP.RECIPIENT,
     }),
-    [flowConfig],
+    [businessContext.uiConfig, flowConfig, initParams],
   );
 
   return (

@@ -327,5 +327,18 @@ describe("useSendHeaderViewModel", () => {
       expect(result.current.recipientContact).toBeUndefined();
       expect(result.current.formattedAddress).toBe("0x123456...12345678");
     });
+
+    it("opens Recipient when Amount is the first screen in the flow", () => {
+      mockAmountStep();
+      mockCanGoBack.mockReturnValue(false);
+
+      const { result } = renderHook(() => useSendHeaderViewModel());
+
+      result.current.handleRecipientInputPress();
+
+      expect(mockSetRecipientSearchValue).toHaveBeenCalledWith(ADDRESS);
+      expect(mockNavigate).toHaveBeenCalledWith(ScreenName.SendFlowRecipient);
+      expect(mockGoBack).not.toHaveBeenCalled();
+    });
   });
 });
