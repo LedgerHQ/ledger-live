@@ -25,8 +25,16 @@ hydrate the session and neither would agree with the other. The machine writes t
 `CARD_OAUTH_REDIRECT_URI` now defaults to `https://go.ledger.com/ledger/card-baanx`. The provider
 whitelists an HTTPS address, and it must match on the token exchange too.
 
-`CARD_OAUTH_DEEP_LINK` is new, and it holds the app's own link, `ledgerlive://paytab`. The redirect
-above lands on it, and the secure browser session ends on it. One value cannot serve both: the
-provider accepts no custom scheme, and the session ends on nothing else. `ASWebAuthenticationSession`
-takes the scheme of this value as its `callbackURLScheme`, and the Android polyfill matches the
-incoming link against the whole of it.
+`oauthConfig` gains `deepLink`, which is what closes the secure browser.
+`ASWebAuthenticationSession` takes the scheme of this value as its `callbackURLScheme`, and the
+Android polyfill matches the incoming link against the whole of it.
+
+One value cannot serve both jobs. The provider accepts an `https` redirect URI alone, and only a
+custom scheme ends a browser session. With no value that matches, the login still completes through
+the app's own deep link, but nothing closes the browser and it stays on top of the Pay tab.
+
+Mobile takes the value from `PAY_TAB_DEEP_LINK`, a new constant that sits beside the linking config
+and shares the path that config maps onto the Pay tab, so the two cannot drift. It is not an
+environment variable: the scheme is declared in `AndroidManifest.xml` and `Info.plist`, so it cannot
+change without a release. Desktop passes no `deepLink`, because the user's own browser opens the page
+and reports nothing back (LIVE-34740).

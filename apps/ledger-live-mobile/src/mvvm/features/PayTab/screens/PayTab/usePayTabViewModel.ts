@@ -13,6 +13,7 @@ import { usePayTabActionTiles } from "LLM/features/PayTab/hooks/usePayTabActionT
 import { usePayTabDepositOptions } from "LLM/features/PayTab/hooks/usePayTabDepositOptions";
 import { usePayStablecoins } from "LLM/features/PayTab/hooks/usePayStablecoins";
 import { track } from "~/analytics";
+import { PAY_TAB_DEEP_LINK } from "~/navigation/deeplinks/payTabDeepLink";
 
 export function usePayTabViewModel() {
   const { top } = useNavigationBarHeights();
@@ -45,7 +46,7 @@ export function usePayTabViewModel() {
     () => ({
       clientId: getEnv("CARD_BAANX_CLIENT_KEY"),
       redirectUri: getEnv("CARD_OAUTH_REDIRECT_URI"),
-      deepLink: getEnv("CARD_OAUTH_DEEP_LINK"),
+      deepLink: PAY_TAB_DEEP_LINK,
     }),
     [],
   );

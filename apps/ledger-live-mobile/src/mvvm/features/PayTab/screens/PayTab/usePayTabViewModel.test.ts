@@ -2,6 +2,7 @@ import { renderHook } from "@tests/test-renderer";
 import type { BalanceData } from "@features/flow-pay-card-balance";
 import { getEnv } from "@shared/env";
 import { track } from "~/analytics";
+import { PAY_TAB_DEEP_LINK } from "~/navigation/deeplinks/payTabDeepLink";
 import { usePayTabViewModel } from "./usePayTabViewModel";
 
 let routeParams: { code?: string; state?: string } | undefined;
@@ -75,11 +76,12 @@ describe("usePayTabViewModel", () => {
   it("should expose the OAuth client configuration", () => {
     const { result } = renderHook(() => usePayTabViewModel());
 
-    // The redirect URI is matched verbatim on the token exchange, so both values come from the app.
+    // The provider matches the redirect URI verbatim on the token exchange. The deep link is the app's
+    // own, and it comes from the module that also spells the Pay tab route.
     expect(result.current.oauthConfig).toEqual({
       clientId: getEnv("CARD_BAANX_CLIENT_KEY"),
       redirectUri: getEnv("CARD_OAUTH_REDIRECT_URI"),
-      deepLink: getEnv("CARD_OAUTH_DEEP_LINK"),
+      deepLink: PAY_TAB_DEEP_LINK,
     });
   });
 

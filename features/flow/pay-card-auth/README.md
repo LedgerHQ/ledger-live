@@ -27,8 +27,12 @@ session and neither would agree with the other. The login machine writes the fla
 `oauthConfig` carries the OAuth client id, the redirect URI and the app's deep link. All three are
 the app's to know. The redirect URI goes to the authorization initiation and to the token exchange,
 and the provider matches it verbatim; it has to be an `https` URL, because the provider whitelists no
-other scheme. The deep link goes to the secure browser, which needs a custom scheme to know which
-callback ends the session. The provider redirects to the deep link, and that is what joins the two.
+other scheme.
+
+`deepLink` is what closes the secure browser, and it is optional. Only a custom scheme can end a
+session, so the redirect URI cannot serve here. The provider redirects to the deep link, and that is
+what joins the two. Mobile passes `PAY_TAB_DEEP_LINK`; desktop passes none, because the user's own
+browser reports nothing back (LIVE-34740).
 
 `callback` carries the OAuth redirect, when the app already has one. The app's router owns the deep
 link, so it hands over the `code` and `state` it parsed. On mobile that is

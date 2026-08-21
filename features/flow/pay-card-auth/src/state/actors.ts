@@ -67,7 +67,7 @@ export const openHostedLogin = fromPromise(
   async ({
     input,
   }: {
-    input: { ports: CardLoginPorts; loginUrl: string | null; deepLink: string };
+    input: { ports: CardLoginPorts; loginUrl: string | null; deepLink?: string };
   }) => {
     if (!input.loginUrl) {
       throw new MissingLoginStateError("URL");

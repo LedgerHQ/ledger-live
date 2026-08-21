@@ -17,8 +17,8 @@ import { usePayTabVerifyAddress } from "./hooks/usePayTabVerifyAddress";
 // Baanx uses the same value for the client key header and the OAuth `client_id`.
 const oauthConfig: CardLoginOauthConfig = {
   clientId: getEnv("CARD_BAANX_CLIENT_KEY"),
+  // No `deepLink`: the user's own browser opens the page, and it reports nothing back (LIVE-34740).
   redirectUri: getEnv("CARD_OAUTH_REDIRECT_URI"),
-  deepLink: getEnv("CARD_OAUTH_DEEP_LINK"),
 };
 
 const PayTab = () => {

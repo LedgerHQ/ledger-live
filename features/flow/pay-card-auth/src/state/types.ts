@@ -49,12 +49,17 @@ export type CardLoginOauthConfig = Readonly<{
    */
   redirectUri: string;
   /**
-   * The app's own link, which the redirect above lands on. The browser session ends on this URL, and
-   * only a custom scheme can end it: `ASWebAuthenticationSession` takes the scheme of this value as
-   * its `callbackURLScheme`, and the Android polyfill matches the incoming link against the whole of
-   * it. An `https` value would match neither.
+   * The app's own link, which the redirect above lands on. This is what closes the secure browser:
+   * `ASWebAuthenticationSession` takes the scheme of this value as its `callbackURLScheme`, and the
+   * Android polyfill matches the incoming link against the whole of it. Only a custom scheme can end a
+   * session, so the redirect URI above cannot serve here.
+   *
+   * Optional, because only the OS browser can act on it. Desktop opens the page in the user's own
+   * browser, which reports nothing back, so it passes none. Leave it out on a platform that has a
+   * session to end and the login still completes through the app's deep link, but nothing closes the
+   * browser and it stays on top of the app.
    */
-  deepLink: string;
+  deepLink?: string;
 }>;
 
 /* --- What the machine needs from the outside world ------------------------------------------- */
@@ -67,7 +72,7 @@ export type HostedLoginResult =
   | Readonly<{ type: "success"; url: string }>
   | Readonly<{ type: "dismissed" }>;
 
-export type OpenHostedLogin = (loginUrl: string, deepLink: string) => Promise<HostedLoginResult>;
+export type OpenHostedLogin = (loginUrl: string, deepLink?: string) => Promise<HostedLoginResult>;
 
 /**
  * Everything the login machine needs from the outside world. The machine itself holds no React, no
