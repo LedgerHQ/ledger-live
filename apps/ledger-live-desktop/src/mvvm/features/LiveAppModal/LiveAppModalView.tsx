@@ -1,17 +1,14 @@
-import React, { useCallback, useRef } from "react";
+import React from "react";
 import { Dialog, DialogContent, DialogHeader, DialogBody } from "@ledgerhq/lumen-ui-react";
 import { Web3AppWebview } from "~/renderer/components/Web3AppWebview";
 import { NetworkErrorScreen } from "~/renderer/components/Web3AppWebview/NetworkError";
 import type { LiveAppModalParams } from "~/renderer/reducers/liveAppModal";
+import { useRestoreFocusOnDialogClose } from "LLD/hooks/useRestoreFocusOnDialogClose";
 import useLiveAppModalContentViewModel, {
   type ExtraInputs,
 } from "./useLiveAppModalContentViewModel";
 import useEarnLiveAppModalContentViewModel from "./useEarnLiveAppModalContentViewModel";
 import type { LiveAppModalViewProps } from "./useLiveAppModalViewModel";
-import {
-  capturePreviouslyFocusedElement,
-  restorePreviouslyFocusedElement,
-} from "./liveAppModalFocus";
 
 const LiveAppModalContent = ({
   params,
@@ -65,22 +62,11 @@ const EarnLiveAppModalContent = ({
 };
 
 const LiveAppModalView = ({ isOpen, params, onOpenChange, onClose }: LiveAppModalViewProps) => {
-  const previouslyFocusedElementRef = useRef<HTMLElement | null>(null);
-
-  const handleOpenAutoFocus = useCallback(() => {
-    previouslyFocusedElementRef.current = capturePreviouslyFocusedElement(document.activeElement);
-  }, []);
-
-  const handleCloseAutoFocus = useCallback((event: Event) => {
-    event.preventDefault();
-    requestAnimationFrame(() => {
-      restorePreviouslyFocusedElement(previouslyFocusedElementRef.current);
-    });
-  }, []);
+  const focusLifecycle = useRestoreFocusOnDialogClose();
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange} height="fixed">
-      <DialogContent onOpenAutoFocus={handleOpenAutoFocus} onCloseAutoFocus={handleCloseAutoFocus}>
+      <DialogContent {...focusLifecycle}>
         {params ? (
           params.useCase === "earn" ? (
             <EarnLiveAppModalContent params={params} onClose={onClose} />

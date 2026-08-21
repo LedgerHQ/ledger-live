@@ -30,7 +30,7 @@ import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
 import BigSpinner from "../BigSpinner";
 import { NetworkErrorScreen } from "./NetworkError";
 import { DappAccountGate } from "./DappAccountGate";
-import { useRestoreWebviewFocus, useWebviewState, withWebviewFocusRestore } from "./helpers";
+import { useWebviewState } from "./helpers";
 import { Loader as StyledLoader } from "./styled";
 import { WebviewAPI, WebviewProps, WebviewTag } from "./types";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
@@ -42,11 +42,7 @@ import { setOriginFlow } from "~/renderer/analytics/originFlow";
 
 const wallet = { name: "ledger-live-desktop", version: __APP_VERSION__ };
 
-function useUiHook(
-  manifest: AppManifest,
-  tracking: TrackingAPI,
-  restoreWebviewFocus: () => void,
-): UiHook {
+function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
   const { pushToast } = useToasts();
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -90,7 +86,8 @@ function useUiHook(
           areCurrenciesFiltered,
           useCase,
           uiUseCase,
-          ...withWebviewFocusRestore({ onSuccess, onCancel }, restoreWebviewFocus),
+          onSuccess,
+          onCancel,
         });
       },
       "account.receive": ({
@@ -275,7 +272,6 @@ function useUiHook(
       openAssetAndAccount,
       manifest,
       pushToast,
-      restoreWebviewFocus,
       t,
       tracking,
     ],
@@ -307,8 +303,7 @@ function useWebView(
   const accounts = useSelector(flattenAccountsSelector);
   const mevProtected = useSelector(mevProtectionSelector);
 
-  const restoreWebviewFocus = useRestoreWebviewFocus(webviewRef);
-  const uiHook = useUiHook(manifest, tracking, restoreWebviewFocus);
+  const uiHook = useUiHook(manifest, tracking);
   const shareAnalytics = useSelector(shareAnalyticsSelector);
   const userId = useGetUserId();
   const config = useConfig({

@@ -1,5 +1,6 @@
 import React from "react";
 import { DialogFlow, type DialogFlowScreenRegistry } from "LLD/components/DialogFlow";
+import { useRestoreFocusOnDialogClose } from "LLD/hooks/useRestoreFocusOnDialogClose";
 import { ModularDialogFlow } from "./ModularDialogFlow";
 import {
   MODULAR_DIALOG_STEP,
@@ -42,6 +43,8 @@ function createScreens({
 }
 
 const ModularDialogFlowManager = ({ onClose }: ModularDialogFlowManagerProps) => {
+  const focusLifecycle = useRestoreFocusOnDialogClose();
+
   return (
     <ModularDialogFlow onClose={onClose}>
       {({
@@ -59,7 +62,7 @@ const ModularDialogFlowManager = ({ onClose }: ModularDialogFlowManagerProps) =>
             currentStep={currentStep}
             defaultOptions={{
               dialogBodyProps: { className: "px-16!" },
-              dialogContentProps: { className: "pb-0" },
+              dialogContentProps: { className: "pb-0", ...focusLifecycle },
             }}
             isOpen={isOpen}
             onBack={onBack}

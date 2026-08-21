@@ -1,8 +1,7 @@
 import { act, renderHook } from "tests/testSetup";
-import { useRestoreWebviewFocus, useWebviewState, withWebviewFocusRestore } from "./helpers";
+import { useWebviewState } from "./helpers";
 import { getInitialURL } from "@ledgerhq/live-common/wallet-api/helpers";
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { WebviewTag } from "./types";
 
 jest.mock("@ledgerhq/live-common/wallet-api/helpers", () => ({
@@ -173,69 +172,5 @@ describe("useWebviewState", () => {
         expect(removeEventListener).toHaveBeenCalledWith(eventName, handler);
       });
     });
-  });
-});
-
-describe("useRestoreWebviewFocus", () => {
-  const runNextFrame = () =>
-    jest.spyOn(window, "requestAnimationFrame").mockImplementation(callback => {
-      callback(0);
-      return 0;
-    });
-
-  afterEach(() => {
-    jest.restoreAllMocks();
-  });
-
-  it("focuses the webview on the next animation frame", () => {
-    runNextFrame();
-    const focus = jest.fn();
-    const webviewRef = { current: { focus } as unknown as WebviewTag };
-
-    const { result } = renderHook(() => useRestoreWebviewFocus(webviewRef));
-    result.current();
-
-    expect(focus).toHaveBeenCalledTimes(1);
-  });
-
-  it("does nothing when the webview is already unmounted", () => {
-    runNextFrame();
-    const webviewRef = { current: null };
-
-    const { result } = renderHook(() => useRestoreWebviewFocus(webviewRef));
-
-    expect(() => result.current()).not.toThrow();
-  });
-});
-
-describe("withWebviewFocusRestore", () => {
-  it("restores webview focus after an account is selected", () => {
-    const onSuccess = jest.fn();
-    const restoreWebviewFocus = jest.fn();
-    const account = { id: "account-1" } as AccountLike;
-    const parentAccount = { id: "parent-1" } as Account;
-
-    const wrapped = withWebviewFocusRestore(
-      { onSuccess, onCancel: jest.fn() },
-      restoreWebviewFocus,
-    );
-    wrapped.onSuccess(account, parentAccount);
-
-    expect(onSuccess).toHaveBeenCalledWith(account, parentAccount);
-    expect(restoreWebviewFocus).toHaveBeenCalledTimes(1);
-  });
-
-  it("restores webview focus after the picker is dismissed", () => {
-    const onCancel = jest.fn();
-    const restoreWebviewFocus = jest.fn();
-
-    const wrapped = withWebviewFocusRestore(
-      { onSuccess: jest.fn(), onCancel },
-      restoreWebviewFocus,
-    );
-    wrapped.onCancel();
-
-    expect(onCancel).toHaveBeenCalledTimes(1);
-    expect(restoreWebviewFocus).toHaveBeenCalledTimes(1);
   });
 });
