@@ -30,6 +30,13 @@ const config: Config = {
   projects: [
     {
       ...sharedConfig,
+      displayName: "unit",
+      // No Docker stack — pure crypto/derivation logic, matching coin-tester-cardano and
+      // coin-tester-casper's own unit project for their signer.test.ts.
+      testMatch: ["<rootDir>/src/signer.test.ts"],
+    },
+    {
+      ...sharedConfig,
       displayName: "devnet",
       // globalSetup/globalTeardown start/stop the Docker stack once for all devnet test files.
       // Both run in the main Jest process so kaspaNode's currentMiningAddress is shared between them.

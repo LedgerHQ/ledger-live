@@ -47,7 +47,7 @@ export function buildKaspaXpub(compressedPubKey: Buffer, chainCode: Buffer): str
   ]).toString("hex");
 }
 
-type TxForSighash = {
+export type TxForSighash = {
   version: number;
   inputs: Array<{ prevTxId: string; outpointIndex: number; value: number }>;
   outputs: Array<{ value: number; scriptPublicKey: string }>;
