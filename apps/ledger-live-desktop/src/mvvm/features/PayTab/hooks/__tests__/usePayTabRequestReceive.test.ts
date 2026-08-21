@@ -92,18 +92,36 @@ describe("usePayTabRequestReceive", () => {
     expect(result.current.requestReceive.isOpen).toBe(false);
   });
 
-  it("should close the receive dialog and hand off to the injected verify callback", () => {
-    const account = { type: "Account" } as unknown as AccountLike;
+  it("should close the receive dialog and hand off the selection to the injected verify callback", () => {
+    const account = { type: "TokenAccount" } as unknown as AccountLike;
+    const parentAccount = { type: "Account" } as unknown as Account;
     const onVerify = jest.fn();
     const { result } = renderHook(() => usePayTabRequestReceive(undefined, onVerify));
 
     act(() => result.current.open());
-    act(() => openAssetAndAccount.mock.calls[0][0].onSuccess(account, undefined));
+    act(() => openAssetAndAccount.mock.calls[0][0].onSuccess(account, parentAccount));
     expect(result.current.requestReceive.isOpen).toBe(true);
 
     act(() => result.current.requestReceive.onVerify(DERIVED.address));
 
     expect(result.current.requestReceive.isOpen).toBe(false);
-    expect(onVerify).toHaveBeenCalledWith(DERIVED.address);
+    expect(onVerify).toHaveBeenCalledWith({ account, parentAccount }, expect.any(Function));
+  });
+
+  it("should reopen the receive dialog when the verify flow calls back", () => {
+    const account = { type: "TokenAccount" } as unknown as AccountLike;
+    const onVerify = jest.fn();
+    const { result } = renderHook(() => usePayTabRequestReceive(undefined, onVerify));
+
+    act(() => result.current.open());
+    act(() => openAssetAndAccount.mock.calls[0][0].onSuccess(account, undefined));
+    act(() => result.current.requestReceive.onVerify(DERIVED.address));
+    expect(result.current.requestReceive.isOpen).toBe(false);
+
+    const [, onDone] = onVerify.mock.calls[0];
+    act(() => onDone());
+
+    expect(result.current.requestReceive.isOpen).toBe(true);
+    expect(result.current.requestReceive.address).toBe(DERIVED.address);
   });
 });

@@ -13,6 +13,7 @@ import { usePayTabActionTiles } from "./hooks/usePayTabActionTiles";
 import { usePayTabDepositOptions } from "./hooks/usePayTabDepositOptions";
 import { usePayTabRequestReceive } from "./hooks/usePayTabRequestReceive";
 import { usePayTabVerifyAddress } from "./hooks/usePayTabVerifyAddress";
+import { VerifyAddressExecutorLWD } from "./verifyAddressIntent/VerifyAddressExecutorLWD";
 
 // Baanx uses the same value for the client key header and the OAuth `client_id`.
 const oauthConfig: CardLoginOauthConfig = {
@@ -38,6 +39,13 @@ const PayTab = () => {
       <DepositOptions {...deposit.depositOptions} />
       <RequestReceive {...request.requestReceive} />
       <VerifyAddress {...verify.verifyAddress} />
+      {verify.deviceIntent.active && verify.deviceIntent.selection && (
+        <VerifyAddressExecutorLWD
+          selection={verify.deviceIntent.selection}
+          onReady={verify.deviceIntent.onReady}
+          onExit={verify.deviceIntent.onExit}
+        />
+      )}
       {/* Each one decides whether it belongs on screen: the login while nobody is signed in, and
           the logout once somebody is. */}
       <CardLogin oauthConfig={oauthConfig} />

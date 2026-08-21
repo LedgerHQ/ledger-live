@@ -1,68 +1,146 @@
-import { act, renderHook } from "tests/testSetup";
-import { usePayTabVerifyAddress } from "../usePayTabVerifyAddress";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
+import { act, renderHook, withFlagOverrides } from "tests/testSetup";
+import { usePayTabVerifyAddress, type PayVerifySelection } from "../usePayTabVerifyAddress";
+
+const SELECTION: PayVerifySelection = {
+  account: { type: "TokenAccount" } as unknown as AccountLike,
+  parentAccount: { type: "Account" } as unknown as Account,
+};
+
+function renderVerifyAddress(ldmkEnabled = false) {
+  return renderHook(() => usePayTabVerifyAddress(undefined), {
+    initialState: withFlagOverrides({ ldmkTransport: { enabled: ldmkEnabled } }),
+  });
+}
 
 describe("usePayTabVerifyAddress", () => {
   it("should start hidden with resolved copy", () => {
-    const { result } = renderHook(() => usePayTabVerifyAddress(undefined));
+    const { result } = renderVerifyAddress();
 
     expect(result.current.phase).toBe("hidden");
     expect(result.current.verifyAddress.phase).toBe("hidden");
-    expect(result.current.verifyAddress.labels).toEqual({
-      introTitle: "Verify your address",
-      introDescription:
-        "To protect against address replacement attacks, verify your address on your Ledger device's Secure Screen.",
-      verifyCta: "Verify address",
-      successTitle: "Address displayed on the device's Secure Screen",
-      nextStepsLabel: "Next steps",
-      nextStepShare: "Share your address via your desired app",
-      nextStepMatch: "Ensure the shared address matches the one on your Ledger Device.",
-      gotItCta: "Got it",
-    });
+    expect(result.current.verifyAddress.labels.introTitle).toBe("Verify your address");
+    expect(result.current.verifyAddress.labels.verifyCta).toBe("Verify address");
+    expect(result.current.deviceIntent.active).toBe(false);
   });
 
-  it("should open the intro phase", () => {
-    const { result } = renderHook(() => usePayTabVerifyAddress(undefined));
+  it("should open the intro phase and stash the selection", () => {
+    const { result } = renderVerifyAddress();
 
-    act(() => result.current.openIntro());
+    act(() => result.current.openIntro(SELECTION));
 
     expect(result.current.phase).toBe("intro");
-    expect(result.current.verifyAddress.phase).toBe("intro");
+    expect(result.current.deviceIntent.selection).toEqual(SELECTION);
   });
 
-  it("should advance from the intro to the success screen on verify", () => {
-    const { result } = renderHook(() => usePayTabVerifyAddress(undefined));
+  it("mounts the DIE but keeps the intro visible until the executor is ready", () => {
+    const { result, store } = renderVerifyAddress(true);
 
-    act(() => result.current.openIntro());
+    act(() => result.current.openIntro(SELECTION));
     act(() => result.current.verifyAddress.onVerify());
 
-    expect(result.current.phase).toBe("success");
-    expect(result.current.verifyAddress.phase).toBe("success");
+    // Intro stays up (no blank gap) while the DIE initializes.
+    expect(result.current.phase).toBe("intro");
+    expect(result.current.deviceIntent.active).toBe(true);
+    expect(result.current.deviceIntent.selection).toEqual(SELECTION);
+    expect(store.getState().modals.MODAL_RECEIVE).toBeUndefined();
+
+    // Once the executor dialog is up, the intro steps aside; DIE stays mounted.
+    act(() => result.current.deviceIntent.onReady());
+    expect(result.current.phase).toBe("hidden");
+    expect(result.current.deviceIntent.active).toBe(true);
   });
 
-  it("should show the success phase when verification completes", () => {
-    const { result } = renderHook(() => usePayTabVerifyAddress(undefined));
+  it("opens the legacy Receive modal and restores the card on verify when ldmkTransport is disabled", () => {
+    const onDone = jest.fn();
+    const { result, store } = renderVerifyAddress(false);
 
-    act(() => result.current.showSuccess());
-
-    expect(result.current.phase).toBe("success");
-    expect(result.current.verifyAddress.phase).toBe("success");
-  });
-
-  it("should hide the overlay from the success CTA", () => {
-    const { result } = renderHook(() => usePayTabVerifyAddress(undefined));
-
-    act(() => result.current.showSuccess());
-    act(() => result.current.verifyAddress.onGotIt());
+    act(() => result.current.openIntro(SELECTION, onDone));
+    act(() => result.current.verifyAddress.onVerify());
 
     expect(result.current.phase).toBe("hidden");
+    expect(result.current.deviceIntent.active).toBe(false);
+    expect(store.getState().modals.MODAL_RECEIVE).toEqual({
+      isOpened: true,
+      data: {
+        account: SELECTION.account,
+        parentAccount: SELECTION.parentAccount,
+      },
+    });
+    expect(onDone).toHaveBeenCalledTimes(1);
   });
 
-  it("should hide the overlay when closed", () => {
-    const { result } = renderHook(() => usePayTabVerifyAddress(undefined));
+  it("does nothing on verify when no selection was made", () => {
+    const { result, store } = renderVerifyAddress(true);
 
-    act(() => result.current.openIntro());
+    act(() => result.current.verifyAddress.onVerify());
+
+    expect(result.current.deviceIntent.active).toBe(false);
+    expect(store.getState().modals.MODAL_RECEIVE).toBeUndefined();
+  });
+
+  it.each(["verified", "cancelled", "unsupported", "dismissed", "initFailed"] as const)(
+    "brings the receive summary back when the device flow exits with %s",
+    outcome => {
+      const onDone = jest.fn();
+      const { result } = renderVerifyAddress(true);
+
+      act(() => result.current.openIntro(SELECTION, onDone));
+      act(() => result.current.verifyAddress.onVerify());
+      act(() => result.current.deviceIntent.onExit(outcome));
+
+      expect(result.current.phase).toBe("hidden");
+      expect(result.current.deviceIntent.active).toBe(false);
+      expect(onDone).toHaveBeenCalledTimes(1);
+    },
+  );
+
+  it("closes the whole flow without restoring the card on mismatch", () => {
+    const onDone = jest.fn();
+    const { result } = renderVerifyAddress(true);
+
+    act(() => result.current.openIntro(SELECTION, onDone));
+    act(() => result.current.verifyAddress.onVerify());
+    act(() => result.current.deviceIntent.onExit("mismatch"));
+
+    expect(result.current.phase).toBe("hidden");
+    expect(result.current.deviceIntent.active).toBe(false);
+    expect(onDone).not.toHaveBeenCalled();
+  });
+
+  it("consumes the restore callback at most once across repeated exits", () => {
+    const onDone = jest.fn();
+    const { result } = renderVerifyAddress(true);
+
+    act(() => result.current.openIntro(SELECTION, onDone));
+    act(() => result.current.verifyAddress.onVerify());
+    act(() => result.current.deviceIntent.onExit("verified"));
+    act(() => result.current.deviceIntent.onExit("dismissed"));
+
+    expect(onDone).toHaveBeenCalledTimes(1);
+  });
+
+  it("brings the receive summary back when the intro overlay is dismissed", () => {
+    const onDone = jest.fn();
+    const { result, store } = renderVerifyAddress();
+
+    act(() => result.current.openIntro(SELECTION, onDone));
     act(() => result.current.verifyAddress.onClose());
 
+    expect(result.current.deviceIntent.active).toBe(false);
+    expect(store.getState().modals.MODAL_RECEIVE).toBeUndefined();
+    expect(onDone).toHaveBeenCalledTimes(1);
+  });
+
+  it("hides the overlay from the success CTA and on close", () => {
+    const { result } = renderVerifyAddress();
+
+    act(() => result.current.openIntro(SELECTION));
+    act(() => result.current.verifyAddress.onClose());
+    expect(result.current.phase).toBe("hidden");
+
+    act(() => result.current.openIntro(SELECTION));
+    act(() => result.current.verifyAddress.onGotIt());
     expect(result.current.phase).toBe("hidden");
   });
 });
