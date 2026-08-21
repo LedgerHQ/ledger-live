@@ -289,4 +289,22 @@ describe("PayTab integration", () => {
       });
     });
   });
+
+  describe("request", () => {
+    beforeEach(() => {
+      mockStablecoins({ stablecoins: [heldUsdc(1000)] });
+    });
+
+    it("opens the modular asset drawer for the request flow when the request tile is pressed", async () => {
+      const { user, store } = render(<PayTabScreen />, { overrideInitialState: tourSeen });
+
+      await user.press(await screen.findByTestId("action-tile-request"));
+
+      await waitFor(() => {
+        expect(store.getState().modularDrawer.isOpen).toBe(true);
+      });
+      expect(store.getState().modularDrawer.flow).toBe("request");
+      expect(store.getState().modularDrawer.source).toBe("Pay");
+    });
+  });
 });
