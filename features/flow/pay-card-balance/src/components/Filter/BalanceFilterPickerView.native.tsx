@@ -24,8 +24,7 @@ export function BalanceFilterPickerView({
     <QueuedBottomSheet
       isRequestingToBeOpened={isOpen}
       onClose={onClose}
-      enableDynamicSizing
-      maxDynamicContentSize="fullWithOffset"
+      snapPoints="fullWithOffset"
       testID="pay-card-balance-filter-sheet"
     >
       {isOpen ? (
