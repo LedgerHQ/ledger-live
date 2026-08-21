@@ -103,6 +103,8 @@ describe("useAddAddressFlowViewModel", () => {
       selectedContactId: contactId,
       existingAddressLabels: [],
       selectedCurrencyId: ETHEREUM_CURRENCY_ID,
+      entryMode: "mad",
+      displayContext: null,
       addressEntry: {
         status: "empty",
         value: "",
@@ -892,5 +894,183 @@ describe("useAddAddressFlowViewModel", () => {
     });
 
     expect(result.current.state).toEqual({ status: "closed" });
+  });
+
+  describe("startWithPrefilled", () => {
+    const ETHEREUM_NETWORK = {
+      networkId: "ethereum",
+      displayName: "Ethereum",
+    } as const;
+
+    it("should start on the naming screen after validating the supplied address", async () => {
+      const contact = mockContact({ addresses: [] });
+      const addressValidation = createValidationPort();
+      const { result } = renderHook(() => useAddAddressFlowViewModel({ addressValidation }));
+
+      let startResult: Awaited<ReturnType<typeof result.current.startWithPrefilled>> | undefined;
+      await act(async () => {
+        startResult = await result.current.startWithPrefilled({
+          contact,
+          address: RAW_ADDRESS,
+          currency: ETHEREUM_SELECTION,
+          network: ETHEREUM_NETWORK,
+        });
+      });
+
+      expect(startResult).toEqual({ status: "started" });
+      expect(addressValidation.validateAddress).toHaveBeenCalledWith({
+        currencyId: ETHEREUM_CURRENCY_ID,
+        address: RAW_ADDRESS,
+      });
+      expect(result.current.state).toMatchObject({
+        status: "namingAddress",
+        entryMode: "prefilled",
+        selectedContactId: contact.id,
+        selectedCurrencyId: ETHEREUM_CURRENCY_ID,
+        displayContext: {
+          assetDisplayName: "Ethereum",
+          network: ETHEREUM_NETWORK,
+        },
+        addressEntry: {
+          status: "valid",
+          resolvedAddress: VALID_ADDRESS,
+        },
+      });
+    });
+
+    it("should bypass MAD and address-entry steps and continue through review", async () => {
+      const contact = mockContact({ addresses: [] });
+      const addressValidation = createValidationPort();
+      const { result } = renderHook(() => useAddAddressFlowViewModel({ addressValidation }));
+
+      await act(async () => {
+        await result.current.startWithPrefilled({
+          contact,
+          address: RAW_ADDRESS,
+          currency: ETHEREUM_SELECTION,
+          network: ETHEREUM_NETWORK,
+        });
+      });
+      act(() => result.current.updateAddressLabel("Exchange"));
+      act(() => result.current.continueFromName());
+
+      expect(result.current.state).toMatchObject({
+        status: "reviewingAddress",
+        origin: "addressName",
+        entryMode: "prefilled",
+        addressLabel: { label: "Exchange", status: "valid" },
+        displayContext: {
+          assetDisplayName: "Ethereum",
+          network: ETHEREUM_NETWORK,
+        },
+      });
+    });
+
+    it("should reject an invalid supplied address without opening naming", async () => {
+      const contact = mockContact({ addresses: [] });
+      const addressValidation = createValidationPort({ status: "invalid_format" });
+      const { result } = renderHook(() => useAddAddressFlowViewModel({ addressValidation }));
+
+      let startResult: Awaited<ReturnType<typeof result.current.startWithPrefilled>> | undefined;
+      await act(async () => {
+        startResult = await result.current.startWithPrefilled({
+          contact,
+          address: "not-an-address",
+          currency: ETHEREUM_SELECTION,
+          network: ETHEREUM_NETWORK,
+        });
+      });
+
+      expect(startResult).toEqual({ status: "invalid_address", error: "invalid_format" });
+      expect(result.current.state).toEqual({ status: "closed" });
+    });
+
+    it("should remain closed when prefilled validation is unavailable", async () => {
+      const contact = mockContact({ addresses: [] });
+      const addressValidation = createValidationPort({ status: "unavailable" });
+      const { result } = renderHook(() => useAddAddressFlowViewModel({ addressValidation }));
+
+      let startResult: Awaited<ReturnType<typeof result.current.startWithPrefilled>> | undefined;
+      await act(async () => {
+        startResult = await result.current.startWithPrefilled({
+          contact,
+          address: RAW_ADDRESS,
+          currency: ETHEREUM_SELECTION,
+          network: ETHEREUM_NETWORK,
+        });
+      });
+
+      expect(startResult).toEqual({ status: "unavailable" });
+      expect(result.current.state).toEqual({ status: "closed" });
+    });
+
+    it("should report cancellation when pending prefilled validation is superseded", async () => {
+      const contact = mockContact({ addresses: [] });
+      const deferredValidation = createDeferredValidation();
+      const addressValidation = createValidationPort();
+      addressValidation.validateAddress.mockReturnValue(deferredValidation.promise);
+      const { result } = renderHook(() => useAddAddressFlowViewModel({ addressValidation }));
+
+      let start = Promise.resolve<Awaited<ReturnType<typeof result.current.startWithPrefilled>>>({
+        status: "cancelled",
+      });
+      act(() => {
+        start = result.current.startWithPrefilled({
+          contact,
+          address: RAW_ADDRESS,
+          currency: ETHEREUM_SELECTION,
+          network: ETHEREUM_NETWORK,
+        });
+      });
+      act(() => result.current.close());
+
+      let startResult: Awaited<ReturnType<typeof result.current.startWithPrefilled>> | undefined;
+      await act(async () => {
+        deferredValidation.resolve({
+          status: "valid",
+          resolvedAddress: VALID_ADDRESS,
+          isDomain: false,
+        });
+        startResult = await start;
+      });
+
+      expect(startResult).toEqual({ status: "cancelled" });
+      expect(result.current.state).toEqual({ status: "closed" });
+    });
+
+    it("should close the prefilled naming step on back without returning to address entry", async () => {
+      const contact = mockContact({ addresses: [] });
+      const addressValidation = createValidationPort();
+      const { result } = renderHook(() => useAddAddressFlowViewModel({ addressValidation }));
+
+      await act(async () => {
+        await result.current.startWithPrefilled({
+          contact,
+          address: RAW_ADDRESS,
+          currency: ETHEREUM_SELECTION,
+          network: ETHEREUM_NETWORK,
+        });
+      });
+      act(() => result.current.goBack());
+
+      expect(result.current.state).toEqual({ status: "closed" });
+    });
+
+    it("should keep MAD naming confirmation behavior unchanged", async () => {
+      const contact = mockContact({ addresses: [] });
+      const addressValidation = createValidationPort();
+      const { result } = renderHook(() => useAddAddressFlowViewModel({ addressValidation }));
+
+      act(() => result.current.start(contact));
+      act(() => result.current.completeCurrencySelection(contact.id, ETHEREUM_SELECTION));
+      await act(() => result.current.updateAddress(RAW_ADDRESS, "manual"));
+      act(() => result.current.confirmAddress());
+      act(() => result.current.continueFromName());
+
+      expect(result.current.state).toMatchObject({
+        status: "confirmationRequired",
+        entryMode: "mad",
+      });
+    });
   });
 });

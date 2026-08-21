@@ -10,9 +10,7 @@ import {
 import { ContactsAddAddressNameInput } from "./ContactsAddAddressNameInput";
 import type { ContactsAddAddressNameProps } from "../../types";
 
-const RESOLVED_ADDRESS = ContactAddressValueSchema.parse(
-  "0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034",
-);
+const ADDRESS = ContactAddressValueSchema.parse("0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034");
 
 function createProps(
   overrides: Partial<ContactsAddAddressNameProps> = {},
@@ -20,8 +18,8 @@ function createProps(
   return {
     addressEntry: {
       status: "valid",
-      value: RESOLVED_ADDRESS,
-      resolvedAddress: RESOLVED_ADDRESS,
+      value: ADDRESS,
+      resolvedAddress: ADDRESS,
       inputMethod: "manual",
     },
     addressLabel: {
@@ -44,6 +42,7 @@ function createProps(
           "Address names must be 32 characters or fewer.",
       },
     },
+    showConfirmedAddress: false,
     onAddressLabelChange: jest.fn(),
     onContinue: jest.fn(),
     ...overrides,
@@ -51,18 +50,16 @@ function createProps(
 }
 
 describe("ContactsAddAddressNameInput", () => {
-  it("should render the confirmed address and prefilled label with the 32-character limit", () => {
+  it("should render only the name input with the 32-character limit", () => {
     render(<ContactsAddAddressNameInput {...createProps()} />);
 
-    expect(screen.getByTestId("contacts-add-address-confirmed-input")).toHaveAttribute(
-      "value",
-      RESOLVED_ADDRESS,
-    );
+    expect(screen.queryByTestId("contacts-add-address-confirmed-input")).not.toBeInTheDocument();
     expect(screen.getByTestId("contacts-add-address-name-input")).toHaveValue("Ethereum");
     expect(screen.getByTestId("contacts-add-address-name-input")).toHaveAttribute(
       "maxlength",
       "32",
     );
+    expect(screen.getByTestId("contacts-add-address-name-disclaimer")).toBeInTheDocument();
     expect(screen.getByTestId("contacts-add-address-name-continue")).toBeEnabled();
   });
 
