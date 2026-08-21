@@ -21,7 +21,11 @@ export type UseRenameContactDialogViewModelOptions = Readonly<{
   contactId: ContactId;
   currentName: string;
   editPort: ContactEditPort;
+  isRequestedOpen: boolean;
+  isEditSessionActive?: boolean;
+  onCloseRequest: () => void;
   onSaveSuccess: () => void;
+  requestSaveApproval?: () => Promise<boolean>;
 }>;
 
 export type ContactsRenameContactLabels = Readonly<{

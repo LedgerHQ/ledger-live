@@ -8,13 +8,11 @@ export function useRenameContactDialogViewModel({
   currentName,
   editPort,
   isRequestedOpen,
+  isEditSessionActive = isRequestedOpen,
   onCloseRequest,
   onSaveSuccess,
-}: UseRenameContactDialogViewModelOptions &
-  Readonly<{
-    isRequestedOpen: boolean;
-    onCloseRequest: () => void;
-  }>): RenameContactDialogViewModel {
+  requestSaveApproval,
+}: UseRenameContactDialogViewModelOptions): RenameContactDialogViewModel {
   const [draftName, setDraftName] = useState(currentName);
   const [isSaving, setIsSaving] = useState(false);
   const { invalidNameError, isConfirmEnabled, save } = useRenameContactViewModel(
@@ -25,15 +23,10 @@ export function useRenameContactDialogViewModel({
   );
 
   useEffect(() => {
-    if (isRequestedOpen) {
+    if (isEditSessionActive) {
       setDraftName(currentName);
     }
-  }, [currentName, isRequestedOpen]);
-
-  const onClose = useCallback(() => {
-    onCloseRequest();
-    setDraftName(currentName);
-  }, [currentName, onCloseRequest]);
+  }, [currentName, isEditSessionActive]);
 
   const onDraftNameChange = useCallback(
     (name: string) => setDraftName(name.slice(0, CONTACT_NAME_MAX_LENGTH)),
@@ -48,6 +41,10 @@ export function useRenameContactDialogViewModel({
     setIsSaving(true);
 
     try {
+      if (requestSaveApproval !== undefined && !(await requestSaveApproval())) {
+        return;
+      }
+
       await save();
       onSaveSuccess();
       onCloseRequest();
@@ -56,7 +53,7 @@ export function useRenameContactDialogViewModel({
     } finally {
       setIsSaving(false);
     }
-  }, [isConfirmEnabled, isSaving, onCloseRequest, onSaveSuccess, save]);
+  }, [isConfirmEnabled, isSaving, onCloseRequest, onSaveSuccess, requestSaveApproval, save]);
 
   return {
     isOpen: isRequestedOpen,
@@ -65,7 +62,7 @@ export function useRenameContactDialogViewModel({
     invalidNameError,
     isConfirmEnabled: isConfirmEnabled && !isSaving,
     onOpen: () => undefined,
-    onClose,
+    onClose: onCloseRequest,
     onDraftNameChange,
     onConfirm,
   };

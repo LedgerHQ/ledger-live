@@ -45,7 +45,11 @@ export type UseRenameAddressDialogViewModelOptions = Readonly<{
   currencyId: ContactAddress["currencyId"] | undefined;
   existingLabels: readonly ContactAddressLabel[];
   editPort: ContactAddressEditPort;
+  isRequestedOpen: boolean;
+  isEditSessionActive?: boolean;
+  onCloseRequest: () => void;
   onSaveSuccess?: (payload: ContactAddressEditSavePayload) => void;
+  requestSaveApproval?: () => Promise<boolean>;
 }>;
 
 export type ContactsEditAddressValidationLabels = Readonly<{

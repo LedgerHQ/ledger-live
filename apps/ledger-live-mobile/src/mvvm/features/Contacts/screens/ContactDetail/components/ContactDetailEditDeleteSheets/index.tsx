@@ -59,6 +59,7 @@ export function ContactDetailEditDeleteSheets({
       </QueuedBottomSheet>
       <QueuedBottomSheet
         isRequestingToBeOpened={renameDrawer.isOpen}
+        isForcingToBeOpened={renameDrawer.isOpen}
         onClose={renameDrawer.onClose}
         testID="contacts-rename-contact-sheet"
         enableDynamicSizing
@@ -79,6 +80,7 @@ export function ContactDetailEditDeleteSheets({
       </QueuedBottomSheet>
       <QueuedBottomSheet
         isRequestingToBeOpened={signerDrawer.isOpen}
+        isForcingToBeOpened={signerDrawer.isOpen}
         onClose={onCloseSigner}
         testID="contacts-edit-signer-sheet"
         enableDynamicSizing

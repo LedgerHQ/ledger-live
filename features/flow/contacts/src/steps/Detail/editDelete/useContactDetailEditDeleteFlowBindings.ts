@@ -24,8 +24,10 @@ export function useContactDetailEditDeleteFlowBindings({
     currentName: flow.contactName,
     editPort: ports.edit,
     isRequestedOpen: flow.editUiState === "edit-open",
+    isEditSessionActive: flow.isEditSessionActive,
     onCloseRequest: flow.onEditClose,
     onSaveSuccess: () => undefined,
+    requestSaveApproval: flow.requestSaveApproval,
   });
 
   return { flow, renameViewModel };
