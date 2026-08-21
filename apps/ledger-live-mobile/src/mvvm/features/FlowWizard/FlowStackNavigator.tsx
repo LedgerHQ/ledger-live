@@ -208,8 +208,18 @@ export function FlowStackNavigator<
     };
   }, [defaultStackNavigationConfig, baseScreenOptions]);
 
+  const initialRouteName = useMemo(() => {
+    const { initialStep } = flowConfig;
+
+    if (initialStep === undefined || !screenConfigs.some(config => config.step === initialStep)) {
+      return undefined;
+    }
+
+    return getScreenName ? getScreenName(initialStep) : `Flow${initialStep}`;
+  }, [flowConfig, getScreenName, screenConfigs]);
+
   return (
-    <Stack.Navigator screenOptions={mergedScreenOptions}>
+    <Stack.Navigator initialRouteName={initialRouteName} screenOptions={mergedScreenOptions}>
       {screenConfigs.map(config => (
         <Stack.Screen
           key={config.step}

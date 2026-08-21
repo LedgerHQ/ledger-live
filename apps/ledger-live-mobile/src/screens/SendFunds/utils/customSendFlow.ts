@@ -59,7 +59,12 @@ type AfterRecipientNavParams = {
 export type CustomSendFlow = {
   screens: CustomSendFlowScreen[];
   /** Declarative entrypoint for navigation from outside the SendFunds navigator (e.g. asset action buttons). */
-  buildSendEntrypoint?: (opts: { account: AccountLike; parentAccount: Account | undefined }) => {
+  buildSendEntrypoint?: (opts: {
+    account: AccountLike;
+    parentAccount: Account | undefined;
+    recipient?: string;
+    skipRecipientStep?: boolean;
+  }) => {
     screen: keyof SendFundsNavigatorStackParamList;
     params: Record<string, unknown>;
   };
