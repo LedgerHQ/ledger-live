@@ -182,7 +182,7 @@ export function useBraze() {
 
     const isInitialized = braze.initialize(brazeConfig.apiKey, {
       baseUrl: brazeConfig.endpoint,
-      allowUserSuppliedJavascript: true,
+      allowUserSuppliedJavascript: false,
       enableLogging: __DEV__,
       sessionTimeoutInSeconds: devMode ? 1 : 1800,
       appVersion: isTrackedUser ? __APP_VERSION__ : undefined,
