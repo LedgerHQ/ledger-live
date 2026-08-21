@@ -25,6 +25,7 @@ import {
   PERPS_DEPOSIT_DEFAULT_FUNDING_CURRENCY_ID,
   PERPS_DEPOSIT_DEFAULT_FUNDING_TICKER,
 } from "../../constants/depositFunding";
+import type { PerpsReviewParams } from "./components/PerpsReview";
 import { usePerpsDepositQuote } from "./usePerpsDepositQuote";
 import { applyAmountKey, toAmountText } from "./utils/amountKeys";
 import { toAmountValue } from "./utils/toAmountValue";
@@ -61,6 +62,9 @@ export type PerpsDepositViewModel = Readonly<{
   missingAccount: boolean;
   pickDepositAccount: () => void;
   handleReview: () => void;
+  isReviewOpen: boolean;
+  reviewParams: PerpsReviewParams | null;
+  closeReview: () => void;
 }>;
 
 export function usePerpsDepositViewModel({ route }: NavigationProps): PerpsDepositViewModel {
@@ -75,6 +79,7 @@ export function usePerpsDepositViewModel({ route }: NavigationProps): PerpsDepos
 
   const [depositAccountId, setDepositAccountId] = useState<string | undefined>(undefined);
   const [amountText, setAmountText] = useState("");
+  const [isReviewOpen, setIsReviewOpen] = useState(false);
 
   /** Read from the store so balances stay live while the form is open. */
   const depositAccount = useMemo(
@@ -242,7 +247,23 @@ export function usePerpsDepositViewModel({ route }: NavigationProps): PerpsDepos
     });
   }, [openDrawer]);
 
-  const handleReview = useCallback(() => undefined, []);
+  const reviewParams = useMemo<PerpsReviewParams | null>(() => {
+    if (!depositAccount || !depositCurrency || !sentAmount || !quote) return null;
+
+    return {
+      depositAccount,
+      receiverAccount,
+      amountSent: sentAmount,
+      amountTo: quote.amountTo.toFixed(),
+    };
+  }, [depositAccount, depositCurrency, quote, receiverAccount, sentAmount]);
+
+  const handleReview = useCallback(() => {
+    if (!canReview) return;
+    setIsReviewOpen(true);
+  }, [canReview]);
+
+  const closeReview = useCallback(() => setIsReviewOpen(false), []);
 
   return {
     headerDescription: `${receiverAccountName} · ${receiverAccountCounterValue}`,
@@ -269,5 +290,8 @@ export function usePerpsDepositViewModel({ route }: NavigationProps): PerpsDepos
     missingAccount,
     pickDepositAccount,
     handleReview,
+    isReviewOpen,
+    reviewParams,
+    closeReview,
   };
 }
