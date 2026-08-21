@@ -1,4 +1,5 @@
 import { useCallback, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import type { PerpsDepositReviewParams } from "@ledgerhq/live-common/wallet-api/Perps/server";
 import { formatCurrencyUnit, parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useSelector } from "LLD/hooks/redux";
@@ -28,6 +29,7 @@ export function usePerpsReviewViewModel(
   data: PerpsReviewData,
   onClose: () => void,
 ): PerpsReviewViewModel {
+  const { t } = useTranslation();
   const walletState = useSelector(walletSelector);
   const sentUnit = useAccountUnit(data.depositAccount);
   const receivedUnit = useAccountUnit(data.receiverAccount);
@@ -48,6 +50,11 @@ export function usePerpsReviewViewModel(
     [data.amountTo, receivedUnit],
   );
 
+  const approximateAmountReceived = useMemo(
+    () => t("perpsReview.approximateValue", { value: formattedAmountReceived }),
+    [formattedAmountReceived, t],
+  );
+
   const receiverAccountLabel = useMemo(
     () => accountNameWithDefaultSelector(walletState, data.receiverAccount),
     [data.receiverAccount, walletState],
@@ -62,18 +69,18 @@ export function usePerpsReviewViewModel(
       },
       {
         labelKey: "perpsReview.amountReceiveLabel",
-        value: formattedAmountReceived,
+        value: approximateAmountReceived,
         testID: "perps-deposit-amount-received",
       },
     ],
-    [formattedAmountReceived, formattedAmountSent],
+    [approximateAmountReceived, formattedAmountSent],
   );
 
   const depositDetails = useMemo<readonly PerpsReviewDetailItem[]>(
     () => [
       {
         labelKey: "perpsReview.depositAmountLabel",
-        value: formattedAmountReceived,
+        value: approximateAmountReceived,
         testID: "perps-deposit-deposited-amount",
       },
       {
@@ -82,7 +89,7 @@ export function usePerpsReviewViewModel(
         testID: "perps-deposit-receiver-account",
       },
     ],
-    [formattedAmountReceived, receiverAccountLabel],
+    [approximateAmountReceived, receiverAccountLabel],
   );
 
   const handleBack = useCallback(() => {

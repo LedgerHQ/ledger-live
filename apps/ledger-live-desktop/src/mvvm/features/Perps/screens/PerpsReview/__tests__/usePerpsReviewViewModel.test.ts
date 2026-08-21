@@ -46,18 +46,18 @@ describe("usePerpsReviewViewModel", () => {
     expect(result.current.swapDetails[0].value).toMatch(/^0\.02[\s\u00A0]ETH$/);
   });
 
-  it("should format the received amount in the receiving currency", async () => {
+  it("should format the received amount in the receiving currency, as an estimate", async () => {
     const { result } = renderHook(() => usePerpsReviewViewModel(createData(), jest.fn()));
 
     await waitFor(() => expect(result.current.swapDetails[1].value).not.toBe(""));
-    expect(result.current.swapDetails[1].value).toMatch(/^0\.019[\s\u00A0]ETH$/);
+    expect(result.current.swapDetails[1].value).toMatch(/^~0\.019[\s\u00A0]ETH$/);
   });
 
   it("should show the received amount and the receiver account in the deposit details", async () => {
     const { result } = renderHook(() => usePerpsReviewViewModel(createData(), jest.fn()));
 
     await waitFor(() => expect(result.current.depositDetails[0].value).not.toBe(""));
-    expect(result.current.depositDetails[0].value).toMatch(/^0\.019[\s\u00A0]ETH$/);
+    expect(result.current.depositDetails[0].value).toMatch(/^~0\.019[\s\u00A0]ETH$/);
     expect(result.current.depositDetails[1].testID).toBe("perps-deposit-receiver-account");
   });
 
