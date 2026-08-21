@@ -157,7 +157,6 @@ describe("Bitcoin Account Balance Summary Footer", () => {
 
     await waitFor(() => {
       expect(screen.getByTestId("zcash-sync-failed-warning")).toBeInTheDocument();
-      // Still the same CTA as a plain stop -- only the warning distinguishes it.
       expect(screen.getByTestId("start-sync-button")).toBeInTheDocument();
     });
   });

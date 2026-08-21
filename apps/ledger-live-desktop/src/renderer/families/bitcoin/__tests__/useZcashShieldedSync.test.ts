@@ -137,12 +137,6 @@ describe("useZcashShieldedSync", () => {
     expect(store.getState().shieldedSyncSubscriptions).toEqual([]);
   });
 
-  // A retry loop (see ZcashPostBroadcastSync) can call `startShieldedSync` long
-  // after this hook's owning component unmounted, so nothing re-renders it and
-  // refreshes a `useSelector`/prop-derived snapshot. These two tests drive the
-  // store directly, without ever re-rendering the hook, to prove the guards
-  // still see that update -- the exact interaction the other tests' mocked
-  // `useZcashShieldedSync` (in ZcashPostBroadcastSync.test.tsx) can't exercise.
   it("does not start a duplicate sync when the account started running via a store update the hook was never re-rendered for", () => {
     const account = buildAccount();
 

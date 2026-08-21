@@ -19,11 +19,9 @@ export function useZcashShieldedSync(account: ZcashAccount) {
   const dispatch = useDispatch();
   const store = useStore();
 
-  // Re-reads the account and its subscription from the store instead of from a
-  // hook closure: a retry loop can call these callbacks long after this hook's
-  // owning component unmounted (see ZcashPostBroadcastSync), and React stops
-  // re-rendering it at that point, so a `useSelector`/prop-derived snapshot
-  // freezes at its last render while the store itself keeps moving.
+  // Reads the store directly instead of a hook closure: a retry loop (see
+  // ZcashPostBroadcastSync) can call these long after this hook's owning
+  // component unmounted, when React has stopped refreshing that closure.
   const currentAccountOf = useCallback(
     (fallback: ZcashAccount): ZcashAccount =>
       (accountSelector(store.getState(), { accountId: fallback.id }) as ZcashAccount | undefined) ??
