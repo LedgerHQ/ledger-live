@@ -50,7 +50,7 @@ describe("QueuedDrawerFlow", () => {
     mockDrawerUnmountCount = 0;
   });
 
-  it("should replace the current screen without closing the drawer", () => {
+  it("should replace the current screen without closing the drawer in tests", () => {
     const onClose = jest.fn();
     const onBack = jest.fn();
     const { rerender } = render(
