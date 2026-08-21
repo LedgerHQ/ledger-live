@@ -15,7 +15,7 @@ import { genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account
 import { mockContact, mockContactAddress } from "@domain/entity-contact/schema.mock";
 import { useFormattedAccountBalance } from "LLM/hooks/useFormattedAccountBalance";
 import { accountsSelector } from "~/reducers/accounts";
-import { useMaybeAccountName, useBatchMaybeAccountName } from "~/reducers/wallet";
+import { useMaybeAccountName } from "~/reducers/wallet";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { createMockAccount, createMockCurrency, createMockTokenCurrency } from "./accounts";
@@ -40,7 +40,6 @@ const mockedUseBridgeRecipientValidation = jest.mocked(useBridgeRecipientValidat
 const mockedFindMatchedContact = jest.mocked(findMatchedContact);
 const mockedUseFormattedAccountBalance = jest.mocked(useFormattedAccountBalance);
 const mockedUseMaybeAccountName = jest.mocked(useMaybeAccountName);
-const mockedUseBatchMaybeAccountName = jest.mocked(useBatchMaybeAccountName);
 const mockedSendFeatures = jest.mocked(sendFeatures);
 
 const mockAccount = createMockAccount({ id: "account_1" });
@@ -86,7 +85,6 @@ describe("useAddressValidation", () => {
       formattedCounterValue: "$50,000",
     });
     mockedUseMaybeAccountName.mockReturnValue("My Account");
-    mockedUseBatchMaybeAccountName.mockReturnValue([]);
     mockedSendFeatures.getSelfTransferPolicy.mockReturnValue("impossible");
     mockedFindMatchedContact.mockReturnValue(undefined);
   });
@@ -247,10 +245,14 @@ describe("useAddressValidation", () => {
         currency: createMockCurrency({ id: "ethereum", name: "Ethereum", ticker: "ETH" }),
         account: mockEthereumAccount,
         recipientSupportsDomain: true,
+        canSearchContactsByName: true,
       }),
     );
 
     expect(result.current.isLoading).toBe(true);
+    expect(mockedFindMatchedContact).toHaveBeenCalledWith([], "test.eth", "ethereum", undefined, {
+      matchName: false,
+    });
   });
 
   it("matches user accounts by address", () => {
@@ -260,11 +262,10 @@ describe("useAddressValidation", () => {
     });
 
     mockedUseSelector.mockReturnValue([mockAccount, otherAccount]);
-    mockedUseBatchMaybeAccountName.mockReturnValue(["Account 1", "Account 2"]);
 
     const { result } = renderHook(() =>
       useAddressValidation({
-        searchValue: "matching",
+        searchValue: "matching_address",
         currency: mockAccount.currency,
         account: mockAccount,
         currentAccountId: mockAccount.id,
@@ -346,6 +347,40 @@ describe("useAddressValidation", () => {
       "vitalik.eth",
       "ethereum",
       contactAddress,
+      { matchName: false },
+    );
+  });
+
+  it("validates a contact name using the contact address", async () => {
+    const contactAddress = "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045";
+    mockedFindMatchedContact.mockReturnValue({
+      contactId: "contact-benoit",
+      contactName: "Benoit",
+      addressId: "address-benoit-ethereum",
+      addressLabel: "Ethereum Network",
+      address: contactAddress,
+    });
+
+    const { result } = renderHook(() =>
+      useAddressValidation({
+        searchValue: "Benoit",
+        currency: mockEthereumAccount.currency,
+        account: mockEthereumAccount,
+        recipientSupportsDomain: true,
+        canSearchContactsByName: true,
+      }),
+    );
+
+    await waitFor(() => {
+      expect(result.current.result.status).toBe("valid");
+    });
+    expect(result.current.result.resolvedAddress).toBe(contactAddress);
+    expect(mockedUseBridgeRecipientValidation).toHaveBeenCalledWith(
+      expect.objectContaining({ recipient: contactAddress }),
+    );
+    expect(mockedIsAddressSanctioned).toHaveBeenCalledWith(
+      mockEthereumAccount.currency,
+      contactAddress,
     );
   });
 
@@ -388,16 +423,23 @@ describe("useAddressValidation", () => {
     expect(result.current.result.matchedAccounts?.[0].account.id).toBe(mockAccount.id);
   });
 
-  it("includes current account match by name when self-transfer is allowed", () => {
+  it("includes current account match when a contact name resolves to the current account address", () => {
     mockedSendFeatures.getSelfTransferPolicy.mockReturnValue("free");
-    mockedUseMaybeAccountName.mockReturnValue("Ethereum 3");
+    mockedFindMatchedContact.mockReturnValue({
+      contactId: "contact-me",
+      contactName: "My contact",
+      addressId: "address-me",
+      addressLabel: "Bitcoin",
+      address: mockAccount.freshAddress,
+    });
 
     const { result } = renderHook(() =>
       useAddressValidation({
-        searchValue: "Ethereum 3",
+        searchValue: "My contact",
         currency: mockAccount.currency,
         account: mockAccount,
         currentAccountId: mockAccount.id,
+        canSearchContactsByName: true,
       }),
     );
 
@@ -405,31 +447,27 @@ describe("useAddressValidation", () => {
     expect(result.current.result.matchedAccounts?.[0].account.id).toBe(mockAccount.id);
   });
 
-  it("searches by account name", () => {
+  it("does not search by account name anymore", () => {
     const namedAccount = createMockAccount({
       id: "account_2",
       freshAddress: "named_account_address",
     });
 
-    // Mock the selector to return both accounts
     mockedUseSelector.mockReturnValue([mockAccount, namedAccount]);
-    // useBatchMaybeAccountName is called with userAccountsForCurrency which excludes currentAccount
-    // So it only receives namedAccount
-    mockedUseBatchMaybeAccountName.mockReturnValue(["My Savings Account"]);
+    mockedUseMaybeAccountName.mockReturnValue("Ethereum 3");
+    mockedSendFeatures.getSelfTransferPolicy.mockReturnValue("free");
 
     const { result } = renderHook(() =>
       useAddressValidation({
-        searchValue: "savings",
+        searchValue: "Ethereum 3",
         currency: mockAccount.currency,
         account: mockAccount,
         currentAccountId: mockAccount.id,
+        canSearchContactsByName: true,
       }),
     );
 
-    // The hook filters accounts by currency and excludes current account
-    // Then searches by name in the remaining accounts
-    expect(result.current.result.matchedAccounts).toHaveLength(1);
-    expect(result.current.result.matchedAccounts?.[0].account.id).toBe("account_2");
+    expect(result.current.result.matchedAccounts).toHaveLength(0);
   });
 
   it("includes bridge validation errors", () => {

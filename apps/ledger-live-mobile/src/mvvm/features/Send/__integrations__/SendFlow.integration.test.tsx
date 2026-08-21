@@ -188,7 +188,7 @@ describe("Send flow integration tests", () => {
     const { user } = renderForAccount(accountEthereum, {}, { contactsEnabled: true });
 
     await user.paste(
-      await screen.findByPlaceholderText("Enter address or ENS"),
+      await screen.findByPlaceholderText("Enter address, ENS or contact"),
       VALID_ETHEREUM_RECIPIENT,
     );
     await flushTimers();

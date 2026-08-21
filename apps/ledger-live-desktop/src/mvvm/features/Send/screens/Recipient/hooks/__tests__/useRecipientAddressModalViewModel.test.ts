@@ -158,6 +158,9 @@ describe("useRecipientAddressModalViewModel", () => {
 
     expect(result.current.showInitialState).toBe(true);
     expect(result.current.showEmptyContactsState).toBe(true);
+    expect(mockedUseAddressValidation).toHaveBeenCalledWith(
+      expect.objectContaining({ canSearchContactsByName: true }),
+    );
   });
 
   it("does not show empty contacts state when address book is not supported", () => {
@@ -180,6 +183,9 @@ describe("useRecipientAddressModalViewModel", () => {
     );
 
     expect(result.current.showEmptyContactsState).toBe(false);
+    expect(mockedUseAddressValidation).toHaveBeenCalledWith(
+      expect.objectContaining({ canSearchContactsByName: false }),
+    );
   });
 
   it("does not show empty contacts state when a contact matches the network", () => {
