@@ -135,8 +135,10 @@ describe("createApi (integration)", () => {
 
   describe("craft -> combine round trip with a funded sender", () => {
     // Craft is real (selects the fixture's UTXOs); the signature is mocked. Kaspa needs one
-    // signature per input and `combine` only attaches the provided strings, so a mock hex
-    // signature per input verifies the craft → combine plumbing and signed-tx shape WITHOUT a
+    // signature per input, but the generic-adapter framework's `combine(tx, signatures)` only
+    // supports a single-string return value from the signer — so all per-input signatures are
+    // packed into one JSON-encoded string (see combine.ts). A mock hex signature per input,
+    // packed the same way, verifies the craft → combine plumbing and signed-tx shape WITHOUT a
     // private key (mirrors coin-filecoin's api/index.integ.test.ts mock-signature round trip).
     // A cryptographically valid signature + broadcast acceptance is out of scope for CI.
     it("produces a valid signed Kaspa transaction shape", async () => {
@@ -150,7 +152,8 @@ describe("createApi (integration)", () => {
       });
 
       const unsigned = JSON.parse(crafted.transaction);
-      const mockSignatures: string[] = unsigned.inputs.map(() => "b".repeat(128));
+      const perInputSignatures: string[] = unsigned.inputs.map(() => "b".repeat(128));
+      const mockSignatures = [JSON.stringify(perInputSignatures)];
       const signed = await api.combine(context, crafted.transaction, mockSignatures);
 
       const parsed = JSON.parse(signed);

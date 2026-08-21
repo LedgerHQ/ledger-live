@@ -96,6 +96,9 @@
     },
     "./libs/live-wallet": {
       "entry": ["src/walletSyncComposition.ts", "src/accounts/index.ts"]
+    },
+    "./libs/coin-tester-modules/coin-tester-kaspa": {
+      "ignore": ["miner/miner.js"]
     }
   }
 }
