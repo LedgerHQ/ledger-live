@@ -61,6 +61,8 @@ const recipientViewModel = {
   clipboardAddress: null,
   handlePasteFromClipboard: jest.fn(),
   isContactsFeatureEnabled: true,
+  hasAddressBook: false,
+  addressBookFamilyName: "Bitcoin",
 } as never;
 
 const memoViewModel = {
@@ -123,6 +125,12 @@ describe("useRecipientScreenContentViewModel", () => {
       address: "resolved-address",
       onSkip: expect.any(Function),
     });
+    expect(mockedUseAddressMatchedSectionViewModel).toHaveBeenCalledWith(
+      expect.objectContaining({
+        hasAddressBook: false,
+        addressBookFamilyName: "Bitcoin",
+      }),
+    );
   });
 
   it("tracks and forwards matched-address selection", () => {

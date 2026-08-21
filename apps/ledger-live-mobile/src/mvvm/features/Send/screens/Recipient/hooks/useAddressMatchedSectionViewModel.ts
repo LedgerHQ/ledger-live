@@ -19,6 +19,8 @@ type UseAddressMatchedSectionViewModelProps = Readonly<{
   isAddressComplete?: boolean;
   hasBridgeError?: boolean;
   isContactsFeatureEnabled?: boolean;
+  hasAddressBook?: boolean;
+  addressBookFamilyName?: string;
 }>;
 
 type AddressListItemSuggestion = Readonly<{
@@ -48,6 +50,9 @@ type RecipientCardSuggestion = Readonly<{
   contact?: MatchedContact;
   isReady: boolean;
   showActions: boolean;
+  hasAddressBook: boolean;
+  addressBookUnsupportedTitle: string;
+  addressBookUnsupportedDescription: string;
   addContactLabel: string;
   sendLabel: string;
   onSend: () => void;
@@ -73,6 +78,8 @@ export function useAddressMatchedSectionViewModel({
   isAddressComplete = false,
   hasBridgeError = false,
   isContactsFeatureEnabled = false,
+  hasAddressBook = false,
+  addressBookFamilyName = "",
 }: UseAddressMatchedSectionViewModelProps): AddressMatchedSectionViewModel {
   const { t } = useTranslation();
   const formatRelativeDate = useFormatRelativeDate();
@@ -94,6 +101,14 @@ export function useAddressMatchedSectionViewModel({
         contact: undefined,
         isReady: false,
         showActions: false,
+        hasAddressBook,
+        addressBookUnsupportedTitle: t("send.newSendFlow.addressBookUnsupported.title", {
+          family: addressBookFamilyName,
+        }),
+        addressBookUnsupportedDescription: t(
+          "send.newSendFlow.addressBookUnsupported.description",
+          { family: addressBookFamilyName },
+        ),
         addContactLabel: t("contacts.addContact"),
         sendLabel: t("contacts.addressDetail.send"),
         onSend: () => onSelect(recipientAddress, searchResult.ensName),
@@ -157,6 +172,14 @@ export function useAddressMatchedSectionViewModel({
           contact: presentation.matchedContact,
           isReady: presentation.isReady,
           showActions: !hasBridgeError,
+          hasAddressBook,
+          addressBookUnsupportedTitle: t("send.newSendFlow.addressBookUnsupported.title", {
+            family: addressBookFamilyName,
+          }),
+          addressBookUnsupportedDescription: t(
+            "send.newSendFlow.addressBookUnsupported.description",
+            { family: addressBookFamilyName },
+          ),
           addContactLabel: t("contacts.addContact"),
           sendLabel: t("contacts.addressDetail.send"),
           onSend: () => onSelect(presentation.recipientAddress, presentation.ensName),
