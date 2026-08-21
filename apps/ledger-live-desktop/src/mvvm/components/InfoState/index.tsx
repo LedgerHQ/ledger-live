@@ -14,6 +14,7 @@ export function InfoState(props: InfoStateProps) {
   const {
     title,
     description,
+    content,
     primaryCta,
     secondaryCta,
     banner,
@@ -22,7 +23,7 @@ export function InfoState(props: InfoStateProps) {
   } = props;
   const isTextPreset = props.preset === "text";
   const isFullHeight = size === "full-height";
-  useDialogBackgroundTone(getInfoStateDialogTone(props.preset));
+  useDialogBackgroundTone(getInfoStateDialogTone(props));
 
   return (
     <div className={cn("w-full", isFullHeight && "flex flex-1")} data-testid={testID}>
@@ -47,6 +48,8 @@ export function InfoState(props: InfoStateProps) {
             </div>
           ) : null}
         </div>
+
+        {content ? <div className="w-full">{content}</div> : null}
 
         {banner ? (
           <div className="w-full">
