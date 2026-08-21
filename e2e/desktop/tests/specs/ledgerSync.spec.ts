@@ -342,3 +342,57 @@ test.describe("Ledger Sync - activation flow no backup activated", () => {
     },
   );
 });
+
+test.describe("Ledger Sync - activation flow backup activated", () => {
+  setupSeed();
+  destroyTrustchainAfterAll();
+
+  test.use({
+    teamOwner: Team.WALLET_XP,
+    userdata: "skip-onboarding-with-last-seen-device",
+    speculosApp: AppInfos.LS,
+    featureFlags: {
+      lldWalletSync: {
+        enabled: true,
+        params: {
+          environment: ledgerSyncEnvironment,
+          watchConfig: {
+            pollingInterval: 2_000,
+            initialTimeout: 500,
+          },
+          learnMoreLink: "",
+        },
+      },
+      lldLedgerSyncEntryPoints: { enabled: true },
+    },
+  });
+
+  test(
+    "[WXP][Ledger Sync] Activation Flow - Backup Activated",
+    {
+      tag: [...deviceTagsWithoutLNS(), "@wallet-xp"],
+      annotation: {
+        type: "TMS",
+        description: "B2CQA-2294",
+      },
+    },
+    async ({ app }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
+      await app.mainNavigation.openSettings();
+      await app.settings.expectLedgerSyncSettingsRow();
+      await app.settings.expectLedgerSyncSettingsEntryPoint();
+      await app.settings.clickSyncLedgerSync();
+      await app.ledgerSync.expectActivationScreenVisible();
+
+      await app.ledgerSync.clickTurnOnLedgerSync();
+      await app.speculos.activateLedgerSync();
+      await app.ledgerSync.expectActivationSuccess();
+
+      await app.drawer.closeDrawer();
+      await app.settings.openManageLedgerSync();
+      await app.ledgerSync.expectLedgerSyncManagementVisible();
+      await app.drawer.closeDrawer();
+    },
+  );
+});
