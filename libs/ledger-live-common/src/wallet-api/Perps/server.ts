@@ -28,6 +28,13 @@ export type PerpsDepositUiParams = {
   receiverAccount: AccountLike;
 };
 
+export type PerpsDepositReviewParams = PerpsDepositUiParams & {
+  depositAccount: AccountLike;
+  amountSent: string;
+  amountTo: string;
+  quoteId?: string;
+};
+
 export type PerpsUiHooks = {
   "signing.execute": (params: {
     appName: string | undefined;

@@ -314,4 +314,37 @@ describe("usePerpsDepositViewModel", () => {
       labelKey: "perpsDeposit.formErrors.amountExceedsBalance",
     });
   });
+
+  it("opens the review with the amount converted into the funding currency", () => {
+    // $20 buys 0.025 ETH, which the review shows in the funding currency.
+    mockCalculate.mockReturnValue(2.5e16);
+    const { props } = createProps();
+    const { result } = renderViewModel(props);
+
+    act(() => result.current.pickDepositAccount());
+    selectFundingAccount(fundedAccount);
+    typeAmount(result.current.pressAmountKey, "20");
+
+    act(() => result.current.handleReview());
+
+    expect(result.current.isReviewOpen).toBe(true);
+    // The received side is whatever the provider quoted, not a local conversion.
+    expect(result.current.reviewParams).toEqual({
+      depositAccount: fundedAccount,
+      receiverAccount,
+      amountSent: "0.025",
+      amountTo: "42",
+    });
+  });
+
+  it("keeps the review closed while the form is incomplete", () => {
+    const { props } = createProps();
+    const { result } = renderViewModel(props);
+
+    typeAmount(result.current.pressAmountKey, "20");
+    act(() => result.current.handleReview());
+
+    expect(result.current.isReviewOpen).toBe(false);
+    expect(result.current.reviewParams).toBeNull();
+  });
 });

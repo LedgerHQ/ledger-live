@@ -9814,6 +9814,17 @@
       "cta": "Try again"
     }
   },
+  "perpsReview": {
+    "depositTitle": "Deposit via SwapKit",
+    "depositSubtitle": "Our partner SwapKit manages your swap and deposit in one transaction - all secured by your Ledger device.",
+    "swapDetailTitle": "Swap details",
+    "amountSendLabel": "Amount send",
+    "amountReceiveLabel": "Amount receive",
+    "depositDetailTitle": "Deposit details",
+    "depositAmountLabel": "Deposit amount",
+    "depositReceiveLabel": "Receiver account",
+    "depositCTA": "Deposit"
+  },
   "perpsDeposit": {
     "title": "Deposit",
     "inputDepositAmount": "Deposit ~{{value}}{{currencyTicker}}",

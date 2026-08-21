@@ -162,4 +162,19 @@ describe("PerpsDeposit integration", () => {
     expect(screen.getByTestId("perps-deposit-quote-skeleton")).toBeOnTheScreen();
     expect(screen.getByTestId("perps-deposit-review-cta")).toBeDisabled();
   });
+
+  it("should open the review drawer when the form is submitted", async () => {
+    const { user } = renderDeposit();
+
+    await user.press(screen.getByTestId("perps-deposit-select-currency"));
+    const { onAccountSelected } = mockOpenDrawer.mock.calls[0][0];
+    act(() => onAccountSelected(fundingAccount));
+
+    await user.press(screen.getByTestId("perps-deposit-key-2"));
+    await user.press(screen.getByTestId("perps-deposit-key-0"));
+    await user.press(screen.getByTestId("perps-deposit-review-cta"));
+
+    expect(await screen.findByTestId("perps-deposit-cta")).toBeOnTheScreen();
+    expect(screen.getByTestId("perps-deposit-amount-sent")).toBeOnTheScreen();
+  });
 });

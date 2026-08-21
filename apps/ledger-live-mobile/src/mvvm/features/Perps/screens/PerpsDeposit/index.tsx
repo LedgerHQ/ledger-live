@@ -6,6 +6,7 @@ import { useTranslation } from "~/context/Locale";
 import { AmountKeypad } from "LLM/components/AmountKeypad";
 import { RatioPicker } from "LLM/components/RatioPicker";
 import { DepositAccountSelector } from "./components/DepositAccountSelector";
+import { PerpsReview } from "./components/PerpsReview";
 import type { PerpsDepositViewModel } from "./usePerpsDepositViewModel";
 
 const QUOTED_AMOUNT_SKELETON_SIZE = { width: 112, height: 16 };
@@ -87,6 +88,9 @@ export function PerpsDepositView({
   missingAccount,
   pickDepositAccount,
   handleReview,
+  isReviewOpen,
+  reviewParams,
+  closeReview,
 }: Readonly<PerpsDepositViewModel>) {
   const { t } = useTranslation();
   const styles = useStyleSheet(
@@ -163,6 +167,10 @@ export function PerpsDepositView({
           {t("perpsDeposit.review")}
         </Button>
       </Box>
+
+      {reviewParams ? (
+        <PerpsReview {...reviewParams} isOpen={isReviewOpen} onClose={closeReview} />
+      ) : null}
     </SafeAreaView>
   );
 }
