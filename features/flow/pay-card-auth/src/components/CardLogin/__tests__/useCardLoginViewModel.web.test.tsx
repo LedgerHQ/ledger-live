@@ -1,12 +1,13 @@
-import { mapSnapshotToViewProps } from "../useCardLoginViewModel";
+import { mapSnapshotToViewModel } from "../useCardLoginViewModel";
 
-describe("mapSnapshotToViewProps", () => {
+const onLoginPress = jest.fn();
+
+describe("mapSnapshotToViewModel", () => {
   it.each(["idle", "error"] as const)("offers the login action in %s", value => {
-    const props = mapSnapshotToViewProps(value, null);
+    const login = mapSnapshotToViewModel(value, null, onLoginPress);
 
-    expect(props.isHidden).toBe(false);
-    expect(props.isLoading).toBe(false);
-    expect(props.loginLabel).toBe("Login");
+    expect(login?.isLoading).toBe(false);
+    expect(login?.loginLabel).toBe("Login");
   });
 
   it.each([
@@ -21,18 +22,16 @@ describe("mapSnapshotToViewProps", () => {
     "fetchingUser",
     "clearingAttempt",
   ] as const)("shows work in progress in %s", value => {
-    const props = mapSnapshotToViewProps(value, null);
-
-    expect(props.isHidden).toBe(false);
-    expect(props.isLoading).toBe(true);
+    expect(mapSnapshotToViewModel(value, null, onLoginPress)?.isLoading).toBe(true);
   });
 
-  it("renders nothing once the user is signed in", () => {
-    expect(mapSnapshotToViewProps("ready", null).isHidden).toBe(true);
+  it("offers nothing once the card holder is signed in", () => {
+    // `CardLogout` holds the screen from here, and it reads the same flag to know it.
+    expect(mapSnapshotToViewModel("ready", null, onLoginPress)).toBeNull();
   });
 
   it("shows no message while there is no error", () => {
-    expect(mapSnapshotToViewProps("idle", null).errorMessage).toBeNull();
+    expect(mapSnapshotToViewModel("idle", null, onLoginPress)?.errorMessage).toBeNull();
   });
 
   it.each([
@@ -45,10 +44,10 @@ describe("mapSnapshotToViewProps", () => {
     "persist_failed",
     "fetch_user_failed",
   ] as const)("shows a message for %s", errorKind => {
-    const { errorMessage } = mapSnapshotToViewProps("error", errorKind);
+    const login = mapSnapshotToViewModel("error", errorKind, onLoginPress);
 
-    expect(errorMessage).toMatch(/\.$/);
+    expect(login?.errorMessage).toMatch(/\.$/);
     // The copy is ours, never the backend's or RTK's.
-    expect(errorMessage).not.toContain(errorKind);
+    expect(login?.errorMessage).not.toContain(errorKind);
   });
 });

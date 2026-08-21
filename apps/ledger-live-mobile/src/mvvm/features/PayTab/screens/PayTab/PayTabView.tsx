@@ -1,6 +1,7 @@
 import React from "react";
 import {
   CardLogin,
+  CardLogout,
   type CardLoginOauthConfig,
   type PayCardAuthCallback,
 } from "@features/flow-pay-card-auth";
@@ -46,6 +47,7 @@ export function PayTabView({
       <Balance {...balance} labels={balanceLabels} actionTiles={actionTiles} />
       <DepositOptions {...depositOptions} />
       <CardLogin oauthConfig={oauthConfig} callback={callback} />
+      <CardLogout />
       <FeatureTour {...featureTour} />
     </Box>
   );

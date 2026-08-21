@@ -68,6 +68,7 @@ function mockFundedPayStablecoins() {
 
 jest.mock("@features/flow-pay-card-auth", () => ({
   CardLogin: () => <button type="button">Login</button>,
+  CardLogout: () => null,
 }));
 
 describe("PayTab integration", () => {

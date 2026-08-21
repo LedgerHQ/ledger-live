@@ -43,7 +43,23 @@ export type PayCardAuthCallback = Readonly<{
  */
 export type CardLoginOauthConfig = Readonly<{
   clientId: string;
+  /**
+   * Sent to the provider on authorize, and repeated on the token exchange. The provider whitelists
+   * an `https` URL only, so this one cannot be the app's own link. It redirects to `deepLink`.
+   */
   redirectUri: string;
+  /**
+   * The app's own link, which the redirect above lands on. This is what closes the secure browser:
+   * `ASWebAuthenticationSession` takes the scheme of this value as its `callbackURLScheme`, and the
+   * Android polyfill matches the incoming link against the whole of it. Only a custom scheme can end a
+   * session, so the redirect URI above cannot serve here.
+   *
+   * Optional, because only the OS browser can act on it. Desktop opens the page in the user's own
+   * browser, which reports nothing back, so it passes none. Leave it out on a platform that has a
+   * session to end and the login still completes through the app's deep link, but nothing closes the
+   * browser and it stays on top of the app.
+   */
+  deepLink?: string;
 }>;
 
 /* --- What the machine needs from the outside world ------------------------------------------- */
@@ -56,7 +72,7 @@ export type HostedLoginResult =
   | Readonly<{ type: "success"; url: string }>
   | Readonly<{ type: "dismissed" }>;
 
-export type OpenHostedLogin = (loginUrl: string, redirectUri: string) => Promise<HostedLoginResult>;
+export type OpenHostedLogin = (loginUrl: string, deepLink?: string) => Promise<HostedLoginResult>;
 
 /**
  * Everything the login machine needs from the outside world. The machine itself holds no React, no
@@ -79,7 +95,26 @@ export type CardLoginPorts = Readonly<{
   exchangeAuthorizationCode: (request: PayCardAuthorizationCodeRequest) => Promise<PayCardSession>;
   /** Fills the RTK Query cache, so every other screen sees the user too. */
   getUser: () => Promise<PayCardUser>;
+  /**
+   * Publishes "the card holder is signed in" for the components the machine does not render.
+   * `CardLogout` reads that flag to decide whether it belongs on screen.
+   */
+  setSignedIn: (isSignedIn: boolean) => void;
   openHostedLogin: OpenHostedLogin;
+}>;
+
+/**
+ * What the logout needs from the outside world. It is a separate list, because `CardLogout` is a
+ * separate component with no machine: it ends one session and says so, and it never logs anybody in.
+ */
+export type CardLogoutPorts = Readonly<{
+  /** Ends the session at the provider before the local session is cleared. */
+  logout: () => Promise<void>;
+  clearSession: () => Promise<void>;
+  clearAttempt: () => Promise<void>;
+  /** Removes the cached Card user, so no other screen shows whoever just left. */
+  forgetUser: () => void;
+  setSignedIn: (isSignedIn: boolean) => void;
 }>;
 
 /* --- The machine's own shapes ---------------------------------------------------------------- */
@@ -122,10 +157,16 @@ export type CardLoginContext = {
 export type CardLoginEvent =
   | { type: "LOGIN" }
   | { type: "RETRY" }
+  | { type: "SESSION_ENDED" }
   | { type: "CALLBACK_RECEIVED"; code: string; state: string };
 
 /* --- Redux ----------------------------------------------------------------------------------- */
 
 export type PayCardAuthState = Readonly<{
   hasCard: boolean;
+  /**
+   * True while a Card session is live. The login machine owns the value, and every component outside
+   * it reads this flag instead, because two machines would each hydrate and neither would agree.
+   */
+  isSignedIn: boolean;
 }>;

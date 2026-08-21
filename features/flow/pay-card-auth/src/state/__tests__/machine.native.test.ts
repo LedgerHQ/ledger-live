@@ -2,9 +2,12 @@ import { createActor, waitFor, type Actor } from "xstate";
 import { cardLoginMachine } from "../machine";
 import type { CardLoginOauthConfig, CardLoginPorts, PayCardAuthCallback } from "../types";
 
+// Two different values on purpose: the provider gets the `https` redirect, and the browser session
+// ends on the app's deep link. A test that spelled them the same could not catch a swap.
 const oauthConfig: CardLoginOauthConfig = {
   clientId: "client-key",
-  redirectUri: "ledgerlive://paytab",
+  redirectUri: "https://go.test/ledger/card",
+  deepLink: "ledgerlive://paytab",
 };
 
 const attempt = { state: "state-value", codeVerifier: "verifier-value" };
@@ -34,6 +37,7 @@ function stubPorts(overrides: Partial<Ports> = {}): Ports {
     initiateAuthorize: jest.fn(async () => ({ url: "https://card.test/login" })),
     exchangeAuthorizationCode: jest.fn(async () => session),
     getUser: jest.fn(async () => user),
+    setSignedIn: jest.fn(),
     openHostedLogin: jest.fn(async () => ({
       type: "success",
       url: "ledgerlive://paytab?code=auth-code&state=state-value",
@@ -103,7 +107,7 @@ describe("cardLoginMachine cold start", () => {
     await settledAt(actor, "ready");
     expect(ports.exchangeAuthorizationCode).toHaveBeenCalledWith({
       code: "auth-code",
-      redirectUri: "ledgerlive://paytab",
+      redirectUri: "https://go.test/ledger/card",
       codeVerifier: "verifier-value",
     });
     expect(ports.openHostedLogin).not.toHaveBeenCalled();
@@ -142,7 +146,7 @@ describe("cardLoginMachine login", () => {
     expect(ports.saveAttempt).toHaveBeenCalledWith(attempt);
     expect(ports.initiateAuthorize).toHaveBeenCalledWith({
       clientId: "client-key",
-      redirectUri: "ledgerlive://paytab",
+      redirectUri: "https://go.test/ledger/card",
       state: "state-value",
       codeChallenge: "challenge-value",
     });
@@ -329,5 +333,74 @@ describe("cardLoginMachine failures", () => {
     await settledAt(actor, "error");
     expect(actor.getSnapshot().context.errorKind).toBe("fetch_user_failed");
     expect(ports.clearSession).not.toHaveBeenCalled();
+  });
+});
+
+describe("cardLoginMachine signed-in flag", () => {
+  async function signedIn(overrides: Partial<Ports> = {}) {
+    const ports = stubPorts({ hasSession: jest.fn(async () => true), ...overrides });
+    const actor = start(ports);
+    await settledAt(actor, "ready");
+    return { ports, actor };
+  }
+
+  it("publishes the signed-in flag when it reaches ready", async () => {
+    const { ports } = await signedIn();
+
+    // `CardLogout` has no machine of its own, so this flag is the only thing that puts it on screen.
+    expect(ports.setSignedIn).toHaveBeenLastCalledWith(true);
+  });
+
+  it("publishes the signed-out flag when it settles in idle", async () => {
+    const ports = stubPorts();
+    const actor = start(ports);
+
+    await settledAt(actor, "idle");
+
+    expect(ports.setSignedIn).toHaveBeenLastCalledWith(false);
+  });
+
+  it("publishes the signed-out flag when it settles in error", async () => {
+    const ports = stubPorts({
+      createAttempt: jest.fn(async () => Promise.reject(new Error("no csprng"))),
+    });
+    const actor = start(ports);
+    await settledAt(actor, "idle");
+
+    actor.send({ type: "LOGIN" });
+
+    await settledAt(actor, "error");
+    expect(ports.setSignedIn).toHaveBeenLastCalledWith(false);
+  });
+
+  it("puts the login back on offer when a session ends elsewhere", async () => {
+    // `CardLogout` owns that journey and has already ended the session, so nothing is undone here.
+    const { ports, actor } = await signedIn();
+
+    actor.send({ type: "SESSION_ENDED" });
+
+    expect(actor.getSnapshot().value).toBe("idle");
+    expect(ports.clearSession).not.toHaveBeenCalled();
+    expect(ports.setSignedIn).toHaveBeenLastCalledWith(false);
+  });
+
+  it("offers a new login after a session ended elsewhere", async () => {
+    const { ports, actor } = await signedIn();
+    actor.send({ type: "SESSION_ENDED" });
+
+    actor.send({ type: "LOGIN" });
+
+    await waitFor(actor, snapshot => snapshot.value === "awaitingHostedLogin");
+    expect(ports.createAttempt).toHaveBeenCalledTimes(1);
+  });
+
+  it("ignores a session end that arrives before anybody is signed in", async () => {
+    const ports = stubPorts();
+    const actor = start(ports);
+    await settledAt(actor, "idle");
+
+    actor.send({ type: "SESSION_ENDED" });
+
+    expect(actor.getSnapshot().value).toBe("idle");
   });
 });

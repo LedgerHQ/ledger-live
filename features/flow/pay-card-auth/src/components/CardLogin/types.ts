@@ -17,10 +17,14 @@ export type CardLoginViewProps = {
   readonly title: string;
   readonly description: string;
   readonly loginLabel: string;
-  /** True once the user is signed in and the card surface takes over. */
-  readonly isHidden: boolean;
   /** True while the machine works. The login action is not pressable then. */
   readonly isLoading: boolean;
   readonly errorMessage: string | null;
   readonly onLoginPress: () => void;
 };
+
+/**
+ * `null` once the card holder is signed in, because the login has nothing left to offer then.
+ * `CardLogout` takes over at that point, and it reads the same flag to know it.
+ */
+export type CardLoginViewModel = CardLoginViewProps | null;

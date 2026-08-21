@@ -3,6 +3,7 @@ import { cardSession, getCardSessionToken } from "@features/platform-card";
 import type { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
 import { clearAttempt, loadAttempt, saveAttempt } from "./attemptStore";
 import { createAuthorizeAttempt } from "./authorizeAttempt";
+import { setSignedIn } from "./slice";
 import type { CardLoginPorts, OpenHostedLogin } from "./types";
 
 /**
@@ -45,6 +46,9 @@ export function createCardLoginPorts({
         // The subscription must not outlive this call, because CardLogin unmounts right after.
         request.unsubscribe();
       }
+    },
+    setSignedIn: isSignedIn => {
+      dispatch(setSignedIn(isSignedIn));
     },
     openHostedLogin,
   };
