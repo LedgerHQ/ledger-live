@@ -47,7 +47,12 @@ export function usePerpsHandlers(accounts: AccountLike[]): WalletAPICustomHandle
     [navigation],
   );
 
-  const uiDepositExecute = useCallback((_params: PerpsDepositUiParams) => undefined, []);
+  const uiDepositExecute = useCallback(
+    (params: PerpsDepositUiParams) => {
+      navigation.navigate(ScreenName.PerpsDeposit, params);
+    },
+    [navigation],
+  );
 
   return useMemo<WalletAPICustomHandlers>(
     () =>
