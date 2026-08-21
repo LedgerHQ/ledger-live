@@ -5,6 +5,12 @@
 // Content is inlined as string literals (not `with { type: "file" }`) so it
 // behaves identically in `bun run` (dev/tests) and in the standalone binary.
 //
+// SKILL.md is rewritten for standalone use (see rewriteForStandaloneBinary
+// below) before embedding — the source in .agents/skills/ is authored for
+// monorepo contributors (`pnpm --silent wallet-cli start ...`), but this
+// manifest ships inside a globally-installed binary invoked as plain
+// `wallet-cli ...`.
+//
 // The generated file (src/skills/manifest.gen.ts) is NOT committed — it is
 // gitignored (same convention as .bunli/commands.gen.ts) and regenerated before
 // typecheck / test / build via the pre* npm scripts.
@@ -99,6 +105,45 @@ function hashSkillFiles(files) {
   return combined.digest("hex");
 }
 
+// The source SKILL.md is authored from a monorepo-dev point of view (it tells
+// contributors to run `pnpm --silent wallet-cli start <command>` from the repo
+// root). The binary this manifest gets embedded into ships standalone — via
+// `npm i -g @ledgerhq/wallet-cli` and friends — where pnpm/the monorepo aren't
+// present and the entry point is just `wallet-cli`. Rewrite those monorepo-only
+// instructions here (mirrors the equivalent `sed` step in
+// .github/workflows/sync-wallet-cli-skill.yml, which performs the same
+// transform for the copy published to LedgerHQ/agent-skills) so the embedded
+// copy — what `wallet-cli skill retrieve` actually returns — matches how the
+// binary is really invoked, without editing the canonical source SKILL.md.
+const STANDALONE_INSTALL_LINE =
+  "Install globally with a user-preferred package manager — `npm i -g @ledgerhq/wallet-cli`, " +
+  "`pnpm add -g @ledgerhq/wallet-cli`, `yarn global add @ledgerhq/wallet-cli`, or " +
+  "`bun add -g @ledgerhq/wallet-cli`. Run: `wallet-cli [flags]`.";
+
+function rewriteForStandaloneBinary(skillMd) {
+  const rewritten = skillMd
+    .replace(
+      /Run from repo root: `pnpm --silent wallet-cli start <command> \[flags\]`/,
+      STANDALONE_INSTALL_LINE,
+    )
+    .replace(/pnpm --silent wallet-cli start ?/g, "wallet-cli ");
+
+  if (rewritten.includes("pnpm --silent wallet-cli start")) {
+    throw new Error(
+      "Skill generation failed — SKILL.md still contains monorepo-only `pnpm --silent wallet-cli start` " +
+        "commands after rewrite. Update rewriteForStandaloneBinary() in generate-skills-manifest.mjs.",
+    );
+  }
+  if (rewritten.includes("Run from repo root")) {
+    throw new Error(
+      "Skill generation failed — SKILL.md still contains monorepo-only run instructions after rewrite. " +
+        "Update rewriteForStandaloneBinary() in generate-skills-manifest.mjs.",
+    );
+  }
+
+  return rewritten;
+}
+
 /** Extract the `description:` field from a SKILL.md YAML frontmatter block. */
 function parseDescription(skillMd) {
   // Tolerate CRLF checkouts (Windows core.autocrlf) so the frontmatter regex matches.
@@ -149,7 +194,11 @@ async function buildManifest() {
       // Normalize to posix so the generated manifest is stable across OSes.
       const posixRel = rel.split(path.sep).join("/");
       const content = await readSkillFile(path.join(skillDir, rel));
-      files.push({ path: posixRel, content });
+      // Only SKILL.md carries the monorepo-only run instructions — reference
+      // files (e.g. business-logic.md) are prose and left untouched.
+      const embeddedContent =
+        posixRel === "SKILL.md" ? rewriteForStandaloneBinary(content) : content;
+      files.push({ path: posixRel, content: embeddedContent });
     }
 
     skills.push({
