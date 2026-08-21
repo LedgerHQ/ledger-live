@@ -1,4 +1,5 @@
 import { renderHook, act } from "@tests/test-renderer";
+import { AssetCategory } from "@domain/api-aggregated-assets";
 import { useModularDrawerController } from "../useModularDrawerController";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { AccountLike } from "@ledgerhq/types-live";
@@ -42,6 +43,26 @@ describe("useModularDrawerController", () => {
     expect(state.enableAccountSelection).toBe(true);
     expect(state.preselectedCurrencies).toEqual(["bitcoin"]);
     expect(state.presentation).toBe("drawer");
+  });
+
+  it("should store asset categories and reset them on close", () => {
+    const { result, store } = renderHook(() => useModularDrawerController());
+
+    act(() => {
+      result.current.openDrawer({
+        flow: "receive_flow",
+        source: "test_source",
+        categories: [AssetCategory.Stablecoins],
+      });
+    });
+
+    expect(store.getState().modularDrawer.categories).toEqual([AssetCategory.Stablecoins]);
+
+    act(() => {
+      result.current.closeDrawer();
+    });
+
+    expect(store.getState().modularDrawer.categories).toBeUndefined();
   });
 
   it("should close the drawer when closeDrawer is called", () => {

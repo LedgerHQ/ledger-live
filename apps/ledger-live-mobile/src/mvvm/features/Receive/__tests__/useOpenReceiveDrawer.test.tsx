@@ -1,4 +1,5 @@
 import { renderHook, act } from "@testing-library/react-native";
+import { AssetCategory } from "@domain/api-aggregated-assets";
 import { useOpenReceiveDrawer } from "../index";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 import { mockEthCryptoCurrency } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
@@ -145,6 +146,26 @@ describe("useOpenReceiveDrawer", () => {
         enableAccountSelection: true,
         onAccountSelected: expect.any(Function),
       });
+    });
+
+    it("should forward asset categories to the modular drawer for a category-filtered flow", () => {
+      const { result } = renderHook(() =>
+        useOpenReceiveDrawer(
+          createTestProps({ currency: undefined, categories: [AssetCategory.Stablecoins] }),
+        ),
+      );
+
+      act(() => {
+        result.current.handleOpenReceiveDrawer();
+      });
+
+      expect(mockOpenDrawer).toHaveBeenCalledWith(
+        expect.objectContaining({
+          currencies: [],
+          categories: [AssetCategory.Stablecoins],
+          areCurrenciesFiltered: false,
+        }),
+      );
     });
 
     it("should give currencyIds priority over currency when both are provided", () => {
