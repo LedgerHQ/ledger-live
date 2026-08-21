@@ -8,6 +8,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./utils/getNanoOnlyDeviceModel": "./src/utils/getNanoOnlyDeviceModel.ts",
+    "./utils/isLargeScreenUpsellBannerEnabled": "./src/utils/isLargeScreenUpsellBannerEnabled.ts",
     "./utils/upsellCta": "./src/utils/upsellCta.ts",
     "./schema.mock": "./src/state/schema.mock.ts",
     "./package.json": "./package.json"
