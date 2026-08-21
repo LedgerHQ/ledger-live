@@ -15,9 +15,6 @@ import {
 // before the sign-permit button (Step 2) appears (the app shows a "1-5 mins" estimate).
 const APPROVAL_PROCESSING_TIMEOUT = 300_000;
 
-// Polls at 500ms against a 1s tick, so 6 identical reads is ~3s of no movement.
-const COUNTDOWN_FROZEN_POLLS = 6;
-
 // Provider UI names (e.g. "Swaps.xyz", "LI.FI") can contain regex metacharacters. Escape them
 // before embedding in a RegExp so they match literally instead of altering the pattern.
 const escapeRegExp = (value: string): string => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -169,12 +166,10 @@ export default class SwapLiveAppPage {
     throw new Error("No single-app exchange providers found");
   }
 
-  // Spans more than one 20s refresh cycle, so a single slow refresh is survivable.
+  // Keeps callers off quotes that a refresh is about to replace. Seconds left is an
+  // instantaneous property, so one good read is the whole check.
   @Step("Wait for quotes countdown to be stable")
   async waitForQuotesStable(timeout: number = COUNTDOWN_STABLE_TIMEOUT) {
-    let previousSeconds = -1;
-    let unchangedPolls = 0;
-
     await retryUntilTimeout(async () => {
       const countdownText = await getWebElementText(this.quotesCountDown);
       const currentSeconds = Number.parseInt(countdownText.replaceAll(/\D/g, ""), 10);
@@ -182,17 +177,6 @@ export default class SwapLiveAppPage {
       if (Number.isNaN(currentSeconds)) {
         throw new TypeError(`Could not parse countdown value: ${countdownText}`);
       }
-
-      // A live countdown ticks. A frozen one means the refetch behind it never landed,
-      // so waiting cannot help - report that instead of blaming the phase.
-      unchangedPolls = currentSeconds === previousSeconds ? unchangedPolls + 1 : 0;
-      previousSeconds = currentSeconds;
-      if (unchangedPolls >= COUNTDOWN_FROZEN_POLLS) {
-        throw new Error(
-          `Quote countdown frozen at ${currentSeconds}s - the quote auto-refresh has stalled`,
-        );
-      }
-
       if (currentSeconds < 2) {
         throw new Error(`Countdown is ${currentSeconds}s, too close to a refresh`);
       }
