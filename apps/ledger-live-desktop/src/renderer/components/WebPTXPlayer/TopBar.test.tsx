@@ -176,10 +176,7 @@ describe("TopBar", () => {
 
     render(
       <MemoryRouter initialEntries={["/"]}>
-        <TopBar
-          {...defaultProps}
-          webviewState={{ ...mockWebviewState, url: urlWithoutFlowName }}
-        />
+        <TopBar {...defaultProps} webviewState={{ ...mockWebviewState, url: urlWithoutFlowName }} />
       </MemoryRouter>,
     );
 
