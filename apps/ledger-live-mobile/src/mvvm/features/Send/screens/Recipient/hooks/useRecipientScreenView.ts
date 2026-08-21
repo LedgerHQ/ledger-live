@@ -91,6 +91,8 @@ export function useRecipientScreenView({
     isLoading,
     result,
     mainAccount,
+    hasAddressBook,
+    addressBookFamilyName: mainAccount.currency.name,
     showInitialState,
     showEmptyContactsState,
     clipboardAddress,

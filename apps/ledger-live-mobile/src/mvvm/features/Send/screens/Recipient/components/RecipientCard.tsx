@@ -14,6 +14,7 @@ import {
 } from "@ledgerhq/lumen-ui-rnative";
 import { Wallet } from "@ledgerhq/lumen-ui-rnative/symbols";
 import React from "react";
+import { AddContactAction } from "./AddContactAction";
 
 type RecipientCardProps = Readonly<{
   recipient: string;
@@ -21,6 +22,9 @@ type RecipientCardProps = Readonly<{
   contact?: MatchedContact;
   isReady: boolean;
   showActions: boolean;
+  hasAddressBook: boolean;
+  addressBookUnsupportedTitle: string;
+  addressBookUnsupportedDescription: string;
   addContactLabel: string;
   sendLabel: string;
   onSend: () => void;
@@ -32,6 +36,9 @@ export function RecipientCard({
   contact,
   isReady,
   showActions,
+  hasAddressBook,
+  addressBookUnsupportedTitle,
+  addressBookUnsupportedDescription,
   addContactLabel,
   sendLabel,
   onSend,
@@ -73,15 +80,12 @@ export function RecipientCard({
           }}
         >
           {!contact && (
-            <Button
-              appearance="gray"
-              size="sm"
-              onPress={() => undefined}
-              testID="send-recipient-card-add-contact"
-              lx={{ flex: 1 }}
-            >
-              {addContactLabel}
-            </Button>
+            <AddContactAction
+              hasAddressBook={hasAddressBook}
+              label={addContactLabel}
+              unsupportedTitle={addressBookUnsupportedTitle}
+              unsupportedDescription={addressBookUnsupportedDescription}
+            />
           )}
           <Button
             appearance="base"

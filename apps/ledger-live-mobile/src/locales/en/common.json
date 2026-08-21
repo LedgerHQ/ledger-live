@@ -4537,6 +4537,10 @@
       "account": "Account",
       "alreadyUsed": "Already used · {{date}}",
       "notInRecentHistory": "Not in your recent history",
+      "addressBookUnsupported": {
+        "title": "{{family}} isn't supported yet",
+        "description": "You can't add a {{family}} address to your contacts yet. We're adding more cryptos over time."
+      },
       "relativeDate": {
         "justNow": "Just now",
         "minutesAgo_one": "1 min ago",
