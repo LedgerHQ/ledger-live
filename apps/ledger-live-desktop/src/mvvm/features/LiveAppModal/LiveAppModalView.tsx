@@ -8,6 +8,10 @@ import useLiveAppModalContentViewModel, {
 } from "./useLiveAppModalContentViewModel";
 import useEarnLiveAppModalContentViewModel from "./useEarnLiveAppModalContentViewModel";
 import type { LiveAppModalViewProps } from "./useLiveAppModalViewModel";
+import {
+  capturePreviouslyFocusedElement,
+  restorePreviouslyFocusedElement,
+} from "./liveAppModalFocus";
 
 const LiveAppModalContent = ({
   params,
@@ -64,18 +68,13 @@ const LiveAppModalView = ({ isOpen, params, onOpenChange, onClose }: LiveAppModa
   const previouslyFocusedElementRef = useRef<HTMLElement | null>(null);
 
   const handleOpenAutoFocus = useCallback(() => {
-    const activeElement = document.activeElement;
-    previouslyFocusedElementRef.current =
-      activeElement instanceof HTMLElement ? activeElement : null;
+    previouslyFocusedElementRef.current = capturePreviouslyFocusedElement(document.activeElement);
   }, []);
 
   const handleCloseAutoFocus = useCallback((event: Event) => {
     event.preventDefault();
     requestAnimationFrame(() => {
-      const previouslyFocusedElement = previouslyFocusedElementRef.current;
-      if (previouslyFocusedElement?.isConnected) {
-        previouslyFocusedElement.focus();
-      }
+      restorePreviouslyFocusedElement(previouslyFocusedElementRef.current);
     });
   }, []);
 

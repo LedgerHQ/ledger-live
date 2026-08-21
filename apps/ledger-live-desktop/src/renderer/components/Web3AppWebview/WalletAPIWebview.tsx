@@ -30,7 +30,7 @@ import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
 import BigSpinner from "../BigSpinner";
 import { NetworkErrorScreen } from "./NetworkError";
 import { DappAccountGate } from "./DappAccountGate";
-import { useWebviewState } from "./helpers";
+import { useRestoreWebviewFocus, useWebviewState, withWebviewFocusRestore } from "./helpers";
 import { Loader as StyledLoader } from "./styled";
 import { WebviewAPI, WebviewProps, WebviewTag } from "./types";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
@@ -90,14 +90,7 @@ function useUiHook(
           areCurrenciesFiltered,
           useCase,
           uiUseCase,
-          onSuccess: (account, parentAccount) => {
-            onSuccess(account, parentAccount);
-            restoreWebviewFocus();
-          },
-          onCancel: () => {
-            onCancel();
-            restoreWebviewFocus();
-          },
+          ...withWebviewFocusRestore({ onSuccess, onCancel }, restoreWebviewFocus),
         });
       },
       "account.receive": ({
@@ -314,9 +307,7 @@ function useWebView(
   const accounts = useSelector(flattenAccountsSelector);
   const mevProtected = useSelector(mevProtectionSelector);
 
-  const restoreWebviewFocus = useCallback(() => {
-    requestAnimationFrame(() => webviewRef.current?.focus());
-  }, [webviewRef]);
+  const restoreWebviewFocus = useRestoreWebviewFocus(webviewRef);
   const uiHook = useUiHook(manifest, tracking, restoreWebviewFocus);
   const shareAnalytics = useSelector(shareAnalyticsSelector);
   const userId = useGetUserId();

@@ -22,7 +22,7 @@ import { setDrawer } from "~/renderer/drawers/Provider";
 import { WebviewAPI, WebviewState, WebviewTag } from "./types";
 import { useDappCurrentAccount } from "@ledgerhq/live-common/wallet-api/useDappLogic";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
-import { AccountLike } from "@ledgerhq/types-live";
+import { Account, AccountLike } from "@ledgerhq/types-live";
 import { useDispatch } from "LLD/hooks/redux";
 import { setFlowValue, setSourceValue } from "~/renderer/reducers/modularDialog";
 import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
@@ -371,4 +371,36 @@ export function useSelectAccount({
   }, [dispatch, flow, openAssetAndAccount, currencyIds, onSuccess, onCancel]);
 
   return { onSelectAccount, currentAccount };
+}
+
+/**
+ * Host dialogs (account picker, live app modal) take keyboard focus away from the
+ * webview, and an embedded live app cannot claim it back on its own. Hand focus
+ * back on the next frame, once the dialog has finished unmounting.
+ */
+export function useRestoreWebviewFocus(webviewRef: RefObject<WebviewTag | null>) {
+  return useCallback(() => {
+    requestAnimationFrame(() => webviewRef.current?.focus());
+  }, [webviewRef]);
+}
+
+type AccountRequestCallbacks = {
+  onSuccess: (account: AccountLike, parentAccount?: Account) => void;
+  onCancel: () => void;
+};
+
+export function withWebviewFocusRestore(
+  { onSuccess, onCancel }: AccountRequestCallbacks,
+  restoreWebviewFocus: () => void,
+): AccountRequestCallbacks {
+  return {
+    onSuccess: (account, parentAccount) => {
+      onSuccess(account, parentAccount);
+      restoreWebviewFocus();
+    },
+    onCancel: () => {
+      onCancel();
+      restoreWebviewFocus();
+    },
+  };
 }
