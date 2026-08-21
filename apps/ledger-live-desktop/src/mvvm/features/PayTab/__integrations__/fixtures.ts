@@ -28,6 +28,13 @@ export const dieEnabledState = {
   ...withFlagOverrides({ ldmkTransport: { enabled: true } }),
 };
 
+export const newSendFlowEnabledState = {
+  ...fundedState,
+  ...withFlagOverrides({
+    newSendFlow: { enabled: true, params: { families: ["evm"], excludedCurrencyIds: [] } },
+  }),
+};
+
 export const defaultPayStablecoins: PayStablecoins = {
   stablecoins: [],
   defaultStablecoins: [USDC, USDT],

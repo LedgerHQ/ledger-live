@@ -19,6 +19,7 @@ import { payCardFeatureTourInitialState } from "@features/flow-pay-card-feature-
 import PayTab from "LLD/features/PayTab";
 import { usePayStablecoins, type PayStablecoins } from "../hooks/usePayStablecoins";
 import { USDC, makeItem } from "../hooks/__tests__/fixtures";
+import { AssetCategory } from "@domain/api-aggregated-assets";
 import {
   EMPTY_DESCRIPTION,
   EMPTY_TITLE,
@@ -28,6 +29,7 @@ import {
   defaultPayStablecoins,
   dieEnabledState,
   fundedState,
+  newSendFlowEnabledState,
   onboardedState,
   tourSeenState,
 } from "./fixtures";
@@ -218,6 +220,26 @@ describe("PayTab integration", () => {
 
     expect(await screen.findByTestId("pay-card-deposit-options")).toBeVisible();
     expect(screen.getByTestId("pay-card-deposit-option-swap")).toBeVisible();
+  });
+
+  it("should open the stablecoin-filtered send account selection from the new payment action tile", async () => {
+    mockFundedPayStablecoins();
+
+    const { store } = renderWithMockedCounterValuesProvider(<PayTab />, {
+      initialState: newSendFlowEnabledState,
+    });
+
+    const payTile = await screen.findByRole("button", { name: "New payment" });
+    fireEvent.click(payTile);
+
+    await waitFor(() => {
+      expect(store.getState().modularDialog.isOpen).toBe(true);
+    });
+    expect(store.getState().modularDialog.flow).toBe("send");
+    expect(store.getState().modularDialog.source).toBe("Pay");
+    expect(store.getState().modularDialog.dialogParams?.categories).toEqual([
+      AssetCategory.Stablecoins,
+    ]);
   });
 
   it("should persist the selected stablecoin, update the hero pill and track the confirmation", async () => {
