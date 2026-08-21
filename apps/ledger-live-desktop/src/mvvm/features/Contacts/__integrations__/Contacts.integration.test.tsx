@@ -838,7 +838,7 @@ describe("Contacts integration", () => {
     expect(screen.getByTestId("contacts-rename-contact-dialog")).toBeVisible();
     expect(screen.getByTestId("contacts-rename-contact-confirm")).toBeDisabled();
 
-    fireEvent.change(screen.getByTestId("contacts-add-contact-name-input"), {
+    fireEvent.change(screen.getByTestId("contacts-rename-contact-name-input"), {
       target: { value: "Alice" },
     });
 

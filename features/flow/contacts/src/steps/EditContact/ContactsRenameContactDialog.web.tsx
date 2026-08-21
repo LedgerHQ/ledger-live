@@ -39,6 +39,7 @@ export function ContactsRenameContactDialog({
         <DialogBody className="flex flex-col gap-32 px-24 pb-24">
           <div className="flex flex-col gap-24">
             <ContactNameInput
+              testIDPrefix="contacts-rename-contact"
               value={draftName}
               placeholder={labels.namePlaceholder}
               errorMessage={nameValidationError}

@@ -26,10 +26,10 @@ export function ContactDetailHeader({
       <Box lx={{ alignItems: "center", gap: "s16" }}>
         <ContactDetailAvatar contact={contact} meAvatarSrc={meAvatarSrc} />
         <Box lx={{ alignItems: "center", gap: "s4" }}>
-          <Text typography="heading3SemiBold" lx={{ color: "base" }}>
+          <Text testID="contacts-detail-name" typography="heading3SemiBold" lx={{ color: "base" }}>
             {displayName}
           </Text>
-          <Text typography="body2" lx={{ color: "muted" }}>
+          <Text testID="contacts-detail-address-count" typography="body2" lx={{ color: "muted" }}>
             {labels.formatAddressCount(contact.addresses.length)}
           </Text>
         </Box>

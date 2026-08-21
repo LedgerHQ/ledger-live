@@ -38,8 +38,10 @@ export function ContactsMeListItem({
           alt={contact.name}
         />
         <ListItemContent>
-          <ListItemTitle>{contact.name}</ListItemTitle>
-          <ListItemDescription>{addressCountLabel}</ListItemDescription>
+          <ListItemTitle testID="contacts-me-name">{contact.name}</ListItemTitle>
+          <ListItemDescription testID="contacts-me-address-count">
+            {addressCountLabel}
+          </ListItemDescription>
         </ListItemContent>
       </ListItemLeading>
     </ListItem>
