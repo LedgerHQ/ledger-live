@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   createIntent,
   type Intent,
@@ -10,12 +10,12 @@ import type {
   EditExternalAddressInput,
   EditExternalAddressResult,
 } from "../contactDeviceIntentsPort";
+import { ContactDeviceIntentCancelledError, ContactDeviceIntentMissingResultError } from "./errors";
 import {
   createEditExternalAddressOperation,
   createRegisterExternalAddressOperation,
   createRenameExternalContactOperation,
 } from "./operations";
-import { SingleFlightRequestController } from "./singleFlightRequestController";
 import type {
   ContactDeviceIntent,
   ContactDeviceIntentInput,
@@ -27,16 +27,16 @@ import type {
 
 const DEVICE_CONNECTION_PARAMS = { acceptedDeviceModelIds: [] };
 
-const createContactIntent = createIntent as <JobState, Input, ExtraProps>(
-  definition: IntentPlatformDefinition<JobState, Input, ExtraProps>,
+const createContactIntent = createIntent as <JobState, Input, ExtraProps, Result>(
+  definition: IntentPlatformDefinition<JobState, Input, ExtraProps, Result>,
   input: Input,
-  listeners?: IntentListeners<JobState>,
-) => Intent<JobState, Input, ExtraProps>;
+  listeners?: IntentListeners<JobState, Result>,
+) => Intent<JobState, Input, ExtraProps, Result>;
 
 type ActiveIntent = Readonly<{
-  requestId: number;
   intent: ContactDeviceIntent;
   initializationInput: ContactsDeviceInitializationInput;
+  cancel: () => void;
 }>;
 
 export type ContactsIntentsOrchestrator = Readonly<{
@@ -45,56 +45,63 @@ export type ContactsIntentsOrchestrator = Readonly<{
 }>;
 
 export function useContactsIntentsOrchestrator(): ContactsIntentsOrchestrator {
-  const controllerRef = useRef(new SingleFlightRequestController());
   const [activeIntent, setActiveIntent] = useState<ActiveIntent>();
 
-  const clearActiveIntent = useCallback((requestId: number) => {
-    setActiveIntent(current => (current?.requestId === requestId ? undefined : current));
-  }, []);
-
   const execute = useCallback(
-    <JobState extends ContactDeviceIntentJobState, Input extends ContactDeviceIntentInput, Result>(
-      operation: ContactOperation<JobState, Input, Result>,
-    ): Promise<Result> => {
-      const request = controllerRef.current.start(operation.classify);
-      const intent = createContactIntent(operation.definition, operation.input, {
-        onJobStateChanged: request.capture,
-        onJobComplete: () => {
-          if (request.complete()) {
-            clearActiveIntent(request.id);
-          }
-        },
-        onJobError: error => {
-          if (request.fail(error)) {
-            clearActiveIntent(request.id);
-          }
-        },
-      });
+    <
+      JobState extends ContactDeviceIntentJobState,
+      Input extends ContactDeviceIntentInput,
+      IntentResult,
+      Result,
+    >(
+      operation: ContactOperation<JobState, Input, IntentResult, Result>,
+    ): Promise<Result> =>
+      new Promise<Result>((resolve, reject) => {
+        let hasReportedResult = false;
+        const intent = createContactIntent(operation.intentDefinition, operation.intentInput, {
+          onResult: result => {
+            if (hasReportedResult) {
+              return;
+            }
+            hasReportedResult = true;
+            try {
+              resolve(operation.mapIntentResultToResult(result));
+            } catch (error) {
+              reject(error);
+            }
+          },
+          onJobComplete: () => {
+            if (!hasReportedResult) {
+              hasReportedResult = true;
+              reject(new ContactDeviceIntentMissingResultError());
+            }
+            setActiveIntent(undefined);
+          },
+          onJobError: error => {
+            hasReportedResult = true;
+            reject(error);
+            setActiveIntent(undefined);
+          },
+        });
 
-      setActiveIntent({
-        requestId: request.id,
-        intent: intent as unknown as ContactDeviceIntent,
-        initializationInput: operation.initializationInput,
-      });
-
-      return request.promise;
-    },
-    [clearActiveIntent],
+        setActiveIntent({
+          intent: intent as unknown as ContactDeviceIntent,
+          initializationInput: operation.initializationInput,
+          cancel: () => {
+            if (!hasReportedResult) {
+              hasReportedResult = true;
+              reject(new ContactDeviceIntentCancelledError());
+            }
+          },
+        });
+      }),
+    [],
   );
 
   const editExternalAddress = useCallback(
     async (input: EditExternalAddressInput): Promise<EditExternalAddressResult> => {
-      const request = createEditExternalAddressOperation(input);
-      switch (request.type) {
-        case "immediate":
-          return request.result;
-        case "identifier":
-          return execute(request.operation);
-        case "scope":
-          return execute(request.operation);
-        case "combined":
-          return execute(request.operation);
-      }
+      const operation = createEditExternalAddressOperation(input);
+      return operation === null ? input.address.device : execute(operation);
     },
     [execute],
   );
@@ -110,16 +117,16 @@ export function useContactsIntentsOrchestrator(): ContactsIntentsOrchestrator {
   );
 
   const cancel = useCallback(() => {
+    activeIntent?.cancel();
     setActiveIntent(undefined);
-    controllerRef.current.cancel();
-  }, []);
+  }, [activeIntent]);
 
-  useEffect(
-    () => () => {
-      controllerRef.current.cancel();
-    },
-    [],
-  );
+  useEffect(() => {
+    if (activeIntent === undefined) {
+      return;
+    }
+    return activeIntent.cancel;
+  }, [activeIntent]);
 
   const dieProps = useMemo<ContactsDeviceIntentExecutorProps | undefined>(() => {
     if (activeIntent === undefined) {
@@ -133,9 +140,6 @@ export function useContactsIntentsOrchestrator(): ContactsIntentsOrchestrator {
       intent: activeIntent.intent,
       intentComponentExtraProps: undefined,
       onExecutorStateChanged: () => undefined,
-      onIntentJobStateChanged: () => undefined,
-      onIntentJobComplete: () => undefined,
-      onIntentJobError: () => undefined,
       onUserCancel: cancel,
       cancelIntentRequestId: undefined,
     };

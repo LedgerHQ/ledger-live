@@ -4,16 +4,22 @@ import type {
   IntentPlatformDefinition,
 } from "@features/platform-device-intent";
 import type {
+  ContactIntentResult,
   EditExternalAddressIdentifierIntentInput,
   EditExternalAddressIdentifierJobState,
+  EditExternalAddressIdentifierResult,
   EditExternalAddressIntentInput,
   EditExternalAddressJobState,
+  EditExternalAddressResult,
   EditExternalAddressScopeIntentInput,
   EditExternalAddressScopeJobState,
+  EditExternalAddressScopeResult,
   RegisterExternalAddressIntentInput,
   RegisterExternalAddressJobState,
+  RegisterExternalAddressResult,
   RenameContactIntentInput,
   RenameContactJobState,
+  RenameContactResult,
 } from "./intents";
 
 export type ContactsDeviceInitializationInput = Readonly<{
@@ -36,34 +42,31 @@ export type ContactDeviceIntentInput =
   | EditExternalAddressScopeIntentInput
   | EditExternalAddressIntentInput;
 
+export type ContactDeviceIntentResult =
+  | ContactIntentResult<RegisterExternalAddressResult>
+  | ContactIntentResult<RenameContactResult>
+  | ContactIntentResult<EditExternalAddressIdentifierResult>
+  | ContactIntentResult<EditExternalAddressScopeResult>
+  | ContactIntentResult<EditExternalAddressResult>;
+
 export type ContactDeviceIntent = Intent<
   ContactDeviceIntentJobState,
   ContactDeviceIntentInput,
-  undefined
+  undefined,
+  ContactDeviceIntentResult
 >;
 
 export type ContactsDeviceIntentExecutorProps = DeviceIntentExecutorProps<
   ContactDeviceIntentJobState,
   ContactDeviceIntentInput,
   undefined,
-  ContactsDeviceInitializationInput
+  ContactsDeviceInitializationInput,
+  ContactDeviceIntentResult
 >;
 
-export type ContactOperationOutcome<Result> =
-  | { readonly type: "pending" }
-  | { readonly type: "success"; readonly result: Result }
-  | { readonly type: "failure"; readonly error: Error };
-
-export type ContactOperation<JobState, Input, Result> = Readonly<{
-  definition: IntentPlatformDefinition<JobState, Input, undefined>;
-  input: Input;
+export type ContactOperation<JobState, Input, IntentResult, Result> = Readonly<{
+  intentDefinition: IntentPlatformDefinition<JobState, Input, undefined, IntentResult>;
+  intentInput: Input;
   initializationInput: ContactsDeviceInitializationInput;
-  classify: (state: JobState) => ContactOperationOutcome<Result>;
+  mapIntentResultToResult: (result: IntentResult) => Result;
 }>;
-
-export type ContactOperationRequest<JobState, Input, Result> =
-  | {
-      readonly type: "intent";
-      readonly operation: ContactOperation<JobState, Input, Result>;
-    }
-  | { readonly type: "immediate"; readonly result: Result };

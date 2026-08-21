@@ -4,41 +4,36 @@ import {
 } from "@domain/entity-contact";
 import type {
   RegisterExternalAddressInput,
-  RegisterExternalAddressResult,
+  RegisterExternalAddressResult as PortResult,
 } from "../../contactDeviceIntentsPort";
 import {
   registerExternalAddressIntentPlatformDefinition,
+  type ContactIntentResult,
   type RegisterExternalAddressIntentInput,
   type RegisterExternalAddressJobState,
+  type RegisterExternalAddressResult as IntentResult,
 } from "../intents";
 import { resolveContactDeviceContext } from "../resolveContactDeviceContext";
-import type { ContactOperation, ContactOperationOutcome } from "../types";
+import type { ContactOperation } from "../types";
 
-function classifyRegisterExternalAddress(
-  state: RegisterExternalAddressJobState,
-): ContactOperationOutcome<RegisterExternalAddressResult> {
-  switch (state.type) {
-    case "completed":
-      return {
-        type: "success",
-        result: {
-          deviceCredentials: DeviceContactGroupCredentialsSchema.parse({
-            groupHandle: state.result.groupHandle,
-            hmacProof: state.result.hmacProof,
-          }),
-          addressDeviceContext: ExternalAddressDeviceContextSchema.parse({
-            blockchainFamily: state.result.blockchainFamily,
-            chainId: state.result.chainId,
-            hmacRest: state.result.hmacRest,
-          }),
-        },
-      };
-    case "failed":
-      return { type: "failure", error: state.error };
-    case "pending":
-    case "awaiting-device-confirmation":
-      return { type: "pending" };
+type IntentOutcome = ContactIntentResult<IntentResult>;
+
+function mapIntentResultToResult(outcome: IntentOutcome): PortResult {
+  if (outcome.type === "failure") {
+    throw outcome.error;
   }
+  const { result } = outcome;
+  return {
+    deviceCredentials: DeviceContactGroupCredentialsSchema.parse({
+      groupHandle: result.groupHandle,
+      hmacProof: result.hmacProof,
+    }),
+    addressDeviceContext: ExternalAddressDeviceContextSchema.parse({
+      blockchainFamily: result.blockchainFamily,
+      chainId: result.chainId,
+      hmacRest: result.hmacRest,
+    }),
+  };
 }
 
 export function createRegisterExternalAddressOperation(
@@ -46,13 +41,14 @@ export function createRegisterExternalAddressOperation(
 ): ContactOperation<
   RegisterExternalAddressJobState,
   RegisterExternalAddressIntentInput,
-  RegisterExternalAddressResult
+  IntentOutcome,
+  PortResult
 > {
   const context = resolveContactDeviceContext(input.currencyId);
 
   return {
-    definition: registerExternalAddressIntentPlatformDefinition,
-    input: {
+    intentDefinition: registerExternalAddressIntentPlatformDefinition,
+    intentInput: {
       contactName: input.contact.name,
       scope: input.label,
       address: input.address,
@@ -63,6 +59,6 @@ export function createRegisterExternalAddressOperation(
         : { existingContactGroup: input.contact.deviceCredentials }),
     },
     initializationInput: context.initializationInput,
-    classify: classifyRegisterExternalAddress,
+    mapIntentResultToResult,
   };
 }

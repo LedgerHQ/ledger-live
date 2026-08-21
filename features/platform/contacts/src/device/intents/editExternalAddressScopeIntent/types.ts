@@ -3,6 +3,7 @@ import type {
   IntentDefinition,
   IntentPlatformDefinition,
 } from "@features/platform-device-intent";
+import type { ContactIntentResult } from "../result";
 
 type ContactIdentifier = string;
 type ChainId = string | number;
@@ -37,23 +38,26 @@ export type EditExternalAddressScopeResult = Readonly<{
 export type EditExternalAddressScopeJobState =
   | { readonly type: "pending" }
   | { readonly type: "awaiting-device-confirmation" }
-  | { readonly type: "completed"; readonly result: EditExternalAddressScopeResult }
+  | { readonly type: "completed" }
   | { readonly type: "failed"; readonly error: Error };
 
 export type EditExternalAddressScopeIntentDefinition = IntentDefinition<
   EditExternalAddressScopeJobState,
-  EditExternalAddressScopeIntentInput
+  EditExternalAddressScopeIntentInput,
+  ContactIntentResult<EditExternalAddressScopeResult>
 >;
 
 export type EditExternalAddressScopeIntentPlatformDefinition<ExtraProps = undefined> =
   IntentPlatformDefinition<
     EditExternalAddressScopeJobState,
     EditExternalAddressScopeIntentInput,
-    ExtraProps
+    ExtraProps,
+    ContactIntentResult<EditExternalAddressScopeResult>
   >;
 
 export type EditExternalAddressScopeIntent<ExtraProps = undefined> = Intent<
   EditExternalAddressScopeJobState,
   EditExternalAddressScopeIntentInput,
-  ExtraProps
+  ExtraProps,
+  ContactIntentResult<EditExternalAddressScopeResult>
 >;

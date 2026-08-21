@@ -6,10 +6,7 @@ import {
   selectContactById,
   updateAddress as updateAddressAction,
 } from "@domain/entity-contact";
-import {
-  EditExternalAddressError,
-  type ContactDeviceIntentsPort,
-} from "@features/platform-contacts";
+import type { ContactDeviceIntentsPort } from "@features/platform-contacts";
 import type { ContactAddressDetailActionsDataPorts } from "./model/ports";
 
 type ContactAddressDetailActionsPortsDeps = Readonly<{
@@ -36,29 +33,12 @@ export function createContactAddressDetailActionsPorts({
           throw new ContactError(`Contact not found: ${contactId}`);
         }
         const parsedLabel = parseContactAddressLabel(label);
-        let device;
-        try {
-          device = await deviceIntents.editExternalAddress({
-            contact: currentContact,
-            address: currentAddress,
-            label: parsedLabel,
-            updatedAddress: address,
-          });
-        } catch (error) {
-          if (error instanceof EditExternalAddressError && error.partialResult !== undefined) {
-            dispatch(
-              updateAddressAction({
-                contactId,
-                address: {
-                  ...currentAddress,
-                  address,
-                  device: error.partialResult,
-                },
-              }),
-            );
-          }
-          throw error;
-        }
+        const device = await deviceIntents.editExternalAddress({
+          contact: currentContact,
+          address: currentAddress,
+          updatedLabel: parsedLabel,
+          updatedAddress: address,
+        });
 
         dispatch(
           updateAddressAction({

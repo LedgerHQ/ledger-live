@@ -51,7 +51,7 @@ describe("createMockContactDeviceIntentsPort", () => {
       port.editExternalAddress({
         contact,
         address,
-        label: ContactAddressLabelSchema.parse("Treasury"),
+        updatedLabel: ContactAddressLabelSchema.parse("Treasury"),
         updatedAddress: address.address,
       }),
     ).resolves.toMatchObject({

@@ -5,35 +5,35 @@ import type {
 } from "../../contactDeviceIntentsPort";
 import {
   renameContactIntentPlatformDefinition,
+  type ContactIntentResult,
   type RenameContactIntentInput,
   type RenameContactJobState,
+  type RenameContactResult,
 } from "../intents";
 import { resolveContactDeviceContext } from "../resolveContactDeviceContext";
-import type { ContactOperation, ContactOperationOutcome } from "../types";
+import type { ContactOperation } from "../types";
 
-function classifyRenameExternalContact(
-  state: RenameContactJobState,
-): ContactOperationOutcome<RenameExternalContactResult> {
-  switch (state.type) {
-    case "completed":
-      return {
-        type: "success",
-        result: DeviceContactGroupCredentialsSchema.parse({
-          groupHandle: state.result.groupHandle,
-          hmacProof: state.result.hmacProof,
-        }),
-      };
-    case "failed":
-      return { type: "failure", error: state.error };
-    case "pending":
-    case "awaiting-device-confirmation":
-      return { type: "pending" };
+type IntentOutcome = ContactIntentResult<RenameContactResult>;
+
+function mapIntentResultToResult(outcome: IntentOutcome): RenameExternalContactResult {
+  if (outcome.type === "failure") {
+    throw outcome.error;
   }
+  const { result } = outcome;
+  return DeviceContactGroupCredentialsSchema.parse({
+    groupHandle: result.groupHandle,
+    hmacProof: result.hmacProof,
+  });
 }
 
 export function createRenameExternalContactOperation(
   input: RenameExternalContactInput,
-): ContactOperation<RenameContactJobState, RenameContactIntentInput, RenameExternalContactResult> {
+): ContactOperation<
+  RenameContactJobState,
+  RenameContactIntentInput,
+  IntentOutcome,
+  RenameExternalContactResult
+> {
   const address = input.contact.addresses[0];
   const credentials = input.contact.deviceCredentials;
 
@@ -42,14 +42,14 @@ export function createRenameExternalContactOperation(
   }
 
   return {
-    definition: renameContactIntentPlatformDefinition,
-    input: {
+    intentDefinition: renameContactIntentPlatformDefinition,
+    intentInput: {
       previousContactName: input.contact.name,
       newContactName: input.name,
       groupHandle: credentials.groupHandle,
       hmacProof: credentials.hmacProof,
     },
     initializationInput: resolveContactDeviceContext(address.currencyId).initializationInput,
-    classify: classifyRenameExternalContact,
+    mapIntentResultToResult,
   };
 }

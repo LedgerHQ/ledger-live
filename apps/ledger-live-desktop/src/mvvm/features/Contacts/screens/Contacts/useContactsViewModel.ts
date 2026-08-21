@@ -19,7 +19,6 @@ import {
   createContactsSearchViewModel,
   type ContactAddressDetailDialogProps,
   type ContactsListViewLabels,
-  type ContactsViewProps,
   CONTACTS_EVENT_SOURCE,
   CONTACTS_FLOW,
   CONTACTS_PAGE_PROPERTY,
@@ -55,13 +54,14 @@ import { useContactsCurrencySelectionAdapter } from "../../hooks/useContactsCurr
 import { useContactsAddressValidationAdapter } from "../../hooks/useContactsAddressValidationAdapter";
 import { useContactsLedgerSyncStatus } from "../../hooks/useContactsLedgerSyncStatus";
 import { useContactDetailPaneAdapter } from "./useContactDetailPaneAdapter";
+import type { ContactsViewProps } from "./ContactsView";
 import type { ContactAddressDetailActionsDialogProps } from "./useContactAddressDetailActionsAdapter";
 import { useContactDetailEditDeleteAdapter } from "./useContactDetailEditDeleteAdapter";
 import { useDispatch } from "LLD/hooks/redux";
 import { useActivationDrawer } from "LLD/features/LedgerSyncEntryPoints/hooks/useActivationDrawer";
 import type { ContactsAddAddressFlowDialogProps } from "./components/ContactsAddAddressFlowDialog";
 
-export type ContactsPageViewModel = Omit<ContactsViewProps, "onAddContact"> &
+export type ContactsPageViewModel = Omit<ContactsViewProps, "onAddContact" | "addContactDialog"> &
   Readonly<{
     addAddressFlowState: AddAddressFlowState;
     addAddressFlowDialog: ContactsAddAddressFlowDialogProps;

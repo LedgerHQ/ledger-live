@@ -1,22 +1,30 @@
 import type { Job } from "@features/platform-device-intent";
-import { concat, of } from "rxjs";
+import { concat, of, tap } from "rxjs";
+import { createContactIntentResultReporter, type ContactIntentResult } from "../result";
 import { stubProof } from "../stubProof";
-import type { RenameContactIntentInput, RenameContactJobState } from "./types";
+import type { RenameContactIntentInput, RenameContactJobState, RenameContactResult } from "./types";
 
 // Temporary deterministic stub until the ContactsManager integration lands.
-export const renameContactIntentJob: Job<RenameContactJobState, RenameContactIntentInput> = ({
-  input,
-}) =>
-  concat(
+export const renameContactIntentJob: Job<
+  RenameContactJobState,
+  RenameContactIntentInput,
+  ContactIntentResult<RenameContactResult>
+> = ({ input, onResult }) => {
+  const reporter = createContactIntentResultReporter(onResult);
+  const result: RenameContactResult = {
+    previousContactName: input.previousContactName,
+    contactName: input.newContactName,
+    groupHandle: input.groupHandle,
+    hmacProof: stubProof("renamed-contact-proof"),
+  };
+
+  return concat(
     of({ type: "pending" } as const),
     of({ type: "awaiting-device-confirmation" } as const),
-    of({
-      type: "completed" as const,
-      result: {
-        previousContactName: input.previousContactName,
-        contactName: input.newContactName,
-        groupHandle: input.groupHandle,
-        hmacProof: stubProof("renamed-contact-proof"),
-      },
-    }),
-  );
+    of({ type: "completed" } as const).pipe(
+      tap(() => {
+        reporter.report({ type: "success", result });
+      }),
+    ),
+  ).pipe(reporter.cancelOnUnsubscribe());
+};

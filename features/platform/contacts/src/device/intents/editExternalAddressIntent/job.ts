@@ -1,18 +1,18 @@
 import type { Job } from "@features/platform-device-intent";
-import { concat, of } from "rxjs";
+import { from, tap } from "rxjs";
+import { createContactIntentResultReporter, type ContactIntentResult } from "../result";
 import { stubProof } from "../stubProof";
 import type {
   EditExternalAddressIntentInput,
   EditExternalAddressJobState,
   EditExternalAddressResult,
-  EditExternalAddressStep,
 } from "./types";
 
 function editResult(
   input: EditExternalAddressIntentInput,
-  proofStep: EditExternalAddressStep,
   scope: string,
   address: string,
+  hmacRest: string,
 ): EditExternalAddressResult {
   return {
     contactName: input.contactName,
@@ -22,27 +22,44 @@ function editResult(
     chainId: input.chainId,
     groupHandle: input.groupHandle,
     hmacProof: input.hmacProof,
-    hmacRest: stubProof(`${proofStep}-proof`),
+    hmacRest,
   };
 }
 
 // Temporary deterministic stub until the ContactsManager integration lands.
 export const editExternalAddressIntentJob: Job<
   EditExternalAddressJobState,
-  EditExternalAddressIntentInput
-> = ({ input }) => {
-  const identifierResult = editResult(input, "identifier", input.previousScope, input.newAddress);
-  const scopeResult = editResult(input, "scope", input.newScope, input.newAddress);
+  EditExternalAddressIntentInput,
+  ContactIntentResult<EditExternalAddressResult>
+> = ({ input, onResult }) => {
+  const reporter = createContactIntentResultReporter(onResult);
+  const addressChanged = input.previousAddress !== input.newAddress;
+  const scopeChanged = input.previousScope !== input.newScope;
+  const hmacRest = scopeChanged
+    ? stubProof("scope-proof")
+    : addressChanged
+      ? stubProof("identifier-proof")
+      : input.hmacRest;
+  const result = editResult(input, input.newScope, input.newAddress, hmacRest);
+  const states: EditExternalAddressJobState[] = [{ type: "pending" }];
 
-  return concat(
-    of({ type: "pending" } as const),
-    of({ type: "awaiting-device-confirmation" as const, step: "identifier" as const }),
-    of({ type: "partial-result" as const, result: identifierResult }),
-    of({ type: "awaiting-device-confirmation" as const, step: "scope" as const }),
-    of({
-      type: "completed" as const,
-      appliedSteps: ["identifier", "scope"] as const,
-      result: scopeResult,
-    } as const),
+  if (addressChanged) {
+    states.push({ type: "awaiting-device-confirmation", step: "identifier" });
+    if (scopeChanged) {
+      states.push({ type: "partial-result" });
+    }
+  }
+  if (scopeChanged) {
+    states.push({ type: "awaiting-device-confirmation", step: "scope" });
+  }
+  states.push({ type: "completed" });
+
+  return from(states).pipe(
+    tap(state => {
+      if (state.type === "completed") {
+        reporter.report({ type: "success", result });
+      }
+    }),
+    reporter.cancelOnUnsubscribe(),
   );
 };
