@@ -67,7 +67,7 @@ jest.mock("../Body", () => {
         <button type="button" onClick={() => onUfvkChanged("test-ufvk")}>
           set ufvk
         </button>
-        <button type="button" onClick={() => handleBirthdayChange("2025-01-01")}>
+        <button type="button" onClick={() => handleBirthdayChange("2026-08-01")}>
           set birthday
         </button>
         <input
@@ -425,7 +425,7 @@ describe("ZCash Export UFVK Flow - Persistence integration", () => {
         expect.objectContaining({
           syncState: "ready",
           ufvk: "test-ufvk",
-          birthday: "2025-01-01",
+          birthday: "2026-08-01",
         }),
       );
     });
@@ -446,7 +446,7 @@ describe("ZCash Export UFVK Flow - Persistence integration", () => {
         expect.objectContaining({
           syncState: "running",
           ufvk: "test-ufvk",
-          birthday: "2025-01-01",
+          birthday: "2026-08-01",
         }),
       );
     });
