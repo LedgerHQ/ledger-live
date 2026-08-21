@@ -18,7 +18,6 @@ export default class PortfolioPage {
   emptyPortfolioListId = "PortfolioEmptyList";
   portfolioSettingsId = "topbar-settings";
   myWalletHeaderSettingsButtonId = "my-wallet-header-settings-button";
-  topBarMyWalletId = "topbar-mywallet";
   portfolioListIdRegex = new RegExp(`portfolio-screen|${this.readOnlyItemsId}`);
   addAccountCta = "add-account-cta";
   transactionHistorySectionTitleId = "portfolio-transaction-history-section";

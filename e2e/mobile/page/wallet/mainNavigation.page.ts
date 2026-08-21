@@ -66,6 +66,14 @@ export default class MainNavigationPage {
     await tapById(this.topBarMyWalletId);
   }
 
+  // The top bar belongs to the navigation chrome, the arrival check to My Wallet — so this composes
+  // that page's own assertion instead of duplicating its locator.
+  @Step("Open My Wallet from top bar")
+  async openMyWallet() {
+    await this.tapTopBarMyWallet();
+    await app.myWallet.expectScreenVisible();
+  }
+
   @Step("Tap Discover in top bar")
   async tapTopBarDiscover() {
     await tapById(this.topBarDiscoverId);
