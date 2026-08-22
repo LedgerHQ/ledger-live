@@ -21,7 +21,7 @@ export default class NewSendFlowPage {
   signaturePromptId = "send-signature-prompt";
   successViewTransactionId = "send-confirmation-success-view-transaction";
 
-  @Step("Fill recipient address and continue: $0")
+  @Step("Fill recipient address and continue: {{{0}}}")
   async setRecipientAndContinueNewFlow(address: string | undefined, memoTag?: string) {
     if (!address) throw new Error("Recipient address is not set");
     await typeTextById(this.recipientInputId, address);
@@ -42,13 +42,13 @@ export default class NewSendFlowPage {
     }
   }
 
-  @Step("Type recipient address (stay on recipient step): $0")
+  @Step("Type recipient address (stay on recipient step): {{{0}}}")
   async typeRecipientNewFlow(address: string | undefined) {
     if (!address) throw new Error("Recipient address is not set");
     await typeTextById(this.recipientInputId, address);
   }
 
-  @Step("Open memo type dropdown and expect options: $0")
+  @Step("Open memo type dropdown and expect options: {{{0}}}")
   async expectMemoTypeOptions(optionValues: string[]) {
     await waitForElementById(this.memoTypeSelectId);
     await tapById(this.memoTypeSelectId);
@@ -57,7 +57,7 @@ export default class NewSendFlowPage {
     }
   }
 
-  @Step("Expect memo field to reject non-numeric input: $0")
+  @Step("Expect memo field to reject non-numeric input: {{{0}}}")
   async expectMemoRejectsNonNumericInput(rawInput: string, expectedSanitizedValue = "") {
     await waitForElementById(this.memoInputId);
     await typeTextById(this.memoInputId, rawInput);
@@ -67,7 +67,7 @@ export default class NewSendFlowPage {
     jestExpect(actualValue).toEqual(expectedSanitizedValue);
   }
 
-  @Step("Expect memo field to retain numeric input: $0")
+  @Step("Expect memo field to retain numeric input: {{{0}}}")
   async expectMemoRetainsNumericInput(numericInput: string) {
     await waitForElementById(this.memoInputId);
     await typeTextById(this.memoInputId, numericInput);
@@ -75,7 +75,7 @@ export default class NewSendFlowPage {
     jestExpect(actualValue).toEqual(numericInput);
   }
 
-  @Step("Fill crypto amount: $0")
+  @Step("Fill crypto amount: {{{0}}}")
   async setAmountNewFlow(amount: string) {
     // The amount step opens in fiat mode, so an untoggled "0.01" is $0.01, not 0.01 crypto —
     // the Speculos assertions compare against the crypto amount.
@@ -86,7 +86,7 @@ export default class NewSendFlowPage {
     }
   }
 
-  @Step("Click review to proceed to signature")
+  @Step("Click review to proceed to signature {{{0}}}")
   async setAmountAndReviewNewFlow(amount: string) {
     await this.setAmountNewFlow(amount);
     await waitForElementById(this.amountContinueEnabledButtonId);

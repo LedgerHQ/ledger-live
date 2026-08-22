@@ -51,7 +51,7 @@ export default class MarketPage {
     await tapByIdAndExpectToDisappear(this.headerBackButtonId);
   }
 
-  @Step("Open market detail via deeplink")
+  @Step("Open market detail via deeplink {{{0}}}")
   async openViaDeeplink(currencyId?: string) {
     await openDeeplink(currencyId ? `market/${currencyId}` : "market");
   }
@@ -116,12 +116,12 @@ export default class MarketPage {
     }
   }
 
-  @Step("Search for asset")
+  @Step("Search for asset {{{0}}}")
   async searchAsset(asset: string) {
     await typeTextByElement(getElementById(await this.searchBarId()), asset);
   }
 
-  @Step("Open asset page")
+  @Step("Open asset page {{{0.name}}}")
   async openAssetPage(currency: CurrencyType) {
     if (await isAssetDiscoverabilityEnabled()) {
       await tapByElement(this.marketScreenRow(currency));
@@ -169,7 +169,7 @@ export default class MarketPage {
     await tapById(this.marketAssetsCategorySwitcherStarredId);
   }
 
-  @Step("Expect market row title")
+  @Step("Expect market row title {{{0.name}}}")
   async expectMarketRowTitle(currency: CurrencyType) {
     if (await isAssetDiscoverabilityEnabled()) {
       await detoxExpect(this.marketScreenRow(currency)).toBeVisible();
@@ -178,7 +178,7 @@ export default class MarketPage {
     }
   }
 
-  @Step("Check market screen item is visible")
+  @Step("Check market screen item {{{0}}} is visible")
   async isMarketScreenItemVisible(marketId: string, title: string): Promise<boolean> {
     try {
       await waitForElement(this.marketScreenItemWithTitle(marketId, title));
@@ -188,7 +188,7 @@ export default class MarketPage {
     }
   }
 
-  @Step("Tap on market quick action button ")
+  @Step("Tap on market quick action button {{{0}}}")
   async tapOnMarketQuickActionButton(action: "send" | "receive" | "buy" | "sell" | "swap") {
     if (await isAggregatedAssetsEnabled()) {
       const q2TestIds: Partial<Record<typeof action, string>> = {
@@ -215,13 +215,13 @@ export default class MarketPage {
     }
   }
 
-  @Step("Expect category tab $0 to be visible")
+  @Step("Expect category tab {{{0}}} to be visible")
   async expectCategoryTabVisible(value: string) {
     await waitForElementById(this.marketCategoryTabId(value));
     await detoxExpect(getElementById(this.marketCategoryTabId(value))).toBeVisible();
   }
 
-  @Step("Expect category $0 to be selected")
+  @Step("Expect category {{{0}}} to be selected")
   async expectCategorySelected(value: string) {
     await this.expectCategoryTabVisible(value);
   }

@@ -10,7 +10,7 @@ export default class AssetAccountsPage {
   assetQuickActionButton = (action: "send" | "receive" | "buy" | "sell" | "swap") =>
     getElementById(`asset-quick-action-button-${action}`);
 
-  @Step("Wait for asset page to load")
+  @Step("Wait for asset page to load {{{0}}}")
   async waitForAccountPageToLoad(
     assetName: string,
     currencyId?: string,
@@ -35,13 +35,13 @@ export default class AssetAccountsPage {
     await detoxExpect(balanceEl).toBeVisible();
   }
 
-  @Step("Wait for individual asset rows to load")
+  @Step("Wait for individual asset rows to load {{{0}}}")
   async waitForAccountAssetsToLoad(assetName: string) {
     await waitForElementById(this.titleId(assetName));
     await waitForElementById(this.accountAssetId(assetName));
   }
 
-  @Step("Open asset list via deeplink")
+  @Step("Open asset list via deeplink {{{0}}}")
   async openViaDeeplink(currencyLong?: string) {
     if (!currencyLong && (await isAggregatedAssetsEnabled())) {
       await openDeeplink("crypto-addresses");
@@ -51,7 +51,7 @@ export default class AssetAccountsPage {
     }
   }
 
-  @Step("Tap on asset quick action button ")
+  @Step("Tap on asset quick action button {{{0}}}")
   async tapOnAssetQuickActionButton(action: "send" | "receive" | "buy" | "sell" | "swap") {
     if (await isAggregatedAssetsEnabled()) {
       const q2TestIds: Partial<Record<typeof action, string>> = {
@@ -69,12 +69,12 @@ export default class AssetAccountsPage {
     }
   }
 
-  @Step("Open asset page via deeplink")
+  @Step("Open asset page via deeplink {{{0}}}")
   async openAssetPageViaDeeplink(currencyId: string) {
     await openDeeplink(`asset/${currencyId}`);
   }
 
-  @Step("Expect asset page to be visible")
+  @Step("Expect asset page to be visible {{{0}}}")
   async expectAssetPage(currencyId?: string) {
     const currency = currencyId?.toLowerCase() || "bitcoin";
     if (await isAggregatedAssetsEnabled()) {

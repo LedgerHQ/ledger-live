@@ -40,7 +40,7 @@ export default class AccountPage {
     `js:2:${account.currency.id}:${account.parentAccount ? account.parentAccount.address : account.address}:${account.currency.id}Sub+${account.address}`;
   accountGraphId = (accountId: string) => `account-graph-${accountId}`;
 
-  @Step("Wait for account screen and verify account name")
+  @Step("Wait for account screen and verify account name {{{0}}}")
   async waitAndVerifyAccountName(accountName: string) {
     await waitForElementById(this.accountScreenScrollView);
     await detoxExpect(getElementByText(accountName, 0)).toBeVisible();
@@ -64,13 +64,13 @@ export default class AccountPage {
     return await IsIdVisible(this.accountScreenScrollView, timeout);
   }
 
-  @Step("Go to the account with the name")
+  @Step("Go to the account with the name {{{0}}}")
   async goToAccountByName(name: string) {
     await scrollToId(this.baseAccountName + name, this.accountsListId);
     await tapById(this.baseAccountName + name);
   }
 
-  @Step("Go to the account with id")
+  @Step("Go to the account with id {{{0}}}")
   async goToAccountById(id: string) {
     const elementId = this.baseAccountRow + id;
     const element = getElementById(elementId);
@@ -80,12 +80,12 @@ export default class AccountPage {
     await tapByElement(element);
   }
 
-  @Step("Expect the account name at index")
+  @Step("Expect the account name {{{0}}}")
   async expectAccountName(accountName: string, index = 0) {
     jestExpect(await this.getAccountName(index)).toBe(accountName);
   }
 
-  @Step("Get the account name at index")
+  @Step("Get the account name at index {{{0}}}")
   async getAccountName(index = 0) {
     return await getTextOfElement(this.accountNameRegExp, index);
   }
@@ -116,12 +116,12 @@ export default class AccountPage {
     await tapByElement(this.accountRenameRow());
   }
 
-  @Step("Enter new account name and submit")
+  @Step("Enter new account name and submit {{{0}}}")
   async enterNewAccountName(name: string) {
     await typeTextById(this.accountRenameTextInputId, name);
   }
 
-  @Step("Expect operation history to be visible")
+  @Step("Expect operation history to be visible {{{0}}}")
   async expectOperationHistoryVisible(accountId: string) {
     await scrollToId(this.operationRowRegexp, this.accountScreenScrollView, 250, "down");
     await detoxExpect(getElementById(this.operationHistorySectionId(accountId))).toExist();
@@ -134,19 +134,19 @@ export default class AccountPage {
     await scrollToId(this.operationRowRegexp, this.accountScreenScrollView, 300, "down");
   }
 
-  @Step("Scroll to a Specific SubAccount Row")
+  @Step("Scroll to a Specific SubAccount Row {{{0}}}")
   async scrollToSubAccount(subAccountId: string) {
     await waitForElementById(this.accountScreenScrollView);
     await scrollToId(subAccountId, this.accountScreenScrollView);
   }
 
-  @Step("Expect account balance to be visible")
+  @Step("Expect account balance to be visible {{{0}}}")
   async expectAccountBalanceVisible(accountId: string) {
     await detoxExpect(this.accountGraph(accountId)).toBeVisible();
     await detoxExpect(this.accountBalance(accountId)).toBeVisible();
   }
 
-  @Step("Get visible account address label")
+  @Step("Get visible account address label {{{0}}}")
   async getVisibleAccountAddressLabel(accountId: string) {
     await scrollToId(this.accountAddressId(accountId), this.accountScreenScrollView);
     await detoxExpect(this.accountAddress(accountId)).toBeVisible();
@@ -160,7 +160,7 @@ export default class AccountPage {
     await detoxExpect(getElementById(this.sendButtonId)).toBeVisible();
   }
 
-  @Step("Expect address index")
+  @Step("Expect address index {{{0}}}")
   async expectAddressIndex(indexNumber: number) {
     await this.openAccountSettings();
     await this.openAccountAdvancedLogs();
@@ -199,14 +199,14 @@ export default class AccountPage {
     await tapById(this.buyButtonId);
   }
 
-  @Step("Navigate to token in account")
+  @Step("Navigate to token in account {{{0.accountName}}}")
   async navigateToTokenInAccount(subAccount: Account) {
     const subAccountId = this.baseSubAccountRow + subAccount.currency.ticker;
     await this.scrollToSubAccount(subAccountId);
     await tapById(subAccountId);
   }
 
-  @Step("Navigate to sub account")
+  @Step("Navigate to sub account {{{0.accountName}}}")
   async navigateToSubAccount(account: AccountType) {
     const subAccountId = this.subAccountId(account);
     await this.openViaDeeplink();
@@ -214,7 +214,7 @@ export default class AccountPage {
     await waitForElement(this.accountGraph(subAccountId));
   }
 
-  @Step("Scroll to history and click on last operation")
+  @Step("Scroll to history and click on last operation {{{0}}}")
   async scrollToHistoryAndClickOnLastOperation(operationType: string) {
     await this.scrollToTransactions();
     await tapByElement(this.getSpecificOperation(operationType));

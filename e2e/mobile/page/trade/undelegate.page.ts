@@ -20,7 +20,7 @@ export default class UndelegatePage {
     await tapById(this.unstakeActionId);
   }
 
-  @Step("Enter unstake amount")
+  @Step("Enter unstake amount {{{0}}}")
   async enterAmount(amount: string) {
     await waitForElementById(this.amountInputId);
     await typeTextById(this.amountInputId, amount);

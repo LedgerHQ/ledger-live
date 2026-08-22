@@ -94,7 +94,7 @@ export default class SwapLiveAppPage {
     await tapWebElementByTestId(this.fromSelector);
   }
 
-  @Step("Verify currency is selected")
+  @Step("Verify currency {{{0}}} is selected")
   async verifyCurrencyIsSelected(ticker: string, isFromCurrency: boolean) {
     const selector = isFromCurrency ? this.fromSelector : this.toSelector;
     const actualText = await getWebElementText(selector);
@@ -106,7 +106,7 @@ export default class SwapLiveAppPage {
     await tapWebElementByTestId(this.toSelector);
   }
 
-  @Step("Input amount")
+  @Step("Input amount {{{0}}}")
   async inputAmount(amount: string) {
     await typeTextByWebTestId(this.fromAmountInput, amount);
   }
@@ -173,7 +173,7 @@ export default class SwapLiveAppPage {
     }, timeout);
   }
 
-  @Step("Tap execute swap button")
+  @Step("Tap execute swap button {{{0}}}")
   async tapExecuteSwap(provider: string) {
     const button = getWebElementByCssSelector(this.providerExecuteButtonCss(provider), 0);
     await waitWebElement(button);
@@ -232,13 +232,13 @@ export default class SwapLiveAppPage {
     }, 30000);
   }
 
-  @Step("Check error message: $0")
+  @Step("Check error message: {{{0}}}")
   async checkErrorMessage(errorMessage: string) {
     const error = await getTextOfElement(this.deviceActionErrorDescriptionId);
     jestExpect(error).toContain(errorMessage);
   }
 
-  @Step("Check first quote container infos")
+  @Step("Check first quote container infos {{{0}}}")
   async checkFirstQuoteContainerInfos(providerList: string[]) {
     const provider: string = SwapProvider.getNameByUiName(providerList[0]);
     const baseProviderLocator = `quote-container-${provider}`;
@@ -292,7 +292,7 @@ export default class SwapLiveAppPage {
 
   // approvalRequired must reflect real allowance state — see isTokenApprovalExpected
   // in swapUtils.ts, rather than guessing it here.
-  @Step("Check exchange CTA text: $0")
+  @Step("Check exchange CTA text: {{{0}}}")
   async checkQuoteCardCta(provider: string, approvalRequired = false): Promise<void> {
     if (!SwapProvider.getNameByUiName(provider)) {
       throw new Error(`Unknown provider UI name: "${provider}"`);
@@ -363,7 +363,7 @@ export default class SwapLiveAppPage {
     };
   }
 
-  @Step("Verify swap amount error message match: $0")
+  @Step("Verify swap amount error message match: {{{0}}}")
   async verifySwapAmountErrorMessageIsCorrect(expectedMessage: string | RegExp) {
     await waitWebElementByTestId(this.fromAccountErrorId);
     const errorText: string = await getWebElementText(this.fromAccountErrorId);
@@ -372,7 +372,7 @@ export default class SwapLiveAppPage {
     await this.expectQuotesButtonNotVisible();
   }
 
-  @Step("Verify swap cross account error message match: $0")
+  @Step("Verify swap cross account error message match: {{{0}}}")
   async verifySwapCrossAccountErrorMessageIsCorrect(expectedMessage: string | RegExp) {
     // Cross-account warnings render in the same from-account error slot as amount errors.
     await this.verifySwapAmountErrorMessageIsCorrect(expectedMessage);
@@ -389,7 +389,7 @@ export default class SwapLiveAppPage {
     await detoxExpect(getWebElementByTestId(this.insufficientFundsBuyButton)).toExist();
   }
 
-  @Step("Click on swap max")
+  @Step("Click on swap max {{{0}}}")
   async clickSwapMax(pattern: RegExp = floatNumberRegex, timeout?: number) {
     await tapWebElementByTestId(this.swapMaxToggle);
     await waitForWebElementToMatchRegex(app.swapLiveApp.toAmountInput, pattern, timeout);
@@ -410,7 +410,7 @@ export default class SwapLiveAppPage {
     return await getWebElementText(this.fromAccountAmountInactive);
   }
 
-  @Step("Get quote card raw amount texts for $0")
+  @Step("Get quote card raw amount texts for {{{0}}}")
   async getQuoteCardRawText(provider: string) {
     const baseProviderLocator = `quote-container-${SwapProvider.getNameByUiName(provider)}`;
     const amount =
@@ -435,7 +435,7 @@ export default class SwapLiveAppPage {
     await tapWebElementByTestId(this.switchButton);
   }
 
-  @Step("Check currency to swap from is $0")
+  @Step("Check currency to swap from is {{{0}}} with amount {{{1}}}")
   async checkAssetFrom(currency: string, amount: string) {
     const fromAccount: string = await getWebElementText(this.fromSelector);
     const amountToSend = await app.swapLiveApp.getAmountToSend();
@@ -443,20 +443,20 @@ export default class SwapLiveAppPage {
     jestExpect(amountToSend).toEqual(amount);
   }
 
-  @Step("Check currency to swap from contains $0")
+  @Step("Check currency to swap from contains {{{0}}}")
   async checkAssetFromContains(expectedAssetText: string) {
     const fromAccount: string = await getWebElementText(this.fromSelector);
     jestExpect(fromAccount).toContain(expectedAssetText);
   }
 
-  @Step("Check from-account balance is masked in discreet mode for $0")
+  @Step("Check from-account balance is masked in discreet mode for {{{0}}}")
   async checkFromAccountBalanceIsDiscreet(ticker: string) {
     await waitWebElementByTestId(this.fromAccountBalance);
     const text = await getWebElementText(this.fromAccountBalance);
     jestExpect(text).toMatch(new RegExp(String.raw`\*\*\*\s+${escapeRegExp(ticker)}`, "i"));
   }
 
-  @Step("Check currency to swap from matches account $0")
+  @Step("Check currency to swap from matches account {{{0.accountName}}}")
   async checkAssetFromMatchesAccount(account: Account) {
     const selectedAccountText: string = await getWebElementText(this.fromSelector);
     const expectedAccountName = account.parentAccount?.accountName ?? account.accountName;
@@ -466,7 +466,7 @@ export default class SwapLiveAppPage {
     jestExpect(accountNameText).toContain(expectedAccountName);
   }
 
-  @Step("Check currency to swap to is $0 with amount $1")
+  @Step("Check currency to swap to is {{{0}}} with amount {{{1}}}")
   async checkAssetTo(currency: string, amount: string) {
     const assetTo: string = await getWebElementText(this.toSelector);
     if (currency === "") {
@@ -478,7 +478,7 @@ export default class SwapLiveAppPage {
     jestExpect(amountToReceive).toEqual(amount);
   }
 
-  @Step("Check currency to swap to contains $0")
+  @Step("Check currency to swap to contains {{{0}}}")
   async checkAssetToContains(expectedAssetText: string) {
     const assetTo: string = await getWebElementText(this.toSelector);
     if (expectedAssetText === "") {
@@ -488,7 +488,7 @@ export default class SwapLiveAppPage {
     }
   }
 
-  @Step("Check currency to swap to matches account $0")
+  @Step("Check currency to swap to matches account {{{0.accountName}}}")
   async checkAssetToMatchesAccount(account: Account) {
     const selectedAccountTicker: string = await getWebElementText(this.toSelector);
     const expectedAccountName = account.parentAccount?.accountName ?? account.accountName;
@@ -507,7 +507,7 @@ export default class SwapLiveAppPage {
     });
   }
 
-  @Step("Check Ledger Nano S not supported banner for $0")
+  @Step("Check Ledger Nano S not supported banner for {{{0}}}")
   async checkLnsNotSupportedBanner(provider: string) {
     await retryUntilTimeout(async () => {
       const bannerText = await getWebElementsText(
@@ -518,7 +518,7 @@ export default class SwapLiveAppPage {
     }, 20000);
   }
 
-  @Step("Select specific provider $0")
+  @Step("Select specific provider {{{0}}}")
   async selectSpecificProvider(provider: string) {
     const providersList = await this.getProviderList();
     if (!providersList.includes(provider)) {
@@ -533,7 +533,7 @@ export default class SwapLiveAppPage {
     await tapWebElementByTestId(providerTestId);
   }
 
-  @Step("Go to $0 live app")
+  @Step("Go to {{{0}}} live app")
   async goToProviderLiveApp(provider: string) {
     const button = getWebElementByCssSelector(this.providerExecuteButtonCss(provider));
     await detoxExpect(button).toExist();
@@ -541,7 +541,7 @@ export default class SwapLiveAppPage {
     await app.swapLiveApp.tapExecuteSwap(provider);
   }
 
-  @Step("Verify live app title contains $0")
+  @Step("Verify live app title contains {{{0}}}")
   async verifyLiveAppTitle(expectedText: string) {
     const liveAppTitle = await getTextOfElement("live-app-title");
     jestExpect(liveAppTitle.toLowerCase()).toContain(expectedText.toLowerCase());
