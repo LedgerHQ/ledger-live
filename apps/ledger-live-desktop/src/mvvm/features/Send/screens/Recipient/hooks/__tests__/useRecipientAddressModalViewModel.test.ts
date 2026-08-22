@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 
-import { renderHook } from "@testing-library/react";
+import { act, renderHook } from "@testing-library/react";
 import { useRecipientAddressModalViewModel } from "../useRecipientAddressModalViewModel";
 import { useAddressValidation } from "../useAddressValidation";
 import { useAddressMatchedSectionViewModel } from "../useAddressMatchedSectionViewModel";
@@ -18,6 +18,7 @@ import {
 } from "../../__integrations__/__fixtures__/accounts";
 import type { SendFlowState } from "@ledgerhq/live-common/flows/send/types";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
+import type { AddressSearchResult } from "@ledgerhq/live-common/flows/send/recipient/types";
 import { mockContact, mockContactAddress } from "@domain/entity-contact/schema.mock";
 
 jest.mock("../useAddressValidation");
@@ -59,6 +60,29 @@ const DEFAULT_STATE = {
   },
 } as unknown as SendFlowState;
 
+function createAddressSearchResult(
+  overrides: Partial<AddressSearchResult> = {},
+): AddressSearchResult {
+  return {
+    status: "idle",
+    error: null,
+    bridgeErrors: {},
+    bridgeWarnings: {},
+    hasBridgeValidationResult: false,
+    matchedAccounts: [],
+    matchedContact: undefined,
+    resolvedAddress: undefined,
+    ensName: undefined,
+    isLedgerAccount: false,
+    accountName: undefined,
+    accountBalance: undefined,
+    accountBalanceFormatted: undefined,
+    isFirstInteraction: true,
+    matchedRecentAddress: undefined,
+    ...overrides,
+  };
+}
+
 describe("useRecipientAddressModalViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -81,23 +105,7 @@ describe("useRecipientAddressModalViewModel", () => {
       isRecipientAddressComplete: false,
     });
     mockedUseAddressValidation.mockReturnValue({
-      result: {
-        status: "idle",
-        error: null,
-        bridgeErrors: {},
-        bridgeWarnings: {},
-        hasBridgeValidationResult: false,
-        matchedAccounts: [],
-        matchedContact: undefined,
-        resolvedAddress: undefined,
-        ensName: undefined,
-        isLedgerAccount: false,
-        accountName: undefined,
-        accountBalance: undefined,
-        accountBalanceFormatted: undefined,
-        isFirstInteraction: true,
-        matchedRecentAddress: undefined,
-      },
+      result: createAddressSearchResult(),
       isLoading: false,
       validateAddress: jest.fn(),
     });
@@ -220,7 +228,74 @@ describe("useRecipientAddressModalViewModel", () => {
     );
 
     expect(result.current.showInitialState).toBe(true);
+    expect(result.current.showContactsList).toBe(true);
     expect(result.current.showEmptyContactsState).toBe(false);
+  });
+
+  it("only exposes saved contact addresses from the selected network", () => {
+    mockedSendFeatures.hasAddressBook.mockReturnValue(true);
+    mockedUseContactsFeature.mockReturnValue({
+      isEnabled: true,
+      showNewBadge: false,
+      eligibleAddressFamilies: ["evm"],
+    });
+    mockedUseContacts.mockReturnValue([
+      mockContact({
+        id: "contact-me",
+        isMe: true,
+        name: "Me",
+        addresses: [mockContactAddress({ id: "address-me", currencyId: "ethereum" })],
+      }),
+      mockContact({
+        id: "contact-alice",
+        name: "Alice",
+        addresses: [
+          mockContactAddress({ id: "address-eth", currencyId: "ethereum" }),
+          mockContactAddress({ id: "address-usdc", currencyId: "ethereum/erc20/usd_coin" }),
+          mockContactAddress({ id: "address-sol", currencyId: "solana" }),
+        ],
+      }),
+      mockContact({
+        id: "contact-bob",
+        name: "Bob",
+        addresses: [mockContactAddress({ id: "address-btc", currencyId: "bitcoin" })],
+      }),
+    ]);
+
+    const { result } = renderHook(() =>
+      useRecipientAddressModalViewModel({
+        account: mockAccount,
+        currency: createMockCurrency({ id: "ethereum" }),
+        onAddressSelected: jest.fn(),
+        recipientSupportsDomain: true,
+      }),
+    );
+
+    expect(result.current.contactsOnNetwork).toHaveLength(1);
+    expect(result.current.contactsOnNetwork[0]).toMatchObject({
+      id: "contact-alice",
+      addresses: [{ id: "address-eth" }, { id: "address-usdc" }],
+    });
+  });
+
+  it("advances straight to the next step when selecting a contact", () => {
+    const onAddressSelected = jest.fn();
+    const contact = mockContact({
+      addresses: [mockContactAddress({ address: "0x123" })],
+    });
+
+    const { result } = renderHook(() =>
+      useRecipientAddressModalViewModel({
+        account: mockAccount,
+        currency: mockAccount.currency,
+        onAddressSelected,
+        recipientSupportsDomain: true,
+      }),
+    );
+
+    act(() => result.current.handleContactSelect(contact));
+
+    expect(onAddressSelected).toHaveBeenCalledWith("0x123", undefined, true);
   });
 
   it("shows search results when search value is provided", () => {
