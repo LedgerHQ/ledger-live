@@ -2,6 +2,7 @@ import BigNumber from "bignumber.js";
 import { NotEnoughBalance } from "@ledgerhq/ledger-wallet-framework/errors";
 import { bitcoinPickingStrategy } from "@ledgerhq/live-common/families/bitcoin/types";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
+import { mockContact, mockContactAddress } from "@domain/entity-contact/schema.mock";
 import {
   createBitcoinAccount,
   createEthereumAccount,
@@ -18,6 +19,7 @@ import {
   waitFor,
   setMockBridgeRecipientValidation,
   setMockScannedCode,
+  setMockContacts,
   setMockStatus,
   setMockStatusResolver,
   setMockTransaction,
@@ -34,6 +36,42 @@ describe("Send Flow Integration", () => {
   });
 
   describe("Recipient step", () => {
+    it("shows only contacts with addresses on the recipient network and advances directly for one address", async () => {
+      setMockContacts([
+        mockContact({
+          id: "contact-vincent",
+          name: "Vincent",
+          addresses: [
+            mockContactAddress({
+              id: "address-vincent-eth",
+              currencyId: "ethereum",
+              label: "Ethereum Main",
+              address: VALID_EVM_RECIPIENT,
+            }),
+          ],
+        }),
+        mockContact({
+          id: "contact-solana",
+          name: "Solana contact",
+          addresses: [
+            mockContactAddress({
+              id: "address-solana",
+              currencyId: "solana",
+              label: "Solana",
+              address: "SolanaAddress123",
+            }),
+          ],
+        }),
+      ]);
+      const { user } = renderSendFlow(ethereumAccount);
+
+      expect(await screen.findByTestId("contacts-compact-row-contact-vincent")).toBeVisible();
+      expect(screen.queryByText("Solana contact")).not.toBeInTheDocument();
+
+      await user.click(screen.getByTestId("contacts-compact-row-contact-vincent"));
+      expect(await screen.findByTestId("send-amount-step")).toBeVisible();
+    });
+
     it("should show the collapsable security card collapsed by default and expand on click", async () => {
       const { user } = renderSendFlow(ethereumAccount);
 
