@@ -236,6 +236,40 @@ describe("Send flow integration tests", () => {
     expect(await screen.findByText("Review")).toBeVisible();
   });
 
+  it("should ask which address to use when a contact has several network addresses", async () => {
+    const contacts = [
+      mockContact({
+        id: "contact-benoit",
+        name: "Benoit",
+        addresses: [
+          mockContactAddress({
+            id: "address-benoit-main",
+            currencyId: "ethereum",
+            label: "Ethereum",
+            address: VALID_ETHEREUM_RECIPIENT,
+          }),
+          mockContactAddress({
+            id: "address-benoit-coinbase",
+            currencyId: "ethereum",
+            label: "Ethereum Coinbase",
+            address: "0x1234567890123456789012345678901234567890",
+          }),
+        ],
+      }),
+    ];
+    const { user } = renderForAccount(accountEthereum, {}, { contactsEnabled: true, contacts });
+
+    await user.press(await screen.findByTestId("contacts-compact-row-contact-benoit"));
+
+    expect(await screen.findByText("Select address")).toBeVisible();
+    expect(screen.getByText("Benoit")).toBeVisible();
+    expect(screen.queryByTestId("recipient-input")).toBeNull();
+
+    await user.press(screen.getByTestId("send-recipient-contact-address-address-benoit-coinbase"));
+
+    expect(await screen.findByText("Review")).toBeVisible();
+  });
+
   it("should explain why add contact is unavailable on an unsupported network", async () => {
     const { user } = renderForAccount(accountBitcoin, {}, { contactsEnabled: true });
 

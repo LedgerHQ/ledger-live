@@ -4539,6 +4539,7 @@
   "send": {
     "newSendFlow": {
       "title": "Send {{currency}}",
+      "selectAddress": "Select address",
       "available": "Available {{amount}}",
       "to": "To:",
       "addressDisclaimer": {
