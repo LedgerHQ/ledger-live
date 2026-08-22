@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import { BigNumber } from "bignumber.js";
 import { act } from "tests/testSetup";
 import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
+import { mockContact } from "@domain/entity-contact/schema.mock";
 import { useSendHeaderModel } from "../useSendHeaderModel";
 
 jest.mock("../../../FlowWizard/FlowWizardContext", () => ({ useFlowWizard: jest.fn() }));
@@ -29,6 +30,9 @@ jest.mock("@ledgerhq/live-common/currencies/index", () => ({
 jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => ({
   sendFeatures: { hasAddressBook: jest.fn(() => false) },
 }));
+jest.mock("../../context/RecipientContactSelectionContext", () => ({
+  useRecipientContactSelection: jest.fn(),
+}));
 
 import { useFlowWizard } from "../../../FlowWizard/FlowWizardContext";
 import { useSendFlowData, useSendFlowActions } from "../../context/SendFlowContext";
@@ -39,6 +43,7 @@ import { RecipientScannerProvider } from "../../context/RecipientScannerContext"
 import { useSelector } from "LLD/hooks/redux";
 import { useContactsFeature } from "@features/platform-contacts";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
+import { useRecipientContactSelection } from "../../context/RecipientContactSelectionContext";
 
 type VM = ReturnType<typeof useSendHeaderModel>;
 let container: HTMLElement;
@@ -129,6 +134,11 @@ beforeEach(() => {
     transaction: { status: {} },
   });
   (useMaybeAccountName as jest.Mock).mockReturnValue("Base 1");
+  jest.mocked(useRecipientContactSelection).mockReturnValue({
+    selectedContact: undefined,
+    selectContact: jest.fn(),
+    clearSelectedContact: jest.fn(),
+  });
 });
 
 afterEach(() => {
@@ -169,6 +179,31 @@ describe("useSendHeaderModel", () => {
 
       expect(latestVM?.title).toBe("Send ETH");
       expect(latestVM?.descriptionText).toBe("$5,969.83");
+    });
+
+    it("shows the contact address selection header and returns to the recipient list", () => {
+      const clearSelectedContact = jest.fn();
+      jest.mocked(useRecipientContactSelection).mockReturnValue({
+        selectedContact: mockContact({ name: "Benoit" }),
+        selectContact: jest.fn(),
+        clearSelectedContact,
+      });
+      mockActions();
+      (useFlowWizard as jest.Mock).mockReturnValue({
+        currentStep: SEND_FLOW_STEP.RECIPIENT,
+        currentStepConfig: { addressInput: true, showTitle: true },
+        navigation: { goToStep: jest.fn(), goToPreviousStep: jest.fn(), canGoBack: () => false },
+      });
+
+      renderHook("$5,969.83");
+
+      expect(latestVM?.title).toBe("Select address");
+      expect(latestVM?.descriptionText).toBe("Benoit");
+      expect(latestVM?.showRecipientInput).toBe(false);
+      expect(latestVM?.showBackButton).toBe(true);
+
+      act(() => latestVM?.handleBack());
+      expect(clearSelectedContact).toHaveBeenCalledTimes(1);
     });
   });
 

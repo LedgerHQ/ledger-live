@@ -2573,6 +2573,7 @@
     "addressBookUnsupported": "{{family}} isn't supported yet",
     "recentSendWillAppear": "Your recent send will appear here",
     "contactsWillAppear": "Contacts will appear here",
+    "selectAddress": "Select address",
     "securityInfo": {
       "title": "How to send securely?",
       "items": {
