@@ -22,6 +22,7 @@ import { useMaybeAccountName } from "~/renderer/reducers/wallet";
 import { track, trackPage } from "~/renderer/analytics/segment";
 import { getSendFlowTrackingProperties } from "../utils/tracking";
 import { useRecipientScanner } from "../context/RecipientScannerContext";
+import { useRecipientContactSelection } from "../context/RecipientContactSelectionContext";
 
 type UseSendHeaderModelParams = Readonly<{
   availableText: string;
@@ -66,6 +67,7 @@ export function useSendHeaderModel({
   const { state, uiConfig, recipientSearch, isRecipientAddressComplete } = useSendFlowData();
   const { close, transaction } = useSendFlowActions();
   const { isScannerOpen, closeScanner, toggleScanner } = useRecipientScanner();
+  const { selectedContact, clearSelectedContact } = useRecipientContactSelection();
   const { isEnabled: isContactsFeatureEnabled } = useContactsFeature("desktop");
   const contacts = useSelector(selectContacts);
 
@@ -74,7 +76,11 @@ export function useSendHeaderModel({
 
   const { navigation, currentStep } = wizard;
   const currentStepConfig = wizard.currentStepConfig;
-  const showRecipientInput = currentStepConfig?.addressInput ?? false;
+  const isRecipientStep = currentStep === SEND_FLOW_STEP.RECIPIENT;
+  const isAmountStep = currentStep === SEND_FLOW_STEP.AMOUNT;
+  const isSelectingContactAddress = isRecipientStep && selectedContact !== undefined;
+  const showRecipientInput =
+    (currentStepConfig?.addressInput ?? false) && !isSelectingContactAddress;
   const showMemoControls = Boolean(
     showRecipientInput &&
     uiConfig.hasMemo &&
@@ -97,11 +103,9 @@ export function useSendHeaderModel({
 
   const backTarget = currentStepConfig?.backTarget;
 
-  const showBackButton = navigation.canGoBack();
+  const showBackButton = isSelectingContactAddress || navigation.canGoBack();
 
   const showTitle = currentStepConfig?.showTitle !== false;
-  const isRecipientStep = currentStep === SEND_FLOW_STEP.RECIPIENT;
-  const isAmountStep = currentStep === SEND_FLOW_STEP.AMOUNT;
 
   const accountSummary = useMemo(() => {
     if (accountName && availableText) return `${accountName} · ${availableText}`;
@@ -111,12 +115,25 @@ export function useSendHeaderModel({
   const titleKey = currentStepConfig?.titleKey ?? "newSendFlow.title";
   const showAvailable = currentStepConfig?.showAvailable ?? true;
 
-  const title = showTitle ? t(titleKey, { currency: currencyName }) : "";
+  const title = isSelectingContactAddress
+    ? t("newSendFlow.selectAddress")
+    : showTitle
+      ? t(titleKey, { currency: currencyName })
+      : "";
 
-  const descriptionText = showTitle && showAvailable && accountSummary ? accountSummary : "";
+  const descriptionText = isSelectingContactAddress
+    ? selectedContact.name
+    : showTitle && showAvailable && accountSummary
+      ? accountSummary
+      : "";
 
   const handleBack = useCallback(() => {
     closeScanner();
+
+    if (isSelectingContactAddress) {
+      clearSelectedContact();
+      return;
+    }
 
     // Per-step state cleanup that runs regardless of whether navigation uses backTarget
     // or goToPreviousStep, so floating steps and regular steps are treated uniformly
@@ -146,7 +163,17 @@ export function useSendHeaderModel({
     } else {
       close();
     }
-  }, [backTarget, close, closeScanner, currentStep, navigation, resetViewState, transaction]);
+  }, [
+    backTarget,
+    clearSelectedContact,
+    close,
+    closeScanner,
+    currentStep,
+    isSelectingContactAddress,
+    navigation,
+    resetViewState,
+    transaction,
+  ]);
 
   const recipientHeader = useMemo(
     () =>

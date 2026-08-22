@@ -20,6 +20,7 @@ import type { SendFlowState } from "@ledgerhq/live-common/flows/send/types";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { AddressSearchResult } from "@ledgerhq/live-common/flows/send/recipient/types";
 import { mockContact, mockContactAddress } from "@domain/entity-contact/schema.mock";
+import { useRecipientContactSelection } from "../../../../context/RecipientContactSelectionContext";
 
 jest.mock("../useAddressValidation");
 jest.mock("../useAddressMatchedSectionViewModel");
@@ -30,6 +31,7 @@ jest.mock("../../../../../FlowWizard/FlowWizardContext", () => ({
 jest.mock("@ledgerhq/live-common/account/index");
 jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features");
 jest.mock("@features/platform-contacts");
+jest.mock("../../../../context/RecipientContactSelectionContext");
 jest.mock("~/renderer/reducers/wallet", () => ({
   useMaybeAccountName: jest.fn(),
   useBatchMaybeAccountName: jest.fn(() => []),
@@ -43,6 +45,7 @@ const mockedGetMainAccount = jest.mocked(getMainAccount);
 const mockedSendFeatures = jest.mocked(sendFeatures);
 const mockedUseContacts = jest.mocked(useContacts);
 const mockedUseContactsFeature = jest.mocked(useContactsFeature);
+const mockedUseRecipientContactSelection = jest.mocked(useRecipientContactSelection);
 
 const mockAccount = createMockAccount({ id: "account_1" });
 
@@ -97,6 +100,11 @@ describe("useRecipientAddressModalViewModel", () => {
       isEnabled: false,
       showNewBadge: false,
       eligibleAddressFamilies: [],
+    });
+    mockedUseRecipientContactSelection.mockReturnValue({
+      selectedContact: undefined,
+      selectContact: jest.fn(),
+      clearSelectedContact: jest.fn(),
     });
     mockedUseSendFlowData.mockReturnValue({
       recipientSearch: mockRecipientSearch,
@@ -278,8 +286,79 @@ describe("useRecipientAddressModalViewModel", () => {
     });
   });
 
-  it("advances straight to the next step when selecting a contact", () => {
+  it("shows a contact choice instead of resolving the first address when a searched contact has several addresses", () => {
+    const selectContact = jest.fn();
+    const contact = mockContact({
+      id: "contact-benoit",
+      name: "Benoit",
+      addresses: [
+        mockContactAddress({ id: "address-1", address: "0x123", currencyId: "ethereum" }),
+        mockContactAddress({ id: "address-2", address: "0x456", currencyId: "ethereum" }),
+      ],
+    });
+    mockedSendFeatures.hasAddressBook.mockReturnValue(true);
+    mockedUseContactsFeature.mockReturnValue({
+      isEnabled: true,
+      showNewBadge: false,
+      eligibleAddressFamilies: ["evm"],
+    });
+    mockedUseContacts.mockReturnValue([contact]);
+    mockedUseRecipientContactSelection.mockReturnValue({
+      selectedContact: undefined,
+      selectContact,
+      clearSelectedContact: jest.fn(),
+    });
+    mockedUseSendFlowData.mockReturnValue({
+      recipientSearch: { ...mockRecipientSearch, value: "Benoit" },
+      state: DEFAULT_STATE,
+      uiConfig: {} as never,
+      isRecipientAddressComplete: false,
+    });
+    mockedUseAddressValidation.mockReturnValue({
+      result: createAddressSearchResult({
+        status: "valid",
+        hasBridgeValidationResult: true,
+        matchedContact: {
+          contactId: contact.id,
+          contactName: contact.name,
+          addressId: contact.addresses[0]!.id,
+          addressLabel: contact.addresses[0]!.label,
+          address: contact.addresses[0]!.address,
+        },
+      }),
+      isLoading: false,
+      validateAddress: jest.fn(),
+    });
+
+    const { result } = renderHook(() =>
+      useRecipientAddressModalViewModel({
+        account: mockAccount,
+        currency: createMockCurrency({ id: "ethereum" }),
+        onAddressSelected: jest.fn(),
+        recipientSupportsDomain: true,
+      }),
+    );
+
+    expect(result.current.showContactSearchResult).toBe(true);
+    expect(result.current.contactSearchResult).toMatchObject({
+      id: contact.id,
+      addresses: [{ id: "address-1" }, { id: "address-2" }],
+    });
+    expect(result.current.showMatchedAddress).toBe(false);
+    expect(result.current.isAddressValid).toBe(false);
+
+    act(() => result.current.handleContactSelect(contact));
+    expect(selectContact).toHaveBeenCalledWith(contact);
+  });
+
+  it("advances straight to the next step for a contact with one address", () => {
     const onAddressSelected = jest.fn();
+    const selectContact = jest.fn();
+    mockedUseRecipientContactSelection.mockReturnValue({
+      selectedContact: undefined,
+      selectContact,
+      clearSelectedContact: jest.fn(),
+    });
     const contact = mockContact({
       addresses: [mockContactAddress({ address: "0x123" })],
     });
@@ -296,6 +375,41 @@ describe("useRecipientAddressModalViewModel", () => {
     act(() => result.current.handleContactSelect(contact));
 
     expect(onAddressSelected).toHaveBeenCalledWith("0x123", undefined, true);
+    expect(selectContact).not.toHaveBeenCalled();
+  });
+
+  it("opens address selection for a contact with multiple addresses", () => {
+    const onAddressSelected = jest.fn();
+    const selectContact = jest.fn();
+    const clearSelectedContact = jest.fn();
+    mockedUseRecipientContactSelection.mockReturnValue({
+      selectedContact: undefined,
+      selectContact,
+      clearSelectedContact,
+    });
+    const contact = mockContact({
+      addresses: [
+        mockContactAddress({ id: "address-1", address: "0x123" }),
+        mockContactAddress({ id: "address-2", address: "0x456" }),
+      ],
+    });
+
+    const { result } = renderHook(() =>
+      useRecipientAddressModalViewModel({
+        account: mockAccount,
+        currency: mockAccount.currency,
+        onAddressSelected,
+        recipientSupportsDomain: true,
+      }),
+    );
+
+    act(() => result.current.handleContactSelect(contact));
+    expect(selectContact).toHaveBeenCalledWith(contact);
+    expect(onAddressSelected).not.toHaveBeenCalled();
+
+    act(() => result.current.handleContactAddressSelect("0x456"));
+    expect(clearSelectedContact).toHaveBeenCalledTimes(1);
+    expect(onAddressSelected).toHaveBeenCalledWith("0x456", undefined, true);
   });
 
   it("shows search results when search value is provided", () => {
