@@ -30,7 +30,7 @@ async function connectWithRetry(client, maxAttempts = 60) {
   }
 }
 
-async function mineOneBlock(client, payAddress) {
+async function mineOneBlock(client, payAddress, retriesLeft = 3) {
   const { block } = await client.getBlockTemplate({
     payAddress: payAddress || MINING_ADDRESS,
     extraData: "ledger-tester",
@@ -50,11 +50,16 @@ async function mineOneBlock(client, payAddress) {
         await client.submitBlock({ block, allowNonDaaBlocks: false });
         console.log(`Block mined  nonce=${nonce}`);
       } catch (e) {
-        // Stale template race — not a fatal error
         const msg = String(e.message || e);
-        if (!msg.includes("BlockAlreadyExists") && !msg.includes("OrphanBlock")) {
-          console.warn(`submitBlock: ${msg}`);
+        if (msg.includes("BlockAlreadyExists") || msg.includes("OrphanBlock")) {
+          // Stale template race — not a fatal error, block is effectively mined.
+          return;
         }
+        if (retriesLeft > 0) {
+          console.warn(`submitBlock: ${msg}; retrying with fresh template (${retriesLeft} left)`);
+          return mineOneBlock(client, payAddress, retriesLeft - 1);
+        }
+        throw e;
       }
       return;
     }

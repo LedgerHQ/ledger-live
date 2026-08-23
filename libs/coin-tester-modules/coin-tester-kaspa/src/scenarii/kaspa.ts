@@ -40,7 +40,7 @@ const MATURITY_GAP_BLOCKS = 1000;
 
 // Mining interval for setup blocks. At 50 ms/block the simply-kaspa-indexer's virtual chain
 // processor handles each block in live mode (~1 ms) instead of a slow historical resync
-// (~240 ms/block). 200 blocks × 50 ms = 10 s total, all blocks indexed by the time setup ends.
+// (~240 ms/block). 100 blocks × 50 ms = 5 s total, all blocks indexed by the time setup ends.
 const SETUP_MINE_INTERVAL_MS = 50;
 
 // Settle delay after mining a confirmation block. Live blocks process in ~1 ms at the indexer;
@@ -201,7 +201,7 @@ export const scenarioKaspa: Scenario<GenericTransaction, Account> = {
       },
     },
 
-    // #2 — Multi-UTXO consolidation send (200 KAS). With 200 mature UTXOs at 50 KAS each,
+    // #2 — Multi-UTXO consolidation send (200 KAS). With 100 mature UTXOs at 50 KAS each,
     // craftTransaction selects multiple inputs to cover amount + fee.
     {
       name: "Send 200 KAS (multi-UTXO)",

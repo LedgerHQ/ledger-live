@@ -41,7 +41,7 @@ This spins up kaspad in simnet mode plus a kaspa-rest-server, runs all scenario 
 - **Coinbase maturity is a real kaspad consensus rule** (~1000-block confirmation depth), not
   configurable away — `setup()` mines a 1000-block gap to satisfy it, sent to a throwaway address
   (not the tracked test address) so it doesn't inflate the account's own transaction history.
-- **`SETUP_BLOCKS` (200) is deliberately small.** Kaspa's simnet has no debug balance-injection
+- **`SETUP_BLOCKS` (100) is deliberately small.** Kaspa's simnet has no debug balance-injection
   RPC (unlike EVM's `anvil_setBalance`), so funding an account means actually mining real blocks —
   each one a transaction. Keeping this low avoids pushing the tracked address past the Kaspa REST
   API's 500-item page cap, which would require the coin module to paginate across multiple pages
