@@ -3,7 +3,10 @@ import { useContacts, useContactsFeature } from "@features/platform-contacts";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { useRecipientSearchState } from "@ledgerhq/live-common/flows/send/recipient/hooks/useRecipientSearchState";
-import { resolveRecipientNetworkId } from "@ledgerhq/live-common/flows/send/recipient/utils/resolveRecipientNetworkId";
+import {
+  findContactWithMultipleAddressesByName,
+  getContactsOnNetwork,
+} from "@ledgerhq/live-common/flows/send/recipient/utils/hasContactsOnNetwork";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { Contact } from "@domain/entity-contact";
@@ -56,25 +59,10 @@ export function useRecipientAddressModalViewModel({
     canSearchContactsByName: isContactsFeatureEnabled && hasAddressBook,
   });
 
-  const contactsOnNetwork = useMemo(() => {
-    const networkId = resolveRecipientNetworkId(currency.id);
-
-    return contacts.reduce<Contact[]>((matchingContacts, contact) => {
-      if (contact.isMe) {
-        return matchingContacts;
-      }
-
-      const addresses = contact.addresses.filter(
-        address => resolveRecipientNetworkId(address.currencyId) === networkId,
-      );
-      if (addresses.length === 0) {
-        return matchingContacts;
-      }
-
-      matchingContacts.push({ ...contact, addresses });
-      return matchingContacts;
-    }, []);
-  }, [contacts, currency.id]);
+  const contactsOnNetwork = useMemo(
+    () => getContactsOnNetwork(contacts, currency.id),
+    [contacts, currency.id],
+  );
 
   const hasSearchValue = recipientSearch.value.length > 0;
   const contactSearchResult = useMemo(() => {
@@ -82,15 +70,7 @@ export function useRecipientAddressModalViewModel({
       return undefined;
     }
 
-    const normalizedSearchValue = recipientSearch.value.trim().toLowerCase();
-    if (!normalizedSearchValue) {
-      return undefined;
-    }
-
-    return contactsOnNetwork.find(
-      contact =>
-        contact.addresses.length > 1 && contact.name.trim().toLowerCase() === normalizedSearchValue,
-    );
+    return findContactWithMultipleAddressesByName(contactsOnNetwork, recipientSearch.value);
   }, [contactsOnNetwork, hasAddressBook, isContactsFeatureEnabled, recipientSearch.value]);
   const showContactSearchResult =
     hasSearchValue && selectedContact === undefined && contactSearchResult !== undefined;

@@ -2,12 +2,16 @@ import { useContacts, useContactsFeature } from "@features/platform-contacts";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { useRecipientSearchState } from "@ledgerhq/live-common/flows/send/recipient/hooks/useRecipientSearchState";
-import { hasContactsOnNetwork } from "@ledgerhq/live-common/flows/send/recipient/utils/hasContactsOnNetwork";
+import {
+  findContactWithMultipleAddressesByName,
+  getContactsOnNetwork,
+} from "@ledgerhq/live-common/flows/send/recipient/utils/hasContactsOnNetwork";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
+import type { Contact } from "@domain/entity-contact";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useSendFlowData } from "../../../context/SendFlowContext";
 import { useAddressValidation } from "./useAddressValidation";
 import { useClipboardRecipient } from "./useClipboardRecipient";
@@ -32,6 +36,7 @@ export function useRecipientScreenView({
   const { recipientSearch } = useSendFlowData();
   const contacts = useContacts();
   const { isEnabled: isContactsFeatureEnabled } = useContactsFeature("mobile");
+  const [selectedContact, setSelectedContact] = useState<Contact>();
 
   const mainAccount = getMainAccount(account, parentAccount);
   const hasAddressBook = sendFeatures.hasAddressBook(currency);
@@ -47,15 +52,28 @@ export function useRecipientScreenView({
     canSearchContactsByName: isContactsFeatureEnabled && hasAddressBook,
   });
 
+  const contactsOnNetwork = useMemo(
+    () => getContactsOnNetwork(contacts, currency.id),
+    [contacts, currency.id],
+  );
   const hasSearchValue = recipientSearch.value.length > 0;
-  const showInitialState = !hasSearchValue;
-  const showEmptyContactsState = useMemo(() => {
-    if (!showInitialState || !isContactsFeatureEnabled || !hasAddressBook) {
-      return false;
+  const contactSearchResult = useMemo(() => {
+    if (!isContactsFeatureEnabled || !hasAddressBook) {
+      return undefined;
     }
 
-    return !hasContactsOnNetwork(contacts, currency.id);
-  }, [contacts, currency.id, hasAddressBook, isContactsFeatureEnabled, showInitialState]);
+    return findContactWithMultipleAddressesByName(contactsOnNetwork, recipientSearch.value);
+  }, [contactsOnNetwork, hasAddressBook, isContactsFeatureEnabled, recipientSearch.value]);
+  const showContactSearchResult =
+    hasSearchValue && selectedContact === undefined && contactSearchResult !== undefined;
+  const showInitialState = !hasSearchValue && selectedContact === undefined;
+  const showContactsList =
+    showInitialState && isContactsFeatureEnabled && hasAddressBook && contactsOnNetwork.length > 0;
+  const showEmptyContactsState =
+    showInitialState &&
+    isContactsFeatureEnabled &&
+    hasAddressBook &&
+    contactsOnNetwork.length === 0;
 
   const { clipboardAddress } = useClipboardRecipient({
     enabled: showInitialState,
@@ -80,26 +98,73 @@ export function useRecipientScreenView({
     [onAddressSelected],
   );
 
+  const handleContactSelect = useCallback(
+    (contact: Contact) => {
+      const [address] = contact.addresses;
+      if (contact.addresses.length === 1 && address) {
+        handleAddressSelect(address.address);
+        return;
+      }
+
+      setSelectedContact(contact);
+    },
+    [handleAddressSelect],
+  );
+
+  const handleContactAddressSelect = useCallback(
+    (address: string) => {
+      setSelectedContact(undefined);
+      handleAddressSelect(address);
+    },
+    [handleAddressSelect],
+  );
+
+  const clearSelectedContact = useCallback(() => {
+    setSelectedContact(undefined);
+  }, []);
+
   const searchState = useRecipientSearchState({
     searchValue: recipientSearch.value,
     result,
     isLoading,
     recipientSupportsDomain,
   });
+  const shouldHideRegularSearchState = showContactSearchResult || selectedContact !== undefined;
 
   return {
     searchValue: recipientSearch.value,
-    isLoading,
+    isLoading: !shouldHideRegularSearchState && isLoading,
     result,
     mainAccount,
     hasAddressBook,
     addressBookFamilyName: mainAccount.currency.name,
     showInitialState,
+    showContactsList,
+    showContactSearchResult,
     showEmptyContactsState,
+    contactsOnNetwork,
+    contactSearchResult,
+    selectedContact,
+    network: mainAccount.currency,
     clipboardAddress,
     handlePasteFromClipboard,
     handleAddressSelect,
+    handleContactSelect,
+    handleContactAddressSelect,
+    clearSelectedContact,
     isContactsFeatureEnabled,
     ...searchState,
+    showSearchResults: !shouldHideRegularSearchState && searchState.showSearchResults,
+    showMatchedAddress: !shouldHideRegularSearchState && searchState.showMatchedAddress,
+    showAddressValidationError:
+      !shouldHideRegularSearchState && searchState.showAddressValidationError,
+    showEmptyState: !shouldHideRegularSearchState && searchState.showEmptyState,
+    showBridgeSenderError: !shouldHideRegularSearchState && searchState.showBridgeSenderError,
+    showSanctionedBanner: !shouldHideRegularSearchState && searchState.showSanctionedBanner,
+    showBridgeRecipientError: !shouldHideRegularSearchState && searchState.showBridgeRecipientError,
+    showBridgeRecipientWarning:
+      !shouldHideRegularSearchState && searchState.showBridgeRecipientWarning,
+    isAddressComplete: !shouldHideRegularSearchState && searchState.isAddressComplete,
+    isAddressValid: !shouldHideRegularSearchState && searchState.isAddressValid,
   };
 }

@@ -8,6 +8,8 @@ import { AddressMatchedSection } from "./AddressMatchedSection";
 import { AddressValidationError } from "./AddressValidationError";
 import { LoadingState } from "./LoadingState";
 import { PasteFromClipboard } from "./PasteFromClipboard";
+import { RecipientContactAddressSelection } from "./RecipientContactAddressSelection";
+import { RecipientContactsList } from "./RecipientContactsList";
 import { RecipientEmptyContactsState } from "./RecipientEmptyContactsState";
 import { ValidationBanner } from "./ValidationBanner";
 
@@ -28,7 +30,13 @@ export const RecipientScreenView = ({ viewModel }: RecipientScreenViewProps) => 
   const {
     isLoading,
     showInitialState,
+    showContactsList,
+    showContactSearchResult,
     showEmptyContactsState,
+    contactsOnNetwork,
+    contactSearchResult,
+    selectedContact,
+    network,
     showBridgeSenderError,
     bridgeSenderError,
     showSanctionedBanner,
@@ -40,6 +48,9 @@ export const RecipientScreenView = ({ viewModel }: RecipientScreenViewProps) => 
     addressValidationErrorType,
     clipboardAddress,
     handlePasteFromClipboard,
+    handleContactSelect,
+    handleContactAddressSelect,
+    clearSelectedContact,
   } = recipient;
 
   return (
@@ -59,6 +70,20 @@ export const RecipientScreenView = ({ viewModel }: RecipientScreenViewProps) => 
           )}
 
           {showInitialState && showEmptyContactsState && <RecipientEmptyContactsState />}
+
+          {showContactsList && (
+            <RecipientContactsList
+              contacts={contactsOnNetwork}
+              onContactSelect={handleContactSelect}
+            />
+          )}
+
+          {showContactSearchResult && contactSearchResult && (
+            <RecipientContactsList
+              contacts={[contactSearchResult]}
+              onContactSelect={handleContactSelect}
+            />
+          )}
 
           {showMemo && <MemoControls vm={memo} />}
 
@@ -93,6 +118,12 @@ export const RecipientScreenView = ({ viewModel }: RecipientScreenViewProps) => 
           )}
         </ScrollView>
       </KeyboardAvoidingView>
+      <RecipientContactAddressSelection
+        contact={selectedContact}
+        network={network}
+        onAddressSelect={handleContactAddressSelect}
+        onDismiss={clearSelectedContact}
+      />
     </SendFlowLayout>
   );
 };

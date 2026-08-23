@@ -6,6 +6,7 @@ import { BigNumber } from "bignumber.js";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { mockContact, mockContactAddress } from "@domain/entity-contact/schema.mock";
 import {
   act,
   fireEvent,
@@ -14,6 +15,7 @@ import {
   withFlagOverrides,
 } from "@tests/test-renderer";
 import type { Account } from "@ledgerhq/types-live";
+import type { Contact } from "@domain/entity-contact";
 import type { State } from "~/reducers/types";
 import { SendFlowOrchestrator } from "../SendFlowOrchestrator";
 import { SEND_FLOW_CONFIG } from "../constants";
@@ -64,6 +66,7 @@ type DriveOpts = Readonly<{
 
 type RenderForAccountOptions = Readonly<{
   contactsEnabled?: boolean;
+  contacts?: Contact[];
 }>;
 
 jest.mock("LLM/components/DeviceIntentExecutor", () => {
@@ -124,6 +127,12 @@ describe("Send flow integration tests", () => {
       ...state,
       accounts: { ...state.accounts, active: [account] },
     });
+    const withAccountAndContacts = (state: State): State => {
+      const stateWithAccount = withAccount(state);
+      return options.contacts
+        ? { ...stateWithAccount, contacts: { contacts: options.contacts } }
+        : stateWithAccount;
+    };
 
     return renderWithReactQuery(<SendPage initParams={{ account, ...initParams }} />, {
       overrideInitialState: options.contactsEnabled
@@ -134,9 +143,9 @@ describe("Send flow integration tests", () => {
                 params: { newBadge: false, eligibleAddressFamilies: ["evm"] },
               },
             },
-            withAccount,
+            withAccountAndContacts,
           )
-        : withAccount,
+        : withAccountAndContacts,
     });
   }
 
@@ -194,6 +203,63 @@ describe("Send flow integration tests", () => {
     await flushTimers();
 
     expect(await screen.findByRole("button", { name: "Add contact" })).toBeEnabled();
+  });
+
+  it("should select a contact with one address from the recipient list", async () => {
+    const contact = mockContact({
+      id: "contact-vincent",
+      name: "Vincent",
+      addresses: [
+        mockContactAddress({
+          id: "address-vincent-eth",
+          currencyId: "ethereum",
+          address: VALID_ETHEREUM_RECIPIENT,
+        }),
+      ],
+    });
+    const { user } = renderForAccount(
+      accountEthereum,
+      {},
+      { contactsEnabled: true, contacts: [contact] },
+    );
+
+    await user.press(await screen.findByTestId("contacts-compact-row-contact-vincent"));
+
+    expect(await screen.findByText("Review")).toBeOnTheScreen();
+  });
+
+  it("should require choosing an address for a contact with multiple network addresses", async () => {
+    const contact = mockContact({
+      id: "contact-benoit",
+      name: "Benoit",
+      addresses: [
+        mockContactAddress({
+          id: "address-benoit-eth",
+          currencyId: "ethereum",
+          address: "0x1234567890123456789012345678901234567890",
+          label: "Ethereum Main",
+        }),
+        mockContactAddress({
+          id: "address-benoit-usdc",
+          currencyId: "ethereum/erc20/usd_coin",
+          address: VALID_ETHEREUM_RECIPIENT,
+          label: "USDC",
+        }),
+      ],
+    });
+    const { user } = renderForAccount(
+      accountEthereum,
+      {},
+      { contactsEnabled: true, contacts: [contact] },
+    );
+
+    await user.press(await screen.findByTestId("contacts-compact-row-contact-benoit"));
+    expect(await screen.findByText("Ethereum Main")).toBeOnTheScreen();
+    expect(screen.getByText("USDC")).toBeOnTheScreen();
+
+    await user.press(screen.getByTestId("send-recipient-contact-address-address-benoit-usdc"));
+
+    expect(await screen.findByText("Review")).toBeOnTheScreen();
   });
 
   it("should explain why add contact is unavailable on an unsupported network", async () => {
