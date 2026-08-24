@@ -1,43 +1,38 @@
 import { renderHook, withFlagOverrides } from "tests/testSetup";
-import { useWalletSyncUserState } from "LLD/features/WalletSync/components/WalletSyncContext";
+import { useLedgerSyncInfo } from "LLD/features/WalletSync/hooks/useLedgerSyncInfo";
 import { useContactsLedgerSyncStatus } from "./useContactsLedgerSyncStatus";
 
-jest.mock("LLD/features/WalletSync/components/WalletSyncContext", () => ({
-  useWalletSyncUserState: jest.fn(),
+jest.mock("LLD/features/WalletSync/hooks/useLedgerSyncInfo", () => ({
+  useLedgerSyncInfo: jest.fn(),
 }));
 
-const mockedUseWalletSyncUserState = jest.mocked(useWalletSyncUserState);
+const mockedUseLedgerSyncInfo = jest.mocked(useLedgerSyncInfo);
 
 function renderContactsLedgerSyncStatus({
   isWalletSyncEnabled = true,
-  visualPending = false,
-  walletSyncError = null,
+  isLoading = false,
+  isError = false,
   rootId,
 }: {
   isWalletSyncEnabled?: boolean;
-  visualPending?: boolean;
-  walletSyncError?: Error | null;
+  isLoading?: boolean;
+  isError?: boolean;
   rootId?: string;
 } = {}) {
-  mockedUseWalletSyncUserState.mockReturnValue({
-    visualPending,
-    walletSyncError,
-    onUserRefresh: jest.fn(),
-  });
+  mockedUseLedgerSyncInfo.mockReturnValue({
+    statusQuery: { error: isError ? new Error("Sync failed") : null, isError, isLoading },
+    trustchain: rootId
+      ? {
+          rootId,
+          applicationPath: "applicationPath",
+          walletSyncEncryptionKey: "walletSyncEncryptionKey",
+        }
+      : null,
+    walletState: {},
+  } as ReturnType<typeof useLedgerSyncInfo>);
 
   return renderHook(() => useContactsLedgerSyncStatus(), {
-    initialState: {
-      ...withFlagOverrides({ lldWalletSync: { enabled: isWalletSyncEnabled } }),
-      trustchain: {
-        trustchain: rootId
-          ? {
-              rootId,
-              applicationPath: "applicationPath",
-              walletSyncEncryptionKey: "walletSyncEncryptionKey",
-            }
-          : null,
-      },
-    },
+    initialState: withFlagOverrides({ lldWalletSync: { enabled: isWalletSyncEnabled } }),
   });
 }
 
@@ -50,16 +45,14 @@ describe("useContactsLedgerSyncStatus", () => {
     expect(result.current).toBe("unavailable");
   });
 
-  it("should be unavailable when Wallet Sync reports an error", () => {
-    const { result } = renderContactsLedgerSyncStatus({
-      walletSyncError: new Error("Sync failed"),
-    });
+  it("should be unavailable when Ledger Sync reports an error", () => {
+    const { result } = renderContactsLedgerSyncStatus({ isError: true });
 
     expect(result.current).toBe("unavailable");
   });
 
-  it("should be checking while Wallet Sync is pending", () => {
-    const { result } = renderContactsLedgerSyncStatus({ visualPending: true });
+  it("should be checking while the Ledger Sync status is loading", () => {
+    const { result } = renderContactsLedgerSyncStatus({ isLoading: true });
 
     expect(result.current).toBe("checking");
   });

@@ -1,19 +1,19 @@
-import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import type { ContactsLedgerSyncStatus } from "@features/flow-contacts-introduction";
 import { useFeature } from "@features/platform-feature-flags";
-import { useSelector } from "LLD/hooks/redux";
-import { useWalletSyncUserState } from "LLD/features/WalletSync/components/WalletSyncContext";
+import { useLedgerSyncInfo } from "LLD/features/WalletSync/hooks/useLedgerSyncInfo";
 
 export function useContactsLedgerSyncStatus(): ContactsLedgerSyncStatus {
   const walletSyncFeature = useFeature("lldWalletSync");
-  const trustchain = useSelector(trustchainSelector);
-  const { visualPending, walletSyncError } = useWalletSyncUserState();
+  const {
+    statusQuery: { isError, isLoading },
+    trustchain,
+  } = useLedgerSyncInfo();
 
-  if (!walletSyncFeature?.enabled || walletSyncError) {
+  if (!walletSyncFeature?.enabled || isError) {
     return "unavailable";
   }
 
-  if (visualPending) {
+  if (isLoading) {
     return "checking";
   }
 
