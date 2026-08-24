@@ -6,7 +6,6 @@ import {
 import BigNumber from "bignumber.js";
 import type { TronCoinConfig } from "../config";
 import {
-  DEFAULT_TRC20_FEES_LIMIT,
   claimRewardTronTransaction,
   craftStandardTransaction,
   craftTrc20Transaction,
@@ -113,14 +112,13 @@ async function craftSend(
       throw new Error("Memo cannot be used with smart contract transactions");
     }
 
-    // `fee_limit` caps what the TVM may burn, it is not a charge: whatever the contract call leaves
-    // unused is never taken. What arrives here is an *estimate* of the cost rather than a cap anyone
-    // chose — Tron's fee descriptor is `hasCustom: false`, so nothing in the app can set one. Capping
-    // at the estimate turns any under-estimate into an OUT_OF_ENERGY revert with the fee still burned,
-    // and a USDT transfer costs roughly twice as much when it has to activate the recipient's token
-    // balance — a state that can flip between estimating and broadcasting. So the cap only ratchets
-    // up from `DEFAULT_TRC20_FEES_LIMIT`, still clearing an estimate above it.
-    const feeLimit = Math.max(feesToNumber(fees) ?? 0, DEFAULT_TRC20_FEES_LIMIT);
+    // `fee_limit` caps what the TVM may burn, not a charge — unused energy is never taken. When the
+    // caller passes a custom fee we honour it verbatim, including a value below
+    // `DEFAULT_TRC20_FEES_LIMIT` or `0`: a low cap can OUT_OF_ENERGY-revert with the fee still burned,
+    // but that trade-off is the caller's to make and the coin module must not silently override it
+    // (LIVE-36391). Only when no custom fee is given does the default apply, and `craftTrc20Transaction`
+    // owns that fallback (`customFees ?? DEFAULT_TRC20_FEES_LIMIT`).
+    const feeLimit = feesToNumber(fees);
 
     return toCrafted(
       await craftTrc20Transaction(
