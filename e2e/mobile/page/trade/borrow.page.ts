@@ -1,5 +1,4 @@
 import { Step } from "jest-allure2-reporter/api";
-import { delay } from "../../helpers/commonHelpers";
 import { WebElementHelpers } from "../../helpers/elementHelpers";
 import { retryUntilTimeout } from "../../utils/retry";
 
@@ -8,7 +7,6 @@ const CONTINUE_READY_TIMEOUT_MS = 30_000;
 /** The partner prepares each transaction server-side, so the CTA stays disabled meanwhile. */
 const EXECUTION_STEP_TIMEOUT_MS = 240_000;
 const PROBE_TIMEOUT_MS = 2_000;
-const POLL_INTERVAL_MS = 500;
 
 const MAINNET_FUNDING_HINT =
   "Ensure the test account holds enough wBTC collateral and ETH for mainnet gas.";
@@ -94,7 +92,7 @@ export default class BorrowPage {
         (el: HTMLElement) => el.innerText,
       ),
     );
-    if (!new RegExp(`Loan to Value[^\\d]*${percentage}`).test(screenText)) {
+    if (!new RegExp(String.raw`Loan to Value[^\d]*${percentage}`).test(screenText)) {
       throw new Error(
         `Expected a loan to value of ${percentage} but the simulate-loan screen showed: ${screenText.replace(/\n+/g, " | ")}`,
       );
@@ -175,21 +173,19 @@ export default class BorrowPage {
   }
 
   private async expectStepDone(doneId: string) {
-    const deadline = Date.now() + EXECUTION_STEP_TIMEOUT_MS;
-    while (Date.now() < deadline) {
-      if (await this.isPresent(doneId)) return;
-      if (await this.isExecutionErrorVisible()) {
-        throw new Error(`Borrow execution failed before "${doneId}". ${MAINNET_FUNDING_HINT}`);
-      }
-      await delay(POLL_INTERVAL_MS);
+    await device.disableSynchronization();
+    try {
+      await waitWebElementByTestId(doneId, { timeout: EXECUTION_STEP_TIMEOUT_MS });
+    } catch {
+      const executionFailed = await this.isExecutionErrorVisible();
+      throw new Error(
+        executionFailed
+          ? `Borrow execution failed before "${doneId}". ${MAINNET_FUNDING_HINT}`
+          : `Borrow step "${doneId}" did not complete within ${EXECUTION_STEP_TIMEOUT_MS}ms. ${MAINNET_FUNDING_HINT}`,
+      );
+    } finally {
+      await device.enableSynchronization();
     }
-    throw new Error(
-      `Borrow step "${doneId}" did not complete within ${EXECUTION_STEP_TIMEOUT_MS}ms. ${MAINNET_FUNDING_HINT}`,
-    );
-  }
-
-  private async isPresent(testId: string): Promise<boolean> {
-    return !!(await waitWebElement(getWebElementByTestId(testId), PROBE_TIMEOUT_MS, false));
   }
 
   private async isExecutionErrorVisible(): Promise<boolean> {

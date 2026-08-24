@@ -82,7 +82,7 @@ const borrowSetupOptions = { nanoAppCatalogPath: NANO_APP_CATALOG_PATH };
 
         await app.borrow.clickViewMyLoan();
         await app.borrow.expectLoansDashboard();
-        await app.borrow.expectLoanDashboardRow();
+        await expect(app.borrow.expectLoanDashboardRow()).resolves.toBeUndefined();
       },
       BORROW_TIMEOUT_MS,
     );
