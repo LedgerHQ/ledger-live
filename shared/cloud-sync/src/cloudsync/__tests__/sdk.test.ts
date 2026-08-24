@@ -1,16 +1,14 @@
-import { z } from "zod";
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 import WebSocket from "ws";
-import { CloudSyncSDK, UpdateEvent } from "../sdk";
+import { CloudSyncInvalidPayload, CloudSyncSDK, UpdateEvent } from "../sdk";
 import { TrustchainOutdated } from "../../trustchain-types";
 import type { MemberCredentials, Trustchain, TrustchainSDK } from "../../trustchain-types";
 
 describe("CloudSyncSDK", () => {
   const port = 54036;
   const base = `http://localhost:${port}`;
-  const schema = z.object({ value: z.string() });
-  type Data = z.infer<typeof schema>;
+  type Data = { value: string };
 
   let storedData: string | null = null;
   let storedVersion = 0;
@@ -68,7 +66,7 @@ describe("CloudSyncSDK", () => {
   let version = 0;
   let data: Data | null = null;
   let trustchainSdk: TrustchainSDK;
-  let sdk: CloudSyncSDK<typeof schema>;
+  let sdk: CloudSyncSDK<Data>;
 
   beforeAll(() => server.listen());
   afterAll(() => server.close());
@@ -83,7 +81,6 @@ describe("CloudSyncSDK", () => {
     sdk = new CloudSyncSDK({
       apiBaseUrl: base,
       slug: "test",
-      schema,
       trustchainSdk,
       getCurrentVersion: () => version,
       saveNewUpdate: (update: UpdateEvent<Data>) => {
@@ -125,8 +122,30 @@ describe("CloudSyncSDK", () => {
     expect(storedData).toBeNull();
   });
 
-  it("rejects invalid payloads on push", async () => {
-    await expect(sdk.push(trustchain, creds, { invalid: 42 } as unknown as Data)).rejects.toThrow();
+  it("rejects non-object payloads on push", async () => {
+    for (const invalid of [null, undefined, 42, "string", true, []]) {
+      await expect(sdk.push(trustchain, creds, invalid as unknown as Data)).rejects.toThrow(
+        CloudSyncInvalidPayload,
+      );
+    }
+  });
+
+  it("accepts a payload it cannot validate, leaving per-module validation to the aggregator", async () => {
+    // a shape this app version does not know must not block the push for every other module
+    const unknownShape = { value: "hello", futureModule: { nested: [1, 2] } };
+    await sdk.push(trustchain, creds, unknownShape as unknown as Data);
+    expect(data).toEqual(unknownShape);
+    expect(version).toBe(1);
+  });
+
+  it("passes an unvalidated document through on pull", async () => {
+    await sdk.push(trustchain, creds, { unexpected: true } as unknown as Data);
+    version = 0;
+    data = null;
+
+    await sdk.pull(trustchain, creds);
+    expect(data).toEqual({ unexpected: true });
+    expect(version).toBe(1);
   });
 
   it("throws TrustchainOutdated when local version exists but remote has no data", async () => {
@@ -176,7 +195,6 @@ describe("CloudSyncSDK", () => {
     const sdkWithWs = new CloudSyncSDK({
       apiBaseUrl: `http://localhost:${wsPort}`,
       slug: "test",
-      schema,
       trustchainSdk,
       getCurrentVersion: () => version,
       saveNewUpdate: async () => {},

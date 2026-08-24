@@ -13936,6 +13936,9 @@ importers:
       '@shared/cloud-sync':
         specifier: workspace:^
         version: link:../../shared/cloud-sync
+      '@shared/cloud-sync-module':
+        specifier: workspace:^
+        version: link:../../shared/cloud-sync-module
       '@shared/env':
         specifier: workspace:*
         version: link:../../shared/env
