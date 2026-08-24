@@ -32,9 +32,11 @@ import {
   useAddAddressCurrencySelectionViewModel,
   useAddAddressFlowViewModel,
   type AddAddressContact,
+  type AddAddressCompletionLabels,
   type AddAddressEntryLabels,
   type AddAddressFlowState,
   type ContactsAddAddressNameLabels,
+  type ContactsAddAddressReviewLabels,
 } from "@features/flow-contacts-add-address";
 import {
   CONTACTS_FEATURE_INTRODUCTION_HIGHLIGHTS,
@@ -56,10 +58,7 @@ import { useContactDetailPaneAdapter } from "./useContactDetailPaneAdapter";
 import type { ContactAddressDetailActionsDialogProps } from "./useContactAddressDetailActionsAdapter";
 import { useContactDetailEditDeleteAdapter } from "./useContactDetailEditDeleteAdapter";
 import { useDispatch } from "LLD/hooks/redux";
-import type {
-  ContactsAddAddressFlowDialogProps,
-  ContactsAddAddressReviewLabels,
-} from "./components/ContactsAddAddressFlowDialog";
+import type { ContactsAddAddressFlowDialogProps } from "./components/ContactsAddAddressFlowDialog";
 
 export type ContactsPageViewModel = Omit<ContactsViewProps, "onAddContact"> &
   Readonly<{
@@ -245,6 +244,17 @@ export function useContactsViewModel(): ContactsPageViewModel {
   const addAddressReviewLabels = useMemo<ContactsAddAddressReviewLabels>(
     () => ({
       title: t("contacts.addAddressReview.title"),
+      addressLabel: t("contacts.addAddressReview.addressLabel"),
+      currencyLabel: t("contacts.addAddressReview.currencyLabel"),
+      networkLabel: t("contacts.addAddressReview.networkLabel"),
+      nameLabel: t("contacts.addAddressReview.nameLabel"),
+      continue: t("contacts.addAddressReview.continue"),
+    }),
+    [t],
+  );
+  const addAddressCompletionLabels = useMemo<AddAddressCompletionLabels>(
+    () => ({
+      title: t("contacts.addAddressReview.title"),
       continue: t("contacts.addAddressReview.continue"),
       successTitle: t("contacts.addAddressReview.successTitle"),
       close: t("contacts.addAddressReview.close"),
@@ -262,6 +272,7 @@ export function useContactsViewModel(): ContactsPageViewModel {
       },
       nameLabels: addAddressNameLabels,
       reviewLabels: addAddressReviewLabels,
+      completionLabels: addAddressCompletionLabels,
       onAddressChange: (address, inputMethod) => {
         void updateAddress(address, inputMethod);
       },
@@ -278,6 +289,7 @@ export function useContactsViewModel(): ContactsPageViewModel {
       handleSanctionedAddressLearnMore,
       addAddressNameLabels,
       addAddressReviewLabels,
+      addAddressCompletionLabels,
       addAddressFlowState,
       onBackAddAddress,
       onCloseAddAddress,

@@ -1,6 +1,7 @@
 import { mockMeContact } from "@domain/entity-contact/schema.mock";
 import { act, renderHook, withFlagOverrides } from "@tests/test-renderer";
 import { ScreenName } from "~/const";
+import { useContactsLedgerSyncStatus } from "../../../hooks/useContactsLedgerSyncStatus";
 import { useContactsPageViewModel } from "./useContactsPageViewModel";
 
 const mockNavigate = jest.fn();
@@ -11,6 +12,10 @@ jest.mock("@react-navigation/native", () => ({
   useNavigation: () => ({ navigate: mockNavigate, goBack: mockGoBack }),
 }));
 
+jest.mock("../../../hooks/useContactsLedgerSyncStatus");
+
+const mockedContactsLedgerSyncStatus = jest.mocked(useContactsLedgerSyncStatus);
+
 function renderViewModel(patchState?: Parameters<typeof withFlagOverrides>[1]) {
   return renderHook(() => useContactsPageViewModel(), {
     overrideInitialState: withFlagOverrides({}, patchState),
@@ -20,6 +25,7 @@ function renderViewModel(patchState?: Parameters<typeof withFlagOverrides>[1]) {
 describe("useContactsPageViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockedContactsLedgerSyncStatus.mockReturnValue("ready");
   });
 
   it("should navigate to the contact detail screen when a contact is opened", () => {

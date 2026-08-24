@@ -1,7 +1,6 @@
 import type { BlockInfo } from "@ledgerhq/coin-module-framework/api/types";
-import { getEnv } from "@ledgerhq/live-env";
 import { BigNumber } from "bignumber.js";
-import { HEDERA_TRANSACTION_NAMES, FINALITY_MS } from "../constants";
+import { HEDERA_TRANSACTION_NAMES, FINALITY_MS, STAKING_REWARD_ACCOUNT_ID } from "../constants";
 import { apiClient } from "../network/api";
 import { hgraphClient } from "../network/hgraph";
 import { analyzeStakingOperation, enrichERC20Transfers } from "../network/utils";
@@ -635,7 +634,6 @@ describe("getBlockV2", () => {
   it("should create CLAIM_REWARDS operations for staking reward transfers", async () => {
     const account1 = "0.0.999";
     const account2 = "0.0.1001";
-    const stakingRewardAccount = getEnv("HEDERA_STAKING_REWARD_ACCOUNT_ID");
     const rewardAccount1 = 30313674;
     const rewardAccount2 = 191772;
     const chargedFee = 79874;
@@ -662,7 +660,7 @@ describe("getBlockV2", () => {
           amount: 3235,
         },
         {
-          account: stakingRewardAccount,
+          account: STAKING_REWARD_ACCOUNT_ID,
           amount: -30505446,
         },
         {
@@ -697,7 +695,7 @@ describe("getBlockV2", () => {
       },
       {
         type: "transfer",
-        address: stakingRewardAccount,
+        address: STAKING_REWARD_ACCOUNT_ID,
         asset: { type: "native" },
         amount: BigInt(-totalRewards),
       },

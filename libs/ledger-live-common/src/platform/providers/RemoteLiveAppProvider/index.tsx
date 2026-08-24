@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, createContext, useMemo, useState, useCallback } from "react";
+import isEqual from "lodash/isEqual";
 import { LiveAppRegistry } from "./types";
 import { AppPlatform, LiveAppManifest, Loadable } from "../../types";
 
@@ -57,6 +58,23 @@ type LiveAppProviderProps = {
   parameters: FetchLiveAppCatalogPrams;
   updateFrequency: number;
 };
+
+function preserveManifestReferences(
+  manifests: LiveAppManifest[],
+  previousManifestsById: LiveAppRegistry["liveAppById"] | undefined,
+): LiveAppManifest[] {
+  return manifests.map(manifest => {
+    const previousManifest = previousManifestsById?.[manifest.id];
+    return previousManifest && isEqual(previousManifest, manifest) ? previousManifest : manifest;
+  });
+}
+
+function indexManifests(manifests: LiveAppManifest[]): LiveAppRegistry["liveAppById"] {
+  return manifests.reduce<LiveAppRegistry["liveAppById"]>((accumulator, manifest) => {
+    accumulator[manifest.id] = manifest;
+    return accumulator;
+  }, Object.create(null));
+}
 
 export function useRemoteLiveAppManifest(appId?: string): LiveAppManifest | undefined {
   const liveAppRegistry = useContext(liveAppContext).state;
@@ -162,22 +180,27 @@ export function RemoteLiveAppProvider({
       return false;
     } else {
       const { allManifests, catalogManifests } = result.manifests;
-      setState(() => ({
-        isLoading: false,
-        value: {
-          liveAppByIndex: allManifests,
-          liveAppFiltered: catalogManifests,
-          liveAppFilteredById: catalogManifests.reduce((acc, liveAppManifest) => {
-            acc[liveAppManifest.id] = liveAppManifest;
-            return acc;
-          }, {}),
-          liveAppById: allManifests.reduce((acc, liveAppManifest) => {
-            acc[liveAppManifest.id] = liveAppManifest;
-            return acc;
-          }, {}),
-        },
-        error: null,
-      }));
+      setState(currentState => {
+        const stableAllManifests = preserveManifestReferences(
+          allManifests,
+          currentState.value?.liveAppById,
+        );
+        const stableCatalogManifests = preserveManifestReferences(
+          catalogManifests,
+          currentState.value?.liveAppFilteredById,
+        );
+
+        return {
+          isLoading: false,
+          value: {
+            liveAppByIndex: stableAllManifests,
+            liveAppFiltered: stableCatalogManifests,
+            liveAppFilteredById: indexManifests(stableCatalogManifests),
+            liveAppById: indexManifests(stableAllManifests),
+          },
+          error: null,
+        };
+      });
       return true;
     }
     // oxlint-disable-next-line react-hooks/exhaustive-deps

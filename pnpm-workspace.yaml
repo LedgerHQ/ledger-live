@@ -51,7 +51,7 @@ catalog:
   "@ledgerhq/wallet-api-core": 2.0.0
   "@ledgerhq/wallet-api-server": 3.4.3
   "@ledgerhq/wallet-api-simulator": 2.3.3
-  "@ledgerhq/zcash-utils": 2.1.1
+  "@ledgerhq/zcash-utils": 2.2.0
   # React Native
   react-native: 0.81.6
   "@react-native/assets-registry": 0.81.6
@@ -222,9 +222,9 @@ catalog:
   oxfmt: 0.36.0
   # Modules published by coin-modules
   "@ledgerhq/coin-hypercore": 2.0.0
-  "@ledgerhq/coin-module-framework": 8.0.0
-  "@ledgerhq/coin-stellar": 9.0.0
-  "@ledgerhq/coin-tezos": 10.0.0
+  "@ledgerhq/coin-module-framework": 8.1.0
+  "@ledgerhq/coin-stellar": 9.3.0
+  "@ledgerhq/coin-tezos": 10.1.1
   "@ledgerhq/coin-xrp": 10.0.0
   detox: 20.51.3
 

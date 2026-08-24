@@ -1,6 +1,5 @@
-import type { ContactsViewNativeProps } from "@features/flow-contacts";
+import type { AddContactAppAdapterResult, ContactsViewNativeProps } from "@features/flow-contacts";
 import type { ContactsLedgerSyncIntroductionContentProps } from "@features/flow-contacts-introduction";
-import type { ContactsAddContactDrawerProps } from "@features/flow-contacts-add-contact";
 
 type ContactsLedgerSyncIntroductionPresentationProps = Pick<
   ContactsLedgerSyncIntroductionContentProps,
@@ -10,10 +9,11 @@ type ContactsLedgerSyncIntroductionPresentationProps = Pick<
 export type ContactsPageViewModel = Omit<ContactsViewNativeProps, "onAddContact"> &
   Readonly<{
     ledgerSyncIntroductionContent: ContactsLedgerSyncIntroductionPresentationProps;
+    onRequestAddContact: (onAllowed: () => void) => void;
   }>;
 
 export type ContactsPageContentProps = ContactsPageViewModel &
   Pick<ContactsViewNativeProps, "onAddContact"> &
   Readonly<{
-    addContactDrawer: ContactsAddContactDrawerProps;
+    addContactDrawer: AddContactAppAdapterResult;
   }>;

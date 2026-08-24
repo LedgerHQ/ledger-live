@@ -4,9 +4,9 @@ import invariant from "invariant";
 import { createBridges } from "@ledgerhq/coin-hedera/bridge/index";
 import Transport from "@ledgerhq/hw-transport";
 import Hedera from "@ledgerhq/hw-app-hedera";
-import type { HederaCoinConfig } from "@ledgerhq/coin-hedera/config";
 import hederaResolver from "@ledgerhq/coin-hedera/signer/index";
 import type {
+  HederaCoinConfig,
   TransactionStatus,
   Transaction,
   HederaAccount,

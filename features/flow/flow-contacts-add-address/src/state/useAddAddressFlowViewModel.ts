@@ -23,6 +23,9 @@ import type {
   AddAddressFlowViewModel,
   AddAddressInputSource,
   AddAddressLabelState,
+  PrefillAddAddressParams,
+  PrefillAddAddressStartResult,
+  ValidAddAddressEntryState,
 } from "./types";
 
 const CLOSED_ADD_ADDRESS_FLOW_STATE = {
@@ -111,6 +114,66 @@ export function useAddAddressFlowViewModel({
     },
     [cancelAddressValidation],
   );
+  const startWithPrefilled = useCallback(
+    async (params: PrefillAddAddressParams): Promise<PrefillAddAddressStartResult> => {
+      cancelAddressValidation();
+      const existingAddressLabels = params.contact.addresses.map(address => address.label);
+      const normalizedAddress = params.address.trim();
+      const requestId = validationRequestId.current;
+
+      if (normalizedAddress.length === 0) {
+        setState(CLOSED_ADD_ADDRESS_FLOW_STATE);
+        return { status: "invalid_address", error: "invalid_format" };
+      }
+
+      const validationResult = await requestAddressValidation(
+        addressValidation,
+        params.currency.currencyId,
+        normalizedAddress,
+      );
+
+      if (validationRequestId.current !== requestId) {
+        return { status: "cancelled" };
+      }
+
+      if (validationResult.status === "unavailable") {
+        setState(CLOSED_ADD_ADDRESS_FLOW_STATE);
+        return { status: "unavailable" };
+      }
+
+      if (validationResult.status !== "valid") {
+        setState(CLOSED_ADD_ADDRESS_FLOW_STATE);
+        return { status: "invalid_address", error: validationResult.status };
+      }
+
+      const addressEntry: ValidAddAddressEntryState = {
+        status: "valid",
+        value: normalizedAddress,
+        resolvedAddress: validationResult.resolvedAddress,
+        inputMethod: validationResult.isDomain ? "ens" : "manual",
+      };
+
+      setState({
+        status: "namingAddress",
+        selectedContactId: params.contact.id,
+        existingAddressLabels,
+        selectedCurrencyId: params.currency.currencyId,
+        entryMode: "prefilled",
+        displayContext: {
+          assetDisplayName: params.currency.assetDisplayName,
+          network: params.network,
+        },
+        addressEntry,
+        addressLabel: createAddressLabelState(
+          limitAddressLabelLength(params.currency.assetDisplayName),
+          existingAddressLabels,
+        ),
+      });
+
+      return { status: "started" };
+    },
+    [addressValidation, cancelAddressValidation],
+  );
   const completeCurrencySelection = useCallback(
     (selectedContactId: ContactId, selection: AddAddressCurrencySelection) => {
       setState(currentState => {
@@ -126,6 +189,8 @@ export function useAddAddressFlowViewModel({
           selectedContactId,
           existingAddressLabels: currentState.existingAddressLabels,
           selectedCurrencyId: selection.currencyId,
+          entryMode: "mad",
+          displayContext: null,
           addressEntry: EMPTY_ADDRESS_ENTRY_STATE,
           addressLabel: createAddressLabelState(
             limitAddressLabelLength(selection.assetDisplayName),
@@ -220,6 +285,8 @@ export function useAddAddressFlowViewModel({
         selectedContactId: currentState.selectedContactId,
         existingAddressLabels: currentState.existingAddressLabels,
         selectedCurrencyId: currentState.selectedCurrencyId,
+        entryMode: currentState.entryMode,
+        displayContext: currentState.displayContext,
         addressEntry: currentState.addressEntry,
         addressLabel: currentState.addressLabel,
       };
@@ -231,11 +298,27 @@ export function useAddAddressFlowViewModel({
         return currentState;
       }
 
+      if (currentState.entryMode === "prefilled") {
+        return {
+          status: "reviewingAddress",
+          selectedContactId: currentState.selectedContactId,
+          existingAddressLabels: currentState.existingAddressLabels,
+          selectedCurrencyId: currentState.selectedCurrencyId,
+          entryMode: currentState.entryMode,
+          displayContext: currentState.displayContext,
+          addressEntry: currentState.addressEntry,
+          addressLabel: currentState.addressLabel,
+          origin: "addressName",
+        };
+      }
+
       return {
         status: "confirmationRequired",
         selectedContactId: currentState.selectedContactId,
         existingAddressLabels: currentState.existingAddressLabels,
         selectedCurrencyId: currentState.selectedCurrencyId,
+        entryMode: currentState.entryMode,
+        displayContext: currentState.displayContext,
         addressEntry: currentState.addressEntry,
         addressLabel: currentState.addressLabel,
       };
@@ -257,6 +340,8 @@ export function useAddAddressFlowViewModel({
         selectedContactId: currentState.selectedContactId,
         existingAddressLabels: currentState.existingAddressLabels,
         selectedCurrencyId: currentState.selectedCurrencyId,
+        entryMode: currentState.entryMode,
+        displayContext: currentState.displayContext,
         addressEntry: currentState.addressEntry,
         addressLabel: currentState.addressLabel,
         origin: "addressDetails",
@@ -302,8 +387,17 @@ export function useAddAddressFlowViewModel({
             existingAddressLabels: currentState.existingAddressLabels,
           };
         case "namingAddress":
+          if (currentState.entryMode === "prefilled") {
+            return CLOSED_ADD_ADDRESS_FLOW_STATE;
+          }
           return { ...currentState, status: "enteringAddress" };
         case "reviewingAddress": {
+          if (currentState.entryMode === "prefilled") {
+            const { origin, ...session } = currentState;
+            return origin === "addressDetails"
+              ? { ...session, status: "enteringAddress" }
+              : { ...session, status: "namingAddress" };
+          }
           const { origin, ...session } = currentState;
           return origin === "addressDetails"
             ? { ...session, status: "enteringAddress" }
@@ -325,6 +419,7 @@ export function useAddAddressFlowViewModel({
   return {
     state,
     start,
+    startWithPrefilled,
     completeCurrencySelection,
     updateAddress,
     updateAddressLabel,

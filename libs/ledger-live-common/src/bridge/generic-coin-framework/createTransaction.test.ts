@@ -73,6 +73,24 @@ describe("createTransaction", () => {
     });
   });
 
+  it("returns the Kaspa default native send transaction", () => {
+    const account = {
+      type: "Account",
+      currency: getCryptoCurrencyById("kaspa"),
+    } as unknown as Account;
+
+    expect(createTransaction(account)).toEqual({
+      family: "kaspa",
+      amount: new BigNumber(0),
+      recipient: "",
+      fees: null,
+      useAllAmount: false,
+      mode: "send",
+      feesStrategy: "fast",
+      nonce: new BigNumber(0),
+    });
+  });
+
   it("throws for an unsupported currency family", () => {
     const account = {
       type: "Account",

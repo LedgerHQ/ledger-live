@@ -97,6 +97,15 @@ describe("FlowStackNavigator", () => {
     expect(screen.getByText("Step 1")).toBeOnTheScreen();
   });
 
+  it("should render the configured initial step", () => {
+    renderFlowNavigator(defaultStepRegistry, {
+      ...defaultFlowConfig,
+      initialStep: "step2",
+    });
+
+    expect(screen.getByText("Step 2")).toBeOnTheScreen();
+  });
+
   it("should use getScreenName when provided", () => {
     const getScreenName = (step: FlowStep) => `Custom_${step}`;
     renderFlowNavigator(defaultStepRegistry, defaultFlowConfig, { getScreenName });

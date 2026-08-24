@@ -93,10 +93,27 @@ export type SendFlowInitParams = Readonly<{
   account?: AccountLike;
   parentAccount?: Account;
   recipient?: string;
+  skipRecipientStep?: boolean;
   amount?: string;
   memo?: string;
   fromMAD?: boolean;
 }>;
+
+export function hasDirectRecipient(
+  params: Pick<SendFlowInitParams, "recipient" | "skipRecipientStep"> | undefined,
+): params is Pick<SendFlowInitParams, "recipient"> & {
+  recipient: string;
+  skipRecipientStep: true;
+} {
+  return params?.skipRecipientStep === true && Boolean(params.recipient?.trim());
+}
+
+export function canSkipRecipientStep(
+  params: Pick<SendFlowInitParams, "recipient" | "skipRecipientStep"> | undefined,
+  uiConfig: Pick<SendFlowUiConfig, "hasMemo">,
+): boolean {
+  return hasDirectRecipient(params) && !uiConfig.hasMemo;
+}
 
 export type SendFlowBusinessContext = Readonly<{
   state: SendFlowState;

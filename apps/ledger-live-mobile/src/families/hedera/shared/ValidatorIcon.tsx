@@ -1,7 +1,6 @@
 import React from "react";
 import { StyleProp, TextStyle, ViewStyle } from "react-native";
 import { useTheme } from "@react-navigation/native";
-import { getEnv } from "@shared/env";
 import LedgerLogo from "@ledgerhq/icons-ui/native/LedgerLogo";
 import type { HederaValidator } from "@ledgerhq/live-common/families/hedera/types";
 import Circle from "~/components/Circle";
@@ -20,8 +19,7 @@ const ValidatorIcon = ({ style, labelStyle, size = 64, validator }: Props) => {
   const fontSize = Math.round(size / 2);
   const lineHeight = Math.round(fontSize * 1.6);
   const validatorName = validator?.name ?? "";
-  const ledgerNodeId = getEnv("HEDERA_STAKING_LEDGER_NODE_ID");
-  const isLedger = validator?.id === String(ledgerNodeId);
+  const isLedger = validator?.isLedgerNode ?? false;
   const ledgerLogoSize = size > 32 ? "L" : "M";
 
   return (

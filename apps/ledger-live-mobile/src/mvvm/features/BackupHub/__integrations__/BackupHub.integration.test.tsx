@@ -4,6 +4,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { DeviceModelInfo } from "@ledgerhq/types-live";
+import { FEATURE_FLAGS_DEFAULTS, type Features } from "@shared/feature-flags";
 import {
   LARGE_SCREEN_UPSELL_BACKUPS_UTM_CONTENT,
   LARGE_SCREEN_UPSELL_UTM_CAMPAIGN,
@@ -77,11 +78,13 @@ const overrideWith = (
   subscriptionState: LedgerRecoverSubscriptionStateEnum,
   devicesModelList: DeviceModelId[] = [],
   lastSeenModelId?: DeviceModelId,
+  largeScreenUpsell: Features["largeScreenUpsell"] = { enabled: true },
 ) =>
   withFlagOverrides(
     {
       lwmBackupHub: { enabled: true },
       protectServicesMobile: { enabled: true, params: { protectId: PROTECT_ID } },
+      largeScreenUpsell,
     },
     (state: State): State => {
       const withSub = seedSubscriptionState(subscriptionState)(state);
@@ -246,6 +249,51 @@ describe("BackupHub screen (mobile)", () => {
 
     expect(await screen.findByText("A PIN-protected smart card.")).toBeVisible();
     expect(screen.queryByText("Not compatible with your device")).toBeNull();
+  });
+
+  it.each([
+    [
+      "the backup-hub-recovery-key-text-warning placement is off",
+      (() => {
+        const defaultParams = FEATURE_FLAGS_DEFAULTS.largeScreenUpsell.params;
+        if (!defaultParams) {
+          throw new Error("Expected large-screen upsell default params");
+        }
+        return {
+          enabled: true,
+          params: {
+            ...defaultParams,
+            banners: {
+              ...defaultParams.banners,
+              "backup-hub-recovery-key-text-warning": false,
+            },
+          },
+        };
+      })(),
+    ],
+    ["the large-screen upsell campaign is off", { enabled: false }],
+  ] as const)("keeps the Recovery Key row unchanged when %s", async (_, largeScreenUpsell) => {
+    const openURLSpy = jest.spyOn(Linking, "openURL").mockResolvedValue(undefined);
+    const { user } = render(<BackupHubTestNavigator />, {
+      overrideInitialState: overrideWith(
+        LedgerRecoverSubscriptionStateEnum.NO_SUBSCRIPTION,
+        [DeviceModelId.nanoS],
+        undefined,
+        largeScreenUpsell,
+      ),
+    });
+
+    expect(await screen.findByText("A PIN-protected smart card.")).toBeVisible();
+    expect(screen.queryByText("Not compatible with your device")).toBeNull();
+
+    await user.press(screen.getByTestId("backup-hub-physical-row-recovery-key"));
+
+    expect(openURLSpy).toHaveBeenCalledWith(urls.backupHub.recoveryKey);
+    expect(track).toHaveBeenCalledWith("button_clicked", {
+      button: BACKUP_HUB_TRACKING_BUTTON.recoveryKey,
+      page: BACKUP_HUB_TRACKING_PAGE_NAME,
+    });
+    expect(track).not.toHaveBeenCalledWith("deeplink_clicked", expect.anything());
   });
 
   it("uses the last-seen nano for Recovery Key upsell analytics when several nanos are known", async () => {

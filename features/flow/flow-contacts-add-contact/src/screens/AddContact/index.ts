@@ -4,5 +4,5 @@ export * from "./model/types";
 export * from "./model/viewModel";
 export * from "./model/controller";
 export * from "./useAddContactViewModel";
-export * from "./useAddContactDrawerViewModel";
+export * from "./useAddContactContentViewModel";
 export * from "./types";

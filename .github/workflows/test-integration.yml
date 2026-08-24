@@ -53,7 +53,7 @@ jobs:
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
       - name: Install dependencies
-        run: pnpm i --filter="live-common..." --filter="ledger-live" --filter="@ledgerhq/ledger-wallet-framework"
+        run: pnpm i --frozen-lockfile --filter="live-common..." --filter="ledger-live" --filter="@ledgerhq/ledger-wallet-framework"
 
       # Seed the local nx cache for live-common's transitive deps in two
       # chunks. Each chunk runs in its own nx process so the per-task fd burst

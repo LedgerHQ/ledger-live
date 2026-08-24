@@ -10,10 +10,7 @@ import { ALWAYS_ON_CATEGORY_ID } from "LLD/features/DynamicContent/utils/constan
 import { userIdSelector } from "@domain/entity-client-identity";
 import { useFeature } from "@features/platform-feature-flags";
 import { getBrazeConfig } from "~/braze-setup";
-import {
-  resolveDesktopBrazeUserId,
-  ensureLegacyAnonymousBrazeIdStored,
-} from "../braze/brazeIdentity";
+import { resolveDesktopBrazeUserId } from "../braze/brazeIdentity";
 import {
   ActionContentCard,
   CategoryContentCard,
@@ -183,18 +180,9 @@ export function useBraze() {
     const brazeConfig = getBrazeConfig();
     const isPlaywright = !!getEnv("PLAYWRIGHT_RUN");
 
-    const legacyAnonymousBrazeIdPersistence = ensureLegacyAnonymousBrazeIdStored(
-      anonymousBrazeId.current,
-      brazeOptOutIdentityCleanupEnabled,
-    );
-    if (legacyAnonymousBrazeIdPersistence) {
-      anonymousBrazeId.current = legacyAnonymousBrazeIdPersistence.anonymousBrazeId;
-      dispatch(legacyAnonymousBrazeIdPersistence.action);
-    }
-
     const isInitialized = braze.initialize(brazeConfig.apiKey, {
       baseUrl: brazeConfig.endpoint,
-      allowUserSuppliedJavascript: true,
+      allowUserSuppliedJavascript: false,
       enableLogging: __DEV__,
       sessionTimeoutInSeconds: devMode ? 1 : 1800,
       appVersion: isTrackedUser ? __APP_VERSION__ : undefined,

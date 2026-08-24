@@ -4,6 +4,7 @@ import type { SanctionedAddressBannerProps } from "../../components/SanctionedAd
 import { ContactsAddAddressNameInput } from "../AddressName/components/Input/ContactsAddAddressNameInput";
 import type { ContactsAddAddressNameLabels } from "../AddressName/types";
 import { ContactsAddAddressCompletion } from "../Completion/ContactsAddAddressCompletion";
+import { ContactsAddAddressReview, type ContactsAddAddressReviewLabels } from "../Review";
 import type {
   AddAddressCompletionLabels,
   AddAddressEntryLabels,
@@ -21,6 +22,7 @@ export type ContactsAddAddressFlowContentProps = Readonly<{
   entryLabels: AddAddressEntryLabels;
   sanctionedAddressBanner?: SanctionedAddressBannerProps;
   nameLabels: ContactsAddAddressNameLabels;
+  reviewLabels?: ContactsAddAddressReviewLabels;
   completionLabels: AddAddressCompletionLabels;
   onAddressChange: (address: string, inputMethod: AddAddressInputSource) => void;
   onContinueFromAddressDetails: () => void;
@@ -63,6 +65,7 @@ export function ContactsAddAddressFlowContent({
   entryLabels,
   sanctionedAddressBanner,
   nameLabels,
+  reviewLabels,
   completionLabels,
   onAddressChange,
   onContinueFromAddressDetails,
@@ -92,6 +95,7 @@ export function ContactsAddAddressFlowContent({
           addressEntry={state.addressEntry}
           addressLabel={state.addressLabel}
           labels={nameLabels}
+          showConfirmedAddress={state.entryMode === "mad"}
           onAddressLabelChange={onAddressLabelChange}
           onContinue={onContinueFromName}
         />
@@ -106,6 +110,21 @@ export function ContactsAddAddressFlowContent({
         />
       );
     case "reviewingAddress":
+      if (
+        state.entryMode === "prefilled" &&
+        state.displayContext !== null &&
+        reviewLabels !== undefined
+      ) {
+        return (
+          <ContactsAddAddressReview
+            addressEntry={state.addressEntry}
+            addressLabel={state.addressLabel}
+            displayContext={state.displayContext}
+            labels={reviewLabels}
+            onContinue={onContinueFromReview}
+          />
+        );
+      }
       return (
         <ContactsAddAddressCompletion
           buttonLabel={completionLabels.continue}

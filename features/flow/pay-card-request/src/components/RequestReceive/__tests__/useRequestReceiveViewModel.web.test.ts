@@ -40,7 +40,7 @@ describe("useRequestReceiveViewModel", () => {
     ["onShare", "share"],
     ["onCopy", "copy address"],
     ["onSave", "save"],
-    ["onVerify", "verify on device"],
+    ["onVerify", "verify"],
   ] as const)("tracks then invokes the injected callback for %s", (handler, button) => {
     const { props, result } = setup();
 
@@ -60,4 +60,15 @@ describe("useRequestReceiveViewModel", () => {
     expect(() => result.current.onCopy()).not.toThrow();
     expect(props.onCopy).toHaveBeenCalledWith(ADDRESS);
   });
+
+  // Share is mobile-only and Save is desktop-only, so each platform omits the other's callback.
+  it.each(["onShare", "onSave"] as const)(
+    "neither tracks nor throws when the optional %s callback is omitted",
+    handler => {
+      const { props, result } = setup({ [handler]: undefined });
+
+      expect(() => result.current[handler]()).not.toThrow();
+      expect(props.onTrackEvent).not.toHaveBeenCalled();
+    },
+  );
 });

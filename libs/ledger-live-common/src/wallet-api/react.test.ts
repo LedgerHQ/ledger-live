@@ -244,6 +244,38 @@ describe("useWalletAPIServer", () => {
     expect(options.tracking.load).toHaveBeenCalledWith(options.manifest);
   });
 
+  it("does not track load again when the same live app manifest is replaced", () => {
+    const options = createDefaultOptions();
+    const { rerender } = renderHook(
+      (props: useWalletAPIServerOptions) => useWalletAPIServer(props),
+      { initialProps: options },
+    );
+
+    expect(options.tracking.load).toHaveBeenCalledTimes(1);
+
+    rerender({
+      ...options,
+      manifest: { ...options.manifest, name: "Renamed App" },
+    });
+
+    expect(options.tracking.load).toHaveBeenCalledTimes(1);
+  });
+
+  it("tracks load when the live app id changes", () => {
+    const options = createDefaultOptions();
+    const { rerender } = renderHook(
+      (props: useWalletAPIServerOptions) => useWalletAPIServer(props),
+      { initialProps: options },
+    );
+
+    rerender({
+      ...options,
+      manifest: { ...options.manifest, id: "other-app" },
+    });
+
+    expect(options.tracking.load).toHaveBeenCalledTimes(2);
+  });
+
   it("should register handlers on the server", () => {
     const options = createDefaultOptions();
     renderHook(() => useWalletAPIServer(options));

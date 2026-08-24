@@ -16,6 +16,7 @@ export function ContactDetailAddressList({
   return (
     <ScrollView
       testID="contacts-detail-address-list"
+      alwaysBounceVertical={false}
       contentContainerStyle={{ flexGrow: 1 }}
       showsVerticalScrollIndicator={false}
     >

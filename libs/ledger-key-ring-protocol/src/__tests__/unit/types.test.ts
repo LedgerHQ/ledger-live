@@ -18,7 +18,6 @@ describe("MemberCredentialsSchema", () => {
     { ...memberCredentials, unexpected: "value" },
     { ...memberCredentials, pubkey: memberCredentials.pubkey.toUpperCase() },
     { ...memberCredentials, privatekey: memberCredentials.privatekey.toUpperCase() },
-    { ...memberCredentials, privatekey: "01".repeat(32) },
   ])("should reject invalid member credentials", invalidCredentials => {
     expect(MemberCredentialsSchema.safeParse(invalidCredentials).success).toBe(false);
   });

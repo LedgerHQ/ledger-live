@@ -398,6 +398,8 @@ export type SendFundsNavigatorStackParamList = {
     account: AccountLike;
     parentAccount?: Account;
     isSelfTransfer: boolean;
+    recipient?: string;
+    skipRecipientStep?: boolean;
   };
   [ScreenName.AleoMandatoryPrivateSync]: {
     account: AccountLike;

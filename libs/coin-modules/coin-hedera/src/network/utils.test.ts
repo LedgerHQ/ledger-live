@@ -1,6 +1,6 @@
 import { InvalidAddress } from "@ledgerhq/ledger-wallet-framework/errors";
-import { getEnv } from "@ledgerhq/live-env";
 import BigNumber from "bignumber.js";
+import { STAKING_REWARD_ACCOUNT_ID } from "../constants";
 import { HederaRecipientInvalidChecksum } from "../errors";
 import { getMockedAccount } from "../test/fixtures/account.fixture";
 import { getMockedCurrency, getMockedHTSTokenCurrency } from "../test/fixtures/currency.fixture";
@@ -109,7 +109,7 @@ describe("network utils", () => {
 
   describe("parseTransfers", () => {
     const userAddress = "0.0.1234";
-    const rewardPayer = getEnv("HEDERA_STAKING_REWARD_ACCOUNT_ID");
+    const rewardPayer = STAKING_REWARD_ACCOUNT_ID;
 
     it("should correctly identify an incoming transfer", () => {
       const transfers = [

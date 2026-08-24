@@ -16,7 +16,6 @@ import {
   HederaRedundantStakingNodeIdError,
 } from "../errors";
 import { findSubAccountById } from "@ledgerhq/ledger-wallet-framework/account";
-import { getEnv } from "@ledgerhq/live-env";
 import type { Account, AccountBridge, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
@@ -26,6 +25,7 @@ import {
   isTokenAssociateTransaction,
   isTokenAssociationRequired,
   isStakingTransaction,
+  resolveConfig,
 } from "../logic/utils";
 import { validateMemo } from "../logic/validateMemo";
 import {
@@ -92,9 +92,10 @@ async function handleTokenAssociateTransaction(
   }
 
   if (isAssociationFlow) {
+    const config = resolveConfig(account.currency.id);
     const hbarBalance = account.balance.dividedBy(10 ** account.currency.units[0].magnitude);
     const currentWorthInUSD = usdRate ? hbarBalance.multipliedBy(usdRate) : new BigNumber(0);
-    const requiredWorthInUSD = getEnv("HEDERA_TOKEN_ASSOCIATION_MIN_USD");
+    const requiredWorthInUSD = config.tokenAssociationMinUsd;
 
     if (currentWorthInUSD.isLessThan(requiredWorthInUSD)) {
       errors.insufficientAssociateBalance = new HederaInsufficientFundsForAssociation("", {

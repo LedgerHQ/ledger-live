@@ -11,3 +11,8 @@ export function selectPayCardAuth(state: PayCardAuthStateRoot): PayCardAuthState
 export function selectHasCard(state: PayCardAuthStateRoot): boolean {
   return state.payCardAuth.hasCard;
 }
+
+/** True while a Card session is live. `CardLogin` hides on it, and `CardLogout` shows on it. */
+export function selectIsSignedIn(state: PayCardAuthStateRoot): boolean {
+  return state.payCardAuth.isSignedIn;
+}

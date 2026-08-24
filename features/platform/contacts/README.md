@@ -29,3 +29,30 @@ ports, address-entry primitives, and shared analytics building blocks used by fl
 - Address-entry primitives: validation types, entry-state transitions, presentation resolution,
   and input helpers shared by Add address and Edit address. Flow-specific UI decisions remain in
   their respective leaf flows.
+
+## Device Intent Executor scaffold
+
+The Contacts DIE contracts are deliberately isolated from the package root:
+
+```ts
+import {
+  createIntent,
+} from "@features/platform-device-intent";
+import {
+  registerExternalAddressIntentPlatformDefinition,
+} from "@features/platform-contacts/device/intents";
+```
+
+The subpath exports the seven ADR intents: external-address registration, external-contact rename,
+identifier edit, scope edit, combined external-address edit, Ledger-account registration, and
+Ledger-account rename. Each intent lives in its own directory with `types.ts`, `job.ts`, a shared
+`intentDefinition.ts` that binds `./component`, and matching `component.web.tsx` /
+`component.native.tsx` files.
+Their current RxJS jobs are deterministic scaffolds: they emit `pending`,
+`awaiting-device-confirmation`, then a persistence-friendly `completed` result without invoking
+DMK or `@ledgerhq/device-contacts-kit`.
+
+The combined edit intentionally emits an identifier `partial-result` before the scope confirmation
+when both fields change. This preserves the ADR's non-atomic recovery contract: a consumer must
+persist that intermediate result before the scope step completes. Real ContactsManager adapters and
+application-flow wiring are deferred to their dedicated work.

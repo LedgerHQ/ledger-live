@@ -27,7 +27,7 @@ export function VerifyAddressSuccessView({
       <div className="flex flex-col gap-16 rounded-md bg-surface p-16">
         <span className="body-2 text-muted">{nextStepsLabel}</span>
         {nextSteps.map(step => (
-          <div key={step.index} className="flex flex-row items-start gap-12">
+          <div key={step.index} className="flex flex-row items-center justify-start gap-12">
             <Spot appearance="number" number={step.index} size={32} />
             <span className="body-2 text-base">{step.label}</span>
           </div>

@@ -17,6 +17,10 @@ export function resolveContactsFeatureIntroductionRequested(
   return input.isContactsEntryAvailable && !input.isDismissed;
 }
 
+export function isContactsLedgerSyncActivationRequired(status: ContactsLedgerSyncStatus): boolean {
+  return status === "inactive" || status === "unavailable";
+}
+
 export function resolveContactsLedgerSyncIntroductionOpen(
   input: ContactsLedgerSyncIntroductionOpenInput,
 ): boolean {
@@ -24,5 +28,8 @@ export function resolveContactsLedgerSyncIntroductionOpen(
     return false;
   }
 
-  return input.ledgerSyncStatus === "inactive" && !input.isLedgerSyncIntroductionDismissed;
+  return (
+    isContactsLedgerSyncActivationRequired(input.ledgerSyncStatus) &&
+    !input.isLedgerSyncIntroductionDismissed
+  );
 }

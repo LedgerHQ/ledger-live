@@ -6,7 +6,13 @@ import { BigNumber } from "bignumber.js";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { act, fireEvent, renderWithReactQuery, screen } from "@tests/test-renderer";
+import {
+  act,
+  fireEvent,
+  renderWithReactQuery,
+  screen,
+  withFlagOverrides,
+} from "@tests/test-renderer";
 import type { Account } from "@ledgerhq/types-live";
 import type { State } from "~/reducers/types";
 import { SendFlowOrchestrator } from "../SendFlowOrchestrator";
@@ -54,6 +60,10 @@ const HostStack = createNativeStackNavigator();
 type DriveOpts = Readonly<{
   recipient: string;
   memo?: string;
+}>;
+
+type RenderForAccountOptions = Readonly<{
+  contactsEnabled?: boolean;
 }>;
 
 jest.mock("LLM/components/DeviceIntentExecutor", () => {
@@ -108,12 +118,25 @@ describe("Send flow integration tests", () => {
   function renderForAccount(
     account: Account,
     initParams: Omit<SendFlowInitParams, "account"> = {},
+    options: RenderForAccountOptions = {},
   ) {
+    const withAccount = (state: State): State => ({
+      ...state,
+      accounts: { ...state.accounts, active: [account] },
+    });
+
     return renderWithReactQuery(<SendPage initParams={{ account, ...initParams }} />, {
-      overrideInitialState: (state: State) => ({
-        ...state,
-        accounts: { ...state.accounts, active: [account] },
-      }),
+      overrideInitialState: options.contactsEnabled
+        ? withFlagOverrides(
+            {
+              lwmContacts: {
+                enabled: true,
+                params: { newBadge: false, eligibleAddressFamilies: ["evm"] },
+              },
+            },
+            withAccount,
+          )
+        : withAccount,
     });
   }
 
@@ -159,6 +182,34 @@ describe("Send flow integration tests", () => {
     await user.press(await screen.findByText(/^Send to /));
 
     expect(await screen.findByText("Review")).toBeOnTheScreen();
+  });
+
+  it("should keep add contact enabled when the network supports the address book", async () => {
+    const { user } = renderForAccount(accountEthereum, {}, { contactsEnabled: true });
+
+    await user.paste(
+      await screen.findByPlaceholderText("Enter address or ENS"),
+      VALID_ETHEREUM_RECIPIENT,
+    );
+    await flushTimers();
+
+    expect(await screen.findByRole("button", { name: "Add contact" })).toBeEnabled();
+  });
+
+  it("should explain why add contact is unavailable on an unsupported network", async () => {
+    const { user } = renderForAccount(accountBitcoin, {}, { contactsEnabled: true });
+
+    await user.paste(await screen.findByPlaceholderText("Enter address"), VALID_BITCOIN_RECIPIENT);
+    await flushTimers();
+
+    await user.press(await screen.findByRole("button", { name: "Add contact" }));
+
+    expect(await screen.findByText("Bitcoin isn't supported yet")).toBeVisible();
+    expect(
+      screen.getByText(
+        "You can't add a Bitcoin address to your contacts yet. We're adding more cryptos over time.",
+      ),
+    ).toBeVisible();
   });
 
   describe("Stellar (memo flow)", () => {

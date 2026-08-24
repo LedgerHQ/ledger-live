@@ -4,12 +4,15 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { render, screen, waitFor, withFlagOverrides } from "@tests/test-renderer";
 import { ScreenName } from "~/const";
 import { ContactsScreen } from "LLM/features/Contacts";
+import { useContactsLedgerSyncStatus } from "LLM/features/Contacts/hooks/useContactsLedgerSyncStatus";
 import MyWalletNavigator from "LLM/features/MyWallet/Navigator";
 import { useMyWalletHeaderViewModel } from "LLM/features/MyWallet/views/Header/useMyWalletHeaderViewModel";
 
 jest.mock("LLM/features/MyWallet/views/Header/useMyWalletHeaderViewModel");
+jest.mock("LLM/features/Contacts/hooks/useContactsLedgerSyncStatus");
 
 const mockedViewModel = jest.mocked(useMyWalletHeaderViewModel);
+const mockedContactsLedgerSyncStatus = jest.mocked(useContactsLedgerSyncStatus);
 
 const Stack = createNativeStackNavigator();
 
@@ -35,6 +38,7 @@ function ContactsFeatureIntroductionTestApp() {
 
 describe("Contacts feature introduction integration", () => {
   beforeEach(() => {
+    mockedContactsLedgerSyncStatus.mockReturnValue("ready");
     mockedViewModel.mockReturnValue({
       onBackPress: jest.fn(),
       onNotificationsPress: jest.fn(),

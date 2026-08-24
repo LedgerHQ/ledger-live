@@ -386,6 +386,14 @@ export type LLDCoinFamily<
   sendRecipientCanNext?: (status: TS) => boolean;
 
   /**
+   * Rendered for its side effects only, once a transaction has been broadcast.
+   * Lets a family react to a completed send (e.g. Zcash triggers a shielded
+   * resync after a private transfer so the account page converges without a
+   * manual refresh).
+   */
+  PostBroadcastEffect?: React.ComponentType<{ account: A; transaction: T; operation: O }>;
+
+  /**
    *  One time modal that is trigger only one time on a account that never send
    */
   sendWarning?: {

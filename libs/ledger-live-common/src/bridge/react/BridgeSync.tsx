@@ -10,6 +10,7 @@ import { getEnv } from "@shared/env";
 import type { SyncAction, SyncState, BridgeSyncState } from "./types";
 import { BridgeSyncContext, BridgeSyncStateContext } from "./context";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
+import { SYNC_TYPE_SHIELDED, SYNC_TYPE_TRANSPARENT } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { createSyncSessionManager } from "../syncSessionManager";
 
@@ -204,6 +205,9 @@ function useSyncQueue({
         const syncConfig = {
           paginationConfig: {},
           blacklistedTokenIds,
+          ...(account.currency.id === "zcash"
+            ? { syncType: SYNC_TYPE_TRANSPARENT | SYNC_TYPE_SHIELDED }
+            : {}),
         };
         concat(
           from(prepareCurrency(account.currency)).pipe(ignoreElements()),

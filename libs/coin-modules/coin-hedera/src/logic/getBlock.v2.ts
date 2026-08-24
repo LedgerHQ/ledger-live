@@ -5,12 +5,12 @@ import type {
   BlockTransaction,
 } from "@ledgerhq/coin-module-framework/api/types";
 import { promiseAllBatched } from "@ledgerhq/coin-module-framework/promises";
-import type { HederaCoinConfig } from "../config";
 import { FINALITY_MS, HEDERA_TRANSACTION_NAMES } from "../constants";
 import { apiClient } from "../network/api";
 import { hgraphClient } from "../network/hgraph";
 import { enrichERC20Transfers, analyzeStakingOperation } from "../network/utils";
 import type {
+  HederaCoinConfig,
   ERC20TokenTransfer,
   HederaMirrorCoinTransfer,
   HederaMirrorTokenTransfer,

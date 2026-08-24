@@ -1,6 +1,5 @@
 export * from "./contactsListFacade.native";
 export * from "./contactsViewFacade.native";
-export * from "./addContactFacade";
 export * from "./analytics";
 export * from "./steps/EditContact";
 export * from "./steps/EditContact/native";

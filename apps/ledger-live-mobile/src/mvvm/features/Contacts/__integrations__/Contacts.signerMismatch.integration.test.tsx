@@ -1,12 +1,15 @@
 import React from "react";
 import { mockPopulatedContacts } from "@domain/entity-contact/schema.mock";
 import { render, screen, waitFor, withFlagOverrides } from "@tests/test-renderer";
+import { useContactsLedgerSyncStatus } from "LLM/features/Contacts/hooks/useContactsLedgerSyncStatus";
 import MyWalletNavigator from "LLM/features/MyWallet/Navigator";
 import { useMyWalletHeaderViewModel } from "LLM/features/MyWallet/views/Header/useMyWalletHeaderViewModel";
 
 jest.mock("LLM/features/MyWallet/views/Header/useMyWalletHeaderViewModel");
+jest.mock("LLM/features/Contacts/hooks/useContactsLedgerSyncStatus");
 
 const mockedViewModel = jest.mocked(useMyWalletHeaderViewModel);
+const mockedContactsLedgerSyncStatus = jest.mocked(useContactsLedgerSyncStatus);
 const noop = () => undefined;
 
 jest.mock("LLM/features/Contacts/hooks/useContactsAddressValidationAdapter", () => ({
@@ -56,6 +59,7 @@ function withContactsPageReadyState(
 
 describe("Contacts signer mismatch integration", () => {
   beforeEach(() => {
+    mockedContactsLedgerSyncStatus.mockReturnValue("ready");
     mockedViewModel.mockReturnValue({
       onBackPress: noop,
       onNotificationsPress: noop,

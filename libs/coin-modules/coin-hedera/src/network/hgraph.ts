@@ -2,16 +2,16 @@ import network from "@ledgerhq/live-network";
 import type { LiveNetworkResponse } from "@ledgerhq/live-network/network";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
-import { type HederaCoinConfig } from "../config";
 import { resolveConfig } from "../logic/utils";
 import type {
+  HederaCoinConfig,
   ERC20TokenAccount,
   ERC20TokenTransfer,
   HgraphErcTokenAccountResponse,
   HgraphErcTokenTransferResponse,
   HgraphLatestIndexedConsensusTimestampResponse,
   HgraphResponse,
-} from "../types/hgraph";
+} from "../types";
 
 const getPaginationDirection = (fetchAllPages: boolean, order: string) => {
   if (fetchAllPages) return "_gt";

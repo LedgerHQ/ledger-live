@@ -1,1 +1,1 @@
-export { ContactsAddContactDrawer } from "./ContactsAddContactDrawer.native";
+export * from "./ContactsAddContactContent.native";

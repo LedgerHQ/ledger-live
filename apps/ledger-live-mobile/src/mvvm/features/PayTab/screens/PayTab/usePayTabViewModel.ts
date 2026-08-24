@@ -11,8 +11,9 @@ import { useNavigationBarHeights } from "LLM/hooks/useNavigationBarHeights";
 import { usePayCardBalance } from "LLM/features/PayTab/hooks/usePayCardBalance";
 import { usePayTabActionTiles } from "LLM/features/PayTab/hooks/usePayTabActionTiles";
 import { usePayTabDepositOptions } from "LLM/features/PayTab/hooks/usePayTabDepositOptions";
-import { usePayStablecoins } from "LLM/features/PayTab/hooks/usePayStablecoins";
+import { usePayTabRequestReceive } from "LLM/features/PayTab/hooks/usePayTabRequestReceive";
 import { track } from "~/analytics";
+import { PAY_TAB_DEEP_LINK } from "~/navigation/deeplinks/payTabDeepLink";
 
 export function usePayTabViewModel() {
   const { top } = useNavigationBarHeights();
@@ -20,12 +21,9 @@ export function usePayTabViewModel() {
   const { params } = useRoute<RouteProp<PayTabNavigatorParamList, ScreenName.PayTab>>();
 
   const balance = usePayCardBalance();
-  const { defaultStablecoins } = usePayStablecoins();
-  const deposit = usePayTabDepositOptions(
-    balance.onTrackEvent,
-    defaultStablecoins.map(stablecoin => stablecoin.id),
-  );
-  const actionTiles = usePayTabActionTiles(balance.onTrackEvent, deposit.open);
+  const deposit = usePayTabDepositOptions(balance.onTrackEvent);
+  const request = usePayTabRequestReceive(balance.onTrackEvent);
+  const actionTiles = usePayTabActionTiles(balance.onTrackEvent, deposit.open, request.open);
 
   const balanceLabels: BalanceLabels = useMemo(
     () => ({
@@ -45,6 +43,7 @@ export function usePayTabViewModel() {
     () => ({
       clientId: getEnv("CARD_BAANX_CLIENT_KEY"),
       redirectUri: getEnv("CARD_OAUTH_REDIRECT_URI"),
+      deepLink: PAY_TAB_DEEP_LINK,
     }),
     [],
   );
@@ -92,5 +91,6 @@ export function usePayTabViewModel() {
     balanceLabels,
     actionTiles,
     depositOptions: deposit.depositOptions,
+    requestReceive: request.requestReceive,
   };
 }

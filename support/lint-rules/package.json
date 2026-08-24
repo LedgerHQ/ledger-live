@@ -1,0 +1,23 @@
+{
+  "name": "@support/lint-rules",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Shared oxlint JS plugin for monorepo-wide custom lint rules",
+  "exports": {
+    "./src/*": "./src/*",
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "catalog:"
+  }
+}

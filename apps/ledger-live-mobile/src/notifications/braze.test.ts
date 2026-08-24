@@ -1,6 +1,5 @@
 import Braze from "@braze/react-native-sdk";
 import { UserId, DUMMY_USER_ID } from "@domain/entity-client-identity";
-import { generateAnonymousId } from "@ledgerhq/live-common/braze/anonymousUsers";
 import { start, updateUserPreferences } from "./braze";
 import type { NotificationsSettings } from "../reducers/types";
 
@@ -12,13 +11,8 @@ jest.mock("@braze/react-native-sdk", () => ({
   },
 }));
 
-jest.mock("@ledgerhq/live-common/braze/anonymousUsers", () => ({
-  generateAnonymousId: jest.fn(() => "anonymous_id_1"),
-}));
-
 const mockedChangeUser = jest.mocked(Braze.changeUser);
 const mockedSetCustomUserAttribute = jest.mocked(Braze.setCustomUserAttribute);
-const mockedGenerateAnonymousId = jest.mocked(generateAnonymousId);
 
 const defaultNotifications = {
   areNotificationsAllowed: true,
@@ -40,19 +34,16 @@ describe("start", () => {
     it("should call changeUser with real id when user is tracked", () => {
       start(true, REAL_USER_ID);
       expect(mockedChangeUser).toHaveBeenCalledWith(REAL_USER_ID.exportUserIdForBraze());
-      expect(mockedGenerateAnonymousId).not.toHaveBeenCalled();
     });
 
-    it("should call changeUser with anonymous id when user is opted out", () => {
+    it("should skip changeUser when user is opted out", () => {
       start(false, REAL_USER_ID);
-      expect(mockedGenerateAnonymousId).toHaveBeenCalled();
-      expect(mockedChangeUser).toHaveBeenCalledWith("anonymous_id_1");
+      expect(mockedChangeUser).not.toHaveBeenCalled();
     });
 
     it("should skip changeUser when user id is dummy", () => {
       start(true, DUMMY_USER_ID);
       expect(mockedChangeUser).not.toHaveBeenCalled();
-      expect(mockedGenerateAnonymousId).not.toHaveBeenCalled();
     });
   });
 
@@ -62,19 +53,16 @@ describe("start", () => {
     it("should call changeUser with real id when user is tracked", () => {
       start(true, REAL_USER_ID, options);
       expect(mockedChangeUser).toHaveBeenCalledWith(REAL_USER_ID.exportUserIdForBraze());
-      expect(mockedGenerateAnonymousId).not.toHaveBeenCalled();
     });
 
     it("should skip changeUser when user is opted out", () => {
       start(false, REAL_USER_ID, options);
       expect(mockedChangeUser).not.toHaveBeenCalled();
-      expect(mockedGenerateAnonymousId).not.toHaveBeenCalled();
     });
 
     it("should skip changeUser when user id is dummy", () => {
       start(false, DUMMY_USER_ID, options);
       expect(mockedChangeUser).not.toHaveBeenCalled();
-      expect(mockedGenerateAnonymousId).not.toHaveBeenCalled();
     });
   });
 });

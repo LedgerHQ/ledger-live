@@ -5,6 +5,7 @@ export function useContactsAddAddressNameViewModel({
   addressEntry,
   addressLabel,
   labels,
+  showConfirmedAddress = true,
   onAddressLabelChange,
   onContinue,
 }: ContactsAddAddressNameProps): ContactsAddAddressNameViewProps {
@@ -24,6 +25,7 @@ export function useContactsAddAddressNameViewModel({
     address: addressEntry.value,
     addressLabel,
     labels,
+    showConfirmedAddress,
     validationMessage,
     isContinueEnabled: addressLabel.status === "valid",
     onAddressLabelChange: onChange,

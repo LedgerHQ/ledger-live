@@ -32,6 +32,7 @@ type SendWorkflowParams = Readonly<{
   account?: AccountLike;
   parentAccount?: Account;
   recipient?: string;
+  skipRecipientStep?: boolean;
   amount?: string;
   memo?: string;
   fromMAD?: boolean;
@@ -54,6 +55,7 @@ export function SendWorkflow({ onClose, params, isOpen }: SendWorkflowProps) {
       account: params?.account,
       parentAccount: params?.parentAccount,
       recipient: params?.recipient,
+      skipRecipientStep: params?.skipRecipientStep,
       amount: params?.amount,
       memo: params?.memo,
       fromMAD: params?.fromMAD ?? false,

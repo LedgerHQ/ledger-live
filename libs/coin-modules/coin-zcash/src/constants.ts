@@ -59,13 +59,29 @@ export const getZainoEndpoint = (): { grpcUrl: string; network: ZcashNetwork } =
 // a note -- and so the default birthday a scan starts from.
 export const ZCASH_ACTIVATION_DATE = new Date("2022-05-31");
 export const ZCASH_ACTIVATION_DATE_STRING = "2022-05-31";
-export const ZCASH_OUTDATED_SYNC_INTERVAL_MINUTES = 2;
 // A freshly shielded note is scanned into the spendable (Ironwood) balance
 // before it can actually be spent: it first needs to gain confirmations. Until
 // the note's transaction has this many blocks mined on top of it, the spendable
 // balance can trail the total.
 export const ZCASH_SHIELDED_SPENDABILITY_DELAY_BLOCKS = 12;
-export const ZCASH_CHECK_OUTDATED_SYNC_INTERVAL = 5_000; // 5 seconds
+/** @deprecated kept for backward compatibility */
+export const ZCASH_OUTDATED_SYNC_INTERVAL_MINUTES = 2;
+/** @deprecated kept for backward compatibility */
+export const ZCASH_CHECK_OUTDATED_SYNC_INTERVAL = 5_000;
+// Bounds how long the automatic (wallet-sync-driven) shielded leg may run before
+// it is treated as hung and degraded to a "stopped" state for this tick. RxJS's
+// `timeout()` on a plain number resets on every emission from the underlying
+// scan, not once for the whole sync, so this is really a per-chunk budget: one
+// server round-trip for one block range, not the full catch-up. A single
+// chunk on an ordinary connection can legitimately take well over the
+// previous 20s, especially for a new or far-behind account, exactly the case
+// this task automates syncing for, so a tight value here falsely treats a
+// slow-but-healthy chunk as hung. No chunk-processing time has actually been
+// measured yet (this stays a planning-time default), but it must clearly
+// exceed realistic single-chunk latency, not just "near-instant" typical
+// latency. A resumable checkpoint (lastProcessedBlock) means the next tick
+// picks up where this one left off, this only bounds one chunk's worst case.
+export const ZCASH_AUTO_SYNC_TIMEOUT_MS = 120_000;
 export const DEFAULT_ZCASH_PRIVATE_INFO: ZcashPrivateInfo = {
   orchardBalance: new BigNumber(0),
   saplingBalance: new BigNumber(0),
@@ -79,6 +95,7 @@ export const DEFAULT_ZCASH_PRIVATE_INFO: ZcashPrivateInfo = {
   lastSyncTimestamp: null,
   lastProcessedBlock: null,
   transactions: [],
+  lastSyncError: null,
 };
 
 /** Estimation recipient used by estimateMaxSpendable/fee-estimation flows. */

@@ -4,7 +4,7 @@
 
 import { renderHook } from "@testing-library/react";
 import { useAssetsData } from "./useAssetsData";
-import { useGetAssetsDataInfiniteQuery } from "@domain/api-aggregated-assets";
+import { AssetCategory, useGetAssetsDataInfiniteQuery } from "@domain/api-aggregated-assets";
 
 jest.mock("@domain/api-aggregated-assets", () => ({
   ...jest.requireActual("@domain/api-aggregated-assets"),
@@ -220,6 +220,23 @@ describe("useAssetsData", () => {
     expect(mockuseGetAssetsDataInfiniteQuery).toHaveBeenCalledWith(
       expect.anything(),
       expect.objectContaining({ pollingInterval: undefined }),
+    );
+  });
+
+  it("should forward category filtering to the underlying query", () => {
+    mockuseGetAssetsDataInfiniteQuery.mockReturnValue({ ...defaultMockValues });
+
+    renderHook(() =>
+      useAssetsData({
+        product: "lld",
+        version: "1.0.0",
+        categories: [AssetCategory.Stablecoins],
+      }),
+    );
+
+    expect(mockuseGetAssetsDataInfiniteQuery).toHaveBeenCalledWith(
+      expect.objectContaining({ categories: [AssetCategory.Stablecoins] }),
+      expect.anything(),
     );
   });
 });

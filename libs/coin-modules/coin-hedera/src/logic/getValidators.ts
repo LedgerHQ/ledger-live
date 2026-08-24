@@ -1,7 +1,7 @@
 import type { Cursor, Page, Validator } from "@ledgerhq/coin-module-framework/api/types";
-import type { HederaCoinConfig } from "../config";
 import { apiClient } from "../network/api";
 import { calculateAPY, extractCompanyFromNodeDescription } from "./utils";
+import type { HederaCoinConfig } from "../types";
 
 export async function getValidators({
   configOrCurrencyId,

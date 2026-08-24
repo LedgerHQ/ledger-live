@@ -4,9 +4,11 @@ import {
   computeAmountError,
   computeRecipientError,
   isTransparentInputTransfer,
+  isTransparentOutputDust,
   resolveTransparentUtxos,
 } from "./statusHelpers";
-import { ZIP317_MINIMUM_FEE } from "../logic/coin-selection";
+import { TRANSPARENT_OUTPUT_DUST_THRESHOLD, ZIP317_MINIMUM_FEE } from "../logic/coin-selection";
+import { ZcashAmountBelowDustThreshold } from "../types/errors";
 import type { BitcoinOutput, Transaction, ZcashAccount, ZcashTransferType } from "../types/bridge";
 import type { SpendableNote } from "../network/types";
 import { ZCASH_SHIELDED_SPENDABILITY_DELAY_BLOCKS } from "../constants";
@@ -62,6 +64,7 @@ function account({
   ironwoodNotes = [50_000],
   freshIronwoodNotes = [],
   synced = true,
+  shieldedKey = true,
   lastProcessedBlock = REFERENCE_HEIGHT,
 }: {
   utxos?: number[];
@@ -71,6 +74,9 @@ function account({
   /** Ironwood notes scanned only a few blocks ago -- still maturing. */
   freshIronwoodNotes?: number[];
   synced?: boolean;
+  /** Whether the UFVK has been exported from the device, i.e. the account can
+   *  take part in the shielded pools at all. */
+  shieldedKey?: boolean;
   lastProcessedBlock?: number | null;
 } = {}): ZcashAccount {
   const ironwoodBalance = [...ironwoodNotes, ...freshIronwoodNotes].reduce((s, v) => s + v, 0);
@@ -121,6 +127,7 @@ function account({
           orchardBalance: new BigNumber(orchardBalance),
           ironwoodBalance: new BigNumber(ironwoodBalance),
           saplingBalance: new BigNumber(0),
+          ufvk: shieldedKey ? "uview1test" : null,
           lastProcessedBlock,
           transactions,
         }
@@ -204,11 +211,46 @@ describe("computeRecipientError", () => {
     ["not-an-address", "InvalidAddress"],
     [ZS_ADDRESS, "ZcashSaplingRecipientNotSupported"],
   ])("rejects %s with %s", (recipient, expected) => {
-    expect(computeRecipientError(recipient, "Zcash")?.name).toBe(expected);
+    expect(computeRecipientError(recipient, "Zcash", true)?.name).toBe(expected);
   });
 
   it.each([T_ADDRESS, U_ADDRESS])("accepts %s", recipient => {
-    expect(computeRecipientError(recipient, "Zcash")).toBe(undefined);
+    expect(computeRecipientError(recipient, "Zcash", true)).toBe(undefined);
+  });
+
+  // Paying an Orchard receiver needs a shielded bundle, which the builder can
+  // only assemble from the account's UFVK.
+  it("rejects a shielded recipient when the account has no UFVK", () => {
+    expect(computeRecipientError(U_ADDRESS, "Zcash", false)?.name).toBe("ZcashShieldedKeyMissing");
+  });
+
+  it("still accepts a transparent recipient when the account has no UFVK", () => {
+    expect(computeRecipientError(T_ADDRESS, "Zcash", false)).toBe(undefined);
+  });
+
+  // The address is malformed whether or not a viewing key exists; reporting the
+  // missing key instead would send the user off to the export flow for nothing.
+  it.each([
+    ["not-an-address", "InvalidAddress"],
+    [ZS_ADDRESS, "ZcashSaplingRecipientNotSupported"],
+  ])("keeps reporting %s as %s without a UFVK", (recipient, expected) => {
+    expect(computeRecipientError(recipient, "Zcash", false)?.name).toBe(expected);
+  });
+});
+
+describe("isTransparentOutputDust", () => {
+  it("is false for a non-positive amount -- that is caught by the positive-amount check instead", () => {
+    expect(isTransparentOutputDust(new BigNumber(0))).toBe(false);
+    expect(isTransparentOutputDust(new BigNumber(-1))).toBe(false);
+  });
+
+  // The bound is exclusive: exactly the threshold is a valid, non-dust value.
+  it.each([
+    ["one zatoshi below the threshold", TRANSPARENT_OUTPUT_DUST_THRESHOLD - 1, true],
+    ["exactly the threshold", TRANSPARENT_OUTPUT_DUST_THRESHOLD, false],
+    ["one zatoshi above the threshold", TRANSPARENT_OUTPUT_DUST_THRESHOLD + 1, false],
+  ] as [string, number, boolean][])("is %s -> dust: %s", (_label, amount, expected) => {
+    expect(isTransparentOutputDust(new BigNumber(amount))).toBe(expected);
   });
 });
 
@@ -377,6 +419,73 @@ describe("getTransactionStatus, transparent-input flows", () => {
 
     expect(status.errors).toEqual({});
   });
+
+  // Without the UFVK the shielded pools are out of reach, so a shielded
+  // recipient has to be refused here -- at the address field, where the user can
+  // act on it -- rather than accepted and failed at the device step.
+  it("refuses a shielded recipient when the UFVK has not been exported", async () => {
+    const status = await getTransactionStatus(
+      account({ shieldedKey: false }),
+      transaction({ transferType: "transparent-to-shielded", recipient: U_ADDRESS }),
+    );
+
+    expect(errorNames(status.errors)).toEqual({ recipient: "ZcashShieldedKeyMissing" });
+  });
+
+  // The counterpart, and the flow restored: spending public funds from an
+  // account that never exported its UFVK stays available.
+  it("still accepts a transparent send when the UFVK has not been exported", async () => {
+    const status = await getTransactionStatus(
+      account({ shieldedKey: false }),
+      transaction({ transferType: "transparent", recipient: T_ADDRESS }),
+    );
+
+    expect(status.errors).toEqual({});
+  });
+
+  it("rejects a t->t send one zatoshi below the dust threshold", async () => {
+    const status = await getTransactionStatus(
+      account({ utxos: [1_000_000] }),
+      transaction({
+        amount: new BigNumber(TRANSPARENT_OUTPUT_DUST_THRESHOLD - 1),
+        zcashFee: new BigNumber(10_000),
+      }),
+    );
+
+    expect(errorNames(status.errors)).toEqual({ amount: "ZcashAmountBelowDustThreshold" });
+    expect((status.errors.amount as ZcashAmountBelowDustThreshold).minimumZatoshis).toBe(
+      TRANSPARENT_OUTPUT_DUST_THRESHOLD,
+    );
+  });
+
+  // The bound is exclusive: exactly the threshold is a valid, non-dust send.
+  it("accepts a t->t send exactly at the dust threshold", async () => {
+    const status = await getTransactionStatus(
+      account({ utxos: [1_000_000] }),
+      transaction({
+        amount: new BigNumber(TRANSPARENT_OUTPUT_DUST_THRESHOLD),
+        zcashFee: new BigNumber(10_000),
+      }),
+    );
+
+    expect(status.errors).toEqual({});
+  });
+
+  // A dust amount only matters for a transparent recipient output;
+  // "transparent-to-shielded" turns it into an Orchard note.
+  it("does not apply the transparent dust rule to a shielding (t->s) send", async () => {
+    const status = await getTransactionStatus(
+      account({ utxos: [1_000_000] }),
+      transaction({
+        transferType: "transparent-to-shielded",
+        recipient: U_ADDRESS,
+        amount: new BigNumber(TRANSPARENT_OUTPUT_DUST_THRESHOLD - 1),
+        zcashFee: new BigNumber(10_000),
+      }),
+    );
+
+    expect(status.errors).toEqual({});
+  });
 });
 
 describe("getTransactionStatus, note-spending flows", () => {
@@ -476,6 +585,56 @@ describe("getTransactionStatus, note-spending flows", () => {
     });
 
     expect((await getTransactionStatus(acc, tx)).errors).toEqual({});
+  });
+
+  // A shielded-to-transparent recipient is also a transparent output, priced
+  // through computeAmountError rather than getTransparentInputStatus, but
+  // subject to the same dust rule.
+  it("rejects a shielded-to-transparent send one zatoshi below the dust threshold", async () => {
+    const status = await getTransactionStatus(
+      account(),
+      transaction({
+        transferType: "shielded-to-transparent",
+        recipient: T_ADDRESS,
+        amount: new BigNumber(TRANSPARENT_OUTPUT_DUST_THRESHOLD - 1),
+        selectedNotes: [note(50_000)],
+        zcashFee: new BigNumber(10_000),
+      }),
+    );
+
+    expect(errorNames(status.errors)).toEqual({ amount: "ZcashAmountBelowDustThreshold" });
+  });
+
+  it("accepts a shielded-to-transparent send exactly at the dust threshold", async () => {
+    const status = await getTransactionStatus(
+      account(),
+      transaction({
+        transferType: "shielded-to-transparent",
+        recipient: T_ADDRESS,
+        amount: new BigNumber(TRANSPARENT_OUTPUT_DUST_THRESHOLD),
+        selectedNotes: [note(50_000)],
+        zcashFee: new BigNumber(10_000),
+      }),
+    );
+
+    expect(status.errors).toEqual({});
+  });
+
+  // A dust amount only matters when the recipient output is transparent; a
+  // pure "shielded" (z->z) recipient is an Orchard note.
+  it("does not apply the transparent dust rule to a pure shielded (z->z) send", async () => {
+    const status = await getTransactionStatus(
+      account(),
+      transaction({
+        transferType: "shielded",
+        recipient: U_ADDRESS,
+        amount: new BigNumber(TRANSPARENT_OUTPUT_DUST_THRESHOLD - 1),
+        selectedNotes: [note(50_000)],
+        zcashFee: new BigNumber(10_000),
+      }),
+    );
+
+    expect(status.errors).toEqual({});
   });
 
   it("refuses a shielded send that selected no note, however full the pool", async () => {
