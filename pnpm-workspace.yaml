@@ -218,8 +218,8 @@ catalog:
   playwright: 1.60.0
   allure-playwright: 3.9.0
   allure-js-commons: 3.9.0
-  oxlint: 1.51.0
-  oxfmt: 0.36.0
+  oxlint: 1.79.0
+  oxfmt: 0.64.0
   # Modules published by coin-modules
   "@ledgerhq/coin-hypercore": 2.0.0
   "@ledgerhq/coin-module-framework": 8.1.0
