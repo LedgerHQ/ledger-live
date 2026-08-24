@@ -7,6 +7,7 @@ type ContactAddressDetailActionsProps = Readonly<{
   labels: ContactAddressDetailDialogNativeLabels;
   hasCopied: boolean;
   onCopy: () => void;
+  onShare?: () => void;
   onSend?: () => void;
   onEdit?: () => void;
   onDelete?: () => void;
@@ -19,6 +20,7 @@ export function ContactAddressDetailActions({
   labels,
   hasCopied,
   onCopy,
+  onShare,
   onSend,
   onEdit,
   onDelete,
@@ -57,7 +59,14 @@ export function ContactAddressDetailActions({
         >
           {labels.edit}
         </TileButton>
-        <TileButton icon={Share} disabled isFull lx={{ flex: 1 }}>
+        <TileButton
+          icon={Share}
+          disabled={!onShare}
+          onPress={onShare}
+          isFull
+          lx={{ flex: 1 }}
+          testID="contacts-address-detail-share"
+        >
           {labels.share}
         </TileButton>
         <TileButton

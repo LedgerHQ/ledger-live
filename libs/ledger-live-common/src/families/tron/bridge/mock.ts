@@ -4,7 +4,7 @@ import {
   RecipientRequired,
   InvalidAddress,
 } from "@ledgerhq/ledger-wallet-framework/errors";
-import type { Transaction } from "@ledgerhq/coin-tron/types/index";
+import type { Transaction } from "../types";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import { TRON_DUMMY_ADDRESS } from "@ledgerhq/coin-tron/constants";
 import { getSerializedAddressParameters } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
@@ -21,25 +21,27 @@ import { validateAddress } from "../../../bridge/validateAddress";
 
 const receive = makeAccountBridgeReceive();
 
+// Each member is typed from the bridge it implements, so the callback parameters below are
+// contextually typed rather than implicitly `any`.
+type TronMockBridge = AccountBridge<Transaction>;
+
 const createTransaction = (): Transaction => ({
   family: "tron",
   amount: new BigNumber(0),
   useAllAmount: false,
   mode: "send",
-  duration: 3,
   recipient: "",
-  networkInfo: null,
-  resource: null,
-  votes: [],
+  // Same defaults the real bridge seeds (generic-coin-framework/createTransaction.ts), so a mock
+  // staking flow doesn't start with an undefined bag.
+  familySpecificData: { resource: null, duration: 3, votes: [] },
 });
 
-const updateTransaction = (t, patch) => ({ ...t, ...patch });
+const updateTransaction: TronMockBridge["updateTransaction"] = (t, patch) => ({ ...t, ...patch });
 
-const estimateMaxSpendable = ({ account }) => {
-  return account.balance;
-};
+const estimateMaxSpendable: TronMockBridge["estimateMaxSpendable"] = async ({ account }) =>
+  account.balance;
 
-const getTransactionStatus = (a, t) => {
+const getTransactionStatus: TronMockBridge["getTransactionStatus"] = (a, t) => {
   const errors: {
     amount?: Error;
     recipient?: Error;
@@ -86,33 +88,11 @@ const getTransactionStatus = (a, t) => {
   });
 };
 
-const prepareTransaction = async (a, t) => {
-  let res = t;
+// Nothing to fill in: mock fees are 0, and the transaction shape carries no `networkInfo`.
+const prepareTransaction: TronMockBridge["prepareTransaction"] = async (_account, transaction) =>
+  transaction;
 
-  if (!res.networkInfo) {
-    const freeNetUsed = 0,
-      freeNetLimit = 0,
-      NetUsed = 0,
-      NetLimit = 0,
-      EnergyUsed = 0,
-      EnergyLimit = 0;
-    res = {
-      ...res,
-      networkInfo: {
-        family: "tron",
-        freeNetUsed: new BigNumber(freeNetUsed),
-        freeNetLimit: new BigNumber(freeNetLimit),
-        netUsed: new BigNumber(NetUsed),
-        netLimit: new BigNumber(NetLimit),
-        energyUsed: new BigNumber(EnergyUsed),
-        energyLimit: new BigNumber(EnergyLimit),
-      },
-    };
-  }
-  return res;
-};
-
-const accountBridge: AccountBridge<Transaction> = {
+const accountBridge: TronMockBridge = {
   createTransaction,
   updateTransaction,
   getTransactionStatus,

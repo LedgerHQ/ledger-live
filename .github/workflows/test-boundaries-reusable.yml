@@ -56,7 +56,7 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
 
       - name: Install dependencies
-        run: pnpm i
+        run: pnpm i --frozen-lockfile
 
       - name: Enforce module boundaries
         run: pnpm exec nx run enforce-boundaries:lint:boundaries

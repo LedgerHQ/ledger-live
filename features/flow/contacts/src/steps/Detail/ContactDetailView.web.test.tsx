@@ -13,7 +13,7 @@ const labels: ContactDetailLabels = {
   emptyMeTitle: "No saved addresses for you",
   emptyContactTitle: name => `No saved addresses for ${name}`,
   emptyMeDescription: "Save your wallet addresses to receive crypto by name next time.",
-  emptyContactDescription: () => "Save their wallet addresses to send to them by name next time.",
+  emptyContactDescription: () => "Save their wallet addresses to send to them by name next time",
   formatMeDisplayName: name => `${name} (Me)`,
   formatAddressCount: count => `${count} address`,
 };
@@ -57,7 +57,7 @@ describe("ContactDetailView", () => {
     expect(screen.getByText("Benoit")).toBeInTheDocument();
     expect(screen.getByText("No saved addresses for Benoit")).toBeInTheDocument();
     expect(
-      screen.getByText("Save their wallet addresses to send to them by name next time."),
+      screen.getByText("Save their wallet addresses to send to them by name next time"),
     ).toBeInTheDocument();
   });
 

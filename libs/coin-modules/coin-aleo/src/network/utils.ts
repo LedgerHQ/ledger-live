@@ -21,13 +21,17 @@ import type {
   AleoRecordScannerStatusResponse,
   AleoDecryptedRecordResponse,
   AleoTokenDetails,
+  AleoTransitionCursor,
+  AleoExactTransitionCursor,
 } from "../types";
 import {
+  hasPublicAddress,
   findTransferArguments,
   isParsableTransferFunction,
   parseAmount,
   parseMicrocredits,
 } from "../logic/utils";
+import { register } from "../logic/register";
 import { apiClient } from "./api";
 
 export async function decryptRecordAmount(
@@ -95,6 +99,74 @@ function hasReachedMinHeight(
   return transactions.some(tx => tx.block_number < minBlockHeight);
 }
 
+/**
+ * A transition with no direct account involvement (e.g. the outer call of a batching contract);
+ * a sibling transition of the same transaction carries the real amount and addresses.
+ * Testnet transaction showing this: at1lqugdt847uwnfem2xhzwq6ewrnd6ysjv2gumvglytskutxj3kcpsmc3rrf
+ */
+function isUnaddressedTransfer(tx: AleoPublicTransaction): boolean {
+  return tx.function_id.includes("transfer") && !hasPublicAddress(tx);
+}
+
+function toExactCursor(tx: AleoPublicTransaction): AleoExactTransitionCursor {
+  return { blockNumber: tx.block_number, transitionId: tx.transition_id };
+}
+
+/**
+ * One page of the explorer's per-transition stream, cut on a block boundary: the block the stream
+ * stops inside is handed to the next page whole, so a caller may bound record fetching by block
+ * height. `next` is `null` once the stream is exhausted.
+ */
+export async function fetchTransitionPage({
+  config,
+  address,
+  cursor,
+  limit,
+  order = "asc",
+}: {
+  config: AleoCoinConfig;
+  address: string;
+  cursor?: AleoTransitionCursor;
+  limit?: number;
+  order?: "asc" | "desc";
+}): Promise<{
+  transitions: AleoPublicTransaction[];
+  next: AleoExactTransitionCursor | null;
+}> {
+  const transitions: AleoPublicTransaction[] = [];
+  let currentCursor = cursor;
+  let hasMorePages = true;
+  let closedRows: AleoPublicTransaction[] = [];
+
+  while (hasMorePages && closedRows.length === 0) {
+    const page = await apiClient.getAccountPublicTransactions({
+      config,
+      address,
+      order,
+      ...(limit && { limit }),
+      ...(currentCursor && { cursor: currentCursor }),
+    });
+
+    transitions.push(...page.transactions.filter(tx => !isUnaddressedTransfer(tx)));
+
+    const lastRow = page.transactions.at(-1);
+
+    if (!page.next_cursor || !lastRow) {
+      hasMorePages = false;
+    } else {
+      currentCursor = toExactCursor(lastRow);
+
+      const openBlock = lastRow.block_number;
+      closedRows = transitions.filter(tx => tx.block_number !== openBlock);
+    }
+  }
+
+  const lastClosedRow = closedRows.at(-1);
+  if (!lastClosedRow) return { transitions, next: null };
+
+  return { transitions: closedRows, next: toExactCursor(lastClosedRow) };
+}
+
 export async function fetchAccountTransactionsFromHeight({
   config,
   address,
@@ -125,25 +197,15 @@ export async function fetchAccountTransactionsFromHeight({
       address,
       limit,
       order,
-      ...(currentCursor && { cursor: currentCursor }),
+      ...(currentCursor && { cursor: { blockNumber: Number(currentCursor) } }),
     });
 
     const nextCursorBlockNumber = page.next_cursor?.block_number.toString() ?? null;
     hasMorePages = nextCursorBlockNumber !== null;
 
-    const recentTxs = page.transactions.filter(tx => {
-      const hasValidBlockNumber = tx.block_number >= minBlockHeight;
-
-      // Skip transitions that have no direct account involvement (e.g. outer call in a batching contract).
-      // Other transition, sharing the same transaction_id, will carry the real amount and addresses.
-      // Testnet transaction showing this issue: at1lqugdt847uwnfem2xhzwq6ewrnd6ysjv2gumvglytskutxj3kcpsmc3rrf
-      const isInvalidTransition =
-        tx.function_id.includes("transfer") &&
-        tx.sender_address === "" &&
-        tx.recipient_address === "";
-
-      return hasValidBlockNumber && !isInvalidTransition;
-    });
+    const recentTxs = page.transactions.filter(
+      tx => tx.block_number >= minBlockHeight && !isUnaddressedTransfer(tx),
+    );
     transactions.push(...recentTxs);
 
     // stop if DESC order hit the min height boundary
@@ -199,6 +261,7 @@ export async function fetchAllOwnedRecords({
   uuid,
   unspent,
   start,
+  end,
   resultsPerPage = DEFAULT_RECORDS_PAGE_SIZE,
   signal,
   programs = [PROGRAM_ID.CREDITS],
@@ -213,6 +276,7 @@ export async function fetchAllOwnedRecords({
   uuid: string;
   unspent?: boolean;
   start?: number;
+  end?: number;
   resultsPerPage?: number;
   signal?: AbortSignal;
   programs?: string[];
@@ -229,6 +293,7 @@ export async function fetchAllOwnedRecords({
       uuid,
       ...(typeof unspent === "boolean" && { unspent }),
       ...(typeof start === "number" && { start }),
+      ...(typeof end === "number" && { end }),
       resultsPerPage,
       page,
       programs,
@@ -277,6 +342,7 @@ export async function fetchAllTokens({
   return tokens;
 }
 
+/** Reads the scanner status, mapping a dropped enrollment to {@link AleoApiConfigurationResetError}. */
 export async function getRecordScannerStatusOrThrow(
   config: AleoCoinConfig,
   uuid: string,
@@ -322,28 +388,13 @@ export async function accessProvableApi({
   let uuid = provableApi?.uuid;
   let synced: boolean | undefined = provableApi?.scannerStatus?.synced ?? false;
   let percentage: number | undefined = provableApi?.scannerStatus?.percentage ?? 0;
-  let status;
 
   if (!uuid) {
-    const { public_key, key_id } = await apiClient.getScannerPublicKey(config);
-
-    const { encrypted: encryptedData } = await sdkClient.encryptRegistrationPayload({
-      config,
-      publicKey: public_key,
-      viewKey,
-      start: 0,
-    });
-
-    const { uuid: accountUuid } = await apiClient.registerForScanningAccountRecordsEncrypted({
-      config,
-      encryptedData,
-      keyId: key_id,
-    });
-
-    uuid = accountUuid;
+    const { provableId } = await register(config, viewKey);
+    uuid = provableId;
   }
 
-  status = await getRecordScannerStatusOrThrow(config, uuid);
+  const status = await getRecordScannerStatusOrThrow(config, uuid);
 
   if (status) {
     synced = status.synced;
@@ -394,7 +445,7 @@ function getInputValue(input: AleoTransition["inputs"][number]): string | null {
  *
  * Returns null silently for non-transfer functions such as join/split.
  */
-async function resolveTransferArguments({
+export async function resolveTransferArguments({
   config,
   transition,
   transactionId,
@@ -421,14 +472,14 @@ async function resolveTransferArguments({
   const decryptionErrors: unknown[] = [];
 
   const plaintexts = await Promise.all(
-    transition.inputs.map((input, index) => {
+    transition.inputs.map(async (input, index) => {
       const value = getInputValue(input);
       if (!value) return null;
       if (input.type !== "private") return value;
 
-      // The owning record's program/function cannot decrypt a batching wrapper's inputs.
-      return sdkClient
-        .decryptCiphertext({
+      try {
+        // The owning record's program/function cannot decrypt a batching wrapper's inputs.
+        const { plaintext } = await sdkClient.decryptCiphertext({
           config,
           ciphertext: value,
           tpk: transition.tpk,
@@ -436,14 +487,12 @@ async function resolveTransferArguments({
           programId: transition.program,
           functionName: transition.function,
           outputIndex: index,
-        })
-        .then(
-          result => result.plaintext,
-          (error: unknown) => {
-            decryptionErrors.push(error);
-            return null;
-          },
-        );
+        });
+        return plaintext;
+      } catch (error) {
+        decryptionErrors.push(error);
+        return null;
+      }
     }),
   );
 
@@ -598,6 +647,31 @@ export async function enrichPrivateRecord({
   }
 
   return { rawRecord, details, ...enrichedRecordData };
+}
+
+export async function enrichPrivateRecords({
+  config,
+  viewKey,
+  address,
+  records,
+  onProgress,
+  signal,
+}: {
+  config: AleoCoinConfig;
+  viewKey: string;
+  address: string;
+  records: AleoPrivateRecord[];
+  onProgress?: (completed: number, total: number) => void;
+  signal?: AbortSignal;
+}): Promise<(EnrichedPrivateRecord | null)[]> {
+  let completed = 0;
+
+  return promiseAllBatched(2, records, async rawRecord => {
+    signal?.throwIfAborted();
+    const result = await enrichPrivateRecord({ config, rawRecord, address, viewKey });
+    onProgress?.(++completed, records.length);
+    return result;
+  });
 }
 
 function splitPublicAndSemiPublicOperations(

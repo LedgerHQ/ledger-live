@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  act,
   renderWithMockedCounterValuesProvider,
   fireEvent,
   screen,
@@ -8,13 +9,30 @@ import {
   within,
 } from "tests/testSetup";
 import { useNavigate } from "react-router";
+import type { TokenAccount } from "@ledgerhq/types-live";
+import type { VerifyAddressIntentJobState } from "@features/platform-verify-address-intent";
+import { buildDeviceInitializationInput } from "LLD/components/DeviceIntentExecutor";
+import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
 import { track, trackPage } from "~/renderer/analytics/segment";
-import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
 import { BTC_ACCOUNT, ETH_ACCOUNT_WITH_USDC } from "LLD/features/__mocks__/accounts.mock";
 import { payCardFeatureTourInitialState } from "@features/flow-pay-card-feature-tour/state";
 import PayTab from "LLD/features/PayTab";
 import { usePayStablecoins, type PayStablecoins } from "../hooks/usePayStablecoins";
-import { USDC, USDT, makeItem } from "../hooks/__tests__/fixtures";
+import { USDC, makeItem } from "../hooks/__tests__/fixtures";
+import { AssetCategory } from "@domain/api-aggregated-assets";
+import {
+  EMPTY_DESCRIPTION,
+  EMPTY_TITLE,
+  FEATURE_TOUR_ROW,
+  INIT_INPUT,
+  USDC_TOKEN,
+  defaultPayStablecoins,
+  dieEnabledState,
+  fundedState,
+  newSendFlowEnabledState,
+  onboardedState,
+  tourSeenState,
+} from "./fixtures";
 
 const mockNavigate = jest.fn();
 
@@ -32,27 +50,6 @@ const mockedTrackPage = jest.mocked(trackPage);
 const mockedTrack = jest.mocked(track);
 const mockedUsePayStablecoins = jest.mocked(usePayStablecoins);
 
-const EMPTY_TITLE = "Pay and get paid";
-const EMPTY_DESCRIPTION = "Start by depositing stablecoin to your wallet";
-const FEATURE_TOUR_ROW = "Minimal volatility";
-
-const onboardedState = { settings: { ...AFTER_ONBOARDING_STATE, counterValue: "USD" } };
-const tourSeenState = {
-  payCardFeatureTour: { ...payCardFeatureTourInitialState, hasSeenFeatureTour: true },
-};
-const fundedState = {
-  ...onboardedState,
-  ...tourSeenState,
-  accounts: [BTC_ACCOUNT, ETH_ACCOUNT_WITH_USDC],
-};
-
-const defaultPayStablecoins: PayStablecoins = {
-  stablecoins: [],
-  defaultStablecoins: [USDC, USDT],
-  isLoading: false,
-  isError: false,
-};
-
 function mockPayStablecoins(overrides: Partial<PayStablecoins> = {}) {
   mockedUsePayStablecoins.mockReturnValue({
     ...defaultPayStablecoins,
@@ -68,17 +65,46 @@ function mockFundedPayStablecoins() {
 
 jest.mock("@features/flow-pay-card-auth", () => ({
   CardLogin: () => <button type="button">Login</button>,
+  CardLogout: () => null,
 }));
 
-jest.mock("~/renderer/linking", () => ({
-  openURL: jest.fn(),
+type CapturedExecutor = {
+  sourceFlow: string;
+  intent: { input: { expectedAddress: string } };
+  onIntentJobStateChanged: (jobState: VerifyAddressIntentJobState) => void;
+};
+
+let capturedExecutor: CapturedExecutor | undefined;
+
+jest.mock("LLD/components/DeviceIntentExecutor", () => ({
+  buildDeviceInitializationInput: jest.fn(),
+  DeviceIntentExecutorLWD: (props: CapturedExecutor) => {
+    capturedExecutor = props;
+    return <div data-testid="device-intent-executor" />;
+  },
 }));
 
-describe("PayTab", () => {
+jest.mock("LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer", () => ({
+  useOpenAssetAndAccount: jest.fn(),
+}));
+
+const mockedBuildInit = jest.mocked(buildDeviceInitializationInput);
+const mockedUseOpenAssetAndAccount = jest.mocked(useOpenAssetAndAccount);
+
+let openAssetAndAccount: jest.Mock;
+
+describe("PayTab integration", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    capturedExecutor = undefined;
     mockPayStablecoins();
     mockedUseNavigate.mockReturnValue(mockNavigate);
+    openAssetAndAccount = jest.fn();
+    mockedUseOpenAssetAndAccount.mockReturnValue({
+      openAssetAndAccount,
+      openAssetAndAccountPromise: jest.fn(),
+    });
+    mockedBuildInit.mockResolvedValue(INIT_INPUT);
   });
 
   it("should show the feature tour on first visit", () => {
@@ -196,6 +222,26 @@ describe("PayTab", () => {
     expect(screen.getByTestId("pay-card-deposit-option-swap")).toBeVisible();
   });
 
+  it("should open the stablecoin-filtered send account selection from the new payment action tile", async () => {
+    mockFundedPayStablecoins();
+
+    const { store } = renderWithMockedCounterValuesProvider(<PayTab />, {
+      initialState: newSendFlowEnabledState,
+    });
+
+    const payTile = await screen.findByRole("button", { name: "New payment" });
+    fireEvent.click(payTile);
+
+    await waitFor(() => {
+      expect(store.getState().modularDialog.isOpen).toBe(true);
+    });
+    expect(store.getState().modularDialog.flow).toBe("send");
+    expect(store.getState().modularDialog.source).toBe("Pay");
+    expect(store.getState().modularDialog.dialogParams?.categories).toEqual([
+      AssetCategory.Stablecoins,
+    ]);
+  });
+
   it("should persist the selected stablecoin, update the hero pill and track the confirmation", async () => {
     mockFundedPayStablecoins();
 
@@ -225,5 +271,35 @@ describe("PayTab", () => {
       button: "confirm_balance_filter",
       asset: "USDC",
     });
+  });
+
+  it("should mount the DIE on verify and restore the request card once the address is confirmed", async () => {
+    mockFundedPayStablecoins();
+    const { user } = renderWithMockedCounterValuesProvider(<PayTab />, {
+      initialState: dieEnabledState,
+    });
+
+    await user.click(await screen.findByRole("button", { name: "Request" }));
+    const { onSuccess } = openAssetAndAccount.mock.calls[0][0] as {
+      onSuccess: (account: TokenAccount, parentAccount: typeof ETH_ACCOUNT_WITH_USDC) => void;
+    };
+    act(() => onSuccess(USDC_TOKEN, ETH_ACCOUNT_WITH_USDC));
+
+    await user.click(await screen.findByTestId("pay-card-request-receive-verify"));
+    await user.click(await screen.findByTestId("pay-card-verify-address-verify-cta"));
+
+    await waitFor(() => expect(screen.getByTestId("device-intent-executor")).toBeVisible());
+    expect(capturedExecutor?.sourceFlow).toBe("receive");
+    expect(capturedExecutor?.intent.input.expectedAddress).toBe(ETH_ACCOUNT_WITH_USDC.freshAddress);
+
+    act(() => {
+      capturedExecutor!.onIntentJobStateChanged({
+        type: "verified",
+        address: ETH_ACCOUNT_WITH_USDC.freshAddress,
+      });
+    });
+
+    expect(await screen.findByTestId("pay-card-request-receive")).toBeVisible();
+    expect(screen.queryByTestId("device-intent-executor")).not.toBeInTheDocument();
   });
 });

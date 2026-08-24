@@ -19,6 +19,14 @@ jest.mock("@ledgerhq/live-common/bridge/index", () => ({
 jest.mock("../ZCashExportKeyFlowModal/sync", () => ({
   syncStateUpdater: jest.fn(() => ({ type: "test/syncStateUpdater" })),
 }));
+jest.mock("@ledgerhq/coin-zcash/logic/account/spendability", () => ({
+  hasMaturingIronwoodNotes: jest.fn(() => false),
+  getSpendableIronwoodBalance: jest.fn(() => new BigNumber(0)),
+  getMaturingIronwoodBalance: jest.fn(() => new BigNumber(0)),
+}));
+jest.mock("@ledgerhq/coin-zcash/bridge/note-reservation", () => ({
+  getReservedNullifiers: jest.fn(() => []),
+}));
 const mockedGetAccountBridge = jest.mocked(getAccountBridge);
 const mockedSyncStateUpdater = jest.mocked(syncStateUpdater);
 
@@ -66,7 +74,9 @@ describe("Bitcoin Account Balance Summary Footer", () => {
       expect(screen.getByText("Transparent balance")).toBeInTheDocument();
       expect(screen.getByText("Private balance")).toBeInTheDocument();
       expect(screen.getByTestId("show-private-balance-button")).toBeInTheDocument();
-      expect(screen.getByText(PRIVATE_BALANCE_WARNING)).toBeVisible();
+      // Warning is now in the ℹ tooltip, not the banner. The banner only renders
+      // when maturing funds are present; a fresh account has none.
+      expect(screen.queryByTestId("zcash-private-maturing-amount")).not.toBeInTheDocument();
     });
   });
 
@@ -121,14 +131,12 @@ describe("Bitcoin Account Balance Summary Footer", () => {
     });
   });
 
-  it("should render the last sync date when the sync state is complete", async () => {
+  it("should render a distinguishable warning when stopped carries a recorded sync error", async () => {
     mockedUseAccountUnit.mockReturnValue({
       code: "ZEC",
       name: "Zcash",
       magnitude: 8,
     });
-
-    const now = new Date();
 
     render(
       <AccountBalanceSummaryFooter
@@ -137,6 +145,79 @@ describe("Bitcoin Account Balance Summary Footer", () => {
           currency: { id: "zcash" } as CryptoCurrency,
           privateInfo: {
             ...DEFAULT_ZCASH_PRIVATE_INFO,
+            syncState: "stopped",
+            lastSyncError: "shielded sync failed/timed out: Error: timeout",
+          },
+        }}
+      />,
+      {
+        initialState: withFlagOverrides({ zcashShielded: { enabled: true } }),
+      },
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId("zcash-sync-failed-warning")).toBeInTheDocument();
+      expect(screen.getByTestId("start-sync-button")).toBeInTheDocument();
+    });
+  });
+
+  it("should not render the sync-failed warning for a plain manual stop", async () => {
+    mockedUseAccountUnit.mockReturnValue({
+      code: "ZEC",
+      name: "Zcash",
+      magnitude: 8,
+    });
+
+    render(
+      <AccountBalanceSummaryFooter
+        account={{
+          ...account,
+          currency: { id: "zcash" } as CryptoCurrency,
+          privateInfo: {
+            ...DEFAULT_ZCASH_PRIVATE_INFO,
+            syncState: "stopped",
+            lastSyncError: null,
+          },
+        }}
+      />,
+      {
+        initialState: withFlagOverrides({ zcashShielded: { enabled: true } }),
+      },
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId("start-sync-button")).toBeInTheDocument();
+    });
+    expect(screen.queryByTestId("zcash-sync-failed-warning")).not.toBeInTheDocument();
+  });
+
+  it("should render the last sync date when the sync state is complete", async () => {
+    mockedUseAccountUnit.mockReturnValue({
+      code: "ZEC",
+      name: "Zcash",
+      magnitude: 8,
+    });
+
+    const now = new Date();
+    const updater = jest.fn();
+    const syncMock = jest.fn(
+      () =>
+        new Observable<(account: unknown) => unknown>(subscriber => {
+          subscriber.next(updater);
+        }),
+    );
+    mockedGetAccountBridge.mockReturnValue({
+      sync: syncMock,
+    } as unknown as ReturnType<typeof getAccountBridge>);
+
+    const { user } = render(
+      <AccountBalanceSummaryFooter
+        account={{
+          ...account,
+          currency: { id: "zcash" } as CryptoCurrency,
+          privateInfo: {
+            ...DEFAULT_ZCASH_PRIVATE_INFO,
+            ufvk: "test-ufvk",
             syncState: "complete",
             lastSyncTimestamp: now.getTime(),
           },
@@ -152,6 +233,25 @@ describe("Bitcoin Account Balance Summary Footer", () => {
       expect(
         screen.getByText(/last sync: \d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}/i),
       ).toBeInTheDocument();
+    });
+
+    // The complete-state CTA is offered and enabled, never disabled, unlike
+    // the old "Up to date" button it replaces.
+    const upToDateButton = screen.getByTestId("up-to-date-button");
+    expect(upToDateButton).toBeEnabled();
+
+    // Clicking it actually invokes the bridge rather than being a dead button:
+    // same observable assertion shape as the "start sync" test above.
+    await user.click(upToDateButton);
+
+    expect(mockedGetAccountBridge).toHaveBeenCalledWith(
+      expect.objectContaining({ id: account.id }),
+    );
+    await waitFor(() => {
+      expect(syncMock).toHaveBeenCalledWith(expect.objectContaining({ id: account.id }), {
+        paginationConfig: {},
+        syncType: SYNC_TYPE_SHIELDED,
+      });
     });
   });
 
@@ -185,7 +285,7 @@ describe("Bitcoin Account Balance Summary Footer", () => {
     });
   });
 
-  it("should stop shielded sync when sync state is running with no subscription for account", async () => {
+  it("does not stop a running sync just because no subscription is tracked for it (regression: this is the normal shape of the automatic wallet-sync leg, not a zombie)", async () => {
     mockedUseAccountUnit.mockReturnValue({
       code: "ZEC",
       name: "Zcash",
@@ -210,12 +310,17 @@ describe("Bitcoin Account Balance Summary Footer", () => {
       },
     );
 
+    // Give any effect a chance to run, then assert it did NOT force-stop the
+    // sync. The automatic (BridgeSync-driven) leg never registers a
+    // subscription in this reducer, only the manually-triggered one does, so
+    // "running" with none tracked is expected, not evidence of a stuck sync.
     await waitFor(() => {
-      expect(mockedSyncStateUpdater).toHaveBeenCalledWith(
-        expect.objectContaining({ id: account.id }),
-        expect.objectContaining({ syncState: "stopped", progress: 0 }),
-      );
+      expect(screen.getByTestId("stop-sync-button")).toBeInTheDocument();
     });
+    expect(mockedSyncStateUpdater).not.toHaveBeenCalledWith(
+      expect.objectContaining({ id: account.id }),
+      expect.objectContaining({ syncState: "stopped" }),
+    );
   });
 
   it("should not render a private balance field if the account is not a zcash account", async () => {

@@ -96,6 +96,8 @@ export function createApi(): CoinModuleApi<KaspaCoinConfig> {
     // --- Not applicable to Kaspa's UTXO model ---
     // No per-account sequence/nonce (replay protection comes from spending one-time UTXOs); no
     // raw-transaction craft; on-device address validation is not exposed through this API.
+    // (The generic-coin-framework's createTransaction sets a synthetic zero nonce for kaspa, the
+    // same way it does for near/vechain/cardano, so signOperation never actually calls this.)
     getNextSequence: (_context: KaspaContext, _address: string): Promise<bigint> => {
       throw new Error("getNextSequence is not applicable for Kaspa");
     },

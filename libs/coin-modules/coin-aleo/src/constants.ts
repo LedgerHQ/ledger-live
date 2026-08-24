@@ -34,6 +34,14 @@ export const PRIVATE_TRANSFER_FUNCTIONS = new Set([
   EXPLORER_TRANSFER_TYPES.PUBLIC_TO_PRIVATE,
 ]);
 
+// Functions that produce owned records without transferring anything,
+// so their transition holds no recipient and no amount.
+export const NON_TRANSFER_FUNCTIONS = new Set([
+  "join",
+  "split",
+  EXPLORER_TRANSFER_TYPES.FEE_PRIVATE,
+]);
+
 // Semi-public function names that cross the public/private boundary.
 // These appear in public token operations AND have matching private records,
 // so they need to be patched during private sync (analogous to coin ops patching).
@@ -52,6 +60,10 @@ export const DEFAULT_RECORDS_PAGE_SIZE = 1000;
 // Pagination parameter for GET /tokens calls when fetching the full token registry.
 export const DEFAULT_TOKENS_PAGE_SIZE = 1000;
 
+// Hard cap of the explorer's public transitions endpoint — above it, 400 "Limit must be between 1
+// and 50". Counts transitions, not transactions: one transaction can span several rows.
+export const MAX_TRANSITIONS_PER_PAGE = 50;
+
 /**
  * Progress phase boundaries for private sync.
  *
@@ -65,6 +77,9 @@ export const PROGRESS_AFTER_LIST_OPS = PROGRESS_AFTER_SCANNER + 35; // 65
 export const PROGRESS_AFTER_PARSING_RECORDS = 30; // 65 → 95
 export const PROGRESS_DONE = 100;
 export const PROGRESS_THROTTLE_MIN_STEP = 5;
+
+// Root transition + up to 30 nested calls, within the device limit of n < 32 per signing session.
+export const MAX_SIGNATURES_PER_TRANSACTION = 31;
 
 // The maximum number of private records that can be included in a single transaction.
 export const MAX_PRIVATE_RECORDS_PER_TRANSACTION = 14;

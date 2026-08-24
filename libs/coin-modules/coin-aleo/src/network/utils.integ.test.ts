@@ -16,7 +16,7 @@ import {
 } from "../__tests__/fixtures/api.fixture";
 import { getPristineAccount } from "../__tests__/helpers/account";
 import { AleoApiConfigurationResetError } from "../errors";
-import { toBridgeOperation } from "../logic/utils";
+import { toBridgeOperation } from "../bridge/utils";
 import type { AleoPrivateRecord, AleoPublicTransaction } from "../types";
 import {
   accessProvableApi,
@@ -148,6 +148,33 @@ describe("fetchAllOwnedRecords", () => {
     expect(unspentFetch.length).toBeGreaterThan(0);
     expect(unspentFetch.every(record => !record.spent)).toBe(true);
     expect(unspentFetch.length).toBe(fullFetch.filter(record => !record.spent).length);
+  });
+
+  it("windows records by block height, both bounds inclusive", async () => {
+    const all = await fetchAllOwnedRecords({ config, uuid });
+    const heights = [...new Set(all.map(record => record.block_height))].sort((a, b) => a - b);
+    // guards that this fixture account spans enough blocks to window
+    expect(heights.length).toBeGreaterThan(2);
+
+    const [low] = heights;
+    const high = heights[heights.length - 2];
+    invariant(low !== undefined && high !== undefined, "guard: missing bounds");
+
+    const windowed = await fetchAllOwnedRecords({ config, uuid, start: low, end: high });
+
+    expect(windowed.length).toBeGreaterThan(0);
+    expect(
+      windowed.every(record => record.block_height >= low && record.block_height <= high),
+    ).toBe(true);
+    expect(windowed.some(record => record.block_height === low)).toBe(true);
+    expect(windowed.some(record => record.block_height === high)).toBe(true);
+    expect(windowed.length).toBeLessThan(all.length);
+  });
+
+  it("returns nothing for a window below the account's first record", async () => {
+    const records = await fetchAllOwnedRecords({ config, uuid, start: 1, end: 2 });
+
+    expect(records).toEqual([]);
   });
 
   it("filters records by function name", async () => {

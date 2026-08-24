@@ -23,7 +23,12 @@ const familyModuleNameByAccountKey: Record<StakePromptCase["accountKey"], string
 const stakePromptFlowNamePattern =
   /(Activate|Bond|ClaimRewards|Delegation|Lock|Nominate|Rebond|Redelegation|Registration|Revoke|SimpleOperation|Staking|Unbond|Undelegation|Undelegate|Unlock|Unstaking|Vote|Withdraw|Withdrawing)Flow$/;
 
-const nonStakePromptFlowExports = new Set<MobileFamilyFlowExport>(["TronVoteFlow"]);
+// InternetComputerStakingFlow is a stub registered in LIVE-29097; the real screens (and
+// NotificationsPrompt integration) land in LIVE-29098. Exclude until then.
+const nonStakePromptFlowExports = new Set<MobileFamilyFlowExport>([
+  "TronVoteFlow",
+  "InternetComputerStakingFlow",
+]);
 
 const hasComponent = (familyExport: unknown): familyExport is MobileFamilyFlow => {
   const component = (familyExport as { component?: unknown } | null)?.component;

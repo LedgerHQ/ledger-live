@@ -12,6 +12,7 @@ import { resolveA4ChainConfig } from "./a4/config";
 import { getCoinModuleApi } from "./api";
 import { buildContext } from "./api/context";
 import { getBridgeApi } from "./bridge";
+import { getAccountRawAssignHooks } from "./accountRawAssign";
 import { adaptCoreOperationToLiveOperation, cleanedOperation, extractBalance } from "./utils";
 import { inferSubOperations } from "@ledgerhq/ledger-wallet-framework/serialization";
 import { buildSubAccounts, mergeSubAccounts } from "./buildSubAccounts";
@@ -187,11 +188,15 @@ function syntheticParentForTokenOnlyTx(
   subOperations: OperationCommon[],
   internalOperations: OperationCommon[],
 ): OperationCommon {
-  // Parent operation is of type FEES if account has paid fees for the transaction, NONE otherwise.
+  // Parent op is FEES only when the account actually paid a fee; NONE otherwise. A zero fee (e.g. a
+  // token send whose energy/bandwidth is fully covered) is not a FEES row — it stays hidden as NONE
+  // rather than surfacing an empty "0 fee" parent. An undefined fee is treated as paid, preserving the
+  // prior behaviour for ops synced without a fee value.
   const feePayer = getFeePayer(referenceOp);
   const isFeePayer = feePayer !== undefined && isSameAddress(address, feePayer);
-  const parentType = isFeePayer ? "FEES" : "NONE";
-  const parentValue = isFeePayer ? referenceOp.fee : new BigNumber(0);
+  const paysFee = isFeePayer && !referenceOp.fee?.isZero();
+  const parentType = paysFee ? "FEES" : "NONE";
+  const parentValue = paysFee ? referenceOp.fee : new BigNumber(0);
   // In the case of smart contract interaction, the contract must be the recipient of the parent operation => this
   // is why we need to extract this information from the operation details.
   const contract = getTokenContract(referenceOp);
@@ -423,7 +428,55 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     ]);
 
     const nativeAsset = extractBalance(balanceRes, "native");
-    const allTokenAssetsBalances = balanceRes.filter(b => b.asset.type !== "native");
+    const freshTokenAssetsBalances = balanceRes.filter(b => b.asset.type !== "native");
+
+    // A token account fully swept to zero can disappear entirely from the balance response
+    // (some chains' balance-listing endpoints only return non-zero holdings) rather than being
+    // reported with a 0 value. `buildSubAccounts` below only ever processes tokens present in
+    // this list, so without this, a previously-tracked token that vanished from a fresh balance
+    // read would never be re-processed -- silently freezing its subAccount's balance and
+    // operations at their pre-sweep state forever instead of ever reflecting the sweep.
+    const getAssetFromToken = bridgeApi.getAssetFromToken;
+    // Lower-cased: a chain's balance-listing response and its own `getAssetFromToken` derivation
+    // aren't guaranteed to agree on reference casing (observed on Stacks -- the balance response
+    // lowercases addresses, `getAssetFromToken` returns the contract address verbatim/uppercase),
+    // so a case-sensitive comparison here would misclassify an still-held, non-zero token as
+    // vanished and inject a spurious zero-value duplicate for it.
+    const freshAssetReferences = new Set(
+      freshTokenAssetsBalances
+        .map(b => ("assetReference" in b.asset ? b.asset.assetReference : undefined))
+        .filter((ref): ref is string => !!ref)
+        .map(ref => ref.toLowerCase()),
+    );
+    // Not gated on "fresh list non-empty": a wallet whose only token gets fully swept legitimately
+    // reports an empty token list on the next balance read (some chains, e.g. Stacks, omit
+    // zero-balance entries entirely), and that sweep must still zero the sub-account. Gating this
+    // on list-non-emptiness (to defend against a hypothetical degraded 200 with a truncated token
+    // list) breaks exactly that real case -- reproduced by the coin-tester's "Send max CTT"
+    // scenario, which never converges because the lone token's balance is never seen as "gone".
+    // A family's balance hook throwing/degrading already rejects the `Promise.all` above and
+    // aborts the whole sync, rather than silently reaching this point with a partial result.
+    const vanishedTokenBalances: Balance[] = getAssetFromToken
+      ? (initialAccount?.subAccounts ?? []).flatMap(subAccount => {
+          // A throwing family implementation must not fail the whole sync over one sub-account.
+          let asset: ReturnType<typeof getAssetFromToken>;
+          try {
+            asset = getAssetFromToken(subAccount.token, address);
+          } catch {
+            return [];
+          }
+          if (
+            !asset ||
+            !("assetReference" in asset) ||
+            !asset.assetReference ||
+            freshAssetReferences.has(asset.assetReference.toLowerCase())
+          ) {
+            return [];
+          }
+          return [{ value: 0n, asset }];
+        })
+      : [];
+    const allTokenAssetsBalances = [...freshTokenAssetsBalances, ...vanishedTokenBalances];
 
     const usesStakingPositions = bridgeApi.usesStakingPositions === true;
 
@@ -524,9 +577,15 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       cursor: paginationCursor,
       order: "desc",
     });
+    // Same hooks the persist/restore path uses, so the family bag on a freshly-synced operation ends
+    // up in the shape a restored one has — the family's `fromOperationExtraRaw` is the single
+    // definition of it. Loaded per sync rather than per operation; the registry caches the import.
+    const { fromOperationExtraRaw: reviveFamilyExtra } = await getAccountRawAssignHooks(network);
     const newOps = newCoreOps
       .filter(op => !isNftCoreOp(op) && (!isIncomingCoreOp(op) || !op.tx.failed))
-      .map(op => adaptCoreOperationToLiveOperation(accountId, op)) as OperationCommon[];
+      .map(op =>
+        adaptCoreOperationToLiveOperation(accountId, op, reviveFamilyExtra),
+      ) as OperationCommon[];
 
     const newAssetOperations = newOps.filter(
       operation =>

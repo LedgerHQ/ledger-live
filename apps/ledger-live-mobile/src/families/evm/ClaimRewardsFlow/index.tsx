@@ -18,7 +18,7 @@ import ClaimRewardsValidationError from "./04-ValidationError";
 import ClaimRewardsValidationSuccess from "./04-ValidationSuccess";
 import type { EvmClaimRewardsFlowParamList } from "./types";
 import { Flex } from "@ledgerhq/native-ui";
-import { useNotificationsContext } from "LLM/features/NotificationsPrompt";
+import { useNotificationsPrompt } from "LLM/features/NotificationsPrompt";
 
 const totalSteps = "4";
 
@@ -59,7 +59,7 @@ function ConnectDeviceHeader() {
 
 function ClaimRewardsFlow() {
   const { colors } = useTheme();
-  const { notifyFlowCompleted } = useNotificationsContext();
+  const { notifyFlowCompleted } = useNotificationsPrompt();
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
   return (
     <Stack.Navigator

@@ -1,4 +1,5 @@
 import type { ComponentProps, ReactNode } from "react";
+import type { DialogBackgroundTone } from "LLD/contexts/DialogBackgroundContext";
 
 type LumenSpotProps = ComponentProps<(typeof import("@ledgerhq/lumen-ui-react"))["Spot"]>;
 type LumenIconSpotProps = Extract<LumenSpotProps, { icon?: unknown }>;
@@ -33,8 +34,10 @@ export type InfoStateBanner = Readonly<{
   appearance?: "info" | "warning" | "error" | "success";
 }>;
 
-/** Props forwarded to the Lumen Spot for the custom spot preset. */
-export type InfoStateSpotProps = Pick<LumenIconSpotProps, "icon">;
+/**
+ * Props forwarded to the Lumen Spot for the custom spot preset.
+ */
+export type InfoStateSpotProps = Pick<LumenIconSpotProps, "icon" | "size">;
 
 type InfoStateBaseProps = Readonly<{
   /** Optional centered heading. */
@@ -42,6 +45,9 @@ type InfoStateBaseProps = Readonly<{
 
   /** Optional centered explanatory copy below the title. */
   description?: ReactNode;
+
+  /** Optional full-width custom content rendered between the copy and the banner. */
+  content?: ReactNode;
 
   /** Primary action rendered first in the action stack. */
   primaryCta?: InfoStateCta;
@@ -70,6 +76,13 @@ export type InfoStateProps =
       /** Renders a Lumen Spot with caller-provided icon props. */
       preset: "spot";
       spotProps: InfoStateSpotProps;
+
+      /**
+       * Tints the dialog with a status gradient. Only the custom spot preset can opt
+       * in: the status presets already carry their own tone and the remaining presets
+       * draw none.
+       */
+      backgroundTone?: DialogBackgroundTone;
     })
   | (InfoStateBaseProps & {
       /** Renders a success status Spot. */

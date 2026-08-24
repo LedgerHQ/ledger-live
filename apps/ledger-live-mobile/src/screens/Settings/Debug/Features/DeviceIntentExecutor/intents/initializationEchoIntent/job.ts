@@ -1,5 +1,5 @@
 import { of, type Observable } from "rxjs";
-import type { Job } from "@ledgerhq/device-intent";
+import type { Job } from "@features/platform-device-intent";
 import type { InitializationEchoIntentInput, InitializationEchoIntentJobState } from "./types";
 
 export const initializationEchoIntentJob: Job<

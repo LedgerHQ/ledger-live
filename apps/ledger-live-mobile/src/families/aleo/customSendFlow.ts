@@ -32,9 +32,9 @@ const aleoSendFlow = {
   AfterAmountInput: QuickAmountSelector,
   hideSummaryTotalSection: true,
   showAllDigits: true,
-  buildSendEntrypoint: ({ account, parentAccount }) => ({
+  buildSendEntrypoint: ({ account, parentAccount, recipient, skipRecipientStep }) => ({
     screen: ScreenName.AleoSendBalanceSelection,
-    params: { account, parentAccount, isSelfTransfer: false },
+    params: { account, parentAccount, isSelfTransfer: false, recipient, skipRecipientStep },
   }),
   navigateToInitialScreen: ({ navigation, account, parentAccount, extra }) => {
     navigation.navigate(ScreenName.AleoSendBalanceSelection, {

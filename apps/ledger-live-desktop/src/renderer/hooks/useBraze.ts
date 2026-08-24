@@ -1,6 +1,5 @@
 import * as braze from "@braze/web-sdk";
 import { ClassicCard } from "@braze/web-sdk";
-import { generateAnonymousId } from "@ledgerhq/live-common/braze/anonymousUsers";
 import { parseOrder, sanitizeExtras } from "@ledgerhq/live-common/braze/contentCardExtras";
 import { appendDeeplinkLocationIfDefined } from "@ledgerhq/live-common/deeplinks/index";
 import { getEnv } from "@shared/env";
@@ -9,7 +8,9 @@ import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { ALWAYS_ON_CATEGORY_ID } from "LLD/features/DynamicContent/utils/constants";
 
 import { userIdSelector } from "@domain/entity-client-identity";
+import { useFeature } from "@features/platform-feature-flags";
 import { getBrazeConfig } from "~/braze-setup";
+import { resolveDesktopBrazeUserId } from "../braze/brazeIdentity";
 import {
   ActionContentCard,
   CategoryContentCard,
@@ -37,7 +38,6 @@ import {
 import {
   clearDismissedContentCards,
   purgeExpiredAnonymousUserNotifications,
-  setAnonymousBrazeId,
 } from "../actions/settings";
 import {
   anonymousBrazeIdSelector,
@@ -117,6 +117,10 @@ export const mapAsCategoryContentCard = (card: ClassicCard): CategoryContentCard
       ? LocationContentCard.Portfolio
       : // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         (card.extras?.location as LocationContentCard);
+  const isAlwaysOnHardwareCarousel =
+    card.extras?.id === ALWAYS_ON_CATEGORY_ID &&
+    card.extras?.cardsLayout === ContentCardsLayout.carousel &&
+    card.extras?.cardsType === ContentCardsType.smallSquare;
 
   return {
     id: String(card.id),
@@ -134,7 +138,7 @@ export const mapAsCategoryContentCard = (card: ClassicCard): CategoryContentCard
     description: card.extras?.description,
     link: appendDeeplinkLocationIfDefined(card.extras?.link, location),
     cta: card.extras?.cta,
-    isDismissable: card.extras?.isDismissable === "true",
+    isDismissable: card.extras?.isDismissable === "true" || isAlwaysOnHardwareCarousel,
     hasPagination: card.extras?.hasPagination === "true",
     centeredText: card.extras?.centeredText === "true",
     extras: card.extras,
@@ -162,8 +166,10 @@ export function useBraze() {
   const devMode = useSelector(developerModeSelector);
   const contentCardsDismissed = useSelector(dismissedContentCardsSelector);
   const isTrackedUser = useSelector(trackingEnabledSelector);
+  const brazeOptOutIdentityCleanup = useFeature("brazeOptOutIdentityCleanup");
   const anonymousBrazeId = useRef(useSelector(anonymousBrazeIdSelector));
   const userId = useSelector(userIdSelector);
+  const brazeOptOutIdentityCleanupEnabled = brazeOptOutIdentityCleanup?.enabled ?? false;
 
   // Read through a ref so that dismissing a card does not re-run the whole Braze
   // init, which would open a new session and stack another card subscription.
@@ -174,14 +180,9 @@ export function useBraze() {
     const brazeConfig = getBrazeConfig();
     const isPlaywright = !!getEnv("PLAYWRIGHT_RUN");
 
-    if (!anonymousBrazeId.current) {
-      anonymousBrazeId.current = generateAnonymousId();
-      dispatch(setAnonymousBrazeId(anonymousBrazeId.current));
-    }
-
     const isInitialized = braze.initialize(brazeConfig.apiKey, {
       baseUrl: brazeConfig.endpoint,
-      allowUserSuppliedJavascript: true,
+      allowUserSuppliedJavascript: false,
       enableLogging: __DEV__,
       sessionTimeoutInSeconds: devMode ? 1 : 1800,
       appVersion: isTrackedUser ? __APP_VERSION__ : undefined,
@@ -197,7 +198,15 @@ export function useBraze() {
       return;
     }
 
-    braze.changeUser(isTrackedUser ? userId.exportUserIdForBraze() : anonymousBrazeId.current);
+    const changeUserId = resolveDesktopBrazeUserId({
+      isTrackedUser,
+      userId,
+      anonymousBrazeId: anonymousBrazeId.current,
+      brazeOptOutIdentityCleanup: brazeOptOutIdentityCleanupEnabled,
+    });
+    if (changeUserId) {
+      braze.changeUser(changeUserId);
+    }
 
     braze.requestContentCardsRefresh();
 
@@ -267,7 +276,14 @@ export function useBraze() {
     braze.openSession();
 
     return subscriptionId;
-  }, [dispatch, devMode, isTrackedUser, anonymousBrazeId, userId]);
+  }, [
+    dispatch,
+    devMode,
+    isTrackedUser,
+    brazeOptOutIdentityCleanupEnabled,
+    anonymousBrazeId,
+    userId,
+  ]);
 
   useEffect(() => {
     let subscriptionId: string | undefined;

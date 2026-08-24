@@ -1,4 +1,9 @@
-export type LNBannerLocation = "manager" | "accounts" | "notification_center" | "wallet";
+export type LNBannerLocation =
+  | "manager"
+  | "accounts"
+  | "notification_center"
+  | "wallet"
+  | "profile";
 
 export type LNBannerModel = {
   location: LNBannerLocation;

@@ -180,4 +180,48 @@ describe("useSwapWebviewProps", () => {
 
     expect(result.current.inputs.isModularDrawer).toBe("true");
   });
+
+  it("should pass device-intent sign variant and enabled state to the live app", () => {
+    const { result } = renderHook(
+      () =>
+        useSwapWebviewProps({
+          manifest: STUB_MANIFEST,
+          params: null,
+          resetWebview: mockResetWebview,
+        }),
+      {
+        overrideInitialState: withFlagOverrides({
+          llmWalletApiDeviceIntentSign: {
+            enabled: true,
+            params: { variantId: "variant_a", enabledManifestIds: [STUB_MANIFEST.id] },
+          },
+        }),
+      },
+    );
+
+    expect(result.current.inputs.llmWalletApiDeviceIntentSignVariant).toBe("variant_a");
+    expect(result.current.inputs.llmWalletApiDeviceIntentSignEnabled).toBe("true");
+  });
+
+  it("should pass the variant when the flag is disabled", () => {
+    const { result } = renderHook(
+      () =>
+        useSwapWebviewProps({
+          manifest: STUB_MANIFEST,
+          params: null,
+          resetWebview: mockResetWebview,
+        }),
+      {
+        overrideInitialState: withFlagOverrides({
+          llmWalletApiDeviceIntentSign: {
+            enabled: false,
+            params: { variantId: "control", enabledManifestIds: [STUB_MANIFEST.id] },
+          },
+        }),
+      },
+    );
+
+    expect(result.current.inputs.llmWalletApiDeviceIntentSignVariant).toBe("control");
+    expect(result.current.inputs.llmWalletApiDeviceIntentSignEnabled).toBe("false");
+  });
 });

@@ -36,6 +36,11 @@ export default function DebugDeviceIntentExecutor() {
         onPress={() => navigation.navigate(ScreenName.DebugDeviceIntentExecutorOrchestration)}
       />
       <DebugEntry
+        title="Contacts validation"
+        description="Run the Contacts register-external-address intent with deterministic development input."
+        onPress={() => navigation.navigate(ScreenName.DebugDeviceIntentExecutorContactsValidation)}
+      />
+      <DebugEntry
         title="Initialization"
         description="Run one echo intent after initialization to inspect the extracted device context."
         onPress={() => navigation.navigate(ScreenName.DebugDeviceIntentExecutorInitialization)}

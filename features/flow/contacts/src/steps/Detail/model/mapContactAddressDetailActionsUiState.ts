@@ -5,6 +5,7 @@ import type {
   ContactsRenameAddressDialogProps,
   RenameAddressDialogViewModel,
 } from "../../EditAddress/types";
+import { EMPTY_EDIT_ADDRESS_ENTRY_STATE } from "../../EditAddress/model/addressEntryValidation";
 import type { UseContactAddressDetailActionsFlowViewModelResult } from "../useContactAddressDetailActionsFlowViewModel";
 import type { ContactAddressDetailActionsLabels } from "./resolveContactAddressDetailActionsLabels";
 
@@ -44,11 +45,13 @@ export function createInactiveContactAddressDetailActionsUiState(
       isSaving: false,
       draftLabel: "",
       invalidLabelError: null,
+      addressEntry: EMPTY_EDIT_ADDRESS_ENTRY_STATE,
       isConfirmEnabled: false,
       labels: labels.rename,
       onOpen: () => undefined,
       onClose: () => undefined,
       onDraftLabelChange: () => undefined,
+      onAddressChange: () => undefined,
       onConfirm: async () => undefined,
     },
     signer: {

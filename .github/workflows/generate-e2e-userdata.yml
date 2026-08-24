@@ -77,7 +77,7 @@ jobs:
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
       - name: Install dependencies
-        run: pnpm i --filter="live-cli..." --filter="ledger-live-desktop-e2e-tests..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm --ignore-scripts
+        run: pnpm i --filter="live-cli..." --filter="ledger-live-desktop-e2e-tests..." --filter="ledger-live" --frozen-lockfile --unsafe-perm --ignore-scripts
 
       - name: Setup Speculos image and Coin Apps
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-speculos_image@develop
@@ -213,7 +213,7 @@ jobs:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
       - name: Install dependencies
-        run: pnpm i --filter="live-cli..." --filter="ledger-live-desktop-e2e-tests..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm --ignore-scripts
+        run: pnpm i --filter="live-cli..." --filter="ledger-live-desktop-e2e-tests..." --filter="ledger-live" --frozen-lockfile --unsafe-perm --ignore-scripts
 
       - name: Setup Speculos image and Coin Apps
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-speculos_image@develop

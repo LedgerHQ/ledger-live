@@ -54,11 +54,13 @@ export function trackContactAddressDetailQuickAction(
   analytics: ContactsAnalyticsHelper,
   button: ContactsTrackingButton,
   asset?: string,
+  network?: string,
 ): void {
   analytics.trackEvent(CONTACTS_TRACK_EVENTS.BUTTON_CLICKED, {
     source: CONTACTS_EVENT_SOURCE.QUICK_ACTION,
     button,
     page: CONTACTS_PAGE_PROPERTY.ADDRESS_DETAIL,
     ...(asset ? { asset } : {}),
+    ...(network ? { network } : {}),
   });
 }

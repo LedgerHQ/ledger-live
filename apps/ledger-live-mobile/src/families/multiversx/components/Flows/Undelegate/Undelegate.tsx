@@ -16,7 +16,7 @@ import MultiversXUndelegationSelectDevice from "~/screens/SelectDevice";
 import MultiversXUndelegationConnectDevice from "~/screens/ConnectDevice";
 
 import type { MultiversXUndelegationFlowParamList } from "./types";
-import { useNotificationsContext } from "LLM/features/NotificationsPrompt";
+import { useNotificationsPrompt } from "LLM/features/NotificationsPrompt";
 
 const Stack = createNativeStackNavigator<MultiversXUndelegationFlowParamList>();
 const totalSteps = "3";
@@ -31,7 +31,7 @@ const options = {
 const Undelegate = () => {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const { notifyFlowCompleted } = useNotificationsContext();
+  const { notifyFlowCompleted } = useNotificationsPrompt();
 
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
 

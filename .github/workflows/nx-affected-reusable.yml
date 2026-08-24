@@ -77,7 +77,7 @@ jobs:
           version: 10.24.0
 
       - name: Install dev dependencies for root workspace
-        run: pnpm i -D -F "ledger-live" --ignore-scripts
+        run: pnpm i --frozen-lockfile -D -F "ledger-live" --ignore-scripts
 
       - name: Skip Nx cache for job
         if: ${{ inputs.skip_nx_cache }}

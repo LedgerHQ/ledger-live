@@ -236,6 +236,26 @@ describe("buildSubAccounts", () => {
       },
     ]);
   });
+
+  it("falls back to an exact match when either side's assetReference isn't a string", async () => {
+    const subAccounts = await buildSubAccounts({
+      accountId: "accountId",
+      allTokenAssetsBalances: [
+        { value: 10n, asset: { type: "token", assetOwner: "owner" } as unknown as AssetInfo },
+      ],
+      syncConfig: { blacklistedTokenIds: [] } as unknown as SyncConfig,
+      operations: [
+        { hash: "matches", extra: { assetOwner: "owner", ledgerOpType: "IN" } },
+        {
+          hash: "does-not-match",
+          extra: { assetReference: "some-string", assetOwner: "owner", ledgerOpType: "IN" },
+        },
+      ] as any,
+      getTokenFromAsset: async () => ({ id: "tokenNoRef" }) as TokenCurrency,
+    });
+
+    expect(subAccounts[0].operations.map(op => op.id)).toEqual(["accountId+tokenNoRef-matches-IN"]);
+  });
 });
 
 describe("mergeSubAccounts", () => {

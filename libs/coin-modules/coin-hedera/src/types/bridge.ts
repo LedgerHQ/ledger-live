@@ -185,6 +185,7 @@ export type HederaValidator = {
   addressChecksum: string | null;
   name: string;
   overstaked: boolean;
+  isLedgerNode: boolean;
 };
 
 export type HederaValidatorRaw = {

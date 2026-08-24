@@ -66,6 +66,7 @@ export type NewSendFlowEntry = {
   transaction: Transaction;
   xrayTicket: string;
   bugTicket?: string;
+  teamOwner?: Team;
 };
 
 export function registerNewSendFlowTests(entries: NewSendFlowEntry[]) {
@@ -78,7 +79,7 @@ export function registerNewSendFlowTests(entries: NewSendFlowEntry[]) {
 
     test.describe("Send - new flow", () => {
       test.use({
-        teamOwner: Team.COIN_INTEGRATION,
+        teamOwner: entry.teamOwner ?? Team.COIN_INTEGRATION,
         userdata: "skip-onboarding-with-last-seen-device",
         speculosApp: tx.accountToDebit.currency.speculosApp,
         cliCommands: [liveDataWithRecipientAddressCommand(tx)],

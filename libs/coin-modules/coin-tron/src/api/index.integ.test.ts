@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import { TronWeb, providers } from "tronweb";
 import { createTronWeb } from "../logic/utils";
 import type { TronCoinConfig, TronContext } from "../config";
+import type { TronMemo, TronTxData } from "../types";
 import { createApi } from ".";
 
 const TRONGRID_URL = "https://api.shasta.trongrid.io";
@@ -25,7 +26,7 @@ const wallet = {
  * Testnet faucet: https://shasta.tronex.io/
  */
 describe("API", () => {
-  let module: CoinModuleApi<TronCoinConfig>;
+  let module: CoinModuleApi<TronCoinConfig, TronMemo, TronTxData>;
   let tronWeb: TronWeb;
 
   const config = {

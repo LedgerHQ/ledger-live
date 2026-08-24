@@ -1,4 +1,4 @@
-import type { DeviceConnectionResult } from "@ledgerhq/device-intent";
+import type { DeviceConnectionResult } from "@features/platform-device-intent";
 import { ledgerToDmkDeviceIdMap } from "@ledgerhq/live-dmk-shared";
 import { webHidTransportIdentifier } from "@ledgerhq/live-dmk-desktop";
 import { DeviceModelId } from "@ledgerhq/types-devices";
@@ -7,7 +7,6 @@ import type { InitializerDevice } from "./types";
 
 export const connectionResult = {
   compatDeviceId: "device-id",
-  compatDeviceModelId: DeviceModelId.nanoX,
   compatDeviceName: "Ledger Nano X",
   compatDeviceWired: true,
   connectedDevice: {

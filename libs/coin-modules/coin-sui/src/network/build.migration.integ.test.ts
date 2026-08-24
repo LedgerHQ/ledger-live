@@ -1,6 +1,6 @@
 /**
  * Build-flow shape parity: `createTransaction` outputs must have the same
- * structural shape across JSON-RPC and GraphQL transports. Mirrors the
+ * structural shape across the gRPC and GraphQL transports. Mirrors the
  * `assertShapeBoth` pattern from `sdk.migration.integ.test.ts`.
  *
  * Values legitimately drift between transports — gas-coin selection picks
@@ -18,29 +18,31 @@
  * What we do NOT compare: per-object IDs, gas budget, gas price, gas-payment
  * coin-object refs. Those are resolver-determined and drift legitimately.
  */
+import { getEnv } from "@ledgerhq/live-env";
 import { parseTransactionBcs } from "@mysten/sui/client";
-import { getJsonRpcFullnodeUrl } from "@mysten/sui/jsonRpc";
 import BigNumber from "bignumber.js";
 import coinConfig from "../config";
 import { FIGMENT_SUI_VALIDATOR_ADDRESS } from "../constants";
-import { GRAPHQL_MAINNET_URL } from "./graphql/constants";
 import { createTransaction, DEFAULT_COIN_TYPE } from "./sdk";
 
-const JSON_RPC_ID = "sui-jsonrpc-build-mig";
+const GRPC_ID = "sui-grpc-build-mig";
 const GRAPHQL_ID = "sui-graphql-build-mig";
-const JSON_RPC_URL = getJsonRpcFullnodeUrl("mainnet");
 
 /** Same mainnet account used in sdk.migration.integ.test — holds USDC + ~4.6k SUI. */
 const ACTIVE_ACCOUNT = "0x0feb54a725aa357ff2f5bc6bb023c05b310285bd861275a30521f339a434ebb3";
 
 beforeAll(() => {
   coinConfig.setCoinConfig(id => {
-    const node = { url: JSON_RPC_URL, graphqlUrl: GRAPHQL_MAINNET_URL };
-    if (id === JSON_RPC_ID) {
-      return { node, status: { type: "active" }, features: { graphql: false } };
+    const node = {
+      url: getEnv("API_SUI_NODE_PROXY"),
+      graphqlUrl: getEnv("API_SUI_GRAPHQL_PROXY"),
+      grpcUrl: getEnv("API_SUI_GRPC_PROXY"),
+    };
+    if (id === GRPC_ID) {
+      return { node, status: { type: "active" }, features: { transport: "grpc" } };
     }
     if (id === GRAPHQL_ID) {
-      return { node, status: { type: "active" }, features: { graphql: true } };
+      return { node, status: { type: "active" }, features: { transport: "graphql" } };
     }
     throw new Error(`Unknown currency id in build migration test: ${id}`);
   });
@@ -51,17 +53,17 @@ beforeAll(() => {
  * Both decoded objects share `SuiClientTypes.TransactionData` (i.e.
  * `SerializedTransactionDataV2`).
  */
-const assertShapeBothBuilt = (rpcBytes: Uint8Array, gqlBytes: Uint8Array, label: string) => {
-  const rpc = parseTransactionBcs(rpcBytes);
+const assertShapeBothBuilt = (grpcBytes: Uint8Array, gqlBytes: Uint8Array, label: string) => {
+  const grpc = parseTransactionBcs(grpcBytes);
   const gql = parseTransactionBcs(gqlBytes);
 
   // Version must match — both should produce v2.
-  expect(gql.version).toBe(rpc.version);
+  expect(gql.version).toBe(grpc.version);
 
   // Sender shape: same kind (address string with same length).
-  expect(typeof gql.sender).toBe(typeof rpc.sender);
-  if (typeof rpc.sender === "string" && typeof gql.sender === "string") {
-    expect(gql.sender.length).toBe(rpc.sender.length);
+  expect(typeof gql.sender).toBe(typeof grpc.sender);
+  if (typeof grpc.sender === "string" && typeof gql.sender === "string") {
+    expect(gql.sender.length).toBe(grpc.sender.length);
   }
 
   // Inputs / commands are tagged-enum shapes (e.g. `{ Pure: {...} }`,
@@ -70,39 +72,36 @@ const assertShapeBothBuilt = (rpcBytes: Uint8Array, gqlBytes: Uint8Array, label:
   const tagOf = (x: object): string => Object.keys(x)[0] ?? "<empty>";
 
   // Inputs: same count, same tag per index.
-  expect(gql.inputs).toHaveLength(rpc.inputs.length);
-  rpc.inputs.forEach((input, i) => {
+  expect(gql.inputs).toHaveLength(grpc.inputs.length);
+  grpc.inputs.forEach((input, i) => {
     expect(tagOf(gql.inputs[i])).toBe(tagOf(input));
   });
 
   // Commands: same count, same tag per index.
-  expect(gql.commands).toHaveLength(rpc.commands.length);
-  rpc.commands.forEach((cmd, i) => {
+  expect(gql.commands).toHaveLength(grpc.commands.length);
+  grpc.commands.forEach((cmd, i) => {
     expect(tagOf(gql.commands[i])).toBe(tagOf(cmd));
   });
 
   // Both had gas resolved; the resolver populated `payment`.
   expect(Array.isArray(gql.gasData.payment)).toBe(true);
-  expect(Array.isArray(rpc.gasData.payment)).toBe(true);
+  expect(Array.isArray(grpc.gasData.payment)).toBe(true);
   // The payment array is allowed to be empty (SIP-58 address-balance path)
   // OR populated with coin objects — but parity means same emptiness.
-  expect((gql.gasData.payment ?? []).length === 0).toBe((rpc.gasData.payment ?? []).length === 0);
+  expect((gql.gasData.payment ?? []).length === 0).toBe((grpc.gasData.payment ?? []).length === 0);
 
   // Gas price + budget must be string-typed (numeric strings); we don't
   // compare values — both are resolver-determined and drift between calls.
-  expect(typeof gql.gasData.price).toBe(typeof rpc.gasData.price);
-  expect(typeof gql.gasData.budget).toBe(typeof rpc.gasData.budget);
+  expect(typeof gql.gasData.price).toBe(typeof grpc.gasData.price);
+  expect(typeof gql.gasData.budget).toBe(typeof grpc.gasData.budget);
 
   // Self-check: label only used in the error path of the outer expectations.
   expect(label).not.toBe("");
 };
 
-// SKIP — Sui JSON-RPC public-endpoint shutdown. The JSON-RPC reference leg of this parity
-// suite hits the public mainnet fullnode (fullnode.mainnet.sui.io), retired by the Sui
-// Foundation (mainnet wk of 2026-07-20) as JSON-RPC is deprecated for gRPC/GraphQL, so
-// cross-transport parity can no longer run. Re-enable once a GraphQL-only live baseline
-// replaces the JSON-RPC reference.
-describe.skip("createTransactionFor* parity (live mainnet)", () => {
+// gRPC is the reference leg. It replaced JSON-RPC here after the Sui Foundation retired the public
+// mainnet fullnode (wk of 2026-07-20), which left this suite skipped with no runnable baseline.
+describe("createTransactionFor* parity (live mainnet)", () => {
   test("transfer: same TransactionData shape across transports", async () => {
     const transaction = {
       amount: new BigNumber("1000000"),
@@ -110,8 +109,8 @@ describe.skip("createTransactionFor* parity (live mainnet)", () => {
       mode: "send" as const,
       recipient: ACTIVE_ACCOUNT,
     };
-    const rpc = await createTransaction(
-      coinConfig.getCoinConfig(JSON_RPC_ID),
+    const grpc = await createTransaction(
+      coinConfig.getCoinConfig(GRPC_ID),
       ACTIVE_ACCOUNT,
       transaction,
       false,
@@ -124,7 +123,7 @@ describe.skip("createTransactionFor* parity (live mainnet)", () => {
       false,
       undefined,
     );
-    assertShapeBothBuilt(rpc.unsigned, gql.unsigned, "transfer");
+    assertShapeBothBuilt(grpc.unsigned, gql.unsigned, "transfer");
   }, 90_000);
 
   test("delegate: same TransactionData shape across transports", async () => {
@@ -134,8 +133,8 @@ describe.skip("createTransactionFor* parity (live mainnet)", () => {
       mode: "delegate" as const,
       recipient: FIGMENT_SUI_VALIDATOR_ADDRESS,
     };
-    const rpc = await createTransaction(
-      coinConfig.getCoinConfig(JSON_RPC_ID),
+    const grpc = await createTransaction(
+      coinConfig.getCoinConfig(GRPC_ID),
       ACTIVE_ACCOUNT,
       transaction,
       false,
@@ -148,7 +147,7 @@ describe.skip("createTransactionFor* parity (live mainnet)", () => {
       false,
       undefined,
     );
-    assertShapeBothBuilt(rpc.unsigned, gql.unsigned, "delegate");
+    assertShapeBothBuilt(grpc.unsigned, gql.unsigned, "delegate");
   }, 90_000);
 
   // TODO: enable once a fresh `stakedSuiId` for `ACTIVE_ACCOUNT` is fixtured
@@ -162,8 +161,8 @@ describe.skip("createTransactionFor* parity (live mainnet)", () => {
       stakedSuiId: "0x0",
       useAllAmount: true,
     };
-    const rpc = await createTransaction(
-      coinConfig.getCoinConfig(JSON_RPC_ID),
+    const grpc = await createTransaction(
+      coinConfig.getCoinConfig(GRPC_ID),
       ACTIVE_ACCOUNT,
       transaction,
       false,
@@ -176,6 +175,6 @@ describe.skip("createTransactionFor* parity (live mainnet)", () => {
       false,
       undefined,
     );
-    assertShapeBothBuilt(rpc.unsigned, gql.unsigned, "undelegate");
+    assertShapeBothBuilt(grpc.unsigned, gql.unsigned, "undelegate");
   }, 90_000);
 });

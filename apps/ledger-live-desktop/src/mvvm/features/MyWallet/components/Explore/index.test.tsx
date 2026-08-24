@@ -1,5 +1,4 @@
 import React from "react";
-import { t } from "i18next";
 import { render, screen } from "tests/testSetup";
 import { openURL } from "~/renderer/linking";
 import { urls } from "~/config/urls";
@@ -22,13 +21,13 @@ describe("Explore", () => {
   it("should display the explore item", () => {
     render(<Explore />);
 
-    expect(screen.getByText(t("myWallet.explore"))).toBeVisible();
+    expect(screen.getByText("Explore all Ledger devices")).toBeVisible();
   });
 
   it("should open the buy new url when clicked", async () => {
     const { user } = render(<Explore />);
 
-    await user.click(screen.getByText(t("myWallet.explore")));
+    await user.click(screen.getByText("Explore all Ledger devices"));
 
     expect(openURL).toHaveBeenCalledTimes(1);
     expect(openURL).toHaveBeenCalledWith(urls.exploreLedgerDevices, "button_clicked", {

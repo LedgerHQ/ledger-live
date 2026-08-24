@@ -1,9 +1,8 @@
 import React, { useCallback, useState } from "react";
 import { ScrollView } from "react-native";
 import { useTranslation } from "~/context/Locale";
-import BigNumber from "bignumber.js";
 import { useTheme } from "@react-navigation/native";
-import { usePolkadotPreloadData } from "@ledgerhq/live-common/families/polkadot/react";
+import { usePolkadotMinimumBondBalance } from "@ledgerhq/live-common/families/polkadot/react";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import CryptoIcon from "@ledgerhq/crypto-icons/native";
 import { hasMinimumBondBalance } from "@ledgerhq/live-common/families/polkadot/logic";
@@ -46,7 +45,8 @@ function AccountBalanceSummaryFooter({ account }: Props) {
 
   const unlockingBalance = _unlockingBalance.minus(unlockedBalance);
 
-  const hasMinBondBalance = hasMinimumBondBalance(account);
+  const minimumBondBalance = usePolkadotMinimumBondBalance(account.currency);
+  const hasMinBondBalance = hasMinimumBondBalance(account, minimumBondBalance);
   return (
     <>
       <InfoModal
@@ -105,8 +105,7 @@ export default function AccountBalanceFooter({ account }: Props) {
 function useInfo(account: PolkadotAccount): Record<InfoName, ModalInfo[]> {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const preloaded = usePolkadotPreloadData();
-  const minimumBondBalance = new BigNumber(preloaded.minimumBondBalance);
+  const minimumBondBalance = usePolkadotMinimumBondBalance(account.currency);
   const unit = useAccountUnit(account);
   const minimumBondBalanceStr = formatCurrencyUnit(unit, minimumBondBalance, {
     disableRounding: true,

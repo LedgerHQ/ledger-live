@@ -1,7 +1,6 @@
 import { getEnv } from "@ledgerhq/live-env";
 import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
 import network from "@ledgerhq/live-network/network";
-import { StacksMainnet, StacksTestnet } from "@stacks/network";
 import { AxiosRequestConfig, AxiosResponse } from "axios";
 import {
   BalanceResponse,
@@ -22,20 +21,33 @@ import {
   extractContractTransactions,
 } from "./transformers";
 
+// Only used as a `keyof typeof StacksNetwork` type and an existence check on the network name --
+// never dereferenced for a value -- so plain string constants avoid needing v6's now-removed
+// StacksMainnet/StacksTestnet classes (v7 replaced them with a string-based network name).
 export const StacksNetwork = {
-  mainnet: new StacksMainnet({ url: getEnv("API_STACKS_ENDPOINT") }),
-  testnet: new StacksTestnet(),
+  mainnet: "mainnet",
+  testnet: "testnet",
+  // Additive only: lets the legacy bridge's `network: keyof typeof StacksNetwork` field
+  // (`types/bridge.ts`) address a local devnet (e.g. Clarinet), same env var as `mainnet`.
+  devnet: "devnet",
+} as const;
+
+/**
+ * The configured Stacks API base URL, or throws if unset. Shared by every network helper that
+ * needs the raw base URL rather than a full path (e.g. the @stacks/transactions SDK's own
+ * `client.baseUrl` option), so a missing env var fails the same way everywhere in this module.
+ */
+export const getStacksBaseUrl = (): string => {
+  const baseUrl = getEnv("API_STACKS_ENDPOINT");
+  if (!baseUrl) throw new Error("API base URL not available");
+
+  return baseUrl;
 };
 
 /**
  * Builds the Stacks API URL with an optional path
  */
-const getStacksURL = (path?: string): string => {
-  const baseUrl = getEnv("API_STACKS_ENDPOINT");
-  if (!baseUrl) throw new Error("API base URL not available");
-
-  return `${baseUrl}${path ? path : ""}`;
-};
+const getStacksURL = (path?: string): string => `${getStacksBaseUrl()}${path ?? ""}`;
 
 /**
  * Basic GET request to the Stacks API

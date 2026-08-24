@@ -2,9 +2,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 import type { ContactId } from "@domain/entity-contact";
+import { useContactsMeContact } from "@features/platform-contacts";
 import {
-  type AddAddressContact,
-  useContactsMeContact,
   useContactDetailSharedState,
   useEmptyContactDetail,
   usePopulatedContactDetail,
@@ -19,11 +18,13 @@ import {
   trackContactsAddAddressClick,
   trackContactsListContactOpen,
 } from "@features/flow-contacts";
+import type { AddAddressContact } from "@features/flow-contacts-add-address";
 import { MY_WALLET_AVATAR_USER_URL } from "LLD/features/MyWallet/components/UserAvatar/constants";
+import { buildNavigationBackState } from "LLD/utils/navigationBackPath";
 import { useContactsAnalytics } from "../../analytics";
-import { useContactsAddressCurrencyAdapter } from "../../hooks/useContactsAddressCurrencyAdapter";
 import { useContactAddressDetailActionsAdapter } from "./useContactAddressDetailActionsAdapter";
 import { useContactDetailEditDeleteAdapter } from "./useContactDetailEditDeleteAdapter";
+import { CRYPTO_ADDRESSES_BACK_PATH_STATE_KEY } from "LLD/features/CryptoAddresses/utils/cryptoAddressesLocationState";
 
 export function useContactDetailPaneAdapter(
   onAddAddress: (contact: AddAddressContact) => void,
@@ -39,7 +40,6 @@ export function useContactDetailPaneAdapter(
   const navigate = useNavigate();
   const analytics = useContactsAnalytics();
   const meContact = useContactsMeContact();
-  const currencyPort = useContactsAddressCurrencyAdapter();
   const trackedContactDetailId = useRef<ContactId | undefined>(undefined);
   const trackedAddressDetailId = useRef<string | undefined>(undefined);
   const [detailContactId, setDetailContactId] = useState<ContactId | undefined>(meContact.id);
@@ -48,7 +48,7 @@ export function useContactDetailPaneAdapter(
   }, [meContact.id]);
   const editDeleteDialogs = useContactDetailEditDeleteAdapter(detailContactId, onDeleteSuccess);
   const emptyContact = useEmptyContactDetail(detailContactId);
-  const populatedContactDetail = usePopulatedContactDetail(detailContactId, currencyPort);
+  const populatedContactDetail = usePopulatedContactDetail(detailContactId);
   const {
     isOpen,
     selection,
@@ -57,11 +57,13 @@ export function useContactDetailPaneAdapter(
     clearSelection,
   } = useContactAddressDetailDialog(populatedContactDetail);
   const addressDetailAsset = selection?.network.networkTicker;
+  const addressDetailNetwork = selection?.network.networkName;
   const addressDetailActionsDialogs = useContactAddressDetailActionsAdapter(
     detailContactId,
     selection?.row?.addressId,
     onCloseAddressDetail,
     addressDetailAsset,
+    addressDetailNetwork,
   );
   const labels = useMemo<ContactDetailLabels>(
     () => ({
@@ -94,7 +96,10 @@ export function useContactDetailPaneAdapter(
     [t],
   );
   const onLedgerWalletAccountsPress = useCallback(() => {
-    navigate("/cryptos");
+    navigate(
+      "/cryptos",
+      buildNavigationBackState(CRYPTO_ADDRESSES_BACK_PATH_STATE_KEY, "/contacts"),
+    );
   }, [navigate]);
   const openContact = useCallback(
     (contactId: ContactId) => {

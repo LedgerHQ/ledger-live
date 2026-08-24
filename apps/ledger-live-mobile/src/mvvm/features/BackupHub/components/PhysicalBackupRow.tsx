@@ -14,6 +14,7 @@ export type PhysicalBackupRowProps = {
   image: ImageSourcePropType;
   title: string;
   description: string;
+  isWarning?: boolean;
   onPress: () => void;
   testID?: string;
 };
@@ -22,6 +23,7 @@ export function PhysicalBackupRow({
   image,
   title,
   description,
+  isWarning = false,
   onPress,
   testID,
 }: Readonly<PhysicalBackupRowProps>) {
@@ -35,7 +37,9 @@ export function PhysicalBackupRow({
         />
         <ListItemContent>
           <ListItemTitle>{title}</ListItemTitle>
-          <ListItemDescription>{description}</ListItemDescription>
+          <ListItemDescription numberOfLines={2} lx={isWarning ? { color: "warning" } : undefined}>
+            {description}
+          </ListItemDescription>
         </ListItemContent>
       </ListItemLeading>
       <ListItemTrailing>

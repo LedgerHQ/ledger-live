@@ -1,5 +1,6 @@
 import { renderHook, waitFor } from "@tests/test-renderer";
 import { http, HttpResponse, server } from "@tests/server";
+import { AssetCategory } from "@domain/api-aggregated-assets";
 import { useAssets } from "../useAssets";
 import {
   expectedAssetsSorted as expectedAssetsSortedFromMock,
@@ -86,5 +87,15 @@ describe("useAssets", () => {
     const searchParams = new URL(requests[0]).searchParams;
     expect(searchParams.get("currencyIds")).toBe("bitcoin");
     expect(searchParams.has("networkIds")).toBe(false);
+  });
+
+  it("forwards asset categories to the DADA request", async () => {
+    const requests = captureDadaRequests();
+    const { result } = renderHook(() => useAssets({ categories: [AssetCategory.Stablecoins] }));
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    const searchParams = new URL(requests[0]).searchParams;
+    expect(searchParams.get("categories")).toBe(AssetCategory.Stablecoins);
   });
 });

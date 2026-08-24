@@ -16,6 +16,7 @@ export type NetworkRowData = {
   ticker: string;
   leftElement?: React.ReactNode;
   rightElement?: React.ReactNode;
+  disabled?: boolean;
 };
 
 type Props = NetworkRowData & {
@@ -24,8 +25,21 @@ type Props = NetworkRowData & {
 
 const NEGATIVE_MARGIN_OFFSET: LumenViewStyle = { marginHorizontal: "-s8" };
 
-export const NetworkRow = ({ id, name, ticker, leftElement, rightElement, onClick }: Props) => (
-  <ListItem onPress={onClick} testID={`network-item-${name}`} lx={NEGATIVE_MARGIN_OFFSET}>
+export const NetworkRow = ({
+  id,
+  name,
+  ticker,
+  leftElement,
+  rightElement,
+  onClick,
+  disabled,
+}: Props) => (
+  <ListItem
+    disabled={disabled}
+    onPress={onClick}
+    testID={`network-item-${name}`}
+    lx={NEGATIVE_MARGIN_OFFSET}
+  >
     <ListItemLeading>
       <Icon ledgerId={id} ticker={ticker} size={48} shape="square" />
       <ListItemContent style={{ flex: 1, minWidth: 0 }}>

@@ -2,7 +2,7 @@ import { useCallback, useEffect } from "react";
 import { getNotificationPermissionStatus } from "~/logic/getNotificationPermissionStatus";
 import { useNotificationsPermission } from "LLM/hooks/useNotificationsPermission";
 import { useNotificationsData } from "./useNotificationsData";
-import { useNotificationsPrompt } from "./useNotificationsPrompt";
+import { useNotificationsPromptEligibility } from "./useNotificationsPromptEligibility";
 import { useNotificationsDrawer } from "./useNotificationsDrawer";
 import { getPushNotificationsDataOfUserFromStorage } from "../utils/storage";
 
@@ -23,7 +23,7 @@ const useNotifications = () => {
   } = useNotificationsData();
 
   const { nextRepromptDelay, shouldPromptOptInDrawerAfterAction, checkIsInactive } =
-    useNotificationsPrompt({
+    useNotificationsPromptEligibility({
       permissionStatus,
       areNotificationsAllowed: notifications.areNotificationsAllowed,
       transactionsAlertsCategory: notifications.transactionsAlertsCategory,

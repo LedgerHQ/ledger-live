@@ -1,0 +1,18 @@
+diff --git a/components/stacks-network/src/orchestrator.rs b/components/stacks-network/src/orchestrator.rs
+index 9785af0b..d30af803 100644
+--- a/components/stacks-network/src/orchestrator.rs
++++ b/components/stacks-network/src/orchestrator.rs
+@@ -686,7 +686,12 @@ impl DevnetOrchestrator {
+             entrypoint: Some(vec![]),
+             env: Some(env),
+             host_config: Some(HostConfig {
+-                auto_remove: Some(true),
++                // Disabled (upstream default: true) so a crashed/never-ready container is left
++                // behind for `docker logs`/`docker inspect` instead of being wiped the instant it
++                // exits -- auto-remove was hiding the actual failure reason on constrained CI
++                // runners, surfacing only a generic downstream "connection refused" from the RPC
++                // wait loop with zero trace of why bitcoind itself never came up.
++                auto_remove: Some(false),
+                 binds: Some(binds),
+                 network_mode: Some(self.network_name.clone()),
+                 port_bindings: Some(port_bindings),

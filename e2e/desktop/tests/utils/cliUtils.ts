@@ -1,12 +1,3 @@
-import { getSdk } from "@ledgerhq/ledger-key-ring-protocol";
-import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
-import { CloudSyncSDK, type UpdateEvent } from "@shared/cloud-sync";
-import { liveSlug } from "@features/platform-wallet-sync";
-import {
-  walletSyncSchema,
-  type WalletSyncDistantState as LiveData,
-} from "@ledgerhq/live-wallet/walletSyncComposition";
-import { getEnv } from "@shared/env";
 import {
   DeviceManagementKitTransportSpeculos,
   SpeculosHttpTransportOpts,
@@ -20,139 +11,16 @@ import {
   runCliTokenApproval,
   type GetAddressOpts,
   type GetTokenAllowanceOpts,
-  type LedgerKeyRingProtocolOpts,
-  type LedgerSyncOpts,
   type LiveDataOpts,
   type TokenApprovalOpts,
 } from "@ledgerhq/live-e2e-shared/runCli";
 
 export const CLI = {
-  ledgerKeyRingProtocol: function (opts: LedgerKeyRingProtocolOpts) {
-    const {
-      apiBaseUrl = getEnv("TRUSTCHAIN_API_STAGING"),
-      applicationId = 16,
-      name = "CLI",
-      initMemberCredentials,
-      getKeyRingTree,
-      pubKey,
-      privateKey,
-      device,
-      destroyKeyRingTree,
-      rootId,
-      walletSyncEncryptionKey,
-      applicationPath,
-    } = opts;
-
-    const context = {
-      applicationId,
-      name,
-      apiBaseUrl,
-    };
-
-    const sdk = getSdk(false, context, withDevice);
-
-    //@todo: Split into it's own function
-    if (initMemberCredentials) {
-      return sdk.initMemberCredentials();
-    }
-
-    //@todo: Split into it's own function
-    if (getKeyRingTree) {
-      if (!pubKey || !privateKey) {
-        return Promise.reject("pubKey and privateKey are required");
-      }
-      return sdk
-        .getOrCreateTrustchain(device || "", { pubkey: pubKey, privatekey: privateKey })
-        .then(result => result.trustchain);
-    }
-
-    if (destroyKeyRingTree) {
-      if (!pubKey || !privateKey) return Promise.reject("pubKey and privateKey are required");
-      if (!rootId) return Promise.reject("rootId is required");
-      if (!walletSyncEncryptionKey) return Promise.reject("walletSyncEncryptionKey is required");
-      if (!applicationPath) return Promise.reject("applicationPath is required");
-
-      return sdk["destroyTrustchain"](
-        { rootId, walletSyncEncryptionKey, applicationPath },
-        { pubkey: pubKey, privatekey: privateKey },
-      );
-    }
-
-    return Promise.reject("No function specified");
-  },
-  ledgerSync: function (opts: LedgerSyncOpts) {
-    const {
-      applicationId = 16,
-      name = "CLI",
-      apiBaseUrl = getEnv("TRUSTCHAIN_API_STAGING"),
-      pubKey,
-      privateKey,
-      rootId,
-      walletSyncEncryptionKey,
-      applicationPath,
-      push,
-      pull,
-      data,
-      version,
-      cloudSyncApiBaseUrl,
-      deleteData,
-    } = opts;
-    const context = {
-      applicationId,
-      name,
-      apiBaseUrl,
-    };
-
-    if (!cloudSyncApiBaseUrl) {
-      return;
-    }
-
-    let latestUpdateEvent: UpdateEvent<LiveData> | null = null;
-    const ledgerKeyRingProtocolSDK = getSdk(false, context, withDevice);
-
-    const cloudSyncSDK = new CloudSyncSDK({
-      apiBaseUrl: cloudSyncApiBaseUrl,
-      slug: liveSlug,
-      schema: walletSyncSchema,
-      trustchainSdk: ledgerKeyRingProtocolSDK,
-      getCurrentVersion: () => version ?? 0,
-      saveNewUpdate: async (event: UpdateEvent<LiveData>) => {
-        latestUpdateEvent = event;
-      },
-    });
-
-    // check deleteData/pull before push: callers reuse args that carry push: true
-    if (deleteData) {
-      return cloudSyncSDK.destroy(
-        { rootId, walletSyncEncryptionKey, applicationPath },
-        { pubkey: pubKey, privatekey: privateKey },
-      );
-    }
-
-    if (pull) {
-      return cloudSyncSDK
-        .pull(
-          { rootId, walletSyncEncryptionKey, applicationPath },
-          { pubkey: pubKey, privatekey: privateKey },
-        )
-        .then((result: void) =>
-          JSON.stringify({ result, updateEvent: latestUpdateEvent }, null, 2),
-        );
-    }
-
-    if (push) {
-      return cloudSyncSDK
-        .push(
-          { rootId, walletSyncEncryptionKey, applicationPath },
-          { pubkey: pubKey, privatekey: privateKey },
-          JSON.parse(data!) as LiveData,
-        )
-        .then((result: void) => JSON.stringify(result, null, 2));
-    }
-  },
   liveData: function (opts: LiveDataOpts) {
     return runCliLiveData(opts);
   },
+  // Desktop runs several Speculos in one process (see `speculos.relaunch`), so the transport id
+  // carries the port and `cleanSpeculos` unregisters that exact module.
   registerSpeculosTransport: function (apiPort: string, speculosAddress = "http://localhost") {
     const req: SpeculosHttpTransportOpts = {
       apiPort: apiPort,

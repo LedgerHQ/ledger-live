@@ -1,9 +1,10 @@
 import React from "react";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
+import { LNUpsellBanner } from "LLM/features/LNUpsell";
 import { type DeviceSectionDevice } from "../useDeviceSectionViewModel";
+import { AddDeviceItem } from "./AddDeviceItem";
 import { DeviceListItem } from "./DeviceListItem";
 import { ExploreDevicesItem } from "./ExploreDevicesItem";
-import { AddDeviceItem } from "./AddDeviceItem";
 
 type DeviceListContentProps = {
   readonly devices: readonly DeviceSectionDevice[];
@@ -20,8 +21,15 @@ export function DeviceListContent({
   onDevicePress,
   onOpenMenu,
 }: DeviceListContentProps) {
+  const profileUpsell = <LNUpsellBanner location="profile" />;
+
   if (devices.length === 0) {
-    return <AddDeviceItem onPress={onAddDevice} />;
+    return (
+      <>
+        <AddDeviceItem onPress={onAddDevice} />
+        {profileUpsell}
+      </>
+    );
   }
 
   return (
@@ -36,6 +44,7 @@ export function DeviceListContent({
           />
         ))}
       </Box>
+      {profileUpsell}
       <ExploreDevicesItem onPress={onExploreDevices} />
     </>
   );

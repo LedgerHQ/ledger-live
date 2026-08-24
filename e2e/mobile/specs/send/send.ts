@@ -9,8 +9,22 @@ import { setTeamOwner } from "../../helpers/allure/allure-helper";
 import type { LiveDataCommandOptions } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import type { InitOptions } from "../../utils/initUtil";
 
-export const BST_SEND_CURRENCIES = new Set(["aptos", "sui", "cardano"]);
-const BST_SEND_INVALID_ADDRESS_CURRENCIES = new Set(["hedera"]);
+export const BST_SEND_CURRENCIES = new Set([
+  "aptos",
+  "sui",
+  "cardano",
+  "kaspa",
+  "vechain",
+  "zcash",
+  "algorand",
+  "hedera",
+  "ripple",
+  "concordium_testnet",
+  "internet_computer",
+]);
+const BST_SEND_INVALID_ADDRESS_CURRENCIES = new Set(["hedera", "ripple", "algorand"]);
+const BST_SEND_INVALID_AMOUNT_CURRENCIES = new Set(["hedera", "ripple"]);
+const BST_SEND_VALID_ADDRESS_CURRENCIES = new Set(["ripple"]);
 
 export type SendTestOptions = {
   featureFlags?: InitOptions["featureFlags"];
@@ -163,7 +177,11 @@ export function runSendValidAddressTest(
   accountName?: string,
   expectedWarningMessage?: string,
 ) {
-  setTeamOwner(Team.COIN_INTEGRATION);
+  setTeamOwner(
+    BST_SEND_VALID_ADDRESS_CURRENCIES.has(transaction.accountToDebit.currency.id)
+      ? Team.BST
+      : Team.COIN_INTEGRATION,
+  );
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
   describe("Send - valid address input", () => {
@@ -202,7 +220,11 @@ export function runSendInvalidAmountTest(
   tmsLinks: string[],
   tags: string[],
 ) {
-  setTeamOwner(Team.COIN_INTEGRATION);
+  setTeamOwner(
+    BST_SEND_INVALID_AMOUNT_CURRENCIES.has(transaction.accountToDebit.currency.id)
+      ? Team.BST
+      : Team.COIN_INTEGRATION,
+  );
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
   describe("Send - invalid amount input", () => {

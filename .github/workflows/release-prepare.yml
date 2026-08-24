@@ -43,7 +43,7 @@ jobs:
           skip-nx-cache: "true"
 
       - name: install dependencies
-        run: pnpm i -F "ledger-live"
+        run: pnpm i --frozen-lockfile -F "ledger-live"
 
       - name: exit prerelease mode
         run: pnpm changeset pre exit

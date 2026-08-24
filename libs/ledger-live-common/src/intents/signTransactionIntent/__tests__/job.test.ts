@@ -4,7 +4,10 @@ import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getMainAccount } from "../../../account/index";
 import { getAccountBridge } from "../../../bridge/index";
-import type { DeviceConnectionResult, DeviceExtractedContext } from "@ledgerhq/device-intent";
+import type {
+  DeviceConnectionResult,
+  DeviceExtractedContext,
+} from "@features/platform-device-intent";
 import type {
   Account,
   AccountLike,
@@ -12,6 +15,7 @@ import type {
   SignedOperation,
 } from "@ledgerhq/types-live";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import { DeviceModelId as DMKDeviceModelId } from "@ledgerhq/device-management-kit";
 import { Observable, of, throwError } from "rxjs";
 import { signTransactionIntentJob } from "../job";
 import type { SignTransactionIntentInput, SignTransactionIntentJobState } from "../types";
@@ -36,10 +40,11 @@ const signedOperation = { operation: { id: "operation-1" } } as SignedOperation;
 const deviceConnectionResult: DeviceConnectionResult = {
   dmk: null as unknown as DeviceConnectionResult["dmk"],
   sessionId: "session-1",
-  connectedDevice: null as unknown as DeviceConnectionResult["connectedDevice"],
+  connectedDevice: {
+    modelId: DMKDeviceModelId.NANO_X,
+  } as DeviceConnectionResult["connectedDevice"],
   compatDeviceId: "device-1",
   compatDeviceName: "Device 1",
-  compatDeviceModelId: DeviceModelId.nanoX,
   compatDeviceWired: true,
 };
 

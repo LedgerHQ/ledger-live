@@ -18,11 +18,11 @@ export const NotificationsPromptContext = createContext<NotificationsPromptConte
   null,
 );
 
-export function useNotificationsContext() {
+export function useNotificationsPrompt() {
   const context = useContext(NotificationsPromptContext);
 
   if (!context) {
-    throw new Error("useNotificationsContext must be used within a NotificationsPromptProvider");
+    throw new Error("useNotificationsPrompt must be used within a NotificationsPromptProvider");
   }
 
   return context;

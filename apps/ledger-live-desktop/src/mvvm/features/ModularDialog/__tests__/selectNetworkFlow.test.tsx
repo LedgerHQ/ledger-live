@@ -44,6 +44,14 @@ const dialogParamsMixedCurrencies = {
   },
 };
 
+const dialogParamsWithSelectableNetworks = {
+  isOpen: true,
+  dialogParams: {
+    selectableNetworkIds: [ethereumCurrency.id],
+    onAssetSelected: mockOnAssetSelected,
+  },
+};
+
 const waitForSkeletonToBeRemoved = async () => {
   // Wait for the asset list to be rendered (skeletons are replaced with actual content)
   await waitFor(() => {
@@ -79,6 +87,42 @@ describe("ModularDialogFlowManager - Select Network Flow", () => {
     await user.click(bitcoinAsset);
 
     expect(mockOnAssetSelected).toHaveBeenCalledWith(bitcoinCurrency);
+  });
+
+  it("should render ineligible assets as disabled and prevent their selection", async () => {
+    const { user } = render(<ModularDialogFlowManager />, {
+      initialState: { modularDialog: dialogParamsWithSelectableNetworks },
+    });
+
+    await waitForSkeletonToBeRemoved();
+
+    const bitcoinAsset = screen.getByTestId("asset-item-ticker-btc");
+    expect(bitcoinAsset).toHaveAttribute("aria-disabled", "true");
+
+    await user.click(bitcoinAsset);
+
+    expect(mockOnAssetSelected).not.toHaveBeenCalled();
+  });
+
+  it("should allow eligible assets to reach the full network list", async () => {
+    const { user } = render(<ModularDialogFlowManager />, {
+      initialState: { modularDialog: dialogParamsWithSelectableNetworks },
+    });
+
+    await waitForSkeletonToBeRemoved();
+
+    const ethereumAsset = screen.getByTestId("asset-item-ticker-eth");
+    expect(ethereumAsset).not.toHaveAttribute("aria-disabled", "true");
+
+    await user.click(ethereumAsset);
+
+    const ethereumNetwork = screen.getByTestId("network-item-name-Ethereum");
+    const arbitrumNetwork = screen.getByTestId("network-item-name-Arbitrum");
+    expect(arbitrumNetwork).toHaveAttribute("aria-disabled", "true");
+
+    await user.click(ethereumNetwork);
+
+    expect(mockOnAssetSelected).toHaveBeenCalledWith(ethereumCurrency);
   });
 
   it("should navigate to NetworkSelection step after asset selection", async () => {

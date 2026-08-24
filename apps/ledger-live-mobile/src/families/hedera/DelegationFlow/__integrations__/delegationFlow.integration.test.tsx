@@ -11,7 +11,7 @@ import { HEDERA_ACCOUNT_1, overrideWithHederaAccount1 } from "../../__mocks__/ac
 import { makeMockAccountBridge } from "../../__mocks__/bridge.mock";
 
 jest.mock("LLM/features/NotificationsPrompt", () => ({
-  useNotificationsContext: () => ({ notifyFlowCompleted: jest.fn() }),
+  useNotificationsPrompt: () => ({ notifyFlowCompleted: jest.fn() }),
 }));
 
 jest.mock("@ledgerhq/live-common/families/hedera/react", () => ({

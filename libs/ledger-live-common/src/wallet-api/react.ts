@@ -372,7 +372,7 @@ export function useWalletAPIServer({
   );
   useEffect(() => {
     tracking.load(manifest);
-  }, [tracking, manifest]);
+  }, [tracking, manifest.id]);
 
   // TODO: refactor each handler into its own logic function for clarity
   useEffect(() => {

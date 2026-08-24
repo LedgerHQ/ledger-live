@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-evm",
-  "version": "4.10.0",
+  "version": "5.0.0",
   "description": "Ledger EVM Coin integration",
   "keywords": [
     "Ledger",
@@ -66,7 +66,6 @@
     "@ethersproject/shims": "^5.7.0",
     "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
-    "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/logs": "catalog:",
     "axios": "catalog:",

@@ -1,6 +1,56 @@
+import { isPlainObjectOverride } from "@ledgerhq/live-config/LiveConfig";
+import { getEnv } from "@shared/env";
 import { CurrencyLiveConfigDefinition } from "../../config";
 
-const evmConfig: CurrencyLiveConfigDefinition = {
+export function isLedgerBased(currencyConfiguration: Record<string, unknown>): boolean {
+  return Boolean(
+    typeof currencyConfiguration.default === "object" &&
+    currencyConfiguration.default &&
+    "node" in currencyConfiguration.default &&
+    currencyConfiguration.default.node &&
+    typeof currencyConfiguration.default.node === "object" &&
+    "type" in currencyConfiguration.default.node &&
+    currencyConfiguration.default.node.type === "ledger",
+  );
+}
+
+function envBasedLedgerConfiguration(): Record<string, unknown> {
+  return {
+    ...(getEnv("EXPLORER") ? { ledgerExplorerUri: getEnv("EXPLORER") } : {}),
+    ...(getEnv("LEDGER_CLIENT_VERSION")
+      ? { ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION") }
+      : {}),
+    ...(getEnv("EIP1559_BASE_FEE_MULTIPLIER")
+      ? { eip1559BaseFeeMultiplier: getEnv("EIP1559_BASE_FEE_MULTIPLIER") }
+      : {}),
+  };
+}
+
+function overridesDefaultsWithEnv(
+  walletCurrenciesConfiguration: CurrencyLiveConfigDefinition,
+): CurrencyLiveConfigDefinition {
+  return Object.fromEntries(
+    Object.entries(walletCurrenciesConfiguration).map(([currencyName, currencyConfiguration]) => [
+      currencyName,
+      {
+        type: "object" as const,
+        get default() {
+          return isPlainObjectOverride(currencyConfiguration.default)
+            ? {
+                ...currencyConfiguration.default,
+                ...(isLedgerBased(currencyConfiguration) ? envBasedLedgerConfiguration() : {}),
+                ...(getEnv("EVM_FORCE_LEGACY_TRANSACTIONS")
+                  ? { forceLegacyTransactions: getEnv("EVM_FORCE_LEGACY_TRANSACTIONS") }
+                  : {}),
+              }
+            : {};
+        },
+      },
+    ]),
+  );
+}
+
+const evmCurrencies: CurrencyLiveConfigDefinition = {
   config_currency_akroma: {
     type: "object",
     default: {
@@ -452,8 +502,8 @@ const evmConfig: CurrencyLiveConfigDefinition = {
         uri: "https://cronos.coin.ledger.com",
       },
       explorer: {
-        type: "blockscout",
-        uri: "https://cronos.org/explorer/api",
+        type: "cronos",
+        uri: "https://proxycronosexplorer.api.live.ledger.com/explorer/api",
       },
       showNfts: false,
     },
@@ -1468,4 +1518,4 @@ const evmConfig: CurrencyLiveConfigDefinition = {
   },
 };
 
-export { evmConfig };
+export const evmConfig = overridesDefaultsWithEnv(evmCurrencies);

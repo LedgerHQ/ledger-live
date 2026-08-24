@@ -6,15 +6,16 @@ describe("useOpenCurrencyFlow", () => {
   const ethereum = getCryptoCurrencyById("ethereum");
   const bitcoin = getCryptoCurrencyById("bitcoin");
 
-  it("should open the terminal currency flow with the exact network ids", () => {
+  it("should open the terminal currency flow with the exact selectable network ids", () => {
     const { result, store } = renderHook(() => useOpenCurrencyFlow());
 
     void result.current.openCurrencyFlow([ethereum.id, bitcoin.id]);
 
     expect(store.getState().modularDialog.dialogParams).toMatchObject({
-      networkIds: [ethereum.id, bitcoin.id],
+      selectableNetworkIds: [ethereum.id, bitcoin.id],
       presentation: "dialog",
     });
+    expect(store.getState().modularDialog.dialogParams?.networkIds).toBeUndefined();
     expect(store.getState().modularDialog.dialogParams?.currencies).toBeUndefined();
     expect(store.getState().modularDialog.dialogParams?.onAccountSelected).toBeUndefined();
   });
@@ -27,7 +28,7 @@ describe("useOpenCurrencyFlow", () => {
     });
 
     expect(store.getState().modularDialog.dialogParams).toMatchObject({
-      networkIds: [ethereum.id],
+      selectableNetworkIds: [ethereum.id],
       presentation: "embedded",
     });
 
@@ -37,6 +38,20 @@ describe("useOpenCurrencyFlow", () => {
 
     await expect(selection).resolves.toBeNull();
     expect(store.getState().modularDialog.dialogParams).toBeNull();
+  });
+
+  it("should forward the dialog configuration", () => {
+    const { result, store } = renderHook(() => useOpenCurrencyFlow());
+    const dialogConfiguration = {
+      assets: { leftElement: "undefined" as const, rightElement: "undefined" as const },
+      networks: { leftElement: "undefined" as const, rightElement: "undefined" as const },
+    };
+
+    void result.current.openCurrencyFlow([ethereum.id], { dialogConfiguration });
+
+    expect(store.getState().modularDialog.dialogParams?.dialogConfiguration).toEqual(
+      dialogConfiguration,
+    );
   });
 
   it("should cancel an embedded selection and reset the dialog", async () => {
@@ -93,7 +108,9 @@ describe("useOpenCurrencyFlow", () => {
     });
 
     expect(store.getState().modularDialog.isOpen).toBe(true);
-    expect(store.getState().modularDialog.dialogParams?.networkIds).toEqual([ethereum.id]);
+    expect(store.getState().modularDialog.dialogParams?.selectableNetworkIds).toEqual([
+      ethereum.id,
+    ]);
 
     act(() => {
       store.getState().modularDialog.dialogParams?.onAssetSelected?.(ethereum);

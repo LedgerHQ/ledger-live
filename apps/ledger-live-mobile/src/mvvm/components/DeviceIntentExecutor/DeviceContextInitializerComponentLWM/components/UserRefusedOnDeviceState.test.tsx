@@ -55,7 +55,7 @@ describe("UserRefusedOnDeviceState", () => {
   it("GIVEN the user refused state WHEN rendering THEN it renders the title and action buttons", () => {
     renderState();
 
-    expect(screen.getByText("Operation rejected on device")).toBeVisible();
+    expect(screen.getByText("Operation rejected on Ledger device")).toBeVisible();
     expect(screen.getByText("Close")).toBeVisible();
     expect(screen.getByText("Retry")).toBeVisible();
   });

@@ -4,7 +4,7 @@ import { Pressable, Text } from "react-native";
 import type { RouteProp } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { render, screen, withFlagOverrides, waitFor } from "@tests/test-renderer";
+import { render, screen, withFlagOverrides, waitFor, within } from "@tests/test-renderer";
 import type { ContactId } from "@domain/entity-contact";
 import {
   mockContact,
@@ -322,6 +322,13 @@ function withContactsPageReadyState(
   });
 }
 
+const evmOnlyContactsFeatureFlag: Parameters<typeof withContactsPageReadyState>[0] = {
+  lwmContacts: {
+    enabled: true,
+    params: { newBadge: false, eligibleAddressFamilies: ["evm"] },
+  },
+};
+
 describe("Contacts integration", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -501,6 +508,7 @@ describe("Contacts integration", () => {
       );
       expect(screen.queryByTestId("contacts-me-item")).toBeNull();
       expect(screen.queryByTestId("contacts-add-contact-row")).toBeNull();
+      expect(screen.queryByTestId("contacts-add-contact-header")).toBeNull();
     });
 
     await user.clear(input);
@@ -508,6 +516,7 @@ describe("Contacts integration", () => {
     await waitFor(() => {
       expect(screen.queryByTestId("contacts-search-no-results")).toBeNull();
       expect(screen.getByTestId("contacts-add-contact-row")).toBeVisible();
+      expect(screen.getByTestId("contacts-add-contact-header")).toBeVisible();
     });
 
     await user.type(input, "Me");
@@ -530,7 +539,7 @@ describe("Contacts integration", () => {
 
     await waitFor(() => {
       expect(screen.getByTestId("contacts-detail-screen")).toBeVisible();
-      expect(screen.getByText("My addresses")).toBeVisible();
+      expect(screen.getByText("Me")).toBeVisible();
       expect(screen.getByTestId("contacts-detail-add-address")).toHaveTextContent(
         "Add your address",
       );
@@ -565,7 +574,10 @@ describe("Contacts integration", () => {
     await waitFor(() => {
       expect(screen.getByTestId("contacts-detail-screen")).toBeVisible();
       expect(screen.getByTestId("contacts-detail-add-address")).toHaveTextContent("Add address");
-      expect(screen.getByText("Save a wallet address to send to Benoit")).toBeVisible();
+      expect(screen.getByText("No saved addresses for Benoit")).toBeVisible();
+      expect(
+        screen.getByText("Save their wallet addresses to send to them by name next time"),
+      ).toBeVisible();
       expect(screen.getByTestId("contacts-detail-avatar")).toBeVisible();
       expect(screen.queryByTestId("contacts-detail-ledger-wallet-addresses")).toBeNull();
     });
@@ -633,12 +645,7 @@ describe("Contacts integration", () => {
   it("should continue Add Address with the final currency selected in the shared drawer", async () => {
     const { user } = render(<ContactDetailViewModelTestApp />, {
       navigationInitialState: contactDetailNavigationState,
-      overrideInitialState: withContactsPageReadyState({
-        lwmContacts: {
-          enabled: true,
-          params: { newBadge: false, eligibleAddressFamilies: ["evm"] },
-        },
-      }),
+      overrideInitialState: withContactsPageReadyState(evmOnlyContactsFeatureFlag),
     });
 
     await user.press(screen.getByTestId("contacts-start-add-address"));
@@ -660,15 +667,10 @@ describe("Contacts integration", () => {
     const contact = mockContact({ id: "contact-benoit", name: "Benoit" });
     const { user } = render(<ContactDetailAddressEntryTestApp />, {
       navigationInitialState: savedContactDetailNavigationState,
-      overrideInitialState: withContactsPageReadyState(
-        {
-          lwmContacts: {
-            enabled: true,
-            params: { newBadge: false, eligibleAddressFamilies: ["evm"] },
-          },
-        },
-        state => ({ ...state, contacts: { contacts: [mockMeContact(), contact] } }),
-      ),
+      overrideInitialState: withContactsPageReadyState(evmOnlyContactsFeatureFlag, state => ({
+        ...state,
+        contacts: { contacts: [mockMeContact(), contact] },
+      })),
     });
 
     await user.press(screen.getByTestId("contacts-detail-add-address"));
@@ -679,7 +681,7 @@ describe("Contacts integration", () => {
         "placeholder",
         "Address or ENS",
       );
-      expect(screen.getByTestId("bottom-sheet-header-title")).toHaveTextContent("Enter address");
+      expect(screen.getByText("Enter address")).toBeVisible();
       expect(screen.getByTestId("contacts-add-address-confirm")).toBeDisabled();
       expect(screen.getByTestId("contacts-add-address-step-frame")).toHaveStyle({
         height: "100%",
@@ -692,7 +694,7 @@ describe("Contacts integration", () => {
 
     await waitFor(() => {
       expect(screen.getByTestId("contacts-add-address-input")).toHaveProp("value", SCANNED_ADDRESS);
-      expect(screen.getByTestId("bottom-sheet-header-title")).toHaveTextContent("Enter address");
+      expect(screen.getByText("Enter address")).toBeVisible();
       expect(screen.getByTestId("contacts-add-address-confirm")).toBeEnabled();
     });
 
@@ -701,7 +703,7 @@ describe("Contacts integration", () => {
     expect(addressNameInput).toHaveProp("value", mockEthCryptoCurrency.name);
     expect(addressNameInput).toHaveProp("maxLength", 32);
     expect(screen.getByTestId("contacts-add-address-name-count")).toHaveTextContent("8/32");
-    expect(screen.getByTestId("bottom-sheet-header-title")).toHaveTextContent("Name address");
+    expect(screen.getByText("Name address")).toBeVisible();
     expect(
       screen.getByText(
         "We recommend giving this address a name to easily find it when needed. It will be only visible by you.",
@@ -725,12 +727,7 @@ describe("Contacts integration", () => {
   it("should keep the currency selector usable when searching for a network", async () => {
     const { user } = render(<ContactDetailAddressEntryTestApp />, {
       navigationInitialState: contactDetailNavigationState,
-      overrideInitialState: withContactsPageReadyState({
-        lwmContacts: {
-          enabled: true,
-          params: { newBadge: false, eligibleAddressFamilies: ["evm"] },
-        },
-      }),
+      overrideInitialState: withContactsPageReadyState(evmOnlyContactsFeatureFlag),
     });
 
     await user.press(screen.getByTestId("contacts-detail-add-address"));
@@ -745,26 +742,51 @@ describe("Contacts integration", () => {
     });
   });
 
+  it("should keep the standard catalog visible while disabling ineligible asset and network rows", async () => {
+    const { user } = render(<ContactDetailAddressEntryTestApp />, {
+      navigationInitialState: contactDetailNavigationState,
+      overrideInitialState: withContactsPageReadyState(evmOnlyContactsFeatureFlag),
+    });
+
+    await user.press(screen.getByTestId("contacts-detail-add-address"));
+
+    const bitcoinAsset = await screen.findByTestId("asset-item-BTC");
+    const tetherAsset = screen.getByTestId("asset-item-USDT");
+    expect(bitcoinAsset).toBeDisabled();
+    expect(tetherAsset).toBeEnabled();
+
+    await user.press(tetherAsset);
+
+    const solanaNetwork = await screen.findByTestId("network-item-Solana");
+    const ethereumNetwork = screen.getByTestId("network-item-Ethereum");
+    expect(solanaNetwork).toBeDisabled();
+    expect(ethereumNetwork).toBeEnabled();
+
+    await user.press(ethereumNetwork);
+
+    await waitFor(() => {
+      expect(screen.getByTestId("contacts-add-address-input")).toBeVisible();
+    });
+  });
+
   it("should return to currency selection without removing the contact detail route", async () => {
     const { user } = render(<ContactDetailAddressEntryTestApp />, {
       navigationInitialState: contactDetailNavigationState,
-      overrideInitialState: withContactsPageReadyState({
-        lwmContacts: {
-          enabled: true,
-          params: { newBadge: false, eligibleAddressFamilies: ["evm"] },
-        },
-      }),
+      overrideInitialState: withContactsPageReadyState(evmOnlyContactsFeatureFlag),
     });
 
     await user.press(screen.getByTestId("contacts-detail-add-address"));
     await user.press(screen.getByTestId("contacts-address-entry-select-currency"));
     expect(await screen.findByTestId("contacts-add-address-input")).toBeVisible();
 
-    await user.press(screen.getByTestId("bottom-sheet-header-back-button"));
+    await user.press(
+      within(screen.getByTestId("contacts-add-address-step-frame")).getByTestId(
+        "bottom-sheet-header-back-button",
+      ),
+    );
 
     await waitFor(() => {
       expect(screen.getByTestId("contacts-detail-screen")).toBeVisible();
-      expect(screen.queryByTestId("contacts-add-address-input")).toBeNull();
       expect(screen.getByTestId("contacts-address-entry-select-currency")).toBeVisible();
       expect(screen.queryByTestId("my-wallet-home")).toBeNull();
     });
@@ -869,6 +891,7 @@ describe("Contacts integration", () => {
     expect(mockHandleOpenSendFlow).toHaveBeenCalledWith({
       currencyIds: ["ethereum"],
       recipient: "0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034",
+      skipRecipientStep: true,
     });
   });
 
@@ -937,6 +960,10 @@ describe("Contacts integration", () => {
     await waitFor(() => {
       expect(screen.queryByTestId("contacts-edit-signer-confirm")).toBeNull();
       expect(screen.getByTestId("contacts-rename-address-confirm")).toBeVisible();
+      expect(screen.getByTestId("contacts-edit-address-input")).toHaveProp(
+        "value",
+        "0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034",
+      );
     });
   });
 
@@ -962,6 +989,48 @@ describe("Contacts integration", () => {
       expect(screen.queryByTestId("contacts-rename-address-confirm")).toBeNull();
       expect(screen.queryByTestId("contacts-address-detail-dialog")).toBeNull();
       expect(screen.getByText("Exchange wallet")).toBeVisible();
+    });
+  });
+
+  it("should prefill the saved address and update the address value", async () => {
+    const newAddress = "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd";
+    const { user } = render(<MyWalletNavigator />, {
+      overrideInitialState: withContactsPageReadyState(
+        { lwmContacts: { enabled: true, params: { newBadge: false } } },
+        state => ({ ...state, contacts: { contacts: mockPopulatedContacts() } }),
+      ),
+    });
+
+    await user.press(screen.getByTestId("my-wallet-contacts-button"));
+    await user.press(await screen.findByTestId("contacts-saved-contact-contact-ben"));
+    await user.press(await screen.findByTestId("contacts-detail-address-row-address-ethereum"));
+    await user.press(await screen.findByText("Edit"));
+    await user.press(await screen.findByTestId("contacts-edit-signer-confirm"));
+
+    const addressInput = await screen.findByTestId("contacts-edit-address-input");
+    expect(addressInput).toHaveProp("value", "0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034");
+
+    await user.clear(addressInput);
+    await user.type(addressInput, newAddress);
+
+    await waitFor(() => {
+      expect(screen.getByTestId("contacts-rename-address-confirm")).toBeEnabled();
+    });
+
+    await user.press(screen.getByTestId("contacts-rename-address-confirm"));
+
+    await waitFor(() => {
+      expect(screen.queryByTestId("contacts-rename-address-confirm")).toBeNull();
+      expect(screen.queryByTestId("contacts-address-detail-dialog")).toBeNull();
+    });
+
+    await user.press(await screen.findByTestId("contacts-detail-address-row-address-ethereum"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("contacts-address-detail-dialog")).toBeVisible();
+      expect(screen.getByTestId("contacts-address-detail-full-address")).toHaveTextContent(
+        newAddress,
+      );
     });
   });
 

@@ -127,6 +127,12 @@ export const OP_TYPES_EXCLUDING_FEES: OperationType[] = [
  */
 export const STAKING_REWARD_HASH_SUFFIX = "-staking-reward";
 
+/**
+ * Network account that pays out staking rewards. Same value on mainnet and testnet
+ * https://docs.hedera.com/learn/core-concepts/staking/staking#staking-reward-account
+ */
+export const STAKING_REWARD_ACCOUNT_ID = "0.0.800";
+
 export const MAP_TX_NAME_TO_CUSTOM_OPERATION_TYPE: Record<string, OperationType> = {
   [HEDERA_TRANSACTION_NAMES.TokenAssociate]: "ASSOCIATE_TOKEN",
   [HEDERA_TRANSACTION_NAMES.ContractCall]: "CONTRACT_CALL",

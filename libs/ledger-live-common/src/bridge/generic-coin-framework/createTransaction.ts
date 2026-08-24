@@ -3,6 +3,18 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import BigNumber from "bignumber.js";
 import { GenericTransaction } from "./types";
 
+/** The plain-send defaults shared by families that add nothing of their own. */
+function sendDefaults(family: string): GenericTransaction {
+  return {
+    family,
+    amount: new BigNumber(0),
+    recipient: "",
+    fees: null,
+    useAllAmount: false,
+    mode: "send",
+  };
+}
+
 export function createTransaction(account: Account | TokenAccount): GenericTransaction {
   const currency =
     account.type === "TokenAccount"
@@ -69,14 +81,13 @@ export function createTransaction(account: Account | TokenAccount): GenericTrans
         mode: "send",
       };
     case "multiversx":
+      return sendDefaults(currency.family);
     case "tron":
       return {
-        family: currency.family,
-        amount: new BigNumber(0),
-        recipient: "",
-        fees: null,
-        useAllAmount: false,
-        mode: "send",
+        ...sendDefaults(currency.family),
+        // `duration: 3` is the Tron freeze period in days. The staking screens merge their patch over
+        // this bag rather than replacing it, so a key they do not set keeps the value seeded here.
+        familySpecificData: { resource: null, duration: 3, votes: [] },
       };
     case "near":
     case "vechain":
@@ -106,6 +117,35 @@ export function createTransaction(account: Account | TokenAccount): GenericTrans
         memoType: null,
         memoValue: null,
         networkInfo: null,
+      };
+    case "kaspa":
+      // UTXO chain — no account nonce/sequence, same as near/vechain/cardano above. Setting a
+      // synthetic zero nonce here (inert for crafting — craftTransaction ignores it and builds
+      // its own inputs from real UTXOs) makes transactionIntent.sequence a valid bigint, so
+      // signOperation's guard skips calling getNextSequence entirely — which is then free to
+      // throw like every other no-sequence family's, instead of needing a silent 0n stub.
+      return {
+        family: currency.family,
+        amount: new BigNumber(0),
+        recipient: "",
+        fees: null,
+        useAllAmount: false,
+        mode: "send",
+        feesStrategy: "fast",
+        nonce: new BigNumber(0),
+      };
+    case "stacks":
+      // Unlike near/vechain/cardano above, leaving nonce unset lets craftTransaction/estimateFees
+      // fetch the real sequential nonce instead of defaulting to 0.
+      return {
+        family: currency.family,
+        amount: new BigNumber(0),
+        recipient: "",
+        fees: null,
+        useAllAmount: false,
+        mode: "send",
+        assetReference: "",
+        assetOwner: "",
       };
     default:
       throw new Error(`Unsupported currency family: ${currency.family}`);

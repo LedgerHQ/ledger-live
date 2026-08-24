@@ -13,7 +13,12 @@ import type { FeeEstimation } from "@ledgerhq/coin-module-framework/api/types";
 import { getEnv } from "@ledgerhq/live-env";
 import invariant from "invariant";
 import { createApi } from "../api";
-import { HEDERA_TRANSACTION_MODES, STAKING_REWARD_HASH_SUFFIX, TINYBAR_SCALE } from "../constants";
+import {
+  HEDERA_TRANSACTION_MODES,
+  STAKING_REWARD_ACCOUNT_ID,
+  STAKING_REWARD_HASH_SUFFIX,
+  TINYBAR_SCALE,
+} from "../constants";
 import { getSyntheticBlock } from "../logic/utils";
 import { rpcClient } from "../network/rpc";
 import { MAINNET_TEST_ACCOUNTS } from "../test/fixtures/account.fixture";
@@ -879,7 +884,7 @@ describe("createApi", () => {
   });
 
   describe("listOperations", () => {
-    const rewardPayerAddress = getEnv("HEDERA_STAKING_REWARD_ACCOUNT_ID");
+    const rewardPayerAddress = STAKING_REWARD_ACCOUNT_ID;
 
     it("returns empty array for pristine account", async () => {
       const { items: operations } = await api.listOperations(

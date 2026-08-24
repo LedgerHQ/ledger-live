@@ -55,7 +55,7 @@ export function useSwapLiveAppState(params: unknown) {
   const { t } = useTranslation();
   const ptxSwapLiveAppMobile = useFeature("ptxSwapLiveAppMobile");
   const { isConnected } = useNetInfo();
-  const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
+  const [webviewState, setWebviewStateInternal] = useState<WebviewState>(initialWebviewState);
   const isWebviewError = webviewState?.url.includes("/unknown-error");
 
   const webviewRef = useRef<WebviewAPI>(null);
@@ -63,7 +63,40 @@ export function useSwapLiveAppState(params: unknown) {
   // Incrementing this key remounts SwapWebviewContent, resetting the webview to
   // its initial URL regardless of where it has navigated internally.
   const [webviewResetKey, setWebviewResetKey] = useState(0);
-  const resetWebview = useCallback(() => setWebviewResetKey(k => k + 1), []);
+
+  // Latest webview URL, mirrored in a ref so ensureWebviewReset can read it without
+  // being re-created on every navigation inside the live app.
+  const webviewUrlRef = useRef(initialWebviewState.url);
+  // URL the live app was on when a reset was last requested, until that reset is
+  // confirmed to have taken effect.
+  const pendingResetFromUrlRef = useRef<string | null>(null);
+
+  const setWebviewState = useCallback((nextState: WebviewState) => {
+    webviewUrlRef.current = nextState.url;
+    setWebviewStateInternal(nextState);
+  }, []);
+
+  const resetWebview = useCallback(() => {
+    pendingResetFromUrlRef.current = webviewUrlRef.current;
+    setWebviewResetKey(k => k + 1);
+  }, []);
+
+  /**
+   * Both reset call sites navigate away in the same tick, so the remount is committed
+   * while the Swap tab is already covered by another screen — and a webview remounted
+   * off-screen does not reliably come back on its initial URL. Re-assert the reset when
+   * the tab is focused again, but only if the live app is still on the page we wanted
+   * gone, so the common case costs no extra reload.
+   */
+  const ensureWebviewReset = useCallback(() => {
+    const resetFromUrl = pendingResetFromUrlRef.current;
+    if (resetFromUrl === null) return;
+
+    pendingResetFromUrlRef.current = null;
+    if (webviewUrlRef.current !== resetFromUrl) return;
+
+    setWebviewResetKey(k => k + 1);
+  }, []);
 
   const swapLiveAppManifestID = ptxSwapLiveAppMobile?.params?.manifest_id ?? DEFAULT_MANIFEST_ID;
 
@@ -112,5 +145,6 @@ export function useSwapLiveAppState(params: unknown) {
     defaultParams,
     webviewResetKey,
     resetWebview,
+    ensureWebviewReset,
   };
 }

@@ -76,10 +76,9 @@ runs:
 
     - name: Install Linux native build dependencies
       if: runner.os == 'Linux'
-      shell: bash
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y build-essential pkg-config
+      uses: LedgerHQ/ledger-live/tools/actions/composites/apt-install@develop
+      with:
+        packages: build-essential pkg-config
 
     - name: Get pnpm store directory
       id: get-store-path

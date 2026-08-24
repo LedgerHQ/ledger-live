@@ -4,7 +4,7 @@ import { UserAvatar } from "LLM/components/UserAvatar";
 
 export function ProfileSection() {
   return (
-    <Box lx={{ alignItems: "center" }}>
+    <Box lx={{ alignItems: "center", alignSelf: "stretch" }}>
       <UserAvatar size="xl" />
     </Box>
   );

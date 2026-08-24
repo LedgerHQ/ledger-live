@@ -25,6 +25,7 @@ const LARGE_SCREEN_UPSELL_BANNER_PLACEMENT_BY_LOCATION = {
   accounts: "accounts",
   notification_center: "notification-center",
   wallet: "homepage",
+  profile: "profile",
 } as const satisfies Record<LNBannerLocation, LargeScreenUpsellBannerPlacement>;
 
 const LNS_UPSELL_HIGH_TIER = "LNS_UPSELL_HIGH_TIER";

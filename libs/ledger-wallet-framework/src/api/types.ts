@@ -23,6 +23,15 @@ export type OptimisticOperationDescriptor = {
    * chain-computed figure for a payout the transaction carries no amount for.
    */
   value?: BigNumber;
+  /**
+   * Family-owned `Operation.extra` keys for the pending row. Framework-reserved keys are dropped and
+   * the framework's own applied last, so this cannot shadow them — the same contract a family bag
+   * arriving from a sync goes through. The drop is unconditional while only `ledgerOpType`,
+   * `blockTime` and `index` are written back, so a reserved key sent here (`memo`, `stake`, …) is
+   * lost rather than merged. Needed by any family whose operation renderers read `extra`:
+   * without it the pending row shows the type-level default until the next sync replaces it.
+   */
+  extra?: Record<string, unknown>;
 };
 
 /** @see BridgeApi.buildAccountShape — anything but a field of `Account`. */
@@ -60,6 +69,7 @@ export type BridgeApi = {
   describeOptimisticOperation?: (
     mode: string,
     account: Account,
+    transaction: Record<string, unknown>,
   ) => OptimisticOperationDescriptor | undefined;
   /**
    * Extra facts this family's device app needs alongside the unsigned payload — passed straight

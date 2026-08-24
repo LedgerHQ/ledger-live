@@ -1,5 +1,19 @@
 # @domain/api-market-sentiment
 
+## 0.3.2
+
+### Patch Changes
+
+- Updated dependencies [[`e07e0ba`](https://github.com/LedgerHQ/ledger-live/commit/e07e0baca2e4edfe90163367047459257034f7cc)]:
+  - @shared/api-services@0.4.0
+
+## 0.3.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`e07e0ba`](https://github.com/LedgerHQ/ledger-live/commit/e07e0baca2e4edfe90163367047459257034f7cc)]:
+  - @shared/api-services@0.4.0-next.0
+
 ## 0.3.1
 
 ### Patch Changes

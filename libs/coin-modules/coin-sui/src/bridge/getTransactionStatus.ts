@@ -18,6 +18,8 @@ import {
   OneSuiMinForUnstake,
   OneSuiMinForUnstakeToBeLeft,
   SomeSuiForUnstake,
+  SuiStakeNotFound,
+  SuiUnstakeExceedsStake,
 } from "../errors";
 import type { SuiAccount, Transaction, TransactionStatus } from "../types";
 import { ensureAddressFormat } from "../utils";
@@ -75,13 +77,35 @@ export const getTransactionStatus: AccountBridge<
   if (transaction.mode === "undelegate") {
     const stakes = account.suiResources?.stakes?.flatMap(({ stakes }) => stakes) ?? [];
     const stake = stakes.find(s => s.stakedSuiId === transaction.stakedSuiId);
-    if (stake) {
-      if (!transaction.useAllAmount && amount.lt(ONE_SUI)) {
+
+    // `staking_pool::split` asserts the withdrawn amount is at most the principal
+    // (`EInsufficientSuiTokenBalance`) and that BOTH the withdrawn amount and the remainder reach
+    // 1 SUI (`EStakedSuiBelowThreshold`), so a partial unstake that breaks either rule aborts on
+    // chain; a full withdrawal takes the no-split path and is exempt. The amount side needs no
+    // account data, hence it runs first.
+    if (!transaction.useAllAmount) {
+      if (amount.lt(ONE_SUI)) {
         errors.amount = new OneSuiMinForUnstake();
       }
-      const stakeLeft = BigNumber(stake?.principal).minus(amount);
-      if (!transaction.useAllAmount && stakeLeft.lt(ONE_SUI) && stakeLeft.gt(0)) {
-        errors.amount = new OneSuiMinForUnstakeToBeLeft();
+
+      if (stake) {
+        const principal = BigNumber(stake.principal);
+        const stakeLeft = principal.minus(amount);
+        if (amount.gt(principal)) {
+          // Overwrites the sub-1-SUI error above on purpose: both apply to an overdraw of a
+          // position under 1 SUI, and naming the overdraw is the one that tells the user what to
+          // change.
+          errors.amount = new SuiUnstakeExceedsStake();
+        } else if (stakeLeft.lt(ONE_SUI) && stakeLeft.gt(0)) {
+          errors.amount = new OneSuiMinForUnstakeToBeLeft();
+        }
+      } else if (!errors.amount) {
+        // Fail closed on a split that cannot be verified: without the principal neither the
+        // remainder nor the overdraw is knowable, so a legal-looking amount may still abort on
+        // chain. A stale, degraded, or cleared sync is enough to lose the position. This is the
+        // last local guard — no transport rejects the build now, and `signOperation` reads
+        // `transaction.fees`, never this status.
+        errors.amount = new SuiStakeNotFound();
       }
     }
   } else {

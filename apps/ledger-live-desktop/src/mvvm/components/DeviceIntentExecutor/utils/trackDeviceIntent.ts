@@ -1,4 +1,4 @@
-import type { DeviceDisconnectedComponent } from "@ledgerhq/device-intent";
+import type { DeviceDisconnectedComponent } from "@features/platform-device-intent";
 import {
   dmkToLedgerDeviceIdMap,
   type DeviceIntentTrackingProperties,

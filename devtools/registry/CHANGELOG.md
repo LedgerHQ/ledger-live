@@ -1,5 +1,36 @@
 # @devtools/registry
 
+## 0.3.0
+
+### Minor Changes
+
+- [#20634](https://github.com/LedgerHQ/ledger-live/pull/20634) [`dd0e578`](https://github.com/LedgerHQ/ledger-live/commit/dd0e578b82b8fc94fa8690cd8111f5826254b197) Thanks [@Sebastien-Dav1d](https://github.com/Sebastien-Dav1d)! - Extract tool registry map and types into registry.ts; rename metadata/team-platform to metadata/platform
+
+### Patch Changes
+
+- Updated dependencies [[`2edf614`](https://github.com/LedgerHQ/ledger-live/commit/2edf614eed7608714821ee54574d8c4d2b6f7d98), [`e54d98b`](https://github.com/LedgerHQ/ledger-live/commit/e54d98b123ad8814be57c2f0e0f26689902ab4fd)]:
+  - @devtools/pay-card@0.3.0
+  - @devtools/feature-flags@0.7.1
+
+## 0.3.0-next.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @devtools/feature-flags@0.7.1-next.1
+
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#20634](https://github.com/LedgerHQ/ledger-live/pull/20634) [`dd0e578`](https://github.com/LedgerHQ/ledger-live/commit/dd0e578b82b8fc94fa8690cd8111f5826254b197) Thanks [@Sebastien-Dav1d](https://github.com/Sebastien-Dav1d)! - Extract tool registry map and types into registry.ts; rename metadata/team-platform to metadata/platform
+
+### Patch Changes
+
+- Updated dependencies [[`2edf614`](https://github.com/LedgerHQ/ledger-live/commit/2edf614eed7608714821ee54574d8c4d2b6f7d98), [`e54d98b`](https://github.com/LedgerHQ/ledger-live/commit/e54d98b123ad8814be57c2f0e0f26689902ab4fd)]:
+  - @devtools/pay-card@0.3.0-next.0
+  - @devtools/feature-flags@0.7.1-next.0
+
 ## 0.2.0
 
 ### Minor Changes
@@ -150,23 +181,4 @@
 - Updated dependencies [[`c5f0a61`](https://github.com/LedgerHQ/ledger-live/commit/c5f0a61c63858227287e4ae7c48f19868eba8b24)]:
   - @devtools/feature-flags@0.4.0
 
-## 0.1.2-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`c5f0a61`](https://github.com/LedgerHQ/ledger-live/commit/c5f0a61c63858227287e4ae7c48f19868eba8b24)]:
-  - @devtools/feature-flags@0.4.0-next.0
-
-## 0.1.1
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @devtools/feature-flags@0.3.2
-
-## 0.1.1-next.0
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @devtools/feature-flags@0.3.2-next.0
+<!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

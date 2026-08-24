@@ -12,8 +12,8 @@ import {
   testnetViewKey,
 } from "../__tests__/fixtures/api.fixture";
 import { setupCalStore } from "../__tests__/helpers/cal";
-import { listOperations } from "../logic/listOperations";
-import { getCalTokens } from "../logic/utils";
+import { listOperations } from "./listOperations";
+import { getCalTokens } from "./utils";
 import { buildSubAccountsFromPrivateRecords, resolveTokenSubAccounts } from "./tokens";
 import type { AleoOperation } from "../types";
 
@@ -45,7 +45,6 @@ describe("resolveTokenSubAccounts", () => {
       currencyId: currency.id,
       address: testnetAddress,
       ledgerAccountId: testnetLedgerAccountId,
-      mode: "bridge",
       options: { minHeight: 0, limit: 50, order: "asc" },
     });
   });

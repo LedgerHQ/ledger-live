@@ -1,5 +1,6 @@
 import React from "react";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
+import type { AssetCategory } from "@domain/api-aggregated-assets";
 import type { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { useModularDrawerConfiguration } from "@ledgerhq/live-common/modularDrawer/hooks/useModularDrawerConfiguration";
 import type { AccountLike } from "@ledgerhq/types-live";
@@ -37,6 +38,8 @@ export type ModularDrawerFlowProps = Readonly<{
 
   /** List of preselected currencies to display in the drawer */
   currencies?: string[];
+  /** DADA asset categories to filter the drawer server-side (e.g. Stablecoins) */
+  categories?: AssetCategory[];
   /** Configuration for assets display */
   assetsConfiguration?: EnhancedModularDrawerConfiguration["assets"];
   /** Configuration for networks display */
@@ -53,6 +56,8 @@ export type ModularDrawerFlowProps = Readonly<{
   uiUseCase?: string;
   /** Whether the currencies are filtered */
   areCurrenciesFiltered?: boolean;
+  /** Network IDs that remain selectable while all MAD rows stay visible. */
+  selectableNetworkIds?: readonly string[];
 
   /** Renders the Modular Drawer flow inside a presentation shell */
   children: (props: ModularDrawerFlowRenderProps) => React.ReactNode;
@@ -62,6 +67,7 @@ export function ModularDrawerFlow({
   isOpen,
   onClose,
   currencies,
+  categories,
   assetsConfiguration,
   networksConfiguration,
   onAccountSelected,
@@ -69,6 +75,7 @@ export function ModularDrawerFlow({
   useCase,
   uiUseCase,
   areCurrenciesFiltered,
+  selectableNetworkIds,
   children,
 }: ModularDrawerFlowProps): React.JSX.Element {
   const {
@@ -86,6 +93,7 @@ export function ModularDrawerFlow({
     {
       currencyIds: completionMode === "currency" ? undefined : currencies,
       networkIds: completionMode === "currency" ? currencies : undefined,
+      categories,
       searchedValue: searchValue,
       useCase,
       areCurrenciesFiltered,
@@ -110,6 +118,7 @@ export function ModularDrawerFlow({
     hasSearchedValue: searchValue.length > 0,
     onAccountSelected,
     onCurrencySelected,
+    selectableNetworkIds,
   });
 
   const content = (
@@ -125,11 +134,13 @@ export function ModularDrawerFlow({
         loadNext,
         assetsSorted,
         uiUseCase,
+        selectableNetworkIds,
       }}
       networksViewModel={{
         onNetworkSelected: handleNetwork,
         availableNetworks,
         networksConfiguration: networkConfigurationSanitized,
+        selectableNetworkIds,
       }}
       accountsViewModel={{
         onAddNewAccount,

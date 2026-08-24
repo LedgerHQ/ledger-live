@@ -74,6 +74,10 @@ export type ZcashPrivateInfo = {
   lastSyncTimestamp: number | null;
   lastProcessedBlock: number | null;
   transactions: ShieldedTransaction[];
+  // This chain-adapter (the zcashShielded flag-off path) never runs the
+  // automatic shielded-sync retry that sets this -- kept only for structural
+  // parity with coin-zcash's ZcashPrivateInfo, which shared LWD UI also reads.
+  lastSyncError?: string | null;
 };
 
 export type ZcashPrivateInfoRaw = {
@@ -89,6 +93,7 @@ export type ZcashPrivateInfoRaw = {
   lastSyncTimestamp: number | null;
   lastProcessedBlock: number | null;
   transactions: ShieldedTransactionRaw[];
+  lastSyncError?: string | null;
 };
 
 export type ShieldedTransactionRaw = {

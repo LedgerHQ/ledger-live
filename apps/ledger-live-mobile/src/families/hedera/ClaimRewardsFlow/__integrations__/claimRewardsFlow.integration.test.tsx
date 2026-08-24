@@ -11,7 +11,7 @@ import { makeMockAccountBridge } from "../../__mocks__/bridge.mock";
 import { mockEnrichedDelegation } from "../../__mocks__/delegation.mock";
 
 jest.mock("LLM/features/NotificationsPrompt", () => ({
-  useNotificationsContext: () => ({ notifyFlowCompleted: jest.fn() }),
+  useNotificationsPrompt: () => ({ notifyFlowCompleted: jest.fn() }),
 }));
 
 jest.mock(

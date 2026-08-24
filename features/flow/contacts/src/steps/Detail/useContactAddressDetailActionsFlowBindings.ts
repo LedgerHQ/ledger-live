@@ -7,6 +7,8 @@ import {
 import { ContactAddressIdSchema } from "@domain/entity-contact";
 import { useMemo } from "react";
 import { useSelector } from "react-redux";
+import type { ContactsAddressValidationPort } from "@features/platform-contacts";
+import type { ContactAddressEditSavePayload } from "../EditAddress/types";
 import { useRenameAddressDialogViewModel } from "../EditAddress/useRenameAddressDialogViewModel";
 import type { ContactAddressDetailActionsPorts } from "./model/ports";
 import { useContactAddressDetailActionsFlowViewModel } from "./useContactAddressDetailActionsFlowViewModel";
@@ -20,18 +22,24 @@ export type UseContactAddressDetailActionsFlowBindingsOptions = Readonly<{
   contactId: ContactId;
   addressId: ContactAddressId | undefined;
   ports: ContactAddressDetailActionsPorts;
+  addressValidation?: ContactsAddressValidationPort;
+  manualValidationDebounceMs?: number;
   onSend?: (intent: ContactAddressDetailSendIntent) => void;
   onDeleteSuccess?: () => void;
   onCloseAddressDetail?: () => void;
+  onEditAddressSaved?: (payload: ContactAddressEditSavePayload) => void;
 }>;
 
 export function useContactAddressDetailActionsFlowBindings({
   contactId,
   addressId,
   ports,
+  addressValidation,
+  manualValidationDebounceMs,
   onSend,
   onDeleteSuccess,
   onCloseAddressDetail,
+  onEditAddressSaved,
 }: UseContactAddressDetailActionsFlowBindingsOptions) {
   const flow = useContactAddressDetailActionsFlowViewModel({
     contactId,
@@ -57,11 +65,18 @@ export function useContactAddressDetailActionsFlowBindings({
     contactId,
     addressId: resolvedAddressId,
     currentLabel: contactAddress?.label ?? "",
+    currentAddress: contactAddress?.address,
+    currencyId: contactAddress?.currencyId,
     existingLabels,
     editPort: ports.edit,
+    addressValidation,
+    manualValidationDebounceMs,
     isRequestedOpen: flow.editUiState === "edit-open",
     onCloseRequest: flow.onEditClose,
-    onSaveSuccess: () => onCloseAddressDetail?.(),
+    onSaveSuccess: payload => {
+      onEditAddressSaved?.(payload);
+      onCloseAddressDetail?.();
+    },
   });
 
   return { flow, renameViewModel };

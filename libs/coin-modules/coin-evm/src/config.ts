@@ -15,6 +15,10 @@ export {
  */
 export type BlockFinalizationTag = "latest" | "safe" | "finalized";
 
+/** Fallbacks mirroring the `EXPLORER` / `EIP1559_BASE_FEE_MULTIPLIER` env defaults. */
+export const DEFAULT_LEDGER_EXPLORER_URI = "https://explorers.api.live.ledger.com";
+export const DEFAULT_EIP1559_BASE_FEE_MULTIPLIER = 1.6;
+
 export type EvmConfig = {
   chainId: number;
   name: string;
@@ -33,7 +37,7 @@ export type EvmConfig = {
       };
   explorer:
     | {
-        type: "etherscan" | "blockscout" | "teloscan" | "klaytnfinder" | "corescan";
+        type: "etherscan" | "blockscout" | "teloscan" | "klaytnfinder" | "corescan" | "cronos";
         noCache?: boolean | undefined;
         /**
          * Optional cap applied to the requested operation `limit` before the internal `limit + 1` probe.
@@ -103,6 +107,14 @@ export type EvmConfig = {
    */
   calldataFloorGasPerToken?: number;
   calldataFloorZeroByteTokens?: number;
+  /** Base URL of the Ledger explorer API, for the `ledger` node/explorer/gasTracker. */
+  ledgerExplorerUri?: string;
+  /** `X-Ledger-Client-Version` header, which some Ledger APIs allowlist on. Unset = no header. */
+  ledgerClientVersion?: string;
+  /** Force type-0 (legacy) transactions instead of EIP-1559 ones. */
+  forceLegacyTransactions?: boolean;
+  /** Multiplier applied to the next base fee when composing `maxFeePerGas`. */
+  eip1559BaseFeeMultiplier?: number;
   /**
    * Ordered list of internal-tx sources for `getBlock`. Built via `internalTxSourcesFromList()`.
    * Defaults to explorer-first, then node traces, then `empty` (resolves only when no

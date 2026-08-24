@@ -71,7 +71,7 @@ jobs:
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
       - name: Install dependencies
-        run: pnpm i --filter="!./apps/**"
+        run: pnpm i --frozen-lockfile --filter="!./apps/**"
       - name: run doc
         run: pnpm exec nx run-many -t doc --projects=tag:scope:libs-ledgerjs
       - name: status

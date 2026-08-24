@@ -12,14 +12,14 @@ import WithdrawAmount from "./WithdrawAmount";
 import ValidationError from "./ValidationError";
 import ValidationSuccess from "./ValidationSuccess";
 import { CeloWithdrawFlowParamList } from "./types";
-import { useNotificationsContext } from "LLM/features/NotificationsPrompt";
+import { useNotificationsPrompt } from "LLM/features/NotificationsPrompt";
 
 const totalSteps = "3"; // Withdraw, Device, Confirmation
 
 function WithdrawFlow() {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const { notifyFlowCompleted } = useNotificationsContext();
+  const { notifyFlowCompleted } = useNotificationsPrompt();
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
   return (
     <Stack.Navigator

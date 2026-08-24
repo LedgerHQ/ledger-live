@@ -1,6 +1,7 @@
 import type { Card as BrazeCard } from "@braze/web-sdk";
 import { compareCards } from "~/renderer/hooks/useBraze";
 import { CategoryContentCard, LocationContentCard } from "~/types/dynamicContent";
+import { hasRenderableCategorySlides } from "./getRenderableSmallSquareSlides";
 
 export type FormattedCategory = {
   category: CategoryContentCard;
@@ -40,3 +41,13 @@ export const formatCategories = (
       cards: childCards.filter(childCard => childCard.extras?.categoryId === category.categoryId),
     }))
     .filter(({ cards }) => cards.length > 0);
+
+export function getRenderableFormattedCategoriesByLocation(
+  categories: CategoryContentCard[],
+  childCards: BrazeCard[],
+  locationId: LocationContentCard,
+): FormattedCategory[] {
+  return formatCategories(filterCategoriesByLocation(categories, locationId), childCards).filter(
+    ({ category, cards }) => hasRenderableCategorySlides(category, cards),
+  );
+}

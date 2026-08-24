@@ -24,7 +24,7 @@ function createPorts(
 ): ContactAddressDetailActionsPorts {
   return {
     edit: {
-      renameAddressLabel: jest.fn().mockResolvedValue(mockContactAddress()),
+      updateAddress: jest.fn().mockResolvedValue(mockContactAddress()),
     },
     deletion: {
       deleteAddress: jest.fn().mockResolvedValue(undefined),

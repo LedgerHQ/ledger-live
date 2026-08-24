@@ -29,6 +29,11 @@ export class SwapPage extends WebViewAppPage {
     "../artifacts/ledgerwallet-swap-history.csv",
   );
   private static readonly PROVIDER_NAME_PREFIX = "lumen-quote-card-provider-name-";
+  private static readonly AMOUNT_LABEL_SUFFIX = "amount-label";
+  private static readonly FIAT_AMOUNT_LABEL_SUFFIX = "fiatAmount-label";
+  private static readonly NETWORK_FEES_HEADING_SUFFIX = "networkFees-heading";
+  private static readonly EXTRA_FEES_CONTAINER_SUFFIX = "extraFeesContainer";
+  private static readonly RATE_INFO_ICON_SUFFIX = "rate-infoIcon";
 
   private readonly fullSwapContainer = this.page.getByTestId("swap-web-app-container-full");
   private readonly embeddedSwapContainer = this.page.getByTestId("swap-web-app-container-embedded");
@@ -42,6 +47,8 @@ export class SwapPage extends WebViewAppPage {
   private readonly noQuotesPlaceholder = "quotes-error-state";
   private toAccountCoinSelector = "to-account-coin-selector";
   private readonly toAccountAccountNameTag = "to-account-account-name-tag";
+  private readonly toAccountAmountInput = "to-account-amount-input";
+  private readonly fromAccountAmountInactive = "from-account-amount-inactive";
   private specificQuoteCardProviderName = (provider: string) =>
     `[data-testid^='${SwapPage.PROVIDER_NAME_PREFIX}${provider.toLowerCase()}']`;
   private providerContainerSelector = (provider: string) =>
@@ -136,9 +143,13 @@ export class SwapPage extends WebViewAppPage {
     await expect(webview.getByTestId(this.bestValueInfoIcon)).toBeVisible();
     await expect(webview.getByTestId(this.quotesCountdown)).toBeVisible();
 
-    return await webview
+    const providerList = await webview
       .locator(`[data-testid^='${SwapPage.PROVIDER_NAME_PREFIX}']`)
       .allTextContents();
+    if (providerList.length === 0) {
+      throw new Error("No quote providers were returned");
+    }
+    return providerList;
   }
 
   @step("Check elements presence on swap approval step")
@@ -154,35 +165,54 @@ export class SwapPage extends WebViewAppPage {
     await this.continueBtn.click();
   }
 
+  @step("Get quote card amount texts for $0")
+  async getQuoteAmountTexts(providerUiName: string) {
+    const webview = await this.getWebView();
+    const provider = SwapProvider.getNameByUiName(providerUiName);
+    const amount = await webview
+      .locator(this.providerContainerInfoSelector(provider, SwapPage.AMOUNT_LABEL_SUFFIX))
+      .first()
+      .textContent();
+    const fiatAmount = await webview
+      .locator(this.providerContainerInfoSelector(provider, SwapPage.FIAT_AMOUNT_LABEL_SUFFIX))
+      .first()
+      .textContent();
+    return { amount, fiatAmount };
+  }
+
   @step("Check quotes container infos")
   async checkQuotesContainerInfos(providerList: string[], ticker: string) {
     const webview = await this.getWebView();
     const provider = SwapProvider.getNameByUiName(providerList[0]);
 
     await webview
-      .locator(this.providerContainerInfoSelector(provider, "amount-label"))
+      .locator(this.providerContainerInfoSelector(provider, SwapPage.AMOUNT_LABEL_SUFFIX))
       .first()
       .click();
     await expect(
-      webview.locator(this.providerContainerInfoSelector(provider, "amount-label")),
+      webview.locator(this.providerContainerInfoSelector(provider, SwapPage.AMOUNT_LABEL_SUFFIX)),
     ).toBeVisible();
     await expect(
-      webview.locator(this.providerContainerInfoSelector(provider, "fiatAmount-label")),
+      webview.locator(
+        this.providerContainerInfoSelector(provider, SwapPage.FIAT_AMOUNT_LABEL_SUFFIX),
+      ),
     ).toBeVisible();
     await expect(
-      webview.locator(this.providerContainerInfoSelector(provider, "networkFees-heading")),
+      webview.locator(
+        this.providerContainerInfoSelector(provider, SwapPage.NETWORK_FEES_HEADING_SUFFIX),
+      ),
     ).toBeVisible();
     await expect(
       webview
-        .locator(this.providerContainerInfoSelector(provider, "extraFeesContainer"))
+        .locator(this.providerContainerInfoSelector(provider, SwapPage.EXTRA_FEES_CONTAINER_SUFFIX))
         .getByText(/Floating rate|Fixed rate/),
     ).toBeVisible();
     await expect(
-      webview.locator(this.providerContainerInfoSelector(provider, "rate-infoIcon")),
+      webview.locator(this.providerContainerInfoSelector(provider, SwapPage.RATE_INFO_ICON_SUFFIX)),
     ).toBeVisible();
     await expect(
       webview
-        .locator(this.providerContainerInfoSelector(provider, "extraFeesContainer"))
+        .locator(this.providerContainerInfoSelector(provider, SwapPage.EXTRA_FEES_CONTAINER_SUFFIX))
         .getByText(ticker),
     ).toBeVisible();
     if (
@@ -193,12 +223,16 @@ export class SwapPage extends WebViewAppPage {
     ) {
       await expect(
         webview
-          .locator(this.providerContainerInfoSelector(provider, "extraFeesContainer"))
+          .locator(
+            this.providerContainerInfoSelector(provider, SwapPage.EXTRA_FEES_CONTAINER_SUFFIX),
+          )
           .getByText("Max Slippage"),
       ).toBeVisible();
       await expect(
         webview
-          .locator(this.providerContainerInfoSelector(provider, "extraFeesContainer"))
+          .locator(
+            this.providerContainerInfoSelector(provider, SwapPage.EXTRA_FEES_CONTAINER_SUFFIX),
+          )
           .getByText("%"),
       ).toBeVisible();
     }
@@ -330,7 +364,11 @@ export class SwapPage extends WebViewAppPage {
   async checkBestOffer() {
     const quoteContainers = await this.getAllSwapProviders();
     const quotes = await this.extractQuotesAndFees(quoteContainers);
-    const bestOffer = quotes.reduce<{ rate: number; fees: number; quote: string } | null>(
+    const bestOffer = quotes.reduce<{
+      rate: number;
+      fees: number;
+      quote: string;
+    } | null>(
       (max, current) =>
         current && (!max || current.rate - current.fees > max.rate - max.fees) ? current : max,
       null,
@@ -373,6 +411,18 @@ export class SwapPage extends WebViewAppPage {
   async getAmountToSend() {
     const webview = await this.getWebView();
     return await webview.getByTestId(this.fromAccountAmountInput).inputValue();
+  }
+
+  @step("Retrieve send currency countervalue text")
+  async getSendCountervalueText() {
+    const webview = await this.getWebView();
+    return await webview.getByTestId(this.fromAccountAmountInactive).textContent();
+  }
+
+  @step("Retrieve receive currency amount value")
+  async getAmountToReceive() {
+    const webview = await this.getWebView();
+    return await webview.getByTestId(this.toAccountAmountInput).textContent();
   }
 
   @step("Click switch button")
@@ -764,7 +814,9 @@ export class SwapPage extends WebViewAppPage {
   async clickGiveAuthorizationButton() {
     const webview = await this.getWebView();
     const authorizationButton = webview.getByTestId(this.signPermitButton);
-    await expect(authorizationButton).toBeVisible({ timeout: APPROVAL_PROCESSING_TIMEOUT });
+    await expect(authorizationButton).toBeVisible({
+      timeout: APPROVAL_PROCESSING_TIMEOUT,
+    });
     await authorizationButton.click();
   }
 

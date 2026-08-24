@@ -146,6 +146,17 @@ describe("HookNotifications", () => {
     rerender(<HookNotifications />);
 
     expect(mockedUpdateUserPreferences).toHaveBeenCalledTimes(2);
-    expect(mockedUpdateUserPreferences).toHaveBeenLastCalledWith(updatedNotifications);
+    expect(mockedUpdateUserPreferences).toHaveBeenLastCalledWith(updatedNotifications, true, {
+      brazeOptOutIdentityCleanup: true,
+    });
+  });
+
+  it("should pass tracking consent into notification preference updates", () => {
+    mockSelectors({ isTrackedUser: false, userId: REAL_USER_ID });
+    render(<HookNotifications />);
+
+    expect(mockedUpdateUserPreferences).toHaveBeenCalledWith(defaultNotifications, false, {
+      brazeOptOutIdentityCleanup: true,
+    });
   });
 });

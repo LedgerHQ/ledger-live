@@ -77,6 +77,7 @@ function redactSecrets(value: unknown): unknown {
 }
 
 // reporting must never flip the command's pass/fail outcome, so payload building runs here too
+// Attached to the report only: printing here floods the console when specs run in parallel.
 async function reportCliOutcome(
   label: string,
   status: string,
@@ -85,7 +86,6 @@ async function reportCliOutcome(
 ) {
   try {
     const payload = buildPayload();
-    console.log(`CLI ${label} — ${status}: `, payload);
     // No timing in the title — Allure records the step duration separately, and a stable
     // title lets repeated commands group under one name (QAA-1433).
     const title = `CLI ${label} — ${status}`;

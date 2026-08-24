@@ -325,6 +325,23 @@ describe("1 output without discard", () => {
     expect(selectUtxos(utxos, isEcdsaRecipient, BigNumber(1_0000_0000)).utxos.length).toBe(2);
   });
 
+  test("regression: prefers a genuinely older (lower DAA) UTXO over a fresher (higher DAA) one across a digit-count boundary", () => {
+    // Real-world shape that broke sortUtxos' old lexicographic comparison: an old, mature
+    // 3-digit-DAA UTXO alongside a fresh, immature 4-digit-DAA one. "1202" < "200" as strings,
+    // so the buggy sort picked the fresh one first — exactly what a FIFO/maturity-aware
+    // selection must never do when the older UTXO alone is enough to cover the send.
+    const older = KaspaUtxoGenerator.generateUtxo(BigNumber(1_0000_0000), "200");
+    const fresh = KaspaUtxoGenerator.generateUtxo(BigNumber(1_0000_0000), "1202");
+    const utxos = [fresh, older];
+    // 1 input + 1 output, no change — matches the "send exact UTXO sum" pattern used elsewhere
+    // in this file, so selection never needs to reach for a second UTXO regardless of order.
+    const sendAmount = BigNumber(1_0000_0000 - (1118 + 506));
+
+    const selected = selectUtxos(utxos, false, sendAmount, 1);
+
+    expect(selected.utxos).toEqual([older]);
+  });
+
   afterEach(() => {
     jest.restoreAllMocks();
     // Reset to actual implementation

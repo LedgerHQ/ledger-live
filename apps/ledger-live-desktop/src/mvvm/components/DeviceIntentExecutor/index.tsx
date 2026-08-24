@@ -1,9 +1,9 @@
 import React from "react";
 import {
-  DeviceIntentExecutor,
   type DeviceIntentExecutorProps,
   type ExecutorPlatformConfiguration,
-} from "@ledgerhq/device-intent";
+} from "@features/platform-device-intent";
+import { DeviceIntentExecutor } from "@features/platform-device-intent/react";
 import {
   DeviceIntentExecutorHeaderContext,
   DeviceIntentTrackingProvider,

@@ -159,7 +159,7 @@ import type {
   TransactionRaw as tronTransactionRaw,
   TransactionStatus as tronTransactionStatus,
   TransactionStatusRaw as tronTransactionStatusRaw,
-} from "@ledgerhq/coin-tron/types/index";
+} from "../families/tron/types";
 import type {
   Transaction as vechainTransaction,
   TransactionRaw as vechainTransactionRaw,

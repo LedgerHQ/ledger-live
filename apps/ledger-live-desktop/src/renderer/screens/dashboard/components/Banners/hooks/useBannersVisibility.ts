@@ -9,6 +9,8 @@ import { portfolioContentCardSelector } from "~/renderer/reducers/dynamicContent
 import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
 import { useLNSUpsellBannerState } from "LLD/features/LNSUpsell";
 import useActionCards from "~/renderer/hooks/useActionCards";
+import { useFormattedCategoriesByLocation } from "LLD/features/DynamicContent/hooks/useFormattedCategoriesByLocation";
+import { LocationContentCard } from "~/types/dynamicContent";
 
 interface BannerVisibilityState {
   /** True if the clear cache banner is visible */
@@ -23,6 +25,8 @@ interface BannerVisibilityState {
   isActionCardsVisible: boolean;
   /** True if the LNS upsell banner is visible */
   isLNSUpsellBannerVisible: boolean;
+  /** True if portfolio category content cards (e.g. hardware carousel) are visible */
+  isPortfolioCategoryContentCardsVisible: boolean;
   /** True if portfolio (top) content cards are visible */
   isPortfolioContentCardsVisible: boolean;
   /** True if at least one banner or content card is visible */
@@ -59,7 +63,10 @@ export function useBannersVisibility(): BannerVisibilityState {
 
   // Portfolio (top) content cards carousel
   const portfolioCards = useSelector(portfolioContentCardSelector);
-  const isPortfolioContentCardsVisible = portfolioCards.length > 0;
+  const portfolioCategoryCards = useFormattedCategoriesByLocation(LocationContentCard.Portfolio);
+  const isPortfolioCategoryContentCardsVisible = portfolioCategoryCards.length > 0;
+  const isPortfolioContentCardsVisible =
+    portfolioCards.length > 0 || isPortfolioCategoryContentCardsVisible;
 
   // Combined check: at least one banner or content card is visible
 
@@ -77,6 +84,7 @@ export function useBannersVisibility(): BannerVisibilityState {
     shouldDisplayFinishOnboardingWidget,
     isActionCardsVisible,
     isLNSUpsellBannerVisible,
+    isPortfolioCategoryContentCardsVisible,
     isPortfolioContentCardsVisible,
     hasAnyContentBannerVisible,
   };

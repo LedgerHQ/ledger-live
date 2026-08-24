@@ -22,7 +22,7 @@ import {
   hasSwapTabRoute,
   navigateBackToSwapTab,
 } from "../navigation/navigateBackToSwapTab";
-import { useNotificationsContext } from "LLM/features/NotificationsPrompt";
+import { useNotificationsPrompt } from "LLM/features/NotificationsPrompt";
 
 export function PendingOperation({ route, navigation }: PendingOperationParamList) {
   const { colors } = useTheme();
@@ -31,7 +31,7 @@ export function PendingOperation({ route, navigation }: PendingOperationParamLis
   const { isEmbeddedSwap, sponsored } = route.params;
   const syncAccounts = useSyncAllAccounts();
   const supportsSwapTabRoute = hasSwapTabRoute(navigation.getState());
-  const { notifyFlowCompleted } = useNotificationsContext();
+  const { notifyFlowCompleted } = useNotificationsPrompt();
   const allowRemovalRef = useRef(false);
   const completeSwapFlow = useCallback(() => {
     notifyFlowCompleted("swap");

@@ -36,6 +36,22 @@ const mockDispatch = jest.fn();
 const mockNavigate = jest.fn();
 const mockGetParent = jest.fn();
 
+/** BaseNavigator with a transient swap screen (`routeName`) pushed over Main. */
+function mockBaseNavigatorFocusedOn(routeName: string) {
+  mockGetParent.mockReturnValue({
+    dispatch: mockParentDispatch,
+    getState: () => ({ index: 1, routes: [{ name: NavigatorName.Main }, { name: routeName }] }),
+  });
+}
+
+/** BaseNavigator sitting on Main, i.e. the user is on the Swap tab itself. */
+function mockBaseNavigatorOnSwapTab() {
+  mockGetParent.mockReturnValue({
+    dispatch: mockParentDispatch,
+    getState: () => ({ index: 0, routes: [{ name: NavigatorName.Main }] }),
+  });
+}
+
 const MOCK_EXCHANGE_PARAMS = {
   provider: "lifi",
   swapId: "swap-123",
@@ -90,8 +106,8 @@ describe("useSwapCustomHandlers", () => {
   }
 
   describe("navigateToSwapPendingOperation (via onCompleteResult)", () => {
-    it("dispatches StackActions.replace to parent when parent navigator is found", () => {
-      mockGetParent.mockReturnValue({ dispatch: mockParentDispatch });
+    it("dispatches StackActions.replace to parent when a transient swap screen is focused", () => {
+      mockBaseNavigatorFocusedOn(NavigatorName.PlatformExchange);
 
       render();
 
@@ -150,8 +166,22 @@ describe("useSwapCustomHandlers", () => {
       });
     });
 
+    it("pushes instead of replacing when the Swap tab (Main) is the focused base route", () => {
+      mockBaseNavigatorOnSwapTab();
+
+      render();
+
+      capturedOnCompleteResult(MOCK_EXCHANGE_PARAMS, "hash-abc");
+
+      expect(mockParentDispatch).not.toHaveBeenCalled();
+      expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.SwapSubScreens, {
+        screen: ScreenName.SwapPendingOperation,
+        params: expect.objectContaining({ isEmbeddedSwap: false }),
+      });
+    });
+
     it("calls resetWebview after navigation when parent is found", () => {
-      mockGetParent.mockReturnValue({ dispatch: mockParentDispatch });
+      mockBaseNavigatorFocusedOn(NavigatorName.PlatformExchange);
 
       render();
 
@@ -198,47 +228,64 @@ describe("useSwapCustomHandlers", () => {
   });
 
   describe("navigateToSwapHistory", () => {
-    it("navigates to SwapHistory when swapRedirectToHistory handler is called", () => {
+    function callHandler(request?: unknown) {
       const { result } = render();
-
       const handler = (result.current as Record<string, unknown>)["custom.swapRedirectToHistory"];
       expect(typeof handler).toBe("function");
+      (handler as (request?: unknown) => void)(request);
+    }
 
-      (handler as () => void)();
+    it("pushes SwapHistory over the Swap tab instead of replacing Main", () => {
+      mockBaseNavigatorOnSwapTab();
+
+      callHandler();
+
+      expect(mockGetParent).toHaveBeenCalledWith(BASE_NAVIGATOR_ID);
+      expect(mockParentDispatch).not.toHaveBeenCalled();
+      expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.SwapSubScreens, {
+        screen: ScreenName.SwapHistory,
+      });
+    });
+
+    it("replaces a transient swap screen when one is focused", () => {
+      mockBaseNavigatorFocusedOn(NavigatorName.SwapSubScreens);
+
+      callHandler();
+
+      expect(mockParentDispatch).toHaveBeenCalledWith(
+        StackActions.replace(NavigatorName.SwapSubScreens, {
+          screen: ScreenName.SwapHistory,
+        }),
+      );
+      expect(mockNavigate).not.toHaveBeenCalled();
+    });
+
+    it("calls navigation.navigate when parent navigator is not found", () => {
+      mockGetParent.mockReturnValue(undefined);
+
+      callHandler();
 
       expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.SwapSubScreens, {
         screen: ScreenName.SwapHistory,
       });
     });
 
-    it("resets the webview when swapRedirectToHistory handler is called", () => {
-      const { result } = render();
+    it("resets the webview so the Swap tab is not left on the page it redirected from", () => {
+      mockBaseNavigatorOnSwapTab();
 
-      const handler = (result.current as Record<string, unknown>)["custom.swapRedirectToHistory"];
-      expect(typeof handler).toBe("function");
-
-      (handler as () => void)();
+      callHandler();
 
       expect(mockResetWebview).toHaveBeenCalledTimes(1);
     });
 
     it("passes swapId to SwapHistory when swapRedirectToHistory handler is called with params", () => {
-      const { result } = render();
+      mockBaseNavigatorOnSwapTab();
 
-      const handler = (result.current as Record<string, unknown>)["custom.swapRedirectToHistory"];
-      expect(typeof handler).toBe("function");
-
-      (handler as (request: unknown) => void)({
-        params: {
-          swapId: "swap-123",
-        },
-      });
+      callHandler({ params: { swapId: "swap-123" } });
 
       expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.SwapSubScreens, {
         screen: ScreenName.SwapHistory,
-        params: {
-          swapId: "swap-123",
-        },
+        params: { swapId: "swap-123" },
       });
     });
   });

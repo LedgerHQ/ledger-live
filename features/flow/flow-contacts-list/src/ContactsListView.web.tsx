@@ -1,5 +1,5 @@
 import React from "react";
-import type { ContactsListViewProps } from "./types";
+import { isContactsSearchNoResultsViewModel, type ContactsListViewProps } from "./types";
 import { ContactsLedgerSyncLoadingPane } from "./components/LedgerSyncLoadingPane/ContactsLedgerSyncLoadingPane.web";
 import { ContactsList } from "./components/ContactsList/ContactsList.web";
 import { ContactsPageLayout } from "./components/PageLayout/ContactsPageLayout.web";
@@ -21,10 +21,11 @@ function renderContactsDetailPane(
 
 export function ContactsListView(props: ContactsListViewProps): React.ReactNode {
   const { isLedgerSyncChecking } = props;
+  const showAddContact = !isContactsSearchNoResultsViewModel(props.viewModel);
   const contactsList = <ContactsList {...props} />;
 
   return (
-    <div className="relative flex min-h-0 flex-1 flex-col px-24 pb-32" data-testid="contacts-page">
+    <div className="relative flex min-h-0 flex-1 flex-col pb-32" data-testid="contacts-page">
       <div
         aria-busy={isLedgerSyncChecking}
         className={`flex min-h-0 flex-1 flex-col${isLedgerSyncChecking ? " pointer-events-none" : ""}`}
@@ -33,6 +34,7 @@ export function ContactsListView(props: ContactsListViewProps): React.ReactNode 
         <ContactsPageLayout
           title={props.labels.title}
           addContactLabel={props.labels.addContact}
+          showAddContact={showAddContact}
           onAddContact={props.onAddContact}
           list={
             isLedgerSyncChecking ? (

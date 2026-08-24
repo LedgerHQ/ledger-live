@@ -40,6 +40,7 @@ import {
 } from "~/renderer/reducers/settings";
 import { accountsSelector } from "../reducers/accounts";
 import { currentRouteNameRef, previousRouteNameRef } from "./screenRefs";
+import { shouldIncludeSegmentIdentity } from "./segmentIdentity";
 import {
   onboardingIsSyncFlowSelector,
   onboardingReceiveFlowSelector,
@@ -501,7 +502,8 @@ export interface UpdateIdentifyOptions {
 export const updateIdentify = async ({ force }: UpdateIdentifyOptions = { force: false }) => {
   if (!storeInstance) return;
 
-  const canTrack = force || trackingEnabledSelector(storeInstance.getState());
+  const state = storeInstance.getState();
+  const canTrack = force || trackingEnabledSelector(state);
   if (!canTrack) return;
 
   let analytics = getAnalytics();
@@ -513,12 +515,12 @@ export const updateIdentify = async ({ force }: UpdateIdentifyOptions = { force:
     if (!analytics) return;
   }
 
-  const id = userIdSelector(storeInstance.getState()).exportUserIdForAnalytics();
+  const includeIdentity = shouldIncludeSegmentIdentity(state);
+  const id = includeIdentity ? userIdSelector(state).exportUserIdForAnalytics() : undefined;
 
   const allProperties = {
     ...extraProperties(storeInstance),
-    userId: id,
-    braze_external_id: id, // Needed for braze with this exact name
+    ...(id ? { userId: id, braze_external_id: id } : {}),
   };
   analytics.identify(id, allProperties, {
     context: getContext(),

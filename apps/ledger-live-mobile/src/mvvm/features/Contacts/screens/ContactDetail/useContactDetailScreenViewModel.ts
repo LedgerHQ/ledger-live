@@ -5,28 +5,44 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { v4 as uuid } from "uuid";
 import { addAddress, contactAddress } from "@domain/entity-contact";
 import {
-  type AddAddressFlowState,
-  type AddAddressInputSource,
   type ContactAddressDetailDialogNativeLabels,
   type ContactAddressDetailDialogNativeProps,
   type ContactDetailLabels,
   type ContactDetailViewProps,
-  resolveEligibleAddressCurrencyIds,
-  useAddAddressFlowViewModel,
   useContactDetailSharedState,
   useContactAddressDetailDialog,
-  useContactsFeature,
   useEmptyContactDetail,
   usePopulatedContactDetail,
+  CONTACTS_EVENT_SOURCE,
+  CONTACTS_FLOW,
+  CONTACTS_PAGE_EVENTS,
+  CONTACTS_PAGE_PROPERTY,
+  CONTACTS_TRACK_EVENTS,
+  CONTACTS_TRACKING_BUTTON,
+  trackContactsAddAddressClick,
 } from "@features/flow-contacts";
-import { createMockContactDeviceIntentsPort } from "@features/platform-contacts";
+import {
+  useAddAddressFlowViewModel,
+  type AddAddressFlowState,
+  type AddAddressInputSource,
+} from "@features/flow-contacts-add-address";
+import {
+  createMockContactDeviceIntentsPort,
+  resolveEligibleAddressCurrencyIds,
+  useContactsFeature,
+  useContactsMeContact,
+} from "@features/platform-contacts";
+import {
+  resolveContactsCurrencyAnalytics,
+  useContactsAnalytics,
+  contactsCurrencyAnalyticsDependencies,
+} from "../../analytics";
 import type { BaseNavigationComposite } from "~/components/RootNavigator/types/helpers";
 import { NavigatorName, ScreenName } from "~/const";
 import { useDispatch } from "~/context/hooks";
 import { useTranslation } from "~/context/Locale";
 import { USER_AVATAR_URL } from "LLM/components/UserAvatar/constants";
 import type { MyWalletNavigatorStackParamList } from "LLM/features/MyWallet/types";
-import { useContactsAddressCurrencyAdapter } from "../../hooks/useContactsAddressCurrencyAdapter";
 import { useContactsAddressValidationAdapter } from "../../hooks/useContactsAddressValidationAdapter";
 import type { ContactsAddAddressFlowDrawerProps } from "./components/ContactsAddAddressFlowDrawer/types";
 import type { ContactDetailEditDeleteFlowProps } from "./hooks/useContactDetailEditDeleteAdapter";
@@ -54,15 +70,18 @@ type NavigationProp = BaseNavigationComposite<
 export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel {
   const dispatch = useDispatch();
   const hasCompletedMockConfirmation = useRef(false);
+  const trackedContactDetailId = useRef<string | undefined>(undefined);
+  const trackedAddressDetailId = useRef<string | undefined>(undefined);
+  const analytics = useContactsAnalytics();
+  const meContact = useContactsMeContact();
   const navigation = useNavigation<NavigationProp>();
   const route =
     useRoute<RouteProp<MyWalletNavigatorStackParamList, typeof ScreenName.MyWalletContactDetail>>();
   const { isEnabled, eligibleAddressFamilies } = useContactsFeature("mobile");
   const { t } = useTranslation();
-  const currencyPort = useContactsAddressCurrencyAdapter();
   const deviceIntents = useMemo(() => createMockContactDeviceIntentsPort(), []);
   const emptyContact = useEmptyContactDetail(route.params.contactId);
-  const populatedContactDetail = usePopulatedContactDetail(route.params.contactId, currencyPort);
+  const populatedContactDetail = usePopulatedContactDetail(route.params.contactId);
   const {
     isOpen,
     selection,
@@ -106,31 +125,57 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
 
     hasCompletedMockConfirmation.current = true;
 
-    const signedAddress = await deviceIntents.registerExternalAddress({
-      contact,
-      currencyId: addAddressFlowState.selectedCurrencyId,
-      label: addAddressFlowState.addressLabel.label,
-      address: addAddressFlowState.addressEntry.resolvedAddress,
-    });
-    const address = contactAddress({
-      id: `address-${uuid()}`,
-      currencyId: addAddressFlowState.selectedCurrencyId,
-      label: addAddressFlowState.addressLabel.label,
-      address: addAddressFlowState.addressEntry.resolvedAddress,
-      device: signedAddress.addressDeviceContext,
-    });
+    try {
+      const signedAddress = await deviceIntents.registerExternalAddress({
+        contact,
+        currencyId: addAddressFlowState.selectedCurrencyId,
+        label: addAddressFlowState.addressLabel.label,
+        address: addAddressFlowState.addressEntry.resolvedAddress,
+      });
+      const address = contactAddress({
+        id: `address-${uuid()}`,
+        currencyId: addAddressFlowState.selectedCurrencyId,
+        label: addAddressFlowState.addressLabel.label,
+        address: addAddressFlowState.addressEntry.resolvedAddress,
+        device: signedAddress.addressDeviceContext,
+      });
 
-    dispatch(
-      addAddress({
-        contactId: addAddressFlowState.selectedContactId,
-        address,
-        deviceCredentials: signedAddress.deviceCredentials,
-      }),
-    );
-    completeMockConfirmation();
-    closeAddAddress();
+      dispatch(
+        addAddress({
+          contactId: addAddressFlowState.selectedContactId,
+          address,
+          deviceCredentials: signedAddress.deviceCredentials,
+        }),
+      );
+      completeMockConfirmation();
+      closeAddAddress();
+
+      try {
+        const { network, asset } = await resolveContactsCurrencyAnalytics(
+          addAddressFlowState.selectedCurrencyId,
+          contactsCurrencyAnalyticsDependencies,
+        );
+        const inputMethod = addAddressFlowState.addressEntry.inputMethod ?? "manual";
+
+        analytics.trackEvent(CONTACTS_TRACK_EVENTS.ADDRESS_ADDED, {
+          source: CONTACTS_EVENT_SOURCE.ADD_ADDRESS,
+          network,
+          asset,
+          inputMethod,
+          isEns: inputMethod === "ens",
+          flow: CONTACTS_FLOW.CONTACTS,
+        });
+      } catch {
+        // Analytics enrichment is best-effort and must not affect the user flow.
+      }
+    } catch (error) {
+      hasCompletedMockConfirmation.current = false;
+      console.warn("Failed to complete add-address confirmation", error);
+      closeAddAddress();
+    }
   }, [
     addAddressFlowState,
+    analytics,
     closeAddAddress,
     completeMockConfirmation,
     contact,
@@ -142,8 +187,10 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
   }, [completeMockAddressConfirmation]);
   const onAddAddress = useCallback(() => {
     if (!contact || eligibleNetworkIds.length === 0) return;
+
+    trackContactsAddAddressClick(analytics, contact.id, meContact.id);
     startAddAddress(contact);
-  }, [contact, eligibleNetworkIds.length, startAddAddress]);
+  }, [analytics, contact, eligibleNetworkIds.length, meContact.id, startAddAddress]);
   const onCurrencySelected = useCallback<ContactsAddAddressFlowDrawerProps["onCurrencySelected"]>(
     selection => {
       if (addAddressFlowState.status === "selectingCurrency") {
@@ -179,12 +226,36 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
       },
     });
   }, [navigation, updateAddress]);
+  const onContinueFromName = useCallback(() => {
+    if (addAddressFlowState.status === "namingAddress") {
+      const currencyId = addAddressFlowState.selectedCurrencyId;
+      const inputMethod = addAddressFlowState.addressEntry.inputMethod ?? "manual";
+
+      void resolveContactsCurrencyAnalytics(currencyId, contactsCurrencyAnalyticsDependencies)
+        .then(({ network, asset }) => {
+          analytics.trackEvent(CONTACTS_TRACK_EVENTS.BUTTON_CLICKED, {
+            source: CONTACTS_EVENT_SOURCE.ADD_ADDRESS,
+            button: CONTACTS_TRACKING_BUTTON.saveAddress,
+            page: CONTACTS_PAGE_PROPERTY.CONTACT_DETAIL,
+            network,
+            asset,
+            inputMethod,
+            flow: CONTACTS_FLOW.CONTACTS,
+          });
+        })
+        .catch(() => {
+          // Analytics enrichment is best-effort and must not affect the user flow.
+        });
+    }
+
+    continueFromName();
+  }, [addAddressFlowState, analytics, continueFromName]);
   const labels = useMemo<ContactDetailLabels>(
     () => ({
       addAddress: t("contacts.addAddress"),
       addYourAddress: t("contacts.addYourAddress"),
       emptyMeTitle: t("contacts.detail.emptyState.meTitle"),
-      emptyContactTitle: () => t("contacts.detail.emptyState.title"),
+      emptyContactTitle: name => t("contacts.detail.emptyState.contactTitle", { name }),
       emptyMeDescription: t("contacts.detail.emptyState.meDescription"),
       emptyContactDescription: name => t("contacts.detail.emptyState.contactDescription", { name }),
       ledgerWalletAddresses: t("contacts.detail.ledgerWalletAddresses"),
@@ -215,11 +286,15 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
   const onDeleteSuccess = useCallback(() => {
     navigation.navigate(ScreenName.MyWalletContacts);
   }, [navigation]);
+  const addressDetailAsset = selection?.network?.networkTicker;
+  const addressDetailNetwork = selection?.network?.networkName;
   const editDeleteFlow = useContactDetailEditDeleteAdapter(route.params.contactId, onDeleteSuccess);
   const addressDetailActions = useContactAddressDetailActionsAdapter(
     route.params.contactId,
     selection?.row?.addressId,
     onCloseAddressDetail,
+    addressDetailAsset,
+    addressDetailNetwork,
   );
   const onCloseAddressDetailSheet = useCallback(() => {
     if (
@@ -240,6 +315,50 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
     onCloseAddressDetail,
   ]);
   const shouldRedirect = !isEnabled || !contact;
+
+  useEffect(() => {
+    if (shouldRedirect) {
+      return;
+    }
+
+    const contactId = route.params.contactId;
+
+    if (trackedContactDetailId.current === contactId) {
+      return;
+    }
+
+    trackedContactDetailId.current = contactId;
+    analytics.trackPage(CONTACTS_PAGE_EVENTS.CONTACT_DETAIL, {
+      source: CONTACTS_EVENT_SOURCE.CONTACT_DETAIL,
+      isSelf: contactId === meContact.id,
+    });
+  }, [analytics, meContact.id, route.params.contactId, shouldRedirect]);
+
+  useEffect(() => {
+    if (shouldRedirect) {
+      return;
+    }
+
+    const addressKey =
+      isOpen && selection ? `${selection.row.addressId}:${selection.network.networkId}` : undefined;
+
+    if (addressKey === undefined || trackedAddressDetailId.current === addressKey) {
+      return;
+    }
+
+    trackedAddressDetailId.current = addressKey;
+    analytics.trackPage(CONTACTS_PAGE_EVENTS.ADDRESS_DETAIL, {
+      source: CONTACTS_EVENT_SOURCE.ADDRESS_DETAIL,
+      network: selection!.network.networkName,
+      asset: selection!.network.networkTicker,
+    });
+  }, [analytics, isOpen, selection, shouldRedirect]);
+
+  useEffect(() => {
+    if (!isOpen) {
+      trackedAddressDetailId.current = undefined;
+    }
+  }, [isOpen]);
 
   useLayoutEffect(() => {
     if (shouldRedirect) {
@@ -281,7 +400,7 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
       onAddressConfirm: confirmAddress,
       onBack: goBackAddAddress,
       onClose: closeAddAddress,
-      onContinueFromName: continueFromName,
+      onContinueFromName,
       onCurrencySelected,
       onQrCodeClick,
     },

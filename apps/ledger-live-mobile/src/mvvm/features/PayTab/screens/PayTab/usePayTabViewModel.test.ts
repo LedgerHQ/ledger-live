@@ -1,8 +1,16 @@
-import { Linking } from "react-native";
 import { renderHook } from "@tests/test-renderer";
 import type { BalanceData } from "@features/flow-pay-card-balance";
+import { getEnv } from "@shared/env";
 import { track } from "~/analytics";
+import { PAY_TAB_DEEP_LINK } from "~/navigation/deeplinks/payTabDeepLink";
 import { usePayTabViewModel } from "./usePayTabViewModel";
+
+let routeParams: { code?: string; state?: string } | undefined;
+
+jest.mock("@react-navigation/native", () => ({
+  ...jest.requireActual("@react-navigation/native"),
+  useRoute: () => ({ params: routeParams }),
+}));
 
 jest.mock("LLM/hooks/useNavigationBarHeights", () => ({
   useNavigationBarHeights: () => ({ top: 24 }),
@@ -35,15 +43,6 @@ const mockDepositOptions = {
   onSelect: jest.fn(),
 };
 
-jest.mock("LLM/features/PayTab/hooks/usePayStablecoins", () => ({
-  usePayStablecoins: () => ({
-    stablecoins: [],
-    defaultStablecoins: [{ id: "ethereum/erc20/usd__coin" }],
-    isLoading: false,
-    isError: false,
-  }),
-}));
-
 jest.mock("LLM/features/PayTab/hooks/usePayTabDepositOptions", () => ({
   usePayTabDepositOptions: () => ({
     open: mockDepositOpen,
@@ -56,6 +55,7 @@ const mockedTrack = jest.mocked(track);
 describe("usePayTabViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    routeParams = undefined;
   });
 
   it("should expose the navigation bar offset", () => {
@@ -64,20 +64,45 @@ describe("usePayTabViewModel", () => {
     expect(result.current.top).toBe(24);
   });
 
+  it("should expose the OAuth client configuration", () => {
+    const { result } = renderHook(() => usePayTabViewModel());
+
+    // The provider matches the redirect URI verbatim on the token exchange. The deep link is the app's
+    // own, and it comes from the module that also spells the Pay tab route.
+    expect(result.current.oauthConfig).toEqual({
+      clientId: getEnv("CARD_BAANX_CLIENT_KEY"),
+      redirectUri: getEnv("CARD_OAUTH_REDIRECT_URI"),
+      deepLink: PAY_TAB_DEEP_LINK,
+    });
+  });
+
+  it("should hand the login flow the redirect the deep link carried", () => {
+    // react-navigation parses `ledgerlive://paytab?code=…&state=…` into the route params.
+    routeParams = { code: "auth-code", state: "state-value" };
+
+    const { result } = renderHook(() => usePayTabViewModel());
+
+    expect(result.current.callback).toEqual({ code: "auth-code", state: "state-value" });
+  });
+
+  it.each([
+    ["there are no params", undefined],
+    ["the code is missing", { state: "state-value" }],
+    ["the state is missing", { code: "auth-code" }],
+  ])("should report no redirect when %s", (_case, params) => {
+    routeParams = params;
+
+    const { result } = renderHook(() => usePayTabViewModel());
+
+    expect(result.current.callback).toBeNull();
+  });
+
   it("should expose the balance data and empty-state labels for the hero", () => {
     const { result } = renderHook(() => usePayTabViewModel());
 
     expect(result.current.balance).toBe(balance);
     expect(result.current.balanceLabels.emptyTitle).toBeTruthy();
     expect(result.current.balanceLabels.emptyDescription).toBeTruthy();
-  });
-
-  it("should open the hosted login URL", async () => {
-    const { result } = renderHook(() => usePayTabViewModel());
-
-    await result.current.openHostedLogin("https://card.example.com/login");
-
-    expect(Linking.openURL).toHaveBeenCalledWith("https://card.example.com/login");
   });
 
   it("should build the feature tour content with the three feature rows", () => {

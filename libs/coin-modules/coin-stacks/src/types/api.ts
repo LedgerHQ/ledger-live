@@ -158,6 +158,45 @@ export interface GetNonceResponse {
 
 export interface BalanceResponse {
   balance: string;
+  total_miner_rewards_received?: string;
+  /** Empty string (not null/absent) when no lock is currently active. */
+  lock_tx_id?: string;
+  /** "0" when no lock is currently active. */
+  locked: string;
+  lock_height?: number;
+  burnchain_lock_height?: number;
+  burnchain_unlock_height?: number;
+}
+
+/** `GET /v2/pox` — active PoX contract + current reward-cycle info, node RPC (not the indexer API). */
+export interface PoxInfoResponse {
+  contract_id: string;
+  current_burnchain_block_height: number;
+  current_cycle: {
+    id: number;
+    min_threshold_ustx: number;
+    stacked_ustx: number;
+    is_pox_active: boolean;
+  };
+  reward_cycle_length: number;
+  first_burnchain_block_height: number;
+}
+
+/** `POST /v2/contracts/call-read/...` response envelope (node RPC), before Clarity-value decoding. */
+export interface ReadOnlyContractCallResponse {
+  okay: boolean;
+  result?: string;
+  cause?: string;
+}
+
+/** A single block, as returned by `GET /extended/v2/blocks/{height_or_hash}`. */
+export interface BlockResponse {
+  height: number;
+  hash: string;
+  /** Nakamoto tenure this block belongs to; blocks sharing this value are in the same open tenure. */
+  tenure_height: number;
+  burn_block_time: number;
+  canonical: boolean;
 }
 
 export interface TokenBalance {

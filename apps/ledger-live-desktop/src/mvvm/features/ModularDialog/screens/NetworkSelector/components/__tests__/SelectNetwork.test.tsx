@@ -189,6 +189,30 @@ describe("SelectNetwork Integration Test", () => {
     });
   });
 
+  it("should render ineligible networks as disabled and prevent their selection", async () => {
+    const { user } = render(
+      <NetworkSelectorContent
+        {...defaultProps}
+        selectableNetworkIds={[ethereumCurrency.id]}
+        networks={[bscCurrency, ethereumCurrency]}
+      />,
+    );
+
+    const bscNetwork = screen.getByTestId("network-item-name-BNB Chain");
+    const ethereumNetwork = screen.getByTestId("network-item-name-Ethereum");
+
+    expect(bscNetwork).toHaveAttribute("aria-disabled", "true");
+    expect(ethereumNetwork).not.toHaveAttribute("aria-disabled");
+
+    await user.click(bscNetwork);
+
+    expect(mockOnNetworkSelected).not.toHaveBeenCalled();
+
+    await user.click(ethereumNetwork);
+
+    expect(mockOnNetworkSelected).toHaveBeenCalledWith(expect.objectContaining(ethereumCurrency));
+  });
+
   describe("Network Ordering", () => {
     it("should order networks by balance when balance element is configured", () => {
       const balanceOnlyConfig = {

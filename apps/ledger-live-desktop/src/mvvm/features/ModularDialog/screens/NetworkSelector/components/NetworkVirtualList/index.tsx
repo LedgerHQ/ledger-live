@@ -13,9 +13,14 @@ type NetworkWithUI = CryptoOrTokenCurrency & {
 type NetworkVirtualListProps = {
   networks: NetworkWithUI[];
   onClick: (networkId: string) => void;
+  selectableNetworkIdSet?: ReadonlySet<string>;
 };
 
-export const NetworkVirtualList = ({ networks, onClick }: NetworkVirtualListProps) => {
+export const NetworkVirtualList = ({
+  networks,
+  onClick,
+  selectableNetworkIdSet,
+}: NetworkVirtualListProps) => {
   const renderNetworkItem = useCallback(
     (network: NetworkWithUI) => {
       const networkId = network.type === "CryptoCurrency" ? network.id : network.parentCurrencyId;
@@ -25,11 +30,12 @@ export const NetworkVirtualList = ({ networks, onClick }: NetworkVirtualListProp
           description={network.description}
           rightElement={network.rightElement}
           apy={network.apy}
+          disabled={selectableNetworkIdSet ? !selectableNetworkIdSet.has(networkId) : undefined}
           onClick={() => onClick(networkId)}
         />
       );
     },
-    [onClick],
+    [onClick, selectableNetworkIdSet],
   );
 
   return (

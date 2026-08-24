@@ -16,15 +16,15 @@ if [ ! -d "$TARGET_DIR" ]; then
   exit 0
 fi
 
-# Install pngquant if not available
-if command -v pngquant &> /dev/null; then
-  echo "pngquant already installed"
-else
-  echo "Installing pngquant..."
+# On Linux the caller installs pngquant via the apt-install composite; brew
+# covers macOS, which that composite skips.
+if ! command -v pngquant &> /dev/null; then
   if [[ "$OSTYPE" == "darwin"* ]]; then
+    echo "Installing pngquant..."
     brew install pngquant
   else
-    sudo apt-get update && sudo apt-get install -y pngquant
+    echo "::warning::pngquant not available. Skipping PNG compression."
+    exit 0
   fi
 fi
 

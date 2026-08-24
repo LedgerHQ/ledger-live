@@ -3,6 +3,7 @@ import { delay } from "@ledgerhq/coin-module-framework/promises";
 import axios from "axios";
 import BigNumber from "bignumber.js";
 import { Transaction } from "ethers";
+import { DEFAULT_LEDGER_EXPLORER_URI } from "../../config";
 import { GasEstimationError } from "../../errors";
 import { getGasOptions } from "../gasTracker/ledger";
 import { createLedgerNodeApi } from "./ledger";
@@ -24,7 +25,12 @@ const mockGetGasOptions = getGasOptions as jest.Mock;
 const currencyId = "ethereum";
 const address = "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d";
 
-const ledgerConfig = { type: "ledger" as const, explorerId: "eth" as const, retries: 2 };
+const ledgerConfig = {
+  type: "ledger" as const,
+  explorerId: "eth" as const,
+  retries: 2,
+  explorerUri: DEFAULT_LEDGER_EXPLORER_URI,
+};
 
 describe("EVM Family", () => {
   describe("network/node/ledger.ts", () => {
@@ -512,11 +518,10 @@ describe("EVM Family", () => {
 
         await api.broadcastTransaction(currencyId, "0xSignedTx", { mevProtected: false });
 
+        // ledgerConfig sets no clientVersion, so `{}` proves no source header was added.
         expect(mockRequest).toHaveBeenCalledWith(
           expect.objectContaining({
-            headers: {
-              "X-Ledger-Client-Version": expect.any(String),
-            },
+            headers: {},
           }),
         );
 

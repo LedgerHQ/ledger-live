@@ -34,11 +34,16 @@ export const sumUtxoAmounts = (utxos: KaspaUtxo[]): BigNumber => {
 
 export const sortUtxos = (utxos: KaspaUtxo[]) => {
   utxos.sort((a, b) => {
-    const transactionComparison = a.utxoEntry.blockDaaScore.localeCompare(
-      b.utxoEntry.blockDaaScore,
-    );
-    if (transactionComparison !== 0) {
-      return transactionComparison;
+    // blockDaaScore is a numeric string. .localeCompare() (lexicographic) is wrong the moment two
+    // scores have different digit counts — e.g. "1202" < "200" as strings, even though 1202 > 200
+    // numerically — which can rank a fresh, immature coinbase UTXO ahead of a genuinely old,
+    // mature one and defeat the FIFO-oldest-first selection this function exists to provide.
+    // Compared as BigInt (not Number) so this stays correct even once DAA score exceeds
+    // Number.MAX_SAFE_INTEGER, which a plain numeric subtraction would silently get wrong.
+    const aDaa = BigInt(a.utxoEntry.blockDaaScore);
+    const bDaa = BigInt(b.utxoEntry.blockDaaScore);
+    if (aDaa !== bDaa) {
+      return aDaa < bDaa ? -1 : 1;
     }
     return a.utxoEntry.amount.minus(b.utxoEntry.amount).toNumber();
   });

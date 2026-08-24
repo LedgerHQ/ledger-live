@@ -34,6 +34,7 @@ describe("createTransaction", () => {
       fees: null,
       useAllAmount: false,
       mode: "send",
+      familySpecificData: { resource: null, duration: 3, votes: [] },
     });
   });
 
@@ -50,6 +51,42 @@ describe("createTransaction", () => {
       fees: null,
       useAllAmount: false,
       mode: "send",
+      nonce: new BigNumber(0),
+    });
+  });
+
+  it("returns the Stacks default native send transaction", () => {
+    const account = {
+      type: "Account",
+      currency: getCryptoCurrencyById("stacks"),
+    } as unknown as Account;
+
+    expect(createTransaction(account)).toEqual({
+      family: "stacks",
+      amount: new BigNumber(0),
+      recipient: "",
+      fees: null,
+      useAllAmount: false,
+      mode: "send",
+      assetReference: "",
+      assetOwner: "",
+    });
+  });
+
+  it("returns the Kaspa default native send transaction", () => {
+    const account = {
+      type: "Account",
+      currency: getCryptoCurrencyById("kaspa"),
+    } as unknown as Account;
+
+    expect(createTransaction(account)).toEqual({
+      family: "kaspa",
+      amount: new BigNumber(0),
+      recipient: "",
+      fees: null,
+      useAllAmount: false,
+      mode: "send",
+      feesStrategy: "fast",
       nonce: new BigNumber(0),
     });
   });

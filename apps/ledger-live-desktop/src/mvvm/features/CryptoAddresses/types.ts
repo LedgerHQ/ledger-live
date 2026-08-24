@@ -2,6 +2,8 @@ import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { AssetTableItem } from "LLD/features/Assets/types";
 
 export type CryptoAddressesViewModel = {
+  readonly showBackButton: boolean;
+  readonly navigateBack: () => void;
   readonly searchValue: string;
   readonly setSearchValue: (value: string) => void;
   readonly emptyTableMessage: string;

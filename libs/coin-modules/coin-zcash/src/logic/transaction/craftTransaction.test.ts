@@ -1,7 +1,7 @@
 import { craftIronwoodTransaction, craftTransaction } from "./craftTransaction";
 import { combine } from "./combine";
 import { setZainoGrpcUrl, ZCASH_GRPC_URL_MAINNET } from "../../constants";
-import type { CraftPlan } from "./craftTransaction";
+import type { CraftPlan, IronwoodCraftPlan } from "./craftTransaction";
 
 const buildTransaction = jest.fn(async () => ({ pcztHex: "01", nActionsOrchard: 2 }));
 const buildIronwoodTransaction = jest.fn(async () => ({ pcztHex: "02", nActionsIronwood: 2 }));
@@ -16,14 +16,14 @@ jest.mock(
 
 const client = () => ({ buildTransaction, buildIronwoodTransaction, finalizeTransaction });
 
-const plan: CraftPlan = {
+const plan: IronwoodCraftPlan = {
   ufvk: "uview1key",
   accountIndex: 0,
   feeZat: "15000",
   spends: [],
   transparentInputs: [],
   outputs: [{ address: "u1recipient", valueZat: "50000" }],
-} as unknown as CraftPlan;
+} as unknown as IronwoodCraftPlan;
 
 beforeEach(() => {
   jest.clearAllMocks();
@@ -60,6 +60,26 @@ describe("craftTransaction", () => {
 
     expect(buildTransaction).toHaveBeenCalledWith(
       expect.objectContaining({ seedFingerprint: "ab".repeat(32) }),
+    );
+  });
+
+  it("builds a transparent send from the account pubkey alone, with no viewing key", async () => {
+    const transparentPlan: CraftPlan = {
+      transparentAccountPubkey: "ab".repeat(65),
+      accountIndex: 0,
+      feeZat: "10000",
+      spends: [],
+      transparentInputs: [],
+      outputs: [{ address: "t1recipient", valueZat: "50000" }],
+    } as unknown as CraftPlan;
+
+    await craftTransaction(transparentPlan);
+
+    expect(buildTransaction).toHaveBeenCalledWith(
+      expect.objectContaining({ transparentAccountPubkey: "ab".repeat(65) }),
+    );
+    expect(buildTransaction).toHaveBeenCalledWith(
+      expect.not.objectContaining({ ufvk: expect.anything() }),
     );
   });
 

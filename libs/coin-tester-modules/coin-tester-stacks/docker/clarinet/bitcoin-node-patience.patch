@@ -1,0 +1,16 @@
+diff --git a/components/stacks-network/src/orchestrator.rs b/components/stacks-network/src/orchestrator.rs
+index c05a5fe..1111111 100644
+--- a/components/stacks-network/src/orchestrator.rs
++++ b/components/stacks-network/src/orchestrator.rs
+@@ -1990,7 +1990,10 @@ impl DevnetOrchestrator {
+
+         let _ = devnet_event_tx.send(DevnetEvent::info("Configuring bitcoin-node".to_string()));
+
+-        const MAX_ERRORS: u32 = 30;
++        // Bumped from clarinet's own default (30 * 500ms = ~15s): a fresh CI runner cold-pulling
++        // the bitcoind image can easily exceed that before the container even starts listening,
++        // and clarinet treats exhausting this budget as fatal, tearing the whole devnet down.
++        const MAX_ERRORS: u32 = 600;
+
+         // Wait for the bitcoin node to be responsive
+         btc_rpc

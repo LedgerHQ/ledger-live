@@ -3,7 +3,7 @@ import { catchError, switchMap } from "rxjs/operators";
 import { craftTransaction } from "@ledgerhq/coin-evm/logic/craftTransaction";
 import { createContext } from "@ledgerhq/coin-evm/config";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
-import type { DeviceConnectionResult, Job } from "@ledgerhq/device-intent";
+import type { DeviceConnectionResult, Job } from "@features/platform-device-intent";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { runSignTransactionEvm } from "../shared/signTransactionEvm";
 import type { QuoteApprovalTransaction } from "../../quotes/types";

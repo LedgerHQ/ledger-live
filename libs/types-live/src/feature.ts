@@ -263,8 +263,8 @@ export type Features = CurrencyFeatures & {
   llmModularDrawer: Feature_ModularDrawer;
   llNftEntryPoint: Feature_LlNftEntryPoint;
   ldmkSolanaSigner: DefaultFeature;
+  ldmkSolanaSignerIsTxcActive: DefaultFeature;
   ldmkCosmosSigner: DefaultFeature;
-  suiGraphqlTransport: DefaultFeature;
   ldmkConnectApp: DefaultFeature;
   lldNetworkBasedAddAccount: DefaultFeature;
   llmDatadog: {
@@ -331,6 +331,7 @@ export type Features = CurrencyFeatures & {
   llmTransferButtonCopyVariant: Feature_LlmTransferButtonCopyVariant;
   lldTezosStaking: DefaultFeature;
   llmTezosStaking: DefaultFeature;
+  llmIcpStaking: DefaultFeature;
   swapToEarn: DefaultFeature;
 };
 
