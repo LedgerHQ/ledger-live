@@ -7,6 +7,7 @@ import { ScreenName } from "~/const";
 import type { BaseNavigationComposite } from "~/components/RootNavigator/types/helpers";
 
 import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { useSendAmountDisplayMode } from "@ledgerhq/live-common/flows/send/amount/SendAmountDisplayModeContext";
 import {
   buildTransactionPatchFromURIScheme,
@@ -51,6 +52,18 @@ export type SendHeaderViewModel = {
   clearRecipientSearch: () => void;
   handleQrCodeClick: () => void;
 };
+
+function getRecipientPlaceholderKey({
+  supportsDomain,
+  canSearchContacts,
+}: Readonly<{ supportsDomain: boolean; canSearchContacts: boolean }>): string {
+  if (canSearchContacts) {
+    return supportsDomain
+      ? "send.newSendFlow.placeholderWithContacts"
+      : "send.newSendFlow.placeholderNoEnsWithContacts";
+  }
+  return supportsDomain ? "send.newSendFlow.placeholder" : "send.newSendFlow.placeholderNoENS";
+}
 
 export function useSendHeaderViewModel(): SendHeaderViewModel {
   const navigation = useNavigation<BaseNavigationComposite<SendFlowNavigationProp>>();
@@ -194,9 +207,14 @@ export function useSendHeaderViewModel(): SendHeaderViewModel {
     state.transaction.transaction,
   ]);
 
-  const recipientPlaceholder = uiConfig.recipientSupportsDomain
-    ? t("send.newSendFlow.placeholder")
-    : t("send.newSendFlow.placeholderNoENS");
+  const canSearchContacts =
+    isContactsFeatureEnabled && sendFeatures.hasAddressBook(state.account.currency ?? undefined);
+  const recipientPlaceholder = t(
+    getRecipientPlaceholderKey({
+      supportsDomain: uiConfig.recipientSupportsDomain,
+      canSearchContacts,
+    }),
+  );
 
   return {
     title,

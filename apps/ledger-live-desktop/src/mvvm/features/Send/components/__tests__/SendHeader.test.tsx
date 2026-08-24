@@ -37,6 +37,7 @@ const baseModel = {
   handleScanPicked: jest.fn(),
   isScannerOpen: false,
   recipientContact: undefined,
+  recipientPlaceholder: "Enter address, ENS or contact",
   showBackButton: true,
   showRecipientInput: true,
   showMemoControls: false,
@@ -105,6 +106,19 @@ describe("SendHeader", () => {
     screen.getByTestId("send-edit-recipient-button").click();
 
     expect(handleRecipientInputClick).toHaveBeenCalled();
+  });
+
+  it("uses the placeholder computed by the header model on the recipient step", () => {
+    (useFlowWizard as jest.Mock).mockReturnValue({
+      currentStep: SEND_FLOW_STEP.RECIPIENT,
+      currentStepConfig: { addressInput: true },
+      navigation: { goToNextStep: jest.fn() },
+    });
+    mockedUseSendHeaderModel.mockReturnValue({ ...baseModel, addressInputValue: "" });
+
+    render(<SendHeader />);
+
+    expect(screen.getByPlaceholderText("Enter address, ENS or contact")).toBeVisible();
   });
 
   it("keeps the recipient field read-only on the amount step", () => {

@@ -2562,6 +2562,8 @@
     },
     "placeholder": "Enter address or ENS",
     "placeholderNoENS": "Enter address",
+    "placeholderWithContacts": "Enter address, ENS or contact",
+    "placeholderNoEnsWithContacts": "Enter address or contact",
     "recent": "Recent",
     "myAccounts": "My accounts",
     "sendTo": "Send to {{address}}",
