@@ -1,5 +1,5 @@
 export const LARGE_SCREEN_UPSELL_UTM = {
-  medium: "ledger_live",
+  medium: "in_app_placements",
   campaign: "nano_upgrade_program",
   sourceByPlatform: {
     mobile: "ledger_wallet_mobile",
@@ -7,10 +7,17 @@ export const LARGE_SCREEN_UPSELL_UTM = {
   },
   content: {
     app_start_modal: "app_start_modal",
-    backups_cta: "backups_cta",
-    profile_cta: "profile_cta",
-    recover_trigger: "recover_trigger",
+    portfolio_banner: "portfolio_banner",
+    notif_banner: "notif_banner",
+    my_ledger_banner: "my_ledger_banner",
     hardware_carousel: "hardware_carousel",
+    profile_cta: "profile_cta",
+    backups_cta: "backups_cta",
+    earn_trigger: "earn_trigger",
+    recover_trigger: "recover_trigger",
+    l_sync_trigger: "l_sync_trigger",
+    swap_trigger: "swap_trigger",
+    lazy_onboarding_banner: "lazy_onboarding_banner",
   },
 } as const;
 

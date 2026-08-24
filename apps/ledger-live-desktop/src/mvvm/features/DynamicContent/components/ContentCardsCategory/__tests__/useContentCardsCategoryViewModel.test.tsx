@@ -159,7 +159,7 @@ describe("useContentCardsCategoryViewModel", () => {
     const openedUrl = new URL(jest.mocked(openURL).mock.calls[0]![0] as string);
     expect(openedUrl.origin + openedUrl.pathname).toBe("https://shop.ledger.com/products");
     expect(openedUrl.searchParams.get("utm_source")).toBe("ledger_wallet_desktop");
-    expect(openedUrl.searchParams.get("utm_medium")).toBe("ledger_live");
+    expect(openedUrl.searchParams.get("utm_medium")).toBe("in_app_placements");
     expect(openedUrl.searchParams.get("utm_campaign")).toBe("nano_upgrade_program");
     expect(openedUrl.searchParams.get("utm_content")).toBe("hardware_carousel");
     expect(mockNavigate).not.toHaveBeenCalled();

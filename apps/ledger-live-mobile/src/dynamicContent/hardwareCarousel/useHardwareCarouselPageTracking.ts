@@ -1,13 +1,12 @@
-import { useCallback, useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { useSelector } from "~/context/hooks";
-import useDynamicContent from "~/dynamicContent/useDynamicContent";
 import {
   knownDeviceModelIdsSelector,
   personalizedRecommendationsEnabledSelector,
 } from "~/reducers/settings";
 import {
-  trackHardwareCarouselCloseAll,
+  trackHardwareCarouselShown,
   type HardwareCarouselDeviceModel,
   type HardwareCarouselSharedAnalyticsProps,
 } from "./analytics";
@@ -26,8 +25,7 @@ function resolveHardwareCarouselDeviceModel(
   return undefined;
 }
 
-export function useHardwareCarouselCloseAll(cardIds: readonly string[]) {
-  const { dismissCards } = useDynamicContent();
+export function useHardwareCarouselPageTracking(shouldTrack: boolean) {
   const knownDeviceModelIds = useSelector(knownDeviceModelIdsSelector);
   const personalRecoOptIn = useSelector(personalizedRecommendationsEnabledSelector);
 
@@ -45,13 +43,11 @@ export function useHardwareCarouselCloseAll(cardIds: readonly string[]) {
     };
   }, [knownDeviceModelIds, personalRecoOptIn]);
 
-  const handleCloseAll = useCallback(() => {
-    if (!dismissCards(cardIds) || !sharedAnalyticsProps) {
-      return;
+  useEffect(() => {
+    if (shouldTrack && sharedAnalyticsProps) {
+      trackHardwareCarouselShown(sharedAnalyticsProps);
     }
+  }, [shouldTrack, sharedAnalyticsProps]);
 
-    trackHardwareCarouselCloseAll(sharedAnalyticsProps);
-  }, [cardIds, dismissCards, sharedAnalyticsProps]);
-
-  return handleCloseAll;
+  return sharedAnalyticsProps;
 }
