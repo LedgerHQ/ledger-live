@@ -77,6 +77,27 @@ describe("genericEstimateMaxSpendable", () => {
     expect(result.toString()).toBe("49990000");
   });
 
+  it("subtracts the Casper fee from the spendable balance", async () => {
+    const casperAccount = {
+      ...dummyAccount,
+      currency: { ...(dummyAccount as any).currency, id: "casper", family: "casper" },
+    } as unknown as Account;
+    mockedGetCoinModuleApi.mockReturnValue({
+      craftTransactionData,
+      estimateFees: estimateFeesMock.mockResolvedValue({ value: 100_000_000n }),
+    });
+
+    const estimate = genericEstimateMaxSpendable("mainnet", "local");
+    const result = await estimate({
+      account: casperAccount,
+      parentAccount: null,
+      transaction: { family: "casper", transferId: "42" } as any,
+    });
+
+    expect(result.toString()).toBe("0"); // fee > balance → floors at 0
+    expect(estimateFeesMock).toHaveBeenCalledTimes(1);
+  });
+
   it("prices the send-max against the family's own intent data", async () => {
     const buildIntentData = jest.fn().mockReturnValue({ type: "familyx" });
     getBridgeApiMock.mockResolvedValueOnce({ buildIntentData });

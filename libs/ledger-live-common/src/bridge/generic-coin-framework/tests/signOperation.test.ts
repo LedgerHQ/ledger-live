@@ -101,6 +101,37 @@ describe("genericSignOperation", () => {
     );
   });
 
+  it("forwards Casper's transfer id to craftTransaction as a transferId memo", async () => {
+    const casperAccount = {
+      freshAddressPath: "44'/506'/0'/0/0",
+      freshAddress: "casperAddress",
+      address: "casperAddress",
+      currency: { id: "casper", name: "casper", units: [{ name: "casper", code: "CSPR" }] },
+    } as any;
+    const casperTransaction = {
+      amount: new BigNumber(2_500_000_000),
+      fees: new BigNumber(100_000_000),
+      recipient: "casperRecipient",
+      family: "casper",
+      memoType: "transferId",
+      memoValue: "42",
+    } as any;
+
+    const signOperation = genericSignOperation("mainnet", "casper")(mockSignerContext);
+    await lastValueFrom(
+      signOperation({ account: casperAccount, transaction: casperTransaction, deviceId: "" }).pipe(
+        toArray(),
+      ),
+    );
+
+    expect(craftTransaction).toHaveBeenCalledTimes(1);
+    expect(craftTransaction).toHaveBeenCalledWith(
+      expect.anything(), // context (framework v6)
+      expect.objectContaining({ memo: { type: "transferId", value: "42" } }),
+      expect.anything(),
+    );
+  });
+
   it("signs the prepared amount on useAllAmount without recomputing it via validateIntent", async () => {
     const validateIntent = jest.fn();
     (getCoinModuleApi as jest.Mock).mockReturnValue({
