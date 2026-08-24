@@ -8,6 +8,7 @@ import { AddressMatchedSection } from "./AddressMatchedSection";
 import { AddressValidationError } from "./AddressValidationError";
 import { LoadingState } from "./LoadingState";
 import { PasteFromClipboard } from "./PasteFromClipboard";
+import { RecipientContactsList } from "./RecipientContactsList";
 import { RecipientEmptyContactsState } from "./RecipientEmptyContactsState";
 import { ValidationBanner } from "./ValidationBanner";
 
@@ -28,7 +29,9 @@ export const RecipientScreenView = ({ viewModel }: RecipientScreenViewProps) => 
   const {
     isLoading,
     showInitialState,
+    showContactsList,
     showEmptyContactsState,
+    contactsOnNetwork,
     showBridgeSenderError,
     bridgeSenderError,
     showSanctionedBanner,
@@ -40,6 +43,7 @@ export const RecipientScreenView = ({ viewModel }: RecipientScreenViewProps) => 
     addressValidationErrorType,
     clipboardAddress,
     handlePasteFromClipboard,
+    handleContactSelect,
   } = recipient;
 
   return (
@@ -59,6 +63,13 @@ export const RecipientScreenView = ({ viewModel }: RecipientScreenViewProps) => 
           )}
 
           {showInitialState && showEmptyContactsState && <RecipientEmptyContactsState />}
+
+          {showInitialState && showContactsList && (
+            <RecipientContactsList
+              contacts={contactsOnNetwork}
+              onContactSelect={handleContactSelect}
+            />
+          )}
 
           {showMemo && <MemoControls vm={memo} />}
 

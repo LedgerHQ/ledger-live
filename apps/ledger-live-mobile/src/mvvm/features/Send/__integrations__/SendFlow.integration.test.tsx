@@ -5,6 +5,7 @@ import { setEnv } from "@shared/env";
 import { BigNumber } from "bignumber.js";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { mockContact, mockContactAddress } from "@domain/entity-contact/schema.mock";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import {
   act,
@@ -64,6 +65,7 @@ type DriveOpts = Readonly<{
 
 type RenderForAccountOptions = Readonly<{
   contactsEnabled?: boolean;
+  contacts?: State["contacts"]["contacts"];
 }>;
 
 jest.mock("LLM/components/DeviceIntentExecutor", () => {
@@ -123,6 +125,7 @@ describe("Send flow integration tests", () => {
     const withAccount = (state: State): State => ({
       ...state,
       accounts: { ...state.accounts, active: [account] },
+      contacts: options.contacts ? { contacts: options.contacts } : state.contacts,
     });
 
     return renderWithReactQuery(<SendPage initParams={{ account, ...initParams }} />, {
@@ -194,6 +197,43 @@ describe("Send flow integration tests", () => {
     await flushTimers();
 
     expect(await screen.findByRole("button", { name: "Add contact" })).toBeEnabled();
+  });
+
+  it("should show network contacts and advance when selecting a contact with one address", async () => {
+    const contacts = [
+      mockContact({
+        id: "contact-vincent",
+        name: "Vincent",
+        addresses: [
+          mockContactAddress({
+            id: "address-vincent-eth",
+            currencyId: "ethereum",
+            label: "Ethereum Main",
+            address: VALID_ETHEREUM_RECIPIENT,
+          }),
+        ],
+      }),
+      mockContact({
+        id: "contact-solana",
+        name: "Solana contact",
+        addresses: [
+          mockContactAddress({
+            id: "address-solana",
+            currencyId: "solana",
+            label: "Solana",
+            address: "SolanaAddress123",
+          }),
+        ],
+      }),
+    ];
+    const { user } = renderForAccount(accountEthereum, {}, { contactsEnabled: true, contacts });
+
+    expect(await screen.findByTestId("contacts-compact-row-contact-vincent")).toBeVisible();
+    expect(screen.queryByText("Solana contact")).toBeNull();
+
+    await user.press(screen.getByTestId("contacts-compact-row-contact-vincent"));
+
+    expect(await screen.findByText("Review")).toBeVisible();
   });
 
   it("should explain why add contact is unavailable on an unsupported network", async () => {

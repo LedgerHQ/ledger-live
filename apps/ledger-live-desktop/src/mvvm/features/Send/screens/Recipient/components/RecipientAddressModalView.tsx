@@ -2,6 +2,7 @@ import React from "react";
 import { DialogBody } from "@ledgerhq/lumen-ui-react";
 import { cn } from "LLD/utils/cn";
 import type { AddressValidationError as AddressValidationErrorType } from "@ledgerhq/live-common/flows/send/recipient/types";
+import type { Contact } from "@domain/entity-contact";
 import { shouldShowMatchedAddress } from "@ledgerhq/live-common/flows/send/recipient/utils/shouldShowMatchedAddress";
 import type { AddressMatchedSectionViewModel } from "../hooks/useAddressMatchedSectionViewModel";
 import { AddressMatchedSection } from "./AddressMatchedSection";
@@ -11,11 +12,15 @@ import { LoadingState } from "./LoadingState";
 import { RecipientEmptyContactsState } from "./RecipientEmptyContactsState";
 import { RecipientIntroCard } from "./RecipientIntroCard";
 import { ValidationBanner } from "./ValidationBanner";
+import { RecipientContactsList } from "./RecipientContactsList";
 
 type RecipientAddressModalViewProps = Readonly<{
   isLoading: boolean;
   showInitialState: boolean;
+  showContactsList: boolean;
   showEmptyContactsState: boolean;
+  contactsOnNetwork: readonly Contact[];
+  handleContactSelect: (contact: Contact) => void;
   showMatchedAddress: boolean;
   showAddressValidationError: boolean;
   showEmptyState: boolean;
@@ -37,7 +42,10 @@ type RecipientAddressModalViewProps = Readonly<{
 export function RecipientAddressModalView({
   isLoading,
   showInitialState,
+  showContactsList,
   showEmptyContactsState,
+  contactsOnNetwork,
+  handleContactSelect,
   showMatchedAddress,
   showAddressValidationError,
   showEmptyState,
@@ -72,15 +80,15 @@ export function RecipientAddressModalView({
 
   return (
     <DialogBody className={cn("flex flex-col py-16", !isWaitingForMemo && "min-h-[156px]")}>
-      {isLoading && !showMatched && (
-        <div className="flex flex-1 items-center">
-          <LoadingState />
-        </div>
-      )}
+      {isLoading && !showMatched && <LoadingState />}
 
       {showInitialState && showEmptyContactsState && <RecipientEmptyContactsState />}
 
-      {showInitialState && !showEmptyContactsState && <RecipientIntroCard />}
+      {showInitialState && showContactsList && (
+        <RecipientContactsList contacts={contactsOnNetwork} onContactSelect={handleContactSelect} />
+      )}
+
+      {showInitialState && !showEmptyContactsState && !showContactsList && <RecipientIntroCard />}
 
       {showMatched && <AddressMatchedSection viewModel={addressMatchedSectionViewModel} />}
 

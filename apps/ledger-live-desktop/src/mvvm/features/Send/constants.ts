@@ -17,7 +17,6 @@ export const SEND_STEP_CONFIGS: Record<SendFlowStep, SendStepConfig> = {
     id: SEND_FLOW_STEP.RECIPIENT,
     canGoBack: true,
     addressInput: true,
-    height: "fit",
   },
   [SEND_FLOW_STEP.RECENT_HISTORY]: {
     id: SEND_FLOW_STEP.RECENT_HISTORY,
