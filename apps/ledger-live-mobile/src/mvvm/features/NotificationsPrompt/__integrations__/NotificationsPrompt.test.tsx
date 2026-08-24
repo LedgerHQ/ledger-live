@@ -1,5 +1,5 @@
 import React, { useEffect, useReducer, useState } from "react";
-import { act, render, screen, waitFor, withFlagOverrides } from "@tests/test-renderer";
+import { act, fireEvent, render, screen, waitFor, withFlagOverrides } from "@tests/test-renderer";
 import {
   NotificationsPromptProvider,
   NotificationsPromptWrapper,
@@ -214,8 +214,10 @@ describe("NotificationsPrompt Integration", () => {
 
     const notifyFlowCompleted = async () => {
       const triggerDrawerButton = await screen.findByRole("button", { name: /trigger drawer/i });
-      await rendered.user.press(triggerDrawerButton);
-      act(() => jest.runOnlyPendingTimers());
+      fireEvent.press(triggerDrawerButton);
+      act(() => {
+        jest.runOnlyPendingTimers();
+      });
     };
 
     await waitFor(() => {
