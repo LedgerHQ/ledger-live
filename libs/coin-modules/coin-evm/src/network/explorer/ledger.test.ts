@@ -472,6 +472,12 @@ describe("EVM Family", () => {
           jest.spyOn(axios, "request").mockImplementation(async () => ({
             data: { data: [coinOperation1, coinOperation2, coinOperation3, coinOperation4] },
           }));
+
+          process.env.NFT_CURRENCIES = JSON.stringify(["ethereum"]);
+        });
+
+        afterAll(() => {
+          process.env.NFT_CURRENCIES = JSON.stringify([]);
         });
 
         const mockConfigWithTokens = (supportedTokens: NftStandard[]) =>
