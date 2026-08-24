@@ -3,19 +3,21 @@
 > [!CAUTION]
 > **Status: UNSTABLE** — In active development; API may change.
 
-Dual-platform flow package for the Pay tab **card visual** for Ledger Wallet. This first slice ships
-the physical card face (`CardArtwork`): a dark gradient with the halftone artwork and the network
-logo. The balance overlay is added on top in a follow-up.
+Dual-platform flow package for the Pay tab **card visual** for Ledger Wallet: the physical card
+face (dark gradient + halftone artwork + network logo) and, on top of it, the card balance overlay.
 
 Props-only and i18n-agnostic — the host owns data fetching, currency formatting and labels.
 
 ## Usage
 
 ```tsx
-import { CardArtwork } from "@features/flow-pay-card-details";
+import { CardVisual } from "@features/flow-pay-card-details";
 
-<CardArtwork />;
+<CardVisual balance={100} formatCountervalue={format} balanceLabel="Balance" />;
 ```
+
+`CardVisual` composes the `CardArtwork` (card face) with the balance overlay. `CardArtwork` is also
+exported on its own for consumers that only need the card face.
 
 ## Platform resolution
 
@@ -24,7 +26,8 @@ import without a suffix; TypeScript `moduleSuffixes`, the bundlers (Rspack / Met
 preset resolve the right side. Each view has a test importing it through its full platform filename.
 
 The desktop artwork renders the halftone SVGs exported from Figma (imported as URLs via the bundler
-`asset/resource` rule). Native `CardArtwork` is an empty stub until an LWM design lands.
+`asset/resource` rule). Native `CardArtwork` and `CardVisualView` are empty stubs until an LWM
+design lands.
 
 ## Structure
 
@@ -36,12 +39,21 @@ pay-card-details/
 └── src/
     ├── assets.d.ts                            # `*.svg` module declaration (URL default export)
     ├── components/
-    │   └── CardArtwork/
-    │       ├── CardArtwork.web.tsx            # Card face + halftone artwork + Visa logo
-│       ├── CardArtwork.native.tsx         # Empty stub until LWM design
-│       ├── assets/                        # Figma-exported SVGs
-│       ├── CardArtwork.web.test.tsx
-│       └── CardArtwork.native.test.tsx
+    │   ├── CardArtwork/
+    │   │   ├── CardArtwork.web.tsx            # Card face + halftone artwork + Visa logo
+    │   │   ├── CardArtwork.native.tsx         # Empty stub until LWM design
+    │   │   ├── assets/                        # Figma-exported SVGs
+    │   │   ├── CardArtwork.web.test.tsx
+    │   │   └── CardArtwork.native.test.tsx
+    │   └── CardVisual/
+    │       ├── CardVisual.tsx                 # Container (props → view)
+    │       ├── CardVisualView.web.tsx         # Artwork + balance overlay
+    │       ├── CardVisualView.native.tsx      # Empty stub until LWM design
+    │       ├── CardVisual.web.test.tsx
+    │       ├── CardVisual.native.test.tsx
+    │       ├── CardVisualView.web.test.tsx
+    │       └── CardVisualView.native.test.tsx
+    ├── types.ts                               # Public props / view-model types
     ├── exports.ts                             # Public surface
     ├── index.ts                              # Public API barrel → ./exports
     └── index.native.ts                       # Native public API barrel → ./exports

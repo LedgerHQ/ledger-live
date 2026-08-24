@@ -27,7 +27,9 @@
     "coverage": "jest --coverage",
     "unimported": "pnpm knip --directory ../../.. -c features/flow/pay-card-details/knip.web.config.mjs -W features/flow/pay-card-details --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/flow/pay-card-details/knip.native.config.mjs -W features/flow/pay-card-details --tsConfig tsconfig.native.json"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@ledgerhq/lumen-utils-shared": "catalog:"
+  },
   "devDependencies": {
     "@features/platform-style": "workspace:*",
     "@ledgerhq/lumen-design-core": "catalog:",
