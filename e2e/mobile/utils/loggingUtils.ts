@@ -45,10 +45,7 @@ export function getCapturedStderr(): string {
  * uses that snapshot so it appears in the Test body; otherwise uses live capture.
  */
 export async function attachTestExecutionConsoleToAllure(): Promise<void> {
-  const stderrText =
-    globalThis.speculosFailureStderr !== undefined
-      ? globalThis.speculosFailureStderr
-      : getCapturedStderr();
+  const stderrText = globalThis.speculosFailureStderr ?? getCapturedStderr();
   if (globalThis.speculosFailureStderr !== undefined) {
     globalThis.speculosFailureStderr = undefined;
   }
@@ -111,7 +108,7 @@ export function formatWebviewConsoleLogs(entries: WebviewConsoleEntry[]): string
   for (const e of entries) {
     const ts = (e.timestamp ?? "").slice(0, TS_WIDTH).padEnd(TS_WIDTH);
     const level = (e.level ?? "log").toUpperCase().padEnd(LEVEL_WIDTH);
-    const raw = (e.text ?? "").replace(/\n/g, " ");
+    const raw = (e.text ?? "").replaceAll("\n", " ");
     const cleaned = stripConsoleFormatting(raw);
     const { summary, body } = splitSummaryAndJson(cleaned);
     const summaryLine = summary.length > 120 ? summary.slice(0, 120) + "…" : summary;
@@ -127,6 +124,7 @@ export function formatWebviewConsoleLogs(entries: WebviewConsoleEntry[]): string
 type ParsedLogsPayload = {
   appLogs?: unknown;
   appNetworkLogs?: unknown[];
+  appNetworkSummary?: { total: number; peakInFlight: number; byHost: Record<string, number> };
   webviewNetworkLogs?: unknown[];
   webviewConsoleLogs?: WebviewConsoleEntry[];
   webviewLoadErrors?: unknown[];
@@ -164,6 +162,17 @@ export async function attachFailureLogsToAllure(logsPayload: string): Promise<vo
       "application/json",
     );
     parsed.appNetworkLogs = undefined;
+  }
+
+  // Peak concurrency answers "was the fan-out bounded?" in one number, without having to
+  // read several hundred individual entries.
+  if (parsed.appNetworkSummary) {
+    await allure.attachment(
+      "Ledger Wallet Network Summary",
+      JSON.stringify(parsed.appNetworkSummary, null, 2),
+      "application/json",
+    );
+    parsed.appNetworkSummary = undefined;
   }
 
   if (parsed.webviewConsoleLogs?.length) {
