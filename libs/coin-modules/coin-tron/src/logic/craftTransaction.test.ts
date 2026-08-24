@@ -110,7 +110,7 @@ describe("craftTransaction", () => {
       "recipient",
       "sender",
       new BigNumber(1000),
-      50000000,
+      undefined,
       undefined,
     );
     expect(result).toBe("extendedRawDataHex");
@@ -141,7 +141,7 @@ describe("craftTransaction", () => {
     expect(result).toBe("extendedRawDataHex");
   });
 
-  it("should raise a 0 fee estimate to the fee-limit ceiling for a TRC20 transaction", async () => {
+  it("should pass a 0 custom fee straight through for a TRC20 transaction", async () => {
     const customFees = 0n;
     const amount = 1000;
     const transactionIntent = {
@@ -166,12 +166,12 @@ describe("craftTransaction", () => {
       undefined,
       undefined,
       BigNumber(amount),
-      50000000,
+      0,
       undefined,
     );
   });
 
-  it("should raise a fee estimate below the ceiling for crafting a TRC20 transaction", async () => {
+  it("should pass a custom fee below the default straight through for a TRC20 transaction", async () => {
     const customFees: bigint = 99n;
     const amount: number = 1000;
     const transactionIntent = {
@@ -196,12 +196,42 @@ describe("craftTransaction", () => {
       undefined,
       undefined,
       BigNumber(amount),
-      50000000,
+      99,
       undefined,
     );
   });
 
-  it("should use the fee-limit ceiling when no fee estimate is provided for a TRC20 transaction", async () => {
+  it("should pass a custom fee above the default straight through for a TRC20 transaction", async () => {
+    const customFees: bigint = 60_000_000n;
+    const amount: number = 1000;
+    const transactionIntent = {
+      intentType: "transaction",
+      type: "send",
+      asset: {
+        type: "trc20",
+        assetReference: "contractAddress",
+      },
+      amount: BigInt(amount),
+    } as TronIntent;
+
+    (decode58Check as jest.Mock).mockImplementation(_address => undefined);
+    (craftTrc20Transaction as jest.Mock).mockResolvedValue({
+      raw_data_hex: "extendedRawDataHex",
+    });
+
+    await craftTransaction(mockConfig, transactionIntent, { value: customFees });
+    expect(craftTrc20Transaction).toHaveBeenCalledWith(
+      mockConfig,
+      "contractAddress",
+      undefined,
+      undefined,
+      BigNumber(amount),
+      60_000_000,
+      undefined,
+    );
+  });
+
+  it("should leave the fee limit to the network default when no custom fee is provided for a TRC20 transaction", async () => {
     const amount = 1000;
     const transactionIntent = {
       intentType: "transaction",
@@ -219,13 +249,15 @@ describe("craftTransaction", () => {
     });
 
     await craftTransaction(mockConfig, transactionIntent);
+    // `undefined` here, not the default: `craftTrc20Transaction` owns the `?? DEFAULT_TRC20_FEES_LIMIT`
+    // fallback, so the default is asserted in the network + integ tests, not mocked away here.
     expect(craftTrc20Transaction).toHaveBeenCalledWith(
       mockConfig,
       "contractAddress",
       undefined,
       undefined,
       BigNumber(amount),
-      50000000,
+      undefined,
       undefined,
     );
   });

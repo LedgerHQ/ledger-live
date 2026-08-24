@@ -54,6 +54,15 @@ const FROZEN_SUN = 50_000_000; // 50 TRX
  * raises it — and comfortably above a TRC-20 transfer's actual energy cost either way.
  */
 const CUSTOM_FEE_LIMIT_SUN = 100_000_000; // 100 TRX
+/**
+ * A custom fee limit *below* `DEFAULT_TRC20_FEES_LIMIT` (50 TRX), for the LIVE-36391 regression guard
+ * row. Comfortably above a TRC-20 transfer's actual energy cost so the transfer still succeeds (the
+ * balance-delta assertions stay valid), but below the default so a reintroduced floor would raise it —
+ * which the on-chain `fee_limit` readback catches.
+ */
+const BELOW_DEFAULT_FEE_LIMIT_SUN = 30_000_000; // 30 TRX
+/** tx hash → on-chain `fee_limit`, recorded by `mockIndexer` for the guard row to assert against. */
+const onChainFeeLimitByHash = new Map<string, number | undefined>();
 
 /**
  * The transaction the wallet hands the bridge for Tron: the generic shape with `mode` widened to
@@ -194,6 +203,28 @@ function makeTransactions(): Tx[] {
     },
   };
 
+  const sendTrc20WithBelowDefaultFee: Tx = {
+    name: `Send 1 ${trc20.symbol} (TRC20) with a below-default custom fee limit`,
+    amount: new BigNumber(1_000_000),
+    recipient: recipient.address,
+    subAccountId: trc20SubAccountId,
+    // LIVE-36391 regression guard: the below-default cap must reach the chain verbatim, not be floored
+    // to the default. The on-chain `fee_limit` readback (from mockIndexer) proves the override survived
+    // craft → sign → broadcast through the shipping generic-coin-framework bridge.
+    customFees: { parameters: { fees: new BigNumber(BELOW_DEFAULT_FEE_LIMIT_SUN) } },
+    expect: (prev, curr) => {
+      const sub = curr.subAccounts?.find(s => s.id === trc20SubAccountId);
+      const prevSub = prev.subAccounts?.find(s => s.id === trc20SubAccountId);
+      expect(sub).toBeDefined();
+      expect(sub!.balance).toStrictEqual((prevSub?.balance ?? new BigNumber(0)).minus(1_000_000));
+
+      const [latestOp] = sub!.operations;
+      expect(latestOp.type).toBe("OUT");
+      expect(latestOp.recipients).toContain(recipient.address);
+      expect(onChainFeeLimitByHash.get(latestOp.hash)).toBe(BELOW_DEFAULT_FEE_LIMIT_SUN);
+    },
+  };
+
   const sendMaxTrc20: Tx = {
     name: `Send max ${trc20.symbol} (TRC20)`,
     useAllAmount: true,
@@ -305,6 +336,7 @@ function makeTransactions(): Tx[] {
     sendMaxTrc10,
     sendTrc20,
     sendTrc20WithCustomFees,
+    sendTrc20WithBelowDefaultFee,
     sendMaxTrc20,
     freeze,
     vote,
@@ -385,6 +417,24 @@ export const scenarioTron: Scenario<GenericTransaction, Account> = {
 
   mockIndexer: async (_account, optimistic) => {
     await waitForOperationInclusion(optimistic.hash);
+    // Record each broadcast transaction's on-chain `fee_limit` so the LIVE-36391 guard row can assert
+    // the custom value reached the chain (non-TRC-20 sends carry none; the guard reads only its own tx).
+    // Records `undefined` rather than throwing on any lookup failure — a rejected fetch, a non-2xx,
+    // or bad JSON. This runs for every row, so a blip must not fail unrelated ones; a miss surfaces
+    // as the guard row's own assertion instead.
+    let feeLimit: number | undefined;
+    try {
+      const res = await fetch(`${TRON_LOCAL_RPC}/wallet/gettransactionbyid`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ value: optimistic.hash }),
+      });
+      const tx = res.ok ? ((await res.json()) as { raw_data?: { fee_limit?: number } }) : undefined;
+      feeLimit = tx?.raw_data?.fee_limit;
+    } catch {
+      feeLimit = undefined;
+    }
+    onChainFeeLimitByHash.set(optimistic.hash, feeLimit);
   },
 
   beforeAll: account => {
@@ -402,6 +452,7 @@ export const scenarioTron: Scenario<GenericTransaction, Account> = {
     closeMsw?.();
     closeMsw = null;
     resetIndexer();
+    onChainFeeLimitByHash.clear();
     await killTronbox();
   },
 };
