@@ -2,6 +2,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { mockMeContact } from "@domain/entity-contact/schema.mock";
 import { renderHook, withFlagOverrides } from "@tests/test-renderer";
 import { ScreenName } from "~/const";
+import { useContactsLedgerSyncStatus } from "../../hooks/useContactsLedgerSyncStatus";
 import { useContactDetailScreenViewModel } from "./useContactDetailScreenViewModel";
 
 const mockGoBack = jest.fn();
@@ -27,6 +28,8 @@ jest.mock("LLM/features/Send/hooks/useOpenSendFlow", () => ({
   useOpenSendFlow: () => ({ handleOpenSendFlow: jest.fn() }),
 }));
 
+jest.mock("../../hooks/useContactsLedgerSyncStatus");
+
 jest.mock("../../analytics/useContactsAnalytics", () => ({
   useContactsAnalytics: () => ({
     trackEvent: jest.fn(),
@@ -37,10 +40,12 @@ jest.mock("../../analytics/useContactsAnalytics", () => ({
 
 const mockedUseRoute = jest.mocked(useRoute);
 const mockedUseNavigation = jest.mocked(useNavigation);
+const mockedContactsLedgerSyncStatus = jest.mocked(useContactsLedgerSyncStatus);
 
 describe("useContactDetailScreenViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockedContactsLedgerSyncStatus.mockReturnValue("ready");
   });
 
   it("should redirect when contacts are disabled", () => {

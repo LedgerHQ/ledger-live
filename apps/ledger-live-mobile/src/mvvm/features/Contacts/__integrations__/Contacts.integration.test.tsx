@@ -19,6 +19,7 @@ import { ContactsButton, ContactsScreen } from "LLM/features/Contacts";
 import { ContactDetailScreen } from "LLM/features/Contacts/screens/ContactDetail";
 import { ContactsAddAddressFlowDrawer } from "LLM/features/Contacts/screens/ContactDetail/components/ContactsAddAddressFlowDrawer";
 import { useContactDetailScreenViewModel } from "LLM/features/Contacts/screens/ContactDetail/useContactDetailScreenViewModel";
+import { useContactsLedgerSyncStatus } from "LLM/features/Contacts/hooks/useContactsLedgerSyncStatus";
 import MyWalletNavigator from "LLM/features/MyWallet/Navigator";
 import { useMyWalletHeaderViewModel } from "LLM/features/MyWallet/views/Header/useMyWalletHeaderViewModel";
 import { useModularDrawerController } from "LLM/features/ModularDrawer";
@@ -30,6 +31,7 @@ jest.mock("LLM/features/Send/hooks/useOpenSendFlow", () => ({
 }));
 
 jest.mock("LLM/features/MyWallet/views/Header/useMyWalletHeaderViewModel");
+jest.mock("LLM/features/Contacts/hooks/useContactsLedgerSyncStatus");
 jest.mock("LLM/features/Contacts/hooks/useContactsAddressValidationAdapter", () => ({
   useContactsAddressValidationAdapter: () => ({
     validateAddress: async ({ address }: { address: string }) => ({
@@ -41,6 +43,7 @@ jest.mock("LLM/features/Contacts/hooks/useContactsAddressValidationAdapter", () 
 }));
 
 const mockedViewModel = jest.mocked(useMyWalletHeaderViewModel);
+const mockedContactsLedgerSyncStatus = jest.mocked(useContactsLedgerSyncStatus);
 
 const Stack = createNativeStackNavigator();
 const AccountsStack = createNativeStackNavigator<AccountsNavigatorParamList>();
@@ -124,6 +127,10 @@ function MyWalletHomeTestScreen() {
   return <Text testID="my-wallet-home">My Wallet</Text>;
 }
 
+function WalletSyncActivationTestScreen() {
+  return <Text testID="wallet-sync-activation">Wallet Sync activation</Text>;
+}
+
 function AccountsListTestScreen() {
   return <Text testID="accounts-list-screen">Accounts list</Text>;
 }
@@ -166,6 +173,7 @@ function ContactsGatingTestApp() {
       <Stack.Screen name={ScreenName.MyWallet} component={MyWalletHomeTestScreen} />
       <Stack.Screen name={ScreenName.MyWalletContacts} component={ContactsScreen} />
       <Stack.Screen name={ScreenName.MyWalletContactDetail} component={ContactDetailScreen} />
+      <Stack.Screen name={NavigatorName.WalletSync} component={WalletSyncActivationTestScreen} />
     </Stack.Navigator>
   );
 }
@@ -332,6 +340,7 @@ const evmOnlyContactsFeatureFlag: Parameters<typeof withContactsPageReadyState>[
 describe("Contacts integration", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockedContactsLedgerSyncStatus.mockReturnValue("ready");
     mockedViewModel.mockReturnValue({
       onBackPress: noop,
       onNotificationsPress: noop,
@@ -582,6 +591,93 @@ describe("Contacts integration", () => {
       expect(screen.queryByTestId("contacts-detail-ledger-wallet-addresses")).toBeNull();
     });
   });
+
+  it("should open Wallet Sync activation instead of Add Address when sync is inactive", async () => {
+    mockedContactsLedgerSyncStatus.mockReturnValue("inactive");
+    const { user } = render(<ContactsGatingTestApp />, {
+      navigationInitialState: contactDetailNavigationState,
+      overrideInitialState: withContactsPageReadyState({
+        lwmContacts: { enabled: true, params: { newBadge: false } },
+      }),
+    });
+
+    await user.press(await screen.findByTestId("contacts-detail-add-address"));
+
+    expect(screen.getByText("Turn on Ledger Sync to save contacts")).toBeVisible();
+    expect(screen.queryByTestId("contacts-add-address-flow-drawer")).toBeNull();
+
+    await user.press(screen.getByRole("button", { name: "Turn on Ledger Sync" }));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("wallet-sync-activation")).toBeVisible();
+    });
+  });
+
+  it("should open Wallet Sync activation instead of Add Contact when sync is unavailable", async () => {
+    mockedContactsLedgerSyncStatus.mockReturnValue("unavailable");
+    const { user } = render(<ContactsGatingTestApp />, {
+      navigationInitialState: contactsNavigationState,
+      overrideInitialState: withContactsPageReadyState({
+        lwmContacts: { enabled: true, params: { newBadge: false } },
+      }),
+    });
+
+    expect(screen.getByText("Turn on Ledger Sync to save contacts")).toBeVisible();
+    await user.press(screen.getByRole("button", { name: "Got it" }));
+    await user.press(await screen.findByTestId("contacts-add-contact-row"));
+
+    await waitFor(() => {
+      expect(screen.getByText("Turn on Ledger Sync to save contacts")).toBeVisible();
+    });
+    expect(screen.queryByTestId("contacts-add-contact-drawer")).toBeNull();
+
+    await user.press(screen.getByRole("button", { name: "Turn on Ledger Sync" }));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("wallet-sync-activation")).toBeVisible();
+    });
+  });
+
+  it("should open Wallet Sync activation instead of Add Address when sync is unavailable", async () => {
+    mockedContactsLedgerSyncStatus.mockReturnValue("unavailable");
+    const { user } = render(<ContactsGatingTestApp />, {
+      navigationInitialState: contactDetailNavigationState,
+      overrideInitialState: withContactsPageReadyState({
+        lwmContacts: { enabled: true, params: { newBadge: false } },
+      }),
+    });
+
+    await user.press(await screen.findByTestId("contacts-detail-add-address"));
+
+    await waitFor(() => {
+      expect(screen.getByText("Turn on Ledger Sync to save contacts")).toBeVisible();
+    });
+    expect(screen.queryByTestId("contacts-add-address-flow-drawer")).toBeNull();
+
+    await user.press(screen.getByRole("button", { name: "Turn on Ledger Sync" }));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("wallet-sync-activation")).toBeVisible();
+    });
+  });
+
+  it.each(["checking"] as const)(
+    "should keep Contacts read-only while sync is %s",
+    async ledgerSyncStatus => {
+      mockedContactsLedgerSyncStatus.mockReturnValue(ledgerSyncStatus);
+      const { user } = render(<ContactsGatingTestApp />, {
+        navigationInitialState: contactDetailNavigationState,
+        overrideInitialState: withContactsPageReadyState({
+          lwmContacts: { enabled: true, params: { newBadge: false } },
+        }),
+      });
+
+      await user.press(await screen.findByTestId("contacts-detail-add-address"));
+
+      expect(screen.queryByTestId("contacts-add-address-flow-drawer")).toBeNull();
+      expect(screen.queryByText("Turn on Ledger Sync to save contacts")).toBeNull();
+    },
+  );
   it("should expose the Add Address session started for Me", async () => {
     const { user } = render(<ContactDetailViewModelTestApp />, {
       navigationInitialState: contactDetailNavigationState,

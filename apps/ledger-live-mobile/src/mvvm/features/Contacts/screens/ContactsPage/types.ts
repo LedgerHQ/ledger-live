@@ -9,6 +9,7 @@ type ContactsLedgerSyncIntroductionPresentationProps = Pick<
 export type ContactsPageViewModel = Omit<ContactsViewNativeProps, "onAddContact"> &
   Readonly<{
     ledgerSyncIntroductionContent: ContactsLedgerSyncIntroductionPresentationProps;
+    onRequestAddContact: (onAllowed: () => void) => void;
   }>;
 
 export type ContactsPageContentProps = ContactsPageViewModel &

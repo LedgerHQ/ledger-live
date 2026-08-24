@@ -7,6 +7,11 @@ import {
   getStackNavigationConfigV4,
 } from "LLM/components/Navigation";
 import { ContactsScreen } from "LLM/features/Contacts";
+import { useContactsLedgerSyncStatus } from "LLM/features/Contacts/hooks/useContactsLedgerSyncStatus";
+
+jest.mock("LLM/features/Contacts/hooks/useContactsLedgerSyncStatus");
+
+const mockedContactsLedgerSyncStatus = jest.mocked(useContactsLedgerSyncStatus);
 
 const Stack = createLumenNativeStackNavigator();
 
@@ -26,6 +31,10 @@ function ContactsTestApp() {
 }
 
 describe("Contacts add contact drawer integration", () => {
+  beforeEach(() => {
+    mockedContactsLedgerSyncStatus.mockReturnValue("ready");
+  });
+
   it("should save a contact from the empty-list CTA with the actual Contacts page", async () => {
     const { user } = render(<ContactsTestApp />, {
       overrideInitialState: withFlagOverrides(
