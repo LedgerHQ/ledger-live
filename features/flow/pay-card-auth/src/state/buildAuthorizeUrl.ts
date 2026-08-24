@@ -24,6 +24,11 @@ export function buildAuthorizeUrl(
 ): string {
   const url = new URL(AUTHORIZE_PATH, oauthConfig.apiUrl);
 
+  // A misconfigured apiUrl must not open the secure browser on an insecure or unexpected page.
+  if (url.protocol !== "https:") {
+    throw new Error(`buildAuthorizeUrl: apiUrl must be https, got "${url.protocol}"`);
+  }
+
   url.search = new URLSearchParams({
     client_id: oauthConfig.clientId,
     response_type: "code",

@@ -50,4 +50,10 @@ describe("buildAuthorizeUrl", () => {
 
     expect(new URL(url).pathname).toBe("/v1/auth/oauth2/authorize");
   });
+
+  it("refuses to open a non-https authorize URL", () => {
+    expect(() =>
+      buildAuthorizeUrl({ ...oauthConfig, apiUrl: "http://dev.api.baanx.com" }, "challenge"),
+    ).toThrow();
+  });
 });

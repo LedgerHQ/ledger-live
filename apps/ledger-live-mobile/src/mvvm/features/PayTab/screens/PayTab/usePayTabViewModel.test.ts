@@ -67,8 +67,9 @@ describe("usePayTabViewModel", () => {
   it("should expose the OAuth client configuration", () => {
     const { result } = renderHook(() => usePayTabViewModel());
 
-    // The provider matches the redirect URI verbatim on the token exchange. The deep link is the app's
-    // own, and it comes from the module that also spells the Pay tab route.
+    // The provider only sees the redirect URI on the authorize URL, where it must match what is
+    // whitelisted with the provider. The deep link is the app's own, and it comes from the module
+    // that also spells the Pay tab route.
     expect(result.current.oauthConfig).toEqual({
       apiUrl: getEnv("CARD_API_URL"),
       clientId: getEnv("CARD_BAANX_CLIENT_KEY"),
