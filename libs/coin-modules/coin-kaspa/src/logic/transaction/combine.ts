@@ -7,19 +7,36 @@ import type { UnsignedKaspaTransaction } from "./craftTransaction";
 
 /**
  * Attach per-input device signatures to an unsigned Kaspa transaction (as produced by
- * `craftTransaction`) and return the signed transaction JSON ready for `broadcast`
- * (mirrors `bridge/signOperation.ts`'s `JSON.stringify(tx.toApiJSON())` serialization).
+ * `craftTransaction`) and return the signed transaction JSON ready for `broadcast`.
  *
- * Kaspa requires one signature per input (each input can be backed by a different key), so
- * unlike single-witness account chains, `signature` here holds one hex signature per input,
- * aligned by index with the crafted transaction's `inputs` array.
+ * Follows the generic-adapter contract: `signatures` is always a 1-element array containing
+ * a JSON-encoded string array of per-input hex signatures (one per UTXO input). Each input
+ * carries a different sighash, so N signatures are required — packed into one string by the
+ * signer so the chain-agnostic framework's single-return-value contract is satisfied.
  */
 export function combine(tx: string, signatures: string[]): string {
   const unsigned: UnsignedKaspaTransaction = JSON.parse(tx);
 
-  if (signatures.length !== unsigned.inputs.length) {
+  if (signatures.length !== 1) {
     throw new Error(
-      `kaspa: combine expected ${unsigned.inputs.length} signature(s), got ${signatures.length}`,
+      `kaspa: combine expects exactly 1 packed signature string, got ${signatures.length}`,
+    );
+  }
+
+  let sigs: string[];
+  try {
+    const parsed: unknown = JSON.parse(signatures[0]);
+    if (!Array.isArray(parsed) || !parsed.every(s => typeof s === "string")) {
+      throw new Error("not a string array");
+    }
+    sigs = parsed;
+  } catch {
+    throw new Error("kaspa: combine signature must be a JSON-encoded string array");
+  }
+
+  if (sigs.length !== unsigned.inputs.length) {
+    throw new Error(
+      `kaspa: combine expected ${unsigned.inputs.length} per-input signature(s), got ${sigs.length}`,
     );
   }
 
@@ -32,7 +49,7 @@ export function combine(tx: string, signatures: string[]): string {
       addressIndex: 0,
       address: "",
     });
-    hwInput.setSignature(signatures[index]);
+    hwInput.setSignature(sigs[index]);
     return hwInput;
   });
 

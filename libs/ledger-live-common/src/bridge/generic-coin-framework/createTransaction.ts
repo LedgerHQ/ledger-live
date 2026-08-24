@@ -118,6 +118,22 @@ export function createTransaction(account: Account | TokenAccount): GenericTrans
         memoValue: null,
         networkInfo: null,
       };
+    case "kaspa":
+      // UTXO chain — no account nonce/sequence, same as near/vechain/cardano above. Setting a
+      // synthetic zero nonce here (inert for crafting — craftTransaction ignores it and builds
+      // its own inputs from real UTXOs) makes transactionIntent.sequence a valid bigint, so
+      // signOperation's guard skips calling getNextSequence entirely — which is then free to
+      // throw like every other no-sequence family's, instead of needing a silent 0n stub.
+      return {
+        family: currency.family,
+        amount: new BigNumber(0),
+        recipient: "",
+        fees: null,
+        useAllAmount: false,
+        mode: "send",
+        feesStrategy: "fast",
+        nonce: new BigNumber(0),
+      };
     case "stacks":
       // Unlike near/vechain/cardano above, leaving nonce unset lets craftTransaction/estimateFees
       // fetch the real sequential nonce instead of defaulting to 0.
