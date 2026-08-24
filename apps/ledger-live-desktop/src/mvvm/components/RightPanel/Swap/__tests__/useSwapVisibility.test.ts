@@ -1,9 +1,9 @@
 import { renderHook, withFlagOverrides } from "tests/testSetup";
-import { useRightPanelVisibility } from "../useRightPanelVisibility";
+import { useSwapVisibility } from "../useSwapVisibility";
 
-describe("useRightPanelVisibility", () => {
+describe("useSwapVisibility", () => {
   it("returns true when ptxSwap flag is enabled", () => {
-    const { result } = renderHook(() => useRightPanelVisibility(), {
+    const { result } = renderHook(() => useSwapVisibility(), {
       initialState: withFlagOverrides({
         ptxSwapLiveAppOnPortfolio: { enabled: true },
       }),
@@ -13,7 +13,7 @@ describe("useRightPanelVisibility", () => {
   });
 
   it("returns false when ptxSwap flag is absent", () => {
-    const { result } = renderHook(() => useRightPanelVisibility());
+    const { result } = renderHook(() => useSwapVisibility());
 
     expect(result.current).toBe(false);
   });

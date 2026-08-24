@@ -1,6 +1,6 @@
 import { useFeature } from "@features/platform-feature-flags";
 
-export const useRightPanelVisibility = (): boolean => {
+export const useSwapVisibility = (): boolean => {
   const ptxSwapLiveAppOnPortfolio = useFeature("ptxSwapLiveAppOnPortfolio");
 
   return !!ptxSwapLiveAppOnPortfolio?.enabled;

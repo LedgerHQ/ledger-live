@@ -7,10 +7,10 @@ import {
   makeIntegrationTokenCurrency,
 } from "tests/utils/distributionTestUtils";
 import {
-  DEFAULT_RIGHT_PANEL_VIEW_MODEL,
-  getRightPanelRouteAssetId,
-  useRightPanelViewModel,
-} from "../useRightPanelViewModel";
+  DEFAULT_SWAP_VIEW_MODEL,
+  getSwapRouteAssetId,
+  useSwapViewModel,
+} from "../useSwapViewModel";
 
 jest.mock("~/renderer/actions/general", () => ({
   ...jest.requireActual("~/renderer/actions/general"),
@@ -23,19 +23,19 @@ const btc = getCryptoCurrencyById("bitcoin");
 const ethereum = getCryptoCurrencyById("ethereum");
 const usdcToken = makeIntegrationTokenCurrency("ethereum/erc20/usd__coin", "USDC", "USD Coin");
 
-describe("getRightPanelRouteAssetId", () => {
+describe("getSwapRouteAssetId", () => {
   it("returns undefined outside asset routes", () => {
-    expect(getRightPanelRouteAssetId("/")).toBeUndefined();
-    expect(getRightPanelRouteAssetId("/analytics")).toBeUndefined();
+    expect(getSwapRouteAssetId("/")).toBeUndefined();
+    expect(getSwapRouteAssetId("/analytics")).toBeUndefined();
   });
 
   it("returns the route asset id on asset routes", () => {
-    expect(getRightPanelRouteAssetId("/asset/bitcoin")).toBe("bitcoin");
-    expect(getRightPanelRouteAssetId(`/asset/${usdcToken.id}`)).toBe(usdcToken.id);
+    expect(getSwapRouteAssetId("/asset/bitcoin")).toBe("bitcoin");
+    expect(getSwapRouteAssetId(`/asset/${usdcToken.id}`)).toBe(usdcToken.id);
   });
 });
 
-describe("useRightPanelViewModel", () => {
+describe("useSwapViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     useDistribution.mockReturnValue({ bySlug: {}, list: [] });
@@ -44,7 +44,7 @@ describe("useRightPanelViewModel", () => {
   describe("initialSwapState", () => {
     it("does not seed swap state when no account exists for the asset", () => {
       const { result } = renderHook(() =>
-        useRightPanelViewModel({ pathname: "/asset/bitcoin", routeAssetId: "bitcoin" }),
+        useSwapViewModel({ pathname: "/asset/bitcoin", routeAssetId: "bitcoin" }),
       );
 
       expect(result.current.initialSwapState).toBeUndefined();
@@ -60,7 +60,7 @@ describe("useRightPanelViewModel", () => {
       });
 
       const { result } = renderHook(() =>
-        useRightPanelViewModel({ pathname: "/asset/bitcoin", routeAssetId: "bitcoin" }),
+        useSwapViewModel({ pathname: "/asset/bitcoin", routeAssetId: "bitcoin" }),
       );
 
       expect(result.current.initialSwapState).toBeUndefined();
@@ -84,7 +84,7 @@ describe("useRightPanelViewModel", () => {
       });
 
       const { result } = renderHook(
-        () => useRightPanelViewModel({ pathname: "/asset/bitcoin", routeAssetId: "bitcoin" }),
+        () => useSwapViewModel({ pathname: "/asset/bitcoin", routeAssetId: "bitcoin" }),
         { initialState: { accounts: [lowBalanceBtc, highBalanceBtc] } },
       );
 
@@ -111,7 +111,7 @@ describe("useRightPanelViewModel", () => {
 
       const { result } = renderHook(
         () =>
-          useRightPanelViewModel({
+          useSwapViewModel({
             pathname: `/asset/${usdcToken.id}`,
             routeAssetId: usdcToken.id,
           }),
@@ -132,9 +132,9 @@ describe("useRightPanelViewModel", () => {
   });
 });
 
-describe("DEFAULT_RIGHT_PANEL_VIEW_MODEL", () => {
+describe("DEFAULT_SWAP_VIEW_MODEL", () => {
   it("provides an empty swap state for non-asset routes", () => {
-    expect(DEFAULT_RIGHT_PANEL_VIEW_MODEL).toEqual({
+    expect(DEFAULT_SWAP_VIEW_MODEL).toEqual({
       initialSwapState: undefined,
       webviewKey: "none::none",
     });
