@@ -515,9 +515,7 @@ describe("Contacts integration", () => {
     expect(screen.getByRole("dialog")).toBe(dialog);
     expect(screen.getByTestId("contacts-add-address-review")).toBeVisible();
 
-    await user.click(
-      screen.getByRole("button", { name: "components.dialogHeader.goBackAriaLabel" }),
-    );
+    await user.click(screen.getByRole("button", { name: "Go back" }));
     expect(screen.getByTestId("contacts-add-address-input")).toBeVisible();
     expect(screen.getByTestId("contacts-add-address-name-input")).toHaveValue("Exchange");
 
@@ -554,9 +552,7 @@ describe("Contacts integration", () => {
     });
 
     await screen.findByTestId("contacts-add-address-input");
-    await user.click(
-      screen.getByRole("button", { name: "components.dialogHeader.goBackAriaLabel" }),
-    );
+    await user.click(screen.getByRole("button", { name: "Go back" }));
 
     await waitFor(() => {
       expect(store.getState().modularDialog.isOpen).toBe(true);

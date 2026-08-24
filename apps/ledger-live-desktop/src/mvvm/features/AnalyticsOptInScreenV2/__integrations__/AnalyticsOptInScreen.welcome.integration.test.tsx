@@ -121,7 +121,7 @@ describe("AnalyticsOptInScreen on Welcome", () => {
     await user.click(await screen.findByRole("button", { name: "Set preferences" }));
     expect(await screen.findByTestId("analytics-opt-in-screen-preferences")).toBeVisible();
 
-    await user.click(screen.getByRole("button", { name: "components.navBar.goBackAriaLabel" }));
+    await user.click(screen.getByRole("button", { name: "Go back" }));
 
     await waitFor(() => {
       expect(screen.queryByTestId("analytics-opt-in-screen-preferences")).not.toBeInTheDocument();

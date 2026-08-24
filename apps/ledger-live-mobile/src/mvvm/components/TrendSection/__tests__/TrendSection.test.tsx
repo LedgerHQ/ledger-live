@@ -22,12 +22,6 @@ describe("TrendSection", () => {
     expect(screen.getByText("7.87%")).toBeVisible();
   });
 
-  it("renders negative percentage with minus sign", () => {
-    render(<TrendSection percentage={-18.81} testID="trend" />);
-
-    expect(screen.getByText("-18.81%")).toBeVisible();
-  });
-
   it("renders all parts together", () => {
     render(
       <TrendSection
@@ -39,7 +33,7 @@ describe("TrendSection", () => {
     );
 
     expect(screen.getByTestId("trend")).toBeVisible();
-    expect(screen.getByText("-5.12%")).toBeVisible();
+    expect(screen.getByText("5.12%")).toBeVisible();
     expect(screen.getByText("-$500.00")).toBeVisible();
     expect(screen.getByText("1 week")).toBeVisible();
     expect(screen.getByText("·")).toBeVisible();

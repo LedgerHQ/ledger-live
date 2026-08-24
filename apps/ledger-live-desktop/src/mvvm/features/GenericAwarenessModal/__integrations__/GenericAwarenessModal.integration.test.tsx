@@ -343,7 +343,7 @@ describe("GenericAwarenessModal Integration", () => {
       });
 
       await advanceCarouselToLastSlide(user);
-      await user.click(screen.getByRole("button", { name: "Close" }));
+      await user.click(screen.getByTestId("generic-awareness-modal-continue-button"));
 
       expect(track).toHaveBeenCalledWith(
         "tour_completed",

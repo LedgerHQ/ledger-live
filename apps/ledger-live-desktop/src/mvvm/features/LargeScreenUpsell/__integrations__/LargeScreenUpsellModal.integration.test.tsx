@@ -146,7 +146,7 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
       expect(screen.getByTestId("large-screen-upsell-modal")).toBeVisible();
     });
 
-    await user.click(screen.getByLabelText("components.dialogHeader.closeAriaLabel"));
+    await user.click(await screen.findByLabelText("Close"));
 
     await waitFor(() => {
       expect(screen.queryByTestId("large-screen-upsell-modal")).not.toBeInTheDocument();
@@ -338,7 +338,7 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
   });
 
   it("should close when the header close control is pressed and stay closed", async () => {
-    const { store, user, i18n } = renderMount();
+    const { store, user } = renderMount();
 
     await waitFor(() => {
       expect(screen.getByTestId("large-screen-upsell-modal")).toBeVisible();
@@ -349,7 +349,7 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
     });
     expect(store.getState().largeScreenUpsellModal.session).toBe("ready");
 
-    await user.click(screen.getByLabelText(i18n.t("components.dialogHeader.closeAriaLabel")));
+    await user.click(screen.getByLabelText("Close"));
 
     await waitFor(() => {
       expect(screen.queryByTestId("large-screen-upsell-modal")).not.toBeInTheDocument();

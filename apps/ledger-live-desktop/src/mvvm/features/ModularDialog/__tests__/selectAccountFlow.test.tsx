@@ -53,7 +53,7 @@ const mockUseAcceptedCurrency = jest.fn(() => () => true);
 
 // Helper to get the back button from DialogHeader (uses aria-label since DialogHeader doesn't expose test-id)
 const getBackButton = () => {
-  return screen.getByLabelText("components.dialogHeader.goBackAriaLabel");
+  return screen.getByLabelText("Go back");
 };
 
 beforeEach(() => {
@@ -272,7 +272,7 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
     });
 
     await waitFor(() => expect(screen.getAllByText(/select account/i)[0]).toBeVisible());
-    expect(screen.queryByLabelText("components.sheetBar.goBackAriaLabel")).not.toBeInTheDocument();
+    expect(screen.queryByLabelText("Go back")).not.toBeInTheDocument();
   });
 
   it("should not display back button on AccountSelection step if only one currency", async () => {
@@ -284,7 +284,7 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
     });
 
     await waitFor(() => expect(screen.getAllByText(/select network/i)[0]).toBeVisible());
-    expect(screen.queryByLabelText("components.sheetBar.goBackAriaLabel")).not.toBeInTheDocument();
+    expect(screen.queryByLabelText("Go back")).not.toBeInTheDocument();
   });
 
   it("should not re trigger page tracking on asset search", async () => {
@@ -598,7 +598,7 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
       });
 
       await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
-      await user.click(screen.getByLabelText("components.dialogHeader.closeAriaLabel"));
+      await user.click(screen.getByLabelText("Close"));
 
       await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
       await waitFor(() => expect(hostFocus).toHaveBeenCalled());

@@ -32,7 +32,7 @@ const StyleProvider = ({ children, selectedPalette }: Props) => {
     [v3SelectedPalette, selectedPalette],
   );
   return (
-    <PlatformStyleProvider theme={theme}>
+    <PlatformStyleProvider theme={theme} colorScheme={selectedPalette}>
       <GlobalStyle />
       {children}
     </PlatformStyleProvider>

@@ -13,6 +13,7 @@ let capturedOnOpenChange: ((value: boolean) => void) | undefined;
 // Radix Tooltip does not handle pointerLeave in JSDOM, so we mock
 // lumen-ui-react to capture onOpenChange and drive it manually.
 jest.mock("@ledgerhq/lumen-ui-react", () => ({
+  ...jest.requireActual("@ledgerhq/lumen-ui-react"),
   Tooltip: ({ open, onOpenChange, children }: TooltipProps) => {
     capturedOnOpenChange = onOpenChange;
     return (
