@@ -84,6 +84,7 @@ function createFlowJestConfig(overrides = {}) {
         ...base,
         displayName: "native",
         testEnvironment: "node",
+        resolver: path.join(__dirname, "resolver.native.js"),
         moduleFileExtensions: platformExtensions("native"),
         testMatch: ["**/*.native.test.ts?(x)", "**/*.native.spec.ts?(x)"],
         moduleNameMapper: { ...nativeMocks },

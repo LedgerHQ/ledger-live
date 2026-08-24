@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { CONTACT_NAME_MAX_LENGTH } from "@features/flow-contacts-add-contact";
+import { CONTACT_NAME_MAX_LENGTH } from "@domain/entity-contact";
 import { useRenameContactViewModel } from "./useRenameContactViewModel";
 import type { RenameContactDialogViewModel, UseRenameContactDialogViewModelOptions } from "./types";
 

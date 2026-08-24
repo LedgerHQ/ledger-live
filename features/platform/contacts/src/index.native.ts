@@ -16,3 +16,6 @@ export * from "./addressEntry/classifyNativeAddressInputMethod";
 export * from "./addressEntry/getInsertedCharacterCount";
 export * from "./addressEntry/wait";
 export * from "./addressEntry/nativeInputProps.native";
+export * from "./contactEdit/ports";
+export * from "./contactEdit/createContactEditPort";
+export * from "./components/ContactNameInput/index.native";

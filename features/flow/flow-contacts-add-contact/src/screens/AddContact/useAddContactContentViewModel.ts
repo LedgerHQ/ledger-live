@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { CONTACT_NAME_MAX_LENGTH } from "../../components/ContactNameInput/constants";
+import { CONTACT_NAME_MAX_LENGTH } from "@domain/entity-contact";
 import { useAddContactViewModel } from "./useAddContactViewModel";
 import type { AddContactContentViewModel, UseAddContactContentViewModelOptions } from "./types";
 

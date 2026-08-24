@@ -12,6 +12,10 @@ Shared jest configuration for `features/flow/*` packages.
 
 Both projects transpile TS/TSX with `@swc/jest`.
 
+The Native project resolves the `react-native` conditional export for workspace `@features/*`
+packages only. This keeps flow package imports platform-correct without changing each consumer's
+Jest config, while third-party Node dependencies retain their default resolution.
+
 ## Lumen handling
 
 The Lumen barrels and subpaths (`@ledgerhq/lumen-ui-react`, `@ledgerhq/lumen-ui-rnative`)

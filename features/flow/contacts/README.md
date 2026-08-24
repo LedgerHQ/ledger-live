@@ -20,7 +20,6 @@ Shared Contacts flow package for Desktop and Mobile.
   app-owned "Me" profile image
 - Contacts analytics contract: typed event/page names, payloads, and
   `createContactsAnalyticsHelper()` for apps to inject their `track` functions
-- Compatibility exports for `@features/flow-contacts-add-contact`
 
 App layers own routing, screen composition, i18n, and analytics adapters (`track` /
 `trackPage`). Flow-specific tracking contracts and helpers live in this package; shared global
@@ -42,6 +41,9 @@ instead of this orchestrator.
 `@features/flow-contacts-add-address` owns the Add address journey. Applications import this leaf
 directly when they mount its dialog or drawer content. Contacts feature configuration and eligible
 network resolution are provided by `@features/platform-contacts`.
+
+`@features/flow-contacts-edit-contact` owns the Edit contact journey. Applications import its Web
+dialog or Native drawer directly; the aggregate composes its state with Contact Detail.
 
 Each user-facing screen owned by this package lives under `src/steps/` and follows the MVVM split
 used by the app features (View + ViewModel + types + colocated components). Web and React Native
@@ -83,12 +85,12 @@ src/
 └── index.native.ts                      # React Native public API
 ```
 
-`@features/flow-contacts-add-contact` owns the Add contact step. This package re-exports its
-public API as a compatibility façade while the remaining Contacts journeys are extracted.
+`@features/flow-contacts-add-contact` owns the Add contact journey. Applications import this leaf
+directly when they mount its dialog or drawer content.
 
 `@features/flow-contacts-introduction` owns both introduction journeys and is composed by
 `ContactsView` on Web.
 
-`@features/platform-contacts` owns `ContactAvatar`: flows and applications can consume it from its
-`web` or `native` entry for a Me profile image or a saved-contact avatar with deterministic color
-and Unicode initial.
+`@features/platform-contacts` owns `ContactAvatar`: flows and applications consume it from the
+package root for a Me profile image or a saved-contact avatar with deterministic color and Unicode
+initial. The target platform configuration resolves its implementation.

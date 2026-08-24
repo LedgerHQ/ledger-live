@@ -15,8 +15,8 @@ ports, address-entry primitives, and shared analytics building blocks used by fl
 - `identityFormatMeDisplayName()` and `resolveMeContactDisplayName()`: resolve the shared display
   name rules used by Contacts List and Detail.
 - `ContactAvatar`: renders the Me profile image when `isMe` is set, otherwise a deterministic
-  color and Unicode initial. Import it from the `web` or `native` entry according to the target
-  platform.
+  color and Unicode initial. Import it from the package root; the consumer's platform
+  configuration resolves the target implementation.
 - `ContactDeviceIntentsPort`: defines the typed boundary for Contacts device interactions.
 - `createMockContactDeviceIntentsPort()`: returns temporary typed device results for Contacts flows.
 - Contacts analytics building blocks: `ContactsGlobalProperties`,
@@ -26,6 +26,12 @@ ports, address-entry primitives, and shared analytics building blocks used by fl
   applications and Contacts leaf flows.
 - `resolveEligibleAddressCurrencyIds()`: resolves configured Contacts families to production
   network identifiers.
+- `ContactEditPort` and `createContactEditPort()`: define and implement the shared Contact rename
+  operation, including device credentials for external contacts.
+- `ContactNameInput`: a cross-platform primitive resolved from the package root and shared by Add
+  and Edit contact without coupling their leaf flows.
+- `ContactNameDisclaimer`: a Web-only primitive shared by the Add and Edit contact dialogs.
+  Contact-name validation and its length limit are owned by `@domain/entity-contact`.
 - Address-entry primitives: validation types, entry-state transitions, presentation resolution,
   and input helpers shared by Add address and Edit address. Flow-specific UI decisions remain in
   their respective leaf flows.

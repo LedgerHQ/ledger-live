@@ -5,8 +5,8 @@ import {
   ContactsDeleteContactDialog,
   ContactsEditSignerDialog,
   ContactsEditSignerMismatchDialog,
-  ContactsRenameContactDrawer,
 } from "@features/flow-contacts";
+import { ContactsRenameContactDrawer } from "@features/flow-contacts-edit-contact";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { shouldUseKeyboardAvoidance, useKeyboardVisible } from "~/logic/keyboardVisible";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";

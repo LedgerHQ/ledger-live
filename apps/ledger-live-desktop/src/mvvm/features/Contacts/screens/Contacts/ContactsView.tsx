@@ -7,12 +7,12 @@ import {
   ContactsEditSignerMismatchDialog,
   ContactsView as ContactsFlowView,
   ContactsRenameAddressDialog,
-  ContactsRenameContactDialog,
   type ContactAddressDetailDialogProps,
   type AddContactAppAdapterResult,
   type ContactsViewProps as ContactsFlowViewProps,
 } from "@features/flow-contacts";
 import { ContactsAddContactDialog } from "./components/ContactsAddContactDialog";
+import { ContactsRenameContactDialog } from "@features/flow-contacts-edit-contact";
 import {
   ContactsAddAddressFlowDialog,
   type ContactsAddAddressFlowDialogProps,

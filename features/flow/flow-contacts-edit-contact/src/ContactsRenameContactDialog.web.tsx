@@ -1,9 +1,6 @@
 import React from "react";
 import { Button, Dialog, DialogBody, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
-import {
-  ContactNameInput,
-  ContactsAddContactNamingDisclaimer,
-} from "@features/flow-contacts-add-contact";
+import { ContactNameDisclaimer, ContactNameInput } from "@features/platform-contacts";
 import type { ContactsRenameContactDialogProps } from "./types";
 
 const NAMING_DISCLAIMER_ID = "contacts-rename-contact-naming-disclaimer";
@@ -45,7 +42,7 @@ export function ContactsRenameContactDialog({
               errorMessage={nameValidationError}
               onChange={onDraftNameChange}
             />
-            <ContactsAddContactNamingDisclaimer
+            <ContactNameDisclaimer
               disclaimerId={NAMING_DISCLAIMER_ID}
               text={labels.namingDisclaimer}
             />
