@@ -1,4 +1,5 @@
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
+import { requireStakePositionId } from "@ledgerhq/live-common/families/solana/logic";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
@@ -94,8 +95,8 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
       model: {
         kind: "stake.delegate",
         uiState: {
-          stakeAccAddr: stakeWithMeta.stake.positionId ?? "",
-          voteAccAddr: stakeWithMeta.stake.validatorAddress ?? "",
+          stakeAccAddr: requireStakePositionId(stakeWithMeta.stake),
+          voteAccAddr: stakeWithMeta.stake.validatorAddress,
         },
       },
     });

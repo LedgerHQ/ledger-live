@@ -16,71 +16,97 @@ import type {
   StakingUnbondingRaw,
 } from "@ledgerhq/types-live";
 
-function toOptionalAmountRaw(value: BigNumber | undefined): string | undefined {
+/**
+ * This package compiles with `exactOptionalPropertyTypes`, so an absent optional field has to be
+ * left out of the object entirely rather than set to `undefined`. Key absence is also part of the
+ * contract downstream: coin-solana discriminates its position union on `"pendingRewards" in
+ * position`.
+ */
+function definedOnly<T extends object>(
+  fields: T,
+): Partial<{ [K in keyof T]-?: Exclude<T[K], undefined> }> {
+  const defined: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(fields)) {
+    if (value !== undefined) {
+      defined[key] = value;
+    }
+  }
+  return defined as Partial<{ [K in keyof T]-?: Exclude<T[K], undefined> }>;
+}
+
+function toAmountRaw(value: BigNumber | undefined): string | undefined {
   return BigNumber.isBigNumber(value) ? value.toString() : undefined;
 }
 
-function toOptionalAmount(value: string | undefined): BigNumber | undefined {
+function fromAmountRaw(value: string | undefined): BigNumber | undefined {
   return typeof value === "string" ? new BigNumber(value) : undefined;
 }
 
+function asString(value: string | undefined): string | undefined {
+  return typeof value === "string" ? value : undefined;
+}
+
+function asBoolean(value: boolean | undefined): boolean | undefined {
+  return typeof value === "boolean" ? value : undefined;
+}
+
+function asNumber(value: string | undefined): number | undefined {
+  if (typeof value !== "string" || value.trim() === "") return undefined;
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : undefined;
+}
+
 function toPositionDetailsRaw(p: StakingPositionDetails): StakingPositionDetailsRaw {
-  const activeAmount = toOptionalAmountRaw(p.activeAmount);
-  const inactiveAmount = toOptionalAmountRaw(p.inactiveAmount);
-  const withdrawableAmount = toOptionalAmountRaw(p.withdrawableAmount);
-  const lockedReserve = toOptionalAmountRaw(p.lockedReserve);
-  return {
-    ...(p.positionId !== undefined ? { positionId: p.positionId } : {}),
-    ...(activeAmount !== undefined ? { activeAmount } : {}),
-    ...(inactiveAmount !== undefined ? { inactiveAmount } : {}),
-    ...(withdrawableAmount !== undefined ? { withdrawableAmount } : {}),
-    ...(p.canStake !== undefined ? { canStake: p.canStake } : {}),
-    ...(p.canWithdraw !== undefined ? { canWithdraw: p.canWithdraw } : {}),
-    ...(lockedReserve !== undefined ? { lockedReserve } : {}),
-  };
+  return definedOnly({
+    positionId: p.positionId,
+    activeAmount: toAmountRaw(p.activeAmount),
+    inactiveAmount: toAmountRaw(p.inactiveAmount),
+    withdrawableAmount: toAmountRaw(p.withdrawableAmount),
+    canStake: p.canStake,
+    canWithdraw: p.canWithdraw,
+    lockedReserve: toAmountRaw(p.lockedReserve),
+  });
 }
 
 function fromPositionDetailsRaw(p: StakingPositionDetailsRaw): StakingPositionDetails {
-  const activeAmount = toOptionalAmount(p.activeAmount);
-  const inactiveAmount = toOptionalAmount(p.inactiveAmount);
-  const withdrawableAmount = toOptionalAmount(p.withdrawableAmount);
-  const lockedReserve = toOptionalAmount(p.lockedReserve);
-  return {
-    ...(typeof p.positionId === "string" ? { positionId: p.positionId } : {}),
-    ...(activeAmount !== undefined ? { activeAmount } : {}),
-    ...(inactiveAmount !== undefined ? { inactiveAmount } : {}),
-    ...(withdrawableAmount !== undefined ? { withdrawableAmount } : {}),
-    ...(typeof p.canStake === "boolean" ? { canStake: p.canStake } : {}),
-    ...(typeof p.canWithdraw === "boolean" ? { canWithdraw: p.canWithdraw } : {}),
-    ...(lockedReserve !== undefined ? { lockedReserve } : {}),
-  };
+  return definedOnly({
+    positionId: asString(p.positionId),
+    activeAmount: fromAmountRaw(p.activeAmount),
+    inactiveAmount: fromAmountRaw(p.inactiveAmount),
+    withdrawableAmount: fromAmountRaw(p.withdrawableAmount),
+    canStake: asBoolean(p.canStake),
+    canWithdraw: asBoolean(p.canWithdraw),
+    lockedReserve: fromAmountRaw(p.lockedReserve),
+  });
 }
 
 function toStakingDelegationRaw(d: StakingDelegation): StakingDelegationRaw {
-  const shares = BigNumber.isBigNumber(d.shares) ? d.shares.toString() : undefined;
   return {
     ...toPositionDetailsRaw(d),
+    ...definedOnly({
+      validatorId: d.validatorId,
+      validatorName: d.validatorName,
+      shares: toAmountRaw(d.shares),
+    }),
     validatorAddress: d.validatorAddress,
-    ...(d.validatorId !== undefined ? { validatorId: d.validatorId } : {}),
-    ...(d.validatorName !== undefined ? { validatorName: d.validatorName } : {}),
     amount: d.amount.toString(),
     pendingRewards: d.pendingRewards.toString(),
     status: d.status,
-    ...(shares !== undefined ? { shares } : {}),
   };
 }
 
 function fromStakingDelegationRaw(d: StakingDelegationRaw): StakingDelegation {
-  const shares = typeof d.shares === "string" ? new BigNumber(d.shares) : undefined;
   return {
     ...fromPositionDetailsRaw(d),
+    ...definedOnly({
+      validatorId: asString(d.validatorId),
+      validatorName: asString(d.validatorName),
+      shares: fromAmountRaw(d.shares),
+    }),
     validatorAddress: d.validatorAddress,
-    ...(typeof d.validatorId === "string" ? { validatorId: d.validatorId } : {}),
-    ...(typeof d.validatorName === "string" ? { validatorName: d.validatorName } : {}),
     amount: new BigNumber(d.amount),
     pendingRewards: new BigNumber(d.pendingRewards),
     status: d.status,
-    ...(shares !== undefined ? { shares } : {}),
   };
 }
 
@@ -105,31 +131,39 @@ function fromStakingRedelegationRaw(r: StakingRedelegationRaw): StakingRedelegat
 function toStakingUnbondingRaw(u: StakingUnbonding): StakingUnbondingRaw {
   return {
     ...toPositionDetailsRaw(u),
+    ...definedOnly({
+      validatorId: u.validatorId,
+      validatorName: u.validatorName,
+      withdrawId: u.withdrawId?.toString(),
+      status: u.status,
+    }),
     validatorAddress: u.validatorAddress,
-    ...(u.validatorId !== undefined ? { validatorId: u.validatorId } : {}),
-    ...(u.validatorName !== undefined ? { validatorName: u.validatorName } : {}),
     amount: u.amount.toString(),
     completionDate: u.completionDate.toISOString(),
-    ...(u.withdrawId !== undefined ? { withdrawId: u.withdrawId.toString() } : {}),
-    ...(u.status !== undefined ? { status: u.status } : {}),
   };
 }
 
 function fromStakingUnbondingRaw(u: StakingUnbondingRaw): StakingUnbonding {
   return {
     ...fromPositionDetailsRaw(u),
+    ...definedOnly({
+      validatorId: asString(u.validatorId),
+      validatorName: asString(u.validatorName),
+      withdrawId: asNumber(u.withdrawId),
+      status: u.status,
+    }),
     validatorAddress: u.validatorAddress,
-    ...(typeof u.validatorId === "string" ? { validatorId: u.validatorId } : {}),
-    ...(typeof u.validatorName === "string" ? { validatorName: u.validatorName } : {}),
     amount: new BigNumber(u.amount),
     completionDate: new Date(u.completionDate),
-    ...(u.withdrawId !== undefined ? { withdrawId: Number(u.withdrawId) } : {}),
-    ...(u.status !== undefined ? { status: u.status } : {}),
   };
 }
 
 export function toStakingResourcesRaw(r: StakingResources): StakingResourcesRaw {
-  const raw: StakingResourcesRaw = {
+  return {
+    ...definedOnly({
+      validators: r.validators,
+      actionFeeReserve: toAmountRaw(r.actionFeeReserve),
+    }),
     delegations: r.delegations.map(toStakingDelegationRaw),
     redelegations: r.redelegations.map(toStakingRedelegationRaw),
     unbondings: r.unbondings.map(toStakingUnbondingRaw),
@@ -137,21 +171,14 @@ export function toStakingResourcesRaw(r: StakingResources): StakingResourcesRaw 
     pendingRewardsBalance: r.pendingRewardsBalance.toString(),
     unbondingBalance: r.unbondingBalance.toString(),
   };
-
-  if (r.validators !== undefined) {
-    raw.validators = r.validators;
-  }
-
-  const actionFeeReserve = toOptionalAmountRaw(r.actionFeeReserve);
-  if (actionFeeReserve !== undefined) {
-    raw.actionFeeReserve = actionFeeReserve;
-  }
-
-  return raw;
 }
 
 export function fromStakingResourcesRaw(r: StakingResourcesRaw): StakingResources {
-  const resources: StakingResources = {
+  return {
+    ...definedOnly({
+      validators: r.validators,
+      actionFeeReserve: fromAmountRaw(r.actionFeeReserve),
+    }),
     delegations: (r.delegations ?? []).map(fromStakingDelegationRaw),
     redelegations: (r.redelegations ?? []).map(fromStakingRedelegationRaw),
     unbondings: (r.unbondings ?? []).map(fromStakingUnbondingRaw),
@@ -159,17 +186,6 @@ export function fromStakingResourcesRaw(r: StakingResourcesRaw): StakingResource
     pendingRewardsBalance: new BigNumber(r.pendingRewardsBalance ?? "0"),
     unbondingBalance: new BigNumber(r.unbondingBalance ?? "0"),
   };
-
-  if (r.validators !== undefined) {
-    resources.validators = r.validators;
-  }
-
-  const actionFeeReserve = toOptionalAmount(r.actionFeeReserve);
-  if (actionFeeReserve !== undefined) {
-    resources.actionFeeReserve = actionFeeReserve;
-  }
-
-  return resources;
 }
 
 export function assignStakingResourcesToAccountRaw(account: Account, accountRaw: AccountRaw): void {

@@ -26,6 +26,18 @@ export function listSolanaStakingPositions(
   return [...resources.delegations, ...resources.unbondings];
 }
 
+/**
+ * `positionId` is optional on the generic staking types, but on Solana it always carries the stake
+ * account address. Fail loudly rather than letting a transaction be built against an empty address.
+ */
+export function requireStakePositionId(position: SolanaStakingPosition): string {
+  const { positionId } = position;
+  if (!positionId) {
+    throw new Error("solana: staking position is missing its stake account address");
+  }
+  return positionId;
+}
+
 export function findSolanaStakingPosition(
   account: SolanaAccount,
   positionId: string,

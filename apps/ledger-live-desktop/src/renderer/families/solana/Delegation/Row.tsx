@@ -109,7 +109,7 @@ export function Row({ account, stakeWithMeta, onManageAction, onExternalLink }: 
     [onManageAction, stakeWithMeta],
   );
 
-  const validatorName = meta.validator?.name ?? stake.validatorAddress ?? "-";
+  const validatorName = meta.validator?.name || stake.validatorAddress || "-";
   const onExternalLinkClick = () => onExternalLink(stakeWithMeta);
   const formatAmount = (amount: BigNumber | number) => {
     return formatCurrencyUnit(
@@ -129,7 +129,7 @@ export function Row({ account, stakeWithMeta, onManageAction, onExternalLink }: 
           {meta.validator?.img !== undefined && (
             <Image resource={meta.validator.img} height={32} width={32} alt="" />
           )}
-          {meta.validator?.img === undefined && <FirstLetterIcon label={validatorName ?? "-"} />}
+          {meta.validator?.img === undefined && <FirstLetterIcon label={validatorName} />}
         </Box>
         <Ellipsis>{validatorName}</Ellipsis>
       </Column>

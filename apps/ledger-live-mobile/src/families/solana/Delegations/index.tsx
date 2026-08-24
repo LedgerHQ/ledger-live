@@ -145,7 +145,7 @@ function Delegations({ account }: Props) {
               style={[styles.valueText]}
               color="live"
             >
-              {meta.validator?.name ?? stake.validatorAddress ?? "N/A"}
+              {meta.validator?.name || stake.validatorAddress || "N/A"}
             </Text>
           </Touchable>
         ),
@@ -330,7 +330,7 @@ function Delegations({ account }: Props) {
           <Box mt={6}>
             {stakesWithMeta.map((stakeWithMeta, i) => (
               <View
-                key={stakeWithMeta.stake.positionId ?? i}
+                key={stakeWithMeta.stake.positionId || i}
                 style={[styles.delegationsWrapper, { backgroundColor: colors.card }]}
               >
                 <DelegationRow

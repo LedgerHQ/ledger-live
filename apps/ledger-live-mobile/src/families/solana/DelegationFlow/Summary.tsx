@@ -1,4 +1,5 @@
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { requireStakePositionId } from "@ledgerhq/live-common/families/solana/logic";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { formatCurrencyUnit, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
@@ -261,18 +262,16 @@ function tx({
   };
 }
 
-function txAmount(delegationAction: DelegationAction & { kind: "change" }) {
+function txAmount(delegationAction: DelegationAction & { kind: "change" }): BigNumber {
   const { stake } = delegationAction.stakeWithMeta;
   switch (delegationAction.stakeAction) {
     case "activate":
-      return (stake.withdrawableAmount ?? new BigNumber(0))
-        .minus(stake.lockedReserve ?? 0)
-        .toNumber();
+      return (stake.withdrawableAmount ?? new BigNumber(0)).minus(stake.lockedReserve ?? 0);
     case "deactivate":
     case "reactivate":
-      return stake.amount.toNumber();
+      return stake.amount;
     case "withdraw":
-      return stake.withdrawableAmount?.toNumber() ?? 0;
+      return stake.withdrawableAmount ?? new BigNumber(0);
     default:
       return assertUnreachable(delegationAction.stakeAction);
   }
@@ -382,7 +381,7 @@ function txModelByDelegationAction(
 
   invariant(stake.validatorAddress, "stake delegation must be defined");
 
-  const stakeAccAddr = stake.positionId ?? "";
+  const stakeAccAddr = requireStakePositionId(stake);
 
   switch (stakeAction) {
     case "activate":
@@ -391,7 +390,7 @@ function txModelByDelegationAction(
         kind: "stake.delegate",
         uiState: {
           stakeAccAddr,
-          voteAccAddr: chosenValidator?.voteAccount ?? stake.validatorAddress ?? "-",
+          voteAccAddr: chosenValidator?.voteAccount ?? stake.validatorAddress,
         },
       };
     case "deactivate":

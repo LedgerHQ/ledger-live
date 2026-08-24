@@ -819,7 +819,7 @@ async function deriveStakeWithdrawCommandDescriptor(
 
   const stake = validateAndTryGetStakeAccount(mainAccount, uiState.stakeAccAddr, errors);
 
-  let withdrawable = stake?.withdrawableAmount?.toNumber() ?? 0;
+  let withdrawable = 0;
 
   if (!errors.stakeAccAddr && stake !== undefined) {
     if (stake.canWithdraw === false) {

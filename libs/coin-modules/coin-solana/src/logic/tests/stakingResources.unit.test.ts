@@ -5,12 +5,13 @@ import {
   emptyStakingResources,
   findSolanaStakingPosition,
   listSolanaStakingPositions,
+  requireStakePositionId,
   solanaActivationState,
   solanaStakesToStakingResources,
   stakeActions,
   stakeActivePercent,
 } from "../stakingResources";
-import type { SolanaAccount, SolanaStake } from "../../types";
+import type { SolanaAccount, SolanaStake, SolanaStakingPosition } from "../../types";
 
 const activeStake: SolanaStake = {
   stakeAccAddr: "stake-active",
@@ -255,5 +256,21 @@ describe("activationFromPosition", () => {
       active: 0,
       inactive: 0,
     });
+  });
+});
+
+describe("requireStakePositionId", () => {
+  it("returns the stake account address of the position", () => {
+    expect(
+      requireStakePositionId({
+        positionId: "stake-acc-1",
+      } as SolanaStakingPosition),
+    ).toBe("stake-acc-1");
+  });
+
+  it.each([undefined, ""])("throws rather than yielding %p as an address", positionId => {
+    expect(() => requireStakePositionId({ positionId } as SolanaStakingPosition)).toThrow(
+      "solana: staking position is missing its stake account address",
+    );
   });
 });

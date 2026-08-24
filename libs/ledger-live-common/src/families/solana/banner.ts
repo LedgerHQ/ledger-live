@@ -44,14 +44,16 @@ export function getAccountBannerState(
     const validatorAdress = delegation.validatorAddress;
     const validator = validators.find(validator => validator.voteAccount === validatorAdress);
     const actions = stakeActions(delegation);
+    const positionId = delegation.positionId;
     const isValidRedelegation =
+      positionId &&
       validator &&
       validatorAdress &&
       !LEDGER_VALIDATORS_VOTE_ACCOUNTS.includes(validatorAdress) &&
       worstValidator.commission <= validator.commission &&
       actions.includes("deactivate");
     if (isValidRedelegation) {
-      stakeAccAddr = delegation.positionId ?? "";
+      stakeAccAddr = positionId;
       worstValidator = validator;
     }
   }

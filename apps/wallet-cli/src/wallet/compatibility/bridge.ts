@@ -183,18 +183,26 @@ export class BridgeAdapter {
    */
   async getSolanaStakes(descriptor: AccountDescriptor): Promise<EarnSolanaStake[]> {
     const account = (await this.sync(descriptor)) as SolanaAccount;
-    return listSolanaStakingPositions(account.stakingResources).map(stake => ({
-      stakeAccount: stake.positionId ?? "",
-      validator: stake.validatorAddress || undefined,
-      state: solanaActivationState(stake),
-      stakeBalance: BigNumberStrSchema.parse(
-        (stake.activeAmount ?? new BigNumber(0))
-          .plus(stake.inactiveAmount ?? 0)
-          .plus(stake.lockedReserve ?? 0)
-          .toFixed(),
-      ),
-      withdrawable: BigNumberStrSchema.parse(stake.withdrawableAmount?.toFixed() ?? "0"),
-    }));
+    return listSolanaStakingPositions(account.stakingResources).flatMap(stake => {
+      const stakeAccount = stake.positionId;
+      // Without a stake account address there is nothing `earn withdraw --stake-account` could
+      // target, so drop the position instead of emitting an unusable empty address.
+      if (!stakeAccount) return [];
+      return [
+        {
+          stakeAccount,
+          validator: stake.validatorAddress || undefined,
+          state: solanaActivationState(stake),
+          stakeBalance: BigNumberStrSchema.parse(
+            (stake.activeAmount ?? new BigNumber(0))
+              .plus(stake.inactiveAmount ?? 0)
+              .plus(stake.lockedReserve ?? 0)
+              .toFixed(),
+          ),
+          withdrawable: BigNumberStrSchema.parse(stake.withdrawableAmount?.toFixed() ?? "0"),
+        },
+      ];
+    });
   }
 
   async verifyAddress(descriptor: AccountDescriptor, deviceId: string): Promise<string> {

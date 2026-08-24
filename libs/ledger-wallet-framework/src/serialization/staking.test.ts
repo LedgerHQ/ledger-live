@@ -173,6 +173,46 @@ describe("staking resources serialization", () => {
     });
   });
 
+  it.each(["not-a-number", "", "   "])(
+    "omits a malformed persisted withdrawId (%p) instead of reviving it as NaN",
+    withdrawId => {
+      const revived = fromStakingResourcesRaw({
+        delegations: [],
+        redelegations: [],
+        unbondings: [
+          {
+            validatorAddress: "validator-1",
+            amount: "10",
+            completionDate: "2026-02-03T04:05:06.000Z",
+            withdrawId,
+          },
+        ],
+        delegatedBalance: "0",
+        pendingRewardsBalance: "0",
+        unbondingBalance: "10",
+      });
+
+      expect(revived.unbondings[0]).not.toHaveProperty("withdrawId");
+    },
+  );
+
+  it("revives a well-formed persisted withdrawId, including 0", () => {
+    const raw = toStakingResourcesRaw({
+      ...minimalResources,
+      unbondings: [
+        {
+          validatorAddress: "validator-1",
+          amount: new BigNumber(10),
+          completionDate: new Date("2026-02-03T04:05:06.000Z"),
+          withdrawId: 0,
+        },
+      ],
+    });
+
+    expect(raw.unbondings[0].withdrawId).toBe("0");
+    expect(fromStakingResourcesRaw(raw).unbondings[0].withdrawId).toBe(0);
+  });
+
   it("assigns resources in both directions on an account", () => {
     const account = { stakingResources: fullResources } as unknown as Account;
     const accountRaw = {} as AccountRaw;

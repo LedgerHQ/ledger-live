@@ -251,6 +251,39 @@ describe("BridgeAdapter.getSolanaStakes", () => {
     ]);
   });
 
+  it("drops a position with no stake account address rather than emitting an empty target", async () => {
+    const adapter = adapterWithSyncedAccount({
+      stakingResources: {
+        delegations: [
+          {
+            validatorAddress: "voteAcc1",
+            amount: new BigNumber(2_000_000),
+            pendingRewards: new BigNumber(0),
+            status: "bonded",
+            activeAmount: new BigNumber(2_000_000),
+          },
+          {
+            positionId: "stakeAcc1",
+            validatorAddress: "voteAcc1",
+            amount: new BigNumber(1_000_000),
+            pendingRewards: new BigNumber(0),
+            status: "bonded",
+            activeAmount: new BigNumber(1_000_000),
+          },
+        ],
+        unbondings: [],
+        redelegations: [],
+        delegatedBalance: new BigNumber(3_000_000),
+        pendingRewardsBalance: new BigNumber(0),
+        unbondingBalance: new BigNumber(0),
+      },
+    });
+
+    const stakes = await adapter.getSolanaStakes(descriptor);
+
+    expect(stakes.map(s => s.stakeAccount)).toEqual(["stakeAcc1"]);
+  });
+
   it("leaves validator undefined for a stake with no delegation", async () => {
     const adapter = adapterWithSyncedAccount({
       stakingResources: {

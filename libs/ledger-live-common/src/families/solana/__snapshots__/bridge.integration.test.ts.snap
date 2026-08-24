@@ -14,6 +14,7 @@ exports[`solana currency bridge scanAccounts solana seed 1 1`] = `
     "operationsCount": 3,
     "pendingOperations": [],
     "seedIdentifier": "AQbkEagmPgmsdAfS4X8V8UyJnXXjVPMvjeD15etqQ3Jh",
+    "spendableBalance": "82498960",
     "stakingResources": {
       "actionFeeReserve": "0",
       "delegatedBalance": "0",
@@ -23,7 +24,6 @@ exports[`solana currency bridge scanAccounts solana seed 1 1`] = `
       "unbondingBalance": "0",
       "unbondings": [],
     },
-    "spendableBalance": "82498960",
     "subAccounts": [],
     "swapHistory": [],
     "syncHash": undefined,
@@ -53,6 +53,7 @@ exports[`solana currency bridge scanAccounts solana seed 1 1`] = `
     "operationsCount": 0,
     "pendingOperations": [],
     "seedIdentifier": "AQbkEagmPgmsdAfS4X8V8UyJnXXjVPMvjeD15etqQ3Jh",
+    "spendableBalance": "0",
     "stakingResources": {
       "actionFeeReserve": "0",
       "delegatedBalance": "0",
@@ -62,7 +63,6 @@ exports[`solana currency bridge scanAccounts solana seed 1 1`] = `
       "unbondingBalance": "0",
       "unbondings": [],
     },
-    "spendableBalance": "0",
     "subAccounts": [],
     "swapHistory": [],
     "syncHash": undefined,

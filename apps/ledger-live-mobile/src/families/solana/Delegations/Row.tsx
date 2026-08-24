@@ -50,7 +50,7 @@ export default function DelegationRow({
         <ValidatorImage
           size={32}
           imgUrl={meta.validator?.img}
-          name={meta.validator?.name ?? stake.validatorAddress}
+          name={meta.validator?.name || stake.validatorAddress}
         />
       </View>
 
@@ -62,7 +62,7 @@ export default function DelegationRow({
             ellipsizeMode="middle"
             style={{ marginRight: 5 }}
           >
-            {meta.validator?.name ?? stake.validatorAddress ?? "-"}
+            {meta.validator?.name || stake.validatorAddress || "-"}
           </Text>
 
           {sweetch(solanaActivationState(stake), {

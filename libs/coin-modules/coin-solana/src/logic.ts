@@ -11,6 +11,7 @@ export {
   emptyStakingResources,
   findSolanaStakingPosition,
   listSolanaStakingPositions,
+  requireStakePositionId,
   solanaActivationState,
   solanaStakesToStakingResources,
   stakeActions,

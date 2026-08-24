@@ -105,7 +105,7 @@ const Delegation = ({ account }: { account: SolanaAccount }) => {
           {stakesWithMeta.map((stakeWithMeta, i) => (
             <Row
               stakeWithMeta={stakeWithMeta}
-              key={stakeWithMeta.stake.positionId ?? i}
+              key={stakeWithMeta.stake.positionId || i}
               account={account}
               onManageAction={onRedirect}
               onExternalLink={onExternalLink}
