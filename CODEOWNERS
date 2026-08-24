@@ -7,13 +7,13 @@
 # owner(s) will be requested for a review.
 
 # CI team
-.github                                                 @ledgerhq/wallet-ci
-.github/workflows/generate-e2e-userdata.yml             @ledgerhq/wallet-ci  @ledgerhq/qaa
-.github/workflows/test-ui-e2e-only-desktop.yml          @ledgerhq/wallet-ci  @ledgerhq/qaa
-.github/workflows/test-mobile-e2e-reusable.yml          @ledgerhq/wallet-ci  @ledgerhq/qaa
-.github/workflows/test-design-system-reusable.yml       @ledgerhq/wallet-ci  @ledgerhq/wallet-xp
-tools                                                   @ledgerhq/wallet-ci
-apps/ledger-live-mobile/fastlane/Fastfile               @ledgerhq/wallet-ci
+.github                                                 @ledgerhq/platform
+.github/workflows/generate-e2e-userdata.yml             @ledgerhq/platform  @ledgerhq/qaa
+.github/workflows/test-ui-e2e-only-desktop.yml          @ledgerhq/platform  @ledgerhq/qaa
+.github/workflows/test-mobile-e2e-reusable.yml          @ledgerhq/platform  @ledgerhq/qaa
+.github/workflows/test-design-system-reusable.yml       @ledgerhq/platform  @ledgerhq/wallet-xp
+tools                                                   @ledgerhq/platform
+apps/ledger-live-mobile/fastlane/Fastfile               @ledgerhq/platform
 
 # Platform & Wallet XP teams catchall
 CODEOWNERS                                               @ledgerhq/platform
@@ -79,7 +79,7 @@ tools/nx-plugins/generators/                             @ledgerhq/platform
 
 # Platform — support
 support/jest-devtools/                                   @ledgerhq/platform
-support/jest-features-flow/                          @ledgerhq/platform
+support/jest-features-flow/                              @ledgerhq/platform
 
 # Wallet — libs
 libs/live-countervalues-react/                           @ledgerhq/wallet-xp
@@ -92,7 +92,7 @@ libs/asset-detail/                                       @ledgerhq/wallet-xp
 libs/wallet-pnl/                                         @ledgerhq/wallet-xp
 libs/wallet-analytics/                                   @ledgerhq/wallet-xp
 libs/live-wallet/                                        @ledgerhq/wallet-xp
-libs/live-wallet/src/walletsync/                          @ledgerhq/platform
+libs/live-wallet/src/walletsync/                         @ledgerhq/platform
 libs/ledger-live-common/src/featureFlags/walletFeaturesConfig/ @ledgerhq/wallet-xp
 libs/ledger-live-common/src/modularDrawer/               @ledgerhq/wallet-xp
 libs/ledger-live-common/src/cg-client/                   @ledgerhq/wallet-xp
@@ -155,8 +155,8 @@ apps/ledger-live-desktop/src/renderer/screens/settings/sections/Developer/Wallet
 .github/workflows/import-cal-tokens.yml                             @ledgerhq/coin-integration
 .github/workflows/test-coin-tester.yml                              @ledgerhq/coin-integration
 .github/workflows/test-coin-modules-integ.yml                       @ledgerhq/coin-integration
-.github/workflows/test-bridge-pr.yml                                @ledgerhq/coin-integration @ledgerhq/wallet-ci
-.github/workflows/notify-e2e-required-reusable.yml                  @ledgerhq/coin-integration @ledgerhq/wallet-ci
+.github/workflows/test-bridge-pr.yml                                @ledgerhq/coin-integration @ledgerhq/platform
+.github/workflows/notify-e2e-required-reusable.yml                  @ledgerhq/coin-integration @ledgerhq/platform
 .github/workflow-templates/bot-coin**                               @ledgerhq/coin-integration
 apps/**/families/                                                   @ledgerhq/coin-integration
 apps/ledger-live-mobile/src/components/DelegationDrawer.tsx         @ledgerhq/coin-integration
@@ -569,7 +569,6 @@ apps/ledger-live-mobile/e2e/                                                @led
 tools/actions/composites/merge-e2e-detox-timings/                           @ledgerhq/qaa
 
 # Team-split convention: ownership of team-* folders (order: last match wins)
-**/team-wallet-ci/                @ledgerhq/wallet-ci
 **/team-qaa/                      @ledgerhq/qaa
 **/team-wallet-xp/                @ledgerhq/wallet-xp
 **/team-platform/                 @ledgerhq/platform
@@ -591,9 +590,7 @@ tools/actions/composites/merge-e2e-detox-timings/                           @led
 **/jest.config*                                       @ledgerhq/platform
 **/knip.json                                          @ledgerhq/platform
 mise.toml                                             @ledgerhq/platform
-
-# CI — Nx
-/nx.json                                              @ledgerhq/platform @ledgerhq/wallet-ci
+/nx.json                                              @ledgerhq/platform
 
 # Platform — Agent files
 .agents/                           @ledgerhq/platform
