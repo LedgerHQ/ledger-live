@@ -1,5 +1,7 @@
 import { useCallback, useRef } from "react";
 
+type WebviewElement = HTMLElement & { getWebContentsId?: () => number };
+
 /**
  * Focus is only ours to hand back when nothing else has claimed it: either it
  * sits nowhere, or on the overlay that is closing.
@@ -14,19 +16,34 @@ function focusIsUnclaimed(closingOverlay: HTMLElement | null): boolean {
 }
 
 /**
- * An embedded live app cannot claim keyboard focus back on its own — only the
- * embedder can hand it over. Clicking inside a webview leaves the embedder's
- * active element on the body, so there is no origin element to restore and the
- * webview stays keyboard-dead after the dialog closes.
+ * An embedded live app cannot claim keyboard focus back on its own, and a click
+ * inside a guest leaves the embedder's active element on the body — so there is
+ * no origin element to restore and the webview stays keyboard-dead.
+ *
+ * The guest to hand focus to is the topmost one that outlives the closing
+ * dialog: a webview rendered inside that dialog dies with it, and focusing a
+ * guest whose webContents is already gone crashes (see LiveAppDrawer).
+ * `getWebContentsId` throws while the guest is detached, so it doubles as the
+ * liveness probe.
  */
-function lastConnectedWebview(): HTMLElement | null {
-  const webviews = document.querySelectorAll<HTMLElement>("webview");
+function topmostLiveWebview(closingOverlay: HTMLElement | null): HTMLElement | null {
+  const webviews = document.querySelectorAll<WebviewElement>("webview");
+
   for (let index = webviews.length - 1; index >= 0; index--) {
     const webview = webviews[index];
-    if (webview.isConnected) {
-      return webview;
+    if (!webview.isConnected || closingOverlay?.contains(webview)) {
+      continue;
     }
+
+    try {
+      webview.getWebContentsId?.();
+    } catch {
+      continue;
+    }
+
+    return webview;
   }
+
   return null;
 }
 
@@ -53,7 +70,7 @@ export function useRestoreFocusOnDialogClose() {
         return;
       }
 
-      const target = focusOrigin?.isConnected ? focusOrigin : lastConnectedWebview();
+      const target = focusOrigin?.isConnected ? focusOrigin : topmostLiveWebview(closingOverlay);
       target?.focus();
     });
   }, []);

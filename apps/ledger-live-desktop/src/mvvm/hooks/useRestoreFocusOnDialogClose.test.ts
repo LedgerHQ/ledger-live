@@ -153,6 +153,59 @@ describe("useRestoreFocusOnDialogClose", () => {
     expect(focusSpy).toHaveBeenCalledTimes(1);
   });
 
+  // A webview rendered inside the dialog dies with it, and focusing a guest whose
+  // webContents is gone crashes.
+  it("skips the webview that is closing along with the dialog", () => {
+    const closingOverlay = document.createElement("div");
+    const hostWebview = document.createElement("webview");
+    const dialogWebview = document.createElement("webview");
+    document.body.append(hostWebview, closingOverlay);
+    closingOverlay.appendChild(dialogWebview);
+    const hostFocusSpy = jest.spyOn(hostWebview, "focus");
+    const dialogFocusSpy = jest.spyOn(dialogWebview, "focus");
+
+    const { result } = renderHook(() => useRestoreFocusOnDialogClose());
+    act(() => result.current.onOpenAutoFocus());
+
+    act(() => {
+      result.current.onCloseAutoFocus({
+        preventDefault: jest.fn(),
+        currentTarget: closingOverlay,
+      } as unknown as Event);
+      nextFrame?.(0);
+    });
+
+    expect(dialogFocusSpy).not.toHaveBeenCalled();
+    expect(hostFocusSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it("skips a webview whose guest is already detached", () => {
+    const detachedGuest = document.createElement("webview");
+    const liveWebview = document.createElement("webview");
+    document.body.append(liveWebview, detachedGuest);
+    Object.assign(detachedGuest, {
+      getWebContentsId: () => {
+        throw new Error("The WebView must be attached to the DOM");
+      },
+    });
+    const detachedFocusSpy = jest.spyOn(detachedGuest, "focus");
+    const liveFocusSpy = jest.spyOn(liveWebview, "focus");
+
+    const { result } = renderHook(() => useRestoreFocusOnDialogClose());
+    act(() => result.current.onOpenAutoFocus());
+
+    act(() => {
+      result.current.onCloseAutoFocus({
+        preventDefault: jest.fn(),
+        currentTarget: null,
+      } as unknown as Event);
+      nextFrame?.(0);
+    });
+
+    expect(detachedFocusSpy).not.toHaveBeenCalled();
+    expect(liveFocusSpy).toHaveBeenCalledTimes(1);
+  });
+
   it("does not wake the webview while a newer overlay holds focus", () => {
     const webview = document.createElement("webview");
     const newerOverlayInput = document.createElement("input");
