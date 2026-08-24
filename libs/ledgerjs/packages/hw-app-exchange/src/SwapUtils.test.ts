@@ -58,13 +58,13 @@ describe("decodePayloadProtobuf function", () => {
 });
 
 describe("findSwapPayloadSpecViolation function", () => {
-  function encodeSwapPayload(fields: Record<string, unknown>): string {
+  function encodeSwapPayload(fields: ledger_swap.INewTransactionResponse): string {
     const TransactionResponse = ledger_swap.NewTransactionResponse;
     const message = TransactionResponse.create(fields);
     return Buffer.from(TransactionResponse.encode(message).finish()).toString("hex");
   }
 
-  const validFields = {
+  const validFields: ledger_swap.INewTransactionResponse = {
     payinAddress: "0x976c3954c5dbbf39a591510db32d2f8cc2252807",
     refundAddress: "0xccaEBcB3876a75ab9E96975058aA75463773029c",
     payoutAddress: "bc1qqdykdw8u36yhdsletwsyv4xe95s375qjjy4gk0",
