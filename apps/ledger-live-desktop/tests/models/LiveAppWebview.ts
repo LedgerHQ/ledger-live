@@ -1,10 +1,6 @@
 import { WebviewTag } from "~/renderer/components/Web3AppWebview/types";
 import { ElectronApplication, Locator, Page, expect } from "@playwright/test";
-import {
-  getLiveAppManifest,
-  startDummyServer,
-  stopDummyServer,
-} from "@ledgerhq/test-utils";
+import { getLiveAppManifest, startDummyServer, stopDummyServer } from "@ledgerhq/test-utils";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 
 export class LiveAppWebview {
@@ -27,15 +23,13 @@ export class LiveAppWebview {
     this.liveAppDevtools = page.getByTestId("live-app-devtools");
     this.liveAppClose = page.getByTestId("live-app-close");
     this.liveAppLoadingSpinner = page.getByTestId("live-app-loading-spinner");
-    this.selectAssetSearchBar = page.getByTestId(
-      "modular-asset-dialog-search-input"
-    );
+    this.selectAssetSearchBar = page.getByTestId("modular-asset-dialog-search-input");
   }
 
   static async startLiveApp(
     liveAppDirectory: string,
     liveAppManifest: Partial<AppManifest> & Pick<AppManifest, "id">,
-    options: { csp?: string } = {}
+    options: { csp?: string } = {},
   ) {
     try {
       const port = await startDummyServer(`${liveAppDirectory}`, 0, options);
@@ -44,12 +38,10 @@ export class LiveAppWebview {
       const response = await fetch(url);
       if (response.ok) {
         // eslint-disable-next-line no-console
-        console.info(
-          `========> Live app successfully running on port ${port}! <=========`
-        );
+        console.info(`========> Live app successfully running on port ${port}! <=========`);
 
         process.env.MOCK_REMOTE_LIVE_MANIFEST = JSON.stringify(
-          getLiveAppManifest({ ...liveAppManifest, url: url })
+          getLiveAppManifest({ ...liveAppManifest, url: url }),
         );
         return true;
       } else {
@@ -128,9 +120,9 @@ export class LiveAppWebview {
       .poll(
         async () => {
           const windows = this.electronApp.windows();
-          return Promise.all(windows.map((w) => w.title().catch(() => "")));
+          return Promise.all(windows.map(w => w.title().catch(() => "")));
         },
-        { timeout: this.defaultWebViewTimeout }
+        { timeout: this.defaultWebViewTimeout },
       )
       .not.toContain("DevTools");
 
@@ -146,7 +138,7 @@ export class LiveAppWebview {
       const src = await this.webview.getAttribute("src");
       const url = new URL(src ?? "");
       const { dappUrl }: { dappUrl: string | null } = JSON.parse(
-        url.searchParams.get("params") ?? ""
+        url.searchParams.get("params") ?? "",
       );
       return dappUrl;
     } catch {
@@ -331,7 +323,7 @@ export class LiveAppWebview {
       })()
     `;
 
-    return this.page.evaluate((functionToExecute) => {
+    return this.page.evaluate(functionToExecute => {
       // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       const webview = document.querySelector("webview") as WebviewTag;
       return webview.executeJavaScript(functionToExecute);
