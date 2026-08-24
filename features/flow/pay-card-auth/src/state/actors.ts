@@ -82,11 +82,7 @@ export const validateCallback = fromPromise(
 );
 
 export const exchangeAuthorizationCode = fromPromise(
-  async ({
-    input,
-  }: {
-    input: { ports: CardLoginPorts; callback: PayCardAuthCallback | null; redirectUri: string };
-  }) => {
+  async ({ input }: { input: { ports: CardLoginPorts; callback: PayCardAuthCallback | null } }) => {
     const attempt = await input.ports.loadAttempt();
     if (!attempt || !input.callback) {
       throw new MissingLoginStateError("attempt");
@@ -94,7 +90,6 @@ export const exchangeAuthorizationCode = fromPromise(
 
     return input.ports.exchangeAuthorizationCode({
       code: input.callback.code,
-      redirectUri: input.redirectUri,
       codeVerifier: attempt.codeVerifier,
     });
   },

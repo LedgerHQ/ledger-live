@@ -3,10 +3,10 @@ import type { CardLoginOauthConfig } from "./types";
 const AUTHORIZE_PATH = "/v1/auth/oauth2/authorize";
 
 /**
- * What the session must cover: who the user is, and a refresh token so the session outlives the
- * access token. `platform:full` is the Card platform scope.
+ * Who the user is, and `offline_access` so the token grant includes a refresh token. A live exchange
+ * without it came back with no `refresh_token` at all.
  */
-const SCOPE = "openid profile email platform:full offline_access";
+const SCOPE = "openid profile email offline_access";
 
 /**
  * Builds the authorize URL the secure browser opens.

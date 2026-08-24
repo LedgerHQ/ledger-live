@@ -41,7 +41,7 @@ export type CardLoginOauthConfig = Readonly<{
   apiUrl: string;
   clientId: string;
   /**
-   * Sent to the provider on authorize, and repeated on the token exchange. The provider whitelists
+   * Sent to the provider on authorize. The token exchange does not repeat it. The provider whitelists
    * an `https` URL only, so this one cannot be the app's own link. It redirects to `deepLink`.
    */
   redirectUri: string;

@@ -11,7 +11,6 @@ describe("PayCardSessionResponseSchema", () => {
       access_token: "at_token",
       expires_in: 21600,
       refresh_token: "rt_token",
-      refresh_token_expires_in: 15897600,
     };
 
     expect(PayCardSessionResponseSchema.parse(response)).toEqual(response);
@@ -23,7 +22,6 @@ describe("PayCardSessionResponseSchema", () => {
         access_token: "at_token",
         expires_in: 0,
         refresh_token: "rt_token",
-        refresh_token_expires_in: 15897600,
       }),
     ).toThrow();
   });

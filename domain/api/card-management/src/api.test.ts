@@ -17,14 +17,12 @@ const sessionResponse = {
   access_token: "at_token",
   expires_in: 21600,
   refresh_token: "rt_token",
-  refresh_token_expires_in: 15897600,
 };
 
 const session = {
   accessToken: "at_token",
   expiresIn: 21600,
   refreshToken: "rt_token",
-  refreshTokenExpiresIn: 15897600,
 };
 
 // Wired the way the apps wire it: the store registers the service api, never this package.
@@ -91,7 +89,6 @@ describe("cardManagementApi requests", () => {
       const result = await store.dispatch(
         cardManagementApi.endpoints.exchangeAuthorizationCode.initiate({
           code: "auth-code",
-          redirectUri: "ledgerlive://paytab",
           codeVerifier: "verifier",
         }),
       );
@@ -101,7 +98,6 @@ describe("cardManagementApi requests", () => {
       expect(JSON.parse(await request(fetchSpy).clone().text())).toEqual({
         grant_type: "authorization_code",
         code: "auth-code",
-        redirect_uri: "ledgerlive://paytab",
         code_verifier: "verifier",
       });
       expect(result.data).toEqual(session);
@@ -121,7 +117,6 @@ describe("cardManagementApi requests", () => {
       const result = await store.dispatch(
         cardManagementApi.endpoints.exchangeAuthorizationCode.initiate({
           code: "auth-code",
-          redirectUri: "ledgerlive://paytab",
           codeVerifier: "verifier",
         }),
       );

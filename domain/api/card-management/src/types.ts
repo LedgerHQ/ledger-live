@@ -20,8 +20,6 @@ export type PayCardOrderResult = z.infer<typeof PayCardOrderResponseSchema>;
 
 export type PayCardAuthorizationCodeRequest = {
   readonly code: string;
-  /** Must match the `redirect_uri` sent on the authorize URL exactly. */
-  readonly redirectUri: string;
   readonly codeVerifier: string;
 };
 

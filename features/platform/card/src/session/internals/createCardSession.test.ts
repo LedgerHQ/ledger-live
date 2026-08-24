@@ -5,7 +5,6 @@ const session = {
   accessToken: "at_token",
   expiresIn: 21600,
   refreshToken: "rt_token",
-  refreshTokenExpiresIn: 15897600,
 };
 
 /** The session a re-login writes over. Every field differs, so a mixed read is visible. */
@@ -13,7 +12,6 @@ const previousSession = {
   accessToken: "at_old",
   expiresIn: 60,
   refreshToken: "rt_old",
-  refreshTokenExpiresIn: 120,
 };
 
 function fakeStore(initial: Record<string, string> = {}) {
@@ -63,10 +61,7 @@ describe("createCardSession", () => {
     expect(Object.fromEntries(slots)).toEqual({
       [CARD_SESSION_KEYS.accessToken]: "at_token",
       [CARD_SESSION_KEYS.refreshToken]: "rt_token",
-      [CARD_SESSION_KEYS.lifetimes]: JSON.stringify({
-        expiresIn: 21600,
-        refreshTokenExpiresIn: 15897600,
-      }),
+      [CARD_SESSION_KEYS.lifetimes]: JSON.stringify({ expiresIn: 21600 }),
     });
   });
 
@@ -243,10 +238,7 @@ describe("createCardSession", () => {
     const stored: Record<string, string> = {
       [CARD_SESSION_KEYS.accessToken]: "at_token",
       [CARD_SESSION_KEYS.refreshToken]: "rt_token",
-      [CARD_SESSION_KEYS.lifetimes]: JSON.stringify({
-        expiresIn: 1,
-        refreshTokenExpiresIn: 2,
-      }),
+      [CARD_SESSION_KEYS.lifetimes]: JSON.stringify({ expiresIn: 1 }),
     };
     for (const key of Object.keys(missing)) {
       delete stored[key];

@@ -23,7 +23,7 @@ describe("buildAuthorizeUrl", () => {
     expect(Object.fromEntries(searchParams)).toEqual({
       client_id: "dc16bbda-eb1b-487c-be60-1a90ca7c9dd6",
       response_type: "code",
-      scope: "openid profile email platform:full offline_access",
+      scope: "openid profile email offline_access",
       redirect_uri: "https://go.ledger.com/ledger/card-baanx",
       code_challenge: "challenge-value",
       code_challenge_method: "S256",
@@ -42,7 +42,7 @@ describe("buildAuthorizeUrl", () => {
 
     // A raw `:` or `/` in the query would end the redirect at the provider's parser.
     expect(url).toContain("redirect_uri=https%3A%2F%2Fgo.ledger.com%2Fledger%2Fcard-baanx");
-    expect(url).toContain("scope=openid+profile+email+platform%3Afull+offline_access");
+    expect(url).toContain("scope=openid+profile+email+offline_access");
   });
 
   it("keeps a base path on the API host", () => {

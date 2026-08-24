@@ -22,14 +22,12 @@ export const cardManagementApi = cardApi
   .injectEndpoints({
     endpoints: build => ({
       exchangeAuthorizationCode: build.mutation<PayCardSession, PayCardAuthorizationCodeRequest>({
-        query: ({ code, redirectUri, codeVerifier }) => ({
+        query: ({ code, codeVerifier }) => ({
           url: "/v1/auth/oauth2/token",
           method: "POST",
           body: {
             grant_type: "authorization_code",
             code,
-            // The provider compares it with the one the authorization carried.
-            redirect_uri: redirectUri,
             code_verifier: codeVerifier,
           },
         }),

@@ -174,7 +174,6 @@ export const cardLoginMachine = setup({
         input: ({ context }) => ({
           ports: context.ports,
           callback: context.callback,
-          redirectUri: context.oauthConfig.redirectUri,
         }),
         onDone: {
           target: "persistingSession",

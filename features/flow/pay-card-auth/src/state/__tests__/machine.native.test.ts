@@ -18,7 +18,6 @@ const session = {
   accessToken: "at_token",
   expiresIn: 21600,
   refreshToken: "rt_token",
-  refreshTokenExpiresIn: 15897600,
 };
 
 const user = { id: "3f2504e0-4f89-11d3-9a0c-0305e82c3301", verificationState: "VERIFIED" } as const;
@@ -115,7 +114,6 @@ describe("cardLoginMachine cold start", () => {
     await settledAt(actor, "ready");
     expect(ports.exchangeAuthorizationCode).toHaveBeenCalledWith({
       code: "auth-code",
-      redirectUri: "https://go.test/ledger/card",
       codeVerifier: "verifier-value",
     });
     expect(ports.openHostedLogin).not.toHaveBeenCalled();
@@ -160,7 +158,7 @@ describe("cardLoginMachine login", () => {
     expect(Object.fromEntries(searchParams)).toEqual({
       client_id: "client-key",
       response_type: "code",
-      scope: "openid profile email platform:full offline_access",
+      scope: "openid profile email offline_access",
       redirect_uri: "https://go.test/ledger/card",
       code_challenge: "challenge-value",
       code_challenge_method: "S256",
