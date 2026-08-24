@@ -1,0 +1,129 @@
+import { KNOWN_TOPICS } from "@ledgerhq/live-common/families/internet_computer/consts";
+import { BaseInput, Button, Flex, ScrollContainer, Text } from "@ledgerhq/native-ui";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { TrackScreen } from "~/analytics";
+import KeyboardView from "~/components/KeyboardView";
+import SafeAreaView from "~/components/SafeAreaView";
+import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { ScreenName } from "~/const";
+import { useTranslation } from "~/context/Locale";
+import ActionFooter from "../components/ActionFooter";
+import { NeuronDetailRow } from "../components/NeuronDetails";
+import { useNeuronAction } from "./useNeuronAction";
+import type { InternetComputerNeuronManageFlowParamList } from "./types";
+
+type Props = StackNavigatorProps<
+  InternetComputerNeuronManageFlowParamList,
+  ScreenName.InternetComputerNeuronFollowees
+>;
+
+const EMPTY_FOLLOWEES: string[] = [];
+
+/**
+ * Edits the followee list for one topic. The canister replaces the whole list per `follow` call, so
+ * removing a followee means submitting the remaining ones — there is no per-followee delete call.
+ */
+export default function Followees({ navigation, route }: Props) {
+  const { t } = useTranslation();
+  const [draft, setDraft] = useState("");
+  const { followTopic } = route.params;
+  const { neuron, transaction, updateTransaction, status, bridgePending, continueToDevice } =
+    useNeuronAction(navigation, route);
+
+  // Stable across renders: the `?? []` fallback would otherwise be a fresh array every time, which
+  // invalidates every callback below.
+  const followeesIds = useMemo(
+    () => transaction?.followeesIds ?? EMPTY_FOLLOWEES,
+    [transaction?.followeesIds],
+  );
+
+  // Seed the transaction from the neuron's current followees for this topic, so submitting an
+  // untouched list is a no-op rather than a wipe.
+  useEffect(() => {
+    if (transaction?.followeesIds) return;
+    const current = neuron?.followees.find(f => f.topic === KNOWN_TOPICS[followTopic]);
+    updateTransaction(tx => ({
+      ...tx,
+      followTopic,
+      followeesIds: current?.followeeIds.map(id => id.toString()) ?? [],
+    }));
+  }, [followTopic, neuron, transaction?.followeesIds, updateTransaction]);
+
+  const setFollowees = useCallback(
+    (next: string[]) => updateTransaction(tx => ({ ...tx, followeesIds: next })),
+    [updateTransaction],
+  );
+
+  const onAdd = useCallback(() => {
+    const id = draft.replace(/\D/g, "");
+    if (!id || followeesIds.includes(id)) return;
+    setFollowees([...followeesIds, id]);
+    setDraft("");
+  }, [draft, followeesIds, setFollowees]);
+
+  return (
+    <SafeAreaView edges={["left", "right", "bottom"]} isFlex>
+      <TrackScreen
+        category="Manage Neurons ICP Flow"
+        name="Followees"
+        flow="stake"
+        action="follow"
+      />
+      <KeyboardView style={{ flex: 1 }}>
+        <ScrollContainer contentContainerStyle={{ padding: 16 }}>
+          <Text variant="body" color="neutral.c70" mb={5}>
+            {t("internetComputer.manageNeuronFlow.selectFollowees.description", {
+              topic: followTopic,
+            })}
+          </Text>
+          <Text variant="small" fontWeight="semiBold" color="neutral.c70" mb={2}>
+            {t("internetComputer.manageNeuronFlow.selectFollowees.neuronId")}
+          </Text>
+          <Flex flexDirection="row" alignItems="center" mb={5} style={{ gap: 8 }}>
+            <Flex flex={1}>
+              <BaseInput
+                value={draft}
+                onChange={setDraft}
+                keyboardType="number-pad"
+                testID="icp-followee-input"
+              />
+            </Flex>
+            <Button
+              type="main"
+              size="small"
+              onPress={onAdd}
+              disabled={!draft}
+              testID="icp-followee-add-button"
+            >
+              {t("internetComputer.manageNeuronFlow.selectFollowees.add")}
+            </Button>
+          </Flex>
+          {followeesIds.length === 0 ? (
+            <Text variant="small" color="neutral.c70">
+              {t("internetComputer.manageNeuronFlow.selectFollowees.empty")}
+            </Text>
+          ) : (
+            followeesIds.map(id => (
+              <NeuronDetailRow
+                key={id}
+                label={id}
+                actions={[
+                  {
+                    label: t("internetComputer.manageNeuronFlow.selectFollowees.remove"),
+                    onPress: () => setFollowees(followeesIds.filter(other => other !== id)),
+                  },
+                ]}
+              />
+            ))
+          )}
+        </ScrollContainer>
+      </KeyboardView>
+      <ActionFooter
+        status={status}
+        bridgePending={bridgePending}
+        onContinue={continueToDevice}
+        canContinue={!!transaction?.followTopic}
+      />
+    </SafeAreaView>
+  );
+}
