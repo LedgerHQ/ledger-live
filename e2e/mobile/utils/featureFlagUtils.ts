@@ -49,6 +49,11 @@ export const FF_BORROW_ENABLED = {
     enabled: true,
     params: { manifest_id: "borrow" },
   },
+  largeScreenUpsell: { enabled: false },
+  // Note: Prevent usage of DIE, which is not Speculos ready yet. The device-intent drawer bypasses
+  // the SignTransaction screens, so it also ignores the SWAP_DISABLE_APPS_INSTALL bypass swapSetup
+  // installs; leaving this to Firebase would make signing non-deterministic.
+  llmWalletApiDeviceIntentSign: { enabled: false },
   lwmWallet40: {
     ...FF_LWM_WALLET_40_Q2.lwmWallet40,
     params: {
