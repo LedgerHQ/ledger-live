@@ -3,9 +3,14 @@ import { AccountType, getParentAccountName } from "@ledgerhq/live-e2e-shared/enu
 import { BuySell, Fiat } from "@ledgerhq/live-e2e-shared/models/BuySell";
 import { BuySellProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import { pickRotatingProvider } from "@ledgerhq/live-e2e-shared/buySell";
+import {
+  extractGoToUrl,
+  getExpectedQueryParams,
+  urlMatchesProvider,
+} from "@ledgerhq/live-e2e-shared/buySellHandoff";
 import { openDeeplink, normalizeText } from "../../helpers/commonHelpers";
-import { checkForErrorElement, ERROR_MODAL_SELECTORS } from "../../helpers/errorHelpers";
-import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
+import { getPtxHandoff } from "../../bridge/server";
+import { retryUntilTimeout } from "../../utils/retry";
 
 export default class BuySellPage {
   appContainerCssSelector = "#app-container";
@@ -182,33 +187,38 @@ export default class BuySellPage {
     await tapWebElementByTestId(this.provider(provider));
   }
 
-  @Step("Verify provider page loaded with correct URL {{{0}}}")
-  async verifyProviderPageLoadedWithCorrectUrl(provider: string) {
-    try {
-      const normalizedProvider = provider.toLowerCase().replace(/\s/g, "");
-      const currentUrl = await waitForCurrentWebviewUrlToContain(normalizedProvider);
-      jestExpect(currentUrl.toLowerCase()).toContain(normalizedProvider);
-    } catch (error) {
-      throw Object.assign(new Error(`Provider page verification failed: ${sanitizeError(error)}`), {
-        cause: error,
-      });
-    }
-  }
+  /**
+   * Asserts the handoff Ledger Live actually owns: the `goToURL` the app hands to the
+   * partner, and its query parameters. Deliberately does NOT wait on the partner's own
+   * page to load or render - that page is third-party and uncontrolled, and rendering it
+   * on the Android CI emulator's software renderer takes the emulator down mid-test.
+   * Mirrors e2e/desktop, which asserts the same handoff out of `webviewUrlHistory`.
+   */
+  @Step("Verify provider handoff URL and query parameters {{{0.uiName}}}")
+  async verifyProviderHandoff(provider: BuySellProvider, buySell: BuySell) {
+    const rawHandoffUrl = await retryUntilTimeout(async () => {
+      const url = await getPtxHandoff();
+      if (!url) throw new Error("No Buy/Sell handoff URL recorded by the app yet");
+      return url;
+    }, 30000);
 
-  @Step("Verify provider page is displayed and not a blank/error screen {{{0}}}")
-  async verifyProviderPageIsNotBlank(provider: string) {
-    try {
-      await waitForWebviewContentToRender();
-    } catch (error) {
-      throw Object.assign(
-        new Error(
-          `Provider "${provider}" redirected to the correct URL but rendered a blank screen: ${sanitizeError(error)}`,
-        ),
-        { cause: error },
+    const partnerUrl = new URL(extractGoToUrl(rawHandoffUrl));
+
+    if (!urlMatchesProvider(partnerUrl.href, provider)) {
+      throw new Error(
+        `Provider "${provider.uiName}" should appear in the handoff URL: ${partnerUrl.href}`,
       );
     }
-    for (const errorSelector of ERROR_MODAL_SELECTORS) {
-      await checkForErrorElement(errorSelector, 1000);
+
+    const params = Object.fromEntries(
+      Array.from(partnerUrl.searchParams).map(([key, value]) => [key.toLowerCase(), value]),
+    );
+    for (const [key, expected] of Object.entries(getExpectedQueryParams(provider, buySell))) {
+      const actual = params[key];
+      if (actual === undefined) {
+        throw new Error(`Query param "${key}" not found in handoff URL: ${partnerUrl.href}`);
+      }
+      jestExpect(actual.toLowerCase()).toContain(expected);
     }
   }
 
@@ -225,21 +235,29 @@ export default class BuySellPage {
     await this.selectPaymentMethod(paymentMethod);
     const selectedProvider = await this.selectRotatingProvider();
     await this.tapBuySellWithCta(selectedProvider.uiName, buySell.operation);
-    await this.verifyProviderPageLoadedWithCorrectUrl(selectedProvider.uiName);
-    await this.verifyProviderPageIsNotBlank(selectedProvider.uiName);
+    await this.verifyProviderHandoff(selectedProvider, buySell);
   }
 
+  /**
+   * The amount is deliberately not a parameter: this flow taps the 75% button, so the
+   * figure handed to the partner is whatever the UI resolved. Passing one in would only
+   * invite a caller to believe it was typed.
+   */
   @Step("Handle sell flow {{{1}}}")
-  async handleSellFlow(buySell: BuySell, paymentMethod: string, provider: BuySellProvider) {
+  async handleSellFlow(
+    buySell: Omit<BuySell, "amount">,
+    paymentMethod: string,
+    provider: BuySellProvider,
+  ) {
     await this.expectSellScreenToBeVisible();
     await this.chooseAssetIfNotSelected(buySell.crypto);
     await this.tapSellPercentageButton("75%");
     await this.chooseCountryIfNotSelected(buySell.fiat);
+    const selectedAmount = normalizeText(await getValueByWebTestId(this.amountInputSectionId()));
     await this.tapSeeQuotes();
     await this.selectPaymentMethod(paymentMethod);
     await this.selectProvider(provider.name);
     await this.tapBuySellWithCta(provider.uiName, buySell.operation);
-    await this.verifyProviderPageLoadedWithCorrectUrl(provider.uiName);
-    await this.verifyProviderPageIsNotBlank(provider.uiName);
+    await this.verifyProviderHandoff(provider, { ...buySell, amount: selectedAmount });
   }
 }
