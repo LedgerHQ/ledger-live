@@ -13,13 +13,21 @@ export const LARGE_SCREEN_UPSELL_UTM = {
     hardware_carousel: "hardware_carousel",
     profile_cta: "profile_cta",
     backups_cta: "backups_cta",
+    earn_trigger: "earn_trigger",
+    recover_trigger: "recover_trigger",
+    l_sync_trigger: "l_sync_trigger",
+    swap_trigger: "swap_trigger",
+    lazy_onboarding_banner: "lazy_onboarding_banner",
   },
 } as const;
+
+export type LargeScreenUpsellUtmContent =
+  (typeof LARGE_SCREEN_UPSELL_UTM.content)[keyof typeof LARGE_SCREEN_UPSELL_UTM.content];
 
 export function buildLargeScreenUpsellCtaLink(
   link: string,
   platform: "mobile" | "desktop" = "mobile",
-  utmContent: string = LARGE_SCREEN_UPSELL_UTM.content.app_start_modal,
+  utmContent: LargeScreenUpsellUtmContent = LARGE_SCREEN_UPSELL_UTM.content.app_start_modal,
 ): string {
   const trimmedLink = link.trim();
   if (!trimmedLink) {

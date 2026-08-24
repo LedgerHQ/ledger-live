@@ -73,7 +73,11 @@ describe("useHardwareCarouselCloseAll", () => {
         ...state,
         settings: {
           ...state.settings,
-          knownDeviceModelIds: {},
+          knownDeviceModelIds: {
+            ...state.settings.knownDeviceModelIds,
+            [DeviceModelId.nanoX]: false,
+            [DeviceModelId.nanoSP]: false,
+          },
           personalizedRecommendationsEnabled: true,
         },
       }),
