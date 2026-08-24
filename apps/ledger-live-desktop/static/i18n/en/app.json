@@ -9550,6 +9550,7 @@
     },
     "ledgerSyncIntroduction": {
       "description": "Your contacts are end-to-end encrypted with your Ledger and synced across your devices, only you can unlock them.",
+      "activate": "Turn on Ledger Sync",
       "dismiss": "Got it"
     },
     "featureIntroduction": {

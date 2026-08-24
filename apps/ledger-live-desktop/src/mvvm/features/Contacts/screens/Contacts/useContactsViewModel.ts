@@ -25,7 +25,9 @@ import {
   CONTACTS_PAGE_PROPERTY,
   CONTACTS_TRACK_EVENTS,
   CONTACTS_TRACKING_BUTTON,
+  trackContactsLedgerSyncActivate,
   useContactsListPageAnalytics,
+  useContactsLedgerSyncMutationGuard,
   trackContactsLedgerSyncDismiss,
 } from "@features/flow-contacts";
 import {
@@ -40,9 +42,9 @@ import {
 } from "@features/flow-contacts-add-address";
 import {
   CONTACTS_FEATURE_INTRODUCTION_HIGHLIGHTS,
+  isContactsLedgerSyncActivationRequired,
   resolveContactsLedgerSyncIntroductionOpen,
   useContactsFeatureIntroductionState,
-  type ContactsLedgerSyncStatus,
 } from "@features/flow-contacts-introduction";
 import {
   createMockContactDeviceIntentsPort,
@@ -54,10 +56,12 @@ import { useContactsAnalytics, resolveContactsCurrencyAnalytics } from "../../an
 import { useContactsFeatureIntroductionPreference } from "../../hooks/useContactsFeatureIntroductionPreference";
 import { useContactsCurrencySelectionAdapter } from "../../hooks/useContactsCurrencySelectionAdapter";
 import { useContactsAddressValidationAdapter } from "../../hooks/useContactsAddressValidationAdapter";
+import { useContactsLedgerSyncStatus } from "../../hooks/useContactsLedgerSyncStatus";
 import { useContactDetailPaneAdapter } from "./useContactDetailPaneAdapter";
 import type { ContactAddressDetailActionsDialogProps } from "./useContactAddressDetailActionsAdapter";
 import { useContactDetailEditDeleteAdapter } from "./useContactDetailEditDeleteAdapter";
 import { useDispatch } from "LLD/hooks/redux";
+import { useActivationDrawer } from "LLD/features/LedgerSyncEntryPoints/hooks/useActivationDrawer";
 import type { ContactsAddAddressFlowDialogProps } from "./components/ContactsAddAddressFlowDialog";
 
 export type ContactsPageViewModel = Omit<ContactsViewProps, "onAddContact"> &
@@ -68,6 +72,7 @@ export type ContactsPageViewModel = Omit<ContactsViewProps, "onAddContact"> &
     editDeleteDialogs: ReturnType<typeof useContactDetailEditDeleteAdapter>;
     addressDetailActionsDialogs: ContactAddressDetailActionsDialogProps;
     onClearSearch: () => void;
+    onRequestAddContact: (onAllowed: () => void) => void;
   }>;
 
 export function useContactsViewModel(): ContactsPageViewModel {
@@ -75,6 +80,7 @@ export function useContactsViewModel(): ContactsPageViewModel {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const analytics = useContactsAnalytics();
+  const { openDrawer } = useActivationDrawer();
   const helpCenterUrl = useLocalizedUrl(urls.helpModal.helpCenter);
   const handleSanctionedAddressLearnMore = useCallback(() => {
     openURL(helpCenterUrl);
@@ -180,12 +186,26 @@ export function useContactsViewModel(): ContactsPageViewModel {
     },
     [closeAddAddress, completeCurrencySelection, selectCurrency],
   );
+  const ledgerSyncStatus = useContactsLedgerSyncStatus();
+  const { requestMutation, dismissPendingIntent } = useContactsLedgerSyncMutationGuard();
+  const [isLedgerSyncIntroductionDismissed, setIsLedgerSyncIntroductionDismissed] = useState(false);
   const onAddAddress = useCallback(
     (contact: AddAddressContact) => {
+      const result = requestMutation(
+        { kind: "addAddress", contactId: contact.id },
+        ledgerSyncStatus,
+      );
+      if (result.status !== "allowed") {
+        if (result.status === "blocked") {
+          setIsLedgerSyncIntroductionDismissed(false);
+        }
+        return;
+      }
+
       startAddAddress(contact);
       selectCurrencyForContact(contact.id);
     },
-    [selectCurrencyForContact, startAddAddress],
+    [ledgerSyncStatus, requestMutation, selectCurrencyForContact, startAddAddress],
   );
   const onCloseAddAddress = useCallback(() => {
     cancelCurrencySelection();
@@ -310,8 +330,6 @@ export function useContactsViewModel(): ContactsPageViewModel {
     onOpenMe,
     onOpenContact,
   } = useContactDetailPaneAdapter(onAddAddress);
-  const [isLedgerSyncIntroductionDismissed, setIsLedgerSyncIntroductionDismissed] = useState(false);
-  const [ledgerSyncStatus] = useState<ContactsLedgerSyncStatus>("ready");
   const preference = useContactsFeatureIntroductionPreference();
   const featureIntroductionState = useContactsFeatureIntroductionState({
     isContactsEntryAvailable: true,
@@ -355,14 +373,33 @@ export function useContactsViewModel(): ContactsPageViewModel {
   const onClearSearch = useCallback(() => setSearchQuery(""), []);
   const onDismissLedgerSyncIntroduction = useCallback(() => {
     trackContactsLedgerSyncDismiss(analytics);
+    dismissPendingIntent();
     setIsLedgerSyncIntroductionDismissed(true);
-  }, [analytics]);
+  }, [analytics, dismissPendingIntent]);
+  const onActivateLedgerSyncIntroduction = useCallback(() => {
+    trackContactsLedgerSyncActivate(analytics);
+    dismissPendingIntent();
+    setIsLedgerSyncIntroductionDismissed(true);
+    openDrawer();
+  }, [analytics, dismissPendingIntent, openDrawer]);
+  const onRequestAddContact = useCallback(
+    (onAllowed: () => void) => {
+      const result = requestMutation({ kind: "addContact" }, ledgerSyncStatus);
+      if (result.status === "allowed") {
+        onAllowed();
+      } else if (result.status === "blocked") {
+        setIsLedgerSyncIntroductionDismissed(false);
+      }
+    },
+    [ledgerSyncStatus, requestMutation],
+  );
 
   useEffect(() => {
-    if (ledgerSyncStatus !== "inactive") {
+    if (!isContactsLedgerSyncActivationRequired(ledgerSyncStatus)) {
+      dismissPendingIntent();
       setIsLedgerSyncIntroductionDismissed(false);
     }
-  }, [ledgerSyncStatus]);
+  }, [dismissPendingIntent, ledgerSyncStatus]);
 
   const isLedgerSyncIntroductionOpen = resolveContactsLedgerSyncIntroductionOpen({
     isFeatureIntroductionRequested: featureIntroductionState.isRequested,
@@ -396,6 +433,7 @@ export function useContactsViewModel(): ContactsPageViewModel {
     meAvatarSrc: MY_WALLET_AVATAR_USER_URL,
     onSearchInputChange,
     onClearSearch,
+    onRequestAddContact,
     onOpenMe,
     onOpenContact,
     detail,
@@ -412,7 +450,9 @@ export function useContactsViewModel(): ContactsPageViewModel {
     ledgerSyncIntroduction: {
       isOpen: isLedgerSyncIntroductionOpen,
       description: t("contacts.ledgerSyncIntroduction.description"),
+      activateLabel: t("contacts.ledgerSyncIntroduction.activate"),
       dismissLabel: t("contacts.ledgerSyncIntroduction.dismiss"),
+      onActivate: onActivateLedgerSyncIntroduction,
       onDismiss: onDismissLedgerSyncIntroduction,
     },
   };
