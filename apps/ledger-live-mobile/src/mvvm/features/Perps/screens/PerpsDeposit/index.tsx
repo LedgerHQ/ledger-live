@@ -75,7 +75,6 @@ export function PerpsDepositView({
   depositAmountTicker,
   isQuoteLoading,
   counterValueCode,
-  maxIntegerLength,
   maxDecimalLength,
   pressAmountKey,
   setDepositAmount,
@@ -114,8 +113,6 @@ export function PerpsDepositView({
           <AmountInput
             value={amountText}
             currencyText={counterValueCode}
-            maxIntegerLength={maxIntegerLength}
-            maxDecimalLength={maxDecimalLength}
             autoFocus
             showSoftInputOnFocus={false}
             // The in-app keypad is the only input path, so the field is display-only.
