@@ -1,6 +1,6 @@
 import React from "react";
 import { Text } from "react-native";
-import { render, screen } from "@tests/test-renderer";
+import { act, render, screen } from "@tests/test-renderer";
 import type { QueuedBottomSheetProps } from "@shared/ui-queued-bottom-sheet";
 import { QueuedDrawerFlow } from "..";
 
@@ -50,7 +50,7 @@ describe("QueuedDrawerFlow", () => {
     mockDrawerUnmountCount = 0;
   });
 
-  it("should replace the current screen without closing the drawer in tests", () => {
+  it("should replace the current screen without closing the drawer", () => {
     const onClose = jest.fn();
     const onBack = jest.fn();
     const { rerender } = render(
@@ -86,6 +86,8 @@ describe("QueuedDrawerFlow", () => {
     );
 
     expect(screen.getByText("Address screen")).toBeVisible();
+    expect(screen.getByText("Asset screen")).toBeVisible();
+    act(() => jest.runAllTimers());
     expect(screen.queryByText("Asset screen")).toBeNull();
     expect(mockDrawerMountCount).toBe(1);
     expect(mockDrawerUnmountCount).toBe(0);
@@ -101,6 +103,21 @@ describe("QueuedDrawerFlow", () => {
       }),
     );
     expect(onClose).not.toHaveBeenCalled();
+  });
+
+  it("should keep the previous screen active when navigating back during its exit", () => {
+    const onClose = jest.fn();
+    const { rerender } = render(
+      <QueuedDrawerFlow currentStep="asset" isOpen onClose={onClose} screens={screens} />,
+    );
+
+    rerender(<QueuedDrawerFlow currentStep="address" isOpen onClose={onClose} screens={screens} />);
+    rerender(<QueuedDrawerFlow currentStep="asset" isOpen onClose={onClose} screens={screens} />);
+
+    act(() => jest.runAllTimers());
+
+    expect(screen.getByText("Asset screen")).toBeVisible();
+    expect(screen.queryByText("Address screen")).toBeNull();
   });
 
   it("should hide the back button when no back handler is provided", () => {

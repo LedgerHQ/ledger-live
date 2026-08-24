@@ -62,8 +62,10 @@ function QueuedDrawerAnimatedScreen<Step extends string>({
     if (screen.isExiting) {
       scale.value = withTiming(0.95, TRANSITION_CONFIG);
       translateY.value = withTiming(32, TRANSITION_CONFIG);
-      opacity.value = withTiming(0, TRANSITION_CONFIG, () => {
-        scheduleOnRN(onExitComplete, screen.step);
+      opacity.value = withTiming(0, TRANSITION_CONFIG, finished => {
+        if (finished) {
+          scheduleOnRN(onExitComplete, screen.step);
+        }
       });
       return;
     }
@@ -96,28 +98,32 @@ export function QueuedDrawerScreenTransition<Step extends string>({
   ]);
 
   const removeScreen = useCallback((step: Step) => {
-    setActiveScreens(previousScreens => previousScreens.filter(screen => screen.step !== step));
+    setActiveScreens(previousScreens =>
+      previousScreens.filter(screen => screen.step !== step || !screen.isExiting),
+    );
   }, []);
 
   useEffect(() => {
     setActiveScreens(previousScreens => {
       const currentScreen = previousScreens.find(screen => screen.step === currentStep);
       if (currentScreen) {
-        return currentScreen.content === currentContent
-          ? previousScreens
-          : previousScreens.map(screen =>
-              screen.step === currentStep ? { ...screen, content: currentContent } : screen,
-            );
-      }
+        if (!currentScreen.isExiting) {
+          return currentScreen.content === currentContent
+            ? previousScreens
+            : previousScreens.map(screen =>
+                screen.step === currentStep ? { ...screen, content: currentContent } : screen,
+              );
+        }
 
-      if (isTestEnv) {
-        return [
-          { step: currentStep, content: currentContent, isEntering: false, isExiting: false },
-        ];
+        return previousScreens.map(screen =>
+          screen.step === currentStep
+            ? { ...screen, content: currentContent, isEntering: true, isExiting: false }
+            : { ...screen, isEntering: false, isExiting: true },
+        );
       }
 
       return [
-        ...previousScreens.map(screen => ({ ...screen, isExiting: true })),
+        ...previousScreens.map(screen => ({ ...screen, isEntering: false, isExiting: true })),
         { step: currentStep, content: currentContent, isEntering: true, isExiting: false },
       ];
     });
