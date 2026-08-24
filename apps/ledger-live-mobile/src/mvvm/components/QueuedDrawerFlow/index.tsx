@@ -1,5 +1,6 @@
 import React from "react";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
+import { QueuedDrawerScreenTransition } from "./useQueuedDrawerScreenTransition";
 import type { QueuedDrawerFlowProps } from "./types";
 
 export function QueuedDrawerFlow<Step extends string>({
@@ -24,7 +25,7 @@ export function QueuedDrawerFlow<Step extends string>({
       onClose={onClose}
       testID={testID}
     >
-      {currentScreen.content}
+      <QueuedDrawerScreenTransition currentStep={currentStep} screens={screens} />
     </QueuedBottomSheet>
   );
 }

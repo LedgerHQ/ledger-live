@@ -4,7 +4,7 @@ import { Pressable, Text } from "react-native";
 import type { RouteProp } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { render, screen, withFlagOverrides, waitFor } from "@tests/test-renderer";
+import { render, screen, withFlagOverrides, waitFor, within } from "@tests/test-renderer";
 import type { ContactId } from "@domain/entity-contact";
 import {
   mockContact,
@@ -681,7 +681,7 @@ describe("Contacts integration", () => {
         "placeholder",
         "Address or ENS",
       );
-      expect(screen.getByTestId("bottom-sheet-header-title")).toHaveTextContent("Enter address");
+      expect(screen.getByText("Enter address")).toBeVisible();
       expect(screen.getByTestId("contacts-add-address-confirm")).toBeDisabled();
       expect(screen.getByTestId("contacts-add-address-step-frame")).toHaveStyle({
         height: "100%",
@@ -694,7 +694,7 @@ describe("Contacts integration", () => {
 
     await waitFor(() => {
       expect(screen.getByTestId("contacts-add-address-input")).toHaveProp("value", SCANNED_ADDRESS);
-      expect(screen.getByTestId("bottom-sheet-header-title")).toHaveTextContent("Enter address");
+      expect(screen.getByText("Enter address")).toBeVisible();
       expect(screen.getByTestId("contacts-add-address-confirm")).toBeEnabled();
     });
 
@@ -703,7 +703,7 @@ describe("Contacts integration", () => {
     expect(addressNameInput).toHaveProp("value", mockEthCryptoCurrency.name);
     expect(addressNameInput).toHaveProp("maxLength", 32);
     expect(screen.getByTestId("contacts-add-address-name-count")).toHaveTextContent("8/32");
-    expect(screen.getByTestId("bottom-sheet-header-title")).toHaveTextContent("Name address");
+    expect(screen.getByText("Name address")).toBeVisible();
     expect(
       screen.getByText(
         "We recommend giving this address a name to easily find it when needed. It will be only visible by you.",
@@ -779,11 +779,14 @@ describe("Contacts integration", () => {
     await user.press(screen.getByTestId("contacts-address-entry-select-currency"));
     expect(await screen.findByTestId("contacts-add-address-input")).toBeVisible();
 
-    await user.press(screen.getByTestId("bottom-sheet-header-back-button"));
+    await user.press(
+      within(screen.getByTestId("contacts-add-address-step-frame")).getByTestId(
+        "bottom-sheet-header-back-button",
+      ),
+    );
 
     await waitFor(() => {
       expect(screen.getByTestId("contacts-detail-screen")).toBeVisible();
-      expect(screen.queryByTestId("contacts-add-address-input")).toBeNull();
       expect(screen.getByTestId("contacts-address-entry-select-currency")).toBeVisible();
       expect(screen.queryByTestId("my-wallet-home")).toBeNull();
     });
