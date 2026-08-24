@@ -279,7 +279,7 @@ test.describe("Ledger Sync - delete backup", () => {
 function unactivatedFeatureFlags() {
   return {
     teamOwner: Team.WALLET_XP,
-    userdata: "skip-onboarding",
+    userdata: "skip-onboarding-with-last-seen-device",
     featureFlags: {
       lldWalletSync: {
         enabled: true,
@@ -292,7 +292,11 @@ function unactivatedFeatureFlags() {
           learnMoreLink: "",
         },
       },
-      lldLedgerSyncEntryPoints: { enabled: true },
+      lldLedgerSyncEntryPoints: {
+        enabled: true,
+        params: { settings: true },
+      },
+      lwdLedgerSyncOptimisation: { enabled: true },
     },
   };
 }
@@ -363,7 +367,11 @@ test.describe("Ledger Sync - activation flow backup activated", () => {
           learnMoreLink: "",
         },
       },
-      lldLedgerSyncEntryPoints: { enabled: true },
+      lldLedgerSyncEntryPoints: {
+        enabled: true,
+        params: { settings: true },
+      },
+      lwdLedgerSyncOptimisation: { enabled: true },
     },
   });
 

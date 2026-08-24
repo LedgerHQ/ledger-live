@@ -16,7 +16,6 @@ export class LedgerSyncDrawer extends Drawer {
   private readonly removeCLI = this.cliMember.getByText("Remove");
   private readonly activateTitle = this.page.getByTestId("walletsync-activate-title");
   private readonly turnOnLedgerSyncButton = this.page.getByTestId("walletsync-activate-cta");
-  private readonly alreadySyncButton = this.page.getByTestId("walletsync-activate-already-sync");
   private readonly activateSuccessTitle = this.page.getByTestId(
     "walletsync-activate-success-title",
   );
@@ -29,7 +28,6 @@ export class LedgerSyncDrawer extends Drawer {
   async expectActivationScreenVisible() {
     await expect(this.activateTitle).toBeVisible();
     await expect(this.turnOnLedgerSyncButton).toBeVisible();
-    await expect(this.alreadySyncButton).toBeVisible();
   }
 
   @step("Click 'Turn on Ledger Sync'")
