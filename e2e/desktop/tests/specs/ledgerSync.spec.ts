@@ -351,29 +351,7 @@ test.describe("Ledger Sync - activation flow backup activated", () => {
   setupSeed();
   destroyTrustchainAfterAll();
 
-  test.use({
-    teamOwner: Team.WALLET_XP,
-    userdata: "skip-onboarding-with-last-seen-device",
-    speculosApp: AppInfos.LS,
-    featureFlags: {
-      lldWalletSync: {
-        enabled: true,
-        params: {
-          environment: ledgerSyncEnvironment,
-          watchConfig: {
-            pollingInterval: 2_000,
-            initialTimeout: 500,
-          },
-          learnMoreLink: "",
-        },
-      },
-      lldLedgerSyncEntryPoints: {
-        enabled: true,
-        params: { settings: true },
-      },
-      lwdLedgerSyncOptimisation: { enabled: true },
-    },
-  });
+  test.use({ ...unactivatedFeatureFlags(), speculosApp: AppInfos.LS });
 
   test(
     "[WXP][Ledger Sync] Activation Flow - Backup Activated",

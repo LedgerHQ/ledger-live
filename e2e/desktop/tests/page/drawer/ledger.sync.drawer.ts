@@ -40,6 +40,7 @@ export class LedgerSyncDrawer extends Drawer {
 
   @step("Click 'Use your Ledger' to sync with device")
   async clickConnectDevice() {
+    await this.connectDeviceButton.waitFor({ state: "visible" });
     await this.connectDeviceButton.click();
   }
 
