@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { SetupServerApi, setupServer } from "msw/node";
+import { SetupServer, setupServer } from "msw/node";
 import { http, HttpResponse } from "msw";
 import { AbiCoder, ethers } from "ethers";
 import { ERC20_ABI, ERC721_ABI, ERC1155_ABI } from "@ledgerhq/coin-evm/abis/index";
@@ -761,7 +761,7 @@ const getEtherscanOpsMap = (action: string) => {
   }
 };
 
-let server: SetupServerApi;
+let server: SetupServer;
 export const initMswHandlers = (currencyConfig: EvmConfigInfo) => {
   const handlers = [
     http.get("https://global.api.prd.ledger.com/cal/v1/currencies", ({ request }) => {

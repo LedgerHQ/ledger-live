@@ -1,7 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { createApi } from "@reduxjs/toolkit/query";
 import { HttpResponse, http } from "msw";
-import { setupServer, type SetupServerApi } from "msw/node";
+import { setupServer, type SetupServer } from "msw/node";
 import { createAuthenticatedBaseQuery } from "./createAuthenticatedBaseQuery";
 import type { AuthProvider } from "./types";
 
@@ -80,7 +80,7 @@ describe("createAuthenticatedBaseQuery", () => {
     public: jest.fn().mockReturnValue(HttpResponse.json({ ok: true })),
     private: jest.fn().mockReturnValue(HttpResponse.json({ ok: true })),
   };
-  const server: SetupServerApi = setupServer(
+  const server: SetupServer = setupServer(
     // API endpoints:
     http.all(`${API_BASE_URL}/public`, endpoints.public),
     http.all(`${API_BASE_URL}/private`, endpoints.private),

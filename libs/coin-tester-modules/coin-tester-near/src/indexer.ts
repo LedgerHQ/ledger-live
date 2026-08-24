@@ -1,5 +1,5 @@
 import { http, HttpResponse } from "msw";
-import { setupServer, type SetupServerApi } from "msw/node";
+import { setupServer, type SetupServer } from "msw/node";
 import type { NearTransaction } from "@ledgerhq/coin-near/network/sdk.types";
 import { INDEXER_URL, POOL_ID } from "./fixtures";
 
@@ -130,7 +130,7 @@ async function historyFor(rpc: RpcCall, address: string, limit: number) {
   return transactions;
 }
 
-export function startIndexer(rpc: RpcCall): SetupServerApi {
+export function startIndexer(rpc: RpcCall): SetupServer {
   const server = setupServer(
     http.get(`${INDEXER_URL}/v3/accounts/:address/txns`, async ({ params, request }) => {
       const limit = Number(new URL(request.url).searchParams.get("limit") ?? 25);

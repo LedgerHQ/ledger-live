@@ -1,4 +1,4 @@
-import { http, HttpResponse } from "msw";
+import { http, HttpResponse, type JsonBodyType, type StrictResponse } from "msw";
 import { type SetupServer, setupServer } from "msw/node";
 import type {
   FetchAccountBalanceResponse,
@@ -50,7 +50,7 @@ function invokeRouteHandler(
   handler: ((body: unknown) => unknown) | undefined,
   route: string,
   body: unknown,
-): HttpResponse {
+): StrictResponse<JsonBodyType> {
   if (!handler) {
     return HttpResponse.json(
       { code: 404, message: `No handler for route: ${route}`, retriable: false },
@@ -58,7 +58,7 @@ function invokeRouteHandler(
     );
   }
   try {
-    return HttpResponse.json(handler(body));
+    return HttpResponse.json(handler(body) as JsonBodyType);
   } catch (e) {
     const message = e instanceof Error ? e.message : String(e);
     return HttpResponse.json({ code: 500, message, retriable: false }, { status: 500 });

@@ -1,5 +1,5 @@
 import { HttpResponse, http } from "msw";
-import { setupServer, type SetupServerApi } from "msw/node";
+import { setupServer, type SetupServer } from "msw/node";
 import { AuthSDK } from "../authSDK";
 import { bytesToBase64Url, stringToBytes } from "../utils";
 import { CustomIdentityProvider } from "./__mocks__/CustomIdentityProvider.mock";
@@ -24,7 +24,7 @@ const EXPECTED_JWT = "integration-jwt-token";
 
 describe("AuthSDK (integration, MSW)", () => {
   let keyPair: CryptoKeyPair;
-  let server: SetupServerApi;
+  let server: SetupServer;
 
   const queryFn = jest.fn().mockResolvedValue({ ok: true });
 
@@ -94,7 +94,7 @@ describe("AuthSDK (integration, MSW)", () => {
   });
 });
 
-function initServer(publicKey: CryptoKey): SetupServerApi {
+function initServer(publicKey: CryptoKey): SetupServer {
   const sessionStore = new Map<string, { codeChallenge?: string }>();
   let pendingCodeChallenge: string | undefined;
 
