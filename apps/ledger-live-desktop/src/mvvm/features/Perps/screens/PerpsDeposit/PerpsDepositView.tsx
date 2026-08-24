@@ -49,7 +49,6 @@ export function PerpsDepositView({
           value={depositAmount}
           onChange={event => changeDepositAmount(event.target.value)}
           currencyText={counterValueCode}
-          maxIntegerLength={8}
           aria-invalid={submitError !== null}
           data-testid="perps-deposit-amount-input"
         />
