@@ -130,6 +130,7 @@ features/flow/pay-card-balance/                          @ledgerhq/wallet-xp
 features/flow/pay-card-deposit/                          @ledgerhq/wallet-xp
 features/flow/pay-card-feature-tour/                     @ledgerhq/wallet-xp
 features/flow/pay-card-request/                          @ledgerhq/wallet-xp
+features/flow/pay-card-details/                          @ledgerhq/wallet-xp
 
 # Wallet — Intents
 features/platform/verify-address-intent/                 @ledgerhq/wallet-xp
