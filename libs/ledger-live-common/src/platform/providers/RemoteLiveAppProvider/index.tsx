@@ -34,14 +34,15 @@ type LiveAppContextType = {
   state: Loadable<LiveAppRegistry>;
   provider: string;
   setProvider: React.Dispatch<React.SetStateAction<string>>;
-  updateManifests: () => Promise<void>;
+  /** Resolves to `true` when the catalog was loaded, `false` when the fetch failed. */
+  updateManifests: () => Promise<boolean>;
 };
 
 export const liveAppContext = createContext<LiveAppContextType>({
   state: initialState,
   provider: initialProvider,
   setProvider: () => {},
-  updateManifests: () => Promise.resolve(),
+  updateManifests: () => Promise.resolve(false),
 });
 
 type FetchLiveAppCatalogPrams = {
@@ -135,7 +136,7 @@ export function RemoteLiveAppProvider({
 
   const providerURL = provider === "production" ? envProviderURL : provider;
 
-  const fetchManifests = useCallback(async (): Promise<boolean> => {
+  const updateManifests = useCallback(async (): Promise<boolean> => {
     setState(currentState => ({
       ...currentState,
       isLoading: true,
@@ -206,10 +207,6 @@ export function RemoteLiveAppProvider({
     // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [allowDebugApps, allowExperimentalApps, providerURL, lang, isMounted]);
 
-  const updateManifests = useCallback(async () => {
-    await fetchManifests();
-  }, [fetchManifests]);
-
   const value: LiveAppContextType = useMemo(
     () => ({
       state,
@@ -232,7 +229,7 @@ export function RemoteLiveAppProvider({
       clearTimeout(retryTimeout);
       retryTimeout = undefined;
 
-      const succeeded = await fetchManifests();
+      const succeeded = await updateManifests();
       if (cancelled) return;
       if (succeeded) {
         failedAttempts = 0;
@@ -251,7 +248,7 @@ export function RemoteLiveAppProvider({
       clearInterval(interval);
       clearTimeout(retryTimeout);
     };
-  }, [updateFrequency, fetchManifests]);
+  }, [updateFrequency, updateManifests]);
 
   return <liveAppContext.Provider value={value}>{children}</liveAppContext.Provider>;
 }
