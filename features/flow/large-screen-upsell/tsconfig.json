@@ -9,6 +9,8 @@
     "noEmit": true,
     "types": ["jest"]
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "lib"]
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.web.json" }
+  ]
 }
