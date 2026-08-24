@@ -167,7 +167,7 @@ test.describe("Borrow", () => {
 });
 
 test.describe("Borrow", () => {
-  useBorrowOnChain("Repay/withdraw flows");
+  useBorrowOnChain("Repay flow");
 
   test.beforeAll(async () => {
     test.setTimeout(BORROW_HOOK_TIMEOUT_MS * 2);
@@ -224,6 +224,20 @@ test.describe("Borrow", () => {
       await app.borrow.expectRepaySuccess();
     },
   );
+});
+
+test.describe("Borrow", () => {
+  useBorrowOnChain("Withdraw flow");
+
+  test.beforeAll(async () => {
+    test.setTimeout(BORROW_HOOK_TIMEOUT_MS * 2);
+    await ensureWithdrawReadyForUi({ nanoAppCatalogPath: NANO_APP_CATALOG });
+  });
+
+  test.afterAll(async () => {
+    test.setTimeout(BORROW_HOOK_TIMEOUT_MS);
+    await resetLoanState({ nanoAppCatalogPath: NANO_APP_CATALOG });
+  });
 
   test(
     `[${openLoanAccount.currency.testLabel}] - Borrow hot start routes a repaid loan to withdraw and completes collateral withdrawal`,
@@ -234,8 +248,6 @@ test.describe("Borrow", () => {
     async ({ app }) => {
       test.setTimeout(BORROW_TEST_TIMEOUT_MS);
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
-      await ensureWithdrawReadyForUi({ nanoAppCatalogPath: NANO_APP_CATALOG });
 
       await app.mainNavigation.openTargetFromMainNavigation("home");
       await app.portfolio.expectBorrowEntryPointVisible();
