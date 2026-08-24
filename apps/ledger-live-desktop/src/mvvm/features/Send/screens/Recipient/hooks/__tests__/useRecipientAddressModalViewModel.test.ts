@@ -351,7 +351,7 @@ describe("useRecipientAddressModalViewModel", () => {
     expect(selectContact).toHaveBeenCalledWith(contact);
   });
 
-  it("advances straight to the next step for a contact with one address", () => {
+  it("validates a contact address before advancing to the next step", () => {
     const onAddressSelected = jest.fn();
     const selectContact = jest.fn();
     mockedUseRecipientContactSelection.mockReturnValue({
@@ -374,7 +374,8 @@ describe("useRecipientAddressModalViewModel", () => {
 
     act(() => result.current.handleContactSelect(contact));
 
-    expect(onAddressSelected).toHaveBeenCalledWith("0x123", undefined, true);
+    expect(mockRecipientSearch.setValue).toHaveBeenCalledWith("0x123");
+    expect(onAddressSelected).not.toHaveBeenCalled();
     expect(selectContact).not.toHaveBeenCalled();
   });
 
@@ -409,7 +410,8 @@ describe("useRecipientAddressModalViewModel", () => {
 
     act(() => result.current.handleContactAddressSelect("0x456"));
     expect(clearSelectedContact).toHaveBeenCalledTimes(1);
-    expect(onAddressSelected).toHaveBeenCalledWith("0x456", undefined, true);
+    expect(mockRecipientSearch.setValue).toHaveBeenCalledWith("0x456");
+    expect(onAddressSelected).not.toHaveBeenCalled();
   });
 
   it("shows search results when search value is provided", () => {

@@ -239,7 +239,7 @@ describe("useRecipientScreenView", () => {
     ]);
   });
 
-  it("selects a contact directly when it has one address on the network", () => {
+  it("validates a contact address before selecting it", () => {
     const address = mockContactAddress({
       id: "address-eth",
       currencyId: "ethereum",
@@ -259,7 +259,12 @@ describe("useRecipientScreenView", () => {
 
     act(() => result.current.handleContactSelect(contact));
 
+<<<<<<< HEAD
     expect(onAddressSelected).toHaveBeenCalledWith(address.address, undefined);
+=======
+    expect(mockRecipientSearch.setValue).toHaveBeenCalledWith(address.address);
+    expect(onAddressSelected).not.toHaveBeenCalled();
+>>>>>>> c8bcffaab71 (feat(send): share lwm contact network filtering validate picked contact)
     expect(result.current.selectedContact).toBeUndefined();
   });
 
@@ -297,7 +302,12 @@ describe("useRecipientScreenView", () => {
     act(() => result.current.handleContactAddressSelect(secondAddress.address));
 
     expect(result.current.selectedContact).toBeUndefined();
+<<<<<<< HEAD
     expect(onAddressSelected).toHaveBeenCalledWith(secondAddress.address, undefined);
+=======
+    expect(mockRecipientSearch.setValue).toHaveBeenCalledWith(secondAddress.address);
+    expect(onAddressSelected).not.toHaveBeenCalled();
+>>>>>>> c8bcffaab71 (feat(send): share lwm contact network filtering validate picked contact)
   });
 
   it("shows a contact result instead of an automatic match for an ambiguous exact-name search", () => {

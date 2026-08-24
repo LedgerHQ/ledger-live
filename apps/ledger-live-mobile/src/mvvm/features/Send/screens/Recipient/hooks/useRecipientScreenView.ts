@@ -102,21 +102,21 @@ export function useRecipientScreenView({
     (contact: Contact) => {
       const [address] = contact.addresses;
       if (contact.addresses.length === 1 && address) {
-        handleAddressSelect(address.address);
+        recipientSearch.setValue(address.address);
         return;
       }
 
       setSelectedContact(contact);
     },
-    [handleAddressSelect],
+    [recipientSearch],
   );
 
   const handleContactAddressSelect = useCallback(
     (address: string) => {
       setSelectedContact(undefined);
-      handleAddressSelect(address);
+      recipientSearch.setValue(address);
     },
-    [handleAddressSelect],
+    [recipientSearch],
   );
 
   const clearSelectedContact = useCallback(() => {

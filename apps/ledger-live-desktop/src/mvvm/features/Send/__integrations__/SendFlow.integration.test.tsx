@@ -36,7 +36,7 @@ describe("Send Flow Integration", () => {
   });
 
   describe("Recipient step", () => {
-    it("shows only contacts with addresses on the recipient network and advances directly for one address", async () => {
+    it("shows only contacts on the recipient network and validates the selected address", async () => {
       setMockContacts([
         mockContact({
           id: "contact-vincent",
@@ -69,6 +69,10 @@ describe("Send Flow Integration", () => {
       expect(screen.queryByText("Solana contact")).not.toBeInTheDocument();
 
       await user.click(screen.getByTestId("contacts-compact-row-contact-vincent"));
+      expect(screen.queryByTestId("send-amount-step")).not.toBeInTheDocument();
+      expect(screen.getByTestId("send-recipient-input")).toHaveValue(VALID_EVM_RECIPIENT);
+
+      await user.click(await screen.findByTestId("send-recipient-card-send"));
       expect(await screen.findByTestId("send-amount-step")).toBeVisible();
     });
 
@@ -105,6 +109,12 @@ describe("Send Flow Integration", () => {
       await user.click(
         screen.getByTestId("send-recipient-contact-address-address-benoit-coinbase"),
       );
+      expect(screen.queryByTestId("send-amount-step")).not.toBeInTheDocument();
+      expect(screen.getByTestId("send-recipient-input")).toHaveValue(
+        "0x1234567890123456789012345678901234567890",
+      );
+
+      await user.click(await screen.findByTestId("send-recipient-card-send"));
       expect(await screen.findByTestId("send-amount-step")).toBeVisible();
     });
 
@@ -144,6 +154,8 @@ describe("Send Flow Integration", () => {
         screen.getByTestId("send-recipient-contact-address-address-benoit-coinbase"),
       );
 
+      expect(screen.queryByTestId("send-amount-step")).not.toBeInTheDocument();
+      await user.click(await screen.findByTestId("send-recipient-card-send"));
       expect(await screen.findByTestId("send-amount-step")).toBeVisible();
       expect(screen.queryByTestId("send-recipient-card")).not.toBeInTheDocument();
     });

@@ -225,6 +225,10 @@ describe("Send flow integration tests", () => {
 
     await user.press(await screen.findByTestId("contacts-compact-row-contact-vincent"));
 
+    expect(screen.queryByText("Review")).not.toBeOnTheScreen();
+    expect(await screen.findByDisplayValue(VALID_ETHEREUM_RECIPIENT)).toBeOnTheScreen();
+    await flushTimers();
+    await user.press(await screen.findByTestId("send-recipient-card-send"));
     expect(await screen.findByText("Review")).toBeOnTheScreen();
   });
 
@@ -259,6 +263,13 @@ describe("Send flow integration tests", () => {
 
     await user.press(screen.getByTestId("send-recipient-contact-address-address-benoit-usdc"));
 
+<<<<<<< HEAD
+=======
+    expect(screen.queryByText("Review")).not.toBeOnTheScreen();
+    expect(await screen.findByDisplayValue(VALID_ETHEREUM_RECIPIENT)).toBeOnTheScreen();
+    await flushTimers();
+    await user.press(await screen.findByTestId("send-recipient-card-send"));
+>>>>>>> c8bcffaab71 (feat(send): share lwm contact network filtering validate picked contact)
     expect(await screen.findByText("Review")).toBeOnTheScreen();
   });
 

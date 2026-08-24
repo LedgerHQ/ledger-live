@@ -120,21 +120,21 @@ export function useRecipientAddressModalViewModel({
     (contact: Contact) => {
       const [address] = contact.addresses;
       if (contact.addresses.length === 1 && address) {
-        handleAddressSelect(address.address);
+        recipientSearch.setValue(address.address);
         return;
       }
 
       selectContact(contact);
     },
-    [handleAddressSelect, selectContact],
+    [recipientSearch, selectContact],
   );
 
   const handleContactAddressSelect = useCallback(
     (address: string) => {
       clearSelectedContact();
-      handleAddressSelect(address);
+      recipientSearch.setValue(address);
     },
-    [clearSelectedContact, handleAddressSelect],
+    [clearSelectedContact, recipientSearch],
   );
 
   const handleAddContact = useCallback(() => {
