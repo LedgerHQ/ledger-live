@@ -19,6 +19,8 @@ import {
   waitFor,
 } from "tests/testSetup";
 import ContactsScreen, { ContactsButton } from "LLD/features/Contacts";
+import { useActivationDrawer } from "LLD/features/LedgerSyncEntryPoints/hooks/useActivationDrawer";
+import { useContactsLedgerSyncStatus } from "LLD/features/Contacts/hooks/useContactsLedgerSyncStatus";
 import { useContactsViewModel } from "LLD/features/Contacts/screens/Contacts/useContactsViewModel";
 import ContextMenuContext from "LLD/features/MyWallet/components/ContextMenuContext";
 import { ContextMenu } from "LLD/features/MyWallet/components/ContextMenu";
@@ -29,6 +31,7 @@ const mockNavigate = jest.fn();
 const mockClose = jest.fn();
 const mockValidateAddress = jest.fn();
 const mockOpenSendFlow = jest.fn();
+const mockOpenActivationDrawer = jest.fn();
 const meContactId = mockMeContact().id;
 const savedContactId = mockContact({ id: "contact-ada" }).id;
 
@@ -40,6 +43,17 @@ jest.mock("react-router", () => ({
 jest.mock("LLD/features/Send/hooks/useOpenSendFlow", () => ({
   useOpenSendFlow: () => mockOpenSendFlow,
 }));
+
+jest.mock("LLD/features/LedgerSyncEntryPoints/hooks/useActivationDrawer", () => ({
+  useActivationDrawer: jest.fn(),
+}));
+
+jest.mock("LLD/features/Contacts/hooks/useContactsLedgerSyncStatus", () => ({
+  useContactsLedgerSyncStatus: jest.fn(),
+}));
+
+const mockedUseActivationDrawer = jest.mocked(useActivationDrawer);
+const mockedContactsLedgerSyncStatus = jest.mocked(useContactsLedgerSyncStatus);
 
 jest.mock("~/renderer/store", () => ({
   getStoreValue: jest.fn(),
@@ -154,6 +168,11 @@ function ContactsViewModelProbe({
 describe("Contacts integration", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockedContactsLedgerSyncStatus.mockReturnValue("ready");
+    mockedUseActivationDrawer.mockReturnValue({
+      openDrawer: mockOpenActivationDrawer,
+      closeDrawer: jest.fn(),
+    });
     mockValidateAddress.mockResolvedValue(true);
     jest.mocked(isAddressSanctioned).mockResolvedValue(false);
   });
@@ -294,6 +313,21 @@ describe("Contacts integration", () => {
       expect(screen.queryByTestId("contacts-add-contact-dialog")).not.toBeInTheDocument();
       expect(screen.getByText("Coinbase 1")).toBeVisible();
     });
+  });
+
+  it("should open Ledger Sync activation instead of adding a contact while sync is inactive", async () => {
+    mockedContactsLedgerSyncStatus.mockReturnValue("inactive");
+    const { user } = renderContactsScreen();
+
+    await user.click(screen.getByTestId("contacts-add-contact"));
+
+    expect(screen.queryByTestId("contacts-add-contact-dialog")).not.toBeInTheDocument();
+    expect(screen.getByRole("dialog")).toBeVisible();
+
+    await user.click(screen.getByRole("button", { name: "Turn on Ledger Sync" }));
+
+    expect(mockOpenActivationDrawer).toHaveBeenCalledTimes(1);
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 
   it("should block a duplicate contact name and allow a unique replacement", async () => {
@@ -658,6 +692,24 @@ describe("Contacts integration", () => {
     expect(screen.getByTestId("contacts-add-address-flow-state")).toHaveTextContent(
       "selectingCurrency:contact-me",
     );
+  });
+
+  it("should keep the Add Address session closed while Ledger Sync is inactive", async () => {
+    mockedContactsLedgerSyncStatus.mockReturnValue("inactive");
+    const { user } = render(
+      <MemoryRouter initialEntries={["/contacts"]}>
+        <ContactsViewModelProbe contactId={meContactId} contactType="me" />
+      </MemoryRouter>,
+      {
+        skipRouter: true,
+        initialState: contactsPageInitialState(),
+      },
+    );
+
+    await user.click(screen.getByRole("button", { name: "Open contact" }));
+    await user.click(screen.getByRole("button", { name: "Start Add Address" }));
+
+    expect(screen.getByTestId("contacts-add-address-flow-state")).toHaveTextContent("closed");
   });
 
   it("should expose the Add Address session started for a saved contact", async () => {

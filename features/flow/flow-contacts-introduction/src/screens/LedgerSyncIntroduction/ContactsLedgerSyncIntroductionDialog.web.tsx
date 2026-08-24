@@ -6,7 +6,9 @@ import type { ContactsLedgerSyncIntroductionDialogProps } from "./types";
 export function ContactsLedgerSyncIntroductionDialog({
   open,
   description,
+  activateLabel,
   dismissLabel,
+  onActivate,
   onDismiss,
 }: ContactsLedgerSyncIntroductionDialogProps): React.ReactNode {
   const dismiss = useSingleFireDismiss(onDismiss, open);
@@ -23,7 +25,17 @@ export function ContactsLedgerSyncIntroductionDialog({
         <DialogHeader density="compact" onClose={dismiss} />
         <DialogBody className="flex flex-col gap-24 px-24 pb-24">
           <p className="body-1 text-base">{description}</p>
-          <Button appearance="base" size="md" onClick={dismiss} className="w-full">
+          {activateLabel && onActivate ? (
+            <Button appearance="base" size="md" onClick={onActivate} className="w-full">
+              {activateLabel}
+            </Button>
+          ) : null}
+          <Button
+            appearance={activateLabel && onActivate ? "gray" : "base"}
+            size="md"
+            onClick={dismiss}
+            className="w-full"
+          >
             {dismissLabel}
           </Button>
         </DialogBody>

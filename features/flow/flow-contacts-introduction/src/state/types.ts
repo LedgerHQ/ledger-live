@@ -3,7 +3,9 @@ export type ContactsLedgerSyncStatus = "ready" | "checking" | "inactive" | "unav
 export type ContactsLedgerSyncIntroduction = Readonly<{
   isOpen: boolean;
   description: string;
+  activateLabel?: string;
   dismissLabel: string;
+  onActivate?: () => void;
   onDismiss: () => void;
 }>;
 

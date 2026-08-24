@@ -1,6 +1,6 @@
 import React from "react";
 import { ContactsView } from "@features/flow-contacts";
-import { ContactsLedgerSyncIntroductionSheet } from "../../../../components/ContactsLedgerSyncIntroductionSheet";
+import { ContactsLedgerSyncIntroductionSheet } from "LLM/features/Contacts/components/ContactsLedgerSyncIntroductionSheet";
 import { ContactsAddContactDrawerSheet } from "../ContactsAddContactDrawerSheet";
 import { ContactsFeatureIntroductionSheet } from "../ContactsFeatureIntroductionSheet";
 import type { ContactsPageContentProps } from "../../types";
