@@ -29,6 +29,7 @@ jobs:
           private-key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
           permission-contents: write
           permission-pull-requests: write
+          permission-workflows: write
 
       - name: Generate ref/tag version to use during main checkout
         uses: LedgerHQ/ledger-live/tools/actions/composites/generate-tag@develop
