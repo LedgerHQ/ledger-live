@@ -2,14 +2,14 @@ name: Adjust Changeset Level
 description: This action adjusts the changeset level from one value to another.
 inputs:
   from_level:
-    description: 'The changeset level to target'
+    description: "The changeset level to target"
     required: true
   to_level:
-    description: 'The desired changeset level for the target'
+    description: "The desired changeset level for the target"
     required: true
 
 runs:
-  using: 'composite'
+  using: "composite"
   steps:
     - name: Validate input levels
       shell: bash

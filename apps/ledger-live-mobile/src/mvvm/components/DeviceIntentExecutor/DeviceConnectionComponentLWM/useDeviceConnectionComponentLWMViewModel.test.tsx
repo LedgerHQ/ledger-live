@@ -100,17 +100,14 @@ function withViewModelState({
   };
 
   return {
-    overrideInitialState: withFlagOverrides(
-      featureFlagOverrides,
-      (state: State): State => ({
-        ...state,
-        knownDevices: { knownDevices },
-        ble: {
-          ...state.ble,
-          knownDevices: bleKnownDevices,
-        },
-      }),
-    ),
+    overrideInitialState: withFlagOverrides(featureFlagOverrides, (state: State): State => ({
+      ...state,
+      knownDevices: { knownDevices },
+      ble: {
+        ...state.ble,
+        knownDevices: bleKnownDevices,
+      },
+    })),
   };
 }
 

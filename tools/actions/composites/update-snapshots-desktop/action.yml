@@ -66,7 +66,7 @@ runs:
         commit_message: "test(lld): update screenshots (${{ inputs.os }}) ${{ steps.changes.outputs.changes }} lld, test, screenshot"
         repo: ${{ github.repository }}
         branch: ${{ steps.get_branch.outputs.branch }}
-        file_pattern: '*'
+        file_pattern: "*"
       env:
         GITHUB_TOKEN: ${{ inputs.token }}
 

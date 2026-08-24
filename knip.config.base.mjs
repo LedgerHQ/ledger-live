@@ -29,9 +29,13 @@ export function createDualPlatformKnipConfig({
   additionalIgnoreDependencies = [],
 }) {
   const platformProjectExclude = platform === "web" ? "!src/**/*.native.*" : "!src/**/*.web.*";
+  // Platform-specific files (*.web.* / *.native.*) are resolved by the bundler
+  // through platform resolution (e.g. `import "./component"` → `./component.web.tsx`).
+  // Knip can't trace that, so we add them as entry points to avoid false "unused file" reports.
+  const platformEntry = platform === "web" ? "src/**/*.web.{ts,tsx}" : "src/**/*.native.{ts,tsx}";
   const workspace = {
     ...rootConfig.workspaces[packagePath],
-    entry,
+    entry: [...entry, platformEntry],
     project: [
       "src/**/*",
       platformProjectExclude,
@@ -48,8 +52,8 @@ export function createDualPlatformKnipConfig({
 
   return {
     ...rootConfig,
+    ignoreWorkspaces: ["apps/ledger-live-mobile"],
     workspaces: {
-      ...rootConfig.workspaces,
       [packagePath]: workspace,
     },
   };

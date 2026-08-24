@@ -34,7 +34,6 @@
         "allow": ["warn", "error"]
       }
     ],
-    "eslint/linebreak-style": ["error", "unix"],
     "typescript/no-empty-function": "off",
     "typescript/no-namespace": [
       "error",
@@ -46,7 +45,6 @@
     "import/no-duplicates": "error",
     "import/no-named-as-default": "off",
     "react/display-name": "off",
-    "react/prop-types": "off",
     "react/jsx-key": "warn",
     "react/no-did-mount-set-state": "warn",
     "react-hooks/rules-of-hooks": "error",

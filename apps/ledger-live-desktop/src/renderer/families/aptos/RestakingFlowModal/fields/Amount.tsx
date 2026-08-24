@@ -135,7 +135,7 @@ const AmountButton = styled.button.attrs(() => ({
       ? p.theme.colors.alertRed
       : p.active
         ? p.theme.colors.neutral.c00
-        : p.theme.colors.primary.c80}!important;
+        : p.theme.colors.primary.c80} !important;
   border: none;
   border-radius: 4px;
   padding: 0px ${p => p.theme.space[2]}px;

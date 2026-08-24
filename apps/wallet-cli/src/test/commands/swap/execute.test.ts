@@ -110,14 +110,12 @@ const mockDiePipelineResult = {
   },
 };
 
-const getQuotesMock = mock(
-  async (_args: GetQuotesArgs): Promise<GetQuotesResponse> => ({
-    quotes: [mockDieQuote],
-    providerErrors: [],
-    warnings: [],
-    errors: [],
-  }),
-);
+const getQuotesMock = mock(async (_args: GetQuotesArgs): Promise<GetQuotesResponse> => ({
+  quotes: [mockDieQuote],
+  providerErrors: [],
+  warnings: [],
+  errors: [],
+}));
 
 function makeAccount(descriptor: AccountDescriptor): Account {
   const family =

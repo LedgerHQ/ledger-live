@@ -31,11 +31,10 @@ const Unbondings = (props: UnbondingsPropsType) => {
         }
 
         return total.concat(
-          item.userUndelegatedList.map(
-            (unbonding: UnbondingType): UnbondingType =>
-              Object.assign(unbonding, {
-                validator: item.validator,
-              }),
+          item.userUndelegatedList.map((unbonding: UnbondingType): UnbondingType =>
+            Object.assign(unbonding, {
+              validator: item.validator,
+            }),
           ),
         );
       }, []),

@@ -17,9 +17,7 @@ jest.mock("../../cache", () => ({
 }));
 
 jest.mock("../../buildTransaction", () => ({
-  buildTransaction: jest.fn().mockResolvedValue({
-    /* not used by PSBT path */
-  }),
+  buildTransaction: jest.fn().mockResolvedValue({/* not used by PSBT path */}),
 }));
 
 jest.mock("../../networks", () => ({

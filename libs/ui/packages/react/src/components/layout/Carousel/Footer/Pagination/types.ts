@@ -1,6 +1,6 @@
 export enum ItemStatus {
-  "active",
-  "nearby",
-  "far",
-  "none",
+  active,
+  nearby,
+  far,
+  none,
 }
