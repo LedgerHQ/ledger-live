@@ -22,7 +22,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -c features/flow/flow-contacts-add-contact/knip.web.config.mjs -W features/flow/flow-contacts-add-contact --tsConfig tsconfig.web.json --isolate-workspaces && pnpm knip --directory ../../.. -c features/flow/flow-contacts-add-contact/knip.native.config.mjs -W features/flow/flow-contacts-add-contact --tsConfig tsconfig.native.json --isolate-workspaces"
+    "unimported": "pnpm knip --directory ../../.. -c features/flow/flow-contacts-add-contact/knip.web.config.mjs -W features/flow/flow-contacts-add-contact --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/flow/flow-contacts-add-contact/knip.native.config.mjs -W features/flow/flow-contacts-add-contact --tsConfig tsconfig.native.json"
   },
   "dependencies": {
     "@domain/entity-contact": "workspace:*",

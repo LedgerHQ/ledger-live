@@ -21,7 +21,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
     "test": "jest",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -c features/flow/flow-contacts-list/knip.web.config.mjs -W features/flow/flow-contacts-list --tsConfig tsconfig.web.json --isolate-workspaces && pnpm knip --directory ../../.. -c features/flow/flow-contacts-list/knip.native.config.mjs -W features/flow/flow-contacts-list --tsConfig tsconfig.native.json --isolate-workspaces"
+    "unimported": "pnpm knip --directory ../../.. -c features/flow/flow-contacts-list/knip.web.config.mjs -W features/flow/flow-contacts-list --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/flow/flow-contacts-list/knip.native.config.mjs -W features/flow/flow-contacts-list --tsConfig tsconfig.native.json"
   },
   "dependencies": {
     "@domain/entity-contact": "workspace:*",
