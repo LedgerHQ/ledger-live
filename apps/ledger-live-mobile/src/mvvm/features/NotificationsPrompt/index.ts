@@ -1,4 +1,3 @@
-export { useNotifications } from "./hooks/useNotifications";
 export { NotificationsPromptWrapper } from "./new/NotificationsPromptWrapper";
 export { NotificationsPromptProvider } from "./new/NotificationsPromptProvider";
 export { useNotificationsPrompt } from "./new/NotificationsPromptProvider";

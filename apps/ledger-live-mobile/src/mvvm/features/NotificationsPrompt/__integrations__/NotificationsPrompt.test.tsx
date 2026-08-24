@@ -4,7 +4,8 @@ import {
   NotificationsPromptProvider,
   NotificationsPromptWrapper,
   setPushNotificationsDataOfUserInStorage,
-  useNotifications,
+  useNotificationsPrompt,
+  type NotificationsPromptAfterActionSource,
 } from "LLM/features/NotificationsPrompt";
 
 import storage from "LLM/storage";
@@ -12,7 +13,7 @@ import { notificationsDataOfUserSelector } from "~/reducers/notifications";
 import { notificationsSelector } from "~/reducers/settings";
 import { add, sub, type Duration } from "date-fns";
 import { Button, Text } from "@ledgerhq/lumen-ui-rnative";
-import { NotificationsSettings, NotificationsState } from "~/reducers/types";
+import { NotificationsSettings } from "~/reducers/types";
 import Braze from "@braze/react-native-sdk";
 import { createNotificationsPromptFeatureFlags } from "../testUtils";
 
@@ -96,18 +97,14 @@ describe("NotificationsPrompt Integration", () => {
     osPermission,
     appNotifications,
     lastActionAt,
-    dateOfNextAllowedRequest,
-    alreadyDelayedToLater,
     dismissedOptInDrawerAtList,
     notificationSettings = {},
     skipStorageSetup = false,
   }: {
-    actionSource?: Exclude<NotificationsState["drawerSource"], undefined | "inactivity">;
+    actionSource?: NotificationsPromptAfterActionSource;
     osPermission: AuthorizationStatusType;
     appNotifications: boolean;
     lastActionAt?: number;
-    dateOfNextAllowedRequest?: Date;
-    alreadyDelayedToLater?: boolean;
     dismissedOptInDrawerAtList?: number[];
     notificationSettings?: Partial<NotificationsSettings>;
     skipStorageSetup?: boolean;
@@ -117,8 +114,6 @@ describe("NotificationsPrompt Integration", () => {
     if (!skipStorageSetup) {
       await setPushNotificationsDataOfUserInStorage({
         lastActionAt,
-        dateOfNextAllowedRequest,
-        alreadyDelayedToLater,
         dismissedOptInDrawerAtList,
       });
     }
@@ -128,10 +123,10 @@ describe("NotificationsPrompt Integration", () => {
       const [reloadCount, reload] = useReducer(x => x + 1, 0);
 
       const {
-        tryTriggerPushNotificationDrawerAfterAction,
+        notifyFlowCompleted,
         initPushNotificationsData,
         tryTriggerPushNotificationDrawerAfterInactivity,
-      } = useNotifications();
+      } = useNotificationsPrompt();
 
       useEffect(() => {
         initPushNotificationsData()
@@ -148,9 +143,7 @@ describe("NotificationsPrompt Integration", () => {
 
       return (
         <>
-          <Button onPress={() => tryTriggerPushNotificationDrawerAfterAction(actionSource)}>
-            Trigger drawer
-          </Button>
+          <Button onPress={() => notifyFlowCompleted(actionSource)}>Trigger drawer</Button>
           <Button onPress={reload}>Reload app</Button>
         </>
       );
@@ -201,8 +194,13 @@ describe("NotificationsPrompt Integration", () => {
           }),
           state => ({
             ...state,
+            notifications: {
+              ...state.notifications,
+              permissionStatus: osPermission,
+            },
             settings: {
               ...state.settings,
+              hasCompletedOnboarding: true,
               notifications: {
                 ...state.settings.notifications,
                 ...notificationSettings,
@@ -214,7 +212,7 @@ describe("NotificationsPrompt Integration", () => {
       },
     );
 
-    const tryTriggerDrawer = async () => {
+    const notifyFlowCompleted = async () => {
       const triggerDrawerButton = await screen.findByRole("button", { name: /trigger drawer/i });
       await rendered.user.press(triggerDrawerButton);
       act(() => jest.runOnlyPendingTimers());
@@ -228,7 +226,7 @@ describe("NotificationsPrompt Integration", () => {
 
     return {
       ...rendered,
-      tryTriggerDrawer,
+      notifyFlowCompleted,
     };
   }
 
@@ -287,197 +285,90 @@ describe("NotificationsPrompt Integration", () => {
         lastActionAt,
       });
 
-      const { tryTriggerDrawer } = await setup({
+      const { notifyFlowCompleted } = await setup({
         skipStorageSetup: true,
         osPermission: AuthorizationStatus.DENIED,
         appNotifications: false,
       });
 
-      await tryTriggerDrawer();
+      await notifyFlowCompleted();
       expect(screen.getByText(/allow notifications/i)).toBeOnTheScreen();
     });
   });
 
   describe("after an action", () => {
-    describe("backward compatibility for legacy users", () => {
-      describe("opt in", () => {
-        it("alreadyDelayedToLater: should never prompt", async () => {
-          const { tryTriggerDrawer } = await setup({
-            osPermission: AuthorizationStatus.AUTHORIZED,
-            appNotifications: true,
-            alreadyDelayedToLater: true,
-          });
-
-          await tryTriggerDrawer();
-          expect(screen.queryByText(/allow notifications/i)).not.toBeOnTheScreen();
-
-          advanceTime(REPROMPT_SCHEDULE[0]);
-          await tryTriggerDrawer();
-          expect(screen.queryByText(/allow notifications/i)).not.toBeOnTheScreen();
-
-          advanceTime(REPROMPT_SCHEDULE[1]);
-          await tryTriggerDrawer();
-          expect(screen.queryByText(/allow notifications/i)).not.toBeOnTheScreen();
-        });
-
-        it("dateOfNextAllowedRequest: should never prompt", async () => {
-          const { tryTriggerDrawer } = await setup({
-            osPermission: AuthorizationStatus.AUTHORIZED,
-            appNotifications: true,
-            dateOfNextAllowedRequest: sub(new Date(), { years: 10 }),
-          });
-
-          await tryTriggerDrawer();
-          expect(screen.queryByText(/allow notifications/i)).not.toBeOnTheScreen();
-
-          advanceTime(REPROMPT_SCHEDULE[0]);
-          await tryTriggerDrawer();
-          expect(screen.queryByText(/allow notifications/i)).not.toBeOnTheScreen();
-
-          advanceTime(REPROMPT_SCHEDULE[1]);
-          await tryTriggerDrawer();
-          expect(screen.queryByText(/allow notifications/i)).not.toBeOnTheScreen();
-        });
-      });
-
-      describe("opt out", () => {
-        describe("os denied", () => {
-          it("alreadyDelayedToLater: should prompt only after the next reprompt delay", async () => {
-            const { tryTriggerDrawer } = await setup({
-              osPermission: AuthorizationStatus.DENIED,
-              appNotifications: true,
-              alreadyDelayedToLater: true,
-            });
-
-            await tryTriggerDrawer();
-            expect(screen.queryByText(/allow notifications/i)).not.toBeOnTheScreen();
-
-            advanceTime(REPROMPT_SCHEDULE[0]);
-            await tryTriggerDrawer();
-            expect(screen.getByText(/allow notifications/i)).toBeOnTheScreen();
-          });
-
-          it("dateOfNextAllowedRequest: should prompt only after the next reprompt delay", async () => {
-            const { tryTriggerDrawer } = await setup({
-              osPermission: AuthorizationStatus.DENIED,
-              appNotifications: true,
-              dateOfNextAllowedRequest: add(new Date(), { years: 10 }),
-            });
-
-            await tryTriggerDrawer();
-            expect(screen.queryByText(/allow notifications/i)).not.toBeOnTheScreen();
-
-            advanceTime(REPROMPT_SCHEDULE[0]);
-            await tryTriggerDrawer();
-            expect(screen.getByText(/allow notifications/i)).toBeOnTheScreen();
-          });
-        });
-        describe("app notifications = false", () => {
-          it("alreadyDelayedToLater: should prompt only after the next reprompt delay", async () => {
-            const { tryTriggerDrawer } = await setup({
-              osPermission: AuthorizationStatus.AUTHORIZED,
-              appNotifications: false,
-              alreadyDelayedToLater: true,
-            });
-
-            await tryTriggerDrawer();
-            expect(screen.queryByText(/allow notifications/i)).not.toBeOnTheScreen();
-
-            advanceTime(REPROMPT_SCHEDULE[0]);
-            await tryTriggerDrawer();
-            expect(screen.getByText(/allow notifications/i)).toBeOnTheScreen();
-          });
-
-          it("dateOfNextAllowedRequest: should prompt only after the next reprompt delay", async () => {
-            const { tryTriggerDrawer } = await setup({
-              osPermission: AuthorizationStatus.AUTHORIZED,
-              appNotifications: false,
-              dateOfNextAllowedRequest: add(new Date(), { years: 10 }),
-            });
-
-            await tryTriggerDrawer();
-            expect(screen.queryByText(/allow notifications/i)).not.toBeOnTheScreen();
-
-            advanceTime(REPROMPT_SCHEDULE[0]);
-            await tryTriggerDrawer();
-            expect(screen.getByText(/allow notifications/i)).toBeOnTheScreen();
-          });
-        });
-      });
-    });
-
     describe("first time prompt", () => {
       describe("os not determined", () => {
         it("app notifications = false, should prompt immediately", async () => {
-          const { tryTriggerDrawer } = await setup({
+          const { notifyFlowCompleted } = await setup({
             osPermission: AuthorizationStatus.NOT_DETERMINED,
             appNotifications: false,
           });
 
-          await tryTriggerDrawer();
+          await notifyFlowCompleted();
           expect(screen.getByText(/allow notifications/i)).toBeOnTheScreen();
         });
 
         it("app notifications = true, should prompt immediately", async () => {
-          const { tryTriggerDrawer } = await setup({
+          const { notifyFlowCompleted } = await setup({
             osPermission: AuthorizationStatus.NOT_DETERMINED,
             appNotifications: true,
           });
 
-          await tryTriggerDrawer();
+          await notifyFlowCompleted();
           expect(screen.getByText(/allow notifications/i)).toBeOnTheScreen();
         });
       });
 
       describe("os denied", () => {
         it("app notifications = false, should not prompt immediately, then prompt after delay", async () => {
-          const { tryTriggerDrawer } = await setup({
+          const { notifyFlowCompleted } = await setup({
             osPermission: AuthorizationStatus.DENIED,
             appNotifications: false,
           });
 
-          await tryTriggerDrawer();
+          await notifyFlowCompleted();
           expect(screen.queryByText(/allow notifications/i)).not.toBeOnTheScreen();
 
           advanceTime(REPROMPT_SCHEDULE[0]);
 
-          await tryTriggerDrawer();
+          await notifyFlowCompleted();
           expect(screen.getByText(/allow notifications/i)).toBeOnTheScreen();
         });
 
         it("app notifications = true, should not prompt immediately, then prompt after delay", async () => {
-          const { tryTriggerDrawer } = await setup({
+          const { notifyFlowCompleted } = await setup({
             osPermission: AuthorizationStatus.DENIED,
             appNotifications: true,
           });
 
-          await tryTriggerDrawer();
+          await notifyFlowCompleted();
           expect(screen.queryByText(/allow notifications/i)).not.toBeOnTheScreen();
 
           advanceTime(REPROMPT_SCHEDULE[0]);
 
-          await tryTriggerDrawer();
+          await notifyFlowCompleted();
           expect(screen.getByText(/allow notifications/i)).toBeOnTheScreen();
         });
       });
 
       describe("os authorized", () => {
         it("app notifications = true, should never prompt", async () => {
-          const { tryTriggerDrawer } = await setup({
+          const { notifyFlowCompleted } = await setup({
             osPermission: AuthorizationStatus.AUTHORIZED,
             appNotifications: true,
           });
 
-          await tryTriggerDrawer();
+          await notifyFlowCompleted();
           expect(screen.queryByText(/allow notifications/i)).not.toBeOnTheScreen();
 
           advanceTime(REPROMPT_SCHEDULE[0]);
 
-          await tryTriggerDrawer();
+          await notifyFlowCompleted();
           expect(screen.queryByText(/allow notifications/i)).not.toBeOnTheScreen();
 
           advanceTime(REPROMPT_SCHEDULE[1]);
-          await tryTriggerDrawer();
+          await notifyFlowCompleted();
           expect(screen.queryByText(/allow notifications/i)).not.toBeOnTheScreen();
         });
 
@@ -490,12 +381,12 @@ describe("NotificationsPrompt Integration", () => {
 
     describe("multiple reprompts", () => {
       it("should never reprompt ever again when user finally opts in notifications", async () => {
-        const { tryTriggerDrawer, user } = await setup({
+        const { notifyFlowCompleted, user } = await setup({
           osPermission: AuthorizationStatus.NOT_DETERMINED,
           appNotifications: true,
         });
 
-        await tryTriggerDrawer();
+        await notifyFlowCompleted();
         const allowNotificationsButton = screen.getByText(/allow notifications/i);
         expect(allowNotificationsButton).toBeOnTheScreen();
 
@@ -507,18 +398,18 @@ describe("NotificationsPrompt Integration", () => {
         advanceTime({
           years: 999,
         });
-        await tryTriggerDrawer();
+        await notifyFlowCompleted();
         expect(screen.queryByText(/allow notifications/i)).not.toBeOnTheScreen();
 
         advanceTime({
           years: 999,
         });
-        await tryTriggerDrawer();
+        await notifyFlowCompleted();
         expect(screen.queryByText(/allow notifications/i)).not.toBeOnTheScreen();
       });
 
       it("should enable app notifications directly when OS permission is already allowed", async () => {
-        const { store, tryTriggerDrawer, user } = await setup({
+        const { store, notifyFlowCompleted, user } = await setup({
           actionSource: "add_favorite_coin",
           osPermission: AuthorizationStatus.AUTHORIZED,
           appNotifications: false,
@@ -528,7 +419,7 @@ describe("NotificationsPrompt Integration", () => {
           },
         });
 
-        await tryTriggerDrawer();
+        await notifyFlowCompleted();
         const allowNotificationsButton = screen.getByText(/allow notifications/i);
         expect(allowNotificationsButton).toBeOnTheScreen();
 
@@ -548,7 +439,7 @@ describe("NotificationsPrompt Integration", () => {
         advanceTime({
           years: 999,
         });
-        await tryTriggerDrawer();
+        await notifyFlowCompleted();
         expect(screen.queryByText(/allow notifications/i)).not.toBeOnTheScreen();
       });
 
@@ -558,7 +449,7 @@ describe("NotificationsPrompt Integration", () => {
       ])(
         "should enable app notifications when they are off and OS permission is %s",
         async (_, osPermission) => {
-          const { store, tryTriggerDrawer, user } = await setup({
+          const { store, notifyFlowCompleted, user } = await setup({
             osPermission,
             appNotifications: false,
             notificationSettings: {
@@ -579,7 +470,7 @@ describe("NotificationsPrompt Integration", () => {
             advanceTime(REPROMPT_SCHEDULE[0]);
           }
 
-          await tryTriggerDrawer();
+          await notifyFlowCompleted();
           const allowNotificationsButton = screen.getByText(/allow notifications/i);
           expect(allowNotificationsButton).toBeOnTheScreen();
 
@@ -599,12 +490,12 @@ describe("NotificationsPrompt Integration", () => {
       );
 
       it("should reprompt after each delay when user opts out notifications by clicking on maybe later text", async () => {
-        const { tryTriggerDrawer, user } = await setup({
+        const { notifyFlowCompleted, user } = await setup({
           osPermission: AuthorizationStatus.AUTHORIZED,
           appNotifications: false,
         });
 
-        await tryTriggerDrawer();
+        await notifyFlowCompleted();
         const maybeLaterButton = screen.getByText(/maybe later/i);
         expect(maybeLaterButton).toBeOnTheScreen();
 
@@ -614,21 +505,21 @@ describe("NotificationsPrompt Integration", () => {
         await waitFor(() => expect(maybeLaterButton).not.toBeOnTheScreen());
 
         advanceTime(REPROMPT_SCHEDULE[0]);
-        await tryTriggerDrawer();
+        await notifyFlowCompleted();
         const maybeLaterButton1 = screen.getByText(/maybe later/i);
         expect(maybeLaterButton1).toBeOnTheScreen();
         await user.press(maybeLaterButton1);
         await waitFor(() => expect(maybeLaterButton1).not.toBeOnTheScreen());
 
         advanceTime(REPROMPT_SCHEDULE[1]);
-        await tryTriggerDrawer();
+        await notifyFlowCompleted();
         const maybeLaterButton2 = screen.getByText(/maybe later/i);
         expect(maybeLaterButton2).toBeOnTheScreen();
         await user.press(screen.getByText(/maybe later/i));
         await waitFor(() => expect(maybeLaterButton2).not.toBeOnTheScreen());
 
         advanceTime(REPROMPT_SCHEDULE[2]);
-        await tryTriggerDrawer();
+        await notifyFlowCompleted();
         const maybeLaterButton3 = screen.getByText(/maybe later/i);
         expect(maybeLaterButton3).toBeOnTheScreen();
         await user.press(maybeLaterButton3);
@@ -636,40 +527,40 @@ describe("NotificationsPrompt Integration", () => {
 
         // It should reprompt using the maximum delay, since we've already dismissed the drawer as many times as the length of reprompt_schedule allows.
         advanceTime(REPROMPT_SCHEDULE[0]);
-        await tryTriggerDrawer();
+        await notifyFlowCompleted();
         expect(screen.queryByText(/maybe later/i)).not.toBeOnTheScreen();
         advanceTime(REPROMPT_SCHEDULE[2]);
-        await tryTriggerDrawer();
+        await notifyFlowCompleted();
         expect(screen.getByText(/maybe later/i)).toBeOnTheScreen();
       });
 
       it("should reprompt after each delay when user opts out notifications by clicking on backdrop", async () => {
-        const { tryTriggerDrawer, user } = await setup({
+        const { notifyFlowCompleted, user } = await setup({
           osPermission: AuthorizationStatus.AUTHORIZED,
           appNotifications: false,
         });
 
-        await tryTriggerDrawer();
+        await notifyFlowCompleted();
         const backdrop = screen.getByTestId("drawer-backdrop");
         await user.press(backdrop);
         await waitFor(() => expect(backdrop).not.toBeOnTheScreen());
 
         advanceTime(REPROMPT_SCHEDULE[0]);
-        await tryTriggerDrawer();
+        await notifyFlowCompleted();
         const backdrop1 = screen.getByTestId("drawer-backdrop");
         expect(backdrop1).toBeOnTheScreen();
         await user.press(backdrop1);
         await waitFor(() => expect(backdrop1).not.toBeOnTheScreen());
 
         advanceTime(REPROMPT_SCHEDULE[1]);
-        await tryTriggerDrawer();
+        await notifyFlowCompleted();
         const backdrop2 = screen.getByTestId("drawer-backdrop");
         expect(backdrop2).toBeOnTheScreen();
         await user.press(backdrop2);
         await waitFor(() => expect(backdrop2).not.toBeOnTheScreen());
 
         advanceTime(REPROMPT_SCHEDULE[2]);
-        await tryTriggerDrawer();
+        await notifyFlowCompleted();
         const backdrop3 = screen.getByTestId("drawer-backdrop");
         expect(backdrop3).toBeOnTheScreen();
         await user.press(backdrop3);
@@ -677,45 +568,45 @@ describe("NotificationsPrompt Integration", () => {
       });
 
       it("should not reprompt when delay is not reached", async () => {
-        const { tryTriggerDrawer, user } = await setup({
+        const { notifyFlowCompleted, user } = await setup({
           osPermission: AuthorizationStatus.AUTHORIZED,
           appNotifications: false,
         });
 
-        await tryTriggerDrawer();
+        await notifyFlowCompleted();
         const maybeLaterButton = screen.getByText(/maybe later/i);
         await user.press(maybeLaterButton);
         await waitFor(() => expect(maybeLaterButton).not.toBeOnTheScreen());
 
         advanceTime({ days: REPROMPT_SCHEDULE[0].days / 99 });
-        await tryTriggerDrawer();
+        await notifyFlowCompleted();
         expect(screen.queryByText(/maybe later/i)).not.toBeOnTheScreen();
         expect(screen.queryByText(/allow notifications/i)).not.toBeOnTheScreen();
 
         advanceTime({ days: REPROMPT_SCHEDULE[0].days / 99 });
-        await tryTriggerDrawer();
+        await notifyFlowCompleted();
         expect(screen.queryByText(/maybe later/i)).not.toBeOnTheScreen();
         expect(screen.queryByText(/allow notifications/i)).not.toBeOnTheScreen();
 
         advanceTime(REPROMPT_SCHEDULE[0]);
-        await tryTriggerDrawer();
+        await notifyFlowCompleted();
         await waitFor(() => expect(screen.getByText(/maybe later/i)).toBeOnTheScreen());
         expect(screen.getByText(/allow notifications/i)).toBeOnTheScreen();
         await user.press(screen.getByTestId("drawer-backdrop"));
         await waitFor(() => expect(screen.queryByTestId("drawer-backdrop")).not.toBeOnTheScreen());
 
         advanceTime({ days: REPROMPT_SCHEDULE[1].days / 99 });
-        await tryTriggerDrawer();
+        await notifyFlowCompleted();
         expect(screen.queryByText(/maybe later/i)).not.toBeOnTheScreen();
         expect(screen.queryByText(/allow notifications/i)).not.toBeOnTheScreen();
 
         advanceTime({ days: REPROMPT_SCHEDULE[1].days / 99 });
-        await tryTriggerDrawer();
+        await notifyFlowCompleted();
         expect(screen.queryByText(/maybe later/i)).not.toBeOnTheScreen();
         expect(screen.queryByText(/allow notifications/i)).not.toBeOnTheScreen();
 
         advanceTime(REPROMPT_SCHEDULE[1]);
-        await tryTriggerDrawer();
+        await notifyFlowCompleted();
         await waitFor(() => expect(screen.getByText(/maybe later/i)).toBeOnTheScreen());
         expect(screen.getByText(/allow notifications/i)).toBeOnTheScreen();
       });
@@ -723,86 +614,6 @@ describe("NotificationsPrompt Integration", () => {
   });
 
   describe("after inactivity", () => {
-    describe("backward compatibility", () => {
-      describe("opt in", () => {
-        it("alreadyDelayedToLater: should never prompt", async () => {
-          const { user } = await setup({
-            osPermission: AuthorizationStatus.AUTHORIZED,
-            appNotifications: true,
-            alreadyDelayedToLater: true,
-          });
-
-          act(() => jest.runOnlyPendingTimers());
-          expect(screen.queryByText(/allow notifications/i)).not.toBeOnTheScreen();
-
-          advanceTime(INACTIVITY_REPROMPT);
-          await user.press(screen.getByText(/reload app/i));
-          act(() => jest.runOnlyPendingTimers());
-          expect(screen.queryByText(/allow notifications/i)).not.toBeOnTheScreen();
-
-          advanceTime(INACTIVITY_REPROMPT);
-          await user.press(screen.getByText(/reload app/i));
-          act(() => jest.runOnlyPendingTimers());
-          expect(screen.queryByText(/allow notifications/i)).not.toBeOnTheScreen();
-        });
-
-        it("dateOfNextAllowedRequest: should never prompt", async () => {
-          const { user } = await setup({
-            osPermission: AuthorizationStatus.AUTHORIZED,
-            appNotifications: true,
-            dateOfNextAllowedRequest: sub(new Date(), { years: 10 }),
-          });
-
-          act(() => jest.runOnlyPendingTimers());
-          expect(screen.queryByText(/allow notifications/i)).not.toBeOnTheScreen();
-
-          advanceTime(INACTIVITY_REPROMPT);
-          await user.press(screen.getByText(/reload app/i));
-          act(() => jest.runOnlyPendingTimers());
-          expect(screen.queryByText(/allow notifications/i)).not.toBeOnTheScreen();
-
-          advanceTime(INACTIVITY_REPROMPT);
-          await user.press(screen.getByText(/reload app/i));
-          act(() => jest.runOnlyPendingTimers());
-          expect(screen.queryByText(/allow notifications/i)).not.toBeOnTheScreen();
-        });
-      });
-
-      describe("opt out", () => {
-        it("alreadyDelayedToLater: should prompt after inactivity", async () => {
-          const { user } = await setup({
-            osPermission: AuthorizationStatus.AUTHORIZED,
-            appNotifications: false,
-            alreadyDelayedToLater: true,
-          });
-
-          act(() => jest.runOnlyPendingTimers());
-          expect(screen.queryByText(/allow notifications/i)).not.toBeOnTheScreen();
-
-          advanceTime(INACTIVITY_REPROMPT);
-          await user.press(screen.getByText(/reload app/i));
-          act(() => jest.runOnlyPendingTimers());
-          expect(screen.getByText(/allow notifications/i)).toBeOnTheScreen();
-        });
-
-        it("dateOfNextAllowedRequest: should prompt after inactivity", async () => {
-          const { user } = await setup({
-            osPermission: AuthorizationStatus.AUTHORIZED,
-            appNotifications: false,
-            dateOfNextAllowedRequest: sub(new Date(), { years: 10 }),
-          });
-
-          act(() => jest.runOnlyPendingTimers());
-          expect(screen.queryByText(/allow notifications/i)).not.toBeOnTheScreen();
-
-          advanceTime(INACTIVITY_REPROMPT);
-          await user.press(screen.getByText(/reload app/i));
-          act(() => jest.runOnlyPendingTimers());
-          expect(screen.getByText(/allow notifications/i)).toBeOnTheScreen();
-        });
-      });
-    });
-
     it("should prompt after inactivity", async () => {
       await setup({
         osPermission: AuthorizationStatus.AUTHORIZED,
@@ -913,7 +724,7 @@ describe("NotificationsPrompt Integration", () => {
 
     describe("with action reprompt logic", () => {
       it("should not affect the action reprompt logic when user dismisses the opt in drawer from inactivity", async () => {
-        const { tryTriggerDrawer, user } = await setup({
+        const { notifyFlowCompleted, user } = await setup({
           osPermission: AuthorizationStatus.AUTHORIZED,
           appNotifications: false,
           lastActionAt: sub(Date.now(), INACTIVITY_REPROMPT).getTime(),
@@ -932,7 +743,7 @@ describe("NotificationsPrompt Integration", () => {
         expect(backdrop).not.toBeOnTheScreen();
 
         // User has never seen the opt in drawer after an action, so we should prompt it.
-        await tryTriggerDrawer();
+        await notifyFlowCompleted();
         expect(screen.getByText(/allow notifications/i)).toBeOnTheScreen();
         await user.press(screen.getByText(/maybe later/i));
 
@@ -940,12 +751,12 @@ describe("NotificationsPrompt Integration", () => {
         // And once from an action.
         // So the first reprompt delay for an action should be applied (7 days).
         advanceTime(REPROMPT_SCHEDULE[0]);
-        await tryTriggerDrawer();
+        await notifyFlowCompleted();
         expect(screen.getByText(/allow notifications/i)).toBeOnTheScreen();
       });
 
       it("should restart inactivity timer when the user opts out of notifications after an action", async () => {
-        const { tryTriggerDrawer, user } = await setup({
+        const { notifyFlowCompleted, user } = await setup({
           osPermission: AuthorizationStatus.AUTHORIZED,
           appNotifications: false,
           lastActionAt: sub(Date.now(), { months: INACTIVITY_REPROMPT.months / 2 }).getTime(), // 3 months ago
@@ -957,7 +768,7 @@ describe("NotificationsPrompt Integration", () => {
 
         // User triggers drawer after an action and opts out
         // This updates lastActionAt to NOW, restarting the inactivity timer
-        await tryTriggerDrawer();
+        await notifyFlowCompleted();
         const maybeLaterButton = screen.getByText(/maybe later/i);
         expect(maybeLaterButton).toBeOnTheScreen();
         await user.press(maybeLaterButton);
@@ -982,14 +793,14 @@ describe("NotificationsPrompt Integration", () => {
 
   describe("protected onboarding flow", () => {
     it("should skip permissions sync and show notifications drawer after an action", async () => {
-      const { tryTriggerDrawer } = await setup({
+      const { notifyFlowCompleted } = await setup({
         skipStorageSetup: true,
         osPermission: AuthorizationStatus.NOT_DETERMINED,
         appNotifications: true,
         actionSource: "onboarding",
       });
 
-      await tryTriggerDrawer();
+      await notifyFlowCompleted();
 
       expect(screen.getByText(/allow notifications/i)).toBeOnTheScreen();
     });
