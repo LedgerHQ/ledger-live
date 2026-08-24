@@ -2,7 +2,7 @@
   "name": "@features/platform-style",
   "version": "0.2.0",
   "private": true,
-  "description": "Single source of truth for StyleProvider across Ledger Live apps — SC ThemeProvider + Lumen integration, DDD-boundary-clean",
+  "description": "Single source of truth for StyleProvider across Ledger Live apps \u2014 SC ThemeProvider + Lumen integration, DDD-boundary-clean",
   "main": "src/index.ts",
   "types": "src/index.ts",
   "exports": {
@@ -18,6 +18,8 @@
   },
   "sideEffects": false,
   "scripts": {
+    "lint": "oxlint src",
+    "lint:ci": "oxlint src --quiet",
     "typecheck": "tsc --noEmit -p tsconfig.native.json",
     "test": "jest",
     "test:watch": "jest --watch",
