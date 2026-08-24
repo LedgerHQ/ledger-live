@@ -31,13 +31,6 @@
     "eslint/preserve-caught-error": "off",
     "eslint/no-useless-constructor": "off",
     "import/no-cycle": "error",
-      "error",
-      {
-        "alphabetize": {
-          "order": "asc"
-        }
-      }
-    ],
     "unicorn/no-useless-fallback-in-spread": "off",
     "unicorn/no-useless-spread": "off",
     "unicorn/no-new-array": "off",
