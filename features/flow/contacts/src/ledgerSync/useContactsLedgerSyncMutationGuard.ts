@@ -26,8 +26,13 @@ export function useContactsLedgerSyncMutationGuard() {
         return { status: "allowed", intent };
       }
 
-      if (isContactsLedgerSyncActivationRequired(ledgerSyncStatus)) {
+      if (ledgerSyncStatus === "inactive") {
         setPendingIntent(intent);
+        return { status: "blocked", intent };
+      }
+
+      if (isContactsLedgerSyncActivationRequired(ledgerSyncStatus)) {
+        setPendingIntent(undefined);
         return { status: "blocked", intent };
       }
 
