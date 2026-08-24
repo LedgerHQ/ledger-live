@@ -99,7 +99,7 @@ const InputBox = styled(Box).attrs(() => ({
 `;
 const MaxButton = styled.button`
   background-color: ${p => p.theme.colors.primary.c80};
-  color: ${p => p.theme.colors.neutral.c00}!important;
+  color: ${p => p.theme.colors.neutral.c00} !important;
   border: none;
   border-radius: 4px;
   padding: 0px ${p => p.theme.space[2]}px;

@@ -131,7 +131,7 @@ const AmountButton = styled.button.attrs(() => ({
   active: boolean;
 }>`
   background-color: ${p => getBackgroundColor(p)};
-  color: ${p => getTextColor(p)}!important;
+  color: ${p => getTextColor(p)} !important;
   border: none;
   border-radius: 4px;
   padding: 0px ${p => p.theme.space[2]}px;

@@ -72,7 +72,7 @@ function generateHistoryFromOperationsG(
   let date = latestDate;
   const reference = account.balanceHistoryCache?.[g];
 
-  for (let i = 0; i < operationsLength; ) {
+  for (let i = 0; i < operationsLength;) {
     if (
       (partial && reference?.latestDate && date < reference.latestDate) ||
       balances.length > maxDatapoints

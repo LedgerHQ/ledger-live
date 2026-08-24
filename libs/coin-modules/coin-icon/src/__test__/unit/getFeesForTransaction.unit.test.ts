@@ -29,9 +29,7 @@ describe("getEstimatedFees", () => {
       fees: new BigNumber(10),
     } as any;
 
-    const unsignedTx = {
-      /* mock unsigned transaction */
-    };
+    const unsignedTx = {/* mock unsigned transaction */};
     const stepLimit = new BigNumber(100000);
     const stepPrice = new BigNumber(10);
 

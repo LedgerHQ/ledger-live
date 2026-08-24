@@ -39,7 +39,7 @@ runs:
           const ref = process.env.REF;
           const tagName = process.env.TAG_NAME;
           const overwrite = process.env.OVERWRITE === 'true';
-          
+
           try {
             // Try to get the existing tag
             await github.rest.git.getRef({

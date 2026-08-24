@@ -31,7 +31,6 @@
     "eslint/preserve-caught-error": "off",
     "eslint/no-useless-constructor": "off",
     "import/no-cycle": "error",
-    "import/order": [
       "error",
       {
         "alphabetize": {

@@ -36,7 +36,7 @@ runs:
         export FILE_LIST=$(mktemp /tmp/file-list.XXXXXX)
         echo "Temporary file created at $FILE_LIST"
         echo "file-list=$FILE_LIST" >> $GITHUB_OUTPUT
-        
+
     - name: Compile file list
       shell: bash
       run: |
@@ -96,6 +96,6 @@ runs:
     - name: Cleanup
       shell: bash
       run: |
-          echo "Cleaning up temporary files"
-          rm -f /tmp/cache.tzst
-          rm -f ${{ steps.create_tempfile.outputs.file-list }}
+        echo "Cleaning up temporary files"
+        rm -f /tmp/cache.tzst
+        rm -f ${{ steps.create_tempfile.outputs.file-list }}
