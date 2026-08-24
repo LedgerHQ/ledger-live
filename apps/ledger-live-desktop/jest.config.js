@@ -136,6 +136,7 @@ module.exports = {
     "default",
     ...(process.env.CI ? ["github-actions"] : []),
     ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
+    "@ledgerhq/test-quarantine/jest",
   ],
   silent: false,
   verbose: true,
@@ -148,11 +149,19 @@ module.exports = {
         "(/__tests__/.*|(\\.|/)react\\.test|spec)\\.tsx",
       ],
       testMatch: ["**/src/**/*.test.(ts|tsx)"],
+      setupFilesAfterEnv: [
+        ...commonConfig.setupFilesAfterEnv,
+        "@ledgerhq/test-quarantine/jest-retries",
+      ],
     },
     {
       ...commonConfig,
       displayName: "dom",
       testRegex: "(/__tests__/.*|(\\.|/)react\\.test|spec)\\.tsx",
+      setupFilesAfterEnv: [
+        ...commonConfig.setupFilesAfterEnv,
+        "@ledgerhq/test-quarantine/jest-retries",
+      ],
     },
   ],
 };

@@ -33,6 +33,7 @@
     "react-redux": ">=9.0.0"
   },
   "devDependencies": {
+    "@ledgerhq/test-quarantine": "workspace:*",
     "@shared/feature-flags": "workspace:^",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",

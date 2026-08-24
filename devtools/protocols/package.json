@@ -20,6 +20,7 @@
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@ledgerhq/test-quarantine": "workspace:*",
     "typescript": "catalog:",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",

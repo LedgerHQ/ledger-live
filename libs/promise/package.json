@@ -24,6 +24,7 @@
     "@ledgerhq/logs": "catalog:"
   },
   "devDependencies": {
+    "@ledgerhq/test-quarantine": "workspace:*",
     "@types/jest": "catalog:",
     "jest": "catalog:",
     "@swc/jest": "catalog:",

@@ -22,6 +22,7 @@
   "license": "Apache-2.0",
   "dependencies": {},
   "devDependencies": {
+    "@ledgerhq/test-quarantine": "workspace:*",
     "@types/jest": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
