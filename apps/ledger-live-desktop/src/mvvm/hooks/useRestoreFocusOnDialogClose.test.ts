@@ -89,7 +89,7 @@ describe("useRestoreFocusOnDialogClose", () => {
     expect(document.activeElement).toBe(origin);
   });
 
-  it("keeps focus on the origin when it was already restored", () => {
+  it("leaves the origin alone when it never lost focus", () => {
     const origin = document.createElement("button");
     document.body.appendChild(origin);
     origin.focus();
@@ -106,7 +106,72 @@ describe("useRestoreFocusOnDialogClose", () => {
       nextFrame?.(0);
     });
 
+    expect(focusSpy).not.toHaveBeenCalled();
+  });
+
+  // Clicking inside a webview leaves the embedder's active element on the body,
+  // so there is no origin to restore — and the guest cannot claim keyboard focus
+  // back on its own.
+  it("hands focus to the webview when the dialog was opened from a live app", () => {
+    const webview = document.createElement("webview");
+    document.body.appendChild(webview);
+    const focusSpy = jest.spyOn(webview, "focus");
+
+    const { result } = renderHook(() => useRestoreFocusOnDialogClose());
+    act(() => result.current.onOpenAutoFocus());
+
+    act(() => {
+      result.current.onCloseAutoFocus({
+        preventDefault: jest.fn(),
+        currentTarget: null,
+      } as unknown as Event);
+      nextFrame?.(0);
+    });
+
     expect(focusSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it("hands focus to the webview when the origin is gone", () => {
+    const origin = document.createElement("button");
+    const webview = document.createElement("webview");
+    document.body.append(origin, webview);
+    origin.focus();
+    const focusSpy = jest.spyOn(webview, "focus");
+
+    const { result } = renderHook(() => useRestoreFocusOnDialogClose());
+    act(() => result.current.onOpenAutoFocus());
+    origin.remove();
+
+    act(() => {
+      result.current.onCloseAutoFocus({
+        preventDefault: jest.fn(),
+        currentTarget: null,
+      } as unknown as Event);
+      nextFrame?.(0);
+    });
+
+    expect(focusSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not wake the webview while a newer overlay holds focus", () => {
+    const webview = document.createElement("webview");
+    const newerOverlayInput = document.createElement("input");
+    document.body.append(webview, newerOverlayInput);
+    const focusSpy = jest.spyOn(webview, "focus");
+
+    const { result } = renderHook(() => useRestoreFocusOnDialogClose());
+    act(() => result.current.onOpenAutoFocus());
+    newerOverlayInput.focus();
+
+    act(() => {
+      result.current.onCloseAutoFocus({
+        preventDefault: jest.fn(),
+        currentTarget: document.createElement("div"),
+      } as unknown as Event);
+      nextFrame?.(0);
+    });
+
+    expect(focusSpy).not.toHaveBeenCalled();
   });
 
   it("does nothing when the focus origin is not an HTML element", () => {
