@@ -3,11 +3,13 @@ import { NotEnoughBalance } from "@ledgerhq/ledger-wallet-framework/errors";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus, ZcashAccount } from "../types/bridge";
 import { ZIP317_MINIMUM_FEE } from "../logic/coin-selection";
+import { ZcashAmountBelowDustThreshold } from "../types/errors";
 import {
   computeAmountError,
   computeRecipientError,
   hasShieldedKey,
   isTransparentInputTransfer,
+  isTransparentOutputDust,
   resolveTransparentUtxos,
 } from "./statusHelpers";
 import { getReservedNullifiers } from "./note-reservation";
@@ -42,6 +44,8 @@ function getTransparentInputStatus(
     errors.amount = new Error("Amount must be positive");
   } else if (totalSpent.gt(transparentBalance)) {
     errors.amount = new NotEnoughBalance();
+  } else if (tx.transferType === "transparent" && isTransparentOutputDust(tx.amount)) {
+    errors.amount = new ZcashAmountBelowDustThreshold();
   }
 
   return {
@@ -94,7 +98,16 @@ export const getTransactionStatus: AccountBridge<
   if (recipientError) errors.recipient = recipientError;
 
   const amountError = computeAmountError(transaction, totalSpent, poolBalance);
-  if (amountError) errors.amount = amountError;
+  if (amountError) {
+    errors.amount = amountError;
+  } else if (
+    transaction.transferType === "shielded-to-transparent" &&
+    isTransparentOutputDust(transaction.amount)
+  ) {
+    // A shielded-to-transparent (z->t) recipient is also a transparent
+    // output, so it needs the same dust check as a t->t send.
+    errors.amount = new ZcashAmountBelowDustThreshold();
+  }
 
   return {
     errors,
