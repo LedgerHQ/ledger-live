@@ -41,6 +41,7 @@ export type Data = {
   parentAccount?: Account | undefined | null;
   startWithWarning?: boolean;
   recipient?: string;
+  skipRecipientStep?: boolean;
   amount?: BigNumber;
   disableBacks?: string[];
   walletConnectProxy?: boolean;

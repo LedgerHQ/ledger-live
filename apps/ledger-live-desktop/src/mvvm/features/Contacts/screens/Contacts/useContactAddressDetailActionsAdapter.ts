@@ -107,6 +107,7 @@ export function useContactAddressDetailActionsAdapter(
       openSendFlow({
         currencyIds: [intent.currencyId],
         recipient: intent.address,
+        skipRecipientStep: true,
       });
       onCloseAddressDetail();
     },

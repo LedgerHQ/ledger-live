@@ -30,6 +30,7 @@ type WorkflowParams = {
   currencyIds?: readonly string[];
   categories?: readonly AssetCategory[];
   recipient?: string;
+  skipRecipientStep?: boolean;
   amount?: string | BigNumber;
   memo?: string;
   fromMAD?: boolean;

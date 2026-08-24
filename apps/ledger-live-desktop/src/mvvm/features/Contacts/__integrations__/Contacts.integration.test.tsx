@@ -894,6 +894,7 @@ describe("Contacts integration", () => {
     expect(mockOpenSendFlow).toHaveBeenCalledWith({
       currencyIds: ["ethereum"],
       recipient: "0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034",
+      skipRecipientStep: true,
     });
     expect(screen.queryByTestId("contacts-address-detail-dialog")).not.toBeInTheDocument();
   });
