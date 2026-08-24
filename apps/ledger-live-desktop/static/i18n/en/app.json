@@ -901,6 +901,9 @@
         "confirm": "Confirm"
       }
     },
+    "card": {
+      "balanceLabel": "Balance"
+    },
     "actions": {
       "deposit": "Add stablecoin",
       "request": "Request",

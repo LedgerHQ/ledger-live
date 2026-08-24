@@ -26,8 +26,7 @@ import without a suffix; TypeScript `moduleSuffixes`, the bundlers (Rspack / Met
 preset resolve the right side. Each view has a test importing it through its full platform filename.
 
 The desktop artwork renders the halftone SVGs exported from Figma (imported as URLs via the bundler
-`asset/resource` rule). Native `CardArtwork` and `CardVisualView` are empty stubs until an LWM
-design lands.
+`asset/resource` rule). The native side is a minimal dark frame until an LWM design lands.
 
 ## Structure
 
@@ -46,7 +45,7 @@ pay-card-details/
     │   │   ├── CardArtwork.web.test.tsx
     │   │   └── CardArtwork.native.test.tsx
     │   └── CardVisual/
-    │       ├── CardVisual.tsx                 # Container (props → view)
+    │       ├── CardVisual.tsx
     │       ├── CardVisualView.web.tsx         # Artwork + balance overlay
     │       ├── CardVisualView.native.tsx      # Empty stub until LWM design
     │       ├── CardVisual.web.test.tsx

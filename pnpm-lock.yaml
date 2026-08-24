@@ -967,6 +967,9 @@ importers:
       '@features/flow-pay-card-deposit':
         specifier: workspace:^
         version: link:../../features/flow/pay-card-deposit
+      '@features/flow-pay-card-details':
+        specifier: workspace:^
+        version: link:../../features/flow/pay-card-details
       '@features/flow-pay-card-feature-tour':
         specifier: workspace:^
         version: link:../../features/flow/pay-card-feature-tour
