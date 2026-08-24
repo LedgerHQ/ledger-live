@@ -318,6 +318,12 @@ export class BorrowPage extends WebViewAppPage {
 
   @step("Click Authorize withdrawal")
   async clickAuthorizeWithdraw() {
+    const webview = await this.getWebView();
+    if (await webview.getByTestId(this.executionErrorDialog).isVisible()) {
+      throw new Error(
+        `borrow-execution-error dialog is visible before authorize withdraw — Speculos or provider state is inconsistent. ${FUNDING_HINT}`,
+      );
+    }
     await this.clickWhenEnabled(this.authorizeWithdraw);
   }
 
