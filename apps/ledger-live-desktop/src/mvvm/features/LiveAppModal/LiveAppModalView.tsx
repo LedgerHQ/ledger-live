@@ -64,16 +64,16 @@ const EarnLiveAppModalContent = ({
 const LiveAppModalView = ({ isOpen, params, onOpenChange, onClose }: LiveAppModalViewProps) => {
   const focusLifecycle = useRestoreFocusOnDialogClose();
 
+  if (!isOpen || !params) return null;
+
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange} height="fixed">
       <DialogContent {...focusLifecycle}>
-        {params ? (
-          params.useCase === "earn" ? (
-            <EarnLiveAppModalContent params={params} onClose={onClose} />
-          ) : (
-            <LiveAppModalContent params={params} onClose={onClose} extraInputs={null} />
-          )
-        ) : null}
+        {params.useCase === "earn" ? (
+          <EarnLiveAppModalContent params={params} onClose={onClose} />
+        ) : (
+          <LiveAppModalContent params={params} onClose={onClose} extraInputs={null} />
+        )}
       </DialogContent>
     </Dialog>
   );
