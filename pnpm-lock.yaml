@@ -16183,6 +16183,12 @@ importers:
         specifier: 19.1.4
         version: 19.1.4
 
+  support/lint-rules:
+    devDependencies:
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
   tests/dummy-live-app:
     dependencies:
       '@ledgerhq/live-app-sdk':
