@@ -8,13 +8,14 @@ export function useConfirmPasswordViewModel({
   const draft = usePasswordDraft();
   const [password, setPassword] = useState("");
   const [hasMismatch, setHasMismatch] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   const onPasswordChange = useCallback((next: string) => {
     setPassword(next);
     setHasMismatch(false);
   }, []);
 
-  const onConfirm = useCallback(() => {
+  const onConfirm = useCallback(async () => {
     const chosen = draft.read();
 
     if (chosen === null || password !== chosen) {
@@ -22,13 +23,20 @@ export function useConfirmPasswordViewModel({
       return;
     }
 
-    onConfirmed(chosen);
+    setIsSaving(true);
+
+    try {
+      await onConfirmed(chosen);
+    } finally {
+      setIsSaving(false);
+    }
   }, [draft, onConfirmed, password]);
 
   return {
     password,
-    isConfirmEnabled: password.length > 0,
+    isConfirmEnabled: password.length > 0 && !isSaving,
     hasMismatch,
+    isSaving,
     onPasswordChange,
     onConfirm,
   };

@@ -20,6 +20,7 @@
     "unimported": "pnpm knip --directory ../../.. -W features/platform/app-lock"
   },
   "dependencies": {
+    "@reduxjs/toolkit": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {

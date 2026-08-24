@@ -49,6 +49,7 @@ import { payCardBalanceSlice } from "@features/flow-pay-card-balance/state";
 import { payCardFeatureTourSlice } from "@features/flow-pay-card-feature-tour/state";
 import { payCardAuthSlice } from "@features/flow-pay-card-auth/state";
 import { contactsSlice } from "@domain/entity-contact";
+import { appLockSlice } from "@features/platform-app-lock";
 import type { UnknownAction } from "@reduxjs/toolkit";
 
 export type AppStore = Store<State>;
@@ -103,6 +104,7 @@ const appReducer = combineReducers({
   liveAppModal,
   supportedFiats: supportedFiatsSlice.reducer,
   contacts: contactsSlice.reducer,
+  appLock: appLockSlice.reducer,
   ...llmRTKApiReducers,
 });
 
