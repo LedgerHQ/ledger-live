@@ -11,6 +11,7 @@ import type { useWalletAPIServerOptions } from "./react";
 import { AccountPublicKeyUnavailable } from "../errors";
 import { accountGetPublicKeyLogic } from "./logic";
 import { getAccountIdFromWalletAccountId, resolveWalletApiSpendableBalance } from "./converters";
+import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 
 const mockSetHandler = jest.fn();
 const mockSetConfig = jest.fn();
@@ -81,7 +82,7 @@ jest.mock("../currencies", () => ({
 }));
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const { useWalletAPIServer } = require("./react");
+const { useWalletAPIServer, TOKEN_LOOKUP_CONCURRENCY } = require("./react");
 
 function getRegisteredHandler<Name extends keyof WalletHandlers>(name: Name): WalletHandlers[Name] {
   const calls = mockSetHandler.mock.calls.filter(([handlerName]) => handlerName === name);
@@ -336,6 +337,51 @@ describe("account.list handler", () => {
     expect(result).toEqual([expect.objectContaining({ spendableBalance })]);
     expect(resolveWalletApiSpendableBalance).toHaveBeenCalledTimes(1);
     expect(resolveWalletApiSpendableBalance).toHaveBeenCalledWith(account, account);
+  });
+});
+
+describe("currency.list handler — token lookup concurrency", () => {
+  const getHandler = () => getRegisteredHandler("currency.list");
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  afterEach(() => {
+    cleanup();
+  });
+
+  /**
+   * Regression for QAA-1497. The handler used to resolve every requested token id in a
+   * single unbounded `Promise.all`. Measured against the real CAL API with the ids the
+   * Buy screen asks for, that took 75.6s and 251 of the requests failed outright;
+   * bounding the pool took 5.9s with none failing. A failed lookup resolves to null and
+   * is silently dropped, so the unbounded version also returned an incomplete list.
+   * This pins the bound so a future refactor cannot quietly restore the fan-out.
+   */
+  it("never has more than TOKEN_LOOKUP_CONCURRENCY lookups in flight", async () => {
+    const tokenIds = Array.from(
+      { length: TOKEN_LOOKUP_CONCURRENCY * 8 },
+      (_, i) => `ethereum/erc20/token_${i}`,
+    );
+    let inFlight = 0;
+    let peakInFlight = 0;
+
+    const findTokenById = jest.fn(async () => {
+      inFlight += 1;
+      peakInFlight = Math.max(peakInFlight, inFlight);
+      await new Promise(resolve => setTimeout(resolve, 0));
+      inFlight -= 1;
+      return null;
+    });
+    jest.mocked(getCryptoAssetsStore).mockReturnValue({ findTokenById } as never);
+
+    renderHook(() => useWalletAPIServer(createDefaultOptions()));
+    await getHandler()({ currencyIds: tokenIds });
+
+    expect(findTokenById).toHaveBeenCalledTimes(tokenIds.length);
+    expect(peakInFlight).toBeGreaterThan(1);
+    expect(peakInFlight).toBeLessThanOrEqual(TOKEN_LOOKUP_CONCURRENCY);
   });
 });
 
