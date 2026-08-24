@@ -1,7 +1,7 @@
 import type { Job } from "@features/platform-device-intent";
 import { concat, of, tap } from "rxjs";
 import { createContactIntentResultReporter, type ContactIntentResult } from "../result";
-import { stubProof } from "../stubProof";
+import { stubEditedAddressHmacRest } from "../stubProof";
 import type {
   EditExternalAddressScopeIntentInput,
   EditExternalAddressScopeJobState,
@@ -24,7 +24,7 @@ export const editExternalAddressScopeIntentJob: Job<
     chainId: input.chainId,
     groupHandle: input.groupHandle,
     hmacProof: input.hmacProof,
-    hmacRest: stubProof("scope-proof"),
+    hmacRest: stubEditedAddressHmacRest,
   };
 
   return concat(

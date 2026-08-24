@@ -1,10 +1,11 @@
+import type { ContactIntentResult } from "../result";
+import { stubEditedAddressHmacRest } from "../stubProof";
 import { editExternalAddressIntentJob } from "./job";
 import type {
   EditExternalAddressIntentInput,
   EditExternalAddressJobState,
   EditExternalAddressResult,
 } from "./types";
-import type { ContactIntentResult } from "../result";
 
 const baseInput: EditExternalAddressIntentInput = {
   contactName: "Alice",
@@ -80,6 +81,7 @@ describe("editExternalAddressIntentJob", () => {
         result: expect.objectContaining({
           scope: input.newScope,
           address: input.newAddress,
+          hmacRest: stubEditedAddressHmacRest,
         }),
       });
     },

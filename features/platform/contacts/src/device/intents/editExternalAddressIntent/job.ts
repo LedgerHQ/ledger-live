@@ -1,7 +1,7 @@
 import type { Job } from "@features/platform-device-intent";
 import { from, tap } from "rxjs";
 import { createContactIntentResultReporter, type ContactIntentResult } from "../result";
-import { stubProof } from "../stubProof";
+import { stubEditedAddressHmacRest } from "../stubProof";
 import type {
   EditExternalAddressIntentInput,
   EditExternalAddressJobState,
@@ -35,11 +35,7 @@ export const editExternalAddressIntentJob: Job<
   const reporter = createContactIntentResultReporter(onResult);
   const addressChanged = input.previousAddress !== input.newAddress;
   const scopeChanged = input.previousScope !== input.newScope;
-  const hmacRest = scopeChanged
-    ? stubProof("scope-proof")
-    : addressChanged
-      ? stubProof("identifier-proof")
-      : input.hmacRest;
+  const hmacRest = scopeChanged || addressChanged ? stubEditedAddressHmacRest : input.hmacRest;
   const result = editResult(input, input.newScope, input.newAddress, hmacRest);
   const states: EditExternalAddressJobState[] = [{ type: "pending" }];
 

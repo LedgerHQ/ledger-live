@@ -1,7 +1,7 @@
 import type { Job } from "@features/platform-device-intent";
 import { concat, of, tap } from "rxjs";
 import { createContactIntentResultReporter, type ContactIntentResult } from "../result";
-import { stubProof } from "../stubProof";
+import { stubDeviceContactGroupCredentials, stubExternalAddressDeviceContext } from "../stubProof";
 import type {
   RegisterExternalAddressIntentInput,
   RegisterExternalAddressJobState,
@@ -22,9 +22,10 @@ export const registerExternalAddressIntentJob: Job<
     address: input.address,
     blockchainFamily: input.blockchainFamily,
     chainId: input.chainId,
-    groupHandle: input.existingContactGroup?.groupHandle ?? stubProof("group-handle"),
-    hmacProof: input.existingContactGroup?.hmacProof ?? stubProof("contact-name-proof"),
-    hmacRest: stubProof("external-address-proof"),
+    groupHandle:
+      input.existingContactGroup?.groupHandle ?? stubDeviceContactGroupCredentials.groupHandle,
+    hmacProof: input.existingContactGroup?.hmacProof ?? stubDeviceContactGroupCredentials.hmacProof,
+    hmacRest: stubExternalAddressDeviceContext.hmacRest,
   };
 
   return concat(
