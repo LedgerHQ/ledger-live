@@ -1,0 +1,286 @@
+import {
+  ICP_FEES,
+  MIN_NEURON_STAKE,
+  NNS_MAXIMUM_DISSOLVE_DELAY,
+  NNS_START_REDUCING_VOTING_POWER_AFTER_SECONDS,
+  SECONDS_IN_DAY,
+  SECONDS_IN_MONTH,
+} from "@ledgerhq/live-common/families/internet_computer/consts";
+import { NeuronState } from "@ledgerhq/live-common/families/internet_computer/types";
+import { render, screen } from "@tests/test-renderer";
+import BigNumber from "bignumber.js";
+import React from "react";
+import NeuronDetails from "../NeuronManageFlow/NeuronDetails";
+import { ICP_UNIT, makeHealthyNeuron, makeICPAccount } from "./testUtils";
+
+const CONTROLLER = "controller-principal";
+const STRANGER = "someone-else";
+
+let neuron = makeHealthyNeuron();
+let principal = CONTROLLER;
+// Funded by default: the top-up action is hidden when the balance cannot cover the transfer fee, so a
+// zero-balance fixture would leave the tests around it passing without rendering the action at all.
+let spendableBalance = new BigNumber(MIN_NEURON_STAKE);
+
+const mockNavigate = jest.fn();
+
+jest.mock("LLM/hooks/useAccountScreen", () => ({
+  useAccountScreen: () => ({
+    account: makeICPAccount({ neurons: [neuron], spendableBalance }),
+    parentAccount: null,
+  }),
+}));
+jest.mock("LLM/hooks/useAccountUnit", () => ({ useAccountUnit: () => ICP_UNIT }));
+jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
+  useAccountBridge: () => ({
+    createTransaction: () => ({ family: "internet_computer" }),
+    updateTransaction: (t: object, patch: object) => ({ ...t, ...patch }),
+  }),
+}));
+jest.mock("@ledgerhq/live-common/families/internet_computer/react", () => ({
+  ...jest.requireActual("@ledgerhq/live-common/families/internet_computer/react"),
+  useICPPrincipal: () => principal,
+  useICPNeuronById: () => neuron,
+}));
+
+const renderDetails = () =>
+  render(
+    <NeuronDetails
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      navigation={{ navigate: mockNavigate } as any}
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      route={{ params: { accountId: "icp-1", neuronId: "1" } } as any}
+    />,
+  );
+
+describe("NeuronDetails", () => {
+  beforeEach(() => {
+    neuron = makeHealthyNeuron({ controller: CONTROLLER });
+    principal = CONTROLLER;
+    spendableBalance = new BigNumber(MIN_NEURON_STAKE);
+    mockNavigate.mockClear();
+  });
+
+  it("offers the controller-only actions when the account controls the neuron", () => {
+    renderDetails();
+
+    expect(screen.getByText("Increase stake")).toBeVisible();
+    expect(screen.getByText("Add hot key")).toBeVisible();
+  });
+
+  it("hides every controller-only action from a hot-key holder, and says why", () => {
+    neuron = makeHealthyNeuron({ controller: STRANGER, hotKeys: [CONTROLLER] });
+
+    renderDetails();
+
+    expect(screen.getByText(/You hold a hot key on this neuron/, { exact: false })).toBeVisible();
+    expect(screen.queryByText("Increase stake")).toBeNull();
+    expect(screen.queryByText("Add hot key")).toBeNull();
+    expect(screen.queryByText("Split neuron")).toBeNull();
+  });
+
+  it("still lets a hot-key holder follow and confirm following, the two things a hot key is for", () => {
+    neuron = makeHealthyNeuron({ controller: STRANGER, hotKeys: [CONTROLLER] });
+
+    renderDetails();
+
+    expect(screen.getByText("Edit following")).toBeVisible();
+    expect(screen.getByText("Confirm following")).toBeVisible();
+  });
+
+  it("hides Stop dissolving from a hot-key holder even though the neuron's state allows it", () => {
+    neuron = makeHealthyNeuron({
+      controller: STRANGER,
+      hotKeys: [CONTROLLER],
+      state: NeuronState.Dissolving,
+    });
+
+    renderDetails();
+
+    expect(screen.queryByText("Stop dissolving")).toBeNull();
+  });
+
+  it("offers Stop dissolving to the controller of a dissolving neuron, and not Start", () => {
+    neuron = makeHealthyNeuron({ controller: CONTROLLER, state: NeuronState.Dissolving });
+
+    renderDetails();
+
+    expect(screen.getByText("Stop dissolving")).toBeVisible();
+    expect(screen.queryByText("Start dissolving")).toBeNull();
+  });
+
+  it("labels the dissolve delay action Set for a dissolved neuron and Increase otherwise", () => {
+    neuron = makeHealthyNeuron({ controller: CONTROLLER, state: NeuronState.Dissolved });
+    const dissolved = renderDetails();
+    expect(screen.getByText("Set dissolve delay")).toBeVisible();
+    dissolved.unmount();
+
+    neuron = makeHealthyNeuron({ controller: CONTROLLER, state: NeuronState.Locked });
+    renderDetails();
+    expect(screen.getByText("Increase dissolve delay")).toBeVisible();
+  });
+
+  it("keeps Spawn hidden until the maturity clears the worst-case modulation floor", () => {
+    neuron = makeHealthyNeuron({ controller: CONTROLLER, maturityE8sEquivalent: 50_000_000n });
+
+    renderDetails();
+
+    expect(screen.getByText("Stake maturity")).toBeVisible();
+    expect(screen.queryByText("Spawn neuron")).toBeNull();
+  });
+
+  // A top-up is a ledger transfer with no minimum, so the only bound is covering the fee. Below that
+  // every amount comes back as NotEnoughBalance and the send flow is a dead end.
+  it("hides the top-up action when the balance cannot cover the transfer fee", () => {
+    spendableBalance = new BigNumber(ICP_FEES);
+
+    renderDetails();
+
+    expect(screen.queryByText("Increase stake")).toBeNull();
+  });
+
+  // The bridge rejects any addition that overshoots the two-year cap, so a neuron already there has
+  // no legal entry left and the step can only end in an error the user cannot correct.
+  it("stops offering more dissolve delay once the neuron sits at the two-year maximum", () => {
+    neuron = makeHealthyNeuron({
+      controller: CONTROLLER,
+      dissolveState: { DissolveDelaySeconds: BigInt(NNS_MAXIMUM_DISSOLVE_DELAY) },
+    });
+
+    renderDetails();
+
+    expect(screen.queryByText("Increase dissolve delay")).toBeNull();
+  });
+
+  it("still offers more dissolve delay a day short of the maximum", () => {
+    neuron = makeHealthyNeuron({
+      controller: CONTROLLER,
+      dissolveState: { DissolveDelaySeconds: BigInt(NNS_MAXIMUM_DISSOLVE_DELAY - SECONDS_IN_DAY) },
+    });
+
+    renderDetails();
+
+    expect(screen.getByText("Increase dissolve delay")).toBeVisible();
+  });
+
+  // getSecondsTillVotingPowerExpires counts to the moment power reaches zero, a month after decay
+  // begins. Quoting that remainder as the decay countdown overstated the deadline by a whole month.
+  it("counts down to the start of decay, not to zero, while power is still full", () => {
+    const refreshed = Math.floor(Date.now() / 1000) - 2 * SECONDS_IN_MONTH - 15 * SECONDS_IN_DAY;
+    neuron = makeHealthyNeuron({
+      controller: CONTROLLER,
+      votingPowerRefreshedTimestampSeconds: BigInt(refreshed),
+    });
+
+    renderDetails();
+
+    expect(screen.getByText("Voting power starts decaying in 3 months, 15 days")).toBeVisible();
+  });
+
+  it("switches to counting down to zero the moment the decay window opens", () => {
+    const windowOpens =
+      Math.floor(Date.now() / 1000) - NNS_START_REDUCING_VOTING_POWER_AFTER_SECONDS;
+    neuron = makeHealthyNeuron({
+      controller: CONTROLLER,
+      votingPowerRefreshedTimestampSeconds: BigInt(windowOpens),
+    });
+
+    renderDetails();
+
+    expect(screen.getByText(/Voting power is decaying/)).toBeVisible();
+    expect(screen.queryByText(/starts decaying/)).toBeNull();
+  });
+
+  // Staked maturity belongs to two totals — the maturity the neuron holds, and the base its voting
+  // power is computed from — so it earns a row under each.
+  it("shows staked maturity under both the maturity total and the voting-power base", () => {
+    neuron = makeHealthyNeuron({
+      controller: CONTROLLER,
+      stakedMaturityE8sEquivalent: BigInt(MIN_NEURON_STAKE),
+    });
+
+    renderDetails();
+
+    expect(screen.getAllByText("Staked maturity")).toHaveLength(2);
+  });
+
+  // The bonuses multiply (cached stake - fees) + staked maturity. The row showed the raw cached
+  // stake, so it matched neither the neuron's own figure nor the base the bonuses were applied to.
+  it("quotes the stake net of fees beside the staked maturity the bonuses multiply", () => {
+    neuron = makeHealthyNeuron({
+      controller: CONTROLLER,
+      cachedNeuronStakeE8s: BigInt(10 * MIN_NEURON_STAKE),
+      neuronFeesE8s: BigInt(0.5 * MIN_NEURON_STAKE),
+      stakedMaturityE8sEquivalent: BigInt(2 * MIN_NEURON_STAKE),
+    });
+
+    renderDetails();
+
+    // Once for the neuron's own total, once for the voting-power row that now agrees with it.
+    expect(screen.getAllByText("9.5 ICP")).toHaveLength(2);
+    expect(screen.queryByText("10 ICP")).toBeNull();
+  });
+
+  it("drops the rows whose only content was an action the hot-key holder cannot take", () => {
+    neuron = makeHealthyNeuron({ controller: STRANGER, hotKeys: [CONTROLLER] });
+
+    renderDetails();
+
+    expect(screen.queryByText("Split this neuron into two")).toBeNull();
+    expect(screen.queryByText("Grant hot-key access to another principal")).toBeNull();
+  });
+
+  it("still lists the hot keys themselves when there is no Remove to offer", () => {
+    neuron = makeHealthyNeuron({ controller: STRANGER, hotKeys: [CONTROLLER] });
+
+    renderDetails();
+
+    expect(screen.getByText(CONTROLLER)).toBeVisible();
+    expect(screen.queryByText("Remove")).toBeNull();
+  });
+
+  // The section carries one action and no data, so the heading alone reads as a section that failed
+  // to load.
+  it("drops the Advanced heading along with the split action it was introducing", () => {
+    neuron = makeHealthyNeuron({
+      controller: CONTROLLER,
+      cachedNeuronStakeE8s: BigInt(2 * MIN_NEURON_STAKE),
+    });
+
+    renderDetails();
+
+    expect(screen.queryByText("Split neuron")).toBeNull();
+    expect(screen.queryByText("Advanced")).toBeNull();
+  });
+
+  it("keeps the Advanced section for a neuron with stake enough to split", () => {
+    neuron = makeHealthyNeuron({
+      controller: CONTROLLER,
+      cachedNeuronStakeE8s: BigInt(2 * MIN_NEURON_STAKE + ICP_FEES),
+    });
+
+    renderDetails();
+
+    expect(screen.getByText("Advanced")).toBeVisible();
+    expect(screen.getByText("Split neuron")).toBeVisible();
+  });
+
+  it("keeps a row that carries a value when it has no action, even at zero", () => {
+    neuron = makeHealthyNeuron({
+      controller: STRANGER,
+      hotKeys: [CONTROLLER],
+      stakedMaturityE8sEquivalent: 0n,
+    });
+
+    renderDetails();
+
+    expect(screen.getAllByText("Staked maturity")).toHaveLength(2);
+  });
+
+  it("renders nothing when the neuron has gone missing between screens", () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    neuron = undefined as any;
+
+    expect(renderDetails().toJSON()).toBeNull();
+  });
+});
