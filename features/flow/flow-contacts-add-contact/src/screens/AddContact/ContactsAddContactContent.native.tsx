@@ -16,7 +16,7 @@ export function ContactsAddContactContent({
     invalidNameError === null ? undefined : labels.nameValidationErrors[invalidNameError];
 
   return (
-    <Box lx={{ gap: "s24" }}>
+    <Box testID="contacts-add-contact-content" lx={{ gap: "s24" }}>
       <Box lx={{ gap: "s16" }}>
         <Text typography="heading3SemiBold" lx={{ color: "base" }}>
           {labels.title}

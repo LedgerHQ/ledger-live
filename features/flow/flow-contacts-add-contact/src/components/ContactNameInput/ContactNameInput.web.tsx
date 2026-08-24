@@ -7,6 +7,8 @@ type ContactNameInputProps = Readonly<{
   placeholder: string;
   errorMessage?: string;
   isEditable?: boolean;
+  /** Namespaces the test ids, so each host dialog identifies its own input. */
+  testIDPrefix?: string;
   onChange: (value: string) => void;
 }>;
 
@@ -15,11 +17,12 @@ export function ContactNameInput({
   placeholder,
   errorMessage,
   isEditable = true,
+  testIDPrefix = "contacts-add-contact",
   onChange,
 }: ContactNameInputProps): React.ReactNode {
   return (
     <TextInput
-      data-testid="contacts-add-contact-name-input"
+      data-testid={`${testIDPrefix}-name-input`}
       label={placeholder}
       value={value}
       onChange={event => onChange(event.target.value)}

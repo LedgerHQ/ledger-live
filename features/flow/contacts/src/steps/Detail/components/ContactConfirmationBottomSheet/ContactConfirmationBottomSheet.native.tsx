@@ -25,6 +25,8 @@ export type ContactConfirmationBottomSheetProps = Readonly<{
   confirmLoading?: boolean;
   confirmDisabled?: boolean;
   confirmTestID?: string;
+  /** Anchor for the sheet's content, present only while the sheet is open. */
+  contentTestID?: string;
   onConfirm: () => void;
   onCancel: () => void;
 }>;
@@ -38,13 +40,14 @@ export function ContactConfirmationBottomSheet({
   confirmLoading = false,
   confirmDisabled = false,
   confirmTestID,
+  contentTestID,
   onConfirm,
   onCancel,
 }: ContactConfirmationBottomSheetProps): React.JSX.Element {
   return (
     <BottomSheetView style={{ paddingBottom: bottomInset + 24 }}>
       {isOpen ? (
-        <Box lx={{ gap: "s24", paddingHorizontal: "s16" }}>
+        <Box testID={contentTestID} lx={{ gap: "s24", paddingHorizontal: "s16" }}>
           <BottomSheetHeader />
           <Box lx={{ alignItems: "center", gap: "s16" }}>
             <Spot appearance="icon" icon={icon} size={56} />

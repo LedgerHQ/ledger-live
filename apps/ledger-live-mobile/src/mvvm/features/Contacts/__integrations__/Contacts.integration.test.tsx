@@ -1165,8 +1165,8 @@ describe("Contacts integration", () => {
       expect(screen.getByTestId("contacts-rename-contact-confirm")).toBeDisabled();
     });
 
-    await user.clear(screen.getByTestId("contacts-add-contact-name-input"));
-    await user.type(screen.getByTestId("contacts-add-contact-name-input"), "Alice");
+    await user.clear(screen.getByTestId("contacts-rename-contact-name-input"));
+    await user.type(screen.getByTestId("contacts-rename-contact-name-input"), "Alice");
 
     await waitFor(() => {
       expect(screen.getByTestId("contacts-rename-contact-confirm")).toBeEnabled();

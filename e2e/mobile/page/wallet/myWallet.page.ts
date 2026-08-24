@@ -1,8 +1,8 @@
 import { Step } from "jest-allure2-reporter/api";
 
 export default class MyWalletPage {
-  topBarMyWalletId = "topbar-mywallet";
   avatarId = "my-wallet-avatar";
+  contactsButtonId = "my-wallet-contacts-button";
   quickActionHelpId = "my-wallet-quick-action-help";
   headerSettingsButtonId = "my-wallet-header-settings-button";
   headerNotificationsButtonId = "my-wallet-header-notifications-button";
@@ -10,15 +10,16 @@ export default class MyWalletPage {
   helpScreenId = "my-wallet-help-screen";
   settingsScreenId = "general-settings-card";
 
-  @Step("Open My Wallet from top bar")
-  async openFromTopBar() {
-    await tapById(this.topBarMyWalletId);
-    await this.expectScreenVisible();
-  }
-
   @Step("Expect My Wallet screen visible")
   async expectScreenVisible() {
     await waitForElementById(this.headerSettingsButtonId);
+  }
+
+  // Composes the Contacts page's own arrival assertion rather than duplicating its locator.
+  @Step("Open Contacts")
+  async openContacts() {
+    await tapById(this.contactsButtonId);
+    await app.contacts.expectScreenVisible();
   }
 
   @Step("Tap Help quick action")

@@ -30,6 +30,7 @@ import SwapPage from "./trade/swap.page";
 import SwapLiveAppPage from "./liveApps/swapLiveApp";
 import MainNavigationPage from "./wallet/mainNavigation.page";
 import MyWalletPage from "./wallet/myWallet.page";
+import ContactsPage from "./wallet/contacts.page";
 import OperationPage from "./wallet/operation.page";
 import TopBarSearchPage from "./wallet/topBarSearch.page";
 import CeloManageAssetsPage from "./trade/celoManageAssets.page";
@@ -92,6 +93,7 @@ export class Application {
   private swapPageInstance = lazyInit(SwapPage);
   private mainNavigationPageInstance = lazyInit(MainNavigationPage);
   private myWalletPageInstance = lazyInit(MyWalletPage);
+  private contactsPageInstance = lazyInit(ContactsPage);
   private operationPageInstance = lazyInit(OperationPage);
   private celoManageAssetsPageInstance = lazyInit(CeloManageAssetsPage);
   private readonly borrowPageInstance = lazyInit(BorrowPage);
@@ -235,6 +237,10 @@ export class Application {
 
   public get myWallet() {
     return this.myWalletPageInstance();
+  }
+
+  public get contacts() {
+    return this.contactsPageInstance();
   }
 
   public get operation() {

@@ -29,6 +29,8 @@ export type ContactsContactNameDrawerContentProps = Readonly<{
   labels: ContactsContactNameDrawerLabels;
   confirmLabel: string;
   confirmTestID?: string;
+  /** Namespaces the drawer's content anchor and its input ids. */
+  testIDPrefix?: string;
   onDraftNameChange: (name: string) => void;
   onConfirm: () => Promise<void>;
 }>;
@@ -45,6 +47,7 @@ export function ContactsContactNameDrawerContent({
   labels,
   confirmLabel,
   confirmTestID,
+  testIDPrefix,
   onDraftNameChange,
   onConfirm,
 }: ContactsContactNameDrawerContentProps): React.JSX.Element {
@@ -54,13 +57,14 @@ export function ContactsContactNameDrawerContent({
   return (
     <BottomSheetView style={{ paddingBottom: bottomInset + 24 + keyboardInset }}>
       {isOpen ? (
-        <Box lx={{ gap: "s24" }}>
+        <Box testID={testIDPrefix ? `${testIDPrefix}-content` : undefined} lx={{ gap: "s24" }}>
           <BottomSheetHeader />
           <Box lx={{ gap: "s16" }}>
             <Text typography="heading3SemiBold" lx={{ color: "base" }}>
               {labels.title}
             </Text>
             <ContactNameInput
+              testIDPrefix={testIDPrefix}
               value={draftName}
               placeholder={labels.namePlaceholder}
               errorMessage={nameValidationError}

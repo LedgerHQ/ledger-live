@@ -8,6 +8,8 @@ type ContactNameInputProps = Readonly<{
   placeholder: string;
   errorMessage?: string;
   isEditable?: boolean;
+  /** Namespaces the test ids, so each host drawer identifies its own input. */
+  testIDPrefix?: string;
   onChangeText: (name: string) => void;
 }>;
 
@@ -16,6 +18,7 @@ export function ContactNameInput({
   placeholder,
   errorMessage,
   isEditable = true,
+  testIDPrefix = "contacts-add-contact",
   onChangeText,
 }: ContactNameInputProps): React.JSX.Element {
   const isAtNameLengthLimit = value.length === CONTACT_NAME_MAX_LENGTH;
@@ -23,7 +26,7 @@ export function ContactNameInput({
   return (
     <Box lx={{ gap: "s8" }}>
       <TextInput
-        testID="contacts-add-contact-name-input"
+        testID={`${testIDPrefix}-name-input`}
         autoFocus
         placeholder={placeholder}
         value={value}
@@ -50,7 +53,7 @@ export function ContactNameInput({
           >
             <DeleteCircleFill color="error" size={16} />
             <Text
-              testID="contacts-add-contact-name-error"
+              testID={`${testIDPrefix}-name-error`}
               typography="body3"
               accessibilityLiveRegion="polite"
               lx={{ color: "error" }}
@@ -60,7 +63,7 @@ export function ContactNameInput({
           </Box>
         ) : null}
         <Text
-          testID="contacts-add-contact-name-count"
+          testID={`${testIDPrefix}-name-count`}
           typography="body3"
           accessibilityLiveRegion="polite"
           lx={{ color: isAtNameLengthLimit ? "error" : "muted" }}
