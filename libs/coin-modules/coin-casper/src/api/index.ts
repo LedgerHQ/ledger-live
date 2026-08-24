@@ -9,10 +9,10 @@ import type {
   Page,
   Reward,
   Stake,
-  TransactionIntent,
   Validator,
 } from "@ledgerhq/coin-module-framework/api/index";
 import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
+import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 import { broadcast } from "../logic/broadcast";
 import { combine } from "../logic/combine";
 import { craftTransaction } from "../logic/craftTransaction";
@@ -88,8 +88,6 @@ export function createApi(): CoinModuleApi<CasperConfig, CasperMemo> {
     // per-account nonce, so getNextSequence has no meaningful value here.
     getNextSequence: async (_context: CasperContext, _address: string) => 0n,
     validateAddress: (_context, address, parameters) => validateAddress(address, parameters),
-    craftTransactionData(_context: CasperContext, _intent: TransactionIntent<CasperMemo>) {
-      throw new Error("craftTransactionData is not supported");
-    },
+    craftTransactionData: (_context, intent) => craftTransactionData(intent),
   };
 }

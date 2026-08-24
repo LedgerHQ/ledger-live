@@ -87,4 +87,12 @@ describe("createApi", () => {
       await expect(api.getNextSequence(context, validEd25519)).resolves.toBe(0n);
     });
   });
+
+  describe("craftTransactionData", () => {
+    it("reports no transaction data — Casper carries none, the transfer id travels on the intent memo", () => {
+      const api = createApi();
+
+      expect(api.craftTransactionData({} as never, sendIntent)).toEqual({ type: "none" });
+    });
+  });
 });
