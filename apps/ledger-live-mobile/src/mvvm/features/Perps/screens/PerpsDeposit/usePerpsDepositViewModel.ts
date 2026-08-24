@@ -22,7 +22,7 @@ import {
   PERPS_DEPOSIT_DEFAULT_FUNDING_TICKER,
 } from "../../constants/depositFunding";
 import { usePerpsDepositQuote } from "./usePerpsDepositQuote";
-import { AMOUNT_MAX_INTEGER_DIGITS, applyAmountKey, toAmountText } from "./utils/amountKeys";
+import { applyAmountKey, toAmountText } from "./utils/amountKeys";
 import { toAmountValue } from "./utils/toAmountValue";
 import { validateDepositFlow } from "./utils/validateDepositFlow";
 
@@ -38,7 +38,6 @@ export type PerpsDepositViewModel = Readonly<{
   depositAmountTicker: string;
   isQuoteLoading: boolean;
   counterValueCode: string;
-  maxIntegerLength: number;
   maxDecimalLength: number;
   pressAmountKey: (key: string) => void;
   setDepositAmount: (amount: number) => void;
@@ -216,7 +215,6 @@ export function usePerpsDepositViewModel({ route }: NavigationProps): PerpsDepos
     depositAmountTicker: receiverCurrency.ticker,
     isQuoteLoading,
     counterValueCode: counterValueUnit.code,
-    maxIntegerLength: AMOUNT_MAX_INTEGER_DIGITS,
     maxDecimalLength,
     pressAmountKey,
     setDepositAmount,
