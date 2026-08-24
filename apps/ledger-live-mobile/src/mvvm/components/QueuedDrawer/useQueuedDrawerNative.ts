@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Keyboard } from "react-native";
-import { useIsFocused } from "@react-navigation/native";
 import { useSelector } from "~/context/hooks";
 import { isModalLockedSelector } from "~/reducers/appstate";
 import { BottomSheetInQueue, useQueuedBottomSheetContext } from "@shared/ui-queued-bottom-sheet";
 import { logDrawer } from "./utils/logDrawer";
+import { useIsScreenVisible } from "./useIsScreenVisible";
 
 interface UseQueuedDrawerNativeProps {
   isRequestingToBeOpened?: boolean;
@@ -27,7 +27,7 @@ const useQueuedDrawerNative = ({
 }: UseQueuedDrawerNativeProps) => {
   const { addBottomSheetToQueue } = useQueuedBottomSheetContext();
   const drawerInQueueRef = useRef<BottomSheetInQueue | undefined>(undefined);
-  const isFocused = useIsFocused();
+  const isFocused = useIsScreenVisible();
   const areBottomSheetsLocked = useSelector(isModalLockedSelector);
 
   const onCloseRef = useRef(onClose);

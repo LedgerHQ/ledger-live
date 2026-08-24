@@ -4,6 +4,27 @@ import React from "react";
 import { ConfirmPasswordScreen } from "../screens/ConfirmPassword";
 import { SetupPasswordScreen } from "../screens/SetupPassword";
 
+jest.mock("expo-crypto", () => ({
+  getRandomBytesAsync: jest.fn(async (length: number) => new Uint8Array(length).fill(3)),
+}));
+
+jest.mock("../adapters/passwordDigest", () => ({
+  APP_LOCK_SALT_LENGTH: 16,
+  APP_LOCK_SCRYPT_PARAMS: { cost: 16384, blockSize: 8, parallelization: 1, digestLength: 32 },
+  derivePasswordDigest: jest.fn(async () => new Uint8Array(32).fill(9)),
+  serialiseDerivation: <T,>(run: () => Promise<T>) => run(),
+}));
+
+jest.mock("../adapters/verifierStore", () => ({
+  writePasswordVerifier: jest.fn(async () => undefined),
+}));
+
+jest.mock("../adapters/installMarker", () => ({
+  writeInstallMarker: jest.fn(async () => undefined),
+}));
+
+const { writePasswordVerifier } = jest.requireMock("../adapters/verifierStore");
+
 const PASSWORD = "longenough";
 
 function ChosenPassword({
@@ -14,6 +35,8 @@ function ChosenPassword({
 
   return <>{children}</>;
 }
+
+beforeEach(() => jest.clearAllMocks());
 
 describe("choosing a password", () => {
   it("only offers to continue once the minimum is met", async () => {
@@ -47,16 +70,15 @@ describe("confirming a password", () => {
       </PasswordDraftProvider>,
     );
 
-  it("accepts an entry that matches the one chosen in the step before", async () => {
-    const { user } = renderConfirm();
+  it("stores a verifier once both entries agree", async () => {
+    const { store, user } = renderConfirm();
 
     const field = await screen.findByTestId("app-lock-confirm-password-field");
     await user.type(field, PASSWORD);
+    await user.press(screen.getByTestId("app-lock-confirm-password-confirm"));
 
-    await waitFor(() =>
-      expect(screen.getByTestId("app-lock-confirm-password-confirm")).toBeEnabled(),
-    );
-    expect(screen.queryByText("Passwords don't match")).toBeNull();
+    await waitFor(() => expect(writePasswordVerifier).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(store.getState().appLock.hasPassword).toBe(true));
   });
 
   it("says so in place when the two entries differ", async () => {
@@ -67,6 +89,6 @@ describe("confirming a password", () => {
     await user.press(screen.getByTestId("app-lock-confirm-password-confirm"));
 
     expect(await screen.findByText("Passwords don't match")).toBeVisible();
-    expect(screen.getByTestId("app-lock-confirm-password-field")).toBeVisible();
+    await waitFor(() => expect(writePasswordVerifier).not.toHaveBeenCalled());
   });
 });

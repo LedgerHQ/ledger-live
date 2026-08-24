@@ -7,7 +7,10 @@ function wrapper({ children }: Readonly<{ children: React.ReactNode }>) {
   return <PasswordDraftProvider>{children}</PasswordDraftProvider>;
 }
 
-function renderViewModel(chosen: string | null, onConfirmed = jest.fn()) {
+function renderViewModel(
+  chosen: string | null,
+  onConfirmed: (password: string) => void | Promise<void> = jest.fn(),
+) {
   const rendered = renderHook(
     () => ({
       viewModel: useConfirmPasswordViewModel({ onConfirmed }),
@@ -20,69 +23,126 @@ function renderViewModel(chosen: string | null, onConfirmed = jest.fn()) {
     act(() => rendered.result.current.draft.write(chosen));
   }
 
-  return { ...rendered, onConfirmed };
+  const type = async (value: string) => {
+    await act(async () => rendered.result.current.viewModel.onPasswordChange(value));
+  };
+  const confirm = async () => {
+    await act(async () => {
+      await rendered.result.current.viewModel.onConfirm();
+    });
+  };
+
+  return { ...rendered, onConfirmed, type, confirm };
 }
 
 describe("useConfirmPasswordViewModel", () => {
-  it("enables Confirm as soon as the field is non-empty", () => {
-    const { result } = renderViewModel("123456");
+  it("enables Confirm as soon as the field is non-empty", async () => {
+    const { result, type } = renderViewModel("123456");
 
     expect(result.current.viewModel.isConfirmEnabled).toBe(false);
 
-    act(() => result.current.viewModel.onPasswordChange("1"));
+    await type("1");
     expect(result.current.viewModel.isConfirmEnabled).toBe(true);
   });
 
-  it("confirms a matching password", () => {
-    const { result, onConfirmed } = renderViewModel("123456");
+  it("confirms a matching password", async () => {
+    const onConfirmed = jest.fn();
+    const { result, type, confirm } = renderViewModel("123456", onConfirmed);
 
-    act(() => result.current.viewModel.onPasswordChange("123456"));
-    act(() => result.current.viewModel.onConfirm());
+    await type("123456");
+    await confirm();
 
     expect(onConfirmed).toHaveBeenCalledWith("123456");
     expect(result.current.viewModel.hasMismatch).toBe(false);
+    expect(result.current.viewModel.isSaving).toBe(false);
   });
 
-  it("surfaces a mismatch and does not confirm", () => {
-    const { result, onConfirmed } = renderViewModel("123456");
+  it("surfaces a mismatch and does not confirm", async () => {
+    const onConfirmed = jest.fn();
+    const { result, type, confirm } = renderViewModel("123456", onConfirmed);
 
-    act(() => result.current.viewModel.onPasswordChange("123457"));
-    act(() => result.current.viewModel.onConfirm());
+    await type("123457");
+    await confirm();
 
     expect(onConfirmed).not.toHaveBeenCalled();
     expect(result.current.viewModel.hasMismatch).toBe(true);
   });
 
-  it("clears the mismatch as soon as the user types again", () => {
-    const { result } = renderViewModel("123456");
+  it("clears the mismatch as soon as the user types again", async () => {
+    const { result, type, confirm } = renderViewModel("123456");
 
-    act(() => result.current.viewModel.onPasswordChange("123457"));
-    act(() => result.current.viewModel.onConfirm());
+    await type("123457");
+    await confirm();
     expect(result.current.viewModel.hasMismatch).toBe(true);
 
-    act(() => result.current.viewModel.onPasswordChange("12345"));
+    await type("12345");
     expect(result.current.viewModel.hasMismatch).toBe(false);
   });
 
-  it("treats whitespace as significant", () => {
-    const { result, onConfirmed } = renderViewModel("  ab  ");
+  it("treats whitespace as significant", async () => {
+    const onConfirmed = jest.fn();
+    const { type, confirm } = renderViewModel("  ab  ", onConfirmed);
 
-    act(() => result.current.viewModel.onPasswordChange("  ab"));
-    act(() => result.current.viewModel.onConfirm());
+    await type("  ab");
+    await confirm();
     expect(onConfirmed).not.toHaveBeenCalled();
 
-    act(() => result.current.viewModel.onPasswordChange("  ab  "));
-    act(() => result.current.viewModel.onConfirm());
+    await type("  ab  ");
+    await confirm();
     expect(onConfirmed).toHaveBeenCalledWith("  ab  ");
   });
 
-  it("cannot confirm when no password was chosen", () => {
-    const { result, onConfirmed } = renderViewModel(null);
+  it("cannot confirm when no password was chosen", async () => {
+    const onConfirmed = jest.fn();
+    const { result, type, confirm } = renderViewModel(null, onConfirmed);
 
-    act(() => result.current.viewModel.onPasswordChange("123456"));
-    act(() => result.current.viewModel.onConfirm());
+    await type("123456");
+    await confirm();
 
     expect(onConfirmed).not.toHaveBeenCalled();
     expect(result.current.viewModel.hasMismatch).toBe(true);
+  });
+
+  it("locks the CTA while saving, so a slow derivation cannot be submitted twice", async () => {
+    let release = () => {};
+    const onConfirmed = jest.fn(
+      () =>
+        new Promise<void>(resolve => {
+          release = resolve;
+        }),
+    );
+    const { result, type } = renderViewModel("123456", onConfirmed);
+
+    await type("123456");
+
+    let confirming: Promise<void> | undefined;
+    await act(async () => {
+      confirming = Promise.resolve(result.current.viewModel.onConfirm());
+    });
+
+    expect(result.current.viewModel.isSaving).toBe(true);
+    expect(result.current.viewModel.isConfirmEnabled).toBe(false);
+
+    await act(async () => {
+      release();
+      await confirming;
+    });
+
+    expect(result.current.viewModel.isSaving).toBe(false);
+    expect(onConfirmed).toHaveBeenCalledTimes(1);
+  });
+
+  it("stops saving and stays on the step when persisting fails", async () => {
+    const onConfirmed = jest.fn(() => Promise.reject(new Error("keychain unavailable")));
+    const { result, type } = renderViewModel("123456", onConfirmed);
+
+    await type("123456");
+
+    await act(async () => {
+      await expect(result.current.viewModel.onConfirm()).rejects.toThrow("keychain unavailable");
+    });
+
+    expect(result.current.viewModel.isSaving).toBe(false);
+    expect(result.current.viewModel.isConfirmEnabled).toBe(true);
   });
 });

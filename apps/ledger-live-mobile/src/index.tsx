@@ -28,7 +28,6 @@ import {
 import { accountsSelector } from "~/reducers/accounts";
 import { rebootIdSelector } from "~/reducers/appstate";
 import LocaleProvider, { i18n } from "~/context/Locale";
-import AuthPass from "~/context/AuthPass";
 import LedgerStoreProvider from "~/context/LedgerStore";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { store } from "~/state-manager/configureStore";
@@ -372,21 +371,19 @@ export default class Root extends Component {
                         <StylesProvider>
                           <StyledStatusBar />
                           <NavBarColorHandler />
-                          <AuthPass>
-                            <GestureHandlerRootView style={styles.root}>
-                              <WaitForAppReady currencyInitialized={currencyInitialized}>
-                                <AppProviders initialCountervalues={initialCountervalues}>
-                                  <AppGeoBlocker>
-                                    <AppVersionBlocker>
-                                      <BridgeSyncProvider>
-                                        <App />
-                                      </BridgeSyncProvider>
-                                    </AppVersionBlocker>
-                                  </AppGeoBlocker>
-                                </AppProviders>
-                              </WaitForAppReady>
-                            </GestureHandlerRootView>
-                          </AuthPass>
+                          <GestureHandlerRootView style={styles.root}>
+                            <WaitForAppReady currencyInitialized={currencyInitialized}>
+                              <AppProviders initialCountervalues={initialCountervalues}>
+                                <AppGeoBlocker>
+                                  <AppVersionBlocker>
+                                    <BridgeSyncProvider>
+                                      <App />
+                                    </BridgeSyncProvider>
+                                  </AppVersionBlocker>
+                                </AppGeoBlocker>
+                              </AppProviders>
+                            </WaitForAppReady>
+                          </GestureHandlerRootView>
                         </StylesProvider>
                       </SafeAreaProvider>
                     </PlatformAppProviderWrapper>

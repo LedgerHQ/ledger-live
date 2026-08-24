@@ -1791,6 +1791,9 @@ importers:
       '@features/platform-aggregated-assets':
         specifier: workspace:*
         version: link:../../features/platform/aggregated-assets
+      '@features/platform-app-lock':
+        specifier: workspace:*
+        version: link:../../features/platform/app-lock
       '@features/platform-card':
         specifier: workspace:*
         version: link:../../features/platform/card
@@ -2043,6 +2046,9 @@ importers:
       '@shared/feature-flags':
         specifier: workspace:*
         version: link:../../shared/feature-flags
+      '@shared/password-verifier':
+        specifier: workspace:*
+        version: link:../../shared/password-verifier
       '@shared/ui-queued-bottom-sheet':
         specifier: workspace:*
         version: link:../../shared/ui-queued-bottom-sheet
@@ -5061,6 +5067,9 @@ importers:
       '@features/platform-app-lock':
         specifier: workspace:*
         version: link:../../platform/app-lock
+      '@shared/ui-queued-bottom-sheet':
+        specifier: workspace:*
+        version: link:../../../shared/ui-queued-bottom-sheet
     devDependencies:
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
@@ -6463,6 +6472,9 @@ importers:
 
   features/platform/app-lock:
     dependencies:
+      '@reduxjs/toolkit':
+        specifier: 'catalog:'
+        version: 2.11.2
       zod:
         specifier: 'catalog:'
         version: 4.3.6

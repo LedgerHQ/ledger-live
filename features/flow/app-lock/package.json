@@ -23,7 +23,8 @@
     "unimported": "pnpm knip --directory ../../.. -W features/flow/app-lock"
   },
   "dependencies": {
-    "@features/platform-app-lock": "workspace:*"
+    "@features/platform-app-lock": "workspace:*",
+    "@shared/ui-queued-bottom-sheet": "workspace:*"
   },
   "peerDependencies": {
     "@ledgerhq/lumen-design-core": "catalog:",
