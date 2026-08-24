@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen, act } from "@support/jest-devtools/native";
-import { QRScannerSheet } from "./QRScannerSheet.native";
+import { QRScannerSheet } from "./QRScannerSheet";
 
 jest.mock("react-native-vision-camera", () => ({
   Camera: "Camera",

@@ -109,6 +109,9 @@ export function toZcashPrivateInfoRaw(info: ZcashPrivateInfo): ZcashPrivateInfoR
     estimatedTimeRemaining: info.estimatedTimeRemaining,
     birthday: info.birthday,
     lastProcessedBlock: info.lastProcessedBlock,
+    // exactOptionalPropertyTypes: undefined can't be assigned to an optional
+    // field directly -- omit the key entirely rather than write it as undefined.
+    ...(info.lastSyncError !== undefined && { lastSyncError: info.lastSyncError }),
     transactions: info.transactions.map(({ fee, transparentOut, decryptedData, ...tx }) => ({
       ...tx,
       fee: fee.toString(),
@@ -142,6 +145,8 @@ export function fromZcashPrivateInfoRaw(info: ZcashPrivateInfoRaw): ZcashPrivate
     estimatedTimeRemaining: info.estimatedTimeRemaining,
     birthday: info.birthday,
     lastProcessedBlock: info.lastProcessedBlock,
+    // Guard accounts persisted before this field was added.
+    lastSyncError: info.lastSyncError ?? null,
     transactions: info.transactions.map(({ fee, transparentOut, decryptedData, ...tx }) => ({
       ...tx,
       fee: new BigNumber(fee),

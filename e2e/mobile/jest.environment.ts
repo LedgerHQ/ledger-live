@@ -198,6 +198,7 @@ export default class TestEnvironment extends DetoxEnvironment {
       waitForElement: NativeElementHelpers.waitForElement,
       waitForElementById: NativeElementHelpers.waitForElementById,
       waitForElementByText: NativeElementHelpers.waitForElementByText,
+      waitForFullyVisibleById: NativeElementHelpers.waitForFullyVisibleById,
       waitForElementNotVisible: NativeElementHelpers.waitForElementNotVisible,
     };
 

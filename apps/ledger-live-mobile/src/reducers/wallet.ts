@@ -129,7 +129,7 @@ export const accountUserDataExportSelector = (
   };
 };
 
-export function latestDistantStateSelector(state: State): unknown {
+export function latestDistantStateSelector(state: State): WSState["data"] {
   return walletSelector(state).walletSync.walletSyncState.data;
 }
 

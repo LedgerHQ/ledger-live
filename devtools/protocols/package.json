@@ -13,13 +13,15 @@
     "format:check": "oxfmt src jest.config.js --check",
     "typecheck": "tsc --noEmit",
     "coverage": "jest --config jest.config.js --coverage",
-    "test": "jest --config jest.config.js"
+    "test": "jest --config jest.config.js",
+    "lint": "oxlint src"
   },
   "dependencies": {
     "@devtools/transport": "workspace:*",
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@ledgerhq/test-quarantine": "workspace:*",
     "typescript": "catalog:",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",

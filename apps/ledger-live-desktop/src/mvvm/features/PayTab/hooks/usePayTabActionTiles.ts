@@ -2,12 +2,11 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import type { ActionTilesProps } from "@features/flow-pay-card-balance";
 
-const noop = () => {};
-
 export function usePayTabActionTiles(
   onTrackEvent: ActionTilesProps["onTrackEvent"],
   onDeposit: () => void,
   onRequest: () => void,
+  onPay: () => void,
 ): ActionTilesProps {
   const { t } = useTranslation();
 
@@ -26,11 +25,11 @@ export function usePayTabActionTiles(
           onPress: onRequest,
           appearance: "transparent",
         },
-        { id: "pay", label: t("payTab.actions.pay"), onPress: noop, appearance: "transparent" },
+        { id: "pay", label: t("payTab.actions.pay"), onPress: onPay, appearance: "transparent" },
       ],
       page: "Pay",
       onTrackEvent,
     }),
-    [t, onTrackEvent, onDeposit, onRequest],
+    [t, onTrackEvent, onDeposit, onRequest, onPay],
   );
 }

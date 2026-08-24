@@ -11,9 +11,11 @@
     "format:check": "oxfmt src jest.config.js --check",
     "typecheck": "tsc --noEmit",
     "test": "jest --config jest.config.js",
-    "coverage": "jest --config jest.config.js --coverage"
+    "coverage": "jest --config jest.config.js --coverage",
+    "lint": "oxlint src"
   },
   "devDependencies": {
+    "@ledgerhq/test-quarantine": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",

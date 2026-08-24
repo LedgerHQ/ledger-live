@@ -3,6 +3,7 @@ import type { PayCardAuthState } from "./types";
 
 export const payCardAuthInitialState: PayCardAuthState = {
   hasCard: false,
+  isSignedIn: false,
 };
 
 export const payCardAuthSlice = createSlice({
@@ -12,7 +13,14 @@ export const payCardAuthSlice = createSlice({
     setHasCard: (state, action: PayloadAction<boolean>) => {
       state.hasCard = action.payload;
     },
+    /**
+     * Written by the login machine, and by `CardLogout` once a logout is through. It is runtime
+     * state, not a preference, so the slice must stay out of the persisted app state.
+     */
+    setSignedIn: (state, action: PayloadAction<boolean>) => {
+      state.isSignedIn = action.payload;
+    },
   },
 });
 
-export const { setHasCard } = payCardAuthSlice.actions;
+export const { setHasCard, setSignedIn } = payCardAuthSlice.actions;

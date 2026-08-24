@@ -24,6 +24,7 @@
   },
   "devDependencies": {
     "@jest/globals": "catalog:",
+    "@ledgerhq/test-quarantine": "workspace:*",
     "@types/node": "catalog:",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",

@@ -72,7 +72,7 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
 
       - name: Install dependencies
-        run: pnpm i
+        run: pnpm i --frozen-lockfile
 
       - name: Build desktop dependencies
         run: pnpm build:lld:deps

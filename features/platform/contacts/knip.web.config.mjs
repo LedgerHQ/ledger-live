@@ -1,15 +1,8 @@
-import { createRequire } from "node:module";
+import { createDualPlatformKnipConfig } from "../../../knip.config.base.mjs";
 
-const require = createRequire(import.meta.url);
-const rootConfig = require("../../../knip.json");
-
-export default {
-  ...rootConfig,
-  workspaces: {
-    ...rootConfig.workspaces,
-    "features/platform/contacts": {
-      entry: ["src/index.ts", "src/web.ts"],
-      project: ["src/**/*", "!src/**/*.native.*", "!src/index.native.ts"],
-    },
-  },
-};
+export default createDualPlatformKnipConfig({
+  packagePath: "features/platform/contacts",
+  platform: "web",
+  entry: ["src/index.ts", "src/web.ts", "src/device/intents/index.ts"],
+  additionalProjectExcludes: ["src/index.native.ts"],
+});

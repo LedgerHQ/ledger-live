@@ -14,22 +14,22 @@ export default class DeviceValidationPage extends CommonPage {
     await waitForElementById(this.validationScrollViewId);
   }
 
-  @Step("Expect amount in device validation screen")
+  @Step("Expect amount in device validation screen {{{0}}}")
   async expectAmount(amount: string) {
     await detoxExpect(this.validationAmount()).toHaveText(amount);
   }
 
-  @Step("Expect address in device validation screen")
+  @Step("Expect address in device validation screen {{{0}}}")
   async expectAddress(recipient: string) {
     await detoxExpect(this.validationAddress()).toHaveText(recipient);
   }
 
-  @Step("Expect provider in device validation screen")
+  @Step("Expect provider in device validation screen {{{0}}}")
   async expectProvider(provider: string) {
     await detoxExpect(this.validationProvider()).toHaveText(provider);
   }
 
-  @Step("Expect fees in device validation screen")
+  @Step("Expect fees in device validation screen {{{0}}}")
   async expectFees(fees: string) {
     await detoxExpect(this.validationFees()).toHaveText(fees);
   }

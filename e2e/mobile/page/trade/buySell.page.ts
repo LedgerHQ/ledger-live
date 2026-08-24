@@ -38,7 +38,7 @@ export default class BuySellPage {
   currencyListSelector = (curr: string) => `fiat-option-${curr}`;
   provider = (name: string) => `provider_${name.toLowerCase()}`;
 
-  @Step("Open page via deeplink")
+  @Step("Open page via deeplink {{{0}}}")
   async openViaDeeplink(page: "Buy" | "Sell") {
     await openDeeplink(page.toLowerCase());
     await waitForElementById(app.common.walletApiWebview, 60000, { checkVisibility: false });
@@ -66,14 +66,14 @@ export default class BuySellPage {
     await detoxExpect(getWebElementByTestId(this.sellPercentageButtonId("max"))).toExist();
   }
 
-  @Step("Select currency")
+  @Step("Select currency {{{0}}}")
   async selectCurrency(currencyId: string) {
     const id = this.currencyRow(currencyId);
     await waitForElementById(id);
     await tapById(id);
   }
 
-  @Step("Choose crypto asset if not selected")
+  @Step("Choose crypto asset if not selected {{{0.accountName}}}")
   async chooseAssetIfNotSelected(account: AccountType) {
     await tapWebElementByTestId(this.cryptoCurrencySelector);
     await app.modularDrawer.selectAsset(account);
@@ -83,7 +83,7 @@ export default class BuySellPage {
     );
   }
 
-  @Step("Choose country if not selected")
+  @Step("Choose country if not selected {{{0.locale}}}")
   async chooseCountryIfNotSelected(fiat: Fiat) {
     await tapWebElementByTestId(this.fiatAmountOptionButtonId);
     await tapWebElementByTestId(this.openCountryDrawerButtonId);
@@ -111,12 +111,12 @@ export default class BuySellPage {
     }
   }
 
-  @Step("Tap sell percentage button")
+  @Step("Tap sell percentage button {{{0}}}")
   async tapSellPercentageButton(percentage: "25%" | "50%" | "75%" | "max") {
     await tapWebElementByTestId(this.sellPercentageButtonId(percentage));
   }
 
-  @Step("Set amount to pay")
+  @Step("Set amount to pay {{{0}}}")
   async setAmountToPay(amount: string) {
     await typeTextByWebTestId(this.amountInputSectionId(), amount);
   }
@@ -129,7 +129,7 @@ export default class BuySellPage {
     await tapWebElementByTestId(this.formCta);
   }
 
-  @Step("Tap buy/sell cta")
+  @Step("Tap {{{1}}} cta for {{{0}}}")
   async tapBuySellWithCta(provider: string, page: "Buy" | "Sell") {
     await waitForWebElementToBeEnabled(this.formCta);
     const text = await getWebElementText(this.formCta);
@@ -137,7 +137,7 @@ export default class BuySellPage {
     await tapWebElementByTestId(this.formCta);
   }
 
-  @Step("Select payment method")
+  @Step("Select payment method {{{0}}}")
   async selectPaymentMethod(paymentMethod: string) {
     await tapWebElementByTestId(this.paymentSelector);
     await detoxExpect(getWebElementByTestId(this.paymentOptions)).toExist();
@@ -173,7 +173,7 @@ export default class BuySellPage {
     return selected;
   }
 
-  @Step("Select provider")
+  @Step("Select provider {{{0}}}")
   async selectProvider(provider: string) {
     await waitWebElementByTestId(this.providersList);
     const expandButton = await waitWebElementByTestId(this.expandButtonId, {
@@ -194,7 +194,7 @@ export default class BuySellPage {
    * on the Android CI emulator's software renderer takes the emulator down mid-test.
    * Mirrors e2e/desktop, which asserts the same handoff out of `webviewUrlHistory`.
    */
-  @Step("Verify provider handoff URL and query parameters")
+  @Step("Verify provider handoff URL and query parameters {{{0.uiName}}}")
   async verifyProviderHandoff(provider: BuySellProvider, buySell: BuySell) {
     const rawHandoffUrl = await retryUntilTimeout(async () => {
       const url = await getPtxHandoff();
@@ -222,7 +222,7 @@ export default class BuySellPage {
     }
   }
 
-  @Step("Handle buy flow")
+  @Step("Handle buy flow with {{{1}}}")
   async handleBuyFlow(buySell: BuySell, paymentMethod: string, skipQuickAmountVerify?: boolean) {
     await this.expectBuyScreenToBeVisible();
     await this.chooseAssetIfNotSelected(buySell.crypto);
@@ -238,12 +238,12 @@ export default class BuySellPage {
     await this.verifyProviderHandoff(selectedProvider, buySell);
   }
 
-  @Step("Handle sell flow")
   /**
    * The amount is deliberately not a parameter: this flow taps the 75% button, so the
    * figure handed to the partner is whatever the UI resolved. Passing one in would only
    * invite a caller to believe it was typed.
    */
+  @Step("Handle sell flow {{{1}}}")
   async handleSellFlow(
     buySell: Omit<BuySell, "amount">,
     paymentMethod: string,

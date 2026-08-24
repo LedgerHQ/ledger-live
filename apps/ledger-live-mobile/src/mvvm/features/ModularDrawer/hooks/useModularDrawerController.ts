@@ -39,6 +39,7 @@ export const useModularDrawerController = () => {
   const {
     isOpen,
     preselectedCurrencies,
+    categories,
     callbackId,
     cancelCallbackId,
     enableAccountSelection,
@@ -54,6 +55,7 @@ export const useModularDrawerController = () => {
     (state: State) => ({
       isOpen: state.modularDrawer.isOpen,
       preselectedCurrencies: state.modularDrawer.preselectedCurrencies,
+      categories: state.modularDrawer.categories,
       callbackId: state.modularDrawer.callbackId,
       cancelCallbackId: state.modularDrawer.cancelCallbackId,
       enableAccountSelection: state.modularDrawer.enableAccountSelection,
@@ -187,6 +189,7 @@ export const useModularDrawerController = () => {
   return {
     isOpen,
     preselectedCurrencies,
+    categories,
     enableAccountSelection,
     completionMode,
     presentation,

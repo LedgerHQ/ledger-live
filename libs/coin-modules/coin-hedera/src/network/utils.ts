@@ -3,7 +3,6 @@ import { AccountId, TransactionId } from "@hashgraph/sdk";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { InvalidAddress } from "@ledgerhq/ledger-wallet-framework/errors";
 import cvsApi from "@ledgerhq/live-countervalues/api/index";
-import { getEnv } from "@ledgerhq/live-env";
 import { makeLRUCache, seconds } from "@ledgerhq/live-network/cache";
 import type {
   FiatCurrency,
@@ -12,7 +11,7 @@ import type {
 } from "@ledgerhq/ledger-wallet-framework/types";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import type { HederaCoinConfig } from "../config";
+import { STAKING_REWARD_ACCOUNT_ID } from "../constants";
 import { HederaRecipientInvalidChecksum } from "../errors";
 import { getChecksum, nanosToSeconds, toEntityId, toTimestamp } from "../logic/utils";
 import type {
@@ -23,6 +22,7 @@ import type {
   EnrichedERC20Transfer,
   HederaMirrorTransaction,
   StakingAnalysis,
+  HederaCoinConfig,
 } from "../types";
 import { apiClient } from "./api";
 import { hgraphClient } from "./hgraph";
@@ -80,7 +80,6 @@ export function parseTransfers(
 
   const senders: string[] = [];
   const recipients: string[] = [];
-  const rewardPayerAddress = getEnv("HEDERA_STAKING_REWARD_ACCOUNT_ID");
 
   for (const transfer of mirrorTransfers) {
     const amount = new BigNumber(transfer.amount);
@@ -96,7 +95,8 @@ export function parseTransfers(
 
     if (amountWithoutReward.isNegative()) {
       // exclude reward payer from senders list, because rewards are shown as separate operations
-      const shouldIgnoreAddress = transfer.account === rewardPayerAddress && stakingReward.gt(0);
+      const shouldIgnoreAddress =
+        transfer.account === STAKING_REWARD_ACCOUNT_ID && stakingReward.gt(0);
 
       if (shouldIgnoreAddress) {
         continue;

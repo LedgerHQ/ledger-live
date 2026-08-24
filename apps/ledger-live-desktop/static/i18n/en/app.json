@@ -930,12 +930,33 @@
     "request": {
       "title": "Request {{asset}}",
       "networkLabel": "{{network}} network",
+      "saveDialogTitle": "Save request card",
       "actions": {
         "share": "Share",
         "copy": "Copy",
         "copied": "Copied",
         "save": "Save",
         "verify": "Verify"
+      },
+      "verifyAddress": {
+        "introTitle": "Verify your address",
+        "introDescription": "To protect against address replacement attacks, verify your address on your Ledger device's Secure Screen.",
+        "verifyCta": "Verify address",
+        "successTitle": "Address displayed on the device's Secure Screen",
+        "nextStepsLabel": "Next steps",
+        "nextStepShare": "Share your address via your desired app",
+        "nextStepMatch": "Ensure the shared address matches the one on your Ledger Device.",
+        "gotItCta": "Got it",
+        "device": {
+          "cancelledTitle": "Address verification cancelled",
+          "cancelledDescription": "You declined the address on your device. You can display it again to verify it.",
+          "mismatchTitle": "Addresses don't match",
+          "mismatchDescription": "The address shown on your device is different from the requested one. Do not share this address.",
+          "unsupportedTitle": "Verification not available",
+          "unsupportedDescription": "This device app can't display the address for on-device verification.",
+          "retryCta": "Show address again",
+          "closeCta": "Close"
+        }
       }
     }
   },
@@ -6557,7 +6578,7 @@
           },
           "dualValidator": {
             "title": "Dual-validator security",
-            "body": "Transactions require co-signing from both Ledger and Klin. Neither can act on your behalf alone."
+            "body": "Transactions require co-signing from both Ledger and Kiln. Neither can act on your behalf alone."
           },
           "tokenLiability": {
             "title": "Standard token liability ⚠️",
@@ -7274,6 +7295,9 @@
     "ZcashSaplingRecipientNotSupported": {
       "title": "Sending to Sapling addresses is not supported"
     },
+    "ZcashAmountBelowDustThreshold": {
+      "title": "Amount is too small to be broadcast (minimum {{minimumZatoshis}} zatoshis)"
+    },
     "InvalidNonce": {
       "title": "Nonce is required"
     },
@@ -7923,6 +7947,10 @@
     },
     "SomeSuiForUnstake": {
       "title": "Please ensure you reserve at least 0.1 SUI in your wallet to cover future network fees and undelegate your stake"
+    },
+    "SuiAddressBalanceAppUpdateRequired": {
+      "title": "Update your Sui app",
+      "description": "Your Ledger Sui app can't sign a transfer from your SUI address balance. Update the Sui app on your Ledger device and try again."
     },
     "NotEnoughBalanceForUnstaking": {
       "message": "Your available (non-staked) balance is currently {{currentBalance}} which is insufficient to pay for the network fees to unstake your {{assetName}}.",
@@ -9028,6 +9056,10 @@
             "message": "Private balance is not synchronized",
             "cta": "Resume sync"
           },
+          "failed": {
+            "message": "Private balance sync failed",
+            "cta": "Resume sync"
+          },
           "running": {
             "message": "Private balance is synchronizing ({{progress}}%)",
             "timeRemaining": "Estimated time remaining: {{hours}}:{{minutes}}"
@@ -9050,7 +9082,8 @@
         "stopSync": "Stop sync",
         "upToDate": "Up to date",
         "lastSync": "Last sync: {{date}}",
-        "estimatedTimeRemaining": "Estimated time remaining: {{hours}}:{{minutes}}"
+        "estimatedTimeRemaining": "Estimated time remaining: {{hours}}:{{minutes}}",
+        "syncFailed": "Private balance sync failed"
       },
       "datepicker": {
         "label": "Birthday height",
@@ -9433,6 +9466,10 @@
     },
     "addAddressReview": {
       "title": "Review address",
+      "addressLabel": "Address",
+      "currencyLabel": "Currency",
+      "networkLabel": "Network",
+      "nameLabel": "Address name",
       "continue": "Confirm address",
       "successTitle": "Address saved",
       "close": "Close"

@@ -1,6 +1,7 @@
 import { useCallback } from "react";
 
 import { CryptoOrTokenCurrency } from "@domain/entity-currency";
+import type { AssetCategory } from "@domain/api-aggregated-assets";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { ModularDrawerVisibleParams } from "@ledgerhq/live-common/modularDrawer/types/visibility";
 import { useDispatch } from "LLD/hooks/redux";
@@ -25,12 +26,14 @@ function selectCurrencyDialog(
   currencyIds?: string[],
   onClose?: () => void,
   dialogConfiguration?: EnhancedModularDrawerConfiguration,
+  categories?: readonly AssetCategory[],
 ): void {
   const filteredCurrencies = currencyIds ?? [];
 
   dispatch(
     openDialog({
       currencies: filteredCurrencies,
+      categories,
       areCurrenciesFiltered: filteredCurrencies.length > 0,
       onAssetSelected,
       dialogConfiguration: dialogConfiguration ?? {
@@ -104,7 +107,11 @@ export function useOpenAssetFlow<Name extends keyof GlobalModalData = keyof Glob
   );
 
   const openAssetFlow = useCallback(
-    (dialogConfiguration?: EnhancedModularDrawerConfiguration, currencyIds?: string[]) => {
+    (
+      dialogConfiguration?: EnhancedModularDrawerConfiguration,
+      currencyIds?: string[],
+      categories?: readonly AssetCategory[],
+    ) => {
       dispatch(setFlowValue(modularDrawerVisibleParams.location));
       dispatch(setSourceValue(source));
       selectCurrencyDialog(
@@ -113,6 +120,7 @@ export function useOpenAssetFlow<Name extends keyof GlobalModalData = keyof Glob
         currencyIds,
         handleClose,
         dialogConfiguration,
+        categories,
       );
     },
     [dispatch, handleClose, modularDrawerVisibleParams, openAddAccountFlow, source],

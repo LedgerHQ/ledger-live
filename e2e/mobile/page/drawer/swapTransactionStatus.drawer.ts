@@ -28,7 +28,7 @@ export default class SwapTransactionStatusDrawer {
   swapIdId = "swap-transaction-details-swap-id";
   viewInExplorerButtonId = "swap-transaction-view-explorer-btn";
 
-  @Step("Verify swap transaction status drawer information")
+  @Step("Verify swap transaction status drawer information {{{0}}}")
   async expectSwapTransactionStatusDrawerInfos(
     swapIdPrefix: string,
     provider: SwapProvider,

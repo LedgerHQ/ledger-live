@@ -54,6 +54,9 @@ export function AddressMatchedSection({ viewModel }: AddressMatchedSectionProps)
             contact={suggestion.contact}
             isReady={suggestion.isReady}
             showActions={suggestion.showActions}
+            hasAddressBook={suggestion.hasAddressBook}
+            addressBookUnsupportedTitle={suggestion.addressBookUnsupportedTitle}
+            addressBookUnsupportedDescription={suggestion.addressBookUnsupportedDescription}
             addContactLabel={suggestion.addContactLabel}
             sendLabel={suggestion.sendLabel}
             onSend={suggestion.onSend}

@@ -2,9 +2,8 @@ import { GetAddressFn } from "@ledgerhq/ledger-wallet-framework/bridge/getAddres
 import { GetAddressOptions } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { log } from "@ledgerhq/logs";
-import { KeyAlgorithm } from "casper-js-sdk";
-import { casperAddressFromPubKey } from "../logic/validateAddress";
 import { CasperSigner } from "../types";
+import { addressFromDeviceResponse } from "./deviceResponse";
 
 function resolver(signerContext: SignerContext<CasperSigner>): GetAddressFn {
   return async (deviceId: string, { path, verify }: GetAddressOptions) => {
@@ -20,9 +19,7 @@ function resolver(signerContext: SignerContext<CasperSigner>): GetAddressFn {
 
     return {
       path,
-      address: r.Address.length
-        ? r.Address.toString().toLowerCase()
-        : casperAddressFromPubKey(r.publicKey, KeyAlgorithm.SECP256K1),
+      address: addressFromDeviceResponse(r),
       publicKey: r.publicKey.toString("hex"),
     };
   };

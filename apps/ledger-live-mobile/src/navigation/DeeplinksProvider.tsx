@@ -17,6 +17,7 @@ import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { hasCompletedOnboardingSelector } from "~/reducers/settings";
 import { navigationRef, isReadyRef } from "../rootnavigation";
 import { ScreenName, NavigatorName } from "~/const";
+import { PAY_TAB_DEEP_LINK_PATH } from "./deeplinks/payTabDeepLink";
 import { setWallectConnectUri } from "~/actions/walletconnect";
 import { useGeneralTermsAccepted } from "~/logic/terms";
 import { lightTheme, darkTheme, Theme } from "../colors";
@@ -513,7 +514,7 @@ export const DeeplinksProvider = ({
                              */
                             [NavigatorName.PayTab]: {
                               screens: {
-                                [ScreenName.PayTab]: "paytab",
+                                [ScreenName.PayTab]: PAY_TAB_DEEP_LINK_PATH,
                               },
                             },
                           }),

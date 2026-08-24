@@ -16,5 +16,7 @@ module.exports = {
     "default",
     ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
     ...(process.env.CI ? ["github-actions"] : []),
+    "@ledgerhq/test-quarantine/jest",
   ],
+  setupFilesAfterEnv: ["@ledgerhq/test-quarantine/jest-retries"],
 };

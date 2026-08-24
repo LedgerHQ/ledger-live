@@ -70,7 +70,7 @@ export default class TezosStakePage {
     await waitForElementById(this.awaitingDelegationId);
   }
 
-  @Step("Fill stake amount $0")
+  @Step("Fill stake amount {{{0}}}")
   async fillStakeAmount(amount: string) {
     await waitForElementById(this.stakeAmountInputId);
     await typeTextById(this.stakeAmountInputId, amount);
@@ -96,7 +96,7 @@ export default class TezosStakePage {
     await waitForElementById(this.unstakeStakedBalanceId);
   }
 
-  @Step("Fill unstake amount $0")
+  @Step("Fill unstake amount {{{0}}}")
   async fillUnstakeAmount(amount: string) {
     await waitForElementById(this.unstakeAmountInputId);
     await typeTextById(this.unstakeAmountInputId, amount);

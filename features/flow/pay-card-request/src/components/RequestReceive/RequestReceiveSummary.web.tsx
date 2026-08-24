@@ -26,7 +26,10 @@ export function RequestReceiveSummary({
   qrPayload,
 }: RequestReceiveSummaryProps) {
   return (
-    <div className="flex flex-col items-center gap-32 bg-surface p-24 rounded-2xl">
+    <div
+      className="flex flex-col items-center gap-32 bg-surface p-24 rounded-2xl"
+      data-testid="pay-card-request-receive-card"
+    >
       <div className="flex flex-col items-center gap-8">
         <span className="heading-3-semi-bold text-base">{title}</span>
         <div

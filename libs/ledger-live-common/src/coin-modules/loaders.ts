@@ -89,6 +89,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadDeviceTxConfig: () =>
       import("@ledgerhq/coin-casper/deviceTransactionConfig").then(m => m.default),
     loadMockBridge: () => import("../families/casper/bridge/mock").then(m => m.default),
+    loadSigner: () => import("../families/casper/signer").then(m => m.default),
   },
   {
     family: "celo",
@@ -447,5 +448,6 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadTransaction: () => import("@ledgerhq/coin-zcash/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
       import("@ledgerhq/coin-zcash/deviceTransactionConfig").then(m => m.default),
+    loadBridgeExtensions: () => import("../families/zcash/bridgeExtensions").then(m => m.default),
   },
 ];

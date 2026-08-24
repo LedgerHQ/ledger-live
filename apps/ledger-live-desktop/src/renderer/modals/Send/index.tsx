@@ -10,6 +10,9 @@ import { isModalOpened, getModalData } from "~/renderer/reducers/modals";
 import { openSendFlowDialog } from "~/renderer/reducers/sendFlow";
 import type { State } from "~/renderer/reducers";
 import { useNewSendFlowFeature } from "LLD/features/Send/hooks/useNewSendFlowFeature";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
+import { getSendUiConfig } from "@ledgerhq/live-common/flows/send/uiConfig";
+import { canSkipRecipientStep } from "@ledgerhq/live-common/flows/send/types";
 
 type Props = {
   stepId?: StepId;
@@ -27,9 +30,15 @@ const MODAL_LOCKED: {
 };
 const SendModal = ({ stepId: initialStepId, onClose }: Props) => {
   const [stepId, setStepId] = useState<StepId>(() => initialStepId || "recipient");
-  const handleReset = useCallback(() => setStepId("recipient"), []);
-  const handleStepChange = useCallback((stepId: StepId) => setStepId(stepId), []);
-  const isModalLocked = MODAL_LOCKED[stepId];
+  const [hasStartedDirectSend, setHasStartedDirectSend] = useState(false);
+  const handleReset = useCallback(() => {
+    setStepId("recipient");
+    setHasStartedDirectSend(false);
+  }, []);
+  const handleStepChange = useCallback((nextStepId: StepId) => {
+    setHasStartedDirectSend(true);
+    setStepId(nextStepId);
+  }, []);
   const dispatch = useDispatch();
 
   const { isEnabledForFamily, getFamilyFromAccount, getCurrencyIdFromAccount } =
@@ -46,6 +55,17 @@ const SendModal = ({ stepId: initialStepId, onClose }: Props) => {
     modalData?.parentAccount ?? null,
   );
   const shouldRedirectToNewFlow = isEnabledForFamily(family, currencyId);
+  const canStartDirectSend =
+    modalData?.account &&
+    canSkipRecipientStep(
+      {
+        recipient: modalData.recipient,
+        skipRecipientStep: modalData.skipRecipientStep,
+      },
+      getSendUiConfig(getAccountCurrency(modalData.account)),
+    );
+  const effectiveStepId = !hasStartedDirectSend && canStartDirectSend ? "amount" : stepId;
+  const isModalLocked = MODAL_LOCKED[effectiveStepId];
 
   const handleModalClose = useCallback(() => {
     dispatch(
@@ -70,6 +90,7 @@ const SendModal = ({ stepId: initialStepId, onClose }: Props) => {
           account: sendData.account ?? undefined,
           parentAccount: sendData.parentAccount ?? undefined,
           recipient: sendData.recipient,
+          skipRecipientStep: sendData.skipRecipientStep,
           amount,
           fromMAD: false,
           startWithWarning: sendData.startWithWarning,
@@ -95,7 +116,7 @@ const SendModal = ({ stepId: initialStepId, onClose }: Props) => {
         preventBackdropClick={isModalLocked}
         render={({ onClose, data }) => (
           <Body
-            stepId={stepId}
+            stepId={effectiveStepId}
             onClose={onClose}
             onChangeStepId={handleStepChange}
             params={data || {}}

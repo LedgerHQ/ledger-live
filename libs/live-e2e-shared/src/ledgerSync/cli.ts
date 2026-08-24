@@ -2,14 +2,18 @@ import { getSdk } from "@ledgerhq/ledger-key-ring-protocol";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import { CloudSyncSDK, type UpdateEvent } from "@shared/cloud-sync";
 import { liveSlug } from "@features/platform-wallet-sync";
-import {
-  walletSyncSchema,
-  type WalletSyncDistantState as LiveData,
-} from "@ledgerhq/live-wallet/walletSyncComposition";
+import { isDistantDocument, type DistantDocument } from "@shared/cloud-sync-module";
 import type { LedgerKeyRingProtocolOpts, LedgerSyncOpts } from "../runCli";
 import { trustchainApiBaseUrl } from "./environment";
 
 const CREDENTIALS_REQUIRED = "pubKey and privateKey are required";
+
+/** checked, not cast; not schema-validated so a suite can push a malformed slice on purpose */
+export function parseDocumentArg(data: string): DistantDocument {
+  const document: unknown = JSON.parse(data);
+  if (!isDistantDocument(document)) throw new Error("ledgerSync: --data must be a JSON object");
+  return document;
+}
 
 /**
  * Ledger Sync CLI entry points, shared by the desktop and mobile e2e suites. Unlike the other
@@ -123,16 +127,15 @@ export function ledgerSync(opts: LedgerSyncOpts) {
     return;
   }
 
-  let latestUpdateEvent: UpdateEvent<LiveData> | null = null;
+  let latestUpdateEvent: UpdateEvent<DistantDocument> | null = null;
   const ledgerKeyRingProtocolSDK = getSdk(false, { applicationId, name, apiBaseUrl }, withDevice);
 
   const cloudSyncSDK = new CloudSyncSDK({
     apiBaseUrl: cloudSyncApiBaseUrl,
     slug: liveSlug,
-    schema: walletSyncSchema,
     trustchainSdk: ledgerKeyRingProtocolSDK,
     getCurrentVersion: () => version ?? 0,
-    saveNewUpdate: async (event: UpdateEvent<LiveData>) => {
+    saveNewUpdate: async (event: UpdateEvent<DistantDocument>) => {
       latestUpdateEvent = event;
     },
   });
@@ -159,7 +162,7 @@ export function ledgerSync(opts: LedgerSyncOpts) {
       .push(
         { rootId, walletSyncEncryptionKey, applicationPath },
         { pubkey: pubKey, privatekey: privateKey },
-        JSON.parse(data!) as LiveData,
+        parseDocumentArg(data!),
       )
       .then((result: void) => JSON.stringify(result, null, 2));
   }

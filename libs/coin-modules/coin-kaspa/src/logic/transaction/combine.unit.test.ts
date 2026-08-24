@@ -11,11 +11,15 @@ function unsignedTx(overrides: Partial<UnsignedKaspaTransaction> = {}): string {
   return JSON.stringify(tx);
 }
 
+// The generic-adapter framework calls combine(tx, signatures) where signatures is the
+// array returned by the signer. Kaspa packs all per-input hex signatures into one
+// JSON-encoded string so the single-return-value framework contract is satisfied while
+// still supporting multi-input transactions (each input has a different sighash).
 describe("combine", () => {
   it("attaches the device signature to the matching input and returns the signed tx JSON", () => {
     const signature = "b".repeat(128);
 
-    const signed = combine(unsignedTx(), [signature]);
+    const signed = combine(unsignedTx(), [JSON.stringify([signature])]);
     const parsed = JSON.parse(signed);
 
     expect(parsed.transaction.inputs).toHaveLength(1);
@@ -31,7 +35,7 @@ describe("combine", () => {
       ],
     });
 
-    const signed = combine(tx, ["c".repeat(128)]);
+    const signed = combine(tx, [JSON.stringify(["c".repeat(128)])]);
     const parsed = JSON.parse(signed);
 
     expect(parsed.transaction.outputs).toEqual([
@@ -46,7 +50,7 @@ describe("combine", () => {
     ]);
   });
 
-  it("throws when the signature count does not match the input count", () => {
+  it("throws when the per-input signature count does not match the input count", () => {
     const tx = unsignedTx({
       inputs: [
         { prevTxId: "a".repeat(64), outpointIndex: 0, value: 1000000 },
@@ -54,8 +58,43 @@ describe("combine", () => {
       ],
     });
 
-    expect(() => combine(tx, ["only-one-signature"])).toThrow(
-      "kaspa: combine expected 2 signature(s), got 1",
+    expect(() => combine(tx, [JSON.stringify(["only-one-sig"])])).toThrow(
+      "kaspa: combine expected 2 per-input signature(s), got 1",
+    );
+  });
+
+  it("throws when the outer signatures array does not contain exactly one packed string", () => {
+    const tx = unsignedTx();
+
+    expect(() => combine(tx, [])).toThrow(
+      "kaspa: combine expects exactly 1 packed signature string, got 0",
+    );
+    expect(() =>
+      combine(tx, [JSON.stringify(["a".repeat(128)]), JSON.stringify(["b".repeat(128)])]),
+    ).toThrow("kaspa: combine expects exactly 1 packed signature string, got 2");
+  });
+
+  it("throws when the packed signature string is not valid JSON", () => {
+    const tx = unsignedTx();
+
+    expect(() => combine(tx, ["not-json"])).toThrow(
+      "kaspa: combine signature must be a JSON-encoded string array",
+    );
+  });
+
+  it("throws when the packed array contains a non-string element", () => {
+    const tx = unsignedTx();
+
+    expect(() => combine(tx, [JSON.stringify([12345])])).toThrow(
+      "kaspa: combine signature must be a JSON-encoded string array",
+    );
+  });
+
+  it("throws when the packed signature string is valid JSON but not an array", () => {
+    const tx = unsignedTx();
+
+    expect(() => combine(tx, [JSON.stringify({ signature: "a".repeat(128) })])).toThrow(
+      "kaspa: combine signature must be a JSON-encoded string array",
     );
   });
 });

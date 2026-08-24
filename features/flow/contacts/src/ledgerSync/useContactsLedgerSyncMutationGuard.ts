@@ -1,6 +1,9 @@
 import { useCallback, useState } from "react";
 import type { ContactId } from "@domain/entity-contact";
-import type { ContactsLedgerSyncStatus } from "@features/flow-contacts-introduction";
+import {
+  isContactsLedgerSyncActivationRequired,
+  type ContactsLedgerSyncStatus,
+} from "@features/flow-contacts-introduction";
 
 export type ContactsLedgerSyncMutationIntent =
   | Readonly<{ kind: "addContact" }>
@@ -23,12 +26,18 @@ export function useContactsLedgerSyncMutationGuard() {
         return { status: "allowed", intent };
       }
 
-      if (ledgerSyncStatus === "checking") {
-        return { status: "checking" };
+      if (ledgerSyncStatus === "inactive") {
+        setPendingIntent(intent);
+        return { status: "blocked", intent };
       }
 
-      setPendingIntent(intent);
-      return { status: "blocked", intent };
+      if (isContactsLedgerSyncActivationRequired(ledgerSyncStatus)) {
+        setPendingIntent(undefined);
+        return { status: "blocked", intent };
+      }
+
+      setPendingIntent(undefined);
+      return { status: "checking" };
     },
     [],
   );

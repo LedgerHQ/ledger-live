@@ -1,0 +1,8 @@
+{
+  "name": "@features/platform-verify-address-intent",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

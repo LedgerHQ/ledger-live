@@ -153,7 +153,11 @@ export function useSendHeaderViewModel(): SendHeaderViewModel {
       setRecipientSearchValue(prefillValue);
     }
 
-    navigation.goBack();
+    if (navigation.canGoBack()) {
+      navigation.goBack();
+    } else {
+      navigation.navigate(ScreenName.SendFlowRecipient);
+    }
   }, [isAmountStep, navigation, recipientFromTransaction, setRecipientSearchValue]);
 
   const handleScannedURI = useCallback(

@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useMemo } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useMachine } from "@xstate/react";
 import type { SnapshotFrom } from "xstate";
 import { createCardLoginPorts, type CardLoginDispatch } from "../../state/createCardLoginPorts";
 import type { PayCardLoginErrorKind } from "../../state/errors";
 import { cardLoginMachine } from "../../state/machine";
-import type { CardLoginViewModelParams, CardLoginViewProps } from "./types";
+import { selectIsSignedIn } from "../../state/selectors";
+import type { CardLoginViewModel, CardLoginViewModelParams } from "./types";
 
 type CardLoginStateValue = SnapshotFrom<typeof cardLoginMachine>["value"];
 
@@ -22,21 +23,26 @@ const ERROR_MESSAGES: Record<PayCardLoginErrorKind, string> = {
 };
 
 /**
- * Turns one machine snapshot into view props. It is a pure function so the mapping can be read, and
- * tested, without a React tree: `idle` and `error` offer the login action, `ready` shows nothing, and
- * every state in between is work in progress.
+ * Turns one machine snapshot into the view props. It is a pure function so the mapping can be read,
+ * and tested, without a React tree.
  */
-export function mapSnapshotToViewProps(
+export function mapSnapshotToViewModel(
   value: CardLoginStateValue,
   errorKind: PayCardLoginErrorKind | null,
-): Omit<CardLoginViewProps, "onLoginPress"> {
+  onLoginPress: () => void,
+): CardLoginViewModel {
+  // The card holder is signed in, so there is no login left to offer. `CardLogout` holds the screen.
+  if (value === "ready") {
+    return null;
+  }
+
   return {
     title: "Card",
     description: "Log in to access your Ledger Card",
     loginLabel: "Login",
-    isHidden: value === "ready",
-    isLoading: value !== "idle" && value !== "error" && value !== "ready",
+    isLoading: value !== "idle" && value !== "error",
     errorMessage: errorKind ? ERROR_MESSAGES[errorKind] : null,
+    onLoginPress,
   };
 }
 
@@ -44,8 +50,9 @@ export function useCardLoginViewModel({
   openHostedLogin,
   oauthConfig,
   callback,
-}: CardLoginViewModelParams): CardLoginViewProps {
+}: CardLoginViewModelParams): CardLoginViewModel {
   const dispatch = useDispatch<CardLoginDispatch>();
+  const isSignedIn = useSelector(selectIsSignedIn);
 
   const ports = useMemo(
     () => createCardLoginPorts({ dispatch, openHostedLogin }),
@@ -64,10 +71,15 @@ export function useCardLoginViewModel({
     }
   }, [callback, send]);
 
+  useEffect(() => {
+    // `CardLogout` ended the session. `ready` raises the flag on entry, so a lowered flag while the
+    // machine still reads `ready` can only come from there, and this puts the login back on offer.
+    if (!isSignedIn && snapshot.value === "ready") {
+      send({ type: "SESSION_ENDED" });
+    }
+  }, [isSignedIn, snapshot.value, send]);
+
   const onLoginPress = useCallback(() => send({ type: "LOGIN" }), [send]);
 
-  return {
-    ...mapSnapshotToViewProps(snapshot.value, snapshot.context.errorKind),
-    onLoginPress,
-  };
+  return mapSnapshotToViewModel(snapshot.value, snapshot.context.errorKind, onLoginPress);
 }

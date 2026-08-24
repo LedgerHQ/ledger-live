@@ -31,6 +31,7 @@
     "bignumber.js": "9"
   },
   "devDependencies": {
+    "@ledgerhq/test-quarantine": "workspace:*",
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",
     "@types/node": "catalog:",
     "@types/jest": "catalog:",

@@ -6,6 +6,7 @@ export function ModularDrawerWrapper() {
   const {
     isOpen,
     preselectedCurrencies,
+    categories,
     closeDrawer,
     handleAccountSelected,
     handleCurrencySelected,
@@ -25,6 +26,7 @@ export function ModularDrawerWrapper() {
     <ModularDrawer
       isOpen={isOpen}
       currencies={preselectedCurrencies}
+      categories={categories}
       onClose={closeDrawer}
       assetsConfiguration={assetsConfiguration}
       networksConfiguration={networksConfiguration}

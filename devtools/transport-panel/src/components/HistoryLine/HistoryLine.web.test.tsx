@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from "@support/jest-devtools/web";
 import type { Envelope, MessageMap } from "@devtools/transport";
-import { HistoryLine } from "./HistoryLine.web";
+import { HistoryLine } from "./HistoryLine";
 
 const makeEnvelope = (overrides?: Partial<Envelope<MessageMap>>): Envelope<MessageMap> => ({
   id: "abc-123",

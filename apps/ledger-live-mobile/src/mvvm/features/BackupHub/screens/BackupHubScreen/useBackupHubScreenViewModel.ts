@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { Linking, type ImageSourcePropType } from "react-native";
 import { getNanoOnlyDeviceModel } from "@features/flow-large-screen-upsell/utils/getNanoOnlyDeviceModel";
+import { isLargeScreenUpsellBannerEnabled } from "@features/flow-large-screen-upsell/utils/isLargeScreenUpsellBannerEnabled";
 import {
   LARGE_SCREEN_UPSELL_BACKUPS_UTM_CONTENT,
   LARGE_SCREEN_UPSELL_UTM_CAMPAIGN,
@@ -75,7 +76,12 @@ export function useBackupHubScreenViewModel(): BackupHubScreenViewModel {
     [knownDeviceModelIds],
   );
 
-  const incompatibleModel = getNanoOnlyDeviceModel(devicesModelList, lastSeenDevice?.modelId);
+  const incompatibleModel = isLargeScreenUpsellBannerEnabled(
+    largeScreenUpsell,
+    "backup-hub-recovery-key-text-warning",
+  )
+    ? getNanoOnlyDeviceModel(devicesModelList, lastSeenDevice?.modelId)
+    : undefined;
 
   const upsellLink = useMemo(() => {
     const variant = personalRecoOptIn ? "opted_in" : "opted_out";

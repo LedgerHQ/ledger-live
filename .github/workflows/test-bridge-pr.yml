@@ -58,7 +58,7 @@ jobs:
         run: |
           pnpm add -g node-gyp@3.8.0
       - name: Install dependencies
-        run: pnpm i --filter="live-common..." --filter="ledger-live"
+        run: pnpm i --frozen-lockfile --filter="live-common..." --filter="ledger-live"
       - name: Build
         run: pnpm exec nx run @ledgerhq/live-common:build
       - name: Test

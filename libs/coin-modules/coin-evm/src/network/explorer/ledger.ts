@@ -1,6 +1,5 @@
 import type { MemoNotSupported, Operation } from "@ledgerhq/coin-module-framework/api/types";
 import { isNFTActive } from "@ledgerhq/ledger-wallet-framework/nft/support";
-import { getEnv } from "@ledgerhq/live-env";
 import { delay } from "@ledgerhq/coin-module-framework/promises";
 import axios from "axios";
 import {
@@ -10,6 +9,7 @@ import {
   ledgerInternalTransactionToOperations,
   ledgerOperationToOperations,
 } from "../../adapters/index";
+import { DEFAULT_LEDGER_EXPLORER_URI } from "../../config";
 import { LedgerExplorerUsedIncorrectly } from "../../errors";
 import { LedgerExplorerOperation } from "../../types";
 import { ExplorerApi, isLedgerExplorerConfig, NO_TOKEN } from "./types";
@@ -25,12 +25,18 @@ type OperationsRequestParams = {
   batchSize: number;
 };
 
+/** Both default to what the env used to supply, so the previous call shape keeps working. */
+type LedgerExplorerSettings = {
+  explorerUri?: string | undefined;
+  clientVersion?: string | undefined;
+};
+
 /**
  * Request fetching all operations from an address
  * and supporting pagination through tokens.
  */
 export async function fetchPaginatedOpsWithRetries(
-  params: Required<OperationsRequestParams>,
+  params: Required<OperationsRequestParams> & LedgerExplorerSettings,
   paginationToken: string | null = null,
   previousOperations: LedgerExplorerOperation[] = [],
   retries = DEFAULT_RETRIES_API,
@@ -42,9 +48,11 @@ export async function fetchPaginatedOpsWithRetries(
       data: LedgerExplorerOperation[];
       token: string;
     }>({
-      headers: { "X-Ledger-Client-Version": getEnv("LEDGER_CLIENT_VERSION") },
+      ...(params.clientVersion
+        ? { headers: { "X-Ledger-Client-Version": params.clientVersion } }
+        : {}),
       method: "GET",
-      url: `${getEnv("EXPLORER")}/blockchain/v4/${params.explorerId}/address/${params.address}/txs`,
+      url: `${params.explorerUri ?? DEFAULT_LEDGER_EXPLORER_URI}/blockchain/v4/${params.explorerId}/address/${params.address}/txs`,
       params: {
         filtering: true,
         from_height: params.fromBlock ?? 0,
@@ -94,6 +102,8 @@ export const getOperations: ExplorerApi["getOperations"] = async (
   }
 
   const ledgerExplorerOps = await fetchPaginatedOpsWithRetries({
+    explorerUri: config.ledgerExplorerUri,
+    clientVersion: config.ledgerClientVersion,
     explorerId: explorer.explorerId,
     address,
     fromBlock,

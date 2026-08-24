@@ -29,6 +29,7 @@ export default function Layout({
       id={slide.card.id}
       displayedPosition={slide.displayedPosition}
       location={slide.card.location ?? category.location}
+      additionalProps={{ type: category.cardsType, layout: category.cardsLayout }}
     >
       <SmallSquareCard
         title={slide.card.title}

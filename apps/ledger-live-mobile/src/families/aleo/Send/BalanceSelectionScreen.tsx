@@ -45,19 +45,21 @@ function buildTransaction({
   account,
   mainAccount,
   isSelfTransfer,
+  recipient,
   mode,
 }: {
   bridge: AccountBridge<AleoTransaction>;
   account: AccountLike;
   mainAccount: AleoAccount;
   isSelfTransfer: boolean;
+  recipient?: string;
   mode: AleoTransaction["mode"];
 }): AleoTransaction {
   const tx = bridge.createTransaction(account);
 
   return bridge.updateTransaction(tx, {
     mode,
-    recipient: isSelfTransfer ? mainAccount.freshAddress : "",
+    recipient: recipient ?? (isSelfTransfer ? mainAccount.freshAddress : ""),
     ...(account.type === "TokenAccount" && { subAccountId: account.id }),
   });
 }
@@ -77,7 +79,7 @@ function getCtaLabelKey(isSelfTransfer: boolean, option: BalanceOption) {
 export function BalanceSelectionScreen() {
   const navigation = useNavigation<Props["navigation"]>();
   const route = useRoute<Props["route"]>();
-  const { account, parentAccount, isSelfTransfer } = route.params;
+  const { account, parentAccount, isSelfTransfer, recipient, skipRecipientStep } = route.params;
   const [selected, setSelected] = useState<BalanceOption>("public");
   const { t } = useTranslation();
   const bridge = useAccountBridge<AleoTransaction>(account, parentAccount);
@@ -106,9 +108,17 @@ export function BalanceSelectionScreen() {
     const isPublic = selected === "public";
     const deriveMode = isPublic ? derivePublicTransactionMode : derivePrivateTransactionMode;
     const mode = deriveMode({ isTokenTx: isToken, isSelfTransfer });
-    const transaction = buildTransaction({ bridge, account, mainAccount, isSelfTransfer, mode });
+    const isDirectContactSend = skipRecipientStep === true && Boolean(recipient?.trim());
+    const transaction = buildTransaction({
+      bridge,
+      account,
+      mainAccount,
+      isSelfTransfer,
+      recipient: isDirectContactSend ? recipient : undefined,
+      mode,
+    });
 
-    if (!isPublic && isSelfTransfer) {
+    if (!isPublic && (isSelfTransfer || isDirectContactSend)) {
       navigation.navigate(ScreenName.AleoMandatoryPrivateSync, {
         account,
         parentAccount,
@@ -117,14 +127,28 @@ export function BalanceSelectionScreen() {
       return;
     }
 
-    const nextScreen = isSelfTransfer ? ScreenName.SendAmountCoin : ScreenName.SendSelectRecipient;
+    const nextScreen =
+      isSelfTransfer || isDirectContactSend
+        ? ScreenName.SendAmountCoin
+        : ScreenName.SendSelectRecipient;
 
     navigation.navigate(nextScreen, {
       accountId: account.id,
       parentId: parentAccount?.id,
       transaction,
     });
-  }, [selected, isToken, isSelfTransfer, bridge, account, mainAccount, navigation, parentAccount]);
+  }, [
+    selected,
+    isToken,
+    isSelfTransfer,
+    skipRecipientStep,
+    recipient,
+    bridge,
+    account,
+    mainAccount,
+    navigation,
+    parentAccount,
+  ]);
 
   return (
     <Box lx={wrapperStyle}>

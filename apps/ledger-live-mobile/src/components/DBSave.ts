@@ -322,6 +322,7 @@ export const ConfigureDBSaveEffects = () => {
     throttle: 500,
     getChangesStats: trustchainNotEquals,
     lense: trustchainStoreSelector,
+    saveAtStart: true,
   });
 
   useDBSaveEffect({

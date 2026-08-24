@@ -2,7 +2,6 @@ import { createHash } from "crypto";
 import { Transaction as SDKTransaction, TransactionId } from "@hashgraph/sdk";
 import type { AssetInfo, TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
-import { getEnv, setEnv } from "@ledgerhq/live-env";
 import BigNumber from "bignumber.js";
 import hederaConfig from "../config";
 import {
@@ -94,19 +93,10 @@ jest.mock("../network/rpc", () => ({
 const mockedHederaConfig = jest.mocked(hederaConfig);
 
 describe("logic utils", () => {
-  let oldStakingLedgerNodeIdEnv: number;
   const mockConfig = getMockedConfig();
 
   beforeEach(() => {
     jest.clearAllMocks();
-  });
-
-  afterEach(() => {
-    setEnv("HEDERA_STAKING_LEDGER_NODE_ID", oldStakingLedgerNodeIdEnv);
-  });
-
-  beforeAll(() => {
-    oldStakingLedgerNodeIdEnv = getEnv("HEDERA_STAKING_LEDGER_NODE_ID");
   });
 
   afterAll(async () => {
@@ -725,11 +715,9 @@ describe("logic utils", () => {
 
   describe("sortValidators", () => {
     it("sorts validators by active stake DESC, Ledger node first if set", () => {
-      setEnv("HEDERA_STAKING_LEDGER_NODE_ID", 2);
-
       const validators = [
         { id: "3", activeStake: new BigNumber(1000) },
-        { id: "2", activeStake: new BigNumber(2000) },
+        { id: "2", activeStake: new BigNumber(2000), isLedgerNode: true },
         { id: "1", activeStake: new BigNumber(3000) },
       ] as HederaValidator[];
 
@@ -773,17 +761,17 @@ describe("logic utils", () => {
   describe("getDefaultValidator", () => {
     const mockValidators = [
       { id: "1", activeStake: new BigNumber(2000) },
-      { id: "2", activeStake: new BigNumber(1000) },
+      { id: "2", activeStake: new BigNumber(1000), isLedgerNode: true },
       { id: "3", activeStake: new BigNumber(10000) },
     ] as HederaValidator[];
 
     it("returns Ledger validator if present", () => {
-      setEnv("HEDERA_STAKING_LEDGER_NODE_ID", 2);
       expect(getDefaultValidator(mockValidators)?.id).toBe("2");
     });
 
     it("returns null if no Ledger validator is present", () => {
       expect(getDefaultValidator([])).toBeNull();
+      expect(getDefaultValidator([{ id: "1" }] as HederaValidator[])).toBeNull();
     });
   });
 

@@ -9,7 +9,7 @@ const mockedOpenAuthSessionAsync = jest.mocked(openAuthSessionAsync);
 
 const loginUrl =
   "https://card.example.com/login?request=opaque%2Bvalue&redirect_uri=ledgerlive%3A%2F%2Fpaytab";
-const redirectUri = "ledgerlive://paytab";
+const deepLink = "ledgerlive://paytab";
 
 describe("openHostedLoginInSecureBrowser", () => {
   beforeEach(() => {
@@ -17,18 +17,18 @@ describe("openHostedLoginInSecureBrowser", () => {
   });
 
   it("should open the exact hosted login URL in the secure auth browser", async () => {
-    mockedOpenAuthSessionAsync.mockResolvedValue({ type: "success", url: redirectUri });
+    mockedOpenAuthSessionAsync.mockResolvedValue({ type: "success", url: deepLink });
 
-    await openHostedLoginInSecureBrowser(loginUrl, redirectUri);
+    await openHostedLoginInSecureBrowser(loginUrl, deepLink);
 
-    expect(mockedOpenAuthSessionAsync).toHaveBeenCalledWith(loginUrl, redirectUri);
+    expect(mockedOpenAuthSessionAsync).toHaveBeenCalledWith(loginUrl, deepLink);
   });
 
   it("should report the redirect the session ended on", async () => {
-    const callbackUrl = `${redirectUri}?code=auth-code&state=state-value`;
+    const callbackUrl = `${deepLink}?code=auth-code&state=state-value`;
     mockedOpenAuthSessionAsync.mockResolvedValue({ type: "success", url: callbackUrl });
 
-    await expect(openHostedLoginInSecureBrowser(loginUrl, redirectUri)).resolves.toEqual({
+    await expect(openHostedLoginInSecureBrowser(loginUrl, deepLink)).resolves.toEqual({
       type: "success",
       url: callbackUrl,
     });
@@ -45,7 +45,7 @@ describe("openHostedLoginInSecureBrowser", () => {
         type,
       } as Awaited<ReturnType<typeof openAuthSessionAsync>>);
 
-      await expect(openHostedLoginInSecureBrowser(loginUrl, redirectUri)).resolves.toEqual({
+      await expect(openHostedLoginInSecureBrowser(loginUrl, deepLink)).resolves.toEqual({
         type: "dismissed",
       });
     },

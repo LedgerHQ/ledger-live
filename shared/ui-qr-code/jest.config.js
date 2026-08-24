@@ -32,6 +32,7 @@ module.exports = {
   reporters: [
     "default",
     ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
+    "@ledgerhq/test-quarantine/jest",
   ],
   projects: [
     {
@@ -40,7 +41,7 @@ module.exports = {
       testEnvironment: "jsdom",
       moduleFileExtensions: platformExtensions("web"),
       testMatch: ["**/*.web.test.ts?(x)", "**/*.web.spec.ts?(x)"],
-      setupFilesAfterEnv: ["@testing-library/jest-dom"],
+      setupFilesAfterEnv: ["@testing-library/jest-dom", "@ledgerhq/test-quarantine/jest-retries"],
     },
     {
       ...base,
@@ -58,6 +59,7 @@ module.exports = {
           "jest/mocks/passthrough-native.js",
         ),
       },
+      setupFilesAfterEnv: ["@ledgerhq/test-quarantine/jest-retries"],
     },
   ],
 };

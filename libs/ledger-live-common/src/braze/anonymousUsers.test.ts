@@ -3,7 +3,7 @@ import { getOldCampaignIds, generateAnonymousId } from "./anonymousUsers";
 const millisecondsInAMonth = 30 * 24 * 60 * 60 * 1000;
 
 describe("anonymousUsers", () => {
-  test("generateAnonymousId should returns an id", () => {
+  test("generateAnonymousId should return an id (deprecated, not for identity)", () => {
     expect(generateAnonymousId()).toMatch(/anonymous_id_\d+/);
   });
   test("getOldCampaignIds should return old ids", () => {

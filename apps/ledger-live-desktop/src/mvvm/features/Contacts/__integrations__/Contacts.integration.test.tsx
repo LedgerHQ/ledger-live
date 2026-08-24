@@ -838,7 +838,7 @@ describe("Contacts integration", () => {
     expect(screen.getByTestId("contacts-rename-contact-dialog")).toBeVisible();
     expect(screen.getByTestId("contacts-rename-contact-confirm")).toBeDisabled();
 
-    fireEvent.change(screen.getByTestId("contacts-add-contact-name-input"), {
+    fireEvent.change(screen.getByTestId("contacts-rename-contact-name-input"), {
       target: { value: "Alice" },
     });
 
@@ -894,6 +894,7 @@ describe("Contacts integration", () => {
     expect(mockOpenSendFlow).toHaveBeenCalledWith({
       currencyIds: ["ethereum"],
       recipient: "0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034",
+      skipRecipientStep: true,
     });
     expect(screen.queryByTestId("contacts-address-detail-dialog")).not.toBeInTheDocument();
   });

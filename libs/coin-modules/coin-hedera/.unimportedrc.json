@@ -28,6 +28,7 @@
   ],
   "ignoreUnused": [
     "@ledgerhq/devices",
+    "@ledgerhq/live-env",
     "lodash",
     "rxjs"
   ]

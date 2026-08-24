@@ -1,4 +1,5 @@
 import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type { AssetCategory } from "@domain/api-aggregated-assets";
 import type {
   ModularDrawerConfiguration,
   EnhancedModularDrawerConfiguration,
@@ -17,6 +18,7 @@ export type AssetAndAccountResult = {
 
 type DrawerParams = {
   currencies?: string[];
+  categories?: readonly AssetCategory[];
   drawerConfiguration?: ModularDrawerConfiguration | EnhancedModularDrawerConfiguration;
   useCase?: string;
   uiUseCase?: string;
@@ -28,6 +30,7 @@ type DrawerParams = {
 function openAssetAndAccountDialog(params: DrawerParams, dispatch: Dispatch) {
   const {
     currencies,
+    categories,
     drawerConfiguration,
     useCase,
     uiUseCase,
@@ -51,6 +54,7 @@ function openAssetAndAccountDialog(params: DrawerParams, dispatch: Dispatch) {
   dispatch(
     openDialog({
       currencies: currencies ?? [],
+      categories,
       onAccountSelected: (account, parentAccount) => {
         handleSuccess({ account, parentAccount });
       },

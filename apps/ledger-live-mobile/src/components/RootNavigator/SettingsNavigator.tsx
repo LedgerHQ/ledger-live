@@ -47,6 +47,7 @@ import TooltipDemo from "~/screens/Settings/Debug/Features/TooltipDemo";
 import DebugDeviceActionContentScreen from "~/screens/Settings/Debug/Features/DeviceIntentExecutor/DeviceActionContentScreen";
 import DebugInfoStateScreen from "~/screens/Settings/Debug/Features/DeviceIntentExecutor/InfoStateScreen";
 import DebugConnectDeviceScreen from "~/screens/Settings/Debug/Features/DeviceIntentExecutor/ConnectDeviceScreen";
+import DebugDeviceIntentExecutorContactsValidation from "~/screens/Settings/Debug/Features/DeviceIntentExecutor/ContactsValidationScreen";
 import DebugDeviceIntentExecutorInitialization from "~/screens/Settings/Debug/Features/DeviceIntentExecutor/InitializationScreen";
 import DebugInitializerStatesScreen from "~/screens/Settings/Debug/Features/DeviceIntentExecutor/InitializerStatesScreen";
 import DebugDeviceIntentExecutorOrchestration from "~/screens/Settings/Debug/Features/DeviceIntentExecutor/OrchestrationScreen";
@@ -335,6 +336,13 @@ export default function SettingsNavigator() {
         component={DebugConnectDeviceScreen}
         options={{
           title: "DIE Connect Device",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugDeviceIntentExecutorContactsValidation}
+        component={DebugDeviceIntentExecutorContactsValidation}
+        options={{
+          title: "DIE Contacts validation",
         }}
       />
       <Stack.Screen

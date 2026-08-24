@@ -89,14 +89,14 @@ export const RECIPIENT = "kaspa:qyp8y7hlk9uj5l9vqsyz78x90yt84cujdytg93s8q8malhpd
 
 // Raw `/addresses/utxos` wire shape (amount as a JSON number; the network layer wraps it in a
 // BigNumber). A single large UTXO keeps KIP-9 storage mass under the per-tx limit.
-export function makeApiUtxo(amount: number, index: number) {
+export function makeApiUtxo(amount: number, index: number, blockDaaScore?: string) {
   return {
     address: SENDER,
     outpoint: { transactionId: index.toString(16).padStart(64, "0"), index },
     utxoEntry: {
       amount,
       scriptPublicKey: { version: 0, scriptPublicKey: "20" + "0".repeat(64) + "ac" },
-      blockDaaScore: (1000 + index).toString(),
+      blockDaaScore: blockDaaScore ?? (1000 + index).toString(),
       isCoinbase: false,
     },
   };

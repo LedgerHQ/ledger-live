@@ -1,6 +1,7 @@
 /**
  * @module models/account
  */
+import BigNumber from "bignumber.js";
 import { createDataModel, DataModel } from "@ledgerhq/live-common/DataModel";
 import {
   fromAccountRaw,
@@ -8,6 +9,8 @@ import {
   accountRawToAccountUserData,
 } from "@ledgerhq/live-common/account/index";
 import { Account, AccountRaw, Operation, AccountUserData } from "@ledgerhq/types-live";
+
+const APTOS_NON_HARDENED_DERIVATION_PATH_REGEX = /^44'\/637'\/\d+'\/\d+\/\d+$/;
 
 /**
  * @memberof models/account
@@ -78,6 +81,43 @@ const accountModel: DataModel<AccountRaw, [Account, AccountUserData]> = createDa
         derivationMode,
         seedIdentifier,
       };
+    },
+    // Set 'change' and 'address_index' levels to be hardened for Aptos derivation path
+    raw => {
+      const { currencyId, freshAddressPath } = raw;
+      if (
+        currencyId === "aptos" &&
+        freshAddressPath.match(APTOS_NON_HARDENED_DERIVATION_PATH_REGEX)
+      ) {
+        return {
+          ...raw,
+          freshAddressPath: freshAddressPath
+            .split("/")
+            .map((value: string) => (value.endsWith("'") ? value : value + "'"))
+            .join("/"),
+        };
+      }
+      return raw;
+    },
+    // Initialize cosmosResources for crypto_org accounts missing it
+    raw => {
+      const { currencyId } = raw;
+      if (currencyId === "crypto_org" && !raw.cosmosResources) {
+        return {
+          ...raw,
+          cosmosResources: {
+            delegations: [],
+            redelegations: [],
+            unbondings: [],
+            delegatedBalance: new BigNumber(0),
+            pendingRewardsBalance: new BigNumber(0),
+            unbondingBalance: new BigNumber(0),
+            withdrawAddress: raw.freshAddress,
+            sequence: 0,
+          },
+        };
+      }
+      return raw;
     },
     // ^- Each time a modification is brought to the model, add here a migration function here
   ],

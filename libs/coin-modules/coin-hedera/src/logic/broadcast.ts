@@ -1,6 +1,6 @@
 import type { TransactionResponse } from "@hashgraph/sdk";
-import type { HederaCoinConfig } from "../config";
 import { rpcClient } from "../network/rpc";
+import type { HederaCoinConfig } from "../types/config";
 import { deserializeTransaction } from "./utils";
 
 export const broadcast = async ({

@@ -9,7 +9,7 @@ import {
 } from "@ledgerhq/lumen-ui-rnative";
 import type { TransportPanelProps } from "../..";
 import type { MessageMap } from "@devtools/transport";
-import { HistoryLine } from "../HistoryLine/HistoryLine.native";
+import { HistoryLine } from "../HistoryLine/HistoryLine";
 import { useTransportSend } from "../../hooks";
 import { RefObject } from "react";
 

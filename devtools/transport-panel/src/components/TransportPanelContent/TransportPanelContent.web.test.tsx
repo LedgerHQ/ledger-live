@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from "@support/jest-devtools/web";
 import { mockTransportPanelProps, mockTransport } from "jest/mocks/transport";
-import { TransportPanelContent } from "./TransportPanelContent.web";
+import { TransportPanelContent } from "./TransportPanelContent";
 
 describe("TransportPanelContent", () => {
   it("always renders the Hub URL field", () => {

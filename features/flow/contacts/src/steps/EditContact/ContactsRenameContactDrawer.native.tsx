@@ -26,6 +26,7 @@ export function ContactsRenameContactDrawer({
       labels={labels}
       confirmLabel={labels.confirmName}
       confirmTestID="contacts-rename-contact-confirm"
+      testIDPrefix="contacts-rename-contact"
       onDraftNameChange={onDraftNameChange}
       onConfirm={onConfirm}
     />

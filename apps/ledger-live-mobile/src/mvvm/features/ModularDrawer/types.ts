@@ -1,6 +1,7 @@
 import { AccountLike, Account } from "@ledgerhq/types-live";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
+import type { AssetCategory } from "@domain/api-aggregated-assets";
 
 export enum ModularDrawerStep {
   Asset = "Asset",
@@ -20,6 +21,7 @@ export type DrawerExtras = {
 
 export type DrawerBaseParams = {
   currencies?: string[];
+  categories?: AssetCategory[];
   enableAccountSelection?: boolean;
   flow?: string;
   source?: string;

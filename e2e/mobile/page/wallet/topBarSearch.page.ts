@@ -49,7 +49,7 @@ export default class TopBarSearchPage {
     await tapById(this.stocksSectionHeaderId);
   }
 
-  @Step("Search for $0")
+  @Step("Search for {{{0}}}")
   async searchFor(query: string) {
     await typeTextById(this.searchInputId, query, false);
     await waitForElementById(this.searchResultsId, undefined, {
@@ -62,7 +62,7 @@ export default class TopBarSearchPage {
     await clearTextByElement(getElementById(this.searchInputId));
   }
 
-  @Step("Expect first search result to be $0")
+  @Step("Expect first search result to be {{{0}}}")
   async expectFirstResult(currencyId: string) {
     const expectedId = this.marketItemId(currencyId);
     await waitForElementById(expectedId);

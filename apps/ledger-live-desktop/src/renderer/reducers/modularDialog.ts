@@ -2,12 +2,14 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { State } from ".";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
+import type { AssetCategory } from "@domain/api-aggregated-assets";
 import type { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 
 export type ModularDialogPresentation = "dialog" | "embedded";
 
 export interface ModularDialogParams {
   currencies?: string[];
+  categories?: readonly AssetCategory[];
   networkIds?: readonly string[];
   selectableNetworkIds?: readonly string[];
   presentation?: ModularDialogPresentation;
@@ -58,6 +60,7 @@ const modularDialogSlice = createSlice({
     openDialog: (state, action: PayloadAction<ModularDialogParams>) => {
       state.dialogParams = {
         ...action.payload,
+        categories: action.payload.categories ? [...action.payload.categories] : undefined,
         networkIds: action.payload.networkIds ? [...action.payload.networkIds] : undefined,
         selectableNetworkIds: action.payload.selectableNetworkIds
           ? [...action.payload.selectableNetworkIds]
@@ -89,6 +92,8 @@ export const modularDialogConfigurationSelector = (state: State) =>
   state.modularDialog.dialogParams?.dialogConfiguration;
 export const modularDialogCurrenciesSelector = (state: State) =>
   state.modularDialog.dialogParams?.currencies;
+export const modularDialogCategoriesSelector = (state: State) =>
+  state.modularDialog.dialogParams?.categories;
 export const modularDialogNetworkIdsSelector = (state: State) =>
   state.modularDialog.dialogParams?.networkIds;
 export const modularDialogSelectableNetworkIdsSelector = (state: State) =>

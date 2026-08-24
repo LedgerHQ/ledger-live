@@ -311,9 +311,11 @@ implementation guide for adding a new intent.
    Keep reusable contracts and execution logic in a shared package, then bind
    them to platform-specific renderers in LWM and LWD. This keeps orchestration
    hooks testable because they can depend on typed contracts and injected
-   platform definitions rather than concrete app implementations.
+   platform definitions rather than concrete app implementations. An intent
+   owned by a `features/` package keeps everything in one directory instead.
    Read more:
    [Recommended file organization](#recommended-file-organization),
+   [Intents living in the DDD structure](#intents-living-in-the-ddd-structure),
    [`IntentDefinition`](#1-intentdefinition----shared-cross-platform-logic),
    [`IntentPlatformDefinition`](#2-intentplatformdefinition----platform-specific-ui).
 
@@ -881,6 +883,44 @@ inside a single platform package or app first, then move `types.ts`, `job.ts`,
 and `intentDefinition.ts` into a shared lib later without changing the platform
 file naming.
 
+#### Intents living in the DDD structure
+
+An intent owned by a `features/` package does not need the app/lib split at all.
+Contract, job, platform definition and both renderers live in one directory,
+because platform extension resolution picks the right component per app:
+
+```text
+features/platform/contacts/src/device/intents/registerExternalAddressIntent/
+├── types.ts
+├── job.ts
+├── intentDefinition.ts
+├── component.web.tsx
+└── component.native.tsx
+```
+
+`intentDefinition.ts` imports `./component` with no suffix. Rspack resolves
+`.web` for LWD, Metro resolves `.native` for LWM, and Jest mirrors both. So a
+single `IntentPlatformDefinition` covers both platforms: no base-versus-platform
+definition split, and no `.native` twin of the barrel exporting it.
+
+This is the recommended layout for intents whose job relies purely on the Device
+Management Kit and the signer kits. See
+[`@features/platform-contacts`](../contacts/README.md) for a live example.
+
+The suffix-less import needs the package's dead-code check to run once per
+platform, otherwise knip flags every `component.web.tsx` and
+`component.native.tsx` as unused. Give the package a `knip.web.config.mjs` and a
+`knip.native.config.mjs` that narrow `project` to one platform, and run knip
+twice with the matching `--tsConfig`, the same way
+[`@features/platform-contacts`](../contacts/package.json) does.
+
+Keep the app/lib split instead when:
+
+- **the intent depends on `@ledgerhq/live-common`** or another legacy library a
+  `features/` package must not import;
+- **the intent's UI leans heavily on components that still live in the app** and
+  are too costly to migrate.
+
 ### Structuring intents (single vs. multiple)
 
 > Preliminary guidance — based on early integrations. Expect it to evolve as
@@ -1134,9 +1174,9 @@ The executor reports progress and lifecycle changes through callback props:
 | Callback                            | Fires when                                                                                                                                                |
 | ----------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `onExecutorStateChanged(state)`     | The executor transitions between lifecycle phases (`connectingDevice`, `initializingDeviceContext`, `executingIntent`, `idle`, and their error variants). |
-| `onIntentJobStateChanged(jobState)` | The running job's observable emits a new `JobState` value.                                                                                                |
-| `onIntentJobComplete()`             | The job observable completes (no more emissions). The executor transitions to `idle`.                                                                     |
-| `onIntentJobError(error)`           | The job observable errors. The executor transitions to `executingIntentError`.                                                                            |
+| `onIntentJobStateChanged(jobState)` | Optional. The running job's observable emits a new `JobState` value.                                                                                      |
+| `onIntentJobComplete()`             | Optional. The job observable completes (no more emissions). The executor transitions to `idle`.                                                           |
+| `onIntentJobError(error)`           | Optional. The job observable errors. The executor transitions to `executingIntentError`.                                                                  |
 
 All callbacks use refs internally, so the executor always calls the **latest**
 version of each callback without needing to be recreated when the callback

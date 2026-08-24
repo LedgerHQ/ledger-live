@@ -40,6 +40,12 @@ export const cardLoginMachine = setup({
     forgetAttempt,
     clearErrorKind,
     failPkce,
+    /**
+     * `CardLogout` is a separate component with no machine, so it cannot read this snapshot. These two
+     * publish the answer it needs through a port, on entry, which keeps the flag and the state in step.
+     */
+    publishSignedIn: ({ context }) => context.ports.setSignedIn(true),
+    publishSignedOut: ({ context }) => context.ports.setSignedIn(false),
   },
 }).createMachine({
   id: "cardLogin",
@@ -92,7 +98,7 @@ export const cardLoginMachine = setup({
     },
 
     idle: {
-      entry: ["forgetAttempt", "clearErrorKind"],
+      entry: ["forgetAttempt", "clearErrorKind", "publishSignedOut"],
       on: { LOGIN: { target: "preparingAttempt" } },
     },
 
@@ -136,7 +142,7 @@ export const cardLoginMachine = setup({
         input: ({ context }) => ({
           ports: context.ports,
           loginUrl: context.loginUrl,
-          redirectUri: context.oauthConfig.redirectUri,
+          deepLink: context.oauthConfig.deepLink,
         }),
         onDone: [
           {
@@ -250,14 +256,18 @@ export const cardLoginMachine = setup({
     },
 
     error: {
-      entry: "forgetAttempt",
+      entry: ["forgetAttempt", "publishSignedOut"],
       on: {
         LOGIN: { target: "preparingAttempt" },
         RETRY: { target: "preparingAttempt" },
       },
     },
 
-    // Terminal for v1. Logout and renewal are later work (LIVE-34741).
-    ready: {},
+    ready: {
+      entry: "publishSignedIn",
+      // `CardLogout` ended the session, and it owns that whole journey. Nothing is left to undo here,
+      // so this only puts the login back on offer.
+      on: { SESSION_ENDED: { target: "idle" } },
+    },
   },
 });

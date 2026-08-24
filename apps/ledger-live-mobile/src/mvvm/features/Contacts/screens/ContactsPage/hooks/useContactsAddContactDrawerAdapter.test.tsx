@@ -54,7 +54,9 @@ describe("useContactsAddContactDrawerAdapter", () => {
         addresses: [],
       }),
     ]);
-    expect(onSaveSuccess).toHaveBeenCalledTimes(1);
+    expect(onSaveSuccess).toHaveBeenCalledWith(
+      expect.objectContaining({ id: expect.stringMatching(/^contact-/), name: "Ada" }),
+    );
     expect(result.current.draftName).toBe("");
     expect(result.current.isOpen).toBe(false);
   });

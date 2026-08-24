@@ -42,7 +42,7 @@ without masking the middle.
 ### Tracking
 
 Each action emits `button_clicked { button, buttonLocation: "request", page }` via the injected
-`onTrackEvent`, where `button` is `share` | `copy address` | `save` | `verify on device`.
+`onTrackEvent`, where `button` is `share` | `copy address` | `save` | `verify`.
 
 ## Components
 

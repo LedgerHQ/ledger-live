@@ -9,6 +9,7 @@ import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/get
 
 export function useLedgerSyncStatus() {
   const featureWalletSync = useFeature("llmWalletSync");
+  const isWalletSyncEnabled = featureWalletSync?.enabled === true;
   const { trustchainApiBaseUrl, cloudSyncApiBaseUrl } = getWalletSyncEnvironmentParams(
     featureWalletSync?.params?.environment,
   );
@@ -16,10 +17,12 @@ export function useLedgerSyncStatus() {
     {
       queryKey: [QueryKey.fetchTrustchainStatus],
       queryFn: () => getTrustchainApi(trustchainApiBaseUrl).fetchStatus(),
+      enabled: isWalletSyncEnabled,
     },
     {
       queryKey: [QueryKey.fetchCloudSyncStatus],
       queryFn: () => getCloudSyncApi(cloudSyncApiBaseUrl).fetchStatus(),
+      enabled: isWalletSyncEnabled,
     },
   ];
 

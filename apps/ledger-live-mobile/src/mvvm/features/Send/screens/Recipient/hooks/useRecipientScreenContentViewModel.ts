@@ -89,6 +89,8 @@ export function useRecipientScreenContentViewModel({
     isAddressComplete: recipient.isAddressComplete,
     hasBridgeError: recipient.showBridgeRecipientError,
     isContactsFeatureEnabled: recipient.isContactsFeatureEnabled,
+    hasAddressBook: recipient.hasAddressBook,
+    addressBookFamilyName: recipient.addressBookFamilyName,
   });
 
   useEffect(() => {

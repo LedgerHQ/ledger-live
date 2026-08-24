@@ -52,7 +52,7 @@ export default class MainNavigationPage {
   // Wallet 4.0 Tab Actions
   // =====================
 
-  @Step("Tap W40 tab")
+  @Step("Tap W40 tab {{{0}}}")
   async tapWallet40Tab(tabName: Wallet40TabName) {
     await this.wallet40Tab(tabName).tap();
   }
@@ -64,6 +64,14 @@ export default class MainNavigationPage {
   @Step("Tap My Wallet avatar in top bar")
   async tapTopBarMyWallet() {
     await tapById(this.topBarMyWalletId);
+  }
+
+  // The top bar belongs to the navigation chrome, the arrival check to My Wallet — so this composes
+  // that page's own assertion instead of duplicating its locator.
+  @Step("Open My Wallet from top bar")
+  async openMyWallet() {
+    await this.tapTopBarMyWallet();
+    await app.myWallet.expectScreenVisible();
   }
 
   @Step("Tap Discover in top bar")

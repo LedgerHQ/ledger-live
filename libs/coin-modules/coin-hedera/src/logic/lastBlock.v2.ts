@@ -1,9 +1,9 @@
 import type { BlockInfo } from "@ledgerhq/coin-module-framework/api/index";
 import BigNumber from "bignumber.js";
-import type { HederaCoinConfig } from "../config";
 import { FINALITY_MS, SYNTHETIC_BLOCK_WINDOW_SECONDS } from "../constants";
 import { apiClient } from "../network/api";
 import { hgraphClient } from "../network/hgraph";
+import type { HederaCoinConfig } from "../types";
 import { getSyntheticBlock, nanosToSeconds } from "./utils";
 
 /**

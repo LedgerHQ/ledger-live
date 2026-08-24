@@ -20,6 +20,7 @@
     "unimported": "pnpm knip --directory ../.. -W shared/password-verifier"
   },
   "devDependencies": {
+    "@ledgerhq/test-quarantine": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
