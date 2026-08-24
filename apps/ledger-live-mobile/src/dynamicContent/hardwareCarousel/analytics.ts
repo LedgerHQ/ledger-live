@@ -8,7 +8,7 @@ export type HardwareCarouselSharedAnalyticsProps = Readonly<{
   deviceModel: HardwareCarouselDeviceModel;
   personalRecoOptIn: boolean;
   offerType: "discount" | "none";
-  platform: "llm";
+  platform: "lwm";
 }>;
 
 export type HardwareCarouselDevice = "ledger gen5" | "ledger flex" | "ledger stax";

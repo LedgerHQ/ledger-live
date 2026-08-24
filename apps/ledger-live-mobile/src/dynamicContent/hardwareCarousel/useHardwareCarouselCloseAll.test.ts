@@ -50,7 +50,7 @@ describe("useHardwareCarouselCloseAll", () => {
       deviceModel: "lnx",
       personalRecoOptIn: true,
       offerType: "discount",
-      platform: "llm",
+      platform: "lwm",
     });
   });
 

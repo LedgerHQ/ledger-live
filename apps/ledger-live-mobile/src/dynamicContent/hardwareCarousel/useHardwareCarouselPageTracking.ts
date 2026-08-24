@@ -39,7 +39,7 @@ export function useHardwareCarouselPageTracking(shouldTrack: boolean) {
       deviceModel,
       personalRecoOptIn,
       offerType: personalRecoOptIn ? "discount" : "none",
-      platform: "llm",
+      platform: "lwm",
     };
   }, [knownDeviceModelIds, personalRecoOptIn]);
 

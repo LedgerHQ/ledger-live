@@ -29,7 +29,6 @@ const lnUpsellImageByLocation: Record<LNBannerLocation, string> = {
 /* eslint-enable @typescript-eslint/no-require-imports */
 
 const PROFILE_PAGE = "Profile";
-const PROFILE_UPGRADE_BUTTON = "upgrade";
 
 type SharedAnalyticsProps = Readonly<{
   deviceModel: LargeScreenUpsellDeviceModelAnalyticsValue;
@@ -127,6 +126,7 @@ const BannerPageEventNameMap: Partial<Record<LNBannerLocation, string>> = {
   wallet: "banner upsell portfolio",
   notification_center: "banner upsell notification center",
   manager: "banner upsell my ledger",
+  accounts: "banner upsell portfolio",
 } as const;
 
 const UTMContentMap: Record<LNBannerLocation, LargeScreenUpsellUtmContent> = {

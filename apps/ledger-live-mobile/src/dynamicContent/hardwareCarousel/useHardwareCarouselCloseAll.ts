@@ -41,7 +41,7 @@ export function useHardwareCarouselCloseAll(cardIds: readonly string[]) {
       deviceModel,
       personalRecoOptIn,
       offerType: personalRecoOptIn ? "discount" : "none",
-      platform: "llm",
+      platform: "lwm",
     };
   }, [knownDeviceModelIds, personalRecoOptIn]);
 
