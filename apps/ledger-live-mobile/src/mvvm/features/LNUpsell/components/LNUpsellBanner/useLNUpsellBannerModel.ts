@@ -30,12 +30,14 @@ const lnUpsellImageByLocation: Record<LNBannerLocation, string> = {
 const PROFILE_PAGE = "Profile";
 const PROFILE_UPGRADE_BUTTON = "upgrade";
 
-type ProfileSharedAnalyticsProps = Readonly<{
+type SharedAnalyticsProps = Readonly<{
   deviceModel: LargeScreenUpsellDeviceModelAnalyticsValue;
   personalRecoOptIn: boolean;
   offerType: "discount" | "none";
   platform: "lwm";
 }>;
+
+type ProfileSharedAnalyticsProps = SharedAnalyticsProps;
 
 export function useLNUpsellBannerModel(location: LNBannerLocation): LNBannerModel {
   const { isShown, ctaLink, discount, deviceModelId, tracking } = useLNUpsellBannerState(location);
@@ -44,7 +46,7 @@ export function useLNUpsellBannerModel(location: LNBannerLocation): LNBannerMode
     ? toLargeScreenUpsellDeviceModelAnalyticsValue(deviceModelId)
     : undefined;
   const personalRecoOptIn = tracking === "opted_in";
-  const profileAnalyticsProps = useMemo(
+  const sharedAnalyticsProps = useMemo(
     () =>
       deviceModel
         ? {
@@ -58,27 +60,41 @@ export function useLNUpsellBannerModel(location: LNBannerLocation): LNBannerMode
   );
 
   useEffect(() => {
-    if (location !== "profile" || !isShown || !profileAnalyticsProps) return;
-    trackProfilePageViewed(profileAnalyticsProps);
-  }, [isShown, location, profileAnalyticsProps]);
-
-  const handleCTAPress = useCallback(() => {
-    if (!ctaLink) return;
+    if (!isShown || !sharedAnalyticsProps) return;
 
     if (location === "profile") {
-      if (!profileAnalyticsProps) return;
-      openProfileUpsell(ctaLink, profileAnalyticsProps);
-      return;
+      trackProfilePageViewed(sharedAnalyticsProps);
+    } else {
+      const bannerPageName = BannerPageEventNameMap[location];
+      if (bannerPageName) {
+        trackBannerPageViewed(bannerPageName, sharedAnalyticsProps);
+      }
     }
+  }, [isShown, location, sharedAnalyticsProps]);
+
+  const handleCTAPress = useCallback(() => {
+    if (!ctaLink || !sharedAnalyticsProps) return;
+
+    const utmContent = UTMContentMap[location];
+    const upsellLink = buildLargeScreenUpsellCtaLink(ctaLink, "mobile", utmContent);
+    const pageName = BannerPageEventNameMap[location] || analyticsPage;
 
     track("button_clicked", {
-      button: "Level up wallet",
-      ...(deviceModel ? { deviceModel } : {}),
-      link: ctaLink,
-      page: analyticsPage,
+      button: "upgrade",
+      page: pageName,
+      ...sharedAnalyticsProps,
     });
-    Linking.openURL(ctaLink);
-  }, [analyticsPage, ctaLink, deviceModel, location, profileAnalyticsProps]);
+
+    track("deeplink_clicked", {
+      page: pageName,
+      deeplinkSource: LARGE_SCREEN_UPSELL_UTM.sourceByPlatform.mobile,
+      deeplinkMedium: LARGE_SCREEN_UPSELL_UTM.medium,
+      deeplinkCampaign: LARGE_SCREEN_UPSELL_UTM.campaign,
+      ...sharedAnalyticsProps,
+    });
+
+    Linking.openURL(upsellLink);
+  }, [analyticsPage, ctaLink, location, sharedAnalyticsProps]);
 
   return {
     location,
@@ -94,27 +110,8 @@ function trackProfilePageViewed(sharedProps: ProfileSharedAnalyticsProps) {
   screen(PROFILE_PAGE, undefined, { name: PROFILE_PAGE, ...sharedProps }, false);
 }
 
-function openProfileUpsell(ctaLink: string, sharedProps: ProfileSharedAnalyticsProps) {
-  const upsellLink = buildLargeScreenUpsellCtaLink(
-    ctaLink,
-    "mobile",
-    LARGE_SCREEN_UPSELL_UTM.content.profile_cta,
-  );
-
-  track("button_clicked", {
-    button: PROFILE_UPGRADE_BUTTON,
-    page: PROFILE_PAGE,
-    ...sharedProps,
-  });
-  track("deeplink_clicked", {
-    page: PROFILE_PAGE,
-    deeplinkSource: LARGE_SCREEN_UPSELL_UTM.sourceByPlatform.mobile,
-    deeplinkMedium: LARGE_SCREEN_UPSELL_UTM.medium,
-    deeplinkCampaign: LARGE_SCREEN_UPSELL_UTM.campaign,
-    ...sharedProps,
-  });
-
-  Linking.openURL(upsellLink);
+function trackBannerPageViewed(pageName: string, sharedProps: SharedAnalyticsProps) {
+  screen(pageName, undefined, { name: pageName, ...sharedProps }, false);
 }
 
 const AnalyticsPageMap = {
@@ -124,3 +121,17 @@ const AnalyticsPageMap = {
   wallet: "Wallet",
   profile: PROFILE_PAGE,
 } as const satisfies Record<LNBannerLocation, unknown>;
+
+const BannerPageEventNameMap: Partial<Record<LNBannerLocation, string>> = {
+  wallet: "banner upsell portfolio",
+  notification_center: "banner upsell notification center",
+  manager: "banner upsell my ledger",
+} as const;
+
+const UTMContentMap: Record<LNBannerLocation, string> = {
+  wallet: LARGE_SCREEN_UPSELL_UTM.content.portfolio_banner,
+  notification_center: LARGE_SCREEN_UPSELL_UTM.content.notif_banner,
+  manager: LARGE_SCREEN_UPSELL_UTM.content.my_ledger_banner,
+  accounts: LARGE_SCREEN_UPSELL_UTM.content.portfolio_banner,
+  profile: LARGE_SCREEN_UPSELL_UTM.content.profile_cta,
+} as const;
