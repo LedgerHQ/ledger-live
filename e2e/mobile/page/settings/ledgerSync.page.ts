@@ -86,7 +86,7 @@ export default class LedgerSyncPage {
 
   @Step("Expect instance $0 to be gone")
   async expectInstanceRemoved(memberPubKey: string) {
-    await detoxExpect(getElementById(this.instanceRowId(memberPubKey))).not.toBeVisible();
+    await waitForElementNotVisible(this.instanceRowId(memberPubKey));
   }
 
   /** The row itself is not touchable — only the Remove CTA inside it is. */
@@ -113,30 +113,6 @@ export default class LedgerSyncPage {
     await detoxExpect(getElementById(this.backupDeletionSuccessTextId)).toHaveText(
       "Your Ledger Wallet apps are no longer synced",
     );
-  }
-
-  @Step("Initialize Ledger Key Ring Protocol")
-  async initializeLedgerKeyRingProtocol() {
-    return LedgerSyncCliHelper.initializeLedgerKeyRingProtocol();
-  }
-
-  @Step("Initialize then delete trust chain")
-  initializeThenDeleteTrustChain() {
-    return [
-      async () => this.initializeLedgerKeyRingProtocol(),
-      async () => this.initializeLedgerSync(),
-      async () => this.deleteLedgerSyncData(),
-    ];
-  }
-
-  @Step("Delete Ledger Sync data")
-  async deleteLedgerSyncData() {
-    return LedgerSyncCliHelper.deleteLedgerSyncData();
-  }
-
-  @Step("Initialize Ledger Sync")
-  async initializeLedgerSync() {
-    return LedgerSyncCliHelper.initializeLedgerSync();
   }
 
   /**

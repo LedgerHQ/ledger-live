@@ -83,6 +83,10 @@ export default class TrustchainPage {
   /** Deleting the backup destroys the last application stream, and with it the trustchain root. */
   @Step("Expect trustchain to be destroyed")
   async expectToBeDestroyed() {
-    await jestExpect(LedgerSyncCliHelper.pullLedgerSyncData()).rejects.toThrow();
+    await jestExpect(LedgerSyncCliHelper.pullLedgerSyncData()).rejects.toMatchObject({
+      name: jestExpect.stringMatching(
+        /CloudSyncHttpError|LedgerAPI4xx|TrustchainEjected|TrustchainNotAllowed/,
+      ),
+    });
   }
 }

@@ -1,6 +1,7 @@
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { setTeamOwner } from "../../helpers/allure/allure-helper";
+import { describeIfNotNanoS } from "../../helpers/commonHelpers";
 import { ledgerSyncEnvironment } from "@ledgerhq/live-e2e-shared/ledgerSync/environment";
 import type { LedgerSyncCliCommand } from "@ledgerhq/live-e2e-shared/ledgerSync/setup";
 import { ethAccount, secondEthAccount } from "@ledgerhq/live-e2e-shared/ledgerSync/testData";
@@ -86,7 +87,7 @@ async function openLedgerSyncSettings() {
 
 export function runLedgerSyncAddAccountTest(tmsLinks: string[], tags: string[]) {
   setTeamOwner(Team.WALLET_XP);
-  describe("Ledger Sync - add account", () => {
+  describeIfNotNanoS("Ledger Sync - add account", () => {
     setupSeed();
     cleanupAfterAll();
 
@@ -125,7 +126,7 @@ export function runLedgerSyncAddAccountTest(tmsLinks: string[], tags: string[]) 
 
 export function runLedgerSyncRenameAccountTest(tmsLinks: string[], tags: string[]) {
   setTeamOwner(Team.WALLET_XP);
-  describe("Ledger Sync - rename account", () => {
+  describeIfNotNanoS("Ledger Sync - rename account", () => {
     setupSeed();
     cleanupAfterAll();
 
@@ -156,7 +157,7 @@ export function runLedgerSyncRenameAccountTest(tmsLinks: string[], tags: string[
 
 export function runLedgerSyncDeleteAccountTest(tmsLinks: string[], tags: string[]) {
   setTeamOwner(Team.WALLET_XP);
-  describe("Ledger Sync - delete account", () => {
+  describeIfNotNanoS("Ledger Sync - delete account", () => {
     setupSeed();
     cleanupAfterAll();
 
@@ -189,7 +190,7 @@ export function runLedgerSyncDeleteAccountTest(tmsLinks: string[], tags: string[
 
 export function runLedgerSyncDeleteInstanceTest(tmsLinks: string[], tags: string[]) {
   setTeamOwner(Team.WALLET_XP);
-  describe("Ledger Sync - delete instance", () => {
+  describeIfNotNanoS("Ledger Sync - delete instance", () => {
     setupSeed();
     cleanupAfterAll();
 
@@ -213,6 +214,10 @@ export function runLedgerSyncDeleteInstanceTest(tmsLinks: string[], tags: string
       await app.ledgerSync.removeInstance(cliMemberPubKey);
       await app.common.selectKnownDevice();
       await app.ledgerSync.removeMemberFromLedgerSyncOnSpeculos();
+      // The app navigates to a success screen after removal, unmounting the instances list.
+      // Navigate back so the assertion runs against the live list, not a stale screen.
+      await openLedgerSyncSettings();
+      await app.ledgerSync.openManageInstances();
       await app.ledgerSync.expectInstanceRemoved(cliMemberPubKey);
     });
   });
@@ -220,7 +225,7 @@ export function runLedgerSyncDeleteInstanceTest(tmsLinks: string[], tags: string
 
 export function runLedgerSyncDeleteBackupTest(tmsLinks: string[], tags: string[]) {
   setTeamOwner(Team.WALLET_XP);
-  describe("Ledger Sync - delete backup", () => {
+  describeIfNotNanoS("Ledger Sync - delete backup", () => {
     setupSeed();
     cleanupAfterAll();
 
