@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen, fireEvent } from "@support/jest-devtools/native";
 import { mockTransport, mockTransportPanelProps } from "jest/mocks/transport";
-import { TransportDebug } from "./TransportDebug.native";
+import { TransportDebug } from "./TransportDebug";
 
 function makeRef() {
   return { current: null } as React.RefObject<unknown>;

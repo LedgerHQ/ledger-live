@@ -1,1 +1,1 @@
-export { QRScannerSheet } from "./QRScannerSheet.native";
+export { QRScannerSheet } from "./QRScannerSheet";
