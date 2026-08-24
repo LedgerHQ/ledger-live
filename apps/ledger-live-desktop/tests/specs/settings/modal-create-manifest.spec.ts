@@ -27,7 +27,7 @@ test("Settings", async ({ page }) => {
   await test.step("create local manifest", async () => {
     await settingsPage.createLocalManifestButton.click();
     await expect(
-      page.getByText("ReplaceAppName").or(page.locator('input[value="ReplaceAppName"]')),
+      page.getByText("ReplaceAppName", { exact: true }),
     ).toBeVisible({ timeout: 60000 });
   });
 
