@@ -379,20 +379,23 @@ function txModelByDelegationAction(
     stakeWithMeta: { stake },
   } = delegationAction;
 
-  invariant(stake.validatorAddress, "stake delegation must be defined");
-
   const stakeAccAddr = requireStakePositionId(stake);
 
   switch (stakeAction) {
     case "activate":
-    case "reactivate":
+    case "reactivate": {
+      // Only delegating needs a validator. A stake account that was created but never delegated
+      // has no `validatorAddress`, and withdrawing or undelegating it must still work.
+      const voteAccAddr = chosenValidator?.voteAccount || stake.validatorAddress;
+      invariant(voteAccAddr, "solana: a validator is required to delegate a stake position");
       return {
         kind: "stake.delegate",
         uiState: {
           stakeAccAddr,
-          voteAccAddr: chosenValidator?.voteAccount ?? stake.validatorAddress,
+          voteAccAddr,
         },
       };
+    }
     case "deactivate":
       return {
         kind: "stake.undelegate",
