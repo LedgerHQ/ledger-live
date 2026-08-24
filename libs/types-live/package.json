@@ -25,6 +25,7 @@
     "rxjs": "catalog:"
   },
   "devDependencies": {
+    "@ledgerhq/test-quarantine": "workspace:*",
     "@ledgerhq/types-devices": "workspace:^",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",

@@ -326,6 +326,7 @@
     "@ledgerhq/live-e2e-shared": "workspace:^",
     "@ledgerhq/speculos-transport": "workspace:^",
     "@ledgerhq/coin-cardano": "workspace:^",
+    "@ledgerhq/test-quarantine": "workspace:*",
     "@ledgerhq/test-utils": "workspace:^",
     "@react-native-community/cli": "catalog:",
     "@react-native-community/cli-platform-android": "catalog:",

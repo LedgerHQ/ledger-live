@@ -25,6 +25,7 @@
     "create-hmac": "^1.1.7"
   },
   "devDependencies": {
+    "@ledgerhq/test-quarantine": "workspace:*",
     "@types/lodash": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",

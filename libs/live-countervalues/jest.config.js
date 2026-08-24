@@ -1,6 +1,10 @@
 module.exports = {
   globalSetup: "<rootDir>/jest-global-setup.js",
-  setupFilesAfterEnv: ["@ledgerhq/wallet-framework-test-setup", "<rootDir>/jest-setup.ts"],
+  setupFilesAfterEnv: [
+    "@ledgerhq/wallet-framework-test-setup",
+    "<rootDir>/jest-setup.ts",
+    "@ledgerhq/test-quarantine/jest-retries",
+  ],
   transform: {
     "^.+\\.(ts|tsx)?$": [
       "@swc/jest",
@@ -17,5 +21,6 @@ module.exports = {
     "default",
     ...(process.env.CI ? ["github-actions"] : []),
     ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
+    "@ledgerhq/test-quarantine/jest",
   ],
 };

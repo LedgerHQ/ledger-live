@@ -32,6 +32,7 @@
   },
   "devDependencies": {
     "@ledgerhq/hw-transport-mocker": "workspace:^",
+    "@ledgerhq/test-quarantine": "workspace:*",
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",

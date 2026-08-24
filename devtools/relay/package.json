@@ -19,6 +19,7 @@
     "ws": "catalog:"
   },
   "devDependencies": {
+    "@ledgerhq/test-quarantine": "workspace:*",
     "@swc/core": "catalog:",
     "@devtools/protocols": "workspace:*",
     "@swc/jest": "catalog:",

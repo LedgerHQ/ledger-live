@@ -1,5 +1,5 @@
 module.exports = {
-  setupFilesAfterEnv: ["./jest.setup.js"],
+  setupFilesAfterEnv: ["./jest.setup.js", "@ledgerhq/test-quarantine/jest-retries"],
   transform: {
     "^.+\\.(t|j)sx?$": [
       "@swc/jest",
@@ -16,5 +16,6 @@ module.exports = {
     "default",
     ...(process.env.CI ? ["github-actions"] : []),
     ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
+    "@ledgerhq/test-quarantine/jest",
   ],
 };

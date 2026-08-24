@@ -30,6 +30,7 @@
     "react-redux": ">=9.0.0"
   },
   "devDependencies": {
+    "@ledgerhq/test-quarantine": "workspace:*",
     "@reduxjs/toolkit": "catalog:",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
