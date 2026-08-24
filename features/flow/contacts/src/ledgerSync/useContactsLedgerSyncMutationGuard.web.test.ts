@@ -25,7 +25,7 @@ describe("useContactsLedgerSyncMutationGuard", () => {
     expect(result.current.pendingIntent).toBeUndefined();
   });
 
-  it("preserves an intent while Ledger Sync is unavailable", () => {
+  it("blocks without preserving an intent while Ledger Sync is unavailable", () => {
     const { result } = renderHook(() => useContactsLedgerSyncMutationGuard());
 
     act(() => {
@@ -35,7 +35,7 @@ describe("useContactsLedgerSyncMutationGuard", () => {
       });
     });
 
-    expect(result.current.pendingIntent).toEqual({ kind: "addContact" });
+    expect(result.current.pendingIntent).toBeUndefined();
   });
 
   it("preserves an address intent until activation succeeds", () => {
