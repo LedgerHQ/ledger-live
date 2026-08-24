@@ -1,7 +1,10 @@
 import React from "react";
+import { Platform } from "react-native";
 import { render, screen, waitFor } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import { BottomSheetView } from "@ledgerhq/lumen-ui-rnative";
 import { usePostOnboardingHubState } from "@ledgerhq/live-common/postOnboarding/hooks/index";
+import type { QueuedBottomSheetProps } from "@shared/ui-queued-bottom-sheet";
 import {
   assetsTransferAction,
   recoverAction,
@@ -11,6 +14,9 @@ import type { State } from "~/reducers/types";
 import { PostOnboardingHubDrawerWrapper } from "../PostOnboardingHubDrawerWrapper";
 import { NotificationsPromptProvider } from "LLM/features/NotificationsPrompt";
 
+let mockDrawerProps: QueuedBottomSheetProps | undefined;
+const originalPlatform = Platform.OS;
+
 jest.mock("@ledgerhq/live-common/postOnboarding/hooks/index", () => ({
   usePostOnboardingHubState: jest.fn(),
 }));
@@ -19,6 +25,21 @@ jest.mock("LLM/features/WalletSync/screens/Activation/ActivationDrawer", () => (
   __esModule: true,
   default: () => null,
 }));
+
+jest.mock("@shared/ui-queued-bottom-sheet", () => {
+  const actual = jest.requireActual("@shared/ui-queued-bottom-sheet");
+  const React = jest.requireActual<typeof import("react")>("react");
+
+  function MockQueuedBottomSheet(props: QueuedBottomSheetProps) {
+    mockDrawerProps = props;
+    return React.createElement(actual.QueuedBottomSheet, props);
+  }
+
+  return {
+    ...actual,
+    QueuedBottomSheet: MockQueuedBottomSheet,
+  };
+});
 
 const mockedUsePostOnboardingHubState = jest.mocked(usePostOnboardingHubState);
 
@@ -64,6 +85,11 @@ function openedDrawerWithLedgerSyncState(state: State): State {
 describe("PostOnboardingHubDrawer Integration", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockDrawerProps = undefined;
+  });
+
+  afterEach(() => {
+    Platform.OS = originalPlatform;
   });
 
   it("should render the device step with the drawer title and no action rows when no actions exist", async () => {
@@ -194,7 +220,7 @@ describe("PostOnboardingHubDrawer Integration", () => {
     expect(screen.getByRole("button", { name: /Got it/i })).toBeVisible();
   });
 
-  it("renders the Recover row and treats it as completed when async getIsAlreadyCompleted resolves true", async () => {
+  it("should treat the Recover row as completed when getIsAlreadyCompleted resolves true", async () => {
     const getIsAlreadyCompleted = jest.fn(async () => true);
 
     mockedUsePostOnboardingHubState.mockReturnValue({
@@ -242,5 +268,102 @@ describe("PostOnboardingHubDrawer Integration", () => {
 
     expect(store.getState().postOnboarding.postOnboardingInProgress).toBe(false);
     expect(store.getState().postOnboardingHubDrawer.isOpen).toBe(false);
+  });
+
+  it("should size the sheet to its content when the hub drawer opens", async () => {
+    Platform.OS = "ios";
+    mockedUsePostOnboardingHubState.mockReturnValue({
+      deviceModelId: DeviceModelId.stax,
+      actionsState: [{ ...assetsTransferAction, completed: false }],
+      lastActionCompleted: null,
+      postOnboardingInProgress: true,
+    });
+
+    render(<HubDrawer />, {
+      overrideInitialState: openedDrawerState,
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText("Add crypto")).toBeVisible();
+    });
+    expect(mockDrawerProps?.enableDynamicSizing).toBe(true);
+    expect(mockDrawerProps?.maxDynamicContentSize).toBe("fullWithOffset");
+  });
+
+  it("should leave dynamic content size unconstrained on Android", async () => {
+    Platform.OS = "android";
+    mockedUsePostOnboardingHubState.mockReturnValue({
+      deviceModelId: DeviceModelId.stax,
+      actionsState: [{ ...assetsTransferAction, completed: false }],
+      lastActionCompleted: null,
+      postOnboardingInProgress: true,
+    });
+
+    render(<HubDrawer />, {
+      overrideInitialState: openedDrawerState,
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText("Add crypto")).toBeVisible();
+    });
+    expect(mockDrawerProps?.maxDynamicContentSize).toBeUndefined();
+  });
+
+  it("should keep 24px of padding below the last hub row", async () => {
+    mockedUsePostOnboardingHubState.mockReturnValue({
+      deviceModelId: DeviceModelId.stax,
+      actionsState: [{ ...assetsTransferAction, completed: false }],
+      lastActionCompleted: null,
+      postOnboardingInProgress: true,
+    });
+
+    render(<HubDrawer />, {
+      overrideInitialState: openedDrawerState,
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText("Add crypto")).toBeVisible();
+    });
+    expect(screen.UNSAFE_getByType(BottomSheetView).props.style).toEqual(
+      expect.objectContaining({ paddingBottom: 24 }),
+    );
+  });
+
+  it("should close the hub with a 56px safe row while actions remain", async () => {
+    mockedUsePostOnboardingHubState.mockReturnValue({
+      deviceModelId: DeviceModelId.stax,
+      actionsState: [{ ...assetsTransferAction, completed: false }],
+      lastActionCompleted: null,
+      postOnboardingInProgress: true,
+    });
+
+    render(<HubDrawer />, {
+      overrideInitialState: openedDrawerState,
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText("Add crypto")).toBeVisible();
+    });
+    expect(screen.getByTestId("post-onboarding-hub-safe-row").props.style).toEqual(
+      expect.objectContaining({ height: 56 }),
+    );
+  });
+
+  it("should replace the safe row with the 'Got it' button once every action is completed", async () => {
+    mockedUsePostOnboardingHubState.mockReturnValue({
+      deviceModelId: DeviceModelId.stax,
+      actionsState: [{ ...assetsTransferAction, completed: true }],
+      lastActionCompleted: null,
+      postOnboardingInProgress: true,
+    });
+
+    render(<HubDrawer />, {
+      overrideInitialState: openedDrawerState,
+    });
+
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: /Got it/i })).toBeVisible();
+    });
+    expect(screen.queryByTestId("post-onboarding-hub-safe-row")).toBeNull();
   });
 });
