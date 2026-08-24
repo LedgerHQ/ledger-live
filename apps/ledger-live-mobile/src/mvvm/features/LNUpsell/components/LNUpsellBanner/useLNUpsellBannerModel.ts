@@ -3,6 +3,7 @@ import { Image, Linking } from "react-native";
 import {
   LARGE_SCREEN_UPSELL_UTM,
   buildLargeScreenUpsellCtaLink,
+  type LargeScreenUpsellUtmContent,
 } from "@features/flow-large-screen-upsell/utils/upsellCta";
 import {
   toLargeScreenUpsellDeviceModelAnalyticsValue,
@@ -128,7 +129,7 @@ const BannerPageEventNameMap: Partial<Record<LNBannerLocation, string>> = {
   manager: "banner upsell my ledger",
 } as const;
 
-const UTMContentMap: Record<LNBannerLocation, string> = {
+const UTMContentMap: Record<LNBannerLocation, LargeScreenUpsellUtmContent> = {
   wallet: LARGE_SCREEN_UPSELL_UTM.content.portfolio_banner,
   notification_center: LARGE_SCREEN_UPSELL_UTM.content.notif_banner,
   manager: LARGE_SCREEN_UPSELL_UTM.content.my_ledger_banner,
