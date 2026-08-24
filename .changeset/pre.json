@@ -232,5 +232,7 @@
     "@ledgerhq/pnpm-utils": "1.0.1",
     "@ledgerhq/prune-changelogs": "0.0.0"
   },
-  "changesets": []
+  "changesets": [
+    "fast-apes-grab"
+  ]
 }

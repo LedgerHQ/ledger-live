@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 4.17.1-hotfix.0
+
+### Patch Changes
+
+- [#21065](https://github.com/LedgerHQ/ledger-live/pull/21065) [`8a6a532`](https://github.com/LedgerHQ/ledger-live/commit/8a6a532c79b865cd9d1814f61ae14e75a63d2ff0) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix nsh installer on Windows
+
 ## 4.17.0
 
 ### Minor Changes
