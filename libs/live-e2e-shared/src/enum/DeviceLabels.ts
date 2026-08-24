@@ -26,6 +26,7 @@ export enum DeviceLabels {
   FEES = "Fees",
   GET = "Get",
   I_UNDERSTAND = "I understand",
+  LEDGER_SYNC_APP_IS_READY = "Ledger Sync app is ready",
   LEDGER_WALLET_WILL_BE = "Ledger Wallet will be",
   NEW_ORDINARY = "New ordinary",
   PLEASE_REVIEW = "Please",
