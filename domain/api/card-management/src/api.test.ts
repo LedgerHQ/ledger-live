@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { cardApi, cardApiExtra } from "@shared/api-services";
-import { cardManagementApi } from "./api";
+import { cardManagementApi, useOrderCardMutation } from "./api";
 
 function jsonResponse(body: unknown): Response {
   return new Response(JSON.stringify(body), {
@@ -60,8 +60,14 @@ describe("cardManagementApi configuration", () => {
       "getUser",
       "initiateAuthorize",
       "logout",
+      "orderCard",
       "refreshSession",
     ]);
+  });
+
+  it("exposes the orderCard endpoint and its hook", () => {
+    expect(cardManagementApi.endpoints.orderCard).toBeDefined();
+    expect(useOrderCardMutation).toBeDefined();
   });
 
   it("shares the Card service reducer and middleware once registered in a store", () => {
@@ -231,6 +237,47 @@ describe("cardManagementApi requests", () => {
         id: "3f2504e0-4f89-11d3-9a0c-0305e82c3301",
         verificationState: "VERIFIED",
       });
+    });
+  });
+
+  describe("orderCard", () => {
+    it("posts a virtual card order with the session bearer token and the client key", async () => {
+      fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({ success: true }));
+
+      const store = makeStore(async () => "session-token");
+      const result = await store.dispatch(cardManagementApi.endpoints.orderCard.initiate());
+
+      expect(request(fetchSpy).url).toBe("https://card.test/v1/card/order");
+      expect(request(fetchSpy).method).toBe("POST");
+      expect(JSON.parse(await request(fetchSpy).clone().text())).toEqual({ type: "VIRTUAL" });
+      expect(request(fetchSpy).headers.get("authorization")).toBe("Bearer session-token");
+      expect(request(fetchSpy).headers.get("x-client-key")).toBe("client-key");
+      expect(result.data).toEqual({ success: true });
+    });
+
+    it("keeps everything the wire contract does not declare out of the cache", async () => {
+      fetchSpy = jest
+        .spyOn(globalThis, "fetch")
+        .mockResolvedValue(
+          jsonResponse({ success: true, cardId: "card-1", pan: "pan-must-not-reach-the-cache" }),
+        );
+
+      const store = makeStore(async () => "session-token");
+      const result = await store.dispatch(cardManagementApi.endpoints.orderCard.initiate());
+
+      expect(result.data).toEqual({ success: true });
+    });
+
+    it("rejects a response whose success flag is not a boolean", async () => {
+      fetchSpy = jest
+        .spyOn(globalThis, "fetch")
+        .mockResolvedValue(jsonResponse({ success: "yes", pan: "pan-must-not-reach-the-cache" }));
+
+      const store = makeStore(async () => "session-token");
+      const result = await store.dispatch(cardManagementApi.endpoints.orderCard.initiate());
+
+      expect(result.data).toBeUndefined();
+      expect(JSON.stringify(result.error)).not.toContain("pan-must-not-reach-the-cache");
     });
   });
 
