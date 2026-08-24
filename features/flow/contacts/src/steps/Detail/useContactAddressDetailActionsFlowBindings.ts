@@ -72,7 +72,9 @@ export function useContactAddressDetailActionsFlowBindings({
     addressValidation,
     manualValidationDebounceMs,
     isRequestedOpen: flow.editUiState === "edit-open",
+    isEditSessionActive: flow.isEditSessionActive,
     onCloseRequest: flow.onEditClose,
+    requestSaveApproval: flow.requestSaveApproval,
     onSaveSuccess: payload => {
       onEditAddressSaved?.(payload);
       onCloseAddressDetail?.();

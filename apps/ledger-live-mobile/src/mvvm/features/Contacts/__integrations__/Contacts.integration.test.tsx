@@ -1035,7 +1035,7 @@ describe("Contacts integration", () => {
     });
   });
 
-  it("should open the signer sheet before editing an address", async () => {
+  it("should open the edit address sheet without asking for the signer first", async () => {
     const { user } = render(<MyWalletNavigator />, {
       overrideInitialState: withContactsPageReadyState(
         { lwmContacts: { enabled: true, params: { newBadge: false } } },
@@ -1047,11 +1047,6 @@ describe("Contacts integration", () => {
     await user.press(await screen.findByTestId("contacts-saved-contact-contact-ben"));
     await user.press(await screen.findByTestId("contacts-detail-address-row-address-ethereum"));
     await user.press(await screen.findByText("Edit"));
-
-    expect(await screen.findByTestId("contacts-edit-signer-confirm")).toBeVisible();
-    expect(screen.getByText("Confirm on your device")).toBeVisible();
-
-    await user.press(screen.getByTestId("contacts-edit-signer-confirm"));
 
     await waitFor(() => {
       expect(screen.queryByTestId("contacts-edit-signer-confirm")).toBeNull();
@@ -1075,13 +1070,18 @@ describe("Contacts integration", () => {
     await user.press(await screen.findByTestId("contacts-saved-contact-contact-ben"));
     await user.press(await screen.findByTestId("contacts-detail-address-row-address-ethereum"));
     await user.press(await screen.findByText("Edit"));
-    await user.press(await screen.findByTestId("contacts-edit-signer-confirm"));
     const renameInput = await screen.findByDisplayValue("Ethereum");
     await user.clear(renameInput);
     await user.type(renameInput, "Exchange wallet");
     await user.press(screen.getByTestId("contacts-rename-address-confirm"));
 
+    expect(await screen.findByTestId("contacts-edit-signer-confirm")).toBeVisible();
+    expect(screen.getByText("Confirm on your device")).toBeVisible();
+
+    await user.press(screen.getByTestId("contacts-edit-signer-confirm"));
+
     await waitFor(() => {
+      expect(screen.queryByTestId("contacts-edit-signer-confirm")).toBeNull();
       expect(screen.queryByTestId("contacts-rename-address-confirm")).toBeNull();
       expect(screen.queryByTestId("contacts-address-detail-dialog")).toBeNull();
       expect(screen.getByText("Exchange wallet")).toBeVisible();
@@ -1101,7 +1101,6 @@ describe("Contacts integration", () => {
     await user.press(await screen.findByTestId("contacts-saved-contact-contact-ben"));
     await user.press(await screen.findByTestId("contacts-detail-address-row-address-ethereum"));
     await user.press(await screen.findByText("Edit"));
-    await user.press(await screen.findByTestId("contacts-edit-signer-confirm"));
 
     const addressInput = await screen.findByTestId("contacts-edit-address-input");
     expect(addressInput).toHaveProp("value", "0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034");
@@ -1114,6 +1113,7 @@ describe("Contacts integration", () => {
     });
 
     await user.press(screen.getByTestId("contacts-rename-address-confirm"));
+    await user.press(await screen.findByTestId("contacts-edit-signer-confirm"));
 
     await waitFor(() => {
       expect(screen.queryByTestId("contacts-rename-address-confirm")).toBeNull();
@@ -1177,6 +1177,54 @@ describe("Contacts integration", () => {
     await waitFor(() => {
       expect(screen.queryByTestId("contacts-rename-contact-confirm")).toBeNull();
       expect(screen.getByText("Alice")).toBeVisible();
+    });
+  });
+
+  it("should open the rename contact sheet without asking for the signer first", async () => {
+    const { user } = render(<MyWalletNavigator />, {
+      overrideInitialState: withContactsPageReadyState(
+        { lwmContacts: { enabled: true, params: { newBadge: false } } },
+        state => ({ ...state, contacts: { contacts: mockPopulatedContacts() } }),
+      ),
+    });
+
+    await user.press(screen.getByTestId("my-wallet-contacts-button"));
+    await user.press(await screen.findByTestId("contacts-saved-contact-contact-ben"));
+    await user.press(await screen.findByTestId("contacts-detail-actions-trigger"));
+    await user.press(await screen.findByTestId("contacts-detail-edit-action"));
+
+    await waitFor(() => {
+      expect(screen.queryByTestId("contacts-edit-signer-confirm")).toBeNull();
+      expect(screen.getByTestId("contacts-rename-contact-confirm")).toBeVisible();
+    });
+  });
+
+  it("should rename a saved contact after confirming on the signer sheet", async () => {
+    const { user } = render(<MyWalletNavigator />, {
+      overrideInitialState: withContactsPageReadyState(
+        { lwmContacts: { enabled: true, params: { newBadge: false } } },
+        state => ({ ...state, contacts: { contacts: mockPopulatedContacts() } }),
+      ),
+    });
+
+    await user.press(screen.getByTestId("my-wallet-contacts-button"));
+    await user.press(await screen.findByTestId("contacts-saved-contact-contact-ben"));
+    await user.press(await screen.findByTestId("contacts-detail-actions-trigger"));
+    await user.press(await screen.findByTestId("contacts-detail-edit-action"));
+
+    const renameInput = await screen.findByTestId("contacts-rename-contact-name-input");
+    await user.clear(renameInput);
+    await user.type(renameInput, "Benjamin");
+    await user.press(screen.getByTestId("contacts-rename-contact-confirm"));
+
+    expect(await screen.findByTestId("contacts-edit-signer-confirm")).toBeVisible();
+
+    await user.press(screen.getByTestId("contacts-edit-signer-confirm"));
+
+    await waitFor(() => {
+      expect(screen.queryByTestId("contacts-edit-signer-confirm")).toBeNull();
+      expect(screen.queryByTestId("contacts-rename-contact-confirm")).toBeNull();
+      expect(screen.getByText("Benjamin")).toBeVisible();
     });
   });
 

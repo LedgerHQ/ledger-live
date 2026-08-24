@@ -23,20 +23,18 @@ export function useRenameAddressDialogViewModel({
   addressValidation,
   manualValidationDebounceMs,
   isRequestedOpen,
+  isEditSessionActive = isRequestedOpen,
   onCloseRequest,
   onSaveSuccess,
-}: UseRenameAddressDialogViewModelOptionsWithValidation &
-  Readonly<{
-    isRequestedOpen: boolean;
-    onCloseRequest: () => void;
-  }>): RenameAddressDialogViewModel {
+  requestSaveApproval,
+}: UseRenameAddressDialogViewModelOptionsWithValidation): RenameAddressDialogViewModel {
   const [draftLabel, setDraftLabel] = useState(currentLabel);
   const [isSaving, setIsSaving] = useState(false);
   const { addressEntry, onAddressChange } = useEditAddressAddressEntry({
     addressValidation,
     currencyId,
     currentAddress,
-    isActive: isRequestedOpen,
+    isActive: isEditSessionActive,
     manualValidationDebounceMs,
   });
   const { invalidLabelError, isConfirmEnabled, save } = useRenameAddressViewModel(
@@ -51,15 +49,10 @@ export function useRenameAddressDialogViewModel({
   );
 
   useEffect(() => {
-    if (isRequestedOpen) {
+    if (isEditSessionActive) {
       setDraftLabel(currentLabel);
     }
-  }, [currentLabel, isRequestedOpen]);
-
-  const onClose = useCallback(() => {
-    onCloseRequest();
-    setDraftLabel(currentLabel);
-  }, [currentLabel, onCloseRequest]);
+  }, [currentLabel, isEditSessionActive]);
 
   const onDraftLabelChange = useCallback(
     (label: string) => setDraftLabel(label.slice(0, CONTACT_ADDRESS_LABEL_MAX_LENGTH)),
@@ -74,6 +67,10 @@ export function useRenameAddressDialogViewModel({
     setIsSaving(true);
 
     try {
+      if (requestSaveApproval !== undefined && !(await requestSaveApproval())) {
+        return;
+      }
+
       await save();
       const addressChanged =
         addressEntry.status === "valid" &&
@@ -101,6 +98,7 @@ export function useRenameAddressDialogViewModel({
     isSaving,
     onCloseRequest,
     onSaveSuccess,
+    requestSaveApproval,
     save,
   ]);
 
@@ -112,7 +110,7 @@ export function useRenameAddressDialogViewModel({
     addressEntry,
     isConfirmEnabled: isConfirmEnabled && !isSaving,
     onOpen: () => undefined,
-    onClose,
+    onClose: onCloseRequest,
     onDraftLabelChange,
     onAddressChange,
     onConfirm,

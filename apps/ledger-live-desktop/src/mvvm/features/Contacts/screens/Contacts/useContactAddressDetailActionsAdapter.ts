@@ -9,7 +9,6 @@ import {
   type ContactAddressDetailSendIntent,
   CONTACTS_EVENT_SOURCE,
   CONTACTS_FLOW,
-  CONTACTS_PAGE_EVENTS,
   CONTACTS_PAGE_PROPERTY,
   CONTACTS_TRACK_EVENTS,
   CONTACTS_TRACKING_BUTTON,
@@ -17,11 +16,12 @@ import {
   createInactiveContactAddressDetailActionsUiState,
   resolveContactAddressDetailActionsLabels,
   useContactAddressDetailActionsFlowBindings,
+  useContactAddressEditAnalytics,
   useContactsAddressDetailActionsPorts,
   trackContactAddressDetailQuickAction,
   type ContactAddressEditSavePayload,
 } from "@features/flow-contacts";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useOpenSendFlow } from "LLD/features/Send/hooks/useOpenSendFlow";
 import { useContactsAnalytics, resolveContactsCurrencyAnalytics } from "../../analytics";
@@ -64,8 +64,6 @@ export function useContactAddressDetailActionsAdapter(
   const ports = useContactsAddressDetailActionsPorts();
   const addressValidation = useContactsAddressValidationAdapter();
   const openSendFlow = useOpenSendFlow();
-  const hasTrackedEditAddressPage = useRef(false);
-  const hasTrackedSignerMismatch = useRef(false);
   const isSelectionActive = contactId !== undefined && addressId !== undefined;
   const labels = useMemo(() => resolveContactAddressDetailActionsLabels({ t }), [t]);
   const trackQuickAction = useCallback(
@@ -143,39 +141,13 @@ export function useContactAddressDetailActionsAdapter(
     await renameViewModel.onConfirm();
   }, [analytics, asset, network, renameViewModel]);
 
-  useEffect(() => {
-    if (!renameViewModel.isOpen) {
-      hasTrackedEditAddressPage.current = false;
-      return;
-    }
-
-    if (hasTrackedEditAddressPage.current || asset === undefined || network === undefined) {
-      return;
-    }
-
-    hasTrackedEditAddressPage.current = true;
-    analytics.trackPage(CONTACTS_PAGE_EVENTS.EDIT_ADDRESS, {
-      source: CONTACTS_EVENT_SOURCE.EDIT_ADDRESS,
-      network,
-      asset,
-    });
-  }, [analytics, asset, network, renameViewModel.isOpen]);
-
-  useEffect(() => {
-    if (flow.editUiState === "signer-mismatch" && !hasTrackedSignerMismatch.current) {
-      hasTrackedSignerMismatch.current = true;
-      analytics.trackEvent(CONTACTS_TRACK_EVENTS.ERROR_DISPLAYED, {
-        source: CONTACTS_EVENT_SOURCE.EDIT_ADDRESS,
-        page: CONTACTS_PAGE_PROPERTY.EDIT_ADDRESS,
-        errorType: "signer_mismatch",
-      });
-      return;
-    }
-
-    if (flow.editUiState !== "signer-mismatch") {
-      hasTrackedSignerMismatch.current = false;
-    }
-  }, [analytics, flow.editUiState]);
+  useContactAddressEditAnalytics(analytics, {
+    isEditSessionActive: flow.isEditSessionActive,
+    isRenameOpen: renameViewModel.isOpen,
+    isSignerMismatchOpen: flow.editUiState === "signer-mismatch",
+    asset,
+    network,
+  });
 
   if (!isSelectionActive) {
     return mapUiStateToDialogProps(createInactiveContactAddressDetailActionsUiState(labels));

@@ -132,4 +132,109 @@ describe("useRenameAddressDialogViewModel", () => {
     });
     expect(onCloseRequest).toHaveBeenCalledTimes(1);
   });
+
+  it("should keep the draft while the signer approval is pending", async () => {
+    const onCloseRequest = jest.fn();
+    const onSaveSuccess = jest.fn();
+    const updateAddress = jest.fn().mockResolvedValue(
+      contactAddress({
+        ...address,
+        label: "Main ETH",
+      }),
+    );
+    let approveSave!: (approved: boolean) => void;
+    const requestSaveApproval = jest.fn(
+      () =>
+        new Promise<boolean>(resolve => {
+          approveSave = resolve;
+        }),
+    );
+    const { result, rerender } = renderHook(
+      ({ isRequestedOpen }) =>
+        useRenameAddressDialogViewModel({
+          contactId: contact.id,
+          addressId: address.id,
+          currentLabel: address.label,
+          currentAddress: address.address,
+          currencyId: address.currencyId,
+          existingLabels: [],
+          editPort: createEditPort({ updateAddress }),
+          isRequestedOpen,
+          isEditSessionActive: true,
+          onCloseRequest,
+          onSaveSuccess,
+          requestSaveApproval,
+        }),
+      { initialProps: { isRequestedOpen: true } },
+    );
+
+    act(() => {
+      result.current.onDraftLabelChange("Main ETH");
+    });
+
+    let confirmed!: Promise<void>;
+
+    act(() => {
+      confirmed = result.current.onConfirm();
+    });
+
+    rerender({ isRequestedOpen: false });
+
+    expect(updateAddress).not.toHaveBeenCalled();
+    expect(result.current.isSaving).toBe(true);
+    expect(result.current.draftLabel).toBe("Main ETH");
+    expect(result.current.addressEntry.value).toBe(address.address);
+
+    await act(async () => {
+      approveSave(true);
+      await confirmed;
+    });
+
+    expect(updateAddress).toHaveBeenCalledWith({
+      contactId: contact.id,
+      addressId: address.id,
+      label: "Main ETH",
+      address: address.address,
+    });
+    expect(onSaveSuccess).toHaveBeenCalledTimes(1);
+    expect(onCloseRequest).toHaveBeenCalledTimes(1);
+  });
+
+  it("should not save when the signer approval is declined", async () => {
+    const onCloseRequest = jest.fn();
+    const onSaveSuccess = jest.fn();
+    const updateAddress = jest.fn();
+    const requestSaveApproval = jest.fn().mockResolvedValue(false);
+    const { result } = renderHook(() =>
+      useRenameAddressDialogViewModel({
+        contactId: contact.id,
+        addressId: address.id,
+        currentLabel: address.label,
+        currentAddress: address.address,
+        currencyId: address.currencyId,
+        existingLabels: [],
+        editPort: createEditPort({ updateAddress }),
+        isRequestedOpen: true,
+        isEditSessionActive: true,
+        onCloseRequest,
+        onSaveSuccess,
+        requestSaveApproval,
+      }),
+    );
+
+    act(() => {
+      result.current.onDraftLabelChange("Main ETH");
+    });
+
+    await act(async () => {
+      await result.current.onConfirm();
+    });
+
+    expect(updateAddress).not.toHaveBeenCalled();
+    expect(onSaveSuccess).not.toHaveBeenCalled();
+    expect(onCloseRequest).not.toHaveBeenCalled();
+    expect(result.current.draftLabel).toBe("Main ETH");
+    expect(result.current.addressEntry.value).toBe(address.address);
+    expect(result.current.isSaving).toBe(false);
+  });
 });

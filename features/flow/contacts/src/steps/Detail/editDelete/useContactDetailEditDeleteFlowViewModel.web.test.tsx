@@ -48,7 +48,7 @@ describe("useContactDetailEditDeleteFlowViewModel", () => {
     expect(result.current.isActionsMenuOpen).toBe(false);
   });
 
-  it("should open the signer dialog when editing a contact with addresses", () => {
+  it("should open the edit dialog without asking for the signer first", () => {
     const contact = mockContactWithAddress();
     const Wrapper = makeContactsWrapper([mockMeContact(), contact]);
     const { result } = renderHook(
@@ -62,13 +62,49 @@ describe("useContactDetailEditDeleteFlowViewModel", () => {
 
     act(() => {
       result.current.onEditPress();
+    });
+
+    expect(result.current.editUiState).toBe("edit-open");
+  });
+
+  it("should ask for the signer when saving a contact with addresses", async () => {
+    const contact = mockContactWithAddress();
+    const Wrapper = makeContactsWrapper([mockMeContact(), contact]);
+    const { result } = renderHook(
+      () =>
+        useContactDetailEditDeleteFlowViewModel({
+          contactId: contact.id,
+          ports: createPorts(),
+        }),
+      { wrapper: Wrapper },
+    );
+    const onApproval = jest.fn();
+
+    act(() => {
+      result.current.onEditPress();
+    });
+
+    let approval!: Promise<boolean>;
+
+    act(() => {
+      approval = result.current.requestSaveApproval();
+      void approval.then(onApproval);
     });
 
     expect(result.current.editUiState).toBe("signer-open");
+    expect(onApproval).not.toHaveBeenCalled();
+
+    await act(async () => {
+      await result.current.onSignerConfirm();
+      await approval;
+    });
+
+    expect(onApproval).toHaveBeenCalledWith(true);
+    expect(result.current.editUiState).toBe("edit-open");
   });
 
-  it("should open edit state after signer confirmation", async () => {
-    const contact = mockContactWithAddress();
+  it("should approve the save without a signer step when the contact has no address", async () => {
+    const contact = mockContact();
     const Wrapper = makeContactsWrapper([mockMeContact(), contact]);
     const { result } = renderHook(
       () =>
@@ -82,8 +118,9 @@ describe("useContactDetailEditDeleteFlowViewModel", () => {
     act(() => {
       result.current.onEditPress();
     });
+
     await act(async () => {
-      await result.current.onSignerConfirm();
+      await expect(result.current.requestSaveApproval()).resolves.toBe(true);
     });
 
     expect(result.current.editUiState).toBe("edit-open");
@@ -103,6 +140,7 @@ describe("useContactDetailEditDeleteFlowViewModel", () => {
 
     act(() => {
       result.current.onEditPress();
+      void result.current.requestSaveApproval();
     });
     await act(async () => {
       await result.current.onSignerConfirm();
@@ -134,6 +172,7 @@ describe("useContactDetailEditDeleteFlowViewModel", () => {
 
     act(() => {
       result.current.onEditPress();
+      void result.current.requestSaveApproval();
     });
 
     expect(result.current.editUiState).toBe("signer-open");
@@ -162,6 +201,7 @@ describe("useContactDetailEditDeleteFlowViewModel", () => {
 
     act(() => {
       result.current.onEditPress();
+      void result.current.requestSaveApproval();
     });
     await act(async () => {
       await result.current.onSignerConfirm();
@@ -176,7 +216,7 @@ describe("useContactDetailEditDeleteFlowViewModel", () => {
     expect(result.current.editUiState).toBe("signer-open");
   });
 
-  it("should close the signer mismatch dialog on cancel", async () => {
+  it("should decline the save and return to the edit dialog when the mismatch is cancelled", async () => {
     const contact = mockContactWithAddress();
     const mismatchPort: ContactSignerValidationPort = createMockContactSignerValidationPort({
       currentSignerId: "signer-b",
@@ -190,9 +230,11 @@ describe("useContactDetailEditDeleteFlowViewModel", () => {
         }),
       { wrapper: Wrapper },
     );
+    let approval!: Promise<boolean>;
 
     act(() => {
       result.current.onEditPress();
+      approval = result.current.requestSaveApproval();
     });
     await act(async () => {
       await result.current.onSignerConfirm();
@@ -200,11 +242,12 @@ describe("useContactDetailEditDeleteFlowViewModel", () => {
 
     expect(result.current.editUiState).toBe("signer-mismatch");
 
-    act(() => {
+    await act(async () => {
       result.current.onSignerMismatchCancel();
+      await expect(approval).resolves.toBe(false);
     });
 
-    expect(result.current.editUiState).toBe("closed");
+    expect(result.current.editUiState).toBe("edit-open");
   });
 
   it("should prevent deleting the Me contact", () => {

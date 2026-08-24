@@ -901,18 +901,32 @@ describe("Contacts integration", () => {
     });
   });
 
-  it("should open the signer dialog before renaming a contact with addresses", async () => {
+  it("should ask for the signer only after saving a contact with addresses", async () => {
     const { user } = renderContactsScreen(populatedContactsPageState);
 
     await user.click(screen.getByTestId("contacts-saved-row-contact-ben"));
     await user.click(screen.getByTestId("contacts-detail-edit-action"));
 
-    expect(screen.getByTestId("contacts-edit-signer-dialog")).toBeVisible();
-    expect(screen.queryByTestId("contacts-rename-contact-dialog")).not.toBeInTheDocument();
+    expect(screen.getByTestId("contacts-rename-contact-dialog")).toBeVisible();
+    expect(screen.queryByTestId("contacts-edit-signer-dialog")).not.toBeInTheDocument();
+
+    const nameInput = screen.getByTestId("contacts-rename-contact-name-input");
+    await user.clear(nameInput);
+    await user.type(nameInput, "Benjamin");
+    await user.click(screen.getByTestId("contacts-rename-contact-confirm"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("contacts-edit-signer-dialog")).toBeVisible();
+    });
+    expect(screen.getByTestId("contacts-saved-row-contact-ben")).toHaveTextContent("Ben");
 
     await user.click(screen.getByTestId("contacts-edit-signer-confirm"));
 
-    expect(screen.getByTestId("contacts-rename-contact-dialog")).toBeVisible();
+    await waitFor(() => {
+      expect(screen.queryByTestId("contacts-edit-signer-dialog")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("contacts-rename-contact-dialog")).not.toBeInTheDocument();
+      expect(screen.getByTestId("contacts-saved-row-contact-ben")).toHaveTextContent("Benjamin");
+    });
   });
 
   it("should delete a saved contact and return to the Me detail pane", async () => {
@@ -983,7 +997,7 @@ describe("Contacts integration", () => {
     expect(screen.getByTestId("contacts-detail-address-row-address-polygon")).toBeInTheDocument();
   });
 
-  it("should open the rename address dialog after signer confirmation", async () => {
+  it("should open the rename address dialog without asking for the signer first", async () => {
     const { user } = renderContactsScreen(populatedContactsPageState);
 
     await user.click(screen.getByTestId("contacts-saved-row-contact-ben"));
@@ -993,14 +1007,7 @@ describe("Contacts integration", () => {
 
     await waitFor(() => {
       expect(screen.queryByTestId("contacts-address-detail-dialog")).not.toBeInTheDocument();
-      expect(screen.getByTestId("contacts-edit-signer-dialog")).toBeVisible();
-    });
-
-    await user.click(screen.getByTestId("contacts-edit-signer-confirm"));
-
-    await waitFor(() => {
       expect(screen.queryByTestId("contacts-edit-signer-dialog")).not.toBeInTheDocument();
-      expect(screen.queryByTestId("contacts-address-detail-dialog")).not.toBeInTheDocument();
       expect(screen.getByTestId("contacts-rename-address-dialog")).toBeVisible();
       expect(screen.getByTestId("contacts-edit-address-input")).toHaveValue(
         "0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034",
@@ -1015,7 +1022,6 @@ describe("Contacts integration", () => {
     await user.click(screen.getByTestId("contacts-detail-address-row-address-ethereum"));
 
     await user.click(screen.getByTestId("contacts-address-detail-edit"));
-    await user.click(screen.getByTestId("contacts-edit-signer-confirm"));
 
     await waitFor(() => {
       expect(screen.getByTestId("contacts-rename-address-dialog")).toBeVisible();
@@ -1025,6 +1031,12 @@ describe("Contacts integration", () => {
       target: { value: "Main ETH" },
     });
     await user.click(screen.getByTestId("contacts-rename-address-confirm"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("contacts-edit-signer-dialog")).toBeVisible();
+    });
+
+    await user.click(screen.getByTestId("contacts-edit-signer-confirm"));
 
     await waitFor(() => {
       expect(screen.queryByTestId("contacts-rename-address-dialog")).not.toBeInTheDocument();
@@ -1043,7 +1055,6 @@ describe("Contacts integration", () => {
     await user.click(screen.getByTestId("contacts-detail-address-row-address-ethereum"));
 
     await user.click(screen.getByTestId("contacts-address-detail-edit"));
-    await user.click(screen.getByTestId("contacts-edit-signer-confirm"));
 
     await waitFor(() => {
       expect(screen.getByTestId("contacts-rename-address-dialog")).toBeVisible();
@@ -1058,6 +1069,12 @@ describe("Contacts integration", () => {
     });
 
     await user.click(screen.getByTestId("contacts-rename-address-confirm"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("contacts-edit-signer-dialog")).toBeVisible();
+    });
+
+    await user.click(screen.getByTestId("contacts-edit-signer-confirm"));
 
     await waitFor(() => {
       expect(screen.queryByTestId("contacts-rename-address-dialog")).not.toBeInTheDocument();
