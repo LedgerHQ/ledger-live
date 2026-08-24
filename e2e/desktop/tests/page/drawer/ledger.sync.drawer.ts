@@ -16,6 +16,9 @@ export class LedgerSyncDrawer extends Drawer {
   private readonly removeCLI = this.cliMember.getByText("Remove");
   private readonly activateTitle = this.page.getByTestId("walletsync-activate-title");
   private readonly turnOnLedgerSyncButton = this.page.getByTestId("walletsync-activate-cta");
+  private readonly connectDeviceButton = this.page.getByTestId(
+    "walletSync-synchronize-connectDevice",
+  );
   private readonly activateSuccessTitle = this.page.getByTestId(
     "walletsync-activate-success-title",
   );
@@ -35,11 +38,14 @@ export class LedgerSyncDrawer extends Drawer {
     await this.turnOnLedgerSyncButton.click();
   }
 
+  @step("Click 'Use your Ledger' to sync with device")
+  async clickConnectDevice() {
+    await this.connectDeviceButton.click();
+  }
+
   @step("Expect activation success screen")
   async expectActivationSuccess() {
-    await expect(this.activateSuccessTitle).toContainText(
-      "Ledger Sync turned on for Ledger Wallet on this computer",
-    );
+    await expect(this.activateSuccessTitle).toContainText("Sync complete");
   }
 
   @step("Check if Ledger Sync management drawer is visible")

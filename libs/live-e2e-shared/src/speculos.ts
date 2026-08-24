@@ -800,18 +800,6 @@ export const removeMemberLedgerSync = withDeviceController(
 
 export const activateLedgerSync = withDeviceController(({ getButtonsController }) => async () => {
   const buttons = getButtonsController();
-  // When the LS app is opened mid-test (vs already running at setup), the device first shows
-  // "Ledger Sync app is ready". Dismiss it if present before waiting for the authorize screen.
-  try {
-    await waitFor(DeviceLabels.LEDGER_SYNC_APP_IS_READY, 5);
-    if (isTouchDevice()) {
-      await pressAndRelease(DeviceLabels.LEDGER_SYNC_APP_IS_READY);
-    } else {
-      await buttons.both();
-    }
-  } catch {
-    // screen not shown, proceed directly
-  }
   await waitFor(DeviceLabels.CONNECT_TO);
 
   if (isTouchDevice()) {

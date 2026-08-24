@@ -394,6 +394,7 @@ test.describe("Ledger Sync - activation flow backup activated", () => {
       await app.ledgerSync.expectActivationScreenVisible();
 
       await app.ledgerSync.clickTurnOnLedgerSync();
+      await app.ledgerSync.clickConnectDevice();
       await app.speculos.activateLedgerSync();
       await app.ledgerSync.expectActivationSuccess();
 
