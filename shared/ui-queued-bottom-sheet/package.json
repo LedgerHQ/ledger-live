@@ -44,7 +44,7 @@
   },
   "devDependencies": {
     "@ledgerhq/lumen-ui-rnative": "catalog:",
-    "@support/jest-features-flow": "workspace:*",
+    "@ledgerhq/test-quarantine": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/react-native": "catalog:",
@@ -57,6 +57,7 @@
     "react-native": "catalog:",
     "react-native-safe-area-context": "catalog:",
     "react-test-renderer": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "@support/jest-shared": "workspace:*"
   }
 }

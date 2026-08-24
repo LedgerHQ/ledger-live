@@ -16258,6 +16258,9 @@ importers:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../support/test-quarantine
+      '@support/jest-shared':
+        specifier: workspace:*
+        version: link:../../support/jest-shared
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -16295,6 +16298,9 @@ importers:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../support/test-quarantine
+      '@support/jest-shared':
+        specifier: workspace:*
+        version: link:../../support/jest-shared
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -16350,6 +16356,9 @@ importers:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../support/test-quarantine
+      '@support/jest-shared':
+        specifier: workspace:*
+        version: link:../../support/jest-shared
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -16387,6 +16396,9 @@ importers:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../support/test-quarantine
+      '@support/jest-shared':
+        specifier: workspace:*
+        version: link:../../support/jest-shared
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -16418,6 +16430,9 @@ importers:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../support/test-quarantine
+      '@support/jest-shared':
+        specifier: workspace:*
+        version: link:../../support/jest-shared
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -16452,6 +16467,9 @@ importers:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../support/test-quarantine
+      '@support/jest-shared':
+        specifier: workspace:*
+        version: link:../../support/jest-shared
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -16476,6 +16494,9 @@ importers:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../support/test-quarantine
+      '@support/jest-shared':
+        specifier: workspace:*
+        version: link:../../support/jest-shared
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -16507,6 +16528,9 @@ importers:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../support/test-quarantine
+      '@support/jest-shared':
+        specifier: workspace:*
+        version: link:../../support/jest-shared
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -16535,6 +16559,9 @@ importers:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../support/test-quarantine
+      '@support/jest-shared':
+        specifier: workspace:*
+        version: link:../../support/jest-shared
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -16602,9 +16629,12 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.58(@ledgerhq/lumen-design-core@0.1.26)(@types/react@19.0.14)(react-native-safe-area-context@5.6.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
-      '@support/jest-features-flow':
+      '@ledgerhq/test-quarantine':
         specifier: workspace:*
-        version: link:../../support/jest-features-flow
+        version: link:../../support/test-quarantine
+      '@support/jest-shared':
+        specifier: workspace:*
+        version: link:../../support/jest-shared
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -16703,6 +16733,12 @@ importers:
         version: '@typescript/typescript6@6.0.2'
 
   support/jest-features-flow:
+    devDependencies:
+      react:
+        specifier: 19.1.4
+        version: 19.1.4
+
+  support/jest-shared:
     devDependencies:
       react:
         specifier: 19.1.4
@@ -25921,7 +25957,7 @@ packages:
       metro-react-native-babel-preset: '*'
       react: 19.1.4
       react-dom: 19.1.4
-      webpack: '*'
+      webpack: ^5.89.0
     peerDependenciesMeta:
       '@react-native/babel-preset':
         optional: true
