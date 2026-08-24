@@ -1,3 +1,5 @@
+import type { OperationType } from "@ledgerhq/types-live";
+
 export const ALEO_DUMMY_ADDRESS = "aleo14pfq40wgltv8wrhsxqe5tlme4pkp448rfejfvqhd4yj0qycs7c9s2xkcwv";
 
 export const PROGRAM_ID = {
@@ -22,9 +24,18 @@ export const TRANSACTION_TYPE = {
   TRANSFER_TOKEN_PRIVATE: "transfer_token_private",
   CONVERT_TOKEN_PRIVATE_TO_PUBLIC: "convert_token_private_to_public",
   CONVERT_TOKEN_PUBLIC_TO_PRIVATE: "convert_token_public_to_private",
+  BOND_PUBLIC: "bond_public",
+  UNBOND_PUBLIC: "unbond_public",
+  CLAIM_UNBOND_PUBLIC: "claim_unbond_public",
 } as const;
 
 export const FEE_INTENT_TYPES = new Set(["fee_public", "fee_private"]);
+
+export const STAKING_OPERATION_TYPE: Record<string, OperationType> = {
+  [TRANSACTION_TYPE.BOND_PUBLIC]: "BOND",
+  [TRANSACTION_TYPE.UNBOND_PUBLIC]: "UNBOND",
+  [TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC]: "WITHDRAW_UNBONDED",
+};
 
 // Function names that represent actual private token transfers between parties.
 // Used to exclude internal operations (split, join, fee_private, etc.) from history.
@@ -94,3 +105,13 @@ export const BALANCED_PRIVATE_RECORDS_PER_TRANSACTION = 8;
 
 // The estimated time in milliseconds it takes to sign a single record during transaction signing.
 export const SINGLE_CALL_SIGNING_TIME = 12500;
+
+// Minimum amount (in microcredits) required to bond/stake to a validator.
+// 1 ALEO = 1_000_000 microcredits (ALEO magnitude is 6).
+export const MIN_BOND_AMOUNT = 1_000_000;
+
+// Minimum total amount (in microcredits) a delegator must have bonded to a
+// validator: 10,000 ALEO. Enforced against the projected total stake
+// (already-bonded balance + this bond amount), so top-ups on an existing
+// >= 10,000 ALEO position only need to satisfy MIN_BOND_AMOUNT.
+export const MIN_STAKE_AMOUNT = 10_000 * 1_000_000;

@@ -30,9 +30,12 @@ import {
   assignToAccountRaw,
   assignToTokenAccountRaw,
   assignFromTokenAccountRaw,
+  toOperationExtraRaw,
+  fromOperationExtraRaw,
 } from "./serialization";
 import { getTransactionStatus } from "./getTransactionStatus";
 import { buildSignOperation } from "./signOperation";
+import { getPreloadStrategy, preload, hydrate } from "./preload";
 
 export function buildCurrencyBridge(signerContext: SignerContext<AleoSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
@@ -43,6 +46,9 @@ export function buildCurrencyBridge(signerContext: SignerContext<AleoSigner>): C
   });
 
   return {
+    getPreloadStrategy,
+    preload,
+    hydrate,
     scanAccounts,
   };
 }
@@ -72,6 +78,8 @@ export function buildAccountBridge(
     assignToAccountRaw,
     assignToTokenAccountRaw,
     assignFromTokenAccountRaw,
+    toOperationExtraRaw,
+    fromOperationExtraRaw,
     getSerializedAddressParameters,
     validateAddress,
   };
