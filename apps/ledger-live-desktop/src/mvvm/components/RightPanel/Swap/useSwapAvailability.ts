@@ -1,9 +1,9 @@
 import { useTradeAvailability } from "@ledgerhq/asset-detail";
 import { useAssetRouteLedgerIds } from "LLD/features/AssetDetail/hooks/useAssetRouteLedgerIds";
-import { getRightPanelRouteAssetId } from "./useRightPanelViewModel";
+import { getSwapRouteAssetId } from "./useSwapViewModel";
 
-export const useRightPanelSwapAvailability = (pathname: string): boolean => {
-  const routeAssetId = getRightPanelRouteAssetId(pathname);
+export const useSwapAvailability = (pathname: string): boolean => {
+  const routeAssetId = getSwapRouteAssetId(pathname);
   const { ledgerIds, isLoading } = useAssetRouteLedgerIds(routeAssetId);
   const { availableOnSwap, isResolved } = useTradeAvailability(ledgerIds);
 

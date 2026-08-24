@@ -2,13 +2,15 @@ import { useCallback, useLayoutEffect, useState } from "react";
 import { useLocation } from "react-router";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { SCROLL_TO_TOP_EVENT } from "./constants";
-import { shouldDisplayRightPanel as isRightPanelPage, getPageTestId } from "./utils";
-import { useRightPanelVisibility } from "LLD/components/RightPanel/useRightPanelVisibility";
-import { useRightPanelSwapAvailability } from "LLD/components/RightPanel/useRightPanelSwapAvailability";
+import { getPageTestId, getRightPanelVariant, type RightPanelVariant } from "./utils";
+import { useSwapVisibility } from "LLD/components/RightPanel/Swap/useSwapVisibility";
+import { useSwapAvailability } from "LLD/components/RightPanel/Swap/useSwapAvailability";
+import { useCardVisibility } from "LLD/components/RightPanel/Card/useCardVisibility";
 
 export interface PageViewModelResult {
   readonly pageScrollerRef: (node: HTMLDivElement | null) => void;
   readonly shouldRenderRightPanel: boolean;
+  readonly rightPanelVariant?: RightPanelVariant;
   readonly pageTestId: string;
 }
 
@@ -16,13 +18,21 @@ export const usePageViewModel = (): PageViewModelResult => {
   const [scrollerElement, setScrollerElement] = useState<HTMLDivElement | null>(null);
   const { pathname } = useLocation();
   const { shouldDisplayAggregatedAssets } = useWalletFeaturesConfig("desktop");
-  const isRightPanelEnabled = useRightPanelVisibility();
-  const isSwapAvailableForRoute = useRightPanelSwapAvailability(pathname);
+  const isSwapEnabled = useSwapVisibility();
+  const isSwapAvailableForRoute = useSwapAvailability(pathname);
+  const isCardEnabled = useCardVisibility();
 
-  const shouldRenderRightPanel =
-    isRightPanelPage(pathname, { shouldDisplayAggregatedAssets }) &&
-    isRightPanelEnabled &&
-    isSwapAvailableForRoute;
+  const variant = getRightPanelVariant(pathname, { shouldDisplayAggregatedAssets });
+  const isSwapUsable = isSwapEnabled && isSwapAvailableForRoute;
+
+  // Per-variant visibility gating. Exhaustive Record: adding a variant requires an entry here.
+  const rightPanelVariantEnabled: Record<RightPanelVariant, boolean> = {
+    swap: isSwapUsable,
+    card: isCardEnabled,
+  };
+
+  const shouldRenderRightPanel = variant !== undefined && rightPanelVariantEnabled[variant];
+  const rightPanelVariant = shouldRenderRightPanel ? variant : undefined;
 
   // Callback ref to capture the scroller element
   const pageScrollerRef = useCallback((node: HTMLDivElement | null) => {
@@ -56,6 +66,7 @@ export const usePageViewModel = (): PageViewModelResult => {
   return {
     pageScrollerRef,
     shouldRenderRightPanel,
+    rightPanelVariant,
     pageTestId: getPageTestId(pathname),
   };
 };

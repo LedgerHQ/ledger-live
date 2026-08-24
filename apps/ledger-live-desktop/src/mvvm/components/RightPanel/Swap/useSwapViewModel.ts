@@ -11,7 +11,7 @@ import { accountsSelector } from "~/renderer/reducers/accounts";
 import { useDistribution } from "~/renderer/actions/general";
 import { decodeRouteParam } from "LLD/features/AssetDetail/utils/decodeRouteParam";
 import { buildSwapNavigationState } from "LLD/features/Market/utils/swapNavigation";
-import type { RightPanelViewModel } from "./types";
+import type { SwapViewModel } from "./types";
 
 const ASSET_PATH_PREFIX = "/asset/";
 const WEBVIEW_KEY_PLACEHOLDER = "none";
@@ -19,24 +19,24 @@ const WEBVIEW_KEY_PLACEHOLDER = "none";
 const buildSwapWebViewKey = (assetId?: string, accountId?: string): string =>
   [assetId, accountId].map(part => part || WEBVIEW_KEY_PLACEHOLDER).join("::");
 
-export const DEFAULT_RIGHT_PANEL_VIEW_MODEL: RightPanelViewModel = {
+export const DEFAULT_SWAP_VIEW_MODEL: SwapViewModel = {
   initialSwapState: undefined,
   webviewKey: buildSwapWebViewKey(),
 };
 
-export const getRightPanelRouteAssetId = (pathname: string): string | undefined => {
+export const getSwapRouteAssetId = (pathname: string): string | undefined => {
   if (!pathname.startsWith(ASSET_PATH_PREFIX)) return undefined;
   const routeAssetId = pathname.slice(ASSET_PATH_PREFIX.length);
   return routeAssetId || undefined;
 };
 
-interface UseRightPanelViewModelParams {
+interface UseSwapViewModelParams {
   readonly pathname: string;
   readonly routeAssetId: string;
   readonly marketState?: MarketStateSlice;
 }
 
-export const useRightPanelRouteCurrency = (
+export const useSwapRouteCurrency = (
   routeAssetId: string | undefined,
   marketState?: MarketStateSlice,
 ) => {
@@ -53,14 +53,14 @@ export const useRightPanelRouteCurrency = (
   }, [routeAssetId, marketState, distribution]);
 };
 
-export const useRightPanelViewModel = ({
+export const useSwapViewModel = ({
   pathname,
   routeAssetId,
   marketState,
-}: UseRightPanelViewModelParams): RightPanelViewModel => {
+}: UseSwapViewModelParams): SwapViewModel => {
   const allAccounts = useSelector(accountsSelector);
 
-  const currency = useRightPanelRouteCurrency(routeAssetId, marketState);
+  const currency = useSwapRouteCurrency(routeAssetId, marketState);
   const decodedRouteAssetId = decodeRouteParam(routeAssetId).toLowerCase();
 
   const initialSwapState = useMemo(() => {

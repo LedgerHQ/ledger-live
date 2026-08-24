@@ -1,5 +1,5 @@
 import { renderHook } from "tests/testSetup";
-import { useRightPanelSwapAvailability } from "../useRightPanelSwapAvailability";
+import { useSwapAvailability } from "../useSwapAvailability";
 import { useAssetRouteLedgerIds } from "LLD/features/AssetDetail/hooks/useAssetRouteLedgerIds";
 import { useTradeAvailability } from "@ledgerhq/asset-detail";
 
@@ -21,7 +21,7 @@ const mockSwap = (availableOnSwap: boolean, isResolved = true) =>
     isResolved,
   });
 
-describe("useRightPanelSwapAvailability", () => {
+describe("useSwapAvailability", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockLedgerIds(["bitcoin"]);
@@ -32,14 +32,14 @@ describe("useRightPanelSwapAvailability", () => {
     mockLedgerIds([]);
     mockSwap(false);
 
-    expect(renderHook(() => useRightPanelSwapAvailability("/")).result.current).toBe(true);
-    expect(renderHook(() => useRightPanelSwapAvailability("/analytics")).result.current).toBe(true);
+    expect(renderHook(() => useSwapAvailability("/")).result.current).toBe(true);
+    expect(renderHook(() => useSwapAvailability("/analytics")).result.current).toBe(true);
   });
 
   it("allows the panel when swap is available for the asset", () => {
     mockSwap(true);
 
-    const { result } = renderHook(() => useRightPanelSwapAvailability("/asset/bitcoin"));
+    const { result } = renderHook(() => useSwapAvailability("/asset/bitcoin"));
 
     expect(result.current).toBe(true);
   });
@@ -47,7 +47,7 @@ describe("useRightPanelSwapAvailability", () => {
   it("hides the panel when swap is unavailable for the asset", () => {
     mockSwap(false);
 
-    const { result } = renderHook(() => useRightPanelSwapAvailability("/asset/bitcoin"));
+    const { result } = renderHook(() => useSwapAvailability("/asset/bitcoin"));
 
     expect(result.current).toBe(false);
   });
@@ -56,7 +56,7 @@ describe("useRightPanelSwapAvailability", () => {
     mockLedgerIds(["bitcoin"], true);
     mockSwap(false);
 
-    const { result } = renderHook(() => useRightPanelSwapAvailability("/asset/bitcoin"));
+    const { result } = renderHook(() => useSwapAvailability("/asset/bitcoin"));
 
     expect(result.current).toBe(true);
   });
@@ -64,7 +64,7 @@ describe("useRightPanelSwapAvailability", () => {
   it("allows the panel while swap availability is unresolved", () => {
     mockSwap(false, false);
 
-    const { result } = renderHook(() => useRightPanelSwapAvailability("/asset/bitcoin"));
+    const { result } = renderHook(() => useSwapAvailability("/asset/bitcoin"));
 
     expect(result.current).toBe(true);
   });
@@ -73,7 +73,7 @@ describe("useRightPanelSwapAvailability", () => {
     mockLedgerIds([]);
     mockSwap(false);
 
-    const { result } = renderHook(() => useRightPanelSwapAvailability("/asset/bitcoin"));
+    const { result } = renderHook(() => useSwapAvailability("/asset/bitcoin"));
 
     expect(result.current).toBe(false);
   });
