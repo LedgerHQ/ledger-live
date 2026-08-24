@@ -164,6 +164,10 @@ describe("EVM Family", () => {
     });
 
     describe("getOperations", () => {
+      beforeEach(() => {
+        process.env.NFT_CURRENCIES = JSON.stringify([]);
+      });
+
       it("should throw if the explorer is misconfigured", async () => {
         mockGetConfig.mockImplementationOnce((): any => {
           return {

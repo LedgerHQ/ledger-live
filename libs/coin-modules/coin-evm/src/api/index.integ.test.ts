@@ -6,7 +6,7 @@ import {
   StakingTransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/types";
 import { ethers } from "ethers";
-import { EvmConfig, EvmConfigInfo, NftStandard } from "../config";
+import { EvmConfig, EvmConfigInfo } from "../config";
 import { createMockEvmContext } from "../fixtures/context.fixtures";
 import { createApi } from "./index";
 
@@ -680,6 +680,8 @@ describe.each([
       });
 
       it("Spoofed NFT transfer through smart contract", async () => {
+        process.env.NFT_CURRENCIES = JSON.stringify(["ethereum"]);
+
         const txHash = "0x61adea29cbf2e50f9ab975636af9a624620589c2cca9b8dc82ccccaefeb9c6ad";
         const blockHeight = 21348730;
         const caller = "0x6b2ae7cc19eda092476f32cced9311da568a823c";
