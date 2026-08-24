@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Pressable, Text } from "react-native";
 import { render, screen, waitFor } from "@tests/test-renderer";
 import storage from "LLM/storage";
+import { NotificationsPromptProvider } from "LLM/features/NotificationsPrompt";
 import NotificationsOptIn from "..";
 import { NavigatorName } from "~/const";
 
@@ -33,11 +34,13 @@ function BaseScreen({ route }: { route: { params?: { screen?: string } } }) {
 
 function TestNavigator({ initialRouteName = "NotificationsOptIn" }) {
   return (
-    <Stack.Navigator initialRouteName={initialRouteName} screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Previous" component={EntryScreen} />
-      <Stack.Screen name="NotificationsOptIn" component={NotificationsOptIn} />
-      <Stack.Screen name={NavigatorName.Base} component={BaseScreen} />
-    </Stack.Navigator>
+    <NotificationsPromptProvider>
+      <Stack.Navigator initialRouteName={initialRouteName} screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="Previous" component={EntryScreen} />
+        <Stack.Screen name="NotificationsOptIn" component={NotificationsOptIn} />
+        <Stack.Screen name={NavigatorName.Base} component={BaseScreen} />
+      </Stack.Navigator>
+    </NotificationsPromptProvider>
   );
 }
 

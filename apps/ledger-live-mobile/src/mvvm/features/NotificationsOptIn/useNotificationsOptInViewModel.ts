@@ -2,15 +2,19 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { AuthorizationStatus } from "@react-native-firebase/messaging";
 import { track } from "~/analytics";
-import { useSelector } from "~/context/hooks";
-import { notificationsSelector } from "~/reducers/settings";
 import { NavigatorName, ScreenName } from "~/const";
 import {
   RootNavigationComposite,
   StackNavigatorNavigation,
 } from "~/components/RootNavigator/types/helpers";
 import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
-import { useNotifications } from "LLM/features/NotificationsPrompt";
+import {
+  useNotificationsData,
+  useNotificationsPrompt,
+  useNotificationsPromptEligibility,
+  type NotificationsPromptRepromptDelay,
+} from "LLM/features/NotificationsPrompt";
+import { useNotificationsPermission } from "LLM/hooks/useNotificationsPermission";
 import { useCompleteLazyOnboarding } from "./hooks/useCompleteLazyOnboarding";
 
 export type NotificationsOptInState = "default" | "error";
@@ -23,7 +27,7 @@ export type NotificationsOptInViewModel = {
   onContinue: () => void;
   isAllowNotificationsDisabled: boolean;
   dismissedCount: number;
-  nextRepromptDelay: ReturnType<typeof useNotifications>["nextRepromptDelay"];
+  nextRepromptDelay: NotificationsPromptRepromptDelay | null;
 };
 
 export function useNotificationsOptInViewModel(): NotificationsOptInViewModel {
@@ -32,16 +36,16 @@ export function useNotificationsOptInViewModel(): NotificationsOptInViewModel {
       RootNavigationComposite<StackNavigatorNavigation<OnboardingNavigatorParamList>>
     >();
   const completeLazyOnboarding = useCompleteLazyOnboarding();
-  const notifications = useSelector(notificationsSelector);
-  const {
-    initPushNotificationsData,
+  const { initPushNotificationsData } = useNotificationsPrompt();
+  const { permissionStatus, requestPushNotificationsPermission } = useNotificationsPermission();
+  const { notifications, pushNotificationsDataOfUser, markUserAsOptIn, markUserAsOptOut } =
+    useNotificationsData();
+  const { nextRepromptDelay } = useNotificationsPromptEligibility({
     permissionStatus,
-    requestPushNotificationsPermission,
-    markUserAsOptIn,
-    markUserAsOptOut,
-    nextRepromptDelay,
+    areNotificationsAllowed: notifications.areNotificationsAllowed,
+    transactionsAlertsCategory: notifications.transactionsAlertsCategory,
     pushNotificationsDataOfUser,
-  } = useNotifications();
+  });
   const [state, setState] = useState<NotificationsOptInState>("default");
   const [isInitialized, setIsInitialized] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
