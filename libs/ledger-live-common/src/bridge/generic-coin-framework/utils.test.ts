@@ -870,6 +870,33 @@ describe("coin-framework utils", () => {
           memos: new Map([["destinationTag", "42"]]),
         });
       });
+
+      it("maps transferId to a transferId memo", () => {
+        const intent = transactionToIntent(account, {
+          transferId: "12345",
+        } as GenericTransaction);
+        expect(intent.memo).toEqual({ type: "transferId", value: "12345" });
+      });
+
+      it("prefers tag over transferId when both are set", () => {
+        const intent = transactionToIntent(account, {
+          tag: 42,
+          transferId: "12345",
+        } as GenericTransaction);
+        expect(intent.memo).toEqual({
+          type: "map",
+          memos: new Map([["destinationTag", "42"]]),
+        });
+      });
+
+      it("prefers transferId over memoType/memoValue when both are set", () => {
+        const intent = transactionToIntent(account, {
+          transferId: "12345",
+          memoType: "memo-type",
+          memoValue: "memo-value",
+        } as GenericTransaction);
+        expect(intent.memo).toEqual({ type: "transferId", value: "12345" });
+      });
     });
 
     it.each([
@@ -1297,11 +1324,8 @@ describe("coin-framework utils", () => {
     });
   });
 
-  // Copilot warned that getPendingTokenSpent could lock native fees as token amount,
-  // because "FEES" is in OPERATION_TYPE_OUT_FAMILY and some fixtures/source data can
-  // attach a pending FEES op to a token sub-account.
-  // For optimistic ops produced via buildOptimisticOperation, addPendingOperation routes
-  // the FEES *parent* op to the native account and the OUT *sub*-op to the token account.
+  // addPendingOperation routes the FEES *parent* op to the native account and the
+  // OUT *sub*-op to the token account, so getPendingTokenSpent never sees a FEES op.
   describe("real pending-op distribution (buildOptimisticOperation + addPendingOperation)", () => {
     const subAccountId = "sub-account-id";
     const buildAccount = (): Account =>
@@ -1488,6 +1512,20 @@ describe("coin-framework utils", () => {
         hasFailed: false,
         extra: {},
       });
+    });
+
+    it("surfaces details.transferId on extra.transferId (Casper memo equivalent)", () => {
+      const op = { ...baseOp, details: { transferId: "42" } };
+
+      const result = adaptCoreOperationToLiveOperation(accountId, op);
+
+      expect(result.extra).toEqual({ transferId: "42" });
+    });
+
+    it("omits extra.transferId when details.transferId is absent", () => {
+      const result = adaptCoreOperationToLiveOperation(accountId, baseOp);
+
+      expect(result.extra).not.toHaveProperty("transferId");
     });
 
     it.each([["FEES"], ["DELEGATE"], ["UNDELEGATE"], ["REDELEGATE"]])(

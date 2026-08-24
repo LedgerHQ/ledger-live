@@ -88,6 +88,7 @@ export type GenericTransaction = TransactionCommon & {
   nonce?: BigNumber | null | undefined;
   memoType?: string | null;
   memoValue?: string | null;
+  transferId?: string | null;
   data?: Buffer;
   mode?: GenericTransactionMode;
   type?: number | null;
@@ -148,6 +149,7 @@ export type GenericTransactionRaw = TransactionCommonRaw & {
   nonce?: string | null | undefined;
   memoType?: string | null;
   memoValue?: string | null;
+  transferId?: string | null;
   data?: string;
   mode?: GenericTransactionMode;
   type?: number | null;

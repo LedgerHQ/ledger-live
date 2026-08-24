@@ -27,7 +27,14 @@ const memoApplicationRegistry: Record<string, MemoApplicationFn> = {
       },
     };
   },
-  casper: memo => ({ transferId: memo }),
+  casper: memo => {
+    // Emits both the legacy `transferId` and the generic adapter's `memoType`/`memoValue`.
+    if (memo === undefined) {
+      return { transferId: undefined, memoType: undefined, memoValue: undefined };
+    }
+    const value = String(memo);
+    return { transferId: value, memoType: "transferId", memoValue: value };
+  },
   xrp: memo => {
     if (typeof memo === "number") return { tag: memo };
     if (typeof memo === "string") return { tag: Number(memo) };

@@ -525,6 +525,7 @@ type FrameworkOperationExtra = {
   parentRecipients?: string[];
   ledgerOpType?: string | undefined;
   memo?: string | undefined;
+  transferId?: string | undefined;
   internal?: boolean;
   feePayer?: string;
   stake?: { address: string; amount: BigNumber };
@@ -550,6 +551,7 @@ const FRAMEWORK_RESERVED_EXTRA_KEYS: ReadonlySet<string> = new Set(
     parentRecipients: true,
     ledgerOpType: true,
     memo: true,
+    transferId: true,
     internal: true,
     feePayer: true,
     stake: true,
@@ -654,6 +656,11 @@ function buildOperationExtra(op: CoreOperation): FrameworkOperationExtra {
 
   if (op.details?.memo) {
     extra.memo = op.details.memo as string;
+  }
+
+  // Casper's memo equivalent; extra.transferId is already read by the LLD/LLM operation-detail views.
+  if (op.details?.transferId) {
+    extra.transferId = op.details.transferId as string;
   }
 
   if (op.details?.internal === true) {
@@ -835,6 +842,12 @@ export function transactionToIntent(
       type: "map",
       memos: new Map([["destinationTag", String(transaction.tag)]]),
     };
+  } else if (transaction.transferId) {
+    // Casper's legacy Send fields only write `transferId`, never `memoType`/`memoValue`.
+    res.memo = {
+      type: "transferId",
+      value: transaction.transferId,
+    };
   } else if (transaction.memoType && transaction.memoValue) {
     res.memo = {
       type: transaction.memoType,
@@ -902,6 +915,7 @@ function toGenericTransactionRaw(transaction: GenericTransaction): GenericTransa
   const stringFieldsToPropagate = [
     "memoType",
     "memoValue",
+    "transferId",
     "assetReference",
     "assetOwner",
   ] as const;

@@ -14,6 +14,18 @@ import { toSafeNumber } from "./utils";
 import { isAddressValid } from "./validateAddress";
 import { validateMemo } from "./validateMemo";
 
+// Honours both coin-casper's `StringMemo<"transferId">` and the generic adapter's `{ type: "transferId" }`.
+function extractTransferId(memo: unknown): string | undefined {
+  if (!memo || typeof memo !== "object") return undefined;
+  const candidate = memo as { type?: string; kind?: string; value?: unknown };
+  const isStringMemo = candidate.type === "string" && candidate.kind === "transferId";
+  const isGenericMemo = candidate.type === "transferId";
+  if ((isStringMemo || isGenericMemo) && typeof candidate.value === "string") {
+    return candidate.value;
+  }
+  return undefined;
+}
+
 export async function craftTransaction(
   transactionIntent: TransactionIntent<CasperMemo>,
   customFees?: FeeEstimation,
@@ -36,7 +48,7 @@ export async function craftTransaction(
   }
 
   const memo = "memo" in transactionIntent ? transactionIntent.memo : undefined;
-  const transferId = memo?.type === "string" && memo.kind === "transferId" ? memo.value : undefined;
+  const transferId = extractTransferId(memo);
 
   if (typeof transferId === "string" && transferId.length > 0 && !validateMemo(transferId)) {
     throw new CasperInvalidTransferId("", {

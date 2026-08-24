@@ -147,6 +147,17 @@ export function createTransaction(account: Account | TokenAccount): GenericTrans
         assetReference: "",
         assetOwner: "",
       };
+    case "casper":
+      // Casper has no account sequence either (see near/vechain/cardano above): casper-js-sdk's
+      // transaction builder takes no nonce, replay protection is via `ttl` alone, and the legacy
+      // bridge never fetches one. `nonce: 0` makes `intent.sequence` a valid bigint upfront so
+      // `signOperation` skips calling the coin module's unimplemented `getNextSequence`.
+      return {
+        ...sendDefaults(currency.family),
+        memoType: null,
+        memoValue: null,
+        nonce: new BigNumber(0),
+      };
     default:
       throw new Error(`Unsupported currency family: ${currency.family}`);
   }

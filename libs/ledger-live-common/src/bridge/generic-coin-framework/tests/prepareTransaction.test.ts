@@ -75,6 +75,35 @@ describe("genericPrepareTransaction", () => {
     );
   });
 
+  it("estimates fees for a Casper transaction carrying a transfer id", async () => {
+    const casperFee = new BigNumber(100_000_000);
+    (getCoinModuleApi as jest.Mock).mockReturnValue({
+      estimateFees: jest.fn().mockResolvedValue({ value: casperFee }),
+    });
+
+    const casperTransaction = {
+      amount: new BigNumber(2_500_000_000),
+      fees: new BigNumber(1),
+      recipient: "casperRecipient",
+      family: "casper",
+      memoType: "transferId",
+      memoValue: "42",
+    };
+
+    const prepareTransaction = genericPrepareTransaction("mainnet", "local");
+    const result = await prepareTransaction(account, casperTransaction as any);
+
+    expect((result as any).fees.toString()).toBe(casperFee.toString());
+    expect(transactionToIntent).toHaveBeenCalledTimes(1);
+    expect(transactionToIntent).toHaveBeenCalledWith(
+      account,
+      expect.objectContaining({ family: "casper", memoType: "transferId", memoValue: "42" }),
+      undefined,
+      expect.any(Function),
+      undefined,
+    );
+  });
+
   it("returns original transaction if fees are the same", async () => {
     const sameFee = baseTransaction.fees;
 

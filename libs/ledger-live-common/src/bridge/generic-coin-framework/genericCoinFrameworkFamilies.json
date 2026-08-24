@@ -5,5 +5,6 @@
   "stellar": true,
   "tezos": true,
   "tron": true,
+  "casper": true,
   "solana": false
 }

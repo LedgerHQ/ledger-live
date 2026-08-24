@@ -1,5 +1,5 @@
 import { InvalidAddress } from "@ledgerhq/ledger-wallet-framework/errors";
-import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
+import type { StringMemo, TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
 import BigNumber from "bignumber.js";
 import { Args, NativeTransferBuilder, Transaction } from "casper-js-sdk";
 import { TEST_ADDRESSES, TEST_TRANSFER_IDS } from "../__tests__/fixtures/addresses.fixture";
@@ -50,9 +50,29 @@ describe("craftTransaction", () => {
       }),
     );
 
+    expect(idSpy).toHaveBeenCalledTimes(1);
     expect(idSpy).toHaveBeenCalledWith(TEST_TRANSFER_IDS.VALID);
     const idArg = getArgs(transaction).getByName("id");
     expect(idArg?.option?.isEmpty()).toBe(false);
+    expect(idArg?.option?.value()?.ui64?.toString()).toBe(TEST_TRANSFER_IDS.VALID);
+  });
+
+  it("accepts the generic adapter's memo shape { type: 'transferId', value }", async () => {
+    const idSpy = jest.spyOn(NativeTransferBuilder.prototype, "id");
+
+    // Not a StringMemo, so it reaches craftTransaction as a bare Memo (hence the cast).
+    const { transaction } = await craftTransaction(
+      baseIntent({
+        memo: {
+          type: "transferId",
+          value: TEST_TRANSFER_IDS.VALID,
+        } as unknown as StringMemo<"transferId">,
+      }),
+    );
+
+    expect(idSpy).toHaveBeenCalledTimes(1);
+    expect(idSpy).toHaveBeenCalledWith(TEST_TRANSFER_IDS.VALID);
+    const idArg = getArgs(transaction).getByName("id");
     expect(idArg?.option?.value()?.ui64?.toString()).toBe(TEST_TRANSFER_IDS.VALID);
   });
 

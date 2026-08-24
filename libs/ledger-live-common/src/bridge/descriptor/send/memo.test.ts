@@ -6,8 +6,12 @@ describe("applyMemoToTransaction", () => {
       expect(applyMemoToTransaction("xrp", "")).toEqual({ tag: undefined });
     });
 
-    it("casper: empty string clears the transferId", () => {
-      expect(applyMemoToTransaction("casper", "")).toEqual({ transferId: undefined });
+    it("casper: empty string clears all three casper fields", () => {
+      expect(applyMemoToTransaction("casper", "")).toEqual({
+        transferId: undefined,
+        memoType: undefined,
+        memoValue: undefined,
+      });
     });
 
     it("solana: empty string clears the memo", () => {
@@ -32,8 +36,20 @@ describe("applyMemoToTransaction", () => {
       expect(applyMemoToTransaction("xrp", "123")).toEqual({ tag: 123 });
     });
 
-    it("casper: transferId", () => {
-      expect(applyMemoToTransaction("casper", "42")).toEqual({ transferId: "42" });
+    it("casper: transferId, plus the memoType/memoValue pair the generic adapter reads", () => {
+      expect(applyMemoToTransaction("casper", "42")).toEqual({
+        transferId: "42",
+        memoType: "transferId",
+        memoValue: "42",
+      });
+    });
+
+    it("casper: coerces a numeric transfer id to a string so a large u64 is not rounded", () => {
+      expect(applyMemoToTransaction("casper", 42)).toEqual({
+        transferId: "42",
+        memoType: "transferId",
+        memoValue: "42",
+      });
     });
 
     it("stellar: forwards value and type", () => {

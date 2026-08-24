@@ -85,6 +85,8 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     family: "casper",
     supportedCoins: ["casper"],
     loadSetup: () => import("../families/casper/setup"),
+    loadLocalApi: () =>
+      import("../families/casper/coinModuleApi").then(m => m.createLocalCasperApi),
     loadTransaction: () => import("@ledgerhq/coin-casper/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
       import("@ledgerhq/coin-casper/deviceTransactionConfig").then(m => m.default),

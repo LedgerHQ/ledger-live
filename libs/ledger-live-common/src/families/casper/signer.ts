@@ -9,9 +9,7 @@ import { createDeviceSigner } from "./deviceSigner";
 export const createSigner: CreateSigner<CasperFrameworkSigner> = (transport: Transport) =>
   createFrameworkSigner(createDeviceSigner(transport));
 
-export const casperGetAddress = (
-  signerContext: SignerContext<CasperFrameworkSigner>,
-): GetAddressFn => {
+const casperGetAddress = (signerContext: SignerContext<CasperFrameworkSigner>): GetAddressFn => {
   return (deviceId, { path, verify }) =>
     signerContext(deviceId, signer => signer.getAddress(path, { verify }));
 };
