@@ -143,7 +143,7 @@ function useFlushMechanism({ flush, cancel }: { flush: () => void; cancel: () =>
 }
 
 function walletExportSelector(state: State) {
-  return exportWalletState(walletSelector(state));
+  return exportWalletState(walletSelector(state), state.contacts);
 }
 
 const getSettingsChanged = (a: State, b: State) => a.settings !== b.settings;
@@ -176,6 +176,11 @@ const accountsDbSaveSliceSelector = createSelector(
   (state: State) => state.wallet,
   (accounts, wallet) => ({ accounts, wallet }),
 );
+const walletDbSaveSliceSelector = createSelector(
+  (state: State) => state.wallet,
+  (state: State) => state.contacts,
+  (wallet, contacts) => ({ wallet, contacts }),
+);
 const bleNotEquals = (a: State, b: State) => a.ble !== b.ble;
 const knownDevicesNotEquals = (a: State, b: State) => a.knownDevices !== b.knownDevices;
 
@@ -202,7 +207,7 @@ const payCardPersistedNotEquals = (a: State, b: State) =>
   !isEqual(payCardPersistedSelector(a), payCardPersistedSelector(b));
 const trustchainNotEquals = (a: State, b: State) => a.trustchain !== b.trustchain;
 const compareWalletState = (a: State, b: State) =>
-  walletStateExportShouldDiffer(a.wallet, b.wallet);
+  walletStateExportShouldDiffer(a.wallet, b.wallet, a.contacts, b.contacts);
 const largeMoverNotEquals = (a: State, b: State) => a.largeMover !== b.largeMover;
 
 const cryptoAssetsNotEquals = (a: State, b: State) =>
@@ -326,7 +331,7 @@ export const ConfigureDBSaveEffects = () => {
   });
 
   useDBSaveEffect({
-    stateSelector: (state: State) => state.wallet,
+    stateSelector: walletDbSaveSliceSelector,
     save: saveWalletExportState,
     throttle: 500,
     getChangesStats: compareWalletState,

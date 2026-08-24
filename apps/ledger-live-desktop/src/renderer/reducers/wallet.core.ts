@@ -1,5 +1,6 @@
 import { combineReducers, type Dispatch } from "@reduxjs/toolkit";
 import { accountNamesSlice, initFromUserData } from "@domain/entity-account-name";
+import { setContacts, type ContactsState } from "@domain/entity-contact";
 import { starredAccountsSlice, initStarredFromIds } from "@domain/entity-starred-account";
 import { walletSyncSlice, walletSyncUpdate, type WSState } from "@domain/entity-wallet-sync";
 import {
@@ -32,24 +33,35 @@ export type ExportedWalletState = {
     accountNames: Array<[string, string]>;
     starredAccountIds: string[];
   };
+  contacts: ContactsState["contacts"];
   recentAddresses: RecentAddressesState;
 };
 
-export const exportWalletState = (state: WalletState): ExportedWalletState => ({
+export const exportWalletState = (
+  state: WalletState,
+  contacts: ContactsState,
+): ExportedWalletState => ({
   walletSyncState: state.walletSync.walletSyncState,
   nonImportedAccountInfos: state.nonImportedAccountInfos,
   accountsData: {
     accountNames: Array.from(state.accountNames),
     starredAccountIds: Array.from(state.starredAccountIds),
   },
+  contacts: contacts.contacts,
   recentAddresses: state.recentAddresses,
 });
 
-export const walletStateExportShouldDiffer = (a: WalletState, b: WalletState): boolean =>
+export const walletStateExportShouldDiffer = (
+  a: WalletState,
+  b: WalletState,
+  aContacts: ContactsState,
+  bContacts: ContactsState,
+): boolean =>
   a.walletSync.walletSyncState !== b.walletSync.walletSyncState ||
   a.nonImportedAccountInfos !== b.nonImportedAccountInfos ||
   a.accountNames !== b.accountNames ||
   a.starredAccountIds !== b.starredAccountIds ||
+  aContacts.contacts !== bContacts.contacts ||
   a.recentAddresses !== b.recentAddresses;
 
 export const importWalletState =
@@ -68,6 +80,9 @@ export const importWalletState =
     }
     if (payload.nonImportedAccountInfos !== undefined) {
       dispatch(setNonImportedAccounts(payload.nonImportedAccountInfos));
+    }
+    if (payload.contacts !== undefined) {
+      dispatch(setContacts(payload.contacts));
     }
     if (payload.recentAddresses !== undefined) {
       dispatch(updateRecentAddresses(payload.recentAddresses));
