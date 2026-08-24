@@ -13,30 +13,38 @@ import {
 
 function resolveHardwareCarouselDeviceModel(
   knownDeviceModelIds: Record<DeviceModelId, boolean>,
-): HardwareCarouselDeviceModel {
+): HardwareCarouselDeviceModel | undefined {
   if (knownDeviceModelIds[DeviceModelId.nanoX]) {
     return "lnx";
   }
 
-  return "lnsp";
+  if (knownDeviceModelIds[DeviceModelId.nanoSP]) {
+    return "lnsp";
+  }
+
+  return undefined;
 }
 
 export function useHardwareCarouselPageTracking(shouldTrack: boolean) {
   const knownDeviceModelIds = useSelector(knownDeviceModelIdsSelector);
   const personalRecoOptIn = useSelector(personalizedRecommendationsEnabledSelector);
 
-  const sharedAnalyticsProps: HardwareCarouselSharedAnalyticsProps = useMemo(
-    () => ({
-      deviceModel: resolveHardwareCarouselDeviceModel(knownDeviceModelIds),
+  const sharedAnalyticsProps: HardwareCarouselSharedAnalyticsProps | undefined = useMemo(() => {
+    const deviceModel = resolveHardwareCarouselDeviceModel(knownDeviceModelIds);
+    if (!deviceModel) {
+      return undefined;
+    }
+
+    return {
+      deviceModel,
       personalRecoOptIn,
       offerType: personalRecoOptIn ? "discount" : "none",
       platform: "llm",
-    }),
-    [knownDeviceModelIds, personalRecoOptIn],
-  );
+    };
+  }, [knownDeviceModelIds, personalRecoOptIn]);
 
   useEffect(() => {
-    if (shouldTrack) {
+    if (shouldTrack && sharedAnalyticsProps) {
       trackHardwareCarouselShown(sharedAnalyticsProps);
     }
   }, [shouldTrack, sharedAnalyticsProps]);
