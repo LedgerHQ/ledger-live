@@ -65,7 +65,7 @@ export function useAmountInput({
   const { displayMode: inputMode, setDisplayMode: setInputMode } = useSendAmountDisplayMode();
   const [fiatInputValue, setFiatInputValue] = useState<string>("");
   const [cryptoInputValue, setCryptoInputValue] = useState<string>("");
-  const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const debounceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastTransactionAmountRef = useRef<BigNumber>(cryptoAmount);
   const lastFiatAmountRef = useRef<BigNumber>(fiatAmount);
   const lastUseAllAmountRef = useRef<boolean>(transaction.useAllAmount ?? false);

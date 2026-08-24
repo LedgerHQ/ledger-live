@@ -22,7 +22,7 @@ function RepairDeviceButton({ buttonProps, onRepair }: Readonly<Props>) {
   const [progress, setProgress] = useState(0);
 
   const subRef = useRef<Subscription | undefined>(undefined);
-  const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   useEffect(() => {
     return () => {

@@ -7796,6 +7796,9 @@ importers:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
+      '@support/jest-features-flow':
+        specifier: workspace:*
+        version: link:../../../support/jest-features-flow
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11

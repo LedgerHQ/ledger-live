@@ -3,7 +3,13 @@ const path = require("path");
 const swcTransform = {
   "^.+\\.(t|j)sx?$": [
     "@swc/jest",
-    { jsc: { target: "esnext", parser: { syntax: "typescript", tsx: true } } },
+    {
+      jsc: {
+        target: "esnext",
+        parser: { syntax: "typescript", tsx: true },
+        transform: { react: { runtime: "automatic" } },
+      },
+    },
   ],
 };
 

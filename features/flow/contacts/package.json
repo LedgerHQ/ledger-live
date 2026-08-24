@@ -19,10 +19,12 @@
     "format": "oxfmt src",
     "format:check": "oxfmt src --check",
     "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
+    "typecheck:web": "tsc --noEmit -p tsconfig.web.json",
+    "typecheck:native": "tsc --noEmit -p tsconfig.native.json --explainFiles 2>&1 | grep -A 10 'ContactsRenameContactDialog.web.tsx'",
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W features/flow/contacts"
+    "unimported": "pnpm knip --directory ../../.. -c features/flow/contacts/knip.web.config.mjs -W features/flow/contacts --tsConfig tsconfig.web.json  && pnpm knip --directory ../../.. -c features/flow/contacts/knip.native.config.mjs -W features/flow/contacts --tsConfig tsconfig.native.json"
   },
   "dependencies": {
     "@domain/entity-contact": "workspace:*",

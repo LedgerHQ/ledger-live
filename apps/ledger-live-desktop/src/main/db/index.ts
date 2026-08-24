@@ -18,7 +18,7 @@ import { encryptData, decryptData } from "~/main/db/crypto";
 import { readFile, writeFile } from "~/main/db/fsHelper";
 
 const debounce = <T, R>(fn: (...args: T[]) => R, ms: number) => {
-  let timeout: NodeJS.Timeout | undefined;
+  let timeout: ReturnType<typeof setTimeout> | undefined;
   let resolveRefs: Array<(value: R | PromiseLike<R>) => void> = [];
   let rejectRefs: Array<(error: unknown) => void> = [];
   return (...args: T[]) => {

@@ -93,7 +93,7 @@ class OnboardModal extends PureComponent<Props, State> {
   private concordiumBridgePromise: Promise<ConcordiumCurrencyBridge> | null = null;
   pairingSubscription: Subscription | null = null;
   onboardingSubscription: Subscription | null = null;
-  stepTransitionTimeout: NodeJS.Timeout | null = null;
+  stepTransitionTimeout: ReturnType<typeof setTimeout> | null = null;
   pairingExpiredRetryCount = 0;
   private mounted = false;
 
