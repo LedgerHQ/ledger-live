@@ -31,7 +31,7 @@ export default class AccountsPage extends CommonPage {
     }
   }
 
-  @Step("Expect accounts number")
+  @Step("Expect accounts number {{{0}}}")
   async expectAccountsNumber(expectedAccountCount: number, testDataJson?: string) {
     let expectedAccountIds: string[] = [];
 

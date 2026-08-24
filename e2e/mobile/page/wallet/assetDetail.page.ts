@@ -96,7 +96,7 @@ export default class AssetDetailPage {
     await tapByIdAndExpectToDisappear(this.coinOptionsFavouriteRowId);
   }
 
-  @Step("Expect Asset Detail page for ticker")
+  @Step("Expect Asset Detail page for ticker {{{0}}}")
   async expectAssetDetailPageForTicker(ticker: string) {
     const scrollViewId = await this.getScrollViewId();
     await scrollToId(this.marketPriceId, scrollViewId, undefined, "up");
@@ -118,7 +118,7 @@ export default class AssetDetailPage {
     return await IsIdVisible(this.scrollViewId, timeout);
   }
 
-  @Step("Check if Asset Detail page for ticker is visible")
+  @Step("Check if Asset Detail page for ticker is visible {{{0}}}")
   async isAssetDetailPageForTickerVisible(ticker: string, timeout = VISIBILITY_PROBE_TIMEOUT) {
     return (
       (await IsIdVisible(this.scrollViewId, timeout)) &&
@@ -135,7 +135,7 @@ export default class AssetDetailPage {
     await detoxExpect(getElementById(this.marketVariationId)).toBeVisible();
   }
 
-  @Step("Expect Asset Detail total crypto balance for ticker")
+  @Step("Expect Asset Detail total crypto balance for ticker {{{0}}}")
   async expectTotalBalanceCryptoForTicker(ticker: string) {
     const scrollViewId = await this.getScrollViewId();
     await scrollToId(this.totalBalanceId, scrollViewId);
@@ -156,7 +156,7 @@ export default class AssetDetailPage {
     await detoxExpect(getElementById(this.transactionsHeaderId)).toBeVisible();
   }
 
-  @Step("Expect holding address details")
+  @Step("Expect holding address details for {{{0.length}}} addresses")
   async expectHoldingAddressDetails(expectedAddresses: HoldingAddressExpectation[]) {
     for (const expectedAddress of expectedAddresses) {
       await this.scrollToAddressItem(expectedAddress.accountId);
@@ -181,7 +181,7 @@ export default class AssetDetailPage {
     }
   }
 
-  @Step("Expect holding address balances to add up to total")
+  @Step("Expect holding address balances to add up to total {{{1}}}")
   async expectHoldingAddressBalancesSumToTotal(accountIds: string[], ticker: string) {
     const scrollViewId = await this.getScrollViewId();
     await scrollToId(this.totalBalanceId, scrollViewId);
@@ -205,13 +205,13 @@ export default class AssetDetailPage {
     return { holdingBalance, totalBalance };
   }
 
-  @Step("Open holding address")
+  @Step("Open holding address {{{0}}}")
   async openHoldingAddress(accountId: string) {
     await this.scrollToAddressItem(accountId);
     await tapById(this.addressItemNameId(accountId));
   }
 
-  @Step("Get visible Asset Detail transaction count for ticker")
+  @Step("Get visible Asset Detail transaction count for ticker {{{0}}}")
   async getVisibleTransactionCountForTicker(ticker: string) {
     await this.scrollToTransactions();
     const scrollViewId = await this.getScrollViewId();
@@ -227,7 +227,7 @@ export default class AssetDetailPage {
     return visibleOperationsCount;
   }
 
-  @Step("Open first Asset Detail transaction")
+  @Step("Open first Asset Detail transaction {{{0}}}")
   async openFirstTransaction(ticker: string) {
     await this.scrollToTransactions();
     const scrollViewId = await this.getScrollViewId();
@@ -249,7 +249,7 @@ export default class AssetDetailPage {
     await this.scrollToAddressesSection();
   }
 
-  @Step("Get address item name at index")
+  @Step("Get address item name at index {{{0}}}")
   async getAddressItemName(index = 0) {
     return await getTextOfElement(/asset-detail-address-item-name-.*/, index);
   }

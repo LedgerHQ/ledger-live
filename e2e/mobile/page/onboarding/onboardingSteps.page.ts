@@ -48,20 +48,20 @@ export default class OnboardingStepsPage {
     await detoxExpect(this.onboardingGetStartedButton()).toBeVisible();
   }
 
-  @Step("Expect current selected language")
+  @Step("Expect current selected language {{{0}}}")
   async expectCurrentSelectedLanguageToBe(language: string): Promise<void> {
     const text = await getTextOfElement(this.currentSelectedLanguageId);
     jestExpect(text).toContain(language);
   }
 
-  @Step("Select language")
+  @Step("Select language {{{0}}}")
   async selectLanguage(language: string): Promise<void> {
     await tapById(this.languageSelectButtonId);
     await waitForElementById(this.languageSelectDrawerTitleId);
     await tapById(this.languageSelectElementId(language.toLowerCase()));
   }
 
-  @Step("Select starting option")
+  @Step("Select starting option {{{0}}}")
   async selectStartingOption(option: "setupLedger" | "accessWallet"): Promise<void> {
     switch (option) {
       case "setupLedger":

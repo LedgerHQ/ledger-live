@@ -20,7 +20,7 @@ export default class SettingsGeneralPage {
     await tapByElement(this.passwordSettingsSwitch());
   }
 
-  @Step("Expect password toggle to be $0")
+  @Step("Expect password toggle to be {{{0}}}")
   async expectPasswordToggleValue(value: "ON" | "OFF") {
     const expected = value === "ON";
     await detoxExpect(this.passwordSettingsSwitch()).toHaveToggleValue(expected);
@@ -41,7 +41,7 @@ export default class SettingsGeneralPage {
     await tapByElement(this.enterLedgerSync());
   }
 
-  @Step("Select language")
+  @Step("Select language {{{0}}}")
   async selectLanguage(lang: string) {
     await scrollToText(lang, this.languageScrollViewId);
     await tapByText(lang);
@@ -52,18 +52,18 @@ export default class SettingsGeneralPage {
     await detoxExpect(getElementById(this.countervalueSettingsRowId)).toBeVisible();
   }
 
-  @Step("Expect localized text")
+  @Step("Expect localized text {{{0}}}")
   async expectLocalizedText(text: string) {
     await detoxExpect(this.localizedText(text)).toBeVisible();
   }
 
-  @Step("Expect character set")
+  @Step("Expect character set {{{1}}} in {{{0}}}")
   async expectCharacterSet(testId: string, pattern: RegExp) {
     const substringPattern = new RegExp(`.*${pattern.source}.*`, pattern.flags);
     await detoxExpect(getElementByIdWithDescendantTexts(testId, substringPattern)).toBeVisible();
   }
 
-  @Step("Expect translated row")
+  @Step("Expect translated row {{{0}}} to be {{{1}}}")
   async expectTranslatedRow(testId: string, expectedText: string) {
     await detoxExpect(getElementByIdWithDescendantTexts(testId, expectedText)).toBeVisible();
   }
@@ -74,14 +74,14 @@ export default class SettingsGeneralPage {
     await tapById(this.countervalueSettingsRowId);
   }
 
-  @Step("Change counter value to $0")
+  @Step("Change counter value to {{{0}}}")
   async changeCounterValue(currency: string) {
     await this.clickOnCountervalueSettingsRow();
     await scrollToId(this.compactSettingsRowId(currency), this.counterValueSettingsFlatListId);
     await tapById(this.compactSettingsRowId(currency));
   }
 
-  @Step("Expect counter value to be $0")
+  @Step("Expect counter value to be {{{0}}}")
   async expectCounterValue(currency: string) {
     await waitForElementById(this.countervalueTickerSettingsRowId);
     await detoxExpect(getElementById(this.countervalueTickerSettingsRowId)).toHaveText(currency);

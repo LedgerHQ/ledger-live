@@ -52,7 +52,7 @@ export default class MainNavigationPage {
   // Wallet 4.0 Tab Actions
   // =====================
 
-  @Step("Tap W40 tab")
+  @Step("Tap W40 tab {{{0}}}")
   async tapWallet40Tab(tabName: Wallet40TabName) {
     await this.wallet40Tab(tabName).tap();
   }

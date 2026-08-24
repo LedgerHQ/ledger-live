@@ -75,7 +75,7 @@ export default class AddAccountDrawer extends CommonPage {
     });
   }
 
-  @Step("Expect account discovered")
+  @Step("Expect account discovered {{{0}}}")
   async expectAccountDiscovery(currencyName: string, currencyId: string, index = 0) {
     await detoxExpect(this.accountItem(this.accountIdAccountDrawer(currencyId))).toBeVisible();
     const accountId = (await getIdByRegexp(this.accountItemRegExp(), index)).replace(
@@ -92,7 +92,7 @@ export default class AddAccountDrawer extends CommonPage {
     await tapById(this.closeAddAccountButtonId);
   }
 
-  @Step("Add only discovered account at index")
+  @Step("Add only discovered {{{0}}} account at index {{{2}}}")
   async addAccountAtIndex(currencyName: string, currencyId: string, index: number = 0) {
     await this.waitAccountsDiscovery();
     const accountCount = await countElementsById(this.accountItemRegExp());
