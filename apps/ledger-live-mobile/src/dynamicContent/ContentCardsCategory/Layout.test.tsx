@@ -233,10 +233,11 @@ describe("ContentCardsCategory Layout", () => {
         "ledger flex",
         mockHardwareCarouselProps,
       );
-      expect(trackContentCardEvent).toHaveBeenCalledWith(
-        ContentCardEvent.Clicked,
-        expectedTrackingBase,
-      );
+      expect(trackContentCardEvent).toHaveBeenCalledWith(ContentCardEvent.Clicked, {
+        ...expectedTrackingBase,
+        title: "Ledger Flex",
+        contentcard: "Ledger Flex",
+      });
     });
 
     it("should track Stax device click when title contains stax", async () => {
@@ -306,10 +307,11 @@ describe("ContentCardsCategory Layout", () => {
       await user.press(screen.getByTestId("card-click"));
 
       expect(trackHardwareCarouselDeviceClick).not.toHaveBeenCalled();
-      expect(trackContentCardEvent).toHaveBeenCalledWith(
-        ContentCardEvent.Clicked,
-        expectedTrackingBase,
-      );
+      expect(trackContentCardEvent).toHaveBeenCalledWith(ContentCardEvent.Clicked, {
+        ...expectedTrackingBase,
+        title: "Other Device",
+        contentcard: "Other Device",
+      });
     });
 
     it("should track card dismiss when hardware carousel props are provided", async () => {
@@ -325,10 +327,11 @@ describe("ContentCardsCategory Layout", () => {
       await user.press(screen.getByTestId("card-dismiss"));
 
       expect(trackHardwareCarouselCardDismiss).toHaveBeenCalledWith(mockHardwareCarouselProps);
-      expect(trackContentCardEvent).toHaveBeenCalledWith(
-        ContentCardEvent.Dismissed,
-        expectedTrackingBase,
-      );
+      expect(trackContentCardEvent).toHaveBeenCalledWith(ContentCardEvent.Dismissed, {
+        ...expectedTrackingBase,
+        title: "Ledger Stax",
+        contentcard: "Ledger Stax",
+      });
     });
 
     it("should not track hardware carousel events without props", async () => {
@@ -338,10 +341,11 @@ describe("ContentCardsCategory Layout", () => {
       await user.press(screen.getByTestId("card-click"));
 
       expect(trackHardwareCarouselDeviceClick).not.toHaveBeenCalled();
-      expect(trackContentCardEvent).toHaveBeenCalledWith(
-        ContentCardEvent.Clicked,
-        expectedTrackingBase,
-      );
+      expect(trackContentCardEvent).toHaveBeenCalledWith(ContentCardEvent.Clicked, {
+        ...expectedTrackingBase,
+        title: "Ledger Flex",
+        contentcard: "Ledger Flex",
+      });
     });
   });
 });
