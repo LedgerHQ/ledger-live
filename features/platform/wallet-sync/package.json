@@ -14,7 +14,7 @@
     "lint": "oxlint src",
     "lint:ci": "oxlint src --quiet",
     "typecheck": "tsc --noEmit",
-    "unimported": "pnpm knip --directory ../../.. -W features/platform/wallet-sync",
+    "unimported": "pnpm knip --directory ../../.. -c features/platform/wallet-sync/knip.config.mjs -W features/platform/wallet-sync",
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage"

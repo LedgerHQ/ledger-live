@@ -26,7 +26,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W features/flow/pay-card-auth"
+    "unimported": "pnpm knip --directory ../../.. -c features/flow/pay-card-auth/knip.web.config.mjs -W features/flow/pay-card-auth --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/flow/pay-card-auth/knip.native.config.mjs -W features/flow/pay-card-auth --tsConfig tsconfig.native.json"
   },
   "dependencies": {
     "@domain/api-card-management": "workspace:^",

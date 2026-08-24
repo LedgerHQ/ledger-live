@@ -1,2 +1,2 @@
-export * from "./ContactsAddContactContent.web";
-export * from "./ContactsAddContactDialog.web";
+export * from "./ContactsAddContactContent";
+export * from "./ContactsAddContactDialog";

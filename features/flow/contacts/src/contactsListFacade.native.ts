@@ -8,7 +8,7 @@ export {
   isContactsSearchNoResultsViewModel,
   isPopulatedContactsListViewModel,
   ContactsAddContactHeaderButton,
-} from "@features/flow-contacts-list/native";
+} from "@features/flow-contacts-list";
 export type {
   ContactsListViewLabels,
   ContactsPageViewModel,
@@ -21,4 +21,4 @@ export type {
   EmptyContactsListViewModel,
   PopulatedContactsListViewModel,
   ContactsAddContactHeaderButtonProps,
-} from "@features/flow-contacts-list/native";
+} from "@features/flow-contacts-list";

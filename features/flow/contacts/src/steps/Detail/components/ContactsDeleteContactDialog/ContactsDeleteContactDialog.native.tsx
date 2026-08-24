@@ -1,6 +1,6 @@
 import React from "react";
 import { Trash } from "@ledgerhq/lumen-ui-rnative/symbols";
-import { ContactConfirmationBottomSheet } from "../ContactConfirmationBottomSheet/ContactConfirmationBottomSheet.native";
+import { ContactConfirmationBottomSheet } from "../ContactConfirmationBottomSheet/ContactConfirmationBottomSheet";
 import type { ContactsDeleteContactDrawerProps } from "./types";
 
 export function ContactsDeleteContactDialog({

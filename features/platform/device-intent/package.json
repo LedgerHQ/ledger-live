@@ -20,7 +20,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W features/platform/device-intent"
+    "unimported": "pnpm knip --directory ../../.. -c features/platform/device-intent/knip.config.mjs -W features/platform/device-intent"
   },
   "dependencies": {
     "@ledgerhq/logs": "catalog:",

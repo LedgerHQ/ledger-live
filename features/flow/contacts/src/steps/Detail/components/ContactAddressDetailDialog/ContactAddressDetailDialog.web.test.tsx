@@ -3,7 +3,7 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { mockContact, mockContactAddress } from "@domain/entity-contact/schema.mock";
 import { createContactDetailAddressRowIntent } from "../../model/viewModel";
-import { ContactAddressDetailDialog } from "./ContactAddressDetailDialog.web";
+import { ContactAddressDetailDialog } from "./ContactAddressDetailDialog";
 import type { ContactAddressDetailDialogProps } from "./types";
 
 function createProps(

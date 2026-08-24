@@ -1,6 +1,6 @@
 import React from "react";
 import { InformationFill } from "@ledgerhq/lumen-ui-rnative/symbols";
-import { ContactConfirmationBottomSheet } from "../ContactConfirmationBottomSheet/ContactConfirmationBottomSheet.native";
+import { ContactConfirmationBottomSheet } from "../ContactConfirmationBottomSheet/ContactConfirmationBottomSheet";
 import type { ContactsEditSignerMismatchDrawerProps } from "./types";
 
 export function ContactsEditSignerMismatchDialog({

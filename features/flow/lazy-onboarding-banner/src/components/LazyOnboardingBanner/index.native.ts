@@ -1,2 +1,2 @@
-export { LazyOnboardingBannerView } from "./LazyOnboardingBanner.native";
+export { LazyOnboardingBannerView } from "./LazyOnboardingBanner";
 export type { LazyOnboardingBannerViewProps } from "./types";

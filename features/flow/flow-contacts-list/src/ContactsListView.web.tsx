@@ -1,8 +1,8 @@
 import React from "react";
 import { isContactsSearchNoResultsViewModel, type ContactsListViewProps } from "./types";
-import { ContactsLedgerSyncLoadingPane } from "./components/LedgerSyncLoadingPane/ContactsLedgerSyncLoadingPane.web";
-import { ContactsList } from "./components/ContactsList/ContactsList.web";
-import { ContactsPageLayout } from "./components/PageLayout/ContactsPageLayout.web";
+import { ContactsLedgerSyncLoadingPane } from "./components/LedgerSyncLoadingPane/ContactsLedgerSyncLoadingPane";
+import { ContactsList } from "./components/ContactsList/ContactsList";
+import { ContactsPageLayout } from "./components/PageLayout/ContactsPageLayout";
 
 function renderContactsDetailPane(
   isLedgerSyncChecking: boolean,

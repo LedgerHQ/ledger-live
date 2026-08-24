@@ -1,5 +1,5 @@
 import React from "react";
-import { LargeScreenUpsellModalView } from "./LargeScreenUpsellModalView.web";
+import { LargeScreenUpsellModalView } from "./LargeScreenUpsellModalView";
 import {
   useLargeScreenUpsellModalViewModel,
   type UseLargeScreenUpsellModalViewModelInput,

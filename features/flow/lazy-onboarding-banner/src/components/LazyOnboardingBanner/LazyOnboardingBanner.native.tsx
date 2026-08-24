@@ -1,7 +1,7 @@
 import React from "react";
 import { Image } from "react-native";
 import { MediaBanner, MediaBannerDescription, MediaBannerTitle } from "@ledgerhq/lumen-ui-rnative";
-import bannerImageSource from "../../assets/lazy-onboarding-banner.webp";
+import bannerImageSource from "../../assets/lazy-onboarding-bannerp";
 import type { LazyOnboardingBannerViewProps } from "./types";
 
 const bannerImageUrl = Image.resolveAssetSource(bannerImageSource).uri;

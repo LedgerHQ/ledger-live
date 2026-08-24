@@ -5,7 +5,7 @@ import {
   ContactsLedgerSyncIntroductionDialog,
   isContactsLedgerSyncActivationRequired,
 } from "@features/flow-contacts-introduction";
-import { ContactDetailView } from "./steps/Detail/ContactDetailView.web";
+import { ContactDetailView } from "./steps/Detail/ContactDetailView";
 import type { ContactsViewProps } from "./ContactsView.types";
 
 export function ContactsView({

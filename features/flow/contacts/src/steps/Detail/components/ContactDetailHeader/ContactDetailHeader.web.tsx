@@ -4,9 +4,9 @@ import type { ContactDetailViewProps } from "../../types";
 import {
   ContactDetailActions,
   type ContactDetailActionsProps,
-} from "../ContactDetailActions/ContactDetailActions.web";
-import { ContactDetailHeaderAddAddress } from "./ContactDetailHeaderAddAddress.web";
-import { ContactDetailHeaderIdentity } from "./ContactDetailHeaderIdentity.web";
+} from "../ContactDetailActions/ContactDetailActions";
+import { ContactDetailHeaderAddAddress } from "./ContactDetailHeaderAddAddress";
+import { ContactDetailHeaderIdentity } from "./ContactDetailHeaderIdentity";
 
 type ContactDetailHeaderProps = Pick<
   ContactDetailViewProps,

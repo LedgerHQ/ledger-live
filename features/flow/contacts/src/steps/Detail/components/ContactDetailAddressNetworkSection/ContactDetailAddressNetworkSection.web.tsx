@@ -1,7 +1,7 @@
 import React from "react";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
 import type { ContactDetailAddressNetworkGroup, ContactDetailAddressRowIntent } from "../../types";
-import { ContactDetailAddressRow as ContactDetailAddressRowView } from "../ContactDetailAddressRow/ContactDetailAddressRow.web";
+import { ContactDetailAddressRow as ContactDetailAddressRowView } from "../ContactDetailAddressRow/ContactDetailAddressRow";
 
 type ContactDetailAddressNetworkSectionProps = Readonly<{
   group: ContactDetailAddressNetworkGroup;

@@ -25,7 +25,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W features/flow/pay-bank-transfer"
+    "unimported": "pnpm knip --directory ../../.. -c features/flow/pay-bank-transfer/knip.web.config.mjs -W features/flow/pay-bank-transfer --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/flow/pay-bank-transfer/knip.native.config.mjs -W features/flow/pay-bank-transfer --tsConfig tsconfig.native.json"
   },
   "devDependencies": {
     "@support/jest-features-flow": "workspace:*",

@@ -8,7 +8,7 @@ import {
   createEmptyContactsListViewModel,
   createPopulatedContactsListViewModel,
 } from "./model/viewModel";
-import { ContactsListView } from "./ContactsListView.web";
+import { ContactsListView } from "./ContactsListView";
 
 const labels = {
   title: "Contacts",

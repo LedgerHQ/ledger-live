@@ -17,7 +17,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W features/flow/fear-and-greed"
+    "unimported": "pnpm knip --directory ../../.. -c features/flow/fear-and-greed/knip.config.mjs -W features/flow/fear-and-greed"
   },
   "dependencies": {},
   "devDependencies": {

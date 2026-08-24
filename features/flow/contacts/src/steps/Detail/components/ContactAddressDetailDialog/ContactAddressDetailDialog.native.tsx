@@ -1,8 +1,8 @@
 import React from "react";
 import { BottomSheetHeader, BottomSheetView, Box } from "@ledgerhq/lumen-ui-rnative";
-import { ContactAddressDetailActions } from "./ContactAddressDetailActions.native";
-import { ContactAddressDetailSummary } from "./ContactAddressDetailSummary.native";
-import { useContactAddressDetailDialogViewModel } from "./useContactAddressDetailDialogViewModel.native";
+import { ContactAddressDetailActions } from "./ContactAddressDetailActions";
+import { ContactAddressDetailSummary } from "./ContactAddressDetailSummary";
+import { useContactAddressDetailDialogViewModel } from "./useContactAddressDetailDialogViewModel";
 import type { ContactAddressDetailDialogNativeProps } from "./types";
 
 export type { ContactAddressDetailDialogNativeProps };

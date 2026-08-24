@@ -17,7 +17,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W features/platform/feature-flags"
+    "unimported": "pnpm knip --directory ../../.. -c features/platform/feature-flags/knip.config.mjs -W features/platform/feature-flags"
   },
   "dependencies": {
     "@shared/feature-flags": "workspace:^",

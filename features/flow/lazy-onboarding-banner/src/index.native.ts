@@ -17,4 +17,4 @@ export { resolveLazyOnboardingBannerTapAction } from "./utils/resolveLazyOnboard
 export {
   LazyOnboardingBannerView,
   type LazyOnboardingBannerViewProps,
-} from "./components/LazyOnboardingBanner/index.native";
+} from "./components/LazyOnboardingBanner/index";

@@ -5,7 +5,7 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { createContactDetailLedgerWalletAccountsIntent } from "./model/contactDetailSharedState";
 import { createContactDetailAddressRowIntent } from "./model/viewModel";
 import type { ContactDetailLabels } from "./types";
-import { ContactDetailView } from "./ContactDetailView.native";
+import { ContactDetailView } from "./ContactDetailView";
 
 const labels: ContactDetailLabels = {
   addAddress: "Add address",

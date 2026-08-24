@@ -9,7 +9,7 @@ jest.mock("styled-components/native", () => {
 import React from "react";
 import { renderHook } from "@testing-library/react";
 import { ThemeContext } from "styled-components/native";
-import { useThemeVariant } from "../useThemeVariant.native";
+import { useThemeVariant } from "../useThemeVariant";
 
 describe("useThemeVariant (native)", () => {
   it.each(["light", "dark"] as const)("reads %s from the mounted provider", variant => {

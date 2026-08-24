@@ -11,7 +11,7 @@ import {
 import { CONTACT_ADDRESS_LABEL_MAX_LENGTH } from "@domain/entity-contact";
 import { CONTACTS_NATIVE_ADDRESS_INPUT_PROPS } from "@features/platform-contacts";
 import type { ContactsRenameAddressDrawerProps } from "./types";
-import { useEditAddressAddressEntryPresentation } from "./useEditAddressAddressEntryPresentation.native";
+import { useEditAddressAddressEntryPresentation } from "./useEditAddressAddressEntryPresentation";
 
 export function ContactsRenameAddressDialog({
   isOpen,

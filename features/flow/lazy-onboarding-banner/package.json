@@ -20,11 +20,11 @@
     "format:check": "oxfmt src --check",
     "lint": "oxlint src",
     "lint:ci": "oxlint src --quiet",
-    "typecheck": "tsc --noEmit -p tsconfig.native.json",
+    "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W features/flow/lazy-onboarding-banner"
+    "unimported": "pnpm knip --directory ../../.. -c features/flow/lazy-onboarding-banner/knip.web.config.mjs -W features/flow/lazy-onboarding-banner --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/flow/lazy-onboarding-banner/knip.native.config.mjs -W features/flow/lazy-onboarding-banner --tsConfig tsconfig.native.json"
   },
   "peerDependencies": {
     "@ledgerhq/lumen-design-core": "catalog:",

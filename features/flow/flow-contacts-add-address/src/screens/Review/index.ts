@@ -1,2 +1,2 @@
-export * from "./ContactsAddAddressReview.web";
+export * from "./ContactsAddAddressReview";
 export * from "./types";

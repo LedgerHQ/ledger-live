@@ -14,7 +14,7 @@
     "lint": "oxlint src",
     "lint:ci": "oxlint src --quiet",
     "typecheck": "tsc --noEmit",
-    "unimported": "pnpm knip --directory ../../.. -W features/platform/env"
+    "unimported": "pnpm knip --directory ../../.. -c features/platform/env/knip.config.mjs -W features/platform/env"
   },
   "dependencies": {
     "@shared/env": "workspace:*"

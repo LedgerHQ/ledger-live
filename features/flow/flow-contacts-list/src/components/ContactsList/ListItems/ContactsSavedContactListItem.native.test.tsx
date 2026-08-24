@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen, userEvent } from "@testing-library/react-native";
 import { ContactIdSchema } from "@domain/entity-contact";
-import { ContactsSavedContactListItem } from "./ContactsSavedContactListItem.native";
+import { ContactsSavedContactListItem } from "./ContactsSavedContactListItem";
 
 describe("ContactsSavedContactListItem", () => {
   it("should render a 48px avatar for a saved contact", () => {

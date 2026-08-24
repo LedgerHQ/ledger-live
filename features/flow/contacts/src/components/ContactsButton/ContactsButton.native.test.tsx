@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen, userEvent } from "@testing-library/react-native";
-import { ContactsButton } from "./ContactsButton.native";
+import { ContactsButton } from "./ContactsButton";
 
 describe("ContactsButton", () => {
   it("should render the Contacts card and invoke its action", async () => {

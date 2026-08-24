@@ -7,7 +7,7 @@ import type { ContactsAddAddressNameProps } from "../AddressName/ContactsAddAddr
 import {
   ContactsAddAddressReview,
   type ContactsAddAddressReviewNativeProps,
-} from "../Review/ContactsAddAddressReview.native";
+} from "../Review/ContactsAddAddressReview";
 
 const STEP_FRAME_HEIGHT = "100%";
 

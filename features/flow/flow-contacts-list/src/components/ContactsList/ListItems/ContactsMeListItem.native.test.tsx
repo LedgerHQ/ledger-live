@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen, userEvent } from "@testing-library/react-native";
 import { ContactIdSchema } from "@domain/entity-contact";
-import { ContactsMeListItem } from "./ContactsMeListItem.native";
+import { ContactsMeListItem } from "./ContactsMeListItem";
 
 describe("ContactsMeListItem", () => {
   it("should render the Me avatar with the Figma size and border", () => {

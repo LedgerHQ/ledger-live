@@ -2,13 +2,13 @@ import React, { useCallback, useRef, useState } from "react";
 import { SectionList, type LayoutChangeEvent, type SectionListRenderItemInfo } from "react-native";
 import { Box, Spinner } from "@ledgerhq/lumen-ui-rnative";
 import type { ContactsListItem, ContactsListSection, ContactsListViewNativeProps } from "./types";
-import { ContactsListHeader } from "./components/ListHeader/ContactsListHeader.native";
-import { ContactsSearchNoResults } from "./components/ContactsList/Search/ContactsSearchNoResults.native";
-import { ContactsSearchInput } from "./components/ContactsList/Search/ContactsSearchInput.native";
-import { ContactsSavedContactListItem } from "./components/ContactsList/ListItems/ContactsSavedContactListItem.native";
-import { ContactsSectionIndex } from "./components/ContactsList/Section/ContactsSectionIndex.native";
-import { ContactsSectionHeader } from "./components/ContactsList/Section/ContactsSectionHeader.native";
-import { useContactsSectionIndex } from "./components/ContactsList/Section/useContactsSectionIndex.native";
+import { ContactsListHeader } from "./components/ListHeader/ContactsListHeader";
+import { ContactsSearchNoResults } from "./components/ContactsList/Search/ContactsSearchNoResults";
+import { ContactsSearchInput } from "./components/ContactsList/Search/ContactsSearchInput";
+import { ContactsSavedContactListItem } from "./components/ContactsList/ListItems/ContactsSavedContactListItem";
+import { ContactsSectionIndex } from "./components/ContactsList/Section/ContactsSectionIndex";
+import { ContactsSectionHeader } from "./components/ContactsList/Section/ContactsSectionHeader";
+import { useContactsSectionIndex } from "./components/ContactsList/Section/useContactsSectionIndex";
 
 const noContactsListSections: readonly never[] = [];
 

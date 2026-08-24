@@ -7369,6 +7369,9 @@ importers:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
+      '@support/jest-features-flow':
+        specifier: workspace:*
+        version: link:../../../support/jest-features-flow
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -7384,6 +7387,9 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.4.1(@types/node@24.12.0)
+      jest-environment-jsdom:
+        specifier: 'catalog:'
+        version: 30.4.1
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -28553,7 +28559,7 @@ packages:
     resolution: {integrity: sha512-/FQM1EDkTsf63Ub2C6O7GuYFDsSXUwsaZDurV0np41ocwq0jthUAYCmhBX9f+KwlaCgIuWyr/4WlUQUBfKfZog==}
     engines: {node: '>=6'}
     peerDependencies:
-      rxjs: ^5.5.10
+      rxjs: '*'
       zenObservable: '*'
     peerDependenciesMeta:
       rxjs:

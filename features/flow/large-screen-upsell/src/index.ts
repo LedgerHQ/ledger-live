@@ -11,7 +11,7 @@ export * from "./utils/isNanoSOnlyWallet";
 export * from "./utils/isLargeScreenUpsellBannerEnabled";
 export { LARGE_SCREEN_UPSELL_IMAGES } from "./assets";
 export { LargeScreenUpsellModal } from "./screens/LargeScreenUpsellModal";
-export { LargeScreenUpsellModalView } from "./screens/LargeScreenUpsellModal/LargeScreenUpsellModalView.web";
+export { LargeScreenUpsellModalView } from "./screens/LargeScreenUpsellModal/LargeScreenUpsellModalView";
 export type { LargeScreenUpsellModalProps } from "./screens/LargeScreenUpsellModal";
 export type { LargeScreenUpsellModalViewModel } from "./screens/LargeScreenUpsellModal/types";
 export type { UseLargeScreenUpsellModalViewModelInput } from "./screens/LargeScreenUpsellModal/useLargeScreenUpsellModalViewModel";

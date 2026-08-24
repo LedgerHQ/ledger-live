@@ -3,7 +3,7 @@ import { Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
 import { Plus } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { resolveMeContactDisplayName } from "@features/platform-contacts";
 import type { ContactDetailViewProps } from "../types";
-import { ContactDetailAvatar } from "./ContactDetailAvatar.native";
+import { ContactDetailAvatar } from "./ContactDetailAvatar";
 
 type ContactDetailHeaderProps = Pick<
   ContactDetailViewProps,

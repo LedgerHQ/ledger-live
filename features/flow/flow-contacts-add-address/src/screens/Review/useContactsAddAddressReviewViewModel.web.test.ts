@@ -1,5 +1,5 @@
 import { ContactAddressLabelSchema, ContactAddressValueSchema } from "@domain/entity-contact";
-import { useContactsAddAddressReviewViewModel } from "./useContactsAddAddressReviewViewModel.web";
+import { useContactsAddAddressReviewViewModel } from "./useContactsAddAddressReviewViewModel";
 
 describe("useContactsAddAddressReviewViewModel", () => {
   it("should map the confirmed address and display context to review props", () => {

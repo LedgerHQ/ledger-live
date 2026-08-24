@@ -1,3 +1,3 @@
-export * from "./useTheme.native";
-export * from "./useThemeVariant.native";
+export * from "./useTheme";
+export * from "./useThemeVariant";
 export * from "./resolveThemeVariant";

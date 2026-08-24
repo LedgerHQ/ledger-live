@@ -9,4 +9,4 @@
 "@features/platform-style": patch
 ---
 
-Split tsconfig into web and native variants for each feature package
+Split tsconfig into web and native variants for each feature package; add oxlint lint scripts to all feature packages
