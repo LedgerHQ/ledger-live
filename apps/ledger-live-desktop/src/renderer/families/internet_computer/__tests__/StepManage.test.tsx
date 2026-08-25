@@ -1,9 +1,13 @@
 import {
+  E8S_PER_ICP,
   ICP_FEES,
   MIN_NEURON_STAKE,
+  NNS_CLEAR_FOLLOWING_AFTER_SECONDS,
   NNS_MAXIMUM_DISSOLVE_DELAY,
   NNS_START_REDUCING_VOTING_POWER_AFTER_SECONDS,
+  SECONDS_IN_7_DAYS,
   SECONDS_IN_DAY,
+  SECONDS_IN_FOUR_YEARS,
   SECONDS_IN_MONTH,
 } from "@ledgerhq/live-common/families/internet_computer/consts";
 import { NeuronState } from "@ledgerhq/live-common/families/internet_computer/types";
@@ -35,6 +39,26 @@ import StepManage from "../ManageNeuronFlowModal/steps/StepManage";
 const controlled = (overrides = {}) =>
   makeHealthyNeuron({ id: 7n, controller: CONTROLLER, ...overrides });
 
+// 1 ICP at both bonuses maxed (3x delay, 1.25x age): potential voting power is exactly 3.75 ICP.
+const fullyBonused = (overrides = {}) =>
+  controlled({
+    cachedNeuronStakeE8s: BigInt(E8S_PER_ICP),
+    dissolveDelaySeconds: BigInt(NNS_MAXIMUM_DISSOLVE_DELAY),
+    dissolveState: { DissolveDelaySeconds: BigInt(NNS_MAXIMUM_DISSOLVE_DELAY) },
+    ageSeconds: BigInt(SECONDS_IN_FOUR_YEARS),
+    ...overrides,
+  });
+
+// Pinned for the whole suite: the decayed figures below are asserted to the digit, and a second
+// elapsing between fixture and render turns 1.875 ICP into 1.87499858.
+const FIXED_NOW_MSECS = 1_800_000_000_000;
+
+const refreshedSecondsAgo = (seconds: number) =>
+  BigInt(Math.floor(FIXED_NOW_MSECS / 1000) - Math.floor(seconds));
+
+// FormattedVal separates a value from its code with a non-breaking space.
+const bodyText = (container: HTMLElement) => container.textContent?.replace(/\u00a0/g, " ") ?? "";
+
 // Funded by default: the top-up action is hidden when the balance cannot cover the transfer fee, so a
 // zero-balance fixture would leave the tests around it passing without rendering the action at all.
 const renderManage = (
@@ -51,6 +75,11 @@ const renderManage = (
 
 beforeEach(() => {
   jest.clearAllMocks();
+  jest.spyOn(Date, "now").mockReturnValue(FIXED_NOW_MSECS);
+});
+
+afterEach(() => {
+  jest.restoreAllMocks();
 });
 
 describe("StepManage", () => {
@@ -211,6 +240,19 @@ describe("StepManage", () => {
     expect(screen.queryByText("Confirm following")).not.toBeInTheDocument();
   });
 
+  // A freshly staked neuron defaults to a 7-day delay, so this is the first-stake path.
+  it("hides the whole periodic-confirmation row below the voting threshold", () => {
+    const { container } = renderManage(
+      controlled({
+        dissolveDelaySeconds: BigInt(SECONDS_IN_7_DAYS),
+        dissolveState: { DissolveDelaySeconds: BigInt(SECONDS_IN_7_DAYS) },
+      }),
+    );
+
+    expect(screen.queryByText("Confirm following")).not.toBeInTheDocument();
+    expect(bodyText(container)).not.toContain("decaying");
+  });
+
   it("warns that voting power is already lost once the window has fully elapsed", () => {
     const longAgo =
       Math.floor(Date.now() / 1000) - NNS_START_REDUCING_VOTING_POWER_AFTER_SECONDS * 4;
@@ -237,6 +279,41 @@ describe("StepManage", () => {
 
     expect(screen.getByText(/Voting power is decaying/)).toBeInTheDocument();
     expect(screen.queryByText(/starts decaying/)).not.toBeInTheDocument();
+  });
+
+  it("quotes the potential figure while nothing has decayed yet", () => {
+    const { container } = renderManage(fullyBonused());
+
+    expect(bodyText(container)).toContain("3.75");
+  });
+
+  it("reduces the figure in step with the decay the row beside it announces", () => {
+    const { container } = renderManage(
+      fullyBonused({
+        votingPowerRefreshedTimestampSeconds: refreshedSecondsAgo(
+          NNS_START_REDUCING_VOTING_POWER_AFTER_SECONDS + NNS_CLEAR_FOLLOWING_AFTER_SECONDS / 2,
+        ),
+      }),
+    );
+
+    // Half the decay window has passed, so the canister counts half of the 3.75 ICP potential.
+    expect(screen.getByText(/Voting power is decaying/)).toBeInTheDocument();
+    expect(bodyText(container)).toContain("1.875");
+    expect(bodyText(container)).not.toContain("3.75");
+  });
+
+  it("reads None once the window has fully elapsed, matching its own warning", () => {
+    const { container } = renderManage(
+      fullyBonused({
+        votingPowerRefreshedTimestampSeconds: refreshedSecondsAgo(
+          NNS_START_REDUCING_VOTING_POWER_AFTER_SECONDS * 4,
+        ),
+      }),
+    );
+
+    expect(screen.getByText(/Voting power lost/)).toBeInTheDocument();
+    expect(screen.getByText("None")).toBeInTheDocument();
+    expect(bodyText(container)).not.toContain("3.75");
   });
 
   // increase_stake debits the ledger canister, so it leaves this modal for the regular send flow.

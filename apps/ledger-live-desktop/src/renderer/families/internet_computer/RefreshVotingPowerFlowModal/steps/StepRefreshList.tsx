@@ -1,6 +1,7 @@
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import {
   getSecondsTillVotingPowerExpires,
+  neuronCanVote,
   votingPowerNeedsRefresh,
 } from "@ledgerhq/live-common/families/internet_computer/neuron";
 import type {
@@ -37,9 +38,9 @@ const COLUMNS: readonly NeuronColumn[] = [
 const rowKey = (neuron: ICPNeuron) => neuron.id?.toString() ?? neuron.accountIdentifier;
 
 /**
- * Lists the neurons whose voting power is on a periodic-confirmation clock, soonest first. Neurons
- * the canister reported no refresh timestamp for are left out: their staleness is unknown, and
- * showing them as expiring would be a guess.
+ * Lists the neurons whose voting power is on a periodic-confirmation clock, soonest first. Left out:
+ * those the canister reported no refresh timestamp for, whose staleness is unknown so showing them
+ * as expiring would be a guess, and those that cannot vote.
  *
  * A neuron only starts losing power in the last month of that clock, which no reading of the
  * countdown alone reveals, so the row says so outright. Confirming earlier is allowed — the NNS
@@ -63,6 +64,7 @@ const StepRefreshList = ({
   const { expiring, stateFor } = useMemo(() => {
     const nowSeconds = Math.floor(Date.now() / 1000);
     const entries = neurons
+      .filter(neuronCanVote)
       .map(neuron => ({ neuron, seconds: getSecondsTillVotingPowerExpires(neuron, nowSeconds) }))
       .filter(
         (entry): entry is { neuron: ICPNeuron; seconds: number } => entry.seconds !== undefined,
