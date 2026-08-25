@@ -1,10 +1,10 @@
 import { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import type { PerpsDepositReviewParams } from "@ledgerhq/live-common/wallet-api/Perps/server";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit, parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useSelector } from "LLD/hooks/redux";
 import { accountNameWithDefaultSelector, walletSelector } from "~/renderer/reducers/wallet";
-import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { openPerpsDeposit } from "../PerpsDeposit/PerpsDepositDialog";
 import type { PerpsDepositDraft } from "../PerpsDeposit/usePerpsDepositViewModel";
 export type PerpsReviewData = PerpsDepositReviewParams & {
@@ -31,8 +31,9 @@ export function usePerpsReviewViewModel(
 ): PerpsReviewViewModel {
   const { t } = useTranslation();
   const walletState = useSelector(walletSelector);
-  const sentUnit = useAccountUnit(data.depositAccount);
-  const receivedUnit = useAccountUnit(data.receiverAccount);
+
+  const sentUnit = getAccountCurrency(data.depositAccount).units[0];
+  const receivedUnit = getAccountCurrency(data.receiverAccount).units[0];
 
   const formattedAmountSent = useMemo(
     () =>
