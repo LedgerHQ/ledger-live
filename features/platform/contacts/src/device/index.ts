@@ -1,2 +1,2 @@
-export { useContactsIntentsOrchestrator } from "./useContactsIntentsOrchestrator";
-export type { ContactsDeviceIntentExecutorProps } from "./types";
+export type * from "./ContactsDeviceIntentExecutorProps";
+export * from "./useContactsIntentsOrchestrator";

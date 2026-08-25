@@ -1,8 +1,4 @@
-import type {
-  DeviceIntentExecutorProps,
-  Intent,
-  IntentPlatformDefinition,
-} from "@features/platform-device-intent";
+import type { Intent, IntentPlatformDefinition } from "@features/platform-device-intent";
 import type {
   ContactIntentResult,
   EditExternalAddressIntentInput,
@@ -41,14 +37,6 @@ export type ContactDeviceIntent = Intent<
   ContactDeviceIntentJobState,
   ContactDeviceIntentInput,
   undefined,
-  ContactDeviceIntentResult
->;
-
-export type ContactsDeviceIntentExecutorProps = DeviceIntentExecutorProps<
-  ContactDeviceIntentJobState,
-  ContactDeviceIntentInput,
-  undefined,
-  ContactsDeviceInitializationInput,
   ContactDeviceIntentResult
 >;
 

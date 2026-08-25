@@ -25,8 +25,8 @@ import type {
   ContactDeviceIntentJobState,
   ContactOperation,
   ContactsDeviceInitializationInput,
-  ContactsDeviceIntentExecutorProps,
 } from "./types";
+import type { ContactsDeviceIntentExecutorProps } from "./ContactsDeviceIntentExecutorProps";
 
 const DEVICE_CONNECTION_PARAMS = { acceptedDeviceModelIds: [] };
 
