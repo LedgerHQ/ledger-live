@@ -82,7 +82,7 @@ describe("usePerpsDepositViewModel", () => {
     mockCalculateCountervalue.mockImplementation((_currency, value) => value);
     mockCalculate.mockReturnValue(0);
     mockUsePerpsDepositQuote.mockReturnValue({
-      quote: { amountTo: new BigNumber(42) },
+      quote: { amountTo: new BigNumber(42), quoteId: "quote-1" },
       isLoading: false,
       isUnavailable: false,
     });
@@ -328,12 +328,12 @@ describe("usePerpsDepositViewModel", () => {
     act(() => result.current.handleReview());
 
     expect(result.current.isReviewOpen).toBe(true);
-    // The received side is whatever the provider quoted, not a local conversion.
     expect(result.current.reviewParams).toEqual({
       depositAccount: fundedAccount,
       receiverAccount,
       amountSent: "0.025",
       amountTo: "42",
+      quoteId: "quote-1",
     });
   });
 
@@ -348,8 +348,7 @@ describe("usePerpsDepositViewModel", () => {
     act(() => result.current.handleReview());
 
     const reviewed = result.current.reviewParams;
-    // The provider drops the quote while refetching; the open review must not
-    // vanish along with it.
+
     mockUsePerpsDepositQuote.mockReturnValue({
       quote: undefined,
       isLoading: true,

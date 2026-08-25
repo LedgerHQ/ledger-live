@@ -255,6 +255,7 @@ export function usePerpsDepositViewModel({ route }: NavigationProps): PerpsDepos
       receiverAccount,
       amountSent: sentAmount,
       amountTo: quote.amountTo.toFixed(),
+      quoteId: quote.quoteId,
     });
     setIsReviewOpen(true);
   }, [canReview, depositAccount, quote, receiverAccount, sentAmount]);
