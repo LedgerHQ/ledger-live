@@ -30,7 +30,12 @@ import {
   isNativeSegwitDerivationMode,
   isTaprootDerivationMode,
 } from "@ledgerhq/ledger-wallet-framework/derivation";
-import type { BitcoinOutput, BtcOperation, ZcashAccount } from "../types/bridge";
+import type {
+  BitcoinOutput,
+  BtcOperation,
+  ZcashAccount,
+  ZcashOperationExtra,
+} from "../types/bridge";
 import type { SignerContext } from "../types/signer";
 import type { ShieldedSyncResult, ShieldedTransaction, ZcashPrivateInfo } from "../network/types";
 import { ZCASH_SHIELDED_TX_TYPES } from "../network/types";
@@ -1062,8 +1067,18 @@ function reconcileConfirmedPendingOperations(account: ZcashAccount): ZcashAccoun
     const optimistic = pendingByHash.get(op.hash);
     // An incoming operation shares its hash with the send that produced it, but
     // it is not the operation that paid the entered address.
-    if (!optimistic?.recipients.length || op.type.endsWith("IN")) return op;
-    return { ...op, recipients: optimistic.recipients };
+    if (!optimistic || op.type.endsWith("IN")) return op;
+    const patch: Partial<BtcOperation> = {};
+    if (optimistic.recipients.length) patch.recipients = optimistic.recipients;
+    const optimisticMemo = (optimistic.extra as ZcashOperationExtra | undefined)?.memo;
+    if (optimisticMemo && !(op.extra as ZcashOperationExtra | undefined)?.memo) {
+      const newExtra: ZcashOperationExtra = {
+        ...(op.extra as ZcashOperationExtra | undefined),
+        memo: optimisticMemo,
+      };
+      patch.extra = newExtra;
+    }
+    return Object.keys(patch).length ? { ...op, ...patch } : op;
   });
 
   // Only the optimistic operations that now have a confirmed counterpart are
