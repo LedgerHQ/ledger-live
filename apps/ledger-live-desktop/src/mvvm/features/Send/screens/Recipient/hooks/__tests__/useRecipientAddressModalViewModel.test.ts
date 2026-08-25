@@ -31,7 +31,10 @@ jest.mock("../../../../../FlowWizard/FlowWizardContext", () => ({
 }));
 jest.mock("@ledgerhq/live-common/account/index");
 jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features");
-jest.mock("@features/platform-contacts");
+jest.mock("@features/platform-contacts", () => ({
+  useContacts: jest.fn(),
+  useContactsFeature: jest.fn(),
+}));
 jest.mock("../../../../context/RecipientContactSelectionContext");
 jest.mock("~/renderer/reducers/wallet", () => ({
   useMaybeAccountName: jest.fn(),
@@ -48,7 +51,10 @@ const mockedUseContacts = jest.mocked(useContacts);
 const mockedUseContactsFeature = jest.mocked(useContactsFeature);
 const mockedUseRecipientContactSelection = jest.mocked(useRecipientContactSelection);
 
-const mockAccount = createMockAccount({ id: "account_1" });
+const mockAccount = createMockAccount({
+  id: "account_1",
+  currency: createMockCurrency({ id: "ethereum", family: "evm" }),
+});
 
 const mockRecipientSearch = {
   value: "",
@@ -95,7 +101,6 @@ describe("useRecipientAddressModalViewModel", () => {
       return account.type === "Account" ? account : parentAccount || mockAccount;
     });
     mockedSendFeatures.hasMemo.mockReturnValue(false);
-    mockedSendFeatures.hasAddressBook.mockReturnValue(false);
     mockedUseContacts.mockReturnValue([]);
     mockedUseContactsFeature.mockReturnValue({
       isEnabled: false,
@@ -142,8 +147,7 @@ describe("useRecipientAddressModalViewModel", () => {
     expect(result.current.showSearchResults).toBe(false);
   });
 
-  it("shows empty contacts state when address book is enabled and no contact matches the network", () => {
-    mockedSendFeatures.hasAddressBook.mockReturnValue(true);
+  it("shows empty contacts state when the contacts feature is enabled and no contact matches the network", () => {
     mockedUseContactsFeature.mockReturnValue({
       isEnabled: true,
       showNewBadge: false,
@@ -180,8 +184,7 @@ describe("useRecipientAddressModalViewModel", () => {
     );
   });
 
-  it("does not show empty contacts state when address book is not supported", () => {
-    mockedSendFeatures.hasAddressBook.mockReturnValue(false);
+  it("does not show empty contacts state when the currency family is not eligible", () => {
     mockedUseContactsFeature.mockReturnValue({
       isEnabled: true,
       showNewBadge: false,
@@ -206,7 +209,6 @@ describe("useRecipientAddressModalViewModel", () => {
   });
 
   it("does not show empty contacts state when a contact matches the network", () => {
-    mockedSendFeatures.hasAddressBook.mockReturnValue(true);
     mockedUseContactsFeature.mockReturnValue({
       isEnabled: true,
       showNewBadge: false,
@@ -242,7 +244,6 @@ describe("useRecipientAddressModalViewModel", () => {
   });
 
   it("only exposes saved contact addresses from the selected network", () => {
-    mockedSendFeatures.hasAddressBook.mockReturnValue(true);
     mockedUseContactsFeature.mockReturnValue({
       isEnabled: true,
       showNewBadge: false,
@@ -328,7 +329,6 @@ describe("useRecipientAddressModalViewModel", () => {
         mockContactAddress({ id: "address-2", address: "0x456", currencyId: "ethereum" }),
       ],
     });
-    mockedSendFeatures.hasAddressBook.mockReturnValue(true);
     mockedUseContactsFeature.mockReturnValue({
       isEnabled: true,
       showNewBadge: false,

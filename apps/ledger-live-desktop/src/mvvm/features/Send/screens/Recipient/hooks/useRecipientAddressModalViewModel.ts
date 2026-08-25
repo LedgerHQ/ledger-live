@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { useContacts, useContactsFeature } from "@features/platform-contacts";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { isEligibleAddressCurrency } from "@ledgerhq/live-common/flows/send/recipient/utils/isEligibleAddressCurrency";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { useRecipientSearchState } from "@ledgerhq/live-common/flows/send/recipient/hooks/useRecipientSearchState";
 import { filterContactsByNetwork } from "@ledgerhq/live-common/flows/send/recipient/utils/filterContactsByNetwork";
@@ -35,12 +36,13 @@ export function useRecipientAddressModalViewModel({
 }: UseRecipientAddressModalViewModelProps) {
   const { recipientSearch, state } = useSendFlowData();
   const contacts = useContacts();
-  const { isEnabled: isContactsFeatureEnabled } = useContactsFeature("desktop");
+  const { isEnabled: isContactsFeatureEnabled, eligibleAddressFamilies } =
+    useContactsFeature("desktop");
   const { selectedContact, selectContact, clearSelectedContact } = useRecipientContactSelection();
   const { navigation } = useFlowWizard<SendFlowStep>();
 
   const mainAccount = getMainAccount(account, parentAccount);
-  const hasAddressBook = sendFeatures.hasAddressBook(currency);
+  const hasAddressBook = isEligibleAddressCurrency(eligibleAddressFamilies, currency);
   const sendFlowTrackingProperties = useMemo(
     () => getSendFlowTrackingProperties(account, parentAccount),
     [account, parentAccount],
@@ -155,7 +157,6 @@ export function useRecipientAddressModalViewModel({
   });
 
   const shouldHideRegularSearchState = showContactSearchResult || selectedContact !== undefined;
-  const addressBookFamilyName = mainAccount.currency.name;
   const addressMatchedSectionViewModel = useAddressMatchedSectionViewModel({
     searchResult: result,
     searchValue: recipientSearch.value,
@@ -166,7 +167,7 @@ export function useRecipientAddressModalViewModel({
     hasBridgeError: searchState.showBridgeRecipientError,
     isContactsFeatureEnabled,
     hasAddressBook,
-    addressBookFamilyName,
+    addressBookFamilyName: mainAccount.currency.name,
   });
 
   return {
@@ -188,8 +189,6 @@ export function useRecipientAddressModalViewModel({
     hasMemoValidationError,
     hasFilledMemo,
     isContactsFeatureEnabled,
-    hasAddressBook,
-    addressBookFamilyName,
     addressMatchedSectionViewModel,
     memoType,
     memoTypeOptions,
