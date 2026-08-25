@@ -1,3 +1,4 @@
+import type { RefObject } from "react";
 import type { AddressParts } from "./utils/splitAddress";
 
 export type PayCardTrackEvent = (event: string, params: Record<string, unknown>) => void;
@@ -140,6 +141,11 @@ type RequestReceiveShell = Readonly<{
   networkIcon?: RequestReceiveIconProps;
   /** Actions rendered, in order. Desktop uses `["save", "copy", "verify"]`. */
   visibleActions: readonly RequestReceiveActionId[];
+  /**
+   * Native only: attached to the shareable card so the host can capture it as an image. Left
+   * opaque here because the web build must not depend on `react-native` types.
+   */
+  cardRef?: RefObject<unknown>;
   onClose: () => void;
 }>;
 

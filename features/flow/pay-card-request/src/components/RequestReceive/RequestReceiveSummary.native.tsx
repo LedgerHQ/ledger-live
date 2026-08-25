@@ -1,9 +1,10 @@
-import React from "react";
+import React, { type Ref } from "react";
+import type { View } from "react-native";
 import CryptoIcon from "@ledgerhq/crypto-icons/native";
 import { Box, Text } from "@ledgerhq/lumen-ui-rnative";
 import { QrCode } from "@shared/ui-qr-code";
 import { RequestReceiveAddress } from "./RequestReceiveAddress.native";
-import type { RequestReceiveIconProps } from "../../types";
+import type { RequestReceiveIconProps, RequestReceiveProps } from "../../types";
 import type { AddressParts } from "../../utils/splitAddress";
 
 const QR_CENTER_ICON_SIZE = 48;
@@ -16,6 +17,7 @@ type RequestReceiveSummaryProps = Readonly<{
   networkIcon?: RequestReceiveIconProps;
   addressParts: AddressParts;
   qrPayload: string;
+  cardRef?: RequestReceiveProps["cardRef"];
 }>;
 
 export function RequestReceiveSummary({
@@ -25,9 +27,13 @@ export function RequestReceiveSummary({
   networkIcon,
   addressParts,
   qrPayload,
+  cardRef,
 }: RequestReceiveSummaryProps) {
   return (
     <Box
+      ref={cardRef as Ref<View>}
+      // captureRef needs a real native view; without this the snapshot is only the card background.
+      collapsable={false}
       lx={{
         alignItems: "center",
         alignSelf: "stretch",
