@@ -6,6 +6,7 @@ import {
   MIN_NEURON_STAKE,
   NNS_CLEAR_FOLLOWING_AFTER_SECONDS,
   NNS_MAXIMUM_DISSOLVE_DELAY,
+  NNS_MINIMUM_DISSOLVE_DELAY_TO_VOTE,
   NNS_START_REDUCING_VOTING_POWER_AFTER_SECONDS,
   SECONDS_IN_DAY,
   SECONDS_IN_FOUR_YEARS,
@@ -35,6 +36,8 @@ import {
   minAllowedSplitAmount,
   minNeuronSplittable,
   neuronCanBeSplit,
+  neuronCanVote,
+  neuronDecidingVotingPower,
   neuronPotentialVotingPower,
   neuronsNeedSync,
   neuronStake,
@@ -148,6 +151,20 @@ describe("bonus multipliers (Mission 70)", () => {
   it("age bonus is linear up to +25% at four years", () => {
     expect(ageMultiplier(BigInt(SECONDS_IN_FOUR_YEARS))).toBe(1.25);
     expect(ageMultiplier(BigInt(SECONDS_IN_FOUR_YEARS * 2))).toBe(1.25);
+  });
+});
+
+describe("neuronCanVote", () => {
+  const withDelay = (seconds: number) =>
+    neuronCanVote(baseNeuron({ dissolveDelaySeconds: BigInt(seconds) }));
+
+  it("turns on exactly at the two-week threshold", () => {
+    expect(withDelay(NNS_MINIMUM_DISSOLVE_DELAY_TO_VOTE - 1)).toBe(false);
+    expect(withDelay(NNS_MINIMUM_DISSOLVE_DELAY_TO_VOTE)).toBe(true);
+  });
+
+  it("excludes the delay a freshly staked neuron gets by default", () => {
+    expect(withDelay(SECONDS_IN_7_DAYS)).toBe(false);
   });
 });
 
@@ -308,6 +325,35 @@ describe("periodic confirmation", () => {
   it("ignores neurons whose dissolve delay is too short to vote", () => {
     const ineligible = decaying({ dissolveDelaySeconds: BigInt(SECONDS_IN_7_DAYS) });
     expect(votingPowerNeedsRefresh([ineligible], clearedAt)).toBe(false);
+  });
+
+  describe("neuronDecidingVotingPower", () => {
+    const POTENTIAL = BigInt(3.75 * E8S_PER_ICP);
+
+    it("counts the full potential right up to the moment decay begins", () => {
+      expect(neuronDecidingVotingPower(decaying(), Number(REFRESHED))).toBe(POTENTIAL);
+      expect(neuronDecidingVotingPower(decaying(), decayStart)).toBe(POTENTIAL);
+    });
+
+    it("falls linearly across the decay window", () => {
+      const quarter = NNS_CLEAR_FOLLOWING_AFTER_SECONDS / 4;
+      expect(neuronDecidingVotingPower(decaying(), decayStart + quarter * 2)).toBe(POTENTIAL / 2n);
+      expect(neuronDecidingVotingPower(decaying(), decayStart + quarter * 3)).toBe(POTENTIAL / 4n);
+    });
+
+    it("is zero from the moment following is cleared", () => {
+      expect(neuronDecidingVotingPower(decaying(), clearedAt)).toBe(0n);
+      expect(neuronDecidingVotingPower(decaying(), clearedAt + 10_000)).toBe(0n);
+    });
+
+    it("counts the full potential when the canister reported no refresh timestamp", () => {
+      expect(neuronDecidingVotingPower(baseNeuron(), clearedAt)).toBe(POTENTIAL);
+    });
+
+    it("is zero for a neuron that cannot vote, however recently it was refreshed", () => {
+      const ineligible = decaying({ dissolveDelaySeconds: BigInt(SECONDS_IN_7_DAYS) });
+      expect(neuronDecidingVotingPower(ineligible, Number(REFRESHED))).toBe(0n);
+    });
   });
 
   it("neuronsNeedSync fires on the threshold and never on an empty snapshot", () => {

@@ -140,6 +140,14 @@ export const getNeuronDissolveDurationSeconds = (
 // ---- voting power (Mission 70) ------------------------------------------------------------------
 
 /**
+ * Whether the dissolve delay is long enough for the canister to count the neuron's vote. Everything
+ * downstream of voting hangs off this — voting power, periodic confirmation, the decay countdown —
+ * so it is one predicate rather than the same comparison repeated at each site.
+ */
+export const neuronCanVote = (neuron: ICPNeuron): boolean =>
+  neuron.dissolveDelaySeconds >= BigInt(NNS_MINIMUM_DISSOLVE_DELAY_TO_VOTE);
+
+/**
  * Bonus multiplier for a scalar (dissolve delay or age): 1 + maxBonus·(min(amount, cap)/cap)^convexity.
  * Mission 70 uses convexity 2 for the dissolve-delay bonus (quadratic), 1 for the age bonus (linear).
  */
@@ -178,9 +186,9 @@ export const ageMultiplier = (ageSeconds: bigint): number =>
 // 2^53 (bonus <= 3x), so it stays an exact integer while preserving full double precision.
 const VOTING_POWER_SCALE = 1_000_000_000_000_000n;
 
-/** Potential voting power. Returns 0 below the vote-eligibility dissolve delay. */
+/** Potential voting power: what the neuron is worth ignoring periodic-confirmation decay. */
 export const neuronPotentialVotingPower = (neuron: ICPNeuron): bigint => {
-  if (neuron.dissolveDelaySeconds < BigInt(NNS_MINIMUM_DISSOLVE_DELAY_TO_VOTE)) return 0n;
+  if (!neuronCanVote(neuron)) return 0n;
   // The rewards-only "8-year gang" bonus is intentionally omitted: it depends on a snapshotted base
   // the wallet does not carry and does not affect potential voting power for post-migration neurons.
   const stakeE8s = neuronVotingStake(neuron);
@@ -217,6 +225,25 @@ export const getSecondsTillVotingPowerExpires = (
 };
 
 /**
+ * Deciding voting power: the potential power reduced by periodic-confirmation decay, i.e. what the
+ * canister counts today. Full until the decay window opens, then linear to zero across it — the
+ * canister's `deciding_voting_power_adjustment_factor` is a LinearMap over
+ * [startReducing, startReducing + clearFollowing) onto 1..0, clamped (`network_economics.rs`).
+ *
+ * A missing refresh timestamp means undecayed, not expired: staleness is unknown there. Truncates
+ * where the canister rounds half-to-even, a difference of at most one e8s.
+ */
+export const neuronDecidingVotingPower = (
+  neuron: ICPNeuron,
+  nowSeconds: number = Math.floor(Date.now() / 1000),
+): bigint => {
+  const potential = neuronPotentialVotingPower(neuron);
+  const remaining = getSecondsTillVotingPowerExpires(neuron, nowSeconds);
+  if (remaining === undefined || remaining >= NNS_CLEAR_FOLLOWING_AFTER_SECONDS) return potential;
+  return (potential * BigInt(remaining)) / BigInt(NNS_CLEAR_FOLLOWING_AFTER_SECONDS);
+};
+
+/**
  * Whether any neuron has entered the decay window and is actively losing voting power.
  * Neurons the canister reported no refresh timestamp for are skipped, so a snapshot persisted before
  * the decode change never raises a false alarm — the next list_neurons populates the field.
@@ -229,7 +256,7 @@ export const votingPowerNeedsRefresh = (
     const refreshed = neuron.votingPowerRefreshedTimestampSeconds;
     // Only neurons eligible to vote are subject to periodic confirmation.
     if (refreshed === undefined) return false;
-    if (neuron.dissolveDelaySeconds < BigInt(NNS_MINIMUM_DISSOLVE_DELAY_TO_VOTE)) return false;
+    if (!neuronCanVote(neuron)) return false;
     return BigInt(nowSeconds) >= refreshed + BigInt(NNS_START_REDUCING_VOTING_POWER_AFTER_SECONDS);
   });
 
@@ -280,8 +307,7 @@ export const getBannerState = ({
   if (fullNeurons.length === 0) return canStake ? "stakeICP" : "none";
   if (neuronsNeedSync(neurons, nowMSecs)) return "syncNeurons";
   if (votingPowerNeedsRefresh(fullNeurons, Math.floor(nowMSecs / 1000))) return "confirmFollowing";
-  if (fullNeurons.some(n => n.dissolveDelaySeconds < BigInt(NNS_MINIMUM_DISSOLVE_DELAY_TO_VOTE)))
-    return "lockNeurons";
+  if (fullNeurons.some(n => !neuronCanVote(n))) return "lockNeurons";
   if (fullNeurons.some(n => !hasFollowees(n))) return "addFollowees";
   return "none";
 };
