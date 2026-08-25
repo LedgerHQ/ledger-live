@@ -1,5 +1,7 @@
-import { useCallback, useEffect, useMemo } from "react";
-import { Share } from "react-native";
+import { useCallback, useEffect, useMemo, useRef, type ComponentRef } from "react";
+import type { View } from "react-native";
+import Share from "react-native-share";
+import { captureRef } from "react-native-view-shot";
 import Clipboard from "@react-native-clipboard/clipboard";
 import { useNavigation, useRoute, type RouteProp } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -21,6 +23,7 @@ export function usePayTabRequestReceiveViewModel(): RequestReceiveProps {
   const { goBack } = useNavigation<NativeStackNavigationProp<PayTabNavigatorParamList>>();
   const route = useRoute<RouteProp<PayTabNavigatorParamList, ScreenName.PayTabRequestReceive>>();
   const { account, parentAccount } = useAccountScreen(route);
+  const cardRef = useRef<ComponentRef<typeof View>>(null);
 
   useEffect(() => {
     if (!account) {
@@ -42,7 +45,9 @@ export function usePayTabRequestReceiveViewModel(): RequestReceiveProps {
   }, []);
 
   const onShare = useCallback((address: string) => {
-    void Share.share({ message: address }).catch(() => undefined);
+    void captureRef(cardRef, { format: "png" })
+      .then(url => Share.open({ url, failOnCancel: false }))
+      .catch(() => undefined);
   }, []);
 
   const onTrackEvent = useCallback((event: string, properties: Record<string, unknown>) => {
@@ -73,6 +78,7 @@ export function usePayTabRequestReceiveViewModel(): RequestReceiveProps {
     labels,
     assetIcon: data?.assetIcon ?? { ledgerId: "", ticker: "" },
     networkIcon: data?.networkIcon,
+    cardRef,
     visibleActions: ["share", "copy", "verify"],
     onShare,
     onCopy,

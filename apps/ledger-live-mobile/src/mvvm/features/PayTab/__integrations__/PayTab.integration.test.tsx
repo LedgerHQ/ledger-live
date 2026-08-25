@@ -1,10 +1,12 @@
 import React from "react";
 import { Text, View } from "react-native";
+import Share from "react-native-share";
+import { captureRef } from "react-native-view-shot";
 import {
   createNativeStackNavigator,
   type NativeStackScreenProps,
 } from "@react-navigation/native-stack";
-import { act, render, screen, waitFor, within } from "@tests/test-renderer";
+import { render, screen, waitFor, within } from "@tests/test-renderer";
 import { PAY_CARD_BALANCE_FILTER_ALL } from "@features/flow-pay-card-balance/state";
 import { AssetCategory } from "@domain/api-aggregated-assets";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
@@ -18,7 +20,8 @@ import { track } from "~/analytics";
 import { screen as trackScreen } from "~/analytics/segment";
 import type { State } from "~/reducers/types";
 import PayTabNavigator from "LLM/features/PayTab";
-import { registryActions } from "LLM/features/ModularDrawer/hooks/useCallbackRegistry/registries";
+import { PayTabRequestReceiveScreen } from "LLM/features/PayTab/screens/RequestReceive";
+import type { PayTabNavigatorParamList } from "LLM/features/PayTab/types";
 
 jest.mock("~/analytics", () => ({
   ...jest.requireActual("~/analytics"),
@@ -47,6 +50,8 @@ const usdc = TokenCurrencySchema.parse({
   name: "USD Coin",
   units: [{ name: "USD Coin", code: "USDC", magnitude: 6 }],
 });
+const payTabEthAccount = genAccount("pay-tab-eth", { currency: ethereum });
+const payTabUsdcAccount = genTokenAccount(0, payTabEthAccount, usdc);
 
 type TestStackParamList = {
   PayTabTest: undefined;
@@ -74,11 +79,9 @@ type RenderPayTabOptions = Readonly<{
 }>;
 
 function withUsdcHoldings(state: State): State {
-  const ethAccount = genAccount("pay-tab-eth", { currency: ethereum });
-
   return {
     ...state,
-    accounts: { active: [{ ...ethAccount, subAccounts: [genTokenAccount(0, ethAccount, usdc)] }] },
+    accounts: { active: [{ ...payTabEthAccount, subAccounts: [payTabUsdcAccount] }] },
     countervalues: {
       ...state.countervalues,
       countervalues: {
@@ -107,6 +110,27 @@ function renderPayTab({ hasSeenFeatureTour = true, holdsUsdc = false }: RenderPa
         return holdsUsdc ? withUsdcHoldings(next) : next;
       },
     },
+  );
+}
+
+const RequestStack = createNativeStackNavigator<PayTabNavigatorParamList>();
+
+function renderRequestReceive() {
+  return render(
+    <RequestStack.Navigator
+      screenOptions={{ headerShown: false, animation: "none" }}
+      initialRouteName={ScreenName.PayTabRequestReceive}
+    >
+      <RequestStack.Screen
+        name={ScreenName.PayTabRequestReceive}
+        component={PayTabRequestReceiveScreen}
+        initialParams={{
+          accountId: payTabUsdcAccount.id,
+          parentId: payTabEthAccount.id,
+        }}
+      />
+    </RequestStack.Navigator>,
+    { overrideInitialState: withUsdcHoldings },
   );
 }
 
@@ -307,26 +331,28 @@ describe("PayTab integration", () => {
       });
     });
 
-    it("shows the request receive screen when an account is selected in the drawer", async () => {
-      const { user, store } = renderPayTab({ holdsUsdc: true });
-      const parentAccount = store.getState().accounts.active[0];
-      const account = parentAccount.subAccounts![0];
-
-      await user.press(await screen.findByTestId("action-tile-request"));
-
-      await waitFor(() => {
-        expect(store.getState().modularDrawer.callbackId).toBeDefined();
-      });
-
-      const callbackId = store.getState().modularDrawer.callbackId;
-      await act(async () => registryActions.executeCallback(callbackId!, account, parentAccount));
+    it("should render the request receive card for the selected account", async () => {
+      renderRequestReceive();
 
       expect(await screen.findByText("Request USD Coin")).toBeVisible();
       expect(screen.getByTestId("pay-card-request-receive")).toBeVisible();
+      expect(screen.getByTestId("pay-card-request-receive-card")).toBeVisible();
+      expect(screen.getByText("Share")).toBeVisible();
+    });
 
-      await user.press(screen.getByTestId("pay-card-request-receive-close"));
+    it("should share a picture of the request card when Share is pressed", async () => {
+      const { user } = renderRequestReceive();
 
-      expect(await screen.findByTestId("paytab-screen")).toBeVisible();
+      await user.press(await screen.findByText("Share"));
+
+      await waitFor(() => {
+        expect(captureRef).toHaveBeenCalledWith(expect.anything(), { format: "png" });
+        expect(Share.open).toHaveBeenCalledWith({
+          url: "file://mock.png",
+          message: payTabEthAccount.freshAddress,
+          failOnCancel: false,
+        });
+      });
     });
   });
 });
